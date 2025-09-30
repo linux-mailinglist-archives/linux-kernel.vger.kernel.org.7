@@ -1,236 +1,172 @@
-Return-Path: <linux-kernel+bounces-838142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2B85BAE892
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 22:28:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D046BAE8A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 22:29:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D02A3C5602
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 20:28:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D53043C5DFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 20:29:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E3162494FF;
-	Tue, 30 Sep 2025 20:28:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="hI90/ig1"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E726524EAB1;
+	Tue, 30 Sep 2025 20:29:34 +0000 (UTC)
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A71344C81;
-	Tue, 30 Sep 2025 20:28:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D179738F9C
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 20:29:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759264114; cv=none; b=Gxt5JFcA6iVtQ8+2qSfzkoPHZEX3ugCruOM2SHuC08KhLV5aJvGr7SMRB2CrZDZ2Xqftz1U9WZbJpg8zACOMWCQcqo+nYIeP0QQBHieiKGTnjxP5aVaddq8V87FQSWYUPiC9Nzn71ZoaLA84fmFYkt73FcMYUEVuDzxiCkdHxjs=
+	t=1759264174; cv=none; b=mNTl0TTxP27w1k11OENJUYlbtr+ZxZahCKUBt9//+25MI71l0XHzvQbGNY0UINU2QUcKpboSxdi1qdn0cSCAZfeAcTZHBD7wHgbapq0N5MCbvLOQPVueQeuXdaEfzlbEulQ+K7H6KTGBZLZMcfVgudh99PRTa8WYHxafS4gJ1B4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759264114; c=relaxed/simple;
-	bh=rVT8LLqQ2BIIqhRUGOt1DEgpSaOhe56wD2gSY9BrNjg=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=XIYoCIU7PQMqQY2OLqsCVM4hvx5ZlU7vcj5wsI3iK+VREnK9ovkahCt+50pnK3T+RQzzxYhltAkA7hxukgK9lYd7ZboF42y3DuyMIbvIZM3hkdXHG7nCcymU3rPh7yazqaM78c7ZYK3mizZjuuabRdUDB5Y7kNd1dp2njabz/14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=hI90/ig1; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58UJt0oc002106;
-	Tue, 30 Sep 2025 20:28:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=ZgxRUx
-	J+4q2dn8A5VIJXA3qVsUiULbZMIbn7ozado9A=; b=hI90/ig1hSxFSWKDr9PcA9
-	CMHVS5XkEkF6oAnQwAo9HFIEQAJkX+R8Ey/t5ERu5eH8DzPIizOfDIRZ/KRL+1FD
-	CMn4qg8v3VzSbM2DH+ludkqA1RhzvwOagPExAbeeX2Ib8M8c02ESodapHmkc2Vo+
-	KuVS0gWRQNwpbFYsY9ydISZpe5NcelwW0W5azO1S5yP5zYe9wIqdP0UWRkeADFoB
-	VYHfzpnXMr2usiKPjoopBYu/ZC2ft1V4CcEDK5iNgnqnlRwzDlHmTu8ZHT1QWBNQ
-	vYLUzHKjnSaAbn3WwnZwFG7XjmHQm08u+O+wn70uPmME15TM9LRZwQH7anD02MhA
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49e7jwjshh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 30 Sep 2025 20:28:17 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58UKOYFg001786;
-	Tue, 30 Sep 2025 20:28:17 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49e7jwjshd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 30 Sep 2025 20:28:17 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58UJ1nGh020098;
-	Tue, 30 Sep 2025 20:28:16 GMT
-Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 49et8s5kus-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 30 Sep 2025 20:28:16 +0000
-Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58UKSF9n18154016
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 30 Sep 2025 20:28:15 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 85AC958054;
-	Tue, 30 Sep 2025 20:28:15 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7EB055805A;
-	Tue, 30 Sep 2025 20:28:14 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.31.96.173])
-	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 30 Sep 2025 20:28:14 +0000 (GMT)
-Message-ID: <bcd1f7b48311aff55711cdff4a6cdbb72aae1d04.camel@linux.ibm.com>
-Subject: Re: [PATCH] ima: Fall back to default kernel module signature
- verification
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Coiby Xu <coxu@redhat.com>, linux-integrity@vger.kernel.org
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Karel Srot
- <ksrot@redhat.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Dmitry
- Kasatkin <dmitry.kasatkin@gmail.com>,
-        Eric Snowberg	
- <eric.snowberg@oracle.com>,
-        Paul Moore <paul@paul-moore.com>, James Morris	
- <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        "open
- list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
-        open list
- <linux-kernel@vger.kernel.org>
-In-Reply-To: <896f4fb0c0146512a66daf0b4c1e033aca4bd6d4.camel@linux.ibm.com>
-References: <20250928030358.3873311-1-coxu@redhat.com>
-	 <896f4fb0c0146512a66daf0b4c1e033aca4bd6d4.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 30 Sep 2025 16:28:14 -0400
+	s=arc-20240116; t=1759264174; c=relaxed/simple;
+	bh=HYVrxLorviy9/LcLk+sJcFHB5u8xcwx12lbV6OBKubw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=OnuNCvFwsICLLWsQyGQ97e/+o5OJjAsNQGQxC85ue+bjrfPrH2l9R51jT2xCk7XtqFmwE28p1QRnM9wHL03utbWG0Kg+vnRVnr1BpbABIw2Gk0VcmBMxcezOwuQT0wX8p1BB7OEMvTeaui2OnowNVbSz6VoxtRaRnmzr20WPKAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-9286199b46fso317217539f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 13:29:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759264172; x=1759868972;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XjLWIlvweUHagMNdlXHm8j88YhPLq+xnooiFq97mL4I=;
+        b=DwkARb1Rb0HvMVMgigmO8EY9/mQMBRcOeedqa+wPnmcK4f2Ip8kEBp/SwikzIgEwbY
+         3dGSArK5Zwfu8lXF5isFHnp52W/de3HyxUpS3MJKHHTn0McvsbFUWkbwBxHnpXMB1oN3
+         uDJ2gDnIUddhDqch9kJA09BK9AfR8oa7eatlm86/yDVTJMP5CQ6MFePSpIwOP/vaQw6t
+         jcK7uSkjW7bhvx21uYfgwSYm6SWCMCTrwsUQwTzb/GPTzgUL9n7v7sDnshZFC8Umhyrj
+         lCpgokU/pWt/gfPEXfQkDoQGb8ZlDSaVdx1XefH/8ds6VKSZM3hjlX3D4oOLnvG1wpJF
+         JzTA==
+X-Forwarded-Encrypted: i=1; AJvYcCUhs21mqryW8Rh4LWqdYQNlVzm13vq6XkTJQUqLBELPIvc23fMBGjuQoVIJ82pyxRj/CVpjo0Q0vgraT7o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTxqEAxHbUCP7MayitxBk0DEtlw9A//RNKfdKbBc2KMEMBbKDx
+	Av+S+iPud7/F0yHh3ZPPc1p+QJ081+onTcziQsiNan+EX3FIC8CQFxlmaEOXMXYqRX4V74bu5pc
+	/C4zAPsxI65fbE8SsafbKPQst2FV5GhI37ta59fx0IC43djgSsJJMVj7uZ7o=
+X-Google-Smtp-Source: AGHT+IHAiZHIaPR3+uqTjIwMls4jnI6NenQ9eHlcMquZTT5xpAYj4H7IeVo/3QFcEIjKxACEGR9F9zY+6pg98Qr9jhrg1gsK4tAX
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.54.3 (3.54.3-2.fc41) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAyNSBTYWx0ZWRfX9wXa+qUPKdkw
- h7ohSrateouz8s8IRgIyn/th/P2PeNjoImjN5h4izFYvcTrNZJE17/6mBW+Tj6FvpifeFoRdvUH
- +aadSST/9YnPeOIbqXPYF8nVu2aFf1b59YOYpRep2PCb9fAdLKs8elgk0MUc382kebDggeHeUyX
- kpDjV4b+AUIt743Uvqui6ItBDgLxqNmmqgi+JNg2db5zV4eGcD6GFArSV5J1i2WJr/NW/x8w/w/
- gfb+7q8VA6KVXkg3MUUjQHtHA8kGR/UXq0U5FBFCPyncVDq7DwKBCvjzLwFL0oIGWlEfxjQSedS
- Hdz++IW581EZqHlU3955zHKoOKC4zD+VNGAb7EccGN3D8nRUXub2LraZBoUoCBNtbYdEEN70u9H
- XCZRRc/MR2fZY/PvbIu8i4BaI1wfQA==
-X-Proofpoint-ORIG-GUID: NHCRxGbQrnjHikw_TyU3VMHH7EuT4LRr
-X-Proofpoint-GUID: nOqafXKuj9pQmT9ZXLXn0MNV4CTV1aCQ
-X-Authority-Analysis: v=2.4 cv=GdUaXAXL c=1 sm=1 tr=0 ts=68dc3d61 cx=c_pps
- a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=i0EeH86SAAAA:8
- a=20KFwNOVAAAA:8 a=16uMmaMVKecfaAtURF4A:9 a=QEXdDO2ut3YA:10
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-30_04,2025-09-29_04,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 clxscore=1015 phishscore=0 adultscore=0 priorityscore=1501
- malwarescore=0 spamscore=0 bulkscore=0 impostorscore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270025
+X-Received: by 2002:a05:6e02:1aa4:b0:413:d5e2:b751 with SMTP id
+ e9e14a558f8ab-42d815ab94emr20716375ab.6.1759264171998; Tue, 30 Sep 2025
+ 13:29:31 -0700 (PDT)
+Date: Tue, 30 Sep 2025 13:29:31 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68dc3dab.a00a0220.102ee.004e.GAE@google.com>
+Subject: [syzbot] [btrfs?] kernel BUG in populate_free_space_tree (2)
+From: syzbot <syzbot+884dc4621377ba579a6f@syzkaller.appspotmail.com>
+To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 2025-09-30 at 09:57 -0400, Mimi Zohar wrote:
-> On Sun, 2025-09-28 at 11:03 +0800, Coiby Xu wrote:
-> > Currently, for any IMA policy that requires appraisal for kernel module=
-s
-> > e.g. ima_policy=3Dsecure_boot, PowerPC architecture specific policy,
-> > booting will fail because IMA will reject a kernel module which will
-> > be decompressed in the kernel space and then have its signature
-> > verified.
-> >=20
-> > This happens because when in-kernel module decompression
-> > (CONFIG_MODULE_DECOMPRESS) is enabled, kmod will use finit_module
-> > syscall instead of init_module to load a module. And IMA mandates IMA
-> > xattr verification for finit_module unless appraise_type=3Dimasig|modsi=
-g
-> > is specified in the rule.  However currently initramfs doesn't support
-> > xattr. And IMA rule "func=3DMODULE_CHECK appraise_type=3Dimasig|modsig"
-> > doesn't work either because IMA will treat to-be-decompressed kernel
-> > module as not having module signature as it can't decompress kernel
-> > module to check if signature exists.
-> >=20
-> > So fall back to default kernel module signature verification when we ha=
-ve
-> > no way to verify IMA xattr.
-> >=20
-> > Reported-by: Karel Srot <ksrot@redhat.com>
-> > Signed-off-by: Coiby Xu <coxu@redhat.com>
-> > ---
-> > Another approach will be to make IMA decompress the kernel module to
-> > check the signature. This requires refactoring kernel module code to
-> > make the in-kernel module decompressing feature modular and seemingly
-> > more efforts are needed. A second disadvantage is it feels
-> > counter-intuitive to verify the same kernel module signature twice. And
-> > we still need to make ima_policy=3Dsecure_boot allow verifying appended
-> > module signature.
-> >=20
-> > Anyways, I'm open to suggestions and can try the latter approach if
-> > there are some benefits I'm not aware of or a better approach.
->=20
-> Coiby, there are multiple issues being discussed here.  Before deciding o=
-n an
-> appropriate solution, let's frame the issues(s) properly.
->=20
-> 1. The finit_module syscall eventually calls init_module_from_file() to r=
-ead the
-> module into memory and then decompress it.  The problem is that the kerne=
-l
-> module signature verification occurs during the kernel_read_file(), befor=
-e the
-> kernel module is decompressed.  Thus, the appended kernel module signatur=
-e
-> cannot be verified.
->=20
-> 2. CPIO doesn't have xattr support. There were multiple attempts at inclu=
-ding
-> xattrs in CPIO, but none were upstreamed [1].  If file signatures stored =
-in
-> security.ima were available in the initramfs, then finit_module() could v=
-erify
-> them, as opposed to the appended kernel module signature.
->=20
-> 3. The issues described above are generic, not limited to Power.  When
-> CONFIG_MODULE_SIG is configured, the arch specific IMA policy rules do no=
-t
-> include an "appraise func=3DMODULE_CHECK".
->=20
-> 4. Unlike the arch specific IMA policy rules, the built-in secure boot IM=
-A
-> policy, specified on the boot command line as "ima_policy=3Dsecure_boot",=
- always
-> enforces the IMA signature stored in security.ima.
->=20
-> Partial solutions without kernel changes:
-> - Enable CONFIG_MODULE_SIG  (Doesn't solve 4)
-> - Disable kernel module compression.
->=20
-> Complete solution:
-> - Pick up and upstream Roberto Sassu's last version of initramfs support =
-[1].
-> - Somehow prevent kernel_read_file() from failing when the kernel_read_fi=
-le_id
-> enumeration is READING_MODULE and the kernel module is compressed.  The c=
-hange
-> might be limited to ima_post_read_file().
+Hello,
 
-or perhaps not totally.
+syzbot found the following issue on:
 
-init_module_from_file() doesn't pass the flags variable to kernel_read_file=
-().=20
-You might want to consider defining a new kernel_read_file_id enumeration n=
-amed
-READING_COMPRESSED_MODULE.
+HEAD commit:    3b9b1f8df454 Add linux-next specific files for 20250929
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=12785ae2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7658505af38711c6
+dashboard link: https://syzkaller.appspot.com/bug?extid=884dc4621377ba579a6f
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=170e2334580000
 
-Mimi
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/2484efae3582/disk-3b9b1f8d.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/c39cb0b765cf/vmlinux-3b9b1f8d.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/5aaf42edc1cb/bzImage-3b9b1f8d.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/8172ca4171ed/mount_0.gz
+  fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=13de6942580000)
 
->=20
-> [1] [PATCH v4 0/3] initramfs: add support for xattrs in the initial ram d=
-isk
-> https://lore.kernel.org/linux-fsdevel/20190523121803.21638-1-roberto.sass=
-u@huawei.com/
->=20
->=20
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+884dc4621377ba579a6f@syzkaller.appspotmail.com
 
+BTRFS warning: 'usebackuproot' is deprecated, use 'rescue=usebackuproot' instead
+BTRFS info (device loop3 state M): rebuilding free space tree
+assertion failed: ret == 0 :: 0, in fs/btrfs/free-space-tree.c:1115
+------------[ cut here ]------------
+kernel BUG at fs/btrfs/free-space-tree.c:1115!
+Oops: invalid opcode: 0000 [#1] SMP KASAN PTI
+CPU: 1 UID: 0 PID: 6352 Comm: syz.3.25 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
+RIP: 0010:populate_free_space_tree+0x700/0x710 fs/btrfs/free-space-tree.c:1115
+Code: ff ff e8 d3 74 d2 fd 48 c7 c7 80 0a f0 8b 48 c7 c6 60 12 f0 8b 31 d2 48 c7 c1 e0 08 f0 8b 41 b8 5b 04 00 00 e8 81 c1 39 fd 90 <0f> 0b 66 66 66 66 66 2e 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90
+RSP: 0018:ffffc9000430f780 EFLAGS: 00010246
+RAX: 0000000000000043 RBX: ffff88805b709630 RCX: fea61d0e2e79d000
+RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+RBP: ffffc9000430f8b0 R08: ffffc9000430f4a7 R09: 1ffff92000861e94
+R10: dffffc0000000000 R11: fffff52000861e95 R12: 0000000000000001
+R13: 1ffff92000861f00 R14: dffffc0000000000 R15: 0000000000000000
+FS:  00007f424d9fe6c0(0000) GS:ffff888125afc000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fd78ad212c0 CR3: 0000000076d68000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ btrfs_rebuild_free_space_tree+0x1ba/0x6d0 fs/btrfs/free-space-tree.c:1364
+ btrfs_start_pre_rw_mount+0x128f/0x1bf0 fs/btrfs/disk-io.c:3062
+ btrfs_remount_rw fs/btrfs/super.c:1334 [inline]
+ btrfs_reconfigure+0xaed/0x2160 fs/btrfs/super.c:1559
+ reconfigure_super+0x227/0x890 fs/super.c:1076
+ do_remount fs/namespace.c:3279 [inline]
+ path_mount+0xd1a/0xfe0 fs/namespace.c:4027
+ do_mount fs/namespace.c:4048 [inline]
+ __do_sys_mount fs/namespace.c:4236 [inline]
+ __se_sys_mount+0x313/0x410 fs/namespace.c:4213
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f424e39066a
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f424d9fde68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007f424d9fdef0 RCX: 00007f424e39066a
+RDX: 0000200000000180 RSI: 0000200000000380 RDI: 0000000000000000
+RBP: 0000200000000180 R08: 00007f424d9fdef0 R09: 0000000000000020
+R10: 0000000000000020 R11: 0000000000000246 R12: 0000200000000380
+R13: 00007f424d9fdeb0 R14: 0000000000000000 R15: 00002000000002c0
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:populate_free_space_tree+0x700/0x710 fs/btrfs/free-space-tree.c:1115
+Code: ff ff e8 d3 74 d2 fd 48 c7 c7 80 0a f0 8b 48 c7 c6 60 12 f0 8b 31 d2 48 c7 c1 e0 08 f0 8b 41 b8 5b 04 00 00 e8 81 c1 39 fd 90 <0f> 0b 66 66 66 66 66 2e 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90
+RSP: 0018:ffffc9000430f780 EFLAGS: 00010246
+RAX: 0000000000000043 RBX: ffff88805b709630 RCX: fea61d0e2e79d000
+RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+RBP: ffffc9000430f8b0 R08: ffffc9000430f4a7 R09: 1ffff92000861e94
+R10: dffffc0000000000 R11: fffff52000861e95 R12: 0000000000000001
+R13: 1ffff92000861f00 R14: dffffc0000000000 R15: 0000000000000000
+FS:  00007f424d9fe6c0(0000) GS:ffff888125afc000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fd78ad212c0 CR3: 0000000076d68000 CR4: 00000000003526f0
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
