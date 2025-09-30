@@ -1,42 +1,42 @@
-Return-Path: <linux-kernel+bounces-837835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BABA8BAD5D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 16:57:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D6CEBAD9B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:12:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F9FE3231AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:56:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4113B3B0D18
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 15:09:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86EA930594D;
-	Tue, 30 Sep 2025 14:56:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AB2E306D23;
+	Tue, 30 Sep 2025 15:09:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="YcBoGkhq"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Lj6v4nBa"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E13D0303C9B;
-	Tue, 30 Sep 2025 14:56:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 926B123506A;
+	Tue, 30 Sep 2025 15:09:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759244187; cv=none; b=T8idQrTONBS4+7tIYL1SRa29vimjvoChEdcyBSCOkMpAMaWvgLLGggWoiJy5uByHEuwDQ7apb1XZFIF32dvDz5JhYCJh0k0ZjeKcoDA5qu0sOHHwRDNkhzyIf7VG/t7YElae/A2PsLA+lxMKUfTdHI1iCSpatPf8u4jGSvREHbQ=
+	t=1759244986; cv=none; b=B7GDV4KmR2A7o7IoQFfCdH0UpIJNc9zytKE/cW//d4zSyaukvO8ATf9hOavnOKw0YOobfDY/QYIhy2tOe6KBqjqpoIpm3+BMB0M1D8ilavuUjEjSWZ0+bibw1gz7WJaBifdDilQZGIuBRlevp7u+LFE00Fkcic8dpS4PkCnhi+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759244187; c=relaxed/simple;
-	bh=Z5d0b5DGcSBbhhIKTZeyvPJji5Ji+ULzzLR+8R5C37M=;
+	s=arc-20240116; t=1759244986; c=relaxed/simple;
+	bh=2d5mlbzXOEFsyGOAy7ajjjm9WNfNLYF3z4LyKA5hDZY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=p0nA9lM9ZBrpfnSPg3Ir92OFS2OZqs190KQDEyFZsWlAdpqHSkcocKxLle/+q6VgAqlkAQhoyYKIBxzm8PdmX7SP3jxvYQYJQAonJIQdEnwjKtwMsEtB3k68V28qyaFJ+lvns0bAk58hQ8nZvALxGe2KJ6BhtNJ3mihlgPMGWB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=YcBoGkhq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 360C6C113D0;
-	Tue, 30 Sep 2025 14:56:26 +0000 (UTC)
+	 MIME-Version; b=Au+l6iT067NxFXIL4h4JDg290s/VLpmhy8WC7Rm/W23+ielf9kYeNx/Zrl/yTCj3vNcw7LsQXh4NSC5s70aBg0zRFQOUbmbTFJxjY6Z9Cw5uNTic5vv+yt0uC1vV9vFNUTNeU6VLvrvNbsY/KE2OZBPEpjKgfr9HNrevcyw1AeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Lj6v4nBa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3C58C4CEF0;
+	Tue, 30 Sep 2025 15:09:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1759244186;
-	bh=Z5d0b5DGcSBbhhIKTZeyvPJji5Ji+ULzzLR+8R5C37M=;
+	s=korg; t=1759244986;
+	bh=2d5mlbzXOEFsyGOAy7ajjjm9WNfNLYF3z4LyKA5hDZY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YcBoGkhq258ECAMb1o6jiyeSS/SUuq+mAN/fwi/5XZIpPUDzOJc3be9hDjD2g4ivo
-	 +NeU5vD+Z3jdpPBMxTpDxb2hnxY5JXIdT4trYrqPZjMkN+u3zdFPMkm4X0DrDR8O6l
-	 GHZlJ6F7yS+sjB8Wg6Dkc86+78l6P6vAR6Y2anAE=
+	b=Lj6v4nBa+eawqtVfF84Khk5TBoxC+nap+CTnXeyc88t//36Mgc9DWzZPWpUmg/Z5I
+	 m6XoaAsuVc2vbcZzwJ8m6pl7CGxS6PzW53D+VpWOfbMf7oLHgnXx7WNQgq2981L8Jb
+	 KyzJryplUmvIXqYP1enYjpMmjdNdI9j7FxlNBqjE=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -55,12 +55,12 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-kernel@vger.kernel.org,
 	Jack Wang <jinpu.wang@ionos.com>,
 	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.10 022/122] mtd: rawnand: stm32_fmc2: Fix dma_map_sg error check
-Date: Tue, 30 Sep 2025 16:45:53 +0200
-Message-ID: <20250930143823.902488364@linuxfoundation.org>
+Subject: [PATCH 5.15 031/151] mtd: rawnand: stm32_fmc2: Fix dma_map_sg error check
+Date: Tue, 30 Sep 2025 16:46:01 +0200
+Message-ID: <20250930143828.856879967@linuxfoundation.org>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250930143822.939301999@linuxfoundation.org>
-References: <20250930143822.939301999@linuxfoundation.org>
+In-Reply-To: <20250930143827.587035735@linuxfoundation.org>
+References: <20250930143827.587035735@linuxfoundation.org>
 User-Agent: quilt/0.69
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -72,7 +72,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-5.10-stable review patch.  If anyone has any objections, please let me know.
+5.15-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
@@ -107,7 +107,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/drivers/mtd/nand/raw/stm32_fmc2_nand.c
 +++ b/drivers/mtd/nand/raw/stm32_fmc2_nand.c
-@@ -858,8 +858,8 @@ static int stm32_fmc2_nfc_xfer(struct na
+@@ -860,8 +860,8 @@ static int stm32_fmc2_nfc_xfer(struct na
  
  	ret = dma_map_sg(nfc->dev, nfc->dma_data_sg.sgl,
  			 eccsteps, dma_data_dir);
@@ -118,7 +118,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  
  	desc_data = dmaengine_prep_slave_sg(dma_ch, nfc->dma_data_sg.sgl,
  					    eccsteps, dma_transfer_dir,
-@@ -889,8 +889,10 @@ static int stm32_fmc2_nfc_xfer(struct na
+@@ -891,8 +891,10 @@ static int stm32_fmc2_nfc_xfer(struct na
  
  		ret = dma_map_sg(nfc->dev, nfc->dma_ecc_sg.sgl,
  				 eccsteps, dma_data_dir);
