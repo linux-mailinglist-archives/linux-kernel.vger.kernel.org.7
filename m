@@ -1,290 +1,121 @@
-Return-Path: <linux-kernel+bounces-837873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32177BADEF7
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:40:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C8F50BADF03
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:40:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1AA91C747B
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 15:40:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D82C61C8057
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 15:40:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6EC3307AD3;
-	Tue, 30 Sep 2025 15:40:30 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25801246795;
-	Tue, 30 Sep 2025 15:40:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65625246795;
+	Tue, 30 Sep 2025 15:40:33 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50803307AD0
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 15:40:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759246830; cv=none; b=CPrk08kmPUjEiShdACtV2Vv1M0qSVyS7U34Pc/HIFFK3av+WdjmCY61i2M/zbKBIkvwimPq8uwBxsVemaZ9viDRwMhHa4gjngJxsFgxRdoLx4a8coGoREWtobTPJ948Yyub8mirLyrDz657fCT5UY7Naar/EnYldRDL8oj60dzQ=
+	t=1759246833; cv=none; b=p7aPKLt1zZkNJ6ZLa1qBXDvFK9iBsfCnaF/pkJXmomYq9PGWKIIILBJ0yQ6ho6KGOV1FfKkHVMVYEocGMoGmucs4ElsCkjj7mcvP4F1YfrOIAzWq/D3bbdaaEBqrw0mKca9hHp4YkufxfZXH4l2oOCEuFrccz1hlgewU5oaX6jw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759246830; c=relaxed/simple;
-	bh=lyYDO7S+1l76oR2jHp0+B0UFePSL9untOGzCJpR9C0w=;
+	s=arc-20240116; t=1759246833; c=relaxed/simple;
+	bh=08nF264kPnb09l/Vpi/EDkqosub5X+SZ4wkXjGyuHJw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bZb23F38cxFBRr9ElmAg1/LvpEH+XDt8dX02xZcQ1P3N20KPQjd9r2sJzmWEQLcDZFIVXkNuHZDBmdr+VuMs59RV+q/vIpUo3gA9sXrWyyU6D3l+uqC/eaSRGwnphAo//eQkpM6HgN82+1QtChd2B6JcYi9ClK/2baiZP+n2LbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 188F31424;
-	Tue, 30 Sep 2025 08:40:19 -0700 (PDT)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.68])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1F4493F59E;
-	Tue, 30 Sep 2025 08:40:24 -0700 (PDT)
-Date: Tue, 30 Sep 2025 16:40:13 +0100
-From: Dave Martin <Dave.Martin@arm.com>
-To: Reinette Chatre <reinette.chatre@intel.com>
-Cc: "Luck, Tony" <tony.luck@intel.com>, linux-kernel@vger.kernel.org,
-	James Morse <james.morse@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, Jonathan Corbet <corbet@lwn.net>,
-	x86@kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH] fs/resctrl,x86/resctrl: Factor mba rounding to be
- per-arch
-Message-ID: <aNv53UmFGDBL0z3O@e133380.arm.com>
-References: <20250902162507.18520-1-Dave.Martin@arm.com>
- <aNFliMZTTUiXyZzd@e133380.arm.com>
- <aNXJGw9r_k3BB4Xk@agluck-desk3>
- <aNqQAy8nOkLRYx4F@e133380.arm.com>
- <d15d97d1-286c-4857-8688-4d8369271c2c@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ou9OrV15+8b5mloYYw8WQfcnQzxJfhzrwFQXzuGJTyJGiWuNTnwtnqi1Ibin2thV7N/n1qv8sn50EEaQw+eLuI0ti2WCHms9kSQWKe0f5eAS7YC7nx+ndZ5X8Z7PPX5gFMGG7AI8ODxHM4RuyNkgxylKGRvqU3+Td4j4AjGZzfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1v3cSn-0004af-2I; Tue, 30 Sep 2025 17:40:25 +0200
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1v3cSm-001Gqw-19;
+	Tue, 30 Sep 2025 17:40:24 +0200
+Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id EF79F47D51F;
+	Tue, 30 Sep 2025 15:40:23 +0000 (UTC)
+Date: Tue, 30 Sep 2025 17:40:23 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Celeste Liu <uwu@coelacanthus.name>
+Cc: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+	Maximilian Schneider <max@schneidersoft.net>, linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Subject: Re: [PATCH] net/can/gs_usb: populate net_device->dev_port
+Message-ID: <20250930-adorable-loud-scallop-faed25-mkl@pengutronix.de>
+References: <20250930-gs-usb-populate-net_device-dev_port-v1-1-68a065de6937@coelacanthus.name>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="lnucko7usyhni2xq"
 Content-Disposition: inline
-In-Reply-To: <d15d97d1-286c-4857-8688-4d8369271c2c@intel.com>
-
-Hi,
-
-On Mon, Sep 29, 2025 at 09:09:35AM -0700, Reinette Chatre wrote:
-> Hi Dave,
-> 
-> On 9/29/25 6:56 AM, Dave Martin wrote:
-> > On Thu, Sep 25, 2025 at 03:58:35PM -0700, Luck, Tony wrote:
-> >> On Mon, Sep 22, 2025 at 04:04:40PM +0100, Dave Martin wrote:
-> 
-> ...
-> 
-> >> The region aware h/w supports separate bandwidth controls for each
-> >> region. We could hope (or perhaps update the spec to define) that
-> >> region0 is always node-local DDR memory and keep the "MB" tag for
-> >> that.
-> > 
-> > Do you have concerns about existing software choking on the #-prefixed
-> > lines?
-> 
-> I am trying to understand the purpose of the #-prefix. I see two motivations
-> for the #-prefix with the primary point that multiple schema apply to the same
-> resource. 
-> 
-> 1) Commented schema are "inactive"
-> This is unclear to me. In the MB example the commented lines show the 
-> finer grained controls. Since the original MB resource is an approximation
-> and the hardware must already be configured to support it, would the #-prefixed
-> lines not show the actual "active" configuration?
-
-They would show the active configuration (possibly more precisely than
-"MB" does).
-
-If not, it's not clear how userspace that is trying to use MB_HW (say)
-could read out the current configuration.
-
-The # is intended to make resctrl ignore the lines when the file
-is written by userspace.  This is done so that userspace has to
-actually change those lines in order for them to take effect when
-writing.  Old userspace can just pass them through without modification,
-without anything unexpected happening.
-
-The reason why I think that this convention may be needed is that we
-never told (old) userspace what it was supposed to do with schemata
-entries that it does not recognise.
+In-Reply-To: <20250930-gs-usb-populate-net_device-dev_port-v1-1-68a065de6937@coelacanthus.name>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
 
-> 2) Commented schema are "conflicting"
-> The original proposal mentioned "write them back instead of (or in addition to)
-> the conflicting entries". I do not know how resctrl will be able to
-> handle a user requesting a change to both "MB" and "MB_HW". This seems like
-> something that should fail?
+--lnucko7usyhni2xq
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] net/can/gs_usb: populate net_device->dev_port
+MIME-Version: 1.0
 
-If userspace is asking for two incompatible things at the same time, we
-can either pick one of them and ignore the rest, or do nothing, or fail
-explicitly.
+On 30.09.2025 14:53:39, Celeste Liu wrote:
+> The gs_usb driver supports USB devices with more than 1 CAN channel. In
+> old kernel before 3.15, it uses net_device->dev_id to distinguish
+> different channel in userspace, which was done in commit
+> acff76fa45b4 ("can: gs_usb: gs_make_candev(): set netdev->dev_id").
+> But since 3.15, the correct way is populating net_device->dev_port. And
+> according to documentation, if network device support multiple interface,
+> lack of net_device->dev_port SHALL be treated as a bug.
+>=20
+> Fixes: acff76fa45b4 ("can: gs_usb: gs_make_candev(): set netdev->dev_id")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Celeste Liu <uwu@coelacanthus.name>
 
-If we think that it doesn't really matter what happens, then resctrl
-could just dumbly process the entries in the order given.  If the
-result is not what userspace wanted, that's not our problem.
+Applied to linux-can.
 
-(Today, nothing prevents userspace writing multiple "MB" lines at the
-same time: resctrl will process them all, but only the final one will
-have a lasting effect.  So, the fact that a resctrl write can contain
-mutually incompatible requests does not seem to be new.)
+Thanks,
+Marc
 
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
 
-> On a high level it is not clear to me why the # prefix is needed. As I understand the
-> schemata names will always be unique and the new features made backward
-> compatible to existing schemata names. That is, existing MB, L3, etc.
-> will also have the new info files that describe their values/ranges.
+--lnucko7usyhni2xq
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Regarding backwards compatibility for the existing controls:
+-----BEGIN PGP SIGNATURE-----
 
-This proposal is only about numeric controls.  L3 wouldn't change, but
-we could still add info/ metadata for bitmap control at the same time
-as adding it for numeric controls.
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmjb+eQACgkQDHRl3/mQ
+kZypgAf/Xj9cS2TujQe8t0YRmaldbPu6iIqp+AZkIh1VJR5iIfjjMtDJZMmN/CA5
+ah97zSKuvE93FnPYChI0lcmICoVZ4k1Gv4R+xywOlPL8ASiuEv48FjVJb9ggPuue
+ps/qEVtoJs0MHvEskN0QzI8oMzbYZk8YV/0dMKeipKQjhDM28WUYvpvd8HA1QVag
+A3AFhIuyfUq0mjkEJw8nqZUdoo0/tZVze48nMB8Z04rSGrhme6ItjHNvnxsPKQka
+Yn35AzxBw82yRtOfE8Wa46yQVh9EhoQIrCvA2lrgFHYF4JmCpyY/KrBMWfIGp8k+
+IBVaFfesLljyqTpnQrpPGKX5P7JECw==
+=9VQW
+-----END PGP SIGNATURE-----
 
-MB may be hard to describe in a useful way, though -- at least in the
-MPAM case, where the number of steps does not divide into 100, and the
-AMD cases where the meaning of the MB control values is different.
-
-MB and MB_HW are not interchangeable.  To obtain predictable results
-from MB, userspace would need to know precisely how the kernel is going
-to round the value.  This feels like an implementation detail that
-doesn't belong in the ABI.
-
-
-I suppose we could also add a "granularity" entry in info/, but we have
-the existing "bandwidth_gran" file for MB.  For any new schema, I don't
-think we need to state the granularity: the other parameters can always
-be adjusted so that the granularity is exactly 1.
-
-
-Regarding the "#" (see below):
-
-> I expect that user space will ignore schema that it is not familiar
-> with so the # prefix seems unnecessary? 
-> 
-> I believe the motivation is to express a relationship between different
-> schema (you mentioned "shadow" initially). I think this relationship can
-> be expressed clearly by using a namespace prefix (like "MB_" in the examples).
-> This may help more when there are multiple schemata with this format where a #-prefix
-> does not make obvious which resource is shadowed. 
-
-An illustration would probably help, here.
-
-Say resctrl knows has schemata MB, MB_HW, MB_MIN and MB_MAX, all of
-which control (aspects of) the same underlying hardware resource.
-
-Reading the schemata file might yield:
-
-	MB: 0=29
-	MB_HW: 0=2
-	MB_MIN: 0=1
-	MB_MAX: 0=2
-
-(I assume for this toy example that MB_{HW,MIN,MAX} ranges from
-0 to 7.)
-
-Now, suppose (current) userspace wants to change the allocated
-bandwidth.  It only understands the "MB" line, but it is reasonable to
-expect that writing the other lines back without modification will do
-nothing.  (A human user might read the file, and tweak it through an
-editor to modify just the entry of interest, run it through awk, etc.)
-
-So, the user writes back:
-
-	MB: 0=43
-	MB_HW: 0=2
-	MB_MIN: 0=1
-	MB_MAX: 0=2
-
-If resctrl just processes the entries in order, it will temporarily
-change the bandwidth allocation due to the "MB" row, but will then
-immediately change it back again due to the other rows.
-
-Reading schemata again now gives:
-
-	MB: 0=29
-	MB_HW: 0=2
-	MB_MIN: 0=1
-	MB_MAX: 0=2
-
-We might be able to solve some problems of this sort be reordering the
-entries, but I suspect that some software may give up as soon as it
-sees an unfamiliar entry -- so it may be better to keep the classic
-entries (like "MB") at the start.
-
-
-Anyway, going back to the "#" convention:
-
-If the initial read of schemata has the new entries "pre-commented",
-then userspace wouldn't need to know about the new entries.  It could
-just tweak the MB entry (which it knows about), and write the file back:
-
-	MB: 0=43
-	# MB_HW: 0=2
-	# MB_MIN: 0=1
-	# MB_MAX: 0=2
-
-then resctrl knows to ignore the hashed lines, and so reading the file
-back gives:
-
-	MB: 0=43
-	# MB_HW: 0=3
-	# MB_MIN: 0=2
-	# MB_MAX: 0=3
-
-(For hardware-specific reasons, the MPAM driver currently internally
-programs the MIN bound to be a bit less than the MAX bound, when
-userspace writes an "MB" entry into schemata.  The key thing is that
-writing MB may cause the MB_MIN/MB_MAX entries to change -- at the
-resctrl level, I don't that that we necessarily need to make promises
-about what they can change _to_.  The exact effect of MIN and MAX
-bounds is likely to be hardware-dependent anyway.)
-
-
-Regarding new userspce:
-
-Going forward, we can explicitly document that there should be no
-conflicting or "passenger" entries in a schemata write: don't include
-an entry for somehing that you don't explicitly want to set, and if
-multiple entries affect the same resource, we don't promise what
-happens.
-
-(But sadly, we can't impose that rule on existing software after the
-fact.)
-
-
-One final note: I have not provided any way to indicate that all those
-entries control the same hardware resource.  The common "MB" prefix is
-intended as a clue, but ultimately, userspace needs to know what an
-entry controls before tweaking it.
-
-We could try to describe the relationships explicitly, but I'm not sure
-that it is useful...
-
-
-> >> Then use some other tag naming for other regions. Remote DDR,
-> >> local CXL, remote CXL are the ones we think are next in the h/w
-> >> memory sequence. But the "region" concept would allow for other
-> >> options as other memory technologies come into use.
-> > 
-> > Would it be reasnable just to have a set of these schema instances, per
-> > region, so:
-> > 
-> > MB_HW: ... // implicitly region 0
-> > MB_HW_1: ...
-> > MB_HW_2: ...
-> > 
-> > etc.
-> > 
-> > Or, did you have something else in mind?
-> > 
-> > My thinking is that we avoid adding complexity in the schemata file if
-> > we treat mapping these schema instances onto the hardware topology as
-> > an orthogonal problem.  So long as we have unique names in the schemata
-> > file, we can describe elsewhere what they relate to in the hardware.
-> 
-> Agreed ... and "elsewhere" is expected to be unique depending on the resource.
-> 
-> Reinette
-
-Yes
-
-Cheers
----Dave
+--lnucko7usyhni2xq--
 
