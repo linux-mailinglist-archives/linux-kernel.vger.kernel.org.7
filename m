@@ -1,146 +1,154 @@
-Return-Path: <linux-kernel+bounces-838127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17B74BAE804
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 22:11:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB5C1BAE810
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 22:13:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 251543C21FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 20:11:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86C543A8C40
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 20:13:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9156B1A83ED;
-	Tue, 30 Sep 2025 20:11:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BC4828C00C;
+	Tue, 30 Sep 2025 20:13:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZkK9+ffG"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g0TRGPzD"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 845831624C5
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 20:11:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3255A1A83ED
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 20:13:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759263074; cv=none; b=EPYo19EiboXEriavRQLU+1D7oYTxDSj1slZJpxr3HEIK+cMHbez77aWk3Ca5Gln6v/aa2TbnqRA3Qtd4+ODSfQHVOyPMW9UhHrZILD6vKM2oJ8uaQ6xBVKYmzu+fj5y0gBevpePJ0ujn88d98BEaPXoMfe/6Hn2Ppibynfm+KgQ=
+	t=1759263184; cv=none; b=Dhrd9MjR4mYRl4K+C25eMQzfJ3gyIC7cRZr5NuCnQCQt7oS1uRh+gmQttDtzjxF/hbQB/ETv/8ORs7aHyDuLz3R+SEC14NSDC/+hUmLGboQzIcLYXuvtRVQNVQZva+gA/7doRzI12OZbf+ehWOqAfEVKWYvlH56xP91os7f+K6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759263074; c=relaxed/simple;
-	bh=28CiOOtE1+utCGkn71XoVKwktkzm+lmXvMrk0Texmhk=;
+	s=arc-20240116; t=1759263184; c=relaxed/simple;
+	bh=uZ2S6dKSY8g1rbmRM06pb3DssGvzzzn78HdItZZ7jqQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V8QYDgrjdoLXYGSbH2kL4w4WF/UtKtU03Hz22txo67WLaCPUfQ6cbGKBTH9aDoB1uyBCG7+KV7sy3lTVZejzzBETJRAMMLKSPUJYsymMDafDZ4jibJP6H4Y+d8zFtD5OalY71PcbAUOwZGjewR0pjgB1nQM0jk80UQ7ApepQ7fE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZkK9+ffG; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-27eeafd4882so58265ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 13:11:11 -0700 (PDT)
+	 To:Cc:Content-Type; b=eBv8rttAwf19/zlDdYe9UeFf8/tglZUdvoG8UKKix1DHuOKJ6WnZ3AIPvJqdelp54hIr7NHjt8OWl+O0LDNohECs3IsXU38zyTI57gVxHuEWehGOcbvS4GjYmoPG0u/L15f+rC4ikwTO76I5930X8mVLqxwqympZI5d0CvLfJPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g0TRGPzD; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5796051ee6aso1248084e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 13:13:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759263071; x=1759867871; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1759263181; x=1759867981; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=4Z35lL/3kx403pYQW8IvvheoMziA8YGpWpHWvXvsIQU=;
-        b=ZkK9+ffGx+h4khUErsG9ROuKLdKQwG3HIpjLxVvFR+mDzLku5pe9yvP0yFta1Xv/aU
-         OIfe49eiPpQHqCkoqtdho6TzKPgkQpS5noh2EXWIIOocblrWs4QTz1/aJ8oKX8jIOgrV
-         BgtjwxLJCNZ+TQ8ybBUgFbMl6aIBzW1gPyZWlMK9ud9f9ekcX5FDMFBXuTXPBlopHE7K
-         p5EOQ35cgPJkTR1mAT9acW3TchW+gqit4Pe8ETo2ODTc9koF99S2eUXvLl33Ww4Iqs0r
-         GFuEwycBCLnBQJNmBahLC7D7plpf2B9Y5mY5QTWZ/Qr1XkgaxPXIGjqVxsKHmqZ7uF0O
-         JIvg==
+        bh=vy7D8szbhIRwtgr1N1d15ZOmlMfXdraquxLR+CvWcVg=;
+        b=g0TRGPzDupQAninCxfXz0BXWIYAFvJpbUdNKW1UM0XMOnr5vySRZ3QhVO3uIJL6VNN
+         VenOsiDxbaahecsm82k5kwFRN/7aR7jDGAf1xsXTCe1o3UyRbTGnx6voSDW+NI2RJEhC
+         ZUP69hGAkWEM00vn0iAn6X/6FZlYI80UkJ417J6RuEsUY+oPY4PxATGPcMZxNcCTrqCo
+         j72M4LSUvmiBoXphfQ3FwYwFPLx/NjrBep7XWjV5aADpizZcxTCgmBumEt63b9OK2BFB
+         JvYoMwOGn8xrMM1/DuMIS+2V8cWILReVBIUl7oggYp1GFoWPuQnYYDLrZwuW+k0O6o9v
+         aNkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759263071; x=1759867871;
+        d=1e100.net; s=20230601; t=1759263181; x=1759867981;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=4Z35lL/3kx403pYQW8IvvheoMziA8YGpWpHWvXvsIQU=;
-        b=d4s3fIcBVNpwFO7eTMIVfbBh69qXm+7M7DtNOfsZWMT2zqMMOtWeqtFuKf03FP2li2
-         5QQXNrT/gCz0o1XXQxCHqedkVjzHipSRZSgnhi14Oc2VBKuMiHA9nsn+dy/2j6azh9IB
-         nPJsozPTsB/EZPg8RxPM8QkpJjY+UbUgQy0i9OolrXMJy1AVNOr8UNVHssKhxID0B9tt
-         dmTYzfihfsa2mZ8jxDxd9k7hZ+ac50woJTTgEM693guHvJE/4ahoGerpO1ZY87B61CU/
-         Cd7LYXZz9z98/ZFBWrt62YsqcciqYtxh61u5cXA/AGboekwTpUu7R7hMH7yf0wHMJyrg
-         aCYg==
-X-Forwarded-Encrypted: i=1; AJvYcCUv05h0GVun+lacpnY6mKsHbp70i37N9TLPogvDTD6MNhPv/rD/IoKlCftEIfLb6HQBrDrqZn1QTVnvhUw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIVCPK+ZU+ZSZwzj9Q8m5trXRcZEq2c7AGZ2qp9fWKRzPKGkwH
-	sCELnX0lG0otlULaWXh615UAA+SNQKigcFxBJ+35krsoJOs6DdEdN/JEEGomUsmQVR4I+Kjz1tR
-	+YO8PUu6UrVr550RwuPcP0Ecgpt8y9m8dLZm4R4pQ
-X-Gm-Gg: ASbGncvP2EdiS8e4BCi6z/6tg8kjCNSmGet2ZO7ehkdM6tPc1bVgw6Nv4OS2o3b2CkS
-	M+oF7UwFnt2eimM/p/jGU1DifBEK9Hudkiur7kqSf55dhwHFmpesB/OIJdEFY709BUmRR9LZ/sA
-	04h79FpKVErMu27V+To1CXoH/fIeLupmCX30OnVfUwfuZLj7RKi63KO9CtGaL9r2Zyq1Tcck/27
-	QKMcAvmVjqcll5KdAKmzffQjAWicfSeMaIhE4+T3VO0Fv+8c9FEq8crBTGgihUS8unr
-X-Google-Smtp-Source: AGHT+IERdYR1/mUI7zXBnM19rHV5/7EdktMJLu+4W1r6xYhstvFfzAM7cCBplh6Yc4QT+b1yPwrOREhwdiT63r7xiis=
-X-Received: by 2002:a17:903:3203:b0:26d:72f8:8cfa with SMTP id
- d9443c01a7336-28e8129b9d0mr150215ad.13.1759263070428; Tue, 30 Sep 2025
- 13:11:10 -0700 (PDT)
+        bh=vy7D8szbhIRwtgr1N1d15ZOmlMfXdraquxLR+CvWcVg=;
+        b=Y28kSKZRw+HxqXCmZzzJ/ghSdKQITq2oD5Dnovx0ptz78OO8hpcl9zNB+9du86hM4v
+         vwYcTNMwWrmk3eOBi0pRXbkeut2KwGz1H2c9XcdjEKZUZdrtYvEY6ed7ThkrYfSD52Tk
+         c/p6wvX1eKTucxcWCPIX2hCj6Pw3+Q+Vm7GoSRs8p146qdGPy5FbVrgzPuSYhKjNlpvm
+         zjkP6uhtMwO0cMVDa0HsdrT3pjlOnbu8uLvH9TUQDs11/LdtZm/0J5n2hZdaqz8GYlqX
+         KSTOgk271vMsBQDgR+xpqkLiGclTkkvazFJ6jvHLmvqVXARstryobX4nku6hTYwMfMe9
+         9KQw==
+X-Forwarded-Encrypted: i=1; AJvYcCXJiKwofIPtfGdF9G0DjJx6EvebQ4i/BL4Qpi+v2SYaoDZ34NREvFzLqL6lZUaSREd8m9smVTxb2urXDxw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywg7APFvYD75w8VAd+pBht6kIPj1f82irok4CGtcxIGSRKWmzua
+	SiB5MrPL19rfKNWnitISGM+3G8YlmBSJRwjalBiFlBEMnDeZN1NKC9IeMmbDuvUG8OdSnrvoGIo
+	yT42VmGvaVBUh2cwQNRI24fki6ZNlBWE=
+X-Gm-Gg: ASbGncsVJUASmZL1SkmPULJQgoFc6mXkZTZzWGKrE2tHxsknj75raGJS9N6WN4UUTp4
+	27QY+ODnZvXPe8QwdmpfM2MujgfT5KuXYkMUy6rQZw3PkamfbQzZ8UQKqHUcxAWYmaFTIqRnd6I
+	7bjQSGmgColDV+Pmhf4USx/F4gbi/RPnDgogwc6748DX7LMO+iTXQlmWfveEov84AMGVa4bSX/4
+	e1eLPHzjruvnQwdh9thiTd6HsrKC0Wm+7+x12TcM+RXB7RMtXI7Yb7vnH03NDr5pNGkJ2Xj/WjM
+	Id0UOYVu+p0puF9SVohGX0cbR/an+OHZJVBkGtPmGvLljzytiKzASRQ6uFjB
+X-Google-Smtp-Source: AGHT+IFtvw/2t0q6x52tfdQq5Jy2e/VSbjt1lzNtaWguSG6A/2TPrH6YJ+0urbPzdntmF9O0R56v9RKpZ+3tGWsFzOA=
+X-Received: by 2002:a05:6512:3b9a:b0:55f:5965:e4e5 with SMTP id
+ 2adb3069b0e04-58af9f3d196mr109397e87.6.1759263181040; Tue, 30 Sep 2025
+ 13:13:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250919210654.317656-1-acme@kernel.org> <aM3SCGOXZsP3GZal@google.com>
- <CAP-5=fX6=7Ycp=Su2ahZS1R0wS9s4eozPPcBgMBG25UCaC6uBA@mail.gmail.com>
-In-Reply-To: <CAP-5=fX6=7Ycp=Su2ahZS1R0wS9s4eozPPcBgMBG25UCaC6uBA@mail.gmail.com>
-From: Ian Rogers <irogers@google.com>
-Date: Tue, 30 Sep 2025 13:10:59 -0700
-X-Gm-Features: AS18NWAMU8EozYGGxgb_yx-b4bLuOaxCH94CW8izj29kx3qqp2nmTeyfVuIUP5g
-Message-ID: <CAP-5=fW6tPRW2qdFE4AbXg+47CzTjDX5HEjenjTxgOZ35fFa8A@mail.gmail.com>
-Subject: Re: [PATCH 0/2] LIBBPF_DYNAMIC=1 fixes
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Ingo Molnar <mingo@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, James Clark <james.clark@linaro.org>, 
-	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, Clark Williams <williams@redhat.com>, 
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	Andrii Nakryiko <andrii@kernel.org>
+References: <cover.1755235180.git.y.j3ms.n@gmail.com>
+In-Reply-To: <cover.1755235180.git.y.j3ms.n@gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 30 Sep 2025 22:12:42 +0200
+X-Gm-Features: AS18NWCr6YpjKIG8ty5QsX8lB_uHMxpdXprhMtC5CD6I1cvtweLAmRebm3I8mVk
+Message-ID: <CANiq72nbERSOWKRUTJ96YYKCDeAoHLBuiVP+XkDUKg7JYkoyiA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/5] rust: add `TryFrom` and `Into` derive macros
+To: Jesung Yang <y.j3ms.n@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, nouveau@lists.freedesktop.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 19, 2025 at 3:10=E2=80=AFPM Ian Rogers <irogers@google.com> wro=
-te:
+On Fri, Aug 15, 2025 at 7:32=E2=80=AFAM Jesung Yang <y.j3ms.n@gmail.com> wr=
+ote:
 >
-> On Fri, Sep 19, 2025 at 2:58=E2=80=AFPM Namhyung Kim <namhyung@kernel.org=
-> wrote:
-> >
-> > On Fri, Sep 19, 2025 at 06:06:52PM -0300, Arnaldo Carvalho de Melo wrot=
-e:
-> > > Hi,
-> > >
-> > >       Please take a look, noticed after processing a patch from Ian
-> > > for another such issue, on a hurry now, haven't checked when that
-> > > emit_string was introduced.
->
-> emit_strings was added in Linux v6.17 and libbpf was tagged as version
-> 1.7 prior to that.
->
-> Thanks,
-> Ian
+> This patch series introduces derive macros for `TryFrom` and `Into`
+> traits.
 
-Ping.
+I took a quick look -- it is a nice series!
 
-When this lands I can rebase:
-https://lore.kernel.org/lkml/20250830053549.1966520-1-irogers@google.com/
-on it.
+Some notes:
 
-Thanks,
-Ian
+  - My biggest concern is the overflow caveat, which is a fairly big
+one if one, especially if one is dealing with runtime values.
 
-> > >
-> > > - Arnaldo
-> > >
-> > > Arnaldo Carvalho de Melo (2):
-> > >   perf bpf: Move the LIBBPF_CURRENT_VERSION_GEQ macro to bpf-utils.h
-> > >   perf bpf: Check libbpf version to use
-> > >     btf_dump_type_data_opts.emit_strings
-> >
-> > Acked-by: Namhyung Kim <namhyung@kernel.org>
-> >
-> > Thanks,
-> > Namhyung
-> >
-> > >
-> > >  tools/perf/util/bpf-event.c  | 2 ++
-> > >  tools/perf/util/bpf-filter.c | 5 +----
-> > >  tools/perf/util/bpf-utils.h  | 5 +++++
-> > >  3 files changed, 8 insertions(+), 4 deletions(-)
-> > >
-> > > --
-> > > 2.51.0
-> > >
+    Can we do better? Accessing the discriminant via `as` is available
+in const context, and you already have every variant easily available,
+so can we check that every variant fits in the relevant target types?
+
+    For instance, by creating some item-level const blocks
+(`static_assert!`s) -- dummy example for an unsigned-to-unsigned case:
+
+        const _: () =3D { assert! (E::A as u128 <=3D u8::MAX as u128); };
+        const _: () =3D { assert! (E::B as u128 <=3D u8::MAX as u128); };
+        ...
+
+    and so on. There may be better ways to do it -- I just quickly
+brute forced it that unsigned case with what you already had for
+handling variants:
+
+        variants.iter().map(|variant| {
+            quote! {
+                const _: () =3D { assert!(#enum_ident::#variant as u128
+<=3D #ty::MAX as u128); };
+            }
+        });
+
+    Maybe this was already discussed elsewhere and there is a reason
+not to do something like this, but it seems to me that we should try
+to avoid that risk.
+
+  - On other news, I will post in the coming days the `syn` patches,
+and my plan is to merge them for next cycle, so when those are out,
+Benno thought you could give them a go (we can still merge this with
+your current approach and then convert, but still, more `syn` users
+and converting the existing macros would be nice :).
+
+    (By the way, the linked patches about converting the existing
+macros to `syn` are an RFC in the sense that they cannot be applied,
+but having `syn` itself is something we already agreed on a long time
+ago.)
+
+  - Couple nits: typo arise -> arises, and I would do `repr-rust`
+instead of `repr-rs` since that is the anchor in the reference that
+you are linking.
+
+Thanks a lot!
+
+Cheers,
+Miguel
 
