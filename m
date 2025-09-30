@@ -1,159 +1,115 @@
-Return-Path: <linux-kernel+bounces-836959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D4FBBAAF97
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 04:18:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 518C6BAAFCA
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 04:24:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DE351C5FB6
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 02:18:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8624189BA33
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 02:25:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C82121B196;
-	Tue, 30 Sep 2025 02:18:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66C1821B918;
+	Tue, 30 Sep 2025 02:24:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="rcdMVqr2"
-Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="EQkehEii"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AACE41D90DD;
-	Tue, 30 Sep 2025 02:18:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF322940D
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 02:24:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759198710; cv=none; b=Bb983A4IjQr3gk1rA7ErniU7hE2zAx7bWUi+pj+7BL57RkRHcnLqGY1i1pQHmYMRFDCV1rVZipT0+WDFqBO4mnSP2yDIxBstXS5q55cHbp77HgCljLRu1whidKECsIWlzHmEfobdyCbI+vK6Oi3zLxD8CYytotkLrUki9s3Yc7w=
+	t=1759199090; cv=none; b=NZzKOFAOl2vXv460Ks3isqVQEps/AaoMV49A4ynlVnZEx+nMfQq1VSBs4leYM18YB9sasJbabVA9uJEgHwtr7er1J8XvGKyNmBcGI0TEekAJ2FPkWZcx+R73jqONeORg5d/ocsZzZBtgY/Fl0cENwhfZloXT0yJItgHWdjWMSX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759198710; c=relaxed/simple;
-	bh=zwmI4fi1gUlKKuIqdfNOTlqHa1rvM+fktGwKmYh2zRA=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=oGCYpr3Zp53VXf6U8L9FyQR7JLsZ62RNudEQFPkkRHvI61NWzEiZXnlD+WYDXEM0jOgt+8NO2p49AcBnGMjGGqIYoRUPZp+Z98mF8791ugOcrg/qiSULKSfWI5IsSSk3509eTs1zQyvHqM2P5FQXhUviWNAp7gMh7KXH7wMvv5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=rcdMVqr2; arc=none smtp.client-ip=202.12.124.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfout.stl.internal (Postfix) with ESMTP id 77C851D0009F;
-	Mon, 29 Sep 2025 22:18:26 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Mon, 29 Sep 2025 22:18:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
-	1759198706; x=1759285106; bh=j5IHdNjhYZKz/YGLkmQrITb2jP7tOnqjnYw
-	EbmqU8g4=; b=rcdMVqr2pmErDpuubXeYNaUOzdqbXfzDA2pxKgweiBUGGJvFejR
-	qru9kwV53qT47G+8XmPG514yGBz8bdlOjbBwVXTQ9uc+lWcT7cXJD6NSkF2VtzPs
-	wLammHa5gC23/KQp1wwJWWDy/W3SC4PDbA5gU/oIwa6ojqDDyMTmGgJg3LsqPCZM
-	0nmx/ZXO9DRMM+FXONvnB0U284dG/VPjBcVsbdOkZTH+87rYLi1rL4GDkeN37e4G
-	bCSCnF3g/aE0WEeimyiS4Wo4F8Zmb2CtH4wevqjjgpvmyWZJe7IVMR8FAzZo5DL6
-	M8cg/T4oW3I2DHN/EbYNyDmNzc4K8rjzwTA==
-X-ME-Sender: <xms:8D3baEXngSJ8Bj_McMpel1A2uHV6BLCjR34It1LkSml_jTOO987mng>
-    <xme:8D3baAtIspvXaB02GU6Y314vhb2_erg2cTIlZPi0qEVoum5nYQD9kMAS51NAZ2fuM
-    DyQNLMH7G1yO8fgoXGwF_noivn-yJxIzBbcYmfGuyauICA6-oRnPlI>
-X-ME-Received: <xmr:8D3baH6cXzVEZSAjiklZC1mdpUVERfud56QLRlm3Q1fMt4A9Ps6_TD2Tnp6tpLbuMcgbqAdd0PtIHMlwwMjaJkBpnbDD6Kq0M1c>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdejleeiiecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefujgfkfhggtgesthdtredttddtvdenucfhrhhomhephfhinhhnucfvhhgr
-    ihhnuceofhhthhgrihhnsehlihhnuhigqdhmieekkhdrohhrgheqnecuggftrfgrthhtvg
-    hrnhepleeuheelheekgfeuvedtveetjeekhfffkeeffffftdfgjeevkeegfedvueehueel
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepfhhthh
-    grihhnsehlihhnuhigqdhmieekkhdrohhrghdpnhgspghrtghpthhtohepuddvpdhmohgu
-    vgepshhmthhpohhuthdprhgtphhtthhopegrrhhnugesrghrnhgusgdruggvpdhrtghpth
-    htohepghgvvghrtheslhhinhhugidqmheikehkrdhorhhgpdhrtghpthhtohepphgvthgv
-    rhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepfihilhhlsehkvghrnhgvlh
-    drohhrghdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdho
-    rhhgpdhrtghpthhtohepsghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmpdhrtghpth
-    htoheptghorhgsvghtsehlfihnrdhnvghtpdhrtghpthhtohepmhgrrhhkrdhruhhtlhgr
-    nhgusegrrhhmrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrh
-    drkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:8D3baDRU4XpRsXkNwWEg1kUHRauXJTg9Yd1BgMae7NtuWeslv88y2w>
-    <xmx:8D3baKuzd_gj-q5s-27IXj9jT392NsiSNXQxQ-YHiy9gyCCtzyMw-g>
-    <xmx:8D3baF_BdKeWoA_3gxYc93V5_caHBnVmvP7vepEogrRCy1rzzpkFXQ>
-    <xmx:8D3baDy673D4S580cSjV4tiDCHqRRWZ6E1E_hk4XQE9tVHJNJPcSZw>
-    <xmx:8j3baBJFsPQl4_-2VESjoUfhPp5do53Grecm9v68XGE4ejHuEXMhJWnO>
-Feedback-ID: i58a146ae:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 29 Sep 2025 22:18:23 -0400 (EDT)
-Date: Tue, 30 Sep 2025 12:18:21 +1000 (AEST)
-From: Finn Thain <fthain@linux-m68k.org>
-To: Arnd Bergmann <arnd@arndb.de>
-cc: Geert Uytterhoeven <geert@linux-m68k.org>, 
-    Peter Zijlstra <peterz@infradead.org>, Will Deacon <will@kernel.org>, 
-    Andrew Morton <akpm@linux-foundation.org>, 
-    Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
-    Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org, 
-    Linux-Arch <linux-arch@vger.kernel.org>, linux-m68k@vger.kernel.org, 
-    Lance Yang <lance.yang@linux.dev>
-Subject: Re: [RFC v2 2/3] atomic: Specify alignment for atomic_t and
- atomic64_t
-In-Reply-To: <86be5cf0-065e-d55d-fdb6-b9cf6655165e@linux-m68k.org>
-Message-ID: <ec2982e3-2996-918e-f406-32f67a0decfe@linux-m68k.org>
-References: <cover.1757810729.git.fthain@linux-m68k.org> <abf2bf114abfc171294895b63cd00af475350dba.1757810729.git.fthain@linux-m68k.org> <CAMuHMdUgkVYyUvc85_P9TyTM5f-=mC=+X=vtCWN45EMPqF7iMg@mail.gmail.com> <6c295a4e-4d18-a004-5db8-db2e57afc957@linux-m68k.org>
- <57ac401b-222b-4c85-b719-9e671a4617cf@app.fastmail.com> <86be5cf0-065e-d55d-fdb6-b9cf6655165e@linux-m68k.org>
+	s=arc-20240116; t=1759199090; c=relaxed/simple;
+	bh=JOHkgl9LqBf+BFWsaX+4JXqJ6AHUlrUTGlZ73UK7P2M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UJ9XDWHiSXUtDZ8RDKyigN4nj6KZgBSyrYV5Jmm+vTGkky9htJeHqZ2cDMSX1qY+JukO1eDYYc6t0hhVai3igi1w46q3lQJ24VPkHoWVnoZaGaCyMqZL8wHyzeQWf57uNtVv79JEBmjFS6Kwijj4tmxzGo061d8LGfInsg5ZJko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=EQkehEii; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b41870fef44so159988366b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 19:24:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1759199086; x=1759803886; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=oaVj5/YycRPyG67e4RKcEIp1KOYsVMX34xHPHMeexRY=;
+        b=EQkehEiivnbOHfnSwhJg16q+Tg3z2weSwCpuO0NS7vOl0mYmeYTp+q0DeXFtpMpv4g
+         lj3PtkoMEjq6FXnPMr9m1NIhhnrzB80zt9PDhQpOoGi5c1oVN+a0RYiEWCTUwP6gInOP
+         svw5U3Xr0jKntUDCwshIRjuMfpkGuYDiFoXRM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759199086; x=1759803886;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oaVj5/YycRPyG67e4RKcEIp1KOYsVMX34xHPHMeexRY=;
+        b=m+GGQ7JysNeYX5cvMHqgUGGL1J+J0ST14kP2jspzKswod4XXM6BFKJKgKpWUOESJdo
+         Ioo0gVP/cav/7OKn+3xXiH2wHWTGvDY3ibU1qEGkDZJGGF8UXgdXI0YTJ7U64RbMryd7
+         kWGBQNNS9AN3nGmDzOWcbu+ZJ7jsniq3FNJo+lmHhd/bh6HP9pwWm3CZb0ho8HCdYEhD
+         CUIRB3LIMr8J01iCGzbyH4IC5kHtMmL8EtBOwuELoFUjMqFW5nHBtmG8jXTtKd96uCeg
+         ENobtZXqK79/4v5HVC7mq1kpGJB89I4h6fslOvOAm5EMONlwyGleRItTP70mU8ZLyj3d
+         ZNpA==
+X-Forwarded-Encrypted: i=1; AJvYcCUADnaj8OuN6yK+0VoA7KklTCghAv6jglTXD8qMk4V7HVZANU1J3xkzV02FxBI6T5alnYyfvWKYiGFzRmU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTTe7duKtGv/3rXPSr2X3v2vRbZCdKFOEI2Tca/RMB2ck72WHr
+	uI8SPzLUQr/0C5knjBUvwSSRM/lUcGorIwBdYxYqSF/S51RX+qrH2xKXXMf9wUsaMxublp5fXwo
+	3Gu4FYaJF7A==
+X-Gm-Gg: ASbGncu7BBWG6iTCKHseS14Xz6p3hXny3PI4uuD5ZqTRxPYEuRDqKj4CkDNgh+m+xbo
+	sbBcKossjGLVhyN8E1DtfUDv3nck8nQikYcHPTzDmnAVHfaXLy7TCwaaUICtGxqYLxgANAFuSdt
+	EFJEQ7Xl6x/BU4tBEtFh4TMz9GSEqeBY+WKKFcmNm7IwRL2O93cIY3ehW31BlfmwhWlNjIrN68m
+	LLBf5KkuQ/YqTXdBAc8t4n3sc0XgkTN3BPVpc3/7K6nYC5HjQzN/4HLHD6eWAsFnvGAc2LkW+sR
+	59p0L1NNddJSbbIRz9JBiu2XLHxSQ/1FNJqiRflgBZZXbLQmjTwtjEhZSoruVqk26AzILtWjpk6
+	2GAI7m+3E2tXP17DFciGoD33GlWD9MUkD82yz0aGP5ixtJtYATS+hwnUiNdmn/gjksM23vFTJUl
+	FS88f1StU=
+X-Google-Smtp-Source: AGHT+IHhbmTRtniqrKsj1JXo4uLLl2SoftsqV/SF9ZwUgcsHwy1HTDZ3spezhe3ODVBFxn174Xd9fg==
+X-Received: by 2002:a17:907:3e0d:b0:b28:b057:3958 with SMTP id a640c23a62f3a-b34be100c78mr2036912866b.48.1759199086406;
+        Mon, 29 Sep 2025 19:24:46 -0700 (PDT)
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com. [209.85.218.47])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b35446f758csm1048934066b.53.2025.09.29.19.24.45
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 29 Sep 2025 19:24:45 -0700 (PDT)
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b07d4d24d09so1044536866b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 19:24:45 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVNhkmJtoFYy+EAiRdGD2Hl+UsUDLAz3sauEtUrSgeWd8tKrC1ZAfq6MtlTHHV/83hzVyTHNSLeiHN5Dcc=@vger.kernel.org
+X-Received: by 2002:a17:907:60c9:b0:b40:cfe9:ed35 with SMTP id
+ a640c23a62f3a-b40cfe9f8aemr357751066b.39.1759199085323; Mon, 29 Sep 2025
+ 19:24:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+References: <20250929093828.2714469Af2-agordeev@linux.ibm.com>
+In-Reply-To: <20250929093828.2714469Af2-agordeev@linux.ibm.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 29 Sep 2025 19:24:29 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjL1Jkr6L_fak_SDWiHZy3-KFpM9+_oG57G9zPc6yg=yg@mail.gmail.com>
+X-Gm-Features: AS18NWDnvEPAl6IWViL1lCt5VhxCXlZKT9yWZPjffZc7pmvLjRMVE8fBlk6Tj-0
+Message-ID: <CAHk-=wjL1Jkr6L_fak_SDWiHZy3-KFpM9+_oG57G9zPc6yg=yg@mail.gmail.com>
+Subject: Re: [GIT PULL] s390 updates for 6.18 merge window
+To: Alexander Gordeev <agordeev@linux.ibm.com>
+Cc: Vasily Gorbik <gor@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>, linux-s390@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Mon, 29 Sept 2025 at 02:38, Alexander Gordeev <agordeev@linux.ibm.com> wrote:
+>
+> - Make the compiler statement attribute "assume" available with
+>   a new __assume macro
 
-On Tue, 23 Sep 2025, I wrote:
+Ahh. Interesting. I hadn't realized this existed.
 
-> 
-> ... there's still some kmem cache or other allocator somewhere that has 
-> produced some misaligned path and dentry structures. So we get 
-> misaligned atomics somewhere in the VFS and TTY layers. I was unable to 
-> find those allocations.
-> 
+It does seem like a potentially dangerous feature - you get some very
+confusing behavior if you misuse it, but looks quite useful for
+describing the results of inline asm like you do.
 
-It turned out that the problem wasn't dynamic allocations, it was a local 
-variable in the core locking code (kernel/locking/rwsem.c): a misaligned 
-long used with an atomic operation (cmpxchg). To get natural alignment for 
-64-bit quantities, I had to align other local variables as well, such as 
-the one in ktime_get_real_ts64_mg() that's used with 
-atomic64_try_cmpxchg(). The atomic_t branch in my github repo has the 
-patches I wrote for that.
+I have definitely had cases where I would have liked to tell the
+compiler that the result is already zero-extended or similar, and this
+looks good for that.
 
-To silence the misalignment WARN from CONFIG_DEBUG_ATOMIC, for 64-bit 
-atomic operations, for my small m68k .config, it was also necesary to 
-increase ARCH_SLAB_MINALIGN to 8. However, I'm not advocating a 
-ARCH_SLAB_MINALIGN increase, as that wastes memory. I think it might be 
-more useful to limit the alignment test for CONFIG_DEBUG_ATOMIC, as 
-follows.
-
-
-diff --git a/include/linux/instrumented.h b/include/linux/instrumented.h
-index 402a999a0d6b..cd569a87c0a8 100644
---- a/include/linux/instrumented.h
-+++ b/include/linux/instrumented.h
-@@ -68,7 +68,7 @@ static __always_inline void instrument_atomic_read(const volatile void *v, size_
- {
- 	kasan_check_read(v, size);
- 	kcsan_check_atomic_read(v, size);
--	WARN_ON_ONCE(IS_ENABLED(CONFIG_DEBUG_ATOMIC) && ((unsigned long)v & (size - 1)));
-+	WARN_ON_ONCE(IS_ENABLED(CONFIG_DEBUG_ATOMIC) && ((unsigned long)v & (size - 1) & 3));
- }
- 
- /**
-@@ -83,7 +83,7 @@ static __always_inline void instrument_atomic_write(const volatile void *v, size
- {
- 	kasan_check_write(v, size);
- 	kcsan_check_atomic_write(v, size);
--	WARN_ON_ONCE(IS_ENABLED(CONFIG_DEBUG_ATOMIC) && ((unsigned long)v & (size - 1)));
-+	WARN_ON_ONCE(IS_ENABLED(CONFIG_DEBUG_ATOMIC) && ((unsigned long)v & (size - 1) & 3));
- }
- 
- /**
-@@ -98,7 +98,7 @@ static __always_inline void instrument_atomic_read_write(const volatile void *v,
- {
- 	kasan_check_write(v, size);
- 	kcsan_check_atomic_read_write(v, size);
--	WARN_ON_ONCE(IS_ENABLED(CONFIG_DEBUG_ATOMIC) && ((unsigned long)v & (size - 1)));
-+	WARN_ON_ONCE(IS_ENABLED(CONFIG_DEBUG_ATOMIC) && ((unsigned long)v & (size - 1) & 3));
- }
- 
- /**
+           Linus
 
