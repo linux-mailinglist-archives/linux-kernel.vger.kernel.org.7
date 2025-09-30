@@ -1,190 +1,133 @@
-Return-Path: <linux-kernel+bounces-837879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28EA9BADF57
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:45:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D849CBADF72
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:46:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69F503AB602
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 15:45:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73510188C101
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 15:46:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 774FA3081C2;
-	Tue, 30 Sep 2025 15:45:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53BC5308F36;
+	Tue, 30 Sep 2025 15:46:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="DbQd98aO"
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="GEmo2aaV"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0F701487F4
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 15:45:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83D783081C2
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 15:46:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759247139; cv=none; b=VBFm2u9+G8lPZymlXg3bCWaNeF6xdQFqrwcx5BlSpIm5mZHRBtDYyMzj2N5OGT7Cj88n5WyzQ4U4AjIR7H9g4p9+nsf7DThvmXY+qarMAgWGlnJFpUNAHg1abHb+cY5j0fLx9LZZd+61fx0L4MSErzI2ByRrycJzSZFwkaBemFk=
+	t=1759247182; cv=none; b=hSgoqFrggpMSqOKY6VWkqwD29sSVA0ldUV7JoXbFrc31UwM6yu/cvEVKNMKP0+o8HvzajSI2lVS5XG6/68bqgG6NhiAAGplTHhpomrFIRgD116aN1TdQaj7V8xhTzrfiVD5A/XXNyHiyL0WqaqOfYZHXUXD66xlK4soUcjKamLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759247139; c=relaxed/simple;
-	bh=xDxknCstF9uvvbu2tz8cMH7sScbAvFCgGSN1udyLFRg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r3uR3gSCroh9vv8HhHmDiYPcDxEJ0elcRQGlJXrGkwKt5AODW1Usx8mQmlRnw+Co1JRLtzko7YUWQoXx4mZt1yavTi3AdY8dfdgVWXWA0F1QrMAEBlClYKy8+UtQajWusGHEm+Y046e65IMEJ446WawPnf5eI3tnpIQEyQxZfpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=DbQd98aO; arc=none smtp.client-ip=91.218.175.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <c1bc4d73-997e-4add-86ec-113c7a836c90@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1759247125;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0C5oF4YVEbrS+ggmOS25CSAcG/Umol8+NBBEfKR7iMY=;
-	b=DbQd98aO2Y7Xh5+xZUDkbdhe/b7sIU50bh9SJM+cIbrX6xtzblFh52YaEaZknesUBAPWX3
-	oM1NrE4VCoNV2R5qqGpKa9zJ34s48L67vSuZZNQDDvwm4p3KNjeqK9R43svBCrRYjz6z9A
-	UFshr/3bLROKvu3q+fuSvKntptBx3Nc=
-Date: Tue, 30 Sep 2025 23:45:19 +0800
+	s=arc-20240116; t=1759247182; c=relaxed/simple;
+	bh=CAUFl+LYZAZIfEQ0dOPctsXAqjVr28NSuz7MjuxJt4Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=FGqJ+080p6Bdl/oxmARgAo7eQRZBxsc1A22lRfzKo6s0REPKoKKfePqPJIlmvUpkEnTWJ/+1PlkLFxKwK06+oT//K/wIKAqA4lo0q92zMt4TbTtKwDArSLiFw8NCHJM29RDJKDQuAZNS6CyuUAArgsx9/iaEtZoREWuHq9dWozk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=GEmo2aaV; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250930154613euoutp025c96e3f460c968c1849bc5d9e09bb00f~qGfujf9G_2021720217euoutp02N
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 15:46:13 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250930154613euoutp025c96e3f460c968c1849bc5d9e09bb00f~qGfujf9G_2021720217euoutp02N
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1759247173;
+	bh=iCpr5TzyOFeRuqU82QBgsAybOuX0sXWBwEO+eHNweII=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=GEmo2aaV3Fhb+h0H+OL88S5Un3zCHcz7kvEcOruc4TmXpXvHdpKjLwI7cEBp7asMO
+	 muCNuGSqnMlJSRFBKwmUe+kxce/c8fhUiZy+mBT4fvst9i7T4SLjLU0Jge/xzV09V9
+	 trHRBO20Um+o+53qS3gt/u6DVrintZBeymx0x8lo=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250930154612eucas1p2cf5b43435487dc8e6b19b60d1a3801ef~qGft4sFWT2800928009eucas1p2c;
+	Tue, 30 Sep 2025 15:46:12 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250930154610eusmtip1200c7ebad2fc47c80d082b3f7ac27ab7~qGfryC8yB2715127151eusmtip1T;
+	Tue, 30 Sep 2025 15:46:09 +0000 (GMT)
+Message-ID: <75d06769-4896-4095-9969-03a517705196@samsung.com>
+Date: Tue, 30 Sep 2025 17:46:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 6.1] arch_topology: Build cacheinfo from primary CPU
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, Pierre Gondois <pierre.gondois@arm.com>,
- Sudeep Holla <sudeep.holla@arm.com>, Palmer Dabbelt <palmer@rivosinc.com>,
- stable@vger.kernel.org
-References: <20250926174658.6546-1-wen.yang@linux.dev>
- <2025092924-anemia-antidote-dad1@gregkh>
- <f47441af-4147-40df-b79a-2fff4a745eac@linux.dev>
- <2025092909-litter-cornstalk-2178@gregkh>
+User-Agent: Betterbird (Windows)
+Subject: =?UTF-8?Q?Re=3A_=5BPATCH_08/29=5D_media=3A_mfc=3A_Add_Exynos?=
+ =?UTF-8?Q?=E2=80=91MFC_driver_probe_support?=
+To: Krzysztof Kozlowski <krzk@kernel.org>, Himanshu Dewangan
+	<h.dewangan@samsung.com>
+Cc: mchehab@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, sumit.semwal@linaro.org, christian.koenig@amd.com,
+	alim.akhtar@samsung.com, manjun@samsung.com, nagaraju.s@samsung.com,
+	ih0206.lee@samsung.com, jehyung.lee@samsung.com,
+	linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org
 Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Wen Yang <wen.yang@linux.dev>
-In-Reply-To: <2025092909-litter-cornstalk-2178@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <CAJKOXPecLREbEDM4yfM=WD-EFfuBqPDXNZceATLeWQRj0X_w7w@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250930154612eucas1p2cf5b43435487dc8e6b19b60d1a3801ef
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250930035551epcas5p4ee7cb5af08eadb2f5ed6e5eaa06a60a9
+X-EPHeader: CA
+X-CMS-RootMailID: 20250930035551epcas5p4ee7cb5af08eadb2f5ed6e5eaa06a60a9
+References: <CGME20250930035551epcas5p4ee7cb5af08eadb2f5ed6e5eaa06a60a9@epcas5p4.samsung.com>
+	<20250930040348.3702923-1-h.dewangan@samsung.com>
+	<20250930040348.3702923-9-h.dewangan@samsung.com>
+	<CAJKOXPecLREbEDM4yfM=WD-EFfuBqPDXNZceATLeWQRj0X_w7w@mail.gmail.com>
 
+Hi Krzysztof,
 
+On 30.09.2025 07:54, Krzysztof Kozlowski wrote:
+> On Tue, 30 Sept 2025 at 12:56, Himanshu Dewangan <h.dewangan@samsung.com> wrote:
+>> From: Nagaraju Siddineni <nagaraju.s@samsung.com>
+>>
+>> Introduce a new Kconfig entry VIDEO_EXYNOS_MFC for the Samsung
+>> Exynos MFC driver that supports firmware version 13 and later.
+>> Extend the top‑level Samsung platform Kconfig to disable the legacy
+>> S5P‑MFC driver when its firmware version is > v12 and to select the
+>> new Exynos‑MFC driver only when VIDEO_SAMSUNG_S5P_MFC is not enabled.
+>>
+>> Add exynos-mfc Kconfig and Makefile for probe functionality and creation
+>> of decoder and encoder device files by registering the driver object
+>> exynos_mfc.o and other relevant source files.
+>>
+>> Provide header files mfc_core_ops.h and mfc_rm.h containing core
+>>    operation prototypes, resource‑manager helpers,
+>>    and core‑selection utilities.
+>>
+>> Add a configurable option MFC_USE_COREDUMP to enable core‑dump
+>> support for debugging MFC errors.
+>>
+>> These changes bring support for newer Exynos‑based MFC hardware,
+>> cleanly separate it from the legacy S5P‑MFC driver, and lay the
+>> groundwork for future feature development and debugging.
+>>
+> No, NAK. Existing driver is well tested and already used on newest
+> Exynos SoC, so all this new driver is exactly how you should not work
+> in upstream. You need to integrate into existing driver.
+>
+> Samsung received this review multiple times already.
 
-On 9/30/25 02:29, Greg Kroah-Hartman wrote:
-> On Tue, Sep 30, 2025 at 01:57:40AM +0800, Wen Yang wrote:
->>
->>
->> On 9/29/25 21:21, Greg Kroah-Hartman wrote:
->>> On Sat, Sep 27, 2025 at 01:46:58AM +0800, Wen Yang wrote:
->>>> From: Pierre Gondois <pierre.gondois@arm.com>
->>>>
->>>> commit 5944ce092b97caed5d86d961e963b883b5c44ee2 upstream.
->>>>
->>
->>>> adds a call to detect_cache_attributes() to populate the cacheinfo
->>>> before updating the siblings mask. detect_cache_attributes() allocates
->>>> memory and can take the PPTT mutex (on ACPI platforms). On PREEMPT_RT
->>>> kernels, on secondary CPUs, this triggers a:
->>>>     'BUG: sleeping function called from invalid context' [1]
->>>> as the code is executed with preemption and interrupts disabled.
->>>>
->>>> The primary CPU was previously storing the cache information using
->>>> the now removed (struct cpu_topology).llc_id:
->>>> commit 5b8dc787ce4a ("arch_topology: Drop LLC identifier stash from
->>>> the CPU topology")
->>>>
->>>> allocate_cache_info() tries to build the cacheinfo from the primary
->>>> CPU prior secondary CPUs boot, if the DT/ACPI description
->>>> contains cache information.
->>>> If allocate_cache_info() fails, then fallback to the current state
->>>> for the cacheinfo allocation. [1] will be triggered in such case.
->>>>
->>>> When unplugging a CPU, the cacheinfo memory cannot be freed. If it
->>>> was, then the memory would be allocated early by the re-plugged
->>>> CPU and would trigger [1].
->>>>
->>>> Note that populate_cache_leaves() might be called multiple times
->>>> due to populate_leaves being moved up. This is required since
->>>> detect_cache_attributes() might be called with per_cpu_cacheinfo(cpu)
->>>> being allocated but not populated.
->>>>
->>>> [1]:
->>>>    | BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:46
->>>>    | in_atomic(): 1, irqs_disabled(): 128, non_block: 0, pid: 0, name: swapper/111
->>>>    | preempt_count: 1, expected: 0
->>>>    | RCU nest depth: 1, expected: 1
->>>>    | 3 locks held by swapper/111/0:
->>>>    |  #0:  (&pcp->lock){+.+.}-{3:3}, at: get_page_from_freelist+0x218/0x12c8
->>>>    |  #1:  (rcu_read_lock){....}-{1:3}, at: rt_spin_trylock+0x48/0xf0
->>>>    |  #2:  (&zone->lock){+.+.}-{3:3}, at: rmqueue_bulk+0x64/0xa80
->>>>    | irq event stamp: 0
->>>>    | hardirqs last  enabled at (0):  0x0
->>>>    | hardirqs last disabled at (0):  copy_process+0x5dc/0x1ab8
->>>>    | softirqs last  enabled at (0):  copy_process+0x5dc/0x1ab8
->>>>    | softirqs last disabled at (0):  0x0
->>>>    | Preemption disabled at:
->>>>    |  migrate_enable+0x30/0x130
->>>>    | CPU: 111 PID: 0 Comm: swapper/111 Tainted: G        W          6.0.0-rc4-rt6-[...]
->>>>    | Call trace:
->>>>    |  __kmalloc+0xbc/0x1e8
->>>>    |  detect_cache_attributes+0x2d4/0x5f0
->>>>    |  update_siblings_masks+0x30/0x368
->>>>    |  store_cpu_topology+0x78/0xb8
->>>>    |  secondary_start_kernel+0xd0/0x198
->>>>    |  __secondary_switched+0xb0/0xb4
->>>>
->>>> Signed-off-by: Pierre Gondois <pierre.gondois@arm.com>
->>>> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
->>>> Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
->>>> Link: https://lore.kernel.org/r/20230104183033.755668-7-pierre.gondois@arm.com
->>>> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
->>>> Cc: <stable@vger.kernel.org> # 6.1.x: c3719bd:cacheinfo: Use RISC-V's init_cache_level() as generic OF implementation
->>>> Cc: <stable@vger.kernel.org> # 6.1.x: 8844c3d:cacheinfo: Return error code in init_of_cache_level(
->>>> Cc: <stable@vger.kernel.org> # 6.1.x: de0df44:cacheinfo: Check 'cache-unified' property to count cache leaves
->>>> Cc: <stable@vger.kernel.org> # 6.1.x: fa4d566:ACPI: PPTT: Remove acpi_find_cache_levels()
->>>> Cc: <stable@vger.kernel.org> # 6.1.x: bd50036:ACPI: PPTT: Update acpi_find_last_cache_level() to acpi_get_cache_info(
->>>> Cc: <stable@vger.kernel.org> # 6.1.x
->>>
->>> I do not understand, why do you want all of these applied as well?  Can
->>> you just send the full series of commits?
->>>
->> Thanks for your comments, here is the original series:
->> https://lore.kernel.org/all/167404285593.885445.6219705651301997538.b4-ty@arm.com/
->>
->> commit 3fcbf1c77d08 ("arch_topology: Fix cache attributes detection in the
->> CPU hotplug path") introduced a bug, and this series fixed it.
->>
->>>> Signed-off-by: Wen Yang <wen.yang@linux.dev>
->>>
->>> Also, you have changed this commit a lot from the original one, please
->>> document what you did here.
->>>
->> Thanks for the reminder. We just hope to cherry-pick them onto the 6.1
->> stable branch, without modifying the original commit.
->> Also checked again, as follows:
->>
->> $ git cherry-pick c3719bd
->> $ git cherry-pick 8844c3d
->> $ git cherry-pick de0df44
->> $ git cherry-pick fa4d566
->> $ git cherry-pick bd50036
->> $ git cherry-pick 5944ce0
->>
->> $ git format-patch HEAD -1
->>
->> $ diff 0001-arch_topology-Build-cacheinfo-from-primary-CPU.patch
->> 20250927_wen_yang_arch_topology_build_cacheinfo_from_primary_cpu.mbx
-> 
-> 
-> Can you resend these all as a patch series with your signed-off-by on
-> them to show that you have tested them?
-> 
-> And again, the commit here did not seem to match up with the original
-> upstream version, but maybe my tools got it wrong.  Resend the series
-> and I'll check it again.
-> 
+Please don't be so categorical. The MFC hardware evolved quite a bit 
+from the ancient times of S5PV210 SoC, when s5p-mfc driver was designed. 
+The feature list of the new hardware hardly matches those and I really 
+don't see the reason for forcing support for so different hardware in a 
+single driver. Sometimes it is easier just to have 2 separate drivers if 
+the common part is just the acronym in the hardware block name...
 
-Thanks. We will resend this series soon.
-
---
-Best wishes,
-Wen
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
 
