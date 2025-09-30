@@ -1,239 +1,190 @@
-Return-Path: <linux-kernel+bounces-837878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05593BADF51
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:45:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28EA9BADF57
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:45:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 230C57A4CD5
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 15:43:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69F503AB602
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 15:45:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F8953081B2;
-	Tue, 30 Sep 2025 15:45:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 774FA3081C2;
+	Tue, 30 Sep 2025 15:45:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F8NyB4+g"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="DbQd98aO"
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5296213AA2F;
-	Tue, 30 Sep 2025 15:45:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0F701487F4
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 15:45:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759247124; cv=none; b=Px82WsJ603gZ5y1g/IACmXpJnwKdDRJLfJpUz/y4KLHu6wU7kMi+KgJxc+kNVnCkaXvoQpsR728/AX/ve4xQrzaB0BSh7g/q027wqBvwDtDltn8Wm2ZNNYtQJaf/ANltGCSB3X8EJly/tnlrrjgJWImq6vweMKXS/ni+97oIFzg=
+	t=1759247139; cv=none; b=VBFm2u9+G8lPZymlXg3bCWaNeF6xdQFqrwcx5BlSpIm5mZHRBtDYyMzj2N5OGT7Cj88n5WyzQ4U4AjIR7H9g4p9+nsf7DThvmXY+qarMAgWGlnJFpUNAHg1abHb+cY5j0fLx9LZZd+61fx0L4MSErzI2ByRrycJzSZFwkaBemFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759247124; c=relaxed/simple;
-	bh=QTLjV5fBh037d021vjk5DqaNTSbSSW8IEsiuapZarIM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fb+obJ5VXpQ653uFpkPkGiYQu1A6I+A1EAmHzBnVxnuNhGwb8Ox6YFFeJ62aaOJZby955ijtaBS1uhGJPlLSmqk4Crw7XgwhF2anQvVlwYCB3zig8hc0gGi34FVgJ1ECoQKculV4zRqUcJiJmCQohUyfnjG30wNKA8iwxEReDK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F8NyB4+g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D375DC4CEF0;
-	Tue, 30 Sep 2025 15:45:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759247123;
-	bh=QTLjV5fBh037d021vjk5DqaNTSbSSW8IEsiuapZarIM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=F8NyB4+gPAZWs4ilkoxIOxtUxPYtzWtfzNOjWXL3296Y131G66ZtkSOOdDDTNivTV
-	 KdHywtXfR6t4STM0bPUJ2aRW9zX8uVML9BBEpgI6oQVCuwavjgY2sg/KwRSgceYHOI
-	 5uptxrcmfc7cLpZKNgUV3KgVZ8Lfe6rvQU1uwziK3kKwWNsyOwQZaBMeid9/v/aZmK
-	 S1m/WqVZ0lofM3rp2zQG9p1C0Z8CSp3yd7CdhQu8Is+TPTfgpPulYsOX00kBWcbP2J
-	 IiaRaMM8aclR7skJyWo8mfIOqkng22fWyHb9go8HIDrBlrlSKIIbrp3afUV6equ+f/
-	 GZKYO1Klx8OgA==
-From: Kees Cook <kees@kernel.org>
-To: Vegard Nossum <vegard.nossum@oracle.com>
-Cc: Kees Cook <kees@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Petr Vorel <pvorel@suse.cz>,
-	linux-kernel@vger.kernel.org,
-	linux-kbuild@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH v2] kconfig: Avoid prompting for transitional symbols
-Date: Tue, 30 Sep 2025 08:45:19 -0700
-Message-Id: <20250930154514.it.623-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1759247139; c=relaxed/simple;
+	bh=xDxknCstF9uvvbu2tz8cMH7sScbAvFCgGSN1udyLFRg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=r3uR3gSCroh9vv8HhHmDiYPcDxEJ0elcRQGlJXrGkwKt5AODW1Usx8mQmlRnw+Co1JRLtzko7YUWQoXx4mZt1yavTi3AdY8dfdgVWXWA0F1QrMAEBlClYKy8+UtQajWusGHEm+Y046e65IMEJ446WawPnf5eI3tnpIQEyQxZfpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=DbQd98aO; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <c1bc4d73-997e-4add-86ec-113c7a836c90@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1759247125;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0C5oF4YVEbrS+ggmOS25CSAcG/Umol8+NBBEfKR7iMY=;
+	b=DbQd98aO2Y7Xh5+xZUDkbdhe/b7sIU50bh9SJM+cIbrX6xtzblFh52YaEaZknesUBAPWX3
+	oM1NrE4VCoNV2R5qqGpKa9zJ34s48L67vSuZZNQDDvwm4p3KNjeqK9R43svBCrRYjz6z9A
+	UFshr/3bLROKvu3q+fuSvKntptBx3Nc=
+Date: Tue, 30 Sep 2025 23:45:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7051; i=kees@kernel.org; h=from:subject:message-id; bh=QTLjV5fBh037d021vjk5DqaNTSbSSW8IEsiuapZarIM=; b=owGbwMvMwCVmps19z/KJym7G02pJDBm3f/P9mFrEKrrnwgTlX9xTb9RcFa65v2XJ89oWR48bD kzrrcscOkpZGMS4GGTFFFmC7NzjXDzetoe7z1WEmcPKBDKEgYtTACYS+5/hn3VNufdWpYVLVO0X 8oozv4jtmFO7X49vsjwrx47n16R2nGBk2BJj6LB3itw2gfvRDOzB+lePsfx4IuqtLD6frXwLl0I IPwA=
-X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH 6.1] arch_topology: Build cacheinfo from primary CPU
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, Pierre Gondois <pierre.gondois@arm.com>,
+ Sudeep Holla <sudeep.holla@arm.com>, Palmer Dabbelt <palmer@rivosinc.com>,
+ stable@vger.kernel.org
+References: <20250926174658.6546-1-wen.yang@linux.dev>
+ <2025092924-anemia-antidote-dad1@gregkh>
+ <f47441af-4147-40df-b79a-2fff4a745eac@linux.dev>
+ <2025092909-litter-cornstalk-2178@gregkh>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Wen Yang <wen.yang@linux.dev>
+In-Reply-To: <2025092909-litter-cornstalk-2178@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-The "transitional" symbol keyword, while working with the "olddefconfig"
-target, was prompting during "oldconfig". This occurred because these
-symbols were not being marked as user-defined when they received values
-from transitional symbols that had user values. The "olddefconfig" target
-explicitly doesn't prompt for anything, so this deficiency wasn't noticed.
 
-The issue manifested when a symbol's value came from a transitional
-symbol's user value but the receiving symbol wasn't marked with
-SYMBOL_DEF_USER. Thus the "oldconfig" logic would then prompt for these
-symbols unnecessarily.
 
-Check after value calculation whether a symbol without a user value
-gets its value from a single transitional symbol that does have a user
-value. In such cases, mark the receiving symbol as user-defined to
-prevent prompting.
+On 9/30/25 02:29, Greg Kroah-Hartman wrote:
+> On Tue, Sep 30, 2025 at 01:57:40AM +0800, Wen Yang wrote:
+>>
+>>
+>> On 9/29/25 21:21, Greg Kroah-Hartman wrote:
+>>> On Sat, Sep 27, 2025 at 01:46:58AM +0800, Wen Yang wrote:
+>>>> From: Pierre Gondois <pierre.gondois@arm.com>
+>>>>
+>>>> commit 5944ce092b97caed5d86d961e963b883b5c44ee2 upstream.
+>>>>
+>>
+>>>> adds a call to detect_cache_attributes() to populate the cacheinfo
+>>>> before updating the siblings mask. detect_cache_attributes() allocates
+>>>> memory and can take the PPTT mutex (on ACPI platforms). On PREEMPT_RT
+>>>> kernels, on secondary CPUs, this triggers a:
+>>>>     'BUG: sleeping function called from invalid context' [1]
+>>>> as the code is executed with preemption and interrupts disabled.
+>>>>
+>>>> The primary CPU was previously storing the cache information using
+>>>> the now removed (struct cpu_topology).llc_id:
+>>>> commit 5b8dc787ce4a ("arch_topology: Drop LLC identifier stash from
+>>>> the CPU topology")
+>>>>
+>>>> allocate_cache_info() tries to build the cacheinfo from the primary
+>>>> CPU prior secondary CPUs boot, if the DT/ACPI description
+>>>> contains cache information.
+>>>> If allocate_cache_info() fails, then fallback to the current state
+>>>> for the cacheinfo allocation. [1] will be triggered in such case.
+>>>>
+>>>> When unplugging a CPU, the cacheinfo memory cannot be freed. If it
+>>>> was, then the memory would be allocated early by the re-plugged
+>>>> CPU and would trigger [1].
+>>>>
+>>>> Note that populate_cache_leaves() might be called multiple times
+>>>> due to populate_leaves being moved up. This is required since
+>>>> detect_cache_attributes() might be called with per_cpu_cacheinfo(cpu)
+>>>> being allocated but not populated.
+>>>>
+>>>> [1]:
+>>>>    | BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:46
+>>>>    | in_atomic(): 1, irqs_disabled(): 128, non_block: 0, pid: 0, name: swapper/111
+>>>>    | preempt_count: 1, expected: 0
+>>>>    | RCU nest depth: 1, expected: 1
+>>>>    | 3 locks held by swapper/111/0:
+>>>>    |  #0:  (&pcp->lock){+.+.}-{3:3}, at: get_page_from_freelist+0x218/0x12c8
+>>>>    |  #1:  (rcu_read_lock){....}-{1:3}, at: rt_spin_trylock+0x48/0xf0
+>>>>    |  #2:  (&zone->lock){+.+.}-{3:3}, at: rmqueue_bulk+0x64/0xa80
+>>>>    | irq event stamp: 0
+>>>>    | hardirqs last  enabled at (0):  0x0
+>>>>    | hardirqs last disabled at (0):  copy_process+0x5dc/0x1ab8
+>>>>    | softirqs last  enabled at (0):  copy_process+0x5dc/0x1ab8
+>>>>    | softirqs last disabled at (0):  0x0
+>>>>    | Preemption disabled at:
+>>>>    |  migrate_enable+0x30/0x130
+>>>>    | CPU: 111 PID: 0 Comm: swapper/111 Tainted: G        W          6.0.0-rc4-rt6-[...]
+>>>>    | Call trace:
+>>>>    |  __kmalloc+0xbc/0x1e8
+>>>>    |  detect_cache_attributes+0x2d4/0x5f0
+>>>>    |  update_siblings_masks+0x30/0x368
+>>>>    |  store_cpu_topology+0x78/0xb8
+>>>>    |  secondary_start_kernel+0xd0/0x198
+>>>>    |  __secondary_switched+0xb0/0xb4
+>>>>
+>>>> Signed-off-by: Pierre Gondois <pierre.gondois@arm.com>
+>>>> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+>>>> Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
+>>>> Link: https://lore.kernel.org/r/20230104183033.755668-7-pierre.gondois@arm.com
+>>>> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+>>>> Cc: <stable@vger.kernel.org> # 6.1.x: c3719bd:cacheinfo: Use RISC-V's init_cache_level() as generic OF implementation
+>>>> Cc: <stable@vger.kernel.org> # 6.1.x: 8844c3d:cacheinfo: Return error code in init_of_cache_level(
+>>>> Cc: <stable@vger.kernel.org> # 6.1.x: de0df44:cacheinfo: Check 'cache-unified' property to count cache leaves
+>>>> Cc: <stable@vger.kernel.org> # 6.1.x: fa4d566:ACPI: PPTT: Remove acpi_find_cache_levels()
+>>>> Cc: <stable@vger.kernel.org> # 6.1.x: bd50036:ACPI: PPTT: Update acpi_find_last_cache_level() to acpi_get_cache_info(
+>>>> Cc: <stable@vger.kernel.org> # 6.1.x
+>>>
+>>> I do not understand, why do you want all of these applied as well?  Can
+>>> you just send the full series of commits?
+>>>
+>> Thanks for your comments, here is the original series:
+>> https://lore.kernel.org/all/167404285593.885445.6219705651301997538.b4-ty@arm.com/
+>>
+>> commit 3fcbf1c77d08 ("arch_topology: Fix cache attributes detection in the
+>> CPU hotplug path") introduced a bug, and this series fixed it.
+>>
+>>>> Signed-off-by: Wen Yang <wen.yang@linux.dev>
+>>>
+>>> Also, you have changed this commit a lot from the original one, please
+>>> document what you did here.
+>>>
+>> Thanks for the reminder. We just hope to cherry-pick them onto the 6.1
+>> stable branch, without modifying the original commit.
+>> Also checked again, as follows:
+>>
+>> $ git cherry-pick c3719bd
+>> $ git cherry-pick 8844c3d
+>> $ git cherry-pick de0df44
+>> $ git cherry-pick fa4d566
+>> $ git cherry-pick bd50036
+>> $ git cherry-pick 5944ce0
+>>
+>> $ git format-patch HEAD -1
+>>
+>> $ diff 0001-arch_topology-Build-cacheinfo-from-primary-CPU.patch
+>> 20250927_wen_yang_arch_topology_build_cacheinfo_from_primary_cpu.mbx
+> 
+> 
+> Can you resend these all as a patch series with your signed-off-by on
+> them to show that you have tested them?
+> 
+> And again, the commit here did not seem to match up with the original
+> upstream version, but maybe my tools got it wrong.  Resend the series
+> and I'll check it again.
+> 
 
-Update regression tests to verify that symbols with transitional defaults
-are not prompted in "oldconfig", except when conditional defaults evaluate
-to 'no' and should legitimately be prompted.
+Thanks. We will resend this series soon.
 
-Build tested with "make testconfig".
-
-Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
-Closes: https://lore.kernel.org/lkml/CAHk-=wgZjUk4Cy2XgNkTrQoO8XCmNUHrTe5D519Fij1POK+3qw@mail.gmail.com/
-Fixes: 05020835c86e ("kconfig: Add transitional symbol attribute for migration support")
-Cc: Vegard Nossum <vegard.nossum@oracle.com>
-Signed-off-by: Kees Cook <kees@kernel.org>
----
- v2:
-  - fix "no new line at end of file" git cleanup that broke expected stdout
-  - set the entire struct to avoid testing type of symbol (Vegard)
- v1: https://lore.kernel.org/lkml/20250930045300.work.375-kees@kernel.org/
----
- scripts/kconfig/symbol.c                      | 15 ++++++++-
- scripts/kconfig/tests/transitional/Kconfig    | 32 +++++++++++++++++++
- .../kconfig/tests/transitional/__init__.py    |  7 ++++
- .../tests/transitional/expected_config        |  3 ++
- .../tests/transitional/expected_stdout        |  1 +
- .../kconfig/tests/transitional/initial_config |  4 +++
- 6 files changed, 61 insertions(+), 1 deletion(-)
- create mode 100644 scripts/kconfig/tests/transitional/expected_stdout
-
-diff --git a/scripts/kconfig/symbol.c b/scripts/kconfig/symbol.c
-index 760cac998381..7e81b3676ee9 100644
---- a/scripts/kconfig/symbol.c
-+++ b/scripts/kconfig/symbol.c
-@@ -411,7 +411,7 @@ bool sym_dep_errors(void)
- void sym_calc_value(struct symbol *sym)
- {
- 	struct symbol_value newval, oldval;
--	struct property *prop;
-+	struct property *prop = NULL;
- 	struct menu *choice_menu;
- 
- 	if (!sym)
-@@ -520,6 +520,19 @@ void sym_calc_value(struct symbol *sym)
- 		;
- 	}
- 
-+	/*
-+	 * If the symbol lacks a user value but its value comes from a
-+	 * single transitional symbol with an existing user value, mark
-+	 * this symbol as having a user value to avoid prompting.
-+	 */
-+	if (prop && !sym_has_value(sym)) {
-+		struct symbol *ds = prop_get_symbol(prop);
-+		if (ds && (ds->flags & SYMBOL_TRANS) && sym_has_value(ds)) {
-+			sym->def[S_DEF_USER] = newval;
-+			sym->flags |= SYMBOL_DEF_USER;
-+		}
-+	}
-+
- 	sym->curr = newval;
- 	sym_validate_range(sym);
- 
-diff --git a/scripts/kconfig/tests/transitional/Kconfig b/scripts/kconfig/tests/transitional/Kconfig
-index 62c3b24665b9..faa4d396f828 100644
---- a/scripts/kconfig/tests/transitional/Kconfig
-+++ b/scripts/kconfig/tests/transitional/Kconfig
-@@ -96,5 +96,37 @@ config OLD_WITH_HELP
- 	help
- 	  This transitional symbol has a help section to validate that help is allowed.
- 
-+# Test that we can set something to =n via transitional symbol
-+config NEW_DISABLED
-+	tristate "Check for setting to disabled"
-+	default OLD_DISABLED
-+
-+config OLD_DISABLED
-+	tristate
-+	transitional
-+
-+# Test that a potential new value disappears if it lacks a prompt
-+config NEW_DISABLED_UNSAVED
-+	tristate
-+	default OLD_DISABLED
-+
-+config OLD_DISABLED_UNSAVED
-+	tristate
-+	transitional
-+
-+# Test conditional default: transitional value should not prevent prompting
-+# when default visibility makes the expression evaluate to 'no'
-+config DEPENDENCY_TEST
-+	bool "Dependency for testing"
-+	default n
-+
-+config NEW_CONDITIONAL_DEFAULT
-+	bool "New option with conditional default"
-+	default OLD_CONDITIONAL_DEFAULT if DEPENDENCY_TEST
-+
-+config OLD_CONDITIONAL_DEFAULT
-+	bool
-+	transitional
-+
- config REGULAR_OPTION
- 	bool "Regular option"
-diff --git a/scripts/kconfig/tests/transitional/__init__.py b/scripts/kconfig/tests/transitional/__init__.py
-index 61937d10edf1..b50ba2397548 100644
---- a/scripts/kconfig/tests/transitional/__init__.py
-+++ b/scripts/kconfig/tests/transitional/__init__.py
-@@ -6,6 +6,7 @@ This tests that:
- - OLD_* options in existing .config cause NEW_* options to be set
- - OLD_* options are not written to the new .config file
- - NEW_* options appear in the new .config file with correct values
-+- NEW_* options with defaults from transitional symbols are not prompted
- - All Kconfig types work correctly: bool, tristate, string, hex, int
- - User-set NEW values take precedence over conflicting OLD transitional values
- """
-@@ -16,3 +17,9 @@ def test(conf):
- 
-     # Check that the configuration matches expected output
-     assert conf.config_contains('expected_config')
-+
-+    # Test oldconfig to ensure symbols with transitional defaults are not prompted
-+    assert conf.oldconfig(dot_config='initial_config', in_keys='n\n') == 0
-+
-+    # Except for when conditional default evaluates to 'no'
-+    assert conf.stdout_contains('expected_stdout')
-diff --git a/scripts/kconfig/tests/transitional/expected_config b/scripts/kconfig/tests/transitional/expected_config
-index 846e9ddcab91..e01f5f070a26 100644
---- a/scripts/kconfig/tests/transitional/expected_config
-+++ b/scripts/kconfig/tests/transitional/expected_config
-@@ -9,4 +9,7 @@ CONFIG_NEW_STRING_PRECEDENCE="user value"
- CONFIG_NEW_TRISTATE_PRECEDENCE=y
- CONFIG_NEW_HEX_PRECEDENCE=0xABCD
- CONFIG_NEW_INT_PRECEDENCE=100
-+# CONFIG_NEW_DISABLED is not set
-+# CONFIG_DEPENDENCY_TEST is not set
-+# CONFIG_NEW_CONDITIONAL_DEFAULT is not set
- # CONFIG_REGULAR_OPTION is not set
-diff --git a/scripts/kconfig/tests/transitional/expected_stdout b/scripts/kconfig/tests/transitional/expected_stdout
-new file mode 100644
-index 000000000000..6f0b285d6469
---- /dev/null
-+++ b/scripts/kconfig/tests/transitional/expected_stdout
-@@ -0,0 +1 @@
-+New option with conditional default (NEW_CONDITIONAL_DEFAULT) [N/y/?] (NEW) n
-diff --git a/scripts/kconfig/tests/transitional/initial_config b/scripts/kconfig/tests/transitional/initial_config
-index e648a65e504c..68b7da672426 100644
---- a/scripts/kconfig/tests/transitional/initial_config
-+++ b/scripts/kconfig/tests/transitional/initial_config
-@@ -14,3 +14,7 @@ CONFIG_NEW_HEX_PRECEDENCE=0xABCD
- CONFIG_OLD_HEX_PRECEDENCE=0x5678
- CONFIG_NEW_INT_PRECEDENCE=100
- CONFIG_OLD_INT_PRECEDENCE=200
-+# CONFIG_OLD_DISABLED is not set
-+# CONFIG_OLD_DISABLED_UNSAVED is not set
-+# CONFIG_DEPENDENCY_TEST is not set
-+CONFIG_OLD_CONDITIONAL_DEFAULT=y
--- 
-2.34.1
+--
+Best wishes,
+Wen
 
 
