@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-837949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93A88BAE1E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 19:01:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16541BAE1E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 19:02:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FAE74C1FF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:01:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B08C14C2974
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:01:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9775330BBBC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2FB230C0F1;
 	Tue, 30 Sep 2025 17:01:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XPJzoIxU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QOch6udt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F39F53093CA
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 17:01:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4671F30AABF
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 17:01:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759251686; cv=none; b=mj454+OSPawQGF4H69MIeAoJC4j9pvzfdvVGKNiR/xQAFQLVZvDiNABOFiLCKVCaK+4aOMB4p+DuctB/U/FUz4FxQ1KQLUoYjcbbdzilOwK8ufo5Xi04j50QmrXTwRMIpN7OsoJYdy0LnJu9DP4BV+u0wCG/iBrh/9Vm+s766VU=
+	t=1759251686; cv=none; b=a3ttz2RcRd1FruFqLHA+5C/EsVQKIVx92+mziwlYzsfXVbliUO6o2rg30/XENsi49ClviPDk/+5YzTELX1y8m3IjaNoBXW77IOViPOUmDQlxAY3dG6xc7MHYOgQfuXBhxtTG19ffKzjL62BKuwJq/VfinhKYEqCT4ti5Qlzwgr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1759251686; c=relaxed/simple;
-	bh=9Has2rbY4I/41mqljMsduhjgNFk0/JrXOnwh9b4Jzv4=;
+	bh=ewfavwPiUlXpVnI+x4ifVIAw/sPC3d8q8xGF3eGqVOw=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=LglZiov/Aa+LxHuPJdQhyT5+qrYz9Jv8dMxknq1FVBd9BTNV2rc5YvVzFhmWwi4Awj6VWR/O6pH4O+c/gU/YtajZnvYun8rTsTLcF7WLzBEECm3NaSOOPQe/bI+TXrbnMG+PlCf9n6J4HArW+7XKweHx8e8Jjg3pquhLvv5CqkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XPJzoIxU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B09F5C116D0;
+	 Content-Type; b=n5zj6U/QAWweWyfOBxyI8zX0DiBEQTgtzAmTfbbU+50pJFvfr/dOS4kcbcmXGSZnbH6tWFHkxtEiB2M1zRZQqVTmhNRWXmGK6aIEhX4ZhrBlRqWSlONH0rqJMCxISnxpGPhcjJunhYucCNmtpesjrIDq12K5akhqwsptrUvjLvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QOch6udt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE1F9C16AAE;
 	Tue, 30 Sep 2025 17:01:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1759251685;
-	bh=9Has2rbY4I/41mqljMsduhjgNFk0/JrXOnwh9b4Jzv4=;
+	bh=ewfavwPiUlXpVnI+x4ifVIAw/sPC3d8q8xGF3eGqVOw=;
 	h=Date:From:To:Cc:Subject:References:From;
-	b=XPJzoIxUiBrGX6ypsRSOTtdkHEylNcoJbvJcPsgEdAeS1Yt50+ckEU53G7ukBZyrw
-	 JZGIB6WpmkvBx9eHzNqcDwiEAZZRwvc/2COH8hJOMTOpccZW9iNKZSkTBeEra1znpw
-	 HLHt91Rrn31MbjZd5vf5E27woaDsEt6aW0TD1Wj6v5FHqJJ3tgjJ7Lh/RquFHvgklk
-	 P41/oL6PpQz0GpbI7OQUVkIZsEWd9q6+vGG/L9ZC8UsbeAVNWxbwDXUHUB+3ntemmq
-	 c5eBmcf6AqU5FJdKq/K7vKZLYFyMlB8kEMVPeB7IYNkdbcJ0ufQK16zEHqYY2e3Rg4
-	 TYzTrurDVpU9Q==
+	b=QOch6udtKicHTXecfI7Ho1xQ7KnygRBKSNhRJh3owV77Gv2AVpYmYKTfpDQn1Mlqt
+	 0Szz4O8J2ZFMPZxwLvyS4QNTyCyixlnMrtKhaJ4lbYKQz52CRSNAh0LIQiuVAI4Fuv
+	 9XVL/Gi/y8GwYDvSOf9y6UjGu2XRczJSzT0tet99PDBF/Cz5DtaExwqLnN1urVEYSp
+	 AjZuK/Ry9V8sXeaQRrFACYUNsrj+tZM9a6eIiisTwTW/QD9JOCORdhBnAL8YQoa5Ly
+	 UL7CvkQPzyhWaJH3y4DNbmJU7IAxtdJmcsazI3Yy6LdRjpMQB0kbQr7+i/5GOeb2f9
+	 Qtu45WBUzEc5Q==
 Received: from rostedt by gandalf with local (Exim 4.98.2)
 	(envelope-from <rostedt@kernel.org>)
-	id 1v3dkj-0000000DIGq-3Yo1;
-	Tue, 30 Sep 2025 13:03:01 -0400
-Message-ID: <20250930170301.699930470@kernel.org>
+	id 1v3dkk-0000000DIHK-04YX;
+	Tue, 30 Sep 2025 13:03:02 -0400
+Message-ID: <20250930170301.869001194@kernel.org>
 User-Agent: quilt/0.68
-Date: Tue, 30 Sep 2025 13:01:38 -0400
+Date: Tue, 30 Sep 2025 13:01:39 -0400
 From: Steven Rostedt <rostedt@kernel.org>
 To: linux-kernel@vger.kernel.org
 Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Mark Rutland <mark.rutland@arm.com>,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
  Andrew Morton <akpm@linux-foundation.org>,
- Qianfeng Rong <rongqianfeng@vivo.com>
-Subject: [for-next][PATCH 03/11] tracing: Use vmalloc_array() to improve code
+ Fushuai Wang <wangfushuai@baidu.com>
+Subject: [for-next][PATCH 04/11] tracing/osnoise: Use for_each_online_cpu() instead of for_each_cpu()
 References: <20250930170135.285740909@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -64,36 +64,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 
-From: Qianfeng Rong <rongqianfeng@vivo.com>
+From: Fushuai Wang <wangfushuai@baidu.com>
 
-Remove array_size() calls and replace vmalloc() with vmalloc_array() in
-tracing_map_sort_entries().  vmalloc_array() is optimized better, uses
-fewer instructions, and handles overflow more concisely[1].
+Replace the opencoded for_each_cpu(cpu, cpu_online_mask) loop with the
+more readable and equivalent for_each_online_cpu(cpu) macro.
 
-[1]: https://lore.kernel.org/lkml/abc66ec5-85a4-47e1-9759-2f60ab111971@vivo.com/
-
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Link: https://lore.kernel.org/20250817084725.59477-1-rongqianfeng@vivo.com
-Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+Link: https://lore.kernel.org/20250811064158.2456-1-wangfushuai@baidu.com
+Signed-off-by: Fushuai Wang <wangfushuai@baidu.com>
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- kernel/trace/tracing_map.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/trace/trace_osnoise.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/trace/tracing_map.c b/kernel/trace/tracing_map.c
-index 1921ade45be3..7f8da4dab69d 100644
---- a/kernel/trace/tracing_map.c
-+++ b/kernel/trace/tracing_map.c
-@@ -1076,7 +1076,7 @@ int tracing_map_sort_entries(struct tracing_map *map,
- 	struct tracing_map_sort_entry *sort_entry, **entries;
- 	int i, n_entries, ret;
- 
--	entries = vmalloc(array_size(sizeof(sort_entry), map->max_elts));
-+	entries = vmalloc_array(map->max_elts, sizeof(sort_entry));
- 	if (!entries)
- 		return -ENOMEM;
- 
+diff --git a/kernel/trace/trace_osnoise.c b/kernel/trace/trace_osnoise.c
+index fd259da0aa64..4cb464894faf 100644
+--- a/kernel/trace/trace_osnoise.c
++++ b/kernel/trace/trace_osnoise.c
+@@ -271,7 +271,7 @@ static inline void tlat_var_reset(void)
+ 	 * So far, all the values are initialized as 0, so
+ 	 * zeroing the structure is perfect.
+ 	 */
+-	for_each_cpu(cpu, cpu_online_mask) {
++	for_each_online_cpu(cpu) {
+ 		tlat_var = per_cpu_ptr(&per_cpu_timerlat_var, cpu);
+ 		if (tlat_var->kthread)
+ 			hrtimer_cancel(&tlat_var->timer);
+@@ -295,7 +295,7 @@ static inline void osn_var_reset(void)
+ 	 * So far, all the values are initialized as 0, so
+ 	 * zeroing the structure is perfect.
+ 	 */
+-	for_each_cpu(cpu, cpu_online_mask) {
++	for_each_online_cpu(cpu) {
+ 		osn_var = per_cpu_ptr(&per_cpu_osnoise_var, cpu);
+ 		memset(osn_var, 0, sizeof(*osn_var));
+ 	}
 -- 
 2.50.1
 
