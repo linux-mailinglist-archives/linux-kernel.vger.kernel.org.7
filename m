@@ -1,166 +1,245 @@
-Return-Path: <linux-kernel+bounces-837581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4854DBACAAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 13:19:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B12B8BACAB5
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 13:20:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F0D47A490D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 11:18:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C702320A52
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 11:20:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F268261B67;
-	Tue, 30 Sep 2025 11:19:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98A0B240611;
+	Tue, 30 Sep 2025 11:20:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="IYU/Oitn"
-Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="RD7indjH"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7ED7275AF6
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 11:19:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D092E237163
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 11:20:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759231185; cv=none; b=iaGuY1gs8vgzReH++XK1ls1K7NM7OLPhncAtHDa4KoCVLUmbQM78ddYSw1HCrBM+k0iPdkocHGQcK8lzyh1KB/vi54ww9U5N88/wjZqZ7zdt2z4CO7+mVtU7/Jb9r8I0b2D6a5J6yUyj97vCepxmOr3LTpFHUNChc3A1kVCIt2A=
+	t=1759231221; cv=none; b=JFfUJRSB202oTvnlaa3Ytno0kpWBQxf+rhCnp+QCtdz+9k8kxxv+ikVfPAcJz+gWfZShOMtZ633UgY0H3uVC7Y2KkUIZpaGpWtQjgjtbeyuhgQHI3nP16jfpI4270EFZsLw1JZBJqAxxAMEnMMI8JZ6ht3wUNWO9JnAk1joyHbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759231185; c=relaxed/simple;
-	bh=Deg9POlJwf6oI59BV5wqbX72B/W4GCjUn9Lp50TU+Zo=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=gri5AqQ1QdGmkSpXKgMdLSRG0EYnpo+t9raqJEdQGn0j2A3IucGxTFl342GEJ1hvK9TSF3yUuRlnorFU8uCR3cLnPO4DJAByXHTXYZnQ/H1IybAn8Q3QEZ5zQAEy6kWw+vt5P/EjmMmjWWE1rLIcjTIRzRxNo6UZMLGPZJSQ6Yg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=IYU/Oitn; arc=none smtp.client-ip=91.218.175.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+	s=arc-20240116; t=1759231221; c=relaxed/simple;
+	bh=aGyJPngcI2GUynbKEOhKOF674Rzhog3Ql+uj/AK6Rbg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WZfa2slOyDQPXkA8Xr5aSI6kPsr1jB3rE9uHM7dRS2AffKQryjDMXPGTKaWNmqVzDJg6aXkyTLw/z9CS1dummNNoTXXOXw4hEqdhMGD2yYcq8/w4a/82Guf0Sy4hl/EQpNylOdw1xIvnkWURgYpKG+h3d29eXlUC164GF5qjpC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=RD7indjH; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3c68ac7e18aso3938329f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 04:20:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=openvpn.net; s=google; t=1759231217; x=1759836017; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=WYHBTgmdmHErC6+UjFY3X1Y//FB5ql6lj7rgayPtwFg=;
+        b=RD7indjHYPL9dbNqUMd5GJnUVqKSWUOdBDe6f5aJciVE+Tw0TrnmWWHWJUZnt/N2Gx
+         FlVQspCqR0Ss+lFsGBc1Dj8LR3GH4FWVML3EM+PkANZzIzMSa4recFtQneKun5SMu4/6
+         v0imlsBqet5V7TSk2x2LxCOYjeV8Vq/dhjIs1a56OOPQkFIx7DQmv5oVHQrFwg+tyOh2
+         vAcosyrJcspK+UVIFmDrk8I4iBdZuGInzJD2ncdMkfAHGr9itjLRol2n141p1T+Grc0/
+         GSLg4zM7ZWKtNlagEy/GRTgQ+R9myW4CkCwB4QCk08tONdhG9LJSPFKWay10lZPLSVdF
+         /+QQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759231217; x=1759836017;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WYHBTgmdmHErC6+UjFY3X1Y//FB5ql6lj7rgayPtwFg=;
+        b=tUkUJEZ1Np+uQIOB0bY/FgZ3cCgohbQtszaYIUc6tXXDZlTrf48hgLmRfl7XW11xI2
+         gxscHa/8IdqBpZwP/aPEbgvzHuiTzlQgZF3gIuoYtUibMB4pAVb5gIt7YWYaIxpO9ohJ
+         SfeMdOFqDHMOGFV9GqALUAKT2t7rDdY3T4rarCn2Z2u8SPzMsJ4m1mb30O7Ez6JsIfIh
+         rg1PBMaSHlT1zruEL5hGeRJc1wKCYI6QTLMHoHxJFFocPB8cYEYt5cvGFRMF39vLuEve
+         KIq11bY2pqqKZAfOl9mKRIKWETdeGC6WXffXZ8fHal1/BVdiN/4PJGZgq6U+k3Ef6Ce7
+         0Zpw==
+X-Forwarded-Encrypted: i=1; AJvYcCXsfEYnvCxHe1WsSw0XWUv/ZH8Y17h/TadhwWJv4K2BqlvEwpXBKC2YmOxSjTUE+9b9LbhGZbE22VAoSCQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjwtO+3PuZRcg0AwXX7iDMZLkyIxeIhEIf5pVsThFDgXGHb4B8
+	y3AAtsLzCXzpVCxjN++UcO7eEIYJAcO+1dLkh8ThmHd8/KfkWKht1Ph8b1lcdaENz0rUllKwzG8
+	4yrzLszwi4FEjGl9TPCh3d9AQI9A1m+x+hWVxjyELi0b6jSoP2ir+Ky2jzWI=
+X-Gm-Gg: ASbGncsco8wnLKkeQAT7nvvLpQNgZq28deuRhxHmqWftIjFpTONv8GQA4ZkxgQ7f+ip
+	BTsDHQDnfxUf2pBB6aF5wbHvpQzvhX20bspMbz9uC0pHBoVo+u5oqbWwHV1e3LFBQtwPkRvh00e
+	DBysQRPSjSE2sL42ToVcMRDhUpFj8lKoyq/1XF5IQmgmCT5FqlA5W9ARyIRPqriMCjb6z7/CcVE
+	pmH4AL9mnQtx5DYM2zoILv0q0Vrt/2x3nKE4X2dMrqloL7SBpZYazAEmDq+21Aci4zJ8PWUXQSj
+	1/IHYECy56S8IxwWPIWF4RvaQSeiC3+Cu30naQoLvgm6Aiu2t2HPuoat6YPDTjebjcGOcvFAEor
+	FvWr+9lUYBwb3NVAGk+A2MuEiZXtUVZk7tN01IQwEbVhzgkSUMYYPazITG72GyD90fH30ih5ZDJ
+	qWnmL1DLEfWi5bPlZi9w==
+X-Google-Smtp-Source: AGHT+IHokmu9/1ydi7cUDt2vPOg7tfZKU3YLML2+mLVZJ7ibXUdPL5HAOmJK7eRxubhFSfT6/8bbew==
+X-Received: by 2002:a05:6000:2dc9:b0:3ec:ce37:3a6a with SMTP id ffacd0b85a97d-40e4458ce65mr18578876f8f.22.1759231203909;
+        Tue, 30 Sep 2025 04:20:03 -0700 (PDT)
+Received: from ?IPV6:2001:67c:2fbc:1:8f94:27ec:8b3:19cd? ([2001:67c:2fbc:1:8f94:27ec:8b3:19cd])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e56f64849sm51890465e9.11.2025.09.30.04.20.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Sep 2025 04:20:03 -0700 (PDT)
+Message-ID: <a21498ff-4dd0-4b3a-9b2e-9b932b5925ad@openvpn.net>
+Date: Tue, 30 Sep 2025 13:20:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1759231171;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ej8+t/v5mQyQZp57f2hlXxPelYNwXcOIgQlGLkUSidA=;
-	b=IYU/Oitnx44deO3YQ4pvsUrf3cs72AmxSOTbghOPYUWNQlr+n/xP/l2HkqnuOORt6jwhNa
-	WlRxsrBk0tsqQxmx6fCdxGGYZSUj1zv4M4auOOALhYVuuCRtxoN5uAi6NROsn1yEhm6j2q
-	9iN0MKsaxUcw94CxbGxM+bu2VJKmRBh4X5Wj5pPiS59OWYrLUn8VRpmKxGpsc1hrfH36dO
-	Hp0X25gak0x8LCJ2/hlncT/efUkp24464O7mCQHrcubDrwYM2h7DNL5uJXl846y4UAc05S
-	+2t36F46/1/pvWfidpXKcYLta/n13xuNVx2wbZGHfswkiMn29vTyZD1ttOHiBA==
-Content-Type: multipart/signed;
- boundary=64945f9999df6ed87a915ea31fa1d9d40eebd6aa48ba7de803956238b27e;
- micalg=pgp-sha512; protocol="application/pgp-signature"
-Date: Tue, 30 Sep 2025 13:19:21 +0200
-Message-Id: <DD63EEOKPWNV.3IK12D6CFPTQZ@cknow.org>
-Cc: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
- <heiko@sntech.de>, <quentin.schulz@cherry.de>, <kever.yang@rock-chips.com>,
- <naoki@radxa.com>, <honyuenkwun@gmail.com>, <inindev@gmail.com>,
- <ivan8215145640@gmail.com>, <neil.armstrong@linaro.org>, <mani@kernel.org>,
- <dsimic@manjaro.org>, <pbrobinson@gmail.com>, <alchark@gmail.com>,
- <jbx6244@gmail.com>, <devicetree@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>,
- <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 0/3] arm64: dts: rockchip: introduce LinkEase EasePi
- R1
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <didi.debian@cknow.org>
-To: "jjm2473" <jjm2473@gmail.com>
-References: <20250929065714.27741-1-jjm2473@gmail.com>
- <DD57IZJQ4FQM.3T5791FLUQ8KQ@cknow.org>
- <CAP_9mL6+uoeG7LX8YCcUFjoU13De1CdPFqxNNfoJvOdsOrYo5Q@mail.gmail.com>
-In-Reply-To: <CAP_9mL6+uoeG7LX8YCcUFjoU13De1CdPFqxNNfoJvOdsOrYo5Q@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v4] selftest:net: Fix uninit return values
+To: Sidharth Seela <sidharthseela@gmail.com>, sd@queasysnail.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+ shuah@kernel.org, willemdebruijn.kernel@gmail.com, kernelxing@tencent.com,
+ nathan@kernel.org, nick.desaulniers+lkml@gmail.com, morbo@google.com,
+ justinstitt@google.com
+Cc: netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+References: <20250930100656.80420-2-sidharthseela@gmail.com>
+Content-Language: en-US
+From: Antonio Quartulli <antonio@openvpn.net>
+Autocrypt: addr=antonio@openvpn.net; keydata=
+ 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
+Organization: OpenVPN Inc.
+In-Reply-To: <20250930100656.80420-2-sidharthseela@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
---64945f9999df6ed87a915ea31fa1d9d40eebd6aa48ba7de803956238b27e
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+Hi,
 
-On Mon Sep 29, 2025 at 8:09 PM CEST, jjm2473 wrote:
-> I have another question. If there are reviewers or co-authors later,
-> do I need to add it to the commit message and send it again?
-> Or should the reviewer or co-author add the message and
-> continue to deliver the patch?
+Thanks a lot for fixing this - I hadn't see the warnings with gcc.
 
-When you get a Reviewed-by tag, you should add that tag too to a new
-version. But there's no need to send a new version to just add those
-tags, the tooling used by maintainers picks those up themselves.
+On 30/09/2025 12:06, Sidharth Seela wrote:
+> Fix functions that return undefined values. These issues were caught by
+> running clang using LLVM=1 option.
+> 
+> 
+> Clang warnings are as follows:
+> ovpn-cli.c:1587:6: warning: variable 'ret' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
+>   1587 |         if (!sock) {
+>        |             ^~~~~
+> ovpn-cli.c:1635:9: note: uninitialized use occurs here
+>   1635 |         return ret;
+>        |                ^~~
+> ovpn-cli.c:1587:2: note: remove the 'if' if its condition is always false
+>   1587 |         if (!sock) {
+>        |         ^~~~~~~~~~~~
+>   1588 |                 fprintf(stderr, "cannot allocate netlink socket\n");
+>        |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>   1589 |                 goto err_free;
+>        |                 ~~~~~~~~~~~~~~
+>   1590 |         }
+>        |         ~
+> ovpn-cli.c:1584:15: note: initialize the variable 'ret' to silence this warning
+>   1584 |         int mcid, ret;
+>        |                      ^
+>        |                       = 0
+> ovpn-cli.c:2107:7: warning: variable 'ret' is used uninitialized whenever switch case is taken [-Wsometimes-uninitialized]
+>   2107 |         case CMD_INVALID:
+>        |              ^~~~~~~~~~~
+> ovpn-cli.c:2111:9: note: uninitialized use occurs here
+>   2111 |         return ret;
+>        |                ^~~
+> ovpn-cli.c:1939:12: note: initialize the variable 'ret' to silence this warning
+>   1939 |         int n, ret;
+>        |                   ^
+>        |
+> 
+> 
+> Fixes: 959bc330a439 ("testing/selftests: add test tool and scripts for ovpn module")
+> ovpn module")
+> Signed-off-by: Sidharth Seela <sidharthseela@gmail.com>
+> ---
+> v4:
+> 	- Move changelog below sign-off.
+> 	- Remove double-hyphens in commit description.
+> v3:
+> 	- Use prefix net.
+> 	- Remove so_txtime fix as default case calls error().
+> 	- Changelog before sign-off.
+> 	- Three dashes after sign-off
+> v2:
+> 	- Use subsystem name "net".
+> 	- Add fixes tags.
+> 	- Remove txtimestamp fix as default case calls error.
+> 	- Assign constant error string instead of NULL.
+> 
+> 
+> diff --git a/tools/testing/selftests/net/ovpn/ovpn-cli.c b/tools/testing/selftests/net/ovpn/ovpn-cli.c
+> index 9201f2905f2c..20d00378f34a 100644
+> --- a/tools/testing/selftests/net/ovpn/ovpn-cli.c
+> +++ b/tools/testing/selftests/net/ovpn/ovpn-cli.c
+> @@ -1581,7 +1581,7 @@ static int ovpn_listen_mcast(void)
+>   {
+>   	struct nl_sock *sock;
+>   	struct nl_cb *cb;
+> -	int mcid, ret;
+> +	int mcid, ret = -1;
 
-If you 'just' get review comments, then you'd usually just
-improve the patch and you could reference it in a changelog item (to
-indicate you addressed it, ttboyk).
-If you think a reviewer helped you 'significantly', you could choose to
-add an Helped-by tag, but whether you think someone deserves some
-credits that way, is up to you(r judgement).
+ret goes uninitialized only under the "if (!sock)" condition, therefore 
+I'd rather assign ret a meaningful value instead of -1.
 
-(Co-)authors are usually known upon first submission. If you later find
-out that that list was incorrect/incomplete, then you would add
-Co-developed-by + Signed-off-by tags on a new version.
+How about adding "err = -ENOMEM;" directly inside the if block?
 
-HTH,
-  Diederik
+>   
+>   	sock = nl_socket_alloc();
+>   	if (!sock) {
+> @@ -1936,7 +1936,7 @@ static int ovpn_run_cmd(struct ovpn_ctx *ovpn)
+>   {
+>   	char peer_id[10], vpnip[INET6_ADDRSTRLEN], laddr[128], lport[10];
+>   	char raddr[128], rport[10];
+> -	int n, ret;
+> +	int n, ret = -1;
 
-> Diederik de Haas <didi.debian@cknow.org> =E4=BA=8E2025=E5=B9=B49=E6=9C=88=
-29=E6=97=A5=E5=91=A8=E4=B8=80 18:20=E5=86=99=E9=81=93=EF=BC=9A
->>
->> On Mon Sep 29, 2025 at 8:57 AM CEST, Liangbin Lian wrote:
->> > LinkEase EasePi R1 [1] is a high-performance mini router.
->> > ...
->> > [1] https://doc.linkease.com/zh/guide/easepi-r1/hardware.html
->> >
->> > Signed-off-by: Liangbin Lian <jjm2473@gmail.com>
->> > ---
->> >
->> > Changes in v2:
->> > - Change deprecated "rockchip,system-power-controller" to "system-powe=
-r-controller"
->> > - Link to v1: https://lore.kernel.org/r/20250925055906.83375-1-jjm2473=
-@gmail.com/
->>
->> You received an Acked-by on patch 1 and 2 in v1 of this patch set.
->> You're supposed to add that to the next/new version(s) or explain why
->> you choose not to do that (bc f.e. there was a major change, but that
->> does not seem applicable to those patches).
->>
->> Cheers,
->>   Diederik
->>
->> > Changes in v3:
->> > - Fix typo ('status =3D "disable"' -> 'status =3D "disabled"') found b=
-y kernel test robot https://lore.kernel.org/all/202509261328.Grjhp029-lkp@i=
-ntel.com/
->> > - Link to v2: https://lore.kernel.org/r/20250925092037.13582-1-jjm2473=
-@gmail.com/
->> >
->> > ---
->> >
->> > Liangbin Lian (3):
->> >   dt-bindings: vendor-prefixes: Document LinkEase
->> >   dt-bindings: arm: rockchip: Add LinkEase EasePi R1
->> >   arm64: dts: rockchip: add LinkEase EasePi R1
->> >
->> >  .../devicetree/bindings/arm/rockchip.yaml     |   5 +
->> >  .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
->> >  arch/arm64/boot/dts/rockchip/Makefile         |   1 +
->> >  .../boot/dts/rockchip/rk3568-easepi-r1.dts    | 692 +++++++++++++++++=
-+
->> >  4 files changed, 700 insertions(+)
->> >  create mode 100644 arch/arm64/boot/dts/rockchip/rk3568-easepi-r1.dts
->> >
->> >
->> > base-commit: d0ca0df179c4b21e2a6c4a4fb637aa8fa14575cb
->>
+Same here.
+ret goes uninitialized only under the "CMD_INVALID" case.
+
+How about adding "ret = -EINVAL;" inside the affected case?
 
 
---64945f9999df6ed87a915ea31fa1d9d40eebd6aa48ba7de803956238b27e
-Content-Type: application/pgp-signature; name="signature.asc"
+Both values are returned by ovpn_run_cmd() and then printed as 
+strerror(-ret).
+If we blindly use -1 we will get "Operation not permitted" which will 
+confuse the user IMHO.
 
------BEGIN PGP SIGNATURE-----
+Thanks a lot!
 
-iHUEABYKAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCaNu8vAAKCRDXblvOeH7b
-bopkAP4rp6hLo5Z1qfCotr2jDcY3qNpOaylNLYkGskxNmYniSwEAuy5jnsnlFxQS
-vg8YfzULofUE/R68RoD9NpsXx8PQogU=
-=QlYj
------END PGP SIGNATURE-----
+>   	FILE *fp;
+>   
+>   	switch (ovpn->cmd) {
 
---64945f9999df6ed87a915ea31fa1d9d40eebd6aa48ba7de803956238b27e--
+-- 
+Antonio Quartulli
+OpenVPN Inc.
+
 
