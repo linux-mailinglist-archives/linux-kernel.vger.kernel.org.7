@@ -1,39 +1,62 @@
-Return-Path: <linux-kernel+bounces-837964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 767ABBAE228
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 19:07:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E431BAE253
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 19:16:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBD013C5D81
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:07:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 911DB4A31DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:16:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A7D730BBAC;
-	Tue, 30 Sep 2025 17:06:52 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 724EE30B50A;
-	Tue, 30 Sep 2025 17:06:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9304730BF6E;
+	Tue, 30 Sep 2025 17:16:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="2ScBP8Mj"
+Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2780F8287E;
+	Tue, 30 Sep 2025 17:16:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759252011; cv=none; b=oYM2MiZqXN1s82RWFvbLdXp1mR/qkR/dPtohLn5wAZgknv6Eb3BtiRP9afLerJfJTfdkrHJZLR83r9U1g7lCv2QQ8FDfIChnkcyDhx+H/BofAxDc6BOwB9G29ar5lDOX7fxzk90y3CkeL+2nCwRfeEmOo+V4bVtONkAlTqrmh+c=
+	t=1759252602; cv=none; b=XwrbEubIvq0KGsda+KvkLEr3BQbX2CItwcMGrS6a22eVIS6gtWUdiN99Ua+YkmP8fTHjM3WY3bJkntxRCyc3R9SIGRgTT71JYvho1XhMuRhhCv6nhdO3f42d1ozBMVycqvh7K9GSNgLZuUpr78Y4l5UUCuA1oDInMfEvuBtEm8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759252011; c=relaxed/simple;
-	bh=SFznz0JiL0nczxwM1nMt9/UtD3k3rWFHVz532gREW8U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YjLS+3kK0TUKzybMBKUuQMivau52u+U4ht++JWjFXRB6zt+a7YiMdw/nFURkx9gwls0fcYrjU30tm8VwC39Q8oW2vHhhDoUbUTw9QWb/pxsDTGGBtSY1FUsE++iKk7T/5QaRdjNEmGKn9b1FeOPtd+gRofce2WYyhIJOYtXlk7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D72BF267F;
-	Tue, 30 Sep 2025 10:06:40 -0700 (PDT)
-Received: from [10.1.197.69] (eglon.cambridge.arm.com [10.1.197.69])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D00833F59E;
-	Tue, 30 Sep 2025 10:06:43 -0700 (PDT)
-Message-ID: <137ca3de-2572-4edf-b10c-67b690f84128@arm.com>
-Date: Tue, 30 Sep 2025 18:06:29 +0100
+	s=arc-20240116; t=1759252602; c=relaxed/simple;
+	bh=8uI0EOW02UJQ01YdYKv6yRXGZqn6rtOmjULACCc5Oyg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=buL6sHmGhMqpUYwum7m1kNNfG2PV9Gpe1KAsgKYCg9hpcZUdkeOazuiy1bSnpPL6dvdLoBM22EP4rh9EEZhx9p0u5OZ4aT43yAB/alPKumj928vTa6SJ2vkdTiT+RGYvf1NOc1YImGTyvgqLdOGKoSaOAPf0T6HXDn+sukrVFPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=2ScBP8Mj; arc=none smtp.client-ip=199.89.3.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 003.mia.mailroute.net (Postfix) with ESMTP id 4cbl8d6sxBzltBCk;
+	Tue, 30 Sep 2025 17:16:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1759252591; x=1761844592; bh=8uI0EOW02UJQ01YdYKv6yRXG
+	Zqn6rtOmjULACCc5Oyg=; b=2ScBP8MjUuqEMXpTOQGlQbMAXwKzNbIBwy+Oy1Da
+	TQvjMN0KGWijT1Ggs45xke/1AESGuQx52KQ3CMx/JcIVDEJcokNT9wpS9OzxaGVV
+	c8/vvag0uf8sk1nWpPwOcylVdAGIDqdc6KRWeKRrv63f3CzjtfYrza0VYxJelghx
+	G80yC/kBez/WFbEfGDsku2wImbmuLkFsm9Yyp5TzwIfB9oQ+AHtbn6uqvKIiKpWy
+	ntOieExwu7jCUDXmO2OstMs3Ks6IgEdM7RIaQXB0kmElzlBdk/tTzRGNEF4r5cmD
+	sqetE5l1bl+GJyAZMzMbZCffffTmF30ci532b2DuAw1Cww==
+X-Virus-Scanned: by MailRoute
+Received: from 003.mia.mailroute.net ([127.0.0.1])
+ by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id Go1pcLbn_Xdb; Tue, 30 Sep 2025 17:16:31 +0000 (UTC)
+Received: from [100.119.48.131] (unknown [104.135.180.219])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4cbl8R2hDKzlrnQG;
+	Tue, 30 Sep 2025 17:16:22 +0000 (UTC)
+Message-ID: <b2ece8ae-b7b7-49c7-81d6-087dd6a4a12c@acm.org>
+Date: Tue, 30 Sep 2025 10:16:21 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,83 +64,25 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 15/29] arm_mpam: Reset MSC controls from cpu hp
- callbacks
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-acpi@vger.kernel.org,
- D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
- Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
- fenghuay@nvidia.com, baisheng.gao@unisoc.com, Rob Herring <robh@kernel.org>,
- Rohit Mathew <rohit.mathew@arm.com>, Rafael Wysocki <rafael@kernel.org>,
- Len Brown <lenb@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Hanjun Guo <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>
-References: <20250910204309.20751-1-james.morse@arm.com>
- <20250910204309.20751-16-james.morse@arm.com>
- <20250912125535.0000151c@huawei.com>
-Content-Language: en-GB
-From: James Morse <james.morse@arm.com>
-In-Reply-To: <20250912125535.0000151c@huawei.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH v2] scsi: ufs: core: Include UTP error in INT_FATAL_ERRORS
+To: HOYOUNG SEO <hy50.seo@samsung.com>, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, alim.akhtar@samsung.com, avri.altman@wdc.com,
+ jejb@linux.ibm.com, martin.petersen@oracle.com, beanhuo@micron.com,
+ kwangwon.min@samsung.com, kwmad.kim@samsung.com, cpgs@samsung.com,
+ h10.kim@samsung.com
+References: <CGME20250930061604epcas2p3f341c32c50f267aa6bd3ae0e82adfbf3@epcas2p3.samsung.com>
+ <20250930061428.617955-1-hy50.seo@samsung.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20250930061428.617955-1-hy50.seo@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi Jonathan,
+On 9/29/25 11:14 PM, HOYOUNG SEO wrote:
+> If the UTP error occurs alone, the UFS is not recovered.
+> It does not check for error and only generates io timeout or OCS error.
+> This is because UTP error is not defined in error handler.
+> To fixed this, added UTP error flag in FATAL_ERROR.
 
-On 12/09/2025 12:55, Jonathan Cameron wrote:
-> On Wed, 10 Sep 2025 20:42:55 +0000
-> James Morse <james.morse@arm.com> wrote:
-> 
->> When a CPU comes online, it may bring a newly accessible MSC with
->> it. Only the default partid has its value reset by hardware, and
->> even then the MSC might not have been reset since its config was
->> previously dirtyied. e.g. Kexec.
->>
->> Any in-use partid must have its configuration restored, or reset.
->> In-use partids may be held in caches and evicted later.
->>
->> MSC are also reset when CPUs are taken offline to cover cases where
->> firmware doesn't reset the MSC over reboot using UEFI, or kexec
->> where there is no firmware involvement.
->>
->> If the configuration for a RIS has not been touched since it was
->> brought online, it does not need resetting again.
->>
->> To reset, write the maximum values for all discovered controls.
-
-> Just one trivial passing comment from me.
-
->> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
->> index cd8e95fa5fd6..0353313cf284 100644
->> --- a/drivers/resctrl/mpam_devices.c
->> +++ b/drivers/resctrl/mpam_devices.c
->> @@ -818,6 +921,20 @@ static int mpam_discovery_cpu_online(unsigned int cpu)
->>  
->>  static int mpam_cpu_offline(unsigned int cpu)
->>  {
->> +	int idx;
->> +	struct mpam_msc *msc;
->> +
->> +	idx = srcu_read_lock(&mpam_srcu);
-
-> Might be worth using
-> guard(srcu)(&mpam_srcu);
-> here but only real advantage it bring is in hiding the local idx variable
-> away.  
-
-Sure. I did that in a few other places, it looks like I either missed this, or thought it
-got more complicated later...
-
-
-Thanks,
-
-James
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
 
