@@ -1,81 +1,79 @@
-Return-Path: <linux-kernel+bounces-837975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B426BBAE293
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 19:22:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EFECBAE296
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 19:22:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD7857AE70A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:20:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDD0B4A4D01
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:22:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5007718A93F;
-	Tue, 30 Sep 2025 17:22:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F1FA30DD26;
+	Tue, 30 Sep 2025 17:22:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="bKjRUnX8"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="B+dKGYhu"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FF332FBE16
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 17:22:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E697630CDB8
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 17:22:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759252922; cv=none; b=f8jcMOAGkEtCAqFpOOjj2RvGE6YmKc8gDQPqR4I7vdJ9FQgp0SFoj+ZuZfvVwRI34nffTy4YFOGzloJ9rSRYNxB4jOjWLQ2J8lN9HtUW/2/6ECQ1nwOJlOiornaAXL9XnBTKFJnW2dnPkJ2foayC88RxCRL213hehDi4UOAmhG8=
+	t=1759252925; cv=none; b=L5FjrrrOXh7XdW5Six7kaqmIroY3IsFC1arnhOAtLLz0Sc6Ctw0mPD3eAxv+OCd16d/LSAwu21GIk1W9seSLslfxdEOygrRk3AE5Hqk2jW58xn5jUe8qfFVdZJ+Kd9HA+bSPYmaSr7lt7CnJznKCrw24yLlSMv9HYYfZDGw/fsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759252922; c=relaxed/simple;
-	bh=ibgKtleGddQNNgCtzt0Ilfee0hjVtNcwD0tKiiu4HR8=;
+	s=arc-20240116; t=1759252925; c=relaxed/simple;
+	bh=GFEUQIJUCkmPFCCykSE+SQS0O7PhGUwsWOftaDX6dYs=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Me26pfSPnJ+xVjdxU/w95PMFb12MurkEIVszzDtkd4IeAGRMNAI96gTAZilBMdPciYctYK68V9O3YI+T0SkNEUEei3gmzKoZi20uwjT3fauwUcnxz4BjaL5VfKq1hWIZMfPogtJTy/q9znob/hk+LHpzLImLs8A5+xJSrGSM4Pg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=bKjRUnX8; arc=none smtp.client-ip=209.85.128.42
+	 In-Reply-To:To:Cc; b=bmAp2BYCOEDqAqHMXOxYqJv3uS2N20UESuisuHJ5dmzgUfrsvMSyhaCyAOsy5jVuOlY/A021jyWajO0tGoNK5wg/BUJ4XOxdIpSqsMSgL5ePXXgbrrvBn7RnaQX93wMR2J6fqUof4gy3w1jJj2MH8bWAEDbmxR40PLfPHldQQKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=B+dKGYhu; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-46e3af7889fso36747785e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 10:22:00 -0700 (PDT)
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-46e3cdc1a6aso808705e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 10:22:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1759252919; x=1759857719; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1759252922; x=1759857722; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=q/JHX8hQ6J2JNvKJcwR9e7CWvf1mvN1dNFPy1HSjY60=;
-        b=bKjRUnX8TV784Rh7C0MPBSEWW6p0oij/8pmH0Mx9T0gyvJWFcwNxGHWbCMRN8ey4VC
-         an6gaAFT+uH2PNE1UWeRkyN1YioWN5H14X/VIpGOYbTxkkzNRAkVXo2LwH1qtXhVQpl6
-         4B8WyVBhlkEHaeGf1JLvKpL+lvHbtnmdxXzTjc0G/dF6t0xJXs2ogHAbPdASsY/vsIma
-         xNHFqSN9LyApm/UWTT8rtO5XZYWUReVSET+FNgC1ipG3UaUoAgrmk0l62bnC7MHQyped
-         aMLAYqGe3kRnBiMUvwmdUGtzgntHuwDdUyzYqsmvnRDQIw0ezgveqcM2BwTUFeb9EGTO
-         fTXQ==
+        bh=h9dKhQXGovS1oeaED9pOXvi/m/Bjh7MbLIiNntfgxDU=;
+        b=B+dKGYhuwsDe9mTLv3pd3s4es69ryfY9AbHk1N2vPrOia2kQ89hGqPLyggl5crrzgH
+         CYjWvlUcok3v+1oV4hgxPOuloeJRIt1v2P/1Hign0qa4Q0d4NhCOWXnBTMMfx5KaSZC1
+         3oQB1K/To40bmMNi38HhAawT+mVozwrBufNO7GPwRvtmafLfnJzU/NOWieBe228reoqR
+         eWHL1+VS2VTDwHcW/EvyiSvubo7rBQu0HrB7hvCR02san0VRGTDkJesRKd1cH/wx0FPv
+         T+IOBWlVT0a1CZYlAX3eK+bt69TUvJAIU4ZZh7qatOC0zN2zau7d+pUHMAhG8qV7AA5l
+         DRnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759252919; x=1759857719;
+        d=1e100.net; s=20230601; t=1759252922; x=1759857722;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=q/JHX8hQ6J2JNvKJcwR9e7CWvf1mvN1dNFPy1HSjY60=;
-        b=E1sXyeaFdJ8byICNNC8DbZem1Z1GZCxAD0aGG/ORxTnRJ43ZGsdyyjLGMNrqM7kog2
-         8k8RMEgyp5phsp+tTv8Ke0LL6L6pZpHbDEZbA3T68FHD35VoqNuj9WRk1ixyBkyeDl/6
-         oRgaIDEaopi4Qx+iaucJAMZkG4lTiucCkTfN66pRs5Wk8O2miObIP5Yr0jV0yHfC8EXM
-         TsTAT9mBuWgXAQXD+tvexlww3g6wap+uGVfr67+ywxvE34H/V3VES8M69Kntb4irGAj6
-         QP6q6tzb2QfbYzoKZA5a/IZuak6FxNCLJ6dK9VD3xbVge6Vk18AuU8eGi+1oLi5dBfUm
-         GHqA==
-X-Gm-Message-State: AOJu0YylCLIdPb6uGfNl4bCgkjxcGuvmtzeTu+Xo6O7kg0IFL5y018ak
-	bz1NYJA+CiA0QkmICk/fXOko4CZ4JTR9o5MVi/cyQv81S5MIfipRMx5mdkDuyWfsfzU=
-X-Gm-Gg: ASbGncvPOt8hkuQi6naJ9QTayzy1vnIafudwbsG9Gg14p+xFxsLTe4o5kISvllSaFFu
-	Fj++YKMqc5HW0SQR5T2J4uLqWopBzNhl+CH2J0qcQ0ZKGdzjFrmeKPwbfiY6nIRphgEOAQwNivv
-	N/mKmZOtN7q1ahdxCtSYWjTQqzDTAMqifsvEC6zEVhVf2UpWeI538a2JmrqN8sAeHCZf+4wqXGe
-	pl+54n4Oy16MXDe7R3Dpx2K+QVKRbP4kiex/j2g38DY5GiaQ2ySMehHteDfJyR7xFSmhea+GxQS
-	gTmyDVVUN2+FqX6+BRanmBn0/ISadRSYJ3+nhvtHE1tPWLIlaOsHYJxT5kVFgkHdBRyZLuFiIxe
-	M6QLx/BW2JE+xmj41CSR6asI3GSdVRJeIBIQelkjypK0KdHkrWedY65UM/FS9o7somGB+MZ6CqB
-	d87zfS
-X-Google-Smtp-Source: AGHT+IEI//gAdpmdg72DS3miwlWKBIpxB/Jy0Pf275A937m8GRKUvUi6OGUpg+qdz7IkdcItagOvHw==
-X-Received: by 2002:a05:600c:8b8b:b0:46e:1c16:7f42 with SMTP id 5b1f17b1804b1-46e6127dc4emr4989045e9.11.1759252918851;
-        Tue, 30 Sep 2025 10:21:58 -0700 (PDT)
+        bh=h9dKhQXGovS1oeaED9pOXvi/m/Bjh7MbLIiNntfgxDU=;
+        b=MR1FRnquMKFaHzokx+lHvFObc9zorLBd0EcB+4CYnXNTuUT4R+7thQixAmwJYXNMQD
+         MUc9vSDRS51/gQnxyzT50OpAK3eZAvXgsTm4BftQE9fkNwe6S3vwXS68Kr0GmfbPPL47
+         u439U18kH9/YnXySWLIktGmuA9XZzPyi/2kNzTLNqoecb2ygnFAqJnMgoFPw0zv1gLv8
+         SfncVXoVtSO+R/TqPvg1XLzIucpwqbNPC+s9uJiozKflrKpKtnFMkfzzQoXxzjAeNLOa
+         jgFxxTUOiodUZdh8IhaoUoWQwdccE9l30melIJzyv+UldyHv9Iu05la9Pua6/9ujnXdA
+         opow==
+X-Gm-Message-State: AOJu0YyUTZmao7hyvvxZ0PZXaLCogzJXfo6aMGuqpGO4s+43QDbafh+Q
+	xg4jOLn0p+cWgPUKFWzaTQHwSrMKoDADHSBBILAaChLVGKlqGCvzW5R415fPMbfV1jc=
+X-Gm-Gg: ASbGnctZBloEq7rbwoB9oLJHP1DAb7WYGSEut4+hfpUMl3kDxHxEgMA1VtwpKRvk6C2
+	u7zpU9cuX3WGa90395glFOKZRR09ceoB5s1TERwbWSyfeJnwobKN754zaEZX1kl5a4hcAonyais
+	jX2/X9q+ot/D+KHyn0dq4+Z+CVl7Gqw6tXwIiurVT7N20NBoXf0h1EdKWuPhUag2j2e9YbtVhg9
+	/vyrMm69EKyNJjY4RmnIaEMLN+OHqgQFKNOEuDkMJ/weS0L8ln67EBishwB/Vi737DEdkAC2tMJ
+	4gHfYKryIrOzfwVPUn7NHQFn1THPl5QhjgfN1pN3xdbpVHtm2Aa/iYqrrLqtNvDhS7w6DMgdKSZ
+	haDRmymV/Ie/zl1Ro4E6i7A6LnDSGUSCzW0GuitssvCk8rm0sG3vy3kY5stM/EQuWLSOIFg==
+X-Google-Smtp-Source: AGHT+IGc/NKF26+LZgWofl7aRSsll1HM8ZP90q7bmD+iyDXEN3293SZ+SnTVd9LCf7IaiSBF0ffaJw==
+X-Received: by 2002:a05:600c:4815:b0:45f:2b0e:b835 with SMTP id 5b1f17b1804b1-46e58ce0e22mr30359725e9.10.1759252922138;
+        Tue, 30 Sep 2025 10:22:02 -0700 (PDT)
 Received: from [127.0.0.1] (88.36.160.45.gramnet.com.br. [45.160.36.88])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e61a17a0dsm2459465e9.17.2025.09.30.10.21.55
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e61a17a0dsm2459465e9.17.2025.09.30.10.21.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Sep 2025 10:21:58 -0700 (PDT)
+        Tue, 30 Sep 2025 10:22:01 -0700 (PDT)
 From: Marcos Paulo de Souza <mpdesouza@suse.com>
-Date: Tue, 30 Sep 2025 14:21:09 -0300
-Subject: [PATCH v5 3/5] printk: nbcon: Allow KDB to acquire the NBCON
- context
+Date: Tue, 30 Sep 2025 14:21:10 -0300
+Subject: [PATCH v5 4/5] printk: nbcon: Export nbcon_write_context_set_buf
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,7 +82,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250930-nbcon-kgdboc-v5-3-8125893cfb4f@suse.com>
+Message-Id: <20250930-nbcon-kgdboc-v5-4-8125893cfb4f@suse.com>
 References: <20250930-nbcon-kgdboc-v5-0-8125893cfb4f@suse.com>
 In-Reply-To: <20250930-nbcon-kgdboc-v5-0-8125893cfb4f@suse.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
@@ -97,90 +95,62 @@ To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 Cc: linux-kernel@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net, 
  Marcos Paulo de Souza <mpdesouza@suse.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1759252905; l=3158;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1759252905; l=2672;
  i=mpdesouza@suse.com; s=20231031; h=from:subject:message-id;
- bh=ibgKtleGddQNNgCtzt0Ilfee0hjVtNcwD0tKiiu4HR8=;
- b=j+AGEj6TmAPGZVFRoAWgYOJ0dGmVgfloYMM7xrQSYUF7XplRNe9oRrGgmQTN0Z8UHKyO3E39z
- i64d6h9h5TpAEv6DpT+i01waCHMVDmmb7sdci1BV215+YlO0R+eL7Gh
+ bh=GFEUQIJUCkmPFCCykSE+SQS0O7PhGUwsWOftaDX6dYs=;
+ b=pWgf2sGREzN+vcWhVnIUx1xJEgLE/ERGoDb8uj5i/w203YIEwWIF4ZVYz2irbFcYn4GNXrx2S
+ TOepELNeoVsDl2vpibyVqNPnrQAdW7wQwSeTdWSzgT0EkZSchA9RrPj
 X-Developer-Key: i=mpdesouza@suse.com; a=ed25519;
  pk=/Ni/TsKkr69EOmdZXkp1Q/BlzDonbOBRsfPa18ySIwU=
 
-KDB can interrupt any console to execute the "mirrored printing" at any
-time, so add an exception to nbcon_context_try_acquire_direct to allow
-to get the context if the current CPU is the same as kdb_printf_cpu.
+This function will be used in the next patch to allow a driver to set
+both the message and message length of a nbcon_write_context. This is
+necessary because the function also initializes the ->unsafe_takeover
+struct member. By using this helper we ensure that the struct is
+initialized correctly.
 
-This change will be necessary for the next patch, which fixes
-kdb_msg_write to work with NBCON consoles by calling ->write_atomic on
-such consoles. But to print it first needs to acquire the ownership of
-the console, so nbcon_context_try_acquire_direct is fixed here.
-
+Reviewed-by: Petr Mladek <pmladek@suse.com>
 Signed-off-by: Marcos Paulo de Souza <mpdesouza@suse.com>
 ---
- include/linux/kdb.h   | 15 +++++++++++++++
- kernel/printk/nbcon.c |  6 +++++-
- 2 files changed, 20 insertions(+), 1 deletion(-)
+ include/linux/console.h | 4 ++++
+ kernel/printk/nbcon.c   | 2 +-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/kdb.h b/include/linux/kdb.h
-index ecbf819deeca118f27e98bf71bb37dd27a257ebb..36b46c85733fe1df28cde7760e5c26e96de40c05 100644
---- a/include/linux/kdb.h
-+++ b/include/linux/kdb.h
-@@ -207,11 +207,26 @@ static inline const char *kdb_walk_kallsyms(loff_t *pos)
- /* Dynamic kdb shell command registration */
- extern int kdb_register(kdbtab_t *cmd);
- extern void kdb_unregister(kdbtab_t *cmd);
-+
-+/* Return true when KDB as locked for printing a message on this CPU. */
-+static inline
-+bool kdb_printf_on_this_cpu(void)
-+{
-+	/*
-+	 * We can use raw_smp_processor_id() here because the task could
-+	 * not get migrated when KDB has locked for printing on this CPU.
-+	 */
-+	return unlikely(READ_ONCE(kdb_printf_cpu) == raw_smp_processor_id());
-+}
-+
- #else /* ! CONFIG_KGDB_KDB */
- static inline __printf(1, 2) int kdb_printf(const char *fmt, ...) { return 0; }
- static inline void kdb_init(int level) {}
- static inline int kdb_register(kdbtab_t *cmd) { return 0; }
- static inline void kdb_unregister(kdbtab_t *cmd) {}
-+
-+static inline bool kdb_printf_on_this_cpu(void) { return false };
-+
- #endif	/* CONFIG_KGDB_KDB */
- enum {
- 	KDB_NOT_INITIALIZED,
+diff --git a/include/linux/console.h b/include/linux/console.h
+index b34c5a0b86303e2fb4583fa467d8be43761cf756..e0fc2608bd9d6a886f5ddc56d26f19b21ae8663d 100644
+--- a/include/linux/console.h
++++ b/include/linux/console.h
+@@ -602,6 +602,8 @@ static inline bool console_is_registered(const struct console *con)
+ extern void nbcon_cpu_emergency_enter(void);
+ extern void nbcon_cpu_emergency_exit(void);
+ extern bool nbcon_can_proceed(struct nbcon_write_context *wctxt);
++extern void nbcon_write_context_set_buf(struct nbcon_write_context *wctxt,
++					char *buf, unsigned int len);
+ extern bool nbcon_enter_unsafe(struct nbcon_write_context *wctxt);
+ extern bool nbcon_exit_unsafe(struct nbcon_write_context *wctxt);
+ extern void nbcon_reacquire_nobuf(struct nbcon_write_context *wctxt);
+@@ -654,6 +656,8 @@ static inline bool console_is_usable(struct console *con, short flags, bool use_
+ static inline void nbcon_cpu_emergency_enter(void) { }
+ static inline void nbcon_cpu_emergency_exit(void) { }
+ static inline bool nbcon_can_proceed(struct nbcon_write_context *wctxt) { return false; }
++static inline void nbcon_write_context_set_buf(struct nbcon_write_context *wctxt,
++					       char *buf, unsigned int len) { }
+ static inline bool nbcon_enter_unsafe(struct nbcon_write_context *wctxt) { return false; }
+ static inline bool nbcon_exit_unsafe(struct nbcon_write_context *wctxt) { return false; }
+ static inline void nbcon_reacquire_nobuf(struct nbcon_write_context *wctxt) { }
 diff --git a/kernel/printk/nbcon.c b/kernel/printk/nbcon.c
-index c23abed5933527cb7c6bcc42057fadbb44a43446..6e4641350fe8985438f53bcd32f3adf72d9d6835 100644
+index 6e4641350fe8985438f53bcd32f3adf72d9d6835..2492b14bd272562378c4cdb465eea2269638e127 100644
 --- a/kernel/printk/nbcon.c
 +++ b/kernel/printk/nbcon.c
-@@ -10,6 +10,7 @@
- #include <linux/export.h>
- #include <linux/init.h>
- #include <linux/irqflags.h>
-+#include <linux/kdb.h>
- #include <linux/kthread.h>
- #include <linux/minmax.h>
- #include <linux/panic.h>
-@@ -249,13 +250,16 @@ static int nbcon_context_try_acquire_direct(struct nbcon_context *ctxt,
- 		 * since all non-panic CPUs are stopped during panic(), it
- 		 * is safer to have them avoid gaining console ownership.
- 		 *
--		 * If this acquire is a reacquire (and an unsafe takeover
-+		 * One exception is when kdb has locked for printing on this CPU.
-+		 *
-+		 * Second exception is a reacquire (and an unsafe takeover
- 		 * has not previously occurred) then it is allowed to attempt
- 		 * a direct acquire in panic. This gives console drivers an
- 		 * opportunity to perform any necessary cleanup if they were
- 		 * interrupted by the panic CPU while printing.
- 		 */
- 		if (panic_on_other_cpu() &&
-+		    !kdb_printf_on_this_cpu() &&
- 		    (!is_reacquire || cur->unsafe_takeover)) {
- 			return -EPERM;
- 		}
+@@ -854,7 +854,7 @@ static bool __nbcon_context_update_unsafe(struct nbcon_context *ctxt, bool unsaf
+ 	return nbcon_context_can_proceed(ctxt, &cur);
+ }
+ 
+-static void nbcon_write_context_set_buf(struct nbcon_write_context *wctxt,
++void nbcon_write_context_set_buf(struct nbcon_write_context *wctxt,
+ 					char *buf, unsigned int len)
+ {
+ 	struct nbcon_context *ctxt = &ACCESS_PRIVATE(wctxt, ctxt);
 
 -- 
 2.51.0
