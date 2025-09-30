@@ -1,133 +1,143 @@
-Return-Path: <linux-kernel+bounces-837414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48645BAC44E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 11:27:22 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68C37BAC448
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 11:27:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D99C819203DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:27:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4610C4E254D
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:27:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3963E2F5A00;
-	Tue, 30 Sep 2025 09:27:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42A192EBDF9;
+	Tue, 30 Sep 2025 09:27:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lG5tBqPZ"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SHGvXsXk"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B99279DCA
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 09:27:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E83B67263E
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 09:26:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759224429; cv=none; b=HYeZfWqcneYREl0S0GCBWHKLbhMRTJMNYT5Z1K89ND8YDa0pGSxTnPsbc9L29hyHO99ExWQHMHdRGYwulCBMcV7ROQJ45n/CYcDqAQAo0fTtlQmRqoKooBz5pf01JjtvetgXRrH1cEzfA82Ts7iv1+2VIDTCJkGOUntr2cP0IKE=
+	t=1759224420; cv=none; b=gkv2hs5mH0cIKMsZunhHycgGHDjl58LGnJotJwMiJJoIIfYySZc/1T97sIAqgxbgjUsfNwf+Z+xfWVYLGLdly25TW24RLXKkxbvAK5vXb2RDKl9sdeoxyNYJ3Kii39QXO3YXKvKzqH/VYR8myvYC9gzK7y8nes4122TllXduJ4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759224429; c=relaxed/simple;
-	bh=nnOJoFklgxkNVnV6y19zqwF7kPIYf/E1Pt8Foa/jQz0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eW162cXgU54Xf/6z36TY6lN46OvTWIuktqp4iQB/PS++4liGFozfkRZ0bdn6YJNQSV5A12ASizUoUNlLUpUFJMPYxcJaw8B6mwGdueTnvcrwfETxywNnzovHT/BNaswxS5Cift9WfVSf2MOh5hJqXPqy+zb84v3wyQadFsRGD7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lG5tBqPZ; arc=none smtp.client-ip=209.85.215.174
+	s=arc-20240116; t=1759224420; c=relaxed/simple;
+	bh=j6aKpZja6IJO9Sv+6v0U/bfOyaEulbLfHw8yBTY5Ssk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OXbW2ANoaJg2OvQbqKINOedLq8vPpph8ycP03b8Yr6YeLEpymWlFSFxKoX7vtaswWCepBjadY2EpDITd1lpao5rcQMm9ddv8kEoOni20KOzW8o34AL8tKQ6u0Gkj9RErbCkrDbSleXE/lpPdvf8WS0Rg24VXAaO96XI+amnFtQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SHGvXsXk; arc=none smtp.client-ip=209.85.128.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b5241e51764so4832372a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 02:27:08 -0700 (PDT)
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-46e32139ef7so9199235e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 02:26:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759224427; x=1759829227; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=oV9nwWlvwMw+boSlHYxl2BiHlv2LHDCeucM2QPwsS60=;
-        b=lG5tBqPZN6Tai22sjjt8EMPd3kHOkiWAiFG9OT5uc2FLX66DkhRwrJSwjn3CWXsOFv
-         GmF9vFdxmRvlTHqMsOb8Jj22Cv1y36sfoDNP6nqoN8mDz3ZkHiYjphG/G5es/0EVuo2C
-         ZOIIiuSrPSBsErjkQkw9B0p6ZDSkZ48inD96w1SfpC2aMqNDm3B8Pk63gPBGKUl/1lAM
-         9Rk/x+HzdSppxD7jRda3hi2yTCcMagC3W39VPrTPR4Sw2W53RBmWmXxQ5MUq5c9qD4R/
-         e3wcN1IcjLtlfllIM5RAVqUdgC/z7uwldiloo4Q57Tb1OkZgkBKF1G65EZGXS+9m8Ukx
-         Zp2A==
+        d=gmail.com; s=20230601; t=1759224417; x=1759829217; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=cmD1H8OwmHh9iQxosxV+vKhL8WnHs3OeYyoNA3LHXXs=;
+        b=SHGvXsXk6pttbqDVQdRVpWt9ncrfYMns1+OZd7BjSvfD/Ze7BhDf2xRKvTD9L+6pgU
+         v1znPNGs98csbW/2r/Hm9AloILYEov0RQhPriSRu4SV9NxKyRszpoqs345NO/pgSRu7O
+         XmuDnbjlhp6wUcahEYjd7Nd7TUpcYwxHlpO2GBUAg/0Szat8JbNG/rqvgDSb985/VUv1
+         At7wMRxTpOU4D9yB2OyRP588AYrQDU1MkxUEfuNtXDBVzvhSLP7aJOFJbZPYsrmmpQQI
+         pme8GUy5JNO8O3nbWK+9jQfjXlOiYoFhbNrkC92kcCmXSJ7FKdwTtkfuusaRNMx/Ko4Q
+         GPfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759224427; x=1759829227;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oV9nwWlvwMw+boSlHYxl2BiHlv2LHDCeucM2QPwsS60=;
-        b=KjGwP9Eft96hTT7zjZb01HloRvEKDHhLUKC4Bhtdjgse1zFvFSbT2Cx5BEybzMO3ux
-         AwluV2Rjna0jcpdVpJSvTC4S1z4O4FIOOpHmxkqta8WXMFjgOvxmty7VG5jgmcEgFobE
-         Xo849E4xa7/2cwWcSmCLV1yOD2KQhZS1MEP6f38kAvgImFi5Np6hKG3rrbGrBdXjCB/9
-         Exj5dCtTNRO7H/2s68hrM35JfUrQi0yT8jeiEFmJzvE8jb1R1B3RAOZk5xInVxMvMfGy
-         0nmHeAcgxbq9GggBIBsfkF+NZfL/0Jg4FQg93Ku9/R7Hwl2dLm55O4yLxQ880eN02c8r
-         KN6w==
-X-Forwarded-Encrypted: i=1; AJvYcCVH3A73Fq/OrKHHXF9ZJDjn8JHR0qD0zQr1OrVPqE1WFuLr3ImBmM18ipOr9vbcSmF6o0RjVdPovMcPJ9c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNnBAPEA4lVRy9gfnkLxyZ1asUl8X68hTXcqrn2lHaxFWZpo5H
-	5dxVMRMBWQIiVZENvO/D0c924F1mttCpg0R4zpfKXCRgba6M5VJfJWLK
-X-Gm-Gg: ASbGncuF6j+zOilocZK/dfjQS58nK0i1Cy9wEijd412GjmNz1Jh+EBiE1A3qvQwxCSZ
-	Q+m/bIu4S7K0JFDG8ONRY5qXCkXos4m0Ri7kimsGIppw/v+99ujZMPWNYDjIsPW5zNgzgqSo6X9
-	mljEdD9zr3Wdg2nsbuEjxzuCsp+ER8kGAo/9k/ZSXPuV2CK8oEecBVfW5eDlxZAM7k4B1gbN2vY
-	wsOIRcLNxESIXCno6xEDIkGnI03iyBH/W/Q9NbNzA5jzBP2Dk7Cp9Pchw5wHF3++hThIsUIrc/J
-	0WT5OmFOziXQAxqpBoaPOAU7wgY7GdSlV/reDcjI/afo+x9psSZlhkLS71TfR6SLWT974vrTCkT
-	ZoqGmoqcp++SoX36XxgVo3ZW7L8VOgJszyDd2fiGh7cA0pk44yDcvt1ei
-X-Google-Smtp-Source: AGHT+IF5Mmu2cJGe20mrkbic7TsBlJPKePi0vu8IJGytdkUd9qXqS/ol7do4D3mDYqG73gSZQACchg==
-X-Received: by 2002:a17:902:e5c4:b0:27e:da3a:32bc with SMTP id d9443c01a7336-27eda3a38b2mr187134845ad.33.1759224427493;
-        Tue, 30 Sep 2025 02:27:07 -0700 (PDT)
-Received: from LAPTOP-1SG6V2T1 ([194.114.136.218])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3341bcd9afbsm19821660a91.0.2025.09.30.02.26.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Sep 2025 02:27:07 -0700 (PDT)
-From: djfkvcing117@gmail.com
-To: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Onur Ozkan <work@onurozkan.dev>,
-	Tong Li <djfkvcing117@gmail.com>
-Subject: [PATCH] rust: file: add intra-doc link for 'EBADF'
-Date: Tue, 30 Sep 2025 17:24:33 +0800
-Message-ID: <20250930092603.284384-1-djfkvcing117@gmail.com>
-X-Mailer: git-send-email 2.51.0
+        d=1e100.net; s=20230601; t=1759224417; x=1759829217;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cmD1H8OwmHh9iQxosxV+vKhL8WnHs3OeYyoNA3LHXXs=;
+        b=IbGl3PU2mbiPkR5HcJC95/BWu+57fkUT6cYvCHhjQIHd9kc1XbT98LHs5BbViPKeoE
+         QhuMJBzeZmnwiaHLSFnYY7NIZivMbgdnwe4Yya+J6pacjWFI2/wTc+KgjpR/tFdAosAi
+         i2J4CqjBtYupRePZrOU3An4T6So9AT80f+KBjERDfOiOfq/1oSiczM1xCH8ClFmRgIhw
+         5MypILdQOTlvUWGS7v03IbdP3FCmGDVO0G/wmupIUmCzJENvtXDRIgt1IcyOFIQb5rAq
+         4kyRoE7x1UEOFuMa2MtAmeS87UBtc2VJXRf9xG7ScGbRjZIaXBw3CNoR08r4Wm6tPfBE
+         F1Ag==
+X-Forwarded-Encrypted: i=1; AJvYcCV8gWASdSk5TZYpmJ148FDsJuFQoAnlIPTiKXiGHZv0LPw3Whlh6o5/hTtWT4SDDiu14oaVe2D7ZdmfU1o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxiaiwg0+bkpiVi/6fm4A7ic14JgrHstA7hOIvlwF5vAcioIfbQ
+	dMdilQVldJt5sbfAjOEpk6PaydFy5fNlVlQt2W0RcWPxCeOMstxn/Tmq
+X-Gm-Gg: ASbGncvTvq2x9hVPmPZc6CVdJLw6J7ktnHGgBlcppv/bVivzkZvk41IF/4k80t27iBt
+	FZ8g9tfHBD21OhWUltwyx9I1efys7UlzkuI+Nk8bAVV2I2ZpKjwfGL/uaCr+zY0xHSWJL4RZZoP
+	feKOJsK5lqfbxHlbgumpEoZFegh0wlx3+ft0m876B20Uy9WTTxO5Ny5xhIu8V/0eYJwQOJ9Cwwk
+	dkt85FDkNjGKzaM3CI9tHaAz/QanVWGxettWeHSKwpu57ZwHIoi3uKv7yjuJ1eQXLlQG7RlECEt
+	yEli+xBKbv5omXHTm4WMF5V9ldsN6SxBeuCw/am1R7ay6UitChafMMbF6jQ5nn8cerqGy42wtxw
+	c2J2NF3xyNkJv7I8FRbZsS1E5vZWsQ5UC0k0GsWBy+bLu5fERdRHja/Qm041ViPmt904PNwfa/a
+	bv6RkYi8yG
+X-Google-Smtp-Source: AGHT+IFGYtwA1qyoebtVQ++gcwEdKaTx5QP4eRZN8yRpJyR7zx0cvodJhiLzw+/VafZl0LWNohao6w==
+X-Received: by 2002:a05:600c:3b0c:b0:46e:5cb5:8ca8 with SMTP id 5b1f17b1804b1-46e5cb5a045mr6783365e9.0.1759224416900;
+        Tue, 30 Sep 2025 02:26:56 -0700 (PDT)
+Received: from [192.168.100.179] ([102.171.36.101])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fb9e1b665sm21820638f8f.27.2025.09.30.02.26.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Sep 2025 02:26:56 -0700 (PDT)
+Message-ID: <342929a3-ac5f-4953-a763-b81c60e66554@gmail.com>
+Date: Tue, 30 Sep 2025 10:27:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] btrfs: Refactor allocation size calculation in kzalloc()
+To: Qu Wenruo <quwenruo.btrfs@gmx.com>, clm@fb.com, dsterba@suse.com
+Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+ skhan@linuxfoundation.org, david.hunter.linux@gmail.com,
+ linux-kernel-mentees@lists.linuxfoundation.org
+References: <20250930091440.25078-1-mehdi.benhadjkhelifa@gmail.com>
+ <76fa5e79-c7e8-4637-bf51-c0e6f4e04f51@gmx.com>
+Content-Language: en-US
+From: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+In-Reply-To: <76fa5e79-c7e8-4637-bf51-c0e6f4e04f51@gmx.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-From: Tong Li <djfkvcing117@gmail.com>
+On 9/30/25 10:19 AM, Qu Wenruo wrote:
+> 
+> 
+> 在 2025/9/30 18:44, Mehdi Ben Hadj Khelifa 写道:
+>> Wrap allocation size calculation in size_add() and size_mul() to avoid
+>> any potential overflow.
+>>
+>> Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+>> ---
+>>   fs/btrfs/volumes.c | 11 +++++------
+>>   1 file changed, 5 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+>> index c6e3efd6f602..3f1f19b28aac 100644
+>> --- a/fs/btrfs/volumes.c
+>> +++ b/fs/btrfs/volumes.c
+>> @@ -6076,12 +6076,11 @@ struct btrfs_io_context 
+>> *alloc_btrfs_io_context(struct btrfs_fs_info *fs_info,
+>>   {
+>>       struct btrfs_io_context *bioc;
+>> -    bioc = kzalloc(
+>> -         /* The size of btrfs_io_context */
+>> -        sizeof(struct btrfs_io_context) +
+>> -        /* Plus the variable array for the stripes */
+>> -        sizeof(struct btrfs_io_stripe) * (total_stripes),
+>> -        GFP_NOFS);
+>> +    /* The size of btrfs_io_context */
+>> +    /* Plus the variable array for the stripes */
+>> +    bioc = kzalloc(size_add(sizeof(struct btrfs_io_context),
+> 
+> Please use struct_size() instead.
+> 
+> And if you're using struct_size() there iwll be no need for any comments.
 
-Suggested-by: Onur Özkan <work@onurozkan.dev>
-Link: https://github.com/Rust-for-Linux/linux/issues/1186
-Signed-off-by: Tong Li <djfkvcing117@gmail.com>
----
- rust/kernel/fs/file.rs | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Understood, I will get v2 on the way with your recommendation.
+Thank you for the suggestion.
+Regards,
+Mehdi
 
-diff --git a/rust/kernel/fs/file.rs b/rust/kernel/fs/file.rs
-index 67a3654f0fd3..f3153f4c8560 100644
---- a/rust/kernel/fs/file.rs
-+++ b/rust/kernel/fs/file.rs
-@@ -448,9 +448,9 @@ fn drop(&mut self) {
-     }
- }
- 
--/// Represents the `EBADF` error code.
-+/// Represents the [`EBADF`] error code.
- ///
--/// Used for methods that can only fail with `EBADF`.
-+/// Used for methods that can only fail with [`EBADF`].
- #[derive(Copy, Clone, Eq, PartialEq)]
- pub struct BadFdError;
- 
--- 
-2.51.0
+>> +                size_mul(sizeof(struct btrfs_io_stripe),
+>> +                        total_stripes)), GFP_NOFS);
+>>       if (!bioc)
+>>           return NULL;
+> 
 
 
