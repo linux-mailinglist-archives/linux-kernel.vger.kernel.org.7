@@ -1,354 +1,278 @@
-Return-Path: <linux-kernel+bounces-837209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55DB0BABB0F
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 08:46:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B99F8BABB09
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 08:46:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0F693B12F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 06:46:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66E8717C2C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 06:46:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7161E29E101;
-	Tue, 30 Sep 2025 06:46:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81C5729E101;
+	Tue, 30 Sep 2025 06:45:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UOQAaZS/"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Xibjcj7C"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E17D299923
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 06:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759214764; cv=fail; b=rufYLUyaGa55mZUZEK7MyJY/h0+cnOmYmUOENTnP6fm6IhzvJnb5FmS8pVxOwhp5guM4ZuY/npbuTxaeF1Bibxybwd04Xi4bKVrwpAE9zDY6kftmBa0nizlxiWvuw60L+v6xE3XIOisp2KU71kpNHhX9BlJP7A7GYWrWSCZfI4s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759214764; c=relaxed/simple;
-	bh=Y8V5XHKtogp3y7l8v1oQ/pAJNjlNjTcWB9z56pMVwNc=;
-	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
-	 Content-Disposition:MIME-Version; b=QdbT3sx5shDwX2TkQWon/lozLbsNve0v+v5p6jrVm1cWb0hEBUGtQOmSa/wriTlWpKG8oOefYAJ3IuwUCFoUAtjPz0g5tuxqz/1pcjSHlHcqRS96TZeM1ymbdGSyw3hTvk8E1e2mhKZUg5BDskeIqlVJOzofTFei50e4GLVBhW8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UOQAaZS/; arc=fail smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759214763; x=1790750763;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=Y8V5XHKtogp3y7l8v1oQ/pAJNjlNjTcWB9z56pMVwNc=;
-  b=UOQAaZS/yE4gz0/Ugsho7kf7/qClq7CF9RukNrL1QJdSiQuNd6JPbOgm
-   K1aP4F+O+nN4mNQtlkQUe/6nCXY6B1s0i33Tzai0jCuO8ElEMrJV+7YFu
-   oCTMOZj7mdfnklDSh4syOSh12eF38URKqQ4Z9CEBVeqvqiBLCglb+5Odu
-   4/1aBrzKhKZjNQrl1UZZgVzPTEv2GXS5vsI81QUZjUnIBQ7mGBbyaCo5e
-   2mACns7DclsgR1gpaYwYoC9yFjxREBoarP6sIqiDXmUHfNICc4spG2gux
-   A5x/vAhIzmNedYyXr7XAQ6rroj/5wV9eS1BsFlFSJ+tEakj5K+P19FupT
-   A==;
-X-CSE-ConnectionGUID: 6VvvZVxWQG+0sCbzXuaGXQ==
-X-CSE-MsgGUID: 0Smvz4+rQ5CuJV0PUDI/wg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11568"; a="64084959"
-X-IronPort-AV: E=Sophos;i="6.18,303,1751266800"; 
-   d="scan'208";a="64084959"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2025 23:46:02 -0700
-X-CSE-ConnectionGUID: If8cPRWGTN+Q9PP4eqjbNQ==
-X-CSE-MsgGUID: QNunVuJyTU23YyF34SRMiQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,303,1751266800"; 
-   d="scan'208";a="215590447"
-Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
-  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2025 23:46:01 -0700
-Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
- fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Mon, 29 Sep 2025 23:46:00 -0700
-Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
- FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Mon, 29 Sep 2025 23:46:00 -0700
-Received: from CY7PR03CU001.outbound.protection.outlook.com (40.93.198.29) by
- edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Mon, 29 Sep 2025 23:45:58 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MesMpl7wexWv2YsoBGn1zE1iY4x+PeH1xKZNRyXkQ0UT0SZAjrGy1Tul18GtIQJRqNo9hX3GdoAfoSu9Rk2W4akjA0lueXbJzPKKx1R0TlKFtrbGWrXPs+J4DJPgsLZW07zbvKKvWFw8HUMX1BUBnWfpWXvUwAyjy+cmkMcWMlfC+DCPJ71l0DyclU6z5681GAcFvhEbbegazIsCiWIbp8VBpH9eM8UXMHyFjtz+y9wYnm5h7LvnFHQog6Mjcch82RBddz2A+ngMS8K0SL+kCMivFjYsZqrLWgi9JPGvTxqXKnD2baikNbKPCZn7aU3lmF7eh6RbNb95wJgpMh0iKw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xV+iEjInXAUG+vPC8bqPK843jYlaDFAkVKxtqAyyExo=;
- b=Z2V9qWemuy2eIwb/TVPCkk7iSt5JAQchykaz3EY+ssPShbZ56LlfwPTXNJNj2ym5QnFh4NUq7F/Vi1x18AYkQObqZzIfn6JJeuzEJ24oi+S0LbdJuszn/TFurUvE0g0+EzqlTVH13de+geJI3c4ALqpIvsmrj69Elr+9uU2RwL1YhpEj52/2HrJ52LvnNkqhRg7Y6JmRa7votM7mpkyaTTv4s5fWEiq2yJsf599txcmTXmtp2C6/NQi2ntMQyG/tipVW7Xlfq1StS7D9vORxWWK40yiXhU6yMa2YGJo+9N1VFzio5yWBBRjbb7ANUA6/yo7D6lhZNP6D0uqjWlqTrQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
- by IA1PR11MB6220.namprd11.prod.outlook.com (2603:10b6:208:3e8::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.17; Tue, 30 Sep
- 2025 06:45:56 +0000
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::4622:29cf:32b:7e5c]) by LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::4622:29cf:32b:7e5c%5]) with mapi id 15.20.9160.014; Tue, 30 Sep 2025
- 06:45:56 +0000
-Date: Tue, 30 Sep 2025 14:45:46 +0800
-From: kernel test robot <oliver.sang@intel.com>
-To: Mark Brown <broonie@kernel.org>
-CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, Shuah Khan
-	<skhan@linuxfoundation.org>, Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	<linux-kernel@vger.kernel.org>, <oliver.sang@intel.com>
-Subject: [broonie-misc:arm64-gcs-exit-token] [selftests/clone3]  0b67d4b724:
- kernel-selftests.clone3.clone3.fail
-Message-ID: <202509301454.adc93851-lkp@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-X-ClientProxiedBy: KL1P15301CA0059.APCP153.PROD.OUTLOOK.COM
- (2603:1096:820:3d::20) To LV3PR11MB8603.namprd11.prod.outlook.com
- (2603:10b6:408:1b6::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6A89265CC0
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 06:45:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759214757; cv=none; b=MpNFhbwZj6Aa/NUaNbYI4Jd4JgTI8xogl7HIaWcwJOXIHcRpxWy3bxoHvYsuF4TJTh+pKZx4ZFuatz5KKkHywikM3bXh+ASRxbkp1+OIKIXnxDnBJNUEbLrPU5rr4+IbipyVb7+E3m3pWViJKy+Td1VgOGo7FZ7Lx/R4d1VHcKg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759214757; c=relaxed/simple;
+	bh=JoBHMz2B+sjw9rguNZd8esTdi3gTDyQjuYPnndRxhgQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tScCS5z4SLCl+PbauLANIUi4YX5IEN8B7uEqNa2TKFxlLwEp1Zr8GqlvltQkrkcf3ntCxtU0T94FckTdCPSb8IJM21TinuEejxYfWnaOpXP7SsBn1yYozkXeDXbJAjHxCjOJXomaMXYxp1xA0KDdoH8wqTEqlvZJNr5ZFT2F1OY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Xibjcj7C; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759214754;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=8AIMq+OlhpyT2npgIFmZrEOK/CbKwyfphzbxq2DUajU=;
+	b=Xibjcj7CHeBLRgtTVaUSMBuClYACz5rRf8o0x2mJUi4vR9R9mhdPBwSLr4nk4BoIZwN0yn
+	l0crbBv8OWf0Y/5K692MzKkR5PdL3Oaju4S52H/9YkgQnC/12wforUuoyxtR5dXKX0ZiK0
+	4e9ewBBV4nya0fYAR4gDU0YuaHwJSKQ=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-465-tRZ0hcLjMYOXLaMcWo_2bg-1; Tue, 30 Sep 2025 02:45:52 -0400
+X-MC-Unique: tRZ0hcLjMYOXLaMcWo_2bg-1
+X-Mimecast-MFC-AGG-ID: tRZ0hcLjMYOXLaMcWo_2bg_1759214752
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3ee13e43dd9so2675681f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 23:45:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759214752; x=1759819552;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8AIMq+OlhpyT2npgIFmZrEOK/CbKwyfphzbxq2DUajU=;
+        b=r1aM1W8Xkokp4rkfTwPPPzWp18DKUvAoiNDk+lJLCUTJ6k45rgg6B4i/4Me8BODOYE
+         rK4e63KaI00BIOtcqbHR/1TB2xh0guCyEono8bWX41mOSfwY/j3panwun7DYkc59wJBW
+         2HvrE0wQQCHqEh3DTK9QyFVj1pgoFT6wfumK2QEXNVKJ6qWWqI0eaymnbQs/LF69zF0z
+         PeCNDP7IQobdlGRJDoqJdV+RgGdKGn7DUqvXJVE44R93fP8ch8QwtFBsBI7Boq2girz8
+         CdhEcyntYgzSjWjVshrnNjso7RcOb73/LCK0Q1dCh1a9NhZIlMGEgz09ULOJrffDJmoY
+         0aIw==
+X-Forwarded-Encrypted: i=1; AJvYcCVsV9cUXFFSfsLmr2dQqlFk8pgRmyl4z1TvfGIktGAIdkrxxzi8h/P74UTDhkOYEPMwvCM2KCwg0OJeRtw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUV1aqFNmay0HzbfWp5umg4TAhRXxkYric6MLwECaXjsPKlXdz
+	g5wSakBCvPVZ2yV8sm0Xu/msLN4tFelEF67Q1hxcw6YMyC1CW230SQzjbJCDcp79iv5ZNlY0YHs
+	hsj8cVCp7pVZhZTU4tvZRUnDf+QOQXMcZ5wnyVW5zCgN5Y3jVDZyILpakvVGAdcFHVg==
+X-Gm-Gg: ASbGncuPo6cRYS6bLYuBjHdsDlvwP80YyVQh8jS3xy3R5ZSCTh8zgK0EEkl7sXXc9md
+	in1f6z/w5n9qjbDXeAEaNeAGywCWAsjpd1dr9kzz20YqI2/371vpnIIoAotbb4XppeUM0FAzisv
+	L7a9hfbccjNBohIe3KX7+NOVOL7LfvVO3hSMW/XDkpzUcorif12ZHMEFmy3pZgEgPXC15PlaFhT
+	Wvp0Ptoon2Qc6HAleg86Uz8genwmrLo1gmDjTcCa0DOXZF0Xi5N/Nc9L+16txO3u2bhBTxuHW30
+	qO/lN2QTajxzOnAaNrA+gZONLRSdmppNi8vQWkLDZdNe/orGExrCip8H7p3jtyjQBQepw4iZfKM
+	m0pBF3hO4
+X-Received: by 2002:a05:6000:1a89:b0:3ed:a43d:8eba with SMTP id ffacd0b85a97d-40e4b389211mr18844302f8f.52.1759214751625;
+        Mon, 29 Sep 2025 23:45:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFg/W6e/I7hHziArdv6ifYggaC+j0tYvxahMU2MCeZ7zKwkNHwGQwxT9opm5ct5RbwIhmPfXQ==
+X-Received: by 2002:a05:6000:1a89:b0:3ed:a43d:8eba with SMTP id ffacd0b85a97d-40e4b389211mr18844269f8f.52.1759214751197;
+        Mon, 29 Sep 2025 23:45:51 -0700 (PDT)
+Received: from ?IPV6:2a01:599:901:4a65:f2e2:845:f3d2:404d? ([2a01:599:901:4a65:f2e2:845:f3d2:404d])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e5c06a9ffsm7025105e9.0.2025.09.29.23.45.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 29 Sep 2025 23:45:50 -0700 (PDT)
+Message-ID: <d25474b8-c340-4546-a41e-60a6ecfc42c3@redhat.com>
+Date: Tue, 30 Sep 2025 08:45:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|IA1PR11MB6220:EE_
-X-MS-Office365-Filtering-Correlation-Id: bb5fe487-52f6-49d0-ef85-08ddffed01eb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?jOqbrhfv8d8s+uzPISqQbau8FgEwJeAO1O8RPZ98T2BP6fonXhwprbj0ITXG?=
- =?us-ascii?Q?YF1WJbX2Jpp5hQV+cf3xXpo0HbUgeItc5oK4kaEgz1iYHmlnuLjj/ZxrJG7s?=
- =?us-ascii?Q?qW6lCWUfyFLMZ14xuEoOtG2VTnLfhiyYTK9bbmp5w4K5sTWQpiY+l/xefJb5?=
- =?us-ascii?Q?YTDYO18SPt02Nos40nPlooxvvs4fhrdZIyoWny1j6MoSSi1783YhYYa3LUhQ?=
- =?us-ascii?Q?wLYRFn7xMZxgJR+pEBXMxUXAFfwCmCuRikYPkb6IwwPP36FA9PTHk3XjSdeW?=
- =?us-ascii?Q?9gYDjwmErmpiBxlhcGIRgQG5iNXzIw7TBeXYuUCXXOfnRyQffUTQzTVQVTf5?=
- =?us-ascii?Q?FhRLvrlPG1OLG4tJ2JHI/xxPhtbJB6y2lK4CupQV4oGtnKeMHVodm3oJgiBH?=
- =?us-ascii?Q?OZuL8TuNhBN5dvbgKSKBrP0c8k5GcKC5W1gYULHEFSexo+Tp/buCg7AmHLAh?=
- =?us-ascii?Q?xuxzdiDgRP+FsuWFoNnKIgEz5JLC2DxdG+WqkDHwS4HCP/T/axaXk/I2YgRS?=
- =?us-ascii?Q?6X+hDCjYChcXlK0o4pLsmaNrF4FxKlsT+OI4w918EOqcTMg5zv7ZRg41kptm?=
- =?us-ascii?Q?jbjgfYVGLdJ0Pr0E0a1Xfq+5GVNz1pBoQn/xVW2+4HKyx2DFcpQvzsd3O1rM?=
- =?us-ascii?Q?5OOPLWRY7aOHLgLXreatHbvN9cofcAvf6iW7nUhDWnyeHoMZe766pn7ranl3?=
- =?us-ascii?Q?KByqBOLqlVND9+d+XzqAItXYPJETvLE7BNoDFHSh0ryWZvUQq/ao9m0Dceoo?=
- =?us-ascii?Q?MAj7VYUNod0PShU3hRJcGE17SnbhpcBZT4XXv1qBvkrAjasB4i/CNacDd8Kl?=
- =?us-ascii?Q?puSq8VeUozit/aonjzfm1ZEnl3N7/CiJCzxlP1QlfU1ZwFxBYWPgZMufhU5B?=
- =?us-ascii?Q?k46nl+xK5cuSXewEdUnCGyEQR9AuA3uSg3fpKmlGFUMb3O9mhmIIuXSvgJaA?=
- =?us-ascii?Q?QpPt/57r7AYCMYhSBqEsKqMhlb+BMbqBDAaxDa7LHNXP63UDA/oECVfqso/X?=
- =?us-ascii?Q?HeMMGYtRi2T85S8HPD+//Dewu2ooufPLwYC0BpMo702+WiOiudtwcZfm5cql?=
- =?us-ascii?Q?HlrnzPKUYOu9iCeb51pESaxCMBtycRqg/5qvToD1jrEJYduIeV7N+WxS+rX7?=
- =?us-ascii?Q?05PrrZr1Bn6MvWNldnS0AdG7yWVXRPkKBtyJzPwMeUFn5VeB4lD7ArDAH5Gb?=
- =?us-ascii?Q?e5qiVIv9aeRVqq1n7ld8Il4BBeFihppJ8QoYJ8S9UxA3I+iQPdxnN1YMhWef?=
- =?us-ascii?Q?gDK83QfiDqsS/g2oRZJoLifqiQSFyyXcQjesONLhF+t/SqwoWfYPjEFiENbM?=
- =?us-ascii?Q?QoEeh5gMmcOqUkofwCen9chqB9R5Rv3RdCFa1s/vFoCX64moCuALO/KnM4j6?=
- =?us-ascii?Q?QREumLwbryI7oqRCKD+vhIBuG7E3ZTS1s/ZrDEWnSGm3IweJ859Vj0Zdt2TR?=
- =?us-ascii?Q?8VOHVUbKtRI=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?PytIYf4oLR6IpUOQxwOWSPiDXX/KYWL5odEbv+9nE5EvGWfCi3tRyVPruJHY?=
- =?us-ascii?Q?NemQwf/pH70sTibcUb3A96C+PA/x8vJ4xfXlz82n/xTY1n/XS+m41yFcVqZH?=
- =?us-ascii?Q?gOw7Af16dqW2n0WlWYmGog7dGKmMHVx/H2kwFCf6DnsChAup3L3Jh8pfivnr?=
- =?us-ascii?Q?fTKk6xbVFCDTeuiZYMkFpeMnnMALtNTFu10rSGvWCUiBmCIDu3Mmd8hs11C1?=
- =?us-ascii?Q?DV5cZ1Kxl8g3tBWdncAdsXvBh9StC5uFgOtZUQjlqfdjZtmmzsEw7EmdjVzT?=
- =?us-ascii?Q?bYaBHoVNBX3/OvXVYmVHyVZWMsrogtZwVZ5ExROqVCfn8P4Bh/5CKI6B5kx/?=
- =?us-ascii?Q?HWBciXdI7kkV3sDbr7XpcVmMZ39YUhW1qgXCd8RXNR95qUwOlUZLkCjiKHJ9?=
- =?us-ascii?Q?p/3RsUIfvIQgdu3OZS0t4NJcFRZ8eJeVHQ3VFRX+oOdm+kb1OSYZu7b4j0Gb?=
- =?us-ascii?Q?ZuLQN4jS/tUc+vx5/91K94VXf1PJSdSTsSGt5HE8Y8OCiyx4zJLdeCCnODm2?=
- =?us-ascii?Q?AI8+HpaYh+NhCGol3zv5w8rLtfsQ5uqI4eoUQrcuEnHot2iV7mfbPxeG5lDp?=
- =?us-ascii?Q?Vtas0H0/JS2BUUzRCs6QaTYUdURo/RkE6kLgwKles5/uHaaGkFtwXXUUm5D+?=
- =?us-ascii?Q?8FBGBB9fb3FwSkb2Ck3wfINikgVJeXeaa6VRRgR+rRWoJQu6fZus4r+wMwj2?=
- =?us-ascii?Q?IVSDiXTKXkdUwzdAvAMzIdzI8tkuVV2ZcIRtQ6GirPU0QQfH+i7OFDXyKbua?=
- =?us-ascii?Q?60zR6IooKaLUic2LLugP4Tv748Z3uYqIipKONMxVm3zpIc7OLazhVz0HSH3S?=
- =?us-ascii?Q?hMe+DAE39A10QT2isfEgsFyxO/phzWuBnps/RXnPtuKvkPMkyqQ63HYthPH4?=
- =?us-ascii?Q?NiS+QoQvz50wPLXXsE8xZ14uWwqjSNNjAFXTlgGoXrzfz97KCmSvLr8no2Tr?=
- =?us-ascii?Q?PZl8nxU2Yu3STavDlWUzctSFhjMCxFJ5nyU1YJZlOuP0YMRB1RwgEf4Df5D4?=
- =?us-ascii?Q?JNNd4cw/dCxihVrzPNkpgFfn6FCsZCmZej+pN73TMulIA0p68f+qnjcJdymu?=
- =?us-ascii?Q?VRwkfHLWLG91Ji61j6SZglLPRIjReUqtsOX3M7IdSutvngd+a9GOG2tOQwIc?=
- =?us-ascii?Q?jFSeOFfclduVW9b233inGQsmiq8DzmklF4d7q/kF5F5Il2OUDVP0krFK+EWh?=
- =?us-ascii?Q?0jZlbVrgpx/59EkwTtvKccg6w76R3RiWiiIEYmRmtWzd8s6o01hEZ4APNeaT?=
- =?us-ascii?Q?mHYzon/CYLFlGq9CrBqPHDp4rcfIzepPX23Do2t60l+xlB1+kNXlyAHNZNEO?=
- =?us-ascii?Q?+osjt8CeE4Vtbu5WJWTHmHeJm9lmsD7c4elIVyEQ8N4V7PpeGXRWYQO03ilC?=
- =?us-ascii?Q?fiBT2aL60XPjU7MJOfIJoAIotxH2mWfQLds2e+0xM6tJyoLgC9jcwAY3c84q?=
- =?us-ascii?Q?ic1rNxZ/ACpYbMTPBMiEr4I1RXMPQw0InDpHLnDX7J5VU84FAaNdRp/g/lgV?=
- =?us-ascii?Q?jqsKSR8PQ73C/dyRma0rwETibMcgmmhrgJex4jOeBBDB5Ru6jbKPhsgyiuvh?=
- =?us-ascii?Q?huSm9JhW9wM+8dsK8IbVJqkErmOl+7eLoONO3tPA2eisyBeoMjjpG3iZToTW?=
- =?us-ascii?Q?sw=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: bb5fe487-52f6-49d0-ef85-08ddffed01eb
-X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2025 06:45:56.2232
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: q1GkOL9BtcDR14jeYhz7rYXcVKYOmycbx2Kz70SKs+fi193B7WspH+ZJbrvyW9PYE6c//RmyX1bUmAZZqBMvog==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB6220
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/ksm: fix flag-dropping behavior in ksm_madvise
+To: Jakub Acs <acsjakub@amazon.de>, linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>, Xu Xin <xu.xin16@zte.com.cn>,
+ Chengming Zhou <chengming.zhou@linux.dev>, Peter Xu <peterx@redhat.com>,
+ Axel Rasmussen <axelrasmussen@google.com>,
+ Mike Kravetz <mike.kravetz@oracle.com>, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20250930063921.62354-1-acsjakub@amazon.de>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <20250930063921.62354-1-acsjakub@amazon.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+
+On 30.09.25 08:39, Jakub Acs wrote:
+> syzkaller discovered the following crash: (kernel BUG)
+> 
+> [   44.607039] ------------[ cut here ]------------
+> [   44.607422] kernel BUG at mm/userfaultfd.c:2067!
+> [   44.608148] Oops: invalid opcode: 0000 [#1] SMP DEBUG_PAGEALLOC KASAN NOPTI
+> [   44.608814] CPU: 1 UID: 0 PID: 2475 Comm: reproducer Not tainted 6.16.0-rc6 #1 PREEMPT(none)
+> [   44.609635] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
+> [   44.610695] RIP: 0010:userfaultfd_release_all+0x3a8/0x460
+> 
+> <snip other registers, drop unreliable trace>
+> 
+> [   44.617726] Call Trace:
+> [   44.617926]  <TASK>
+> [   44.619284]  userfaultfd_release+0xef/0x1b0
+> [   44.620976]  __fput+0x3f9/0xb60
+> [   44.621240]  fput_close_sync+0x110/0x210
+> [   44.622222]  __x64_sys_close+0x8f/0x120
+> [   44.622530]  do_syscall_64+0x5b/0x2f0
+> [   44.622840]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> [   44.623244] RIP: 0033:0x7f365bb3f227
+> 
+> Kernel panics because it detects UFFD inconsistency during
+> userfaultfd_release_all(). Specifically, a VMA which has a valid pointer
+> to vma->vm_userfaultfd_ctx, but no UFFD flags in vma->vm_flags.
+> 
+> The inconsistency is caused in ksm_madvise(): when user calls madvise()
+> with MADV_UNMEARGEABLE on a VMA that is registered for UFFD in MINOR
+> mode, it accidentally clears all flags stored in the upper 32 bits of
+> vma->vm_flags.
+> 
+> Assuming x86_64 kernel build, unsigned long is 64-bit and unsigned int
+> and int are 32-bit wide. This setup causes the following mishap during
+> the &= ~VM_MERGEABLE assignment.
+> 
+> VM_MERGEABLE is a 32-bit constant of type unsigned int, 0x8000'0000.
+> After ~ is applied, it becomes 0x7fff'ffff unsigned int, which is then
+> promoted to unsigned long before the & operation. This promotion fills
+> upper 32 bits with leading 0s, as we're doing unsigned conversion (and
+> even for a signed conversion, this wouldn't help as the leading bit is
+> 0). & operation thus ends up AND-ing vm_flags with 0x0000'0000'7fff'ffff
+> instead of intended 0xffff'ffff'7fff'ffff and hence accidentally clears
+> the upper 32-bits of its value.
+> 
+> Fix it by casting `VM_MERGEABLE` constant to unsigned long to preserve
+> the upper 32 bits, in case it's needed.
+> 
+> Note: other VM_* flags are not affected:
+> This only happens to the VM_MERGEABLE flag, as the other VM_* flags are
+> all constants of type int and after ~ operation, they end up with
+> leading 1 and are thus converted to unsigned long with leading 1s.
+> 
+> Note 2:
+> After commit 31defc3b01d9 ("userfaultfd: remove (VM_)BUG_ON()s"), this is
+> no longer a kernel BUG, but a WARNING at the same place:
+> 
+> [   45.595973] WARNING: CPU: 1 PID: 2474 at mm/userfaultfd.c:2067
+> 
+> but the root-cause (flag-drop) remains the same.
+> 
+> Fixes: 7677f7fd8be76 ("userfaultfd: add minor fault registration mode")
+> Signed-off-by: Jakub Acs <acsjakub@amazon.de>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Xu Xin <xu.xin16@zte.com.cn>
+> Cc: Chengming Zhou <chengming.zhou@linux.dev>
+> Cc: Peter Xu <peterx@redhat.com>
+> Cc: Axel Rasmussen <axelrasmussen@google.com>
+> Cc: Mike Kravetz <mike.kravetz@oracle.com>
+> Cc: linux-mm@kvack.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: stable@vger.kernel.org
+> ---
+> 
+> I looked around the kernel and found one more flag that might be
+> causing similar issues: "IORESOURCE_BUSY" - as its inverted version is
+> bit-anded to unsigned long fields. However, it seems those fields don't
+> actually use any bits from upper 32-bits as flags (yet?).
+> 
+> I also considered changing the constant definition by adding ULL, but am
+> not sure where else that could blow up, plus it would likely call to
+> define all the related constants as ULL for consistency. If you'd prefer
+> that fix, let me know.
+> 
+> 
+>   mm/ksm.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/mm/ksm.c b/mm/ksm.c
+> index 160787bb121c..c24137a1eeb7 100644
+> --- a/mm/ksm.c
+> +++ b/mm/ksm.c
+> @@ -2871,7 +2871,7 @@ int ksm_madvise(struct vm_area_struct *vma, unsigned long start,
+>   				return err;
+>   		}
+>   
+> -		*vm_flags &= ~VM_MERGEABLE;
+> +		*vm_flags &= ~((unsigned long) VM_MERGEABLE);
+>   		break;
+>   	}
+>   
+
+Wouldn't it be better to just do
+
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 1ae97a0b8ec75..0eaf8af153f98 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -296,7 +296,7 @@ extern unsigned int kobjsize(const void *objp);
+  #define VM_MIXEDMAP    0x10000000      /* Can contain "struct page" and pure PFN pages */
+  #define VM_HUGEPAGE    0x20000000      /* MADV_HUGEPAGE marked this vma */
+  #define VM_NOHUGEPAGE  0x40000000      /* MADV_NOHUGEPAGE marked this vma */
+-#define VM_MERGEABLE   0x80000000      /* KSM may merge identical pages */
++#define VM_MERGEABLE   0x80000000ul    /* KSM may merge identical pages */
+  
+  #ifdef CONFIG_ARCH_USES_HIGH_VMA_FLAGS
+  #define VM_HIGH_ARCH_BIT_0     32      /* bit only usable on 64-bit architectures */
 
 
+And for consistency doing it to all other flags as well? After all we have
 
-Hello,
-
-kernel test robot noticed "kernel-selftests.clone3.clone3.fail" on:
-
-commit: 0b67d4b724b4afed2690c21bef418b8a803c5be2 ("selftests/clone3: Test shadow stack support")
-https://git.kernel.org/cgit/linux/kernel/git/broonie/misc.git arm64-gcs-exit-token
-
-in testcase: kernel-selftests
-version: kernel-selftests-x86_64-592a93fea16b-1_20250918
-with following parameters:
-
-	group: clone3
-
-
-
-config: x86_64-rhel-9.4-kselftests
-compiler: gcc-14
-test machine: 36 threads 1 sockets Intel(R) Core(TM) i9-9980XE CPU @ 3.00GHz (Skylake) with 32G memory
-
-(please refer to attached dmesg/kmsg for entire log/backtrace)
-
-
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <oliver.sang@intel.com>
-| Closes: https://lore.kernel.org/oe-lkp/202509301454.adc93851-lkp@intel.com
-
-
-# timeout set to 300
-# selftests: clone3: clone3
-# TAP version 13
-# 1..24
-# # clone3() syscall supported
-# # map_shadow_stack() not supported
-# # Running test 'simple clone3()'
-# # [2448] Trying clone3() with flags 0 (size 0)
-# # I am the parent (2448). My child's pid is 2449
-# # I am the child, my PID is 2449
-# # [2448] clone3() with flags says: 0 expected 0
-# ok 1 simple clone3()
-# # Running test 'clone3() in a new PID_NS'
-# # [2448] Trying clone3() with flags 0x20000000 (size 0)
-# # I am the parent (2448). My child's pid is 2450
-# # I am the child, my PID is 1
-# # [2448] clone3() with flags says: 0 expected 0
-# ok 2 clone3() in a new PID_NS
-# # Running test 'CLONE_ARGS_SIZE_VER0'
-# # [2448] Trying clone3() with flags 0 (size 64)
-# # I am the parent (2448). My child's pid is 2451
-# # I am the child, my PID is 2451
-# # [2448] clone3() with flags says: 0 expected 0
-# ok 3 CLONE_ARGS_SIZE_VER0
-# # Running test 'CLONE_ARGS_SIZE_VER0 - 8'
-# # [2448] Trying clone3() with flags 0 (size 56)
-# # Invalid argument - Failed to create new process
-# # [2448] clone3() with flags says: -22 expected -22
-# ok 4 CLONE_ARGS_SIZE_VER0 - 8
-# # Running test 'sizeof(struct clone_args) + 8'
-# # [2448] Trying clone3() with flags 0 (size 104)
-# # I am the parent (2448). My child's pid is 2452
-# # I am the child, my PID is 2452
-# # [2448] clone3() with flags says: 0 expected 0
-# ok 5 sizeof(struct clone_args) + 8
-# # Running test 'exit_signal with highest 32 bits non-zero'
-# # [2448] Trying clone3() with flags 0 (size 0)
-# # Invalid argument - Failed to create new process
-# # [2448] clone3() with flags says: -22 expected -22
-# ok 6 exit_signal with highest 32 bits non-zero
-# # Running test 'negative 32-bit exit_signal'
-# # [2448] Trying clone3() with flags 0 (size 0)
-# # Invalid argument - Failed to create new process
-# # [2448] clone3() with flags says: -22 expected -22
-# ok 7 negative 32-bit exit_signal
-# # Running test 'exit_signal not fitting into CSIGNAL mask'
-# # [2448] Trying clone3() with flags 0 (size 0)
-# # Invalid argument - Failed to create new process
-# # [2448] clone3() with flags says: -22 expected -22
-# ok 8 exit_signal not fitting into CSIGNAL mask
-# # Running test 'NSIG < exit_signal < CSIG'
-# # [2448] Trying clone3() with flags 0 (size 0)
-# # Invalid argument - Failed to create new process
-# # [2448] clone3() with flags says: -22 expected -22
-# ok 9 NSIG < exit_signal < CSIG
-# # Running test 'Arguments sizeof(struct clone_args) + 8'
-# # [2448] Trying clone3() with flags 0 (size 104)
-# # I am the parent (2448). My child's pid is 2453
-# # I am the child, my PID is 2453
-# # [2448] clone3() with flags says: 0 expected 0
-# ok 10 Arguments sizeof(struct clone_args) + 8
-# # Running test 'Arguments sizeof(struct clone_args) + 16'
-# # [2448] Trying clone3() with flags 0 (size 112)
-# # Argument list too long - Failed to create new process
-# # [2448] clone3() with flags says: -7 expected -7
-# ok 11 Arguments sizeof(struct clone_args) + 16
-# # Running test 'Arguments sizeof(struct clone_arg) * 2'
-# # [2448] Trying clone3() with flags 0 (size 112)
-# # Argument list too long - Failed to create new process
-# # [2448] clone3() with flags says: -7 expected -7
-# ok 12 Arguments sizeof(struct clone_arg) * 2
-# # Running test 'Arguments > page size'
-# # [2448] Trying clone3() with flags 0 (size 4104)
-# # Argument list too long - Failed to create new process
-# # [2448] clone3() with flags says: -7 expected -7
-# ok 13 Arguments > page size
-# # Running test 'CLONE_ARGS_SIZE_VER0 in a new PID NS'
-# # [2448] Trying clone3() with flags 0x20000000 (size 64)
-# # I am the parent (2448). My child's pid is 2454
-# # I am the child, my PID is 1
-# # [2448] clone3() with flags says: 0 expected 0
-# ok 14 CLONE_ARGS_SIZE_VER0 in a new PID NS
-# # Running test 'CLONE_ARGS_SIZE_VER0 - 8 in a new PID NS'
-# # [2448] Trying clone3() with flags 0x20000000 (size 56)
-# # Invalid argument - Failed to create new process
-# # [2448] clone3() with flags says: -22 expected -22
-# ok 15 CLONE_ARGS_SIZE_VER0 - 8 in a new PID NS
-# # Running test 'sizeof(struct clone_args) + 8 in a new PID NS'
-# # [2448] Trying clone3() with flags 0x20000000 (size 104)
-# # I am the parent (2448). My child's pid is 2455
-# # I am the child, my PID is 1
-# # [2448] clone3() with flags says: 0 expected 0
-# ok 16 sizeof(struct clone_args) + 8 in a new PID NS
-# # Running test 'Arguments > page size in a new PID NS'
-# # [2448] Trying clone3() with flags 0x20000000 (size 4104)
-# # Argument list too long - Failed to create new process
-# # [2448] clone3() with flags says: -7 expected -7
-# ok 17 Arguments > page size in a new PID NS
-# # Running test 'New time NS'
-# # [2448] Trying clone3() with flags 0x80 (size 0)
-# # I am the parent (2448). My child's pid is 2456
-# # I am the child, my PID is 2456
-# # [2448] clone3() with flags says: 0 expected 0
-# ok 18 New time NS
-# # Running test 'exit signal (SIGCHLD) in flags'
-# # [2448] Trying clone3() with flags 0x11 (size 0)
-# # Invalid argument - Failed to create new process
-# # [2448] clone3() with flags says: -22 expected -22
-# ok 19 exit signal (SIGCHLD) in flags
-# # Shadow stack not supported
-# ok 20 # SKIP Shadow stack on system with shadow stack
-# # Shadow stack not supported
-# ok 21 # SKIP Shadow stack with misaligned address
-# # Shadow stack not supported
-# ok 22 # SKIP Shadow stack with normal memory
-# # Shadow stack not supported
-# ok 23 # SKIP Shadow stack with no token
-# # Running test 'Shadow stack on system without shadow stack'
-# # [2448] Trying clone3() with flags 0x100 (size 0)
-# # Invalid argument - Failed to create new process
-# # [2448] clone3() with flags says: -22 expected -14
-# # [2448] Result (-22) is different than expected (-14)
-# not ok 24 Shadow stack on system without shadow stack
-# # 4 skipped test(s) detected. Consider enabling relevant config options to improve coverage.
-# # Totals: pass:19 fail:1 xfail:0 xpass:0 skip:4 error:0
-not ok 1 selftests: clone3: clone3 # exit=1
-
-
-
-The kernel config and materials to reproduce are available at:
-https://download.01.org/0day-ci/archive/20250930/202509301454.adc93851-lkp@intel.com
-
-
+	typedef unsigned long vm_flags_t;
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Cheers
+
+David / dhildenb
 
 
