@@ -1,114 +1,128 @@
-Return-Path: <linux-kernel+bounces-836887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 811A7BAACDB
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 02:32:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00AD0BAACE7
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 02:36:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19AA4189FF3F
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 00:32:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B0993C4346
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 00:36:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE34B145FE0;
-	Tue, 30 Sep 2025 00:32:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A6FD15C158;
+	Tue, 30 Sep 2025 00:36:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="ecE4NoUU"
-Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
+	dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b="O3Ji+s0t"
+Received: from sender3-pp-f112.zoho.com (sender3-pp-f112.zoho.com [136.143.184.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E5698F54;
-	Tue, 30 Sep 2025 00:32:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759192333; cv=none; b=rd/xMmy2MAMt4t6aOiMS5SKLcayts7AUIvKqU/8xmrVXSqh6UUxvV5yd85LrmcCyMGRyk4iDJ9BiPSwwPSolSkAws7gbGNcw84c+OrVm9i1hmKXT30gI9a+ssf30u1/+KBwtZBW6GvvS2EdSRTIwwfbMEwLwai7FhT+d/zT83hY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759192333; c=relaxed/simple;
-	bh=+tLNx+ty8nM9Mq69rXCXs1LMIASD60kRA1Yv1OyNcjw=;
-	h=Date:From:To:Cc:Message-Id:In-Reply-To:References:Mime-Version:
-	 Content-Type:Subject; b=phadzV6P3SDd2ZVvGCUhSU8ZLaYyrX76PE9DldEoKZ2rGp16YN0tItbWX2dXcG8oP+lmQ3yzBUimD/7TeLC4HR+6qgoJF4IfXuQMGbn8xG9CY0eCyVT1GyRWFEUmyZB/rqBK/eyV1PVajml64gisXPK633a5lHCGmrXbvhUe9Go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=ecE4NoUU; arc=none smtp.client-ip=162.243.120.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
-	; s=x; h=Subject:Content-Transfer-Encoding:Mime-Version:Message-Id:Cc:To:From
-	:Date:subject:date:message-id:reply-to;
-	bh=hQOQ4L7I2CcAyJkBWqUO9MjfM4Y5ef3z7CcrWZV4qR0=; b=ecE4NoUUt4hfIN6D3D+NGrSHXU
-	kyLuDVf4dePDF+RsQOb+41YaKTZvOfJRZ5dR/HCYzXRW3/TJUNe9Ges6YqnvDmymCdgqTo7BL3cr7
-	g0Af1eIrfv87gVWt9IO9uZ4qEYo7kvoiQRxLQ8AN89odjA7vHHgQ6Yhs8BCEW0Pkx9t0=;
-Received: from modemcable168.174-80-70.mc.videotron.ca ([70.80.174.168]:43862 helo=pettiford)
-	by mail.hugovil.com with esmtpa (Exim 4.92)
-	(envelope-from <hugo@hugovil.com>)
-	id 1v3OHo-0000nE-V4; Mon, 29 Sep 2025 20:32:09 -0400
-Date: Mon, 29 Sep 2025 20:32:08 -0400
-From: Hugo Villeneuve <hugo@hugovil.com>
-To: Jiri Slaby <jirislaby@kernel.org>
-Cc: gregkh@linuxfoundation.org, fvallee@eukrea.fr,
- linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, Hugo Villeneuve
- <hvilleneuve@dimonoff.com>
-Message-Id: <20250929203208.507952a1d6454a94427dee50@hugovil.com>
-In-Reply-To: <a7fe7f1e-df3f-4823-a19c-b581e8bb0eea@kernel.org>
-References: <20250924153740.806444-1-hugo@hugovil.com>
-	<20250924153740.806444-7-hugo@hugovil.com>
-	<a7fe7f1e-df3f-4823-a19c-b581e8bb0eea@kernel.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5512B140E5F;
+	Tue, 30 Sep 2025 00:36:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.184.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759192604; cv=pass; b=mXx6OPuSJKyyOMvoRkWvc7gUlHLnBQtUh76+sFpNRORonVlHBP1GKizXzhdSfxRlo5ykb+p41sJvpDQoO7lJAV+5QH7i7SrXFm4DfVwe10IO+x6HE36pFw6Wt0jTP5qT+xtZsDcFQP3oYdsCCMWzuJ5wS5wZYqneDjxiurALaG8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759192604; c=relaxed/simple;
+	bh=0dmw+NX0SV+++5sYlZaNjj5lFZzOb2zEdPom2w5GJ28=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KXfKivLQd/f72G8PeIvKXqBwgNvx/ooZ74DKSQ7FlLHG/FfA4Ucq2/AO4MyNprIeM4MtdJi2/Ft1JNzCBaxeqJvCGLg6twVUFT/p2pVIK8FUC29RJdjnEN5H4MLCiiLWPhLF4QOEblLUthHgsaxvls1QgUByzdkndz2U4lXOewg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.beauty; spf=pass smtp.mailfrom=linux.beauty; dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b=O3Ji+s0t; arc=pass smtp.client-ip=136.143.184.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.beauty
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.beauty
+ARC-Seal: i=1; a=rsa-sha256; t=1759192572; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Gzzvatf2+sOjcLRAR35rfF6PyBpIAs2zctN6lNO2evh/mpIP7fD1GVTcbKuJECN9VPY3dG4T+kgi97611gXES0990c2xlbSrmT9lgscxazjJ3We7DQV7JP6U7hVS1x/mboZp4vRetKQzCYWI0C8SqBV37GMDc4ayN/vN9r9Gsl4=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1759192572; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=hydiAdnjg/6bowrEjqyPCxKqacoOwPu3GjH+2V9IjnI=; 
+	b=N072Nz1wP8msVfX2z6Vb4QI8eM7xVRQCzU+3xnOuAiKtpjL1+OszzPlYWmQQMRVJoxi1NdgnR2U2n/6gz3dL8YG2cXqFWo0lv0z8r0KXvKo/Ik2hZc/13/5Xh8/gCSOoETVkLBPpUVVkK5m+tDVjFI2hKPOv+eNnjjBxSctdPlo=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=linux.beauty;
+	spf=pass  smtp.mailfrom=me@linux.beauty;
+	dmarc=pass header.from=<me@linux.beauty>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1759192571;
+	s=zmail; d=linux.beauty; i=me@linux.beauty;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=hydiAdnjg/6bowrEjqyPCxKqacoOwPu3GjH+2V9IjnI=;
+	b=O3Ji+s0tXa3c2jQrZHN7aZtOznofbmue9EnDAJIFiXn9A16jwC4x8w+bzihQDdwq
+	/QlgieInSYZMTKQMDYqtT4GTl5vJPUpPQ2him4WI4mKmWeGSLHY4e8APRLTjMWlIKCL
+	fbA53BHKKcsPHj9oMc6d43EdZVsdDry9A8LBBq4U=
+Received: by mx.zohomail.com with SMTPS id 1759192569234211.8709219622018;
+	Mon, 29 Sep 2025 17:36:09 -0700 (PDT)
+From: Li Chen <me@linux.beauty>
+To: Jens Axboe <axboe@kernel.dk>,
+	Lizhi Xu <lizhi.xu@windriver.com>,
+	linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org,
+	"Markus Elfring" <Markus.Elfring@web.de>,
+	"Yang Erkun" <yangerkun@huawei.com>,
+	"Ming Lei" <ming.lei@redhat.com>,
+	"Yu Kuai" <yukuai1@huaweicloud.com>
+Subject: [PATCH v2] loop: fix backing file reference leak on validation error
+Date: Tue, 30 Sep 2025 08:35:59 +0800
+Message-ID: <20250930003559.708798-1-me@linux.beauty>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 70.80.174.168
-X-SA-Exim-Mail-From: hugo@hugovil.com
-X-Spam-Level: 
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	* -2.3 NICE_REPLY_A Looks like a legit reply (A)
-Subject: Re: [PATCH 06/15] serial: sc16is7xx: use dev_err_probe() instead of
- dev_err()
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-Hi Jiri,
+loop_change_fd() and loop_configure() call loop_check_backing_file()
+to validate the new backing file. If validation fails, the reference
+acquired by fget() was not dropped, leaking a file reference.
 
-On Mon, 29 Sep 2025 08:10:17 +0200
-Jiri Slaby <jirislaby@kernel.org> wrote:
+Fix this by calling fput(file) before returning the error.
 
-> On 24. 09. 25, 17:37, Hugo Villeneuve wrote:
-> > From: Hugo Villeneuve <hvilleneuve@dimonoff.com>
-> > 
-> > This simplifies code and standardizes the error output.
-> > 
-> > Signed-off-by: Hugo Villeneuve <hvilleneuve@dimonoff.com>
-> > ---
-> >   drivers/tty/serial/sc16is7xx.c | 7 +++----
-> >   1 file changed, 3 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/tty/serial/sc16is7xx.c b/drivers/tty/serial/sc16is7xx.c
-> > index 7af09535a1563..4384804a4e228 100644
-> > --- a/drivers/tty/serial/sc16is7xx.c
-> > +++ b/drivers/tty/serial/sc16is7xx.c
-> > @@ -1528,10 +1528,9 @@ int sc16is7xx_probe(struct device *dev, const struct sc16is7xx_devtype *devtype,
-> >   
-> >   	/* Alloc port structure */
-> >   	s = devm_kzalloc(dev, struct_size(s, p, devtype->nr_uart), GFP_KERNEL);
-> > -	if (!s) {
-> > -		dev_err(dev, "Error allocating port structure\n");
-> > -		return -ENOMEM;
-> > -	}
-> > +	if (!s)
-> > +		return dev_err_probe(dev, -ENOMEM,
-> > +				     "Error allocating port structure\n");
-> 
-> This does not work as you'd expect:
->          case -ENOMEM:
->                  /* Don't print anything on -ENOMEM, there's already 
-> enough output */
->                  break;
+Cc: stable@vger.kernel.org
+Cc: "Markus Elfring"<Markus.Elfring@web.de>
+CC: "Yang Erkun" <yangerkun@huawei.com>
+Cc: "Ming Lei"<ming.lei@redhat.com>
+Cc: "Yu Kuai"<yukuai1@huaweicloud.com>
+Fixes: f5c84eff634b ("loop: Add sanity check for read/write_iter")
+Signed-off-by: Li Chen <chenl311@chinatelecom.cn>
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
+Reviewed-by: Yang Erkun <yangerkun@huawei.com>
+---
+changelog:
+v2: add review by, Fixes and cc stable tags.
 
-Ok, I will simply remove the original dev_err() call.
+ drivers/block/loop.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-Hugo.
+diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+index 053a086d547e..94ec7f747f36 100644
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -551,8 +551,10 @@ static int loop_change_fd(struct loop_device *lo, struct block_device *bdev,
+ 		return -EBADF;
+ 
+ 	error = loop_check_backing_file(file);
+-	if (error)
++	if (error) {
++		fput(file);
+ 		return error;
++	}
+ 
+ 	/* suppress uevents while reconfiguring the device */
+ 	dev_set_uevent_suppress(disk_to_dev(lo->lo_disk), 1);
+@@ -993,8 +995,10 @@ static int loop_configure(struct loop_device *lo, blk_mode_t mode,
+ 		return -EBADF;
+ 
+ 	error = loop_check_backing_file(file);
+-	if (error)
++	if (error) {
++		fput(file);
+ 		return error;
++	}
+ 
+ 	is_loop = is_loop_device(file);
+ 
+-- 
+2.51.0
+
 
