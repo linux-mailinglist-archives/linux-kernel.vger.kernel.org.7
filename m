@@ -1,249 +1,218 @@
-Return-Path: <linux-kernel+bounces-837196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43467BABAA3
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 08:31:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12BC9BABAAF
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 08:32:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9B5A7A783C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 06:30:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 524853C270D
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 06:32:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83FFB248F51;
-	Tue, 30 Sep 2025 06:31:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 603E1280309;
+	Tue, 30 Sep 2025 06:32:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="yLrGcdBX"
-Received: from canpmsgout05.his.huawei.com (canpmsgout05.his.huawei.com [113.46.200.220])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UyXeFBPs"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBCE2224AEF
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 06:31:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.220
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDBF822B8D0
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 06:32:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759213906; cv=none; b=evn6NyAM3JmsL8ZaVUdOcnzU3aP9mmdigkPsvInvlb3SWRsEXAz5b1k9bsiKHe7+H5K8B8hhyM7LqYJ4i+50OtKl+6gDeD9eqIBTZ8iIb4Er5b6DQ399PND7x9+yDiRd5DV4lpFI254+y0jc2HyyfnIbAao+kNGqD2OvNPRnFwU=
+	t=1759213931; cv=none; b=hdCBpgmIPR5D63qW9iJqUQyXlUKgSe5/HC3QBysAewTuoAuC0pBNq/aC8sRx0VrVv04I7pqrSkVnggmy4EQrSNxFKBoVOGjlYtCMb9usgUKeO+uZ6Cv7LUjaq+ptS7qW3PFbiASqkqK4kYYiopwGtDMbuXcoRkT16L/B1fJs+Vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759213906; c=relaxed/simple;
-	bh=3BUzruO98xegBEy3Goi3ezeWcXr7FKTMgIlelLmhQCM=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=jUjJ3MRzktRIcBy8q/+djSI844TqVEd37CUmw7axciEr7feJLYvFIs6uBsOkVOWgt1tdC2iisNXaqAMUIgKYoC5qxnMkGlihgEaILe+f4Nj5FchFkiSMFvWQHLnCiNjIHJ0J/3ZccGEevcLvc3RBb0Cs3TYFxizgtJt51DkDY9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=yLrGcdBX; arc=none smtp.client-ip=113.46.200.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=uUCA7eVrP/zVqrhbttxDcCsaHz85pF/bBDpoThnF+xc=;
-	b=yLrGcdBX+ePJr6aOloP5qw0PA3hSv1zBPQ4LN+kMhgLIk/O/f8e6/5fUbSpj1xWW/mp15U9d2
-	tLPsemmNezgfiu9EKmCGT4KE05SVs3JTbKbzl6VraNE6jShFj/ykz1eKPNA0OgTpuJVRWh1tEDt
-	2v6OZdVDnuqPvCgpAzQ9dJQ=
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by canpmsgout05.his.huawei.com (SkyGuard) with ESMTPS id 4cbSrf6GCtz12LDF;
-	Tue, 30 Sep 2025 14:31:46 +0800 (CST)
-Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1F2D91800B1;
-	Tue, 30 Sep 2025 14:31:38 +0800 (CST)
-Received: from kwepemq500010.china.huawei.com (7.202.194.235) by
- dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 30 Sep 2025 14:31:37 +0800
-Received: from [10.173.125.236] (10.173.125.236) by
- kwepemq500010.china.huawei.com (7.202.194.235) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 30 Sep 2025 14:31:36 +0800
-Subject: Re: [syzbot] [mm?] WARNING in memory_failure
-To: <jane.chu@oracle.com>
-CC: David Hildenbrand <david@redhat.com>, Luis Chamberlain
-	<mcgrof@kernel.org>, syzbot
-	<syzbot+e6367ea2fdab6ed46056@syzkaller.appspotmail.com>,
-	<akpm@linux-foundation.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mm@kvack.org>, <nao.horiguchi@gmail.com>,
-	<syzkaller-bugs@googlegroups.com>, "Pankaj Raghav (Samsung)"
-	<kernel@pankajraghav.com>, Zi Yan <ziy@nvidia.com>
-References: <68d2c943.a70a0220.1b52b.02b3.GAE@google.com>
- <ce93b55c-75a7-4b4d-a68b-9d80baf1578b@redhat.com>
- <DB0E39CD-36A9-4929-BCC6-33F27E387AEA@nvidia.com>
- <70522abd-c03a-43a9-a882-76f59f33404d@redhat.com>
- <B0781266-D168-4DCB-BFCE-3EA01F43F184@nvidia.com>
- <cad74ef8-3543-4fc5-a175-8fc23a88776a@redhat.com>
- <E82638DD-9E5D-4C69-AA0F-7DDC0E3D109B@nvidia.com>
- <fzfcprayhtwbyuauld5geudyzzrslcb3luaneejq4hyq2aqm3l@iwpn2n33gi3m>
- <80D4F8CE-FCFF-44F9-8846-6098FAC76082@nvidia.com>
- <w2kwxcd6br6h4tdn6xigtuf73qklt6jhxvhtcwp7idugycgxlv@vqjx26vrnwu5>
- <594350a0-f35d-472b-9261-96ce2715d402@oracle.com>
- <7577871f-06be-492d-b6d7-8404d7a045e0@oracle.com>
- <c61ca94b-5b19-4c69-b2a1-d11a5301c6bb@oracle.com>
- <d15fec58-58ad-fd20-7130-9c480df43d15@huawei.com>
- <8d39b975-b85f-42f2-8be4-0b7adee09dd6@oracle.com>
-From: Miaohe Lin <linmiaohe@huawei.com>
-Message-ID: <c97dedf5-0f45-5082-64b6-ef0772dc33a3@huawei.com>
-Date: Tue, 30 Sep 2025 14:31:36 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+	s=arc-20240116; t=1759213931; c=relaxed/simple;
+	bh=gSb9hpVnAiK+wrme2rMztoHStdeHptdWeSiVsTpjXJc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uQjufVM2AsxYOlr+Jia9K7H+CG7q552If3gISG6ptGI9JuLTRIhYhip1LpUUXxsgsFtQhTRiD3LlbNFI5HOsONtuYm/6QUS/3BogAHtnQRQT5uu+zLmPFZIEJawudeupoPfjV68VBwjfvfMZH8P7JAXphRrwSln87HKsjiX3MP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UyXeFBPs; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759213928;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=QZxX8N/sKGJlVE5pAbHGzUpk3+c3k9/cnQoJvNOE3+s=;
+	b=UyXeFBPsDgFrA2cYtx4gidLOXcoLvnioHaVRn8j8KFSeG/LVbF4iJhWIuWEvXQHmO7XcPt
+	un+XUSOa3zNqADQ+FgRdgPMmVBqIj0wv+3XvqbmwzZWbSos4I1TzASsoXGkBKbK768LOZ3
+	Mh/V5Z9rF3sljuOHUGYrMRggbl+Sr1I=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-511-bMDE2idwOLy5hr1HixHa_A-1; Tue, 30 Sep 2025 02:31:56 -0400
+X-MC-Unique: bMDE2idwOLy5hr1HixHa_A-1
+X-Mimecast-MFC-AGG-ID: bMDE2idwOLy5hr1HixHa_A_1759213916
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3f42b54d159so4150204f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 23:31:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759213915; x=1759818715;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QZxX8N/sKGJlVE5pAbHGzUpk3+c3k9/cnQoJvNOE3+s=;
+        b=FXO2Hp1TKPlUo/LVA7RsX2WK43xrbtoboyojPCuAnY9totECKOXVLsVhBsiJ3Y2vN+
+         fh/9xSgeLSxbSP6IsRZEYGI8ipyAYEUbPMAAIc08SqpPPUyFW3rjH0coo1sBvAfWc5oF
+         HiqB7qzfLlDheYZV2KOX2MawNFKFan7dpEhiU6JBzyH3ZMp1zdUjoeK6xYE8vYZkYRp3
+         rNuQUhJWrjUAhCXpUl6PkrenWkUwkl3EtiAyo1gi8QMS4lYrBLFP5S3YEw9MTzYY0U2m
+         laHPu4hcNY6BOFVbiGmOLrngyYkYmBtl1KhJEd+mTyXj6ThH2DgY3W0Ke0bpCFYXbJDO
+         x4NQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVSiPTacWgzdc1Icip3S+qfAFSo5zBbDyQLJp9XpyxfdJyzqRLRdQ8WUnf4BRfmLHBlwckZ57B40ZcCpfo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCebgUTaFz6IfJtPkO/Y/LTrs9/YZ1p/byj61f8msdZlQRrz7f
+	Ls//QpWbKRD8TTSFdopaKWVSCnKSZN0xikOqg78gPPlgNh+zU57uEbaV242zmwEEU52DvuCOH/r
+	ZYSlOescSmzwWan4x+M0rW66RF52HDgmaZZ3uDZrUFMblCQFd179OLzfBKuWmlKmMBQ==
+X-Gm-Gg: ASbGncsKGRz0R+HklhfXxYWgZvav49memYiKbn3ZUpDGwm19U3LzjaKiTdh5FS0il8f
+	/Oq9q2WzFO0xHDOeEHkSWQKg1j9y3kaS3qWfInCb52o4iS9kpFPbLtO3yD4ozmgSH4J34u4MZtG
+	GQNzk/3vnQgajeqLY9YvOXvsH/To3zOWcIk+FW5pJ+9T1knsabM9ZNUpVKDkrr2vlKAygalSHJg
+	TRtLKqFx+/XLYbu3/dZ1UnQIXQsrIgwCvFtTTY5W476lEYaTozEu40PRG0tSZhEEvjJLXooYLp3
+	7vda9PHUyAnW3iI02hCmqgx7aXmH2tM/gDkHq03HUH+XGlgJB3EvEOpVo8iS3XYBVV7xZRHGK6o
+	yNKznSXpz
+X-Received: by 2002:a05:6000:2901:b0:3eb:60a6:3167 with SMTP id ffacd0b85a97d-40e4bb2f6c4mr16567499f8f.32.1759213915565;
+        Mon, 29 Sep 2025 23:31:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGmobp+tOjJOF//PmKFIcM6NnU02g+dLKnBZaleTbh+vwqdgi1vbm7nrtaV/IIxMnFIr9mjRQ==
+X-Received: by 2002:a05:6000:2901:b0:3eb:60a6:3167 with SMTP id ffacd0b85a97d-40e4bb2f6c4mr16567476f8f.32.1759213915104;
+        Mon, 29 Sep 2025 23:31:55 -0700 (PDT)
+Received: from ?IPV6:2a01:599:901:4a65:f2e2:845:f3d2:404d? ([2a01:599:901:4a65:f2e2:845:f3d2:404d])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fb9e1b665sm21132349f8f.27.2025.09.29.23.31.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 29 Sep 2025 23:31:53 -0700 (PDT)
+Message-ID: <026a2673-8195-4927-8cde-f7517b601125@redhat.com>
+Date: Tue, 30 Sep 2025 08:31:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <8d39b975-b85f-42f2-8be4-0b7adee09dd6@oracle.com>
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/1] mm/rmap: fix soft-dirty and uffd-wp bit loss when
+ remapping zero-filled mTHP subpage to shared zeropage
+To: Lance Yang <lance.yang@linux.dev>, akpm@linux-foundation.org,
+ lorenzo.stoakes@oracle.com
+Cc: peterx@redhat.com, ziy@nvidia.com, baolin.wang@linux.alibaba.com,
+ baohua@kernel.org, ryan.roberts@arm.com, dev.jain@arm.com,
+ npache@redhat.com, riel@surriel.com, Liam.Howlett@oracle.com,
+ vbabka@suse.cz, harry.yoo@oracle.com, jannh@google.com,
+ matthew.brost@intel.com, joshua.hahnjy@gmail.com, rakie.kim@sk.com,
+ byungchul@sk.com, gourry@gourry.net, ying.huang@linux.alibaba.com,
+ apopple@nvidia.com, usamaarif642@gmail.com, yuzhao@google.com,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, ioworker0@gmail.com,
+ stable@vger.kernel.org
+References: <20250930060557.85133-1-lance.yang@linux.dev>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemq500010.china.huawei.com (7.202.194.235)
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <20250930060557.85133-1-lance.yang@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 2025/9/30 12:35, jane.chu@oracle.com wrote:
+On 30.09.25 08:05, Lance Yang wrote:
+> From: Lance Yang <lance.yang@linux.dev>
 > 
+> When splitting an mTHP and replacing a zero-filled subpage with the shared
+> zeropage, try_to_map_unused_to_zeropage() currently drops several important
+> PTE bits.
 > 
-> On 9/29/2025 7:51 PM, Miaohe Lin wrote:
->> On 2025/9/30 2:23, jane.chu@oracle.com wrote:
->>>
->>>
->>> On 9/29/2025 10:49 AM, jane.chu@oracle.com wrote:
->>>>
->>>> On 9/29/2025 10:29 AM, jane.chu@oracle.com wrote:
->>>>>
->>>>> On 9/29/2025 4:08 AM, Pankaj Raghav (Samsung) wrote:
->>>>>>>
->>>>>>> I want to change all the split functions in huge_mm.h and provide
->>>>>>> mapping_min_folio_order() to try_folio_split() in truncate_inode_partial_folio().
->>>>>>>
->>>>>>> Something like below:
->>>>>>>
->>>>>>> 1. no split function will change the given order;
->>>>>>> 2. __folio_split() will no longer give VM_WARN_ONCE when provided new_order
->>>>>>> is smaller than mapping_min_folio_order().
->>>>>>>
->>>>>>> In this way, for an LBS folio that cannot be split to order 0, split
->>>>>>> functions will return -EINVAL to tell caller that the folio cannot
->>>>>>> be split. The caller is supposed to handle the split failure.
->>>>>>
->>>>>> IIUC, we will remove warn on once but just return -EINVAL in __folio_split()
->>>>>> function if new_order < min_order like this:
->>>>>> ...
->>>>>>          min_order = mapping_min_folio_order(folio->mapping);
->>>>>>          if (new_order < min_order) {
->>>>>> -            VM_WARN_ONCE(1, "Cannot split mapped folio below min- order: %u",
->>>>>> -                     min_order);
->>>>>>              ret = -EINVAL;
->>>>>>              goto out;
->>>>>>          }
->>>>>> ...
->>>>>
->>>>> Then the user process will get a SIGBUS indicting the entire huge page at higher order -
->>>>>                   folio_set_has_hwpoisoned(folio);
->>>>>                   if (try_to_split_thp_page(p, false) < 0) {
->>>>>                           res = -EHWPOISON;
->>>>>                           kill_procs_now(p, pfn, flags, folio);
->>>>>                           put_page(p);
->>>>>                           action_result(pfn, MF_MSG_UNSPLIT_THP, MF_FAILED);
->>>>>                           goto unlock_mutex;
->>>>>                   }
->>>>>                   VM_BUG_ON_PAGE(!page_count(p), p);
->>>>>                   folio = page_folio(p);
->>>>>
->>>>> the huge page is not usable any way, kind of similar to the hugetlb page situation: since the page cannot be splitted, the entire page is marked unusable.
->>>>>
->>>>> How about keep the current huge page split code as is, but change the M- F code to recognize that in a successful splitting case, the poisoned page might just be in a lower folio order, and thus, deliver the SIGBUS ?
->>>>>
->>>>> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
->>>>> index a24806bb8e82..342c81edcdd9 100644
->>>>> --- a/mm/memory-failure.c
->>>>> +++ b/mm/memory-failure.c
->>>>> @@ -2291,7 +2291,9 @@ int memory_failure(unsigned long pfn, int flags)
->>>>>                    * page is a valid handlable page.
->>>>>                    */
->>>>>                   folio_set_has_hwpoisoned(folio);
->>>>> -               if (try_to_split_thp_page(p, false) < 0) {
->>>>> +               ret = try_to_split_thp_page(p, false);
->>>>> +               folio = page_folio(p);
->>>>> +               if (ret < 0 || folio_test_large(folio)) {
->>>>>                           res = -EHWPOISON;
->>>>>                           kill_procs_now(p, pfn, flags, folio);
->>>>>                           put_page(p);
->>>>> @@ -2299,7 +2301,6 @@ int memory_failure(unsigned long pfn, int flags)
->>>>>                           goto unlock_mutex;
->>>>>                   }
->>>>>                   VM_BUG_ON_PAGE(!page_count(p), p);
->>>>> -               folio = page_folio(p);
->>>>>           }
->>>>>
->>>>> thanks,
->>>>> -jane
->>>>
->>>> Maybe this is better, in case there are other reason for split_huge_page() to return -EINVAL.
->>>>
->>>> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
->>>> index a24806bb8e82..2bfa05acae65 100644
->>>> --- a/mm/memory-failure.c
->>>> +++ b/mm/memory-failure.c
->>>> @@ -1659,9 +1659,10 @@ static int identify_page_state(unsigned long pfn, struct page *p,
->>>>    static int try_to_split_thp_page(struct page *page, bool release)
->>>>    {
->>>>           int ret;
->>>> +       int new_order = min_order_for_split(page_folio(page));
->>>>
->>>>           lock_page(page);
->>>> -       ret = split_huge_page(page);
->>>> +       ret = split_huge_page_to_list_to_order(page, NULL, new_order);
->>>>           unlock_page(page);
->>>>
->>>>           if (ret && release)
->>>> @@ -2277,6 +2278,7 @@ int memory_failure(unsigned long pfn, int flags)
->>>>           folio_unlock(folio);
->>>>
->>>>           if (folio_test_large(folio)) {
->>>> +               int ret;
->>>>                   /*
->>>>                    * The flag must be set after the refcount is bumped
->>>>                    * otherwise it may race with THP split.
->>>> @@ -2291,7 +2293,9 @@ int memory_failure(unsigned long pfn, int flags)
->>>>                    * page is a valid handlable page.
->>>>                    */
->>>>                   folio_set_has_hwpoisoned(folio);
->>>> -               if (try_to_split_thp_page(p, false) < 0) {
->>>> +               ret = try_to_split_thp_page(p, false);
->>>> +               folio = page_folio(p);
->>>> +               if (ret < 0 || folio_test_large(folio)) {
->>>>                           res = -EHWPOISON;
->>>>                           kill_procs_now(p, pfn, flags, folio);
->>>>                           put_page(p);
->>>> @@ -2299,7 +2303,6 @@ int memory_failure(unsigned long pfn, int flags)
->>>>                           goto unlock_mutex;
->>>>                   }
->>>>                   VM_BUG_ON_PAGE(!page_count(p), p);
->>>> -               folio = page_folio(p);
->>>>           }
->>>>
->>>>           /*
->>>> @@ -2618,7 +2621,8 @@ static int soft_offline_in_use_page(struct page *page)
->>>>           };
->>>>
->>>>           if (!huge && folio_test_large(folio)) {
->>>> -               if (try_to_split_thp_page(page, true)) {
->>>> +               if ((try_to_split_thp_page(page, true)) ||
->>>> +                       folio_test_large(page_folio(page))) {
->>>>                           pr_info("%#lx: thp split failed\n", pfn);
->>>>                           return -EBUSY;
->>>>                   }
->>>
->>> In soft offline, better to check if (min_order_for_split > 0), no need to split, just return for now ...
->>
->> I might be miss something but why we have to split it? Could we migrate the whole thp or folio with min_order instead?
+> For userspace tools like CRIU, which rely on the soft-dirty mechanism for
+> incremental snapshots, losing the soft-dirty bit means modified pages are
+> missed, leading to inconsistent memory state after restore.
 > 
-> The soft offline code was originally written with the assumption that only 1 base page will be offlined.
+> As pointed out by David, the more critical uffd-wp bit is also dropped.
+> This breaks the userfaultfd write-protection mechanism, causing writes
+> to be silently missed by monitoring applications, which can lead to data
+> corruption.
+> 
+> Preserve both the soft-dirty and uffd-wp bits from the old PTE when
+> creating the new zeropage mapping to ensure they are correctly tracked.
+> 
+> Cc: <stable@vger.kernel.org>
+> Fixes: b1f202060afe ("mm: remap unused subpages to shared zeropage when splitting isolated thp")
+> Suggested-by: David Hildenbrand <david@redhat.com>
+> Suggested-by: Dev Jain <dev.jain@arm.com>
+> Acked-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Lance Yang <lance.yang@linux.dev>
+> ---
+> v2 -> v3:
+>   - ptep_get() gets called only once per iteration (per Dev)
+>   - https://lore.kernel.org/linux-mm/20250930043351.34927-1-lance.yang@linux.dev/
+> 
+> v1 -> v2:
+>   - Avoid calling ptep_get() multiple times (per Dev)
+>   - Double-check the uffd-wp bit (per David)
+>   - Collect Acked-by from David - thanks!
+>   - https://lore.kernel.org/linux-mm/20250928044855.76359-1-lance.yang@linux.dev/
+> 
+>   mm/migrate.c | 14 ++++++++++----
+>   1 file changed, 10 insertions(+), 4 deletions(-)
+> 
+> diff --git a/mm/migrate.c b/mm/migrate.c
+> index ce83c2c3c287..bafd8cb3bebe 100644
+> --- a/mm/migrate.c
+> +++ b/mm/migrate.c
+> @@ -297,6 +297,7 @@ bool isolate_folio_to_list(struct folio *folio, struct list_head *list)
+>   
+>   static bool try_to_map_unused_to_zeropage(struct page_vma_mapped_walk *pvmw,
+>   					  struct folio *folio,
+> +					  pte_t old_pte,
+>   					  unsigned long idx)
 
-Yes, only page corresponding to parameter @pfn of soft_offline_page() will be offlined.
+Nit:
 
->
-> With the recent introduction of min_order, it might quietly offline multiple pages, is that a desirable thing? 
+static bool try_to_map_unused_to_zeropage(struct page_vma_mapped_walk *pvmw,
+		struct folio *folio, pte_t old_pte, unsigned long idx)
 
-I don't think so. Even if try_to_split_thp_page splits folio into smaller one with min_order, page_handle_poison()
-will put back the folio into buddy after migrate_pages, set the hwpoisoned flag to raw error page and hold the extra
-refcnt. So only raw error page will be offlined while other sub-pages will be put back into buddy.
-Or am I miss something?
+LGTM, Thanks!
 
-Thanks.
-.
+-- 
+Cheers
+
+David / dhildenb
+
 
