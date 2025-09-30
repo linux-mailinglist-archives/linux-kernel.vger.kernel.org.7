@@ -1,62 +1,50 @@
-Return-Path: <linux-kernel+bounces-837864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F11ABADE76
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:31:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D35BBADBA9
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:21:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98E6A1895044
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 15:31:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42F793204BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 15:20:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE7303090C9;
-	Tue, 30 Sep 2025 15:30:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="P1AWzQlf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DC5B308F16;
-	Tue, 30 Sep 2025 15:30:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB53F3043CC;
+	Tue, 30 Sep 2025 15:20:25 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91B08173;
+	Tue, 30 Sep 2025 15:20:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759246251; cv=none; b=LDad9l4/O09rQxekijVXJxDM/MDVeYxQpYDTFh+w/BjuUhK4lf4iZLKiWneyjoe0F70eITb4rpPC/ItY5Lsrm1ZOhOGd3OcEAE25tnPg/ezRe+XKZQmzRbfsWmEWG0OaAp13YLKCguA3U5PH1DHvbvUSqaVqH+MWbRsq13YwmTU=
+	t=1759245625; cv=none; b=LfO6qclTzixVT/VdI1NjBY66xeKeRHAoYD6ye7LMCo9NyV+YIwkwFyEiicSw8Rzc6qeW1PXrNtmKItifV+TVd98jJbMIEgiBC0aTWPStll/1SHj6Oz/Qo/7M1ea2v98qs5xFrKAwONuWU1pl/MyJpDBYWJlBfDmeoJ2NBO2rXGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759246251; c=relaxed/simple;
-	bh=ooCBmh9/CIFksOUqUMHAhlpwhUo/LkdrKCdrIJqspQ8=;
+	s=arc-20240116; t=1759245625; c=relaxed/simple;
+	bh=4e30QlnkrFHP1IK4ssY3GXRdwGRiC58ydkd81fVN7Ac=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X+Yx4F7FWZUmOZWVoNxjUNSk+yW2T9X34ba2BhEXafo1wcTxMMgSY8R9XLMtTePF2SElcoBVkRNXY7LyVmlUVtBtUmeYq/aku/wpjfF4V/Iqxotq5EUTUlxaoWw1oLNE1AgDfvaVMA14uqannBHPphgRiXQX61h9h11XNSty7k4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=P1AWzQlf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98E4CC116B1;
-	Tue, 30 Sep 2025 15:30:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1759246251;
-	bh=ooCBmh9/CIFksOUqUMHAhlpwhUo/LkdrKCdrIJqspQ8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=P1AWzQlf/lNFmWR+oBolQ1gpkB7lj3kSS+2c2XsKANZ4fe0hKeMEOzggQX8Iubj+/
-	 Ys5tZkqKhkAlfn/OGjFzHu49RZLryle+q3Bd7XdOrrj0JTXQLfVb46MPKp/0LFsTSm
-	 j8K2Z0Ic6yreOfAgQ7o0vASDaSF8Tx9rCk+gDL1M=
-Date: Tue, 30 Sep 2025 17:17:10 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Chris Li <chrisl@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, Len Brown <lenb@kernel.org>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-acpi@vger.kernel.org, David Matlack <dmatlack@google.com>,
-	Pasha Tatashin <tatashin@google.com>,
-	Jason Miu <jasonmiu@google.com>, Vipin Sharma <vipinsh@google.com>,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Adithya Jayachandran <ajayachandra@nvidia.com>,
-	Parav Pandit <parav@nvidia.com>, William Tu <witu@nvidia.com>,
-	Mike Rapoport <rppt@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Leon Romanovsky <leon@kernel.org>
-Subject: Re: [PATCH v2 01/10] PCI/LUO: Register with Liveupdate Orchestrator
-Message-ID: <2025093014-qualify-scoop-c406@gregkh>
-References: <20250916-luo-pci-v2-0-c494053c3c08@kernel.org>
- <20250916-luo-pci-v2-1-c494053c3c08@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rnX8oseEwfsqj+SiF7qltMyW/rBnpDxpkj8cao2jP9zYOnHVJmKTtU+SG9GNz2YAIO3cMbyvGD7l9w9C5aneR99HfTdpJJ+5BOr+V8shZ2VeiI+RdQeKHVq04pgWuFmTZEW57mXWrThOLaT6xiqx66mXOoJliQJ6nfroL6G92qE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A97D81424;
+	Tue, 30 Sep 2025 08:20:14 -0700 (PDT)
+Received: from localhost (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 59BD13F59E;
+	Tue, 30 Sep 2025 08:20:22 -0700 (PDT)
+Date: Tue, 30 Sep 2025 16:20:20 +0100
+From: Leo Yan <leo.yan@arm.com>
+To: James Clark <james.clark@linaro.org>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>, coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH v2 0/6] coresight: Add format attribute for setting the
+ timestamp interval
+Message-ID: <20250930152020.GL7985@e132581.arm.com>
+References: <20250814-james-cs-syncfreq-v2-0-c76fcb87696d@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,118 +53,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250916-luo-pci-v2-1-c494053c3c08@kernel.org>
+In-Reply-To: <20250814-james-cs-syncfreq-v2-0-c76fcb87696d@linaro.org>
 
-On Tue, Sep 16, 2025 at 12:45:09AM -0700, Chris Li wrote:
-> Register PCI subsystem with the Liveupdate Orchestrator
-> and provide noop liveupdate callbacks.
-> 
-> Signed-off-by: Chris Li <chrisl@kernel.org>
-> ---
->  MAINTAINERS              |  2 ++
->  drivers/pci/Makefile     |  1 +
->  drivers/pci/liveupdate.c | 54 ++++++++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 57 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 91cec3288cc81aea199f730924eee1f5fda1fd72..85749a5da69f88544ccc749e9d723b1b54c0e3b7 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -14014,11 +14014,13 @@ F:	tools/testing/selftests/livepatch/
->  
->  LIVE UPDATE
->  M:	Pasha Tatashin <pasha.tatashin@soleen.com>
-> +M:	Chris Li <chrisl@kernel.org>
->  L:	linux-kernel@vger.kernel.org
->  S:	Maintained
->  F:	Documentation/ABI/testing/sysfs-kernel-liveupdate
->  F:	Documentation/admin-guide/liveupdate.rst
->  F:	drivers/misc/liveupdate/
-> +F:	drivers/pci/liveupdate/
->  F:	include/linux/liveupdate.h
->  F:	include/uapi/linux/liveupdate.h
->  F:	tools/testing/selftests/liveupdate/
-> diff --git a/drivers/pci/Makefile b/drivers/pci/Makefile
-> index 67647f1880fb8fb0629d680398f5b88d69aac660..aa1bac7aed7d12c641a6b55e56176fb3cdde4c91 100644
-> --- a/drivers/pci/Makefile
-> +++ b/drivers/pci/Makefile
-> @@ -37,6 +37,7 @@ obj-$(CONFIG_PCI_DOE)		+= doe.o
->  obj-$(CONFIG_PCI_DYNAMIC_OF_NODES) += of_property.o
->  obj-$(CONFIG_PCI_NPEM)		+= npem.o
->  obj-$(CONFIG_PCIE_TPH)		+= tph.o
-> +obj-$(CONFIG_LIVEUPDATE)	+= liveupdate.o
->  
->  # Endpoint library must be initialized before its users
->  obj-$(CONFIG_PCI_ENDPOINT)	+= endpoint/
-> diff --git a/drivers/pci/liveupdate.c b/drivers/pci/liveupdate.c
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..86b4f3a2fb44781c6e323ba029db510450556fa9
-> --- /dev/null
-> +++ b/drivers/pci/liveupdate.c
-> @@ -0,0 +1,54 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +/*
-> + * Copyright (c) 2025, Google LLC.
-> + * Chris Li <chrisl@kernel.org>
-> + */
-> +
-> +#define pr_fmt(fmt) "PCI liveupdate: " fmt
-> +
-> +#include <linux/liveupdate.h>
-> +
-> +#define PCI_SUBSYSTEM_NAME "pci"
-> +
-> +static int pci_liveupdate_prepare(void *arg, u64 *data)
-> +{
-> +	pr_info("prepare data[%llx]\n", *data);
-> +	return 0;
-> +}
-> +
-> +static int pci_liveupdate_freeze(void *arg, u64 *data)
-> +{
-> +	pr_info("freeze data[%llx]\n", *data);
-> +	return 0;
-> +}
-> +
-> +static void pci_liveupdate_cancel(void *arg, u64 data)
-> +{
-> +	pr_info("cancel data[%llx]\n", data);
-> +}
-> +
-> +static void pci_liveupdate_finish(void *arg, u64 data)
-> +{
-> +	pr_info("finish data[%llx]\n", data);
-> +}
-> +
-> +struct liveupdate_subsystem pci_liveupdate_ops = {
-> +	.prepare = pci_liveupdate_prepare,
-> +	.freeze = pci_liveupdate_freeze,
-> +	.cancel = pci_liveupdate_cancel,
-> +	.finish = pci_liveupdate_finish,
-> +	.name = PCI_SUBSYSTEM_NAME,
-> +};
-> +
-> +static int __init pci_liveupdate_init(void)
-> +{
-> +	int ret;
-> +
-> +	ret = liveupdate_register_subsystem(&pci_liveupdate_ops);
-> +	if (ret && liveupdate_state_updated())
-> +		panic("PCI liveupdate: Register subsystem failed: %d", ret);
-> +	WARN(ret, "PCI liveupdate: Register subsystem failed %d", ret);
+On Thu, Aug 14, 2025 at 11:49:51AM +0100, James Clark wrote:
 
-But this didn't fail.
+[...]
 
-And you just crashed the box if panic-on-warn is enabled, so if some
-test infrastructure builds this first patch, boom.
+> This is added as an event format attribute, rather than a Coresight
+> config because it's something that the driver is already configuring
+> automatically in Perf mode with any unused counter, so it's not possible
+> to modify this with a config.
 
-{sigh}
+Tested on Juno-r2 for this series:
 
-If you are going to do a "dummy" driver, please make it at least work
-and not do anything bad.
+  # /mnt/build/perf record -e cs_etm/timestamp=1,ts_level=15/ -- ls
+  # /mnt/build/perf script -D | grep I_TIMESTAMP | wc
 
-thanks,
+   1305   11745   83337
 
-greg k-h
+  # /mnt/build/perf record -e cs_etm/timestamp=1,ts_level=0/ -- ls
+  # /mnt/build/perf script -D | grep I_TIMESTAMP | wc
+
+   120668 1086012 7705024
+
+We can see a small counter (2 ^ 0 = 1) that records significant
+timestamp packets.
+
+Tested-by: Leo Yan <leo.yan@arm.com>
 
