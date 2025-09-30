@@ -1,128 +1,127 @@
-Return-Path: <linux-kernel+bounces-838043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id AADC8BAE4AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 20:22:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8733BAE4A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 20:22:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 725AE4E27BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 18:22:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62E843AC066
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 18:22:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07CB534BA42;
-	Tue, 30 Sep 2025 18:22:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A43E3226D17;
+	Tue, 30 Sep 2025 18:22:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=listout.xyz header.i=@listout.xyz header.b="e4D+xKYa"
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="VCkeRnb8"
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8E02211499;
-	Tue, 30 Sep 2025 18:22:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79B3434BA42
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 18:22:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759256546; cv=none; b=ZE0SHVDxu2/23K8YodSiQt8d3N21eQrAfQH15kQIxkTX/RE1eN2AxvsWU+b5LVsRvz8H7XMKi4KcPxz0ywfA+SLAT5hqWDnsJu9FqGfPIeYwzqPibd+iqHCQoKhYOs6QNugmuL7OG/aTlR9qcgWs0yPqmrSK6uY+qG/9ivYTjp8=
+	t=1759256523; cv=none; b=Vym9Gpr2MC0lfMjzZXW6zW70/Y+VZyrkV+0s5VSM36CzU9hOhdi1NyO5yjatuFmoSKRAga+6TaZL2wIXDwZDu4H+gucpB4sFCPxXcfkSfc6VTglaueAT/vOMEXZsz816cQk1o+URzawws9rdcJSjyhB1r+TADKQ3RRSIGeWSVHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759256546; c=relaxed/simple;
-	bh=+V+RzqHTVSHWzwZql2VkU320P7hVykf40jxm+lgamc4=;
+	s=arc-20240116; t=1759256523; c=relaxed/simple;
+	bh=9UYdLztjfxNJnURtmw+lbRKpcyjpnYaxwEjrSGbrTg4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lNBrS+Ybjkm81FeWoEpRGKqcZiIrsmEReMRZMTsw59ryBGa1PM2fNRUE1yTygpGB98WPxIRnTfAyRZGJZndFfQt0maQ353gjt3al0Zv9kbWmUmdW24wtETl0Z4LtXcN/h0XDK1hh89zSWhnw4aSaIIu/siiWDV5taj4AsUDJ10g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=listout.xyz; spf=pass smtp.mailfrom=listout.xyz; dkim=pass (2048-bit key) header.d=listout.xyz header.i=@listout.xyz header.b=e4D+xKYa; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=listout.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=listout.xyz
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4cbmcQ3NrYz9ty1;
-	Tue, 30 Sep 2025 20:22:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=listout.xyz; s=MBO0001;
-	t=1759256534;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nsIAQsUWXW/abWKM0AdhZQuMsTYSb9DGGhwXEon9Kys=;
-	b=e4D+xKYacgca7yRC4+baMCLEP9JFksX5bINk0w1rZEYr5fJidLlw07CvlF23JgZpNPbPDP
-	s90zXK60JWLdHp64ieLgAha4kTvd7sCgDifGGTUiplKwlIUkiBm9fOYCk9AZSAd3SUysbu
-	hxQUizEH5uHdUJQiumozsCSkO07w7po1XZm9vdMxJjjAcs/LrhDn0+XJIeZZ2r9j64Se4T
-	ZsFHGYxJ50oU/zbGAd9a173mf5//M+enpuxPqGdfxWe8OXlGnh23oArlKiLyL2EiLuqzOG
-	06C6+9TtA+4sQQ587Q5onuPRXU5sa4hsYXrZj50t8jTMXogWGB8mwHfld8cdkw==
-Date: Tue, 30 Sep 2025 23:51:56 +0530
-From: Brahmajit Das <listout@listout.xyz>
-To: KaFai Wan <kafai.wan@linux.dev>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, 
-	syzbot+d36d5ae81e1b0a53ef58@syzkaller.appspotmail.com, Andrii Nakryiko <andrii@kernel.org>, 
-	Alexei Starovoitov <ast@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Eduard <eddyz87@gmail.com>, Hao Luo <haoluo@google.com>, 
-	John Fastabend <john.fastabend@gmail.com>, Jiri Olsa <jolsa@kernel.org>, KP Singh <kpsingh@kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Song Liu <song@kernel.org>, 
-	syzkaller-bugs <syzkaller-bugs@googlegroups.com>, Yonghong Song <yonghong.song@linux.dev>
-Subject: Re: [PATCH v2] bpf: fix NULL pointer dereference in print_reg_state()
-Message-ID: <vgtxqzgqxtyfd3pzfngq4l43eeocpputr5syqstbnw2yibl6bv@3yep75dnifgp>
-References: <68d26227.a70a0220.1b52b.02a4.GAE@google.com>
- <20250923174738.1713751-1-listout@listout.xyz>
- <CAADnVQ+SkF2jL6NZLTF7ZKwNOfOtpMqr0ubjXpF1K0+EkHdJHw@mail.gmail.com>
- <qj5y7pjdx2f5alp7sfx2gepfylkk2bytiyeoiapyp3dpzwloyk@aljz7o77tt3m>
- <9051652cf548271da9c349758cbd70aaa3cee444.camel@linux.dev>
- <wz6god46aom7lfyuvhju67w47czdznzflec3ilqs6f7fpyf3di@k5wliusgqlut>
- <933a66f3e0e1f642ef53726abe617c4d138a91fa.camel@linux.dev>
- <5fjhzkvgvbpcm2vvqlxhgcobbkiwvo36aalj5lbqrfbznbpynf@jzokg4ba2mwp>
- <14a30aa593f8d8c018bf54439261a8f05182aa87.camel@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bryHVwm2wVuiUr9D5OTdvmW5vF7Mm37zymFVC8E78BP/Ny0aKHZucZ7AUW+lij1f25jRqYweJkmAY193sxya5F9tuSAc/C2CjE6+o987AUhI1LMOin1Cg6puOdXzdNQw+O1Y9W7Xk7OcL0+sjfwykKsd/H/HyNVlmw1VJ+fBr9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=VCkeRnb8; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-856222505eeso678371785a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 11:22:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1759256520; x=1759861320; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9UYdLztjfxNJnURtmw+lbRKpcyjpnYaxwEjrSGbrTg4=;
+        b=VCkeRnb8SaiwOaKAc/qE5CJ/rt3kivBgyviAWrz+sFgPeHRPrfqAPoFuXplbB+FDz0
+         Ruldc12GwwS7FB4WcmiEPUAQmZtXGp7B1REDRe5bpObg9HUJBW3LF+g9xlyNJQ+QKtpN
+         DMkIFwMUcuzdJzxShvsDbQ53V1872I/cXLNUiTm2SzGF+CEfRsh8C6HNMy4lRlcnCgSW
+         wLpLBwKAMhHtUFNRyx6J7HzTnk/5KcLQVVpvAQu+7Ee/TF/TveUA9PAGUq5RiLoS2ivW
+         zRXc+lBjaTfwquYV/9bd6OgDOuygADEk8qwQayP0jxdE+XW6kO9y6xduoZ1BLsGpzeY5
+         WUlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759256520; x=1759861320;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9UYdLztjfxNJnURtmw+lbRKpcyjpnYaxwEjrSGbrTg4=;
+        b=DiZDNu0fTF0HVSEF8IWe3Ejd/mB0pj9XYhZGsO985WoCRsWQZgpkRYNwpto6RYqzN3
+         7JPnqro/zA/jOpFI6/x62GORRWJZbv+Yg9wZ3IhPODC7j70+6y/aL42BktZxPfsn07YP
+         H7VbcU8alg/mz4IT2nEv8MJH8SHud80zSzCHhIeGH8tudK4MG7TTYFofwEIY/J+GOkdG
+         znXKzYnx9GJAKaSypXAcFKWlGu+QywqHnWe2BZXgjx1AhDAQW6R6aCUSSQEqG0WWPN7j
+         ErVoD8bmU3a0fCl/rQ3DuxpV9SDg06P7h+/pl7/WNrTasOwCgFeVIhRukg95em/QxJKO
+         9ZSw==
+X-Forwarded-Encrypted: i=1; AJvYcCWBHQzWey997MXmQIs95ReUxC29dUNtaPAC6UvA5ltZozyTbUY8kiHAnhWF5XQKTUfbiBJMHgYX7no67TY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkVY4hhtchEzCZ51cQ4BoG/dSHHY/jpFKP3tUjHXNCTzwZ+7bP
+	MZ2jz1lVsYwFbwMtgkxjNSW5DfGxcCk4V9YOEeOE1Nqj7QY+XQwN24vnOfcDOfw7NSSMDfpT/Eu
+	wbNPwOyE=
+X-Gm-Gg: ASbGncsPKohx47Rz4HDyacS33SgNITcErjZ58w6ioUxcKx9ePXyLYKXDX1NriKCUpbH
+	9ptvu8boNVN+aEXVZtsjHCAcHl4RoZjZmN4zkkK4k2YifVfYvcyG+10WIcwUp2G22UnxXleIkK0
+	r4R4fsBwkj3T2BuV+kO/V32AlDAwrNvj7VVSZcG9W0GKISPv41t3428Nz0ReN0QdlNNXCXwHYIZ
+	nRQLTz1f0Pn2EvKzrGszICL25z52Y53JycPgBVvs5MuHyaJRSpQY3BIR3j3nHbJFN9Es+6h83bp
+	A9ziCZ6xO42Y97gm4fkU3Ao2Xx1yKxC2MaVrtblGxar9n/tXKcXlECrVfLtaBizqn6akQQxKlzg
+	K4qFD+BfRJLA48jm5Xxsoc6897wocQIw=
+X-Google-Smtp-Source: AGHT+IFsIfsirssruboI26MlaM0NZggtj52mIktm8BzOMFTKBqd4QU6pWwedeMRBbz+8NtekD4Df5Q==
+X-Received: by 2002:a05:620a:1a0d:b0:85a:1caf:d07a with SMTP id af79cd13be357-873721b7327mr111082085a.34.1759256520220;
+        Tue, 30 Sep 2025 11:22:00 -0700 (PDT)
+Received: from ziepe.ca ([130.41.10.202])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-85c288a0f7dsm1081472585a.17.2025.09.30.11.21.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Sep 2025 11:21:59 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1v3ez8-0000000CgR4-1wgY;
+	Tue, 30 Sep 2025 15:21:58 -0300
+Date: Tue, 30 Sep 2025 15:21:58 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Johan Hovold <johan@kernel.org>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>, Sven Peter <sven@kernel.org>,
+	Janne Grunau <j@jannau.net>,
+	Rob Clark <robin.clark@oss.qualcomm.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Yong Wu <yong.wu@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Krishna Reddy <vdumpa@nvidia.com>, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/14] iommu: fix device leaks
+Message-ID: <20250930182158.GS2695987@ziepe.ca>
+References: <20250925122756.10910-1-johan@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <14a30aa593f8d8c018bf54439261a8f05182aa87.camel@linux.dev>
+In-Reply-To: <20250925122756.10910-1-johan@kernel.org>
 
-On 26.09.2025 18:36, KaFai Wan wrote:
-> On Fri, 2025-09-26 at 06:34 +0530, Brahmajit Das wrote:
-> > On 25.09.2025 23:31, KaFai Wan wrote:
-> > > On Wed, 2025-09-24 at 23:58 +0530, Brahmajit Das wrote:
-> > > > On 25.09.2025 01:38, KaFai Wan wrote:
-> > > > > On Wed, 2025-09-24 at 21:10 +0530, Brahmajit Das wrote:
-> > > > > > On 24.09.2025 09:32, Alexei Starovoitov wrote:
-> > > > > > > On Wed, Sep 24, 2025 at 1:43 AM Brahmajit Das
-> > > > > > > <listout@listout.xyz>
-> > > > > > > wrote:
-> > > > > > > > 
-> > > > > > > > Syzkaller reported a general protection fault due to a
-> > > > > > > > NULL
-> > > > > > > > pointer
-> > > > > > > > dereference in print_reg_state() when accessing reg-
-> > > > > > > > >map_ptr
-> > > > > > > > without
-> > > > > > > > checking if it is NULL.
-> > > > > > > > 
-...snip...
-> 
-> You should add a Fixes label in the commit log and add selftest for it
-> in V3. 
-> Fixes label is Fixes: aced132599b3 ("bpf: Add range tracking for
-> BPF_NEG")
-> For selftest you may check the test in verifier_value_illegal_alu.c and
-> other files.  
-> 
-> The code in your next post would change the behavior of BPF_NEG and 
-> BPF_END, you can run the selftest to check that.
-> 
+On Thu, Sep 25, 2025 at 02:27:42PM +0200, Johan Hovold wrote:
+> This series fixes device leaks in the iommu drivers, which pretty
+> consistently failed to drop the reference taken by
+> of_find_device_by_node() when looking up iommu platform devices.
 
-KaFai, I'm quite new to kernel development. I'm been trying to write a
-selftest for this unfortunately been having a hard time. I would really
-appreciate some help. For now I tried to create on from the initial test
-you used to verify this bug i.e. r0 -= r0.
+Yes, they are mis-designed in many ways :\
 
-I have tried testing my changes via sending a pull request on the
-kernel-patches/bpf repository, but seems like it's failing.
-My pull request: https://github.com/kernel-patches/bpf/pull/9900
+IDK if it is worth fixing like this, or if more effort should be put
+to make the drivers use of_xlate properly - the arm smmu drivers show
+the only way to use it..
 
--- 
-Regards,
-listout
+But if staying like this then maybe add a little helper?
+
+void *iommu_xlate_to_iommu_drvdata(const struct of_phandle_args *args);
+
+Put the whole racy of_find_device_by_node / put_device /
+platform_get_drvdata sequence is in one tidy function.. With
+documentation it is not safe don't use it in new code?
+
+Jason
 
