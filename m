@@ -1,103 +1,162 @@
-Return-Path: <linux-kernel+bounces-837485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7071EBAC699
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:08:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6249ABAC6A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:09:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11832321353
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 10:08:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 128D5176358
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 10:09:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D51F54918;
-	Tue, 30 Sep 2025 10:08:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42D242F6194;
+	Tue, 30 Sep 2025 10:09:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PPFoM2jB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="vJ/rAULf"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 603732F6572
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 10:07:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81B722F5333
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 10:09:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759226879; cv=none; b=ARVMBs8yAUhG7GcA8GtozaJo4sdgMj+A17FETGCuSyDC7QTuHDEEi8KPJHRJlwM6yl9h03cMsMkmAx04rw2T9IppfLxMlgiQZVnd3DO9sHGV/TpPGF79i6cRIdUoKzRwnSa+f9bd/R58zkyxf5EtDXgI5xrZxp7eTZ2fvJLrMQA=
+	t=1759226965; cv=none; b=o6TECw+D/VFt9STL11ba0dXud7mlYPedcUmxI4DXFnnIEDaL03xnSi9i1RT5lUtE4eVNsYy3AazjCBTozZNngobHOvwbqUxfNvfcKtnfON6q8mOpITJN6BMZWU7lY8VRU2DKfZy/iNe5P0AKz82XyvHruCwtLGeVBrra41S6iuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759226879; c=relaxed/simple;
-	bh=iaTYo42AMbeWEpSjWoHhR0ggf4sFotfptbmlFUWCPr0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aKBxClDYMJlUZOUHF0Oa57RP9GQjzgZoGqHKNycMggWI37HvCDZqrfUQikgg6v7wiET8t0kmO63De7F4HsRxGC4QcoBpLipeTneZ5Aw7OqMmNMRzAT8VTJSZ6O5UM0Tg0mVuvcG/OAF/BIVu3d+rCpnq6ZCehCGVv351FWtJ6PY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PPFoM2jB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3040C4CEF7;
-	Tue, 30 Sep 2025 10:07:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759226878;
-	bh=iaTYo42AMbeWEpSjWoHhR0ggf4sFotfptbmlFUWCPr0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PPFoM2jBVRv5qpyhc8HiiNBCJxADagb8/rS9CmNMB1PjEYIY9FJqprLktYosCrr4d
-	 MJICc96nK4yJ8BFPoBDCLK53IsCOeKrVVGLkkTCdMO0AOyZwvvLCUeDUZgyidmJ3d1
-	 l3QaFlvxESd3dsppQ9sMTAkZO3QLqHjhuHlxMDmXRXiqP5gDptFbEy4FITjKGk48Ys
-	 mcUU2RrRkAm9w00OJZxz7mV9BDkAf0cWZncSX0Eg0szswZXYfvJxOoy/JsDEghgq2I
-	 YMBnUxgJg3GUhhsGPiQFD0oND8EgMRh650+Qsw/WNyBV00Wlq1uFsnC3xgEKnu/pPZ
-	 6Z76IJLF4SVDA==
-Date: Tue, 30 Sep 2025 12:07:50 +0200
-From: Mike Rapoport <rppt@kernel.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: Peter Xu <peterx@redhat.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Axel Rasmussen <axelrasmussen@google.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	James Houghton <jthoughton@google.com>,
-	Nikita Kalyazin <kalyazin@amazon.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Ujwal Kundur <ujwal.kundur@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andrea Arcangeli <aarcange@redhat.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Michal Hocko <mhocko@suse.com>, Muchun Song <muchun.song@linux.dev>,
-	Oscar Salvador <osalvador@suse.de>, Hugh Dickins <hughd@google.com>,
-	Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v3 1/4] mm: Introduce vm_uffd_ops API
-Message-ID: <aNur9nbdnlykqbU7@kernel.org>
-References: <20250926211650.525109-1-peterx@redhat.com>
- <20250926211650.525109-2-peterx@redhat.com>
- <f1da3505-f17f-4829-80c1-696b1d99057d@redhat.com>
+	s=arc-20240116; t=1759226965; c=relaxed/simple;
+	bh=zx5KnZTpjWTHZDFPoEJU8NR+tRSkUEh1sgMf7q6lPd0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=QNser7Cwh5Za5bCsucxRUwHshh8op8GVpRjBguypkOMlxOWGF4wgEroaLsgVJSp5kut0TL+yUWHmG5lIiHFzgdzbNRPrdHW1iNcshRO1p4b2weWulmHqiiokkt9e/EkU/KxUjBxPUmLXEt/YtqLz9f+ccRgaC2OoltJJYw2eg2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=vJ/rAULf; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250930100920euoutp024b03b1915633dc9455aca5c0861c33a5~qB5mYlTok2505825058euoutp02Y
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 10:09:20 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250930100920euoutp024b03b1915633dc9455aca5c0861c33a5~qB5mYlTok2505825058euoutp02Y
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1759226960;
+	bh=30mDfsKQ8iwvNVTRnzUy7p+ibLwenFZY6QI63dERqJA=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=vJ/rAULfEh6ZbRvTKHSr8YZGNSbDsSVz8NigWKAxQHMeZrLj//DW6JBrofK2Hoy6R
+	 w9D13TEKy5zvf1dvtA1auDFM/k5s3rEB068KDHrSGMN+Iv8vDLhDpeDsnXfm6JxjoQ
+	 aHOWZKdHpowf3m6j0LQ3R6H5FCNn2DnJyVlxuPHg=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250930100920eucas1p138d1f0aef1a43aea9f9d22073469847e~qB5l10E1z0082200822eucas1p1M;
+	Tue, 30 Sep 2025 10:09:20 +0000 (GMT)
+Received: from AMDC4653.digital.local (unknown [106.120.51.32]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250930100919eusmtip238742188fa87394ddec88319c933f202~qB5lWiOqw2531125311eusmtip2A;
+	Tue, 30 Sep 2025 10:09:19 +0000 (GMT)
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, iommu@lists.linux.dev, Marek Szyprowski
+	<m.szyprowski@samsung.com>, Christoph Hellwig <hch@lst.de>, Robin Murphy
+	<robin.murphy@arm.com>, Leon Romanovsky <leon@kernel.org>, Jason Gunthorpe
+	<jgg@nvidia.com>, Qianfeng Rong <rongqianfeng@vivo.com>, Petr Tesarik
+	<ptesarik@suse.com>
+Subject: [GIT PULL] dma-mapping updates for Linux 6.18
+Date: Tue, 30 Sep 2025 12:08:18 +0200
+Message-Id: <20250930100818.350934-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f1da3505-f17f-4829-80c1-696b1d99057d@redhat.com>
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250930100920eucas1p138d1f0aef1a43aea9f9d22073469847e
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250930100920eucas1p138d1f0aef1a43aea9f9d22073469847e
+X-EPHeader: CA
+X-CMS-RootMailID: 20250930100920eucas1p138d1f0aef1a43aea9f9d22073469847e
+References: <CGME20250930100920eucas1p138d1f0aef1a43aea9f9d22073469847e@eucas1p1.samsung.com>
 
-On Tue, Sep 30, 2025 at 11:36:53AM +0200, David Hildenbrand wrote:
-> On 26.09.25 23:16, Peter Xu wrote:
-> > +	/**
-> > +	 * uffd_get_folio: Handler to resolve UFFDIO_CONTINUE request.
-> 
-> Just wondering if we could incorporate the "continue" / "minor" aspect into
-> the callback name.
-> 
-> uffd_minor_get_folio / uffd_continue_get_folio
-> 
-> Or do you see use of that callback in the context of other uffd features?
+The following changes since commit 7e2368a21741e2db542330b32aa6fdd8908e7cff:
 
-If someone picks the gauntlet of refactoring the loop in mcopy_atomic()
-we'd need a similar callback for uffd copy. And as I see it it would be
-different enough to warrant emphasizing minor/continue in the name here.
+  dma-debug: don't enforce dma mapping check on noncoherent allocations (2025-09-02 10:18:16 +0200)
 
-I also think we can drop uffd_ prefix for the callback, as it's called as
-uffd_ops->get_folio() or whatever it's be called.
- 
-> -- 
-> Cheers
-> 
-> David / dhildenb
-> 
+are available in the Git repository at:
 
--- 
-Sincerely yours,
-Mike.
+  https://git.kernel.org/pub/scm/linux/kernel/git/mszyprowski/linux.git tags/dma-mapping-6.18-2025-09-30
+
+for you to fetch changes up to ef3d979b3e270b6a41b6f306bfc442253c41a4cd:
+
+  kmsan: fix missed kmsan_handle_dma() signature conversion (2025-09-17 14:42:36 +0200)
+
+----------------------------------------------------------------
+dma-mapping updates for Linux 6.18:
+
+- refactoring of DMA mapping API to physical addresses as the primary
+interface instead of page+offset parameters; this gets much closer to
+Matthew Wilcox's long term wish for struct-pageless IO to cacheable DRAM and is
+supporting memdesc project which seeks to substantially transform how
+struct page works; an advantage of this approach is the possibility of
+introducing DMA_ATTR_MMIO, which covers existing 'dma_map_resource' flow
+in the common paths, what in turn lets to use recently introduced
+dma_iova_link() API to map PCI P2P MMIO without creating struct page;
+developped by Leon Romanovsky and Jason Gunthorpe
+- minor clean-up by Petr Tesarik and Qianfeng Rong
+
+----------------------------------------------------------------
+Leon Romanovsky (14):
+      dma-mapping: introduce new DMA attribute to indicate MMIO memory
+      iommu/dma: implement DMA_ATTR_MMIO for dma_iova_link().
+      dma-debug: refactor to use physical addresses for page mapping
+      dma-mapping: rename trace_dma_*map_page to trace_dma_*map_phys
+      iommu/dma: rename iommu_dma_*map_page to iommu_dma_*map_phys
+      iommu/dma: implement DMA_ATTR_MMIO for iommu_dma_(un)map_phys()
+      dma-mapping: convert dma_direct_*map_page to be phys_addr_t based
+      kmsan: convert kmsan_handle_dma to use physical addresses
+      dma-mapping: implement DMA_ATTR_MMIO for dma_(un)map_page_attrs()
+      xen: swiotlb: Open code map_resource callback
+      dma-mapping: export new dma_*map_phys() interface
+      mm/hmm: migrate to physical address-based DMA mapping API
+      mm/hmm: properly take MMIO path
+      kmsan: fix missed kmsan_handle_dma() signature conversion
+
+Marek Szyprowski (1):
+      Merge tag 'dma-mapping-6.17-2025-09-09' into HEAD
+
+Petr Tesarik (1):
+      dma-direct: clean up the logic in __dma_direct_alloc_pages()
+
+Qianfeng Rong (1):
+      swiotlb: Remove redundant __GFP_NOWARN
+
+ Documentation/core-api/dma-api.rst        |   4 +-
+ Documentation/core-api/dma-attributes.rst |  18 +++++
+ arch/powerpc/kernel/dma-iommu.c           |   4 +-
+ drivers/iommu/dma-iommu.c                 |  61 ++++++++--------
+ drivers/virtio/virtio_ring.c              |   4 +-
+ drivers/xen/swiotlb-xen.c                 |  21 +++++-
+ include/linux/dma-direct.h                |   2 -
+ include/linux/dma-map-ops.h               |   8 +--
+ include/linux/dma-mapping.h               |  33 +++++++++
+ include/linux/iommu-dma.h                 |  11 +--
+ include/linux/kmsan.h                     |   9 ++-
+ include/linux/page-flags.h                |   1 +
+ include/trace/events/dma.h                |   9 ++-
+ kernel/dma/debug.c                        |  82 ++++++----------------
+ kernel/dma/debug.h                        |  37 ++--------
+ kernel/dma/direct.c                       |  53 +++++---------
+ kernel/dma/direct.h                       |  57 +++++++++------
+ kernel/dma/mapping.c                      | 112 ++++++++++++++++++------------
+ kernel/dma/ops_helpers.c                  |   6 +-
+ kernel/dma/swiotlb.c                      |   2 +-
+ mm/hmm.c                                  |  19 ++---
+ mm/kmsan/hooks.c                          |  13 ++--
+ rust/kernel/dma.rs                        |   3 +
+ tools/virtio/linux/kmsan.h                |   2 +-
+ 24 files changed, 295 insertions(+), 276 deletions(-)
+----------------------------------------------------------------
+
+Thanks!
+
+Best regards
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
