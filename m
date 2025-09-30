@@ -1,189 +1,155 @@
-Return-Path: <linux-kernel+bounces-837901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B833ABAE02E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 18:08:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DE57BAE03A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 18:08:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CCA6194213F
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 16:08:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6EF5194439C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 16:09:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B120309EE4;
-	Tue, 30 Sep 2025 16:08:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iEaJoRjB"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 348C33093BF
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 16:08:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 111163090F7;
+	Tue, 30 Sep 2025 16:08:49 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA94B303C9D
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 16:08:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759248493; cv=none; b=r2uCojD+s2AN8jZi4THHCL22q0t4WOozYfyb1742eauZ+LFUi2v+VWfHXbrMgFLj/81oKXilpzFNf1JCojjpcVB8NYfogi8hFdCc65nYtFJ4ByXzpmrh2uipjkE5WBY3ozJId3CEzzBXOPfdAAjJij2D+nnDSsfLP6cieSHvvTE=
+	t=1759248528; cv=none; b=RiTypnFo1QLqLaHvYzTee5WDreJWN1I3W34RpBNBnYi1t6GLzMviF0Z+oUwUZ8vafL6/FB1uoGU8BOk2sUkwNPzpxwWslMh9Q3AzBIxm9keeDfm4p852THc3jSXx+6pl6JMNwN6ZSly4XTP9rFvcyX/vMAJFtHLA06+CulozfYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759248493; c=relaxed/simple;
-	bh=snlcpuhg9ToSlXPE+QrSoUGnOciOVCfFz6OxetVNkco=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DsntyTb3NJ/dRL8CoSAJSR6eDTTyqHG9ZZIiul7K1jPwLh83KwsZTV/OtH4E+ALoqn+LJ/sdNSwSQRV7hqNOtXSYBNNt+gqF14sTYRj4qAA/rA9oUquqSPz7NgVLJzwsBobREALOK82HP3Ewp7nUCKE2gjNb7rdIk/vhlUGhhQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iEaJoRjB; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759248488;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wSk9NtZOWjVSHAXaMNsatYeAsaJr+OLKF/ipGZAl/7o=;
-	b=iEaJoRjBA+qVbCTNV/oqwJexw0nqTxU26QfQUuNEGd/e5LwcG3SVI3iwX/J6+77+Hu96GU
-	lCb1LtkdllqxxX7pyggvfazgHuKUXRj6PlAVNRCixumnbidCkdLMeK5OE+6jOxiiQ3zu9q
-	fQqlXWepq5BkNzXq491VZo89wdOJVno=
-Received: from mail-ot1-f72.google.com (mail-ot1-f72.google.com
- [209.85.210.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-96-3Bko1zhuM0yRZslPWW9vzA-1; Tue, 30 Sep 2025 12:08:04 -0400
-X-MC-Unique: 3Bko1zhuM0yRZslPWW9vzA-1
-X-Mimecast-MFC-AGG-ID: 3Bko1zhuM0yRZslPWW9vzA_1759248484
-Received: by mail-ot1-f72.google.com with SMTP id 46e09a7af769-7b30885170eso1098970a34.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 09:08:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759248483; x=1759853283;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wSk9NtZOWjVSHAXaMNsatYeAsaJr+OLKF/ipGZAl/7o=;
-        b=N1faYW3V5OPwaLQ5SB3z0UZagfsOyDX9EVU/4StLhUdmpxZS/hSkEj7mIdhSGiKRAS
-         CheSNpqxrI9XBVUz3aCBYsd+w8Sw1bPJeclIzfFZPfC5JjjIui3HAb1qS+jXxAqAMfGY
-         cyiYxpA9aqgJMWmgFT0KzfIN62VZcfpOfngurs/l7QBXuUvxXySlyRNnuYEQaUbQz6xy
-         7tpiGRkxIdYTmYX8QlNikP5RGX4GhCUzKQ8HJ3WzJU1eLhEHGvOcbNRTMaxBMOorKcTB
-         sifhQ1nTo2NAgdqMjwb4vLXH63vKmfrX5wdr3HPVddu87HI0s/E1SXzsayvfLgb8DUaH
-         iHiw==
-X-Forwarded-Encrypted: i=1; AJvYcCWfI9/8KOWijbdCxdMPyJUWoCCJBxVeHOpy6GOjBKdJltnXeDgvn1XQjtUAsHRe1E7EB3gkas00Aa8M6j4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxlYco352XmPYb0BUUyKob5/LBnAZMEo2BdUXVNwKqbW/0+wZk
-	nz7EtcICp2icn7euBLW1NhYDFlK/pD/cu9KPL31X/YJkU7AU23Zlkdg0q6TM7JYHSo8XJjmYgAw
-	aLGmpw0L0oRgknkRQkqbGTkFLR9Mhol6mwrY54aK6JK4JoYVvwi4/vOVK54c0uUiU7g==
-X-Gm-Gg: ASbGncuy64Y79nRrKnNi7U3vyar9/cz1Z5NA5j5g0ArZMxdBuS/BUy4NEYrhtKNon1a
-	xVrU9LodY6jMcO0rOd0/A+FygrW1Q7UB97FDExlqWfJQr4WUFRzl5WTC1fRuy6v514LP3Ebl+Hg
-	s3VxTE8b6s0OS0/H8fSfdix4Dyh16WgefjBOb9E8jBK/FfpqJ4Ol6SQwkqp0y8a8h+S1GoZ1RpC
-	cv0t+aAn6V6bxXwBRfXxDuDGeImtattyjuhheQ3Oc7Rq0qTeUDll1P8sXZQXGMVemSmgayo3q4X
-	IgKcxUeAsgCP9nvEd5UxTafbrzlaj9Qw9HyHybEJEiwlDJIk
-X-Received: by 2002:a05:6820:5082:b0:621:2845:6daa with SMTP id 006d021491bc7-64bb6545f8bmr113850eaf.0.1759248483596;
-        Tue, 30 Sep 2025 09:08:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHJseUyrGoKfdwzuhrG64O9kfcQryt5nehwMqyr+Cc6sT4mD/DyY2Du1MoSsHbbw6RCv1mcDg==
-X-Received: by 2002:a05:6820:5082:b0:621:2845:6daa with SMTP id 006d021491bc7-64bb6545f8bmr113843eaf.0.1759248483252;
-        Tue, 30 Sep 2025 09:08:03 -0700 (PDT)
-Received: from redhat.com ([38.15.36.11])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7b4c0e92da9sm1836631a34.26.2025.09.30.09.08.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Sep 2025 09:08:02 -0700 (PDT)
-Date: Tue, 30 Sep 2025 10:07:58 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Jason Gunthorpe <jgg@nvidia.com>, Andrew Morton
- <akpm@linux-foundation.org>, Bjorn Helgaas <bhelgaas@google.com>, Christian
- =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>,
- dri-devel@lists.freedesktop.org, iommu@lists.linux.dev, Jens Axboe
- <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
- linaro-mm-sig@lists.linaro.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-mm@kvack.org, linux-pci@vger.kernel.org, Logan Gunthorpe
- <logang@deltatee.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Robin
- Murphy <robin.murphy@arm.com>, Sumit Semwal <sumit.semwal@linaro.org>,
- Vivek Kasireddy <vivek.kasireddy@intel.com>, Will Deacon <will@kernel.org>
-Subject: Re: [PATCH v4 07/10] vfio/pci: Add dma-buf export config for MMIO
- regions
-Message-ID: <20250930100758.1605d5a5.alex.williamson@redhat.com>
-In-Reply-To: <20250930075748.GF324804@unreal>
-References: <cover.1759070796.git.leon@kernel.org>
-	<b1b44823f93fd9e7fa73dc165141d716cb74fa90.1759070796.git.leon@kernel.org>
-	<20250929151740.21f001e3.alex.williamson@redhat.com>
-	<20250930075748.GF324804@unreal>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1759248528; c=relaxed/simple;
+	bh=EXPCLyqrl8gYbOyaCu+eFHadB01pjmsUq9P7hhiQYcU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L/FLSE/0WMl66pKW/KyW7PlCIkTE827TFityfgTPChEU1/uHGl/TTN5N/uR8rDJt9JfvKexjyjVDtbksb1IYB4cgCT1oFDLKWWu9a9PJ/0ku+xFBY3O9hrqNwy9IRwipDv1QjvIvcnoUnTat7aaIDzQ/EXGRa3xW2A7clhJRztE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 367021424;
+	Tue, 30 Sep 2025 09:08:38 -0700 (PDT)
+Received: from [10.163.65.117] (unknown [10.163.65.117])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 880333F66E;
+	Tue, 30 Sep 2025 09:08:44 -0700 (PDT)
+Message-ID: <3399336c-f08e-479f-aa9d-de6bac9bda61@arm.com>
+Date: Tue, 30 Sep 2025 21:38:41 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/ptdump: Replace READ_ONCE() with standard page table
+ accessors
+To: David Hildenbrand <david@redhat.com>,
+ Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org
+References: <20250930025246.1143340-1-anshuman.khandual@arm.com>
+ <9736fd6a-8987-4b10-9b05-e03106463c34@arm.com>
+ <f0f0479a-fdab-4f42-9600-5d7b44a73f4e@redhat.com>
+ <1f3c8fe8-cff0-4e3e-bea8-285b00fc7a5d@arm.com>
+ <25653f37-6ba3-442f-9348-d879a8ad4704@redhat.com>
+Content-Language: en-US
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <25653f37-6ba3-442f-9348-d879a8ad4704@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, 30 Sep 2025 10:57:48 +0300
-Leon Romanovsky <leon@kernel.org> wrote:
 
-> On Mon, Sep 29, 2025 at 03:17:40PM -0600, Alex Williamson wrote:
-> > On Sun, 28 Sep 2025 17:50:17 +0300
-> > Leon Romanovsky <leon@kernel.org> wrote:
-> >   
-> > > From: Leon Romanovsky <leonro@nvidia.com>
-> > > 
-> > > Add new kernel config which indicates support for dma-buf export
-> > > of MMIO regions, which implementation is provided in next patches.
-> > > 
-> > > Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
-> > > ---
-> > >  drivers/vfio/pci/Kconfig | 20 ++++++++++++++++++++
-> > >  1 file changed, 20 insertions(+)
-> > > 
-> > > diff --git a/drivers/vfio/pci/Kconfig b/drivers/vfio/pci/Kconfig
-> > > index 2b0172f54665..55ae888bf26a 100644
-> > > --- a/drivers/vfio/pci/Kconfig
-> > > +++ b/drivers/vfio/pci/Kconfig
-> > > @@ -55,6 +55,26 @@ config VFIO_PCI_ZDEV_KVM
-> > >  
-> > >  	  To enable s390x KVM vfio-pci extensions, say Y.
-> > >  
-> > > +config VFIO_PCI_DMABUF
-> > > +	bool "VFIO PCI extensions for DMA-BUF"
-> > > +	depends on VFIO_PCI_CORE
-> > > +	depends on PCI_P2PDMA && DMA_SHARED_BUFFER
-> > > +	default y
-> > > +	help
-> > > +	  Enable support for VFIO PCI extensions that allow exporting
-> > > +	  device MMIO regions as DMA-BUFs for peer devices to access via
-> > > +	  peer-to-peer (P2P) DMA.
-> > > +
-> > > +	  This feature enables a VFIO-managed PCI device to export a portion
-> > > +	  of its MMIO BAR as a DMA-BUF file descriptor, which can be passed
-> > > +	  to other userspace drivers or kernel subsystems capable of
-> > > +	  initiating DMA to that region.
-> > > +
-> > > +	  Say Y here if you want to enable VFIO DMABUF-based MMIO export
-> > > +	  support for peer-to-peer DMA use cases.
-> > > +
-> > > +	  If unsure, say N.
-> > > +
-> > >  source "drivers/vfio/pci/mlx5/Kconfig"
-> > >  
-> > >  source "drivers/vfio/pci/hisilicon/Kconfig"  
-> > 
-> > This is only necessary if we think there's a need to build a kernel with
-> > P2PDMA and VFIO_PCI, but not VFIO_PCI_DMABUF.  Does that need really
-> > exist?  
-> 
-> It is used to filter build of vfio_pci_dmabuf.c - drivers/vfio/pci/Makefile:
-> vfio-pci-core-$(CONFIG_VFIO_PCI_DMABUF) += vfio_pci_dmabuf.o
+On 30/09/25 8:13 pm, David Hildenbrand wrote:
+> On 30.09.25 09:00, Anshuman Khandual wrote:
+>>
+>>
+>> On 30/09/25 12:11 PM, David Hildenbrand wrote:
+>>> On 30.09.25 06:37, Dev Jain wrote:
+>>>>
+>>>> On 30/09/25 8:22 am, Anshuman Khandual wrote:
+>>>>> Replace READ_ONCE() with standard page table accessors i.e 
+>>>>> pxdp_get() which
+>>>>> anyways default into READ_ONCE() in cases where platform does not 
+>>>>> override.
+>>>>>
+>>>>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>>>>> Cc: David Hildenbrand <david@redhat.com>
+>>>>> Cc: linux-mm@kvack.org
+>>>>> Cc: linux-kernel@vger.kernel.org
+>>>>> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+>>>>> ---
+>>>>>     mm/ptdump.c | 8 ++++----
+>>>>>     1 file changed, 4 insertions(+), 4 deletions(-)
+>>>>>
+>>>>> diff --git a/mm/ptdump.c b/mm/ptdump.c
+>>>>> index b600c7f864b8..18861501b533 100644
+>>>>> --- a/mm/ptdump.c
+>>>>> +++ b/mm/ptdump.c
+>>>>> @@ -31,7 +31,7 @@ static int ptdump_pgd_entry(pgd_t *pgd, unsigned 
+>>>>> long addr,
+>>>>>                     unsigned long next, struct mm_walk *walk)
+>>>>>     {
+>>>>>         struct ptdump_state *st = walk->private;
+>>>>> -    pgd_t val = READ_ONCE(*pgd);
+>>>>> +    pgd_t val = pgdp_get(pgd);
+>>>>>        #if CONFIG_PGTABLE_LEVELS > 4 && \
+>>>>>             (defined(CONFIG_KASAN_GENERIC) || 
+>>>>> defined(CONFIG_KASAN_SW_TAGS))
+>>>>> @@ -54,7 +54,7 @@ static int ptdump_p4d_entry(p4d_t *p4d, unsigned 
+>>>>> long addr,
+>>>>>                     unsigned long next, struct mm_walk *walk)
+>>>>>     {
+>>>>>         struct ptdump_state *st = walk->private;
+>>>>> -    p4d_t val = READ_ONCE(*p4d);
+>>>>> +    p4d_t val = p4dp_get(p4d);
+>>>>>        #if CONFIG_PGTABLE_LEVELS > 3 && \
+>>>>>             (defined(CONFIG_KASAN_GENERIC) || 
+>>>>> defined(CONFIG_KASAN_SW_TAGS))
+>>>>> @@ -77,7 +77,7 @@ static int ptdump_pud_entry(pud_t *pud, unsigned 
+>>>>> long addr,
+>>>>>                     unsigned long next, struct mm_walk *walk)
+>>>>>     {
+>>>>>         struct ptdump_state *st = walk->private;
+>>>>> -    pud_t val = READ_ONCE(*pud);
+>>>>> +    pud_t val = pudp_get(pud);
+>>>>>        #if CONFIG_PGTABLE_LEVELS > 2 && \
+>>>>>             (defined(CONFIG_KASAN_GENERIC) || 
+>>>>> defined(CONFIG_KASAN_SW_TAGS))
+>>>>> @@ -100,7 +100,7 @@ static int ptdump_pmd_entry(pmd_t *pmd, 
+>>>>> unsigned long addr,
+>>>>>                     unsigned long next, struct mm_walk *walk)
+>>>>>     {
+>>>>>         struct ptdump_state *st = walk->private;
+>>>>> -    pmd_t val = READ_ONCE(*pmd);
+>>>>> +    pmd_t val = pmdp_get(pmd);
+>>>>
+>>>> I believe this should go through pmdp_get_lockless(). I can see in 
+>>>> pgtable.h that
+>>>> some magic is required on some arches to decode the pmd correctly 
+>>>> in case walking
+>>>> without locks.
+>>>
+>>> pmdp_get_lockless() is a nasty thingy to handle selected 32bit 
+>>> architectures.
+>>>
+>>> But given that we're using ptep_get_lockless() in ptdump_pmd_entry() 
+>>> it probably wouldn't hurt to use pmdp_get_lockless() here.
+>>>
+>>> Staring at ARCH_HAS_PTDUMP, I don't think any 32bit arch would 
+>>> actually end up compiling ptdump.c.
+>>>
+>>> E.g., on x86 only X86_64 ends up selecting ARCH_HAS_PTDUMP.
+>>>
+>>
+>> pxdp_get_lockless() not really required here, let's stick with 
+>> pxdp_get() instead.
+>
+> I'd suggest that we keep it consistent. That is, also removing the 
+> ptep_get_lockless() if not really required.
 
-Maybe my question of whether it needs to exist at all is too broad.
-Does it need to be a user visible Kconfig option?  Where do we see the
-need to preclude this feature from vfio-pci if the dependencies are
-enabled?
+So in theory, the _lockless variant is not required, but surely 
+consistency would mean that since we are
 
-> > I also find it unusual to create the Kconfig before adding the
-> > supporting code.  Maybe this could be popped to the end or rolled into
-> > the last patch if we decided to keep it.  Thanks,  
-> 
-> It is leftover from previous version, I can squash it, but first we need
-> to decide what to do with pcim_p2pdma_init() call, if it needs to be
-> guarded or not.
+dereferencing the pte without the PTL, we should use the _lockless variant?
 
-As in the other thread, I think it would be cleaner in an IS_ENABLED
-branch.  I'm tempted to suggest we filter out EOPNOTSUPP to allow it to
-be unconditional, but I understand your point with the list_head
-initialization.  Thanks,
-
-Alex
 
 
