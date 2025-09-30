@@ -1,547 +1,267 @@
-Return-Path: <linux-kernel+bounces-837299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2752CBABE76
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:51:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0833EBABE7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:52:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45647188EEBA
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 07:51:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BA46188BB74
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 07:52:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FECA2C3272;
-	Tue, 30 Sep 2025 07:51:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40A892D879F;
+	Tue, 30 Sep 2025 07:52:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b="kfmREGUi"
-Received: from mail-pl1-f196.google.com (mail-pl1-f196.google.com [209.85.214.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="fBa21+HF";
+	dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b="UXPEFWLE"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E2562C0F7C
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 07:51:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.196
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759218668; cv=none; b=rEvTYzk/duNSIyFUO2DQ1klg7BTjJvllHRwa8mYAfQgYo8YUDarzPqM0gZbK0NXIJqolrdOUDYcgoxrxOxSKwLU48FE653amN3XHJdmBduPCimYCKOBl1wHcrUvYlz5Xoi4g+Ah1/McpphwvNIRBTAZHkPIK24MJq7f+IANs3DA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759218668; c=relaxed/simple;
-	bh=pet/N8sFaNRIHeMu67LUBKma+8CENtX3Toq6EdvBO/4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=RnyaV3GZ/cM9e9bORV78/c4kw5Ad14ZuNGW6xXNAXwtYk8uX17p5JbkinytaahrRKlNJjGq4F506gnui6d6k8cUzQOxI1R2Lt2t1N0YDGgEQwqeZ1E5o39bI5tU4GjS+qiYk2Hddzdlf7Jr+rIyvUmNUC9PsYhmuxIk3i+W3xvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com; dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b=kfmREGUi; arc=none smtp.client-ip=209.85.214.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com
-Received: by mail-pl1-f196.google.com with SMTP id d9443c01a7336-279e2554c8fso57730675ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 00:51:06 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75E412D94B8
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 07:51:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=60.244.123.138
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759218707; cv=fail; b=ikCPXI5XAAwbGqlYCbs+RWKONZYAqIFSbQRgK6Ep5prb/xJccHxt/SaH5vLXX4eD34LwuA3cBkIlKbqjrk/HZ8Ob1NZLQ1H/Pa2aBAsqBA2rSCa2EE7pFUEDlyPY/WKObd+zc9mqQl7ARJeu/kFlRg0/HVW8GPowD+fOd5VosAQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759218707; c=relaxed/simple;
+	bh=yhpidOuvjK/PCwpXDuCtiLBH7krNWYQRdjOWzgKu0h8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=MFfP/fwU35/TTo/2tY/LeLXflq9R6XFwcNbdHXZGUlqt2cvayufSjYiz5Q9LdO0RW+jykbzEQmG1gm9LBXC6ACuQORwkO4445lwougB5e19c+hj223l0NxlJoCrkG3B9YFqTaDKkGCgRx1A1hpgsDU9FALHVxEwOqVxsk1WvJiE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=fBa21+HF; dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b=UXPEFWLE; arc=fail smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 3ee64c2c9dd211f08d9e1119e76e3a28-20250930
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=MIME-Version:Content-Transfer-Encoding:Content-ID:Content-Type:In-Reply-To:References:Message-ID:Date:Subject:CC:To:From; bh=yhpidOuvjK/PCwpXDuCtiLBH7krNWYQRdjOWzgKu0h8=;
+	b=fBa21+HF76C/tmarbnM8X8hT9tTSgt5X1c/xP+R2kgmg6+HLTeVdCFH3mo5N+Qqi034VeVz94/pIWnRQ0DanywzP//p2I8+TO1uGuGBINduVojwIdE67n6e+W/IYnikqVmQft4OCbDn7ZJbzFzdnfVZ/J2DwT8iNIO3WDSclDYY=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.6,REQID:29befcd7-beeb-4090-beb8-24ac69e199c0,IP:0,UR
+	L:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:-5
+X-CID-META: VersionHash:a9d874c,CLOUDID:976cd2e9-2ff9-4246-902c-2e3f7acb03c4,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102|110|111|836|888|898,
+	TC:-5,Content:0|15|50,EDM:-3,IP:nil,URL:0,File:130,RT:nil,Bulk:nil,QS:nil,
+	BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 3ee64c2c9dd211f08d9e1119e76e3a28-20250930
+Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw01.mediatek.com
+	(envelope-from <ck.hu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1512012509; Tue, 30 Sep 2025 15:51:17 +0800
+Received: from mtkmbs10n2.mediatek.inc (172.21.101.183) by
+ mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Tue, 30 Sep 2025 15:51:15 +0800
+Received: from SI4PR04CU001.outbound.protection.outlook.com (172.21.101.237)
+ by mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server id
+ 15.2.1748.10 via Frontend Transport; Tue, 30 Sep 2025 15:51:15 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=amUnVipDFyyPZJWUPLe7gBY8Efm5ERxw5Q1Vh6bal5NxpcjTFCANbb4t3nqZxXxrvVyyBoFj9AFiePi+dwKNTKSewkiTSDF/7ixn15UA1HZ47yrbcGzx0+DiQFr7Oa3bLeFxed4+fkeEBtk4Owp56q8XEFcdnqA0v3fn4s+627yrbM2UA+TbqYdYSV6I/U71beg4iIKzo4poDUihJ32KT1qhioBdWMruJTthtQ2gO3M2U0TKYcaAOlKvoVTnrsJFa8rHjcdDqpM95BYDDL8zHOoZNfIOSZK5anahfT8LjBn5eEO6P7p+ZsJsXHE6QpC5VsLPdiVXqcHbtfwxvK9chA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=yhpidOuvjK/PCwpXDuCtiLBH7krNWYQRdjOWzgKu0h8=;
+ b=IgAOBS4MvOdstIfXXcMLpe+MDPooEhVrVTkmF69fGS/HhB2zi4PY1zlFGnEi1BPww983G7iK9XYUAxlrqp9fE4y0CQansDyqTOveUroH/vs4rx3KKtxWO39k0aiJgl5ThtOHqu5tOmO3r3LlqNYlBT4dtRL4LSer3ZuVgFwguU4Y5//QkzhmRcJHhecc31XBJ52x6RkA5DPJkkgKO5IjcNMC8h7tjj5b6eo61dUNTPi0J4qeEvit+aBvAapMv0qxdXQlR0EMKkw3fEX+pZGJJEE+BFJEWRekLa7Tk2QLCXoOOOZ58fzskTY2Sw/MnYknJ7uIHzuDIipfRATvvrcVtw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mediatek.com; dmarc=pass action=none header.from=mediatek.com;
+ dkim=pass header.d=mediatek.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=huaqin-corp-partner-google-com.20230601.gappssmtp.com; s=20230601; t=1759218665; x=1759823465; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=60hr+t3VU3n6O3UnBPMWzfsQUhzglMdEt7VA1TIh1So=;
-        b=kfmREGUidEO1y+rCrIDS8ampWyJm6/UOSPJCf5s43+uN1Z34A/Jwf6v2GPnkYB8ob7
-         8titDmQ4J1feGvvLcu5ev7jvidzXkhSHIOEQS0tkKG5+DLEbBj9GWVwc023Jk3wpF0dm
-         W412y6SR3o6Wwz56AjSce8O0AI03ot7O0FhFsLgVlKST96ailbJGLXIZhabcNNagf8Fu
-         xNE/22yR1lp+MCZrB6cEg3Nz9e2acSELOtLbOuxP5eayxOSK2nAhWMYwRlXB9bEko5uI
-         Lr58dwuLs6IQZK4d25ywi4fA43zJspEaoYftfkWQtbocgZGR1HHK4i2RD6k8WM6Lw1ju
-         VhyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759218665; x=1759823465;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=60hr+t3VU3n6O3UnBPMWzfsQUhzglMdEt7VA1TIh1So=;
-        b=P3HllousGdhDpfPRXsjbodb7iA84O4JdpLCX7rMisKlM+9PGX16s/o1FSLRbZhEAjn
-         HHRnFHIvAvE4YeokVHUMqRv1FNrP/6zZ4v4TOX+XktA5OXGg70JrqiMRPccrH5vPg8F+
-         +YXR2jZv8J5CytDbjump55Bg/A9KWBggrjVFneMBhU9ZjesX60pEpwEGfwniYNWKL8bN
-         pUA3ASj09ziVJQMe+afoIACerf2B4s+IUD18xG1319v7JKXTKEYNZDGjHabEnwiPelbP
-         f7ubPuhzI1Fe5/qCz2SKQWp0uv2QEe1okzG6EIkb5F9g7pAVnbMbeMMUlfzIDTCPaUyu
-         uTZg==
-X-Forwarded-Encrypted: i=1; AJvYcCUNNxrOrVpVnqfrqcjpXQpS9bLQPrkSAI1cA/yEJ+GA23JyM14O3m4Y6uRPIljhidbMArTQGNvzn95TjL4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFAv1ZmDAJX3K6xqLHkkky4T0VNEAd50+tWNPflThsqXjxC8UA
-	dDlw9r6pICw6mT681bsx/GgRuTas7FUxsEEdnPmQndFyxj+8UQuEJQbbPb8Uwt2//wGCyud0fV8
-	7t9PmqunewA==
-X-Gm-Gg: ASbGncscQy1iA+e5U0yNoMk2zbSuGaSSJ5COG1Bs5nvWbIO5XRY14TcWODbJDtAnfXI
-	ZF/03TTl5+KSA5runA11xXEQ7Mbzu2clfpKzxya1BNQjCDwU7mo8gGvog9Qh/zdWXFr1fLBXNO6
-	UV+mLwAA6B9sT/W4I8RcNqXMWGlWPAwoO7NkDByJKCrFNyspPEPN5gCiI8YfEoUiqIiwPfeAm3w
-	QArK/t/3AtO53vwiePkeieP71E3y7wuiMuPHwSZfKv067CgWgLYswV4RuRndpYMbu5grsovu0nq
-	lfC/T54EAml04xW/rCpVIV5TpX0/cI1ct/BJtgrfRI4qx7t1VSNzJ3bT1MDsy1mBuL/On87A6Of
-	Zeso2ZoC44QWniEEzNaX1XXW4SNxfEBEuvSJ8QLbIXpzzWlKp22HiNpkEksS+NPw4Oje/TDmEWE
-	IzX0VrTvjRa+RpJlGIGw==
-X-Google-Smtp-Source: AGHT+IGhRjc/a14/eaZ4YvqMOpu6kLwlxEUo+yCQX0UzgJOr1NpZ0sRtE5db0gL+ZNvRxuseuwI2sQ==
-X-Received: by 2002:a17:902:e890:b0:24c:a269:b6d5 with SMTP id d9443c01a7336-27ed493e891mr192104545ad.0.1759218665443;
-        Tue, 30 Sep 2025 00:51:05 -0700 (PDT)
-Received: from dgp100339560-01.huaqin.com ([103.117.77.121])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed688223dsm152313565ad.86.2025.09.30.00.51.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Sep 2025 00:51:05 -0700 (PDT)
-From: Langyan Ye <yelangyan@huaqin.corp-partner.google.com>
-To: neil.armstrong@linaro.org,
-	jessica.zhang@oss.qualcomm.com,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	dianders@chromium.org
-Cc: dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Langyan Ye <yelangyan@huaqin.corp-partner.google.com>
-Subject: [PATCH v1 2/2] drm/panel: Add driver for Tianma TL121BVMS07-00 panel
-Date: Tue, 30 Sep 2025 15:50:44 +0800
-Message-Id: <20250930075044.1368134-3-yelangyan@huaqin.corp-partner.google.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250930075044.1368134-1-yelangyan@huaqin.corp-partner.google.com>
-References: <20250930075044.1368134-1-yelangyan@huaqin.corp-partner.google.com>
+ d=mediateko365.onmicrosoft.com; s=selector2-mediateko365-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yhpidOuvjK/PCwpXDuCtiLBH7krNWYQRdjOWzgKu0h8=;
+ b=UXPEFWLENsvzUTJe/Rhw44ulJI9Fwk6rqAHCSK0wewrtU1hNxhurQMxlMuxflkI/Zav5i+KcF7CsFVmYwj8qJzoDHUuw0SHCADDUplJq+x0NT19CMSfWovmdnUw83zHYAMNqFS6Vpji1es4269tcOI3s+ypXK6xTYHVf4s1buXo=
+Received: from TYZPR03MB6624.apcprd03.prod.outlook.com (2603:1096:400:1f4::13)
+ by JH0PR03MB8810.apcprd03.prod.outlook.com (2603:1096:990:a9::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.17; Tue, 30 Sep
+ 2025 07:51:12 +0000
+Received: from TYZPR03MB6624.apcprd03.prod.outlook.com
+ ([fe80::9ce6:1e85:c4a7:2a54]) by TYZPR03MB6624.apcprd03.prod.outlook.com
+ ([fe80::9ce6:1e85:c4a7:2a54%4]) with mapi id 15.20.9160.015; Tue, 30 Sep 2025
+ 07:51:12 +0000
+From: =?utf-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>
+To: =?utf-8?B?SmF5IExpdSAo5YiY5Y2aKQ==?= <Jay.Liu@mediatek.com>,
+	"chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>, "AngeloGioacchino Del
+ Regno" <angelogioacchino.delregno@collabora.com>,
+	=?utf-8?B?WW9uZ3FpYW5nIE5pdSAo54mb5rC45by6KQ==?=
+	<yongqiang.niu@mediatek.com>, "airlied@gmail.com" <airlied@gmail.com>,
+	"simona@ffwll.ch" <simona@ffwll.ch>, "p.zabel@pengutronix.de"
+	<p.zabel@pengutronix.de>, "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+	"hsinyi@chromium.org" <hsinyi@chromium.org>
+CC: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1 1/1] drm/mediatek: fix CCORR mtk_ctm_s31_32_to_s1_n
+ function issue
+Thread-Topic: [PATCH v1 1/1] drm/mediatek: fix CCORR mtk_ctm_s31_32_to_s1_n
+ function issue
+Thread-Index: AQHcKrxJFvgScr5P1UCW7F2TsTOBzLSraIGA
+Date: Tue, 30 Sep 2025 07:51:11 +0000
+Message-ID: <ec1c7d3deca62adca0ee016a3691a4d8b8f0bdb4.camel@mediatek.com>
+References: <20250921055416.25588-1-jay.liu@mediatek.com>
+	 <20250921055416.25588-2-jay.liu@mediatek.com>
+In-Reply-To: <20250921055416.25588-2-jay.liu@mediatek.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Evolution 3.52.3-0ubuntu1 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=mediatek.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYZPR03MB6624:EE_|JH0PR03MB8810:EE_
+x-ms-office365-filtering-correlation-id: 209ebb33-543e-4384-8c5e-08ddfff62024
+x-ld-processed: a7687ede-7a6b-4ef6-bace-642f677fbe31,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|42112799006|1800799024|7416014|366016|38070700021;
+x-microsoft-antispam-message-info: =?utf-8?B?MmtOblhpT290UEFma0FCcEFSMkh2UEVyeUN3V2RHc0ExdlhNbkFlc3d2OE1w?=
+ =?utf-8?B?S0hvZ05Ca2FMR1RUL29VTnFsVnN3STBjRUpja0ppYnpmdEl6QVUyLzlWU3Rh?=
+ =?utf-8?B?Ry9tL3VzaXJ0Q0ExM3pvZC92REJod2oxY0gwbUpFTmRvSFpEUjdDR01EdExC?=
+ =?utf-8?B?NTFZY3dXUHRaQXROU2F3YzREQ2ZRRHh0UFY2NnFhQTMvMnlXQk9pMGZIV3Zo?=
+ =?utf-8?B?bUZNZE0zdzZmQkszUEJrRjdaRDhLdWhTdTNRQWlNcHl1SXpUbTlnalRpRzgx?=
+ =?utf-8?B?WDNZNmhId2xYMjhYeC9HUm5VbHdxWmM4dGRpNnNaWW44WVMvUzhGTzh3alNC?=
+ =?utf-8?B?QWNaem9rMy9FNnhPL3JYY21vVGo3WkhHY3kxQzUvUVNqb3NsOVlJcmRCMk1B?=
+ =?utf-8?B?aXIzR0kveW1jV3YwUnNjdzQyRXVtZ1ZxdFNxeVhpc2s4YmhIQWZHY1ZpQVNS?=
+ =?utf-8?B?K1Bxc083aVpFbFB4M2FrMlg3a0hsOTl1YWlWdlRTdXNrVzdyUlVZbUV1MXg4?=
+ =?utf-8?B?Zm1ScFcrVkVFeFNCT3MvdkR3ek9qQXNveEdvMjZtREhWWWw2K0FzM1F1ZFQ2?=
+ =?utf-8?B?SEU5V3lxd0NiVWpvL1UrT0daM1hlZmFiR3ZTMW9mQTZNRTE3T0srdS83cTFW?=
+ =?utf-8?B?b0RJSWFhaHY2dUR3WGFFVDJLb2pydmRwenZIOFVjZFo4UlVFZDV1YWNlSUVF?=
+ =?utf-8?B?S0VqQ2N3OXlLZjBRb1FBMmhtdnNIdzJRN0lhYm5kdm5BQW93TjdVeDc5RzNJ?=
+ =?utf-8?B?QjZ3TU5NTkh3azFWUkNNUDFhM3VLcHBGT1FVSVg4L2RCN1h4emZaWW5XMk5K?=
+ =?utf-8?B?VGk4aTUweXZWbzFjdy9UZ1lLNVIyZVR6OU9PLzlWcXpvc2MrcURmZkVEY1Jq?=
+ =?utf-8?B?MUlGM0M0bGZ2ZXdCT1hLZndnQWpEMXcvRFBneUJ2VURaL1EyZTcrUE9rVEI2?=
+ =?utf-8?B?UUpaRVFEa0dKWm9CWlpXMkRNZmszK1diOWxweDhDakliQWFiL3huNC9LZHl3?=
+ =?utf-8?B?MEJxaUk5SWIya3hubWRrTlBvVU5NWmVtTWMwYXJYRHBkVDRwdW42ODBCbHhR?=
+ =?utf-8?B?WCtJRnN5SHIvK25NK2hQWTNQUHNpUUdxTUxCOGxiLzN3UFlWS25wejU1Tzcv?=
+ =?utf-8?B?N3U4S0RYR1Qvdm1NKzVXNC91ZUlLNkxaY2ZQdDNLaEpMeklZZThibjllUGdQ?=
+ =?utf-8?B?WW8zbWVsQW54ZnRwYWZlVEc1SldkMDRSbmhpRXI0QVA4SkFGY2RUR3FRRWdl?=
+ =?utf-8?B?NFJYMWlIWkZuRW56aW0vUjhjUXBab3VyZEZQdnkvWjlDR2pJdXJuU2JQK2VU?=
+ =?utf-8?B?d0pmYTF0NnAvaGtEVzlVbmVUN0FIQ2xjbDl1Ri9tckY3aTBuMU9KN3pvRDlB?=
+ =?utf-8?B?ZnN3WHN3RWk4NWZmY0VwVndLdjhVU1lUcUgvYnpFcFlpUno3VHRPSG4rVmZT?=
+ =?utf-8?B?VzJVTEZMeW1NdkFjL3haNEFuMG1ZSC9VOXkxc2tBMm9ma3lKNGtxZmFFdDVy?=
+ =?utf-8?B?RmNxM0d5b2E1TDE5REJERzNHUnR0c1ZwWXJIMmxEN1J2elh0anJjNURWNmlw?=
+ =?utf-8?B?NlZaUm5ncXFXem1ISllReHhpNFA5cXdTRUc3cjFySUVtT05ZbktJYm5EcGU2?=
+ =?utf-8?B?QXArcHVxdXdSeG0xRDB3NXhjQll0MGNFNVV2MHUxTmJpVnBZOTA2OU1sNHov?=
+ =?utf-8?B?cU5pSDBjMm94Y1lqUDIrSHd2eURYaGpMNzl2bmhIWlhKRndBajNOYXB4cFlv?=
+ =?utf-8?B?ZUdCaldrMXFjOTFkWE11VlUvSzhLbVMydlhMbTc1d25ncEVTamdoYWhQWFdu?=
+ =?utf-8?B?eit5Ymd2YlltSzdEZkNrUHpFcXI4UE9tQWtxVnVXcTA5VjIwQ2c5cjR2NmU5?=
+ =?utf-8?B?YnNlNWdmWXdIakFDTXU0cVlkUGRUREN4TXJZd1BiUW9TVEw1M1YvYllNUzgz?=
+ =?utf-8?B?REhjd2FDSnFEL0I5Q1hPN1ZTTTlnQkZNNnJLYzJZZ3dHbVpsWHAva0ExTHpv?=
+ =?utf-8?B?c09Rb0tjRTBZU0FSdG9EM25iMGlOYTVXWTBtQTNIdWZ2WWYzM1U5cExFVlNZ?=
+ =?utf-8?Q?7m5yIQ?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB6624.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(42112799006)(1800799024)(7416014)(366016)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?SndSVEJmV1BCYXdtcTZtajdUUW02N1BVcW1ibWx4RVRwVFJlK1pxUHA0dHRK?=
+ =?utf-8?B?cDlOUWd0UStFZWhLMUo5WDBvdFlmdThBa3E0UEJ2bkNDVmxtNmI5aXJFN29D?=
+ =?utf-8?B?T3JpTGNjMDl6S29Bem1nSytHU1JwdDd5dHRHbnB5MVZWOFFuaUJadkpzUVNo?=
+ =?utf-8?B?MS85amJSUHB5M24xVTgvSUJyUE9CQk9rd0hhcWsrb0NMdjQvNkRDZmo2eE9s?=
+ =?utf-8?B?dHlqOXZLYlIrTGpCM1oxSlZ0aUFXSmIrV2xkN3B6UDVGSjVzRmU5OXZGV0ZY?=
+ =?utf-8?B?SWlVeVRjY2x5eWZVQ0t5OExyVGFJc2ZkcEdPaDFXM1NyNXVicFp0ek5JVU9S?=
+ =?utf-8?B?ZFNQc0xjajRqK2NkaERMay9EWE96S2Nydks4QnlnSElsRytYZjJyWms0WFdl?=
+ =?utf-8?B?YVliaE9XTVJadyt2cVpyOUNpU3VERGZUWkxtZzFOSXI2ZG5KZmFla0huVDlO?=
+ =?utf-8?B?alBLKzJPSlVZbkZHVlhrVTl0aXUzOFlJUDFMWVNRMU9FUUQwdE4remtNcHNp?=
+ =?utf-8?B?eG01bmllZWNnZ0h4TUZldW92NXFBa1lCYWltcExnTVRzYkV0Q3pyVkVjRmVK?=
+ =?utf-8?B?WUo5bTJYdnBoQWwxQ2JCVk9MeldXOXE4MXJKOTBkZ1ZvVDZ4bzQvMzFsM3Zh?=
+ =?utf-8?B?MGRCdmVEWWhwQ1ZKRFJXUUJ4WXk0SEFsdk11ZG9KblEwNEZ6VmJ3VnNKdmxa?=
+ =?utf-8?B?bXhuckp4U245YzI0SG1IL1ZSMUIzNVNRWml0WSt0bmI2Lzl2S1lFRFIzNFZL?=
+ =?utf-8?B?MmtjelMyTXhlZDhNK3RidmRZT09mS0NyampNd2NyMDVVSkdFcDN2TFA1MjFO?=
+ =?utf-8?B?Yk5hUG0rVVhDZUVJa3BFREdyVzZRNjBQWFJhYThrMUl4K2FNL0JNcEpGeS9Q?=
+ =?utf-8?B?MnNOcUlHMUVlYy9SS0JQZjNwYUFsU3NyR0JaSkNaeXo3TXRIOEpGRWNHa2F2?=
+ =?utf-8?B?RFp0MVB4YzJYS0tjV1dIL2s5bjJDTEVjTTh6OUNiKzVUeFc5aFlUZUNjT2p0?=
+ =?utf-8?B?UTlxNmVXYTdwMS9za0xjbWxQUk80RUgzc1dPZEhVQTVQa21SekROUCtCT3hG?=
+ =?utf-8?B?Um1IeklPM2ZTWmh4VWwyR0I5QnRoV3YxOW9ycFo0MFJKZG1WTmVSd2MwaEQ0?=
+ =?utf-8?B?eFhjWFozbHJldjM3OTNJVFdnWHZqUWtTZjVSeFRNSXAzUGhVbm52aHNURk03?=
+ =?utf-8?B?Wk1ObmdGbUpUTDN0UktYekY0UWVrOWpqaUVKMFRlRWhGV1pmazc0Q3UySGNt?=
+ =?utf-8?B?ZGF3N1lFQUEwVEhJYjBQK3FYMTcwZ2Q0aW9FeGdKUXR3UlUrVHVzTjR2a09p?=
+ =?utf-8?B?SXh4bUZVa1JPaGRZdUNlQ0s0SEpmQ29MLzcrUXdYTThGbG0wT0p4ZC9PVU5B?=
+ =?utf-8?B?MmJBdmNoUzliUUJFbTk5akxzUWVGTnY3a0VSajBoR0o0KzRaSXpkQzdRenRp?=
+ =?utf-8?B?U29tL3Z5Y2IzVHdkOExNSDJ3U0FsMnhFNENRNHlVRlpjRExyYmhZSG9zeWhP?=
+ =?utf-8?B?K2FkOTBXd09adjFhQW1ReS82STZ6MmpXeHdTTysvaGFXT1Erb0Npc0lrZGlw?=
+ =?utf-8?B?bnhyMWNuZkwyaUlBODM5M3phNTUwblhIMFVyRVZhT0Q2MWtBMVZaQVZha2dh?=
+ =?utf-8?B?bmtBREhjcEFzT0hobW5YTkV0SmwxeVhUTXpFTUJCUEtvazV4ckZrcThmMjF2?=
+ =?utf-8?B?Zk42c1k5YUZJaC9VUWIwWTVZRktCcURnRUU2ejQvMWhvSE5yT0M1RCtweEs5?=
+ =?utf-8?B?LzBIT09KMlJGLzA5bmduZllTZHl2VFF0WGg1eVI2eDI5YllmUUZrOW5xTkFL?=
+ =?utf-8?B?emJueFlsRW9NcWxFc3BYYUlUM2JFWFpvQkdvMjRhbzdjcS9pbGZnKzBVYitY?=
+ =?utf-8?B?T2NZd3BleGZ6OXFRK0llTzZyc09TemQxQTVxampmeGR6Q1h3TWR1MDhzVEZp?=
+ =?utf-8?B?dHZJNmRMOCtURFhzL1N5bG9XY2J5WUlxY3Q3eEVTQW9GM3NCSVlqYlZsVXpW?=
+ =?utf-8?B?eGlxNndIS1hGalpyWlpLTTRQUmpMVDFFRUs5ZDJDWmdsazBROFhTb1JlczVK?=
+ =?utf-8?B?QjJOUWtrTXI3Z05wWDJINTdsNWdhank4eW44Y244c1pWZmVza3NGTUQxS3Z2?=
+ =?utf-8?Q?EoHXyHMjhMM01q5CU5E6UvHdD?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <FDE1C5A0ED5B124499EF4174682F38B3@apcprd03.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB6624.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 209ebb33-543e-4384-8c5e-08ddfff62024
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Sep 2025 07:51:12.2677
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a7687ede-7a6b-4ef6-bace-642f677fbe31
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 9FGIE5vNt9YIcYrvyZL+jgPOsAuI4sI05ptSlmH8kAI3XWaa1+FPggthgvdNAuA3trHslafEduVWXQ0BIawxcw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR03MB8810
 
-Add a DRM panel driver for the Tianma TL121BVMS07-00 12.1"
-MIPI-DSI TFT LCD panel. The panel requires multiple power
-supplies (AVDD, AVEE, 1.8V logic), an enable GPIO, and a
-backlight device. The panel is based on the Ilitek IL79900A
-controller.
-
-Signed-off-by: Langyan Ye <yelangyan@huaqin.corp-partner.google.com>
----
- .../drm/panel/panel-tianma-tl121bvms07-00.c   | 419 ++++++++++++++++++
- 1 file changed, 419 insertions(+)
- create mode 100644 drivers/gpu/drm/panel/panel-tianma-tl121bvms07-00.c
-
-diff --git a/drivers/gpu/drm/panel/panel-tianma-tl121bvms07-00.c b/drivers/gpu/drm/panel/panel-tianma-tl121bvms07-00.c
-new file mode 100644
-index 000000000000..5facffeda864
---- /dev/null
-+++ b/drivers/gpu/drm/panel/panel-tianma-tl121bvms07-00.c
-@@ -0,0 +1,419 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * DRM panel driver for Tianma TL121BVMS07-00 12.1" MIPI-DSI TFT LCD panel
-+ *
-+ * Based on drivers/gpu/drm/panel/panel-boe-tv101wum-nl6.c
-+ */
-+
-+
-+#include <linux/delay.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/regulator/consumer.h>
-+
-+#include <drm/drm_connector.h>
-+#include <drm/drm_crtc.h>
-+#include <drm/drm_mipi_dsi.h>
-+#include <drm/drm_panel.h>
-+
-+#include <video/mipi_display.h>
-+
-+struct tm_panel;
-+
-+struct panel_desc {
-+	const struct drm_display_mode *modes;
-+	unsigned int bpc;
-+
-+	/**
-+	 * @width_mm: width of the panel's active display area
-+	 * @height_mm: height of the panel's active display area
-+	 */
-+	struct {
-+		unsigned int width_mm;
-+		unsigned int height_mm;
-+	} size;
-+
-+	unsigned long mode_flags;
-+	enum mipi_dsi_pixel_format format;
-+	int (*init)(struct tm_panel *tm);
-+	unsigned int lanes;
-+	bool discharge_on_disable;
-+	bool lp11_before_reset;
-+};
-+
-+struct tm_panel {
-+	struct drm_panel base;
-+	struct mipi_dsi_device *dsi;
-+
-+	const struct panel_desc *desc;
-+
-+	enum drm_panel_orientation orientation;
-+	struct regulator *pp1800;
-+	struct regulator *avee;
-+	struct regulator *avdd;
-+	struct gpio_desc *enable_gpio;
-+
-+	bool prepared;
-+};
-+
-+static int tm_tl121bvms07_00_init(struct tm_panel *tm)
-+{
-+	struct mipi_dsi_multi_context ctx = { .dsi = tm->dsi };
-+	struct mipi_dsi_device *dsi = ctx.dsi;
-+
-+	mipi_dsi_dcs_write_seq_multi(&ctx, 0xff, 0x5a, 0xa5, 0x06);
-+	mipi_dsi_dcs_write_seq_multi(&ctx, 0x3e, 0x62);
-+
-+
-+	mipi_dsi_generic_write_seq(dsi, 0xff, 0x5a, 0xa5, 0x02);
-+	mipi_dsi_dcs_write_seq_multi(&ctx, 0x1b, 0x20);
-+	mipi_dsi_dcs_write_seq_multi(&ctx, 0x5d, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(&ctx, 0x5e, 0x40);
-+
-+	mipi_dsi_dcs_write_seq_multi(&ctx, 0xff, 0x5a, 0xa5, 0x07);
-+	mipi_dsi_dcs_write_seq_multi(&ctx, 0X29, 0x00);
-+
-+	mipi_dsi_generic_write_seq(dsi, 0xff, 0x5a, 0xa5, 0x00);
-+
-+	mipi_dsi_dcs_write_seq_multi(&ctx, 0X11);
-+
-+	if (ctx.accum_err)
-+		return ctx.accum_err;
-+
-+	msleep(120);
-+
-+	mipi_dsi_dcs_write_seq_multi(&ctx, 0X29);
-+
-+	if (ctx.accum_err)
-+		return ctx.accum_err;
-+
-+	msleep(80);
-+
-+	return 0;
-+};
-+
-+static inline struct tm_panel *to_tm_panel(struct drm_panel *panel)
-+{
-+	return container_of(panel, struct tm_panel, base);
-+}
-+
-+static int tm_panel_enter_sleep_mode(struct tm_panel *tm)
-+{
-+	struct mipi_dsi_device *dsi = tm->dsi;
-+	int ret;
-+
-+	dsi->mode_flags &= ~MIPI_DSI_MODE_LPM;
-+
-+	ret = mipi_dsi_dcs_set_display_off(dsi);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = mipi_dsi_dcs_enter_sleep_mode(dsi);
-+	if (ret < 0)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static int tm_panel_disable(struct drm_panel *panel)
-+{
-+	struct tm_panel *tm = to_tm_panel(panel);
-+	int ret;
-+
-+	ret = tm_panel_enter_sleep_mode(tm);
-+	if (ret < 0) {
-+		dev_err(panel->dev, "failed to set panel off: %d\n", ret);
-+		return ret;
-+	}
-+
-+	msleep(150);
-+
-+	return 0;
-+}
-+
-+static int tm_panel_unprepare(struct drm_panel *panel)
-+{
-+	struct tm_panel *tm = to_tm_panel(panel);
-+
-+	if (!tm->prepared)
-+		return 0;
-+
-+	if (tm->desc->discharge_on_disable) {
-+		regulator_disable(tm->avee);
-+		regulator_disable(tm->avdd);
-+		usleep_range(5000, 7000);
-+		gpiod_set_value(tm->enable_gpio, 0);
-+		usleep_range(5000, 7000);
-+		regulator_disable(tm->pp1800);
-+	} else {
-+		gpiod_set_value(tm->enable_gpio, 0);
-+		usleep_range(1000, 2000);
-+		regulator_disable(tm->avee);
-+		regulator_disable(tm->avdd);
-+		usleep_range(5000, 7000);
-+		regulator_disable(tm->pp1800);
-+	}
-+
-+	tm->prepared = false;
-+
-+	return 0;
-+}
-+
-+static int tm_panel_prepare(struct drm_panel *panel)
-+{
-+	struct tm_panel *tm = to_tm_panel(panel);
-+	int ret;
-+
-+	if (tm->prepared)
-+		return 0;
-+
-+	ret = regulator_enable(tm->pp1800);
-+	if (ret < 0)
-+		return ret;
-+
-+	usleep_range(6000, 8000);
-+
-+	ret = regulator_enable(tm->avdd);
-+	if (ret < 0)
-+		goto poweroff1v8;
-+	ret = regulator_enable(tm->avee);
-+	if (ret < 0)
-+		goto poweroffavdd;
-+
-+	usleep_range(11000, 12000);
-+
-+	gpiod_set_value(tm->enable_gpio, 1);
-+
-+	if (tm->desc->lp11_before_reset) {
-+		ret = mipi_dsi_dcs_nop(tm->dsi);
-+		if (ret < 0) {
-+			dev_err(&tm->dsi->dev, "Failed to send NOP: %d\n", ret);
-+			goto poweroff;
-+		}
-+		usleep_range(1000, 2000);
-+	}
-+	gpiod_set_value(tm->enable_gpio, 0);
-+	usleep_range(1000, 2000);
-+	gpiod_set_value(tm->enable_gpio, 1);
-+	usleep_range(20000, 21000);
-+
-+	ret = tm->desc->init(tm);
-+	if (ret < 0)
-+		goto poweroff;
-+
-+	tm->prepared = true;
-+	return 0;
-+
-+poweroff:
-+	gpiod_set_value(tm->enable_gpio, 0);
-+	regulator_disable(tm->avee);
-+poweroffavdd:
-+	regulator_disable(tm->avdd);
-+poweroff1v8:
-+	usleep_range(5000, 7000);
-+	regulator_disable(tm->pp1800);
-+
-+	return ret;
-+}
-+
-+static int tm_panel_enable(struct drm_panel *panel)
-+{
-+	msleep(130);
-+	return 0;
-+}
-+
-+static const struct drm_display_mode tm_tl121bvms07_00_default_mode = {
-+	.clock = 264355,
-+	.hdisplay = 1600,
-+	.hsync_start = 1600 + 20,
-+	.hsync_end = 1600 + 20 + 4,
-+	.htotal = 1600 + 20 + 4 + 20,
-+	.vdisplay = 2560,
-+	.vsync_start = 2560 + 82,
-+	.vsync_end = 2560 + 82 + 2,
-+	.vtotal = 2560 + 82 + 2 + 36,
-+};
-+
-+static const struct panel_desc tm_tl121bvms07_00_desc = {
-+	.modes = &tm_tl121bvms07_00_default_mode,
-+	.bpc = 8,
-+	.size = {
-+		.width_mm = 163,
-+		.height_mm = 260,
-+	},
-+	.lanes = 3,
-+	.format = MIPI_DSI_FMT_RGB888,
-+	.mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_SYNC_PULSE |
-+		      MIPI_DSI_MODE_LPM,
-+	.init = tm_tl121bvms07_00_init,
-+	.lp11_before_reset = true,
-+};
-+
-+static int tm_panel_get_modes(struct drm_panel *panel,
-+			       struct drm_connector *connector)
-+{
-+	struct tm_panel *tm = to_tm_panel(panel);
-+	const struct drm_display_mode *m = tm->desc->modes;
-+	struct drm_display_mode *mode;
-+
-+	mode = drm_mode_duplicate(connector->dev, m);
-+	if (!mode) {
-+		dev_err(panel->dev, "failed to add mode %ux%u@%u\n",
-+			m->hdisplay, m->vdisplay, drm_mode_vrefresh(m));
-+		return -ENOMEM;
-+	}
-+
-+	mode->type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED;
-+	drm_mode_set_name(mode);
-+	drm_mode_probed_add(connector, mode);
-+
-+	connector->display_info.width_mm = tm->desc->size.width_mm;
-+	connector->display_info.height_mm = tm->desc->size.height_mm;
-+	connector->display_info.bpc = tm->desc->bpc;
-+	/*
-+	 * TODO: Remove once all drm drivers call
-+	 * drm_connector_set_orientation_from_panel()
-+	 */
-+	drm_connector_set_panel_orientation(connector, tm->orientation);
-+
-+	return 1;
-+}
-+
-+static enum drm_panel_orientation tm_panel_get_orientation(struct drm_panel *panel)
-+{
-+	struct tm_panel *tm = to_tm_panel(panel);
-+
-+	return tm->orientation;
-+}
-+
-+static const struct drm_panel_funcs tm_panel_funcs = {
-+	.disable = tm_panel_disable,
-+	.unprepare = tm_panel_unprepare,
-+	.prepare = tm_panel_prepare,
-+	.enable = tm_panel_enable,
-+	.get_modes = tm_panel_get_modes,
-+	.get_orientation = tm_panel_get_orientation,
-+};
-+
-+static int tm_panel_add(struct tm_panel *tm)
-+{
-+	struct device *dev = &tm->dsi->dev;
-+	int err;
-+
-+	tm->avdd = devm_regulator_get(dev, "avdd");
-+	if (IS_ERR(tm->avdd))
-+		return PTR_ERR(tm->avdd);
-+
-+	tm->avee = devm_regulator_get(dev, "avee");
-+	if (IS_ERR(tm->avee))
-+		return PTR_ERR(tm->avee);
-+
-+	tm->pp1800 = devm_regulator_get(dev, "pp1800");
-+	if (IS_ERR(tm->pp1800))
-+		return PTR_ERR(tm->pp1800);
-+
-+	tm->enable_gpio = devm_gpiod_get(dev, "enable", GPIOD_OUT_LOW);
-+	if (IS_ERR(tm->enable_gpio)) {
-+		dev_err(dev, "cannot get reset-gpios %ld\n",
-+			PTR_ERR(tm->enable_gpio));
-+		return PTR_ERR(tm->enable_gpio);
-+	}
-+
-+	gpiod_set_value(tm->enable_gpio, 0);
-+
-+	tm->base.prepare_prev_first = true;
-+
-+	drm_panel_init(&tm->base, dev, &tm_panel_funcs,
-+		       DRM_MODE_CONNECTOR_DSI);
-+	err = of_drm_get_panel_orientation(dev->of_node, &tm->orientation);
-+	if (err < 0) {
-+		dev_err(dev, "%pOF: failed to get orientation %d\n", dev->of_node, err);
-+		return err;
-+	}
-+
-+	err = drm_panel_of_backlight(&tm->base);
-+	if (err)
-+		return err;
-+
-+	tm->base.funcs = &tm_panel_funcs;
-+	tm->base.dev = &tm->dsi->dev;
-+
-+	drm_panel_add(&tm->base);
-+
-+	return 0;
-+}
-+
-+static int tm_panel_probe(struct mipi_dsi_device *dsi)
-+{
-+	struct tm_panel *tm;
-+	int ret;
-+	const struct panel_desc *desc;
-+
-+	tm = devm_kzalloc(&dsi->dev, sizeof(*tm), GFP_KERNEL);
-+	if (!tm)
-+		return -ENOMEM;
-+
-+	desc = of_device_get_match_data(&dsi->dev);
-+	dsi->lanes = desc->lanes;
-+	dsi->format = desc->format;
-+	dsi->mode_flags = desc->mode_flags;
-+	tm->desc = desc;
-+	tm->dsi = dsi;
-+	ret = tm_panel_add(tm);
-+	if (ret < 0)
-+		return ret;
-+
-+	mipi_dsi_set_drvdata(dsi, tm);
-+
-+	ret = mipi_dsi_attach(dsi);
-+	if (ret)
-+		drm_panel_remove(&tm->base);
-+	return ret;
-+}
-+
-+static void tm_panel_shutdown(struct mipi_dsi_device *dsi)
-+{
-+	struct tm_panel *tm = mipi_dsi_get_drvdata(dsi);
-+
-+	drm_panel_disable(&tm->base);
-+	drm_panel_unprepare(&tm->base);
-+}
-+
-+static void tm_panel_remove(struct mipi_dsi_device *dsi)
-+{
-+	struct tm_panel *tm = mipi_dsi_get_drvdata(dsi);
-+	int ret;
-+
-+	tm_panel_shutdown(dsi);
-+
-+	ret = mipi_dsi_detach(dsi);
-+	if (ret < 0)
-+		dev_err(&dsi->dev, "failed to detach from DSI host: %d\n", ret);
-+
-+	if (tm->base.dev)
-+		drm_panel_remove(&tm->base);
-+}
-+
-+static const struct of_device_id tm_of_match[] = {
-+	{ .compatible = "tianma,tl121bvms07-00",
-+	  .data = &tm_tl121bvms07_00_desc
-+	},
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, tm_of_match);
-+
-+static struct mipi_dsi_driver tm_panel_driver = {
-+	.driver = {
-+		.name = "panel-tianma-tl121bvms07-00",
-+		.of_match_table = tm_of_match,
-+	},
-+	.probe = tm_panel_probe,
-+	.remove = tm_panel_remove,
-+	.shutdown = tm_panel_shutdown,
-+};
-+module_mipi_dsi_driver(tm_panel_driver);
-+
-+MODULE_AUTHOR("Langyan Ye <yelangyan@huaqin.corp-partner.google.com>");
-+MODULE_DESCRIPTION("TM tl121bvms07-00 1600x2560 video mode panel driver");
-+MODULE_LICENSE("GPL");
--- 
-2.34.1
-
+SGksIFlvbmdxaWFuZzoNCg0KSSB3b3VsZCBsaWtlIHlvdSB0byByZXZpZXcgdGhpcyBwYXRjaC4N
+Cg0KUmVnYXJkcywNCkNLDQoNCk9uIFN1biwgMjAyNS0wOS0yMSBhdCAxMzo1MyArMDgwMCwgSmF5
+IExpdSB3cm90ZToNCj4gaWYgbWF0cml4Yml0IGlzIDExLA0KPiBUaGUgcmFuZ2Ugb2YgY29sb3Ig
+bWF0cml4IGlzIGZyb20gMCB0byAoQklUKDEyKSAtIDEpLg0KPiBWYWx1ZXMgZnJvbSAwIHRvIChC
+SVQoMTEpIC0gMSkgcmVwcmVzZW50IHBvc2l0aXZlIG51bWJlcnMsDQo+IHZhbHVlcyBmcm9tIEJJ
+VCgxMSkgdG8gKEJJVCgxMikgLSAxKSByZXByZXNlbnQgbmVnYXRpdmUgbnVtYmVycy4NCj4gRm9y
+IGV4YW1wbGUsIC0xIG5lZWQgY29udmVydGVkIHRvIDgxOTEuDQo+IHNvIGNvbnZlcnQgUzMxLjMy
+IHRvIEhXIFEyLjExIGZvcm1hdCBieSBkcm1fY29sb3JfY3RtX3MzMV8zMl90b19xbV9uLA0KPiBh
+bmQgc2V0IGludF9iaXRzIHRvIDIuDQo+IA0KPiBGaXhlczogNzM4ZWQ0MTU2ZmJhICgiZHJtL21l
+ZGlhdGVrOiBBZGQgbWF0cml4X2JpdHMgcHJpdmF0ZSBkYXRhIGZvciBjY29yciIpDQo+IENoYW5n
+ZS1JZDogSWNiMmFhZTFkZWUyMWQ5ZWEzNGYyNjNhNTQ4NTBmZWUyNmQ5N2Q0NTUNCj4gUmV2aWV3
+ZWQtYnk6IEFuZ2Vsb0dpb2FjY2hpbm8gRGVsIFJlZ25vIDxhbmdlbG9naW9hY2NoaW5vLmRlbHJl
+Z25vQGNvbGxhYm9yYS5jb20+DQo+IFNpZ25lZC1vZmYtYnk6IEpheSBMaXUgPGpheS5saXVAbWVk
+aWF0ZWsuY29tPg0KPiAtLS0NCj4gIGRyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZGlzcF9j
+Y29yci5jIHwgMjYgKysrLS0tLS0tLS0tLS0tLS0tLS0tLS0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAz
+IGluc2VydGlvbnMoKyksIDIzIGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZl
+cnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZGlzcF9jY29yci5jIGIvZHJpdmVycy9ncHUvZHJtL21l
+ZGlhdGVrL210a19kaXNwX2Njb3JyLmMNCj4gaW5kZXggMTBkNjBkMmMyYTU2Li42MzRiMzEzNDY5
+MjEgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZGlzcF9jY29y
+ci5jDQo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZGlzcF9jY29yci5jDQo+
+IEBAIC04MCwyOCArODAsNyBAQCB2b2lkIG10a19jY29ycl9zdG9wKHN0cnVjdCBkZXZpY2UgKmRl
+dikNCj4gIAl3cml0ZWxfcmVsYXhlZCgweDAsIGNjb3JyLT5yZWdzICsgRElTUF9DQ09SUl9FTik7
+DQo+ICB9DQo+ICANCj4gLS8qIENvbnZlcnRzIGEgRFJNIFMzMS4zMiB2YWx1ZSB0byB0aGUgSFcg
+UzEubiBmb3JtYXQuICovDQo+IC1zdGF0aWMgdTE2IG10a19jdG1fczMxXzMyX3RvX3MxX24odTY0
+IGluLCB1MzIgbikNCj4gLXsNCj4gLQl1MTYgcjsNCj4gLQ0KPiAtCS8qIFNpZ24gYml0LiAqLw0K
+PiAtCXIgPSBpbiAmIEJJVF9VTEwoNjMpID8gQklUKG4gKyAxKSA6IDA7DQo+IC0NCj4gLQlpZiAo
+KGluICYgR0VOTUFTS19VTEwoNjIsIDMzKSkgPiAwKSB7DQo+IC0JCS8qIGlkZW50aXR5IHZhbHVl
+IDB4MTAwMDAwMDAwIC0+IDB4NDAwKG10ODE4MyksICovDQo+IC0JCS8qIGlkZW50aXR5IHZhbHVl
+IDB4MTAwMDAwMDAwIC0+IDB4ODAwKG10ODE5MiksICovDQo+IC0JCS8qIGlmIGJpZ2dlciB0aGlz
+LCBzZXQgaXQgdG8gbWF4IDB4N2ZmLiAqLw0KPiAtCQlyIHw9IEdFTk1BU0sobiwgMCk7DQo+IC0J
+fSBlbHNlIHsNCj4gLQkJLyogdGFrZSB0aGUgbisxIG1vc3QgaW1wb3J0YW50IGJpdHMuICovDQo+
+IC0JCXIgfD0gKGluID4+ICgzMiAtIG4pKSAmIEdFTk1BU0sobiwgMCk7DQo+IC0JfQ0KPiAtDQo+
+IC0JcmV0dXJuIHI7DQo+IC19DQo+IC0NCj4gLXZvaWQgbXRrX2Njb3JyX2N0bV9zZXQoc3RydWN0
+IGRldmljZSAqZGV2LCBzdHJ1Y3QgZHJtX2NydGNfc3RhdGUgKnN0YXRlKQ0KPiArYm9vbCBtdGtf
+Y2NvcnJfY3RtX3NldChzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBkcm1fY3J0Y19zdGF0ZSAq
+c3RhdGUpDQo+ICB7DQo+ICAJc3RydWN0IG10a19kaXNwX2Njb3JyICpjY29yciA9IGRldl9nZXRf
+ZHJ2ZGF0YShkZXYpOw0KPiAgCXN0cnVjdCBkcm1fcHJvcGVydHlfYmxvYiAqYmxvYiA9IHN0YXRl
+LT5jdG07DQo+IEBAIC0xMDksNiArODgsNyBAQCB2b2lkIG10a19jY29ycl9jdG1fc2V0KHN0cnVj
+dCBkZXZpY2UgKmRldiwgc3RydWN0IGRybV9jcnRjX3N0YXRlICpzdGF0ZSkNCj4gIAljb25zdCB1
+NjQgKmlucHV0Ow0KPiAgCXVpbnQxNl90IGNvZWZmc1s5XSA9IHsgMCB9Ow0KPiAgCWludCBpOw0K
+PiArCWludCBpbnRfYml0cyA9IDI7DQo+ICAJc3RydWN0IGNtZHFfcGt0ICpjbWRxX3BrdCA9IE5V
+TEw7DQo+ICAJdTMyIG1hdHJpeF9iaXRzID0gY2NvcnItPmRhdGEtPm1hdHJpeF9iaXRzOw0KPiAg
+DQo+IEBAIC0xMTksNyArOTksNyBAQCB2b2lkIG10a19jY29ycl9jdG1fc2V0KHN0cnVjdCBkZXZp
+Y2UgKmRldiwgc3RydWN0IGRybV9jcnRjX3N0YXRlICpzdGF0ZSkNCj4gIAlpbnB1dCA9IGN0bS0+
+bWF0cml4Ow0KPiAgDQo+ICAJZm9yIChpID0gMDsgaSA8IEFSUkFZX1NJWkUoY29lZmZzKTsgaSsr
+KQ0KPiAtCQljb2VmZnNbaV0gPSBtdGtfY3RtX3MzMV8zMl90b19zMV9uKGlucHV0W2ldLCBtYXRy
+aXhfYml0cyk7DQo+ICsJCWNvZWZmc1tpXSA9IGRybV9jb2xvcl9jdG1fczMxXzMyX3RvX3FtX24o
+aW5wdXRbaV0sIGludF9iaXRzLCBtYXRyaXhfYml0cyk7DQo+ICANCj4gIAltdGtfZGRwX3dyaXRl
+KGNtZHFfcGt0LCBjb2VmZnNbMF0gPDwgMTYgfCBjb2VmZnNbMV0sDQo+ICAJCSAgICAgICZjY29y
+ci0+Y21kcV9yZWcsIGNjb3JyLT5yZWdzLCBESVNQX0NDT1JSX0NPRUZfMCk7DQoNCg==
 
