@@ -1,421 +1,189 @@
-Return-Path: <linux-kernel+bounces-837700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA338BACFBE
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 15:11:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B8AADBACFC4
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 15:11:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03E297A8606
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 13:09:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB1297A9A11
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 13:09:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61E30302163;
-	Tue, 30 Sep 2025 13:11:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53F7F2FC895;
+	Tue, 30 Sep 2025 13:11:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SgO5Kk54"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dlt41fG1"
+Received: from mail-pl1-f194.google.com (mail-pl1-f194.google.com [209.85.214.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 684BB24E00F;
-	Tue, 30 Sep 2025 13:11:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FFEA2FB0BA
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 13:11:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759237864; cv=none; b=eLuotPTvR2DGiqCGZyswuijDzRxVfWo5z+NaTO2UCzNsd5g0lX0i2OWnyQcBsRM4LZE0CTnEdmo8l25aJj6zNK5A66yEkuVXvVzwRl+dicL5y9SBGcERehEUqDkw4RG46e8I4AZYo2upF/jXrbSM+Yv1TZ0Pix5olaRRDWsh+pE=
+	t=1759237891; cv=none; b=WRSTuiRv2dwhsgSejgFzwl0UEhABzih8rxD4AxaWl99DZX1UXbvWdhlHPU+wzokcMKz2dMClXABQY7tT2ZkTsav2SUmsRNtbxDfYjo8q7JPxDHWQjKQiWVFaUp1X8ewY6ADX3hHZTFMiyi8020bcjdJuRe9F7ttJTEAY072x0ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759237864; c=relaxed/simple;
-	bh=hcVwDJiuc5fCjA4IRLGdVkmUdEx2kMOh7WarD7QVQb0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eWoyWltIrzIHgYE3Ep+QafDzbRf0nr9zQhxZYlhw8KJJjOcvHHC+C4a1djBlHx95FN3W+fFdWh7W4ygl8tftUBZXYnfA0zFAZ9gRACw3+b38U+CxzfukLDfFlwapsxlU4upXILXhqpTyUwC0ePv7J1xD2zYyRemEqX+jUSipzyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SgO5Kk54; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0ABBC4CEF0;
-	Tue, 30 Sep 2025 13:11:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759237864;
-	bh=hcVwDJiuc5fCjA4IRLGdVkmUdEx2kMOh7WarD7QVQb0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SgO5Kk54N/xt6m/PNlwX9voIWEBuhepI9dWxTX8gmSsid2JhBm50lMFxxyLPlh9Mm
-	 zLiqY823Of0muR4YS8x5XFCjYZNpCUzrAFvt24BSdVheHi5kmEgJt/Gxb5OLyyrNoh
-	 c/KN1fdFbeAa282S+d0FGCdYDT1SrJmZ1+xpdHv0ro0/77q9L/zlw5GjgcfYVYjCSZ
-	 l/iMSnbwO3rI6OiBCG42XmHMC43qOzaGAhUNYlmrsjaaMhcsJncBvA1Mz5jvLT43cu
-	 gIptwTZmNitS/yAhjmA76xK3H/8Gz1TWCdoOXheSnCEH/r0CSl98lBBHoKhzqyki30
-	 x0qRg9+qrzxhA==
-Date: Tue, 30 Sep 2025 16:11:00 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Stefano Garzarella <sgarzare@redhat.com>
-Cc: linux-integrity@vger.kernel.org, dpsmith@apertussolutions.com,
-	ross.philipson@oracle.com,
-	Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
-	Stefan Berger <stefanb@linux.ibm.com>,
-	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:KEYS/KEYRINGS" <keyrings@vger.kernel.org>,
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH v3 10/10] tpm-buf: Enable managed and stack allocations.
-Message-ID: <aNvW5KMUO2C0i233@kernel.org>
-References: <20250929194832.2913286-1-jarkko@kernel.org>
- <20250929194832.2913286-11-jarkko@kernel.org>
- <u7zay2gb3dff4ptbh34qw7ini63ar3246ivd4xnxtdxc6ijktx@lutatpeg7f7z>
+	s=arc-20240116; t=1759237891; c=relaxed/simple;
+	bh=Ytf2NkRfcS24mvyhgg6Fpz/jDl94mam559z3JfUeyu8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=by0Ts4lptr5TcQMGwyzgEjOR/axmLWsTI5ZIM9BKpylLW7Fv6kC6SXb3pNGriMbP9yXwk6gvBHEgiq8dc2hmsw5A3+eZc4XxisqW66NNbERV+V3P6GasPGBn5uHYAOaVSvnqoaHcBYuOH0ZS6fX/eV4Oh0lJ2Jjt5NvaSI95FwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dlt41fG1; arc=none smtp.client-ip=209.85.214.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f194.google.com with SMTP id d9443c01a7336-2897522a1dfso23583425ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 06:11:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759237889; x=1759842689; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uHc/E7m/jFKYEfR1/jPPVcerM7wOAZa1eDOTdDgLqtM=;
+        b=dlt41fG1Oy9lxkpSgmuLrESTEgBNKy2M2G7t341JhVSaIgDeZJwaOqq8nLoeN6957r
+         YHzzvYFIG8zMyjo5WDdG8dmRfUMV3U/4F+KPsygqtn0iQK9WIYFDsr0zznPGSUASy9nX
+         Q9QHaDI+kRmel9lF9iuBJ/4AFgwqYC4j1lxuJcCQBvVcYAlYs9MufNRrCCMaxAIXuR7b
+         /09xutJ9ZLkt2tv5uchV07myy8nwsPtAwtpXxJIpwcHYn5jIXjD2CpdDFp8KMXR9LiLM
+         Wl4kNi0RsRkfP3u2MG+VR6YD+LthYfmoeLdnhDaRbCruZ3YHjzPqmgy5s9k3VTxmbdrM
+         x1qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759237889; x=1759842689;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uHc/E7m/jFKYEfR1/jPPVcerM7wOAZa1eDOTdDgLqtM=;
+        b=bEiqRJHVX8f9toQ6yLaSk90oclbaow9HjU0pZQmVZP4Z6OxbLPLY0kEGO26se9UGpl
+         P8NdexQdmhoYjbo/L/Lqy53X9pM5RTulmsVzZgYi6XlhWfOHWJjjNhRuK7MsOWEIyoY4
+         SHlgUwbruRcAueqe/jGfE/vEaSTyLAgolPWa0XW4BrrK6KVKcfjekYYB7ndLvYfBg1VP
+         /+C3jMgqzvUHMr6qGE4ahWeW8NBC5S+eRJNis+30XOglXXyEFZ1zGR41zjwSbTBi69ve
+         ZfLVkgIdBFlMHgAVuRyehuap82c9IrA+DH+rS3eK3Lh1yI1jzM2VFFGgbKcAClOKb9ef
+         Yo4A==
+X-Forwarded-Encrypted: i=1; AJvYcCUmnmLywJvED4gn7KVOE6/DtfujRvtCQq8N0hUmNqKHcVokMvELGd/LZ1auHh+af+K61WZ4i0YOqdrGfyg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyZELd4QVn1sS+wkKw1qQYM77459s7akHH0w98UWVekhoekxqd
+	/GX3DdxKCLJlzc5ksabmVGNC9AdhEyvHeijb5QdUiFdHWVJW9JNNBJZugQNkQGqb8quqLiZ5hPD
+	UUgyVfOf6dg4mbwH+t/4SQruzlYMk+38=
+X-Gm-Gg: ASbGncu9DMCcdwH6hQk8SkM9Il1gDOX96kpw8NKql8+fC8Ypih+o3LMwcgCNQk8mj45
+	rEezaqBKTpiNFmJpWhkpAJlaEzRrqe1tuHoWLfq3363fsvpvpAKYqJg8LT2M4b/RzCfy/wyW6ie
+	7TWklEzb8RVLJOZIDPVELT5cqFKZ3g77vRZk6exQYY2pUJI5iL7cubTEFvUk90kq1EY8EJ9St/2
+	MALC6/D9oAc9U++5pm8zBhBh5DK240Osij6/3wnKw==
+X-Google-Smtp-Source: AGHT+IGHOp5Dy+vBf5scno3BDqZJSmoW/HyCNwJQWRz31aCwhtpdhEJdbAjnOh+rTHWGYxvCZalCIOkQWDr2J0an+wg=
+X-Received: by 2002:a17:903:3586:b0:24c:6125:390a with SMTP id
+ d9443c01a7336-27ed49b9cbfmr200771805ad.10.1759237889185; Tue, 30 Sep 2025
+ 06:11:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <u7zay2gb3dff4ptbh34qw7ini63ar3246ivd4xnxtdxc6ijktx@lutatpeg7f7z>
+References: <20250929061213.1659258-1-jianyungao89@gmail.com>
+ <ff4099fa-a6e4-4478-af81-a4c1baaf483b@arm.com> <20250930122959.GA87275@pauld.westford.csb>
+In-Reply-To: <20250930122959.GA87275@pauld.westford.csb>
+From: Jianyun Gao <jianyungao89@gmail.com>
+Date: Tue, 30 Sep 2025 21:11:17 +0800
+X-Gm-Features: AS18NWDgd9hjpvoGPLnSvbAr3swPPrcMEkZVbjoQPLK8GHVmWUGsAq3f7LD5WpU
+Message-ID: <CAHP3+4DRJuEtxEXLLz1Z76ofPqd030sTmX5pQ+21jAFKQB9K_g@mail.gmail.com>
+Subject: Re: [PATCH v2] sched: Fix some spelling mistakes in the scheduler module
+To: Phil Auld <pauld@redhat.com>
+Cc: Christian Loehle <christian.loehle@arm.com>, linux-kernel@vger.kernel.org, 
+	Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 30, 2025 at 02:44:52PM +0200, Stefano Garzarella wrote:
-> On Mon, Sep 29, 2025 at 10:48:32PM +0300, Jarkko Sakkinen wrote:
-> > From: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
-> > 
-> > Decouple kzalloc from buffer creation, so that  a managed allocation can be
-> > done trivially:
-> > 
-> > 	struct tpm_buf *buf __free(kfree) buf = kzalloc(TPM_BUFSIZE,
->                                                         ^
-> In the code, we use PAGE_SIZE instead of TPM_BUFSIZE with kzalloc().
-> Should we do the same in this example? (Perhaps adding the reason, if you
-> think it would be useful)
+Hi Phil,
+I agree with you. As a non-native English speaker, I think both of
+them(except or exempt) are acceptable.
+So, do I still need to change "except" to "exempt"?
 
-I think that should be fixed up in the patch and use TPM_BUFSIZE
-consistently for kzallocs. Thanks for the remark.
-
-> 
-> > 							GFP_KERNEL);
-> > 	if (!buf)
-> > 		return -ENOMEM;
-> > 	tpm_buf_init(buf, TPM_BUFSIZE);
-> > 
-> > Alternatively, stack allocations are also possible:
-> > 
-> > 	u8 buf_data[512];
-> > 	struct tpm_buf *buf = (struct tpm_buf *)buf_data;
-> > 	tpm_buf_init(buf, sizeof(buf_data));
-> > 
-> > Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
-> > ---
-> > v3:
-> > - A new patch from the earlier series with more scoped changes and
-> >  less abstract commit message.
-> > ---
-> > drivers/char/tpm/tpm-buf.c                | 122 +++++----
-> > drivers/char/tpm/tpm-sysfs.c              |  20 +-
-> > drivers/char/tpm/tpm.h                    |   1 -
-> > drivers/char/tpm/tpm1-cmd.c               | 147 +++++------
-> > drivers/char/tpm/tpm2-cmd.c               | 290 ++++++++++------------
-> > drivers/char/tpm/tpm2-sessions.c          | 121 +++++----
-> > drivers/char/tpm/tpm2-space.c             |  44 ++--
-> > drivers/char/tpm/tpm_vtpm_proxy.c         |  30 +--
-> > include/linux/tpm.h                       |  18 +-
-> > security/keys/trusted-keys/trusted_tpm1.c |  34 ++-
-> > security/keys/trusted-keys/trusted_tpm2.c | 176 ++++++-------
-> > 11 files changed, 482 insertions(+), 521 deletions(-)
-> > 
-> > diff --git a/drivers/char/tpm/tpm-buf.c b/drivers/char/tpm/tpm-buf.c
-> > index c9e6e5d097ca..1cb649938c01 100644
-> > --- a/drivers/char/tpm/tpm-buf.c
-> > +++ b/drivers/char/tpm/tpm-buf.c
-> > @@ -7,82 +7,109 @@
-> > #include <linux/module.h>
-> > #include <linux/tpm.h>
-> > 
-> > -/**
-> > - * tpm_buf_init() - Allocate and initialize a TPM command
-> > - * @buf:	A &tpm_buf
-> > - * @tag:	TPM_TAG_RQU_COMMAND, TPM2_ST_NO_SESSIONS or TPM2_ST_SESSIONS
-> > - * @ordinal:	A command ordinal
-> > - *
-> > - * Return: 0 or -ENOMEM
-> > - */
-> > -int tpm_buf_init(struct tpm_buf *buf, u16 tag, u32 ordinal)
-> > +static void __tpm_buf_size_invariant(struct tpm_buf *buf, u16 buf_size)
-> > {
-> > -	buf->data = (u8 *)__get_free_page(GFP_KERNEL);
-> > -	if (!buf->data)
-> > -		return -ENOMEM;
-> > -
-> > -	tpm_buf_reset(buf, tag, ordinal);
-> > -	return 0;
-> > +	u32 buf_size_2 = (u32)buf->capacity + (u32)sizeof(*buf);
-> > +
-> > +	if (!buf->capacity) {
-> > +		if (buf_size > TPM_BUFSIZE) {
-> > +			WARN(1, "%s: size overflow: %u\n", __func__, buf_size);
-> > +			buf->flags |= TPM_BUF_INVALID;
-> > +		}
-> > +	} else {
-> > +		if (buf_size != buf_size_2) {
-> > +			WARN(1, "%s: size mismatch: %u != %u\n", __func__, buf_size,
-> > +			     buf_size_2);
-> > +			buf->flags |= TPM_BUF_INVALID;
-> > +		}
-> > +	}
-> > }
-> > -EXPORT_SYMBOL_GPL(tpm_buf_init);
-> > 
-> > -/**
-> > - * tpm_buf_reset() - Initialize a TPM command
-> > - * @buf:	A &tpm_buf
-> > - * @tag:	TPM_TAG_RQU_COMMAND, TPM2_ST_NO_SESSIONS or TPM2_ST_SESSIONS
-> > - * @ordinal:	A command ordinal
-> > - */
-> > -void tpm_buf_reset(struct tpm_buf *buf, u16 tag, u32 ordinal)
-> > +static void __tpm_buf_reset(struct tpm_buf *buf, u16 buf_size, u16 tag, u32 ordinal)
-> > {
-> > 	struct tpm_header *head = (struct tpm_header *)buf->data;
-> > 
-> > +	__tpm_buf_size_invariant(buf, buf_size);
-> > +
-> > +	if (buf->flags & TPM_BUF_INVALID)
-> > +		return;
-> > +
-> > 	WARN_ON(tag != TPM_TAG_RQU_COMMAND && tag != TPM2_ST_NO_SESSIONS &&
-> > 		tag != TPM2_ST_SESSIONS && tag != 0);
-> > 
-> > 	buf->flags = 0;
-> > 	buf->length = sizeof(*head);
-> > +	buf->capacity = buf_size - sizeof(*buf);
-> > +	buf->handles = 0;
-> > 	head->tag = cpu_to_be16(tag);
-> > 	head->length = cpu_to_be32(sizeof(*head));
-> > 	head->ordinal = cpu_to_be32(ordinal);
-> > +}
-> > +
-> > +static void __tpm_buf_reset_sized(struct tpm_buf *buf, u16 buf_size)
-> > +{
-> > +	__tpm_buf_size_invariant(buf, buf_size);
-> > +
-> > +	if (buf->flags & TPM_BUF_INVALID)
-> > +		return;
-> > +
-> > +	buf->flags = TPM_BUF_TPM2B;
-> > +	buf->length = 2;
-> > +	buf->capacity = buf_size - sizeof(*buf);
-> > 	buf->handles = 0;
-> > +	buf->data[0] = 0;
-> > +	buf->data[1] = 0;
-> > }
-> > -EXPORT_SYMBOL_GPL(tpm_buf_reset);
-> > 
-> > /**
-> > - * tpm_buf_init_sized() - Allocate and initialize a sized (TPM2B) buffer
-> > - * @buf:	A @tpm_buf
-> > - *
-> > - * Return: 0 or -ENOMEM
-> > + * tpm_buf_init() - Initialize a TPM command
-> > + * @buf:	A &tpm_buf
-> > + * @buf_size:	Size of the buffer.
-> >  */
-> > -int tpm_buf_init_sized(struct tpm_buf *buf)
-> > +void tpm_buf_init(struct tpm_buf *buf, u16 buf_size)
-> > {
-> > -	buf->data = (u8 *)__get_free_page(GFP_KERNEL);
-> > -	if (!buf->data)
-> > -		return -ENOMEM;
-> > +	memset(buf, 0, buf_size);
-> > +	__tpm_buf_reset(buf, buf_size, TPM_TAG_RQU_COMMAND, 0);
-> > +}
-> > +EXPORT_SYMBOL_GPL(tpm_buf_init);
-> > 
-> > -	tpm_buf_reset_sized(buf);
-> > -	return 0;
-> > +/**
-> > + * tpm_buf_init_sized() - Initialize a sized buffer
-> > + * @buf:	A &tpm_buf
-> > + * @buf_size:	Size of the buffer.
-> > + */
-> > +void tpm_buf_init_sized(struct tpm_buf *buf, u16 buf_size)
-> > +{
-> > +	memset(buf, 0, buf_size);
-> > +	__tpm_buf_reset_sized(buf, buf_size);
-> > }
-> > EXPORT_SYMBOL_GPL(tpm_buf_init_sized);
-> > 
-> > /**
-> > - * tpm_buf_reset_sized() - Initialize a sized buffer
-> > + * tpm_buf_reset() - Re-initialize a TPM command
-> >  * @buf:	A &tpm_buf
-> > + * @tag:	TPM_TAG_RQU_COMMAND, TPM2_ST_NO_SESSIONS or TPM2_ST_SESSIONS
-> > + * @ordinal:	A command ordinal
-> >  */
-> > -void tpm_buf_reset_sized(struct tpm_buf *buf)
-> > +void tpm_buf_reset(struct tpm_buf *buf, u16 tag, u32 ordinal)
-> > {
-> > -	buf->flags = TPM_BUF_TPM2B;
-> > -	buf->length = 2;
-> > -	buf->data[0] = 0;
-> > -	buf->data[1] = 0;
-> > +	u16 buf_size = buf->capacity + sizeof(*buf);
-> > +
-> > +	__tpm_buf_reset(buf, buf_size, tag, ordinal);
-> > }
-> > -EXPORT_SYMBOL_GPL(tpm_buf_reset_sized);
-> > +EXPORT_SYMBOL_GPL(tpm_buf_reset);
-> > 
-> > -void tpm_buf_destroy(struct tpm_buf *buf)
-> > +/**
-> > + * tpm_buf_reset_sized() - Re-initialize a sized buffer
-> > + * @buf:	A &tpm_buf
-> > + */
-> > +void tpm_buf_reset_sized(struct tpm_buf *buf)
-> > {
-> > -	free_page((unsigned long)buf->data);
-> > +	u16 buf_size = buf->capacity + sizeof(*buf);
-> > +
-> > +	__tpm_buf_reset_sized(buf, buf_size);
-> > }
-> > -EXPORT_SYMBOL_GPL(tpm_buf_destroy);
-> > +EXPORT_SYMBOL_GPL(tpm_buf_reset_sized);
-> > 
-> > /**
-> >  * tpm_buf_length() - Return the number of bytes consumed by the data
-> > @@ -92,6 +119,9 @@ EXPORT_SYMBOL_GPL(tpm_buf_destroy);
-> >  */
-> > u32 tpm_buf_length(struct tpm_buf *buf)
-> 
-> Should we update the return value to u16?
-> 
-> > {
-> > +	if (buf->flags & TPM_BUF_INVALID)
-> > +		return 0;
-> > +
-> > 	return buf->length;
-> > }
-> > EXPORT_SYMBOL_GPL(tpm_buf_length);
-> > @@ -104,10 +134,12 @@ EXPORT_SYMBOL_GPL(tpm_buf_length);
-> >  */
-> > void tpm_buf_append(struct tpm_buf *buf, const u8 *new_data, u16 new_length)
-> > {
-> > +	u32 total_length = (u32)buf->length + (u32)new_length;
-> > +
-> > 	if (buf->flags & TPM_BUF_INVALID)
-> > 		return;
-> > 
-> > -	if ((buf->length + new_length) > PAGE_SIZE) {
-> > +	if (total_length > (u32)buf->capacity) {
-> > 		WARN(1, "tpm_buf: write overflow\n");
-> > 		buf->flags |= TPM_BUF_INVALID;
-> > 		return;
-> 
-> [...]
-> 
-> > diff --git a/security/keys/trusted-keys/trusted_tpm1.c b/security/keys/trusted-keys/trusted_tpm1.c
-> > index 636acb66a4f6..6e6a9fb48e63 100644
-> > --- a/security/keys/trusted-keys/trusted_tpm1.c
-> > +++ b/security/keys/trusted-keys/trusted_tpm1.c
-> > @@ -310,9 +310,8 @@ static int TSS_checkhmac2(unsigned char *buffer,
-> >  * For key specific tpm requests, we will generate and send our
-> >  * own TPM command packets using the drivers send function.
-> >  */
-> > -static int trusted_tpm_send(unsigned char *cmd, size_t buflen)
-> > +static int trusted_tpm_send(void *cmd, size_t buflen)
-> > {
-> > -	struct tpm_buf buf;
-> > 	int rc;
-> > 
-> > 	if (!chip)
-> > @@ -322,15 +321,12 @@ static int trusted_tpm_send(unsigned char *cmd, size_t buflen)
-> > 	if (rc)
-> > 		return rc;
-> > 
-> > -	buf.flags = 0;
-> > -	buf.length = buflen;
-> > -	buf.data = cmd;
-> > 	dump_tpm_buf(cmd);
-> > -	rc = tpm_transmit_cmd(chip, &buf, 4, "sending data");
-> > +	rc = tpm_transmit_cmd(chip, cmd, 4, "sending data");
-> 
-> Is it fine here to remove the intermediate tpm_buf ?
-> 
-> IIUC tpm_transmit_cmd() needs a tpm_buf, while here we are passing just
-> the "data", or in some way it's a nested tpm_buf?
-> 
-> (Sorry if it's a stupid question, but I'm still a bit new with this code).
-> 
-> > 	dump_tpm_buf(cmd);
-> > 
-> > +	/* Convert TPM error to -EPERM. */
-> > 	if (rc > 0)
-> > -		/* TPM error */
-> > 		rc = -EPERM;
-> > 
-> > 	tpm_put_ops(chip);
-> > @@ -624,23 +620,23 @@ static int tpm_unseal(struct tpm_buf *tb,
-> > static int key_seal(struct trusted_key_payload *p,
-> > 		    struct trusted_key_options *o)
-> > {
-> > -	struct tpm_buf tb;
-> > 	int ret;
-> > 
-> > -	ret = tpm_buf_init(&tb, 0, 0);
-> > -	if (ret)
-> > -		return ret;
-> > +	struct tpm_buf *tb __free(kfree) = kzalloc(PAGE_SIZE, GFP_KERNEL);
-> > +	if (!tb)
-> > +		return -ENOMEM;
-> > +
-> > +	tpm_buf_init(tb, TPM_BUFSIZE);
-> > 
-> > 	/* include migratable flag at end of sealed key */
-> > 	p->key[p->key_len] = p->migratable;
-> > 
-> > -	ret = tpm_seal(&tb, o->keytype, o->keyhandle, o->keyauth,
-> > +	ret = tpm_seal(tb, o->keytype, o->keyhandle, o->keyauth,
-> > 		       p->key, p->key_len + 1, p->blob, &p->blob_len,
-> > 		       o->blobauth, o->pcrinfo, o->pcrinfo_len);
-> > 	if (ret < 0)
-> > 		pr_info("srkseal failed (%d)\n", ret);
-> > 
-> > -	tpm_buf_destroy(&tb);
-> > 	return ret;
-> > }
-> > 
-> > @@ -650,14 +646,15 @@ static int key_seal(struct trusted_key_payload *p,
-> > static int key_unseal(struct trusted_key_payload *p,
-> > 		      struct trusted_key_options *o)
-> > {
-> > -	struct tpm_buf tb;
-> > 	int ret;
-> > 
-> > -	ret = tpm_buf_init(&tb, 0, 0);
-> > -	if (ret)
-> > -		return ret;
-> > +	struct tpm_buf *tb __free(kfree) = kzalloc(PAGE_SIZE, GFP_KERNEL);
-> > +	if (!tb)
-> > +		return -ENOMEM;
-> > +
-> > +	tpm_buf_init(tb, TPM_BUFSIZE);
-> > 
-> > -	ret = tpm_unseal(&tb, o->keyhandle, o->keyauth, p->blob, p->blob_len,
-> > +	ret = tpm_unseal(tb, o->keyhandle, o->keyauth, p->blob, p->blob_len,
-> > 			 o->blobauth, p->key, &p->key_len);
-> > 	if (ret < 0)
-> > 		pr_info("srkunseal failed (%d)\n", ret);
-> > @@ -665,7 +662,6 @@ static int key_unseal(struct trusted_key_payload *p,
-> > 		/* pull migratable flag out of sealed key */
-> > 		p->migratable = p->key[--p->key_len];
-> > 
-> > -	tpm_buf_destroy(&tb);
-> > 	return ret;
-> > }
-> 
-> The rest LGTM, but it's a huge patch (not your issue at all), so yeah not
-> sure :-)
-
-It's still a single logical change :-)
-
-> 
-> Thanks,
-> Stefano
-> 
-
-BR, Jarkko
+On Tue, Sep 30, 2025 at 8:30=E2=80=AFPM Phil Auld <pauld@redhat.com> wrote:
+>
+> On Tue, Sep 30, 2025 at 09:26:59AM +0100 Christian Loehle wrote:
+> > On 9/29/25 07:12, Jianyun Gao wrote:
+> > > From: "jianyun.gao" <jianyungao89@gmail.com>
+> > >
+> > > The following are some spelling mistakes existing in the scheduler
+> > > module. Just fix it!
+> > >
+> > >   slection -> selection
+> > >   achitectures -> architectures
+> > >   excempt -> except
+> > >   incorectly -> incorrectly
+> > >   litle -> little
+> > >   faireness -> fairness
+> > >   condtion -> condition
+> > >
+> > > Signed-off-by: jianyun.gao <jianyungao89@gmail.com>
+> > > ---
+> > > V2:
+> > > Delete the incorrect modifications for "borken" in V1.
+> > > The previous version is here:
+> > >
+> > > https://lore.kernel.org/lkml/20250926092832.1457477-1-jianyungao89@gm=
+ail.com/
+> > >
+> > >  kernel/sched/core.c     | 2 +-
+> > >  kernel/sched/cputime.c  | 2 +-
+> > >  kernel/sched/fair.c     | 8 ++++----
+> > >  kernel/sched/wait_bit.c | 2 +-
+> > >  4 files changed, 7 insertions(+), 7 deletions(-)
+> > >
+> > > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> > > index 7f1e5cb94c53..af5076e40567 100644
+> > > --- a/kernel/sched/core.c
+> > > +++ b/kernel/sched/core.c
+> > > @@ -6858,7 +6858,7 @@ static void __sched notrace __schedule(int sche=
+d_mode)
+> > >             /*
+> > >              * We pass task_is_blocked() as the should_block arg
+> > >              * in order to keep mutex-blocked tasks on the runqueue
+> > > -            * for slection with proxy-exec (without proxy-exec
+> > > +            * for selection with proxy-exec (without proxy-exec
+> > >              * task_is_blocked() will always be false).
+> > >              */
+> > >             try_to_block_task(rq, prev, &prev_state,
+> > > diff --git a/kernel/sched/cputime.c b/kernel/sched/cputime.c
+> > > index 7097de2c8cda..2429be5a5e40 100644
+> > > --- a/kernel/sched/cputime.c
+> > > +++ b/kernel/sched/cputime.c
+> > > @@ -585,7 +585,7 @@ void cputime_adjust(struct task_cputime *curr, st=
+ruct prev_cputime *prev,
+> > >     stime =3D mul_u64_u64_div_u64(stime, rtime, stime + utime);
+> > >     /*
+> > >      * Because mul_u64_u64_div_u64() can approximate on some
+> > > -    * achitectures; enforce the constraint that: a*b/(b+c) <=3D a.
+> > > +    * architectures; enforce the constraint that: a*b/(b+c) <=3D a.
+> > >      */
+> > >     if (unlikely(stime > rtime))
+> > >             stime =3D rtime;
+> > > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> > > index 18a30ae35441..20fe5899b247 100644
+> > > --- a/kernel/sched/fair.c
+> > > +++ b/kernel/sched/fair.c
+> > > @@ -5381,7 +5381,7 @@ dequeue_entity(struct cfs_rq *cfs_rq, struct sc=
+hed_entity *se, int flags)
+> > >             bool delay =3D sleep;
+> > >             /*
+> > >              * DELAY_DEQUEUE relies on spurious wakeups, special task
+> > > -            * states must not suffer spurious wakeups, excempt them.
+> > > +            * states must not suffer spurious wakeups, except them.
+> >
+> > This should be exempt, no?
+> >
+>
+> I had the same thought then decded that "except" as a verb worked too.
+> We are making an exception for the special states, right? I think either
+> works, but not both at once :)
+>
+> But that said, I'm not sure we should bother as these don't seem to
+> effect the meaning (at least to me as a native 'merican speaker).
+>
+> Cheers,
+> Phil
+>
+>
+>
+> --
+>
 
