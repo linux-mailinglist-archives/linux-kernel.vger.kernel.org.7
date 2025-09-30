@@ -1,170 +1,236 @@
-Return-Path: <linux-kernel+bounces-837994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2D0CBAE30E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 19:31:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22A75BAE317
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 19:31:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DA8F16884B
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:31:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2A0616EE81
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:31:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23FD430C605;
-	Tue, 30 Sep 2025 17:30:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5051230DED0;
+	Tue, 30 Sep 2025 17:30:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="TuBEgx26"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FC1GxJsD"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C37082472A8;
-	Tue, 30 Sep 2025 17:30:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BC7F25A323
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 17:30:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759253432; cv=none; b=aifWdA50v/Tzq1/n8d+hRgRjcKp9rRFTn6wkCcZF7gkiv4ULm7++LV9IA0umoJzt2SiUGAXoPKshtPzyrMLDnINpio5MwCiVcT6co98BYyRRsWQglgg6OYp6MsWIkaSp1511lFXD7aeK3PCAG5Bn/snZ5mN3bDnnXhNFAZRpbsU=
+	t=1759253442; cv=none; b=GuQo1o24u692F00boHM8yWTLBiJ2EG85S6bew9zNvi36QiEPBwYorfbDcRKK3tZyOxvPFcDxxFPiooxaDELJcxUc+Zpiy1RyJ7pkde5En6sU6y6+8Aqup/aC/9v93/JC2Hm9fMzyDB1ohcF2ngpWOoME3skd3+vCN5aVkpmHDwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759253432; c=relaxed/simple;
-	bh=pLWRomEWHMCJJcdA7B/x76jaKO31uCQkaUkcIDrKzWI=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=TiB4F5o1LmMwkMjYl+Nb2ex1ohWB6CBkDDsU1AtMKHzoagX5f3QS8y5hrgtfg/WXvBYOXL/Ww6yCzNe3t+dsU2cwinhSay1R0rQuG+4suLGmIStrzEgs2JKgH528Q/kcCL8DkFpxD8JigZkUdWownIGh5+cbmkPwqPg6v2Fieyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=TuBEgx26; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1759253427; x=1759858227; i=markus.elfring@web.de;
-	bh=FhWGIbww3II4LIlmLX1DcGogc+sctvfoZlXhRs+moug=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=TuBEgx26/6EbiczAI8Q9U5iItCtAlBbX3mxZ2K1Hw0WNLEhujBUTpg8Nbw/FfU7k
-	 U91z5UNEeOtH/JX2vCaNRVewJ6QgB3/tynmBR5CGshF8ncXJ195XdWsa29RibGKjl
-	 PQP68cvlDJK3LXEavQ1TFzIb6MZ/+QLMZQPRCMMeIEEGUmUYr3f1PkOVdsOjM69c0
-	 lcLIpAuxq/cD87LnsetvPt9yND8Xrvy+nE0/oUMOPVLyl2nluOJ9G3mtwW4INmVO0
-	 V0lvke3Xv05cqKuXI/YCduyfJzVXpkub8ZDF4JBTo1Xlh9FcEg72+WYSkSStIVITa
-	 qrdT20zdzKbKH6MCmQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.185]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MtyA4-1u9lmB2dkS-00tT5h; Tue, 30
- Sep 2025 19:30:27 +0200
-Message-ID: <d5d3df5c-3cbf-403c-ad89-aa039ed85579@web.de>
-Date: Tue, 30 Sep 2025 19:30:20 +0200
+	s=arc-20240116; t=1759253442; c=relaxed/simple;
+	bh=/u4nGAIRhuo73VWseUmoYKCZ4wwGCuvWLfJxiqmxqlI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=L4OzFYajlHZScKJLMkZTXtjkdtr//LnUYWAPoUtxjEQoQ+AjrKbfAdvRFxpXf9NVOczOU85iNVbduu1VtiZz6k8VJ5k3g/FiwV+mB+D2sClcrunbLfoPRZvm0B7pubqpG2P61OMpjX5V3+jbFIYpGsfG9Pw6EQ1vE5AvatRFZVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FC1GxJsD; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759253440; x=1790789440;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=/u4nGAIRhuo73VWseUmoYKCZ4wwGCuvWLfJxiqmxqlI=;
+  b=FC1GxJsD2vzWEgI10hh7gxpLxhmLKaRZSZw6WiktWHxp33Ocmeg6dJ3q
+   QuE1UDDA72zB48XkzP7TM5zlkwnajNCGTOfnP8bXZmenmFztMWqaAOLa3
+   R9VssJLjfzxxr3qy1I9IwmsUvzjYLMmNx17xeUDDBAbTpcIMxz3MbP9nP
+   GTRjMpPrWxBwl1XhwVUaI2MGbMRgXT/3XhfrGxrlaj6pCf7NODCH6JNX0
+   /pVfW8UOB0eXZv2rAWUVxVSpkRefYACGBIzhygicVnWPpBTeefhiKwrew
+   eizLirx4HkYFK41V9dgo71yjhr9ge+aybr/92aRKKo3A73dzdiffQoP15
+   w==;
+X-CSE-ConnectionGUID: 3eFo3j/8S0+xgcn5EjsI6w==
+X-CSE-MsgGUID: 8HwK64zQQIKfC+8/+88NhQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11569"; a="61437551"
+X-IronPort-AV: E=Sophos;i="6.18,304,1751266800"; 
+   d="scan'208";a="61437551"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2025 10:30:40 -0700
+X-CSE-ConnectionGUID: 4CMu1NfzTxifx9z5FNFlZA==
+X-CSE-MsgGUID: 3glwvT+nSSKeKn/PfMq9Rg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,304,1751266800"; 
+   d="scan'208";a="179334345"
+Received: from schen9-mobl4.amr.corp.intel.com (HELO [10.125.109.158]) ([10.125.109.158])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2025 10:30:38 -0700
+Message-ID: <6446b46bb8750deb28687b3e84d9b6062a35c86a.camel@linux.intel.com>
+Subject: Re: [PATCH v4 1/2] sched: Create architecture specific sched domain
+ distances
+From: Tim Chen <tim.c.chen@linux.intel.com>
+To: "Chen, Yu C" <yu.c.chen@intel.com>, Peter Zijlstra
+ <peterz@infradead.org>,  Ingo Molnar <mingo@redhat.com>
+Cc: Juri Lelli <juri.lelli@redhat.com>, Dietmar Eggemann	
+ <dietmar.eggemann@arm.com>, Ben Segall <bsegall@google.com>, Mel Gorman	
+ <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, Tim Chen	
+ <tim.c.chen@intel.com>, Vincent Guittot <vincent.guittot@linaro.org>, Len
+ Brown	 <len.brown@intel.com>, linux-kernel@vger.kernel.org, K Prateek Nayak
+	 <kprateek.nayak@amd.com>, "Gautham R . Shenoy" <gautham.shenoy@amd.com>, 
+ Zhao Liu <zhao1.liu@intel.com>, Vinicius Costa Gomes
+ <vinicius.gomes@intel.com>, Arjan Van De Ven	 <arjan.van.de.ven@intel.com>
+Date: Tue, 30 Sep 2025 10:30:36 -0700
+In-Reply-To: <79db86a1-dc75-42ca-9cff-927539dc2104@intel.com>
+References: <cover.1758234869.git.tim.c.chen@linux.intel.com>
+	 <990005f249897c6ef2e7d998c68836eba604f346.1758234869.git.tim.c.chen@linux.intel.com>
+	 <6a650359-d106-453a-a5a3-24b3750a05d2@intel.com>
+	 <861e15234270eb3678390da2b0ddf3a7162d98dd.camel@linux.intel.com>
+	 <79db86a1-dc75-42ca-9cff-927539dc2104@intel.com>
+Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual;
+ keydata=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
+ uQ==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-GB, de-DE
-To: Gal Pressman <gal@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>,
- cocci@inria.fr, Alexei Lazar <alazar@nvidia.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Julia Lawall <Julia.Lawall@inria.fr>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
- linux-rdma@vger.kernel.org, Leon Romanovsky <leon@kernel.org>,
- Mark Bloch <mbloch@nvidia.com>, Nicolas Palix <nicolas.palix@imag.fr>,
- Richard Cochran <richardcochran@gmail.com>,
- Saeed Mahameed <saeedm@nvidia.com>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH 0/6] Coccinelle: ptr_err_to_pe: Adjustments for SmPL code
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Ifg0K8XLz2kD1r2OLZz3SGGJ2z264BN76aRcY4vNzm8Pnk5phy1
- 6L/QMQtsFMTXfyZkw5KJ8dFSe1tkJkFZ1pWJxIihvO+ZRjz4exAJl62XPZFVWeYw7bNXCRp
- UnAZYinXcA930JrydyNsFBqZDIQ9yVB7PeimBLhYCr6jhCm2oRYoNgeeTTtlgsPhNT068+J
- R8/8znSCLXn604vSB5gng==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:F+osHgO2r8U=;3sAQa9EyhjFsKr5IWyXkmnMsgE9
- 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
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 30 Sep 2025 19:19:38 +0200
+On Tue, 2025-09-30 at 10:28 +0800, Chen, Yu C wrote:
+> On 9/30/2025 6:18 AM, Tim Chen wrote:
+> > On Sat, 2025-09-27 at 20:34 +0800, Chen, Yu C wrote:
+> > >=20
 
-Refine some implementation details for further development considerations.
+[snip]
 
-Markus Elfring (6):
-  Omit an URL comment line
-  Reduce repetition of the key word =E2=80=9Cvirtual=E2=80=9D
-  Restrict the metavariable type =E2=80=9Cconstant=E2=80=9D for the usage =
-of string literals
-  Omit a redundant space character
-  Simplify two SmPL dependency specifications
-  Distinguish implementation details better for operation mode properties
+> > >=20
+> > > If our goal is to figure out whether the arch_sched_node_distance()
+> > > has been overridden, how about the following alias?
+> > >=20
+> > > int __weak arch_sched_node_distance(int from, int to)
+> > > {
+> > > 	return __node_distance(from, to);
+> > > }
+> > > int arch_sched_node_distance_original(int from, int to) __weak
+> > > __alias(arch_sched_node_distance);
+> > >=20
+> > > static bool arch_sched_node_distance_is_overridden(void)
+> > > {
+> > > 	return arch_sched_node_distance !=3D arch_sched_node_distance_origin=
+al;
+> > > }
+> > >=20
+> > > so arch_sched_node_distance_is_overridden() can replace
+> > > modified_sched_node_distance()
+> > >=20
+> >=20
+> > I think that the alias version will still point to the replaced functio=
+n and not
+> > the originally defined one.
+> >=20
+> > How about not using __weak and just explicitly define arch_sched_node_d=
+istance
+> > as a function pointer.  Change the code like below.
+> >=20
+>=20
+> The arch_sched_node_distance_original is defined as __weak, so it
+> should point to the old function even if the function has been
+> overridden. I did a test on a X86 VM and it seems to be so.
+> But using the arch_sched_node_distance as a function point
+> should also be OK.
+>=20
 
- scripts/coccinelle/misc/ptr_err_to_pe.cocci | 22 ++++++++++++---------
- 1 file changed, 13 insertions(+), 9 deletions(-)
+How about changing the code as follow. I think this change is cleaner.
+I tested it in my VM and works for detecting sched distance substitution.
+Thanks.
 
-=2D-=20
-2.51.0
+Tim
+
+diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+index f25e4402c63e..3dc941258df3 100644
+--- a/kernel/sched/topology.c
++++ b/kernel/sched/topology.c
+@@ -1897,31 +1897,17 @@ static void init_numa_topology_type(int offline_nod=
+e)
+  * A NUMA level is created for each unique
+  * arch_sched_node_distance.
+  */
+-static bool __modified_sched_node_dist =3D true;
+-
+-int __weak arch_sched_node_distance(int from, int to)
++static int numa_node_dist(int i, int j)
+ {
+-	if (__modified_sched_node_dist)
+-		__modified_sched_node_dist =3D false;
+-
+-	return node_distance(from, to);
++	return node_distance(i, j);
+ }
+=20
+-static bool modified_sched_node_distance(void)
+-{
+-	/*
+-	 * Call arch_sched_node_distance()
+-	 * to determine if arch_sched_node_distance
+-	 * has been modified from node_distance()
+-	 * to arch specific distance.
+-	 */
+-	arch_sched_node_distance(0, 0);
+-	return __modified_sched_node_dist;
+-}
++int arch_sched_node_distance(int from, int to)
++			     __weak __alias(numa_node_dist);
+=20
+-static int numa_node_dist(int i, int j)
++static bool modified_sched_node_distance(void)
+ {
+-	return node_distance(i, j);
++	return numa_node_dist !=3D arch_sched_node_distance;
+ }
+=20
+ static int sched_record_numa_dist(int offline_node, int (*n_dist)(int, int=
+),
 
 
