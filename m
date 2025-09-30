@@ -1,229 +1,138 @@
-Return-Path: <linux-kernel+bounces-837115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E4CFBAB6AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 06:49:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A306BAB6B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 06:50:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8CC33C4537
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 04:49:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B286D1925AC8
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 04:50:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BA8B2749D7;
-	Tue, 30 Sep 2025 04:48:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="NIwA0pmu"
-Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010024.outbound.protection.outlook.com [52.101.193.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E83826FDA8;
-	Tue, 30 Sep 2025 04:48:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.24
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759207702; cv=fail; b=nYVSVXawnABrRu0gxbB1KTSyLdw/lHYWMgZg/idqXTfKLqFtSP6D5jCjkjVxuG65rvGyhloKqzWNx4P9OjRhrkZLPC9BTXxQNf2aVycp08EhuD/R8I4wdWdQQtEfdUPbGXHz6vskQOcJIe0PyruH5QOKzLEAUcCSqfMu9f0Z6X0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759207702; c=relaxed/simple;
-	bh=S85JyUpTQ4sDButVjrL3Lnh7uMgOK3RHtGJyMboZ4K0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=R/UJZRQSzVndJa3ZuoOIfz5IhWCokp9aKJ/EM9L41fnXrQn3Znj9/VVwBF5fJz1pxQFexj04I4oSSpePFvbNnvH0vwEeW0su14zcvNwiOkrR6zhIIugrnkyyshDcbiBUcylJltidmCC+it8YnNTbj/+Gq57IvXY/MHPOmbIybuE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=NIwA0pmu; arc=fail smtp.client-ip=52.101.193.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UOEfj0hqAmABuWyEZU+oJxq3/EEp5zwWgklAtEZrcRDzWfw1QyItMzYhQoBxWUZ589lkpn9fbXM0efJJDm/lxcMOohE3Z0rxUc+lPi4u6zNCAnmTSX/hAfh4q6UScPE6dYkf2l8EEB89cpz4PEk6dF4AxrV1PbGgbUzPl8v8DYDOI/An5b2J6DyBxbAWGooAKB1XuT8lhSebjqtancY9L8o8L2JalwyNFnnj6lce7XWOke6w30JXOswYWmpe2gH1JlgJ1Z5k0rUZABoW4Ewo6qmsKdBS95Wb9D5NJNmFhvFpc70Cse0IWy2RntB1bsa8ANy94jf4ureIh7T7pvz6Vg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ma5oSCysClIIkYhBFPHuIimjgX3X/PLd/CYMk3UjMg8=;
- b=u7EBNS7rVse6sEv/o7qMjpHMF8Xd1lD7puOnAu5kL9zWZjojx16N+bPFjtnhc+K50BtXTWPYx31CwhS6iFDbA7gAxLkyxiAaJDojoINu6hyREvMUGMqspASL1czAeoU9Iu12SoW9eTu5BgkEji3vTz27VG4EobnZzfKyTT36FyEkPenD107kJmczRpxbfv1kemh9I0S8dnty8KLukz6VFXnqRmaaea/vrFbBL5mJeBuAk4fGO+axHq3IjRwBrFMBCtjE5icGB6e+EnkKI36SLonCZj254FpTyDDGZwsEl58CktutX0XrP2r1t1/ylMwrlJ38v851JKe3rlEVTeiFHw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ma5oSCysClIIkYhBFPHuIimjgX3X/PLd/CYMk3UjMg8=;
- b=NIwA0pmu++hPX6KLso4S3gMhL1qec+SNVgsqLIg4kx/5kyFLvaIDNfYzxCneeuhAmwr1M6mlYfuUhRzXLd+ZOIFnFs12yFUXu6JhgjLkjyXwg1qBPREfiivA4sOGi7QnfdO4rnudhvGMeuz1x6JxZ9QxNJC1ZZyep2hY9hr5i3o=
-Received: from BY1P220CA0020.NAMP220.PROD.OUTLOOK.COM (2603:10b6:a03:5c3::7)
- by MN2PR12MB4319.namprd12.prod.outlook.com (2603:10b6:208:1dc::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.17; Tue, 30 Sep
- 2025 04:48:14 +0000
-Received: from SJ5PEPF000001E8.namprd05.prod.outlook.com
- (2603:10b6:a03:5c3:cafe::9a) by BY1P220CA0020.outlook.office365.com
- (2603:10b6:a03:5c3::7) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9160.17 via Frontend Transport; Tue,
- 30 Sep 2025 04:48:14 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- SJ5PEPF000001E8.mail.protection.outlook.com (10.167.242.196) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9160.9 via Frontend Transport; Tue, 30 Sep 2025 04:48:14 +0000
-Received: from ethanolx50f7host.amd.com (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Mon, 29 Sep
- 2025 21:48:11 -0700
-From: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
-To: <linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<nvdimm@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
-	<linux-pm@vger.kernel.org>
-CC: Davidlohr Bueso <dave@stgolabs.net>, Jonathan Cameron
-	<jonathan.cameron@huawei.com>, Dave Jiang <dave.jiang@intel.com>, "Alison
- Schofield" <alison.schofield@intel.com>, Vishal Verma
-	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
-	<dan.j.williams@intel.com>, Matthew Wilcox <willy@infradead.org>, Jan Kara
-	<jack@suse.cz>, "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown
-	<len.brown@intel.com>, Pavel Machek <pavel@kernel.org>, Li Ming
-	<ming.li@zohomail.com>, Jeff Johnson <jeff.johnson@oss.qualcomm.com>, "Ying
- Huang" <huang.ying.caritas@gmail.com>, Yao Xingtao <yaoxt.fnst@fujitsu.com>,
-	Peter Zijlstra <peterz@infradead.org>, Greg KH <gregkh@linuxfoundation.org>,
-	Nathan Fontenot <nathan.fontenot@amd.com>, Smita Koralahalli
-	<Smita.KoralahalliChannabasappa@amd.com>, Terry Bowman
-	<terry.bowman@amd.com>, Robert Richter <rrichter@amd.com>, Benjamin Cheatham
-	<benjamin.cheatham@amd.com>, Zhijian Li <lizhijian@fujitsu.com>, "Borislav
- Petkov" <bp@alien8.de>, Ard Biesheuvel <ardb@kernel.org>
-Subject: [PATCH v3 5/5] dax/hmem: Reintroduce Soft Reserved ranges back into the iomem tree
-Date: Tue, 30 Sep 2025 04:47:57 +0000
-Message-ID: <20250930044757.214798-6-Smita.KoralahalliChannabasappa@amd.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20250930044757.214798-1-Smita.KoralahalliChannabasappa@amd.com>
-References: <20250930044757.214798-1-Smita.KoralahalliChannabasappa@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60AD825B1C7;
+	Tue, 30 Sep 2025 04:50:29 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFEC5288DB;
+	Tue, 30 Sep 2025 04:50:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759207829; cv=none; b=ngXKXd1v/yglbO8mMPmjOole/0tsMT22D3qea5kdvTAtG+v8jMm+fdpONgQqMzt05lxQ7Bq4x0CK3tt0n/MHkFxDfo0OOeRYC9JxjMKCQu3Keb1zEfSb4xUIfJWbXGLAomk9wcYEhXW2ohfEtKhkuacgAq5ImOlSpF15CKqD0iQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759207829; c=relaxed/simple;
+	bh=q7JKcLc5rFsue9IeSq60djpSLcwWdKNibnqwpCcjTG0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UxnBxFxiZyjDotR//q50SD4+CVPJVcDaCQoqPlpr3vGW7aTR+4Yz9C3Kgs3aBv5wL0f0pQq4BoQhMkCIkQldveUT4M+xCBt8CtAe6SqPZt6Si6O3k1n8yMX/yKEH410Qc1OooyzF5kmXXCDt4IrkanH/lhfLnCvBgbTpLbSJadc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D70691424;
+	Mon, 29 Sep 2025 21:50:17 -0700 (PDT)
+Received: from [10.164.18.53] (MacBook-Pro.blr.arm.com [10.164.18.53])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 78AB33F66E;
+	Mon, 29 Sep 2025 21:50:17 -0700 (PDT)
+Message-ID: <0c498301-7434-4b2b-b7bc-73abe2057b67@arm.com>
+Date: Tue, 30 Sep 2025 10:20:14 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
- (10.181.42.216)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001E8:EE_|MN2PR12MB4319:EE_
-X-MS-Office365-Filtering-Correlation-Id: 31ec1a3c-d40a-4a44-06dc-08ddffdc90d6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|1800799024|82310400026|376014|36860700013|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?5QzqA9lTHUEWpt97DIpSh7YvnbmuBm6EJRJJO4Z4lqXljHpuRObGRvLEESH0?=
- =?us-ascii?Q?JN5R2KHFmgzrZi6RqfFG6NJWEqO8epQkzBQwzt6PqqOLdN9QSarzeNOS7d6f?=
- =?us-ascii?Q?GGe26J8wz//eStLvqB6NzU4NiJXath8mW/Y8V20M6AZObvwtuisi5Phkgl2Y?=
- =?us-ascii?Q?IKJnNTtDZ5RdnDBvCo1dJfvjHw77V4P7PapkAGN3vjKZWHKzTs3rawkcotVm?=
- =?us-ascii?Q?1EOWXl1kth9ALqk9aP1GMROagxj73qdH1dVN1VU3IteImD6Eb224EASagiVJ?=
- =?us-ascii?Q?Nj6kGKpi0qrN9ooQd3/l6CKtTgj3gguX5Wyh9HzRuUrVN5KAHXJFbgWJvvZJ?=
- =?us-ascii?Q?cf1sMDC2HNI7JjLsxFj3jt2wVCQGhdhf69XF8KgPZZk/On+mxzcFWjvlP7L3?=
- =?us-ascii?Q?AQs++YxmK5gwU4fVaqJcPr558mXfyetgc+lNtYat/Y0AvlBjqlRqGtwCUP6A?=
- =?us-ascii?Q?Jd0SC03MspDK9+7NYe/c76dVBJ4/YbjakzUai2mQitWLJwIpZnRK5gdwV206?=
- =?us-ascii?Q?HwAulSRlb0TVc8IvfmWMVbcJgwDENnKhXzmxmwEp96cpQ3wwyq1LNPTEnVuC?=
- =?us-ascii?Q?G73D4PA7GtlMaY4ZSVll9IdAdXtzgOLqvv+z5Szgb4dryl2Ql6HK5JNlXTVt?=
- =?us-ascii?Q?8CMK34W/byRx5FHAE0smDEo3i0EZ1JvulYdILI+pOkxrXZw7Q68H+pUd2k7b?=
- =?us-ascii?Q?MXREzBHDOrey6g9Q+0//jsZhqXBg+YY/Tpx3zC9PDTv9tXRS3RawmraNIh4r?=
- =?us-ascii?Q?gaRnnHwJkbVuSMXe9gAeKIXSRGRfFUFMUznucHIPl4DPxkniZRNl+CaS/id8?=
- =?us-ascii?Q?TmvrJIcA9/sPdFzHm1d3VxWvHIT8vXV+J4d7gaAdYGdABs7UawornxXDd4Xk?=
- =?us-ascii?Q?bnHUQWmR3oXvkqhl1o3IN8wDkkO9Pp8CStSXw3rPO2MCETBFNqtRRC/olVdw?=
- =?us-ascii?Q?ixHsaWfb6Cmmum+9oHHCs57AFh9JHNFncOBgrHed8uMZ3CO/Gy4YDneT4C2h?=
- =?us-ascii?Q?ofduHuwEYohWcJ+qHPWIUjrOaXLgTCJ+LUkRotV/+S4T+lIL1i5Qu+9B/YMc?=
- =?us-ascii?Q?Cv5+6m8tdRrd7tYXSS6TrGL9luybSFf65nsKOPeH796Kaa/sOlxb/f9E5tYW?=
- =?us-ascii?Q?qpRfAYsTq0wMFQSKiBcfso7btpU/TdYD7D2K1HWfhVd2zwHGHe2S6C9VPytS?=
- =?us-ascii?Q?GSWWPtE3b7kfgpFKCkaaVVvgN+huwJT9ncrWtvgo1SgCZ6/3UNbFBkOstEO1?=
- =?us-ascii?Q?HI4NqBXj10lMuayh586tEqbHeQZ696JcrRqp0kYBkgNK9HVw9YeUGl+mWuNQ?=
- =?us-ascii?Q?xVJcybQRzHMNpYBAaMQErlyVCRx4sdqpFc+lUJiREu2JbnDVnby1RKFln+W9?=
- =?us-ascii?Q?ZE1iIS0IrCX6PL4sKrq/08vpKxOA/GE8g2OyaGY+6XoiT+AMFWN3vNkF7pCC?=
- =?us-ascii?Q?B1x/qQ18J/AbtJo8NwIX/OczkkhQnvWdhaDY3gkyKovlsmzO7xQX+m+qPP7M?=
- =?us-ascii?Q?g9oQv5SNdCaT/NyxVHGGiOV+dU8hMjvnEBpv?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(82310400026)(376014)(36860700013)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2025 04:48:14.3595
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 31ec1a3c-d40a-4a44-06dc-08ddffdc90d6
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF000001E8.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4319
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] mm/rmap: fix soft-dirty and uffd-wp bit loss when
+ remapping zero-filled mTHP subpage to shared zeropage
+To: Lance Yang <lance.yang@linux.dev>, akpm@linux-foundation.org,
+ david@redhat.com, lorenzo.stoakes@oracle.com
+Cc: peterx@redhat.com, ziy@nvidia.com, baolin.wang@linux.alibaba.com,
+ baohua@kernel.org, ryan.roberts@arm.com, npache@redhat.com,
+ riel@surriel.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
+ harry.yoo@oracle.com, jannh@google.com, matthew.brost@intel.com,
+ joshua.hahnjy@gmail.com, rakie.kim@sk.com, byungchul@sk.com,
+ gourry@gourry.net, ying.huang@linux.alibaba.com, apopple@nvidia.com,
+ usamaarif642@gmail.com, yuzhao@google.com, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, ioworker0@gmail.com, stable@vger.kernel.org
+References: <20250930043351.34927-1-lance.yang@linux.dev>
+Content-Language: en-US
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <20250930043351.34927-1-lance.yang@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Reworked from a patch by Alison Schofield <alison.schofield@intel.com>
 
-Reintroduce Soft Reserved range into the iomem_resource tree for dax_hmem
-to consume.
+On 30/09/25 10:03 am, Lance Yang wrote:
+> From: Lance Yang <lance.yang@linux.dev>
+>
+> When splitting an mTHP and replacing a zero-filled subpage with the shared
+> zeropage, try_to_map_unused_to_zeropage() currently drops several important
+> PTE bits.
+>
+> For userspace tools like CRIU, which rely on the soft-dirty mechanism for
+> incremental snapshots, losing the soft-dirty bit means modified pages are
+> missed, leading to inconsistent memory state after restore.
+>
+> As pointed out by David, the more critical uffd-wp bit is also dropped.
+> This breaks the userfaultfd write-protection mechanism, causing writes
+> to be silently missed by monitoring applications, which can lead to data
+> corruption.
+>
+> Preserve both the soft-dirty and uffd-wp bits from the old PTE when
+> creating the new zeropage mapping to ensure they are correctly tracked.
+>
+> Cc: <stable@vger.kernel.org>
+> Fixes: b1f202060afe ("mm: remap unused subpages to shared zeropage when splitting isolated thp")
+> Suggested-by: David Hildenbrand <david@redhat.com>
+> Suggested-by: Dev Jain <dev.jain@arm.com>
+> Acked-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Lance Yang <lance.yang@linux.dev>
+> ---
+> v1 -> v2:
+>   - Avoid calling ptep_get() multiple times (per Dev)
+>   - Double-check the uffd-wp bit (per David)
+>   - Collect Acked-by from David - thanks!
+>   - https://lore.kernel.org/linux-mm/20250928044855.76359-1-lance.yang@linux.dev/
+>
+>   mm/migrate.c | 9 ++++++++-
+>   1 file changed, 8 insertions(+), 1 deletion(-)
+>
+> diff --git a/mm/migrate.c b/mm/migrate.c
+> index ce83c2c3c287..50aa91d9ab4e 100644
+> --- a/mm/migrate.c
+> +++ b/mm/migrate.c
+> @@ -300,13 +300,14 @@ static bool try_to_map_unused_to_zeropage(struct page_vma_mapped_walk *pvmw,
+>   					  unsigned long idx)
+>   {
+>   	struct page *page = folio_page(folio, idx);
+> +	pte_t oldpte = ptep_get(pvmw->pte);
 
-This restores visibility in /proc/iomem for ranges actively in use, while
-avoiding the early-boot conflicts that occurred when Soft Reserved was
-published into iomem before CXL window and region discovery.
+What I meant to say was, you can pass oldpte from remove_migration_pte to this
+function. Basically define old_pte = ptep_get(pvmw.pte) in the declarations of
+the start of the while block in remove_migration_pte and remove the existing
+one. That will ensure ptep_get() gets called only once per iteration.
 
-Link: https://lore.kernel.org/linux-cxl/29312c0765224ae76862d59a17748c8188fb95f1.1692638817.git.alison.schofield@intel.com/
-Co-developed-by: Alison Schofield <alison.schofield@intel.com>
-Signed-off-by: Alison Schofield <alison.schofield@intel.com>
-Co-developed-by: Zhijian Li <lizhijian@fujitsu.com>
-Signed-off-by: Zhijian Li <lizhijian@fujitsu.com>
-Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
----
- drivers/dax/hmem/hmem.c | 32 +++++++++++++++++++++++++++++++-
- 1 file changed, 31 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/dax/hmem/hmem.c b/drivers/dax/hmem/hmem.c
-index 0498cb234c06..9dc6eb15c4d2 100644
---- a/drivers/dax/hmem/hmem.c
-+++ b/drivers/dax/hmem/hmem.c
-@@ -93,6 +93,34 @@ static void process_defer_work(struct work_struct *_work)
- 	walk_hmem_resources(&pdev->dev, handle_deferred_cxl);
- }
- 
-+static void remove_soft_reserved(void *r)
-+{
-+	remove_resource(r);
-+	kfree(r);
-+}
-+
-+static int add_soft_reserve_into_iomem(struct device *host,
-+				       const struct resource *res)
-+{
-+	struct resource *soft __free(kfree) =
-+		kzalloc(sizeof(*soft), GFP_KERNEL);
-+	int rc;
-+
-+	if (!soft)
-+		return -ENOMEM;
-+
-+	*soft = DEFINE_RES_NAMED_DESC(res->start, (res->end - res->start + 1),
-+				      "Soft Reserved", IORESOURCE_MEM,
-+				      IORES_DESC_SOFT_RESERVED);
-+
-+	rc = insert_resource(&iomem_resource, soft);
-+	if (rc)
-+		return rc;
-+
-+	return devm_add_action_or_reset(host, remove_soft_reserved,
-+					no_free_ptr(soft));
-+}
-+
- static int hmem_register_device(struct device *host, int target_nid,
- 				const struct resource *res)
- {
-@@ -125,7 +153,9 @@ static int hmem_register_device(struct device *host, int target_nid,
- 	if (rc != REGION_INTERSECTS)
- 		return 0;
- 
--	/* TODO: Add Soft-Reserved memory back to iomem */
-+	rc = add_soft_reserve_into_iomem(host, res);
-+	if (rc)
-+		return rc;
- 
- 	id = memregion_alloc(GFP_KERNEL);
- 	if (id < 0) {
--- 
-2.17.1
-
+>   	pte_t newpte;
+>   
+>   	if (PageCompound(page))
+>   		return false;
+>   	VM_BUG_ON_PAGE(!PageAnon(page), page);
+>   	VM_BUG_ON_PAGE(!PageLocked(page), page);
+> -	VM_BUG_ON_PAGE(pte_present(ptep_get(pvmw->pte)), page);
+> +	VM_BUG_ON_PAGE(pte_present(oldpte), page);
+>   
+>   	if (folio_test_mlocked(folio) || (pvmw->vma->vm_flags & VM_LOCKED) ||
+>   	    mm_forbids_zeropage(pvmw->vma->vm_mm))
+> @@ -322,6 +323,12 @@ static bool try_to_map_unused_to_zeropage(struct page_vma_mapped_walk *pvmw,
+>   
+>   	newpte = pte_mkspecial(pfn_pte(my_zero_pfn(pvmw->address),
+>   					pvmw->vma->vm_page_prot));
+> +
+> +	if (pte_swp_soft_dirty(oldpte))
+> +		newpte = pte_mksoft_dirty(newpte);
+> +	if (pte_swp_uffd_wp(oldpte))
+> +		newpte = pte_mkuffd_wp(newpte);
+> +
+>   	set_pte_at(pvmw->vma->vm_mm, pvmw->address, pvmw->pte, newpte);
+>   
+>   	dec_mm_counter(pvmw->vma->vm_mm, mm_counter(folio));
 
