@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-836914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F165BAADC7
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 03:21:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A32FBAADCD
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 03:21:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53D24188B916
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 01:21:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CA503B76F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 01:21:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A51241DE887;
-	Tue, 30 Sep 2025 01:20:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8602A1F0E24;
+	Tue, 30 Sep 2025 01:20:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lZXEQkeO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SKmhymDT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 068561DDC2C;
-	Tue, 30 Sep 2025 01:20:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE9711EA7D2;
+	Tue, 30 Sep 2025 01:20:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759195255; cv=none; b=QUBBIHmgDxF1bo93/VPpTlU2ovAbPpnQPU4cNrqpXiqUIWoWe+DX5aSCzD3nV25SDZO0utxz79QVPyh0V28jumfVk9nJIlSqNeGWoehns+6nlXDOUf07jOSzm809NiY5dcf8lBl5gZfgQuNZJd4Yw2/xar7xrBfHXdWeZom3A/U=
+	t=1759195258; cv=none; b=C4x6xBoPZSCVpE+hejUwmvOdWsVW2sVxxOSUompJJ+VerRudJruuvuTsY1+ICJ5Eu2XpqperbavoJzu6tlsDvf3TN046BGsQVKR97n5JTBAMiCBTqmVjz3132sJhgo4fX8o4Y3N2URe8NVN2o2ng1KTjRsjINOnhA2at20yOXvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759195255; c=relaxed/simple;
-	bh=X22pEFpCAgMRW1UK5UodG0zf7Y6uxPShDgKLYOKw3ZI=;
+	s=arc-20240116; t=1759195258; c=relaxed/simple;
+	bh=ve5UTXQfuF4pVLNY0yY3DClkLpo0efls5iY+2K7GFUY=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=KBwCc/FKSKOtBY72+4c1UaFW05ELT6OxGJTiyZgBE+eslHMnIT9ayWOD8raIf4ABO974IlZbaiVMI9osDeryv5dHNesbdJDcVhdbMuzMR6lbfkWe+9sftDnDUBt/EMxGRvT+1yg32LXzPVKrXFdRu9/L3vKjwCvdzkcebQPkkgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lZXEQkeO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81021C4CEF4;
-	Tue, 30 Sep 2025 01:20:54 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=pT2rBBsdE4Lm58FlkGW4xN9kCvVlY5jOnARM5iYS1nvFX5xQ4qBsHYlUJJFPcKurFkuxu5WRcYrH+aSEzCt+JgP5kgVV/ByYrHbzzfIXN+85kKEjdB8uRH3k3LLoZYMJNveN9x5TxcjVoPWZTPYWXgcBSUHl4eefTsAhP7saiVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SKmhymDT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D1A5C4CEF7;
+	Tue, 30 Sep 2025 01:20:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759195254;
-	bh=X22pEFpCAgMRW1UK5UodG0zf7Y6uxPShDgKLYOKw3ZI=;
+	s=k20201202; t=1759195257;
+	bh=ve5UTXQfuF4pVLNY0yY3DClkLpo0efls5iY+2K7GFUY=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=lZXEQkeO2EVxyntPgxq6Gql93fRNspkOZNZtbl+lq1HcCX92H2oyukLagXeNja6BX
-	 4DDkkDTh73oK4NoG01u8DTfeIjtW62B/F3nHksUOqYE0Ikz0jyXEHFEAVgFZU5Ryi9
-	 ACauuux9ZdMqfLx0/QTD9HyfbDKCEE3uCtnnSeEk1qBglr9aJc/BSpZNQlSEsJf68U
-	 tlIfrR5E//B4cHQJko8c+fR6qhncw/ghsPML0WHBQ1d3RypmPoK4d6Bcq6jq4AjPje
-	 Ud1xR/NDusWUt73DHEwJFJQNzWE2j3b9VKO4O0aypsg+oCLCXkG41Aq1Z8p25T70Fi
-	 4AfClI+xAaAVQ==
+	b=SKmhymDTXt1LllgWKoYx2rWf6Dvxlia9gfTyVl83bB4pvAWjfyGvge6KzavVFaHos
+	 GvM1HksGMdVo86weSmWA8oUpk5CLtOrdbWoEDArl3DjN7nLzInN98SANJfgb1uQNch
+	 Z9SJuH1ogmiR5/O9XymoLDarqAiGB7/yF2ViWgdduuKFjBcAgj18qPg1SdhcryT5ox
+	 c+2Z+bPLvEyYfBOPJIKld6JNWNZF1ueV+1MUg9SsMDQUDDBFrWwZGMR25g7sv/tMrP
+	 hBID9dvuKUXOU86cTHRcRSOtzxvZd7RV5Ano3SehtElhMRaRoAgBqsbAoSj4kNhSkb
+	 yy9rLuprOaNpA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 346C139D0C1A;
-	Tue, 30 Sep 2025 01:20:49 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33D3039D0C1A;
+	Tue, 30 Sep 2025 01:20:52 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,43 +51,35 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v3 0/2] net: stmmac: Drop frames causing HLBS
- error
+Subject: Re: [PATCH] net: ethtool: remove duplicated mm.o from Makefile
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <175919524773.1775912.3053137579146685906.git-patchwork-notify@kernel.org>
-Date: Tue, 30 Sep 2025 01:20:47 +0000
-References: <20250925-hlbs_2-v3-0-3b39472776c2@altera.com>
-In-Reply-To: <20250925-hlbs_2-v3-0-3b39472776c2@altera.com>
-To: G@codeaurora.org, Thomas@codeaurora.org,
-	Rohan <rohan.g.thomas@altera.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com,
- alexandre.torgue@foss.st.com, netdev@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- matthew.gerlach@altera.com
+ <175919525074.1775912.16980428373235703917.git-patchwork-notify@kernel.org>
+Date: Tue, 30 Sep 2025 01:20:50 +0000
+References: <20250926131323.222192-1-m.heidelberg@cab.de>
+In-Reply-To: <20250926131323.222192-1-m.heidelberg@cab.de>
+To: Markus Heidelberg <m.heidelberg@cab.de>
+Cc: andrew@lunn.ch, kuba@kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, vladimir.oltean@nxp.com
 
 Hello:
 
-This series was applied to netdev/net-next.git (main)
+This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Thu, 25 Sep 2025 22:06:12 +0800 you wrote:
-> This patchset consists of following patchset to avoid netdev watchdog
-> reset due to Head-of-Line Blocking due to EST scheduling error.
->  1. Drop those frames causing HLBS error
->  2. Add HLBS frame drops to taprio stats
+On Fri, 26 Sep 2025 15:13:23 +0200 you wrote:
+> Fixes: 2b30f8291a30 ("net: ethtool: add support for MAC Merge layer")
+> Signed-off-by: Markus Heidelberg <m.heidelberg@cab.de>
+> ---
+>  net/ethtool/Makefile | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Signed-off-by: Rohan G Thomas <rohan.g.thomas@altera.com>
 > 
 > [...]
 
 Here is the summary with links:
-  - [net-next,v3,1/2] net: stmmac: est: Drop frames causing HLBS error
-    https://git.kernel.org/netdev/net-next/c/7ce48d497475
-  - [net-next,v3,2/2] net: stmmac: tc: Add HLBS drop count to taprio stats
-    https://git.kernel.org/netdev/net-next/c/de17376cad97
+  - net: ethtool: remove duplicated mm.o from Makefile
+    https://git.kernel.org/netdev/net-next/c/280435953627
 
 You are awesome, thank you!
 -- 
