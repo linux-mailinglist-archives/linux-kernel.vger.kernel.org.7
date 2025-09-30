@@ -1,85 +1,85 @@
-Return-Path: <linux-kernel+bounces-838145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A854BAE8B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 22:30:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4E4CBAE8C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 22:32:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6A3418964FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 20:30:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B5353C7B64
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 20:32:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C2E324C06A;
-	Tue, 30 Sep 2025 20:29:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17D62267F58;
+	Tue, 30 Sep 2025 20:32:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="o5LOIFdV"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="cOGafGbM"
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5658E241663
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 20:29:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1829823D7CE
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 20:32:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759264182; cv=none; b=bhSrXozeOmyzvvqR6ipVqxpinBYEKnn2OqcLzrp8xRvp7o3muXb1ja+ehN63TeYs0ehaU1KyVwJreGvHIjcjz6FwkSI/FC+09eoz2ihrejjgmNU8TxNUXvV6MmDop46xdsIrc/aBrb9Zd7YxqBRmpH/FHZ/2C8DbvxDU7Wz7vqQ=
+	t=1759264348; cv=none; b=J/lrNbKQak8qMsdzIyCBxyZOVIa6NYVsQXQ3P6HvgKDsz1yPMt4qMSrZGvRtJP/rqAL17N9ExlJMpN7RSNyN1tB2JHwt4GA2Rsz/6t0o8oveSO22o0naxZejHQipTS3g7WDStpJqLHENZmGmU9AN9Fg19hDPkGmQkD3GOgMEKuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759264182; c=relaxed/simple;
-	bh=MyyNOT6Z8gPlEd2B1CWD4Q7bqvrx7M4Qx6OSp4ALGqE=;
+	s=arc-20240116; t=1759264348; c=relaxed/simple;
+	bh=N+B6oZWZlGACcgCKE91/I5EsJwXOd2f0A3VW+CBf6Bs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T8xtEXCnyMXW9R9ORn2eFIoCRip9o8KE33bcZQ+wg8bv5j0fo/F3jBpptFoCwjoOI6l1c6diNQE6iGw2gJGCc0zQ3vUHWGXrhcoQZEccbKMygrnsZjyo+JcUunx90roj9g+ItZ4YVGGTYmoVXJJ2ucX7EG485CorvBHO4Iejp80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=o5LOIFdV; arc=none smtp.client-ip=205.220.168.131
+	 Content-Type:Content-Disposition:In-Reply-To; b=RLnZ1yO/Z0AZkkGJQZjnJeQuHLE4u2J0B9Hye0aBMnkNDWOsyns/ltmgA6nxCT0U+grYMk7dgB+fezfUXWkdfj1okam1sQUyr+NR+zocRAVnaXQYsEsR/tJo/rFIZoHyp65byKdkFehiLnzHvewTmFUqmk+NUgLqxWGgHl1b0Nc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=cOGafGbM; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58UChCfQ030563
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 20:29:40 GMT
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58UBlaEX009336
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 20:32:26 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=R5sl3ZNZwJRriIGWPQB/a/Ct
-	xB1WoaSGeN5QScEiQ7Q=; b=o5LOIFdVBZ//v/2E1TnvIcqUjzye/Ka5ijY8xeC0
-	d9YkC/9/1wv4SoPLu4fEQ0ZW1lZln041JrDY8SwcqEguun2K84mIpjGkPm7JkD7v
-	zjCVofucFtUpNFoX33CWX21J4ED2mYM8MHunzDINF63/Rbi8Sz1Z/letyLi34kQL
-	t6dSAeW3005RM/Q9mur/Fg4XuhGi6fa1fTXYw4ygq/8axfnxp+9bTI6CnKXIOnQx
-	Wnk8uIyreZgUPFfe9wgn4hsqEbVhMbJSqUBcHtLj4/8EdPE12sPGoqHGfRFtqKR4
-	EDhz5ZYVUf46AOpEPYCN7YccyVCzqeVUb6SP7Ni0pR4QbQ==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e8pdj473-1
+	:references:subject:to; s=qcppdkim1; bh=aQIv8HbSGU/ItL07DFk6fn1p
+	HIrebqBCTmh7KKahI5w=; b=cOGafGbMemrEy2Yp9eUfawzJXf6Q3VhICbNjmOkF
+	ZQlv89/gJcQ7aiAnGhnt7WtH9I94mOdfDhXrfWQ7cYlIKq8ZwyhqFIEP7gxNScp+
+	HKS1hy/sLSced/c5RpJZFqqrGC/XYZ0lcT6/CYa5dktC2CdtUeLXlnMATvI+iqKG
+	7a/vhWiA+zZuxZU/vUq+EP6h2Py0g/SttYNjLwE95YkMubbYblZz3b11AuSF2bdm
+	gVPCIpzCK6b9PyUK/v9b0XNC0L8tbhuo81DoZb85/IJVoNsainh6NwDE9gJi6dp6
+	/+mr7+cL+r5c6nDDV2XPfMl+/jyVqfLWLlRceevEMNtY/w==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e977t53q-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 20:29:40 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4d6a41b5b66so164046931cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 13:29:40 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 20:32:26 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4de4fb840abso7682391cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 13:32:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759264179; x=1759868979;
+        d=1e100.net; s=20230601; t=1759264345; x=1759869145;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=R5sl3ZNZwJRriIGWPQB/a/CtxB1WoaSGeN5QScEiQ7Q=;
-        b=w5JMZJZ93oZP1x6tSm/eBI3yva1cmzOJO7rlsalDkbnw+4xBjMvNez5gjk9CYg4LY8
-         IgO2VFAGYboVfKjuSiU9DCs6N4CBcGmDfDYYjouO6/InQNe54rEeYNZ4369Lu5z1PE43
-         25KkzTbJjS9CAdPPNR4wihsA+JtxXnY2k0FmgLUlTYptZ/WN3Knwc63b676yMcjJeMmM
-         OqSqol3x0UaVt7kbof7Do/ecCM1dQhkQ0GHNtGBT+A5BaeLDQyToKuYs27BLwt2lc8oY
-         lTtPmVCr4z2wUHdtrcvtaRmSfdb59uuKmMIgmvBYY7tewLjki6JsUJ7wbkshow9aZNWK
-         ebRA==
-X-Forwarded-Encrypted: i=1; AJvYcCX9UHpr5hneU7U58WBh0PWyEjafGX0CLX5oREYMCd67s8kGSCcl6BB8UW2VOMbYujMncCIIVJKivrJpjxE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3rprOMryHjg0LTR8zWmSYcaXWkxBhGQXQZipaMXqC7PZSqi+1
-	5MPBYoWyK9PBDXVq6ebmSDciObk4bOd/5HeSdz6m9pRqrOYVfIAfUhIH/+FC+duluMRhe/xBvDt
-	YGzSNxwPiezQi0T5LgDDAaDtWfu9+bztn4DSaLSW+s0eJiYGO98Hj7S4xHYHJOhGRHvE=
-X-Gm-Gg: ASbGncv2oJPYwsWa45SjLuuy3mXm9ZaD+hCWex2wanpfbtVMcobdiwP9pduuKgpXsqD
-	sqh2SpmsV5FRsasd2DUi4G9IWkN8JawuwSuQpEsol7i7QSYGR2kgH6gCoopVzQ3TM380pjj1pU1
-	+MMeE6Pz+bTRTJ5uKNhDP46FLaUDi2EAN8BrZVUasEhtd3cUgHJo/7dJqJU+mo/FcNCKhrM1Bbf
-	hRYbmTSv4fIFMLl9XFIxuDcgkJ5dkvwrILG2zeNRT3lMMFJ6PUTQY05GVRIJfGSE6me6ik8+frQ
-	MLCmj4vE4f+09FNReNS8vqKI6w1WXT0Qh9+xPv2C6S34rAmvKQY4WVGmMev6pX1PbeTVclZM/qV
-	Nfo6d7tGG8fW577zn4MQdIqR0Kv4ZQPzGfJKKYAeN3TOhxPwOthF4FPITcQ==
-X-Received: by 2002:a05:622a:58c3:b0:4b5:ffc4:d87b with SMTP id d75a77b69052e-4e41e25672cmr12693141cf.63.1759264178893;
-        Tue, 30 Sep 2025 13:29:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFWqYNQ5DcdbJzz/fom5G6oGKnCTXV+GrXUnR7tUKQp7CbjCVYz/Y9aUaVBAEusZAM09X6HlA==
-X-Received: by 2002:a05:622a:58c3:b0:4b5:ffc4:d87b with SMTP id d75a77b69052e-4e41e25672cmr12692511cf.63.1759264178263;
-        Tue, 30 Sep 2025 13:29:38 -0700 (PDT)
+        bh=aQIv8HbSGU/ItL07DFk6fn1pHIrebqBCTmh7KKahI5w=;
+        b=akFSxRNX3qauxXB2Rt1zxiORqemsOyrDskpB3KtCMOoG04DlTj4qLBq1WE3yFnvtKh
+         hDS5ecOc5g5z0iovxO/hg5ydT5aQwL2VUcSt1C7e6TnrBISpjvrb5GU0eHncp7T/Glg7
+         JTkrwn+t/+oADVGqH54l/Isp6GnA/3nkOnkRYH8jYE7moU8lRPKFZPMxaqOsbQf6egej
+         R2Bd3FlXZVRvJNSMUotLFpmNT98OJhR4WDc2iRdFAj1z/bf4p3/C9CfxH3oQgaTxRByu
+         qo2yrbGR7H6qL3nOM2dhRDjvdRaQGIWtbUrBJKEDy96OjgMSo3xCxVjUhFOwSXryuZLt
+         B2QA==
+X-Forwarded-Encrypted: i=1; AJvYcCV4es1aX/YyavcXMt8K4MYBEmMoX6PKbhkF1cU1NxPozT+R0Qcek/C/IH+/eUBKnZCeotrY5LNC1/lKmSg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyhe7DPUOJTCy6Tg+4LfyHlpSMdm31lnEKR8UYCn7LyuqLvDod5
+	wi25RwMrektXLOi4Q5jM0H7bZ0NYwLRzbaCosalStaJGSeMCozIGFqXt5q2HK0e9F1cBZKgfteM
+	MTi1nphknB1gtkJ1D9XmWlq16vaK41dKMCVB/y+HgbNSPT8LaG3lmuMrZgm0b3Xm+Xv0=
+X-Gm-Gg: ASbGncsP3Ga8tcqm6DtZzuowARKX3EaWzHeSDpr4X0K9vFbW59/RV0JGJoL4LA9Ksi+
+	CrJxJwNjodlhHDj5tE/S9X+O5Bn1pRQzYf1SoZxyVcX7sJhJVdqLhl9u0qa4ku4rrm9z2u/EfP2
+	oxIsyahSNFi4WvioAher83IAkkM0x8iONeIWzfCfY+cw641XGhjHfQXGHAZdb2Oi4EAz87WSJOO
+	Ujgw6qjvgnFbLK7mQ7VtAEg8xcgNKtlMo953loQsCVt+OO3NgaSTb1RF1i9l7hoW1lPe1vWHgvn
+	j4OfUSCMCbAMuTPRlJ4Iu9K9zJ7ndKQeS3wuFST98KfzbMuEv94tMH9ozrPrxTsdn2xAwgj6SbQ
+	wDUYy9JJP/NVUpUox6HHRAsASrKGYADQx3SAmG8yM/7rKWwad95I16ktadw==
+X-Received: by 2002:a05:622a:245:b0:4be:9bf7:74f6 with SMTP id d75a77b69052e-4e27d7c5f55mr67499241cf.4.1759264344573;
+        Tue, 30 Sep 2025 13:32:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHjMsa1KUO+Xb2y8JXrARVlbLY0nhFqxX54cw9WXubdWIf7Qf3oigc8c9WVQu/MUBv6yKFVYQ==
+X-Received: by 2002:a05:622a:245:b0:4be:9bf7:74f6 with SMTP id d75a77b69052e-4e27d7c5f55mr67498601cf.4.1759264344072;
+        Tue, 30 Sep 2025 13:32:24 -0700 (PDT)
 Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5831665671csm5160974e87.75.2025.09.30.13.29.36
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-583139fab10sm5324346e87.45.2025.09.30.13.32.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Sep 2025 13:29:37 -0700 (PDT)
-Date: Tue, 30 Sep 2025 23:29:35 +0300
+        Tue, 30 Sep 2025 13:32:21 -0700 (PDT)
+Date: Tue, 30 Sep 2025 23:32:19 +0300
 From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 To: Damon Ding <damon.ding@rock-chips.com>
 Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
@@ -96,10 +96,11 @@ Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
         linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
         imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
         linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v6 00/18] Apply drm_bridge_connector and panel_bridge
- helper for the Analogix DP driver
-Message-ID: <hvakijaevs7ucwvlnf6x6aqj5k465g2rc3ba7zexjmamy7mxg6@gnyhlf5jj3wn>
-References: <20250930090920.131094-1-damon.ding@rock-chips.com>
+Subject: Re: [PATCH v6 16/18] drm/bridge: analogix_dp: Attach the next bridge
+ in analogix_dp_bridge_attach()
+Message-ID: <qqomsrix67lmx7rth7tg44bxjltw2d7s4dwojqd26duf45uf32@krpb756s6q6q>
+References: <20250930094251.131314-1-damon.ding@rock-chips.com>
+ <20250930094251.131314-3-damon.ding@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -108,45 +109,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250930090920.131094-1-damon.ding@rock-chips.com>
-X-Proofpoint-GUID: fA0MVAwWnEn_cv8YeHUGiCSnjahlDmQy
-X-Authority-Analysis: v=2.4 cv=MYZhep/f c=1 sm=1 tr=0 ts=68dc3db4 cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=hD80L64hAAAA:8 a=6YOL-LhRVAKcL1tHTEcA:9
- a=CjuIK1q_8ugA:10 a=a_PwQJl-kcHnX1M80qC6:22
-X-Proofpoint-ORIG-GUID: fA0MVAwWnEn_cv8YeHUGiCSnjahlDmQy
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAzNiBTYWx0ZWRfX0aX3/bheLYOO
- d9gmJBVvqY5+qoU4/vbxase1g91mo/zLAO4Xy9B9+o+vELrkTbndHil7AzpnUsJtFWfCaif3H0V
- M4vA/R+SE/E4zY+7NFdy72Ekx8J238vizy7vgXj/7lYQj0xK+EbonJuuM1LXE0DS6VpMOPvN1VW
- CIyVzsmSGeAW4+gISa2ieBZhNNxs6ZNL5AmFHr15l/2sF54NotbWp1gNJaBkZtRMbpngVlY2bOq
- TcugxQB/RoK+1GtSTj6OIDegki7GpoFbQ4aHBWESLrSdIMCyydZkPVXKdFnNeqJ30ThEIbWujFm
- 6qEBRjOUrhoQtMn+TMuUNm4lwdooF9WX2N8nv+FfKSj8oTOjOd6kDb91V/bYGDIq6yhQyH34QS+
- Wd3paNFK/ld2sMsKrjSlWoalYpaI8g==
+In-Reply-To: <20250930094251.131314-3-damon.ding@rock-chips.com>
+X-Proofpoint-GUID: i1spOwTmxF3XMyDGOJ4HVFwoGkADUZxI
+X-Proofpoint-ORIG-GUID: i1spOwTmxF3XMyDGOJ4HVFwoGkADUZxI
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDA0MyBTYWx0ZWRfXyrIQUaCQwMNu
+ p4x96T0dcvazN/+khs6X9fmAXM6tgPtoXZop1z9PcKiI6IX566RIOX2qv47G86RMbp2Fz/bAnLY
+ fY878Wz1X6IGJrY7iozdIX35eYXhMIggT4bJXLu3MYDIs6OtZgggB4uVG5s2TLsOdTPIdYKJE56
+ 1XslA9kHd8ZoR2kRhxLgq22DzNCFVfAhoMzxWLhNcMBwhO/tLDiOZ1sMQ/TPVQTWhmfiwF4pyA5
+ gRWrMwVbBavLZ3yZsRp6rusUItgPPj9GidF6f0S4IcR3UPF6bSstTHlYqIzo9/pK+pt/A7qFi0/
+ 115vj8rOWhh2r/IRsD0tTLXcyi5ea6c6avMF9gQiMERuj16a6IPYv/A8cjaRnKr+99iHPouSOh+
+ iQAzUInW81Hao/KMiKQQ+XoLMjSHtw==
+X-Authority-Analysis: v=2.4 cv=Sf36t/Ru c=1 sm=1 tr=0 ts=68dc3e5a cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=s8YR1HE3AAAA:8 a=EUspDBNiAAAA:8 a=z1Cm9R5qtz1vL6CzoToA:9
+ a=CjuIK1q_8ugA:10 a=dawVfQjAaf238kedN5IG:22 a=jGH_LyMDp9YhSvY-UuyI:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-09-30_04,2025-09-29_04,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 clxscore=1015 bulkscore=0 lowpriorityscore=0
- priorityscore=1501 phishscore=0 malwarescore=0 spamscore=0 impostorscore=0
- adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ clxscore=1015 bulkscore=0 suspectscore=0 adultscore=0 spamscore=0
+ priorityscore=1501 malwarescore=0 lowpriorityscore=0 phishscore=0
+ impostorscore=0 classifier=typeunknown authscore=0 authtc= authcc=
  route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2509150000
- definitions=main-2509270036
+ definitions=main-2509270043
 
-On Tue, Sep 30, 2025 at 05:09:02PM +0800, Damon Ding wrote:
-> PATCH 1 is a small format optimization for struct analogid_dp_device.
-> PATCH 2 is to perform mode setting in &drm_bridge_funcs.atomic_enable.
-> PATCH 3 is to add a new parameter to store the point of next bridge.
-> PATCH 4 is to make legacy bridge driver more universal.
-> PATCH 5-10 are preparations for apply drm_bridge_connector helper.
-> PATCH 11 is to ensure last bridge determines OP_EDID/OP_MODES capabilities.
-> PATCH 12 is to apply the drm_bridge_connector helper.
-> PATCH 13-15 are to move the panel/bridge parsing to the Analogix side.
-> PATCH 16 is to attach the next bridge on Analogix side uniformly.
-> PATCH 17-18 are to apply the panel_bridge helper.
+On Tue, Sep 30, 2025 at 05:42:49PM +0800, Damon Ding wrote:
+> Uniformly, move the next bridge attachment to the Analogix side
+> rather than scattered on Rockchip and Exynos sides. It can also
+> help get rid of the callback &analogix_dp_plat_data.attach() and
+> make codes more concise.
+> 
+> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+> 
+> ------
+> 
+> Changes in v6:
+> - Move the next bridge attachment to the Analogix side rather than
+>   scattered on Rockchip and Exynos sides.
+> ---
+>  .../gpu/drm/bridge/analogix/analogix_dp_core.c |  7 ++++---
+>  drivers/gpu/drm/exynos/exynos_dp.c             | 18 ------------------
+>  include/drm/bridge/analogix_dp.h               |  1 -
+>  3 files changed, 4 insertions(+), 22 deletions(-)
+> 
 
-Note, only patches 1-13 made it to the list:
+So, here is the rest of the series. In-Reply-To header is different for
+some reason.
 
-https://lore.kernel.org/dri-devel/41c2a141-a72e-4780-ab32-f22f3a2e0179@samsung.com/#related
+Anyway,
+
+
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+
 
 
 -- 
