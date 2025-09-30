@@ -1,156 +1,170 @@
-Return-Path: <linux-kernel+bounces-837995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F280DBAE314
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 19:31:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2D0CBAE30E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 19:31:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD7533A60C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:31:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DA8F16884B
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:31:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 876662472A8;
-	Tue, 30 Sep 2025 17:30:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23FD430C605;
+	Tue, 30 Sep 2025 17:30:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="H5bY/3Yz"
-Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="TuBEgx26"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D9F830CD88
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 17:30:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C37082472A8;
+	Tue, 30 Sep 2025 17:30:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759253440; cv=none; b=CJAhBAe4JcBENn+HqEbLCTwpWorBLT2h5elog+O4AYCbEOHKqzxB29qu4FEvlQdXy9kzXOHmOUBZE/tWGfXf400edHbqcZbq1UYqcftQfsT29pzxMdqr0kzJGUgGQLNewZwKyKwCeF6uX9XcqGWwvFOoJ/MSwDQOjgd1HndT+84=
+	t=1759253432; cv=none; b=aifWdA50v/Tzq1/n8d+hRgRjcKp9rRFTn6wkCcZF7gkiv4ULm7++LV9IA0umoJzt2SiUGAXoPKshtPzyrMLDnINpio5MwCiVcT6co98BYyRRsWQglgg6OYp6MsWIkaSp1511lFXD7aeK3PCAG5Bn/snZ5mN3bDnnXhNFAZRpbsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759253440; c=relaxed/simple;
-	bh=RAzN02ntU6we7KtqdUsGw1bQvhAKuIdoO3RtEp9cuGc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cfUvs/RNXcGfr3tquFVR52FnRQTCiZop3nC5btyRWcPYqmOtx4y1urh6hs9rgtMxrkzhfhIJ8aKjiy9UAt5J+2FquGVd/eZFMkEktgamppZObTPInAuNM8Y8E0eJWbQ7G3SrrvvptMuZ7wWCczUzxDW0L+FRkaCQqPjIn+Ml0R8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=H5bY/3Yz; arc=none smtp.client-ip=209.85.222.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-904d71faab6so4455403241.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 10:30:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759253437; x=1759858237; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8kjeYVi3BFjPoMUBum1xgGJVhZJDmP8eaKSN0CbIZRQ=;
-        b=H5bY/3Yzu6wBD+yxbm9BlzPMjCrvaE2JHyFjmlsq/wXpNkjWrV872YeKU93iQgRaWf
-         sDANDUeeQMpVlDVaIN8VCQfEZjHYalC01C4tSm3ybGtgBRiOPV3KQdCF0TsSUn+22JUT
-         nt9zn5cUU4lWbIESqjIN8vBkFnSAh9osSmL+qG9pepllejItErkkl6aJL1FVoIRPStqW
-         mhT1g2+EMmpNIguFfWzJkuhAR9dUo/UiAuexudN0psPBKvRu3o79qGMTxCGa38pGIdql
-         yF7UjE8fCNdDRb1ulDG9Ql+Pw10y8Q6KwYlDTqLBH8U7dzKLcnp/08H7ecAK/qhLla66
-         bAbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759253437; x=1759858237;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8kjeYVi3BFjPoMUBum1xgGJVhZJDmP8eaKSN0CbIZRQ=;
-        b=S5BBAF/1OcikrBtEPBgkEbSa8wOZe5P+7jKOhPmKjCzecEtcLYqLo+cRYhpEBq/Po9
-         engOwqkKTF7TADHVgENEOxYV2x1jJNx/vyyejJS8+umpTRZc9NTQ5bXL4u6tyGjYzpQQ
-         /9RrtoUjrAP4FCIMgfhs/yIQ1mOq7J1+v2gYg/CKqjnAWsNtCOg4ghrkOJHW/oygR/jB
-         frnrb0Af5IlnRpdEfNc91hRt39N6y0Ce2ZBlPHywIfeCnji/nAZv9p1dl15ry21cUpN3
-         ExHrh6Z3/x1vASFwDWLWklnQWPSTJGN9W9dTZS9tfBJGNZXRvR8w/dgjzauBrmNGnm92
-         9hFA==
-X-Forwarded-Encrypted: i=1; AJvYcCX7Dc57aYj8zvVkUF9Q+/vzoJ0G9dgsc8YoqQrXp4DFNwEIIl8UAYg4zKD9YV1OdID3ABZ7N5EMKtq/gsc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzlu2qw7dqIg/XOadefULkWiruA6X+BdiyLohuqa3GC3PsMY/Nx
-	KylA1rW/6mLOKMkZmLVfwxBh6gdAMxbeRNivv2p7wkn9EyMzdwI1CfptAOd3d5m/Rz1pMIRLXf+
-	zCOHBEQGs2BT5HWobnr5zRfyFNiMgKXoh/XzT4q8B
-X-Gm-Gg: ASbGncvYC+s8wHC3QCvCBNf4tHudQFyAtZ2ev5IqXo/2W/Q29HPe/AeD2ASvHibMZlw
-	nJRwxZwlR+wf997J298cjxINLIYHTyjNovC8um3n/w6iRQlkBEVrNNYKcT5T8i/gp9pjE6OBjIN
-	jaCn7yuf8GU+Y2PSgDKIBHlcPDpfdTIdwC91NpsJy4YpHOfimCNXCQNPh9GL45EJ7IydH2JMZSU
-	v32BIGnm4HNI7TM2WBVMHAWR9eqxvr4TJbQ
-X-Google-Smtp-Source: AGHT+IG8jJ95/JjL1D4MG02AWTuWRULg09/UHI6ETn6Cc8YDCJp+TEu0wu9vGpPMKXVhUdNr52Sp/ZXXPPXheG9lrtk=
-X-Received: by 2002:a05:6122:251a:b0:54a:992c:8164 with SMTP id
- 71dfb90a1353d-5522d37d0c7mr277987e0c.7.1759253434892; Tue, 30 Sep 2025
- 10:30:34 -0700 (PDT)
+	s=arc-20240116; t=1759253432; c=relaxed/simple;
+	bh=pLWRomEWHMCJJcdA7B/x76jaKO31uCQkaUkcIDrKzWI=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=TiB4F5o1LmMwkMjYl+Nb2ex1ohWB6CBkDDsU1AtMKHzoagX5f3QS8y5hrgtfg/WXvBYOXL/Ww6yCzNe3t+dsU2cwinhSay1R0rQuG+4suLGmIStrzEgs2JKgH528Q/kcCL8DkFpxD8JigZkUdWownIGh5+cbmkPwqPg6v2Fieyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=TuBEgx26; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1759253427; x=1759858227; i=markus.elfring@web.de;
+	bh=FhWGIbww3II4LIlmLX1DcGogc+sctvfoZlXhRs+moug=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=TuBEgx26/6EbiczAI8Q9U5iItCtAlBbX3mxZ2K1Hw0WNLEhujBUTpg8Nbw/FfU7k
+	 U91z5UNEeOtH/JX2vCaNRVewJ6QgB3/tynmBR5CGshF8ncXJ195XdWsa29RibGKjl
+	 PQP68cvlDJK3LXEavQ1TFzIb6MZ/+QLMZQPRCMMeIEEGUmUYr3f1PkOVdsOjM69c0
+	 lcLIpAuxq/cD87LnsetvPt9yND8Xrvy+nE0/oUMOPVLyl2nluOJ9G3mtwW4INmVO0
+	 V0lvke3Xv05cqKuXI/YCduyfJzVXpkub8ZDF4JBTo1Xlh9FcEg72+WYSkSStIVITa
+	 qrdT20zdzKbKH6MCmQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.185]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MtyA4-1u9lmB2dkS-00tT5h; Tue, 30
+ Sep 2025 19:30:27 +0200
+Message-ID: <d5d3df5c-3cbf-403c-ad89-aa039ed85579@web.de>
+Date: Tue, 30 Sep 2025 19:30:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250930-mmc_pwrseq-v2-1-80a8c6be0fb0@valla.it>
-In-Reply-To: <20250930-mmc_pwrseq-v2-1-80a8c6be0fb0@valla.it>
-From: Saravana Kannan <saravanak@google.com>
-Date: Tue, 30 Sep 2025 10:29:58 -0700
-X-Gm-Features: AS18NWDhaTb_SHyVdkz3H1aGObXRSKwr83vx52Zf-N7iLwTKT6lcWCzjbd3sNII
-Message-ID: <CAGETcx_eDbx1QowXzy1k9r2D-G-gT7nEgFqEfWY7wBbLzfRukQ@mail.gmail.com>
-Subject: Re: [PATCH v2] of: property: fw_devlink: Add support for "mmc-pwrseq"
-To: Francesco Valla <francesco@valla.it>
-Cc: Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Content-Language: en-GB, de-DE
+To: Gal Pressman <gal@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>,
+ cocci@inria.fr, Alexei Lazar <alazar@nvidia.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Julia Lawall <Julia.Lawall@inria.fr>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
+ linux-rdma@vger.kernel.org, Leon Romanovsky <leon@kernel.org>,
+ Mark Bloch <mbloch@nvidia.com>, Nicolas Palix <nicolas.palix@imag.fr>,
+ Richard Cochran <richardcochran@gmail.com>,
+ Saeed Mahameed <saeedm@nvidia.com>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH 0/6] Coccinelle: ptr_err_to_pe: Adjustments for SmPL code
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Ifg0K8XLz2kD1r2OLZz3SGGJ2z264BN76aRcY4vNzm8Pnk5phy1
+ 6L/QMQtsFMTXfyZkw5KJ8dFSe1tkJkFZ1pWJxIihvO+ZRjz4exAJl62XPZFVWeYw7bNXCRp
+ UnAZYinXcA930JrydyNsFBqZDIQ9yVB7PeimBLhYCr6jhCm2oRYoNgeeTTtlgsPhNT068+J
+ R8/8znSCLXn604vSB5gng==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:F+osHgO2r8U=;3sAQa9EyhjFsKr5IWyXkmnMsgE9
+ HoWsNnCovU/SCXT/3GQMMfBEQsdOG681+FngugiiQeuIiBiuXry/qGdAA09t1iosW5LsG2MWs
+ NUAqBcGLRCcU6Vljo1gg11dOiCeYQnKY/GUtJABVUXayjOeoX4sRs80c6UQv4D3cMJmUlj8qy
+ bwZj/1a+bJttq8jqTykksMmfuD15NeifQjF94gw6GxvjxR30EXbVn+J7/CDjMTMYb2QOrPGja
+ 28qKXNYKCaaPcnNsUxLzmTZY/xxoDXM4W7knYlQceJz9EI/2Bmo7HOap0b0N9qL2ho7bq/rh7
+ mZNOHTBkURW0v/57o54bZhA7oaJuvXHHEfVnZbiD/0+aZkyxCBzFsK7J7ClZRBI4WcqIuflkk
+ 5AS16Mo5ejuLQmtXfMtypm8RgYShwCxzXHjf5gcHfZsF3iLVObPB66YFIeDPhuJRNLcsv7Y5i
+ TJvu7Gadjf+AWpij8fBoE3rSwjmDAaGC7m0HiKwKXa0I9Kn+1q3FkdIH5oop+MqTFGWattIS5
+ Uel65bONKzfqWWzEslKV/153+7hDR+ud6V5E3xyZERS/r3hnEj49kjyoKD1N5woGvYZ8uWoE/
+ vslcVyPlmb0dSIM0HeEXKi1+P9NWm2ca7xkzPNAYyr72aetHfejhrDj/h7c6VCUFUJuEFEEI+
+ xLxa0viFsggx8E+HYh7uHD+86qYwCNvXip+4ZPSSob69lNap21Xh2IjOxisx62WMYzI66DBR3
+ WUdyPGeo87+0U8zIDG8KJkK/cpyceWM36GQBmXy8EMKYz5uQFx5YRlo6HCJlwYqe8q26c4P+J
+ S0HaPyyrNz+aJkzq7V6Rrz9R4ZPHCXVGBrq7AGsy8Z2a6RvODPk6iesrCyeLBMaOmpsRbT6GZ
+ 2k5wNu9IW6fYWPGSglLjMitY24jWlHxKMUUx0tJ66M8q2cTXI3YgxIVxVX04BhyYcGm0wOvPm
+ wYPXdrZ+NHxPAEhSAzqGSH+6IOuhNNx+F2YXt3AkxnNV943PdqtBMtHMIuNU/7EVABJWeVr1E
+ q6NN8KyNd0HgvIAXEEBAMLkI0L6WAHYPLffY/GfcSM2B/PcFLFI5I7CABSOPki65gcaQahVce
+ OS6FZ9ABiSALgT8Y5yw7YOJf2/4rPyssLxwX5XBTortgHM3y3e7HWtEhst9Iki/T29c27QZS1
+ Wjvb196jtbr0PoM2+S/3uvHCZKYLiIs8BoKZBnxB6QPJAwgveLAU9uUDASD5n1Ug61eKJPN/w
+ Xf412kzagj6RS/oG10K6e9PB/dmeqYVLY6fLOmxZ8xiLO5gRKZYoh2kvzC8wUag7MOmzH0Hum
+ W7rC8VUIZAxqZmt9FYgKGhb8Hf3Wns5fgWJwFo09KFb1sUUAUY1PTAHQYeATS5H1fQH1HlXds
+ bJ/SA79/FI9sE7krp0gdd1IrnYRcgMLBFibaCPbH0EfzUJZ5xCvC6hTWozDw4xbdW8jy4tvX1
+ 34Y0+7vEo9LfbENUtEWsYIExyiXYzOztTECIKmLz5NTGBS2auQZI09zD+u6gpUuXLZvyLvdlb
+ 1A590XflBcbOT1voJfHNkYOut23cBIJfQGtMonMUUhYoTefqGow9U49iiSVpuxb5iSU0mRSHW
+ 30XBY4sZkv7T3+bPwDlD8bir2nSxP0MZ9b4X/HglqvMGuS8JqxwAUlAbP5O1/QzoDmxARJTpM
+ pd5lZtLInwomSyovcy7dcKsiwXNasxIO8WUe0Ggo3y95wjinBN24jyynUX0/Se5bojGT2gVuw
+ IcRpnhqIV26cIUow/BKjFmE5bS8npAYAzcqVrNC9jNp7V9DCaXT4kWSTQV0jufplRTjLsSpy3
+ DcJIRC8we/cZuYg1OghwHc2t0IJVHyInRp6ymsQ5J/3Rf8Fg/mHxW5kEI7p36xAjpq9aeIyY/
+ fodhYGtR4qEqaYy61fG39MO/1qZP6vxi54j/judKjIZj6qmUUPkmoJC0YeJICnUeT1LOL1gN5
+ WzVJJJ1btQSvRo9EGw4E3v0mbhlFE9Bsc4UYxTrqozGi2ImSkDqc51Wts9msuJ2JpJ6s76uKQ
+ rkcZ/Es/Esy1x8P7VQbRA71tPJyorYZIXjIQOn5XDVY3c/3mMmraG64otOTAuraNieZSCIjuc
+ VaNAzaXjbt0rH70FO3iyo+K3Z5eQv17C36aSIuixhJ9JvBG47kw9+YudSx8RH7iDnug9Ux8ek
+ sUmqqAwiyk/EtZLPpaCTOThlh78dBFPIXt1lt7aYNE0uBJI2vo6/4kxer0Abyjo1fvWg44ck6
+ 2R5zz4CGSawQfsydLGrajLtc9XSB3wnWwOWgt5rAgBu5jPGzerK24PSumjJqD1NAoo6A/tyA2
+ CapoENpzg73vvSmlOhdJdD1uFhEkUCn0DPFhxA1mR+rOlXHgnZVwAYMPHrCMeG58ZcaJKbNvk
+ eLXBySHwCL2T7+jfhNHPG13a4MH5WtglnkmZvOnD4QNPZq7i74J9tXz5bNdskaO1To2HeQSaz
+ LLOBtQq/qGPvdbDmhrAE45rgBYCTtoO9zCmrjSJ417fTOvHuOXs1owwBAmjLEyRk1fX3HofJT
+ eHISxwWn80FN4cUhkmvAC7IvJwmhk3/+IrY0+tQzdIvj4Bu/l/eSC3zRCgvnYC393j5DDknsI
+ S83eblcec2ExPaJpkUZm/l4Bf8RxVMvTJ1EFlVc2CNHgoLKyyNUKzvjvwE8f+QOr7wJmaL0qk
+ iuz18TqrlwWXHBFeS4ZuM1UT5iawjS/ESgHaTURuVfAHecZBL+gnySyq1ECCgb9biUm/Ip51J
+ yMz75lEzwgagID7ct2LEO4YRgHnbHj6rF8buLM81ZsSOmrx4KriL7Aw8wAK9gea3L8PZrHKei
+ 80r7N98YaTUcrHRdl6iNwKfFdVnG0pFQ82NaKKW83K0KlEEov44zV3cOf2zSSsS859HQp1vr9
+ +eZ5R+c+4eYHG3xmsaBD9+YZe8qzFAFNV5iIRWodJvo794SwbJMADovcadBwGFoZcbmP64UTn
+ fCRul/t+F6nKAoJsgFEB0XT3mO4LmzLeAqwdCRn7TCtQeBxRHslK2Rwvc1ee/v494y/0UucJX
+ +5CzLLFPuP8xwAYpkauUXbX1/rJ20MWF1fWtRFxaLjTl/tmrkIwmaffb8vJCTO0XC2rxqoioU
+ jhu9CjQ/VZyGLHSO4cmPkTMcIvolfTpmmyZ0hovimNlCiu6hz3IT3Xed8iBPvmNRAH6R68XW7
+ 0n78fUa+qWzUsFZh2njgKnCr7Xk/aZQLQrQN+AzdGfAVCitZVIvJzBLHuL53HMoAreLZ2V+hV
+ nLzXwj9Qis7jIKfnu/exIdJVyFItWH2zDGdzTK6Y4KBybpGS9zKlUEUzsh4SuzFqDg/I+2y2u
+ OOrXLE32N0v6pG70dIxRZi6NhAIChj7ugghTS7/H10RdcyV7Iu+wcVIwM8XqOIa0DCM7dq+2d
+ vKy5bA/ZXZ5hzMX3zyPvY2hrvYWTeq3ClML5aG55Czur+XpPELYgm7u8X/kV6gjJ5jmCSC717
+ 2fTPnVgT38f0KQh5n6vIP1uGSj6v5kg06OK4P5DcHjoKe2zqFyVO7aIofeos3V7g8GIqf0nyD
+ sQL60uk9G0abnIYcpxJVLGfbo/dPyDI0kABA/s3VhJQKBMVB/haj3Z7h8UOzHY8PNogdniXfe
+ UJegBY/KIXDXYbSRegwwmjkALusH3ed+HD2NMWG+siiE00V+iGJzD4S4lYMeecLdgoPyldjkY
+ HeYY5nxqE9GFRC2cw+JzufQU90m89n1nfJ7hmcScJyJ/HcQNv4AMPQCaxLl3QSONU4cptCfpo
+ ul+R/72gAWFoK/ZLyZOKLBWk/j9av29ruP7l6VlI/mD84bYMXFJYoaC0gsZUgmTJI/3ck+0Mm
+ /Vb3xV0vAEfNPerE4V3vhsu3oVd185JQrt8Y8elHTnnKPLZSbn78lgZus7SRQcoGZg43U93Be
+ ZEiQ8VC5vLIhHgIHS6oLs9wMvjuB6GHziFBdQBbAydnNs3cyC9QhPgvzM0c0o7OnA1XP02WXr
+ /KQVRUO5BJNsElSkXAR5BasS57Z5uIWOpCVe/C1KgBTiCmZ2ZnhK05ox07G9LbAnKPX3JDS6D
+ luH54vQ6HUFc2TNpS1KQEh7/xQw+D5x+ydOSY3Zv+RYrfgKE/UQu9WCigthLRg0hoktn9zJvW
+ goV0YYzbYlnNM7vWKVbsy1jBzALCMg+sikWqu35Fj/VDrRHSziaajtOI83s9d1c2+SjLHi2yu
+ MT8VI0iSak6qnY2Pqi8DD7mbzcR49p3jlK2WHMk8Ny/0VrZ3/mHvqq5bXDf3Lz+pYPiH3xyLN
+ CD92pgtzED9Zlvle4vhNHEr7osPggUS/AmGrqgKJ/EoX0vsb+I0YPECzJCYB4QVdHCJwJ+ZqN
+ e3pjNxeraYfqPFRxNA79SP55BHiXJP63YLt5ufAmtMBKuSn83FaiUfA8/ZTwDAEShqbaVvgFD
+ Z/bk2qxZgG1iUHYI0e6w2iJVDR1zSo4h8ARf/fvsU94xHJYYzmQRsH0yXqD2TPIsyRnND7oEX
+ QyzO6U3vVEXnVgHmsPqxc1eK5LKJ/kai2RYg4Y7SL2CBKqg2c6t47X6CPyJxy1XF2+naqeGy7
+ rHNA+jn9Wms2hBA4b4PAc819GNX+jLSrWZt2+Y5cH683aLkJ25fbGODQGmmxyRHysuLUgnlOK
+ MUzF/1EXB6DDmOV7HoZgJM6TRa/BRieA0Y49gawMH1d6F/c69WNlpvkHfV01T37NhOcbBbxgN
+ ynyA84a9NvPNG0kdct2rzX7/LEsRRmM4It88WneskWybLRidIQ0WxGGSEKLjBNNAkzQJAGiAS
+ S+lxsrlAFdgZ7q8sl2XjFKcvpe8RRz2JVlNLtrH35rfSmJucDOJe0J5f9eCWTXHgvEzu/bNnX
+ qmf8tpTJlrojiDjFY8Qfhyro5BRUFrR0YTumi+5SSvpg83GCA1DsDMAWRSx/o9OQJjSyHB+SJ
+ N1lWcSyGfq1aOQ+88NPImUOsj+nhcNOgbCSI9ozMfqrY=
 
-On Tue, Sep 30, 2025 at 8:58=E2=80=AFAM Francesco Valla <francesco@valla.it=
-> wrote:
->
-> Add support for parsing MMC power sequencing (pwrseq) binding so that
-> fw_devlink can enforce the dependency.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 30 Sep 2025 19:19:38 +0200
 
-I took a quick look at the documentation. It's not clear to me that
-mmc-pwrseq always points to a supplier. Can someone with more
-experience on this confirm that is what it's supposed to point at?
+Refine some implementation details for further development considerations.
 
-Meaning if A lists B as pwrseq, is it always the case that B needs to
-be powered on? The binding documentation doesn't say anything about B
-needs to be powered on first. It's just saying A and B have an
-ordering requirement.
+Markus Elfring (6):
+  Omit an URL comment line
+  Reduce repetition of the key word =E2=80=9Cvirtual=E2=80=9D
+  Restrict the metavariable type =E2=80=9Cconstant=E2=80=9D for the usage =
+of string literals
+  Omit a redundant space character
+  Simplify two SmPL dependency specifications
+  Distinguish implementation details better for operation mode properties
 
-If the meaning of the binding is _ALWAYS_ B needs to be powered on
-first, then yes, this patch is correct and I can give a reviewed-by.
+ scripts/coccinelle/misc/ptr_err_to_pe.cocci | 22 ++++++++++++---------
+ 1 file changed, 13 insertions(+), 9 deletions(-)
 
-Thanks,
-Saravana
+=2D-=20
+2.51.0
 
->
-> Signed-off-by: Francesco Valla <francesco@valla.it>
-> ---
-> Changes in v2:
-> - EDITME: describe what is new in this series revision.
-> - EDITME: use bulletpoints and terse descriptions.
-> - Link to v1: https://lore.kernel.org/r/20250930-mmc_pwrseq-v1-1-7fd2764f=
-5ac1@valla.it
-> ---
->  drivers/of/property.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/of/property.c b/drivers/of/property.c
-> index c1feb631e3831d7d5ec23c606af31731bfc2f8b8..fcf10c4f02dcf879e1f25e4fa=
-97b25152d58bacb 100644
-> --- a/drivers/of/property.c
-> +++ b/drivers/of/property.c
-> @@ -1377,6 +1377,7 @@ DEFINE_SIMPLE_PROP(post_init_providers, "post-init-=
-providers", NULL)
->  DEFINE_SIMPLE_PROP(access_controllers, "access-controllers", "#access-co=
-ntroller-cells")
->  DEFINE_SIMPLE_PROP(pses, "pses", "#pse-cells")
->  DEFINE_SIMPLE_PROP(power_supplies, "power-supplies", NULL)
-> +DEFINE_SIMPLE_PROP(mmc_pwrseq, "mmc-pwrseq", NULL)
->  DEFINE_SUFFIX_PROP(regulators, "-supply", NULL)
->  DEFINE_SUFFIX_PROP(gpio, "-gpio", "#gpio-cells")
->
-> @@ -1524,6 +1525,7 @@ static const struct supplier_bindings of_supplier_b=
-indings[] =3D {
->         { .parse_prop =3D parse_msi_parent, },
->         { .parse_prop =3D parse_pses, },
->         { .parse_prop =3D parse_power_supplies, },
-> +       { .parse_prop =3D parse_mmc_pwrseq, },
->         { .parse_prop =3D parse_gpio_compat, },
->         { .parse_prop =3D parse_interrupts, },
->         { .parse_prop =3D parse_interrupt_map, },
->
-> ---
-> base-commit: 30d4efb2f5a515a60fe6b0ca85362cbebea21e2f
-> change-id: 20250930-mmc_pwrseq-247089ac9583
->
-> Best regards,
-> --
-> Francesco Valla <francesco@valla.it>
->
 
