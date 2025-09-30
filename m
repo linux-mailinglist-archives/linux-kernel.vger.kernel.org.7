@@ -1,119 +1,174 @@
-Return-Path: <linux-kernel+bounces-838201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A6FEBAEA9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 00:09:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5603BBAEA9E
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 00:10:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A4023ADD71
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 22:09:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F24631925F1B
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 22:10:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AC8D2882B7;
-	Tue, 30 Sep 2025 22:09:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA82328C2D2;
+	Tue, 30 Sep 2025 22:10:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HmaDJ0G3"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TPNh/vzO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20D1919C540
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 22:09:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9CB619C540;
+	Tue, 30 Sep 2025 22:10:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759270178; cv=none; b=fgerLlDclzwx0su/8GVPR/o8sL6tYRemdHGgIEuD8RK2Ou0DKfqvxxeXFeigQHSKWm9QvnHroa8luHM5G8QzvVVgV3ewuqdBO4Z7mFPEvfpqgjwsGOgs1alWi02Rb4KK/gKWSn2tI783R1ebsVrmMfnnkuj/GU6kNvvLiQZKaD8=
+	t=1759270208; cv=none; b=KURdkUqdMMXfrzH9WRBghTiYDzwtL2uByEMnqFHh4mPlmWV2iCjW/2vlaeIc+XQ7gdL1PuihqM5u7RpWVviQohYP9XWr6JNpY4qQGZmFiX+aEN6gQK29/ofQZezeMXw9MP1m6apcYki3mUzbI/chApHrjzQ/TYMGFEiU6tL/hys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759270178; c=relaxed/simple;
-	bh=3dE6ZY8DDCWKUhCE0JZ/ajz2ahy27BhaA2XqD7WVCCk=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=feJ0pBWvwrJ/jbenuNu69YkTipHHvu/UGmHWsT8M5Mju2GKv2mi5d5nTV4EJFOPvncoszYXXWMhfwqx67q3I2J1+8L7kCzx1xZzQDvu/LmDYvLC8JdDRvM4/VFd0SvI159x4JJhDLh3nzDj1hzIYd8hlDUkSNhpuq9JVqlRJE4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HmaDJ0G3; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759270175;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=O2X58BHmT7cyXnDKOb1E3hEOS9ATLii9dOwb2upw4iw=;
-	b=HmaDJ0G3P9ZWeTD/HLZNWN9/eq0kyf5Dz0t4QXotrMHUe/r86dQTp73FkhRR1XqXzYWrwI
-	X5FeksxLOtMAEEhiePJpCK4e7FsEeyoEC5wmkWjCJ32scaMSyM82fBfKYOYnohnh2BBlhl
-	LDZ5bCQdpgfxmgc5a+nz2VK29ud4rt8=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-134-4NTc-AOxPe6dYEgRUzKWGg-1; Tue,
- 30 Sep 2025 18:09:32 -0400
-X-MC-Unique: 4NTc-AOxPe6dYEgRUzKWGg-1
-X-Mimecast-MFC-AGG-ID: 4NTc-AOxPe6dYEgRUzKWGg_1759270171
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8F6E619560B5;
-	Tue, 30 Sep 2025 22:09:30 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.24])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 8D61C19560B4;
-	Tue, 30 Sep 2025 22:09:27 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20250928162054.GB3121@redhat.com>
-References: <20250928162054.GB3121@redhat.com> <20250928161953.GA3112@redhat.com>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: dhowells@redhat.com, Boqun Feng <boqun.feng@gmail.com>,
-    Ingo Molnar <mingo@redhat.com>, Li RongQing <lirongqing@baidu.com>,
-    Linus Torvalds <torvalds@linux-foundation.org>,
-    Peter Zijlstra <peterz@infradead.org>,
-    Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>,
-    linux-kernel@vger.kernel.org
-Subject: Re: [RFC 2/1] seqlock: make the read_seqbegin_or_lock() API more simple and less error-prone ?
+	s=arc-20240116; t=1759270208; c=relaxed/simple;
+	bh=hMd/AM3ewIb0jj5ghCyFKoP7KwuS14FKJyK/ph0ODyM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R76PwpEvwWzpp2VLsNTLJ+XlGoDg2FYzLCHC2IxSKQ+zvZsQJd+lgmPCRTKC2z8GnT6ndm7kBubewDwzsUlm+DE436STZbR0xISszSDEkQTH1MSX+l1uc2sdTQBskdjOxe/8LhCWgskbRUpN1Pv+jaaGHBqA2mMS2lUOPblK+ME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TPNh/vzO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6719BC4CEF7;
+	Tue, 30 Sep 2025 22:10:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759270207;
+	bh=hMd/AM3ewIb0jj5ghCyFKoP7KwuS14FKJyK/ph0ODyM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TPNh/vzOa3u/0div8i87Dy9LaaSnw20oVgnYVKRcud+Zud4VcP9sdUT86mvKLNaSX
+	 4hAApTJERCXEwxyMUHksxymNDRP4jpQlEa1yLP9f1nLujyT+hadzblmndZVvy4p/rN
+	 kOvmUxDy/rtBUz2UkbWzN91Jesm1MVMAi+AKlbwZDWllnPORuKW0YFM6lCesag4T+R
+	 ktUTXq0voYdslGUv0vH5HEgr967cRvQ7H6pJ+xvbq+nzn+hE5n4JxEQ6kyutWDpaKH
+	 yYySGG4kJxBv0Sgb1y64k4KJ/MGp+Ijc6HtSg8ejVMd3/U/YpesfI3fgqa4fwUEJCP
+	 TEoo88EOFh0mw==
+Date: Tue, 30 Sep 2025 15:10:01 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Guodong Xu <guodong@riscstar.com>, Vinod Koul <vkoul@kernel.org>
+Cc: Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, Yixun Lan <dlan@gentoo.org>,
+	dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev, linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev, elder@riscstar.com,
+	Naresh Kamboju <naresh.kamboju@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] dmaengine: mmp_pdma: fix DMA mask handling
+Message-ID: <20250930221001.GA66006@ax162>
+References: <20250918-mmp-pdma-simplify-dma-addressing-v1-1-5c2be2b85696@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2060587.1759270166.1@warthog.procyon.org.uk>
-Date: Tue, 30 Sep 2025 23:09:26 +0100
-Message-ID: <2060588.1759270166@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250918-mmp-pdma-simplify-dma-addressing-v1-1-5c2be2b85696@riscstar.com>
 
-Oleg Nesterov <oleg@redhat.com> wrote:
-
+On Thu, Sep 18, 2025 at 10:27:27PM +0800, Guodong Xu wrote:
+> The driver's existing logic for setting the DMA mask for "marvell,pdma-1.0"
+> was flawed. It incorrectly relied on pdev->dev->coherent_dma_mask instead
+> of declaring the hardware's fixed addressing capability. A cleaner and
+> more correct approach is to define the mask directly based on the hardware
+> limitations.
 > 
-> Can we improve this API?
+> The MMP/PXA PDMA controller is a 32-bit DMA engine. This is supported by
+> datasheets and various dtsi files for PXA25x, PXA27x, PXA3xx, and MMP2,
+> all of which are 32-bit systems.
+> 
+> This patch simplifies the driver's logic by replacing the 'u64 dma_mask'
+> field with a simpler 'u32 dma_width' to store the addressing capability
+> in bits. The complex if/else block in probe() is then replaced with a
+> single, clear call to dma_set_mask_and_coherent(). This sets a fixed
+> 32-bit DMA mask for "marvell,pdma-1.0" and a 64-bit mask for
+> "spacemit,k1-pdma," matching each device's hardware capabilities.
+> 
+> Finally, this change also works around a specific build error encountered
+> with clang-20 on x86_64 allyesconfig. The shift-count-overflow error is
+> caused by a known clang compiler issue where the DMA_BIT_MASK(n) macro's
+> ternary operator is not correctly evaluated in static initializers. By
+> moving the macro's evaluation into the probe() function, the driver avoids
+> this compiler bug.
+> 
+> Fixes: 5cfe585d8624 ("dmaengine: mmp_pdma: Add SpacemiT K1 PDMA support with 64-bit addressing")
+> Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+> Closes: https://lore.kernel.org/lkml/CA+G9fYsPcMfW-e_0_TRqu4cnwqOqYF3aJOeKUYk6Z4qRStdFvg@mail.gmail.com
+> Suggested-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Guodong Xu <guodong@riscstar.com>
 
-It would also be nice to fix the static lock-balance detection stuff that you
-get when you enable advanced checking during a kernel build.  It doesn't
-seem to understand seqlocks.
+Tested-by: Nathan Chancellor <nathan@kernel.org> # build
 
-> 	-	nextseq = 0;
-> 	+	seq = 0;
+It would be great if this could be picked up before the 6.18 DMA pull
+request so that I do not have to patch our CI to avoid this issue.
 
-Perhaps an init function or macro that hides this bit?
-
-	void init_read_seqlock(int *seq)
-	{
-		*seq = 0;
-	}
-
-	init_read_seqlock(&seq);
-
-or:
-
-	#define INIT_READ_SEQBEGIN 0
-
-	seq = INIT_READ_SEQBEGIN;
-
-Though if we can fold the whole loop inside a macro, that might make it easier
-to use.
-
-d_walk() in fs/dcache.c might give you issues, though.
-
-David
-
+>  drivers/dma/mmp_pdma.c | 20 ++++++++------------
+>  1 file changed, 8 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/dma/mmp_pdma.c b/drivers/dma/mmp_pdma.c
+> index d07229a748868b8115892c63c54c16130d88e326..86661eb3cde1ff6d6d8f02b6f0d4142878b5a890 100644
+> --- a/drivers/dma/mmp_pdma.c
+> +++ b/drivers/dma/mmp_pdma.c
+> @@ -152,8 +152,8 @@ struct mmp_pdma_phy {
+>   *
+>   * Controller Configuration:
+>   * @run_bits:   Control bits in DCSR register for channel start/stop
+> - * @dma_mask:   DMA addressing capability of controller. 0 to use OF/platform
+> - *              settings, or explicit mask like DMA_BIT_MASK(32/64)
+> + * @dma_width:  DMA addressing width in bits (32 or 64). Determines the
+> + *              DMA mask capability of the controller hardware.
+>   */
+>  struct mmp_pdma_ops {
+>  	/* Hardware Register Operations */
+> @@ -173,7 +173,7 @@ struct mmp_pdma_ops {
+>  
+>  	/* Controller Configuration */
+>  	u32 run_bits;
+> -	u64 dma_mask;
+> +	u32 dma_width;
+>  };
+>  
+>  struct mmp_pdma_device {
+> @@ -1172,7 +1172,7 @@ static const struct mmp_pdma_ops marvell_pdma_v1_ops = {
+>  	.get_desc_src_addr = get_desc_src_addr_32,
+>  	.get_desc_dst_addr = get_desc_dst_addr_32,
+>  	.run_bits = (DCSR_RUN),
+> -	.dma_mask = 0,			/* let OF/platform set DMA mask */
+> +	.dma_width = 32,
+>  };
+>  
+>  static const struct mmp_pdma_ops spacemit_k1_pdma_ops = {
+> @@ -1185,7 +1185,7 @@ static const struct mmp_pdma_ops spacemit_k1_pdma_ops = {
+>  	.get_desc_src_addr = get_desc_src_addr_64,
+>  	.get_desc_dst_addr = get_desc_dst_addr_64,
+>  	.run_bits = (DCSR_RUN | DCSR_LPAEEN),
+> -	.dma_mask = DMA_BIT_MASK(64),	/* force 64-bit DMA addr capability */
+> +	.dma_width = 64,
+>  };
+>  
+>  static const struct of_device_id mmp_pdma_dt_ids[] = {
+> @@ -1314,13 +1314,9 @@ static int mmp_pdma_probe(struct platform_device *op)
+>  	pdev->device.directions = BIT(DMA_MEM_TO_DEV) | BIT(DMA_DEV_TO_MEM);
+>  	pdev->device.residue_granularity = DMA_RESIDUE_GRANULARITY_DESCRIPTOR;
+>  
+> -	/* Set DMA mask based on ops->dma_mask, or OF/platform */
+> -	if (pdev->ops->dma_mask)
+> -		dma_set_mask(pdev->dev, pdev->ops->dma_mask);
+> -	else if (pdev->dev->coherent_dma_mask)
+> -		dma_set_mask(pdev->dev, pdev->dev->coherent_dma_mask);
+> -	else
+> -		dma_set_mask(pdev->dev, DMA_BIT_MASK(64));
+> +	/* Set DMA mask based on controller hardware capabilities */
+> +	dma_set_mask_and_coherent(pdev->dev,
+> +				  DMA_BIT_MASK(pdev->ops->dma_width));
+>  
+>  	ret = dma_async_device_register(&pdev->device);
+>  	if (ret) {
+> 
+> ---
+> base-commit: cc0bacac6de7763a038550cf43cb94634d8be9cd
+> change-id: 20250904-mmp-pdma-simplify-dma-addressing-f6aef03e07c3
+> 
+> Best regards,
+> -- 
+> Guodong Xu <guodong@riscstar.com>
+> 
 
