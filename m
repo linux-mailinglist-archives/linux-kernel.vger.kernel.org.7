@@ -1,154 +1,172 @@
-Return-Path: <linux-kernel+bounces-837998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C253BAE326
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 19:33:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5C15BAE32C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 19:34:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 998801896E9A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:34:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F7283BF1DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:34:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 608AB25B302;
-	Tue, 30 Sep 2025 17:33:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 824C4242D60;
+	Tue, 30 Sep 2025 17:33:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dFiyTxjo"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zpq4a5UF"
+Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45E091E9B1A
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 17:33:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 418412116E0
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 17:33:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759253620; cv=none; b=UDeZHZ0iwcK2jgkmuFj1OwAfY//4pGhvfPDy71/hX/hxGRjTtAQGHlBR7G8yrqbekSPpdoPK1KqCqPg3BK11kHXUbp7oFanJ9Ps0u7g0GGhiD4wx4BFhTiHyB/d5Io5XrBbz2F2gNGCsC4kaLrS5/WvEjCJH4KwXxurKwMWA3/A=
+	t=1759253629; cv=none; b=R43akThQCHGoGBkZRZPrgM80kDuTluh4BNhPsFUDyd/59KkDDTCNVohxjo4wajmRTmU8KyYKgzvfwtlQ6FoVRd5FzdS+xIwxOhRRvLEgB6UEOkaRd4iHWNmMB4v5ILicpYoGE6VbjM6EJ7UcIBF1imC7QOLvYqMqbzxcH6SQAdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759253620; c=relaxed/simple;
-	bh=/uzHTZRlmfTXfkbDbdCgwivf0VeFrYx3UT6Fycy7EKg=;
+	s=arc-20240116; t=1759253629; c=relaxed/simple;
+	bh=7oaqfY4n8gvCo3G5WCbSUF/1L0kT2TAijUBs8QVAX/8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eFQw03p/5SYOHoBI2iLH5DYwlTsskwY1qABu92njsGoHo4ClKiDo699+dXRUqPgnh9zEMOC0iRqnEzt/fpkVj1M74iDE7sEhZ21hf1JhgmfgwZ3uTDtmfm2S+2NcBpWSY29iaUspixR1YrLPuy1gErbcxAsqqvU5f6sgreQFN/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dFiyTxjo; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759253618;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DVdC9fzy8g2U07P39DvGMyerTR2hUiEGZN4FGElHXu8=;
-	b=dFiyTxjoqWwObaRezi4Fbsc9Fv+wP37RR0ufgLqpJtc1c/WqhKbf53cplHAzS32jd1eX+9
-	JZNEEK5XOsXemNAWU+oYx4mAIHBFTVpEyRr8e8Ja858pecQW5/aJJ4JeOswm41zpN0UBmf
-	uhxSu+3vm3QZQB9r3SRKwn3XldeyrYo=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-400-7dJGic4lOPSg33sHuF_5yg-1; Tue, 30 Sep 2025 13:33:36 -0400
-X-MC-Unique: 7dJGic4lOPSg33sHuF_5yg-1
-X-Mimecast-MFC-AGG-ID: 7dJGic4lOPSg33sHuF_5yg_1759253615
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3f6b44ab789so3637743f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 10:33:36 -0700 (PDT)
+	 To:Cc:Content-Type; b=CWYvQmYnZhNndbMlSoxwYUttPcNc0EAJKWq6OOZ4jkLZ5w2ALk45F/d76Tu48lMgHs7MVFTBhe6LEMLi3VlmbKm+uw3fsr8Rk09zKTICAt0TfmNcDyxArTWaYQmkVZ6Y+l39tkN4HLQSOjHVjCsfpK5aBHH3NVP6+jUlxTPhJiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zpq4a5UF; arc=none smtp.client-ip=209.85.167.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-43f8116a130so1079260b6e.2
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 10:33:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759253626; x=1759858426; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QOQJc76/bjfzUHkGEG4L0ifBSjFnFM5dvfGqeltjYHY=;
+        b=Zpq4a5UFnM4wkNcemHIaWOwoN0YL3mMN0vgMhADhYWn4jonhuLJJH1wthtOKepgMcT
+         NLkO8vN0am7ACUBhrIqGwvtEQZC8CK5Rgo4PdDwRrZhMQHgIQkSiCs3AIZBj1Cwhfko0
+         JgEggNpPpha6oum7E/U5tRvDU7GkoB9ce2IXevkP/KvxosJ3FzoxEYoQBfRQDAtRFkmk
+         Z8YsS6r+rjr1XJobofGW5XAUmYyL3EfXMUmmdNTEKY/Ga920UPd+0ndmM+k9wzIaMOfK
+         rlH1evPNbsRfRZhoSJvFm9i+IX1yvYWXEzZALjNTNhnQQKnhgp5IVletkAvOyIELCbE5
+         YSqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759253615; x=1759858415;
+        d=1e100.net; s=20230601; t=1759253626; x=1759858426;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=DVdC9fzy8g2U07P39DvGMyerTR2hUiEGZN4FGElHXu8=;
-        b=wvsR85Bh6PzHSZB9QvHLih0qQfmmtLAVnI2ZTzUj5wW28zLgDER32o4s7ieWsVc3o/
-         zzomtXGij7ekH89vAUU/4C5BKtPg+/Xa62vNCHn7q6vjCCzvkOwFkfKmNDqdBaIn/WZ6
-         1A+7EH0WREV3X3ahbGwpyNbG88LART6pE50H1WBP5JyqYaro5V0DvxzGHtmlhTFhCf7x
-         MY2qDS/z1KNMVJ04MehpwbVfUDCQsrlwV3dtqzpVZJ4U1zpaoprVhelH4d8C36MqJAG7
-         VcoNNdrwiCQEODB5OIh7WVCWkH6vZa9d4HRW4lfvm+Yxl8tWXBDufPjFofV2mguMgK7W
-         7CiA==
-X-Forwarded-Encrypted: i=1; AJvYcCU27/F5She6pFZkWswe6smXjGUaX1HG++S88tsde3xMlk1OouLea4oWZ+2KA7R3iFTZoB7pPIK7+9HYLkk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyspXShQ2Ima4eYZ+rEYpgUo4LuYRgUtMCG5GCa97z+yEt/r8AL
-	VPJk5mJIvvT5cPZqE40s2IimDvDwADvoHKG6NpfeS8sBJLZxaNyxKNz5GvCR/rrPddyzjxkhx4r
-	l4YTI7Ok/38vAAGLaR2h/EA7qdDd2eM4+BRLpWiYkJvaIuBUD/sfKVPfbKox/Is41j66yzSRYC5
-	tcWnLl4WTvPlwwWJ9iM+GhM1zuu1ZRwfN4VP0Ts5Zz
-X-Gm-Gg: ASbGncvmjdLODadcFn0fmyyGvIBvp6gS9X0zlV++Z+D0ba+INHWoebp7G6AbRDhJGua
-	BORD/xIfyMEySF1VHJneczCGXxPt566kFXx/eXCI89RwHLFP+tQPsmqX4NaEyT1V0MAtyXx8E1V
-	LeS2aPoqbjmcwPVA2oh5UMiAgtmFqqbz9lh13oaXzeNjclplbNdUANF/SMQ2m/kqd7pAdwMYROZ
-	TcYUT4dbXwb5yip2bU/z3djCRL1VH/G
-X-Received: by 2002:a05:6000:420a:b0:3ee:15d5:614f with SMTP id ffacd0b85a97d-4255781b050mr453891f8f.46.1759253615167;
-        Tue, 30 Sep 2025 10:33:35 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGPEGl7i1wI3zGz8Gl0JlNQlV381u6TWCOx0x5yH96A4cHnQkC4YdjEEJwapOyYbkd/ZvX3EIxM60w4sr5oFVo=
-X-Received: by 2002:a05:6000:420a:b0:3ee:15d5:614f with SMTP id
- ffacd0b85a97d-4255781b050mr453874f8f.46.1759253614771; Tue, 30 Sep 2025
- 10:33:34 -0700 (PDT)
+        bh=QOQJc76/bjfzUHkGEG4L0ifBSjFnFM5dvfGqeltjYHY=;
+        b=L8u9/rYvZ84hpgv5nW4GRbkPOlviBFwWU2RRCCnF2Ys+Nit4RqToCC2kpTnJ1hS2a3
+         keLhAMB3p88Kgq0BBp2mCH9HK6ZYOh67FrbCyML2W9ui+9oiV8rzfM9RYmSj7vuBXEoz
+         UEPAsP64hxNqR+dhbJN/merOrlEcopETSWbs4mfNoTiXG+E0SPQNZB1gSCmRzWMfmhTF
+         SDDAoaOlU/PzdII276ZTIFRivWyJPUarrEZdxX+wH6fHMQQGwgtGO13Cem1GhVUiq+9/
+         pwzcmDUfJNqVA0gHYDpS3ULjzR2yRIlYBjJ57WrMygHSy8z94H2sk5S9BvVS0OmFKbdY
+         s6+A==
+X-Forwarded-Encrypted: i=1; AJvYcCUemZZsKVPFC3g0KSzb6VKumXylbNGnfYCp3bgUXsfxrMMrDktgUl+PEM8nLidZFJG+WYtGeHv3jjc4UGQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpTN6tMA2+YfcosclUeisUEKtY+6nI8ggVwRyNuJIrMUGAYlC6
+	rRORZWOofmSAAUJuVc98rwAUGeQ8RmqDVGSWjogUjYkVvlXxW7NWg0gsFY8BBbGsJvCE96jqs7/
+	5hJlM+H3ewogpnjAOh/4zv4lYXT9GjWc=
+X-Gm-Gg: ASbGncuny33x0eYB6p8TxKFrkZxr0C0PQRK/erU8QNjdIYDJKSb936ZRaI4PVfYjqEC
+	RfYcNmCeGgc0MLxhJCyt0ejOm5rtEKRuoPihC5FrIEaugAz8XeydscLtZhyEZ1hEWpMK7ExxhoK
+	LCMbS48NYqXLRuEUz+bR+qcv9roSpeWOCWaOMXa+RC2nQI4sQMoDmQsOTnA239B7qAoq/GA1hyW
+	NLFrPqq/qeFH53WjJVah/JXCDuEvSDY
+X-Google-Smtp-Source: AGHT+IGpOWfgvUg+G2VayONLt47j/R1hMVCBp8a+ycGnyRMKxU5QNMPGQonL1pcFoIep0QFwgJqh3mF74MDopg4J1p8=
+X-Received: by 2002:a05:6808:4441:b0:43f:6654:c757 with SMTP id
+ 5614622812f47-43fa57a45e8mr9771b6e.33.1759253626212; Tue, 30 Sep 2025
+ 10:33:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250927060910.2933942-1-seanjc@google.com> <20250927060910.2933942-6-seanjc@google.com>
-In-Reply-To: <20250927060910.2933942-6-seanjc@google.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Tue, 30 Sep 2025 19:33:22 +0200
-X-Gm-Features: AS18NWBYZvWeclECRyRctpt0s36DZsWKpQ0aMUf6N3yHtD8DPtsunh5xRdz3dz4
-Message-ID: <CABgObfbOSffjFPgpOe1TQ8XJNYD907Ufa-YQN7C--9dREkFw2w@mail.gmail.com>
-Subject: Re: [GIT PULL] KVM: x86: VMX changes for 6.18
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250925185043.3013388-1-tanmay.shah@amd.com> <CABb+yY0MzJWOGtS=ocphpUVcJ-gb6_ENCjSmJQiWfRiOhxrpCg@mail.gmail.com>
+ <3ecf0bb8-a1f1-498f-8b7d-39483a67cbfc@amd.com>
+In-Reply-To: <3ecf0bb8-a1f1-498f-8b7d-39483a67cbfc@amd.com>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Date: Tue, 30 Sep 2025 12:33:34 -0500
+X-Gm-Features: AS18NWCDmfzO57z9_IeDFtwzy97PTjLYrAOUglA9BCgS4QvjFmFKG7a3d3QwQI0
+Message-ID: <CABb+yY388YaM=wLMy1aaDT0E1yN=7Ge2taMWMyEhWvyqDV=3Dg@mail.gmail.com>
+Subject: Re: [PATCH] mailbox: check mailbox queue is full or not
+To: tanmay.shah@amd.com
+Cc: andersson@kernel.org, mathieu.poirier@linaro.org, 
+	linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Sep 27, 2025 at 8:09=E2=80=AFAM Sean Christopherson <seanjc@google.=
-com> wrote:
+On Tue, Sep 30, 2025 at 11:52=E2=80=AFAM Tanmay Shah <tanmay.shah@amd.com> =
+wrote:
 >
-> Fix a TDX bug detected by Smatch where KVM would return '0' on failure, d=
-o a
-> bit of early prep for FRED virtualization, and tidy up.
+> Hi Jassi,
 >
-> The following changes since commit c17b750b3ad9f45f2b6f7e6f7f4679844244f0=
-b9:
+> Please find my comments below.
 >
->   Linux 6.17-rc2 (2025-08-17 15:22:10 -0700)
+> On 9/30/25 9:11 AM, Jassi Brar wrote:
+> > On Thu, Sep 25, 2025 at 1:51=E2=80=AFPM Tanmay Shah <tanmay.shah@amd.co=
+m> wrote:
+> >>
+> >> Sometimes clients need to know if mailbox queue is full or not before
+> >> posting new message via mailbox. If mailbox queue is full clients can
+> >> choose not to post new message. This doesn't mean current queue length
+> >> should be increased, but clients may want to wait till previous Tx is
+> >> done. This API can help avoid false positive warning from mailbox
+> >> framework "Try increasing MBOX_TX_QUEUE_LEN".
+> >>
+> >> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+> >> ---
+> >>   drivers/mailbox/mailbox.c               | 24 +++++++++++++++++++++++=
++
+> >>   drivers/remoteproc/xlnx_r5_remoteproc.c |  4 ++++
+> >>   include/linux/mailbox_client.h          |  1 +
+> >>   3 files changed, 29 insertions(+)
+> >>
+> >> diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
+> >> index 5cd8ae222073..7afdb2c9006d 100644
+> >> --- a/drivers/mailbox/mailbox.c
+> >> +++ b/drivers/mailbox/mailbox.c
+> >> @@ -217,6 +217,30 @@ bool mbox_client_peek_data(struct mbox_chan *chan=
+)
+> >>   }
+> >>   EXPORT_SYMBOL_GPL(mbox_client_peek_data);
+> >>
+> >> +/**
+> >> + * mbox_queue_full - check if mailbox queue is full or not
+> >> + * @chan: Mailbox channel assigned to this client.
+> >> + *
+> >> + * Clients can choose not to send new msg if mbox queue is full.
+> >> + *
+> >> + * Return: true if queue is full else false. < 0 for error
+> >> + */
+> >> +int mbox_queue_full(struct mbox_chan *chan)
+> >> +{
+> >> +       unsigned long flags;
+> >> +       int res;
+> >> +
+> >> +       if (!chan)
+> >> +               return -EINVAL;
+> >> +
+> >> +       spin_lock_irqsave(&chan->lock, flags);
+> >> +       res =3D (chan->msg_count =3D=3D (MBOX_TX_QUEUE_LEN - 1));
+> >>
+> > 1) If we really need this, it should be
+> >          res =3D (chan->msg_count =3D=3D MBOX_TX_QUEUE_LEN);
+> >
 >
-> are available in the Git repository at:
+> Ack here.
 >
->   https://github.com/kvm-x86/linux.git tags/kvm-x86-vmx-6.18
+> > 2) I am thinking instead, introduce a
+> >         struct mbox_client.msg_slots_ro;
+> >    Which is a read-only field for the client, denoting how many message
+> > slots are currently available.
+> >    The mailbox api will always adjust it when msg_count changes...
+> >        chan->cl->msg_slots_ro =3D MBOX_TX_QUEUE_LEN - chan->msg_count;
+> >
 >
-> for you to fetch changes up to 510c47f165f0c1f0b57329a30a9a797795519831:
+> It's not possible to make msg_slots_ro true Read-Only. Nothing prevents
+> clients to write to that variable as far as I know.
 >
->   KVM: TDX: Fix uninitialized error code for __tdx_bringup() (2025-09-19 =
-15:25:34 -0700)
+Correct, nothing prevents a client from changing 'msg_slots_ro', just
+like nothing
+prevents it from setting tx_done or rx_callback to 0xdeadbabe.
+The '_ro' suffix is to tell the client developer to not mess with it.
+I am slightly more inclined towards this approach because it avoids
+adding another
+convenience api and is more immediately available without needing a spinloc=
+k.
 
-Pulled, thanks.
-
-Paolo
-
-> ----------------------------------------------------------------
-> KVM VMX changes for 6.18
->
->  - Add read/write helpers for MSRs that need to be accessed with preempti=
-on
->    disable to prepare for virtualizing FRED RSP0.
->
->  - Fix a bug where KVM would return 0/success from __tdx_bringup() on err=
-or,
->    i.e. where KVM would load with enable_tdx=3Dtrue despite TDX not being=
- usable.
->
->  - Minor cleanups.
->
-> ----------------------------------------------------------------
-> Qianfeng Rong (1):
->       KVM: TDX: Remove redundant __GFP_ZERO
->
-> Sean Christopherson (1):
->       KVM: VMX: Add host MSR read/write helpers to consolidate preemption=
- handling
->
-> Tony Lindgren (1):
->       KVM: TDX: Fix uninitialized error code for __tdx_bringup()
->
-> Xin Li (1):
->       KVM: VMX: Fix an indentation
->
->  arch/x86/kvm/vmx/tdx.c | 12 ++++--------
->  arch/x86/kvm/vmx/vmx.c | 37 ++++++++++++++++++++++++++-----------
->  2 files changed, 30 insertions(+), 19 deletions(-)
->
-
+-jassi
 
