@@ -1,119 +1,152 @@
-Return-Path: <linux-kernel+bounces-837624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2111BACC78
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:09:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9427EBACC88
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:11:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC0F4321759
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:09:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0821019262E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:12:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8CAA2F8BC9;
-	Tue, 30 Sep 2025 12:09:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 719F12F9987;
+	Tue, 30 Sep 2025 12:11:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rUrnJwZf"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Kwt7qjpt"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746A91B4236
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 12:09:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9AB42F7AC3
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 12:11:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759234182; cv=none; b=umtbPpxBS4lN6YSJUbHDRk4T31GaZCJx+p69o2fn5/4MLYpwxYau3y+KEWp0dSAvetTGgcEaXbkVQttO2SsZ0jF0G6r4yok6MfuU+r3k3ia/+jTLaUlNGJpDEA9uvG3y8ls6Yz2obh10W5u0b/S99d8SjhCt5pXN4DSxDw5w2Sk=
+	t=1759234296; cv=none; b=QnIjG+sIVG378ge4oExpHYy2sagnOAWisXBBNzAYvYOe9Cgr1GPWZK1nnlopQ/65pqud5nVYdmGCfb+jMMGdFlIbXpJc4YF1mrI1qhbWOWvZKcIRztMFLhnrC9d8/e0DzkOgQZ5/W2rVezK/MF7SVzmsRPFseUanbUsS1jxdbfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759234182; c=relaxed/simple;
-	bh=XWsHwcmhycoGa2HIoRG3LP4lfFRHaNv28AhUiYBFboM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VghcWYxv80ae2wtpwGOVvXTyVaOgcZpL8z4lYl+CoW6H2c250vtX4v4bas1y0DK02pHENKlUStsqh5L9cTu182zK0iaehNAVZmFc7FUJw87ZZOF1h2TelIR9M5Ts80nCJUTAS/RKlkkQjMEg5vQxBVzXQltHEyCOWFyEklCiArU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rUrnJwZf; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-57dfd0b6cd7so7375238e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 05:09:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759234178; x=1759838978; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BAIE6N/ie1ZesaEiWPTQEN6Rw49R0R3rgXHZKFPMKzc=;
-        b=rUrnJwZfqtftVQnfSpjApitQD1G077v+QuYlXV7ONLWsTOKBlUC3SKF7w2FFrCqEde
-         evWnjFOWeJi9KqqBn8fyrO3UfweFfsfjAjL4lCM0F/EyhBwJWsv5ttOfy7C2l2gTRf95
-         cxwa+tveVJt/mUG9mWPt+P1vlE1JuBrYoC6VS39AtrsTLqpX//p3ZaNht1TluoV/FE0t
-         dnVttDP/iBmNQe03ptVMuOMm6oyuMVCyyo+rsxMCxYdDuVJzd8nMZyIw6YhSIC6Km9Ko
-         xii5DK9lhfNRntyusNfEbduVzxKkBKauhXbt8mQYWmcTkazaPLObS/KiKY4E1j8CiJ4W
-         jbUQ==
+	s=arc-20240116; t=1759234296; c=relaxed/simple;
+	bh=KD8kMWmVHWif/IAatoSGDNampJhPM/CNfGdxYnMKEMc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QyX/aeDLqcElcJDlDtF/x8u0QBqIvhglxTy3C78ZPJEVtg3bBPhP+EdAHvPGBOqKJgbM05OKDahnLaXfx5CRJ3p6rFoys/8fu2dZlKziNKWSVMdmbcoNKLi55rK6GO8Daya5+drogD6vi8DE+3ilg3tsuIoZSpPmYXbQ4dfUOcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Kwt7qjpt; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759234293;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nYhlOTDpz0Sda3KEKTdInplw8rxwP1Ctg1XIqKxUWtw=;
+	b=Kwt7qjpt8yWlXs3YDyIVWVI5LARFFQlb9jMEnCLiBZBuYss8CMK5daDtz0ATnOboZ8+Wdv
+	Z302gQgziYsdcuZ4lKIrIO1XZ2gAkJx9GLLgaeHDhmlSP3vd7ipD7UOew+wenKpSvv9FTc
+	u3BM5GZ080CSW7qeR35X0CVszbg2/X4=
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
+ [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-635-ASwA-u2WMeeAQ9zqJVlxbA-1; Tue, 30 Sep 2025 08:11:32 -0400
+X-MC-Unique: ASwA-u2WMeeAQ9zqJVlxbA-1
+X-Mimecast-MFC-AGG-ID: ASwA-u2WMeeAQ9zqJVlxbA_1759234291
+Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-634b661347bso5599969a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 05:11:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759234178; x=1759838978;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BAIE6N/ie1ZesaEiWPTQEN6Rw49R0R3rgXHZKFPMKzc=;
-        b=RcreoRQ4IY3u4gRnfp7YHpxpBhLvKehoC5cfy4jy56dvNtqDqH/+/nRE1+7s4VUUKN
-         db5OkOcWr7F2eqc5qkqIjCtrSF8Oh0WraRfiBe/b7laWlGiOcXI7ZuKgsTdOF6nCcfw+
-         lMPEYsboP8Rvpki+Y8eCyqIgYrqcIqmHC+bbO90f1R7mdb5o2Lb35AL3YeGTbrsACqEv
-         dWqKy9cQwmzSmBRrjaEGoZNauQkB5mufch/PRcOJCU2XW4UPNIvfij2qfpCsYuTdn73k
-         OvWn/7W9c7hEsnKYD4Vb6p5/aSdxv6r6+5a3AfBADmhWDMuALdasuIKYGOIjMqp3YmZl
-         uEbA==
-X-Forwarded-Encrypted: i=1; AJvYcCVoaP8iKqM//lMG0W1wPSG8a2KJUnWxojYPunuW5O5McLeoYrZfPTNc0t9N9q3zbjrIFfarDzCxaPplTvo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjFLJKAWUaiBPHnh/pkKTnck9sUaNH5oR/vD0VHmLS2HgdGCO1
-	JV4USAv6sNSBZVAv/0je9xtH+iSLZ65XP0O9+aYUWYI26Ap2tJ8WbRIr3zqL1/1HkG2bNhNdzwE
-	sLDOebow6rSdVaVxGF3wuUC71AAjahZBwfxoIUAz5WA==
-X-Gm-Gg: ASbGncv4GjZhQtmSlSbXp0bwlqcLJlLcRbhE64ywW5OSnDzu8OiPpKRwAkK8rHdyiRJ
-	USHqMwlqj2oE3GFC5wqdUhsmjQgOrc4M8TKOAHInqWJT0Gca5vVrSmmYP9np8zO4Q4YDdYILDVR
-	OU4H0dEslrgc0vzAX0OFupEePNfuI78CczjRfSrzq2+FG2f0JtM51O1Ypey2C/uoM/v0h+QA6mS
-	ngZm26LOCfOSUQcykTCAjp6QwqdTTtVaxpmka8FVA==
-X-Google-Smtp-Source: AGHT+IFSwW9Wy1FU+esxU7n+NnGnwYqfKtouELxp+NZW+Pi9jueaReG4jfxbaQvtzn5VmiWlJbhIyO1LxFlQl0vytEM=
-X-Received: by 2002:a05:6512:2c8f:b0:55f:64b9:3ab4 with SMTP id
- 2adb3069b0e04-582d2299c9cmr6543141e87.23.1759234178520; Tue, 30 Sep 2025
- 05:09:38 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759234291; x=1759839091;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nYhlOTDpz0Sda3KEKTdInplw8rxwP1Ctg1XIqKxUWtw=;
+        b=UPxdD7V2z04JtGgT0dzKRmIFATUWSsi5HEbXWc3ICz8FvJwyquceNJaJXoY1/FLzER
+         QJrzdOK1HnMdzAPxvvAFpiAfbBVpaqMlCYwPNkNjIUFC4y+zwxIdLwLJLChiZ/QFqsCK
+         +KNb72zsvcVRMOD9HHssc9HSsx54CDi/NmQ0TVY0i+C9g9xOF3n122AJ170xMOgVOt29
+         Ab+Y8MDM8DH0J/poYpKfIPZRmpjliV6dFAqXLwoyKiBc+U25n/YYbunWmBGwKuFzlns7
+         liRJcvOOFlkWos/c7p/BlENoEnUotLZlcV+FqSrSyvqpMLz2/TF5h7KdN44fs1oQ8ePO
+         1WqA==
+X-Forwarded-Encrypted: i=1; AJvYcCUw0PyfK/kvTHEDmuuT/KpIf+VS+WrrYsi4BBGEHKwCVqWG75AKRcJK5VBADsPl8pBDXh9WJd2CdYJnBS8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVT48kYmaEfXQ6wExodhWoBdqY9w+bYrlJDGOYOmQpg25IRKBg
+	pKzHSpxJ6Z6yZ6qPZjkPTNcQm5ARl1k5952WAlOWKUi8VVDsCt7byA1J77FSyuwUThwWvkw20a/
+	i6hOYqI+rvLP5Q0JkBM/QqUt4gSzHCkoDi7hU4Opr29n/2hCQKlyKms301FLY+KvwXQ==
+X-Gm-Gg: ASbGncuUD91B/AfwEHbSxFrznMcSn44KQ0jSHxTvDCARrdJbEjrJf79RK95UHlihiwX
+	lOik+nZU2E9qFB0lHdHGBqOzPTwbELrESfu22jCqjBvDR+ziplWZ4r0TU13OUXZBPblNGdDsrfv
+	uDt9gE7jiP53WJ7VywdUqat4muh9fMaOWv5hVyg0mIX0wZ9Ux27N6ILXRSrJsp3VASGX8bdJZhh
+	mqpstK3mnR+5ilidk70ljf3hunXu92J8BRgsaIyn7rGj71yxEE6d8AeSjaOnr8a/e5de6cQxgbm
+	OZO4NWIsHOrjVVznC796BoZFQOySmzRnzUFjqEY7CScavsnwGydLKdlXsGydvq4F3HtWSgz4jHK
+	hM2ndSGr2KNvaWEoHouJsnA==
+X-Received: by 2002:a05:6402:3551:b0:636:23c2:e61f with SMTP id 4fb4d7f45d1cf-63623c2f2d5mr11899900a12.26.1759234291458;
+        Tue, 30 Sep 2025 05:11:31 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHpBFHlpi6h26vswLogB4lR1OKDkES+l20vuTxXnbWfysRnTRsji62rg1W2cZYzxCghNaMmAA==
+X-Received: by 2002:a05:6402:3551:b0:636:23c2:e61f with SMTP id 4fb4d7f45d1cf-63623c2f2d5mr11899850a12.26.1759234290960;
+        Tue, 30 Sep 2025 05:11:30 -0700 (PDT)
+Received: from sgarzare-redhat (host-79-46-200-153.retail.telecomitalia.it. [79.46.200.153])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-634a3b02ccbsm9498953a12.45.2025.09.30.05.11.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Sep 2025 05:11:30 -0700 (PDT)
+Date: Tue, 30 Sep 2025 14:11:23 +0200
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: linux-integrity@vger.kernel.org, dpsmith@apertussolutions.com, 
+	ross.philipson@oracle.com, Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>, 
+	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	David Howells <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	open list <linux-kernel@vger.kernel.org>, "open list:KEYS/KEYRINGS" <keyrings@vger.kernel.org>, 
+	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH v3 02/10] tpm: Use -EPERM as fallback error code in
+ tpm_ret_to_err
+Message-ID: <hjay4b2lomj6k63tbnuk55q6mm4sdj2d7yycw64ybhu372l6bd@uqetr6ipbtg4>
+References: <20250929194832.2913286-1-jarkko@kernel.org>
+ <20250929194832.2913286-3-jarkko@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <VI0P195MB2739D000BD1BF18B3B718F93ED1FA@VI0P195MB2739.EURP195.PROD.OUTLOOK.COM>
-In-Reply-To: <VI0P195MB2739D000BD1BF18B3B718F93ED1FA@VI0P195MB2739.EURP195.PROD.OUTLOOK.COM>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 30 Sep 2025 14:09:27 +0200
-X-Gm-Features: AS18NWAALVNybg-tprH2AdPhVEMvREN5pHeE4UHKDbwJmi9lhCaGcWVtSNrYsTg
-Message-ID: <CACRpkdZbwuf2Fgtq+jyqzqspb37-P6X4O9xqkG-mSb+afSjh3g@mail.gmail.com>
-Subject: Re: [PATCH] ARM: Make sure CPU_ARM940T kernel can be built.
-To: Franz-Josef Haider <fj.haider@outlook.com>
-Cc: linux@armlinux.org.uk, ardb@kernel.org, rmk+kernel@armlinux.org.uk, 
-	ebiggers@kernel.org, nathan@kernel.org, rostedt@goodmis.org, kees@kernel.org, 
-	dave@vasilevsky.ca, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, trivial@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20250929194832.2913286-3-jarkko@kernel.org>
 
-On Thu, Sep 25, 2025 at 11:33=E2=80=AFPM Franz-Josef Haider
-<fj.haider@outlook.com> wrote:
-
-> From 33ce5a26ef08199625bc5bb01a176047bfacff91 Mon Sep 17 00:00:00 2001
-> From: Franz-Josef Haider <fj.haider@outlook.com>
-> Date: Thu, 25 Sep 2025 22:14:07 +0300
-> Subject: [PATCH] ARM: Make sure CPU_ARM940T kernel can be built.
+On Mon, Sep 29, 2025 at 10:48:24PM +0300, Jarkko Sakkinen wrote:
+>From: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
 >
-> Fixes build for this cpu type.
+>Using -EFAULT as the tpm_ret_to_err() fallback error code causes makes it
+>incompatible on how trusted keys transmute TPM return codes.
 >
-> Signed-off-by: Franz-Josef Haider <fj.haider@outlook.com>
+>Change the fallback as -EPERM in order to gain compatibility with trusted
+>keys. In addition, map TPM_RC_HASH to -EINVAL in order to be compatible
+>with tpm2_seal_trusted() return values.
+>
+>Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
+>---
+>v3:
+>- Removed fixes tag as it hardly categorizes as a bug fix.
+>v2:
+>- Split trusted_tpm2 change to a separate patch.
+>---
+> include/linux/tpm.h | 4 +++-
+> 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Please elaborate a bit on this change in the commit message.
+LGTM now!
 
-1. What were you trying to do.
+Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
 
-2. What stopped you from doing what you wanted to do.
+>
+>diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+>index fc7df87dfb9a..51846317d662 100644
+>--- a/include/linux/tpm.h
+>+++ b/include/linux/tpm.h
+>@@ -453,8 +453,10 @@ static inline ssize_t tpm_ret_to_err(ssize_t ret)
+> 		return 0;
+> 	case TPM2_RC_SESSION_MEMORY:
+> 		return -ENOMEM;
+>+	case TPM2_RC_HASH:
+>+		return -EINVAL;
+> 	default:
+>-		return -EFAULT;
+>+		return -EPERM;
+> 	}
+> }
+>
+>-- 
+>2.39.5
+>
+>
 
-3. Why did you do this change to the kernel to do what you wanted
-  to do.
-
-Should it not be:
-!CPU_ARM740T && !CPU_ARM946E && !CPU_ARM940T
-?
-
-Yours,
-Linus Walleij
 
