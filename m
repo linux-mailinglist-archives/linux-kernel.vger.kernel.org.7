@@ -1,114 +1,155 @@
-Return-Path: <linux-kernel+bounces-837214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF77DBABB4A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 08:52:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2040BABB59
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 08:53:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 801DB1C451E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 06:52:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B20518964C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 06:54:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A98BC2BDC0C;
-	Tue, 30 Sep 2025 06:52:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E08A288C12;
+	Tue, 30 Sep 2025 06:53:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YwlxW3JT"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=coelacanthus.name header.i=@coelacanthus.name header.b="Wwm3h4TL";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="p9kq53Fg"
+Received: from fout-b7-smtp.messagingengine.com (fout-b7-smtp.messagingengine.com [202.12.124.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 916E17D07D
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 06:52:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7343427E1B1;
+	Tue, 30 Sep 2025 06:53:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759215142; cv=none; b=qLVxW/yrgKJyl14EOwg9N171no1PlvlHz58aay3mdmXSrU2GVjNqKKqE4oF1K5ps3bJS2cxy9dLjxy2M4GSObVIWvuYnwMySMv3FU7l+GPxUxPG1jvNEhug4MwC0IW87yNUh6Latskvm3CBmYgArKMApOhpB9OFkjCSbB39r7DI=
+	t=1759215228; cv=none; b=ILYCN4Jj0xmlv5+MpDOkRG8HdgWhhOd2POPb+snRHNvNKtYJCDSkZ6Szqyel85aQFCJ9REH1kZjQ2NxQtiLwRp4bXtKMz+X+SHT//YoRADkdcZ5SS9ApmVN4Sq0W05t30PfygZF0pOz22W41FA7jaOISs2bmA+HuMBZ+8DcgKKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759215142; c=relaxed/simple;
-	bh=cYaBpm56hinhNoSwuyHJ0YHIPFozFBLLQv/kuBfheQY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=JQjVWSjGUVAyw2OvJFvPuEysl34+ghMA8Y1M2g6m/cDIscyrMJ7pzLL8TODcPVaTAcU8mPhldF/+fPztS+C+9cohIMJrAdndlJIHdx+b/LDcgmzy12G/MA0R7qgkdP+TzUcZ5qmsnS82JpZydIBb9X+/DG97KgysUerQl1pPVjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YwlxW3JT; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-25d21fddb85so101961635ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 23:52:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759215140; x=1759819940; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=sWMHlYc0hMoE1GM3bsB+Lb3OGqc1VWCQ8QLyLifKnkM=;
-        b=YwlxW3JTJ2AyDfqlhFx4i1adAwlBh2lqBeOLhZ7xon+E/tXTPB/vPhkdPKILRCQdXD
-         GhVAP8yVEaCJdnD+XaB3g1U+ORQ2eRcYUjHXQESMMkq1ghz9LNHH8AX1WS/97k5MI+t6
-         fSPC/wsXjvWKJGEbTlflYmNwFgt3Va4lRYB7mFtKDKy24HUsMXTYBqD6jRmAN/rVQWft
-         D/QAeEBmUuQmMrE6FW9nMBo0Mf/zIxbrilD/c5JvbZAox/XRcMgtZh59sDhISJk4EYvn
-         PsK4z+aycnaClEhPjNI+FDWRgnNxsQqxJhyxzLXHdBlq7aUIE4qXTZclFG358++rSdVb
-         v4xQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759215140; x=1759819940;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sWMHlYc0hMoE1GM3bsB+Lb3OGqc1VWCQ8QLyLifKnkM=;
-        b=lL07i00yXT007FKClFPRXnr8qtSDWJBMvOc+886FHLav4UDfMjah3BgIzvjjQEJ1aW
-         QxFIIT7NOZK4J1p+Aw5baO1BU3/NlRoXb7mBPzka6IdcnUg8NpPs3F/ybwEgbQ/0vACS
-         qaIWV8AAwSYnOMJzxjIiYIzhhsjNLQOi23APDKPb6WeSCW0Zjq2eZZqKcfQiXx28GcUc
-         35r75jHAvXEI+Xazag9/xvgwoJPKLLem4La+jgEmzfSz4FD8DMY3/hkGfIu3Jj1GrclD
-         wBIp81myZaJcn+ED5c0SszoTjRJDi9sxe/AHjaXw7Ugtdkbwi+LeNDCL0ryo8wBh0Efx
-         2PCg==
-X-Forwarded-Encrypted: i=1; AJvYcCV3CLGRkutS/3Eu2dnde/rY8UTJmTKZ5ubB8S39tfmc16VS01qkYlsAFi0vYfxXLEGGwtwk0B49YzFhaL8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvVXwOFhFHif3UoAZoE9xJGCTNHaQe6pJjB4UlmujQkBv631Ca
-	G4nA52V638rorSSxC/xLn98YjNQQ0rBwI2uGpzpwP8/OQY2jvJ0zJjfzNy93XpJQeiTFQAVbAcX
-	hiZ0fCocL6co8tUcog5h+7kGlHA==
-X-Google-Smtp-Source: AGHT+IGC7MITWguwW4mNJBum52j1+kua3rPzsQOwcaHFJ0a5mYZtyTF4W2e7W0OIUPIt9GOaiwODKYzxXGoW4ftPsw==
-X-Received: from plot5.prod.google.com ([2002:a17:902:8c85:b0:273:8fca:6e12])
- (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:902:e84e:b0:269:9719:fffd with SMTP id d9443c01a7336-27ed49b8623mr245208965ad.1.1759215139860;
- Mon, 29 Sep 2025 23:52:19 -0700 (PDT)
-Date: Tue, 30 Sep 2025 06:52:18 +0000
-In-Reply-To: <aNq6qWVEBLkWhWFc@google.com>
+	s=arc-20240116; t=1759215228; c=relaxed/simple;
+	bh=USG8lenE4OmXYzm1tUnfdT2zeBwOkzOgEoVpjZDEcHg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=KcM3IkpvsIcXQtsRYlBx40gON5TyFoj9TEC88WnNdTn1t74q7TD66BaIQaXVu9t8Tip8+wsElAMLz4rIadluzNpFJA3QSloHPZVHmoxyHTLqSF48+vwggXs0VcyMv9YT/zeNQ9vJcjSCZd7ewl7lACyP9nzCill2SAcsRndoYM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=coelacanthus.name; spf=pass smtp.mailfrom=coelacanthus.name; dkim=pass (2048-bit key) header.d=coelacanthus.name header.i=@coelacanthus.name header.b=Wwm3h4TL; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=p9kq53Fg; arc=none smtp.client-ip=202.12.124.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=coelacanthus.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=coelacanthus.name
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailfout.stl.internal (Postfix) with ESMTP id 5EAFF1D000A3;
+	Tue, 30 Sep 2025 02:53:45 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Tue, 30 Sep 2025 02:53:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	coelacanthus.name; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:from:from:in-reply-to
+	:message-id:mime-version:reply-to:subject:subject:to:to; s=fm3;
+	 t=1759215225; x=1759301625; bh=EMtFpG+Bb1tLZ/pMnCpLyyl10Wvnkg0U
+	0h/ZqbI05EY=; b=Wwm3h4TLnCWzfr2Uf5RWbsb3RZOCS7WFYPAZ8LmwQlpQOBbD
+	EbpoVRQcZ6gOtNcLRSza4gzpA0wTU70Sue0n0OzChM80PwmP7eEhowZA8oILdDDy
+	leomtSg58S77D1wirkp+CUmcu7MvtFhIoSRdLnGYlF0XSf1qaOyx4GABN21VNeay
+	0vEYykUJ9bj9GEzOiVXgTTqnCL3wUr6eGK5WNJHo7ShT6D4Sc4qwkB1B9+Fw47LK
+	IOTtlwpTPKRgavMwSAsQzo1zWqZkgfKaMWCrJw7HzYh77D+32NjgEtpqIleQizK6
+	IAK98eRvR4re9mMAYyNALSsjUWulRTbdOUCYKw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1759215225; x=1759301625; bh=EMtFpG+Bb1tLZ/pMnCpLyyl10Wvn
+	kg0U0h/ZqbI05EY=; b=p9kq53Fg02uxrNOFTSm88uYA3bLcw3KULnlArq79OR9f
+	13HKnPO9iM6vUsvIEuDls+0O3M+K3u1Lh1pt+zhVDahckD3sMLd48UYmO3woPQGg
+	KJrHFbKfPsUwxjotUs66eNpNuJJ/XCnHFfC8Hd8AHkzLNX8Ie++vhNjGIcznEx//
+	lQ63mbCwmZqYNcWrFfJ1dYMBEvMS/dagRECjxYsLstK16K2GaZraHh7DcgrwD1kE
+	r2MxBOCn/DdadCnyqGH3VlVhksOeCLNFQ9QW9bfUT6AGTU14n7o9hr16+zHX8Pf+
+	7ZkBB9NbFc01Z9RvRJQTfVdKaXahArJu0cQPx+yiKw==
+X-ME-Sender: <xms:eH7baJJGuveAd2e2htkwwdqI77YK8qK4dvr4bE6woA7C1QXya7MV8A>
+    <xme:eH7baPOXnNIBSRc0tSdGrcoi99bRrU1rKQC1e8i-W7sIRrui9exKhPIRkQtLCQTxU
+    e3ueacDmbSV8ydzbeMV1ofC9UK_dNtKcVDaBH1n0iaqwoTy9JJhq1Q>
+X-ME-Received: <xmr:eH7baBlgD59ysbGa_LM5Ns_oLbZ_hjtvyutMXcb7jJVnTN7GuXDJZa6XOI9qag>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdektddvudcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefhfffugggtgffkvfevofesthejredtredtjeenucfhrhhomhepvegvlhgvshhtvgcu
+    nfhiuhcuoehufihusegtohgvlhgrtggrnhhthhhushdrnhgrmhgvqeenucggtffrrghtth
+    gvrhhnpeefteegleevudeiteefheetfffgtedugffgjeeigfejffduhedugffgkeeufeev
+    ueenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehufi
+    husegtohgvlhgrtggrnhhthhhushdrnhgrmhgvpdhnsggprhgtphhtthhopeejpdhmohgu
+    vgepshhmthhpohhuthdprhgtphhtthhopehsthgrsghlvgesvhhgvghrrdhkvghrnhgvlh
+    drohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgv
+    lhdrohhrghdprhgtphhtthhopehmrghilhhhohhlrdhvihhntggvnhhtseifrghnrgguoh
+    hordhfrhdprhgtphhtthhopehlihhnuhigqdgtrghnsehvghgvrhdrkhgvrhhnvghlrdho
+    rhhgpdhrtghpthhtohepmhgrgiesshgthhhnvghiuggvrhhsohhfthdrnhgvthdprhgtph
+    htthhopehmkhhlsehpvghnghhuthhrohhnihigrdguvgdprhgtphhtthhopehufihusegt
+    ohgvlhgrtggrnhhthhhushdrnhgrmhgv
+X-ME-Proxy: <xmx:eH7baL5bV11s4NXn-Mhs7J8ajMzNZBayZag7kQ8G-3saGMQb0YdDbw>
+    <xmx:eH7baN2BUyXnFyqSNobakIstYZ64nJYWVuXEc0Ly-yXMibc46dL94g>
+    <xmx:eH7baOH2371aKz-m9CiwFbjGPtdAI4r56NOhDaLgANqCnsRmlFQNYA>
+    <xmx:eH7baEjS1O0EPAya3Tl1C3w66r3LPbMWWnnj8vFbN8YyS-RURBOT_g>
+    <xmx:eH7baPaZxgEQG0YJww2BBnUEtuCBL7zZ0Jj6DuFW4lB7l67dB7j51SCs>
+Feedback-ID: i95c648bc:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 30 Sep 2025 02:53:43 -0400 (EDT)
+From: Celeste Liu <uwu@coelacanthus.name>
+Date: Tue, 30 Sep 2025 14:53:39 +0800
+Subject: [PATCH] net/can/gs_usb: populate net_device->dev_port
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250926163114.2626257-1-seanjc@google.com> <20250926163114.2626257-3-seanjc@google.com>
- <diqz1pnp34st.fsf@google.com> <aNq6qWVEBLkWhWFc@google.com>
-Message-ID: <diqzikh01lgd.fsf@google.com>
-Subject: Re: [PATCH 2/6] KVM: selftests: Stash the host page size in a global
- in the guest_memfd test
-From: Ackerley Tng <ackerleytng@google.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>, 
-	Fuad Tabba <tabba@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250930-gs-usb-populate-net_device-dev_port-v1-1-68a065de6937@coelacanthus.name>
+X-B4-Tracking: v=1; b=H4sIAHJ+22gC/x2NQQqDMBBFryKz7kASK5hepRSxyWgHShIyUQri3
+ Tu4erzF+/8Aocok8OgOqLSzcE4q9tZB+MxpJeSoDs64wfje4Cq4yRtLLtt3boSJ2hQ1DISKqeT
+ a0N/t4qIN/Th60KVSaeHf9fJ8necf8HILjXUAAAA=
+X-Change-ID: 20250930-gs-usb-populate-net_device-dev_port-941f2d1c3889
+To: Marc Kleine-Budde <mkl@pengutronix.de>, 
+ Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Cc: Maximilian Schneider <max@schneidersoft.net>, linux-can@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+ Celeste Liu <uwu@coelacanthus.name>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1421; i=uwu@coelacanthus.name;
+ h=from:subject:message-id; bh=USG8lenE4OmXYzm1tUnfdT2zeBwOkzOgEoVpjZDEcHg=;
+ b=owJ4nJvAy8zAJeafov85RWVtBeNptSSGjNt1JVNErWQ1lleJ+zMbrdz+0O6FmaS103rJ9ux50
+ /kPx/V7RnSUsjCIcTHIiimy5JWw/OS8dLZ7b8f2Lpg5rEwgQxi4OAXgJksy/OHlaW9T2vHxUrBa
+ RePZQuNalvNsDW7Z1oJG8w/G6ppMrGb4Z97f6xf+s7x2+V2Nu1s+72HdvTD7bt3sL/LTPJbcv+B
+ szw8A4hRF9w==
+X-Developer-Key: i=uwu@coelacanthus.name; a=openpgp;
+ fpr=892EBC7DC392DFF9C9C03F1D15F4180E73787863
 
-Sean Christopherson <seanjc@google.com> writes:
+The gs_usb driver supports USB devices with more than 1 CAN channel. In
+old kernel before 3.15, it uses net_device->dev_id to distinguish
+different channel in userspace, which was done in commit
+acff76fa45b4 ("can: gs_usb: gs_make_candev(): set netdev->dev_id").
+But since 3.15, the correct way is populating net_device->dev_port. And
+according to documentation, if network device support multiple interface,
+lack of net_device->dev_port SHALL be treated as a bug.
 
-> On Mon, Sep 29, 2025, Ackerley Tng wrote:
->> Sean Christopherson <seanjc@google.com> writes:
->> 
->> > Use a global variable to track the host page size in the guest_memfd test
->> > so that the information doesn't need to be constantly passed around.  The
->> > state is purely a reflection of the underlying system, i.e. can't be set
->> > by the test and is constant for a given invocation of the test, and thus
->> > explicitly passing the host page size to individual testcases adds no
->> > value, e.g. doesn't allow testing different combinations.
->> >
->> 
->> I was going to pass in page_size to each of these test cases to test
->> HugeTLB support, that's how page_size crept into the parameters of these
->> functions.
->> 
->> Could we do a getpagesize() within the gmem_test() macro that you
->> introduced instead?
->
-> We could, and I actually had it that way to start.  But I found that burying the
-> effective setting of page_size made it harder to see that it's a runtime constant,
-> versus something that can be configured by the test.
+Fixes: acff76fa45b4 ("can: gs_usb: gs_make_candev(): set netdev->dev_id")
+Cc: stable@vger.kernel.org
+Signed-off-by: Celeste Liu <uwu@coelacanthus.name>
+---
+ drivers/net/can/usb/gs_usb.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-I guess I could also just update the global static variable page_size
-for HugeTLB tests since we won't be running tests with different page
-sizes in parallel. Maybe that's better, actually.
+diff --git a/drivers/net/can/usb/gs_usb.c b/drivers/net/can/usb/gs_usb.c
+index c9482d6e947b0c7b033dc4f0c35f5b111e1bfd92..7ee68b47b569a142ffed3981edcaa9a1943ef0c2 100644
+--- a/drivers/net/can/usb/gs_usb.c
++++ b/drivers/net/can/usb/gs_usb.c
+@@ -1249,6 +1249,7 @@ static struct gs_can *gs_make_candev(unsigned int channel,
+ 
+ 	netdev->flags |= IFF_ECHO; /* we support full roundtrip echo */
+ 	netdev->dev_id = channel;
++	netdev->dev_port = channel;
+ 
+ 	/* dev setup */
+ 	strcpy(dev->bt_const.name, KBUILD_MODNAME);
+
+---
+base-commit: 30d4efb2f5a515a60fe6b0ca85362cbebea21e2f
+change-id: 20250930-gs-usb-populate-net_device-dev_port-941f2d1c3889
+
+Best regards,
+-- 
+Celeste Liu <uwu@coelacanthus.name>
+
 
