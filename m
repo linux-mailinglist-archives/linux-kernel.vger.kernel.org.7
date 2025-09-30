@@ -1,112 +1,120 @@
-Return-Path: <linux-kernel+bounces-837508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C702BAC773
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:25:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CB37BAC6AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:11:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4DB97A61BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 10:24:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14E393C08B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 10:11:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 175D62F90EA;
-	Tue, 30 Sep 2025 10:25:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7E6F2F6572;
+	Tue, 30 Sep 2025 10:11:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="MoIqBabH"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SlJR6dls"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53B46218AD1;
-	Tue, 30 Sep 2025 10:25:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7386223B62C;
+	Tue, 30 Sep 2025 10:11:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759227937; cv=none; b=pmYTR2zFhU+Dguqm9YPyCD04F4lVy44VCdYDjWE4/bpXcQmBCFWqqZ/ZGSomD5l42wZUoD9YQzqcCWw5mxf9/JwGReIlNrVdVnA5JbuyeJQoOteFiFn9JD0r7Oja+vrTi8RMzETfycdQ+5c8oLvXBbWzOWsgIQeBF9/Nx6EtMcU=
+	t=1759227063; cv=none; b=n0IwDzkuAdgFsYj3wCK0QCPd36EKvB5YRi4alxhsojCDajtUENz/jw9XqbBqg9vWD0GjvbOzjFHSR5sOJnE0YbM+qkxyxO7YAJOfVcocVwt25Qka5SSvcusEgEuS7zUButGd+NkZYEAKs+LF7C8mA/Qz677aOXtlSK2g1BSdtOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759227937; c=relaxed/simple;
-	bh=m8kgpN8y2+dD1fGt/wKhPjGmqbehchW0ol6unVjQYp8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=A3hmiMLv6h4aC8MTZWzjx3x+0I6QQQOXCwt3DKGR27cg0yANFoKL3R0roGHne5XdiC9G9NHNH++/0qhMAJjoEmaKGvfYqu+yKhc2VLIe7lSXJucQ0hk8Xj67fWu7kz+CbQeH/xhneTZ/xt7jPDsVVXXVLBUg66kl4vzTa8vPdLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=MoIqBabH; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58UAPNjZ2435439;
-	Tue, 30 Sep 2025 05:25:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1759227923;
-	bh=BJDek7EWLI0i+nKCSFQ3tgTixnlCvzxcxxZ3hVY8jMk=;
-	h=From:To:CC:Subject:Date;
-	b=MoIqBabHq+Rv0CiBC9Ddiebcqvf79Y8gaT4zZVqTo1JscPQTO7OKCfU5oLXnPw47R
-	 PEm3uWmhmFj2aeQrsCilTAidXZVLEnYC3jUdwK3nTG4PNBclHCp+6G3isAP9HToug1
-	 e5T1LQ7knWgVTeEa6lTipckQxvCS1zTX3DjivC6c=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58UAPNrS3043076
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Tue, 30 Sep 2025 05:25:23 -0500
-Received: from DLEE209.ent.ti.com (157.170.170.98) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 30
- Sep 2025 05:25:23 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE209.ent.ti.com
- (157.170.170.98) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Tue, 30 Sep 2025 05:25:23 -0500
-Received: from pratham-Workstation-PC (pratham-workstation-pc.dhcp.ti.com [10.24.69.191])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58UAPLAJ3028303;
-	Tue, 30 Sep 2025 05:25:22 -0500
-From: T Pratham <t-pratham@ti.com>
-To: T Pratham <t-pratham@ti.com>, Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-CC: Kamlesh Gurudasani <kamlesh@ti.com>, Manorit Chawdhry <m-chawdhry@ti.com>,
-        Shiva Tripathi <s-tripathi1@ti.com>,
-        Kavitha Malarvizhi
-	<k-malarvizhi@ti.com>,
-        Vishal Mahaveer <vishalm@ti.com>, <linux-crypto@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] crypto: ti - Add CRYPTO_ALG_ASYNC flag to DTHEv2 AES algos
-Date: Tue, 30 Sep 2025 15:40:26 +0530
-Message-ID: <20250930102423.2895282-1-t-pratham@ti.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1759227063; c=relaxed/simple;
+	bh=h9HgIoGBQjSi1XCoAKCIhO9bF1dgTIEXPdad4STGnNA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eYjSg+tneyz9jpgik6lZTtRCgX07Fi7WDrpu1XziL2vSfyA9NrS+piudwIFDIATa3T6QAiusixtgZZku2lONKxEclHFbaoep/rLaZs6nyVk+UnKtJNe8Lih6eTPef32FIFoZKp3sqo/3eu6oeZRvq1E8ZO23FjU9SowuJAzl9Jw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=SlJR6dls; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=D+CZAypiGvBv9t3fET4ytZsgqVELs1pifW7X4YTcTJQ=; b=SlJR6dlsigYezhyVby0mOit/K/
+	+CikGgD4DrX+HJwfKMjhny/YGlgT70/lWDYgxuJbkBgqBFmt7R0LigpJ4VmL3R3gvLYkjkSjGLOWC
+	2R5sjL+XBeCx7td0YcwdBb2Vhtwee7RmwuawlTAVK33hniSJhoTSWM1w+r1BzN93NnXhhMT4l2Isk
+	+56cHMrv6SescNMwPTMP3dKyMz+ppP+BwTEDANA7IL6NGZiaImiiUKrJ3jLAXuQYZ9QgynRMmPJ4g
+	UlASvc3H2B+gGl8pbUab8NmLSlRVzrk8efrbs3juJCGAZelT14pvz6smLZ9G5vZhAYcrQpn7MX5v2
+	OzJUMV8Q==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v3XJr-00000009toO-1vf2;
+	Tue, 30 Sep 2025 10:10:52 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 4173F300220; Tue, 30 Sep 2025 12:10:52 +0200 (CEST)
+Date: Tue, 30 Sep 2025 12:10:52 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: John Ogness <john.ogness@linutronix.de>,
+	Steven Rostedt <rostedt@goodmis.org>, chenyuan_fl@163.com,
+	mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, Yuan Chen <chenyuan@kylinos.cn>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Re: [PATCH v2] tracing: Fix race condition in kprobe initialization
+ causing NULL pointer dereference
+Message-ID: <20250930101052.GL3245006@noisy.programming.kicks-ass.net>
+References: <20250929143916.5984441b32e6f84618b4deb8@kernel.org>
+ <20250929065731.1351028-1-chenyuan_fl@163.com>
+ <20250929044836.7169d5be@batman.local.home>
+ <84seg5d2p3.fsf@jogness.linutronix.de>
+ <20250929101259.GE3245006@noisy.programming.kicks-ass.net>
+ <20250930175826.52b58b7a502b215e3d226f9b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250930175826.52b58b7a502b215e3d226f9b@kernel.org>
 
-Add CRYPTO_ALG_ASYNC flag to DTHEv2 AES-ECB and AES-CBC algorithms so as
-to properly indicate driver capabilities.
+On Tue, Sep 30, 2025 at 05:58:26PM +0900, Masami Hiramatsu wrote:
+> On Mon, 29 Sep 2025 12:12:59 +0200
+> Peter Zijlstra <peterz@infradead.org> wrote:
+> 
+> > On Mon, Sep 29, 2025 at 11:38:08AM +0206, John Ogness wrote:
+> > 
+> > > >> Problem:
+> > > >> 1. CPU0 executes (1) assigning tp_event->perf_events = list
+> > > 
+> > > smp_wmb()
+> > > 
+> > > >> 2. CPU0 executes (2) enabling kprobe functionality via class->reg()
+> > > >> 3. CPU1 triggers and reaches kprobe_dispatcher
+> > > >> 4. CPU1 checks TP_FLAG_PROFILE - condition passes (step 2 completed)
+> > > 
+> > > smp_rmb()
+> > > 
+> > > >> 5. CPU1 calls kprobe_perf_func() and crashes at (3) because
+> > > >>    call->perf_events is still NULL
+> > > >> 
+> > > >> The issue: Assignment in step 1 may not be visible to CPU1 due to
+> > > >> missing memory barriers before step 2 sets TP_FLAG_PROFILE flag.
+> > > 
+> > > A better explanation of the issue would be: CPU1 sees that kprobe
+> > > functionality is enabled but does not see that perf_events has been
+> > > assigned.
+> > > 
+> > > Add pairing read and write memory barriers to guarantee that if CPU1
+> > > sees that kprobe functionality is enabled, it must also see that
+> > > perf_events has been assigned.
+> > > 
+> > > Note that this could also be done more efficiently using a store_release
+> > > when setting the flag (in step 2) and a load_acquire when loading the
+> > > flag (in step 4).
+> > 
+> > The RELEASE+ACQUIRE is a better pattern for these cases. 
+> > 
+> > And I'll argue the barrier should be in 2 not 1, since it is 2 that sets
+> > the flag checked in 4.  Any store before that flag might be affected,
+> > not just the ->perf_events list.
+> 
+> RELEASE+ACQUIRE ensures the memory ordering on the `same` CPU, so do we still need smp_rmb() and smp_wmb()? e.g.
 
-Suggested-by: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: T Pratham <t-pratham@ti.com>
----
- drivers/crypto/ti/dthev2-aes.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/crypto/ti/dthev2-aes.c b/drivers/crypto/ti/dthev2-aes.c
-index 0431a36d8c4a4..3547c41fa4ed3 100644
---- a/drivers/crypto/ti/dthev2-aes.c
-+++ b/drivers/crypto/ti/dthev2-aes.c
-@@ -367,6 +367,7 @@ static struct skcipher_engine_alg cipher_algs[] = {
- 			.cra_driver_name	= "ecb-aes-dthev2",
- 			.cra_priority		= 299,
- 			.cra_flags		= CRYPTO_ALG_TYPE_SKCIPHER |
-+						  CRYPTO_ALG_ASYNC |
- 						  CRYPTO_ALG_KERN_DRIVER_ONLY,
- 			.cra_alignmask		= AES_BLOCK_SIZE - 1,
- 			.cra_blocksize		= AES_BLOCK_SIZE,
-@@ -389,6 +390,7 @@ static struct skcipher_engine_alg cipher_algs[] = {
- 			.cra_driver_name	= "cbc-aes-dthev2",
- 			.cra_priority		= 299,
- 			.cra_flags		= CRYPTO_ALG_TYPE_SKCIPHER |
-+						  CRYPTO_ALG_ASYNC |
- 						  CRYPTO_ALG_KERN_DRIVER_ONLY,
- 			.cra_alignmask		= AES_BLOCK_SIZE - 1,
- 			.cra_blocksize		= AES_BLOCK_SIZE,
--- 
-2.43.0
-
+Eh, no, that's wrong. RELEASE and ACQUIRE are SMP barriers.
 
