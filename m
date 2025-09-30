@@ -1,124 +1,127 @@
-Return-Path: <linux-kernel+bounces-837920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79F46BAE0EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 18:34:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67DE0BAE117
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 18:37:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 687C64E259E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 16:34:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB0514C0711
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 16:37:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98BB523ABAF;
-	Tue, 30 Sep 2025 16:34:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5088723C506;
+	Tue, 30 Sep 2025 16:37:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ear9hBDB"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="QXDWdEhq"
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 957321EE02F
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 16:34:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F2C423D7D1
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 16:37:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759250065; cv=none; b=s6sFNse/zMKxztVTLSCPUjwlsJthYQGeA6gA5HyM8hlop0HUp4FoypmQF48Q8knDTQRRb3MdmpCdlSJCRP5uWim8w+U2xsXxlYZKsJIy8RpB2/0cUr4I+FEP1n4G09kmkGfVTBpebxC8SyIBNIXaKB1SCNCjliayqA3jQIptcGo=
+	t=1759250256; cv=none; b=bEI5aeoj4Xardb56qsxxXxnPLlYyYcg2FINaQMO2Vmn1mMF6/TDz2Gxeg+PZJMkGtQX/I7bLVcu33M5Ygi/mAy3TjtrXWKn6jgdsvdT9qLRD90qeezDWeBlviPMyyN7KXZ1uVSoFwg0fip2kodbcYoHr6N8H4cOm9sjyompOqAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759250065; c=relaxed/simple;
-	bh=TzPIt5QqZ/ncsUjXjePi75S8DUEZ/jVmGu8XXDEiJAM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=VGSbKkQZ8MJFM8KZAjLWOtX4L8EtYcjp+2U7yQ7I+bWfmnK6cBAM10uvRI1gwdSqhluTEH6lJ9S1DQa+hUwI8GJLSm7Kdv45nm4hmeiQGigWC2t0seBajLAMlxf4+ORSPOZYXG4VHg+e4hkAi1pva0exh0W2E3ijB4SIxmocPCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ear9hBDB; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b5527f0d39bso8431513a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 09:34:22 -0700 (PDT)
+	s=arc-20240116; t=1759250256; c=relaxed/simple;
+	bh=wZlnhLVWjCo/EoZ8rwJ+2WNDjewuk+/wknr5aB3MEkU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ADDQV9I6eFzZZsY9Jji6aFU6B0mpnujC9tAxHVEVFmeTbiiwS5MO27/jsNd1A5y5MNpcTzZHRd0vK1UR2YsinbKnhADM1VGFBvxRBoIMmA94h6CnJcjqvpiKSGv/ikUY/OGYXVjGB+AiHUOKSqJfKen8RmouydRybNNHIIrLUCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=QXDWdEhq; arc=none smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-78f15d58576so720076d6.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 09:37:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759250062; x=1759854862; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ts11PRKQJbECWFlSkrZaC2Cq1Up8eQN07d9pIiZQ+5k=;
-        b=ear9hBDBT0q689TC9nk/l4JP1uGm4eoDjqdTuu4nGAprd8u8bMqkYLzLQJBOMdNWqU
-         uVWNFTVhql+FzfgJhGY1x/8Z3SOppUfik63zYukLIyBnDRNomX80lIXO/+hGiYbV43j6
-         rZSQ8uUiKPAMRZpvNpqKNhOH4U07YdkJ+npv1hKKQPT2WCon6+aMTYmUf8PWUMt7bBz0
-         QJ8ipq1fBbt/IYt2hOjZ8dWHnMBFi2FKh9NrDmcQXbnYUiSNFmjDJnofBzUT7yl9h6PW
-         TrmccK2AGV/g1EvES9i3c3oXZifPNrz4OnaHl4MiaXHoem1pef5n3VeS2D48RFWXk3Ob
-         wj+g==
+        d=ziepe.ca; s=google; t=1759250254; x=1759855054; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wZlnhLVWjCo/EoZ8rwJ+2WNDjewuk+/wknr5aB3MEkU=;
+        b=QXDWdEhq6DrEERhYXLsV8N2u8lhNdFUKfN8/cQK5terzImXnW+c1KYzeNEIrcu6r9a
+         TGXDMnJGDgaqn/+1ZZJR6eJtflG+y+ULwaeQMlVMtRknJLEpbJg1lUcm5ynEWvDjJKye
+         O4apiuqGYsjUrhwhNeq01OHMy0TC1Xw4xluczD39vGkXSA3BiiVQMtYd6RKtI7Y0geji
+         mXkar18DiCFacXLx42+pZU/mZvibP01gvp0tmUfNezH6mSJ5r9fDjHePGhIvcylzJy42
+         beBP2C8wWvZZBgxhGV2ytQMyIvnvWJIlry90DAgF9jz3Ab0fGAb4Dvxu2myyCbWCf259
+         2I9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759250062; x=1759854862;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ts11PRKQJbECWFlSkrZaC2Cq1Up8eQN07d9pIiZQ+5k=;
-        b=a7/m2yzQSHk5gD9Z/ituIViuZjMVl5jEQO65VBBDTZyO7sGmRz6BhmM9INIbH0lmKc
-         eDfJNCboZi38aIiiINUGYqJPx5pOjEyposZprtaPlWJDvvdk+KWQyQtE2U60PemVn7SQ
-         6BsNbJLcZTyFO9LzU5ce0Oz8X/+2rRzQD3X0Tj7Xq4gK4/OlwyYATlBrmzuYAqvWOJK2
-         YFU2o3ZxzZPX83QZGKgiGYLQaAxsLmA1PViX93bfAFLUsghVoeKV+YipPa8er7Lc5Lwx
-         F6Hm4qHvIM5UXjmEvIgY+O02slQsd1zGfFcNoZkYH8Q8VSVA0qqGBMu9/vKyvQvCjo9f
-         heSg==
-X-Forwarded-Encrypted: i=1; AJvYcCV8oBlBLU/A67x6dLaktC41lcaDV5PIVkzZRtCl1thM1l8VaDfDJFO0KlY8HMgxO3FRaN4U3EbSMvJYMno=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyu3kMzLZR14jkMXsL2/Jej6Wb+z30ZK4rX0oNjmdjDnlxeqLmX
-	rD+FtAIAOtfxFWW1fFbNaheSTVQEn/8Vyhn0qPmiH4W9Z8AMryIQGgT0CdbSNnqmTTfKKCwc5xi
-	NbqpZug==
-X-Google-Smtp-Source: AGHT+IFX4CBMrBfFxnkGRFgOYRHXTZmNWaYLzdc89aJiDnP/g8eaLWlThAkjYKzlvZmnAhY1DXZxav01xFw=
-X-Received: from pjzg20.prod.google.com ([2002:a17:90a:e594:b0:339:9a75:1b1e])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:38cb:b0:338:3dca:e0a3
- with SMTP id 98e67ed59e1d1-339a6ec7e16mr119884a91.16.1759250061911; Tue, 30
- Sep 2025 09:34:21 -0700 (PDT)
-Date: Tue, 30 Sep 2025 09:34:20 -0700
-In-Reply-To: <aNwFTLM3yt6AGAzd@google.com>
+        d=1e100.net; s=20230601; t=1759250254; x=1759855054;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wZlnhLVWjCo/EoZ8rwJ+2WNDjewuk+/wknr5aB3MEkU=;
+        b=XDhT7fgxGPCGEHKq/X/3H3Y13famxphIC5+bV52Yojg8q5zMX9Lr5g2YBWJLV0JnZZ
+         kCrfYU3UwdYb1o0FhRjm5dUA/MBqL12KJoUz46Ge09hTPYB2Vzpyk7bGVi4H2/ma66EV
+         3KJbxxPHXr/oOFdqL9fNHbu2+REfhNWE5NnABoALa//sjJYUYE7XOmINLuTUmMR6SpaT
+         7wl5W45FPqgyHj+5hbzk71ui+NgDSywloq+EToOmWDIdYjBrJIQ9J0LxhvklWb6OXUjp
+         9E/LXqo8IfBRktGi93eB+Pif+jdtQ1vASw0bOlG+G0+7Z2v/7H7kV608wXh+R2o0vqfi
+         1TwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVs6TB4seWjXt6d1f0f+Gz1Of2+43+0geIErsMdMjaF6USaQJONYsVGg8axLTV3n31NM0HfS74sVCdVKMo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7ADUJ8tlE4v0neUQufdV/Y2leTR3tzKCs0Aoj9kbatOpbCDOK
+	uLXha7v0/9v1M0b9W4BpqgsxY2wZIXE61PfNxqjS5Ni/toPbMyrXBK34VgN3dZgLmFA=
+X-Gm-Gg: ASbGncsznkyOHcDphE+4EXqAMG9GMQCIlUIA5kvqIiCkkx6YEgMkwT739PVi5LpPesD
+	EBTtGkELUaE9ojdb3F+Q6n1naUAePMq9PCM70TiY7pLxJjfzZchpiY2IXxuQuI0MPQ1qjA0Y46O
+	SpSl/0UnRqzs1wz9exF3abvE1aY5O/DiiEfWUTD/lTKayShGSsT70kVFRaP1k0/KWE9OlO0MjEy
+	z5Wd5zTjnv0vUNekiUaZKYXgBPQijrXYXJVFyaLylHYucrpG6jdTLzhZAW0+Q+r0OIUtwCG0jYw
+	ar11neb6CweRdw3osAdu+UwuSFAQP2+vy44P8YW0LJYS7hRgQOs6bllmJjpKenMwdOABHgoLJ/6
+	AKtWBYJWn/tKL74sNS6sNSkm7mSmvCaQ=
+X-Google-Smtp-Source: AGHT+IFTUouLZO/CN3csdEu5i5OdgDUNjmGvNmvgmP5gfS05E7lB9xEJ9dOZVQrm6wg7EiUAZUUmJg==
+X-Received: by 2002:a05:6214:c83:b0:7a7:b219:635f with SMTP id 6a1803df08f44-8737bbfd4ddmr7502266d6.16.1759250253744;
+        Tue, 30 Sep 2025 09:37:33 -0700 (PDT)
+Received: from ziepe.ca ([130.41.10.202])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-801351c328esm99532066d6.9.2025.09.30.09.37.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Sep 2025 09:37:33 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1v3dM4-0000000CbmJ-21fb;
+	Tue, 30 Sep 2025 13:37:32 -0300
+Date: Tue, 30 Sep 2025 13:37:32 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: Chris Li <chrisl@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, Len Brown <lenb@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-acpi@vger.kernel.org, David Matlack <dmatlack@google.com>,
+	Pasha Tatashin <tatashin@google.com>,
+	Jason Miu <jasonmiu@google.com>, Vipin Sharma <vipinsh@google.com>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Adithya Jayachandran <ajayachandra@nvidia.com>,
+	Parav Pandit <parav@nvidia.com>, William Tu <witu@nvidia.com>,
+	Mike Rapoport <rppt@kernel.org>, Leon Romanovsky <leon@kernel.org>
+Subject: Re: [PATCH v2 06/10] PCI/LUO: Save and restore driver name
+Message-ID: <20250930163732.GP2695987@ziepe.ca>
+References: <20250916-luo-pci-v2-0-c494053c3c08@kernel.org>
+ <20250916-luo-pci-v2-6-c494053c3c08@kernel.org>
+ <20250929175704.GK2695987@ziepe.ca>
+ <CAF8kJuNfCG08FU=BmLtoh6+Z4V5vPHOMew9NMyCWQxJ=2MLfxg@mail.gmail.com>
+ <CA+CK2bBFZn7EGOJakvQs3SX3i-b_YiTLf5_RhW_B4pLjm2WBuw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250919214259.1584273-1-seanjc@google.com> <aNvLkRZCZ1ckPhFa@yzhao56-desk.sh.intel.com>
- <aNvT8s01Q5Cr3wAq@yzhao56-desk.sh.intel.com> <aNwFTLM3yt6AGAzd@google.com>
-Message-ID: <aNwGjIoNRGZL3_Qr@google.com>
-Subject: Re: [PATCH] KVM: x86: Drop "cache" from user return MSR setter that
- skips WRMSR
-From: Sean Christopherson <seanjc@google.com>
-To: Yan Zhao <yan.y.zhao@intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Xiaoyao Li <xiaoyao.li@intel.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+CK2bBFZn7EGOJakvQs3SX3i-b_YiTLf5_RhW_B4pLjm2WBuw@mail.gmail.com>
 
-On Tue, Sep 30, 2025, Sean Christopherson wrote:
-> On Tue, Sep 30, 2025, Yan Zhao wrote:
-> > On Tue, Sep 30, 2025 at 08:22:41PM +0800, Yan Zhao wrote:
-> > > On Fri, Sep 19, 2025 at 02:42:59PM -0700, Sean Christopherson wrote:
-> > > > Rename kvm_user_return_msr_update_cache() to __kvm_set_user_return_msr()
-> > > > and use the helper kvm_set_user_return_msr() to make it obvious that the
-> > > > double-underscores version is doing a subset of the work of the "full"
-> > > > setter.
-> > > > 
-> > > > While the function does indeed update a cache, the nomenclature becomes
-> > > > slightly misleading when adding a getter[1], as the current value isn't
-> > > > _just_ the cached value, it's also the value that's currently loaded in
-> > > > hardware.
-> > > Nit:
-> > > 
-> > > For TDX, "it's also the value that's currently loaded in hardware" is not true.
-> > since tdx module invokes wrmsr()s before each exit to VMM, while KVM only
-> > invokes __kvm_set_user_return_msr() in tdx_vcpu_put().
-> 
-> No?  kvm_user_return_msr_update_cache() is passed the value that's currently
-> loaded in hardware, by way of the TDX-Module zeroing some MSRs on TD-Exit.
-> 
-> Ah, I suspect you're calling out that the cache can be stale.  Maybe this?
-> 
->   While the function does indeed update a cache, the nomenclature becomes
->   slightly misleading when adding a getter[1], as the current value isn't
->   _just_ the cached value, it's also the value that's currently loaded in
->   hardware (ignoring that the cache holds stale data until the vCPU is put,
->   i.e. until KVM prepares to switch back to the host).
-> 
-> Actually, that's a bug waiting to happen when the getter comes along.  Rather
-> than document the potential pitfall, what about adding a prep patch to mimize
-> the window?  Then _this_ patch shouldn't need the caveat about the cache being
-> stale.
+On Tue, Sep 30, 2025 at 09:02:44AM -0400, Pasha Tatashin wrote:
+> The kernel's PCI core would perform an extra check before falling back
+> to the standard PCI ID matching.
 
-Ha!  It's technically a bug fix.  Because a forced shutdown will invoke
-kvm_shutdown() without waiting for tasks to exit, and so the on_each_cpu() calls
-to kvm_disable_virtualization_cpu() can call kvm_on_user_return() and thus
-consume a stale values->curr.
+This still seems very complex just to solve the VFIO case.
+
+As I said, I would punt all of this to the initrd and let the initrd
+explicitly bind drivers.
+
+The only behavior we need from the kernel is to not autobind some
+drivers so userspace can control it, and in a LUO type environment
+userspace should well know what drivers go where - or can get it from
+a preceeding kernel from a memfd.
+
+This is broadly the same thing we need for Confidential Compute anyhow.
+
+Jason
 
