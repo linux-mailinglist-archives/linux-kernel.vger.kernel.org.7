@@ -1,134 +1,117 @@
-Return-Path: <linux-kernel+bounces-837514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA125BAC7BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:30:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D92B4BAC7CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:32:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D68F18953ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 10:30:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EA133AC183
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 10:32:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2887B2FABF7;
-	Tue, 30 Sep 2025 10:30:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qz3uZlMZ"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAF71296BC5
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 10:30:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFE4B2F83D4;
+	Tue, 30 Sep 2025 10:32:01 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3F511C84A6;
+	Tue, 30 Sep 2025 10:31:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759228211; cv=none; b=oaL04d0bUvXh51QGzQkZ5k5meimu2cLq91T3zo4SvbSgGHNXhTENmzxduh5DDeTgebS/0MybDbKAAFjA4OvGY7v4pZLlv2p4c6MgxuCZ/SG98UrTOVsCgOJBKErRBdOafGfJAvKg82UU1RPPvXU0Y8Mr6173NW8fLQBTDvxSDRc=
+	t=1759228321; cv=none; b=s+jPOinaYqUBiCycppYQ79aDpQws62B4Gs/w06DidGe4/1gVaCOqFXkjmS/nhSUq4cGdRqI2qOVKfIU8oWmKxY9vN2rWQW0R1ESv1OpTSWVzfCTEETwXvFbTNQUO/7Q4FqkPYm4ypMhLt66itBJTBC/FnSqE3Vam3e1uVn7d+W0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759228211; c=relaxed/simple;
-	bh=LlAd46X4AMd1hwxDl9JpZBtSvrds+zrXrLm1hCZMZGg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fpk0fdrHVIPeNBvFI1e2x2oawsjcKGWYaA2z1pruLzepXSkM4z2+ZCvXw4tYbZLh2oZVO041NZXo5MmyV1in7uCVZCFLCVZDocwu8zf6Q9JaRNOGlDGfg71jVGhYse+ckbsQIqDvsplnLemr+MjV2lvy4Z3zdxgpOSy6hDMb1x4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qz3uZlMZ; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b556b3501easo4833697a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 03:30:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759228209; x=1759833009; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1Bti2R28/RAVcQBXOrb8jZ4ikDl7tBOWMDlFZn02oZ4=;
-        b=qz3uZlMZevLjFLfnFdPjS7DJyFCcC4z+WUPimXuo8Txym21x+GCXTI6jSzAzhSJs05
-         bj4zWMYDpuxSq0z20B0xjz4iwvmJ3vvi2RxQvyWNqHwm4MwYq1Bf1N47Rf9qhf9D4au9
-         kcCK5wq7ipecWcP3ZZw/VNwIjprmbIqbYn/eoVnkwKIK2CKk62OSjk2c0PfxJJPNkuTi
-         B2NPfix3wcaC3lMK3OskKF0mwPctPFR3wEHDffQGle3cTnWmjkYHn9SOr2exjERnka6b
-         2LWH2ybpP1iFRkIfFtl+DSl9iIkUh299cNZviOViPweK9VawxiS9gle4K3Ktds8eiCjk
-         KzWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759228209; x=1759833009;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1Bti2R28/RAVcQBXOrb8jZ4ikDl7tBOWMDlFZn02oZ4=;
-        b=S3Y1OfPEzsiyz3VWZ1mS/U6mRS6XhL2LBowSUnGbE7AQifig7YrhdLJKTVAUAqjfCU
-         LMpG6ZK47heAZ1NpjRR/6tEzwZLgQ+vIPGtPf3IctbaN+rJWw5rhx44bxzJMbQwmmDB/
-         xKZ4YWpgUWQGj6ngkXEhIFe3Hfx8QHJUk3HNlevpsWsPHPMw+3+cPEl3+X6GAiY7a32t
-         rFCRS2x/8uZaLwROUHjBQF0uhdOGwcgogHxg2e/HGeApZFf4rpLvOqNshOg5pEOZ+MrT
-         CJd1AMrUUhpCzQ5IaF/8SEehAfvqJNeC5pIpQDX5PXpL/+k11S78peZqaMXnNUSCpZYn
-         mrHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXLLzxIBScA+6N79K3wEgZDS3jsbSiomy8Y3N7CWhgDG99ec9ae+6j5fL3RmHOAbPodWI60Iqf9AtIYluU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqE0K+587dXJrztUkAEFSyQ5/lY12/fudq9LoIArYC1mJWs3mg
-	oPBxhsUBmxVv9b+9HmNuDj7NaUqwf2LmHcZsXvlp6der8Y8f3gICqHKU1vAXXXblgew=
-X-Gm-Gg: ASbGncuoWgFwfNRAQ3lvSg9FGrWjK8FGDGWo2/hFjXdcs6FrnO58p2J+kUKn4ACRFeu
-	kMsgyrRwPrQZbGm4vp4r76TUW1przEdnKDtQ67WYwFhZKbQZBLQGdSSfaTP3E1wB6bhBJSpxLDv
-	1LtA8qnnRZlBttPKwOkhFc7mFnTTfNlt+xYUawFzIHavVxa+esFtgjtPsS+O1ftFfllQbjThpAb
-	F0b/QwaYDG0/V8pIKhRgkFYDAAalOhHnR+HzmzKMtvoZKrnLXbd4U3KRzj1uCoSwTDyVm/ID4XR
-	B9RCKZUDTcpAhlAqS8DbrXOMPxFhgA0wMw+j6WCcSVzdU4chpRHSlL2s965QgX1j6jcxBiyaupu
-	8bms9oTunM9K4YOlilzEIqU6WUkh5kalJRrBg/XBWNHgxUhTOjEyFPd1lmqqJE2bCYdVLug==
-X-Google-Smtp-Source: AGHT+IGvSXNfKcREmK5xdLdLGpoBcxZHLK9ma2oRLZHFgufwj2uLeXd8vq5DC3f0IouV+OETawQEFA==
-X-Received: by 2002:a17:902:d0c9:b0:24c:da3b:7376 with SMTP id d9443c01a7336-27ed49fb299mr159575375ad.26.1759228209125;
-        Tue, 30 Sep 2025 03:30:09 -0700 (PDT)
-Received: from localhost ([122.172.87.183])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed6ad1fd9sm154739555ad.142.2025.09.30.03.30.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Sep 2025 03:30:08 -0700 (PDT)
-Date: Tue, 30 Sep 2025 16:00:06 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: webgeek1234@gmail.com
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v2 1/8] cpufreq: tegra186: add OPP support and set
- bandwidth
-Message-ID: <20250930103006.octwlx53p2shwq2v@vireshk-i7>
-References: <20250909-tegra186-icc-v2-0-09413724e781@gmail.com>
- <20250909-tegra186-icc-v2-1-09413724e781@gmail.com>
+	s=arc-20240116; t=1759228321; c=relaxed/simple;
+	bh=MmWWeWN2VszbM6u7oDU+wa7E68fvdskDjNBmxAo7sms=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cOPsYrfsj83ZG1ZWk7oHd/qJes1NUmfk3lM+CpjnsFtGnREuMkRtE0JJRC6Mf/PkiVewguq+cB71zBQUOZvO9LeFV8Gow1libLHbp49GKzodLA/gvpHIY8vw9dX6lgCxPVL4pFxNr43YKvNQXqK84E/1uaYxfpSnIyEhcph27zc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 29AB82008;
+	Tue, 30 Sep 2025 03:31:51 -0700 (PDT)
+Received: from ewhatever.cambridge.arm.com (ewhatever.cambridge.arm.com [10.1.197.1])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D22ED3F66E;
+	Tue, 30 Sep 2025 03:31:57 -0700 (PDT)
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+To: kvmarm@lists.linux.dev
+Cc: kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	will@kernel.org,
+	oliver.upton@linux.dev,
+	maz@kernel.org,
+	alexandru.elisei@arm.com,
+	aneesh.kumar@kernel.org,
+	steven.price@arm.com,
+	tabba@google.com,
+	Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: [PATCH kvmtool 00/15] arm64: Handle PSCI calls in userspace
+Date: Tue, 30 Sep 2025 11:31:14 +0100
+Message-ID: <20250930103130.197534-1-suzuki.poulose@arm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250909-tegra186-icc-v2-1-09413724e781@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On 09-09-25, 01:21, Aaron Kling via B4 Relay wrote:
-> +static int tegra_cpufreq_set_bw(struct cpufreq_policy *policy, unsigned long freq_khz)
-> +{
-> +	struct tegra186_cpufreq_data *data = cpufreq_get_driver_data();
-> +	struct dev_pm_opp *opp __free(put_opp);
+This is version 4 of the patch series, originally posted by Oliver [0]. Mostly
+remains the same as v3, except for
 
-The usage here looks incorrect..
+ - Address Will's comment on the race between pause/resume - Patch 1
+ - Rebase on to v6.17-rc7
+ - Drop importing cputype.h, which was not used by the series
 
-> +	struct device *dev;
-> +	int ret;
-> +
-> +	dev = get_cpu_device(policy->cpu);
-> +	if (!dev)
-> +		return -ENODEV;
+[0] https://lore.kernel.org/all/20230802234255.466782-1-oliver.upton@linux.dev/
 
-On failure, we would return from here with a garbage `opp` pointer, which the
-OPP core may try to free ?
 
-Moving the variable definition here would fix that.
+Oliver Upton (12):
+  Import arm-smccc.h from Linux 6.17-rc7
+  arm64: Stash kvm_vcpu_init for later use
+  arm64: Use KVM_SET_MP_STATE ioctl to power off non-boot vCPUs
+  arm64: Expose ARM64_CORE_REG() for general use
+  arm64: Add support for finding vCPU for given MPIDR
+  arm64: Add skeleton implementation for PSCI
+  arm64: psci: Implement CPU_SUSPEND
+  arm64: psci: Implement CPU_ON
+  arm64: psci: Implement AFFINITY_INFO
+  arm64: psci: Implement MIGRATE_INFO_TYPE
+  arm64: psci: Implement SYSTEM_{OFF,RESET}
+  arm64: smccc: Start sending PSCI to userspace
 
-> +
-> +	opp = dev_pm_opp_find_freq_exact(dev, freq_khz * HZ_PER_KHZ, true);
-> +	if (IS_ERR(opp))
-> +		return PTR_ERR(opp);
-> +
-> +	ret = dev_pm_opp_set_opp(dev, opp);
-> +	if (ret)
-> +		data->icc_dram_bw_scaling = false;
-> +
-> +	return ret;
-> +}
+Suzuki K Poulose (3):
+  Allow pausing the VM from vcpu thread
+  update_headers: arm64: Track psci.h for PSCI definitions
+  update headers: Linux v6.17-rc7
+
+ Makefile                            |   2 +
+ arm64/include/asm/kvm.h             |  23 ++-
+ arm64/include/asm/smccc.h           |  65 ++++++
+ arm64/include/kvm/kvm-arch.h        |   2 +
+ arm64/include/kvm/kvm-config-arch.h |   8 +-
+ arm64/include/kvm/kvm-cpu-arch.h    |  30 ++-
+ arm64/kvm-cpu.c                     |  51 +++--
+ arm64/kvm.c                         |  20 ++
+ arm64/psci.c                        | 207 +++++++++++++++++++
+ arm64/smccc.c                       |  81 ++++++++
+ include/linux/arm-smccc.h           | 305 ++++++++++++++++++++++++++++
+ include/linux/kvm.h                 |  33 +++
+ include/linux/psci.h                |  52 +++++
+ include/linux/virtio_net.h          |  46 +++++
+ include/linux/virtio_pci.h          |   1 +
+ kvm-cpu.c                           |  13 ++
+ kvm.c                               |  35 +++-
+ powerpc/include/asm/kvm.h           |  13 --
+ riscv/include/asm/kvm.h             |   3 +
+ util/update_headers.sh              |  17 +-
+ x86/include/asm/kvm.h               |  81 ++++++++
+ 21 files changed, 1030 insertions(+), 58 deletions(-)
+ create mode 100644 arm64/include/asm/smccc.h
+ create mode 100644 arm64/psci.c
+ create mode 100644 arm64/smccc.c
+ create mode 100644 include/linux/arm-smccc.h
 
 -- 
-viresh
+2.43.0
+
 
