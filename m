@@ -1,378 +1,185 @@
-Return-Path: <linux-kernel+bounces-837912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABD9EBAE093
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 18:27:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEA78BAE096
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 18:29:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87BB41943A3B
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 16:27:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCBE64A7AA8
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 16:29:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86EF1238142;
-	Tue, 30 Sep 2025 16:27:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F6A023817E;
+	Tue, 30 Sep 2025 16:29:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AbE+arLF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NtFZGqjP"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DF2ACA4E;
-	Tue, 30 Sep 2025 16:27:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 373F31E260D
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 16:29:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759249623; cv=none; b=RMfK0nUUW8gkP45aFqc+cttqtT7oh0FFTp0PG/toZ3afXM6HjKYoUHNbL6kYou8ANvHTVDhyXdiNdHmm00pMsLLMHuz8YsWcXYah0ceveg1RxeJYq3tPE2revFJepX3879d9N1D2UgZLLwWjjCMQMD0rKmuCsbsDc06ib0bCuyU=
+	t=1759249744; cv=none; b=VLnywFnmCRsGPGxDf7rgXq8tPBsSuGJL/+NoUHchK9PoAljDYjUi9rCXR7GPC7grBUFyZd1xM/cCdS6JdUDHLuDk/570HgdELj6xTRvErWl7SVudmuqVjSGTgiACDmKdTAYDkCRnZdtqm/dywLgGSPbqNN3uxiOiV3cfbx8VAw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759249623; c=relaxed/simple;
-	bh=QpX7H1glCEew6/fXBPAjjPputLtXSY15ADgSTrv3Ggk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PjRb/22i1bEPtGfdFS4kiL6+xWrsjHj6AsawQXL6Mu/rQrHEcsqSUYwisMYwIDnIRwi8WVLtFFcluboOw7ocgqh2zV8ad0v7kxZSfApnNTI/KO3Td/ufxYeYYaAxguHzFK0+3XSVld0FP3eTN2hUjiExU151QVTaXbrYGFN0cno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AbE+arLF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 651EEC4CEF0;
-	Tue, 30 Sep 2025 16:27:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759249622;
-	bh=QpX7H1glCEew6/fXBPAjjPputLtXSY15ADgSTrv3Ggk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AbE+arLFxdFRQPdarLxZG1EKUgWsC6Hvo3w1QcFacRZXRS3wMp4rM84HlmDKi+ZkT
-	 o2JRd2QqpUt1VBrYbZkWc15WmYNLBilcH3bzyS13WIMWvqa30ohUjjW371Chg9Moob
-	 8iVwcLU4mWVtFPNVTpymAK/vIfev3KZ3LGUTbrO+kjC8h9tLk63Ty+qWBA1sL5LnVo
-	 7rO1rq7zNy5IoFG9B1MJc4/SFYmnWBM8vtYkSWpw2mZ7ty0wOFkBUKINDyR4clT273
-	 wHn2AMjKFecP74IF3NGNVsd+7JEuuYtHy7E9ovb4+LNlC0/lG8by+j+wSJ0kl/pUDa
-	 9s13TV/yicMtA==
-Date: Tue, 30 Sep 2025 13:26:58 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: "Falcon, Thomas" <thomas.falcon@intel.com>
-Cc: "alexander.shishkin@linux.intel.com" <alexander.shishkin@linux.intel.com>,
-	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
-	"kan.liang@linux.intel.com" <kan.liang@linux.intel.com>,
-	"afaerber@suse.de" <afaerber@suse.de>,
-	"peterz@infradead.org" <peterz@infradead.org>,
-	"mingo@redhat.com" <mingo@redhat.com>,
-	"Hunter, Adrian" <adrian.hunter@intel.com>,
-	"Biggers, Caleb" <caleb.biggers@intel.com>,
-	"namhyung@kernel.org" <namhyung@kernel.org>,
-	"Taylor, Perry" <perry.taylor@intel.com>,
-	"jolsa@kernel.org" <jolsa@kernel.org>,
-	"irogers@google.com" <irogers@google.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"mani@kernel.org" <mani@kernel.org>
-Subject: Re: [PATCH v2 03/10] perf vendor events intel: Update emeraldrapids
- events to v1.20
-Message-ID: <aNwE0sAsRKoBNADw@x1>
-References: <20250925172736.960368-1-irogers@google.com>
- <20250925172736.960368-4-irogers@google.com>
- <5545b403a33b32c65ff1dc6e61d78861dbfdde90.camel@intel.com>
+	s=arc-20240116; t=1759249744; c=relaxed/simple;
+	bh=jvs1HpDbHuLHsXwdNWN5OQ0EARN3lWmBRfQzMHZ4nD8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=J7+TRplsdm+qw2/QSuUEv+wrRjpJIGGwAqt7vdFD3M6URGGnrCTJMcrR9UjBYwOiLjXEApQ17iY52JnPypEMxy970lBDnGirikw2P0rt66TyQ6f8Hq/P4zSCI2IHbrLNeCWlMopxomqVLNZL8LefUrRR9twszH9MGNZQuZSabUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NtFZGqjP; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-336b646768eso4544901a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 09:29:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759249742; x=1759854542; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=IvqulNZyHw3NH8THJ4dZILvp5eZnrhz0uuimme275IM=;
+        b=NtFZGqjP9/oDU/iJQb1suyJeAJSQGyRMiGsMfGsjox+lP8W+OY6lE/C7GfRLxTN3y1
+         LUGXtwqtupEgvrUTGJx8WXY7m5ZsZhSZ9tVMMlTs6G92E8AAbhjdMWt26Q3SA30YJQLf
+         cx+V+/tGScN5UQaskeFLaagz5KkWFhlYrlJaffFP+gqMgYY6GorU3MyehYzHsgGMDPov
+         epPDUJmqKKD7+Hc43KGZ/hmQa9YsukYXZwlGI6zzs4uul8jRIz3dJO0Lilk7WYD/6ivD
+         q/NSx5aA2cGwCPj7E8h4/9UQ+vQ3stMa+E4wBCAM1Rspp3EmaGbGZzFWzNHcvjFIxrIW
+         I66g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759249742; x=1759854542;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IvqulNZyHw3NH8THJ4dZILvp5eZnrhz0uuimme275IM=;
+        b=YNRKlbbuiXr2pLonNs4Wv18n1G13wIoBNlGy0eT+cMRr0d72TX39mxTF9h1EmGkzzY
+         PqthHRpy37D0yfy0zcjVVlTsjJXefCyhwtkCR+Lh3I9C+oZoHkLDBwg8bevpLtngP4OQ
+         kwAxkq9VcSqeuxCEaRqwdWJAFEEieF9WiqwPp/FwxniAfEydMciMcW3PkWxbyrU3W77p
+         BzUUTUzK77nRaidFkuV5WRQ08G8GMSn5gQhAjCMAwRMpDHGJu09/F+wPIuXxKIIubVXs
+         73wIk/7VF8pYLF9D+mzWhgKORyyjD44YkmhOPkRTTIR+9VMOE7ZPGwUqh2bA1Ia5vOFw
+         18ag==
+X-Forwarded-Encrypted: i=1; AJvYcCVhT3YAQ+ydxQJ6SlqtAtiTvq10uqpKcnQqawOtmVl/LOzDyNDkNEybTuKP8UoDF9Iaec4AxTtfJxFk8xQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywod7FKLw8w1aJTadiDF8Mx3AvmOC0BU5hcb6cCKD7NmISWjOu0
+	C2RVs75TqFbDVb38TS8k4zMV08CNnwHT1tupqLWTawe6wYxPOrd7TnSwxcaQ7bi3j20s7VGBuCu
+	wU+m2yg==
+X-Google-Smtp-Source: AGHT+IHzjBQ0AdCcBjAnrdTTq/5Smhx7Q7IlZ3njiQ56g/bLqUrOXudSTMTSnkrzIbu2QJ5VRD4RdJoqhv8=
+X-Received: from pjbnu4.prod.google.com ([2002:a17:90b:1b04:b0:32e:ca6a:7ca9])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1d91:b0:32b:9bec:158f
+ with SMTP id 98e67ed59e1d1-339a6f5b668mr72251a91.29.1759249742526; Tue, 30
+ Sep 2025 09:29:02 -0700 (PDT)
+Date: Tue, 30 Sep 2025 09:29:00 -0700
+In-Reply-To: <aNvT8s01Q5Cr3wAq@yzhao56-desk.sh.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5545b403a33b32c65ff1dc6e61d78861dbfdde90.camel@intel.com>
+Mime-Version: 1.0
+References: <20250919214259.1584273-1-seanjc@google.com> <aNvLkRZCZ1ckPhFa@yzhao56-desk.sh.intel.com>
+ <aNvT8s01Q5Cr3wAq@yzhao56-desk.sh.intel.com>
+Message-ID: <aNwFTLM3yt6AGAzd@google.com>
+Subject: Re: [PATCH] KVM: x86: Drop "cache" from user return MSR setter that
+ skips WRMSR
+From: Sean Christopherson <seanjc@google.com>
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Xiaoyao Li <xiaoyao.li@intel.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Mon, Sep 29, 2025 at 11:45:20PM +0000, Falcon, Thomas wrote:
-> On Thu, 2025-09-25 at 10:27 -0700, Ian Rogers wrote:
-> > Update emeraldrapids events to v1.20 released in:
-> > https://github.com/intel/perfmon/commit/868b433955f3e94126420ee9374b9e0a6ce2d83e
-> > https://github.com/intel/perfmon/commit/43681e2817a960d06c5b8870cc6d3e5b7b6feeb9
+On Tue, Sep 30, 2025, Yan Zhao wrote:
+> On Tue, Sep 30, 2025 at 08:22:41PM +0800, Yan Zhao wrote:
+> > On Fri, Sep 19, 2025 at 02:42:59PM -0700, Sean Christopherson wrote:
+> > > Rename kvm_user_return_msr_update_cache() to __kvm_set_user_return_msr()
+> > > and use the helper kvm_set_user_return_msr() to make it obvious that the
+> > > double-underscores version is doing a subset of the work of the "full"
+> > > setter.
+> > > 
+> > > While the function does indeed update a cache, the nomenclature becomes
+> > > slightly misleading when adding a getter[1], as the current value isn't
+> > > _just_ the cached value, it's also the value that's currently loaded in
+> > > hardware.
+> > Nit:
 > > 
-> > Also adds cpu_cstate_c0 and cpu_cstate_c6 metrics.
-> > 
-> > Event json automatically generated by:
-> > https://github.com/intel/perfmon/blob/main/scripts/create_perf_json.py
-> > 
-> > Signed-off-by: Ian Rogers <irogers@google.com>
-> 
-> I found an Emerald Rapids to test this on. All metrics tests passed.
+> > For TDX, "it's also the value that's currently loaded in hardware" is not true.
+> since tdx module invokes wrmsr()s before each exit to VMM, while KVM only
+> invokes __kvm_set_user_return_msr() in tdx_vcpu_put().
 
-I'll take this as a Tested-by for this specific patch, ok?
+No?  kvm_user_return_msr_update_cache() is passed the value that's currently
+loaded in hardware, by way of the TDX-Module zeroing some MSRs on TD-Exit.
 
-- Arnaldo
+Ah, I suspect you're calling out that the cache can be stale.  Maybe this?
+
+  While the function does indeed update a cache, the nomenclature becomes
+  slightly misleading when adding a getter[1], as the current value isn't
+  _just_ the cached value, it's also the value that's currently loaded in
+  hardware (ignoring that the cache holds stale data until the vCPU is put,
+  i.e. until KVM prepares to switch back to the host).
+
+Actually, that's a bug waiting to happen when the getter comes along.  Rather
+than document the potential pitfall, what about adding a prep patch to mimize
+the window?  Then _this_ patch shouldn't need the caveat about the cache being
+stale.
+
+diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+index ff41d3d00380..326fa81cb35f 100644
+--- a/arch/x86/kvm/vmx/tdx.c
++++ b/arch/x86/kvm/vmx/tdx.c
+@@ -789,6 +789,14 @@ void tdx_prepare_switch_to_guest(struct kvm_vcpu *vcpu)
+                vt->msr_host_kernel_gs_base = read_msr(MSR_KERNEL_GS_BASE);
  
-> Thanks,
-> Tom
-> 
-> > ---
-> >  .../arch/x86/emeraldrapids/cache.json         | 63
-> > +++++++++++++++++++
-> >  .../arch/x86/emeraldrapids/emr-metrics.json   | 12 ++++
-> >  .../arch/x86/emeraldrapids/uncore-cache.json  | 11 ++++
-> >  .../arch/x86/emeraldrapids/uncore-memory.json | 22 +++++++
-> >  .../arch/x86/emeraldrapids/uncore-power.json  |  2 -
-> >  tools/perf/pmu-events/arch/x86/mapfile.csv    |  2 +-
-> >  6 files changed, 109 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/tools/perf/pmu-events/arch/x86/emeraldrapids/cache.json
-> > b/tools/perf/pmu-events/arch/x86/emeraldrapids/cache.json
-> > index e96f938587bb..26568e4b77f7 100644
-> > --- a/tools/perf/pmu-events/arch/x86/emeraldrapids/cache.json
-> > +++ b/tools/perf/pmu-events/arch/x86/emeraldrapids/cache.json
-> > @@ -1,4 +1,67 @@
-> >  [
-> > +    {
-> > +        "BriefDescription": "Hit snoop reply with data, line
-> > invalidated.",
-> > +        "Counter": "0,1,2,3",
-> > +        "EventCode": "0x27",
-> > +        "EventName": "CORE_SNOOP_RESPONSE.I_FWD_FE",
-> > +        "PublicDescription": "Counts responses to snoops indicating
-> > the line will now be (I)nvalidated: removed from this core's cache,
-> > after the data is forwarded back to the requestor and indicating the
-> > data was found unmodified in the (FE) Forward or Exclusive State in
-> > this cores caches cache.  A single snoop response from the core
-> > counts on all hyperthreads of the core.",
-> > +        "SampleAfterValue": "1000003",
-> > +        "UMask": "0x20"
-> > +    },
-> > +    {
-> > +        "BriefDescription": "HitM snoop reply with data, line
-> > invalidated.",
-> > +        "Counter": "0,1,2,3",
-> > +        "EventCode": "0x27",
-> > +        "EventName": "CORE_SNOOP_RESPONSE.I_FWD_M",
-> > +        "PublicDescription": "Counts responses to snoops indicating
-> > the line will now be (I)nvalidated: removed from this core's caches,
-> > after the data is forwarded back to the requestor, and indicating the
-> > data was found modified(M) in this cores caches cache (aka HitM
-> > response).  A single snoop response from the core counts on all
-> > hyperthreads of the core.",
-> > +        "SampleAfterValue": "1000003",
-> > +        "UMask": "0x10"
-> > +    },
-> > +    {
-> > +        "BriefDescription": "Hit snoop reply without sending the
-> > data, line invalidated.",
-> > +        "Counter": "0,1,2,3",
-> > +        "EventCode": "0x27",
-> > +        "EventName": "CORE_SNOOP_RESPONSE.I_HIT_FSE",
-> > +        "PublicDescription": "Counts responses to snoops indicating
-> > the line will now be (I)nvalidated in this core's caches without
-> > forwarded back to the requestor. The line was in Forward, Shared or
-> > Exclusive (FSE) state in this cores caches.  A single snoop response
-> > from the core counts on all hyperthreads of the core.",
-> > +        "SampleAfterValue": "1000003",
-> > +        "UMask": "0x2"
-> > +    },
-> > +    {
-> > +        "BriefDescription": "Line not found snoop reply",
-> > +        "Counter": "0,1,2,3",
-> > +        "EventCode": "0x27",
-> > +        "EventName": "CORE_SNOOP_RESPONSE.MISS",
-> > +        "PublicDescription": "Counts responses to snoops indicating
-> > that the data was not found (IHitI) in this core's caches. A single
-> > snoop response from the core counts on all hyperthreads of the
-> > Core.",
-> > +        "SampleAfterValue": "1000003",
-> > +        "UMask": "0x1"
-> > +    },
-> > +    {
-> > +        "BriefDescription": "Hit snoop reply with data, line kept in
-> > Shared state.",
-> > +        "Counter": "0,1,2,3",
-> > +        "EventCode": "0x27",
-> > +        "EventName": "CORE_SNOOP_RESPONSE.S_FWD_FE",
-> > +        "PublicDescription": "Counts responses to snoops indicating
-> > the line may be kept on this core in the (S)hared state, after the
-> > data is forwarded back to the requestor, initially the data was found
-> > in the cache in the (FS) Forward or Shared state.  A single snoop
-> > response from the core counts on all hyperthreads of the core.",
-> > +        "SampleAfterValue": "1000003",
-> > +        "UMask": "0x40"
-> > +    },
-> > +    {
-> > +        "BriefDescription": "HitM snoop reply with data, line kept
-> > in Shared state",
-> > +        "Counter": "0,1,2,3",
-> > +        "EventCode": "0x27",
-> > +        "EventName": "CORE_SNOOP_RESPONSE.S_FWD_M",
-> > +        "PublicDescription": "Counts responses to snoops indicating
-> > the line may be kept on this core in the (S)hared state, after the
-> > data is forwarded back to the requestor, initially the data was found
-> > in the cache in the (M)odified state.  A single snoop response from
-> > the core counts on all hyperthreads of the core.",
-> > +        "SampleAfterValue": "1000003",
-> > +        "UMask": "0x8"
-> > +    },
-> > +    {
-> > +        "BriefDescription": "Hit snoop reply without sending the
-> > data, line kept in Shared state.",
-> > +        "Counter": "0,1,2,3",
-> > +        "EventCode": "0x27",
-> > +        "EventName": "CORE_SNOOP_RESPONSE.S_HIT_FSE",
-> > +        "PublicDescription": "Counts responses to snoops indicating
-> > the line was kept on this core in the (S)hared state, and that the
-> > data was found unmodified but not forwarded back to the requestor,
-> > initially the data was found in the cache in the (FSE) Forward,
-> > Shared state or Exclusive state.  A single snoop response from the
-> > core counts on all hyperthreads of the core.",
-> > +        "SampleAfterValue": "1000003",
-> > +        "UMask": "0x4"
-> > +    },
-> >      {
-> >          "BriefDescription": "L1D.HWPF_MISS",
-> >          "Counter": "0,1,2,3",
-> > diff --git a/tools/perf/pmu-events/arch/x86/emeraldrapids/emr-
-> > metrics.json b/tools/perf/pmu-events/arch/x86/emeraldrapids/emr-
-> > metrics.json
-> > index af0a7dd81e93..433ae5f50704 100644
-> > --- a/tools/perf/pmu-events/arch/x86/emeraldrapids/emr-metrics.json
-> > +++ b/tools/perf/pmu-events/arch/x86/emeraldrapids/emr-metrics.json
-> > @@ -39,6 +39,18 @@
-> >          "MetricName": "cpi",
-> >          "ScaleUnit": "1per_instr"
-> >      },
-> > +    {
-> > +        "BriefDescription": "The average number of cores that are in
-> > cstate C0 as observed by the power control unit (PCU)",
-> > +        "MetricExpr": "UNC_P_POWER_STATE_OCCUPANCY_CORES_C0 /
-> > UNC_P_CLOCKTICKS * #num_packages",
-> > +        "MetricGroup": "cpu_cstate",
-> > +        "MetricName": "cpu_cstate_c0"
-> > +    },
-> > +    {
-> > +        "BriefDescription": "The average number of cores are in
-> > cstate C6 as observed by the power control unit (PCU)",
-> > +        "MetricExpr": "UNC_P_POWER_STATE_OCCUPANCY_CORES_C6 /
-> > UNC_P_CLOCKTICKS * #num_packages",
-> > +        "MetricGroup": "cpu_cstate",
-> > +        "MetricName": "cpu_cstate_c6"
-> > +    },
-> >      {
-> >          "BriefDescription": "CPU operating frequency (in GHz)",
-> >          "MetricExpr": "CPU_CLK_UNHALTED.THREAD /
-> > CPU_CLK_UNHALTED.REF_TSC * #SYSTEM_TSC_FREQ / 1e9",
-> > diff --git a/tools/perf/pmu-events/arch/x86/emeraldrapids/uncore-
-> > cache.json b/tools/perf/pmu-events/arch/x86/emeraldrapids/uncore-
-> > cache.json
-> > index f453202d80c2..92cf47967f0b 100644
-> > --- a/tools/perf/pmu-events/arch/x86/emeraldrapids/uncore-cache.json
-> > +++ b/tools/perf/pmu-events/arch/x86/emeraldrapids/uncore-cache.json
-> > @@ -311,6 +311,17 @@
-> >          "UMask": "0x2",
-> >          "Unit": "CHA"
-> >      },
-> > +    {
-> > +        "BriefDescription": "Distress signal asserted : DPT Remote",
-> > +        "Counter": "0,1,2,3",
-> > +        "EventCode": "0xaf",
-> > +        "EventName": "UNC_CHA_DISTRESS_ASSERTED.DPT_NONLOCAL",
-> > +        "Experimental": "1",
-> > +        "PerPkg": "1",
-> > +        "PublicDescription": "Distress signal asserted : DPT Remote
-> > : Counts the number of cycles either the local or incoming distress
-> > signals are asserted. : Dynamic Prefetch Throttle received by this
-> > tile",
-> > +        "UMask": "0x8",
-> > +        "Unit": "CHA"
-> > +    },
-> >      {
-> >          "BriefDescription": "Egress Blocking due to Ordering
-> > requirements : Down",
-> >          "Counter": "0,1,2,3",
-> > diff --git a/tools/perf/pmu-events/arch/x86/emeraldrapids/uncore-
-> > memory.json b/tools/perf/pmu-events/arch/x86/emeraldrapids/uncore-
-> > memory.json
-> > index 90f61c9511fc..30044177ccf8 100644
-> > --- a/tools/perf/pmu-events/arch/x86/emeraldrapids/uncore-memory.json
-> > +++ b/tools/perf/pmu-events/arch/x86/emeraldrapids/uncore-memory.json
-> > @@ -3129,6 +3129,28 @@
-> >          "PublicDescription": "Clock-Enabled Self-Refresh : Counts
-> > the number of cycles when the iMC is in self-refresh and the iMC
-> > still has a clock.  This happens in some package C-states.  For
-> > example, the PCU may ask the iMC to enter self-refresh even though
-> > some of the cores are still processing.  One use of this is for
-> > Monroe technology.  Self-refresh is required during package C3 and
-> > C6, but there is no clock in the iMC at this time, so it is not
-> > possible to count these cases.",
-> >          "Unit": "iMC"
-> >      },
-> > +    {
-> > +        "BriefDescription": "Throttle Cycles for Rank 0",
-> > +        "Counter": "0,1,2,3",
-> > +        "EventCode": "0x46",
-> > +        "EventName": "UNC_M_POWER_THROTTLE_CYCLES.SLOT0",
-> > +        "Experimental": "1",
-> > +        "PerPkg": "1",
-> > +        "PublicDescription": "Throttle Cycles for Rank 0 : Counts
-> > the number of cycles while the iMC is being throttled by either
-> > thermal constraints or by the PCU throttling.  It is not possible to
-> > distinguish between the two.  This can be filtered by rank.  If
-> > multiple ranks are selected and are being throttled at the same time,
-> > the counter will only increment by 1. : Thermal throttling is
-> > performed per DIMM.  We support 3 DIMMs per channel.  This ID allows
-> > us to filter by ID.",
-> > +        "UMask": "0x1",
-> > +        "Unit": "iMC"
-> > +    },
-> > +    {
-> > +        "BriefDescription": "Throttle Cycles for Rank 0",
-> > +        "Counter": "0,1,2,3",
-> > +        "EventCode": "0x46",
-> > +        "EventName": "UNC_M_POWER_THROTTLE_CYCLES.SLOT1",
-> > +        "Experimental": "1",
-> > +        "PerPkg": "1",
-> > +        "PublicDescription": "Throttle Cycles for Rank 0 : Counts
-> > the number of cycles while the iMC is being throttled by either
-> > thermal constraints or by the PCU throttling.  It is not possible to
-> > distinguish between the two.  This can be filtered by rank.  If
-> > multiple ranks are selected and are being throttled at the same time,
-> > the counter will only increment by 1.",
-> > +        "UMask": "0x2",
-> > +        "Unit": "iMC"
-> > +    },
-> >      {
-> >          "BriefDescription": "Precharge due to read, write,
-> > underfill, or PGT.",
-> >          "Counter": "0,1,2,3",
-> > diff --git a/tools/perf/pmu-events/arch/x86/emeraldrapids/uncore-
-> > power.json b/tools/perf/pmu-events/arch/x86/emeraldrapids/uncore-
-> > power.json
-> > index 9482ddaea4d1..71c35b165a3e 100644
-> > --- a/tools/perf/pmu-events/arch/x86/emeraldrapids/uncore-power.json
-> > +++ b/tools/perf/pmu-events/arch/x86/emeraldrapids/uncore-power.json
-> > @@ -178,7 +178,6 @@
-> >          "Counter": "0,1,2,3",
-> >          "EventCode": "0x35",
-> >          "EventName": "UNC_P_POWER_STATE_OCCUPANCY_CORES_C0",
-> > -        "Experimental": "1",
-> >          "PerPkg": "1",
-> >          "PublicDescription": "Number of cores in C0 : This is an
-> > occupancy event that tracks the number of cores that are in the
-> > chosen C-State.  It can be used by itself to get the average number
-> > of cores in that C-state with thresholding to generate histograms, or
-> > with other PCU events and occupancy triggering to capture other
-> > details.",
-> >          "Unit": "PCU"
-> > @@ -198,7 +197,6 @@
-> >          "Counter": "0,1,2,3",
-> >          "EventCode": "0x37",
-> >          "EventName": "UNC_P_POWER_STATE_OCCUPANCY_CORES_C6",
-> > -        "Experimental": "1",
-> >          "PerPkg": "1",
-> >          "PublicDescription": "Number of cores in C6 : This is an
-> > occupancy event that tracks the number of cores that are in the
-> > chosen C-State.  It can be used by itself to get the average number
-> > of cores in that C-state with thresholding to generate histograms, or
-> > with other PCU events and occupancy triggering to capture other
-> > details.",
-> >          "Unit": "PCU"
-> > diff --git a/tools/perf/pmu-events/arch/x86/mapfile.csv
-> > b/tools/perf/pmu-events/arch/x86/mapfile.csv
-> > index 8daaa8f40b66..dec7bdd770cf 100644
-> > --- a/tools/perf/pmu-events/arch/x86/mapfile.csv
-> > +++ b/tools/perf/pmu-events/arch/x86/mapfile.csv
-> > @@ -9,7 +9,7 @@ GenuineIntel-6-4F,v23,broadwellx,core
-> >  GenuineIntel-6-55-[56789ABCDEF],v1.25,cascadelakex,core
-> >  GenuineIntel-6-DD,v1.00,clearwaterforest,core
-> >  GenuineIntel-6-9[6C],v1.05,elkhartlake,core
-> > -GenuineIntel-6-CF,v1.16,emeraldrapids,core
-> > +GenuineIntel-6-CF,v1.20,emeraldrapids,core
-> >  GenuineIntel-6-5[CF],v13,goldmont,core
-> >  GenuineIntel-6-7A,v1.01,goldmontplus,core
-> >  GenuineIntel-6-B6,v1.09,grandridge,core
-> 
+        vt->guest_state_loaded = true;
++
++       /*
++        * Several of KVM's user-return MSRs are clobbered by the TDX-Module if
++        * VP.ENTER succeeds, i.e. on TD-Exit.  Mark those MSRs as needing an
++        * update to synchronize the "current" value in KVM's cache with the
++        * value in hardware (loaded by the TDX-Module).
++        */
++       to_tdx(vcpu)->need_user_return_msr_update = true;
+ }
+ 
+ struct tdx_uret_msr {
+@@ -816,7 +824,6 @@ static void tdx_user_return_msr_update_cache(void)
+ static void tdx_prepare_switch_to_host(struct kvm_vcpu *vcpu)
+ {
+        struct vcpu_vt *vt = to_vt(vcpu);
+-       struct vcpu_tdx *tdx = to_tdx(vcpu);
+ 
+        if (!vt->guest_state_loaded)
+                return;
+@@ -824,11 +831,6 @@ static void tdx_prepare_switch_to_host(struct kvm_vcpu *vcpu)
+        ++vcpu->stat.host_state_reload;
+        wrmsrl(MSR_KERNEL_GS_BASE, vt->msr_host_kernel_gs_base);
+ 
+-       if (tdx->guest_entered) {
+-               tdx_user_return_msr_update_cache();
+-               tdx->guest_entered = false;
+-       }
+-
+        vt->guest_state_loaded = false;
+ }
+ 
+@@ -1067,7 +1069,11 @@ fastpath_t tdx_vcpu_run(struct kvm_vcpu *vcpu, u64 run_flags)
+                update_debugctlmsr(vcpu->arch.host_debugctl);
+ 
+        tdx_load_host_xsave_state(vcpu);
+-       tdx->guest_entered = true;
++
++       if (tdx->need_user_return_msr_update) {
++               tdx_user_return_msr_update_cache();
++               tdx->need_user_return_msr_update = false;
++       }
+ 
+        vcpu->arch.regs_avail &= TDX_REGS_AVAIL_SET;
+ 
+diff --git a/arch/x86/kvm/vmx/tdx.h b/arch/x86/kvm/vmx/tdx.h
+index ca39a9391db1..fcac1627f71f 100644
+--- a/arch/x86/kvm/vmx/tdx.h
++++ b/arch/x86/kvm/vmx/tdx.h
+@@ -67,7 +67,7 @@ struct vcpu_tdx {
+        u64 vp_enter_ret;
+ 
+        enum vcpu_tdx_state state;
+-       bool guest_entered;
++       bool need_user_return_msr_update;
+ 
+        u64 map_gpa_next;
+        u64 map_gpa_end;
+
 
