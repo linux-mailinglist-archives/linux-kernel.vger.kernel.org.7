@@ -1,126 +1,155 @@
-Return-Path: <linux-kernel+bounces-837923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D202BAE123
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 18:39:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD36FBAE134
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 18:42:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7A1D1944AAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 16:39:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8617C7AA8BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 16:40:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23FF12343B6;
-	Tue, 30 Sep 2025 16:39:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2349245010;
+	Tue, 30 Sep 2025 16:42:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="S0K3mXIT"
-Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="UprHlYym"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4361522422B
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 16:39:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEF0F22422B
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 16:42:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759250349; cv=none; b=LF/DR6lcg8fNPsJNWkswKdCx73gjZIm1RZtoFQJ+0nIV6/NicTOawCtPDo4DSwuXoIrgM7ne0yqMZsNbHhjABNprNxfrCiNZ/YLgFFVvKCZg5+WsrbqL6/ReYKjW6VpnOIfHX5D45TLsBz63TyOVyKjq+cwLaS3qlnQPeeK9g6M=
+	t=1759250533; cv=none; b=PreahMqEBZdifBLku21esnBFX3CUCzINHAasyI+glNnYfyfaZ6ceXh4eLKecs2cwT+5d9H9FFIJT/KMiwOyCYOq0S/cUop4m6SRiGG/t0IOjUky6FWFt6GEQ75klK/kZJzumnmlAJDy5iCqap8a/yUYE4sThZ2A2GSCi66Ao2wA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759250349; c=relaxed/simple;
-	bh=K/OW5QVJiYUdeHnfxTsx43OwQg//BxaPlBCvPJ8I494=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UK33bmnEPRgZ2ADuix9VZwgcyWBowVzZ+FUhSH+ae3RDbQthxcPGVVQ1fp+9vuFBylJpgRxSayNfYxAf+o0TMyqzAws40FLFEm+wnLqhsxkjPGHxej+Ua80Ki+bG3rlHQj3XU+ZwEt6iOMze8kQ3uC4LJj3vQs/IDifVv/GUTGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=S0K3mXIT; arc=none smtp.client-ip=95.215.58.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 30 Sep 2025 16:38:55 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1759250342;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=B3CKhHSKM3GAHgQOBi5L/lbF/hi6x7IpHKwCLnAX/hw=;
-	b=S0K3mXITYdBzco4OPx4s4kDHufQW7Dk1ZDHiLzDl8uf2PmJOi5N6RYV70/g2vltuhqShCW
-	Uq5wmuYVFEmvtPQe2aLA/gbBMHqPHwFp82r4XI3ZHS+mdWOIOv+pw9Dv+fJWTAe1FYlpey
-	aZms9l3QNdGWgxU67Tz/+F0U19FlsAQ=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: Jim Mattson <jmattson@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Sean Christopherson <seanjc@google.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
-	Tom Lendacky <thomas.lendacky@amd.com>, Manali Shukla <manali.shukla@amd.com>, 
-	Sohil Mehta <sohil.mehta@intel.com>, "Xin Li (Intel)" <xin@zytor.com>, linux-kernel@vger.kernel.org, 
-	kvm@vger.kernel.org
-Subject: Re: [PATCH] KVM: x86: Advertise EferLmsleUnsupported to userspace
-Message-ID: <qglalt6crrqevdpvsp25tlo3onmcuhyneft2cptwxzebj7ych5@dmk2xhsjvlgl>
-References: <20250925202937.2734175-1-jmattson@google.com>
- <byqww7zx55qgtbauqmrqzyz4vwcwojhxguqskv4oezmish6vub@iwe62secbobm>
- <CALMp9eRvf54jCrmWXH_WDZwB7KJcM3DLtPubvDibAUKj7-=yyg@mail.gmail.com>
+	s=arc-20240116; t=1759250533; c=relaxed/simple;
+	bh=jguk/JSzmwgQx5dX/LxO/aT6uGm3rPlRw2544tHroQM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZDNrM0BxBiwuDgjgsrvkcf5tzgT3WAUwsqftNQjMbLDzRmEZnk0TnojK8akBUryCZTCAeMhW+Jqwb6jTor3IVKW2fAduWWXKHVwXbZV75bKz2+DSvYsH7L9vcuijAopmnF4Ao8GJZOV2ltDYHRsztWZWDpANoK/pek+hciilNSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=UprHlYym; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1759250528;
+	bh=jguk/JSzmwgQx5dX/LxO/aT6uGm3rPlRw2544tHroQM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=UprHlYymrE1wHFS94X2ZBnAUqm9aNsgUCUOlzig/pmQXcpAZ73A3Tia1Of5aWIe/p
+	 Hg6srSyneiERMdMKwL2Y70gerM0fbtzNW/3HL7F6MAP8JfZHU6TRCVLm5OFrVNyybG
+	 DKagN9kmi2XMl3lrd9fOpVr4GPY19suaQx5YD7eZLhC/AoIRn55lPgn7URWj85tdgT
+	 FlZjWRtPVV1NbTxi3bU8xIMoqMJrDPuN8WhViUSo2Zou+lipclEuJQ0wk/BggPaGj/
+	 jxG4pvjhJDrMM7ZDNe28fy37ZyOBz6XpB8EMOasW6BybaQnWWvrspuOTSdF/c5ja3i
+	 eVBNN3HKTsNKA==
+Received: from [IPV6:2a01:e0a:5e3:6100:7aed:fe0e:8590:cbaa] (unknown [IPv6:2a01:e0a:5e3:6100:7aed:fe0e:8590:cbaa])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: loicmolinari)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 07CFC17E010B;
+	Tue, 30 Sep 2025 18:42:07 +0200 (CEST)
+Message-ID: <22680961-1a51-469a-93df-ee9a63b3fd66@collabora.com>
+Date: Tue, 30 Sep 2025 18:42:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/8] drm/gem: Introduce drm_gem_get_unmapped_area() fop
+To: Boris Brezillon <boris.brezillon@collabora.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Jani Nikula <jani.nikula@linux.intel.com>,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
+ <tursulin@ursulin.net>, Rob Herring <robh@kernel.org>,
+ Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
+ Melissa Wen <mwen@igalia.com>, =?UTF-8?Q?Ma=C3=ADra_Canal?=
+ <mcanal@igalia.com>, Hugh Dickins <hughd@google.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Al Viro
+ <viro@zeniv.linux.org.uk>, =?UTF-8?Q?Miko=C5=82aj_Wasiak?=
+ <mikolaj.wasiak@intel.com>, Christian Brauner <brauner@kernel.org>,
+ Nitin Gote <nitin.r.gote@intel.com>, Andi Shyti
+ <andi.shyti@linux.intel.com>, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+ linux-mm@kvack.org, kernel@collabora.com
+References: <20250929200316.18417-1-loic.molinari@collabora.com>
+ <20250929200316.18417-3-loic.molinari@collabora.com>
+ <20250930123003.75370854@fedora>
+ <cd9084e1-16d9-4fd6-9c64-1876d53d5225@collabora.com>
+ <20250930182920.5604ca49@fedora>
+Content-Language: fr
+From: =?UTF-8?Q?Lo=C3=AFc_Molinari?= <loic.molinari@collabora.com>
+Organization: Collabora Ltd
+In-Reply-To: <20250930182920.5604ca49@fedora>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALMp9eRvf54jCrmWXH_WDZwB7KJcM3DLtPubvDibAUKj7-=yyg@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
 
-On Tue, Sep 30, 2025 at 09:02:46AM -0700, Jim Mattson wrote:
-> On Tue, Sep 30, 2025 at 8:31 AM Yosry Ahmed <yosry.ahmed@linux.dev> wrote:
-> >
-> > On Thu, Sep 25, 2025 at 01:29:18PM -0700, Jim Mattson wrote:
-> > > CPUID.80000008H:EBX.EferLmsleUnsupported[bit 20] is a defeature
-> > > bit. When this bit is clear, EFER.LMSLE is supported. When this bit is
-> > > set, EFER.LMLSE is unsupported. KVM has never supported EFER.LMSLE, so
-> > > it cannot support a 0-setting of this bit.
-> > >
-> > > Set the bit in KVM_GET_SUPPORTED_CPUID to advertise the unavailability
-> > > of EFER.LMSLE to userspace.
-> >
-> > It seems like KVM allows setting EFER.LMSLE when nested SVM is enabled:
-> > https://elixir.bootlin.com/linux/v6.17/source/arch/x86/kvm/svm/svm.c#L5354
-> >
-> > It goes back to commit eec4b140c924 ("KVM: SVM: Allow EFER.LMSLE to be
-> > set with nested svm"), the commit log says it was needed for the SLES11
-> > version of Xen 4.0 to boot with nested SVM. Maybe that's no longer the
-> > case.
-> >
-> > Should KVM advertise EferLmsleUnsupported if it allows setting
-> > EFER.LMSLE in some cases?
+On 30/09/2025 18:29, Boris Brezillon wrote:
+> On Tue, 30 Sep 2025 18:09:37 +0200
+> Loïc Molinari <loic.molinari@collabora.com> wrote:
 > 
-> I don't think KVM should allow setting the bit if it's not going to
-> actually implement long mode segment limits. That seems like a
-> security issue. The L1 hypervisor thinks that the L2 guest will not be
-> able to access memory above the segment limit, but if there are no
-> segment limit checks, then L2 will be able to access that memory.
-
-Yeah this sounds bad.
-
-On HW that supports EFER.LMSLE we're mostly virtualizing it, but not
-entirely.
-
-On HW that doesn't support it, we're not advertising
-EferLmsleUnsupported and we allow the guest to set EFER.LMSLE, so the
-VMRUN will fail with the invalid EFER (or immediate #VMexit?), and the
-VM will crash.
-
+>> On 30/09/2025 12:30, Boris Brezillon wrote:
+>>> On Mon, 29 Sep 2025 22:03:10 +0200
+>>>
+>>> Loïc Molinari <loic.molinari@collabora.com> wrote:
+>>>> +unsigned long drm_gem_get_unmapped_area(struct file *filp, unsigned long uaddr,
+>>>> +					unsigned long len, unsigned long pgoff,
+>>>> +					unsigned long flags)
+>>>> +{
+>>>> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>>>> +	struct drm_gem_object *obj;
+>>>> +	unsigned long ret;
+>>>> +
+>>>> +	obj = drm_gem_object_lookup_from_offset(filp, pgoff, len >> PAGE_SHIFT);
+>>>> +	if (IS_ERR(obj))
+>>>> +		return mm_get_unmapped_area(current->mm, filp, uaddr, len, 0,
+>>>> +					    flags);
+>>>> +
+>>>> +	ret = shmem_get_unmapped_area(obj->filp, uaddr, len, 0, flags);
+>>>> +
+>>>> +	drm_gem_object_put(obj);
+>>>> +
+>>>> +	return ret;
+>>>> +#else
+>>>> +	return mm_get_unmapped_area(current->mm, filp, uaddr, len, 0, flags);
+>>>
+>>> Looks like the above code covers the non-THP case too, do we really need
+>>> to specialize for !CONFIG_TRANSPARENT_HUGEPAGE here?
+>>
+>> It does cover the !CONFIG_TRANSPARENT_HUGEPAGE case
+>> (shmem_get_unmapped_area() would just call and return the
+>> mm_get_unmapped_area() address) but the idea here is to avoid the GEM
+>> object lookup cost by calling mm_get_unmapped_area() directly.
 > 
-> It should be possible for KVM to implement long mode segment limits on
-> hardware that supports the feature, but offering the feature on
-> hardware that doesn't support it is infeasible.
-
-I am not sure what we can and cannot do in terms of backward
-compatibility. Ideally we'd stop allowing EFER.LMSLE completely, but
-maybe we cannot break old users like that on HW that supports
-EFER.LMSLE.
-
+> I'd expect the extra GEM lookup to be negligible compared to the overall
+> mmap() operation to be honest, but I guess if we really want to avoid
+> the overhead, we could still write it without this ifdef.
 > 
-> Do we really want to implement long mode segment limits in KVM, given
-> that modern CPUs don't support the feature?
+> 	if (!IS_ENABLED(TRANSPARENT_HUGEPAGE))
+> 		return mm_get_unmapped_area(current->mm, filp, uaddr,
+> 					    len, 0, flags);
+> 
+> 	...
+> 
+> My main concern is that shmem_get_unmapped_area() evolves with more
+> !TRANSPARENT_HUGEPAGE cases, and by calling mm_get_unmapped_area()
+> directly, we miss the opportunity to get optimizations for these cases,
+> just like we missed them by not forwarding the ->get_unmapped_area()
+> requests to the shmem layer so far.
 
-Probably not, and it causes crashes today anyway so I don't think anyone
-depends on it.
+Yes, sounds like a very good point. I'll remove the ifdef and forward to 
+the shmem layer unconditionally.
+
+>>
+>>>> +#endif
+>>>> +}
+>>>> +EXPORT_SYMBOL(drm_gem_get_unmapped_area);
+>>
+>> Loïc
+> 
+
 
