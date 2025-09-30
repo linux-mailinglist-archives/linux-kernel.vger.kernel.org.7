@@ -1,159 +1,130 @@
-Return-Path: <linux-kernel+bounces-836872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B481BAAC68
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 02:15:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D68BBAAC78
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 02:17:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE9B5189D748
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 00:16:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0E501C2ACB
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 00:17:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CF5F7DA66;
-	Tue, 30 Sep 2025 00:15:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B45F5142E83;
+	Tue, 30 Sep 2025 00:17:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="emd2ATTj"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JKQPGwXO"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D4F42AD14
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 00:15:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 727541A275
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 00:17:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759191331; cv=none; b=sgP41uEYbsAYpf0FinX3FzfobOt/2DVOLOPsr2BLNO+dTL+OqYxIyDDdpscTFZ8De3MyW9aJyQW/hLlyu91E3O+4OymkF+YaeUTBwGOQZazrl7dAb6gG/0oGBux9qScT82DCrWQG2dJvRrMA4bqDfitQVmEZ6/Icc7tzED4KkFU=
+	t=1759191444; cv=none; b=AfGUU+Bjxode4EE/d4cRvGEHCGYeFZE6s81HPTczPqiGeq0iU1acXSYJEEx7ZypjXkfrWmlHjn2UHmxqsFJSQ7kvDxC48F9ObfZndZD2v3ymdBf5JfB6wyJemoGE4qxYkSD/iIlffrF9aN6JqMZWPk7+dYgsuicd+WvoBE3icyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759191331; c=relaxed/simple;
-	bh=sr6UMLGJo6Pgq+ok7BYVRjZyCY6qu7Jt6gAbG5eSDVA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=N/S+ExIVGVHP9W2rS3o50rseoRN9cycvIJg3iJmeTsvAfE6QuyBc2sZtdjdVd5dKybfNBaOimqs3BwJzMwSUy+vArl5QOdbeAYy6q6jg/OLD6bVXxYNy05dn212jqkBU46pCk1i8at5U+XXNgAo65YRNtNMly/xHrHqUdl7t41s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=emd2ATTj; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b5527f0d39bso7400467a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 17:15:30 -0700 (PDT)
+	s=arc-20240116; t=1759191444; c=relaxed/simple;
+	bh=R0YLBiUyp3YW7yv7x28H3CgeEQEOZJr3Y+k/HoiLimQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bhtg5gzSvTS/Ehi/4/nSzB7++U+EJuEJ1U2vSOvF1DUvEgXe2UjTuwm4pSwRmMwE8EL+b/5tbB3PQFYfS41uDbc7MVoknoFQq78FTbtpLy4xhHCFCDryPyrrSTypdss7FuRWmRJ1gpfEH8Bjr/KaiegnODw6w6BvdxZDVO9KLOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JKQPGwXO; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-46e2e363118so51074265e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 17:17:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759191329; x=1759796129; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ox23JA2zqsUyi2/t9XndyvxMILNLbQxRs/c7zoz7G7s=;
-        b=emd2ATTjfJU18nD3pgBQIR5nRG+/Bgb3jVM8BU4zUR0p+BEjuWJUUFD9GC5UX5lLyg
-         bWnR6Em6EJ7vzhSIfqbSigXa8gl35BKoakTC8McQCEg4Kt1D2jKqFpi2DJicM+it4jNe
-         nOCs5b0Kkv0XIcD6OzI7yHSX0PIP9ymvgTfv0O14ws5cmKj8mpSt5isj+j15HvdmEYlT
-         qfMU2dpYnBGXT83ahlzzbqgni/2zMJJxw8bBBoVRyydE0ayFzcMHAz5rQh2po3QgruzL
-         3xFacp+ZO8q8+cJdeG0qPUL6G0k+Ga2SYEHg6n2QFU3zbkg1bb9nnychy8x+18bgX5du
-         p7pA==
+        d=linaro.org; s=google; t=1759191440; x=1759796240; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XdEC/q6le7nfUpMwS8QD1mrWIXjjaEQSmDLATI0QjFQ=;
+        b=JKQPGwXOroor2ZNT7QUdLk108fEYgFF8zdT+6rZBkktVM9+8+ZZkpiD4YWjZayfNWd
+         dL134bFsUU1pdnJBeWlHHb3tu2pP4kYYrZhR5Ln65B/coBrEQkTeG8HdzKqOheDMjNHs
+         s27ushuoRlb+r1Zt7OkzP1i2SLRuT11ux53i6pJx5WTIM2jBR76PKOaKRO3JgvQRw6MM
+         Vy5CTcSBd0nbz8oObMXCfeHZHBNBVIaeGNj2cgD4B7m4XS+B/Mshte6yxn7l0pVsXSSL
+         6EthYEs4+cGUPF++NT/8LZDhWvRask1jLmtuuKCZ2anDhkN6rKGeViJGcXs9oPLcd5Yt
+         8gFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759191329; x=1759796129;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ox23JA2zqsUyi2/t9XndyvxMILNLbQxRs/c7zoz7G7s=;
-        b=bd6lS3xoQXhUGmQu7rU2Sa9UWtVAWcf2AQau4U0uGOMtJSKdNLpce+qDNcZmwxtU79
-         eYu7TRacRgPu5UZs+ArZn+ahOdGbmQIbIOIQaLdu5nkmcmRv1gpciIPtO311Jhc1LWTL
-         AoV20q7ysOT6kskGGJDsqjJ1k5sSLKhf6LdroVSBn+pNPh2XQd3Jqpg7JgOwz93NnPCs
-         ufwh8EYL8CiglkbSqdngMS61oizCDbfL064yyG2RjTNuX287r3doBF15zGYoDc2RQj4Y
-         5jbFzoU+B6foZuXHcwSY6cDLcp54VPyiZmt+nlG/y4HkBwOGNjpvJm6z94s3X+2JRpQt
-         JtYw==
-X-Forwarded-Encrypted: i=1; AJvYcCUDO/T06smUB6lX9qe3XcQK4UApBWYocDhKj/ZsVXat8FhO2+Ass0zXUHx3foQs1I3+No4HA3gQJ01XzfU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzR26QzJMrCUl6VrNS08aw/VxJ+MdFV0LObJMirXlSeKJcLLv9y
-	L12e0o9gxzbopDOfVzUqu2xe6MpV/Qd9fXaPMIV2TEjPXuJxNTq+kAWiVGH374eqnhBtHHvXc3P
-	3JeJ1OA==
-X-Google-Smtp-Source: AGHT+IEFB/zG6X5Vwil/d0GOFdZHYb1u1iQ7uAb3bb7Tiu+dE5P39o8vxvoXqh2MYMb/EqQzi/NW9xaIb3g=
-X-Received: from pjbci3.prod.google.com ([2002:a17:90a:fc83:b0:330:62e1:cda6])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:380f:b0:32e:32e4:9789
- with SMTP id 98e67ed59e1d1-3342a257486mr20862154a91.3.1759191329558; Mon, 29
- Sep 2025 17:15:29 -0700 (PDT)
-Date: Mon, 29 Sep 2025 17:15:28 -0700
-In-Reply-To: <aNq6Hz8U0BtjlgQn@google.com>
+        d=1e100.net; s=20230601; t=1759191440; x=1759796240;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XdEC/q6le7nfUpMwS8QD1mrWIXjjaEQSmDLATI0QjFQ=;
+        b=aqPAOYvuf1vXaYAK8+wZSOyIRK2SIuhlC3lgTYsJs1Ry09B3AlJm2Crb/IURU7eAFR
+         qTSId13JuQJervAXhMwZzq96669ZOROhgxXIroxMSL93aAiQWbDRhfNPhSCSfKZ9IYZ+
+         lOSGYB1ex6LL+wRANpjGLtBcUWnUxGIyW9g/YB2H+tQdZN9cWk+/r6bYYctmGbpzCV1K
+         EnsP14NUPGFyQLXYvjLr4Ee8XKAOoFowTS0/nKWeHqSlRuJCmUXohG6+PtIxJPlUudcF
+         Ub1EetTrLgozwSGG2qq3RHZjGYehF99maYN4Yi8HWYKwndscAP7uYrHXHfCIbaZ7H0vU
+         f0dg==
+X-Forwarded-Encrypted: i=1; AJvYcCWtEFycNom/zP0kXmgjwfZqmrUtxzPwFWojXnrTegMsf8eLYrrFN1ydCSDIEz/cjw+amfHV0SvIIaZrPNU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAv2a1X85r1fWmvxZTnecn4YX5/R6zDCO2zn2XucArfTTga6aE
+	A4jASLbjN6Lqszs6txlmz/ZIN/L1xC1uJ3zFYOjJH8SOfmGBQy3tDCBG+nFuwwNc+e8=
+X-Gm-Gg: ASbGncvrYoQWcdYvGVqoi/x4NFm64pPLRPkeW+CWy2QhMEc37ICqxoqg+sJz+l3oUKI
+	xev5B47atPsnLc66HubDeglc0eHD1n+vvzPod23N45R7Swg6ot4IHO75gax8ogzW9SJpaTvbO5y
+	4bd1m1qOnPhwjvNXNlKodE5GvHecA1ECKbyTUR3pvnY3H/J8ri8i49ISD9eL1qUnFfn6a3LiS3H
+	03pR5sbgeObpl/N09FTHCI9ou+cKxWkFGKJolFqf6SRShDQHcXV/k35IKkM0mb1C8kzQuimGLXf
+	paB/9VzSd2Xfqm+qkX/7+YgOJcPtPaEcIS3CVZ2E0ZoeF5FzarhMLPE9mWSBrM93Dc1LFpZdiBu
+	ayTtdUDSd95CPT0D61JiWxA4mogdrgG5Zj5rewTBq2IjqTG96PWdbtmVzqW0IxfhFnp0dVcQkWf
+	JlcB39bRLQAnwgDqYeo1wqBac60MBjt3c=
+X-Google-Smtp-Source: AGHT+IF1NvJ6A8YUVxkdRJkfeGyVldxLeh1qdvb50sqvC4KYOgmP95PhemeRL1E+WA4Xb6qkHy3wsw==
+X-Received: by 2002:a05:600c:1d06:b0:45b:9912:9f30 with SMTP id 5b1f17b1804b1-46e329a0d0amr156323085e9.6.1759191439753;
+        Mon, 29 Sep 2025 17:17:19 -0700 (PDT)
+Received: from [192.168.0.19] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e2a996e2fsm266744585e9.2.2025.09.29.17.17.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 29 Sep 2025 17:17:19 -0700 (PDT)
+Message-ID: <3594bbc8-b063-4472-a294-117582f063dd@linaro.org>
+Date: Tue, 30 Sep 2025 01:17:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250926163114.2626257-1-seanjc@google.com> <20250926163114.2626257-2-seanjc@google.com>
- <CA+EHjTzdX8+MbsYOHAJn6Gkayfei-jE6Q_5HfZhnfwnMijmucw@mail.gmail.com>
- <diqz7bxh386h.fsf@google.com> <a4976f04-959d-48ae-9815-d192365bdcc6@linux.dev>
- <d2fa49af-112b-4de9-8c03-5f38618b1e57@redhat.com> <diqz4isl351g.fsf@google.com>
- <aNq6Hz8U0BtjlgQn@google.com>
-Message-ID: <aNshILzpjAS-bUL5@google.com>
-Subject: Re: [PATCH 1/6] KVM: guest_memfd: Add DEFAULT_SHARED flag, reject
- user page faults if not set
-From: Sean Christopherson <seanjc@google.com>
-To: Ackerley Tng <ackerleytng@google.com>
-Cc: David Hildenbrand <david@redhat.com>, Patrick Roy <patrick.roy@linux.dev>, 
-	Fuad Tabba <tabba@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
-	Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Nikita Kalyazin <kalyazin@amazon.co.uk>, shivankg@amd.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 03/17] media: dt-bindings: add rockchip px30 vip
+To: michael.riesch@collabora.com, Mehdi Djait <mehdi.djait@linux.intel.com>,
+ Maxime Chevallier <maxime.chevallier@bootlin.com>,
+ =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Gerald Loacker <gerald.loacker@wolfvision.net>,
+ Markus Elfring <Markus.Elfring@web.de>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring
+ <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Kever Yang <kever.yang@rock-chips.com>,
+ Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Collabora Kernel Team <kernel@collabora.com>,
+ Paul Kocialkowski <paulk@sys-base.io>,
+ Alexander Shiyan <eagle.alexander923@gmail.com>,
+ Val Packett <val@packett.cool>, Rob Herring <robh@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, Mehdi Djait <mehdi.djait@bootlin.com>
+References: <20240220-rk3568-vicap-v11-0-af0eada54e5d@collabora.com>
+ <20240220-rk3568-vicap-v11-3-af0eada54e5d@collabora.com>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Content-Language: en-US
+In-Reply-To: <20240220-rk3568-vicap-v11-3-af0eada54e5d@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 29, 2025, Sean Christopherson wrote:
-> On Mon, Sep 29, 2025, Ackerley Tng wrote:
-> > David Hildenbrand <david@redhat.com> writes:
-> > 
-> > >                           GUEST_MEMFD_FLAG_DEFAULT_SHARED;
-> > >>>>
-> > >>>> At least for now, GUEST_MEMFD_FLAG_DEFAULT_SHARED and
-> > >>>> GUEST_MEMFD_FLAG_MMAP don't make sense without each other. Is it worth
-> > >>>> checking for that, at least until we have in-place conversion? Having
-> > >>>> only GUEST_MEMFD_FLAG_DEFAULT_SHARED set, but GUEST_MEMFD_FLAG_MMAP,
-> > >>>> isn't a useful combination.
-> > >>>>
-> > >>>
-> > >>> I think it's okay to have the two flags be orthogonal from the start.
-> > >> 
-> > >> I think I dimly remember someone at one of the guest_memfd syncs
-> > >> bringing up a usecase for having a VMA even if all memory is private,
-> > >> not for faulting anything in, but to do madvise or something? Maybe it
-> > >> was the NUMA stuff? (+Shivank)
-> > >
-> > > Yes, that should be it. But we're never faulting in these pages, we only 
-> > > need the VMA (for the time being, until there is the in-place conversion).
-> > >
-> > 
-> > Yup, Sean's patch disables faulting if GUEST_MEMFD_FLAG_DEFAULT_SHARED
-> > is not set, but mmap() is always enabled so madvise() still works.
-> 
-> Hah!  I totally intended that :-D
-> 
-> > Requiring GUEST_MEMFD_FLAG_DEFAULT_SHARED to be set together with
-> > GUEST_MEMFD_FLAG_MMAP would still allow madvise() to work since
-> > GUEST_MEMFD_FLAG_DEFAULT_SHARED only gates faulting.
-> > 
-> > To clarify, I'm still for making GUEST_MEMFD_FLAG_DEFAULT_SHARED
-> > orthogonal to GUEST_MEMFD_FLAG_MMAP with no additional checks on top of
-> > whatever's in this patch. :)
+On 17/09/2025 16:38, Michael Riesch via B4 Relay wrote:
+> +                enum: [5, 6]
 
-Oh!  This got me looking at kvm_arch_supports_gmem_mmap() and thus
-KVM_CAP_GUEST_MEMFD_MMAP.  Two things:
+Not required but nice to have is a comment like:
 
- 1. We should change KVM_CAP_GUEST_MEMFD_MMAP into KVM_CAP_GUEST_MEMFD_FLAGS so
-    that we don't need to add a capability every time a new flag comes along,
-    and so that userspace can gather all flags in a single ioctl.  If gmem ever
-    supports more than 32 flags, we'll need KVM_CAP_GUEST_MEMFD_FLAGS2, but
-    that's a non-issue relatively speaking.
+enum:
+   - 5 # MEDIA_BUS_TYPE_PARALLEL
+   - 6 # MEDIA_BUS_TYPE_BT656
 
- 2. We should allow mmap() for x86 CoCo VMs right away.  As evidenced by this
-    series, mmap() on private memory is totally fine.  It's not useful until the
-    NUMA and/or in-place conversion support comes along, but's not dangerous in
-    any way.  The actual restriction is on initializing memory to be shared,
-    because allowing memory to be shared from gmem's perspective while it's
-    private from the VM's perspective would be all kinds of broken.
+Just for the sake of a reviewer.
 
+Either way
 
-E.g. with a s/kvm_arch_supports_gmem_mmap/kvm_arch_supports_gmem_init_shared:
-
-	case KVM_CAP_GUEST_MEMFD_FLAGS:
-		if (!kvm || kvm_arch_supports_init_shared(kvm))
-			return GUEST_MEMFD_FLAG_MMAP |
-			       GUEST_MEMFD_FLAG_INIT_SHARED;
-
-		return GUEST_MEMFD_FLAG_MMAP;
-
-#2 is also a good reason to add INIT_SHARED straightaway.  Without INIT_SHARED,
-we'd have to INIT_PRIVATE to make the NUMA support useful for x86 CoCo VMs, i.e.
-it's not just in-place conversion that's affected, IIUC.
-
-I'll add this in v2.
+Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
