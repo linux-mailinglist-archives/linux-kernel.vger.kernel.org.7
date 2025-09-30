@@ -1,163 +1,149 @@
-Return-Path: <linux-kernel+bounces-837569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AC50BACA24
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 13:07:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77014BACAC7
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 13:25:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 454653C82B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 11:07:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE8893B06CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 11:25:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEF65221557;
-	Tue, 30 Sep 2025 11:07:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="lDBqNEjJ"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AEB52F5A11;
+	Tue, 30 Sep 2025 11:25:07 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9EDC2206BB
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 11:07:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C29C1D8A10;
+	Tue, 30 Sep 2025 11:25:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759230452; cv=none; b=J8KMdUZn1tcarurnGVOLIxHcJPig1Ip7gepYGvbl9QkClizWXXk7/CQxblp1dH1pL6gT4ebg2yY7GKarfTCcXZJFX5anyCQ6hvcqMtT6DDnQaq0szXsswDg6pUM1ivIy9Fm6tQLgnlAB3vRV8dJltxUxYKGAj0/1ZCOYi1u6vs4=
+	t=1759231506; cv=none; b=B/NPH4vV9HWFx1q3E8Vwokmfe3lBWLgfTKnmc3GhIkKQOMG1DjBRm3ks0ixWnZalI5188/zpMiPhS24PrCEuVDy+fPqb8rh7GdaDkecEDMJFlwkt4KFO20r946rhwnxsfu+9Jc+JUKESrToFYfvI7FGET7dSVuq+X85PdQjkX7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759230452; c=relaxed/simple;
-	bh=OP1/MRJAfGMICp4RtAI/1z/ZBhQNXHTuF87jjGT2mss=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OofnlATFN1tteWElR9AqXgdHpBcIGUVhEEdo4Te5ih0ROatsRT06jiR2kfp3dRtmUbDNmy5JyKHYRF5j00Z2VmU/ReSqLZPrqErJF5YiU8S70/p+sf2l+S8cXTvUm/Wnuiqy7fGW5bBUU+Chqa4c+knKkHQrY5sGx7qQ1QGR6vk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=lDBqNEjJ; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-782a77b5ec7so2274650b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 04:07:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1759230449; x=1759835249; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IkAq8j18aL2m0KrsrtmHKA5G3346lqjQLn5RjuIphwk=;
-        b=lDBqNEjJfI102mHcLzzJLlnMqBOpRRDe7L8uSk1olAbleAV90awXRexuQlmqc4dnSI
-         Tmj9+XZGITvivMax+P1/CwcI2MZjyOwVk+l/x5CnaRANUwKKF7/0RC2QY+6g1SHoCIxs
-         kaOaQN8f/SjFITaITrPEJISzfOPP/cLVWAaQLjgQiKTn2E6tSA95M/2HZZIzNx7z3dGK
-         HoIxt+EmbeG9UWpa/gFhz/hr3SIXVZUBfuALoP7MC97thK/pnKlrvOqUrjXCOKpHhftF
-         dS8RSSvXOLtiiTn9zkXFphfEykV3o2QdvnnWNsQBQr2EmzcXG9YeC06PIXLn6wkUrGoD
-         fSbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759230449; x=1759835249;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IkAq8j18aL2m0KrsrtmHKA5G3346lqjQLn5RjuIphwk=;
-        b=fZiT+V/GrII5NgVlcBLKR/8tnv6nt0YOt+K58cFXbOfPSm8rJ045Z08vCEJaamCcD9
-         BDKjnb4BO3yHs/xn0mX8ZXew+fkh64XxAdU79Yr8B6y4Blk/E9ogoq8WcIFdTstEh7YK
-         +QJCtUrJN/7NNlZb2Osk6dYX/lN+ixLZminLpre8exrD5jCzBDa4tiUvzqsuidlGEE0C
-         Xscyxhk5KVsVgkOcqWXGEppT/Pgs2c7UrEpBnNloir21P+VAGRnD3y62XjtoTrtCLWus
-         hBmIfVwYeIqOT9UwDBiUFIl/vSWt66eoosLCGWzB7TzTrLDweA9tH/VDVKfge7UsEWZ5
-         M25g==
-X-Forwarded-Encrypted: i=1; AJvYcCWvTt0QmnU3pXqOdm9ZeoBbQsRraYfOaFo3pqrA4GWfPEcbWQhUwRhfG4osUwj5xv0lDtxbl2qQGh8SxXU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxO8+NdWgJJeD2S6v0hsDsWSOZBkeiNwTjgls2ziiXhAm/rGiA7
-	zNCV66q2Q+gC+5S/ROj52HcepgMo9GlfyFUTfPiCO1zWYhXP5hIXpCaOUmZWnz9POw==
-X-Gm-Gg: ASbGncvody2pQ+WT8EIznNzMhzfTcRZbOai3zFIq0JPttnTaI9qj14SfJmC+9IdIGqs
-	XiValaSvUIgOy9D7nkTNYi8wpb7rqN7Sy+5q2Bbvu3oFH/T0al2qemTgdMOVjOJiz/sYtWSIHIi
-	eXeEkBhVl2//RtUPZ5IlMm7zQYlJ9o9B0xjtrSzp0hEBxDb6Cg6MJONDVLCjU10cJkfZYqU9ulC
-	fT7InoDiMUNBX9L/ZKK3S+LJkfKkZLewCrVOTS4YRviHBWY5gWGGililzCu5/qLlghftoglrq+o
-	dEDgbQvRXNOjvjgT6xQ+uygN5G1ZsobmhfQbJCFVLUENvDn2QbE1oZ3KEEM1naA0uN6siaULop+
-	qyw3O1YHpgrtxaB+j2fhMBrHmMUKHEUerXuprfCq371nEWmbBnL0VGYl2jZAuOsxNj11iuIQr9w
-	==
-X-Google-Smtp-Source: AGHT+IG/oWvaKnxK1G0O/CtaYSug/EbLg/EXO9xECxsCPDSMqEMhqxOZVMDYHKWEEpNz0y3HKLECnA==
-X-Received: by 2002:a17:902:dace:b0:24a:fab6:d15a with SMTP id d9443c01a7336-27ed49ff533mr227833795ad.20.1759230449010;
-        Tue, 30 Sep 2025 04:07:29 -0700 (PDT)
-Received: from bytedance ([61.213.176.55])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed699cbfesm156568865ad.108.2025.09.30.04.07.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Sep 2025 04:07:28 -0700 (PDT)
-Date: Tue, 30 Sep 2025 19:07:17 +0800
-From: Aaron Lu <ziqianlu@bytedance.com>
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Valentin Schneider <vschneid@redhat.com>,
-	Ben Segall <bsegall@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Xi Wang <xii@google.com>, linux-kernel@vger.kernel.org,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
-	Chuyi Zhou <zhouchuyi@bytedance.com>,
-	Jan Kiszka <jan.kiszka@siemens.com>,
-	Florian Bezdeka <florian.bezdeka@siemens.com>,
-	Songtang Liu <liusongtang@bytedance.com>,
-	Chen Yu <yu.c.chen@intel.com>,
-	Matteo Martelli <matteo.martelli@codethink.co.uk>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: [PATCH] sched/fair: Prevent cfs_rq from being unthrottled with
- zero runtime_remaining
-Message-ID: <20250930110717.GC510@bytedance>
-References: <20250929074645.416-1-ziqianlu@bytedance.com>
- <7c93d622-49fe-4e99-8142-aed69d48aa8a@amd.com>
- <20250930075602.GA510@bytedance>
- <658734b1-b02b-4e04-8479-ed17eb42c1f2@amd.com>
+	s=arc-20240116; t=1759231506; c=relaxed/simple;
+	bh=NXRjKotQk2vAiCbWnW3c+m1O1zMOJHYM9S0J38k1EFs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XqfcvoAForWsNhvNFXwYWarlGqewYczYVj2i8HL8Splezhu2ctavpj/+n2JS661p2Za++WPzsRLSfFHXRH7Wn6B1H5ULpw4tsZYIAD3F9ejlF+vQmr0eUYKP8TuYG0JOOFXf6iyW9TGS4ZQHP01MiA4WWQZprZZUg1KNrDCWTVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cbZzP38VyzYQtrt;
+	Tue, 30 Sep 2025 19:08:01 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id E61E71A130A;
+	Tue, 30 Sep 2025 19:08:18 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgAHGWEguttoImdKBQ--.23845S3;
+	Tue, 30 Sep 2025 19:08:17 +0800 (CST)
+Message-ID: <989a25da-c1a2-4541-a1a9-42b357276437@huaweicloud.com>
+Date: Tue, 30 Sep 2025 19:08:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <658734b1-b02b-4e04-8479-ed17eb42c1f2@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] ext4: detect invalid INLINE_DATA + EXTENTS flag
+ combination
+To: Deepanshu Kartikey <kartikey406@gmail.com>
+Cc: tytso@mit.edu, adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ syzbot+038b7bf43423e132b308@syzkaller.appspotmail.com,
+ Zhang Yi <yi.zhang@huawei.com>
+References: <20250930102549.311578-1-kartikey406@gmail.com>
+Content-Language: en-US
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <20250930102549.311578-1-kartikey406@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgAHGWEguttoImdKBQ--.23845S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxJw45JrWkXw1kuw45tF4xJFb_yoW5Wry3pF
+	W5C3WDJ34vq34DuayIgr17XF1jgayrGr47XrZI9r1UZas8KFyxKF43tF47Za4kWr48u3Wj
+	vF1FkF1UCw1UArJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkab4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
+	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
+	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIccxYrVCFb41lIxkGc2Ij64vI
+	r41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr
+	1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvE
+	x4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07brmiiUUUUU=
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On Tue, Sep 30, 2025 at 02:28:16PM +0530, K Prateek Nayak wrote:
-> Hello Aaron,
+On 9/30/2025 6:25 PM, Deepanshu Kartikey wrote:
+> syzbot reported a BUG_ON in ext4_es_cache_extent() when opening a verity
+> file on a corrupted ext4 filesystem mounted without a journal.
 > 
-> On 9/30/2025 1:26 PM, Aaron Lu wrote:
-> > On Mon, Sep 29, 2025 at 03:04:03PM +0530, K Prateek Nayak wrote:
-> > ... ...
-> >> Can we instead do a check_enqueue_throttle() in enqueue_throttled_task()
-> >> if we find cfs_rq->throttled_limbo_list to be empty?
-> >>
-> >> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> >> index 18a30ae35441..fd2d4dad9c27 100644
-> >> --- a/kernel/sched/fair.c
-> >> +++ b/kernel/sched/fair.c
-> >> @@ -5872,6 +5872,8 @@ static bool enqueue_throttled_task(struct task_struct *p)
-> >>  	 */
-> >>  	if (throttled_hierarchy(cfs_rq) &&
-> >>  	    !task_current_donor(rq_of(cfs_rq), p)) {
-> >                 /*
-> >                  * Make sure to throttle this cfs_rq or it can be unthrottled
-> >                  * with no runtime_remaining and gets throttled again on its
-> >                  * unthrottle path.
-> >                  */
-> >> +		if (list_empty(&cfs_rq->throttled_limbo_list))
-> >> +			check_enqueue_throttle(cfs_rq);
-> > 
-> > BTW, do you think a comment is needed? Something like the above, not
-> > sure if it's too redundant though, feel free to let me know your
-> > thoughts, thanks.
+> The issue is that the filesystem has an inode with both the INLINE_DATA
+> and EXTENTS flags set:
 > 
-> Now that I'm looking at it again, I think we should actually do a:
+>     EXT4-fs error (device loop0): ext4_cache_extents:545: inode #15:
+>     comm syz.0.17: corrupted extent tree: lblk 0 < prev 66
 > 
->     for_each_entity(se)
->         check_enqueue_throttle(cfs_rq_of(se));
+> Investigation revealed that the inode has both flags set:
+>     DEBUG: inode 15 - flag=1, i_inline_off=164, has_inline=1, extents_flag=1
 > 
-> The reason being, we can have:
+> This is an invalid combination since an inode should have either:
+> - INLINE_DATA: data stored directly in the inode
+> - EXTENTS: data stored in extent-mapped blocks
 > 
->     root -> A (throttled) -> B -> C
+> Having both flags causes ext4_has_inline_data() to return true, skipping
+> extent tree validation in __ext4_iget(). The unvalidated out-of-order
+> extents then trigger a BUG_ON in ext4_es_cache_extent() due to integer
+> underflow when calculating hole sizes.
 > 
-> Consider B has runtime_remaining = 0, and subsequently a throttled task
-> is queued onto C. Ideally, we should start the B/W timer for B at that
-> point but we bail out after queuing it on C. Thoughts?
+> Fix this by detecting this invalid flag combination early in ext4_iget()
+> and rejecting the corrupted inode.
+> 
+> Reported-and-tested-by: syzbot+038b7bf43423e132b308@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=038b7bf43423e132b308
+> Suggested-by: Zhang Yi <yi.zhang@huawei.com>
+> Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
 
-Yes agree the B/W timer should also be considered.
+Thanks for the patch! It looks good to me.
 
-So in my original patch, cfs_rqs will (most likely) start with
-runtime_remaining == 1 and unthrottled after calling throttle_cfs_rq(),
-which will also start the B/W timer. The timer is not needed in this
-case when no cfs_rqs are actually throttled but it doesn't hurt. Looks
-like everything is OK, we do not need to do any special handling in
-enqueue_throttled_task(). Thoughts?
+Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
+
+> ---
+> Changes in v3:
+> - Fix code alignment and use existing function/line variables per Zhang Yi
+> - Keep check after ret = 0 where all inode fields are initialized, as
+>   i_inline_off gets set during inode initialization after ext4_set_inode_flags()
+> 
+> Changes in v2:
+> - Instead of adding validation in ext4_find_extent(), detect the invalid
+>   INLINE_DATA + EXTENTS flag combination in ext4_iget() as suggested by
+>   Zhang Yi to avoid redundant checks in the extent lookup path
+> ---
+>  fs/ext4/inode.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+> 
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 5b7a15db4953..5c97de5775c7 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -5445,6 +5445,15 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
+>  	}
+>  
+>  	ret = 0;
+> +	/* Detect invalid flag combination - can't have both inline data and extents */
+> +	if (ext4_test_inode_flag(inode, EXT4_INODE_INLINE_DATA) &&
+> +	    ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS)) {
+> +		ext4_error_inode(inode, function, line, 0,
+> +			"inode has both inline data and extents flags");
+> +		ret = -EFSCORRUPTED;
+> +		goto bad_inode;
+> +	}
+> +
+>  	if (ei->i_file_acl &&
+>  	    !ext4_inode_block_valid(inode, ei->i_file_acl, 1)) {
+>  		ext4_error_inode(inode, function, line, 0,
+
 
