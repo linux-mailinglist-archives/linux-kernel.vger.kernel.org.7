@@ -1,154 +1,203 @@
-Return-Path: <linux-kernel+bounces-838085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB0E6BAE65E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 21:06:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02305BAE66D
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 21:09:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C08BA188B0AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 19:06:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFAEA17CC70
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 19:09:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2267C2857CB;
-	Tue, 30 Sep 2025 19:06:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 479CD28541F;
+	Tue, 30 Sep 2025 19:09:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W2eUU7cU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="OQRbvaoQ"
+Received: from mail-pl1-f226.google.com (mail-pl1-f226.google.com [209.85.214.226])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 704B22848A7;
-	Tue, 30 Sep 2025 19:06:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C469230996
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 19:09:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.226
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759259160; cv=none; b=pnFvFPa3gXGmpG7n0k2Q2ievcdH5FtZdk8cYlAcVAPePR/q0lMLW1rACqJc2GqNUyioJ7u/O2bDVu5SQiPdYEuLKkRv7BNjIAx+MJlidB866e85nbX0Gvfnw6luwjkvBXWzl462D1WHV9rjnsv8InMIWSLFMNmmdZgkmgaK1Ma4=
+	t=1759259348; cv=none; b=Y8z3gLNnsomurvI5nJNyAjKu29BBOyaYJg6xsNKNlTO4exAs7xtXTvAEJlcLNt6nRcJStJEkqOu2D14lg3/jv7t70XmLgE6SES1VuXPJ4/NosTFOuLQzIIfWQMxx4eFXDWTCrnPvf2NhT5VqEMWlBqrmf7vv7ko4Ie0+9l07lN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759259160; c=relaxed/simple;
-	bh=WmddhDMLhlRHiSGuLiIAMMbrgljd/6gY8s8Pt0q4Wk4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fKXPV/fG7Dn9RHWAMy8Ul5WRkuyEQO+NndpG9Kn2T3ETvIJm7LPVabYr3GBPthsL4Erj9+qs2M4Mdn3NZRDh3T/qjkNoaLXJhNUyU1ntQ57q+fEZvJQScin/QUZiYWmGkB5KfxuMqkzRcNEVugmZmUzIayKv7ysPqcKTPaKzv6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W2eUU7cU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4198DC4CEF0;
-	Tue, 30 Sep 2025 19:05:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759259160;
-	bh=WmddhDMLhlRHiSGuLiIAMMbrgljd/6gY8s8Pt0q4Wk4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=W2eUU7cUXRGj+mGEOq7ooTEnMGDxfrReh3aFSELB262VQV8th2Q+CVDdoVh3JQkYw
-	 hntbAnMVU/LuRNuV7Jaozslqr4UcXHDHjtsb3UqTIji1aR0XLFTd9WHHDmouW6hhsn
-	 2LWWE89/dtvq1rK9uw1zo4HBzmSAoBk+PrHaNWPlmOwEw44Ij3Sz6SehTjol/0lZK1
-	 JOQKK28lqqqgkUc3wMPl97Nfyni3cmY74uQiogPNMJhgGLYMgtg9k/zW0FsaGMJpzb
-	 GXYFGHu2T49jOT2NkSGkmLLdOmcUToXe4hPx/FESuSErR0nO3Djmp9bMflesY/USio
-	 E/bUFOoeOAXZg==
-Date: Tue, 30 Sep 2025 20:05:56 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)..." <linux-input@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
-Subject: Re: [PATCH v2 2/2] dt-bindings: touchscreen: move ar1021.txt to
- trivial-touch.yaml
-Message-ID: <20250930-venomous-tracing-669be2e1163b@spud>
-References: <20250926184720.391335-1-Frank.Li@nxp.com>
- <20250926184720.391335-2-Frank.Li@nxp.com>
+	s=arc-20240116; t=1759259348; c=relaxed/simple;
+	bh=8byBzfuARLecV6jM7Fyl8z6QyeFuZed5n+JikteZAf4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uZ3c79prkOwvnEVlP8TFBET7DzxKXSZS8OWvU6+7ZehC5xYdlt0SZnYgLHjvX+GY+Wtp1x7wFGB3cbj5tS29BM7DiEwPwzv5Et1TNEeGFFftrMVqfw68Fh5J3dIfmMA7LSCWtxUvpEIATq43nKhTPaTl6h+2w/5SFkDBUPvAY0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=OQRbvaoQ; arc=none smtp.client-ip=209.85.214.226
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pl1-f226.google.com with SMTP id d9443c01a7336-27d3540a43fso70397885ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 12:09:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759259346; x=1759864146;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:dkim-signature:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mEfsyBIOLNFZekIuKmhiFVgQSrwSDxg84Ts1cNcrGIY=;
+        b=qWF4gddsgFFNjVU9xqDdJbGSeE6C49Z9JNE1BGkn6EkYTzVm0GjxTuaadL5Jw8Xu28
+         MV+Rwzgz8vuenhZ70M4jpEi/WUOOuQy67EoA5NftTalpK2SEcNQFbOH3X7hamoF9CtUJ
+         cfJA3gJ/PGI6gXra4xiypZ5gkHIJVlpEo2ECwz+Cg+Z2reWSBzN+zQOkiQAFsNWFrnAp
+         /+BBNNXdCvepfaG51sNxlxBRsHts/y33qZ6B+crJEmWc4Jo1n54gdAXfzDKU29g/ob4g
+         BF0Ov5v38sUxnnhR+STBZ6X6lxwVR/Sne3OcDeSXQd/Xpkwb18NeiS+yzOhVaI/xCJng
+         NooQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUqCrOu0CqKkeRvIqWKkNAvrl65jS/V9nEOCXOLsvydlu1O8Cmb0wmUM36xFGDtiHUvf9ImQlwhJqDVHFo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyw9n+ddvfy7hR9v7KmzGaDS9YyqwsIYjgYRXxLjzn03CsqDQo+
+	ArE3sxERFewscqMocKhSlmzaFgSmo9JdlgkPnNKJ7ej072gxKc5puoSvGx+R4odDyxytnNixek2
+	4FBSB7HP3CEKoyQwryYEyC6uckFYSXFGLmgLZdEyhwh1ESTSr4AKcgPXbikeeMqwVS7TbqBiN5M
+	FyyB9ilY/4y6iLPf0aWJ+kIo3/PjVjzEhVIRWTf0Is/E9y3KeX/mrf8ynFN5Np8kUx8NePdl8hx
+	ZB7ZI8hcxtsmIotOqUPj1tc
+X-Gm-Gg: ASbGncunJso0LhP2lqPmTHCUros9DOtcH/T1imVgQiM3utYdm1z+2yFkaz7oW+k812L
+	BQNB2/G6C4R5aJMSGXDz36ZyOF658roq4DkmfW9z+uWFayhO7IGqfX7ybnsf9KomVWDv0EAt8BU
+	OljOF4ajNsMlJu0SuDeS6XPR2eBd+K53vCElh36ID0XtavoUB4j92VQPnVhAtRz4l1Ah+trXLM9
+	cHxZWmW43onBqBmXLK2VzTTkEtPNiHzKr1+Fopnahc2BXKRKv9dEELyPpceUjjEunWIwCpaLJkp
+	hKGblVBzMw2EHIIwwfuLe2BvO+EJJWqhL84ccCy+k2gQyjVH9iZbyOKpOunCSgroSWc8l/148LE
+	4DJ240/EXLdIKEOoJGZsLMtrN83e3Gy4Q82LQCNASQw1hfXvR2mmUbhfq1IcsEPOaDJHuEsZ7jV
+	au+WOmOJBJdioL
+X-Google-Smtp-Source: AGHT+IGAj+pI82R8X9tdS6//DSBmyd8Y03gpGJ+vkq+SJgLaTZbYDa+rAzSBLqeC6ZrDvMHW/AoqsjcJ9UJJ
+X-Received: by 2002:a17:902:ea0f:b0:28d:1815:6382 with SMTP id d9443c01a7336-28e7f444496mr9682095ad.46.1759259346148;
+        Tue, 30 Sep 2025 12:09:06 -0700 (PDT)
+Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-101.dlp.protect.broadcom.com. [144.49.247.101])
+        by smtp-relay.gmail.com with ESMTPS id d9443c01a7336-28e802d825dsm193095ad.52.2025.09.30.12.09.05
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Sep 2025 12:09:06 -0700 (PDT)
+X-Relaying-Domain: broadcom.com
+X-CFilter-Loop: Reflected
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-33428befb83so7115693a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 12:09:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1759259344; x=1759864144; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=mEfsyBIOLNFZekIuKmhiFVgQSrwSDxg84Ts1cNcrGIY=;
+        b=OQRbvaoQsJvxfH38ClbS6SmZ4WVMbXa17LQoRRvb6ro9EAqJiEIAlDlaInUIUHHq8a
+         xDb0clGurBmQtBR8MWFBCDk1DEh12pYbu4qIGS8dNUextYJ7s0uRc+WcLad7W+LAt3Vi
+         kHrLHJfCtEazLIaBAenRr1u26LrAZ6cklWKpc=
+X-Forwarded-Encrypted: i=1; AJvYcCXR00fK2yOA2uyZI9s3xGkmk+d0t1v4qiuYqRiV1kjjwkOWoRttcrna3PHDCdFNp++evRVq7Uv1ORWDcEw=@vger.kernel.org
+X-Received: by 2002:a17:90b:3a92:b0:334:29f0:a7e4 with SMTP id 98e67ed59e1d1-339a6f36cbamr634145a91.21.1759259344351;
+        Tue, 30 Sep 2025 12:09:04 -0700 (PDT)
+X-Received: by 2002:a17:90b:3a92:b0:334:29f0:a7e4 with SMTP id 98e67ed59e1d1-339a6f36cbamr634109a91.21.1759259343918;
+        Tue, 30 Sep 2025 12:09:03 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-339a6ebe5f2sm297610a91.11.2025.09.30.12.09.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Sep 2025 12:09:02 -0700 (PDT)
+Message-ID: <1bb0f2f9-d3fa-42af-aa55-e9f0771ed5be@broadcom.com>
+Date: Tue, 30 Sep 2025 12:09:01 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="nfQSaJ5LsA5jl7n8"
-Content-Disposition: inline
-In-Reply-To: <20250926184720.391335-2-Frank.Li@nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: hwlock: Adding brcmstb-hwspinlock
+ support
+To: Conor Dooley <conor@kernel.org>, Kamal Dasu <kamal.dasu@broadcom.com>
+Cc: bcm-kernel-feedback-list@broadcom.com, andersson@kernel.org,
+ baolin.wang@linux.alibaba.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, linux-remoteproc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250929200628.3699525-1-kamal.dasu@broadcom.com>
+ <20250929200628.3699525-2-kamal.dasu@broadcom.com>
+ <20250930-slapstick-volatile-60ad540f4b66@spud>
+Content-Language: en-US, fr-FR
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20250930-slapstick-volatile-60ad540f4b66@spud>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 
+On 9/30/25 12:03, Conor Dooley wrote:
+> On Mon, Sep 29, 2025 at 04:06:24PM -0400, Kamal Dasu wrote:
+>> Adding brcmstb-hwspinlock bindings.
+>>
+>> Signed-off-by: Kamal Dasu <kamal.dasu@broadcom.com>
+>> ---
+>>   .../hwlock/brcm,brcmstb-hwspinlock.yaml       | 36 +++++++++++++++++++
+>>   1 file changed, 36 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/hwlock/brcm,brcmstb-hwspinlock.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/hwlock/brcm,brcmstb-hwspinlock.yaml b/Documentation/devicetree/bindings/hwlock/brcm,brcmstb-hwspinlock.yaml
+>> new file mode 100644
+>> index 000000000000..f45399b4fe0b
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/hwlock/brcm,brcmstb-hwspinlock.yaml
+>> @@ -0,0 +1,36 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/hwlock/brcm,brcmstb-hwspinlock.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Broadcom settop Hardware Spinlock
+>> +
+>> +maintainers:
+>> +  - Kamal Dasu <kamal.dasu@broadcom.com>
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: brcm,brcmstb-hwspinlock
+> 
+> Is "brcmstb" actually the name of a single platform?
+> Looking at the "brcmstb" pci binding, it looks like there's a whole load
+> of different devices there and none use "brcmstb":
+>            - brcm,bcm2711-pcie # The Raspberry Pi 4
+>            - brcm,bcm2712-pcie # Raspberry Pi 5
+>            - brcm,bcm4908-pcie
+>            - brcm,bcm7211-pcie # Broadcom STB version of RPi4
+>            - brcm,bcm7216-pcie # Broadcom 7216 Arm
+>            - brcm,bcm7278-pcie # Broadcom 7278 Arm
+>            - brcm,bcm7425-pcie # Broadcom 7425 MIPs
+>            - brcm,bcm7435-pcie # Broadcom 7435 MIPs
+>            - brcm,bcm7445-pcie # Broadcom 7445 Arm
+>            - brcm,bcm7712-pcie # Broadcom STB sibling of Rpi 5
+> 
+> If "stb" means "set top box", it sounds like a catchall for disparate
+> devices, which isn't permitted.
 
---nfQSaJ5LsA5jl7n8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Sep 26, 2025 at 02:47:12PM -0400, Frank Li wrote:
-> ar1021 have only reg and interrupts property beside touch common
-> properties. So move context of ar1021.txt into trivial-touch.yaml.
->=20
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
-> change in v2
->  move to trivial-touch.yaml
->=20
-> previous discussion
->     https://lore.kernel.org/imx/20250925-swimming-overspend-ddf7ab4a252c@=
-spud/T/#t
-
-You mentioned there were a load of other devices using just these 3
-properties. Do you intend moving those too?
-
-> ---
->  .../bindings/input/touchscreen/ar1021.txt         | 15 ---------------
->  .../bindings/input/touchscreen/trivial-touch.yaml |  2 ++
->  2 files changed, 2 insertions(+), 15 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/input/touchscreen/a=
-r1021.txt
->=20
-> diff --git a/Documentation/devicetree/bindings/input/touchscreen/ar1021.t=
-xt b/Documentation/devicetree/bindings/input/touchscreen/ar1021.txt
-> deleted file mode 100644
-> index 82019bd6094ee..0000000000000
-> --- a/Documentation/devicetree/bindings/input/touchscreen/ar1021.txt
-> +++ /dev/null
-> @@ -1,15 +0,0 @@
-> -* Microchip AR1020 and AR1021 touchscreen interface (I2C)
-> -
-> -Required properties:
-> -- compatible		: "microchip,ar1021-i2c"
-> -- reg			: I2C slave address
-> -- interrupts		: touch controller interrupt
-> -
-> -Example:
-> -
-> -	touchscreen@4d {
-> -		compatible =3D "microchip,ar1021-i2c";
-> -		reg =3D <0x4d>;
-> -		interrupt-parent =3D <&gpio3>;
-> -		interrupts =3D <11 IRQ_TYPE_LEVEL_HIGH>;
-> -	};
-> diff --git a/Documentation/devicetree/bindings/input/touchscreen/trivial-=
-touch.yaml b/Documentation/devicetree/bindings/input/touchscreen/trivial-to=
-uch.yaml
-> index c393cce273c5b..d6aed3afd4acb 100644
-> --- a/Documentation/devicetree/bindings/input/touchscreen/trivial-touch.y=
-aml
-> +++ b/Documentation/devicetree/bindings/input/touchscreen/trivial-touch.y=
-aml
-> @@ -14,6 +14,8 @@ properties:
->      enum:
->        # MAXI MAX11801 Resistive touch screen controller with i2c interfa=
-ce
->        - maxim,max11801
-> +      # Microchip AR1020 and AR1021 touchscreen interface (I2C)
-> +      - microchip,ar1021-i2c
-> =20
->    reg:
->      maxItems: 1
-> --=20
-> 2.34.1
->=20
-
---nfQSaJ5LsA5jl7n8
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaNwqFAAKCRB4tDGHoIJi
-0tWLAQC1n2yPqxzpGGLumm0bVK/6IxAfADZgCmHqAKwU+J4k3gD/XjOYFP6oF2YV
-soUksHK6tuNWn4eoX9th5iV5eKtlGQk=
-=7hjP
------END PGP SIGNATURE-----
-
---nfQSaJ5LsA5jl7n8--
+Unlike PCIe, the HW spinlock hardware has been stable across all Set-top 
+box chips ever since it was added, which is why the catch all is IMHO 
+adequate here.
+-- 
+Florian
 
