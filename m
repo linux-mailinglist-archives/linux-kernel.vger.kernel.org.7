@@ -1,115 +1,514 @@
-Return-Path: <linux-kernel+bounces-836961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 518C6BAAFCA
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 04:24:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D838DBAAFEC
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 04:28:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8624189BA33
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 02:25:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90BD04217D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 02:28:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66C1821B918;
-	Tue, 30 Sep 2025 02:24:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A1D123771E;
+	Tue, 30 Sep 2025 02:27:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="EQkehEii"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=iopsys.eu header.i=@iopsys.eu header.b="HR4NCknZ"
+Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11021104.outbound.protection.outlook.com [40.107.130.104])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF322940D
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 02:24:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759199090; cv=none; b=NZzKOFAOl2vXv460Ks3isqVQEps/AaoMV49A4ynlVnZEx+nMfQq1VSBs4leYM18YB9sasJbabVA9uJEgHwtr7er1J8XvGKyNmBcGI0TEekAJ2FPkWZcx+R73jqONeORg5d/ocsZzZBtgY/Fl0cENwhfZloXT0yJItgHWdjWMSX0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759199090; c=relaxed/simple;
-	bh=JOHkgl9LqBf+BFWsaX+4JXqJ6AHUlrUTGlZ73UK7P2M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UJ9XDWHiSXUtDZ8RDKyigN4nj6KZgBSyrYV5Jmm+vTGkky9htJeHqZ2cDMSX1qY+JukO1eDYYc6t0hhVai3igi1w46q3lQJ24VPkHoWVnoZaGaCyMqZL8wHyzeQWf57uNtVv79JEBmjFS6Kwijj4tmxzGo061d8LGfInsg5ZJko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=EQkehEii; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b41870fef44so159988366b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 19:24:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1759199086; x=1759803886; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=oaVj5/YycRPyG67e4RKcEIp1KOYsVMX34xHPHMeexRY=;
-        b=EQkehEiivnbOHfnSwhJg16q+Tg3z2weSwCpuO0NS7vOl0mYmeYTp+q0DeXFtpMpv4g
-         lj3PtkoMEjq6FXnPMr9m1NIhhnrzB80zt9PDhQpOoGi5c1oVN+a0RYiEWCTUwP6gInOP
-         svw5U3Xr0jKntUDCwshIRjuMfpkGuYDiFoXRM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759199086; x=1759803886;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oaVj5/YycRPyG67e4RKcEIp1KOYsVMX34xHPHMeexRY=;
-        b=m+GGQ7JysNeYX5cvMHqgUGGL1J+J0ST14kP2jspzKswod4XXM6BFKJKgKpWUOESJdo
-         Ioo0gVP/cav/7OKn+3xXiH2wHWTGvDY3ibU1qEGkDZJGGF8UXgdXI0YTJ7U64RbMryd7
-         kWGBQNNS9AN3nGmDzOWcbu+ZJ7jsniq3FNJo+lmHhd/bh6HP9pwWm3CZb0ho8HCdYEhD
-         CUIRB3LIMr8J01iCGzbyH4IC5kHtMmL8EtBOwuELoFUjMqFW5nHBtmG8jXTtKd96uCeg
-         ENobtZXqK79/4v5HVC7mq1kpGJB89I4h6fslOvOAm5EMONlwyGleRItTP70mU8ZLyj3d
-         ZNpA==
-X-Forwarded-Encrypted: i=1; AJvYcCUADnaj8OuN6yK+0VoA7KklTCghAv6jglTXD8qMk4V7HVZANU1J3xkzV02FxBI6T5alnYyfvWKYiGFzRmU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTTe7duKtGv/3rXPSr2X3v2vRbZCdKFOEI2Tca/RMB2ck72WHr
-	uI8SPzLUQr/0C5knjBUvwSSRM/lUcGorIwBdYxYqSF/S51RX+qrH2xKXXMf9wUsaMxublp5fXwo
-	3Gu4FYaJF7A==
-X-Gm-Gg: ASbGncu7BBWG6iTCKHseS14Xz6p3hXny3PI4uuD5ZqTRxPYEuRDqKj4CkDNgh+m+xbo
-	sbBcKossjGLVhyN8E1DtfUDv3nck8nQikYcHPTzDmnAVHfaXLy7TCwaaUICtGxqYLxgANAFuSdt
-	EFJEQ7Xl6x/BU4tBEtFh4TMz9GSEqeBY+WKKFcmNm7IwRL2O93cIY3ehW31BlfmwhWlNjIrN68m
-	LLBf5KkuQ/YqTXdBAc8t4n3sc0XgkTN3BPVpc3/7K6nYC5HjQzN/4HLHD6eWAsFnvGAc2LkW+sR
-	59p0L1NNddJSbbIRz9JBiu2XLHxSQ/1FNJqiRflgBZZXbLQmjTwtjEhZSoruVqk26AzILtWjpk6
-	2GAI7m+3E2tXP17DFciGoD33GlWD9MUkD82yz0aGP5ixtJtYATS+hwnUiNdmn/gjksM23vFTJUl
-	FS88f1StU=
-X-Google-Smtp-Source: AGHT+IHhbmTRtniqrKsj1JXo4uLLl2SoftsqV/SF9ZwUgcsHwy1HTDZ3spezhe3ODVBFxn174Xd9fg==
-X-Received: by 2002:a17:907:3e0d:b0:b28:b057:3958 with SMTP id a640c23a62f3a-b34be100c78mr2036912866b.48.1759199086406;
-        Mon, 29 Sep 2025 19:24:46 -0700 (PDT)
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com. [209.85.218.47])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b35446f758csm1048934066b.53.2025.09.29.19.24.45
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Sep 2025 19:24:45 -0700 (PDT)
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b07d4d24d09so1044536866b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 19:24:45 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVNhkmJtoFYy+EAiRdGD2Hl+UsUDLAz3sauEtUrSgeWd8tKrC1ZAfq6MtlTHHV/83hzVyTHNSLeiHN5Dcc=@vger.kernel.org
-X-Received: by 2002:a17:907:60c9:b0:b40:cfe9:ed35 with SMTP id
- a640c23a62f3a-b40cfe9f8aemr357751066b.39.1759199085323; Mon, 29 Sep 2025
- 19:24:45 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E008721CC4B;
+	Tue, 30 Sep 2025 02:27:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.104
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759199238; cv=fail; b=cvrJC8wBFyoOVk3KTw2FL3cmdfDFNRAm9L9keO7IBfQQ7PVANRFk7C0MFJzHkh9FzGP2Pxu2I37qbvcGV445D62gvNRCIGQqYbZrSLolN5gmcJvlaJLuJ3LSziw5D7GhhyDUIAubK40NROFpExU/8AzT+9/f6tV9D4IrTcNQaxM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759199238; c=relaxed/simple;
+	bh=+Pr5xbkYAw+q8FoItCod/+LYoOg1rinV9uKuXdBj+b8=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=FINWthpc0EntZjn0X1AIPrzrQHKms4ZnS8fqoVzdJkWt3tvLaqMyhEaTZwcyqn48YViqZX3rlm4eWP0tpcC+s7AgxyY/J9idPTNHJSFCSl+lzZFTEgl5JKjKzyKAuCAFIPfWWZ8DruNZblyv+az9jBSMhcQ0fC0GUuRxo79KtwI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iopsys.eu; spf=pass smtp.mailfrom=genexis.eu; dkim=pass (2048-bit key) header.d=iopsys.eu header.i=@iopsys.eu header.b=HR4NCknZ; arc=fail smtp.client-ip=40.107.130.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iopsys.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=genexis.eu
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=O69GaxuTbrpUvw9nDjS/fukgsYJRZdMDnoseAEKLFSrIa36LhcGYzsACIsklX3BLBDD4zj2CDr7fmUseJZBSZ+qLlLZQDzMwANtYfyesaO8yxcOcDoBK+wre2pSiOs99/BPReKOZl6hkHDlgzB8WR8mSVT0duXCGMZfRZCw5/EPQz8B2klieqB4UZwSqNHuUnJaCsxA26WSku925r4NZpATUPT3L3rJEvn9+S6QyFIe3TeyJd1KaAvDCg0SeeIDUzmN/YNTFhGU7+DRk/y+46+g0ZJWLvAabC1x3deLgzngzIA5h4iqsg0+VzZGr+dgRiaE90WMn9KkS+g9qhGcmAA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/dbTf/DY6ZielmflzT/XAFets08BCyHMCTNXAI2ZxvM=;
+ b=sZEkVGwTfjdy8pNh42fxzymOLi79mTrm/RCykO+6qkXgVfihGJw6trKImsAbsHBFhKBWNBeHvBk9umlUvAIHf7dFg2fxHIiN9gnnZT4tVO4oh7BnlITBc2gx9z9mrwa2Acc5HNAba6XkBpp9o/1Ole9qLYGL85UlERS+49H5ZKNFvtPcyUaV6gaUKGfVRwk0aAZeJJqSqg9cuul6N3x0sbdQcFAwDSM9ercK4GVbyOMfYbXKpGt3QkDDXa0U+/S12d4lXxq2wMB07b77W20PlNwF3Fi/OzzBUhKk/jfYluOSbsuZvtwDvwUhhTAk9X4amz8VNPL3JiZA6KfaatpGLQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=genexis.eu; dmarc=pass action=none header.from=iopsys.eu;
+ dkim=pass header.d=iopsys.eu; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iopsys.eu;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/dbTf/DY6ZielmflzT/XAFets08BCyHMCTNXAI2ZxvM=;
+ b=HR4NCknZgATJdVp2VUP8bNdfJtNnEmh/Jbg77xLGeHcsbp5dcQsVGh9Y/KnDsfsmT275rR1MBQgJMSv7NWYIpAXzNx/FRTrxRvCuVM3QWXwIEUBES3mMeFFIZRkmZdG6rY8y3j5Nl9aiOfzvGDnex7qexx0aUKeYyUn92bFFR/Eq2qNLNcsjwnXKLhACKz3brLtv2MfBixv1Z6R5rOTXUfgV9THjubhKrzJQ7A4EZ3SGiRzy5N4ujVpr/F8gYJ0zZ/ROT81jAnujAwyIsnazQVMBJJiPXEGgEHwjl8UhRyI3NQnBdfaNDNdSW6t0SYkhlyrrSgewFcr2M11xcvRxLw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=iopsys.eu;
+Received: from GV2PR08MB8121.eurprd08.prod.outlook.com (2603:10a6:150:7d::22)
+ by GV2PR08MB7929.eurprd08.prod.outlook.com (2603:10a6:150:ac::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.17; Tue, 30 Sep
+ 2025 02:27:05 +0000
+Received: from GV2PR08MB8121.eurprd08.prod.outlook.com
+ ([fe80::4cd3:da80:2532:daa0]) by GV2PR08MB8121.eurprd08.prod.outlook.com
+ ([fe80::4cd3:da80:2532:daa0%3]) with mapi id 15.20.9160.015; Tue, 30 Sep 2025
+ 02:27:05 +0000
+From: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+To: Lorenzo Bianconi <lorenzo@kernel.org>,
+	Ray Liu <ray.liu@airoha.com>,
+	Mark Brown <broonie@kernel.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>,
+	Andreas Gnau <andreas.gnau@iopsys.eu>
+Subject: [PATCH RESEND v5 00/13] spi: airoha: driver fixes & improvements
+Date: Tue, 30 Sep 2025 05:26:45 +0300
+Message-ID: <20250930022658.1485767-1-mikhail.kshevetskiy@iopsys.eu>
+X-Mailer: git-send-email 2.51.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: GV2PEPF00006627.SWEP280.PROD.OUTLOOK.COM
+ (2603:10a6:158:401::3cd) To GV2PR08MB8121.eurprd08.prod.outlook.com
+ (2603:10a6:150:7d::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250929093828.2714469Af2-agordeev@linux.ibm.com>
-In-Reply-To: <20250929093828.2714469Af2-agordeev@linux.ibm.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 29 Sep 2025 19:24:29 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjL1Jkr6L_fak_SDWiHZy3-KFpM9+_oG57G9zPc6yg=yg@mail.gmail.com>
-X-Gm-Features: AS18NWDnvEPAl6IWViL1lCt5VhxCXlZKT9yWZPjffZc7pmvLjRMVE8fBlk6Tj-0
-Message-ID: <CAHk-=wjL1Jkr6L_fak_SDWiHZy3-KFpM9+_oG57G9zPc6yg=yg@mail.gmail.com>
-Subject: Re: [GIT PULL] s390 updates for 6.18 merge window
-To: Alexander Gordeev <agordeev@linux.ibm.com>
-Cc: Vasily Gorbik <gor@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>, linux-s390@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: GV2PR08MB8121:EE_|GV2PR08MB7929:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6c545d14-b852-474f-afee-08ddffc8d8fb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|52116014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Tk/jITKPvawcP6krc3QVSklr+mg+Ed9ZSvz+AlaFFMEwNZkXh3s5Mi3nj0Z6?=
+ =?us-ascii?Q?F4+c02TGsFEKw8dkaUSGdHliycZQG2uL+3dCfcGidMQohnHKYTdYga91kIeC?=
+ =?us-ascii?Q?WfhwBYwG0yBPfVzB5nhyFsrXMIslm6nWBnJY014SsLNV8cf6iVsbnp4Ljb8G?=
+ =?us-ascii?Q?bj59Ps8w2qisbIhJRIkxrKDxfsuQaLRN9OBP+D0ku86p25Ceea/pbK/W0O+0?=
+ =?us-ascii?Q?0HK75lKpUmCCBruhY1ka/yA0ZcUQKtp6tUlMyYYe85CdPmGNkVx6fxgQm9qW?=
+ =?us-ascii?Q?TzOCsqL0IHP7FMnWCow1kZxIXSD7+gCykiyAdr3VlsP122LeKyeQnHKwylNI?=
+ =?us-ascii?Q?pYFwdPiVlPpNnZMuuXTqC4Td0t0RvnCsK32nZ+8BHonG9wCBR1/wMf8r94xL?=
+ =?us-ascii?Q?x7vGGIRMJgVijpPaKAfJRcLKMLYlQImoTFXzZRxCHLTu2OTaETHi+F3PCzJa?=
+ =?us-ascii?Q?ho04mVh37x7LBvT4+OPpSb/P/E+YJ8ika3ermIhEE1e6b5C+WyWcM7HoSmyj?=
+ =?us-ascii?Q?Di4uTt/mZh2xTVHgMLd/YDu15V372CI1WGO3jGjqZ+H58SgrWlZ5HVElLp6r?=
+ =?us-ascii?Q?rQqeZJbM3I9HQQGVxwpFrZh7lowa9F8fBgshIFUtwWJIufZjTDHVdwOQzx+n?=
+ =?us-ascii?Q?rRU5FwtPtBBc2Ip1LVNDCV8Ne6RMdYiQi8cIbyzFyZ3IRJZ5TFYhZOflcobF?=
+ =?us-ascii?Q?/fxk6IUTMSetk77n8TLL+brx4jIVjO31wYIiX1ze4C+Uhf7I43EIozOiad00?=
+ =?us-ascii?Q?mdDyyCWO1KHM/esx9P27yWCA8S1RUH3oqbWTX999MDSlFGH8mFYMqSMJogK7?=
+ =?us-ascii?Q?Z8Wj6GaXaYuRrClrvhYrU36TV8sIvvwZM3vAePyfLfMJNYjBCVORKmy0Njx2?=
+ =?us-ascii?Q?00JuHKVBBdvo8u6vKJX8BlD5OtAYZeb/Yx4w6d9soIcvbJACEOi1RAk45x0/?=
+ =?us-ascii?Q?GnHRhogIOvJGdEPa5XMEta0BB1QdzuhS/PhAzJyCZL51CdQ2+8LxlCcDSg8d?=
+ =?us-ascii?Q?GUkS6zYOG8kTocIPv2oCYhANkoIaTZ6+N7ot+ZaBcKt9K/dz8Y4oAEadeVNC?=
+ =?us-ascii?Q?uALT4RcXP9g5o0wXJD7P/MGQcOZllLmkmMnG0osUolR8ypLInvyezrvCz1DN?=
+ =?us-ascii?Q?st/9SSo3ExXJ8hXDwcltLGR4QhKojzTZt5DUpgbj4lEWnkcTz5X7byeP2LK5?=
+ =?us-ascii?Q?PAHrIv/246qkM7rZChrFMPgEiAL3qAdxy5ejZ411ljVSAp06lh5Ox3ZvIP4H?=
+ =?us-ascii?Q?Z1Lg0uoJNKz5EsWYAVXcNlTXP6fuxdI6+JdbtrOEB6nIA113DhTmtayO88A0?=
+ =?us-ascii?Q?eq6k/ooThqFvWXXX7VVrciXuW+0vJKe5gGUhKGa/JDHimw6ZhjihPVTYjt5M?=
+ =?us-ascii?Q?wY0Tfivh65XS/fONo8oQUydxTZ+0PBulUsHa2dFs4XPoS65DA2iXiai6ZPoy?=
+ =?us-ascii?Q?o4TaI8nLL02ZAn2rELTJndQlMSsvaM0t5JOPERMeYMMk9fAAMjjTTMXHUUMW?=
+ =?us-ascii?Q?netchuAxtrSC45FMF9JeQBbSEvNxqbBtlxPM?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR08MB8121.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(376014)(38350700014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?aAtHPtngIZ6pZ2xDWY4B75PJgsMHu60ZNqjlZGfRvdAi/0S4mrzss8kJsBpQ?=
+ =?us-ascii?Q?xZfLe332PLmeuVWM0NvUUq88FMWpZMFPcxGEILribJUN/VdozOoab3WQeaA5?=
+ =?us-ascii?Q?Ga7lCd67VWcw8a8uBWF3Csoz2XTN+SnvEBjrFavt8LUgxgrz9I/ZO+RXNIq0?=
+ =?us-ascii?Q?a9vjadlytGy5agBfazt3YvBybWo5rinZ/OJ7/jM24dk0MyIspQ8VJZkNDYFb?=
+ =?us-ascii?Q?lZ1MRTiAtFxOWt353wOR1Ysx0D4q8bcPnwojg9sjnvYzQ7YJlxlr2bH6NpOI?=
+ =?us-ascii?Q?/evhzUYZLtjaVxjkMoq2l7vHgfb0M7Qf8HCFKq606FhmxGg3C+cdfq5qCwRW?=
+ =?us-ascii?Q?v2x6CrjYE6/Kbb/5ta1JL8L71zXVK9UHw8IydZ1FlodCplDlcX9MbVIq91/j?=
+ =?us-ascii?Q?DYLvg7w7v4MRHpkv3t7/+dSkwVgU37qEwJaULvtYDrLF/ZAxWHzd3AKem8iN?=
+ =?us-ascii?Q?ns5otwzfMx9UteafTEaBmv2C21V8CqvGHpAyE5X/rZ1KwSft15RYgTh/N4RA?=
+ =?us-ascii?Q?5CPh6W3njNzKgeggJ0tKicUOsJLWnmFLHf4oLoZ6p8P+TBnIthQdv7hzKP+M?=
+ =?us-ascii?Q?nZHNbEgYtuxEhLchIP87Iul0GDyOY6dNgiNfgjpa1h1uu3HoiNALHc0bR/GG?=
+ =?us-ascii?Q?l6eUJKSiNNKv97ip8C3aoFL6F270fGwc6QqIpQVN6ypNMNhSkUEYIISRFglw?=
+ =?us-ascii?Q?iYKKP9v40ZMpinY/oA+D1qCEzGXxKdKO9jrlv8xizk7wTLC5QnEFn13OY68s?=
+ =?us-ascii?Q?Mzp1WQp0xMN7X2ykJr+r3xhSKixOhDXtYxrqlYZFi8RMp3qag2tXR7lpBIw3?=
+ =?us-ascii?Q?gHgz+JJdKoX5NqbkZXbjH1ORdsNVD82srFT2NWN+Je1aASQrWKXDGdv40z7N?=
+ =?us-ascii?Q?WxmCW/SlV6lislwCSw6YoujW/VkE1JST94A/oedpzQ+EFahBXOqSjo6eIeyk?=
+ =?us-ascii?Q?RfAbUr2g2NwJgTd6nbt2H/HqDgVRWqNIXvJiayzQBpd8M4JUhdPkSMVfnaoB?=
+ =?us-ascii?Q?LHLTwYroORnRNrrckjuAae0jnTquhJnJC5z+u3gHmtxsY5CyN5y9HStiR2pH?=
+ =?us-ascii?Q?QUGgKqbfnSNRezULV/bVtyFGgAKVHMoHr8mF/J4fBOVFVQlfV+R4G7McbeQU?=
+ =?us-ascii?Q?0YqdCysngvhVIt2kMXxInHYl0/Vi1k0/ZD7sLB9pIYXzpVEQbp5Nh2EDN6m7?=
+ =?us-ascii?Q?DGCObbnrHFJEha+tgpR8g4JHX51Ashv81jRIj+2dxUYMXSEuguSjOWFtj8hq?=
+ =?us-ascii?Q?hOyc8BqU7If0GeneEhFTTz21IzIWCDuxN4lZdtKjYQryP92UOnQ2ajuGS4a3?=
+ =?us-ascii?Q?Ab6opPSVarLlE3pXIO+YpzVuC77pAtC2RpALqspfyV5QBrj2SEMo74js5z2X?=
+ =?us-ascii?Q?KbLXqn1EZqfoIHanYwqZZVc8aElINJYI2EPZxiHSLyEtTaKlqVwVIz5PryUq?=
+ =?us-ascii?Q?QOX2oDlcQp5CFXvqaTqCcU76JWezD51cauLde2Jh7z+gotPuIrdFfUofetIt?=
+ =?us-ascii?Q?bct3GdT+8ZyCKOKgt7LsI0xPhjjQOdczYVPSN96vtsFqkdUQHAUQJ7lzVaAf?=
+ =?us-ascii?Q?IgB33mcAfoifET/dcOBFOESrHt5ENIOe0EppM5d2PfAqvnJH5ZIOjhnF21DD?=
+ =?us-ascii?Q?lTCFgDLsqphE5s6najR2LKY=3D?=
+X-OriginatorOrg: iopsys.eu
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6c545d14-b852-474f-afee-08ddffc8d8fb
+X-MS-Exchange-CrossTenant-AuthSource: GV2PR08MB8121.eurprd08.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2025 02:27:05.7965
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8d891be1-7bce-4216-9a99-bee9de02ba58
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: TP9gqGyYb7SWJNDMWLEVDGtBsAp9bGjQKq0trErb73GwIs2zuGLXyDYuHUh08h0wte0AgBcsej5AVFVHTgmvPaauNpUmXOfrazwjZqLM2q4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR08MB7929
 
-On Mon, 29 Sept 2025 at 02:38, Alexander Gordeev <agordeev@linux.ibm.com> wrote:
->
-> - Make the compiler statement attribute "assume" available with
->   a new __assume macro
+The were no any reply in almost 2 week, so resend patch series.
 
-Ahh. Interesting. I hadn't realized this existed.
+This patch series greatly improve airoha snfi driver and fix a
+number of serious bugs.
 
-It does seem like a potentially dangerous feature - you get some very
-confusing behavior if you misuse it, but looks quite useful for
-describing the results of inline asm like you do.
+Fixed bugs:
+ * Fix reading/writing of flashes with more than one plane per lun
+ * Fill the buffer with 0xff before writing
+ * Fix reading of flashes supporting continuous reading mode
+ * Fix error paths
 
-I have definitely had cases where I would have liked to tell the
-compiler that the result is already zero-extended or similar, and this
-looks good for that.
+Improvements:
+ * Add support of dual/quad wires spi modes in exec_op(). This also
+   fix flash reading/writing if dirmap can't be created.
+ * Support of dualio/quadio flash reading commands
+ * Remove dirty hack that reads flash page settings from SNFI registers
+   during driver startup
 
-           Linus
+Patched kernel tests:
+
+    root@OpenWrt:/lib/modules/6.6.79# insmod mtd_oobtest.ko dev=1
+    [  263.191711] 
+    [  263.193218] =================================================
+    [  263.199014] mtd_oobtest: MTD device: 1
+    [  263.202768] mtd_oobtest: MTD device size 268304384, eraseblock size 131072, page size 2048, count of eraseblocks 2047, pages per eraseblock 64, OOB size 128
+    [  263.216791] mtd_test: scanning for bad eraseblocks
+    [  263.221956] mtd_test: scanned 2047 eraseblocks, 0 are bad
+    [  263.227361] mtd_oobtest: test 1 of 5
+    [  265.077216] mtd_oobtest: writing OOBs of whole device
+    [  265.121767] mtd_oobtest: written up to eraseblock 0
+    [  275.174147] mtd_oobtest: written up to eraseblock 256
+    [  285.210279] mtd_oobtest: written up to eraseblock 512
+    [  295.241724] mtd_oobtest: written up to eraseblock 768
+    [  305.280167] mtd_oobtest: written up to eraseblock 1024
+    [  315.326883] mtd_oobtest: written up to eraseblock 1280
+    [  325.364049] mtd_oobtest: written up to eraseblock 1536
+    [  335.398609] mtd_oobtest: written up to eraseblock 1792
+    [  345.358981] mtd_oobtest: written 2047 eraseblocks
+    [  345.363694] mtd_oobtest: verifying all eraseblocks
+    [  345.386088] mtd_oobtest: verified up to eraseblock 0
+    [  349.830833] mtd_oobtest: verified up to eraseblock 256
+    [  354.276245] mtd_oobtest: verified up to eraseblock 512
+    [  358.721496] mtd_oobtest: verified up to eraseblock 768
+    [  363.166881] mtd_oobtest: verified up to eraseblock 1024
+    [  367.612694] mtd_oobtest: verified up to eraseblock 1280
+    [  372.058211] mtd_oobtest: verified up to eraseblock 1536
+    [  376.503820] mtd_oobtest: verified up to eraseblock 1792
+    [  380.914843] mtd_oobtest: verified 2047 eraseblocks
+    [  380.919660] mtd_oobtest: test 2 of 5
+    [  384.202620] mtd_oobtest: writing OOBs of whole device
+    [  384.247584] mtd_oobtest: written up to eraseblock 0
+    [  394.305121] mtd_oobtest: written up to eraseblock 256
+    [  404.342199] mtd_oobtest: written up to eraseblock 512
+    [  414.374204] mtd_oobtest: written up to eraseblock 768
+    [  424.409891] mtd_oobtest: written up to eraseblock 1024
+    [  434.453378] mtd_oobtest: written up to eraseblock 1280
+    [  444.494321] mtd_oobtest: written up to eraseblock 1536
+    [  454.534480] mtd_oobtest: written up to eraseblock 1792
+    [  464.490962] mtd_oobtest: written 2047 eraseblocks
+    [  464.495681] mtd_oobtest: verifying all eraseblocks
+    [  464.518015] mtd_oobtest: verified up to eraseblock 0
+    [  468.955635] mtd_oobtest: verified up to eraseblock 256
+    [  473.395502] mtd_oobtest: verified up to eraseblock 512
+    [  477.834373] mtd_oobtest: verified up to eraseblock 768
+    [  482.272717] mtd_oobtest: verified up to eraseblock 1024
+    [  486.712148] mtd_oobtest: verified up to eraseblock 1280
+    [  491.150704] mtd_oobtest: verified up to eraseblock 1536
+    [  495.589439] mtd_oobtest: verified up to eraseblock 1792
+    [  499.993138] mtd_oobtest: verified 2047 eraseblocks
+    [  499.997951] mtd_oobtest: test 3 of 5
+    [  503.404228] mtd_oobtest: writing OOBs of whole device
+    [  503.448822] mtd_oobtest: written up to eraseblock 0
+    [  513.480773] mtd_oobtest: written up to eraseblock 256
+    [  523.489361] mtd_oobtest: written up to eraseblock 512
+    [  533.506896] mtd_oobtest: written up to eraseblock 768
+    [  543.506268] mtd_oobtest: written up to eraseblock 1024
+    [  553.506503] mtd_oobtest: written up to eraseblock 1280
+    [  563.511266] mtd_oobtest: written up to eraseblock 1536
+    [  573.519567] mtd_oobtest: written up to eraseblock 1792
+    [  583.455111] mtd_oobtest: written 2047 eraseblocks
+    [  583.459837] mtd_oobtest: verifying all eraseblocks
+    [  583.499358] mtd_oobtest: verified up to eraseblock 0
+    [  592.382953] mtd_oobtest: verified up to eraseblock 256
+    [  601.267297] mtd_oobtest: verified up to eraseblock 512
+    [  610.150907] mtd_oobtest: verified up to eraseblock 768
+    [  619.034702] mtd_oobtest: verified up to eraseblock 1024
+    [  627.919683] mtd_oobtest: verified up to eraseblock 1280
+    [  636.821168] mtd_oobtest: verified up to eraseblock 1536
+    [  645.705487] mtd_oobtest: verified up to eraseblock 1792
+    [  654.520336] mtd_oobtest: verified 2047 eraseblocks
+    [  654.525134] mtd_oobtest: test 4 of 5
+    [  657.578146] mtd_oobtest: attempting to start write past end of OOB
+    [  657.584336] mtd_oobtest: an error is expected...
+    [  657.588974] mtd_oobtest: error occurred as expected
+    [  657.593848] mtd_oobtest: attempting to start read past end of OOB
+    [  657.599953] mtd_oobtest: an error is expected...
+    [  657.604569] mtd_oobtest: error occurred as expected
+    [  657.609450] mtd_oobtest: attempting to write past end of device
+    [  657.615367] mtd_oobtest: an error is expected...
+    [  657.619990] mtd_oobtest: error occurred as expected
+    [  657.624864] mtd_oobtest: attempting to read past end of device
+    [  657.630715] mtd_oobtest: an error is expected...
+    [  657.635333] mtd_oobtest: error occurred as expected
+    [  657.641043] mtd_oobtest: attempting to write past end of device
+    [  657.646966] mtd_oobtest: an error is expected...
+    [  657.651574] mtd_oobtest: error occurred as expected
+    [  657.656451] mtd_oobtest: attempting to read past end of device
+    [  657.662277] mtd_oobtest: an error is expected...
+    [  657.666901] mtd_oobtest: error occurred as expected
+    [  657.671774] mtd_oobtest: test 5 of 5
+    [  659.382333] mtd_oobtest: writing OOBs of whole device
+    [  659.388056] mtd_oobtest: written up to eraseblock 0
+    [  659.393526] mtd_oobtest: written up to eraseblock 0
+    [  659.704525] mtd_oobtest: written up to eraseblock 256
+    [  659.710187] mtd_oobtest: written up to eraseblock 256
+    [  660.021093] mtd_oobtest: written up to eraseblock 512
+    [  660.026752] mtd_oobtest: written up to eraseblock 512
+    [  660.338427] mtd_oobtest: written up to eraseblock 768
+    [  660.344048] mtd_oobtest: written up to eraseblock 768
+    [  660.655718] mtd_oobtest: written up to eraseblock 1024
+    [  660.661462] mtd_oobtest: written up to eraseblock 1024
+    [  660.970676] mtd_oobtest: written up to eraseblock 1280
+    [  660.976386] mtd_oobtest: written up to eraseblock 1280
+    [  661.286858] mtd_oobtest: written up to eraseblock 1536
+    [  661.292587] mtd_oobtest: written up to eraseblock 1536
+    [  661.605397] mtd_oobtest: written up to eraseblock 1792
+    [  661.611142] mtd_oobtest: written up to eraseblock 1792
+    [  661.918754] mtd_oobtest: written 2046 eraseblocks
+    [  661.923458] mtd_oobtest: verifying all eraseblocks
+    [  661.928812] mtd_oobtest: verified up to eraseblock 0
+    [  662.072499] mtd_oobtest: verified up to eraseblock 256
+    [  662.216152] mtd_oobtest: verified up to eraseblock 512
+    [  662.359956] mtd_oobtest: verified up to eraseblock 768
+    [  662.503238] mtd_oobtest: verified up to eraseblock 1024
+    [  662.646847] mtd_oobtest: verified up to eraseblock 1280
+    [  662.790603] mtd_oobtest: verified up to eraseblock 1536
+    [  662.934269] mtd_oobtest: verified up to eraseblock 1792
+    [  663.076329] mtd_oobtest: verified 2046 eraseblocks
+    [  663.081114] mtd_oobtest: finished with 0 errors
+    [  663.085647] =================================================
+
+    root@OpenWrt:/lib/modules/6.6.79# insmod  mtd_pagetest.ko dev=1
+    [ 1142.213082] 
+    [ 1142.214590] =================================================
+    [ 1142.220433] mtd_pagetest: MTD device: 1
+    [ 1142.224278] mtd_pagetest: MTD device size 268304384, eraseblock size 131072, page size 2048, count of eraseblocks 2047, pages per eraseblock 64, OOB size 128
+    [ 1142.238388] mtd_test: scanning for bad eraseblocks
+    [ 1142.243536] mtd_test: scanned 2047 eraseblocks, 0 are bad
+    [ 1142.248935] mtd_pagetest: erasing whole device
+    [ 1143.962562] mtd_pagetest: erased 2047 eraseblocks
+    [ 1143.967301] mtd_pagetest: writing whole device
+    [ 1144.011729] mtd_pagetest: written up to eraseblock 0
+    [ 1154.137933] mtd_pagetest: written up to eraseblock 256
+    [ 1164.265201] mtd_pagetest: written up to eraseblock 512
+    [ 1174.393365] mtd_pagetest: written up to eraseblock 768
+    [ 1184.525700] mtd_pagetest: written up to eraseblock 1024
+    [ 1194.650920] mtd_pagetest: written up to eraseblock 1280
+    [ 1204.773676] mtd_pagetest: written up to eraseblock 1536
+    [ 1214.896934] mtd_pagetest: written up to eraseblock 1792
+    [ 1224.942600] mtd_pagetest: written 2047 eraseblocks
+    [ 1224.947410] mtd_pagetest: verifying all eraseblocks
+    [ 1225.053133] mtd_pagetest: verified up to eraseblock 0
+    [ 1250.760034] mtd_pagetest: verified up to eraseblock 256
+    [ 1276.448242] mtd_pagetest: verified up to eraseblock 512
+    [ 1302.138825] mtd_pagetest: verified up to eraseblock 768
+    [ 1327.824020] mtd_pagetest: verified up to eraseblock 1024
+    [ 1353.532178] mtd_pagetest: verified up to eraseblock 1280
+    [ 1379.234385] mtd_pagetest: verified up to eraseblock 1536
+    [ 1404.943865] mtd_pagetest: verified up to eraseblock 1792
+    [ 1430.468816] mtd_pagetest: verified 2047 eraseblocks
+    [ 1430.473702] mtd_pagetest: crosstest
+    [ 1430.477717] mtd_pagetest: reading page at 0x0
+    [ 1430.482328] mtd_pagetest: reading page at 0xffdf800
+    [ 1430.487469] mtd_pagetest: reading page at 0x0
+    [ 1430.492084] mtd_pagetest: verifying pages read at 0x0 match
+    [ 1430.497668] mtd_pagetest: crosstest ok
+    [ 1430.501409] mtd_pagetest: erasecrosstest
+    [ 1430.505323] mtd_pagetest: erasing block 0
+    [ 1430.511511] mtd_pagetest: writing 1st page of block 0
+    [ 1430.517166] mtd_pagetest: reading 1st page of block 0
+    [ 1430.522505] mtd_pagetest: verifying 1st page of block 0
+    [ 1430.527739] mtd_pagetest: erasing block 0
+    [ 1430.532565] mtd_pagetest: writing 1st page of block 0
+    [ 1430.538229] mtd_pagetest: erasing block 2046
+    [ 1430.544181] mtd_pagetest: reading 1st page of block 0
+    [ 1430.549498] mtd_pagetest: verifying 1st page of block 0
+    [ 1430.554718] mtd_pagetest: erasecrosstest ok
+    [ 1430.558900] mtd_pagetest: erasetest
+    [ 1430.562381] mtd_pagetest: erasing block 0
+    [ 1430.567208] mtd_pagetest: writing 1st page of block 0
+    [ 1430.572858] mtd_pagetest: erasing block 0
+    [ 1430.577680] mtd_pagetest: reading 1st page of block 0
+    [ 1430.582990] mtd_pagetest: verifying 1st page of block 0 is all 0xff
+    [ 1430.589279] mtd_pagetest: erasetest ok
+    [ 1430.593023] mtd_pagetest: finished with 0 errors
+    [ 1430.597651] =================================================
+
+    root@OpenWrt:/lib/modules/6.6.79# insmod  mtd_readtest.ko dev=1
+    [ 1478.691648] 
+    [ 1478.693158] =================================================
+    [ 1478.698981] mtd_readtest: MTD device: 1
+    [ 1478.702829] mtd_readtest: MTD device size 268304384, eraseblock size 131072, page size 2048, count of eraseblocks 2047, pages per eraseblock 64, OOB size 128
+    [ 1478.716939] mtd_test: scanning for bad eraseblocks
+    [ 1478.722072] mtd_test: scanned 2047 eraseblocks, 0 are bad
+    [ 1478.727475] mtd_readtest: testing page read
+    [ 1548.352125] mtd_readtest: finished
+    [ 1548.355553] =================================================
+
+    root@OpenWrt:/lib/modules/6.6.79# insmod  mtd_speedtest.ko dev=1
+    [ 1617.353002] 
+    [ 1617.354511] =================================================
+    [ 1617.360332] mtd_speedtest: MTD device: 1
+    [ 1617.364258] mtd_speedtest: MTD device size 268304384, eraseblock size 131072, page size 2048, count of eraseblocks 2047, pages per eraseblock 64, OOB size 128
+    [ 1617.380150] mtd_test: scanning for bad eraseblocks
+    [ 1617.385428] mtd_test: scanned 2047 eraseblocks, 0 are bad
+    [ 1621.021861] mtd_speedtest: testing eraseblock write speed
+    [ 1700.915306] mtd_speedtest: eraseblock write speed is 3279 KiB/s
+    [ 1700.921250] mtd_speedtest: testing eraseblock read speed
+    [ 1734.931886] mtd_speedtest: eraseblock read speed is 7705 KiB/s
+    [ 1738.682742] mtd_speedtest: testing page write speed
+    [ 1818.818644] mtd_speedtest: page write speed is 3269 KiB/s
+    [ 1818.824058] mtd_speedtest: testing page read speed
+    [ 1852.913595] mtd_speedtest: page read speed is 7687 KiB/s
+    [ 1856.674492] mtd_speedtest: testing 2 page write speed
+    [ 1936.437284] mtd_speedtest: 2 page write speed is 3285 KiB/s
+    [ 1936.442869] mtd_speedtest: testing 2 page read speed
+    [ 1970.498124] mtd_speedtest: 2 page read speed is 7694 KiB/s
+    [ 1970.503624] mtd_speedtest: Testing erase speed
+    [ 1974.343389] mtd_speedtest: erase speed is 68316 KiB/s
+    [ 1974.348479] mtd_speedtest: Testing 2x multi-block erase speed
+    [ 1976.068855] mtd_speedtest: 2x multi-block erase speed is 152811 KiB/s
+    [ 1976.075309] mtd_speedtest: Testing 4x multi-block erase speed
+    [ 1977.790232] mtd_speedtest: 4x multi-block erase speed is 153301 KiB/s
+    [ 1977.796693] mtd_speedtest: Testing 8x multi-block erase speed
+    [ 1979.511905] mtd_speedtest: 8x multi-block erase speed is 153273 KiB/s
+    [ 1979.518367] mtd_speedtest: Testing 16x multi-block erase speed
+    [ 1981.230700] mtd_speedtest: 16x multi-block erase speed is 153539 KiB/s
+    [ 1981.237249] mtd_speedtest: Testing 32x multi-block erase speed
+    [ 1982.948381] mtd_speedtest: 32x multi-block erase speed is 153648 KiB/s
+    [ 1982.954918] mtd_speedtest: Testing 64x multi-block erase speed
+    [ 1984.665992] mtd_speedtest: 64x multi-block erase speed is 153655 KiB/s
+    [ 1984.672531] mtd_speedtest: finished
+    [ 1984.676054] =================================================
+
+    root@OpenWrt:/lib/modules/6.6.79# insmod mtd_stresstest.ko dev=1
+    [ 2190.651750] 
+    [ 2190.653263] =================================================
+    [ 2190.659087] mtd_stresstest: MTD device: 1
+    [ 2190.663105] mtd_stresstest: MTD device size 268304384, eraseblock size 131072, page size 2048, count of eraseblocks 2047, pages per eraseblock 64, OOB size 128
+    [ 2190.679846] mtd_test: scanning for bad eraseblocks
+    [ 2190.684981] mtd_test: scanned 2047 eraseblocks, 0 are bad
+    [ 2190.690389] mtd_stresstest: doing operations
+    [ 2190.694655] mtd_stresstest: 0 operations done
+    [ 2214.262705] mtd_stresstest: 1024 operations done
+    [ 2239.019612] mtd_stresstest: 2048 operations done
+    [ 2262.820899] mtd_stresstest: 3072 operations done
+    [ 2285.061376] mtd_stresstest: 4096 operations done
+    [ 2308.297322] mtd_stresstest: 5120 operations done
+    [ 2330.530459] mtd_stresstest: 6144 operations done
+    [ 2352.651759] mtd_stresstest: 7168 operations done
+    [ 2375.188275] mtd_stresstest: 8192 operations done
+    [ 2397.738174] mtd_stresstest: 9216 operations done
+    [ 2414.792572] mtd_stresstest: finished, 10000 operations done
+    [ 2414.798257] =================================================
+
+Speed test of original driver (with patch to fix support of flashes
+with more than one plane per lun)
+
+    root@OpenWrt:/lib/modules/6.6.79# insmod  mtd_speedtest.ko dev=1
+    [ 2894.142208] 
+    [ 2894.143719] =================================================
+    [ 2894.149556] mtd_speedtest: MTD device: 1
+    [ 2894.153486] mtd_speedtest: MTD device size 268304384, eraseblock size 131072, page size 2048, count of eraseblocks 2047, pages per eraseblock 64, OOB size 128
+    [ 2894.168888] mtd_test: scanning for bad eraseblocks
+    [ 2894.174023] mtd_test: scanned 2047 eraseblocks, 0 are bad
+    [ 2897.500416] mtd_speedtest: testing eraseblock write speed
+    [ 2977.807233] mtd_speedtest: eraseblock write speed is 3262 KiB/s
+    [ 2977.813171] mtd_speedtest: testing eraseblock read speed
+    [ 3013.906597] mtd_speedtest: eraseblock read speed is 7260 KiB/s
+    [ 3017.440320] mtd_speedtest: testing page write speed
+    [ 3097.833394] mtd_speedtest: page write speed is 3259 KiB/s
+    [ 3097.838812] mtd_speedtest: testing page read speed
+    [ 3134.004981] mtd_speedtest: page read speed is 7245 KiB/s
+    [ 3137.538423] mtd_speedtest: testing 2 page write speed
+    [ 3217.906288] mtd_speedtest: 2 page write speed is 3260 KiB/s
+    [ 3217.911883] mtd_speedtest: testing 2 page read speed
+    [ 3254.049757] mtd_speedtest: 2 page read speed is 7251 KiB/s
+    [ 3254.055254] mtd_speedtest: Testing erase speed
+    [ 3257.599146] mtd_speedtest: erase speed is 74027 KiB/s
+    [ 3257.604213] mtd_speedtest: Testing 2x multi-block erase speed
+    [ 3259.320945] mtd_speedtest: 2x multi-block erase speed is 153139 KiB/s
+    [ 3259.327413] mtd_speedtest: Testing 4x multi-block erase speed
+    [ 3261.044585] mtd_speedtest: 4x multi-block erase speed is 153098 KiB/s
+    [ 3261.051047] mtd_speedtest: Testing 8x multi-block erase speed
+    [ 3262.786520] mtd_speedtest: 8x multi-block erase speed is 151479 KiB/s
+    [ 3262.792979] mtd_speedtest: Testing 16x multi-block erase speed
+    [ 3264.509898] mtd_speedtest: 16x multi-block erase speed is 153130 KiB/s
+    [ 3264.516454] mtd_speedtest: Testing 32x multi-block erase speed
+    [ 3266.233403] mtd_speedtest: 32x multi-block erase speed is 153125 KiB/s
+    [ 3266.239961] mtd_speedtest: Testing 64x multi-block erase speed
+    [ 3267.957985] mtd_speedtest: 64x multi-block erase speed is 153029 KiB/s
+    [ 3267.964525] mtd_speedtest: finished
+    [ 3267.968039] =================================================
+
+It looks like a patched driver is a bit faster
+
+write speed: 3260 KiB/s  vs  3277 KiB/s
+read speed:  7252 KiB/s  vs  7695 KiB/s
+
+Changes v2:
+ * minor fix
+ * add comments to code
+
+Changes v3:
+ * add patch to prevent continuous reading
+
+Changes v4:
+ * removed non-needed patch, other patch was a bit updated
+ * treat zero buswidth as single wire buswidth (thanks to Jyothi Kumar Seerapu)
+ * changes were tested with linux
+ * test results was added
+
+Changes v5:
+ * reorder patches a bit
+ * improve description of some patches
+ * minor fixes & improvements
+
+Mikhail Kshevetskiy (13):
+  spi: airoha: return an error for continuous mode dirmap creation cases
+  spi: airoha: remove unnecessary restriction length
+  spi: airoha: add support of dual/quad wires spi modes to exec_op()
+    handler
+  spi: airoha: remove unnecessary switch to non-dma mode
+  spi: airoha: switch back to non-dma mode in the case of error
+  spi: airoha: fix reading/writing of flashes with more than one plane
+    per lun
+  spi: airoha: unify dirmap read/write code
+  spi: airoha: support of dualio/quadio flash reading commands
+  spi: airoha: avoid setting of page/oob sizes in REG_SPI_NFI_PAGEFMT
+  spi: airoha: reduce the number of modification of REG_SPI_NFI_CNFG and
+    REG_SPI_NFI_SECCUS_SIZE registers
+  spi: airoha: set custom sector size equal to flash page size
+  spi: airoha: avoid reading flash page settings from SNFI registers
+    during driver startup
+  spi: airoha: buffer must be 0xff-ed before writing
+
+ drivers/spi/spi-airoha-snfi.c | 510 ++++++++++++++++++----------------
+ 1 file changed, 263 insertions(+), 247 deletions(-)
+
+-- 
+2.51.0
+
 
