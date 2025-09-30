@@ -1,128 +1,170 @@
-Return-Path: <linux-kernel+bounces-836983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B58FBAB07B
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 04:37:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88889BAB088
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 04:38:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76D257A7170
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 02:35:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D92DB1924338
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 02:38:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 649FD21A425;
-	Tue, 30 Sep 2025 02:37:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B69C918859B;
+	Tue, 30 Sep 2025 02:38:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ODZXEPpP"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BaUREYG6"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A732186E2E;
-	Tue, 30 Sep 2025 02:37:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92CD9186E2E
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 02:38:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759199841; cv=none; b=MRbwPDjIXYtdWVaNM2T5H10e7q5AI0NNT4ACaoWjepXYOCyAiqziV1GChgliV5kRtzZWraWWaSyxXGX/Hgz/vVIqmN6/AJQh0W1ffcRriDIcysKQD1eRzKGmNR3+6LjLgpj7QsU7gl2L3j+qUU/a8VO3CtpbqgrSVIlTco6uyU8=
+	t=1759199901; cv=none; b=OSPnBlrkcNEiPMY4d4Q0Ud0x4VHVM7YEWRJT37MsNjRr8qWEm7oY6Rnlu6ZVU7JqC/2xK6sxcofba9gvUEWI2PapYGCkYcuQ0wRvynT+bfXQo7lIHKuLBNgqPAmvGlZzfMX8l/ybVvUR/U+6ebjz/LMCUpEjEtwQlZTbS2rV3GE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759199841; c=relaxed/simple;
-	bh=Y855UhrMJQD6VnZYZvWcROJeKAxBAa2YXhFi10Anj0c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=O1p+bE0PfPjn5tzzy/jFd/QYfB8a89qsr2KEY9aTMzSngxmSebA3ff0bVetrnu8LGTDSNwpBhX6N+867mtBo0AO61pahTsAJH89kQ3YlG8DU9rqr2UnhxSxJauFWVrIRq7OxmiWZUUF5LaMPrZy2+iuI6USJrWzcBgJY8kySpSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=ODZXEPpP; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58U1ibk6029786;
-	Tue, 30 Sep 2025 02:37:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=FhDbPV3D1MKeI9tBld/+W6DRHYWPW9SeKsHGfihwMUI=; b=
-	ODZXEPpPrHoyZ/9JbCovuPFRz2XOTcZ+XJJb8ymvwQ67w8QDNR1gbLoXWoACtFkx
-	sLsBiapUA0/BzmRpQfbmiP0XaSBfsTdwjFBd66ghJKrt1JB3dqT/nKPMb9pbEN8I
-	OGMddaqHsrG2RqSh7LQ9gvvYu4A/1M1ukEUYZGxKPITZDXThDGYdrCM4uNMF0U4L
-	3IxifQg8RWiV6o7iOS3PD6De2/YoM/m3yCJFecr1y5JM8xOG9Th3/lnwk2FeqzA+
-	6q/6UJUZAED75diqR2XmFOJO6gbuJNEy/9R0QT3ad6zYnpCrdFf10JMrOr9S3kFf
-	wdxs0J98AtseKA38jDNcwA==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 49g5ta82w3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 30 Sep 2025 02:37:06 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 58TNHjuN008099;
-	Tue, 30 Sep 2025 02:37:06 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 49e6c86ey1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 30 Sep 2025 02:37:06 +0000
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 58U2awVJ004400;
-	Tue, 30 Sep 2025 02:37:05 GMT
-Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 49e6c86eur-6;
-	Tue, 30 Sep 2025 02:37:05 +0000
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-To: alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org,
-        James.Bottomley@HansenPartnership.com,
-        Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
-Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
-        peter.wang@mediatek.com, tanghuan@vivo.com, liu.song13@zte.com.cn,
-        quic_nguyenb@quicinc.com, viro@zeniv.linux.org.uk, huobean@gmail.com,
-        adrian.hunter@intel.com, can.guo@oss.qualcomm.com, ebiggers@kernel.org,
-        neil.armstrong@linaro.org, angelogioacchino.delregno@collabora.com,
-        quic_narepall@quicinc.com, quic_mnaresh@quicinc.com,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        nitin.rawat@oss.qualcomm.com, ziqi.chen@oss.qualcomm.com
-Subject: Re: [PATCH v3] scsi: ufs: core: Fix data race in CPU latency PM QoS request handling
-Date: Mon, 29 Sep 2025 22:36:52 -0400
-Message-ID: <175917739980.3755404.731706054489200591.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250917094143.88055-1-zhongqiu.han@oss.qualcomm.com>
-References: <20250917094143.88055-1-zhongqiu.han@oss.qualcomm.com>
+	s=arc-20240116; t=1759199901; c=relaxed/simple;
+	bh=ehjgd49ctoBMPKXxoGCYDdif6tDZ783PLrpd2+SWkC4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oEXeP0319Q1e6382GOxamXlPHRyHlj+7P71t+DMfFOpasiEzN8Xdk3TCEJJLadpC0x4RFhq5sAtmFbm5LtoNeIZi5tL8oZ56ztz/ZrEKxpqWLpJX5eSPB8kzXut3w3533avfhAkzluqUeLQcP8lZ0wJUujPzGUKB5QIzl4LchfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BaUREYG6; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2897522a1dfso17678965ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 19:38:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759199899; x=1759804699; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=idpmqO+/M5+T+9HgrvHz/cjNgYorjEMLx91cVALuleo=;
+        b=BaUREYG6HCBp8nBJHxFTXjGTDEypd/dLXh7pLd4jicLgqr3tzibGju6deE586V3Qze
+         4utw8xGN02tlXxT2TDUpCtSKoIEb3vWoxbqYPs/PU/WY90HH8vBoOFd6CBsYCQQNxD34
+         YZV/EQddaLYqInIkf3MkRGBylCLa87E/7gt1XEFP7qtTuJ/glRLRadBHW2CCi/JmCIgL
+         Q5FIt6pNh8dMrJQWsSSrxOq8xWpIfSuGsGrn3d4FPcyXP3WdLq1TBR8t1D4j05fKuMUv
+         W+RfIHawD1Ie1pgOwKLQ1jS+TOIi0f+WVf9dsLMtkiYjLhRJTTFBXh8DGWjolNOI4BYX
+         Edpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759199899; x=1759804699;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=idpmqO+/M5+T+9HgrvHz/cjNgYorjEMLx91cVALuleo=;
+        b=VhFBkGXrzY3WgIrVXx68ilW052mDAX5eFAYSxMaUv7pEDskl4l8XfYqxxWEmLNyl6D
+         +NzRVCrZ91IuHA1iSGMw16Y0yxpJnUKCvq9pXV/XjNVMsC3NAw7eAFSXf+gOsd+SWF/I
+         e7FzrfWjTwhVYFQzTpeHGMyRpoVRjkoqjy/oejxC5ncyI8fc+wNwRxcvY9mwbyBkQwh2
+         BV7datChMSJZ8oK1S8hhp4CnqzXRQF8WGFnNFXHrO6axZciQOXLSvoTBUrMfroai11XL
+         JNHpIwdz4LFnVG4yC+aSA8MfA728Cy2wZb/+o6hx00QIp22EUIcOtcwFPMiAkdTvgNb6
+         K+zQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVF6iqgXx/s8j0vHuyztM7JTKSVJmwtd/mgzBynDtAjidUefaUzJA7R3hR2PJGfLdIQQSuGni2q6wmuQvA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTKAHcOSsTqjV0MIcDOzTVEnDvGbp4dQtNizY8nO+Km5S3LCkm
+	74r7qgfp4VBTMhEKGZO+6WGcAjgKpxV0lsMZaU2E/53AQtaVwMxiFUN2
+X-Gm-Gg: ASbGncvPU99+0Ch4sf4Ee4eRdrAVPy5tyN79XFF+U1LRZU9jzcqdFtpYvQZ1kPQH52S
+	y0QqvKsvz+lBCZgECHaCaG3Nj0eGZiFWgCXSjvW0JodlUdKJf6baXyQSqVsRAwEoyqZrDriZQ5V
+	UH1CH+rVwz9Gy0TJye45lrbRt+tOvtWbY67XumH2GKJrwCAUXj8BKR2/ZC4BauQEkl1P/hgD0yy
+	kU8hvHhUcyfoa6LQ+oYVMvJzwVKyw9j2Q/4cM/ERiuLw/DfJYMYJjkQs9EYhoXyBrZFBCB8eAf/
+	D+6RrElgT3Ys9RHQnwkUqtngKSUJqf6bOjyxBW7w0uefAEXUA+NaVhvEk04LeGv3+nN8v0XR8br
+	JuZiEYm94KC5G8H8zcOY5a3XTSPVO3ay1wsqUx3qZ8Qtpq16Le1aw3yxaga7hnNR0hgGXJ1M6fS
+	jhBWstQBLGfh0Rm/nLdrGL
+X-Google-Smtp-Source: AGHT+IG+tNEJhvC6KbONBG5CcwIIiSbeUCckEf11aDbSSGtQFaHXDj3dSNyzsdKDHvbHhywmREudkg==
+X-Received: by 2002:a17:902:e882:b0:269:874c:4e48 with SMTP id d9443c01a7336-27ed4a4bb09mr223205055ad.47.1759199898837;
+        Mon, 29 Sep 2025 19:38:18 -0700 (PDT)
+Received: from ti-am64x-sdk.. ([157.50.103.22])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed69bc295sm144810785ad.123.2025.09.29.19.38.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Sep 2025 19:38:18 -0700 (PDT)
+From: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
+To: mani@kernel.org,
+	kwilczynski@kernel.org,
+	kishon@kernel.org,
+	bhelgaas@google.com,
+	cassel@kernel.org,
+	Frank.Li@nxp.com,
+	dlemoal@kernel.org,
+	bhanuseshukumar@gmail.com,
+	christian.bruel@foss.st.com
+Cc: linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] PCI: endpoint: pci-epf-test: Fix sleeping function being called from atomic context
+Date: Tue, 30 Sep 2025 08:08:09 +0530
+Message-Id: <20250930023809.7931-1-bhanuseshukumar@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-29_08,2025-09-29_04,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 malwarescore=0
- mlxlogscore=999 mlxscore=0 phishscore=0 bulkscore=0 suspectscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2509150000 definitions=main-2509300021
-X-Proofpoint-GUID: eqwlNG2nbaPCieWp2-jXK0cyiePmFwmf
-X-Authority-Analysis: v=2.4 cv=HZ0ZjyE8 c=1 sm=1 tr=0 ts=68db4253 b=1 cx=c_pps
- a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=w3E3u23N8SuqHuMmXqsA:9
- a=QEXdDO2ut3YA:10 a=zZCYzV9kfG8A:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTMwMDAxMyBTYWx0ZWRfX7+1vWsVYL/eF
- ubSP80tLX2SOFDecsHyMwZbDK/UK4PHLjt86isTJndT3T9Y7StG0MWv+aESdhJhhsL3TLilL4Rz
- FjhF92hijdAfmtDt9cYi2nwKEM+/oUPZFXXbroMWixtyvA0xwaBCUxWFgSiqYBPLUJcVdBS4eR8
- 8jK80ngFGVFnw3rLGH7jc25rXxFhGSlRKMjC1v3xOD1O3Bar6U/hXaWHS/DNLffcDnTyohE0XGq
- 27bjGLorFf0Ycic3oaXWF3G4jKAOyyFF/HhpInKG+GL45kbhwGr9TFj20nw8WJv1xXK20ZYadgU
- xqKYYEvw91TetwUZOLnbc6j4tXH8jmSdv7TBPpcqmpFrMceIQxuP4x//stvD/lDyTMymfLsXnyX
- 9lBdNTYbH6PxryrhnyM9WGdUoaCL+w==
-X-Proofpoint-ORIG-GUID: eqwlNG2nbaPCieWp2-jXK0cyiePmFwmf
 
-On Wed, 17 Sep 2025 17:41:43 +0800, Zhongqiu Han wrote:
+When Root Complex(RC) triggers a Doorbell MSI interrupt to Endpoint(EP) it triggers a warning
+in the EP. pci_endpoint kselftest target is compiled and used to run the Doorbell test in RC.
 
-> The cpu_latency_qos_add/remove/update_request interfaces lack internal
-> synchronization by design, requiring the caller to ensure thread safety.
-> The current implementation relies on the `pm_qos_enabled` flag, which is
-> insufficient to prevent concurrent access and cannot serve as a proper
-> synchronization mechanism. This has led to data races and list corruption
-> issues.
-> 
-> [...]
+[  474.686193] BUG: sleeping function called from invalid context at kernel/locking/mutex.c:271
+[  474.710934] Call trace:
+[  474.710995]  __might_resched+0x130/0x158
+[  474.711011]  __might_sleep+0x70/0x88
+[  474.711023]  mutex_lock+0x2c/0x80
+[  474.711036]  pci_epc_get_msi+0x78/0xd8
+[  474.711052]  pci_epf_test_raise_irq.isra.0+0x74/0x138
+[  474.711063]  pci_epf_test_doorbell_handler+0x34/0x50
 
-Applied to 6.18/scsi-queue, thanks!
+The BUG arises because the EP's pci_epf_test_doorbell_handler is making an
+indirect call to pci_epc_get_msi, which uses mutex inside, from interrupt context.
 
-[1/1] scsi: ufs: core: Fix data race in CPU latency PM QoS request handling
-      https://git.kernel.org/mkp/scsi/c/79dde5f7dc7c
+To fix the issue convert hard irq handler to a threaded irq handler to allow it
+to call functions that can sleep during bottom half execution. Register threaded
+irq handler with IRQF_ONESHOT to keep interrupt line disabled until the threaded
+irq handler completes execution.
 
+Fixes: eff0c286aa91 ("PCI: endpoint: pci-epf-test: Add doorbell test support")
+Signed-off-by: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
+---
+ Note : It is compiled and tested on TI am642 board.
+
+ Change log. V1->V2: 
+  Trimmed Call trace to include only essential calls.
+  Used 12 digit commit ID in fixes tag.
+  Steps to reproduce the bug are removed from commit log.
+  Link to V1: https://lore.kernel.org/all/20250917161817.15776-1-bhanuseshukumar@gmail.com/
+ 	
+ Warnings can be reproduced by following steps below.
+ *On EP side:
+ 1. Configure the pci-epf-test function using steps given below
+   mount -t configfs none /sys/kernel/config
+   cd /sys/kernel/config/pci_ep/
+   mkdir functions/pci_epf_test/func1
+   echo 0x104c > functions/pci_epf_test/func1/vendorid
+   echo 0xb010 > functions/pci_epf_test/func1/deviceid
+   echo 32 > functions/pci_epf_test/func1/msi_interrupts
+   echo 2048 > functions/pci_epf_test/func1/msix_interrupts
+   ln -s functions/pci_epf_test/func1 controllers/f102000.pcie-ep/
+   echo 1 > controllers/f102000.pcie-ep/start
+
+ *On RC side:
+ 1. Once EP side configuration is done do pci rescan.
+   echo 1 > /sys/bus/pci/rescan
+ 2. Run Doorbell MSI test using pci_endpoint_test kselftest app.
+  ./pci_endpoint_test -r pcie_ep_doorbell.DOORBELL_TEST
+  Note: Kernel is compiled with CONFIG_DEBUG_KERNEL enabled.
+
+ drivers/pci/endpoint/functions/pci-epf-test.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
+index e091193bd8a8..c9e2eb930ad3 100644
+--- a/drivers/pci/endpoint/functions/pci-epf-test.c
++++ b/drivers/pci/endpoint/functions/pci-epf-test.c
+@@ -725,8 +725,8 @@ static void pci_epf_test_enable_doorbell(struct pci_epf_test *epf_test,
+ 	if (bar < BAR_0)
+ 		goto err_doorbell_cleanup;
+ 
+-	ret = request_irq(epf->db_msg[0].virq, pci_epf_test_doorbell_handler, 0,
+-			  "pci-ep-test-doorbell", epf_test);
++	ret = request_threaded_irq(epf->db_msg[0].virq, NULL, pci_epf_test_doorbell_handler,
++				   IRQF_ONESHOT, "pci-ep-test-doorbell", epf_test);
+ 	if (ret) {
+ 		dev_err(&epf->dev,
+ 			"Failed to request doorbell IRQ: %d\n",
 -- 
-Martin K. Petersen
+2.34.1
+
 
