@@ -1,136 +1,160 @@
-Return-Path: <linux-kernel+bounces-837804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E4AABAD39B
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 16:41:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9FBDBAD3A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 16:42:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78D9D3C6481
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:41:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 078C27A73FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:40:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E92062FC877;
-	Tue, 30 Sep 2025 14:40:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QxN3m+RI"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8445E2727F8
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 14:40:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 595B32441B8;
+	Tue, 30 Sep 2025 14:41:59 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07C2A72617;
+	Tue, 30 Sep 2025 14:41:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759243259; cv=none; b=f+giC6yFGGFtGqu5NOW+i87ODYCWouQQzBprYa6G/2F0h/3WniYrNg5FTsajIBlbrP5DUW4/G4N1IwzBR8/zT5r9pKQaAuralpLTAQY6N6AXDWHLzKTjN10Uszq83HCJlWo5th6dtDEjQqnMjBel0DGY9d7BD+jx3rhFPcxTFEM=
+	t=1759243319; cv=none; b=PvWslqCOeS7cC4P3UBK71xX7X6IBXczLcXAxbQVj0EETJqn4nGqtMtDpUSTEZLOPEMvLj59+iLDYjaPDYY7PSR4bSC3rIb+PPYz5dSHwKAqfj9V0Ez57HB0qjVibbhfl870VTeZSFaO73wy7LGU9O4jWNBUkmDyqqydQF63Rv1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759243259; c=relaxed/simple;
-	bh=F+e6k/MNBHHmb9WOoUe+ofU5LLqZmUIhUhBFL3KBwyE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m34hI2HXoPqvTHzaSNbuRL4gunPY4vFh+cMGm+os1+aWWdFipEkhPRffcs29+0R36VNSejEZBiJguy0QUmFy6hbiW5zONfDbcfoB7w5MAGCr+9KjvPA2GcOZK2VBfZ0De9IfrIuDK3ztwmg2cmvr86lsX/j6jpOrAuKkdF5qz4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QxN3m+RI; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759243256;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=w3djEZpptZal3epfy3wWsnTfTbCNeOqgWpzoHsn5j4A=;
-	b=QxN3m+RIe+OLSLGkp38Nws+akjiXKZFWyiE4GV3pd/XEUXMAJPkoYAozmLNV+rnqPFAczL
-	40CF8CF8cMItqZwq+N84I3BLKJF1DYxawY+cLDfaB4gCku//bw2/hlmBrnllSrKCaGTDQq
-	Da1/7i904+dciqqxcbrD8onqqS0uO0o=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-312-KW1w3w8fP7Gbe1njCs7S4w-1; Tue, 30 Sep 2025 10:40:54 -0400
-X-MC-Unique: KW1w3w8fP7Gbe1njCs7S4w-1
-X-Mimecast-MFC-AGG-ID: KW1w3w8fP7Gbe1njCs7S4w_1759243254
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-46b303f6c9cso43689835e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 07:40:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759243254; x=1759848054;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=w3djEZpptZal3epfy3wWsnTfTbCNeOqgWpzoHsn5j4A=;
-        b=Lo44/Twk/boz8FgjRVlHu+5rElbOjzUEhYR450Mh6EYfgtYXBYBc1k52j26yR+I1Fl
-         FgWOSeEFQvRGASpbTaoCB7fhOsZc8Mrwu/IYQY1QUtkKHVHZRyWDUD+/ssxpM4R44+pM
-         yLPSWbySrMJu4DeLJ7cuibzjWaNHdePwJwMxJTD+xN+xL8JjFvtSyXt2+6Qil3JcqkOW
-         RtaqPEBYXFaFvuK8EKrBQWnHJUQV0+EU/SWfXF1lYGqf1OtcYc04jGRIfI3uFM/RkqFE
-         lDEE2Wf2+RDna02gMmWDikwVKdBtU/mMgy8Cf2ZNPptB4D6abHhqGqZ6yqLGv2gfh73A
-         crTg==
-X-Forwarded-Encrypted: i=1; AJvYcCUzD9Uhpq2JG9kRy5HfqcyCXEFDhU4nCZMYKbQmJau3QalBTzw1q1gbYwLaytA6UBmdHwU5Y/OBKn/Nmto=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+hdCIYPjWobOw8gNJ6rkCuZ6xUPxiu9uz5A3bDAXZ9PTii7pG
-	+KBZ/SO9DeOIP8Em/C5mNM6iA//fluNwQG+uV5wGk7r7+VjDbA/CdgVFyW9NV9YJXF3hQDc7F5U
-	XmMRN216dT20UIed3rjzF/efjWkreBm9aXS0Hwwhp9lyZDGhkb7BIxiqMrLlcEyXb+g==
-X-Gm-Gg: ASbGncsRP+X/96wLKDHsJpuM7xZ+msD1+01vDg8LOzvf3/0I5S1oWAIEOn4yNnCTf1g
-	FPc05sYu3OIh7gtZxg/qEpg6g3qhW2ozPb9DJQNrB5/7qkrKxWFnVxAm5Qo2Gt7zrlZeqcBH0ga
-	Qq3xaNmiR2jCex+IZV6t8m57gujp1mYQnswAOlN+wiCVz5NEdsfmoYkhurRkmT4amswXnhTs5e8
-	ZMbr289b0qNroHEouEgNzSleQcRULYJxMRAGPPTxbUKw+21L4hNkG8VvQz04Rocd4yJdgaZA3xH
-	sqpdlEMtrlgBn04E5JlskDUa9Bsi4RMX3s2XR7RzzihbcUqYHcIPvIbbZgOrB+4lpYCOoQbEGA5
-	llPPNd9iweNGi+jP0mw==
-X-Received: by 2002:a05:600c:c494:b0:46d:5572:547 with SMTP id 5b1f17b1804b1-46e612beee1mr817305e9.24.1759243253623;
-        Tue, 30 Sep 2025 07:40:53 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IErtVGkx1D5l/JnuVjXkcHnUEGbSlUgRkrwSQWF/mEtPEoSRepcReln8uah8F8nah4bhRfI9w==
-X-Received: by 2002:a05:600c:c494:b0:46d:5572:547 with SMTP id 5b1f17b1804b1-46e612beee1mr817025e9.24.1759243253217;
-        Tue, 30 Sep 2025 07:40:53 -0700 (PDT)
-Received: from ?IPV6:2a0d:3344:2712:7e10:4d59:d956:544f:d65c? ([2a0d:3344:2712:7e10:4d59:d956:544f:d65c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e2ab31f1dsm270846615e9.13.2025.09.30.07.40.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Sep 2025 07:40:52 -0700 (PDT)
-Message-ID: <89ed50ab-07da-4514-b240-ed3d05400e91@redhat.com>
-Date: Tue, 30 Sep 2025 16:40:51 +0200
+	s=arc-20240116; t=1759243319; c=relaxed/simple;
+	bh=nSGaiJ3AjwZjG7r8ZW1nwQmlj571tGkuZJvQkfy7mbU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jU2HC3/XnkGtEeXtv6tvspgFGf2jfrfua8ubBFepsLE4aioc5Bwh75qbOgLo6Z5dWqdVQBPGcni7h4YlhMpKmbOxnPhEie3gcWPyhpp5a7uWtrtxwxl1QUyrGtEeEJtlADsxfpf9KBDcZA3+rR5mX0gY2u8kak2Iae5MAY1boPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1F4041424;
+	Tue, 30 Sep 2025 07:41:48 -0700 (PDT)
+Received: from localhost (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C65113F66E;
+	Tue, 30 Sep 2025 07:41:55 -0700 (PDT)
+Date: Tue, 30 Sep 2025 15:41:53 +0100
+From: Leo Yan <leo.yan@arm.com>
+To: James Clark <james.clark@linaro.org>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>, coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH v2 3/6] coresight: Repack struct etmv4_drvdata
+Message-ID: <20250930144153.GI7985@e132581.arm.com>
+References: <20250814-james-cs-syncfreq-v2-0-c76fcb87696d@linaro.org>
+ <20250814-james-cs-syncfreq-v2-3-c76fcb87696d@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 0/3] Preserve PSE PD692x0 configuration across
- reboots
-To: Kory Maincent <kory.maincent@bootlin.com>,
- Oleksij Rempel <o.rempel@pengutronix.de>, Andrew Lunn
- <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, kernel@pengutronix.de,
- Dent Project <dentproject@linuxfoundation.org>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250930-feature_pd692x0_reboot_keep_conf-v1-0-620dce7ee8a2@bootlin.com>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20250930-feature_pd692x0_reboot_keep_conf-v1-0-620dce7ee8a2@bootlin.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250814-james-cs-syncfreq-v2-3-c76fcb87696d@linaro.org>
 
-On 9/30/25 11:12 AM, Kory Maincent wrote:
-> From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
+On Thu, Aug 14, 2025 at 11:49:54AM +0100, James Clark wrote:
+> Fix holes and convert the long list of bools to single bits to save
+> some space because there's one of these for each ETM.
 > 
-> Previously, the driver would always reconfigure the PSE hardware on
-> probe, causing a port matrix reflash that resulted in temporary power
-> loss to all connected devices. This change maintains power continuity
-> by preserving existing configuration when the PSE has been previously
-> initialized.
-> 
-> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+> Signed-off-by: James Clark <james.clark@linaro.org>
 > ---
-> Kory Maincent (3):
->       net: pse-pd: pd692x0: Replace __free macro with explicit kfree calls
->       net: pse-pd: pd692x0: Separate configuration parsing from hardware setup
->       net: pse-pd: pd692x0: Preserve PSE configuration across reboots
+>  drivers/hwtracing/coresight/coresight-etm4x.h | 39 ++++++++++++++-------------
+>  1 file changed, 20 insertions(+), 19 deletions(-)
 > 
->  drivers/net/pse-pd/pd692x0.c | 155 +++++++++++++++++++++++++++++++------------
->  1 file changed, 112 insertions(+), 43 deletions(-)
+> diff --git a/drivers/hwtracing/coresight/coresight-etm4x.h b/drivers/hwtracing/coresight/coresight-etm4x.h
+> index a355a1e9606d..1c67b263b01b 100644
+> --- a/drivers/hwtracing/coresight/coresight-etm4x.h
+> +++ b/drivers/hwtracing/coresight/coresight-etm4x.h
+> @@ -1020,29 +1020,30 @@ struct etmv4_drvdata {
+>  	u8				ns_ex_level;
+>  	u8				q_support;
+>  	u8				os_lock_model;
+> -	bool				sticky_enable;
+> -	bool				boot_enable;
+> -	bool				os_unlock;
+> -	bool				instrp0;
+> -	bool				q_filt;
+> -	bool				trcbb;
+> -	bool				trccond;
+> -	bool				retstack;
+> -	bool				trccci;
+> -	bool				trc_error;
+> -	bool				syncpr;
+> -	bool				stallctl;
+> -	bool				sysstall;
+> -	bool				nooverflow;
+> -	bool				atbtrig;
+> -	bool				lpoverride;
+> +	bool				sticky_enable : 1;
+> +	bool				boot_enable : 1;
+> +	bool				os_unlock : 1;
+> +	bool				instrp0 : 1;
+> +	bool				q_filt : 1;
+> +	bool				trcbb : 1;
+> +	bool				trccond : 1;
+> +	bool				retstack : 1;
+> +	bool				trccci : 1;
+> +	bool				trc_error : 1;
+> +	bool				syncpr : 1;
+> +	bool				stallctl : 1;
+> +	bool				sysstall : 1;
+> +	bool				nooverflow : 1;
+> +	bool				atbtrig : 1;
+> +	bool				lpoverride : 1;
+> +	bool				state_needs_restore : 1;
+> +	bool				skip_power_up : 1;
+> +	bool				paused : 1;
 
-## Form letter - net-next-closed
+I used pahole to check the structure layout. It is good to see that
+bool fields are packed into single cache line (and we don't expect
+these fields to modified frequently so no concern for false sharing).
 
-The merge window for v6.18 has begun and therefore net-next is closed
-for new drivers, features, code refactoring and optimizations. We are
-currently accepting bug fixes only.
+  /* XXX 1 byte hole, try to pack */
 
-Please repost when net-next reopens after October 12th.
+  u16                        ccitmin;              /*   120     2 */
+  u8                         s_ex_level;           /*   122     1 */
+  u8                         ns_ex_level;          /*   123     1 */
+  u8                         q_support;            /*   124     1 */
+  u8                         os_lock_model;        /*   125     1 */
+  bool                       sticky_enable:1;      /*   126: 0  1 */
+  bool                       boot_enable:1;        /*   126: 1  1 */
+  bool                       os_unlock:1;          /*   126: 2  1 */
+  bool                       instrp0:1;            /*   126: 3  1 */
+  bool                       q_filt:1;             /*   126: 4  1 */
+  bool                       trcbb:1;              /*   126: 5  1 */
+  bool                       trccond:1;            /*   126: 6  1 */
+  bool                       retstack:1;           /*   126: 7  1 */
+  bool                       trccci:1;             /*   127: 0  1 */
+  bool                       trc_error:1;          /*   127: 1  1 */
+  bool                       syncpr:1;             /*   127: 2  1 */
+  bool                       stallctl:1;           /*   127: 3  1 */
+  bool                       sysstall:1;           /*   127: 4  1 */
+  bool                       nooverflow:1;         /*   127: 5  1 */
+  bool                       atbtrig:1;            /*   127: 6  1 */
+  bool                       lpoverride:1;         /*   127: 7  1 */
+  /* --- cacheline 2 boundary (128 bytes) --- */
+  bool                       state_needs_restore:1; /*   128: 0  1 */
+  bool                       skip_power_up:1;      /*   128: 1  1 */
+  bool                       paused:1;             /*   128: 2  1 */
 
-RFC patches sent for review only are obviously welcome at any time.
+Reviewed-by: Leo Yan <leo.yan@arm.com>
 
+>  	u64				trfcr;
+>  	struct etmv4_config		config;
+>  	u64				save_trfcr;
+>  	struct etmv4_save_state		*save_state;
+> -	bool				state_needs_restore;
+> -	bool				skip_power_up;
+> -	bool				paused;
+> +
+>  	DECLARE_BITMAP(arch_features, ETM4_IMPDEF_FEATURE_MAX);
+>  };
+>  
+> 
+> -- 
+> 2.34.1
+> 
 
