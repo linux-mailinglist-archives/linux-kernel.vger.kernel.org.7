@@ -1,229 +1,133 @@
-Return-Path: <linux-kernel+bounces-837478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 703FEBAC666
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:04:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E6F0BAC7B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:30:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 432084E25AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 10:04:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 050621893762
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 10:30:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6990D2F548A;
-	Tue, 30 Sep 2025 10:04:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 973E22FA0C7;
+	Tue, 30 Sep 2025 10:30:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MTCvNJVW"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="Rh6h0uEI"
+Received: from mail-m15580.qiye.163.com (mail-m15580.qiye.163.com [101.71.155.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 127122144C7;
-	Tue, 30 Sep 2025 10:04:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE33B285404;
+	Tue, 30 Sep 2025 10:30:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759226654; cv=none; b=H5HcZs2lmvENelCAhuC0MpCCvVOGjChBS6YNT/rtNNop2MP4nekCdS3gk/1OGEzEgeyieaPhHJCR0+neqLyRP6vhNN4fyclSDVMoVEtNEpdQaIBAozJR+Uv3eZu6P9KqFhKlHYPoN/GO1NGQY7lmDUYF+ECF2MeGYoQYk9dl3gc=
+	t=1759228210; cv=none; b=KTool3ggmLS8sRWwGZG/yizXPVed7IBw11cJ0YkLdCjz3GmxFPrNfOugRk+xmSsUJVyLEwqizrNHvu5f3BbvW+511Iceq+HV4APZr9FNu14StNH92Vra5iZp7ACtZzZf2uT0lIe4CUSrlwAxnkRMk1H7VaBMjhCe/UgSIRhR3mI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759226654; c=relaxed/simple;
-	bh=DMvglHJ7kBzj2N1mTPZVq+GDYz6OhworUV/akkxDMGY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xz6nVweRQ9s6QNNlSNfivQyYozW+XH+3VBaG38EY+yICOnjxSK0zVLxr5AZmzR9kSOnh0WR9Vg6opZqFAMWb5ChlRy8ShknwWiDcsSToOx69gUFRde0vlDBvoO3tpZrIqanuXREKcm8yfraKtkD+PRKfYVkNGm/F9ryYJE1FBgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MTCvNJVW; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=MWKfGHqfQoXIoK2fr1DCRttNg7EHyA3c10MmVnFnCAg=; b=MTCvNJVWJBWdqU/OOjC3FdgGUj
-	S9PS2pOsDZGrhIS/9a+YND5J88eADzGtxSWVvcA6Wsn0e/5M4jhPP+6I6+2BcS/+uMP5xpzMUydhJ
-	ytAGsrd3YGFfj1dDkK8Z6PFftkOzZFsZ4Jrak8NkDKTv8XNT4hrKbb9HDEFZrU7gv0l5uBlb7Ce/H
-	uQ02gzpHBuasGSJLVXmsifPugnt/bFZUGE6QtKMe4YI28R22olde3vgZ/l+PpGTjvjjof7m/5s35q
-	Nuu8pY44EpRfS8UcSLYvEETcuGS7fVJlfAY8jbjRtrqiw5cNX1s5ZMO/MWmTNQ37r82UtV6U02nBi
-	XA97nfbg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v3XDI-00000009k3g-2ECK;
-	Tue, 30 Sep 2025 10:04:05 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 3AE8B300220; Tue, 30 Sep 2025 12:04:04 +0200 (CEST)
-Date: Tue, 30 Sep 2025 12:04:04 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: =?iso-8859-1?Q?J=FCrgen_Gro=DF?= <jgross@suse.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
-	virtualization@lists.linux.dev, xin@zytor.com,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Ajay Kaher <ajay.kaher@broadcom.com>,
-	Alexey Makhalov <alexey.makhalov@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	xen-devel@lists.xenproject.org
-Subject: Re: [PATCH v2 11/12] x86/paravirt: Don't use pv_ops vector for MSR
- access functions
-Message-ID: <20250930100404.GK4067720@noisy.programming.kicks-ass.net>
-References: <20250930070356.30695-1-jgross@suse.com>
- <20250930070356.30695-12-jgross@suse.com>
- <20250930083827.GI3245006@noisy.programming.kicks-ass.net>
- <1541b670-8b29-42a5-a58d-34d85197751d@suse.com>
+	s=arc-20240116; t=1759228210; c=relaxed/simple;
+	bh=27sWcGgopy8L9O52zrINaPxkx4hhS3gSfw1vvWRUM44=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Jn4Uq0yaao7732GlKW2b8Ab+VAcyCqaiKeRkwNbQ03VFSALwcfcevLLcs6LEfsbOaBDZ8nEyftS+2wG44TZro/JqtjilzSouSW7VgwgSdf/9SbGkpncWS9+ehKmzHTpCQazlKUpghkZw5laVcGhC6EqI8ou4KjB+vfHwjP6gVQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=Rh6h0uEI; arc=none smtp.client-ip=101.71.155.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 2493eb14f;
+	Tue, 30 Sep 2025 17:14:24 +0800 (GMT+08:00)
+From: Damon Ding <damon.ding@rock-chips.com>
+To: andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org,
+	rfoss@kernel.org
+Cc: Laurent.pinchart@ideasonboard.com,
+	jonas@kwiboo.se,
+	jernej.skrabec@gmail.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com,
+	inki.dae@samsung.com,
+	sw0312.kim@samsung.com,
+	kyungmin.park@samsung.com,
+	krzk@kernel.org,
+	alim.akhtar@samsung.com,
+	jingoohan1@gmail.com,
+	p.zabel@pengutronix.de,
+	hjc@rock-chips.com,
+	heiko@sntech.de,
+	andy.yan@rock-chips.com,
+	dmitry.baryshkov@oss.qualcomm.com,
+	dianders@chromium.org,
+	m.szyprowski@samsung.com,
+	luca.ceresoli@bootlin.com,
+	jani.nikula@intel.com,
+	linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Damon Ding <damon.ding@rock-chips.com>
+Subject: [PATCH v6 01/18] drm/bridge: analogix_dp: Formalize the struct analogix_dp_device
+Date: Tue, 30 Sep 2025 17:09:03 +0800
+Message-Id: <20250930090920.131094-2-damon.ding@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250930090920.131094-1-damon.ding@rock-chips.com>
+References: <20250930090920.131094-1-damon.ding@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="OKKMZZxPhdskK4Hh"
-Content-Disposition: inline
-In-Reply-To: <1541b670-8b29-42a5-a58d-34d85197751d@suse.com>
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9999e6d03903a3kunmd96de74a43bb18
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGkJITVZCGB0eQhkYGEMeShhWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
+	1VSktLVUpCWQY+
+DKIM-Signature: a=rsa-sha256;
+	b=Rh6h0uEIO7erDsTFOPCZFdRV1Y1StVPKBSyVWeDpB6lxMJIteC0AtKqCl1xd/okhVbVQ8OiWv8rfpILHrleh5cZO7Q+vB2a+HpuaGe58jm62fmBj3/KnqD4skTdWXVJ+tILzrxAGahXY/LMErUzMAQQswbjADJMRb3YBpZd1dzc=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=wMgNU9HKWX4U88wR/qYvG3evHrpviSSz9KGW1/W263o=;
+	h=date:mime-version:subject:message-id:from;
 
+Use the tap instead of the space for &analogix_dp_device.aux and
+&analogix_dp_device.force_hpd.
 
---OKKMZZxPhdskK4Hh
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-On Tue, Sep 30, 2025 at 11:02:52AM +0200, J=FCrgen Gro=DF wrote:
-> On 30.09.25 10:38, Peter Zijlstra wrote:
-> > On Tue, Sep 30, 2025 at 09:03:55AM +0200, Juergen Gross wrote:
-> >=20
-> > > +static __always_inline u64 read_msr(u32 msr)
-> > > +{
-> > > +	if (cpu_feature_enabled(X86_FEATURE_XENPV))
-> > > +		return xen_read_msr(msr);
-> > > +
-> > > +	return native_rdmsrq(msr);
-> > > +}
-> > > +
-> > > +static __always_inline int read_msr_safe(u32 msr, u64 *p)
-> > > +{
-> > > +	if (cpu_feature_enabled(X86_FEATURE_XENPV))
-> > > +		return xen_read_msr_safe(msr, p);
-> > > +
-> > > +	return native_read_msr_safe(msr, p);
-> > > +}
-> > > +
-> > > +static __always_inline void write_msr(u32 msr, u64 val)
-> > > +{
-> > > +	if (cpu_feature_enabled(X86_FEATURE_XENPV))
-> > > +		xen_write_msr(msr, val);
-> > > +	else
-> > > +		native_wrmsrq(msr, val);
-> > > +}
-> > > +
-> > > +static __always_inline int write_msr_safe(u32 msr, u64 val)
-> > > +{
-> > > +	if (cpu_feature_enabled(X86_FEATURE_XENPV))
-> > > +		return xen_write_msr_safe(msr, val);
-> > > +
-> > > +	return native_write_msr_safe(msr, val);
-> > > +}
-> > > +
-> > > +static __always_inline u64 rdpmc(int counter)
-> > > +{
-> > > +	if (cpu_feature_enabled(X86_FEATURE_XENPV))
-> > > +		return xen_read_pmc(counter);
-> > > +
-> > > +	return native_read_pmc(counter);
-> > > +}
-> >=20
-> > Egads, didn't we just construct giant ALTERNATIVE()s for the native_
-> > things? Why wrap that in a cpu_feature_enabled() instead of just adding
-> > one more case to the ALTERNATIVE() ?
->=20
-> The problem I encountered with using pv_ops was to implement the *_safe()
-> variants. There is no simple way to do that using ALTERNATIVE_<n>(), as
-> in the Xen PV case the call will remain, and I didn't find a way to
-> specify a sane interface between the call-site and the called Xen function
-> to return the error indicator. Remember that at the call site the main
-> interface is the one of the RDMSR/WRMSR instructions. They lack an error
-> indicator.
+diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
+index b86e93f30ed6..91b215c6a0cf 100644
+--- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
++++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
+@@ -156,7 +156,7 @@ struct analogix_dp_device {
+ 	struct drm_device	*drm_dev;
+ 	struct drm_connector	connector;
+ 	struct drm_bridge	bridge;
+-	struct drm_dp_aux       aux;
++	struct drm_dp_aux	aux;
+ 	struct clk		*clock;
+ 	unsigned int		irq;
+ 	void __iomem		*reg_base;
+@@ -166,7 +166,7 @@ struct analogix_dp_device {
+ 	struct phy		*phy;
+ 	int			dpms_mode;
+ 	struct gpio_desc	*hpd_gpiod;
+-	bool                    force_hpd;
++	bool			force_hpd;
+ 	bool			fast_train_enable;
+ 	bool			psr_supported;
+ 
+-- 
+2.34.1
 
-Would've been useful Changelog material that I suppose.
-
-> In Xin's series there was a patch written initially by you to solve such
-> a problem by adding the _ASM_EXTABLE_FUNC_REWIND() exception table method.
-> I think this is a dead end, as it will break when using a shadow stack.
-
-No memories, let me go search. I found this:
-
-  https://patchwork.ozlabs.org/project/linux-ide/patch/20250331082251.31712=
-76-12-xin@zytor.com/
-
-That's the other Peter :-)
-
-Anyway, with shadowstack you should be able to frob SSP along with SP in
-the exception context. IIRC the SSP 'return' value is on the SS itself,
-so a WRSS to that field can easily make the whole CALL go away.
-
-> Additionally I found a rather ugly hack only to avoid re-iterating most of
-> the bare metal ALTERNATIVE() for the paravirt case. It is possible, but t=
-he
-> bare metal case is gaining one additional ALTERNATIVE level, resulting in
-> patching the original instruction with an identical copy first.
-
-OTOH the above generates atrocious crap code :/
-
-You get that _static_cpu_has() crud, which is basically a really fat
-jump_label (because it needs to include the runtime test) and then the
-code for both your xen thing and the alternative.
-
-/me ponders things a bit..
-
-> Remember that at the call site the main interface is the one of the
-> RDMSR/WRMSR instructions. They lack an error indicator.
-
-This, that isn't true.
-
-Note how ex_handler_msr() takes a reg argument and how that sets that
-reg to -EIO. See how the current native_read_msr_safe() uses that:
-
-  _ASM_EXTABLE_TYPE_REG(1b, 2b, EX_TYPE_RDMSR_SAFE, %[err])
-
-(also note how using _ASM_EXTABLE_TYPE(1b, 2b, EX_TYPE_*_SAFE) like you
-do, will result in reg being 0 or ax. Scribbling your 0 return value)
-
-It very explicitly uses @err as error return value. So your call would
-return eax:edx and take ecx to be the msr, but there is nothing stopping
-us from then using say ebx for error return, like:
-
-	int err =3D 0;
-
-	asm_inline(
-		"1:\n"
-		ALTERNATIVE("ds rdmsr",
-			    "call xen_rdmsr", XENPV)
-		"2:\n"
-
-		_ASM_EXTABLE_TYPE_REG(1b, 2b, EX_TYPE_RDMSR_SAFE, %%ebx)
-
-		: "a" (ax), "d" (dx), "+b" (err)
-		: "c" (msr));
-
-	return err;
-
-Hmm?
-
---OKKMZZxPhdskK4Hh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEv3OU3/byMaA0LqWJdkfhpEvA5LoFAmjbqxQACgkQdkfhpEvA
-5LrlWxAAqulZs4pOHvRqUmLabha0Md6Falt3RnNmeNOe0ALy2IX0BKsPFMKwZYVd
-RepAgPRzqFQT/TXPVN1Xl1b0Untty0TDZraoLeUUEKdPnc6yqXlSSZIqO+ObLM/9
-h9SikaadckG2IhydaxD61jeW4ZWSUjR7zcFz+NcYVDtegIrz/WoO04k9EwFEUrB1
-eLqiXc2m9OwMxbLPlSp0ux881Pwyvu5qmcfbuvh0bZcQq+3LADuNGcofbJe0V5Ug
-0eWvoe+35N+ntv/2vgaObV/ksZhg0bLvQDjO86e/Wka4wGwSCiOrAQFj2mMfKe+w
-Ax/dZd4LpysGV/tlk3PwbkLED06yfQzIwoOKc51kmJ7IonSYeaS/nTcQaPdjbaJZ
-N9FMdJ6zCZx64QZXW6ytZCpsVaiHleFBOug6SGRYkf8IdDzRZB0O4yrp1WVLs6w5
-qLzmrFQkGvNGURUqvy1T9pCX+vzZg4tSGxsFTlGObeLclvhQCr1SCignk8HYpcc8
-LGR2C1AbBXZQVzBwF9qhqPFPKANp5baq5BkyFZVOUIqkZfMZaW0fAVsidwC60Df2
-Tz/891/zvYOMZZqi672Ci1Qz2MwSu2twj9MdWoMs1z+pvVHAhi4MDRXqKf3yrdW3
-bIsP9gLuPAb9JjkMtUQ+0BmBPNc+o67KwijHXDiaoGkXtpU698I=
-=NBbB
------END PGP SIGNATURE-----
-
---OKKMZZxPhdskK4Hh--
 
