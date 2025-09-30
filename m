@@ -1,105 +1,157 @@
-Return-Path: <linux-kernel+bounces-837694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF98FBACF67
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 15:04:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2346DBACF70
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 15:04:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4AAC47A1220
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 13:02:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A9BC4A1D18
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 13:04:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95095264A72;
-	Tue, 30 Sep 2025 13:03:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 440B2253957;
+	Tue, 30 Sep 2025 13:04:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2/G1SM2i";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="b97220Hc"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="oU6vfXi3";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="bkudy7Oo";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="sCedy/q5";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="0bb3V8Uh"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 028C32D3237
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 13:03:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E38A0303A39
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 13:04:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759237434; cv=none; b=i2GVWZUSuuqOME4oIfOk2YW15XNe/AP+6DRQgS+bnBAAsBudit2TT4lqOjU9ITWi/Ivk4yorpjne3X1Vb3Gn2DLcoG6Hb7gAYupZJZ7L8om1LSeBNt81KSG7JYnCgycYKZuaG2uiY0D8TJ/ODzK+6+jnq3E1uIaciOUivR53kQA=
+	t=1759237448; cv=none; b=WxNXz/b/aJXq8IPf0mK2X9bhc8qcN3+XTq0mgjnEGC9aC1mW9fKUJaobS9PovBocTDEBpUbRpzgxzOd4uKQcNlVIhQecyu9JP0gOkGqqlQiuivSr6w5jBg2NHM67AG4UnohfMq2AUM5sQSMF+09onYoctpJ6HhoZHe7bn1GeVwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759237434; c=relaxed/simple;
-	bh=AGcvxwycRqLLUN6/GXg/jmiFpMjzJtI3D5YFs4IeLDU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=RLmbhSwvtSwxttXoRbRfNi+tGo6XbJSHLBa9C3szzWBzHUMenJ9YKt8r+MxWDgYi9g2euuIbshUzm0pEX2ecYtlb0YM1xjtTBJZuU1O4k0goAL4sZhL2P4b+Id5XjTudECYNNjT0wxOUIU3jYV7XCrIIB4y4d19IfhI+5nYY6Ds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2/G1SM2i; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=b97220Hc; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1759237429;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1759237448; c=relaxed/simple;
+	bh=ro76ONjtxuhp9Jih1z2g4aG1dRL+Su8zX2IGE7+2GsQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r0/0hgmryoLPX9Pt9GaiKp6PrkXBSqXcUmBtP+uBNTeBQ1x766juvQtTeJ+WTIuD/KTGknRQPlfS3AYMk88noK+VlJls46dg6U/EiR5GxvPKUvm4sj4eE1dGkhLkW51gq8rrkoaiL7Cd1FOuOJXIPMVKY+82m9524At4TK18fHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=oU6vfXi3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=bkudy7Oo; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=sCedy/q5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=0bb3V8Uh; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id E1066336E6;
+	Tue, 30 Sep 2025 13:04:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759237445;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=LE5EX2pgn6D/ifa4P1XORGJPcO1OadE0wg7VY0lqttI=;
-	b=2/G1SM2iEMyc8CEG/ptCUm3jEFZ5mH/dt+YahU2F8PVVC10GxwpuXd5GwkV7Q2r3x5izRo
-	GIvb1K1AiqK31tH/AIUUNJLTMs8x+vcoe1u7jD7QZ2xaoLHgg/GQQwVxXis1ZDEIQBJ9vP
-	pGvEQ721PHdXSligb4HZ/44Too9JPTKBfa7BJ7zwLogC2IAdbCMATTY7PBWyEMkDk41003
-	v+isY1EPpdyS5lqiEDSs/lbN0b2gY8FXNGtH4Fh0LIe/0CIAY5NLo1TvVhmZfM3rrSKS+P
-	VpzfLd6CVPhVUgzgh78xeuJS4XQBTSF4dTJPNBMKP8hBQSOFFvq/WhZ3V4xVGA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1759237429;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	bh=L35wnh9HCYKBdlIaJBJq36JfdQcWBIL170zr2OXssQE=;
+	b=oU6vfXi3F+lQg4NiLgkvvPgPFMy9g2CkQGkgYQ58roHNvchJjB85Ef+Ualpl4R1cG/OmEe
+	WToGOOpQdsoB0d7ugKLL4PFpVEPVoM6EqgX/c93xdJhpttpEvXeQ2RTPqMA70sCUILPXeK
+	tOOajwTwL4iVsA/hNLjmWnGGak/ilHg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759237445;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=LE5EX2pgn6D/ifa4P1XORGJPcO1OadE0wg7VY0lqttI=;
-	b=b97220HcnL2ONvgXZz32duKShgrk7T90vHUf1ER8ccBstqiZsG2JcjhW+hq3cZrYL6ZyFv
-	XxIVfFR3wEsY/7Dg==
-To: Andrew Murray <amurray@thegoodpenguin.co.uk>, Petr Mladek
- <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, Sergey
- Senozhatsky <senozhatsky@chromium.org>
-Cc: linux-kernel@vger.kernel.org, Andrew Murray <amurray@thegoodpenguin.co.uk>
-Subject: Re: [PATCH v2 3/3] printk: Use console_flush_one_record for legacy
- printer kthread
-In-Reply-To: <20250927-printk_legacy_thread_console_lock-v2-3-cff9f063071a@thegoodpenguin.co.uk>
-References: <20250927-printk_legacy_thread_console_lock-v2-0-cff9f063071a@thegoodpenguin.co.uk>
- <20250927-printk_legacy_thread_console_lock-v2-3-cff9f063071a@thegoodpenguin.co.uk>
-Date: Tue, 30 Sep 2025 15:09:48 +0206
-Message-ID: <84ldlwjdmz.fsf@jogness.linutronix.de>
+	bh=L35wnh9HCYKBdlIaJBJq36JfdQcWBIL170zr2OXssQE=;
+	b=bkudy7OoGDN5BBZiqBXeZM/Yry9V8XtGe919RRb6B8IMHVMfqQAiUibhT3PdKXrjTr49VT
+	2n+UFYlU6Znh0oDA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="sCedy/q5";
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=0bb3V8Uh
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759237444;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=L35wnh9HCYKBdlIaJBJq36JfdQcWBIL170zr2OXssQE=;
+	b=sCedy/q5KymGDoyiYfAfEZcZzsOYwt3YjrJ6vA7sx8QhdHK78hO76doj8TM54QCsn/UnB7
+	yLd0frbONj8uUFH50r+y5iLLVWvGeZLUrNvCV89/70OW9VJ3QNfF70L2qMXac0AQagTFWY
+	I07Klyoi3NRRZs30Ovbcbuc20DEXCuA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759237444;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=L35wnh9HCYKBdlIaJBJq36JfdQcWBIL170zr2OXssQE=;
+	b=0bb3V8UhhubshMERfF5rAwDEbl54XVcJv8XMPtOpOxKkgiAFlXufzD83kjQijLyqasZDuA
+	qAqOxItAliDGX2CA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C9EC613A3F;
+	Tue, 30 Sep 2025 13:04:04 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id x6obMUTV22ghPAAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Tue, 30 Sep 2025 13:04:04 +0000
+Date: Tue, 30 Sep 2025 15:04:03 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] Btrfs updates for 6.18
+Message-ID: <20250930130403.GA4052@suse.cz>
+Reply-To: dsterba@suse.cz
+References: <cover.1758696658.git.dsterba@suse.com>
+ <CAHk-=wjuu2-7z3ALpt6v7L3Zoa_cqz+imGNGwaL=QPGLw7eKNQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjuu2-7z3ALpt6v7L3Zoa_cqz+imGNGwaL=QPGLw7eKNQ@mail.gmail.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: E1066336E6
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.21 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	URIBL_BLOCKED(0.00)[suse.cz:dkim,suse.cz:mid,suse.cz:replyto,suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:dkim,suse.cz:mid,suse.cz:replyto,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -4.21
 
-On 2025-09-27, Andrew Murray <amurray@thegoodpenguin.co.uk> wrote:
-> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-> index e2c1cacdb4164489c60fe38f1e2837eb838107d6..2c9b9383df76de956a05211537264fd6e06366da 100644
-> --- a/kernel/printk/printk.c
-> +++ b/kernel/printk/printk.c
-> @@ -3668,17 +3668,29 @@ static bool legacy_kthread_should_wakeup(void)
->  
->  static int legacy_kthread_func(void *unused)
->  {
-> -	for (;;) {
-> -		wait_event_interruptible(legacy_wait, legacy_kthread_should_wakeup());
-> +	bool any_progress;
-> +
-> +wait_for_event:
-> +	wait_event_interruptible(legacy_wait,
-> +				 legacy_kthread_should_wakeup());
-> +
-> +	do {
-> +		bool any_usable;
-> +		bool handover = false;
-> +		u64 next_seq;
+On Mon, Sep 29, 2025 at 02:35:20PM -0700, Linus Torvalds wrote:
+> On Wed, 24 Sept 2025 at 07:41, David Sterba <dsterba@suse.com> wrote:
+> >
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git tags/for-6.18-tag
+> >
+> > for you to fetch changes up to 45c222468d33202c07c41c113301a4b9c8451b8f:
+> 
+> I see the for-6.18 branch, and it matches that commit, but no for-6.8-tag.
+> 
+> I suspect you just forgot to push that one out,
 
-Please sort by length. It looks nicer. ;-)
-
-		bool handover = false;
-		bool any_usable;
-		u64 next_seq;
-
-Note that it is fine that @any_usable is not initialized here because
-legacy_kthread_func() does not actually care about this variable.
-
-John
+Ah yes, sorry, now pushed.
 
