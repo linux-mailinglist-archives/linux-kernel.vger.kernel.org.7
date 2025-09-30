@@ -1,177 +1,147 @@
-Return-Path: <linux-kernel+bounces-837780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14FC0BAD2B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 16:25:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB003BAD2B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 16:27:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62B5E1927D2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:26:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A33A1925AC4
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:27:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51AC02F8BF1;
-	Tue, 30 Sep 2025 14:25:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 781BA2F8BF1;
+	Tue, 30 Sep 2025 14:27:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="NI29BUNS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NDFLEkY4"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9044029405;
-	Tue, 30 Sep 2025 14:25:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24217282E1
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 14:27:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759242333; cv=none; b=usonVqprfcnOoBQCb4sswC2NX1jJMDpP4PXxHy+zLqL2DxZevhDGu0gkCEiihs5Cnc1OUmbb4fujzf7H+ahKxyI8dgfdc1BzwgMxJjmTpEb6zIDULhoSYtefQd6MlQElteSVA9K+98+EOeiYMyCOePXasMz0m04IAzLhDsnb+Sk=
+	t=1759242429; cv=none; b=OVSmzKYo4ifexs0z5XnwY7JDb/cfgeln1OuKQBqeJOnOC8uqQLPUJkckh/vmQBHmK/38pQj+Oy8Sh6mMNhdo0doAxaU1a5BoJHgdlel00aryXZEIS/4V+jlDhoMLi4c/tXizYJdOnKDad10xAzTEtgUGMTJ3nRMsnawym+0CGEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759242333; c=relaxed/simple;
-	bh=HMMSK0gZE+ZPdzKo8NfDBgzWwBhENlb8Exrqm290TLE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GRGUHNcmG3UmcZ0WNMkRhOqXxGOcKrPuN8ok2DUkTP3h7ApoTj+9iii/ZBmRh1bNZDh3ILY2dtnz17N1qWy7WSywHfWgjHM7T1OzC1NlDkIzdq1/TXEkGWHr9HqK0jnmqmRlbXR8SmSguJTo7wyk43dc6hPWayDWA2CQcSkP2qo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=NI29BUNS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C533C4CEF0;
-	Tue, 30 Sep 2025 14:25:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1759242332;
-	bh=HMMSK0gZE+ZPdzKo8NfDBgzWwBhENlb8Exrqm290TLE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NI29BUNSmUmlWy0/PzEJPq2TmfVCQmImzFJn/FcYBSeWWKE5XbsJW0tLizQmoTw/p
-	 /OlTKwzhrKyhEMrmQUtDMBnMDlrDM7g/4abQpV1W9vQsTcWCXCapcEz9uqyGGywsLg
-	 2YwX5kxBXUyCDljHtMBWrNn0Gd8wgCi+IsvRjGKA=
-Date: Tue, 30 Sep 2025 16:25:28 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Eliav Farber <farbere@amazon.com>
-Cc: sashal@kernel.org, mario.limonciello@amd.com, lijo.lazar@amd.com,
-	David.Laight@aculab.com, arnd@kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Subject: Re: [PATCH v2 03/13 6.1.y] minmax: simplify min()/max()/clamp()
- implementation
-Message-ID: <2025093026-gutter-avert-7f16@gregkh>
-References: <20250929183358.18982-1-farbere@amazon.com>
- <20250929183358.18982-4-farbere@amazon.com>
+	s=arc-20240116; t=1759242429; c=relaxed/simple;
+	bh=x43Aiv7rPX2GEQZu5NfhE12xepCVe53wujMWizCXNyg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=S4cTCCqwnFTjsj6w+wWx6FNpADn/uTUqZW09V9XSxqwsqeMtsztPtghTQ1YULygw8JAq7onWZ/mjCKu3idNFWmnNB5vxjVjW3+7zTO2nCUScuz5AeJp9r2MNkjVtC5taPOQsBhg3p4u53+YCBSDVLYWFpcftKOhqLVLNEhn0ayk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NDFLEkY4; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-634cc96ccaeso9155a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 07:27:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759242426; x=1759847226; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SZy9N2kUaCjLFUFTo+cbervBp1DnEnunIQqdJHxh2kY=;
+        b=NDFLEkY4z8JrkEuw8KaheOIS8UYL91tMpbVbg9ClcPpU7uZhBUmAIE49cJmiyhvP5y
+         mcYSkwJlernQGdBlCr3Uwi86UpJdLbsxHl39ovGqXG/FnIVe5chA749syVD9uxMIFOE9
+         XJ/dC95AqYC2X9o6dMZorwbWQpEn7uxyKQzX3fU7kJ7UfHgjwna3xaiHvg6qg0E0v2CT
+         S3gbBVTP4ecWcccIdn7QEg8NS7uuVKRRaUVq0hSI3GvpGHRHQ27TY3cHYvrIw7F+/ZqG
+         uLTqt1TxwG6+TjD1FzREY7mBQse8XRae/nj1SLFEsxI0vrhYkyZzike3fOBAqYhlVQLU
+         Qj6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759242426; x=1759847226;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SZy9N2kUaCjLFUFTo+cbervBp1DnEnunIQqdJHxh2kY=;
+        b=N35TB6Jr4kj6BHLeivMTZL1agsVEGDzaZVMcBQmOavAkU85ygZQkqq59UO3qcT9EdF
+         ek99wZQEcecXO3mOVliOBnZQjSduBZUf2mucCDBL5hC+c0PlaGGFs0uu8TIDF/SoKKpb
+         Ma4QDortcmD+a8v+ZFNHVokt2fhxSRxNMHVP6VT/DrCdWSNhR8bqwrdplGsETV5o6RYl
+         VCiNgeQf8iTOpYfKHk+2LfMiDTtptCEQloCgvnw6VGP1UCL9Y0PgSgweT08VhOpeb2dV
+         iMEx1c6cTv3sjiii1EmnTtsXy4Smk9Q41+gXaa4gMG50iqnOqBfVGOrUlx1U+GDUB24n
+         7bag==
+X-Forwarded-Encrypted: i=1; AJvYcCUcLvKa+c+f5kvTUBbBF8A2i15PMb8mObtCmV/yjvl0BetgmHVzh/SKXU3SNOnzdrrm0ZNs/ZRL3wHG3CM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyePl18ATdF5Eme8EGLf1PJHf+0NiVWtB/bEKb2OXahaNzzQmS7
+	p930skG3d8P2wbbE7GNhOgwkbCEpugAhwzseyiUOztzlHkM2Ub6hb5s78sgC4SGxf9xSVZ7Msv8
+	JjxH0FO9IbuyCpVLwCCxoDEmwMyf+ZN98gpVl1vun
+X-Gm-Gg: ASbGncuX9jF3BF+V9Njz2t7wg7NCajAMtNMeqHdII6GCnw1jDzus/LGhjHLm5KHvWIv
+	TsSkRKlWp2J9YbO7Cr4T+yLsQq+eUzITup+hI8p909RHvj0bO3tziBOY4CMTA6e1nbFliOHD5J0
+	HlOHplIhkhXgOK4yLNF62C3M6qkpZANz2lLEPQeqWdLLXVedf+PXVOKH2VY4KIUzJWPp0UQt7j6
+	rjoVjV+DjK7Rsh3TiFs58izBVhnFiKs1/ZcMW16UmhsT0j083if2l1fs1hPAkFEm2VuwRXp2Oub
+	f85+hM7QCPLa
+X-Google-Smtp-Source: AGHT+IFvLNEtH2e5/dO5x9kwTjOA1XboZaWBElllxhFQnYr0glf12eW6jY3ATCxllGYkUI6x229ESRphuK+7A9uRrb4=
+X-Received: by 2002:a50:9ee6:0:b0:624:45d0:4b33 with SMTP id
+ 4fb4d7f45d1cf-6366271cc53mr92789a12.7.1759242426105; Tue, 30 Sep 2025
+ 07:27:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250929183358.18982-4-farbere@amazon.com>
+References: <20250926-ima-audit-v1-0-64d75fdc8fdc@google.com> <ef7c07585e41c8afbb2b97df98fd47c9374b15cb.camel@linux.ibm.com>
+In-Reply-To: <ef7c07585e41c8afbb2b97df98fd47c9374b15cb.camel@linux.ibm.com>
+From: Jann Horn <jannh@google.com>
+Date: Tue, 30 Sep 2025 16:26:28 +0200
+X-Gm-Features: AS18NWBrH6EzLSqnkNtObif1pJ0uyYEfSCvr2raYhHSw1EgoC2pdUUiHvV6uX9s
+Message-ID: <CAG48ez1jqa2y=aTJ=C+s9v0_xhWra7gezdY+BO=Red-XVGNQJQ@mail.gmail.com>
+Subject: Re: [PATCH 0/2] ima: add dont_audit and fs_subtype to policy language
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
+	Eric Snowberg <eric.snowberg@oracle.com>, Frank Dinoff <fdinoff@google.com>, 
+	linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 29, 2025 at 06:33:48PM +0000, Eliav Farber wrote:
-> From: Linus Torvalds <torvalds@linux-foundation.org>
-> 
-> [ Upstream commit dc1c8034e31b14a2e5e212104ec508aec44ce1b9 ]
-> 
-> Now that we no longer have any C constant expression contexts (ie array
-> size declarations or static initializers) that use min() or max(), we
-> can simpify the implementation by not having to worry about the result
-> staying as a C constant expression.
-> 
-> So now we can unconditionally just use temporary variables of the right
-> type, and get rid of the excessive expansion that used to come from the
-> use of
-> 
->    __builtin_choose_expr(__is_constexpr(...), ..
-> 
-> to pick the specialized code for constant expressions.
-> 
-> Another expansion simplification is to pass the temporary variables (in
-> addition to the original expression) to our __types_ok() macro.  That
-> may superficially look like it complicates the macro, but when we only
-> want the type of the expression, expanding the temporary variable names
-> is much simpler and smaller than expanding the potentially complicated
-> original expression.
-> 
-> As a result, on my machine, doing a
-> 
->   $ time make drivers/staging/media/atomisp/pci/isp/kernels/ynr/ynr_1.0/ia_css_ynr.host.i
-> 
-> goes from
-> 
-> 	real	0m16.621s
-> 	user	0m15.360s
-> 	sys	0m1.221s
-> 
-> to
-> 
-> 	real	0m2.532s
-> 	user	0m2.091s
-> 	sys	0m0.452s
-> 
-> because the token expansion goes down dramatically.
-> 
-> In particular, the longest line expansion (which was line 71 of that
-> 'ia_css_ynr.host.c' file) shrinks from 23,338kB (yes, 23MB for one
-> single line) to "just" 1,444kB (now "only" 1.4MB).
-> 
-> And yes, that line is still the line from hell, because it's doing
-> multiple levels of "min()/max()" expansion thanks to some of them being
-> hidden inside the uDIGIT_FITTING() macro.
-> 
-> Lorenzo has a nice cleanup patch that makes that driver use inline
-> functions instead of macros for sDIGIT_FITTING() and uDIGIT_FITTING(),
-> which will fix that line once and for all, but the 16-fold reduction in
-> this case does show why we need to simplify these helpers.
-> 
-> Cc: David Laight <David.Laight@aculab.com>
-> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Signed-off-by: Eliav Farber <farbere@amazon.com>
-> ---
->  include/linux/minmax.h | 43 ++++++++++++++++++++----------------------
->  1 file changed, 20 insertions(+), 23 deletions(-)
+On Tue, Sep 30, 2025 at 12:23=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.com> w=
+rote:
+> On Fri, 2025-09-26 at 01:45 +0200, Jann Horn wrote:
+> > This series adds a "dont_audit" action that cancels out following
+> > "audit" actions (as we already have for other action types), and also
+> > adds an "fs_subtype" that can be used to distinguish between FUSE
+> > filesystems.
+> >
+> > With these two patches applied, as a toy example, you can use the
+> > following policy:
+> > ```
+> > dont_audit fsname=3Dfuse fs_subtype=3Dsshfs
+> > audit func=3DBPRM_CHECK fsname=3Dfuse
+> > ```
+> >
+> > I have tested that with this policy, executing a binary from a
+> > "fuse-zip" FUSE filesystem results in an audit log entry:
+> > ```
+> > type=3DINTEGRITY_RULE msg=3Daudit([...]): file=3D"/home/user/ima/zipmou=
+nt/usr/bin/echo" hash=3D"sha256:1d82e8[...]
+> > ```
+> > while executing a binary from an "sshfs" FUSE filesystem does not
+> > generate any audit log entries.
+> >
+> > Signed-off-by: Jann Horn <jannh@google.com>
+>
+>
+> Thanks, Jann.  The patches look fine.  Assuming the "toy" test program cr=
+eates
+> and mounts the fuse filesystems, not just loads the IMA policy rules, cou=
+ld you
+> share it?
 
-This change breaks the build in drivers/md/ :
+Thanks for the quick review! To clarify, by "toy example" I meant that
+while I was using real FUSE filesystems, the policy I was using is not
+very sensible.
 
-In file included from ./include/linux/container_of.h:5,
-                 from ./include/linux/list.h:5,
-                 from ./include/linux/wait.h:7,
-                 from ./include/linux/mempool.h:8,
-                 from ./include/linux/bio.h:8,
-                 from drivers/md/dm-bio-record.h:10,
-                 from drivers/md/dm-integrity.c:9:
-drivers/md/dm-integrity.c: In function ‘integrity_metadata’:
-drivers/md/dm-integrity.c:131:105: error: ISO C90 forbids variable length array ‘checksums_onstack’ [-Werror=vla]
-  131 | #define MAX_TAG_SIZE                    (JOURNAL_SECTOR_DATA - JOURNAL_MAC_PER_SECTOR - offsetof(struct journal_entry, last_bytes[MAX_SECTORS_PER_BLOCK]))
-      |                                                                                                         ^~~~~~~~~~~~~
-./include/linux/build_bug.h:78:56: note: in definition of macro ‘__static_assert’
-   78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-      |                                                        ^~~~
-./include/linux/minmax.h:56:9: note: in expansion of macro ‘static_assert’
-   56 |         static_assert(__types_ok(x, y, ux, uy),         \
-      |         ^~~~~~~~~~~~~
-./include/linux/minmax.h:41:31: note: in expansion of macro ‘__is_noneg_int’
-   41 |          __is_noneg_int(x) || __is_noneg_int(y))
-      |                               ^~~~~~~~~~~~~~
-./include/linux/minmax.h:56:23: note: in expansion of macro ‘__types_ok’
-   56 |         static_assert(__types_ok(x, y, ux, uy),         \
-      |                       ^~~~~~~~~~
-./include/linux/minmax.h:61:9: note: in expansion of macro ‘__careful_cmp_once’
-   61 |         __careful_cmp_once(op, x, y, __UNIQUE_ID(x_), __UNIQUE_ID(y_))
-      |         ^~~~~~~~~~~~~~~~~~
-./include/linux/minmax.h:92:25: note: in expansion of macro ‘__careful_cmp’
-   92 | #define max(x, y)       __careful_cmp(max, x, y)
-      |                         ^~~~~~~~~~~~~
-drivers/md/dm-integrity.c:1797:40: note: in expansion of macro ‘max’
- 1797 |                 char checksums_onstack[max((size_t)HASH_MAX_DIGESTSIZE, MAX_TAG_SIZE)];
-      |                                        ^~~
-drivers/md/dm-integrity.c:131:89: note: in expansion of macro ‘offsetof’
-  131 | #define MAX_TAG_SIZE                    (JOURNAL_SECTOR_DATA - JOURNAL_MAC_PER_SECTOR - offsetof(struct journal_entry, last_bytes[MAX_SECTORS_PER_BLOCK]))
-      |                                                                                         ^~~~~~~~
-drivers/md/dm-integrity.c:1797:73: note: in expansion of macro ‘MAX_TAG_SIZE’
- 1797 |                 char checksums_onstack[max((size_t)HASH_MAX_DIGESTSIZE, MAX_TAG_SIZE)];
-      |                                                                         ^~~~~~~~~~~~
+I used real FUSE filesystems for this since I figured that would be
+the easiest way to test, https://github.com/libfuse/sshfs and
+https://bitbucket.org/agalanin/fuse-zip. These are packaged in distros
+like Debian (as "sshfs" and "fuse-zip"). I mounted sshfs with these
+commands (mounting the home directory over ssh at ~/mnt/ssh):
 
+user@vm:~$ cp /usr/bin/echo ~/ima/
+user@vm:~$ sshfs localhost: ~/mnt/ssh
 
-So I'll stop here on this series.
+and mounted fuse-zip with:
 
-After the next release, can you rebase the series and resend the remaining ones after they are fixed up to build properly?
+user@vm:~/ima$ zip -rD echo.zip /usr/bin/echo
+  adding: usr/bin/echo (deflated 62%)
+user@vm:~/ima$ mkdir zipmount
+user@vm:~/ima$ fuse-zip echo.zip zipmount/
 
-thanks,
-
-greg k-h
+I then ran the executables ~/ima/zipmount/usr/bin/echo and ~/mnt/ssh/ima/ec=
+ho.
 
