@@ -1,78 +1,155 @@
-Return-Path: <linux-kernel+bounces-838173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FDC6BAE978
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 23:05:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B2B8BAE97B
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 23:05:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4C407AB625
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 21:03:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CF271945D78
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 21:05:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 338082C0F64;
-	Tue, 30 Sep 2025 21:03:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 117F228D836;
+	Tue, 30 Sep 2025 21:05:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mddp14ga"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="VYi1WeRn"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DAD32C08C8
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 21:03:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DECA3242910
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 21:05:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759266207; cv=none; b=N9O7NYg8qTCDvfrqQk2V1DpXHISW4n20+UIFdMMoGNbGflsnea2JlE7HWJA8Jd0HHDuY7/yCaC8CRLaSHweWZ+zkBA6K4vEHS7tNsM7Vpa7Wg7e+SIbHMrwm45wNMo0Ft2rClBwaf0EOSruZmkmJ1ubHvjWLnxptZ20/DTwFpPI=
+	t=1759266309; cv=none; b=LQdCOvABDPFVG6Re9njSg1FrjzVnOMbg0pf3VfwClGaitGGAjVREIyo/0G8yw8IQVUAMtteJ0hc7bFMRFGVCSealpiBwpZkmGZleu4JmKdCrALFq0t7TuaAeVsnxZa6Sbu3IyPjFJK8dUEqp6HWOWSRoWgZXyMUiDAG2I6SqBi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759266207; c=relaxed/simple;
-	bh=xpyqz06eeWouOMQvhuN7IymGa+ZNeccZyWDENIj3i94=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=WVmE1YtNzFGZrU2g7WPIgnamxD56RHSU248BUHC73zwZvnD11R2OSuc4vlnloR00OyjfXWX28R0WCFJS2DFCDWEXnL2++wSQylOctGgU8C+wP1TI7KJTh1/oxSRVSbKkR/beEP/k7Hwdgayi0pQao4h61m0j7zJZcNnHeWQBtBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mddp14ga; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC41BC4CEF0;
-	Tue, 30 Sep 2025 21:03:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759266207;
-	bh=xpyqz06eeWouOMQvhuN7IymGa+ZNeccZyWDENIj3i94=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=Mddp14gaipj5yxetIrLzbe81QlHNNJxEd6A4ZzkTU0LdCon/ee1otnQTJ5EmSfPp5
-	 fSQv+F73FwjiXX6KwtYVokadFH4bwo87C1jBRw/PRwyUEkrQqY2XseJz1+iZwS0+KC
-	 202V/HbwmRh5srJPIjxNLP5bp2nb7nDLliU9FNJLKW/OX/mLqL2zGkx2pWZE0eBaZN
-	 PvOx8zmBLwSCr/SyMiYF2Ex9moGAYnQCgCKhEmIxvCIo0QnO1FgI/M69SRmNXmhJjZ
-	 tI62uOIobRQ17NFjINtg13pRKZ3buriw06kEQSRE+EblVWXSjhahclC5nGiY3U8jMi
-	 PW3qsb43/zwSw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33E1639D0C1A;
-	Tue, 30 Sep 2025 21:03:21 +0000 (UTC)
-Subject: Re: [GIT PULL] locking changes for v6.18
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <aNanBZ9VbIO2CO9x@gmail.com>
-References: <aNanBZ9VbIO2CO9x@gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <aNanBZ9VbIO2CO9x@gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking-core-2025-09-26
-X-PR-Tracked-Commit-Id: 17d9f8eaa87d40a2ff66598875a43363e37a909b
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 88b489385bfe3713497a63c0dcf4dd7852cf4568
-Message-Id: <175926619973.2146267.7616366740159199718.pr-tracker-bot@kernel.org>
-Date: Tue, 30 Sep 2025 21:03:19 +0000
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, Borislav Petkov <bp@alien8.de>, Uros Bizjak <ubizjak@gmail.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Gary Guo <gary@garyguo.net>
+	s=arc-20240116; t=1759266309; c=relaxed/simple;
+	bh=lEGDXr0OSsJFsEaYVFe7+rsm4OTGb1tv7ozhbvoTJ2k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=awXjgs/BckXMXAIHaz+iVKLuKBL5jnnFLsxITw19DXkb9lIut5gQKw08Apv02unLoEUbGu1VnoJvbIuHmeJJ3XZi7qmOukZh7zsekFJRX5usSU+Blh5Rba/inLYAFSPpM/487m9A2Rd/WhIrh72MzrMt5oSP2ZsQEGa0jhJ+aWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=VYi1WeRn; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-3324523dfb2so6206315a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 14:05:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1759266307; x=1759871107; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ql1Q7wmWT9QRnmXaB5Vhny8NzT+Ua/Ks+K1EVPAtCvw=;
+        b=VYi1WeRnq/g2h9HnBB2vI9iiDRWs51Sl5uiPaS4j0hyjckb0JEEdZ+uG3a8JTw2gzY
+         xxo9TD5jBeiaafgNabziWsewGhsgz7RkoUi1VIpw2M+q25B2KXEhPMS4FknZ8OStLbV9
+         rE7txmx1Zh1kSSmikiZGP/0cZOf7Dc1EZtk1408wB0KachOg57V0m1nwUYxRw85b1BqY
+         2xstKiqetZmbHqEi9CKCYtdyb5lqDzZFk1Ee0SmvtpRs2CDP7d0injLnnnnb6weTAQ5u
+         nBEO4R75XAQp612MgMnuG5nw/ZsixAjolJusr32u/1uYee/rWnxefxDJZGd2B5QAVD1l
+         2elg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759266307; x=1759871107;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ql1Q7wmWT9QRnmXaB5Vhny8NzT+Ua/Ks+K1EVPAtCvw=;
+        b=b1l/y3r5G7CJ6Z9J6mwI/5kFfB8nVLFHaANSf0P6ObL1k9C87Rwo+dm6tC6e04qUyG
+         AZ4RjXBg0YcI1ELv4XJWbyTeCN4qP5X0HFUtHT+v5R5vYFb7qiHZ1mXFHIp0/pfoIw61
+         E7LafPiVCKYbFyQCwrTnKrUoCyUm9q3ebOni4mE8VNKsGgqp1PLUS+6c9x23Vybw5Ysv
+         q3q8Ffl8MBpY5/xflwtTO1Q1x3kDDVf5RZrOn/L04CRAygkRFDBEqe81gvd8J18YdZFF
+         xqYmZb9Bo7RmF7Ntr4Y1cU+wgRTLc/LhYAjtWkbQAXt9h51k39H1MA0d+9mGIpTz+TPC
+         8r2g==
+X-Forwarded-Encrypted: i=1; AJvYcCXqKV7aT6rdVxnODYgUJSRNnAscoOeczJCavF/DgSOaWNv6QeeFuCRcbiRUReKXG31zlL2z804ttn2fKcY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEtE/dIcvYQP4FSkHSjDrUbB0x3qmjYHLu3usGPguzMLugysWP
+	HMR2m38ajJUnem312KCJYCtZ0pgQQfNi6hgbBASTd4T7jciESeThwyfknIl7jdCUcIE=
+X-Gm-Gg: ASbGncvCkWl6TUImszzEfRgDBW4TMel84aXe2clQXdolIlvoOP5pYUW/9gl+vXhe4jr
+	oF0CYi0WO3WUFOmn8rkWT4HoLBGFyADNW3hUU/UQkOEwhm4lLYsnT+e9UckovK+VhZyf3YmGr5W
+	RSzdxQF5FAsgCRFMl3pFdfKcH1FpKC1hfhOvknVzJvkhsjqZd/neF+R7CaNn3xzBlDD12aL5uLH
+	6k164HJ6J8wIWO2jwM7YzmNj1BXseOM4HT8Z3yiL1RhdPyeTwTF5S7c9CxaxQE7i3dmVi146sQ+
+	XUncsDKzNlV6c+yz1Z1jY7VNy3cGFC3Zj/EOeqaKwFmvymmp0uhZ19zhc6fTRxLIxdibgFgNpZU
+	cgkjurWaU7Gzwm5CZOgO0
+X-Google-Smtp-Source: AGHT+IHn9B4YPhcXSlM98kFJ+ee5CCn30TAdf9k2oVDRoOfjvEqnxoeTEITK+r+k1FFQmfJz5mJuvw==
+X-Received: by 2002:a17:90b:33ce:b0:336:b60f:3936 with SMTP id 98e67ed59e1d1-339a6e9d33fmr988326a91.12.1759266306958;
+        Tue, 30 Sep 2025 14:05:06 -0700 (PDT)
+Received: from ziepe.ca ([130.41.10.202])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-339a6effe77sm493824a91.17.2025.09.30.14.05.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Sep 2025 14:05:06 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1v3hWy-0000000Chej-3Vt2;
+	Tue, 30 Sep 2025 18:05:04 -0300
+Date: Tue, 30 Sep 2025 18:05:04 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Samiullah Khawaja <skhawaja@google.com>
+Cc: Pasha Tatashin <pasha.tatashin@soleen.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, iommu@lists.linux.dev,
+	YiFei Zhu <zhuyifei@google.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Pratyush Yadav <pratyush@kernel.org>,
+	Kevin Tian <kevin.tian@intel.com>, linux-kernel@vger.kernel.org,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Adithya Jayachandran <ajayachandra@nvidia.com>,
+	Parav Pandit <parav@nvidia.com>,
+	Leon Romanovsky <leonro@nvidia.com>, William Tu <witu@nvidia.com>,
+	Vipin Sharma <vipinsh@google.com>, dmatlack@google.com,
+	Chris Li <chrisl@kernel.org>, praan@google.com
+Subject: Re: [RFC PATCH 13/15] iommufd: Persist iommu domains for live update
+Message-ID: <20250930210504.GU2695987@ziepe.ca>
+References: <20250928190624.3735830-1-skhawaja@google.com>
+ <20250928190624.3735830-14-skhawaja@google.com>
+ <20250929160034.GG2695987@ziepe.ca>
+ <CA+CK2bDqDz3k0gXamJEbKUL7RPBLVjaA5=Jum=CF84wR+50izA@mail.gmail.com>
+ <20250930135916.GN2695987@ziepe.ca>
+ <CAAywjhRGrGjZK3jQptieVWmdzvjfNtTYrp2ChTZJSmFyrBaRqw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAAywjhRGrGjZK3jQptieVWmdzvjfNtTYrp2ChTZJSmFyrBaRqw@mail.gmail.com>
 
-The pull request you sent on Fri, 26 Sep 2025 16:45:25 +0200:
+On Tue, Sep 30, 2025 at 01:02:31PM -0700, Samiullah Khawaja wrote:
+> > There are HWPTs outside the IOAS so it is inconsisent.
+> 
+> This makes sense. But if I understand correctly a HWPT should be
+> associated one way or another to a preserved device or IOAS. Also the
+> nested ones will have parent HWPT. Can we not look at the dependencies
+> here and find the HWPTs that need to preserved.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking-core-2025-09-26
+Maybe in some capacity, but I would say more of don't allow preserving
+things that depend on things not already preserved somehow.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/88b489385bfe3713497a63c0dcf4dd7852cf4568
+> > Finally we expect to discard the preserved HWPTs and replace them we
+> > rebuilt ones at least as a first step. Userspace needs to sequence all
+> > of this..
+> 
+> But if we discard the old HWPTs and replace them with the new ones, we
+> shouldn't need labeling of the old HWPTs? We would definitely need to
+> sequence the replacement and discard of the old ones, but that can
+> also be inferred through the dependencies between the new HWPTs?
 
-Thank you!
+It depends how this ends up being designed and who is responsible to
+free the restored iommu_domain.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+The iommu core code should be restoring the iommu_domain as soon as
+the attached device is plugged in and attaching the preserved domain
+instead of something else during the device probe sequence
+
+This logic should not be in drivers.
+
+From there you either put the hwpt back into iommufd and have it free
+the iommu_domain when it destroys the hwpt
+
+Or you have the iommu core code free the iommu_domain at some point
+after iommufd has replaced the attachment with a new iommu_domain?
+
+I'm not sure which is a better option..
+
+Also there is an interesting behavior to note that if the iommu driver
+restores a domain then it will also prevent a non-vfio driver from
+binding to that device.
+
+Jason
 
