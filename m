@@ -1,104 +1,61 @@
-Return-Path: <linux-kernel+bounces-837922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55537BAE120
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 18:38:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D202BAE123
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 18:39:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 105C417467E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 16:38:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7A1D1944AAA
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 16:39:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAB712459E7;
-	Tue, 30 Sep 2025 16:38:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23FF12343B6;
+	Tue, 30 Sep 2025 16:39:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="QxSog5oQ"
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="S0K3mXIT"
+Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E77C2343B6
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 16:38:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4361522422B
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 16:39:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759250321; cv=none; b=n4ytnpneoJFr5wLCcyGJ/PTFUJLj6ERzXF4EEdesxBSbDj0Ve0PqIXkedM7wukaejY8w+4SnqAn8IynLSFCwFAW0dHtQMmC7yHOGKZP6I3P0ke4Vf++e54kUImfOZxY41I69IZC6L07rX3gNitooSDGWvwqQLM5v9IgkpzcqRZ4=
+	t=1759250349; cv=none; b=LF/DR6lcg8fNPsJNWkswKdCx73gjZIm1RZtoFQJ+0nIV6/NicTOawCtPDo4DSwuXoIrgM7ne0yqMZsNbHhjABNprNxfrCiNZ/YLgFFVvKCZg5+WsrbqL6/ReYKjW6VpnOIfHX5D45TLsBz63TyOVyKjq+cwLaS3qlnQPeeK9g6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759250321; c=relaxed/simple;
-	bh=7ZvWWTmbwpz938UNoot7kYAQyxONzvQpdhOgp4f0kCo=;
+	s=arc-20240116; t=1759250349; c=relaxed/simple;
+	bh=K/OW5QVJiYUdeHnfxTsx43OwQg//BxaPlBCvPJ8I494=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CktsD6+N4G+H0vVfc+09APrnVaL6mKxmb3P4c1+s4ol/txkYVDlrA0ymYmnqc1glhqQKP83DQck8yOSpQQqLlUHmKWKt03rUwVzgR1kL9Y2uqZcTYFahONVVS6uBauOVowu7IDqdeqW8GoElXSqPWfqfw62xWc5MhPF0C2HWCnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=QxSog5oQ; arc=none smtp.client-ip=209.85.222.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-85a4ceb4c3dso661061585a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 09:38:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1759250318; x=1759855118; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=xMgANQFX+SgjbJ7utrDVcHclI2GXnTTwQrJXxesWGK0=;
-        b=QxSog5oQqgvxLnngv8jU+x203/kOQ7zDjATvuDF14qUIVMjHN5ZldBQUXyEXnnU4kN
-         uXewgRecH2LdxHNHyZPgIA7NcMm9IH9jwHBlwY+FVw5DfnhkOCQwrxfyatDiN8yIb3nm
-         QjWuIdPAppqdsn0s7FbQW3Lqo4aKEwwFlL1rc1Sg259MIgyht5gvEcmREVej/4fgYIHd
-         WDXddj5iajsW79DTuJIFWkkJA3ksnFksI0q9eMHcuHGly/AsvGl077KPsLj1bMDoj+nT
-         AtB+pxM+QJM4OD7HgOVrAEXhgDdCgfCd9GBia/VUo9cS+4blIE4Cp6eVD9q681zKVQnR
-         CgXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759250318; x=1759855118;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xMgANQFX+SgjbJ7utrDVcHclI2GXnTTwQrJXxesWGK0=;
-        b=oxMqZY+OOUqBZXeQQdg5QWOsDyPJhFkxQusAJdSmZscJZXcToTnV7guUWu921VCl4S
-         RDx2tEia3963h6v2QaO/rfN5ndv1RqwumOu3PPECt9J8b6mPgA/JhldgTK1Qo54cuAeF
-         5E6eR2qgblVVFBeLXpkmMAkGl0Z0Fxb0BRGA/KAdbhkz/tZJbWj8V9WYEKSErqdAYgBs
-         hvokjAwKTtercRL9XAWWq7+613fPTwW7UNN1zH+j5M0Yozr2fPc7kl1fqUvHK7dzl7HI
-         UuK4NvzCkjenGNWpxBx2dckib2YuPQlUyZrfiCpe/dW2XuU2RgbNsc7TUn32CTmmj5At
-         ff5A==
-X-Forwarded-Encrypted: i=1; AJvYcCXTDP2YYp2XaMVASy5GCaRyz41y3nSJ+5JJeKdwTfuy88FY9tDCg6jaiQyoBCjaP+qjgXay0FZhd5TMUiA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyspj2Hd+cKPmCxzlMqjmtXXPzLVBN0AvadSfyUV3gO08BXilWq
-	X0clHMTtiIsJ6f8gjOQY5TkgpsiSEd8SWoAcq3WUb5zpvLbMYIjPSlXny+jn6OsIy5w=
-X-Gm-Gg: ASbGnct2lIwuvEJDa9NWMuZoYG4e3u3cqT/2MlPVl6AaIEJ1lz9OMoDa+dhxj7rXBnT
-	OZsvv/hj8U8rZIED5JX1bt+peiz13fBlzB12ueudlW+nUkmPty9+JxKLwOKAqlTR3CEzbhJdZRt
-	C/90kGfQ2V29WwcFyVQaIm5RQVU1XjDHO9ZUiBMhdUJb4zMBNBdl5qJCIT93LSXTsP+M/3tK/Wj
-	oMjrWfwBbVMqiiJIDkAhOzlrtFEnt2TqGRAgobldYiNhUufomasz4P5ny1wL4sBs4wzL6CAX7Tq
-	+afhUrN20f2Akz6IBXz+HJbikX/O5YX7c22+F/XsTRHZ0HcutTqU39OuS/962pTg+auYpp+H5CJ
-	oH5wLRbuUP97DstXJsijH7ctZKzvsL7E=
-X-Google-Smtp-Source: AGHT+IHPJOCF3mi5Y/iQEx0Qz4nnWU+loAsRCrx0f3/7Rw3nO0AV/kHYsW/UKUUR5t5JJw+wAlT2Yw==
-X-Received: by 2002:a05:620a:4544:b0:85b:cd94:71fe with SMTP id af79cd13be357-87374cdab36mr68636085a.33.1759250318426;
-        Tue, 30 Sep 2025 09:38:38 -0700 (PDT)
-Received: from ziepe.ca ([130.41.10.202])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-85c307ad101sm1065322985a.36.2025.09.30.09.38.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Sep 2025 09:38:37 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1v3dN7-0000000Cbmj-1CPI;
-	Tue, 30 Sep 2025 13:38:37 -0300
-Date: Tue, 30 Sep 2025 13:38:37 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Chris Li <chrisl@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, Len Brown <lenb@kernel.org>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-acpi@vger.kernel.org, David Matlack <dmatlack@google.com>,
-	Pasha Tatashin <tatashin@google.com>,
-	Jason Miu <jasonmiu@google.com>, Vipin Sharma <vipinsh@google.com>,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Adithya Jayachandran <ajayachandra@nvidia.com>,
-	Parav Pandit <parav@nvidia.com>, William Tu <witu@nvidia.com>,
-	Mike Rapoport <rppt@kernel.org>, Leon Romanovsky <leon@kernel.org>
-Subject: Re: [PATCH v2 03/10] PCI/LUO: Forward prepare()/freeze()/cancel()
- callbacks to driver
-Message-ID: <20250930163837.GQ2695987@ziepe.ca>
-References: <20250916-luo-pci-v2-0-c494053c3c08@kernel.org>
- <20250916-luo-pci-v2-3-c494053c3c08@kernel.org>
- <20250929174831.GJ2695987@ziepe.ca>
- <CAF8kJuNZPYxf2LYTPYVzho_NM-Rtp8i+pP3bFTwkM_h3v=LwbQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UK33bmnEPRgZ2ADuix9VZwgcyWBowVzZ+FUhSH+ae3RDbQthxcPGVVQ1fp+9vuFBylJpgRxSayNfYxAf+o0TMyqzAws40FLFEm+wnLqhsxkjPGHxej+Ua80Ki+bG3rlHQj3XU+ZwEt6iOMze8kQ3uC4LJj3vQs/IDifVv/GUTGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=S0K3mXIT; arc=none smtp.client-ip=95.215.58.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 30 Sep 2025 16:38:55 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1759250342;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=B3CKhHSKM3GAHgQOBi5L/lbF/hi6x7IpHKwCLnAX/hw=;
+	b=S0K3mXITYdBzco4OPx4s4kDHufQW7Dk1ZDHiLzDl8uf2PmJOi5N6RYV70/g2vltuhqShCW
+	Uq5wmuYVFEmvtPQe2aLA/gbBMHqPHwFp82r4XI3ZHS+mdWOIOv+pw9Dv+fJWTAe1FYlpey
+	aZms9l3QNdGWgxU67Tz/+F0U19FlsAQ=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Jim Mattson <jmattson@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Sean Christopherson <seanjc@google.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
+	Tom Lendacky <thomas.lendacky@amd.com>, Manali Shukla <manali.shukla@amd.com>, 
+	Sohil Mehta <sohil.mehta@intel.com>, "Xin Li (Intel)" <xin@zytor.com>, linux-kernel@vger.kernel.org, 
+	kvm@vger.kernel.org
+Subject: Re: [PATCH] KVM: x86: Advertise EferLmsleUnsupported to userspace
+Message-ID: <qglalt6crrqevdpvsp25tlo3onmcuhyneft2cptwxzebj7ych5@dmk2xhsjvlgl>
+References: <20250925202937.2734175-1-jmattson@google.com>
+ <byqww7zx55qgtbauqmrqzyz4vwcwojhxguqskv4oezmish6vub@iwe62secbobm>
+ <CALMp9eRvf54jCrmWXH_WDZwB7KJcM3DLtPubvDibAUKj7-=yyg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -108,32 +65,62 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAF8kJuNZPYxf2LYTPYVzho_NM-Rtp8i+pP3bFTwkM_h3v=LwbQ@mail.gmail.com>
+In-Reply-To: <CALMp9eRvf54jCrmWXH_WDZwB7KJcM3DLtPubvDibAUKj7-=yyg@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Sep 29, 2025 at 07:11:06PM -0700, Chris Li wrote:
-> On Mon, Sep 29, 2025 at 10:48 AM Jason Gunthorpe <jgg@ziepe.ca> wrote:
+On Tue, Sep 30, 2025 at 09:02:46AM -0700, Jim Mattson wrote:
+> On Tue, Sep 30, 2025 at 8:31 AM Yosry Ahmed <yosry.ahmed@linux.dev> wrote:
 > >
-> > On Tue, Sep 16, 2025 at 12:45:11AM -0700, Chris Li wrote:
-> > > After the list of preserved devices is constructed, the PCI subsystem can
-> > > now forward the liveupdate request to the driver.
+> > On Thu, Sep 25, 2025 at 01:29:18PM -0700, Jim Mattson wrote:
+> > > CPUID.80000008H:EBX.EferLmsleUnsupported[bit 20] is a defeature
+> > > bit. When this bit is clear, EFER.LMSLE is supported. When this bit is
+> > > set, EFER.LMLSE is unsupported. KVM has never supported EFER.LMSLE, so
+> > > it cannot support a 0-setting of this bit.
+> > >
+> > > Set the bit in KVM_GET_SUPPORTED_CPUID to advertise the unavailability
+> > > of EFER.LMSLE to userspace.
 > >
-> > This also seems completely backwards for how iommufd should be
-> > working. It doesn't want callbacks triggered on prepare, it wants to
-> > drive everything from its own ioctl.
+> > It seems like KVM allows setting EFER.LMSLE when nested SVM is enabled:
+> > https://elixir.bootlin.com/linux/v6.17/source/arch/x86/kvm/svm/svm.c#L5354
+> >
+> > It goes back to commit eec4b140c924 ("KVM: SVM: Allow EFER.LMSLE to be
+> > set with nested svm"), the commit log says it was needed for the SLES11
+> > version of Xen 4.0 to boot with nested SVM. Maybe that's no longer the
+> > case.
+> >
+> > Should KVM advertise EferLmsleUnsupported if it allows setting
+> > EFER.LMSLE in some cases?
 > 
-> This series is about basic PCI device support, not IOMMUFD.
-> 
-> > Let's just do one thing at a time please and make this series about
-> > iommufd to match the other luo series for iommufd.
-> 
-> I am confused by you.
-> 
-> > non-iommufd cases can be proposed in their own series.
-> 
-> This is that non-iommufd series.
+> I don't think KVM should allow setting the bit if it's not going to
+> actually implement long mode segment limits. That seems like a
+> security issue. The L1 hypervisor thinks that the L2 guest will not be
+> able to access memory above the segment limit, but if there are no
+> segment limit checks, then L2 will be able to access that memory.
 
-Then don't do generic devices until we get iommufd done and you have a
-meaningful in-tree driver to consume what you are adding.
+Yeah this sounds bad.
 
-Jason
+On HW that supports EFER.LMSLE we're mostly virtualizing it, but not
+entirely.
+
+On HW that doesn't support it, we're not advertising
+EferLmsleUnsupported and we allow the guest to set EFER.LMSLE, so the
+VMRUN will fail with the invalid EFER (or immediate #VMexit?), and the
+VM will crash.
+
+> 
+> It should be possible for KVM to implement long mode segment limits on
+> hardware that supports the feature, but offering the feature on
+> hardware that doesn't support it is infeasible.
+
+I am not sure what we can and cannot do in terms of backward
+compatibility. Ideally we'd stop allowing EFER.LMSLE completely, but
+maybe we cannot break old users like that on HW that supports
+EFER.LMSLE.
+
+> 
+> Do we really want to implement long mode segment limits in KVM, given
+> that modern CPUs don't support the feature?
+
+Probably not, and it causes crashes today anyway so I don't think anyone
+depends on it.
 
