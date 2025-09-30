@@ -1,160 +1,125 @@
-Return-Path: <linux-kernel+bounces-837774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B90A2BAD28D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 16:19:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 484E5BAD293
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 16:22:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E1F14A15AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:19:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8B161927B63
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:22:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2775C2F9DAA;
-	Tue, 30 Sep 2025 14:19:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A2624DD09;
+	Tue, 30 Sep 2025 14:22:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Yhxuy5ew"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="P0pwmJV5"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF2A13FB1B
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 14:19:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 100B014F121
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 14:22:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759241982; cv=none; b=UvjN1eOfm/pzaH0pQpo4dZmsngMzkwzuR8h6Z5J/ESPddnUreQneJJHvhIlL/Y98IObvugrf+yrge3d8PhST/m9m0JwEsDcyCgqj4xTC1/+sbi05Oe2FqeZwvFrnDHS6TBaLdGSz0nnIEJap/Mzlg848nI8IhaQj8FHG8Nyf2Oo=
+	t=1759242145; cv=none; b=UqIsC8a6F5edaTSfOFcqJytA49Rd3ilaYPE/2xPq5139waFi2uiwbVdw21qzTPIZXD0deoq5uGLxAgWlxa6yCugQNbsdh4/rkjPwIdGUd1wPj5Xu90sCxeoaYNwO7zC+mEi1Jikj12xTOGsRWQd2dMUzQvV/tnMoqqDtQNnDeiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759241982; c=relaxed/simple;
-	bh=GSqtGKeLEkDO8mOc2Pcj0fzEKM7m/L0trIvQsuHGZ+o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KbcGB7gYQ66EuIKXN/rrUgexn+uJ87xcQmOZ+mh/MvtQOlEzIOVIFFBlMXQTj76Py+0QIiD8kBWHzygSssXgOOOEcruwgPagkjgUgcI60gVc4t7KQYFyRUY2NVTTo9QCDUG/IT52NQHKSVANFDrwrkrJ9bYlTVDEx9yUw++isYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Yhxuy5ew; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-46e33b260b9so13887555e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 07:19:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759241979; x=1759846779; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UDjqq7jrvNjkxYsdvJ5PPEYM1NX5CibO3X/31GcV+t4=;
-        b=Yhxuy5ewqtHtT5+GU5Z05rg4D2EA75Q9+s7iO1LX9UbDq6Bt+M4RjAAM19KhgnaWED
-         1hgORD0jrKCg/7kEmkdm3DSv+aieNIIrRxpDtaCWrQxxH23L+HthN6u/s2qch9xOHJCx
-         h6hw0f0EduAWK7XUJfAQPv0tTUOXdELc2e0+Z+uqpxXTRpHlUU5Xxds1mwfcjKVW0H+4
-         Ybr/gCovG6tgtJN9J8fNwQ0fWBRYEOsbBmWzZdGaFWj1lfvqBBY7QYk9t7T2JmqkZc+5
-         J5DzHqU/CZtF+8uk5ZjZh1Dv1uzbhh07CXYsRFWTqMUTn0HNV0xP7UNm8aU9B6WtqDci
-         2OeA==
+	s=arc-20240116; t=1759242145; c=relaxed/simple;
+	bh=5AsASDTDX0EZBQgqeKMk0P8gAYO+8BwnqNiV4Qo/RNk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P4CLF+ofg0aJyA/68ezi3u/80AtqPcvSf4thczFDz5iilVkdSlyjUMxRuwW+Yu7wzJEzkhSQaRY7dQoVlLPKbFDAOpU10UgXI3N+Z0bmUdet0zzzKZ3GwTr4QqleLZVsA0B1siU5K+wUe0tlXmhmOPLNl+4YJELXgso2x7J81R4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=P0pwmJV5; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com [209.85.218.69])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 4960C3FCEE
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 14:22:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1759242135;
+	bh=3pyHm8KyjFLN8BUel0C1d84/Bk/uPgP//s83pCFUOCE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version;
+	b=P0pwmJV5IHgN6c1SjuH4CweQ5ebENtAOXQrt2vARMYBsXKrMmfUt0bWHBDDgGUXfb
+	 eCAE5DyqMLK5oVHCMOQ/hdjdDNKvZFwLYEPvyHZstAbymcfU05Hciungndrsy5emy2
+	 qzkEQ/UKgCnWwIFTj1/NwUuJlL6k2pjLttoQoQB+/rDPWfmPaL+9apwJfyg05kE9eg
+	 +oazjGpEv2jTdgc0B3Xt3zvDeUNMsKrr5gKmYAYdJOSholNWqckh5ZeO+ykVS6zjQd
+	 zUZFCLVPD7P+O5t6vcmHu31OEP93+CANRu90l/0yioZT3arnuei7t3Nn0N0f/9lvYE
+	 /ywA65kVOIbBw==
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-b3023c21e21so565981366b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 07:22:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759241979; x=1759846779;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UDjqq7jrvNjkxYsdvJ5PPEYM1NX5CibO3X/31GcV+t4=;
-        b=Nkj3NdV+CbNL1I1wdgidnNYWGQkSIyu0+XJqhd0m8M9xSHFZVDZfsti7itx1DkAaNP
-         hN3ipiTA92HWcKQYZQm3hiGK1WASRLAoJShqbb4RXv07SYe6LI+ePue3nYmKDCZfoiGN
-         fGLEWsXQ/oDfwItSoP/kdiPFWyQQuPe52Vma8wLcgK4iAUm7CsU0RsWbdLgNGWMj9oXV
-         ip/UUuqgm6S5eNDCEV76tfsYTDWlett3QHpgvTdRItAFdm9IMceary5h+9f/nzY9yoCd
-         3I5uCcvRz98QCFVgd9Y0BbD8E4eCrVxG85GQUFH/5lItFFyf5xU4BfGwWNRWfCn2sWnJ
-         SXHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUNW+Sal2roiuqi4XW/3Kn0v7Gug51OCC8Rf4HzbtqMHCr+cxUvhKsMF5a6qGwT2XOSJXa2/gLjhUUDONA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhVpPq+xqja/h3DxkWGhCdKGFY7AhXN1RGYXBiVQzbtsqgEUsO
-	k63smJZv/4fF+5sVBhIqgjzkBaoqQLfVpQws5MafbyHj9uEL9upZKaKchxiT3kSV1vM=
-X-Gm-Gg: ASbGncvlKun+4+82Zys8B+5v4AhYyDt3UN4XHXLhP7J3/Z77iOKJyxtpFcGSqhzEDRq
-	VUM7OOhfn+RcEqZzglK5Q7DteODjG5rWiaiNWWUKgflG9A7wCK8xjTPQNoFo7UjxVTeIKfWsoJe
-	xTrMT0mR9y1PTJqMhZjl9WDrDbUTfP7sn+ycGmHpEChy5qDGUz91E+mnVAcX3amFeQLjIpXz0KZ
-	Nb3oUL6Nh4CNObYYRSORV6U0EVkuDAUg1DEi47xc7PLspN5xe4AP5rSXpcIJn+TNwacRhmCLhRi
-	6tuw9+pZ0bSBW6qADpPsJVmSVNczJhuxhRQ4Sz2UyOSjf8WiLwX2TEIxkRtBbHm7vxFd6GfA4h3
-	edmmPvJdYsD9hw14XIOL7vY/UhUQ8LNZDxlhIUbwMPOHMvAMxMyTNji3IJArnyMs=
-X-Google-Smtp-Source: AGHT+IGZAD/5oX1ipv48pfdQeRFK5TqRyymJQORmTLlc+sbKKPcFj0zcXeK1EO+S0yZ9fWsth2JhjA==
-X-Received: by 2002:a05:600c:468e:b0:46e:36ba:9253 with SMTP id 5b1f17b1804b1-46e6127b93cmr330185e9.15.1759241978952;
-        Tue, 30 Sep 2025 07:19:38 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-46e56f3dc27sm67637095e9.5.2025.09.30.07.19.38
+        d=1e100.net; s=20230601; t=1759242134; x=1759846934;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3pyHm8KyjFLN8BUel0C1d84/Bk/uPgP//s83pCFUOCE=;
+        b=PY5WyGZnFDfXlHhpdyvF6jjgtUyVMuAqfP5Vkf8gaJW6Z6lmTVkFp6CpkRenmZ4jzS
+         dBTCl+kP5Z9eAmxzLw49sMCXBpfKGbcnsd+7cpjp0XfUT1tfl9xIqCSyGnrKMcvsR67N
+         MLN/vQD5ahAf7l1j0IiIftFMdXlYEmIC/5tX3NkGwfaMScnLztmMsy6OqkwbdNUf4TZ8
+         HBpjOSdkeNt3GH3pc1vit1ZMeg220sP7wY6GbG8Sh6cK2TxHh1Zf+QLbK6LgQbwYnns/
+         3x7stUZ1LsY3Ct7OTZxa6NiY4S7y2N62+NmIgy45v3sSKlx+r1SB5G78z8Ifs769NjLz
+         n11Q==
+X-Gm-Message-State: AOJu0YwHRMZMVtP+4vnHnQ1mH0V+PfhhyAJvLRdKJTnaJPfxN0q9sNkE
+	91LcwOlloem1aubF5twer6PJr5q2unzLu5Hv7H4Y/nXM4vSatYIsvvEaRlVflhfhcKYVtFwi/an
+	0DpE8NHn8S9LQ5qMDyjpd+GyExybD36/ljw/pGTzzdn4JKKST5vZX0hcvrtd1v6AMslj4FkB65g
+	o8vw9gPSVkM9ED+w==
+X-Gm-Gg: ASbGnctk0Hb5tqhcZkAhZzS5WwIPXCGpyijquwSZNHd9jlICQDOks77D3PqK5yKd6Ht
+	Fk8/1d2iNZ7TnVL3QVSlJkoAl4+SR7O10xNfOinQ35pjfdzvc2wZjeaQl4ZyLmdl1WRbuNBUVjX
+	zUoUKSyQuY2Bqrn/MkJUW5xPYlwkI//+XoaFyNUD65gItMYRjGGlRA2ONahMU/9v5slfWDxyz7n
+	llKGJ6WGeEZ+FZDTl1zDsLZ9GuZI1xe5ozsoJBXZ9VJ3cH/zhdJ7ppGiE2U0QxMdOywZy7Kt1Ki
+	N1gvg1G5p7cE1EL4V3sJL0ssWD4s95qokxlB8oXWGu6IcKkarUphwqNTRw==
+X-Received: by 2002:a17:907:808:b0:b04:2533:e8dd with SMTP id a640c23a62f3a-b34beca14ccmr1913869766b.60.1759242134507;
+        Tue, 30 Sep 2025 07:22:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGfBer/QzZke9eGI2xluCIbFtC+ZX2DMbyqhp5u+G14wDWRdgtvPFJJZPnSDL8OghHbM2JuLw==
+X-Received: by 2002:a17:907:808:b0:b04:2533:e8dd with SMTP id a640c23a62f3a-b34beca14ccmr1913867566b.60.1759242134079;
+        Tue, 30 Sep 2025 07:22:14 -0700 (PDT)
+Received: from stitch.. ([80.71.130.60])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b3fb818fb90sm374129566b.63.2025.09.30.07.22.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Sep 2025 07:19:38 -0700 (PDT)
-Date: Tue, 30 Sep 2025 17:19:35 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: David Brownell <david-b@pacbell.net>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Lubomir Rintel <lkundrak@v3.sk>,
-	Christian Heusel <christian@heusel.eu>,
-	Greg Kroah-Hartman <gregkh@suse.de>, linux-usb@vger.kernel.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH net] rndis_host: Check for integer overflows in
- rndis_rx_fixup()
-Message-ID: <aNvm91A4Mmu_qamc@stanley.mountain>
-References: <aNvOh3f2B5g0eeRC@stanley.mountain>
- <2025093055-awoke-facedown-64d5@gregkh>
+        Tue, 30 Sep 2025 07:22:13 -0700 (PDT)
+From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+To: linux-kernel@vger.kernel.org
+Cc: Srinivas Kandagatla <srini@kernel.org>,
+	Samuel Holland <samuel@sholland.org>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH v1] nvmem: core: update cell->bytes after shifting bits
+Date: Tue, 30 Sep 2025 16:22:11 +0200
+Message-ID: <20250930142212.521925-1-emil.renner.berthing@canonical.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2025093055-awoke-facedown-64d5@gregkh>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 30, 2025 at 03:56:39PM +0200, Greg KH wrote:
-> On Tue, Sep 30, 2025 at 03:35:19PM +0300, Dan Carpenter wrote:
-> > The "data_offset" and "data_len" values come from received skb->data so
-> > we don't trust them.  They are u32 types. Check that the "data_offset +
-> > data_len + 8" addition does not have an integer overflow.
-> > 
-> > Fixes: 64e049102d3d ("[PATCH] USB: usbnet (8/9) module for RNDIS devices")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > ---
-> >  drivers/net/usb/rndis_host.c | 5 +++--
-> >  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> David has passed away many years ago, odd that this was sent to him
-> given that get_maintainers.pl doesn't show it :(
-> 
-> > diff --git a/drivers/net/usb/rndis_host.c b/drivers/net/usb/rndis_host.c
-> > index 7b3739b29c8f..913aca6ff434 100644
-> > --- a/drivers/net/usb/rndis_host.c
-> > +++ b/drivers/net/usb/rndis_host.c
-> > @@ -513,8 +513,9 @@ int rndis_rx_fixup(struct usbnet *dev, struct sk_buff *skb)
-> >  		data_len = le32_to_cpu(hdr->data_len);
-> >  
-> >  		/* don't choke if we see oob, per-packet data, etc */
-> > -		if (unlikely(msg_type != RNDIS_MSG_PACKET || skb->len < msg_len
-> > -				|| (data_offset + data_len + 8) > msg_len)) {
-> > +		if (unlikely(msg_type != RNDIS_MSG_PACKET || skb->len < msg_len ||
-> > +				size_add(data_offset, data_len) > U32_MAX - 8 ||
-> > +				(data_offset + data_len + 8) > msg_len)) {
-> 
-> Nice, I missed this in my old audit of this code (there's still lots of
-> other types of these bugs in this codebase, remember the rndis standard
-> says "there is no security", and should never be used by untrusted
-> devices.)
-> 
-> But will this work?  If size_add(x, y) wraps, it will return SIZE_MAX,
-> which we hope is bigger than (U32_MAX - 8)?  That feels fragile.
-> 
+When support for bit offsets of more than one byte was added it
+unfortunately left the cell->bytes value at the number of bytes read
+including the offset. Make sure to update it to the proper number of
+meaningful bytes in the returned data.
 
-SIZE_MAX is always going to be >= U32_MAX so it works.
+Fixes: 7a06ef751077 ("nvmem: core: fix bit offsets of more than one byte")
+Signed-off-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+---
+ drivers/nvmem/core.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Right now size_t is exactly the same as unsigned long.  I think we might
-end up making it a separate thing so we can enforce stricter checking.
-
-> Then we do:
-> 	skb_pull(skb, 8 + data_offset);
-> so if data_offset was huge, that doesn't really do anything, and then we
-> treat data_len independent of data_offset.  So even if that check
-> overflowed, I don't think anything "real" will happen here except a
-> packet is dropped.
-> 
-> or am I missing something elsewhere in this function?
-
-Yeah.  You're right.  I don't see anything very bad happening with an
-integer overflow.
-
-regards,
-dan carpenter
+diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
+index 387c88c55259..5f6d22545e39 100644
+--- a/drivers/nvmem/core.c
++++ b/drivers/nvmem/core.c
+@@ -1640,6 +1640,8 @@ static void nvmem_shift_read_buffer_in_place(struct nvmem_cell_entry *cell, void
+ 	/* clear msb bits if any leftover in the last byte */
+ 	if (cell->nbits % BITS_PER_BYTE)
+ 		*p &= GENMASK((cell->nbits % BITS_PER_BYTE) - 1, 0);
++
++	cell->bytes = (p - (u8 *)buf) + 1;
+ }
+ 
+ static int __nvmem_cell_read(struct nvmem_device *nvmem,
+-- 
+2.43.0
 
 
