@@ -1,111 +1,155 @@
-Return-Path: <linux-kernel+bounces-838113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3B77BAE78B
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 21:42:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A4045BAE79A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 21:50:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9209F3BCF5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 19:42:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF3753C3E98
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 19:50:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4F2B287272;
-	Tue, 30 Sep 2025 19:42:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FF2F27A442;
+	Tue, 30 Sep 2025 19:50:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="DJeivoFv"
-Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="WiyLGMbm"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D55462581;
-	Tue, 30 Sep 2025 19:42:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF4BC145B16
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 19:50:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759261372; cv=none; b=Sdokzu6Gj1en4ca47wpz7yPHI5MazUwzEnBluwBWO2hyo4KPwXzIwJtQLCSgFpe7zbzOMTurCO6xzKSppzK5dAERxJzgvH4j7emqvSi7QsuD+pSORqxlcA1OcOZs61dqRioIypnVz5VN0tQmrmgF0HLS5xd58iY4nUqnF/hRiZQ=
+	t=1759261807; cv=none; b=Hfz/whuKWlomrPafMKNihaZEYjbDVMCeypen33BZGKC+gypYLvPjhUSfY8QMi5FfhQsX/fnO+vK01lmNVbCa84n2iVYN1PY/JI3AX4gk3OZZRO2q501vkUIHhjorDLs+Ek/JKdOG6XVLuYJ0NPNGXonSjZ7Tjvtw62xAyDRnhZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759261372; c=relaxed/simple;
-	bh=X1uedMjifch/HBfEA9YdTLc3ZAIYvwShhf/7HuUHoZg=;
-	h=Date:From:To:Cc:Message-Id:In-Reply-To:References:Mime-Version:
-	 Content-Type:Subject; b=rnKI0cl39PMYnpuBf0wWPHPxJ2CJ+p5TTf5eInnHBsoXGUcNg++w0StRxdGje+3wUvkoiXQTdhOEaD2/zwNa+QEHZHPmD35o/hNVOHwCyMyZDRBildFZM42nCMz+p4CkrLqwMKkwheFNB0tqW0+vDx7FC88tkNc4/Z6Xe5zvrmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=DJeivoFv; arc=none smtp.client-ip=162.243.120.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
-	; s=x; h=Subject:Content-Transfer-Encoding:Mime-Version:Message-Id:Cc:To:From
-	:Date:subject:date:message-id:reply-to;
-	bh=3gBJ4nP+qc/A8NDWXpsGP7ab4u1MNsYZezJ46nSXncc=; b=DJeivoFvEOCtWQH+cYJcVCaQmc
-	+zIflskLHmHIiaMVjxRFh59gDZ108JjQxpZ1UWbAdYKBxZSIBrArR/21NcTZPeZTPvaU3qg1g/7+b
-	3prmg5Lifp9nVch6B7tzT3Vi8SDGPFa8ijqlw+WMm0vzxvy4eA2wRrRvadOtteQF++so=;
-Received: from modemcable168.174-80-70.mc.videotron.ca ([70.80.174.168]:57168 helo=pettiford)
-	by mail.hugovil.com with esmtpa (Exim 4.92)
-	(envelope-from <hugo@hugovil.com>)
-	id 1v3gFK-00022k-IV; Tue, 30 Sep 2025 15:42:47 -0400
-Date: Tue, 30 Sep 2025 15:42:45 -0400
-From: Hugo Villeneuve <hugo@hugovil.com>
-To: Jiri Slaby <jirislaby@kernel.org>
-Cc: gregkh@linuxfoundation.org, fvallee@eukrea.fr,
- linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, Hugo Villeneuve
- <hvilleneuve@dimonoff.com>
-Message-Id: <20250930154245.93d0405ac3aaa6baa06dd1d8@hugovil.com>
-In-Reply-To: <70fc7ca0-a98c-4d1b-9212-c7948607e840@kernel.org>
-References: <20250924153740.806444-1-hugo@hugovil.com>
-	<20250924153740.806444-15-hugo@hugovil.com>
-	<70fc7ca0-a98c-4d1b-9212-c7948607e840@kernel.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1759261807; c=relaxed/simple;
+	bh=0iia0nU5x4rf/WRQNytlMZVqDa6lvfFSyPcVsFZYvhA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nUmnTv0X1PPeqeX/trzXWkqOWm/l6eDRZ30pRI7zDbD19HUzeFX11yk7SqQc9dTyADixI0RJUC9Ksp5Nf/DWCTxlwxXs6s5e8amodnDq2Ii+wuvlqm2/6yb719qI6dqIUnQkDaxWg2eMw2t0S4aHKoz6MhZ5wxVYv7YM0V8l4hA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=WiyLGMbm; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [IPV6:2601:646:8081:9484:3373:e8bd:aaa4:7c23] ([IPv6:2601:646:8081:9484:3373:e8bd:aaa4:7c23])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 58UJnQA9386545
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Tue, 30 Sep 2025 12:49:26 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 58UJnQA9386545
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025092201; t=1759261768;
+	bh=dNL6gt2iTdh66H47BLI0CoB/8tRPotODaDlCai0q5ho=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=WiyLGMbm41DpWdoeFYmeIGVkzQksa98mG1NxGVlgSKXuYKU94ud4wLZ7uWpxfPuEy
+	 agrf020XSbTAABlOgFng9j8R0aUTAlhh8N4AbNkK7OtFKM4XBL5T+bw8rH0Ior1O36
+	 d8xSMWC+DmFRLEoRqjd1FCcA+EXGAfQpkXVgBdxyyHwULfVwwtSo44n43XvsC2wxxq
+	 oOahoknddZ6uUCoCZm5exOA58kIYDTgqNEKDhxGWaVkGHkjjb/cIU7HqkYJstxgGZA
+	 kj7y8CQwndjMAtLhfHU/20MMHxiiTw5jxddwRlYgxkm3lHpT9lSXQZ+ZCErnA5CJh3
+	 20RtYF/Dy2WRA==
+Message-ID: <d2c68cbe-2e92-4801-b1a3-af4645e9ba78@zytor.com>
+Date: Tue, 30 Sep 2025 12:49:21 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 70.80.174.168
-X-SA-Exim-Mail-From: hugo@hugovil.com
-X-Spam-Level: 
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	* -2.1 NICE_REPLY_A Looks like a legit reply (A)
-Subject: Re: [PATCH 14/15] serial: sc16is7xx: reformat comments
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 11/12] x86/paravirt: Don't use pv_ops vector for MSR
+ access functions
+To: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+        virtualization@lists.linux.dev, xin@zytor.com,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ajay Kaher <ajay.kaher@broadcom.com>,
+        Alexey Makhalov <alexey.makhalov@broadcom.com>,
+        Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        xen-devel@lists.xenproject.org
+References: <20250930070356.30695-1-jgross@suse.com>
+ <20250930070356.30695-12-jgross@suse.com>
+ <20250930083827.GI3245006@noisy.programming.kicks-ass.net>
+ <1541b670-8b29-42a5-a58d-34d85197751d@suse.com>
+ <20250930100404.GK4067720@noisy.programming.kicks-ass.net>
+ <fefbd1ee-ab8c-465e-89bf-39cd2601fc60@suse.com>
+Content-Language: en-US, sv-SE
+From: "H. Peter Anvin" <hpa@zytor.com>
+In-Reply-To: <fefbd1ee-ab8c-465e-89bf-39cd2601fc60@suse.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Jiri,
-
-On Mon, 29 Sep 2025 08:18:01 +0200
-Jiri Slaby <jirislaby@kernel.org> wrote:
-
-> On 24. 09. 25, 17:37, Hugo Villeneuve wrote:
-> > From: Hugo Villeneuve <hvilleneuve@dimonoff.com>
-> > 
-> > Add missing space at end of comments and reformat to have uniform style.
-> > 
-> > Signed-off-by: Hugo Villeneuve <hvilleneuve@dimonoff.com>
-> > ---
-> >   drivers/tty/serial/sc16is7xx.c | 14 +++++++++-----
-> >   1 file changed, 9 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/drivers/tty/serial/sc16is7xx.c b/drivers/tty/serial/sc16is7xx.c
-> > index 31d43fc857187..b3fbe9459303a 100644
-> > --- a/drivers/tty/serial/sc16is7xx.c
-> > +++ b/drivers/tty/serial/sc16is7xx.c
-> > @@ -81,11 +81,14 @@
-> >   /* IER register bits */
-> >   #define SC16IS7XX_IER_RDI_BIT		BIT(0)   /* Enable RX data interrupt */
-> >   #define SC16IS7XX_IER_THRI_BIT		BIT(1)   /* Enable TX holding register
-> > -						  * interrupt */
-> > +						  * interrupt
-> > +						  */
+On 2025-09-30 03:43, Jürgen Groß wrote:
+>>
+>>> In Xin's series there was a patch written initially by you to solve such
+>>> a problem by adding the _ASM_EXTABLE_FUNC_REWIND() exception table method.
+>>> I think this is a dead end, as it will break when using a shadow stack.
+>>
+>> No memories, let me go search. I found this:
+>>
+>>    https://patchwork.ozlabs.org/project/linux-ide/
+>> patch/20250331082251.3171276-12-xin@zytor.com/
+>>
+>> That's the other Peter :-)
 > 
-> I am not forcing this, but maybe put it on one line, if it fits into 100 
-> columns? I believe people are using 100 columns nowadays (me included).
+> Oh, my bad, sorry. :-)
 
-Yes good idea. And since the goal of this commit was to try to
-uniformize all comments accross the driver, I will probably reformat
-most of them to improve readability and follow same convention.
+Yes, you would have to patch both the stack and the shadow stack.
 
-Hugo.
+BUT: in the end it really doesn't really buy much. The only thing that
+benefits is Xen, but it is fairly easy for Xen (my original POC did this) to
+filter out the quite few MSRs that they do special dispatch for (plus the
+variable case), and then they can just use the native code including the
+benefit of using WRMSRNS and immediates.
 
--- 
-Hugo Villeneuve
+The other approach that I also came up with looks like this:
+
+/* Native code (non-immediate): trap point at +7 */
+
+   0:   48 89 c2                mov    %rax,%rdx
+   3:   48 c1 ea 20             shr    $0x20,%rdx
+   7:   0f 01 c6                wrmsrns
+   a:
+
+/* Native code (immediate): trap point at +0 */
+
+   0:   36 c4 e7 7a f6 c0 xx    ds wrmsrns %rax,$XX
+        xx xx xx
+   a:
+
+/* Xen code, stub sets CF = 1 on failure */
+
+   0:   e8 xx xx xx xx          call   asm_xen_pv_wrmsr
+   5:   73 03                   jnc    0xa
+   7:   0f 0b                   ud2
+   9:   90                      nop
+   a:
+
+The trap point even ends up in the same place! UD2 can be any 1-, 2-, or
+3-byte trapping instruction.
+
+> 
+>>> Additionally I found a rather ugly hack only to avoid re-iterating most of
+>>> the bare metal ALTERNATIVE() for the paravirt case. It is possible, but the
+>>> bare metal case is gaining one additional ALTERNATIVE level, resulting in
+>>> patching the original instruction with an identical copy first.
+>>
+>> OTOH the above generates atrocious crap code :/
+> 
+> Yes.
+
+Please don't generate crap code -- that's exactly The Wrong Thing. I didn't
+actually look at the output code; I honestly didn't think that that would even
+be an issue.
+
+If it is REALLY evil, then do something like shell script to generate the code
+instead...
+
+(One big problem here is that cpp doesn't understand colons as separators...)
+
+	-hpa
+
 
