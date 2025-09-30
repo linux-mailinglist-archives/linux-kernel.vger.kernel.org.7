@@ -1,247 +1,179 @@
-Return-Path: <linux-kernel+bounces-837032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A194BAB204
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 05:07:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE4C3BAB20D
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 05:07:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F27B53C331A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 03:07:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 311E3189A052
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 03:07:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 996C1224B1B;
-	Tue, 30 Sep 2025 03:06:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49A2F2144C9;
+	Tue, 30 Sep 2025 03:07:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=coelacanthus.name header.i=@coelacanthus.name header.b="fLmyKftQ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="oNP5pFOx"
-Received: from fhigh-b5-smtp.messagingengine.com (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="T2V0n94Z"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3A671E1E04;
-	Tue, 30 Sep 2025 03:06:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 285A721B9E2
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 03:07:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759201613; cv=none; b=t0fap2kSXpJm4QqaNZOa7C29V1PGQX6FMcR0sBrfjf7QqIiWV8Q75AhqMn0oLcUYFdc2Swip1620wfp3Zd+YbG/LVDJPSOxJ20d+YS+ZkxgagD7dkAtp7gsqemZHh+GZmK48+Hbm8g695ZrY+YKikg3I0v0tk4yJfIICxicbVZ0=
+	t=1759201644; cv=none; b=E2UqtemKyiZDaryE919fLOfs4GCLPtvREC9NSsqz2auWheBxG9aYt+jJPdKNTxMs2C+yL0Ns4VxWqXT97q5x9MImKj4c3bZEOXCG4O2yp5+xv145bf6Whn6JNjMmxL5UiGpI3qf7Tp4H7Ma2DMamVPMGbHy/qrlluH1cQ+MXVug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759201613; c=relaxed/simple;
-	bh=YzKh5KM25egSgCIkXs8XfZcXIc8x3hlfCi9KXBW5mfw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=DUNL7/UnozJvTWJdkrqZiciRN+Zqq9eVppStbQMhW+EPm8A4+jNSN3YPkK0+SeA8FKmpDQoGfYhJXQROyhkM3KJW+cadXJYtV2aEGhzKi3YctVH6MqF5fO8y4m+9tYTmGmu7EQ1jGcGwYvXeRiM7Xb067mWb+pj2WBs2xTucchg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=coelacanthus.name; spf=pass smtp.mailfrom=coelacanthus.name; dkim=pass (2048-bit key) header.d=coelacanthus.name header.i=@coelacanthus.name header.b=fLmyKftQ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=oNP5pFOx; arc=none smtp.client-ip=202.12.124.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=coelacanthus.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=coelacanthus.name
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 9E1AF7A008A;
-	Mon, 29 Sep 2025 23:06:50 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-04.internal (MEProxy); Mon, 29 Sep 2025 23:06:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	coelacanthus.name; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:from:from:in-reply-to
-	:message-id:mime-version:reply-to:subject:subject:to:to; s=fm3;
-	 t=1759201610; x=1759288010; bh=X7ptXVOpVacXocranNPRCzZZZfkTHOiR
-	nzQURHJQe98=; b=fLmyKftQLkkF0gP5ectm9hS1dYxQUKZtaPeRxdXfh1PLuK9S
-	b5mBbykF4BxR+7Dnk4aWIAmtUmuf2zaQZSWCtL6dIwi4E/ID5hYqoRbx87J98LPS
-	bPppQ8tRCd5dii9KKkrsAkZnWF5Rc8TQggwKlMZtC4XGbKrgDh2W1tNlttPoOa4X
-	gbsulXeZr8i5Dv3ABTXiJu98hbEInkD+ftSzic1Rx7fLhNSW/KIEdnIuZbLSeVCL
-	Sl0T8zgs55z32DOUB38Otr+U+xIFkWIZQ0V70XrK3RT4mVaPcuCFExruLgIr2Ccv
-	dG0Pb/zmazvBEVvdS1RcI1RIzae7Lm6QBhTQ7g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1759201610; x=1759288010; bh=X7ptXVOpVacXocranNPRCzZZZfkT
-	HOiRnzQURHJQe98=; b=oNP5pFOxBeKQcZ1SS6nSE+uGpRNe3T7R1BvnMOrofNNy
-	UXhPzoHZ5LhpGiN+XYokWFpYu4yzqbWp2d1VLUaGThBBAjSRBluz7amFccTOkkAA
-	qIHJ40qlbiT1my/CGTY3h9e9CdENt2syl5fKgl5YLTlElOHTRyKAiLXvp17/oJWw
-	LXra6hv9q5P2gl9+732nViDHunUKTME92+QyJnvdxWnKQWat6x27J6GT+4HpeZjN
-	F6gBq3lYKEBMkU4ev2/yCgIxt8urLI5YdiLStteRoEkvP+iesdGm+GpYQch0LnmH
-	DQWDYXv0Cy1vJhFuyMKhWVjCrzCKoGTL9zYfIDTpTQ==
-X-ME-Sender: <xms:SUnbaFlFFuXoENBozvoWT4vi9Nv6LzJ3RHIfzwqzDk8qFjLad93Ljg>
-    <xme:SUnbaI9O1NNRyw55lzilePRXX7CeRZ6D9bwZoSLpsAWsx43kkIbHc_vOOHQFWbxZH
-    I9_iHkghkY7BDZFkuxnznEdNsQ1ZKiyXVL1TCT_tZi5KpBZpQHGjC0>
-X-ME-Received: <xmr:SUnbaLL6Zidc6IbE9oD7HZpt1Rs0tL5a_gdWtpYCfJ1f01naLYlvj2120pAgJg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdejleejiecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefhfffugggtgffkvfevofesthejredtredtjeenucfhrhhomhepvegvlhgvshhtvgcu
-    nfhiuhcuoehufihusegtohgvlhgrtggrnhhthhhushdrnhgrmhgvqeenucggtffrrghtth
-    gvrhhnpedtgfehkeeuveekvdeuueeiteehgfeitdekudekgeeiteduudeufeelheejgeei
-    ueenucffohhmrghinhepghhithhhuhgsrdgtohhmpdhkvghrnhgvlhdrohhrghenucevlh
-    hushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehufihusegtohgv
-    lhgrtggrnhhthhhushdrnhgrmhgvpdhnsggprhgtphhtthhopeduvddpmhhouggvpehsmh
-    htphhouhhtpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhn
-    vghlrdhorhhgpdhrtghpthhtohepghhushhtrghvohgrrhhssehkvghrnhgvlhdrohhrgh
-    dprhgtphhtthhopehsthgrsghlvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphht
-    thhopehmrghilhhhohhlrdhvihhntggvnhhtseifrghnrgguohhordhfrhdprhgtphhtth
-    hopehhvghnrhhikhessghrihigrghnuggvrhhsvghnrdgukhdprhgtphhtthhopehmkhhl
-    sehpvghnghhuthhrohhnihigrdguvgdprhgtphhtthhopehkvggvsheskhgvrhhnvghlrd
-    horhhgpdhrtghpthhtoheprhhunhgthhgvnhhgrdhluheshhhpmhhitghrohdrtghomhdp
-    rhgtphhtthhopehufihusegtohgvlhgrtggrnhhthhhushdrnhgrmhgv
-X-ME-Proxy: <xmx:SUnbaFgolxaHB-FluZvHZ2_4cfMBYP4jiiKn0avrr2t2koYn5dxgsg>
-    <xmx:SUnbaP9eq2qz6etDplOedMT0mKjuc53pjz8F2nJDlAV_JVq7cuDyQA>
-    <xmx:SUnbaCMs0nzj1Jr1yyIT9GyMWW_ITBK7F2tCHcuqKHByhi_vvh4P0g>
-    <xmx:SUnbaLBHUpwuRmCyw8GOooRXwfP_nLNwB-zS8Cg8di1paLFPLXL1_g>
-    <xmx:SknbaNiyu-nsBmGa23iL5_ZVYf9n_iCNovTKVby-DEUdunHn1Ex7izg2>
-Feedback-ID: i95c648bc:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 29 Sep 2025 23:06:48 -0400 (EDT)
-From: Celeste Liu <uwu@coelacanthus.name>
-Date: Tue, 30 Sep 2025 11:06:41 +0800
-Subject: [PATCH v3] net/can/gs_usb: increase max interface to U8_MAX
+	s=arc-20240116; t=1759201644; c=relaxed/simple;
+	bh=6CYu0yjjLffWbYyT1iuvFnA3aqfZ7582Muoa6RB5CIs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DU80W+cdWD06/nrLkWWD5nSdCwfq//pwy7C5Kb4RRzafuT3Ap5J49lgtq0528b62yP2t85rXVITNcq+8jOBJhFvVk3vxJ3EaSAXfoAYtjwOF/yf36TZty9xL6IMLk9uTDwOkXWOQw1y+ypOUERR71LG+ImB+jnAZDh2zoUAI1lU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=T2V0n94Z; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-27d2c35c459so43422625ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 20:07:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1759201637; x=1759806437; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gKvNIqyQStmqM1bZBXJ3keviMu+G7jno5fFKkr2O1vg=;
+        b=T2V0n94Z72PkWrgoKPn3wti0SMXyWgXWITYhsxs0BBwPeONdbMihl5p06hVfcRJMBY
+         KBGFaC1Cl/EQFG2FKQ7kwLs5TvXf2JcP+UWJkXVNd7zRSXfjS+qD8GFpm0jNLu7wGpxq
+         KLevcRL5ZSVYkRBP/E2Nk8He+p4GgXNRlEF5k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759201637; x=1759806437;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gKvNIqyQStmqM1bZBXJ3keviMu+G7jno5fFKkr2O1vg=;
+        b=kqtl6RNAkan1mLIHFXIF6vOAEIGprhmeM3fKM7i+UPgV3eBUm6j60UbBFLticpeqgO
+         6vocT99YyL/NbitJ5Dd6R0CJjeV+v993GfKXzlquKhXLCA9rNcTJXQ3RVt8mIgB+wfL6
+         oVfdeE+1nWmmWDavlsYFBtIlTN5in3PvAagAcWt9Ql4K2THvRCIsFywlk+An32XluqOL
+         0eq6NKUu2bQesn+qM3Zi4kNnPK63J9yyoxRUc5mL29FIMtq7TW5S6/3tW93JNUyMtO3E
+         0sCTm7hEw3EK/y4btHYOs6svOuqQw/B+Iiwqd0rvbm6R1M96hSLRgvRLCXbBW3HcxAKw
+         6+DA==
+X-Forwarded-Encrypted: i=1; AJvYcCVB+npTLRsXNtLYedFU0oSUuY6WXCG0P705YeLBjqGSS+fEwxdtP7rXBmN3ZNxNgFozxMRs0NZWL67uc08=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyO+/BRM7SYLvzpjUThCweKHNgxBOijTPHyrKPluHB8R+iadLcQ
+	OgeBuxZxsPvx2TqW8tmEq2taR7fyQZ9jBA4vI/8jgXZL63rQigZVBu1OIaZOhhq5Cu627IkeExy
+	2lf4=
+X-Gm-Gg: ASbGncu6n56NVeWaL0tNumTkBrwRDiZ0XLyGNxCcGPVCUGSJmDkUR/g60rktlmEAF8n
+	oHY/2e4p68YPifalHp7D3ur8596tm5n+6hnRpNk9guNdTx2Q6FGNVQXaYSuInBOcsIpaB262vCJ
+	6hyGVpl9r+ylpDfQvVpIb+3IICjREV0Wo6TGV1MgZ6bMsAYjHmwhRYKJD3GnB5BVUipnHMsytIK
+	3Yx98DCr2hmGrKnGIRG5efPFVUIp6BikFDlgjM2K6GZHsIGkHEOo9uw8RvtMn9M8fhO+BARCGIo
+	XTqngvzB8cwGd0GfmaBOhKdMr9tk27PYnIv4YGBHhmvC20lWtPIN2jbSQatvJAs7MmMmYWBcn7t
+	0vzubEHxrKgNqzR7Jw93Rs+gwhncpoWwN0GnWB5LqGGWecVIu8jO0uFSU/lOelihHZXl42UzkBJ
+	LVw3ThS7CwRM8Njw==
+X-Google-Smtp-Source: AGHT+IGz+L49ayRNiEj3wfL/SeoCo/PM75jRGL4G2Yjz+uYAGL4CprTZphrdDjaxtp9UH4WJID7sGw==
+X-Received: by 2002:a17:902:ec89:b0:27e:f06b:ae31 with SMTP id d9443c01a7336-27ef06bb0b8mr153238025ad.61.1759201637137;
+        Mon, 29 Sep 2025 20:07:17 -0700 (PDT)
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com. [209.85.214.174])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed68821ebsm145203645ad.84.2025.09.29.20.07.15
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 29 Sep 2025 20:07:16 -0700 (PDT)
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-26a0a694ea8so45034965ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 20:07:15 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVavonKQuWBnphPRAyG+oRCgZbiTUlj6D7vRjNFLuwz+bpmklWrgl5r39CYtuogLKoSpQfVtSWTTxzJUp8=@vger.kernel.org
+X-Received: by 2002:a17:902:f64b:b0:275:f932:8636 with SMTP id
+ d9443c01a7336-27ed4a2d54fmr206796235ad.38.1759201634408; Mon, 29 Sep 2025
+ 20:07:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250930-gs-usb-max-if-v3-1-21d97d7f1c34@coelacanthus.name>
-X-B4-Tracking: v=1; b=H4sIAEBJ22gC/3XMSw6CMBSF4a2Yjr2mLwh15D6Mg0u9QBMppoUGQ
- 9i7hZExOvxPcr6FRQqOIjsfFhYouegGn0MdD8x26FsCd8/NJJcFN9JAG2GKNfQ4g2sAFde2UlI
- rKlj+PAM1bt696y135+I4hNfOJ7Gt/6QkQABpUReWG6EUXuxAD7Tox26KJ489sU1M8kNR/FuRW
- ZG2Mag1lVUpfinrur4B0E85aPgAAAA=
-X-Change-ID: 20250929-gs-usb-max-if-a304c83243e5
-To: Marc Kleine-Budde <mkl@pengutronix.de>, 
- Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Cc: Maximilian Schneider <max@schneidersoft.net>, 
- Henrik Brix Andersen <henrik@brixandersen.dk>, 
- Wolfgang Grandegger <wg@grandegger.com>, Kees Cook <kees@kernel.org>, 
- "Gustavo A. R. Silva" <gustavoars@kernel.org>, linux-can@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Runcheng Lu <runcheng.lu@hpmicro.com>, 
- stable@vger.kernel.org, Celeste Liu <uwu@coelacanthus.name>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4003; i=uwu@coelacanthus.name;
- h=from:subject:message-id; bh=YzKh5KM25egSgCIkXs8XfZcXIc8x3hlfCi9KXBW5mfw=;
- b=owJ4nJvAy8zAJeafov85RWVtBeNptSSGjNuerptZ9l4/XrCtZupcJo9OH3924xdzBAQPu6odi
- 3uqe5aXv7SjlIVBjItBVkyRJa+E5SfnpbPdezu2d8HMYWUCGcLAxSkAE7nTxfC/at4R5/v/Pn1h
- vsn82vzuXPfImV6is/Zcn7CrtFZ9Me8GPUaGy9GbfHSXPN93IHHZbjWm3WZ/Pm4Q45/SV2N/r/w
- a0wl+TgCSS0nP
-X-Developer-Key: i=uwu@coelacanthus.name; a=openpgp;
- fpr=892EBC7DC392DFF9C9C03F1D15F4180E73787863
+References: <20250929142455.24883-1-clamor95@gmail.com> <20250929142455.24883-2-clamor95@gmail.com>
+In-Reply-To: <20250929142455.24883-2-clamor95@gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Mon, 29 Sep 2025 20:07:02 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=Vd=muLeMJYszC2SqRBThN=Srm_bKXBEmjjqND7bqHo2g@mail.gmail.com>
+X-Gm-Features: AS18NWCupJdoWovR_kE0x_uWeV-e4Q15rTRpmAHzxBq1v_8sPWAFlU2cXRm8lAs
+Message-ID: <CAD=FV=Vd=muLeMJYszC2SqRBThN=Srm_bKXBEmjjqND7bqHo2g@mail.gmail.com>
+Subject: Re: [PATCH v1 1/8] dt-bindings: display: panel: properly document LG
+ LD070WX3 panel
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Sam Ravnborg <sam@ravnborg.org>, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This issue was found by Runcheng Lu when develop HSCanT USB to CAN FD
-converter[1]. The original developers may have only 3 intefaces device to
-test so they write 3 here and wait for future change.
+Hi,
 
-During the HSCanT development, we actually used 4 interfaces, so the
-limitation of 3 is not enough now. But just increase one is not
-future-proofed. Since the channel type in gs_host_frame is u8, just
-increase interface number limit to max size of u8 safely.
+On Mon, Sep 29, 2025 at 7:25=E2=80=AFAM Svyatoslav Ryhel <clamor95@gmail.co=
+m> wrote:
+>
+> LG LD070WX3-SL01 was mistakenly documented as a simple DSI panel, which i=
+t
+> clearly is not. Address this by adding the proper schema for this panel.
+>
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> ---
+>  .../bindings/display/panel/lg,ld070wx3.yaml   | 60 +++++++++++++++++++
+>  .../display/panel/panel-simple-dsi.yaml       |  2 -
+>  2 files changed, 60 insertions(+), 2 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/display/panel/lg,ld=
+070wx3.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/display/panel/lg,ld070wx3.=
+yaml b/Documentation/devicetree/bindings/display/panel/lg,ld070wx3.yaml
+> new file mode 100644
+> index 000000000000..0a82cf311452
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/panel/lg,ld070wx3.yaml
+> @@ -0,0 +1,60 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/panel/lg,ld070wx3.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: LG Corporation 7" WXGA TFT LCD panel
+> +
+> +maintainers:
+> +  - Svyatoslav Ryhel <clamor95@gmail.com>
+> +
+> +allOf:
+> +  - $ref: panel-common.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - const: lg,ld070wx3-sl01
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  vdd-supply: true
+> +  vcc-supply: true
+> +
+> +  backlight: true
+> +  port: true
+> +
+> +required:
+> +  - compatible
+> +  - vdd-supply
+> +  - vcc-supply
 
-[1]: https://github.com/cherry-embedded/HSCanT-hardware
+I suspect you'll get a NAK here because you're not preserving backward
+compatibility for existing device trees. While there can sometimes be
+reasons to do that, you'd need to provide a very strong justification.
 
-Fixes: d08e973a77d1 ("can: gs_usb: Added support for the GS_USB CAN devices")
-Reported-by: Runcheng Lu <runcheng.lu@hpmicro.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Celeste Liu <uwu@coelacanthus.name>
----
-Changes in v3:
-- Cc stable should in patch instead of cover letter.
-- Link to v2: https://lore.kernel.org/r/20250930-gs-usb-max-if-v2-1-2cf9a44e6861@coelacanthus.name
 
-Changes in v2:
-- Use flexible array member instead of fixed array.
-- Link to v1: https://lore.kernel.org/r/20250929-gs-usb-max-if-v1-1-e41b5c09133a@coelacanthus.name
----
- drivers/net/can/usb/gs_usb.c | 22 ++++++++++------------
- 1 file changed, 10 insertions(+), 12 deletions(-)
+It seems like instead of breaking compatibility you could just have
+two supplies:
 
-diff --git a/drivers/net/can/usb/gs_usb.c b/drivers/net/can/usb/gs_usb.c
-index c9482d6e947b0c7b033dc4f0c35f5b111e1bfd92..69b068c8fa8fbab42337e2b0a3d0860ac678c792 100644
---- a/drivers/net/can/usb/gs_usb.c
-+++ b/drivers/net/can/usb/gs_usb.c
-@@ -289,11 +289,6 @@ struct gs_host_frame {
- #define GS_MAX_RX_URBS 30
- #define GS_NAPI_WEIGHT 32
- 
--/* Maximum number of interfaces the driver supports per device.
-- * Current hardware only supports 3 interfaces. The future may vary.
-- */
--#define GS_MAX_INTF 3
--
- struct gs_tx_context {
- 	struct gs_can *dev;
- 	unsigned int echo_id;
-@@ -324,7 +319,6 @@ struct gs_can {
- 
- /* usb interface struct */
- struct gs_usb {
--	struct gs_can *canch[GS_MAX_INTF];
- 	struct usb_anchor rx_submitted;
- 	struct usb_device *udev;
- 
-@@ -336,9 +330,11 @@ struct gs_usb {
- 
- 	unsigned int hf_size_rx;
- 	u8 active_channels;
-+	u8 channel_cnt;
- 
- 	unsigned int pipe_in;
- 	unsigned int pipe_out;
-+	struct gs_can *canch[] __counted_by(channel_cnt);
- };
- 
- /* 'allocate' a tx context.
-@@ -599,7 +595,7 @@ static void gs_usb_receive_bulk_callback(struct urb *urb)
- 	}
- 
- 	/* device reports out of range channel id */
--	if (hf->channel >= GS_MAX_INTF)
-+	if (hf->channel >= parent->channel_cnt)
- 		goto device_detach;
- 
- 	dev = parent->canch[hf->channel];
-@@ -699,7 +695,7 @@ static void gs_usb_receive_bulk_callback(struct urb *urb)
- 	/* USB failure take down all interfaces */
- 	if (rc == -ENODEV) {
- device_detach:
--		for (rc = 0; rc < GS_MAX_INTF; rc++) {
-+		for (rc = 0; rc < parent->channel_cnt; rc++) {
- 			if (parent->canch[rc])
- 				netif_device_detach(parent->canch[rc]->netdev);
- 		}
-@@ -1460,17 +1456,19 @@ static int gs_usb_probe(struct usb_interface *intf,
- 	icount = dconf.icount + 1;
- 	dev_info(&intf->dev, "Configuring for %u interfaces\n", icount);
- 
--	if (icount > GS_MAX_INTF) {
-+	if (icount > type_max(typeof(parent->channel_cnt))) {
- 		dev_err(&intf->dev,
- 			"Driver cannot handle more that %u CAN interfaces\n",
--			GS_MAX_INTF);
-+			type_max(typeof(parent->channel_cnt)));
- 		return -EINVAL;
- 	}
- 
--	parent = kzalloc(sizeof(*parent), GFP_KERNEL);
-+	parent = kzalloc(struct_size(parent, canch, icount), GFP_KERNEL);
- 	if (!parent)
- 		return -ENOMEM;
- 
-+	parent->channel_cnt = icount;
-+
- 	init_usb_anchor(&parent->rx_submitted);
- 
- 	usb_set_intfdata(intf, parent);
-@@ -1531,7 +1529,7 @@ static void gs_usb_disconnect(struct usb_interface *intf)
- 		return;
- 	}
- 
--	for (i = 0; i < GS_MAX_INTF; i++)
-+	for (i = 0; i < parent->channel_cnt; i++)
- 		if (parent->canch[i])
- 			gs_destroy_candev(parent->canch[i]);
- 
+* power-supply - The name for the "dvdd" supply.
+* avdd-supply - The name for the "avdd" supply.
 
----
-base-commit: e5f0a698b34ed76002dc5cff3804a61c80233a7a
-change-id: 20250929-gs-usb-max-if-a304c83243e5
-
-Best regards,
--- 
-Celeste Liu <uwu@coelacanthus.name>
-
+...and then you make both of them not "required". Maybe you'd add some
+documentation saying that things might not work 100% correctly if they
+weren't provided but that old device trees didn't specify them?
 
