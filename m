@@ -1,131 +1,214 @@
-Return-Path: <linux-kernel+bounces-837875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CAB2BADF0F
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:41:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ABF2BADF1B
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:41:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AA003BEF48
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 15:41:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2ACD51C7864
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 15:41:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DEB73081A5;
-	Tue, 30 Sep 2025 15:41:01 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64BF91F428F;
+	Tue, 30 Sep 2025 15:41:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BdbmKi6t"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C83A2FF16B
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 15:40:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A37E5306D47
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 15:41:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759246860; cv=none; b=mwDuVB+T29oOu0T25HOvlGxt6Rt2pkNwwHiy/CPkXVMk5G0cS8gq23leG0mk8y/MJatyJgb8P4EBuUwYcDSLV2afaa9m0F2QD2SZSBrJhXrq02DKdtGYg+4Qq8Rwne1yEj8Jj6bcRriWpPiqCXTcp4+McoBx/igPwg7cbYYAfYE=
+	t=1759246901; cv=none; b=mG+/dwy2hEtaTUNh4CKc8XNEfY0MDLkhplOOMNkqZZ28EtH95ZFCSnF8nCdrNsKFI7foiTpu4Sg6ownQL3iImflbA3LXhZz77bWuP+8n66uDIN7EguhpmEEXduIzIPZQfleROz1o7jXFoYSqvsCZQWQXjy+yyXXJ7lpk7ocM8qc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759246860; c=relaxed/simple;
-	bh=LabcR7YF5ECsGRiXgerHKl3LKlbLePSylAl5VBiL0y4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=izPgdNcs0mUrlTWByGIHncIr2kS8dM1IQDen5NPtpMGlN3Y+eLWpOf7ZJbjOQwMJHW7TfCw1eWJgQb6t1rvhFE8So8aR5m7ZOVPO9Cy/97eNjGNVBLkOOaSnEij8pL0pC2EZWUhSDZM8ylVPM+yIk872WBXx/yVq12iIWdh3pCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1v3cT8-0004hF-Kd; Tue, 30 Sep 2025 17:40:46 +0200
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1v3cT6-001Gr0-2z;
-	Tue, 30 Sep 2025 17:40:44 +0200
-Received: from pengutronix.de (p54b152ce.dip0.t-ipconnect.de [84.177.82.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 9CCF947D522;
-	Tue, 30 Sep 2025 15:40:44 +0000 (UTC)
-Date: Tue, 30 Sep 2025 17:40:44 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Celeste Liu <uwu@coelacanthus.name>
-Cc: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
-	Maximilian Schneider <max@schneidersoft.net>, Henrik Brix Andersen <henrik@brixandersen.dk>, 
-	Wolfgang Grandegger <wg@grandegger.com>, Kees Cook <kees@kernel.org>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Runcheng Lu <runcheng.lu@hpmicro.com>, stable@vger.kernel.org, Vincent Mailhol <mailhol@kernel.org>
-Subject: Re: [PATCH v5] net/can/gs_usb: increase max interface to U8_MAX
-Message-ID: <20250930-translucent-tested-sheep-347fb2-mkl@pengutronix.de>
-References: <20250930-gs-usb-max-if-v5-1-863330bf6666@coelacanthus.name>
+	s=arc-20240116; t=1759246901; c=relaxed/simple;
+	bh=HILxtH794LxX2LcYx+WlJIIQjfNADL2/g651LbTPUOc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CTAGdYHxYhzuO2h3td5GPVkiWHiOjPsz00g8sqx282KD6nEOYFXqTJmU3+pLGl3mUim9o49koZGb28zyQf/mqGrDUBF9aAzepfg3z3PJwbNIi93JirSvKG3/oY/RHM4gjmRXAxVmMZIyBi0nbYBdw7cFnsUHxYMn2IgS9wiVc3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BdbmKi6t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A044C2BC9E
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 15:41:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759246901;
+	bh=HILxtH794LxX2LcYx+WlJIIQjfNADL2/g651LbTPUOc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=BdbmKi6tvVzFmjHbsVeVkLjsBZ9qDcSj9aG63FfB6EDuPc16FlGZXfduhRvzMr6DH
+	 89izW2OnYO3FgchULt0G1ZVHo3AqhPv5nGEelG5LdtoKy0si9aOu9N2DNIPh8FMWrO
+	 dzsJAx73MP2rJxZZoJnO8kwSW+4f9/rWRwVTN2L0nvnsdh6+XA72CVREhGyAbyK4a2
+	 NHOMWgJOvxwGUrts1XUdHAbeQNIu6tw7LFDoIWmO8oYMf8uFXI9k73qsP3vcQr6c97
+	 gsJqPuGKKjjkS2s2eif53grnF4znqa/UEvsCxHYtqmsKltw2EXsdatVN6s1RC8A3iV
+	 JTEp67P1oNr2g==
+Received: by mail-yx1-f49.google.com with SMTP id 956f58d0204a3-635c9db8a16so4563657d50.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 08:41:41 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX15BNRSxGnUQOd8YyHhiKzQQOnmt3Q9N+Own3IS/KvGf33qbTVNYZ+21sN2tU0+DMGyl+1XIVxMrrlzSU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/45N/IsXiLxfnIUB/95yzUuvih32DvrqA2hxSMqQ4HHfDrqv/
+	Ol10WKF4UPzvRto7ckZ7AT5FO3tM+YhkkzolkzQztA3LTs38ZC0LUpYnqk6UcNvM1tklC9xSGjj
+	fjKXJKdbomSYTHtjdI3D1Kd+WSJw+hxka8NQ2+CPPBA==
+X-Google-Smtp-Source: AGHT+IHnEWysjUTlXzGqmjNk0BACH5wHQsyC/hdMpqw50UGr2zQD5Mmp3w6QC1LocfY4iWrCYlcFLiJbaQADAeNE4wM=
+X-Received: by 2002:a05:690e:4298:10b0:637:eb5f:7425 with SMTP id
+ 956f58d0204a3-63b6fd8a203mr499756d50.0.1759246900278; Tue, 30 Sep 2025
+ 08:41:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="vpd4l2s3wnfawl53"
-Content-Disposition: inline
-In-Reply-To: <20250930-gs-usb-max-if-v5-1-863330bf6666@coelacanthus.name>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
-
-
---vpd4l2s3wnfawl53
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
+References: <20250916-luo-pci-v2-0-c494053c3c08@kernel.org>
+ <20250916-luo-pci-v2-6-c494053c3c08@kernel.org> <20250929175704.GK2695987@ziepe.ca>
+ <CAF8kJuNfCG08FU=BmLtoh6+Z4V5vPHOMew9NMyCWQxJ=2MLfxg@mail.gmail.com>
+ <CA+CK2bBFZn7EGOJakvQs3SX3i-b_YiTLf5_RhW_B4pLjm2WBuw@mail.gmail.com> <2025093030-shrewdly-defiant-1f3e@gregkh>
+In-Reply-To: <2025093030-shrewdly-defiant-1f3e@gregkh>
+From: Chris Li <chrisl@kernel.org>
+Date: Tue, 30 Sep 2025 08:41:29 -0700
+X-Gmail-Original-Message-ID: <CACePvbXrbR=A43UveqPrBmQHAfvjuJGtw9XyUQvpYe941KwzuA@mail.gmail.com>
+X-Gm-Features: AS18NWAC4fHMXW0R7YRu79v-JcoJYTEAG3XCAfO8__KvhcCcqK-49zqgQNbiKuQ
+Message-ID: <CACePvbXrbR=A43UveqPrBmQHAfvjuJGtw9XyUQvpYe941KwzuA@mail.gmail.com>
+Subject: Re: [PATCH v2 06/10] PCI/LUO: Save and restore driver name
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Pasha Tatashin <pasha.tatashin@soleen.com>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	Bjorn Helgaas <bhelgaas@google.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Len Brown <lenb@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	David Matlack <dmatlack@google.com>, Pasha Tatashin <tatashin@google.com>, 
+	Jason Miu <jasonmiu@google.com>, Vipin Sharma <vipinsh@google.com>, 
+	Saeed Mahameed <saeedm@nvidia.com>, Adithya Jayachandran <ajayachandra@nvidia.com>, 
+	Parav Pandit <parav@nvidia.com>, William Tu <witu@nvidia.com>, Mike Rapoport <rppt@kernel.org>, 
+	Leon Romanovsky <leon@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v5] net/can/gs_usb: increase max interface to U8_MAX
-MIME-Version: 1.0
 
-On 30.09.2025 19:34:28, Celeste Liu wrote:
-> This issue was found by Runcheng Lu when develop HSCanT USB to CAN FD
-> converter[1]. The original developers may have only 3 interfaces device to
-> test so they write 3 here and wait for future change.
->=20
-> During the HSCanT development, we actually used 4 interfaces, so the
-> limitation of 3 is not enough now. But just increase one is not
-> future-proofed. Since the channel index type in gs_host_frame is u8, just
-> make canch[] become a flexible array with a u8 index, so it naturally
-> constraint by U8_MAX and avoid statically allocate 256 pointer for
-> every gs_usb device.
->=20
-> [1]: https://github.com/cherry-embedded/HSCanT-hardware
->=20
-> Fixes: d08e973a77d1 ("can: gs_usb: Added support for the GS_USB CAN devic=
-es")
-> Reported-by: Runcheng Lu <runcheng.lu@hpmicro.com>
-> Cc: stable@vger.kernel.org
-> Reviewed-by: Vincent Mailhol <mailhol@kernel.org>
-> Signed-off-by: Celeste Liu <uwu@coelacanthus.name>
+On Tue, Sep 30, 2025 at 6:41=E2=80=AFAM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Tue, Sep 30, 2025 at 09:02:44AM -0400, Pasha Tatashin wrote:
+> > On Mon, Sep 29, 2025 at 10:10=E2=80=AFPM Chris Li <chrisl@kernel.org> w=
+rote:
+> > >
+> > > On Mon, Sep 29, 2025 at 10:57=E2=80=AFAM Jason Gunthorpe <jgg@ziepe.c=
+a> wrote:
+> > > >
+> > > > On Tue, Sep 16, 2025 at 12:45:14AM -0700, Chris Li wrote:
+> > > > > Save the PCI driver name into "struct pci_dev_ser" during the PCI
+> > > > > prepare callback.
+> > > > >
+> > > > > After kexec, use driver_set_override() to ensure the device is
+> > > > > bound only to the saved driver.
+> > > >
+> > > > This doesn't seem like a great idea, driver name should not be made
+> > > > ABI.
+> > >
+> > > Let's break it down with baby steps.
+> > >
+> > > 1) Do you agree the liveupdated PCI device needs to bind to the exact
+> > > same driver after kexec?
+> > > To me that is a firm yes. If the driver binds to another driver, we
+> > > can't expect the other driver will understand the original driver's
+> > > saved state.
+> >
+> > Hi Chris,
+> >
+> > Driver name does not have to be an ABI.
+>
+> A driver name can NEVER be an abi, please don't do that.
 
-Applied to linux-can.
+Can you please clarify that.
 
-Thanks,
-Marc
+for example, the pci has this sysfs control api:
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+"/sys/bus/pci/devices/0000:04:00.0/driver_override" which takes the
+*driver name* as data to override what driver is allowed to bind to
+this device.
+Does this driver_override consider it as using the driver name as part
+of the abi? If not, why?
 
---vpd4l2s3wnfawl53
-Content-Type: application/pgp-signature; name="signature.asc"
+What live update wants is to make that driver_override persistent over
+kexec. It does not introduce the "driver_override" API. That is
+pre-existing conditions. The PCI liveupdate just wants to use it.
 
------BEGIN PGP SIGNATURE-----
+I want to get some basic understanding before adventure into the more
+complex solutions.
 
-iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAmjb+fkACgkQDHRl3/mQ
-kZw3rgf8Ds99h2c+Gxkp6eFeXpgydDTPs+fsnZrndfaKnk1smRJAsvhb8pziyMlM
-MFJyl1DjEkz9SJrbgDZLmu0iPkcgBdmIrdT0yn7cMmiVHBQWwTRsWsWm/lLKO68A
-xMftNo6VkjWokey7tLqVwDqjfpYkV1XmQ4FlbMqeqOOLRPGScI9N7x70fUK7I5Y0
-qDZPJ5cViDGL3eEIdHt1YZa5dtvVG0umFdH4Yv8snNHJPyxwVOF9Q/ewe3VjC2FF
-hnu7HAiaGxSnMj31AIKIV4++OhnakLssMTTCKJAesy0mDbxl+BkPy3SdDzFEdnRe
-Jxwct12vgpSVV6C4JDHKae9YHMmAxw==
-=JDxv
------END PGP SIGNATURE-----
+> > Drivers that support live
+> > updates should provide a live update-specific ABI to detect
+> > compatibility with the preserved data. We can use a preservation
+> > schema GUID for this.
+> >
+> > > 2) Assume the 1) is yes from you. Are you just not happy that the
+> > > kernel saves the driver name? You want user space to save it, is that
+> > > it?
+> > > How does it reference the driver after kexec otherwise?
+> >
+> > If we use GUID, drivers would advertise the GUIDs they support and we
+> > would modify the core device-driver matching process to use this
+> > information.
+> >
+> > Each driver that supports this mechanism would need to declare an
+> > array of GUIDs it is compatible with. This would be a new field in its
+> > struct pci_driver.
+> >
+> > static const guid_t my_driver_guids[] =3D {
+> >     GUID_INIT(0x123e4567, ...), // Schema V1
+> >     GUID_INIT(0x987a6543, ...), // Schema V2
+> >     {},
+> > };
+>
+> That's crazy, who is going to be adding all of that to all drivers?  And
+> knowing to bump this if the internal data representaion changes?  And it
+> will change underneath it without the driver even knowing?  This feels
+> really really wrong, unless I'm missing something.
 
---vpd4l2s3wnfawl53--
+The GUID is more complex than a driver name. I am fine with not using
+GUID if you are so strongly opposed to it.
+
+You are saying don't do A(driver name) and B(GUID). I am waiting for
+the part where you say "please do C instead".
+
+Do you have any other suggestion how to prevent the live update PCI
+device bind to a different driver after kexec? I am happy to work on
+the direction you point out and turn that into a patch for the
+discussion purpose.
+
+Thanks
+
+Chris
+
+> > static struct pci_driver my_pci_driver =3D {
+> >     .name       =3D "my_driver",
+> >     .id_table   =3D my_pci_ids,
+> >     .probe      =3D my_probe,
+> >     .live_update_guids =3D my_driver_guids,
+> > };
+> >
+> > The kernel's PCI core would perform an extra check before falling back
+> > to the standard PCI ID matching.
+> > 1. When a PCI device is discovered, the core first asks the Live
+> > Update framework: "Is there a preserved GUID for this device?"
+> > 2. If a GUID is found, the core will only attempt to bind drivers that
+> > both match the device's PCI ID and have that specific GUID in their
+> > live_update_guids list.
+>
+> What "core" is doing this?  And how exactly?
+>
+> And why is PCI somehow special here?
+>
+> > 3. If no GUID is preserved for the device, the core proceeds with the
+> > normal matching logic
+> > 4. If no driver matches the GUID, the device is left unbound. The
+> > state gets removed during finish(), and the device is reset.
+>
+> How do you reset a device you are not bound to?  That feels ripe for
+> causing problems (think multi-function devices...)
+>
+> And what about PCI drivers that are really just a aux-bus "root" point?
+> How is the sharing of all of the child devices going to work?
+>
+> This feels really rough and might possibly work if you squint hard
+> enough and test it in a very limited way with almost no real hardware :)
+>
+> good luck!
+>
+> greg k-h
 
