@@ -1,267 +1,154 @@
-Return-Path: <linux-kernel+bounces-838053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57E38BAE535
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 20:38:23 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1930FBAE538
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 20:39:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E90F04E10C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 18:38:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E08DD4E2804
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 18:39:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8F8F23817E;
-	Tue, 30 Sep 2025 18:38:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C134238175;
+	Tue, 30 Sep 2025 18:39:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="x6kylR6v"
-Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011032.outbound.protection.outlook.com [40.93.194.32])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BdqRu4TM"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 227591C68F;
-	Tue, 30 Sep 2025 18:38:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759257495; cv=fail; b=B6/LO0pXUPWqYi9AZUaa+BtLHcrOOajyL0a0qq2mgNtQ7wrErT7XfwqY+KfmgA4JHjm+HoUJWB0zBfUthErqfPYEjHfyma0PnTqsCgEXlrTJxWgIFV4e+AwJtmMbySsH+Za/qSMXxANccA6YBT5GGXwTEOjtiZdsv/84sehRGZQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759257495; c=relaxed/simple;
-	bh=M/8Mmwlmp8DEO2s3hUB8Lp7y+7+u8ZRvbPQBRo6hfGs=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=YMleF73EjXNJsEre5byP9QJFsMfrfDJpJHua/p5duNGZb+UfUhVeXEVRY1VmHFJTmYpSRkJZwGm34GnK+Y3azre/l5fbUJsup4qfVNpfdkYogtFTc2zB4h3QL3+CC6OOGmVDpEIHsKZo8+weWXhOfT9V+hvSty+wfUMswrfU8dE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=x6kylR6v; arc=fail smtp.client-ip=40.93.194.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ecn1Kx88xdeUxHspAKklLxUueEQETk406CFBMdgMqPibsncq81E9z6vA2RdqZttvqfPX/EmI3gNiVbpevK4xw7tArpSJBhk4+LOi7x1YdpuZtAbIsOFklcBe5FHw0bSWDHru2qcZoEt3eVuO6RgvAfl+VqgETKjvoUFt4jpN9pCMeASxl7Ot0kA3bcI58dCCVD3UgU3bOWtd839naOaTGKkx3PVX2OMrb4GxRYNZqw0LBA5/mHmiX33IEC18EI11kCcuIphItmJkecg07Zr+TBDNATd9o5VXz/mId1gt0zajD6nD85giVDqA2g843CySoPpssa1ieNabHbDDTlFZ5Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=edPkev7517vAwnDZqQErF6ilyZEkF07MXGWMvLzgF74=;
- b=DkKBm3NFJJbzutgThDVV28vDPcp0Nd+u6U1grp5BYuLk7FvgD4bAesf7roEwdHbQHoF1Hmqcv7NdGr7ZlOdwuR1CZDQlzn/wdSQDwWo4PXyI8nnYSSZIdOXEZLp+rxU+QH8nawspA3BJ4esq9YJn4jGvABw4mI+RR3L5rJP2VzTaFvniouNlpD6DI1nSd6x3EygJTGLG12T/p5rWKgwU30vt5NJHLyT1a1omZhew0GMYsRYwo41griYWVyzSy11SjY4LBU5joEZZluJTd4L3aqbg4B0U//u3L6IuN0Z3sNAtBO7h6a4hNdCJhN1lNB91JDnAQwuLEQ7loEnJkEPb8g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=gmail.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=edPkev7517vAwnDZqQErF6ilyZEkF07MXGWMvLzgF74=;
- b=x6kylR6vI+ttO9b3Pj1Z/tlTOJOXxPrjIe5HrI5m+9PkyFlQGVoZ6QDRnVji2iMZdKdsF9k42ZPxbIoDWE4pPGJSVvP4Ma579DdBjyUJ4e58TnhXt0BncxR5p0YLELmLjddCPTs3JeTrmVIlyXqolN+QxN5LgirnFMVQcu+F7+E=
-Received: from MW4PR03CA0338.namprd03.prod.outlook.com (2603:10b6:303:dc::13)
- by MW6PR12MB8707.namprd12.prod.outlook.com (2603:10b6:303:241::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.17; Tue, 30 Sep
- 2025 18:38:09 +0000
-Received: from SJ1PEPF00002326.namprd03.prod.outlook.com
- (2603:10b6:303:dc:cafe::a0) by MW4PR03CA0338.outlook.office365.com
- (2603:10b6:303:dc::13) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9160.17 via Frontend Transport; Tue,
- 30 Sep 2025 18:38:09 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
-Received: from satlexmb08.amd.com (165.204.84.17) by
- SJ1PEPF00002326.mail.protection.outlook.com (10.167.242.89) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9160.9 via Frontend Transport; Tue, 30 Sep 2025 18:38:08 +0000
-Received: from SATLEXMB03.amd.com (10.181.40.144) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Tue, 30 Sep
- 2025 11:38:08 -0700
-Received: from satlexmb08.amd.com (10.181.42.217) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 30 Sep
- 2025 13:38:07 -0500
-Received: from [172.31.8.141] (10.180.168.240) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Tue, 30 Sep 2025 11:38:07 -0700
-Message-ID: <67b30fb5-8fd9-4fd5-b002-aec199b7e88a@amd.com>
-Date: Tue, 30 Sep 2025 13:38:01 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F5DF33EC
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 18:39:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759257556; cv=none; b=RyqM0puvZ7qsGkKRuiOhT8rNMq2yTRoFPvQsgPrfhZoSIeeKGCOMicJbnVKYEgrT1/Vn0IwU01HBlU7NsmKTEiaib4K4hu1+wF/XMC+3G9v15uo1H93WNCAjiA5vXC+uDa3H2z2xCorGEJe5OslknurMvBi25CruXC8G1eVfAq4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759257556; c=relaxed/simple;
+	bh=41FcYWDCd//svS7G9UxD4xdGwTB1l+wDZ7lVXeNhM1w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YQozwaWUuvmsjMPUjo+3LL5VACVNNIMKGD6yVh1sHCu760laRDOHF2XWDYs9MuJJYS8LiTzjASli2hbpnqiKMUT/4KuNqGKmuQPxh3kectlTlLjJTa976nfk7+YRosz7Y51+EWGe7wzTQUmjW2ih5zlHsFhmuZ/iI9H79MaxyJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BdqRu4TM; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759257553;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eOcI1ZIbD/HvHYX2YhFw02/XoFtTTRUFMmkH7W3cd1M=;
+	b=BdqRu4TM5RPp+ZKTCMH1H1R8hB+IntqL0kCSFVGpQbkWxudc6DBZdjC+TZJWGVaXT5oQOH
+	z4KGaSeMoE2aHUC2RBAlr3XFfwS+an/FY5yWt5FeVSEWsU/Q3lJ5F1HSWYJExR+Xx1TCfS
+	C7sgEVC7HrM0mnQWwHEI+58CwByuQUQ=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-642-ZP-bO4GMOYqZwDwEs07doQ-1; Tue, 30 Sep 2025 14:39:11 -0400
+X-MC-Unique: ZP-bO4GMOYqZwDwEs07doQ-1
+X-Mimecast-MFC-AGG-ID: ZP-bO4GMOYqZwDwEs07doQ_1759257551
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-78e30eaca8eso178367526d6.2
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 11:39:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759257551; x=1759862351;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eOcI1ZIbD/HvHYX2YhFw02/XoFtTTRUFMmkH7W3cd1M=;
+        b=izUWi7sxVVh7aHlvHL7JdC7KHnIAnswxqHrqVBxzd5F8qU/Cw4VL0SF5pC7cHOqWwb
+         zHug2BmCZuPbPLC7phaerLvI9Vk/S0LVusiOHk5n57i1ND1ICr63JVJ0vfs5bbs+T8yC
+         Mdye3XMg6tG/1HtYyn0Ah436z49aBCF6KKUo8TUSBTfAgDS4R4nQ3DcTKtspZETuSdDU
+         bsmdkXSOcVeVlktSdKiKlXl42pmcJVYxTzb7blk4yGtXJcKDGUUMalBO6sJeH2BJKGa7
+         rhweuJCB93RTtVmpOPv8dCI9vljTv0zc9lMIcDqBE/KaWEVn6GLFqV1RZldZyEnW0tXB
+         oNpA==
+X-Forwarded-Encrypted: i=1; AJvYcCWSGoj5XZ5wWs/GlQb/hgjcWN933dIs7PPFWuwbGonxteM/Nu5nJ7g7WPlDKf2EcnHqJcyPv4jHSQf+QBQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzX+zCQW5srzEMNsZYJpF1OitVjkgUVQDzqAarDAiddbBwwcy1U
+	fJBmmQMV+OqUrt176gwvNhJ1Q/ILw4qIBT+sT6BuuQkC2EXmeNGBPb5vbuuqj4UwAbsjBzHADZH
+	jqpgT7ckOa0p00PsDyD4rD4jkAHuzNYlOX5vJ6ws0CFXLloUG+pjn//aZHweIiP+QLA==
+X-Gm-Gg: ASbGncv1jKPkNRsEUbF5tNmKnFajtbj/AEOowm0yh0z3x/Y8x8rBROEYkISpOubEJLo
+	JsxG77Ta0zu3CtXjYQ6TuSf5kdyxhrgLC4op1HDKLxpTxdWYxEYNyY/ObPM9WULvTislurCqqDg
+	Ov8SedNL6hskpYjwIiriMUl6zNc6WBPJNhDirAeT/A4pHkChTaOmPPV9VuNjMEiKjWa8CN1kX/8
+	DjKIY9Idda0bhZ5S9H6QlAATZJ1zb2y0zQgoX5OlK2SHuMJitNWs1Rlq3S/u3j82IdWpG7JSndr
+	coNixTjB58JddWxtC+5+uXIs9MT/t8f8nG7Sbg==
+X-Received: by 2002:a05:6214:f25:b0:86c:1f66:e2eb with SMTP id 6a1803df08f44-873a4dca4ecmr9343316d6.33.1759257550949;
+        Tue, 30 Sep 2025 11:39:10 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IElCA+Ys8V7FHTo8o4fXzI+Tp8Ue5gMs0OVn2KTplxlHdrIW9wKkjuDv1J29s1qR50z6aY/Dw==
+X-Received: by 2002:a05:6214:f25:b0:86c:1f66:e2eb with SMTP id 6a1803df08f44-873a4dca4ecmr9342926d6.33.1759257550445;
+        Tue, 30 Sep 2025 11:39:10 -0700 (PDT)
+Received: from x1.local ([142.188.210.50])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8013ca1f1desm100257506d6.23.2025.09.30.11.39.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Sep 2025 11:39:09 -0700 (PDT)
+Date: Tue, 30 Sep 2025 14:39:08 -0400
+From: Peter Xu <peterx@redhat.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Mike Rapoport <rppt@kernel.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Axel Rasmussen <axelrasmussen@google.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	James Houghton <jthoughton@google.com>,
+	Nikita Kalyazin <kalyazin@amazon.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Ujwal Kundur <ujwal.kundur@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andrea Arcangeli <aarcange@redhat.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Michal Hocko <mhocko@suse.com>, Muchun Song <muchun.song@linux.dev>,
+	Oscar Salvador <osalvador@suse.de>, Hugh Dickins <hughd@google.com>,
+	Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v3 1/4] mm: Introduce vm_uffd_ops API
+Message-ID: <aNwjzC1mlnHwEgsd@x1.local>
+References: <20250926211650.525109-1-peterx@redhat.com>
+ <20250926211650.525109-2-peterx@redhat.com>
+ <f1da3505-f17f-4829-80c1-696b1d99057d@redhat.com>
+ <aNur9nbdnlykqbU7@kernel.org>
+ <186ef2e5-bd0a-46e1-a88d-2fc5448c1c72@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: <tanmay.shah@amd.com>
-Subject: Re: [PATCH] mailbox: check mailbox queue is full or not
-From: Tanmay Shah <tanmay.shah@amd.com>
-To: Jassi Brar <jassisinghbrar@gmail.com>
-CC: <andersson@kernel.org>, <mathieu.poirier@linaro.org>,
-	<linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
-References: <20250925185043.3013388-1-tanmay.shah@amd.com>
- <CABb+yY0MzJWOGtS=ocphpUVcJ-gb6_ENCjSmJQiWfRiOhxrpCg@mail.gmail.com>
- <3ecf0bb8-a1f1-498f-8b7d-39483a67cbfc@amd.com>
- <CABb+yY388YaM=wLMy1aaDT0E1yN=7Ge2taMWMyEhWvyqDV=3Dg@mail.gmail.com>
- <9934e6d0-8f38-4a8e-ae0f-fb86b24cd44c@amd.com>
-Content-Language: en-US
-In-Reply-To: <9934e6d0-8f38-4a8e-ae0f-fb86b24cd44c@amd.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-Received-SPF: None (SATLEXMB03.amd.com: tanmay.shah@amd.com does not designate
- permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00002326:EE_|MW6PR12MB8707:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0b8488e6-6860-4dd3-82c4-08de005080a5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?emc3MzBJTlU4Qy9YYmE2OE9NSGV2YTN3bmsyUktNOUpCdFZqbzA1VDdBd2N1?=
- =?utf-8?B?aGZrbEhtMWNwd0tMbkVJQUtkTEFTZnRoQzIvZENTVlBZTW1aNHg4SU95MUZX?=
- =?utf-8?B?bGhvQzJIeThIaUVVRm5oSVkzMmttbGQ4T2d2Ri9mMnowTnU4VGMwNVpXY2RW?=
- =?utf-8?B?V3R6T3ZZMVJSWXQwazJUZklVQ1JPOGRTUFhnWk1zMncyRDVnc1RvVGZzVUVz?=
- =?utf-8?B?L2ZYbXVtQUpmYWZQbExmOExHK1NHUytzdkJwdERobHhmQ0JzY2szYm14Q2tY?=
- =?utf-8?B?ZlZuaEwwVjVXY1k4bVp3b2N6NWtwRXU2MUIvek9DdEFDQzFqM1l3dmVpQzI5?=
- =?utf-8?B?WE01WnpwYkVFdGJ5aERiSzBzMEw0VWJWZXZjbi84OTQ3b21nWFNOb3FYUDc2?=
- =?utf-8?B?L1AwaGh3aUJJMTlPd3hFcExQc2cyeFNkZlJrT0ZBaU51eTVScjk3RlJXMTJq?=
- =?utf-8?B?VStXL2lCay9peVkzUzdNT3NzdzhBYVZyKzk2cmVTV0E0S2FobytodC9UM2Ev?=
- =?utf-8?B?WWdYdzhyY0xrOGRHMzZjQU5CVXJ2a3lQRWRpdEJRb1VXd0V0MENkc1J0enV0?=
- =?utf-8?B?L2J0UlRINk5WMlF1Q0xNSmpzVVlLWkQvTTlIdnZvSTBFYjRLNWo5ZVVndm9S?=
- =?utf-8?B?ZVBMbCtNV3h5VkRKUWFmNXI4R0FKZ2lCYzd3YWhjWkFjeDhObEFXb1ZjNnE1?=
- =?utf-8?B?clZ3QWlLNkNZTm1lbTBwSE0raHJTVUM1OWRSbjNiN2NEbkROTjl1K1ZPaXhh?=
- =?utf-8?B?WnJMUTJRM0l0b3RlK3dFbVdrUTR6cmt2MFVtNjJlVGxiZks5dUpqcU1XWEk2?=
- =?utf-8?B?aGFPQzM4MG5IdHpBTTNoZ0dTM2cyMkg1ditIL3o0RlpXLy9EeVNSOXJ3UldS?=
- =?utf-8?B?MmdQT2JSQjNVK0RaVnI2S2QvaStBZ2d4UDdTSGhBT0ErbVRxK1h0ODdhR2Vl?=
- =?utf-8?B?aWg2Q0VWMDZNR1g4WENxa2lLUStkdW1QTWgyNUpzK280aHlYU1luWWRBZzZ2?=
- =?utf-8?B?T2F2dkpTbzZQdjQrSkhSaTUyTnU0Qys5OXhsQnhPL0lMU1RhZnQ5VkpBSHFJ?=
- =?utf-8?B?a3ZCOUJRZWhDUlRqcVlyWHVXR095dE1GS1gwMnRxUit5eXhoeloyQ3NkWmIr?=
- =?utf-8?B?N2VHczFmdC9zbkFMR2VYd1RQOHhFWHhCZXMzcFNRVURMajlBdmZBNmxSRlQv?=
- =?utf-8?B?TWVIZDNEajJxeU9CRjVvTWd4em1QZHFQYmtnZmQ0NXVZSHhETXI5cWdjZ1Fv?=
- =?utf-8?B?WVJzbmxOWnF2S3E1N0k1ajFlMk1tUFRDUW1lMWJtSnJUV2FNZE0wWThUTHJ1?=
- =?utf-8?B?Y3pMRnRrK1hBUVZPRlpEK3dKTVRPRkY3bzQ1TUNvMEZkTTM2UTBjN2RoVTNX?=
- =?utf-8?B?SFZBM05OcEIzZlJnWGpaU3Nod0tUQnUvZmtJd21qN2tQaGl6RGNBZEFsa1pi?=
- =?utf-8?B?WUYyYTFLNWpocUUwUXhBclNYWkU4WU5oWHgvNE5hMGppTUpYRGRzbSt0L2pi?=
- =?utf-8?B?ZjBoNytZa2pJUFJuazFQeDB0bUVPcFM3Y0x6UVFhZlV3QmJJOG84RGtoNVFN?=
- =?utf-8?B?ejVMempmY1NVYTJjNG1KVDlkYmp5NGdCcytxZU10VkFjTWN2Qm5VNHNFSmVp?=
- =?utf-8?B?NHpjVlN1NmVJSUJtYXFlREZKQ2dWYStLNmhtRGVWV0NXQ2lKMkg5V056K01o?=
- =?utf-8?B?YnJKb2RXNTFTYTlZbUdLRnk4QWc0b0dwVW9vVjRhcmxXRk5wbG5BM0lrWXlU?=
- =?utf-8?B?U0JHSVpEWFIxUlVTUzhTMUpDd01GblR5bjZxQ3V3ek5zaEJ2V051TFZrYVpy?=
- =?utf-8?B?cnVBQ3Z0M2dYdkkwYjFMNjNBVDBqdjZTZlM5ckoxOHBSSW9BQThHcHFzSEY0?=
- =?utf-8?B?YnZudmJTNkptUWk1N3BPcE5vckFjbGVCWmF1SEZIN091T0o3dlpmOW5MRC9H?=
- =?utf-8?B?MWZYNytMSmR3Rm0zMGRuRTRLR2Z5M00za1B3VE5Ga0NpUmk3U21sMzIvZDFG?=
- =?utf-8?B?d3JYVVBHbFpqK3dGK1V1NHl1U1BjUlZzZCtOcWt1Q0JNYmJ1dWMzTGdKeGtB?=
- =?utf-8?B?WDVIczJQWXJZazBEb1k0eHJFQ0hoZ2JPaEk2c2d2anNmNHdCSFZkZEVWQlRV?=
- =?utf-8?Q?z9Kw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2025 18:38:08.7575
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0b8488e6-6860-4dd3-82c4-08de005080a5
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF00002326.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8707
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <186ef2e5-bd0a-46e1-a88d-2fc5448c1c72@redhat.com>
 
+On Tue, Sep 30, 2025 at 12:18:37PM +0200, David Hildenbrand wrote:
+> On 30.09.25 12:07, Mike Rapoport wrote:
+> > On Tue, Sep 30, 2025 at 11:36:53AM +0200, David Hildenbrand wrote:
+> > > On 26.09.25 23:16, Peter Xu wrote:
+> > > > +	/**
+> > > > +	 * uffd_get_folio: Handler to resolve UFFDIO_CONTINUE request.
+> > > 
+> > > Just wondering if we could incorporate the "continue" / "minor" aspect into
+> > > the callback name.
+> > > 
+> > > uffd_minor_get_folio / uffd_continue_get_folio
+> > > 
+> > > Or do you see use of that callback in the context of other uffd features?
+> > 
+> > If someone picks the gauntlet of refactoring the loop in mcopy_atomic()
+> > we'd need a similar callback for uffd copy. And as I see it it would be
+> > different enough to warrant emphasizing minor/continue in the name here.
 
+Sure, I can go with uffd_minor_get_folio when I repost.
 
-On 9/30/25 12:58 PM, Tanmay Shah wrote:
+> > 
+> > I also think we can drop uffd_ prefix for the callback, as it's called as
+> > uffd_ops->get_folio() or whatever it's be called.
 > 
-> 
-> On 9/30/25 12:33 PM, Jassi Brar wrote:
->> On Tue, Sep 30, 2025 at 11:52 AM Tanmay Shah <tanmay.shah@amd.com> wrote:
->>>
->>> Hi Jassi,
->>>
->>> Please find my comments below.
->>>
->>> On 9/30/25 9:11 AM, Jassi Brar wrote:
->>>> On Thu, Sep 25, 2025 at 1:51 PM Tanmay Shah <tanmay.shah@amd.com> 
->>>> wrote:
->>>>>
->>>>> Sometimes clients need to know if mailbox queue is full or not before
->>>>> posting new message via mailbox. If mailbox queue is full clients can
->>>>> choose not to post new message. This doesn't mean current queue length
->>>>> should be increased, but clients may want to wait till previous Tx is
->>>>> done. This API can help avoid false positive warning from mailbox
->>>>> framework "Try increasing MBOX_TX_QUEUE_LEN".
->>>>>
->>>>> Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
->>>>> ---
->>>>>    drivers/mailbox/mailbox.c               | 24 +++++++++++++++++++ 
->>>>> +++++
->>>>>    drivers/remoteproc/xlnx_r5_remoteproc.c |  4 ++++
->>>>>    include/linux/mailbox_client.h          |  1 +
->>>>>    3 files changed, 29 insertions(+)
->>>>>
->>>>> diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
->>>>> index 5cd8ae222073..7afdb2c9006d 100644
->>>>> --- a/drivers/mailbox/mailbox.c
->>>>> +++ b/drivers/mailbox/mailbox.c
->>>>> @@ -217,6 +217,30 @@ bool mbox_client_peek_data(struct mbox_chan 
->>>>> *chan)
->>>>>    }
->>>>>    EXPORT_SYMBOL_GPL(mbox_client_peek_data);
->>>>>
->>>>> +/**
->>>>> + * mbox_queue_full - check if mailbox queue is full or not
->>>>> + * @chan: Mailbox channel assigned to this client.
->>>>> + *
->>>>> + * Clients can choose not to send new msg if mbox queue is full.
->>>>> + *
->>>>> + * Return: true if queue is full else false. < 0 for error
->>>>> + */
->>>>> +int mbox_queue_full(struct mbox_chan *chan)
->>>>> +{
->>>>> +       unsigned long flags;
->>>>> +       int res;
->>>>> +
->>>>> +       if (!chan)
->>>>> +               return -EINVAL;
->>>>> +
->>>>> +       spin_lock_irqsave(&chan->lock, flags);
->>>>> +       res = (chan->msg_count == (MBOX_TX_QUEUE_LEN - 1));
->>>>>
->>>> 1) If we really need this, it should be
->>>>           res = (chan->msg_count == MBOX_TX_QUEUE_LEN);
->>>>
->>>
->>> Ack here.
->>>
->>>> 2) I am thinking instead, introduce a
->>>>          struct mbox_client.msg_slots_ro;
->>>>     Which is a read-only field for the client, denoting how many 
->>>> message
->>>> slots are currently available.
->>>>     The mailbox api will always adjust it when msg_count changes...
->>>>         chan->cl->msg_slots_ro = MBOX_TX_QUEUE_LEN - chan->msg_count;
->>>>
->>>
->>> It's not possible to make msg_slots_ro true Read-Only. Nothing prevents
->>> clients to write to that variable as far as I know.
->>>
->> Correct, nothing prevents a client from changing 'msg_slots_ro', just
->> like nothing
->> prevents it from setting tx_done or rx_callback to 0xdeadbabe.
->> The '_ro' suffix is to tell the client developer to not mess with it.
->> I am slightly more inclined towards this approach because it avoids
->> adding another
->> convenience api and is more immediately available without needing a 
->> spinlock.
-> 
-> To avoid spinlock, msg_slots_ro should be atomic right?
+> Agreed. I got annoyed yesterday when typing vma->vm_mm often enough
+> (vma->mm! ).
 
-I take it back, it doesn't have to be atomic. I will send a new revision 
-with the design we discussed here.
+That's also why I kept uffd_ because that's the tradition mm/ uses in many
+important data structures like vma and mm.  It helps most tagging systems
+that most Linux developers use to avoid global name collisions.
 
-> 
->>
-> 
-> Then in the remoteproc driver, before using mbox_send_message, I can 
-> simply check (chan->cl->msg_slots_ro == 0) then don't use 
-> mbox_send_message.
-> 
-> 
->> -jassi
-> 
-> 
+So I tend to keep the prefix for now, until we want to switch away from
+Hungarian-like notations completely. But let me know if anyone has strong
+feelings.
+
+Thanks,
+
+-- 
+Peter Xu
 
 
