@@ -1,120 +1,117 @@
-Return-Path: <linux-kernel+bounces-838157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4114BAE92B
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 22:51:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F3ECBAE92E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 22:51:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 918707A6483
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 20:49:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDAA61C4953
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 20:51:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AF06288C25;
-	Tue, 30 Sep 2025 20:50:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E3B728725E;
+	Tue, 30 Sep 2025 20:51:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="JuIum8uk"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="NTXq/a6h"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F283B4C81;
-	Tue, 30 Sep 2025 20:50:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50BA1287516
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 20:51:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759265452; cv=none; b=gFgblOTtDqvL3bqYfCBMyQmRO3c38aE0Q3TUGb5qJIppdoEuZygA09v1F8VXnsek+nTDP187PGnqleHggcYqO1/LGY5ilHCiuL7EAyJGXzwsWqZOnfLvvR8P+L9RWycR5BK5dyVceEHZn9e/VSXyJl6Rr6Lg8tu7YwSieE3ty2M=
+	t=1759265470; cv=none; b=Pz2xp5aVSg3BrvXT0DEuMbIy3mDFEzLt1HM+1ykEEdENFj33k3Rb6c9D94K3oV+UQ2xWhPkTFvQIO09hS09knl7GwhhACnVGuRyEPuQKwVKJh+QiBM5R9+bsXDFlCwv+bhh09EqWfHw/srr1B935xLS7oFPbAsDUtPCC3NGUK4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759265452; c=relaxed/simple;
-	bh=ACcXPbe5NMl26PPR9Llchzmw0KCS84dSQ3O+3lah1Ac=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gXVEHkZGO/QivrewfvNIZhiCiuL0TgiAKFLpoxTa5FE3CaTbduSTw9VUGfqI9tBhDr6u8LcuNFwJj2d8kbXyhcRQfrfxo2fSo0skudlwD5tgBlZR78taYCUC04F6QtkigK6Kklog8mxiHe+GisItsQosZvKrq6leUknNce645zk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=JuIum8uk; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=oWMiHblyc1nac+1JY++WRrU7ggN2MiZoA9VBM+9/ciQ=; b=JuIum8ukiSTaC1+InRNlCaIT23
-	AmY9Nod/PQSuuqB5s8rFmyFhod3tsRSZcYgyI9aoiksKsn3EFUanH5ClAtCdgZtqPmCCU7J4YxnrS
-	F2FJUUO0JQPKiVoTJibJ+/+Vv88KZGq8St4qFERQ5Je9S1EsOJ3+Y5fwKUJqGOmIVAFO/WBce4keN
-	DpfN/NFG5/bbOHUOtIBgZ7JVj6vJaFXT1GYzVOoijv51rJP0u5HqRI7OX2zzLI6ZmhoXqUC8XysJB
-	5u/wIIbSTiJBdKOuLRB/mdeEO3zjeCJFoVq5ixmWjk88WWubAfhSFZkk2Bhih8UVWDwrV4gEXY2fB
-	cXTa4ktQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:60900)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1v3hJ4-000000008BO-2jEJ;
-	Tue, 30 Sep 2025 21:50:42 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1v3hJ2-000000004oU-3EHs;
-	Tue, 30 Sep 2025 21:50:40 +0100
-Date: Tue, 30 Sep 2025 21:50:40 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Bjorn Helgaas <helgaas@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH] PCI: ixp4xx: Guard ARM32-specific hook_fault_code()
-Message-ID: <aNxCoN2fP4aEAH2i@shell.armlinux.org.uk>
-References: <20250925202738.2202195-1-helgaas@kernel.org>
- <CACRpkdZFy2Kb0BaEkMiTi3j89H-6G=chuZSijtRRg7QCCktLDA@mail.gmail.com>
+	s=arc-20240116; t=1759265470; c=relaxed/simple;
+	bh=Bq7aYulorZgMIBlo9sqBhK4C0U91968OxL5exOrO+Sc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bl75cesBEE12+LP4rxjWLASQWEDTA/pUEQ1YfM46WQAZoWUkmRVKXTCAX01kWWXBf3q5b0LYvXqSoDPSGIhQOzcUhAYhjuRD53Bfcxa8dyT10IvVuFeU7ldULB8Q0ssoAVmuJHCu2Fk+21fH98WRyuzIwcfEd1DKYn0h4jBCmpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=NTXq/a6h; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-634a4829c81so10952552a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 13:51:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1759265466; x=1759870266; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=QRUM4XMMsUYAz/h48H1x+lWc5jezcYUvc3NT096GRyg=;
+        b=NTXq/a6h3O/ss1ekhiWkXRlGApPJwVL4a340zdj7zWwqH0E1Rik2W0lzWsirFf7uxD
+         zKDmGZ3w5Hm5zS2h5RqVV5GaSvSQOCB0X1vKkhk76/cXrF1XEy140c2eBugsUtjR6b6P
+         PLwgWF/fVKrwnav1cWHKyQPqWunqJ//XXjnC4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759265466; x=1759870266;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QRUM4XMMsUYAz/h48H1x+lWc5jezcYUvc3NT096GRyg=;
+        b=wCILLJhCQcyn5SgoVzy+fi6Aeajpm8oqgwHXBRZCByiRx27U8yifBhDiLQpSB5D/Ca
+         lSw0PYjIVfeloSMkYxT8ufvtADIQ0scVLNATSdLzWY4P6liC/J8uxYXVOR95q1a8O7Ro
+         SVqGPy7rXn8L/Qq62oz3uBbty7ew0Y/HwlgIbQbGzJhvaarZlyCYxL+JA8ZZPuIz6Jzm
+         PM+B5QR5WQPb8GNJlzdr+yx6294Xy6AVHY+7IDfILencrsfxmgG9AJtdz3k28Lqj0puZ
+         jgwtUauzm8HbEBdpKe3TgeMjca9eRb+CrufY3XelpKOdLI+s461JM7Y7rHsu0eg8EfWp
+         A4Og==
+X-Forwarded-Encrypted: i=1; AJvYcCURGPuB3FqW+uR/iWCgViJwYShrj3Dfk37567qIHY9FA2FTKcgSZGkBdW61w/4CoyoJ4iABUu03D63kmkA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6SXzdbzdRsi1p3vpkARMZZOIHoP3Ae3d6Lo9s0iRR9zOwz1Il
+	xXMu6XO8e5CZl6oGTRnvKKMiggww2JKnnd4Ax2S5GQx0gj/zs5Dwx5uzOWD4b/V5DopD3O9waAa
+	jzUm31mM=
+X-Gm-Gg: ASbGncvw45ueAi9hMBxnJmPwyo3W6UUMOoo86EVRbszsPv8yC700IzIEbhMtCjIFhW5
+	mOjavBJHvQwddebCiPRk3kG3YilKbFppkpwnQ+yi/ilGKvdD20N9fAYnG8K3y0PFWyZQOIvcr97
+	xG5etCD6I/tkXrZxFGF84qIPngJAxwb7+tY0HOiA0jgNOmUiOJDtfWPZMBFlKDQ47oqqYuVAScc
+	okhpKEm+GUM5zCe425S29+NUK0ZDhT/onjT5B6jPDVZyAkRXbOOIprPutR22ZSO2tx/S8sUPc1u
+	Ojs7IhtsSHJlOzDN2uo2nkn1rCCBGFFndZ0OXb4XD+NSXC0WarJndSgaXFyQgL1CGO6TgjH5+a9
+	f8tVw78N4dsVISzj4GGNzX/hKvpl1DQCIpW/b7Exi5m8loXEyCf2Pc08JOnSg81VAgx+AIfsTli
+	Si1gQcv+Rldxwose7tITs8cQl5XrLzQUI=
+X-Google-Smtp-Source: AGHT+IG7NLDvS1nhcFEA3nd/0XO9tr/wN/I75IvaZd/yKvXBkF2hpd9+WHIKR149APXse5ODIUgQ6w==
+X-Received: by 2002:aa7:c60c:0:b0:634:bc7b:440e with SMTP id 4fb4d7f45d1cf-63678c9f531mr1070236a12.36.1759265466323;
+        Tue, 30 Sep 2025 13:51:06 -0700 (PDT)
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com. [209.85.208.54])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-634a3ae321csm10726140a12.24.2025.09.30.13.51.05
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Sep 2025 13:51:05 -0700 (PDT)
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-634bc2d6137so9285017a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 13:51:05 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX/B2yKg0M//ihT6tW9zwmm+2w8qHNOWS5Y6S73D1imXr/7SEUKgjBes0So0drNMs7pzm87d4KAchNiMQw=@vger.kernel.org
+X-Received: by 2002:a17:907:3f16:b0:b3f:f822:2d9b with SMTP id
+ a640c23a62f3a-b46e2624e0amr109870066b.9.1759265465001; Tue, 30 Sep 2025
+ 13:51:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACRpkdZFy2Kb0BaEkMiTi3j89H-6G=chuZSijtRRg7QCCktLDA@mail.gmail.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+References: <20250926102823.GAaNZqxzXkasrXXFjn@fat_crate.local>
+In-Reply-To: <20250926102823.GAaNZqxzXkasrXXFjn@fat_crate.local>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 30 Sep 2025 13:50:48 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wibOJBAp66CPz0qfSWe93iisGvN4xL_MzuwSZ8sAut09A@mail.gmail.com>
+X-Gm-Features: AS18NWDjELbR_yfUcTf-Bwg5AjTE-jRMFQK1zwGNV3AgH9YqtlkhR8ordnaNWT4
+Message-ID: <CAHk-=wibOJBAp66CPz0qfSWe93iisGvN4xL_MzuwSZ8sAut09A@mail.gmail.com>
+Subject: Re: [GIT PULL] x86/apic for v6.18-rc1
+To: Borislav Petkov <bp@alien8.de>
+Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Sep 30, 2025 at 08:59:36PM +0200, Linus Walleij wrote:
-> On Thu, Sep 25, 2025 at 10:27 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
-> 
-> > From: Bjorn Helgaas <bhelgaas@google.com>
-> >
-> > hook_fault_code() is an ARM32-specific API.  Guard it and related code with
-> > CONFIG_ARM #ifdefs so the driver can be compile tested on other
-> > architectures.
-> >
-> > Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> 
-> It looks OK to me
-> Acked-by: Linus Walleij <linus.walleij@linar.org>
-> 
-> I see some other ARM32 drivers use it too, but we surely do
-> not have a arch-agnostic way of handling bus errors so perhaps it
-> need to be like this.
-> 
-> I think Russell created the fault hooks originally so CC:ing him
-> in.
+On Fri, 26 Sept 2025 at 03:28, Borislav Petkov <bp@alien8.de> wrote:
+>
+> this branch contains two big features because it was deemed a better idea
+> to merge them into one.
 
-I wonder what the point of compile testing if it needs code to be
-#ifdef'd out.
+Ugh. I really wish that hadn't been done. I would much rather have
+seen separate SEV and apic branches.
 
-Wouldn't it be better to add something like:
+And I don't see the _point_. Yes, I see a conflict resolution. An
+absolutely trivial one. So mixing up the SEV branch and the APIC side
+seems to have had no actual reason or much commonality.
 
-#ifndef CONFIG_ARM
-static inline void hook_fault_code(int n, int (*fn)(unsigned long, unsigned int,
-						    struct pt_regs *),
-				   int sig, int code, const char *name)
-{
-}
-#endif
+Oh well. I've taken this, but it really just seems ugly and pointless.
 
-maybe to a local header that pci-imx6, pci-keystone, pcie-rcar-host
-and pci-ixp4xx can all share?
+If there was a real *reason* for merging those branches, it sure as
+hell isn't explained in said merge. That just has the "fix conflict"
+explanation, and as mentioned that seems a really really bad reason.
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+          Linus
 
