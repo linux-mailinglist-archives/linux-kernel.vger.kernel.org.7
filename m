@@ -1,178 +1,228 @@
-Return-Path: <linux-kernel+bounces-837446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0565EBAC55A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 11:41:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 581EEBAC563
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 11:42:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AE501893EB8
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:42:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6BA6189BB55
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:42:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51E603009ED;
-	Tue, 30 Sep 2025 09:37:49 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5A882F5A24;
-	Tue, 30 Sep 2025 09:37:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C3B930147F;
+	Tue, 30 Sep 2025 09:37:51 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1217D2F7475;
+	Tue, 30 Sep 2025 09:37:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759225068; cv=none; b=H32L9OyKiKyIHkFd52diE54egeG/QQR463t4gmQVAAi+8fhmdS4TRSY0VR09NtcjdZCeL6Z1Klys7s5H6U+Mfyrxc6wuSCoIjbb+f6RFR8CFk95w4HPGKXAQSz6fSr0YngAldWflkQmf3G80H61h60N3C3o5y9+lyucg9gPtacA=
+	t=1759225070; cv=none; b=uaPLcH8K+SC98t5A/3iavWxgpnS6u/uEfQVJjTwfWFEr8XqnqQ+eMCy1ETg+uSLNiOLivIVJ8ZjOnOaXhs70T8MO8EA+rErsDKaH88qF6cMrfBvM/q1e8tM4Ox2Zb4zmUPhVo3cmXE6Sn7dkh3RTcGGhiSqzsfaZhUXouGdGv2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759225068; c=relaxed/simple;
-	bh=mEmTXwyMRGv8yOetrTVoOJb6OHMoscog+HrB+ZPskRE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eo8fz9qAofxbNXELJWKHFXZoB5ycuPiwtXH76P489acXRVNDjO9+Dwy/l+U0XsjYmr6xZNoRvgqwGOW8Tr9c5Z4rnKjaAj2Q/AGufif/bEKkoLIKDfxWmalDZ/C8cEMInC4HJiIyDCn1LRQ9ZG1ZLtbsQ+IRZC2bdUYuToinJ+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.2.5.213])
-	by gateway (Coremail) with SMTP id _____8AxP_DmpNto44gQAA--.34642S3;
-	Tue, 30 Sep 2025 17:37:42 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.2.5.213])
-	by front1 (Coremail) with SMTP id qMiowJCxM+TmpNtolB7AAA--.15021S2;
-	Tue, 30 Sep 2025 17:37:42 +0800 (CST)
-From: Bibo Mao <maobibo@loongson.cn>
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: WANG Xuerui <kernel@xen0n.name>,
-	kvm@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] LoongArch: KVM: Get VM PMU capability from HW GCFG register
-Date: Tue, 30 Sep 2025 17:37:41 +0800
-Message-Id: <20250930093741.2734974-1-maobibo@loongson.cn>
-X-Mailer: git-send-email 2.39.3
+	s=arc-20240116; t=1759225070; c=relaxed/simple;
+	bh=sB8QpoW7apk3wRrBGS7LSxK6IdeSDh3bKJHWIzEyZ5A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NnWI+/lmT3YJSDhoi9rpFUy6EKdE4snfQckPOFnKnX83/eP/PR8DtJBtYGANgQKif0EmoKzKQ3NHcJabp6owK580vVf2modZznL4fpbcawOVxEzoXhRUNFznzhAgyw0sz3nOtSAUOR88ohJ9297Yzhr86zTbBXxc8uPefYDIO7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 440671424;
+	Tue, 30 Sep 2025 02:37:38 -0700 (PDT)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2978D3F59E;
+	Tue, 30 Sep 2025 02:37:45 -0700 (PDT)
+Date: Tue, 30 Sep 2025 10:37:42 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Adam Young <admiyo@amperemail.onmicrosoft.com>
+Cc: Jassi Brar <jassisinghbrar@gmail.com>,
+	Adam Young <admiyo@os.amperecomputing.com>,
+	Sudeep Holla <sudeep.holla@arm.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] Revert "mailbox/pcc: support mailbox management of the
+ shared buffer"
+Message-ID: <20250930-little-numbat-of-justice-e8a3da@sudeepholla>
+References: <20250926153311.2202648-1-sudeep.holla@arm.com>
+ <2ef6360e-834f-474d-ac4d-540b8f0c0f79@amperemail.onmicrosoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJCxM+TmpNtolB7AAA--.15021S2
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
-	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
-	nUUI43ZEXa7xR_UUUUUUUUU==
+In-Reply-To: <2ef6360e-834f-474d-ac4d-540b8f0c0f79@amperemail.onmicrosoft.com>
 
-Now VM PMU capability comes from host PMU capability directly, instead
-bit 23 of HW GCFG CSR register also show PMU capability for VM. It
-will be better if it comes from HW GCFG CSR register rather than host
-PMU capability, especially when LVZ function is emulated in TCG mode,
-however without PMU capability.
+On Mon, Sep 29, 2025 at 01:11:23PM -0400, Adam Young wrote:
+> I posted a patch that addresses a few of these issues.  Here is a top level
+> description of the isse
+> 
+> The correct way to use the mailbox API would be to allocate a buffer for the
+> message,write the message to that buffer, and pass it in to
+> mbox_send_message.  The abstraction is designed to then provide sequential
+> access to the shared resource in order to send the messages in order.  The
+> existing PCC Mailbox implementation violated this abstraction.  It requires
+> each individual driver re-implement all of the sequential ordering to access
+> the shared buffer.
+> 
 
-Signed-off-by: Bibo Mao <maobibo@loongson.cn>
----
- arch/loongarch/include/asm/kvm_host.h  |  8 +++++++
- arch/loongarch/include/asm/loongarch.h |  2 ++
- arch/loongarch/kvm/vm.c                | 30 +++++++++++++++++---------
- 3 files changed, 30 insertions(+), 10 deletions(-)
+Please, let us keep the avoiding duplication as a separate topic atleast for
+the discussion. We can take care of it even before merging if you prefer that
+way but we need to explore what other drivers can use it. Otherwise it is
+not yet duplication right ?
 
-diff --git a/arch/loongarch/include/asm/kvm_host.h b/arch/loongarch/include/asm/kvm_host.h
-index 0cecbd038bb3..392480c9b958 100644
---- a/arch/loongarch/include/asm/kvm_host.h
-+++ b/arch/loongarch/include/asm/kvm_host.h
-@@ -126,6 +126,8 @@ struct kvm_arch {
- 	struct kvm_phyid_map  *phyid_map;
- 	/* Enabled PV features */
- 	unsigned long pv_features;
-+	/* Supported features from KVM */
-+	unsigned long support_features;
- 
- 	s64 time_offset;
- 	struct kvm_context __percpu *vmcs;
-@@ -293,6 +295,12 @@ static inline int kvm_get_pmu_num(struct kvm_vcpu_arch *arch)
- 	return (arch->cpucfg[6] & CPUCFG6_PMNUM) >> CPUCFG6_PMNUM_SHIFT;
- }
- 
-+/* Check whether KVM support this feature, however VMM may disable it */
-+static inline bool kvm_vm_support(struct kvm_arch *arch, int feature)
-+{
-+	return !!(arch->support_features & BIT_ULL(feature));
-+}
-+
- bool kvm_arch_pmi_in_guest(struct kvm_vcpu *vcpu);
- 
- /* Debug: dump vcpu state */
-diff --git a/arch/loongarch/include/asm/loongarch.h b/arch/loongarch/include/asm/loongarch.h
-index 09dfd7eb406e..b640f8f6d7bd 100644
---- a/arch/loongarch/include/asm/loongarch.h
-+++ b/arch/loongarch/include/asm/loongarch.h
-@@ -510,6 +510,8 @@
- #define  CSR_GCFG_GPERF_SHIFT		24
- #define  CSR_GCFG_GPERF_WIDTH		3
- #define  CSR_GCFG_GPERF			(_ULCAST_(0x7) << CSR_GCFG_GPERF_SHIFT)
-+#define  CSR_GCFG_GPMP_SHIFT		23
-+#define  CSR_GCFG_GPMP			(_ULCAST_(0x1) << CSR_GCFG_GPMP_SHIFT)
- #define  CSR_GCFG_GCI_SHIFT		20
- #define  CSR_GCFG_GCI_WIDTH		2
- #define  CSR_GCFG_GCI			(_ULCAST_(0x3) << CSR_GCFG_GCI_SHIFT)
-diff --git a/arch/loongarch/kvm/vm.c b/arch/loongarch/kvm/vm.c
-index edccfc8c9cd8..735ad20d9ea9 100644
---- a/arch/loongarch/kvm/vm.c
-+++ b/arch/loongarch/kvm/vm.c
-@@ -6,6 +6,7 @@
- #include <linux/kvm_host.h>
- #include <asm/kvm_mmu.h>
- #include <asm/kvm_vcpu.h>
-+#include <asm/kvm_csr.h>
- #include <asm/kvm_eiointc.h>
- #include <asm/kvm_pch_pic.h>
- 
-@@ -24,6 +25,23 @@ const struct kvm_stats_header kvm_vm_stats_header = {
- 					sizeof(kvm_vm_stats_desc),
- };
- 
-+static void kvm_vm_init_features(struct kvm *kvm)
-+{
-+	unsigned long val;
-+
-+	/* Enable all PV features by default */
-+	kvm->arch.pv_features = BIT(KVM_FEATURE_IPI);
-+	kvm->arch.support_features = BIT(KVM_LOONGARCH_VM_FEAT_PV_IPI);
-+	if (kvm_pvtime_supported()) {
-+		kvm->arch.pv_features |= BIT(KVM_FEATURE_STEAL_TIME);
-+		kvm->arch.support_features |= BIT(KVM_LOONGARCH_VM_FEAT_PV_STEALTIME);
-+	}
-+
-+	val = read_csr_gcfg();
-+	if (val & CSR_GCFG_GPMP)
-+		kvm->arch.support_features |= BIT(KVM_LOONGARCH_VM_FEAT_PMU);
-+}
-+
- int kvm_arch_init_vm(struct kvm *kvm, unsigned long type)
- {
- 	int i;
-@@ -42,11 +60,7 @@ int kvm_arch_init_vm(struct kvm *kvm, unsigned long type)
- 	spin_lock_init(&kvm->arch.phyid_map_lock);
- 
- 	kvm_init_vmcs(kvm);
--
--	/* Enable all PV features by default */
--	kvm->arch.pv_features = BIT(KVM_FEATURE_IPI);
--	if (kvm_pvtime_supported())
--		kvm->arch.pv_features |= BIT(KVM_FEATURE_STEAL_TIME);
-+	kvm_vm_init_features(kvm);
- 
- 	/*
- 	 * cpu_vabits means user address space only (a half of total).
-@@ -137,13 +151,9 @@ static int kvm_vm_feature_has_attr(struct kvm *kvm, struct kvm_device_attr *attr
- 			return 0;
- 		return -ENXIO;
- 	case KVM_LOONGARCH_VM_FEAT_PMU:
--		if (cpu_has_pmp)
--			return 0;
--		return -ENXIO;
- 	case KVM_LOONGARCH_VM_FEAT_PV_IPI:
--		return 0;
- 	case KVM_LOONGARCH_VM_FEAT_PV_STEALTIME:
--		if (kvm_pvtime_supported())
-+		if (kvm_vm_support(&kvm->arch, attr->attr))
- 			return 0;
- 		return -ENXIO;
- 	default:
+> Why? Because they are all type 2 drivers, and the shared buffer is 64bits in
+> length:  32bits for signature, 16 bits for command, 16 bits for status.  It
+> would be execessive to kmalloc a buffer of this size.
+> 
 
-base-commit: e5f0a698b34ed76002dc5cff3804a61c80233a7a
+Sure, if there is only and first driver needing large buffers, it is still
+not duplication yet. I agree it can be moved to PCC, but lets start with
+you client driver code first and then take it from there.
+
+> This shows the shortcoming of the mailbox API.  The mailbox API assumes that
+> there is a large enough buffer passed in to only provide a void * pointer to
+> the message.  Since the value is small enough to fit into a single register,
+> it the mailbox abstraction could provide an implementation that stored a
+> union of a void * and word.  With that change, all of the type 2
+> implementations could have their logic streamlined and moved into the PCC
+> mailbox.
+> 
+
+No, it is left to the client driver interpretation as it clearly varies even
+within PCC type 1-5. Again, let us start with client driver code and see how
+to standardise later. I agree with PCC being standard, there is scope for
+avoiding duplication, but we will get to know that only if you first present
+it with the client driver code and we can then see how and what to make
+generic.
+
+> However, I am providing an implementation for a type3/type4 based driver,
+> and I do need the whole managmenet of the message buffer. IN addition, I
+> know of at least one other subsystem (MPAM) that will benefit from a type3
+> implementation.
+> 
+
+Don't even go there. It is much bigger beast with all sorts of things to
+consider. Now that you have mentioned that, I am interested more to look
+at MPAM driver usage as well before merging anything as generic as I know
+MPAM is not so trivial. You pulled that topic into this, sorry 😉.
+
+> On 9/26/25 11:33, Sudeep Holla wrote:
+> > This reverts commit 5378bdf6a611a32500fccf13d14156f219bb0c85.
+> > 
+> > Commit 5378bdf6a611 ("mailbox/pcc: support mailbox management of the shared buffer")
+> > attempted to introduce generic helpers for managing the PCC shared memory,
+> > but it largely duplicates functionality already provided by the mailbox
+> > core and leaves gaps:
+> > 
+> > 1. TX preparation: The mailbox framework already supports this via
+> >    ->tx_prepare callback for mailbox clients. The patch adds
+> >    pcc_write_to_buffer() and expects clients to toggle pchan->chan.manage_writes,
+> >    but no drivers set manage_writes, so pcc_write_to_buffer() has no users.
+> 
+> tx prepare is insufficient, as it does not provide access to the type3
+> flags.  IN addition, it forces the user to manage the buffer memory
+> directly.  WHile this is a necessary workaround for type 2 non extended
+> memory regions, it does not make sense for a managed resource like the
+> mailbox.
+> 
+
+Sorry if I am slow in understanding but I still struggle why tx_prepare won't
+work for you. Please don't jump to solve 2 problems at the same time as it
+just adds more confusion. Let us see if and how to make tx_prepare work for
+your driver. And then we can look at standardising it as a helper function
+that can be use in all the PCC mailbox client drivers if we can do that.
+
+You are just adding parallel and optional APIs just to get your driver
+working here. I am not against standardising to avoid duplication which
+is your concern(very valid) but doen't need to be solved by adding another
+API when the existing APIs already provides mechanism to do that.
+
+If you need information about the PCC type3/4, we can explore that as well.
+
+> You are correct that the manage_writes flag can be removed, but if (and only
+> if) we limit the logic to type 3 or type 4 drivers.  I have made that change
+> in a follow on patch:
+> 
+
+OK, but I would like to start fresh reverting this patch.
+
+> > 2. RX handling: Data reception is already delivered through
+> >     mbox_chan_received_data() and client ->rx_callback. The patch adds an
+> >     optional pchan->chan.rx_alloc, which again has no users and duplicates
+> >     the existing path.
+> 
+> The change needs to go in before there are users. The patch series that
+> introduced this change requires this or a comparable callback mechanism.
+> 
+
+Not always necessary. Yes if it is agreed to get the user merged. But I am
+now questioning why you need it when you do have rx_callback.
+
+> However, the reviewers have shown that there is a race condition if the
+> callback is provided to the PCC  mailbox Channel, and thus I have provided a
+> patch which moves this callback up to the Mailbox API.
+
+Sorry if I have missed it. Can you please point me to the race condition in
+question. I am interested to know more details.
+
+> This change, which is obviosuly not required when returning a single byte,
+> is essential when dealing with larger buffers, such as those used by network
+> drivers.
+> 
+
+I assume it can't be beyond the shmem area anyways. That can be read from the
+rx_callback. Again I haven't understood your reasoning as why the allocation
+and copy can't be part of rx_callback.
+
+> > 
+> > 3. Completion handling: While adding last_tx_done is directionally useful,
+> >     the implementation only covers Type 3/4 and fails to handle the absence
+> >     of a command_complete register, so it is incomplete for other types.
+> 
+> Applying it to type 2 and earlier would require a huge life of rewriting
+> code that is both  multi architecture (CPPC)  and on esoteric hardware
+> (XGene) and thus very hard to test. 
+
+True but you have changed the generic code which could break Type1/2 PCC.
+I am not sure if it is tested yet.
+
+> While those drivers should make better use of  the mailbox mechanism,
+> stopping the type 3 drivers from using this approach  stops an effort to
+> provide a common implementation base. That should happen in future patches,
+> as part of reqorking the type 2 drivers. 
+
+No you need to take care to apply your changes only for Type3/4 so that
+Type1/2 is unaffected. You can expect to break and someone else to fix
+the breakage later.
+
+> Command Complete is part of the PCC specification for type 3 drivers.
+>
+
+Agreed, that's not the argument. The check is done unconditionally. I will
+send the patch once we agree to revert this change and start fresh. And each
+feature handled separately instead of mixing 3 different things in one patch.
+
+> > 
+> > Given the duplication and incomplete coverage, revert this change. Any new
+> > requirements should be addressed in focused follow-ups rather than bundling
+> > multiple behavioral changes together.
+> 
+> I am willing to break up the previous work into multiple steps, provided the
+> above arguments you provided are not going to prevent them from getting
+> merged.  Type 3/4 drivers can and should make use of the Mailbox
+> abstraction. Doing so can lay the ground work for making the type 2 drivers
+> share a common implementation of the shared buffer management.
+>
+
+Sure. Lets revert this patch and start discussing your individual requirements
+in individual patches and check why tx_prepare and rx_callback can't work for
+you. Please share the client driver code changes you tried when checking
+tx_prepare and rx_callback as well so that we can see why it can't work.
+
 -- 
-2.39.3
-
+Regards,
+Sudeep
 
