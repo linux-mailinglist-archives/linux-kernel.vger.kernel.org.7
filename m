@@ -1,291 +1,169 @@
-Return-Path: <linux-kernel+bounces-837654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89372BACD72
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:30:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30701BACD78
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:30:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 956EE18987CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:30:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E6841896410
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:30:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B111C22332E;
-	Tue, 30 Sep 2025 12:29:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F9326A1BE;
+	Tue, 30 Sep 2025 12:30:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cT9Ju5ms"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ezFwC0AL"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C37C20F08E;
-	Tue, 30 Sep 2025 12:29:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD15E2FB616
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 12:30:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759235396; cv=none; b=TBZAvFr0qTdRQGrPRVK6RhAQMTGmeO6tVCF4J6NnY/9+U0UE9S/3TOlhfIliABNMsdtodQ21Y1wjRioilBzLm48UNYiIK5ZpYrVWIohJZIH6hl3Aw7YAxYUvmaNtnm7hQTqkqTRz2BNf1VhpFoPFzvbc52Lh8LXpBtaNPvnvi4U=
+	t=1759235413; cv=none; b=c0aO/9MBgH935si1533v0XiR4S8X4vmUjBKGUeBoCiijjnjWG0Df3HTSgGVw7zAI6V/8fM7u15wa2ShOyiEjIcJcXrcguK9DhO8u7YCG1UjXJP0hH7nITffYMFu63ejLerhkKJgbb1nzAEv5Sy6bfmgzQ897Yl4RMfjJoz17qW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759235396; c=relaxed/simple;
-	bh=GDmus2CGw+l5vE3v3aGHGnfFjE/5q50mDpeUd0fkz+M=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=VBpPg1ZHN0d/+nGnIseRYDeeJP+gaP4HKpPU7YWT2MJQyNcvyMn/rZrFpyNYrOHOoSyZ7AVwq5UVAigCTwKuV7p01qHyr44ZTYnnc2b/4FgfBFeu6Ja2jrOxjTg3pxBXwKWMBHMl81guW7FTVZVl3vvh+T/BL1TZNqORI3O666c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cT9Ju5ms; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759235395; x=1790771395;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=GDmus2CGw+l5vE3v3aGHGnfFjE/5q50mDpeUd0fkz+M=;
-  b=cT9Ju5msFdPcIQ33AHDQXVlKSuRqwrFEXPp9BLIeP5M2LRGfr5qsMWT5
-   fVCum9eJNa3fxat48HaNEiMniSKJwaJnR+97fRTt4swNa+z2KhL/3WAKL
-   YJxp1o3IcWuJ0MjCiJVmDJQa9fauZcUdQBKZCSdUuFo+ra3LmNQItgpvV
-   mvKkJEDpMMzsAgqmirtXgVUdAv6jEdWlKaENRm3rH2Ea94dCZ8vK7IYLi
-   UzaQwbMwzbLmQJZHswt06Uaui+9owBynsHOcKMQXDGZ1EdSjjIfrn6dp2
-   gJf0ApA4wM/bHPweogG2vdm+on21HGxBIMKabSEtKehsrwRZshfEFmFxZ
-   A==;
-X-CSE-ConnectionGUID: xyp1wuM+Sl+tBJGF8OL/Vg==
-X-CSE-MsgGUID: ZuTd7HT8TXK9RxmwlDKM+w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11568"; a="84106627"
-X-IronPort-AV: E=Sophos;i="6.18,304,1751266800"; 
-   d="scan'208";a="84106627"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2025 05:29:54 -0700
-X-CSE-ConnectionGUID: OCEuioj0RVGP0Gcgvu7szw==
-X-CSE-MsgGUID: 0PYDBXcMS+iyKgM01kzEXg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,304,1751266800"; 
-   d="scan'208";a="182527025"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.162])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2025 05:29:50 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 30 Sep 2025 15:29:46 +0300 (EEST)
-To: Xu Yilun <yilun.xu@linux.intel.com>
-cc: linux-coco@lists.linux.dev, linux-pci@vger.kernel.org, 
-    dan.j.williams@intel.com, yilun.xu@intel.com, baolu.lu@linux.intel.com, 
-    zhenzhong.duan@intel.com, aneesh.kumar@kernel.org, bhelgaas@google.com, 
-    aik@amd.com, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/3] PCI/IDE: Add Address Association Register setup for
- RP
-In-Reply-To: <20250928062756.2188329-3-yilun.xu@linux.intel.com>
-Message-ID: <d58dfdf5-0058-a03f-dd75-5afb8ae69e04@linux.intel.com>
-References: <20250928062756.2188329-1-yilun.xu@linux.intel.com> <20250928062756.2188329-3-yilun.xu@linux.intel.com>
+	s=arc-20240116; t=1759235413; c=relaxed/simple;
+	bh=/zL0EFk+v/5fhzJnTW5AH5NtDIodVA5pLQDzXOr2AqM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=huAUy1z262kecLrE/23OeD+kRaoUQl0kRB9c+bXr3HBgCFjFgUuprt6K7iOLwOjUp+N5LdXB5GtwCoSfhzPvyxUq9ZmD4xSLPSHVxANVhBatf7nPXtIKzt+gyt+9h93cGv6qQvewTVug7lj1fG9qYpG4iI4s8WDdcaO81aBTuwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ezFwC0AL; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759235410;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=y6xcN7C4Fb9O/Gi5nkV9luP1iu5hB9NCLHHJ7lVM2PQ=;
+	b=ezFwC0ALv3TvxdtxEVvnjuMMA0+mT/hGB5QIB55tdMDICZUQmlVsz5OHDbhwUbLS45/flg
+	KoLU0EEfiqQi40NTvky5EpRgg22fJSypq2dQCsBPMy5G3nwbSdde/GvvHhIofutC70OzFz
+	qmyghJ6bdxTD0ZBidTLa3ZpxansNu7M=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-159-lUx6fI6cMJ-K3x16lkjNDg-1; Tue,
+ 30 Sep 2025 08:30:07 -0400
+X-MC-Unique: lUx6fI6cMJ-K3x16lkjNDg-1
+X-Mimecast-MFC-AGG-ID: lUx6fI6cMJ-K3x16lkjNDg_1759235405
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 68AA61800366;
+	Tue, 30 Sep 2025 12:30:05 +0000 (UTC)
+Received: from pauld.westford.csb (unknown [10.22.88.241])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4942530003BA;
+	Tue, 30 Sep 2025 12:30:01 +0000 (UTC)
+Date: Tue, 30 Sep 2025 08:29:59 -0400
+From: Phil Auld <pauld@redhat.com>
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: Jianyun Gao <jianyungao89@gmail.com>, linux-kernel@vger.kernel.org,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>
+Subject: Re: [PATCH v2] sched: Fix some spelling mistakes in the scheduler
+ module
+Message-ID: <20250930122959.GA87275@pauld.westford.csb>
+References: <20250929061213.1659258-1-jianyungao89@gmail.com>
+ <ff4099fa-a6e4-4478-af81-a4c1baaf483b@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ff4099fa-a6e4-4478-af81-a4c1baaf483b@arm.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Sun, 28 Sep 2025, Xu Yilun wrote:
-
-> Add Address Association Register setup for Root Ports.
+On Tue, Sep 30, 2025 at 09:26:59AM +0100 Christian Loehle wrote:
+> On 9/29/25 07:12, Jianyun Gao wrote:
+> > From: "jianyun.gao" <jianyungao89@gmail.com>
+> > 
+> > The following are some spelling mistakes existing in the scheduler
+> > module. Just fix it!
+> > 
+> >   slection -> selection
+> >   achitectures -> architectures
+> >   excempt -> except
+> >   incorectly -> incorrectly
+> >   litle -> little
+> >   faireness -> fairness
+> >   condtion -> condition
+> > 
+> > Signed-off-by: jianyun.gao <jianyungao89@gmail.com>
+> > ---
+> > V2:
+> > Delete the incorrect modifications for "borken" in V1.
+> > The previous version is here:
+> > 
+> > https://lore.kernel.org/lkml/20250926092832.1457477-1-jianyungao89@gmail.com/
+> > 
+> >  kernel/sched/core.c     | 2 +-
+> >  kernel/sched/cputime.c  | 2 +-
+> >  kernel/sched/fair.c     | 8 ++++----
+> >  kernel/sched/wait_bit.c | 2 +-
+> >  4 files changed, 7 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> > index 7f1e5cb94c53..af5076e40567 100644
+> > --- a/kernel/sched/core.c
+> > +++ b/kernel/sched/core.c
+> > @@ -6858,7 +6858,7 @@ static void __sched notrace __schedule(int sched_mode)
+> >  		/*
+> >  		 * We pass task_is_blocked() as the should_block arg
+> >  		 * in order to keep mutex-blocked tasks on the runqueue
+> > -		 * for slection with proxy-exec (without proxy-exec
+> > +		 * for selection with proxy-exec (without proxy-exec
+> >  		 * task_is_blocked() will always be false).
+> >  		 */
+> >  		try_to_block_task(rq, prev, &prev_state,
+> > diff --git a/kernel/sched/cputime.c b/kernel/sched/cputime.c
+> > index 7097de2c8cda..2429be5a5e40 100644
+> > --- a/kernel/sched/cputime.c
+> > +++ b/kernel/sched/cputime.c
+> > @@ -585,7 +585,7 @@ void cputime_adjust(struct task_cputime *curr, struct prev_cputime *prev,
+> >  	stime = mul_u64_u64_div_u64(stime, rtime, stime + utime);
+> >  	/*
+> >  	 * Because mul_u64_u64_div_u64() can approximate on some
+> > -	 * achitectures; enforce the constraint that: a*b/(b+c) <= a.
+> > +	 * architectures; enforce the constraint that: a*b/(b+c) <= a.
+> >  	 */
+> >  	if (unlikely(stime > rtime))
+> >  		stime = rtime;
+> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> > index 18a30ae35441..20fe5899b247 100644
+> > --- a/kernel/sched/fair.c
+> > +++ b/kernel/sched/fair.c
+> > @@ -5381,7 +5381,7 @@ dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+> >  		bool delay = sleep;
+> >  		/*
+> >  		 * DELAY_DEQUEUE relies on spurious wakeups, special task
+> > -		 * states must not suffer spurious wakeups, excempt them.
+> > +		 * states must not suffer spurious wakeups, except them.
 > 
-> The address ranges for RP side Address Association Registers should
-> cover memory addresses for all PFs/VFs/downstream devices of the DSM
-> device. A simple solution is to get the aggregated 32-bit and 64-bit
-> address ranges from directly connected downstream port (either an RP or
-> a switch port) and set into 2 Address Association Register blocks.
+> This should be exempt, no?
 > 
-> There is a case the platform doesn't require Address Association
-> Registers setup and provides no register block for RP (AMD). Will skip
-> the setup in pci_ide_stream_setup().
-> 
-> Also imaging another case where there is only one block for RP.
-> Prioritize 64-bit address ranges setup for it. No strong reason for the
-> preference until a real use case comes.
-> 
-> The Address Association Register setup for Endpoint Side is still
-> uncertain so isn't supported in this patch.
-> 
-> Take the oppotunity to export some mini helpers for Address Association
-> Registers setup. TDX Connect needs the provided aggregated address
-> ranges but will use specific firmware calls for actual setup instead of
-> pci_ide_stream_setup().
-> 
-> Co-developed-by: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
-> Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
-> Co-developed-by: Arto Merilainen <amerilainen@nvidia.com>
-> Signed-off-by: Arto Merilainen <amerilainen@nvidia.com>
-> Signed-off-by: Xu Yilun <yilun.xu@linux.intel.com>
-> ---
->  include/linux/pci-ide.h | 11 +++++++
->  drivers/pci/ide.c       | 64 ++++++++++++++++++++++++++++++++++++++++-
->  2 files changed, 74 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/pci-ide.h b/include/linux/pci-ide.h
-> index 5adbd8b81f65..ac84fb611963 100644
-> --- a/include/linux/pci-ide.h
-> +++ b/include/linux/pci-ide.h
-> @@ -6,6 +6,15 @@
->  #ifndef __PCI_IDE_H__
->  #define __PCI_IDE_H__
->  
-> +#define SEL_ADDR1_LOWER GENMASK(31, 20)
-> +#define SEL_ADDR_UPPER GENMASK_ULL(63, 32)
-> +#define PREP_PCI_IDE_SEL_ADDR1(base, limit)                    \
-> +	(FIELD_PREP(PCI_IDE_SEL_ADDR_1_VALID, 1) |             \
-> +	 FIELD_PREP(PCI_IDE_SEL_ADDR_1_BASE_LOW,          \
-> +		    FIELD_GET(SEL_ADDR1_LOWER, (base))) | \
-> +	 FIELD_PREP(PCI_IDE_SEL_ADDR_1_LIMIT_LOW,         \
-> +		    FIELD_GET(SEL_ADDR1_LOWER, (limit))))
-> +
->  #define PREP_PCI_IDE_SEL_RID_2(base, domain)               \
->  	(FIELD_PREP(PCI_IDE_SEL_RID_2_VALID, 1) |          \
->  	 FIELD_PREP(PCI_IDE_SEL_RID_2_BASE, (base)) | \
-> @@ -42,6 +51,8 @@ struct pci_ide_partner {
->  	unsigned int default_stream:1;
->  	unsigned int setup:1;
->  	unsigned int enable:1;
-> +	struct range mem32;
-> +	struct range mem64;
->  };
->  
->  /**
-> diff --git a/drivers/pci/ide.c b/drivers/pci/ide.c
-> index 7633b8e52399..8db1163737e5 100644
-> --- a/drivers/pci/ide.c
-> +++ b/drivers/pci/ide.c
-> @@ -159,7 +159,11 @@ struct pci_ide *pci_ide_stream_alloc(struct pci_dev *pdev)
->  	struct stream_index __stream[PCI_IDE_HB + 1];
->  	struct pci_host_bridge *hb;
->  	struct pci_dev *rp;
-> +	struct pci_dev *br;
 
-Why not join with the previous line?
+I had the same thought then decded that "except" as a verb worked too.
+We are making an exception for the special states, right? I think either
+works, but not both at once :) 
 
->  	int num_vf, rid_end;
-> +	struct range mem32 = {}, mem64 = {};
-> +	struct pci_bus_region region;
-> +	struct resource *res;
->  
->  	if (!pci_is_pcie(pdev))
->  		return NULL;
-> @@ -206,6 +210,24 @@ struct pci_ide *pci_ide_stream_alloc(struct pci_dev *pdev)
->  	else
->  		rid_end = pci_dev_id(pdev);
->  
-> +	br = pci_upstream_bridge(pdev);
-> +	if (!br)
-> +		return NULL;
-> +
-> +	res = &br->resource[PCI_BRIDGE_MEM_WINDOW];
+But that said, I'm not sure we should bother as these don't seem to
+effect the meaning (at least to me as a native 'merican speaker). 
 
-pci_resource_n()
+Cheers,
+Phil
 
-> +	if (res->flags & IORESOURCE_MEM) {
-> +		pcibios_resource_to_bus(br->bus, &region, res);
-> +		mem32.start = region.start;
-> +		mem32.end = region.end;
-> +	}
-> +
-> +	res = &br->resource[PCI_BRIDGE_PREF_MEM_WINDOW];
 
-Ditto.
-
-> +	if (res->flags & IORESOURCE_PREFETCH) {
-
-While I don't know much about what's going on here, is this assuming the 
-bridge window is not disabled solely based on this flag check?
-
-Previously inactive bridge window flags were reset but that's no longer 
-the case after the commit 8278c6914306 ("PCI: Preserve bridge window 
-resource type flags") (currently in pci/resource)?
 
 -- 
- i.
 
-> +		pcibios_resource_to_bus(br->bus, &region, res);
-> +		mem64.start = region.start;
-> +		mem64.end = region.end;
-> +	}
-> +
->  	*ide = (struct pci_ide) {
->  		.pdev = pdev,
->  		.partner = {
-> @@ -218,6 +240,8 @@ struct pci_ide *pci_ide_stream_alloc(struct pci_dev *pdev)
->  				.rid_start = pci_dev_id(pdev),
->  				.rid_end = rid_end,
->  				.stream_index = no_free_ptr(rp_stream)->stream_index,
-> +				.mem32 = mem32,
-> +				.mem64 = mem64,
->  			},
->  		},
->  		.host_bridge_stream = no_free_ptr(hb_stream)->stream_index,
-> @@ -397,6 +421,21 @@ static void set_ide_sel_ctl(struct pci_dev *pdev, struct pci_ide *ide,
->  	pci_write_config_dword(pdev, pos + PCI_IDE_SEL_CTL, val);
->  }
->  
-> +static void set_ide_sel_addr(struct pci_dev *pdev, int pos, int assoc_idx,
-> +			     struct range *mem)
-> +{
-> +	u32 val;
-> +
-> +	val = PREP_PCI_IDE_SEL_ADDR1(mem->start, mem->end);
-> +	pci_write_config_dword(pdev, pos + PCI_IDE_SEL_ADDR_1(assoc_idx), val);
-> +
-> +	val = FIELD_GET(SEL_ADDR_UPPER, mem->end);
-> +	pci_write_config_dword(pdev, pos + PCI_IDE_SEL_ADDR_2(assoc_idx), val);
-> +
-> +	val = FIELD_GET(SEL_ADDR_UPPER, mem->start);
-> +	pci_write_config_dword(pdev, pos + PCI_IDE_SEL_ADDR_3(assoc_idx), val);
-> +}
-> +
->  /**
->   * pci_ide_stream_setup() - program settings to Selective IDE Stream registers
->   * @pdev: PCIe device object for either a Root Port or Endpoint Partner Port
-> @@ -410,6 +449,7 @@ static void set_ide_sel_ctl(struct pci_dev *pdev, struct pci_ide *ide,
->  void pci_ide_stream_setup(struct pci_dev *pdev, struct pci_ide *ide)
->  {
->  	struct pci_ide_partner *settings = pci_ide_to_settings(pdev, ide);
-> +	u8 assoc_idx = 0;
->  	int pos;
->  	u32 val;
->  
-> @@ -424,6 +464,21 @@ void pci_ide_stream_setup(struct pci_dev *pdev, struct pci_ide *ide)
->  	val = PREP_PCI_IDE_SEL_RID_2(settings->rid_start, pci_ide_domain(pdev));
->  	pci_write_config_dword(pdev, pos + PCI_IDE_SEL_RID_2, val);
->  
-> +	/*
-> +	 * Feel free to change the default stratagy, Intel & AMD don't directly
-> +	 * setup RP registers.
-> +	 *
-> +	 * 64 bit memory first, assuming it's more popular.
-> +	 */
-> +	if (assoc_idx < pdev->nr_ide_mem && settings->mem64.end != 0) {
-> +		set_ide_sel_addr(pdev, pos, assoc_idx, &settings->mem64);
-> +		assoc_idx++;
-> +	}
-> +
-> +	/* 64 bit memory in lower block and 32 bit in higher block, any risk? */
-> +	if (assoc_idx < pdev->nr_ide_mem && settings->mem32.end != 0)
-> +		set_ide_sel_addr(pdev, pos, assoc_idx, &settings->mem32);
-> +
->  	/*
->  	 * Setup control register early for devices that expect
->  	 * stream_id is set during key programming.
-> @@ -445,7 +500,7 @@ EXPORT_SYMBOL_GPL(pci_ide_stream_setup);
->  void pci_ide_stream_teardown(struct pci_dev *pdev, struct pci_ide *ide)
->  {
->  	struct pci_ide_partner *settings = pci_ide_to_settings(pdev, ide);
-> -	int pos;
-> +	int pos, i;
->  
->  	if (!settings)
->  		return;
-> @@ -453,6 +508,13 @@ void pci_ide_stream_teardown(struct pci_dev *pdev, struct pci_ide *ide)
->  	pos = sel_ide_offset(pdev, settings);
->  
->  	pci_write_config_dword(pdev, pos + PCI_IDE_SEL_CTL, 0);
-> +
-> +	for (i = 0; i < pdev->nr_ide_mem; i++) {
-> +		pci_write_config_dword(pdev, pos + PCI_IDE_SEL_ADDR_1(i), 0);
-> +		pci_write_config_dword(pdev, pos + PCI_IDE_SEL_ADDR_2(i), 0);
-> +		pci_write_config_dword(pdev, pos + PCI_IDE_SEL_ADDR_3(i), 0);
-> +	}
-> +
->  	pci_write_config_dword(pdev, pos + PCI_IDE_SEL_RID_2, 0);
->  	pci_write_config_dword(pdev, pos + PCI_IDE_SEL_RID_1, 0);
->  	settings->setup = 0;
-> 
 
