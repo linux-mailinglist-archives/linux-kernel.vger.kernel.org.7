@@ -1,95 +1,163 @@
-Return-Path: <linux-kernel+bounces-837672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8341BACE20
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:39:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E9E0BACE2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:40:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E8601927A10
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:40:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 148333B629A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:39:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EA2A2F9987;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6D422FCC13;
 	Tue, 30 Sep 2025 12:39:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="yTwiMOzn"
-Received: from out203-205-221-205.mail.qq.com (out203-205-221-205.mail.qq.com [203.205.221.205])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K84O9Zhu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4085E34BA29;
-	Tue, 30 Sep 2025 12:39:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28BC42FB625;
+	Tue, 30 Sep 2025 12:39:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759235983; cv=none; b=gftNY2TmFmmV/+4IQKji4sz6ytqOnh5PxZDMZ44+0rIPz3C6EqGNfINwN69Y2QqrWDxSSF/aibIVZT29r/MA7KTSmTmRoUbCU9Z0MI8J94WoWXWJlFlkMab+REnompE1a//Z7E+FOE2pCF/SDsLrF8Zzk0OSL5wtyFMturqZgVQ=
+	t=1759235984; cv=none; b=gTz27gSLHWPjdOgLPjOk5+4zyUf5e/IjxTY7IeoQ/flNdwG+dwIpH03Bg3W78MpMoymbeh+nyK+eeIkDqV14zTT1cfzCFZc1H7EvBEC3zOOzaaSXQWLaKmT6dStEC3+wDq7nvqXikLfTY9SPEn3CGf1+iUmD94IJn4CRDZoOFaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759235983; c=relaxed/simple;
-	bh=6eKCQ/B33c43ONnZ+/Nb2tdS++4lzEi7VV/6tLsTwrw=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=Kx2/9CyfSAi29u/2T8EAQZBj09neU3X2xjkdjbhZvknBMsmBvHhrrEnv4BTLs1T8RF3taMBmm+kjFAmrZdbYeBou4embj/d0WgINPCwUGCudpe2HeVGdEkV9iYVef8SYu9hPLZnkYG6gcYkg67nnnNWQ4s5ZWMtU3A9x/5oWWhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=yTwiMOzn; arc=none smtp.client-ip=203.205.221.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1759235975; bh=zX1yud5rWsehKArldd3NcJNTyIjFnt+V8odHkAI+Jok=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=yTwiMOzn4ZftmVFh/3id5HKUp8zPF/XiklWzW6vB7flAiD+aAHE2/SXhCL5dGg7p3
-	 SYik5yJDacXaFvDnPkhzcpnhsOufYYGwyuz3E41O5HZNR9R8tfvMHu5NR76vQ8LRQ5
-	 Xf9divyPNNR3sdjP6F/QJ50YAbsEdiezw7XpXq6o=
-Received: from localhost.localdomain ([116.128.244.171])
-	by newxmesmtplogicsvrszb42-0.qq.com (NewEsmtp) with SMTP
-	id 9E1280EF; Tue, 30 Sep 2025 20:39:33 +0800
-X-QQ-mid: xmsmtpt1759235973toy47nfyy
-Message-ID: <tencent_88053624249C81B35E3F59FCF6F53DEA4007@qq.com>
-X-QQ-XMAILINFO: MllZffuBkEb52VHQQjs75muKszaAy9Ea3JvZ1AFrhbMAFXRqZ42zraUhhKbsmF
-	 gj7nbfiV/WBVAKwdsx7F8JABhkqiFFFWnUSpCBa/qUXlwTsOpC0C/tPRQ6Bwoohlc6slDS0kmQNf
-	 2UgyrbaCZqnoOXRM//P52JACbEHZRVcGLxPQhKv/7CmqkUVXr+K/q7dtUJXM9AO4nrXuz1okbOx4
-	 +0gjFIwKBeklSkpjw+r2c8qObcXfGz0oc1GHowP87eJlyLwpP//a6FoQst+YJS7GG0gbWKK5s3Ig
-	 QT6/5VRtpGpCQYwzTvdQRWQUhNcJmwQ1Z1C95mBUB2aZFMwa59JSndcf0q5VJv3+p6CXUTZ1lwhe
-	 Tcwr5UU621SIeAJeazpewvk/23Hw5fbrhHOhzQNHgUKr4rvkbtwnfImhWwqQpFStsivqNrJXuQbe
-	 Z35qn0PLU328fxV0cD0f3LAz2RmYj5GWJZrxBtosfYB01FD/I37IrIFGL+kypoL+oahddr4a+6sD
-	 tu0Aj7O/boP++C8ERTYtZNeHqOJJOuzyd0UkYe5JOIsRCsfYMzeC4GN/pIfjcPUSuCNYq3qpkbFZ
-	 Kmcji+LCqGUivk2pj1kP5nlj/VwX1+78y7c/htYay52UaqrWHSRrbblzWtCsNuJSr2pTeyHCVqy/
-	 YHzL7uFquD9mC3m9nSNYzuoTU5Lgo2HCdCmIsnHwzfoPLmAJxYflI/IOzDf02S63l+8QltvLK1zW
-	 QzroxDunBiCKYvWhnZiau8u6c1MISEq4lEtcY5t3BfbiOF4q2f76+pK3tqex9N0h4p7Jx8BiAeC6
-	 zY6YEPPROiwNmlavW5wTuOi/hYvF7UjHBuXNuTEs5p7Kko+Ph48e/6dCNq5XObm7cNI90O2Bj9fj
-	 rcsvf3KF1eTcf4ma/79mMV33gmDep1HuZ9Bcn9fC1baf6dU4z8qZZd4dDQyXiJC3nV9T0XRTcdDR
-	 V37NmDMVLX9bXHxOxyKG2s4/4VD4GT5gMjdUBW0gFXwuRzw4lmLr89vS5l+Ne6PhPhZeiytew1UX
-	 pRQB4JJgQx9/V3Dm0sySqogq3Hp9QujgLurlk2dCL/ikLsFOtl
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-From: Haofeng Li <920484857@qq.com>
-To: kuba@kernel.org
-Cc: 13266079573@163.com,
-	920484857@qq.com,
-	donald.hunter@gmail.com,
-	lihaofeng@kylinos.cn,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH WITHDRAWN] net: ynl: return actual error code in ynl_exec_dump()
-Date: Tue, 30 Sep 2025 20:39:33 +0800
-X-OQ-MSGID: <20250930123933.22034-1-920484857@qq.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250926112406.1d92c89d@kernel.org>
-References: <20250926112406.1d92c89d@kernel.org>
+	s=arc-20240116; t=1759235984; c=relaxed/simple;
+	bh=Hf0iUYcbid7zzLDUR6Xrgij1hCWZ488BCe4EgYcOHuM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yj3qXqrsy2gopploHrcuQAiLvVYygj1Z7CX+qxZm3dQ4Wq5yw4JBKGGRTUAEeQDpihtekGvxIz/bzeOsl0hWVBprsWMlxpbqes+bEaXwa4UmZumvIXWS9keee0aTGrOUQw5We/NB39oNIdkQCPJkqr6vuxU9UbOE1rRJJRqFPNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K84O9Zhu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39333C4CEF0;
+	Tue, 30 Sep 2025 12:39:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759235983;
+	bh=Hf0iUYcbid7zzLDUR6Xrgij1hCWZ488BCe4EgYcOHuM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=K84O9Zhu5D/STTAB7jwVwCmaw0mOyAerPw2bcoJusHc+kOs0/UdQavU0/klGZnQ9f
+	 6VdGaSyMfrtsgPW7piB+Zg48cQy/Y2o1s5WII3V64uDxRVid9j7SvQdS04K2pZyOEy
+	 ETjUW3MWLJfY0MJhcY/pp/46Qcs4NATlJwgJCsZU2fnevitORckcTCFAZBboWYQ07R
+	 dOrfAm4iXobAzxKI+NfsqsSHNDcjn99FoNNyjmLCkTyJJGxuWgSEV/gSMjyiJKXMAg
+	 gHuYly+R3E92FQUUX+jsaFatBR2Iuuw5tGNNJV8PJKrMqT2RkSq8xX8PxAKZSpADIx
+	 zEbkrPST5HSAw==
+Date: Tue, 30 Sep 2025 15:39:39 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Jonathan McDowell <noodles@earth.li>
+Cc: linux-integrity@vger.kernel.org, dpsmith@apertussolutions.com,
+	ross.philipson@oracle.com,
+	Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
+	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:KEYS/KEYRINGS" <keyrings@vger.kernel.org>,
+	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH v3 04/10] tpm2-sessions: Remove 'attributes' from
+ tpm_buf_append_auth
+Message-ID: <aNvPi9qQGjXDDgDl@kernel.org>
+References: <20250929194832.2913286-1-jarkko@kernel.org>
+ <20250929194832.2913286-5-jarkko@kernel.org>
+ <aNu6sZc-JTPhFTLV@earth.li>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aNu6sZc-JTPhFTLV@earth.li>
 
-> This is not kernel code the error is always -1, and the details are in errno.
+On Tue, Sep 30, 2025 at 12:10:41PM +0100, Jonathan McDowell wrote:
+> On Mon, Sep 29, 2025 at 10:48:26PM +0300, Jarkko Sakkinen wrote:
+> > From: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
+> > 
+> > In a previous bug fix, 'attributes' was added by mistake to
+> > tpm_buf_append_auth(). Remove the parameter.
+> > 
+> > Fixes: 27184f8905ba ("tpm: Opt-in in disable PCR integrity protection")
+> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
+> 
+> Reviewed-by: Jonathan McDowell <noodles@meta.com>
 
-Thank you for the feedback and for pointing that out.
+Thank you.
 
-You are absolutely right. I now understand that in the context of this 
-userspace code, the error handling convention relies on errno for 
-details when the return value is -1. My patch was attempting to align 
-the return value with a specific internal error code, which, as you clarified,
- is not the established practice here and doesn't provide the intended 
-benefit in this case.
+> 
+> > ---
+> > v3:
+> > - No changes
+> > v2:
+> > - Uncorrupt the patch.
+> > ---
+> >  drivers/char/tpm/tpm2-cmd.c      | 2 +-
+> >  drivers/char/tpm/tpm2-sessions.c | 5 ++---
+> >  include/linux/tpm.h              | 2 +-
+> >  3 files changed, 4 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+> > index a7cddd4b5626..86b1a4d859b9 100644
+> > --- a/drivers/char/tpm/tpm2-cmd.c
+> > +++ b/drivers/char/tpm/tpm2-cmd.c
+> > @@ -191,7 +191,7 @@ int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
+> >  		tpm_buf_append_hmac_session(chip, &buf, 0, NULL, 0);
+> >  	} else {
+> >  		tpm_buf_append_handle(chip, &buf, pcr_idx);
+> > -		tpm_buf_append_auth(chip, &buf, 0, NULL, 0);
+> > +		tpm_buf_append_auth(chip, &buf, NULL, 0);
+> >  	}
+> >  
+> >  	tpm_buf_append_u32(&buf, chip->nr_allocated_banks);
+> > diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-sessions.c
+> > index 6d03c224e6b2..13f019d1312a 100644
+> > --- a/drivers/char/tpm/tpm2-sessions.c
+> > +++ b/drivers/char/tpm/tpm2-sessions.c
+> > @@ -266,7 +266,7 @@ void tpm_buf_append_name(struct tpm_chip *chip, struct tpm_buf *buf,
+> >  EXPORT_SYMBOL_GPL(tpm_buf_append_name);
+> >  
+> >  void tpm_buf_append_auth(struct tpm_chip *chip, struct tpm_buf *buf,
+> > -			 u8 attributes, u8 *passphrase, int passphrase_len)
+> > +			 u8 *passphrase, int passphrase_len)
+> >  {
+> >  	/* offset tells us where the sessions area begins */
+> >  	int offset = buf->handles * 4 + TPM_HEADER_SIZE;
+> > @@ -327,8 +327,7 @@ void tpm_buf_append_hmac_session(struct tpm_chip *chip, struct tpm_buf *buf,
+> >  #endif
+> >  
+> >  	if (!tpm2_chip_auth(chip)) {
+> > -		tpm_buf_append_auth(chip, buf, attributes, passphrase,
+> > -				    passphrase_len);
+> > +		tpm_buf_append_auth(chip, buf, passphrase, passphrase_len);
+> >  		return;
+> >  	}
+> >  
+> > diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+> > index 51846317d662..1fa02e18e688 100644
+> > --- a/include/linux/tpm.h
+> > +++ b/include/linux/tpm.h
+> > @@ -531,7 +531,7 @@ void tpm_buf_append_hmac_session(struct tpm_chip *chip, struct tpm_buf *buf,
+> >  				 u8 attributes, u8 *passphrase,
+> >  				 int passphraselen);
+> >  void tpm_buf_append_auth(struct tpm_chip *chip, struct tpm_buf *buf,
+> > -			 u8 attributes, u8 *passphrase, int passphraselen);
+> > +			 u8 *passphrase, int passphraselen);
+> >  static inline void tpm_buf_append_hmac_session_opt(struct tpm_chip *chip,
+> >  						   struct tpm_buf *buf,
+> >  						   u8 attributes,
+> > -- 
+> > 2.39.5
+> > 
+> > 
+> 
+> J.
+> 
+> -- 
+>    101 things you can't have too   |  .''`.  Debian GNU/Linux Developer
+>        much of : 17 - Money.       | : :' :  Happy to accept PGP signed
+>                                    | `. `'   or encrypted mail - RSA
+>                                    |   `-    key on the keyservers.
 
-I appreciate you taking the time to explain this.
-
+BR, Jarkko
 
