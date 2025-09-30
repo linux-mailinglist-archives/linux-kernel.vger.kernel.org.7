@@ -1,178 +1,348 @@
-Return-Path: <linux-kernel+bounces-837301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 277C8BABE8E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:53:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4052BABE94
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:53:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B60818934D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 07:53:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 601F11C1BEC
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 07:53:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEE182C178E;
-	Tue, 30 Sep 2025 07:53:00 +0000 (UTC)
-Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E073D2C178E;
+	Tue, 30 Sep 2025 07:53:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RFX3zRmt"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A154F2BEC34
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 07:52:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E361243968
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 07:53:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759218780; cv=none; b=AR+ohhnbr/6dOWRbfbQfTOvcsknSUnWIGnRG0K7bnqcVzMHZatzZpw7hGI92B1fQyuOye1ehJHdjvXKLARHUnpkICucfaqA+zN/i8qpm3k+uWdI4aJqV1OdDWhk/DkqUuMZ5LkJdkjz+kubv1bCTnQdVI5Niwi3NGwsQXu9eGZw=
+	t=1759218821; cv=none; b=si9HF2G1aKuNCgTWCW3XAnRJ3c+sDG89L3kyBMzcCUTSIZ7iocyohQcAzE6aShAX2IxtKKRD6nLR/nVFd22msvpy5coiy5xD2wgCSpFwzpw959T/Ce/sHAkmZJnVqxQt1MxjvvJP+7GkjAdRyYBcvOSdTP/Q3XnrekGrws1nRv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759218780; c=relaxed/simple;
-	bh=Ks2i8mOpB744eUk2A/ODTB+R+UAfytF25Eq134pKwt0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dmrK856+XRNepvC6UX4/oiXbsajFuuAj6cn4HThKB8vDrFTETtEVreex6xCKp4JGlf5c2Q6xGXJVn/DX5bhFhZO1CHEd17KE6hduMbScyrmgP4p1Auu+/nFu/8iF5CWNFxkPBnZj+ZQHxmiKpQk6se4gcEaKqeZ1iYhDqtBMrKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-8e32821b5bcso1899092241.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 00:52:58 -0700 (PDT)
+	s=arc-20240116; t=1759218821; c=relaxed/simple;
+	bh=PRLFLpJagjo4igMVRiaCV24ienbgLYFYkfF39ql7Tn8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=vEIVpGQCSqza+s8ADNbkapXnH3ISRhveCCBJtdNyM0jucsFgwdLNgWSALXlxx0cNF0vD6grMJavfglikBaG/fP4IJCMxjb6V4sti9eyxhpFgoJI5/AdKdv8Sjb3spCYc9g+HNrR67cSf2d+mfLb/svlHzA1DPlzvgHSmnlJXkjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RFX3zRmt; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-28e538b5f23so8877155ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 00:53:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759218819; x=1759823619; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ARPuefy6xt1h44Lmz1DwT7zsJ1Q7j9YMD1jtO1M5gDo=;
+        b=RFX3zRmttA0POqm9iR4QkzPWvinfFxl0H2P71VzVcJbWdcvlXxzSNEqPjZsBvYKbqA
+         X5ufYs3FOUCyQoONSw5oQ0pOg5cSdQO9WdxE4XosVFmzfRXQXDA6mFrCIpkpykogXold
+         jS4JAN1DwIx98ErRsHVe5P8Vz/bZi22dpIkBquqwrR24fMubQwB9Yg6xdWlzKpX/qWYG
+         mttnfwsXGnhUqw9ApDA7YcdSjz4XeWB2D0pSYIwkfGQKHM1C0gEh5IMuWC1+UK9Kro1O
+         4gLsy9O/VK3qcv3n6e1+Eulmi93cg+PsDiTQo2CSTys5Wm8tHf9886yw31of0px8yCT6
+         KPqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759218777; x=1759823577;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Aa5DrkK9lamemzbezkeJMzZtq5kF5RPmPk7WlbJcb3g=;
-        b=ln2EGufBlh51eA5scRNHNkNrwmUOPtbUSaBzNRbl9SAST2ycR7aWVx+iAdXTvjTANJ
-         v5tsSlY38I+mmqRj/UzRxRD47hrev85D1hJjYOqj6UnRixGha5744b6YbYfnyL9mj7Tu
-         SQaAxQDz1IlsTj0KlPfzDmtFULzvby7QseHnBzj2vitWpzQ2Fic5QLR3GrF0N0uXARbz
-         qytvXmiZx9C988XZw7fUtX6Y6saq3ZwsrCOWs/7qJtkncfFe66ZgP4SnAQroFAf7iK8U
-         FJXdNwQRB1jweryL/vq3aJ/Z5jb2IE2q/9AXGMW6bVdOk4L2+PjdsqpmE0FrpHhO4u8K
-         kHiA==
-X-Forwarded-Encrypted: i=1; AJvYcCWDncKx9F4CGZpjJhWJxptcDro9AoNF8QChobsFqqaQVzCFnZtofju0ENN2+f7k24q2xAXatqgKsY4Q758=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxM7FUeGLkFFKuqqfAJyi+ySuQ4k9qp3ltb8SasbxDBevPi0Wug
-	VzR1sXYqGAKUsbXLU1Zis00c60ls7w2j2eU4bvJwpphjFEh0V2yhMi37TExDkGvt
-X-Gm-Gg: ASbGnctrHoqgFoZaLe0NUlubvwWCNDGAKLsPj2ikm4lRi64iKlAYOHXWEi+bfECZkSW
-	65jZ2NvmUEoLAgE1GwzzRlrGxzIx4ofTw+hTQk/cynRr/+ZxzaWhJW9G6i3ful1SwCECNIiclG5
-	tMl0sK61wRqDUe//jkT4g2zyyrWOhSD1ZI0iH+ptk1DbgFRB+BrNtL5fYPemRDHmOJK0QAyaSLZ
-	o2l93IZjaR3NN7A/A29t8tBs/t2Yvdg4+ZOYHUkivUAWrs+BDJta7XDZpSbmpCxyIpTKWXO6M+a
-	QWQ1vwxhfDtWzyMHYpdrl8nx0uumzxVzUOfD8P65EvPRITf3G6/hM7mrF/eacvZyFaBG+vxv9Gp
-	w71omnwPowa1KC/Xfm3BuJr6OJ79IRI/tp/SWkWBdrBO/f3Ma0ufM86FuD6a8vjY0hLjOAgZrnG
-	JXs4Rcntp6m1yCajQyXJw=
-X-Google-Smtp-Source: AGHT+IHnI4ap3n0lmrzky3xM0FcYE071xUcOtI3gnkWO+Eft4bR2O3gzFrejWCO3avJxQPlTwUS7aA==
-X-Received: by 2002:a05:6102:e0a:b0:525:33a9:c71 with SMTP id ada2fe7eead31-5acce75ac3emr6958579137.24.1759218777244;
-        Tue, 30 Sep 2025 00:52:57 -0700 (PDT)
-Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com. [209.85.222.52])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5be147da365sm2358689137.9.2025.09.30.00.52.56
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Sep 2025 00:52:56 -0700 (PDT)
-Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-8e32821b5bcso1899082241.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 00:52:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX75wDI5Ky2oOSBGCrNqpt38I5YqjsT0ltwFke3Mzv66cL7RdOuImNVImJmxi5kZOtXjG+ZUK/sOsggq4U=@vger.kernel.org
-X-Received: by 2002:a05:6122:3c92:b0:54a:a5ac:5107 with SMTP id
- 71dfb90a1353d-54bea256dccmr7837048e0c.15.1759218775649; Tue, 30 Sep 2025
- 00:52:55 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759218819; x=1759823619;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ARPuefy6xt1h44Lmz1DwT7zsJ1Q7j9YMD1jtO1M5gDo=;
+        b=rMGD+Zl4b73vXhuj2g6Vr40R07gXd5dthbCXM6Qah2XQQcU5PVJZljFLlxUPEXqS0F
+         Ql5H42b1iRDT9IjAxCd9ugUdIgyR+ao/o3z+u/G+c/QQkjI74B/eEygFoSJk7226rHy9
+         GjD5bDPFRbQvLNDfrkrvkpVEDzLjPqH00vifSYr7UkPF8dT16virJbIWfJ1250E/Ogip
+         dOgdVDz5KnADWJ+yqEjzVuieh/BJ4uP8RAEhEtbEIstigwP3D3pnnANqTbbOR4s/kg1u
+         t2N4+xTYn2h6S5L5fhxGqsXeQcJdlMHBbpJIBLNSVnDUI0Jr3Pdn+FxoB8aHNFXRGido
+         bE+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXnBsXe9SPVYePC/nvJE2wyz1fPDy22YbkkaMR80HoxJORnEW/0UmCxaGsNOlK5KaK9YO6qzmo+mIljcME=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsrbXOT1r3Ht7aHxKGYfNcx2GTm9HWI9E9HTOkS91A5oHG/TwK
+	xX3x0NzxxeWgKON66LJBW8nHnXSasq3JXkmA0WJFmPBYFZk1Gv9UhQ0a6ZJ6RdAzyYjFVHQFhre
+	ULuGVdD8+kskeYu/HP2gOAbbyzA==
+X-Google-Smtp-Source: AGHT+IE2XuxOoKILu6nm+YtUWuNO19SuAk0lsfc/w/jR3J5fI+6uoNjtUKbQuml7WPGigdITGlQVSKwsO+4FE5j3dQ==
+X-Received: from pgvm13.prod.google.com ([2002:a65:62cd:0:b0:b55:1852:3ef3])
+ (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:902:db0e:b0:27d:6995:9911 with SMTP id d9443c01a7336-27ed4a7728amr219570925ad.28.1759218818749;
+ Tue, 30 Sep 2025 00:53:38 -0700 (PDT)
+Date: Tue, 30 Sep 2025 07:53:37 +0000
+In-Reply-To: <aNrLpkrbnwVSaQGX@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250916084631.77127e29@bootlin.com> <aMt5kEI_WRDOf-Hw@zatzit>
- <20250918094409.0d5f92ec@bootlin.com> <aMzhgDYOuG4qNcc0@zatzit>
- <dcbeaff2-0147-4a27-bb46-e247e42810d7@beagleboard.org> <aNJVqSpdAJzGliNx@zatzit>
- <20250923114849.2385736d@bootlin.com> <CAMuHMdWmDwedyPnBERs-tSYEG15nMUuh9u1Q+W_FdquHpUC0-A@mail.gmail.com>
- <aNNvaN4xJtKBFmWT@zatzit> <cd9763b7-919a-4b44-a347-f1491d9584b9@beagleboard.org>
- <aNtXnAeLj3xNwkyE@zatzit>
-In-Reply-To: <aNtXnAeLj3xNwkyE@zatzit>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 30 Sep 2025 09:52:44 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdV+sUZpMtbCtWqJMiL_JC_nFEJcFDOoZJZPhhzhY8zQJQ@mail.gmail.com>
-X-Gm-Features: AS18NWCn2Nf_ET6vEoGNsB6ZKan8jeS0YTKv9inR2GremBjiwmJIe_zbvyBIsgE
-Message-ID: <CAMuHMdV+sUZpMtbCtWqJMiL_JC_nFEJcFDOoZJZPhhzhY8zQJQ@mail.gmail.com>
-Subject: Re: Device tree representation of (hotplug) connectors: discussion at ELCE
-To: David Gibson <david@gibson.dropbear.id.au>
-Cc: Ayush Singh <ayush@beagleboard.org>, Herve Codina <herve.codina@bootlin.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, Andrew Davis <afd@ti.com>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Luca Ceresoli <luca.ceresoli@bootlin.com>, devicetree@vger.kernel.org, 
-	Jason Kridner <jkridner@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, devicetree-compiler@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Mime-Version: 1.0
+References: <20250926163114.2626257-1-seanjc@google.com> <20250926163114.2626257-7-seanjc@google.com>
+ <diqzldlx1fyk.fsf@google.com> <aNrLpkrbnwVSaQGX@google.com>
+Message-ID: <diqza52c1im6.fsf@google.com>
+Subject: Re: [PATCH 6/6] KVM: selftests: Verify that faulting in private
+ guest_memfd memory fails
+From: Ackerley Tng <ackerleytng@google.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>, 
+	Fuad Tabba <tabba@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Hi David,
+Sean Christopherson <seanjc@google.com> writes:
 
-On Tue, 30 Sept 2025 at 06:34, David Gibson <david@gibson.dropbear.id.au> wrote:
-> On Wed, Sep 24, 2025 at 10:33:50PM +0530, Ayush Singh wrote:
-> > On 9/24/25 09:41, David Gibson wrote:
-> > > > On Tue, 23 Sept 2025 at 11:49, Herve Codina <herve.codina@bootlin.com> wrote:
-> > > > > On Tue, 23 Sep 2025 18:09:13 +1000
-> > > > > David Gibson <david@gibson.dropbear.id.au> wrote:
-> > > > > > Ah, right.  To be clear: we absolutely don't want multiple addons
-> > > > > > altering the same nodes.  But I think we could do that in ways other
-> > > > > > than putting everything under a connector.  This is exactly why I
-> > > > > > think we should think this through as an end-to-end problem, rather
-> > > > > > trying to do it as a tweak to the existing (crap) overlay system.
-> > > > > >
-> > > > > > So, if we're thinking of this as an entirely new way of updating the
-> > > > > > base dt - not "an overlay" - we can decide on the rules to ensure that
-> > > > > > addition and removal is sane.  Two obvious ones I think we should
-> > > > > > definitely have are:
-> > > > > >
-> > > > > > a) Addons can only add completely new nodes, never modify existing
-> > > > > >     ones.  This means that whatever addons are present at runtime,
-> > > > > >     every node has a single well defined owner (either base board or
-> > > > > >     addon).
-> > > > > In this rule I suppose that "never modify existing ones" should be understood
-> > > > > as "never modify, add or remove properties in existing ones". Because, of course
-> > > > > adding a full node in a existing one is allowed (rule b).
-> > > > What if the add-on board contains a provider for the base board.
-> > > > E.g. the connector has a clock input, fed by an optional clock generator
-> > > > on the add-on board.  Hooking that into the system requires modifying
-> > > > a clocks property in the base board, cfr. [1].
-> > > > Or is there some other solution?
-> > > Hmm.  My first inclination would be that this case is not in scope for
-> > > the protocol we're trying to design now.  If the widget provides
-> > > things to the base board as well as the other way around, it's no
-> > > longer an "addon" for the purposes of this spec.
-> > >
-> > > But it's possible I've underestimated how common / useful such a case
-> > > is.
-> > >
-> > > Note that I'd expect the existing overlay mechanism to still be
-> > > around.  It may be ugly and not very well thought out, but its
-> > > drawbacks are much less severe if you're not dealing with hot unplug.
-> >
-> > Well, while that was not an initial use-case in my mind, external clock
-> > inputs are a valid use-case when talking about connectors for board headers
-> > specifically (e.g. pocketbeagle connector).
+> On Mon, Sep 29, 2025, Ackerley Tng wrote:
+>> Sean Christopherson <seanjc@google.com> writes:
+>> 
+>> 
+>> [...snip...]
+>> 
+>> > -static void test_fault_overflow(int fd, size_t total_size)
+>> > +static void *test_fault_sigbus(int fd, size_t size)
+>> >  {
+>> >  	struct sigaction sa_old, sa_new = {
+>> >  		.sa_handler = fault_sigbus_handler,
+>> >  	};
+>> > -	size_t map_size = total_size * 4;
+>> > -	const char val = 0xaa;
+>> > -	char *mem;
+>> > -	size_t i;
+>> > +	void *mem;
+>> >  
+>> > -	mem = kvm_mmap(map_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd);
+>> > +	mem = test_mmap_common(fd, size);
+>> >  
+>> >  	sigaction(SIGBUS, &sa_new, &sa_old);
+>> >  	if (sigsetjmp(jmpbuf, 1) == 0) {
+>> > -		memset(mem, 0xaa, map_size);
+>> > +		memset(mem, 0xaa, size);
+>> >  		TEST_ASSERT(false, "memset() should have triggered SIGBUS.");
+>> >  	}
+>> >  	sigaction(SIGBUS, &sa_old, NULL);
+>> >  
+>> > +	return mem;
+>> 
+>> I think returning the userspace address from a test is a little hard to
+>> follow. This one feels even more unexpected because a valid address is
+>> being returned (and used) from a test that has sigbus in its name.
 >
-> I guess I'm not familiar enough with modern embedded hardware.  I'm
-> having a hard time wrapping my head around what's going on here.  If
-> the external clock input is optional (hence under a connector), how is
-> anything on the base board dependent on it?  If nothing on the base
-> board is dependent, why do we need to modify its properties to
-> represent it?
+> Yeah, and it's fugly all around.  If we pass in the "accessible" size, then we
+> can reduce the amount of copy+paste, eliminate the weird return and split mmap()
+> versus munmap(), and get bonus coverage that reads SIGBUS as well.
 >
-> Is this a design flaw in the clocks binding?
+> How's this look?
+>
+> static void test_fault_sigbus(int fd, size_t accessible_size, size_t mmap_size)
+> {
+> 	struct sigaction sa_old, sa_new = {
+> 		.sa_handler = fault_sigbus_handler,
+> 	};
+> 	const uint8_t val = 0xaa;
+> 	uint8_t *mem;
+> 	size_t i;
+>
+> 	mem = kvm_mmap(mmap_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd);
+>
+> 	sigaction(SIGBUS, &sa_new, &sa_old);
+> 	if (sigsetjmp(jmpbuf, 1) == 0) {
+> 		memset(mem, val, mmap_size);
+> 		TEST_FAIL("memset() should have triggered SIGBUS");
+> 	}
+> 	if (sigsetjmp(jmpbuf, 1) == 0) {
+> 		(void)READ_ONCE(mem[accessible_size]);
+> 		TEST_FAIL("load at first unaccessible byte should have triggered SIGBUS");
+> 	}
+> 	sigaction(SIGBUS, &sa_old, NULL);
+>
+> 	for (i = 0; i < accessible_size; i++)
+> 		TEST_ASSERT_EQ(READ_ONCE(mem[i]), val);
+>
+> 	kvm_munmap(mem, mmap_size);
+> }
+>
+> static void test_fault_overflow(int fd, size_t total_size)
+> {
+> 	test_fault_sigbus(fd, total_size, total_size * 4);
+> }
+>
 
-In my example, the external clock input is indeed optional, and not
-used by the base board itself.  Still, it is a clock input to the SoC,
-and may be used as a reference clock when an add-on board is connected
-that needs to use the exact clock frequency of that reference clock.
+Is it intentional that the same SIGBUS on offset mem + total_size is
+triggered twice? The memset would have worked fine until offset mem +
+total_size, which is the same SIGBUS case as mem[accessible_size]. Or
+was it meant to test that both read and write trigger SIGBUS?
 
-https://elixir.bootlin.com/linux/v6.17/source/arch/arm64/boot/dts/renesas/white-hawk-ard-audio-da7212.dtso
-AUDIO_CLKIN_V is the optional clock input to the SoC.
-GP1_25/SL_SW2_V/TPU is the reference clock (actually it is not
-generated on the add-on board, but by a PWM controller on the base
-board, but it could just be a crystal oscillator on the add-on board
-instead)
+> static void test_fault_private(int fd, size_t total_size)
+> {
+> 	test_fault_sigbus(fd, 0, total_size);
+> }
+>
 
-I hope this makes it clearer.
+I would prefer more unrolling to avoid mental hoops within test code,
+perhaps like (not compile tested):
 
-Gr{oetje,eeting}s,
+static void assert_host_fault_sigbus(uint8_t *mem) 
+{
+ 	struct sigaction sa_old, sa_new = {
+ 		.sa_handler = fault_sigbus_handler,
+ 	};
 
-                        Geert
+ 	sigaction(SIGBUS, &sa_new, &sa_old);
+ 	if (sigsetjmp(jmpbuf, 1) == 0) {
+ 		(void)READ_ONCE(*mem);
+ 		TEST_FAIL("Reading %p should have triggered SIGBUS", mem);
+ 	}
+        sigaction(SIGBUS, &sa_old, NULL);
+}
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+static void test_fault_overflow(int fd, size_t total_size)
+{
+	uint8_t *mem = kvm_mmap(total_size * 2, PROT_READ | PROT_WRITE, MAP_SHARED, fd);
+        int i;
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+ 	for (i = 0; i < total_size; i++)
+ 		TEST_ASSERT_EQ(READ_ONCE(mem[i]), val);
+
+        assert_host_fault_sigbus(mem + total_size);
+
+        kvm_munmap(mem, mmap_size);
+}
+
+static void test_fault_private(int fd, size_t total_size)
+{
+	uint8_t *mem = kvm_mmap(total_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd);
+        int i;
+
+        assert_host_fault_sigbus(mem);
+
+        kvm_munmap(mem, mmap_size);
+}
+
+assert_host_fault_sigbus() can then be flexibly reused for conversion
+tests (coming up) at various offsets from the mmap()-ed addresses.
+
+At some point, sigaction, sigsetjmp, etc could perhaps even be further
+wrapped. For testing memory_failure() for guest_memfd we will want to
+check for SIGBUS on memory failure injection instead of on host fault.
+
+Would be nice if it looked like this (maybe not in this patch series):
+
++ TEST_ASSERT_WILL_SIGBUS(READ_ONCE(mem[i]))
++ TEST_ASSERT_WILL_SIGBUS(WRITE_ONCE(mem[i]))
++ TEST_ASSERT_WILL_SIGBUS(madvise(MADV_HWPOISON))
+
+>> > +static void test_fault_private(int fd, size_t total_size)
+>> > +{
+>> > +	void *mem = test_fault_sigbus(fd, total_size);
+>> > +
+>> > +	kvm_munmap(mem, total_size);
+>> > +}
+>> > +
+>> 
+>> Testing that faults fail when GUEST_MEMFD_FLAG_DEFAULT_SHARED is not set
+>> is a good idea. Perhaps it could be even clearer if further split up:
+>> 
+>> + test_mmap_supported()
+>>     + kvm_mmap()
+>>     + kvm_munmap()
+>> + test_mmap_supported_fault_supported()
+>>     + kvm_mmap()
+>>     + successful accesses to offsets within the size of the fd
+>>     + kvm_munmap()
+>> + test_mmap_supported_fault_sigbus()
+>>     + kvm_mmap()
+>>     + expect SIGBUS from accesses to offsets within the size of the fd
+>>     + kvm_munmap()
+>> 
+>> >  static void test_mmap_not_supported(int fd, size_t total_size)
+>> >  {
+>> >  	char *mem;
+>> > @@ -274,9 +299,12 @@ static void __test_guest_memfd(struct kvm_vm *vm, uint64_t flags)
+>> >  
+>> >  	gmem_test(file_read_write, vm, flags);
+>> >  
+>> > -	if (flags & GUEST_MEMFD_FLAG_MMAP) {
+>> > +	if (flags & GUEST_MEMFD_FLAG_MMAP &&
+>> > +	    flags & GUEST_MEMFD_FLAG_DEFAULT_SHARED) {
+>> >  		gmem_test(mmap_supported, vm, flags);
+>> >  		gmem_test(fault_overflow, vm, flags);
+>> > +	} else if (flags & GUEST_MEMFD_FLAG_MMAP) {
+>> > +		gmem_test(fault_private, vm, flags);
+>> 
+>> test_fault_private() makes me think the test is testing for private
+>> faults, but there's nothing private about this fault,
+>
+> It's a user fault on private memory, not sure how else to describe that :-)
+> The CoCo shared vs. private and MAP_{SHARED,PRIVATE} collision is unfortunate,
+> but I think we should prioritize standardizing on CoCo shared vs. private since
+> that is what KVM will care about 99.9% of the time, i.e. in literally everything
+> except kvm_gmem_mmap().
+>
+>> and the fault doesn't even come from the guest.
+>
+> Sure, but I don't see what that has to do with anything, e.g. fault_overflow()
+> isn't a fault from the guest either.
+>
+
+Maybe it's the frame of mind I'm working in (conversions), where all
+private faults must be from the guest or from KVM. Feel free to ignore this.
+
+>> >  	} else {
+>> >  		gmem_test(mmap_not_supported, vm, flags);
+>> >  	}
+>> 
+>> If split up as described above, this could be
+>> 
+>> 	if (flags & GUEST_MEMFD_FLAG_MMAP &&
+>> 	    flags & GUEST_MEMFD_FLAG_DEFAULT_SHARED) {
+>> 		gmem_test(mmap_supported_fault_supported, vm, flags);
+>> 		gmem_test(fault_overflow, vm, flags);
+>> 	} else if (flags & GUEST_MEMFD_FLAG_MMAP) {
+>> 		gmem_test(mmap_supported_fault_sigbus, vm, flags);
+>
+> I find these unintuitive, e.g. is this one "mmap() supported, test fault sigbus",
+> or is it "mmap(), test supported fault sigbus".  I also don't like that some of
+> the test names describe the _result_ (SIBGUS), where as others describe _what_
+> is being tested.
+>
+
+I think of the result (SIGBUS) as part of what's being tested. So
+test_supported_fault_sigbus() is testing that mmap is supported, and
+faulting will result in a SIGBUS.
+
+> In general, I don't like test names that describe the result, because IMO what
+> is being tested is far more interesting.  E.g. from a test coverage persective,
+> I don't care if attempting to fault in (CoCO) private memory gets SIGBUS versus
+> SIGSEGV, but I most definitely care that we have test coverage for the "what".
+>
+
+The SIGBUS is part of the contract with userspace and that's also part
+of what's being tested IMO.
+
+That said, I agree we don't need sigbus in the name, I guess I just
+meant that there are a few layers to test here and I couldn't find a
+better name:
+
+1. mmap() succeeds to start with
+2. mmap() succeeds, and faulting also succeeds
+    + mmap() works, and faulting does not succeed because memory is not
+      intended to be accessible to the host
+3. mmap() succeed, and faulting also succeeds, but only within the size of
+   guest_memfd
+
+> Looking at everything, I think the only that doesn't fit well is the CoW
+> scenario.  What if we extract that to its own helper?  That would eliminate the
+> ugly test_mmap_common(), 
+>
+
+Extracting the CoW scenario is good, thanks!
+
+> So my vote would be to keep things largely the same:
+>
+> 	if (flags & GUEST_MEMFD_FLAG_MMAP &&
+> 	    flags & GUEST_MEMFD_FLAG_DEFAULT_SHARED) {
+> 		gmem_test(mmap_supported, vm, flags);
+> 		gmem_test(mmap_cow, vm, flags);
+> 		gmem_test(fault_overflow, vm, flags);
+> 		gmem_test(mbind, vm, flags);
+> 		gmem_test(numa_allocation, vm, flags);
+> 	} else if (flags & GUEST_MEMFD_FLAG_MMAP) {
+> 		gmem_test(fault_private, vm, flags);
+> 	} else {
+> 		gmem_test(mmap_not_supported, vm, flags);
+> 	}
 
