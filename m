@@ -1,71 +1,60 @@
-Return-Path: <linux-kernel+bounces-837621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6D9CBACC6F
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:09:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1F06BACC72
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:09:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 597DF1927611
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:09:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB5823AF83B
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:09:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6546A2F9DAF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2EA02FABF6;
 	Tue, 30 Sep 2025 12:09:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b="A1hBI1x8"
-Received: from mx12.kaspersky-labs.com (mx12.kaspersky-labs.com [91.103.66.155])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B88257849
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E42E02561B6
 	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 12:09:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.103.66.155
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759234151; cv=none; b=dp/RW+ZkG/ipCti2TGtdDDGj7/cEMDDrrllgnmaW+bMbzOY7co25tBeC0u1H5bdAZMukCv5s0Yp1jjoQWMQXmgact5+E2F3nFqtU7aF2MwZOiK+B3VT5Yb33MtKVtkuE1wQhmp+pc0KHNWoRHk3b4YB2JS7RT49WRXCfu3GzEU8=
+	t=1759234152; cv=none; b=LW04LZ+C2lBF4m4hpj4sGlhxN1WDRQo3BTHb90RGRJ+Zcx1xMuWiUOMTgfb7eYBRuTwu/mxZvoNUaKoVUIMucvCXvlKgTUGCMurwSaqkGSRmkJtB7NzsYZOmP2PGjtw0qVOz3s6gbC94VXGFv8j2rxvqzrQOA/B9ayNpPDLY1LM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759234151; c=relaxed/simple;
-	bh=/ZCPtrxpHwurwKrKTcXULQymMpkDsQzM+hB11gAT9Kw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TByaxX19okY4GXaWLaVMbxqCxz2WIPY5H/+vbk9y3n36ZSPU7DTbdZT54F7gSt5zBQIlDlm3P+ok+aaIf0rUViYPxI2tBxoQyiICv/wxTmXdskjR+8Qb3lh63lREFkOCjRjTQ7mrAorLrtOGkmuvf4nUxEaXmURa9h98FZC8boY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaspersky.com; spf=pass smtp.mailfrom=kaspersky.com; dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b=A1hBI1x8; arc=none smtp.client-ip=91.103.66.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaspersky.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kaspersky.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kaspersky.com;
-	s=mail202505; t=1759234141;
-	bh=E/ymyFAhoXDT38ivAgqCCbFrpdwUReIE/Raa9MY4iHQ=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	b=A1hBI1x8eETbEXWIQMn4khJnGdlcR8D5GGLT6bfxXGif+WGiWjssrRUFIeOutw6Lg
-	 ajH/RRoiDOp5Ld9VZX6Of0kaMA+A9/gx11ux5T78sbbGdYA+Jn18FWuFsqNlthqhP8
-	 UIMf2yyF7M1egCHS1VVQKvghqYlKwvovSSpcPLylnTyDxNyad+Pk8C11XSSt971VX6
-	 cTxI4r3nv8P7Qa9oAi4Ggy64cOhMot8cIpwc6XFy/uwZ1spi2zoqDAPvs9U0t5kSJF
-	 J8i741MiVG5ANIC+izf18kIcBiBgRgbTRwR795BTh0JUcFfQrqCgdJzRSCs4bowqyR
-	 8Z7U6P+9J96cg==
-Received: from relay12.kaspersky-labs.com (localhost [127.0.0.1])
-	by relay12.kaspersky-labs.com (Postfix) with ESMTP id 666465A18CB;
-	Tue, 30 Sep 2025 15:09:01 +0300 (MSK)
-Received: from mail-hq2.kaspersky.com (unknown [91.103.66.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(Client CN "mail-hq2.kaspersky.com", Issuer "Kaspersky MailRelays CA G3" (verified OK))
-	by mailhub12.kaspersky-labs.com (Postfix) with ESMTPS id C37665A1A50;
-	Tue, 30 Sep 2025 15:08:59 +0300 (MSK)
-Received: from zhigulin-p.avp.ru (10.16.104.190) by HQMAILSRV2.avp.ru
- (10.64.57.52) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.36; Tue, 30 Sep
- 2025 15:08:59 +0300
-From: Pavel Zhigulin <Pavel.Zhigulin@kaspersky.com>
-To: Xinliang Liu <xinliang.liu@linaro.org>
-CC: Pavel Zhigulin <Pavel.Zhigulin@kaspersky.com>, Tian Tao
-	<tiantao6@hisilicon.com>, Xinwei Kong <kong.kongxinwei@hisilicon.com>, Sumit
- Semwal <sumit.semwal@linaro.org>, Yongqin Liu <yongqin.liu@linaro.org>, John
- Stultz <jstultz@google.com>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, Anusha Srivatsa <asrivats@redhat.com>, Andy
- Green <andy.green@linaro.org>, <dri-devel@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
-Subject: [PATCH] gpu: fix potential division by zero in DesignWare controller driver
-Date: Tue, 30 Sep 2025 15:08:55 +0300
-Message-ID: <20250930120858.251255-1-Pavel.Zhigulin@kaspersky.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1759234152; c=relaxed/simple;
+	bh=aXheT6SuJ8j5FXGmOrUPMo5wJsarsxNsdl3Gz76bvLU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=uL6Rxsb3GcE7s8ZszRNNbSXvtK8VEMWpvP8DyXCgHBBCT65eticyOLibkcVZ3pZUh/2UtrEdF784WOHFEYqPAPAlwrDkeikxdF5oZOhzsZRw0sUuAdwadMcsWSlJcSYrb7tFQkSwhWkhFNw5PZ+IguINH4qZjLTuh0C1GmwS1Q4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1v3ZAD-0008KE-2P; Tue, 30 Sep 2025 14:09:01 +0200
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1v3ZAC-001F1X-2r;
+	Tue, 30 Sep 2025 14:09:00 +0200
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.98.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1v3ZAC-00000009LkC-3TXF;
+	Tue, 30 Sep 2025 14:09:00 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 1/2] regulator: core: add infrastructure for downstream event forwarding
+Date: Tue, 30 Sep 2025 14:08:56 +0200
+Message-ID: <20250930120857.2228296-2-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20250930120857.2228296-1-o.rempel@pengutronix.de>
+References: <20250930120857.2228296-1-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,82 +62,181 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: HQMAILSRV5.avp.ru (10.64.57.55) To HQMAILSRV2.avp.ru
- (10.64.57.52)
-X-KSE-ServerInfo: HQMAILSRV2.avp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 09/30/2025 11:56:43
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 0
-X-KSE-AntiSpam-Info: Lua profiles 196699 [Sep 30 2025]
-X-KSE-AntiSpam-Info: Version: 6.1.1.11
-X-KSE-AntiSpam-Info: Envelope from: Pavel.Zhigulin@kaspersky.com
-X-KSE-AntiSpam-Info: LuaCore: 67 0.3.67
- f6b3a124585516de4e61e2bf9df040d8947a2fd5
-X-KSE-AntiSpam-Info: {Tracking_cluster_exceptions}
-X-KSE-AntiSpam-Info: {Tracking_real_kaspersky_domains}
-X-KSE-AntiSpam-Info: {Tracking_uf_ne_domains}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: kaspersky.com:5.0.1,7.1.1;zhigulin-p.avp.ru:5.0.1,7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1
-X-KSE-AntiSpam-Info: {Tracking_white_helo}
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: Rate: 0
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Deterministic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 09/30/2025 11:58:00
-X-KSE-AttachmentFiltering-Interceptor-Info: no applicable attachment filtering
- rules found
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 9/30/2025 10:40:00 AM
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
-X-KSE-AttachmentFiltering-Interceptor-Info: no applicable attachment filtering
- rules found
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
-X-KSMG-AntiPhishing: NotDetected
-X-KSMG-AntiSpam-Interceptor-Info: not scanned
-X-KSMG-AntiSpam-Status: not scanned, disabled by settings
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/09/30 11:37:00 #27867828
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 52
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-A division by zero may occur in the dsi_get_phy_params function if
-phy_req_kHz is in the range [1000000, 1500000]. In this case,
-dsi_calc_phy_rate can return a value greater than 1000000, which sets
-the 'ui' variable to zero. The variable is then used as the denominator
-in the ROUND macro.
+Forward critical regulator events downstream through the supply chain.
+Without forwarding, an under-voltage at an upstream supply is not
+visible to end devices (e.g. eMMC), preventing timely emergency action.
 
-This patch adds an additional check of phy_rate_kHz to prevent 'ui'
-from being zero.
+Introduce an opt-in helper to forward events from a regulator's supply
+to the consumer's notifier chain. For now only
+REGULATOR_EVENT_UNDER_VOLTAGE is forwarded to avoid surprising behavior.
+Drivers that do not opt in see no behavior change.
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
-
-Fixes: f819b0d4a913 ("drm/hisilicon: Add designware dsi encoder driver")
-Signed-off-by: Pavel Zhigulin <Pavel.Zhigulin@kaspersky.com>
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 ---
- drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/regulator/core.c         | 113 +++++++++++++++++++++++++++++++
+ include/linux/regulator/driver.h |   5 ++
+ 2 files changed, 118 insertions(+)
 
-diff --git a/drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c b/drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c
-index e80debdc4176..7502a9ddbbf5 100644
---- a/drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c
-+++ b/drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c
-@@ -251,7 +251,7 @@ static void dsi_get_phy_params(u32 phy_req_kHz,
- 	memset(phy, 0, sizeof(*phy));
-
- 	phy_rate_kHz = dsi_calc_phy_rate(phy_req_kHz, phy);
--	if (!phy_rate_kHz)
-+	if (!phy_rate_kHz || phy_rate_kHz > 1000000)
- 		return;
-
- 	ui = 1000000 / phy_rate_kHz;
---
-2.43.0
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index 554d83c4af0c..69cdc6db64e8 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -83,6 +83,19 @@ struct regulator_supply_alias {
+ 	const char *alias_supply;
+ };
+ 
++/*
++ * Work item used to forward regulator events.
++ *
++ * @work: workqueue entry
++ * @rdev: regulator device to notify (consumer receiving the forwarded event)
++ * @event: event code to be forwarded
++ */
++struct regulator_event_work {
++	struct work_struct work;
++	struct regulator_dev *rdev;
++	unsigned long event;
++};
++
+ static int _regulator_is_enabled(struct regulator_dev *rdev);
+ static int _regulator_disable(struct regulator *regulator);
+ static int _regulator_get_error_flags(struct regulator_dev *rdev, unsigned int *flags);
+@@ -5054,6 +5067,106 @@ int regulator_unregister_notifier(struct regulator *regulator,
+ }
+ EXPORT_SYMBOL_GPL(regulator_unregister_notifier);
+ 
++/**
++ * regulator_event_work_fn - process a deferred regulator event
++ * @work: work_struct queued by the notifier
++ *
++ * Calls the regulator's notifier chain in process context while holding
++ * the rdev lock, then releases the device reference.
++ */
++static void regulator_event_work_fn(struct work_struct *work)
++{
++	struct regulator_event_work *rew =
++		container_of(work, struct regulator_event_work, work);
++	struct regulator_dev *rdev = rew->rdev;
++	int ret;
++
++	regulator_lock(rdev);
++	ret = regulator_notifier_call_chain(rdev, rew->event, NULL);
++	regulator_unlock(rdev);
++	if (ret == NOTIFY_BAD)
++		dev_err(rdev_get_dev(rdev), "failed to forward regulator event\n");
++
++	put_device(rdev_get_dev(rdev));
++	kfree(rew);
++}
++
++/**
++ * regulator_event_forward_notifier - notifier callback for supply events
++ * @nb:    notifier block embedded in the regulator
++ * @event: regulator event code
++ * @data:  unused
++ *
++ * Packages the event into a work item and schedules it in process context.
++ * Takes a reference on @rdev->dev to pin the regulator until the work
++ * completes (see put_device() in the worker).
++ *
++ * Return: NOTIFY_OK on success, NOTIFY_DONE for events that are not forwarded.
++ */
++static int regulator_event_forward_notifier(struct notifier_block *nb,
++					    unsigned long event,
++					    void __always_unused *data)
++{
++	struct regulator_dev *rdev = container_of(nb, struct regulator_dev,
++						  supply_fwd_nb);
++	struct regulator_event_work *rew;
++
++	switch (event) {
++	case REGULATOR_EVENT_UNDER_VOLTAGE:
++		break;
++	default:
++		/* Only forward allowed events downstream. */
++		return NOTIFY_DONE;
++	}
++
++	rew = kmalloc(sizeof(*rew), GFP_ATOMIC);
++	if (!rew)
++		return NOTIFY_DONE;
++
++	get_device(rdev_get_dev(rdev));
++	rew->rdev = rdev;
++	rew->event = event;
++	INIT_WORK(&rew->work, regulator_event_work_fn);
++
++	queue_work(system_highpri_wq, &rew->work);
++
++	return NOTIFY_OK;
++}
++
++/**
++ * register_regulator_event_forwarding - enable supply event forwarding
++ * @rdev: regulator device
++ *
++ * Registers a notifier on the regulator's supply so that supply events
++ * are forwarded to the consumer regulator via the deferred work handler.
++ *
++ * Return: 0 on success, -EALREADY if already enabled, or a negative error code.
++ */
++int register_regulator_event_forwarding(struct regulator_dev *rdev)
++{
++	int ret;
++
++	if (!rdev->supply)
++		return 0; /* top-level regulator: nothing to forward */
++
++	if (rdev->supply_fwd_nb.notifier_call)
++		return -EALREADY;
++
++	rdev->supply_fwd_nb.notifier_call = regulator_event_forward_notifier;
++
++	ret = devm_regulator_register_notifier(rdev->supply,
++					       &rdev->supply_fwd_nb);
++	if (ret) {
++		dev_err(&rdev->dev, "failed to register supply notifier: %pe\n",
++			ERR_PTR(ret));
++		rdev->supply_fwd_nb.notifier_call = NULL;
++		return ret;
++	}
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(register_regulator_event_forwarding);
++
+ /* notify regulator consumers and downstream regulator consumers.
+  * Note mutex must be held by caller.
+  */
+diff --git a/include/linux/regulator/driver.h b/include/linux/regulator/driver.h
+index 4a216fdba354..60d16d37196a 100644
+--- a/include/linux/regulator/driver.h
++++ b/include/linux/regulator/driver.h
+@@ -658,6 +658,9 @@ struct regulator_dev {
+ 	spinlock_t err_lock;
+ 
+ 	int pw_requested_mW;
++
++	/* regulator notification forwarding */
++	struct notifier_block supply_fwd_nb;
+ };
+ 
+ /*
+@@ -781,6 +784,8 @@ int regulator_desc_list_voltage_linear_range(const struct regulator_desc *desc,
+ int regulator_desc_list_voltage_linear(const struct regulator_desc *desc,
+ 				       unsigned int selector);
+ 
++int register_regulator_event_forwarding(struct regulator_dev *rdev);
++
+ #ifdef CONFIG_REGULATOR
+ const char *rdev_get_name(struct regulator_dev *rdev);
+ #else
+-- 
+2.47.3
 
 
