@@ -1,313 +1,245 @@
-Return-Path: <linux-kernel+bounces-837240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ABE4BABC23
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:09:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C779BBABC1A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:09:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 56FDB7A8557
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 07:08:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D4D23A5DC1
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 07:09:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE0682BDC16;
-	Tue, 30 Sep 2025 07:09:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E772BD587;
+	Tue, 30 Sep 2025 07:09:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="aphjo0ME"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0lO8Xds8"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDF221494C3;
-	Tue, 30 Sep 2025 07:09:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F6451494C3
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 07:09:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759216184; cv=none; b=R4h9DWgkgF8CN6rNu4r221TedeSiWq1lTffoW4p/bYU+OCuHHGb8ySJ7cBcAZbMpkwtSHHFMvalD93PuJ+rfXIAN9HvyiSCijeR191v64dIAA7xT9M7V8ygcieB66NAQIm6ixQ3ixRDUIROJ89qS3QrrqP2wPAqis8t68R/W6VI=
+	t=1759216170; cv=none; b=TquJaedb4GVkAzKRynhNxCZ/Ih+RoCdc8XKkk03gZqAFAh3dGp7652ItmRtkiMOPsx9Re7Y7lqk5Z5pxRgOcrUm5/i6WoAIn7BDxenkKjWgroxTfMyz1tsQgYGzs/EAqSq6lFfz7QfwAutqInn+N6TMWY6/lTKMP9O9WsliKYDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759216184; c=relaxed/simple;
-	bh=NI78X0vkxVcPeiH8F3i5aaFKnTiGHjAqH0QVO1HeQEY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Qa3Bjsz5mJ8WUpVRCAtO8xmO1c1zZ8WbQxdeptKD3rfj8p/QTsQm7mcQ9ZQiSmFgDAXAPsq4OERpOmJA44sdZaGJDdZdq2qs2jCnbqH2yECQQLLYWJ/lsXk1DVuNDFYw9rtw9pUf+Qio48LhDzLWjUCYZgK8Nzsj8K9DXz6r4Iw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=aphjo0ME; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id A7E551A100F;
-	Tue, 30 Sep 2025 07:09:37 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 75FDA606E4;
-	Tue, 30 Sep 2025 07:09:37 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 899AC102F1760;
-	Tue, 30 Sep 2025 09:09:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1759216176; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=Pr2fwh74vGkx9cj7ksefwre+SXb8wauBsJ6yuvEOiDM=;
-	b=aphjo0ME8MyM3FQNiBjEfGZJ0cTJokftC3bxuGJ1RixJpVhyNKDfPklEwpGCjX3m7BZUO0
-	3qcyfv/2DPMTvTAyZ8Qscctd6PR3zllIZVXgsujNg+ycxMOr9COUhzwMtzRnWqabaRPNFz
-	Sg++UVOD+qKCr5qztNnxRS/VhB4H56jNVIj89YQzpOSPeK+By1/3gzJJLuzNd395TOXjuR
-	XdFXCf8wRmE9CpvrFqDsPpUhfVSQXY6ho0xl/s/iiJFx3G1W0ArrL9GNbYj5t9wI3DSG0c
-	VyKy0yqANR9DhlgCgP2cgh2xje+yf7/K19nLYqIo+J02CS3Lm8SK56UnCxjZjg==
-Date: Tue, 30 Sep 2025 09:09:24 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: David Gibson <david@gibson.dropbear.id.au>
-Cc: Ayush Singh <ayush@beagleboard.org>, Krzysztof Kozlowski
- <krzk@kernel.org>, Rob Herring <robh@kernel.org>, Andrew Davis
- <afd@ti.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>, Luca
- Ceresoli <luca.ceresoli@bootlin.com>, devicetree@vger.kernel.org, Jason
- Kridner <jkridner@gmail.com>, Geert Uytterhoeven <geert@linux-m68k.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, devicetree-compiler@vger.kernel.org,
- linux-kernel@vger.kernel.org, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>
-Subject: Re: Device tree representation of (hotplug) connectors: discussion
- at ELCE
-Message-ID: <20250930090924.1bfc8730@bootlin.com>
-In-Reply-To: <aNpQCboQimgwIkJw@zatzit>
-References: <aMebXe-yJy34kST8@zatzit>
-	<20250916084631.77127e29@bootlin.com>
-	<aMt5kEI_WRDOf-Hw@zatzit>
-	<20250918094409.0d5f92ec@bootlin.com>
-	<aMzhgDYOuG4qNcc0@zatzit>
-	<dcbeaff2-0147-4a27-bb46-e247e42810d7@beagleboard.org>
-	<aNJVqSpdAJzGliNx@zatzit>
-	<20250923114849.2385736d@bootlin.com>
-	<aNNrbmZfZU-1xJFm@zatzit>
-	<20250924143130.0a34badb@bootlin.com>
-	<aNpQCboQimgwIkJw@zatzit>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1759216170; c=relaxed/simple;
+	bh=nEib4Ghi85l3FWyJxphX9jSiYJFIQEl6res5LifHFg4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=KO/7JSVeCQ4BJdTof8Ko6dP9sPvfFUloxeiTSrE7iJG+AaXDNRwGnusX7cmfTD1+853JZjZje0sCLXkc7P8iZ/rK9wbs15hcWxHknpcORXIfT4TdMgaHTbKvqpeimVW2vr9eJLexrsgFYmpnJ+Z2nV/cRNBMlsbf0rYikHp0thk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0lO8Xds8; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-783c3400b5dso1620928b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 00:09:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759216168; x=1759820968; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UP672iBXqfF/M4eb7b0fPJvD5RDYtZGt7W3+nRDDW7U=;
+        b=0lO8Xds8ydbtanpWt92wS2riIySTmNyo5zdDZVcxYVjpQ6dDK29Q762W2rqKxm74sT
+         3bbkiJ9iy5hxsUwjw2Ei5MJDo3JYPHhwkE/Qq/87g7hCAHmAOT/QaMDZdrqadObmDxks
+         lkuu2x9Z3YuDYPJtDi5sMPdhcm+C6MN1mnrQF/jQ0T1UZjH0t0V+uMLJNq98f11TIDQX
+         RSl4QjHXt/KN9XJPjzyx3JYer9UpE026K1i+SWd+uyniVUWDRwW6g2sE3aqN94jkMLOb
+         /xI2ZCIIYa8urue2W4iZ4c8ARLognClJ1SQBJRJv4/2W76HeVuulMSjmEZ/DSd/aGsRp
+         bzNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759216168; x=1759820968;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UP672iBXqfF/M4eb7b0fPJvD5RDYtZGt7W3+nRDDW7U=;
+        b=s7jsyBoQPyefBVTRa+TZSUqeTUYpgQsu8b44tD7j2TRH2FF98m8E3Y8N3RYgtFdblz
+         VXMuvf1PfytkAaMXKtWUdDvvw3QkO6qOMuXwHwJeiRPN9K2ElQgPHUtzTlVzyB7jLTUr
+         1mIrfy5L+xzW6cZQgxJZBj0NQgIh4lNUmj5/p0g6mGDzqtm5krUQjpxGZxeWkRPsDlB+
+         2BYKzhSKURQdFWEnqTjT8aITX+R7hBmX+itf/qYCzLpsxU6clv4JKKRDb0Lvr/04Az3w
+         Fh7c4Gl/kQJ3awoyQt5dQQ/NsuiZTOZs2uTnowPaVQbnDrDjMe0kDCQmtvNT0rGOePpE
+         w50Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXQxAQluGBZNabUy+86C5ijtm1orzqilMuH2gZU8A1akIZHjqV/N6ZJ5cQP68Z+AxYrBbwRKLzdSqCzgEI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJtEYzkIxfx+mYMkC98NF+84s8zo93z8ZkWDGIH0Qtz/Faj92F
+	pZwN2K/jVJLmJrx9CWH5VnH2MD5l5hMejsH9Tk/AF2BCKPOOUBWoZ7lLr/lezgvnGKJ2sQ/E/4z
+	TolwHiQpR9shmqmcHASnw3/+cBw==
+X-Google-Smtp-Source: AGHT+IGBuYj/q0jGYUG7M3fPbV2JRBsFGwjHP1fPe6GdcNCfcMiclGAvh4hoSmA12qBaQKnFC6Jqg4jVIDpe2cQnaA==
+X-Received: from pffj26.prod.google.com ([2002:a62:b61a:0:b0:77f:5d99:87b6])
+ (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6a00:a1d:b0:781:275a:29d9 with SMTP id d2e1a72fcca58-781275a2b55mr13651457b3a.18.1759216168240;
+ Tue, 30 Sep 2025 00:09:28 -0700 (PDT)
+Date: Tue, 30 Sep 2025 07:09:27 +0000
+In-Reply-To: <aNrCqhA_hhUjflPA@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Mime-Version: 1.0
+References: <20250926163114.2626257-1-seanjc@google.com> <20250926163114.2626257-6-seanjc@google.com>
+ <diqztt0l1pol.fsf@google.com> <aNrCqhA_hhUjflPA@google.com>
+Message-ID: <diqzfrc41kns.fsf@google.com>
+Subject: Re: [PATCH 5/6] KVM: selftests: Add wrappers for mmap() and munmap()
+ to assert success
+From: Ackerley Tng <ackerleytng@google.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>, 
+	Fuad Tabba <tabba@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi David,
+Sean Christopherson <seanjc@google.com> writes:
 
-On Mon, 29 Sep 2025 19:23:21 +1000
-David Gibson <david@gibson.dropbear.id.au> wrote:
+> On Mon, Sep 29, 2025, Ackerley Tng wrote:
+>> Sean Christopherson <seanjc@google.com> writes:
+>> 
+>> > Add and use wrappers for mmap() and munmap() that assert success to reduce
+>> > a significant amount of boilerplate code, to ensure all tests assert on
+>> > failure, and to provide consistent error messages on failure.
+>> >
+>> > No functional change intended.
+>> >
+>> > Signed-off-by: Sean Christopherson <seanjc@google.com>
+>> > ---
+>> >  .../testing/selftests/kvm/guest_memfd_test.c  | 21 +++------
+>> >  .../testing/selftests/kvm/include/kvm_util.h  | 25 +++++++++++
+>> >  tools/testing/selftests/kvm/lib/kvm_util.c    | 44 +++++++------------
+>> >  tools/testing/selftests/kvm/mmu_stress_test.c |  5 +--
+>> >  .../selftests/kvm/s390/ucontrol_test.c        | 16 +++----
+>> >  .../selftests/kvm/set_memory_region_test.c    | 17 ++++---
+>> >  6 files changed, 64 insertions(+), 64 deletions(-)
+>> >
+>> > 
+>> > [...snip...]
+>> > 
+>> > diff --git a/tools/testing/selftests/kvm/include/kvm_util.h b/tools/testing/selftests/kvm/include/kvm_util.h
+>> > index 23a506d7eca3..1c68ff0fb3fb 100644
+>> > --- a/tools/testing/selftests/kvm/include/kvm_util.h
+>> > +++ b/tools/testing/selftests/kvm/include/kvm_util.h
+>> > @@ -278,6 +278,31 @@ static inline bool kvm_has_cap(long cap)
+>> >  #define __KVM_SYSCALL_ERROR(_name, _ret) \
+>> >  	"%s failed, rc: %i errno: %i (%s)", (_name), (_ret), errno, strerror(errno)
+>> >  
+>> > +static inline void *__kvm_mmap(size_t size, int prot, int flags, int fd,
+>> > +			       off_t offset)
+>> 
+>> Do you have a policy/rationale for putting this in kvm_util.h as opposed
+>> to test_util.h? I like the idea of this wrapper but I thought this is
+>> less of a kvm thing and more of a test utility, and hence it belongs in
+>> test_util.c and test_util.h.
+>
+> To be perfectly honest, I forgot test_util.h existed :-)
+>
 
-> On Wed, Sep 24, 2025 at 02:31:30PM +0200, Herve Codina wrote:
-> > Hi David,
-> > 
-> > On Wed, 24 Sep 2025 13:54:22 +1000
-> > David Gibson <david@gibson.dropbear.id.au> wrote:
-> > 
-> > ...
-> >   
-> > > > 
-> > > > IMHO, no extra rules are needed in DT addon rules to constraint i2c devices
-> > > > to be added in a connector node, a connector sub-node or an i2c controller
-> > > > node.
-> > > > 
-> > > > This will be constrained by the connector itself (out of DT addon rules).    
-> > > 
-> > > At this point I'm just considering the end-to-end rules we want to
-> > > enforce.  Exactly what stage of the process enforces each rule is
-> > > another question.
-> > >   
-> > > > I mean, according to rule b), the connector will allow some destination
-> > > > places. Either it will allow the i2c controller node or a connector sub-node.    
-> > > 
-> > > Sure.
-> > >   
-> > > > This is specific to the connector definition and it should be out of
-> > > > generic DT addon rules.    
-> > > 
-> > > Hang on... what distinction are you seeing between the "connector
-> > > definition" and "generic DT addon rules".  As I see it we're trying to
-> > > create a protocol that defines both the base rules and what a
-> > > "connector" even means.
-> > >   
-> > 
-> > The "generic DT addon rules" give rules related to addon from a DT
-> > perspective. In other word "What an addon DT can do"
-> >  - export symbols
-> >  - import symbols
-> >  - Add full node only
-> >  - Don't allow to modify existing node
-> >  - ...
-> > 
-> > The way addon are used is what I put behind "connector definition".
-> > The connector is a specific node in a DT with a specific comptible string.
-> > The definition of this node will tell "how to use it". For instance:
-> >   - There is 2 gpios available and an addon can use it with <&connector 0> and
-> >     <&connector 1>.
-> >   - There is an i2c bus available and an addon can use if with <&i2c-a>
-> >   - The hotplug mecanism used for this specific connector (gpio, eeprom, ...)
-> >     is also part of the "connector definition".
-> > 
-> > An external board DT supposed to be connected to this connector should
-> >   - a) Provide its description using an addon DT (compliant with "generic DT
-> >        addon rules")
-> > and
-> > 
-> >   - b) Use resources from connector the board is connected to (compliant with
-> >        "connector definition").
-> > 
-> > "generic DT addon rules": DT specification
-> > "connector definition": Connector binding  
-> 
-> Ok.  I think there are some further possible distinctions here between:
-> 
->  a. Rules for connectors in general
->  b. Rules for a specific connector type (defined by the connector type
->     binding)
->  c. Rules for a specific connector instance (defined by the property
->     values in that instance).
-> 
-> Possible we can avoid using one or more of those categories, but we
-> need to consider them and do so conciously.
-> 
-> > Today, connectors are going to use the addon feature but I didn't want to
-> > restrict addon feature to connectors.  
-> 
-> Hmm.  I'm not sure this is a good idea.  I had been envisaging this
-> new "addon" support as explicitly tied to connectors - you can't
-> addon, except in a way the base board allows, and connectors are the
-> way it allows.
+Merging/dropping one of kvm_util.h vs test_util.h is a good idea. The
+distinction is not clear and it's already kind of messy between the two.
 
-I agree with that.
+>> Also, the name kind of associates mmap with KVM too closely IMO, but
+>> test_mmap() is not a great name either.
+>
+> Which file will hopefully be irrevelant, because ideally it'll be temporary (see
+> below). But if someone has a strong opinion and/or better idea on the name prefix,
+> I definitely want to settle on a name for syscall wrappers, because I want to go
+> much further than just adding an mmap() wrapper.  I chose kvm_ because there's
+> basically zero chance that will ever conflict with generic selftests functionality,
+> and the wrappers utilize TEST_ASSERT(), which are unique to KVM selftests.
+>
+> As for why the current location will hopefully be temporary, and why I want to
+> settle on a name, I have patches to add several more wrappers, along with
+> infrastructure to make it super easy to add new wrappers.  When trying to sort
+> out the libnuma stuff for Shivank's series[*], I discovered that KVM selftests
+> already has a (very partial, very crappy) libnuma equivalent in
+> tools/testing/selftests/kvm/include/numaif.h.
+>
+> Adding wrappers for NUMA syscalls became an exercise in frustration (so much
+> uninteresting boilerplate, and I kept making silly mistakes), and so that combined
+> with the desire for mmap() and munmap() wrappers motivated me to add a macro
+> framework similar to the kernel's DEFINE_SYSCALL magic.
+>
+> So, I've got patches (that I'll post with the next version of the gmem NUMA
+> series) that add tools/testing/selftests/kvm/include/kvm_syscalls.h, and
+> __kvm_mmap() will be moved there (ideally it wouldn't move, but I want to land
+> this small series in 6.18, and so wanted to keep the changes for 6.18 small-ish).
+>
+> For lack of a better namespace, and because we already have __KVM_SYSCALL_ERROR(),
+> I picked KVM_SYSCALL_DEFINE() for the "standard" builder, e.g. libnuma equivalents,
+> and then __KVM_SYSCALL_DEFINE() for a KVM selftests specific version to handle
+> asserting success.
+>
 
-I think we just need to clarify what is the definition of "connector" in
-this context.
+It's a common pattern in KVM selftests to have a syscall/ioctl wrapper
+foo() that asserts defaults and a __foo() that doesn't assert anything
+and allows tests to assert something else, but I have a contrary
+opinion.
 
-I have the feeling that a "connector" for you is where an addon is going to
-be applied.
+I think it's better that tests be explicit about what they're testing
+for, so perhaps it's better to use macros like TEST_ASSERT_EQ() to
+explicitly call a function and check the results.
 
-In my mind a connector was the piece of hardware where the addon board is
-connected.
+Or perhaps it should be more explicit, like in the name, that an
+assertion is made within this function?
 
-Most of the time, this piece of hardware will be represented as a node in the
-DT and the addon DT will be applied to this node.
+In many cases a foo() exists without the corresponding __foo(), which
+seems to be discouraging testing for error cases.
 
-I made the distinction in case of PMOD use case (Geert's use case with
-multiple connector). In that case we need to find, probably with external help,
-connectors connected to the addon board.
+Also, I guess especially for vcpu_run(), tests would like to loop/take
+different actions based on different errnos and then it gets a bit
+unwieldy to have to avoid functions that have assertions within them.
 
-I have the feeling that in that case the description will be:
-   /* Base board DT */
-   pmod-group {
-      pmod-connector1 {
-        ...
-      };
-      pmod-connector2 {
-        ...
-      };
-      pmod-connector3 {
-        ...
-      };
-   };
+I can see people forgetting to add TEST_ASSERT_EQ()s to check results of
+setup/teardown functions but I think those errors would surface some
+other way anyway.
 
-The addon DT will be applied to pmod-group and the pmod-group driver
-selects multiple connectors (pmod-connector1 and/or pmod-connector2
-and/or pmod-connector3) according to the addon needs and some external
-help in order to applied the addon DT.
-   https://lore.kernel.org/all/20250911121103.40ccb112@bootlin.com/
+Not a strongly-held opinion, and no major concerns on the naming
+either. It's a selftest after all and IIUC we're okay to have selftest
+interfaces change anyway?
 
-> 
-> > For instance, a FPGA driver could use the addon feature with an addon DT
-> > to describe the internal part of the FPGA related to the FPGA bitstream
-> > loaded by the FPGA driver. That might make sense, right ?  
-> 
-> With the distinction from the connector case being that the driver
-> defines how to interpret the addon at runtime, rather than the base DT
-> defining it statically?
-
-Yes
-
-> 
-> > Also upstream in the kernel, PCI boards can be described using DT.
-> >   https://elixir.bootlin.com/linux/v6.16/source/drivers/misc/lan966x_pci.c
-> >   https://elixir.bootlin.com/linux/v6.16/source/drivers/misc/lan966x_pci.dtso
-> > 
-> > Using addon DT in that case makes sense too even if a "connector" is not present.  
-> 
-> Ok.  So I think the model you're suggesting is this:
-> 
->  * A bus/port driver (let's call it an "addon driver") can allow addon
->    DTs to be plugged in and removed, under constraints defined by that
->    driver at runtime.
-> 
->  * The connector driver would be one specific addon driver, that can
->    handle a pretty broad range of not-too-complex addons.  The
->    constraints for the addon DT are defined by the properties of the
->    connector in the base DT, rather than by runtime logic in the
->    driver.
-> 
-> Is that correct?
-
-Both properties of the connector and runtime logic.
-
-In multiple connector cases, some runtime logic will be needed.
-
-Also, in my use case, several steps are required:
-1) Apply an addon DT to describe EEPROM available on all addon boards
-   we supports.
-2) Read the eeprom to identify the board
-3) Select the right full addon DT based on the board idendified
-4) Apply the full addon DT
-
-> 
-> A few observations
-> 
->  - This effectively makes an addon driver a special case of a
->    discoverable bus/port driver.  Or even DT addons as a library that
->    a bus/port driver can use.  Rather than directly updating the Linux
->    device model, the driver selects an addon DT and uses that to
->    update the Linux device model.
-> 
->  - The distinction between a connector and a general addon driver, is
->    a bit like that between the simple-bus driver and a PCI host bridge
->    driver.  The former handles a fairly wide range of relatively
->    simple cases, the latter handles a more complex and specialized
->    case.
-> 
-> I don't dislike this model, but it does raise some questions (these
-> are not rhetorical):
-> 
-> 1) Is DT a good way of describing the addon?
-> 
-> After all, the addon driver could make updates directly to the Linux
-> device model from whatever format is convenient.
-
-The DT goal is to describe hardware and we are describing hardware available
-on an addon board. DT description seems perfectly legit for this use case.
-
-Let's try as an exercise. Now we have device tree (DT), let's say we want
-to describe addons using the new "Another Representation of Generic
-Hardware" (ARGH) syntax.
-
-We need to:
- * implement arghc (similar to dtc)
- * write argh-bindings for chips that already have dt-bindings
- * write new argh_*() functions similar to of_*() functions
- * write new toooling like `make argh_binding_check` and
-   `make arghs_check`
- * etc
-
-Or we could look for an existing format and decide to use the device
-tree format, which is maybe not perfect, but it works well for a lot of
-things and has all these and more implemented already.
-
-> 
-> 2) Does it make sense to use the addon to alter the global DT?
-> 
-> Even if the addon is described by a DT, the addon/connector driver
-> could read that DT and the system DT and make corresponding updates to
-> the Linux device model without altering the system DT first.
-> 
-
-May I missed something but I think we already discussed this and you appeared
-to agree with my arguments in favor of letting the addon alter very specific
-nodes in the base tree that are explicitly marked as suitable in the connector
-description.
-  https://lore.kernel.org/all/aMebXe-yJy34kST8@zatzit/
-
-Best regards,
-Hervé
+> /* Define a kvm_<syscall>() API to assert success. */
+> #define __KVM_SYSCALL_DEFINE(name, nr_args, args...)			\
+> static inline void kvm_##name(DECLARE_ARGS(nr_args, args))		\
+> {									\
+> 	int r;								\
+> 									\
+> 	r = name(UNPACK_ARGS(nr_args, args));				\
+> 	TEST_ASSERT(!r, __KVM_SYSCALL_ERROR(#name, r));			\
+> }
+>
+> /*
+>  * Macro to define syscall APIs, either because KVM selftests doesn't link to
+>  * the standard library, e.g. libnuma, or because there is no library that yet
+>  * provides the syscall.  These
+>  */
+> #define KVM_SYSCALL_DEFINE(name, nr_args, args...)			\
+> static inline long name(DECLARE_ARGS(nr_args, args))			\
+> {									\
+> 	return syscall(__NR_##name, UNPACK_ARGS(nr_args, args));	\
+> }									\
+> __KVM_SYSCALL_DEFINE(name, nr_args, args)
+>
+>
+> The usage looks like this (which is odd at first glance, but makes it trivially
+> easy to copy+paste from the kernel SYSCALL_DEFINE invocations:
+>
+> KVM_SYSCALL_DEFINE(get_mempolicy, 5, int *, policy, const unsigned long *, nmask,
+> 		   unsigned long, maxnode, void *, addr, int, flags);
+>
+> KVM_SYSCALL_DEFINE(set_mempolicy, 3, int, mode, const unsigned long *, nmask,
+> 		   unsigned long, maxnode);
+>
+> KVM_SYSCALL_DEFINE(set_mempolicy_home_node, 4, unsigned long, start,
+> 		   unsigned long, len, unsigned long, home_node,
+> 		   unsigned long, flags);
+>
+> KVM_SYSCALL_DEFINE(migrate_pages, 4, int, pid, unsigned long, maxnode,
+> 		   const unsigned long *, frommask, const unsigned long *, tomask);
+>
+> KVM_SYSCALL_DEFINE(move_pages, 6, int, pid, unsigned long, count, void *, pages,
+> 		   const int *, nodes, int *, status, int, flags);
+>
+> KVM_SYSCALL_DEFINE(mbind, 6, void *, addr, unsigned long, size, int, mode,
+> 		   const unsigned long *, nodemask, unsigned long, maxnode,
+> 		   unsigned int, flags);
+>
+> __KVM_SYSCALL_DEFINE(munmap, 2, void *, mem, size_t, size);
+> __KVM_SYSCALL_DEFINE(close, 1, int, fd);
+> __KVM_SYSCALL_DEFINE(fallocate, 4, int, fd, int, mode, loff_t, offset, loff_t, len);
+> __KVM_SYSCALL_DEFINE(ftruncate, 2, unsigned int, fd, off_t, length);
+>
+> [*] https://lore.kernel.org/all/0e986bdb-7d1b-4c14-932e-771a87532947@amd.com
 
