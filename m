@@ -1,133 +1,248 @@
-Return-Path: <linux-kernel+bounces-837880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D849CBADF72
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:46:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50BB3BADF75
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:47:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73510188C101
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 15:46:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B7D03C68C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 15:47:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53BC5308F36;
-	Tue, 30 Sep 2025 15:46:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="GEmo2aaV"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41E18308F16;
+	Tue, 30 Sep 2025 15:47:33 +0000 (UTC)
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83D783081C2
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 15:46:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7C393043B3
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 15:47:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759247182; cv=none; b=hSgoqFrggpMSqOKY6VWkqwD29sSVA0ldUV7JoXbFrc31UwM6yu/cvEVKNMKP0+o8HvzajSI2lVS5XG6/68bqgG6NhiAAGplTHhpomrFIRgD116aN1TdQaj7V8xhTzrfiVD5A/XXNyHiyL0WqaqOfYZHXUXD66xlK4soUcjKamLQ=
+	t=1759247252; cv=none; b=MVBESvYM26KTFyyHKEYP8eIS39RHMxM+T6wL7JiykAsezePZ4THBvGbqmCbuBnxsdGSavXbT61IJ+pPDnymJZPCdb5XNHIzh3Gw2au0gVq9YIXdiDNe5/7GHmnZnbhDnEZ6P6d+4mYF2rIFyRa14mBuBti9AaY4yDLPjiCh5SIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759247182; c=relaxed/simple;
-	bh=CAUFl+LYZAZIfEQ0dOPctsXAqjVr28NSuz7MjuxJt4Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=FGqJ+080p6Bdl/oxmARgAo7eQRZBxsc1A22lRfzKo6s0REPKoKKfePqPJIlmvUpkEnTWJ/+1PlkLFxKwK06+oT//K/wIKAqA4lo0q92zMt4TbTtKwDArSLiFw8NCHJM29RDJKDQuAZNS6CyuUAArgsx9/iaEtZoREWuHq9dWozk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=GEmo2aaV; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250930154613euoutp025c96e3f460c968c1849bc5d9e09bb00f~qGfujf9G_2021720217euoutp02N
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 15:46:13 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250930154613euoutp025c96e3f460c968c1849bc5d9e09bb00f~qGfujf9G_2021720217euoutp02N
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1759247173;
-	bh=iCpr5TzyOFeRuqU82QBgsAybOuX0sXWBwEO+eHNweII=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=GEmo2aaV3Fhb+h0H+OL88S5Un3zCHcz7kvEcOruc4TmXpXvHdpKjLwI7cEBp7asMO
-	 muCNuGSqnMlJSRFBKwmUe+kxce/c8fhUiZy+mBT4fvst9i7T4SLjLU0Jge/xzV09V9
-	 trHRBO20Um+o+53qS3gt/u6DVrintZBeymx0x8lo=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250930154612eucas1p2cf5b43435487dc8e6b19b60d1a3801ef~qGft4sFWT2800928009eucas1p2c;
-	Tue, 30 Sep 2025 15:46:12 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250930154610eusmtip1200c7ebad2fc47c80d082b3f7ac27ab7~qGfryC8yB2715127151eusmtip1T;
-	Tue, 30 Sep 2025 15:46:09 +0000 (GMT)
-Message-ID: <75d06769-4896-4095-9969-03a517705196@samsung.com>
-Date: Tue, 30 Sep 2025 17:46:09 +0200
+	s=arc-20240116; t=1759247252; c=relaxed/simple;
+	bh=/GTRr+rLD7K2TzCWfU4DUzYHCm/dB5H1CMW4shlEIrA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HN0/sHKQjUzTN4fSP51F61Jin/+oi3mzp4b6DE6NRRQE3lGuj/VMCvFzpnh8ZNRTLY8tCNneES8ii8eCawd6S6CEVYYuweZ5ZePL1ZQcwP54BvwINz6i3hsaAl8FSUsVv6+xeJS1GDtI49iOqyosoVmiZgEh+KxP71bblLfvzrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-54bc339aa07so48245e0c.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 08:47:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759247249; x=1759852049;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=t1oYdI5DgHZdeROfFJCaPLP7qCG2FJdSJntNb3cbOMs=;
+        b=EV0WHD33H2kweOR5Eqt+iuJ8b8+flZiLyzhEe2ZawOMl2P6h3W8fU56hvT1iCYpRWE
+         Z39Mev48MXmb8tiq6fUjivOdCuwTHL7BMm8QrlUJTwue3a8JkLF0N0KpjFPoyhN6HmbR
+         KIn2aNItbnOrqf9yODutIpPqVv6F58kcujLMlZrv1khkZXut5VW1vL4Ac/32DnXP1zpO
+         rgzAHQ9uD5G+DZqbbHfMD9sCFX76L30Waf7QHgPbswFyRPN9hqur5Li8E6Jg/riFOs/d
+         Z4EBDvZJ67PQ1gx60Q7s0xTPtqQ+Wx9kbpqiGLZ4+vteynO2NC88BYOfIa3XBL5ymfRm
+         1GLA==
+X-Forwarded-Encrypted: i=1; AJvYcCU0/6WkC7euoItVpURwXFH3HgjRVK85A9m5SUBhh947A2+m9eUelby31bkVsHSzIGZ3Y8iR9PRRSfvsMT4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRuXbJDm62EobVdoKc4lLVrdxlQ6ubaN+0wiGYq/aKUEOgfB3W
+	rqKg7WqBP6QMQFscm4TofUaorU4deABmO1BdVWb57J3LGOD3L8gYcWc8jh4VYUqS
+X-Gm-Gg: ASbGncvU0jdUVVZMGbV4dRbMebJBVcY1ebaHI+qIubN5Cm3NwjUT4nF6rpSpdzRf7Jc
+	rKeI5XEQXzHPA/wRhMC+3rGDHy1dlfTDe/jftL2rDS9WmP4CX5F/3bHQJ6rk0KWEZBanWFR8NKr
+	OX9tQhotLLjuFbbkhPY75lN9il6wOFk0DMvDmfqBNQqOJZ0/P/BMgGJqJDdcuD9kh7LzVeV073B
+	WPfHYQ8NXcKPQEx1dYcSYxCeYdRMXjO8J0y+nUUsKtszWOUYww2KUD2TG8AUUDmLaqgLVYRORUs
+	ORZlo9c9AyKgn54hJTgoaUDuUqPzFnunq9eJt9yfcn6SllXXw34xDwKstsN8oNMOi5OjJ09hv/p
+	mFuCcfhkh3xfRlUI7WdRfXmGUBUUWS4rISaTz7R1hxibSyfA3jFoofNmD4HzKvClc4ZLFdqgY8O
+	1fhT/+hb0tcfY/w5w+WL/hFoRRYdFtz8oJdA==
+X-Google-Smtp-Source: AGHT+IGTNjBT3egM83y2AEXGZQ+OcNjDYUplUa8RrdHrd7RnqLv+iEBKbzbYgJ81isxRyAyW/7eApg==
+X-Received: by 2002:a05:6122:913:b0:54c:da0:f734 with SMTP id 71dfb90a1353d-5522cf08950mr134683e0c.0.1759247249248;
+        Tue, 30 Sep 2025 08:47:29 -0700 (PDT)
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com. [209.85.221.181])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-54beddbc629sm2979054e0c.24.2025.09.30.08.47.28
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Sep 2025 08:47:28 -0700 (PDT)
+Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-54a81bf36ebso942228e0c.3
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 08:47:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVM/aXy6Fxf3aW2Xwok/djpPx6INIqFICEGeR0TbCAZHiyYRF+IAtu2U0e6N5WkoxIa0FVraoumh/leP78=@vger.kernel.org
+X-Received: by 2002:a05:6122:d98:b0:538:d49b:719 with SMTP id
+ 71dfb90a1353d-5522d1b261emr65053e0c.1.1759247247997; Tue, 30 Sep 2025
+ 08:47:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: =?UTF-8?Q?Re=3A_=5BPATCH_08/29=5D_media=3A_mfc=3A_Add_Exynos?=
- =?UTF-8?Q?=E2=80=91MFC_driver_probe_support?=
-To: Krzysztof Kozlowski <krzk@kernel.org>, Himanshu Dewangan
-	<h.dewangan@samsung.com>
-Cc: mchehab@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, sumit.semwal@linaro.org, christian.koenig@amd.com,
-	alim.akhtar@samsung.com, manjun@samsung.com, nagaraju.s@samsung.com,
-	ih0206.lee@samsung.com, jehyung.lee@samsung.com,
-	linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <CAJKOXPecLREbEDM4yfM=WD-EFfuBqPDXNZceATLeWQRj0X_w7w@mail.gmail.com>
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250930154612eucas1p2cf5b43435487dc8e6b19b60d1a3801ef
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250930035551epcas5p4ee7cb5af08eadb2f5ed6e5eaa06a60a9
-X-EPHeader: CA
-X-CMS-RootMailID: 20250930035551epcas5p4ee7cb5af08eadb2f5ed6e5eaa06a60a9
-References: <CGME20250930035551epcas5p4ee7cb5af08eadb2f5ed6e5eaa06a60a9@epcas5p4.samsung.com>
-	<20250930040348.3702923-1-h.dewangan@samsung.com>
-	<20250930040348.3702923-9-h.dewangan@samsung.com>
-	<CAJKOXPecLREbEDM4yfM=WD-EFfuBqPDXNZceATLeWQRj0X_w7w@mail.gmail.com>
+References: <20250924134228.1663-1-ilpo.jarvinen@linux.intel.com> <20250924134228.1663-3-ilpo.jarvinen@linux.intel.com>
+In-Reply-To: <20250924134228.1663-3-ilpo.jarvinen@linux.intel.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 30 Sep 2025 17:47:16 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVtVzcL3AX0uetNhKr-gLij37Ww+fcWXxnYpO3xRAOthA@mail.gmail.com>
+X-Gm-Features: AS18NWCo0u0uKjaP0aHUnOkHmV_Iy_nS2MkwIx0vpZfnx2vg_M_a1UQOALbe6hg
+Message-ID: <CAMuHMdVtVzcL3AX0uetNhKr-gLij37Ww+fcWXxnYpO3xRAOthA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] PCI: Resources outside their window must set IORESOURCE_UNSET
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-kernel@vger.kernel.org, 
+	Lucas De Marchi <lucas.demarchi@intel.com>, 
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Krzysztof,
+Hi Ilpo,
 
-On 30.09.2025 07:54, Krzysztof Kozlowski wrote:
-> On Tue, 30 Sept 2025 at 12:56, Himanshu Dewangan <h.dewangan@samsung.com> wrote:
->> From: Nagaraju Siddineni <nagaraju.s@samsung.com>
->>
->> Introduce a new Kconfig entry VIDEO_EXYNOS_MFC for the Samsung
->> Exynos MFC driver that supports firmware version 13 and later.
->> Extend the top‑level Samsung platform Kconfig to disable the legacy
->> S5P‑MFC driver when its firmware version is > v12 and to select the
->> new Exynos‑MFC driver only when VIDEO_SAMSUNG_S5P_MFC is not enabled.
->>
->> Add exynos-mfc Kconfig and Makefile for probe functionality and creation
->> of decoder and encoder device files by registering the driver object
->> exynos_mfc.o and other relevant source files.
->>
->> Provide header files mfc_core_ops.h and mfc_rm.h containing core
->>    operation prototypes, resource‑manager helpers,
->>    and core‑selection utilities.
->>
->> Add a configurable option MFC_USE_COREDUMP to enable core‑dump
->> support for debugging MFC errors.
->>
->> These changes bring support for newer Exynos‑based MFC hardware,
->> cleanly separate it from the legacy S5P‑MFC driver, and lay the
->> groundwork for future feature development and debugging.
->>
-> No, NAK. Existing driver is well tested and already used on newest
-> Exynos SoC, so all this new driver is exactly how you should not work
-> in upstream. You need to integrate into existing driver.
+On Fri, 26 Sept 2025 at 04:40, Ilpo J=C3=A4rvinen
+<ilpo.jarvinen@linux.intel.com> wrote:
+> PNP resources are checked for conflicts with the other resource in the
+> system by quirk_system_pci_resources() that walks through all PCI
+> resources. quirk_system_pci_resources() correctly filters out resource
+> with IORESOURCE_UNSET.
 >
-> Samsung received this review multiple times already.
+> Resources that do not reside within their bridge window, however, are
+> not properly initialized with IORESOURCE_UNSET resulting in bogus
+> conflicts detected in quirk_system_pci_resources():
+>
+> pci 0000:00:02.0: VF BAR 2 [mem 0x00000000-0x1fffffff 64bit pref]
+> pci 0000:00:02.0: VF BAR 2 [mem 0x00000000-0xdfffffff 64bit pref]: contai=
+ns BAR 2 for 7 VFs
+> ...
+> pci 0000:03:00.0: VF BAR 2 [mem 0x00000000-0x1ffffffff 64bit pref]
+> pci 0000:03:00.0: VF BAR 2 [mem 0x00000000-0x3dffffffff 64bit pref]: cont=
+ains BAR 2 for 31 VFs
+> ...
+> pnp 00:04: disabling [mem 0xfc000000-0xfc00ffff] because it overlaps 0000=
+:03:00.0 BAR 9 [mem 0x00000000-0x3dffffffff 64bit pref]
+> pnp 00:05: disabling [mem 0xc0000000-0xcfffffff] because it overlaps 0000=
+:00:02.0 BAR 9 [mem 0x00000000-0xdfffffff 64bit pref]
+> pnp 00:05: disabling [mem 0xfedc0000-0xfedc7fff] because it overlaps 0000=
+:03:00.0 BAR 9 [mem 0x00000000-0x3dffffffff 64bit pref]
+> pnp 00:05: disabling [mem 0xfeda0000-0xfeda0fff] because it overlaps 0000=
+:03:00.0 BAR 9 [mem 0x00000000-0x3dffffffff 64bit pref]
+> pnp 00:05: disabling [mem 0xfeda1000-0xfeda1fff] because it overlaps 0000=
+:03:00.0 BAR 9 [mem 0x00000000-0x3dffffffff 64bit pref]
+> pnp 00:05: disabling [mem 0xc0000000-0xcfffffff disabled] because it over=
+laps 0000:03:00.0 BAR 9 [mem 0x00000000-0x3dffffffff 64bit pref]
+> pnp 00:05: disabling [mem 0xfed20000-0xfed7ffff] because it overlaps 0000=
+:03:00.0 BAR 9 [mem 0x00000000-0x3dffffffff 64bit pref]
+> pnp 00:05: disabling [mem 0xfed90000-0xfed93fff] because it overlaps 0000=
+:03:00.0 BAR 9 [mem 0x00000000-0x3dffffffff 64bit pref]
+> pnp 00:05: disabling [mem 0xfed45000-0xfed8ffff] because it overlaps 0000=
+:03:00.0 BAR 9 [mem 0x00000000-0x3dffffffff 64bit pref]
+> pnp 00:05: disabling [mem 0xfee00000-0xfeefffff] because it overlaps 0000=
+:03:00.0 BAR 9 [mem 0x00000000-0x3dffffffff 64bit pref]
+>
+> Mark resources that are not contained within their bridge window with
+> IORESOURCE_UNSET in __pci_read_base() which resolves the false
+> positives for the overlap check in quirk_system_pci_resources().
+>
+> Fixes: f7834c092c42 ("PNP: Don't check for overlaps with unassigned PCI B=
+ARs")
+> Signed-off-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
 
-Please don't be so categorical. The MFC hardware evolved quite a bit 
-from the ancient times of S5PV210 SoC, when s5p-mfc driver was designed. 
-The feature list of the new hardware hardly matches those and I really 
-don't see the reason for forcing support for so different hardware in a 
-single driver. Sometimes it is easier just to have 2 separate drivers if 
-the common part is just the acronym in the hardware block name...
+Thanks for your patch, which is now commit 06b77d5647a4d6a7 ("PCI:
+Mark resources IORESOURCE_UNSET when outside bridge windows") in
+linux-next/master next-20250929 pci/next
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+This replaces the actual resources by their sizes in the boot log on
+e.g. on R-Car M2-W:
 
+     pci-rcar-gen2 ee090000.pci: host bridge /soc/pci@ee090000 ranges:
+     pci-rcar-gen2 ee090000.pci:      MEM 0x00ee080000..0x00ee08ffff
+-> 0x00ee080000
+     pci-rcar-gen2 ee090000.pci: PCI: revision 11
+     pci-rcar-gen2 ee090000.pci: PCI host bridge to bus 0000:00
+     pci_bus 0000:00: root bus resource [bus 00]
+     pci_bus 0000:00: root bus resource [mem 0xee080000-0xee08ffff]
+     pci 0000:00:00.0: [1033:0000] type 00 class 0x060000 conventional
+PCI endpoint
+    -pci 0000:00:00.0: BAR 0 [mem 0xee090800-0xee090bff]
+    -pci 0000:00:00.0: BAR 1 [mem 0x40000000-0x7fffffff pref]
+    +pci 0000:00:00.0: BAR 0 [mem size 0x00000400]
+    +pci 0000:00:00.0: BAR 1 [mem size 0x40000000 pref]
+     pci 0000:00:01.0: [1033:0035] type 00 class 0x0c0310 conventional
+PCI endpoint
+    -pci 0000:00:01.0: BAR 0 [mem 0x00000000-0x00000fff]
+    +pci 0000:00:01.0: BAR 0 [mem size 0x00001000]
+     pci 0000:00:01.0: supports D1 D2
+     pci 0000:00:01.0: PME# supported from D0 D1 D2 D3hot
+     pci 0000:00:02.0: [1033:00e0] type 00 class 0x0c0320 conventional
+PCI endpoint
+    -pci 0000:00:02.0: BAR 0 [mem 0x00000000-0x000000ff]
+    +pci 0000:00:02.0: BAR 0 [mem size 0x00000100]
+     pci 0000:00:02.0: supports D1 D2
+     pci 0000:00:02.0: PME# supported from D0 D1 D2 D3hot
+     PCI: bus0: Fast back to back transfers disabled
+     pci 0000:00:01.0: BAR 0 [mem 0xee080000-0xee080fff]: assigned
+     pci 0000:00:02.0: BAR 0 [mem 0xee081000-0xee0810ff]: assigned
+     pci_bus 0000:00: resource 4 [mem 0xee080000-0xee08ffff]
+
+Is that intentional?
+
+> --- a/drivers/pci/probe.c
+> +++ b/drivers/pci/probe.c
+> @@ -205,6 +205,26 @@ static void __pci_size_rom(struct pci_dev *dev, unsi=
+gned int pos, u32 *sizes)
+>         __pci_size_bars(dev, 1, pos, sizes, true);
+>  }
+>
+> +static struct resource *pbus_select_window_for_res_addr(
+> +                                       const struct pci_bus *bus,
+> +                                       const struct resource *res)
+> +{
+> +       unsigned long type =3D res->flags & IORESOURCE_TYPE_BITS;
+> +       struct resource *r;
+> +
+> +       pci_bus_for_each_resource(bus, r) {
+> +               if (!r || r =3D=3D &ioport_resource || r =3D=3D &iomem_re=
+source)
+> +                       continue;
+> +
+> +               if ((r->flags & IORESOURCE_TYPE_BITS) !=3D type)
+> +                       continue;
+> +
+> +               if (resource_contains(r, res))
+> +                       return r;
+> +       }
+> +       return NULL;
+> +}
+> +
+>  /**
+>   * __pci_read_base - Read a PCI BAR
+>   * @dev: the PCI device
+> @@ -329,6 +349,18 @@ int __pci_read_base(struct pci_dev *dev, enum pci_ba=
+r_type type,
+>                          res_name, (unsigned long long)region.start);
+>         }
+>
+> +       if (!(res->flags & IORESOURCE_UNSET)) {
+> +               struct resource *b_res;
+> +
+> +               b_res =3D pbus_select_window_for_res_addr(dev->bus, res);
+> +               if (!b_res ||
+> +                   b_res->flags & (IORESOURCE_UNSET | IORESOURCE_DISABLE=
+D)) {
+> +                       pci_dbg(dev, "%s %pR: no initial claim (no window=
+)\n",
+> +                               res_name, res);
+> +                       res->flags |=3D IORESOURCE_UNSET;
+> +               }
+> +       }
+> +
+>         goto out;
+>
+>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
