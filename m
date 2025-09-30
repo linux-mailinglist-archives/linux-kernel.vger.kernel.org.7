@@ -1,129 +1,156 @@
-Return-Path: <linux-kernel+bounces-837504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98B91BAC74F
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:23:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 882C3BAC758
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:24:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FE1619255B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 10:23:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40A7317249A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 10:24:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6AE62F83DE;
-	Tue, 30 Sep 2025 10:23:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B8462F8BC0;
+	Tue, 30 Sep 2025 10:24:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a26GaCmv"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="eMBHta3C"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BBAC220F2A
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 10:23:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F9642F83C5;
+	Tue, 30 Sep 2025 10:24:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759227785; cv=none; b=tSzKgnsB3J3BnC3RBJB94WwoMPPlT4kcvl31jg4URsFtlxBx1YXY3RCcTaKeOXF2OjgtOll7b8pL5hc80DuesUaEG8ColpldzNCq+6+D0vTvE2sOdHpjsYap6HDbMroqZYCNuDxohPdFgSVVKN/aY5bZYsIQTkM7WcbODKLSxQ8=
+	t=1759227845; cv=none; b=cxGQix9AXuuHWcBiAr8Y926x3wyEs/edbKQB2ES1Se8piEp47tnAoyln9egfr0vLxF/G44cMpP4CYokkvg2YJ4fLD18iSItv6pku94rFGyZSVn5AZgXvfQTaenYP/Vx0X7epTwTigW5euCALIGCX3tI4XmehUOyTejV6OFu14SA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759227785; c=relaxed/simple;
-	bh=iwETwjsWH8KkWnjdGAXqGGSLFku1lXN3pXfIWeiax2w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GzkzFYcurrrIlsbbW9ipaYGQfEqWWNngN8SEDWjTncnILtCuD31HFGIVdAoBkABkQAdQgyM/2gkvl8/6jUSHz91HCcKSTyNU/7LTdqJAuvKXKiVpEN691RLOv9vEv4THmo+YLiMfOJyQGMFL2MPjAouWGgyoiC2klRfpGAR0F+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a26GaCmv; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759227782;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Mgf+5bSh0KvMOHC6oH/iO2k9wdq3bzQfdz8vvpviODQ=;
-	b=a26GaCmvjtOGXKkgtKZ7kDdb3lz6kjmiFM+yJ7WSn383o+Gbz8IQfGyaX3MsWXKdCN28vy
-	rpEYlcqDNP/C0vCZRSLnxuBV2HTPmzlRfl11jMa0EMiIkhJmqe4cYboljLvcor5vq0DINB
-	QsNgtW1cRGYMThlXrvZIXGKPfV1XVCc=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-344-57__WuUVOQyf3lWgCOcjrA-1; Tue, 30 Sep 2025 06:23:01 -0400
-X-MC-Unique: 57__WuUVOQyf3lWgCOcjrA-1
-X-Mimecast-MFC-AGG-ID: 57__WuUVOQyf3lWgCOcjrA_1759227781
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-870d82c566fso87345385a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 03:23:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759227781; x=1759832581;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Mgf+5bSh0KvMOHC6oH/iO2k9wdq3bzQfdz8vvpviODQ=;
-        b=MslMRyKbLDts8bEFpwONbrDxQhJNpxp0xIsJMqXRB3dWbxJG/xqsBQC9N/HQsyxuwK
-         x0RU7PDEftPFBvF2Te1RLUjyMTye03H9HCdqgbDpztdSwP69NMD+VyeI+QbNGU3lA9Wl
-         PiPlTSMVceHE2ReXkBHhO4BSRAsDdlwHjVb0xzE6QntAD7UPVeYK6G9Xi05y81rLkhsp
-         302eeV/Mc8E/TvKbAz+7vb8u9JtnJTPY//FI/lzKry5XpudQRGbocW3UzeI+Ape1UrG4
-         k14uh0mHvhcZuxo8OioN0Olve0DPqNz3D396XbtItebdLP3OaY0wgeEqvdxwfB4Mwaz3
-         HwuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX6l/uRi8drNlr/156/r0OK9l/9yNJGLa85yDXbw/66hFIMLPD/YYsn/9ITFPK4R7hPPgJnMPhrXUq6Rzo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrfNsKAtFJnWTWGgXB148B6RKm6ZJLfGk7fBndeKVUOTi3SdeP
-	/Dq+wnRGJftmZsXDsKHvFWYm7mtmmN/QNB6yqr87s9dgVG2xtHquQrocMfoiixliX3+yVY6Uut2
-	qEXLBHBvsJyXilugtFIwTkb9qA2FBgGpQTaPJtF6PSb8fgBxpIve5jANLHl6aKB4W7Q==
-X-Gm-Gg: ASbGncvUGufQgeplDlYMOyAVH+WWIGTwJB0oSFdWvdjiATHyoJIDPgJuHzuqz8pPJf+
-	T4znpaCrUkK635tKrfvaecZGQzi2zTGhf+PCj+Y1JI9ao4phbZvXp3BhOStvCmVS8ST6m7/i9zA
-	+bmKW1pMPGkuZkFuAAUEt2J060TlbtYYCnTgzALARRaS56YIGzKp/Eh8NiOaTH2UJFvQuF9F74k
-	RnUIEFa593L9dpsXDqdtgev3yXVZOb6BSc/Al5ZtyLwTCisdsOJFsWLMEgYVQpLgbypXyPIbx98
-	w1SDRWNnDeJTfcHzwcV8x6zZbMmfIkn3kKyOjO1C92N2K1qcdjY8LYY8XmYBPb8C63vqioippeJ
-	JxFYKxTLVUmbU9J5di2320PpEMc2pCYXfFsfR
-X-Received: by 2002:a05:620a:a115:b0:871:dc2d:6026 with SMTP id af79cd13be357-871dc2d7504mr86159685a.16.1759227780677;
-        Tue, 30 Sep 2025 03:23:00 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEoByg3sSfWNNSEyfpGpiDYCBSbVHTJiJB2RdYaJ4CTo/cPLRB4Pivt12MeIkKx9oIwAdPV4A==
-X-Received: by 2002:a05:620a:a115:b0:871:dc2d:6026 with SMTP id af79cd13be357-871dc2d7504mr86157585a.16.1759227780145;
-        Tue, 30 Sep 2025 03:23:00 -0700 (PDT)
-Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-85c2737869esm1013615585a.11.2025.09.30.03.22.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Sep 2025 03:22:59 -0700 (PDT)
-Date: Tue, 30 Sep 2025 06:22:58 -0400
-From: Brian Masney <bmasney@redhat.com>
-To: "Zhou, Yun" <yun.zhou@windriver.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, dianders@chromium.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: fix slab-use-after-free when
- clk_core_populate_parent_map failed
-Message-ID: <aNuvghjOrY7nSviZ@redhat.com>
-References: <20250929083119.2066159-1-yun.zhou@windriver.com>
- <aNrj60UeYQfXmlJ2@redhat.com>
- <a77dc81a-e8fa-4f9e-8915-3b8f352c114c@windriver.com>
+	s=arc-20240116; t=1759227845; c=relaxed/simple;
+	bh=kFbjzKu4C1FIUbz3Du4tI6MtJPnBh7S5QIrZlxj8QZY=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=IZ69QcS0KmhiswfzERawms321xDO76WS7CcbhkIihNqk2Geu1g6omnKAmS/E3U5o3eF8l0FF5Nf7RBq7HoiCqEPMpBGxq5ElGUoyMpJZuUfeeZ6RsJdw+vXZDmO8sfYX33E6FH/yfErkBFu4SB1lkXo3apwIuE6EvZDP8il36QU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=eMBHta3C; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58U7NRKU016159;
+	Tue, 30 Sep 2025 10:23:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=q+A6AB
+	FPSBqxNX7wJhRsHf/mKikSfIHWXLZ/RDka+AQ=; b=eMBHta3COcHPnnF7LGIynZ
+	3E8c6TP2VXnqVbfv9cruhvVn8WbnsPA9rKGK4/fZMbliyM6AYcbxiKEvQ8WB2UUu
+	NsxXbuKxdcraf6+dSdZF0Y8uSOqOf/oHJoSOAwvAF58LZSBoY/7iNeHfshfKX7eA
+	zW6lkxYkZbsAzx+9Tt/4EL0XXd7t9ExdNRiGkMmdcR0v6Tw8/i77p9MPl5KLW99N
+	xm3h2cCXQtRqv0R6J40KNSHBBGzMEBI/o66zQ+DsPtZz2afTjbF4QoSL+PbV4D5d
+	lq5bwiW8Qm7wUjfi7mYGyVS1pr3KMZ6dj6TULnZlOX2h0kq86wN/7UiyzzMFFxGQ
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49e7ku85a2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 30 Sep 2025 10:23:53 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58UALfDi027088;
+	Tue, 30 Sep 2025 10:23:53 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49e7ku859v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 30 Sep 2025 10:23:53 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58U81UA6020057;
+	Tue, 30 Sep 2025 10:23:49 GMT
+Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 49et8s32dm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 30 Sep 2025 10:23:49 +0000
+Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
+	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58UANmZS23724612
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 30 Sep 2025 10:23:48 GMT
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 915F05804E;
+	Tue, 30 Sep 2025 10:23:48 +0000 (GMT)
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C75A95803F;
+	Tue, 30 Sep 2025 10:23:47 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.25.147])
+	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 30 Sep 2025 10:23:47 +0000 (GMT)
+Message-ID: <ef7c07585e41c8afbb2b97df98fd47c9374b15cb.camel@linux.ibm.com>
+Subject: Re: [PATCH 0/2] ima: add dont_audit and fs_subtype to policy
+ language
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Jann Horn <jannh@google.com>, Roberto Sassu <roberto.sassu@huawei.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Eric Snowberg
+ <eric.snowberg@oracle.com>
+Cc: Frank Dinoff <fdinoff@google.com>, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org
+In-Reply-To: <20250926-ima-audit-v1-0-64d75fdc8fdc@google.com>
+References: <20250926-ima-audit-v1-0-64d75fdc8fdc@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 30 Sep 2025 06:23:47 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a77dc81a-e8fa-4f9e-8915-3b8f352c114c@windriver.com>
-User-Agent: Mutt/2.2.14 (2025-02-20)
+User-Agent: Evolution 3.54.3 (3.54.3-2.fc41) 
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=T7WBjvKQ c=1 sm=1 tr=0 ts=68dbafb9 cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=1XWaLZrsAAAA:8 a=Dp9FQI8HATi7HZ4XbgAA:9
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: vkFhW_iLldhKBo0qD5CUO-Lgtt-gqC3o
+X-Proofpoint-ORIG-GUID: YdTilexLCFbJWiq3Bhg22xQhLhmW8szR
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAyNSBTYWx0ZWRfX/5QVs33hE10z
+ 9cEBivf8VZ7+Mv7A2nw7t1XTE6tPKPmRLpjXml8mtUFnQLv31e7uG/Unfb1gb7C0CmRG/4innQM
+ YPtpdWo7Pq1IOhFHHw6abdenXBBjDKf2uxEMxf9tJjYd4P+0ipx0Tly6W0+5w5fC8lIJ8ig5sbX
+ oVJldNhLgCA+No/OLykIBDFf9V7GeHWqtQI9qanmdsF4oGTP5I+FkzoY/e/eKGFDm+o41txHrgL
+ 5DGzTd4axgGcO3wy+Q+xWCfvYwCiBEFil6A4SNcvGUa9IuzFKIRL1Ebv7FNIhRqq6YpOHiGGZtT
+ 8zn6V1PB2+IjJChTnOFLEsXsHHHeRX/XEN9BWGgTF4lgu8v3xZK3/g5X6yv9MhRhYe8HeSXnM9t
+ LemWrcghNIrqQXJ9imd+R4mK2wGSkA==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-30_01,2025-09-29_04,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 clxscore=1015 spamscore=0 suspectscore=0 priorityscore=1501
+ bulkscore=0 adultscore=0 lowpriorityscore=0 malwarescore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270025
 
-Hi Yun,
+On Fri, 2025-09-26 at 01:45 +0200, Jann Horn wrote:
+> This series adds a "dont_audit" action that cancels out following
+> "audit" actions (as we already have for other action types), and also
+> adds an "fs_subtype" that can be used to distinguish between FUSE
+> filesystems.
+>=20
+> With these two patches applied, as a toy example, you can use the
+> following policy:
+> ```
+> dont_audit fsname=3Dfuse fs_subtype=3Dsshfs
+> audit func=3DBPRM_CHECK fsname=3Dfuse
+> ```
+>=20
+> I have tested that with this policy, executing a binary from a
+> "fuse-zip" FUSE filesystem results in an audit log entry:
+> ```
+> type=3DINTEGRITY_RULE msg=3Daudit([...]): file=3D"/home/user/ima/zipmount=
+/usr/bin/echo" hash=3D"sha256:1d82e8[...]
+> ```
+> while executing a binary from an "sshfs" FUSE filesystem does not
+> generate any audit log entries.
+>=20
+> Signed-off-by: Jann Horn <jannh@google.com>
 
-On Tue, Sep 30, 2025 at 12:59:14PM +0800, Zhou, Yun wrote:
-> Hi Brian,
-> 
-> Thanks for your review.
-> 
-> This defect is caused by multiple reasons, but as you said, the fixes tag is
-> not accurate enough.
-> 
-> I think it should be:
-> 
-> Fixes: fc0c209c1 ("clk: Allow parents to be specified without string names")
-> 
-> Do you think so?
 
-Yes, that's what I would make it. With that fixed in a v2, you can add:
+Thanks, Jann.  The patches look fine.  Assuming the "toy" test program crea=
+tes
+and mounts the fuse filesystems, not just loads the IMA policy rules, could=
+ you
+share it?
 
-Reviewed-by: Brian Masney <bmasney@redhat.com>
+thanks,
 
-Also, just a heads up to not top post, and to reply inline next time.
-
-https://subspace.kernel.org/etiquette.html#do-not-top-post-when-replying
-
-Brian
-
+Mimi
 
