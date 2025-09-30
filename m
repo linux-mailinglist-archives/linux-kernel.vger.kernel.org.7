@@ -1,218 +1,159 @@
-Return-Path: <linux-kernel+bounces-837761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33B9CBAD214
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 15:59:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E94B7BAD204
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 15:58:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8BFC4A55FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 13:59:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C57A7A059D
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 13:57:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96F3D308F0B;
-	Tue, 30 Sep 2025 13:57:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85046302779;
+	Tue, 30 Sep 2025 13:57:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="TLw1KVQf"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H4hBMVo3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 037F13081B5;
-	Tue, 30 Sep 2025 13:57:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 345E22FD1DD
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 13:57:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759240655; cv=none; b=H4IxSKhhbkotH67SLjtPTEoh4vuHeHf+gjktQSfzKYf5lsPu+Osamdh2CGt2tNHV9JluBCCWueP63tbqh1Saeu0ZmVN0v7jAMolz4aKDWgpqvEc/cY5fUBVCB8hqDqSKFjhZoPlDRE35WAo/XjBXHgyM8PIxngldrI0JyGS0/Do=
+	t=1759240651; cv=none; b=HuLba5XDUoepMTZWq+wKf6pdJm4PjjbLwPRjsi+2VAA2c6DRSx0mr7kRgufCZE1Au6l6MbqHjD95qUodXtz0FehVH5CqzHHuSGaUhFVa2OeD0yCzSbrlkMkU+gpZrq8itYiaQrFvGR07to0TnvFtTGeU8g1LYvx2MTmRqB46L/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759240655; c=relaxed/simple;
-	bh=In9r7c+wdcbNtEpOOZ44XfXzAN+ZfSmb7k4T8LbLBbI=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=WQwmk8CX1Hu6o/UtEYN5Kok8udlIQrxjAD253jKuGpMw3i9zGHsDv+k0za7C8GuS/6uFVpIGmTXV4yiVTzNSd2L4Gvw5lKamR8cIzm+9kykxFeGXy6IR4Tk9r+GFaLIUkMoYmSF9APJaRvxC5QYQ6ZvpD2sGDij3RXbiT3+yL+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=TLw1KVQf; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58U7R8kJ014796;
-	Tue, 30 Sep 2025 13:57:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=mc5QBp
-	F0Q6KVKJJ9Xaf/eq8K5qiEWRGkQWTHOSi5bIE=; b=TLw1KVQfdmAaGxEbm17wNY
-	lwtS66PJGp3n6gT8FTjWkArxDAiBlSr2roYIee4GK0sv2xWw0H3TVNOiHjQY43hu
-	Y19NBuXO4IJUvJYLqPLb4iqkj89YJZC539sMb8PoHx/BIgIbA6Z4033gNfed3doL
-	lNz6y0P5MIQRREXZVSiUCeRvgTpF37OXJjxO2N8PhDrs1yPuIJqpuS6opl53jy9L
-	WfHzr0Ck+CFq1ustEDtYhwRAmglaVtksXCQvG8gfdP4A2Ab/CnTphAaUJVs9Vxy/
-	oVN2kcibSz10SJ0d0s1aneApCRTGISuuNyzEhia371kG5y0Wh7+hpxNZAOLmeKzQ
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49e6bhh03k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 30 Sep 2025 13:57:11 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58UDputd009852;
-	Tue, 30 Sep 2025 13:57:11 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49e6bhh03e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 30 Sep 2025 13:57:11 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58UDWdJf001667;
-	Tue, 30 Sep 2025 13:57:10 GMT
-Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 49evfj3dv5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 30 Sep 2025 13:57:10 +0000
-Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
-	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58UDv9Wh13959796
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 30 Sep 2025 13:57:09 GMT
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 526B858059;
-	Tue, 30 Sep 2025 13:57:09 +0000 (GMT)
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1AA0558043;
-	Tue, 30 Sep 2025 13:57:08 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.16.91])
-	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 30 Sep 2025 13:57:07 +0000 (GMT)
-Message-ID: <896f4fb0c0146512a66daf0b4c1e033aca4bd6d4.camel@linux.ibm.com>
-Subject: Re: [PATCH] ima: Fall back to default kernel module signature
- verification
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Coiby Xu <coxu@redhat.com>, linux-integrity@vger.kernel.org
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Karel Srot
- <ksrot@redhat.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Dmitry
- Kasatkin <dmitry.kasatkin@gmail.com>,
-        Eric Snowberg	
- <eric.snowberg@oracle.com>,
-        Paul Moore <paul@paul-moore.com>, James Morris	
- <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        "open
- list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
-        open list
- <linux-kernel@vger.kernel.org>
-In-Reply-To: <20250928030358.3873311-1-coxu@redhat.com>
-References: <20250928030358.3873311-1-coxu@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 30 Sep 2025 09:57:07 -0400
+	s=arc-20240116; t=1759240651; c=relaxed/simple;
+	bh=BjipmKiYqvOMqy6wFOLf2B1TFV/73W3I8z7alN1lxDM=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ozQyY/Bajn93/aQJlLd0zmDWXNFZSCSB01Lx/2jMNZU2SANhSHDQPmmJQRVY0RK4mp586bZni1d76hVrWqtMetao8smXFzeQ3MjkuYKstZJMP4ha/V86e4jndh1K+fV1h8cumfrATIGqUh9Btwq27w/g5rg4VWxkMO43L2tzXmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H4hBMVo3; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759240649;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=StT/fwa4hIsTlxaXA0cy/bjyM8J68OtRfbRwReR7TO4=;
+	b=H4hBMVo3zE7h/8xOsHOMdS5gxp2XA+l7dRyEzwhYuJuKk0zGzjy1/dl9qn3GhPUVdKOTx0
+	JwNv0jOXE1X8c8I0S7Gg9YGjL5BrTn9KsPjpPMlwf1sJIj8WGMPYsYs9xoRP1T3J2uGfLp
+	DXaHn8x3e//mHyfTKsvnor3d5rEAsMQ=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-85-mzhm7NGvOy2UMRwwWB3OPw-1; Tue, 30 Sep 2025 09:57:24 -0400
+X-MC-Unique: mzhm7NGvOy2UMRwwWB3OPw-1
+X-Mimecast-MFC-AGG-ID: mzhm7NGvOy2UMRwwWB3OPw_1759240644
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4df10fb4a4cso120675881cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 06:57:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759240644; x=1759845444;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=StT/fwa4hIsTlxaXA0cy/bjyM8J68OtRfbRwReR7TO4=;
+        b=fCQRjb5TzzCOnbaW3VMIsFauGDE8Ec+5ounGQREkP+/FEfTIrQotTmHDNwRVnJeI7o
+         p8OWJdkWjQUXAJ7xY+YlpIdWi2liD3zgP0GLtj3nuopus/KzP4syuumPRD3bUSy66zVV
+         9Qrq7velXOEy6ACE50Piy+kZ6M0gohMq6KsWplMNVb/SNFkNu4pdY038bZow7yIOUIhX
+         Eex96rAPsM1pF3P4qoR5AKVUCO1FD740wCYZRMuMRH9zxCg7m476HdzDA8Xqbao/0OOq
+         op34AGjtKKnB/g5uF5p1TQrGPdUP84xCOvRA4GnRwJwqT03Mm4sYwJB2XhchX2Hi0BGq
+         ayDg==
+X-Forwarded-Encrypted: i=1; AJvYcCU5kK38LMVj5zqOYZ5bGDEQtzhcGxJKSJ4YFbyL4EDpOzqPI+QxNo6d9l0z4SmR6egtx4frlc8lctLVFzY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSGScE1/YqZ+N5wrGGOlERks5kjneFfgtPebsmiJNni3AcMiH6
+	twddF4C2Dxwq+y1wPDRQYSgjjcdp7hfb12MAMYsMrxGlLBGs1RbbqlmjIsH+GYGN/Yk7kAY/Rb9
+	yLt+YchQGuWNgyNadFjr6Mz6D5zC0aRfPtfLd1LnG5aW4jVpfNRNwt0rvmpnORckC1w==
+X-Gm-Gg: ASbGnct/hcCiJIkg29dlKqMaGhRhHCAcwbxn/ebeaqW2lv24tZsD6fdUCE6ykUs9k2V
+	gieg4MQ7D/4KcJqsRJG51cu9tG8uCMPGlkkTtqwvllz2dVPRx7pj/7GMJJsDV0VhnsWijyTx3sc
+	Nj1T2gRo+pFYLcN3ZiValVGgNeC67+NAD54Iplj1uYkgqD7BuP17PDpZpa+qFwZLF3nsvrd+MKU
+	4pzUNe5R1zo/AHu2mEMIWnvkFByIGOlbU4UVQ6TffTqv6y70e+DGkbu7201UoBQxB3uXhTjqD1T
+	guko5ltZ2C2ZokKbJKByB0Xvy98drWydfOr4HPtOzgRo+OyxfF1KgWAolu2Zm031nBFjKjA1URp
+	te0Tkwm8tZpOaM5oP
+X-Received: by 2002:a05:622a:6109:b0:4d8:67fb:4185 with SMTP id d75a77b69052e-4da47c057e2mr219780191cf.15.1759240643399;
+        Tue, 30 Sep 2025 06:57:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH4ERJkEqmQ7ePM8VRv3iVEwz8JDqKErLEOLUqEtBj8xKLCAQv4aJ0I8B9MMJsvQOQqPyV4aA==
+X-Received: by 2002:a05:622a:6109:b0:4d8:67fb:4185 with SMTP id d75a77b69052e-4da47c057e2mr219779651cf.15.1759240642510;
+        Tue, 30 Sep 2025 06:57:22 -0700 (PDT)
+Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-80175168d7dsm95307126d6.68.2025.09.30.06.57.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Sep 2025 06:57:21 -0700 (PDT)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <4d49ad5a-878a-44a1-a4d0-459e56924581@redhat.com>
+Date: Tue, 30 Sep 2025 09:57:20 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.54.3 (3.54.3-2.fc41) 
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=Se/6t/Ru c=1 sm=1 tr=0 ts=68dbe1b7 cx=c_pps
- a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=i0EeH86SAAAA:8
- a=20KFwNOVAAAA:8 a=IwvpNu1LYuw_ebdDn2kA:9 a=QEXdDO2ut3YA:10
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAxMCBTYWx0ZWRfX+/V5A4iDfgTZ
- JdAK48//JjlhZxfwDPDbXj59pnMIGkkGrLEANbNClXe+LwIhuyVXVrga0s49F2B1CycVpad92AC
- O9H7ZQ+gRjWGnFU6nyGr8j1rtPFr5Ymlk8T6evtMzQOLNviYV+tCi3ciBpxpwa2DmSZDtVvRzou
- nfgftcTLJivX/BwVzzTBepT4Zzbs1FKyx3IGeHdjh5HYNatwuPzSX5gBNt4S/sGkyLsXLd154wA
- Jxnuetn/cyNcMmRxRjVOKpx3WjYJHoK7l/MifvoXSEnRHtu5ezCM83J4oIH0marSGsJ89jz/9GP
- 8YmahdF37us/0LE8W4JbVsXQFH+pQHTKdLE9WZzbIPKKxKVsRR4FBsmHtTGmx5slKZ4YR6cbYm8
- lFyKo5fN6R7U2/fJ2h0I/as7SPXqXw==
-X-Proofpoint-GUID: BPmjQx43MbM_zqqdAXGY0s0-lHnc55ah
-X-Proofpoint-ORIG-GUID: RAKkLfJ8ze8ZUMi4wI7P9nwzksqjxj-k
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-30_03,2025-09-29_04,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 malwarescore=0 suspectscore=0 bulkscore=0 lowpriorityscore=0
- clxscore=1011 phishscore=0 priorityscore=1501 adultscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270010
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next RFC 0/2] cpuset: Add cpuset.mems.spread_page to
+ cgroup v2
+To: Cai Xinchen <caixinchen1@huawei.com>, llong@redhat.com, tj@kernel.org,
+ hannes@cmpxchg.org, mkoutny@suse.com
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lujialin4@huawei.com
+References: <20250930093552.2842885-1-caixinchen1@huawei.com>
+Content-Language: en-US
+In-Reply-To: <20250930093552.2842885-1-caixinchen1@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sun, 2025-09-28 at 11:03 +0800, Coiby Xu wrote:
-> Currently, for any IMA policy that requires appraisal for kernel modules
-> e.g. ima_policy=3Dsecure_boot, PowerPC architecture specific policy,
-> booting will fail because IMA will reject a kernel module which will
-> be decompressed in the kernel space and then have its signature
-> verified.
->=20
-> This happens because when in-kernel module decompression
-> (CONFIG_MODULE_DECOMPRESS) is enabled, kmod will use finit_module
-> syscall instead of init_module to load a module. And IMA mandates IMA
-> xattr verification for finit_module unless appraise_type=3Dimasig|modsig
-> is specified in the rule.  However currently initramfs doesn't support
-> xattr. And IMA rule "func=3DMODULE_CHECK appraise_type=3Dimasig|modsig"
-> doesn't work either because IMA will treat to-be-decompressed kernel
-> module as not having module signature as it can't decompress kernel
-> module to check if signature exists.
->=20
-> So fall back to default kernel module signature verification when we have
-> no way to verify IMA xattr.
->=20
-> Reported-by: Karel Srot <ksrot@redhat.com>
-> Signed-off-by: Coiby Xu <coxu@redhat.com>
-> ---
-> Another approach will be to make IMA decompress the kernel module to
-> check the signature. This requires refactoring kernel module code to
-> make the in-kernel module decompressing feature modular and seemingly
-> more efforts are needed. A second disadvantage is it feels
-> counter-intuitive to verify the same kernel module signature twice. And
-> we still need to make ima_policy=3Dsecure_boot allow verifying appended
-> module signature.
->=20
-> Anyways, I'm open to suggestions and can try the latter approach if
-> there are some benefits I'm not aware of or a better approach.
+On 9/30/25 5:35 AM, Cai Xinchen wrote:
+> I encountered a scenario where a machine with 1.5TB of memory,
+> while testing the Spark TPCDS 3TB dataset, experienced a significant
+> concentration of page cache usage on one of the NUMA nodes.
+> I discovered that the DataNode process had requested a large amount
+> of page cache. most of the page cache was concentrated in one NUMA node,
+> ultimately leading to the exhaustion of memory in that NUMA node.
+> At this point, all other processes in that NUMA node have to alloc
+> memory across NUMA nodes, or even across sockets. This eventually
+> caused a degradation in the end-to-end performance of the Spark test.
+>
+> I do not want to restart the Spark DataNode service during business
+> operations. This issue can be resolved by migrating the DataNode into
+> a cpuset, dropping the cache, and setting cpuset.memory_spread_page to
+> allow it to evenly request memory. The core business threads could still
+> allocate local numa memory. After using cpuset.memory_spread_page, the
+> performance in the tpcds-99 test is improved by 2%.
+>
+> The key point is that the even distribution of page cache within the
+> DataNode process (rather than the current NUMA distribution) does not
+> significantly affect end-to-end performance. However, the allocation
+> of core business processes, such as Executors, to the same NUMA node
+> does have a noticeable impact on end-to-end performance.
+>
+> However, I found that cgroup v2 does not provide this interface. I
+> believe this interface still holds value in addressing issues caused
+> by uneven distribution of page cache allocation among process groups.
+>
+> Thus I add cpuset.mems.spread_page to cpuset v2 interface.
+>
+> Cai Xinchen (2):
+>    cpuset: Move cpuset1_update_spread_flag to cpuset
+>    cpuset: Add spread_page interface to cpuset v2
+>
+>   kernel/cgroup/cpuset-internal.h |  6 ++--
+>   kernel/cgroup/cpuset-v1.c       | 25 +----------------
+>   kernel/cgroup/cpuset.c          | 49 ++++++++++++++++++++++++++++++++-
+>   3 files changed, 51 insertions(+), 29 deletions(-)
+>
+The spread_page flag is only used in filemap_alloc_folio_noprof() of 
+mm/filemap.c. By setting it, the code will attempt to spread the 
+folio/page allocation across different nodes. As noted by Michal,  it is 
+more or less equivalent to setting a MPOL_INTERLEAVE memory policy with 
+set_mempolicy(2) with the node mask of cpuset.mems. Using 
+set_mempolicy(2) has a finer task granularity instead of all the tasks 
+within a cpuset. Of course, this requires making changes to the 
+application instead of making change to external cgroup control file.
 
-Coiby, there are multiple issues being discussed here.  Before deciding on =
-an
-appropriate solution, let's frame the issues(s) properly.
+cpusets.mems.spread_page is a legacy interface, we need good 
+justification if we want to enable it in cgroup v2.
 
-1. The finit_module syscall eventually calls init_module_from_file() to rea=
-d the
-module into memory and then decompress it.  The problem is that the kernel
-module signature verification occurs during the kernel_read_file(), before =
-the
-kernel module is decompressed.  Thus, the appended kernel module signature
-cannot be verified.
-
-2. CPIO doesn't have xattr support. There were multiple attempts at includi=
-ng
-xattrs in CPIO, but none were upstreamed [1].  If file signatures stored in
-security.ima were available in the initramfs, then finit_module() could ver=
-ify
-them, as opposed to the appended kernel module signature.
-
-3. The issues described above are generic, not limited to Power.  When
-CONFIG_MODULE_SIG is configured, the arch specific IMA policy rules do not
-include an "appraise func=3DMODULE_CHECK".
-
-4. Unlike the arch specific IMA policy rules, the built-in secure boot IMA
-policy, specified on the boot command line as "ima_policy=3Dsecure_boot", a=
-lways
-enforces the IMA signature stored in security.ima.
-
-Partial solutions without kernel changes:
-- Enable CONFIG_MODULE_SIG  (Doesn't solve 4)
-- Disable kernel module compression.
-
-Complete solution:
-- Pick up and upstream Roberto Sassu's last version of initramfs support [1=
-].
-- Somehow prevent kernel_read_file() from failing when the kernel_read_file=
-_id
-enumeration is READING_MODULE and the kernel module is compressed.  The cha=
-nge
-might be limited to ima_post_read_file().
-
-thanks,
-
-Mimi
-
-[1] [PATCH v4 0/3] initramfs: add support for xattrs in the initial ram dis=
-k
-https://lore.kernel.org/linux-fsdevel/20190523121803.21638-1-roberto.sassu@=
-huawei.com/
-
+Cheers,
+Longman
 
 
