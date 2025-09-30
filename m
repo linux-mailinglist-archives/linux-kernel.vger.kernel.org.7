@@ -1,250 +1,249 @@
-Return-Path: <linux-kernel+bounces-837868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82C25BADE91
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:32:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD752BADEB2
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:34:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34EE4380A68
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 15:32:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 570313B31BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 15:34:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5018260569;
-	Tue, 30 Sep 2025 15:32:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E17A248F4D;
+	Tue, 30 Sep 2025 15:34:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J+gfjJse"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rxg8MhaW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 115621EB5E3
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 15:32:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B91B232395
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 15:34:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759246358; cv=none; b=un2rqtckqGFErspP9xHsis2Wk3RNNEC8/XHalbHlagCSqlZcjKsd2H6DSXBEwW4w6w3eJTp3of3XYj6eU5SQxyTl0qatnq+NRQBM1DG9jiM+aQvuw1T07H6avoWbFZVObcSi4yjMeO1OSbz8vGmymGoeLBBSr36bfEG0UUiIweo=
+	t=1759246456; cv=none; b=I4iSsTJZjIZzQXGm9WFHVZifM3roFUR9Q+VZG/EogmZPrHcozvbTZJMdrreq0gpE4xoFKLeraUvesvrq4Hn368zbfIRLOR49RKJnkCJHtYnyStviVzzMjTOh8v8UMMphcVvn/LVLu7SQAEdpM0e6D8gv0Vj+9es/3fnSZudekIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759246358; c=relaxed/simple;
-	bh=jD1z9xUdvcP5NaUIjCUaH3eFtGnRzHPhUvV9kshYXXo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dzGBVRm2gUTmTGWtz8oWsco03WS2nQxee6Na9jBHWzEH06xTUJqb/buSfKLz82483yRK5KDkXV2CC+U79ouGS8YjFZl7A0RnlUFtcfhofEbk7YyBIAHhK4g7G4WAnN6/a+ZNPHVguCMKu5YXpZhqOLCTew5onJMJ7fXICzlpVY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J+gfjJse; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759246353;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=dV+ycWrFzskPSnB+QMwZi+hj6ppbWIqN7KMrO32+6zE=;
-	b=J+gfjJseVn01cBY2nmKtMAcX1yuJfEHEA3tSh4wfgbz36BNLfGjEYdtHbLOrYgM/AzcrzD
-	aKgG1nwKaTcqqe1IqaF7+5FMTxjuwsWpJQUD6hwlvw2ykeXdmT4GKsdfthIVuVLQ5ZEzKI
-	s6+cnv+B+XRl0YKBZbIK69KVoSI53I4=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-610-nRzzuJwlMXaaT5NY9EWheQ-1; Tue, 30 Sep 2025 11:32:32 -0400
-X-MC-Unique: nRzzuJwlMXaaT5NY9EWheQ-1
-X-Mimecast-MFC-AGG-ID: nRzzuJwlMXaaT5NY9EWheQ_1759246352
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-792f273fd58so10767656d6.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 08:32:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759246352; x=1759851152;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dV+ycWrFzskPSnB+QMwZi+hj6ppbWIqN7KMrO32+6zE=;
-        b=PZthcQNjswsr/JsSF6R6iNeDds+5Z9pk/AzStZrVFAk292fJp/qpvrIW2XqwKmQOdJ
-         lrf0RL1mfp27hE7mQXn2Mzc+XXSPllW+c9RsumzKgE99KQpo3XETJGsU8x5hHzZhzgts
-         K2ImsfVGRJW4MJl1PPzhkDYWldnh1/gtcPKYnqqVJyW3ECqD4APKDa9pJxGWrgVi0V28
-         9+duizgmDyI2C3DZR2UcjV9A2lFsxxp0+6OrTg7gmnsO+rNhVjhDfLm0hhmWgiugmR0M
-         QTIjDoX6d1HV+k4LxuUHeDnHZCYLqTGdvd+eNk+LHfdlUM5oIF06TpigyiEQT818ye+7
-         lYEg==
-X-Forwarded-Encrypted: i=1; AJvYcCXv4jbdk17SlPsWnisQ2NW/2L8PQiEToI82z91Xbzc7EqniagQl52wyRh3nT33PB9NzygTfGQOz7xEbBfA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoZsIqY3+C7Of2AOuAB6NcIyFUKlG6/uK0P7Kzg9/82q2sRNGs
-	4VacgzEa7utySHN/jYn/JQmy3AzzdTBQHoEA7A4Li4vjku1t/hHpN1UnSDovnCYIRTDoJ444lIR
-	3PwV0MH6vRGkzXGmFRKHE0OGDyceWoU9Kj4zEoetfH0sttvBl/C7bLlMGaPUsYqJzSw==
-X-Gm-Gg: ASbGncuvYxtCwADG+9wrRTW5rWlSTRfdWTeu5ioZcq04Cfm1IJQ3bMRgkqKYscV2yuI
-	W2crrN/3zFlh/afpMpA5udrXtjaEq8xSaWr/r1xtLYPgvEkojEaRFmJzgO2JUmALDT1mQtIu/zQ
-	PJWu8JuqVlrWy0/+i7FH9UTxus36QYj9inwRa8DnjJCu9LscKFHqqbtLfmq1OgP+VuUx+Nr8AOE
-	mSfDTiStJBJqyGKu7ZdXPVcb2XPV8QtbPhOHcYcWGI+OZrgJ7V/fV5MglYn4wOuBtYZdGMq0C5Q
-	xRoJhkQ2bMWYkGXyPPAklw2ucut2poI5qrZ7tC6BVZRoEExSLd4Uw1XssrGNH9s1he1u3pZwm+J
-	6JcoMx2tt
-X-Received: by 2002:a05:6214:f01:b0:796:b86f:3eae with SMTP id 6a1803df08f44-873a5d20212mr2738716d6.36.1759246351753;
-        Tue, 30 Sep 2025 08:32:31 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IES/v4bj9W83pQGqcZwESU2U5EfK7XpZkH9/GTodnY1llP4rsL9omYr2EEEfFJNXwo1h08wLQ==
-X-Received: by 2002:a05:6214:f01:b0:796:b86f:3eae with SMTP id 6a1803df08f44-873a5d20212mr2737916d6.36.1759246350904;
-        Tue, 30 Sep 2025 08:32:30 -0700 (PDT)
-Received: from [192.168.3.141] (tmo-080-144.customers.d1-online.com. [80.187.80.144])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-8013cdf14ddsm97613996d6.25.2025.09.30.08.32.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Sep 2025 08:32:30 -0700 (PDT)
-Message-ID: <85f852f9-8577-4230-adc7-c52e7f479454@redhat.com>
-Date: Tue, 30 Sep 2025 17:32:25 +0200
+	s=arc-20240116; t=1759246456; c=relaxed/simple;
+	bh=umIFmn2UelsmL37RXGn4vEG672DxR7sEUbTuGaU3W5g=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ddvR641zulihuC4sXqB4dLCs+8wafeBYxtrRfhzmtxuqCuy2xMGYwZjfLaHw8Wx/GSWcu+zD2KpFGjt2d8ui0JQjbp8/W5E03YInuQoSXdJgcdBTVcpoxaIoDQeRxxpB+qGmWpfz2Zj2kxufrPdTAqaIiWFj7W3+6QaYKuYS+y0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rxg8MhaW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75977C4CEF0;
+	Tue, 30 Sep 2025 15:34:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759246456;
+	bh=umIFmn2UelsmL37RXGn4vEG672DxR7sEUbTuGaU3W5g=;
+	h=Date:From:To:Cc:Subject:From;
+	b=rxg8MhaWmC0icav0hmMSOOKKr5PEH24hlWqC1Gb55BR79ofk0uzXwBdqQxRA6F9MO
+	 az0yQfwVcX+IA1GTy3PFtAp8lFDoLGUvYmuWp81iLmIqQ0FiR9YEBsvNctuazKXYD+
+	 7LfumnvYjMCu/1Mo22RY/kkxvrXWhzV7XY73azR+ggN7ihZwbmdKtQGYwW4BtYD/Aq
+	 ZNIJg0WgUQbPl1orWXeRyL+or+o/1FLAizOqfmkahxUfn2fMZYkMtA2WDYj+CFMtLq
+	 Q5wSrLcm2mTpLIkMuYWLHRxPpwvY1w1kQigSqKvnpkuhS35LweLuivQWn2TF5IAc9A
+	 H1SnKm8CFaJbw==
+Date: Tue, 30 Sep 2025 17:34:12 +0200
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Jiri Kosina <jikos@kernel.org>, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] HID for 6.18 merge window
+Message-ID: <6avar2v2wzvery2ptlynwdlf43octlt57ue32kykwjqn23kemp@j7vmslpbqwxt>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mm/ksm: fix flag-dropping behavior in ksm_madvise
-To: Jakub Acs <acsjakub@amazon.de>, linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>, Xu Xin <xu.xin16@zte.com.cn>,
- Chengming Zhou <chengming.zhou@linux.dev>, Peter Xu <peterx@redhat.com>,
- Axel Rasmussen <axelrasmussen@google.com>, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250930130023.60106-1-acsjakub@amazon.de>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <20250930130023.60106-1-acsjakub@amazon.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-On 30.09.25 15:00, Jakub Acs wrote:
-> syzkaller discovered the following crash: (kernel BUG)
-> 
-> [   44.607039] ------------[ cut here ]------------
-> [   44.607422] kernel BUG at mm/userfaultfd.c:2067!
-> [   44.608148] Oops: invalid opcode: 0000 [#1] SMP DEBUG_PAGEALLOC KASAN NOPTI
-> [   44.608814] CPU: 1 UID: 0 PID: 2475 Comm: reproducer Not tainted 6.16.0-rc6 #1 PREEMPT(none)
-> [   44.609635] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
-> [   44.610695] RIP: 0010:userfaultfd_release_all+0x3a8/0x460
-> 
-> <snip other registers, drop unreliable trace>
-> 
-> [   44.617726] Call Trace:
-> [   44.617926]  <TASK>
-> [   44.619284]  userfaultfd_release+0xef/0x1b0
-> [   44.620976]  __fput+0x3f9/0xb60
-> [   44.621240]  fput_close_sync+0x110/0x210
-> [   44.622222]  __x64_sys_close+0x8f/0x120
-> [   44.622530]  do_syscall_64+0x5b/0x2f0
-> [   44.622840]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> [   44.623244] RIP: 0033:0x7f365bb3f227
-> 
-> Kernel panics because it detects UFFD inconsistency during
-> userfaultfd_release_all(). Specifically, a VMA which has a valid pointer
-> to vma->vm_userfaultfd_ctx, but no UFFD flags in vma->vm_flags.
-> 
-> The inconsistency is caused in ksm_madvise(): when user calls madvise()
-> with MADV_UNMEARGEABLE on a VMA that is registered for UFFD in MINOR
-> mode, it accidentally clears all flags stored in the upper 32 bits of
-> vma->vm_flags.
-> 
-> Assuming x86_64 kernel build, unsigned long is 64-bit and unsigned int
-> and int are 32-bit wide. This setup causes the following mishap during
-> the &= ~VM_MERGEABLE assignment.
-> 
-> VM_MERGEABLE is a 32-bit constant of type unsigned int, 0x8000'0000.
-> After ~ is applied, it becomes 0x7fff'ffff unsigned int, which is then
-> promoted to unsigned long before the & operation. This promotion fills
-> upper 32 bits with leading 0s, as we're doing unsigned conversion (and
-> even for a signed conversion, this wouldn't help as the leading bit is
-> 0). & operation thus ends up AND-ing vm_flags with 0x0000'0000'7fff'ffff
-> instead of intended 0xffff'ffff'7fff'ffff and hence accidentally clears
-> the upper 32-bits of its value.
-> 
-> Fix it by changing `VM_MERGEABLE` constant to unsigned long. Modify all
-> other VM_* flags constants for consistency.
-> 
-> Note: other VM_* flags are not affected:
-> This only happens to the VM_MERGEABLE flag, as the other VM_* flags are
-> all constants of type int and after ~ operation, they end up with
-> leading 1 and are thus converted to unsigned long with leading 1s.
-> 
-> Note 2:
-> After commit 31defc3b01d9 ("userfaultfd: remove (VM_)BUG_ON()s"), this is
-> no longer a kernel BUG, but a WARNING at the same place:
-> 
-> [   45.595973] WARNING: CPU: 1 PID: 2474 at mm/userfaultfd.c:2067
-> 
-> but the root-cause (flag-drop) remains the same.
-> 
-> Fixes: 7677f7fd8be76 ("userfaultfd: add minor fault registration mode")
-> Signed-off-by: Jakub Acs <acsjakub@amazon.de>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: Xu Xin <xu.xin16@zte.com.cn>
-> Cc: Chengming Zhou <chengming.zhou@linux.dev>
-> Cc: Peter Xu <peterx@redhat.com>
-> Cc: Axel Rasmussen <axelrasmussen@google.com>
-> Cc: linux-mm@kvack.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: stable@vger.kernel.org
-> ---
+Linus,
 
-If we want a smaller patch for easier backporting, we could split off 
-the VM_MERGEABLE change into a separate patch and do all the other ones 
-for consistency in another
+please pull from
 
-Reading what we do VM_HIGH_ARCH_BIT_* , we use BIT(), which does
+  git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git tags/hid-for-linus-2025093001
 
-	#define BIT(nr)		(UL(1) << (nr))
+to receive HID subsystem queue for 6.17 merge window, namely:
 
-So likely we should just clean it all up an use e.g.,
+=====
+- implementation of haptic touchpad support (Angela Czubak and Jonathan
+  Denose)
 
-#define VM_NONE		0
-#define VM_READ		BIT(0)
-#define VM_WRITE	BIT(1)
+- add support for audio jack handling on DualSense Playstation
+  controllers (Cristian Ciocaltea)
 
-etc.
+- allow HID-BPF to rebind a driver to hid-multitouch (Benjamin
+  Tissoires)
 
-So likely it's best to do in a first fix
-	#define VM_MERGEABLE	BIT(31)
+- rework hidraw ioctls to make them safer (and tested) (Benjamin
+  Tissoires)
 
-And in a follow-up cleanup patch convert all the other ones.
+- various PIDFF and universal-PIDFF fixes/improvements (Tomasz Pakuła)
 
-Sorry for not thinking about BIT() earlier
+- better configuration of Intel QuickI2C through ACPI (Xinpeng Sun)
 
--- 
-Cheers
+- other assorted cleanups and fixes
+=====
 
-David / dhildenb
+Thanks.
 
+----------------------------------------------------------------
+Amit Chaudhari (1):
+      HID: asus: add support for missing PX series fn keys
+
+Angela Czubak (11):
+      HID: add haptics page defines
+      Input: add FF_HAPTIC effect type
+      Input: add INPUT_PROP_HAPTIC_TOUCHPAD
+      HID: haptic: introduce hid_haptic_device
+      HID: input: allow mapping of haptic output
+      HID: haptic: initialize haptic device
+      HID: input: calculate resolution for pressure
+      HID: haptic: add functions handling events
+      Input: MT - add INPUT_MT_TOTAL_FORCE flags
+      HID: haptic: add hid_haptic_switch_mode
+      HID: multitouch: add haptic multitouch support
+
+Antheas Kapenekakis (1):
+      HID: asus: add Z13 folio to generic group for multitouch to work
+
+Basavaraj Natikar (1):
+      HID: amd_sfh: Add sync across amd sfh work functions
+
+Benjamin Tissoires (18):
+      HID: core: factor out hid_set_group()
+      HID: bpf: rescan the device for the group after a load/unload
+      selftests/hid: update vmtest.sh for virtme-ng
+      selftests/hid: hidraw: add more coverage for hidraw ioctls
+      selftests/hid: hidraw: forge wrong ioctls and tests them
+      HID: hidraw: tighten ioctl command parsing
+      Merge branch 'for-6.18/core' into for-linus
+      Merge branch 'for-6.18/hidraw' into for-linus
+      Merge branch 'for-6.18/i2c-hid' into for-linus
+      Merge branch 'for-6.18/intel-ish-ipc' into for-linus
+      Merge branch 'for-6.18/haptic' into for-linus
+      Merge branch 'for-6.18/asus' into for-linus
+      Merge branch 'for-6.18/pidff' into for-linus
+      Merge branch 'for-6.18/playstation' into for-linus
+      Merge branch 'for-6.18/steelseries' into for-linus
+      Merge branch 'for-6.18/uclogic' into for-linus
+      Merge branch 'for-6.18/selftests' into for-linus
+      Merge branch 'for-6.18/intel-thc-hid' into for-linus
+
+Cristian Ciocaltea (14):
+      HID: playstation: Make use of bitfield macros
+      HID: playstation: Add spaces around arithmetic operators
+      HID: playstation: Simplify locking with guard() and scoped_guard()
+      HID: playstation: Replace uint{32,16,8}_t with u{32,16,8}
+      HID: playstation: Correct spelling in comment sections
+      HID: playstation: Fix all alignment and line length issues
+      HID: playstation: Document spinlock_t usage
+      HID: playstation: Prefer kzalloc(sizeof(*buf)...)
+      HID: playstation: Redefine DualSense input report status field
+      HID: playstation: Support DualSense audio jack hotplug detection
+      HID: playstation: Support DualSense audio jack event reporting
+      HID: playstation: Update SP preamp gain comment line
+      HID: playstation: Silence sparse warnings for locking context imbalances
+      HID: playstation: Switch to scoped_guard() in {dualsense|dualshock4}_output_worker()
+
+Janne Grunau (1):
+      HID: lenovo: Use KEY_PERFORMANCE instead of ACPI's platform_profile
+
+Jeongjun Park (1):
+      HID: steelseries: refactor probe() and remove()
+
+Jiri Kosina (3):
+      HID: steelseries: Fix STEELSERIES_SRWS1 handling in steelseries_remove()
+      Merge commit '89c5214639294' into for-6.17/upstream-fixes
+      Merge remote-tracking branch 'origin' into for-6.18/intel-thc-hid
+
+Liu Song (2):
+      HID: Intel-thc-hid: Intel-thc: Use str_true_false() helper
+      HID: uclogic: Use str_true_false() helper
+
+Mario Limonciello (AMD) (1):
+      HID: i2c-hid: Resolve touchpad issues on Dell systems during S4
+
+Rahul Rameshbabu (1):
+      HID: core: Change hid_driver to use a const char* for name
+
+Sébastien Szymanski (1):
+      HID: cp2112: fix setter callbacks return value
+
+Tomasz Pakuła (18):
+      HID: pidff: Use direction fix only for conditional effects
+      HID: pidff: Remove unhelpful pidff_set_actuators helper
+      HID: pidff: Remove unneeded debug
+      HID: pidff: Use ARRAY_SIZE macro instead of sizeof
+      HID: pidff: Treat PID_REQUIRED_REPORTS as count, not max
+      HID: pidff: Better quirk assigment when searching for fields
+      HID: pidff: Simplify HID field/usage searching logic
+      HID: pidff: Add support for AXES_ENABLE field
+      HID: pidff: Update debug messages
+      HID: pidff: Rework pidff_upload_effect
+      HID: pidff: Separate check for infinite duration
+      HID: pidff: PERMISSIVE_CONTROL quirk autodetection
+      HID: pidff: Remove Anssi's email address from info msg
+      HID: pidff: Define all cardinal directions
+      HID: pidff: clang-format pass
+      HID: universal-pidff: clang-format pass
+      HID: pidff: Reduce PID_EFFECT_OPERATION spam
+      HID: pidff: Fix possible null pointer dereference
+
+Xinpeng Sun (3):
+      HID: intel-thc-hid: intel-quicki2c: Add WCL Device IDs
+      HID: intel-thc-hid: intel-quickspi: Add WCL Device IDs
+      HID: intel-thc-hid: intel-quicki2c: support ACPI config for advanced features
+
+Zhang Lixu (1):
+      HID: intel-ish-ipc: Remove redundant ready check after timeout function
+
+ Documentation/input/event-codes.rst                     |   14 +
+ drivers/hid/Kconfig                                     |   13 +-
+ drivers/hid/Makefile                                    |    1 +
+ drivers/hid/amd-sfh-hid/amd_sfh_client.c                |   12 +-
+ drivers/hid/amd-sfh-hid/amd_sfh_common.h                |    3 +
+ drivers/hid/amd-sfh-hid/amd_sfh_pcie.c                  |    4 +
+ drivers/hid/hid-asus.c                                  |    9 +-
+ drivers/hid/hid-core.c                                  |   44 ++-
+ drivers/hid/hid-cp2112.c                                |   10 +-
+ drivers/hid/hid-haptic.c                                |  580 +++++++++++++++++++++++++++++++++
+ drivers/hid/hid-haptic.h                                |  127 ++++++++
+ drivers/hid/hid-ids.h                                   |    4 +-
+ drivers/hid/hid-input.c                                 |   18 +-
+ drivers/hid/hid-lenovo.c                                |    4 +-
+ drivers/hid/hid-multitouch.c                            |   47 +++
+ drivers/hid/hid-playstation.c                           | 1073 ++++++++++++++++++++++++++++++++++---------------------------
+ drivers/hid/hid-quirks.c                                |    2 +
+ drivers/hid/hid-steelseries.c                           |  108 +++----
+ drivers/hid/hid-uclogic-params.c                        |   10 +-
+ drivers/hid/hid-universal-pidff.c                       |   57 ++--
+ drivers/hid/hidraw.c                                    |  224 +++++++------
+ drivers/hid/i2c-hid/i2c-hid-acpi.c                      |    8 +
+ drivers/hid/i2c-hid/i2c-hid-core.c                      |   28 +-
+ drivers/hid/i2c-hid/i2c-hid.h                           |    2 +
+ drivers/hid/intel-ish-hid/ipc/ipc.c                     |   17 +-
+ drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c |   41 ++-
+ drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-dev.h |   26 +-
+ drivers/hid/intel-thc-hid/intel-quickspi/pci-quickspi.c |    2 +
+ drivers/hid/intel-thc-hid/intel-quickspi/quickspi-dev.h |    2 +
+ drivers/hid/intel-thc-hid/intel-thc/intel-thc-dev.c     |    3 +-
+ drivers/hid/usbhid/hid-pidff.c                          |  716 ++++++++++++++++++++++++-----------------
+ drivers/hid/usbhid/hid-pidff.h                          |    2 +-
+ drivers/input/input-mt.c                                |   14 +-
+ include/linux/hid.h                                     |   31 +-
+ include/linux/input/mt.h                                |    1 +
+ include/uapi/linux/hidraw.h                             |    2 +
+ include/uapi/linux/input-event-codes.h                  |    1 +
+ include/uapi/linux/input.h                              |   22 +-
+ tools/testing/selftests/hid/hid_common.h                |    6 +
+ tools/testing/selftests/hid/hidraw.c                    |  473 +++++++++++++++++++++++++++
+ tools/testing/selftests/hid/vmtest.sh                   |  668 ++++++++++++++++++++++++--------------
+ 41 files changed, 3150 insertions(+), 1279 deletions(-)
+ create mode 100644 drivers/hid/hid-haptic.c
+ create mode 100644 drivers/hid/hid-haptic.h
+
+--
+
+Cheers,
+Benjamin
 
