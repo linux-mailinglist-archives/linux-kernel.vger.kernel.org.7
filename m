@@ -1,280 +1,378 @@
-Return-Path: <linux-kernel+bounces-837910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11CC5BAE06E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 18:14:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABD9EBAE093
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 18:27:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B93316E513
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 16:14:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87BB41943A3B
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 16:27:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C78E309DCC;
-	Tue, 30 Sep 2025 16:13:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86EF1238142;
+	Tue, 30 Sep 2025 16:27:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A1++i4u2"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AbE+arLF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF57A4501A;
-	Tue, 30 Sep 2025 16:13:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DF2ACA4E;
+	Tue, 30 Sep 2025 16:27:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759248833; cv=none; b=uzNuJarV/WkxHY8U6nGanWSaROnF5hCrmDCdbrX8UzrsuOZSYkWYGm358QAx99qZhaEfaAYE9AuKQM1O5GCP6XMrhWnU6BqMCNbBCbEdDWjwt1i901FRP3l6xbSNBl/DJIUZNYV2rNDl5lT1yl3yBdTMMlBjoK89LTMg/vn4syk=
+	t=1759249623; cv=none; b=RMfK0nUUW8gkP45aFqc+cttqtT7oh0FFTp0PG/toZ3afXM6HjKYoUHNbL6kYou8ANvHTVDhyXdiNdHmm00pMsLLMHuz8YsWcXYah0ceveg1RxeJYq3tPE2revFJepX3879d9N1D2UgZLLwWjjCMQMD0rKmuCsbsDc06ib0bCuyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759248833; c=relaxed/simple;
-	bh=5+T6dQJkhqnXsd8OU+/4OXe2jUb92hyssTPkFheuZf4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hL9tWOI+zXOh24k/ac1z4pc4KV1yUjGSUfxDas9lhFFAzRyXUfmUNBDI2haio3RmfFkjISHhLgrz8BCvbkQQIFp49pyBZN48h41b6Zstm0CYHj9JN2e2fnvbWQV6+gHDZR00ejd8vFuZmvXJGLPAvwMYqHgxNoA6OyEHCuyqHVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A1++i4u2; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759248832; x=1790784832;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=5+T6dQJkhqnXsd8OU+/4OXe2jUb92hyssTPkFheuZf4=;
-  b=A1++i4u2CEy5eilh1uE0ELW/7qtCStAT8pGcQ8WmU5Wd9N/jgvzz3Qdj
-   nKXzkodmcqD2JDo++UcTLPiGcvonkNoaxhQdhxcm1lermEe7EBUffj3Gb
-   5cUwUsrrLr/mZKEeKZUzM3tSpUzCKeMV1Lto8atGJdLMA0JwDYmpmrvf0
-   JOxcNkoUhrImr+XOAc2lFbMAEUM4fT8tGCmllq3mjFK8Cy+TKw4X51dBn
-   VcefeUl1SfTPafoA2Adp0CB6m0I1Ls0wSscWoWtf2LwhYAe/KA38o/Qh6
-   PyqK2mgX9paGPtNbUCMdat/fkXKSDO7Me4EcAAKds+JYcoS2JlqkxpAeH
-   g==;
-X-CSE-ConnectionGUID: q3f08OtGTICoqO1lIrzQlQ==
-X-CSE-MsgGUID: OtYRpGkKRwKh49TD6mnyrg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11569"; a="79162120"
-X-IronPort-AV: E=Sophos;i="6.18,304,1751266800"; 
-   d="scan'208";a="79162120"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2025 09:13:50 -0700
-X-CSE-ConnectionGUID: LZTaY9RiSya9cIQd0xvE+w==
-X-CSE-MsgGUID: k5JAID56SiKd4RsivZBBgw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,304,1751266800"; 
-   d="scan'208";a="178975308"
-Received: from gabaabhi-mobl2.amr.corp.intel.com (HELO [10.125.109.162]) ([10.125.109.162])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2025 09:13:48 -0700
-Message-ID: <5706b8ca-6046-4f96-a93b-8dd677494352@intel.com>
-Date: Tue, 30 Sep 2025 09:13:46 -0700
+	s=arc-20240116; t=1759249623; c=relaxed/simple;
+	bh=QpX7H1glCEew6/fXBPAjjPputLtXSY15ADgSTrv3Ggk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PjRb/22i1bEPtGfdFS4kiL6+xWrsjHj6AsawQXL6Mu/rQrHEcsqSUYwisMYwIDnIRwi8WVLtFFcluboOw7ocgqh2zV8ad0v7kxZSfApnNTI/KO3Td/ufxYeYYaAxguHzFK0+3XSVld0FP3eTN2hUjiExU151QVTaXbrYGFN0cno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AbE+arLF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 651EEC4CEF0;
+	Tue, 30 Sep 2025 16:27:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759249622;
+	bh=QpX7H1glCEew6/fXBPAjjPputLtXSY15ADgSTrv3Ggk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AbE+arLFxdFRQPdarLxZG1EKUgWsC6Hvo3w1QcFacRZXRS3wMp4rM84HlmDKi+ZkT
+	 o2JRd2QqpUt1VBrYbZkWc15WmYNLBilcH3bzyS13WIMWvqa30ohUjjW371Chg9Moob
+	 8iVwcLU4mWVtFPNVTpymAK/vIfev3KZ3LGUTbrO+kjC8h9tLk63Ty+qWBA1sL5LnVo
+	 7rO1rq7zNy5IoFG9B1MJc4/SFYmnWBM8vtYkSWpw2mZ7ty0wOFkBUKINDyR4clT273
+	 wHn2AMjKFecP74IF3NGNVsd+7JEuuYtHy7E9ovb4+LNlC0/lG8by+j+wSJ0kl/pUDa
+	 9s13TV/yicMtA==
+Date: Tue, 30 Sep 2025 13:26:58 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: "Falcon, Thomas" <thomas.falcon@intel.com>
+Cc: "alexander.shishkin@linux.intel.com" <alexander.shishkin@linux.intel.com>,
+	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
+	"kan.liang@linux.intel.com" <kan.liang@linux.intel.com>,
+	"afaerber@suse.de" <afaerber@suse.de>,
+	"peterz@infradead.org" <peterz@infradead.org>,
+	"mingo@redhat.com" <mingo@redhat.com>,
+	"Hunter, Adrian" <adrian.hunter@intel.com>,
+	"Biggers, Caleb" <caleb.biggers@intel.com>,
+	"namhyung@kernel.org" <namhyung@kernel.org>,
+	"Taylor, Perry" <perry.taylor@intel.com>,
+	"jolsa@kernel.org" <jolsa@kernel.org>,
+	"irogers@google.com" <irogers@google.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"mani@kernel.org" <mani@kernel.org>
+Subject: Re: [PATCH v2 03/10] perf vendor events intel: Update emeraldrapids
+ events to v1.20
+Message-ID: <aNwE0sAsRKoBNADw@x1>
+References: <20250925172736.960368-1-irogers@google.com>
+ <20250925172736.960368-4-irogers@google.com>
+ <5545b403a33b32c65ff1dc6e61d78861dbfdde90.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 23/25] CXL/PCI: Introduce CXL uncorrectable protocol
- error recovery
-To: "Bowman, Terry" <terry.bowman@amd.com>, dave@stgolabs.net,
- jonathan.cameron@huawei.com, alison.schofield@intel.com,
- dan.j.williams@intel.com, bhelgaas@google.com, shiju.jose@huawei.com,
- ming.li@zohomail.com, Smita.KoralahalliChannabasappa@amd.com,
- rrichter@amd.com, dan.carpenter@linaro.org,
- PradeepVineshReddy.Kodamati@amd.com, lukas@wunner.de,
- Benjamin.Cheatham@amd.com, sathyanarayanan.kuppuswamy@linux.intel.com,
- linux-cxl@vger.kernel.org, alucerop@amd.com, ira.weiny@intel.com
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-References: <20250925223440.3539069-1-terry.bowman@amd.com>
- <20250925223440.3539069-24-terry.bowman@amd.com>
- <d3d3ab84-8cdd-4386-82dd-de8149159985@intel.com>
- <a2b5d6f0-7f6a-4ac3-b302-73fb3c1a92b2@amd.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <a2b5d6f0-7f6a-4ac3-b302-73fb3c1a92b2@amd.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <5545b403a33b32c65ff1dc6e61d78861dbfdde90.camel@intel.com>
 
-
-
-On 9/30/25 7:38 AM, Bowman, Terry wrote:
+On Mon, Sep 29, 2025 at 11:45:20PM +0000, Falcon, Thomas wrote:
+> On Thu, 2025-09-25 at 10:27 -0700, Ian Rogers wrote:
+> > Update emeraldrapids events to v1.20 released in:
+> > https://github.com/intel/perfmon/commit/868b433955f3e94126420ee9374b9e0a6ce2d83e
+> > https://github.com/intel/perfmon/commit/43681e2817a960d06c5b8870cc6d3e5b7b6feeb9
+> > 
+> > Also adds cpu_cstate_c0 and cpu_cstate_c6 metrics.
+> > 
+> > Event json automatically generated by:
+> > https://github.com/intel/perfmon/blob/main/scripts/create_perf_json.py
+> > 
+> > Signed-off-by: Ian Rogers <irogers@google.com>
 > 
-> 
-> On 9/29/2025 7:26 PM, Dave Jiang wrote:
->>
->> On 9/25/25 3:34 PM, Terry Bowman wrote:
->>> Populate the cxl_do_recovery() function with uncorrectable protocol error (UCE)
->>> handling. Follow similar design as found in PCIe error driver,
->>> pcie_do_recovery(). One difference is cxl_do_recovery() will treat all UCEs
->>> as fatal with a kernel panic. This is to prevent corruption on CXL memory.
->>>
->>> Introduce cxl_walk_port(). Make this analogous to pci_walk_bridge() but walking
->>> CXL ports instead. This will iterate through the CXL topology from the
->>> erroring device through the downstream CXL Ports and Endpoints.
->>>
->>> Export pci_aer_clear_fatal_status() for CXL to use if a UCE is not found.
->>>
->>> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
->>>
->>> ---
->>>
->>> Changes in v11->v12:
->>> - Cleaned up port discovery in cxl_do_recovery() (Dave)
->>> - Added PCI_EXP_TYPE_RC_END to type check in cxl_report_error_detected()
->>>
->>> Changes in v10->v11:
->>> - pci_ers_merge_results() - Move to earlier patch
->>> ---
->>>  drivers/cxl/core/ras.c | 111 +++++++++++++++++++++++++++++++++++++++++
->>>  1 file changed, 111 insertions(+)
->>>
->>> diff --git a/drivers/cxl/core/ras.c b/drivers/cxl/core/ras.c
->>> index 7e8d63c32d72..45f92defca64 100644
->>> --- a/drivers/cxl/core/ras.c
->>> +++ b/drivers/cxl/core/ras.c
->>> @@ -443,8 +443,119 @@ void cxl_endpoint_port_init_ras(struct cxl_port *ep)
->>>  }
->>>  EXPORT_SYMBOL_NS_GPL(cxl_endpoint_port_init_ras, "CXL");
->>>  
->>> +static int cxl_report_error_detected(struct device *dev, void *data)
->>> +{
->>> +	struct pci_dev *pdev = to_pci_dev(dev);
->>> +	pci_ers_result_t vote, *result = data;
->>> +
->>> +	guard(device)(dev);
->>> +
->>> +	if ((pci_pcie_type(pdev) == PCI_EXP_TYPE_ENDPOINT) ||
->>> +	    (pci_pcie_type(pdev) == PCI_EXP_TYPE_RC_END)) {
->>> +		if (!cxl_pci_drv_bound(pdev))
->>> +			return 0;
->>> +
->>> +		vote = cxl_error_detected(dev);
->>> +	} else {
->>> +		vote = cxl_port_error_detected(dev);
->>> +	}
->>> +
->>> +	*result = pci_ers_merge_result(*result, vote);
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +static int match_port_by_parent_dport(struct device *dev, const void *dport_dev)
->>> +{
->>> +	struct cxl_port *port;
->>> +
->>> +	if (!is_cxl_port(dev))
->>> +		return 0;
->>> +
->>> +	port = to_cxl_port(dev);
->>> +
->>> +	return port->parent_dport->dport_dev == dport_dev;
->>> +}
->>> +
->>> +static void cxl_walk_port(struct device *port_dev,
->>> +			  int (*cb)(struct device *, void *),
->>> +			  void *userdata)
->>> +{
->>> +	struct cxl_dport *dport = NULL;
->>> +	struct cxl_port *port;
->>> +	unsigned long index;
->>> +
->>> +	if (!port_dev)
->>> +		return;
->>> +
->>> +	port = to_cxl_port(port_dev);
->>> +	if (port->uport_dev && dev_is_pci(port->uport_dev))
->>> +		cb(port->uport_dev, userdata);
->> Could use some comments on what is being walked. Also an explanation of what is happening here would be good.
-> Ok
->> If this is an endpoint port, this would be the PCI endpoint device.
->> If it's a switch port, then this is the upstream port.
->> If it's a root port, this is skipped.
->>
->>> +
->>> +	xa_for_each(&port->dports, index, dport)
->>> +	{
->>> +		struct device *child_port_dev __free(put_device) =
->>> +			bus_find_device(&cxl_bus_type, &port->dev, dport->dport_dev,
->>> +					match_port_by_parent_dport);
->>> +
->>> +		cb(dport->dport_dev, userdata);
->> This is going through all the downstream ports
->>> +
->>> +		cxl_walk_port(child_port_dev, cxl_report_error_detected, userdata);
->>> +	}
->>> +
->>> +	if (is_cxl_endpoint(port))
->>> +		cb(port->uport_dev->parent, userdata);
->> And this is the downstream parent port of the endpoint device
->>
->> Why not move this before the xa_for_each() and return early? endpoint ports don't have dports, no need to even try to run that block above.
-> Sure, I'll change that.
->> So in the current implementation,
->> 1. Endpoint. It checks the device, and then it checks the downstream parent port for errors. Is checking the parent dport necessary?
->> 2. Switch. It checks the upstream port, then it checks all the downstream ports for errors.
->> 3. Root port. It checks all the downstream ports for errors.
->> Is this the correct understanding of what this function does?
-> 
-> Yes. The ordering is different as you pointed out. I can move the endpointÂ 
-> check earlier with an early return.Â 
+> I found an Emerald Rapids to test this on. All metrics tests passed.
 
-As the endpoint, what is the reason the check the parent dport? Pardon my ignorance.
+I'll take this as a Tested-by for this specific patch, ok?
 
->>> +}
->>> +
->>>  static void cxl_do_recovery(struct device *dev)
->>>  {
->>> +	pci_ers_result_t status = PCI_ERS_RESULT_CAN_RECOVER;
->>> +	struct pci_dev *pdev = to_pci_dev(dev);
->>> +	struct cxl_port *port = NULL;
->>> +
->>> +	if ((pci_pcie_type(pdev) == PCI_EXP_TYPE_ROOT_PORT) ||
->>> +	    (pci_pcie_type(pdev) == PCI_EXP_TYPE_DOWNSTREAM)) {
->>> +		struct cxl_dport *dport;
->>> +		struct cxl_port *rp_port __free(put_cxl_port) = find_cxl_port(&pdev->dev, &dport);
->>> +
->>> +		port = rp_port;
->>> +
->>> +	} else	if (pci_pcie_type(pdev) == PCI_EXP_TYPE_UPSTREAM) {
->>> +		struct cxl_port *us_port __free(put_cxl_port) = find_cxl_port_by_uport(&pdev->dev);
->>> +
->>> +		port = us_port;
->>> +
->>> +	} else	if ((pci_pcie_type(pdev) == PCI_EXP_TYPE_ENDPOINT) ||
->>> +		    (pci_pcie_type(pdev) == PCI_EXP_TYPE_RC_END)) {
->>> +		struct cxl_dev_state *cxlds;
->>> +
->>> +		if (!cxl_pci_drv_bound(pdev))
->>> +			return;
->> Need to have the pci dev lock before checking driver bound.
->> DJ
+- Arnaldo
+ 
+> Thanks,
+> Tom
 > 
-> Ok, I'll try to add that intoÂ cxl_pci_drv_bound(). Terry
-
-Do you need the lock beyond just checking the driver data? Maybe do it outside cxl_pci_drv_bound(). I would have an assert in the function though to ensure lock is held when calling this function.
-
-DJ
->>> +
->>> +		cxlds = pci_get_drvdata(pdev);
->>> +		port = cxlds->cxlmd->endpoint;
->>> +	}
->>> +
->>> +	if (!port) {
->>> +		dev_err(dev, "Failed to find the CXL device\n");
->>> +		return;
->>> +	}
->>> +
->>> +	cxl_walk_port(&port->dev, cxl_report_error_detected, &status);
->>> +	if (status == PCI_ERS_RESULT_PANIC)
->>> +		panic("CXL cachemem error.");
->>> +
->>> +	/*
->>> +	 * If we have native control of AER, clear error status in the device
->>> +	 * that detected the error.  If the platform retained control of AER,
->>> +	 * it is responsible for clearing this status.  In that case, the
->>> +	 * signaling device may not even be visible to the OS.
->>> +	 */
->>> +	if (cxl_error_is_native(pdev)) {
->>> +		pcie_clear_device_status(pdev);
->>> +		pci_aer_clear_nonfatal_status(pdev);
->>> +		pci_aer_clear_fatal_status(pdev);
->>> +	}
->>>  }
->>>  
->>>  static void cxl_handle_cor_ras(struct device *dev, u64 serial, void __iomem *ras_base)
+> > ---
+> >  .../arch/x86/emeraldrapids/cache.json         | 63
+> > +++++++++++++++++++
+> >  .../arch/x86/emeraldrapids/emr-metrics.json   | 12 ++++
+> >  .../arch/x86/emeraldrapids/uncore-cache.json  | 11 ++++
+> >  .../arch/x86/emeraldrapids/uncore-memory.json | 22 +++++++
+> >  .../arch/x86/emeraldrapids/uncore-power.json  |  2 -
+> >  tools/perf/pmu-events/arch/x86/mapfile.csv    |  2 +-
+> >  6 files changed, 109 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/tools/perf/pmu-events/arch/x86/emeraldrapids/cache.json
+> > b/tools/perf/pmu-events/arch/x86/emeraldrapids/cache.json
+> > index e96f938587bb..26568e4b77f7 100644
+> > --- a/tools/perf/pmu-events/arch/x86/emeraldrapids/cache.json
+> > +++ b/tools/perf/pmu-events/arch/x86/emeraldrapids/cache.json
+> > @@ -1,4 +1,67 @@
+> >  [
+> > +    {
+> > +        "BriefDescription": "Hit snoop reply with data, line
+> > invalidated.",
+> > +        "Counter": "0,1,2,3",
+> > +        "EventCode": "0x27",
+> > +        "EventName": "CORE_SNOOP_RESPONSE.I_FWD_FE",
+> > +        "PublicDescription": "Counts responses to snoops indicating
+> > the line will now be (I)nvalidated: removed from this core's cache,
+> > after the data is forwarded back to the requestor and indicating the
+> > data was found unmodified in the (FE) Forward or Exclusive State in
+> > this cores caches cache.  A single snoop response from the core
+> > counts on all hyperthreads of the core.",
+> > +        "SampleAfterValue": "1000003",
+> > +        "UMask": "0x20"
+> > +    },
+> > +    {
+> > +        "BriefDescription": "HitM snoop reply with data, line
+> > invalidated.",
+> > +        "Counter": "0,1,2,3",
+> > +        "EventCode": "0x27",
+> > +        "EventName": "CORE_SNOOP_RESPONSE.I_FWD_M",
+> > +        "PublicDescription": "Counts responses to snoops indicating
+> > the line will now be (I)nvalidated: removed from this core's caches,
+> > after the data is forwarded back to the requestor, and indicating the
+> > data was found modified(M) in this cores caches cache (aka HitM
+> > response).  A single snoop response from the core counts on all
+> > hyperthreads of the core.",
+> > +        "SampleAfterValue": "1000003",
+> > +        "UMask": "0x10"
+> > +    },
+> > +    {
+> > +        "BriefDescription": "Hit snoop reply without sending the
+> > data, line invalidated.",
+> > +        "Counter": "0,1,2,3",
+> > +        "EventCode": "0x27",
+> > +        "EventName": "CORE_SNOOP_RESPONSE.I_HIT_FSE",
+> > +        "PublicDescription": "Counts responses to snoops indicating
+> > the line will now be (I)nvalidated in this core's caches without
+> > forwarded back to the requestor. The line was in Forward, Shared or
+> > Exclusive (FSE) state in this cores caches.  A single snoop response
+> > from the core counts on all hyperthreads of the core.",
+> > +        "SampleAfterValue": "1000003",
+> > +        "UMask": "0x2"
+> > +    },
+> > +    {
+> > +        "BriefDescription": "Line not found snoop reply",
+> > +        "Counter": "0,1,2,3",
+> > +        "EventCode": "0x27",
+> > +        "EventName": "CORE_SNOOP_RESPONSE.MISS",
+> > +        "PublicDescription": "Counts responses to snoops indicating
+> > that the data was not found (IHitI) in this core's caches. A single
+> > snoop response from the core counts on all hyperthreads of the
+> > Core.",
+> > +        "SampleAfterValue": "1000003",
+> > +        "UMask": "0x1"
+> > +    },
+> > +    {
+> > +        "BriefDescription": "Hit snoop reply with data, line kept in
+> > Shared state.",
+> > +        "Counter": "0,1,2,3",
+> > +        "EventCode": "0x27",
+> > +        "EventName": "CORE_SNOOP_RESPONSE.S_FWD_FE",
+> > +        "PublicDescription": "Counts responses to snoops indicating
+> > the line may be kept on this core in the (S)hared state, after the
+> > data is forwarded back to the requestor, initially the data was found
+> > in the cache in the (FS) Forward or Shared state.  A single snoop
+> > response from the core counts on all hyperthreads of the core.",
+> > +        "SampleAfterValue": "1000003",
+> > +        "UMask": "0x40"
+> > +    },
+> > +    {
+> > +        "BriefDescription": "HitM snoop reply with data, line kept
+> > in Shared state",
+> > +        "Counter": "0,1,2,3",
+> > +        "EventCode": "0x27",
+> > +        "EventName": "CORE_SNOOP_RESPONSE.S_FWD_M",
+> > +        "PublicDescription": "Counts responses to snoops indicating
+> > the line may be kept on this core in the (S)hared state, after the
+> > data is forwarded back to the requestor, initially the data was found
+> > in the cache in the (M)odified state.  A single snoop response from
+> > the core counts on all hyperthreads of the core.",
+> > +        "SampleAfterValue": "1000003",
+> > +        "UMask": "0x8"
+> > +    },
+> > +    {
+> > +        "BriefDescription": "Hit snoop reply without sending the
+> > data, line kept in Shared state.",
+> > +        "Counter": "0,1,2,3",
+> > +        "EventCode": "0x27",
+> > +        "EventName": "CORE_SNOOP_RESPONSE.S_HIT_FSE",
+> > +        "PublicDescription": "Counts responses to snoops indicating
+> > the line was kept on this core in the (S)hared state, and that the
+> > data was found unmodified but not forwarded back to the requestor,
+> > initially the data was found in the cache in the (FSE) Forward,
+> > Shared state or Exclusive state.  A single snoop response from the
+> > core counts on all hyperthreads of the core.",
+> > +        "SampleAfterValue": "1000003",
+> > +        "UMask": "0x4"
+> > +    },
+> >      {
+> >          "BriefDescription": "L1D.HWPF_MISS",
+> >          "Counter": "0,1,2,3",
+> > diff --git a/tools/perf/pmu-events/arch/x86/emeraldrapids/emr-
+> > metrics.json b/tools/perf/pmu-events/arch/x86/emeraldrapids/emr-
+> > metrics.json
+> > index af0a7dd81e93..433ae5f50704 100644
+> > --- a/tools/perf/pmu-events/arch/x86/emeraldrapids/emr-metrics.json
+> > +++ b/tools/perf/pmu-events/arch/x86/emeraldrapids/emr-metrics.json
+> > @@ -39,6 +39,18 @@
+> >          "MetricName": "cpi",
+> >          "ScaleUnit": "1per_instr"
+> >      },
+> > +    {
+> > +        "BriefDescription": "The average number of cores that are in
+> > cstate C0 as observed by the power control unit (PCU)",
+> > +        "MetricExpr": "UNC_P_POWER_STATE_OCCUPANCY_CORES_C0 /
+> > UNC_P_CLOCKTICKS * #num_packages",
+> > +        "MetricGroup": "cpu_cstate",
+> > +        "MetricName": "cpu_cstate_c0"
+> > +    },
+> > +    {
+> > +        "BriefDescription": "The average number of cores are in
+> > cstate C6 as observed by the power control unit (PCU)",
+> > +        "MetricExpr": "UNC_P_POWER_STATE_OCCUPANCY_CORES_C6 /
+> > UNC_P_CLOCKTICKS * #num_packages",
+> > +        "MetricGroup": "cpu_cstate",
+> > +        "MetricName": "cpu_cstate_c6"
+> > +    },
+> >      {
+> >          "BriefDescription": "CPU operating frequency (in GHz)",
+> >          "MetricExpr": "CPU_CLK_UNHALTED.THREAD /
+> > CPU_CLK_UNHALTED.REF_TSC * #SYSTEM_TSC_FREQ / 1e9",
+> > diff --git a/tools/perf/pmu-events/arch/x86/emeraldrapids/uncore-
+> > cache.json b/tools/perf/pmu-events/arch/x86/emeraldrapids/uncore-
+> > cache.json
+> > index f453202d80c2..92cf47967f0b 100644
+> > --- a/tools/perf/pmu-events/arch/x86/emeraldrapids/uncore-cache.json
+> > +++ b/tools/perf/pmu-events/arch/x86/emeraldrapids/uncore-cache.json
+> > @@ -311,6 +311,17 @@
+> >          "UMask": "0x2",
+> >          "Unit": "CHA"
+> >      },
+> > +    {
+> > +        "BriefDescription": "Distress signal asserted : DPT Remote",
+> > +        "Counter": "0,1,2,3",
+> > +        "EventCode": "0xaf",
+> > +        "EventName": "UNC_CHA_DISTRESS_ASSERTED.DPT_NONLOCAL",
+> > +        "Experimental": "1",
+> > +        "PerPkg": "1",
+> > +        "PublicDescription": "Distress signal asserted : DPT Remote
+> > : Counts the number of cycles either the local or incoming distress
+> > signals are asserted. : Dynamic Prefetch Throttle received by this
+> > tile",
+> > +        "UMask": "0x8",
+> > +        "Unit": "CHA"
+> > +    },
+> >      {
+> >          "BriefDescription": "Egress Blocking due to Ordering
+> > requirements : Down",
+> >          "Counter": "0,1,2,3",
+> > diff --git a/tools/perf/pmu-events/arch/x86/emeraldrapids/uncore-
+> > memory.json b/tools/perf/pmu-events/arch/x86/emeraldrapids/uncore-
+> > memory.json
+> > index 90f61c9511fc..30044177ccf8 100644
+> > --- a/tools/perf/pmu-events/arch/x86/emeraldrapids/uncore-memory.json
+> > +++ b/tools/perf/pmu-events/arch/x86/emeraldrapids/uncore-memory.json
+> > @@ -3129,6 +3129,28 @@
+> >          "PublicDescription": "Clock-Enabled Self-Refresh : Counts
+> > the number of cycles when the iMC is in self-refresh and the iMC
+> > still has a clock.  This happens in some package C-states.  For
+> > example, the PCU may ask the iMC to enter self-refresh even though
+> > some of the cores are still processing.  One use of this is for
+> > Monroe technology.  Self-refresh is required during package C3 and
+> > C6, but there is no clock in the iMC at this time, so it is not
+> > possible to count these cases.",
+> >          "Unit": "iMC"
+> >      },
+> > +    {
+> > +        "BriefDescription": "Throttle Cycles for Rank 0",
+> > +        "Counter": "0,1,2,3",
+> > +        "EventCode": "0x46",
+> > +        "EventName": "UNC_M_POWER_THROTTLE_CYCLES.SLOT0",
+> > +        "Experimental": "1",
+> > +        "PerPkg": "1",
+> > +        "PublicDescription": "Throttle Cycles for Rank 0 : Counts
+> > the number of cycles while the iMC is being throttled by either
+> > thermal constraints or by the PCU throttling.  It is not possible to
+> > distinguish between the two.  This can be filtered by rank.  If
+> > multiple ranks are selected and are being throttled at the same time,
+> > the counter will only increment by 1. : Thermal throttling is
+> > performed per DIMM.  We support 3 DIMMs per channel.  This ID allows
+> > us to filter by ID.",
+> > +        "UMask": "0x1",
+> > +        "Unit": "iMC"
+> > +    },
+> > +    {
+> > +        "BriefDescription": "Throttle Cycles for Rank 0",
+> > +        "Counter": "0,1,2,3",
+> > +        "EventCode": "0x46",
+> > +        "EventName": "UNC_M_POWER_THROTTLE_CYCLES.SLOT1",
+> > +        "Experimental": "1",
+> > +        "PerPkg": "1",
+> > +        "PublicDescription": "Throttle Cycles for Rank 0 : Counts
+> > the number of cycles while the iMC is being throttled by either
+> > thermal constraints or by the PCU throttling.  It is not possible to
+> > distinguish between the two.  This can be filtered by rank.  If
+> > multiple ranks are selected and are being throttled at the same time,
+> > the counter will only increment by 1.",
+> > +        "UMask": "0x2",
+> > +        "Unit": "iMC"
+> > +    },
+> >      {
+> >          "BriefDescription": "Precharge due to read, write,
+> > underfill, or PGT.",
+> >          "Counter": "0,1,2,3",
+> > diff --git a/tools/perf/pmu-events/arch/x86/emeraldrapids/uncore-
+> > power.json b/tools/perf/pmu-events/arch/x86/emeraldrapids/uncore-
+> > power.json
+> > index 9482ddaea4d1..71c35b165a3e 100644
+> > --- a/tools/perf/pmu-events/arch/x86/emeraldrapids/uncore-power.json
+> > +++ b/tools/perf/pmu-events/arch/x86/emeraldrapids/uncore-power.json
+> > @@ -178,7 +178,6 @@
+> >          "Counter": "0,1,2,3",
+> >          "EventCode": "0x35",
+> >          "EventName": "UNC_P_POWER_STATE_OCCUPANCY_CORES_C0",
+> > -        "Experimental": "1",
+> >          "PerPkg": "1",
+> >          "PublicDescription": "Number of cores in C0 : This is an
+> > occupancy event that tracks the number of cores that are in the
+> > chosen C-State.  It can be used by itself to get the average number
+> > of cores in that C-state with thresholding to generate histograms, or
+> > with other PCU events and occupancy triggering to capture other
+> > details.",
+> >          "Unit": "PCU"
+> > @@ -198,7 +197,6 @@
+> >          "Counter": "0,1,2,3",
+> >          "EventCode": "0x37",
+> >          "EventName": "UNC_P_POWER_STATE_OCCUPANCY_CORES_C6",
+> > -        "Experimental": "1",
+> >          "PerPkg": "1",
+> >          "PublicDescription": "Number of cores in C6 : This is an
+> > occupancy event that tracks the number of cores that are in the
+> > chosen C-State.  It can be used by itself to get the average number
+> > of cores in that C-state with thresholding to generate histograms, or
+> > with other PCU events and occupancy triggering to capture other
+> > details.",
+> >          "Unit": "PCU"
+> > diff --git a/tools/perf/pmu-events/arch/x86/mapfile.csv
+> > b/tools/perf/pmu-events/arch/x86/mapfile.csv
+> > index 8daaa8f40b66..dec7bdd770cf 100644
+> > --- a/tools/perf/pmu-events/arch/x86/mapfile.csv
+> > +++ b/tools/perf/pmu-events/arch/x86/mapfile.csv
+> > @@ -9,7 +9,7 @@ GenuineIntel-6-4F,v23,broadwellx,core
+> >  GenuineIntel-6-55-[56789ABCDEF],v1.25,cascadelakex,core
+> >  GenuineIntel-6-DD,v1.00,clearwaterforest,core
+> >  GenuineIntel-6-9[6C],v1.05,elkhartlake,core
+> > -GenuineIntel-6-CF,v1.16,emeraldrapids,core
+> > +GenuineIntel-6-CF,v1.20,emeraldrapids,core
+> >  GenuineIntel-6-5[CF],v13,goldmont,core
+> >  GenuineIntel-6-7A,v1.01,goldmontplus,core
+> >  GenuineIntel-6-B6,v1.09,grandridge,core
 > 
-> 
-
 
