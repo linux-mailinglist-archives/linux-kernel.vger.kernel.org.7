@@ -1,108 +1,109 @@
-Return-Path: <linux-kernel+bounces-837237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EF80BABC0E
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:08:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7C2EBABC17
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:08:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7CEE173EF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 07:08:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09432175235
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 07:08:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 199672BCF4C;
-	Tue, 30 Sep 2025 07:08:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8006C2BCF4C;
+	Tue, 30 Sep 2025 07:08:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="FRQl2LEz"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="fRkfoK5V"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B5B22367CF;
-	Tue, 30 Sep 2025 07:08:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 216E21F462C
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 07:08:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759216099; cv=none; b=rOAneUlEAOecYvm1mReDawhr74pbFvlAUP5gf+Z7eF9U5kGoJagWasvtjegVOoPYFzv361c7T1u558kXVo8U59iKQTedgPYjcybvawWXXeKST+BCTQ68DDw0XJ/8DwBsMMOuM/YZ7N4rPfV9sG/BA0swu2YEeugr8voOeUBKF8M=
+	t=1759216122; cv=none; b=nMlFpj6sx9J6JgHB8EpbEndFMzvkBXdxz2IDZg7HocXPsXkLHqnvsLopWoFoIrI2jFti1uI60AR171vFM9d7L21VQjX48gCBXWxuZ5RDMPHBdeCiwIObSpGCYLYVFz87bAMzidRznPFeqKWfIEpI2uZAy96ylakpVNavfn+iZ5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759216099; c=relaxed/simple;
-	bh=eO7HBzwE2G+/p7nPEVxTKuhlvp5k2eOtqaVQ1m7bSDU=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KLtw5q5bmI7+aydRAzvKap+5+B89idGMAxNjtow/hwZTyBdbH6iEjiLOZ5ky2ykI/aU3g8DKgS9AOwDwM/teL9xLtyhoCFrGZB31CeWK5KXFGEAZ233ikl56rwvO0dGNaLI+fpe5c0oeAeErSgc+3gKOLEnmqDImls6He6BMlUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=FRQl2LEz; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1759216097; x=1790752097;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=eO7HBzwE2G+/p7nPEVxTKuhlvp5k2eOtqaVQ1m7bSDU=;
-  b=FRQl2LEz/Vi7LOiWmucSZBwNl+6WW6lcQpjXWsPkPNFFP22iA0/KQxgk
-   Ddkkg6GhAwcdvujTzLUv9MzubpybGJor4Vd9ZLQ9PMeOZrEYM0XIk+Xo2
-   C1DFjxbyOl8aJCcy/DdS7M6/N6YvmKwbYpDbowlfAr6iN0hhSqa/tyKYz
-   853njeMXM7vtAvMKlP7GnhASdkaL6pzuc6goGOkuKnure+ACc3wH6vV56
-   AWe/zPjgR8eGrAWSxmp4ejD5pwIMDbRkO9IazbOqGlO2Lys4Yd3bAYRfG
-   5gbMNTocjlH/4kFH5Yya21OS9IxCE7qIM63MWbc3PPZsXCf2Jvpu92XLS
-   Q==;
-X-CSE-ConnectionGUID: C3Wgn4EdQpGGq/DP0Wqg7g==
-X-CSE-MsgGUID: Cm4R3luxQzSBLd7Z5UI1ww==
-X-IronPort-AV: E=Sophos;i="6.18,303,1751266800"; 
-   d="scan'208";a="46562260"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 30 Sep 2025 00:08:16 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Tue, 30 Sep 2025 00:07:58 -0700
-Received: from localhost (10.10.85.11) by chn-vm-ex04.mchp-main.com
- (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Tue, 30 Sep 2025 00:07:58 -0700
-Date: Tue, 30 Sep 2025 09:07:17 +0200
-From: Horatiu Vultur <horatiu.vultur@microchip.com>
-To: Jakub Kicinski <kuba@kernel.org>
-CC: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
-	<davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
-	<richardcochran@gmail.com>, <vladimir.oltean@nxp.com>,
-	<vadim.fedorenko@linux.dev>, <rmk+kernel@armlinux.org.uk>,
-	<rosenp@gmail.com>, <christophe.jaillet@wanadoo.fr>,
-	<steen.hegelund@microchip.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net v3 0/2] phy: mscc: Fix PTP for VSC8574 and VSC8572
-Message-ID: <20250930070717.4oad7l6ab3jxjl2e@DEN-DL-M31836.microchip.com>
-References: <20250929091302.106116-1-horatiu.vultur@microchip.com>
- <20250929184700.50628a5f@kernel.org>
+	s=arc-20240116; t=1759216122; c=relaxed/simple;
+	bh=qWQPUUkCkkV19zNqrK2WGTgoeDTRNbYXHAJ/vA9PTP0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tDv2GZS4/gDQp5plf/vzjHy1gTYiW+zzjYCmCw3GD8/gUDcje6bNTS0ZEdg/h291v6h7/Rbh99ECAQoZMx4pnmct+28cabmIV3tXGbpKsbMHSYOu+mspyNODlSuolDdmmGFEwn46oyqBG18kZS7RZhD1HehvMd2KvGo2nALR44o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=fRkfoK5V; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-57bf912cbf6so6323307e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 00:08:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1759216119; x=1759820919; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uwe+uVVGDXkZSpUyoeD3Xi/i6aYh8K/CqmdbPD2pAxw=;
+        b=fRkfoK5VoJp4UP9RnZqEqMpiy7SfeKib5tBwwPDGVLaY7mmxWKRcgTyHXWqrg8WQ2X
+         +ubIkcZLy/h0pgIgt/oF2mXuhxoWyiq534BIy19nfgh9BsWIUVC+wDVFIsEGNbhZMlvs
+         /KZ+4V9GWdaoR2pIwx2Vi26hK8wtMXFQkoMUHAx4dY9jRNRkc20n/kn+R9KE1ClTSJ7K
+         +ArRD6Q2LFYx7631lMZ9Q8a73r4A90Sy4CK6FswGblIgdK6Vb1avr3nOB8Iqvh/c12fQ
+         6rq13OJgt3Gm1wuX2sk5aGvlZWzLC51JvNJWSafVOAQgKEAojjdLiSlLyt3x0wh13W5H
+         XOJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759216119; x=1759820919;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uwe+uVVGDXkZSpUyoeD3Xi/i6aYh8K/CqmdbPD2pAxw=;
+        b=vYPhSXmz7bEsD/Mpx8KsNz0oSFLUK0PL55B22+ZKJ1Xo43LgUBKVTJ2w7Xfi2xO9ir
+         hXBGX03TqCn39KBFqHYFMzBp5XmPgjDo0oHs2zmLBxSKgnmiNLoyp3YMlCH02/7/xXyD
+         UCci/2QWKtU8/2CwZZNJvApGCF6BBouE4uCr5LM9EEy/eBcyqtKuDnnfK6UYTbEds5MU
+         nP85tIV9sPznFFvInUIudKvnOb2ERqyfcy5lNJOT3pFJ2b2NOo1VlEj5xc+/C0ucL92Z
+         wKmGg3BSff5HN7CVa38DmnW8tKgXXec3USrgReCMbIcgxMg5EYcKWyruHG7xmMEjDA2p
+         186g==
+X-Gm-Message-State: AOJu0YxMpGXBoe/pL1458mJLhuE7XKkflbiMbr3D7+pRMfSNdg9CG15L
+	2+b/yu9lu345Rmbb6MqnzY5X+/nr2Uca3TbSiwXJS1kxp0UjFw+HHHGQn8w3uUUAan4jh4L7a6p
+	oyzi3nTCriw2ya+0ql4nAsnQAod2yGcRlFJco87gaUzq85y020867
+X-Gm-Gg: ASbGncuzUZXvlFXe98Stk93147LEeT0hBQvbw4WYNiDZxBwop4fyQqJtk0lvgWdjUeJ
+	w5Wg//3NYGvQ6ut79CgulJEorYR5xqfMowTekrlbV7Zc71fl16xS059DiA8h16OpniTf9U6WHPJ
+	JHC4KhR1ymRaT0Qam/Eef4f02UMcLTe6S4ogv5rbqKiyrwZbMcgFR5D7BFezwIgKq0BEcK+AZ2s
+	nAWiiepqctJpecekcWDtZaIIwYjY+UTD3yNss1phRncEZ84z/OwmsNgR2lYB0nkLXjjxp8tUMg=
+X-Google-Smtp-Source: AGHT+IEn57+ZfFiQKbnwjnObh+24OGeSBpRxA1r0P3grMEzlyYxifukqiainmfdrIL7O0642sRpYNy5aojA3GcSdeKU=
+X-Received: by 2002:a05:6512:2249:b0:571:8fad:ecee with SMTP id
+ 2adb3069b0e04-582d12ff836mr5326325e87.21.1759216119310; Tue, 30 Sep 2025
+ 00:08:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-In-Reply-To: <20250929184700.50628a5f@kernel.org>
+References: <20250929155053.400342-1-marco.crivellari@suse.com> <aNq6pObNPCihWON4@finisterre.sirena.org.uk>
+In-Reply-To: <aNq6pObNPCihWON4@finisterre.sirena.org.uk>
+From: Marco Crivellari <marco.crivellari@suse.com>
+Date: Tue, 30 Sep 2025 09:08:27 +0200
+X-Gm-Features: AS18NWCtgfS6naUd5qaJZRE6qoUqnuVcPTzv2MtJ9EdtIxWfiNalcErVrgI-DOQ
+Message-ID: <CAAofZF69Lcuv9hL29eNKVAYAqsOWdeAd=2_4PXocTd0rX-11cA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/1] ASoC: change system_wq with system_dfl_wq
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
+	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
+	Frederic Weisbecker <frederic@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+	Michal Hocko <mhocko@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+	Takashi Iwai <tiwai@suse.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The 09/29/2025 18:47, Jakub Kicinski wrote:
-> 
-> On Mon, 29 Sep 2025 11:13:00 +0200 Horatiu Vultur wrote:
-> > The first patch will update the PHYs VSC8584, VSC8582, VSC8575 and VSC856X
-> > to use PHY_ID_MATCH_MODEL because only rev B exists for these PHYs.
-> > But for the PHYs VSC8574 and VSC8572 exists rev A, B, C, D and E.
-> > This is just a preparation for the second patch to allow the VSC8574 and
-> > VSC8572 to use the function vsc8584_probe().
-> >
-> > We want to use vsc8584_probe() for VSC8574 and VSC8572 because this
-> > function does the correct PTP initialization. This change is in the second
-> > patch.
-> 
-> This doesn't apply cleanly to net. If it was generated against net-next
-> - perhaps wait a couple of days until trees converge before reposting?
+On Mon, Sep 29, 2025 at 6:58=E2=80=AFPM Mark Brown <broonie@kernel.org> wro=
+te:
+> Please don't send cover letters for single patches, if there is anything
+> that needs saying put it in the changelog of the patch or after the ---
+> if it's administrative stuff.  This reduces mail volume and ensures that
+> any important information is recorded in the changelog rather than being
+> lost.
 
-Yeah, I have generated this patch series on net-next instead of net.
-Yes, I can wait before reposting.
+Ok Mark, thank you. The changelog already contains all the information.
 
-> --
-> pw-bot: cr
+Noted for the next time.
 
--- 
-/Horatiu
+--=20
+
+Marco Crivellari
+
+L3 Support Engineer, Technology & Product
 
