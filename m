@@ -1,258 +1,188 @@
-Return-Path: <linux-kernel+bounces-837267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9658BBABD2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:28:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D1E39BABD2F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:29:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 466694A1373
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 07:28:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 835353A9A5C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 07:29:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3D18298CBE;
-	Tue, 30 Sep 2025 07:28:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08E9729B781;
+	Tue, 30 Sep 2025 07:29:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=dev.tdt.de header.i=@dev.tdt.de header.b="EiwHKXHQ"
-Received: from mxout70.expurgate.net (mxout70.expurgate.net [194.37.255.70])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bU6SKo27"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D72951FE471;
-	Tue, 30 Sep 2025 07:28:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.37.255.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3C6E2940D;
+	Tue, 30 Sep 2025 07:29:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759217300; cv=none; b=CY95xqZGXb9cnHLDQqLjz277kAOJll1tkpzMW/yqGuYGNfO2NMGqEhUK9ZOJKMrOmN56om6UVoSOSe7vB79ASmJ1nXHgpslrKkvydzXUPyzbCodwJXqHfYl3Tzo5d0X9ISucuRiihHTrN7Kn4PGLt4gfsxDvzzNJxnZUYH1d+Gw=
+	t=1759217356; cv=none; b=k+xvs56BJ5Sif4Sa2mfLyoRq7W9EUhzIQ3369epbjhZ3ciQSAuwxW4eGrOB2FZvVdBUATaPHq5IV6v5laGHXWjsSn/JGYg11DKht8M2PVP0sXEPv9LPjNw2rXzZP3F+wl/UxtXpe/JieWVcLqEyYtiEmc3ocGcdN0rqclH8G5GQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759217300; c=relaxed/simple;
-	bh=VwCJWMy8ItpsfKfl1EIkVsSnBddauVq27KalmhGJTwU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=on4cpgVsbKSiFBiRDSpHfv0DyE8Z65fmBIjEVB0KflCMZx8FD/Kn1HDgRGw1mWiuNJlGKKgFx6cBbO0Z+E477uZ58//pyg2msTSPhbniyVzNSTANRwLoIHTYRpzYw/F594f2hFV7HiZBtgIxKtxgGTERHyh5jJrmPNmZBGJt/z0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dev.tdt.de; spf=pass smtp.mailfrom=dev.tdt.de; dkim=temperror (0-bit key) header.d=dev.tdt.de header.i=@dev.tdt.de header.b=EiwHKXHQ; arc=none smtp.client-ip=194.37.255.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dev.tdt.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dev.tdt.de
-Received: from [194.37.255.9] (helo=mxout.expurgate.net)
-	by relay.expurgate.net with smtp (Exim 4.92)
-	(envelope-from <prvs=838262a34c=fe@dev.tdt.de>)
-	id 1v3UmM-008ZFJ-48; Tue, 30 Sep 2025 09:28:06 +0200
-Received: from [195.243.126.94] (helo=securemail.tdt.de)
-	by relay.expurgate.net with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <fe@dev.tdt.de>)
-	id 1v3UmL-000HDn-CP; Tue, 30 Sep 2025 09:28:05 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dev.tdt.de;
-	s=z1-selector1; t=1759217284;
-	bh=32t1lEtoWQjAJxO5HBEyfgVyOgcv2EL9CkXnvNB6Ga8=;
-	h=From:To:Cc:Subject:Date:From;
-	b=EiwHKXHQwbtIRstYgkukHsruJEGV/2Axksf7+ISx6hfxHMpLuY6b5LJ/YXckPqEFD
-	 LwEPBhSNkTXseypZNYKwdvlEgxVQlSbB9VOw3ve69p2d7DNkYflh5//3t0+pfUMYL3
-	 4zlwsFBOqZSy8NqWUOgYrpdRQiYoef+2ziSow3if6zMVpvF31j6V3SCrc3kK9O2K51
-	 TO+3pXWj2ZBThAlevStBCltBk32E4e6HpaVm1MUjJcOJ0rCmkagRVXhCm+pnse+l7R
-	 2RrcqVqtl/2e4k1YcAyyUClpa+R96/S+2KHDlmMcDdY8rzbhiALlBIq5jxud7eOD+l
-	 MCYSOIRIsx9zA==
-Received: from securemail.tdt.de (localhost [127.0.0.1])
-	by securemail.tdt.de (Postfix) with ESMTP id E223F240042;
-	Tue, 30 Sep 2025 09:28:04 +0200 (CEST)
-Received: from mail.dev.tdt.de (unknown [10.2.4.42])
-	by securemail.tdt.de (Postfix) with ESMTP id C890D240036;
-	Tue, 30 Sep 2025 09:28:04 +0200 (CEST)
-Received: from localhost.localdomain (unknown [10.2.3.40])
-	by mail.dev.tdt.de (Postfix) with ESMTPSA id 4FF1926780;
-	Tue, 30 Sep 2025 09:28:04 +0200 (CEST)
-From: Florian Eckert <fe@dev.tdt.de>
-To: gregkh@linuxfoundation.org, jirislaby@kernel.org,
-	kumaravel.thiagarajan@microchip.com,
-	andriy.shevchenko@linux.intel.com, pnewman@connecttech.com,
-	angelogioacchino.delregno@collabora.com, peterz@infradead.org,
-	yujiaoliang@vivo.com, arnd@kernel.org, cang1@live.co.uk,
-	macro@orcam.me.uk, schnelle@linux.ibm.com,
-	Eckert.Florian@googlemail.com
-Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-	Florian Eckert <fe@dev.tdt.de>
-Subject: [PATCH v2] serial: 8250_pcilib: Replace deprecated PCI functions
-Date: Tue, 30 Sep 2025 09:27:43 +0200
-Message-ID: <20250930072743.791580-1-fe@dev.tdt.de>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1759217356; c=relaxed/simple;
+	bh=46YCLTx/FX2549HtH0nhlM0CzLqRzR3LF3K6lFBH8zo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WpdfnWer1FcF4xyFVbWphWnQ3g3dcdOy5b9n4c5Rmto1ngDeu7RH7hgh89Vi0vncHINkSW+uzws6UYOTCT+mGfhQ3+SDFs6ZQKRvkesokVQi6+qKQys5NbZ/LCgFVl2gOcDOJ972OL15Qr7RHhfT3ZdBqTP1tLC8Qj7vAsCKOWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bU6SKo27; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759217354; x=1790753354;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=46YCLTx/FX2549HtH0nhlM0CzLqRzR3LF3K6lFBH8zo=;
+  b=bU6SKo27BIikv9s8x4O81FoYYZzx5wAd3h7mhB/Dez2ALs74daBa5X6L
+   GM5IsX0Agkwu5HRvDZx9XJHm7+w7oezZZtQWRy8MTzm4Rx4Na4yP+mGuO
+   RZwOCB5GvyY2gEwZNu3lNeDfDyKlqN7udSSZuL3FfFSDS27i29HHLvnCw
+   KTgk8/u7JsZKeXhtjn8OLpFe4/z5+exQUcQFeii8xqfcSg6Q8SmPM55MP
+   di7Ep4l1/JizTmmvULiQebhHJc+wbwlpaTj6j1cDNoJVyO50q9mOUlZbw
+   bvxLlJL0bZ/8H9gmARAZSHYVCNlol5IMrirUNAN9qXimkAeHeW23ueFjN
+   Q==;
+X-CSE-ConnectionGUID: t/gMHOubTMeIJRlXinxUuw==
+X-CSE-MsgGUID: pJn2Qd60Tsi++b6OJP1bgg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11568"; a="65105279"
+X-IronPort-AV: E=Sophos;i="6.18,303,1751266800"; 
+   d="scan'208";a="65105279"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2025 00:28:57 -0700
+X-CSE-ConnectionGUID: 2O+7BYlQSYqB15SIuiflBw==
+X-CSE-MsgGUID: KFlFoovGQaqZyQRftiWdNA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,303,1751266800"; 
+   d="scan'208";a="209162659"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.232.209]) ([10.124.232.209])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2025 00:28:54 -0700
+Message-ID: <ed463cd8-495e-4769-b392-372413ca7db6@linux.intel.com>
+Date: Tue, 30 Sep 2025 15:28:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-purgate-type: clean
-X-purgate: clean
-X-purgate-ID: 151534::1759217285-DCD9713C-C5B4E1A5/0/0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND][PATCH v2 0/2] perf record: ratio-to-prev event term for
+ auto counter reload
+To: Thomas Falcon <thomas.falcon@intel.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ Andi Kleen <ak@linux.intel.com>
+References: <20250902164047.64261-1-thomas.falcon@intel.com>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <20250902164047.64261-1-thomas.falcon@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-When the '8250_exar' module is loaded into the kernel, a kernel trace
-with 'WARN_ON(legacy_iomap_table[bar])' is dumped to the console,
-because the old pci table mapping is still used in '8250_pcilib'.
 
-The old function have been deprecated in commit e354bb84a4c1 ("PCI:
-Deprecate pcim_iomap_table(), pcim_iomap_regions_request_all()").
+On 9/3/2025 12:40 AM, Thomas Falcon wrote:
+> The Auto Counter Reload (ACR)[1] feature is used to track the
+> relative rates of two or more perf events, only sampling
+> when a given threshold is exceeded. This helps reduce overhead
+> and unnecessary samples. However, enabling this feature
+> currently requires setting two parameters:
+>
+>  -- Event sampling period ("period")
+>  -- acr_mask, which determines which events get reloaded
+>     when the sample period is reached.
+>
+> For example, in the following command:
+>
+> perf record -e "{cpu_atom/branch-misses,period=200000,\
+> acr_mask=0x2/ppu,cpu_atom/branch-instructions,period=1000000,\
+> acr_mask=0x3/u}" -- ./mispredict
+>
+> The goal is to limit event sampling to cases when the
+> branch miss rate exceeds 20%. If the branch instructions
+> sample period is exceeded first, both events are reloaded.
+> If branch misses exceed their threshold first, only the
+> second counter is reloaded, and a sample is taken.
+>
+> To simplify this, provide a new “ratio-to-prev” event term
+> that works alongside the period event option or -c option.
+> This would allow users to specify the desired relative rate
+> between events as a ratio, making configuration more intuitive.
+>
+> With this enhancement, the equivalent command would be:
+>
+> perf record -e "{cpu_atom/branch-misses/ppu,\
+> cpu_atom/branch-instructions,period=1000000,ratio_to_prev=5/u}" \
+> -- ./mispredict
 
-The remapping already takes or must take place in the driver that calls
-the function 'serial8250_pci_setup_port()'. The remapping should only be
-called once via 'pcim_iomap()'. Therefore the remapping moved to the
-caller of 'serial8250_pci_setup_port()'.
+Hi Tom,
 
-To replace the outdated/legacy iomap_table processing in '8250_pcilib' th=
-e
-function signature of 'serial8250_pci_setup_port()' has been extended wit=
-h
-an already iomapped address value. So this can be used directly without
-io mapping again.
+Does this "ratio-to-prev" option support 3 and more events in ACR group?
 
-Signed-off-by: Florian Eckert <fe@dev.tdt.de>
----
+If not, should we consider to support the cases there are 3 and more events
+in the ACR group? (If I remember correct, the PMU driver should support it).
 
-v2:
-* The function 'pcim_iomap()' returns a NULL pointer in the event of an
-  error, so error handling has been adjusted.
+e.g.,
 
- drivers/tty/serial/8250/8250_exar.c     |  4 ++--
- drivers/tty/serial/8250/8250_pci.c      | 10 +++++++++-
- drivers/tty/serial/8250/8250_pci1xxxx.c | 10 +++++-----
- drivers/tty/serial/8250/8250_pcilib.c   |  7 ++-----
- drivers/tty/serial/8250/8250_pcilib.h   |  2 +-
- 5 files changed, 19 insertions(+), 14 deletions(-)
+perf record -e
+"{cpu_atom/branch-misses,period=200000,acr_mask=0x6/p,cpu_atom/branches,period=1000000,acr_mask=0x7/,cpu_atom/branches,period=1000000,acr_mask=0x7/}"
+-- sleep 1
 
-diff --git a/drivers/tty/serial/8250/8250_exar.c b/drivers/tty/serial/825=
-0/8250_exar.c
-index 04a0cbab02c2..3c16a849b474 100644
---- a/drivers/tty/serial/8250/8250_exar.c
-+++ b/drivers/tty/serial/8250/8250_exar.c
-@@ -503,7 +503,7 @@ static int default_setup(struct exar8250 *priv, struc=
-t pci_dev *pcidev,
- 	unsigned char status;
- 	int err;
-=20
--	err =3D serial8250_pci_setup_port(pcidev, port, 0, offset, board->reg_s=
-hift);
-+	err =3D serial8250_pci_setup_port(pcidev, port, 0, offset, board->reg_s=
-hift, priv->virt);
- 	if (err)
- 		return err;
-=20
-@@ -831,7 +831,7 @@ static int cti_port_setup_common(struct exar8250 *pri=
-v,
- 	port->port.port_id =3D idx;
- 	port->port.uartclk =3D priv->osc_freq;
-=20
--	ret =3D serial8250_pci_setup_port(pcidev, port, 0, offset, 0);
-+	ret =3D serial8250_pci_setup_port(pcidev, port, 0, offset, 0, priv->vir=
-t);
- 	if (ret)
- 		return ret;
-=20
-diff --git a/drivers/tty/serial/8250/8250_pci.c b/drivers/tty/serial/8250=
-/8250_pci.c
-index 152f914c599d..f0f13fdda2df 100644
---- a/drivers/tty/serial/8250/8250_pci.c
-+++ b/drivers/tty/serial/8250/8250_pci.c
-@@ -165,7 +165,15 @@ static int
- setup_port(struct serial_private *priv, struct uart_8250_port *port,
- 	   u8 bar, unsigned int offset, int regshift)
- {
--	return serial8250_pci_setup_port(priv->dev, port, bar, offset, regshift=
-);
-+	void __iomem *iomem =3D NULL;
-+
-+	if (pci_resource_flags(priv->dev, bar) & IORESOURCE_MEM) {
-+		iomem =3D pcim_iomap(priv->dev, bar, 0);
-+		if (!iomem)
-+			return -ENOMEM;
-+	}
-+
-+	return serial8250_pci_setup_port(priv->dev, port, bar, offset, regshift=
-, iomem);
- }
-=20
- /*
-diff --git a/drivers/tty/serial/8250/8250_pci1xxxx.c b/drivers/tty/serial=
-/8250/8250_pci1xxxx.c
-index 4c149db84692..feeede164886 100644
---- a/drivers/tty/serial/8250/8250_pci1xxxx.c
-+++ b/drivers/tty/serial/8250/8250_pci1xxxx.c
-@@ -671,7 +671,7 @@ static int pci1xxxx_resume(struct device *dev)
- }
-=20
- static int pci1xxxx_setup(struct pci_dev *pdev,
--			  struct uart_8250_port *port, int port_idx, int rev)
-+			  struct uart_8250_port *port, int port_idx, struct pci1xxxx_8250 *pr=
-iv)
- {
- 	int ret;
-=20
-@@ -698,12 +698,12 @@ static int pci1xxxx_setup(struct pci_dev *pdev,
- 	 * C0 and later revisions support Burst operation.
- 	 * RTS workaround in mctrl is applicable only to B0.
- 	 */
--	if (rev >=3D 0xC0)
-+	if (priv->dev_rev >=3D 0xC0)
- 		port->port.handle_irq =3D pci1xxxx_handle_irq;
--	else if (rev =3D=3D 0xB0)
-+	else if (priv->dev_rev =3D=3D 0xB0)
- 		port->port.set_mctrl =3D pci1xxxx_set_mctrl;
-=20
--	ret =3D serial8250_pci_setup_port(pdev, port, 0, PORT_OFFSET * port_idx=
-, 0);
-+	ret =3D serial8250_pci_setup_port(pdev, port, 0, PORT_OFFSET * port_idx=
-, 0, priv->membase);
- 	if (ret < 0)
- 		return ret;
-=20
-@@ -821,7 +821,7 @@ static int pci1xxxx_serial_probe(struct pci_dev *pdev=
-,
- 		else
- 			uart.port.irq =3D pci_irq_vector(pdev, 0);
-=20
--		rc =3D pci1xxxx_setup(pdev, &uart, port_idx, priv->dev_rev);
-+		rc =3D pci1xxxx_setup(pdev, &uart, port_idx, priv);
- 		if (rc) {
- 			dev_warn(dev, "Failed to setup port %u\n", i);
- 			continue;
-diff --git a/drivers/tty/serial/8250/8250_pcilib.c b/drivers/tty/serial/8=
-250/8250_pcilib.c
-index d8d0ae0d7238..9d5d2531a33b 100644
---- a/drivers/tty/serial/8250/8250_pcilib.c
-+++ b/drivers/tty/serial/8250/8250_pcilib.c
-@@ -22,19 +22,16 @@ int serial_8250_warn_need_ioport(struct pci_dev *dev)
- EXPORT_SYMBOL_NS_GPL(serial_8250_warn_need_ioport, "SERIAL_8250_PCI");
-=20
- int serial8250_pci_setup_port(struct pci_dev *dev, struct uart_8250_port=
- *port,
--		   u8 bar, unsigned int offset, int regshift)
-+		   u8 bar, unsigned int offset, int regshift, void __iomem *iomem)
- {
- 	if (bar >=3D PCI_STD_NUM_BARS)
- 		return -EINVAL;
-=20
- 	if (pci_resource_flags(dev, bar) & IORESOURCE_MEM) {
--		if (!pcim_iomap(dev, bar, 0) && !pcim_iomap_table(dev))
--			return -ENOMEM;
--
- 		port->port.iotype =3D UPIO_MEM;
- 		port->port.iobase =3D 0;
- 		port->port.mapbase =3D pci_resource_start(dev, bar) + offset;
--		port->port.membase =3D pcim_iomap_table(dev)[bar] + offset;
-+		port->port.membase =3D iomem + offset;
- 		port->port.regshift =3D regshift;
- 	} else if (IS_ENABLED(CONFIG_HAS_IOPORT)) {
- 		port->port.iotype =3D UPIO_PORT;
-diff --git a/drivers/tty/serial/8250/8250_pcilib.h b/drivers/tty/serial/8=
-250/8250_pcilib.h
-index 16a274574cde..ab18de8d1355 100644
---- a/drivers/tty/serial/8250/8250_pcilib.h
-+++ b/drivers/tty/serial/8250/8250_pcilib.h
-@@ -12,6 +12,6 @@ struct pci_dev;
- struct uart_8250_port;
-=20
- int serial8250_pci_setup_port(struct pci_dev *dev, struct uart_8250_port=
- *port, u8 bar,
--		   unsigned int offset, int regshift);
-+		   unsigned int offset, int regshift, void __iomem *iomem);
-=20
- int serial_8250_warn_need_ioport(struct pci_dev *dev);
---=20
-2.39.5
+Of course, this is just an example that indicates the cases are supported,
+it doesn't mean the command is meaningful. But we can't exclude that users
+have such real requirements.
 
+If we want to support 3 and more events in ACR group (if not already), we'd
+better rename the "ratio-to-prev" option to "ratio-to-head" and only allow
+the group leader can be set the sampling period explicitly with "period"
+option and the sampling period of all other group members can only be
+calculated base on the sampling period of group leader and
+the "ratio-to-head", maybe like this.
+
+perf record -e
+"{cpu_atom/branch-misses,period=200000/p,cpu_atom/branches,ratio-to-head=5/,cpu_atom/branches,ratio-to-head=5/}"
+-- sleep 1
+
+Thanks.
+
+
+>
+> or
+>
+> perf record -e "{cpu_atom/branch-misses/ppu,\
+> cpu_atom/branch-instructions,ratio-to-prev=5/u}" -c 1000000 \
+> -- ./mispredict
+>
+> [1] https://lore.kernel.org/lkml/20250327195217.2683619-1-kan.liang@linux.intel.com/
+>
+> Changes in v2 (mostly suggested by Ian Rogers):
+>
+> -- Add documentation explaining acr_mask bitmask used by ACR
+> -- Move ACR specific implementation to arch/x86/
+> -- Provide test cases for event parsing and perf record tests
+>
+> Thomas Falcon (2):
+>   perf record: Add ratio-to-prev term
+>   perf record: add auto counter reload parse and regression tests
+>
+>  tools/perf/Documentation/intel-acr.txt | 53 ++++++++++++++++++
+>  tools/perf/Documentation/perf-list.txt |  2 +
+>  tools/perf/arch/x86/util/evsel.c       | 53 ++++++++++++++++++
+>  tools/perf/tests/parse-events.c        | 54 ++++++++++++++++++
+>  tools/perf/tests/shell/record.sh       | 40 ++++++++++++++
+>  tools/perf/util/evsel.c                | 76 ++++++++++++++++++++++++++
+>  tools/perf/util/evsel.h                |  1 +
+>  tools/perf/util/evsel_config.h         |  1 +
+>  tools/perf/util/parse-events.c         | 22 ++++++++
+>  tools/perf/util/parse-events.h         |  3 +-
+>  tools/perf/util/parse-events.l         |  1 +
+>  tools/perf/util/pmu.c                  |  3 +-
+>  12 files changed, 307 insertions(+), 2 deletions(-)
+>  create mode 100644 tools/perf/Documentation/intel-acr.txt
+>
 
