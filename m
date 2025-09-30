@@ -1,146 +1,100 @@
-Return-Path: <linux-kernel+bounces-837786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 536C8BAD2E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 16:31:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC0DEBAD2DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 16:31:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DE1B32211A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:31:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AF74322086
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:31:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 711DC284896;
-	Tue, 30 Sep 2025 14:31:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DAB2212FB3;
+	Tue, 30 Sep 2025 14:31:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="FrrW8Yy/"
-Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BoF9A4Lb";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RqD/P53H"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EEB3241673
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 14:31:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A24A1A0BE0;
+	Tue, 30 Sep 2025 14:31:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759242674; cv=none; b=V/YUXrlV1lDhvwnaeVc05DRpemfcLTYg9p5dAHSU+tLuzlz8stjT+wuS9769HJ6+GCf2XYr3hxkDyRJD36mReNOHMvPlt4tPy73tcoSEmuaRRGVOTyyJMO1v/MJln6vjpILb6+VpLKVPT2VUvIgVv2H4ZDbW00JvTcHw05PaWks=
+	t=1759242667; cv=none; b=cqEKYIQYFVvTe9DZKgkcaUfS8y0goMvGql4Wvm6wr9ooZvd7LErHIODNpJXPOz4xvo7yRUeGMZeNlhNg89L1gemGF3fXYROrdN3INDpuAWJ4Xn9X5YHWbcezZ9Vkw95j3D0ZhJf5Z5AYAhdqZQzncZBtYPeXDlGlR8jKfEUvZdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759242674; c=relaxed/simple;
-	bh=tk8QX20vhVgvhFs5c1ShZSPdYu5PmDbETEFmQGs7ASg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fUVkNKBYd6M1bL/G9C9vOoQO4KhsTDugC2cHqkQWKhPYBiXxgAY1s0eLzosUDRWYi0Jnk9pv675Ya3FLjLi9u06Czz8gkCYFbzYioNqMPDyIA9zLmzCSskr6cHdQM5l+cUg3MWV+PYfAJVKJJPOIG6AJkp8XG2ebAqlphlH1Gt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=FrrW8Yy/; arc=none smtp.client-ip=91.218.175.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Forwarded-Encrypted: i=1; AJvYcCW/pOvylhx2g8ncYuY98mhVmD+vUxALk8Pv7nDULLfPlpANDJqp5zpfLHWjoVgHGMmlldjAkm38+ZzS4ME=@vger.kernel.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1759242669;
+	s=arc-20240116; t=1759242667; c=relaxed/simple;
+	bh=lJ41failz6s5ibyAqRor3HhQSOH1yaAZt9EsNN8NjJ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QvNRfMpoEQPFJLQ21CuBEhyH5IhTDzKXPzrPJKjhj7AB0Kond2YYys/D+0kWEPaYnvQ1XxOajSAnh15p1AM5QtIQsl2nDt2T07zwV78EbXAELDZX1Gd6SRlwheh3Y+9BCZV1ZB/UB/eKGf13vAxL1k5+lbujUqPgPzLgp/auhc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BoF9A4Lb; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RqD/P53H; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 30 Sep 2025 16:30:59 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1759242661;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=/P8UbV87J09tZL1h3UzmxkojtiXGLQJFOupY2v35F54=;
-	b=FrrW8Yy/jvWuFW+ZwbYYTb/jryMyxSHmmi5pw1ciKqlFdltE3Qn7BWWGujyKamjs70z/Hw
-	m70FFTqGOUFjLvT+wxdFi4Sh19MiTfw3fbsaTLgM4gM0ErypldyLIYiA/y6SLMXnZ7D2ac
-	6qK+WpX4xmHwKDOQWyIYrE+JAICcluA=
-X-Gm-Message-State: AOJu0YwkDUkBssODWPWTlcQCwWpTidDBw0sTtePOAWEYVr7DrsC99yU2
-	btvS/hQCjD8q1XN2qq47tY/O19OXooElz0c/9cO3Yi37p81Awu9298fXnHKYlmA4jQGZqQcsYHj
-	6Gy4OpbZavIIr3u9BcnE08Ihfabe6nuQ=
-X-Google-Smtp-Source: AGHT+IFVSPZu6yh0Q16pHzVeahA0zVDamjBYekfddJu+S0nvsCyAm84127hmtyw+5HLmrZLl1Fidbc3JRjFYvkTCfPo=
-X-Received: by 2002:ad4:5c65:0:b0:746:4ca1:fbc with SMTP id
- 6a1803df08f44-7fc2fd7343amr298313466d6.23.1759242666456; Tue, 30 Sep 2025
- 07:31:06 -0700 (PDT)
+	bh=lJ41failz6s5ibyAqRor3HhQSOH1yaAZt9EsNN8NjJ8=;
+	b=BoF9A4LbTD8DbuqzHMymn6Z0OFkUG4hgMjwnsc+CWSOZFh8CW2TypKcD6nS8vFO6zVCZrY
+	I2xxcUBSnL5+++UruwBqLldWsSg6a0vuHXpsT+m/XRTwowQoiaw4z1W/CO9v8q1grclHt1
+	MUeAI7G0VfmcnEd2DwMh9+PAlw3Fqj6FMd/WLQ38dnNjP0TnVisQSZ0+NSd1hMtIodU81g
+	283y/Pw5pTeksIbepX3GfFxAfvTFfTODAXLMCQ1SnsrtIAsE+9ncEp5w73jhuh6F79YFuJ
+	wQ1jvIeiH5/OAFHIv3NVEKk2IEQ3OGAYvcPZO15tADVY8o6Jred3kvHQ2RiiLQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1759242661;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lJ41failz6s5ibyAqRor3HhQSOH1yaAZt9EsNN8NjJ8=;
+	b=RqD/P53HXgLXPnIxXIDMMc9LcDoO0CnQqb8xUCl1SIgq1re5GZZNMTonrU7YQXjDKssDF0
+	2W6zgpx7eeJ9V6AQ==
+From: Sebastian Siewior <bigeasy@linutronix.de>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Calvin Owens <calvin@wbinvd.org>, Breno Leitao <leitao@debian.org>,
+	Petr Mladek <pmladek@suse.com>, Mike Galbraith <efault@gmx.de>,
+	Simon Horman <horms@kernel.org>, kuba@kernel.org,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	Johannes Berg <johannes@sipsolutions.net>, paulmck@kernel.org,
+	LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
+	boqun.feng@gmail.com, Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: netconsole: HARDIRQ-safe -> HARDIRQ-unsafe lock order warning
+Message-ID: <20250930143059.OA_NFC9S@linutronix.de>
+References: <tx2ry3uwlgqenvz4fsy2hugdiq36jrtshwyo4a2jpxufeypesi@uceeo7ykvd6w>
+ <5b509b1370d42fd0cc109fc8914272be6dcfcd54.camel@gmx.de>
+ <tgp5ddd2xdcvmkrhsyf2r6iav5a6ksvxk66xdw6ghur5g5ggee@cuz2o53younx>
+ <84a539f4kf.fsf@jogness.linutronix.de>
+ <trqtt6vhf6gp7euwljvbbmvf76m4nrgcoi3wu3hb5higzsfyaa@udmgv5lwahn4>
+ <847by65wfj.fsf@jogness.linutronix.de>
+ <aMGVa5kGLQBvTRB9@pathway.suse.cz>
+ <oc46gdpmmlly5o44obvmoatfqo5bhpgv7pabpvb6sjuqioymcg@gjsma3ghoz35>
+ <aNvh2Cd2i9MVA1d3@mozart.vkv.me>
+ <84frc4j9yx.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250930025246.1143340-1-anshuman.khandual@arm.com>
-In-Reply-To: <20250930025246.1143340-1-anshuman.khandual@arm.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lance Yang <lance.yang@linux.dev>
-Date: Tue, 30 Sep 2025 22:30:28 +0800
-X-Gmail-Original-Message-ID: <CABzRoyYvdeX562ob6tf50O8gRoMKPp9-62FR5mcjTUNyGZSoTQ@mail.gmail.com>
-X-Gm-Features: AS18NWDSRA9_SfA-4xAgCAAwq9ckBLFuJLAQkfHgnyzZ7OPW9t0Fkeu1DptjuSI
-Message-ID: <CABzRoyYvdeX562ob6tf50O8gRoMKPp9-62FR5mcjTUNyGZSoTQ@mail.gmail.com>
-Subject: Re: [PATCH] mm/ptdump: Replace READ_ONCE() with standard page table accessors
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
-	David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <84frc4j9yx.fsf@jogness.linutronix.de>
 
-On Tue, Sep 30, 2025 at 10:56=E2=80=AFAM Anshuman Khandual
-<anshuman.khandual@arm.com> wrote:
->
-> Replace READ_ONCE() with standard page table accessors i.e pxdp_get() whi=
-ch
-> anyways default into READ_ONCE() in cases where platform does not overrid=
-e.
->
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: linux-mm@kvack.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-> ---
+On 2025-09-30 16:29:02 [+0206], John Ogness wrote:
+> @bigeasy: You have some experience cleaning up this class of
+> problems. Any suggestions?
 
-Nice cleanup! I assume it's a no-op change on all architectures for now ;)
-Acked-by: Lance Yang <lance.yang@linux.dev>
+I though that we have netconsole disabled on RT. As far as I remember it
+disables interrupts and expects that the NAPI callback (as in interrupts)
+will not fire not will there be any packets sent. So this is not going
+to work.
+It needs to be checked what kind of synchronisation is expected of
+netconsole by disabling interrupts and providing this by other means.
 
->  mm/ptdump.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/mm/ptdump.c b/mm/ptdump.c
-> index b600c7f864b8..18861501b533 100644
-> --- a/mm/ptdump.c
-> +++ b/mm/ptdump.c
-> @@ -31,7 +31,7 @@ static int ptdump_pgd_entry(pgd_t *pgd, unsigned long a=
-ddr,
->                             unsigned long next, struct mm_walk *walk)
->  {
->         struct ptdump_state *st =3D walk->private;
-> -       pgd_t val =3D READ_ONCE(*pgd);
-> +       pgd_t val =3D pgdp_get(pgd);
->
->  #if CONFIG_PGTABLE_LEVELS > 4 && \
->                 (defined(CONFIG_KASAN_GENERIC) || defined(CONFIG_KASAN_SW=
-_TAGS))
-> @@ -54,7 +54,7 @@ static int ptdump_p4d_entry(p4d_t *p4d, unsigned long a=
-ddr,
->                             unsigned long next, struct mm_walk *walk)
->  {
->         struct ptdump_state *st =3D walk->private;
-> -       p4d_t val =3D READ_ONCE(*p4d);
-> +       p4d_t val =3D p4dp_get(p4d);
->
->  #if CONFIG_PGTABLE_LEVELS > 3 && \
->                 (defined(CONFIG_KASAN_GENERIC) || defined(CONFIG_KASAN_SW=
-_TAGS))
-> @@ -77,7 +77,7 @@ static int ptdump_pud_entry(pud_t *pud, unsigned long a=
-ddr,
->                             unsigned long next, struct mm_walk *walk)
->  {
->         struct ptdump_state *st =3D walk->private;
-> -       pud_t val =3D READ_ONCE(*pud);
-> +       pud_t val =3D pudp_get(pud);
->
->  #if CONFIG_PGTABLE_LEVELS > 2 && \
->                 (defined(CONFIG_KASAN_GENERIC) || defined(CONFIG_KASAN_SW=
-_TAGS))
-> @@ -100,7 +100,7 @@ static int ptdump_pmd_entry(pmd_t *pmd, unsigned long=
- addr,
->                             unsigned long next, struct mm_walk *walk)
->  {
->         struct ptdump_state *st =3D walk->private;
-> -       pmd_t val =3D READ_ONCE(*pmd);
-> +       pmd_t val =3D pmdp_get(pmd);
->
->  #if defined(CONFIG_KASAN_GENERIC) || defined(CONFIG_KASAN_SW_TAGS)
->         if (pmd_page(val) =3D=3D virt_to_page(lm_alias(kasan_early_shadow=
-_pte)))
-> --
-> 2.30.2
->
->
+> John Ogness
+
+Sebastian
 
