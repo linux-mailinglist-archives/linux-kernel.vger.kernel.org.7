@@ -1,123 +1,108 @@
-Return-Path: <linux-kernel+bounces-838118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 762F6BAE7BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 21:56:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFCE7BAE7C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 22:00:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B71C4324227
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 19:56:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F4E4194308C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 20:00:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01E1E28724E;
-	Tue, 30 Sep 2025 19:56:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB0192857C2;
+	Tue, 30 Sep 2025 19:59:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="W5FMTXYt"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="QaNz4Je2"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B639C238C03
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 19:56:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC7F61EE02F
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 19:59:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759262197; cv=none; b=RkESPe8jvu4s2yxCQqwaEa2yfRtMTFvWRBibbJ308YzxWkWFi74XDIjXgyJGtCHirX1KdMkmGsuBrv4NHdRHjc9+T/5BnToUr/J2bpdbEt442jI+kVEssT/GrG9vXa0StKgO3U4FZbWaJv8CrS/1lGA6kNdzaN3wwNdUy5HdXoU=
+	t=1759262395; cv=none; b=cC1DD5/Vi47W/mCxWSYAapNS7wweI2h0qo6QhcAYR62vqchTZcK9KlmydhxsGGXIGeBqBspGN45o1Ep0fjZiHuNCNKmTlBXHI6Bc9WSJf+htLYuFM2NgdJBMVBsLlfULOFWpUt78wz2nLfKYI1AUISOlUI3NYUlthFPXX95HyGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759262197; c=relaxed/simple;
-	bh=pZsEy4BlzjnbApYdtY98hgFcJKx+/xKyksynw+ju+JU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eQDtd1yKTui22RsuaFTFwkEtfEsJG5eb1rlYceJQ4Jt3ANRSdl7O4/1peYa97k4Oi2C81YOR0Wv9rGcgnhDlEgEQyM009/kd6GxP/CDkKnuyuEdcMD3Md0Kn6vdKd8p/4EF/78PdqOdFolvNpG1ilYEv6ht1DHESS4VqCaJdwfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=W5FMTXYt; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-46e542196c7so1512925e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 12:56:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1759262194; x=1759866994; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wr3gBhu+Jtq0RAUdwZRnS8EkF8mlUADBYcr5EwXyQJs=;
-        b=W5FMTXYtgirQcApbHrt4DhcX7e/arIgqAIb962vwiipD3TVF4D3O9xvZCRXud9GFDT
-         FzEmInuoVyl181NHb1HhJK7zjR+qHTbfTrFdfa6oOmnv1mJOtX6hBULWZXSQ7GMvUZhB
-         0Qm0vC7Cz9JaikP60XLWzg6/45SUIVmmzT6BqySmwGEUVk4nhmy6DscSEfumRn72EpLb
-         3ufioGVgzZlY/V3vzPaDse1CeWgJyXs9cvaSh6dJxuuY0foTA/VSOM4MmLayWOZkH+1B
-         f/Zsu+wtMGTG4YlsQBXPQGRfwYKoekX3KgHzFpF4EyU0nnVbMSYi33yiQ9eUanNLkemj
-         p4NQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759262194; x=1759866994;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wr3gBhu+Jtq0RAUdwZRnS8EkF8mlUADBYcr5EwXyQJs=;
-        b=YD4BOLj41PqqJMxrZwL5CUIJKoksxAp2G588dwcpjTqvAUnIH5iFWOyVKTf87gU9QG
-         rIZawrq8bx3gVQaoVpHg21w+LhdKWdu1PrSo9hG35zyoPcmz5/ylMKDjdAgzpS6lBI5H
-         q7XWwfLK/cyBGyDu1/rg45DchxnQsf8ZZXA3iDNBAPtn+ZQPKV6FCdiDNkuVE/8VvtHC
-         r+zuBwl1LBOWV0r5V6iTd9WiLsMeGwZGS/5+8dV0894WpIe9h9o8d56EB66KROdG2Aoq
-         z/J/vPsp73nOyBBeCZNXWPIa+M8E+gdW0zNzF7lB29L4C0nO4ywf5J8ZyQUlDejYHJXT
-         ASsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX5FP7WJw7iTmxxEVnAg/7ujaIf0ZeSscE066t4VT9kA3CzLM+98kLSfotGErD/XJ7Y9P3YjrSWZMvW94E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9EbLVgDUzmad/nv7hLG2LISBYaQ0Mgu+HoRowVIsB5HIfMOFr
-	F5MaKLF84WN52p2Db5yEUFSDYXVkhglsQ/fQiTgRj4nyxf2eRhC/cYo=
-X-Gm-Gg: ASbGncsKJrGGjGNe9ac4MnSuRyLxHQGpeED4EpktdSFw+gGYABraZcboN6wLB+pMCfx
-	fBKieHOL0OLqKb7etPFLVz5L9plifSZSsl8Vb66oChITGoOGm4JfJxaFEFIao96brQr0yCmGsh3
-	arodkQ/nxtmEIqxXlcPFQS6BFEfLVotzOXZYdyHYGqF7iZC13J9quu/U0BMaIeds2oWL8eMY03Y
-	9M8fKubOG8phyZJdM/Iu0y64AV0W0paRVhS52IaV12zqMyLqQTBMT0OmW5B9O+Fig3iKdR4AFHg
-	FTD/B/57aqso/H7jMM7PsX1gZrFM25HRu5h6J/w4yZD3x2FCfS38QR5yLki4Ih3S4J379Nmyzbc
-	wy2nWiOR/pGfFJ0J3VXPZt79PlbuyD3heC+7WG3C5VuwArkCQTMzCT8l5YFYZ/Tt5pWoDx3DLUb
-	RgsKv3Jzp1dSyTsLQ/ByNyDQRq0+QSW3Sfyw==
-X-Google-Smtp-Source: AGHT+IF0sFwvuRgPGE+exYeJzMFswBI4i3P7jw3i8w/j6W2Np5WRLVu1oilbh2amI4bAMDKJaEAy4g==
-X-Received: by 2002:a05:6000:4387:b0:3e9:b208:f2f1 with SMTP id ffacd0b85a97d-425577b39fcmr862831f8f.29.1759262193723;
-        Tue, 30 Sep 2025 12:56:33 -0700 (PDT)
-Received: from [192.168.1.3] (p5b2b4965.dip0.t-ipconnect.de. [91.43.73.101])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fb985e080sm23858507f8f.24.2025.09.30.12.56.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Sep 2025 12:56:33 -0700 (PDT)
-Message-ID: <8947d35f-9e9d-42a3-9ed2-69c6f6a8bd97@googlemail.com>
-Date: Tue, 30 Sep 2025 21:56:32 +0200
+	s=arc-20240116; t=1759262395; c=relaxed/simple;
+	bh=Hy7YTC353G/i8KcCKTnHdodQD4/ARaG2eoCv6OzYxhw=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=eUiOvQv0RBn5xoUNh8q+Gh/up5GCWNIzGFGZU3lSQ45xG/CU/5InIir1RsTYRDXBvGK4SEp6fY2yerhgWlfLddipdiJ0eiA+2zIigX1zUAIW/uNvbkCmp8SJkSIA/er9zIivdxkxcqekTcUF2pXk+yJguNSy8zNUjLIufWRGQQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=QaNz4Je2; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [IPV6:2601:646:8081:9484:3373:e8bd:aaa4:7c23] ([IPv6:2601:646:8081:9484:3373:e8bd:aaa4:7c23])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 58UJxGxQ388770
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Tue, 30 Sep 2025 12:59:16 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 58UJxGxQ388770
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025092201; t=1759262357;
+	bh=GUDfo0ggb2Kf0OLA6XTPKyaZ5hpYV0SrMLjTdCbuESQ=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=QaNz4Je2UXuQTSWaK4KMZazVcUDgrcjdxPf7vCTlHy0S5KlindalLZY9iSdbN0LPO
+	 dZb78UBGhBI6zN+vsilEaxZSxAvZBA+b2DzFqnhlIs+P7vKdM8tGRUo3+SmH+ShgM7
+	 b4ebKEuKD7ubKHHtEaatmx3ExNblsR56/PR+F2q18PSsag/YCLricKcIsLGhYsD8fm
+	 +3Bi3bmpb/VjsC+tI1oc2MfG6eB2Odcjqkxn6QEL3QbDHW/e4z7LKSf4okznFo2Wwy
+	 Y0OorC4QkeM6DrHa7SK6xfWjFIfjwzCLKSxx7dd3XM+E31C01/RFVTptacurWTbYs0
+	 oHt+fMunsTYzg==
+Message-ID: <2ca6c68f-16a7-402f-adb0-327583695d4a@zytor.com>
+Date: Tue, 30 Sep 2025 12:59:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.6 00/91] 6.6.109-rc1 review
-Content-Language: de-DE
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, rwarsow@gmx.de,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
-References: <20250930143821.118938523@linuxfoundation.org>
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20250930143821.118938523@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 11/12] x86/paravirt: Don't use pv_ops vector for MSR
+ access functions
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+        virtualization@lists.linux.dev, xin@zytor.com,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ajay Kaher <ajay.kaher@broadcom.com>,
+        Alexey Makhalov <alexey.makhalov@broadcom.com>,
+        Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        xen-devel@lists.xenproject.org
+References: <20250930070356.30695-1-jgross@suse.com>
+ <20250930070356.30695-12-jgross@suse.com>
+ <20250930083827.GI3245006@noisy.programming.kicks-ass.net>
+ <1541b670-8b29-42a5-a58d-34d85197751d@suse.com>
+ <20250930100404.GK4067720@noisy.programming.kicks-ass.net>
+ <fefbd1ee-ab8c-465e-89bf-39cd2601fc60@suse.com>
+ <d2c68cbe-2e92-4801-b1a3-af4645e9ba78@zytor.com>
+Content-Language: en-US, sv-SE
+In-Reply-To: <d2c68cbe-2e92-4801-b1a3-af4645e9ba78@zytor.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Am 30.09.2025 um 16:46 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.6.109 release.
-> There are 91 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 2025-09-30 12:49, H. Peter Anvin wrote:
+> 
+> /* Xen code, stub sets CF = 1 on failure */
+> 
+>    0:   e8 xx xx xx xx          call   asm_xen_pv_wrmsr
+>    5:   73 03                   jnc    0xa
+>    7:   0f 0b                   ud2
+>    9:   90                      nop
+>    a:
+> 
+> The trap point even ends up in the same place! UD2 can be any 1-, 2-, or
+> 3-byte trapping instruction.
+> 
 
-Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg oddities or regressions found.
+You can, of course, also simply have a conditional jump, at the expense of
+making the whole alternative block one byte longer:
 
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+  0:   e8 xx xx xx xx          call   asm_xen_pv_wrmsr
+  5:   0f 82 xx xx xx xx       jc     wrmsr_failed
 
+	-hpa
 
-Beste Grüße,
-Peter Schneider
-
--- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
-
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
