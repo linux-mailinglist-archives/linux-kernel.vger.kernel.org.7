@@ -1,185 +1,236 @@
-Return-Path: <linux-kernel+bounces-838016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE078BAE3AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 19:39:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D34DCBAE3AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 19:41:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 106177A997F
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:38:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E91007AAA3F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:39:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A94C4305979;
-	Tue, 30 Sep 2025 17:39:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DB0E26A1CF;
+	Tue, 30 Sep 2025 17:41:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="XZgU4oaW"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OJ6j+gAl"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB38D1C862D;
-	Tue, 30 Sep 2025 17:39:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 957E920B7E1
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 17:41:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759253968; cv=none; b=QRD/k7sqODUqVNaO7t9J8WyXDmQawtsz6O6kUKbNUBR28l/GjwSXl2pSujpB1nHw/tDelG3Rd8QEMUfhh7Ew2T/YCPU2gCKQD9p6tJgcMVTGe0F2ohHOVzLTX3xC+1ZrqWJWDog6JhXvXORIX7YizVWx7oFFpucK+Jlkboyt1WY=
+	t=1759254091; cv=none; b=nMdY8rcKC6JGcpEu6vcfbh/aSTnmNrvTBm84eh1LzV2gp6FXYDdRUUTgi2i29ZCeDXNrnFXbTFzryzVhcYCkXKtxEL0osloS9Uuws3Suv9s31MIswYUeu9Y1Cw3Sw//rh+y4tsvTa6zYrfWNckR+Ek50FGse80XmZpusJsIUhns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759253968; c=relaxed/simple;
-	bh=dJ22hKA0Pw46/eMtwHJfDRVC5brR1Fd+Ptpn07rVw+A=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=iQPXv6kpt9ns/QeweRs3atVCCT7L6WHPFQCNtFut/4qoyciQ6CY2zkqMx6HJHjEdmos3zb7Gw9macf5qf+MjCchfzBxcIr8sQ/7n01zzPwIbWOKOvJnatEb4wEPEnnUg0dSlRr/JmBpfKSzivGdmkSN5+6p1DwgHcHE6MVdKnyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=XZgU4oaW; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1759253951; x=1759858751; i=markus.elfring@web.de;
-	bh=dJ22hKA0Pw46/eMtwHJfDRVC5brR1Fd+Ptpn07rVw+A=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
-	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=XZgU4oaW7BOwhHTup9t5ED9kRtmQRwaLIt55LbrgDlNFj2cTpUJLM3rmF4K7nwe7
-	 mzhsRicpsyW90HLjXAhPnzh6uL88b9OtuNvyZXvdkiQjnqed+GP+vUezVxLQQwsSH
-	 9IE3X6RRWecjefupjbGE6xef8EUrQFj1HYGxfrk4CzH6wS87YV9FEY7f6I3oGg8jZ
-	 zFhmhyt+cx593TSFStQReFII59EXGjy3oTDmVqpNS0eKqDH7RIiSGLXdpzt/r4xH8
-	 nup5qK7G+tPL+nw4k10p45y+vbNLMJBney+zVxYJ2Z85beI83r7yukT3QDOUouDLm
-	 459RYsd3StOH2D2E1g==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.185]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mav6t-1uTDts2lzP-00aR68; Tue, 30
- Sep 2025 19:39:11 +0200
-Message-ID: <277fbd11-6533-4f45-a846-cf31abfb06d9@web.de>
-Date: Tue, 30 Sep 2025 19:39:10 +0200
+	s=arc-20240116; t=1759254091; c=relaxed/simple;
+	bh=q64cqrc+DL7CyKWrLWgqNsYA1vpEdUt77jZZdDO8Ftg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rqFyVox5K2LX2ccIFgNhr6mEjtb/WsA7ait9zXT7KHZapMDNjtyMKKHPr1OXZHl3QNO3hipo5zTeMxADUagsE3H27AmvzOSM9AxVtw/JsIfAEskggx3mEwU4eTqC0Vdap+9VvgCdGnnXlsep9qRI9zSAWTH6Og4q+6ykBqC9Xmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OJ6j+gAl; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759254088;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=45rirt6UgKivtF83lr1iNJMWHnfUnLbsHai5065xl0s=;
+	b=OJ6j+gAljnzaiF/ZgK08qT8hbbf14xjnuR6NBi+IK4+v2EHn4oYFgS8n0RAj9bhMA4u93G
+	ZGwPTDgbvP/L4I+ZTGwBvzpgLn+Pc0CCyQ3pN/Cu6/+Ni4efklG2kJGwHtxkY7T7mF8CZQ
+	GctRj0jzxOtYO58V4toHFF/Y9tKxdhQ=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-601-CbIqzQqMNJS4DtgRT7uueA-1; Tue, 30 Sep 2025 13:41:26 -0400
+X-MC-Unique: CbIqzQqMNJS4DtgRT7uueA-1
+X-Mimecast-MFC-AGG-ID: CbIqzQqMNJS4DtgRT7uueA_1759254085
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3f93db57449so3596362f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 10:41:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759254085; x=1759858885;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=45rirt6UgKivtF83lr1iNJMWHnfUnLbsHai5065xl0s=;
+        b=RlmgYGGxbeHBJMfCRvh3T48VcwuZWzd2GQXMjIZ1uURc3N7xmcJxKo2evYGde38iPR
+         RNvmAgbG3Vz6nt1k5LnNLBSsryo16YNvnw76rXGFt7bzD+zmGI0leTz3LeX/L10hCymT
+         89yqRoAl0q+i7ghDDjpCJUiiTWM+cd3hFilogWGmHP/L8ESuUtYTGEVBFAmmHzn2FBRR
+         SEHNPZC1/pKhHiYInqZu4WwGWpI6MIvg3GolGpUyb3qEDTBPC9uQPkqRtRy15eOxNVu9
+         bCNnMHfVrcvO7vmh6EvkVA22rKsyUkahtkcDu4lRstni4Bbwm5iqNaOXUcuV21kYmbhd
+         W2GQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU8cFKApF4hiV+JzO7NaMPzlc695DEenvFxnUPvGHL9n69I7H6Vzh7pLUcgxjr4TqEk0VtsQjqmqww5hBw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnLVe7tKy6vrhDzO8MnBjJO9vSdWOnSRtFEaJH1wp1tOGoxsfl
+	vX5kZ8uvvjGskmnCe/0xwZyscCS5XEXbDtl1pxvlK7gJRSTktoa+utKsg+G0k9h0KDKWbRHSmxM
+	jXEwDG0Is3HzGFcNRi1uaZREBUzREeooSjzrmTAimBXHWB7nGVPcDQcYos296ixFojmfu3tl+3d
+	0hMJ/lMDWG3uaW/Dpr+GaDwWycFfGxErolegUqysQ6
+X-Gm-Gg: ASbGncvISpgQIsuGoTvKL06myf74PXDhovYd92izQDKV8Bs8FZJ/Y042TaPJHVpg973
+	x1WL9q0T2J8FjyYbEV7Ggx+zfQDgA3mq7ePcZ0Zn7r6Yk03SNAPHYaGrKrFYPPdDG4b+APIvh+e
+	C4ayCrftimAlBzDpjVhemZ10ygzzfeuzjjjhAKGmE1X9CkYJlUcqAPpi6n8ScLijHJKDMLtYqLt
+	uf8nq5AC4bmnGCVvbSFchlWx+Z9j6hm
+X-Received: by 2002:a05:6000:220b:b0:3fd:2dee:4e3d with SMTP id ffacd0b85a97d-42557818464mr465487f8f.46.1759254085077;
+        Tue, 30 Sep 2025 10:41:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF4AVn1Ljy0/iRDhxbKeR1WGQmvI/li1TzRCOybb+Gb4L2/1fw4OqXyy8yQekPJ8Ey9rJXuM0TkZ3ZWGI4RuG4=
+X-Received: by 2002:a05:6000:220b:b0:3fd:2dee:4e3d with SMTP id
+ ffacd0b85a97d-42557818464mr465469f8f.46.1759254084690; Tue, 30 Sep 2025
+ 10:41:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH 4/6] Coccinelle: ptr_err_to_pe: Omit a redundant space
- character
-From: Markus Elfring <Markus.Elfring@web.de>
-To: Gal Pressman <gal@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>,
- cocci@inria.fr, Alexei Lazar <alazar@nvidia.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Julia Lawall <Julia.Lawall@inria.fr>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org,
- linux-rdma@vger.kernel.org, Leon Romanovsky <leon@kernel.org>,
- Mark Bloch <mbloch@nvidia.com>, Nicolas Palix <nicolas.palix@imag.fr>,
- Richard Cochran <richardcochran@gmail.com>,
- Saeed Mahameed <saeedm@nvidia.com>
-References: <d5d3df5c-3cbf-403c-ad89-aa039ed85579@web.de>
-Content-Language: en-GB, de-DE
-In-Reply-To: <d5d3df5c-3cbf-403c-ad89-aa039ed85579@web.de>
-Content-Type: text/plain; charset=UTF-8
+References: <20250927060910.2933942-1-seanjc@google.com> <20250927060910.2933942-11-seanjc@google.com>
+In-Reply-To: <20250927060910.2933942-11-seanjc@google.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Tue, 30 Sep 2025 19:41:13 +0200
+X-Gm-Features: AS18NWBECixmY7PRvjINuwNoJ86CKCLh_XttTJvYN7DZsSXRUD-y3wtEVwAKROE
+Message-ID: <CABgObfYKWku7=i8b3FE=dRseQrsGbS6pPc_kC+S4Yxv90M1VTA@mail.gmail.com>
+Subject: Re: [GIT PULL] KVM: Symbol export restrictions for 6.18
+To: Sean Christopherson <seanjc@google.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:O58Z0tenR95pqkFlVQReIQKIrnCZPgmwLTINoBPLcq/rz6je78X
- I9wlB7XA+mOUULOWmo/zNnlAqjvgJ/txjtA1iKXNU43DPWWayOHLH8SqA/o9T+zYgyhf4iW
- YIwasVpMiD3uBhIsx+vbs/6BzPtSHptLfo/2wdfN5jWR1DhrrGiYKrfx4gTCINK2HtLkg46
- wXj6BsU8PCxu3kgTMh7nA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:YGCqnEc+tpA=;J/TcG41QIuUmuFRkbV688znzMJ4
- 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
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 30 Sep 2025 17:33:10 +0200
+On Sat, Sep 27, 2025 at 8:09=E2=80=AFAM Sean Christopherson <seanjc@google.=
+com> wrote:
+>
+> Note!  If possible, and you're feeling generous, please merge this dead l=
+ast
+> and manually convert any new KVM exports to EXPORT_SYMBOL_FOR_KVM_INTERNA=
+L so
+> that there are no unwanted exports.
+>
+> Three new exports are coming in via other kvm-x86 pull requests; I've bee=
+n
+> "fixing" them as part of the merge into kvm-x86/next (see diff below), so=
+ those
+> at least have gotten coverage in -next.
+>
+> Note #2, this is based on the "misc" branch/pull, but includes a backmerg=
+e of
+> v6.17-rc3.  I posted the patches against kvm-x86/next to avoid an annoyin=
+g
+> conflict (which I can't even remember at this point), and then didn't rea=
+lize
+> I needed v6.17-rc3 to pick up the EXPORT_SYMBOL_GPL_FOR_MODULES =3D>
+> EXPORT_SYMBOL_FOR_MODULES rename that snuck in until the 0-day bot yelled
+> because the branch didn't compile (I only tested when merged on top of
+> kvm/next, doh).
 
-An extra space character is not required after an SmPL asterisk.
-Thus omit it.
+I've cherry picked instead of merging it, seems to be the simplest way
+to clean up the backmerge.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- scripts/coccinelle/misc/ptr_err_to_pe.cocci | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Paolo
 
-diff --git a/scripts/coccinelle/misc/ptr_err_to_pe.cocci b/scripts/coccine=
-lle/misc/ptr_err_to_pe.cocci
-index fb4b5bf91081..b2db0dc3395e 100644
-=2D-- a/scripts/coccinelle/misc/ptr_err_to_pe.cocci
-+++ b/scripts/coccinelle/misc/ptr_err_to_pe.cocci
-@@ -18,7 +18,7 @@ constant char[] fmt;
- position p;
- identifier print_func;
- @@
--* print_func(..., fmt, ..., PTR_ERR@p(ptr), ...)
-+*print_func(..., fmt, ..., PTR_ERR@p(ptr), ...)
-=20
- @script:python depends on r && report@
- p << r.p;
-=2D-=20
-2.51.0
-
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index e96080cba540..3d4ec1806d3e 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -695,7 +695,7 @@ u64 kvm_get_user_return_msr(unsigned int slot)
+>  {
+>         return this_cpu_ptr(user_return_msrs)->values[slot].curr;
+>  }
+> -EXPORT_SYMBOL_GPL(kvm_get_user_return_msr);
+> +EXPORT_SYMBOL_FOR_KVM_INTERNAL(kvm_get_user_return_msr);
+>
+>  static void drop_user_return_notifiers(void)
+>  {
+> @@ -1304,7 +1304,7 @@ int __kvm_set_xcr(struct kvm_vcpu *vcpu, u32 index,=
+ u64 xcr)
+>                 vcpu->arch.cpuid_dynamic_bits_dirty =3D true;
+>         return 0;
+>  }
+> -EXPORT_SYMBOL_GPL(__kvm_set_xcr);
+> +EXPORT_SYMBOL_FOR_KVM_INTERNAL(__kvm_set_xcr);
+>
+>  int kvm_emulate_xsetbv(struct kvm_vcpu *vcpu)
+>  {
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index b99eb34174af..83a1b4dbbbd8 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -2661,7 +2661,7 @@ struct kvm_memory_slot *kvm_vcpu_gfn_to_memslot(str=
+uct kvm_vcpu *vcpu, gfn_t gfn
+>
+>         return NULL;
+>  }
+> -EXPORT_SYMBOL_GPL(kvm_vcpu_gfn_to_memslot);
+> +EXPORT_SYMBOL_FOR_KVM_INTERNAL(kvm_vcpu_gfn_to_memslot);
+>
+>  bool kvm_is_visible_gfn(struct kvm *kvm, gfn_t gfn)
+>  {
+>
+> The following changes since commit 1b237f190eb3d36f52dffe07a40b5eb210280e=
+00:
+>
+>   Linux 6.17-rc3 (2025-08-24 12:04:12 -0400)
+>
+> are available in the Git repository at:
+>
+>   https://github.com/kvm-x86/linux.git tags/kvm-x86-exports-6.18
+>
+> for you to fetch changes up to aca2a0fa7796cf026a39a49ef9325755a9ead932:
+>
+>   KVM: x86: Export KVM-internal symbols for sub-modules only (2025-09-24 =
+07:01:30 -0700)
+>
+> ----------------------------------------------------------------
+> KVM symbol export restrictions for 6.18
+>
+> Use the newfangled EXPORT_SYMBOL_FOR_MODULES() along with some macro
+> shenanigans to export KVM-internal symbols if and only if KVM has one or
+> more sub-modules, and only for those sub-modules, e.g. x86's kvm-amd.ko
+> and/or kvm-intel.ko, and PPC's many varieties of sub-modules.
+>
+> Define the macros in the kvm_types.h so that the core logic is visible ou=
+tside
+> of KVM, so that the logic can be reused in the future to further restrict
+> kernel exports that exist purely for KVM (x86 in particular has a _lot_ o=
+f
+> exports that are used only by KVM).
+>
+> ----------------------------------------------------------------
+> Sean Christopherson (6):
+>       Merge 'v6.17-rc3' into 'exports' to EXPORT_SYMBOL_FOR_MODULES renam=
+e
+>       KVM: s390/vfio-ap: Use kvm_is_gpa_in_memslot() instead of open code=
+d equivalent
+>       KVM: Export KVM-internal symbols for sub-modules only
+>       KVM: x86: Move kvm_intr_is_single_vcpu() to lapic.c
+>       KVM: x86: Drop pointless exports of kvm_arch_xxx() hooks
+>       KVM: x86: Export KVM-internal symbols for sub-modules only
+>
+>  arch/powerpc/include/asm/Kbuild      |   1 -
+>  arch/powerpc/include/asm/kvm_types.h |  15 +++++++++
+>  arch/s390/include/asm/kvm_host.h     |   2 ++
+>  arch/s390/kvm/priv.c                 |   8 +++++
+>  arch/x86/include/asm/kvm_host.h      |   3 --
+>  arch/x86/include/asm/kvm_types.h     |  10 ++++++
+>  arch/x86/kvm/cpuid.c                 |  10 +++---
+>  arch/x86/kvm/hyperv.c                |   4 +--
+>  arch/x86/kvm/irq.c                   |  34 ++------------------
+>  arch/x86/kvm/kvm_onhyperv.c          |   6 ++--
+>  arch/x86/kvm/lapic.c                 |  71 +++++++++++++++++++++++++++++=
+-------------
+>  arch/x86/kvm/lapic.h                 |   4 +--
+>  arch/x86/kvm/mmu/mmu.c               |  36 ++++++++++-----------
+>  arch/x86/kvm/mmu/spte.c              |  10 +++---
+>  arch/x86/kvm/mmu/tdp_mmu.c           |   2 +-
+>  arch/x86/kvm/pmu.c                   |  10 +++---
+>  arch/x86/kvm/smm.c                   |   2 +-
+>  arch/x86/kvm/x86.c                   | 219 +++++++++++++++++++++++++++++=
+++++++++++++++++++++++++++++++++++-----------------------------------------=
+------------------------
+>  drivers/s390/crypto/vfio_ap_ops.c    |   2 +-
+>  include/linux/kvm_types.h            |  25 ++++++++++-----
+>  virt/kvm/eventfd.c                   |   2 +-
+>  virt/kvm/guest_memfd.c               |   4 +--
+>  virt/kvm/kvm_main.c                  | 126 +++++++++++++++++++++++++++++=
+++++++++-------------------------------------
+>  23 files changed, 323 insertions(+), 283 deletions(-)
+>  create mode 100644 arch/powerpc/include/asm/kvm_types.h
+>
 
 
