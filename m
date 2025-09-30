@@ -1,430 +1,384 @@
-Return-Path: <linux-kernel+bounces-837859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73EA4BADCF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:25:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01B93BADE73
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:31:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48FBA19457D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 15:26:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9A203C414A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 15:31:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD879306B1C;
-	Tue, 30 Sep 2025 15:25:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B9063093CF;
+	Tue, 30 Sep 2025 15:30:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Sch1TQlO"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="tCEBw3+t"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A055F2FD1DD;
-	Tue, 30 Sep 2025 15:25:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FD19306B3B;
+	Tue, 30 Sep 2025 15:30:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759245945; cv=none; b=m3F36iAA/6z/vawYTyk1VToUmyu+KL/dFZ+ELCqkKMYLT7rIx1Zxk8H/aNBT7sweLd95+W3D4Ngl1rZdzwhCOJngZ9X2Dr70KwL5u7/bCwspfqQEa+5RpKW7KjXfpXHCVBtqmO3aSU+qK3tPpqWYRUgAZ8IiIticqBTZ7pr5OAA=
+	t=1759246254; cv=none; b=dkjG8tEmIfvGtzTaz2V4iPXmqcYRd8tGaX/t1JZtdRR1vlTG2rQYegx2/xHpKOKxxMJ0JnXP3+kTq8UPs1tHqLBDiy+WmyMS9cLrrUj0ozd/Fp0WkcbP72JzqrNrECy/mW2o5mN33ShD/kAbJRwhaJ3OZU+MgLsMkf15bV87z+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759245945; c=relaxed/simple;
-	bh=HBwQytcSwykONCNxeqm1o0gfZIKOYI96xjSq1aGiaLA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QoF+3ORe+g37UP4gztToVFieZ/1Nbs0JzoXQzqmrI+zl6YzkvwVwGJmugLA93gby9Ghz/X/raVrAPylIDf0AAd7aeoEk7PUN3ww7MvfC9f0sI6OFQwSz1gVN7IdRAWsTcwsHuKfqYFWst7blZc5lDnXtH2IMJISALXOykBseR/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Sch1TQlO; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759245942; x=1790781942;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=HBwQytcSwykONCNxeqm1o0gfZIKOYI96xjSq1aGiaLA=;
-  b=Sch1TQlOJGES0fQrAIEKwNy7ncyV6ZP2D+jwvUJ2NYzCaVvsFSFNja9N
-   rcnU0Ax8dkvsnZelIgSKJSV1tIsE5icUE2vjsNAX4Tl2QwIAisx9xpudA
-   TevEVEp5SDqp0pWa/YiQXUps44udB7+u+cRb/yjMM6rreQ/hQRRdY3HZz
-   mPIcTst4uEbcQs6Bdn5VeeWK5oEfujiAD0rGVVlGttAsI4LEzAksKP74f
-   mvIaTdfP19goGr/YAKPw+uCoACWq/wWUDsHNgbLv9qAmc5Nl870AkXhKp
-   5znVLAoKqZhypwMjXGRITWA2dFqWeli+3zyL+XoztSQi4cgBHLWOILF92
-   Q==;
-X-CSE-ConnectionGUID: fNilZaJYSeyQRb6AABDCIw==
-X-CSE-MsgGUID: gfZBVS8QSAWGCD7KvpK87Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11569"; a="61615114"
-X-IronPort-AV: E=Sophos;i="6.18,304,1751266800"; 
-   d="scan'208";a="61615114"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2025 08:25:42 -0700
-X-CSE-ConnectionGUID: xPIrSchvQRGKByruv3nG5w==
-X-CSE-MsgGUID: l3OvyQB4RciR0OIF1sVnkQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,304,1751266800"; 
-   d="scan'208";a="177823755"
-Received: from tslove-mobl4.amr.corp.intel.com (HELO [10.125.109.151]) ([10.125.109.151])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2025 08:25:41 -0700
-Message-ID: <355ad607-52ed-42cc-9a48-63aaa49f4c68@intel.com>
-Date: Tue, 30 Sep 2025 08:25:40 -0700
+	s=arc-20240116; t=1759246254; c=relaxed/simple;
+	bh=CGbVcM8ju3qjrdPZ21/z8N4JCGXx5YjM1sfmbIWyasc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sKGwTp4yzTi4egmt+KwfplDCrkALeLuMR6F7Ej0ROFPE9EqI1Q1ppK+uSjnOZKTMWHqSwUytGXUSP44aSCCZ1WrShRM4W/PWv2jWcBGe7SETVcuL8749RxdcCGu82Hl062QeSqRIvl1zOFFf5bsj+xw5SShAOojqYOvekTd8wwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=tCEBw3+t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E0F3C4CEF0;
+	Tue, 30 Sep 2025 15:30:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1759246254;
+	bh=CGbVcM8ju3qjrdPZ21/z8N4JCGXx5YjM1sfmbIWyasc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tCEBw3+tEmkND18XuyxJBrg8EfrD16eJ5MBDBh3mT33TbMoQO2H/8G+6/NGOahQB/
+	 rJkhpuSirxsVCI6efAWc6KUPxSlz6PLx5xFy55s8kJ4K15ubg10CeOE+6YzJVaMVKd
+	 pl9X1kJxTWLdKjNcFL3EE/JvDHbhaSPsbLqutZ5I=
+Date: Tue, 30 Sep 2025 17:26:17 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Chris Li <chrisl@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, Len Brown <lenb@kernel.org>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-acpi@vger.kernel.org, David Matlack <dmatlack@google.com>,
+	Pasha Tatashin <tatashin@google.com>,
+	Jason Miu <jasonmiu@google.com>, Vipin Sharma <vipinsh@google.com>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Adithya Jayachandran <ajayachandra@nvidia.com>,
+	Parav Pandit <parav@nvidia.com>, William Tu <witu@nvidia.com>,
+	Mike Rapoport <rppt@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Leon Romanovsky <leon@kernel.org>
+Subject: Re: [PATCH v2 02/10] PCI/LUO: Create requested liveupdate device list
+Message-ID: <2025093023-frantic-sediment-9849@gregkh>
+References: <20250916-luo-pci-v2-0-c494053c3c08@kernel.org>
+ <20250916-luo-pci-v2-2-c494053c3c08@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 07/16] x86/virt/tdx: Add tdx_alloc/free_page() helpers
-To: Rick Edgecombe <rick.p.edgecombe@intel.com>, kas@kernel.org,
- bp@alien8.de, chao.gao@intel.com, dave.hansen@linux.intel.com,
- isaku.yamahata@intel.com, kai.huang@intel.com, kvm@vger.kernel.org,
- linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org, mingo@redhat.com,
- pbonzini@redhat.com, seanjc@google.com, tglx@linutronix.de, x86@kernel.org,
- yan.y.zhao@intel.com, vannapurve@google.com
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-References: <20250918232224.2202592-1-rick.p.edgecombe@intel.com>
- <20250918232224.2202592-8-rick.p.edgecombe@intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20250918232224.2202592-8-rick.p.edgecombe@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250916-luo-pci-v2-2-c494053c3c08@kernel.org>
 
-On 9/18/25 16:22, Rick Edgecombe wrote:
-...
-> +/*
-> + * The TDX spec treats the registers like an array, as they are ordered
-> + * in the struct. The array size is limited by the number or registers,
-> + * so define the max size it could be for worst case allocations and sanity
-> + * checking.
-> + */
-> +#define MAX_DPAMT_ARG_SIZE (sizeof(struct tdx_module_args) - \
-> +			    offsetof(struct tdx_module_args, rdx))
-> +
-> +/*
-> + * Treat struct the registers like an array that starts at RDX, per
-> + * TDX spec. Do some sanitychecks, and return an indexable type.
-> + */
-> +static u64 *dpamt_args_array_ptr(struct tdx_module_args *args)
-> +{
-> +	WARN_ON_ONCE(tdx_dpamt_entry_pages() > MAX_DPAMT_ARG_SIZE);
-> +
-> +	/*
-> +	 * FORTIFY_SOUCE could inline this and complain when callers copy
-> +	 * across fields, which is exactly what this is supposed to be
-> +	 * used for. Obfuscate it.
-> +	 */
-> +	return (u64 *)((u8 *)args + offsetof(struct tdx_module_args, rdx));
-> +}
+On Tue, Sep 16, 2025 at 12:45:10AM -0700, Chris Li wrote:
+>  #define pr_fmt(fmt) "PCI liveupdate: " fmt
+> +#define dev_fmt(fmt) "PCI liveupdate: " fmt
 
-There are a lot of ways to to all of this jazz to alias an array over
-the top of a bunch of named structure fields. My worry about this
-approach is that it intentionally tries to hide the underlying type from
-the compiler.
+Please no.  Use the default dev_ formatting so that people can correct
+track the devices spitting out messages here.
 
-It could be done with a bunch of union/struct voodoo like 'struct page':
-
-struct tdx_module_args {
-	u64 rcx;
-	union {
-		struct {
-			u64 rdx;
-			u64 r8;
-			u64 r9;
-			...
-		};
-		u64 array[FOO];
-	};
-}
-
-Or a separate structure:
-
-struct tdx_module_array_args {
-	u64 rcx;
-	u64 array[FOO];
-};
-
-So that you could do something simpler:
-
-u64 *dpamt_args_array_ptr(struct tdx_module_args *args)
-{
-	return ((struct tdx_module_array_args *)args)->array;
-}
-
-Along with one of these somewhere:
-
-BUILD_BUG_ON(sizeof(struct tdx_module_array_args) !=
-	     sizeof(struct tdx_module_array));
-
-I personally find the offsetof() tricks to be harder to follow than
-either of those.
-
-> +static int alloc_pamt_array(u64 *pa_array)
-> +{
-> +	struct page *page;
-> +
-> +	for (int i = 0; i < tdx_dpamt_entry_pages(); i++) {
-> +		page = alloc_page(GFP_KERNEL);
-> +		if (!page)
-> +			return -ENOMEM;
-> +		pa_array[i] = page_to_phys(page);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static void free_pamt_array(u64 *pa_array)
-> +{
-> +	for (int i = 0; i < tdx_dpamt_entry_pages(); i++) {
-> +		if (!pa_array[i])
-> +			break;
-> +
-> +		reset_tdx_pages(pa_array[i], PAGE_SIZE);
-
-One nit: this reset is unnecessary in the error cases here where the
-array never gets handed to the TDX module. Right?
-
-> +		/*
-> +		 * It might have come from 'prealloc', but this is an error
-> +		 * path. Don't be fancy, just free them. TDH.PHYMEM.PAMT.ADD
-> +		 * only modifies RAX, so the encoded array is still in place.
-> +		 */
-> +		__free_page(phys_to_page(pa_array[i]));
-> +	}
-> +}
-> +
-> +/*
-> + * Add PAMT memory for the given HPA. Return's negative error code
-> + * for kernel side error conditions (-ENOMEM) and 1 for TDX Module
-> + * error. In the case of TDX module error, the return code is stored
-> + * in tdx_err.
-> + */
-> +static u64 tdh_phymem_pamt_add(unsigned long hpa, u64 *pamt_pa_array)
-> +{
-> +	struct tdx_module_args args = {
-> +		.rcx = hpa,
-> +	};
-> +	u64 *args_array = dpamt_args_array_ptr(&args);
-> +
-> +	WARN_ON_ONCE(!IS_ALIGNED(hpa & PAGE_MASK, PMD_SIZE));
-> +
-> +	/* Copy PAMT page PA's into the struct per the TDX ABI */
-> +	memcpy(args_array, pamt_pa_array,
-> +	       tdx_dpamt_entry_pages() * sizeof(*args_array));
-
-This uses 'sizeof(*args_array)'.
-
-> +	return seamcall(TDH_PHYMEM_PAMT_ADD, &args);
-> +}
-> +
-> +/* Remove PAMT memory for the given HPA */
-> +static u64 tdh_phymem_pamt_remove(unsigned long hpa, u64 *pamt_pa_array)
-> +{
-> +	struct tdx_module_args args = {
-> +		.rcx = hpa,
-> +	};
-> +	u64 *args_array = dpamt_args_array_ptr(&args);
-> +	u64 ret;
-> +
-> +	WARN_ON_ONCE(!IS_ALIGNED(hpa & PAGE_MASK, PMD_SIZE));
-> +
-> +	ret = seamcall_ret(TDH_PHYMEM_PAMT_REMOVE, &args);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Copy PAMT page PA's out of the struct per the TDX ABI */
-> +	memcpy(pamt_pa_array, args_array,
-> +	       tdx_dpamt_entry_pages() * sizeof(u64));
-
-While this one is sizeof(u64).
-
-Could we make it consistent, please?
-
-
-> +/* Serializes adding/removing PAMT memory */
-> +static DEFINE_SPINLOCK(pamt_lock);
-> +
-> +/* Bump PAMT refcount for the given page and allocate PAMT memory if needed */
-> +int tdx_pamt_get(struct page *page)
-> +{
-> +	unsigned long hpa = ALIGN_DOWN(page_to_phys(page), PMD_SIZE);
-> +	u64 pamt_pa_array[MAX_DPAMT_ARG_SIZE];
-> +	atomic_t *pamt_refcount;
-> +	u64 tdx_status;
-> +	int ret;
-> +
-> +	if (!tdx_supports_dynamic_pamt(&tdx_sysinfo))
-> +		return 0;
-> +
-> +	ret = alloc_pamt_array(pamt_pa_array);
-> +	if (ret)
-> +		return ret;
-> +
-> +	pamt_refcount = tdx_find_pamt_refcount(hpa);
-> +
-> +	scoped_guard(spinlock, &pamt_lock) {
-> +		if (atomic_read(pamt_refcount))
-> +			goto out_free;
-> +
-> +		tdx_status = tdh_phymem_pamt_add(hpa | TDX_PS_2M, pamt_pa_array);
-> +
-> +		if (IS_TDX_SUCCESS(tdx_status)) {
-> +			atomic_inc(pamt_refcount);
-> +		} else {
-> +			pr_err("TDH_PHYMEM_PAMT_ADD failed: %#llx\n", tdx_status);
-> +			goto out_free;
-> +		}
-
-I'm feeling like the states here are under-commented.
-
-	1. PAMT already allocated
-	2. 'pamt_pa_array' consumed, bump the refcount
-	3. TDH_PHYMEM_PAMT_ADD failed
-
-#1 and #3 need to free the allocation.
-
-Could we add comments to that effect, please?
-
-> +	}
-
-This might get easier to read if the pr_err() gets dumped in
-tdh_phymem_pamt_add() instead.
-
-> +	return ret;
-> +out_free:
-> +	free_pamt_array(pamt_pa_array);
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(tdx_pamt_get);
-> +
-> +/*
-> + * Drop PAMT refcount for the given page and free PAMT memory if it is no
-> + * longer needed.
-> + */
-> +void tdx_pamt_put(struct page *page)
-> +{
-> +	unsigned long hpa = ALIGN_DOWN(page_to_phys(page), PMD_SIZE);
-> +	u64 pamt_pa_array[MAX_DPAMT_ARG_SIZE];
-> +	atomic_t *pamt_refcount;
-> +	u64 tdx_status;
-> +
-> +	if (!tdx_supports_dynamic_pamt(&tdx_sysinfo))
-> +		return;
-> +
-> +	hpa = ALIGN_DOWN(hpa, PMD_SIZE);
-> +
-> +	pamt_refcount = tdx_find_pamt_refcount(hpa);
-> +
-> +	scoped_guard(spinlock, &pamt_lock) {
-> +		if (!atomic_read(pamt_refcount))
-> +			return;
-> +
-> +		tdx_status = tdh_phymem_pamt_remove(hpa | TDX_PS_2M, pamt_pa_array);
-> +
-> +		if (IS_TDX_SUCCESS(tdx_status)) {
-> +			atomic_dec(pamt_refcount);
-> +		} else {
-> +			pr_err("TDH_PHYMEM_PAMT_REMOVE failed: %#llx\n", tdx_status);
-> +			return;
-> +		}
-> +	}
-> +
-> +	free_pamt_array(pamt_pa_array);
-> +}
-> +EXPORT_SYMBOL_GPL(tdx_pamt_put);
-
-It feels like there's some magic in terms of how the entire contents of
-pamt_pa_array[] get zeroed so that this ends up being safe.
-
-Could that get commented, please?
-
-> +/* Allocate a page and make sure it is backed by PAMT memory */
-
-This comment is giving the "what" but is weak on the "why". Could we add
-this?
-
-	This ensures that the page can be used as TDX private
-	memory and obtain TDX protections.
-
-> +struct page *tdx_alloc_page(void)
-> +{
-> +	struct page *page;
-> +
-> +	page = alloc_page(GFP_KERNEL);
-> +	if (!page)
-> +		return NULL;
-> +
-> +	if (tdx_pamt_get(page)) {
-> +		__free_page(page);
-> +		return NULL;
-> +	}
-> +
-> +	return page;
-> +}
-> +EXPORT_SYMBOL_GPL(tdx_alloc_page);
-> +
-> +/* Free a page and release its PAMT memory */
-
-Also:
-
-	After this, the page is can no longer be protected by TDX.
-
-> +void tdx_free_page(struct page *page)
-> +{
-> +	if (!page)
-> +		return;
-> +
-> +	tdx_pamt_put(page);
-> +	__free_page(page);
-> +}
-> +EXPORT_SYMBOL_GPL(tdx_free_page);
-> diff --git a/arch/x86/virt/vmx/tdx/tdx.h b/arch/x86/virt/vmx/tdx/tdx.h
-> index 82bb82be8567..46c4214b79fb 100644
-> --- a/arch/x86/virt/vmx/tdx/tdx.h
-> +++ b/arch/x86/virt/vmx/tdx/tdx.h
-> @@ -46,6 +46,8 @@
->  #define TDH_PHYMEM_PAGE_WBINVD		41
->  #define TDH_VP_WR			43
->  #define TDH_SYS_CONFIG			45
-> +#define TDH_PHYMEM_PAMT_ADD		58
-> +#define TDH_PHYMEM_PAMT_REMOVE		59
+> +#include <linux/types.h>
+>  #include <linux/liveupdate.h>
+> +#include "pci.h"
 >  
->  /*
->   * SEAMCALL leaf:
+>  #define PCI_SUBSYSTEM_NAME "pci"
 
+I still don't know why this is needed, why?
+
+>  
+> +static void stack_push_buses(struct list_head *stack, struct list_head *buses)
+> +{
+> +	struct pci_bus *bus;
+> +
+> +	list_for_each_entry(bus, buses, node)
+> +		list_move_tail(&bus->dev.lu.lu_next, stack);
+> +}
+> +
+> +static void liveupdate_add_dev(struct device *dev, struct list_head *head)
+> +{
+> +	dev_info(dev, "collect liveupdate device: flags %x\n", dev->lu.flags);
+
+Debugging code can go away please.
+
+> +	list_move_tail(&dev->lu.lu_next, head);
+> +}
+> +
+> +static int collect_bus_devices_reverse(struct pci_bus *bus, struct list_head *head)
+> +{
+> +	struct pci_dev *pdev;
+> +	int count = 0;
+> +
+> +	list_for_each_entry_reverse(pdev, &bus->devices, bus_list) {
+
+Why are you allowed to walk the pci bus list here?  Shouldn't there be
+some type of core function to do that?
+
+And why in reverse?
+
+> +		if (pdev->dev.lu.flags & LU_BUSMASTER &&  pdev->dev.parent)
+> +			pdev->dev.parent->lu.flags |= LU_BUSMASTER_BRIDGE;
+> +		if (pdev->dev.lu.flags) {
+> +			liveupdate_add_dev(&pdev->dev, head);
+> +			count++;
+
+No locking?
+
+> +		}
+> +	}
+> +	return count;
+
+What prevents this value from changing right after you return it?
+
+> +}
+> +
+> +static int build_liveupdate_devices(struct list_head *head)
+> +{
+> +	LIST_HEAD(bus_stack);
+> +	int count = 0;
+> +
+> +	stack_push_buses(&bus_stack, &pci_root_buses);
+> +
+> +	while (!list_empty(&bus_stack)) {
+> +		struct device *busdev;
+> +		struct pci_bus *bus;
+> +
+> +		busdev = list_last_entry(&bus_stack, struct device, lu.lu_next);
+> +		bus = to_pci_bus(busdev);
+> +		if (!busdev->lu.visited && !list_empty(&bus->children)) {
+> +			stack_push_buses(&bus_stack, &bus->children);
+> +			busdev->lu.visited = 1;
+> +			continue;
+> +		}
+> +
+> +		count += collect_bus_devices_reverse(bus, head);
+> +		busdev->lu.visited = 0;
+> +		list_del_init(&busdev->lu.lu_next);
+> +	}
+> +	return count;
+
+A comment here about what you are trying to do with walking the list of
+devices.  Somehow.  Are you sure that's right?  It feels backwards, and
+the lack of any locking makes me very nervous.  How is this integrating
+into the normal driver model lists?
+
+> +}
+> +
+> +static void cleanup_liveupdate_devices(struct list_head *head)
+> +{
+> +	struct device *d, *n;
+> +
+> +	list_for_each_entry_safe(d, n, head, lu.lu_next) {
+> +		d->lu.flags &= ~LU_DEPENDED;
+> +		list_del_init(&d->lu.lu_next);
+> +	}
+> +}
+
+What does "cleanup" mean?
+
+> +
+>  static int pci_liveupdate_prepare(void *arg, u64 *data)
+>  {
+> +	LIST_HEAD(requested_devices);
+> +
+>  	pr_info("prepare data[%llx]\n", *data);
+
+Addresses written to the kernel log?
+
+> +
+> +	pci_lock_rescan_remove();
+> +	down_write(&pci_bus_sem);
+> +
+> +	build_liveupdate_devices(&requested_devices);
+
+Ah, you lock here.  Document the heck out of this and put the proper
+build macros in there so we know what is going on.
+
+> +	cleanup_liveupdate_devices(&requested_devices);
+> +
+> +	up_write(&pci_bus_sem);
+
+Why is it a write?  You aren't modifying the list, are you?
+
+> +	pci_unlock_rescan_remove();
+>  	return 0;
+>  }
+>  
+> diff --git a/drivers/pci/pcie/portdrv.c b/drivers/pci/pcie/portdrv.c
+> index e8318fd5f6ed537a1b236a3a0f054161d5710abd..0e9ef387182856771d857181d88f376632b46f0d 100644
+> --- a/drivers/pci/pcie/portdrv.c
+> +++ b/drivers/pci/pcie/portdrv.c
+> @@ -304,6 +304,7 @@ static int pcie_device_init(struct pci_dev *pdev, int service, int irq)
+>  	device = &pcie->device;
+>  	device->bus = &pcie_port_bus_type;
+>  	device->release = release_pcie_device;	/* callback to free pcie dev */
+> +	dev_liveupdate_init(device);
+
+Why here?
+
+>  	dev_set_name(device, "%s:pcie%03x",
+>  		     pci_name(pdev),
+>  		     get_descriptor_id(pci_pcie_type(pdev), service));
+> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+> index 4b8693ec9e4c67fc1655e0057b3b96b4098e6630..dddd7ebc03d1a6e6ee456e0bf02ab9833a819509 100644
+> --- a/drivers/pci/probe.c
+> +++ b/drivers/pci/probe.c
+> @@ -614,6 +614,7 @@ static struct pci_bus *pci_alloc_bus(struct pci_bus *parent)
+>  	INIT_LIST_HEAD(&b->devices);
+>  	INIT_LIST_HEAD(&b->slots);
+>  	INIT_LIST_HEAD(&b->resources);
+> +	dev_liveupdate_init(&b->dev);
+
+Same, why here?  Shouldn't the driver core be doing this all for you
+automatically?  Are you going to make each bus do this manually?
+
+>  	b->max_bus_speed = PCI_SPEED_UNKNOWN;
+>  	b->cur_bus_speed = PCI_SPEED_UNKNOWN;
+>  #ifdef CONFIG_PCI_DOMAINS_GENERIC
+> @@ -1985,6 +1986,7 @@ int pci_setup_device(struct pci_dev *dev)
+>  	dev->sysdata = dev->bus->sysdata;
+>  	dev->dev.parent = dev->bus->bridge;
+>  	dev->dev.bus = &pci_bus_type;
+> +	dev_liveupdate_init(&dev->dev);
+
+Looks like you are :(
+
+Do it in one place please.
+
+>  	dev->hdr_type = hdr_type & 0x7f;
+>  	dev->multifunction = !!(hdr_type & 0x80);
+>  	dev->error_state = pci_channel_io_normal;
+> @@ -3184,7 +3186,7 @@ struct pci_bus *pci_create_root_bus(struct device *parent, int bus,
+>  		return NULL;
+>  
+>  	bridge->dev.parent = parent;
+> -
+> +	dev_liveupdate_init(&bridge->dev);
+
+Again, one place.
+
+>  	list_splice_init(resources, &bridge->windows);
+>  	bridge->sysdata = sysdata;
+>  	bridge->busnr = bus;
+> diff --git a/include/linux/dev_liveupdate.h b/include/linux/dev_liveupdate.h
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..72297cba08a999e89f7bc0997dabdbe14e0aa12c
+> --- /dev/null
+> +++ b/include/linux/dev_liveupdate.h
+> @@ -0,0 +1,44 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +
+> +/*
+> + * Copyright (c) 2025, Google LLC.
+> + * Pasha Tatashin <pasha.tatashin@soleen.com>
+> + * Chris Li <chrisl@kernel.org>
+> + */
+> +#ifndef _LINUX_DEV_LIVEUPDATE_H
+> +#define _LINUX_DEV_LIVEUPDATE_H
+> +
+> +#include <linux/liveupdate.h>
+> +
+> +#ifdef CONFIG_LIVEUPDATE
+> +
+> +enum liveupdate_flag {
+> +	LU_BUSMASTER = 1 << 0,
+> +	LU_BUSMASTER_BRIDGE = 2 << 0,
+
+BIT() please.
+
+> +};
+> +
+> +#define	LU_REQUESTED	(LU_BUSMASTER)
+> +#define	LU_DEPENDED	(LU_BUSMASTER_BRIDGE)
+
+Why 2 names for the same thing?
+
+> +
+> +/**
+> + * struct dev_liveupdate - Device state for live update operations
+> + * @lu_next:	List head for linking the device into live update
+> + *		related lists (e.g., a list of devices participating
+> + *		in a live update sequence).
+> + * @flags:	Indicate what liveupdate feature does the device
+> + *		participtate.
+> + * @visited:	Only used by the bus devices when travese the PCI buses
+> + *		to build the liveupdate devices list. Set if the child
+> + *		buses have been pushed into the pending stack.
+> + *
+> + * This structure holds the state information required for performing
+> + * live update operations on a device. It is embedded within a struct device.
+> + */
+> +struct dev_liveupdate {
+> +	struct list_head lu_next;
+
+Another list?
+
+> +	enum liveupdate_flag flags;
+> +	bool visited:1;
+
+You shouldn't need this, you "know" you only touch one device at a time
+when walking a bus, don't try to manually keep track of it on your own.
+
+And again, why is the pci core doing this, the driver core should be
+doing all of this, PLEASE do not bury driver-model-core-changes down in
+a "PCI" patch.  That will make the driver core maintainers very grumpy
+when they run across stuff like this (as it did here...)
+
+> +};
+> +
+> +#endif /* CONFIG_LIVEUPDATE */
+> +#endif /* _LINUX_DEV_LIVEUPDATE_H */
+> diff --git a/include/linux/device.h b/include/linux/device.h
+> index 4940db137fffff4ceacf819b32433a0f4898b125..e0b35c723239f1254a3b6152f433e0412cd3fb34 100644
+> --- a/include/linux/device.h
+> +++ b/include/linux/device.h
+> @@ -21,6 +21,7 @@
+>  #include <linux/lockdep.h>
+>  #include <linux/compiler.h>
+>  #include <linux/types.h>
+> +#include <linux/dev_liveupdate.h>
+
+Look, driver core changes.  Please do this all in stuff that is NOT for
+just PCI.
+
+
+>  #include <linux/mutex.h>
+>  #include <linux/pm.h>
+>  #include <linux/atomic.h>
+> @@ -508,6 +509,7 @@ struct device_physical_location {
+>   * @pm_domain:	Provide callbacks that are executed during system suspend,
+>   * 		hibernation, system resume and during runtime PM transitions
+>   * 		along with subsystem-level and driver-level callbacks.
+> + * @lu:		Live update state.
+
+You have more letters, please use them.  "lu" is too short.
+
+>   * @em_pd:	device's energy model performance domain
+>   * @pins:	For device pin management.
+>   *		See Documentation/driver-api/pin-control.rst for details.
+> @@ -603,6 +605,10 @@ struct device {
+>  	struct dev_pm_info	power;
+>  	struct dev_pm_domain	*pm_domain;
+>  
+> +#ifdef CONFIG_LIVEUPDATE
+> +	struct dev_liveupdate	lu;
+> +#endif
+
+Why not a pointer?
+
+> +
+>  #ifdef CONFIG_ENERGY_MODEL
+>  	struct em_perf_domain	*em_pd;
+>  #endif
+> @@ -1168,4 +1174,13 @@ void device_link_wait_removal(void);
+>  #define MODULE_ALIAS_CHARDEV_MAJOR(major) \
+>  	MODULE_ALIAS("char-major-" __stringify(major) "-*")
+>  
+> +#ifdef CONFIG_LIVEUPDATE
+> +static inline void dev_liveupdate_init(struct device *dev)
+> +{
+> +	INIT_LIST_HEAD(&dev->lu.lu_next);
+
+Why does this have to be in device.h?  The driver core should do this
+for you (as I say above).
+
+thanks,
+
+greg k-h
 
