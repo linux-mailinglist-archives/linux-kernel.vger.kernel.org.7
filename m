@@ -1,308 +1,118 @@
-Return-Path: <linux-kernel+bounces-837640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57B2ABACD0D
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 152BEBACD07
 	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:26:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E281166597
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:25:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A97D1927522
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:26:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B8772F9DBB;
-	Tue, 30 Sep 2025 12:25:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD8A42FB0B3;
+	Tue, 30 Sep 2025 12:25:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ffEk1Ikn"
-Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010036.outbound.protection.outlook.com [52.101.201.36])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Hd0gzNx1"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF6232F90CD
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 12:25:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.36
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759235139; cv=fail; b=bBnuSczd8Re3BYE4SZH4WkNzs3wXRJhvZUq745j/DfCM7+zXGNxnzuvKCJvv6boJITGT5gx+VaivigsyfRCgXDjP9xqNc5GPPCDH1OkQ5ErvdZ6hmZJUwG7/8RPCHr1t8uKLYW3bVC7E8OV+jmFcTgtMcHnyhj312HtSYBoGHcU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759235139; c=relaxed/simple;
-	bh=y0SaYjuSgispKqQBahCSjFTbdOa6SgSd+ilQXkWKym8=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=opxRiFMKA/JHgo6bfofh2bYzQAx1J0EIpC9QJj4fU2KVgA9dSUeZqPdIHoguMrmfxYWzDa/SWCvzmXxmMPhlLEqp6YczH1yJ4bUsZUnID08y8WK+sXWE2e3qMKCEHLRH96GNHQD1s15PfOYFSjiEMm+n8fcRRCznnDLTFtW1jqQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ffEk1Ikn; arc=fail smtp.client-ip=52.101.201.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=f/bomXlLWx9aJpwQRO/eNOj9KdAQNG+/Lcj+oN/zcJ7C/D7cAtYikKZdvUSZTEXHYl6K0i0p1POOTu72Iyjb9Wn+27O74iWE8FuKPkAQK0oFZDrDYVx0EOiwewIDaHyJ+eWOCl5cA2zMIEzH7KvEOECI2KOml+rbnPU4EBG1I2KFOtjj0N4YyDZthaW4Rfc/ZVcUkJQBnEpU2EGtai0WSvNZNrvOr9BjL7HchvtvwQs3Apq8OwuUEHHN78ymgOxxoQ02uuxjPx3XpnHG7c6vElDAOBJ/cxOeD3KcXJhcEediHgq7pRjwsxpbS8ioFCn7tk3jEXz56uP42RA6JIbsBQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TcUi5LzSfxpESw1bRUVQvYumQka+BuIS73XBEAsbhDs=;
- b=u3hwRj3nNfhKd3y1bS2nlL65LLRvtFH5yqPqVkBDTwFdvkK7xaIf+c4PjDHEhbfBL2o9xaRHV386KJHrzzA8pKrKXhRheQTydQm8zDF4sU/rx7QWhPIWvyVYk8H7XyBClGMDjt8xX43zuJ3xDZ2zQCN3G0mc9oie3gwilHVvEfSAKtiS67q/+cSYwMyk4D8zLQVWIw+QA+h/B+s0vOefD45x1o9q7baoYc7b1hqpOk+bd1YrM7YQDyQOlHkg3qqfUeWT5jp/TMlU5U1lZi/btI5Dvnv5IfEfXpZPmfjIyVPgXfXxfmDwqeOTk08e/r1819BmCzKG67HjNIwJfPB9jQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TcUi5LzSfxpESw1bRUVQvYumQka+BuIS73XBEAsbhDs=;
- b=ffEk1Ikn4Vjnqy3w3mJ316MslRLzBKFjPglUF+Q6FsGBREbzd7l8DTY2zaiGBWaTRtYdFqaJBHS9ThRehfd4EZc707WF6Hek6xo7A+CteDgdDff6dMD4xhBsYAp2LgMhq6eTsyxdhnm1hv/MP+spVhI92q2ij+ODpdXybBQjdv4=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from CO6PR12MB5427.namprd12.prod.outlook.com (2603:10b6:5:358::13)
- by DS0PR12MB7534.namprd12.prod.outlook.com (2603:10b6:8:139::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.17; Tue, 30 Sep
- 2025 12:25:32 +0000
-Received: from CO6PR12MB5427.namprd12.prod.outlook.com
- ([fe80::9e93:67dd:49ac:bc14]) by CO6PR12MB5427.namprd12.prod.outlook.com
- ([fe80::9e93:67dd:49ac:bc14%6]) with mapi id 15.20.9160.017; Tue, 30 Sep 2025
- 12:25:31 +0000
-Message-ID: <443ced9e-1bf5-49a9-bec7-aeba449f8523@amd.com>
-Date: Tue, 30 Sep 2025 08:25:24 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 00/16] drm/vkms: Add configfs support
-To: =?UTF-8?B?Sm9zw6kgRXhww7NzaXRv?= <jose.exposito89@gmail.com>,
- louis.chauvet@bootlin.com
-Cc: hamohammed.sa@gmail.com, simona@ffwll.ch, melissa.srw@gmail.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- airlied@gmail.com, sebastian.wick@redhat.com, xaver.hugl@kde.org,
- victoria@system76.com, a.hindborg@kernel.org, leitao@debian.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250901122541.9983-1-jose.exposito89@gmail.com>
-Content-Language: en-US
-From: Harry Wentland <harry.wentland@amd.com>
-In-Reply-To: <20250901122541.9983-1-jose.exposito89@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: VI1P189CA0028.EURP189.PROD.OUTLOOK.COM
- (2603:10a6:802:2a::41) To CO6PR12MB5427.namprd12.prod.outlook.com
- (2603:10b6:5:358::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 772D02F9DAF
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 12:25:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759235142; cv=none; b=Boe1ilyg/K9lRzn+aIRHvqkqUJwI2xe8a9DWBfMYJgxCq5wNaRSa6MSBr+58Fiol75VDWjzeNNdWbEmd0klSL0/+PkgWaLQCrED+QMg9/Zai0ifzV+LP8D7JMCHAVm+59MnxR/+z/fWYeXE4104iPPEapWmYmMIJ2oKlwqwmgj8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759235142; c=relaxed/simple;
+	bh=heMBj5Se7D674ot+jB86uM824vbkgYvDDTYr2KtcYCU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=K91i/fEZ1H4YV7EYdWPjYEiilRnjL/qh5ReisxBzdPEStM3vQrzpHkxrOKjqU4KitVxawb2teFZTAen4/swdc1lZ6xhDgyREAtWbHmPBcRK5LqBPZqmIGCrSnkvd7V6HSmMuWhxzdsK0+1tGu6x0Ak10qzTnIIjKWCayPP0JQN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Hd0gzNx1; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-46e4473d7f6so26883775e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 05:25:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1759235138; x=1759839938; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1AXE3E4du7FCwUTXFpKPQhJu66seghaqwcG1g0MMZMA=;
+        b=Hd0gzNx1SK5r5C939TAWQwIJt/DaYSupEPAymjMLw305ZOwoHMkalatSRydfV56KnD
+         kKFtPEgR7HXNLhLHDW74pzu6OHDn9ne1nuRAQmPDowthoKF/FRcljrWBMB6xcIBXxgFW
+         PDWsUH6iC9mB1BlT4X4HlUqspE5vSmY+B4Ygw71Qg16MFpJ7l9yYW4Fi02bz3pKb97iH
+         en+t8ZvOx60Xt8S8wdFF5UTAlXTfTov91SjrVljDQ6JaYc+vneqxEDKvgqtN9QElaVn5
+         +A47MGK5t6Kl9jo5FqbIWEbmIpfpbom2Hzif3h3peHWr1SZ1X2EnzXFqg2Z4gPzp/X13
+         4Mpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759235138; x=1759839938;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1AXE3E4du7FCwUTXFpKPQhJu66seghaqwcG1g0MMZMA=;
+        b=mMfxjEihUhL7N6s8mDyZT5CfL3x9zWxpn6aNAfp1lA1Ai8PrgsMDx3sYwOCvnYh6oF
+         MbPIudx+RJ5WBnFHmi/ioLdWKkKoOmXk8ZzvTYHJ5384xVR6BFEvjxQmVubz2JDnImti
+         a7prrcGKvk8jfB5PLAJ3S93F4GAqjKRsvxCKS6G8wz6FS6hMPC65i53dHr1zxxId29hU
+         +UrjISrjY+XiOFLAhzmvL3s5VqI8sE0pT/h1TTP6TDY4NqFyzrKBwh8fOhVSFEZIHzMz
+         rToEdhQtNavTN37lDAp4ehRnmcJB6JlcxUIYGk0/w/wZreFheOG3je/tsfAWbaB7cZ9Y
+         h8gg==
+X-Forwarded-Encrypted: i=1; AJvYcCWtND9YEcFPY18KDZj524U8za09MMoO473r0sc0LSNdAF78BUmVsSWZX7agOY2Ib1cnWVYIELzEGlCMiIU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yybj0+Zkmkiqt+DdjekUiBQNMOeP9SDqkzvIaz7rXej92BsujSB
+	LFP8nCnRgIF8X7D4RoTHv5MQHkrcZYUZDREfPYviImw35rpqg+ewCjen+jqg9hII4q3/65jsbk7
+	DyhFi
+X-Gm-Gg: ASbGncuXZ3d2y3YWN7DuDF3tkd7yKftFe7LxjHGjEGh6u4ta5koOzvfNjFwGvVOEL/j
+	ZwPOquktopZF44auRDKkQF8uCPQvBDBHLeQSnZDKBqs9WifS08wCKCHgmWl/mrHuaRlB9cGknt2
+	JrrY8276jTU+ADa0cvyBPptBWxJYhv+A8YQj4xCDIHUfswT+6Q2IPxa9jmY643TiY6V4mp7/GKS
+	ZxC/dAJ1JmfVTke7U4otpxlmmy7rKoveJxY94XxsN/ud9dvOUvxca0VkA7jftlTo0UNpgcX7NBT
+	zq5V2WJY523gDbekyMAoFnncISXC6f6zCWdPqSJSxPPWj3j2jCi3XHsbcmhIPekXfeAsn+eK6Cq
+	qnvgIxQvGDGanT2nftFhj8elgCrAGzHVZTsFLekxEImSkwLGS0j2Q
+X-Google-Smtp-Source: AGHT+IGDWKfvS7xIHf+6vDs/q0NKQ2FRZkP9GQRKEpMrTz9/x83MNNzlklURhvJCRHqO6tBrQqt6Dw==
+X-Received: by 2002:a05:600c:3105:b0:46e:1fb9:5497 with SMTP id 5b1f17b1804b1-46e329e4d87mr203921765e9.18.1759235137830;
+        Tue, 30 Sep 2025 05:25:37 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-46e5b622f37sm13662115e9.1.2025.09.30.05.25.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Sep 2025 05:25:37 -0700 (PDT)
+Date: Tue, 30 Sep 2025 15:25:33 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Griffin Kroah-Hartman <griffin.kroah@fairphone.com>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH next] Input: aw86927 - Fix error code in probe()
+Message-ID: <aNvMPTnOovdBitdP@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO6PR12MB5427:EE_|DS0PR12MB7534:EE_
-X-MS-Office365-Filtering-Correlation-Id: bc558a89-f075-40ab-f55c-08de001c723a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|10070799003|376014|7416014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cVJ0aFBxYkxxMW9pS0lNMVFNNnlHTXMycnNyMTgyL09GSnRNQUw1Q0ZBMnlt?=
- =?utf-8?B?Sk9yYTNucWdtSDdxMEtkZDRUaHoyZzBCb0x6NkdiQUJrMXo2M2E5MVU1Z3Rz?=
- =?utf-8?B?cnBSR3lrczVGRisrTnM5OEU2NUlLMUZsVEFJTWwySkNXNUpGUGN2dW9lcmNN?=
- =?utf-8?B?eGhxUXRJcWxZK2QwaUFtNGJWbmhqZ1V3NitzREpyY0JRQzB1UUtIMkVVQkRL?=
- =?utf-8?B?ZmcycDh1ak9INVJBeUQ3WmVUSndVT01WMkxwNFJ3cE9YL2xKVUhaT1NWOU4w?=
- =?utf-8?B?Y3FqcHpLOTJpUTR1WWdiSHg5N1lNVW5tQy9uWlBENzlXWXAvbWJuUm1Rd1lu?=
- =?utf-8?B?dW1ENEtaZW5qUHJkcDd1b1ROZTczQlBwQjNVUS9KeXhPVi9DUjczYU05c2tH?=
- =?utf-8?B?NlFPQlk0cXlSamFrd0lmanQzQW05Q0l6bmV1RHdWMlF0cFZjaFo1Qm04RHNZ?=
- =?utf-8?B?MTV2aTl4TjNnNW1aYWlvZEU4WGhFWFdOZ2NXbWx1S1NqVlhKYm41N0NMMUdz?=
- =?utf-8?B?em9wdWNDNnFkL2pMMFpQSE03WjFOWTVKRHV1Wk9vWVRUS1I1TEh5QkwxZmNT?=
- =?utf-8?B?aDhDL05BSWV0Wlc1RG1ld1dOVnBvcDlKWjRiV2MveEJUdWNmSXJzR2d3S3BK?=
- =?utf-8?B?aHhVYkMyVVluMUpIaTdodkptcFErN0oramt6UUNBbFNyWDNucmVSNEFnQXFW?=
- =?utf-8?B?TDhESTR3SEJ3MG4xTWZhQ1JhYm5aZkVnUG9IWWhzVENRWkJ6MnVqSVJzWG9l?=
- =?utf-8?B?U0FLcWpkNVFOZTIxZCtNbytrOVNjKzZ0S2pZaGxBUEdPbDlQRlU1VThzMnE5?=
- =?utf-8?B?RXZSbnNwTFQ4VmsxMnVGbWxQelBkV1BHdmc5Q1g1UkczS0NTenBIZEczQzJI?=
- =?utf-8?B?blNML3hCTXBGOHo0d3BDWlduTWNTdFpYUGxLVUlTOERoVmNLSnd4NlZpMFFH?=
- =?utf-8?B?dHI5aVdLZk1DeEZuWFdNUEV6TXFqS0x0S2VzRGllQ20zWnNuSG50YjVRLzZN?=
- =?utf-8?B?UmF4MXgzWWkwTUwvdFYzTy92VnFpQzEydDQ2d0orODJTSVZ1a1dIZjBuNmVn?=
- =?utf-8?B?VUpOcTJJUUp3aEdPK2ZOQktoMiszUENDaWpHYVZCSXNBVTJGTkNmWEtuamdC?=
- =?utf-8?B?WkZwMllLRC9SMzN2WVhaL1hmWnE0STF3K1FQZ1luUXA2b1IvdjRIeEI2VVZm?=
- =?utf-8?B?MW82WjFKc1orSGlmYVZUSWdnNWRjakRUVkplSExTYTgvYjM5RHgxbC9ud0V4?=
- =?utf-8?B?cWt2MlhZRXEyQmVUeDUxRStGbkdrSzlJVVg0UUgrM3ExU2RJanNsaktuenhk?=
- =?utf-8?B?a1hXY29HVk5xSEZvQ1VEUzZXb200WmdPVUV0NGVHcVdOeG13LzFkb2VHb2Ji?=
- =?utf-8?B?aE1iMUpQbW96TTNra3lGaldJTldFaVNjU1RmTHFzZ2tCblpRVHQxSStXdGV2?=
- =?utf-8?B?WjRHQUZaUkdVdFVJZmdyZkxXbTh4M1Vsc2cvc3lydUMzMkVLMDJDVEsvbUhF?=
- =?utf-8?B?R0o4eFpLSjZMR1JRUW1XQzFZL3VsMlZCS3BRUEU1K05jVkw3eTFKd1VaTVdH?=
- =?utf-8?B?bWFac0xpMXp2SWJuRE5VN1dET2hvTko4N1FGaTJiUzA2Z2dDcStYZlo4aGlW?=
- =?utf-8?B?Q1hTNkJ1UEFzQ0dKb25WM0FYcGtrd3l4aHhJMG8wbFNndDlBS1FONkdzSDdD?=
- =?utf-8?B?RnhSdm9GUTVMaGwweHRTYkRxMnlQRmJZNU11Mk1pRlZaVGZWdmxZRVBqZ09C?=
- =?utf-8?B?WUtsMTE2NEZxSXRmU3cyNUg5OGVSUmtIOFhsREIxQmFsN1ZlTXkxSkV6R0hD?=
- =?utf-8?B?eTE4d25TclBxUHYvNEpERWhVNEo1SjYzcGEwWitJRGNnbjVvVXBIRFhiS2Y3?=
- =?utf-8?B?N0d2ek82NElmeUkyNTFBVldtTmlNMTVtM2RVVlV2TExkaStKeDl2cWpqdVJR?=
- =?utf-8?Q?V8gcww0HUjg=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5427.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(376014)(7416014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RzhyVktqLzhSMmpvNzh0dWhyc1JQSTMzSnhqYkRMTUpBRGowR0g4UGNQWUJo?=
- =?utf-8?B?aXNvR3RNc1FXajdZakRIN001TFRpNlUyWmFuR3FMM1FpL3BHSGt6ZHkvSFMr?=
- =?utf-8?B?VnMra2xEZXArNGppd0dvZk13T3hZbzU1T05lTnp3MG5XSUMya0R3RHBsOVFW?=
- =?utf-8?B?NHFDalI0bU92czJGeldXbnhiSGFhNWZBVUVxTVZySFhUQW9sbzFKdlR6SFkw?=
- =?utf-8?B?bFZabFpRWlBHMm9nSHh0dEdjYyt4eWVybHdvZi9iK3pCWHVjcDdFT2dNOGRp?=
- =?utf-8?B?UHB5YlBGb0xNZWNsSWx5YXlBYmVoZEdML3ZkNXlxSzNGbEoxRXMxVVppdE4x?=
- =?utf-8?B?M25nVndtalI5VHU0STdFamRYOVNoTm1qdVk0TkFNdUFaTFpBOUdNZEtxVEhC?=
- =?utf-8?B?Vk1IYVJ2bGxTdkR2cFRBZmZEMGZFNzYvL1BLVW4rdFBiMlBGTktVMm9xTm5s?=
- =?utf-8?B?K3dITkhpT1U4OUs2Vk1JTWRGSFNOelJhdjJNNjkxVFRuVWFkdWxkWG1zbEsy?=
- =?utf-8?B?eVBiZ1BacFhrVnRCc0p5SUd2bVFkT3UxeGorMllyU3VqbWN6SitOVU5vTnFJ?=
- =?utf-8?B?RHA0ZitBMm9hbDF4cUpZcUsrWjNKV20rVG9PWElmWmNIWlZ1Y05LeXJsOExp?=
- =?utf-8?B?alcyWGRYNUljaG1xdTJ1bE4vaWhQb2s4clBUWWh0dURsVEdTU3pjTTIvOVRy?=
- =?utf-8?B?QmxkU216R2xNMnM4Nk9hTXdod3U2Y3gxanZ4eHZIY0xGemh6YWI1TEE2QnVs?=
- =?utf-8?B?SFZFeFY3VVZzM3lmSHFtWHY5NkUrZlo2UVJpK2VVT3FVZjMvYWliWDJnMk9u?=
- =?utf-8?B?ZHNqcVpkMXdYNW4xTUI1Sk4wZW9QNGduNWJkOGs0NnRKc00wSS85ZG1qWWYx?=
- =?utf-8?B?UFFjMzhtM2lRTjZwNEpaU2JFM1k1UnZDQnJTbU5zZlNGbmhldlZtWDJsL29u?=
- =?utf-8?B?bms4Q2NhWG9rSXBMMlJzVCtpTmVZNHlaZnQ2SGJSTk5DWjZMYm9TcDZ3UXkr?=
- =?utf-8?B?b3lvaHpCNGw1enplL3NtODNVbUxrMzdqajVVbWUybHlIZHZhLzJ5Y3BJMVNa?=
- =?utf-8?B?cTNVR3lnRHFtd1d4dVNnS0hRZVV2Q0REdDFrMy8rTURBc2lZSzRsQ3FaTEhX?=
- =?utf-8?B?VzU1M1RNMWxoeXF0RHhtV2haM2QyZW8rTEhkSkJ3TTFFZnBRQzREaTVsU2Jw?=
- =?utf-8?B?MTlOczdsMmhETnlDcE9IQTkzSzVKQjRSS0JZNUFaeUlqWjFZMnpTTHVBRUtP?=
- =?utf-8?B?cDBmdjFlc09QNHE4RlVRNllERFNzdXdhMGZlWmZFM0tQNnExNTErZnhMK2ta?=
- =?utf-8?B?dTVaQzYvU1hMY3lmUGlTQWFUMGF0Q1JIS1JPaEVoKytRWXdmaEU2UDhEQUZ5?=
- =?utf-8?B?cFdJcHpZSzYxVjFQMTlPVWlxYlJWK1JKWkNlRlpVWlFzaitRTWErOVNKUFpq?=
- =?utf-8?B?RDBVRVJzTk9PbjF5QS9HZG1EaEdoZXhkbFJGNW4yL3l3WVlzYXBrVklnTlBP?=
- =?utf-8?B?YUhHUlR6eSt5K2p2K01WTk9TZThzYUpqU1hHT0U2N0tBakVoRWxxaGFJeFdP?=
- =?utf-8?B?Ni9HSCt6WHFGSDEvRndPMHZkRzViN05OcVZ5WDczOHdORllxd1hvOWFSQXZW?=
- =?utf-8?B?U3dCMENSL0hoLzNhYk45Q3JtcGVjRUMwajhXdnYxandreXI2SUtGdURUN0tQ?=
- =?utf-8?B?b01hRW51NlVSMGNlRFlTK2NFanN0cGlJbmxBMjdYN1pzZnQ4dHYrc3B0T2h0?=
- =?utf-8?B?NHJ2WGY1bC8wZHZlU0FFaVNpcWhQdlJQTjhTeWQxZlJaWDA2S1hJeGQrTitD?=
- =?utf-8?B?MWpsRWJYaDY5clFQMmJEcG42SythQTFuWWVIM2RFa3pmNXB5MkNLZG1oRU16?=
- =?utf-8?B?RFc5YXN3WGllR1phVVNMeG1Kby8yOGhMYkhRMU9VZW1JcUtjOWRGaXBJbEhm?=
- =?utf-8?B?S3dBWmpRWGN2czc2UG9qMzhQaC9xK25RRldWU1pOQ3pDQ3BEbkxZdHF6T3o1?=
- =?utf-8?B?SE0rZWNKdTR6QnEvd2djK1c0OWhhMHI2RXNHQU9EVFJFdUx2N3ZtZXNSTk1p?=
- =?utf-8?B?S0phdC9Ib3c5Q3hGY2NPdzhFZm9DUDRlbVVHb0Y0anVROGc5UStLbVVNTVh3?=
- =?utf-8?B?bEpDMjlNWWVzUzVvcHBqSk1uWjBqSDdYa1lxdko4N0U4RHlQMkpPMWZwd2pX?=
- =?utf-8?Q?whqSPxo5lMMYhOisCYr+nYM=3D?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bc558a89-f075-40ab-f55c-08de001c723a
-X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5427.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2025 12:25:31.0237
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZZ8Yxk2/EOGqM0y6VZGH+fOu6IKq94q6xrPIsYEYlFyFEAIM5p3x/JJcUQF7Xfot681cgYYR9FynZjuKOBxd6g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7534
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
+Fix this copy and paste bug.  Return "err" instead of
+PTR_ERR(haptics->regmap).
 
+Fixes: 52e06d564ce6 ("Input: aw86927 - add driver for Awinic AW86927")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/input/misc/aw86927.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-On 2025-09-01 08:25, José Expósito wrote:
-> Hi everyone,
-> 
-> This series allow to configure one or more VKMS instances without having
-> to reload the driver using configfs.
-> 
-> The process of configuring a VKMS device is documented in "vkms.rst".
-> 
-> In addition, I created a CLI tool to easily control VKMS instances from the
-> command line: vkmsctl [1].
-> 
-> The series is structured in 3 blocks:
-> 
->    - Patches 1..11: Basic device configuration. For simplicity, I kept the
->      available options as minimal as possible.
-> 
->    - Patches 12 and 13: New option to skip the default device creation and to-do
->      cleanup.
-> 
->    - Patches 14, 15 and 16: Allow to hot-plug and unplug connectors. This is not
->      part of the minimal set of options, but I included in this series so it can
->      be used as a template/example of how new configurations can be added.
-> 
-> Finally, the code is thoroughly tested by a collection of IGT tests [2]. The IGT
-> series is almost fully reviewed (1 patch is missing) and it is waiting on this
-> series to be merged.
-> 
-> I don't know what is preventing this series to be ACK by a DRM maintainer, but
-> please, if there is something missing or that needs to be fixed let me know.
-> 
-> I CCed the configfs maintainers in case they can give feedback about the design
-> of the configfs API or the configfs related code, just in case that is one of
-> the complicated points to review by DRM maintainers.
-> 
-
-While I'm not a configfs expert these patches look good to me. With the 
-two comments about function docs fixed these patches are
-Reviewed-by: Harry Wentland <harry.wentland@amd.com>
-
-I went through them manually and also asked both GPT 4.1 and Claude 
-Sonnet 4 to review them for correctness against the configfs.rst docs.
-
-Harry
-
-> Best wishes,
-> José Expósito
-> 
-> [1] https://github.com/JoseExposito/vkmsctl
-> [2] https://lore.kernel.org/igt-dev/20250807074550.6543-1-jose.exposito89@gmail.com/
-> 
-> Changes in v6:
-> 
->    - No code changes, rebased on top of drm-misc-next
->    - Added Tested-by: Mark Yacoub, who merged the series into the Android tree (thanks!)
->      https://lore.kernel.org/dri-devel/CAC0gqY6ZH8h5aoNh31ck3dP6c3YYtfTRjJ47Obu6xSXSVXm5mA@mail.gmail.com/
->    - Added a link in the cover letter the CLI to configure VKMS: vkmsctl
->    - CCed more people to try to get the series merged
->    - Link to v5: https://lore.kernel.org/dri-devel/20250507135431.53907-1-jose.exposito89@gmail.com/
-> 
-> Changes in v5:
-> 
->    - No code changes, rebased on top of drm-misc-next
->    - Added Reviewed-by tags, thanks Louis!
->    - Link to v4: https://lore.kernel.org/dri-devel/20250407081425.6420-1-jose.exposito89@gmail.com/
-> 
-> Changes in v4:
-> 
->    - No code changes, rebased on top of drm-misc-next
->    - Since Louis and I worked on this together, set him as the author of some of
->      the patches and me as co-developed-by to reflect this joint effort.
->    - Link to v3: https://lore.kernel.org/all/20250307163353.5896-1-jose.exposito89@gmail.com/
-> 
-> Changes in v3:
-> 
->    - Applied review comments by Louis Chauvet: (thanks!!)
->      - Use scoped_guard() instead of guard(mutex)(...)
->      - Fix a use-after-free error in the connector hot-plug code
->    - Rebased on top of drm-misc-next
->    - Link to v2: https://lore.kernel.org/all/20250225175936.7223-1-jose.exposito89@gmail.com/
-> 
-> Changes in v2:
-> 
->    - Applied review comments by Louis Chauvet:
->      - Use guard(mutex)(...) instead of lock/unlock
->      - Return -EBUSY when trying to modify a enabled device
->      - Move the connector hot-plug related patches to the end
->    - Rebased on top of drm-misc-next
->    - Link to v1: https://lore.kernel.org/dri-devel/20250218170808.9507-1-jose.exposito89@gmail.com/T/
-> 
-> José Expósito (6):
->    drm/vkms: Expose device creation and destruction
->    drm/vkms: Allow to configure the default device creation
->    drm/vkms: Remove completed task from the TODO list
->    drm/vkms: Allow to configure connector status
->    drm/vkms: Allow to update the connector status
->    drm/vkms: Allow to configure connector status via configfs
-> 
-> Louis Chauvet (10):
->    drm/vkms: Add and remove VKMS instances via configfs
->    drm/vkms: Allow to configure multiple planes via configfs
->    drm/vkms: Allow to configure the plane type via configfs
->    drm/vkms: Allow to configure multiple CRTCs via configfs
->    drm/vkms: Allow to configure CRTC writeback support via configfs
->    drm/vkms: Allow to attach planes and CRTCs via configfs
->    drm/vkms: Allow to configure multiple encoders via configfs
->    drm/vkms: Allow to attach encoders and CRTCs via configfs
->    drm/vkms: Allow to configure multiple connectors via configfs
->    drm/vkms: Allow to attach connectors and encoders via configfs
-> 
->   Documentation/gpu/vkms.rst                    | 100 ++-
->   drivers/gpu/drm/vkms/Kconfig                  |   1 +
->   drivers/gpu/drm/vkms/Makefile                 |   3 +-
->   drivers/gpu/drm/vkms/tests/vkms_config_test.c |  24 +
->   drivers/gpu/drm/vkms/vkms_config.c            |   8 +-
->   drivers/gpu/drm/vkms/vkms_config.h            |  26 +
->   drivers/gpu/drm/vkms/vkms_configfs.c          | 833 ++++++++++++++++++
->   drivers/gpu/drm/vkms/vkms_configfs.h          |   8 +
->   drivers/gpu/drm/vkms/vkms_connector.c         |  35 +
->   drivers/gpu/drm/vkms/vkms_connector.h         |   9 +
->   drivers/gpu/drm/vkms/vkms_drv.c               |  18 +-
->   drivers/gpu/drm/vkms/vkms_drv.h               |  20 +
->   12 files changed, 1072 insertions(+), 13 deletions(-)
->   create mode 100644 drivers/gpu/drm/vkms/vkms_configfs.c
->   create mode 100644 drivers/gpu/drm/vkms/vkms_configfs.h
-> 
-> 
-> base-commit: 6b53cf48d9339c75fa51927b0a67d8a6751066bd
+diff --git a/drivers/input/misc/aw86927.c b/drivers/input/misc/aw86927.c
+index a0c88a7e1e1c..8ad361239cfe 100644
+--- a/drivers/input/misc/aw86927.c
++++ b/drivers/input/misc/aw86927.c
+@@ -759,8 +759,7 @@ static int aw86927_probe(struct i2c_client *client)
+ 	/* Software reset */
+ 	err = regmap_write(haptics->regmap, AW86927_RSTCFG_REG, AW86927_RSTCFG_SOFTRST);
+ 	if (err)
+-		return dev_err_probe(haptics->dev, PTR_ERR(haptics->regmap),
+-					"Failed Software reset\n");
++		return dev_err_probe(haptics->dev, err,	"Failed Software reset\n");
+ 
+ 	/* Wait ~3ms until I2C is accessible */
+ 	usleep_range(3000, 3500);
+-- 
+2.51.0
 
 
