@@ -1,133 +1,114 @@
-Return-Path: <linux-kernel+bounces-837513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E6F0BAC7B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:30:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73B1BBAC6D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:13:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 050621893762
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 10:30:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11019189C337
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 10:13:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 973E22FA0C7;
-	Tue, 30 Sep 2025 10:30:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C870E2F659A;
+	Tue, 30 Sep 2025 10:13:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="Rh6h0uEI"
-Received: from mail-m15580.qiye.163.com (mail-m15580.qiye.163.com [101.71.155.80])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="VEUhEU6f"
+Received: from out203-205-221-202.mail.qq.com (out203-205-221-202.mail.qq.com [203.205.221.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE33B285404;
-	Tue, 30 Sep 2025 10:30:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D162223B62C
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 10:13:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759228210; cv=none; b=KTool3ggmLS8sRWwGZG/yizXPVed7IBw11cJ0YkLdCjz3GmxFPrNfOugRk+xmSsUJVyLEwqizrNHvu5f3BbvW+511Iceq+HV4APZr9FNu14StNH92Vra5iZp7ACtZzZf2uT0lIe4CUSrlwAxnkRMk1H7VaBMjhCe/UgSIRhR3mI=
+	t=1759227203; cv=none; b=u8hdgGjKy3G+4LnJRhBGIPOAFaYw8JbSjSACmP5JjLrHn/kvcTBKs+CVcQtKJYnuFMHWpifql50lDKc5C+daziNc00gsnimaYotw1ZQ4NliiOO9LR0hfOhZetiolDxUVuxEtv0tVax/qX10QbLFMui/v0Onecg5d4Xm+NqhwDac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759228210; c=relaxed/simple;
-	bh=27sWcGgopy8L9O52zrINaPxkx4hhS3gSfw1vvWRUM44=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Jn4Uq0yaao7732GlKW2b8Ab+VAcyCqaiKeRkwNbQ03VFSALwcfcevLLcs6LEfsbOaBDZ8nEyftS+2wG44TZro/JqtjilzSouSW7VgwgSdf/9SbGkpncWS9+ehKmzHTpCQazlKUpghkZw5laVcGhC6EqI8ou4KjB+vfHwjP6gVQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=Rh6h0uEI; arc=none smtp.client-ip=101.71.155.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 2493eb14f;
-	Tue, 30 Sep 2025 17:14:24 +0800 (GMT+08:00)
-From: Damon Ding <damon.ding@rock-chips.com>
-To: andrzej.hajda@intel.com,
-	neil.armstrong@linaro.org,
-	rfoss@kernel.org
-Cc: Laurent.pinchart@ideasonboard.com,
-	jonas@kwiboo.se,
-	jernej.skrabec@gmail.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	inki.dae@samsung.com,
-	sw0312.kim@samsung.com,
-	kyungmin.park@samsung.com,
-	krzk@kernel.org,
-	alim.akhtar@samsung.com,
-	jingoohan1@gmail.com,
-	p.zabel@pengutronix.de,
-	hjc@rock-chips.com,
-	heiko@sntech.de,
-	andy.yan@rock-chips.com,
-	dmitry.baryshkov@oss.qualcomm.com,
-	dianders@chromium.org,
-	m.szyprowski@samsung.com,
-	luca.ceresoli@bootlin.com,
-	jani.nikula@intel.com,
-	linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Damon Ding <damon.ding@rock-chips.com>
-Subject: [PATCH v6 01/18] drm/bridge: analogix_dp: Formalize the struct analogix_dp_device
-Date: Tue, 30 Sep 2025 17:09:03 +0800
-Message-Id: <20250930090920.131094-2-damon.ding@rock-chips.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250930090920.131094-1-damon.ding@rock-chips.com>
-References: <20250930090920.131094-1-damon.ding@rock-chips.com>
+	s=arc-20240116; t=1759227203; c=relaxed/simple;
+	bh=nxojs/i6jbB1qHl/95oSlU4YHbHQm8oweo9Dh9VqlR8=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qsi2tKsIfGi1sY7yLhqSQ+tJgM4M2iA4Y6ySFVsik1IbznJalG684KvNYOanIoAv52qQqjoTFXH+VrY3au79O/CHdPOrjIJ5lDjxYxJUuG/DN54C/F5YuUBwtohL5t6kuKzgWE9v7Vl5IhqZsA9hB+3qT7FcY+/WRO95JsHxb54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=VEUhEU6f; arc=none smtp.client-ip=203.205.221.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1759227198; bh=+z4VuSEyqyHbymvozcwTCmyPiBeyYrKjSnszB1XAJjM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=VEUhEU6fyW+exFhw6IHiu1e9CxZTJFJddNy5ylvWEYy5XfXK+dq/itN/2Zp16pOD5
+	 aR/TOubc5vow2Zgfmd+Ocb+YjhecVrsS28o7lOgI1iDNCxh4VINp7d0y8JPw/fky7K
+	 cdNmCGcuTl6ojXK57WUvm2uTubC0zITaTErTo/YY=
+Received: from localhost.localdomain ([116.128.244.171])
+	by newxmesmtplogicsvrszc41-0.qq.com (NewEsmtp) with SMTP
+	id 13128091; Tue, 30 Sep 2025 18:04:49 +0800
+X-QQ-mid: xmsmtpt1759226689trcyp1n79
+Message-ID: <tencent_5A915E07B07A5564B9DA65F6F002EBD91209@qq.com>
+X-QQ-XMAILINFO: MDbayGdXPuoedgpXSJFomO/6fblRmk4vCwGYnjkIVYH7C3nIeehO22HyWf6OTT
+	 H82d301dWqKCR6Zau631ToEr6wLdpL01e2uNZ0DkXPdyBkGq4MMcx0bzALvqRRGmGHiC0+B7Tbut
+	 VpJh9GqMZZc6T6N+1mSw42oikLVgFlFGHn3kbLyEeGDhM6VUv8/ecQOS7xQDbvXxnbfXGIaUTa2c
+	 huBhC1jsGroSIENX6/4gAQ2yR1I8G2fevqyHr5y1raXXdV7V1ru5Z8Pc3u2Y/nu7aIm3RQZboMkX
+	 ZQThhzTkoJ1YcEb0IcLs/Yg5+3+f4HmgYEsSU21nzhLG2i19G6EEmZN/ivX7IsL11sQj2nxCW4SU
+	 cJ6Wr0fYk3/gTMknAvXJOusPZKQmceIYmAKkLv31Kh4QtyYmSLn7hc2Z8I5B9p8d0lMbyv9QbOLS
+	 /guEW8rDpqyCvuoPunyMOVXTXUOASy3Xq2yLcJxWHWShWAXiL1nkOAVanl3mQTHzRlfJl5rKDwf+
+	 00jrpLv4mxGHuae9T7TfaoajGslaaeB6olqPZcRg+teimElxnVsnogvqcINUqcQyJv6zcX8cMlpA
+	 YIOw+Vo/BWH1gb+rp8ydotkVrYzyRjgF0g5GBKB8bORcI0ncVY72JPVOHMoVkF0pKTQw9tbOndmo
+	 VXAXRGqUBEtfFYe//HbdE2XPGeBg6FeNkZ7FI0ugQXCc33CKnJhI8HjiYaswMoaVYYYe8EHcx4cG
+	 n/dVpnwEmbjczpeIuqUuN9zLoeM5Xwd5ZjNIzw60uT99jaGQw1pHW5IlANrrYTu/Fj4E3fmv/Oqn
+	 bkKbqcVHfww4a4q9cgt/Yy898GwktiDdCaQKcUY+uTFt02BheKiv3qlR1rxDQvA/i9L+KFb1DqJy
+	 Qtj5oPrqNam3m6vxODHVtkbzUCfRjCGeRkPGahuZGN8cA33ZVY1ZkSFYY0DxoWJOrvvJF0y/Guin
+	 nmWeHwnwX6xzw18gI/Yc6XPkeeeV+222be+Q8KPFXUMXUEgfjNagW1VUTQdHpdnLBGxkeGPD29PB
+	 N/uGm0+b+Pw5jMuxCQ6xdHgYTW7gk68/V7uW6bYFt9A6GxVwQj
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+From: Haofeng Li <920484857@qq.com>
+To: linux-f2fs-devel@lists.sourceforge.net
+Cc: 13266079573@163.com,
+	920484857@qq.com,
+	chao@kernel.org,
+	jaegeuk@kernel.org,
+	lihaofeng@kylinos.cn,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] f2fs: fix ifolio memory leak in f2fs_move_inline_dirents error path
+Date: Tue, 30 Sep 2025 18:04:48 +0800
+X-OQ-MSGID: <20250930100448.4061644-1-920484857@qq.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <tencent_3FA2C956B557ED4D050EB26922B50D3CF40A@qq.com>
+References: <tencent_3FA2C956B557ED4D050EB26922B50D3CF40A@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9999e6d03903a3kunmd96de74a43bb18
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGkJITVZCGB0eQhkYGEMeShhWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
-	1VSktLVUpCWQY+
-DKIM-Signature: a=rsa-sha256;
-	b=Rh6h0uEIO7erDsTFOPCZFdRV1Y1StVPKBSyVWeDpB6lxMJIteC0AtKqCl1xd/okhVbVQ8OiWv8rfpILHrleh5cZO7Q+vB2a+HpuaGe58jm62fmBj3/KnqD4skTdWXVJ+tILzrxAGahXY/LMErUzMAQQswbjADJMRb3YBpZd1dzc=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=wMgNU9HKWX4U88wR/qYvG3evHrpviSSz9KGW1/W263o=;
-	h=date:mime-version:subject:message-id:from;
 
-Use the tap instead of the space for &analogix_dp_device.aux and
-&analogix_dp_device.force_hpd.
+>Fixes a memory leak issue in f2fs_move_inline_dirents() where
+>the ifolio is not properly released in certain error paths.
 
-Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+>Problem Analysis:
+>- In f2fs_try_convert_inline_dir(), ifolio is acquired via f2fs_get_inode_folio()
+>- When do_convert_inline_dir() fails, the caller expects ifolio to be released
+>- However, in f2fs_move_inline_dirents(), two specific error paths don't release ifolio
 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-index b86e93f30ed6..91b215c6a0cf 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.h
-@@ -156,7 +156,7 @@ struct analogix_dp_device {
- 	struct drm_device	*drm_dev;
- 	struct drm_connector	connector;
- 	struct drm_bridge	bridge;
--	struct drm_dp_aux       aux;
-+	struct drm_dp_aux	aux;
- 	struct clk		*clock;
- 	unsigned int		irq;
- 	void __iomem		*reg_base;
-@@ -166,7 +166,7 @@ struct analogix_dp_device {
- 	struct phy		*phy;
- 	int			dpms_mode;
- 	struct gpio_desc	*hpd_gpiod;
--	bool                    force_hpd;
-+	bool			force_hpd;
- 	bool			fast_train_enable;
- 	bool			psr_supported;
- 
--- 
-2.34.1
+Add some additional information.
+
+When do_convert_inline_dir() fails in f2fs_try_convert_inline_dir(),
+the ifolio obtained via f2fs_get_inode_folio() is not properly released,
+leading to a memory leak.
+
+The issue occurs in the following call path:
+
+f2fs_try_convert_inline_dir()
+├── f2fs_get_inode_folio()  // acquires ifolio
+├── do_convert_inline_dir()
+│   ├── f2fs_move_inline_dirents() // The issue is in this function. 
+│   │   └── Error paths may not release ifolio
+└── Only releases ifolio on success: if (!err) f2fs_folio_put(ifolio, true)
+
+Specifically, in f2fs_move_inline_dirents():
+- If f2fs_reserve_block() fails, the function jumps to 'out' label
+- The 'out' label only releases the newly allocated 'folio' but not 'ifolio'
+- This leaves ifolio unreleased when f2fs_reserve_block() fails
+
+In contrast, f2fs_move_rehashed_dirents() properly handles ifolio release
+in its error recovery path, but the inconsistency creates a leak risk.
 
 
