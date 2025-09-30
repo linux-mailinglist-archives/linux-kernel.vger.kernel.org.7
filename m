@@ -1,185 +1,197 @@
-Return-Path: <linux-kernel+bounces-837458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BAEFBAC5C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 11:47:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BCBABAC5D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 11:52:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BD9616CAA2
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:47:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3FFFD7A732D
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:50:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2E162BB17;
-	Tue, 30 Sep 2025 09:47:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 640F72F7454;
+	Tue, 30 Sep 2025 09:51:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lBXDFWtl"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PLPh+9sz"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34CB9221FC6
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 09:47:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19E4F2F60C1
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 09:51:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759225639; cv=none; b=dNElgKSGb20jkvWYkg8oMqjv+kBMb848UYUii0y5uabmRlcRBYOcylzG4vFLGRbORDeX0GsD4acwrBJPZKUoUiwE6+0VV6Yp8W6Ospw/P1DYtjNs0t0SqU3aKYd2Lb//4L6MlM19KgcwdM6l1uaBtMdPnLi6waxGy0lOiKUXing=
+	t=1759225911; cv=none; b=giG4hhxMApYc6JRxF/r6pcGKA88ZYUskQlAb4SvQ5EoNLLSRFD388DooZVcf0P7sdeFgu11vk+1i4mthI2wZ/wgH3Q7DIGIY0PfS8bnSNwOUVjgWY5U2+ZxAPMHHj3CSs8RYtI5UmuaA9DAzUNuxdlfe8aE3MZKAr/DnfxZ4QKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759225639; c=relaxed/simple;
-	bh=R5eUE/k7fr9cPxgmyCPHZN28u/hmGz9eGDjEvMGrQ/M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pLNGn/Rz14Sb8YWT8jRPKgQfIf/eY0mC0MnSDznTx8EPefoYx9mfFXOwJ+1T3fj9lbGaPgFBydX6QELOLDq3gnefI598Yf6JhHWcFexYH3PxjK+NNP0rcQUElQKnbKrlx/nR5lUprvKjCDnpWs07Mg6I8xV+pt+L2yWoSZ+0Xn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lBXDFWtl; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b3e44f22f15so362682966b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 02:47:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759225635; x=1759830435; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PECcxxgPrslWjdZF9hdrPJ/fNitPu9//arKK4RLmCMk=;
-        b=lBXDFWtl0SxDVRlNV0oUs5xYYDnrTRoxwGRi+j/gKn9CVI/GoOp4xyeX2HhlbFpXI/
-         805LkdqYeGdZS03sl6pdUAfiOBaTznDQvjx10IrnB+MY0v/rMdMz7WFMngZJDwd5hrUP
-         MIdbb6dtbvudk6sWUEEUIMBGAlsXuhR6tVophqRMd8NUKEPK7dS3/5yPflw6fKLo2Lhe
-         DaDQFX9xhPvvMotCtmye/4jsG+5YecE3gDaIslKxLadWjuNk2OsyqiVnob+7J1ogyTTP
-         GZXMGVJwWLa+QgWeLNkw+5oXN7iZxeWEud2pTMNWBkPQaH73v+E+gH/XGg8cGHyRSdfx
-         sFcA==
+	s=arc-20240116; t=1759225911; c=relaxed/simple;
+	bh=VPAxITs5r4A4xYcV0NWFG/2CCjq5Ndf/fBAcr4O1KaE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tzMWWB8U1ypk4SBqLzfo0MAFBv6222vzIx4PIwDuHH39zS53h6E0lbfkXhoMOaGFvnyMQMCrAueIUXr7tcg1urXC/nCtB7OdEBgFX2lUoJCevQwIfls0BNtWxP4Bf3I3wlON4e8ZSOBYyMbiIrkLQKJLtylygbEzmjJX9fESya0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PLPh+9sz; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759225907;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=3c9XOi7tDlReMrDwAkgMkDY9WG67hlQrjqzpE4Wrfqs=;
+	b=PLPh+9sz9mTXc07JQX7/CBfUUxX4CeKrrVIYZeXqoOglZxeEBeWfAkGo1CSBYtbLNaOyjK
+	Pp5BtuUH6yHjYTd1w1uKhSOPesS9GySYBDnjGModx5awpWih259qLhWnDrKOHJzsGlzf2X
+	51g6OiQBIGbo/WZtifeIDOO0HWqK6eE=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-426-rAyK0MvTPxKgW2oCEgU-iw-1; Tue, 30 Sep 2025 05:51:46 -0400
+X-MC-Unique: rAyK0MvTPxKgW2oCEgU-iw-1
+X-Mimecast-MFC-AGG-ID: rAyK0MvTPxKgW2oCEgU-iw_1759225905
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3ece0fd841cso3194348f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 02:51:46 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759225635; x=1759830435;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PECcxxgPrslWjdZF9hdrPJ/fNitPu9//arKK4RLmCMk=;
-        b=kXVUbWJO/qKw5rApYAqVFkjABqm9mX7gLmRZT3cYMwm8b+v+j6hsBN8JbISoipraIk
-         DPKoIdeDldauhFzFR1gYreB+DsIJl13hDmWSDshhR6BGcf+8NP+yhAMIpafogHxMERJ1
-         4hR7a2HdV73IsgeYfHeMUkBdf6IutAGjaH4/8p/qu9K7Xn7XEUO3n9GViksYd7OrRal5
-         T+Ckv43mu4sIg4gQG2paAPCsrAe30YdP0D9Nsxfy4gwE1ZE/VPFT6/CDj4IAl+v/7yhQ
-         PSxnkZ6K17bRvBIJUfdnB+ZpUttiKreaV0rKs4mGqawLKRO90wrvLbdlE5yLHB1dytbr
-         ZUgg==
-X-Forwarded-Encrypted: i=1; AJvYcCUDwD/GaXTq71HSbSnHsZfEpuAofXawwIP5gDOEzRoOgWrl9iCKioSlBOd2qzlf19xzYP+LScR8F4aXHdU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqHghnrmFyubXXG0QhiXEgFg6Qw6TArog+gN6jxtSwmLotKyIt
-	m38ug96/atKBGhaU7m+BtxNJg9fzyJFQwztBmANTzzxsbOOjUG0llUWCi0G1rYVYqo+yJWIT35w
-	5r85SPK+S9REEOkEb0sCwPShatZDeoWM=
-X-Gm-Gg: ASbGnctsrWGBff7ORlVyYo/4ohn6dt5mBIHW9uMkMPM7C3I+jMs7uBZAcF1zbdIIljH
-	fY8F4cG8WRSqyKl/XptSmvwwcNnexJ6DfwX9dpsQx06wxobVuSraHyk8/8uWgptaR36LQaUmG3g
-	hxHIA/Ix9bWsvHilTr9/tK7DlGEH/NkNmlH4qEVHJ2RNwhoxPxY+A+nAnU9sQ6y1fge1GoqMDLA
-	4c7dUjSsmuFllUucXHO2QzoRXPfn0+VzzvMohb2KxS5WZ+H8nt9s7BM6mqwAHo=
-X-Google-Smtp-Source: AGHT+IHgrTWmNMFFHnfd0lj5oNhgsomsQpL15DJSD0/eU20JCLwROv8mnCSGOX61iu8gWXio0owIt1z4w1bbdeC1XZM=
-X-Received: by 2002:a17:906:730c:b0:b41:27ca:6701 with SMTP id
- a640c23a62f3a-b4127d9aeccmr487703866b.24.1759225635179; Tue, 30 Sep 2025
- 02:47:15 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759225905; x=1759830705;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3c9XOi7tDlReMrDwAkgMkDY9WG67hlQrjqzpE4Wrfqs=;
+        b=cPwRPjAgbJGf4lFzjz3ndYbkDOXfRizZhvRr5SYUm+tsqlIrFQE1pbjYF3NWanXdhJ
+         LovYhs273d13Siw9J0+z6G3yz87iVLQwi1PqZ8lq0P9g+Jp1Dg92jQatk4PQGywwSmVo
+         XVimGBAYXv00QDyRgQu+mxF1MvuerY9B2ATWEQCpSIePyTsEBP7gKwZVQP0Nq8nrix9S
+         +UCdC668VFAUYmCNzjwX2sHSN9WXx5ioT6tK8Ru+IiHsVK+oGNin4U0QaRVR3QYZuKLf
+         LSzTnlgNHQn+rDCJCkT+7T4n0AhRKKy3jTiRUFmelMBNZgsfw3URxp2I4twjak1c4u/K
+         qNZw==
+X-Gm-Message-State: AOJu0YwBfoTILPzfIX7Bh0ioUCjl/2XHnHh57qyEGVtZQexKMP21l9Qv
+	M8Io89XDb3IhgfCky7mLszR4cFUfW6iW7h4CUIloWnQw540dblrxqsCicK0am+gkLnHmbCsIa/s
+	WFOVFIVCvXvSb/1Zer5ucwGlPgjHY4l0mYuXlacy+vpKW6Z/fnkqi++FA5kwXrj6DnA==
+X-Gm-Gg: ASbGncvfWU8DLMPnmAFWrQ29Wu59NbKghoR1wom7sBzybrwfVyTvcoXYYu/lEDgS2w6
+	AJEQAr7uwAJD21i6WUClnelgW47pebAQX6kA2EOaqbXqxy2vJMRainquY4fzEVR5VtFNc1orw/b
+	Nctb6jmqKJZHoyRN9twf/cCFDCWjMJzElOFK4tc3jvgFcffC8j/g4L2f05Ud4ziPGgzBkyXz1UP
+	mNIejWryD1zynh2vkz3sxBkUbhQz11li5GeQLRY4nXudfqn+oH6Fq/QOjJtaZkWEldAj81JuTB6
+	sOaSWwTgIglHwUXt2+OHXFOx+3AocmgACzIMknVO1RicX7sXgSGATPX56qYcSQlc8fzn0WVbOwQ
+	zQBQrHOD+
+X-Received: by 2002:a05:6000:240c:b0:3e7:68b2:c556 with SMTP id ffacd0b85a97d-40e46ad0110mr18214271f8f.26.1759225905060;
+        Tue, 30 Sep 2025 02:51:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF8L0Ol2EiM+AbDlbohqCAI1G5Tu/oLcjBfYdO2UrvC9G2OHhzANDR+0hlm9krhZmp2YY9EjA==
+X-Received: by 2002:a05:6000:240c:b0:3e7:68b2:c556 with SMTP id ffacd0b85a97d-40e46ad0110mr18214248f8f.26.1759225904672;
+        Tue, 30 Sep 2025 02:51:44 -0700 (PDT)
+Received: from [192.168.3.141] (tmo-080-144.customers.d1-online.com. [80.187.80.144])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fc5603365sm22602468f8f.37.2025.09.30.02.51.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Sep 2025 02:51:44 -0700 (PDT)
+Message-ID: <3cf7c02e-d77f-48cd-bd03-69d71f8cf92b@redhat.com>
+Date: Tue, 30 Sep 2025 11:51:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250929211241.55701-2-sidharthseela@gmail.com> <aNueLn3Wy-2X_GeE@horms.kernel.org>
-In-Reply-To: <aNueLn3Wy-2X_GeE@horms.kernel.org>
-From: Sidharth Seela <sidharthseela@gmail.com>
-Date: Tue, 30 Sep 2025 15:17:02 +0530
-X-Gm-Features: AS18NWCrQTE6adq-xMOBGkCFzYdqRGqDir_x8mhokUn4KGXncQ46nLQvKyPQ23k
-Message-ID: <CAJE-K+AeEYkAN8wX3FbBCbQMGTDsueA-YiC4w_qi+TZgUzkS-w@mail.gmail.com>
-Subject: Re: [PATCH net v3] selftest:net: Fix uninit return values
-To: Simon Horman <horms@kernel.org>
-Cc: antonio@openvpn.net, sd@queasysnail.net, edumazet@google.com, 
-	kuba@kernel.org, pabeni@redhat.com, shuah@kernel.org, 
-	willemdebruijn.kernel@gmail.com, kernelxing@tencent.com, nathan@kernel.org, 
-	nick.desaulniers+lkml@gmail.com, morbo@google.com, justinstitt@google.com, 
-	netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 12/16] arm: mm: define clear_user_highpages()
+To: Ankur Arora <ankur.a.arora@oracle.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
+ akpm@linux-foundation.org, bp@alien8.de, dave.hansen@linux.intel.com,
+ hpa@zytor.com, mingo@redhat.com, mjguzik@gmail.com, luto@kernel.org,
+ peterz@infradead.org, acme@kernel.org, namhyung@kernel.org,
+ tglx@linutronix.de, willy@infradead.org, raghavendra.kt@amd.com,
+ boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
+References: <20250917152418.4077386-1-ankur.a.arora@oracle.com>
+ <20250917152418.4077386-13-ankur.a.arora@oracle.com>
+ <d2dca02c-ec5a-4b3d-92fe-2b3a3614b5df@redhat.com> <87jz1obyd7.fsf@oracle.com>
+ <d03dd7ab-5237-4de6-8872-a8ae2e9b7c5d@redhat.com> <87segb9i9a.fsf@oracle.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <87segb9i9a.fsf@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 30, 2025 at 2:39=E2=80=AFPM Simon Horman <horms@kernel.org> wro=
-te:
-> Hi,
->
-> I don't want to block progress.
-> But there are some format problems with the commit message.
->
-> Locally, git truncates the commit message at the line above ('--').
-> Which, omits a lot of useful information.
-> Most critically your Signed-off-by line.
->
-> There is also another '--' below. Just above the fixes tag.
-> Which would cause a similar problem.
->
-> And the v2/v3 information should go below the scissors ('---'),
-> below your signed-off by line.
->
-> Maybe the maintainers can fix this when applying,
-> given how close we are to the pull for v6.18-rc1.
-> And that I believe there has already been some
-> discussion of this patch with the maintainers.
->
-> > ovpn-cli.c:1587:6: warning: variable 'ret' is used uninitialized whenev=
-er 'if' condition is true [-Wsometimes-uninitialized]
-> >  1587 |         if (!sock) {
-> >       |             ^~~~~
-> > ovpn-cli.c:1635:9: note: uninitialized use occurs here
-> >  1635 |         return ret;
-> >       |                ^~~
-> > ovpn-cli.c:1587:2: note: remove the 'if' if its condition is always fal=
-se
-> >  1587 |         if (!sock) {
-> >       |         ^~~~~~~~~~~~
-> >  1588 |                 fprintf(stderr, "cannot allocate netlink socket=
-\n");
-> >       |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~=
-~~~~~
-> >  1589 |                 goto err_free;
-> >       |                 ~~~~~~~~~~~~~~
-> >  1590 |         }
-> >       |         ~
-> > ovpn-cli.c:1584:15: note: initialize the variable 'ret' to silence this=
- warning
-> >  1584 |         int mcid, ret;
-> >       |                      ^
-> >       |                       =3D 0
-> > ovpn-cli.c:2107:7: warning: variable 'ret' is used uninitialized whenev=
-er switch case is taken [-Wsometimes-uninitialized]
-> >  2107 |         case CMD_INVALID:
-> >       |              ^~~~~~~~~~~
-> > ovpn-cli.c:2111:9: note: uninitialized use occurs here
-> >  2111 |         return ret;
-> >       |                ^~~
-> > ovpn-cli.c:1939:12: note: initialize the variable 'ret' to silence this=
- warning
-> >  1939 |         int n, ret;
-> >       |                   ^
-> >       |
-> > --
-> > Fixes: 959bc330a439 ("testing/selftests: add test tool and scripts for =
-ovpn module")
-> > ovpn module")
-> >
-> > v3:
-> >       - Use prefix net.
-> >       - Remove so_txtime fix as default case calls error().
-> >       - Changelog before sign-off.
-> >       - Three dashes after sign-off
-> >
-> > v2:
-> >       - Use subsystem name "net".
-> >       - Add fixes tags.
-> >       - Remove txtimestamp fix as default case calls error.
-> >       - Assign constant error string instead of NULL.
-> >
-> > Signed-off-by: Sidharth Seela <sidharthseela@gmail.com>
-> > ---
-> >
->
-> This is where the v2/v3 information should go.
->
-> ...
 
-Thankyou Simon, I didn't know that double hyphen would cause
-an issue. Although I need a logical separator between commit message
-and warning log, may I ask what could be used instead?
+>>> assumes one of the following:
+>>>     1. clear_user_highpages is defined by the architecture or,
+>>>     2. HIGHMEM => arch defines clear_user_highpage or clear_user_page
+>>>     3. !HIGHMEM => arch defines clear_user_pages or clear_user_page
+>>> Case 2 is fine, since ARM has clear_user_highpage().
+>>> Case 3 runs into a problem since ARM doesn't have clear_user_pages()
+>>> or clear_user_page() (it does have the second, but only with !CONFIG_MMU).
+>>
+>> I think we should look into having a generic fallback version in common code
+>> instead for that case, and not require the arch to implement such a loop around
+>> clear_user_highpage().
+> 
+> So, as you suggested, I moved clear_user_pages() to mm/utils.c and
+> conditioned it on clear_user_page() also existing.
+> 
+>    #if defined(clear_user_page) && !defined(clear_user_pages)
+>    void clear_user_pages(void *addr, unsigned long vaddr, struct page *page,
+>                          unsigned int npages) {
+>                        ...
+>    }
+>    #endif
+> 
+> That fixed this issue as well since there's no more bogus reference to
+> clear_user_page().
 
---=20
-Thanks,
-Sidharth Seela
-www.realtimedesign.org
+I'll have to see the resulting code to comment on details, but if we can handle it in
+common code, all good.
+
+> 
+> Are there cases in which (TRANSPARENT_HUGEPAGE || HUGETLB) might be enabled
+> on ARM?
+
+Arm has
+
+arch/arm/Kconfig:       select HAVE_ARCH_TRANSPARENT_HUGEPAGE if ARM_LPAE
+
+and supports hugetlb. So yes on both.
+
+-- 
+Cheers
+
+David / dhildenb
+
 
