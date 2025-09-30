@@ -1,141 +1,139 @@
-Return-Path: <linux-kernel+bounces-837567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F380BBACA18
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 13:04:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FE90BACA12
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 13:04:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADBB11C46AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 11:04:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4849173B19
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 11:04:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4A40230D14;
-	Tue, 30 Sep 2025 11:04:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35E4E1F37C5;
+	Tue, 30 Sep 2025 11:04:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eblLuuX/"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B21vioHz"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A37B01F1932
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 11:04:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A96D911CAF
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 11:04:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759230285; cv=none; b=N8vsyQ7RsrJ/MjHHUQcnhDTdaYV9CGV76JxHeD3NKFZtGeqztDHcHmdNTdzKnWuec8uCHc11SDhTFMgwgB/lkaNX1HnXtJnZ7+QxBOkqBv0p66c73FNA3pQfwjUQNiEVql4oTgeJRShRQnrXWxV9m1yF8DbctrBWsUPjzC28AcQ=
+	t=1759230266; cv=none; b=BU4uLkexIdB4V8zf+8kqe7D3j1YchXivOgHuXn8OvNKDZDc6E1ZluP1gCPexor1mWKiMW9J2xpWA7Ai5jYn+RkoI83xdVk9YvB/qNe70n7Qy6pZoA6+w2ZpkNhb4VAF43YWSiVp9iFJvzAp0bGfGjBDlF/1HgsJWsd3m/n+6OuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759230285; c=relaxed/simple;
-	bh=rd6r3YZ5CreoOIGPhlv7qZcTbTgQxOS1EYltrH+4Vok=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JYEurIPv5eJXf092q6dTFaBHjviAOODYqT1H5vrjtYNshM6ez32ZM7iYMXM3k1p8i4FLpLVzm5xnL1WupFAh0HhcCimw2tn1GVWyogXUOxNHmujoAf1oUaCt4GgpwnP87aAYGZnsarhHwJxOBhTmBROxEp8eYZPl2241vyU+/NU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eblLuuX/; arc=none smtp.client-ip=209.85.214.176
+	s=arc-20240116; t=1759230266; c=relaxed/simple;
+	bh=YNuBjMcAcNII5wmOqu/ZT99nidyTcJ+BFMPR9FYlMbY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=l2xBorLSJ8gwic51WrNmGo926D8ajHF1DQntFoBmrMgSszcJp0Z2aqh3+H44BAKXEiCmfnI50rbRNM3SxycuvcmJ9JcgxL7m7hXuFpJkaeAEw5WxBomNir1S9H2Wn205ZoidAWyKizWfC3RsxY5tc6TXvg8dnqFDSYr5i/O/xSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B21vioHz; arc=none smtp.client-ip=209.85.221.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-27ee41e0798so72126905ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 04:04:43 -0700 (PDT)
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3fa528f127fso4545010f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 04:04:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759230283; x=1759835083; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1759230263; x=1759835063; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IPM9cQm+a2uPRDlRKN6oUV7loYn+iemaYSScmwnHm2U=;
-        b=eblLuuX/GahellGoPu7RbL4xOj4Uu2XBrdbde/Bv6Qy3uCBKLJSGEoK98khvYNYsGo
-         eBdKMeDYb4TS8t9f+DgJLeUxAY8S0AZzU/98t47TvKEpXCf2lPBDXFk/lZoxNmfjUvii
-         PqQd3A0MSHrLe0ZZYBHJVctYTsyVySHoK6VpacoKX4EXRBadWo09ljKBL7jQzsB0eqmH
-         eFvAn+qPOm957mOKG/6lhhmBouJwXK2sHyQzoPhC3uKsKzucsUKqHgT46WNBPHkn8eV4
-         eEo+nRS90RHqATqmK+30qB9BH2vAo7vHjWdRC/8Z9+iEz6a93fsXprTlghS3O8F0IMol
-         XS7g==
+        bh=DLG2shrEUT3PEsVD2MKX4WEwp+11f9/xRUTGis7fAKM=;
+        b=B21vioHz0k0Cgi1tEnfrOXn/Fwc+lha22Pd7wYknTPjm2zJOJe0Q5G1ymrFDu5q0RU
+         jH/c8e9HFF+JfRIwB/meFM9DizCGsKsfVAMpM6C+hu9gtATfzF0v2ySTQrmTBkUrSjod
+         fWQpa1hIZGktyWp8ThdFtR/oUIAhsqjupCwSr4TCvXkpG8Qw84lJRC8TMUEd10Tx9QOY
+         QoeG/fGf336OGQldAS/Jhyd5VhT78q0mi/UBKfilO+zmo31Y5Ok/ftID3Joo8FUkTJxH
+         hi/yUb+iTMGx1UbY32jW33b1B/CG8CG7TKVfLgpi1ebGBRFLY6S1mktnhi/rs3NKaX0X
+         73Sw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759230283; x=1759835083;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1759230263; x=1759835063;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=IPM9cQm+a2uPRDlRKN6oUV7loYn+iemaYSScmwnHm2U=;
-        b=eXS4OhL7vq/2tf8sgc6eqmcieV/JLHDBR6r7mOhCXg0lWS9av0evXJLiMcY41zGfuC
-         KOkxE/dPNk1ONos2Tlv2uBFDRb6LBSnnRpGvuBloMz5cVwB5QJv0PplESWrWUbypGhy+
-         clWDtV+VhNwHchJaz1IZlMKOU3TYZWBCzjo5+0ksud7Kzk0oSBhoq2u02IMX2tdqWkdL
-         r/g6R/QZnbyjUNRWeurBXT8VsaVykwYTqB2+UD5iImL1/Q/5bXTfH0uyzM7gJeJK1grs
-         bz21Y9YWsIr62wBLPk0QWxVO0B3c+QUFj9gikW3ru0gI9gBGZIHuoe7KEEiHRP+jLRYH
-         gdNw==
-X-Forwarded-Encrypted: i=1; AJvYcCV/ShYuzOI/DYw3zYw5pxTJT7d+/CI1HwZuM+vN39L2nSfxpn0TlQofLH/5UZb60l5d2mCT3DaEcbKBtL4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywoc0Jk6TWIhrqy95WDSmhKQWBQeIawNP2E/e8TcaSI0X3FQFsG
-	wLLReLZ1/4qYi68z4Y6B2peeV3K4RP4bVCoTwc9rNVLV3ABslF3QQVhf
-X-Gm-Gg: ASbGnct/NjRw4y/KApqZXj+f3WubJ9PqaQ8Z7H0rnlEs5F+PvLsJhcZmkrJui45+LNK
-	xPZJc4QCpxYqGxFJcZf4Az7zlYW1Osu1qzQvh5wdFoQEDL2RXWm5xT8FBDql3qVNDxoW3bXHb8R
-	oLveNIP43fjwwLU9PG3U7y01irzwC3ZZzOKmfb2wdyPOI7M9Ak/PnbMaRqAevIe5bfOk/R8Tt+b
-	NvJQP7l8XoVNh9O/HCrG1m5xqgUsFVuW1VEuiVrw+mBoYlyXhEhpkysYaeZ70I16rxYokni1592
-	ak9grRgrB6qGBpvM89QXFNxRi3IIy4+tiEbakT2cl1TyTd8dOiHEklLfZJYT98lo/xnrese/DZz
-	OErD/eVLZqfXGX+6T6C+X41edPe3ys/aWI+bMhlgGppE6CkemKAvwhPwhxjoWdw==
-X-Google-Smtp-Source: AGHT+IHzSgoeQhshCVoioYm/kSlIiIPlDW7b2JR6FtckzXalSYNpdGWehRFnw4TklcYXNFKx4nNzww==
-X-Received: by 2002:a17:903:2348:b0:275:3ff9:ab88 with SMTP id d9443c01a7336-27ed4a4e174mr220944555ad.49.1759230282147;
-        Tue, 30 Sep 2025 04:04:42 -0700 (PDT)
-Received: from LAPTOP-1SG6V2T1 ([45.14.71.13])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed66fb07dsm155372575ad.36.2025.09.30.04.04.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Sep 2025 04:04:41 -0700 (PDT)
-From: Tong Li <djfkvcing117@gmail.com>
-To: Miguel Ojeda <ojeda@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Tong Li <djfkvcing117@gmail.com>,
-	=?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>
-Subject: [PATCH v2] rust: file: add intra-doc link for 'EBADF'
-Date: Tue, 30 Sep 2025 19:02:58 +0800
-Message-ID: <20250930110258.23827-1-djfkvcing117@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <CANiq72n+tBB=NasbJr95YJ=HPgSc35uwKALRyHDOyh4nG6xUOA@mail.gmail.com>
-References: <CANiq72n+tBB=NasbJr95YJ=HPgSc35uwKALRyHDOyh4nG6xUOA@mail.gmail.com>
+        bh=DLG2shrEUT3PEsVD2MKX4WEwp+11f9/xRUTGis7fAKM=;
+        b=P6scd90wLaidkMq1aMxmTseyB6pKNxqwzzJp2WWDMbHBZblvcwpMtP3ZvNntM74Bq/
+         0B2i96MYD7BJtiY4BnMASl2vD8AaGtvLDeQ0aSDvl9vKiPvjqzcFUKlqWm6cQ2ciY91T
+         CYBOkn8kjl+Hr28v6tn21CdLh43Tp/RnYdQu9JwkYVsjF+yFbkt+pzOHMTCGWtsNAWuH
+         nOBs9/sN1j5+4jy1MSfuKTA78WnJwH3uIYlY+I+FAoILz+1NuSZmON9g18UYtATpfmAu
+         8e9NxNLdcHQylKQhG9x+6rACx9JYLSrRpuGdZC+Q0MZZRzRn6E1uvat3lWuTADKHMdWp
+         tMXg==
+X-Forwarded-Encrypted: i=1; AJvYcCU6hsjrpXjmdry5VfhqPBYHYIfm6rcAbplHQ57ORC/J+doVY6eH9wZSpFIjIPcrg5usgdLNDQmt3VNKIHc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxo58pInhwsiBLR8z2WIITO/Rfen8EXZNDnsabr4AGC5rtOkvjR
+	H3h5qtiiaanNaq0bUKHXVtGaLwLQdhxD2enIypGppebjw2QCPLdwVBTXYFYTfD0VGQG8ZBBYzjY
+	B6ijZ6cf/yYlW3GD2+FiJtcqF1OX5wHY=
+X-Gm-Gg: ASbGnctCzaCzpqfWY7jn1juDuSVyNh1w+K16N3WVBjo5kpAs1VJIHpehsALJ9S4diEw
+	nFPxmxBqP2dPMz2T7rcHrhINzmfoWsV3nuuUJhMeRnbPBs7fdmT4e7Y80/pSvydaxPf8m6UBelx
+	i17DEeaYlOhVx9gnQHpheZoANX1P+w+zGOVpabKH0I9v5QKa03bmj0jsK7qoUau7rw+eymdBBmh
+	ylJToTuUBnrl0tW6KjZKrEocH5CluuI
+X-Google-Smtp-Source: AGHT+IE1Is0PTQDKNr+NSF+nZuh/e1voDJCc644MliK0X/icVb+Svhcvwsj2c4aXKUHdH9O9YMauBVY1JShn7PqSgKk=
+X-Received: by 2002:a5d:64e4:0:b0:3eb:ad27:9802 with SMTP id
+ ffacd0b85a97d-4240f26156amr3686758f8f.2.1759230262708; Tue, 30 Sep 2025
+ 04:04:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250930063831.782815-1-ranxiaokai627@163.com> <aNuX9wZHjOZgJdTm@hyeyoo>
+In-Reply-To: <aNuX9wZHjOZgJdTm@hyeyoo>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Tue, 30 Sep 2025 13:04:11 +0200
+X-Gm-Features: AS18NWDWMUL9dtXKS3ofmjeGZtpVuVjezBxx8spaAodkJfgXXqDAB7u70llrrXM
+Message-ID: <CAADnVQKkFFxSMBi5EnsQ9-ZwcNqMrUvFM14fV8ehExSEbgY69A@mail.gmail.com>
+Subject: Re: [PATCH] slab: Add allow_spin check to eliminate kmemleak warnings
+To: Harry Yoo <harry.yoo@oracle.com>
+Cc: ranxiaokai627@163.com, Vlastimil Babka <vbabka@suse.cz>, 
+	Andrew Morton <akpm@linux-foundation.org>, cl@gentwo.org, 
+	David Rientjes <rientjes@google.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Alexei Starovoitov <ast@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	linux-mm <linux-mm@kvack.org>, ran.xiaokai@zte.com.cn
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The `BadFdError` doc comment mentions the `EBADF` constant but does
-not currently provide a navigation target for readers of the
-generated docs. Turning the references into intra-doc links matches
-the rest of the module and makes the documentation easier to
-explore.
+On Tue, Sep 30, 2025 at 10:43=E2=80=AFAM Harry Yoo <harry.yoo@oracle.com> w=
+rote:
+>
+> On Tue, Sep 30, 2025 at 06:38:31AM +0000, ranxiaokai627@163.com wrote:
+> > From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
+> >
+> > In slab_post_alloc_hook(), kmemleak check is skipped when
+> > gfpflags_allow_spinning() returns false since commit 13d872ade8be
+> > ("slab: Introduce kmalloc_nolock() and kfree_nolock().").
+> > Therefore, unconditionally calling kmemleak_not_leak() in
+> > alloc_slab_obj_exts() would trigger the following warning:
+>
+> Good catch.
+>
+> > kmemleak: Trying to color unknown object at 0xffff8881057f5000 as Grey
+> > Call Trace:
+> >  alloc_slab_obj_exts+0x1b5/0x370
+> >  __alloc_tagging_slab_alloc_hook+0x9f/0x2d0
+> >  __kmalloc_cache_noprof+0x1c4/0x5c0
+> >  __set_page_owner+0x10d/0x1c0
+> >  post_alloc_hook+0x84/0xf0
+> >  get_page_from_freelist+0x73b/0x1380
+> >  __alloc_frozen_pages_noprof+0x110/0x2c0
+> >  alloc_pages_mpol+0x44/0x140
+> >  alloc_slab_page+0xac/0x150
+> >  allocate_slab+0x78/0x3a0
+> >  ___slab_alloc+0x76b/0xed0
+> >  __slab_alloc.constprop.0+0x5a/0xb0
+> >
+> > Add the allow_spin check in alloc_slab_obj_exts() to
+> > eliminate the above warning.
+> >
+> > Fixes: 13d872ade8be ("slab: Introduce kmalloc_nolock() and kfree_nolock=
+().")
+>
+> The commit hash in the tag and commit message will be adjusted after -rc1
+> when picking up this patch.
+>
+> > Signed-off-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
+> > ---
+>
+> Looks good to me,
+> Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
 
-Suggested-by: Onur Özkan <work@onurozkan.dev>
-Link: https://github.com/Rust-for-Linux/linux/issues/1186
-Signed-off-by: Tong Li <djfkvcing117@gmail.com>
----
- rust/kernel/fs/file.rs | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/rust/kernel/fs/file.rs b/rust/kernel/fs/file.rs
-index 67a3654f0fd3..f3153f4c8560 100644
---- a/rust/kernel/fs/file.rs
-+++ b/rust/kernel/fs/file.rs
-@@ -448,9 +448,9 @@ fn drop(&mut self) {
-     }
- }
- 
--/// Represents the `EBADF` error code.
-+/// Represents the [`EBADF`] error code.
- ///
--/// Used for methods that can only fail with `EBADF`.
-+/// Used for methods that can only fail with [`EBADF`].
- #[derive(Copy, Clone, Eq, PartialEq)]
- pub struct BadFdError;
- 
--- 
-2.51.0
-
+Makes sense to me as well:
+Acked-by: Alexei Starovoitov <ast@kernel.org>
 
