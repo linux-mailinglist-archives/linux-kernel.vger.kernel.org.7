@@ -1,87 +1,167 @@
-Return-Path: <linux-kernel+bounces-837424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50592BAC496
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 11:37:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6678FBAC4FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 11:38:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 052E93B6CEA
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:37:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1746E321BC1
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:38:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 461C32F5A1F;
-	Tue, 30 Sep 2025 09:37:08 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6A5C2F8BC0;
+	Tue, 30 Sep 2025 09:37:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n9xxRbBB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E5E22F5479
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 09:37:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B91842F5305;
+	Tue, 30 Sep 2025 09:37:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759225027; cv=none; b=WcyVRe4cTAQ+8/F9N4t/On5ktxvqgHrs0ysSrv9QIuAugGQVX4XFprU2iyl1oI+88PrdrQdW55xzC4+KIyh27pnl8pm4Dm1FP3uxWF1z1i5RtGDaPaHHjsj5YPtzM62iVVJofOzN8SVkx2XGn8PEQSxIcreIejzqb9e3Vo84PTU=
+	t=1759225051; cv=none; b=H82mNCIkHAvznb9d2rB+rVrk9kKhebNDFQ0uK8LuK8KxvnB+YL6L4JanwsRPqHk3jQ/RipMoTXR3wisAGXfyXtQbE5w3ZxMNx2x19H6SkjJOeRu+7F3J+X5ahosubqzUURFs8ZGGOpK55eTzEyIEye225HUKACAwQphlaHo88ls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759225027; c=relaxed/simple;
-	bh=JRQ3LTgbeDX7YHJmlNZZlgdp25/osCwRdOu29ygjOPw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Xzmz3ig09o2mZxUhmSbr8iJPtv6LWUoas+Ep+h0rSvXGzPkEm6GLN+CC03ahaCaqHycnhIbpUrpp+SBztUqdJE0lcDL8pd5xfniw2oCqLwwLdJxOX7Uz6RNEzR1bYw4JS55iwBbX01QT22jxxRt7Yx6lff0G1nWEDjzisKNUbag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-9228ed70eb7so535374239f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 02:37:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759225025; x=1759829825;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YB79uH5/LfaWuCl3g3TQotEzhI0/ry9ZLrefnxTcfyc=;
-        b=dTyj9PtQfKb/ErVnSKzG9q58qXqSJSbgwP+sAKtC2Dokd2NQKDOPHC8cCY3rm+Fr47
-         0hkAk+YscGpJ37FMm13ZbpBVIZSyL8Y2F2Y+6t0/AlCWh6Bg1xrkKBHJbAyDINZdV7xE
-         M4uTZ7+xZ5rbCgXgmucgRjj3zs9vmgBuJNrX9uhob+F6iETsUZxgsqG7KXk+5uJ8Fv7p
-         eHyVta4PEN2GSN0+NYpo4n1390xS44PU+OBWkzm6HCTLzKnEYlLapOAoNamwtHhEC+FD
-         V31rBQWQ1BhXU7ur624juSB/6QsunotUxZGf3iuFTp+8KZ7MO/JKLb9PLsIGlJ598Bx2
-         kESg==
-X-Forwarded-Encrypted: i=1; AJvYcCXhN2rrSbzVf96BQGQ2/wJR8waxbEpKgukFpoIuoUQ2MFKiVBQ+vMla+RBHoElmDUmI5PkCG5u1pPpjeCo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIYpWC6SUfmQtKs7ylfzV97rHyFwiuK4xFBHi3Jfp8H7j9kESI
-	N+o4B6fr2mpbWxvkX6SMqk8mQIxvFQ5Sot2PAP5yIDfR1ysBZj8AQQFQiAvibEcs8J9n4L2u5Eb
-	8bFMIDzxnZyzYf3yrE12nhZ3fMWYKuwJZnquei4s7lKpjO/LakhmlFM5ELXY=
-X-Google-Smtp-Source: AGHT+IFufqM5vlHRno7RZLQWFXK5tfnPBdg6n+lRh359mp/KyB/MNGtQ66mMojuFnUsBs1gFwkJdCXk0OeYmXYcGFL6qJcQCDrd4
+	s=arc-20240116; t=1759225051; c=relaxed/simple;
+	bh=5o+htP+rM/HKQyGn1eH3S7+MzThwQ+uX1Hq8VqONr8g=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=qfAlzwfA4rot1qJjKmh0kXonbmBpLrgwUgUEbhgYW2mxxc66r2CTe75AHS/PT+7m+f+HlKlp+tGn4t6mLTt7n8qnoURQZZXq5Vnpt7fGiANIfh/X7gp5KDVr0kNGXFJWZGKz7NcUgBlL+4cvSF4WF/LbcDtMETxUIpWn0faYODc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n9xxRbBB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 44A39C4CEF0;
+	Tue, 30 Sep 2025 09:37:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759225051;
+	bh=5o+htP+rM/HKQyGn1eH3S7+MzThwQ+uX1Hq8VqONr8g=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=n9xxRbBBX96T9ogcvhLUVw8I8DhLBCLfbpk2dfxWWXyJ/khtsq8oqFcT7gGdJqit/
+	 tWd6EgzlvC+0o6Bt7lHLfzDo/6yH7naAjRWQ7xfHiml1BS1hpIL3N9vAdcUGR7SpT3
+	 Z0LNwuF6TBLCCfkRPe13i8SnOwGpuzl7LzdYjnvutHXqCzQ7mwHuxzuXC2EYyof6jH
+	 edpVAsXoS8kubU08pHR5U9LT4zwEzvQQw1N81UnIzStZ03XlSFJL/og3k0UuUxff7b
+	 zF4jiPEE3lZ5q0AOmAQgCMDSl+xXF5V2LJneUtv9+igBFiWrDje3RdijMcN/HiabZW
+	 yZbBf/QEdRPfw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FAB2CAC5BC;
+	Tue, 30 Sep 2025 09:37:31 +0000 (UTC)
+From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
+Subject: [PATCH 00/19] clk: amlogic: Add PLLs and peripheral clocks for A4
+ and A5 SoCs
+Date: Tue, 30 Sep 2025 17:37:13 +0800
+Message-Id: <20250930-a4_a5_add_clock_driver-v1-0-a9acf7951589@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:340a:b0:887:633e:9a9b with SMTP id
- ca18e2360f4ac-929be8ab070mr818688339f.10.1759225025649; Tue, 30 Sep 2025
- 02:37:05 -0700 (PDT)
-Date: Tue, 30 Sep 2025 02:37:05 -0700
-In-Reply-To: <20250930091631.310211-1-kartikey406@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68dba4c1.a70a0220.10c4b.0138.GAE@google.com>
-Subject: Re: [syzbot] [ext4?] kernel BUG in ext4_es_cache_extent (3)
-From: syzbot <syzbot+038b7bf43423e132b308@syzkaller.appspotmail.com>
-To: kartikey406@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, yi.zhang@huawei.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAMmk22gC/x3M0QoCIRBA0V9Z5jnBNC37lSXEnKmGYl1GkED89
+ 6TH83Bvh0rCVOG6dBBqXLlsE8fDAvmVticpxmkw2jgdzEWlU0wuJsSYPyW/Iwo3EmXu5xzQB+e
+ thRnvQg/+/sfrbYwfl8Id9GgAAAA=
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ Xianwei Zhao <xianwei.zhao@amlogic.com>, Chuan Liu <chuan.liu@amlogic.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1759225047; l=4218;
+ i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
+ bh=5o+htP+rM/HKQyGn1eH3S7+MzThwQ+uX1Hq8VqONr8g=;
+ b=9UB/pSh4Qx25JQAEirqjDzvZLuzERi70Cm6gW7FIEkZawGXnWeEHArseYuIOn4cVV4sEtZAa/
+ JbTQPGuAcNjD5619B0r6CFtJhOhE2icgF32q6i9IBU4mc7tmLmTgXXe
+X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
+ pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
+X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
+ auth_id=203
+X-Original-From: Chuan Liu <chuan.liu@amlogic.com>
+Reply-To: chuan.liu@amlogic.com
 
-Hello,
+This patch series includes changes related to the PLL and peripheral
+clocks for both the A4 and A5 SoCs.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+The patches for A5 were previously submitted up to V3 by Xianwei.
+https://lore.kernel.org/all/20250103-a5-clk-v3-0-a207ce83b9e9@amlogic.com/
+After friendly coordination, I’ve taken over and continued the
+submission as part of this series. The dt-bindings patch retains Rob's
+original "Reviewed-by" tag, and I hope this hasn’t caused any
+additional confusion.
 
-Reported-by: syzbot+038b7bf43423e132b308@syzkaller.appspotmail.com
-Tested-by: syzbot+038b7bf43423e132b308@syzkaller.appspotmail.com
+Both A4 and A5 belong to the Audio series. Judging by their names, one
+might assume that A5 is an upgrade to A4, but in fact, A5 was released
+a year earlier than A4.
 
-Tested on:
+Since there are differences in the PLLs and peripheral clocks between
+the A4 and A5 SoCs (especially the PLL), and taking into account factors
+such as memory footprint and maintainability, this series does not
+attempt to merge the two into a shared driver as was done for
+G12A/G12B/SM1.
 
-commit:         30d4efb2 Merge tag 'for-linus-6.18-rc1-tag' of git://g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16b3f27c580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=607d55e4510cba63
-dashboard link: https://syzkaller.appspot.com/bug?extid=038b7bf43423e132b308
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=13cb16e2580000
+This patch series includes all related dt-bindings, driver, and dts
+changes for the PLLs and peripheral clocks. Following our past convention
+for clock-related submissions, the dts changes are placed at the end
+and submitted separately. If this ordering makes it harder for
+maintainers to review or pick patches, please feel free to point it out.
 
-Note: testing is done by a robot and is best-effort only.
+Co-developed-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+---
+Chuan Liu (19):
+      dt-bindings: clock: Add Amlogic A4 SCMI clock controller
+      dt-bindings: clock: Add Amlogic A4 PLL clock controller
+      dt-bindings: clock: Add Amlogic A4 peripherals clock controller
+      clk: amlogic: Optimize PLL enable timing
+      clk: amlogic: Correct l_detect bit control
+      clk: amlogic: Fix out-of-range PLL frequency setting
+      clk: amlogic: Add A4 PLL clock controller driver
+      clk: amlogic: Add A4 clock peripherals controller driver
+      arm64: dts: amlogic: A4: Add scmi-clk node
+      arm64: dts: amlogic: A4: Add PLL controller node
+      arm64: dts: amlogic: A4: Add peripherals clock controller node
+      dt-bindings: clock: Add Amlogic A5 SCMI clock controller support
+      dt-bindings: clock: Add Amlogic A5 PLL clock controller
+      dt-bindings: clock: Add Amlogic A5 peripherals clock controller
+      clk: amlogic: Add A5 PLL clock controller driver
+      clk: amlogic: Add A5 clock peripherals controller driver
+      arm64: dts: amlogic: A5: Add scmi-clk node
+      arm64: dts: amlogic: A5: Add PLL controller node
+      arm64: dts: amlogic: A5: Add peripheral clock controller node
+
+ .../clock/amlogic,a4-peripherals-clkc.yaml         | 122 +++
+ .../bindings/clock/amlogic,a4-pll-clkc.yaml        |  61 ++
+ .../clock/amlogic,a5-peripherals-clkc.yaml         | 134 ++++
+ .../bindings/clock/amlogic,a5-pll-clkc.yaml        |  63 ++
+ arch/arm64/boot/dts/amlogic/amlogic-a4.dtsi        |  80 ++
+ arch/arm64/boot/dts/amlogic/amlogic-a5.dtsi        |  87 ++
+ drivers/clk/meson/Kconfig                          |  53 ++
+ drivers/clk/meson/Makefile                         |   4 +
+ drivers/clk/meson/a1-pll.c                         |   1 +
+ drivers/clk/meson/a4-peripherals.c                 | 764 ++++++++++++++++++
+ drivers/clk/meson/a4-pll.c                         | 242 ++++++
+ drivers/clk/meson/a5-peripherals.c                 | 883 +++++++++++++++++++++
+ drivers/clk/meson/a5-pll.c                         | 476 +++++++++++
+ drivers/clk/meson/clk-pll.c                        |  76 +-
+ drivers/clk/meson/clk-pll.h                        |   2 +
+ .../clock/amlogic,a4-peripherals-clkc.h            | 129 +++
+ include/dt-bindings/clock/amlogic,a4-pll-clkc.h    |  15 +
+ include/dt-bindings/clock/amlogic,a4-scmi-clkc.h   |  42 +
+ .../clock/amlogic,a5-peripherals-clkc.h            | 132 +++
+ include/dt-bindings/clock/amlogic,a5-pll-clkc.h    |  24 +
+ include/dt-bindings/clock/amlogic,a5-scmi-clkc.h   |  44 +
+ 21 files changed, 3406 insertions(+), 28 deletions(-)
+---
+base-commit: 01f3a6d1d59b8e25a6de243b0d73075cf0415eaf
+change-id: 20250928-a4_a5_add_clock_driver-2b7c9d695633
+
+Best regards,
+-- 
+Chuan Liu <chuan.liu@amlogic.com>
+
+
 
