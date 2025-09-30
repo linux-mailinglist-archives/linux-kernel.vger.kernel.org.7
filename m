@@ -1,361 +1,119 @@
-Return-Path: <linux-kernel+bounces-837981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7055BAE2B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 19:25:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC31ABAE2BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 19:28:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C32A67A36C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:23:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FF473253D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 17:28:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B269230CB25;
-	Tue, 30 Sep 2025 17:24:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0017D303A16;
+	Tue, 30 Sep 2025 17:28:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZEWFjHsg"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="e0XNhCO0"
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3FE52FBE16
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 17:24:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDFBE8287E
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 17:28:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759253082; cv=none; b=KlZvfEDBDn4KPpGEDy2GlQLuZbocaC+xaECqLU8yWH/qdhu2QlZjbztQGMkAEebUgh0Uw5+w7lBxZa6BYtM14nq3HQzPeXAEdccV9i6WQRnJcDD4+qym0kmHFyLcx/PwRNr0l8RKcOieRGBockhO2PdJVCwywos38ZZZqhzX6Bg=
+	t=1759253297; cv=none; b=B/pru1I5DaOAFmHBNxdxkcZEL3RLuhPO5KOcM4D0FR9MnTgrJnyOaW9cLeDVTdOY9BqOyK+8Gl+Rlbag5HOmIxwHEy8bItyJQFG1I8+eLQw3+Y3GJKyQafUkj8nCjVz1rhLg1MfZTmwzcagTnHavjXsVzLREdB4D8f0QpWD30xQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759253082; c=relaxed/simple;
-	bh=uejollmX6UdW6EW80SMay1PeJ9j4GJBM65xwi4SUhUI=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=tEH5hdpSg+ZUeh8Pv6T7+kRSrBh18Kfje5dAHUsZID85ejZu2xvWdRhRt8LUblLHYWsYNrdpujQFAXMuqLBMkzOy2WGe81KvBto2UgBIfiYAjWGhQrFZpm0ekb5GmJDvSFFGjRx+mo7qhAJYKO9b0KUx5mQXYae9Z/KX/Vv9rrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZEWFjHsg; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-42421b1514fso696396f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 10:24:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759253079; x=1759857879; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pvVNpnk1em0RkZX+LraDKpmhOFpQMHJx3+utgoN6HFU=;
-        b=ZEWFjHsgEVl/Tb2SsJRIFTFV/cnWfUhbR18Noj6IJOej8dCyGTPn1X/aUztRoF2/3+
-         vMjVCVIkwzG6m7xMGmYDTFGZ8RHTPWepAIU/JlqJ41zkujaNUxImpqNFy1AVbcfLOJId
-         /rcCs4mBZrRb/PQahnkliCqiTtozr2kWx02r/zW4WhDK4ss5B1fj6cCD3Tu498wXZG1A
-         gKLvXXEFGpsAAtYB4VQWR3YZ5ttowHuutq4j4s7Rhyl52EYHKaq1Cqt4Y8hHtR7PSA0C
-         lfFpfXsJta99QBcwa1EX8fLjopsE+iiOzsM/5Vk3keL8U9BvMdZ4Kxm0zPRVUsPdMfUp
-         GhgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759253079; x=1759857879;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=pvVNpnk1em0RkZX+LraDKpmhOFpQMHJx3+utgoN6HFU=;
-        b=jH3ylSFWD7aP6sUJgKgsb96R4s3lYKRSKKLDe/IEXxkkQ4lz/FYOntVe2AiWqscMpy
-         Z1JAOYGyRFREOAB9OSnsZ99BA51nGolzGFeJIqkmvYmoBCyfALn+2xKa1GxFfuH4eHb0
-         NxZ4HxUe77QU64oviPWiQo4Ei2AhZchImD2S7Qzux54lWz7LtCe0LGuMH9Rz0ttGS5TW
-         LdeOtyKFaqFGXX1fnKHNnvcjqjSYfLoZrhbHW59zg7Hmvf8rOD+APHO/K71aALFKrYxx
-         7hNTQT4U+csvxMASgjhlBKoIi803TpfIuPyAeYcMicNzHyXmXEfAb7q3NdMVz0igbi0N
-         cWWw==
-X-Forwarded-Encrypted: i=1; AJvYcCVoN7QYaGqQFNSJIfPDMj+7BJjPobOTUv6Lv/E+NXdnYRB2mQ7yZn3cV8MA0ZAq9CnnCuKJzzBwUW/WjoY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yylrg9osE48ZzzX7r04x2KmrBAa/4a9rShsvZx2zAdIa0m0fBXs
-	GEdtaXmaQ70xxpVS8ykEFNWSmQzlZzCfgcv5Fu2JaXAogc1/F6HzKaUhiKQQEY6Sf/E=
-X-Gm-Gg: ASbGncvjivUCcLRXMNSZ+ft2OuxGGXVE+2norv545ARG3HJF4JygQ3frPXog4F7iUjJ
-	KG4pxZTVgM8cHYkhWRS0BmIqao1InO9NbGRvpyRII7bZDkc0a1/543p4cI5C1O7mT+pUHK+yhb6
-	9cXzEI5OFpuR3Lvf1YA6kuThPBHCKecFc7wRkkGSFt/p/fyjfN4ixsNIRv68wa90m1SMJPmuUo8
-	9VSjyKIOXfyTzj5+qe9i8L17SObcn0BD7meR9AbuCbMj91sWIc5N0/FWyTpGssQKdvkSbO2AQNk
-	8rZ5RVIwQCIbpUYMZ3cdVgLx/qgd9z3EPotVMWaZQEdUVfjFsbOnQrvQrELwXoBWvysdpHKOLiZ
-	mPUqbOSKXb08OTsLgjJqt6LZZc32+5XdOx2dlxezyzzLIaVhPnrVWHsGDSFc=
-X-Google-Smtp-Source: AGHT+IGglgxN2Hhmv9KmUP8JA/GwoSDh33Ava4t+rFkJLhqrQMU1IiSGuBGFF+USzQgFE5I07APBdA==
-X-Received: by 2002:a05:6000:220b:b0:3ea:6680:8fb5 with SMTP id ffacd0b85a97d-425577ecaa5mr439876f8f.2.1759253079123;
-        Tue, 30 Sep 2025 10:24:39 -0700 (PDT)
-Received: from localhost ([2a02:c7c:7259:a00:248:54ff:fe20:c34])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fc5603161sm23914123f8f.35.2025.09.30.10.24.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Sep 2025 10:24:38 -0700 (PDT)
+	s=arc-20240116; t=1759253297; c=relaxed/simple;
+	bh=bN8050SeQ37WVbp086DyHKJ2gMBp8Gfpzlww6eit/+U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NqatYzaf5lT2Vy1xL88HRt9gOTr4Nsg+Vhcjl2ZrBg85aaCMO29F9WpE/z3pgpOM7fFsJ1ocXJzLkCthk7PywlYQ8z+WiL6+t26tvDGscP37ZwlagbTOS9OE1ciEiaBEgOx5swbMpeX6MFsUnKdvKx9yMJIagsXAzXVTryD5aTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=e0XNhCO0; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1759253282;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Kb4vrT1IqfH/wEYBny1isKoOnot4x3idjBMooqMXDo0=;
+	b=e0XNhCO0QY88WWEuyjnQYGLJAO+J9szaoUtDS/hwOGLW5j43As9+o/bLM4nQZrzLxQpPN4
+	dH+lmj5LqCsHXt7krdDygNx8ZENZl+Vs5JD2LbgZT5JUU6Q4+CkWiq93HZ7AGDQqaKJvhU
+	c+3UMMe+dTIZAN+PM3QPkBSFjcr8jUo=
+From: Wen Yang <wen.yang@linux.dev>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Wen Yang <wen.yang@linux.dev>
+Subject: [PATCH 6.1 0/6] fix invalid sleeping in detect_cache_attributes()
+Date: Wed,  1 Oct 2025 01:27:25 +0800
+Message-Id: <cover.1759251543.git.wen.yang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 30 Sep 2025 18:24:37 +0100
-Message-Id: <DD6B62STZOTG.L12V3DGNDZUZ@linaro.org>
-Cc: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <aiqun.yu@oss.qualcomm.com>,
- <tingwei.zhang@oss.qualcomm.com>, <trilok.soni@oss.qualcomm.com>,
- <yijie.yang@oss.qualcomm.com>
-Subject: Re: [PATCH 07/20] arm64: dts: qcom: kaanapali: Add remoteprocs for
- Kaanapali SoC
-From: "Alexey Klimov" <alexey.klimov@linaro.org>
-To: "Jingyi Wang" <jingyi.wang@oss.qualcomm.com>, "Bjorn Andersson"
- <andersson@kernel.org>, "Konrad Dybcio" <konradybcio@kernel.org>, "Rob
- Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>
-X-Mailer: aerc 0.20.0
-References: <20250924-knp-dts-v1-0-3fdbc4b9e1b1@oss.qualcomm.com>
- <20250924-knp-dts-v1-7-3fdbc4b9e1b1@oss.qualcomm.com>
-In-Reply-To: <20250924-knp-dts-v1-7-3fdbc4b9e1b1@oss.qualcomm.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu Sep 25, 2025 at 1:17 AM BST, Jingyi Wang wrote:
-> Add remoteproc PAS loader for ADSP, CDSP, MPSS and SoCCP with
-> its SMP2P and fastrpc nodes.
->
-> Written with help from Kumari Pallavi(added fastrpc).
+commit 3fcbf1c77d08 ("arch_topology: Fix cache attributes detection
+in the CPU hotplug path")
+adds a call to detect_cache_attributes() to populate the cacheinfo
+before updating the siblings mask. detect_cache_attributes() allocates
+memory and can take the PPTT mutex (on ACPI platforms). On PREEMPT_RT
+kernels, on secondary CPUs, this triggers a:
+  'BUG: sleeping function called from invalid context'
+as the code is executed with preemption and interrupts disabled:
 
-Co-developed-by tag then maybe?
-
-Also I don't see this name in email addresses.
-
-> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-> ---
->  arch/arm64/boot/dts/qcom/kaanapali.dtsi | 484 ++++++++++++++++++++++++++=
-++++++
->  1 file changed, 484 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/qcom/kaanapali.dtsi b/arch/arm64/boot/dt=
-s/qcom/kaanapali.dtsi
-> index 08ab267bf9a7..c3b38fd851c5 100644
-> --- a/arch/arm64/boot/dts/qcom/kaanapali.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/kaanapali.dtsi
-> @@ -438,6 +438,121 @@ rmtfs_mem: rmtfs@d7c00000 {
->  		};
->  	};
-
-[...]
-
-> +		remoteproc_adsp: remoteproc@6800000 {
-> +			compatible =3D "qcom,kaanapali-adsp-pas", "qcom,sm8550-adsp-pas";
-> +			reg =3D <0x0 0x06800000 0x0 0x10000>;
-> +
-> +			interrupts-extended =3D <&pdc 6 IRQ_TYPE_EDGE_RISING>,
-> +					      <&smp2p_adsp_in 0 IRQ_TYPE_EDGE_RISING>,
-> +					      <&smp2p_adsp_in 1 IRQ_TYPE_EDGE_RISING>,
-> +					      <&smp2p_adsp_in 2 IRQ_TYPE_EDGE_RISING>,
-> +					      <&smp2p_adsp_in 3 IRQ_TYPE_EDGE_RISING>,
-> +					      <&smp2p_adsp_in 7 IRQ_TYPE_EDGE_RISING>;
-> +			interrupt-names =3D "wdog",
-> +					  "fatal",
-> +					  "ready",
-> +					  "handover",
-> +					  "stop-ack",
-> +					  "shutdown-ack";
-> +
-> +			clocks =3D <&rpmhcc RPMH_CXO_CLK>;
-> +			clock-names =3D "xo";
-> +
-> +			interconnects =3D <&lpass_lpicx_noc MASTER_LPASS_PROC QCOM_ICC_TAG_AL=
-WAYS
-> +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
-> +
-> +			power-domains =3D <&rpmhpd RPMHPD_LCX>,
-> +					<&rpmhpd RPMHPD_LMX>;
-> +			power-domain-names =3D "lcx",
-> +					     "lmx";
-> +
-> +			memory-region =3D <&adspslpi_mem>, <&q6_adsp_dtb_mem>;
-> +
-> +			qcom,qmp =3D <&aoss_qmp>;
-> +
-> +			qcom,smem-states =3D <&smp2p_adsp_out 0>;
-> +			qcom,smem-state-names =3D "stop";
-> +
-> +			status =3D "disabled";
-> +
-> +			remoteproc_adsp_glink: glink-edge {
-> +				interrupts-extended =3D <&ipcc IPCC_MPROC_LPASS
-> +							     IPCC_MPROC_SIGNAL_GLINK_QMP
-> +							     IRQ_TYPE_EDGE_RISING>;
-> +
-> +				mboxes =3D <&ipcc IPCC_MPROC_LPASS
-> +						IPCC_MPROC_SIGNAL_GLINK_QMP>;
-> +
-> +				qcom,remote-pid =3D <2>;
-> +
-> +				label =3D "lpass";
-> +
-> +				fastrpc {
-> +					compatible =3D "qcom,fastrpc";
-> +					qcom,glink-channels =3D "fastrpcglink-apps-dsp";
-> +					label =3D "adsp";
-> +					#address-cells =3D <1>;
-> +					#size-cells =3D <0>;
-> +
-> +					compute-cb@3 {
-> +						compatible =3D "qcom,fastrpc-compute-cb";
-> +						reg =3D <3>;
-> +
-> +						iommus =3D <&apps_smmu 0x1003 0x80>,
-> +							 <&apps_smmu 0x1043 0x20>;
-> +						dma-coherent;
-> +					};
-> +
-> +					compute-cb@4 {
-> +						compatible =3D "qcom,fastrpc-compute-cb";
-> +						reg =3D <4>;
-> +
-> +						iommus =3D <&apps_smmu 0x1004 0x80>,
-> +							 <&apps_smmu 0x1044 0x20>;
-> +						dma-coherent;
-> +					};
-> +
-> +					compute-cb@5 {
-> +						compatible =3D "qcom,fastrpc-compute-cb";
-> +						reg =3D <5>;
-> +
-> +						iommus =3D <&apps_smmu 0x1005 0x80>,
-> +							 <&apps_smmu 0x1045 0x20>;
-> +						dma-coherent;
-> +					};
-> +
-> +					compute-cb@6 {
-> +						compatible =3D "qcom,fastrpc-compute-cb";
-> +						reg =3D <6>;
-> +
-> +						iommus =3D <&apps_smmu 0x1006 0x80>,
-> +							 <&apps_smmu 0x1046 0x20>;
-> +						dma-coherent;
-> +					};
-> +
-> +					compute-cb@7 {
-> +						compatible =3D "qcom,fastrpc-compute-cb";
-> +						reg =3D <7>;
-> +
-> +						iommus =3D <&apps_smmu 0x1007 0x40>,
-> +							 <&apps_smmu 0x1067 0x0>,
-> +							 <&apps_smmu 0x1087 0x0>;
-> +						dma-coherent;
-> +					};
-> +				};
-> +			};
-> +		};
-
-Fastrpc nodes here. Was this tested? If yes, then how?
-Or was it just copied from somewhere from downstream?
-
-The same questions basically go for cdsp fastrpc too.
+ | BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:46
+ | in_atomic(): 1, irqs_disabled(): 128, non_block: 0, pid: 0, name: swapper/111
+ | preempt_count: 1, expected: 0
+ | RCU nest depth: 1, expected: 1
+ | 3 locks held by swapper/111/0:
+ |  #0:  (&pcp->lock){+.+.}-{3:3}, at: get_page_from_freelist+0x218/0x12c8
+ |  #1:  (rcu_read_lock){....}-{1:3}, at: rt_spin_trylock+0x48/0xf0
+ |  #2:  (&zone->lock){+.+.}-{3:3}, at: rmqueue_bulk+0x64/0xa80
+ | irq event stamp: 0
+ | hardirqs last  enabled at (0):  0x0
+ | hardirqs last disabled at (0):  copy_process+0x5dc/0x1ab8
+ | softirqs last  enabled at (0):  copy_process+0x5dc/0x1ab8
+ | softirqs last disabled at (0):  0x0
+ | Preemption disabled at:
+ |  migrate_enable+0x30/0x130
+ | CPU: 111 PID: 0 Comm: swapper/111 Tainted: G        W          6.0.0-rc4-rt6-[...]
+ | Call trace:
+ |  __kmalloc+0xbc/0x1e8
+ |  detect_cache_attributes+0x2d4/0x5f0
+ |  update_siblings_masks+0x30/0x368
+ |  store_cpu_topology+0x78/0xb8
+ |  secondary_start_kernel+0xd0/0x198
+ |  __secondary_switched+0xb0/0xb4
 
 
-[..]
+Pierre fixed this issue in the upstream 6.3 and the original series is follows:
+https://lore.kernel.org/all/167404285593.885445.6219705651301997538.b4-ty@arm.com/
 
-> +				label =3D "cdsp";
-> +
-> +				fastrpc {
-> +					compatible =3D "qcom,fastrpc";
-> +					qcom,glink-channels =3D "fastrpcglink-apps-dsp";
-> +					label =3D "cdsp";
-> +					#address-cells =3D <1>;
-> +					#size-cells =3D <0>;
-> +
-> +					compute-cb@1 {
-> +						compatible =3D "qcom,fastrpc-compute-cb";
-> +						reg =3D <1>;
-> +						iommus =3D <&apps_smmu 0x19c1 0x0>,
-> +							 <&apps_smmu 0x1961 0x0>,
-> +							 <&apps_smmu 0x0c21 0x0>,
-> +							 <&apps_smmu 0x0c01 0x40>;
-> +						dma-coherent;
-> +					};
-> +
-> +					compute-cb@2 {
-> +						compatible =3D "qcom,fastrpc-compute-cb";
-> +						reg =3D <2>;
-> +						iommus =3D <&apps_smmu 0x1962 0x0>,
-> +							 <&apps_smmu 0x0c02 0x20>,
-> +							 <&apps_smmu 0x0c42 0x0>,
-> +							 <&apps_smmu 0x19c2 0x0>;
-> +						dma-coherent;
-> +					};
-> +
-> +					compute-cb@3 {
-> +						compatible =3D "qcom,fastrpc-compute-cb";
-> +						reg =3D <3>;
-> +						iommus =3D <&apps_smmu 0x1963 0x0>,
-> +							 <&apps_smmu 0x0c23 0x0>,
-> +							 <&apps_smmu 0x0c03 0x40>,
-> +							 <&apps_smmu 0x19c3 0x0>;
-> +						dma-coherent;
-> +					};
-> +
-> +					compute-cb@4 {
-> +						compatible =3D "qcom,fastrpc-compute-cb";
-> +						reg =3D <4>;
-> +						iommus =3D <&apps_smmu 0x1964 0x0>,
-> +							 <&apps_smmu 0x0c44 0x0>,
-> +							 <&apps_smmu 0x0c04 0x20>,
-> +							 <&apps_smmu 0x19c4 0x0>;
-> +						dma-coherent;
-> +					};
-> +
-> +					compute-cb@5 {
-> +						compatible =3D "qcom,fastrpc-compute-cb";
-> +						reg =3D <5>;
-> +						iommus =3D <&apps_smmu 0x1965 0x0>,
-> +							 <&apps_smmu 0x0c45 0x0>,
-> +							 <&apps_smmu 0x0c05 0x20>,
-> +							 <&apps_smmu 0x19c5 0x0>;
-> +						dma-coherent;
-> +					};
-> +
-> +					compute-cb@6 {
-> +						compatible =3D "qcom,fastrpc-compute-cb";
-> +						reg =3D <6>;
-> +						iommus =3D <&apps_smmu 0x1966 0x0>,
-> +							 <&apps_smmu 0x0c06 0x20>,
-> +							 <&apps_smmu 0x0c46 0x0>,
-> +							 <&apps_smmu 0x19c6 0x0>;
-> +						dma-coherent;
-> +					};
-> +
-> +					compute-cb@7 {
-> +						compatible =3D "qcom,fastrpc-compute-cb";
-> +						reg =3D <7>;
-> +						iommus =3D <&apps_smmu 0x1967 0x0>,
-> +							 <&apps_smmu 0x0c27 0x0>,
-> +							 <&apps_smmu 0x0c07 0x40>,
-> +							 <&apps_smmu 0x19c7 0x0>;
-> +						dma-coherent;
-> +					};
-> +
-> +					compute-cb@8 {
-> +						compatible =3D "qcom,fastrpc-compute-cb";
-> +						reg =3D <8>;
-> +						iommus =3D <&apps_smmu 0x1968 0x0>,
-> +							 <&apps_smmu 0x0c08 0x20>,
-> +							 <&apps_smmu 0x0c48 0x0>,
-> +							 <&apps_smmu 0x19c8 0x0>;
-> +						dma-coherent;
-> +					};
-> +
-> +					/* note: secure cb9 in downstream */
-> +
-> +					compute-cb@12 {
-> +						compatible =3D "qcom,fastrpc-compute-cb";
-> +						reg =3D <12>;
-> +						iommus =3D <&apps_smmu 0x196c 0x0>,
-> +							 <&apps_smmu 0x0c2c 0x00>,
-> +							 <&apps_smmu 0x0c0c 0x40>,
-> +							 <&apps_smmu 0x19cc 0x0>;
-> +						dma-coherent;
-> +					};
-> +
-> +					compute-cb@13 {
-> +						compatible =3D "qcom,fastrpc-compute-cb";
-> +						reg =3D <13>;
-> +						iommus =3D <&apps_smmu 0x196d 0x0>,
-> +							 <&apps_smmu 0x0c0d 0x40>,
-> +							 <&apps_smmu 0x0c2e 0x0>,
-> +							 <&apps_smmu 0x0c2d 0x0>,
-> +							 <&apps_smmu 0x19cd 0x0>;
-> +						dma-coherent;
-> +					};
-> +				};
-> +			};
-> +		};
-> +
+We also encountered the same issue on 6.1 stable branch,  and need to backport this series.
 
-Best regards,
-Alexey
+Pierre Gondois (6):
+  cacheinfo: Use RISC-V's init_cache_level() as generic OF
+    implementation
+  cacheinfo: Return error code in init_of_cache_level()
+  cacheinfo: Check 'cache-unified' property to count cache leaves
+  ACPI: PPTT: Remove acpi_find_cache_levels()
+  ACPI: PPTT: Update acpi_find_last_cache_level() to
+    acpi_get_cache_info()
+  arch_topology: Build cacheinfo from primary CPU
+
+ arch/arm64/kernel/cacheinfo.c |  11 ++-
+ arch/riscv/kernel/cacheinfo.c |  42 -----------
+ drivers/acpi/pptt.c           |  93 +++++++++++++----------
+ drivers/base/arch_topology.c  |  12 ++-
+ drivers/base/cacheinfo.c      | 134 +++++++++++++++++++++++++++++-----
+ include/linux/cacheinfo.h     |  11 ++-
+ 6 files changed, 196 insertions(+), 107 deletions(-)
+
+-- 
+2.25.1
 
 
