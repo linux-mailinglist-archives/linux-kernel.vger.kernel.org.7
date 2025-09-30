@@ -1,297 +1,184 @@
-Return-Path: <linux-kernel+bounces-837614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F340CBACC09
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:00:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EF51BACC0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:00:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B28527A7ABD
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 11:58:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 125911680CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:00:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55B2325A326;
-	Tue, 30 Sep 2025 12:00:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67FB02765C3;
+	Tue, 30 Sep 2025 12:00:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Lnx4TNbK"
-Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010001.outbound.protection.outlook.com [52.101.193.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="He/33/UP"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A36C5DF6C
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 12:00:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.1
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759233629; cv=fail; b=mDW0F9naqESSZvPKE4B4hwGdnS0OOJ1mTdWg+WMa1wFiPCnS67uwNY6MOrkHNSne8Tb6YDlzDv8I8o1vcl6NbwNsP8XZ8W2HohiwtyQ1fnE13gCj0NCS0womDk+39jAaTZ31HP5kfj0zns88KF+QrsfOrq0rflzRnfnqc+H4xD4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759233629; c=relaxed/simple;
-	bh=Gg7ZUf1mkQs2LsBI69/PtYW63rD9Msb4mDwhTA1A5kU=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=KQt0lP6Ij8UV423HZdrKPe51g/3yw7Z7ocwuxDr+fkpGqZKR/7j8sjAiA0v52tRIVJbJ3+M91r2rSZV1Wn1GdT2UeuUKLNg9IjhSlwfdcP8wQ7upTEn1d6Kkk+KCUGV+ufpuE5+9/qUrYOHJyO+IzsfDCB5phvuwRW8Kqf9Jrq4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Lnx4TNbK; arc=fail smtp.client-ip=52.101.193.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MNtRiSYPEpC2WtnHhg4ik/cTLVWPlO15NuGvd7VwepOc5FwjI8FX1PPWA0lYniI8qF3b5AWMcuVH8JI0QgGDLFaq1cjJ8V2/nZvGBE2xXA0r61rGopoLSzrhnXEHTZwzrpMAvcS6aTZIL4jbJXmyZrs0cnmez0GaRKZunbZnpryxijmrZe/9HWgvJrXphu+13Iy8N9zOhQtlJZq8W3wqaQCHa9llZ0zBzJ6AClVcFlmq45HONsUDPNrDgPoKqPQux8wabcOOOd6+kKnAEbL1qV5+FMC8pAqJUIE3P8/L41bIUpDgNVehfzwMgPU+8DL5vxzsbj/n7Iw0M0s1BYam+Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gSaKsj6javWizyFmLP3QDjhPQsCUIKnj0CCB1YlqJHs=;
- b=FVjoqPZH8y+n2sn6fpJTxNwbbj6r4grcKQpEtcEh9fEhqoDF/Ci0di1yUaC+cN9gVNxBAzcncHI9K/hd4StZTjDqKmuyqbUbbgrWlym+U0SIkVaLr55+f4ZuMrcs0BUxgJE7I1rlCgLmGiY5YwaxBJPniSNZI4Ra1zCiZZWwnLcmyVDkYouH8qrqTg6QjcURTGJ/Jrh4lMEC7WliXu2DsofwSri287b4a8Jj9REJP+F5sp4If2XdxsiULgUuJjY4eUKbHotDhIYO6vVRP4M++hxYjltQGWceWCjBSGFnU7WCWrDiCKIHOydulmu56EnpC+cIFz11jIq4Tr8b1CUP9A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gSaKsj6javWizyFmLP3QDjhPQsCUIKnj0CCB1YlqJHs=;
- b=Lnx4TNbKqjZXzZqEBc5J5Qk2tQeMrtkuSqnK0YLnT9Zl/f28BQmI2qhOHqh24K7ynwdtrF/feMHX78z67rSvwFjt9k9E6sakVdwzyRLwBOK+FI7jxYYrGuXIT6Z8ODDrHG1E7i05FKxvGfb8tHuZOJrTgBX2RYKVQ54o43aMZ3RIYw3Nry4JFtPt64O3tOHKAShgiK1RTiB9MwPrONI1Tjr7RtwR8REbw4MGdFt4z2SWC0n1IfRmtP4Xh/Eq7f/LOhoDlohxaS79cj6U/3DA538TN2v7ZLzHhoCHuHblbwTWGj9UHa4AMgRD+bleTtOluC3kHuJJa+A/mdMtPeoThQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from PH8PR12MB7277.namprd12.prod.outlook.com (2603:10b6:510:223::13)
- by MN2PR12MB4077.namprd12.prod.outlook.com (2603:10b6:208:1da::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.17; Tue, 30 Sep
- 2025 12:00:24 +0000
-Received: from PH8PR12MB7277.namprd12.prod.outlook.com
- ([fe80::3a4:70ea:ff05:1251]) by PH8PR12MB7277.namprd12.prod.outlook.com
- ([fe80::3a4:70ea:ff05:1251%7]) with mapi id 15.20.9160.015; Tue, 30 Sep 2025
- 12:00:24 +0000
-Message-ID: <4d8142b8-a187-4519-a174-7b3bc594b4df@nvidia.com>
-Date: Tue, 30 Sep 2025 22:00:16 +1000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v6 07/15] mm/memory/fault: add THP fault handling for zone
- device private pages
-To: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, Alistair Popple <apopple@nvidia.com>
-Cc: damon@lists.linux.dev, dri-devel@lists.freedesktop.org,
- Zi Yan <ziy@nvidia.com>, Joshua Hahn <joshua.hahnjy@gmail.com>,
- Rakie Kim <rakie.kim@sk.com>, Byungchul Park <byungchul@sk.com>,
- Gregory Price <gourry@gourry.net>, Ying Huang
- <ying.huang@linux.alibaba.com>, Oscar Salvador <osalvador@suse.de>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Lyude Paul <lyude@redhat.com>,
- Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Ralph Campbell <rcampbell@nvidia.com>,
- =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>,
- Matthew Brost <matthew.brost@intel.com>,
- Francois Dugast <francois.dugast@intel.com>
-References: <20250916122128.2098535-1-balbirs@nvidia.com>
- <20250916122128.2098535-8-balbirs@nvidia.com>
- <7fe72c55-fbf9-472e-8d10-5b6396994435@redhat.com>
-Content-Language: en-US
-From: Balbir Singh <balbirs@nvidia.com>
-In-Reply-To: <7fe72c55-fbf9-472e-8d10-5b6396994435@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: BYAPR08CA0060.namprd08.prod.outlook.com
- (2603:10b6:a03:117::37) To PH8PR12MB7277.namprd12.prod.outlook.com
- (2603:10b6:510:223::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 563A21E8329
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 12:00:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759233641; cv=none; b=LPHP8zUvIuSrzaGPt7kWZx+PUSFc/cZXgE5rUOL3eqg7e7o2AdsD6OxYJk8yAKrqwNWFUMMGqBk8YIrpLD9dIBwoDQek9DF4cUUiU7qzdbg7GnXSlU4l5hJk+9g3YfGnRVMeNFC8sS5IQkwrnvHOtIBhCmMzq7krDOzRMY5aL/8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759233641; c=relaxed/simple;
+	bh=FabH5mN4zhLuKZr9se2KR/RjA3IMi9d2QCJpAU9/dIs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IR3tWoI4MQxcZJuCK1WXHvUmJHPqt7My/r1Cloa0oNjQxeD0PkLL+IADXxksf0GUc1zNd6qP6T9gXrAefVZ+miAjzo+yStdfkgOcJ/QGwfG2uFa7sS5oaZOfkhBQY4MNIJeKJDuZlnVQ8hiBz7XKrJ/L6s/uzGPtNmOOW/BJiX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=He/33/UP; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-33274fcf5c1so5581987a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 05:00:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759233640; x=1759838440; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SgDDrNZnsegWRc2V1qujx9PuTP9rgoyvrSx11R8wMak=;
+        b=He/33/UPPkJFyCtjMmul8cs6OIRe8pjT7+NpUt/PV8ED45vLHXV6g4Rq4js9TuOVXc
+         jH13D/v7Cql6EmLaRSP/BaIBBDqYhdFHEFBm6EBxyXdVk8XsdP5WiesgRteEU5aZSWwh
+         VT5a1GH15m4P5ME1xiKP+1ajjTu4Xyt0Tz18XmQ5dvzipmsONPkhIXLHubuN5mAEJL1c
+         83sYv+UiVAFsjtjogwvcTNpRls6erdVI9QegasV+9urFdaM2arOpC7y/ZeuZwP1pVYEb
+         11L49g5EtZqPgt6s/Q4MchKFGzp9TmL8tzA/48XmwTWWp5vzfk6diDLr9OZgCN99tY5h
+         burw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759233640; x=1759838440;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SgDDrNZnsegWRc2V1qujx9PuTP9rgoyvrSx11R8wMak=;
+        b=vbsmHF4l8KRbxsVpKvAEMUFAiZk7nBZHrJ1wZ7JX3RnhRVRmH8yEARJtk3MZFARg20
+         kDy9SHmoF/DB1rpBFIx4+gKzLj+pmFchTi7J4hYjlrIvPeiTbIpU2Y3jz0XlxC8PytuL
+         v94CZSCrz5BczWEcF8XIsQto8oZHNymlXtEKUDj5t3JzSe883Rx3V3Bqr713gmcA+S1A
+         afi9E0oqsrWdrFn3kSZqCJnF5ThcfKQ4qzDPf3iIthLr1rKUmDgaVXwNNW+4dNgNKj7l
+         OYGzX+ct2DukbUMGwgPxADS0zREkvx9N2wrPUyhdLUOp+UnNbi30f8e9t51rkcy3BVBg
+         4PsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVMKExDT2sPY5C+0RI2og18kjNCxta8LzPplQCS7dp9TFsIWjyr2PNqNUrAqKPIq4oc2htQnkvVwXTxmJs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2m/qRULuWipsuocFNOyJsdSIlKMog1NRR3JOw2JLcNy2bBtXs
+	bXJj+utczJtcy2lLdHq3BiVpQ5r+Bz6nL1uqBnilJWe1zl2xVSbOw6lg
+X-Gm-Gg: ASbGncscF/3wzEgGgr3kgjklurutPqvNfTW/OsuZ1A5Rkq8Mli2CMrqjq477T+AIXQm
+	mzzEJ4S1CHR0a0FmUkL+5lDnXZtyRWRv5ylIFUNraeNZhMJJhC65C6wRPVxOV2d63c/xMXZxbCa
+	Cp3pm3xPUB0mrvumPkwMs9WHZ5zMtZqsGlg/huBqPlghrheP7DRa64ZIZx3ZgTh8gbNYD4sRiXj
+	0vhIRtmkkkrMRXjCHIkdCCebL1fyQog3tGlLHYOs4HhGtJvXhM2b3Ajl1hwdYc86+huxuBiNnnJ
+	h1LVnf4ENOx70Paheznyu0A6245pcqQS8ExActKzEvE84SOdRN1EjU1r0QuG+0HmrxmFbSRMtl6
+	K0RsneK6efuOsax/x9GcfOsk7xllRWA/sQ4qn51HSL3tbNV7gen8i4z+BUCk9III=
+X-Google-Smtp-Source: AGHT+IF5xytoamoNNnFsGzqI3I/1zL8QxwW1vpNTaidF0bgHfcirdj8j2+a5eRIDt+HWn3cuLf8DSQ==
+X-Received: by 2002:a17:90b:4a4c:b0:32e:8c14:5d09 with SMTP id 98e67ed59e1d1-3342a23718dmr20535324a91.7.1759233639182;
+        Tue, 30 Sep 2025 05:00:39 -0700 (PDT)
+Received: from y740.local ([2401:4900:1f31:e91f:2d6d:e8a8:f2d7:94ae])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3399cd190e9sm823160a91.2.2025.09.30.05.00.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Sep 2025 05:00:38 -0700 (PDT)
+From: Sidharth Seela <sidharthseela@gmail.com>
+To: antonio@openvpn.net,
+	sd@queasysnail.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	shuah@kernel.org,
+	willemdebruijn.kernel@gmail.com,
+	kernelxing@tencent.com,
+	nathan@kernel.org,
+	nick.desaulniers+lkml@gmail.com,
+	morbo@google.com,
+	justinstitt@google.com
+Cc: netdev@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev,
+	david.hunter.linux@gmail.com,
+	Sidharth Seela <sidharthseela@gmail.com>
+Subject: [PATCH net v5] selftest:net: Fix uninit return values
+Date: Tue, 30 Sep 2025 17:30:28 +0530
+Message-ID: <20250930120028.390405-1-sidharthseela@gmail.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR12MB7277:EE_|MN2PR12MB4077:EE_
-X-MS-Office365-Filtering-Correlation-Id: 85ff8e9e-ae50-483a-1545-08de0018efff
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|7416014|376014|10070799003|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Y2pXUENFRUVBVmRBWHovbGJGMGxBRG9uUTRvSjdJK2pvbHlvbURLLytlQW9t?=
- =?utf-8?B?c0ppcDM2TEYxQ3NWNnpoUFZId1ZBN0ZpbnQ5cFBLSE9JenR0eXZVaHZkOFky?=
- =?utf-8?B?NXhhbVp3Vzg5OGtkU0VxRzBiZVcza2RmYk1xTHlpUWF3VFVSeEVQK0pVL2g4?=
- =?utf-8?B?M05hZ0tpMUZqVFphRDNrb3l5RUk0YnlGWURXVEFDV3NTTlhuekhweko1Z1Bk?=
- =?utf-8?B?Wnl0d3hheER3dVptSWlLQ3dmR2VFeVltdGpDZ0tzM2FvUVJpM2czL1lJbStW?=
- =?utf-8?B?bDZPaHpSNnp0LzdleUtVSlloSStuMTdzQnlLOHByaitTRW9UQzZGZncxVXRB?=
- =?utf-8?B?R01YenJNN1lDeDVqMWNvSEFqeHArcTh6MDJSOTNWQXJKSUMyTEpGSENFRGF5?=
- =?utf-8?B?cTZpaFZyZ2FITG5PV05VL1VIL1ltNlRMN0VjM2tnYkdoYlpYdjdPM3IzdU91?=
- =?utf-8?B?cU5JckkrOWxvR0t3L1RWRTFiZWZmM0xZUXliTUVxWWJJZmRKNmJaM3dQc1Uw?=
- =?utf-8?B?cUsraDR1VDRvNzVpSmg0bE1PaU13aG5JWGI5NFFIQnRnQzJSSlhlSFl5VXlI?=
- =?utf-8?B?OUhEaVNkMDZNZm9MQ2NTYXh3ZWlMdlZudVN3c21sZExsODh5cnpHeTdWcVJh?=
- =?utf-8?B?eG43R0NzcmxNaVYrNWFnRythYndOTXdoTTdUUHAxUjFsTmpWYXVvcW1TNW0r?=
- =?utf-8?B?akpOSmdyNE1tKzZBVnVhQUxpOTdBMyt1NWd0WEtDV2V4Umpvc1VnNEFTNGh0?=
- =?utf-8?B?UFo4cjBhbnovMzdRRFpGYmNOVm84c2g0WTJITDd3aHAybHFNYUxNZUJYckJK?=
- =?utf-8?B?L2JZaVRoTFAxTUFkLzJvQlNNSkorL1Z0VmtCd2JUVms2K1NJdzhhUm0rakZX?=
- =?utf-8?B?VzBUSlVQcVE0QlBWc0FFU3IzOU15U1JYeThKWWRadGFhMHVqSU90TnV0NnVn?=
- =?utf-8?B?K3FzOTNxNjYyY0RXcUpoYnBtNzF5TUN4Z29rNGgxVDVDZ1ZIcWxFVmZFTDg0?=
- =?utf-8?B?dXZzbmxxbmdCT2dpajIzS3FMSFllakFycU5uL0p3VnZ1K2RxZUZjdVQ1dklM?=
- =?utf-8?B?ZzhaTmhaQkVEWXorRmJVbDJiTHQrQndpMFgzV2x6Unp2OGpaMkxnQ0N1eXNk?=
- =?utf-8?B?WGJGMUJQYUMzeHoydVNOZy85OHF0Yjd5WnZYOXBxVzU2UXVnME03ZWdxOTNL?=
- =?utf-8?B?VktDOEFjNkswK3BoUmhCY2V5TFkzYzlmeE9walV0ZWV1OTJSWVhhcGJNYjNE?=
- =?utf-8?B?WTVaZUFralh4V09DYWlkSHFJMTJ3YkVBYThVd2J5NjZvZ0pFVUMxUmE4amh3?=
- =?utf-8?B?TFdlRlk2bERkV05FbW1xdXRJV1UzMzdYM3BDOFBaYkpCQXdXNHpqYjVnemtD?=
- =?utf-8?B?SGRKWFFBT2Roa2RTSDgxNDhhQWFrTk9ZTVQ5czBhQUl2ZUdZbzBQRm5HeE4x?=
- =?utf-8?B?cnBtYXFac29oUTc3T3VsTmFjb0R6Y1J3UEVLaWh3MzZlNGJxbHFlTWJnNkt0?=
- =?utf-8?B?KzczNWgvUFkvRUV0ZjRtVllSZlAyK0dqUUxSVk4xNkhSK1R4c1JjamNyT1E4?=
- =?utf-8?B?MDhTZTh0amZYQStEZ3RKbENNakFiS1ZTZE1XOVd1dlMvakJ5N3B4UmVKVWFK?=
- =?utf-8?B?eERGczFmMzhkSHpBOU9sa3JGY2tYaFQzWGxPTWNTMGZ0UDFOZDgvbWd3V0FF?=
- =?utf-8?B?MmlZTVNkUEZIQ0RheENWUjdpT1phL2lWa1IvSDJzK3dlUGxqNW5UcUZVNnVh?=
- =?utf-8?B?YXh6eW41UzF6RkN5djlUMEZ5N3hpNUpLMEVtM0d5Ukc3NWsxVis2U3Iyd2Mx?=
- =?utf-8?B?NERBUHNpdHhNQnQvQzdYVGRRSkZRMW9VaVZGTUtqc3FzaWVvc3M3ZVAydFlW?=
- =?utf-8?B?aitDcklTOGNxcUxxL3BZOUt6OVlJZDQyY0V1YXJsZ3BkYXA2dGR3OFd3bG5Z?=
- =?utf-8?Q?9MYFHOfVv7aYnLZjIMpVEYOV0TiiowHJ?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7277.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(10070799003)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?THY4ZlBSc2tnMHVJZTF2MVdNZHRpdS9TbVFTb1JIQU5sREJTWE10ZURqWXd5?=
- =?utf-8?B?bVp1SHFHNS96UC9qYVgrdzg3ZEVGcE94Tm9tVGd4allaQUNPWExKSDkzbzFN?=
- =?utf-8?B?WkMzN2RsbTRZQ3VQcnAzaDV5QWd3MkpzRzdQeEo1QVZJdmNHWkwyZGQvd25w?=
- =?utf-8?B?UnZlYUhHQXpDa2JDTFhocDdyLzZHcG9tSDRlWG9qYmd2TDVNdC84YSszT2t3?=
- =?utf-8?B?VTdJT2F5NS9RUTJiRFBaNnAwNkNmNWNOTERCZUFMNThpTVN2a2F5a0Y5em92?=
- =?utf-8?B?VmZRR241NmxnMFFtYXRmN3hFRmhyTm9iNVZCVU1GUHdMblpIQXR5c0xWRnQ2?=
- =?utf-8?B?eExGQmoyOHlPYlI3TUFldEttQWNSZExOajlzdlFTTTV6NXphM1ZlbnlIdURh?=
- =?utf-8?B?UmN3RXd6SkY5OWQyZGNFSUpPZlV0SzlPalkxOGFsSGZNN3FadDI2V0JVUUVL?=
- =?utf-8?B?VzVvUVJGeXlabkRTcXd2VEw4WCtQeU1GR1RiajI4c3VYd21OMkJiU1VOdUtB?=
- =?utf-8?B?WlRXMXpRRE1aQVJvSnZpdjBrTXY4YUdRYWM4Mld3c280eHZtZUcxT2NwVFJl?=
- =?utf-8?B?SzZEYUxod1lVNjR5cEpuaXUrVlJNWTNJWDVxeE02UmQ2QUdzZWF6RkZGMllT?=
- =?utf-8?B?elZiQXErQnptdDgxSElEL0VmNS9LMk5aZmlMNU9BTzc4dGdzM0hVL2tCTEFz?=
- =?utf-8?B?M2g0V3NUUUgvb3llUHRVemgxQ0tSY2E4ZllBSDY0NFgzczJKQ1ZVR094dWlD?=
- =?utf-8?B?dEpCc3VnbkJuRENSVlpZdFFiMXB6ZlNpWUxNc0w0allOaWI3SkNaVGZnakZY?=
- =?utf-8?B?TUlsWXU1NmhKYTRnZWwrYTdBeC9PQUlzN0JrRWpPeWQ0RWM4Z1NLdi9WbThO?=
- =?utf-8?B?NkJNM1dLWTVOUWFaTnJpZEd4YlczbGlFMGJwWUJYaFdsTHEyYmVad2RKRk5D?=
- =?utf-8?B?OHllZ3dDSC96MUFhOGs4TEI0dXZsdGxqaWhHRU01SjVxb1pJaFErWmplYkNv?=
- =?utf-8?B?aEFPZzI0L1I1dlBGVFh2STNVaytJS1lSbjNrMER0MjB6M2RsNkNETldVNm9a?=
- =?utf-8?B?U1RGN1FLd0labWpFbXdyL3ptZWFnWUFvZmNoQ1J5ekQrMS9NYnFzMkR5cnA1?=
- =?utf-8?B?YzY1K2d6OXh5Vmc0N3A1dUxlUERHR29HTkFMTVpudWdMYXM0Q1RTVE9lREVn?=
- =?utf-8?B?VVFJaE9waThoa3VuSm9icUh5RzdYbm1Mek50WkxMaU1XYzBESzc4WjZST1Ju?=
- =?utf-8?B?a29jc05NUzdVNUlhSUU0b3hWZThaaDhHcHp4TlZHVFpRbXdGK1lYSHhNYnFi?=
- =?utf-8?B?ZWNEbmdwK0NaTWtaemIzc3o0N3kwQ2pCYXJUamVNWnlicXcyaEpySTVqQXZR?=
- =?utf-8?B?eTRPaUVMMWtML1Q4Q2hZSXJBdjNHWmxxU0tnZTdxOVQ0eUIvQ3FoN0ZpNmNk?=
- =?utf-8?B?aEZkRDNqS0Y3OXRGTWhVZnBBTURPT2graTNkNytQMTNpVFo4RDNiRlQwUHND?=
- =?utf-8?B?aDJLeXFrSUF0TmdVNmhZMVhnQTlzdERmQjhjczVIRTFVMUJ4VGhRUDlYck9v?=
- =?utf-8?B?UmUyd3VCNTZaMzRTaDRGczBZWnBYT21jcVpaaFRJYTlXQ20wUS9rdFhNd0JK?=
- =?utf-8?B?M3ZPR2VqalgrU3pXY1hWaWFwSkZBZHVVVGdITHlvL2lZTkxneFE2T0xiYjRZ?=
- =?utf-8?B?dS9IZ0RQd2wza3ZlL1NzODluNzJUT1hrenJNck5GcHV2TExJY3doTkIvdFpp?=
- =?utf-8?B?MzJBTXdYejlpZ3hSOFdsTUhRdkFyK1dvUHVXTTlzY2hTSE5tY0RYVXhVdlk5?=
- =?utf-8?B?OVY5cjh1V0Q2NytsNzNvbkxjMUJjZ0tFMVpCUUN3YTcxd3JGb1lILzRSQTZs?=
- =?utf-8?B?MElqQXVZOWxGMU9NRlZOdW5oSjNWbDBQbEVrLzFMZE5tQkVHSXJOdnczMm9j?=
- =?utf-8?B?dE14NzhtVUVkR3FhbVZwcElKNVBzVEVJbDl1TXIyZHZhZnBBSGNJa2VJdVRK?=
- =?utf-8?B?enV6aGhudWU0M3NLNnp1UFpkOUhENTVzd1hZOWdCS2tKUHBObEpqaStFMnkr?=
- =?utf-8?B?aEFxM25saXFPR29WMDZTalRFSnNzWWI0V25aOTM0NTlNc2pkZFJnY05VWGI3?=
- =?utf-8?B?YnQ1bDJQU1NjYmhBY0F1OEhyLzlndll2eDMyeHY3S1ZYNURMeVM3YTVuMUVu?=
- =?utf-8?Q?43yX/rUPNsdFxXXLGZJovc0WOfYv6tkibmmCfxFDpgPw?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 85ff8e9e-ae50-483a-1545-08de0018efff
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7277.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2025 12:00:24.0635
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: WC5UKB1wZ7XxXWIYAV8s5lFHwifbpzgDr27yd20+QUtMUUqlYbrZP01wj+zCxrNw+AvlLDp9WML1TgNaRFLfxA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4077
+Content-Transfer-Encoding: 8bit
 
-On 9/25/25 20:11, David Hildenbrand wrote:
-> On 16.09.25 14:21, Balbir Singh wrote:
->> Implement CPU fault handling for zone device THP entries through
->> do_huge_pmd_device_private(), enabling transparent migration of
->> device-private large pages back to system memory on CPU access.
->>
->> When the CPU accesses a zone device THP entry, the fault handler calls the
->> device driver's migrate_to_ram() callback to migrate the entire large page
->> back to system memory.
->>
->> Signed-off-by: Balbir Singh <balbirs@nvidia.com>
->> Cc: David Hildenbrand <david@redhat.com>
->> Cc: Zi Yan <ziy@nvidia.com>
->> Cc: Joshua Hahn <joshua.hahnjy@gmail.com>
->> Cc: Rakie Kim <rakie.kim@sk.com>
->> Cc: Byungchul Park <byungchul@sk.com>
->> Cc: Gregory Price <gourry@gourry.net>
->> Cc: Ying Huang <ying.huang@linux.alibaba.com>
->> Cc: Alistair Popple <apopple@nvidia.com>
->> Cc: Oscar Salvador <osalvador@suse.de>
->> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
->> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
->> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
->> Cc: Nico Pache <npache@redhat.com>
->> Cc: Ryan Roberts <ryan.roberts@arm.com>
->> Cc: Dev Jain <dev.jain@arm.com>
->> Cc: Barry Song <baohua@kernel.org>
->> Cc: Lyude Paul <lyude@redhat.com>
->> Cc: Danilo Krummrich <dakr@kernel.org>
->> Cc: David Airlie <airlied@gmail.com>
->> Cc: Simona Vetter <simona@ffwll.ch>
->> Cc: Ralph Campbell <rcampbell@nvidia.com>
->> Cc: Mika Penttilä <mpenttil@redhat.com>
->> Cc: Matthew Brost <matthew.brost@intel.com>
->> Cc: Francois Dugast <francois.dugast@intel.com>
->> ---
->>   include/linux/huge_mm.h |  7 +++++++
->>   mm/huge_memory.c        | 36 ++++++++++++++++++++++++++++++++++++
->>   mm/memory.c             |  5 +++--
->>   3 files changed, 46 insertions(+), 2 deletions(-)
->>
->> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
->> index f327d62fc985..2d669be7f1c8 100644
->> --- a/include/linux/huge_mm.h
->> +++ b/include/linux/huge_mm.h
->> @@ -496,6 +496,8 @@ static inline bool folio_test_pmd_mappable(struct folio *folio)
->>     vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf);
->>   +vm_fault_t do_huge_pmd_device_private(struct vm_fault *vmf);
->> +
->>   extern struct folio *huge_zero_folio;
->>   extern unsigned long huge_zero_pfn;
->>   @@ -671,6 +673,11 @@ static inline vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf)
->>       return 0;
->>   }
->>   +static inline vm_fault_t do_huge_pmd_device_private(struct vm_fault *vmf)
->> +{
->> +    return 0;
->> +}
->> +
->>   static inline bool is_huge_zero_folio(const struct folio *folio)
->>   {
->>       return false;
->> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->> index 5291ee155a02..90a1939455dd 100644
->> --- a/mm/huge_memory.c
->> +++ b/mm/huge_memory.c
->> @@ -1287,6 +1287,42 @@ static vm_fault_t __do_huge_pmd_anonymous_page(struct vm_fault *vmf)
->>     }
->>   +vm_fault_t do_huge_pmd_device_private(struct vm_fault *vmf)
->> +{
->> +    struct vm_area_struct *vma = vmf->vma;
->> +    vm_fault_t ret = 0;
->> +    spinlock_t *ptl;
->> +    swp_entry_t swp_entry;
->> +    struct page *page;
->> +
->> +    if (vmf->flags & FAULT_FLAG_VMA_LOCK) {
->> +        vma_end_read(vma);
->> +        return VM_FAULT_RETRY;
->> +    }
->> +
->> +    ptl = pmd_lock(vma->vm_mm, vmf->pmd);
->> +    if (unlikely(!pmd_same(*vmf->pmd, vmf->orig_pmd))) {
->> +        spin_unlock(ptl);
->> +        return 0;
->> +    }
->> +
->> +    swp_entry = pmd_to_swp_entry(vmf->orig_pmd);
->> +    page = pfn_swap_entry_to_page(swp_entry);
->> +    vmf->page = page;
->> +    vmf->pte = NULL;
->> +    if (trylock_page(vmf->page)) {
-> 
-> We should be operating on a folio here. folio_trylock() + folio_get() + folio_unlock() + folio_put().
-> 
->> +        get_page(page);
->> +        spin_unlock(ptl);
->> +        ret = page_pgmap(page)->ops->migrate_to_ram(vmf);
-> 
-> BTW, I was wondering whether it is really the right design to pass the vmf here. Likely the const vma+addr+folio could be sufficient. I did not look into all callbaks, though.
-> 
+Fix functions that return undefined values. These issues were caught by
+running clang using LLVM=1 option.
 
-The vmf is used for address and other bits. FYI, this is no different from pte fault handling and migrate_to_ram(). I can do the folio conversions
+Clang warnings are as follows:
+ovpn-cli.c:1587:6: warning: variable 'ret' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
+ 1587 |         if (!sock) {
+      |             ^~~~~
+ovpn-cli.c:1635:9: note: uninitialized use occurs here
+ 1635 |         return ret;
+      |                ^~~
+ovpn-cli.c:1587:2: note: remove the 'if' if its condition is always false
+ 1587 |         if (!sock) {
+      |         ^~~~~~~~~~~~
+ 1588 |                 fprintf(stderr, "cannot allocate netlink socket\n");
+      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 1589 |                 goto err_free;
+      |                 ~~~~~~~~~~~~~~
+ 1590 |         }
+      |         ~
+ovpn-cli.c:1584:15: note: initialize the variable 'ret' to silence this warning
+ 1584 |         int mcid, ret;
+      |                      ^
+      |                       = 0
+ovpn-cli.c:2107:7: warning: variable 'ret' is used uninitialized whenever switch case is taken [-Wsometimes-uninitialized]
+ 2107 |         case CMD_INVALID:
+      |              ^~~~~~~~~~~
+ovpn-cli.c:2111:9: note: uninitialized use occurs here
+ 2111 |         return ret;
+      |                ^~~
+ovpn-cli.c:1939:12: note: initialize the variable 'ret' to silence this warning
+ 1939 |         int n, ret;
+      |                   ^
+      |
 
-Balbir
+Fixes: 959bc330a439 ("testing/selftests: add test tool and scripts for ovpn module")
+ovpn module")
+Signed-off-by: Sidharth Seela <sidharthseela@gmail.com>
+---
+
+v5:
+	- Assign -ENOMEM to ret inside if block.
+	- Assign -EINVAL to ret inside case block.
+v4:
+	- Move changelog below sign-off.
+	- Remove double-hyphens in commit description.
+v3:
+	- Use prefix net.
+	- Remove so_txtime fix as default case calls error().
+	- Changelog before sign-off.
+	- Three dashes after sign-off
+v2:
+	- Use subsystem name "net".
+	- Add fixes tags.
+	- Remove txtimestamp fix as default case calls error.
+	- Assign constant error string instead of NULL.
+
+diff --git a/tools/testing/selftests/net/ovpn/ovpn-cli.c b/tools/testing/selftests/net/ovpn/ovpn-cli.c
+index 9201f2905f2c..8d0f2f61923c 100644
+--- a/tools/testing/selftests/net/ovpn/ovpn-cli.c
++++ b/tools/testing/selftests/net/ovpn/ovpn-cli.c
+@@ -1586,6 +1586,7 @@ static int ovpn_listen_mcast(void)
+ 	sock = nl_socket_alloc();
+ 	if (!sock) {
+ 		fprintf(stderr, "cannot allocate netlink socket\n");
++		ret = -ENOMEM;
+ 		goto err_free;
+ 	}
+ 
+@@ -2105,6 +2106,7 @@ static int ovpn_run_cmd(struct ovpn_ctx *ovpn)
+ 		ret = ovpn_listen_mcast();
+ 		break;
+ 	case CMD_INVALID:
++		ret = -EINVAL;
+ 		break;
+ 	}
+ 
+-- 
+2.47.3
+
 
