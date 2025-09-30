@@ -1,129 +1,250 @@
-Return-Path: <linux-kernel+bounces-837561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 181E9BAC943
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:59:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CDF0BAC961
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 13:00:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1933D4E1F79
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 10:59:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9F9419272D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 11:00:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A34212FABFA;
-	Tue, 30 Sep 2025 10:59:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C6F62FABFA;
+	Tue, 30 Sep 2025 11:00:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YGfxW3Tk"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hMgAjDFi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D52B275AF6
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 10:59:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71B022F9D8E;
+	Tue, 30 Sep 2025 11:00:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759229952; cv=none; b=KD2fa2WhVol5ZKw7AwsqhIZT6WW8cr0UY/xs8kVQzbczgK85pwWFbEVP96ElXjfp8WgBEkJMnDF7Cy944tLw34fBd6jbUygNsxSysOpdfgsuAwpNlP9F26MBBG2ZOF0xlLU0ZMkIxMc5IBSeYXsV0WANYh59V1BJCLq80wp3JTQ=
+	t=1759230004; cv=none; b=bbExXTsfBcFu4hPNBQfoJPzQGWK6D48mdUkrZ0o6e/jCfTt/MTIXKv4MQTGedigz5GR8tmYeqgMmI4CsgNY9OqOscA2iZwtqis+Dm10rHOJdtpv4Z90UviKWkZQ7CRAhlkxyJN1gQd0dQAG5JdXh3fRquzXnZGBa1WLJaQazylA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759229952; c=relaxed/simple;
-	bh=aD5jGL56V2tce4m9N5SJnlY9Yue0hnBtWnJ3rC2zM6U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fzAxZRH1e+KvG3VNVcqwsUWVeAx+8J2IJLJ7/x6KGlfvXmwmwcG8dOGILjPGYfrqbhEEEU4JG7enENjndTGsecp5JpR0003/BtZuYR/7GvqQODYiraWqhSf/CXSVOvGVnYSQGXZmNjzXeC2RJYgZvv0QWJ+z9xL+yDH7OA2l7nQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YGfxW3Tk; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759229949;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SVOA0Q0ymTDoBZOCl3mOf8HuY6BSBntN7jY80MGvrho=;
-	b=YGfxW3TkKDx4jsZBZdCGT2UhLyGP9S3Y549+LvNki0jNZoCEv2Wma9MtnXUj2814owLEBr
-	yl5Pqy9vkm8z1B39Iy6gPH44DafRhhraniG4pl44Fo28GdQEPSkqw55BaXrOssmph+jGwy
-	keAIHsPSnK0wnWNoTqEoR+ndHSpsr/A=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-576-lbPyCVS8MWaFHauPcwr2fw-1; Tue, 30 Sep 2025 06:59:08 -0400
-X-MC-Unique: lbPyCVS8MWaFHauPcwr2fw-1
-X-Mimecast-MFC-AGG-ID: lbPyCVS8MWaFHauPcwr2fw_1759229947
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-46e3e177893so36104925e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 03:59:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759229946; x=1759834746;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SVOA0Q0ymTDoBZOCl3mOf8HuY6BSBntN7jY80MGvrho=;
-        b=eU1gxAoAH++YhUiwrOt1lnMUPuymFMiqabkZlzwAd7pi06rT6c5GhmXc05xIvwuwWo
-         JO7KPH0Kl+QqU4jDRs7DP8yLV6dwGmsaeg67jROYOx9FklIONejkkloMSxofUd+pXGA/
-         FA9aaEaVeeXah4M6GCT+ci0h/9LWpybvu88Oae1kAgxM7QOQ41hBaiRZImJoVZ5Z+kD2
-         HkIyFpiYHUx2Az5v0mXpBCk3n+wjd5ifJtAt9lFIsQJ5FDuF3q4TNa8AjpBU5HGdv/Os
-         IUckCSHU3XEyoY6OrqBRsyzyCA42oLZ8UJyBa4zh298SPvkrF9LTSMs5qQrLG8vAliYh
-         3aiw==
-X-Forwarded-Encrypted: i=1; AJvYcCVe6JHorsyKFmfFq+yFk3AgZtvKpM8glEfvzy/as5bxSnVSlbJDY2r365q0moli8sbkjXZxV6cOQWGJq+8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjsZPfuK3syYwr1hJQ2AVP4WJ/lgUIuRVXGioR25ND2g0NsAe8
-	KyzHglKMgDiEDwCSMrggOHimrcT/Mk5PT2n0LGZPPunewq4H1FgtSBeyLa0ZpVbv5d1xuWdhltm
-	3e875DThrtoOFuJ4Mv9vOM2cFTJmBjG2u6gMS4Inz7+q/NIQsscmepD3X4m61lbeHDh9WrCV7nQ
-	==
-X-Gm-Gg: ASbGncsAjJfQtu8X34sKUht3UahUcGoPbcXaXNFN1vofyU7640ZXS6xPzLX7veZtLHd
-	OLOs/rrmaJ45/L0xeFe7Be9Opq3AJ1meJYkAiNQYMlaErofgN4xnCa1osbWLc/RtGd9es60/mgU
-	Ra9Ep+sHAdHRNiwtUxCn1krIg4cAbUkmnDzgDBfFzuw6oLumGkqlKUPAb4zlnOrrS6Gh8Xjb4wh
-	EYRD4v4jYWbBigyeXvjMQVMLmyYW0gj9c/lDKDIPw+Rc1B48jn5mbuPzbrcB1OEkZFSVQgOFWD9
-	pTahkfg5oZ9ExCI1EPYAd3jevlNlWGgP8iw/331wsdp/0CCFe+ftuJ+fhwuQHGv/BL19jFGcM7/
-	cikW/7JHD+twN4KpWgA==
-X-Received: by 2002:a7b:cd98:0:b0:45c:b6fa:352e with SMTP id 5b1f17b1804b1-46e329fb852mr152040245e9.18.1759229946546;
-        Tue, 30 Sep 2025 03:59:06 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFl75M5KM/nmhV85NmfLdPrO6RTkSlsYl+oX9QrpyA/JV+GEDplaQbfuu86mibd2UCwjkweEA==
-X-Received: by 2002:a7b:cd98:0:b0:45c:b6fa:352e with SMTP id 5b1f17b1804b1-46e329fb852mr152040055e9.18.1759229946107;
-        Tue, 30 Sep 2025 03:59:06 -0700 (PDT)
-Received: from ?IPV6:2a0d:3344:2712:7e10:4d59:d956:544f:d65c? ([2a0d:3344:2712:7e10:4d59:d956:544f:d65c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e2ab61eecsm263007585e9.20.2025.09.30.03.59.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Sep 2025 03:59:05 -0700 (PDT)
-Message-ID: <b92d752d-b4c3-4f3b-8a2b-1c7162af63b7@redhat.com>
-Date: Tue, 30 Sep 2025 12:59:04 +0200
+	s=arc-20240116; t=1759230004; c=relaxed/simple;
+	bh=hl6CpBsFM0yclQLF3Wr1UR3e+Pr0M3yXUJx6ZUgVFTo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=WSYuc+M3UiIhWil9LzeCvIgf0lBpGri/ly+LkJoSOZi0qPSGV24hi1IW6e/vZ+ervFZCC8nYioZjEa04+NPE2cZBcUDg+jTttjzyFMeFsex1+zWJ3dYfVKvgo2QymQ3LnURrWfhgGR3Ng5tsS+EH245O8Dc/ajGRCNI/VYu42ic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hMgAjDFi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51488C4CEF0;
+	Tue, 30 Sep 2025 11:00:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759230003;
+	bh=hl6CpBsFM0yclQLF3Wr1UR3e+Pr0M3yXUJx6ZUgVFTo=;
+	h=From:Subject:Date:To:Cc:From;
+	b=hMgAjDFiUcHZlHXjNfiivYmi8e8vUVWCi59OcfXv0rRTbwfOXoZRgN9AbmT6dp24I
+	 QG9cauPJW6cadrjxv9LaBeqXg2c41/8Afqvud6K2PeYu5cT41oVL2Rd0dO08HLJ1KN
+	 EzucbmMAqmuZu+7MBn6um5hAXXbmRWnDv/rV8vIGOBaSOEnTsFyZ6ZM571/O9AUMGH
+	 Flap9Gu7hgedgeX22zbtnMoQdL9pkmX/clya9FLtDuexAQAJiXx6m81fUxDWpuNtm+
+	 hQszCjBUs8oMkf3jYBWhJnB4L+H4zNY2ZqKUrJaEKvD8H/JgewXOHCi9u/myHJLxn8
+	 dS3ZTJeRZILEw==
+From: Maxime Ripard <mripard@kernel.org>
+Subject: [PATCH v5 00/39] drm/atomic: Get rid of existing states (not
+ really)
+Date: Tue, 30 Sep 2025 12:59:15 +0200
+Message-Id: <20250930-drm-no-more-existing-state-v5-0-eeb9e1287907@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v12 2/5] net: phy: introduce
- PHY_INTERFACE_MODE_REVSGMII
-To: David Yang <mmyangfl@gmail.com>, netdev@vger.kernel.org
-Cc: Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>,
- Russell King <linux@armlinux.org.uk>, Simon Horman <horms@kernel.org>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Maxime Chevallier <maxime.chevallier@bootlin.com>
-References: <20250926135057.2323738-1-mmyangfl@gmail.com>
- <20250926135057.2323738-3-mmyangfl@gmail.com>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20250926135057.2323738-3-mmyangfl@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAO422gC/43NTWrDMBCG4asErTtFP5at6ar3KF3Yo5Ej2khFM
+ iYl+O5VsmlKwHT5fgzPXETlErmKl8NFFF5jjTm1sE8HQccxzQzRtxZaaiudtuDLCVKGUy4MfI5
+ 1iWmGuowLA05GW01qNGYSDfgqHOL5hr+9tz6261y+b79WdV3/xa4KJATpiDwGZwlfP7gk/nzOZ
+ RZXd9W/Fkq9a+lmeUYXyIbe9/2DZe4t3LVMsxQN4+Cxl2TMg9XdWWrYtbpmWd9N6BySIffH2rb
+ tB24+KlipAQAA
+X-Change-ID: 20250825-drm-no-more-existing-state-9b3252c1a33b
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, Maxime Ripard <mripard@kernel.org>, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+ =?utf-8?q?Ville_Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>, 
+ Louis Chauvet <louis.chauvet@bootlin.com>, 
+ Haneen Mohammed <hamohammed.sa@gmail.com>, 
+ Melissa Wen <melissa.srw@gmail.com>, Jyri Sarha <jyri.sarha@iki.fi>, 
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+ Paul Cercueil <paul@crapouillou.net>, linux-mips@vger.kernel.org, 
+ Liviu Dudau <liviu.dudau@arm.com>, Russell King <linux@armlinux.org.uk>, 
+ Manikandan Muralidharan <manikandan.m@microchip.com>, 
+ Dharma Balasubiramani <dharma.b@microchip.com>, 
+ Nicolas Ferre <nicolas.ferre@microchip.com>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+ linux-arm-kernel@lists.infradead.org, Inki Dae <inki.dae@samsung.com>, 
+ Seung-Woo Kim <sw0312.kim@samsung.com>, 
+ Kyungmin Park <kyungmin.park@samsung.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org, 
+ Liu Ying <victor.liu@nxp.com>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, imx@lists.linux.dev, 
+ Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>, 
+ Lucas Stach <l.stach@pengutronix.de>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Anitha Chrisanthus <anitha.chrisanthus@intel.com>, 
+ Edmund Dea <edmund.j.dea@intel.com>, Paul Kocialkowski <paulk@sys-base.io>, 
+ Sui Jingfeng <suijingfeng@loongson.cn>, 
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Rob Clark <robin.clark@oss.qualcomm.com>, 
+ Dmitry Baryshkov <lumag@kernel.org>, 
+ Abhinav Kumar <abhinav.kumar@linux.dev>, 
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org, 
+ Sandy Huang <hjc@rock-chips.com>, 
+ =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
+ Andy Yan <andy.yan@rock-chips.com>, linux-rockchip@lists.infradead.org, 
+ Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, linux-sunxi@lists.linux.dev, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Mikko Perttunen <mperttunen@nvidia.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, 
+ Hans de Goede <hansg@kernel.org>, 
+ Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+ =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>, 
+ Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6084; i=mripard@kernel.org;
+ h=from:subject:message-id; bh=hl6CpBsFM0yclQLF3Wr1UR3e+Pr0M3yXUJx6ZUgVFTo=;
+ b=owGbwMvMwCmsHn9OcpHtvjLG02pJDBm3d8j/a/a6xTLbujO7gOmIX8GRFI/Z08TFfa8l/f2wJ
+ 1vwnOCTjqksDMKcDLJiiixPZMJOL29fXOVgv/IHzBxWJpAhDFycAjCRo76M9RGT5kX9/PrcYUOU
+ Xc3vVCdrnrZQvp8/9rW2TlB2zd9arHTJpL76n8H01qSDffMSOxbsZayPWzpdcdqEsnkMcZ3Su3a
+ bh9aUT/vo9XJ+SPfni76/f52viFVZ8PjkVV3ZNO+5Bldt9xgAAA==
+X-Developer-Key: i=mripard@kernel.org; a=openpgp;
+ fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
 
-On 9/26/25 3:50 PM, David Yang wrote:
-> The "reverse SGMII" protocol name is an invention derived from
-> "reverse MII" and "reverse RMII", this means: "behave like an SGMII
-> PHY".
-> 
-> Signed-off-by: David Yang <mmyangfl@gmail.com>
-> Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Hi,
 
-My understanding is that Russell question on v11 is still pending:
+Here's a series to get rid of the drm_atomic_helper_get_existing_*_state
+accessors.
 
-https://lore.kernel.org/netdev/aNbWEdabqXIaoo2T@shell.armlinux.org.uk/
+The initial intent was to remove the __drm_*_state->state pointer to
+only rely on old and new states, but we still need it now to know which
+of the two we need to free: if a state has not been committed (either
+dropped or checked only), then we need to free the new one, if it has
+been committed we need to free the old state. 
 
-and the net-next PR for 6.18 is upcoming. Deferring to next cycle.
+Thus, the state pointer is kept (and documented) only to point to the
+state we should free eventually.
 
-Cheers,
+All users have been converted to the relevant old or new state
+accessors.  
 
-Paolo
+This was tested on tidss.
+
+Let me know what you think,
+Maxime
+
+Signed-off-by: Maxime Ripard <mripard@kernel.org>
+---
+Changes in v5:
+- Added some more documentation on state teardown
+- Link to v4: https://lore.kernel.org/r/20250917-drm-no-more-existing-state-v4-0-5d4b9889c3c8@kernel.org
+
+Changes in v4:
+- Fix ingenic
+- Rebased on latest drm-misc-next tag
+- Link to v3: https://lore.kernel.org/r/20250909-drm-no-more-existing-state-v3-0-1c7a7d960c33@kernel.org
+
+Changes in v3:
+- Added an armada rework patch
+- Added an ingenic fix
+- Collected tags
+- Rebased on latest drm-misc-next tag
+- Link to v2: https://lore.kernel.org/r/20250902-drm-no-more-existing-state-v2-0-de98fc5f6d66@kernel.org
+
+Changes in v2:
+- Dropped the first and second patches
+- Reworked the recipient list to be nicer with SMTPs
+- Link to v1: https://lore.kernel.org/r/20250825-drm-no-more-existing-state-v1-0-f08ccd9f85c9@kernel.org
+
+---
+Maxime Ripard (39):
+      drm/atomic: Convert drm_atomic_get_connector_state() to use new connector state
+      drm/atomic: Remove unused drm_atomic_get_existing_connector_state()
+      drm/atomic: Document __drm_connectors_state state pointer
+      drm/atomic: Convert __drm_atomic_get_current_plane_state() to modern accessor
+      drm/atomic: Convert drm_atomic_get_plane_state() to use new plane state
+      drm/vkms: Convert vkms_crtc_atomic_check() to use new plane state
+      drm/tilcdc: crtc: Use drm_atomic_helper_check_crtc_primary_plane()
+      drm/atomic: Remove unused drm_atomic_get_existing_plane_state()
+      drm/atomic: Document __drm_planes_state state pointer
+      drm/atomic: Convert drm_atomic_get_crtc_state() to use new connector state
+      drm/ingenic: ipu: Switch to drm_atomic_get_new_crtc_state()
+      drm/arm/malidp: Switch to drm_atomic_get_new_crtc_state()
+      drm/armada: Drop always true condition in atomic_check
+      drm/armada: Switch to drm_atomic_get_new_crtc_state()
+      drm/atmel-hlcdc: Switch to drm_atomic_get_new_crtc_state()
+      drm/exynos: Switch to drm_atomic_get_new_crtc_state()
+      drm/imx-dc: Switch to drm_atomic_get_new_crtc_state()
+      drm/imx-dcss: Switch to drm_atomic_get_new_crtc_state()
+      drm/imx-ipuv3: Switch to drm_atomic_get_new_crtc_state()
+      drm/ingenic: Switch to drm_atomic_get_new_crtc_state()
+      drm/kmb: Switch to drm_atomic_get_new_crtc_state()
+      drm/logicvc: Switch to drm_atomic_get_new_crtc_state()
+      drm/loongson: Switch to drm_atomic_get_new_crtc_state()
+      drm/mediatek: Switch to drm_atomic_get_new_crtc_state()
+      drm/msm/mdp5: Switch to drm_atomic_get_new_crtc_state()
+      drm/omap: Switch to drm_atomic_get_new_crtc_state()
+      drm/rockchip: Switch to drm_atomic_get_new_crtc_state()
+      drm/sun4i: Switch to drm_atomic_get_new_crtc_state()
+      drm/tegra: Switch to drm_atomic_get_new_crtc_state()
+      drm/tilcdc: Switch to drm_atomic_get_new_crtc_state()
+      drm/vboxvideo: Switch to drm_atomic_get_new_crtc_state()
+      drm/vc4: Switch to drm_atomic_get_new_crtc_state()
+      drm/atomic: Switch to drm_atomic_get_new_crtc_state()
+      drm/framebuffer: Switch to drm_atomic_get_new_crtc_state()
+      drm/atomic: Remove unused drm_atomic_get_existing_crtc_state()
+      drm/atomic: Document __drm_crtcs_state state pointer
+      drm/ingenic: crtc: Switch to ingenic_drm_get_new_priv_state()
+      drm/atomic: Convert drm_atomic_get_private_obj_state() to use new plane state
+      drm/atomic: Document __drm_private_objs_state state pointer
+
+ drivers/gpu/drm/arm/malidp_planes.c             |   2 +-
+ drivers/gpu/drm/armada/armada_plane.c           |   7 +-
+ drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c |   2 +-
+ drivers/gpu/drm/drm_atomic.c                    |  21 ++--
+ drivers/gpu/drm/drm_framebuffer.c               |   2 +-
+ drivers/gpu/drm/exynos/exynos_drm_plane.c       |   2 +-
+ drivers/gpu/drm/imx/dc/dc-plane.c               |   2 +-
+ drivers/gpu/drm/imx/dcss/dcss-plane.c           |   4 +-
+ drivers/gpu/drm/imx/ipuv3/ipuv3-plane.c         |   3 +-
+ drivers/gpu/drm/ingenic/ingenic-drm-drv.c       |  13 +-
+ drivers/gpu/drm/ingenic/ingenic-ipu.c           |   4 +-
+ drivers/gpu/drm/kmb/kmb_plane.c                 |   3 +-
+ drivers/gpu/drm/logicvc/logicvc_layer.c         |   4 +-
+ drivers/gpu/drm/loongson/lsdc_plane.c           |   2 +-
+ drivers/gpu/drm/mediatek/mtk_plane.c            |   3 +-
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_plane.c      |   7 +-
+ drivers/gpu/drm/omapdrm/omap_plane.c            |   2 +-
+ drivers/gpu/drm/rockchip/rockchip_drm_vop.c     |   6 +-
+ drivers/gpu/drm/rockchip/rockchip_drm_vop2.c    |   2 +-
+ drivers/gpu/drm/sun4i/sun8i_ui_layer.c          |   3 +-
+ drivers/gpu/drm/sun4i/sun8i_vi_layer.c          |   3 +-
+ drivers/gpu/drm/tegra/dc.c                      |   2 +-
+ drivers/gpu/drm/tilcdc/tilcdc_crtc.c            |   9 +-
+ drivers/gpu/drm/tilcdc/tilcdc_plane.c           |   3 +-
+ drivers/gpu/drm/vboxvideo/vbox_mode.c           |   8 +-
+ drivers/gpu/drm/vc4/vc4_plane.c                 |   6 +-
+ drivers/gpu/drm/vkms/vkms_crtc.c                |   4 +-
+ include/drm/drm_atomic.h                        | 152 +++++++++++++-----------
+ 28 files changed, 140 insertions(+), 141 deletions(-)
+---
+base-commit: 91494dee1091a14d91da6bcb39e12a907765c793
+change-id: 20250825-drm-no-more-existing-state-9b3252c1a33b
+
+Best regards,
+-- 
+Maxime Ripard <mripard@kernel.org>
 
 
