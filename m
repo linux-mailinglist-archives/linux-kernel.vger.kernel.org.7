@@ -1,65 +1,60 @@
-Return-Path: <linux-kernel+bounces-838215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C4C1BAEB43
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 00:24:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE7FFBAEABA
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 00:17:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E07613C7C89
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 22:24:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A5C81923A17
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 22:17:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D58532C3774;
-	Tue, 30 Sep 2025 22:24:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B91CB2C2364;
+	Tue, 30 Sep 2025 22:17:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="pXvlLcyQ"
-Received: from r3-23.sinamail.sina.com.cn (r3-23.sinamail.sina.com.cn [202.108.3.23])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ErIDrCz0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B05571EE02F
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 22:24:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11B05FC1D;
+	Tue, 30 Sep 2025 22:17:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759271077; cv=none; b=uFlNDjUtVjTlnhPmbl23DOL3lRzHvbsZFh+/Qc0x0ZjLAvQYYsYbGmW9Gv6H9T/E+O1NpDkVyaeJaDhwNpqpSzlnvxsfJnlpm5S/m+sZguUAvBnImqKPk48XpHEXZeDJ1oN+HTFHmBECbwx/jXHx21SWlxz8SJyXQVKlE4IwOTs=
+	t=1759270636; cv=none; b=AQHoWwiBNAn/ILJvOl4Qx9Lhgcsq5BvmdIrFhXvpQhuZ9TgW5GdzgIrP70yYoJ1KaZM50ZEF4iYy+Oc56SMWjyuSUZ6deFJ3I+iqK7ctNaU2E2hGB1I0QHx1BAVdNxvCICttVBQGXUqvfEyH4X4u5JnHBgRxtCXBFvr++uEzoi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759271077; c=relaxed/simple;
-	bh=g48O09spZcT2TwbZnPHI3M6D6cC63UQ8dwj/95Lf0nU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=D1xkI/MBOnAHhPd05vtHaVb5FrGJ8Ajg68fxwwe6uMqv7iIwRGVXfm630bmHpl203BZ5LzD3jsjAWwu8G6dByGJPNEnopr+DVFQWq/eC6QUmd91QH3yM66nKgu+936w/aBRnuPxXlRAoJa7dyU6Za2Z3J47yHACrAT5PmP+rUjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=pXvlLcyQ; arc=none smtp.client-ip=202.108.3.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1759271072;
-	bh=PeSt4auwglYPFnJc8427LVoppmueE7xaZPihXjESuXM=;
-	h=From:Subject:Date:Message-ID;
-	b=pXvlLcyQRzoLtn3GB2rD6kItwqPMHJl3CgHdGruaxSq0YwvWyFjuj6LjwxIf0LtrI
-	 2zNXimXImxCnE3vIDd/qd381OIP6LnPUBvw0cLk0NQBPNCZP7/fbzBzcqfK0DoZjmS
-	 ODH12MfTj6oMJfT8FvA5IvvmEYojQoo3tEWokeno=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.31) with ESMTP
-	id 68DC565B00001D3D; Tue, 1 Oct 2025 06:14:54 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 2332286816301
-X-SMAIL-UIID: C55BE4FAE527454F8983310896AB42A9-20251001-061454-1
-From: Hillf Danton <hdanton@sina.com>
-To: Joshua Hahn <joshua.hahnjy@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	kernel-team@meta.com
-Subject: Re: [PATCH v2 2/4] mm/page_alloc: Perform appropriate batching in drain_pages_zone
-Date: Wed,  1 Oct 2025 06:14:40 +0800
-Message-ID: <20250930221441.7748-1-hdanton@sina.com>
-In-Reply-To: <20250930144240.2326093-1-joshua.hahnjy@gmail.com>
-References: 
+	s=arc-20240116; t=1759270636; c=relaxed/simple;
+	bh=d+JYANOeZ+9GlZcNiN33I9hBdQl0AHlGwLK80LGLXa0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iqW6UyOJ3nmxsKD+0vsOdQ49YzoJHyv4YHhWcvyQlt9vTbTcFfySrTi/V4/4yMCcCutVioALmjZwLZvULhWOd4cYSVYLg917qPdl8clEiQMpwlfgNaeqfvpSllW8fzlcG5qlbC0vKGir6FV3iMyunShifyABuuEKQtIvsrolSg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ErIDrCz0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DD9DC4CEF0;
+	Tue, 30 Sep 2025 22:17:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759270635;
+	bh=d+JYANOeZ+9GlZcNiN33I9hBdQl0AHlGwLK80LGLXa0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ErIDrCz0wIvjIygTTjYc39ufDMFQApecjBJwBtT5/k+K638HWXimeDSOZcK/dq/YK
+	 zUDTqYeYPeDyYqXLtGvjcA8aeQpZvOvCnszZdZKpUzOUVGG0wGiSA2UD7ONLTogYYQ
+	 0EWhcB12hsMa/wvgoOw1RX6iSNWMgeAhMwNO4eivK4CK5VASVDYSwhCNzsLbDoOt8A
+	 8l/LXGBL2McupXxgb7vin9BlawXp10EiSECxoJvt4lxqr1CV0MZj+kN9EgfHy2j9PF
+	 QQng+yhskgII8F6R6+cup40dm5JPQCz8hlbRr4Htpm68Q/8CwTSNVOmg68QsgH/t1a
+	 o/n7Bjb2dIjkQ==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: linux-integrity@vger.kernel.org
+Cc: dpsmith@apertussolutions.com,
+	ross.philipson@oracle.com,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	keyrings@vger.kernel.org (open list:KEYS/KEYRINGS),
+	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v4 0/9] tpm: Decouple Trenchboot dependencies
+Date: Wed,  1 Oct 2025 01:16:58 +0300
+Message-Id: <20250930221707.1373912-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,101 +63,61 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On Tue, 30 Sep 2025 07:42:40 -0700 Joshua Hahn wrote:
-> On Sat, 27 Sep 2025 08:46:15 +0800 Hillf Danton <hdanton@sina.com> wrote:
-> > On Wed, 24 Sep 2025 13:44:06 -0700 Joshua Hahn wrote:
-> > > drain_pages_zone completely drains a zone of its pcp free pages by
-> > > repeatedly calling free_pcppages_bulk until pcp->count reaches 0.
-> > > In this loop, it already performs batched calls to ensure that
-> > > free_pcppages_bulk isn't called to free too many pages at once, and
-> > > relinquishes & reacquires the lock between each call to prevent
-> > > lock starvation from other processes.
-> > > 
-> > > However, the current batching does not prevent lock starvation. The
-> > > current implementation creates batches of
-> > > pcp->batch << CONFIG_PCP_BATCH_SCALE_MAX, which has been seen in
-> > > Meta workloads to be up to 64 << 5 == 2048 pages.
-> > > 
-> > > While it is true that CONFIG_PCP_BATCH_SCALE_MAX is a config and
-> > > indeed can be adjusted by the system admin to be any number from
-> > > 0 to 6, it's default value of 5 is still too high to be reasonable for
-> > > any system.
-> > > 
-> > > Instead, let's create batches of pcp->batch pages, which gives a more
-> > > reasonable 64 pages per call to free_pcppages_bulk. This gives other
-> > > processes a chance to grab the lock and prevents starvation. Each
-> 
-> Hello Hillf,
-> 
-> Thank you for your feedback!
-> 
-> > Feel free to make it clear, which lock is contended, pcp->lock or
-> > zone->lock, or both, to help understand the starvation.
-> 
-> Sorry for the late reply. I took some time to run some more tests and
-> gather numbers so that I could give an accurate representation of what
-> I was seeing in these systems.
-> 
-> So running perf lock con -abl on my system and compiling the kernel,
-> I see that the biggest lock contentions come from free_pcppages_bulk
-> and __rmqueue_pcplist on the upstream kernel (ignoring lock contentions
-> on lruvec, which is actually the biggest offender on these systems.
-> This will hopefully be addressed some time in the future as well).
-> 
-> Looking deeper into where they are waiting on the lock, I found that they
-> are both waiting for the zone->lock (not the pcp lock, even for
+Overview
+========
 
-One of the hottest locks again plays its role.
+Decouple TPM driver features relevant for Trenchboot and make tpm-buf
+robust and decoupled entity from the rest of driver. By doing this, code
+can be easily linked to the early boot code.
 
-> __rmqueue_pcplist). I'll add this detail into v3, so that it is more
-> clear for the user. I'll also emphasize why we still need to break the
-> pcp lock, since this was something that wasn't immediately obvious to me.
-> 
-> > If the zone lock is hot, why did numa node fail to mitigate the contension,
-> > given workloads tested with high sustained memory pressure on large machines
-> > in the Meta fleet (1Tb memory, 316 CPUs)?
-> 
-> This is a good question. On this system, I've configured the machine to only
-> use 1 node/zone, so there is no ability to migrate the contention. Perhaps
+Goals and scope
+===============
 
-Thanks, we know why the zone lock is hot - 300+ CPUs potentially contended a lock.
-The single node/zone config may explain why no similar reports of large
-systems (1Tb memory, 316 CPUs) emerged a couple of years back, given
-NUMA machine is not anything new on the market.
+This patch set contains only changes, which are acceptable to mainline
+driver without existence Trenchboot feature.
 
-> another approach to this problem would be to encourage the user to
-> configure the system such that each NUMA node does not exceed N GB of memory?
-> 
-> But if so -- how many GB/node is too much? It seems like there would be
-> some sweet spot where the overhead required to maintain many nodes
-> cancels out with the benefits one would get from splitting the system into
-> multiple nodes. What do you think? Personally, I think that this patchset
-> (not this patch, since it will be dropped in v3) still provides value in
-> the form of preventing lock monopolies in the zone lock even in a system
-> where memory is spread out across more nodes.
-> 
-> > Can the contension be observed with tight memory pressure but not highly tight? 
-> > If not, it is due to misconfigure in the user space, no?
-> 
-> I'm not sure I entirely follow what you mean here, but are you asking
-> whether this is a userspace issue for running a workload that isn't
-> properly sized for the system? Perhaps that could be the case, but I think
+At the same the primary goal of the included is to make driver code 
+robust enough to meet Trenchboot's requirements.
 
-This is not complicated. Take another look at the system from another
-POV - what is your comment if running the same workload on the same
-system but with RAM cut down to 1Gb? If roughly it is fully loaded for a
-dentist to serve two patients well a day, getting the professional over
-loaded makes no sense I think.
+These constraints should define a meaningful DoD for this patch set.
 
-In short, given the zone lock is hot in nature, soft lockup with reproducer
-hints misconfig.
+v4:
+- PCR patch has been removed because it does not fly without Trenchboot
+  context.
+v3:
+- I think 6.19 is a better goal for this and thus expanded the series to
+  be a generic Trenchboot enablers series. This version also consolidates
+  my two separate ongoing series.
+v2:
+- While including fixes from v1, this patch set has a refocus in order to
+  do minimal changes to make code base more compatible  Trenchboot.
 
-> that it would not be bad for the system to protect against these workloads
-> which can cause the system to stall, especially since the numbers show
-> that there is neutral to positive gains from this patch. But of course
-> I am very biased in this opinion : -) so happy to take other opinions on
-> this matter.
-> 
-> Thanks for your questions. I hope you have a great day!
-> Joshua
+Jarkko Sakkinen (9):
+  tpm: Cap the number of PCR banks
+  tpm: Use -EPERM as fallback error code in tpm_ret_to_err
+  KEYS: trusted: Use tpm_ret_to_err() in trusted_tpm2
+  tpm2-sessions: Remove 'attributes' from tpm_buf_append_auth
+  tpm2-sessions: Unmask tpm_buf_append_hmac_session()
+  KEYS: trusted: Open code tpm2_buf_append()
+  tpm-buf: check for corruption in tpm_buf_append_handle()
+  tpm-buf: Remove chip parameter from tpm_buf_append_handle
+  tpm-buf: Enable managed and stack allocations.
+
+ drivers/char/tpm/tpm-buf.c                | 141 ++++++----
+ drivers/char/tpm/tpm-chip.c               |  13 +-
+ drivers/char/tpm/tpm-sysfs.c              |  21 +-
+ drivers/char/tpm/tpm.h                    |   2 -
+ drivers/char/tpm/tpm1-cmd.c               | 185 +++++--------
+ drivers/char/tpm/tpm2-cmd.c               | 313 ++++++++++------------
+ drivers/char/tpm/tpm2-sessions.c          | 129 +++++----
+ drivers/char/tpm/tpm2-space.c             |  44 ++-
+ drivers/char/tpm/tpm_vtpm_proxy.c         |  30 +--
+ include/linux/tpm.h                       |  65 ++---
+ security/keys/trusted-keys/trusted_tpm1.c |  34 ++-
+ security/keys/trusted-keys/trusted_tpm2.c | 237 +++++++---------
+ 12 files changed, 542 insertions(+), 672 deletions(-)
+
+-- 
+2.39.5
+
 
