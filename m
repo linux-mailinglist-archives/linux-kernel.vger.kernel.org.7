@@ -1,165 +1,361 @@
-Return-Path: <linux-kernel+bounces-837260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B72CBABCE7
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:24:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39A15BABCED
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:24:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A97B2170EDA
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 07:24:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 500AE7A26E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 07:22:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E521725C6E2;
-	Tue, 30 Sep 2025 07:24:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8604B23D7D3;
+	Tue, 30 Sep 2025 07:24:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hshRb6I+"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JIVwxpdB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE64023182D
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 07:23:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7947023182D;
+	Tue, 30 Sep 2025 07:24:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759217040; cv=none; b=HfS9fcINMpWI+HZD3RWAnS5aBf2PGlWAPWfUSs7dOivBwFGf7JXmJ2pskYKmvot6cZ5lEPbvCW9xZdnTl2N9IgJ3YLtesv7e2WgVJoUpBU0pwQ7YJv0rH+ykKKF5KZdAHkKbQN4bWoSDcxMP36TyKxeF18iFVmdxiBize6Aei8g=
+	t=1759217051; cv=none; b=d5mIjXNgTM1kJfvcOhrknrRhfb/iDrmagVb/LVj67KOe99C2iJAqOjA0zTFdIpd3PUZksjYnpo45dycdy8hoIbGZX26yOLoxuuSnFDk9jf+l/HQd6Up7GZ8PSGIi3iLRcXeIZ3vniW/ZZbhvOjDj+4U1ioTfZ0qgf7rvYLS0emk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759217040; c=relaxed/simple;
-	bh=ZgA1xLujZKlEfvb+QrPulixK+gcPs02HgGMtQGdszKs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XjZI/BfTrW9r358BcBqGOoi6O3qNEUqA0ri2rc++iT88Ho79m90/nO6x21SwIyOTVC0ToUyWy/p/xiR/i45D5ZnmPY/PDG0zR5hoW3w4qXk17GEvBVYlB/caQ92mrr8cSapedTyxBAqluawtB0SNfmL4x8cX5l4eTsruAEVsq9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hshRb6I+; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58U4HRWI016877
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 07:23:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=n9P8C3EgLujC+SyMjcSHJMVn
-	TiYYgF5ShDLErcRG4l8=; b=hshRb6I+JHtIlOsVBCil9QBuCchiZ2SvX49aR691
-	j4cL9/QnIkuDfSpqQfv3+WCgl/DPub0oI/kSe4TthzAOFULW+uiCdcogm52iRZQT
-	ZJZMdP9SO4crLjRvGAKOwb8uPNXgd7fEbD0GWG/Dy4X0ITKMT83EHGCT01XV5xWt
-	v0FyH5XcS92EFEQ2jA5VleBvCdiKss+wqWZsuoMPqfd+fXQEoo8AZI4ejb2ings/
-	i83BZxxS1ABWC/x2xWYdwe5BqWPAxA5t6rGFisSQg6B9zYc/1EougHlhZ0oINwMM
-	cpA1JPQ23+P2stdnT5+A/9rV6lpQ0hvJ45owHmpF6LB7Pw==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e93hfsy9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 07:23:57 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-827061b4ca9so962792985a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 00:23:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759217036; x=1759821836;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n9P8C3EgLujC+SyMjcSHJMVnTiYYgF5ShDLErcRG4l8=;
-        b=E+m0JcWsBrTBYYcEi2Z+U9bi7HZzaxa/nU7Jpm1LuW4Sk/sruQ4ledwOA1thunZPj8
-         QeM9NOVZ8ZtQHD+3fquDIlqubKQIp7VA0M4NGNA1qcYNNHOIUTctleeQEqlwGF1JOY/u
-         KSqTKMQcmjbjdN1C/X5f8wrJp3wE1JSa7aO6M1zCtUu/C0mBRV0h12FjZcJtHxxiW3MT
-         cXJ8wYF08e8zCJKEfKCzHuqvUqORnvpXC2lH9yeWjXWJ2KGLJhwA/SWd3+kecdgudpGT
-         /h+c4Xyk6MdEc/BnfQkjsfmC2tTsI3G8Y46dbn2+rg8G2+Wj3z7aY7sKRwFmFZYAglrS
-         pgMg==
-X-Forwarded-Encrypted: i=1; AJvYcCUOvg7C1eqBhYoGdHjePhWh7p9xI43fIg0/gohoW6KqMbGEngA014GmSQMDyH9YnzKlXaBu7lCWjkAhRlM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHeThmsAbXlyovTAdm0h01HcU68x5ndhpSDTZBb2DTX2WChPYi
-	Qb/wWvoOQjpkefDqqIblkrJ7ctWtXwXDGxb7nnNB3J1VUy/2UKTkx5TWb7OzS0M8/QMwpZ5CtEn
-	zdGeGpandUDP+cV8d7z8Ow43dfrUfb4ErJ+ATNcvvrUuAi15c7Q/MfNeC+wA7gpwIkmk=
-X-Gm-Gg: ASbGncs0OMjy/wENY12YgS1pXMPEmwQVamvVvercRqUzNndCRslMScdYDsSuIhTWvBX
-	m5XjT4r3Ve0/m6CJixgKH6aNWn3dDQxnV3wJpltYMhHC4DUyYGGFeHPdKd7kCmiJuuLY7pAN6eu
-	pbU0qVMFGY20uCqJixqYOm3Cs+Tb5AZrW1Ugt4wUyY6hlVEvRvxZTyphf340VqqmUpxGOKDUzci
-	wQIGhWyWhN0jaqXu2d/2Xy9svQW8JMHPJmfzqjOGhDq9ITIZO4D6g56iuIhxbGst+sB8OUPq3v5
-	9TclviQMjrt66Bub1MJInhQCGsPkoso3j7yKqMJzfzYg+iljPXuPrDEChFCZh40/RHDRIt1e10P
-	+zd4EF08frHkD940OEan42qn8Bf+C7gcBOG9nkZkOMfbCuFNG3e02btVAUA==
-X-Received: by 2002:a05:620a:298b:b0:82b:3bb5:5e03 with SMTP id af79cd13be357-85ae033ce46mr2294502985a.30.1759217036324;
-        Tue, 30 Sep 2025 00:23:56 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEtokqh05kg7AoFYMORm7EciWzypwxfanES3STHoDORc8Badi06y8IJ5mTLaRxU8ZjwP/+wMA==
-X-Received: by 2002:a05:620a:298b:b0:82b:3bb5:5e03 with SMTP id af79cd13be357-85ae033ce46mr2294499785a.30.1759217035829;
-        Tue, 30 Sep 2025 00:23:55 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-36fb771023esm31994681fa.41.2025.09.30.00.23.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Sep 2025 00:23:54 -0700 (PDT)
-Date: Tue, 30 Sep 2025 10:23:52 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Akhil P Oommen <akhilpo@oss.qualcomm.com>
-Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Sean Paul <sean@poorly.run>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Jonathan Marek <jonathan@marek.ca>,
-        Jordan Crouse <jordan@cosmicpenguin.net>,
-        Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux.dev, devicetree@vger.kernel.org
-Subject: Re: [PATCH 10/17] drm/msm/a6xx: Rebase GMU register offsets
-Message-ID: <s4no2wy3yskk6l6igtx7h4vopaupc3wkmu7nhpnocv3bbs4hqi@uhie6j7xr2pt>
-References: <20250930-kaana-gpu-support-v1-0-73530b0700ed@oss.qualcomm.com>
- <20250930-kaana-gpu-support-v1-10-73530b0700ed@oss.qualcomm.com>
+	s=arc-20240116; t=1759217051; c=relaxed/simple;
+	bh=bWcBYWmXdN1+JVZCMF1u/7u8yEttu6heekRmvUtc/sQ=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=JLSDI2VAMb2byLfhPIMndJXTNfEDxUJQGH/5OrtCEjtLPwpWq1dZRH7FkUV9FS/qgBVvCoBzonz4ebAFx3RFkqyHkgZO3+rlNep/f1TYTNO2KKhf3XHMmb99pB8U+IssgcMSBn7t3nGuDzebXfJt0Al7kZv1V9pXOkQrhaEQlyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JIVwxpdB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5DA0C4CEF0;
+	Tue, 30 Sep 2025 07:24:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759217051;
+	bh=bWcBYWmXdN1+JVZCMF1u/7u8yEttu6heekRmvUtc/sQ=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
+	b=JIVwxpdB3fVTFEwFukA0kVgdpUkEEBxDV+pUpvOrstZX3eKBCT9MenV5ldz526PUM
+	 ZjgpABiXFFaub0NcyX+qJoL+5jKK+gp6BRJgH9mRwgK/OX4HyzRZ8wmayZsHeSY1v4
+	 /yTrFZhK6mCzMgu7yteoGJj8ORjAzYMtdZJq8xrPcyYZljk1+YrXROqIrgnMwg61jW
+	 OQ8g9aKoE2QJQTLSRCu9lNKw2DY2uaoI+GSun+Szlmm9qX2adw8Qd6sKaH5GOWLOna
+	 P+AtSJWJDRaWV4oxEket32cUgrvwb3QG1MiN5Do5wS+WEuhOZoj7hlZV3Fl3D8bsKP
+	 Ifl53oOuLF4+A==
+Message-ID: <74829ca5-d559-4c8a-8016-cd5c8957960b@kernel.org>
+Date: Tue, 30 Sep 2025 09:24:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250930-kaana-gpu-support-v1-10-73530b0700ed@oss.qualcomm.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDA0MSBTYWx0ZWRfX0+UTcGGMs4xT
- gTAFVGLcfbqw1agd7zRUIeqtgZoFZ/P3HDMdYy/T4lC4dI1aBJijxHHAMvzMDDBsJE0qlJD917R
- lgZp19HVULQNIsmCo9oIF/4n2nI7xouiN89sirVj9bGVuxSnsq55RVJhLVgHy3777foJ/YO0Jy4
- wy9F8cMR+LnktRP013qN2YS7Bt7SUjXJ6AcWnJhweV+fvgHCudzB82T/u4halmAQSqT2tx9q8oQ
- gl5w/1wqfzBWLTqir01QMLSlN2OeE9k+/I/JUj5l/kDft7+HYPEufEaB0IrqRf3tZXPzijSGL5D
- 5vBD+5oS9Vxko7MQBnxuYSR/sHz99wkVJtXlqQsYTiZ8dlVNBOavFWvDneRUwj7+hmPXAFW6pQL
- l4wN3iqfXIgw8r+OMDdcxdMg25y5fA==
-X-Proofpoint-GUID: surbxTqbLuVl-agFdm7Hzm-7rZza56nq
-X-Proofpoint-ORIG-GUID: surbxTqbLuVl-agFdm7Hzm-7rZza56nq
-X-Authority-Analysis: v=2.4 cv=Rfydyltv c=1 sm=1 tr=0 ts=68db858d cx=c_pps
- a=HLyN3IcIa5EE8TELMZ618Q==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=xSz5tX2VPR3T1CvqFR4A:9 a=CjuIK1q_8ugA:10
- a=bTQJ7kPSJx9SKPbeHEYW:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-30_01,2025-09-29_04,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 priorityscore=1501 bulkscore=0 adultscore=0 lowpriorityscore=0
- impostorscore=0 clxscore=1015 malwarescore=0 spamscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270041
+User-Agent: Mozilla Thunderbird
+From: Hans Verkuil <hverkuil+cisco@kernel.org>
+Subject: Re: [PATCH v2 01/10] media: v4l2-core: Introduce state management for
+ video devices
+To: Jai Luthra <jai.luthra@ideasonboard.com>,
+ Hans Verkuil <hverkuil@kernel.org>,
+ Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, linux-media@vger.kernel.org
+Cc: Ricardo Ribalda <ribalda@chromium.org>,
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+ Al Viro <viro@zeniv.linux.org.uk>, Ma Ke <make24@iscas.ac.cn>,
+ linux-kernel@vger.kernel.org
+References: <20250919-vdev-state-v2-0-b2c42426965c@ideasonboard.com>
+ <20250919-vdev-state-v2-1-b2c42426965c@ideasonboard.com>
+ <15df046b-0fe1-4b57-acad-66b88beac982@kernel.org>
+ <9beb643b-603d-46e8-9c1d-cd8060548507@kernel.org>
+ <175915985176.11386.11080057428921957743@freya>
+Content-Language: en-US, nl
+In-Reply-To: <175915985176.11386.11080057428921957743@freya>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 30, 2025 at 11:18:15AM +0530, Akhil P Oommen wrote:
-> GMU registers are always at a fixed offset from the GPU base address,
-> a consistency maintained at least within a given architecture generation.
-> In A8x family, the base address of the GMU has changed, but the offsets
-> of the gmu registers remain largely the same. To enable reuse of the gmu
-
-I understand the code, but I think I'd very much prefer to see it in the
-catalog file (with the note on how to calculate it). Reading resources
-for two different devices sounds too strange to be nice. This way you
-can keep the offsets for a6xx / a7xx untouched and just add the non-zero
-offset for a8xx.
-
-> code for A8x chipsets, update the gmu register offsets to be relative
-> to the GPU's base address instead of GMU's.
+On 29/09/2025 17:30, Jai Luthra wrote:
+> Hi Hans,
 > 
-> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
-> ---
->  drivers/gpu/drm/msm/adreno/a6xx_gmu.c             |  44 +++-
->  drivers/gpu/drm/msm/adreno/a6xx_gmu.h             |  20 +-
->  drivers/gpu/drm/msm/registers/adreno/a6xx_gmu.xml | 248 +++++++++++-----------
->  3 files changed, 172 insertions(+), 140 deletions(-)
+> Thanks for the review.
+> 
+> Quoting Hans Verkuil (2025-09-22 13:30:05)
+>> On 22/09/2025 09:44, Hans Verkuil wrote:
+>>> Hi Jai,
+>>>
+>>> Apologies that I had no time to review v1, but I'll review v2 today.
+>>>
+>>> On 19/09/2025 11:55, Jai Luthra wrote:
+>>>> Similar to V4L2 subdev states, introduce state support for video devices
+>>>> to provide a centralized location for storing device state information.
+>>>> This includes the current (active) pixelformat used by the device and
+>>>> the temporary (try) pixelformat used during format negotiation. In the
+>>>> future, this may be extended or subclassed by device drivers to store
+>>>> their internal state variables.
+>>>>
+>>>> Also introduce a flag for drivers that wish to use this state
+>>>> management. When set, the framework automatically allocates the state
+>>>> during device registration and stores a pointer to it within the
+>>>> video_device structure.
+>>>>
+>>>> This change aligns video devices with V4L2 subdevices by storing
+>>>> hardware state in a common framework-allocated structure. This is the
+>>>> first step towards enabling the multiplexing of the underlying hardware
+>>>> by using different software "contexts", each represented by the combined
+>>>> state of all video devices and V4L2 subdevices in a complex media graph.
+>>>>
+>>>> Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
+>>>> --
+>>>> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+>>>> Cc: Hans Verkuil <hverkuil@kernel.org>
+>>>> Cc: Ricardo Ribalda <ribalda@chromium.org>
+>>>> Cc: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+>>>> Cc: Al Viro <viro@zeniv.linux.org.uk>
+>>>> Cc: Ma Ke <make24@iscas.ac.cn>
+>>>> Cc: Jai Luthra <jai.luthra@ideasonboard.com>
+>>>> Cc: linux-media@vger.kernel.org
+>>>> Cc: linux-kernel@vger.kernel.org
+>>>> ---
+>>>>  drivers/media/v4l2-core/v4l2-dev.c | 27 +++++++++++++++++++++++++
+>>>>  include/media/v4l2-dev.h           | 40 ++++++++++++++++++++++++++++++++++++++
+>>>>  2 files changed, 67 insertions(+)
+>>>>
+>>>> diff --git a/drivers/media/v4l2-core/v4l2-dev.c b/drivers/media/v4l2-core/v4l2-dev.c
+>>>> index 10a126e50c1ca25b1bd0e9872571261acfc26b39..997255709448510fcd17b6de798a3df99cd7ea09 100644
+>>>> --- a/drivers/media/v4l2-core/v4l2-dev.c
+>>>> +++ b/drivers/media/v4l2-core/v4l2-dev.c
+>>>> @@ -163,6 +163,27 @@ void video_device_release_empty(struct video_device *vdev)
+>>>>  }
+>>>>  EXPORT_SYMBOL(video_device_release_empty);
+>>>>  
+>>>> +struct video_device_state *
+>>>> +__video_device_state_alloc(struct video_device *vdev)
+>>>> +{
+>>>> +    struct video_device_state *state =
+>>>> +            kzalloc(sizeof(struct video_device_state), GFP_KERNEL);
+>>>> +
+>>>> +    if (!state)
+>>>> +            return ERR_PTR(-ENOMEM);
+>>>> +
+>>>> +    state->vdev = vdev;
+>>>> +
+>>>> +    return state;
+>>>> +}
+>>>> +EXPORT_SYMBOL_GPL(__video_device_state_alloc);
+>>>> +
+>>>> +void __video_device_state_free(struct video_device_state *state)
+>>>> +{
+>>>> +    kfree(state);
+>>>> +}
+>>>> +EXPORT_SYMBOL_GPL(__video_device_state_free);
+>>>> +
+>>>>  static inline void video_get(struct video_device *vdev)
+>>>>  {
+>>>>      get_device(&vdev->dev);
+>>>> @@ -939,6 +960,10 @@ int __video_register_device(struct video_device *vdev,
+>>>>      spin_lock_init(&vdev->fh_lock);
+>>>>      INIT_LIST_HEAD(&vdev->fh_list);
+>>>>  
+>>>> +    /* state support */
+>>>> +    if (test_bit(V4L2_FL_USES_STATE, &vdev->flags))
+>>>> +            vdev->state = __video_device_state_alloc(vdev);
+>>>> +
+>>>>      /* Part 1: check device type */
+>>>>      switch (type) {
+>>>>      case VFL_TYPE_VIDEO:
+>>>> @@ -1127,6 +1152,8 @@ void video_unregister_device(struct video_device *vdev)
+>>>>      clear_bit(V4L2_FL_REGISTERED, &vdev->flags);
+>>>>      mutex_unlock(&videodev_lock);
+>>>>      v4l2_event_wake_all(vdev);
+>>>> +    if (test_bit(V4L2_FL_USES_STATE, &vdev->flags))
+>>>> +            __video_device_state_free(vdev->state);
+>>>>      device_unregister(&vdev->dev);
+>>>>  }
+>>>>  EXPORT_SYMBOL(video_unregister_device);
+>>>> diff --git a/include/media/v4l2-dev.h b/include/media/v4l2-dev.h
+>>>> index a213c3398dcf60be8c531df87bf40c56b4ad772d..57e4691ef467aa2b0782dd4b8357bd0670643293 100644
+>>>> --- a/include/media/v4l2-dev.h
+>>>> +++ b/include/media/v4l2-dev.h
+>>>> @@ -89,12 +89,18 @@ struct dentry;
+>>>>   *  set by the core when the sub-devices device nodes are registered with
+>>>>   *  v4l2_device_register_ro_subdev_nodes() and used by the sub-device ioctl
+>>>>   *  handler to restrict access to some ioctl calls.
+>>>> + * @V4L2_FL_USES_STATE:
+>>>> + *  indicates that the &struct video_device has state support.
+>>>> + *  The active video and metadata formats are stored in video_device.state,
+>>>> + *  and the try video and metadata formats are stored in v4l2_fh.state.
+>>>> + *  All new drivers should use it.
+>>>>   */
+>>>>  enum v4l2_video_device_flags {
+>>>>      V4L2_FL_REGISTERED              = 0,
+>>>>      V4L2_FL_USES_V4L2_FH            = 1,
+>>>>      V4L2_FL_QUIRK_INVERTED_CROP     = 2,
+>>>>      V4L2_FL_SUBDEV_RO_DEVNODE       = 3,
+>>>> +    V4L2_FL_USES_STATE              = 4,
+>>>>  };
+>>>>  
+>>>>  /* Priority helper functions */
+>>>> @@ -214,6 +220,17 @@ struct v4l2_file_operations {
+>>>>      int (*release) (struct file *);
+>>>>  };
+>>>>  
+>>>> +/**
+>>>> + * struct video_device_state - Used for storing video device state information.
+>>>> + *
+>>>> + * @fmt: Format of the capture stream
+>>>> + * @vdev: Pointer to video device
+>>>> + */
+>>>> +struct video_device_state {
+>>>> +    struct v4l2_format fmt;
+>>>
+>>> While typically a video_device supports only a single video format type, that is
+>>> not always the case. There are the following exceptions:
+>>>
+>>> 1) M2M devices have both a capture and output video format. However, for M2M devices
+>>>    the state is per-filehandle, so it shouldn't be stored in a video_device_state
+>>>    struct anyway.
+> 
+> Ah I see, so for M2M devices the formats are stored per-context, where the
+> context is tied to the filehandle. In that case, I agree that storing the
+> format state inside struct video_device would not work.
+> 
+>>> 2) VBI devices can have both a raw and sliced VBI format (either capture or output)
+>>> 3) AFAIK non-M2M video devices can have both a video and meta format. That may have
+>>>    changed, I'm not 100% certain about this.
+> 
+> RPi CFE driver is one such case, where a single driver structure stores
+> both metadata and video format. But if I understand correctly, it creates
+> separate video device nodes for metadata and video capture, so it can be
+> managed through a single v4l2_format.fmt union for each video device.
+> 
+> Are there any non-M2M drivers which allow more than one type of formats to
+> be set on the same device node?
 
--- 
-With best wishes
-Dmitry
+I think this one does that:
+
+drivers/media/pci/intel/ipu6/ipu6-isys-video.c
+
+I think it can set both video and metadata formats, but it can only stream one
+type at a time. I'm not 100% certain of that, but that's what it looks like
+reading the code.
+
+> 
+>>> 4) video devices can also support an OVERLAY or OUTPUT_OVERLAY format (rare)
+>>>
+>>> V4L2_CAP_VIDEO_OVERLAY is currently only used in
+>>> drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c, so once that driver
+>>> disappears we can drop video overlay support for capture devices.
+> 
+> Yes, bcm2835-camera should be dropped hopefully in a couple more revisions of
+> https://lore.kernel.org/all/20250907-vchiq-destage-v2-4-6884505dca78@ideasonboard.com/
+> 
+>>>
+>>> 2-4 are all quite rare, but 1 is very common. But for such devices the state
+>>> wouldn't be in video_device anyway.
+>>>
+>>> But it would be nice if the same struct can be used in both m2m devices and non-m2m
+>>> devices. It's just stored either in struct v4l2_fh or struct video_device. It would
+>>> give a lot of opportunities for creating helper functions to make the life for
+>>> driver developers easier.
+> 
+> Sure, I think we can modify the existing state struct to store both capture
+> and output formats, and keep it inside struct v4l2_fh for M2M devices.
+> 
+> This will definitely be confusing for driver developers, as currently the
+> two example patches in this series access the state directly. So I will add
+> framework helpers to access the correct state and format type, and document
+> properly that it should never be accessed manually by drivers.
+> 
+>>
+>> Follow-up: assuming we want to support M2M devices as well (I think we should), then
+>> consider renaming video_device_state since it isn't video_device specific, i.e. it
+>> can either live in video_device or in v4l2_fh, and in the latter case you'd have
+>> two instances: capture and output state.
+> 
+> Argh, naming is the hardest problem :-)
+> Do you have any suggestions?
+> 
+> I personally don't think video_device_state is a bad name, even if it is
+> stored somewhere else for m2m devices, given it is still the "state" of the
+> video device, even if it is not persistent across multiple file opens.
+
+Perhaps just v4l2_state?
+
+video_device_state refers to struct video_device, so that's not a good name.
+
+Regards,
+
+	Hans
+
+> 
+> I was trying to avoid names with "context" in then, so it does not clash
+> with Jacopo's work.
+> 
+>>
+>> Regards,
+>>
+>>         Hans
+>>
+>>>
+>>> Regards,
+>>>
+>>>       Hans
+>>>
+>>>> +    struct video_device *vdev;
+>>>> +};
+>>>> +
+>>>>  /*
+>>>>   * Newer version of video_device, handled by videodev2.c
+>>>>   *  This version moves redundant code from video device code to
+>>>> @@ -238,6 +255,7 @@ struct v4l2_file_operations {
+>>>>   * @queue: &struct vb2_queue associated with this device node. May be NULL.
+>>>>   * @prio: pointer to &struct v4l2_prio_state with device's Priority state.
+>>>>   *   If NULL, then v4l2_dev->prio will be used.
+>>>> + * @state: &struct video_device_state, holds the active state for the device.
+>>>>   * @name: video device name
+>>>>   * @vfl_type: V4L device type, as defined by &enum vfl_devnode_type
+>>>>   * @vfl_dir: V4L receiver, transmitter or m2m
+>>>> @@ -283,6 +301,7 @@ struct video_device {
+>>>>      struct vb2_queue *queue;
+>>>>  
+>>>>      struct v4l2_prio_state *prio;
+>>>> +    struct video_device_state *state;
+>>>>  
+>>>>      /* device info */
+>>>>      char name[64];
+>>>> @@ -546,6 +565,27 @@ static inline int video_is_registered(struct video_device *vdev)
+>>>>      return test_bit(V4L2_FL_REGISTERED, &vdev->flags);
+>>>>  }
+>>>>  
+>>>> +/** __video_device_state_alloc - allocate video device state structure
+>>>> + *
+>>>> + * @vdev: pointer to struct video_device
+>>>> + *
+>>>> + * .. note::
+>>>> + *
+>>>> + *  This function is meant to be used only inside the V4L2 core.
+>>>> + */
+>>>> +struct video_device_state *
+>>>> +__video_device_state_alloc(struct video_device *vdev);
+>>>> +
+>>>> +/** __video_device_state_free - free video device state structure
+>>>> + *
+>>>> + * @state: pointer to the state to be freed
+>>>> + *
+>>>> + * .. note::
+>>>> + *
+>>>> + *  This function is meant to be used only inside the V4L2 core.
+>>>> + */
+>>>> +void __video_device_state_free(struct video_device_state *state);
+>>>> +
+>>>>  /**
+>>>>   * v4l2_debugfs_root - returns the dentry of the top-level "v4l2" debugfs dir
+>>>>   *
+>>>>
+>>>
+>>>
+>>
+> 
+> Thanks,
+> Jai
+
 
