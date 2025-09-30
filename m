@@ -1,151 +1,308 @@
-Return-Path: <linux-kernel+bounces-837704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DBB9BACFEE
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 15:16:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E850FBAD007
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 15:17:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFA17192652D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 13:16:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F5503BA1C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 13:17:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEF702F7AB9;
-	Tue, 30 Sep 2025 13:16:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FFAC30275E;
+	Tue, 30 Sep 2025 13:17:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="KocRPIlw"
-Received: from mail-wr1-f66.google.com (mail-wr1-f66.google.com [209.85.221.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="DRGIsfFe"
+Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010003.outbound.protection.outlook.com [52.101.56.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B0FB23507C
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 13:16:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.66
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759238190; cv=none; b=tyJE9rJcW+VUD3nXaZEjlTU6mNIqhtXFQh+aqs1+yxGR61JVuF6VjVon0yhGTRL/C08mG2MysaAQdrfUZpMGAXf0B+2jD3kFnjiYLcup+Zy8h9o8KXCHzfGDhUGFRPRu1Sb5c1gNO0qOJhL3egMWYGSaM7xX3vU2xupaZQz2LXc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759238190; c=relaxed/simple;
-	bh=vACPcvX4LWehkNCn3avFNQCRel5Es4xLtJf1RFoWwxA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VLcivRcbFHeOM9DMoKUwRJ9YoZrz5us8AWjLazJYpAf/nWYGz+Nb1Y3sxcf+PpmtyX1etxBCziV8M5JkA31JCMtrM8OIpioxUrkYPR2rxlSdSHeatoYY2OgSHrvJfbbg410Dc1KVd0iecwaP01NoejqYP71CEecrcibvAkqJa38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=KocRPIlw; arc=none smtp.client-ip=209.85.221.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f66.google.com with SMTP id ffacd0b85a97d-421b93ee372so1156183f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 06:16:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1759238186; x=1759842986; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gdligv9Yrmq7/rk+Qyvy0jU8vW9q2hQx81H/VG9HIsk=;
-        b=KocRPIlw32P6U3ZSi8FlWHtZjlLQYLWQZxha/GFDnrwhR7DQjO2ko/u9pNBUVFPdwr
-         hmA50rCe38YuqPbzMdXIAnYw1UKEDUZQ7BecZ+JM9qvrbOwIF5UyzEpoB61/eoyuAI/7
-         r5wOC2lFXYTuu7QXc3tg1O783qwOGTJfWqJD7c54mCla87VEIngn/1ISu12GjTmOzMiP
-         kLKfQ4H5/j1GOq1dRhVUfGyV7HkldA+cySr3oP/jCc3W5dgCLfYRufa2HpK86PUAmpoB
-         rVXOCaUc0UymInblrwjt4iNid/WlHyKGqIVTxUlsyas/+oYfP+k5bzpGTJHg29WR4z4X
-         mopA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759238186; x=1759842986;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gdligv9Yrmq7/rk+Qyvy0jU8vW9q2hQx81H/VG9HIsk=;
-        b=HQMDIbz6DsAAtD5JSu4it0e6u5fNSAaxKxjPyiNdcxvhj21zM905/EJLAiUq+iXZti
-         MzGwhR+8RKEjum9ZsdK+ZbZcamITPOfyUmnlXH+F96uEYHoJ+SAqzW4bOjyvCqB9CAPa
-         T7+cfsHsvL1hlWolLjR988VScFgr3AqDdtubR/3UE6jhyI286VTalCAI7XfhEi7S4LNF
-         DlPlO3YG2FJ6a8ffSXgqD6yFU+nHWPIWjVCNgtoefCh7KW9aRIEVULJuDFykN9+Z1dB9
-         GqOUreweXIoZqRyjGpSdZx9u9/aiO6AXZofcm76C1mQmRgOgRcUgI9Xco8dEqwIsuO5+
-         sKJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUCMk/nkUonOuH89UFLPM0pEXDUcV774YaP49nHyX45w850bch1ADOLb7YAegjtqiUb7MeV0PXseIBKpbI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRqdYSMgXVGOhY/m1QbfhNe1/Zwi33yeXW/klhLanMPiqiBx7a
-	D3cJIATMuQaSrqOyYgLE9+N83nAFd3rGcHfEQULQaC7NoQbNqUwjCjI1Lo2SnFKgonQ=
-X-Gm-Gg: ASbGncu6bqsoLYgU1yNcDCNfhyIjhYoamQ4ura1Xdmj3ZnkeF6bFDdwf0H69/7dKcVl
-	/YH0jV9nbztQVi+Fvag8DvASYI6XF7ZhQX39BtlL/SBy/gQ0B/ib21R7Tk0omOJxjAguCmivL4h
-	uYKPxb2yzs50yVEiEumYvpz9N/D/8oYQFdlIKq4dO1+n1FC9W8qLRAiaTlxQlXOFKaeJjXMhZQT
-	pIMcgEmvGnSIIr+MhuSQxru6e8oXb5U98+EGdPgwPD7UPxA8iavO9gehJ+iYCRiqKpXKR/H0mAV
-	Vv9MAc/VnBbTO1BaO+ogl1akR9GeZDag2w8Mf+j7ssAaMO2v6ZlropY8kAWLstFm1lx1Iami3tc
-	cbqpou/HTriy+xZhPwFTgN6ZILG/QNy8pOXLxxkhJFC+L+S7hAfDllG/CMm7KevMRMmI=
-X-Google-Smtp-Source: AGHT+IF1ErbbbjhopZL6pCF+T2Bztzzvt3Govsbo7Ke9CGLKtmmw2H4ZbQVixK6pD842k6HiDc4iKg==
-X-Received: by 2002:a05:6000:2507:b0:3ee:1118:df81 with SMTP id ffacd0b85a97d-40e4623732amr18897288f8f.13.1759238186177;
-        Tue, 30 Sep 2025 06:16:26 -0700 (PDT)
-Received: from [10.100.51.209] (nat2.prg.suse.com. [195.250.132.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fb72fb2eesm23337471f8f.12.2025.09.30.06.16.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Sep 2025 06:16:25 -0700 (PDT)
-Message-ID: <3fc3f7e8-3297-4586-91ca-41f07c8a9418@suse.com>
-Date: Tue, 30 Sep 2025 15:16:25 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 666322DF158;
+	Tue, 30 Sep 2025 13:17:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.3
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759238222; cv=fail; b=i9WcSBfgYrrAaHXqK1MYGII/kV6Cpuo3Q8RBvitLyEDQ2HiB0vD/xiqIBaaYLvFDtfeRMgVm8YHr9vYJ3nkR4tLKSBeOFxuAMjO5jwZVnrh0BR90M6LHIRXoLnGxL+TbcwY6kMYZzA42fw+y6AHfVDH+72pECnYQCVzNqbWezqQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759238222; c=relaxed/simple;
+	bh=cWN6CNyirZisgi1TZBfvNjOjqa5PgQ0qoSy2rHcM79w=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=UBKHe67ysf5vRyWabigoLYaRb55W7vnnXXUn7uSyggPF3l5ZQmm4ufLPEsUIYAQKFvrh6jbtJD2s20S92pd+DO9eANLRs2bjqmhgDX2swUKeVOneXAEmYSLGhVZX9IfM1JNGK79ZJ0BAjI9ZF6KqQF75EBtR1TpdZ2yNbQvCa9w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=DRGIsfFe; arc=fail smtp.client-ip=52.101.56.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tygjl/5dmyUm9lav0umrxfkCTdcyxxa29iIQNBX8XmMQQ4AVbDHyD1ebO/brKaBavzKFfkMfasSo+XJJFjhyrRtsIVS9x+BnenHQMVKCUMQyxHNPVuFjhpLrPwCPNH1XIuincPamiyym19PGOdgq2Ooc/SJbQSMfpwReJ35NIz8WZFFKFKHBpxlW7+NqQtYojlAZfgSIM7YBPSa16GH26kWGBe45wWBWSaZ3ZFlY9CjD+rhxZwV/DL1UVsBE20NvNRvZUDr/W4NuenaQr272gT0lUwTN2zcJBh2VsWegc8gBETMZuo3EtnO2e4jXL3hgJVjbg24U5a9ikHLF9ar8Qg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6Y3tsjl5t7X/eRnb5dygDhjIYoxXkrUQBxEmUydAL6c=;
+ b=E+DQD7H1ydubSrIKJ9wxNclAcSwFeGfRSyK8XFln9tJG8mrSB5RfbRBY2N2/+XhT4Y5Rnlx20LjOzpc4eeawhFg6J3kaAdxlXlWMkEafANYCSJiCtEDs9AfCKGo9ePIU71baKh+bSQJo1HpRrgkLPEXDjBJYuLyAryWwWp5jNp7rVea8zW9oB16jswM3TKPk9+rUw8Sq4vjt0D9s1qvSYv5fCB3TZqYzpkDgN8CgYotKR7eBHmxOWFDfkiDJ+4xfi/I38qjJDD8YDjaYJnYybz00i5afQhDhqUX6JrEU5e7gpHJeoM3M/HeE5vmLMmNHB6MbTgLvNSscu1ri/DqsZg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6Y3tsjl5t7X/eRnb5dygDhjIYoxXkrUQBxEmUydAL6c=;
+ b=DRGIsfFeamW9ngmOQQ+MYwPlWA1xiztYqT3nah77zDmQd5itgZ5cB0eFEz3GE9I2HDaCX29T82Rr6LUQb14CabmavBa79nRfZo4gziARtiCALZxBMlv/MJWuHd4qsCzv7j/NgNH/oFitbrPnZom/AjzJ3bMpUR7IX5h73Yv7uxu4ft7aMwfeZVWV3B0fB4z+0/X0GLe4HM4Txc3/aTVSOI90OJtvspr8L3Jqzzf4UqEPavQaRCPFME5uVDrxJhOw4+Fv/JCO41BBBA/NDaaMR50F0AxMQ+SHmO7ygQLq1e2HT/ECIxOaOum/vhCBRfPVRqaUbeMu4fX5OO287B28jw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
+ LV9PR12MB9758.namprd12.prod.outlook.com (2603:10b6:408:2bd::5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9160.17; Tue, 30 Sep 2025 13:16:56 +0000
+Received: from DS0PR12MB7726.namprd12.prod.outlook.com
+ ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
+ ([fe80::953f:2f80:90c5:67fe%4]) with mapi id 15.20.9160.015; Tue, 30 Sep 2025
+ 13:16:56 +0000
+From: Alistair Popple <apopple@nvidia.com>
+To: rust-for-linux@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	dakr@kernel.org,
+	acourbot@nvidia.com
+Cc: Alistair Popple <apopple@nvidia.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	John Hubbard <jhubbard@nvidia.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Timur Tabi <ttabi@nvidia.com>,
+	linux-kernel@vger.kernel.org,
+	nouveau@lists.freedesktop.org
+Subject: [PATCH v3 00/13] gpu: nova-core: Boot GSP to RISC-V active
+Date: Tue, 30 Sep 2025 23:16:33 +1000
+Message-ID: <20250930131648.411720-1-apopple@nvidia.com>
+X-Mailer: git-send-email 2.50.1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SYBPR01CA0104.ausprd01.prod.outlook.com
+ (2603:10c6:10:1::20) To DS0PR12MB7726.namprd12.prod.outlook.com
+ (2603:10b6:8:130::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/6] module: enable force unloading of modules that have
- crashed during init
-To: Julian LaGattuta <julian.lagattuta@gmail.com>
-Cc: Luis Chamberlain <mcgrof@kernel.org>,
- Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez
- <da.gomez@samsung.com>, linux-modules@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250918201109.24620-2-julian.lagattuta@gmail.com>
- <000808f3-10cf-46ad-94f9-95a142c08b59@suse.com>
- <CADuX1qJZ1V32d0U4hSOUOzte2KE-k-Hzop0zZd4=7Ap-kS3JzQ@mail.gmail.com>
-Content-Language: en-US
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <CADuX1qJZ1V32d0U4hSOUOzte2KE-k-Hzop0zZd4=7Ap-kS3JzQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|LV9PR12MB9758:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3388454b-6c1d-4d35-cca0-08de0023a0f3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZDdxa0p0WW5MR2tZcUdCcCt2K2RCSEZKTlIyTndZYkI0bSs0L2krSW5DSjJT?=
+ =?utf-8?B?SUs5YU5MUU1JL3VmY0JiQ3YzWjY1amg2Rm1BN1VzTDF2OFMxZ0d6OW1WU3Bk?=
+ =?utf-8?B?WHh5WHJIbnFEcFZWMWQ4ZnhJUUgzcTdhNVA4aEplSGNtY2dKNFlzaDVSR1N2?=
+ =?utf-8?B?RkdmTFAwRmFJVkdJNjlra0tNVjR0SDcvcDdRRndmMWIvcHdGTXhNRnB4MEM4?=
+ =?utf-8?B?a21jMFBjcHR5RkR3UHNBZ3E3bFZmaDFwR2Z1UC9IM1k5enhZQURKc0RhMk5L?=
+ =?utf-8?B?UU1pSFRlRDJYOGEyU25PWlZFZ2YrOUY5MEJFd0FOL1c0UkZkdytjbTREeWl4?=
+ =?utf-8?B?cndtYTl3bkJ3USthTnlsR0twZ3pGWmVwQzN0T2dzOTN3OWs3UTQ2SU1ReUhD?=
+ =?utf-8?B?QTkvaFdqUG9UYUlDVEJjUHNPT2c2c1VGSVQycG1jVVE1REdvVFhiOFpidDhL?=
+ =?utf-8?B?bjdYYisvQURUcXM0LzNoTTJKSEY0cGxESVNVL0lZRkhnVlZHQVJwYytXRVIz?=
+ =?utf-8?B?S1IxNGNtSkJhZE1yYWt3MnRUUGplaDhoaXF4bEp4ZTN0a3Q3QlY4QUl5dDY4?=
+ =?utf-8?B?SXRDMHVZdGZYOTVkMm95WEFSMmJOUTkwbUdCUzgwU3VBeXZKWFo3S1o0TGlz?=
+ =?utf-8?B?aFJ4cU05NHVzKzc5THBGY2RzTDRGYks3T0tOd0FVbEUwOGJiZGhraVhwWEFK?=
+ =?utf-8?B?bDNvbEcvR3VkVHlIVS9vMGh2L0V4TlRmMUdOME5DcmlvWExLZWZWc25iUUhk?=
+ =?utf-8?B?NnVvaGVoRVM4SDZnNTBUWHJRRm5RTktnRzBCL2dFL2NPcDFiK200aXNjN21y?=
+ =?utf-8?B?M0xvenM0L093S3c3MWJOa29waUNZTXNLZ0ZQdlRzcmlYa1FPWDczczkwQ0Yz?=
+ =?utf-8?B?STJoN01ZQkhYMS9BNjRGbS9EMVNhdDRnTkVCd1kvOHNGZXlCMjkzVzJ6MzlJ?=
+ =?utf-8?B?by90REdpT3ZlaEV3aS9pdU52a0puUjRmbklPalVLa3NtRGs3R0syclJaSlZm?=
+ =?utf-8?B?cVlzN2xqMTFtblgzaGpGOHdhdWozMFk5OFp3eHQ4UTl1MUdDcjB0VWlwVEtZ?=
+ =?utf-8?B?cUJlNWkySVNmb3NUSkFCU2lBUmpIY0U2TXhvaHVndUJScjVzUE5tbERjYzZy?=
+ =?utf-8?B?eVNhelNWKzBvS2xCdTg2cTJMUnpvcUJUeWV2YmtKTVBRZkZsVzVjbEpPVHdn?=
+ =?utf-8?B?aCtiR1lCalNJeVAzV2NDWm1kK09FOU9TK0x0UHl4OVpwUG91QXpEQlp4b2pM?=
+ =?utf-8?B?dVlZUmI4UDBUbFZZdmRvYTkrb1llR1czUS9oQUxod2FJMnUxYVltV3pFSVV3?=
+ =?utf-8?B?U1R2Tk84NG1sT1FicFNHZ2YxNDBQNHR1YjNaSTZFaDRLY0FYdWZ4MXZTUE5a?=
+ =?utf-8?B?MGtSZ1VvQW1QV25LUndsVzBmN2dkNGw5MUhKcHpycnlmdlJEZnNSTHpUQ2hK?=
+ =?utf-8?B?QW1WQkxhbFdmUTJUQlBqTFNMRDY5S1NnVUpxRDlqeXZIK0Mrd0JEU2hISGFR?=
+ =?utf-8?B?d1pRUzllVUN5cE1BTnVIOEYyWXQxZ0xYendZZFFOS25WTmdQbTRtOEt3NFlK?=
+ =?utf-8?B?MzVMS0hEd0RQL2pTVlVPei9hODg5b3RKc2VXd3k5K1cyMVF4OTUraE11WFdT?=
+ =?utf-8?B?bUdyUk9oaEViZENWK2RPdytvczFGSnVzK2kzb2FKVlFuaHVtOWc2anFlQW03?=
+ =?utf-8?B?Tkl5dTJFd1FRZC9Qa1Y2RkdpL0FDNTN3SVVDNWtaYjR0bE5nR3VwT0dNQUZM?=
+ =?utf-8?B?SVorQ3BDSm1ibDRGUzE4dFJXTW9TWEtIc0RWeTJ4Y2hpdm1JSjNlQVVTd1dR?=
+ =?utf-8?B?UnhiWE5mQTduOEJadWNQbmtUeUc5SE03U2J0VFVxbzRPMlkzQWJQSWpUaDVv?=
+ =?utf-8?B?ajBkTjJVMWVORjBLMmI2SkMyV2tuZGdVV1k5RFk5RVFZamh1clg0ZThXcUZH?=
+ =?utf-8?B?ZUwzTWdHYWZ4YTE4L0tIMVZ2d3hNYnh2Z2s1dEZIdGhFcmlSTkpIam1NM0Fp?=
+ =?utf-8?B?bjVCeXNVTDVBPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?aXE0WG8xVVFXdHdqOEtIbkdxMURkMVRKT0MySHptUHdyZEFIUHVlbTMrWGti?=
+ =?utf-8?B?aENGQzZJU3JwZzlIRjdzc09yTUpxWTlKT0VETG1KTVhCZXh1c3A3OHF4eFYv?=
+ =?utf-8?B?TnN0bnBWUHlqQzlFVER2R3g0akZ6aklpK3BDMDVzZXhvTTdWdkVTUzRDM2VM?=
+ =?utf-8?B?Vlhqb1JPNDhhN2JKMTQzMWQ3WHhNQnB5NlNWbWwwbVVueW9TeXpJQWlHdk95?=
+ =?utf-8?B?ZmxPUVpadGFNWUVndGdmWHpoekNyLzlrVVdkNmZRcE1WKzJ3cXh3cDhacVM3?=
+ =?utf-8?B?dzRXVHB6Ukd6alorbkhHUHpwRXhlUTB0VHdPbjV0bCtVeTZTVkNPWXNYL3RG?=
+ =?utf-8?B?K2FNbXRmcVdvN2s3M3BRZG9Wc0lSNGJTOEhUUXFTR3I4K2lwdk5wbmNHMXhL?=
+ =?utf-8?B?aUFnTDY4UU9QLzZXUkFaRWVaZW94cmlPQVhIdjhMY3VFUzdiYkExeTU0R1Y2?=
+ =?utf-8?B?VGJhd0lIK0xHV1VPek0rWTVQN0M4b3hoa3hlazMrQ3VsdTRLenBrMnF1eHNl?=
+ =?utf-8?B?Y3BjaWhVOUhFUGJEdlVzc2huWUlnWGxkQll5Z1dYdTNUMTl4R09oaWswdUE0?=
+ =?utf-8?B?aHV6eWxuN2xjQ01RNUhkc1ArZW1xSnU5MVFITGRrK3pidFBxMXdsL2ZheU0w?=
+ =?utf-8?B?NDdJZTltN0ZEM0loN25ManR3Q2Z1ZW9UclNzVWJKaTcrN2Y1aXo4MTZ1WEk3?=
+ =?utf-8?B?WmNmTDc1RnlyZFdUa2l0aXB3S05nMW9jSFBJUStZOE5NeGhJY292UW8zQnpK?=
+ =?utf-8?B?dEU4MTU4WkFCaDZnOHJjOW44UXdiKzhzN0oxZGRTdFd5WEpaUWhENWQ1TTBw?=
+ =?utf-8?B?ZHJlRURNU1hrbmNXV2o1NTZjM25CUmJlZ1RuSFVlaTFMOEl2bUdMZzFUeDNm?=
+ =?utf-8?B?eWVITk1iOVAwZC9DU1BDUkFLNG5CemlNMXNXLy9IZkdsRlNKTDNoeDNqUWFr?=
+ =?utf-8?B?ZDYrSFlIa205YlorbUsxZTg5c1NmZHJHWlJnRmpsUkhXekI4L3ljcmdkYXNW?=
+ =?utf-8?B?ZnR4cU42dnMwL3I1MGJIc0ROVUU0MVNhYVFibnlGell4Z0NnKzd1WUpiSzlr?=
+ =?utf-8?B?aFQ2T3BKYWhOZlhWdEEyMDllbFBZSzY3QUVQTnhjb3lMQ2hBcEFjdmQwYTA0?=
+ =?utf-8?B?SnBhZEhja2FjanFoS2Rxa1R2YjZSMlRaeGlsMnVaclc2OHdaSklLRWU5c0h3?=
+ =?utf-8?B?c2YweTBWdERvRkxNSkZPVmRrNExSSmFOTTF2NnAxUDF2TkVpMThUaEp5bVdi?=
+ =?utf-8?B?aVk2MUJvTXhxLzRTeVgxSVhlWTl2WkMydXdnUmtFN3k1bTNWOGkyaU1UaUNr?=
+ =?utf-8?B?TmduZFFyL2RsVWxYb09IMlArVUlIOVJacGZ3L0liRUNoWWc0MmtQSnlWQ3N4?=
+ =?utf-8?B?ZlJRQzVVaFNkb0tuT0Y1cDNmYVNWYlRMU01PMlpKTG82SW53Rm8reXA0Q2JQ?=
+ =?utf-8?B?VzJGMFNsY2k1YWJOZjNqT0toTTlJMmtDWDZQektQWXlGdXF0NTNLTmlldFU3?=
+ =?utf-8?B?MUtkWncwUm4rQnI5Nk5raEN6ZVNsUkdrdWpGT1IybGdzV2xCaGZjaXhqazNM?=
+ =?utf-8?B?UkNSUVNkM1drSVpOR3VVZjYrQ1hnL0cvK1hGSTlCTlNEZmxqalViV3h3MHZ4?=
+ =?utf-8?B?R0RzU3JjTkMrTmF0Y3pwSFZvVndRSlFpVXRMeTBKQ29yWklMcDJNcmI2SEJ5?=
+ =?utf-8?B?aTVENS9SeTBjb2U2Z3hjSU53L3VLTVI0cHJrdmx1N1JySExmWG03a2xFcy9p?=
+ =?utf-8?B?b2NwY3kzVW9LNzRQem9WWHVIcnhqSllBMnIreTNGMzZEWk84eUFyeEIzWVNN?=
+ =?utf-8?B?NCt3eVN2cTJBMXYzZWRSdVdYV0pJRWhuTW1heHBwN0tEYnVhbmNaeER2SXRD?=
+ =?utf-8?B?SnV2UVpKRFl6d1EzYm5DUlJ5SXhlb0w4QktMM1lOMmVSTkVuSEgyQytPcnox?=
+ =?utf-8?B?QkVDREQ0OHhSeDZxMDcvZ2IyTXFPelo2bUZ6VnphKzBVV0oyN0hUNzA1WWN0?=
+ =?utf-8?B?WU1vMFhWZEpkWjZHVjNiRTFSQnpaS2tjT2lVbTE3bnhqbUNESlhYaWx3T0dJ?=
+ =?utf-8?B?ZERSb0VUTXNSdFRuZW84THZkSlZ0RFZDdkg0NmdyVVBQcHNjRk5LUTc5VGZZ?=
+ =?utf-8?Q?CzPEbXUerss1fZSjbxGq55NOZ?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3388454b-6c1d-4d35-cca0-08de0023a0f3
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2025 13:16:55.9948
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: V6kLyydO1WzCuT7HQS0FQWIrtL/i2/xJ0iSovfdoS64MEQ5Z7/DKZkbcYXYJhNfliJFVFFLWVgHEOQLvUxthhA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV9PR12MB9758
 
-On 9/25/25 12:16 AM, Julian LaGattuta wrote:
->> Could you please explain the motivation for doing this in more detail?
->>
->> I think we shouldn't attempt to do anything clever with modules that
->> crashed during initialization. Such a module can already leave the
->> system in an unstable state and trying to recover can cause even more
->> problems. For instance, I don't see how it is safe to call the module's
->> exit function.
-> 
-> Thank you for your response Petr. The motivation comes from when I
-> wanted to replace a crashed module with one which does not crash
-> without having to reboot. I looked around and saw some other people
-> complain about it on stackoverflow.
+Changes since v2:
 
-Hm, I'm still not sure I understand the use case. If it is about being
-able to remove a crashed module when developing it, then I wouldn't
-expect rebooting the machine to be much of an issue. If it is on the
-other hand about removing it on a production machine, then I think
-attempting this can leave the machine in a worse state and not something
-we should encourage or support.
+The main change since v2 has been to make all firmware bindings
+completely opaque. It has been made clear this is a pre-requisite for
+this series to progress upstream as it should make supporting
+different firmware versions easier in future.
 
-> 
-> I thought that if a module crashed during init, it would be in a no
-> better position compared to if it were forcefully removed.
-> Therefore, there is no reason why this shouldn't be an option as it
-> couldn't make the problem worse.
+Overall the extra constructors and accessors add a couple of hundred
+lines of code and a few extra unsafe statements.
 
-A module can be halfway through its initialization when it crashes. It
-may have already registered with various parts of the kernel and
-I believe that removing the module from under the kernel's control could
-result in even more problems.
+Other changes include addressing a bunch of other comments - see the
+individual patches for further details. There are also still some
+outstanding comments and TODO's to address which I have not gotten to
+yet - these will be done in the next version of this series.
 
-The current support for forcefully removing a module overrides the
-kernel's tracking of module references. This option was originally
-introduced by "[PATCH] Forced module unload" [1]. As far as I can see,
-it was related to the module loader rework at that time in "[PATCH]
-In-kernel Module Loader" [2]. This rework provided raceless
-loading/unloading and marked several MOD_INC_USE_COUNT/MOD_DEC_USE_COUNT
-interfaces as obsolete and unsafe. Since some modules still used the old
-racy interfaces, it seems the forced removal option was added to make it
-possible to remove such modules.
+Changes since v1:
 
-However, this issue should have been fixed a long time ago, so I wonder
-if even the current CONFIG_MODULE_FORCE_UNLOAD support is useful.
+ - Based on feed back from Alex the GSP command queue logic was reworked
+   extensively. This involved creating a new data struct (DmaGspMem) to
+   manage the shared memory areas between CPU and GSP.
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/mpe/linux-fullhistory.git/commit/?id=d0f8c9a4c2c9d93463d157248c73028670e80a97
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/mpe/linux-fullhistory.git/commit/?id=4c877b08daf4b463c144cbd2748ed1659931a0dd
+ - This data structure helps ensure the safety constraints are meet when
+   the CPU is reading/writing the shared memory queues.
+
+ - Several other minor comments were addressed, as noted in the individual
+   patches.
+
+This series builds on top of Alex's series[1], most of which has been
+merged into drm-rust-next, to continue initialising the GSP into a state
+where it becomes active and it starts communicating with the host. A tree
+including these patches with the prerequisite patches is available at [2].
+
+It includes patches to initialise several important data structures
+required to boot the GSP. The biggest change is the implementation of the
+command/message circular queue used to establish communication between GSP
+and host in patch 6. Admittedly this patch is rather large - if necessary
+it could be split into send and receive patches if people prefer.
+
+This is required to configure and boot the GSP. However this series does
+not get the GSP to a fully active state. Instead it gets it to a state
+where the GSP sends a message to the host with a sequence of instructions
+which need running to get to the active state. A subsequent series will
+implement processing of this message and allow the GSP to get to the fully
+active state.
+
+A full tree including the prerequisites for this patch series is available
+at https://github.com/apopple-nvidia/linux/tree/nova-core-for-upstream.
+
+[1] - https://lore.kernel.org/rust-for-linux/20250911-nova_firmware-v5-0-5a8a33bddca1@nvidia.com/
+[2] - https://github.com/apopple-nvidia/linux/tree/nova-core-for-upstream-v2
+
+To: rust-for-linux@vger.kernel.org
+To: dri-devel@lists.freedesktop.org
+To: Danilo Krummrich <dakr@kernel.org>
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Gary Guo <gary@garyguo.net>
+Cc: Björn Roy Baron <bjorn3_gh@protonmail.com>
+Cc: Benno Lossin <lossin@kernel.org>
+Cc: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Alice Ryhl <aliceryhl@google.com>
+Cc: Trevor Gross <tmgross@umich.edu>
+Cc: David Airlie <airlied@gmail.com>
+Cc: Simona Vetter <simona@ffwll.ch>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: Maxime Ripard <mripard@kernel.org>
+Cc: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: John Hubbard <jhubbard@nvidia.com>
+Cc: Joel Fernandes <joelagnelf@nvidia.com>
+Cc: Timur Tabi <ttabi@nvidia.com>
+Cc: linux-kernel@vger.kernel.org
+Cc: nouveau@lists.freedesktop.org
+
+Alistair Popple (10):
+  gpu: nova-core: Set correct DMA mask
+  gpu: nova-core: Create initial Gsp
+  gpu: nova-core: gsp: Create wpr metadata
+  gpu: nova-core: Add GSP command queue bindings
+  gpu: nova-core: gsp: Add GSP command queue handling
+  gpu: nova-core: gsp: Create rmargs
+  gpu: nova-core: Add bindings and accessors for GspSystemInfo
+  gpu: nova-core: Add bindings for the GSP RM registry tables
+  gpu: nova-core: gsp: Create RM registry and sysinfo commands
+  nova-core: gsp: Boot GSP
+
+Joel Fernandes (3):
+  gpu: nova-core: Add a slice-buffer (sbuffer) datastructure
+  nova-core: falcon: Add support to check if RISC-V is active
+  nova-core: falcon: Add support to write firmware version
+
+ drivers/gpu/nova-core/driver.rs               |   8 +-
+ drivers/gpu/nova-core/falcon.rs               |  16 +
+ drivers/gpu/nova-core/fb.rs                   |   1 -
+ drivers/gpu/nova-core/firmware/gsp.rs         |   3 +-
+ drivers/gpu/nova-core/firmware/riscv.rs       |   9 +-
+ drivers/gpu/nova-core/gpu.rs                  |   2 +-
+ drivers/gpu/nova-core/gsp.rs                  | 111 +++-
+ drivers/gpu/nova-core/gsp/boot.rs             |  77 ++-
+ drivers/gpu/nova-core/gsp/cmdq.rs             | 419 +++++++++++++
+ drivers/gpu/nova-core/gsp/commands.rs         | 101 +++
+ drivers/gpu/nova-core/gsp/fw.rs               | 419 ++++++++++++-
+ drivers/gpu/nova-core/gsp/fw/commands.rs      |  80 +++
+ .../gpu/nova-core/gsp/fw/r570_144/bindings.rs | 577 ++++++++++++++++++
+ drivers/gpu/nova-core/nova_core.rs            |   1 +
+ drivers/gpu/nova-core/regs.rs                 |  15 +
+ drivers/gpu/nova-core/sbuffer.rs              | 188 ++++++
+ scripts/Makefile.build                        |   2 +-
+ 17 files changed, 2006 insertions(+), 23 deletions(-)
+ create mode 100644 drivers/gpu/nova-core/gsp/cmdq.rs
+ create mode 100644 drivers/gpu/nova-core/gsp/commands.rs
+ create mode 100644 drivers/gpu/nova-core/gsp/fw/commands.rs
+ create mode 100644 drivers/gpu/nova-core/sbuffer.rs
 
 -- 
-Thanks,
-Petr
+2.50.1
+
 
