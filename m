@@ -1,549 +1,408 @@
-Return-Path: <linux-kernel+bounces-838191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FF65BAEA19
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 23:46:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCF28BAEA28
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 23:56:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4DF437AA97A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 21:44:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76A711C7EDA
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 21:56:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 517A22C11D1;
-	Tue, 30 Sep 2025 21:45:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADA11288538;
+	Tue, 30 Sep 2025 21:56:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="otOyGW03"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bb7MnJg1"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C31828C01E
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 21:45:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759268719; cv=none; b=E4v7bcN4dFV34n7qVboyakFFTFM7kRrbfJ0tY1q5oTuR1rS73ipq8p7Dba+32tUSCaWlLeFYchNjpjYihxXjg7qyMdoithcYZNDH+x6JcclakYZBCeMC4X4kOgm8ewhM5/xc8AO+JYF90rwUGpysF3rXkDPLv9tVuQYbLb5BoqY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759268719; c=relaxed/simple;
-	bh=vhfCCAGBjZ+sKsHITf6F2tgtkkrDk1vWKygP1Nk3KbQ=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=DED2LPPQUll7/nWQahlw1iHznwMOYxOm71sw/v/0FzTY8uaRrQgInR53Jsws9XVHQCBPa9dW7fUm/s6QUSLd7hGVPSlO8Cu8vkxBhLjvHqWhBIgaIYYQIxnAz+o3BSGmfV8OLbwazW/j+J/CfES0zN4ODcHgyO5662g7USTW6Jg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=otOyGW03; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD752C113CF;
-	Tue, 30 Sep 2025 21:45:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759268719;
-	bh=vhfCCAGBjZ+sKsHITf6F2tgtkkrDk1vWKygP1Nk3KbQ=;
-	h=Date:From:To:Cc:Subject:References:From;
-	b=otOyGW03zNy7rBrOD+Csc1mh174ELjEyTkY/kdgzH8wRXuo7o0XcwN+iI0E6tFDL0
-	 QQf0G/Pa1ic2mLNFoH02rM4JHsLC9q4i8efNmzYUT4i7gUFNkyDE8jSh7hGk1tMAj5
-	 eNCxmdjKdhbm54PaKw4n5Ow0gylHqmQODysiLf79gtSkGfq35CsAZnoqPOybCURTMn
-	 S6omkRBxTiMn3KPHaUBpdwFtGpmWYc99y/JxMEdfv2N3ac1fwMfFjFDHH3XAXB+eCM
-	 1acx1ezhh0XMCKpHKPfz0Oeq7HQ1dWJ8l7AXhGhhOC3FG9jF3ePEo6SdYaTdPL/sJh
-	 VmDlhecaWM32g==
-Received: from rostedt by gandalf with local (Exim 4.98.2)
-	(envelope-from <rostedt@kernel.org>)
-	id 1v3iBT-0000000DUx5-1nRW;
-	Tue, 30 Sep 2025 17:46:55 -0400
-Message-ID: <20250930214655.279642395@kernel.org>
-User-Agent: quilt/0.68
-Date: Tue, 30 Sep 2025 17:46:37 -0400
-From: Steven Rostedt <rostedt@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: Tomas Glozar <tglozar@redhat.com>,
- John Kacur <jkacur@redhat.com>,
- Costa Shulyupin <costa.shul@redhat.com>,
- Crystal Wood <crwood@redhat.com>
-Subject: [for-next][PATCH 7/7] tools/rtla: Add remaining support for osnoise actions
-References: <20250930214630.332381812@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01E0924C068;
+	Tue, 30 Sep 2025 21:56:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759269402; cv=fail; b=e1Ii9vk+QFoAZwdV2eZOemUGnS0s3yC+p5sIzbUDIpPIbOt6krNoGJPosev0tHDQnHhOgdBMcOgykrSYDO8bW8jTp2pcKnSM0l+fxLiP0fYZVYxMLK9Bk5BUP3nOlPtv7QFUpsuPmGANibVLIVyJwbsbkVmcswq9kfxKWoVK21g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759269402; c=relaxed/simple;
+	bh=/+proPD6EabriQrBPRmv8ne6HQ0nLBfFjjkrL/CqQxY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=tVggwWaDSOK9PLvA8hzc+DnhJgXcSjA2HFtB53Qt6lDUo0IjVZ8E4P5TcfLAGwyXz/jhgTSEWmvYJcqalwjHwlobSSBVsbhH7s0euiMwHsXvxFA9ee7GBCh8cRpPpL2kpm43kMfVTRqENuyDDMy34U6Mjo8KQMdTsskC5YeAAIE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bb7MnJg1; arc=fail smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759269400; x=1790805400;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=/+proPD6EabriQrBPRmv8ne6HQ0nLBfFjjkrL/CqQxY=;
+  b=bb7MnJg1LkjZIUC6mbBYoQnNFM7NCV+L8UAf+lqv4UrMaKY+SM4DBIqV
+   eyPNNFYw9ziviLSWowHIidAHOM2eiG0OQbH67oh62+WZgWx3w9i23Nh7P
+   GrUKkegS9fU9cwfQUAYCkI3s4O943FBT32LH1sklJae1MGoB+pMlCaWUl
+   NPqRhdTEHCrxZZBNuggoHbGvqFRnM6KtWpkaQeuMFkjTJmm7YUh6+U+r4
+   ykZWgI9wbNdABMri0CICBqDQTWlmgkU0JqpVswSkJ4nM2KT702q/HFLwJ
+   c0DXOsdm5ZzaP05nBCd5kUjDHuuwBXD6rDFQrW0VnDuQJr+AmGuKuaHfh
+   A==;
+X-CSE-ConnectionGUID: klqp8yhNR0GzLEzjngZE3w==
+X-CSE-MsgGUID: 7Osj6JLsSJKCu3cEZbdeYQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11569"; a="61704137"
+X-IronPort-AV: E=Sophos;i="6.18,305,1751266800"; 
+   d="scan'208";a="61704137"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2025 14:56:39 -0700
+X-CSE-ConnectionGUID: y+465KVMSw2uIfvlpXRqqQ==
+X-CSE-MsgGUID: lC0GzjlUQ8qDITAB7EVWwA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,305,1751266800"; 
+   d="scan'208";a="183824729"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2025 14:56:39 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Tue, 30 Sep 2025 14:56:38 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Tue, 30 Sep 2025 14:56:38 -0700
+Received: from CH5PR02CU005.outbound.protection.outlook.com (40.107.200.9) by
+ edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Tue, 30 Sep 2025 14:56:38 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=N3mVk0QsT8/ay/Umrh9ZW6B671FCYSS8+mMUs80SEReMMHCZ0InrWwryMfpI7oUW4UN+KIN5X61jz1FFIJiza1r+GPlCT8TRoO5uEGqHW3IiLj83/W6JgX3iNjKD6voSzVIoh/3ycvMQFPuQ8bnRi3ttIFYkzgeijlUvvyKG1hlhNZ7fB/qsTyFtBrwCBwXa1YZ78NimjgpYdUUrC60n5/B7XiKxq3JxJifttYj7IYlcoRLvHG4TEPhzWC98zGRryrasdTUlSqbgwNgediOqQpp7fs/j37SVF1JrEl9Bxs9Mq2+ehbP4PUrG3ghqQ2ZAVeZxXMFhZDqT2MCp+DktYQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=EirQLQX2fMyHpwVo5HCP5F8xTR+t4UEdNpY2JmTy4s8=;
+ b=KQM4PkzU4yV7JdgwvK3KpSckXEj34SHi7xOJD7xLaCx9k6qT8Lnp/Brkhnt95ECpAdvVeOdi6sjcBCIdn/Z9+5uWXtoG4d//A3BJYzQsUojEN+90KoSJAr7Ob3VP042oQtJWBHGY/xwk4BuEO4NQ5p38vhcmvarUBlW8CR1bzse44rdqpGg/K4eMB87smMffNdMJ04iyqyWz4kqgTnX/RKDx7iR8MiVE/D8E22hY327ba54DY8YPuhJ/M54IgkkGcNXNW+R8YmbMUNKMofOPc2OBxnr5ewTH9DklKiII5xpQzWn/wzfF/5fuu9/jZ+2uZKRq0aGUYlPlClktorIOQQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from SA3PR11MB8120.namprd11.prod.outlook.com (2603:10b6:806:2f3::7)
+ by PH3PPFF8C186950.namprd11.prod.outlook.com (2603:10b6:518:1::d62) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9137.16; Tue, 30 Sep
+ 2025 21:56:33 +0000
+Received: from SA3PR11MB8120.namprd11.prod.outlook.com
+ ([fe80::3597:77d7:f969:142c]) by SA3PR11MB8120.namprd11.prod.outlook.com
+ ([fe80::3597:77d7:f969:142c%4]) with mapi id 15.20.9160.014; Tue, 30 Sep 2025
+ 21:56:33 +0000
+From: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
+To: Yosry Ahmed <yosry.ahmed@linux.dev>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, "hannes@cmpxchg.org"
+	<hannes@cmpxchg.org>, "nphamcs@gmail.com" <nphamcs@gmail.com>,
+	"chengming.zhou@linux.dev" <chengming.zhou@linux.dev>,
+	"usamaarif642@gmail.com" <usamaarif642@gmail.com>, "ryan.roberts@arm.com"
+	<ryan.roberts@arm.com>, "21cnbao@gmail.com" <21cnbao@gmail.com>,
+	"ying.huang@linux.alibaba.com" <ying.huang@linux.alibaba.com>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"senozhatsky@chromium.org" <senozhatsky@chromium.org>, "sj@kernel.org"
+	<sj@kernel.org>, "kasong@tencent.com" <kasong@tencent.com>,
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+	"herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+	"davem@davemloft.net" <davem@davemloft.net>, "clabbe@baylibre.com"
+	<clabbe@baylibre.com>, "ardb@kernel.org" <ardb@kernel.org>,
+	"ebiggers@google.com" <ebiggers@google.com>, "surenb@google.com"
+	<surenb@google.com>, "Accardi, Kristen C" <kristen.c.accardi@intel.com>,
+	"Gomes, Vinicius" <vinicius.gomes@intel.com>, "Feghali, Wajdi K"
+	<wajdi.k.feghali@intel.com>, "Gopal, Vinodh" <vinodh.gopal@intel.com>,
+	"Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
+Subject: RE: [PATCH v12 20/23] mm: zswap: Per-CPU acomp_ctx resources exist
+ from pool creation to deletion.
+Thread-Topic: [PATCH v12 20/23] mm: zswap: Per-CPU acomp_ctx resources exist
+ from pool creation to deletion.
+Thread-Index: AQHcLpaVftDjct+5Jkq/fUkbn0Rx3bSr5mcAgAAXwZCAABUagIAAJKswgAAK3QCAAAiGUA==
+Date: Tue, 30 Sep 2025 21:56:33 +0000
+Message-ID: <SA3PR11MB8120D4BDA8A6980A4BC5447FC91AA@SA3PR11MB8120.namprd11.prod.outlook.com>
+References: <20250926033502.7486-1-kanchana.p.sridhar@intel.com>
+ <20250926033502.7486-21-kanchana.p.sridhar@intel.com>
+ <j4o53f24yeegzrj7aj2mbu5c2xyqksnb6uz2fjkwgi3dbbtqsw@cwatjnrsgbco>
+ <SA3PR11MB81201CE73D6CCF274BB2265FC91AA@SA3PR11MB8120.namprd11.prod.outlook.com>
+ <7gnj6tcuvqg7vxqu4otqznvtdhus3agtxkorwy3nm2zobkd7vn@hqanfuyklt7u>
+ <SA3PR11MB81209CF02417CED3C0459504C91AA@SA3PR11MB8120.namprd11.prod.outlook.com>
+ <6xb7feds424kfld4udwmbtccftwnnx6vmbpvmjcwlionfdlmuj@vz4uzh6tog5g>
+In-Reply-To: <6xb7feds424kfld4udwmbtccftwnnx6vmbpvmjcwlionfdlmuj@vz4uzh6tog5g>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SA3PR11MB8120:EE_|PH3PPFF8C186950:EE_
+x-ms-office365-filtering-correlation-id: 09c4a26d-d9ac-442d-8477-08de006c3879
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014|38070700021;
+x-microsoft-antispam-message-info: =?us-ascii?Q?WmVLdPkYtj7S2qnqwVQVFci6fBl8bZy0VoXoG9+hZ8EIXitpk4Iz2PaKN2wR?=
+ =?us-ascii?Q?D88zcMBtZYVDzfMsh+Nti5bkEQUAoQ08oKBcrKCeZR6VYFJmslTFt5PX8Ov5?=
+ =?us-ascii?Q?xoXwOaS6NUrMD3f2vmC0ybh6Mzv7l0fLCnT0eqPPD5gZToOFVkdRgM/GfasF?=
+ =?us-ascii?Q?AAf2AbNl6AU+vGNvq2GxR39FymYJc7f5qQt5c4G+ikxXneEwhYhJ/4lCWgaV?=
+ =?us-ascii?Q?1fvu5rRc+EZR8KJ3ptinq+fD3EfUxIP3mjVdqXp99wznKfuo7za5I1mMmaSF?=
+ =?us-ascii?Q?Q7CL55w2rEPoFotzaiY7/5MQyg4YG+th7sCVqvg7rgNiggIXPMk4lTtY6ZD/?=
+ =?us-ascii?Q?rxBdonf9Z2e8ApBR/myMecLcfup3Bzpfm7ar9Lsd0Skg7xIMcibtEDtTJVgG?=
+ =?us-ascii?Q?c/KPKce/JywvWn3hF6h1mtN4pCTDbxkU2vkXH0+nu04/9UVydEJlQb3bmKNP?=
+ =?us-ascii?Q?wL+elWyQhHNUDC8xW7xGsODixv/RVIWNNldLXJTYZJ83djTs3D87wRyjp2M2?=
+ =?us-ascii?Q?nPloEL+INE4Mi41IiK7Nte1cyBxAwP3GTYCfj63NIqxdQBt64UuiPjXnBiFy?=
+ =?us-ascii?Q?p5tcilbwyOvrJZ+zBSo3N/SxnvKjdgM9OlFb7dKbafJmS7wrnSEfuqt6amdj?=
+ =?us-ascii?Q?5YIEBCEZsWHxjUy0iBgyCfVy8pF5ZKLCG+CrZz1Bm02XM9FNpxPApIThqs3r?=
+ =?us-ascii?Q?xPz6PL8eAGrw+N38EBTU/s7AAOMW4bMokVuvIecuYs4ANLO1gucnA1bz9gBb?=
+ =?us-ascii?Q?nXdfWQ85hFH//HrugLE+TSmReUEZduaO8CqlKk9MLGZtSchzE5VoFxXLwpmo?=
+ =?us-ascii?Q?MA4RMw7U3T39PtbEhKyzU+GUom1CqBTey0v4Rz84FMObxUR83obRBsqbPYzb?=
+ =?us-ascii?Q?/I8wuPf8MdtK/BWbgeIX6zR62++86RMjpJvb/1dUWHh0+vALVY3dGvBWB+wr?=
+ =?us-ascii?Q?qE08QbpSwRHiv14TMuhLlC26Wg9aGj5+uO+k4DCrUOxRChS8yUYRyq/0ilfz?=
+ =?us-ascii?Q?n5vUhBLOKzj6WseWeW/3jZFzg8yj/RUlWwUgxVhfc9jc+iJPHyn17R8mvPHX?=
+ =?us-ascii?Q?tblzsIFsXfKhcQbmUkjtpXFDkIr3i1p6/+AkeIo5Hq6cnLkG+ciXs1dCMC/z?=
+ =?us-ascii?Q?9Ufhuiz+dHed1bfPfqMWOIwDW7S4Eyz17/dJRz9pXUhj2des+8PNjfev1Sh0?=
+ =?us-ascii?Q?PCm69msc9PR9u1Yjnw886GqdT92nU+ACkfe+tcIWqQXxowMe5oRWVMgZPgY1?=
+ =?us-ascii?Q?W/WwjWyE+zkSFeGCZ1C6SBKDee0UeUTsec+i0PqC1nUTTj2X5KaNkxtK+vLG?=
+ =?us-ascii?Q?dhizHDLnKoud97l3OhKV8LJD/ar7AkgtbxkT0rVrBTrHnC4J99oc3S9f+U0K?=
+ =?us-ascii?Q?4/DIxG/qxpXRLB6zexQplrTQyEizNFGxxgVUV2KtaJpEIZSukpW94eJwl+Qe?=
+ =?us-ascii?Q?UxR+pYOs3TMiEnyh2QN2jFxs9vLZkj0oa1F8ZOy5dYoiA+m4BjXdVeWiQe0n?=
+ =?us-ascii?Q?hO9zJu9msPk01nBvVOKKMV1bSxFmOW02Xuqq?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA3PR11MB8120.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?H+kJnarzwP2JDFZJWzP0hruy3TuPBHD0nDSAEbDmmOTApHmilT1TO0R9JOyf?=
+ =?us-ascii?Q?+FOj3Z7gkYllJcAYm1U/3z5H4FDCSjO+/syg+L459Eoq5mCYZtOuIjmJqUO3?=
+ =?us-ascii?Q?FYZOwLyXGIv+6NCX14IYPaXzbz0EwhfxJeg0UOKw/2vFytGIgltG5XSQMP6v?=
+ =?us-ascii?Q?b1+TneDrErs7wfqMQFZK2xyQnI/9Ru4R9/G8Newxoy1j19QEaKANMh7Ru7Vs?=
+ =?us-ascii?Q?azUsv+jhYmjiDB9jPdEvVbvQv/Uka2EieBXl1vrNUhsne77oRVOWAaDLSvE1?=
+ =?us-ascii?Q?ZI+NRU7+VBMyhX89lAlpQUnbtR06qU7+kdAMjHPJLo0I6mFWvDraOrerk03c?=
+ =?us-ascii?Q?JPBbixjKAWKa+bNB666o3o+0++0o+bwXhEwp3QBLD9pg4SB8PyB8mhiVOZS2?=
+ =?us-ascii?Q?oiqFj8uv9tU/3+I3KoWFZihrstMOBiDsGRg77HsMfkqf9AjAajUtdeNtCZSN?=
+ =?us-ascii?Q?zO+RaeBonNdd8WnlVs+Gm8L1ZqfXDYavInuvu93Jd/SGWIOwQNCLw6A9b0sM?=
+ =?us-ascii?Q?OhcZaYSCdLWpOUvGaJp/QJRPwp4iyG5dhz8v48Gy/QhLhpwvZDqDqTeC9DkQ?=
+ =?us-ascii?Q?B8CTXu9iwxw4sB9VKd8XQqaBbUPdDzOfRw4d1D4KbdKEswHStjyqCCXLRn2W?=
+ =?us-ascii?Q?P3sqA4rctvkJscohKIv+fgDG13uq0anhpUe2S6kEe5yEY7KJgc67IJFVVpeV?=
+ =?us-ascii?Q?L19fcF7pGrz61Ka7SWSN/yxjzGnN5bVyBZ7pysCUAzDEpKo43We/zCDCY3Y0?=
+ =?us-ascii?Q?lNbk1XJY8hq5CoYaA3yh30gmDqC6UeVspRlOkWEiNhZOIyU+qBjuf19LU/QR?=
+ =?us-ascii?Q?IOAHbwipPDoOfkTEXbogqBUhA8Sc53QMVUSW8jRizX6xff4FH+AQTXPmUh+B?=
+ =?us-ascii?Q?yD9eJRqV9qGngUB1wOG85xb6RjoBbqxuEJoZANN4frWBBCOKRDW3Nfy2j3JK?=
+ =?us-ascii?Q?e8xcg7qYjXGMKAKNmrFp/ZetNzy25Rdw3uTnYysxMCOhkFqkOLMJ3+20b6h8?=
+ =?us-ascii?Q?vHia4EtwXxYgoObaArifi1MvaKJNHY04x8fsE/D+dEZQnN6bQ7WudqZu9eGN?=
+ =?us-ascii?Q?NhjLng7WITL2NJM0lBPLzu/qR7jkaozTRS+OB4XbfjX+BXaxh6BUmiuEouGF?=
+ =?us-ascii?Q?eq7NZHsIrXuvQnYQR1yqqo9Ilhnbr/uxPhcyNv0eHbiJ9evDGfM0wsWHcGyn?=
+ =?us-ascii?Q?MufCvnb3UdiE8T/ffVgBOODyH73dQwtwHo+C6YVHBYwQxnf1DXAmAKnx2BHo?=
+ =?us-ascii?Q?b/irheww0HDAN6ty4REc6fUhKFZt/4QB0silzQpejkTEbV6YaQYklhiiZB/P?=
+ =?us-ascii?Q?Y8NyXbxB+IvBpMUk7dO51nTCPIE6n6i3DDbCKEK0FNbQmiPPf+LpvwxdgPn1?=
+ =?us-ascii?Q?9TPgLJVI5d+U8ia/6PZEjbL6hxaYDzfVdR2sq+bITJpCn0mkgi+Bf79LuW5H?=
+ =?us-ascii?Q?CdKpwOZqeRmdi6EfEESaZL+pOz8eiompv/X/7c62IKhApTeGUFv4i4GJdV+a?=
+ =?us-ascii?Q?ZzedfKeSAM1vbmmHFAKB9ivNJ2v091DXsdGb/Ktnj5v206YJSg4tDWxz6X6b?=
+ =?us-ascii?Q?yRwL+isZQ0oYyAfdsI9+0jsUKPTuDiglYXkGjU/LbwCjE5S2gDo6JnaiqIHk?=
+ =?us-ascii?Q?gA=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-
-From: Crystal Wood <crwood@redhat.com>
-
-The basic functionality came with the consolidation; now hook up the
-command line options, and add documentation and tests.
-
-Cc: John Kacur <jkacur@redhat.com>
-Cc: Costa Shulyupin <costa.shul@redhat.com>
-Link: https://lore.kernel.org/20250907022325.243930-8-crwood@redhat.com
-Reviewed-by: Tomas Glozar  <tglozar@redhat.com>
-Signed-off-by: Crystal Wood <crwood@redhat.com>
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- Documentation/tools/rtla/common_options.rst   | 61 +++++++++++++++
- .../tools/rtla/common_osnoise_options.rst     |  8 ++
- .../tools/rtla/common_timerlat_options.rst    | 74 +++----------------
- Documentation/tools/rtla/rtla-hwnoise.rst     |  2 +
- .../tools/rtla/rtla-osnoise-hist.rst          |  2 +
- Documentation/tools/rtla/rtla-osnoise-top.rst |  2 +
- .../tools/rtla/rtla-timerlat-hist.rst         |  2 +
- .../tools/rtla/rtla-timerlat-top.rst          |  2 +
- tools/tracing/rtla/src/actions.c              |  8 +-
- tools/tracing/rtla/src/actions.h              |  2 +-
- tools/tracing/rtla/src/osnoise_hist.c         | 20 +++++
- tools/tracing/rtla/src/osnoise_top.c          | 20 +++++
- tools/tracing/rtla/src/timerlat_hist.c        |  6 +-
- tools/tracing/rtla/src/timerlat_top.c         |  6 +-
- tools/tracing/rtla/tests/osnoise.t            | 27 ++++++-
- 15 files changed, 168 insertions(+), 74 deletions(-)
-
-diff --git a/Documentation/tools/rtla/common_options.rst b/Documentation/tools/rtla/common_options.rst
-index 2dc1575210aa..77ef35d3f831 100644
---- a/Documentation/tools/rtla/common_options.rst
-+++ b/Documentation/tools/rtla/common_options.rst
-@@ -53,6 +53,67 @@
- **--trace-buffer-size** *kB*
-         Set the per-cpu trace buffer size in kB for the tracing output.
- 
-+**--on-threshold** *action*
-+
-+        Defines an action to be executed when tracing is stopped on a latency threshold
-+        specified by |threshold|.
-+
-+        Multiple --on-threshold actions may be specified, and they will be executed in
-+        the order they are provided. If any action fails, subsequent actions in the list
-+        will not be executed.
-+
-+        Supported actions are:
-+
-+        - *trace[,file=<filename>]*
-+
-+          Saves trace output, optionally taking a filename. Alternative to -t/--trace.
-+          Note that nlike -t/--trace, specifying this multiple times will result in
-+          the trace being saved multiple times.
-+
-+        - *signal,num=<sig>,pid=<pid>*
-+
-+          Sends signal to process. "parent" might be specified in place of pid to target
-+          the parent process of rtla.
-+
-+        - *shell,command=<command>*
-+
-+          Execute shell command.
-+
-+        - *continue*
-+
-+          Continue tracing after actions are executed instead of stopping.
-+
-+        Example:
-+
-+        $ rtla |tool| |thresharg| 20 --on-threshold trace
-+        --on-threshold shell,command="grep ipi_send |tracer|\_trace.txt"
-+        --on-threshold signal,num=2,pid=parent
-+
-+        This will save a trace with the default filename "|tracer|\_trace.txt", print its
-+        lines that contain the text "ipi_send" on standard output, and send signal 2
-+        (SIGINT) to the parent process.
-+
-+        Performance Considerations:
-+
-+        |actionsperf|
-+
-+**--on-end** *action*
-+
-+        Defines an action to be executed at the end of tracing.
-+
-+        Multiple --on-end actions can be specified, and they will be executed in the order
-+        they are provided. If any action fails, subsequent actions in the list will not be
-+        executed.
-+
-+        See the documentation for **--on-threshold** for the list of supported actions, with
-+        the exception that *continue* has no effect.
-+
-+        Example:
-+
-+        $ rtla |tool| -d 5s --on-end trace
-+
-+        This runs rtla with the default options, and saves trace output at the end.
-+
- **-h**, **--help**
- 
-         Print help menu.
-diff --git a/Documentation/tools/rtla/common_osnoise_options.rst b/Documentation/tools/rtla/common_osnoise_options.rst
-index d73de2d58f5f..bd3c4f499193 100644
---- a/Documentation/tools/rtla/common_osnoise_options.rst
-+++ b/Documentation/tools/rtla/common_osnoise_options.rst
-@@ -1,3 +1,11 @@
-+.. |threshold|  replace:: **-a/--auto**, **-s/--stop**, or **-S/--stop-total**
-+.. |thresharg|  replace:: -s
-+.. |tracer|     replace:: osnoise
-+
-+.. |actionsperf| replace::
-+        Due to implementational limitations, actions might be delayed
-+        up to one second after tracing is stopped.
-+
- **-a**, **--auto** *us*
- 
-         Set the automatic trace mode. This mode sets some commonly used options
-diff --git a/Documentation/tools/rtla/common_timerlat_options.rst b/Documentation/tools/rtla/common_timerlat_options.rst
-index 7854368f1827..1f5d024b53aa 100644
---- a/Documentation/tools/rtla/common_timerlat_options.rst
-+++ b/Documentation/tools/rtla/common_timerlat_options.rst
-@@ -1,3 +1,13 @@
-+.. |threshold|  replace:: **-a/--auto**, **-i/--irq**, or **-T/--thread**
-+.. |thresharg|  replace:: -T
-+.. |tracer|     replace:: timerlat
-+
-+.. |actionsperf| replace::
-+        For time-sensitive actions, it is recommended to run **rtla timerlat** with BPF
-+        support and RT priority. Note that due to implementational limitations, actions
-+        might be delayed up to one second after tracing is stopped if BPF mode is not
-+        available or disabled.
-+
- **-a**, **--auto** *us*
- 
-         Set the automatic trace mode. This mode sets some commonly used options
-@@ -55,67 +65,3 @@
-         Set timerlat to run without workload, waiting for the user to dispatch a per-cpu
-         task that waits for a new period on the tracing/osnoise/per_cpu/cpu$ID/timerlat_fd.
-         See linux/tools/rtla/sample/timerlat_load.py for an example of user-load code.
--
--**--on-threshold** *action*
--
--        Defines an action to be executed when tracing is stopped on a latency threshold
--        specified by **-i/--irq** or **-T/--thread**.
--
--        Multiple --on-threshold actions may be specified, and they will be executed in
--        the order they are provided. If any action fails, subsequent actions in the list
--        will not be executed.
--
--        Supported actions are:
--
--        - *trace[,file=<filename>]*
--
--          Saves trace output, optionally taking a filename. Alternative to -t/--trace.
--          Note that nlike -t/--trace, specifying this multiple times will result in
--          the trace being saved multiple times.
--
--        - *signal,num=<sig>,pid=<pid>*
--
--          Sends signal to process. "parent" might be specified in place of pid to target
--          the parent process of rtla.
--
--        - *shell,command=<command>*
--
--          Execute shell command.
--
--        - *continue*
--
--          Continue tracing after actions are executed instead of stopping.
--
--        Example:
--
--        $ rtla timerlat -T 20 --on-threshold trace
--        --on-threshold shell,command="grep ipi_send timerlat_trace.txt"
--        --on-threshold signal,num=2,pid=parent
--
--        This will save a trace with the default filename "timerlat_trace.txt", print its
--        lines that contain the text "ipi_send" on standard output, and send signal 2
--        (SIGINT) to the parent process.
--
--        Performance Considerations:
--
--        For time-sensitive actions, it is recommended to run **rtla timerlat** with BPF
--        support and RT priority. Note that due to implementational limitations, actions
--        might be delayed up to one second after tracing is stopped if BPF mode is not
--        available or disabled.
--
--**--on-end** *action*
--
--        Defines an action to be executed at the end of **rtla timerlat** tracing.
--
--        Multiple --on-end actions can be specified, and they will be executed in the order
--        they are provided. If any action fails, subsequent actions in the list will not be
--        executed.
--
--        See the documentation for **--on-threshold** for the list of supported actions, with
--        the exception that *continue* has no effect.
--
--        Example:
--
--        $ rtla timerlat -d 5s --on-end trace
--
--        This runs rtla timerlat with default options and save trace output at the end.
-diff --git a/Documentation/tools/rtla/rtla-hwnoise.rst b/Documentation/tools/rtla/rtla-hwnoise.rst
-index fb1c52bbc00b..3a7163c02ac8 100644
---- a/Documentation/tools/rtla/rtla-hwnoise.rst
-+++ b/Documentation/tools/rtla/rtla-hwnoise.rst
-@@ -1,5 +1,7 @@
- .. SPDX-License-Identifier: GPL-2.0
- 
-+.. |tool| replace:: hwnoise
-+
- ============
- rtla-hwnoise
- ============
-diff --git a/Documentation/tools/rtla/rtla-osnoise-hist.rst b/Documentation/tools/rtla/rtla-osnoise-hist.rst
-index f2e79d22c4c4..1fc60ef26106 100644
---- a/Documentation/tools/rtla/rtla-osnoise-hist.rst
-+++ b/Documentation/tools/rtla/rtla-osnoise-hist.rst
-@@ -1,3 +1,5 @@
-+.. |tool| replace:: osnoise hist
-+
- ===================
- rtla-osnoise-hist
- ===================
-diff --git a/Documentation/tools/rtla/rtla-osnoise-top.rst b/Documentation/tools/rtla/rtla-osnoise-top.rst
-index 5d75d1394516..b1cbd7bcd4ae 100644
---- a/Documentation/tools/rtla/rtla-osnoise-top.rst
-+++ b/Documentation/tools/rtla/rtla-osnoise-top.rst
-@@ -1,3 +1,5 @@
-+.. |tool| replace:: osnoise top
-+
- ===================
- rtla-osnoise-top
- ===================
-diff --git a/Documentation/tools/rtla/rtla-timerlat-hist.rst b/Documentation/tools/rtla/rtla-timerlat-hist.rst
-index b2d8726271b3..4923a362129b 100644
---- a/Documentation/tools/rtla/rtla-timerlat-hist.rst
-+++ b/Documentation/tools/rtla/rtla-timerlat-hist.rst
-@@ -1,3 +1,5 @@
-+.. |tool| replace:: timerlat hist
-+
- =====================
- rtla-timerlat-hist
- =====================
-diff --git a/Documentation/tools/rtla/rtla-timerlat-top.rst b/Documentation/tools/rtla/rtla-timerlat-top.rst
-index ab6cb60c9083..50968cdd2095 100644
---- a/Documentation/tools/rtla/rtla-timerlat-top.rst
-+++ b/Documentation/tools/rtla/rtla-timerlat-top.rst
-@@ -1,3 +1,5 @@
-+.. |tool| replace:: timerlat top
-+
- ====================
- rtla-timerlat-top
- ====================
-diff --git a/tools/tracing/rtla/src/actions.c b/tools/tracing/rtla/src/actions.c
-index aaf0808125d7..991139f9069f 100644
---- a/tools/tracing/rtla/src/actions.c
-+++ b/tools/tracing/rtla/src/actions.c
-@@ -127,17 +127,17 @@ actions_add_continue(struct actions *self)
-  * actions_parse - add an action based on text specification
-  */
- int
--actions_parse(struct actions *self, const char *trigger)
-+actions_parse(struct actions *self, const char *trigger, const char *tracefn)
- {
- 	enum action_type type = ACTION_NONE;
--	char *token;
-+	const char *token;
- 	char trigger_c[strlen(trigger)];
- 
- 	/* For ACTION_SIGNAL */
- 	int signal = 0, pid = 0;
- 
- 	/* For ACTION_TRACE_OUTPUT */
--	char *trace_output;
-+	const char *trace_output;
- 
- 	strcpy(trigger_c, trigger);
- 	token = strtok(trigger_c, ",");
-@@ -160,7 +160,7 @@ actions_parse(struct actions *self, const char *trigger)
- 	case ACTION_TRACE_OUTPUT:
- 		/* Takes no argument */
- 		if (token == NULL)
--			trace_output = "timerlat_trace.txt";
-+			trace_output = tracefn;
- 		else {
- 			if (strlen(token) > 5 && strncmp(token, "file=", 5) == 0) {
- 				trace_output = token + 5;
-diff --git a/tools/tracing/rtla/src/actions.h b/tools/tracing/rtla/src/actions.h
-index b10a19d55c49..a4f9b570775b 100644
---- a/tools/tracing/rtla/src/actions.h
-+++ b/tools/tracing/rtla/src/actions.h
-@@ -48,5 +48,5 @@ int actions_add_trace_output(struct actions *self, const char *trace_output);
- int actions_add_signal(struct actions *self, int signal, int pid);
- int actions_add_shell(struct actions *self, const char *command);
- int actions_add_continue(struct actions *self);
--int actions_parse(struct actions *self, const char *trigger);
-+int actions_parse(struct actions *self, const char *trigger, const char *tracefn);
- int actions_perform(struct actions *self);
-diff --git a/tools/tracing/rtla/src/osnoise_hist.c b/tools/tracing/rtla/src/osnoise_hist.c
-index 2c2cdd467a67..dffb6d0a98d7 100644
---- a/tools/tracing/rtla/src/osnoise_hist.c
-+++ b/tools/tracing/rtla/src/osnoise_hist.c
-@@ -462,6 +462,8 @@ static void osnoise_hist_usage(char *usage)
- 		"						       in nanoseconds",
- 		"	     --warm-up: let the workload run for s seconds before collecting data",
- 		"	     --trace-buffer-size kB: set the per-cpu trace buffer size in kB",
-+		"	     --on-threshold <action>: define action to be executed at stop-total threshold, multiple are allowed",
-+		"	     --on-end <action>: define action to be executed at measurement end, multiple are allowed",
- 		NULL,
- 	};
- 
-@@ -531,6 +533,8 @@ static struct common_params
- 			{"filter",		required_argument,	0, '5'},
- 			{"warm-up",		required_argument,	0, '6'},
- 			{"trace-buffer-size",	required_argument,	0, '7'},
-+			{"on-threshold",	required_argument,	0, '8'},
-+			{"on-end",		required_argument,	0, '9'},
- 			{0, 0, 0, 0}
- 		};
- 
-@@ -692,6 +696,22 @@ static struct common_params
- 		case '7':
- 			params->common.buffer_size = get_llong_from_str(optarg);
- 			break;
-+		case '8':
-+			retval = actions_parse(&params->common.threshold_actions, optarg,
-+					       "osnoise_trace.txt");
-+			if (retval) {
-+				err_msg("Invalid action %s\n", optarg);
-+				exit(EXIT_FAILURE);
-+			}
-+			break;
-+		case '9':
-+			retval = actions_parse(&params->common.end_actions, optarg,
-+					       "osnoise_trace.txt");
-+			if (retval) {
-+				err_msg("Invalid action %s\n", optarg);
-+				exit(EXIT_FAILURE);
-+			}
-+			break;
- 		default:
- 			osnoise_hist_usage("Invalid option");
- 		}
-diff --git a/tools/tracing/rtla/src/osnoise_top.c b/tools/tracing/rtla/src/osnoise_top.c
-index 5a56c276f9da..95418f7ecc96 100644
---- a/tools/tracing/rtla/src/osnoise_top.c
-+++ b/tools/tracing/rtla/src/osnoise_top.c
-@@ -291,6 +291,8 @@ static void osnoise_top_usage(struct osnoise_params *params, char *usage)
- 		"						       in nanoseconds",
- 		"	     --warm-up s: let the workload run for s seconds before collecting data",
- 		"	     --trace-buffer-size kB: set the per-cpu trace buffer size in kB",
-+		"	     --on-threshold <action>: define action to be executed at stop-total threshold, multiple are allowed",
-+		"	     --on-end: define action to be executed at measurement end, multiple are allowed",
- 		NULL,
- 	};
- 
-@@ -371,6 +373,8 @@ struct common_params *osnoise_top_parse_args(int argc, char **argv)
- 			{"filter",		required_argument,	0, '1'},
- 			{"warm-up",		required_argument,	0, '2'},
- 			{"trace-buffer-size",	required_argument,	0, '3'},
-+			{"on-threshold",	required_argument,	0, '4'},
-+			{"on-end",		required_argument,	0, '5'},
- 			{0, 0, 0, 0}
- 		};
- 
-@@ -511,6 +515,22 @@ struct common_params *osnoise_top_parse_args(int argc, char **argv)
- 		case '3':
- 			params->common.buffer_size = get_llong_from_str(optarg);
- 			break;
-+		case '4':
-+			retval = actions_parse(&params->common.threshold_actions, optarg,
-+					       "osnoise_trace.txt");
-+			if (retval) {
-+				err_msg("Invalid action %s\n", optarg);
-+				exit(EXIT_FAILURE);
-+			}
-+			break;
-+		case '5':
-+			retval = actions_parse(&params->common.end_actions, optarg,
-+					       "osnoise_trace.txt");
-+			if (retval) {
-+				err_msg("Invalid action %s\n", optarg);
-+				exit(EXIT_FAILURE);
-+			}
-+			break;
- 		default:
- 			osnoise_top_usage(params, "Invalid option");
- 		}
-diff --git a/tools/tracing/rtla/src/timerlat_hist.c b/tools/tracing/rtla/src/timerlat_hist.c
-index a9154f83f1a9..606c1688057b 100644
---- a/tools/tracing/rtla/src/timerlat_hist.c
-+++ b/tools/tracing/rtla/src/timerlat_hist.c
-@@ -1047,14 +1047,16 @@ static struct common_params
- 			params->deepest_idle_state = get_llong_from_str(optarg);
- 			break;
- 		case '\5':
--			retval = actions_parse(&params->common.threshold_actions, optarg);
-+			retval = actions_parse(&params->common.threshold_actions, optarg,
-+					       "timerlat_trace.txt");
- 			if (retval) {
- 				err_msg("Invalid action %s\n", optarg);
- 				exit(EXIT_FAILURE);
- 			}
- 			break;
- 		case '\6':
--			retval = actions_parse(&params->common.end_actions, optarg);
-+			retval = actions_parse(&params->common.end_actions, optarg,
-+					       "timerlat_trace.txt");
- 			if (retval) {
- 				err_msg("Invalid action %s\n", optarg);
- 				exit(EXIT_FAILURE);
-diff --git a/tools/tracing/rtla/src/timerlat_top.c b/tools/tracing/rtla/src/timerlat_top.c
-index 4f1ce72d6a05..fc479a0dcb59 100644
---- a/tools/tracing/rtla/src/timerlat_top.c
-+++ b/tools/tracing/rtla/src/timerlat_top.c
-@@ -783,14 +783,16 @@ static struct common_params
- 			params->deepest_idle_state = get_llong_from_str(optarg);
- 			break;
- 		case '9':
--			retval = actions_parse(&params->common.threshold_actions, optarg);
-+			retval = actions_parse(&params->common.threshold_actions, optarg,
-+					       "timerlat_trace.txt");
- 			if (retval) {
- 				err_msg("Invalid action %s\n", optarg);
- 				exit(EXIT_FAILURE);
- 			}
- 			break;
- 		case '\1':
--			retval = actions_parse(&params->common.end_actions, optarg);
-+			retval = actions_parse(&params->common.end_actions, optarg,
-+					       "timerlat_trace.txt");
- 			if (retval) {
- 				err_msg("Invalid action %s\n", optarg);
- 				exit(EXIT_FAILURE);
-diff --git a/tools/tracing/rtla/tests/osnoise.t b/tools/tracing/rtla/tests/osnoise.t
-index 7574ec6a5a53..e3c89d45a6bb 100644
---- a/tools/tracing/rtla/tests/osnoise.t
-+++ b/tools/tracing/rtla/tests/osnoise.t
-@@ -8,7 +8,8 @@ set_timeout 2m
- check "verify help page" \
- 	"osnoise --help" 0 "osnoise version"
- check "verify the --priority/-P param" \
--	"osnoise top -P F:1 -c 0 -r 900000 -d 10s -q"
-+	"osnoise top -P F:1 -c 0 -r 900000 -d 10s -q -S 1 --on-threshold shell,command=\"tests/scripts/check-priority.sh osnoise/ SCHED_FIFO 1\"" \
-+	2 "Priorities are set correctly"
- check "verify the --stop/-s param" \
- 	"osnoise top -s 30 -T 1" 2 "osnoise hit stop tracing"
- check "verify the  --trace param" \
-@@ -22,4 +23,28 @@ check "verify the --entries/-E param" \
- check_with_osnoise_options "apply default period" \
- 	"osnoise hist -s 1" 2 period_us=600000000
- 
-+# Actions tests
-+check "trace output through -t with custom filename" \
-+	"osnoise hist -S 2 -t custom_filename.txt" 2 "^  Saving trace to custom_filename.txt$"
-+check "trace output through --on-threshold trace" \
-+	"osnoise hist -S 2 --on-threshold trace" 2 "^  Saving trace to osnoise_trace.txt$"
-+check "trace output through --on-threshold trace with custom filename" \
-+	"osnoise hist -S 2 --on-threshold trace,file=custom_filename.txt" 2 "^  Saving trace to custom_filename.txt$"
-+check "exec command" \
-+	"osnoise hist -S 2 --on-threshold shell,command='echo TestOutput'" 2 "^TestOutput$"
-+check "multiple actions" \
-+	"osnoise hist -S 2 --on-threshold shell,command='echo -n 1' --on-threshold shell,command='echo 2'" 2 "^12$"
-+check "hist stop at failed action" \
-+	"osnoise hist -S 2 --on-threshold shell,command='echo -n 1; false' --on-threshold shell,command='echo -n 2'" 2 "^1# RTLA osnoise histogram$"
-+check "top stop at failed action" \
-+	"timerlat top -T 2 --on-threshold shell,command='echo -n abc; false' --on-threshold shell,command='echo -n defgh'" 2 "^abc" "defgh"
-+check "hist with continue" \
-+	"osnoise hist -S 2 -d 1s --on-threshold shell,command='echo TestOutput' --on-threshold continue" 0 "^TestOutput$"
-+check "top with continue" \
-+	"osnoise top -q -S 2 -d 1s --on-threshold shell,command='echo TestOutput' --on-threshold continue" 0 "^TestOutput$"
-+check "hist with trace output at end" \
-+	"osnoise hist -d 1s --on-end trace" 0 "^  Saving trace to osnoise_trace.txt$"
-+check "top with trace output at end" \
-+	"osnoise top -d 1s --on-end trace" 0 "^  Saving trace to osnoise_trace.txt$"
-+
- test_end
--- 
-2.50.1
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SA3PR11MB8120.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 09c4a26d-d9ac-442d-8477-08de006c3879
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Sep 2025 21:56:33.6640
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 7OwzBPFp1FAABTfczKO67SdLBHGHN3EJ0wEW6aq6ljgbY1Qy1x1Y04oglpnK/1/fAmcghKQ+3yGiHOyiE/vBYJxOKXiWcFOiPYQC3gv0yeM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH3PPFF8C186950
+X-OriginatorOrg: intel.com
 
 
+> -----Original Message-----
+> From: Yosry Ahmed <yosry.ahmed@linux.dev>
+> Sent: Tuesday, September 30, 2025 2:20 PM
+> To: Sridhar, Kanchana P <kanchana.p.sridhar@intel.com>
+> Cc: linux-kernel@vger.kernel.org; linux-mm@kvack.org;
+> hannes@cmpxchg.org; nphamcs@gmail.com; chengming.zhou@linux.dev;
+> usamaarif642@gmail.com; ryan.roberts@arm.com; 21cnbao@gmail.com;
+> ying.huang@linux.alibaba.com; akpm@linux-foundation.org;
+> senozhatsky@chromium.org; sj@kernel.org; kasong@tencent.com; linux-
+> crypto@vger.kernel.org; herbert@gondor.apana.org.au;
+> davem@davemloft.net; clabbe@baylibre.com; ardb@kernel.org;
+> ebiggers@google.com; surenb@google.com; Accardi, Kristen C
+> <kristen.c.accardi@intel.com>; Gomes, Vinicius <vinicius.gomes@intel.com>=
+;
+> Feghali, Wajdi K <wajdi.k.feghali@intel.com>; Gopal, Vinodh
+> <vinodh.gopal@intel.com>
+> Subject: Re: [PATCH v12 20/23] mm: zswap: Per-CPU acomp_ctx resources
+> exist from pool creation to deletion.
+>=20
+> > > > > >  static struct zswap_pool *zswap_pool_create(char *compressor)
+> > > > > >  {
+> > > > > >  	struct zswap_pool *pool;
+> > > > > > @@ -263,19 +287,43 @@ static struct zswap_pool
+> > > > > *zswap_pool_create(char *compressor)
+> > > > > >
+> > > > > >  	strscpy(pool->tfm_name, compressor, sizeof(pool-
+> >tfm_name));
+> > > > > >
+> > > > > > -	pool->acomp_ctx =3D alloc_percpu(*pool->acomp_ctx);
+> > > > > > +	/* Many things rely on the zero-initialization. */
+> > > > > > +	pool->acomp_ctx =3D alloc_percpu_gfp(*pool->acomp_ctx,
+> > > > > > +					   GFP_KERNEL |
+> __GFP_ZERO);
+> > > > > >  	if (!pool->acomp_ctx) {
+> > > > > >  		pr_err("percpu alloc failed\n");
+> > > > > >  		goto error;
+> > > > > >  	}
+> > > > > >
+> > > > > > -	for_each_possible_cpu(cpu)
+> > > > > > -		mutex_init(&per_cpu_ptr(pool->acomp_ctx, cpu)-
+> >mutex);
+> > > > > > -
+> > > > > > +	/*
+> > > > > > +	 * This is serialized against CPU hotplug operations. Hence,
+> cores
+> > > > > > +	 * cannot be offlined until this finishes.
+> > > > > > +	 * In case of errors, we need to goto "ref_fail" instead of
+> "error"
+> > > > > > +	 * because there is no teardown callback registered anymore,
+> for
+> > > > > > +	 * cpuhp_state_add_instance() to de-allocate resources as it
+> rolls
+> > > > > back
+> > > > > > +	 * state on cores before the CPU on which error was
+> encountered.
+> > > > > > +	 */
+> > > > > >  	ret =3D
+> > > > > cpuhp_state_add_instance(CPUHP_MM_ZSWP_POOL_PREPARE,
+> > > > > >  				       &pool->node);
+> > > > > > +
+> > > > > > +	/*
+> > > > > > +	 * We only needed the multi state instance add operation to
+> invoke
+> > > > > the
+> > > > > > +	 * startup callback for all cores without cores getting offli=
+ned.
+> Since
+> > > > > > +	 * the acomp_ctx resources will now only be de-allocated
+> when the
+> > > > > pool
+> > > > > > +	 * is destroyed, we can safely remove the multi state
+> instance. This
+> > > > > > +	 * minimizes (but does not eliminate) the possibility of
+> > > > > > +	 * zswap_cpu_comp_prepare() being invoked again due to a
+> CPU
+> > > > > > +	 * offline-online transition. Removing the instance also
+> prevents race
+> > > > > > +	 * conditions between CPU onlining after initial pool creatio=
+n,
+> and
+> > > > > > +	 * acomp_ctx_dealloc() freeing the acomp_ctx resources.
+> > > > > > +	 * Note that we delete the instance before checking the error
+> status
+> > > > > of
+> > > > > > +	 * the node list add operation because we want the instance
+> removal
+> > > > > even
+> > > > > > +	 * in case of errors in the former.
+> > > > > > +	 */
+> > > > > > +
+> 	cpuhp_state_remove_instance(CPUHP_MM_ZSWP_POOL_PREPARE,
+> > > > > &pool->node);
+> > > > > > +
+> > > > >
+> > > > > I don't understand what's wrong with the current flow? We call
+> > > > > cpuhp_state_remove_instance() in pool deletion before freeing up =
+the
+> > > > > per-CPU resources. Why is this not enough?
+> > > >
+> > > > This is because with the changes proposed in this commit, the multi
+> state
+> > > > add instance is used during pool creation as a way to create acomp_=
+ctx
+> > > > resources correctly with just the offline/online state transitions
+> guaranteed
+> > > > by CPU hotplug, without needing additional mutex locking as in the
+> > > mainline.
+> > > > In other words, the consistency wrt safely creating/deleting acomp_=
+ctx
+> > > > resources with the changes being proposed is accomplished by the
+> hotplug
+> > > > state transitions guarantee. Stated differently, the hotplug framew=
+ork
+> > > > helps enforce the new design during pool creation without relying o=
+n the
+> > > > mutex and subsequent simplifications during zswap_[de]compress()
+> > > > proposed in this commit.
+> > > >
+> > > > Once this is done, deleting the CPU hotplug state seems cleaner, an=
+d
+> > > reflects
+> > > > the change in policy of the resources' lifetime. It also prevents r=
+ace
+> > > conditions
+> > > > between zswap_cpu_comp_prepare() and acomp_ctx_dealloc() called
+> from
+> > > > zswap_pool_destroy().
+> > >
+> > > How is a race with zswap_cpu_comp_prepare() possible if we call
+> > > cpuhp_state_remove_instance() before acomp_ctx_dealloc() in the pool
+> > > deletion path?
+> >
+> > Good point. I agree, calling cpuhp_state_remove_instance() before
+> > acomp_ctx_dealloc() will not cause a race. However, if we consider the
+> > time from pool creation to deletion: if there is an online-offline-onli=
+ne
+> > transition, can zswap_cpu_comp_prepare() race with the call to
+> > cpuhp_state_remove_instance()? If so, wouldn't this cause unpredictable
+> > behavior?
+>=20
+> How will this race happen?
+>=20
+> cpuhp_state_remove_instance() is called while a pool is being destroyed,
+> while zswap_cpu_comp_prepare() while the pool is being created or during
+> CPU onlining.
+>=20
+> The former cannot race, and the latter should be synchronized by hotplug
+> code.
+>=20
+> >
+> > I agree, this can occur even with the code in this commit, but there is
+> > less risk of things going wrong because we remove the CPU hotplug
+> > instance before the pool is added to zswap_pools.
+> >
+> > Further, removing the CPU hotplug instance directly codifies the
+> > intent of this commit, i.e., to use this as a facilitator and manage me=
+mory
+> > allotted to acomp_ctx, but not to manage those resources' lifetime
+> > thereafter.
+> >
+> > Do you see any advantage of keeping the call to
+> cpuhp_state_remove_instance()
+> > occur before acomp_ctx_dealloc() in zswap_pool_destroy()? Please let me
+> know
+> > if I am missing something.
+>=20
+> What about more CPUs going online? Without the hotplug instance we don't
+> get per-CPU resources for those. We are not using the hotplug mechanism
+> just to facilitate per-CPU resource allocation, we use it to
+> automatically allocate resources for newly onlined CPUs without having
+> to preallocate for all possible CPUs.
+
+This is an excellent point! It makes sense, I will move the call to
+cpuhp_state_remove_instance() to be before the call to
+acomp_ctx_dealloc() in zswap_pool_destroy(). Thanks for catching this.
+
+>=20
+> Also, this makes the code more difficult to reason about, and is an
+> unncessary change from the current behavior.
+
+Ok.
+
+>=20
+> The only change needed is to drop the teardown callback and do the
+> freeing in the pool destruction path instead.
+
+Just to summarize: besides moving the call to cpuhp_state_remove_instance()
+to zswap_pool_destroy() and more concise comments/commit logs, are there
+other changes to be made in patch 20?
+
+Thanks,
+Kanchana
 
