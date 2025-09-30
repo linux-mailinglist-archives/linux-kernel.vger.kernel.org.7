@@ -1,324 +1,184 @@
-Return-Path: <linux-kernel+bounces-837085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F833BAB484
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 06:07:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD119BAB606
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 06:34:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 554BA7A434A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 04:05:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31B50192301A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 04:34:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F36B524BD1A;
-	Tue, 30 Sep 2025 04:06:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 448AE248878;
+	Tue, 30 Sep 2025 04:34:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ueRPZ12Y"
-Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013014.outbound.protection.outlook.com [40.93.201.14])
+	dkim=pass (2048-bit key) header.d=gibson.dropbear.id.au header.i=@gibson.dropbear.id.au header.b="gWsBngYr"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E22D1E1A17;
-	Tue, 30 Sep 2025 04:06:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759205215; cv=fail; b=ifFKv5umhfKG2bKlw9VFlletXf62+eptJc7Y3dyQ1Iedx95prEVd6iz/5TxA7DqDShVXyzjsxLC0Aod3Z/2O2E+uzyCy/YjljkGzgmuv13lDPIGiwZxAU11hHx8tYNeRLdiSa29IqxSBYNJiRrAw/4EdBE49RIKjiJH2at/jioE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759205215; c=relaxed/simple;
-	bh=TaVVWvQkKDLv54VRT/8ZnTDqYe1j9CJjw5r6MYJyQ6o=;
-	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=oBvelNOX24PV+UjrT5PMaRDcsI+hgXMg5yp+xy3P4JsWWSWQSWGk6mh2Gx53hWU1tGEd3KcD3T4YXeWJYFJNYARS8wYGh+X/prTYQtJhkbul5LXxcNM7Mq0dUJ9ZbzmbNYVNTfImSVBsgxqhpSxkEXlz/1cPbg8o379rlKTsZ9Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ueRPZ12Y; arc=fail smtp.client-ip=40.93.201.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LdbYUe1sDOJI5R6+LAd+T7AAfN6CxCe9NUJQSUxTLnIjsKeCeJj3x86T+BMePL7TBSEKsH02nqvMKJvJTEplIsY1Z4n55nXFvXTwGttTO8VqiQie3XD7e3Nzc8YWpB7rN0lzutXMPFtnKuWwIc8sEosp1mmyNMjIiNH6HEXr7kdm2g/6xV2ykiae8D/crhehRVKn8f9Ym3qmXe1gud6Ew6ciNOWuN1Q7YUmUIAnbcyRLXFVF9h+HAm5ENB8i4Ui0t2x/IG8G52h/QPFa+9k8WcdKkufDPX1R2J40vUc1SP1s5ekR+XMtrz+gQmEey/S6kAH1ADgsvGJU7tstXTRu0Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hG1+gMRQdfaBYpC9ah6/ZSru12Oc+V3RjhTNpAS17kU=;
- b=soapuygmGKlplmN7F3oqlrNmLt3fwKnPh8Y3HenCrM3R0nZec9rf4jm0XNXy4yXFv7BYdvHFnUuaH6zdCFsTnEaxA7Ybcbpt/pxUgl9yosPC7v6ZAPkh/VMZHHVuQ/QJGuptZkoplhDST6FwUW3p7SHay4zIBmfmB/m6+bpR6WSm/OgTmXbKywZbijtSJtdSznViP2U8UUpZTDZtWV9+IXQrBbDn/L0ciL46kAtRT6wxrz1YCqzg2aet3tv3K4pOs+1calObp8cqALfrU3qN91DAwOpbDWrldypqNFjxC6zS+vMlKqNxdZc4j+7J+VdHzyrCn8UOPeA2JDupHlhrDw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hG1+gMRQdfaBYpC9ah6/ZSru12Oc+V3RjhTNpAS17kU=;
- b=ueRPZ12YlOZLSduQXDf4v7+zyeGUdZYiMCbojLsWt5VWf8bUdtlSCXFfDgbeu0Lyk/CKn+ZzJ6z83CvjxEZEL83j62wEffbvwI0lXqT0CcbGWB7IdWx/5UHTwMAaVqm6fPweTSbx8KwxAeHS+XSm70H8+9xgWzPNB1oqnOz7i8Y=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MW4PR12MB7142.namprd12.prod.outlook.com (2603:10b6:303:220::6)
- by SJ2PR12MB9139.namprd12.prod.outlook.com (2603:10b6:a03:564::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.17; Tue, 30 Sep
- 2025 04:06:50 +0000
-Received: from MW4PR12MB7142.namprd12.prod.outlook.com
- ([fe80::e5b2:cd7c:ba7d:4be3]) by MW4PR12MB7142.namprd12.prod.outlook.com
- ([fe80::e5b2:cd7c:ba7d:4be3%7]) with mapi id 15.20.9160.015; Tue, 30 Sep 2025
- 04:06:49 +0000
-Message-ID: <652a4391-4825-46bf-9f64-52e0ef751dff@amd.com>
-Date: Mon, 29 Sep 2025 21:06:47 -0700
-User-Agent: Mozilla Thunderbird
-From: "Koralahalli Channabasappa, Smita" <skoralah@amd.com>
-Subject: Re: [RFC PATCH 6/6] cxl/region, dax/hmem: Guard CXL DAX region
- creation and tighten HMEM deps
-To: "Zhijian Li (Fujitsu)" <lizhijian@fujitsu.com>,
- Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>,
- "linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "nvdimm@lists.linux.dev" <nvdimm@lists.linux.dev>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
-Cc: Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Dave Jiang <dave.jiang@intel.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>, Matthew Wilcox
- <willy@infradead.org>, Jan Kara <jack@suse.cz>,
- "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <len.brown@intel.com>,
- Pavel Machek <pavel@kernel.org>, Li Ming <ming.li@zohomail.com>,
- Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
- Ying Huang <huang.ying.caritas@gmail.com>,
- "Xingtao Yao (Fujitsu)" <yaoxt.fnst@fujitsu.com>,
- Peter Zijlstra <peterz@infradead.org>, Greg KH <gregkh@linuxfoundation.org>,
- Nathan Fontenot <nathan.fontenot@amd.com>,
- Terry Bowman <terry.bowman@amd.com>, Robert Richter <rrichter@amd.com>,
- Benjamin Cheatham <benjamin.cheatham@amd.com>,
- PradeepVineshReddy Kodamati <PradeepVineshReddy.Kodamati@amd.com>
-References: <20250822034202.26896-1-Smita.KoralahalliChannabasappa@amd.com>
- <20250822034202.26896-7-Smita.KoralahalliChannabasappa@amd.com>
- <2397ebb5-ae63-402e-bc23-339c74be9210@fujitsu.com>
-Content-Language: en-US
-In-Reply-To: <2397ebb5-ae63-402e-bc23-339c74be9210@fujitsu.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SJ0PR03CA0230.namprd03.prod.outlook.com
- (2603:10b6:a03:39f::25) To MW4PR12MB7142.namprd12.prod.outlook.com
- (2603:10b6:303:220::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF462CCC5;
+	Tue, 30 Sep 2025 04:34:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759206846; cv=none; b=Ey8gjDQfpiDRqk1MViKNdNVvu2IPX6K+sknbJOmdVJbhDVmyj6/h/Sip4K6FZkemolzp/2ToaPZrfrOEqKvZd/0MiO/ygPGQv94VFGDJKG+oyLNQ1l2Dch3wWOWut42Ka8WAj7oGHiX/RGag9561dz2al9/c0J5+Mv8v0QAcAAM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759206846; c=relaxed/simple;
+	bh=zyloaIfApG3Ugb2d/dothpTRpX4hO6cuE3NKVcalncY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yv+6NuzNCN3tZinhUqX+L/q5REJCBFMBtP2yd+VImW4IDn6OCLXfnYu3by2sxxUQxIuPLvZBY4xe6NL377tr+JlmKWLSfWJMeA3fv395XB+7Z1CvgbHTWKOOKB+RN6WXtkVUuJzxZzMtU/btgBy6MXROea4tMXaZbDpYqgMRBls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gibson.dropbear.id.au; spf=pass smtp.mailfrom=gandalf.ozlabs.org; dkim=pass (2048-bit key) header.d=gibson.dropbear.id.au header.i=@gibson.dropbear.id.au header.b=gWsBngYr; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gibson.dropbear.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gandalf.ozlabs.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=gibson.dropbear.id.au; s=202508; t=1759206839;
+	bh=bVfiIX18jPAm6SdUaAX59gr3TaU/bljhvf/jzuLZ9bk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gWsBngYrRgBaQxTz5ZqFLNoEYCwjVCLR9v6ZZV7reLU8Wp5Ibj4vsnZZPeM+4zSBf
+	 jLFoUIpAJKf5jHAYYWL9XQXWF0BdJzSi7OceYq8qJet4fXgU8jK9pbaVaYxjMTNgSe
+	 zOZkx4ZqeUSKrpDVho9IO06d9Sl+jgbNaN/N5ZNrx/xvjvH/PHuZ5DvOvu4xCKH19G
+	 nXthOpXDK1adkZ1Cq4lp7OlxLR71LdCBouDg4iZMze/ooUWW6v0sbmosPhLLYOZKQG
+	 CGX1UdmPIV2eSBijKCzhh2XEB+mTun0np2JrnP9gdHQQkkHIy100GLQrzr7zYujTmJ
+	 RxC47fARnRznQ==
+Received: by gandalf.ozlabs.org (Postfix, from userid 1007)
+	id 4cbQDl4jDgz4w2P; Tue, 30 Sep 2025 14:33:59 +1000 (AEST)
+Date: Tue, 30 Sep 2025 14:07:56 +1000
+From: David Gibson <david@gibson.dropbear.id.au>
+To: Ayush Singh <ayush@beagleboard.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Rob Herring <robh@kernel.org>, Andrew Davis <afd@ti.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	devicetree@vger.kernel.org, Jason Kridner <jkridner@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree-compiler@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: Device tree representation of (hotplug) connectors: discussion
+ at ELCE
+Message-ID: <aNtXnAeLj3xNwkyE@zatzit>
+References: <20250916084631.77127e29@bootlin.com>
+ <aMt5kEI_WRDOf-Hw@zatzit>
+ <20250918094409.0d5f92ec@bootlin.com>
+ <aMzhgDYOuG4qNcc0@zatzit>
+ <dcbeaff2-0147-4a27-bb46-e247e42810d7@beagleboard.org>
+ <aNJVqSpdAJzGliNx@zatzit>
+ <20250923114849.2385736d@bootlin.com>
+ <CAMuHMdWmDwedyPnBERs-tSYEG15nMUuh9u1Q+W_FdquHpUC0-A@mail.gmail.com>
+ <aNNvaN4xJtKBFmWT@zatzit>
+ <cd9763b7-919a-4b44-a347-f1491d9584b9@beagleboard.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW4PR12MB7142:EE_|SJ2PR12MB9139:EE_
-X-MS-Office365-Filtering-Correlation-Id: fc375d5f-c580-4a22-bf97-08ddffd6c7bc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UHRQUS8wbXkrZlJJeXA2VjNYV3dtTHBacElQRG0yYXBnclBqRkVLSzJWREtn?=
- =?utf-8?B?QjA1Sy9scE5aajVzM1lhR0R1MmttV1FmTUhUWWtDdmpaWUd1MExibjJsTUpo?=
- =?utf-8?B?NHVTejdGRzIrT0pqSzRxVlRTL2lFM1dXN2NNS2wvcUd3TThwMXQ5QzkzZGFY?=
- =?utf-8?B?SXhkaDYxWTVXcTIzQk1jUjNXZm5LeGJ6UjI2TzY0S1JFNTJSa3FPOGlhRWpP?=
- =?utf-8?B?MFd1SlAxYzBwNW5aM1g2YVpDMXVLUGtSU3RwYXpSR3RuNWVCSUJiaEpyRXVU?=
- =?utf-8?B?Skk5WXZtWFE4WTl6TW16OWRHWDRJdmVrMjJKTTdVL0R3VE5FSkl3MXc2UU9R?=
- =?utf-8?B?YXlzdGd3clZRalJ1VlNKMnRzT0VPenhyblBNZDFUaVVvOWplUkh6RDJnYnBo?=
- =?utf-8?B?MGJleU9abXJud3FMY3QyOWUzcVFLNGN2V3B3Mk9aUEVCaURlM29XMmJVMWxm?=
- =?utf-8?B?dDJFMEVDYjlhQ210WnhTKzNlTlp4VE85VVladWw3ME01Sjg4SzY3K1BKZEhB?=
- =?utf-8?B?SWt2NnpiRUdrVmNzR1hYaVFSaSs0SW5nbGtrbTJaZjNBRm9hb0t3NDI4Qktt?=
- =?utf-8?B?K0ZZUFpPUUVyQi9JN0ZVVjdoQkVOYk54RzVTQzBxRmVod1UzK1YyazdTeSty?=
- =?utf-8?B?VnVrbUJPNEhZVmJsWXJnNmJPNGhSWXV1SnRHSDNXUDVtOHpPRWJpM0hLL0Ey?=
- =?utf-8?B?aWZpQk1pR3dEd1JNT1ZLQU53NmZGcHZYR1NTaWpyNlgwU2RDNW9rQ2xncUUr?=
- =?utf-8?B?SGtXd2FNSFhOSC9tT0xnaGx3QUxqRlhpV3d6dW5tMzNqbGY1UUk2Z2ZRSEFX?=
- =?utf-8?B?VkM1d2hLM2xqZDhkUVp6ZTllWTRkSFNycWpCNjUwRGU4TjZjQ3RhRzVkRUJU?=
- =?utf-8?B?NzlkOUowYnpZOGQxQUFFbVFEbVBCRUdyb2xJM3ZBR3ljYUM4Tm9HdHA2UlJQ?=
- =?utf-8?B?d00raUhYUnBWS1RhTTJWcXdoY1JlK0xrQnYvUjVDRnVRY1ZRcTBvd3ZCR1Yy?=
- =?utf-8?B?Q2QvU2pqTmcvcVpac0tVeTU0V0hVdUxaWEhQa3FNd21lTElrMzZvb0VPamtH?=
- =?utf-8?B?QzlRaENEVFg5T3dkR1lLRGovMVYrT0NIQ1hjUnk0YXhnNDJhSGhHQWFyZmE5?=
- =?utf-8?B?ZWNKWUxJc0VGREFRQ2pEV0tpemdzdnJrNW9JRU5hK2xhSFVzTnUyQVNlWmFm?=
- =?utf-8?B?cGcxWlFHWjVtZVhNdHNSanpEbjEyNkFXL1YrblIvd3cwY0VrSUFBWTBPUlJ0?=
- =?utf-8?B?a25xTVoycVRsMHpuVTJ3OXlrWUNDQ2Y4ZTdYTks0YmlhT1hCUW8rVk51dzdK?=
- =?utf-8?B?a3RUK0xveGw0ci9VWks0U0RSVXVqNVNpZzRuRFBxTkxSU2MvQ1BXaENGRS9H?=
- =?utf-8?B?b2cyZzNicmtwRDVaSDdiQU9GVjFjOTFUbGZFaVhOaGxqczl3MEFJT2VFNDlp?=
- =?utf-8?B?WExpMFN2bkRZcEJhV0lXZzU2dWhBbXBRTm92ZDhWODdQdVBoRUE3ZHBiWW40?=
- =?utf-8?B?OTNWdGJXZi9BUzhHbEx6OXJZUDJjNTF3STJybHp2MjJSUW9yVTZlWGdmUU1h?=
- =?utf-8?B?TTJ5bEhRL0g0SFgvYnl0TmZ3MGQ0ekl0OVl4anJQQjJPYlZIN2h0YmlCcHR6?=
- =?utf-8?B?TnVuTGk0OHVocmV4bzRtQ2czUitvUkRxWkI5cklOQ0JSNVdFSmdvREg5QVpr?=
- =?utf-8?B?cDU1L1I4SjQrUlFQRkwzVWptUnJlUjd6NmJORXNTdTZFWHFtcTJHRDRmQ29F?=
- =?utf-8?B?a2RMSEdrQWRqYUF3dytzeER0YTZmM0dBaW9mQ0NVaStYWEM5Q1FDUEw3ZDhC?=
- =?utf-8?B?SEJhUURXcHNPdklaNXMwVXpFd3VVOXhzTkRIdXBxVXhmamJOVmhjT1ZvR1FB?=
- =?utf-8?B?OElCbXJsbnJLUWNYOHdaSFB1TnN3OXN4eCttMStXc3piUHdtM2VGUG01SnRS?=
- =?utf-8?Q?YuhRNYu7671GOExSc3GJeD02U38Xql+S?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR12MB7142.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?eFNESzdFc3kxZElPZDNPMjRqYWc4QW5tVllxUkxDaGRXd01BRjdMZ3hxdzhY?=
- =?utf-8?B?akFQenVsQnAxTU9qN3E0cnE1U3Z5a1ZYTnNNWmo0SFV1ZjRaWGZ0d2VwZ056?=
- =?utf-8?B?akZBbjV4WWJsZzhWNnRqOWtwc0RrUEV4OVBwb1RRYk9KY211bDZ3cXNpZGxw?=
- =?utf-8?B?Mkl4ZkN3RVp4Qzc0d1prRStuUVNtZTRScjJqZ3poc0xvSmxDeHVwZUJrT3F6?=
- =?utf-8?B?ZTJORUh5b1lFU3J0QU1RU3JZRzdXenREd0Fqc2grQXdxUmd1ZHVaQUVRVE5o?=
- =?utf-8?B?UU52alppRkVabzRleFh1V05LSXppVGtYNGxIWkkvQXltbzZzZk5qU2xma1dZ?=
- =?utf-8?B?Q0ViYTlGOWJNMkVrQ0RVYVAwQ0xxdUNNVElkc3pxWDZHMVFpUFA2QmJWUlNh?=
- =?utf-8?B?cFNFamJYQVpuaWdaVzJmR1F6T2RyNHd1d01JVmdUTm9mUWVHek83RVZIZ1Jn?=
- =?utf-8?B?cXdiTm5CRVFSOFhDelRFMkhxeVQ5ak9ORXhRTmJKYnRvL0VLWmhJVWpVMk4r?=
- =?utf-8?B?cXh6bzJpREFGWE5vNStsalo4YWdiNTd5eE5QdHJhZTNzNVp5REpCdkI0a1hT?=
- =?utf-8?B?bDIxMmdaM2FkRVVpVVJBWVY2MThhSXpTUHlZNlBDN3p1ZDV1M0F3YmpSc3RE?=
- =?utf-8?B?ZUYyU0dNcVMzMkZFenU0eTAxYVJsRXMxMDN2VGpRL25FK1h2V2pzOVA4UVJu?=
- =?utf-8?B?MUFiMTUxZ2JrN0pna24xVmRBWlNwQmNMSHc5aHMrYkRncXF4OUw0OGRRYWpC?=
- =?utf-8?B?Z3djOEFOeUZtOFAxaDc0MGkvdkVjaW5oZlExN1d2SXB6cks5QXpOSEMyVlJu?=
- =?utf-8?B?OHF2RVdqL25pdDlJekdONXlINmdYZUcvSzczZzI4U1VSVWc1ZWtQWlMvYXM2?=
- =?utf-8?B?MUE2aUJTc01zaGJKZnpFTTF4TE1sekZHcDRnQzc5bk8wR1RGME50RTFkYTZz?=
- =?utf-8?B?ZXJKbkJGOVV2b0xlQTVISWtibnRqYVkrRlZYaWRLZERvR09pMjVjRnNQY2N3?=
- =?utf-8?B?VUdpajJzK1JJQXh4SlVUYWxGQkxLamZZNW1NNG1QbkpGOExUem1XL1NhWk8v?=
- =?utf-8?B?cUlIMHRBb1FlS0piMUdBalpGZlhUVUZmRlk0eDZkc2IyZjB6cks2NHhTcW92?=
- =?utf-8?B?RkcwMFZUQ0Z0NUdoSUlyM2NBMUk1dHhxWFdJNFFwa0hKc2ZTZk5mcFFzdjgw?=
- =?utf-8?B?ZDVyVzZkZWdkcVNPQmJSR1dvQTJiajI3YjFhYS9LUUdINHdwSzErUXh1Rjcr?=
- =?utf-8?B?QTNVaTZpSjEzK0FXZVhncXlOV0RsNllUMU9jdEpnaGZxOFd0Z2kyS1MzYXRY?=
- =?utf-8?B?SzZuY085czlHNys4NzF3RForNWpXZXlGcXRIZW4rVlBybUtSTFY2b29ROUMy?=
- =?utf-8?B?NlBQc0QvaWJNcFBCNGhYK1NFbE1hUHI0eWx5K2g3eEh0WG56b3pwdXlvREUr?=
- =?utf-8?B?UFFvakdZZFptSHgrM2hwVklQRllFbEtJdHgrNGNQcjhKZUFhalVFa29yNmVD?=
- =?utf-8?B?YUkyZ2tZWFBnTFEySnMrdWxPWGd3ekYvSllwQVZxYTNXZ2VGaUxnNGhhTTh4?=
- =?utf-8?B?NG5zaldBM2ZQNzEvR1FPNGhEb1pWZlpFVWh2QlI0UExCVEJlN211UzFGYlJ0?=
- =?utf-8?B?TExGTHh5NExLSHhqUUsydWRNMWxBZmxwM0NCbDlmYncxYUI4T1ZGTExsYTN4?=
- =?utf-8?B?WXFDejhaRkFxdS9jam9DUkg4SjhyUkdvWGVQMy9SV1dFaVpkRzg3Q09pRlZu?=
- =?utf-8?B?dDVGYjBVOUFwVzdhWldzMHVXTkhXUjZxK3VBajR1TFU0c29LMmluZ0dCcjlr?=
- =?utf-8?B?T0o3d0pudXl5cU5VWnZmVEFxK3hBQ2N5WDBlVGJTVXllMUVjaEsyeG1vdjlj?=
- =?utf-8?B?M0lFVTZiVTR6QUlwS3VUbjljcHhHSmlGRmw1eGw0S2lsNFF3MWR5Zk5hbGd5?=
- =?utf-8?B?ekh2M0N1MEN5djg2QzY5Z0FCOXU4dHZWZ2RMQ0Y3UmNha1ZJL2ZONlpxeEZ1?=
- =?utf-8?B?UEo5NTZTUmg3aFI0WDhGVTFSWVlvMS9YaG9wOW4rYVZ2ZzZRVHRnM0xVK1l1?=
- =?utf-8?B?eWsrRU9CNG8rMUFUNnljRzRBcFpLRUtPd3dyeWZWbWovcEh5RDQwN3kxekJV?=
- =?utf-8?Q?ZQz4NNdlEAoTvmXpAvNbv+Oed?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fc375d5f-c580-4a22-bf97-08ddffd6c7bc
-X-MS-Exchange-CrossTenant-AuthSource: MW4PR12MB7142.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2025 04:06:49.8349
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Mth+6WF7SZ75xLj4QkGsu3Ha5GADXXcU1w8x5rNkLnLf9H1Leenpvyxvoq/8hzoNaPvH+la/DHhp9TcLZvf9hA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB9139
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="38U+DYi6yaZOgmqL"
+Content-Disposition: inline
+In-Reply-To: <cd9763b7-919a-4b44-a347-f1491d9584b9@beagleboard.org>
 
-On 8/31/2025 11:21 PM, Zhijian Li (Fujitsu) wrote:
-> 
-> 
-> On 22/08/2025 11:42, Smita Koralahalli wrote:
->> Prevent cxl_region_probe() from unconditionally calling into
->> devm_cxl_add_dax_region() when the DEV_DAX_CXL driver is not enabled.
->> Wrap the call with IS_ENABLED(CONFIG_DEV_DAX_CXL) so region probe skips
->> DAX setup cleanly if no consumer is present.
-> 
-> A question came to mind:
->    
-> Why is the case of `CXL_REGION && !DEV_DAX_CXL` necessary? It appears to fall back to the hmem driver in that scenario.
-> If so, could we instead simplify it as follows?
->    
-> --- a/drivers/cxl/Kconfig
-> +++ b/drivers/cxl/Kconfig
-> @@ -200,6 +200,7 @@ config CXL_REGION
->           depends on SPARSEMEM
->           select MEMREGION
->           select GET_FREE_REGION
-> +       select DEV_DAX_CXL
-> 
 
-I’m not entirely sure about the full implications of disabling 
-CXL_REGION when DEV_DAX_CXL is disabled.
+--38U+DYi6yaZOgmqL
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The primary intent of this patch was to address the scenario where 
-DEV_DAX_HMEM=y and CXL=m, which results in DEV_DAX_CXL being disabled. 
-In that configuration, ownership of the soft-reserved ranges incorrectly 
-falls back to hmem instead of being managed by CXL. This leads to 
-misleading output in /proc/iomem, as I illustrated earlier.
+On Wed, Sep 24, 2025 at 10:33:50PM +0530, Ayush Singh wrote:
+>=20
+> On 9/24/25 09:41, David Gibson wrote:
+> > On Tue, Sep 23, 2025 at 12:29:27PM +0200, Geert Uytterhoeven wrote:
+> > > Hi Herv=E9,
+> > >=20
+> > > On Tue, 23 Sept 2025 at 11:49, Herve Codina <herve.codina@bootlin.com=
+> wrote:
+> > > > On Tue, 23 Sep 2025 18:09:13 +1000
+> > > > David Gibson <david@gibson.dropbear.id.au> wrote:
+> > > > > Ah, right.  To be clear: we absolutely don't want multiple addons
+> > > > > altering the same nodes.  But I think we could do that in ways ot=
+her
+> > > > > than putting everything under a connector.  This is exactly why I
+> > > > > think we should think this through as an end-to-end problem, rath=
+er
+> > > > > trying to do it as a tweak to the existing (crap) overlay system.
+> > > > >=20
+> > > > > So, if we're thinking of this as an entirely new way of updating =
+the
+> > > > > base dt - not "an overlay" - we can decide on the rules to ensure=
+ that
+> > > > > addition and removal is sane.  Two obvious ones I think we should
+> > > > > definitely have are:
+> > > > >=20
+> > > > > a) Addons can only add completely new nodes, never modify existing
+> > > > >     ones.  This means that whatever addons are present at runtime,
+> > > > >     every node has a single well defined owner (either base board=
+ or
+> > > > >     addon).
+> > > > In this rule I suppose that "never modify existing ones" should be =
+understood
+> > > > as "never modify, add or remove properties in existing ones". Becau=
+se, of course
+> > > > adding a full node in a existing one is allowed (rule b).
+> > > What if the add-on board contains a provider for the base board.
+> > > E.g. the connector has a clock input, fed by an optional clock genera=
+tor
+> > > on the add-on board.  Hooking that into the system requires modifying
+> > > a clocks property in the base board, cfr. [1].
+> > > Or is there some other solution?
+> > Hmm.  My first inclination would be that this case is not in scope for
+> > the protocol we're trying to design now.  If the widget provides
+> > things to the base board as well as the other way around, it's no
+> > longer an "addon" for the purposes of this spec.
+> >=20
+> > But it's possible I've underestimated how common / useful such a case
+> > is.
+> >=20
+> > Note that I'd expect the existing overlay mechanism to still be
+> > around.  It may be ugly and not very well thought out, but its
+> > drawbacks are much less severe if you're not dealing with hot unplug.
+> >=20
+>=20
+> Well, while that was not an initial use-case in my mind, external clock
+> inputs are a valid use-case when talking about connectors for board heade=
+rs
+> specifically (e.g. pocketbeagle connector).
 
-That said, as you pointed out, dax_hmem is not exclusive to CXL, so I 
-will drop this patch in v2. The next revision will therefore not cover 
-the case of DEV_DAX_HMEM=y and CXL=m. I would appreciate input on how 
-best to handle this scenario efficiently.
+I guess I'm not familiar enough with modern embedded hardware.  I'm
+having a hard time wrapping my head around what's going on here.  If
+the external clock input is optional (hence under a connector), how is
+anything on the base board dependent on it?  If nothing on the base
+board is dependent, why do we need to modify its properties to
+represent it?
 
-Thanks
-Smita
+Is this a design flaw in the clocks binding?
 
->>
->> In parallel, update DEV_DAX_HMEM’s Kconfig to depend on
->> !CXL_BUS || (CXL_ACPI && CXL_PCI) || m. This ensures:
->>
->> Built-in (y) HMEM is allowed when CXL is disabled, or when the full
->> CXL discovery stack is built-in. Module (m) HMEM remains always possible.
-> 
-> Hmm,IIUC, `dax_hmem` isn't exclusively designed for CXL. It could support other special memory types (e.g., HBM).
-> 
-> Thanks
-> Zhijian
-> 
-> 
-> 
->>
->> Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
->> ---
->> I did not want to override Dan’s original approach, so I am posting this
->> as an RFC.
->>
->> This patch addresses a corner case when applied on top of Patches 1–5.
->>
->> When DEV_DAX_HMEM=y and CXL=m, the DEV_DAX_CXL option ends up disabled.
->> In that configuration, with Patches 1–5 applied, ownership of the Soft
->> Reserved ranges falls back to dax_hmem. As a result, /proc/iomem looks
->> like this:
->>
->> 850000000-284fffffff : CXL Window 0
->>     850000000-284fffffff : region3
->>       850000000-284fffffff : Soft Reserved
->>         850000000-284fffffff : dax0.0
->>           850000000-284fffffff : System RAM (kmem)
->> 2850000000-484fffffff : CXL Window 1
->>     2850000000-484fffffff : region4
->>       2850000000-484fffffff : Soft Reserved
->>         2850000000-484fffffff : dax1.0
->>           2850000000-484fffffff : System RAM (kmem)
->> 4850000000-684fffffff : CXL Window 2
->>     4850000000-684fffffff : region5
->>       4850000000-684fffffff : Soft Reserved
->>         4850000000-684fffffff : dax2.0
->>           4850000000-684fffffff : System RAM (kmem)
->>
->> In this case the dax devices are created by dax_hmem, not by dax_cxl.
->> Consequently, a "cxl disable-region <regionx>" operation does not
->> unregister these devices. In addition, the dmesg output can be misleading
->> to users, since it looks like the CXL region driver created the devdax
->> devices:
->>
->>     devm_cxl_add_region: cxl_acpi ACPI0017:00: decoder0.2: created region5
->>     ..
->>     ..
->>
->> This patch addresses those situations. I am not entirely sure how clean
->> the approach of using “|| m” is, so I am sending it as RFC for feedback.
->> ---
->>    drivers/cxl/core/region.c | 4 +++-
->>    drivers/dax/Kconfig       | 1 +
->>    2 files changed, 4 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
->> index 71cc42d05248..6a2c21e55dbc 100644
->> --- a/drivers/cxl/core/region.c
->> +++ b/drivers/cxl/core/region.c
->> @@ -3617,7 +3617,9 @@ static int cxl_region_probe(struct device *dev)
->>    					p->res->start, p->res->end, cxlr,
->>    					is_system_ram) > 0)
->>    			return 0;
->> -		return devm_cxl_add_dax_region(cxlr);
->> +		if (IS_ENABLED(CONFIG_DEV_DAX_CXL))
->> +			return devm_cxl_add_dax_region(cxlr);
->> +		return 0;
->>    	default:
->>    		dev_dbg(&cxlr->dev, "unsupported region mode: %d\n",
->>    			cxlr->mode);
->> diff --git a/drivers/dax/Kconfig b/drivers/dax/Kconfig
->> index 3683bb3f2311..fd12cca91c78 100644
->> --- a/drivers/dax/Kconfig
->> +++ b/drivers/dax/Kconfig
->> @@ -30,6 +30,7 @@ config DEV_DAX_PMEM
->>    config DEV_DAX_HMEM
->>    	tristate "HMEM DAX: direct access to 'specific purpose' memory"
->>    	depends on EFI_SOFT_RESERVE
->> +	depends on !CXL_BUS || (CXL_ACPI && CXL_PCI) || m
->>    	select NUMA_KEEP_MEMINFO if NUMA_MEMBLKS
->>    	default DEV_DAX
->>    	help
+--=20
+David Gibson (he or they)	| I'll have my music baroque, and my code
+david AT gibson.dropbear.id.au	| minimalist, thank you, not the other way
+				| around.
+http://www.ozlabs.org/~dgibson
 
+--38U+DYi6yaZOgmqL
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEO+dNsU4E3yXUXRK2zQJF27ox2GcFAmjbV44ACgkQzQJF27ox
+2Gf7TRAAiB+fR8M9ZW43173P4pNm6v8KnaRxK8YZ+rfvserkiNQswx/mbPhinuJw
+9eQQ0d92E4ujz2cx971xnqofCvHIckzoWQkH84BjobvIvSF7iTFjJqStC2n1MmSo
+qbchBzgTUjU/ZM9krPtGWxsRFgMTwFuKfeucn3TY5KHcsGMDt2TspLw513mfDIXS
+7KwY0Z3GR7uodsHKWncQWkQmShG5iPrRNbjBCcjSd8Kjl9InsLsg944+y0cDrw87
+8/Q4WfiJS/BBTIqR+/uZvEi4p4fQzKXLMu9OMt2yEpf2trI1sa701qeZC8ASJSx1
+NuyZHjXS8KMX009EOkjTFwNiNNihsSrOQfHXetSEwqnZuMYe5oQMYDzx5GhBHZG7
+obQDBBNYmMysa3OUxQG9uhuof8XEexPITgatd2FPd1YhnlJ8Whyovpdt6Mj8ZsAK
+kcGPJaT5P4ysEPSPt+cs0zIW0coOXRPCzTeZntPPjLzDihI5sU66MIJq64jrTykq
+f4VEkmOH2s909mQVJpPomtsk2idX3G5YV13th74+/8VE3jutC9gjJaaazATosBe7
+gJiCvB9VBEQPPpZ+1e1PawcO7dzL5eKEJ/0rcYovYMUE3vmlpmFHLN8WIR9sKDDW
+250Khxb8y/6kItvvmK9uz3buo28Hl0e42zt+3eFj/RABpN3/J+k=
+=8jCr
+-----END PGP SIGNATURE-----
+
+--38U+DYi6yaZOgmqL--
 
