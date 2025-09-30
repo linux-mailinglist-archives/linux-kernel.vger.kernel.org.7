@@ -1,222 +1,169 @@
-Return-Path: <linux-kernel+bounces-837480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 887F4BAC672
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:04:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F0C0BAC65D
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:03:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D8AB482955
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 10:04:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D57B4320D40
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 10:03:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 886442F6171;
-	Tue, 30 Sep 2025 10:04:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE9F2F60D8;
+	Tue, 30 Sep 2025 10:03:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="mflzYbfN"
-Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="s+YO5Euq"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E16A2F3C3F;
-	Tue, 30 Sep 2025 10:04:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759226668; cv=pass; b=UqiyoIxQzfeVjkVVlzE/PLxIh2ahF/mNNgUDFXlyRTAY3nMTLnJMr+Vyn5Ub0fly2wtFLTTaPo8HX6EwBx2wfNzdF0u+J7VqheQ6GLxz68ff/xn+KPlQbyyA42S/7fZ5dcvkY/VUondz3ivymy3UAFpGnPLXTCTXwMhhhuGScW4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759226668; c=relaxed/simple;
-	bh=6EQ4vH+cXU+iD5frPHGq/5qWqLvTXSCAmlO5LVRklyA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=K/r9kIzclQpjHzXdoeB7hgSBnF3CbUb/7qI3DByLXosqTpnqIS32T/MZgIklTlY7lyurKgBOAsqnCGQSYsULEW9GOCUl5DXxTGRPecBVq5ZO/7eUe4aNXrp+xztet9l8p2xE6ID712nGt0piz7N+rifJbT0/86mWo9BrZfVD2lk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=mflzYbfN; arc=pass smtp.client-ip=136.143.188.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
-ARC-Seal: i=1; a=rsa-sha256; t=1759226640; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=mvbioyt5TZ0Bjifd5WH/AHYzbKrXx5QlgQ8yN3wfKPUIKBhZ9JRg6yaXSARU4SxHFN5GItlfo1rtcv2m1+0FSVFBQsmm+MhmrIcB75cAfglCk9jRDEtTLJ11K0E3sVDflN6HlhWlAHm1r3Vj2eXWf9b8O5XskDGy5S+gXv9vIkU=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1759226640; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=X+2Kt7ia+spiy1WSmoZW7Xpn1ruAr5JNqGp2P8AiYYo=; 
-	b=RdRa7o2bPSVGPpCdYbWw9XIjwnjogUIbonJHU2pqjwkeTFHxcP5fcKzqGedE0/0CpugUnPwXBxGArn6ewNfdP//HWZbzftq6lJqEd+qIEIS6ccgViBwNVCb+bvc39Pwr6mKItrDPcvxLrwUNMxdufEkCkeC3HD8z6khxmwayXzA=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=icenowy.me;
-	spf=pass  smtp.mailfrom=uwu@icenowy.me;
-	dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1759226640;
-	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=X+2Kt7ia+spiy1WSmoZW7Xpn1ruAr5JNqGp2P8AiYYo=;
-	b=mflzYbfNcZdJYS4Hb+wkeIHFdK9qS4IdJyyP4wsRvvjIIgBg78f+N01tx5XSLG7S
-	9UWgol1LaIcb2aD6swjnFMbJoans2pattEJ9dIpJbAQa4UFtlxFgcRMDYLjmVB1YQFG
-	T47gb1tDabaui9IzUw2NgHNmYGNPW+myCwNOL4HjMVvLTiASOu7p6mFhyq7r+Xf0m8I
-	uU+7saeDsHcOFcuIVwU7uVBBKnbGOKBlM/AtC14Hc4fDCneaTMiiDpRt7dXPgCFmVGs
-	Beb/lng8xgLBqDb3rkhuTlOzkxE1GHuD8mHIVi5pRgb16TjAdcOR751lkfyUXEkDWr6
-	MiHgkAIRug==
-Received: by mx.zohomail.com with SMTPS id 1759226638649745.844690092961;
-	Tue, 30 Sep 2025 03:03:58 -0700 (PDT)
-From: Icenowy Zheng <uwu@icenowy.me>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Michael Zhu <michael.zhu@starfivetech.com>,
-	Drew Fustini <drew@beagleboard.org>,
-	Yao Zi <ziyao@disroot.org>,
-	E Shattow <e@freeshell.de>
-Cc: devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Icenowy Zheng <uwu@icenowy.me>
-Subject: [PATCH v2 2/2] riscv: dts: starfive: add DT for Orange Pi RV
-Date: Tue, 30 Sep 2025 18:03:18 +0800
-Message-ID: <20250930100318.2131968-2-uwu@icenowy.me>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250930100318.2131968-1-uwu@icenowy.me>
-References: <20250930100318.2131968-1-uwu@icenowy.me>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 961202144C7;
+	Tue, 30 Sep 2025 10:03:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759226613; cv=none; b=AXhr8g8cX8bb+t+86xvvRt+eHDF9yKHF4sn656Kw63TaT1CUzjT36h0KnRe0SH9u6Kn82pCbq65Pgq76450iiMivBo5yqMq0mt4SuX65J9K/fh9uDI/09psnEueC+n2hHbkfvuS6AFaT2y/sjoFiNjc1wv2LARjZMB3by14IJyQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759226613; c=relaxed/simple;
+	bh=C+uDptFGPX/XX4u4uX2laDXbZLRztM/wuZjt8KMmf5U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hCgChOxpDRjsBqbq8TsCb6+qc0+9rdVliLd4ymTMEBlzdor84iVpyrzxdE8Xhya2r3yNbUCzZydEx6Q6PO5j3aPc0GD37gAtMZk/KJMZwRhpn7QPrLVyObRKJJN9Eka6Hm2uYXmg9znTAWHHYBdIWE2c1kzkyXjRChG+7ICi2LI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=s+YO5Euq; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58TLfT63030414;
+	Tue, 30 Sep 2025 10:03:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:sender:subject:to; s=pp1;
+	 bh=MMjnW8ZGY5JsHDTDmnnEqn4fKP+OrNKDNH+uh8F2tUM=; b=s+YO5EuqJV6A
+	jVerq/WC5ng0P43OgyRV6NWlC2S6jF0BaCIOtkasYLn9mBTyiZOz8h2Xd99A/C13
+	n00B0b17MIwkqbShKIauba2S38l7eN7XceUx7lJfwpcLIsv96X4QqT4JI3ZcCW91
+	2OijYGI7zPX6Uxy0Y8XeELSW4WKOu8xqyRjFb9eJluc4YSFtR2xHwiWo4WQufyHi
+	/x37E2xvQd2Szl503rh6xjoVFO/9/YO2bY6/GKAEXXr4aCyPh9s789c3RPM5/XB0
+	jmFyXzYYeffor633ExkuE3sCfqPKbBQIm92qt9P/oX3lQKABoQuAdnkf0bNoydop
+	w8jcBTBZOQ==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49e6bhfqka-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 30 Sep 2025 10:03:26 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58U7v1Of020064;
+	Tue, 30 Sep 2025 10:03:25 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 49et8s2yu7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 30 Sep 2025 10:03:25 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58UA3MR840763648
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 30 Sep 2025 10:03:22 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1F68A20067;
+	Tue, 30 Sep 2025 10:03:22 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0ECC920063;
+	Tue, 30 Sep 2025 10:03:22 +0000 (GMT)
+Received: from p1gen4-pw042f0m (unknown [9.152.212.180])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue, 30 Sep 2025 10:03:22 +0000 (GMT)
+Received: from bblock by p1gen4-pw042f0m with local (Exim 4.98.2)
+	(envelope-from <bblock@linux.ibm.com>)
+	id 1v3XCb-00000000m9T-3RZ6;
+	Tue, 30 Sep 2025 12:03:21 +0200
+Date: Tue, 30 Sep 2025 12:03:21 +0200
+From: Benjamin Block <bblock@linux.ibm.com>
+To: Farhan Ali <alifm@linux.ibm.com>
+Cc: linux-s390@vger.kernel.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        alex.williamson@redhat.com, helgaas@kernel.org, clg@redhat.com,
+        schnelle@linux.ibm.com, mjrosato@linux.ibm.com
+Subject: Re: [PATCH v4 02/10] PCI: Add additional checks for flr reset
+Message-ID: <20250930100321.GB15786@p1gen4-pw042f0m.boeblingen.de.ibm.com>
+References: <20250924171628.826-1-alifm@linux.ibm.com>
+ <20250924171628.826-3-alifm@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+In-Reply-To: <20250924171628.826-3-alifm@linux.ibm.com>
+Sender: Benjamin Block <bblock@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=Se/6t/Ru c=1 sm=1 tr=0 ts=68dbaaee cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
+ a=8nJEP1OIZ-IA:10 a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=2Qdhaze4vaRhrbKc8xAA:9
+ a=3ZKOabzyN94A:10 a=wPNLvfGTeEIA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAxMCBTYWx0ZWRfXwOnINJ1dUPG6
+ rzozq1J9kNxyzuL+TWL+XBQ30Ym8MbuPfLi/2O46LtF76sJW0P8byyLTrrWvxzmYR1MM8ogeG2i
+ IshuVSXujzD6+bXhj8ZoMYg1Y34+g1auQwVQEgBBrri+w5AdlJf0UvVOJy2dsAwjOObD7iADVPk
+ DJgb+E9dG1p0UncWzCV85a1oosxbcNsBJCMw5AmBUlxP0wCM9Atz4OTMeGQoSYfzsGvzMs4M/lv
+ vSMyRVHIMBejKZZeTqDYUNNsMkFmBiBYpmG0kzgS+aUtqil4TC3ttMG165gY3QP/sQ29r8qSb3C
+ +Qi5HyyQeeXpOj6W+ZrYPeu/kfixYbsi3ngbyhe6h5B1Ut1HcOIypJclPzq4iTF20LDcUoLzRBl
+ ugJ8AjhoHVpJ/MWd07WIOn9gOqbpuw==
+X-Proofpoint-GUID: 3QCoety8nuQyFRoJJfZ-pCKRmkH81s2D
+X-Proofpoint-ORIG-GUID: 3QCoety8nuQyFRoJJfZ-pCKRmkH81s2D
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-30_01,2025-09-29_04,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 malwarescore=0 suspectscore=0 bulkscore=0 lowpriorityscore=0
+ clxscore=1011 phishscore=0 priorityscore=1501 adultscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270010
 
-Orange Pi RV is a newly released SBC with JH7110 SoC, single GbE port
-(connected to JH7110 GMAC0 via a YT8531 PHY), 4 USB ports (via a VL805
-PCIe USB controller connected to JH7110 PCIE0), a M.2 M-key slot
-(connected to JH7110 PCIE1), a HDMI video output, a 3.5mm audio output
-and a microSD slot.
+On Wed, Sep 24, 2025 at 10:16:20AM -0700, Farhan Ali wrote:
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index a3d93d1baee7..327fefc6a1eb 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -4576,12 +4576,19 @@ EXPORT_SYMBOL_GPL(pcie_flr);
+>   */
+>  int pcie_reset_flr(struct pci_dev *dev, bool probe)
+>  {
+> +	u32 reg;
+> +
+>  	if (dev->dev_flags & PCI_DEV_FLAGS_NO_FLR_RESET)
+>  		return -ENOTTY;
+>  
+>  	if (!(dev->devcap & PCI_EXP_DEVCAP_FLR))
+>  		return -ENOTTY;
+>  
+> +	if (pcie_capability_read_dword(dev, PCI_EXP_DEVCAP, &reg)) {
+> +		pci_warn(dev, "Device unable to do an FLR\n");
+> +		return -ENOTTY;
+> +	}
 
-Other Onboard peripherals contain a SPI NOR (which contains the U-Boot
-firmware), a 24c02 EEPROM storing some StarFive-specific information
-(factory programmed and read only by default) and an Ampak AP6256 SDIO
-Wi-Fi module.
+Just thinking out loud, not sure whether it make sense, but since you already
+read an up-to-date value from the config space, would it make sense to
+pull the check above `dev->devcap & PCI_EXP_DEVCAP_FLR` below this read, and
+check on the just read `reg`?
 
-Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
----
-Changes in v2:
-- Property order change mentioned in the review of v1.
-- Added Wi-Fi (along with the always on VCC3V3_PCIE regulator, which is
-  used to power up WIFI_3V3). The OOB IRQ is still not possible to use
-  because of some incompatibility between StarFive pinctrl driver and
-  brcmfmac.
-- Removed the LED because it's in common DTSI.
+Also wondering whether it makes sense to stable-tag this? We've recently seen
+"unpleasant" recovery attempts that look like this in the kernel logs:
 
- arch/riscv/boot/dts/starfive/Makefile         |  1 +
- .../boot/dts/starfive/jh7110-orangepi-rv.dts  | 87 +++++++++++++++++++
- 2 files changed, 88 insertions(+)
- create mode 100644 arch/riscv/boot/dts/starfive/jh7110-orangepi-rv.dts
+    [  663.330053] vfio-pci 0007:00:00.1: timed out waiting for pending transaction; performing function level reset anyway
+    [  664.730051] vfio-pci 0007:00:00.1: not ready 1023ms after FLR; waiting
+    [  665.830023] vfio-pci 0007:00:00.1: not ready 2047ms after FLR; waiting
+    [  667.910023] vfio-pci 0007:00:00.1: not ready 4095ms after FLR; waiting
+    [  672.070022] vfio-pci 0007:00:00.1: not ready 8191ms after FLR; waiting
+    [  680.550025] vfio-pci 0007:00:00.1: not ready 16383ms after FLR; waiting
+    [  697.190023] vfio-pci 0007:00:00.1: not ready 32767ms after FLR; waiting
+    [  730.470021] vfio-pci 0007:00:00.1: not ready 65535ms after FLR; giving up
 
-diff --git a/arch/riscv/boot/dts/starfive/Makefile b/arch/riscv/boot/dts/starfive/Makefile
-index b3bb12f78e7d5..24f1a44828350 100644
---- a/arch/riscv/boot/dts/starfive/Makefile
-+++ b/arch/riscv/boot/dts/starfive/Makefile
-@@ -10,6 +10,7 @@ dtb-$(CONFIG_ARCH_STARFIVE) += jh7100-starfive-visionfive-v1.dtb
- 
- dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-deepcomputing-fml13v01.dtb
- dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-milkv-mars.dtb
-+dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-orangepi-rv.dtb
- dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-pine64-star64.dtb
- dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-starfive-visionfive-2-v1.2a.dtb
- dtb-$(CONFIG_ARCH_STARFIVE) += jh7110-starfive-visionfive-2-v1.3b.dtb
-diff --git a/arch/riscv/boot/dts/starfive/jh7110-orangepi-rv.dts b/arch/riscv/boot/dts/starfive/jh7110-orangepi-rv.dts
-new file mode 100644
-index 0000000000000..5a917b7db6f78
---- /dev/null
-+++ b/arch/riscv/boot/dts/starfive/jh7110-orangepi-rv.dts
-@@ -0,0 +1,87 @@
-+// SPDX-License-Identifier: GPL-2.0 OR MIT
-+/*
-+ * Copyright (C) 2025 Icenowy Zheng <uwu@icenowy.me>
-+ */
-+
-+/dts-v1/;
-+#include "jh7110-common.dtsi"
-+
-+/ {
-+	model = "Xunlong Orange Pi RV";
-+	compatible = "xunlong,orangepi-rv", "starfive,jh7110";
-+
-+	/* This regulator is always on by hardware */
-+	reg_vcc3v3_pcie: regulator-vcc3v3-pcie {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc3v3-pcie";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-always-on;
-+	};
-+
-+	wifi_pwrseq: wifi-pwrseq {
-+		compatible = "mmc-pwrseq-simple";
-+		reset-gpios = <&sysgpio 62 GPIO_ACTIVE_LOW>;
-+	};
-+};
-+
-+&gmac0 {
-+	assigned-clocks = <&aoncrg JH7110_AONCLK_GMAC0_TX>;
-+	assigned-clock-parents = <&aoncrg JH7110_AONCLK_GMAC0_RMII_RTX>;
-+	starfive,tx-use-rgmii-clk;
-+	status = "okay";
-+};
-+
-+&mmc0 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	cap-sd-highspeed;
-+	mmc-pwrseq = <&wifi_pwrseq>;
-+	vmmc-supply = <&reg_vcc3v3_pcie>;
-+	vqmmc-supply = <&vcc_3v3>;
-+	status = "okay";
-+
-+	ap6256: wifi@1 {
-+		compatible = "brcm,bcm43456-fmac", "brcm,bcm4329-fmac";
-+		reg = <1>;
-+		/* TODO: out-of-band IRQ on GPIO21 */
-+	};
-+};
-+
-+&mmc0_pins {
-+	/*
-+	 * As the MMC0 bus is used to connect a SDIO Wi-Fi card instead of
-+	 * an eMMC card, and the eMMC RST is repurposed to be an enablement
-+	 * pin of the SDIO Wi-Fi, remove it from the pinctrl node and manage
-+	 * it as a GPIO instead.
-+	 */
-+	/delete-node/ rst-pins;
-+};
-+
-+&mmc1 {
-+	/delete-property/ cd-gpios;
-+	broken-cd;
-+};
-+
-+&pcie0 {
-+	status = "okay";
-+};
-+
-+&pcie1 {
-+	status = "okay";
-+};
-+
-+&phy0 {
-+	rx-internal-delay-ps = <1500>;
-+	tx-internal-delay-ps = <1500>;
-+	motorcomm,tx-clk-adj-enabled;
-+	motorcomm,tx-clk-10-inverted;
-+	motorcomm,tx-clk-100-inverted;
-+	motorcomm,tx-clk-1000-inverted;
-+	motorcomm,rx-clk-drv-microamp = <3970>;
-+	motorcomm,rx-data-drv-microamp = <2910>;
-+};
-+
-+&pwmdac {
-+	status = "okay";
-+};
+The VF here was already dead in the water at that point, so I suspect
+`pci_read_config_dword()` might have failed, and so this check would have
+failed, and we wouldn't have "wasted" the minute waiting for a FLR that was
+never going to happen anyway.
+
+
 -- 
-2.51.0
-
+Best Regards, Benjamin Block        /        Linux on IBM Z Kernel Development
+IBM Deutschland Research & Development GmbH    /   https://www.ibm.com/privacy
+Vors. Aufs.-R.: Wolfgang Wendt         /        Geschäftsführung: David Faller
+Sitz der Ges.: Böblingen     /    Registergericht: AmtsG Stuttgart, HRB 243294
 
