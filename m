@@ -1,186 +1,122 @@
-Return-Path: <linux-kernel+bounces-838231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3264BAEBD6
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 01:16:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A690BAEBE3
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 01:20:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 550B81C3F2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 23:16:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F10A318945CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 23:20:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DE3021ABAA;
-	Tue, 30 Sep 2025 23:15:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B63E2D0634;
+	Tue, 30 Sep 2025 23:20:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1ImT/5sB"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p/3Ad7NA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCB581C4A0A
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 23:15:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D34C41A2C0B;
+	Tue, 30 Sep 2025 23:20:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759274158; cv=none; b=W3wlaWffiF1oEWhEbnGZlWEEgQnREtEJP3wPlYM5dodf/8r4YjQIGH+piGYe6qkzjUmO/FhQZhxKt1QDgNSKMK2/54KnDCoNQ3wNFiRCE4MC40cYn8fDstkJH4Tl1Yv/CaQnLUjPNB6UhwHvRvhJRQUwAC6YDOANa/U0mIwW6gM=
+	t=1759274406; cv=none; b=jfEsQnF2O5ofWY1Wwj2OC54LprPnjdwM5cYxXSdhQDd588PsBoXxcx28eGZJi3aPJz1pmbzOCTDsQaPPVUWckDXjeOf/OdqC3YGHEIWc1YyWIpf5aLJ60+8tQa47MH2EMfWo5/zySig9/jRAscmhx6t0QsPqpa/kkzNuduHM9fU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759274158; c=relaxed/simple;
-	bh=avL1rWBunFTgSKQhZqowxnKhVr1RP4S9GV/sye2EIP4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q5f7aHTcn4XYp+yIhmnA+LbZMnI3dby8Q5pIsnMxAmvME2ytoP3BSt611ixhVDNt8OxKitnsvicUMiHIbS29mk9GGQj0N6cwoS59faiXPQwWzMvtxTiMvA+SR+p7KtmlB3bp6NE35uIWiPf6Owpm3te4QCurhChE/t9e1ErJ+Es=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1ImT/5sB; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4de60f19a57so174791cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 16:15:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759274155; x=1759878955; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=avL1rWBunFTgSKQhZqowxnKhVr1RP4S9GV/sye2EIP4=;
-        b=1ImT/5sB2iHpNy5eVP2E26qRi98JMN5rSppw//43Li++1/BVY6Ai7El3N39WeTChT1
-         9v+q9mSK/2Y5hjwS6c/nlExa7qMgwpxCQIJCLQre4c1g6cy65znQ1G7xrTRPLenYokds
-         /s8dauIBdOJFmxpudXc+qVH9es/nkMg3KJy7jYqgyNq8iWqCE8/vMrEzMherBDFfBpGj
-         Ni6a/mXm0CnUkVG06F7F0ggQIW861324j5aTtsAdiiBjRGdIhTZSQermNYLQRTI7R/3r
-         kNHn20KqbdHLdLZE+Cxxt0ohUHW4ca7OQrRUrp+eq5f/rDkEHT3x44gEr0YKk6mpxqfR
-         52bA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759274155; x=1759878955;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=avL1rWBunFTgSKQhZqowxnKhVr1RP4S9GV/sye2EIP4=;
-        b=eDxHaJcnuystGOed/NzGnYM121CPNDAF7T2qrkQt92jsO+wsBLyT9FQVTaiUxafxJX
-         EblC9tsRf2DB/CSBvi1wAtdwwzlyUC4dmNSJuSr7Sakh+itJSgq/b2AXy+Dn+5k9wbEB
-         LGIutC03LoW3g8Q+XgXRJ7MrqzUx9xg8owSVVlxjs5VfVIpFFA9KiraI68RgH4U52O1U
-         W1TG8iaFzH42oqmxMpfvD7Q/Afzw5eJ3YFIv1tAIvgikBbnylBG0Jw5+ZZlJxcEaQkfU
-         8pELFlP64Que+xTXXgOO1Q9cdx350O1pI4D363gdFjPNRGT+Jv+FtEUiR1OBRLIEpgfL
-         1TRg==
-X-Forwarded-Encrypted: i=1; AJvYcCVMiSErEReLLmbWnp3HWAIetF0PeyBgNuOouxTA4S9TZyWXCnYvB1Kxg9iM1vWVu0Gs8NcKzjHhWdZCZiU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4TyKxvpDax3GWCMdX3POghz8tbPQMp8t6vVryS4Lgdj7/6Y3A
-	dYcduWCWuJ7DoXSTcEPgQ7qR7tISvCQ/UjiRLKX2iSu+QoLKfQYsI6Dleiryk7TbAoNWQYUtLax
-	GpoqMLu/nDQEAK5rBqux0l+U3SQtEx3oqtcznXw5o
-X-Gm-Gg: ASbGncsQzi5ClYuKQWoKWN1hgnYHtuI/5lYbLXJcx1hVrXkiEInHoCYw6MhP6+Xpke1
-	zScDqPeDxVZDGf0XmOhdgU8z+s2jM8afSQscDkXh8I2agqqUXXsJ0NOrwTLcrY6JTEHHrqvBWSE
-	PaXpB11s0Ccb83HWRdUzeS5gjSxmTsPSTXoRBj/wIerS3o9W5IE/jifK/L+8WEODQDnkKuOqN83
-	Z/UOU4VO22F0xZrTIPznS2vpXtTIsS59Bl7HylrxTNkUiDP1Mt4xs9scZuMXyIM3L6s2hcU/R+/
-	TDw=
-X-Google-Smtp-Source: AGHT+IGPIoxnc9wl9XoB03dKZCaUowW6vVnO/ky57WoBHCiNTAZb+mWCRVcb+zmztZVZ9ReoYArCalm5QPGFPsWdPdY=
-X-Received: by 2002:a05:622a:30a:b0:4ca:c49a:549d with SMTP id
- d75a77b69052e-4e45111f774mr1258111cf.9.1759274155027; Tue, 30 Sep 2025
- 16:15:55 -0700 (PDT)
+	s=arc-20240116; t=1759274406; c=relaxed/simple;
+	bh=+wWTrE4ITvFS8g2AqNmb6ksKLW9/5I4wm5HcledP4dU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ii3+oKnZE93JWFYjCh49m5Vz7AQpKHUnhzHspHzTZ2fU3JpsiwSKilUQdSqdD+un0jn7An41hPwG+JLqjTV0/3p3ZXhwso5/bFsK33vfTDYs1C1GHv2RpIpCzjPcTHwh+Iq0CFVwLot7jqOU98NG6oIyTwACZavkaZxcnjlnky0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p/3Ad7NA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFDC6C4CEF0;
+	Tue, 30 Sep 2025 23:20:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759274405;
+	bh=+wWTrE4ITvFS8g2AqNmb6ksKLW9/5I4wm5HcledP4dU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=p/3Ad7NA8hJygSDTMQy9ygj743we6+3oG3kOTOCsNbN/NFSspYnNCGw32Yq5JdJVF
+	 CCqGVjR1+egrGRmAUuaiEkXfcWBhAp5egrbjFUY0VlJizIwDc8wFIpouvu1N6poE6R
+	 jExV+q0x8cY2T7LefTZVROKOW3BBP94drDs/414eVNASIyU9UBaJoFFQRylbcUDGJK
+	 nZTRIZ6uG+zPXFjyTw7CCEchRjMAhFpBsffJ0p7jYU8fh4WYYxKtDVc/2E12mzXRYW
+	 t87zYJwve+5BeYkPReYpdv7d4Wpq/zvgxOmJmgYJo1sX3k1mEZUmkElaRLjbrc4q17
+	 yke3NSEjBMRTQ==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: linux-integrity@vger.kernel.org
+Cc: dpsmith@apertussolutions.com,
+	ross.philipson@oracle.com,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	keyrings@vger.kernel.org (open list:KEYS/KEYRINGS),
+	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v5 0/9] Prepare TPM driver for Trenchboot
+Date: Wed,  1 Oct 2025 02:19:49 +0300
+Message-Id: <20250930231958.1437783-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250928190624.3735830-1-skhawaja@google.com> <20250928190624.3735830-14-skhawaja@google.com>
- <20250929160034.GG2695987@ziepe.ca> <CA+CK2bDqDz3k0gXamJEbKUL7RPBLVjaA5=Jum=CF84wR+50izA@mail.gmail.com>
- <20250930135916.GN2695987@ziepe.ca> <CAAywjhRGrGjZK3jQptieVWmdzvjfNtTYrp2ChTZJSmFyrBaRqw@mail.gmail.com>
- <20250930210504.GU2695987@ziepe.ca>
-In-Reply-To: <20250930210504.GU2695987@ziepe.ca>
-From: Samiullah Khawaja <skhawaja@google.com>
-Date: Tue, 30 Sep 2025 16:15:43 -0700
-X-Gm-Features: AS18NWBnk-42w8cdejF4xgnkLcF9Jd68pR7aYC-MmhJCljNRDOOGNN7hUI9RPdo
-Message-ID: <CAAywjhRQONuHsxTGQZ5R=EJbOHUD+xOF_CYjkNRbUyCQkORwig@mail.gmail.com>
-Subject: Re: [RFC PATCH 13/15] iommufd: Persist iommu domains for live update
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Pasha Tatashin <pasha.tatashin@soleen.com>, David Woodhouse <dwmw2@infradead.org>, 
-	Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>, 
-	Will Deacon <will@kernel.org>, iommu@lists.linux.dev, YiFei Zhu <zhuyifei@google.com>, 
-	Robin Murphy <robin.murphy@arm.com>, Pratyush Yadav <pratyush@kernel.org>, 
-	Kevin Tian <kevin.tian@intel.com>, linux-kernel@vger.kernel.org, 
-	Saeed Mahameed <saeedm@nvidia.com>, Adithya Jayachandran <ajayachandra@nvidia.com>, 
-	Parav Pandit <parav@nvidia.com>, Leon Romanovsky <leonro@nvidia.com>, William Tu <witu@nvidia.com>, 
-	Vipin Sharma <vipinsh@google.com>, dmatlack@google.com, Chris Li <chrisl@kernel.org>, 
-	praan@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 30, 2025 at 2:05=E2=80=AFPM Jason Gunthorpe <jgg@ziepe.ca> wrot=
-e:
->
-> On Tue, Sep 30, 2025 at 01:02:31PM -0700, Samiullah Khawaja wrote:
-> > > There are HWPTs outside the IOAS so it is inconsisent.
-> >
-> > This makes sense. But if I understand correctly a HWPT should be
-> > associated one way or another to a preserved device or IOAS. Also the
-> > nested ones will have parent HWPT. Can we not look at the dependencies
-> > here and find the HWPTs that need to preserved.
->
-> Maybe in some capacity, but I would say more of don't allow preserving
-> things that depend on things not already preserved somehow.
+Overview
+========
 
-I agree. I think this makes sense. Users can explicitly indicate that
-they want to preserve HWPTs and iommufd can enforce the dependencies.
->
-> > > Finally we expect to discard the preserved HWPTs and replace them we
-> > > rebuilt ones at least as a first step. Userspace needs to sequence al=
-l
-> > > of this..
-> >
-> > But if we discard the old HWPTs and replace them with the new ones, we
-> > shouldn't need labeling of the old HWPTs? We would definitely need to
-> > sequence the replacement and discard of the old ones, but that can
-> > also be inferred through the dependencies between the new HWPTs?
->
-> It depends how this ends up being designed and who is responsible to
-> free the restored iommu_domain.
+Prepare TPM driver for Trenchboot by making tpm-buf easy to compile as an
+independent compilation unit, and generally be IO and memory agnostic.
+This allows Trenchboot easily use this code to build and parse TPM 1.2 and
+TPM 2.0 commands.
 
-Agreed. I think it depends on how much is restored from the previous
-kernel. Discussed further below inline.
->
-> The iommu core code should be restoring the iommu_domain as soon as
-> the attached device is plugged in and attaching the preserved domain
-> instead of something else during the device probe sequence
->
-> This logic should not be in drivers.
->
-> From there you either put the hwpt back into iommufd and have it free
-> the iommu_domain when it destroys the hwpt
->
-> Or you have the iommu core code free the iommu_domain at some point
-> after iommufd has replaced the attachment with a new iommu_domain?
+Goals and scope
+===============
 
-But we cannot do the replacement during domain attachment because
-userspace might not have fully prepared the new domain with all the
-required DMA mappings. Replace during LUO finish?
+This patch set contains only changes, which are acceptable to the mainline
+driver without existence of Trenchboot feature.
 
-This is actually very close to what I had in mind for the "Hotswap"
-model. My thought was:
+v5:
+- Order sobs correctly.
+- Fixed a minor glitch in 9/9.
+v4:
+- PCR patch has been removed because it does not fly without Trenchboot
+  context.
+v3:
+- I think 6.19 is a better goal for this and thus expanded the series to
+  be a generic Trenchboot enablers series. This version also consolidates
+  my two separate ongoing series.
+v2:
+- While including fixes from v1, this patch set has a refocus in order to
+  do minimal changes to make code base more compatible  Trenchboot.
 
-1. During boot, the IOMMU core sets up a default domain but doesn't
-program the context entries for the preserved device. The hardware
-keeps on using the old preserved tables.
-2. Userspace restores the iommufd, creates a new HWPT/domain and
-populates mappings.
-3. On FINISH, the IOMMU core updates the context entries of preserved
-devices to point to the new domain.
+Jarkko Sakkinen (9):
+  tpm: Cap the number of PCR banks
+  tpm: Use -EPERM as fallback error code in tpm_ret_to_err
+  KEYS: trusted: Use tpm_ret_to_err() in trusted_tpm2
+  tpm2-sessions: Remove 'attributes' from tpm_buf_append_auth
+  tpm2-sessions: Unmask tpm_buf_append_hmac_session()
+  KEYS: trusted: Open code tpm2_buf_append()
+  tpm-buf: check for corruption in tpm_buf_append_handle()
+  tpm-buf: Remove chip parameter from tpm_buf_append_handle
+  tpm-buf: Enable managed and stack allocations.
 
-I have a sequence diagram for this in the cover letter also.
+ drivers/char/tpm/tpm-buf.c                | 141 ++++++----
+ drivers/char/tpm/tpm-chip.c               |  13 +-
+ drivers/char/tpm/tpm-sysfs.c              |  21 +-
+ drivers/char/tpm/tpm.h                    |   2 -
+ drivers/char/tpm/tpm1-cmd.c               | 185 +++++--------
+ drivers/char/tpm/tpm2-cmd.c               | 313 ++++++++++------------
+ drivers/char/tpm/tpm2-sessions.c          | 129 +++++----
+ drivers/char/tpm/tpm2-space.c             |  44 ++-
+ drivers/char/tpm/tpm_vtpm_proxy.c         |  30 +--
+ include/linux/tpm.h                       |  65 ++---
+ security/keys/trusted-keys/trusted_tpm1.c |  34 ++-
+ security/keys/trusted-keys/trusted_tpm2.c | 241 +++++++----------
+ 12 files changed, 544 insertions(+), 674 deletions(-)
 
-I understand the desire to have the preserved iommu domain be restored
-during boot so the device has a default domain and there is an owner
-of the attached restored domain, but that would prevent the iommfud
-from cooking a clean new domain.
+-- 
+2.39.5
 
-Maybe we can refine the "Hotswap" model I had in mind. Basically on
-boot the core restores the preserved iommu domain, but core lets
-iommufd attach a new domain with preserved devices without replacing
-the underlying context entries? The core replaces the context entries
-when the iommufd indicates that the domain is fully prepared (during
-luo finish).
->
-> I'm not sure which is a better option..
->
-> Also there is an interesting behavior to note that if the iommu driver
-> restores a domain then it will also prevent a non-vfio driver from
-> binding to that device.
-
-Agreed. I think in the "Hotswap" approach I discussed above, if we
-don't restore the domain, the core can just commit the context entries
-of the new default domain if a non-vfio driver is bound to the device.
->
-> Jason
 
