@@ -1,140 +1,190 @@
-Return-Path: <linux-kernel+bounces-838094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A134BAE6BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 21:17:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F8F0BAE6C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 21:18:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BA2016E2C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 19:17:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 473634A065A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 19:18:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35065287516;
-	Tue, 30 Sep 2025 19:17:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3234525B30E;
+	Tue, 30 Sep 2025 19:18:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="HeCoswil"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cRuF/9aS"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C4F2287259
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 19:17:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0BDE4C81
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 19:18:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759259825; cv=none; b=RoBAw9ZWh5yJPy18jmjp9KQCRulXj/wKsj8cwnfAF1xO/Ncx9PhWuUDUtjpAwQ+pas5tI7xe6lieM0wclvpzA5/ptdy+QLdmWrbs88Dv4xqBxX7IDMwT98byI504FYJA8nzJobe/wYiwyaM/JNScCSImSVhT+OW95nDn/+5CsVM=
+	t=1759259893; cv=none; b=Mn1GeEs+srQr+lr+1KFvIt3n5M3qvZsdezl+7wc9cyTFlzGK1ApkFqVN5nQC86hrvgf4KSyYVfNw5IFKE85nqzhhSTqMqp8LKbFXyplY0of4qCocKh+k1gEp1F1TVXBGud1nU3LRy7aNDcei3EA8tTn0LhEwqHdGWLGGetlhofk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759259825; c=relaxed/simple;
-	bh=44UG9dRy9/fwmbXTFNYj/VESWJLHlVWNqviEeWagbFc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UUsevykAXEMzsLfcBqPyDHCa+vmnC4BYSvej5uy5ByvxxZV4r60JR2oKpzm8OkNBJesqLtQL8DBW9INj+uQ577I6O6NeKdEyytesKhRsA+3Wcdk4lWoxwaixWzRB6pa58E/b/G7PqfNirhCWSpDfebK1QpvnKI0QLQCkIo5a1aw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=HeCoswil; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58UBolnR027554
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 19:17:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=fIoZL4IX42meIGYJZYMC2O1w
-	w+tUNy4ioZpD/pNofyA=; b=HeCoswil0oy1BaLEp8q1C2pWmz6i9r+lSHqgt1dT
-	Qkx0d7Z7hD5sp4Wrx0iw4Mm8E4c6fMaB+zTCM761UN+kV3XUGcx/KZBsMgio/Kip
-	zFtAdzbBAyPBkc0+nyjtRYbd8RhTS3KQuiDnljECzyVt7wuCYE9jGabdPZr3ObYk
-	v81OcjQhpJ/9Du9FQN9tzl7XvywEzTn4qHHwx7oq2feYHNPI4jlVaNs3rF+ZmJGN
-	KrgGMxiWXjjKbxm7cz6DS9/U/AgZ3Hsu3lofjw0c23td9txPNLj41JQURqenDRD/
-	22yu8cegpvj94L9y1IXSdcyYXnoeoj2BPPVk6ZhSInTDJQ==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e851j5fj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 19:17:02 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4de801c1446so102049661cf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 12:17:02 -0700 (PDT)
+	s=arc-20240116; t=1759259893; c=relaxed/simple;
+	bh=GUeNVxovE4BIxA+RJnKhUwvmZ83v9T2HTqZpUMa6g18=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VfM/z8pek1VsK5FAFPuz+O5YF80w9A36W6LHz1qFv4BQZ7VC6M+oaOJU1BJ7IDWTrwswSTBbua7YK6X4WtWxlK+eXDKfi/ehbOfzD8PvorevzhkZ3Yr7PrzKIgGGl1b65i+o1cu+GYBZkZCvdkeC70NSgZLv3idyPsE/10fX3lA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cRuF/9aS; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b5515eaefceso6109747a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 12:18:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759259891; x=1759864691; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=QcSOOec7hYWNPWAHG6CqMpEpK2JyhPXuWUtKRek37zE=;
+        b=cRuF/9aS2OxhyxCezxcu/Oczw9oSHQJxQD8cOWby8iv4XRKAmGWa75NRgVCt1ksOOp
+         /oMAqNEzLhOXASeKXe4gxh2HT7T33li83kv3XibKI+AopSkUILEgYwf+Xj/IYHdpzsyS
+         Z8qhQ80mYqc5gNNblWxlT1KoCnS6guQiDboc1qNKfWNvL/tAUeZWXuckHZYGt41Hilqm
+         UckuuKJJWDRTucZhIYGtEn+W/pPibzaShOr7a4YkbhOTypZ9eeeCKKvjQUgnFzmnr3EP
+         C5LrP2HQLyK58p6+3SOoDJIfwjJLlMxfMNzRj0RC7TqAbqPKQMgnT6stK1hTvCoGXOGU
+         RgFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759259821; x=1759864621;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1759259891; x=1759864691;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fIoZL4IX42meIGYJZYMC2O1ww+tUNy4ioZpD/pNofyA=;
-        b=HIhp68dh4TdMByWYpWEwXzcDCoM0OLlYnpiGmbZM7/6kcH7vvpeIySUR+xRJ0n33JC
-         2Q3XpGSuN9RTpTTkHTrgMYL6xuTfhHoWO92/PruVR7ZQKNL/uBTWMuGr5I0pGk48VY1c
-         8aEmrCeN+mbe1XJPgzP5ttI6eYTBU3HU0VyJWGPKcGfjP5j9Ezlsd4xPm6jpEqAy79xf
-         2oq0DuTAqu9t4v2E+y6gZPY6br/OkFNqOIIPH0U+Z3aqvXedbwDyVsUzGXZ18K+NksqH
-         B1cbj95qevmt+EzZysrE06/Oz28K/S3ZOoLEggIbvrPxpBCJQqBLgjKMJguGkbLHrldu
-         Zc7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX9WhEH7Q7vYNvmS2B5vg8hyb8FFjPyQuI9d35R+hr4UdjTLcfkyYifCZgNyW8+Za+TXVHUWHGLOvxGBRw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxa4OUI/TKelSvq9BEfvTg5iCRlJf9x3ugjVBi9E0Qv+RKgLRMX
-	SCYx1rrn9xXstCORbvcXjqpRwtMEgZA2EseVjSO+5bEh7KKFQlGTWT6D4YYzCeGJEudpJTjTGiu
-	q+F20faO8c+246ZJ3Aspg47A0LPagY7WBw7d3pgbaDHvqTplMgjVaU4niJD5uK9rEvao=
-X-Gm-Gg: ASbGncsduGlDay9bNSc5zCxpe9KIpNcbBxPzxHSIQZXIk9EaijQcaRcLnpVKeiA9VFe
-	FlkUZSPE3VvGZyUAJkApBUnJ2lgMB0sx4B4ZOoNd2/kUhYgsYZVdesGo/IFjNBtIrWNMtn0//W7
-	psaeMDKCbs+N6aXDPpAbTWKqlvJDkOUHrHDSwBP6SCES9MMF3/bUHsQKfYl49ycnf/maQX61yfe
-	HrLeGSG3tkygAit3h5l14WXFvdH2sLxKZlEa65Ib0kZVl8bQbN2vTy8o7VqekwirN4WUn+iIT3P
-	ynuWaDGsFxfHgcOL8NICrmNRInAnplZuvLzQdlpLZoGMv8qD8n4jjtnHP9MLiElfFL29fLp+IXN
-	xvwjK0faRCxMX/JsHghwkdUJhOej3HuKUIHS/mLtPT+5DLffJGWDoR1sbvA==
-X-Received: by 2002:a05:622a:4acc:b0:4c7:e39a:388b with SMTP id d75a77b69052e-4e41e15df77mr10119771cf.47.1759259821091;
-        Tue, 30 Sep 2025 12:17:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGOjGw/13ibdEaq67tmXZnXJFrkmO3DlfDDREr0t+56wazs2jNMn8OyuMT31Gg9i7tKZgg2lQ==
-X-Received: by 2002:a05:622a:4acc:b0:4c7:e39a:388b with SMTP id d75a77b69052e-4e41e15df77mr10119381cf.47.1759259820658;
-        Tue, 30 Sep 2025 12:17:00 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-583166560d1sm5130604e87.71.2025.09.30.12.16.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Sep 2025 12:16:59 -0700 (PDT)
-Date: Tue, 30 Sep 2025 22:16:58 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: TangBin <tangbin@cmss.chinamobile.com>
-Cc: srini@kernel.org, lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz,
-        tiwai@suse.com, linux-sound@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ASoC: codecs: Fix the error of excessive semicolons
-Message-ID: <dxuyn3sa55f7k7ecwhxi4v3y6n3kw7nyftkrbmwt2ufobya4bd@ipdy5bz4yrzu>
-References: <20250930094103.2038-1-tangbin@cmss.chinamobile.com>
+        bh=QcSOOec7hYWNPWAHG6CqMpEpK2JyhPXuWUtKRek37zE=;
+        b=PGGMlMZQl9JGf26ztjBh+y0af+TKLkxSLL3+QptDdUMTHfkWKThREUn0GDosSW2NXo
+         3yPfP/09276v6I/Jrm8bzkId6vfkVQEkKb0fGwN+hUfHanIJ7h39ob6d2jz3KpraS5eO
+         fgv5P8I8MOQOXUm93ucfO+Tz17PJUvp7AmjPAk0C12Up18E6/KmZ2BcghrgptY656Pcd
+         EouqgnZMuMgEDZo3sTNqhPdBw0erxWP7SlaC8mmbWDMsi+/hK5WoUuhEBXJNmhVi6Ii5
+         PSYxgm4evXcI774wUCYRXKrGP+Y2yYWNbNfyfc0cFmihXA9VIwU71toa25503tCQ1XiQ
+         wlYg==
+X-Forwarded-Encrypted: i=1; AJvYcCWTn1v96wAWaA8WuaE54wXntvNmcuGFh91VRoWgc5aYyaPwKBcwyhfHl8IQXF0g2EJppBsUf2UNgKDsj5o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQxLGDE5tewJK/EGJI63HK95Pln1lWdqY9Xghckbt7S8Fd0Zpv
+	GW+QcarqriITPHIOLyK9uIRD5HuZ9cufeY2ZztpZC7u/9RHpTTjOmTCL
+X-Gm-Gg: ASbGncuCKelqD+KPhATRP9PQy5CttxgSfXpGEJjnPnf8l8PJNpRuM27OcC3N3XSNl1g
+	ExAkenrhohUt8Gu4rXejcXLUORuSdVpzBAIZ5IatSpRNZToxpwHCz1kvjr3pVRl25ffv8OCY9SZ
+	P5n4KZleR08EuIzVDqNfWvmnm5iLU90CWB6RIkn5qLMeYqoMewuoDHg1eq7yK8gUa/0EJPhnk1Z
+	+bdSGeRtTrYKXaqbVrZ92MCrxNI/BBaT5gcZ4d+1Vr0PfoGvkhqDsYkK5W/rtpKvg98qf3bKpQd
+	6aiZFKtx1WPS28CiBkJJ7fGGeBvKjRVzB2d0zIaJ3uzJGJ1nRNbqXG9PPeEoV4Ompk8/aRav86g
+	koGRh5foWZ4tdiZsptMAodbinVsfFoE4qqzU55m0oCirO9EOKGACAb16Aztr1ScCDlVBzPmdWBf
+	TN0w02ccChHO5IqFMDfzU=
+X-Google-Smtp-Source: AGHT+IH4EhVoqYoTbW8cYWDiUID1BS7rnxsPGKrbnyydJAA2t10EkE4eohbrK83caN5GEcZLC7ZMyg==
+X-Received: by 2002:a17:903:144e:b0:27d:69de:edd3 with SMTP id d9443c01a7336-28e7f2a2aa3mr9555435ad.20.1759259891002;
+        Tue, 30 Sep 2025 12:18:11 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed671738esm167446725ad.46.2025.09.30.12.18.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Sep 2025 12:18:10 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <7c481b23-d623-4fc8-9b31-78db6d1f7245@roeck-us.net>
+Date: Tue, 30 Sep 2025 12:18:08 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250930094103.2038-1-tangbin@cmss.chinamobile.com>
-X-Authority-Analysis: v=2.4 cv=OJoqHCaB c=1 sm=1 tr=0 ts=68dc2cae cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=R5C9hjxsAAAA:8 a=EUspDBNiAAAA:8 a=foHylL8Yi6giCiIZhfYA:9
- a=CjuIK1q_8ugA:10 a=dawVfQjAaf238kedN5IG:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAzMiBTYWx0ZWRfX4tOaGHpXA3qS
- dSMQR+NDHg0w0V3V50+bhAnH7zXOlv2PRf7C8BMAQRXnAavI9vDDoG5N5YRsk2kpdIV1du5PoXz
- vOihnjUBKd/uXPD7+yRNufRi0Gqc1a/jApLXTuk24k5G9OsuWkZMyu9bsevAnTsOBsj1wzvaINT
- xEkD5EL/a6wQFR27Jjs0mV+m1UyndsN31Lg5kfjt/jOM8hsEccejlzi+x9EMDGQD9on8yGc7Srt
- 53MSCtxkqRHx9eYO1I2j2Qz4RKRkFobWK9hpsEEJB5lhkJp1NQSZoYpEOOiKYcTik710pYNJhD2
- ey3Ky9AR67zdYdO7q4F0gFuI92BnRfOzF81uHex4tgrOkVIcnrmlMrxh1ayaBIvHILfSxJKLwIk
- Psi7I3tA85Tq8tLJb8Xj1KHJfGKQLA==
-X-Proofpoint-ORIG-GUID: kyBSua3kuAJKKfdTAOrRDnbP4hesN1aB
-X-Proofpoint-GUID: kyBSua3kuAJKKfdTAOrRDnbP4hesN1aB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-30_04,2025-09-29_04,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 adultscore=0 priorityscore=1501 bulkscore=0 impostorscore=0
- suspectscore=0 lowpriorityscore=0 phishscore=0 malwarescore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270032
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.12 00/89] 6.12.50-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org, shuah@kernel.org,
+ patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+ jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ achill@achill.org
+References: <20250930143821.852512002@linuxfoundation.org>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <20250930143821.852512002@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 30, 2025 at 05:41:03PM +0800, TangBin wrote:
-> From: Tang Bin <tangbin@cmss.chinamobile.com>
+On 9/30/25 07:47, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.12.50 release.
+> There are 89 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Remove unnecessary semicolons in the function
-> pm4125_codec_enable_adc and pm4125_micbias_control.
-> 
-> Signed-off-by: Tang Bin <tangbin@cmss.chinamobile.com>
-> ---
->  sound/soc/codecs/pm4125.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+> Responses should be made by Thu, 02 Oct 2025 14:37:59 +0000.
+> Anything received after that time might be too late.
 > 
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+s390:allmodconfig:
+parisc:allmodconfig:
 
+drivers/gpu/drm/i915/display/intel_backlight.c: In function 'scale':
+././include/linux/compiler_types.h:536:45: error:
+	call to '__compiletime_assert_666' declared with attribute error: clamp() low limit source_min greater than high limit source_max
+include/linux/compiler_types.h:517:25: note: in definition of macro '__compiletime_assert'
+   517 |                         prefix ## suffix();                             \
+       |                         ^~~~~~
+include/linux/compiler_types.h:536:9: note: in expansion of macro '_compiletime_assert'
+   536 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+       |         ^~~~~~~~~~~~~~~~~~~
+include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
+    39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+       |                                     ^~~~~~~~~~~~~~~~~~
+include/linux/minmax.h:188:9: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+   188 |         BUILD_BUG_ON_MSG(statically_true(ulo > uhi),                            \
+       |         ^~~~~~~~~~~~~~~~
+include/linux/minmax.h:195:9: note: in expansion of macro '__clamp_once'
+   195 |         __clamp_once(type, val, lo, hi, __UNIQUE_ID(v_), __UNIQUE_ID(l_), __UNIQUE_ID(h_))
+       |         ^~~~~~~~~~~~
+include/linux/minmax.h:206:28: note: in expansion of macro '__careful_clamp'
+   206 | #define clamp(val, lo, hi) __careful_clamp(__auto_type, val, lo, hi)
+       |                            ^~~~~~~~~~~~~~~
+drivers/gpu/drm/i915/display/intel_backlight.c:47:22: note: in expansion of macro 'clamp'
+    47 |         source_val = clamp(source_val, source_min, source_max);
 
--- 
-With best wishes
-Dmitry
+This is exposed by the minmax patch series, as with 6.12.49.
+
+Fixed upstream with commit 6f7150741584 ("drm/i915/backlight: Return immediately
+when scale() finds invalid parameters"). This patch also includes an explanation
+of what exactly happens (and thanks again to Linus for the analysis).
+
+Guenter
+
 
