@@ -1,141 +1,142 @@
-Return-Path: <linux-kernel+bounces-838221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47282BAEB8E
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 00:59:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BACBCBAEB94
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 01:00:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07A083BB21A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 22:59:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61E541C284F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 23:00:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A186B2D2384;
-	Tue, 30 Sep 2025 22:59:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB5F62D1931;
+	Tue, 30 Sep 2025 23:00:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h9rHi+jt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="S31i/LCt"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0639F2D1936
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 22:59:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51657264F9F
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 23:00:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759273160; cv=none; b=m7r9NeixTQ3ISIQ4o3r5HYyqfvY5P4phIA+K77uGyWd4mpP7efMG1V/g7Ffis9w/cQLhp4sXhO6SuIUM3bV/ZeZ1GsHmGq0oxtdUSKDvJoEr64sryG9IQGjclm91AKtfscgrwqWiv9iM9bLZF202YWZmjlAnQzrjkGWLfGILY7Y=
+	t=1759273216; cv=none; b=hJpHPfnX1UUZUV5vWZyDqvRLPWRGtfNmVLpYQ9ksVcahtQRAf+z58oeWG7Ogu2j5gqrokCnmrsxOWGo3YZQx2eR2FigvpMwyI0qFw/4G9OQuAMvRrZ7WZe0M+vN5qn5eMOEFFpwdfCAumQhGh/sNi2wdUUk1xrR3oYlcolBzYUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759273160; c=relaxed/simple;
-	bh=pZbH7LPZiV6YQRsuN23fRTyE9NZC7LXkXRPWHo3BLe8=;
+	s=arc-20240116; t=1759273216; c=relaxed/simple;
+	bh=0JAdTX9kSCI0ZL2lixlSV2aTjK1FwSvpdQJXgYHkgA8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pJkQ3mAD/Gge2RAS8iEyp7E2gJC0CdBDQT+kH8tBV0LDZU5k4vaR0NhVjiKgjdowWhtIC1cGq86tj+7mEZXT9wQoRjSauEjEfdVtkz+p2ryDcQFnb8tAhJA1N4fc85wPxnYb4jCSJYR/VAYvyV4qvbWX7vr//hNtmoYgUi70NeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h9rHi+jt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 816F2C2BCB1
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 22:59:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759273159;
-	bh=pZbH7LPZiV6YQRsuN23fRTyE9NZC7LXkXRPWHo3BLe8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=h9rHi+jt8NsmaTS0OJF+mP5P2Y0zeOkF8evYC2568+HLe7liiEH3Jahjstgmmo2Pg
-	 nxd5G6ngtw3Xt8rbRgvDOHmR9sR5U5BceKMZjr9GRYRDBrqg7K4lE2OCr59GBhLGIG
-	 fFe1LkCKT3ER/mvlpsjXzGuCD4JLgRUjrIZA9rH+fJLLLk9Gw4oE41rwfcE7wOgq46
-	 YWMDVJ0iKNazX2s3s7tLrOE69GfYuG/pXM72MpkVgp5CVyIHbc8Jl1kl2+YA7qIKN/
-	 N8uw+D5FCwCjaV7Mln/ro2DtvL7SQ5XeMH75hSlCOGjx+NF8fWEbXox7zn4+csg818
-	 b+sZaEDB3bxwQ==
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-27c369f8986so63156495ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 15:59:19 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVPIXoNZVZAef9mEmbJC8mlOXAaRz6k1srZ5BTM6MxgP187vJEp8s2b1747C6ZXsn1Kw63bKgqiLocCVcw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/G/iQvgLFmbLJn46fMzXF4W2cMbb2bJ7T/OjnZ7/xZ+XJMPES
-	9UQEAiA3HjYrTj5D8Isga7JhHVIBl714bagsp4/IXNRU1MGLC8REW/JGFDCjerzk082V2qmSEUK
-	PIvVBQjybElW+I1N9IM/Kou2tWucAsa8=
-X-Google-Smtp-Source: AGHT+IEjOJY+T/R5p0HUNzDJbvMSExqfd4Zm4zKN7PDOWoXwQsAkRMa1cPIdhvK5mllhEGX7uEeioJja0ynGdTlQ21Y=
-X-Received: by 2002:a17:902:dad2:b0:269:8c12:909a with SMTP id
- d9443c01a7336-28e7f31167dmr15520695ad.31.1759273158970; Tue, 30 Sep 2025
- 15:59:18 -0700 (PDT)
+	 To:Cc:Content-Type; b=rp/OTl5WpEf4fYK4zmgUnN91x8f4nTr47fya70F3NqTIUzsXifAqbMWRUU2JBdhX6y+aYWPJCbKWK/7WnHR4qBhBGHb9e4Tc2fzAR8a1aa6R25JfRuu5MXkUuUvQZtQO9noBrQ0MkAYKmjRyCCSU05rhfSssPFz1ekgCmkSVIu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=S31i/LCt; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-57b35e176dbso8205757e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 16:00:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1759273212; x=1759878012; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YNGpoJ5D1HDARLkPTC0Il8tsGPxqsMJo0AN7zBWkLI0=;
+        b=S31i/LCte32fAC5JKpz4CSTkJ7tadDLjIngdsdFR0nKDFcnmWKB2uxbjY+uWyfeuQx
+         7vuCrzkydDTd8o6JtxmTiYEQK4Ocmxhl8PcX2HsD3nDPAEw67NV6DF8DplxQnccZabL2
+         ioJkc1BiogXLwFDOM0UsQ7otBAaVFIIBI8UlHMtaPoDxyrxJjuKPjyB3uAH+vWW2OTGh
+         xCEhlDCX75P/BAP9VhPc6pcs593xJkgpvTJCqWz8FZNEAV9SKFd+wHOJDXKv446mUYi0
+         WBSxwY3CWEHUzuluEAlq+ScbPBD5zqEthRCxah5dWLKs4X6H9UO4IgyLn9EBXP6f5xen
+         fRRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759273212; x=1759878012;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YNGpoJ5D1HDARLkPTC0Il8tsGPxqsMJo0AN7zBWkLI0=;
+        b=uK365atn2IwPMM5g2hMN12sMls1Q7Bb60BvFOxv9llBigBgC38e+sAAe0Vyuu4Qa9D
+         7GkzvYl5onyUKzo2opZrZzUTOjWTnqh4uGAd1FGZZovVT4+g+25eUuUhgFNi48/FaKY4
+         kuEWHBaWrfCyZNmnw6lq85xYDLQUSmhv+o0nel594kG7Uw6Rm6KGkdVEElzSUuP3sDFE
+         opTT1vwnaOapUEwWYZP97op9ROUSGI/GKkzd8q44d0QhrWYjohfTivnywfVHCHz9nQx5
+         NT/HayG/zDhMrk1kmXnCwlzCI8TwNCWRWs2Q/E+RDALHclBu0j+FYberxI8uqtnYeuXD
+         +iQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXYDGsH62fOqyaqJEsZbUacSuNdLuJd+EsmpT7OphV4yBHHJEMPiy6cgRuE/dr/iUkwEykd9vOImvovHuc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7F94H8A/aDPYxBXifBeZLvYAhmWx2jthvHox8WIjCN6BW660P
+	xqNGW8d3ogy69QdMY4oesi79nFxuO9l4e77Z6acO6NrewJWQ2eOkowybe2A9RvRR2eWV2BsLmy1
+	qacKZek5houMpuO4CnL9rz+Kc/TQaAVAntEiwwU7SUQ==
+X-Gm-Gg: ASbGnct1mBhISiJM/GktS5eR0TQxmLLKj7VVDprLe2tcCjZ1kEU4foRQATmu6imGbo5
+	9rzRrkTehilxQ8KAkXwzptMK48nq+eJbJHNf1+G+Vnzo4iKX74vGhhcAqwt+QonjWmjm6h5/zBr
+	oUzgL2FXxrAkuBJpkjApe8YqoLigYOMEAZpIGOYMcXwWSAdYEjJW8isYk+NyRgW6r7JmcA5Lwi3
+	28mJjMTbv68Ccp+1Stkpm5JB3sgBu0=
+X-Google-Smtp-Source: AGHT+IEVz6f2f6ubGL1NAHbArQuJx21btrHT6IMUIR8tJN8YYNQAnJBbiclaELxhNdFbCs8p1UkBI5RhBN5Vzj3bgbs=
+X-Received: by 2002:a05:6512:b05:b0:57d:d62e:b212 with SMTP id
+ 2adb3069b0e04-58af9f4b755mr335472e87.38.1759273212293; Tue, 30 Sep 2025
+ 16:00:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20250930035551epcas5p4ee7cb5af08eadb2f5ed6e5eaa06a60a9@epcas5p4.samsung.com>
- <20250930040348.3702923-1-h.dewangan@samsung.com> <20250930040348.3702923-9-h.dewangan@samsung.com>
- <CAJKOXPecLREbEDM4yfM=WD-EFfuBqPDXNZceATLeWQRj0X_w7w@mail.gmail.com> <75d06769-4896-4095-9969-03a517705196@samsung.com>
-In-Reply-To: <75d06769-4896-4095-9969-03a517705196@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Wed, 1 Oct 2025 07:59:07 +0900
-X-Gmail-Original-Message-ID: <CAJKOXPe0kGFoUxOGupwD_rSshTBVFhH3184xOH=NquSGn2QxcQ@mail.gmail.com>
-X-Gm-Features: AS18NWAOxLyorh9QMzb_rAtOLuensrQj-n9XXTXgykqSdy5eNYjdJBLoFkIMVc8
-Message-ID: <CAJKOXPe0kGFoUxOGupwD_rSshTBVFhH3184xOH=NquSGn2QxcQ@mail.gmail.com>
-Subject: =?UTF-8?Q?Re=3A_=5BPATCH_08=2F29=5D_media=3A_mfc=3A_Add_Exynos=E2=80=91MFC_drive?=
-	=?UTF-8?Q?r_probe_support?=
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Himanshu Dewangan <h.dewangan@samsung.com>, mchehab@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, sumit.semwal@linaro.org, 
-	christian.koenig@amd.com, alim.akhtar@samsung.com, manjun@samsung.com, 
-	nagaraju.s@samsung.com, ih0206.lee@samsung.com, jehyung.lee@samsung.com, 
-	linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linaro-mm-sig@lists.linaro.org
+References: <20250922142427.3310221-1-ioana.ciornei@nxp.com> <20250922142427.3310221-9-ioana.ciornei@nxp.com>
+In-Reply-To: <20250922142427.3310221-9-ioana.ciornei@nxp.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 1 Oct 2025 01:00:01 +0200
+X-Gm-Features: AS18NWDno9w3YJfSDGfd27SZbITIyFHNn9tKwshGM3VINLqos-LcWggqf3IrU68
+Message-ID: <CACRpkdYBz2Ly20N92w1FCZFOs6GONzEHi8ZsVg_HAUNExh071A@mail.gmail.com>
+Subject: Re: [PATCH v5 08/12] gpio: add QIXIS FPGA GPIO controller
+To: Ioana Ciornei <ioana.ciornei@nxp.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Shawn Guo <shawnguo@kernel.org>, 
+	Michael Walle <mwalle@kernel.org>, Lee Jones <lee@kernel.org>, devicetree@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Frank Li <Frank.Li@nxp.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, 1 Oct 2025 at 00:46, Marek Szyprowski <m.szyprowski@samsung.com> wr=
-ote:
->
-> Hi Krzysztof,
->
-> On 30.09.2025 07:54, Krzysztof Kozlowski wrote:
-> > On Tue, 30 Sept 2025 at 12:56, Himanshu Dewangan <h.dewangan@samsung.co=
+Hi Ioana,
+
+thanks for your patch!
+
+On Mon, Sep 22, 2025 at 4:24=E2=80=AFPM Ioana Ciornei <ioana.ciornei@nxp.co=
 m> wrote:
-> >> From: Nagaraju Siddineni <nagaraju.s@samsung.com>
-> >>
-> >> Introduce a new Kconfig entry VIDEO_EXYNOS_MFC for the Samsung
-> >> Exynos MFC driver that supports firmware version=E2=80=AF13 and later.
-> >> Extend the top=E2=80=91level Samsung platform Kconfig to disable the l=
-egacy
-> >> S5P=E2=80=91MFC driver when its firmware version is >=E2=80=AFv12 and =
-to select the
-> >> new Exynos=E2=80=91MFC driver only when VIDEO_SAMSUNG_S5P_MFC is not e=
-nabled.
-> >>
-> >> Add exynos-mfc Kconfig and Makefile for probe functionality and creati=
-on
-> >> of decoder and encoder device files by registering the driver object
-> >> exynos_mfc.o and other relevant source files.
-> >>
-> >> Provide header files mfc_core_ops.h and mfc_rm.h containing core
-> >>    operation prototypes, resource=E2=80=91manager helpers,
-> >>    and core=E2=80=91selection utilities.
-> >>
-> >> Add a configurable option MFC_USE_COREDUMP to enable core=E2=80=91dump
-> >> support for debugging MFC errors.
-> >>
-> >> These changes bring support for newer Exynos=E2=80=91based MFC hardwar=
-e,
-> >> cleanly separate it from the legacy S5P=E2=80=91MFC driver, and lay th=
-e
-> >> groundwork for future feature development and debugging.
-> >>
-> > No, NAK. Existing driver is well tested and already used on newest
-> > Exynos SoC, so all this new driver is exactly how you should not work
-> > in upstream. You need to integrate into existing driver.
-> >
-> > Samsung received this review multiple times already.
->
-> Please don't be so categorical. The MFC hardware evolved quite a bit
-> from the ancient times of S5PV210 SoC, when s5p-mfc driver was designed.
-> The feature list of the new hardware hardly matches those and I really
-> don't see the reason for forcing support for so different hardware in a
-> single driver. Sometimes it is easier just to have 2 separate drivers if
-> the common part is just the acronym in the hardware block name...
->
 
-I know it is easier for Samsung to write new driver, but this should
-answer to - why the maintainers and the community would like to
-maintain two drivers. Sure, make a case why we would like to take this
-code.
+> Add support for the GPIO controller found on some QIXIS FPGAs in
+> Layerscape boards such as LX2160ARDB and LS1046AQDS. This driver is
+> using gpio-regmap.
+>
+> A GPIO controller has a maximum of 8 lines (all found in the same
+> register). Even within the same controller, the GPIO lines' direction is
+> fixed, which mean that both input and output lines are found in the same
+> register. This is why the driver also passed to gpio-regmap the newly
+> added .fixed_direction_output bitmap to represent the true direction of
+> the lines.
+>
+> Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+(...)
+> +++ b/drivers/gpio/Kconfig
+> @@ -1986,6 +1986,15 @@ config GPIO_LATCH
+>           Say yes here to enable a driver for GPIO multiplexers based on =
+latches
+>           connected to other GPIOs.
+>
+> +config GPIO_QIXIS_FPGA
+> +       tristate "NXP QIXIS FPGA GPIO support"
+> +       depends on MFD_SIMPLE_MFD_I2C || COMPILE_TEST
+> +       select GPIO_REGMAP
+> +       help
+> +         This enables support for the GPIOs found in the QIXIS FPGA whic=
+h is
+> +         integrated on some NXP Layerscape boards such as LX2160ARDB and
+> +         LS1046AQDS.
+> +
+>  config GPIO_MOCKUP
+>         tristate "GPIO Testing Driver (DEPRECATED)"
+>         select IRQ_SIM
 
-The easiest argument here why we wouldn't is: new vendor downstream
-code means replicating all known issues, old coding style, everything
-which we already fixed and changed.
+Why is this menu entry among the virtual GPIO drivers?
+Move it under the MFD menu where it should be, please.
+
+With this fixed:
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
+Yours,
+Linus Walleij
 
