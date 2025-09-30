@@ -1,176 +1,95 @@
-Return-Path: <linux-kernel+bounces-837671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03CC6BACE1A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:39:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8341BACE20
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:39:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7ABF174A64
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:39:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E8601927A10
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:40:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EE822FC863;
-	Tue, 30 Sep 2025 12:39:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EA2A2F9987;
+	Tue, 30 Sep 2025 12:39:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aZtOb4jT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="yTwiMOzn"
+Received: from out203-205-221-205.mail.qq.com (out203-205-221-205.mail.qq.com [203.205.221.205])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DD7F34BA29;
-	Tue, 30 Sep 2025 12:39:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4085E34BA29;
+	Tue, 30 Sep 2025 12:39:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759235947; cv=none; b=Dk5DmR/UoHDed6zV8Aicp10D37QRHUhNjvsNbreLMuEOGwKq0heHvVnLaNlpXGLbu4HyiLLDiOzTRINrc4F5m0AmVbNqHQPlrapxNKPaV8A7b7hsvgcIsfVo0nFV201X/2u7hPi1IDvxfb1/gymnSWhsvtD3vaZCPiwshHBbsGE=
+	t=1759235983; cv=none; b=gftNY2TmFmmV/+4IQKji4sz6ytqOnh5PxZDMZ44+0rIPz3C6EqGNfINwN69Y2QqrWDxSSF/aibIVZT29r/MA7KTSmTmRoUbCU9Z0MI8J94WoWXWJlFlkMab+REnompE1a//Z7E+FOE2pCF/SDsLrF8Zzk0OSL5wtyFMturqZgVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759235947; c=relaxed/simple;
-	bh=FH7YiuqsbnWq/LnI9Rcmaje4Dk1Lpe5UJ99+64McSr8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hzFztlCHz5SCGe8z41GkxAUkdZvCYZT0pQpluAwVkk3cE00YapVJOdi1YQcTf7dKZgg4r08rWdOilPDzoF3NW7nUrRlbEh+zoq+XbxumPUXGLskJIOK8S5/iiypYNuh14ZnkUcZ8OZUg/q8ytT09APF53dy00QTTqY4QrjH0Zh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aZtOb4jT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1669C4CEF0;
-	Tue, 30 Sep 2025 12:39:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759235946;
-	bh=FH7YiuqsbnWq/LnI9Rcmaje4Dk1Lpe5UJ99+64McSr8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aZtOb4jThe5hbr+Tyqyy0BX4IP44qyIJzByuIFNsfqHVVknUpDU63py3n8kqkXCVm
-	 Dix4XQFJg9O4rP0F22GQ3Ete/n3Ec9hefJxp3G0JOyuekpTrNKEHhC2Dgi64LYkXDU
-	 S0uYWNtPXOu8+Ohp9jBUHyTM0hnxuqIQAadcJ6epWuDKal/FJQl+5DucQfOFBXa5eZ
-	 bx9uCAcnx5kKFgHaw+MAOUr7sh0ay1QWn1+GUPkANq/IalMH8ErGqBgZ3XBVMxCjS6
-	 rEWnnLneqTXWv/FQdHcOYA2/oH/S35FVfhQvg95DlyOE4bmMzaOM+DcT6C3/Kgc0JB
-	 F07dSaOF4JuPQ==
-Date: Tue, 30 Sep 2025 15:39:02 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Stefano Garzarella <sgarzare@redhat.com>
-Cc: linux-integrity@vger.kernel.org, dpsmith@apertussolutions.com,
-	ross.philipson@oracle.com,
-	Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	"open list:KEYS/KEYRINGS" <keyrings@vger.kernel.org>,
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 03/10] KEYS: trusted: Use tpm_ret_to_err() in
- trusted_tpm2
-Message-ID: <aNvPZmoF7ygfkYMq@kernel.org>
-References: <20250929194832.2913286-1-jarkko@kernel.org>
- <20250929194832.2913286-4-jarkko@kernel.org>
- <7icpto3rnm2f4u6zaxl4xy7zvar3q4hhpgelq2gnazszdkwc3m@5dtivkqs5xdg>
+	s=arc-20240116; t=1759235983; c=relaxed/simple;
+	bh=6eKCQ/B33c43ONnZ+/Nb2tdS++4lzEi7VV/6tLsTwrw=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=Kx2/9CyfSAi29u/2T8EAQZBj09neU3X2xjkdjbhZvknBMsmBvHhrrEnv4BTLs1T8RF3taMBmm+kjFAmrZdbYeBou4embj/d0WgINPCwUGCudpe2HeVGdEkV9iYVef8SYu9hPLZnkYG6gcYkg67nnnNWQ4s5ZWMtU3A9x/5oWWhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=yTwiMOzn; arc=none smtp.client-ip=203.205.221.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1759235975; bh=zX1yud5rWsehKArldd3NcJNTyIjFnt+V8odHkAI+Jok=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=yTwiMOzn4ZftmVFh/3id5HKUp8zPF/XiklWzW6vB7flAiD+aAHE2/SXhCL5dGg7p3
+	 SYik5yJDacXaFvDnPkhzcpnhsOufYYGwyuz3E41O5HZNR9R8tfvMHu5NR76vQ8LRQ5
+	 Xf9divyPNNR3sdjP6F/QJ50YAbsEdiezw7XpXq6o=
+Received: from localhost.localdomain ([116.128.244.171])
+	by newxmesmtplogicsvrszb42-0.qq.com (NewEsmtp) with SMTP
+	id 9E1280EF; Tue, 30 Sep 2025 20:39:33 +0800
+X-QQ-mid: xmsmtpt1759235973toy47nfyy
+Message-ID: <tencent_88053624249C81B35E3F59FCF6F53DEA4007@qq.com>
+X-QQ-XMAILINFO: MllZffuBkEb52VHQQjs75muKszaAy9Ea3JvZ1AFrhbMAFXRqZ42zraUhhKbsmF
+	 gj7nbfiV/WBVAKwdsx7F8JABhkqiFFFWnUSpCBa/qUXlwTsOpC0C/tPRQ6Bwoohlc6slDS0kmQNf
+	 2UgyrbaCZqnoOXRM//P52JACbEHZRVcGLxPQhKv/7CmqkUVXr+K/q7dtUJXM9AO4nrXuz1okbOx4
+	 +0gjFIwKBeklSkpjw+r2c8qObcXfGz0oc1GHowP87eJlyLwpP//a6FoQst+YJS7GG0gbWKK5s3Ig
+	 QT6/5VRtpGpCQYwzTvdQRWQUhNcJmwQ1Z1C95mBUB2aZFMwa59JSndcf0q5VJv3+p6CXUTZ1lwhe
+	 Tcwr5UU621SIeAJeazpewvk/23Hw5fbrhHOhzQNHgUKr4rvkbtwnfImhWwqQpFStsivqNrJXuQbe
+	 Z35qn0PLU328fxV0cD0f3LAz2RmYj5GWJZrxBtosfYB01FD/I37IrIFGL+kypoL+oahddr4a+6sD
+	 tu0Aj7O/boP++C8ERTYtZNeHqOJJOuzyd0UkYe5JOIsRCsfYMzeC4GN/pIfjcPUSuCNYq3qpkbFZ
+	 Kmcji+LCqGUivk2pj1kP5nlj/VwX1+78y7c/htYay52UaqrWHSRrbblzWtCsNuJSr2pTeyHCVqy/
+	 YHzL7uFquD9mC3m9nSNYzuoTU5Lgo2HCdCmIsnHwzfoPLmAJxYflI/IOzDf02S63l+8QltvLK1zW
+	 QzroxDunBiCKYvWhnZiau8u6c1MISEq4lEtcY5t3BfbiOF4q2f76+pK3tqex9N0h4p7Jx8BiAeC6
+	 zY6YEPPROiwNmlavW5wTuOi/hYvF7UjHBuXNuTEs5p7Kko+Ph48e/6dCNq5XObm7cNI90O2Bj9fj
+	 rcsvf3KF1eTcf4ma/79mMV33gmDep1HuZ9Bcn9fC1baf6dU4z8qZZd4dDQyXiJC3nV9T0XRTcdDR
+	 V37NmDMVLX9bXHxOxyKG2s4/4VD4GT5gMjdUBW0gFXwuRzw4lmLr89vS5l+Ne6PhPhZeiytew1UX
+	 pRQB4JJgQx9/V3Dm0sySqogq3Hp9QujgLurlk2dCL/ikLsFOtl
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+From: Haofeng Li <920484857@qq.com>
+To: kuba@kernel.org
+Cc: 13266079573@163.com,
+	920484857@qq.com,
+	donald.hunter@gmail.com,
+	lihaofeng@kylinos.cn,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH WITHDRAWN] net: ynl: return actual error code in ynl_exec_dump()
+Date: Tue, 30 Sep 2025 20:39:33 +0800
+X-OQ-MSGID: <20250930123933.22034-1-920484857@qq.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250926112406.1d92c89d@kernel.org>
+References: <20250926112406.1d92c89d@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7icpto3rnm2f4u6zaxl4xy7zvar3q4hhpgelq2gnazszdkwc3m@5dtivkqs5xdg>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 30, 2025 at 02:12:35PM +0200, Stefano Garzarella wrote:
-> On Mon, Sep 29, 2025 at 10:48:25PM +0300, Jarkko Sakkinen wrote:
-> > From: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
-> > 
-> > Use tpm_ret_to_err() to transmute TPM return codes in trusted_tpm2.
-> > 
-> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
-> > ---
-> > v3:
-> > - No changes.
-> > v2:
-> > - New patch split out from the fix.
-> > ---
-> > security/keys/trusted-keys/trusted_tpm2.c | 26 ++++++-----------------
-> > 1 file changed, 7 insertions(+), 19 deletions(-)
-> 
-> Nice clean up!
-> 
-> Acked-by: Stefano Garzarella <sgarzare@redhat.com>
+> This is not kernel code the error is always -1, and the details are in errno.
 
-Thank you.
+Thank you for the feedback and for pointing that out.
 
-> 
-> > 
-> > diff --git a/security/keys/trusted-keys/trusted_tpm2.c b/security/keys/trusted-keys/trusted_tpm2.c
-> > index 024be262702f..e165b117bbca 100644
-> > --- a/security/keys/trusted-keys/trusted_tpm2.c
-> > +++ b/security/keys/trusted-keys/trusted_tpm2.c
-> > @@ -348,25 +348,19 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
-> > 	}
-> > 
-> > 	blob_len = tpm2_key_encode(payload, options, &buf.data[offset], blob_len);
-> > +	if (blob_len < 0)
-> > +		rc = blob_len;
-> > 
-> > out:
-> > 	tpm_buf_destroy(&sized);
-> > 	tpm_buf_destroy(&buf);
-> > 
-> > -	if (rc > 0) {
-> > -		if (tpm2_rc_value(rc) == TPM2_RC_HASH)
-> > -			rc = -EINVAL;
-> > -		else
-> > -			rc = -EPERM;
-> > -	}
-> > -	if (blob_len < 0)
-> > -		rc = blob_len;
-> > -	else
-> > +	if (!rc)
-> > 		payload->blob_len = blob_len;
-> > 
-> > out_put:
-> > 	tpm_put_ops(chip);
-> > -	return rc;
-> > +	return tpm_ret_to_err(rc);
-> > }
-> > 
-> > /**
-> > @@ -468,10 +462,7 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
-> > 		kfree(blob);
-> > 	tpm_buf_destroy(&buf);
-> > 
-> > -	if (rc > 0)
-> > -		rc = -EPERM;
-> > -
-> > -	return rc;
-> > +	return tpm_ret_to_err(rc);
-> > }
-> > 
-> > /**
-> > @@ -534,8 +525,6 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
-> > 	tpm_buf_fill_hmac_session(chip, &buf);
-> > 	rc = tpm_transmit_cmd(chip, &buf, 6, "unsealing");
-> > 	rc = tpm_buf_check_hmac_response(chip, &buf, rc);
-> > -	if (rc > 0)
-> > -		rc = -EPERM;
-> > 
-> > 	if (!rc) {
-> > 		data_len = be16_to_cpup(
-> > @@ -568,7 +557,7 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
-> > 
-> > out:
-> > 	tpm_buf_destroy(&buf);
-> > -	return rc;
-> > +	return tpm_ret_to_err(rc);
-> > }
-> > 
-> > /**
-> > @@ -600,6 +589,5 @@ int tpm2_unseal_trusted(struct tpm_chip *chip,
-> > 
-> > out:
-> > 	tpm_put_ops(chip);
-> > -
-> > -	return rc;
-> > +	return tpm_ret_to_err(rc);
-> > }
-> > -- 
-> > 2.39.5
-> > 
-> > 
-> 
+You are absolutely right. I now understand that in the context of this 
+userspace code, the error handling convention relies on errno for 
+details when the return value is -1. My patch was attempting to align 
+the return value with a specific internal error code, which, as you clarified,
+ is not the established practice here and doesn't provide the intended 
+benefit in this case.
 
-BR, Jarkko
+I appreciate you taking the time to explain this.
+
 
