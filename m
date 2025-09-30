@@ -1,65 +1,69 @@
-Return-Path: <linux-kernel+bounces-837494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4E9BBAC6DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:15:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C4BFBAC6EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:16:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 957ED3A3716
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 10:15:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D428320F9C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 10:16:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C45322BD5A7;
-	Tue, 30 Sep 2025 10:15:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8A072F83C5;
+	Tue, 30 Sep 2025 10:16:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EzMCcLE6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="EB28MsHT"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2502E1E51E0;
-	Tue, 30 Sep 2025 10:15:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95F3E218AD1;
+	Tue, 30 Sep 2025 10:16:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759227322; cv=none; b=P5UcOp64NkJL1XCtC8HiVwuvNrixp7xSOpwwIv+gxy/apo7SKipeEDERXZJBq5nsPOfo1UucJHVgjtrHOYVxZddEWgizhylLcFxNKw3GyLPoIVP0JkZx1i2m3rmqqqM96R6dzr9wgcraVSOCrU3rATzB/TEnHZngEp85281DNe4=
+	t=1759227397; cv=none; b=V0+6PeqDBG+i4HHSNxzo3MDkmV4KwdVG0lPjOiycnl1ShMdqVDv0SJ1hIGZx56N0m+jMd6nublA4N3Hw+il6uUMiFy8DneUbQMYruvmIstIDVXoQnwOe0So/26e9EwAjj4fPqh2w0wR7IdojaEh96AVqIzfMFJUM5o7IvI2rtZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759227322; c=relaxed/simple;
-	bh=MNWyXnGoHFWpG7Rnd9CdwwT83DvQVU8dAcsX+F387zM=;
+	s=arc-20240116; t=1759227397; c=relaxed/simple;
+	bh=JJyuhPS9cvJhhH392NVdpZy5/YDKI9Im/fRJvp2gzYo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qFUnfG2x5sE7SVawI7m7ENKvWPz0EC53VORU1MF+eZM+OmuoJRgDZ8ZJ8WN0Q2g6ZQ5FUoebpGXdhGCU0+ELBPlFMmdn9C1Ngwc2SlcGK0RECP6ck64+XX9XTdQwvYhTTZIPnsFW6dAUapsNXoVzmuCSUjGitP74iykk3WWjSnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EzMCcLE6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EC5DC4CEF0;
-	Tue, 30 Sep 2025 10:15:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759227321;
-	bh=MNWyXnGoHFWpG7Rnd9CdwwT83DvQVU8dAcsX+F387zM=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=PgUN7nXDlOIAdMun0EeBIMo94LrqJa+zNhDWuzq9R6zt4IIBw7ApL/gaZl+4yV0BeREa6TlcOJF0tGwATmtpixA/Cvb8xbRHVo9xw0Dh2iAPGV542a8P26CVqzA5xSMONm6fVQXA7ZN2Tz9MGF9NzWv+nX5VGFckXuF+DSSa27Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=EB28MsHT; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id A43A7982;
+	Tue, 30 Sep 2025 12:15:03 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1759227303;
+	bh=JJyuhPS9cvJhhH392NVdpZy5/YDKI9Im/fRJvp2gzYo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EzMCcLE6C8KZLJh6bAr7/dj98kB4GetUjjXSsrSkignLS9+qNMWsSgibyHzJyZ1vX
-	 iJ1ZlKJ6yQKjjJelIpeo4QzKi+NGvq7mVs9Q00yS6jCiZU5C1zJLTi/RNOAwc1uS6F
-	 3HI3wUdkej0Vchvk/3LEkj1VQeV7K3+RgHhd9xpDEKmxtmEehIVtrSwTIS9PF9fmfo
-	 Rrdq+aqgkYUDw7W2Rpmg/nsedJOOfJXX7Wq8yechMS/ZdUuWUgypINJjH0szYVUuVF
-	 zJCY6ub8OkexmvZgcsu7jM2BsYO+U7TOdnSdfv3LMIIynDaYzY1/tHbvRZ66K4jzET
-	 q1UTo03EGLcsg==
-Date: Tue, 30 Sep 2025 12:15:15 +0200
-From: Mike Rapoport <rppt@kernel.org>
-To: dan.j.williams@intel.com
-Cc: =?utf-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>,
-	Ira Weiny <ira.weiny@intel.com>, Dave Jiang <dave.jiang@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>, jane.chu@oracle.com,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	Tyler Hicks <code@tyhicks.com>, linux-kernel@vger.kernel.org,
-	nvdimm@lists.linux.dev
-Subject: Re: [PATCH 1/1] nvdimm: allow exposing RAM carveouts as NVDIMM DIMM
- devices
-Message-ID: <aNuts7yMTJdtmDXZ@kernel.org>
-References: <20250826080430.1952982-1-rppt@kernel.org>
- <20250826080430.1952982-2-rppt@kernel.org>
- <68b0f8a31a2b8_293b3294ae@iweiny-mobl.notmuch>
- <aLFdVX4eXrDnDD25@kernel.org>
- <CAAi7L5eWB33dKTuNQ26Dtna9fq2ihiVCP_4NoTFjmFFrJzWtGQ@mail.gmail.com>
- <68d3465541f82_105201005@dwillia2-mobl4.notmuch>
- <CAAi7L5esz-vxbbP-4ay-cCfc1osXLkvGDx5thijuBXFBQNwiug@mail.gmail.com>
- <68d6df3f410de_1052010059@dwillia2-mobl4.notmuch>
+	b=EB28MsHTRbdEej/CC6YghJ9Eo3P8+FbQJ1UqsMq0WpbxKzf4mwaLmEXwRS+YbJzAk
+	 N45+x+jzf8P/Y+kDYqFNhsWhTKcRfuNUYgvUgvOuuc6cU8fzwZzWXTuR/Mnfma8Tn0
+	 cd6B1AEJP0lk7qU3NaGOQbbhZfrH+sQM0WOCtodg=
+Date: Tue, 30 Sep 2025 13:16:26 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Cc: Anthony McGivern <Anthony.McGivern@arm.com>,
+	"bcm-kernel-feedback-list@broadcom.com" <bcm-kernel-feedback-list@broadcom.com>,
+	"florian.fainelli@broadcom.com" <florian.fainelli@broadcom.com>,
+	"hverkuil@kernel.org" <hverkuil@kernel.org>,
+	"kernel-list@raspberrypi.com" <kernel-list@raspberrypi.com>,
+	"Kieran Bingham (kieran.bingham@ideasonboard.com)" <kieran.bingham@ideasonboard.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+	"linux-rpi-kernel@lists.infradead.org" <linux-rpi-kernel@lists.infradead.org>,
+	"m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
+	"mchehab@kernel.org" <mchehab@kernel.org>,
+	"nicolas.dufresne@collabora.com" <nicolas.dufresne@collabora.com>,
+	"sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
+	"tfiga@chromium.org" <tfiga@chromium.org>,
+	"tomi.valkeinen@ideasonboard.com" <tomi.valkeinen@ideasonboard.com>
+Subject: Re: [PATCH v2 12/27] media: v4l2-subdev: Introduce v4l2 subdev
+ context
+Message-ID: <20250930101626.GE25784@pendragon.ideasonboard.com>
+References: <DU0PR08MB8836559555E586FCD5AE1CBA811FA@DU0PR08MB8836.eurprd08.prod.outlook.com>
+ <pdxsi4fskze6mvgro5foa3jvmrvl3ihmksnzukonoihkb5xum5@kph26jtiayda>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,50 +72,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <68d6df3f410de_1052010059@dwillia2-mobl4.notmuch>
+In-Reply-To: <pdxsi4fskze6mvgro5foa3jvmrvl3ihmksnzukonoihkb5xum5@kph26jtiayda>
 
-On Fri, Sep 26, 2025 at 11:45:19AM -0700, dan.j.williams@intel.com wrote:
-> Michał Cłapiński wrote:
-> [..]
-> > > As Mike says you would lose 128K at the end, but that indeed becomes
-> > > losing that 1GB given alignment constraints.
+On Tue, Sep 30, 2025 at 11:53:39AM +0200, Jacopo Mondi wrote:
+> On Thu, Sep 25, 2025 at 09:26:56AM +0000, Anthony McGivern wrote:
+> > On Thu, Jul 24, 2025 at 16:10:19 +0200, Jacopo Mondi write:
+> > > Introduce a new type in v4l2 subdev that represents a v4l2 subdevice
+> > > contex. It extends 'struct media_entity_context' and is intended to be
+> > > extended by drivers that can store driver-specific information
+> > > in their derived types.
 > > >
-> > > However, I think that could be solved by just separately vmalloc'ing the
-> > > label space for this. Then instead of kernel parameters to sub-divide a
-> > > region, you just have an initramfs script to do the same.
-> > >
-> > > Does that meet your needs?
-> > 
-> > Sorry, I'm having trouble imagining this.
-> > If I wanted 500 1GB chunks, I would request a region of 500GB+space
-> > for the label? Or is that a label and info-blocks?
+> > > Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+> >
+> > I am interested in how the sub-device context will handle the
+> > Streams API? Looking at the commits the
+> > v4l2_subdev_enable/disable_streams functions still appear to operate
+> > on the main sub-device only. I take it we would have additional
+> > context-aware functions here that can fetch the subdev state from
+> > the sub-device context, though I imagine some fields will have to be
+> > moved into the context such as s_stream_enabled, or even
+> > enabled_pads for non stream-aware drivers?
 > 
-> You would specify an memmap= range of 500GB+128K*.
+> mmm good question, I admit I might have not considered that part yet.
 > 
-> Force attach that range to Mike's RAMDAX driver.
+> Streams API should go in a soon as Sakari's long awaited series hits
+> mainline, and I will certainly need to rebase soon, so I'll probably
+> get back to this.
 > 
-> [ modprobe -r nd_e820, don't build nd_820, or modprobe policy blocks nd_e820 ]
-> echo ramdax > /sys/bus/platform/devices/e820_pmem/driver_override
-> echo e820_pmem > /sys/bus/platform/drivers/ramdax
-> 
-> * forget what I said about vmalloc() previously, not needed
-> 
-> > Then on each boot the kernel would check if there is an actual
-> > label/info-blocks in that space and if yes, it would recreate my
-> > devices (including the fsdax/devdax type)?
-> 
-> Right, if that range is persistent the kernel would automatically parse
-> the label space each boot and divide up the 500GB region space into
-> namespaces.
-> 
-> 128K of label spaces gives you 509 potential namespaces.
+> Have you any idea about how this should be designed ?
 
-I was also thinking that the label area can be put either in the end or in
-the beginning of the memmap= range, so that if you specify memmap=<1G
-aligned address - 128K> the actual space will be 1G aligned.
+Multi-context is designed for memory to memory pipelines, as inline
+pipelines can't be time-multiplexed (at least not without very specific
+hardware designs that I haven't encountered in SoCs so far). In a
+memory-to-memory pipeline I expect the .enable/disable_streams()
+operation to not do much, as the entities in the pipeline operate based
+on buffers being queued on the input and output video devices. We may
+still need to support this in the multi-context framework, depending on
+the needs of drivers.
+
+Anthony, could you perhaps share some information about the pipeline
+you're envisioning and the type of subdev that you think would cause
+concerns ?
 
 -- 
-Sincerely yours,
-Mike.
+Regards,
+
+Laurent Pinchart
 
