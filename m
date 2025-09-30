@@ -1,198 +1,166 @@
-Return-Path: <linux-kernel+bounces-837580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C381BACAA6
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 13:19:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4854DBACAAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 13:19:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62A3018935A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 11:20:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F0D47A490D
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 11:18:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1985E262FC5;
-	Tue, 30 Sep 2025 11:19:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F268261B67;
+	Tue, 30 Sep 2025 11:19:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CJnORWlf"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="IYU/Oitn"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A9164C98
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 11:19:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7ED7275AF6
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 11:19:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759231170; cv=none; b=XgV8qITVCeQ2K15DwjBY5ZAUf3oAwvQbFOg4S1suHi0O3643Ur45dtRV+8a+rKsw+cOjYJV5+Q1X03N/wpdH0atcCRf3VCDbfJsrFL3araESfiCtZjFR4XyLKpWHwYBgJwHhaKuPqxLsim7oR8ifzLKRbqBmaYIhkZukY15hMKw=
+	t=1759231185; cv=none; b=iaGuY1gs8vgzReH++XK1ls1K7NM7OLPhncAtHDa4KoCVLUmbQM78ddYSw1HCrBM+k0iPdkocHGQcK8lzyh1KB/vi54ww9U5N88/wjZqZ7zdt2z4CO7+mVtU7/Jb9r8I0b2D6a5J6yUyj97vCepxmOr3LTpFHUNChc3A1kVCIt2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759231170; c=relaxed/simple;
-	bh=GCZlpn9CjRT/k1IQPc49AYA4DPeOTwZpqqTvJvZWk1g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XCAYRn6z+iNoeMYfPmBnakf3QuvX231FYiSm9ZvseoxpP0E6Z4x2N4fX7CRKA0KlzgYvi0qUcZhT0QXJjNEAqnxzvCqhsgpYfzd9Y90eDZVyNpMb1jf5NC+6hgu5ISOQSkCufKHGjAZboeiwWsXdEeSFUpIFRr2yMA2C0KcuAwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CJnORWlf; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-46e4ad36541so32893035e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 04:19:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759231167; x=1759835967; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ypq+/ajxaG4je7HYmcqvMA1fKurMa0dGhCUD1PNUx50=;
-        b=CJnORWlf65L1/v/xaCtAawrfe+r+7qsncQSC3rn9LTPI8a6pwWwQgsLFOHbKoLHU4K
-         tj4oRvFylMddKEOZmBMwmFTRbdsuXBQRxdi+wnuxSaeyE1LyBIn8S5zY1t2p7pvGEyTL
-         D2r0qj3s1RqOktSGeLIUUlbViSxLfMM9EjSHGsa3e2DBkshvVxGvamHyYvRhjuH86od1
-         DYrl1HB5jlwHZy2jdsKUSxzBvbynMkQuqmDXGLqy+jKWOv+z3upsCX/JWhQQfskuHgOE
-         Xa2H2tb6R6QufsGGcZhPmrEt4l1VYq3qM7DrherJYnrrXXFkcnY9cN5XE5r4PhQjJPKh
-         5Qtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759231167; x=1759835967;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ypq+/ajxaG4je7HYmcqvMA1fKurMa0dGhCUD1PNUx50=;
-        b=c1z4K7jVYkOgqnGl8L1QBFkrL4KyI2XWtx8VzYjtUdb8qjLriwwBRlNyrikdP9bp/j
-         /8M4AFrFlS838GJcapeDvGw5M9a0MRrJEYzqHV57RascSUuVxNpwe3LXKTTcKDbfNOOd
-         0E03DTn5XxlW55lrnIICDdkBhzGukEEx/LX8olhZdOwvlTMFCJWHcJzon8gGGqdueJYU
-         c+0lxGkKdr0/PxayRHdwwyG4yuvK4oynTTvbuKDuOwJctQ/C30DtBm+U1TgGiMcMmkAC
-         VyBLFJraPJStyYTZRgt6Z157EwvsSt8Jlw1py/5AWUTannMTT2BQuzyLnqWvNS1Ff2td
-         VrsA==
-X-Forwarded-Encrypted: i=1; AJvYcCXa1X2P6XNbZOOUO3XaVkv8SEh18wk4t9shszsTq/vdaWiJykWxtvSG8uqGXFxPUdVr73NL7g1ZUeUaRro=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFnUwTFb8vsUbO+T9wZHVurJUrvcQnGAlo42DJmtwaRtDvuZYq
-	O/jWvLRqNO7d7WKG6gwXIZqWKwU9FJB1iu5rDifB4EbPmUC0dLmeuo76ETVmw33Gt6+XMwz3r5r
-	W4Itxr4x+uf10Bks4l3i+inTi7kl1/kA=
-X-Gm-Gg: ASbGnctW2fhP/1sXy79vqRtSEbC7I2otAxYpwiJTjwzdMtBhmcMGOQSR2GwLsyW/hUr
-	iuw/pUVP3bFBL0KNfORFpfKHkyCF+VDqjRPDwDY+u9exmq/SGn18JbE7KaY91x6i7LPTFmDVKca
-	qNyRUdgFZugE1ShFcR0LUxs1jR9qQNdblfdFXbT9igVrgPvQiXXEAM01LNzPCE+nNZuMrSIByRC
-	hQxT8DzabCD0P1c+HPwvcmkAjp6ChYZ+Y5Yiq/2ER512axdBMdZag==
-X-Google-Smtp-Source: AGHT+IFZ1fMTMwFHtaeQpXybp0NxecATfP4lqnf9y7TiHPos/hXiuxUHuUdy25b4V0fv4saKSFcmKIqnb2NB8ydX8Ww=
-X-Received: by 2002:a05:600c:6303:b0:46e:37a3:3ec1 with SMTP id
- 5b1f17b1804b1-46e37a34304mr173099175e9.24.1759231166709; Tue, 30 Sep 2025
- 04:19:26 -0700 (PDT)
+	s=arc-20240116; t=1759231185; c=relaxed/simple;
+	bh=Deg9POlJwf6oI59BV5wqbX72B/W4GCjUn9Lp50TU+Zo=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=gri5AqQ1QdGmkSpXKgMdLSRG0EYnpo+t9raqJEdQGn0j2A3IucGxTFl342GEJ1hvK9TSF3yUuRlnorFU8uCR3cLnPO4DJAByXHTXYZnQ/H1IybAn8Q3QEZ5zQAEy6kWw+vt5P/EjmMmjWWE1rLIcjTIRzRxNo6UZMLGPZJSQ6Yg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=IYU/Oitn; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250930083402.782927-1-ranxiaokai627@163.com> <aNu2xJMkEyYSdmW6@hyeyoo>
-In-Reply-To: <aNu2xJMkEyYSdmW6@hyeyoo>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Tue, 30 Sep 2025 13:19:15 +0200
-X-Gm-Features: AS18NWDoOuauUwUhU_r-pegvcK1zYn6qFC4ElDPwWAuR9qeK68FX3q_eHNFaYvg
-Message-ID: <CAADnVQJ-bkd2UVsZmhdb1L5ZrXjZbTnRcaJ-D=ojsoiRHmHwaw@mail.gmail.com>
-Subject: Re: [PATCH] slab: Fix using this_cpu_ptr() in preemptible context
-To: Harry Yoo <harry.yoo@oracle.com>
-Cc: ranxiaokai627@163.com, Vlastimil Babka <vbabka@suse.cz>, 
-	Andrew Morton <akpm@linux-foundation.org>, cl@gentwo.org, 
-	David Rientjes <rientjes@google.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Alexei Starovoitov <ast@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	linux-mm <linux-mm@kvack.org>, ran.xiaokai@zte.com.cn
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1759231171;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ej8+t/v5mQyQZp57f2hlXxPelYNwXcOIgQlGLkUSidA=;
+	b=IYU/Oitnx44deO3YQ4pvsUrf3cs72AmxSOTbghOPYUWNQlr+n/xP/l2HkqnuOORt6jwhNa
+	WlRxsrBk0tsqQxmx6fCdxGGYZSUj1zv4M4auOOALhYVuuCRtxoN5uAi6NROsn1yEhm6j2q
+	9iN0MKsaxUcw94CxbGxM+bu2VJKmRBh4X5Wj5pPiS59OWYrLUn8VRpmKxGpsc1hrfH36dO
+	Hp0X25gak0x8LCJ2/hlncT/efUkp24464O7mCQHrcubDrwYM2h7DNL5uJXl846y4UAc05S
+	+2t36F46/1/pvWfidpXKcYLta/n13xuNVx2wbZGHfswkiMn29vTyZD1ttOHiBA==
+Content-Type: multipart/signed;
+ boundary=64945f9999df6ed87a915ea31fa1d9d40eebd6aa48ba7de803956238b27e;
+ micalg=pgp-sha512; protocol="application/pgp-signature"
+Date: Tue, 30 Sep 2025 13:19:21 +0200
+Message-Id: <DD63EEOKPWNV.3IK12D6CFPTQZ@cknow.org>
+Cc: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+ <heiko@sntech.de>, <quentin.schulz@cherry.de>, <kever.yang@rock-chips.com>,
+ <naoki@radxa.com>, <honyuenkwun@gmail.com>, <inindev@gmail.com>,
+ <ivan8215145640@gmail.com>, <neil.armstrong@linaro.org>, <mani@kernel.org>,
+ <dsimic@manjaro.org>, <pbrobinson@gmail.com>, <alchark@gmail.com>,
+ <jbx6244@gmail.com>, <devicetree@vger.kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>,
+ <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 0/3] arm64: dts: rockchip: introduce LinkEase EasePi
+ R1
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Diederik de Haas" <didi.debian@cknow.org>
+To: "jjm2473" <jjm2473@gmail.com>
+References: <20250929065714.27741-1-jjm2473@gmail.com>
+ <DD57IZJQ4FQM.3T5791FLUQ8KQ@cknow.org>
+ <CAP_9mL6+uoeG7LX8YCcUFjoU13De1CdPFqxNNfoJvOdsOrYo5Q@mail.gmail.com>
+In-Reply-To: <CAP_9mL6+uoeG7LX8YCcUFjoU13De1CdPFqxNNfoJvOdsOrYo5Q@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
+
+--64945f9999df6ed87a915ea31fa1d9d40eebd6aa48ba7de803956238b27e
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-On Tue, Sep 30, 2025 at 12:54=E2=80=AFPM Harry Yoo <harry.yoo@oracle.com> w=
-rote:
->
-> On Tue, Sep 30, 2025 at 08:34:02AM +0000, ranxiaokai627@163.com wrote:
-> > From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
-> >
-> > defer_free() maybe called in preemptible context, this will
-> > trigger the below warning message:
-> >
-> > BUG: using smp_processor_id() in preemptible [00000000] code: swapper/0=
-/1
-> > caller is defer_free+0x1b/0x60
-> > Call Trace:
-> >  <TASK>
-> >  dump_stack_lvl+0xac/0xc0
-> >  check_preemption_disabled+0xbe/0xe0
-> >  defer_free+0x1b/0x60
-> >  kfree_nolock+0x1eb/0x2b0
-> >  alloc_slab_obj_exts+0x356/0x390
+On Mon Sep 29, 2025 at 8:09 PM CEST, jjm2473 wrote:
+> I have another question. If there are reviewers or co-authors later,
+> do I need to add it to the commit message and send it again?
+> Or should the reviewer or co-author add the message and
+> continue to deliver the patch?
 
-Please share config and repro details, since the stack trace
-looks theoretical, but you somehow got it?
-This is not CONFIG_SLUB_TINY, but kfree_nolock()
-sees locked per-cpu slab?
-Is this PREEMPT_RT ?
+When you get a Reviewed-by tag, you should add that tag too to a new
+version. But there's no need to send a new version to just add those
+tags, the tooling used by maintainers picks those up themselves.
 
-> >  __alloc_tagging_slab_alloc_hook+0xa0/0x300
-> >  __kmalloc_cache_noprof+0x1c4/0x5c0
-> >  __set_page_owner+0x10d/0x1c0
-> >  post_alloc_hook+0x84/0xf0
-> >  get_page_from_freelist+0x73b/0x1380
-> >  __alloc_frozen_pages_noprof+0x110/0x2c0
-> >  alloc_pages_mpol+0x44/0x140
-> >  alloc_slab_page+0xac/0x150
-> >  allocate_slab+0x78/0x3a0
-> >  ___slab_alloc+0x76b/0xed0
-> >  __slab_alloc.constprop.0+0x5a/0xb0
-> >  __kmalloc_noprof+0x3dc/0x6d0
-> >  __list_lru_init+0x6c/0x210
-> >  alloc_super+0x3b6/0x470
-> >  sget_fc+0x5f/0x3a0
-> >  get_tree_nodev+0x27/0x90
-> >  vfs_get_tree+0x26/0xc0
-> >  vfs_kern_mount.part.0+0xb6/0x140
-> >  kern_mount+0x24/0x40
-> >  init_pipe_fs+0x4f/0x70
-> >  do_one_initcall+0x62/0x2e0
-> >  kernel_init_freeable+0x25b/0x4b0
-> >  kernel_init+0x1a/0x1c0
-> >  ret_from_fork+0x290/0x2e0
-> >  ret_from_fork_asm+0x11/0x20
-> > </TASK>
-> >
-> > Replace this_cpu_ptr with raw_cpu_ptr to eliminate
-> > the above warning message.
-> >
-> > Fixes: af92793e52c3 ("slab: Introduce kmalloc_nolock() and kfree_nolock=
-().")
->
-> There's no mainline commit hash yet, should be adjusted later.
->
-> > Signed-off-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
-> > ---
-> >  mm/slub.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/mm/slub.c b/mm/slub.c
-> > index 1433f5b988f7..67c57f1b5a86 100644
-> > --- a/mm/slub.c
-> > +++ b/mm/slub.c
-> > @@ -6432,7 +6432,7 @@ static void free_deferred_objects(struct irq_work=
- *work)
-> >
-> >  static void defer_free(struct kmem_cache *s, void *head)
-> >  {
-> > -     struct defer_free *df =3D this_cpu_ptr(&defer_free_objects);
-> > +     struct defer_free *df =3D raw_cpu_ptr(&defer_free_objects);
->
-> This suppresses warning, but let's answer the question;
-> Is it actually safe to not disable preemption here?
->
-> >       if (llist_add(head + s->offset, &df->objects))
->
-> Let's say a task was running on CPU X and migrated to a different CPU
-> (say, Y) after returning from llist_add() or before calling llist_add(),
-> then we're queueing the irq_work of CPU X on CPU Y.
->
-> I think technically this should be safe because, although we're using
-> per-cpu irq_work here, the irq_work framework itself is designed to handl=
-e
-> concurrent access from multiple CPUs (otherwise it won't be safe to use
-> a global irq_work like in other places) by using lockless list, which
-> uses try_cmpxchg() and xchg() for atomic update.
->
-> So if I'm not missing something it should be safe, but it was very
-> confusing to confirm that it's safe as we're using per-cpu irq_work...
->
-> I don't think these paths are very performance critical, so why not disab=
-le
-> preemption instead of replacing it with raw_cpu_ptr()?
+If you 'just' get review comments, then you'd usually just
+improve the patch and you could reference it in a changelog item (to
+indicate you addressed it, ttboyk).
+If you think a reviewer helped you 'significantly', you could choose to
+add an Helped-by tag, but whether you think someone deserves some
+credits that way, is up to you(r judgement).
 
-+1.
-Though irq_work_queue() works for any irq_work it should
-be used for current cpu, since it IPIs itself.
-So pls use guard(preempt)(); instead.
+(Co-)authors are usually known upon first submission. If you later find
+out that that list was incorrect/incomplete, then you would add
+Co-developed-by + Signed-off-by tags on a new version.
+
+HTH,
+  Diederik
+
+> Diederik de Haas <didi.debian@cknow.org> =E4=BA=8E2025=E5=B9=B49=E6=9C=88=
+29=E6=97=A5=E5=91=A8=E4=B8=80 18:20=E5=86=99=E9=81=93=EF=BC=9A
+>>
+>> On Mon Sep 29, 2025 at 8:57 AM CEST, Liangbin Lian wrote:
+>> > LinkEase EasePi R1 [1] is a high-performance mini router.
+>> > ...
+>> > [1] https://doc.linkease.com/zh/guide/easepi-r1/hardware.html
+>> >
+>> > Signed-off-by: Liangbin Lian <jjm2473@gmail.com>
+>> > ---
+>> >
+>> > Changes in v2:
+>> > - Change deprecated "rockchip,system-power-controller" to "system-powe=
+r-controller"
+>> > - Link to v1: https://lore.kernel.org/r/20250925055906.83375-1-jjm2473=
+@gmail.com/
+>>
+>> You received an Acked-by on patch 1 and 2 in v1 of this patch set.
+>> You're supposed to add that to the next/new version(s) or explain why
+>> you choose not to do that (bc f.e. there was a major change, but that
+>> does not seem applicable to those patches).
+>>
+>> Cheers,
+>>   Diederik
+>>
+>> > Changes in v3:
+>> > - Fix typo ('status =3D "disable"' -> 'status =3D "disabled"') found b=
+y kernel test robot https://lore.kernel.org/all/202509261328.Grjhp029-lkp@i=
+ntel.com/
+>> > - Link to v2: https://lore.kernel.org/r/20250925092037.13582-1-jjm2473=
+@gmail.com/
+>> >
+>> > ---
+>> >
+>> > Liangbin Lian (3):
+>> >   dt-bindings: vendor-prefixes: Document LinkEase
+>> >   dt-bindings: arm: rockchip: Add LinkEase EasePi R1
+>> >   arm64: dts: rockchip: add LinkEase EasePi R1
+>> >
+>> >  .../devicetree/bindings/arm/rockchip.yaml     |   5 +
+>> >  .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+>> >  arch/arm64/boot/dts/rockchip/Makefile         |   1 +
+>> >  .../boot/dts/rockchip/rk3568-easepi-r1.dts    | 692 +++++++++++++++++=
++
+>> >  4 files changed, 700 insertions(+)
+>> >  create mode 100644 arch/arm64/boot/dts/rockchip/rk3568-easepi-r1.dts
+>> >
+>> >
+>> > base-commit: d0ca0df179c4b21e2a6c4a4fb637aa8fa14575cb
+>>
+
+
+--64945f9999df6ed87a915ea31fa1d9d40eebd6aa48ba7de803956238b27e
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCaNu8vAAKCRDXblvOeH7b
+bopkAP4rp6hLo5Z1qfCotr2jDcY3qNpOaylNLYkGskxNmYniSwEAuy5jnsnlFxQS
+vg8YfzULofUE/R68RoD9NpsXx8PQogU=
+=QlYj
+-----END PGP SIGNATURE-----
+
+--64945f9999df6ed87a915ea31fa1d9d40eebd6aa48ba7de803956238b27e--
 
