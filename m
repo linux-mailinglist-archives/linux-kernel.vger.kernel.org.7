@@ -1,110 +1,151 @@
-Return-Path: <linux-kernel+bounces-837706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1E43BAD013
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 15:17:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DBB9BACFEE
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 15:16:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A23073C05B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 13:17:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFA17192652D
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 13:16:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5000303C9D;
-	Tue, 30 Sep 2025 13:17:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEF702F7AB9;
+	Tue, 30 Sep 2025 13:16:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zanders.be header.i=@zanders.be header.b="Ldg81QLw"
-Received: from smtp28.bhosted.nl (smtp28.bhosted.nl [94.124.121.40])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="KocRPIlw"
+Received: from mail-wr1-f66.google.com (mail-wr1-f66.google.com [209.85.221.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7D0B2F5301
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 13:17:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.124.121.40
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B0FB23507C
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 13:16:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759238225; cv=none; b=PCQmlWd+ies281rCjkMHTfobWEkgS5l5N6XcoXUpDfWHdj4tJw0fyIMtA2VV8+09+K/9J+0q5hDGUKADX6KP3mPPCck2lG6iT4Rfc+PWBO5qhc+SlRS71d5bg2Bl7E78pX+PqQQpBtQlFcnBc5F6rv3yZBnO1udnZ/wOBWreKx0=
+	t=1759238190; cv=none; b=tyJE9rJcW+VUD3nXaZEjlTU6mNIqhtXFQh+aqs1+yxGR61JVuF6VjVon0yhGTRL/C08mG2MysaAQdrfUZpMGAXf0B+2jD3kFnjiYLcup+Zy8h9o8KXCHzfGDhUGFRPRu1Sb5c1gNO0qOJhL3egMWYGSaM7xX3vU2xupaZQz2LXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759238225; c=relaxed/simple;
-	bh=UyCxDrrZzUT8zGZfo+Gzk8tgmUCGTYZ7qS0TdC3wFDE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lav6xR7hg2kom17WfZEJZq+J8yDW0dQ/wN8cvC5MA33jNwV9GLlKl6WGymB+9ZFV2Lg2OsP75vTbqdWoOdzSwQioH8aPZbJ6HXxNmNLqg0z3ilRdvbIkIKIBx/0ljmGh5GOHjBNuQoM+Ir9H0mY+jeE47QmUXbmPNR/QYSoGBxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zanders.be; spf=pass smtp.mailfrom=zanders.be; dkim=pass (2048-bit key) header.d=zanders.be header.i=@zanders.be header.b=Ldg81QLw; arc=none smtp.client-ip=94.124.121.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zanders.be
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zanders.be
+	s=arc-20240116; t=1759238190; c=relaxed/simple;
+	bh=vACPcvX4LWehkNCn3avFNQCRel5Es4xLtJf1RFoWwxA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VLcivRcbFHeOM9DMoKUwRJ9YoZrz5us8AWjLazJYpAf/nWYGz+Nb1Y3sxcf+PpmtyX1etxBCziV8M5JkA31JCMtrM8OIpioxUrkYPR2rxlSdSHeatoYY2OgSHrvJfbbg410Dc1KVd0iecwaP01NoejqYP71CEecrcibvAkqJa38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=KocRPIlw; arc=none smtp.client-ip=209.85.221.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f66.google.com with SMTP id ffacd0b85a97d-421b93ee372so1156183f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 06:16:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=zanders.be; s=202002;
-	h=content-transfer-encoding:content-type:cc:to:subject:message-id:date:from:
-	 in-reply-to:references:mime-version:from;
-	bh=UyCxDrrZzUT8zGZfo+Gzk8tgmUCGTYZ7qS0TdC3wFDE=;
-	b=Ldg81QLwQ0rvqH+tgxMdbODuP3nlmjnc/SAk5R64rjJrk2sZjq7LejtlqnpUregLhKeKjlyJwP11X
-	 kGb5wMaL/qB8XGjyxHbBK7NCqmW9ou/35yGCLRoxUPHLUonIfKQ+Ra5mAI+26Y1fwZPa9vmTxHmuTX
-	 y3T6J+azHzHm518R8QC7KjeIQDtlzyx0bo2DJIsecZAob3AtkVjSEt4b4YW2DCQaPUwXEYwVQA6/og
-	 gPBEsA1TVn6D09qAACQrElgs7fNVfVqTupBPXtvI3GRtYBCLvQ/IMSoP0vGSGjPG3rPqRVUOixWHJF
-	 gMpi6Fzd2nO8Got61Cs6uZLIxc6A74A==
-X-MSG-ID: 960fe147-9dff-11f0-867f-0050568164d1
-X-Forwarded-Encrypted: i=1; AJvYcCXbG/H5UuslD1aU0g+vfG4GE/Z46vBVGcd/Hzy5xcYvCLwrpyBKfjz7FE4tnowlnmlB16drB68x2xvFgE4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlEoLfex+hSRjgwIkGTTDU9YKujraisnUOw6Xrp9YfLYTfzVoQ
-	QzA66VLHA6NE4pTQ0/0G8tkUvxIABPUmhzJTSMae6BnrEYZ3pYygJCu2efaevbG5+GC7vB9QhI8
-	rAJdEva+Npi3hF+/zTOehy7v+n6lChDk=
-X-Google-Smtp-Source: AGHT+IEZpmUSSznZa3rcjquI8wBv8ZJiyiwjBQHfDOTQ+O92mufKmzERFkvjrfpPB/2t9FApR7bP0UgDW1B1GrDHyyM=
-X-Received: by 2002:a05:690e:586:b0:62a:b545:54b4 with SMTP id
- 956f58d0204a3-6361a822839mr17586176d50.26.1759238150375; Tue, 30 Sep 2025
- 06:15:50 -0700 (PDT)
+        d=suse.com; s=google; t=1759238186; x=1759842986; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gdligv9Yrmq7/rk+Qyvy0jU8vW9q2hQx81H/VG9HIsk=;
+        b=KocRPIlw32P6U3ZSi8FlWHtZjlLQYLWQZxha/GFDnrwhR7DQjO2ko/u9pNBUVFPdwr
+         hmA50rCe38YuqPbzMdXIAnYw1UKEDUZQ7BecZ+JM9qvrbOwIF5UyzEpoB61/eoyuAI/7
+         r5wOC2lFXYTuu7QXc3tg1O783qwOGTJfWqJD7c54mCla87VEIngn/1ISu12GjTmOzMiP
+         kLKfQ4H5/j1GOq1dRhVUfGyV7HkldA+cySr3oP/jCc3W5dgCLfYRufa2HpK86PUAmpoB
+         rVXOCaUc0UymInblrwjt4iNid/WlHyKGqIVTxUlsyas/+oYfP+k5bzpGTJHg29WR4z4X
+         mopA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759238186; x=1759842986;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gdligv9Yrmq7/rk+Qyvy0jU8vW9q2hQx81H/VG9HIsk=;
+        b=HQMDIbz6DsAAtD5JSu4it0e6u5fNSAaxKxjPyiNdcxvhj21zM905/EJLAiUq+iXZti
+         MzGwhR+8RKEjum9ZsdK+ZbZcamITPOfyUmnlXH+F96uEYHoJ+SAqzW4bOjyvCqB9CAPa
+         T7+cfsHsvL1hlWolLjR988VScFgr3AqDdtubR/3UE6jhyI286VTalCAI7XfhEi7S4LNF
+         DlPlO3YG2FJ6a8ffSXgqD6yFU+nHWPIWjVCNgtoefCh7KW9aRIEVULJuDFykN9+Z1dB9
+         GqOUreweXIoZqRyjGpSdZx9u9/aiO6AXZofcm76C1mQmRgOgRcUgI9Xco8dEqwIsuO5+
+         sKJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUCMk/nkUonOuH89UFLPM0pEXDUcV774YaP49nHyX45w850bch1ADOLb7YAegjtqiUb7MeV0PXseIBKpbI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRqdYSMgXVGOhY/m1QbfhNe1/Zwi33yeXW/klhLanMPiqiBx7a
+	D3cJIATMuQaSrqOyYgLE9+N83nAFd3rGcHfEQULQaC7NoQbNqUwjCjI1Lo2SnFKgonQ=
+X-Gm-Gg: ASbGncu6bqsoLYgU1yNcDCNfhyIjhYoamQ4ura1Xdmj3ZnkeF6bFDdwf0H69/7dKcVl
+	/YH0jV9nbztQVi+Fvag8DvASYI6XF7ZhQX39BtlL/SBy/gQ0B/ib21R7Tk0omOJxjAguCmivL4h
+	uYKPxb2yzs50yVEiEumYvpz9N/D/8oYQFdlIKq4dO1+n1FC9W8qLRAiaTlxQlXOFKaeJjXMhZQT
+	pIMcgEmvGnSIIr+MhuSQxru6e8oXb5U98+EGdPgwPD7UPxA8iavO9gehJ+iYCRiqKpXKR/H0mAV
+	Vv9MAc/VnBbTO1BaO+ogl1akR9GeZDag2w8Mf+j7ssAaMO2v6ZlropY8kAWLstFm1lx1Iami3tc
+	cbqpou/HTriy+xZhPwFTgN6ZILG/QNy8pOXLxxkhJFC+L+S7hAfDllG/CMm7KevMRMmI=
+X-Google-Smtp-Source: AGHT+IF1ErbbbjhopZL6pCF+T2Bztzzvt3Govsbo7Ke9CGLKtmmw2H4ZbQVixK6pD842k6HiDc4iKg==
+X-Received: by 2002:a05:6000:2507:b0:3ee:1118:df81 with SMTP id ffacd0b85a97d-40e4623732amr18897288f8f.13.1759238186177;
+        Tue, 30 Sep 2025 06:16:26 -0700 (PDT)
+Received: from [10.100.51.209] (nat2.prg.suse.com. [195.250.132.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fb72fb2eesm23337471f8f.12.2025.09.30.06.16.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Sep 2025 06:16:25 -0700 (PDT)
+Message-ID: <3fc3f7e8-3297-4586-91ca-41f07c8a9418@suse.com>
+Date: Tue, 30 Sep 2025 15:16:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250407075400.1113177-1-linchengming884@gmail.com>
- <20250407075400.1113177-2-linchengming884@gmail.com> <d98f6eee-d5f7-43b7-bbc8-d6e7e274723a@roeck-us.net>
- <mafs05xh6pf7s.fsf@kernel.org> <da58fc81-3c99-4951-85bc-e3c139283b5a@roeck-us.net>
- <a2a0c40e-69d7-4408-add2-88616c92b0ca@roeck-us.net> <aa2a4480-9b78-4ed9-8f9d-b18a87eb01e9@linaro.org>
- <CAAyq3SYybDgBvkTKh2ZB4UdKq1XV_nnzx3Tj1P915W5x_7_nNA@mail.gmail.com>
- <DD10QMSJVZ2K.26U45JAXV5EY7@kernel.org> <CAAyq3SYyqi-oR8T039Zd0uaF6UieX3SdF9UF2kxOG6+yJqAEUg@mail.gmail.com>
- <mafs01pnoceum.fsf@kernel.org>
-In-Reply-To: <mafs01pnoceum.fsf@kernel.org>
-From: Maarten Zanders <maarten@zanders.be>
-Date: Tue, 30 Sep 2025 15:15:39 +0200
-X-Gmail-Original-Message-ID: <CAPB_pE+f7QGNaBgWz6OSOmfBAdCoOgnUhCV=KzUR94vWt_pEYA@mail.gmail.com>
-X-Gm-Features: AS18NWBAFFJpNfkAj_8jYdQKO9YeMQdBqD1VwzpimmSkxxS4FLynVx0YdFMrp0A
-Message-ID: <CAPB_pE+f7QGNaBgWz6OSOmfBAdCoOgnUhCV=KzUR94vWt_pEYA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] mtd: spi-nor: macronix: Drop the redundant flash
- info fields
-To: Pratyush Yadav <pratyush@kernel.org>
-Cc: Cheng Ming Lin <linchengming884@gmail.com>, Michael Walle <mwalle@kernel.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Guenter Roeck <linux@roeck-us.net>, 
-	Cheng Ming Lin <chengminglin@mxic.com.tw>, miquel.raynal@bootlin.com, richard@nod.at, 
-	vigneshr@ti.com, linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	alvinzhou@mxic.com.tw, leoyu@mxic.com.tw
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/6] module: enable force unloading of modules that have
+ crashed during init
+To: Julian LaGattuta <julian.lagattuta@gmail.com>
+Cc: Luis Chamberlain <mcgrof@kernel.org>,
+ Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez
+ <da.gomez@samsung.com>, linux-modules@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250918201109.24620-2-julian.lagattuta@gmail.com>
+ <000808f3-10cf-46ad-94f9-95a142c08b59@suse.com>
+ <CADuX1qJZ1V32d0U4hSOUOzte2KE-k-Hzop0zZd4=7Ap-kS3JzQ@mail.gmail.com>
+Content-Language: en-US
+From: Petr Pavlu <petr.pavlu@suse.com>
+In-Reply-To: <CADuX1qJZ1V32d0U4hSOUOzte2KE-k-Hzop0zZd4=7Ap-kS3JzQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi all,
+On 9/25/25 12:16 AM, Julian LaGattuta wrote:
+>> Could you please explain the motivation for doing this in more detail?
+>>
+>> I think we shouldn't attempt to do anything clever with modules that
+>> crashed during initialization. Such a module can already leave the
+>> system in an unstable state and trying to recover can cause even more
+>> problems. For instance, I don't see how it is safe to call the module's
+>> exit function.
+> 
+> Thank you for your response Petr. The motivation comes from when I
+> wanted to replace a crashed module with one which does not crash
+> without having to reboot. I looked around and saw some other people
+> complain about it on stackoverflow.
 
-On Tue, Sep 30, 2025 at 2:19=E2=80=AFPM Pratyush Yadav <pratyush@kernel.org=
-> wrote:
-> > I agree with reverting this patch. When I initially verified it, the
-> > devices I had on hand all supported SFDP, so I did not catch this issue=
-.
-> > After checking again, I confirm that some older flashes without SFDP ar=
-e
-> > indeed affected.
->
-> Do you know if these flashes are used in any devices that are actively
-> used and maintained? If so, we should revert. If it is likely they
-> aren't actively used, then maybe we just keep things as they are?
-> Dunno...
+Hm, I'm still not sure I understand the use case. If it is about being
+able to remove a crashed module when developing it, then I wouldn't
+expect rebooting the machine to be much of an issue. If it is on the
+other hand about removing it on a production machine, then I think
+attempting this can leave the machine in a worse state and not something
+we should encourage or support.
 
-The non-SFDP parts have been obsoleted in 2009-2010 according to
-Macronix's PCN's. So they're pretty ancient.
+> 
+> I thought that if a module crashed during init, it would be in a no
+> better position compared to if it were forcefully removed.
+> Therefore, there is no reason why this shouldn't be an option as it
+> couldn't make the problem worse.
 
-If we choose to keep the patch in, I think we should make it more
-consistent and drop support for the smaller flashes without SFDP as
-well. The behavior is different in the spi-nor core for SFDP-parsed vs
-non-SFDP-parsed cases.
-In particular ID's 0xc22016 and 0xc22017 could be handled in the same
-way I believe?
+A module can be halfway through its initialization when it crashes. It
+may have already registered with various parts of the kernel and
+I believe that removing the module from under the kernel's control could
+result in even more problems.
 
-Best regards,
-Maarten
+The current support for forcefully removing a module overrides the
+kernel's tracking of module references. This option was originally
+introduced by "[PATCH] Forced module unload" [1]. As far as I can see,
+it was related to the module loader rework at that time in "[PATCH]
+In-kernel Module Loader" [2]. This rework provided raceless
+loading/unloading and marked several MOD_INC_USE_COUNT/MOD_DEC_USE_COUNT
+interfaces as obsolete and unsafe. Since some modules still used the old
+racy interfaces, it seems the forced removal option was added to make it
+possible to remove such modules.
+
+However, this issue should have been fixed a long time ago, so I wonder
+if even the current CONFIG_MODULE_FORCE_UNLOAD support is useful.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/mpe/linux-fullhistory.git/commit/?id=d0f8c9a4c2c9d93463d157248c73028670e80a97
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/mpe/linux-fullhistory.git/commit/?id=4c877b08daf4b463c144cbd2748ed1659931a0dd
+
+-- 
+Thanks,
+Petr
 
