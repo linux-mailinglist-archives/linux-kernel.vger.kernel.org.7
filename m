@@ -1,250 +1,124 @@
-Return-Path: <linux-kernel+bounces-837683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F242BACF04
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:52:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17BB3BACF13
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:54:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB8F2188E4A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:52:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68CED189330A
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 12:54:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D18D42FD1DD;
-	Tue, 30 Sep 2025 12:52:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AC1C2FC88B;
+	Tue, 30 Sep 2025 12:54:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YgP4wE0q"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lL0FY3Az";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1hg8AnXj"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E972B2AE90;
-	Tue, 30 Sep 2025 12:52:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D921B4236
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 12:54:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759236729; cv=none; b=jkEfi/J3RQV5PDoCu9ZOGJf5f+IBGeB3m/mwM/gPCqWJX+BWEs83crZIkG5k4H2xk78VaoW2+TTIO06ksXR00BNzXnw2oYuxgv1oUwiWx7jCkI8+lHcFW/1lP1aCTSoSIPKIusKNtMMoF9rhWuhA7SK2HO7CbQCeAaqEiXYj5cc=
+	t=1759236859; cv=none; b=Rlzo+KwF58ed3Wou0f+P3FdPztXornrvyXi8YKgQcJ/pIr2Y3T+CPXenwqvnU1OZyST+pHcmeKdoW3uNgZnwunQb47tZa3x6ufm0XPhvyNDqwvE3SRVpMbRynhjbPkM9D3Dgvt1wiD5F5a7Gu64V690Jv0Ute70sWscR/vooob4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759236729; c=relaxed/simple;
-	bh=NBzs5D4uuWJUjPCHsfP6knc6Q/gyHDcuVmc8t+peMmg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MzgsySyQoaMUF3Zss9YToOicMX5ojob/UAfRUgOg9gG0GHzcSeYGrvkiB1bY8zyIwCJyZlocvalVtOPkDIL1mdg8T0Kkm5cCiOzhbHPNKTJvCl0n3bf1vSvzuIu2w/tDHcVp/NpiRkEETk4GA/cyH9GaEKRZFd898IAVjX5mzg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=YgP4wE0q; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=1J//rl64lw04ODF0oGXCCZsjqrxoJKz9lbEG9Hm9I+U=; b=YgP4wE0qqX3ifnlrg0BFrYJAtL
-	mGbxN4ktg1xjYBoNO1aJrnzkLQlbIAvQgOUiafQ1I1Wk7iHbx2b/FlwfXd/cl3QQ3rnHkVZWRVXqU
-	UzrY1LIsIND+2QuSXVXyU8hzmEpZcm+e5lWCv+Jegj4oMWxT4i1b9+tIvjQikOp2FVJnCUn8gjvEg
-	/oHf0R71xww7cSPJbGLxbctdozyPj3w10zaC2JxXPE9hIpjiWelxegtIFKGK7neJNOxT9fvrQKDmL
-	ycLwMA+/Y17U8NPGGUc8sobLLnZVb64iN9e+wO+gmBaApkpCxG3h6NWoyD3ZfmwtAufavR357hQgl
-	VShkrpLA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v3Zpl-0000000Cq3s-2JQ3;
-	Tue, 30 Sep 2025 12:51:57 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 9A26F300220; Tue, 30 Sep 2025 14:51:56 +0200 (CEST)
-Date: Tue, 30 Sep 2025 14:51:56 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: =?iso-8859-1?Q?J=FCrgen_Gro=DF?= <jgross@suse.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, llvm@lists.linux.dev,
-	xin@zytor.com, "H. Peter Anvin" <hpa@zytor.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>
-Subject: Re: [PATCH v2 09/12] x86/msr: Use the alternatives mechanism for
- WRMSR
-Message-ID: <20250930125156.GK1386988@noisy.programming.kicks-ass.net>
-References: <20250930070356.30695-1-jgross@suse.com>
- <20250930070356.30695-10-jgross@suse.com>
- <20250930083137.GH3245006@noisy.programming.kicks-ass.net>
- <2df26cc0-53bc-499c-8c78-bc24fd8bf882@suse.com>
- <20250930085044.GK3245006@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1759236859; c=relaxed/simple;
+	bh=vXpldruJYhbfDoxDWzmNDNZQcDUfHyYa2KrRL+D5MA4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=XFSuEfh3sxROMOk185Te5jOMY+8JFfCuytUwm3JbRH0sEiE8ZCZbFbV/rar6lQvGRD7eW7GubLYXk7TiFITsEyehGgP5atU2+twf8u6KvW5YDalQTCEuyEmQEGGEwci+Q3S226ctPkOeX+UrUNzatts8n+ZCDY9B0Myq6VAbwng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lL0FY3Az; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1hg8AnXj; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1759236849;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VwlejN6/I1xN6mFz8KIsqVY0jlQ9hYQPLHG0XlHA7Z0=;
+	b=lL0FY3AzqjVTVXHOdj2n2evQiaXMPwv/ySzEjEz9rzaapVXu4DUFWhGgcM4cx2pXr+3cHs
+	MQn9UgcvhjrTdE8jYnhXDtmL6SieOhg6PRqfTpoyVb7O9F3jvToBJu21pkwVKyvAn77xdy
+	d7Ww++uFk9vftD98VBSgXbwe/q64C00Ou4pSjjwdz1qUBAnp5vfpztM3e2aeLqRhOf2NeB
+	glFBnlSsC06gXTFnnaHvM85Wr8D/dAYoSWg1SsnlXn1+4/0c9cNE6i87az33M2Alf/fi2K
+	uLvk6YhB4qhLO+oIfoKI3AytIB/bzQPCO2xGbI7NFfAn4qr4JKMoJn1/+v+fzQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1759236849;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VwlejN6/I1xN6mFz8KIsqVY0jlQ9hYQPLHG0XlHA7Z0=;
+	b=1hg8AnXjpMk7pHW1okpDqoq300aM7oEPEOB1tnIEFDj8OEcDwGPpEvuBpYcRO7Hi07GkBj
+	TLwmnqX8/yVdr0BQ==
+To: Andrew Murray <amurray@thegoodpenguin.co.uk>, Petr Mladek
+ <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, Sergey
+ Senozhatsky <senozhatsky@chromium.org>
+Cc: linux-kernel@vger.kernel.org, Andrew Murray <amurray@thegoodpenguin.co.uk>
+Subject: Re: [PATCH v2 1/3] printk: Introduce console_flush_one_record
+In-Reply-To: <20250927-printk_legacy_thread_console_lock-v2-1-cff9f063071a@thegoodpenguin.co.uk>
+References: <20250927-printk_legacy_thread_console_lock-v2-0-cff9f063071a@thegoodpenguin.co.uk>
+ <20250927-printk_legacy_thread_console_lock-v2-1-cff9f063071a@thegoodpenguin.co.uk>
+Date: Tue, 30 Sep 2025 15:00:09 +0206
+Message-ID: <84qzvoje32.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250930085044.GK3245006@noisy.programming.kicks-ass.net>
+Content-Type: text/plain
 
-On Tue, Sep 30, 2025 at 10:50:44AM +0200, Peter Zijlstra wrote:
-> On Tue, Sep 30, 2025 at 10:46:23AM +0200, Jürgen Groß wrote:
+On 2025-09-27, Andrew Murray <amurray@thegoodpenguin.co.uk> wrote:
+> diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+> index 0efbcdda9aaba9d8d877df5e4f1db002d3a596bc..060d4919de320fe21fd7aca73ba497e27c4ff334 100644
+> --- a/kernel/printk/printk.c
+> +++ b/kernel/printk/printk.c
+> @@ -3161,6 +3161,100 @@ static inline void printk_kthreads_check_locked(void) { }
+>  
+>  #endif /* CONFIG_PRINTK */
+>  
+> +
+> +/*
+> + * Print out one record for each console.
+> + *
+> + * @do_cond_resched is set by the caller. It can be true only in schedulable
+> + * context.
+> + *
+> + * @next_seq is set to the sequence number after the last available record.
+> + * The value is valid only when this function returns true.
+> + *
+> + * @handover will be set to true if a printk waiter has taken over the
+> + * console_lock, in which case the caller is no longer holding the
+> + * console_lock. Otherwise it is set to false.
+> + *
+> + * @any_usable will be set to true if there are any usable consoles.
+> + *
+> + * Returns true when there was at least one usable console and a record was
+> + * flushed. A returned false indicates there were no records to flush for any
+> + * of the consoles. It may also indicate that there were no usable consoles,
+> + * the context has been lost or there is a panic suitation. Regardless the
+> + * reason, the caller should assume it is not useful to immediately try again.
+> + *
+> + * Requires the console_lock.
+> + */
+> +static bool console_flush_one_record(bool do_cond_resched, u64 *next_seq, bool *handover,
+> +				     bool *any_usable)
+> +{
+> +	struct console_flush_type ft;
+> +	struct console *con;
+> +	bool any_progress;
+> +	int cookie;
+> +
+> +	any_progress = false;
 
-> > > 	asm_inline volatile goto(
-> > > 		"1:\n"
-> > > 		ALTERNATIVE(PREPARE_RCX_RDX_FOR_WRMSR
-> > > 			    "2:\n"
-> > > 			    ALTERNATIVE("ds wrmsr",
-> > > 			                ASM_WRMSRNS, X86_FEATURE_WRMSRNS),
-> > > 			    ASM_WRMSRNS_IMM, X86_FEATURE_MSR_IMM);
-> > > 		_ASM_EXTABLE_TYPE(1b, %l[badmsr], %c[type])	/* For WRMSRNS immediate */
-> > > 		_ASM_EXTABLE_TYPE(2b, %l[badmsr], %c[type])	/* For WRMSR(NS) */
-> > > 
-> > > 		:
-> > > 		: [val] "a" (val), [msr] "i" (msr), [type] "i" (type)
-> > > 		: "memory", "ecx", "rdx"
-> > > 		: badmsr);
-> > > 
+I would let this be a definition initializer. And then place it sorted
+by length:
 
-> Oh well, lets forget about this :-)
+	struct console_flush_type ft;
+	bool any_progress = false;
+	struct console *con;
+	int cookie;
 
-So I couldn't. I tried the below, which when building a .i generates the
-following:
-
-
-static inline __attribute__((__gnu_inline__)) __attribute__((__unused__)) __attribute__((no_instrument_function)) void clear_page(void *page)
-{
-
- kmsan_unpoison_memory(page, ((1UL) << 12));
- asm __inline volatile(
- 	"# ALT: oldinstr\n"
-	"__UNIQUE_ID_altinstr_9" "_begin:\n\t" 
-
-		"# ALT: oldinstr\n"
-		"__UNIQUE_ID_altinstr_8" "_begin:\n\t"
-		"call %c[old]" "\n"
-		"__UNIQUE_ID_altinstr_8" "_pad:\n"
-		"# ALT: padding\n"
-		".skip -(((" "__UNIQUE_ID_altinstr_8" "_alt_end - " "__UNIQUE_ID_altinstr_8" "_alt_begin" ")-(" "__UNIQUE_ID_altinstr_8" "_pad - " "__UNIQUE_ID_altinstr_8" "_begin" ")) > 0) * " 
-		"((" "__UNIQUE_ID_altinstr_8" "_alt_end - " "__UNIQUE_ID_altinstr_8" "_alt_begin" ")-(" "__UNIQUE_ID_altinstr_8" "_pad - " "__UNIQUE_ID_altinstr_8" "_begin" ")),0x90\n" 
-		"__UNIQUE_ID_altinstr_8" "_end:\n"
-		".pushsection .altinstructions,\"a\"\n"
-		" .long " "__UNIQUE_ID_altinstr_8" "_begin - .\n"
-		" .long " "__UNIQUE_ID_altinstr_8" "_alt_begin - .\n" 
-		" .4byte " "( 3*32+16)" "\n" 
-		" .byte " "__UNIQUE_ID_altinstr_8" "_end - " "__UNIQUE_ID_altinstr_8" "_begin" "\n" 
-		" .byte " "__UNIQUE_ID_altinstr_8" "_alt_end - " "__UNIQUE_ID_altinstr_8" "_alt_begin" "\n" 
-		".popsection\n" 
-		".pushsection .altinstr_replacement, \"ax\"\n" 
-		"# ALT: replacement\n" 
-		"__UNIQUE_ID_altinstr_8" "_alt_begin:\n\t" 
-		"call %c[new1]" "\n" 
-		"__UNIQUE_ID_altinstr_8" "_alt_end:\n" 
-		".popsection\n"
-		"\n" 
-
-	"__UNIQUE_ID_altinstr_9" "_pad:\n" 
-	"# ALT: padding\n" 
-	".skip -(((" "__UNIQUE_ID_altinstr_9" "_alt_end - " "__UNIQUE_ID_altinstr_9" "_alt_begin" ")-(" "__UNIQUE_ID_altinstr_9" "_pad - " "__UNIQUE_ID_altinstr_9" "_begin" ")) > 0) * "
-	"((" "__UNIQUE_ID_altinstr_9" "_alt_end - " "__UNIQUE_ID_altinstr_9" "_alt_begin" ")-(" "__UNIQUE_ID_altinstr_9" "_pad - " "__UNIQUE_ID_altinstr_9" "_begin" ")),0x90\n" 
-	"__UNIQUE_ID_altinstr_9" "_end:\n" 
-	".pushsection .altinstructions,\"a\"\n" 
-	" .long " "__UNIQUE_ID_altinstr_9" "_begin - .\n"
-	" .long " "__UNIQUE_ID_altinstr_9" "_alt_begin - .\n" 
-	" .4byte " "( 9*32+ 9)" "\n" 
-	" .byte " "__UNIQUE_ID_altinstr_9" "_end - " "__UNIQUE_ID_altinstr_9" "_begin" "\n"
-	" .byte " "__UNIQUE_ID_altinstr_9" "_alt_end - " "__UNIQUE_ID_altinstr_9" "_alt_begin" "\n"
-	".popsection\n" 
-	".pushsection .altinstr_replacement, \"ax\"\n" 
-	"# ALT: replacement\n" 
-	"__UNIQUE_ID_altinstr_9" "_alt_begin:\n\t" 
-	"call %c[new2]" "\n" 
-	"__UNIQUE_ID_altinstr_9" "_alt_end:\n" 
-	".popsection\n" 
-	: "+r" (current_stack_pointer), "=D" (page) 
-	: [old] "i" (clear_page_orig), [new1] "i" (clear_page_rep), [new2] "i" (clear_page_erms) , "D" (page) 
-	: "cc", "memory", "rax", "rcx")
-
-                                   ;
-}
-
-Which looks right, but utterly fails to build :(
-
-
-diff --git a/arch/x86/include/asm/alternative.h b/arch/x86/include/asm/alternative.h
-index 15bc07a5ebb3..12a93982457a 100644
---- a/arch/x86/include/asm/alternative.h
-+++ b/arch/x86/include/asm/alternative.h
-@@ -5,6 +5,7 @@
- #include <linux/types.h>
- #include <linux/stringify.h>
- #include <linux/objtool.h>
-+#include <linux/compiler.h>
- #include <asm/asm.h>
- #include <asm/bug.h>
- 
-@@ -184,38 +185,41 @@ static inline int alternatives_text_reserved(void *start, void *end)
- 
- #define ALT_CALL_INSTR		"call BUG_func"
- 
--#define alt_slen		"772b-771b"
--#define alt_total_slen		"773b-771b"
--#define alt_rlen		"775f-774f"
-+#define alt_slen(pfx)		#pfx "_pad - " #pfx "_begin"
-+#define alt_total_slen(pfx)	#pfx "_end - " #pfx "_begin"
-+#define alt_rlen(pfx)		#pfx "_alt_end - " #pfx "_alt_begin"
- 
--#define OLDINSTR(oldinstr)						\
-+#define OLDINSTR(oldinstr, pfx)						\
- 	"# ALT: oldinstr\n"						\
--	"771:\n\t" oldinstr "\n772:\n"					\
-+	#pfx "_begin:\n\t" oldinstr "\n" #pfx "_pad:\n"			\
- 	"# ALT: padding\n"						\
--	".skip -(((" alt_rlen ")-(" alt_slen ")) > 0) * "		\
--		"((" alt_rlen ")-(" alt_slen ")),0x90\n"		\
--	"773:\n"
-+	".skip -(((" alt_rlen(pfx) ")-(" alt_slen(pfx) ")) > 0) * "	\
-+		"((" alt_rlen(pfx) ")-(" alt_slen(pfx) ")),0x90\n"	\
-+	#pfx "_end:\n"
- 
--#define ALTINSTR_ENTRY(ft_flags)					      \
-+#define ALTINSTR_ENTRY(ft_flags, pfx)					      \
- 	".pushsection .altinstructions,\"a\"\n"				      \
--	" .long 771b - .\n"				/* label           */ \
--	" .long 774f - .\n"				/* new instruction */ \
-+	" .long " #pfx "_begin - .\n"			/* label           */ \
-+	" .long " #pfx "_alt_begin - .\n"			/* new instruction */ \
- 	" .4byte " __stringify(ft_flags) "\n"		/* feature + flags */ \
--	" .byte " alt_total_slen "\n"			/* source len      */ \
--	" .byte " alt_rlen "\n"				/* replacement len */ \
-+	" .byte " alt_total_slen(pfx) "\n"		/* source len      */ \
-+	" .byte " alt_rlen(pfx) "\n"			/* replacement len */ \
- 	".popsection\n"
- 
--#define ALTINSTR_REPLACEMENT(newinstr)		/* replacement */	\
-+#define ALTINSTR_REPLACEMENT(newinstr, pfx)	/* replacement */	\
- 	".pushsection .altinstr_replacement, \"ax\"\n"			\
- 	"# ALT: replacement\n"						\
--	"774:\n\t" newinstr "\n775:\n"					\
-+	#pfx "_alt_begin:\n\t" newinstr "\n" #pfx "_alt_end:\n"			\
- 	".popsection\n"
- 
- /* alternative assembly primitive: */
--#define ALTERNATIVE(oldinstr, newinstr, ft_flags)			\
--	OLDINSTR(oldinstr)						\
--	ALTINSTR_ENTRY(ft_flags)					\
--	ALTINSTR_REPLACEMENT(newinstr)
-+#define __ALTERNATIVE(oldinstr, newinstr, ft_flags, pfx)		\
-+	OLDINSTR(oldinstr, pfx)						\
-+	ALTINSTR_ENTRY(ft_flags, pfx)					\
-+	ALTINSTR_REPLACEMENT(newinstr, pfx)
-+
-+#define ALTERNATIVE(oldinstr, newinstr, feat)				\
-+	__ALTERNATIVE(oldinstr, newinstr, feat, __UNIQUE_ID(altinstr))
- 
- #define ALTERNATIVE_2(oldinstr, newinstr1, ft_flags1, newinstr2, ft_flags2) \
- 	ALTERNATIVE(ALTERNATIVE(oldinstr, newinstr1, ft_flags1), newinstr2, ft_flags2)
-diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-index 64ff73c533e5..d79552a61fda 100644
---- a/include/linux/compiler.h
-+++ b/include/linux/compiler.h
-@@ -163,7 +163,7 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
- 	__asm__ ("" : "=r" (var) : "0" (var))
- #endif
- 
--#define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
-+#define __UNIQUE_ID(prefix) __PASTE(__PASTE(__PASTE(__UNIQUE_ID_, prefix), _), __COUNTER__)
- 
- /**
-  * data_race - mark an expression as containing intentional data races
+John
 
