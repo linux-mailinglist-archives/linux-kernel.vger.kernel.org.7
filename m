@@ -1,131 +1,142 @@
-Return-Path: <linux-kernel+bounces-837418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B4A7BAC46C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 11:30:03 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B6CCBAC3C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 11:17:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35774480CF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:30:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2B4144E212E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:17:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 631E42F362F;
-	Tue, 30 Sep 2025 09:29:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="OGAlANiV"
-Received: from out162-62-57-49.mail.qq.com (out162-62-57-49.mail.qq.com [162.62.57.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AD252D3226;
+	Tue, 30 Sep 2025 09:16:42 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA9CF2BD5A7
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 09:29:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56861279908
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 09:16:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759224598; cv=none; b=AVZOdI3pdaX/C1lKJ4EzGMmbMOjOpHwRSlF8Pp3zAkd7Chs9VBCOOUKsnJhmmR2xnAZzbUIdn4MDmAyECUA6dkRCzptiwHIlmOWfOXBURYHisbu85cVrBE0XRumJZ56Kw9ATBGFJiY6Lb2GPAjk+P0iHwawCx2iIcKlHxFJOq64=
+	t=1759223801; cv=none; b=hLIviwJpzB5f3mZydLKjucAY4SFjytCA3v5b/N1hM4FIFPaQ1bM9lkWe8m5u/F9ZivZf4MdAFqKpmYWlpdQRyGr6lvRDdX4DZTQWwACCCDob/OTLCQp+AbjoqgVjmnnYRJOHYp4eKsc5eqqoP9rfMy2I5ROcdRhXxzL0yChx4AE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759224598; c=relaxed/simple;
-	bh=4MLz/dRramsBGJje5kXGZ+Y/Qgz00KE2p8K/KWcaM7U=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=YDkvXUcSjLxVZn/u8fKBryn+xieZWQsJECjnBqEpoNQnOOT6VGZ1stAQofV7icvJWxnzsehs5aAY/XUgM9SgMUdDfOzm6ZivQh9LupMjr02jXHaqMz5GFFpAZ/8EXq9tOI5RVogM8O5uQYqD09VM9WlNxmjw4vsqXktjtdSDNW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=OGAlANiV; arc=none smtp.client-ip=162.62.57.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1759224589; bh=sjKOMSUKFceEsi2HVyF69WgmsGT8yilr2nItsl+yc10=;
-	h=From:To:Cc:Subject:Date;
-	b=OGAlANiV7lLv8EZxaSvedbYCp30eczGVH6q8U32Iqy3UWRx7LpdGnbs7m6rxrQzL/
-	 GaQeevvKwjbt35cdFmr5iGGwbKvbe07MXT48/WvVY2ImyCLrR/yr/NodJCe2jiQkH8
-	 R6R3fhBrlDfrvxG8HvozLlTB4VtPk+sQQ/F/XmtI=
-Received: from localhost.localdomain ([116.128.244.171])
-	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
-	id 4191B498; Tue, 30 Sep 2025 17:16:25 +0800
-X-QQ-mid: xmsmtpt1759223785thn26fkks
-Message-ID: <tencent_3FA2C956B557ED4D050EB26922B50D3CF40A@qq.com>
-X-QQ-XMAILINFO: OKZmdVNIw/gXA5s3qo7J1+t0PGITjuC65oo1emaYhlWFT/KnKh9Lz5G4FR6smF
-	 GUz+lqBcgG9ItF2hL0vkpTbd53/GEGR/k/9IU5G3R28rqwRW99fNeaDlSl46mydd2KGLE7uPOoM7
-	 lbGlyPa3NLWbs739E9QugkMnMgYBYMNRdBNLSb10e6egsqtFcOhU+46lu8JzEMCJ3QWagzhqJFm4
-	 oc0PYY9z2SyCo2970aoOV5JBl2O8tk2RR61X1U3Sy8DOxb7InqKubmjtTHwz8TIbHGbkt/xo1p+P
-	 dpwQZJrSQc/lFduLKLOpCLSw5FGLtH6Oc/EWebcAczSlT+wBD01LvY7J7j01hppO+BGAJH0fqKpf
-	 Z1960ni2xMPftIabtPsnvdY8k+BE2uPxYknGWi68CkRF5ZSiJh8zmZjVgyjNarLQ71AK60pXrDfg
-	 7DorJm6jdfLQANOVDEL1KyVs1u992S6sI9CwJmXZTVNhTnVtXObQ6kzl4Dh14rOkRZZdbjKgO2kz
-	 GqrTNj3F2cE0DVwH1CkVUUnWgo2fak7kixz5JeNCfVpa6md9tR65SsnS3o6vWizSke2OTEna5F5E
-	 TJ40AySI6oVxgvxpziGgPPspJrKl8njkGgGcLFKGSphYsUmZZ+PwpW7s8PjyfgW7c1P6Vqpg1F19
-	 8MewWVqq2GRmbxpTtRKnTqnjxKT3SPz17tf+raKtfLuaL4V9ssbEwRQY9OjWDQpKUlivy6Xdn2a4
-	 1jA2gg420V3P1yw2GU5rRq8N49GBpmdUpSMltZL3LKzZbvzgFWZ6O0HfrHFCx8SrilOTLyojsiLG
-	 FwXfvbDx5/yxj6GL/IdjL6H3T2MBfcd6ZsQ68KXcjehKQoRUIgI8ak3ScRIb8tUuF727dNjD+D3Z
-	 p46IjBK36mkvj7jDVAjFYyYrelJNjXtFGPkvhYe4gTviGkKoewsfHvu+v6uBI2QWTlFelUbjckXo
-	 bDSS/kl84YzpPRqwndojbqqCAeACaW7fikKSybBMrTFgVj0r0TItZRv1rDip3AKyR86b+lqTlTy/
-	 OWS3sRHRwb71mvdLbmBQVWMO3PrJE8BF5W+6SWkFGTwUqf6hVLAMA//8H0oyEs+QkhjV6suhu/kv
-	 MnY84b
-X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
-From: Haofeng Li <920484857@qq.com>
-To: Jaegeuk Kim <jaegeuk@kernel.org>,
-	Chao Yu <chao@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Haofeng Li <13266079573@163.com>,
-	Haofeng Li <lihaofeng@kylinos.cn>
-Subject: [PATCH] f2fs: fix ifolio memory leak in f2fs_move_inline_dirents error path
-Date: Tue, 30 Sep 2025 17:16:21 +0800
-X-OQ-MSGID: <20250930091621.4006285-1-920484857@qq.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1759223801; c=relaxed/simple;
+	bh=8Hu8S7M6pdr0y9oKS5K4/59tm4V8kRm65zCvhUH/Jvo=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=AtJu6C9nO75PBIHBTVxRZMJVsN+kAzPPjQK1T7s3J60vVIAjSZifvptdUr0aIZBMb8uB7aX6GmCi3ihMFHiNA6BKz9fHZqfQwAnYFbe3DPXbwWUpCzyw/I9Xv8dczZ4NROUFMfW2X+p7dEe2dsdfiRpM+wKThNd5BfO6VG614aQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-42575c5c876so84450375ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 02:16:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759223799; x=1759828599;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GjxlYsLRK/Y7/YvdN21EKZpewwalHCH+H3eI+DPnnG8=;
+        b=vULR9ZtzXKeXYWdYifi9D11o40iSCF+2B1Oro7tKm/0HTGrOSI8mjMxWuVWN88GM8t
+         r0yG/BiZNB5xvzVcTJ20QYkMtlp7/unyHGsfFMaBQFMs4+j409CHNPZ4iKq1hcuPeh9M
+         MSBePF1e0M4FzrzxjXazk1b4Y21C5jRH0Rv0MIv5hQ2VDKQP3D3vQWpWcWOCHwzYiPzm
+         T8uLnH1KShdDmkY8nseYC8G7C866p+xnr6z+tINC2SpAWW26ieQAqYwhfsjWjF6HJT4h
+         +eNMrFPvzCy9y8BFcVakJXkswzoMgm91+vBlxTPmDi06osj8K057wQLMtKi+fXmTzoFp
+         BTmA==
+X-Gm-Message-State: AOJu0YzjJm5bbANC65W1T49keNtN5VwwHKV6iMMYTrNRMgDUwMbcgIUj
+	wmw4fcJrnW8Kb3FGDai4YVuH+qIwpP5hwBo52vyODPXiEN223QMCxImpUiAy1YA3Uw0vTS18WnU
+	5NuEQ5v8pQ3D15xnyDMZp/xi5JqVjIVSbICxTZai7EdCyx0CiB2y5QIOzKEw=
+X-Google-Smtp-Source: AGHT+IE8SNnm3XdIOO41McQvqI5ZeCokBvlUeWh+gU5VbK916yyNgdMLNjx0NVacmOuVWcr2xEyE6RKgMcmO3u9jSK8e/jtCEtxh
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a92:ca45:0:b0:429:5f74:3bad with SMTP id
+ e9e14a558f8ab-4295f83a1c9mr146939545ab.30.1759223799479; Tue, 30 Sep 2025
+ 02:16:39 -0700 (PDT)
+Date: Tue, 30 Sep 2025 02:16:39 -0700
+In-Reply-To: <68b95f81.a00a0220.eb3d.0001.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68db9ff7.a70a0220.10c4b.0133.GAE@google.com>
+Subject: Forwarded: [PATCH v3] ext4: detect invalid INLINE_DATA + EXTENTS flag combination
+From: syzbot <syzbot+038b7bf43423e132b308@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Haofeng Li <lihaofeng@kylinos.cn>
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Fixes a memory leak issue in f2fs_move_inline_dirents() where
-the ifolio is not properly released in certain error paths.
+***
 
-Problem Analysis:
-- In f2fs_try_convert_inline_dir(), ifolio is acquired via f2fs_get_inode_folio()
-- When do_convert_inline_dir() fails, the caller expects ifolio to be released
-- However, in f2fs_move_inline_dirents(), two specific error paths don't release ifolio
+Subject: [PATCH v3] ext4: detect invalid INLINE_DATA + EXTENTS flag combination
+Author: kartikey406@gmail.com
 
-Fixes: 201a05be9628a ("f2fs: add key function to handle inline dir")
-Signed-off-by: Haofeng Li <lihaofeng@kylinos.cn>
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+
+syzbot reported a BUG_ON in ext4_es_cache_extent() when opening a verity
+file on a corrupted ext4 filesystem mounted without a journal.
+
+The issue is that the filesystem has an inode with both the INLINE_DATA
+and EXTENTS flags set:
+
+    EXT4-fs error (device loop0): ext4_cache_extents:545: inode #15:
+    comm syz.0.17: corrupted extent tree: lblk 0 < prev 66
+
+Investigation revealed that the inode has both flags set:
+    DEBUG: inode 15 - flag=1, i_inline_off=164, has_inline=1, extents_flag=1
+
+This is an invalid combination since an inode should have either:
+- INLINE_DATA: data stored directly in the inode
+- EXTENTS: data stored in extent-mapped blocks
+
+Having both flags causes ext4_has_inline_data() to return true, skipping
+extent tree validation in __ext4_iget(). The unvalidated out-of-order
+extents then trigger a BUG_ON in ext4_es_cache_extent() due to integer
+underflow when calculating hole sizes.
+
+Fix this by detecting this invalid flag combination early in ext4_iget()
+and rejecting the corrupted inode.
+
+Reported-and-tested-by: syzbot+038b7bf43423e132b308@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=038b7bf43423e132b308
+Suggested-by: Zhang Yi <yi.zhang@huawei.com>
+Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
 ---
- fs/f2fs/inline.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+Changes in v3:
+- Fix code alignment and use existing function/line variables per Zhang Yi
+- Keep check after ret = 0 where all inode fields are initialized, as
+  i_inline_off gets set during inode initialization after ext4_set_inode_flags()
 
-diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-index 58ac831ef704..2496866fc45d 100644
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -425,7 +425,7 @@ static int f2fs_move_inline_dirents(struct inode *dir, struct folio *ifolio,
- 	set_new_dnode(&dn, dir, ifolio, NULL, 0);
- 	err = f2fs_reserve_block(&dn, 0);
- 	if (err)
--		goto out;
-+		goto out_put_ifolio;
- 
- 	if (unlikely(dn.data_blkaddr != NEW_ADDR)) {
- 		f2fs_put_dnode(&dn);
-@@ -434,7 +434,7 @@ static int f2fs_move_inline_dirents(struct inode *dir, struct folio *ifolio,
- 			  __func__, dir->i_ino, dn.data_blkaddr);
- 		f2fs_handle_error(F2FS_F_SB(folio), ERROR_INVALID_BLKADDR);
- 		err = -EFSCORRUPTED;
--		goto out;
-+		goto out_put_ifolio;
+Changes in v2:
+- Instead of adding validation in ext4_find_extent(), detect the invalid
+  INLINE_DATA + EXTENTS flag combination in ext4_iget() as suggested by
+  Zhang Yi to avoid redundant checks in the extent lookup path
+---
+ fs/ext4/inode.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 5b7a15db4953..5c97de5775c7 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -5445,6 +5445,15 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
  	}
  
- 	f2fs_folio_wait_writeback(folio, DATA, true, true);
-@@ -479,6 +479,10 @@ static int f2fs_move_inline_dirents(struct inode *dir, struct folio *ifolio,
- out:
- 	f2fs_folio_put(folio, true);
- 	return err;
+ 	ret = 0;
++	/* Detect invalid flag combination - can't have both inline data and extents */
++	if (ext4_test_inode_flag(inode, EXT4_INODE_INLINE_DATA) &&
++	    ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS)) {
++		ext4_error_inode(inode, function, line, 0,
++			"inode has both inline data and extents flags");
++		ret = -EFSCORRUPTED;
++		goto bad_inode;
++	}
 +
-+out_put_ifolio:
-+	f2fs_folio_put(ifolio, true);
-+	goto out;
- }
- 
- static int f2fs_add_inline_entries(struct inode *dir, void *inline_dentry)
+ 	if (ei->i_file_acl &&
+ 	    !ext4_inode_block_valid(inode, ei->i_file_acl, 1)) {
+ 		ext4_error_inode(inode, function, line, 0,
 -- 
-2.25.1
+2.43.0
 
 
