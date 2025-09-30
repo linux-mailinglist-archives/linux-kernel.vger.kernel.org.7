@@ -1,156 +1,123 @@
-Return-Path: <linux-kernel+bounces-838136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B9E1BAE856
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 22:19:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FDBEBAE85C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 22:19:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CD8D1926356
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 20:19:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB4323245F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 20:19:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E618242D63;
-	Tue, 30 Sep 2025 20:18:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9456A244669;
+	Tue, 30 Sep 2025 20:18:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="phrIoJPh"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="QSJ4ZWIB"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35C5C235045
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 20:18:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E609255E53
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 20:18:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759263524; cv=none; b=UOsYE6b2zf/XwV8Sfl40Lem/sNOrAX2+2HLKAURpqJ92HUpaWFFJrlwKPYMJQhXceoFlMKSGx/pOofpIZd4pdZ8lmkhNICz+gR13+JMUns2I3mNqDdZit8dPosym/t/TVuSePd/qgl7oqXFYq4IhSDq0WxwMTR1p9DDANeL1WZc=
+	t=1759263537; cv=none; b=EXvdTQquzEg2j/CUdi07/UbEP3+o7M0oQIVjzWFLHE1fJ29JcQiXhvmfGrlpvP3U3rq6T7hqt4OhDtmPaI7JMjciayaOQ3LE09oaY9pwLvSnT+zmYAFRgb+Is0lUqwVF2RyEnYmtfYjd61IlCDDbjfk22TUmgeR+f0JyBpGEhiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759263524; c=relaxed/simple;
-	bh=cYYH3/yTc9wBXPcA74vYb9yfUr6t5bEcM/coGFu1oMs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LMOkyWHnxN5lNyasBExnOEzltoxl4z09cqjqcB4Cje6oM74vVhdW4QSOpjM9JK5sz7eY8HDNsH5oTmghNw5xOOWpAURaEIC2BzKPnBO20nUO/cBgw+8WNf1ZX99Te0jqim9QZc+IWjJ6NeGuE6y6xCidCld3+qBwWPL2jmfsWZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=phrIoJPh; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58UC9MEr030619
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 20:18:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=1prKZ4v8aUicNJIrRPB93Z2q
-	BSZpWbI16ikZz4dczC8=; b=phrIoJPh//YjDsPd6tBBkta/NYufyjsIgztdxLMZ
-	AZvqOF5x6Cq7k7hO3vWlIFKi/Q2l3CWCZ11YULAuW0t0OZ2b3pl1O6nmoSAG/bwC
-	CtM3r5IUdX/w8EzIqd8MAT3aJxZEMkPVQb1yO63P53KW7/XTuzgjHBdgQP4bqgRg
-	cfd7QNe1bDajr5SObgGIQKwRT8CWlory66hqslK3qw9GPJaZUJa7kxlc+Jom+3Lv
-	JEt1iGDAxu74RjzeriRN0JIGkq3+4tnjVbc9ygx8n83DhmbX3WOnWKfDb+7IvjPz
-	xDLpEU2gkmxtKgNCeVzbUsmQvgS762iIdaQf7uEdPYnU8g==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e8pdj3h3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 20:18:42 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4df60ea7a1bso63184521cf.2
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 13:18:42 -0700 (PDT)
+	s=arc-20240116; t=1759263537; c=relaxed/simple;
+	bh=MmXauHjASPTNlj0mQwEIjT/B/YzKvv+oNcG9uMvXJLU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C65raRpaSm2+fCyU3g44P/i9VIvtN9NLH6avLlHdjcLvqYjWadW1SJ2I7WBsvHia6/zO8K/PusekysyrlU1b/bX1YLA0urf43hwWhGCqyH3/BPOwaBXpHda7XuqpM+XdP/M6PvEOocqLwgexS8V77ID8BQ2Pppz/YhleOiTAWXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=QSJ4ZWIB; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-46e4473d7f6so30566735e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 13:18:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1759263533; x=1759868333; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8I6dbvilgE5CwAYRRTgrE+fX48lvio4oI5BZ1CMQAEs=;
+        b=QSJ4ZWIBDW2SnjY7CJWIFlctnbrcM4oPlh7TmBDhgZ+1dCgJUyOIr31f2LFWPZMI85
+         gG+GMoaDMeh0ABCpg3b6JhVbEYUZEs3INLSmO9nnRJDxR3xZJO0E87Cf6FfH5dlzNdTw
+         /NIhaniUMAH1zwcrjVpCLf/nOBQxDFb7K22un1J89ocbbOayVlg4SjxTttpQGI/jE7QP
+         xGEJTPK1nm6X2czZUTXIKL/h5NkgOREn0JUzPwGkrcqQAsJ9RcTG3R9eRMEEFhnnPGOe
+         qv9JpL8yntVK0DqPsmWnbUH1sLx6kAXew7WZK4uu2OAdXzZjiQQttbCvM+9L//rZdDE3
+         48sg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759263521; x=1759868321;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1prKZ4v8aUicNJIrRPB93Z2qBSZpWbI16ikZz4dczC8=;
-        b=vny3vDRBLKNyYjFxOQugdXiYfDDNSh1NAnbaqje8b9M5ciS0qw+omajSj3oDB12GW9
-         RyiaINJwLtl+MMGUaPkGd9BZhwmn2o4OqzeG9J0i1J1PY9gTXy/JmQV+yso8mivc8Mo9
-         lVuaEZZDN98qfqe+YRd/+7t4+KeUrB0tr9foWTpUSRGzAa6vUK4wncjmuUye2PZ/APm+
-         xOTvoCWHNYrNcMuihwrCr1PNnlmnipm+CUYoTeZ2dgkgKSUAU7cFa+U2QrXVFKB8QDx3
-         qbILYCZxdGo3GUys/uGw2gEg1YGJComN5xpyhQCetqBI531RAAhGudmyzBvtqCnKm0H4
-         Wn/g==
-X-Forwarded-Encrypted: i=1; AJvYcCX8xVdqYezsZ5w8777y7aIfYrZu6GywEKTrMEZQqq2vhJ3yvDDEbdZlffwv7ySWq1Q3L4cZ1eDMcGLd3W8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySKSQ3RwVANZCdhlhx2cN2/Oinr516UoXpPXCcVl5i1adYlNBk
-	M98lhAWG/sh8nKA2YmcnnLHsAQoCdzxmGguAtrG9z3Qf80KKhWM9P+uxbesYSyIiBOG2cILetnl
-	HR4C2lfoHNTXKdl4p9u7kyECGMOrajxV7Clw16rucw5R4AMwvwoebb9NL7V6k6ONe37o=
-X-Gm-Gg: ASbGncst318W5O0F6MfEO4/hWpFlPGWFuHnzrTNKvIPdBE4pmZe96dvPKWz7FCDJ75w
-	IYWjiKKB8jmCvqQJBAtqbTFVBsNUXkAKxkk7LF+wwMWGz9XNXSYtnbS8PtAdiU+HOg4y4xBKzSG
-	8E3GatGKmTURhYIp0iT1+swkTx0yUoKJTzRdoLVcmeZHrLmG1129Nq+3Ip0NZek1pdzL4qilApT
-	BhPbVhRGcmd15J5Ucl1DG4ds6u9KbYN2yt1SUBCbLDpXJ/l+sIjLtEFvzPf4AN0BzAhJIPQqETO
-	WnJ5vydi7pyTWfTjQ7paR3csQxt2E4T2xonWyGdUl4392LAHUOYe6EF76/x/UbxAfJZlPhtNiz7
-	aDXSUKZdTb39uLiAOhwcJVtb5SRDsr0hHg/Qrn1fsySTAT1EPk1EhZU3DDw==
-X-Received: by 2002:a05:622a:4cf:b0:4da:207:f0f8 with SMTP id d75a77b69052e-4e41c54839bmr12914401cf.11.1759263520676;
-        Tue, 30 Sep 2025 13:18:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHSxICdUQhJwxyOP6ey50e51aF0tOi4+IPIxh6uK7udyhkmudoTzU3ziqUxuPBP2Y+j6k4Wbw==
-X-Received: by 2002:a05:622a:4cf:b0:4da:207:f0f8 with SMTP id d75a77b69052e-4e41c54839bmr12913881cf.11.1759263520062;
-        Tue, 30 Sep 2025 13:18:40 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-36fb528259dsm35069431fa.31.2025.09.30.13.18.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Sep 2025 13:18:37 -0700 (PDT)
-Date: Tue, 30 Sep 2025 23:18:35 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Damon Ding <damon.ding@rock-chips.com>
-Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
-        Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
-        jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
-        mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
-        simona@ffwll.ch, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, inki.dae@samsung.com,
-        sw0312.kim@samsung.com, kyungmin.park@samsung.com, krzk@kernel.org,
-        alim.akhtar@samsung.com, jingoohan1@gmail.com, p.zabel@pengutronix.de,
-        hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com,
-        dianders@chromium.org, m.szyprowski@samsung.com,
-        luca.ceresoli@bootlin.com, jani.nikula@intel.com,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v6 10/18] drm/bridge: analogix_dp: Remove unused
- &analogix_dp_plat_data.get_modes()
-Message-ID: <hh4kn3qmwdbfev27xrs7eng7adfyli5xt7oiy7xgmviz2pzyql@rgggrhqckdjy>
-References: <20250930090920.131094-1-damon.ding@rock-chips.com>
- <20250930090920.131094-11-damon.ding@rock-chips.com>
+        d=1e100.net; s=20230601; t=1759263533; x=1759868333;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8I6dbvilgE5CwAYRRTgrE+fX48lvio4oI5BZ1CMQAEs=;
+        b=kKNsVKVe3Wm0ldz2AY5w3a/aZBExVtqVR19eGmWYngYk1QvMIJOqRZ1TvGp3xox8oo
+         qAFXKt2lu7rUg5DAzNvqxJCo5Zm33hwQUsiiaN1/E+T0HCfU3RcyHIpqprdiRjDAE5Ch
+         IIXH5GpBag6pyWVDB1sOvQrjHaYtMjWkqz1Q0eBcpZvKbvLakWgiaUmogXeuW9nwagV2
+         BN4HWnX9ANJKxbCPxdr2oyrZcG4BQWZuB9HjMEwH9OkZAIGHJjiDI1ASG34XSNPD0L5o
+         mpTxecv9bj8zWYbmVTHjCntPMasIIKDlb1+/+tbjk+m19GeVrYHa5B4lAGfdoTiceFXC
+         RNcg==
+X-Forwarded-Encrypted: i=1; AJvYcCUrbWYKt78Wvg+yJqTCfga6Ll7o7ffp4rJysRPPY7h/7fSx2VgTuShmxWawZyWuMbB5mzF3/w7qm2eYLgQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjVqivluayHpV5XfdD67bNGxT5HM+os/QqSDYUfavmwEI7Tw5C
+	nCHWI3nJOaaJF1/Cqr7Aq6MYc2JZVyEPkfTRoAaM7gJXF9yqgYtVuuI=
+X-Gm-Gg: ASbGncuZx64Ko6qQezpXzxvEDIIrWJMYvMARe1Y8JKBj1l0PG95DQHRVNDuUBw3MkTM
+	AIK+Tzu/r13YX4uVnK1CR1u9PNo2o1jSpyKGR9q0Fs9v5HOIXyPzE3ZjbxfR6qxL3+anMVapxjk
+	bLc50MPfOK+IjAaF/DyJSRk7zs3f+tHhDS+p5B++tczplWm9T0/C9TtCIwPTXpT8nnHv2mXFTg8
+	GNmFhv1VazzMD/DUzgHFH+qUXn4WK4tkR+O2RBo67uOVoRQcmn8AnrQkLmmZkoPCG882+49ML/s
+	Oc56g8rZSOrWwvmKG0SMeVu+Xg2cpCkNMP9VPvEwMr++Rj8T7TBHCYe8dTde2awefkVi+kR8s9f
+	TvJY23X+CPbzJFlns2nxEqGyzvr5aMPqjev9r+qIPh24FeT0pvoe56rKX5PhqolKjNvzVNLwfm9
+	qPH8X50eTYgZiu+XoVGOS2NO4=
+X-Google-Smtp-Source: AGHT+IHVX3QXQRe9EuiPExL8BKNrajYyrxG7WzB4GC1B2EjOUomUTUBpPzTUhvs5y/w6rZHI4Wb2Fg==
+X-Received: by 2002:a05:6000:4312:b0:424:211a:4141 with SMTP id ffacd0b85a97d-425577ee1d3mr734255f8f.27.1759263532907;
+        Tue, 30 Sep 2025 13:18:52 -0700 (PDT)
+Received: from [192.168.1.3] (p5b2b4965.dip0.t-ipconnect.de. [91.43.73.101])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fc5602df0sm24133218f8f.36.2025.09.30.13.18.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Sep 2025 13:18:52 -0700 (PDT)
+Message-ID: <a7b6616d-c5ec-4f11-9c51-48551705d535@googlemail.com>
+Date: Tue, 30 Sep 2025 22:18:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250930090920.131094-11-damon.ding@rock-chips.com>
-X-Proofpoint-GUID: P0oFim3sB5zNT1bZUGp3_VL6yy2fPEGn
-X-Authority-Analysis: v=2.4 cv=MYZhep/f c=1 sm=1 tr=0 ts=68dc3b22 cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=s8YR1HE3AAAA:8 a=hD80L64hAAAA:8 a=EUspDBNiAAAA:8
- a=eBbjTLbptxnSh8XXWekA:9 a=CjuIK1q_8ugA:10 a=a_PwQJl-kcHnX1M80qC6:22
- a=jGH_LyMDp9YhSvY-UuyI:22
-X-Proofpoint-ORIG-GUID: P0oFim3sB5zNT1bZUGp3_VL6yy2fPEGn
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAzNiBTYWx0ZWRfX/waruLKZSFqs
- lY0I6bESdhQxQLc71GZmBWOzAgw7CnbSEleprzq/ouRhliCRx1gXILUA9hA8uOG9Q5zn4tFp+kF
- EsemUJgdfXOGTmYFl4hw7bw39e+EwDMEefFBDrv8Fy7p3yAvr0wpoWnnSN70y2NmQtMM23Fl9n+
- PQlkBFhoWglYfmjwg3QoPGdltzFYLFsy3Z/BbuyoRTnoJVGeEyo/nC/LMm+0QP9tQSZDOM/msAa
- 4UXikvWNe3Bv/qM7Qx2IbTOEgZdhuynCou3NR/2+qhxD86qOKeNZU04pOq3ujnXi/+MW268gjG2
- gAD4OTdq61NXYtgJp5mdVjjxlU4fjlJkG0f1a3oKpwCw4V4q4aC+5LyrjBDi6oxlBdBlSUIGFq2
- 6qgBFMZ3y+UMOB6Hjj8dfsxnEqXvTg==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-30_04,2025-09-29_04,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 clxscore=1015 bulkscore=0 lowpriorityscore=0
- priorityscore=1501 phishscore=0 malwarescore=0 spamscore=0 impostorscore=0
- adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2509150000
- definitions=main-2509270036
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 6.12 00/89] 6.12.50-rc1 review
+Content-Language: de-DE
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
+References: <20250930143821.852512002@linuxfoundation.org>
+From: Peter Schneider <pschneider1968@googlemail.com>
+In-Reply-To: <20250930143821.852512002@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 30, 2025 at 05:09:12PM +0800, Damon Ding wrote:
-> The callback &analogix_dp_plat_data.get_modes() is not implemented
-> by either Rockchip side or Exynos side.
-> 
-> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
-> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 3 ---
->  include/drm/bridge/analogix_dp.h                   | 2 --
->  2 files changed, 5 deletions(-)
-> 
+Am 30.09.2025 um 16:47 schrieb Greg Kroah-Hartman:
+> This is the start of the stable review cycle for the 6.12.50 release.
+> There are 89 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg oddities or regressions found.
 
-> 
+Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+
+
+Beste Grüße,
+Peter Schneider
 
 -- 
-With best wishes
-Dmitry
+Climb the mountain not to plant your flag, but to embrace the challenge,
+enjoy the air and behold the view. Climb it so you can see the world,
+not so the world can see you.                    -- David McCullough Jr.
+
+OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
+Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
