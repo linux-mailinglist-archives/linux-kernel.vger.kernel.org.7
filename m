@@ -1,96 +1,136 @@
-Return-Path: <linux-kernel+bounces-837787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 265D9BAD2F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 16:32:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C9CEBAD2F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 16:32:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D48CC322212
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:32:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E07B3C3E20
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:32:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B72AF21CC4B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7005F2DFA39;
 	Tue, 30 Sep 2025 14:32:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="dXpj7gOA"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="uo99jEBb"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13E201A0BE0
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 14:32:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 058DC1D63D8
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 14:32:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759242756; cv=none; b=qVBnpEdek15NK0y5NnQodVK6TReht4ujbGlmazVTqJj/Szoe+et2gkd6xibKAatVQPW2NXIuyaozTZH3IjS5jwrsHGwGpZ6UEU8XUVy3BXUdxP6npVU1qc70+qrdc/rJlJrUEjkCcyZjdXLOvonGTIodkHvmbGXGMmtcqxlD/2s=
+	t=1759242756; cv=none; b=n2f3KM0qSj8h9T/I6k47AOzKirBDuQl/WNm5UnsU5an1KuBO3TYpIz4zSE5+gN3p74i+soqay8SzCXExRFnrgqbNViUhJfpgz6LrBefii6OxDAWgIUvHJNCozJNPYgVcx+ws7o3LRarLtKYCBfAJaLzTbhB284k9XAS9JNUaFEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1759242756; c=relaxed/simple;
-	bh=FJ2vNfPXMdxXLsXvGSg8IRBqANEbBI2yKMLhdtQ37CY=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=d/7O4VFtvQZXX0A2vwO0ls5gLVtfCv8CuRq7ThAvOS1P/j/5Zdj28gimY5k65vW/g8PO0JUrHC649Cc4CjfjCOndNIIdwxMIwP1d1NW+AIuB5O200Jk4Xly7IlpHkIPtzgwOrZ71ro/u83OGgLjKvau+AOoUEQT7aeqJSsFlZWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=dXpj7gOA; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:Message-ID:References:
-	In-Reply-To:Subject:Cc:To:From:Date:MIME-Version:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=Na77R11NbjgWMZhuIVj8AYAJI1CDT3+izYFOG1w9JTo=; b=dXpj7gOA3v9harDKKH/oW0XcbY
-	+h/uyc6a2+u9EZS9K6NxCe2Prjf7rmfpx1lWPNemsWwepTtZ0iYvKyM7kW4qQQysPLnSUpWCamWh+
-	pWLpvwhnL1Hw4YM2+moKz8uxFkJgryPd56GjsTTVWruSda4BQrYwUV7dmu20vJAzDi7yzi/O3qQSA
-	uJ88naDRF6KE+VI7qOrlFil2SHAZKueUiTjJRvC2JUy6VEf1Tkae4MQhhk2u+cwV85hftXAvmnHQu
-	u5XsZTI1XwTDmMkZMqeu/LRCxfzqgYPkSwzITiU69rN5U3Nmo5F5C/DXH9gZBBX8QtUmdDrQxwlZ4
-	plLvqeKw==;
-Received: from maestria.local.igalia.com ([192.168.10.14] helo=mail.igalia.com)
-	by fanzine2.igalia.com with esmtps 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1v3bOo-002JKb-8u; Tue, 30 Sep 2025 16:32:14 +0200
-Received: from webmail.service.igalia.com ([192.168.21.45])
-	by mail.igalia.com with esmtp (Exim)
-	id 1v3bOm-001fwV-8f; Tue, 30 Sep 2025 16:32:14 +0200
-Received: from localhost ([127.0.0.1] helo=webmail.igalia.com)
-	by webmail with esmtp (Exim 4.96)
-	(envelope-from <mfo@igalia.com>)
-	id 1v3bOl-00Chfy-2C;
-	Tue, 30 Sep 2025 16:32:12 +0200
+	bh=trtFIVQ7skIm+AJ2uSYPYV1+QuWRN+OapOx2C9yTkv8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=JhVkLMJ82KLLOPuE3zR+RvNgECiUnuUNX7RApwfApAZH4n9RF0QlJShYx7bpY5c0KsKgeYj9ZdvizRGuR30s+bieCIdmEbSBzIpzCdmQfHJij9sfoKnM9YojICMXkyrVrVbDplkrHSeAZ2kVTAtx8m1ftVNzNPU0G2u+7no1jFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=uo99jEBb; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-634cdb5ed4bso7438881a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 07:32:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1759242753; x=1759847553; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1XGzvIYD2K0dKmTD5NLqz2HHH1fk0VmQ6ZCiFWN/CWQ=;
+        b=uo99jEBb//E6n4KlO+0QKBYQJb6XRQl1vJxtpInYFxpMOYsa3pKkSd0e8ODPCrFxUK
+         u4LIUE3V1hdZ1PZwH2cL0ArZnkF7BeSj7SJ6ewamd7HMsFI1fw2po+VACQJVKNYSz/lE
+         LBPv7pWLdJ1/SCv+6MhCuPbXWNjoKsd6M4YUtTOnjR1xcNMABIb8c2eozGP7a06XuA7R
+         S8R/vC7/rWCmEYBnpDwhTyT2e+b/VmpowgGVLWnsSghpmREeTPnva89w/bGAkuPXI1P6
+         MjYHbb6T7ita6H7ydohm5Bhn0yJLbF0hAfoySuAjtzeNFNHI+x2pvuZ2kYxZsfI/AcN1
+         10gA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759242753; x=1759847553;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1XGzvIYD2K0dKmTD5NLqz2HHH1fk0VmQ6ZCiFWN/CWQ=;
+        b=WaOR4/8PNDJ7MqRegZ2DpH5JGF63QNmTIGSULAoZqDdI7RC8U3n9LqmXORQhaZ/ylY
+         xlPdkGj3MunW7LYnJ/7of/+rL132hl1N5y6cPJDNY0IOy32oWSbk/GDZKizcOIO7S4Aj
+         RMQkSpQka4k1XiJXb94OxbfSXziRw+1ynsKrrlrn5z6eTW58+PUxkzzoj7Kc3o+iYtcj
+         BNMqG8fWZ8yjAIiUWC/ZNg86exmchLSiU4QVSap7JYwrFwZpfHnVSa3TSqmhoOXjsZBs
+         ebQXls/pvLBVqyTFgjsAizet+pEyhwSr0BhsKispIF5f7WKQ4abv1gUtxQVanASb2BiD
+         PetQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWp1W3ce/SwfDCf9ciXDyYgNQ6t8cQvhf3Edwl3Oty9K6TqILYlvYE6p7AxIlCmClWSkAYDEd14ZRUXh8Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8FnxiEK/M9361j0g8+ho3SkLXX+zYEd62gHI8+jIWNXE0aBI7
+	addRsUVz5AF5Ze9l14oiWvTOHdFbx9QsbDQNUQnPph89aNx9hIRwxp2kiZc6h7Slplk=
+X-Gm-Gg: ASbGnctmrn9plV5dfLkCgYsyzOVZfaEwIORLwXSf0kiZDkktAezP4n/s5hRaL4JZoaM
+	0OgK9qHmR+XoXk5hh2qEE2PdL1TskvSmVT2jClsFp0y69T+feFU0VVd1YVu3Yn5TdEH5ost3Bd/
+	pgJKeohB4V08e+2RaliJiehgGos+gKs4fIAdRe1AlEQw5R75UEZjrRenIS2Qy/aiTEhZ1WrpGqr
+	xmSNoy9d4O+8YakYuGO/kYGnAY1jQzb/OPVxOdCAyUdYuV9oiigeFQ0kQd/6zIJ0aABEZ7/ZApX
+	Q4GwhkQ4Iv9vZBIvCAn0ZLdaVt6yAEqSI4avImmuFisM92AVrYJH4fjq3chFdComsilzZD/uo3l
+	dPmUraLFiLIs3MwvEHw4vzqu7JCoi2h4/sb7L9KXhEaRYB61mphi8806Pa8z3S8scjG+W3QnnqS
+	O1iFnFoHdfhChfU/PYr3XMAXoRIjKy
+X-Google-Smtp-Source: AGHT+IG8lOLegfuz9sdLqi92zTTH2vZJK6klR6+7kLs717bzPyf9qtgelOMxZ0NsFbtzUNaLIfkVwQ==
+X-Received: by 2002:a17:907:d14:b0:b46:8bad:6960 with SMTP id a640c23a62f3a-b468bad6d6dmr66677666b.31.1759242753382;
+        Tue, 30 Sep 2025 07:32:33 -0700 (PDT)
+Received: from otso.local (144-178-202-138.static.ef-service.nl. [144.178.202.138])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b3dc2cf61dbsm499858466b.29.2025.09.30.07.32.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Sep 2025 07:32:33 -0700 (PDT)
+From: Luca Weiss <luca.weiss@fairphone.com>
+Subject: [PATCH 0/6] Further bringup of SHIFTphone 8
+Date: Tue, 30 Sep 2025 16:32:18 +0200
+Message-Id: <20250930-otter-further-bringup-v1-0-7fe66f653900@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Tue, 30 Sep 2025 11:32:12 -0300
-From: Mauricio Faria de Oliveira <mfo@igalia.com>
-To: Michal Hocko <mhocko@suse.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka
- <vbabka@suse.cz>, Oscar Salvador <osalvador@suse.de>, Suren Baghdasaryan
- <surenb@google.com>, Brendan Jackman <jackmanb@google.com>, Johannes Weiner
- <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, kernel-dev@igalia.com
-Subject: Re: [PATCH 0/3] mm/page_owner: add options 'print_handle' and
- 'print_stack' for 'show_stacks'
-In-Reply-To: <aNvjDsBuw3hqwy31@tiehlicka>
-References: <20250924174023.261125-1-mfo@igalia.com>
- <aNVpFn9W0jYYr9vs@tiehlicka> <4c2a467113efd085530eb055e4a4e1fe@igalia.com>
- <aNY49sdoFVe03m_Y@tiehlicka> <d9af42d5cb9d427632087c5f51e50501@igalia.com>
- <aNvjDsBuw3hqwy31@tiehlicka>
-Message-ID: <2a1efa8ba183e866ab5c71b3526f64ab@igalia.com>
-X-Sender: mfo@igalia.com
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Spam-Report: NO, Score=-4.9, Tests=ALL_TRUSTED=-3,AWL=-2.663,BAYES_50=0.8
-X-Spam-Score: -48
-X-Spam-Bar: ----
+X-B4-Tracking: v=1; b=H4sIAPLp22gC/x2MSQqAMAwAv1JythBX1K+IB5dUc6klbUUo/t3ia
+ ZjDTAJPwuRhVAmEbvZ82SxloWA7F3uQ5j07VFi1ONSorxBItIkSzsxV2B7RaTNQ1+DWIPYEuXV
+ Chp//O83v+wGrc7SkZwAAAA==
+X-Change-ID: 20250930-otter-further-bringup-f9e640c4008e
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Casey Connolly <casey.connolly@linaro.org>, 
+ Alexander Martinz <amartinz@shiftphones.com>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Luca Weiss <luca.weiss@fairphone.com>, 
+ Luca Weiss <luca@lucaweiss.eu>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1759242752; l=943;
+ i=luca.weiss@fairphone.com; s=20250611; h=from:subject:message-id;
+ bh=trtFIVQ7skIm+AJ2uSYPYV1+QuWRN+OapOx2C9yTkv8=;
+ b=qsGVrAkXP50Vge9B0Ma8EEFSVt6ayyjWaeKJa9SCVhcPnmY/baNqhqIzUOMWmIbK4rz7P3d/T
+ 7qL/hYgE3JQBqzQ5/ScU7vwrY2Q6i2+N8g4TaFEEZH7Zg0usT7M/IJ+
+X-Developer-Key: i=luca.weiss@fairphone.com; a=ed25519;
+ pk=O1aw+AAust5lEmgrNJ1Bs7PTY0fEsJm+mdkjExA69q8=
 
-On 2025-09-30 11:02, Michal Hocko wrote:
-> Sure, I see. The main problem with the option file is that it is
-> inherently suited for a single consumer which is a hard assumption to
-> make at this stage. So I think it is worth having a separate 2 files
-> which provide the missing functionality.
+Add some cleanups and fixes to shift-otter, and enable flash LED, RGB
+LED and Venus.
 
-Ack; I'll submit v2 addressing your suggestions. Thanks!
+Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+---
+Alexander Martinz (4):
+      arm64: dts: qcom: qcm6490-shift-otter: Fix sorting and indentation
+      arm64: dts: qcom: qcm6490-shift-otter: Remove thermal zone polling delays
+      arm64: dts: qcom: qcm6490-shift-otter: Add missing reserved-memory
+      arm64: dts: qcom: qcm6490-shift-otter: Enable venus node
 
+Casey Connolly (1):
+      arm64: dts: qcom: qcm6490-shift-otter: Enable flash LED
+
+Luca Weiss (1):
+      arm64: dts: qcom: qcm6490-shift-otter: Enable RGB LED
+
+ arch/arm64/boot/dts/qcom/qcm6490-shift-otter.dts | 75 ++++++++++++++++++++----
+ 1 file changed, 63 insertions(+), 12 deletions(-)
+---
+base-commit: 3b9b1f8df454caa453c7fb07689064edb2eda90a
+change-id: 20250930-otter-further-bringup-f9e640c4008e
+
+Best regards,
 -- 
-Mauricio
+Luca Weiss <luca.weiss@fairphone.com>
+
 
