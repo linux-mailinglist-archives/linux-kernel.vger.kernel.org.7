@@ -1,71 +1,123 @@
-Return-Path: <linux-kernel+bounces-837342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A042CBAC15A
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 10:38:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88B6CBAC160
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 10:38:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5655F320AC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 08:38:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67310481F13
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 08:38:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 255A62F532F;
-	Tue, 30 Sep 2025 08:38:12 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2A982F4A1B;
-	Tue, 30 Sep 2025 08:38:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAB5C2D5C67;
+	Tue, 30 Sep 2025 08:38:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="C8bP7++u"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD41F257458;
+	Tue, 30 Sep 2025 08:38:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759221491; cv=none; b=D7Okwg1A4+5MaHt88RRIz27fRR/lW0dyGOU5v+Kg1O0+FEN5dKxI7zxNo4qE45+zwDDD/yq5uRAEf7FkYyvhpHlnXTykfROWlk3EFKo2If474XXhOt5ouIoH9EJwKgr3g9qvbV8AD6LIYguGwQPhk/Pyh8hjekJK2H/IAX7rRJA=
+	t=1759221517; cv=none; b=siLv5DIZ3VO5hK5uOeX76vM9F8ec1wlxRumuvJITzkuGncIQORnyOyAqoOcpOydtSgkGfJlbFzXDT6V8cqHPobTq88NijntK9oaLZLwg4XG4VL2TrUk0winl9HC0T62KHAZTugbprN73i2UkxgtvdWU9IGpU7wG7TYI7ysi/2Jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759221491; c=relaxed/simple;
-	bh=lmqllInZfb5npaUJWCnOqhrqfzbIPI8UtolGKdhF8DE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SjtIkIfbtsA1VKztf6yrOTIM7bCH1+U+C0tbq+BY2H5XcHQSQCVNzgfVLsZ1/x5ULAzeIa1XOgrIGeNlVvRT9BEOXuQdiefZHV0a2M6HZ3Sqx0BG/sngKppNVUp1lCSUWOGregnEFiJu9JIGI+k6JZMKwIgkZHrESFT2LVPDaXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 089D21424;
-	Tue, 30 Sep 2025 01:38:01 -0700 (PDT)
-Received: from [10.1.28.41] (Suzukis-MBP.cambridge.arm.com [10.1.28.41])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E44203F66E;
-	Tue, 30 Sep 2025 01:38:06 -0700 (PDT)
-Message-ID: <e21159ef-d438-4944-adb3-eb8e7c801d9e@arm.com>
-Date: Tue, 30 Sep 2025 09:38:05 +0100
+	s=arc-20240116; t=1759221517; c=relaxed/simple;
+	bh=fRtYOw6L4IOBcmJIpTxkJDXXzNe+WXKXx9rvPi3pXus=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aRv2DEJ6r9DPZeg/PY/8I7E/EL7fj8EcwEqlgq1/7J04b63lafeioJMhnZzfb0TeOySnas1MUTFpDlXlTAlMD2RbjKRt4kR3qnJWZCwHqh7TZViLT0hdkiRWVA2qvE4s9zOJsJj4QLHpFaNbOxJmnLl2H46WQAUwPM0dgZzHMkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=C8bP7++u; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=3jlHGCv3KKfepny4/+8UDRH2Uchjm+ncAKZLjXBzPQE=; b=C8bP7++u/b5qMJnayCP05rlwX6
+	siikOCS3dkib6Z13ktiKs0qkiKKxo2bs+qW2uD3E8MRuWp0Z0O4yRe2q3dJLi4I+/62oKlQOFt6JN
+	esxZ861tBA7iWNxDXxOMa/7XA5jCPzTltJyqgGOSJC+5yvI90tXMXShLvSZIWZxHilpv9ZLOj6yvu
+	FeknuqLFJe3UINMVdw17fYcqyoQLLavUTX4++UMaXmTpPptEmPfIe34/71CY0kDQhWW0eHM/zmqE+
+	8FjOPvfqXZJ4BLRL7ZhjGC3PpCaXO//hmkJfr/x1YOeswxG0IQYA27jtiDzRwAC535u0407ggWCUC
+	1+cRSFkA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v3VsR-00000007vQP-2C9S;
+	Tue, 30 Sep 2025 08:38:29 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id AAEA6300328; Tue, 30 Sep 2025 10:38:27 +0200 (CEST)
+Date: Tue, 30 Sep 2025 10:38:27 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Juergen Gross <jgross@suse.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+	virtualization@lists.linux.dev, xin@zytor.com,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Ajay Kaher <ajay.kaher@broadcom.com>,
+	Alexey Makhalov <alexey.makhalov@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	xen-devel@lists.xenproject.org
+Subject: Re: [PATCH v2 11/12] x86/paravirt: Don't use pv_ops vector for MSR
+ access functions
+Message-ID: <20250930083827.GI3245006@noisy.programming.kicks-ass.net>
+References: <20250930070356.30695-1-jgross@suse.com>
+ <20250930070356.30695-12-jgross@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/5] perf/arm_cspmu: Add arm_cspmu_acpi_dev_get
-Content-Language: en-GB
-To: Besar Wicaksono <bwicaksono@nvidia.com>, will@kernel.org,
- robin.murphy@arm.com, ilkka@os.amperecomputing.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-tegra@vger.kernel.org, mark.rutland@arm.com, treding@nvidia.com,
- jonathanh@nvidia.com, vsethi@nvidia.com, rwiley@nvidia.com,
- sdonthineni@nvidia.com
-References: <20250930002604.346306-1-bwicaksono@nvidia.com>
- <20250930002604.346306-2-bwicaksono@nvidia.com>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20250930002604.346306-2-bwicaksono@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250930070356.30695-12-jgross@suse.com>
 
-On 30/09/2025 01:26, Besar Wicaksono wrote:
-> Add interface to get ACPI device associated with the
-> PMU. This ACPI device may contain additional properties
-> not covered by the standard properties.
-> 
-> Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
+On Tue, Sep 30, 2025 at 09:03:55AM +0200, Juergen Gross wrote:
 
-Repeat: Where is the user ?
+> +static __always_inline u64 read_msr(u32 msr)
+> +{
+> +	if (cpu_feature_enabled(X86_FEATURE_XENPV))
+> +		return xen_read_msr(msr);
+> +
+> +	return native_rdmsrq(msr);
+> +}
+> +
+> +static __always_inline int read_msr_safe(u32 msr, u64 *p)
+> +{
+> +	if (cpu_feature_enabled(X86_FEATURE_XENPV))
+> +		return xen_read_msr_safe(msr, p);
+> +
+> +	return native_read_msr_safe(msr, p);
+> +}
+> +
+> +static __always_inline void write_msr(u32 msr, u64 val)
+> +{
+> +	if (cpu_feature_enabled(X86_FEATURE_XENPV))
+> +		xen_write_msr(msr, val);
+> +	else
+> +		native_wrmsrq(msr, val);
+> +}
+> +
+> +static __always_inline int write_msr_safe(u32 msr, u64 val)
+> +{
+> +	if (cpu_feature_enabled(X86_FEATURE_XENPV))
+> +		return xen_write_msr_safe(msr, val);
+> +
+> +	return native_write_msr_safe(msr, val);
+> +}
+> +
+> +static __always_inline u64 rdpmc(int counter)
+> +{
+> +	if (cpu_feature_enabled(X86_FEATURE_XENPV))
+> +		return xen_read_pmc(counter);
+> +
+> +	return native_read_pmc(counter);
+> +}
 
-Suzuki
-
-
+Egads, didn't we just construct giant ALTERNATIVE()s for the native_
+things? Why wrap that in a cpu_feature_enabled() instead of just adding
+one more case to the ALTERNATIVE() ?
 
