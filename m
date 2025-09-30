@@ -1,169 +1,184 @@
-Return-Path: <linux-kernel+bounces-837734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B12CBAD118
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 15:32:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AEBABAD11E
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 15:32:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5F273B18D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 13:32:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A96B166450
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 13:32:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52FB03043B4;
-	Tue, 30 Sep 2025 13:32:26 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A4072FA0C7;
-	Tue, 30 Sep 2025 13:32:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDFB81A8F97;
+	Tue, 30 Sep 2025 13:32:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="nuFUKD1C";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ACxfrnUx";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="nuFUKD1C";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ACxfrnUx"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55DA325C81F
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 13:32:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759239145; cv=none; b=n7Fn9uotqm9fvowK6pP4lfSNnt5v8hYqafRN/saie9azrAOqh4nZ6mTNDMLMsJZgabvj5pPVTKki/F0kTJX6qEuHy7hAlgJzKt3HxdrnkZL03F0ttyE2xElU9svwufH8OAuiK8H4kLUjpo3vB44M5AdLlgWzM0YcQLdT54fclG4=
+	t=1759239148; cv=none; b=OgC1RsN5F0My0ToJvSw+YwPoc9GIx47E+gleskhSce6QzXH4WkbLmG/F5ZJumEpqt9YFdd6qDyp9aPcEXyCwhkQSdpyu+SuVR5Mp42HvK5kWj7Ic9FfochBfsFKkV/AR07CvKc3oGkRM7qYm5AV6Zoz4/OJok9vx+tPSzhuAZvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759239145; c=relaxed/simple;
-	bh=Xk6RZuGztEL9unK1SjNmM+dQ7i44rNs7t52p338eIAQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rhCs13V1Qog9FuR+HquqsnLISvWHaspwxEIFxGmdkEm7w+tzgSg8aUkT6cyQmZY9hmWNgyHNn9ASdePwNEf+ZKWQtd1gm8MYsvOThpAnJBEVvrqQnw1yQpLW3MbWylPyn50NN3vUoMnIh/RufURtOpHrVmlteiqwQcOKJy1jWS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0D4B4113E;
-	Tue, 30 Sep 2025 06:32:09 -0700 (PDT)
-Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CC9973F59E;
-	Tue, 30 Sep 2025 06:32:12 -0700 (PDT)
-Message-ID: <7b13b1b5-295e-499b-9f8f-da168099377d@arm.com>
-Date: Tue, 30 Sep 2025 14:32:11 +0100
+	s=arc-20240116; t=1759239148; c=relaxed/simple;
+	bh=hjiUvhTEcdI+Yx6XNweoKsC0rD2vJbqkmRgwKnlMcNo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KWXQ6+F6XOWuwy5JvNbdLoh2FYZlViI+LfGS7CmuS2cCjkMi8iEV6YKyLSXgCfvFjjImG+FP0eI99+Dfs57Xde5GI1IS934S6cvmphntSvy3JkzpHx5Vh7WgESwrVOyWMNVDMH//+t+v2S4Vsq9CK/vsnH6kiWemDZebEBoo2mc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=nuFUKD1C; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ACxfrnUx; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=nuFUKD1C; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ACxfrnUx; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id A1C101F83B;
+	Tue, 30 Sep 2025 13:32:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759239141;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1Getj9FPGP+Bzf+xHlVzE0JepEsiLzYSmV09bhXiYYc=;
+	b=nuFUKD1CYq3mTKKtqgyBgPKg0MVwK/5bUyIcBe57nupAzoexJH80GY286eDGMtYXtkzZLh
+	Zrfm9m0yoEOwhBaIJHHY5Ci6bEXXuwxx/Q83UIFXFtIHb8TeFrCk3+HKsFQSLlUl+mmjfP
+	BYAAT2/3dXr1IB05GIVdYatN3yexyMg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759239141;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1Getj9FPGP+Bzf+xHlVzE0JepEsiLzYSmV09bhXiYYc=;
+	b=ACxfrnUxl0GN76Oc7ofUgkni/+dUC7XTFaNWYMXz+O+5ULF5MNqfsxB8irEf4jE32o1Wv0
+	xGs/b/4YTZgZnlCg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759239141;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1Getj9FPGP+Bzf+xHlVzE0JepEsiLzYSmV09bhXiYYc=;
+	b=nuFUKD1CYq3mTKKtqgyBgPKg0MVwK/5bUyIcBe57nupAzoexJH80GY286eDGMtYXtkzZLh
+	Zrfm9m0yoEOwhBaIJHHY5Ci6bEXXuwxx/Q83UIFXFtIHb8TeFrCk3+HKsFQSLlUl+mmjfP
+	BYAAT2/3dXr1IB05GIVdYatN3yexyMg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759239141;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1Getj9FPGP+Bzf+xHlVzE0JepEsiLzYSmV09bhXiYYc=;
+	b=ACxfrnUxl0GN76Oc7ofUgkni/+dUC7XTFaNWYMXz+O+5ULF5MNqfsxB8irEf4jE32o1Wv0
+	xGs/b/4YTZgZnlCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 805961342D;
+	Tue, 30 Sep 2025 13:32:21 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id me4xH+Xb22hRRQAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Tue, 30 Sep 2025 13:32:21 +0000
+Date: Tue, 30 Sep 2025 15:32:20 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Han Xu <han.xu@nxp.com>,
+	"suman.kumar.chakraborty@intel.com" <suman.kumar.chakraborty@intel.com>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"terrelln@fb.com" <terrelln@fb.com>,
+	"dsterba@suse.com" <dsterba@suse.com>,
+	Richard Weinberger <richard@nod.at>,
+	"chengzhihao1@huawei.com" <chengzhihao1@huawei.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:MEMORY TECHNOLOGY DEVICES (MTD)" <linux-mtd@lists.infradead.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>
+Subject: Re: [PATCH] crypto: zstd - Fix compression bug caused by truncation
+Message-ID: <20250930133220.GB4052@suse.cz>
+Reply-To: dsterba@suse.cz
+References: <GV1PR04MB9071B5AC95DBD48B67FACF44971BA@GV1PR04MB9071.eurprd04.prod.outlook.com>
+ <aNuQAr79Hdky3WII@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 13/29] arm_mpam: Probe the hardware features resctrl
- supports
-To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org
-Cc: D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
- Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
- fenghuay@nvidia.com, baisheng.gao@unisoc.com,
- Jonathan Cameron <jonathan.cameron@huawei.com>, Rob Herring
- <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
- Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
- <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>
-References: <20250910204309.20751-1-james.morse@arm.com>
- <20250910204309.20751-14-james.morse@arm.com>
- <8ed9fbe9-1075-4abb-91d0-20203906a4dc@arm.com>
- <32bc0e4a-d0bb-4aaa-8706-95a6edd470a9@arm.com>
-From: Ben Horgan <ben.horgan@arm.com>
-Content-Language: en-US
-In-Reply-To: <32bc0e4a-d0bb-4aaa-8706-95a6edd470a9@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aNuQAr79Hdky3WII@gondor.apana.org.au>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:replyto,suse.cz:mid,imap1.dmz-prg2.suse.org:helo];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Score: -4.00
 
-Hi James,
+On Tue, Sep 30, 2025 at 04:08:34PM +0800, Herbert Xu wrote:
+> On Mon, Sep 29, 2025 at 11:51:36PM +0000, Han Xu wrote:
+> > Hi Suman,
+> > 
+> > The patch f5ad93ffb5411 "crypto: zstd - convert to acomp"
+> > leads to the following kernel dump during UBIFS write back.
+> 
+> Thanks for the detailed report and instructions!
+> 
+> Please let me know if you still get the crash with this patch:
+> 
+> ---8<---
+> Use size_t for the return value of zstd_compress_cctx as otherwise
+> negative errors will be truncated to a positive value.
+> 
+> Reported-by: Han Xu <han.xu@nxp.com>
+> Fixes: f5ad93ffb541 ("crypto: zstd - convert to acomp")
+> Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 
-On 9/29/25 18:45, James Morse wrote:
-> Hi Ben,
-> 
-> On 11/09/2025 16:37, Ben Horgan wrote:
->> On 9/10/25 21:42, James Morse wrote:
->>> Expand the probing support with the control and monitor types
->>> we can use with resctrl.
-> 
->>> diff --git a/drivers/resctrl/mpam_internal.h b/drivers/resctrl/mpam_internal.h
->>> index 4cc44d4e21c4..5ae5d4eee8ec 100644
->>> --- a/drivers/resctrl/mpam_internal.h
->>> +++ b/drivers/resctrl/mpam_internal.h
->>> @@ -112,6 +112,55 @@ static inline void mpam_mon_sel_lock_init(struct mpam_msc *msc)
->>>  	raw_spin_lock_init(&msc->_mon_sel_lock);
->>>  }
->>>  
->>> +/*
->>> + * When we compact the supported features, we don't care what they are.
->>> + * Storing them as a bitmap makes life easy.
->>> + */
->>> +typedef u16 mpam_features_t;
->>> +
->>> +/* Bits for mpam_features_t */
->>> +enum mpam_device_features {
->>> +	mpam_feat_ccap_part = 0,
->>> +	mpam_feat_cpor_part,
->>> +	mpam_feat_mbw_part,
->>> +	mpam_feat_mbw_min,
->>> +	mpam_feat_mbw_max,
->>> +	mpam_feat_mbw_prop,
->>> +	mpam_feat_msmon,
->>> +	mpam_feat_msmon_csu,
->>> +	mpam_feat_msmon_csu_capture,
->>> +	mpam_feat_msmon_csu_hw_nrdy,
->>> +	mpam_feat_msmon_mbwu,
->>> +	mpam_feat_msmon_mbwu_capture,
->>> +	mpam_feat_msmon_mbwu_rwbw,
->>> +	mpam_feat_msmon_mbwu_hw_nrdy,
->>> +	mpam_feat_msmon_capt,
->>> +	MPAM_FEATURE_LAST,
->>> +};
-> 
->> I added a garbled comment about this for v1. What I was trying to say is
->> that I don't think this quite matches what resctrl supports. For
->> instance, I don't think mpam_feat_ccap_part matches a resctrl feature.
-> 
-> Ah - right. I thought you meant something was removed later.
-> Looks like I thought something could be emulated with CCAP, but that turns out not to be
-> true because it doesn't have an implicit isolation property, which the
-> resctrl:bitmap-from-userspace requires.
-> (I think rwbw was a later addition to the architecture and I added it to the wrong patch).
-> 
-> I'll move that, _prop and _rwbw to the later patch. The split is fairly arbitrary - it was
-
-I think ccap gets split into finer grained features later on which seems
-fine.
-
-> just somewhere to split an otherwise large patch, and does help determine if a bug is
-> going to be visible to user-space or not.
-
-Ok, sensible, I hadn't appreciated the user-space visibility aspect.
+Reviewed-by: David Sterba <dsterba@suse.com>
 
 > 
-> _capt can go completely. Last I heard no-one was interested in firmware descriptions of
-> how the capture hardware can be triggered. I suspect no-one has done anything with it.
-
-So, if I've understood correctly this leaves you with the following in
-this patch.
-
-mpam_feat_cpor_part,
-mpam_feat_mbw_part,
-mpam_feat_mbw_min,
-mpam_feat_mbw_max,
-mpam_feat_mbw_prop,
-mpam_feat_msmon,
-mpam_feat_msmon_csu,
-mpam_feat_msmon_csu_hw_nrdy,
-mpam_feat_msmon_mbwu,
-mpam_feat_msmon_mbwu_hw_nrdy,
-
-Looks like the correct, resctrl based, split.
-
-> 
-> 
-> Thanks,
-> 
-> James
-
-Thanks,
-
-Ben
-
+> diff --git a/crypto/zstd.c b/crypto/zstd.c
+> index c2a19cb0879d..ac318d333b68 100644
+> --- a/crypto/zstd.c
+> +++ b/crypto/zstd.c
+> @@ -83,7 +83,7 @@ static void zstd_exit(struct crypto_acomp *acomp_tfm)
+>  static int zstd_compress_one(struct acomp_req *req, struct zstd_ctx *ctx,
+>  			     const void *src, void *dst, unsigned int *dlen)
+>  {
+> -	unsigned int out_len;
+> +	size_t out_len;
+>  
+>  	ctx->cctx = zstd_init_cctx(ctx->wksp, ctx->wksp_size);
+>  	if (!ctx->cctx)
+> -- 
+> Email: Herbert Xu <herbert@gondor.apana.org.au>
+> Home Page: http://gondor.apana.org.au/~herbert/
+> PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
