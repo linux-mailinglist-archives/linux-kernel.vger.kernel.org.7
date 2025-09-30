@@ -1,155 +1,228 @@
-Return-Path: <linux-kernel+bounces-837336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3E5EBAC10F
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 10:34:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03B0EBAC11B
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 10:35:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A1A61926A74
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 08:35:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B381D3BBF65
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 08:35:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BD0F248880;
-	Tue, 30 Sep 2025 08:34:37 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3963248F7F;
+	Tue, 30 Sep 2025 08:34:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BRE7EA9q"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89CD22BB17;
-	Tue, 30 Sep 2025 08:34:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759221276; cv=none; b=grplM41W5sbZEzxm5DezH069xEi67pqqu45aeLBeBD0RqKnR5WZssMlT2E/cqDUKBF1icPAE1wRCLO2cnLEFwYJ0z/4wk3DGGos5Z4vF5A8JP1wm7otG8jm7T8ZfbI5+oSCw7wpW2aYpRWLCYOXEIAQf6wbZBCiwNWbXJb//3ho=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759221276; c=relaxed/simple;
-	bh=SXsgFq8Xtn7OrIbbPNrPBD+k61+5DOvZpeBqN5ND1yg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PjXMyUwhJEdMjDvATYlTjwVhVUucUKNcvFJOqQRdLNHpY/tOxg/fXjb16f7DUucN+k3sD47P4/47cmkLA7ExEEKb6V/wZ62RNt6A94MTFBT5OxWvDZ4lMggnGV4gEvRcFDavnP418ZzrXwguH8Plqgl80tugeZ24XtcmKUU/Ibw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cbWYx50yKzYQv8x;
-	Tue, 30 Sep 2025 16:34:13 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 08FE81A156A;
-	Tue, 30 Sep 2025 16:34:31 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgDHi2MUltto8ZU+BQ--.47119S3;
-	Tue, 30 Sep 2025 16:34:29 +0800 (CST)
-Message-ID: <ec41dc81-f6cd-4aaf-8fbc-968d3e3d6ba8@huaweicloud.com>
-Date: Tue, 30 Sep 2025 16:34:27 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FDCA244693;
+	Tue, 30 Sep 2025 08:34:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759221297; cv=fail; b=jx043hxVOdxsMGu+qly04bMdoFLJkkryZIUnoWnjnHCID4k2RO7WVvrbDEUO5GR9h90aMjUwr4McsQWvmKHGqk/86rcwLG+PLwm9dlQJt/TuE9wOmtTJalmoXaenoAaPXFDg5Ryl1yR3rwuesNRu5L965DbstDRO/t7eitXQHQE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759221297; c=relaxed/simple;
+	bh=PZyqanzW88J1s43tCvkubGkPM/CKgcoiYhfAJi9uOiw=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=qdHjlvQCbnmqY1vsoM/HN67i+ByOJ1F6+Spo8MM5sip1iviALNFAlhUsRkdtmsj9nOg80GDjkwuTTQZ0CF3ByFiLZsme7y9aJgwo+MR+0Y4nt4h38du3iaxHAR9tFTUd/9IyJwTz18uHU/dWRyjC9UFLYM34La6H0xrpxGtwQhk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BRE7EA9q; arc=fail smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759221295; x=1790757295;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=PZyqanzW88J1s43tCvkubGkPM/CKgcoiYhfAJi9uOiw=;
+  b=BRE7EA9qGtj0Skm48Pur6vjJfRBWCCDK3aGL93Jua8j0yQMEfMiU31ny
+   Ao/Za0q1HLyfNSY59X+WyU3V6eDGbCMdu7xnI8NoWZv+NhlfOHNQ4FDLi
+   WPaY3L97aKHneg1MBcQXl2M5O7c6FIXM543knVX1pavbEILd3fAcQl2ss
+   rAUK2yHoHHYpv/DE0NZR4oqWGtF2tkYQIbqO/gJm1wO2FXUwr2rznFC4s
+   N0ja9was3Wh+DxZ9gJnOHkIlUKOiotgk0EddSWHQbbaAh79cjG8mKCzhm
+   +tT9Jc0Fp2erfCwrst/u7MZGz65066Dju8YpEN6CUm73kKlNXf0Jl5scZ
+   Q==;
+X-CSE-ConnectionGUID: 4ijaFveZSEKeJ+0J0lUcUw==
+X-CSE-MsgGUID: 9HVqlSCnS+msCu/sp5HLaA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11568"; a="61579782"
+X-IronPort-AV: E=Sophos;i="6.18,303,1751266800"; 
+   d="scan'208";a="61579782"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2025 01:34:54 -0700
+X-CSE-ConnectionGUID: z/DsuvRTTxus8y9c+p8haA==
+X-CSE-MsgGUID: 7kjtCR5nTMa1rl/yed9jcg==
+X-ExtLoop1: 1
+Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2025 01:34:54 -0700
+Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Tue, 30 Sep 2025 01:34:53 -0700
+Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
+ FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Tue, 30 Sep 2025 01:34:53 -0700
+Received: from DM1PR04CU001.outbound.protection.outlook.com (52.101.61.31) by
+ edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Tue, 30 Sep 2025 01:34:53 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=a4pw7z2gGO4cOfOwzzF5SoHBtrHWJRCJZb2o+aAhEPEV0koi92rGUInZqRLl0jZeoBu2Mzcqrn4a8dpx0d8Y+4r0wzmDa/Dmk2KkXrAcBlHJ3dElBXdlgD5/qS6F+Bzf8BW5PM6vtLCe/RJAXk328BiRNHGcyEJgxGqVBBy8VRkqO59TZjqRw0q83dRbl1OMf4yWKG08JogC/bp7hlPWaiP9pyWDkYfXbQ4St5uhJQkJL1sizOwEvtG0+v3vm9D7KyNV71YjAK/1njWl6o678buO5RtzU1cOjHb7ECny1nr+w2omcParf1sanJEGgKU9W6aZahpsqCtOFpi94Kl1pw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TLm4wdNB4UvHh76YjrAzpxH2lME624LdSHxJpF9bwok=;
+ b=YNp/Rsm4DSHZqkdFBZmEUsxaBdRhGQAyVb+PsqyGMVgyiq6OoZ+mMWE26S9IeV9vlGM7476LEBxUZu9zLJ4reyQYiW533bGkxTmCDb0Ezh44ORBA9m7vIoNx1MRlp4nGmlkJn/kJAKrzqLOdQhjof5BYNx4LjguFdpatJxwPZh4P70wi5piDzvPJ0kcn0dVzdLVuhPETcZ3XdPkj5fzH/14et9YRxPNYsxXp29DHV4SWL6feTb85c4HTVJZSNMsenXA0s243x7HUxYRUsEaM37UYEpfTdY2BBxX/LVB2Cea6rv90fZNcGhw2WW6u3qjqjyVyv4T4GzFlQDEz7EFRvQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DM4PR11MB5295.namprd11.prod.outlook.com (2603:10b6:5:392::14)
+ by SA1PR11MB7037.namprd11.prod.outlook.com (2603:10b6:806:2ba::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.17; Tue, 30 Sep
+ 2025 08:34:47 +0000
+Received: from DM4PR11MB5295.namprd11.prod.outlook.com
+ ([fe80::769a:177e:10f2:f283]) by DM4PR11MB5295.namprd11.prod.outlook.com
+ ([fe80::769a:177e:10f2:f283%4]) with mapi id 15.20.9160.015; Tue, 30 Sep 2025
+ 08:34:46 +0000
+Date: Tue, 30 Sep 2025 09:34:37 +0100
+From: Suman Kumar Chakraborty <suman.kumar.chakraborty@intel.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+CC: Han Xu <han.xu@nxp.com>, "davem@davemloft.net" <davem@davemloft.net>,
+	"terrelln@fb.com" <terrelln@fb.com>, "dsterba@suse.com" <dsterba@suse.com>,
+	Richard Weinberger <richard@nod.at>, "chengzhihao1@huawei.com"
+	<chengzhihao1@huawei.com>, Miquel Raynal <miquel.raynal@bootlin.com>,
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, open list
+	<linux-kernel@vger.kernel.org>, "open list:MEMORY TECHNOLOGY DEVICES (MTD)"
+	<linux-mtd@lists.infradead.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>
+Subject: Re: [PATCH] crypto: zstd - Fix compression bug caused by truncation
+Message-ID: <aNuWHekFas2g7a5b@t21-qat.iind.intel.com>
+References: <GV1PR04MB9071B5AC95DBD48B67FACF44971BA@GV1PR04MB9071.eurprd04.prod.outlook.com>
+ <aNuQAr79Hdky3WII@gondor.apana.org.au>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <aNuQAr79Hdky3WII@gondor.apana.org.au>
+X-ClientProxiedBy: MA5PR01CA0030.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a01:178::14) To DM4PR11MB5295.namprd11.prod.outlook.com
+ (2603:10b6:5:392::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] ext4: detect invalid INLINE_DATA + EXTENTS flag
- combination
-To: Deepanshu Kartikey <kartikey406@gmail.com>
-Cc: tytso@mit.edu, adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- syzbot+038b7bf43423e132b308@syzkaller.appspotmail.com,
- Zhang Yi <yi.zhang@huawei.com>
-References: <20250929154308.360315-1-kartikey406@gmail.com>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <20250929154308.360315-1-kartikey406@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgDHi2MUltto8ZU+BQ--.47119S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxJw45JrWkXw1kuw45KFyUJrb_yoW5WFWfpF
-	Z8Cw1Dt34DX34qg3yxKr4UXFyjga95Gr47JrZxWr18Aas8KFyxKF13tF4UZa4UWr4F93Wj
-	vF45KryUC3WUAFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
-	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
-	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1veHDUUUUU==
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR11MB5295:EE_|SA1PR11MB7037:EE_
+X-MS-Office365-Filtering-Correlation-Id: bc8e5a89-0ede-4bae-af36-08ddfffc367b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?I9doXAatH6Uz1lBoZwBs3WFmyWhq2vcn3RXdx371Dywu6PTNH+hOlRBuX5BJ?=
+ =?us-ascii?Q?wMAjUi9LLY14dI4dWQylBIyV9KJ29SG4Eem+XQGDp7ytaspjt3ouKmmFGJdW?=
+ =?us-ascii?Q?oJIA9f8Umgf9RCYoyTjj/jdbqh4ZScYTcbcm2wGa0GNDj+Gz06rGCupTwQ0/?=
+ =?us-ascii?Q?JjTsGsJQvLHkAql3oggzomFq9MUFYCWX9n5nEyFSwFLJP5oAvRcKNrqWYx25?=
+ =?us-ascii?Q?M7Oo9K1C6yVi0YRGF71xiG8PYDDXxZcVyF5LkNDAM2dAocXpjPkDQMZFxbS2?=
+ =?us-ascii?Q?aFPDw9FYpMLILeFRWhm40OvoqkUsOIgg7PLdOhgWaIhVHmFBNPKsE1AsKVu9?=
+ =?us-ascii?Q?XDkQ60n363wHjn4P/AmmKCMGIxQEj+M7jug+a1BW2jw/aONxvXXyFTx3SKil?=
+ =?us-ascii?Q?0A8rJj+va4HLOVnYVvS6CrYj/6UwM2joXKw+qzPS97uubRSZDz8fDBQesIBz?=
+ =?us-ascii?Q?75yrbg3+AAXD/09hPjAnPDHridp4WYmPQfCgPe5SRihD2S7XmS3DSryarRwx?=
+ =?us-ascii?Q?qtm6zYH3oBFJYgq5Ii/wtye4b8GBYEC8F8Dkj+FCIm2Wtj92pHd61pu9hG5L?=
+ =?us-ascii?Q?+2EN/9+Ln0iDWoHToui4tAWx45nNObJuiFM5Qd7XD9GuB4LjdFtb54n18tQ0?=
+ =?us-ascii?Q?+7yLm5VbfzsEP3CPnoeHV4lS4rG3SBDcB0cVHIF0qOu5NVGkYIbstE2VBZPV?=
+ =?us-ascii?Q?9jOxvc5RvGfk+Cyp7cMdiZzA53wo3Q9GNLivLqaj65MHDGOh22C18Q2gM5SR?=
+ =?us-ascii?Q?6v9mK0+3Sge9FZEWMy1/9liqRWY3Jd9NygJ9/JU/9wwS/v2I6iyPoSH7i6xc?=
+ =?us-ascii?Q?gRS5oRWDAe30ld7+9UYL+9nCR+W8iv0VpsxW8vbt3fsriEZotxxqEchPzibf?=
+ =?us-ascii?Q?yFpldSqYRjwPvcEu73bSZd/MWsuR6EwEb65gpVRh+sLVCnq9rpqXG/bPDcmn?=
+ =?us-ascii?Q?SAlpDB/gBThJ8VQbXf8NMugC84sbRNYYuOEl0DXJCSc4xIYwUx3kI702jomP?=
+ =?us-ascii?Q?T28kTpJECRmnynjFb4S8F1mp3s6PfW7/CGSU9IqGuv8wcX+5YLUxJSZvjyLL?=
+ =?us-ascii?Q?6sE5lQzvmQjFiWkJIDQSSvCVuPrJf8055LeeqhexXMDg/mqsEdLXD57BmbAB?=
+ =?us-ascii?Q?UXaNYvuuVtYnrQLlk5ITZevUzu4cGk4xsA+oHtg9e6F1iI9QKpf/qMIRvBw4?=
+ =?us-ascii?Q?BsQUm90hLH//ntRkqAPXK6/BJNa0F7rCxpOObS45cHas9vyNNm5fOLEJ6YoF?=
+ =?us-ascii?Q?eUMcliNoRWsv0stlgwaW115v1ly4EV65MrY+EdC+XNKgPuGiuK+ldrDW284X?=
+ =?us-ascii?Q?c9Jcl+CdLvCA0bM57QfqERHzGZfKS+JqNdialokuQc9v9IDpTdoJG/nOa663?=
+ =?us-ascii?Q?VDhwFhDNNCOcJ/W8/dwPdHgpjySoVq6J4ioCd3S6qXU3/t6xfQ=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB5295.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?87zrqCPO7H7sMal2EmN+97uNShpP14EES3yJlxr9H3iIwx9FmmVyxKYozJub?=
+ =?us-ascii?Q?CHx2a4e1TvTjcQy9gkaRXf1oo+2ulhwEcjI4kY5bbStFR2unWJdQRbOpNttg?=
+ =?us-ascii?Q?aDmY5VDmryZz2dsLka+sRh8XNWXaLC8wxLrz80vslkhe1AAoOLbbAhftOJD+?=
+ =?us-ascii?Q?h7pOmR/3fnmuhwv1xrwrt9ZsevDwT7Y29OoXq1s0D5GAEBASN5UNdL36FaPJ?=
+ =?us-ascii?Q?JU2ba13+AQkg30rl4aKKHQfTc4XitmnVGgKTndpRjuiHhrG0o4J8+CeOrHd+?=
+ =?us-ascii?Q?2V74IZee/XxgYWY7+e/4lb3Ek3uo8OYtnpEPsSQfG93IgfBGUGhkV/gIKUTB?=
+ =?us-ascii?Q?Y/GW2EP/7LRGp9Zh2D33NQFDdtLLc81Lxm3Q9LRC1w/I3cK6IHif1JcAhx/b?=
+ =?us-ascii?Q?da2Bk6OZ27kFBgXRwwSRLeF18D2vd9/aioD2a5X/WH+o8+2eDDmhqExvIzlo?=
+ =?us-ascii?Q?Tadk5azrI0a1IeoymvU/NH1NSJCZCf/xKIWt3ro+xgnB2mqFkkZBf+m7SD/W?=
+ =?us-ascii?Q?/2gKGcwp3ObjaUHIkmn/sojnjsSlrQDjemeHXX+nH+07WORCeXmoDDh8XNyU?=
+ =?us-ascii?Q?/iJe0UsNIJq0Vh20LwPTO93Q9m5+PnD9y5WIsqsLK67ctqg3wSMK2k5rQdZe?=
+ =?us-ascii?Q?Xivrnz6kyPNyFPYzetVFunPqr5GvkNU68E61fI/YEqq8plDJ6ReqwtIawMfK?=
+ =?us-ascii?Q?fWZEOBgPfj3eFst1xNbgdMt+TnSLQjQV6atwu3Mkc1KyGjuAn4kUNN39zP0R?=
+ =?us-ascii?Q?hgVko48J5GE7M7o5MRnnSqWVE+FjITj/P8IUngBwtoXt3MHVOVaJ/NyWxOvw?=
+ =?us-ascii?Q?msOlAVCf0wDokOV8CsblKELKxwHUsgjClCPzSmoJRDcDknY97d9pqC1btixb?=
+ =?us-ascii?Q?pHH8GGpJuEYTjCADTRePOMg31idqlrlz9Uar4k0AMZUe60xQdy2Kx0ifzzE3?=
+ =?us-ascii?Q?BGPiCqLqEQXh1heIjJIW/zNH171wqLunqjeAbvsN+uVgsiPQwq2NTI5iOG6h?=
+ =?us-ascii?Q?7OT63RcP02JuNF7FgEloNtPZ4kmUb5jIMy+v0qhm0qMh8j2i9V7dt9gH4sm4?=
+ =?us-ascii?Q?SIAhk9couOXnY27d2l+A+NE2yf9KaJYOzhkk882CTmidv0RcNbTGMbgArX9Y?=
+ =?us-ascii?Q?dUf9Fku/f5yp5k47ceTLQIuaCV2ptw3OlZEUaxPl7YDjAAXk1QUDBmvdg2EN?=
+ =?us-ascii?Q?u2dREQbcMC0242nuEG3/nNvvVNljA5plQPWrXU6+N2y3vAOLzhdvSD2poLkN?=
+ =?us-ascii?Q?jLhTuyPS5kfSvZPS0LYMHjBMOX3PWKi6euc4X27sA6QZyeS5NGFE9v/ccxSj?=
+ =?us-ascii?Q?0Oe1LfAAIiT4aUjITBPdokyEyC2wdR/PBYk6EnSmZ95ZEAoEQKYlfYmj9dtZ?=
+ =?us-ascii?Q?uWWWUsbCtXPtIn/+bIiuYRo2PlFl08YxXKjFnIfXTFNlEQA65gmOhI4MwsMw?=
+ =?us-ascii?Q?DU/oKdAaKI+XEWFdBCqLrxZMrbyGeSxnY5iY6Iu5CRKhuxZ1wZuT/e8LVnE4?=
+ =?us-ascii?Q?DVfQvPWF0NpP6NU+zj98HpIaV4PjbRsIlbgf2EMrl9K9ehicXthX+Sy6MTqO?=
+ =?us-ascii?Q?7ZzVazJkK/suyNc0PkoUwU3vRt9dJluQiuJTTXzznCUSxdZ5qHLWKhyechnQ?=
+ =?us-ascii?Q?sWYy+ANKN67+FfRYBk+F638=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: bc8e5a89-0ede-4bae-af36-08ddfffc367b
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB5295.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2025 08:34:46.8642
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: SfQHpC6D4D+Urlsz4rPC8t0AwYfpRRbKHIrvH0kR5L+C+GNzHzDdN2FRzAm3hONDdJWpY1ojWf2zX7vwnTW9MMM1x66WK/5FTNqufSAFNS9tNw+fimQIE7I6tZksAuRk
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB7037
+X-OriginatorOrg: intel.com
 
-On 9/29/2025 11:43 PM, Deepanshu Kartikey wrote:
-> syzbot reported a BUG_ON in ext4_es_cache_extent() when opening a verity
-> file on a corrupted ext4 filesystem mounted without a journal.
+On Tue, Sep 30, 2025 at 04:08:34PM +0800, Herbert Xu wrote:
+> On Mon, Sep 29, 2025 at 11:51:36PM +0000, Han Xu wrote:
+> > Hi Suman,
+> > 
+> > The patch f5ad93ffb5411 "crypto: zstd - convert to acomp"
+> > leads to the following kernel dump during UBIFS write back.
 > 
-> The issue is that the filesystem has an inode with both the INLINE_DATA
-> and EXTENTS flags set:
+> Thanks for the detailed report and instructions!
 > 
->     EXT4-fs error (device loop0): ext4_cache_extents:545: inode #15:
->     comm syz.0.17: corrupted extent tree: lblk 0 < prev 66
-> 
-> Investigation revealed that the inode has both flags set:
->     DEBUG: inode 15 - flag=1, i_inline_off=164, has_inline=1, extents_flag=1
-> 
-> This is an invalid combination since an inode should have either:
-> - INLINE_DATA: data stored directly in the inode
-> - EXTENTS: data stored in extent-mapped blocks
-> 
-> Having both flags causes ext4_has_inline_data() to return true, skipping
-> extent tree validation in __ext4_iget(). The unvalidated out-of-order
-> extents then trigger a BUG_ON in ext4_es_cache_extent() due to integer
-> underflow when calculating hole sizes.
-> 
-> Fix this by detecting this invalid flag combination early in ext4_iget()
-> and rejecting the corrupted inode.
-> 
-> Reported-and-tested-by: syzbot+038b7bf43423e132b308@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=038b7bf43423e132b308
-> Suggested-by: Zhang Yi <yi.zhang@huawei.com>
-> Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
+> Please let me know if you still get the crash with this patch:
 
-Thank you for debugging and thoroughly investigating this issue! This
-patch overall looks good to me, with just a few minor suggestions.
+Thank you Herbert. It fixes the issue.
 
-> ---
-> Changes in v2:
-> - Instead of adding validation in ext4_find_extent(), detect the invalid
->   INLINE_DATA + EXTENTS flag combination in ext4_iget() as suggested by
->   Zhang Yi to avoid redundant checks in the extent lookup path
 > 
->  fs/ext4/inode.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
+> ---8<---
+> Use size_t for the return value of zstd_compress_cctx as otherwise
+> negative errors will be truncated to a positive value.
 > 
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 5b7a15db4953..71fa3faa1475 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -5445,6 +5445,15 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
->  	}
+> Reported-by: Han Xu <han.xu@nxp.com>
+> Fixes: f5ad93ffb541 ("crypto: zstd - convert to acomp")
+> Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+> 
+> diff --git a/crypto/zstd.c b/crypto/zstd.c
+> index c2a19cb0879d..ac318d333b68 100644
+> --- a/crypto/zstd.c
+> +++ b/crypto/zstd.c
+> @@ -83,7 +83,7 @@ static void zstd_exit(struct crypto_acomp *acomp_tfm)
+>  static int zstd_compress_one(struct acomp_req *req, struct zstd_ctx *ctx,
+>  			     const void *src, void *dst, unsigned int *dlen)
+>  {
+> -	unsigned int out_len;
+> +	size_t out_len;
 >  
->  	ret = 0;
-> +	/* Detect invalid flag combination - can't have both inline data and extents */
-> +	if (ext4_test_inode_flag(inode, EXT4_INODE_INLINE_DATA) &&
-> +		ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS)) {
-	    ^^^
-	    I'd recommended to maintain format alignment.
-
-> +		ext4_error_inode(inode, __func__, __LINE__, 0,
-		                        ^^^^^^^^^^^^^^^^^^
-		                        function, line,> +			"inode has both inline data and extents flags");
-> +		ret = -EFSCORRUPTED;
-> +		goto bad_inode;
-> +	}
-> +
-
-Additionally, I would prefer to move this check earlier, immediately
-after setting the flags, that is, after ext4_set_inode_flags(). What
-do you think?
-
-Thanks,
-Yi.
-
->  	if (ei->i_file_acl &&
->  	    !ext4_inode_block_valid(inode, ei->i_file_acl, 1)) {
->  		ext4_error_inode(inode, function, line, 0,
-
+>  	ctx->cctx = zstd_init_cctx(ctx->wksp, ctx->wksp_size);
+>  	if (!ctx->cctx)
+> -- 
+> Email: Herbert Xu <herbert@gondor.apana.org.au>
+> Home Page: http://gondor.apana.org.au/~herbert/
+> PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
