@@ -1,223 +1,143 @@
-Return-Path: <linux-kernel+bounces-837401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0A94BAC3E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 11:19:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DC1DBAC2E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 11:09:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CDF41927218
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:20:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED4E0174A91
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:09:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE991261B9E;
-	Tue, 30 Sep 2025 09:19:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A466D2F4A1E;
+	Tue, 30 Sep 2025 09:09:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="XmLXrMvr"
-Received: from mail-m19731115.qiye.163.com (mail-m19731115.qiye.163.com [220.197.31.115])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ovgb9sSn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFEC621A95D;
-	Tue, 30 Sep 2025 09:19:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.115
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F10672147FB;
+	Tue, 30 Sep 2025 09:09:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759223972; cv=none; b=EKOYDc+fKyaQxIpnYEYMcb7jfCUsFndp0l6uZjxCu77yLmzonpKlDi3NKrtI0im+PjFbejXT6J5zCEx+kSLalFM+XEwfPejg/smnfkd/8Osh+lNNzTDRw4GuEqdxrR0Qi4Z2wp//AwU8QEple/E0TloXOSSrvh5VUs3wV8Od5D0=
+	t=1759223348; cv=none; b=AKL2nwZsg7jy3s9Jg+pW9q6Q0wcrQufVGm2YN2woZ4fqMgRM8607QyNvg0nqRdPIoPtDYmTkqGhKI2TJEmu3EM3SzRzK+pjlfjOR6rAdX2/NJUQp0+/sf4UlHIUxvKhWkakkjNB8NL3hLW/WcPXxQjqgx9NMu6qCd+JXlTnFwgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759223972; c=relaxed/simple;
-	bh=pnJJio3BL3ioQDxW1DYAtxDNyFBTDjPtPX7cjY2rc70=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=K5wwocQ8J5PdgINBuY3F//fn+CBcgBLX4zu3s848YuWNcEea/B699IlFJd+DjFsl8L1+H8V2HhBNmK0+kkRVeLGM5mUBFMpnqYgokr9nTl7OiY4XNhfCIt3PonTJCnFelPKINRGlVr2Cy2DfZKlSuCOBjQuSe+0sCeze3HDbqyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=XmLXrMvr; arc=none smtp.client-ip=220.197.31.115
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 2493eb107;
-	Tue, 30 Sep 2025 17:14:09 +0800 (GMT+08:00)
-From: Damon Ding <damon.ding@rock-chips.com>
-To: andrzej.hajda@intel.com,
-	neil.armstrong@linaro.org,
-	rfoss@kernel.org
-Cc: Laurent.pinchart@ideasonboard.com,
-	jonas@kwiboo.se,
-	jernej.skrabec@gmail.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	inki.dae@samsung.com,
-	sw0312.kim@samsung.com,
-	kyungmin.park@samsung.com,
-	krzk@kernel.org,
-	alim.akhtar@samsung.com,
-	jingoohan1@gmail.com,
-	p.zabel@pengutronix.de,
-	hjc@rock-chips.com,
-	heiko@sntech.de,
-	andy.yan@rock-chips.com,
-	dmitry.baryshkov@oss.qualcomm.com,
-	dianders@chromium.org,
-	m.szyprowski@samsung.com,
-	luca.ceresoli@bootlin.com,
-	jani.nikula@intel.com,
-	linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Damon Ding <damon.ding@rock-chips.com>
-Subject: [PATCH v6 00/18] Apply drm_bridge_connector and panel_bridge helper for the Analogix DP driver
-Date: Tue, 30 Sep 2025 17:09:02 +0800
-Message-Id: <20250930090920.131094-1-damon.ding@rock-chips.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1759223348; c=relaxed/simple;
+	bh=1TypGX/cTzJD9kx3Mbj0TYYoI7zzRjlYiUdYBg+4JVw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QmU+hthOoSlALI1bVpRrW6QHdaVBrMQlWS1fVAoHecYmWrV00I/oe720nvMud6AR02rmiVAitoAb4EJ9qFB00aqLvd/qJyFAx+tVVfnPgbv6nr1rWI0J3aG7zBAGiAN/gLoNQxMcXHmVanMAhHYte3zbMDlB2dem0Fe3YzlRvtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ovgb9sSn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F021C4CEF0;
+	Tue, 30 Sep 2025 09:09:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759223347;
+	bh=1TypGX/cTzJD9kx3Mbj0TYYoI7zzRjlYiUdYBg+4JVw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ovgb9sSntYNrTvjX2qMv+VyzZhVdHH9hRwOaZ5rztICEHlaG+rVq3Jk3watrult+Z
+	 SnuXOlpTYIYJEt1ikl6yiBA5ZwFVqcJSVoJN84hGILw0VFUcc5slaqeJn7iJBvkujE
+	 Dj6IX5vXrm/gMgg5ET/q02XjaDClI6LiPsVJe4E4lxNjrhwWDbQEfoExIw1wwXqeDX
+	 Bcs1yJTt1cvXGXkiIAvmeFSOfHExVPDysBMquZP71kjVjzOiaTDTzrSAlH88fEnOeB
+	 MzRUC4BgmBCcOHBGccvaQ4emYBAV3IU+lbR1wFpwb6y1RwFTlY8fsyZm7QbG+1H/zN
+	 vfcLGGCVev8dg==
+Date: Tue, 30 Sep 2025 10:09:02 +0100
+From: Simon Horman <horms@kernel.org>
+To: Sidharth Seela <sidharthseela@gmail.com>
+Cc: antonio@openvpn.net, sd@queasysnail.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, shuah@kernel.org,
+	willemdebruijn.kernel@gmail.com, kernelxing@tencent.com,
+	nathan@kernel.org, nick.desaulniers+lkml@gmail.com,
+	morbo@google.com, justinstitt@google.com, netdev@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: Re: [PATCH net v3] selftest:net: Fix uninit return values
+Message-ID: <aNueLn3Wy-2X_GeE@horms.kernel.org>
+References: <20250929211241.55701-2-sidharthseela@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9999e6960e03a3kunmd96de74a43b9a5
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGhgeSlZDQk9NThlPSx9LHxpWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
-	1VSktLVUpCWQY+
-DKIM-Signature: a=rsa-sha256;
-	b=XmLXrMvrN6lC3eAZZK8KA2PbUGORqKt/cvBVnRP1VQsigWRaYg78tmxvxinCLPS2pjK+TLvXPdAIuXpZ/MUeanTuOGZ2GzbfILHBDWfvaxthOtETnXR0NrBYJV2HzVzoruL6ytDh4Wj8Zozoe3WN8FLIXuKybLumk9Tw898l1AM=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=Ovc33eB7wSLHPez3uqwzpvXJejZ0kZtOPk8MV/jKdXE=;
-	h=date:mime-version:subject:message-id:from;
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250929211241.55701-2-sidharthseela@gmail.com>
 
-PATCH 1 is a small format optimization for struct analogid_dp_device.
-PATCH 2 is to perform mode setting in &drm_bridge_funcs.atomic_enable.
-PATCH 3 is to add a new parameter to store the point of next bridge.
-PATCH 4 is to make legacy bridge driver more universal.
-PATCH 5-10 are preparations for apply drm_bridge_connector helper.
-PATCH 11 is to ensure last bridge determines OP_EDID/OP_MODES capabilities.
-PATCH 12 is to apply the drm_bridge_connector helper.
-PATCH 13-15 are to move the panel/bridge parsing to the Analogix side.
-PATCH 16 is to attach the next bridge on Analogix side uniformly.
-PATCH 17-18 are to apply the panel_bridge helper.
+On Tue, Sep 30, 2025 at 02:42:42AM +0530, Sidharth Seela wrote:
+> Fix functions that return undefined values. These issues were caught by
+> running clang using LLVM=1 option; and are as follows:
+> --
 
-Damon Ding (18):
-  drm/bridge: analogix_dp: Formalize the struct analogix_dp_device
-  drm/bridge: analogix_dp: Move &drm_bridge_funcs.mode_set to
-    &drm_bridge_funcs.atomic_enable
-  drm/bridge: analogix_dp: Add &analogix_dp_plat_data.next_bridge
-  drm/bridge: Move legacy bridge driver out of imx directory for
-    multi-platform use
-  drm/exynos: exynos_dp: Remove &exynos_dp_device.ptn_bridge
-  drm/exynos: exynos_dp: Remove unused &exynos_dp_device.connector
-  drm/exynos: exynos_dp: Apply legacy bridge to parse the
-    display-timings node
-  drm/bridge: analogix_dp: Remove redundant
-    &analogix_dp_plat_data.skip_connector
-  drm/bridge: analogix_dp: Move the color format check to
-    .atomic_check() for Rockchip platforms
-  drm/bridge: analogix_dp: Remove unused
-    &analogix_dp_plat_data.get_modes()
-  drm/display: bridge_connector: Ensure last bridge determines
-    EDID/modes detection capabilities
-  drm/bridge: analogix_dp: Apply drm_bridge_connector helper
-  drm/bridge: analogix_dp: Add new API analogix_dp_finish_probe()
-  drm/rockchip: analogix_dp: Apply analogix_dp_finish_probe()
-  drm/exynos: exynos_dp: Apply analogix_dp_finish_probe()
-  drm/bridge: analogix_dp: Attach the next bridge in
-    analogix_dp_bridge_attach()
-  drm/bridge: analogix_dp: Remove bridge disabing and panel unpreparing
-    in analogix_dp_unbind()
-  drm/bridge: analogix_dp: Apply panel_bridge helper
+Hi,
 
- drivers/gpu/drm/bridge/Kconfig                |  10 +
- drivers/gpu/drm/bridge/Makefile               |   1 +
- drivers/gpu/drm/bridge/analogix/Kconfig       |   1 +
- .../drm/bridge/analogix/analogix_dp_core.c    | 395 +++++++++---------
- .../drm/bridge/analogix/analogix_dp_core.h    |   5 +-
- drivers/gpu/drm/bridge/imx/Kconfig            |  10 -
- drivers/gpu/drm/bridge/imx/Makefile           |   1 -
- .../gpu/drm/bridge/imx/imx-legacy-bridge.c    |  91 ----
- drivers/gpu/drm/bridge/legacy-bridge.c        |  99 +++++
- .../gpu/drm/display/drm_bridge_connector.c    |  42 ++
- drivers/gpu/drm/exynos/Kconfig                |   2 +
- drivers/gpu/drm/exynos/exynos_dp.c            | 117 ++----
- drivers/gpu/drm/imx/ipuv3/Kconfig             |   4 +-
- drivers/gpu/drm/imx/ipuv3/imx-ldb.c           |   6 +-
- drivers/gpu/drm/imx/ipuv3/parallel-display.c  |   4 +-
- drivers/gpu/drm/rockchip/Kconfig              |   1 +
- .../gpu/drm/rockchip/analogix_dp-rockchip.c   |  67 +--
- include/drm/bridge/analogix_dp.h              |   8 +-
- include/drm/bridge/imx.h                      |  17 -
- include/drm/bridge/legacy-bridge.h            |  18 +
- 20 files changed, 433 insertions(+), 466 deletions(-)
- delete mode 100644 drivers/gpu/drm/bridge/imx/imx-legacy-bridge.c
- create mode 100644 drivers/gpu/drm/bridge/legacy-bridge.c
- delete mode 100644 include/drm/bridge/imx.h
- create mode 100644 include/drm/bridge/legacy-bridge.h
+I don't want to block progress.
+But there are some format problems with the commit message.
 
----
+Locally, git truncates the commit message at the line above ('--').
+Which, omits a lot of useful information.
+Most critically your Signed-off-by line.
 
-Changes in v2:
-- Update Exynos DP driver synchronously.
-- Move the panel/bridge parsing to the Analogix side.
+There is also another '--' below. Just above the fixes tag.
+Which would cause a similar problem.
 
-Changes in v3:
-- Rebase for the existing devm_drm_bridge_alloc() applying commit.
-- Fix the typographical error of panel/bridge check in exynos_dp_bind().
-- Squash all commits related to skip_connector deletion in both Exynos and
-  Analogix code into one.
-- Apply panel_bridge helper to make the codes more concise.
-- Fix the handing of bridge in analogix_dp_bridge_get_modes().
-- Remove unnecessary parameter struct drm_connector* for callback
-  &analogix_dp_plat_data.attach().
-- In order to decouple the connector driver and the bridge driver, move
-  the bridge connector initilization to the Rockchip and Exynos sides.
+And the v2/v3 information should go below the scissors ('---'),
+below your signed-off by line.
 
-Changes in v4:
-- Rebase for the applied &drm_bridge_funcs.detect() modification commit.
-- Rename analogix_dp_find_panel_or_bridge() to analogix_dp_finish_probe().
-- Drop the drmm_encoder_init() modification commit.
-- Rename the &analogix_dp_plat_data.bridge to
-  &analogix_dp_plat_data.next_bridge.
+Maybe the maintainers can fix this when applying,
+given how close we are to the pull for v6.18-rc1.
+And that I believe there has already been some
+discussion of this patch with the maintainers.
 
-Changes in v5:
-- Add legacy bridge to parse the display-timings node under the dp node
-  for Exynos side.
-- Move color format check to &drm_connector_helper_funcs.atomic_check()
-  in order to get rid of &analogix_dp_plat_data.get_modes().
-- Remove unused callback &analogix_dp_plat_data.get_modes().
-- Distinguish the &drm_bridge->ops of Analogix bridge based on whether
-  the downstream device is a panel, a bridge or neither.
-- Select DRM_DISPLAY_DP_AUX_BUS for DRM_ANALOGIX_DP, and remove it for
-  ROCKCHIP_ANALOGIX_DP.
-- Apply rockchip_dp_attach() to support the next bridge attachment for
-  the Rockchip side.
-- Move next_bridge attachment from Analogix side to Rockchip/Exynos sides.
+> ovpn-cli.c:1587:6: warning: variable 'ret' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
+>  1587 |         if (!sock) {
+>       |             ^~~~~
+> ovpn-cli.c:1635:9: note: uninitialized use occurs here
+>  1635 |         return ret;
+>       |                ^~~
+> ovpn-cli.c:1587:2: note: remove the 'if' if its condition is always false
+>  1587 |         if (!sock) {
+>       |         ^~~~~~~~~~~~
+>  1588 |                 fprintf(stderr, "cannot allocate netlink socket\n");
+>       |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>  1589 |                 goto err_free;
+>       |                 ~~~~~~~~~~~~~~
+>  1590 |         }
+>       |         ~
+> ovpn-cli.c:1584:15: note: initialize the variable 'ret' to silence this warning
+>  1584 |         int mcid, ret;
+>       |                      ^
+>       |                       = 0
+> ovpn-cli.c:2107:7: warning: variable 'ret' is used uninitialized whenever switch case is taken [-Wsometimes-uninitialized]
+>  2107 |         case CMD_INVALID:
+>       |              ^~~~~~~~~~~
+> ovpn-cli.c:2111:9: note: uninitialized use occurs here
+>  2111 |         return ret;
+>       |                ^~~
+> ovpn-cli.c:1939:12: note: initialize the variable 'ret' to silence this warning
+>  1939 |         int n, ret;
+>       |                   ^
+>       |
+> --
+> Fixes: 959bc330a439 ("testing/selftests: add test tool and scripts for ovpn module")
+> ovpn module")
+> 
+> v3:
+> 	- Use prefix net.
+> 	- Remove so_txtime fix as default case calls error().
+> 	- Changelog before sign-off.
+> 	- Three dashes after sign-off
+> 
+> v2:
+> 	- Use subsystem name "net".
+> 	- Add fixes tags.
+> 	- Remove txtimestamp fix as default case calls error.
+> 	- Assign constant error string instead of NULL.
+> 
+> Signed-off-by: Sidharth Seela <sidharthseela@gmail.com>
+> ---
+> 
 
-Changes in v6:
-- Move legacy bridge driver out of imx directory for multi-platform use.
-- Apply DRM legacy bridge to parse display timings intead of implementing
-  the same codes only for Exynos DP.
-- Ensure last bridge determines EDID/modes detection capabilities in DRM
-  bridge_connector driver.
-- Remove unnecessary drm_bridge_get_modes() in
-  analogix_dp_bridge_get_modes().
-- Simplify analogix_dp_bridge_edid_read().
-- If the next is a bridge, set DRM_BRIDGE_OP_DETECT and return
-  connector_status_connected in analogix_dp_bridge_detect().
-- Set flag DRM_BRIDGE_ATTACH_NO_CONNECTOR for bridge attachment while
-  binding. Meanwhile, make DRM_BRIDGE_ATTACH_NO_CONNECTOR unsuppported
-  in analogix_dp_bridge_attach().
-- Move the next bridge attachment to the Analogix side rather than
-  scattered on Rockchip and Exynos sides.
-- Remove the unnecessary analogix_dp_bridge_get_modes().
-- Squash [PATCH v5 15/17] into [PATCH v5 17/17].
-- Fix the &drm_bridge->ops to DRM_BRIDGE_OP_EDID | DRM_BRIDGE_OP_DETECT.
+This is where the v2/v3 information should go.
 
--- 
-2.34.1
-
+...
 
