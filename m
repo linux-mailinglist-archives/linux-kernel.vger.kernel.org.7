@@ -1,96 +1,57 @@
-Return-Path: <linux-kernel+bounces-837246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37797BABC5D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:13:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C105BABCB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 09:22:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E13753B23A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 07:13:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26CE81C4CA9
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 07:22:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B74C22BE024;
-	Tue, 30 Sep 2025 07:13:13 +0000 (UTC)
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C2BE2BEFE0;
+	Tue, 30 Sep 2025 07:21:56 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7283227A929
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 07:13:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED70D1EBA14;
+	Tue, 30 Sep 2025 07:21:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759216393; cv=none; b=j0+g9Ec8Zbh1GYY6CVWoFZFTtKXLo759agOpayYxzeaOSk4VYEVXbSuuC058ZTqeITmFgNh+9vt9wnUChUb4pL4El/T0VCqvk/ZTSbSP1KwH3ZeZHfs2+Em0om+yMpedfykghxvhDSkYuUM4by0jLW9fe8H/mF2W/pMA4y7d5Cg=
+	t=1759216915; cv=none; b=mXi9WzYchNdM78HaA5NAgDPhZpw970VIxmnkSOjFkTf+TvHyn5x7377HSM67frS95Swy2zPUKSRJEX9M1wxR5kT/zc/mN864KvAF6Sshp+0yP6swk3eaKuD3RVJW1niGUqMBkZH/QI355jYUhNFQT9aOOfotMWgNLfl87t7a0Qc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759216393; c=relaxed/simple;
-	bh=jZLUYO9y0S453l34VftfAEuNf7vhvQMizNgY3IHOQ3s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pwYWTiuwMVszY6ygTj8/e9l444qE7UoMSex62hv9kS96VrPwwzycY30oEtpWBf1PCKQ8c8P7h/JKhDAjPu5Qyojm99Am8RzHGF0OK4a4yzomfTWnVTD5R8vWdyZgvVnlnLYBZeTjUXJSYyGCJa+bFjUzBGRFQCnOet9B96TjmBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-46e3af7889fso31071835e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 00:13:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759216390; x=1759821190;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RJg+MB8jkyhooYHl7VPWRbhLVwCzgwHPNjrxfT41vz8=;
-        b=U01CxKAarT7qmMQvLOHfcpBQa2iwjSt6eHs1IXYLA2c39oxTrj+RtR0KsKJUOFM9bT
-         cxT8YtWYFJK9Ef4bo+dvjWb1bc6zi7mENUF6VG6fL3CtUbRD7oP18djn7o7L5TYxD+wb
-         rjN2GYd/rX4M6LPeAoP/cMUfajxOD/dnR1bcK0R/OaYPYOIp8pqYheSVrIuBPnyXgfpe
-         LaYlzGDwWLYBDvqVz9N2Pyf+v8I7NVc/pJMQH79bs8xV5NHyIPHjMACZhKiY4Jwdk1tU
-         p2a0mCWDXHSdLF950zyGR/DrmW+VY36KT36TFucIGKKmFiBQ6DSd8LdTZJ4aDbxS0o/A
-         rGNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX+BXK51cj9G8XLK9EHJ9SUmls4XvFIksDgULhc1SmjLIyAukHikvFOtcjKeHDgnoDrR4TDaDEg2BTheMI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0QIOfWoEeCn1caaw4FmN/UQlVU9aZ3Wo8z22w4A+jb6lmjXcC
-	IJYp3JuFJeFQWfGJmIlx+37UXW2b8HmdgtFHierXG/bf4o/EhibvvXI+
-X-Gm-Gg: ASbGncvYbqXLcTOA3ml8DkQkp4qNE1n+8zdNLopd8JhlRbDDsz7d+OqEB1tMobjNnjP
-	MnSNkuUeMriour/eIc9JGY0J9ZrpJN7eeRSN/TD6kbgdZB1CEy5gZMlyxNQ4Qq6meVZjYFAbDGJ
-	bQThB212v52FE5NwID6Q18MgzdpC/DyQmy76hxiLPRmvUXqUPIjPh4tbRREq+G5Kez/7fyS/+2a
-	MWrqCwA6lr5IK1XwsXIK57Ieg0NCn5C3mCo0+xtjajiRdMYZXcY2iCObpA448yHb19nb9db+WZ1
-	TasgpNJILbWG0nDSG9IC86zqMHYAK1RMB1Xy7X5u9shgg/otZK7dKJjzelKHWqTPs0gXQxsSC+o
-	o29+uDyLvxyGApflah7iudEMUb18odh9L2ppLE9AZE3WaslfWdQ==
-X-Google-Smtp-Source: AGHT+IHG/vdhpkUdLGzDD/hQegsFD5o72BWBQNk08ly8bjkRBa9wOlUTaVnXFyckUgCALWtyUUhxsA==
-X-Received: by 2002:a05:600c:8b58:b0:45d:e326:96fb with SMTP id 5b1f17b1804b1-46e32a17d2bmr190697065e9.30.1759216389605;
-        Tue, 30 Sep 2025 00:13:09 -0700 (PDT)
-Received: from localhost.localdomain ([2a09:0:1:2::301b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e56f64d06sm42221855e9.12.2025.09.30.00.13.00
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 30 Sep 2025 00:13:09 -0700 (PDT)
-From: Lance Yang <lance.yang@linux.dev>
-To: akpm@linux-foundation.org,
-	david@redhat.com,
-	lorenzo.stoakes@oracle.com
-Cc: peterx@redhat.com,
-	ziy@nvidia.com,
-	baolin.wang@linux.alibaba.com,
-	baohua@kernel.org,
-	ryan.roberts@arm.com,
-	dev.jain@arm.com,
-	npache@redhat.com,
-	riel@surriel.com,
-	Liam.Howlett@oracle.com,
-	vbabka@suse.cz,
-	harry.yoo@oracle.com,
-	jannh@google.com,
-	matthew.brost@intel.com,
-	joshua.hahnjy@gmail.com,
-	rakie.kim@sk.com,
-	byungchul@sk.com,
-	gourry@gourry.net,
-	ying.huang@linux.alibaba.com,
-	apopple@nvidia.com,
-	usamaarif642@gmail.com,
-	yuzhao@google.com,
+	s=arc-20240116; t=1759216915; c=relaxed/simple;
+	bh=DdGibbdnVzYcM3M5kcfmw7XHsl668t2rnZL8EpqTGYU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NvGJhZ7lovuXiT3z7hs/lYv4tGuhxwISE7HwyS1nX75WoWttM3vaLGllGt48+rS1IelAoJkvaiJ/uXhGk6xvCTgsVhohNe7/EaAqLi8zcWCc7vPbUd9B95HVE2hD0o7yaCzZY9dhuYi/KGD0Bsvla5HYyeUsYpeO2qOkHLJTdXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cbTy45G7TzYQtsp;
+	Tue, 30 Sep 2025 15:21:32 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id EE7471A12E7;
+	Tue, 30 Sep 2025 15:21:49 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgDHjGQLhdtoC9s4BQ--.44849S4;
+	Tue, 30 Sep 2025 15:21:49 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: axboe@kernel.dk,
+	bvanassche@acm.org,
+	ming.lei@redhat.com,
+	nilay@linux.ibm.com
+Cc: linux-block@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	ioworker0@gmail.com,
-	stable@vger.kernel.org,
-	Lance Yang <lance.yang@linux.dev>
-Subject: [PATCH v4 1/1] mm/rmap: fix soft-dirty and uffd-wp bit loss when remapping zero-filled mTHP subpage to shared zeropage
-Date: Tue, 30 Sep 2025 15:10:53 +0800
-Message-ID: <20250930071053.36158-1-lance.yang@linux.dev>
-X-Mailer: git-send-email 2.49.0
+	yukuai3@huawei.com,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com,
+	johnny.chenyi@huawei.com
+Subject: [PATCH 0/7] blk-mq: introduce new queue attribute async_depth
+Date: Tue, 30 Sep 2025 15:11:04 +0800
+Message-Id: <20250930071111.1218494-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,112 +59,66 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDHjGQLhdtoC9s4BQ--.44849S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7Cw4ruFyDGw15Aw1fJr17GFg_yoW8WF13pa
+	93JFySkr17Kr4xuryfJw13Xr1fAwn3Cr43Jr13K34xJry5ArsrZFn5XF18XrZ7Zry8Aa1q
+	gr1qya95GFy29aDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjfUonmRUUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-From: Lance Yang <lance.yang@linux.dev>
+From: Yu Kuai <yukuai3@huawei.com>
 
-When splitting an mTHP and replacing a zero-filled subpage with the shared
-zeropage, try_to_map_unused_to_zeropage() currently drops several important
-PTE bits.
+Background and motivation:
 
-For userspace tools like CRIU, which rely on the soft-dirty mechanism for
-incremental snapshots, losing the soft-dirty bit means modified pages are
-missed, leading to inconsistent memory state after restore.
+At first, we test a performance regression from 5.10 to 6.6 in
+downstream kernel(described in patch 5), the regression is related to
+async_depth in mq-dealine.
 
-As pointed out by David, the more critical uffd-wp bit is also dropped.
-This breaks the userfaultfd write-protection mechanism, causing writes
-to be silently missed by monitoring applications, which can lead to data
-corruption.
+While trying to fix this regression, Bart suggests add a new attribute
+to request_queue, and I think this is a good idea because all elevators
+have similar logical, however only mq-deadline allow user to configure
+async_depth.
 
-Preserve both the soft-dirty and uffd-wp bits from the old PTE when
-creating the new zeropage mapping to ensure they are correctly tracked.
+patch 1-3 add new queue attribute async_depth;
+patch 4 convert kyber to use request_queue->async_depth;
+patch 5 covnert mq-dedaline to use request_queue->async_depth, also the
+performance regression will be fixed;
+patch 6 convert bfq to use request_queue->async_depth;
 
-Cc: <stable@vger.kernel.org>
-Fixes: b1f202060afe ("mm: remap unused subpages to shared zeropage when splitting isolated thp")
-Suggested-by: David Hildenbrand <david@redhat.com>
-Suggested-by: Dev Jain <dev.jain@arm.com>
-Acked-by: David Hildenbrand <david@redhat.com>
-Reviewed-by: Dev Jain <dev.jain@arm.com>
-Signed-off-by: Lance Yang <lance.yang@linux.dev>
----
-v3 -> v4:
- - Minor formatting tweak in try_to_map_unused_to_zeropage() function
-   signature (per David and Dev)
- - Collect Reviewed-by from Dev - thanks!
- - https://lore.kernel.org/linux-mm/20250930060557.85133-1-lance.yang@linux.dev/
+Yu Kuai (7):
+  block: convert nr_requests to unsigned int
+  blk-mq-sched: unify elevators checking for async requests
+  blk-mq: add a new queue sysfs attribute async_depth
+  kyber: covert to use request_queue->async_depth
+  mq-deadline: covert to use request_queue->async_depth
+  block, bfq: convert to use request_queue->async_depth
+  blk-mq: add documentation for new queue attribute async_dpeth
 
-v2 -> v3:
- - ptep_get() gets called only once per iteration (per Dev)
- - https://lore.kernel.org/linux-mm/20250930043351.34927-1-lance.yang@linux.dev/
+ Documentation/ABI/stable/sysfs-block | 10 ++++++
+ block/bfq-iosched.c                  | 45 +++++++++++---------------
+ block/blk-core.c                     |  1 +
+ block/blk-mq-sched.h                 |  5 +++
+ block/blk-mq.c                       |  4 +++
+ block/blk-sysfs.c                    | 47 ++++++++++++++++++++++++++++
+ block/elevator.c                     |  1 +
+ block/kyber-iosched.c                | 36 ++-------------------
+ block/mq-deadline.c                  | 42 ++-----------------------
+ include/linux/blkdev.h               |  3 +-
+ 10 files changed, 94 insertions(+), 100 deletions(-)
 
-v1 -> v2:
- - Avoid calling ptep_get() multiple times (per Dev)
- - Double-check the uffd-wp bit (per David)
- - Collect Acked-by from David - thanks!
- - https://lore.kernel.org/linux-mm/20250928044855.76359-1-lance.yang@linux.dev/
-
- mm/migrate.c | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
-
-diff --git a/mm/migrate.c b/mm/migrate.c
-index ce83c2c3c287..21a2a1bf89f7 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -296,8 +296,7 @@ bool isolate_folio_to_list(struct folio *folio, struct list_head *list)
- }
- 
- static bool try_to_map_unused_to_zeropage(struct page_vma_mapped_walk *pvmw,
--					  struct folio *folio,
--					  unsigned long idx)
-+		struct folio *folio, pte_t old_pte, unsigned long idx)
- {
- 	struct page *page = folio_page(folio, idx);
- 	pte_t newpte;
-@@ -306,7 +305,7 @@ static bool try_to_map_unused_to_zeropage(struct page_vma_mapped_walk *pvmw,
- 		return false;
- 	VM_BUG_ON_PAGE(!PageAnon(page), page);
- 	VM_BUG_ON_PAGE(!PageLocked(page), page);
--	VM_BUG_ON_PAGE(pte_present(ptep_get(pvmw->pte)), page);
-+	VM_BUG_ON_PAGE(pte_present(old_pte), page);
- 
- 	if (folio_test_mlocked(folio) || (pvmw->vma->vm_flags & VM_LOCKED) ||
- 	    mm_forbids_zeropage(pvmw->vma->vm_mm))
-@@ -322,6 +321,12 @@ static bool try_to_map_unused_to_zeropage(struct page_vma_mapped_walk *pvmw,
- 
- 	newpte = pte_mkspecial(pfn_pte(my_zero_pfn(pvmw->address),
- 					pvmw->vma->vm_page_prot));
-+
-+	if (pte_swp_soft_dirty(old_pte))
-+		newpte = pte_mksoft_dirty(newpte);
-+	if (pte_swp_uffd_wp(old_pte))
-+		newpte = pte_mkuffd_wp(newpte);
-+
- 	set_pte_at(pvmw->vma->vm_mm, pvmw->address, pvmw->pte, newpte);
- 
- 	dec_mm_counter(pvmw->vma->vm_mm, mm_counter(folio));
-@@ -344,7 +349,7 @@ static bool remove_migration_pte(struct folio *folio,
- 
- 	while (page_vma_mapped_walk(&pvmw)) {
- 		rmap_t rmap_flags = RMAP_NONE;
--		pte_t old_pte;
-+		pte_t old_pte = ptep_get(pvmw.pte);
- 		pte_t pte;
- 		swp_entry_t entry;
- 		struct page *new;
-@@ -365,12 +370,11 @@ static bool remove_migration_pte(struct folio *folio,
- 		}
- #endif
- 		if (rmap_walk_arg->map_unused_to_zeropage &&
--		    try_to_map_unused_to_zeropage(&pvmw, folio, idx))
-+		    try_to_map_unused_to_zeropage(&pvmw, folio, old_pte, idx))
- 			continue;
- 
- 		folio_get(folio);
- 		pte = mk_pte(new, READ_ONCE(vma->vm_page_prot));
--		old_pte = ptep_get(pvmw.pte);
- 
- 		entry = pte_to_swp_entry(old_pte);
- 		if (!is_migration_entry_young(entry))
 -- 
-2.49.0
+2.39.2
 
 
