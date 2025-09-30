@@ -1,106 +1,195 @@
-Return-Path: <linux-kernel+bounces-836898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F01B3BAAD47
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 02:53:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DA77BAAD4D
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 02:54:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B14903C7C07
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 00:53:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C28733C7B4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 00:54:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F282199FAC;
-	Tue, 30 Sep 2025 00:53:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A2AE19DF4D;
+	Tue, 30 Sep 2025 00:54:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="Op1Mn8DJ"
-Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hr3jsrtQ"
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3733C133;
-	Tue, 30 Sep 2025 00:53:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAF0F17A31E
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 00:54:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759193618; cv=none; b=iP7tHCXgr/iDH009ixQkb3YyyV+tDzE1Aj5S8DAugrrzaiRiKYg1PA5AlW0jgArgP0Zxs/IXYo6t5BhDrD+KZg+1P7wOw4C5G48ttouIX10/h1nhNcH+rNHCYAevnIaQV89ksWE1kNQcWCN2IYNJcJQrB6qN7obluE3K/rVI9/4=
+	t=1759193648; cv=none; b=br7HKOFo4xYerS2ZPTMfrJaWPsQN7rzd6tKHswZkQSwII8gNBSEAwB4nbsAEg85nr4Uhsb94b9nkNIDcMUFFAupWr4RQnBItgsVOaiHbEDAXbAUSsyJp+qei22UOa5ngv4VWG6vy9zyTFLD7N83ou64SAI/cyOn9xgHCUi1Md6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759193618; c=relaxed/simple;
-	bh=hoca13KcHwxHNi7PYf1m+6JtiDzJUsspKSSlJUp0o9g=;
-	h=Date:From:To:Cc:Message-Id:In-Reply-To:References:Mime-Version:
-	 Content-Type:Subject; b=JtB8zHOIVSJhaRwd/IGDMni9ZENty0tBlj3G7f1MMdG/KWuRGhb4DbO9//VXEaMyLKOzMkPDsHLSyqAJIZLtbiNFff5BhU5n6U4QopOCOGcF4BHF0iG88SwtUCvDAoCjk37iAwjaltiQ2MZ7Peg1ttIjIvamwlOfa1Wt80VqU9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=Op1Mn8DJ; arc=none smtp.client-ip=162.243.120.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
-	; s=x; h=Subject:Content-Transfer-Encoding:Mime-Version:Message-Id:Cc:To:From
-	:Date:subject:date:message-id:reply-to;
-	bh=meEmlsHD2YwqxAbxt1NL+/Q1AzPmFXGThSNSuRKLTb0=; b=Op1Mn8DJ0B3PxQgv9cmwfCedUe
-	NHAVbK1wdQBxzUOB7C8BgZn58zOho8LJJmpLJy9CgHOFZtE3UNwPff7KBw8fWi9Jmd8r6k3sIrhs3
-	V6xMzoGPAN3apu8g/masvWveaJ92LmW35icyx6mvNgvSE67lggg+AOwl1CEE4WGXT07w=;
-Received: from modemcable168.174-80-70.mc.videotron.ca ([70.80.174.168]:47494 helo=pettiford)
-	by mail.hugovil.com with esmtpa (Exim 4.92)
-	(envelope-from <hugo@hugovil.com>)
-	id 1v3OcY-0005dw-FC; Mon, 29 Sep 2025 20:53:34 -0400
-Date: Mon, 29 Sep 2025 20:53:34 -0400
-From: Hugo Villeneuve <hugo@hugovil.com>
-To: Jiri Slaby <jirislaby@kernel.org>
-Cc: gregkh@linuxfoundation.org, fvallee@eukrea.fr,
- linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, Hugo Villeneuve
- <hvilleneuve@dimonoff.com>
-Message-Id: <20250929205334.670aeaa3a747801d9071e1d9@hugovil.com>
-In-Reply-To: <14a1f14f-f5c7-4d09-9b4b-9248c4f5162c@kernel.org>
-References: <20250924153740.806444-1-hugo@hugovil.com>
-	<20250924153740.806444-12-hugo@hugovil.com>
-	<14a1f14f-f5c7-4d09-9b4b-9248c4f5162c@kernel.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1759193648; c=relaxed/simple;
+	bh=AcijATm3N75Ov0nMjiQqledSjmaSWMbDCp6rF3qzFUg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pv70kNrJtLF/yE8QNuyDup8aRO2iy0YFxNG+R2Si2B4PXsdAWu312g7GjB6l/sIX92L7MK2cbF6JU0i9z1V197ZcTth4dnw4KIInGnEvwCojVfXoxmbR0bXcCqvMmsIvISZS64rM3fjWC0J+JjBYB5sbBGOKr1XKWe9Rebd8/8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hr3jsrtQ; arc=none smtp.client-ip=95.215.58.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 29 Sep 2025 17:53:54 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1759193641;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=toyaVjkpPinuAEIPOarMwJdLvd9BQ2PV4RPd1E3oP4E=;
+	b=hr3jsrtQsxW72gNjOEPsv4iQ9v/0A7cW0vmawVGdX45ydnDFq1yMF5QgeZ9N/xChHdvNoK
+	Q2AZGZuaDA9FmsTsSVXcIfSWlxrVeJ5PHu9hSCZTH96pzMRGRi9tqXCCqeZI7AM9YipJjr
+	qqFqGtGAkzNNTPCMu9EbjZd7HufUbP4=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Oliver Upton <oliver.upton@linux.dev>
+To: "Thomson, Jack" <jackabt.amazon@gmail.com>
+Cc: maz@kernel.org, pbonzini@redhat.com, joey.gouly@arm.com,
+	suzuki.poulose@arm.com, yuzenghui@huawei.com,
+	catalin.marinas@arm.com, will@kernel.org, shuah@kernel.org,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	isaku.yamahata@intel.com, roypat@amazon.co.uk,
+	kalyazin@amazon.co.uk, jackabt@amazon.com
+Subject: Re: [PATCH 3/6] KVM: arm64: Add pre_fault_memory implementation
+Message-ID: <aNsqIsbYyROCjShQ@linux.dev>
+References: <20250911134648.58945-1-jackabt.amazon@gmail.com>
+ <20250911134648.58945-4-jackabt.amazon@gmail.com>
+ <aMMYKqWsAZ4y0WI7@linux.dev>
+ <7d109638-3d26-443a-b24d-eb7a0059b80f@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 70.80.174.168
-X-SA-Exim-Mail-From: hugo@hugovil.com
-X-Spam-Level: 
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	* -2.3 NICE_REPLY_A Looks like a legit reply (A)
-Subject: Re: [PATCH 11/15] serial: sc16is7xx: remove empty line
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7d109638-3d26-443a-b24d-eb7a0059b80f@gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-Hi Jiri,
-
-On Mon, 29 Sep 2025 08:14:33 +0200
-Jiri Slaby <jirislaby@kernel.org> wrote:
-
-> On 24. 09. 25, 17:37, Hugo Villeneuve wrote:
-> > From: Hugo Villeneuve <hvilleneuve@dimonoff.com>
-> > 
-> > Remove empty line inavertently added in commit d5078509c8b0
-> > ("serial: sc16is7xx: improve do/while loop in sc16is7xx_irq()").
-> > 
-> > Signed-off-by: Hugo Villeneuve <hvilleneuve@dimonoff.com>
-> > ---
-> >   drivers/tty/serial/sc16is7xx.c | 1 -
-> >   1 file changed, 1 deletion(-)
-> > 
-> > diff --git a/drivers/tty/serial/sc16is7xx.c b/drivers/tty/serial/sc16is7xx.c
-> > index d1a9fa26e9bdb..a05be92f7e776 100644
-> > --- a/drivers/tty/serial/sc16is7xx.c
-> > +++ b/drivers/tty/serial/sc16is7xx.c
-> > @@ -834,7 +834,6 @@ static bool sc16is7xx_port_irq(struct sc16is7xx_port *s, int portno)
-> >   static irqreturn_t sc16is7xx_irq(int irq, void *dev_id)
-> >   {
-> >   	bool keep_polling;
-> > -
-> >   	struct sc16is7xx_port *s = (struct sc16is7xx_port *)dev_id;
+On Mon, Sep 29, 2025 at 02:59:35PM +0100, Thomson, Jack wrote:
+> Hi Oliver,
 > 
-> And remove the cast and switch the two definitions, so we have a 
-> reversed xmas tree ;).
+> Thanks for reviewing!
+> 
+> On 11/09/2025 7:42 pm, Oliver Upton wrote:
+> > On Thu, Sep 11, 2025 at 02:46:45PM +0100, Jack Thomson wrote:
+> > > @@ -1607,7 +1611,7 @@ static int __user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+> > >   			    struct kvm_s2_trans *nested,
+> > >   			    struct kvm_memory_slot *memslot,
+> > >   			    long *page_size, unsigned long hva,
+> > > -			    bool fault_is_perm)
+> > > +			    bool fault_is_perm, bool pre_fault)
+> > >   {
+> > >   	int ret = 0;
+> > >   	bool topup_memcache;
+> > > @@ -1631,10 +1635,13 @@ static int __user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+> > >   	vm_flags_t vm_flags;
+> > >   	enum kvm_pgtable_walk_flags flags = KVM_PGTABLE_WALK_MEMABORT_FLAGS;
+> > > +	if (pre_fault)
+> > > +		flags |= KVM_PGTABLE_WALK_PRE_FAULT;
+> > > +
+> > >   	if (fault_is_perm)
+> > >   		fault_granule = kvm_vcpu_trap_get_perm_fault_granule(vcpu);
+> > > -	write_fault = kvm_is_write_fault(vcpu);
+> > > -	exec_fault = kvm_vcpu_trap_is_exec_fault(vcpu);
+> > > +	write_fault = !pre_fault && kvm_is_write_fault(vcpu);
+> > > +	exec_fault = !pre_fault && kvm_vcpu_trap_is_exec_fault(vcpu);
+> > 
+> > I'm not a fan of this. While user_mem_abort() is already a sloppy mess,
+> > one thing we could reliably assume is the presence of a valid fault
+> > context. Now we need to remember to special-case our interpretation of a
+> > fault on whether or not we're getting invoked for a pre-fault.
+> > 
+> > I'd rather see the pre-fault infrastructure compose a synthetic fault
+> > context (HPFAR_EL2, ESR_EL2, etc.). It places the complexity where it
+> > belongs and the rest of the abort handling code should 'just work'.
+> > 
+> 
+> Agreed, it looks much better with the synthetic abort. Is this the
+> approach you had in mind?
 
-Good idea, I will do it in V2.
+Pretty much. Thanks for taking a moment to fiddle with it.
 
-Hugo.
+> +long kvm_arch_vcpu_pre_fault_memory(struct kvm_vcpu *vcpu,
+> +				    struct kvm_pre_fault_memory *range)
+> +{
+> +	int ret, idx;
+> +	hva_t hva;
+> +	phys_addr_t end;
+> +	u64 esr, hpfar;
+> +	struct kvm_memory_slot *memslot;
+> +	struct kvm_vcpu_fault_info *fault_info;
+> +
+> +	long page_size = PAGE_SIZE;
+> +	phys_addr_t ipa = range->gpa;
+> +	gfn_t gfn = gpa_to_gfn(range->gpa);
+> +
+> +	idx = srcu_read_lock(&vcpu->kvm->srcu);
+> +
+> +	if (ipa >= kvm_phys_size(vcpu->arch.hw_mmu)) {
+> +		ret = -ENOENT;
+> +		goto out_unlock;
+> +	}
+> +
+> +	memslot = gfn_to_memslot(vcpu->kvm, gfn);
+> +	if (!memslot) {
+> +		ret = -ENOENT;
+> +		goto out_unlock;
+> +	}
+> +
+> +	fault_info = &vcpu->arch.fault;
+> +
+> +	esr = fault_info->esr_el2;
+> +	hpfar = fault_info->hpfar_el2;
+
+nit: Just snapshot the entire struct, makes this forward-compatible with
+new fields showing up.
+
+> +
+> +	fault_info->esr_el2 = ESR_ELx_FSC_ACCESS_L(KVM_PGTABLE_LAST_LEVEL);
+
+A translation fault would be a more accurate representation what you're
+trying to do Access flag faults aren't expected in user_mem_abort() and
+instead handled in handle_access_fault().
+
+You're also missing the rest of the ESR fields that are relevant here,
+such as ESR_ELx.EC which would actually indicate a data abort. I think
+you'd also want to communicate this as a nISV fault (i.e.
+ESR_ELx.ISV=0).
+
+> +	fault_info->hpfar_el2 = HPFAR_EL2_NS |
+> +		((ipa >> (12 - HPFAR_EL2_FIPA_SHIFT)) & HPFAR_EL2_FIPA_MASK);
+
+FIELD_PREP()?
+
+> +
+> +	if (kvm_slot_has_gmem(memslot)) {
+> +		ret = gmem_abort(vcpu, ipa, NULL, memslot, false);
+> +	} else {
+> +		hva = gfn_to_hva_memslot_prot(memslot, gfn, NULL);
+> +		if (kvm_is_error_hva(hva)) {
+> +			ret = -EFAULT;
+> +			goto out;
+> +		}
+> +		ret = user_mem_abort(vcpu, ipa, NULL, memslot, &page_size, hva,
+> +				     false);
+> +	}
+> +
+> +	if (ret < 0)
+> +		goto out;
+> +
+> +	end = (range->gpa & ~(page_size - 1)) + page_size;
+> +	ret = min(range->size, end - range->gpa);
+> +
+> +out:
+> +	fault_info->esr_el2 = esr;
+> +	fault_info->hpfar_el2 = hpfar;
+> +out_unlock:
+> +	srcu_read_unlock(&vcpu->kvm->srcu, idx);
+> +	return ret;
+> +}
+
+Thanks,
+Oliver
 
