@@ -1,69 +1,99 @@
-Return-Path: <linux-kernel+bounces-837834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4E78BAD5DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 16:57:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B38E7BAD5FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 16:57:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB2B21892519
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:56:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E029F323D7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 14:57:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B433306489;
-	Tue, 30 Sep 2025 14:56:17 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ABAB30594D;
-	Tue, 30 Sep 2025 14:56:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B5B5305045;
+	Tue, 30 Sep 2025 14:57:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ul+KVGHx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 939561AB6F1
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 14:57:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759244177; cv=none; b=JjpWDzowbYyNaP2sa9Q86ezsGV79U98JQClKhEUrN49tWlfPF5jbHzmeI3Fgdx9eMIByGATJW6TJB6q7JJv1vOok3ta69By8XPJWFVH/N/llXXk1ob/8dpeMydV27+1tNWaYYItz72Vag3rkaYCSuQju2LSSLiEoZqeW+UnV0SA=
+	t=1759244229; cv=none; b=IBuXNaT3ZN8ZGVrW3z96DMUgABVt9NAptUEDj7QoQ0apcBayXds6n5yPB1VjJXckA9rdpmuvp973EUHNhTdgtuUNnvwx8i9gjvquXFFmv2RmzqSF+yWTAvBoB4j34kHlkKteGR4XlKzHePDMLWd+pcpD80iD1FkOGKcAF7GgSTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759244177; c=relaxed/simple;
-	bh=CLOz+mLB1FROI9P8SsJR3wP+Ye2pbPUTh/PJ3w6F0TQ=;
+	s=arc-20240116; t=1759244229; c=relaxed/simple;
+	bh=Cj7LWlzSdotdCX1r5dKPprmBxv8vvn8ZC0rt9RqpRb4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bc1oJR8PtYfPwdggSmMvSWOq00GITvpKx2P4MJMSpgHPJkbGv+PPuEacdGK4VcNP43t0/GWaDFpxp/yBAyzDG2byml+jUsxbvNDMhkkwYaWnbsNB9SZdI1cL6wAYnsJKxfbo5SO9h9sBHaOsmlDjVyo05QxpAz9pqbQJjsw9hLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 578311424;
-	Tue, 30 Sep 2025 07:56:06 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0AF183F59E;
-	Tue, 30 Sep 2025 07:56:13 -0700 (PDT)
-Date: Tue, 30 Sep 2025 15:56:12 +0100
-From: Leo Yan <leo.yan@arm.com>
-To: James Clark <james.clark@linaro.org>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>, coresight@lists.linaro.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v2 4/6] coresight: Refactor etm4_config_timestamp_event()
-Message-ID: <20250930145612.GJ7985@e132581.arm.com>
-References: <20250814-james-cs-syncfreq-v2-0-c76fcb87696d@linaro.org>
- <20250814-james-cs-syncfreq-v2-4-c76fcb87696d@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uXPm6m+vj+iTlshVZXY6/D3mhGsN3BC1vu3UGJsalGP2wjm0wpmZErK/H5hWjE5+gaE81+lIgC+zuJ3p+9r5qIYQhuwNtIMeqgPCP2LaZFmqzMZVws/0dEo8GiIo3dhHoO6HXW2Yfkd8R02RZxVDsqqB0KDjg0VVT6WJQLbxFO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ul+KVGHx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C0DFC4CEF0;
+	Tue, 30 Sep 2025 14:57:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759244229;
+	bh=Cj7LWlzSdotdCX1r5dKPprmBxv8vvn8ZC0rt9RqpRb4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ul+KVGHxPA1bZn2Yv1ctLRQ0/UA1eP8mteaGPsY1GAQRTfrKx3yG3cjxVSlOB7fBR
+	 296gunuKMvoL1ztmTjtQN6+rRuqMroHXtrWPUx9pK7hehR/NkoHiN/t8Pm0g6toSJn
+	 enjvgrJ+CcWnLLGCM8no5ZdM51zUrIs544utKE81rqZI0SudJ4kTD19KP4glOX8Ica
+	 5wx6iMuE8Y8K5ZuEh7Q6BYz1Rbkd1JJhPgivFc33luEW8aMti/2PUuQmzDAfJ87tbk
+	 nj41ON0+TwIEjfQsE2WLd1C6/lrS63mFI4Kh+c/C4QhnbZo5yUxFoT5VFC7mdohtVa
+	 501IkTtB6h05w==
+Date: Tue, 30 Sep 2025 15:57:05 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 0/2] regulator: forward undervoltage events downstream
+Message-ID: <aNvvwcXW_zNdAVp5@finisterre.sirena.org.uk>
+References: <20250930120857.2228296-1-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="tF1zCDdEP252RsiI"
+Content-Disposition: inline
+In-Reply-To: <20250930120857.2228296-1-o.rempel@pengutronix.de>
+X-Cookie: If in doubt, mumble.
+
+
+--tF1zCDdEP252RsiI
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250814-james-cs-syncfreq-v2-4-c76fcb87696d@linaro.org>
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 14, 2025 at 11:49:55AM +0100, James Clark wrote:
-> Remove some of the magic numbers and try to clarify some of the
-> documentation so it's clearer how this sets up the timestamp interval.
-> 
-> Return errors directly instead of jumping to out and returning ret,
-> nothing needs to be cleaned up at the end and it only obscures the flow
-> and return value.
-> 
-> Signed-off-by: James Clark <james.clark@linaro.org>
+On Tue, Sep 30, 2025 at 02:08:55PM +0200, Oleksij Rempel wrote:
+> This short series lets critical supply events propagate to consumers.
+> It introduces an opt-in helper in the core to forward
+> REGULATOR_EVENT_UNDER_VOLTAGE from a regulator's supply to the
+> consumer's notifier chain, and opts the fixed regulator in at probe.
+>=20
+> Only under-voltage is forwarded to avoid surprises. Behavior is
+> unchanged unless a driver calls the helper. No DT/UAPI/ABI changes.
 
-Reviewed-by: Leo Yan <leo.yan@arm.com>
+On the one hand I appreciate the caution.  On the other hand I'm
+struggling to articulate the circumstances in which one would not wish
+to forward events to downstream regulators.  Perhaps the option should
+be opt out instead?
+
+--tF1zCDdEP252RsiI
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjb77oACgkQJNaLcl1U
+h9Dqagf+J+Cjs7xlPbIB5aVw0Xjf0LsEQsyYTJrAqIL6QefF6GKpURLQkMzTsm6Q
+oYkfLGJ+r6qCdlidYoOwfEoAfE+JCA4RoZfIyQL8o+SKpL5BNDhYTKKakY8gFRli
+VSgLRxaG1Nn7LAK/2j1M5zQPqfPEgHn2WtnXhxdFMfyYnmf0NTAxkZOAYrhXs7DP
+T9RQPkInEsoLq47q30U29Ta6A+uG9ELfxJwQTPWGmYxXi9HLKWN3S6eN9mqOyQSM
+7qND0KVpAwn2OEiaHQOEOCt9rDYQlxyeHPSIMOTxGZ57qQV7+o1KU+vRe0tlM2ZV
+y3IGjPNpNf+HOfxdRzsCLFGLMdm/xg==
+=ncYU
+-----END PGP SIGNATURE-----
+
+--tF1zCDdEP252RsiI--
 
