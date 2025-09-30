@@ -1,308 +1,348 @@
-Return-Path: <linux-kernel+bounces-837108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-837109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4A21BAB64D
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 06:43:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 67855BAB653
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 06:44:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CDED18913F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 04:44:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 852461925087
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 04:44:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5048F2580E4;
-	Tue, 30 Sep 2025 04:43:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BF60261B6D;
+	Tue, 30 Sep 2025 04:43:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gBG8YR0w"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="M9ru2ksC"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAD4535949;
-	Tue, 30 Sep 2025 04:43:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759207431; cv=fail; b=Q/gxswMFeruD1fnMa+B1JxpfHksji31YNwHd8KjKHRlsfNVx7aeivzkBfjWNFv2Yf2qG7oQIB2YtL3FeHbfqWqPWLIQ7qaaV9zOiOPXsRCyF0D8gcvD3sNh4D2mwObK9TjMJ2G7pXhFMOnivfr7ljmbCtfuuE8g+mOkL7hxCQyc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759207431; c=relaxed/simple;
-	bh=aC58c2IstUnyQfIxQucYXBvN4rpZB+lraKaCduiL6kM=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=hX3krDyKOECA7p1lYKMr8fYAQquJ6LyKiL5cJtuurGJBF9PS7mmH6TU7BlfoY6dbofnxCFtR65RWyd/SzgS02RneTDyrcEjD88T2zE8scF7DHR8f22PxaeWKUx0UqGWrv25INjFAoDSG1LBVB6OlSgoJwIRUFVRmMrBnDnJ7Xo8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gBG8YR0w; arc=fail smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759207430; x=1790743430;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=aC58c2IstUnyQfIxQucYXBvN4rpZB+lraKaCduiL6kM=;
-  b=gBG8YR0w8j04KMdzjgQ9LwyKjqYt8wmNsRuizqIKtkrrF0v3LxXcNLxT
-   M/2UyAku+YayukbckyNK2A8CVKX3BQRbDFjk+agIzEme2gbqec2y6LRr4
-   K0SJZY3Bf7T4zbIi8QjZSo4MuuGS2wHlETFPr5aMWmLAyLiNq2k9Qq0rF
-   Z0W0jJMEwrtoe+sjIO/PcOW4FTYnHLw+v93iSxZ9y9WXTgLX4jZ0NvRBg
-   cabRoslxb/RedVF5Fw56FIDAIVnAYQ8pkwdB6dfmxf3wTo5yNkrhK6A02
-   YYgBHLCsCMn/Gs7U0vV23iEA3aO7syS7qKmEenI+L/Xgna85CQkQQvODp
-   A==;
-X-CSE-ConnectionGUID: 9UJ9PBf7TUWcfsJmU+eihA==
-X-CSE-MsgGUID: zGih0jvwQZqVdWbhWfEDqA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11568"; a="60492388"
-X-IronPort-AV: E=Sophos;i="6.18,303,1751266800"; 
-   d="scan'208";a="60492388"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2025 21:43:49 -0700
-X-CSE-ConnectionGUID: 8pNs3PimRQGw7FWeJ6+Y1w==
-X-CSE-MsgGUID: lCxx6cnARYSI7Hl94whSuQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,303,1751266800"; 
-   d="scan'208";a="182699533"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2025 21:43:49 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Mon, 29 Sep 2025 21:43:48 -0700
-Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Mon, 29 Sep 2025 21:43:48 -0700
-Received: from DM1PR04CU001.outbound.protection.outlook.com (52.101.61.26) by
- edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Mon, 29 Sep 2025 21:43:47 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dzwTUXWj3iDWAE5YDx7B421yvf/U5tvPrUtvro+bQiPwcyZ7ffq//Diato9fsDAAjvkRT1lo+EqUHsbdbw6qjCF/YKk2jGb/RlAPobc7Pg6lUjWD+hVLlcBo60JKWeiHD0NNh901qXZTKspZFc32MN7MiQEE2AYHOJfTcRCOa/MabpgVPWiIP4Z3vw4iwx1P5/DpHUZ9ekdd8LbkwDP95suQTLqvE+YT9edj9kzEOX5Y9FHe8Q7/UlG4xfEZHeU0fD9E9hGw1DjgVFy0uByB6WRIE5AP3Lhqd3b8O7h1f1a77P3LNtWKjpWnKpCMGHXH7KXmRVr9Vv2mw/HyZuHFEQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6gkYlibzCWwsNkxR1cXyx3PdOQz9SGrolw3fQK8kJGk=;
- b=jirbXKgbg2A2faUVPceuG04Lx3VSxnWsKLpnsXDqkkt3FKly2bS3vyZMGkzCYO8Ci7QMSsVuqKQq0ypoE1NYG6Q1HJCokokELTZR3B+YSQN3Yd2Sv/zimq4SQlgVMy4V2LjOZiG3sS653m8rt2p9jThH+y1Ag0X9Gutmzd8qvOdcegQVh5vIGBSa/W2nyGbAQ2cuPtjnY+uor4CFQI2ISNxYner3KvP5IfFUn2qoApUx6uDCD/zKgp1XMQb0A1sOdelHMxeUsBraBnrVpu+AoaT49SUoBt5FiXfr81OZRc1Y9vgef1FSaMrXOLZlRMQ7V6l/Zu2ufT6Mc2jXEC5OPg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DM4PR11MB6020.namprd11.prod.outlook.com (2603:10b6:8:61::19) by
- DS7PR11MB6248.namprd11.prod.outlook.com (2603:10b6:8:97::11) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9160.16; Tue, 30 Sep 2025 04:43:45 +0000
-Received: from DM4PR11MB6020.namprd11.prod.outlook.com
- ([fe80::4af6:d44e:b6b0:fdce]) by DM4PR11MB6020.namprd11.prod.outlook.com
- ([fe80::4af6:d44e:b6b0:fdce%5]) with mapi id 15.20.9160.015; Tue, 30 Sep 2025
- 04:43:45 +0000
-Message-ID: <541fb538-0c22-4ad2-9c6e-83ada7f2240b@intel.com>
-Date: Tue, 30 Sep 2025 12:43:36 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fs/resctrl,x86/resctrl: Factor mba rounding to be
- per-arch
-To: Dave Martin <Dave.Martin@arm.com>, "Luck, Tony" <tony.luck@intel.com>
-CC: <linux-kernel@vger.kernel.org>, Reinette Chatre
-	<reinette.chatre@intel.com>, James Morse <james.morse@arm.com>, "Thomas
- Gleixner" <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "Borislav
- Petkov" <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter
- Anvin" <hpa@zytor.com>, Jonathan Corbet <corbet@lwn.net>, <x86@kernel.org>,
-	<linux-doc@vger.kernel.org>
-References: <20250902162507.18520-1-Dave.Martin@arm.com>
- <aNFliMZTTUiXyZzd@e133380.arm.com> <aNXJGw9r_k3BB4Xk@agluck-desk3>
- <02647276-dea2-47b5-a271-7f02666e0492@intel.com>
- <aNqUACFbXHjURWir@e133380.arm.com>
-Content-Language: en-US
-From: "Chen, Yu C" <yu.c.chen@intel.com>
-In-Reply-To: <aNqUACFbXHjURWir@e133380.arm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: KL1P15301CA0066.APCP153.PROD.OUTLOOK.COM
- (2603:1096:820:3d::14) To DM4PR11MB6020.namprd11.prod.outlook.com
- (2603:10b6:8:61::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 884DF2264CD
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 04:43:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759207433; cv=none; b=sTkGRSo7xplok0QjZ8ngsxnOLVNmP3ml3ulCktXSuz5sHcdmyx9Zv9KXaMRFjo14r7cgUXmcAQpzyBXX/xuKoEZHBqeJElmyM2kj2x/6+SH7gIMuboYigzFVVQug4utTmjhFhEYhc62OcX1TsJyzJxqnHJIHmbPAElGyimZvGgs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759207433; c=relaxed/simple;
+	bh=j8q6uJl5fy6jJeLuXaWYMOkAuH45bCKK6J2wa7jnI7E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AZnKQ80GKx/Tpcd7KchVhjTIGQ+oNXrgWG04ettnIL0Tq7sEOx7t2YzlqS0/8Q3fMun8YqrPmzMv1zM+LPKZWWqkt0jZ2L5gH4/KBJzGUPY+gCOiaWxTwMLVLj8JziV7+U+6mf2xkZcCV/kV5C5oDhPZvRiKdCIUZOKB08AU+ps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=M9ru2ksC; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58U4HjJ1009556
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 04:43:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	HE/PwEw34TV6LP8lhYgK0e9HeuAiGSOeepZM8oUrj6E=; b=M9ru2ksCa1GEFU8c
+	1feiQsJ20gekJQg17XQxfryuD1t1nHSrR5pKllm98O4v/Q2XmPwIKj8CzR0U3+Wa
+	3G5kJGcMGs/O2pDd+Jv6OisWa5PyKEpAwkCAiUBz8NZmdh6wFTO7SpmLPneyQ+zU
+	uirrFtxI6LxVIgKNYVMJiouhcgB5SI5PS9TIVa5jin8S2ZIkqNWhrhDo7yo/Ze4L
+	arTeFz09TtWaBjMntt6wDTTR/U4d4l4c9xYAUB9bBk2oATJRNx1ak/2g53ZNyR86
+	XvAA9IwgFb8OXyNCM0qH4CWdrfE81aZSftCbt3sddqW6KQlFDAcHiq1ghY951LoZ
+	XtCeUQ==
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e977qdgf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 04:43:50 +0000 (GMT)
+Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-78108268ea3so4017508b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 21:43:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759207430; x=1759812230;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HE/PwEw34TV6LP8lhYgK0e9HeuAiGSOeepZM8oUrj6E=;
+        b=jkvcwOn9QfgNL9kqzKjemuZNoXxez5UFXpgEeLx0fp3kZIijsvD5zEw9TXkLOLf6Kb
+         Tb3MavZDsgWgcUJW3QftxVwpdwLm/lEcfx+2gUdS0KLdk3x9VPooOxYLFlFkOTi/z9BX
+         KNtQGwVfachE/53fsRLz1/wK9WnFHJpjB2H6G+znHWzhAuwVAS47yNO4a+7l5jZGZmt/
+         DbZ6opld+6mRSDeNoG2jiyTYu3kcfiAtuOSuK47sgQcl/U7s0l/l4d0mNOHYAxA8JlqL
+         v7H4gg/Jto06dkfaax1baUrt8KCfxhQe9Q8D0FPMsMdKtkfA5vbNPf2nGVkWx/4z3ve4
+         xKDA==
+X-Forwarded-Encrypted: i=1; AJvYcCV5ds1/DHEBoK+HvHBbpdiC6uIQx9S8BPYtokC6QCYJJ07+my2FftX9G8j9Y8kJRjDFoQspKdh2laSy0lY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQvq5/LCLgKQMY0aXMHdtdhLUgLJCG6Mqw/Lpa0PLQf8xg+6ev
+	3nAxRLtpXhN1wwlsoqeQf++lTrQdiVUUSfhote6rsWdyg0NXK0PDlkOdNSvBy+frx4dldnZEsAL
+	QGhW9jUOoL0y7LOaE6UtVE2sh2nKRBopUnGjePbaFIXLivc1vp0N13bHrH3FaRoaM0B4=
+X-Gm-Gg: ASbGncuQF1oEjaO4GRdqUIlLrceBDW8VHbTX37AjnXmD0tQd4XJguGc3C2Vs0/pxRIk
+	XioVu4jo07dHKt8nSm8zTS8tO6FxPFxj/CgjT2yw61GP466VM/MbVoLfcqCvE1SYrAemRkSflVN
+	1c/xIQhdyO5Q5RlNgeQb0jjOW+IlTJHrU+aGJ2qv6TbXcDnYsxNDDbSgwAW8EhP8Futipo0kGpF
+	2Zc/xgWbOQjpKWLPAiNOAG+qYlGydatuvvyBte5Gjs/s5l/JitvjyG+9vRX1onIt6RVyBdZThVR
+	9HOpjKUafiNfn3leRRt8WijCdNn6SG+vLIuBI1rufMFv3YStprIvgwvK4QngO4aAouZ/ReJMdv/
+	N
+X-Received: by 2002:a05:6a21:3290:b0:261:ed47:c9b5 with SMTP id adf61e73a8af0-31766f0f15dmr4276699637.13.1759207429776;
+        Mon, 29 Sep 2025 21:43:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEcw5Vnw0qMjbGYrHmXkdhasUR0s98OUAwY84goAdi/+syAZPhKj4afqVsIm4XzxONViobouA==
+X-Received: by 2002:a05:6a21:3290:b0:261:ed47:c9b5 with SMTP id adf61e73a8af0-31766f0f15dmr4276665637.13.1759207429205;
+        Mon, 29 Sep 2025 21:43:49 -0700 (PDT)
+Received: from [10.204.86.68] ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b57c557418csm12593166a12.30.2025.09.29.21.43.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 29 Sep 2025 21:43:48 -0700 (PDT)
+Message-ID: <cdb8f84c-ed62-48ec-b7ce-9744a80e56af@oss.qualcomm.com>
+Date: Tue, 30 Sep 2025 10:13:44 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR11MB6020:EE_|DS7PR11MB6248:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1dec5e42-4925-4312-805d-08ddffdbf08e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?WCs0UHNlNlRsTHRFU2dvMEgxK25yNVpwVnU2MVQ1QjdqWHBSemhXanRnc3cv?=
- =?utf-8?B?Q29ZMy9VME9vc0N0b3NFUEdiZlM1aGZBK01oVGpJc3JiVnZEbkV1RGlQYktK?=
- =?utf-8?B?d2N3bjlSZXpQaFBSZ0JNRkRySTNFWUhwSjRhbTZUQ0FzQlliQTk1NjJCN2N1?=
- =?utf-8?B?aWRsZFEvQXFVb2FhanJKNDFzeTFLd2xWMzhCR29VUVVFOTE0U2xRckNNWDli?=
- =?utf-8?B?RVp4UGhyL1kzWTlGc2s4WnVHZmxSRXR5TjBjaWg0d09leGY2MmJVaVlYT0pV?=
- =?utf-8?B?emR1cFA0bDJCOStLanZXRXh2R3FMOHhGU1JnNzEvUVBJODE5UlZxNnhPdmgy?=
- =?utf-8?B?Z05yVzFCeVZOSmxMQk1IZkNjUUtMMkhVeUNQUnhqKzYwYkUxb0ZSYllEZFFB?=
- =?utf-8?B?L3QvNHJpZllyZ2tZd1dIUUtYNEc1STI3elN5WkkxMTUzd1l5T3NhUXdtbWlE?=
- =?utf-8?B?QXhiM1pGTDdvazhvc1ZCdEZSWHZmMDdRRUtKNktZdDkwTnA4V1N4TGdtRTRk?=
- =?utf-8?B?WFB1TlpjZkFLc0hsZEt5V296TmlWdzU3M0xWREhmWTJtTm9rcFJHaGtGenVp?=
- =?utf-8?B?VWV0STdSNHFDbVJQWEhuY0lzQmNNSGo3STN4L3hKcm03NGtTTGEybWFzb3FS?=
- =?utf-8?B?UVE1dExrWElKU2ZYV3BrMS9oQ2dRbk02SExSYXF4Y1FLMTFPOU5URlRNVDFk?=
- =?utf-8?B?WDFFYjNYU0VtN0JTRVN0eE5UU0Y0Y0t5TTE0V1prUnlsYjBUZGt0MkcrbmJw?=
- =?utf-8?B?cDNFa2QyRlN2YnZCQzVlSmhvNEc2WVdpUHNqMlJZeDB4MXZ5V0NPVDhiZUhp?=
- =?utf-8?B?MytLZHYxalhLQ3BPck1XcmxKR0hROWdURnZhVFdKZFJOVHJlQXBnYUhCaUVv?=
- =?utf-8?B?bm5QbW5iY2U0bFBJVStqM1dZeWJ3eG1MNjZrVFE4SmpoS1Zmb2FXUXJwVGls?=
- =?utf-8?B?ZjMvUDFVeGVyRm1ucXo1R01nRHJpUS9UWk9GbG40ZTJQQ2hCdTNCaVlKazAz?=
- =?utf-8?B?VVg4M3o1VFdrRDBKQ0MzRGRlazcwKzFSNUJBQ2RsZXRZdkRmdUR4aTN3OW9B?=
- =?utf-8?B?ZEVlUGkwU01JL3lDek5vL3Q5UFVmaDdCeGkyclBtakQvRDZFU2pKMEo5UXJu?=
- =?utf-8?B?a0RQcnFMUlNRUUNEREEzOHFFOWZVMHlDREdYL1p1MDBNa2ZFaThjOEVmeEpM?=
- =?utf-8?B?QTZnZFl6QjJoV1ZUMUltOTN6cHFIbVhCMUtUV2VQVVZ5Tit5NUlZYjZ6UEp3?=
- =?utf-8?B?ZjgyVW1LYUxIdklERXhoQVIzNXlGN3VrWTY3ZHZ3aTFBL0VxUFlySWhwSnVh?=
- =?utf-8?B?OE9TeXcwckN5d1BHcGoreGQwWVNSSFl0RmJ0bmpCZ2h1QU1VM0FMWFFDdDNZ?=
- =?utf-8?B?M2d4UDdQS2Nja0IxMUp5dTdQVjJlTTdieFV4RDZCUFl2L0o2eGVxdEs4QjlK?=
- =?utf-8?B?VVcrNTVSbDd0ZFE5N1R2MW0zYXNRanFIQmN2ayt1aFJTZzRBb043NUpINHdv?=
- =?utf-8?B?cHhleS9nSTdKWUZaVVNHM2NVWEpZRVd2Y1pBdzJvNDFkWng4Q1lqbFR3bFRh?=
- =?utf-8?B?WTNxWTNPYXIyUm9oTWVLQ2VTZ3V5Q3NQdEp3ZWd5elRmaEc5SUZXTnZUM3I3?=
- =?utf-8?B?QkhEQ3lobmFrSWxScFQ0M0NwSFdxMk5BSVFsZWtnaUhtNzlGNCtodHdPaWoz?=
- =?utf-8?B?c0IrWlhGeStDazlLVGdDMkxYNFVvUTJvNWtqNm03d3pYT3VIMnFEQnVoSmxP?=
- =?utf-8?B?NkQ3UzhhTTdHZWZ3bHVLWGN2Z1BFVHZpV0FSdnEvWW5jTmQ0NmZYc21zb1Fx?=
- =?utf-8?B?bXk4bFJNVlgwNnJ5ODh4a3YwTTVCRGlwSHpham9IK1oxRE1ERXpVdXJmNVAv?=
- =?utf-8?B?TVgzUzZxTTlleGVhNVR1U3BjQTBsWCtTeVVWQ1BxOVVDRkpWNlNtSlAzR0U5?=
- =?utf-8?B?WC9WYWNFTzJDQlR5VTlqSy90Zy9aMHd5N2Z1S2pSK1plcDBHbDlGSVJNV1Zt?=
- =?utf-8?B?ZzMrakxGYnd3PT0=?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB6020.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?T2hTUU0wTE1NdHkxSmJ5eVZ4RW12QmZ5NDFyLzhqU0JIYzFHUVNsclA0d1pU?=
- =?utf-8?B?YnpJajhsYlJJSHFKVjdBWW96TE1OYUhwZzE4b2pJaktQck9RMlNlemdkWmhW?=
- =?utf-8?B?RkptWWUrZ0hXSGpZcW8vdEEyUUZqQThySFJqc2xZOFBBN1ljeGdGQXdYQ2J2?=
- =?utf-8?B?aktwZ3BSNEZ3ZWNFOHE3eGlnVWY3ZHd5aDJUZHdyOG52VmFiSVMrZW9qcSs3?=
- =?utf-8?B?S3IxSm5kUGxJa1lkRTgwb050dUhEOVRBbndHNmRDaVFCUk1ZMUkvci9BUUR2?=
- =?utf-8?B?NklOSUFpbG4zb2V3bjVYQ1g3Ukg1QjdLNUZmZVlNVjZsREFwSlRERmRPK3da?=
- =?utf-8?B?bEg0d0VjanRwVG5Wc1hHWmgxV1JyVWNmcG9nU1E4cmI4aVB1YnpIVlNkUWdj?=
- =?utf-8?B?OVVsMWh4NFBhTjlUQXpHQWtZeFRMWTh0SnhMU1hsSDIzam80eE1vQTRBeUpp?=
- =?utf-8?B?RlVyUXVXa0cwRm1ZUG9EMC9OM1Uwa2ltcUN0cUpLTXJrWnRIM3VKWG95dzVX?=
- =?utf-8?B?R0hvWGNqVSt3aHI5VFpCOTNnNXBZWC9UNjlJU3F2bk9zTGtpTmRxc251bDBS?=
- =?utf-8?B?SVZwak9kWlN4LytQZTA2M2RHc2kwMkJwczAyR0xlZFk5eXJ0dzYyaFROTGlt?=
- =?utf-8?B?bFlCMHJJSFdWR3dPZU9zSUo4WVZlOTF5eTJIbjR3V1Y3S1FWOGx4Y2ZSMG9O?=
- =?utf-8?B?NUdkOVJ6Zlh2a05aVVVieTRVS003QWtHMWZWNjRSQy92OGxnN0wzRVhZZGtz?=
- =?utf-8?B?TGtvY1UxOE9VWnhvb2h5R1JKM0w5UU54cTcwaUJjbHZFR1VxMmw1LythRmND?=
- =?utf-8?B?VFZNOVZBMzBCM2wrRXhnVmlpRjlvYm1DTzMxWGZiZjEwekNYd25UTVZGN3J5?=
- =?utf-8?B?V2FmT0ZxWjVpZG9QVmhCS1VuYTl6cWd6NC9oTjh4eE41T1lWb0NxR3o4SmVk?=
- =?utf-8?B?cUJITmMwVlhpZ0FkSDczMnBiYlNFcWExNHRPZXBuNncrazB2R2g4TDBnMTY2?=
- =?utf-8?B?bElmOCtWa1dQNWZEUExmUkhVMEJlbmNFZ0h6amVwMlVlalBsZlpRTUEveG5H?=
- =?utf-8?B?amtEUDJkVW1HdWhVd2twZTZ4aHp1STlZUGpHd3luSkF3dFpUMjlCODdDVWtS?=
- =?utf-8?B?TFM1RFdlNmhPOVJUUE1HQ3FPWks0amN2K1NyTzhVVG0xMjBwekFnS1A2MkN6?=
- =?utf-8?B?Y3N1TkQyU010U0Mvd2cxVm5hcjFSeFhTNmxuWEp3bStWUUdsZ0VpUUEwL2lm?=
- =?utf-8?B?V3JWeDJ4bVdJQTZpVEtiLy9oV1NybnZHTXZJcCszdmtieFBUb2MzeFFzaUVN?=
- =?utf-8?B?ZFVPcmhTRFFCa1R5NEpUQW4ya0hDSDVDT0M1NmlwK0FKY0J3K3hGeFpMMlBm?=
- =?utf-8?B?UzBxV1FpRWFGWmlZc0t6QWxBcllSVU93Ry96OGN1eWRuVVU4aG10bEtqaWVX?=
- =?utf-8?B?SE1rM0VKU2llS2ZRempZZ0l5bGdsWlBiY1JLczZQUHFlTmswRytjMTRwVUd4?=
- =?utf-8?B?YXZXQzJPR1lsbi81QWNzMWxrb1VMbW56cmIyY1dHWFVpcDVQa3RFWXY4Tks4?=
- =?utf-8?B?SDJiL2tVWTBMZS9ZdnpGaXRDcFVENldnVzU4R1lNZFMvekdhdG1yREt0cnMx?=
- =?utf-8?B?NnZ1REhCUUhDN2h0RW1kTTJvZ08vN2NHQXB4OFlKQkwvbkZGTTQ4Rjljb0JE?=
- =?utf-8?B?aUZNUTdMSHpDTHBxbmZTejRNV2ZEcVowcmpBY2dnVzNzTDNva3RUa2JTNmtw?=
- =?utf-8?B?elJWQURIcml5LzhLTUtnUXRTWVJEMWdmOVIzZSs2bmZINklaRGowbzhmajlj?=
- =?utf-8?B?TGMyOWx3aFZQQ0hGck9ZdGJRVkdIQjhLS2JyelpWaCtvaHpVbFhwTDZkVHJI?=
- =?utf-8?B?Y004dDI4L3VMb3k4T1k0L2w5NHdrYlBRYmZjcHZEaC95WWI5bFFXS2lYYk5v?=
- =?utf-8?B?dmIzUUU5OUZYQ25UaEdEM2MyNzVCeXY2RXlXMDRDRldobjh0S3k3djlEV0Nx?=
- =?utf-8?B?U0tRQTJ5WFNRc2VTZTlWa1NLbEVneFNuVjBraSt4WnEyeVRRMEJBRHJHd1Rk?=
- =?utf-8?B?aFRWT3JTR3FlZ1hUWG5sekxzamVKZGUxeTliVVFkcExKOTFoeHl1azRGa08z?=
- =?utf-8?Q?XX8Tht1dModteksRJyAuJKq7d?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1dec5e42-4925-4312-805d-08ddffdbf08e
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6020.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Sep 2025 04:43:45.6543
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: LFHP4t5iO0Z8mSaQxLXIt5MNelo3IjyU9PPrsN9FbQNnG0/l/TxxR7H8EK6tcz84DU+j3ygXmCiJ9/nC1cT+oA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR11MB6248
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] misc: fastrpc: Add support for new DSP IOVA
+ formatting
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+Cc: Srinivas Kandagatla <srini@kernel.org>,
+        Amol Maheshwari <amahesh@qti.qualcomm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
+        trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+References: <20250924-knp-fastrpc-v1-0-4b40f8bfce1d@oss.qualcomm.com>
+ <20250924-knp-fastrpc-v1-1-4b40f8bfce1d@oss.qualcomm.com>
+ <42ge3imptxp46pltqhktrptm6paivhmhooyehc7zigfdlk2qea@zi5ulbgtvy5h>
+Content-Language: en-US
+From: Kumari Pallavi <kumari.pallavi@oss.qualcomm.com>
+In-Reply-To: <42ge3imptxp46pltqhktrptm6paivhmhooyehc7zigfdlk2qea@zi5ulbgtvy5h>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: VuuoBQLOauthrNWLVO4M3NbGCMgvOuCc
+X-Proofpoint-ORIG-GUID: VuuoBQLOauthrNWLVO4M3NbGCMgvOuCc
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDA0MyBTYWx0ZWRfX1ZQ18c5smjKc
+ DBCb06TsgPnPgKKtmvaT4+0A6IkdQrLVr07iKk3nMP9ULuzIUhsP9vJ96y61x0eqCjuh0YrdItm
+ /6wNjnowkRZ3Alc7nWCzSdG1OSI314+Q9w/AhiwCHfF+3gcQINqZXqLSKy83VWNDswGcDFnzdHc
+ SQVOyANN66zlj0L06LbnUH+Af6SM1QXLpUUrff+ghpkkFBL8+ecA74wap97PvUgN6QUDYKl/Jw7
+ oC2Hty4R1ewIGHhslbvNp8T3QH2fPiAy0HjmdXBN+fG4Y9yGRuoWsqCvySMnZkBfd/bJwF0Cw8Q
+ h+6iPjKAlMcjK97nxQjX5aLAm5up4vZtHL9Q0WikEeHmvXu6acCSx+4CKpEZ6oCD4MRmQWCBDx3
+ VYi5qG6oefxNTBuOjCDcFw54xvR05w==
+X-Authority-Analysis: v=2.4 cv=Sf36t/Ru c=1 sm=1 tr=0 ts=68db6006 cx=c_pps
+ a=m5Vt/hrsBiPMCU0y4gIsQw==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=AqClqBJQwO-Rircdwo8A:9
+ a=QEXdDO2ut3YA:10 a=IoOABgeZipijB_acs4fv:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-29_08,2025-09-29_04,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1011 bulkscore=0 suspectscore=0 adultscore=0 spamscore=0
+ priorityscore=1501 malwarescore=0 lowpriorityscore=0 phishscore=0
+ impostorscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2509150000
+ definitions=main-2509270043
 
-On 9/29/2025 10:13 PM, Dave Martin wrote:
-> Hi there,
-> 
-> On Mon, Sep 29, 2025 at 05:19:32PM +0800, Chen, Yu C wrote:
->> On 9/26/2025 6:58 AM, Luck, Tony wrote:
-> 
-> [...]
-> 
->>> Applying this to Intel upcoming region aware memory bandwidth
->>> that supports 255 steps and h/w min/max limits.
->>> We would have info files with "min = 1, max = 255" and a schemata
->>> file that looks like this to legacy apps:
->>>
->>> MB: 0=50;1=75
->>> #MB_HW: 0=128;1=191
->>> #MB_MIN: 0=128;1=191
->>> #MB_MAX: 0=128;1=191
->>>
->>> But a newer app that is aware of the extensions can write:
->>>
->>> # cat > schemata << 'EOF'
->>> MB_HW: 0=10
->>> MB_MIN: 0=10
->>> MB_MAX: 0=64
->>> EOF
->>>
->>> which then reads back as:
->>> MB: 0=4;1=75
->>> #MB_HW: 0=10;1=191
->>> #MB_MIN: 0=10;1=191
->>> #MB_MAX: 0=64;1=191
->>>
->>> with the legacy line updated with the rounded value of the MB_HW
->>> supplied by the user. 10/255 = 3.921% ... so call it "4".
->>>
+
+
+On 9/25/2025 7:55 AM, Dmitry Baryshkov wrote:
+> On Wed, Sep 24, 2025 at 04:46:36PM -0700, Jingyi Wang wrote:
+>> From: Kumari Pallavi <kumari.pallavi@oss.qualcomm.com>
 >>
->> This seems to be applicable as it introduces the new interface
->> while preserving forward compatibility.
+>> Implement the new IOVA formatting required by the DSP architecture change
+>> on Kaanapali SoC. Place the SID for DSP DMA transactions at bit 56 in the
+>> physical address. This placement is necessary for the DSPs to correctly
+>> identify streams and operate as intended.
+>> To address this, add an iova-format flag which determines the SID position
+>> within the physical address. Set SID position to bit 56 when iova_format
+>> is enabled; otherwise, default to legacy 32-bit placement.
+>> Initialize the flag to 0 and update to 1 based on SoC-specific compatible
+>> string from the root node.
+>> This change ensures consistent SID placement across DSPs.
 >>
->> One minor question is that, according to "Figure 6-5. MBA Optimal
->> Bandwidth Register" in the latest RDT specification, the maximum
->> value ranges from 1 to 511.
->> Additionally, this bandwidth field is located at bits 48 to 56 in
->> the MBA Optimal Bandwidth Register, and the range for
->> this segment could be 1 to 8191. Just wonder if it would be
->> possible that the current maximum value of 512 may be extended
->> in the future? Perhaps we could explore a method to query the maximum upper
->> limit from the ACPI table or register, or use CPUID to distinguish between
->> platforms rather than hardcoding it. Reinette also mentioned this in another
->> thread.
+>> Signed-off-by: Kumari Pallavi <kumari.pallavi@oss.qualcomm.com>
+>> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+>> ---
+>>   drivers/misc/fastrpc.c | 76 ++++++++++++++++++++++++++++++++++++++++++++------
+>>   1 file changed, 68 insertions(+), 8 deletions(-)
 >>
->> Thanks,
->> Chenyu
+>> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
+>> index 8e1d97873423..db396241b8ce 100644
+>> --- a/drivers/misc/fastrpc.c
+>> +++ b/drivers/misc/fastrpc.c
+>> @@ -33,7 +33,6 @@
+>>   #define FASTRPC_ALIGN		128
+>>   #define FASTRPC_MAX_FDLIST	16
+>>   #define FASTRPC_MAX_CRCLIST	64
+>> -#define FASTRPC_PHYS(p)	((p) & 0xffffffff)
+>>   #define FASTRPC_CTX_MAX (256)
+>>   #define FASTRPC_INIT_HANDLE	1
+>>   #define FASTRPC_DSP_UTILITIES_HANDLE	2
+>> @@ -105,6 +104,26 @@
+>>   
+>>   #define miscdev_to_fdevice(d) container_of(d, struct fastrpc_device, miscdev)
+>>   
+>> +/*
+>> + * By default, the sid will be prepended adjacent to smmu pa before sending
+>> + * to DSP. But if the compatible Soc found at root node specifies the new
+>> + * addressing format to handle pa's of longer widths, then the sid will be
+>> + * prepended at the position specified in this macro.
+>> + */
+>> +#define SID_POS_IN_IOVA 56
+>> +
+>> +/* Default width of pa bus from dsp */
+>> +#define DSP_DEFAULT_BUS_WIDTH 32
+>> +
+>> +/* Extract smmu pa from consolidated iova */
+>> +#define IOVA_TO_PHYS(iova, sid_pos) (iova & ((1ULL << sid_pos) - 1ULL))
+>> +
+>> +/*
+>> + * Prepare the consolidated iova to send to dsp by prepending the sid
+>> + * to smmu pa at the appropriate position
+>> + */
+>> +#define IOVA_FROM_SID_PA(sid, phys, sid_pos) (phys += sid << sid_pos)
+>> +
+>>   struct fastrpc_phy_page {
+>>   	u64 addr;		/* physical address */
+>>   	u64 size;		/* size of contiguous region */
+>> @@ -255,6 +274,7 @@ struct fastrpc_session_ctx {
+>>   	int sid;
+>>   	bool used;
+>>   	bool valid;
+>> +	u32 sid_pos;
+>>   };
+>>   
+>>   struct fastrpc_channel_ctx {
+>> @@ -278,6 +298,7 @@ struct fastrpc_channel_ctx {
+>>   	bool secure;
+>>   	bool unsigned_support;
+>>   	u64 dma_mask;
+>> +	u32 iova_format;
+>>   };
+>>   
+>>   struct fastrpc_device {
+>> @@ -391,8 +412,11 @@ static int fastrpc_map_lookup(struct fastrpc_user *fl, int fd,
+>>   
+>>   static void fastrpc_buf_free(struct fastrpc_buf *buf)
+>>   {
+>> +	uint32_t sid_pos = (buf->fl->sctx ? buf->fl->sctx->sid_pos :
+>> +					    DSP_DEFAULT_BUS_WIDTH);
+>> +
+>>   	dma_free_coherent(buf->dev, buf->size, buf->virt,
+>> -			  FASTRPC_PHYS(buf->phys));
+>> +			  IOVA_TO_PHYS(buf->phys, sid_pos));
+>>   	kfree(buf);
+>>   }
+>>   
+>> @@ -442,7 +466,7 @@ static int fastrpc_buf_alloc(struct fastrpc_user *fl, struct device *dev,
+>>   	buf = *obuf;
+>>   
+>>   	if (fl->sctx && fl->sctx->sid)
+>> -		buf->phys += ((u64)fl->sctx->sid << 32);
+>> +		IOVA_FROM_SID_PA((u64)fl->sctx->sid, buf->phys, fl->sctx->sid_pos);
+>>   
+>>   	return 0;
+>>   }
+>> @@ -687,7 +711,8 @@ static int fastrpc_dma_buf_attach(struct dma_buf *dmabuf,
+>>   		return -ENOMEM;
+>>   
+>>   	ret = dma_get_sgtable(buffer->dev, &a->sgt, buffer->virt,
+>> -			      FASTRPC_PHYS(buffer->phys), buffer->size);
+>> +			      IOVA_TO_PHYS(buffer->phys, buffer->fl->sctx->sid_pos),
+>> +			      buffer->size);
+>>   	if (ret < 0) {
+>>   		dev_err(buffer->dev, "failed to get scatterlist from DMA API\n");
+>>   		kfree(a);
+>> @@ -736,7 +761,7 @@ static int fastrpc_mmap(struct dma_buf *dmabuf,
+>>   	dma_resv_assert_held(dmabuf->resv);
+>>   
+>>   	return dma_mmap_coherent(buf->dev, vma, buf->virt,
+>> -				 FASTRPC_PHYS(buf->phys), size);
+>> +				 IOVA_TO_PHYS(buf->phys, buf->fl->sctx->sid_pos), size);
+>>   }
+>>   
+>>   static const struct dma_buf_ops fastrpc_dma_buf_ops = {
+>> @@ -793,7 +818,8 @@ static int fastrpc_map_create(struct fastrpc_user *fl, int fd,
+>>   		map->phys = sg_phys(map->table->sgl);
+>>   	} else {
+>>   		map->phys = sg_dma_address(map->table->sgl);
+>> -		map->phys += ((u64)fl->sctx->sid << 32);
+>> +		IOVA_FROM_SID_PA((u64)fl->sctx->sid, map->phys,
+>> +				 fl->sctx->sid_pos);
+>>   	}
+>>   	map->size = len;
+>>   	map->va = sg_virt(map->table->sgl);
+>> @@ -2153,11 +2179,14 @@ static int fastrpc_cb_probe(struct platform_device *pdev)
+>>   	sess->used = false;
+>>   	sess->valid = true;
+>>   	sess->dev = dev;
+>> -	dev_set_drvdata(dev, sess);
+>> +	/* Configure where sid will be prepended to pa */
+>> +	sess->sid_pos =
+>> +		(cctx->iova_format ? SID_POS_IN_IOVA : DSP_DEFAULT_BUS_WIDTH);
+> 
+> You are using iova_format as a flag. Rename it to something more
+> sensible and turn it into a boolean flag.
+> 
+
+Sure, I'll take it up in next patch series.
+
+>>   
+>>   	if (of_property_read_u32(dev->of_node, "reg", &sess->sid))
+>>   		dev_info(dev, "FastRPC Session ID not specified in DT\n");
+>>   
+>> +	dev_set_drvdata(dev, sess);
+>>   	if (sessions > 0) {
+>>   		struct fastrpc_session_ctx *dup_sess;
+>>   
+>> @@ -2256,6 +2285,19 @@ static int fastrpc_get_domain_id(const char *domain)
+>>   	return -EINVAL;
+>>   }
+>>   
+>> +struct fastrpc_soc_data {
+>> +	u32 dsp_iova_format;
+>> +};
+>> +
+>> +static const struct fastrpc_soc_data kaanapali_soc_data = {
+>> +	.dsp_iova_format = 1,
+>> +};
+>> +
+>> +static const struct of_device_id qcom_soc_match_table[] = {
+>> +	{ .compatible = "qcom,kaanapali", .data = &kaanapali_soc_data },
+>> +	{},
+>> +};
+>> +
+>>   static int fastrpc_rpmsg_probe(struct rpmsg_device *rpdev)
+>>   {
+>>   	struct device *rdev = &rpdev->dev;
+>> @@ -2264,6 +2306,23 @@ static int fastrpc_rpmsg_probe(struct rpmsg_device *rpdev)
+>>   	const char *domain;
+>>   	bool secure_dsp;
+>>   	unsigned int vmids[FASTRPC_MAX_VMIDS];
+>> +	struct device_node *root;
+>> +	const struct of_device_id *match;
+>> +	const struct fastrpc_soc_data *soc_data = NULL;
+>> +	u32 iova_format = 0;
+>> +
+>> +	root = of_find_node_by_path("/");
+>> +	if (!root)
+>> +		return -ENODEV;
+>> +
+>> +	match = of_match_node(qcom_soc_match_table, root);
+>> +	of_node_put(root);
+>> +	if (!match || !match->data) {
+>> +		dev_dbg(rdev, "no compatible SoC found at root node\n");
+>> +	} else {
+>> +		soc_data = match->data;
+>> +		iova_format = soc_data->dsp_iova_format;
+>> +	}
+>>   
+>>   	err = of_property_read_string(rdev->of_node, "label", &domain);
+>>   	if (err) {
+>> @@ -2343,7 +2402,8 @@ static int fastrpc_rpmsg_probe(struct rpmsg_device *rpdev)
+>>   		err = -EINVAL;
+>>   		goto err_free_data;
+>>   	}
+>> -
+>> +	/* determine where sid needs to be prepended to pa based on iova_format */
+>> +	data->iova_format = iova_format;
+>>   	kref_init(&data->refcount);
+>>   
+>>   	dev_set_drvdata(&rpdev->dev, data);
 >>
+>> -- 
+>> 2.25.1
 >>
->> [1] https://www.intel.com/content/www/us/en/content-details/851356/intel-resource-director-technology-intel-rdt-architecture-specification.html
 > 
-> I can't comment on the direction of travel in the RDT architecture.
-> 
-> I guess it would be up to the arch code whether to trust ACPI if it
-> says that the maximum value of this field is > 511.  (> 65535 would be
-> impossible though, since the fields would start to overlap each
-> other...)
-> 
-> Would anything break in the interface proposed here, if the maximum
-> value is larger than 511?  (I'm hoping not.  For MPAM, the bandwidth
-> controls can have up to 16 bits and the size can be probed though MMIO
-> registers.
-> 
-
-I overlooked this bit width. It should not exceed 511 according to the
-RDT spec. Previously, I was just wondering how to calculate the legacy
-MB percentage in Tony's example. If we want to keep consistency - if
-the user provides a value of 10, what is the denominator: Is it 255,
-511, or something queried from ACPI.
-
-MB: 0=4;1=75           <--- 10/255
-#MB_HW: 0=10;1=191
-#MB_MIN: 0=10;1=191
-#MB_MAX: 0=64;1=191
-
-or
-
-MB: 0=1;1=75          <--- 10/511
-#MB_HW: 0=10;1=191
-#MB_MIN: 0=10;1=191
-#MB_MAX: 0=64;1=191
-
-thanks,
-Chenyu
-
-> I don't think we've seen MPAM hardware that comes close to 16 bits for
-> now, though.
-> 
-> Cheers
-> ---Dave
+Thanks,
+Pallavi
 
