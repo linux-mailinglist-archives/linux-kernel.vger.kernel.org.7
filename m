@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-836920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-836921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAF68BAAE00
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 03:25:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9736BAAE0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 03:25:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37CF8188EA62
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 01:25:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75D771C2536
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 01:25:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2EFD1F582B;
-	Tue, 30 Sep 2025 01:24:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D19B41E1E04;
+	Tue, 30 Sep 2025 01:24:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eRjpqdnw"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="upmmxI4E"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8124A1E520C
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 01:24:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B79F91FF5E3
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 01:24:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759195472; cv=none; b=J8LFnqmrAen6opcDy5aHn9xPVCOvtYLdZiRcOU5u80vJ/KPvrl0Y8YJi4DUZLXm3oJVPQKSUNeSP+Df0mYa0jlrpnweEO7w3grFFZF2U7feeoiVhMff8bO5VX3Wi32Ggf6PemSB/QL6J35s/6jsB1SGffCn9o6Ry/SLFiu7Gol8=
+	t=1759195475; cv=none; b=joG6ZGSoxXZmQ7WOY5nPgyPGet+SkW60XGcsxtWJqIPTkozb9ArQN2LkkB0SWJDwHGaaNEjCpjG9FeY9f+myQCTutHWqPv5jE+AikbFOrF1HBU9hvSt/+gFZpgZkC8XjpvSryHTAkKGRjwOWDdmsqFf7tiElfbVjgY7Gqe69UXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759195472; c=relaxed/simple;
-	bh=N4kLniQHDskmFQXBLT0LHBLGRHO/htZMq5n45mo5spA=;
+	s=arc-20240116; t=1759195475; c=relaxed/simple;
+	bh=n5cziPQ61KRp5AtyPFgy8VJF4Lqvc2a81X5suV1ETHU=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Yt9u3RG2i0jih36J8jGDNtpIGiZhPxfdaIzF4itnPDzIcmmtKoxc/dDmUXdQmmLo0vaQrJwhQ2yKqX+/uo8Xx5WuLAU2tbcjPAbVQfZy2vVTYo1wjIlWhTqng3koiruq7Nbwj7AWvRkH477geL+wurvxA3yL6+fc5IpCtXL2alE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jthies.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eRjpqdnw; arc=none smtp.client-ip=209.85.128.202
+	 To:Cc:Content-Type; b=DUs2tJbyTVMcPrxE/7gIGaS4FJHsN8+kCfR76gYyp5CvSPRFNeP/TX3uKtnMh1YWoghCO6h1xVmqw9EL8RRdrwQajOS02T115t+rbkvvCi4Dxp815ptLVRvDTd/njuQ5pUIttvCQc/WSsqdXRhfcuLGqQOQ3C4xd4eN9kKEGlYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jthies.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=upmmxI4E; arc=none smtp.client-ip=209.85.214.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jthies.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-745c3f7e569so48210247b3.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 18:24:30 -0700 (PDT)
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-28a5b8b12bbso39642055ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Sep 2025 18:24:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759195469; x=1759800269; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1759195473; x=1759800273; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=atjRbq2Ix0kpQpih72xPV1a5tslbrY8BWtKFpnViPQs=;
-        b=eRjpqdnwHov7uNjNBAxtduOkE+1rKzXROltB2OCVb939/djWaAKDuhgTpAFNxmt5h0
-         O8SC5/KK5s3Vxgj96nEpX2yRHVRDMswpx1bvGrHc0nEJtQaMz2MeDrYap4uw72Ttlki8
-         xsKJ/5hdH6n1KrrOLHgpAbKx0D2NkAnsjKtAIF7Yxr6/plhF/XF/24i1J2sh82K+wADb
-         wvj957d+TO+/iFLrJa1OIzm9W5vsHVfDanq618uD5gXMrZKpk6xum0vK3SC+K5Oc2RMT
-         DVQ74L0ikOOegAb/MC1SSva3mnBerJBvAkoQ5DzXl7tDpCsKaHnKmVFSKO3HBLsuDW4K
-         aFaA==
+        bh=kogf9tvbfBCb39vdLAEVilZDn5JXEZ0lPob5kpAtHeE=;
+        b=upmmxI4ETaz3upbs8OaweRTJP7ZvxBkAr7RbCJ1ApUn5UsLh1C8iQ/V7h8NBEhNc02
+         Nr7Vv4zRGfOTdlwm1M2Rjw2sG6OriH3SQEO4mTlXB4FWosLspGSO7qreCfA4VYpx+CQX
+         ouDIDksvIBcWlwq4Bpt0OBsFfg+CdywSken9RsI74VTlfyVilSLv3ZR1yK3D0FgkN/ZU
+         UuD0Mk5OSqfHwzaamzdbGsxVkLv4Y/70h9iPMtRj/q3UN2e3shJGpXR91O1XD0SyLiCW
+         03t+ebt63JvzlSzNaF4nacXAUXwj0DQ4H70MSCWPbuktQkZIDpl9U02Jop1Nk3vbuSZT
+         +5KA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759195469; x=1759800269;
+        d=1e100.net; s=20230601; t=1759195473; x=1759800273;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=atjRbq2Ix0kpQpih72xPV1a5tslbrY8BWtKFpnViPQs=;
-        b=usdJKBlxIRil0w1icAE4sdFTH3AIlgPaQCd1EJxkSUpv9M2wsV5dwNbJ75FGTMrhtR
-         dbZRoipp3Iws4DwoPJOSdAvv8elfq6Dun80JUibhPH9bf0PHI4PFGd6Qsodyn76vK+G+
-         iHTBTruHtSXrnBXjU8Ju5nZ9plbLfZPSlm4lEOB4w7o1/Ha/6L9tZmNbupfxB2UGb1R8
-         ITkeOKU8lCWpZslLW1Mkh1M8fkb27hO4s7G49Duc++E1fxladhhY8kZtgwZZC5JcZE/S
-         cLzAs8weFgFw9FxdX3dyVJyy2AERIswbR8dvD6mVBO9h/6Ud6xhgnfplBSnSEik7QCEL
-         4JLw==
-X-Forwarded-Encrypted: i=1; AJvYcCVYKdb/TpLkFYXEgrPKtweIkfFhsnIvniE+Jouu1XrLXqSdbHykAmXqMoukCbI0AaqYQr9bmP/d4z7Y42E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywg5b1gZv/dkyTQ3ulI3fdh2Gv4V3RgOiOi+prAWwsvSOikMqvr
-	AermGT8TqO2c8MTpouA5ypLwjzru4Z9WCjs7LqG6nnC3hWfEwlqVsmiHTQl5O5/MTsynUDr2qCr
-	CGyiqcw==
-X-Google-Smtp-Source: AGHT+IF0AUjaRoUFbB9ad+iQ92cEe5cg6xNX0XH44Xe7Y4Ue8xeSsrOu4IjOY25U6TTP0/J2T1TylPh/qAM=
-X-Received: from ywbnh10.prod.google.com ([2002:a05:690c:5c0a:b0:735:7cbc:a939])
- (user=jthies job=prod-delivery.src-stubby-dispatcher) by 2002:a05:690c:3608:b0:766:6507:686b
- with SMTP id 00721157ae682-7666507767bmr165283147b3.8.1759195469484; Mon, 29
- Sep 2025 18:24:29 -0700 (PDT)
-Date: Tue, 30 Sep 2025 01:23:47 +0000
+        bh=kogf9tvbfBCb39vdLAEVilZDn5JXEZ0lPob5kpAtHeE=;
+        b=baVRaOrWu1GGqttrd0YZ3EsfmYrEjRvbcyOUeOZnbO7DZKgdxFEpwpb8BYeeVASIUO
+         1OhGSYG2F5xLUWgEnIvcee9hNYwVq6RgxZmA+DJrbLSHQCxgo/pvViro/Vc5Bt3MUQMt
+         sVQTKivnl4AT3PHgDnKHpHhlG6rLZkdFy/dGMXBFco2vD5g1RVrOOFJ2JAahUKqgFxsv
+         w2Wadk+80UhiV8gModmWvgMYVEY6Im49j4uuYOhXYda31ygGxIxuLahpLlwvueYLbkWk
+         ZQd2FTqF5TmI9dV+XZudpjRWVJDF8fF+OU3fwpeqCXnHSqEasgEkYbGadewZnU8sVWHb
+         MOdA==
+X-Forwarded-Encrypted: i=1; AJvYcCX8GIn+g6+KG5d9iUeWkbV8bhtPHl/elD3fi3zYa9KV+ovxfgI3v7tB1XMTUuMm5TWSN+/G7X8BNJBve6M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxr+CMXdht1FXdd5ROVAmTBh2JD0ixuWxlgqqcFE6pBQhB8PX+b
+	07V/pBToj2pt5NziwJ6zaMOUoPGX0r/2XzcnNEoHKiS93qsAhij6OWTyB9LjE51hnifn0BsdQmb
+	8hIPsfQ==
+X-Google-Smtp-Source: AGHT+IHrgMj/I7ewzUlfQ+tAFdK6lsLgX95aSaFSACakL6kqrbRRIQLYFBi7WQqIgbhinM2CjM73dUzXSCk=
+X-Received: from plblk8.prod.google.com ([2002:a17:903:8c8:b0:269:96fe:32ad])
+ (user=jthies job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:e88d:b0:272:f9c3:31f7
+ with SMTP id d9443c01a7336-27ed4a5e907mr193803585ad.50.1759195473033; Mon, 29
+ Sep 2025 18:24:33 -0700 (PDT)
+Date: Tue, 30 Sep 2025 01:23:48 +0000
 In-Reply-To: <20250930012352.413066-1-jthies@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250930012352.413066-1-jthies@google.com>
 X-Mailer: git-send-email 2.51.0.570.gb178f27e6d-goog
-Message-ID: <20250930012352.413066-3-jthies@google.com>
-Subject: [PATCH v1 2/3] usb: typec: cros_ec_ucsi: Load driver from OF and ACPI definitions
+Message-ID: <20250930012352.413066-4-jthies@google.com>
+Subject: [PATCH v1 3/3] mfd: cros_ec: Don't add cros_ec_ucsi if it is defined
+ in OF or ACPI
 From: Jameson Thies <jthies@google.com>
 To: akuchynski@chromium.org, abhishekpandit@chromium.org, krzk+dt@kernel.org, 
 	robh@kernel.org, bleung@chromium.org, heikki.krogerus@linux.intel.com, 
@@ -84,81 +85,88 @@ Cc: devicetree@vger.kernel.org, chrome-platform@lists.linux.dev,
 	Jameson Thies <jthies@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Add support for cros_ec_ucsi to load based on "google,cros-ec-ucsi"
-compatible devices and "GOOG0021" ACPI nodes.
+On devices with a UCSI PPM in the EC, check for cros_ec_ucsi to be
+defined in the OF device tree or an ACPI node. If it is defined by
+either OF or ACPI, it does not need to be added as a subdevice of
+cros_ec_dev.
 
 Signed-off-by: Jameson Thies <jthies@google.com>
 ---
- drivers/usb/typec/ucsi/cros_ec_ucsi.c | 25 +++++++++++++++++++++++--
- 1 file changed, 23 insertions(+), 2 deletions(-)
+ drivers/mfd/cros_ec_dev.c | 40 ++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 35 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/usb/typec/ucsi/cros_ec_ucsi.c b/drivers/usb/typec/ucsi/cros_ec_ucsi.c
-index eed2a7d0ebc6..3d19560bbaa7 100644
---- a/drivers/usb/typec/ucsi/cros_ec_ucsi.c
-+++ b/drivers/usb/typec/ucsi/cros_ec_ucsi.c
-@@ -5,11 +5,13 @@
-  * Copyright 2024 Google LLC.
+diff --git a/drivers/mfd/cros_ec_dev.c b/drivers/mfd/cros_ec_dev.c
+index dc80a272726b..b0523f6541d2 100644
+--- a/drivers/mfd/cros_ec_dev.c
++++ b/drivers/mfd/cros_ec_dev.c
+@@ -5,6 +5,7 @@
+  * Copyright (C) 2014 Google, Inc.
   */
  
 +#include <linux/acpi.h>
- #include <linux/container_of.h>
- #include <linux/dev_printk.h>
- #include <linux/jiffies.h>
- #include <linux/mod_devicetable.h>
- #include <linux/module.h>
-+#include <linux/of.h>
- #include <linux/platform_data/cros_ec_commands.h>
- #include <linux/platform_data/cros_usbpd_notify.h>
- #include <linux/platform_data/cros_ec_proto.h>
-@@ -235,7 +237,7 @@ static void cros_ucsi_destroy(struct cros_ucsi_data *udata)
- static int cros_ucsi_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
--	struct cros_ec_dev *ec_data = dev_get_drvdata(dev->parent);
-+	struct cros_ec_dev *ec_data;
- 	struct cros_ucsi_data *udata;
- 	int ret;
- 
-@@ -244,8 +246,13 @@ static int cros_ucsi_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	udata->dev = dev;
-+	if (is_acpi_device_node(dev->fwnode) || is_of_node(dev->fwnode)) {
-+		udata->ec = dev_get_drvdata(pdev->dev.parent);
-+	} else {
-+		ec_data = dev_get_drvdata(dev->parent);
-+		udata->ec = ec_data->ec_dev;
-+	}
- 
--	udata->ec = ec_data->ec_dev;
- 	if (!udata->ec)
- 		return dev_err_probe(dev, -ENODEV, "couldn't find parent EC device\n");
- 
-@@ -326,10 +333,24 @@ static const struct platform_device_id cros_ucsi_id[] = {
- };
- MODULE_DEVICE_TABLE(platform, cros_ucsi_id);
- 
-+static const struct acpi_device_id cros_ec_ucsi_acpi_device_ids[] = {
-+	{ "GOOG0021", 0 },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(acpi, cros_ec_ucsi_acpi_device_ids);
-+
-+static const struct of_device_id cros_ucsi_of_match[] = {
-+	{ .compatible = "google,cros-ec-ucsi", },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, cros_ucsi_of_match);
-+
- static struct platform_driver cros_ucsi_driver = {
- 	.driver = {
- 		.name = KBUILD_MODNAME,
- 		.pm = &cros_ucsi_pm_ops,
-+		.acpi_match_table = cros_ec_ucsi_acpi_device_ids,
-+		.of_match_table = cros_ucsi_of_match,
+ #include <linux/dmi.h>
+ #include <linux/kconfig.h>
+ #include <linux/mfd/core.h>
+@@ -131,11 +132,6 @@ static const struct cros_feature_to_cells cros_subdevices[] = {
+ 		.mfd_cells	= cros_ec_rtc_cells,
+ 		.num_cells	= ARRAY_SIZE(cros_ec_rtc_cells),
  	},
- 	.id_table = cros_ucsi_id,
- 	.probe = cros_ucsi_probe,
+-	{
+-		.id		= EC_FEATURE_UCSI_PPM,
+-		.mfd_cells	= cros_ec_ucsi_cells,
+-		.num_cells	= ARRAY_SIZE(cros_ec_ucsi_cells),
+-	},
+ 	{
+ 		.id		= EC_FEATURE_HANG_DETECT,
+ 		.mfd_cells	= cros_ec_wdt_cells,
+@@ -177,6 +173,16 @@ static const struct mfd_cell cros_ec_vbc_cells[] = {
+ 	{ .name = "cros-ec-vbc", }
+ };
+ 
++static int ucsi_acpi_match(struct device *dev, const void *data)
++{
++	struct acpi_device_id ucsi_acpi_device_ids[] = {
++		{ "GOOG0021", 0 },
++		{"", 0},
++	};
++	return !!acpi_match_device(ucsi_acpi_device_ids, dev);
++}
++
++
+ static void cros_ec_class_release(struct device *dev)
+ {
+ 	kfree(to_cros_ec_dev(dev));
+@@ -264,6 +270,30 @@ static int ec_device_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
++	/*
++	 * FW nodes can load cros_ec_ucsi, but early PDC devices did not define
++	 * the required nodes. On PDC systems without FW nodes for cros_ec_ucsi,
++	 * the driver should be added as an mfd subdevice.
++	 */
++	if (cros_ec_check_features(ec, EC_FEATURE_USB_PD) &&
++	    cros_ec_check_features(ec, EC_FEATURE_UCSI_PPM)) {
++		struct device *acpi_dev = device_find_child(ec->ec_dev->dev,
++							    NULL,
++							    ucsi_acpi_match);
++
++		if (!!acpi_dev) {
++			put_device(acpi_dev);
++		} else if (!of_find_compatible_node(NULL, NULL,
++						    "google,cros-ec-ucsi")) {
++			retval = mfd_add_hotplug_devices(
++				ec->dev, cros_ec_ucsi_cells,
++				ARRAY_SIZE(cros_ec_ucsi_cells));
++			if (retval)
++				dev_warn(ec->dev,
++				    "failed to add cros_ec_ucsi: %d\n", retval);
++		}
++	}
++
+ 	/*
+ 	 * UCSI provides power supply information so we don't need to separately
+ 	 * load the cros_usbpd_charger driver.
 -- 
 2.51.0.570.gb178f27e6d-goog
 
