@@ -1,184 +1,171 @@
-Return-Path: <linux-kernel+bounces-838062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DFEABAE580
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 20:48:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E8F8BBAE58F
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 20:49:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93E191925F07
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 18:48:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E64D1925F97
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 18:49:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47BE3228CBC;
-	Tue, 30 Sep 2025 18:48:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11D8A22126D;
+	Tue, 30 Sep 2025 18:49:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lXbcCMZk"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CPDJeYY5"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC9318287E
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 18:48:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A03C12B9B9
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 18:48:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759258099; cv=none; b=GEEIawhTTl7v8tHpgXcNENF2rqVWd1iVMqbRwKXZ9VE8UXah57p7WQypp271vGbtVnIOaxlV1Ys5mgFASHrWgrYKUPCpn11wpeZzn/rO72fm1QhT4Y/KVgg+lT7gF+lBY0Cw5JH5pyL3JVDiyMqoq7GJLZjY7jZbYT5zRM50SAM=
+	t=1759258139; cv=none; b=rJ5ou6MEZLn0wcF8LTkk60h5jKR8gPqfWCA30+79iJcWvskOaxOs2/kxdpXb5lnUlgBau3iYQojRzg2jqDGWHktxzpvdLSXxC914zo6HbZKNqoOL+PqlST6mfhURwOZ4SAqdoEbQ2jyAv9kA32m7Z4I/OuhCQ/Eq3qpdoA2qEDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759258099; c=relaxed/simple;
-	bh=AkSZ2p2ipyMcwGlPDAvkNQcfgzKLfIjz9ybYo7uFpDY=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=cJzIJIPqgNusvTyAMA8DH7Qi1KWyW+ee49GgwGr/FKwsXqGbXHK6blQnhMKuHyos6UHTfVh53kZGLXhZ0bhC3OdGRx2h6/2HqW0ey0TthZwHoqYMdSVTGb1j+wmjID8j7M6iENiGfSMYxOkVp1UCamZcgyOalF1CS5496SwL0pQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lXbcCMZk; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-46e5980471eso9506365e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 11:48:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759258096; x=1759862896; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ffgRfYtnm1HKc4tZUZavEotYf7CHOSNEIdJwn2PiGvQ=;
-        b=lXbcCMZknREsrO0Mtv0yPYP13BJVVZ2gkmpfkDKw6p1ZzRMiivZOqT09U4l28iNtxU
-         3iKpihgtEh4t3amIpA6sefYQe4qyPpsEonzquIoeSVXlkHyvp2hSLg9MiT20De8d5rw/
-         1l0ca3tj/lrZb29j0KYyElE0vBbucFWTt74e8ByCdG+JdRHArWmqOlrqE6RytaC3zfhD
-         GNmZezOs4Olu61uBpdonmVG2c/PCm3walosz2XHfaGw7nHI0z6Lib4yc+TuERuTAd4py
-         QeVFk73u5ro48O3P4WWo7uG7X6o1NR0Z6I0RY0v83MMNsrcQRl5NzlAv4e2tjK/fXo4x
-         bglA==
+	s=arc-20240116; t=1759258139; c=relaxed/simple;
+	bh=EecMY+VkM0TbudNcpVA+uiLVhjbZensjFurwDNkAibg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=keevpKZBYUZt5uj//vk3QRS/hJqZfUnxLHq5TDHuXQy4qkN4gaTjLg5arOLZ/Bq1lLUvbaZeFse8Yjq//B+lkvpfDXy/EtpILz/wTvuLX13YG0CqDH7uD23BqhXZbAKhLVRjfFhcCvHWz0jiSQUuvtfRmhsI9PbDnqV4sXbhyCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CPDJeYY5; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759258136;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GsK2ZJQMv6HTGwzBtNFmgf1Bb8Mvb8sxIYfW5o9dQJg=;
+	b=CPDJeYY53qk7dp0qBtRHsJUozPdb8IOBhEV4CsDOX+06Kdv1+1IQoQUK4pqJvdiiu13F6u
+	yGS+67DfusdCIW2jYeVnHffxYabIVi870xgal1TC+pJonEy1AXs5agQHsTwtb5RWIM5FOk
+	dJLNyeM/RNnV1cOPjYz76WbdTacv18g=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-76-jAZtVJAYPPC8_NirFAnYiQ-1; Tue, 30 Sep 2025 14:48:54 -0400
+X-MC-Unique: jAZtVJAYPPC8_NirFAnYiQ-1
+X-Mimecast-MFC-AGG-ID: jAZtVJAYPPC8_NirFAnYiQ_1759258134
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-857003e911fso1409414785a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 11:48:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759258096; x=1759862896;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ffgRfYtnm1HKc4tZUZavEotYf7CHOSNEIdJwn2PiGvQ=;
-        b=CtljYeQ9rJJDyqQDJ+O8bXA95MXNbp6qbRPvuk6JN3beUC04PYPWnCb3LJT5N89GKM
-         sutZHdcuei3WurTQpEh5keJWf95Dinyls4Hh66dNVlqb8t+cRfup6sNAyif6lr969oBX
-         jVgevOp9knokcsYPe3jqAWUFwF4fk1zCTrEgnne+ath8Tymo2lhPwouI1jO6LITqAzl+
-         KNLq4sig4+FfpbPRQQmSX2Cn3G+SjtC3aYw4+Nm93rc1jl7C8oTQyxlFnZCJBQCGcdv7
-         ZuB/+cD8jDLkc8eoOvoVQdlkAgkcKsbhwpvcRTkz98NrYvMMkSvFG90nNedo2fQ6Ff97
-         ZCAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWMwZ5s5NP34cOOd9xmQ412vT+BRwHPILDablK7Q9L7nUvIRjrQk3KQ0YqHww7Oxg0CDuWo/nk3+VobT18=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDM1+TWPosffyjriBKMm5df/NDqCcSXJEE9NZ0dkWQH7mv1AOE
-	JHOR/c12tyL9c0ZCv+ekq19/QXpY4Igb4T7YNXvKN6rQzc96c3MdRlZ5D16lAIoDCgY=
-X-Gm-Gg: ASbGncvhFPFkD70vqy9toATdbin3iONtwvxhHc5vj4vCzqDGjOJJ9SL664I9aI12ZOu
-	DDJTv9N89t+d7iMm3BVnhrM4fIAUc5n1hYeJrRUVVMrs6YUHca6hsFr+xb5RCaj8lCyuZh/4dIb
-	DiHug3+wmSZd2rDVinPF7kqlEddFSOgrool7cf5saDW4Gxxdu8W/SYVGAJjk+QpHfX32s3t8ORP
-	ZmxwBqYz4uXuBeESe6o1xnhDDkAdoDgLQ9mKlRSFuBFWdZ2HgCJ9DS+aZUsOEMZbB7iLg0VdTt/
-	BLFT26cSbaB24TygPHWBZ0s/iWWXqT9VM5bY8zI2PyyEdX+Iq2VKr3zv6MAo7REJUlF9Xh4jHfm
-	n9j0CvQD85bHzEejJZIz2ZDL2x2ColojJC7yFlwC7L2vO/FLhM73XULPbDxSMhCcBt7jnriHzOj
-	IiyH8neRGz0mqbagqGCc6c/4A=
-X-Google-Smtp-Source: AGHT+IEYI3huopKWdfDQEJir5e/rv3rOBRHS1Emu0fC6ieyMwwYyTSg13GLpRz3qoAuTqhlVIXzV/Q==
-X-Received: by 2002:a05:600c:5303:b0:46e:4287:a85e with SMTP id 5b1f17b1804b1-46e612192ecmr7706325e9.13.1759258095988;
-        Tue, 30 Sep 2025 11:48:15 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:3d9:2080:9459:14e0:525e:d859? ([2a01:e0a:3d9:2080:9459:14e0:525e:d859])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e6199fb54sm5013245e9.9.2025.09.30.11.48.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Sep 2025 11:48:15 -0700 (PDT)
-Message-ID: <426679ae-03c4-47d5-895d-7c927b2c3b07@linaro.org>
-Date: Tue, 30 Sep 2025 20:48:13 +0200
+        d=1e100.net; s=20230601; t=1759258134; x=1759862934;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GsK2ZJQMv6HTGwzBtNFmgf1Bb8Mvb8sxIYfW5o9dQJg=;
+        b=sd6zZ61dLHGc4b3cqMwHrgqZbxES/g98T3ypQvJ+cvd1vzfRaBG1yAln3dO3dfMejP
+         xqN0osV1NT+5urBY9MjyJNyjwLVrE71QhrUpRay32t7O+tSq3O/zp4OmYEWMsDEek7wv
+         sMlfcicFe8O2QZYuM7PpBqkgCNoYlaJB6+D6QRNmukx/vmnQ+leeF5Qi2fSTGWEnNL70
+         +DvQlifmn33InixqcVy2JBe0U8gZvQtlsYMYy4ikb9mojIH1WYjSe6Y7El5O8NwJ+uOQ
+         s0a7ySKpwYPWwJN/yQmhbis2hLLkRpHm0kDc+1LtWRZ1HeyxuNbDhCO8COLomvAgUK4Q
+         1gEg==
+X-Forwarded-Encrypted: i=1; AJvYcCUYz9tiDry3EmCNZHHkRcwnktPZXQZbkxkexU1uEVE0LPltVJxd2tyS0wv7Eb1g+R48mlEvIe8GqFIgH+M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzD9/JNGlGsw/LWZwwzQw+ZowOD4dlKSYygPqYkVFusuwVMCkgZ
+	aFp4GaqtoN1kvJBVJsVDSoLT8i5HKLAZRHgxhPwk7J7v1TPpiT3RIBoqRlL2KaaCyc7SAbevjAT
+	VjsQ3Moog0jHNflU20t4z26xaSXjtp2Qu76uus4wGlTgbSSzTfAt6RZyLdy1MacO/UA==
+X-Gm-Gg: ASbGnctO+Qj11RVzsHQU7yocfI8QFK1b3FrJpS0ag1YCIKIjakITZMBYcHfqgWwCm/g
+	Tbt4ewxvqGxGD2ycP1sU9g5Ma7R8T5l9pUZNa4a7rmwElUsmi0c4edyedENE8Ahd6PGQmHO/OQY
+	8cvGic52FzguI1iDS/2/sdfFuOqgLSF6i7uXSyQJmyXebbKzQzC1T2o/rBg+LboH6Y9vFiWv887
+	yE9rDVkucEMZ3L+Qhwsw0QFFlt1bWUdl41/JXvUOMQm1SFn0ykjOrpYt9eAojLJdFWZ1vnr0oJz
+	oOlCkk6sYHDKFhCccBRigcB2IHyRUO8lSMgAvQ==
+X-Received: by 2002:a05:620a:d8e:b0:815:87ab:37e0 with SMTP id af79cd13be357-873758551c8mr121580085a.53.1759258133774;
+        Tue, 30 Sep 2025 11:48:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHR75yoXHKLyo204zRVz+mQdvcWMzFHs268w3lCm1SiwqLIybwfgDOJTTuWeF1rAdKiczAlOQ==
+X-Received: by 2002:a05:620a:d8e:b0:815:87ab:37e0 with SMTP id af79cd13be357-873758551c8mr121575285a.53.1759258133235;
+        Tue, 30 Sep 2025 11:48:53 -0700 (PDT)
+Received: from x1.local ([142.188.210.50])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-85c337a1e1csm1083938985a.62.2025.09.30.11.48.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Sep 2025 11:48:52 -0700 (PDT)
+Date: Tue, 30 Sep 2025 14:48:51 -0400
+From: Peter Xu <peterx@redhat.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	Axel Rasmussen <axelrasmussen@google.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	James Houghton <jthoughton@google.com>,
+	Nikita Kalyazin <kalyazin@amazon.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Ujwal Kundur <ujwal.kundur@gmail.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andrea Arcangeli <aarcange@redhat.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Michal Hocko <mhocko@suse.com>, Muchun Song <muchun.song@linux.dev>,
+	Oscar Salvador <osalvador@suse.de>, Hugh Dickins <hughd@google.com>,
+	Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v3 1/4] mm: Introduce vm_uffd_ops API
+Message-ID: <aNwmE11LirPtEuGW@x1.local>
+References: <20250926211650.525109-1-peterx@redhat.com>
+ <20250926211650.525109-2-peterx@redhat.com>
+ <f1da3505-f17f-4829-80c1-696b1d99057d@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH] dt-bindings: usb: switch: split out ports definition
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
- <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Romain Gantois <romain.gantois@bootlin.com>, Li Jun <jun.li@nxp.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Bjorn Andersson <andersson@kernel.org>, Luca Weiss
- <luca.weiss@fairphone.com>, Abel Vesa <abel.vesa@linaro.org>,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org, linux-arm-msm@vger.kernel.org
-References: <20250930-topic-sm8x50-fix-qmp-usb43dp-usb-switch-v1-1-060568de9538@linaro.org>
- <vwlshz5li23xlthn5delxwxdsdci5nc22iey3xih4qf5uhbory@clskdsy64xpx>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <vwlshz5li23xlthn5delxwxdsdci5nc22iey3xih4qf5uhbory@clskdsy64xpx>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <f1da3505-f17f-4829-80c1-696b1d99057d@redhat.com>
 
-On 9/30/25 20:43, Dmitry Baryshkov wrote:
-> On Tue, Sep 30, 2025 at 07:17:21PM +0200, Neil Armstrong wrote:
->> The ports definition currently defined in the usb-switch.yaml
->> fits standards devices which are either recipient of altmode
->> muxing and orientation switching events or an element of the
->> USB Super Speed data lanes.
->>
->> This doesn't necessarely fit combo PHYs like the Qualcomm
->> USB3/DP Combo which has a different ports representation.
->>
->> Move the ports definition to a separate usb-switch-ports.yaml
->> and reference it next to the usb-switch.yaml, except for
->> the Qualcomm USB3/DP Combo PHY bindings.
+On Tue, Sep 30, 2025 at 11:36:53AM +0200, David Hildenbrand wrote:
+> > +/* VMA userfaultfd operations */
+> > +struct vm_uffd_ops {
+> > +	/**
+> > +	 * @uffd_features: features supported in bitmask.
+> > +	 *
+> > +	 * When the ops is defined, the driver must set non-zero features
+> > +	 * to be a subset (or all) of: VM_UFFD_MISSING|WP|MINOR.
+> > +	 *
+> > +	 * NOTE: VM_UFFD_MISSING is still only supported under mm/ so far.
+> > +	 */
+> > +	unsigned long uffd_features;
 > 
-> Isn't it easier to make QMP PHY use $ref for port nodes instead of allOf
-> and keep ports definitions inside the usb-switch schema?
+> This variable name is a bit confusing , because it's all about vma flags,
+> not uffd features. Just reading the variable, I would rather connect it to
+> things like UFFD_FEATURE_WP_UNPOPULATED.
+> 
+> As currently used for VM flags, maybe you should call this
+> 
+> 	unsigned long uffd_vm_flags;
+> 
+> or sth like that.
 
-Rob asked to not do that... see https://lore.kernel.org/all/20250905175533.GA1000951-robh@kernel.org/
+Indeed it's slightly confusing.  However uffd_vm_flags is confusing in
+another way, where it seems to imply some flags similar to vm_flags that is
+prone to change.
 
-Neil
+How about uffd_vm_flags_supported / uffd_modes_supported?
 
 > 
->>
->> Reported-by: Rob Herring <robh@kernel.org>
->> Closes: https://lore.kernel.org/all/175462129176.394940.16810637795278334342.robh@kernel.org/
->> Fixes: 3bad7fe22796 ("dt-bindings: phy: qcom,sc8280xp-qmp-usb43dp: Reference usb-switch.yaml to allow mode-switch")
->> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
->> ---
->>   .../bindings/phy/fsl,imx8mq-usb-phy.yaml           |  4 +-
->>   .../bindings/phy/samsung,usb3-drd-phy.yaml         |  4 +-
->>   .../devicetree/bindings/usb/fcs,fsa4480.yaml       |  1 +
->>   .../devicetree/bindings/usb/gpio-sbu-mux.yaml      |  1 +
->>   .../devicetree/bindings/usb/nxp,ptn36502.yaml      |  1 +
->>   .../devicetree/bindings/usb/onnn,nb7vpq904m.yaml   |  1 +
->>   .../devicetree/bindings/usb/parade,ps8830.yaml     |  1 +
->>   .../bindings/usb/qcom,wcd939x-usbss.yaml           |  1 +
->>   .../devicetree/bindings/usb/ti,tusb1046.yaml       |  1 +
->>   .../devicetree/bindings/usb/usb-switch-ports.yaml  | 68 ++++++++++++++++++++++
->>   .../devicetree/bindings/usb/usb-switch.yaml        | 52 -----------------
->>   11 files changed, 81 insertions(+), 54 deletions(-)
->>
+> I briefly wondered whether we could use actual UFFD_FEATURE_* here, but they
+> are rather unsuited for this case here (e.g., different feature flags for
+> hugetlb support/shmem support etc).
 > 
+> But reading "uffd_ioctls" below, can't we derive the suitable vma flags from
+> the supported ioctls?
+> 
+> _UFFDIO_COPY | _UFDIO_ZEROPAGE -> VM_UFFD_MISSING
+> _UFFDIO_WRITEPROTECT -> VM_UFFD_WP
+> _UFFDIO_CONTINUE -> VM_UFFD_MINOR
+
+Yes we can deduce that, but it'll be unclear then when one stares at a
+bunch of ioctls and cannot easily digest the modes the memory type
+supports.  Here, the modes should be the most straightforward way to
+describe the capability of a memory type.
+
+If hugetlbfs supported ZEROPAGE, then we can deduce the ioctls the other
+way round, and we can drop the uffd_ioctls.  However we need the ioctls now
+for hugetlbfs to make everything generic.
+
+Do you mind I still keep it as-is?  So far that's still the clearest I can
+think of.  It's only set when some support is added to a memory type, so
+it's a one-time shot.
+
+Thanks,
+
+-- 
+Peter Xu
 
 
