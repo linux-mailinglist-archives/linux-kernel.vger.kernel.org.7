@@ -1,108 +1,168 @@
-Return-Path: <linux-kernel+bounces-838119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFCE7BAE7C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 22:00:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EC1FBAE7CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 22:02:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F4E4194308C
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 20:00:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9F4C1925430
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 20:03:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB0192857C2;
-	Tue, 30 Sep 2025 19:59:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39562288C89;
+	Tue, 30 Sep 2025 20:02:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="QaNz4Je2"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lG2h+PbT"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC7F61EE02F
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 19:59:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14E9E285C90
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 20:02:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759262395; cv=none; b=cC1DD5/Vi47W/mCxWSYAapNS7wweI2h0qo6QhcAYR62vqchTZcK9KlmydhxsGGXIGeBqBspGN45o1Ep0fjZiHuNCNKmTlBXHI6Bc9WSJf+htLYuFM2NgdJBMVBsLlfULOFWpUt78wz2nLfKYI1AUISOlUI3NYUlthFPXX95HyGI=
+	t=1759262568; cv=none; b=bc0DCvauXIkvWZBhfNb7qAgoAXm3V/Zcx9N/yXIBk9VakHaZ9CkDnKoVE+9uTeHT6g3RXvRNEJ/vADJc5j3+K9OTkpy1FGYZNtbcVLzMOh2f8w5V4ocwOfmlMU347f+XzM61gX/XyCOoBXFFjD/kzBgdKCZ3u4jKnoTMfj3c26M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759262395; c=relaxed/simple;
-	bh=Hy7YTC353G/i8KcCKTnHdodQD4/ARaG2eoCv6OzYxhw=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=eUiOvQv0RBn5xoUNh8q+Gh/up5GCWNIzGFGZU3lSQ45xG/CU/5InIir1RsTYRDXBvGK4SEp6fY2yerhgWlfLddipdiJ0eiA+2zIigX1zUAIW/uNvbkCmp8SJkSIA/er9zIivdxkxcqekTcUF2pXk+yJguNSy8zNUjLIufWRGQQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=QaNz4Je2; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [IPV6:2601:646:8081:9484:3373:e8bd:aaa4:7c23] ([IPv6:2601:646:8081:9484:3373:e8bd:aaa4:7c23])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 58UJxGxQ388770
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Tue, 30 Sep 2025 12:59:16 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 58UJxGxQ388770
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025092201; t=1759262357;
-	bh=GUDfo0ggb2Kf0OLA6XTPKyaZ5hpYV0SrMLjTdCbuESQ=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=QaNz4Je2UXuQTSWaK4KMZazVcUDgrcjdxPf7vCTlHy0S5KlindalLZY9iSdbN0LPO
-	 dZb78UBGhBI6zN+vsilEaxZSxAvZBA+b2DzFqnhlIs+P7vKdM8tGRUo3+SmH+ShgM7
-	 b4ebKEuKD7ubKHHtEaatmx3ExNblsR56/PR+F2q18PSsag/YCLricKcIsLGhYsD8fm
-	 +3Bi3bmpb/VjsC+tI1oc2MfG6eB2Odcjqkxn6QEL3QbDHW/e4z7LKSf4okznFo2Wwy
-	 Y0OorC4QkeM6DrHa7SK6xfWjFIfjwzCLKSxx7dd3XM+E31C01/RFVTptacurWTbYs0
-	 oHt+fMunsTYzg==
-Message-ID: <2ca6c68f-16a7-402f-adb0-327583695d4a@zytor.com>
-Date: Tue, 30 Sep 2025 12:59:11 -0700
+	s=arc-20240116; t=1759262568; c=relaxed/simple;
+	bh=b4Yne0Qw6q2ZXPRXF3jBjLK4x5kjmQpjIHFFtEPHqCg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=D0vKaxNUnaLG9/MLhBzMTyy6jW+nEn9ibYX15qbJJmvdtJHOO8iMGux56nVebFhAT5nTYpwPXkC8X4qCKozjBC71UJf4tLDOYbv5EilwYbdABbyqyqVimhrizQ+bXWSYakV40fE+Lk5olIQ7lkX9BiRETSCWJFwfSR4G5aUX+Q8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lG2h+PbT; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2731ff54949so1945ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 13:02:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759262566; x=1759867366; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UmjWU3TtlONkR58FzLBdx1M37tT6PGpX+MejoGqz+FU=;
+        b=lG2h+PbTY2rW1yU8QXMS1vUp1yTCefg1cjn2u22OYYFw4tybexeRxSHIyBQoHEQ+5J
+         HaqnH0scvG8EclV6HXa982jiJ76zs8BwccWX++W72FRX0VuBIJm+kEjlWE8xlxrmkgbd
+         8eDz8hQRu6dugaaSQRVcVyd2ZpW6Mz/Nu6vL3WG1Es0+3Uqi09lZWxLYZjL5vW+XZocK
+         Sh3hlWPKXNvM1TQc6RcbDOuoq/TPXD5Y7Kmyl24Q42hjDycsqur1t+SvLsVfBGIZiMkJ
+         CWj0De/gj8Mm4SAp/u6S2Lm1xNvNTRfNbw/5aVazxYSZ6vzybkC+3t7UF6MF3j6dO8GK
+         962A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759262566; x=1759867366;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UmjWU3TtlONkR58FzLBdx1M37tT6PGpX+MejoGqz+FU=;
+        b=cU2AE3Qn3T4Z2EkZb3lj+8DXC8oX+CP+rRKUnwTccxX2KiyFLblzFWPWQG07Qrk6vD
+         jxzFBABPX8MPy3HGYJQkQWbs4CyNgq23Ki3oW4XbVjiELREZWmNRzYhR503bEIm6kNST
+         QBs/jLS3PD9ld/JYBkC3q6vw/l0bqoETuZDbiJ8kEkpWk2mgYmF6cqzBzpDRaddpqv0I
+         hEVXC+Gb4l93MRPrpb+jFY16g09eGCP6ge78SRLSeSG09Mwu/08I3IGBSYttAf9Ppu7S
+         99hxcZvKuLuBDOKV0T6nYgPTtmYTTwxFZPbGeiwUb8ByryPV/q+s86GPzSQiEj+9PpoP
+         yheQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWNRLFLz5LP9gm0gIAxqlO0nxdVgPR56XdEaS9G7v4RWoUIOr89efPrdADcoBz4WpYMOsuuKbPwrKaGnDU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzqznOAu/pq+V/U6lZ7B0sbXvFsGRxYQ6hh4CRQHqqrDEIP7ES
+	ROALrEOKhgojSfECkFVvoZ5Mg+TkEdU/dpzblrwir1mmQ11pyacVaAuhhbMs3bYYnBBc3fZKDRv
+	9ntozGTEtohi8r2nfrhxUgayZ4AeTB697x28L3UPk
+X-Gm-Gg: ASbGnctqkEtD7kADIPwxDqsXQbWGIDwaz11oO2a/2XQ9qaavoEM8Us9a60IcqPzM38p
+	x8QI0apt158k1db9VTzJdjiw5uJCNzGkzzyZUlrg4VOiTtZ6SWR2iH41UGX466XLgqp5B2Y2lqO
+	pyDxzvGDyHuin+1qY8gjcdcTK7vbD0TRQ6OM1weDLYOZoHGCg9+VjQmsnbU4H38n3OWEzEhTD+8
+	rOpbOZgfwbgzwnqFh+nuir2taC6+uhIBr7u3q2d5Dins4wLn4CqdVDJ62hOa3+5jcA=
+X-Google-Smtp-Source: AGHT+IHx+YJ6OoU2Vttd31DlFqYP5qTmJncBxyHWUS5OUKKuJ74sIZfzXDXkPor8ehJoA623CmmYP8vJePvPpHHmT/U=
+X-Received: by 2002:a17:902:ce07:b0:266:b8a2:f5d8 with SMTP id
+ d9443c01a7336-28e80054fc2mr915285ad.14.1759262565821; Tue, 30 Sep 2025
+ 13:02:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 11/12] x86/paravirt: Don't use pv_ops vector for MSR
- access functions
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
-        virtualization@lists.linux.dev, xin@zytor.com,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ajay Kaher <ajay.kaher@broadcom.com>,
-        Alexey Makhalov <alexey.makhalov@broadcom.com>,
-        Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        xen-devel@lists.xenproject.org
-References: <20250930070356.30695-1-jgross@suse.com>
- <20250930070356.30695-12-jgross@suse.com>
- <20250930083827.GI3245006@noisy.programming.kicks-ass.net>
- <1541b670-8b29-42a5-a58d-34d85197751d@suse.com>
- <20250930100404.GK4067720@noisy.programming.kicks-ass.net>
- <fefbd1ee-ab8c-465e-89bf-39cd2601fc60@suse.com>
- <d2c68cbe-2e92-4801-b1a3-af4645e9ba78@zytor.com>
-Content-Language: en-US, sv-SE
-In-Reply-To: <d2c68cbe-2e92-4801-b1a3-af4645e9ba78@zytor.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250928190624.3735830-1-skhawaja@google.com> <20250928190624.3735830-14-skhawaja@google.com>
+ <20250929160034.GG2695987@ziepe.ca> <CA+CK2bDqDz3k0gXamJEbKUL7RPBLVjaA5=Jum=CF84wR+50izA@mail.gmail.com>
+ <20250930135916.GN2695987@ziepe.ca>
+In-Reply-To: <20250930135916.GN2695987@ziepe.ca>
+From: Samiullah Khawaja <skhawaja@google.com>
+Date: Tue, 30 Sep 2025 13:02:31 -0700
+X-Gm-Features: AS18NWDlBEef52YzHXVxaMZeX4cRlUtI0dF5L6bXYHvYPPunK-J_lTtDOKzdu1o
+Message-ID: <CAAywjhRGrGjZK3jQptieVWmdzvjfNtTYrp2ChTZJSmFyrBaRqw@mail.gmail.com>
+Subject: Re: [RFC PATCH 13/15] iommufd: Persist iommu domains for live update
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Pasha Tatashin <pasha.tatashin@soleen.com>, David Woodhouse <dwmw2@infradead.org>, 
+	Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>, 
+	Will Deacon <will@kernel.org>, iommu@lists.linux.dev, YiFei Zhu <zhuyifei@google.com>, 
+	Robin Murphy <robin.murphy@arm.com>, Pratyush Yadav <pratyush@kernel.org>, 
+	Kevin Tian <kevin.tian@intel.com>, linux-kernel@vger.kernel.org, 
+	Saeed Mahameed <saeedm@nvidia.com>, Adithya Jayachandran <ajayachandra@nvidia.com>, 
+	Parav Pandit <parav@nvidia.com>, Leon Romanovsky <leonro@nvidia.com>, William Tu <witu@nvidia.com>, 
+	Vipin Sharma <vipinsh@google.com>, dmatlack@google.com, Chris Li <chrisl@kernel.org>, 
+	praan@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2025-09-30 12:49, H. Peter Anvin wrote:
-> 
-> /* Xen code, stub sets CF = 1 on failure */
-> 
->    0:   e8 xx xx xx xx          call   asm_xen_pv_wrmsr
->    5:   73 03                   jnc    0xa
->    7:   0f 0b                   ud2
->    9:   90                      nop
->    a:
-> 
-> The trap point even ends up in the same place! UD2 can be any 1-, 2-, or
-> 3-byte trapping instruction.
-> 
+On Tue, Sep 30, 2025 at 6:59=E2=80=AFAM Jason Gunthorpe <jgg@ziepe.ca> wrot=
+e:
+>
+> On Tue, Sep 30, 2025 at 09:07:48AM -0400, Pasha Tatashin wrote:
+> > On Mon, Sep 29, 2025 at 12:00=E2=80=AFPM Jason Gunthorpe <jgg@ziepe.ca>=
+ wrote:
+> > >
+> > > On Sun, Sep 28, 2025 at 07:06:21PM +0000, Samiullah Khawaja wrote:
+> > > > +static int iommufd_save_ioas(struct iommufd_ctx *ictx,
+> > > > +                          struct iommufd_lu *iommufd_lu)
+> > > > +{
+> > > > +     struct iommufd_hwpt_paging *hwpt_paging;
+> > > > +     struct iommufd_ioas *ioas =3D NULL;
+> > > > +     struct iommufd_object *obj;
+> > > > +     unsigned long index;
+> > > > +     int rc;
+> > > > +
+> > > > +     /* Iterate each ioas. */
+> > > > +     xa_for_each(&ictx->objects, index, obj) {
+> > > > +             if (obj->type !=3D IOMMUFD_OBJ_IOAS)
+> > > > +                     continue;
+> > >
+> > > Wrong locking
+> > >
+> > > > +
+> > > > +             ioas =3D (struct iommufd_ioas *)obj;
+> > > > +             mutex_lock(&ioas->mutex);
+> > > > +
+> > > > +             /*
+> > > > +              * TODO: Iterate over each device of this iommufd and=
+ only save
+> > > > +              * hwpt/domain if the device is persisted.
+> > > > +              */
+> > > > +             list_for_each_entry(hwpt_paging, &ioas->hwpt_list, hw=
+pt_item) {
+> > > > +                     if (!hwpt_paging->common.domain)
+> > > > +                             continue;
+> > >
+> > > I don't think this should be automatic. The user should directly
+> > > serialize/unserialize HWPTs by ID.
+> >
+> > Why not?  Live Updated uAPI is handled through FDs, and both iommufd
+> > and vfiofd have to be preserved; I assume we can automatically
+> > determine the hwpt to be preserved through dependencies. Why would we
+> > delegate this to the user?
+>
+> There are HWPTs outside the IOAS so it is inconsisent.
 
-You can, of course, also simply have a conditional jump, at the expense of
-making the whole alternative block one byte longer:
+This makes sense. But if I understand correctly a HWPT should be
+associated one way or another to a preserved device or IOAS. Also the
+nested ones will have parent HWPT. Can we not look at the dependencies
+here and find the HWPTs that need to preserved.
+>
+> We are not going to reconstruct the IOAS.
+>
+> The IDR ids of the HWPT may not be available on restore (we cannot
+> make this ABI), so without userspace expressly labeling them and
+> recovering the new IDR ids it doesn't work.
+>
+> Finally we expect to discard the preserved HWPTs and replace them we
+> rebuilt ones at least as a first step. Userspace needs to sequence all
+> of this..
 
-  0:   e8 xx xx xx xx          call   asm_xen_pv_wrmsr
-  5:   0f 82 xx xx xx xx       jc     wrmsr_failed
-
-	-hpa
-
+But if we discard the old HWPTs and replace them with the new ones, we
+shouldn't need labeling of the old HWPTs? We would definitely need to
+sequence the replacement and discard of the old ones, but that can
+also be inferred through the dependencies between the new HWPTs?
+>
+> Jason
 
