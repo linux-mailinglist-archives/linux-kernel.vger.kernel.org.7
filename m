@@ -1,106 +1,158 @@
-Return-Path: <linux-kernel+bounces-838180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3836BAE9BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 23:23:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27E83BAE9F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 23:28:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 756271C820F
-	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 21:23:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2EA467A385B
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 21:27:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B076D29D270;
-	Tue, 30 Sep 2025 21:23:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D83272BD587;
+	Tue, 30 Sep 2025 21:28:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EY2uxdcY"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VaW57o7S"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D564246332
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 21:23:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8E5629D297
+	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 21:28:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759267417; cv=none; b=e8ipL8CrcN3j3YCAR0eWScdyf8VcxFDf42gtfdfddu8ynzbizMTEbNDa98UPOwSo/AsawjVXcMt/eIuYJ4/M6zuD9nlVtiyOmbwqhjCIDaaCCMx1suzhFedis6a2bpJC6JVYZByI3jcZWcRjj91WlUJTKq5nqwGqEcGh4asN7mY=
+	t=1759267728; cv=none; b=bWHiAU4lasFBNhG5yUESfAS5fQfbB54FzdBUvwJsLMPHNyQvvPR+o2vzyzfMiAwxvxmgMV0ZEgWDzZcrMQn0lMYNq1DUGrXJ8mMPlqr9jnalodR4FX7nKsqgNKVS4YPuwkrc62PB/M63MkNRWm9D7FO0p+DXx55mfPMKHb/PhCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759267417; c=relaxed/simple;
-	bh=UJ0qhsXY1FCMn4xw0TLSCTC+6x+RYKDjyn73bGI8LJ8=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=oBKgHRKa88GgOKUyxCCRy/QH1KtSwouojHMU7gsbiX6Mt+1EWsUrKmmaoj5FrnARJePb42hqqF696Gkm/hHago8kmqKAmg3JH6HgJzwxzuwHsEtuvwF4qmdv4GqXzstd62kDX477fJSln0pjYDscv0j+aA9zZoVo5etnfihAlt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EY2uxdcY; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-4060b4b1200so5667491f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 14:23:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759267414; x=1759872214; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:content-language:to:subject:from
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UJ0qhsXY1FCMn4xw0TLSCTC+6x+RYKDjyn73bGI8LJ8=;
-        b=EY2uxdcYO5n948b32QVqe21iwIKMLoARfZCX54/dTikr37DMtgcQK4Zq3hwhktFT4v
-         JU3aLNzG0D4YFbdrS8fJFdeEDk7FbDiCPG0ZhCLm6L20LXQGLccA2rDPxZ7nB/1GvfIq
-         nHz7qcfculcfQldf62Q0pxvdR9QdriW0aw3v5W4onkCxyj/aJajhR4T/hFvc23hkstg7
-         AJHa7Fd9k9N/Ovli550n+0a61Crxm9gOAmBu8Eweg9skOa/muHlnPTU8XUIRwmesyj1j
-         LrZX0TB3Opdwc1HZ2wwnEhUlneUiH0VzTxvS4OIquj/5sZTKQUyyA+zioXN77pRDUMyH
-         CPmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759267414; x=1759872214;
-        h=content-transfer-encoding:cc:content-language:to:subject:from
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=UJ0qhsXY1FCMn4xw0TLSCTC+6x+RYKDjyn73bGI8LJ8=;
-        b=WGG2OxdDQIjzIsNqUx6orPCAsVEJfiRvD+LE1SrpixdS+NBS90Zdn9qe2DxQELSO9K
-         sK6A7pPVQftTj/zn+U7EW2gnuMlwuphehfZCt50JWku52RXeiyIV1OMTPQ+nS+Q89Yg8
-         x2RUWkwzKD05mvvpWZYzd1NmXEu9ElxF8jMy3Axi4ceXMb5T4+fCkQFjbwMUIaR6xE3C
-         u32ydxnxlGfg6BF30QqaRbBKW209Id4fKhrFti5lZHdrbpCVhNOwHcLhtRstW1fTvrw+
-         sSpQOvWx4DxaU+Feq9I+eDp8yhKT1nODaowTXcrWMY4jN/ZO9hfK809yQf28mhZd1zdT
-         8AGQ==
-X-Gm-Message-State: AOJu0Yx35u0aYh2vqJ4BKcSKoO/IsyPTvHwb5XNcdTzaw4SedBxGvB9I
-	SzkBmA2x3klInFD7L79d3WKf4coyaGSPV97dLPNfs7lTYDRKNr6/7nghqfB/AVxv
-X-Gm-Gg: ASbGnctOrLJqG/wrh5ism70h3oC+plhQdl6e3mSQ2S4i968+W7gzBjdtN3lFPnr71f+
-	5MX8omcwpwCLBPBSi5huyYKlz+Y3Awt5xL7eCP943J+5OyXlzGHJzjDmUPqtWACvadeEuoNEEeI
-	1Q7i2YfVhn3k6gzfkFlAx3eiXbkkafRpiLiyUf2/vyBm67h4ZVCFjN3aOfD6Kp5bDfqpx6MjBjV
-	Wuh7Eb3yxCDw7lFzeFLKJlvGfNqG1KsK9i/VIRlHRGVNYaGPx88T6z6alF41DMA8JHA8qf2eWNB
-	xVp+KiILz9Qx6WWOJfDxc+54RFTTot5SWkVMlFJnu5RoTJmKcEWogGwNUhcRKhkNF7NzM8ZiGdp
-	oI76MX1uACNR8oPjbfHdtcVtF/whTAoJdBHAmAWRoC4uRRfF2kqmswUca8snQ
-X-Google-Smtp-Source: AGHT+IGm9KqlaWCEmtfcvTCYEb280Bi19ayiyfpWLQ+s8WQa3dTO66HwawV404mNLijDSR1im2xP9A==
-X-Received: by 2002:a05:6000:2203:b0:3d1:c805:81e with SMTP id ffacd0b85a97d-425577edc8emr736033f8f.4.1759267413616;
-        Tue, 30 Sep 2025 14:23:33 -0700 (PDT)
-Received: from [192.168.1.121] ([176.206.100.218])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fc5602dc2sm24030865f8f.32.2025.09.30.14.23.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Sep 2025 14:23:33 -0700 (PDT)
-Message-ID: <8128cd6b-50e3-464c-90c2-781f61c3963e@gmail.com>
-Date: Tue, 30 Sep 2025 23:23:32 +0200
+	s=arc-20240116; t=1759267728; c=relaxed/simple;
+	bh=zfIdBcB/dpjzaEpep4X7eK5CAcnmsMfVWj/01hovLLc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kQ+83+3/63LH7IzKbHR0VKp+DXO7B7LApWgAqsqPSUlYiHBoNP8FjLu2kwpB6tpVya3471BqOQ027xfPuIDsdZa8VFZiLaBSnPE05I+nO1mqgJ9SUNIkV7XNZ4VtDSVANO8Y+NKwmUNESWA5P4evY9zUBUAy2FTe6Bgcp+y1txw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VaW57o7S; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759267727; x=1790803727;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=zfIdBcB/dpjzaEpep4X7eK5CAcnmsMfVWj/01hovLLc=;
+  b=VaW57o7SXfNVlh/Q/078kmrKTwGnSD+OQTpgjZsv81O4H40HmvGhAADz
+   OV+HX7mN/o041HsUqqxm989Q71bRbLj9zF/fubx0UG1YxoHsTiRjkaq0n
+   dURj9lp8OoZIZaKD892XpB6oQfYhpUML/44NB1LKce+pFxUC/2lrWrR06
+   Yk254IBbrnkTbxRSDqVTq48T4IxCw9uUCZSXexK0bGuTTOeL/RPsBkrgb
+   KVgx/SNM+VD0WVMIutDBcuF9hGYk1FvWU/XsSbTD5ID3JCdAeIwo4ovXH
+   1sAx/Yb2ssY5DyoqCbNZiujEQppPe7JZPe13DuGQWkyXQCDhR1/tsUxWf
+   w==;
+X-CSE-ConnectionGUID: 6G2rGvAHSFO3AJUiKdNPzg==
+X-CSE-MsgGUID: 1uR1WKe2TiCM8i87A1EGgQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11569"; a="61702275"
+X-IronPort-AV: E=Sophos;i="6.18,305,1751266800"; 
+   d="scan'208";a="61702275"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2025 14:28:47 -0700
+X-CSE-ConnectionGUID: q10CyoJ6SJ+/5NU0nmLg9A==
+X-CSE-MsgGUID: 8gjwNvBERwyFySIzgmzpQg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,305,1751266800"; 
+   d="scan'208";a="182917958"
+Received: from lkp-server01.sh.intel.com (HELO 2f2a1232a4e4) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 30 Sep 2025 14:28:42 -0700
+Received: from kbuild by 2f2a1232a4e4 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v3htn-0002Ul-2E;
+	Tue, 30 Sep 2025 21:28:39 +0000
+Date: Wed, 1 Oct 2025 05:27:40 +0800
+From: kernel test robot <lkp@intel.com>
+To: Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
+	x86@kernel.org, virtualization@lists.linux.dev
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, xin@zytor.com,
+	Juergen Gross <jgross@suse.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Ajay Kaher <ajay.kaher@broadcom.com>,
+	Alexey Makhalov <alexey.makhalov@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	xen-devel@lists.xenproject.org
+Subject: Re: [PATCH v2 11/12] x86/paravirt: Don't use pv_ops vector for MSR
+ access functions
+Message-ID: <202510010555.InsgYDTd-lkp@intel.com>
+References: <20250930070356.30695-12-jgross@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Denis Benato <benato.denis96@gmail.com>
-Subject: New co-maintainer for ASUS driver
-To: linux-kernel@vger.kernel.org
-Content-Language: en-US, it-IT, en-US-large
-Cc: platform-driver-x86@vger.kernel.org, "Luke D . Jones" <luke@ljones.dev>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Hans de Goede <hdegoede@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250930070356.30695-12-jgross@suse.com>
 
-Hello,
+Hi Juergen,
 
-I am Denis Benato and I have been asked by my friend and person I estimate Luke to help him in his asus support effort and I gladly accepted.
+kernel test robot noticed the following build errors:
 
-As a first step I have refined his asus-armoury as requested and resent it upsteam [1].
+[auto build test ERROR on tip/x86/core]
+[also build test ERROR on linus/master v6.17]
+[cannot apply to kvm/queue kvm/next tip/master kvm/linux-next tip/auto-latest next-20250929]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-With quite a few more work on the horizon for me, like the hid-ally driver, adding more models to the asus-armoury driver and working on the xg mobile interface I want to ask what's the best thing for me (and everybody) going forward?
-Should I be added as a driver maintainer? Please, advice me on what to do next.
+url:    https://github.com/intel-lab-lkp/linux/commits/Juergen-Gross/coco-tdx-Rename-MSR-access-helpers/20250930-150753
+base:   tip/x86/core
+patch link:    https://lore.kernel.org/r/20250930070356.30695-12-jgross%40suse.com
+patch subject: [PATCH v2 11/12] x86/paravirt: Don't use pv_ops vector for MSR access functions
+config: x86_64-buildonly-randconfig-001-20251001 (https://download.01.org/0day-ci/archive/20251001/202510010555.InsgYDTd-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251001/202510010555.InsgYDTd-lkp@intel.com/reproduce)
 
-Thanks for your time and understanding,
-Denis Benato
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510010555.InsgYDTd-lkp@intel.com/
 
-[1] https://lore.kernel.org/all/20250813165620.1131127-1-benato.denis96@gmail.com/
+All errors (new ones prefixed by >>):
 
+   In file included from arch/x86/kernel/asm-offsets.c:9:
+   In file included from include/linux/crypto.h:18:
+   In file included from include/linux/slab.h:16:
+   In file included from include/linux/gfp.h:7:
+   In file included from include/linux/mmzone.h:22:
+   In file included from include/linux/mm_types.h:16:
+   In file included from include/linux/uprobes.h:18:
+   In file included from include/linux/timer.h:6:
+   In file included from include/linux/ktime.h:25:
+   In file included from include/linux/jiffies.h:10:
+   In file included from include/linux/time.h:60:
+   In file included from include/linux/time32.h:13:
+   In file included from include/linux/timex.h:67:
+   In file included from arch/x86/include/asm/timex.h:6:
+   In file included from arch/x86/include/asm/tsc.h:11:
+>> arch/x86/include/asm/msr.h:327:10: fatal error: 'asm/xen/msr.h' file not found
+     327 | #include <asm/xen/msr.h>
+         |          ^~~~~~~~~~~~~~~
+   1 error generated.
+   make[3]: *** [scripts/Makefile.build:182: arch/x86/kernel/asm-offsets.s] Error 1 shuffle=3471495288
+   make[3]: Target 'prepare' not remade because of errors.
+   make[2]: *** [Makefile:1282: prepare0] Error 2 shuffle=3471495288
+   make[2]: Target 'prepare' not remade because of errors.
+   make[1]: *** [Makefile:248: __sub-make] Error 2 shuffle=3471495288
+   make[1]: Target 'prepare' not remade because of errors.
+   make: *** [Makefile:248: __sub-make] Error 2 shuffle=3471495288
+   make: Target 'prepare' not remade because of errors.
+
+
+vim +327 arch/x86/include/asm/msr.h
+
+   325	
+   326	#ifdef CONFIG_XEN_PV
+ > 327	#include <asm/xen/msr.h>
+   328	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
