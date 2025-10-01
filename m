@@ -1,134 +1,157 @@
-Return-Path: <linux-kernel+bounces-839308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 756D5BB14FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 19:00:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE4C7BB150D
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 19:03:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4E7119235E7
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 17:01:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB8E01617FB
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 17:03:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD48C2D1F69;
-	Wed,  1 Oct 2025 17:00:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 446B32D29A9;
+	Wed,  1 Oct 2025 17:03:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="I3m0RJFl"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kEP+VV+4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D3CB262A6
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 17:00:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80FA926D4C2;
+	Wed,  1 Oct 2025 17:03:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759338045; cv=none; b=H1tbILR1JA+En0dVZrId5OM4uvEFmmBN4YmjQ7S5P/2aKCd0wNWzUmnINnKx24ZIm0/u1t3oV0JFl3gz7BMNwe0B9em413szrxBghXd1Q6h/f6WlAOTQj80VAilh5gWK3YBLO1yceLs9GqOdVBlsG7kDyAL2SvKCLiNNgeu+vCM=
+	t=1759338223; cv=none; b=I+P1c3EmG9J4CenT+j0vl7iudgaLUWMl2+nzzt4Z9wGjPsB0J6VgrwqsQ+iB4rQTTkJZZRXGQtrIQfD4NU86iPTcN7n5hDuGahu796RBH+xnvvWkjevwQweLhZZkBKdUGnKfrj0TnQ3YVwyVJOwXaSntfusXDnpw8V2VQU/yheo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759338045; c=relaxed/simple;
-	bh=aX12YDPy0rZ1fc/73NvRXtwlL/Vidfv7E1aLrUYFoUE=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fL7K0Hda5Igb2PzEXPHhJjCnrhiTOKwQz7SwHaubJhusDRcBmRGlfBZ+04YnmaX/em8v6UIht3a+qSTH/ulot5dcerR4h91KQml33V5i7eTKpbKWsYZmDSUjFvMFSySEmfnThyvqq7bqQldb5cRz4p0XxOe3FcBfJ77Dj2GdWHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=I3m0RJFl; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 591H0bIt2711958;
-	Wed, 1 Oct 2025 12:00:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1759338037;
-	bh=ZEODEvpZ+kS569dNngWKxPn7Rdv1MvJZa+IDSy7FiTA=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=I3m0RJFlD4f93M3FuwSB2x20oHw/qeSywDKnYQsGnaP3y4bNteFM+noUb1+nCB20P
-	 P0j+alxQNzJDMKH8H1a/lCv9zjyehoceSAoAViHVwntKWl2uCn6CZW18N7B4JWi8/W
-	 /7VmsuJC667Zw62FaLxoTbw2fQiu89I5owD7hxRo=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 591H0bZg3004851
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Wed, 1 Oct 2025 12:00:37 -0500
-Received: from DLEE215.ent.ti.com (157.170.170.118) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 1
- Oct 2025 12:00:36 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE215.ent.ti.com
- (157.170.170.118) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Wed, 1 Oct 2025 12:00:36 -0500
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 591H0a5v612566;
-	Wed, 1 Oct 2025 12:00:36 -0500
-Date: Wed, 1 Oct 2025 12:00:36 -0500
-From: Nishanth Menon <nm@ti.com>
-To: "Markus Schneider-Pargmann (TI.com)" <msp@baylibre.com>
-CC: Tero Kristo <kristo@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>,
-        Vishal Mahaveer <vishalm@ti.com>, Kevin Hilman <khilman@baylibre.com>,
-        Dhruva
- Gole <d-gole@ti.com>, Sebin Francis <sebin.francis@ti.com>,
-        Kendall Willis
-	<k-willis@ti.com>, Akashdeep Kaur <a-kaur@ti.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v8 0/3] firmware: ti_sci: Partial-IO support
-Message-ID: <20251001170036.favd5zaieknywcch@amendable>
-References: <20251001-topic-am62-partialio-v6-12-b4-v8-0-76a742605110@baylibre.com>
+	s=arc-20240116; t=1759338223; c=relaxed/simple;
+	bh=nPII5ruhsWVBCkggNl2oDGdpF0mKUlLC73uy3QpGtkU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZuDn+dnme3u0beFvW6K/3k8CliRR0/GIgzJvfMPpEzXPMa3XoOILLNj94tQvEOHei3IZtfF72cic2kuO55YMqI22of5lCJZ36KfqXPYSTC6A2kHUDZxSDoUkjAUL99ftnX+pwQ8bB4rhr4UOXtf/d/9w2KFjLOhNzrvuBGnIeEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kEP+VV+4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77717C4CEF1;
+	Wed,  1 Oct 2025 17:03:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759338223;
+	bh=nPII5ruhsWVBCkggNl2oDGdpF0mKUlLC73uy3QpGtkU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=kEP+VV+4TBzxm4OMZWFfSsc5CVuBWXvI9fszuNkZ4BUB4cpzcrvW7u9noZImnFhzE
+	 5tK+GRgMhGPaZRRIOn3g3LZIQuN0BJNQhNV+5d/Le+YMpkcrnsgR9ZmT9J+vhiqbbt
+	 IElVkRbmV3YBN1OMdqVRp+CFif1P+MSkcGlHJFT6i/0T2RUo1vw9P/EuiZWdp6EVaq
+	 Kir6WP0GMSLWmfI4zRmIHazGov/akYoLj/pPnspKLur3zutc9sRuemk8A0NEIq4Biu
+	 vbIdJlzZr+ZvltidQ68yTmf/ZcQeeupD5xxaCYF2zuW8fjpwG74xTygboA09+ZaZ50
+	 bC0G+AzzjGVcg==
+Message-ID: <dbee61be-4e1c-4f58-ae20-32447b6767fd@kernel.org>
+Date: Wed, 1 Oct 2025 12:03:40 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20251001-topic-am62-partialio-v6-12-b4-v8-0-76a742605110@baylibre.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 6/8] cpufreq: CPPC: Add sysfs for min/max_perf and
+ perf_limited
+To: linux-doc@vger.kernel.org, corbet@lwn.net,
+ Randy Dunlap <rdunlap@infradead.org>
+Cc: linux-tegra@vger.kernel.org, treding@nvidia.com, jonathanh@nvidia.com,
+ vsethi@nvidia.com, ksitaraman@nvidia.com, sanjayc@nvidia.com,
+ bbasu@nvidia.com, Sumit Gupta <sumitg@nvidia.com>, rafael@kernel.org,
+ viresh.kumar@linaro.org, lenb@kernel.org, robert.moore@intel.com,
+ pierre.gondois@arm.com, zhenglifeng1@huawei.com, ray.huang@amd.com,
+ gautham.shenoy@amd.com, perry.yuan@amd.com, linux-pm@vger.kernel.org,
+ linux-acpi@vger.kernel.org, linux-doc@vger.kernel.org,
+ acpica-devel@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20251001150104.1275188-1-sumitg@nvidia.com>
+ <20251001150104.1275188-7-sumitg@nvidia.com>
+Content-Language: en-US
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <20251001150104.1275188-7-sumitg@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 16:37-20251001, Markus Schneider-Pargmann (TI.com) wrote:
-> Hi,
-> 
-> This series adds support for Partial-IO to the ti-sci driver,
-> implementing the firmware interface necessary to enter this low power
-> state. It processes the wakeup-source properties from the devicetree and
-> communicates with the system firmware to enter Partial-IO mode when
-> appropriate wakeup sources are enabled.
-> 
-> Partial-IO Overview
-> ------------------
-> Partial-IO is a low power system state in which nearly everything is
-> turned off except the pins of the CANUART group (mcu_mcan0, mcu_mcan1,
-> wkup_uart0 and mcu_uart0). These devices can trigger a wakeup of the
-> system on pin activity. Note that this does not resume the system as the
-> DDR is off as well. So this state can be considered a power-off state
-> with wakeup capabilities.
-> 
-> A documentation can also be found in section 6.2.4 in the TRM:
->   https://www.ti.com/lit/pdf/spruiv7
-> 
-> Implementation Details
-> ----------------------
-> The complete Partial-IO feature requires three coordinated series, each
-> handling a different aspect of the implementation:
-> 
-> 1. m_can driver series: Implements device-specific wakeup functionality
->    for m_can devices, allowing them to be set as wakeup sources.
->    https://gitlab.baylibre.com/msp8/linux/-/tree/topic/mcan-wakeup-source/v6.17?ref_type=heads
->    https://lore.kernel.org/r/20250812-topic-mcan-wakeup-source-v6-12-v8-0-6972a810d63b@baylibre.com
-> 
-> 2. Devicetree series: Defines system states and wakeup sources in the
->    devicetree for am62, am62a and am62p.
->    https://gitlab.baylibre.com/msp8/linux/-/tree/topic/am62-dt-partialio/v6.17?ref_type=heads
->    https://lore.kernel.org/r/20250812-topic-am62-dt-partialio-v6-15-v2-0-25352364a0ac@baylibre.com
-> 
-> 3. This series (TI-SCI firmware): Implements the firmware interface to
->    enter Partial-IO mode when appropriate wakeup sources are enabled.
++linux-doc
 
-If this is the order of dependencies, I guess the series has to wait
-till CAN driver changes are merged? did I get that right?
+On 10/1/25 10:01 AM, Sumit Gupta wrote:
+> Add sysfs interfaces for Minimum Performance, Maximum Performance
+> and Performance Limited Register in the cppc_cpufreq driver.
+> 
+> Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+> ---
+>   .../ABI/testing/sysfs-devices-system-cpu      | 43 +++++++++++++++++++
+>   1 file changed, 43 insertions(+)
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-devices-system-cpu b/Documentation/ABI/testing/sysfs-devices-system-cpu
+> index ab8cd337f43a..82141b45d58c 100644
+> --- a/Documentation/ABI/testing/sysfs-devices-system-cpu
+> +++ b/Documentation/ABI/testing/sysfs-devices-system-cpu
+> @@ -327,6 +327,49 @@ Description:	Energy performance preference
+>   
+>   		This file is only present if the cppc-cpufreq driver is in use.
+>   
+> +What:		/sys/devices/system/cpu/cpuX/cpufreq/min_perf
+> +Date:		September 2025
 
-Also surprised that the DT series is second in the dependency.. usually
-dts changes occur the last. but anyways..
+These dates will need to push out since this isn't 6.17 material.
 
-[...]
+That being said I have a general question to linux-doc.
 
--- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
-https://ti.com/opensource
+Why is this is date based?  I would expect a date is meaningless to 
+anyone reads this documentation.  People who want to know if an 
+interface is available would normally look at their kernel version to tell.
+
+So wouldn't it make more sense for this field to be something like:
+
+Version: 6.19
+
+> +Contact:	linux-pm@vger.kernel.org
+> +Description:	Minimum Performance
+> +
+> +		Read/write a 32 bits value from/to this file. This file
+> +		conveys the minimum performance level at which the platform
+> +		may run. Minimum performance may be set to any performance
+> +		value in the range [Lowest Performance, Highest Performance],
+
+How will a user discover the lowest -> highest range?
+
+IE I think you should document how to lookup those caps too.
+
+> +		inclusive but must be set to a value that is less than or
+> +		equal to that specified by the Maximum Performance Register.
+> +
+> +		Writing to this file only has meaning when Autonomous Selection
+> +		is enabled.
+> +
+> +		This file is only present if the cppc-cpufreq driver is in use.
+> +
+> +What:		/sys/devices/system/cpu/cpuX/cpufreq/max_perf
+> +Date:		September 2025
+> +Contact:	linux-pm@vger.kernel.org
+> +Description:	Minimum Performance
+> +
+> +		Read/write a 32 bits value from/to this file. This file conveys
+> +		the maximum performance level at which the platform may run.
+> +		Maximum performance may be set to any performance value in the
+> +		range [Lowest Performance, Highest Performance], inclusive.
+> +
+> +		Writing to this file only has meaning when Autonomous Selection is
+> +		enabled.
+> +
+> +		This file is only present if the cppc-cpufreq driver is in use.
+> +
+> +What:		/sys/devices/system/cpu/cpuX/cpufreq/perf_limited
+> +Date:		September 2025
+> +Contact:	linux-pm@vger.kernel.org
+> +Description:	Minimum Performance
+> +
+> +		Read/write a 32 bits value from/to this file. This file indicates
+> +		to OSPM that an unpredictable event has limited processor
+> +		performance, and the delivered performance may be less than
+> +		desired/minimum performance.
+> +
+> +		This file is only present if the cppc-cpufreq driver is in use.
+>   
+>   What:		/sys/devices/system/cpu/cpu*/cache/index3/cache_disable_{0,1}
+>   Date:		August 2008
+
 
