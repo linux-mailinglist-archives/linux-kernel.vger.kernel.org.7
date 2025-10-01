@@ -1,118 +1,168 @@
-Return-Path: <linux-kernel+bounces-839414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E332DBB1944
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 21:18:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2625BB1956
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 21:24:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53ADA1926E1F
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 19:19:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AFD827A5523
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 19:22:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E5DE2D8781;
-	Wed,  1 Oct 2025 19:18:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EC542C159D;
+	Wed,  1 Oct 2025 19:24:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="hvpmYxh0"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WixW4Pd3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 866352E54B2
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 19:18:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EC3A258EDF
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 19:24:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759346316; cv=none; b=meXxTDQ7EW/FuKZ+uQL95cnwEfuNC6yZpqlivEJiAtxGsvJ8R7x63LAi79H0bhiiw6k32gPqTGAVjxp8k1eo3xLEtEPcxnK5Yv8T9RHz05uCwq+R8ZD9Y6uNcUdBzgGl/5i6tH3dcOOvrL8EgUnIvPOOOxi72Ez2/agle8HchkA=
+	t=1759346667; cv=none; b=VbX+0itYopo4Mlmw1IRmoRBtclrOyU90CsYmyz75iIzWA5DLdzIxuKBHGPOdf2Evda6U36yVeUyGu2pfgqQGpdo1XeNH1MB/ID4YlUXyy5ruLXu6FapfSqRvH3Uhwd9zx2cOaE5UYM63Tey/5aBW1dnl1/FmZybQuVGvHcwxDZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759346316; c=relaxed/simple;
-	bh=duPcS0wfMeB+YtIDMwyoth5EHINr1H5VM9YOTBe0lDg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EEb76zTXIqe+aYjp2ROWVHUryw48ayAgZmVS6QIUBPwy+nj0ZWConxrSUVGT09iAwyDqEtyMzNoOAkjdIOCRD8YJ4Xf5toy+GB4OD7PEb7XogRIx9VdB4X62UST7Tp8kH4eyy7UWm4NXCoB0VeUKYrY+rWPb5ZxzqOnJthRu6SY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=hvpmYxh0; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-36a448c8aa2so1638081fa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 12:18:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1759346313; x=1759951113; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ika2EwTLbPs/hB14my45j17pHFrdQm4poatSi0eQJhA=;
-        b=hvpmYxh0u7SqMc63OqX5wEXGXQQWEIOhgyt9KqsanJ6K1yzlgZ/p8ynsJ+4o5d0Q0Y
-         //X3ZqRUJqyPhAg9TE1fHUr0X5PIOCBjFNbCXlTO6zrnxbLo/RK/BUCkBYrUZ6pvsx40
-         H52oU/JFQQFF65ciQeYSK3xlMEq8md1x39OzojEgoju/trJ7Ut+HHJDIPhIIprKy1Sd9
-         Q+GpA4USAAIxVjqqOS7h/ajPmFdkenCm4jNqqRKh4vzAm5nHd4yciXsanLyp4AeizNKj
-         Rlb/VG41Ff7rkm9dBUdTBzGEeqIZNVjrabba107YFBde8Snt/BZ7ZnsAAYocg6SuoIDq
-         Zv8w==
+	s=arc-20240116; t=1759346667; c=relaxed/simple;
+	bh=nRC46xEODH80MnbSgfC/kuQIrvaHgrZgSGpEKmC0rFQ=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=IlarJYwkKRkcWxaRkWtfdo9V79eRTSksnCm96q0YiblUA6B5Xxtlbv6bo1R7pWBzzs6FaSUp7BdZvnVVsm/C2YMKrFZGnSDuxj2U7sWn8g/3oQuERlPKBhZtxx3vkvK2u2aRkPkRDnQswOdMUHAnXCgy/lxoeAkdIKdY/2yqBNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WixW4Pd3; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759346665;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=It1UT3kjVaVEvGMYUZZVYUbJfdXTOcvLkqZghBBkKwY=;
+	b=WixW4Pd3aHrvtf3JwytdBQOpWyg4zk27SCs5nC+WfQ13ST5r1kP0OonKkrwmxoRiDXfhgD
+	4Ke0b1Uufu3BNmOH1BgOlihVkmS/2rzdGTJyfVMXeQcJsgdp23ZH5XO1PBRZZHNOiWu/Fi
+	BFlx3JNj3oGPy81wX9LhyUKxDys6QgM=
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
+ [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-193-paE5DzyjPzKWNV-iONUXlQ-1; Wed, 01 Oct 2025 15:24:23 -0400
+X-MC-Unique: paE5DzyjPzKWNV-iONUXlQ-1
+X-Mimecast-MFC-AGG-ID: paE5DzyjPzKWNV-iONUXlQ_1759346663
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-79538b281cdso3418686d6.0
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 12:24:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759346313; x=1759951113;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ika2EwTLbPs/hB14my45j17pHFrdQm4poatSi0eQJhA=;
-        b=tkm515TC4FZ4F131bn5tJPGHzk0nCH6cEq8t3nkbKxJs9Eg1fMYv0SJqxZoLEvUAYV
-         TZuORrstZKI4/2RsO5BoH/jRwNA04EoF7m+t3D8gCEjcInACoXLz2soaCqgaf/+s6KZc
-         CmuCjPX4onnN6Z1a+PR8OKuE0tbAK+6DpsutVIExgex9+GVFebQCwWIGdEB3Nv+JXKYw
-         9dtXGcu4HyXG3ke7lmKSbFJIqzgiy/GqLlRuBcT5XsblvRtg1iGkRpNZ140zlvy3V2O3
-         YdfQydsjlC5QSR1lrBoWh4gVPj2CtMG01TfcA7zjLe4dNn9FXK2JkXDE9RUeWjtmZuSj
-         DF6w==
-X-Forwarded-Encrypted: i=1; AJvYcCX2mDaVEmi5kTkDNgl8Nyvufm15u9XrlCt/pGhxQPr2Vdfb6UxMCSo2GQgoHxhuBWCbDRX+rbIddgjR7XQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVkVohk54DuEwNWCEfGDLOi6O7UffuL7FslcOD5uhc5IszZG4o
-	Hh0YN/AsDqx3MFQ+WzXfG3PbCeKHntnrsGpdoesmKf3Z4Lv1Z3EOkfH15s51lwtQxiqHtHkY9n5
-	trem+wTGxMQvZj1t6wiD6osP1SbeFcaGdXgabt1JNuQ==
-X-Gm-Gg: ASbGnctki5ovMt4tx3/M3WGA7KjFNbaBStiLVMCTcvUKc20z+zXy7Gxc4VOK/aRweJD
-	CbTEEBo36GGzaudJXte1Z/xt8WdIelhzIxDMTrkUQUHtDbJhvHuLqVU/PlSGuRtvvu3aYj9CmbK
-	7HbDrzam0C7jsd/2SsS124vCyGRTjg5ELt+2Nb3vttB83tufM7BM+M/WtASKr+3I6YWETGOUH2K
-	marE+WVkwH3wjDYw6+b3aU1hI9dkJ+qq68VhKoICswnhSGA+ri2ue/0eqbAivc6zMZgYKND/A==
-X-Google-Smtp-Source: AGHT+IHdKtzst+020FzI9gZfNJFk/Y8mES72dcb0M1Lunet0OYSDf8iqU3erDstle92eJI6mXzgIdHwjDya8pxKfaCQ=
-X-Received: by 2002:a05:651c:548:b0:373:a5ad:639 with SMTP id
- 38308e7fff4ca-373a70e3f74mr12786451fa.8.1759346312603; Wed, 01 Oct 2025
- 12:18:32 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759346663; x=1759951463;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=It1UT3kjVaVEvGMYUZZVYUbJfdXTOcvLkqZghBBkKwY=;
+        b=pkWJ6vKztyn6q9mmqQwePHqSkV8yh1ScXp/mQVWjzHZqSFtC9UjjTJk815hatNsbrX
+         259m4CJqf+ps/IjdRC8rm+IQKXxhV8BZuiikfrEso0yd4oQmmY+/IIjPAuWWYX+e/e8C
+         rpRofAVO5krP8u20LURS/k+SAisG2+iEfIQHPOpxaBTVac3ckE6tSJ9rXsgt1uwEr+u2
+         1NT/9+t0qGEf2vJS/JR78WpYAV/ZFb5GBtO0ks1l+cvOSS9cFQV5A2f68hF9CCnMnTwr
+         H89ggwTDWik+eSQ9ZeuVKN2aDm0KWRpbW5maItDbavsTHUqgKyqDdYZtakwdbcjzc5w4
+         G77A==
+X-Forwarded-Encrypted: i=1; AJvYcCUWKCu0Mhv1cSdUMfJ0t37rJ1xz/WDnpU5R3mg+o50QMCyUku8qHNF4Rw2feJSFK0RqHqvRgg6alb/kVfU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYconf421jCryZ7su84PzIFGgmbYAMK2MP9NLlY7mF4XTeFSJD
+	riSwNTIwQwV7NkbEWi+IrOzLYY+Tm3pH/NRI9Ahe7R5ioTZfp6BI1i6y8QwY5lM2hCGfZt7J9L0
+	VEe5BsWCYIdmPhADEksdTBYJpW4Sx60/wffJTMkVakDLWw+ME2DaIARrIPYv4swFjaQ==
+X-Gm-Gg: ASbGncvvi5HLf+XhPhi8ofOWvGZY5eopRhVDtp+e9sD02HvPXhFX3Kvms79PwB8hH5O
+	z15hc6ltwzkwLnoGplRaumB0PdU18pK0G/svoWDRUL4gqPD0HKK+T2Z3bsCQsEE5Kby1BReEXY4
+	Cqd7LylCEmMHYLKQBclxBALgKekuN+zb6XqyVbLvBWhWkUN7LYsaiACyUBc6v0wXy/HC18QGTZD
+	ovnCDPezUecwF9V3RThA7f3AsUMzj/5wvJUYeUPg4p2YAHeh3S+Y2XcyTH1hV0x4brqxnfUI/hI
+	Rw9UBUGT18unXQsKEKIkbgpPhiqDHTtTiQdnZP79rs4vRlNgomELU6SAmOL4jc949Ztg9eTia/B
+	R6j9DqBmj+yLKvePI
+X-Received: by 2002:a05:6214:19c4:b0:789:52eb:2bf2 with SMTP id 6a1803df08f44-878b96f1c8amr12556056d6.2.1759346663207;
+        Wed, 01 Oct 2025 12:24:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGlm7ZAgEs+bKq/EvjUX5mjxTrOeSPCDA0Y46chfCyC1AxVmu3PWcJptUKJm0ibHjpf7GZUGw==
+X-Received: by 2002:a05:6214:19c4:b0:789:52eb:2bf2 with SMTP id 6a1803df08f44-878b96f1c8amr12555816d6.2.1759346662822;
+        Wed, 01 Oct 2025 12:24:22 -0700 (PDT)
+Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-878bd785963sm4306356d6.35.2025.10.01.12.24.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 01 Oct 2025 12:24:22 -0700 (PDT)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <339a4e0b-f323-4d48-8a1a-b7459aec53a2@redhat.com>
+Date: Wed, 1 Oct 2025 15:24:21 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250929094107.34633-1-brgl@bgdev.pl> <CAHk-=whnmvjsan9Y=LcV0encJungD451VkdqYAKrRpk6YyA6-w@mail.gmail.com>
- <CAHk-=whPqa8YnjjH=Np_Q8r+9xDrypJVL4SPtFzgN-Znjb6knA@mail.gmail.com>
-In-Reply-To: <CAHk-=whPqa8YnjjH=Np_Q8r+9xDrypJVL4SPtFzgN-Znjb6knA@mail.gmail.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 1 Oct 2025 21:18:21 +0200
-X-Gm-Features: AS18NWDziKtG5ep_vpgTvGBSV3_avAhsqs2_NmERRWgOx-Xl5t9ov70C9jXbNqM
-Message-ID: <CAMRc=MeFzn1CfjAaLJgFNyEybCudmaFfQ-9GQDCb6k5FureNsQ@mail.gmail.com>
-Subject: Re: [GIT PULL] gpio updates for v6.18-rc1
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] documentation: seqlock: fix the wrong documentation
+ of read_seqbegin_or_lock/need_seqretry
+To: Oleg Nesterov <oleg@redhat.com>, Waiman Long <llong@redhat.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, David Howells <dhowells@redhat.com>,
+ Ingo Molnar <mingo@redhat.com>, Li RongQing <lirongqing@baidu.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Peter Zijlstra <peterz@infradead.org>, Will Deacon <will@kernel.org>,
+ linux-kernel@vger.kernel.org
+References: <20250928161953.GA3112@redhat.com>
+ <20250928162029.GA3121@redhat.com>
+ <b83e9c1d-2623-4abf-8c63-1110a0b92d2e@redhat.com>
+ <20251001190625.GA32506@redhat.com>
+Content-Language: en-US
+In-Reply-To: <20251001190625.GA32506@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 1, 2025 at 9:06=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+On 10/1/25 3:06 PM, Oleg Nesterov wrote:
+> On 10/01, Waiman Long wrote:
+>> On 9/28/25 12:20 PM, Oleg Nesterov wrote:
+>>> --- a/Documentation/locking/seqlock.rst
+>>> +++ b/Documentation/locking/seqlock.rst
+>>> @@ -218,13 +218,14 @@ Read path, three categories:
+>>>      according to a passed marker. This is used to avoid lockless readers
+>>>      starvation (too much retry loops) in case of a sharp spike in write
+>>>      activity. First, a lockless read is tried (even marker passed). If
+>>> -   that trial fails (odd sequence counter is returned, which is used as
+>>> -   the next iteration marker), the lockless read is transformed to a
+>>> -   full locking read and no retry loop is necessary::
+>>> +   that trial fails (sequence counter doesn't match), make the marker
+>>> +   odd for the next iteration, the lockless read is transformed to a
+>>> +   full locking read and no retry loop is necessary, for example::
+>>>   	/* marker; even initialization */
+>>> -	int seq = 0;
+>>> +	int seq = 1;
+>>>   	do {
+>>> +		seq++; /* 2 on the 1st/lockless path, otherwise odd */
+>>>   		read_seqbegin_or_lock(&foo_seqlock, &seq);
+>>>   		/* ... [[read-side critical section]] ... */
+>> It is kind of odd to initialize the sequence to 1 and add an sequence
+>> increment inside the loop.
+> Sure. But a) in this patch my only point is that the current documentation is
+> wrong, and b) the pseudo-code after this change becomes correct and the new
+> pattern already have the users. For example, do_io_accounting() and more.
+Thank for letting me know, but I believe my suggested change will work 
+with this modified loop iteration.
 >
-> On Wed, 1 Oct 2025 at 11:36, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > It's trivial to fix, but I should not be in the situation where I have
-> > to fix it, and I should not be getting pull requests that don't even
-> > build under trivial configurations.
+>> Perhaps we can do something like:
+> Perhaps. But could you please read the "RFC 2/1" thread? To me it is kind of
+> odd that the simple loops like this example have to even touch the sequence
+> counter inside the loop.
 >
-> I see that it got fixed in the MFD tree, but this is not how things
-> should work. At all.
->
->                    Linus
+>> +static inline int need_seqretry_once(seqlock_t *lock, int *seq)
+>> +{
+>> +       int ret = !(*seq & 1) && read_seqretry(lock, *seq);
+>> +
+>> +       if (ret)
+>> +               *seq = 1;       /* Enforce locking in next iteration */
+>> +       return ret;
+>> +}
+> And this is exactly what I tried to propose in "RFC 2/1". Plus more...
 
-Hi Linus,
+I had read that. You used _xxx() suffix which I think a good choice will 
+be to use _once() to indicate that we only want one retry.
 
-Sorry for that. All the patches should have been a single series going
-through the MFD tree but the GPIO patch was sent to me separately and
-I applied which of course caused a build problem in next. I thought
-the fix was to have just the core MFD patch in my tree which we did
-with Lee and due to the order in which branches are merged into next,
-the (unfixed) problem remained hidden. I'll pay more attention next
-time to these MODULE_* macros.
+Note that I believe the current read_seqbegin_or_lock() API was made to 
+be consistent with how the read_seqbegin() or read_seqcount_begin() APIs 
+are being used. I am not against your suggested single helper function, 
+but it may cause confusion because it differs from the others. So it 
+must be clearly documented to highlight its difference from the other 
+similar APIs.
 
-Bartosz
+Cheers,
+Longman
+
 
