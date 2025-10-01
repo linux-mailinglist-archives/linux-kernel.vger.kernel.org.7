@@ -1,142 +1,112 @@
-Return-Path: <linux-kernel+bounces-839577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF65EBB1F1B
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 00:09:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DEEFBB1F3D
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 00:12:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4AC0481529
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 22:09:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 022F919C3E5F
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 22:12:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB7C727F010;
-	Wed,  1 Oct 2025 22:09:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4604280A5F;
+	Wed,  1 Oct 2025 22:12:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="bOa4vh2x"
-Received: from mail3-163.sinamail.sina.com.cn (mail3-163.sinamail.sina.com.cn [202.108.3.163])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E2JHhPxn"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A8FE145355
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 22:09:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A65326F2BF
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 22:12:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759356571; cv=none; b=DAsEPlCHZVbUWhfRoSCABc3uGQDWRhty/0DXZkQGtLlLPvRhkdcOOQ/kchVT3J13JOGiE+R5nX1TMmj6QtdLV9l1Y2oawxwYIzbVrUdr2Rj2YWWL80c6oecvkvx8q7No54kii3xtBOKQc+MGg/KNSi63snTC+5DSxnBgGNz1r1g=
+	t=1759356738; cv=none; b=PhAreAuVQZJIZPNNOA88XpyhiWTxC4Ap71ahEPSoK3kutL+cARwAdQdDJkTo7c43xomFD75oikI5GF8DawnrA2unqzBnZoboHhq5ygA66OPAzff0Ti4Zw8xoEdqVidTf8eDEvhU5snxl4M6Hz7Uh9orgUoTWWp5SLrsGNxrCRDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759356571; c=relaxed/simple;
-	bh=uhzn2CgINPmo2GJKXqjy8ZsNv+aV3BojKRNQyeVrAbw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mHKR4+1BXWyhWFO7cDZFcoqQHnLoo6S6jEMGSC/SiHJs6/MoWFV5yHDh5viuhfOg/U2TUWTagQorjaoUrioi2A7f0qAk6yllZUVhwwHGiYup6AFJ4s7QNQX6fgzGYknTm6T7B34qFoP1dN2jDbRHd35niN5EprDmCwhRHQOxk1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=bOa4vh2x; arc=none smtp.client-ip=202.108.3.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1759356566;
-	bh=HJitJfLXOKZsHe4+MKRCE1Ey4Bu+oOcIToTjc/0p7rM=;
-	h=From:Subject:Date:Message-ID;
-	b=bOa4vh2xcswER8mej0aUpPb5d2fKb6RiHraikg95YzxIdvppfPfA+5fnEXxo93kyi
-	 X8kJadpTJxRXOqN1+RwGNSwQKAGKMHFMBi0UJqVhnjyXcljyvOse3dTEcdf4vGBsfT
-	 izVMFszhFbb/N0QgjoeoQKvlQAn9EhbL3rJiYCVk=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.34) with ESMTP
-	id 68DDA668000064B3; Wed, 2 Oct 2025 06:08:42 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 4139066291950
-X-SMAIL-UIID: 201637118A924248A57C5F10030ADE38-20251002-060842-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+7d23dc5cd4fa132fb9f3@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [fs?] WARNING in free_mnt_ns
-Date: Thu,  2 Oct 2025 06:08:28 +0800
-Message-ID: <20251001220831.7873-1-hdanton@sina.com>
-In-Reply-To: <68dc3ade.a70a0220.10c4b.015c.GAE@google.com>
-References: 
+	s=arc-20240116; t=1759356738; c=relaxed/simple;
+	bh=WrzVffmDsNjJiCDEF5KAcYVwh280/AsFYAlQDRppDys=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LrbrDbU0wqaANlom2Ud8NuG2O0MxAkH7Efbb8bzBKn8U8zfwXo3xs+OpCawTRRoDfTm2ea2fSpFZR2ghBZLEZMtjQ5ntL0AbhZkoQwqWO+k/Y4+wpasI6eobsP5ncr04buabe361xpXo9lsRxZQVehKpofZnrKk2GiPIZpeiQYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E2JHhPxn; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-62fc2d92d34so561071a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 15:12:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759356735; x=1759961535; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=+4M0gfdv2LO5VIxrtcNUP3+z5CTBxfNX3uE59t+KH/Q=;
+        b=E2JHhPxnJpd+a77zfUhETE5kZshbTFWXz0rprsVqs05eBnEVCMOPs4d65N4xLsqaSo
+         A6jjtvImaahNhBbaEFcXsBAYEJQL+5f6Gk9SVUOmRcssL3Vyh3rU3d6UYLqorFDZaDl5
+         Vfcs1rSVQwnCRVHYEGanh8EKdMmLB9PwuS7HgDZn6+fFyjnvMvRmqS+rltu+bF1w+q9h
+         mhttBwgbwMPneWYvCEUiQRvAr5EP/aYzKPDw9SeXrwDgmXU1Zzc7GS8eCENkM+c51KaA
+         /42+fBEYjB8fJYZ7F/j+xBFhFAH8yXtxS4tUjVGkytDQsCz6tstKf4Z4TIB625qG1JcN
+         dOeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759356735; x=1759961535;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+4M0gfdv2LO5VIxrtcNUP3+z5CTBxfNX3uE59t+KH/Q=;
+        b=a1Ykn3cOK7aUlHmhLFDx0i5lrIkW6kS+tDlKLM3+0i5S5jDPC2LtkeIcGjJihCnaUf
+         RAhR3DZXZH8/lKuRez9Hkk1DMcwzOal7ocI/Wkti4uZf1XxXQuGRDY70CP9RmT0LO6hX
+         mE6Xa0/wWwknVFjnlrf8LTBqLguTHrQV5SNTOtbq/ZAhL5yGCpsx7YfZ4wgX0QDCfp+E
+         3GA1mcA9gc6QyakH4sonMVY2Yy+NwXeGOT0VSXyOr+pzCa7u0gdgSCr7oQmz1TSk665A
+         crzt2JzQiTTlJGUlPXQKaKj9DiQaoxx777cZnwxMjRMA0thDAgoLPZkrZ+da2iwVMuuY
+         2ATA==
+X-Forwarded-Encrypted: i=1; AJvYcCUBo27QyV+xyaGfPYzWCeN29We6+Rki0lLS3BZ9Ja+hyC9mk0sZv74sQp730ZzhKlsKVR4GSj+OdGDzocs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzF+kqgfsvdzT/xSirpg058bY4HDkdjisufUC7Gktlh9ZlEAzL
+	7/Yvx2ksVIpjJsbT/dAPkEAscOH89ybgsuJ8Ie8mxTPMKFxWWf8RB3ZWrUWNUYEFbnUa0mk5JSt
+	ooDd2fGegjWXSiBoDVxRh6KNcMlXy+/drIJK6
+X-Gm-Gg: ASbGncvCGUg5ouTkF3F2eCXwqEphKfJCOX8hVO/felalC+NJH1TMyXqwILc4W5BblnW
+	FMrB3Kr/0DUBtIbPQSXzeSJ0C2h+D8ZuAtdaelWm9d5OkzTFQYVUbiACAsEpYoHKqTRGwN86+ol
+	K9vGV2q2uMC8LUZe2IOIuWAinSl4pr+GB1JzvvE3yy0J5pwM5c9XMwYmHe5AUMFl/DYfpSHqstl
+	DSCi1NaVX9cbMsqLB2wo8v620NgexeiHy+LM4XXz7c=
+X-Google-Smtp-Source: AGHT+IGRyaQeOqp1+iTUh7IToyq/JkqeZjebvRFOS8YTTLCI2P+NJylcPhZZZvabKFfY8JxGMtgbEptWC4JSVeRb6NE=
+X-Received: by 2002:a05:6402:13ce:b0:634:5381:5301 with SMTP id
+ 4fb4d7f45d1cf-63678bce51emr5793018a12.3.1759356734605; Wed, 01 Oct 2025
+ 15:12:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <fc2e8775d55f43e08eb79d326d6fdd89291898dd.1759347737.git.sam@gentoo.org>
+ <b6a724419773598d75ace5629bf4b05726d45218.1759347737.git.sam@gentoo.org>
+In-Reply-To: <b6a724419773598d75ace5629bf4b05726d45218.1759347737.git.sam@gentoo.org>
+From: Magnus Lindholm <linmag7@gmail.com>
+Date: Thu, 2 Oct 2025 00:12:03 +0200
+X-Gm-Features: AS18NWA38cHrRQFrTLOvXPxXoKh4oNZB8UDWgPCymue5VOHaQKIi0-RE2TAvrCk
+Message-ID: <CA+=Fv5R=Gtt2BQqRRQz2tntW4nqTB3d-wb9R-0GjHnm-uXgA6w@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] alpha: don't reference obsolete termio struct for
+ TC* constants
+To: Sam James <sam@gentoo.org>
+Cc: Richard Henderson <richard.henderson@linaro.org>, Matt Turner <mattst88@gmail.com>, 
+	Stian Halseth <stian@itx.no>, linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-> Date: Tue, 30 Sep 2025 13:17:34 -0700	[thread overview]
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    449c2b302c8e Merge tag 'vfs-6.18-rc1.async' of git://git.k..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=15b43858580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=595e5938a1dd5b4e
-> dashboard link: https://syzkaller.appspot.com/bug?extid=7d23dc5cd4fa132fb9f3
-> compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11c9ad04580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=160bf27c580000
+> +#define TCGETA          0x5405
+> +#define TCSETA          0x5406
+> +#define TCSETAW         0x5407
+> +#define TCSETAF         0x5408
 
-#syz test
+Hi,
 
---- l/include/linux/ns_common.h
-+++ n/include/linux/ns_common.h
-@@ -38,7 +38,7 @@ extern const struct proc_ns_operations t
- extern const struct proc_ns_operations timens_for_children_operations;
- 
- struct ns_common {
--	u32 ns_type;
-+	u32 ns_type, gi;
- 	struct dentry *stashed;
- 	const struct proc_ns_operations *ops;
- 	unsigned int inum;
---- l/kernel/nscommon.c
-+++ n/kernel/nscommon.c
-@@ -57,6 +57,7 @@ int __ns_common_init(struct ns_common *n
- 	ns->ops = ops;
- 	ns->ns_id = 0;
- 	ns->ns_type = ns_type;
-+	ns->gi = 0;
- 	RB_CLEAR_NODE(&ns->ns_tree_node);
- 	INIT_LIST_HEAD(&ns->ns_list_node);
- 
-@@ -66,6 +67,7 @@ int __ns_common_init(struct ns_common *n
- 
- 	if (inum) {
- 		ns->inum = inum;
-+		ns->gi++;
- 		return 0;
- 	}
- 	return proc_alloc_inum(&ns->inum);
-@@ -73,5 +75,7 @@ int __ns_common_init(struct ns_common *n
- 
- void __ns_common_free(struct ns_common *ns)
- {
-+	if (ns->gi)
-+		return;
- 	proc_free_inum(ns->inum);
- }
---- l/fs/namespace.c
-+++ n/fs/namespace.c
-@@ -3026,7 +3026,7 @@ static struct file *open_detached_copy(s
- 	mnt = __do_loopback(path, recursive);
- 	if (IS_ERR(mnt)) {
- 		namespace_unlock();
--		free_mnt_ns(ns);
-+		put_mnt_ns(ns);
- 		return ERR_CAST(mnt);
- 	}
- 
-@@ -4165,7 +4165,7 @@ struct mnt_namespace *copy_mnt_ns(u64 fl
- 	new = copy_tree(old, old->mnt.mnt_root, copy_flags);
- 	if (IS_ERR(new)) {
- 		namespace_unlock();
--		ns_common_free(ns);
-+		put_mnt_ns(ns);
- 		dec_mnt_namespaces(new_ns->ucounts);
- 		mnt_ns_release(new_ns);
- 		return ERR_CAST(new);
---
+A similar patch aimed for powerpc (commit ab10727) had the following
+definitions:
+
+#define TCGETA    0x40147417
+#define TCSETA    0x80147418
+#define TCSETAW 0x80147419
+#define TCSETAF  0x8014741c
+
+On Alpha, if I do something like printf("TCGETA = 0x%08x\n", TCGETA);
+I get TCGETA = 0x40127417, but on an intel/x64 I get 0x5405.
+Is this something we need to consider here?
+
+Regards
+
+Magnus
 
