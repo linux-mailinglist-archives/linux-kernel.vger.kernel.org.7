@@ -1,110 +1,151 @@
-Return-Path: <linux-kernel+bounces-839232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FA46BB11D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 17:39:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0802CBB11FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 17:42:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E57A3A76D7
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 15:39:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9082718931FF
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 15:42:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDFCE2773D2;
-	Wed,  1 Oct 2025 15:39:21 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADC5927B35F;
+	Wed,  1 Oct 2025 15:42:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="D89cEK9/"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E52632628D
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 15:39:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C90F1FCCF8;
+	Wed,  1 Oct 2025 15:42:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759333161; cv=none; b=WFTd9kA/5NV0VatpDXpWuJ2gSCb0hfBGQrOiJls2RpPoLF0ss6W2Jr+l6zg/Dd6A8LiVEfj2CvcEYo8w3CQ8WPHF72A4WCVoHvyvXWN9rBfcgDLPb7h0lH4ucqGv8zSY+Rp6SFDR5o4ZI0gvg4m2dcNwy5We/Ht0UaTOQJ4AZxc=
+	t=1759333332; cv=none; b=Ha//UPqWcIccwcxVUm2Q56jOJcLRzcoU5A2kUBnpfBOfmgrJogShZBBzPvFreLO7TB0bssWXOGUf0RnBhh+J7md52CX+S96W/odKYRnD3aKOoCLU2dipy7ehhLF6aUvCfCQRlvKEtqVlo1NQbEQ2tO6diyz2CUFxsBc+IqQZQg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759333161; c=relaxed/simple;
-	bh=H/lOpBRdzr+aqcXu3lSz/ATUOFC5D4c1Q7h6wcedKrk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YrxkQfCROSWSwDwVK+EYUzJrzcwL6lEQcGpRKYD2BSAxSdebpzrO5W2cjZU13vG7O9P/1m815eB+T+gwILV0nu5y4ebS+QDvCcLOU+KqWbEyZ+EwGEgig0nA7+F54USy1dhDYHpVOMesTjp5IFv4x+7izmJ/GR0kOAK8mHjVByU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf02.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay04.hostedemail.com (Postfix) with ESMTP id C0EAA1A0142;
-	Wed,  1 Oct 2025 15:39:17 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf02.hostedemail.com (Postfix) with ESMTPA id 1371F80013;
-	Wed,  1 Oct 2025 15:39:16 +0000 (UTC)
-Date: Wed, 1 Oct 2025 11:40:53 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: jpoimboe@kernel.org, rostedt@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 08/12] unwind: Simplify unwind_user_faultable()
-Message-ID: <20251001114053.242997aa@gandalf.local.home>
-In-Reply-To: <20250924080119.271671514@infradead.org>
-References: <20250924075948.579302904@infradead.org>
-	<20250924080119.271671514@infradead.org>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1759333332; c=relaxed/simple;
+	bh=5LgfWDLXbU3+ZSJ+d2bp+2xL5GUQjmcurD5GvPXYjOk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TiUucL0YbKZzfAwOExQFAPXW9dL1Kz6EaeKHkO7PsYRzrLU/JTbCFchJFJDFRvaFqkWDvMUNYzPNLg1R4dQnNjb7hyfzfa75phwqkYMfEKAxZgqwdU0NX9e5gToMTxV2Cc2neDliuPJ/xGKmtxT6269p+zl4OWPQhJPUOxomb68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=D89cEK9/; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759333330; x=1790869330;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=5LgfWDLXbU3+ZSJ+d2bp+2xL5GUQjmcurD5GvPXYjOk=;
+  b=D89cEK9/FjxrcrGxtq59M6QzPNUDSaSL0L6g55Qn2+RghJt5ZlrWgTG0
+   0UHJG7A4+jT8mcI7eG8b6qJ2i2b0Gd9w/x9QTEVm01IePavqEGG5Pyra7
+   SOY1mTy8kYiOnOW9Q8R+UUJ5uWTUd5tlgPfSfHMHUBWZDxDEDi3UOIWMK
+   4lUN0jk+Pe08ydmW2vCGsruE9CTcxST9Cv6BdxJHnurj67pkhq2yvrgC9
+   jHI082yqbjr/AeKPr+0sqW82As7TYrAkBX22GdyyDNGMZJKkkfkfKaAhI
+   6hA76zl3oaZc5dCeewGfWd29bttA6wJej6wFWert78Ej+wOsIMM5wDZq/
+   w==;
+X-CSE-ConnectionGUID: e5Sybbs1TlGUdABCzfsmlA==
+X-CSE-MsgGUID: 6gds1fCUQbmJxHG4PNpD5g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11569"; a="60648067"
+X-IronPort-AV: E=Sophos;i="6.18,307,1751266800"; 
+   d="scan'208";a="60648067"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2025 08:42:06 -0700
+X-CSE-ConnectionGUID: /Fxn0tAsSRGjTZSibRpw8g==
+X-CSE-MsgGUID: xTz3/MZ5TSG7ykeCg6zfrA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,307,1751266800"; 
+   d="scan'208";a="183998916"
+Received: from tfalcon-desk.amr.corp.intel.com (HELO [10.125.109.218]) ([10.125.109.218])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2025 08:42:05 -0700
+Message-ID: <e89ea10b-edb5-4e37-8eef-0fb99fc5b19f@intel.com>
+Date: Wed, 1 Oct 2025 08:42:04 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] dmaengine: idxd: drain ATS translations when disabling
+ WQ
+To: Vinicius Costa Gomes <vinicius.gomes@intel.com>, dmaengine@vger.kernel.org
+Cc: vkoul@kernel.org, linux-kernel@vger.kernel.org
+References: <20251001012226.1664994-1-vinicius.gomes@intel.com>
+Content-Language: en-US
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20251001012226.1664994-1-vinicius.gomes@intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Stat-Signature: sx7n4y7nrp7her46was7d39wpzagxtyw
-X-Rspamd-Server: rspamout07
-X-Rspamd-Queue-Id: 1371F80013
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX18Axg8srxliomzZqHslx35on5L65RESdQM=
-X-HE-Tag: 1759333155-463918
-X-HE-Meta: U2FsdGVkX18lNBJEsa72/o6jiKSwqLpB4zUwDHLUm4BjyrirhCH+jMvHTi44LCp7+AX8YyakJlQgxNgEp5p/UkwMpYTLfl3Kmvv72WRySuARx+TEdIiKFWEY7OkzPPF/iCE0+sZVIuIYZAMc0HZanD0TfCC5BSbcsJrywSciQ+2IWHRlr99VrA1Nz8uHi2QyPawTNgNFhdiPpLUUnTHdUOPTiv0G3dp7Jih7VMyjfo1oCJAgJ5eAR97R6Qho+jHLVVtVxnoif2N7rXFuIEeRSRx+hO6ZpLfWk43rbi42yWawJ+QHlBy37n3+6vnE+nwKBQm8PybpqfdrFnDJ8zVYjgTl8ROFzNIpgvy+trjw9YlvjHk9yh7q2qriViZ44WyQ
 
-On Wed, 24 Sep 2025 09:59:56 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
 
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> ---
->  kernel/unwind/deferred.c |    6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
+
+On 9/30/25 6:22 PM, Vinicius Costa Gomes wrote:
+> From: Nikhil Rao <nikhil.rao@intel.com>
 > 
-> --- a/kernel/unwind/deferred.c
-> +++ b/kernel/unwind/deferred.c
-> @@ -128,17 +128,15 @@ int unwind_user_faultable(struct unwind_
+> There's an errata[1], for the Disable WQ command that it
+> does not guaranteee that address translations are drained. If WQ
+> configuration is updated, pending address translations can use an
+> updated WQ configuration, resulting an invalid translation response
+> that is cached in the device translation cache.
+> 
+> Replace the Disable WQ command with a Drain WQ command followed by a
+> Reset WQ command, this guarantees that all ATS translations are
+> drained from the device before changing WQ configuration.
+> 
+> [1] https://cdrdv2.intel.com/v1/dl/getcontent/843306 ("Intel DSA May
+> Cause Invalid Translation Caching")
+> 
+> Signed-off-by: Nikhil Rao <nikhil.rao@intel.com>
+> Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
+> Signed-off-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+> ---
+>  drivers/dma/idxd/device.c | 19 +++++++++++++++++--
+>  1 file changed, 17 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/dma/idxd/device.c b/drivers/dma/idxd/device.c
+> index 5cf419fe6b46..c2cdf41b6e57 100644
+> --- a/drivers/dma/idxd/device.c
+> +++ b/drivers/dma/idxd/device.c
+> @@ -16,6 +16,7 @@ static void idxd_cmd_exec(struct idxd_device *idxd, int cmd_code, u32 operand,
+>  			  u32 *status);
+>  static void idxd_device_wqs_clear_state(struct idxd_device *idxd);
+>  static void idxd_wq_disable_cleanup(struct idxd_wq *wq);
+> +static int idxd_wq_config_write(struct idxd_wq *wq);
 >  
->  	cache = info->cache;
->  	trace->entries = cache->entries;
-> -
-> -	if (cache->nr_entries) {
-> +	trace->nr = cache->nr_entries;
-> +	if (trace->nr) {
->  		/*
->  		 * The user stack has already been previously unwound in this
->  		 * entry context.  Skip the unwind and use the cache.
->  		 */
-> -		trace->nr = cache->nr_entries;
+>  /* Interrupt control bits */
+>  void idxd_unmask_error_interrupts(struct idxd_device *idxd)
+> @@ -215,14 +216,28 @@ int idxd_wq_disable(struct idxd_wq *wq, bool reset_config)
 >  		return 0;
 >  	}
-
-Could we turn the above into:
-
-	/*
-	 * If the user stack has already been previously unwound in this
-	 * entry context.  Skip the unwind and use the cache.
-	 */
-	if (trace->nr)
-		return 0;
-
-So we could remove the squiggly brackets?
-
--- Steve
-
-
-
 >  
-> -	trace->nr = 0;
->  	unwind_user(trace, UNWIND_MAX_ENTRIES);
+> +	/*
+> +	 * Disable WQ does not drain address translations, if WQ attributes are
+> +	 * changed before translations are drained, pending translations can
+> +	 * be issued using updated WQ attibutes, resulting in invalid
+> +	 * translations being cached in the device translation cache.
+> +	 *
+> +	 * To make sure pending translations are drained before WQ
+> +	 * attributes are changed, we use a WQ Drain followed by WQ Reset and
+> +	 * then restore the WQ configuration.
+> +	 */
+> +	idxd_wq_drain(wq);
+> +
+>  	operand = BIT(wq->id % 16) | ((wq->id / 16) << 16);
+> -	idxd_cmd_exec(idxd, IDXD_CMD_DISABLE_WQ, operand, &status);
+> +	idxd_cmd_exec(idxd, IDXD_CMD_RESET_WQ, operand, &status);
 >  
->  	cache->nr_entries = trace->nr;
-> 
+>  	if (status != IDXD_CMDSTS_SUCCESS) {
+> -		dev_dbg(dev, "WQ disable failed: %#x\n", status);
+> +		dev_dbg(dev, "WQ reset failed: %#x\n", status);
+>  		return -ENXIO;
+>  	}
+>  
+> +	idxd_wq_config_write(wq);
+> +
+>  	if (reset_config)
+>  		idxd_wq_disable_cleanup(wq);
+>  	clear_bit(wq->id, idxd->wq_enable_map);
 
 
