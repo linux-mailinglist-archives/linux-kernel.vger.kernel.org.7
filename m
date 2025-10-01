@@ -1,109 +1,125 @@
-Return-Path: <linux-kernel+bounces-838516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA378BAF5E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 09:15:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 675A4BAF5EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 09:15:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0260E7A2D2D
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 07:13:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 478757A459D
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 07:14:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA5C318A93F;
-	Wed,  1 Oct 2025 07:15:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1496318A93F;
+	Wed,  1 Oct 2025 07:15:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UIJgm6gp"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rcaA0GL4"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C281017C77
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 07:15:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94BC517C77
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 07:15:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759302928; cv=none; b=PSj7+HfGtJxlWv9FD4tdM3kKECxcmGUhTYrJ4RD1AzwFwOkJpQQcsmWMNW7AqNyIGz/VVsafNrnIhizN+p24rpyWOtfrF1fD9jjdaIhTOp9GKh2Hj4aDoPe96xvz2fXu/Nn/M61cDhmLte5xgPxDs9uRJR0uLz5D7KbyiyxYuBk=
+	t=1759302938; cv=none; b=R8gdQptZaqAVo1/Uq5CjzRGmX93EkwtgEukHEs6b8XPTqNinWlkZNKJroHqQvaH8xH6terBxr2P/B+9oNYqxM3e74jbxa+PppsAZL/pPTzxacttouN18ZaoxKKNbsqhCn/Wo+M/jjzEaz3++ZEtQALJFHXCcQQHIh0z5Zrfvi7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759302928; c=relaxed/simple;
-	bh=KLOUoFvpz3+9Daoni/vqhIeATvg32tx7vSxzv4KrSWY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UXLjqJZ27hQcDSYWoXw9GG2gwPbMaJ8ZJTYvCZsIk6ViG2cg7D3YOwGNpVgW+OSMHJrtJszpTEs8wOXcOLGJ7pjjjCp5U2uBjhINoJ92ka5K3DTS8WuSTBJ6T4HksInk5zie8CDfBnhYJ3SJWwBl4UcYumlUoV7sWwA+19DZXGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UIJgm6gp; arc=none smtp.client-ip=209.85.167.41
+	s=arc-20240116; t=1759302938; c=relaxed/simple;
+	bh=kF2U7Nwwffvx2Uw/H6A0ckJAmT9g0NCqwMG0nstmLBk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Q+NHY998poH+lHnwkPSukHitru+EwRoaZ0UjlMneztWZSbHumulPS2z8WqILoo+3A16wWsmfMTuXNVkCQST9qcPccdn7XGS2j/mK8iGkhugVPbK7Dde6LcJsZ+W9JCw6/O7+SeYjUTY06DujZsRcl+imjrqO4PLZOCBa2DKMrwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rcaA0GL4; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-57db15eeb11so8132583e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 00:15:26 -0700 (PDT)
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-46e33b260b9so22607615e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 00:15:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759302925; x=1759907725; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1759302935; x=1759907735; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=KLOUoFvpz3+9Daoni/vqhIeATvg32tx7vSxzv4KrSWY=;
-        b=UIJgm6gpqR34LrvO/Dnj6u1em273Fm2u6GtLGUY8LhyHf1KS8uDKPhLqBOwpfwOyty
-         ZA0GI3gBCxNltJ0BT3FQduz0l28HOB5UVptyO5oJ4bbf6DZB9a9SxkOuavPJ3+RCIpgQ
-         Vll6meLlYM624OFqPCiqq/gGTiZKjxl253JGjjiCcYS8j3XrxgiUAQNFkokroqhReDHl
-         XpxxkHxSI/xtCgkQYsooR4gdtWm5uBHNvD0cwzNM3YUEfmEPrc6S176Lob/zf5IaHdVY
-         8NwO2xL/+oYA3+m3Yudp4mbHp/Jqf9ZOw96yQRpq37I0+TlCe6fe3NHhpexVrB1H/3v+
-         57jQ==
+        bh=ig8BKEaSDbO0ANR6SUqa4XKNjpsfwaNlIByEpPqVvbU=;
+        b=rcaA0GL4c3S2t0ZIB9wU570W+271vZjhyrJsiq2rLwARJAVsYM9AWg7z/Kqi8+dFYX
+         s2PIryy9mvj6iv3iq9ghr+92BL8SQPxUCnrbLNaXKdBDcb5aeD9XitGkjWFAJcWxI+ql
+         E8nTzSjNWmJGBEHLLckmnU9dbhK+OsQNN3Y034vizKssLr/QlTrcTaPwAcJRAeZ0wPkJ
+         6BWTJs0gv/4BVU4EXga/Nsk4HRI8kVWIj3E/r2cv9KaF7lT0bOOMF0gSt2sIx5LD1Oje
+         LX7UZBCZ6zfkbZifxQp5kyAUgo72ujXF+ORJn1Hx/ECRwK4b4Oj0RE8DCZBEfXAULjuC
+         nc3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759302925; x=1759907725;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1759302935; x=1759907735;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=KLOUoFvpz3+9Daoni/vqhIeATvg32tx7vSxzv4KrSWY=;
-        b=X+3wsw7ppdAg8Xlz5ek51XdhpcILUOVLuRIjRaHaC2r7D2SODkK4OoVj+bE1V7nSU0
-         8mYs5q6Hd42XCtZkOWSFH6BJ1/BLPGjgFNtRtNfzQfsztPh8g+s9JYdD+0sKdG9swgvi
-         8lybk1OcfwiRF+FtACyw/dvuwt9mA0j8H5mVCX3DhkIZwm9JkMH6DA6+Y3ohx1WbLLvb
-         pdL9jNxL3yfFyjKQ1zbfb3213sbsNBx3phbWpzjRop5mMPRen/T+ndBGRbGZa7HrdGLb
-         Y5dVQUCSelYltlh4pfTBboNYkm0lvzSkSQP7oB8Rr2jnSxyzY/KmnkWL7yU+DQIJi8A2
-         hE9Q==
-X-Gm-Message-State: AOJu0YylFhQ2+XIXdUFFroV7sfQUNOQ7ejNMCK5EVRIjP7a7QHANgf5O
-	0Qmh6T/wXsrZpiDMLVY++0q/awuqCuzTqLkgCMRJdiaKPJFhAhfcLyBbXX1nc0Jt7rlv6QgG0Y5
-	wfnhuSGQVsXie/m53cWwp1wChabv9av3XTvQzl1aiJA==
-X-Gm-Gg: ASbGnctTPX1ilv4ey5aFwMPDOj6IiIYEY5WOtPTJ3alXjtMfns70zst1f4cXjgqvrfJ
-	tH0pXAWnzdDq766EH/XaLWKwnkmL/GPbAc8yRAEhTbjDGJ/2woLsqCMra+y/nzdv4LWnFEWRdJh
-	eIiSN3s36z/v0VpeV4AWshgN8XcESwUhobw8s5gJ1D5nHIAE6LUu3AzNdnvEruXxDhirzJDRRAz
-	LwXbRN0Q2CNSivPC+RvtEAy4KwLXNM=
-X-Google-Smtp-Source: AGHT+IEnqFN8uRHySmhyFBckr+4qfapD0oIDbjAXJpBIKMb/6cpABxlfPjflIdUDyU81H5zIY7PLLDU9mAVEsotGkaw=
-X-Received: by 2002:a05:6512:1319:b0:560:8b86:75ba with SMTP id
- 2adb3069b0e04-58af9f755c8mr685869e87.52.1759302924877; Wed, 01 Oct 2025
- 00:15:24 -0700 (PDT)
+        bh=ig8BKEaSDbO0ANR6SUqa4XKNjpsfwaNlIByEpPqVvbU=;
+        b=KtdCv0o3H6yV7V+347rnyZiECsBWOuREMLyucnyckOfdQ/JiVeUTJH2CNX+0g1w4DZ
+         Hd7kUW0ZEJe+cxZiTE7rGP9ejEE9TghPGq2nJWuz/OwWaKDmic9+15JH97RCMs6JBGtJ
+         iEFaMxvfPrgF9T8cwHuRWJ/ZPIS4emtp1PlIi0FrLSNjeeTYPvoKK1j3fFwQDKaDj1Qq
+         /K0TEbRsh0pFAmAWjy16FWGaaueQoE/I+A8qwZ3G6NrDMaAI/2xPa9Nq5ufILfWXxuSE
+         dPhDEV3fPyjWV9w+tVkBmLK0hhu5E4UNeCZh0PQ4X6Q/TP5fwiNyYXwKeY9SF4xxoNk1
+         TnFw==
+X-Forwarded-Encrypted: i=1; AJvYcCU2UhuVU3MlN/RxIV7W0OCDtC3HX0OlYOe/Awsl+KtEiWqn2sx3CckjXjkp2jOvfwyykX/HXMY2hqkK/rk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfcUO1r7dM07KMlxT2J/B5TkS7Nbmn8lCzop2/lLBmrOtuPsSp
+	VNEc6uqIK823CxXUE/IBbWiV3fikckZKKl8COMPIUZKGsYl9uu31RdkCRn53imn7XQQ=
+X-Gm-Gg: ASbGncvh1l1LQkOchvWDdhkVdR4bAahluVraNz/WRHaWg0dageirBCPftRe7XVQzvvp
+	cJKHFoRlf/RB+X/PDHN7E7YT1UitTtWzxbQ9dMIjFhKjiJ3pnCm79b1Oxzw8tFO1OfTLDoGp8V5
+	GcYIvHxk0L5usFOzyBb/SeSQshjEMiUcSU32OqDCHDMv5v9TummXgAsypcf7FuC0xIs2R4PXOAo
+	nYfEWAPFwJV0Uy5Q/O859+thDxdH4po4bQyTFCb2kCOxtxUNEkGeWAPV8D8mnaweCRVNDMqTM/Y
+	4XKG0qL9UIvd3BncyyXG+A3v8FZxdMZmJa8Htd/JclzERDVSCWQK9MOLQNDSV4TefNx7dqbdZJS
+	v7Md1tGX0UmcJ9BE6FYrVZbuXIAPCzHS06UPkRXHdxam/UxTDKXAtMD/R7/adPWnXW5g=
+X-Google-Smtp-Source: AGHT+IE+IYKiRpEjUqHImSI00u6cF4PFdF1GH74nExNMmIPL8P92h3i3/FToK8gMkIESeeV2Lkl61g==
+X-Received: by 2002:a05:600c:4e8e:b0:45d:d97c:235e with SMTP id 5b1f17b1804b1-46e6127a1a2mr20622315e9.12.1759302934915;
+        Wed, 01 Oct 2025 00:15:34 -0700 (PDT)
+Received: from arrakeen.starnux.net ([2a01:e0a:3d9:2080:52eb:f6ff:feb3:451a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e61a0241bsm24801515e9.11.2025.10.01.00.15.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Oct 2025 00:15:34 -0700 (PDT)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+To: Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Matthias Kaehlcke <mka@chromium.org>, Sam Ravnborg <sam@ravnborg.org>, 
+ =?utf-8?q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ phone-devel@vger.kernel.org
+In-Reply-To: <20250910-shift6mq-panel-v3-0-a7729911afb9@sigxcpu.org>
+References: <20250910-shift6mq-panel-v3-0-a7729911afb9@sigxcpu.org>
+Subject: Re: (subset) [PATCH v3 0/3] drm/panel: visionox-rm69299: Add
+ backlight support and small fixes
+Message-Id: <175930293421.429742.3887174305831150628.b4-ty@linaro.org>
+Date: Wed, 01 Oct 2025 09:15:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250923133304.273529-1-mstrodl@csh.rit.edu> <20250923133304.273529-2-mstrodl@csh.rit.edu>
-In-Reply-To: <20250923133304.273529-2-mstrodl@csh.rit.edu>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 1 Oct 2025 09:15:14 +0200
-X-Gm-Features: AS18NWATFpTIxuKt6TOYxlvCdRwC0-rKJPWCBiTCdTUgjY_Zw5e5ezG3W3zJtXc
-Message-ID: <CACRpkdZ6_YkUsCNRFfRM1v68fpvAJcdqPRtAKTGqLqHf1geJog@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] gpio: mpsse: use rcu to ensure worker is torn down
-To: Mary Strodl <mstrodl@csh.rit.edu>
-Cc: linux-kernel@vger.kernel.org, brgl@bgdev.pl, linux-gpio@vger.kernel.org, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Tzung-Bi Shih <tzungbi@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.14.2
 
-On Tue, Sep 23, 2025 at 3:35=E2=80=AFPM Mary Strodl <mstrodl@csh.rit.edu> w=
-rote:
+Hi,
 
-> When an IRQ worker is running, unplugging the device would cause a
-> crash. The sealevel hardware this driver was written for was not
-> hotpluggable, so I never realized it.
->
-> This change uses RCU to create a list of workers, which it tears down on
-> disconnect.
->
-> Signed-off-by: Mary Strodl <mstrodl@csh.rit.edu>
+On Wed, 10 Sep 2025 18:39:55 +0200, Guido Günther wrote:
+> This adds optional backlight support via DSI commands. If
+> a max_brightness is set in the panel description the backlight
+> is created.
+> 
+> While at that we fold in the already sent out clock fix and
+> a fix that prevents us from clearing all mode flags when we
+> only want HS mode.
+> 
+> [...]
 
-Oh this RCU thing is a bit terse and a lot of code.
+Thanks, Applied to https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-next)
 
-Can you look if you can use the new revocable resource
-management API? It uses RCU underneath.
-https://lwn.net/Articles/1038523/
+[1/3] drm/panel: visionox-rm69299: Fix clock frequency for SHIFT6mq
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/d298062312724606855294503acebc7ee55ffbca
+[2/3] drm/panel: visionox-rm69299: Don't clear all mode flags
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/39144b611e9cd4f5814f4098c891b545dd70c536
+[3/3] drm/panel: visionox-rm69299: Add backlight support
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/7911d8cab55453b6bf59cd1f806503c3dbf0e990
 
-Yours,
-Linus Walleij
+-- 
+Neil
+
 
