@@ -1,182 +1,274 @@
-Return-Path: <linux-kernel+bounces-838861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5241BBB04AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 14:15:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79756BB04BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 14:15:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEE983BB776
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 12:15:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E032D16EA87
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 12:15:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96B8E2E9746;
-	Wed,  1 Oct 2025 12:15:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9521828BABB;
+	Wed,  1 Oct 2025 12:15:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="W6kNq+Y9"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tUYyUvKo";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="tq6tqG82";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0QUtbbC8";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+ouw00QD"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74153537E9
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 12:15:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21B1521579F
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 12:15:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759320901; cv=none; b=JgnecePULRNkNIUR+bM3oAjYS82GHeCOoi/Kfye5cNN9SFothH6S9X2PlAH6nGqfrhWgcecy/yM5Hr/Em7uEqiFLcRICf2qFFIoxIwUIBgGiGb/AH0R0+A0IsZOp5rJ4vR5UU4bW5uUGl7PK8uPUoH/xbYbto/iq4/g42XaMgIk=
+	t=1759320945; cv=none; b=JmuDcbt+ExErFkSh5zjQsDKCAPi9WI3/Ejpn0MbZ4q8vqUNLodW2O5ansry/d11mh0JBUnRvTXkByPBUhzaHeXOFp9HS+XrEI7fa7X4MKwgQGdZL8cKfANiQYjrBSRB4eQJHqXNlEojmz3rzkPv9GuvzTyvXrg8Fe7NA1Ne9li0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759320901; c=relaxed/simple;
-	bh=pUysoWOuzpLtIlpmwUBS4KrMK3y5u/TzCzSKbKWLwRk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=WC0ohFo9cyPOej7Wf9YRpDL/5UZoU9EAWib46BpjMQxnDqJTnx9DAFpAwLmbDNEkNhBOpmZhyKuzQDp9Rau/QEI/2Ka8usrdNwNcAHpL4EtDJfobEPQ684F7+/d+5QMTmrit6qUYq4pkOEN7s6l7X8BHjwHlrT9lMgU2BzfiCbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=W6kNq+Y9; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5919PYvi030609
-	for <linux-kernel@vger.kernel.org>; Wed, 1 Oct 2025 12:14:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=JrHq7SFIyXVKiO6+Yq1XHr
-	/cP7kMFjJ1Nti+Tl3luCw=; b=W6kNq+Y9zYNo1taie7NwP8rOPxikA6YYtFimGV
-	eHsgtC8+58qld1b84GtBOIjjzp9JiMprESolw+lf+wOhRyDqSWtGwDJrGEDTGk6C
-	4PO3tGg124O9VMzIkL8AtyYguV+ljWU4HNeflJqMsEKjIgSj/HYz6TCKjysCeaGf
-	2ke5EmoHGWs33Yrz4ER+7IavAM98Bn6ZnQSkNoICzm7+QKZS9secJ+JOjaJtTB9P
-	oLVU6GO0BoXsm7IUbR4aae41ej3PSgsNdlmefYdoeYNfixYn9pvcUnJC9tZ19U0r
-	v7mBXijykRrWbxzu5DLxKykuZ9Nws7iUFDtWtG0GhEdsqJxQ==
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e8pdm9db-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 12:14:59 +0000 (GMT)
-Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b5b3715102fso882262a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 05:14:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759320899; x=1759925699;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JrHq7SFIyXVKiO6+Yq1XHr/cP7kMFjJ1Nti+Tl3luCw=;
-        b=MiVC/7Pwsj2tSkW8jlReb0PTtsSEVG8Uh0XTB5smkfkUkyoq0kcv1zD/JCbsrNdYHH
-         KeGXS4m5iBtokzZf72oHSBDvEiHwqkvDh/gsvSAh2h6uu21kBxaCURLlWvFJPE2nTHnK
-         NgNoC2OIOHAnuEDkCCiqu5vWSNU9ryntB+bsDU4u4ChOPRS3qxaoPLwNHTv2QJfAsks4
-         MeTy5Q4GH5GKV0/5aPvMQ83WDmpnvQZHoWNnTBwNMjbt28rxXG7yHw1/dxdyfksZjLBF
-         EuZYbdrzO3h+khb7nUAtvyNg8Qaa3Gj+7OomO4YPvrLfN1i1WKyIVFrLUDpmbhbjdUTf
-         5dOw==
-X-Forwarded-Encrypted: i=1; AJvYcCVJAu261m3nQ1haU21I4MdP++uKURI9H0g0kyaV7E/n+cGsSz66wCdPqskXf0HZqGsqolluwqEu72QSDHo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxE/bWxyuBkkT0lCmAXsn0LKmkFvHEhqNEYYxD5cwopFAVGEQsO
-	VBxUUFY+Z+rVLSsA+FaYw8p4kJWQ0zm7QClKNJdEUnpJuST4vaP0bH8v/Kbs5FLeADPh6qhaWAi
-	IuFFZq0C5BsO3qIy1sDJSpZoCD8+ug2bGmxcMQp2IyNBxzLHbUhfOH9QBKchtSc8ar9c=
-X-Gm-Gg: ASbGncsuNde67abAQ+/0/z2vJ6LUDWblzl5UPqAo8/HkMda8C1cZhG21gUwJw6seWw3
-	0u1lhc6oQoS/qinZR01OOdPp1x/UgTdlH9mTCvIq1Fd1F19HU8vQ+vUJ8nOBEhCxpqR+r4jNB1F
-	k1F1vX3eTUA+4WRFGv6blbSgm6+AKWjNiRHWEUvuvhdj2/vUQrSSnbyx99yu72a/HdcaRZT8ijt
-	PVso9l71c305f66ejBYgElbtUrtKv3RgFGnIShP//k/GN3dIb4t9/58hmVHQNzI5vQDIHAsMB/6
-	c2nxk2Fm+3c2WOmly+QZYzWMinDwBNay1KS6y5gxG9y9zvW4wWORISxKc5gUVH6Fu21JmD5AbJr
-	KD8JSIyo=
-X-Received: by 2002:a17:902:d589:b0:262:f975:fcba with SMTP id d9443c01a7336-28e7ea04a15mr35811625ad.9.1759320898659;
-        Wed, 01 Oct 2025 05:14:58 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFCSzJ1IHbLA1mfK6YpBR9XBK9JKqCFzSQMfit64fdt6dtO57eMB3HX1cPLeS7li1eYgD9ZSQ==
-X-Received: by 2002:a17:902:d589:b0:262:f975:fcba with SMTP id d9443c01a7336-28e7ea04a15mr35804635ad.9.1759320885983;
-        Wed, 01 Oct 2025 05:14:45 -0700 (PDT)
-Received: from hu-arakshit-hyd.qualcomm.com ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed699cbfesm185026425ad.108.2025.10.01.05.14.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Oct 2025 05:14:45 -0700 (PDT)
-From: Abhinaba Rakshit <abhinaba.rakshit@oss.qualcomm.com>
-Date: Wed, 01 Oct 2025 17:44:32 +0530
-Subject: [PATCH] soc: qcom: ice: Set ICE clk to turbo on probe
+	s=arc-20240116; t=1759320945; c=relaxed/simple;
+	bh=Ug0SoXvIAOQxVCaHdHL2z7cZsNpGQXTPQ8N5oIwsgyk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qq0gs9ha90DnhNp0p+qyk9mTpGCKR8vf5iF5reMqEAL64+OYi/yqYNfyKOg8vaoiB8s0kobdIhmztvYh7XanLFH4B1wA5uSPdpx4hUdD29OuNxnqIch34jIlgBnHVDT9DY1JF6Qnr/wNNh/btjHB+Lv74uRUobW2IpXok5XI7ME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tUYyUvKo; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=tq6tqG82; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0QUtbbC8; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+ouw00QD; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id F182A1FD9D;
+	Wed,  1 Oct 2025 12:15:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759320918; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lFi5Fj1xOeCOIglDwmt3tluJPzzYn8OSotgbNMb/9xA=;
+	b=tUYyUvKon9bCy30ai2OGqoJ2Nne1uHiVU23pzSlcdl1vT7kCZDCgtryVdNBffKCpmd4q6k
+	hgMMS3weUDdtB6NaG31/JT41Udjd/lSUWKGRHhW+AQ7x3MFcJUPn4yyw48eqh8Br8nuejr
+	0PAeHo7JKjUDgzdiBnjA+YpF/SeewJI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759320918;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lFi5Fj1xOeCOIglDwmt3tluJPzzYn8OSotgbNMb/9xA=;
+	b=tq6tqG822OuSRE3mAl63Xq1pGTVWsH7FLo+BJ+OxE3WHRc3PVAcxsyjPe3XDcrTuSe/lHe
+	G3b4XPFfSzJDiEDA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=0QUtbbC8;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=+ouw00QD
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759320917; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lFi5Fj1xOeCOIglDwmt3tluJPzzYn8OSotgbNMb/9xA=;
+	b=0QUtbbC8n1oGFpQYh7EA3VT7W9wuaeR/wdRwmAYI0flYDp17lpHK38eHdSc0cXj7uIbDQS
+	Nm1b2ZEbEZ8Z2MOCFa4NElZMoLfJT9+n3LOc/w2pGMY9LlO0mzMSeya8LbLQ9WUQXbzGtl
+	+Xa5L7LgRpxSWu2S4QhLuFxMSEkRAAs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759320917;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lFi5Fj1xOeCOIglDwmt3tluJPzzYn8OSotgbNMb/9xA=;
+	b=+ouw00QDE8qkOcRRVK600666U6Wi+LcgFW4i9Rb1y25jAry0zQ3ddDQdptwORO/q6X/wcB
+	moV2/Ghhph/XjmCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5C7F413A42;
+	Wed,  1 Oct 2025 12:15:16 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 9aeOFlQb3WjDeQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 01 Oct 2025 12:15:16 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 7E898A0A2D; Wed,  1 Oct 2025 14:15:11 +0200 (CEST)
+Date: Wed, 1 Oct 2025 14:15:11 +0200
+From: Jan Kara <jack@suse.cz>
+To: Jakub Acs <acsjakub@amazon.de>
+Cc: linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>, 
+	Amir Goldstein <amir73il@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>, 
+	Christian Brauner <brauner@kernel.org>, linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Subject: Re: [PATCH] fs/notify: call exportfs_encode_fid with s_umount
+Message-ID: <e4o5wuh2h7viev2khbr7excdm7xv6ubw3va55e56q4apjno62s@hu3ybnftbhhz>
+References: <20251001100955.59634-1-acsjakub@amazon.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251001-set-ice-clock-to-turbo-v1-1-7b802cf61dda@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIACcb3WgC/02NwQ7CIBBEf6Xh7CZQoZb+ivGwbBcl1qJAjYnx3
- 0VN1OObzLy5i8wpcBZDcxeJryGHOFdQq0bQAec9Qxgri1a2RkmpIHOBQAw0RTpCiVCW5CIwobO
- MusPeijo+J/bh9hZvdx9OfFmqv3zCn35ovnKe0U0Mi89/H5lwCvMeLBljbN9a47vhql4vDnNtx
- dMplKFZO+uU70evjSZEbda08U5uut7KTvPoWh7RShS7x+MJqHE+NfgAAAA=
-X-Change-ID: 20251001-set-ice-clock-to-turbo-ecab9ea46a89
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Abhinaba Rakshit <abhinaba.rakshit@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Proofpoint-GUID: iY_V-191xP2lEn1B9rMnTelb1tDRXyO7
-X-Authority-Analysis: v=2.4 cv=MYZhep/f c=1 sm=1 tr=0 ts=68dd1b43 cx=c_pps
- a=oF/VQ+ItUULfLr/lQ2/icg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=u1bwIIJuvd_SIhYoViIA:9
- a=QEXdDO2ut3YA:10 a=3WC7DwWrALyhR5TkjVHa:22
-X-Proofpoint-ORIG-GUID: iY_V-191xP2lEn1B9rMnTelb1tDRXyO7
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAzNiBTYWx0ZWRfX7/XthM4Xz8T/
- 7mr5M4hMc00K20eayd78D6Ej8oG8Uf8reOm0Na6BWIbf9mvTIngngQfmfVQ9kJRI+u+I069GSAl
- TuS7x15NponpQzgZsXEXOjU0X5sKSy0bUmiW9hxnYpR3x+Zh8k04HXhluIt+XB4cHKppwkRXVyx
- B7DEfSsL9DHeK28hvz/7FULHLYMSH15kZThScUKd+Ocj+47LzDvjpMfJHDICWUql7IHARYUv8ZS
- PscPRrZxMzguRteh9wLPtmfhwuRmaYiHriWKpKpxwTsjgG9y1SemoTD4YZ5UlBy1s9+IlCzewST
- W95co5mcuvVesiTxry0ZO3Zrmy0UhfwiS6bhbbZjnDlfAr9LUVHw4b0/TU5iuk9Hlzz1zFERAdj
- DXFV9QCqo+68JqFang57XJFE3Pgmjg==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-01_03,2025-09-29_04,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 clxscore=1015 bulkscore=0 lowpriorityscore=0
- priorityscore=1501 phishscore=0 malwarescore=0 spamscore=0 impostorscore=0
- adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2509150000
- definitions=main-2509270036
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251001100955.59634-1-acsjakub@amazon.de>
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,suse.cz,gmail.com,szeredi.hu,kernel.org];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:email,suse.cz:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,amazon.de:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: F182A1FD9D
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.01
 
-Set ICE core clock to turbo (max freq) provided by dt
-entry at ice device probe.
+On Wed 01-10-25 10:09:55, Jakub Acs wrote:
+> Calling intotify_show_fdinfo() on fd watching an overlayfs inode, while
+> the overlayfs is being unmounted, can lead to dereferencing NULL ptr.
+> 
+> This issue was found by syzkaller.
+> 
+> Race Condition Diagram:
+> 
+> Thread 1                           Thread 2
+> --------                           --------
+> 
+> generic_shutdown_super()
+>  shrink_dcache_for_umount
+>   sb->s_root = NULL
+> 
+>                     |
+>                     |             vfs_read()
+>                     |              inotify_fdinfo()
+>                     |               * inode get from mark *
+>                     |               show_mark_fhandle(m, inode)
+>                     |                exportfs_encode_fid(inode, ..)
+>                     |                 ovl_encode_fh(inode, ..)
+>                     |                  ovl_check_encode_origin(inode)
+>                     |                   * deref i_sb->s_root *
+>                     |
+>                     |
+>                     v
+>  fsnotify_sb_delete(sb)
+> 
+> Which then leads to:
+> 
+> [   32.133461] Oops: general protection fault, probably for non-canonical address 0xdffffc0000000006: 0000 [#1] SMP DEBUG_PAGEALLOC KASAN NOPTI
+> [   32.134438] KASAN: null-ptr-deref in range [0x0000000000000030-0x0000000000000037]
+> [   32.135032] CPU: 1 UID: 0 PID: 4468 Comm: systemd-coredum Not tainted 6.17.0-rc6 #22 PREEMPT(none)
+> 
+> <snip registers, unreliable trace>
+> 
+> [   32.143353] Call Trace:
+> [   32.143732]  ovl_encode_fh+0xd5/0x170
+> [   32.144031]  exportfs_encode_inode_fh+0x12f/0x300
+> [   32.144425]  show_mark_fhandle+0xbe/0x1f0
+> [   32.145805]  inotify_fdinfo+0x226/0x2d0
+> [   32.146442]  inotify_show_fdinfo+0x1c5/0x350
+> [   32.147168]  seq_show+0x530/0x6f0
+> [   32.147449]  seq_read_iter+0x503/0x12a0
+> [   32.148419]  seq_read+0x31f/0x410
+> [   32.150714]  vfs_read+0x1f0/0x9e0
+> [   32.152297]  ksys_read+0x125/0x240
+> 
+> IOW ovl_check_encode_origin derefs inode->i_sb->s_root, after it was set
+> to NULL in the unmount path.
+> 
+> Fix it by protecting calling exportfs_encode_fid() from
+> show_mark_fhandle() with s_umount lock.
+> 
+> This form of fix was suggested by Amir in [1].
+> 
+> [1]: https://lore.kernel.org/all/CAOQ4uxhbDwhb+2Brs1UdkoF0a3NSdBAOQPNfEHjahrgoKJpLEw@mail.gmail.com/
+> 
+> Fixes: c45beebfde34 ("ovl: support encoding fid from inode with no alias")
+> Signed-off-by: Jakub Acs <acsjakub@amazon.de>
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: Amir Goldstein <amir73il@gmail.com>
+> Cc: Miklos Szeredi <miklos@szeredi.hu>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: linux-unionfs@vger.kernel.org
+> Cc: linux-fsdevel@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: stable@vger.kernel.org
+> ---
+> 
+> This issue was already discussed in [1] with no consensus reached on the
+> fix.
+> 
+> This form was suggested as a band-aid fix, without explicity yes/no
+> reaction. Hence reviving the discussion around the band-aid.
 
-Signed-off-by: Abhinaba Rakshit <abhinaba.rakshit@oss.qualcomm.com>
----
-MMC controller lacks a clock scaling mechanism, unlike the UFS
-controller. By default, the MMC controller is set to TURBO mode
-during probe, but the ICE clock remains at XO frequency,
-leading to read/write performance degradation on eMMC.
+FWIW I'm working on a proper fix. But it's a larger rework so it will take
+some time to settle. For the time being, since this seems to happen in
+practical workloads, I guess we can live with this workaround so I'll pick
+this patch, add some comment about band-aid into the code and push it to
+Linus. Thanks!
 
-To address this, set the ICE clock to TURBO during probe to
-align it with the controller clock. This ensures consistent
-performance and avoids mismatches between the controller
-and ICE clock frequencies.
----
- drivers/soc/qcom/ice.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+								Honza
 
-diff --git a/drivers/soc/qcom/ice.c b/drivers/soc/qcom/ice.c
-index ec8d6bb9f426deee1038616282176bfc8e5b9ec1..eee06c499dc36a6bf380361f27e938331f1fcb10 100644
---- a/drivers/soc/qcom/ice.c
-+++ b/drivers/soc/qcom/ice.c
-@@ -535,6 +535,7 @@ static struct qcom_ice *qcom_ice_create(struct device *dev,
- 	struct qcom_ice *engine;
- 	const __be32 *prop;
- 	int len;
-+	int err;
- 
- 	if (!qcom_scm_is_available())
- 		return ERR_PTR(-EPROBE_DEFER);
-@@ -577,6 +578,13 @@ static struct qcom_ice *qcom_ice_create(struct device *dev,
- 	if (!qcom_ice_check_supported(engine))
- 		return ERR_PTR(-EOPNOTSUPP);
- 
-+	/* Set the ICE clk rate to TURBO */
-+	if (engine->core_clk && engine->max_freq) {
-+		err = clk_set_rate(engine->core_clk, engine->max_freq);
-+		if (err)
-+			dev_err(dev, "Failed setting the clk to TURBO\n");
-+	}
-+
- 	dev_dbg(dev, "Registered Qualcomm Inline Crypto Engine\n");
- 
- 	return engine;
-
----
-base-commit: 3b9b1f8df454caa453c7fb07689064edb2eda90a
-change-id: 20251001-set-ice-clock-to-turbo-ecab9ea46a89
-prerequisite-change-id: 20251001-enable-ufs-ice-clock-scaling-9c55598295f6:v1
-prerequisite-patch-id: d66f521e5e625b295a1c408cdfce9bd9524ae3ba
-prerequisite-patch-id: 23934f3fee5aabe4a2324130ed02909352b5cf61
-
-Best regards,
+> 
+>  fs/notify/fdinfo.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/fs/notify/fdinfo.c b/fs/notify/fdinfo.c
+> index 1161eabf11ee..9cc7eb863643 100644
+> --- a/fs/notify/fdinfo.c
+> +++ b/fs/notify/fdinfo.c
+> @@ -17,6 +17,7 @@
+>  #include "fanotify/fanotify.h"
+>  #include "fdinfo.h"
+>  #include "fsnotify.h"
+> +#include "../internal.h"
+>  
+>  #if defined(CONFIG_PROC_FS)
+>  
+> @@ -46,7 +47,12 @@ static void show_mark_fhandle(struct seq_file *m, struct inode *inode)
+>  
+>  	size = f->handle_bytes >> 2;
+>  
+> +	if (!super_trylock_shared(inode->i_sb))
+> +		return;
+> +
+>  	ret = exportfs_encode_fid(inode, (struct fid *)f->f_handle, &size);
+> +	up_read(&inode->i_sb->s_umount);
+> +
+>  	if ((ret == FILEID_INVALID) || (ret < 0))
+>  		return;
+>  
+> -- 
+> 2.47.3
+> 
+> 
+> 
+> 
+> Amazon Web Services Development Center Germany GmbH
+> Tamara-Danz-Str. 13
+> 10243 Berlin
+> Geschaeftsfuehrung: Christian Schlaeger
+> Eingetragen am Amtsgericht Charlottenburg unter HRB 257764 B
+> Sitz: Berlin
+> Ust-ID: DE 365 538 597
+> 
 -- 
-Abhinaba Rakshit <abhinaba.rakshit@oss.qualcomm.com>
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
