@@ -1,88 +1,109 @@
-Return-Path: <linux-kernel+bounces-838451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83601BAF31E
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 08:13:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BA02BAF32D
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 08:14:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96FC27A12D7
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 06:12:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBF024A5522
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 06:14:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B26E23C8AA;
-	Wed,  1 Oct 2025 06:12:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CB4C27AC21;
+	Wed,  1 Oct 2025 06:14:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jDPekD+o"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uh/fxsUD"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2F31234964;
-	Wed,  1 Oct 2025 06:12:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44FE0296BD0
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 06:14:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759299168; cv=none; b=LB9ZXQYNux2HeJ7IJEm9ubBJ7ekCSLlPqz4nnIGX8D+n8+5Z8GyCEGEAjdQKXn9WCiq0yew7eS8IugqjvGBaYVJSSHTZAvadCybKo6uQe51CpbxV5n+a0cs8jKABlOvtPgjuEZuM0KYMQJ4SEIQfsgCQVuwg7vm+II9VNA7kPsU=
+	t=1759299282; cv=none; b=p7b+OMTRFGbn7oeSdfqN+tZEhEkxD2XEvZfzaPcdDE2IsVGcd/sJmFi74Wim23ODV+4q1U5/FHgQPhX18d06nxD2SAxKlELHmboRXSwv/p1bKIY6BTx9aDcQBLLbpZ/CaOoCn/otaiWKFHL2GJ8B5NRSIAlyODfGq8q0Tm4XgWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759299168; c=relaxed/simple;
-	bh=0NkqnWA2gnuNS3Z+dXQyRJktMjrjg9exYNHx9RAs/Ns=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BT2qbtw4TtS8LKXo0Of70KwDOUL7krAzXn5wZ7Q00f7y2VnWbkVBske5sxEXaRaAKAueILfV4eQQ1rae6eh9RCA3uRQjAWw91YcrolRMcX5sR3JvFUbSN4CcY2Ru+p9c8EAC+P+6g80vAxHiA7Cn6+163TbjTF5RVPcwNQ+wf4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jDPekD+o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F19DC4CEF4;
-	Wed,  1 Oct 2025 06:12:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759299168;
-	bh=0NkqnWA2gnuNS3Z+dXQyRJktMjrjg9exYNHx9RAs/Ns=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jDPekD+oSIHYglKUV40Sas9Nc38YGV4JdDq6xfoV+48J32tCwPRUGPC0gb0GIY8im
-	 ABCb4lrAU7XN8lpCi5SgWngFgzXTmwzKkn7Kh+ierZSNrnss+6jbgBVKEX6Kay7UGU
-	 OySb0XiWuRY/s/eVxjSvBcsI4nuhtp2ERAtfX6tQv1lKd7aB+j/FGqV+b9VhTbo5Mt
-	 BtzlITQGRADc5Axwoz7CYSdZmQEtkBEqtypu4lYkPraQA+gyNY8h36pCIcYE8qy4mV
-	 bS5IFEPdY2D0Ej7oLTZuB2YLYzQVCsy244angK3amueoETWzLKM51DXtXKiSg+DUaW
-	 s+DalWq88p2qw==
-Message-ID: <6a485ace-be08-4d52-bdf5-7f5be2f58418@kernel.org>
-Date: Wed, 1 Oct 2025 15:12:40 +0900
+	s=arc-20240116; t=1759299282; c=relaxed/simple;
+	bh=9+pLrX0Q4NwZE9lEirGuVWH9jUzrol+ZXQHzqv0t/Tw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TIeXmJbX+yflOS7JjXQtVG+Sc/TrLXYSM6sBFOSuBhTkPAiLCdpNLopjAeOSSOiEDRNwlxGcXAtfyeuyJPWW0ITlBrAiFOfSFBL/BqcVyRD+3aOq5MMIVCSojwIKETJHCtlCuXFlvl4UOQFQ9wMd1r5yteAzRdIP8F+9i2dkPgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uh/fxsUD; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-57d8ff3944dso4939163e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 23:14:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1759299277; x=1759904077; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9+pLrX0Q4NwZE9lEirGuVWH9jUzrol+ZXQHzqv0t/Tw=;
+        b=uh/fxsUDUmuawGTGXKM3Osh5B3xk0Z/svX9F8nBDYyBWVx3CSsGuXqrCd1TYba+cnK
+         qU+lz32fzQaXpaBwU/8ZoEgPCAnW9b6xLDVi7t1X52BEKgyge8Ai2m/4WHHNlKendJ96
+         cTFM3O+RiFp+xa28EIvyrn5EoN76sdZzUjTuzY86aeNAKJCY3K8vAE4uDC6CyWUBH0gE
+         azrZmUZxlSkeu0kbBOTdClim7pbPOVfuBBWztGIakLvFuGmGfDr7VgOF3aQzPPLkp38P
+         rPPm6/z5u3rSPCjEN3YXWIsUbEA1aKYnrlep5+gn1CGrJcVM47s0MSc/JQCIZd1tcnkE
+         l6qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759299277; x=1759904077;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9+pLrX0Q4NwZE9lEirGuVWH9jUzrol+ZXQHzqv0t/Tw=;
+        b=OXxsJLp0wdZw/6uywbZruHGiRf1cFf6w8H7Q5AMc3HFw2DRTgpm5SAdEIba2zx2X3r
+         K4a3t0BYsmmtErmAYW1epb4JE+98uFu3ozGSRVBIby+wGk5dPz7zusbUTUKlshapNuPR
+         Y3cD4VEgOsi/uEGKCMA0MtWbOHGgG7JIOUGK0TsX6deWWtU0zbrw6U/0zxfqnEQoOIOZ
+         I0Un0zxOlAnwlEORdWTnOI+HtnFC9h2Gds13cNmqwrBpQkRpmZiAfEnz3Vs4xgaY19Ya
+         Tyg9gFfBduJnZ5YjG0AatwqbGKFq9vrlxERp0dFJkQvx0Xz0FI2o+GvJ95C/yJm+UnzE
+         ITwg==
+X-Forwarded-Encrypted: i=1; AJvYcCXa5lK4rsERSygOuH+ZQJTtiS3qpSK7PzUKcFKL+zdprcVehVf7DheHGPLuFXJET4Y2KhmXs3J4U2pVDnk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNsQaGwuLJI0Ur9XmgIcWgVPu9gcOhzeCIkeWjiCYaB6BoY7cv
+	hC9IuOIOBJrCN1Hecu6Jl9DRcbvgDmiLScPfhz5+83vEArjHJ29o4u/fKuV1FnvYYFeWHkHzOXt
+	SGQnepFm2QUHgI7LSrB8zcbKGB/EUiN67Gn66A/HtDA==
+X-Gm-Gg: ASbGncubZHouKVb7zb+BPd/VI3n+LKPRxeY2g87nOb5Fyo1LHu+IDtXpeTDa6ka8wpl
+	QmZT9Lf1r6H3FgGucNAh0XT5Lw6n47FzVwe9Rw/D4Jykk3NOd7crO6a71RDRiUue4H4y5dbfI81
+	HkgNOmn+fLY/wRiHCTrK0WZ2r69U+gXgPehGNZzrbhsnDyyioR8glPvrpY2+fgPX647Ziuu+/sb
+	mf6xeOWuJ+7DR00O42ql8yxySSWZZU=
+X-Google-Smtp-Source: AGHT+IG2GQMXvM5wXsx6CzkWWALkmKJo7n9m32peMSwizZiLBt3hdl4uunMSSjoXjLkgjaoaZY2YYv9fSHpGi6xLHvU=
+X-Received: by 2002:a05:6512:12c9:b0:58a:f88b:25a1 with SMTP id
+ 2adb3069b0e04-58af9ed287cmr658282e87.5.1759299277410; Tue, 30 Sep 2025
+ 23:14:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 01/15] blktrace: only calculate trace length once
-To: Johannes Thumshirn <johannes.thumshirn@wdc.com>,
- Jens Axboe <axboe@kernel.dk>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
- Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-btrace@vger.kernel.org,
- John Garry <john.g.garry@oracle.com>, Hannes Reinecke <hare@suse.de>,
- Christoph Hellwig <hch@lst.de>, Naohiro Aota <naohiro.aota@wdc.com>,
- Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
- Chaitanya Kulkarni <chaitanyak@nvidia.com>,
- "Martin K . Petersen" <martin.petersen@oracle.com>
-References: <20250925150231.67342-1-johannes.thumshirn@wdc.com>
- <20250925150231.67342-2-johannes.thumshirn@wdc.com>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20250925150231.67342-2-johannes.thumshirn@wdc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250710-arm32-clk-round-rate-v1-0-a9146b77aca9@redhat.com> <20250710-arm32-clk-round-rate-v1-3-a9146b77aca9@redhat.com>
+In-Reply-To: <20250710-arm32-clk-round-rate-v1-3-a9146b77aca9@redhat.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 1 Oct 2025 08:14:26 +0200
+X-Gm-Features: AS18NWCsR4raMo4wbunxRFTWZtDHnEXvF9gNLQU5m7trixs7xTJv_rQ_r124Pjg
+Message-ID: <CACRpkdar_4UR-HtBb88dKLWbaM-p_vx_Z7RBEg5szPTMbdLN4Q@mail.gmail.com>
+Subject: Re: [PATCH 3/3] ARM: versatile: clock: convert from round_rate() to determine_rate()
+To: Brian Masney <bmasney@redhat.com>
+Cc: Paul Walmsley <paul@pwsan.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, 
+	Janusz Krzysztofik <jmkrzyszt@gmail.com>, Tony Lindgren <tony@atomide.com>, 
+	Russell King <linux@armlinux.org.uk>, Andreas Kemnade <andreas@kemnade.info>, 
+	Kevin Hilman <khilman@baylibre.com>, Roger Quadros <rogerq@kernel.org>, 
+	Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Maxime Ripard <mripard@kernel.org>, 
+	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, linux-omap@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/26/25 00:02, Johannes Thumshirn wrote:
-> De-duplicate the calculation of the trace length instead of doing the
-> calculation twice, once for calling trace_buffer_lock_reserve() and once
-> for calling relay_reserve().
-> 
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+On Fri, Jul 11, 2025 at 1:42=E2=80=AFAM Brian Masney <bmasney@redhat.com> w=
+rote:
 
-Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+> The round_rate() clk ops is deprecated, so migrate this driver from
+> round_rate() to determine_rate() using the Coccinelle semantic patch
+> on the cover letter of this series.
+>
+> Signed-off-by: Brian Masney <bmasney@redhat.com>
 
+I signed off the patch and sent it separately to the SoC tree.
 
--- 
-Damien Le Moal
-Western Digital Research
+Yours,
+Linus Walleij
 
