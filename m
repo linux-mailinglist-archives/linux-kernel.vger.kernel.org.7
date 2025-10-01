@@ -1,87 +1,79 @@
-Return-Path: <linux-kernel+bounces-838653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02ACFBAFD4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 11:14:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EE98BAFD51
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 11:14:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA91A4C0370
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 09:14:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BF8D1C2308
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 09:14:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ED1E2D9EC7;
-	Wed,  1 Oct 2025 09:14:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D4F82D9488;
+	Wed,  1 Oct 2025 09:14:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Q3Bk/+Rj"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="GtNWybiZ"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0061C1AB6F1
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 09:14:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B3222D9485
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 09:14:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759310052; cv=none; b=VUcI8FNr1J7BVZ+EZ6yDLmGbbgJQgbiV8kKztq5ggPhQp1yk8qUJHZb+VLGWnyVWuClQX6pBY4OtPQOHq56hO1GiQ1wYkG1fBbihOTyh+xynjv+8kEzKcVIS4NiZcXVqPBfzBQy1ONBXnJQWa4KmMKb+bKChAUMU8GYYQMCKKlc=
+	t=1759310082; cv=none; b=YuDaWNQI8lyUfRPTW3v+WmwXdIYdYAuDBDpiXvdfg5Q0/PGcWbLn+JD1KZDgcGOQ6zVqcbhJWiacdXhI5Bc4OMs42GfTbp1iyztXnYwPWyb64uLcoNZrdIxAKcs5MrhH9UTvk6qEB8zVKO6uR5pA1uqaDuEY0IbYHWaQ6CPTD/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759310052; c=relaxed/simple;
-	bh=DiKOiuOUrDOlbJnzJU/h1DMix21rOvJ9MIGTIzcCuLw=;
+	s=arc-20240116; t=1759310082; c=relaxed/simple;
+	bh=U5/mWF2eT719ERlEO+VsG/7r+9lp2+vAGBmIyIfsoA0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GFOo/2W/avyF5UeTCqScm+Ebu+nwPuay9VJeK5qt+HL18a3bUNIemIvmd0ppJ65lLdCszCCa9t1YCM0+Cl5T1bp6kQlBxG3SkDTdMJIZguGp2yponTwwhPTWWsNEBpd1lENJ8+NA10iUGGybgtRghb3h+Ic2UIsQtin9yhZdG1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Q3Bk/+Rj; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5918QjNl009314
-	for <linux-kernel@vger.kernel.org>; Wed, 1 Oct 2025 09:14:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Rn3/KCzj9e9RYjWV5CHIU+LrVXqFk2tQ42l7zJWamMo=; b=Q3Bk/+RjjREsrk/n
-	MEw4NpcMDm9AtkNhRFcdtGRhaNPoiW58Y2CsOIXdZwQgBPcElLBOZKWBfetz5lGS
-	EFeWgPAVpkNkGheylbMm3NJ37nOgapyxnbVoM4iM3B6YGizuaiH5wiIAP1KEAie1
-	f3WvUvy7rJrs16gNLGzhemDPY1GfrdW3bOBn5Ga6ubhlhiFznrMATfA++Vo0ybek
-	D8SpCQ8V92Xm0VW4w7gnvx95X3MI/csR+Dos/VpkfGq1zruU3LDp8Gdyc7Kz1Slc
-	n8aiQVxKFQKVjhn4q0MHWA/6FmqshUo56vKXlNykmGBfBPFNuwx7/doFYif2JYqe
-	tJJvow==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e977usf6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 09:14:10 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-85d43cd080eso213451485a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 02:14:10 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=Lkm4jQWi/0VH86xCTw6zR8ObTOcgMzGLCRrYcRllw350XTWHTHUUE+/UcLlb9MWtaVD0fHtp54047RTfOWzoJOEkkNJNWQaxE6fOgKZkbSkRlFa+mCQBbpl5/UZjpdVV2wnl4Ny35Q+Jui6jf9t4FINIwiVJxQhGvz1iIrFuhF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=GtNWybiZ; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-46e37d10ed2so66509785e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 02:14:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1759310078; x=1759914878; darn=vger.kernel.org;
+        h=in-reply-to:autocrypt:from:content-language:references:cc:to
+         :subject:user-agent:mime-version:date:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=U5/mWF2eT719ERlEO+VsG/7r+9lp2+vAGBmIyIfsoA0=;
+        b=GtNWybiZ1KalovDccxG0v4CYAZFQ9JS8mgs2utN9hZ0Wxu21sbxYmSOdtCLsvttN08
+         WLOHPBBdYyfDAVxxku2jvsKKl6r97gUBbFW+OV/E+sLeHf33XIpV7RiwmJAuT+EjT2NN
+         fK9fqCebx0NsqAqFL+XFD6LFA7X5kG7x3FLfjgFBbTlCTrvoSX6jFOvS3j/37BcukJxR
+         WAtQ6s8WIcNVvH5tSNzJcD+Qze0KiLqX9GIBpmXqQ4fe+pIU/Hcy5xvLhdIQhZ98Aa9Y
+         7LgquwNEDm8FU1YhwoCRcaeZ58sWbGFEHYAA0YYYp6iNbMX9BK1AxSTFClSdXDuKnFuQ
+         yOnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759310049; x=1759914849;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Rn3/KCzj9e9RYjWV5CHIU+LrVXqFk2tQ42l7zJWamMo=;
-        b=XSR+6ZlNtuJmZQ3CSJJP8jA50yLTvJ10b2JexpSIYe2MluX41m2tDjO8xP1vhwXh99
-         OGmIpdbr33GfFnLcn1MZ8IB5pSmMzaFQekGtyo8risGcL4dQCTMwm5Ku4SXj1X0xMQAM
-         iT7vR+9RIvgu0Als9maHu6itsCZ1raezopjFfCbRdceqXk7Imu5i6gFITcwoakHGRAre
-         jPP5wmdkPbmKww5Jv9lU3BboZap4gFxAQTrmC3eYEcM7GU8ucwSARmjZ4KuHcVVEaVEx
-         h7QbINwFjTSSPI2UD55bw+AKrLlAO0XBIB/wgp1KHwG15p5MVtcEre+yhU2eMj3pXAU2
-         TXDw==
-X-Forwarded-Encrypted: i=1; AJvYcCX/+c3opCl3zxgcqY/hlG0iRW4XQbRd3te6Yo0vgvaW3logheSOYC0WNRaQVg63jwCNxLtlh0s6PKfzgMY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMdM0HjVhI3y/c54XPOcZELNt61tgM3j+8eiE1DnSupSln8W0b
-	ZYvxBCegpxEKGv5B6aC8YR4phsgSa/3/exvFivq52UUzyQ671QwqgTu2A2ssKCVaVcB5+INKUci
-	kcshUaL7lmKt+SzBQmpuHS/oyJ/mtWcZ3zx38jBMC7fTFMLMQjnP8LddvdpQ+Qtt6pbY=
-X-Gm-Gg: ASbGncsMWbzHV4wyBlUcPdPIINr4jsWl8pWdGzpKG8wpZ1sHG2VI4M3vxhAb4ddiAyF
-	bDlwfJxwWWPaaamHHqJkUmKdinxxCG1nlaXReUvDn6wCzb8b+wHgo+j7zeTJAhreFUss4xP7lfN
-	NYyB0ISKmxjorAQP2oSJ/t591xXjEdUPpxjas4dCWpGogxYaka/n87XX8oBSY5jc0runIqeT5lH
-	4woUsGko2iLEBzFUF59gQT9uo2IZM8IMo2AV+1bkL21Eb4UH27rqO8Ofr3eFr2qrH6S1lyxS4KC
-	ixlE5RikoJWuLIML5M6VUa+2/dnxevv4rbjzrPuhhMsQrnBb6emi/8hb+18G5x73Nhxb1CTNrVI
-	/djfKz2i7tqEvf2iR+HZIV+tTqtE=
-X-Received: by 2002:a05:620a:4095:b0:827:52b2:42be with SMTP id af79cd13be357-873705f0553mr259062485a.1.1759310048850;
-        Wed, 01 Oct 2025 02:14:08 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGENrGs3rsybFlp3G03YUI5//8oZwz0h6YnC6O0icQirUqBpC1fptftVFehVajvDELL7EbvWA==
-X-Received: by 2002:a05:620a:4095:b0:827:52b2:42be with SMTP id af79cd13be357-873705f0553mr259059185a.1.1759310048211;
-        Wed, 01 Oct 2025 02:14:08 -0700 (PDT)
-Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b3cedacd973sm725041066b.49.2025.10.01.02.14.06
+        d=1e100.net; s=20230601; t=1759310078; x=1759914878;
+        h=in-reply-to:autocrypt:from:content-language:references:cc:to
+         :subject:user-agent:mime-version:date:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=U5/mWF2eT719ERlEO+VsG/7r+9lp2+vAGBmIyIfsoA0=;
+        b=EOu9uvZDuQ2lAm6Pl+bkiOq68XF3C2zW6ZQtK5HNgeyppbOgckettAo18bR/BPz7VD
+         XF2PKkSrmIewIKiVO6ZEDErgOHSheOKtMtrskcoMbHl8RCiMVXj2gpFyXaqq2PMbMnQw
+         99pvOwLUv03pat39/mBGSIO8k4mlUoQkHC3hdZceA2M5ONY45+mqlicomfiDCIpjKN9r
+         x8v40aPAw45YC+cjqtdc0hrsTzTw25Xn9wfu1Y1uEb6fosIoVcMzNoZVkJs0OZvpW4Lf
+         saXkVWdPNct9HjmKzf1R17dV6JLe4qYPEus9XSBUEbQVH2lSMYL6eoT06g+Ar1zKGYfv
+         Mkzw==
+X-Gm-Message-State: AOJu0YyvKpPbfiQMQcnVtAe96x0pa1kfVjUNVIdFllTZbC0GfnWPLtiV
+	0agQcUTqa439YTtGdORz9TqLAvQ1Kr4cOJaZHU/cxVd4c+bpxhXEkd6DxLEEGcOQT28=
+X-Gm-Gg: ASbGncuj4tPEneZ5As62Qx/nLIRuJsyfUDFT6oe3Pd7q30SL10nGmrLcNnPD5jg4KLo
+	Lu25ZtjalN5kmQEMGjgLr0CgEhei9sMy1YRknNbmoGjz7L1ps/ODpn/LPrnZu8ij7yoGLqpo7rz
+	SLhBVAiv/ZfLAl+maauyBE3XiI53axaq85g1zXyFHl/+ue5bMZs0CTBNIENWU1yP12w5f4INrNC
+	ZGEvlLF9/bbZLkIOapF9QaIRmUVjTKTekmxZADMutIh89GqEaupMFfG9ZWOAx+3K6R7Z7LPI3Js
+	L6/b5ckBlFi3T/fTJcauYicXZcPw/TwQ4yT0LMxSnPQAMueFucT72ZVfjMHsrqoyO9tUZ3WWL8E
+	Xgzhy1V6vwGQfTd7h3Vp5bz1rdRK+tgpD7lmFSuF+POVJqQHHw6mC36JNWX6CeSfMP8fj7O9fzP
+	hTDERly6X71YKzZIhsvyNULDQ1qpQ2XL1ieAu6UJRn+ANe4rQs1TmawBORYNThW7yFw/6N
+X-Google-Smtp-Source: AGHT+IHdQhbSAex+R6vWQfJv25cLINdEYUVtsCdbJWv9HhYGgpyniumEcBLkuGXKEPs7b/1Yg8YwnA==
+X-Received: by 2002:a05:600c:3543:b0:45d:d68c:2a36 with SMTP id 5b1f17b1804b1-46e61281448mr22040615e9.27.1759310078422;
+        Wed, 01 Oct 2025 02:14:38 -0700 (PDT)
+Received: from ?IPV6:2003:e5:873f:400:7b4f:e512:a417:5a86? (p200300e5873f04007b4fe512a4175a86.dip0.t-ipconnect.de. [2003:e5:873f:400:7b4f:e512:a417:5a86])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e619b8507sm30583175e9.3.2025.10.01.02.14.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 01 Oct 2025 02:14:07 -0700 (PDT)
-Message-ID: <f58493a9-6def-4610-9c3e-d6a877dc23d3@oss.qualcomm.com>
-Date: Wed, 1 Oct 2025 11:14:05 +0200
+        Wed, 01 Oct 2025 02:14:38 -0700 (PDT)
+Message-ID: <281800ab-30bb-4939-8f20-0993a1e6b0f3@suse.com>
+Date: Wed, 1 Oct 2025 11:14:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,78 +81,183 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 07/11] arm64: dts: qcom: sdm845-lg-{common, judyln}:
- Add wifi node
-To: Paul Sajna <sajattack@postmarketos.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, David Heidelberg <david@ixit.cz>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org,
-        Amir Dahan <system64fumo@protonmail.com>,
-        Christopher Brown <crispybrown@gmail.com>
-References: <20250928-judyln-dts-v3-0-b14cf9e9a928@postmarketos.org>
- <20250928-judyln-dts-v3-7-b14cf9e9a928@postmarketos.org>
+Subject: Re: [PATCH v2 03/12] x86/kvm: Remove the KVM private read_msr()
+ function
+To: Sean Christopherson <seanjc@google.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, kvm@vger.kernel.org,
+ xin@zytor.com, Paolo Bonzini <pbonzini@redhat.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>
+References: <20250930070356.30695-1-jgross@suse.com>
+ <20250930070356.30695-4-jgross@suse.com> <aNv_lWzVqycCUZIi@google.com>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250928-judyln-dts-v3-7-b14cf9e9a928@postmarketos.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: ia6e-B8Oxix_5WKNx87gO_pMag7oc6A_
-X-Proofpoint-ORIG-GUID: ia6e-B8Oxix_5WKNx87gO_pMag7oc6A_
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDA0MyBTYWx0ZWRfXwoUoM/un/SqC
- k8HT4tnnT+b3A3XVXu81yxPr0WMSgDF1ukEsrT3JqYrtfM2s5rYQAthZYoqnQdxyVYRodq0CA7/
- w2ugkXlRxQJ+AHVo/0h6dNM+JxtMGkKUwtTRn30QGtcaryda3W/ioLJGO8zPau0i0Fe+gEPpfml
- HMWsX7p5F+fkMx7k8LrcQChfaEkXSy3sqDgVAHZ5QDPTJBbGs4pMWulUYWi2urpJixII9/knpEn
- Z5cZGXkhLYsR+emsKbmg1ooPF3PECPTU3kR/yfvwZnlEjLEy/T+VWyXzhPR2prJsqyWEFULb/8X
- ui+XofVAmb13wQW+jHUGk3Hnjj/zeVk+uUMmEIVRmsGFaBlvwZNVhjq8vcAEj9gzo3jWBbOWjBD
- LG05iSrog9SxyDuCkEwrq6hVV7HP7w==
-X-Authority-Analysis: v=2.4 cv=Sf36t/Ru c=1 sm=1 tr=0 ts=68dcf0e2 cx=c_pps
- a=HLyN3IcIa5EE8TELMZ618Q==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=IqCYnrxLgLuRO9zwK-sA:9
- a=QEXdDO2ut3YA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-01_02,2025-09-29_04,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 bulkscore=0 suspectscore=0 adultscore=0 spamscore=0
- priorityscore=1501 malwarescore=0 lowpriorityscore=0 phishscore=0
- impostorscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2509150000
- definitions=main-2509270043
+From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+Autocrypt: addr=jgross@suse.com; keydata=
+ xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
+ ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
+ dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
+ NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
+ XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
+ AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
+ CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
+ mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
+ G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
+ kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
+ Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
+ RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
+ vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
+ sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
+ aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
+ w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
+ auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
+ 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
+ fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
+ HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
+ QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
+ ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
+In-Reply-To: <aNv_lWzVqycCUZIi@google.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------TrUtvkp0TauRyjp2nwWIKfjg"
 
-On 9/29/25 7:05 AM, Paul Sajna wrote:
-> Wi-Fi now works with this patch and relevant firmware
-> 
-> [   21.488274] ath10k_snoc 18800000.wifi: qmi chip_id 0x30214 chip_family 0x4001 board_id 0xff soc_id 0x40030001
-> [   21.498477] ath10k_snoc 18800000.wifi: qmi fw_version 0x20060285 fw_build_timestamp 2020-10-12 23:35 fw_build_id QC_IMAGE_VERSION_STRING=WLAN.HL.2.0.c4-00645-QCAHLSWMTPLZ-1.336037.2
-> [   22.973165] ath10k_snoc 18800000.wifi: wcn3990 hw1.0 target 0x00000008 chip_id 0x00000000 sub 0000:0000
-> [   22.983265] ath10k_snoc 18800000.wifi: kconfig debug 1 debugfs 1 tracing 0 dfs 0 testmode 0
-> [   22.992048] ath10k_snoc 18800000.wifi: firmware ver  api 5 features wowlan,mgmt-tx-by-reference,non-bmi crc32 b3d4b790
-> [   23.045368] ath10k_snoc 18800000.wifi: htt-ver 3.83 wmi-op 4 htt-op 3 cal file max-sta 32 raw 0 hwcrypto 1
-> [   23.130581] ath10k_snoc 18800000.wifi: invalid MAC address; choosing random
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------TrUtvkp0TauRyjp2nwWIKfjg
+Content-Type: multipart/mixed; boundary="------------qfX8g3Ov94hVZdf0FX8oINEy";
+ protected-headers="v1"
+From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, kvm@vger.kernel.org,
+ xin@zytor.com, Paolo Bonzini <pbonzini@redhat.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>
+Message-ID: <281800ab-30bb-4939-8f20-0993a1e6b0f3@suse.com>
+Subject: Re: [PATCH v2 03/12] x86/kvm: Remove the KVM private read_msr()
+ function
+References: <20250930070356.30695-1-jgross@suse.com>
+ <20250930070356.30695-4-jgross@suse.com> <aNv_lWzVqycCUZIi@google.com>
+In-Reply-To: <aNv_lWzVqycCUZIi@google.com>
 
-I was only interested in this hunk ^
+--------------qfX8g3Ov94hVZdf0FX8oINEy
+Content-Type: multipart/mixed; boundary="------------oOMO04Esfdn5Zk7quz0HiTts"
 
-please trim the timestamps, too
+--------------oOMO04Esfdn5Zk7quz0HiTts
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
-[...]
+T24gMzAuMDkuMjUgMTg6MDQsIFNlYW4gQ2hyaXN0b3BoZXJzb24gd3JvdGU6DQo+IEZvciB0
+aGUgc2NvcGU6DQo+IA0KPiAgICBLVk06IHg4NjoNCj4gDQo+IGJlY2F1c2UgeDg2L2t2bSBp
+cyBzcGVjaWZpY2FsbHkgdXNlZCBmb3IgZ3Vlc3Qtc2lkZSBjb2RlLg0KDQpPa2F5LCB3aWxs
+IGNoYW5nZSB0aGF0Lg0KDQo+IA0KPiBPbiBUdWUsIFNlcCAzMCwgMjAyNSwgSnVlcmdlbiBH
+cm9zcyB3cm90ZToNCj4+IEluc3RlYWQgb2YgaGF2aW5nIGEgS1ZNIHByaXZhdGUgcmVhZF9t
+c3IoKSBmdW5jdGlvbiwganVzdCB1c2UgcmRtc3JxKCkuDQo+Pg0KPj4gU2lnbmVkLW9mZi1i
+eTogSnVlcmdlbiBHcm9zcyA8amdyb3NzQHN1c2UuY29tPg0KPj4gLS0tDQo+PiBWMjoNCj4+
+IC0gcmVtb3ZlIHRoZSBoZWxwZXIgYW5kIHVzZSByZG1zcnEoKSBkaXJlY3RseSAoU2VhbiBD
+aHJpc3RvcGhlcnNvbikNCj4+IC0tLQ0KPj4gICBhcmNoL3g4Ni9pbmNsdWRlL2FzbS9rdm1f
+aG9zdC5oIHwgMTAgLS0tLS0tLS0tLQ0KPj4gICBhcmNoL3g4Ni9rdm0vdm14L3ZteC5jICAg
+ICAgICAgIHwgIDQgKystLQ0KPj4gICAyIGZpbGVzIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygr
+KSwgMTIgZGVsZXRpb25zKC0pDQo+Pg0KPj4gZGlmZiAtLWdpdCBhL2FyY2gveDg2L2luY2x1
+ZGUvYXNtL2t2bV9ob3N0LmggYi9hcmNoL3g4Ni9pbmNsdWRlL2FzbS9rdm1faG9zdC5oDQo+
+PiBpbmRleCBmMTlhNzZkM2NhMGUuLmFlZDc1NGRkYTFhMyAxMDA2NDQNCj4+IC0tLSBhL2Fy
+Y2gveDg2L2luY2x1ZGUvYXNtL2t2bV9ob3N0LmgNCj4+ICsrKyBiL2FyY2gveDg2L2luY2x1
+ZGUvYXNtL2t2bV9ob3N0LmgNCj4+IEBAIC0yMjk2LDE2ICsyMjk2LDYgQEAgc3RhdGljIGlu
+bGluZSB2b2lkIGt2bV9sb2FkX2xkdCh1MTYgc2VsKQ0KPj4gICAJYXNtKCJsbGR0ICUwIiA6
+IDogInJtIihzZWwpKTsNCj4+ICAgfQ0KPj4gICANCj4+IC0jaWZkZWYgQ09ORklHX1g4Nl82
+NA0KPj4gLXN0YXRpYyBpbmxpbmUgdW5zaWduZWQgbG9uZyByZWFkX21zcih1bnNpZ25lZCBs
+b25nIG1zcikNCj4+IC17DQo+PiAtCXU2NCB2YWx1ZTsNCj4+IC0NCj4+IC0JcmRtc3JxKG1z
+ciwgdmFsdWUpOw0KPj4gLQlyZXR1cm4gdmFsdWU7DQo+PiAtfQ0KPj4gLSNlbmRpZg0KPiAN
+Cj4gR2FoLCB0aGUgc2FtZSBjb21taXRbKl0gdGhhdCBhZGRlZCBhIHdybXNybnMoKSB1c2Ug
+YWxzbyBhZGRlZCBhIHJlYWRfbXNyKCkuICBTb3JyeSA6LSgNCj4gDQo+IFsqXSA2NTM5MWZl
+YjA0MmIgKCJLVk06IFZNWDogQWRkIGhvc3QgTVNSIHJlYWQvd3JpdGUgaGVscGVycyB0byBj
+b25zb2xpZGF0ZSBwcmVlbXB0aW9uIGhhbmRsaW5nIikNCg0KQWdhaW4sIHRoYW5rcyBmb3Ig
+dGhlIGhlYWRzIHVwLg0KDQoNCkp1ZXJnZW4NCg==
+--------------oOMO04Esfdn5Zk7quz0HiTts
+Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Description: OpenPGP public key
+Content-Transfer-Encoding: quoted-printable
 
-> +&wifi {
-> +	vdd-0.8-cx-mx-supply = <&vreg_l5a_0p8>;
-> +	vdd-1.8-xo-supply = <&vreg_l7a_1p8>;
-> +	vdd-1.3-rfa-supply = <&vreg_l17a_1p3>;
-> +	vdd-3.3-ch0-supply = <&vreg_l25a_3p3>;
-> +	vdd-3.3-ch1-supply = <&vreg_l23a_3p3>;
-> +
-> +	qcom,snoc-host-cap-skip-quirk;
+-----BEGIN PGP PUBLIC KEY BLOCK-----
 
-As the dt-checker points out, there is no such property
+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
+kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
+=3DeeAB
+-----END PGP PUBLIC KEY BLOCK-----
 
-If your wi-fi works regardless of that, you probably don't need
-to set the one you intended to
+--------------oOMO04Esfdn5Zk7quz0HiTts--
 
-Konrad
+--------------qfX8g3Ov94hVZdf0FX8oINEy--
+
+--------------TrUtvkp0TauRyjp2nwWIKfjg
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmjc8P0FAwAAAAAACgkQsN6d1ii/Ey8m
+uggAgMFiEuofh6mpXYOvpBCTInppEkws0ZCHxV5tIYOkaeXRlYs0hZauElcjqpQethAPJAw9rjFM
+Z3KhEnAlqYaTrZ8ofgQiASpo4E9AtGjqs+/FtlRl+7ugd9egygGjgw1T/JihQ4sF8xZTdJDe+uxN
+UDeAmFAOhFB6JlN1M2kKJkFeyAtGidhCgQ8Wxak+5BbxArFDkEJPYiELsrzNNAmWjxr0ay5tSj8C
+n8b5ybOzUveHMVzAKUutcrkGiD2WyiBafaPq3Owhyv04BIRH0V3zuaTjv1FiClj5ACGzqXtVeVzg
+ABO/94npxzO/UElfRDDj4pHX79FxVQYEEg2VvMN9wg==
+=tyPf
+-----END PGP SIGNATURE-----
+
+--------------TrUtvkp0TauRyjp2nwWIKfjg--
 
