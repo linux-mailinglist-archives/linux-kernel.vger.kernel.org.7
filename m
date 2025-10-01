@@ -1,217 +1,221 @@
-Return-Path: <linux-kernel+bounces-838753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E8F1BB0132
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 12:58:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DC7BBB0138
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 12:59:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FC687A046D
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 10:57:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98EFB1941D84
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 10:59:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAEFE296BDB;
-	Wed,  1 Oct 2025 10:58:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 951192C11CF;
+	Wed,  1 Oct 2025 10:58:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FzHFmtNw"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="pRaCq5CS"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DEF92BE647
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 10:58:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A642A2264C0
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 10:58:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759316315; cv=none; b=h9vjSWwH/alOEXeBOGvH9sjCGYc7jvr+cynxTyYQZBX6qASFzfy9BB6Ex8Dgvb+lCYfzAVulk0yfRbCnydZZfGVXgJ6cbM5fWdIk5IOtNtCdLRWy65ohAP3UCCJy8ngXX+Uc43E5NLEeGyC5s7Wjq+gHpMelVc51i8zbV5iJqEk=
+	t=1759316327; cv=none; b=Fkq+nk2+mMsP0bKG1fCGSY/YgdS0hSLXtHcHfY/gLvRe5F4FkE4BSjOV7q/Tr0S2kzB5G/h610a49Jcnti1ORNRLGfI6ra0Rnd8m0t8FciRxk6kjOavudCfR7gRn/2QvJmPWu95tcK4LU8djTy7JWggfSi3+WFmgrY450VqSwlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759316315; c=relaxed/simple;
-	bh=/IYSV63F/1m3PQjyG9fAEJ3srxPO2l7np0mTFe5/Tzw=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RvDU/tgyO9lViitCXpNhvKqYNiX++tGVqgJANvuP9j8b3NFomb572hs2GcetXocjBtMabojWpbAD/3WriFqQcVBMN+LcxzlUNkpaKYBUJjaImPGYPSiSrx/u0DW0cKNeNnyNX+IeTnIyMHD5w7z+EANPiIg9T3rlBkNODhMyiRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FzHFmtNw; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-46e4ad36541so47460845e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 03:58:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759316312; x=1759921112; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=jgTf8OFmZbVt9M6n37Tqho0gXB+F57yDDcMKmNn8RI8=;
-        b=FzHFmtNwD1xd+ZU9W0RowK5UoDpwXGWhkptj9C7LBvnuhRGGJ6ER9AeJLwNmycQuaI
-         KsMquDpdqa5cTwHD8mLsGJLfZebRAw1G7KXjqCxvUXwWOwab+y8OlM5M4gcTtG8fu8Di
-         rnZEgZFdeBywNpCxv7Zug4A1u6oWiec0+Yt7Qn7Kjhiq+e0kLSI3nSihXN8e9KPuFmqK
-         +Rqc17FS1EnBGXGR0cyt4Ic8o5xnUa3F+qrI9zo2omtru4SiRyr6gyLNAEc0ncRBXv0q
-         /+i3/RxMQfO45KXh8SWsAzA7qMjzge9u7Zeps8lK/9E+Z9Ku8uCxRa1XN2Xo6QLwxyEy
-         DoaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759316312; x=1759921112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jgTf8OFmZbVt9M6n37Tqho0gXB+F57yDDcMKmNn8RI8=;
-        b=hMm1K7OA2YbLbQl/fvLHrp0tdPSlcsRX/fCP7Rpe82aYIWsID89YQEMe2HS3eaYso1
-         9sREHO2zW1g9zmn8R9O/UKyDm7IHxUueORCd5s8frdxkNSiNKfWjKiPAAvbXtgwvjpN/
-         Vyv4rhWYT5p5jfHd+S1RjBarJMm0IBHbFNS8HM/oG0Mecjo9elnOatxVK1pNfc4PwqFT
-         A54Z8G82fGxY9cFp5kQJyBP6A74CHuirmgqgb+Arlm2mnM+xIlo4gC7uYvHGDgjDfIzu
-         cjNW1k8pdmJXjoXQR7J57sJR3PbILUeyPUNUjkHT75+GUNnPxuEabDGbKO1AVzak/5jy
-         elhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVezodHK80dJte/UcWoEfkCiIQCdwv1b/CFnr0TTBrg8YY5rBiRmEtrFOS277uLnDjgHORjUe/zGlpjlg8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoPNo5PGNRhZD+gDk3x+pRncnW5Cy7V9cKaqvIKHCk+e3E3Egp
-	0lEr9BeL2Bk3Wm8Sg3K9cisLE1BJedu9JNDCNZzhWqBBDIxV38D3ihqk
-X-Gm-Gg: ASbGncsjv9ljc12LLsB0+X+0iVXcFcG4taGALOgijdT+Q/6w2ipWeBsc1SniFK8wptd
-	pqROc1Y8v3tWXwJADy2AacOwi1uXKwviQrsPj/MHyP3byCe7TQn/b8krfOSAj1UCjuAgZn/SlsR
-	NnFZvzFCQuVecxEAiOjRZ1Sch5ayZJGp+NBLvrkn3Gw4ii20Of6uqx3EaaG3Hyv3apOAf9WNMeo
-	t/gKyp/zAJfWWyLs4hcK4mM8eEqX5ca/U9BQcmUoj7MvEyJymJ4b4tRDNfX8Bv4sqHiupqjPplZ
-	xSDCqyTD7CioTk36Py3421PG2yM0f+Eh4bt06EoZpvGZAUxRwJg6dqE/DUolu5Cg0tE6+pM1pBA
-	njzvaT2HHbM3GQip3kZlM
-X-Google-Smtp-Source: AGHT+IETvY4nPwFmCDnck2+Me06qm/+E1HwxuuyzfVMchJwNS3fwOfFmJvBmtJ4GPxRZiTy3sRbd6A==
-X-Received: by 2002:a05:600c:820c:b0:46e:4882:94c7 with SMTP id 5b1f17b1804b1-46e612cb269mr24565545e9.28.1759316311314;
-        Wed, 01 Oct 2025 03:58:31 -0700 (PDT)
-Received: from krava ([2a02:8308:a00c:e200::31e0])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e61a0204fsm34308255e9.14.2025.10.01.03.58.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Oct 2025 03:58:30 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Wed, 1 Oct 2025 12:58:29 +0200
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, bpf@vger.kernel.org,
-	daniel@iogearbox.net, andrii@kernel.org, martin.lau@kernel.org,
-	peterz@infradead.org, kuba@kernel.org, linux-kernel@vger.kernel.org,
-	mingo@kernel.org, netdev@vger.kernel.org
-Subject: Re: [GIT PULL] BPF changes for 6.18
-Message-ID: <aN0JVRynHxqKy4lw@krava>
-References: <20250928154606.5773-1-alexei.starovoitov@gmail.com>
- <CAHk-=whR4OLqN_h1Er14wwS=FcETU9wgXVpgvdzh09KZwMEsBA@mail.gmail.com>
+	s=arc-20240116; t=1759316327; c=relaxed/simple;
+	bh=0w3Jyk0rJng/IrgFEfWRqEdtug1v7WMnBStu3ORBxWc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iSyUB9X9Ha6TyoFmDOeFgq6PBz7AG8ISgvOLkmS6ri6WLEPZxxxaaE+7x7/r0PhT7RPHKtH5EuzN0K+14GerF3mnsiv3/i1hkI5dZ6M4XyHkf66hxdSvwiHpuVq3HIFNi4HfanM/1hxwb3TVsdDC65BimC4vZrw7L/nyahRzs0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=pRaCq5CS; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1759316323;
+	bh=0w3Jyk0rJng/IrgFEfWRqEdtug1v7WMnBStu3ORBxWc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=pRaCq5CScn+5ZHLaSoijyNq3koeUC6kPqNeM/Pn489elk8ieFTMqkJQqwZfDN3BJl
+	 dtE3wOnnMoaqXQp0zRD+brackwQd83ZXNYvgcq6it5P5fPfIf+C6wwzGJGsA3BHlMl
+	 Feu32KNld8ct1nWws+Ck8UrD6KgPBcrMeHaLLmwDEWgrA3ASQglH8yd7hSid2r7sU9
+	 AaS7zn1M6jZ5k7sdUiOOAUBDwYzTqHqb9JNz3wvZ7FB9gxSD2JK/UM0CN4B0X6+ds4
+	 2RUzHeD12EePKoM6iuAPEdasT0GbtCIOo9hYMYg9vyBtvpl0p0mPqA7eLbyuoblBm1
+	 iQjdiEo+Xlhkg==
+Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 6506B17E107D;
+	Wed,  1 Oct 2025 12:58:43 +0200 (CEST)
+Date: Wed, 1 Oct 2025 12:58:38 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Steven
+ Price <steven.price@arm.com>, kernel@collabora.com, Rob Herring
+ <robh@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann
+ <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>
+Subject: Re: [PATCH v4 05/10] drm/panfrost: Handle page mapping failure
+Message-ID: <20251001125838.10200ff2@fedora>
+In-Reply-To: <20251001022039.1215976-6-adrian.larumbe@collabora.com>
+References: <20251001022039.1215976-1-adrian.larumbe@collabora.com>
+	<20251001022039.1215976-6-adrian.larumbe@collabora.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHk-=whR4OLqN_h1Er14wwS=FcETU9wgXVpgvdzh09KZwMEsBA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 30, 2025 at 07:09:43PM -0700, Linus Torvalds wrote:
-> [ Jiri added to participants ]
-> 
-> On Sun, 28 Sept 2025 at 08:46, Alexei Starovoitov
-> <alexei.starovoitov@gmail.com> wrote:
-> >
-> > Note, there is a trivial conflict between tip and bpf-next trees:
-> > in kernel/events/uprobes.c between commit:
-> >   4363264111e12 ("uprobe: Do not emulate/sstep original instruction when ip is changed")
-> > from the bpf-next tree and commit:
-> >   ba2bfc97b4629 ("uprobes/x86: Add support to optimize uprobes")
-> > from the tip tree:
-> > https://lore.kernel.org/all/aNVMR5rjA2geHNLn@sirena.org.uk/
-> > since Jiri's two separate uprobe/bpf related patch series landed
-> > in different trees. One was mostly uprobe. Another was mostly bpf.
-> 
-> So the conflict isn't complicated and I did it the way linux-next did
-> it, but honestly, the placement of that arch_uprobe_optimize() thing
-> isn't obvious.
-> 
-> My first reaction was to put it before the instruction_pointer()
-> check, because it seems like whatever rewriting the arch wants to do
-> might as well be done regardless.
-> 
-> It's very confusing how it's sometimes skipped, and sometimes not
-> skipped. For example. if the uprobe is skipped because of
-> single-stepping disabling it, the arch optimization still *will* be
-> done, because the "skip_sstep()" test is done after - but other
-> skipping tests are done before.
-> 
-> Jiri, it would be good to just add a note about when that optimization
-> is done and when not done. Because as-is, it's very confusing.
-> 
-> The answer may well be "it doesn't matter, semantics are the same" (I
-> suspect that _is_ the answer), but even so that current ordering is
-> just confusing when it sometimes goes through that
-> arch_uprobe_optimize() and sometimes skips it.
+On Wed,  1 Oct 2025 03:20:26 +0100
+Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
 
-yes, either way will work fine, but perhaps the other way round to
-first optimize and then skip uprobe if needed is less confusing
+> When mapping the pages of a BO, either a heap type at page fault time or
+> else a non-heap BO at object creation time, if the ARM page table mapping
+> function fails, we unmap what had been mapped so far and bail out.
+>=20
+> Signed-off-by: Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com>
+> ---
+>  drivers/gpu/drm/panfrost/panfrost_mmu.c | 49 ++++++++++++++++++++++---
+>  1 file changed, 44 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_mmu.c b/drivers/gpu/drm/pa=
+nfrost/panfrost_mmu.c
+> index cf272b167feb..fb17c32855a5 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_mmu.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_mmu.c
+> @@ -393,13 +393,32 @@ static void panfrost_mmu_flush_range(struct panfros=
+t_device *pfdev,
+>  	pm_runtime_put_autosuspend(pfdev->base.dev);
+>  }
+> =20
+> +static void mmu_unmap_range(struct panfrost_mmu *mmu, u64 iova, size_t l=
+en)
+> +{
+> +	struct io_pgtable_ops *ops =3D mmu->pgtbl_ops;
+> +	size_t pgsize, unmapped_len =3D 0;
+> +	size_t unmapped_page, pgcount;
+> +
+> +	while (unmapped_len < len) {
+> +		pgsize =3D get_pgsize(iova, len - unmapped_len, &pgcount);
+> +
+> +		unmapped_page =3D ops->unmap_pages(ops, iova, pgsize, pgcount, NULL);
+> +		WARN_ON(unmapped_page !=3D pgsize * pgcount);
+> +
+> +		iova +=3D pgsize * pgcount;
+> +		unmapped_len +=3D pgsize * pgcount;
+> +	}
+> +}
+> +
+>  static int mmu_map_sg(struct panfrost_device *pfdev, struct panfrost_mmu=
+ *mmu,
+>  		      u64 iova, int prot, struct sg_table *sgt)
+>  {
+>  	unsigned int count;
+>  	struct scatterlist *sgl;
+>  	struct io_pgtable_ops *ops =3D mmu->pgtbl_ops;
+> +	size_t total_mapped =3D 0;
+>  	u64 start_iova =3D iova;
+> +	int ret;
+> =20
+>  	for_each_sgtable_dma_sg(sgt, sgl, count) {
+>  		unsigned long paddr =3D sg_dma_address(sgl);
+> @@ -413,10 +432,14 @@ static int mmu_map_sg(struct panfrost_device *pfdev=
+, struct panfrost_mmu *mmu,
+>  			size_t pgcount, mapped =3D 0;
+>  			size_t pgsize =3D get_pgsize(iova | paddr, len, &pgcount);
+> =20
+> -			ops->map_pages(ops, iova, paddr, pgsize, pgcount, prot,
+> +			ret =3D ops->map_pages(ops, iova, paddr, pgsize, pgcount, prot,
+>  				       GFP_KERNEL, &mapped);
+> +			if (ret)
+> +				goto err_unmap_pages;
+> +
+>  			/* Don't get stuck if things have gone wrong */
+>  			mapped =3D max(mapped, pgsize);
+> +			total_mapped +=3D mapped;
+>  			iova +=3D mapped;
+>  			paddr +=3D mapped;
+>  			len -=3D mapped;
+> @@ -426,6 +449,10 @@ static int mmu_map_sg(struct panfrost_device *pfdev,=
+ struct panfrost_mmu *mmu,
+>  	panfrost_mmu_flush_range(pfdev, mmu, start_iova, iova - start_iova);
+> =20
+>  	return 0;
+> +
+> +err_unmap_pages:
+> +	mmu_unmap_range(mmu, start_iova, total_mapped);
+> +	return ret;
+>  }
+> =20
+>  int panfrost_mmu_map(struct panfrost_gem_mapping *mapping)
+> @@ -436,6 +463,7 @@ int panfrost_mmu_map(struct panfrost_gem_mapping *map=
+ping)
+>  	struct panfrost_device *pfdev =3D to_panfrost_device(obj->dev);
+>  	struct sg_table *sgt;
+>  	int prot =3D IOMMU_READ | IOMMU_WRITE | IOMMU_CACHE;
+> +	int ret;
+> =20
+>  	if (WARN_ON(mapping->active))
+>  		return 0;
+> @@ -447,11 +475,18 @@ int panfrost_mmu_map(struct panfrost_gem_mapping *m=
+apping)
+>  	if (WARN_ON(IS_ERR(sgt)))
+>  		return PTR_ERR(sgt);
+> =20
+> -	mmu_map_sg(pfdev, mapping->mmu, mapping->mmnode.start << PAGE_SHIFT,
+> -		   prot, sgt);
+> +	ret =3D mmu_map_sg(pfdev, mapping->mmu, mapping->mmnode.start << PAGE_S=
+HIFT,
+> +			 prot, sgt);
+> +	if (ret)
+> +		goto err_put_pages;
+> +
+>  	mapping->active =3D true;
+> =20
+>  	return 0;
+> +
+> +err_put_pages:
+> +	drm_gem_shmem_put_pages_locked(shmem);
+> +	return ret;
+>  }
+> =20
+>  void panfrost_mmu_unmap(struct panfrost_gem_mapping *mapping)
+> @@ -635,8 +670,10 @@ static int panfrost_mmu_map_fault_addr(struct panfro=
+st_device *pfdev, int as,
+>  	if (ret)
+>  		goto err_map;
+> =20
+> -	mmu_map_sg(pfdev, bomapping->mmu, addr,
+> -		   IOMMU_WRITE | IOMMU_READ | IOMMU_CACHE | IOMMU_NOEXEC, sgt);
+> +	ret =3D mmu_map_sg(pfdev, bomapping->mmu, addr,
+> +			 IOMMU_WRITE | IOMMU_READ | IOMMU_CACHE | IOMMU_NOEXEC, sgt);
+> +	if (ret)
+> +		goto err_mmu_map_sg;
+> =20
+>  	bomapping->active =3D true;
+>  	bo->heap_rss_size +=3D SZ_2M;
+> @@ -650,6 +687,8 @@ static int panfrost_mmu_map_fault_addr(struct panfros=
+t_device *pfdev, int as,
+> =20
+>  	return 0;
+> =20
+> +err_mmu_map_sg:
+> +	dma_unmap_sgtable(pfdev->base.dev, sgt, DMA_BIDIRECTIONAL, 0);
 
-> 
-> Side note: the conflict in the selftests was worse, and the magic to
-> build it is not obvious. It errors out randomly with various kernel
-> configs with useless error messages, and I eventually just gave up
-> entirely with a
-> 
->    attempt to use poisoned ‘gettid’
-> 
-> error.
-> 
->              Linus
+You also need to clear the sgts[]/pages[] entries you added earlier,
+otherwise the next time you have a fault it will bail-out before
+attempting an mmu_map_sg().
 
-I ended up with changes below, should I send formal patches?
+IIRC, Dmitry had a similar fix in his shmem-shrinker series.
 
-thanks,
-jirka
+>  err_map:
+>  	sg_free_table(sgt);
+>  err_unlock:
 
-
----
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index 5dcf927310fd..c14ec27b976d 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -2765,6 +2765,9 @@ static void handle_swbp(struct pt_regs *regs)
- 
- 	handler_chain(uprobe, regs);
- 
-+	/* Try to optimize after first hit. */
-+	arch_uprobe_optimize(&uprobe->arch, bp_vaddr);
-+
- 	/*
- 	 * If user decided to take execution elsewhere, it makes little sense
- 	 * to execute the original instruction, so let's skip it.
-@@ -2772,9 +2775,6 @@ static void handle_swbp(struct pt_regs *regs)
- 	if (instruction_pointer(regs) != bp_vaddr)
- 		goto out;
- 
--	/* Try to optimize after first hit. */
--	arch_uprobe_optimize(&uprobe->arch, bp_vaddr);
--
- 	if (arch_uprobe_skip_sstep(&uprobe->arch, regs))
- 		goto out;
- 
-diff --git a/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c b/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c
-index 6d75ede16e7c..955a37751b52 100644
---- a/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c
-+++ b/tools/testing/selftests/bpf/prog_tests/uprobe_syscall.c
-@@ -661,7 +661,7 @@ static void *worker_trigger(void *arg)
- 		rounds++;
- 	}
- 
--	printf("tid %d trigger rounds: %lu\n", gettid(), rounds);
-+	printf("tid %ld trigger rounds: %lu\n", sys_gettid(), rounds);
- 	return NULL;
- }
- 
-@@ -704,7 +704,7 @@ static void *worker_attach(void *arg)
- 		rounds++;
- 	}
- 
--	printf("tid %d attach rounds: %lu hits: %d\n", gettid(), rounds, skel->bss->executed);
-+	printf("tid %ld attach rounds: %lu hits: %d\n", sys_gettid(), rounds, skel->bss->executed);
- 	uprobe_syscall_executed__destroy(skel);
- 	free(ref);
- 	return NULL;
-diff --git a/tools/testing/selftests/bpf/prog_tests/usdt.c b/tools/testing/selftests/bpf/prog_tests/usdt.c
-index 4f7f45e69315..f4be5269fa90 100644
---- a/tools/testing/selftests/bpf/prog_tests/usdt.c
-+++ b/tools/testing/selftests/bpf/prog_tests/usdt.c
-@@ -142,7 +142,7 @@ static void subtest_basic_usdt(bool optimized)
- 		goto cleanup;
- #endif
- 
--	alled = TRIGGER(1);
-+	called = TRIGGER(1);
- 
- 	ASSERT_EQ(bss->usdt0_called, called, "usdt0_called");
- 	ASSERT_EQ(bss->usdt3_called, called, "usdt3_called");
 
