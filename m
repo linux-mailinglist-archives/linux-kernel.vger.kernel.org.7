@@ -1,82 +1,109 @@
-Return-Path: <linux-kernel+bounces-838935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC15ABB074D
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 15:20:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE6BCBB06F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 15:11:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D2061927CC8
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 13:21:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EE1C19400C0
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 13:12:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D0672EDD4D;
-	Wed,  1 Oct 2025 13:20:26 +0000 (UTC)
-Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0642E2EC566;
+	Wed,  1 Oct 2025 13:11:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t6dO4Qcq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D6DC1DA62E;
-	Wed,  1 Oct 2025 13:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50EBA2E264C;
+	Wed,  1 Oct 2025 13:11:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759324825; cv=none; b=u0onedwJOMT0xigUuP5J14/FPWV68PLtVTCuXO5XslnP4DJ6yUXgjHej/WgfYqJP9kxEL27eqqbQr80GqJB/Ii79UhjwjYPeksqNmWiWNtGYDxgf6HD5+OvpMJ7UwAy5p53oGgDck5giISkZP/Vpt6NYmrHvHXiE/EwfIFWqfvI=
+	t=1759324308; cv=none; b=KPwS+5Zy2G0C/6reLvlnh2eKcjfSXRJ6pyIcTktsafhBSR3o0NeNYLUMJ5wAIBKjg/ANownNpghsvNPG1csDBxwoH70fTkMO5xLmPoEse4zpnLCewqdQ7EdFh9QnjJLy7/xZwgfCJbBtplCf2nfvJ+9xeanzCBAoaEYEoBzbNIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759324825; c=relaxed/simple;
-	bh=Uctcsfz4nNrfaQk5rKvvDsfcCV9RMgYtVLuLHqiRaLo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SjjEXakmwiyeDxSVhhJ1vnQf/HCvVvHX90NddnkrlJx2DUJuSUa/ELynAQz3so7kA4L1lGZ/PU3KXcDHyG93BgrvbZJ86b28Vc/Km5l3qCSYfQKIaIBqTvFRyeBZ6Mq0X/6hOSoJSZ0iuRFAkFU7KSPrngH+ts+hCQEOuGqRi2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout1.hostsharing.net (Postfix) with ESMTPS id 621F82C0A2C6;
-	Wed,  1 Oct 2025 15:10:14 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 4BEE65F82FE; Wed,  1 Oct 2025 15:10:14 +0200 (CEST)
-Date: Wed, 1 Oct 2025 15:10:14 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Hubert Wi??niewski <hubert.wisniewski.25632@gmail.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>, stable@vger.kernel.org,
-	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-	Xu Yang <xu.yang_2@nxp.com>, linux-usb@vger.kernel.org
-Subject: Re: [PATCH net v2 1/1] net: usb: asix: hold PM usage ref to avoid
- PM/MDIO + RTNL deadlock
-Message-ID: <aN0oNgEp08BaGeTJ@wunner.de>
-References: <20251001130432.2444863-1-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1759324308; c=relaxed/simple;
+	bh=clujk22pKlR3lY5QkTpBaiYqGOkG+FR+VUr/OI56JdE=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SyqPvWSU3cAxyj5usH1md3h8e9IOLLkOq2JVLFABuM5+78aAzR52UWmXGhlqOymqGxCr34dVZRYZPxTRKdVVV1iu4mZ5fjUVx5w69draz0phMjfkmZVM4vvu9tfkFwYMn/4S4qT2PXg1jC3HL9/VS9B32H4JJ6onmC7qc68Xruw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t6dO4Qcq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16CE1C4CEF4;
+	Wed,  1 Oct 2025 13:11:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759324308;
+	bh=clujk22pKlR3lY5QkTpBaiYqGOkG+FR+VUr/OI56JdE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=t6dO4Qcq2sgN7MqMsG/tl7axae64golJdNSQYH49U2njLFcdLDW2/UKLm/I8YP6hA
+	 qMZ+eTrysKQpzc74Rk430lXfMCafWTjnmOZNYPOS8/4ACokUJWcqA0VbYFkg4+h0ED
+	 ioi99/Kt4Tw3BQcYr/WfBKWUzoLBzI4k/DEm14+4TiXg8cnM4KtSAJpwXmGDrZi3t7
+	 oHNa/xR3uuDwWEpJVDwVbq/K1Z4kLFqQzIpLAR7hegl0xVhLftGeyd9DFWSKSNMojh
+	 hcJ2SmR5l3SK4zZ5EzSwdanA87PmX8ctlLjWZpzDcO6yumncHFZJrnq9FWTAPwFAbo
+	 ZqL8j43BqtQGQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1v3wcT-0000000Ao9g-1u79;
+	Wed, 01 Oct 2025 13:11:45 +0000
+Date: Wed, 01 Oct 2025 14:11:44 +0100
+Message-ID: <86ikgyzrzj.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Steven Price <steven.price@arm.com>
+Cc: kvm@vger.kernel.org,
+	kvmarm@lists.linux.dev,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Joey Gouly <joey.gouly@arm.com>,
+	Alexandru Elisei <alexandru.elisei@arm.com>,
+	Christoffer Dall <christoffer.dall@arm.com>,
+	Fuad Tabba <tabba@google.com>,
+	linux-coco@lists.linux.dev,
+	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+	Gavin Shan <gshan@redhat.com>,
+	Shanker Donthineni <sdonthineni@nvidia.com>,
+	Alper Gun <alpergun@google.com>,
+	"Aneesh Kumar K . V" <aneesh.kumar@kernel.org>,
+	Emi Kisanuki <fj0570is@fujitsu.com>,
+	Vishal Annapurve <vannapurve@google.com>
+Subject: Re: [PATCH v10 08/43] kvm: arm64: Don't expose debug capabilities for realm guests
+In-Reply-To: <20250820145606.180644-9-steven.price@arm.com>
+References: <20250820145606.180644-1-steven.price@arm.com>
+	<20250820145606.180644-9-steven.price@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251001130432.2444863-1-o.rempel@pengutronix.de>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: steven.price@arm.com, kvm@vger.kernel.org, kvmarm@lists.linux.dev, suzuki.poulose@arm.com, catalin.marinas@arm.com, will@kernel.org, james.morse@arm.com, oliver.upton@linux.dev, yuzenghui@huawei.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, joey.gouly@arm.com, alexandru.elisei@arm.com, christoffer.dall@arm.com, tabba@google.com, linux-coco@lists.linux.dev, gankulkarni@os.amperecomputing.com, gshan@redhat.com, sdonthineni@nvidia.com, alpergun@google.com, aneesh.kumar@kernel.org, fj0570is@fujitsu.com, vannapurve@google.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Wed, Oct 01, 2025 at 03:04:32PM +0200, Oleksij Rempel wrote:
-> @@ -1600,6 +1624,10 @@ static struct usb_driver asix_driver = {
->  	.resume =	asix_resume,
->  	.reset_resume =	asix_resume,
->  	.disconnect =	usbnet_disconnect,
-> +	/* usbnet will force supports_autosuspend=1; we explicitly forbid RPM
-> +	 * per-interface in bind to keep autosuspend disabled for this driver
-> +	 * by using pm_runtime_forbid().
-> +	 */
+On Wed, 20 Aug 2025 15:55:28 +0100,
+Steven Price <steven.price@arm.com> wrote:
+> 
+> From: Suzuki K Poulose <suzuki.poulose@arm.com>
+> 
+> RMM v1.0 provides no mechanism for the host to perform debug operations
+> on the guest. So don't expose KVM_CAP_SET_GUEST_DEBUG and report 0
+> breakpoints and 0 watch points.
 
-Looks like this code comment needs an update, now that you're no longer
-using pm_runtime_forbid()?
+What is the guest seeing for the same things?
 
-Thanks,
+	M.
 
-Lukas
+-- 
+Without deviation from the norm, progress is not possible.
 
