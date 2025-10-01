@@ -1,76 +1,103 @@
-Return-Path: <linux-kernel+bounces-838901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EA9CBB063E
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 14:55:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 59129BB064D
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 14:56:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 049CC1945C61
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 12:55:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A858219460C1
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 12:56:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4583B2EC0A8;
-	Wed,  1 Oct 2025 12:55:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 957832EC0A9;
+	Wed,  1 Oct 2025 12:56:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZKiDXyTZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="MBpLJj+C"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 990E22522BE;
-	Wed,  1 Oct 2025 12:55:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7F5C256C9E;
+	Wed,  1 Oct 2025 12:56:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759323313; cv=none; b=iXXRe/yqeIeibXCsmIxtyXD1Hb7uwnx40vddeeMcXo+Vc7OcO6IPoSPxneRA/cm0K2k/09kbpB7jszbGwSfnizB5pdl0e0vMuei9HKt2YCYr/9nI29/qrGcbLqbtiITobvJVvMmZGhCabfG5KJNgPM3FTwm1nP1KX9v5R8df0QQ=
+	t=1759323371; cv=none; b=bZ9zBvins7Ec8ptPIFRWkFB2xWhomw4usN84cdaLsl8sNXoNfUH1UiSgpGfCecFgoveiSdUgRqHRZ+0ONbI/HLyucjAjaLr4n3wsd2HZM32n978dkSvHv5gnQAeJhVtIo6vS6UjIsm+h7RSXm7cCDGMydjF8XgDgbq8fiZJ7+8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759323313; c=relaxed/simple;
-	bh=LRPAIU7oUMh2EMMgZZBYLQFZsIlE0AA8tKcdEBDoFCE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RX/4bUwFx+ZOQxQhujKZtrrj6w8QUAZjRvCTXSzCyfRpoA5bj/htPKkFwQFVzWQSSzQsJAvYWA5x+XEVF9eBR7tAcKNZSTmEsy7cLcvfXpCtP5V8kIXM3virgt4V601D+Wkng4hp8ojz8wm4cd3HnIcP4ECwUBNepwcgtOsCqKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZKiDXyTZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 798B9C4CEF4;
-	Wed,  1 Oct 2025 12:55:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759323313;
-	bh=LRPAIU7oUMh2EMMgZZBYLQFZsIlE0AA8tKcdEBDoFCE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZKiDXyTZkU1mJCAZsavBe4swvM2lZoX/FlntfD5DsO0H12GtnACGXA+6hrP/2523g
-	 EBuJHohENuaN2IGd0NGDCkUiRncgQpdLXAp97yVusHX0qW3V0ag12uHzSG/yUOy1CJ
-	 yQCLnIcWO9MPEBvb3BGBd4t64NMMqH5Q5xmyAqo+eGijsRsP82uZhh62UtsCliPJrz
-	 WrsD3guUrnNbaYOawmMlXsKbaKt4ewyW0vG03gGKBUYoXIaVjMHCx41Hw2eYYajVEt
-	 RJZdJUcNf/ccG2O75khqcerZKVdDDnzdHGVV3FWlt7d4shMzCKn1ZPUFqUCXRJqD9T
-	 xw/tBcCZKf5lg==
-Date: Wed, 1 Oct 2025 07:55:10 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Akiyoshi Kurita <weibu@redadmin.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org,
-	linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Conor Dooley <conor+dt@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH] dt-bindings: mmc: Correct typo "upto" to "up to"
-Message-ID: <175932328886.1147501.11874097725207297926.robh@kernel.org>
-References: <20250930134547.1096686-1-weibu@redadmin.org>
+	s=arc-20240116; t=1759323371; c=relaxed/simple;
+	bh=mOReZNqWwbU4a/wTjJDB0+lkjw0UmfuQ9GPr10g0YVA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=nWFg1YniSaV9rZrRd+HPfxgh6/ohSNT0ylCQpvAXNE1Y9d4Fk2zzYhYKqXhu4xMT2D9VvD/m8LQemBKnyKHwruQzH1seB0/tsY4mT00mOvZt5TK/ze+ssIBWwJkiN3kM5hzhJzicvTZiKObojNDz/ZUemVczhdHzCS/15wx4+jM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=MBpLJj+C; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 6C70740B1B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1759323361; bh=EgZoynB3HntThhqa4R0c/Bog3MxF773jArVoHdMs/BM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=MBpLJj+CZHD4g9j3eG4cW1cQFCB97uzVFLfjyAg0Zuo+OMmb9pfhp97mqmsjBNb3C
+	 ZSsS9GO5Rsh8eqC/s3IJKtVHNJ16O+JlBEcJ5+H6FKmUNJihlFRvTv4Bj6/hpvAv/o
+	 vfpuiUs/a1YXboMr0NdWuRRY5khpO25yJWU4p5zjEHcn5U0ZQj3nyJ+HAU1gr1QUY3
+	 /oUAl5K2VbaRkNO+kqitUWDuQcHWJEVQ5DT5RZq6e4VNkWWoLQgssBVXhoJ53Kn+hJ
+	 Ge7jSGAhRRPeInhXuAqyQXU9YZIuofgdbUs7PkyJntDyEJNuC/7IHQ66R/GpUdKEa/
+	 e+z8tO1pd8s/A==
+Received: from localhost (mdns.lwn.net [45.79.72.68])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 6C70740B1B;
+	Wed,  1 Oct 2025 12:56:00 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Linux Doc Mailing
+ List <linux-doc@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] docs: Makefile: use PYTHONPYCACHEPREFIX
+In-Reply-To: <65f341d516c329e2b57252176b188ae68f3bb6ca.1759135339.git.mchehab+huawei@kernel.org>
+References: <cover.1759135339.git.mchehab+huawei@kernel.org>
+ <65f341d516c329e2b57252176b188ae68f3bb6ca.1759135339.git.mchehab+huawei@kernel.org>
+Date: Wed, 01 Oct 2025 06:55:57 -0600
+Message-ID: <87a52avl0i.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250930134547.1096686-1-weibu@redadmin.org>
+Content-Type: text/plain
 
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
 
-On Tue, 30 Sep 2025 22:45:47 +0900, Akiyoshi Kurita wrote:
-> The word "upto" is a typo for "up to". Correct this typo in the
-> mmc-controller-common binding documentation.
-> 
-> Signed-off-by: Akiyoshi Kurita <weibu@redadmin.org>
+> Previous cleanup patches ended dropping it when sphinx-build-wrapper
+> were added. Also, sphinx-pre-install can also generate caches.
+>
+> So, re-add it for both.
+>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 > ---
->  .../devicetree/bindings/mmc/mmc-controller-common.yaml          | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
+>  Documentation/Makefile | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/Documentation/Makefile b/Documentation/Makefile
+> index f764604fa1ac..cf26d5332fb5 100644
+> --- a/Documentation/Makefile
+> +++ b/Documentation/Makefile
+> @@ -60,8 +60,10 @@ else # HAVE_SPHINX
+>  
+>  # Common documentation targets
+>  htmldocs mandocs infodocs texinfodocs latexdocs epubdocs xmldocs pdfdocs linkcheckdocs:
+> -	$(Q)@$(srctree)/tools/docs/sphinx-pre-install --version-check
+> -	+$(Q)$(PYTHON3) $(BUILD_WRAPPER) $@ \
+> +	$(Q)PYTHONPYCACHEPREFIX="$(PYTHONPYCACHEPREFIX)" \
+> +		@$(srctree)/tools/docs/sphinx-pre-install --version-check
+> +	+$(Q)PYTHONPYCACHEPREFIX="$(PYTHONPYCACHEPREFIX)" \
+> +		$(PYTHON3) $(BUILD_WRAPPER) $@ \
 
-Applied, thanks!
+This causes an immediate build fail for me:
 
+  /bin/sh: line 1: @./tools/docs/sphinx-pre-install: No such file or directory
+  make[2]: *** [Documentation/Makefile:63: htmldocs] Error 127
+  make[1]: *** [Makefile:1808: htmldocs] Error 2
+  make: *** [Makefile:248: __sub-make] Error 2
+
+jon
 
