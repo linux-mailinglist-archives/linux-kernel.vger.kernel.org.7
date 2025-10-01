@@ -1,277 +1,221 @@
-Return-Path: <linux-kernel+bounces-838419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B585EBAF24B
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 07:20:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DABB6BAF251
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 07:26:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6976D2A1693
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 05:20:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9288B3B4F19
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 05:26:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F4C52561A7;
-	Wed,  1 Oct 2025 05:20:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A4FF254AFF;
+	Wed,  1 Oct 2025 05:25:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RTpedSWf"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b="CNbGa+ND"
+Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11023138.outbound.protection.outlook.com [40.93.201.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF93F23816D
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 05:20:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759296038; cv=none; b=iZ1yH/EN9O3edy6izimT+EgwGmJX62L6nNRkb0XKNF2E3bDUCrc4cr5awO3He9yAPpPdIiUmMiPO+4a+aDkEKsirZFeCKbRT3/0y/byEVe85xvbHsfZ1qdoOqJUtIyft/n5aXxI7JGY0GPGsr8IgK6BdssOttSbvcQgr/H0WAvk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759296038; c=relaxed/simple;
-	bh=pavEtnoo8vrFDTJ6BQAdYsqVXpuXcYgxwvBxXZ6E4n0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uQu1uTgFPQJx6XpsjMthjQqrXEx9IpQhyb4BLkbg+9BO33uaRCdoyylJENmrcNr5blNbK/3P4QCxEA/hgHTtU7z80RtzYTIJ9sXSJzP+FR9WZD2i4Lz2Y9W6Tv/8PkDawWkIT8YaCTb44ZOtWdX/se6/O/MBkeHrUiNFF+hxRuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RTpedSWf; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-27eda3a38ceso16359795ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 22:20:36 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1C9156B81;
+	Wed,  1 Oct 2025 05:25:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.138
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759296352; cv=fail; b=d9WrEBNP3+5IuC9fWdzIP9nYcK8Fanb878HCM5SOctRy2hUsjMTntsVuPBD2LJnizsAzMyRK3kQs/XXOItZbNj543OfkIVGwc1VsmVoq4bTKS742wjysx09onAIhzWSpz8xAoG+LauGzwzMXF7id9OyDQkfC7QywWomoN+Wx2bA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759296352; c=relaxed/simple;
+	bh=X4DcxO45q1DA+A4sLWBCYnw7KXpYI7YM2SzgHDa2QrA=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=MEmMOttRFPeZi6njokTBIjt0qiPlzYqTCXMBoszim/x5UvShi8V5xdbmxnDvdRPoA5010inATYwuApARa8YggUuUy1ESrEiH0E7LW26CqGt1xue6Ki6ZPg6tZCqzfyPa5YCn56q+QLHR+8qTAkmZ5qv0a1fB49vtqYksLi3s7/w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=fail (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b=CNbGa+ND reason="key not found in DNS"; arc=fail smtp.client-ip=40.93.201.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=AC4i0xjmbtP6j3lCQqZJzTZn/ypYMG2Xe3TD8GewIpqpGbp487ENEZVo/7q2D0g3MhQ8yaK2jjQLPtthZJZEd+x0Fdj27MfZ+8nQz4GNSfRRNxElLxppcfYtHAbroAeXBShIpli4iVkPTJdKE4HKltK/Q727iYLMEQ8CZPw+7MpSZMYliYi6V14otYt5LB4n7qGJlwdBB8MrC2Tce8M/ebyVRF3NXQGnr34kzqC72jAKJXRqdU+dI23JCxMsHy9gLqbPLf8yHumk9dMr0biF1S2jKv7Jc9Ma70YMvEIgaVEd/n5cdyvLiy7DSa2F5c4lCagZ3Akj5iCmPQapyoxtLw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=o8XPha4Sn/juP8U+hvdbpvF1adZG9DGWhFZUkG9QeeQ=;
+ b=lyTkmVObl0pf/iKHWOpWH9Dtusxb19PAe2IM61hyX2PlyyTGJTAc2FKBSaVwfY9EP8rajgLxYT/F95JUX70Y5mV93iVI+1cqekJFJH8zgmHTACne5hu05t7CCGVZeYahCnZXWgSYGDP6LIBwRdf1Qn46iDLH784eq2yKMaDQrJRe3mZGnxJuozqWADCQwtMkmHZ/A11S0P7pX1uPwibmsMjgSF1GV6ZXU6BWGUeFU9h/OG40oygirD6EKtDw4MSs8qMT9QjHQtpQccK/PVAxlMpIyip5UHStrcsQ6iFbrQWbhgagJCKH/3kvs7KNCeAH2pXO+w3DVUSx+AgUY2W8AA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=amperemail.onmicrosoft.com; dkim=pass
+ header.d=amperemail.onmicrosoft.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759296036; x=1759900836; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aH4GQA68OgOjz0m0FNs9gjF+dMkismSV7fAIc1tlIUY=;
-        b=RTpedSWfmzZlYOIPT2XNjXY4FEI9oOyWONu3q7WjbFfC+GPbqUalwkwQ8xXjPasyQ0
-         0VkcvSYJ+jxZz2CDg3nOJU1q+rpVB/CaKC6BNnPok8P+ScQ2xHTVdv3YQyp7FFCueMUm
-         N5w/39fVbNn7h8xFwJNIuR8inQR72tx+CMjWiOtbhiXFfCgo9SJkrGIuK36MiB92ONP4
-         RW5XHNLckn1jkit6Av+N5lNQ301R9adOT5X73P5i10EJ5nBIt58ojb31nszLQ197QbFr
-         fNl/dnhNKINtHctVlwvf69OcrTgbFiU3MHM/+ao6cC6cuQki5c4VbFkqsdpFfCyYUCR+
-         ojMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759296036; x=1759900836;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aH4GQA68OgOjz0m0FNs9gjF+dMkismSV7fAIc1tlIUY=;
-        b=jarSZS7QAgCkIjgvDGm/f0BkVZqQ6rakfc32pgB8OADpGaKcmlfQTe/QShQDrsfrwD
-         B6uZ+G6WQebrZQcjY66JDDzHMZ/YROhCrR3dtW0Y9rymBLMCMGJP+vVfKS1T8GSPZnZU
-         Td5GpklH/E91zvmEX9iNK64hdayZecEhPKCnRNNYjysKdc8nlKf+VWnOBU7pdWA9bMB/
-         pZK0cGuOeOljwXUB+QR7AzdWLvU6mJPBpXaCkYHERAh6SUTN+z54CtAme0/G7JzmRoET
-         UPLeaJ2uh8PXJhI+oKiSJsxNTD+yylNcqwNHJFBuOK2oq4W45J5F8oTanN1r+tBxm9rK
-         eK+A==
-X-Forwarded-Encrypted: i=1; AJvYcCXuEhbH5KvQIeURs835Ku54KsswdLlUbg6bqXu1SciHi7+/zQH2pfvSuBvhzNBqOBHePeM/UJENvYRtnS4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywTi0ERherAFqCj0AiIWv8S1aOgMHGs9CPI5u/sy6T0iWQ7cDM
-	3quyRf7FLhkjV0UYHZn9QvJxRnr8AEoHV79KCReve6SFEz1GS9SitMO4
-X-Gm-Gg: ASbGncuG4VOuthoyqUwQc8nqOkESnbM+Tk6iBcvPIbASndoJE067qbafpjasFmslnxA
-	Fj20TEuPn/ETV7Ce2Iee70wca5fnCLD/QtUZoN3eA2EXcACoJjh4jOf4lzkP2zq6FA1S6c31D7Q
-	37LXRhgOJ9k02AyH3FIypXUN7o3K6uW7OJkIgx40TO+VBHggqHAuYUMcOK3MdAfTlEBNbwI+lkA
-	Q3nn76VYKos4eG2c6cU9WEEn4yenqIiPeEo+svbsfC5UXHHdiQqunU9RXp5z5GKFmrbWuLRrV+S
-	c9KrGxGyZfJuvXiZbnxfA/yNbj0BlXVqWDycw38GfBWGj8A5gdk9SMvxpnngG0Xj+ix2/EvGKVD
-	DIbWg2lifmtWv+UPPXcvQpuEmffRm6A6/kuoX2Q0CqiUX3CqP1nWlGbeMoOPvDhpGTJ1ZeE3QqS
-	/0+R7msVpzKx0/iw2vPlk=
-X-Google-Smtp-Source: AGHT+IEQBKkMmRJFhaLk6aiUUkZoMWjQ9aJLtNwc/fNJqUJtv9OSvqT5Ztf+nL1s0I42Kh7r/e+d+g==
-X-Received: by 2002:a17:903:41d0:b0:273:a653:bacf with SMTP id d9443c01a7336-28e7ec78ddbmr14326235ad.0.1759296035825;
-        Tue, 30 Sep 2025 22:20:35 -0700 (PDT)
-Received: from [172.20.45.103] (S0106a85e45f3df00.vc.shawcable.net. [174.7.235.4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed671738esm176840585ad.46.2025.09.30.22.20.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Sep 2025 22:20:34 -0700 (PDT)
-Message-ID: <25a87311-70fd-4248-86e4-dd5fecf6cc99@gmail.com>
-Date: Tue, 30 Sep 2025 22:20:44 -0700
+ d=amperemail.onmicrosoft.com; s=selector1-amperemail-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=o8XPha4Sn/juP8U+hvdbpvF1adZG9DGWhFZUkG9QeeQ=;
+ b=CNbGa+NDert2/IPzcE6ES/17FNPQxpTdSNTRa3zP5dINFgxOX+gWgGVmHp/QxIaxkMYHOsXjAmWNWS24Ktpm9sZnsHz3AW6iAVB13rCXuy5NAytbB5vWmomogRLcDqETgcV3Nr19uJ2LvLK5X5wKPusp/FKZaobMe9UpwzONmA0=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amperemail.onmicrosoft.com;
+Received: from BN3PR01MB9212.prod.exchangelabs.com (2603:10b6:408:2cb::8) by
+ SJ0PR01MB6207.prod.exchangelabs.com (2603:10b6:a03:29d::10) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9160.16; Wed, 1 Oct 2025 05:25:46 +0000
+Received: from BN3PR01MB9212.prod.exchangelabs.com
+ ([fe80::3513:ad6e:208c:5dbd]) by BN3PR01MB9212.prod.exchangelabs.com
+ ([fe80::3513:ad6e:208c:5dbd%3]) with mapi id 15.20.9160.015; Wed, 1 Oct 2025
+ 05:25:46 +0000
+Message-ID: <0f48a2b3-50c4-4f67-a8f6-853ad545bb00@amperemail.onmicrosoft.com>
+Date: Wed, 1 Oct 2025 01:25:42 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Revert "mailbox/pcc: support mailbox management of the
+ shared buffer"
+To: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+ Adam Young <admiyo@os.amperecomputing.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250926153311.2202648-1-sudeep.holla@arm.com>
+ <2ef6360e-834f-474d-ac4d-540b8f0c0f79@amperemail.onmicrosoft.com>
+ <CABb+yY2Uap0ePDmsy7x14mBJO9BnTcCKZ7EXFPdwigt5SO1LwQ@mail.gmail.com>
+Content-Language: en-US
+From: Adam Young <admiyo@amperemail.onmicrosoft.com>
+In-Reply-To: <CABb+yY2Uap0ePDmsy7x14mBJO9BnTcCKZ7EXFPdwigt5SO1LwQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: CY8PR10CA0019.namprd10.prod.outlook.com
+ (2603:10b6:930:4f::15) To BN3PR01MB9212.prod.exchangelabs.com
+ (2603:10b6:408:2cb::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [6.16.9 / 6.17.0 PANIC REGRESSION] block: fix lockdep warning caused
- by lock dependency in elv_iosched_store
-To: Nilay Shroff <nilay@linux.ibm.com>, linux-block@vger.kernel.org,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: axboe@kernel.dk, hch@lst.de, ming.lei@redhat.com, hare@suse.de,
- sth@linux.ibm.com, gjoyce@ibm.com, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250730074614.2537382-1-nilay@linux.ibm.com>
- <20250730074614.2537382-3-nilay@linux.ibm.com>
-Content-Language: en-CA
-From: Kyle Sanderson <kyle.leet@gmail.com>
-In-Reply-To: <20250730074614.2537382-3-nilay@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-
-On 7/30/2025 12:46 AM, Nilay Shroff wrote:
-> To address this, move all sched_tags allocations and deallocations outside
-> of both the ->elevator_lock and the ->freeze_lock. Since the lifetime of
-> the elevator queue and its associated sched_tags is closely tied, the
-> allocated sched_tags are now stored in the elevator queue structure. Then,
-> during the actual elevator switch (which runs under ->freeze_lock and
-> ->elevator_lock), the pre-allocated sched_tags are assigned to the
-> appropriate q->hctx. Once the elevator switch is complete and the locks
-> are released, the old elevator queue and its associated sched_tags are
-> freed.
-> ...
-> 
-> [1] https://lore.kernel.org/all/0659ea8d-a463-47c8-9180-43c719e106eb@linux.ibm.com/
-> 
-> Reported-by: Stefan Haberland <sth@linux.ibm.com>
-> Closes: https://lore.kernel.org/all/0659ea8d-a463-47c8-9180-43c719e106eb@linux.ibm.com/
-> Reviewed-by: Ming Lei <ming.lei@redhat.com>
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Hannes Reinecke <hare@suse.de>
-> Signed-off-by: Nilay Shroff <nilay@linux.ibm.com>
-
-Hi Nilay,
-
-I am coming off of a 36 hour travel stint, and 6.16.7 (I do not have 
-that log, and it mightily messed up my xfs root requiring offline 
-repair), 6.16.9, and 6.17.0 simply do not boot on my system. After 
-unlocking with LUKS I get this panic consistently and immediately, and I 
-believe this is the problematic commit which was unfortunately carried 
-to the previous and current stable. I am using this udev rule: 
-`ACTION=="add|change", KERNEL=="sd*[!0-9]|sr*|nvme*", 
-ATTR{queue/scheduler}="bfq"`
-
- > Sep 30 21:19:39 moon kernel: io scheduler bfq registered
- > Sep 30 21:19:39 moon kernel: ------------[ cut here ]------------
- > Sep 30 21:19:39 moon kernel: kernel BUG at mm/slub.c:563!
- > Sep 30 21:19:39 moon kernel: Oops: general protection fault, probably 
-for non-canonical address 0x2cdf52296eacb08: 0000 [#1] SMP NOPTI
- > Sep 30 21:19:39 moon kernel: CPU: 2 UID: 0 PID: 791 Comm: 
-(udev-worker) Not tainted 6.17.0-061700-generic #202509282239 
-PREEMPT(voluntary)
- > Sep 30 21:19:39 moon kernel: Hardware name: Supermicro Super 
-Server/A2SDi-8C-HLN4F, BIOS 2.0 03/08/2024
- > Sep 30 21:19:39 moon kernel: RIP: 0010:kfree+0x6b/0x360
- > Sep 30 21:19:39 moon kernel: Code: 80 48 01 d8 0f 82 f6 02 00 00 48 
-c7 c2 00 00 00 80 48 2b 15 af 3f 61 01 48 01 d0 48 c1 e8 0c 48 c1 e0 06 
-48 03 05 8d 3f 61 01 <48> 8b 50 08 49 89 c4 f6 c2 01 0f 85 2f 02 00 00 
-0f 1f 44 00 00 41
- > Sep 30 21:19:39 moon kernel: RSP: 0018:ffffc9e804257930 EFLAGS: 00010207
- > Sep 30 21:19:39 moon kernel: RAX: 02cdf52296eacb00 RBX: 
-b37de27a3ab2cae5 RCX: 0000000000000000
- > Sep 30 21:19:39 moon kernel: RDX: 000076bb00000000 RSI: 
-ffffffff983b7c31 RDI: b37de27a3ab2cae5
- > Sep 30 21:19:39 moon kernel: RBP: ffffc9e804257978 R08: 
-0000000000000000 R09: 0000000000000000
- > Sep 30 21:19:39 moon kernel: R10: 0000000000000000 R11: 
-0000000000000000 R12: ffff894589365840
- > Sep 30 21:19:39 moon kernel: R13: ffff89458c7c20e0 R14: 
-0000000000000000 R15: ffff89458c7c20e0
- > Sep 30 21:19:39 moon kernel: FS:  0000721ca92168c0(0000) 
-GS:ffff898464f80000(0000) knlGS:0000000000000000
- > Sep 30 21:19:39 moon kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 
-0000000080050033
- > Sep 30 21:19:39 moon kernel: CR2: 00005afd46663fc8 CR3: 
-0000000111bf4000 CR4: 00000000003506f0
- > Sep 30 21:19:39 moon kernel: Call Trace:
- > Sep 30 21:19:39 moon kernel:  <TASK>
- > Sep 30 21:19:39 moon kernel:  ? kfree+0x2dd/0x360
- > Sep 30 21:19:39 moon kernel:  kvfree+0x31/0x40
- > Sep 30 21:19:39 moon kernel:  blk_mq_free_tags+0x4b/0x70
- > Sep 30 21:19:39 moon kernel:  blk_mq_free_map_and_rqs+0x4d/0x70
- > Sep 30 21:19:39 moon kernel:  blk_mq_free_sched_tags+0x35/0x90
- > Sep 30 21:19:39 moon kernel:  elevator_change_done+0x53/0x200
- > Sep 30 21:19:39 moon kernel:  elevator_change+0xdf/0x190
- > Sep 30 21:19:39 moon kernel:  elv_iosched_store+0x151/0x190
- > Sep 30 21:19:39 moon kernel:  queue_attr_store+0xf1/0x120
- > Sep 30 21:19:39 moon kernel:  ? putname+0x65/0x90
- > Sep 30 21:19:39 moon kernel:  ? aa_file_perm+0x54/0x2e0
- > Sep 30 21:19:39 moon kernel:  ? _copy_from_iter+0x9d/0x690
- > Sep 30 21:19:39 moon kernel:  sysfs_kf_write+0x6f/0x90
- > Sep 30 21:19:39 moon kernel:  kernfs_fop_write_iter+0x15e/0x210
- > Sep 30 21:19:39 moon kernel:  vfs_write+0x271/0x490
- > Sep 30 21:19:39 moon kernel:  ksys_write+0x6f/0xf0
- > Sep 30 21:19:39 moon kernel:  __x64_sys_write+0x19/0x30
- > Sep 30 21:19:39 moon kernel:  x64_sys_call+0x79/0x2330
- > Sep 30 21:19:39 moon kernel:  do_syscall_64+0x80/0xac0
- > Sep 30 21:19:39 moon kernel:  ? 
-arch_exit_to_user_mode_prepare.isra.0+0xd/0xe0
- > Sep 30 21:19:39 moon kernel:  ? do_syscall_64+0xb6/0xac0
- > Sep 30 21:19:39 moon kernel:  ? 
-arch_exit_to_user_mode_prepare.isra.0+0xd/0xe0
- > Sep 30 21:19:39 moon kernel:  ? __seccomp_filter+0x47/0x5d0
- > Sep 30 21:19:39 moon kernel:  ? __x64_sys_fcntl+0x97/0x130
- > Sep 30 21:19:39 moon kernel:  ? 
-arch_exit_to_user_mode_prepare.isra.0+0xd/0xe0
- > Sep 30 21:19:39 moon kernel:  ? do_syscall_64+0xb6/0xac0
- > Sep 30 21:19:39 moon kernel:  entry_SYSCALL_64_after_hwframe+0x76/0x7e
- > Sep 30 21:19:39 moon kernel: RIP: 0033:0x721ca911c5a4
- > Sep 30 21:19:39 moon kernel: Code: c7 00 16 00 00 00 b8 ff ff ff ff 
-c3 66 2e 0f 1f 84 00 00 00 00 00 f3 0f 1e fa 80 3d a5 ea 0e 00 00 74 13 
-b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 54 c3 0f 1f 00 55 48 89 e5 
-48 83 ec 20 48 89
- > Sep 30 21:19:39 moon kernel: RSP: 002b:00007ffdfffb8b58 EFLAGS: 
-00000202 ORIG_RAX: 0000000000000001
- > Sep 30 21:19:39 moon kernel: RAX: ffffffffffffffda RBX: 
-0000000000000003 RCX: 0000721ca911c5a4
- > Sep 30 21:19:39 moon kernel: RDX: 0000000000000003 RSI: 
-00007ffdfffb8df0 RDI: 000000000000002a
- > Sep 30 21:19:39 moon kernel: RBP: 00007ffdfffb8b80 R08: 
-0000721ca9202228 R09: 00007ffdfffb8bd0
- > Sep 30 21:19:39 moon kernel: R10: 0000000000000000 R11: 
-0000000000000202 R12: 0000000000000003
- > Sep 30 21:19:39 moon kernel: R13: 00007ffdfffb8df0 R14: 
-00005afd465c5100 R15: 0000000000000003
- > Sep 30 21:19:39 moon kernel:  </TASK>
- > Sep 30 21:19:39 moon kernel: Modules linked in: bfq nfsd tcp_bbr 
-sch_fq auth_rpcgss nfs_acl lockd grace nvme_fabrics efi_pstore sunrpc 
-nfnetlink dmi_sysfs ip_tables x_tables autofs4 xfs btrfs blake2b_generic 
-dm_crypt raid10 raid456 async_raid6_recov async_memcpy async_pq 
-async_xor asy>
- > Sep 30 21:19:39 moon kernel: Oops: general protection fault, probably 
-for non-canonical address 0x3ce12d676eacb08: 0000 [#2] SMP NOPTI
- > Sep 30 21:19:39 moon kernel: ---[ end trace 0000000000000000 ]---
- > Sep 30 21:19:39 moon kernel: CPU: 3 UID: 0 PID: 792 Comm: 
-(udev-worker) Tainted: G      D             6.17.0-061700-generic 
-#202509282239 PREEMPT(voluntary)
- > Sep 30 21:19:39 moon kernel: Tainted: [D]=DIE
- > Sep 30 21:19:39 moon kernel: Hardware name: Supermicro Super 
-Server/A2SDi-8C-HLN4F, BIOS 2.0 03/08/2024
- > Sep 30 21:19:39 moon kernel: RIP: 0010:kfree+0x6b/0x360
- > Sep 30 21:19:40 moon kernel: Code: 80 48 01 d8 0f 82 f6 02 00 00 48 
-c7 c2 00 00 00 80 48 2b 15 af 3f 61 01 48 01 d0 48 c1 e8 0c 48 c1 e0 06 
-48 03 05 8d 3f 61 01 <48> 8b 50 08 49 89 c4 f6 c2 01 0f 85 2f 02 00 00 
-0f 1f 44 00 00 41
- > Sep 30 21:19:40 moon kernel: RSP: 0018:ffffc9e80425f990 EFLAGS: 00010207
- > Sep 30 21:19:40 moon kernel: RAX: 03ce12d676eacb00 RBX: 
-f3854f723ab2cae5 RCX: 0000000000000000
- > Sep 30 21:19:40 moon kernel: RDX: 000076bb00000000 RSI: 
-ffffffff983b7c31 RDI: f3854f723ab2cae5
- > Sep 30 21:19:40 moon kernel: RBP: ffffc9e80425f9d8 R08: 
-0000000000000000 R09: 0000000000000000
- > Sep 30 21:19:40 moon kernel: R10: 0000000000000000 R11: 
-0000000000000000 R12: ffff894580056160
- > Sep 30 21:19:40 moon kernel: R13: ffff89458c7c20e0 R14: 
-0000000000000000 R15: ffff89458c7c20e0
- > Sep 30 21:19:40 moon kernel: FS:  0000721ca92168c0(0000) 
-GS:ffff898465000000(0000) knlGS:0000000000000000
- > Sep 30 21:19:40 moon kernel: RIP: 0010:kfree+0x6b/0x360
- > Sep 30 21:19:40 moon kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 
-0000000080050033
- > Sep 30 21:19:40 moon kernel: Code: 80 48 01 d8 0f 82 f6 02 00 00 48 
-c7 c2 00 00 00 80 48 2b 15 af 3f 61 01 48 01 d0 48 c1 e8 0c 48 c1 e0 06 
-48 03 05 8d 3f 61 01 <48> 8b 50 08 49 89 c4 f6 c2 01 0f 85 2f 02 00 00 
-0f 1f 44 00 00 41
- > Sep 30 21:19:40 moon kernel: CR2: 00007ffdfffb5b70 CR3: 
-000000010c1aa000 CR4: 00000000003506f0
- > Sep 30 21:19:40 moon kernel: RSP: 0018:ffffc9e804257930 EFLAGS: 00010207
- > Sep 30 21:19:40 moon kernel: Call Trace:
- > Sep 30 21:19:40 moon kernel:
- > Sep 30 21:19:40 moon kernel: RAX: 02cdf52296eacb00 RBX: 
-b37de27a3ab2cae5 RCX: 0000000000000000
- > Sep 30 21:19:40 moon kernel:  <TASK>
- > Sep 30 21:19:40 moon kernel:  ? kfree+0x2dd/0x360
- > Sep 30 21:19:40 moon kernel: RDX: 000076bb00000000 RSI: 
-ffffffff983b7c31 RDI: b37de27a3ab2cae5
- > Sep 30 21:19:40 moon kernel:  kvfree+0x31/0x40
- > Sep 30 21:19:40 moon kernel:  blk_mq_free_tags+0x4b/0x70
- > Sep 30 21:19:40 moon kernel:  blk_mq_free_map_and_rqs+0x4d/0x70
- > Sep 30 21:19:40 moon kernel: RBP: ffffc9e804257978 R08: 
-0000000000000000 R09: 0000000000000000
- > Sep 30 21:19:40 moon kernel:  blk_mq_free_sched_tags+0x35/0x90
- > Sep 30 21:19:40 moon kernel: R10: 0000000000000000 R11: 
-0000000000000000 R12: ffff894589365840
- > Sep 30 21:19:40 moon kernel:  elevator_change_done+0x53/0x200
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN3PR01MB9212:EE_|SJ0PR01MB6207:EE_
+X-MS-Office365-Filtering-Correlation-Id: 324e450e-0d5e-4460-9bce-08de00aaf93f
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|10070799003|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?b00zZTFjem1TK0RtUlBhRW1rQ1E1dHZwMG1LMjNGOStVcVJ1YlJ0R2NZckxq?=
+ =?utf-8?B?U0VWUkRmcTRldlNrTEFBS3JSYU1COGNKV1V2MStWNlhHbkNzUGdRVVUvMWEv?=
+ =?utf-8?B?T09Xc1dVZ0lJdFZyQyswcFFLUmlVWS8xU1MrUW80TlJHejJOMkFMV0tmNmRT?=
+ =?utf-8?B?WW1KVUlJa3ZZQjdRSXVXVzRKNVJ0UmJ4dzlPdmZWRi85RFVkWE84elhkYmtV?=
+ =?utf-8?B?aDNJV2ZwWDZraGVQM3VuVUVqWFk5anVuSW43UW9mRGtieU5aSlIwcGM0Rzh5?=
+ =?utf-8?B?L1BEOWpTcllwUWJOdTZxN1lEaWdFeDErR3JlWGpFSlpWR2Y4SHZ4SlhJNXYr?=
+ =?utf-8?B?c1dlUkJzN3VxRDZoSUNucFI5L3FFdEIyVjRnWDAweWpnNDdKakc0M3RCTytQ?=
+ =?utf-8?B?bjFnaTRQbXN1UlZWQ3RkcFdQdGV5SUE2OFYxbVdQZm13M0dOUC81d1lCQm9Z?=
+ =?utf-8?B?NTRsY2I4MnNRZjQvWkl0WmpETk9yOHZJZ2xWY2FBT2ZZVjViYjdHNC8wZ29h?=
+ =?utf-8?B?ODhKUFcxWTBsQ2Zacm9vcjA4djdUYXhCU2RlcWppMDFFaXIrTFJVWFlpeUdS?=
+ =?utf-8?B?NTh1bWNZUXNWRWhTb1lGcnVZQm8wWVdQcUhlRCtjb0ZIWFJKazBTMEtyYzRL?=
+ =?utf-8?B?VC9IYmZVSDRMNGU2a3cyWjdzWWNPQVNmZG5aWnBNMktVdVMrMGZsU2RxY1ZR?=
+ =?utf-8?B?V1E2NnJTbEMxUnFZZWEzN1dvYVA0cE5VcXRCVTdvNjRzNjQ2TW9mSEFTckh0?=
+ =?utf-8?B?ZVp3cXhmUWJtajU4NEVjNWJvdFYyQy9HSFp4QlFVc043dlg5eU9hZVNDV3Zr?=
+ =?utf-8?B?aHVzRkUrVlg1MlE0dVczVG54MGxCelB3ak5WeGRkMkNpeWpBSkNON0czVUdi?=
+ =?utf-8?B?RVkxdVg5VURzaFg0WEFxeEdmMklnTmh3UHJsam1kWjh5NVBWcFI3ekdEeC81?=
+ =?utf-8?B?eDd5SjV3b01ZQlNmZzg5bFRzOXJUM05GTlhJeTRac3ZjU1FIRzRXaklEVUk4?=
+ =?utf-8?B?Z1FOOElndFBrd1BOL3VEMWt2R1lYelYvYVRpNXMxR2VZazJFTVI1TWZHclc3?=
+ =?utf-8?B?QXR6UXlFODZJcVhlMDB6RjdYc0ltQ2xkeUNnS1FJVC9TN2pqK2JiVkJnTC9X?=
+ =?utf-8?B?TDRoblg5S3ppUjlVNmVFWEtxa0ZnTy9GZytxaFlzeVBPeW92WTRkMGxZcU9w?=
+ =?utf-8?B?dGFTcnVwdjRCRHF1NnM3R0drL2NxREEwakhIRW1TMGhpa2ZSdWFob1ZtOGx3?=
+ =?utf-8?B?Mml1RkdteGgzMlYwRG9xaDVsaGt1Y3RrNzlpRXpRNStXMXorb0UwRkdiZmlS?=
+ =?utf-8?B?L3BuVFFSdXQ5cXFHeEFGWWJqcUlhLzRzckwwTmpFcDBoRUhHRlduWjN3UmtM?=
+ =?utf-8?B?TU5iaDFiVnVLcERobDZoN3FUTUl4QnF4WStaZEhmM1hJS01MODIyTFlvSFNq?=
+ =?utf-8?B?OVQ2U2RQM2VTa25OMFJzN2luKzN2dDNYUnp5K05uQmwyUTd1OFhwU2I1SmQ3?=
+ =?utf-8?B?STk1ZVd6Y0RmUzV6eTNQRlhBT0Mxc2VwVG5Za2xpZStScVlEV1c2NVJBVFNh?=
+ =?utf-8?B?VkVFdUNCSzRXRVZ1MjNLanBtVktCUVJpTGFjeXFEcjJSTnIrZnd2NDdkeXVE?=
+ =?utf-8?B?aVFMRE0wbTRwMk9SdHZsZWo1TnpHZFIwcU1odXQ5cWNrQjlrb2drT3hBRVZk?=
+ =?utf-8?B?Uno0ZitYRCs1eDFoejFTWXVNNGhzUmhRVTZESHJQQzROZjhJVmJ5bnNzZzB5?=
+ =?utf-8?B?SDlmWlRsUVRIL00vVGcrYzBLYklnTGczODBlSXFCWWxacXdMeEVIb0o5VndM?=
+ =?utf-8?B?c2w5WVZOaGk3ZVZDNjNxVmt4QXp6TFNvZDR2YlUzOFRaQWVSSWFPRjY4b2Jl?=
+ =?utf-8?B?TFNTdHFLV20vcDI0aDRPWE96UmdOUnhEV0xvNC9iZFZ6RlByc0hZQnl5Lzlt?=
+ =?utf-8?Q?+p06eQ0T3Y0d5eMEQCUGDHnamqJUHCCo?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN3PR01MB9212.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(10070799003)(366016)(1800799024);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?bFRicDFDMDYyb3M3d0hIZnQ5aXI4Ymd3M0tTd2tsSG1rcENYVHIyMnNLbGY5?=
+ =?utf-8?B?L21RVVVaSmhyMElYZTNvNGp3d3NSMWJmRkVVdVlTd0hFZ3YvUnUwME1TS0Ra?=
+ =?utf-8?B?M0tBRDNraEZyVS9MM2pnWUFOeGFzM0V3V2NCRkd2cjJEcXVRY1lONVdadHBn?=
+ =?utf-8?B?M3Z6WGlsTXdHN0FWR1FnR1JuZmtuUG5KbStWVE1TYjUxdDFtK0FEQXZwMGNq?=
+ =?utf-8?B?RE5QdzQyQ214by84aG8ycFlGWm9LaGt2Ti85U2tBa2szTEljZzZPKzcxSDd6?=
+ =?utf-8?B?bHJmeVI3T3FsSGxsUk5BdklnanBNTi94S2VNZThybDlzSEdUS3JHRlkyVjNy?=
+ =?utf-8?B?RTQyUXQzRkFNUTQydjAyRzZNRHR3a2tPam8wSEVOUXdPQnVsaVdieDl6MmNx?=
+ =?utf-8?B?U0xobVNoYmhkZ05vcHNySklxRkZUZ2IvRXlzU3pBUjdieSttdWpReEdXZ2s2?=
+ =?utf-8?B?YzIwMUs4dlJTNGJKNko4MVZ0Vmk4bkVnTlUzTkVrQkN0Mk1VWHBhOTdPaXBj?=
+ =?utf-8?B?T2xkZk1XTkhoMW95WUhkNU9CVHU3SWFEWWJOU042OUh3VjU3cEY2QmZPMGxI?=
+ =?utf-8?B?Q3JWNXVGMW5DLzFRVXE5dUNMMUhvcFBIZnVtTEpxZHVxaWhRRjBBWCtqRmV1?=
+ =?utf-8?B?MGNCbFhrRkh2cEZYMVo5WnVJUk96dmtFcC9rU2I4Ry8rb3VHNWN2ZUlKcFQy?=
+ =?utf-8?B?c0srVlB0cXdOR3ltdmdlQXB0N2tzWTFyNEt1NHNLNmRIMS8veWxUSGc1V2dk?=
+ =?utf-8?B?SW5LRGdUZDJnSmUvYmZmWW1BZDh5ZmJzbllnbjd1V2MvUENLeDFMc1BLcC93?=
+ =?utf-8?B?a0hiZlBhQWNHM1JOZ1p4Y29qY1ZWK2xZSm12R0U1aXoyQ3NVOVh6c2YxM0FS?=
+ =?utf-8?B?Y2xKL251NU9nZGVRelZjNS91ZXNxZUlMSEw5UDBpZTltdDUvT01aSTRad0dN?=
+ =?utf-8?B?TVNTdzJOeEFtb3llZlBJUGk3cEdjVmp6aXR4eDdRNTRDYUE2Sjl6YVdURTJB?=
+ =?utf-8?B?QTcxNTZpdHZkWUtYUjlVQlFkK2owMnJxV0N4emZzS0RkWklkSHhTNHRiL3lv?=
+ =?utf-8?B?YWlhNU00UW1OMWc1Z2JSNFdLWk9JU1IzTk1wU2FaS01iRzdCTjByd1lkeFNo?=
+ =?utf-8?B?L05jT0pXNE5ockIwSXBFa0ZhUEtYK3kzN09KVHNicE9MdHlmQldQQ3ROb1A1?=
+ =?utf-8?B?VThMaG5IMFd3cXFrdktvLzVySlU0Y2FmM2xTNzIranJDMnJzbktMcWp2MVdN?=
+ =?utf-8?B?clJmcXNYYXFFVXRhRExnSWxObnNNL05nRURwaDdTQmVvejRadDNUaGw2RHNi?=
+ =?utf-8?B?YldHeFlPS2hRUE5ZOGJwL0llaTZLN0Z5YXE1a3ZIcWpZcWRKNU9MR3BaQ1E5?=
+ =?utf-8?B?eVd1UCtFbEhBVTdMM3NJb3JmVlR4MU9TaWd5cGRVSUcxaUJUU1JrSWZzajZG?=
+ =?utf-8?B?Y1dnSzRkU2dNZEltbFhOOWhuWEhKYU54a1FmdzBRbUZSeUo5ZHUvWUVNREoy?=
+ =?utf-8?B?a3VsTm9yaWpha3QzNVVUbUpEQWpGVFZVem5GanMyMGx4Mk96RnNpdDhLMWxE?=
+ =?utf-8?B?M0hiNm9QREtObU5MT2VvbDJtS2pETnlOYnptb2F4MmJ5MzhHSlkrVG1NeG05?=
+ =?utf-8?B?TnIrdzNwYit0WFRPNlRWUjlhbU5TQUZRU2FKZk52eERMM0IvdnZQeU90WUll?=
+ =?utf-8?B?d1U0WjlmOE1YOGJBSFNtSXpSdDl2dTBsZS9OT0E5QSsxVzNGeUkzUkRaUEtW?=
+ =?utf-8?B?WW9WeE1hNThHWS9VRWJ4RmNUQkFPRWpHQlpQVFZYU0V6Q0lnbDl6a0pYQVpJ?=
+ =?utf-8?B?SjNJbnNFbnk0OWY0T2hHN2J4RmV3TVdkL3FuSDE5S3UwWlFpUUsvM2MzcVhE?=
+ =?utf-8?B?ekxuVGRnTWVzTEtRaFhaT21xYXQ0UU5UWUp6R1FGK3h1RmtUVTJpL1N4d3lt?=
+ =?utf-8?B?Y1FyckZyZjZaVXJmL2RkMi96S3doQlQzYVdqVUNrSnpiMXVwQ20vSTRMKzhz?=
+ =?utf-8?B?STI2N2RsZktMMGhXcmtDOHZvaWpEa20xQXc5K1NtSGUwS3VkRGVEWTYyRU1S?=
+ =?utf-8?B?OWlvNE1jUjRxc2ZNald6VmZnS2FSaGNqbW1lQ2I5LzVUYms3VjExdjlrQzEv?=
+ =?utf-8?B?MytES0pvR3NtYjBZMVhrVDhWNGowWklONkZLdWl3bUZMcHpCU3gwYklTQjFi?=
+ =?utf-8?B?U0xuRGQ5cWp2cUFSSU9kOEtLcnJYcXRMdDlOZGx2Z1RYOVMzRFNhUkkycGE4?=
+ =?utf-8?Q?WOJlxJDje5EX/P9K2EEsbWxV4W23sFL1fvMI4+L9Ok=3D?=
+X-OriginatorOrg: amperemail.onmicrosoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 324e450e-0d5e-4460-9bce-08de00aaf93f
+X-MS-Exchange-CrossTenant-AuthSource: BN3PR01MB9212.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2025 05:25:46.2135
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 01MXslamsr2AGmmG4+Cks+4HJOdmWrq9Jeafe7ERbuC0DcJRErEF/UXXRcntuwwDDEv2d02JwLZdsUJdH1Ic83Q1IfVBF9JKglnHl1aCtgOqKgJG1/Qv01YbVGIDpkfW
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR01MB6207
 
 
-
+On 9/29/25 20:19, Jassi Brar wrote:
+> On Mon, Sep 29, 2025 at 12:11 PM Adam Young
+> <admiyo@amperemail.onmicrosoft.com> wrote:
+>> I posted a patch that addresses a few of these issues.  Here is a top
+>> level description of the isse
+>>
+>>
+>> The correct way to use the mailbox API would be to allocate a buffer for
+>> the message,write the message to that buffer, and pass it in to
+>> mbox_send_message.  The abstraction is designed to then provide
+>> sequential access to the shared resource in order to send the messages
+>> in order.  The existing PCC Mailbox implementation violated this
+>> abstraction.  It requires each individual driver re-implement all of the
+>> sequential ordering to access the shared buffer.
+>>
+>> Why? Because they are all type 2 drivers, and the shared buffer is
+>> 64bits in length:  32bits for signature, 16 bits for command, 16 bits
+>> for status.  It would be execessive to kmalloc a buffer of this size.
+>>
+>> This shows the shortcoming of the mailbox API.  The mailbox API assumes
+>> that there is a large enough buffer passed in to only provide a void *
+>> pointer to the message.  Since the value is small enough to fit into a
+>> single register, it the mailbox abstraction could provide an
+>> implementation that stored a union of a void * and word.
+>>
+> Mailbox api does not make assumptions about the format of message
+> hence it simply asks for void*.
+> Probably I don't understand your requirement, but why can't you pass the pointer
+> to the 'word' you want to use otherwise?
+>
+> -jassi
+The mbox_send_message call will then take the pointer value that you 
+give it and put it in a ring buffer.  The function then returns, and the 
+value may be popped off the stack before the message is actually sent.  
+In practice we don't see this because much of the code that calls it is 
+blocking code, so the value stays on the stack until it is read.  Or, in 
+the case of the PCC mailbox, the value is never read or used.  But, as 
+the API is designed, the memory passed into to the function should 
+expect to live longer than the function call, and should not be 
+allocated on the stack.
 
