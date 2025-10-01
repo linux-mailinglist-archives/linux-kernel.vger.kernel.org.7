@@ -1,57 +1,97 @@
-Return-Path: <linux-kernel+bounces-838751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE1F6BB0120
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 12:57:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42E09BB0150
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 13:03:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 671D72A1B94
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 10:57:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E55897B121B
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 11:01:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 150072C0F81;
-	Wed,  1 Oct 2025 10:56:56 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F9E42C2374;
+	Wed,  1 Oct 2025 11:03:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e8L9CGvB"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1BF424502C
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 10:56:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F11923236D
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 11:03:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759316215; cv=none; b=EqQKRnhvKJVbKLLwXHsZuAd+cFC6wnPDQc8MZnfHnqd2+EwBCSSyP7CxdKNNRwq/0cf2ERr13VXCSWN9G9DbmQQqGhuu+2CQfvUeqy5i6S4wlit0n2lGGXCdDbs7wtCmmJMbjTpxFTaHPKzjNOQk/k2z0YVG8SPOksF7RWGoeGE=
+	t=1759316602; cv=none; b=KQsY7y07DY87AaD561RP0hLW/1NCnKbmI3hW2WxdDKXWrPjj0hb8C+UqS+SfBLSn441xuxowW3wz882ndMWbC4cU+bdI/LTWeVF6Tn74rviGtg2577LXjuKLDhC7LA6/qCtzi0aE9V1301h8SYiP9FGRcraSLelg5QYPI1Ir1Vs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759316215; c=relaxed/simple;
-	bh=Tm9YT35x+rhzIJsNx1RT++/G/P5A8DDEkwwm40aRU/4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UNP/rb5zqxL0oZBhQigsYEQRVzf7+ElyAJvwIR64xsERlgTC8jGpqmJfYz7PXdMUbtlr+Gw66K7zQlqeou1g9hCF/zqJkDjPUDAU8scKtqQFOr2v4nQxKg33ymlb2xykH9DFexXBI2Yd9CosSx9aMNHU3tZb0V3SMdpFBUkiXQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1v3uVv-0007XO-Eh; Wed, 01 Oct 2025 12:56:51 +0200
-Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1v3uVv-001On1-0C;
-	Wed, 01 Oct 2025 12:56:51 +0200
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.98.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1v3uVu-0000000A28c-4BYB;
-	Wed, 01 Oct 2025 12:56:50 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/1] regulator: core: forward undervoltage events downstream by default
-Date: Wed,  1 Oct 2025 12:56:49 +0200
-Message-ID: <20251001105650.2391477-1-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.47.3
+	s=arc-20240116; t=1759316602; c=relaxed/simple;
+	bh=ayH6eU74HGK2Uw8pBU8RG4fsbY2PSfyyn49rkqPJ7Vc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=plA6v2131nXJSDK5bS5B7EYLrrkFelgty+Lu6BaGowxyu5yKDkUBhwHGHgnBWAyxi+pBn3cU89sAuf+MZxgJkm6fw5Tg0vhMW9TSCpAxORL1yM562lovWZuz9qZ1nTdToj/L+3EZ12RSlQXtDcfkTRQ5BwHR24Bof/No7XM8HJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e8L9CGvB; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-3352018e050so6459818a91.2
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 04:03:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759316601; x=1759921401; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9V28geYs6+fybVTeARjUscAK9N0tpW7+cMdGRd5q3Us=;
+        b=e8L9CGvB0rCx0sshlkGmL7R9LEouH1QywFa9lzsQmJ1JhgE0OEiKeAbkEETjya5z+p
+         MTWA9bH/Ole6l3gKOk137zJnrOK+p/Wwk7HnC+EDM7GGpv+HJyl5NEAEflofoQVrdNFY
+         nG2jNc990tXilfTQXZmk6crLKTVa/d8R1oW+lXe2qR6ST9CDflY87v7qTvoYsv1hIAKn
+         CHTRHtgQyrdLLnyhag8lO+8GP1MyBYoVAsn3udd3T/FNXKEceUXLxF7faKjbaQMo+43c
+         oLHBFtpAo6IRrtZpQiCAPoQ8KCo47y0xKUr/EZAdf2CzmONrp6L13hu+6DzYsYNL8wFW
+         sF+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759316601; x=1759921401;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9V28geYs6+fybVTeARjUscAK9N0tpW7+cMdGRd5q3Us=;
+        b=gdXGJ5R2GbGZruvgUFPB7AJ8qpM+EMmz8/XBs/cX7jtSGokiS46XcGA2MW3L1Q1amH
+         waoXZl1TWqIKzIAp/OKcXkrNdJfO8Uev8X5xP2+m3PECtc6GJlYI9kqTghB+ZCGvuegT
+         kFtspnDmyl6Q6YjupPfgT3Z+vBrKtYHYEbYSZtasGOy6b0rTO6ZrwruSMTq3cXbbibwK
+         01NDLlAZ/lWaqNY9ZEoF8c53IbCa3CHMH5nXKhHY/1AVM9o5HUq5pctgZyb7wSZNrpbc
+         HKrJYJ1e9bfoxKFdMIGpC8q95GGNi0rgy7k43euk6PorqBOGa1gXhWJ48oUB6MhNeFL9
+         ixsA==
+X-Forwarded-Encrypted: i=1; AJvYcCXg6u9c2WtlY5AWp/E3WaoBau0v1I44X8FQUJSWQGd6aQwfR5zhSMpUSNXhAVISMOpRnxRUPFsGtA0PX3w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywu9Hvbz7Tyhc75YhLy9pyTN+vPBfTKqHNtlVxRIF/q/xB77i6v
+	d8QnOjCX3H9OogmBRb85bMoXTk7klLTeJ83a5ol1r2lTtnGgNIn16Nsk
+X-Gm-Gg: ASbGncsrJ0KKJ9MS1uQblHHx2bOOVsD9uGCisCw1WMvWfQy1A/D06XXZGZO+GAn0yFe
+	huRotrXp783iWD+Oc6fHi+J3P6Qbkc5dxodUj9xArXuvnPJJULKK8SSbOB/tSKxzQybeJmQqlDy
+	9LeR5oyLDhV4ZLMZXvx8kUG/X40KH2IY1Ckpz4d1CKsAOrtcwZ52eN1pfmIpcREXvY4DgRGBSHw
+	gLWxYOROFqjC1dMbU9+DvE0Wl5NS4IPF7hIOKYMz6iSOoPfq7xgiwEOdBX4+D7evHqcknNee/jb
+	nvninwdeQixbGnTFRno7aB3cPJrLHohOF+WPODmY3Vi7gLj3akuwI6++IXiuoG1mauEJmgd3m8J
+	0wYfjawdFeWMaeu8aZLgLns1VXNChN/bv1NuLvjVbOkCI53irYF02suzF8OQQMRBvOaF7te+eLA
+	==
+X-Google-Smtp-Source: AGHT+IF6egVDTn5Ywg4HO8cRrcaXb7fIR+VPczMNX7N1WKOEThRzIZRtsgAxQPHJcsd40gZ+gXw7rQ==
+X-Received: by 2002:a17:90b:314e:b0:335:228c:6f1f with SMTP id 98e67ed59e1d1-339a6e95d23mr3939304a91.12.1759316600367;
+        Wed, 01 Oct 2025 04:03:20 -0700 (PDT)
+Received: from ti-am64x-sdk.. ([157.50.93.46])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-339a6f15fbfsm2073476a91.21.2025.10.01.04.03.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Oct 2025 04:03:19 -0700 (PDT)
+From: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Jon Maloy <jmaloy@redhat.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tipc-discussion@lists.sourceforge.net,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	skhan@linuxfoundation.org,
+	david.hunter.linux@gmail.com,
+	bhanuseshukumar@gmail.com
+Subject: [PATCH v2] net: doc: Fix typos in docs
+Date: Wed,  1 Oct 2025 16:27:15 +0530
+Message-Id: <20251001105715.50462-1-bhanuseshukumar@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,207 +99,81 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Forward critical supply events downstream so consumers can react in
-time.  An under-voltage event on an upstream rail may otherwise never
-reach end devices (e.g. eMMC).
+Fix typos in doc comments.
 
-Register a notifier on a regulator's supply when the supply is resolved,
-and forward only REGULATOR_EVENT_UNDER_VOLTAGE to the consumer's notifier
-chain. Event handling is deferred to process context via a workqueue; the
-consumer rdev is lifetime-pinned and the rdev lock is held while calling
-the notifier chain. The notifier is unregistered on regulator teardown.
-
-No DT/UAPI changes. Behavior applies to all regulators with a supply.
-
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Signed-off-by: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
 ---
-changes v2:
-- Switch to default on
-- Register forwarding in regulator_resolve_supply()
-- Make register_regulator_event_forwarding() static
-- Use regulator_register_notifier() and unregister in regulator_unregister()
-- Remove separate fixed-regulator patch (no longer needed).
----
- drivers/regulator/core.c         | 124 +++++++++++++++++++++++++++++++
- include/linux/regulator/driver.h |   3 +
- 2 files changed, 127 insertions(+)
+ Note: No functionality change intended.
 
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 554d83c4af0c..7629e6a28338 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -83,6 +83,19 @@ struct regulator_supply_alias {
- 	const char *alias_supply;
- };
+ Change log:
+ v1->v2 changes:
+  fixed pertaing to pertaining.
+  Link to v1: https://lore.kernel.org/all/20251001064102.42296-1-bhanuseshukumar@gmail.com/
+ 
+ include/linux/phy.h | 4 ++--
+ net/tipc/crypto.c   | 2 +-
+ net/tipc/topsrv.c   | 4 ++--
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
-+/*
-+ * Work item used to forward regulator events.
-+ *
-+ * @work: workqueue entry
-+ * @rdev: regulator device to notify (consumer receiving the forwarded event)
-+ * @event: event code to be forwarded
-+ */
-+struct regulator_event_work {
-+	struct work_struct work;
-+	struct regulator_dev *rdev;
-+	unsigned long event;
-+};
-+
- static int _regulator_is_enabled(struct regulator_dev *rdev);
- static int _regulator_disable(struct regulator *regulator);
- static int _regulator_get_error_flags(struct regulator_dev *rdev, unsigned int *flags);
-@@ -1658,6 +1671,104 @@ static int set_machine_constraints(struct regulator_dev *rdev)
- 	return 0;
- }
-
-+/**
-+ * regulator_event_work_fn - process a deferred regulator event
-+ * @work: work_struct queued by the notifier
-+ *
-+ * Calls the regulator's notifier chain in process context while holding
-+ * the rdev lock, then releases the device reference.
-+ */
-+static void regulator_event_work_fn(struct work_struct *work)
-+{
-+	struct regulator_event_work *rew =
-+		container_of(work, struct regulator_event_work, work);
-+	struct regulator_dev *rdev = rew->rdev;
-+	int ret;
-+
-+	regulator_lock(rdev);
-+	ret = regulator_notifier_call_chain(rdev, rew->event, NULL);
-+	regulator_unlock(rdev);
-+	if (ret == NOTIFY_BAD)
-+		dev_err(rdev_get_dev(rdev), "failed to forward regulator event\n");
-+
-+	put_device(rdev_get_dev(rdev));
-+	kfree(rew);
-+}
-+
-+/**
-+ * regulator_event_forward_notifier - notifier callback for supply events
-+ * @nb:    notifier block embedded in the regulator
-+ * @event: regulator event code
-+ * @data:  unused
-+ *
-+ * Packages the event into a work item and schedules it in process context.
-+ * Takes a reference on @rdev->dev to pin the regulator until the work
-+ * completes (see put_device() in the worker).
-+ *
-+ * Return: NOTIFY_OK on success, NOTIFY_DONE for events that are not forwarded.
-+ */
-+static int regulator_event_forward_notifier(struct notifier_block *nb,
-+					    unsigned long event,
-+					    void __always_unused *data)
-+{
-+	struct regulator_dev *rdev = container_of(nb, struct regulator_dev,
-+						  supply_fwd_nb);
-+	struct regulator_event_work *rew;
-+
-+	switch (event) {
-+	case REGULATOR_EVENT_UNDER_VOLTAGE:
-+		break;
-+	default:
-+		/* Only forward allowed events downstream. */
-+		return NOTIFY_DONE;
-+	}
-+
-+	rew = kmalloc(sizeof(*rew), GFP_ATOMIC);
-+	if (!rew)
-+		return NOTIFY_DONE;
-+
-+	get_device(rdev_get_dev(rdev));
-+	rew->rdev = rdev;
-+	rew->event = event;
-+	INIT_WORK(&rew->work, regulator_event_work_fn);
-+
-+	queue_work(system_highpri_wq, &rew->work);
-+
-+	return NOTIFY_OK;
-+}
-+
-+/**
-+ * register_regulator_event_forwarding - enable supply event forwarding
-+ * @rdev: regulator device
-+ *
-+ * Registers a notifier on the regulator's supply so that supply events
-+ * are forwarded to the consumer regulator via the deferred work handler.
-+ *
-+ * Return: 0 on success, -EALREADY if already enabled, or a negative error code.
-+ */
-+static int register_regulator_event_forwarding(struct regulator_dev *rdev)
-+{
-+	int ret;
-+
-+	if (!rdev->supply)
-+		return 0; /* top-level regulator: nothing to forward */
-+
-+	if (rdev->supply_fwd_nb.notifier_call)
-+		return -EALREADY;
-+
-+	rdev->supply_fwd_nb.notifier_call = regulator_event_forward_notifier;
-+
-+	ret = regulator_register_notifier(rdev->supply, &rdev->supply_fwd_nb);
-+	if (ret) {
-+		dev_err(&rdev->dev, "failed to register supply notifier: %pe\n",
-+			ERR_PTR(ret));
-+		rdev->supply_fwd_nb.notifier_call = NULL;
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
- /**
-  * set_supply - set regulator supply regulator
-  * @rdev: regulator (locked)
-@@ -2144,6 +2255,16 @@ static int regulator_resolve_supply(struct regulator_dev *rdev)
- 		goto out;
- 	}
-
-+	/*
-+	 * Automatically register for event forwarding from the new supply.
-+	 * This creates the downstream propagation link for events like
-+	 * under-voltage.
-+	 */
-+	ret = register_regulator_event_forwarding(rdev);
-+	if (ret < 0)
-+		rdev_warn(rdev, "Failed to register event forwarding: %pe\n",
-+			  ERR_PTR(ret));
-+
- 	regulator_unlock_two(rdev, r, &ww_ctx);
-
- 	/* rdev->supply was created in set_supply() */
-@@ -6031,6 +6152,9 @@ void regulator_unregister(struct regulator_dev *rdev)
- 		return;
-
- 	if (rdev->supply) {
-+		regulator_unregister_notifier(rdev->supply,
-+					      &rdev->supply_fwd_nb);
-+
- 		while (rdev->use_count--)
- 			regulator_disable(rdev->supply);
- 		regulator_put(rdev->supply);
-diff --git a/include/linux/regulator/driver.h b/include/linux/regulator/driver.h
-index 4a216fdba354..978cf593b662 100644
---- a/include/linux/regulator/driver.h
-+++ b/include/linux/regulator/driver.h
-@@ -658,6 +658,9 @@ struct regulator_dev {
- 	spinlock_t err_lock;
-
- 	int pw_requested_mW;
-+
-+	/* regulator notification forwarding */
-+	struct notifier_block supply_fwd_nb;
- };
-
- /*
---
-2.47.3
+diff --git a/include/linux/phy.h b/include/linux/phy.h
+index bb45787d8684..de786fc2169b 100644
+--- a/include/linux/phy.h
++++ b/include/linux/phy.h
+@@ -292,7 +292,7 @@ static inline const char *phy_modes(phy_interface_t interface)
+  *
+  * Description: maps RGMII supported link speeds into the clock rates.
+  * This can also be used for MII, GMII, and RMII interface modes as the
+- * clock rates are indentical, but the caller must be aware that errors
++ * clock rates are identical, but the caller must be aware that errors
+  * for unsupported clock rates will not be signalled.
+  *
+  * Returns: clock rate or negative errno
+@@ -514,7 +514,7 @@ enum phy_state {
+  * struct phy_c45_device_ids - 802.3-c45 Device Identifiers
+  * @devices_in_package: IEEE 802.3 devices in package register value.
+  * @mmds_present: bit vector of MMDs present.
+- * @device_ids: The device identifer for each present device.
++ * @device_ids: The device identifier for each present device.
+  */
+ struct phy_c45_device_ids {
+ 	u32 devices_in_package;
+diff --git a/net/tipc/crypto.c b/net/tipc/crypto.c
+index ea5bb131ebd0..751904f10aab 100644
+--- a/net/tipc/crypto.c
++++ b/net/tipc/crypto.c
+@@ -1797,7 +1797,7 @@ int tipc_crypto_xmit(struct net *net, struct sk_buff **skb,
+  * @b: bearer where the message has been received
+  *
+  * If the decryption is successful, the decrypted skb is returned directly or
+- * as the callback, the encryption header and auth tag will be trimed out
++ * as the callback, the encryption header and auth tag will be trimmed out
+  * before forwarding to tipc_rcv() via the tipc_crypto_rcv_complete().
+  * Otherwise, the skb will be freed!
+  * Note: RX key(s) can be re-aligned, or in case of no key suitable, TX
+diff --git a/net/tipc/topsrv.c b/net/tipc/topsrv.c
+index ffe577bf6b51..aad7f96b6009 100644
+--- a/net/tipc/topsrv.c
++++ b/net/tipc/topsrv.c
+@@ -57,7 +57,7 @@
+  * @conn_idr: identifier set of connection
+  * @idr_lock: protect the connection identifier set
+  * @idr_in_use: amount of allocated identifier entry
+- * @net: network namspace instance
++ * @net: network namespace instance
+  * @awork: accept work item
+  * @rcv_wq: receive workqueue
+  * @send_wq: send workqueue
+@@ -83,7 +83,7 @@ struct tipc_topsrv {
+  * @sock: socket handler associated with connection
+  * @flags: indicates connection state
+  * @server: pointer to connected server
+- * @sub_list: lsit to all pertaing subscriptions
++ * @sub_list: list to all pertaining subscriptions
+  * @sub_lock: lock protecting the subscription list
+  * @rwork: receive work item
+  * @outqueue: pointer to first outbound message in queue
+-- 
+2.34.1
 
 
