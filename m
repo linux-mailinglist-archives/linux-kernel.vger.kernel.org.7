@@ -1,144 +1,160 @@
-Return-Path: <linux-kernel+bounces-838383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89B7BBAF0BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 04:58:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C264DBAF077
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 04:54:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 123454C0E80
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 02:58:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 000813C702D
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 02:54:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FC392D46C6;
-	Wed,  1 Oct 2025 02:55:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61DA927B331;
+	Wed,  1 Oct 2025 02:54:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ixUzme/5"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="YKXBgfpj"
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48F3E2D3731
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 02:55:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ED3127A93C
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 02:54:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759287331; cv=none; b=X6renzE4bVMKJh7BUfU/engbm4XJLyNV/jZ3UW5+ZBHfyUNP9t4YTUa0Cp8aVstbv7RIzsU1e79bsKvZE961Tv0Q7uVaKP8XdjbiMuPpZH54PEu2euzL0TIl2CXq1fgxKV4Mj+oMtQD/sTyhBQQcWCoIHs5+S4G13clDXmGbTUM=
+	t=1759287257; cv=none; b=kgJj/P76AZPorU5/898cZPwBLcyTWr2fxvvtcrAvV1GfurMYMkmobSzylpS5WfZYGSmvGjUBrN65JEhEAUDesQTChNvURxaMy1FzCLoYgoUmFd9nOQr2/MRa8nRrbFUQpCu/PqOAEqxOsKEy3vXnca8zPojFGESS4WCZ+c2fw50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759287331; c=relaxed/simple;
-	bh=afH+CbWJk+R3QqJvXfANhF7hRA27nbMPG3qpLyeTTk4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IMNiuswgj8QGckXV4nXoKHuEESTs/73A3s6HF7YU3Z2BIQBiCWa2Vs0x4czFSVfZBK8b95+t4C4yBqhQ/dxQY1dzLCDxAfncQHuj7arqu1EYWyFlxqO532c/G0Yw4tbJu/uiLDDlOm84yBx5ih5ATOtgE0Xhw+MXITnromRQxfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ixUzme/5; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759287330; x=1790823330;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=afH+CbWJk+R3QqJvXfANhF7hRA27nbMPG3qpLyeTTk4=;
-  b=ixUzme/5n2m7oreU6EIzGO9UYeOfpv/0+Q/mYWl4dJnyrX2anz5gh1cU
-   3qJH36eXBKUAWk3s4bBOLmQCD76yoWMuyrTBRPFhV/jYECXJwoc5e2e4O
-   U6etZfGJdZ5tVPxSY3Gv1C/sm7+yG9HTgRrwb4BUkLZIClBDuDFFHlMX6
-   b0BBFl+JgRP755t/SefVx0L5QV98TZ/aXpFPJ2yLNQyfl80JXsmivcK8B
-   0zML4jjBFQzzoc4GhYWN9E2MkwfBQZeZSKBEfFLFTxuPRrSooFpGmROZc
-   X/wQlSuBmvG08pZ+K9QZIKlgC2MdzgQHtPjd1iQPqgq893TXtpcUiSTm/
-   A==;
-X-CSE-ConnectionGUID: 1Bo4ObIMQgi1Oof+4BGXhA==
-X-CSE-MsgGUID: vBsOILCERNa3LBrwRxzKBQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11569"; a="61662423"
-X-IronPort-AV: E=Sophos;i="6.18,305,1751266800"; 
-   d="scan'208";a="61662423"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2025 19:55:30 -0700
-X-CSE-ConnectionGUID: eoSP3TlvTSm77f9WuV6SkA==
-X-CSE-MsgGUID: SOehwTZ6RM+3uNdxi5rK5w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,305,1751266800"; 
-   d="scan'208";a="178629276"
-Received: from 984fee019967.jf.intel.com ([10.165.54.94])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2025 19:55:29 -0700
-From: Chao Gao <chao.gao@intel.com>
-To: linux-coco@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	x86@kernel.org,
-	reinette.chatre@intel.com,
-	ira.weiny@intel.com,
-	kai.huang@intel.com,
-	dan.j.williams@intel.com,
-	yilun.xu@linux.intel.com,
-	sagis@google.com,
-	vannapurve@google.com,
-	paulmck@kernel.org,
-	nik.borisov@suse.com
-Cc: Chao Gao <chao.gao@intel.com>,
-	"Kirill A. Shutemov" <kas@kernel.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH v2 21/21] x86/virt/tdx: Enable TDX Module runtime updates
-Date: Tue, 30 Sep 2025 19:53:05 -0700
-Message-ID: <20251001025442.427697-22-chao.gao@intel.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251001025442.427697-1-chao.gao@intel.com>
-References: <20251001025442.427697-1-chao.gao@intel.com>
+	s=arc-20240116; t=1759287257; c=relaxed/simple;
+	bh=XcdUOVP2ST66bgN0i3mM03qMLhQASrIrftRuGgxZqFU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=YXlHCRVqXXQ+P+3gHmLg4rSrkz3CrglJmJj5rxErd8J35NxZHxxvTBzuYzG+Bonhp+6KmXZJCpH8rNHtgdJO2cLCZyOjyMnMy3Q4ecE4lBdN3vEUd672/5OkCW46HsDmSN8NrMwsAiKCLNoAiOu2aM6LY8449TIBzXvHtlugiMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=YKXBgfpj; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from trampoline.thunk.org (pool-173-48-113-189.bstnma.fios.verizon.net [173.48.113.189])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 5912s1Ys017031
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 30 Sep 2025 22:54:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1759287242; bh=Qf7UtKUlYjyeQyEVGZWBThbfyxqAnNWIuRrsdjjbR9U=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=YKXBgfpjwyAcEeNkTa3oNpnggEgl0U4YZOXtugodEBZsyrQShJQ8dInFuuPv4Qo+m
+	 iuxv8P6XborkhlWxNojqTqgl7JHScR2W4itRevADbiUbOba8HF9ma+vgQRx1pXCQNX
+	 af3VQMUr2KRVwu1IUokAqWCHhv9XwSBY/om0LCMKd2XXIsh7kp50J+EEYJ6YSPvoxA
+	 Bv/33iPlkq9MWLfJaNynDKLqthb7DqJ5Buz5Qg/MQ5Nei0hDJJDq0gltBP/cpf9A55
+	 NszBOnnvuewO7Vj98KGGnHkb3HhFb8VgCcawKIryt9f5JYPpfTi/FBd5vAns76f4/x
+	 zzorRAx80Ezuw==
+Received: by trampoline.thunk.org (Postfix, from userid 15806)
+	id D02CF2E00D9; Tue, 30 Sep 2025 22:54:00 -0400 (EDT)
+Date: Tue, 30 Sep 2025 22:54:00 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Kernel Developers List <linux-kernel@vger.kernel.org>,
+        Ext4 Developers List <linux-ext4@vger.kernel.org>
+Subject: [GIT PULL] ext4 updates for 6.18-rc1
+Message-ID: <20251001025400.GA333371@mit.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-All pieces of TDX Module runtime updates are in place. Enable it if it
-is supported.
+The following changes since commit b320789d6883cc00ac78ce83bccbfe7ed58afcf0:
 
-Signed-off-by: Chao Gao <chao.gao@intel.com>
----
- arch/x86/include/asm/tdx.h  | 6 +++++-
- arch/x86/virt/vmx/tdx/tdx.h | 3 ---
- 2 files changed, 5 insertions(+), 4 deletions(-)
+  Linux 6.17-rc4 (2025-08-31 15:33:07 -0700)
 
-diff --git a/arch/x86/include/asm/tdx.h b/arch/x86/include/asm/tdx.h
-index 2422904079a3..94aa1237fef4 100644
---- a/arch/x86/include/asm/tdx.h
-+++ b/arch/x86/include/asm/tdx.h
-@@ -32,6 +32,10 @@
- #define TDX_SUCCESS		0ULL
- #define TDX_RND_NO_ENTROPY	0x8000020300000000ULL
- 
-+/* Bit definitions of TDX_FEATURES0 metadata field */
-+#define TDX_FEATURES0_TD_PRESERVING	BIT(1)
-+#define TDX_FEATURES0_NO_RBP_MOD	BIT(18)
-+
- /* P-SEAMLDR SEAMCALL leaf function error codes */
- #define SEAMLDR_RND_NO_ENTROPY	0x8000000000030001ULL
- 
-@@ -109,7 +113,7 @@ const struct tdx_sys_info *tdx_get_sysinfo(void);
- 
- static inline bool tdx_supports_runtime_update(const struct tdx_sys_info *sysinfo)
- {
--	return false; /* To be enabled when kernel is ready */
-+	return sysinfo->features.tdx_features0 & TDX_FEATURES0_TD_PRESERVING;
- }
- 
- int tdx_guest_keyid_alloc(void);
-diff --git a/arch/x86/virt/vmx/tdx/tdx.h b/arch/x86/virt/vmx/tdx/tdx.h
-index ca76126880ee..1965adb63f1f 100644
---- a/arch/x86/virt/vmx/tdx/tdx.h
-+++ b/arch/x86/virt/vmx/tdx/tdx.h
-@@ -87,9 +87,6 @@ struct tdmr_info {
- 	DECLARE_FLEX_ARRAY(struct tdmr_reserved_area, reserved_areas);
- } __packed __aligned(TDMR_INFO_ALIGNMENT);
- 
--/* Bit definitions of TDX_FEATURES0 metadata field */
--#define TDX_FEATURES0_NO_RBP_MOD	BIT(18)
--
- /*
-  * Do not put any hardware-defined TDX structure representations below
-  * this comment!
--- 
-2.47.3
+are available in the Git repository at:
 
+  https://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git tags/ext4_for_linus-6.18-rc1
+
+for you to fetch changes up to acf943e9768ec9d9be80982ca0ebc4bfd6b7631e:
+
+  ext4: fix checks for orphan inodes (2025-09-26 08:36:08 -0400)
+
+----------------------------------------------------------------
+New ext4 features:
+
+  * Add support so tune2fs can modify/update the superblock using an
+    ioctl, without needing write access to the block device.
+  * Add support for 32-bit reserved uid's and gid's.
+
+Bug fixes:
+
+  * Fix potential warnings and other failures caused by corrupted / fuzzed
+    file systems.
+  * Fail unaligned direct I/O write with EINVAL instead of silently
+    falling back to buffered I/O
+  * Correectly handle fsmap queries for metadata mappings
+  * Avoid journal stalls caused by writeback throttling
+  * Add some missing GFP_NOFAIL flags to avoid potential deadlocks
+    under extremem memory pressure
+
+Cleanups:
+
+  * Remove obsolete EXT3 Kconfigs
+
+----------------------------------------------------------------
+Ahmet Eray Karadag (1):
+      ext4: guard against EA inode refcount underflow in xattr update
+
+Baokun Li (2):
+      ext4: add ext4_sb_bread_nofail() helper function for ext4_free_branches()
+      ext4: fix potential null deref in ext4_mb_init()
+
+Deepanshu Kartikey (1):
+      ext4: validate ea_ino and size in check_xattrs
+
+Jan Kara (3):
+      ext4: fail unaligned direct IO write with EINVAL
+      ext4: verify orphan file size is not too big
+      ext4: fix checks for orphan inodes
+
+Julian Sun (2):
+      jbd2: increase IO priority of checkpoint
+      ext4: increase IO priority of fastcommit
+
+Lukas Bulwahn (1):
+      ext4: remove obsolete EXT3 config options
+
+Ojaswin Mujoo (1):
+      ext4: correctly handle queries for metadata mappings
+
+Theodore Ts'o (3):
+      ext4: avoid potential buffer over-read in parse_apply_sb_mount_options()
+      ext4: add support for 32-bit default reserved uid and gid values
+      ext4: implemet new ioctls to set and get superblock parameters
+
+Xichao Zhao (1):
+      ext4: replace min/max nesting with clamp()
+
+Yongjian Sun (1):
+      ext4: increase i_disksize to offset + len in ext4_update_disksize_before_punch()
+
+Zhang Yi (1):
+      ext4: fix an off-by-one issue during moving extents
+
+chuguangqing (1):
+      fs: ext4: change GFP_KERNEL to GFP_NOFS to avoid deadlock
+
+ fs/ext4/Kconfig           |  27 -------
+ fs/ext4/ext4.h            |  28 ++++++-
+ fs/ext4/fast_commit.c     |   2 +-
+ fs/ext4/file.c            |   2 +-
+ fs/ext4/fsmap.c           |  14 ++--
+ fs/ext4/indirect.c        |   2 +-
+ fs/ext4/inode.c           |  47 +++---------
+ fs/ext4/ioctl.c           | 312 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++--
+ fs/ext4/mballoc.c         |  10 +++
+ fs/ext4/mmp.c             |   6 +-
+ fs/ext4/move_extent.c     |   2 +-
+ fs/ext4/orphan.c          |  19 +++--
+ fs/ext4/super.c           |  38 +++++-----
+ fs/ext4/xattr.c           |  21 ++++--
+ fs/jbd2/checkpoint.c      |   2 +-
+ include/uapi/linux/ext4.h |  53 +++++++++++++
+ 16 files changed, 467 insertions(+), 118 deletions(-)
 
