@@ -1,147 +1,156 @@
-Return-Path: <linux-kernel+bounces-838981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 041A7BB0900
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 15:48:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F2A0BB0906
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 15:49:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EB5C4A05B5
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 13:48:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 295FB2A1398
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 13:49:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24E682FC028;
-	Wed,  1 Oct 2025 13:48:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5726A2FC016;
+	Wed,  1 Oct 2025 13:49:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="n+WQA5md"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NlqwsgHc"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1D872FBE14
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 13:48:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC2922FBE0B
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 13:49:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759326504; cv=none; b=uKBdT2cmhL4Tw5x05IABjONw3vRqnWHNGHKqYRjsVC8n9w8QX9uMOCwli7Gq/69c2SOVjYLi8s3CADmwDmcsgt9ms3K40ycecv0J6y8dkEa0M5rN6koWqGMIfAKtNesV/yQ6UbWFYX1NN3BncVLq8rlryNpw75ZNkkxZTSIkxAU=
+	t=1759326553; cv=none; b=fpEDBIV4y1vaWwrYCZWyV8dR5JdnXZMEx8SS9tRvme99KodfngfAhiiFwfUW6hVGn8bey1RaE/IyBA3MLv3TFaOU24ak9o7znfiFtDGjarZv7gIE3ipkc9OHlvX5n5XX+QSKfCN+zS4uo80G/8iibP4JItyr5//f00bUjPmemDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759326504; c=relaxed/simple;
-	bh=fp3v57qBuLEjj+J/x49VyV5FvxQeWmOVI+OPPyz4H7U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mJvfxq26y+joOBFurVQDl76tZH6NtfYKTcrnEnAz/m/KxePvq//vC4K3ALSWcqET3cuoCo0PeK4nE+N1KeFwkixtDrgj+BayU7TegCmwF9Z4bdesKDvv43RdQKHvsRw+DbLeJUoQuski5tGAfH+DtzBKaqLK8P719Q4l6THJ0RY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=n+WQA5md; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5918wM6N024443
-	for <linux-kernel@vger.kernel.org>; Wed, 1 Oct 2025 13:48:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	fp3v57qBuLEjj+J/x49VyV5FvxQeWmOVI+OPPyz4H7U=; b=n+WQA5md74ejqI22
-	weutqrqOSh8bHER/YgP7ORqarjnx1x7Q6u2QU+m0t3Lgnn8Hr547sOFtCtOpdVdo
-	VmzJNle/CIt6lSESTN5+mnCqR9WmQ6qEVGXOSctw7w9fDABsyH5X5YlBy/qWGQ1Q
-	wFFvroYetQDlqWXwFB7GeRHuK8p9JNqCZkvr0znuzjODxrwLfd5D735ii9598kQe
-	bChngM/JygPhnrKHpyQZUoSHS2Q8TeJQfkVvVvVcRn5i4g7NhtRgXbf/XQTBTQBo
-	WUxTXtxv1872zW77Fjh3QFjVsXR+UInS1z7367YDXPEF0hlFF5wmi41WBwq7m0e9
-	QD+cbw==
-Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e59n5462-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 13:48:21 +0000 (GMT)
-Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-b550fab38e9so5055900a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 06:48:21 -0700 (PDT)
+	s=arc-20240116; t=1759326553; c=relaxed/simple;
+	bh=oUMtdNZYK6Fyw7iywZcExti86DdeEspgiPN/lnLvNww=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cG7GnUa/Xf7fLH/oIjSUXa1ZmEQzuDvU6lJBT6eeprzabNXqog3wxpwo4si+lbFEOEvWG/y1gkZFPuQS3Jv/8zdzQSfluug3Ia3qfZsOBQP5K8c5uccN3MVuWNoamDuac6HF5AFid5LN3YwLMYxtOUcn9J+sk3v/mkoz2XFE0KE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NlqwsgHc; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3b9edf4cf6cso6534498f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 06:49:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1759326550; x=1759931350; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aXTHbm1yGkE2/zORBswhWrACx80/EC1QRjdLtiEom4Q=;
+        b=NlqwsgHc3VMPskc1Wanto0WarOUnYXNYz7//IivTe5CGIP4mmC2TSnWOgswNtDO70f
+         KbKzT7Ry1DXR2LDvsQqsdYfh049PDvlA+vxxIhSBmNiFKG1JEp+IaIHoYl3EudEX9PfS
+         AZQ4KDZuc+gTEENn5waj1QD7oBc19E1noskNsTWcFi1aIQ8rWeAbn/gqnVxxzInlXSz1
+         lb0XnzsAKKMCZdmOL5PXXCJdilupD4/XOZUpfRuF+8LxJvMsTim3+xydxqxqaL09QDZG
+         g8IGSo0jhktxodWxjac58td2ycXUYxgHApj8ckIKCaHqoBlubOGIsaNn5Wb3JoYl2ENW
+         q9RA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759326500; x=1759931300;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fp3v57qBuLEjj+J/x49VyV5FvxQeWmOVI+OPPyz4H7U=;
-        b=LIbdto1EiCQt4KiorFR8LymxrMxrVrTp1tQNbMgKdIg4LJWr8LKhVPaLWnw1gaP2Q8
-         ZrpgsiJ8v0PSqnaAOE6gOI53aoVtO9jMr0wzF+WwyHBJ46gQeIdTkRgChkkvSUBRAsHq
-         iW8p2HaU/tqzL4FgSO/LRC/oG4oa1DxOtaQW+ORLELS4oCPaetp/xrmIPju/IyKNaDgL
-         b6HTSzYBK98jljGvkFMNLUAwHOzWFBvJBelY07BtjLXbJ/UbQi6jC8/O684+XkYKsYc3
-         30gXJU0+Gu1flE8cgO5LvKYhq26AhAQ24dfdsW4ZUORNGEERbaarJlr8JcYuyGtZLbR0
-         DBHw==
-X-Forwarded-Encrypted: i=1; AJvYcCVBBOm+9+d79UzVbHW2F1KHU+Pa+7FZ5jQV4x3+/8mAFFTnxX7fyvzX0w0UUm6Dzj3ywyb5iC7tdUXLdAA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzz4dY3fXdteHPs9MkkQqRVrE1WydS3H4Xx7ehs6WvWoQhvNV+X
-	laJjRecAnCzwc1BvM7QW7C90nK/vmPF/UlhPnPOLC/nV/aU/4G11Rob5n+cymJ35/Ay5RHLa5OD
-	j5ui90irFZPj1qjhPm2S5oroiGw8EfDKpaqJuJyC64X3cIv3RqcyANl0mto9SjU91QPyhqM/DEh
-	WNUotC0TrhSzcqR6K/Z2zZ7MjRFRnhJAFxj2U262a/YQ==
-X-Gm-Gg: ASbGnctW8++NyE+OTVwysIxTbOPCbfxUEFgcXye3AoaU4YpMvG0kHUsnJVagZRlPZeW
-	AXPgK9geYdAkStkBhe/yrgSJNzJMlWZNvHiUVUj+c7agDkp1ygZosi5QeYzKTto1znbaZUFjoS9
-	kx3j62lfOjgjSjocQYIVvWhjC/fZkIBvmKQA7lJ8bWMiuW0jhcTyxXHL9k3v0=
-X-Received: by 2002:a17:90b:17cf:b0:32b:d183:facf with SMTP id 98e67ed59e1d1-339a6f66d48mr3342752a91.28.1759326500230;
-        Wed, 01 Oct 2025 06:48:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGGEoqW8Gg2lgK86qxAwu+nfXe3G5OJ2NfYflPendMDk34x4Ydw1dWzOJ1aSl3n8ThNvGAbpRjrnFNtVgBSIzw=
-X-Received: by 2002:a17:90b:17cf:b0:32b:d183:facf with SMTP id
- 98e67ed59e1d1-339a6f66d48mr3342716a91.28.1759326499769; Wed, 01 Oct 2025
- 06:48:19 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759326550; x=1759931350;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aXTHbm1yGkE2/zORBswhWrACx80/EC1QRjdLtiEom4Q=;
+        b=j/EexBAqJX8BargHfLhehEIeL/+wnJtsKCox2IVu+SYZDn7Y0p6QT/bx9a8gNqjkyQ
+         dmoDX4sukbfnGvx1Nda5puJVOwoU2/WPG38n90XmEbHgD7o+pGdgoLoN27zjV7+10acy
+         CACnNri38dOwZhWigkf5r6q1LS4bht8/tuKrW9UFzCLF12Y1Hr2+EKTSkarVOa/jEetp
+         NI8yBQoG/xwrFWfq0nFjykDYzKJbCF47g85vEvSgE88gQ33cCZZOAMsMXCRuKn0LPvMN
+         hjPptFzlvBjvGE32OqmHNuGzT2LzrnRXrmYUlcDjCqjw67ApMxGW23ggll27mA5ZXEGM
+         Zxvw==
+X-Forwarded-Encrypted: i=1; AJvYcCU7yuDu5gcvYJV+Nju7JeoUKLFJ1mz4g0ZOC52VgRvUgeavHtKCp7djcoCBigO8hugiL643gf3/rEGmLDo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvnnSWjg0czs032wCMD1c7s5YrPYkgWxII7oUzr8/QqLXk2RiN
+	hcq76//zJjRo7NY0K60w29zReKLMp5P06mkQcx2zxPVM2fRotI/tFq0TscFH8gMTays=
+X-Gm-Gg: ASbGncsFRb3iSeAjcOrpyl9jW9X7fLXd14m1RNShgJEjSevnYfqcgye45RrpNthD00Z
+	0dG8fo3OODQGdAR9PkW9ZG3sDjAKZOus9pgR3VYXL7bcXBzWEbrT9h9Vc6QXcHCCq71zt5QH5eW
+	jhGnsbpY+Bcdc/UAX6b3JlFgjhwC+NOwBOl3kjvLPR9odbKDaTx7Qy5ogENoxPdmks8PPo79NOP
+	bXJNLt6yFbrSM2wl+44D0uJJMiSepPTtDr4eiZ6oU7o6vqxLck8DAHO06quXHGWuypsLvyfsM3i
+	qHOjN5ufLekSopvXoWo5/EkGMW2ErK4ab2t2QjSOQqhPY98jvdrrdFd6+zxHXMOjR/z54PMYfGV
+	lgo5kmA5Ri6Iwt1G4sQVSmgwGaHE8PNDE4VVz958PKSi88Js52tQx
+X-Google-Smtp-Source: AGHT+IGLrHf4UIk1KWnOc/zaVSe2/+LGCHS141wLHD+2YH4GOoHIJk5yG2sHN2EHQfFgXGXp5sFacQ==
+X-Received: by 2002:a05:6000:2001:b0:3ee:f10c:6baa with SMTP id ffacd0b85a97d-4255780b811mr2734622f8f.37.1759326550066;
+        Wed, 01 Oct 2025 06:49:10 -0700 (PDT)
+Received: from [192.168.1.3] ([185.48.76.109])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-41f0c467ecasm14427731f8f.38.2025.10.01.06.49.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 01 Oct 2025 06:49:09 -0700 (PDT)
+Message-ID: <6baf0f01-a333-4bca-b39d-d01f8624e170@linaro.org>
+Date: Wed, 1 Oct 2025 14:49:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250925-v3_glymur_introduction-v1-0-24b601bbecc0@oss.qualcomm.com>
- <20250925-v3_glymur_introduction-v1-16-24b601bbecc0@oss.qualcomm.com> <cd91e7f2-72bf-48f2-891e-4e6cd36b1e24@oss.qualcomm.com>
-In-Reply-To: <cd91e7f2-72bf-48f2-891e-4e6cd36b1e24@oss.qualcomm.com>
-From: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
-Date: Wed, 1 Oct 2025 19:18:07 +0530
-X-Gm-Features: AS18NWBhYwOecFTI7PUFOxMVtEHAFfH7cHQ1cCOcmiaMyYqMB14HKhsIE_TTwpI
-Message-ID: <CADhhZXau4EPEvf6Ngo+p4Jv=NPF6TYxcWtt2tV+MyrmOxp7OOQ@mail.gmail.com>
-Subject: Re: [PATCH 16/24] arm64: boot: dts: glymur-crd: Add Volume down/up
- keys support
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Pankaj Patil <pankaj.patil@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-GUID: Wt63puCEERcDTitr7Fb69Qou6rw2C9T-
-X-Authority-Analysis: v=2.4 cv=O4g0fR9W c=1 sm=1 tr=0 ts=68dd3125 cx=c_pps
- a=rz3CxIlbcmazkYymdCej/Q==:117 a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10
- a=EUspDBNiAAAA:8 a=QrdbydHfbqU_mCGI0rsA:9 a=QEXdDO2ut3YA:10
- a=bFCP_H2QrGi7Okbo017w:22
-X-Proofpoint-ORIG-GUID: Wt63puCEERcDTitr7Fb69Qou6rw2C9T-
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAwMSBTYWx0ZWRfX/0+cImCUvgxY
- tvreNB4YcweJOinAE7eeZcqK2gNPhl3/sT2I53yRk6MbhLAgsbuUYkvn4c25xwPTAKEmFB00CgP
- 1IQODAveiuAp6EbpFJpqOtReNAWRQ7ZN8KxZ8EPpVF95LQFC8B50l3VXQKqOdmn4H4Fk1uGSKhq
- uXad88sB7rRSnJX7yys9D6HvRu54kVebaZVvgb5qKaJ8t6JOsCUNxldRgf02trZOGMk0n83TkJP
- bQHTK/4rl/S1JXjRCa/XlW2gX8bDu3/E/J94C6cBu9DyjHnNumKCpyACuIHm8VGQX0J0XmOr/RC
- F452UqIF4yhkUjpe78wcOulADSUBGVfMkk4mBNQd89z7BPInm9GO7ORDX8Vdp+by9YlpBUVxnoW
- w44mfOI4ODKIYmb/sFpJl0pB9Alo7A==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-01_04,2025-09-29_04,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 phishscore=0 clxscore=1015 priorityscore=1501 lowpriorityscore=0
- spamscore=0 impostorscore=0 bulkscore=0 suspectscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270001
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] perf test: Extend branch stack sampling test for
+ arm64 BRBE
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Anshuman Khandual <anshuman.khandual@arm.com>,
+ "Rob Herring (Arm)" <robh@kernel.org>,
+ Adam Young <admiyo@os.amperecomputing.com>, Will Deacon <will@kernel.org>,
+ German Gomez <german.gomez@arm.com>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Ian Rogers <irogers@google.com>
+References: <20250813-james-brbe-test-v1-0-76a0144b73fb@linaro.org>
+ <CAP-5=fXdFQCgeF5DRH=-cUErz2opU98H6u1cTTO3ZPJ7SMQfMw@mail.gmail.com>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <CAP-5=fXdFQCgeF5DRH=-cUErz2opU98H6u1cTTO3ZPJ7SMQfMw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Konrad,
 
-On Thu, Sep 25, 2025 at 4:46=E2=80=AFPM Konrad Dybcio
-<konrad.dybcio@oss.qualcomm.com> wrote:
->
-> On 9/25/25 8:32 AM, Pankaj Patil wrote:
-> > From: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
-> >
-> > Add Volume Down/Up keys for Glymur CRD.
->
-> Does the CRD have these physical keys, or are they routed to the
-> debug board?
 
-Yes, it seems to be routed only over the debug board.
-The keyboard too has the vol+ key, but seems no direct key having
-vol+/gpio6 on CRD.
-(sorry should this patch be dropped then for this reason i guess?)
+On 18/08/2025 10:38 pm, Ian Rogers wrote:
+> On Wed, Aug 13, 2025 at 6:39 AM James Clark <james.clark@linaro.org> wrote:
+>>
+>> Refactor and add some extra tests for all platforms which were useful
+>> when developing and testing the BRBE (Branch Buffer Extension) driver
+>> [1]. Then lastly extend the test for new features which are BRBE
+>> specific.
+>>
+>> Tested on the Arm FVP RevC model [2] and Intel Raptor Lake.
+>>
+>> [1]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=58074a0fce66
+>> [2]: https://developer.arm.com/Tools%20and%20Software/Fixed%20Virtual%20Platforms
+>>
+>> Signed-off-by: James Clark <james.clark@linaro.org>
+> 
+> Reviewed-by: Ian Rogers <irogers@google.com>
+> 
+> Thanks,
+> Ian
+> 
 
->
-> Konrad
+Hi Arnaldo,
 
-Regards,
-Kamal
+If you have a chance can you take this one please. It still applies 
+cleanly to perf-tools-next.
+
+Thanks
+James
+
+>> ---
+>> James Clark (3):
+>>        perf test: Refactor brstack test
+>>        perf test: Add syscall and address tests to brstack test
+>>        perf test: Extend branch stack sampling test for Arm64 BRBE
+>>
+>>   tools/perf/tests/builtin-test.c        |   1 +
+>>   tools/perf/tests/shell/test_brstack.sh | 106 ++++++++++++++++++++++++++++++---
+>>   tools/perf/tests/tests.h               |   1 +
+>>   tools/perf/tests/workloads/Build       |   2 +
+>>   tools/perf/tests/workloads/traploop.c  |  31 ++++++++++
+>>   5 files changed, 132 insertions(+), 9 deletions(-)
+>> ---
+>> base-commit: 6235ce77749f45cac27f630337e2fdf04e8a6c73
+>> change-id: 20250811-james-brbe-test-f5a20dffd734
+>>
+>> Best regards,
+>> --
+>> James Clark <james.clark@linaro.org>
+>>
+
 
