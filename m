@@ -1,59 +1,58 @@
-Return-Path: <linux-kernel+bounces-839030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDBAABB0AAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 16:15:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 258DBBB0AB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 16:15:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DD081890B40
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 14:16:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4F3517BD9F
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 14:15:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EE65254B1B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C33AE2580EC;
 	Wed,  1 Oct 2025 14:15:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dAMRMnLk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OZxkeUKF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E91CE70814;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B481D9663;
 	Wed,  1 Oct 2025 14:15:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759328137; cv=none; b=qxVz2Ur2LOFDz+CeEvgi6kpyq4F9yHaAXgY6fig/5ewUpR7jQFeSnHV2yOq5rYI+KoWlatiDxB/b9h/h0vtJSzcktdAJ2md9WxFyuYpfHMDongUf0jkXNagcHnHAgddLjIg6RhE7Od4H9RLOergNEeIw9CkQzdoDaTlcgJCgImo=
+	t=1759328137; cv=none; b=shN9o9ux08Zdf/45uxVdUpFElPLssieCVpLyD+QOAI1bbXw+ct/ePeHsotG+L0zMMQtWrlIyCUIUKTtghGNEyBAdp08Q3drbo2H4Gwon/q6+5A2BPH/uStK+4gz0zB2TsgRBExKRcwf4HQHy8DK8QCq/mrsK+CX+2b7LMMXSlHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1759328137; c=relaxed/simple;
-	bh=ByrMKW6U9oaI4lD+zo8zFpFS4hv7Szimd0l86ILcZmc=;
+	bh=poQHc0zUbKi61U3MBi9zrVxyTLo30MnCelCecnP23IY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NtphAWM//mdxV0UXxs1nviHxNMA2BYaol11puyIoLclUXi7HQE4tJ6Ol+X8pnmHd1s3WiWX2tUQpdUe+U/IEPPDMUY8a5hWCH33A2+qco5LaIS2LLrlqf0CzG1PiKUvlLMj1NarZD4NbMKmqvJbhBduKtNaLGSp2NoWknDN9sA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dAMRMnLk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89195C4CEFA;
+	 MIME-Version; b=LR/QVMi7buEnRZzHKDzurUxDs4ImKSpzDIbDAXnhQmsgiu9dAeTyrs1rGSl9elaldZTNJjW91FSy1k9JvuIkYcWDZWxz+XEykhJxOyOA3uJ+Ec7GvdnpwG0vMlu+Y05HgR2anbn87W2wRWpkinH+45ShxwDhL0RoAnt6KvhtEqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OZxkeUKF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CF55C4CEFB;
 	Wed,  1 Oct 2025 14:15:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1759328136;
-	bh=ByrMKW6U9oaI4lD+zo8zFpFS4hv7Szimd0l86ILcZmc=;
+	bh=poQHc0zUbKi61U3MBi9zrVxyTLo30MnCelCecnP23IY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=dAMRMnLkABaPgeVImbKFr2GlnwxNEs6uRbTyqu59AZ8LtdkTlsxEFoSQ/bNRT0yhH
-	 i/wr596D1r2aLRdTsTcdzw3rFo+jljjm+adia8b+s8m5BK3TkeGLbz1fmEHh0pjLd7
-	 6oh92rPrsR2eb84THYI4zf3J+F1g8JPjpqhUgSralOc6fsJaygMS4u0QLDzkLDM4By
-	 zfE5mPOwLiveAFroi+c9DOiXB8+tgw/k3rZUPPWuukkxMnRsq7JrwCDLPUFmbeX3FL
-	 IYfAKt8Lh60Bx6/885wdT/OGQ1z55MFAGbZU4hKjO4xNHzoiZA5Vf3iD8wXxp3PXMF
-	 azZ5KxN332vnQ==
+	b=OZxkeUKF0TF/wLILhFVfszckjTsin7PEfSFK3zlB87zXTGDiQnxGWC1Kgiw8hMesN
+	 KHQgMCX0Bnd4W1Bpowyuc8Uw3aOPmr8lVDa78RE4M56JGxgMUdfqsrNLRuRauGTdXc
+	 +GcnMPJF67agz47HebhpwIv38mHEtpB8lIg0m7yJkU387SRWlxY5NL2E5ySr3AZseZ
+	 TRWqLIazV2h7XSCLP3VirfpzKK3AJj61Dw6R1XH+2sovQwcOzN7x2WMdIG7+ketvxJ
+	 QCDFNXPE5SluVAiZZRLcy5DEslDY18UBe+jxroxHkdwN4mtT7xsjFfEhi5naKwfLte
+	 W5p3vyHUMmrVg==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
 	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1v3xcE-0000000BJ9R-3F5M;
+	id 1v3xcE-0000000BJ9V-3Log;
 	Wed, 01 Oct 2025 16:15:34 +0200
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: "Jonathan Corbet" <corbet@lwn.net>,
 	Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
 	"Mauro Carvalho Chehab" <mchehab@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Akira Yokosawa <akiyks@gmail.com>
-Subject: [PATCH v2 2/3] tools/docs: sphinx-build-wrapper: pdflatex is needed only for pdf
-Date: Wed,  1 Oct 2025 16:15:25 +0200
-Message-ID: <313df7b4aab653e8fc40c30120c0dbebf8a0bcb1.1759328070.git.mchehab+huawei@kernel.org>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 3/3] docs: Makefile: use PYTHONPYCACHEPREFIX
+Date: Wed,  1 Oct 2025 16:15:26 +0200
+Message-ID: <8c37576342994ea0e3466eec2602a8d989d9a5f0.1759328070.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <cover.1759328070.git.mchehab+huawei@kernel.org>
 References: <cover.1759328070.git.mchehab+huawei@kernel.org>
@@ -66,30 +65,33 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Fix the logic which checks for pdflatex. Currently, it complains
-for both pdfdocs and latexdocs, but for the latter, all it is
-needed is Sphinx.
+Previous cleanup patches ended dropping it when sphinx-build-wrapper
+were added. Also, sphinx-pre-install can also generate caches.
 
-Reported-by: Akira Yokosawa <akiyks@gmail.com>
-Closes: https://lore.kernel.org/linux-doc/cover.1758881658.git.mchehab+huawei@kernel.org/T/#ma81ff2e11b8579e5edc23e4381e464081ae668b7
+So, re-add it for both.
+
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- tools/docs/sphinx-build-wrapper | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/Makefile | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/tools/docs/sphinx-build-wrapper b/tools/docs/sphinx-build-wrapper
-index cce985dced00..a74998e8309a 100755
---- a/tools/docs/sphinx-build-wrapper
-+++ b/tools/docs/sphinx-build-wrapper
-@@ -650,7 +650,7 @@ class SphinxBuilder:
-             if not sphinxbuild and target != "mandocs":
-                 sys.exit(f"Error: {self.sphinxbuild} not found in PATH.\n")
+diff --git a/Documentation/Makefile b/Documentation/Makefile
+index f764604fa1ac..65d184eab739 100644
+--- a/Documentation/Makefile
++++ b/Documentation/Makefile
+@@ -60,8 +60,10 @@ else # HAVE_SPHINX
  
--        if builder == "latex":
-+        if target == "pdfdocs":
-             if not self.pdflatex_cmd and not self.latexmk_cmd:
-                 sys.exit("Error: pdflatex or latexmk required for PDF generation")
- 
+ # Common documentation targets
+ htmldocs mandocs infodocs texinfodocs latexdocs epubdocs xmldocs pdfdocs linkcheckdocs:
+-	$(Q)@$(srctree)/tools/docs/sphinx-pre-install --version-check
+-	+$(Q)$(PYTHON3) $(BUILD_WRAPPER) $@ \
++	$(Q)PYTHONPYCACHEPREFIX="$(PYTHONPYCACHEPREFIX)" \
++		$(srctree)/tools/docs/sphinx-pre-install --version-check
++	+$(Q)PYTHONPYCACHEPREFIX="$(PYTHONPYCACHEPREFIX)" \
++		$(PYTHON3) $(BUILD_WRAPPER) $@ \
+ 		--sphinxdirs="$(SPHINXDIRS)" $(RUSTDOC) \
+ 		--builddir="$(BUILDDIR)" --deny-vf=$(FONTS_CONF_DENY_VF) \
+ 		--theme=$(DOCS_THEME) --css=$(DOCS_CSS) --paper=$(PAPER)
 -- 
 2.51.0
 
