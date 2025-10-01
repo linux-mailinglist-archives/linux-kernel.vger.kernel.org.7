@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-839500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D434BB1BE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 23:04:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DF44BB1BF1
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 23:05:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B407170659
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 21:04:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C98919C42D3
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 21:05:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B4B530F92C;
-	Wed,  1 Oct 2025 21:03:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54839310628;
+	Wed,  1 Oct 2025 21:04:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2PjoT70L"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="joWHD8d2"
+Received: from mail-ed1-f74.google.com (mail-ed1-f74.google.com [209.85.208.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D76F30F92D
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 21:03:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C72A530FC06
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 21:03:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759352637; cv=none; b=fftaKxU0C9O2HFGMVCM2uMDpek7+9aNrlWYOIEilseZWBkdKUhvjVilI4f4MCDI//kjSzby6+HVX0TazfpTQarUhxAHVUKbnj6kCZKToKgQMvT8UHRwHYZ+BtqHarDnxEfvsm+dnTWtrXZXBqp7zZy6cR9IT/YxqiH5CzBh3zco=
+	t=1759352640; cv=none; b=RUTbrrV3LhDZ7oh/YvTtqx4DZPHhq6okA5KI7fjz1NSfzMyUdHzri9QqIYtVszLhqugfzU5IUGKn1ZjyjDhgBSDIR8PzaP59llaN0lPjbkILBgX17/RYGnkAd1xVe/C5Oa1iNb1LGv8heck0dCfiZBx5wGBE+XxyYElchIYwWr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759352637; c=relaxed/simple;
-	bh=GXeASNEqmczwPiXD+TO0rYwiXLFqmUMdsycyCVMnj/0=;
+	s=arc-20240116; t=1759352640; c=relaxed/simple;
+	bh=y61+7VCzNMGSMbWtXfByDo69lK0ON+BCKh3sIOEFzkE=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ZGIQvqqUbuoAXh6JCeyjSnJ8kPAqQBIafkNvET3F1ifPxbp9HzTwyp0/t39uSPDNXOXsMYvFTKlEZ8bQWm+F/vr43NB7SoE+9aa/3NMRg6F1g7YTELlUBfucIsGpVLrziaEo27ouV3QlTFVvpFnJl2XBcRfovS0tijpgbxOgm/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2PjoT70L; arc=none smtp.client-ip=209.85.128.73
+	 To:Cc:Content-Type; b=HGt4baePm9N/ZAlUnlXtz8Ol7uoGlelS0H7yID3QyYBaxbe/SOecxSXSP88oQGg84xj9Zk909XFC/XQm0Yameo6/qJhWI7Mv3be9lIAPv6lOc6RcEz86RNWMMoEUEH6me93+5Ql7guhEWt0PxvXdWwvz4vC06i9bceGU2QfZHn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=joWHD8d2; arc=none smtp.client-ip=209.85.208.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-46e32eb4798so1081015e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 14:03:56 -0700 (PDT)
+Received: by mail-ed1-f74.google.com with SMTP id 4fb4d7f45d1cf-634c48a0ce7so303866a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 14:03:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759352635; x=1759957435; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1759352636; x=1759957436; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1FhWp47bs3reBDPv5Eo8/YKbhWPmlo11aWHsEN7F2Pk=;
-        b=2PjoT70LGH0JnD3OlTa6+NIZvy1+Z5je/qye5U2evkAqywldrBCg2kP1HyQ+gP7bhQ
-         93o3ZzHlcItKJkflVq3yOabrJAzJe92bQfZVdQyMQo6VDnbDduNFjdBT1riXObdNR69J
-         0hmvLxvhchOGvbrgy6NjxtzzMpKWw6GqRd/seIsV8gZZNfmJgzMaJ6uvqLVd6PrkxGaD
-         Ea/0RWO7Poh5/hoPZJD/ve5Ugo8qNcWYyHwAKqLbxvYXSNfdXHo+uCUGaU8naoRxyBnw
-         suFQI5qmmvIZRtpykZictYcBDFfKDt3EWjMo/qeInmXbk8bjOMdAsy6VvYYxE2jtS1Xz
-         fxiw==
+        bh=acDSbPr0ckzlJYMJhQI+twxWM3EGvwpk6VEzCJHCwrY=;
+        b=joWHD8d2x1bi8PXS+1tN+EACbQ+ehuWEkUIm2UjhZdyvaSfWJyM9aHbWWZLpPmzKOI
+         crWV5ykV6rIDb+TuxPIySwlUyO9ERZwuhuFhisrd3Y0rj87eW+LMs4roJks0qBTFWAnr
+         2nzrdjh8Oyg4eRHBPRTLmjiPfd99jO0B+GpBhQ7TcLNOivVxwnOYEihjteRYNDWtlwKY
+         RuGb5GNjVNf8qECH6+QLpXzSNTrrr971qAmq/seTTOiY/Z+r76enGEr5xayrFKk+zkzj
+         ys2BmS7b47dCx9bKIT9WMOPTlLa7KE0AB41BZM9Aum3sSBtUokAD4kAMNXzaeGhewLT4
+         rB1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759352635; x=1759957435;
+        d=1e100.net; s=20230601; t=1759352636; x=1759957436;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1FhWp47bs3reBDPv5Eo8/YKbhWPmlo11aWHsEN7F2Pk=;
-        b=PxhvmBKeIcfma6BmAwqxOJGVUDe8vs0EKalgX9UQuS60smt+++lqya+6AQjh6atpaR
-         VkhIRusR3RGw6AqYLvfy6cJFo99F6j/wcETIfxA0uAlE5K3a/qKLPOMjUrItyNpXnL8Q
-         wBy8mB7b0qXSCw+7AAC1Tyn+cHIoNu749ReOIkK5q+28yspLhGHMHH6P6gvpBbQKHoDU
-         gn1ozbqAiv+zmg8YrxKTTXpbZaCzf5fR9fWOPMMpJpOb0v6DQuao2YeIKyqN+Ww2piQz
-         ukiuolFelzFLN+DyXFcDECDLl8JSFINn8jgtexgeqeNjbZ+GCEFG9OskLFSTRGg/k3hi
-         Nqqw==
-X-Forwarded-Encrypted: i=1; AJvYcCWEJHy/iUWql+rbBGibFBQrrBSXvKK+4fhoVn6UF2d02MqRv5jhA4lZNbcSR7KRkHv5CYvpGdU+8JiMY8A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4AQ+/uLD3/WcCl7cEJ8qAv6ffH19TW6TwZ6FEh8zfO6n778tB
-	l4bLX2/917AcXlaD++mueDd/sgzuTc0PYTCgSINHCJ4KZrpuNA/odv/JrS52COie2tMJXxCUZw=
+        bh=acDSbPr0ckzlJYMJhQI+twxWM3EGvwpk6VEzCJHCwrY=;
+        b=ikavJnVlmBIrtzmcKbau3mhup2pDFL1sWDCZw0ilvLNKptx3mcxLfx7cBDIzavgVtT
+         ft8ppr1lWoogqhm50c7nK72830/ARpwY9Z7/xC05HghSo5IOjnwI3Ma8p7OzQS925LIz
+         0pdZF6mMaaVpknrzCGujHO2zlLDXzZdYy3mAo8SnVsrcpdkIwD7Q+KzhGTUlsDHQVBUZ
+         lVUrLI000jwEHB7dGVo6woou5GuMPR01tXJa9boCd6Het5xSCHBUMiwkZBhkEOyn5TWV
+         qQ1/47tZbq6AfUHAjgRkwo8yiti/RjQftKSUva987LmB3diOY6LXEj8YswTWmziAaHC+
+         Y9GA==
+X-Forwarded-Encrypted: i=1; AJvYcCXvA3T8mNUQFS6IJCROgG1+d4bTn2VjZR+oOyYHobvtE0WhVr8QxF0YcNFv3055h1U9AS84S4vVYlbYb+o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXsEZvs6O/cvq87AZPqrAqiXbS7xXAddLc34ZVPnMEJlULCphK
+	X+g96HTQz6ZaB6tM9N0inkG6C1REBA/VuL358KwCh7VgPKRhg9lVHn+N1h4CNA06Eg50B5RtYw=
 	=
-X-Google-Smtp-Source: AGHT+IFI3zKtjw3viIN28FavI/x8N6Vmi9ld+eUE+6cV0FsK7qbWev2ZSe6+tyHLFwzSdNJeSUW5izog
-X-Received: from wmpb25.prod.google.com ([2002:a05:600c:4a99:b0:46e:2f1b:4ceb])
- (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:198b:b0:45f:29ed:2cff
- with SMTP id 5b1f17b1804b1-46e613dd3femr38614835e9.35.1759352634802; Wed, 01
- Oct 2025 14:03:54 -0700 (PDT)
-Date: Wed,  1 Oct 2025 23:02:05 +0200
+X-Google-Smtp-Source: AGHT+IEnx5RXeiL9kmHFg/RRSgpRtVYIAVUq2zDXnriSjY4GRqOqm0pZKleynTYr8BnmTOEPCHcJAcWB
+X-Received: from edwn19.prod.google.com ([2002:a05:6402:4d3:b0:636:7d5e:f1f0])
+ (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6402:42c2:b0:634:b4cb:c892
+ with SMTP id 4fb4d7f45d1cf-63678c998cdmr5701808a12.32.1759352635997; Wed, 01
+ Oct 2025 14:03:55 -0700 (PDT)
+Date: Wed,  1 Oct 2025 23:02:06 +0200
 In-Reply-To: <20251001210201.838686-22-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,14 +73,15 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251001210201.838686-22-ardb+git@google.com>
 X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
-X-Developer-Signature: v=1; a=openpgp-sha256; l=982; i=ardb@kernel.org;
- h=from:subject; bh=o8h5bq3OJmsWnm3lH4s7jaZZXCXhEjYAKa43aK/6n5k=;
- b=owGbwMvMwCVmkMcZplerG8N4Wi2JIePutOs8NmwfJZcsl/9bfHnC3QmpN39NV4vzcFjwbPfeO
- t3Zis5KHaUsDGJcDLJiiiwCs/++23l6olSt8yxZmDmsTCBDGLg4BWAiMzIZGX7UiG1UelXjuaJP
- p+dWpvAZjY/Rm7RvvhI8tKggf5JM6BmG/1Wqi6y/rcu5rndMTeJ40MRrHqvufL95KeRz6py6z7d PufICAA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2459; i=ardb@kernel.org;
+ h=from:subject; bh=cjwJWt4i7jKdiITTdNRuozrMElZ3Ow1rsFcjCp41v6I=;
+ b=owGbwMvMwCVmkMcZplerG8N4Wi2JIePutDtRV62tdzTOWvv8H6N85apP8zU+pHE0XX+8dkfc+
+ XknPnrM6ShlYRDjYpAVU2QRmP333c7TE6VqnWfJwsxhZQIZwsDFKQATMdZk+F87y/Ne5BfOHc8/
+ 3mZY2B+3Pdrzc9G9588Cp8dLvpx1WsObkWHnjJRdwZa9pbmFmr8/W8ztFJOJlbz35bApq+W96/U ajMwA
 X-Mailer: git-send-email 2.51.0.618.g983fd99d29-goog
-Message-ID: <20251001210201.838686-25-ardb+git@google.com>
-Subject: [PATCH v2 03/20] ARM/simd: Add scoped guard API for kernel mode SIMD
+Message-ID: <20251001210201.838686-26-ardb+git@google.com>
+Subject: [PATCH v2 04/20] crypto: aegis128-neon - Move to more abstract
+ 'ksimd' guard API
 From: Ard Biesheuvel <ardb+git@google.com>
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
@@ -93,40 +94,86 @@ Content-Type: text/plain; charset="UTF-8"
 
 From: Ard Biesheuvel <ardb@kernel.org>
 
-Implement the ksimd scoped guard API so that it can be used by code that
-supports both ARM and arm64.
+Move away from calling kernel_neon_begin() and kernel_neon_end()
+directly, and instead, use the newly introduced scoped_ksimd() API. This
+permits arm64 to modify the kernel mode NEON API without affecting code
+that is shared between ARM and arm64.
 
 Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
 ---
- arch/arm/include/asm/simd.h | 7 +++++++
- 1 file changed, 7 insertions(+)
+ crypto/aegis128-neon.c | 33 +++++++-------------
+ 1 file changed, 12 insertions(+), 21 deletions(-)
 
-diff --git a/arch/arm/include/asm/simd.h b/arch/arm/include/asm/simd.h
-index be08a8da046f..8549fa8b7253 100644
---- a/arch/arm/include/asm/simd.h
-+++ b/arch/arm/include/asm/simd.h
-@@ -2,14 +2,21 @@
- #ifndef _ASM_SIMD_H
- #define _ASM_SIMD_H
+diff --git a/crypto/aegis128-neon.c b/crypto/aegis128-neon.c
+index 9ee50549e823..b41807e63bd3 100644
+--- a/crypto/aegis128-neon.c
++++ b/crypto/aegis128-neon.c
+@@ -4,7 +4,7 @@
+  */
  
-+#include <linux/cleanup.h>
- #include <linux/compiler_attributes.h>
- #include <linux/preempt.h>
- #include <linux/types.h>
+ #include <asm/cpufeature.h>
+-#include <asm/neon.h>
++#include <asm/simd.h>
  
-+#include <asm/neon.h>
-+
- static __must_check inline bool may_use_simd(void)
+ #include "aegis.h"
+ #include "aegis-neon.h"
+@@ -24,32 +24,28 @@ void crypto_aegis128_init_simd(struct aegis_state *state,
+ 			       const union aegis_block *key,
+ 			       const u8 *iv)
  {
- 	return IS_ENABLED(CONFIG_KERNEL_MODE_NEON) && !in_hardirq()
- 	       && !irqs_disabled();
+-	kernel_neon_begin();
+-	crypto_aegis128_init_neon(state, key, iv);
+-	kernel_neon_end();
++	scoped_ksimd()
++		crypto_aegis128_init_neon(state, key, iv);
  }
  
-+DEFINE_LOCK_GUARD_0(ksimd, kernel_neon_begin(), kernel_neon_end())
-+
-+#define scoped_ksimd()	scoped_guard(ksimd)
-+
- #endif	/* _ASM_SIMD_H */
+ void crypto_aegis128_update_simd(struct aegis_state *state, const void *msg)
+ {
+-	kernel_neon_begin();
+-	crypto_aegis128_update_neon(state, msg);
+-	kernel_neon_end();
++	scoped_ksimd()
++		crypto_aegis128_update_neon(state, msg);
+ }
+ 
+ void crypto_aegis128_encrypt_chunk_simd(struct aegis_state *state, u8 *dst,
+ 					const u8 *src, unsigned int size)
+ {
+-	kernel_neon_begin();
+-	crypto_aegis128_encrypt_chunk_neon(state, dst, src, size);
+-	kernel_neon_end();
++	scoped_ksimd()
++		crypto_aegis128_encrypt_chunk_neon(state, dst, src, size);
+ }
+ 
+ void crypto_aegis128_decrypt_chunk_simd(struct aegis_state *state, u8 *dst,
+ 					const u8 *src, unsigned int size)
+ {
+-	kernel_neon_begin();
+-	crypto_aegis128_decrypt_chunk_neon(state, dst, src, size);
+-	kernel_neon_end();
++	scoped_ksimd()
++		crypto_aegis128_decrypt_chunk_neon(state, dst, src, size);
+ }
+ 
+ int crypto_aegis128_final_simd(struct aegis_state *state,
+@@ -58,12 +54,7 @@ int crypto_aegis128_final_simd(struct aegis_state *state,
+ 			       unsigned int cryptlen,
+ 			       unsigned int authsize)
+ {
+-	int ret;
+-
+-	kernel_neon_begin();
+-	ret = crypto_aegis128_final_neon(state, tag_xor, assoclen, cryptlen,
+-					 authsize);
+-	kernel_neon_end();
+-
+-	return ret;
++	scoped_ksimd()
++		return crypto_aegis128_final_neon(state, tag_xor, assoclen,
++						  cryptlen, authsize);
+ }
 -- 
 2.51.0.618.g983fd99d29-goog
 
