@@ -1,124 +1,103 @@
-Return-Path: <linux-kernel+bounces-839653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1C05BB2173
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 01:56:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1B5DBB217C
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 01:56:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EBD8321524
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 23:56:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8970A19C46E2
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 23:57:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC2292BFC60;
-	Wed,  1 Oct 2025 23:56:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF7E22BF009;
+	Wed,  1 Oct 2025 23:56:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OOJYzq/d"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h/wEpGpX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D1A296BA8;
-	Wed,  1 Oct 2025 23:56:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C16C2222B4;
+	Wed,  1 Oct 2025 23:56:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759362967; cv=none; b=r2wistJ/SnaXIKIv/U74vX3wHM5+psNz5B9g1y3lyzfeqv6NWiS1WOlPsAkyH0/V9Y++fyN7pkWOac5MUkyiqFOGlX66ri3BdaBJPOCy9jT26/mH4vUP70LUIpfJsHlClgUhZCpGE/YZZ2gUjyjH0um5TQL9aAC4JKWvC28LpK8=
+	t=1759362991; cv=none; b=qSYuS4aJJxG6p2+9kcYzu+Qc04YT6Siqav8CL8s7zU2Vw6Ndc4QYAUMPA455X8Q42QGL+N0PCXDfjVW+LyZ3XlN21WKrJ+wohSjlikrD8l25/ay731RF7H0j2UeD0BBymOvD0OW4/X75svG8g+H3D6r82sDkoWpcCzrbjs/eUGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759362967; c=relaxed/simple;
-	bh=ILkjc/XVyx6bQd0jLKnZzkgG0gPtYYukDOQdK37yZo4=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
-	 References:In-Reply-To; b=eYxQ8pB308FCAPcWaKzCkNdj8JsKjzHgVXCZi/Ysyuxppvr38XPS+h0zgNtleuK5FsXr54ExDa7Rd3uUKn2DSwCsog2rHb5sTQWjUNzk+U1JFvt7KOZi4lVEc92phLta3Z9VjslYz3Ha45QDXRVUeSNx8LFzqBsYTS683ECRCOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OOJYzq/d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4126C4CEF1;
-	Wed,  1 Oct 2025 23:55:59 +0000 (UTC)
+	s=arc-20240116; t=1759362991; c=relaxed/simple;
+	bh=x+l79Fi6Gb8DAi1tS8bk67k8/fMpNk5VIgVodP1W2BI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZGhcA7eGvjApm50811SCNfkPmjAnLu7ecRW9tsbpB0Jq9pU55o+SBHZtCB4+j5xWfQYAEdc1bp5phkfNcry7ki/iTdbGiL44TTt7QIUb3n9VUOJx9PDmLFqX4MPO7XAUma1PItyu4decNRO7yfg/M3lQJSpr9BWvGyjOyK8Q6vs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h/wEpGpX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7817DC4CEF1;
+	Wed,  1 Oct 2025 23:56:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759362964;
-	bh=ILkjc/XVyx6bQd0jLKnZzkgG0gPtYYukDOQdK37yZo4=;
-	h=Date:From:Subject:Cc:To:References:In-Reply-To:From;
-	b=OOJYzq/d9GisZWtqu9cNN5RFi3FocdFAYpWPhUh2NCuSnPRxyxBP3x1IHCSv1xUUO
-	 bEdCEO+Vas16q+omPselXFEFb7cDvooOz1rAbQ+RVKbWxndUsP+bl5lO+qL2GWdZj2
-	 BjXO3hTDcObebkjFTKK88bDcGj8s3bmuYoV0OEuof03/1V62oXgDdHjY7JLxFRNpb2
-	 TUyq4QuFJg+jmzmh/nCFYPF8j4dmmVDxY22+sKrV57gXwK6mg9TLKcbEunAjFk/sK8
-	 Vwnx7glv/LyvQ/ISNgyKBbMKIYVYTHCIV/Pl61l1hsmjcgwqGmUWd2YWArY447pMg5
-	 s7w45BbsVUyFg==
+	s=k20201202; t=1759362990;
+	bh=x+l79Fi6Gb8DAi1tS8bk67k8/fMpNk5VIgVodP1W2BI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=h/wEpGpXnmg2bK7dCZ8D8Pdu3kQpsrMvW8gm92ZzwRYAzEDtUSfX6PjVxPGKz7hJv
+	 hl8Ubm8VuqqgMRd0AxaBSRyzzVMqCYYxUikfHtPIBzrn7kWlPXIRebzHK2OYTOENeK
+	 rLhNEEX31X7O0Fcw82RgwTLJGIN5zxuup3SbKwlizR8y79XlVLyI2fLhADUz62Jwiv
+	 sJlVEZrrIzlSRMtD8kqXCO1OJ4lz3h6J2V3xXB7jFrmKNVi7nJuvzY8UUPb8f5JOYL
+	 +2UfDYoyI+ooJIpILmLJjMCddkXa4iNkN7EcmDt8dp6qaQxwDypyCN3u9P/Se6lyJK
+	 BmqqpAzPoefHw==
+Date: Thu, 2 Oct 2025 01:56:25 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Ma Ke <make24@iscas.ac.cn>
+Cc: syniurge@gmail.com, shyam-sundar.s-k@amd.com, wsa@kernel.org, 
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, akpm@linux-foundation.org, 
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2] i2c: fix reference leak in MP2 PCI device
+Message-ID: <7cu6uvwjki72rz6zoshfg3vonawikiasxheotmrsowqoalk2jb@7iu7cenha7p5>
+References: <20250928071933.1627-1-make24@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 02 Oct 2025 01:55:57 +0200
-Message-Id: <DD7E4902SAFP.3JLTVDIKKCRWS@kernel.org>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH 0/2] rust: pci: expose is_virtfn() and reject VFs in
- nova-core
-Cc: "Joel Fernandes" <joelagnelf@nvidia.com>, "Zhi Wang" <zhiw@nvidia.com>,
- "Alistair Popple" <apopple@nvidia.com>, "Alexandre Courbot"
- <acourbot@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>, "Surath Mitra"
- <smitra@nvidia.com>, "David Airlie" <airlied@gmail.com>, "Simona Vetter"
- <simona@ffwll.ch>, "Bjorn Helgaas" <bhelgaas@google.com>,
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, "Miguel
- Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun
- Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
- <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
- Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
- "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
- "rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>, "LKML"
- <linux-kernel@vger.kernel.org>, "Jason Gunthorpe" <jgg@nvidia.com>, "Alex
- Williamson" <alex.williamson@redhat.com>
-To: "John Hubbard" <jhubbard@nvidia.com>
-References: <20250930220759.288528-1-jhubbard@nvidia.com>
- <h6jdcfhhf3wuiwwj3bmqp5ohvy7il6sfyp6iufovdswgoz7vul@gjindki2pyeh>
- <e77bbcda-35a3-4ec6-ac24-316ab34a201a@nvidia.com>
- <DD6X0PXA0VAO.101O3FEAHJUH9@kernel.org>
- <f145fd29-e039-4621-b499-17ab55572ea4@nvidia.com>
- <ae48fad0-d40e-4142-87d0-8205abdf42d6@nvidia.com>
- <DD7CREVYE5L7.2FALGBC35L8CN@kernel.org>
- <e19781f3-1451-4b4d-b4be-c71c9ec8dc63@nvidia.com>
- <1FA2746D-6F73-4D5A-A0DC-803D0563A5D7@nvidia.com>
- <a7bd8285-922e-446f-9b43-a67fff67a505@nvidia.com>
-In-Reply-To: <a7bd8285-922e-446f-9b43-a67fff67a505@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250928071933.1627-1-make24@iscas.ac.cn>
 
-On Thu Oct 2, 2025 at 1:51 AM CEST, John Hubbard wrote:
-> On 10/1/25 4:47 PM, Joel Fernandes wrote:
->>> On Oct 1, 2025, at 7:00=E2=80=AFPM, John Hubbard <jhubbard@nvidia.com> =
-wrote:
->>> =EF=BB=BFOn 10/1/25 3:52 PM, Danilo Krummrich wrote:
->>>>> On Thu Oct 2, 2025 at 12:38 AM CEST, John Hubbard wrote:
->>>>> On 10/1/25 6:52 AM, Zhi Wang wrote:
->>>>>> On 1.10.2025 13.32, Danilo Krummrich wrote:
->>>>>>> On Wed Oct 1, 2025 at 3:22 AM CEST, John Hubbard wrote:
->>>>>>>> On 9/30/25 5:29 PM, Alistair Popple wrote:
->>>>>>>>> On 2025-10-01 at 08:07 +1000, John Hubbard <jhubbard@nvidia.com> =
-wrote...
->>>>> ...
->> Here is my opinion and correct me if I missed something:
->>=20
->> It feels premature to remove the option of nova-core binding to a VF, si=
-nce other options to disable auto probing do exist as Jason pointed out.
->>=20
->> Taking a parallel with VFIO pass through for instance, the user already =
-has to do some diligence like preventing drivers from binding and then maki=
-ng vfio-pci bind to the device IDs. This case is similar though slightly di=
-fferent, but VFIO setup requires some configuration anyway so will it reall=
-y improve anything?
->>=20
->> I quietly suggest holding on till there is a real need or we are sure no=
-va cannot bind to, or operate on a VF. This=20
->
-> I'm confident that nova-core cannot properly handle a VF with *today's* c=
-ode.
-> There is no expectation at all for a VF to show up--yet.
->
-> Which is why I think it's appropriate to skip it right now.
+Hi,
 
-I agree with John.
+> diff --git a/drivers/i2c/busses/i2c-amd-mp2-pci.c b/drivers/i2c/busses/i2c-amd-mp2-pci.c
+> index ef7370d3dbea..60edbabc2986 100644
+> --- a/drivers/i2c/busses/i2c-amd-mp2-pci.c
+> +++ b/drivers/i2c/busses/i2c-amd-mp2-pci.c
+> @@ -458,13 +458,16 @@ struct amd_mp2_dev *amd_mp2_find_device(void)
+>  {
+>  	struct device *dev;
+>  	struct pci_dev *pci_dev;
+> +	struct amd_mp2_dev *mp2_dev;
+>  
+>  	dev = driver_find_next_device(&amd_mp2_pci_driver.driver, NULL);
+>  	if (!dev)
+>  		return NULL;
+>  
+>  	pci_dev = to_pci_dev(dev);
+> -	return (struct amd_mp2_dev *)pci_get_drvdata(pci_dev);
+> +	mp2_dev = (struct amd_mp2_dev *)pci_get_drvdata(pci_dev);
+> +	put_device(dev);
+> +	return mp2_dev;
 
-If a driver does not support a certain device, it is not the user's
-responsibility to prevent probing. Currently nova-core does not support VFs=
-, so
-it should never get probed for them in the first place.
+the patch is good, but I don't think you need to declare mp2_dev
+because to_pci_dev(dev) should work even without hodling the
+reference of dev.
+
+I also have to agree with Markus that something like:
+
+struct device *dev __free(put_device) = ...; /* it can also be NULL */
+
+would work nicer.
+
+Thanks,
+Andi
+
+>  }
+>  EXPORT_SYMBOL_GPL(amd_mp2_find_device);
+>  
+> -- 
+> 2.17.1
+> 
 
