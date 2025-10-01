@@ -1,59 +1,60 @@
-Return-Path: <linux-kernel+bounces-838565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48F27BAF8DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 10:12:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 51F88BAF8EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 10:12:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 038362A1CBE
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 08:12:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00C542A1EBE
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 08:12:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FA7C27AC31;
-	Wed,  1 Oct 2025 08:11:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29847283FE0;
+	Wed,  1 Oct 2025 08:12:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="oWc+5n9M"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="rfuqTJWl"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09613258CD0;
-	Wed,  1 Oct 2025 08:11:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F1F927FB31;
+	Wed,  1 Oct 2025 08:11:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759306314; cv=none; b=aJUsOH160aF8QOY8cIl2Rc2iqte1tpScSMN5wFlI3hSZ/YR3x3LmSQ2UiNX5NCPSGY3kvU7ugKgswwUIwDVsXNQo1mnivMMIxSm5HNP4WWf8c0jFHOsbPXKUvcTLS842mpdetmfbe1F7mKwIZD9Pw0ieHg31jFp2Tv+PnFrAvdA=
+	t=1759306320; cv=none; b=dUbBlIVoO+rFRTKjMA8zJ0znAO/4ICTrM4GBl93ynjZguZ9tUZAmvBwEbnxxM9V5nEKGsY7WVvYNpI0kNS5B1CiJYtWnF4kKRCnFN8o+6xx4EJRFYHxuaT1sMSPcZP6GE6foqLwCztWl9UcA2SdqFKMhOc5QDZsGvmUr6Uzq4YI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759306314; c=relaxed/simple;
-	bh=s4/DsDuRlWceiLWQQXEKeREbUD4ZXOV2awEcyKm9yvQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fqli/tDKerxOfMepW+bx1oWmL1M4quo9/WYhsyatzrlxVm5/uUhOQGACdXSWSNAAzSltyRaZbtpZnqqMTdn6CwXsUJ6iv6iil4gqIM+mFkaImUPhq7oLkO02a0bnxtKKrzXpeeNyYw0ZjD4ms01GoMN3pzd7j12HyCb+ZozSX4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=oWc+5n9M; arc=none smtp.client-ip=210.61.82.184
+	s=arc-20240116; t=1759306320; c=relaxed/simple;
+	bh=1nh3RcReVlJicpzmCvkIIuy5VK1h7CUzEfmdeB7lzrE=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XVRr2IbXFgjqeP9tEdAA+XbEsRjH8UoDo/pzOBsGLTqlr8CTf3DfOlHfRQooCVfC1qBFEnR4EqMxvJaiYEg79S7g8+D0/bpNo2ZHORzDdDrluCtXQwuIgHfoU/LJPZ2KCpmr47jyBh5lOfNVOmWUanJDSSt8OYVUUN/XhBCvHj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=rfuqTJWl; arc=none smtp.client-ip=60.244.123.138
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 462fc1769e9e11f0b33aeb1e7f16c2b6-20251001
+X-UUID: 464889909e9e11f08d9e1119e76e3a28-20251001
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=cHJINyY/HfM0Bk3CJ11w/F3lW9D9PJ3q9roxipCTsjI=;
-	b=oWc+5n9MG+TAUf3Lb54Xqs4X6xuFtZS08Lwvcw8oR5IReZdaAy4ECVg27T1JkHr5gFRfl0B7n5GTXykvCt9yJrYkySHXg1K8UDgM/K82ht2SHVVaefAHEOB/JeuxraY1DyQTIawfXyO0CTZLVmOZIu6V01VfQcOuapUTJ2qnzR8=;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=k3EAP/+FOI83O/PLuTxumtXIUWMsfxlSJk1xntjwfM4=;
+	b=rfuqTJWleW+5w+YzX/yK1/cvkW8s9M25zehLPtYuKXx7FMDGrO75IN0dgKWovTT5VMMqDjVzPxEFNumyWrtyQCo1G9hT7EwPnLWTDu6WIkNhNVOQlxj3FGbCrQb124Be31wxfeO9IX9ooWcyaRaw9sOz3MeWcDjGpY+evOBVdgE=;
 X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.6,REQID:f8c36314-7836-41a6-849c-414dd2e4bafb,IP:0,UR
+X-CID-O-INFO: VERSION:1.3.6,REQID:ffba009b-ee38-44ce-9a84-69427f5a68ab,IP:0,UR
 	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
 	elease,TS:0
-X-CID-META: VersionHash:a9d874c,CLOUDID:0ad90722-c299-443d-bb51-d77d2f000e20,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102|836|888|898,TC:-5,Content:0|15|5
-	0,EDM:-3,IP:nil,URL:0,File:130,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,
-	OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-META: VersionHash:a9d874c,CLOUDID:aa2f206d-8443-424b-b119-dc42e68239b0,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102|836|888|898,TC:-5,Content:
+	0|15|50,EDM:-3,IP:nil,URL:0,File:130,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,
+	OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
 X-CID-BVR: 2,SSN|SDN
 X-CID-BAS: 2,SSN|SDN,0,_
 X-CID-FACTOR: TF_CID_SPAM_SNR
 X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 462fc1769e9e11f0b33aeb1e7f16c2b6-20251001
-Received: from mtkmbs09n2.mediatek.inc [(172.21.101.94)] by mailgw02.mediatek.com
+X-UUID: 464889909e9e11f08d9e1119e76e3a28-20251001
+Received: from mtkmbs09n1.mediatek.inc [(172.21.101.35)] by mailgw01.mediatek.com
 	(envelope-from <chris.lu@mediatek.com>)
 	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1417157396; Wed, 01 Oct 2025 16:11:46 +0800
+	with ESMTP id 728520293; Wed, 01 Oct 2025 16:11:46 +0800
 Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
+ MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Wed, 1 Oct 2025 16:11:45 +0800
+ 15.2.1748.10; Wed, 1 Oct 2025 16:11:45 +0800
 Received: from mtksitap99.mediatek.inc (10.233.130.16) by
  mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
  15.2.1748.10 via Frontend Transport; Wed, 1 Oct 2025 16:11:45 +0800
@@ -65,10 +66,12 @@ CC: Sean Wang <sean.wang@mediatek.com>, Will Lee <will-cy.Lee@mediatek.com>,
 	linux-bluetooth <linux-bluetooth@vger.kernel.org>, linux-kernel
 	<linux-kernel@vger.kernel.org>, linux-mediatek
 	<linux-mediatek@lists.infradead.org>, Chris Lu <chris.lu@mediatek.com>
-Subject: [PATCH v2 0/2] Add two new ID for MediaTek's Bluetooth
-Date: Wed, 1 Oct 2025 16:11:42 +0800
-Message-ID: <20251001081144.2384434-1-chris.lu@mediatek.com>
+Subject: [PATCH v2 1/2] Bluetooth: btusb: MT7920: Add VID/PID 0489/e135
+Date: Wed, 1 Oct 2025 16:11:43 +0800
+Message-ID: <20251001081144.2384434-2-chris.lu@mediatek.com>
 X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20251001081144.2384434-1-chris.lu@mediatek.com>
+References: <20251001081144.2384434-1-chris.lu@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,24 +81,69 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-In response to the customer's request, add the following two
-VID/PID to the USB driver table so that btusb driver can support
-the corresponding MT7920/MT7922 modules.
+Add VID 0489 & PID e135 for MediaTek MT7920 USB Bluetooth chip.
 
-1. VID/PID 0489/e135 for MT7920
-2. VID/PID 0489/e170 for MT7922
+The information in /sys/kernel/debug/usb/devices about the Bluetooth
+device is listed as the below.
 
+T:  Bus=06 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  2 Spd=480  MxCh= 0
+D:  Ver= 2.10 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
+P:  Vendor=0489 ProdID=e135 Rev= 1.00
+S:  Manufacturer=MediaTek Inc.
+S:  Product=Wireless_Device
+S:  SerialNumber=000000000
+C:* #Ifs= 3 Cfg#= 1 Atr=e0 MxPwr=100mA
+A:  FirstIf#= 0 IfCount= 3 Cls=e0(wlcon) Sub=01 Prot=01
+I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=125us
+E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+I:  If#= 1 Alt= 6 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  63 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  63 Ivl=1ms
+I:* If#= 2 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=(none)
+E:  Ad=8a(I) Atr=03(Int.) MxPS=  64 Ivl=125us
+E:  Ad=0a(O) Atr=03(Int.) MxPS=  64 Ivl=125us
+I:  If#= 2 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=(none)
+E:  Ad=8a(I) Atr=03(Int.) MxPS=  64 Ivl=125us
+E:  Ad=0a(O) Atr=03(Int.) MxPS=  64 Ivl=125us
+
+Signed-off-by: Chris Lu <chris.lu@mediatek.com>
 ---
-v1->v2: Change patch title
----
+ drivers/bluetooth/btusb.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Chris Lu (2):
-  Bluetooth: btusb: MT7920: Add VID/PID 0489/e135
-  Bluetooth: btusb: MT7922: Add VID/PID 0489/e170
-
- drivers/bluetooth/btusb.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index 4be34c556db8..a2cde2284163 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -621,6 +621,8 @@ static const struct usb_device_id quirks_table[] = {
+ 	/* Additional MediaTek MT7920 Bluetooth devices */
+ 	{ USB_DEVICE(0x0489, 0xe134), .driver_info = BTUSB_MEDIATEK |
+ 						     BTUSB_WIDEBAND_SPEECH },
++	{ USB_DEVICE(0x0489, 0xe135), .driver_info = BTUSB_MEDIATEK |
++						     BTUSB_WIDEBAND_SPEECH },
+ 	{ USB_DEVICE(0x13d3, 0x3620), .driver_info = BTUSB_MEDIATEK |
+ 						     BTUSB_WIDEBAND_SPEECH },
+ 	{ USB_DEVICE(0x13d3, 0x3621), .driver_info = BTUSB_MEDIATEK |
 -- 
 2.45.2
 
