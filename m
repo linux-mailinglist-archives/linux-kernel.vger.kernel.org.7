@@ -1,124 +1,161 @@
-Return-Path: <linux-kernel+bounces-838712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6F82BAFFB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 12:19:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C115BAFFB6
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 12:20:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FAFB16444F
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 10:19:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E3D13B735A
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 10:20:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0EF9299A81;
-	Wed,  1 Oct 2025 10:19:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="S4utW/4l"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1B481A3165;
-	Wed,  1 Oct 2025 10:19:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73779296BBF;
+	Wed,  1 Oct 2025 10:20:48 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E23D1A3165
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 10:20:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759313967; cv=none; b=NY9MzeUPvwt+35Mei8Di1v0hOjrVbrwrUrJtZ3+gupilFsqhuw/6jGcByKp5aPJTbs6iMoFjbDcJKYtEQHq5rpUuaQXWTldI7XzjiV0phJO7pC3nnckXPXDew3Q29gmG3KT+aGifE28bOhc0tTgXHdc7jm3lg5WG5FJj5xXXXtI=
+	t=1759314048; cv=none; b=sQ0RqNKEFnQeMJafiZYJpUS/YN/cHGiE6qiZtwcT6chH8YwUyq9fX4q26FTX2uMFIZrTpqxXwQ0t79Bd/7pQao+E1+se7SRFUiGCJbdWCxkHUgb2E4Q8Qd4tfOlIYVmHg0Y5gZtsDrOTRy825eNcdKvA1dtRcV687UlCcpTlCEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759313967; c=relaxed/simple;
-	bh=iWVWJBqDSD2sztDLsnOLt3+d27IJlKsCPSHArC2zydg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=PdUeDxkZzROqo++8FFs+Ara2LC2XtDzSF4UJ7sJkPwaPXbV2wyo/8W9s0QAcPq1+Eq84aqYQO/OjtPLSacHsxGWg9JaTAlr5eE20clvwuvTC317hIIEkvsio7opdIQSmTObrvtVovXHyqqnulOiROlmluE+VZysoTdfqhVG50jE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=S4utW/4l; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=cF/jWprwt28c4Hq83t+C5Fw83V3DhLNWIJ4LDAW3d8A=;
-	t=1759313966; x=1760523566; b=S4utW/4lAMBObhH+AZVKTidJHkgjb8oN9bnqo3d7tyGS4wk
-	8yWrK5Vw155VJhybfiODj8h4KuMhVEzY8H20Cfo5KaTLWUaeyJaONc5evxNf0bA+XBJrfdycWNspK
-	0bWU2+dicrpu0YvpE+0Sh4JWYWnu7fj+Gx0KI3p0vGobpFpTOy96x+q+Zq55MhpC3c512X0ZOF0Zw
-	c3grJ638ZpvH16U/yA8k5DzEkH1i41ldI1A98BFMP/OZ+pe0t3snjmZGleXXvXRaDpBbaVXG8In9L
-	suWWvXAQLeQZszQc4OxGixAY1u5HMhDuPvr/48ywlpFYQX/BxCjFaTsoXVTGqsiw==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98.2)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1v3tvf-00000005gBP-0orB;
-	Wed, 01 Oct 2025 12:19:23 +0200
-Message-ID: <fa3283276fcc9e9795989b49bab21a9a4217582c.camel@sipsolutions.net>
-Subject: Re: [PATCH v5 18/22] wifi: nxpwifi: add core files
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Jeff Chen <jeff.chen_1@nxp.com>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	briannorris@chromium.org, francesco@dolcini.it, tsung-hsien.hsieh@nxp.com, 
-	s.hauer@pengutronix.de, brian.hsu@nxp.com
-Date: Wed, 01 Oct 2025 12:19:22 +0200
-In-Reply-To: <aNz/vOlApzVzMLZy@nxpwireless-Inspiron-14-Plus-7440>
-References: <20250804154018.3563834-1-jeff.chen_1@nxp.com>
-	 <20250804154018.3563834-19-jeff.chen_1@nxp.com>
-	 <6b8ff5139bb9c361468840046b757dfa5ebe1aba.camel@sipsolutions.net>
-	 <aM2bmc49cJXDmcf3@nxpwireless-Inspiron-14-Plus-7440>
-	 <aNz/vOlApzVzMLZy@nxpwireless-Inspiron-14-Plus-7440>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1759314048; c=relaxed/simple;
+	bh=ufX2gSIr1AmDhY08nJvRMf2JOGKmK77sHDrOjj2utZk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=shQWQXw3bMCGlZIgeRlVh+U8moHRsxwg9gN+IJe6mkncYwguyVVfRq963bhHrHfRivrT3hRuP0GDBANf92DEjq4VYu+VM8RHuMQSGqCoS8y2nIqvfScA2sIxN1Tmxlv3Va1y/EpwqnDooBEM09DrnnVtAJ4IUIeyzaS3nWcfwro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A7AA416F2;
+	Wed,  1 Oct 2025 03:20:37 -0700 (PDT)
+Received: from [10.164.18.53] (MacBook-Pro.blr.arm.com [10.164.18.53])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 735BF3F66E;
+	Wed,  1 Oct 2025 03:20:40 -0700 (PDT)
+Message-ID: <a1df234c-d003-4696-8f1f-609a360fdeda@arm.com>
+Date: Wed, 1 Oct 2025 15:50:37 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH mm-new v2 1/1] mm/khugepaged: abort collapse scan on
+ non-swap entries
+To: Lance Yang <lance.yang@linux.dev>, akpm@linux-foundation.org
+Cc: david@redhat.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
+ baohua@kernel.org, baolin.wang@linux.alibaba.com, hughd@google.com,
+ ioworker0@gmail.com, kirill@shutemov.name, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, mpenttil@redhat.com, npache@redhat.com,
+ ryan.roberts@arm.com, ziy@nvidia.com, richard.weiyang@gmail.com
+References: <20251001032251.85888-1-lance.yang@linux.dev>
+Content-Language: en-US
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <20251001032251.85888-1-lance.yang@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, 2025-10-01 at 18:17 +0800, Jeff Chen wrote:
-> On Sat, Sep 20, 2025 at 02:06:17 AM +0800, Jeff Chen wrote:
-> > On Thu, Sep 04, 2025 at 01:37:20 PM +0200, Johannes Berg wrote:
-> > > On Mon, 2025-08-04 at 23:40 +0800, Jeff Chen wrote:
-> > > >=20
-> > > > +/* The main process.
-> > > > + *
-> > > > + * This function is the main procedure of the driver and handles v=
-arious driver
-> > > > + * operations. It runs in a loop and provides the core functionali=
-ties.
-> > > > + *
-> > > > + * The main responsibilities of this function are -
-> > > > + *      - Ensure concurrency control
-> > > > + *      - Handle pending interrupts and call interrupt handlers
-> > > > + *      - Wake up the card if required
-> > > > + *      - Handle command responses and call response handlers
-> > > > + *      - Handle events and call event handlers
-> > > > + *      - Execute pending commands
-> > > > + *      - Transmit pending data packets
-> > > > + */
-> > > > +void nxpwifi_main_process(struct nxpwifi_adapter *adapter)
-> > > > +{
-> > > > +	unsigned long flags;
-> > > > +
-> > > > +	spin_lock_irqsave(&adapter->main_proc_lock, flags);
-> > > > +
-> > > > +	/* Check if already processing */
-> > > > +	if (adapter->nxpwifi_processing || adapter->main_locked) {
-> > > > +		adapter->more_task_flag =3D true;
-> > > > +		spin_unlock_irqrestore(&adapter->main_proc_lock, flags);
-> > > > +		return;
-> > > > +	}
-> > > > +
-> > > > +	adapter->nxpwifi_processing =3D true;
-> > > > +	spin_unlock_irqrestore(&adapter->main_proc_lock, flags);
-> > >=20
-> > >=20
-> > > This makes me very nervous, it at least means it's super hard to
-> > > understand when this may or may not be running ... It's also the sort=
- of
-> > > custom locking that's kind of frowned upon.
->=20
-> Hi Johannes, may I have your thoughts on the proposed plan to remove
-> custom locking and rely on workqueue.
 
-Oh sorry, I didn't realize you were expecting a response.
+On 01/10/25 8:52 am, Lance Yang wrote:
+> From: Lance Yang <lance.yang@linux.dev>
+>
+> Currently, special non-swap entries (like migration, hwpoison, or PTE
+> markers) are not caught early in hpage_collapse_scan_pmd(), leading to
+> failures deep in the swap-in logic.
+>
+> hpage_collapse_scan_pmd()
+>   `- collapse_huge_page()
+>       `- __collapse_huge_page_swapin() -> fails!
+>
+> As David suggested[1], this patch skips any such non-swap entries
+> early. If any one is found, the scan is aborted immediately with the
+> SCAN_PTE_NON_PRESENT result, as Lorenzo suggested[2], avoiding wasted
+> work.
+>
+> [1] https://lore.kernel.org/linux-mm/7840f68e-7580-42cb-a7c8-1ba64fd6df69@redhat.com
+> [2] https://lore.kernel.org/linux-mm/7df49fe7-c6b7-426a-8680-dcd55219c8bd@lucifer.local
+>
+> Suggested-by: David Hildenbrand <david@redhat.com>
+> Suggested-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Signed-off-by: Lance Yang <lance.yang@linux.dev>
+> ---
+> v1 -> v2:
+>   - Skip all non-present entries except swap entries (per David) thanks!
+>   - https://lore.kernel.org/linux-mm/20250924100207.28332-1-lance.yang@linux.dev/
+>
+>   mm/khugepaged.c | 32 ++++++++++++++++++--------------
+>   1 file changed, 18 insertions(+), 14 deletions(-)
+>
+> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+> index 7ab2d1a42df3..d0957648db19 100644
+> --- a/mm/khugepaged.c
+> +++ b/mm/khugepaged.c
+> @@ -1284,7 +1284,23 @@ static int hpage_collapse_scan_pmd(struct mm_struct *mm,
+>   	for (addr = start_addr, _pte = pte; _pte < pte + HPAGE_PMD_NR;
+>   	     _pte++, addr += PAGE_SIZE) {
+>   		pte_t pteval = ptep_get(_pte);
+> -		if (is_swap_pte(pteval)) {
+> +		if (pte_none(pteval) || is_zero_pfn(pte_pfn(pteval))) {
+> +			++none_or_zero;
+> +			if (!userfaultfd_armed(vma) &&
+> +			    (!cc->is_khugepaged ||
+> +			     none_or_zero <= khugepaged_max_ptes_none)) {
+> +				continue;
+> +			} else {
+> +				result = SCAN_EXCEED_NONE_PTE;
+> +				count_vm_event(THP_SCAN_EXCEED_NONE_PTE);
+> +				goto out_unmap;
+> +			}
+> +		} else if (!pte_present(pteval)) {
 
-FWIW, that all sounds good to me.
+If you are trying to merge this with the _isolate() conditions, we can do
+a micro-optimization here - is_swap_pte, (pte_none && is_zero_pfn), and pte_uffd_wp
+are disjoint conditions, so we can use if-else-if-else-if to write them.
 
-johannes
+> +			if (non_swap_entry(pte_to_swp_entry(pteval))) {
+> +				result = SCAN_PTE_NON_PRESENT;
+> +				goto out_unmap;
+> +			}
+> +
+>   			++unmapped;
+>   			if (!cc->is_khugepaged ||
+>   			    unmapped <= khugepaged_max_ptes_swap) {
+> @@ -1293,7 +1309,7 @@ static int hpage_collapse_scan_pmd(struct mm_struct *mm,
+>   				 * enabled swap entries.  Please see
+>   				 * comment below for pte_uffd_wp().
+>   				 */
+> -				if (pte_swp_uffd_wp_any(pteval)) {
+> +				if (pte_swp_uffd_wp(pteval)) {
+>   					result = SCAN_PTE_UFFD_WP;
+
+Could have mentioned in the changelog "while at it, convert pte_swp_uffd_wp_any to
+pte_swp_uffd_wp since we are in the swap pte branch".
+
+>   					goto out_unmap;
+>   				}
+> @@ -1304,18 +1320,6 @@ static int hpage_collapse_scan_pmd(struct mm_struct *mm,
+>   				goto out_unmap;
+>   			}
+>   		}
+> -		if (pte_none(pteval) || is_zero_pfn(pte_pfn(pteval))) {
+> -			++none_or_zero;
+> -			if (!userfaultfd_armed(vma) &&
+> -			    (!cc->is_khugepaged ||
+> -			     none_or_zero <= khugepaged_max_ptes_none)) {
+> -				continue;
+> -			} else {
+> -				result = SCAN_EXCEED_NONE_PTE;
+> -				count_vm_event(THP_SCAN_EXCEED_NONE_PTE);
+> -				goto out_unmap;
+> -			}
+> -		}
+>   		if (pte_uffd_wp(pteval)) {
+>   			/*
+>   			 * Don't collapse the page if any of the small
+
+Otherwise LGTM
+
+Reviewed-by: Dev Jain <dev.jain@arm.com>
+
 
