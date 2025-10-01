@@ -1,173 +1,134 @@
-Return-Path: <linux-kernel+bounces-838513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A04B2BAF5C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 09:12:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45DE0BAF5C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 09:12:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5640417DE8D
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 07:12:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0055A3C77A8
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 07:12:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A931E26D4CA;
-	Wed,  1 Oct 2025 07:12:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F0B226C3B6;
+	Wed,  1 Oct 2025 07:12:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="cdrQs0tf"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XuPMtddx"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A03B256C9E;
-	Wed,  1 Oct 2025 07:12:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0A1D26B2CE
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 07:12:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759302733; cv=none; b=AGUKyYGPenru0XogmrJDhaYOFUIvGRKEmMKcMFjwuRbcxaldvbyc6FnQw/ORx8cCKj9CJeIx0Ra/hIptAJJjD+NZKwumXwnjC5lv2a8jH7T+oUmEUHOmpOsv/RSH5scxujdtkfncGVCjpuxfCxfRuPgbHfd2JUfWu+3miFrScuE=
+	t=1759302760; cv=none; b=M5JVt3iNhhAV+YHPgUzeiIkYz4WaBLVine3MBP61cf057qp5920HgrAPy1xOkwuK7xC200Vnjg8Kz5SEFCGo1XPxIhMUhm/ta5QS1GIROxu+0Q/HZE0DFSewHTEvE7aXbiWhw6ZMG/ZoU7wWWzHb7PGT6/MtECRicKCXAreSqFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759302733; c=relaxed/simple;
-	bh=t7LQvWDoawtcjynybyV6CpESEqmrVI+X1jX9CcdZPZ0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cSe2yQdR5GPp6uVWL8htQ4Vj6c0ygiOq+fBU9CXsE1dLJHfkH2EdIU4zTUlMLdkTGrd73YxWKBpiWk68jK4U3gNl2aX7w6UHtKmxfgQiuykL7PzObfxol7P4M5ALCGiqabY/dvlnuAwCHSe8fa+zHEzNP5TCaLt0nmSD0bsD8SY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=cdrQs0tf; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 253784E40DE7;
-	Wed,  1 Oct 2025 07:12:06 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id E7227606BF;
-	Wed,  1 Oct 2025 07:12:05 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 82FD1102F1854;
-	Wed,  1 Oct 2025 09:11:57 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1759302725; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=GnVI4ZR4JkJ5vv9WaP33l3msfPu596SbGWUzbRdFAx4=;
-	b=cdrQs0tfjiD2vmtme9KllctTecE2Rl9XGw801EbGjiI6ek+2YXXUv586pPfLCdZ4B/hcvn
-	EaiO/8Vvgtl1Mv9E/TN+suIX8xnA6W4i6UM50/Zl+a/MrO9Ez98fL9gtawa5ARotKhvPot
-	8LM7VFkEXsonjXF6GmRwLFcthj9PVEPfd7HzrsjWVhIQjdyis2xLzSk1AAX5XJkYt49WEM
-	X8CGD863aML1KQvQBMVNrRZvBJYHCMJrkjZlrq2Af3yztGrqVxuCIY0zeb74+ri0mlnEiL
-	CM4NdfXn51oPYdPQkBA6dbdhTZxlysutzPXNGth1iKOe9gSxRIpBKdlPnm97Ow==
-From: Romain Gantois <romain.gantois@bootlin.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
- David Lechner <dlechner@baylibre.com>,
- Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, Hans de Goede <hansg@kernel.org>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-iio@vger.kernel.org
-Subject:
- Re: [PATCH v2 1/5] regulator: dt-bindings: Add Linear Technology LTM8054
- regulator
-Date: Wed, 01 Oct 2025 09:11:51 +0200
-Message-ID: <5926760.DvuYhMxLoT@fw-rgant>
-In-Reply-To: <20250927-spoon-yearning-c1a8df796173@spud>
-References:
- <20250925-ltm8054-driver-v2-0-bb61a401a0dc@bootlin.com>
- <5331035.LvFx2qVVIh@fw-rgant> <20250927-spoon-yearning-c1a8df796173@spud>
+	s=arc-20240116; t=1759302760; c=relaxed/simple;
+	bh=L2HSfqYJ1d1CTnDukXhgKX6m4nuO8rCoGcHf7t25Q3o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bN7Yh883WLogBeSgp0tq8mFIoTgV76Vwu1MOcUXveCq3Ccr20AqMrH3FcD6WYGs1sj3U6lRdcNGTMyHR2qhTO26VY91e9e6f9lgiWu0N6XGtFc1Zg3sVN7mRhIGdaZYZl6D3alv2G52w1eX/ptCUKmhQUGZSwW4Q4SjXOGsyypw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XuPMtddx; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-27eeafd4882so151385ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 00:12:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759302758; x=1759907558; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=L2HSfqYJ1d1CTnDukXhgKX6m4nuO8rCoGcHf7t25Q3o=;
+        b=XuPMtddxZC3+2NgTG/4QkfsacathUsfqcXFi5enQseRHHXsfWUPcTY6N3Fmn3nVS4t
+         Y8NJLZI4xtIRSmBb971HnrfCJPovZl6ToFvbl5pBZH6MPtuHDzijksEfmAthZfuVYVDw
+         zgbd6gewWLW53m3qUI+8rxwAZF95r+irNo8TyiBZp5/vc7ZZtgRm6iCc6opaRigQiZ6l
+         0pwgmmn9MVFW0MX04XNZFkXMEmAUgvVboRmeEN+yuF+wrlTFFn6cK3OYiEJOE6nYEnou
+         DU8R4VF6fUKWziw5hpxS3AOWif8gFepWanQ3AP+mfzejeJYZnZiuQeafkEwabPac3utQ
+         BG7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759302758; x=1759907558;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=L2HSfqYJ1d1CTnDukXhgKX6m4nuO8rCoGcHf7t25Q3o=;
+        b=u1c3wjq4rACmhBHpUWPppZvUcHjAoBkGOvvG/LxEKJN26NuPhfpt6aOjPL8ESCT/bm
+         r2k8+lxOx2CAE9pCbkHz6+Dr5AQqKtVS0/VWiEZYAodUBryJnsmlT1YmpxvO/FolhK3u
+         zyFQ7E9rLhcOdmqJJpRR6MAY/n6+WvbnMJ6PnjmIqgDvYgkkFrGrQ+eaCvsM6Q0qi9rD
+         FczXhf4m2P8bZiEjJyD3cZtGVaMkeQc35wrmwcrj6i8TgJspgx2jZZz5eJLWcQK4jYm4
+         +/SlCAQBmQs3HLp1H43lqRFCWdwRrrlvZDQhyy8vlPAnnA4IuM41y6FMdYz7DoU+E3cb
+         U7Jw==
+X-Forwarded-Encrypted: i=1; AJvYcCU9Nk4eIFTyAvcm73Y4LDAw0t/fJtzR5YElvsXmgI5MIcgk8c5NHKRBu5Feh9mREdg4QBvTJZjm6N04I0c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHh9bvdR2iIkoUk7CSRfmHB/8QSGs05mgqD/FxGjrlK1XQoBem
+	KBjbKisTOpE20jffwa4hm18f75n3hOUfbEcQGaq9NOvgTtS+ZuVUhqHIpSaLBSmZhiThJ/5dSsw
+	r438CsLDSperzEKhwECQjmyYa2EChq11HoQ0vL5M7
+X-Gm-Gg: ASbGncuN0MpVtgFmE51IC0hCODhoQ2RwnfKyoy2FFq5K22ZoKfNVYCgx2MbMU94K0l/
+	9Wy7oOAcDwkIIzOC5vSJSNAaPy4Jma/JfpMZzRrXGxVnRbheafR06pubV8twPjxOoM50KvIw6bX
+	D+gwTHgPyJnw7q25KQ8X/spfu9SON7HoxwJEkBzUP6XDPg4v3+hdthu02+L6BPhZ2Kd+8Qi2QGP
+	/rR5AqWHlDK7x8Wdh6cVNOAmmIQki0F+SmfpsSp7Fp9dmeelNkIIYdurgKjvAEEFXAl4Azx0BxJ
+	KQ==
+X-Google-Smtp-Source: AGHT+IFKqalmxPPvbMf8gFFBYBwD3PuLwLfacEpGwfmVbHR7x+xhXopvFQOtlxwKsWCLYK7vchRDPFO/yKXEXrAzbhw=
+X-Received: by 2002:a17:903:144e:b0:248:f683:e980 with SMTP id
+ d9443c01a7336-28e7fdd3e70mr3595135ad.2.1759302757663; Wed, 01 Oct 2025
+ 00:12:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart6197909.lOV4Wx5bFT";
- micalg="pgp-sha512"; protocol="application/pgp-signature"
-X-Last-TLS-Session-Version: TLSv1.3
+References: <20250924-b4-asi-page-alloc-v1-0-2d861768041f@google.com> <aNw0sNehEQTWVI29@char.us.oracle.com>
+In-Reply-To: <aNw0sNehEQTWVI29@char.us.oracle.com>
+From: Brendan Jackman <jackmanb@google.com>
+Date: Wed, 1 Oct 2025 09:12:25 +0200
+X-Gm-Features: AS18NWAifHOvvZfxOYNmfg733w5HRL1kfD7yDfmp_AAQDacXW-pG953lY3cbh20
+Message-ID: <CA+i-1C3ry07NdPFFS3m2-WoboffgPSrOASJ4pPvoF=cN8NxbBg@mail.gmail.com>
+Subject: Re: [PATCH 00/21] mm: ASI direct map management
+To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: Andy Lutomirski <luto@kernel.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Suren Baghdasaryan <surenb@google.com>, 
+	Michal Hocko <mhocko@suse.com>, Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>, 
+	Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, peterz@infradead.org, bp@alien8.de, 
+	dave.hansen@linux.intel.com, mingo@redhat.com, tglx@linutronix.de, 
+	akpm@linux-foundation.org, david@redhat.com, derkling@google.com, 
+	junaids@google.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	reijiw@google.com, rientjes@google.com, rppt@kernel.org, vbabka@suse.cz, 
+	x86@kernel.org, Yosry Ahmed <yosry.ahmed@linux.dev>
+Content-Type: text/plain; charset="UTF-8"
 
---nextPart6197909.lOV4Wx5bFT
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
-From: Romain Gantois <romain.gantois@bootlin.com>
-To: Conor Dooley <conor@kernel.org>
-Date: Wed, 01 Oct 2025 09:11:51 +0200
-Message-ID: <5926760.DvuYhMxLoT@fw-rgant>
-In-Reply-To: <20250927-spoon-yearning-c1a8df796173@spud>
-MIME-Version: 1.0
+On Tue, 30 Sept 2025 at 21:51, Konrad Rzeszutek Wilk
+<konrad.wilk@oracle.com> wrote:
+>
+> On Wed, Sep 24, 2025 at 02:59:35PM +0000, Brendan Jackman wrote:
+> > As per [0] I think ASI is ready to start merging. This is the first
+> > step. The scope of this series is: everything needed to set up the
+> > direct map in the restricted address spaces.
+>
+> There looks to be a different approach taken by other folks to
+> yank the guest pages from the hypervisor:
+>
+> https://lore.kernel.org/kvm/20250912091708.17502-1-roypat@amazon.co.uk/
+>
+> That looks to have a very similar end result with less changes?
 
-On Sunday, 28 September 2025 00:31:05 CEST Conor Dooley wrote:
-...
-> > > 
-> > > > +  lltc,fb-voltage-divider:
-> > > Why does this property have a ?linear? vendor prefix?
-> > > Shouldn't it be adi to match the other property and compatible?
-> > 
-> > This component was originally from Linear Technology, before it was
-> > acquired by Analog Devices. The new properties and compatibles have the
-> > Analog Devices prefix, but the "fb-voltage-divider" property is already
-> > used by the LTC3676 and LTC3589 regulators, so I left the Linear
-> > Technology prefix for this one to avoid introducing a new property just
-> > to specify a vendor prefix change.
-> > 
-> > I don't have a strong opinion about this though.
-> 
-> Do they share the same driver?
+Hey Konrad,
 
-They do not. However, they use it in the exact same way, and I would've
-liked to factor out the handling of this property in a future patch. This
-would also make it easier to handle other types of feedback pin circuits
-and have a generic binding for "regulators using a feedback pin connected
-to some kind of analog circuit".
+Yeah if you only care about the security boundary around VM guests,
+and you're able to rework your hypervisor stack appropriately (I don't
+know too much about this but presumably it's just a subset of what's
+needed to support confidential computing usecases?), that approach
+seems good to me.
 
-For example:
+But that isn't true for most of Linux's users. We still need to
+support systems where there is a meaningful security boundary around
+native processes. Also, unless I'm mistaken Patrick's approach will
+always require changes to the VMM, I don't think the kernel can just
+tell all users to go and make those changes.
 
-Vout----+      
-        |      
-        |      
-       +++     
-       | |     
-       | | Rtop
-       | |     
-       +++     
-        |      
-        |      
- FB ----+      
-        |      
-     +--+--+   
-     |  |  |   
-     |  |  |CCS
-     +--v--+   
-        |      
-        |      
-       -+-     
-        -      
- 
-This is all speculation at this point though, so I don't mind changing the
-property to "adi,fb-voltage-divider" and handling the different compatibles
-when it comes to it.
+Basically: I support that approach, it's a good idea. It just solves a
+different set of problems. (I haven't thought about it carefully but I
+guess it solves some problems that ASI doesn't, since I guess it
+prevents some set of software exploits too, while ASI only helps with
+HW vulns).
 
-Thanks,
-
--- 
-Romain Gantois, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---nextPart6197909.lOV4Wx5bFT
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEIcCsAScRrtr7W0x0KCYAIARzeA4FAmjc1DcACgkQKCYAIARz
-eA6qTg/+Kkilr24s4UFOMInNmOfoTXbYDRNnY1G9d2/sXjYcwqNTtmnoK/iwyuta
-wsf8Aw9kycn8Daw1ra4fAdARNjHU/ky1ciPZPDRqRcuhgSoyxP2TbKHDjoKBYIBK
-KhOx9Ow267KOnJRooUbhNdX0CRwOr6PgPc2qE1ZQatDKriNc1SRkeGarUqdeyITq
-GBMGJi/uhMMVgrjsXRxGaDiDjZT9PxGGc7lGoOq0/QxdOPsFfuJmzgH/1MY6jj7b
-qRePQELC4N4So3jAGvUZgqWS+o2A7EOMGXO9MBSOi9oUwFQODYMWD1+a4QEAQN7t
-lM15POGGAhxTb2406ez8chEMamBOr+CU2Q7zsCrJfYc4+2D3qPhojxm2WAb44dOq
-x+qJS88Su6lA/b8DRUcxuem7EUSUpjKTXy2g4ox4FBbfxZqr+J4tws7xBp/wpBv9
-jsw20G74ycrru6povudm5ge5P7XVQF9BArHxjW++vNMdE9Dd0+2cqn8eZhu8rXlh
-qVQDOLzGINZUccX0b/QeA2G2JmQ3Sb/FCZQuLA/CTyNIZLF0yjPXg9MR02/hNBR9
-JI/IQ8Y/thn6+1TtAzDRPRJWzkMbJAnCXYRs92d4IRpxdbthytgI5OXN10j2H9gr
-nMS3sbxSbsJRGOmMCwuRjuki6DcHcmUZFvpg83QKJ5+oxiWuUtg=
-=/Mf9
------END PGP SIGNATURE-----
-
---nextPart6197909.lOV4Wx5bFT--
-
-
-
+Cheers,
+Brendan
 
