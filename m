@@ -1,211 +1,327 @@
-Return-Path: <linux-kernel+bounces-839300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07971BB14A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 18:47:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63233BB14BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 18:48:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B40FC3A8A97
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 16:47:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2357188D9CA
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 16:49:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBDF528CF52;
-	Wed,  1 Oct 2025 16:46:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F4F7296BA7;
+	Wed,  1 Oct 2025 16:48:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="pwnpYRtb"
-Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012047.outbound.protection.outlook.com [52.101.48.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IGNUqYZV"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F8761D416E;
-	Wed,  1 Oct 2025 16:46:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759337212; cv=fail; b=D+nN9YUHeSh4yj9Dwjagzv2njaR5OK4aWReXdUhpWUylnxez0/2A2U+nXSzKUhKWM9BqNeqzsGCvZLDGnuYeBZcsqyvb+fjsBSDbnVGTUp8Ev56L6JRoxUf5dK/5j+WMM6Mwyo6zyDd4eS89O2VORwBP26WkMaec7qcnznaGipI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759337212; c=relaxed/simple;
-	bh=HvdzynR94Pq7VOa7XHDjTnASyGv4LD2/k/oLC3P4WnA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=QlaVnEWPiXLtxQtMFEVFH6mRYuRyn+kRZJxG8+ixAko512NpZl2iiULxEA8uzd5s3oDxiW9Jj0LcEMe4c1nlvnmBOOQDKyx24CidbDDpHEgMAtweDpXEFjGa4/Wb9MDjjjWQvvzFSCi0i6o5sbVYXAFZVmvTcRCALrq9p9+RhrM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=pwnpYRtb; arc=fail smtp.client-ip=52.101.48.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZwIrlW3lfE5SFoE3mQkIQ7Kf+1bnz0gzNQeRSjEvgAfZIJbV4UMnjkDcX1doXktdJPhtSmeCKQF/oduaiQX4N/trOhJ+aQDrrJ4iFZb4uQkkQ24g5OvL5SGznYXySvfnHdFqJxvRymD8XJUAXILbjVFxi94Ci2cuOIb2fxMcSROqmzO02euFevO40IbSRn6Mnu9uOwkQSzaQ36R8vsADAu8M+O9zad4jzJ13/2iMduSfrfkTFC97Qfk/gDCSG6MwS7UlMYxDLqCPQnU5V33Qt3vND9vkAEIge7UscflSNeacBXCQp54kLEzheJzh1CdvU777eQbNyTAR22A9bn33Hg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HvdzynR94Pq7VOa7XHDjTnASyGv4LD2/k/oLC3P4WnA=;
- b=g8iZagH0MnGpTpEB9EhkmmdyM9dVtYjyiKxe5Ger7inuGzZXEMN8k62ZRVPXxIx4CKSxNL6GFPXogfkKaW6weaYySvNVgNLiBLLBG9m3w9H/6doNgphkkEtdAjN3I2GjLay8EUrX+903t0vHXicBKUfes5V2FYPR2bbAI+u7icuqHzBUMY8h54RNoX7aLXb+E/4cAMUbFfJeVIihtsP1JScQPP3h8tSXLvwXFydh73CKlvGXlkZFWh1CPL4USc0bLqmNJweSaB7CVqbuHI5QL6fsgDIFOEBZkVBvIOYfxG7ygB3i1DAiBfF6rAOghCzTOrRbXHd+bDApwQsP57j/zg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HvdzynR94Pq7VOa7XHDjTnASyGv4LD2/k/oLC3P4WnA=;
- b=pwnpYRtbql+kQOkdJ476KysePq7UFGj15daBcHOtDDrXIP7bdxWC7OTopBdjOjxauDlswEehvPj8erdGMvXEs6iBWVdyGsTJ6WofTai52OhzsjxtKdgA/0kUSoTVx3+CzbhZPmYUMmsabeSIl0ToxXW3Pm38lb+dG4PWQft5wufS3y/Zmn1MN4b8a8FIzWCrr0VfRBpfRwVBqblByN6jEyaE8VA4fKUtgiAq6nXuUgSuVJt6ao8kR5we+A8gH19DwP8vlFi8TS5F8HM+D+umaoZM2EUZyWzsI5O8Tuv2sIe9j8dPnOGv9uZcYx4karThYqFT6zDylKzGY+95UgcWxg==
-Received: from CY5PR12MB6526.namprd12.prod.outlook.com (2603:10b6:930:31::20)
- by PH0PR12MB5631.namprd12.prod.outlook.com (2603:10b6:510:144::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.18; Wed, 1 Oct
- 2025 16:46:47 +0000
-Received: from CY5PR12MB6526.namprd12.prod.outlook.com
- ([fe80::d620:1806:4b87:6056]) by CY5PR12MB6526.namprd12.prod.outlook.com
- ([fe80::d620:1806:4b87:6056%3]) with mapi id 15.20.9160.015; Wed, 1 Oct 2025
- 16:46:46 +0000
-From: Timur Tabi <ttabi@nvidia.com>
-To: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	Alistair Popple <apopple@nvidia.com>, Alexandre Courbot
-	<acourbot@nvidia.com>, "dakr@kernel.org" <dakr@kernel.org>,
-	"rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>
-CC: "lossin@kernel.org" <lossin@kernel.org>, "ojeda@kernel.org"
-	<ojeda@kernel.org>, "boqun.feng@gmail.com" <boqun.feng@gmail.com>,
-	"a.hindborg@kernel.org" <a.hindborg@kernel.org>, "tzimmermann@suse.de"
-	<tzimmermann@suse.de>, "tmgross@umich.edu" <tmgross@umich.edu>,
-	"alex.gaynor@gmail.com" <alex.gaynor@gmail.com>, "simona@ffwll.ch"
-	<simona@ffwll.ch>, "mripard@kernel.org" <mripard@kernel.org>,
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, John Hubbard
-	<jhubbard@nvidia.com>, "nouveau@lists.freedesktop.org"
-	<nouveau@lists.freedesktop.org>, "bjorn3_gh@protonmail.com"
-	<bjorn3_gh@protonmail.com>, "airlied@gmail.com" <airlied@gmail.com>,
-	"aliceryhl@google.com" <aliceryhl@google.com>, Joel Fernandes
-	<joelagnelf@nvidia.com>, "gary@garyguo.net" <gary@garyguo.net>,
-	"lyude@redhat.com" <lyude@redhat.com>
-Subject: Re: [PATCH v3 10/13] gpu: nova-core: gsp: Create RM registry and
- sysinfo commands
-Thread-Topic: [PATCH v3 10/13] gpu: nova-core: gsp: Create RM registry and
- sysinfo commands
-Thread-Index: AQHcMgyfpL8Jj0HjREWVuyTz4FiX2LStgdiA
-Date: Wed, 1 Oct 2025 16:46:46 +0000
-Message-ID: <944d69d9916e53f76e4180b02c63e0f94b2c8950.camel@nvidia.com>
-References: <20250930131648.411720-1-apopple@nvidia.com>
-	 <20250930131648.411720-11-apopple@nvidia.com>
-In-Reply-To: <20250930131648.411720-11-apopple@nvidia.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Evolution 3.52.3-0ubuntu1 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CY5PR12MB6526:EE_|PH0PR12MB5631:EE_
-x-ms-office365-filtering-correlation-id: 91dfe188-9add-47c2-18ee-08de010a1c2f
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|7416014|1800799024|366016|38070700021;
-x-microsoft-antispam-message-info:
- =?utf-8?B?V1d2RjhTSDltRDFxdm1KM3RWTS9uZDdZd3hLWjZBSW05R2lTRE9LUDJKSFJr?=
- =?utf-8?B?UUU1cW9UNE4xU3dUbmdsTkdIRkNkTnNjOUtmaXFxTzN6V08vSGVxUTA3K3hQ?=
- =?utf-8?B?a2JBSXI0dng5S2hQTzk3aXhsajF6LzFUdnF6V2hOVzZwT1MwNk1COEJ6ZCsw?=
- =?utf-8?B?cGl4QzVSY05sVlBuMmlIbzM1aDl4Sjh2RlFDMjJ2dysvaTFjRVFHNlRJWDVS?=
- =?utf-8?B?VForKzFCbWI5TTJJOFI4cXJ4L3N5ZXNVTlRIWVR1WXN1NVA0a3U3ME90bjJZ?=
- =?utf-8?B?T2thSW1SQnE2LzZZVStvNkxLNzh5cjRiUDlQVUNCb0JMbmdNNHRmWURjUWhC?=
- =?utf-8?B?dGxsQ0lQYVM3OVROWFFMTVNWbFdOd21aY2lFb2l0UnljRWNzTkd0SHNMb0o2?=
- =?utf-8?B?YjA0a2NkYkZkSkpPV0dQenlhdGRsVHRIOWx4OUdIMXAvcTNETVkyQ2hUdm04?=
- =?utf-8?B?alVFazJsc0lPcUdYRGg5SlNUWXZtWVQ3YUE5anJSUnFRb2NTZjV2OVg2bjRG?=
- =?utf-8?B?bXpIUmY5NVd5aTFpOTJGRHVqL3B6WFVHZ3JsdVlCcG93M1h4Nmp4eGRKa0hY?=
- =?utf-8?B?K0xUNld5TTF3OTRRcW1rQzN3aXF0cmpzMTBJYXk2enR4R25VQjMvMUJRb2xQ?=
- =?utf-8?B?bVdVbFRmUk9UWFMyNXQ5T21mSEpDT2t3VWFJRVl1QWtBV05aQUFlM3NndDc3?=
- =?utf-8?B?N3RDMEhKaCtPQmY2ODVDczVPY3I3SlAzWmZoUXhSL1JLWnAwUkZhRDl2MWZU?=
- =?utf-8?B?TUt3LzQ0cG5TdVd0NWJyTDUxMjZxVis5NkR6VHlScVVIenJuZXNCMzk2TktH?=
- =?utf-8?B?ektnSWI5dkN0T3JTampncnB6UFhNamNxSWU5aSt3LzNGSjZnanVhenlkVUE1?=
- =?utf-8?B?bVRaU1pUN2w1eHI4WWtselBXUllmZ0pmYXF0SC9pODQ2L2srOU5sWnoxTlI5?=
- =?utf-8?B?QVlFOEZtSS9KMFZUTCt3aEZXV29BK2FiU2d3RHBrSE5iaCtIV210MU9CeGM2?=
- =?utf-8?B?ZWI2Y0I3VURjZDlHZnZGTGZKeWh2VnovU3JoNGk4bkdndll4UjhiZDdXMm5E?=
- =?utf-8?B?cndBbEw1K2RtSFArRVpqVStCbmg0ak93QW05cDMrK1dhYVNtbWE1RmFBRURh?=
- =?utf-8?B?Wk1GVEdWbkhRRGhOcDBwMnlicFIwY2wvQUNGTlV6a3M2WFF3RmoxQnNsNUVP?=
- =?utf-8?B?bHNwbzFWVUJnRjhCV1RYbDVwa1NINXh1L2NRaDc1MnZHeDhxV1lEYmg5TkQ2?=
- =?utf-8?B?cmN6ODVtWXQrWjYzSnBpeTA2c0lERTZsZUtIK1hIT0s0RWpOSnZDWkFDajR1?=
- =?utf-8?B?QlRld3lVTXRsaDJ3aDJLdmlqOFpjOFppOFh1WWpqNG16MzBXNkJxVGVIMnZw?=
- =?utf-8?B?MHpGcjFVc3lPTE9jZ3pEeDRJc0RLakYvTjVTSTNoRVJ2dXdIZXN1VDlFS20r?=
- =?utf-8?B?UUV5Tm9rWFBCbENkc3NJdkx0Y3NlaVhFWCtpY2VtZ0k2M1ZJUGxhV2pnMVZP?=
- =?utf-8?B?Zktjck11TjlPWEZwcnpzdUdCVk5CdUFEU2wyaGdTb2hQYmxBcjlMU25CeXRn?=
- =?utf-8?B?ZXh0T2JZc05MV3ZZN1BnZjc1cUQwODRXbVltRy9uY2lGcXhBSW16a1JZRGZR?=
- =?utf-8?B?OVVmckx4cEFmZjMzQndWb0NxS2hrdUsvMHV2UGV4NmMxeEFyVjVNcTJydEV1?=
- =?utf-8?B?S0N3WmtrL2wwelZSMHh0MzB5K2xVNG5DcGR4UzJEdzdVcFJVenhvZ01hV2pB?=
- =?utf-8?B?RmZ1NzlBYWZWSWdTOFZURVRaaTcvYlVrcGFxT2tJcjNOblUzclVHOTV4cFZJ?=
- =?utf-8?B?RUFOdTg1c1greFhxU3hWREx1R0k3cys0SnlUdE92UEFHNWduclNuRkd5K3hm?=
- =?utf-8?B?MG0wZFN2cUI4UFkwV1B0Mi9iV09Nbk5kdU93QWtjQUNNSUhaNGpuY1E1Slh5?=
- =?utf-8?B?bXFJM0IxT0dmdHZicEtnVWwxN0x5d0dSOHpKbEo5MTFHNDJDUHZ6ZFdxbEJw?=
- =?utf-8?B?clk1MEZsZjRBTjdoK3g5U2xNa3ZnRklvUzFRTnZpYXcwT3V0TTVHb0M2Uml2?=
- =?utf-8?Q?nQarzm?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6526.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?UkZrRSs2NVJyZ2ZUNldkZVpsdDRaVHNjOVlyZU9yTEpPUVVUSWxtWHNVcHc0?=
- =?utf-8?B?bTlnR0R0M1BTKzV2NTN2VEZIZjFOR2o2TEJiWnZ0TElNbUx1ek5ENzVPNHdM?=
- =?utf-8?B?UjVYNlhxUEIxWHFGWWRIWjRveU9SbWJqMHNHMVhmVUIzcDF5NFdUaWdvMGNH?=
- =?utf-8?B?TnowVzVHTjVkV0pldFNNRFlOWEpYWUxFVzBteHFtbkt2VDJUYjlKQXdFY1Ja?=
- =?utf-8?B?bGljSVorT3NYWkFXS3ZlVzZTMjVqL3VpU090RndSTndueDZZeXlveFh2Nk9x?=
- =?utf-8?B?K3FKWi9PTFlvOS9QeDJ6M0VpZVNaaGNGNUtYRFZrN1BlQXJ2Nmd0d3pJZCtR?=
- =?utf-8?B?MVA3YkFEc1ZtMnhOYzZ1LytkcmFuekRYOWRoNy9pWllvNmFnMkoweDMvNC9m?=
- =?utf-8?B?c3pXVFR6a2wrZDhFMER6WkFyL2N2UWJUOVp1R014ais3anJ1M0lPbXkrVGh4?=
- =?utf-8?B?bVdJdDN2OXg0QVlWYkJQWjdPeHd4NmEwMXBHaU1WRnE1ZDJ5TVFyS09SRGdU?=
- =?utf-8?B?eXdrR25LcW94TGJtKzZreDladjRrbnN0N3VUaU1yTXBPSG9SVWMzMGY3SXlI?=
- =?utf-8?B?TTBvS0dxMkxkb01FYU95cWE0RWhLUElPWFRLTHhVaG54UVdLS3MxbTFzVnFj?=
- =?utf-8?B?Tmk0ZHl2alBlMVAvOGdMVjN0KzVEVExTUnYzOCsrNmJvN01BYXI5V1k2UDhO?=
- =?utf-8?B?WXVYTjdRd0JBT1FsT2dob3pjeHV4QS9rNnFLVlRick5FTVhEei9sbzJYbWRS?=
- =?utf-8?B?VGNPb2N0UnhUaUtZUUZWSTV6bEhBYlp5cFFJL1NENEdhSUxTY0Q0UWhpKzdr?=
- =?utf-8?B?T3I1ekNHY1NMZHo2NlQ2VDBRbGpXNVdoYTgxTnZtTzM1Q2RlR0VzVmdTNmFX?=
- =?utf-8?B?TnFkeFJnMHBoMEFqUlhKK0dwRnIwaE5TUUJrZ3AxazFnemtiNmFkalZIeHBN?=
- =?utf-8?B?emRCVk9nSHBic3NjS1JTTkpWU29uOGFKcWY4M1I4WHJGeGJvdkNwUnk4cWRT?=
- =?utf-8?B?anhHeFZ3dDdyT3VQSEN0UE83b2VwVW1wOGc2SzNzZWJtaEFQbHJMdTlCN2Ir?=
- =?utf-8?B?NGJRMHhJT0J5VWRQYUNIT2VDcU5PSEVUanl1MDhGRkxJanFOeCtSUHRjSHlL?=
- =?utf-8?B?aW40ZjZTYWtyV1RFN1R1UFBkeko2bW4zYTUySDJ4VXdvY1ZQUzN6bHFuaGtj?=
- =?utf-8?B?UWhFOVloT2VDWlJkSU5DRXBRMVBqa1NobzBWbzdSblk5c1pRbG51aWhxd2Y5?=
- =?utf-8?B?am1jVGU2c3FkVGpsSml6MEN1eE9jaW4xNHZxMnR6eEtJTlU5SS9IN0pobFdW?=
- =?utf-8?B?UEdBM0g3ZUNHOG15WUk3di9vRXdQbGxLdHBmWktYTUsxZ0hobVFTdlFTbjBI?=
- =?utf-8?B?U2JXajFObmhVOWdycjdnU3VlK0JudlluT2h0TkVqRnRyUTl3bnk5K1VtZUFQ?=
- =?utf-8?B?Q0xad2lsWkZ2RDVEKzZIbHBlQ2lpeW1DTG1FSlFzaUlhNmkwdjczTmdzeUJv?=
- =?utf-8?B?WnR2a3VFV3lLUDhWZGRhOUZDZktCakhWQmo4NS8yRzhvdnZXbGVBQmJqeVBO?=
- =?utf-8?B?cm9BOGduUW5UVEZCejVyZHRWUXlIYlV4c1RLRERUajJhcENCQkhlOGpZS2Rt?=
- =?utf-8?B?UDFac0VYK0haOEdYTm1ucDZWS1ltM1JaL090NnRZdThCZWUzTWpQV2dKQXEw?=
- =?utf-8?B?YmhSclV4YXZOZ2t4VUxBY2p6VzZJU09ZNGhRbGUrMGFFVGxIMmhvejh2UTF6?=
- =?utf-8?B?ZzdVV1JGQzlMRTJKR0hvaUV0eWkzaTVnNjRjREZua0RrTjJ2d0FYelMydWhs?=
- =?utf-8?B?aksvS2psdVEyVE9vZGxwWVZrbERXTGFXNXdqcisxclMyU2JwYXllSXoxM3dH?=
- =?utf-8?B?M3RtdFk2dlh5eTArTHVBWkRraHRyTnR3T204dU9jTGVEV3NKMU9FYUdOR3pV?=
- =?utf-8?B?ckJxb3NoaEI4Q01GaTdETXppWVVkK0lwcjVQRGRqRUY2bjRGT2RSams4NTZq?=
- =?utf-8?B?dVVuaUFHemRyQUZkbHh5Qm0yOWNSZmlEbHMwLy9ITmlFdUdvOXAwOTBhdU1D?=
- =?utf-8?B?ckxZelJWUnpUMkxxZEJnZ25EZVU5aGZSRlp0ekZhRTlsUWdIUmVBeFBEY2t6?=
- =?utf-8?Q?q8FvxVYrbSmpnTw4TMEHjCMI4?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <70B548FEA8D0E147BAC19BA08A16A75B@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC86A1373
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 16:48:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759337314; cv=none; b=GE+4fUKZ5XSY4CIKmnuiyEWIWMnB+/HrO+ZaDn8g3NwiupUDwxed91s/zFPXZjO2sHFEf8N5KPV8HQ8clKRdPFxmf7mfv4Wc14D6o0fMticLbUMQZ0n/pslvd9q58k/WQbq7VBVvaHmvYIwidSugprOSspv01V4xedtEGuG57YA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759337314; c=relaxed/simple;
+	bh=cu70jR3G6wCv097RrQIR7eS0JwveKZNmgwljhW007Bo=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=jZsDK5fT6B0jseqJSUl8OSy63dW8jqUuxVQamwaaNAZl0EKqeyJNylyoiFZpuBUyMuazDpvoFb1EmRxjKvZ6hu8tJsVtjo5h5sIxM4wizbUmJ30KbBdtvbzBYhzr+xbbfHIH17OFVBQVRy8A3k2/ePJKRGsldNX9CTERpw1mmco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IGNUqYZV; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-32ec69d22b2so116896a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 09:48:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759337310; x=1759942110; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=PsETvYebxNjKcZGVO1bpJtLyrl/1L0m0GOVocGjgaWc=;
+        b=IGNUqYZV1/W8E0j+XzqI/RL/t14Ad6fAcvym7xRUOrSgb+mHCYac+ExCdgaBH0Myo+
+         ClmEWT7fgXDBC9uUIN+KT11YR7UrsEa9S9HhSssEMYVlS1nRfAHxw2qJbB2Nop8neLtW
+         6YO7mfAgm/A/hUbWPoQEF6u+YHGd2VFU6S41nSSyZlWMPPne2fklPm3/UKPOCwhZpOFi
+         0BiT+mmjYm5p5hzCLg26W7tdg3lAkJkd55KK2Ptj3+UKSvgOfptBdGvM3ZbsHp3brsid
+         XEa+sjnPl/0cz+VonGLXaGETUxfGAOhlmVtAj1wLBerp8bq20/ZEkaLocZr9cl5A1kev
+         Ra1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759337310; x=1759942110;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PsETvYebxNjKcZGVO1bpJtLyrl/1L0m0GOVocGjgaWc=;
+        b=nG1hVu4Pa/wvo65EBq+WOqGuD2MkImXO5Oznky05X64bXmXNUT8P0gWz1pKvTkCvHZ
+         4Iq54NaWLrlzrGcaLIxwfye/HHdlo7J10r+x60jjwtiOcaSHJD4ppqwd9P5FqdqRBhFz
+         od3yiir4xyCbnqfpNIkYuF/tuWDt/4ibD4XN3NUWpm/NQntVywW/YHafZRRPxFlLRz4L
+         ZFIDqAJO807JjlR1PuAgvyzGsAbL32T1zXi3kU9xKSKhb6gYS4ywgRxmCmuuuRTB21lC
+         kRHPmTpBOHgVqPtxXS1XTS+0GwMlJ0SWlT2BqMd+Gi93ja70xZJRAgbiC1BM7uGTFpG1
+         Qa0A==
+X-Forwarded-Encrypted: i=1; AJvYcCX1aUw7xTD+UTMiH0zYWxmz1PG7G0+5j6yjYt+11vcAIM1wJu0QXkjH2cvM8YfVMWHZ+dvZnIqg8B4hdpQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGAarIGNhAPCFcw2LN03Ip4dONPhxzRn7gijjtVRFeXnIs74kQ
+	kHG7d+sLKSwsQ5yaX7siF0yspEYjqZBwfyOM3xZ5W1f+kJlaeJtP+8AAPL54taOEEpgDPGK67so
+	4c7boQg==
+X-Google-Smtp-Source: AGHT+IGBr4qCftsTq3OAdviGUAHI0gcCXTOIGwo+JZyoAatrlnRvcGgpHO7iZYgCThGSrh/QsBRJMeiJnXM=
+X-Received: from pjn13.prod.google.com ([2002:a17:90b:570d:b0:335:2897:47c9])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4b0a:b0:32e:3552:8c79
+ with SMTP id 98e67ed59e1d1-339a6f52413mr5336697a91.29.1759337310187; Wed, 01
+ Oct 2025 09:48:30 -0700 (PDT)
+Date: Wed, 1 Oct 2025 09:48:28 -0700
+In-Reply-To: <diqzbjmrt000.fsf@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6526.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 91dfe188-9add-47c2-18ee-08de010a1c2f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Oct 2025 16:46:46.6752
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: DVpXRIhQ/tzgZTi0mxfWs31gDU4E0AJUgWf6X69oW1wWkOpJAOCS75LQhr5x0W7AfWK2q3bvBLokVGU/d+YqWA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB5631
+Mime-Version: 1.0
+References: <cover.1747264138.git.ackerleytng@google.com> <b784326e9ccae6a08388f1bf39db70a2204bdc51.1747264138.git.ackerleytng@google.com>
+ <aNxqYMqtBKll-TgV@google.com> <diqzbjmrt000.fsf@google.com>
+Message-ID: <aN1bXOg3x0ZdTI1D@google.com>
+Subject: Re: [RFC PATCH v2 02/51] KVM: guest_memfd: Introduce and use
+ shareability to guard faulting
+From: Sean Christopherson <seanjc@google.com>
+To: Ackerley Tng <ackerleytng@google.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Yan Zhao <yan.y.zhao@intel.com>, Fuad Tabba <tabba@google.com>, 
+	Binbin Wu <binbin.wu@linux.intel.com>, Michael Roth <michael.roth@amd.com>, 
+	Ira Weiny <ira.weiny@intel.com>, Rick P Edgecombe <rick.p.edgecombe@intel.com>, 
+	Vishal Annapurve <vannapurve@google.com>, David Hildenbrand <david@redhat.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>
+Content-Type: text/plain; charset="us-ascii"
 
-T24gVHVlLCAyMDI1LTA5LTMwIGF0IDIzOjE2ICsxMDAwLCBBbGlzdGFpciBQb3BwbGUgd3JvdGU6
-Cj4gK3B1YihjcmF0ZSkgZm4gYnVpbGRfcmVnaXN0cnkoY21kcTogJm11dCBDbWRxLCBiYXI6ICZC
-YXIwKSAtPiBSZXN1bHQgewo+ICvCoMKgwqAgbGV0IHJlZ2lzdHJ5ID0gUmVnaXN0cnlUYWJsZSB7
-Cj4gK8KgwqDCoMKgwqDCoMKgIGVudHJpZXM6IFsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBS
-ZWdpc3RyeUVudHJ5IHsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGtleTogIlJN
-U2VjQnVzUmVzZXRFbmFibGUiLAo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgdmFs
-dWU6IDEsCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfSwKPiArwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoCBSZWdpc3RyeUVudHJ5IHsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGtl
-eTogIlJNRm9yY2VQY2llQ29uZmlnU2F2ZSIsCj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoCB2YWx1ZTogMSwKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB9LAo+ICvCoMKgwqDCoMKg
-wqDCoCBdLAo+ICvCoMKgwqAgfTsKCllvdSBmb3Jnb3QgdG8gaW5jbHVkZSBhbnkgb2YgbXkgY29t
-bWVudHMgZnJvbSB2MjoKCmh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL3J1c3QtZm9yLWxpbnV4L2Q4
-N2JmZjBjNjRmYjJhNTQ5OTIwMzU0YzhiMDlmNzY0ZTE0NWE0OTIuY2FtZWxAbnZpZGlhLmNvbS8K
-IAo=
+On Wed, Oct 01, 2025, Ackerley Tng wrote:
+> Sean Christopherson <seanjc@google.com> writes:
+> > On Wed, May 14, 2025, Ackerley Tng wrote:
+> >> +enum shareability {
+> >> +	SHAREABILITY_GUEST = 1,	/* Only the guest can map (fault) folios in this range. */
+> >> +	SHAREABILITY_ALL = 2,	/* Both guest and host can fault folios in this range. */
+> >> +};
+> >
+> > Rather than define new values and new KVM uAPI, I think we should instead simply
+> > support KVM_SET_MEMORY_ATTRIBUTES.  We'll probably need a new CAP, as I'm not sure
+> > supporting KVM_CHECK_EXTENSION+KVM_CAP_MEMORY_ATTRIBUTES on a gmem fd would be a
+> > good idea (e.g. trying to do KVM_CAP_GUEST_MEMFD_FLAGS on a gmem fd doesn't work
+> > because the whole point is to get flags _before_ creating the gmem instance).  But
+> > adding e.g. KVM_CAP_GUEST_MEMFD_MEMORY_ATTRIBUTES is easy enough.
+> >
+> 
+> I've read this a few times and I'm a bit confused, so just making sure:
+> you are suggesting that we reuse the KVM_SET_MEMORY_ATTRIBUTES ioctl as
+> a guest_memfd (not a VM) ioctl and still store private/shared state
+> within guest_memfd, right?
+
+Yep.  Something like:
+
+static long kvm_gmem_set_attributes(struct file *file, void __user *argp)
+{
+	struct gmem_file *f = file->private_data;
+	struct inode *inode = file_inode(file);
+	struct kvm_memory_attributes attrs;
+	pgoff_t err_index;
+	int r;
+
+	if (copy_from_user(&attrs, argp, sizeof(attrs)))
+		return -EFAULT;
+
+	if (attrs.flags)
+		return -EINVAL;
+	if (attrs.attributes & ~kvm_gmem_supported_mem_attributes(f))
+		return -EINVAL;
+	if (attrs.size == 0 || attrs.offset + attrs.size < attrs.offset)
+		return -EINVAL;
+	if (!PAGE_ALIGNED(attrs.offset) || !PAGE_ALIGNED(attrs.offset))
+		return -EINVAL;
+
+	if (attrs.offset > inode->i_size ||
+	    attrs.offset + attrs.size > inode->i_size)
+		return -EINVAL;
+
+	r = __kvm_gmem_set_attributes(inode, &attrs, &err_index);
+	if (r) {
+		attrs.offset = err_index << PAGE_SHIFT;
+		if (copy_to_user(argp, &attrs, sizeof(attrs)))
+			return -EFAULT;
+
+		return r;
+	}
+
+	return 0;
+}
+
+static long kvm_gmem_ioctl(struct file *file, unsigned int ioctl,
+			   unsigned long arg)
+{
+	switch (ioctl) {
+	case KVM_SET_MEMORY_ATTRIBUTES:
+		return kvm_gmem_set_attributes(file, (void __user *)arg);
+	default:
+		return -ENOTTY;
+	}
+}
+
+> I think fundamentally the introduction of the guest_memfd ioctls was
+> motivated by how private/shared state is a property of memory and not a
+> property of the VM. (IIRC you were the one to most succinctly phrase it
+> this way on one of the guest_memfd biweeklies.) So I hope you don't mean
+> to revert to doing conversions through a VM ioctl.
+
+I do not.  Ah shoot.  I responded to my (much earlier) mail on this to clarify
+exactly this point, but I botched the Cc and threading, and it didn't make it's
+way to you.
+
+https://lore.kernel.org/all/aNxxJodpbHceb3rF@google.com
+
+> > But for specifying PRIVATE vs. SHARED, I don't see any reason to define new uAPI.
+> > I also don't want an entirely new set of terms in KVM to describe the same things.
+> > PRIVATE and SHARED are far from perfect, but they're better than https://xkcd.com/927.
+> > And if we ever want to let userspace restrict RWX protections in gmem, we'll have
+> > a ready-made way to do so.  
+> >
+> 
+> Would like to understand more about RWX protections: is the use case to
+> let userspace specify that certain ranges of guest memory are to be
+> mapped into stage 2 page tables without executable permissions?
+
+Yep.  Or execute-only.  Or read-only.  The primary use case I'm aware of is for
+supporting things VBS (Hyper-V's virtualization based security) and HEKI[1] (which
+is effectively the same thing as VBS, and is indeed being dropped in favor of
+simply piggybacking the VBS guest<=>host ABI).
+
+VBS allows the kernel to deprivilege itself, and hoist a small amount of code
+into a more privilege "thing".  In KVM, the separate privilege domains will be
+called "planes"[2].  For RWX protections, the more privileged plane would have
+full RWX access to all of guest memory, while the deprivilege kernel will have
+select chunks of memory mapped RO (e.g. kernel page tables, GDT, IDT, etc., or
+potentially not at all (see Credential Guard).
+
+I don't know if tracking per-plane RWX state in guest_memfd would be a good idea,
+but it costs practically nothing to keep the possibility open.
+
+[1] https://lore.kernel.org/all/20231113022326.24388-1-mic@digikod.net
+[2] https://lore.kernel.org/all/20250401161106.790710-1-pbonzini@redhat.com
+
+> Is there a further use case to let the guest specify that userspace must
+> not mmap() some ranges as executable?
+> 
+> For guest_memfd the userspace mapping permissions are already defined
+> by userspace and so unless guest_memfd must enforce something on behalf
+> of the guest, there shouldn't be anything more that guest_memfd should
+> track with respect to RWX permissions.
+
+But not all userspaces are created equal.  E.g. if a VM is sharing memory with
+another entity, it might want to restrict that sharing to be read-only.  I don't
+know that memory attributes would be the best way to express such rules, just
+saying that fully relying on mmap() has limitations.
+
+> > Internally, that let's us do some fun things in KVM.  E.g. if we make the "disable
+> > legacy per-VM memory attributes" a read-only module param, then we can wire up a
+> > static_call() for kvm_get_memory_attributes() and then kvm_mem_is_private() will
+> > Just Work.
+> >
+> >   static inline unsigned long kvm_get_memory_attributes(struct kvm *kvm, gfn_t gfn)
+> >   {
+> > 	return static_call(__kvm_get_memory_attributes)(kvm, gfn);
+> >   }
+> >
+> >   static inline bool kvm_mem_is_private(struct kvm *kvm, gfn_t gfn)
+> >   {
+> > 	return kvm_get_memory_attributes(kvm, gfn) & KVM_MEMORY_ATTRIBUTE_PRIVATE;
+> >   }
+> >
+> > That might trigger some additional surgery if/when we want to support RWX
+> > protections on a per-VM basis _and_ a per-gmem basic, but I suspect such churn
+> > would pale in comparison to the overall support needed for RWX protections.
+> >
+> 
+> RWX protections are more of a VM-level property, if I understood the use
+> case correctly that some gfn ranges are to be marked non-executable by
+> userspace. Setting RWX within guest_memfd would be kind of awkward since
+> userspace must first translate GFN to offset, then set it using the
+> offset within guest_memfd. Hence I think it's okay to have RWX stuff go
+> through the regular KVM_SET_MEMORY_ATTRIBUTES *VM* ioctl and have it
+> tracked in mem_attr_array.
+
+Maybe.  It will depend on how the use cases shake out.  E.g. before the planes
+idea came along, the proposal for supporting different privilege levels was to
+represent each privilege level with its own "struct kvm", at which point tracking
+RWX protections per-VM (struct kvm) made sense.
+
+But with planes, that's no longer true.  E.g. we'd need RWX flags for plane0
+and separate RWX flags for plane1 regardless of whether they're tracked in
+struct kvm or in the gmem instance.
+
+To be clear, I don't have an opinion one way or the other, because what we'll
+end up with is quite unclear.  All I was calling out is that reusing
+KVM_SET_MEMORY_ATTRIBUTES provides a lot of the plumbing, _if_ we want to define
+RWX protections on a gmem instance.
+
+> I'd prefer not to have the module param choose between the use of
+> mem_attr_array and guest_memfd conversion in case we need both
+> mem_attr_array to support other stuff in future while supporting
+> conversions.
+
+Luckily, we don't actually need to make a decision on this, because PRIVATE is
+the only attribute that exists.  Which is partly why I want to go with a module
+param.  We can make the behavior very definitive without significant risk of
+causing ABI hell.
+
+It's entirely possible I'm completely wrong and we'll end up with per-VM RWX
+protections and no other per-gmem memory attributes, but as above, unwinding or
+adjusting the module param will be a drop in the bucket compared to the effort
+needed to add whatever support comes along.
+
+> > The kvm_memory_attributes structure is compatible, all that's needed AFAICT is a
+> > union to clarify it's a pgoff instead of an address when used for guest_memfd.
+> >
+> > diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+> > index 52f6000ab020..e0d8255ac8d2 100644
+> > --- a/include/uapi/linux/kvm.h
+> > +++ b/include/uapi/linux/kvm.h
+> > @@ -1590,7 +1590,10 @@ struct kvm_stats_desc {
+> >  #define KVM_SET_MEMORY_ATTRIBUTES              _IOW(KVMIO,  0xd2, struct kvm_memory_attributes)
+> >  
+> >  struct kvm_memory_attributes {
+> > -       __u64 address;
+> > +       union {
+> > +               __u64 address;
+> > +               __u64 offset;
+> > +       };
+> >         __u64 size;
+> >         __u64 attributes;
+> >         __u64 flags;
+> >
+> 
+> struct kvm_memory_attributes doesn't have room for reporting the offset
+> at which conversion failed (error_offset in the new struct). How do we
+> handle this? Do we reuse the flags field, or do we not report
+> error_offset?
+
+Write back at address/offset (and update size too, which I probably forgot to do).
+Ugh, but it's defined _IOW.  I forget if that matters in practice (IIRC, it's not
+enforced anywhere, i.e. purely informational for userspace).
+
+> >>  static int __kvm_gmem_prepare_folio(struct kvm *kvm, struct kvm_memory_slot *slot,
+> >>  				    pgoff_t index, struct folio *folio)
+> >>  {
+> >> @@ -333,7 +404,7 @@ static vm_fault_t kvm_gmem_fault_shared(struct vm_fault *vmf)
+> >>  
+> >>  	filemap_invalidate_lock_shared(inode->i_mapping);
+> >>  
+> >> -	folio = kvm_gmem_get_folio(inode, vmf->pgoff);
+> >> +	folio = kvm_gmem_get_shared_folio(inode, vmf->pgoff);
+> >
+> > I am fairly certain there's a TOCTOU bug here.  AFAICT, nothing prevents the
+> > underlying memory from being converted from shared=>private after checking that
+> > the page is SHARED.
+> >
+> 
+> Conversions take the filemap_invalidate_lock() too, along with
+> allocations, truncations.
+> 
+> Because the filemap_invalidate_lock() might be reused for other
+> fs-specific operations, I didn't do the mt_set_external_lock() thing to
+> lock at a low level to avoid nested locking or special maple tree code
+> to avoid taking the lock on other paths.
+
+mt_set_external_lock() is a nop.  It exists purely for lockdep assertions.  Per
+the comment for MT_FLAGS_LOCK_EXTERN, "mt_lock is not used", LOCK_EXTERN simply
+tells maple tree to not use/take mt_lock.   I.e. it doesn't say "take this lock
+instead", it says "I'll handle locking".
 
