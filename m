@@ -1,126 +1,108 @@
-Return-Path: <linux-kernel+bounces-838689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AF72BAFF05
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 11:57:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18E03BAFF11
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 11:59:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DD4B1C6EAD
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 09:57:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C571E17C6BD
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 09:59:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D2E296BCC;
-	Wed,  1 Oct 2025 09:57:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 428BD296BCD;
+	Wed,  1 Oct 2025 09:59:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=listout.xyz header.i=@listout.xyz header.b="OPaM3tXx"
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UM1iNgds"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5428728C5BE;
-	Wed,  1 Oct 2025 09:57:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 951331C8611;
+	Wed,  1 Oct 2025 09:59:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759312624; cv=none; b=W8cGGHtPysRzzEsSFcdI2Hbt4+AQCg6JBaaGfLvExbWYKZiY/XvXAkwgZYzAGgNm5OBZvo4FNkUsQELp/Us8Q8Net/ZThEQqGgKDezpVN3ZG1j2AR5RfICrXIJEUBBUO/3Z++e/UneGduc6ZRpcc6qaAw9ZChWAN/HcbQUQ54Vg=
+	t=1759312747; cv=none; b=YIG/khYvI0wpKg6qX7qvlC4YHT7kTwXsVXHeBdcaJlhJgmnsNJtp+XTjCsrnePVmCoWurw+gKilWTHT80dZYK3Cs+5kMN5qMQLsejSBhK89bKTJd/FLxB/vAEwL/xv0QdpXQFn7sjpAzdETKqJFykhwvaLW95ubsT/bCvGElS64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759312624; c=relaxed/simple;
-	bh=HLYhW50XHaRj/9ZRdiTUSGg8dvCftmf3opE4NOaKOFI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AudaG/hHzWMeyJMIPbpnUrkLodcIH3jurgSlEp66XSnhRLYA1OzgZonSPkV0LhXYgOGrhHrLqBE8JCkj6qZbEfom3pU71vz5NRxKsDuQdy38BzT7MxvhsayhUOXJICL0AaPxFgxlwYH1KkZvSa6r+S1jqCrwjJHJZwjo3i3U6U8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=listout.xyz; spf=pass smtp.mailfrom=listout.xyz; dkim=pass (2048-bit key) header.d=listout.xyz header.i=@listout.xyz header.b=OPaM3tXx; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=listout.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=listout.xyz
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4cc9Ly46cPz9svd;
-	Wed,  1 Oct 2025 11:56:58 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=listout.xyz; s=MBO0001;
-	t=1759312618;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mFOt7Q6Yh4zU6HGqC4KBvS7uM2NDq7KoM7BsVGIWIDU=;
-	b=OPaM3tXxwqFYeforC7OSLfoe/1PgSh+M/aTg91Y5lVIqrdZ9ek6cvWUBeZmiOPZYs/PU/5
-	S5VLqHOdIOa95yPe1isUIonMsGV+Gjmr9TdzK4MrziRzgcDYqSjVV/iLXa+7nUFEJ3o+17
-	jvKSHGCF37sET/Ab9jBb1Ypp0vJ2KaeOCjMKzFPWbjnndxiNep7BDC+H3goBjTurrAh8Mh
-	w0jF1QsacIW2C73/SeLFOD0kpvB2aw4RWmvbhQhuvQavYCO3awMe9FBj78DoG8hBJDxUt+
-	1WVoF7gpqkySf/X+HOKLdPx2skzxR334X03l81GflKkAJ1kKUL6YJEuch5zbxw==
-From: Brahmajit Das <listout@listout.xyz>
-To: syzbot+d36d5ae81e1b0a53ef58@syzkaller.appspotmail.com
-Cc: andrii@kernel.org,
-	ast@kernel.org,
-	bpf@vger.kernel.org,
-	daniel@iogearbox.net,
-	eddyz87@gmail.com,
-	haoluo@google.com,
-	john.fastabend@gmail.com,
-	jolsa@kernel.org,
-	kpsingh@kernel.org,
-	linux-kernel@vger.kernel.org,
-	martin.lau@linux.dev,
-	sdf@fomichev.me,
-	song@kernel.org,
-	syzkaller-bugs@googlegroups.com,
-	yonghong.song@linux.dev,
-	kafai.wan@linux.dev
-Subject: [PATCH v3 2/2] selftests/bpf: Add test for BPF_NEG alu on CONST_PTR_TO_MAP
-Date: Wed,  1 Oct 2025 15:26:13 +0530
-Message-ID: <20251001095613.267475-3-listout@listout.xyz>
-In-Reply-To: <20251001095613.267475-1-listout@listout.xyz>
-References: <68d26227.a70a0220.1b52b.02a4.GAE@google.com>
- <20251001095613.267475-1-listout@listout.xyz>
+	s=arc-20240116; t=1759312747; c=relaxed/simple;
+	bh=NiLZp9i7KhYZ7sEUFqq6diLm8LTYjZqIgXXtKVXc9wU=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ERwgsHd/E2jwukrOg2U3EZMPzQBeyOuejncFNBJv53MD0ky+KoTeYbYkPAWhCRP3cFBHJGELORRxmk8qu07YIwvfxiRj3Zg4zgyTgSGz1Z9G8xKt9qH/a7qGcDe47K9kIQd8RMe5KtzpvMEpy+agm1dzY87PbCvMF/08oftCDGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UM1iNgds; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB296C4CEF4;
+	Wed,  1 Oct 2025 09:59:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759312746;
+	bh=NiLZp9i7KhYZ7sEUFqq6diLm8LTYjZqIgXXtKVXc9wU=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
+	b=UM1iNgdsB2mm9da/VZps4E3syLEiJrW8/NUlOaL0mdt9/ZNqBDjWAKWETTm44WuLh
+	 60mSZlikZ7IMcJmvkuLObmDxpjG0omSGrlTWCUW0NvHD2q3UwBwUGh9OdkWb/3Dprb
+	 Dinj1L3Fbicb6cOpTgFpF7HYhcX3I+upNAaJXqjbY1wXTN+EXUEh3mK6T4+7PuzdYc
+	 QNbO3TjZ2zE3xDgp6n2Noc0pkPsx+6S54bXANIRT319sUuMeUxqmlmyD6nzRe2zMgW
+	 pOEl5x+iSAiaCROXbwXqNhj8lIZa9b04i/E9wYOHKTbllTM2gx6Teb/bRxrb+3Rthe
+	 Jsw1F6rRm3gIQ==
+Message-ID: <bffe3d02-076c-47af-8770-2b89c1dccf08@kernel.org>
+Date: Wed, 1 Oct 2025 11:59:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+From: Hans Verkuil <hverkuil+cisco@kernel.org>
+Subject: Re: [PATCH] staging: media: av7110: Replace msleep() with
+ usleep_range() in tuner function
+To: Pratibimba Khadka <pratibimbakhadka@gmail.com>, mchehab@kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Al Viro <viro@zeniv.linux.org.uk>,
+ "open list:MEDIA INPUT INFRASTRUCTURE (V4L/DVB)"
+ <linux-media@vger.kernel.org>,
+ "open list:STAGING SUBSYSTEM" <linux-staging@lists.linux.dev>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20250626173229.10967-1-pratibimbakhadka@gmail.com>
+Content-Language: en-US, nl
+In-Reply-To: <20250626173229.10967-1-pratibimbakhadka@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: KaFai Wan <kafai.wan@linux.dev>
+On 26/06/2025 19:32, Pratibimba Khadka wrote:
+> Replace msleep(10) with usleep_range(10000, 12000) in the PLL lock
+> waiting loop of nexusca_stv0297_tuner_set_params().
+> 
+> usleep_range() is preferred over msleep() for short delays (< 20ms) as
+> it provides better accuracy and allows the scheduler flexibility for
+> power management optimizations. The 10-12ms range maintains the same
+> timing behavior while giving the kernel scheduler room to optimize.
+> 
+> This change improves timing precision during the PLL lock detection
+> phase without affecting the overall functionality of the tuner
+> configuration process.
+> 
+> Signed-off-by: Pratibimba Khadka <pratibimbakhadka@gmail.com>
 
-Add a test case for BPF_NEG operation on CONST_PTR_TO_MAP. Tests if
-BPF_NEG operation on map_ptr is rejected in unprivileged mode and is a
-scalar value and do not trigger Oops in privileged mode.
+Thank you for your patch, but I'm not taking this patch. It's an old driver,
+and msleep is perfectly fine here.
 
-Signed-off-by: KaFai Wan <kafai.wan@linux.dev>
----
- .../bpf/progs/verifier_value_illegal_alu.c     | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+Regards,
 
-diff --git a/tools/testing/selftests/bpf/progs/verifier_value_illegal_alu.c b/tools/testing/selftests/bpf/progs/verifier_value_illegal_alu.c
-index a9ab37d3b9e2..dcaab61a11a0 100644
---- a/tools/testing/selftests/bpf/progs/verifier_value_illegal_alu.c
-+++ b/tools/testing/selftests/bpf/progs/verifier_value_illegal_alu.c
-@@ -146,6 +146,24 @@ l0_%=:	exit;						\
- 	: __clobber_all);
- }
- 
-+SEC("socket")
-+__description("map_ptr illegal alu op, map_ptr = -map_ptr")
-+__failure __msg("R0 invalid mem access 'scalar'")
-+__failure_unpriv __msg_unpriv("R0 pointer arithmetic prohibited")
-+__flag(BPF_F_ANY_ALIGNMENT)
-+__naked void map_ptr_illegal_alu_op(void)
-+{
-+	asm volatile ("					\
-+	r0 = %[map_hash_48b] ll;			\
-+	r0 = -r0;					\
-+	r1 = 22;					\
-+	*(u64*)(r0 + 0) = r1;				\
-+	exit;						\
-+"	:
-+	: __imm_addr(map_hash_48b)
-+	: __clobber_all);
-+}
-+
- SEC("flow_dissector")
- __description("flow_keys illegal alu op with variable offset")
- __failure __msg("R7 pointer arithmetic on flow_keys prohibited")
--- 
-2.51.0
+	Hans
+
+> ---
+>  drivers/staging/media/av7110/av7110.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/media/av7110/av7110.c b/drivers/staging/media/av7110/av7110.c
+> index bc9a2a40afcb..7f6c610579c8 100644
+> --- a/drivers/staging/media/av7110/av7110.c
+> +++ b/drivers/staging/media/av7110/av7110.c
+> @@ -1827,7 +1827,7 @@ static int nexusca_stv0297_tuner_set_params(struct dvb_frontend *fe)
+>  		if (i2c_transfer(&av7110->i2c_adap, &readmsg, 1) == 1)
+>  			if (data[0] & 0x40)
+>  				break;
+> -		msleep(10);
+> +		usleep_range(10000, 12000);
+>  	}
+>  
+>  	return 0;
 
 
