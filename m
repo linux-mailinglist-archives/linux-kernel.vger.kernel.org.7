@@ -1,135 +1,181 @@
-Return-Path: <linux-kernel+bounces-839242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26A62BB1265
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 17:43:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E247BB127D
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 17:44:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71C271947210
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 15:44:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6DFB1947464
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 15:44:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52DC5299AA9;
-	Wed,  1 Oct 2025 15:42:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ikGAzP3l"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBE8027F195;
+	Wed,  1 Oct 2025 15:42:58 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE6C283FDD;
-	Wed,  1 Oct 2025 15:42:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93CE1280CC8;
+	Wed,  1 Oct 2025 15:42:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759333362; cv=none; b=qW4rVGmXOajfSp7rvF305P0LZ3kQzPzt3tMleNdcabURz77aPtlM6kftlyZSqQMXYOsEYC/WQeXeF4DGHqGMIcOFrQq+VUyjW3gFJPHi9mKmV6807NVEu3uTCcCHD71ySn8kTjPg3yEow6CuKeI8BV5n88iD80yVlYBX9US1F3k=
+	t=1759333378; cv=none; b=hzD+A9rqts6Sntuza02GtTv33YrBqOwExeCvCpJkFv/4srOVXkSMS1i4NQP5LH7173HIuPFu/ivUuL5vN8ejgnEBlUfY38Z6mMV49M+Aj1tzoHtYroXxBO0O0Xpy5SL7RrAXIuZcnYXgOoF4QlZhL0rlRi3aATZ/GdjQV52Ifvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759333362; c=relaxed/simple;
-	bh=aLMjkI0N9pKIbUT9f12rSPBR9IjP2dlhRR4XDWQ8FHM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=NCz4jgeOKq9sOt2LEDMBRIIgMKySxCi+a98AeCarsiYqzWsZfgLu54PXYDP5p1uOHfJQUIOeqqz6xicFUVB12FnrLbbGj6xLUTMcQs/ciGbKRGXx+DZokKNwMDphywjmWDNImvn8POpxHp+QIvjexKfY5tg1fxbsA/TtuJSklBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ikGAzP3l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 86349C2BC87;
-	Wed,  1 Oct 2025 15:42:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759333362;
-	bh=aLMjkI0N9pKIbUT9f12rSPBR9IjP2dlhRR4XDWQ8FHM=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=ikGAzP3lLY/kWgzOTHmFXvaei2ZAA6DjqrGY8DNR/jVj6NC0f+ABiEHEDmJLH9qIG
-	 cIOipNxxNQ5WOmV5wvSICj7a/+6eHnjLi+cxetoHtmHGLAyZKYsAfcGErl+mIVWTh+
-	 FNurO18Y6S+79UCxOqorBjeS7OzrvE5Nx4CQyXUmrtyzsxJX9mW6ovG2rFfSFYJu+X
-	 qqFwF+KY9EAEFbOAZ7nE7c+LcmpbkpFlLpbIgQA5/E5Bp+cZDqOJSOXgDjdfbSTVIF
-	 /bg9esHont9y+fyUoKfDSkzNJfB/Mt+7Igk2DRqwPS0jEgD7UeYmEP8ffZnbjgbSmh
-	 7VmBvm95pObbw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72261CCA470;
-	Wed,  1 Oct 2025 15:42:42 +0000 (UTC)
-From: Samuel Kayode via B4 Relay <devnull+samuel.kayode.savoirfairelinux.com@kernel.org>
-Date: Wed, 01 Oct 2025 11:42:42 -0400
-Subject: [PATCH v12 6/6] MAINTAINERS: add an entry for pf1550 mfd driver
+	s=arc-20240116; t=1759333378; c=relaxed/simple;
+	bh=zl8OvM2e0RnXj6a9R/TsMxcv9Vyq3M+XKQyuJFBKwBs=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lplOrS4W9F1GmebWRBUBxlh/5J2dhqPpJ2HcA1MZ/lYNB5lqiKXLHnY+DU2ABXayAKKSBmxAx4+fm7bxDRzL82COZY7mbyVjw7Mi1vGfnfAKgZiBT1YwmXAA8oIy1jbyMbnOoeKz3b7eH0O5q7psLYlXwOonftkWpRD85uWMxMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ccJyR0RM1z6K8tR;
+	Wed,  1 Oct 2025 23:39:43 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id 94130140276;
+	Wed,  1 Oct 2025 23:42:51 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 1 Oct
+ 2025 16:42:50 +0100
+Date: Wed, 1 Oct 2025 16:42:48 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Terry Bowman <terry.bowman@amd.com>
+CC: <dave@stgolabs.net>, <dave.jiang@intel.com>, <alison.schofield@intel.com>,
+	<dan.j.williams@intel.com>, <bhelgaas@google.com>, <shiju.jose@huawei.com>,
+	<ming.li@zohomail.com>, <Smita.KoralahalliChannabasappa@amd.com>,
+	<rrichter@amd.com>, <dan.carpenter@linaro.org>,
+	<PradeepVineshReddy.Kodamati@amd.com>, <lukas@wunner.de>,
+	<Benjamin.Cheatham@amd.com>, <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	<linux-cxl@vger.kernel.org>, <alucerop@amd.com>, <ira.weiny@intel.com>,
+	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>
+Subject: Re: [PATCH v12 06/25] CXL/AER: Introduce aer_cxl_rch.c into AER
+ driver for handling CXL RCH errors
+Message-ID: <20251001164248.0000182a@huawei.com>
+In-Reply-To: <20250925223440.3539069-7-terry.bowman@amd.com>
+References: <20250925223440.3539069-1-terry.bowman@amd.com>
+	<20250925223440.3539069-7-terry.bowman@amd.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251001-pf1550-v12-6-a3302aa41687@savoirfairelinux.com>
-References: <20251001-pf1550-v12-0-a3302aa41687@savoirfairelinux.com>
-In-Reply-To: <20251001-pf1550-v12-0-a3302aa41687@savoirfairelinux.com>
-To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
- Mark Brown <broonie@kernel.org>, 
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
- Sebastian Reichel <sre@kernel.org>, Frank Li <Frank.li@nxp.com>
-Cc: imx@lists.linux.dev, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, 
- linux-pm@vger.kernel.org, Abel Vesa <abelvesa@kernel.org>, 
- Abel Vesa <abelvesa@linux.com>, Robin Gong <b38343@freescale.com>, 
- Robin Gong <yibin.gong@nxp.com>, 
- Enric Balletbo i Serra <eballetbo@gmail.com>, 
- Sean Nyekjaer <sean@geanix.com>, 
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>, 
- Samuel Kayode <samuel.kayode@savoirfairelinux.com>, 
- Abel Vesa <abelvesa@kernel.org>, Frank Li <Frank.Li@nxp.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1759333360; l=1229;
- i=samuel.kayode@savoirfairelinux.com; s=20250527;
- h=from:subject:message-id;
- bh=GUpwedwZ6iTM/9T8xwTWsw5t21VrPDOJAhQDVkmdBtI=;
- b=2WpW9lNVxnpyGsfvRtsbtDpNK6l2vH8C+8r+KLHpzefyxsWELgNa2VO1R6dhsXCuawvudv3dg
- wpUIgtg1lJKBm+N7Z+21QXTnU0Y4Ff2vUKhqfFEczjiZU9ln+KhAtiV
-X-Developer-Key: i=samuel.kayode@savoirfairelinux.com; a=ed25519;
- pk=TPSQGQ5kywnnPyGs0EQqLajLFbdDu17ahXz8/gxMfio=
-X-Endpoint-Received: by B4 Relay for
- samuel.kayode@savoirfairelinux.com/20250527 with auth_id=412
-X-Original-From: Samuel Kayode <samuel.kayode@savoirfairelinux.com>
-Reply-To: samuel.kayode@savoirfairelinux.com
+X-ClientProxiedBy: lhrpeml100010.china.huawei.com (7.191.174.197) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-From: Samuel Kayode <samuel.kayode@savoirfairelinux.com>
+On Thu, 25 Sep 2025 17:34:21 -0500
+Terry Bowman <terry.bowman@amd.com> wrote:
 
-Add MAINTAINERS entry for pf1550 PMIC.
+> The restricted CXL Host (RCH) AER error handling logic currently resides
+> in the AER driver file, drivers/pci/pcie/aer.c. CXL specific changes are
+> conditionally compiled using #ifdefs.
+> 
+> Improve the AER driver maintainability by separating the RCH specific logic
+> from the AER driver's core functionality and removing the ifdefs. Introduce
+> drivers/pci/pcie/aer_cxl_rch.c for moving the RCH AER logic into.
+> Conditionally compile the file using the CONFIG_CXL_RCH_RAS Kconfig.
+> 
+> Move the CXL logic into the new file but leave helper functions in aer.c
+> for now as they will be moved in future patch for CXL virtual hierarchy
+> handling. Export the handler functions as needed. Export
+> pci_aer_unmask_internal_errors() allowing for all subsystems to use.
+> Avoid multiple declaration moves and export cxl_error_is_native() now to
+> allow for cxl_core access.
+> 
+> Inorder to maintain compilation after the move other changes are required.
+> Change cxl_rch_handle_error() & cxl_rch_enable_rcec() to be non-static
+> inorder for accessing from the AER driver in aer.c.
+> 
+> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+> 
+> ---
+> 
+> Changes in v11->v12:
+> - Rename drivers/pci/pcie/cxl_rch.c to drivers/pci/pcie/aer_cxl_rch.c (Lukas)
+> - Removed forward declararation of 'struct aer_err_info' in pci/pci.h (Terry)
 
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Tested-by: Sean Nyekjaer <sean@geanix.com>
-Signed-off-by: Samuel Kayode <samuel.kayode@savoirfairelinux.com>
----
-v9:
- - Pick up Frank's `Reviewed-by` tag
-v6:
- - Add imx mailing list
----
- MAINTAINERS | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+Unwise given the bot reply.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 97d958c945e4ffa3031590823f7a2867f577ebf3..5cc042b7ffe31a79bbbcbfd1fec7831b3546054d 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -18293,6 +18293,17 @@ F:	Documentation/devicetree/bindings/clock/*imx*
- F:	drivers/clk/imx/
- F:	include/dt-bindings/clock/*imx*
- 
-+NXP PF1550 PMIC MFD DRIVER
-+M:	Samuel Kayode <samuel.kayode@savoirfairelinux.com>
-+L:	imx@lists.linux.dev
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/mfd/nxp,pf1550.yaml
-+F:	drivers/input/misc/pf1550-onkey.c
-+F:	drivers/mfd/pf1550.c
-+F:	drivers/power/supply/pf1550-charger.c
-+F:	drivers/regulator/pf1550-regulator.c
-+F:	include/linux/mfd/pfd1550.h
-+
- NXP PF8100/PF8121A/PF8200 PMIC REGULATOR DEVICE DRIVER
- M:	Jagan Teki <jagan@amarulasolutions.com>
- S:	Maintained
+Fun is that it's only needed I think in the !CONFIG_CXL_RCH_RAS bit as that
+can occur with !CONFIG_PCIE_AER.
 
--- 
-2.50.1
+Other than that, just a few trivial comments.
+
+Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+
+> diff --git a/drivers/pci/pcie/aer_cxl_rch.c b/drivers/pci/pcie/aer_cxl_rch.c
+> new file mode 100644
+> index 000000000000..bfe071eebf67
+> --- /dev/null
+> +++ b/drivers/pci/pcie/aer_cxl_rch.c
+> @@ -0,0 +1,99 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/* Copyright(c) 2025 AMD Corporation. All rights reserved. */
+
+For a code move, the date at least should I think be a bit older.
+
+> +
+> +#include <linux/pci.h>
+> +#include <linux/aer.h>
+> +#include <linux/bitfield.h>
+> +#include "../pci.h"
+> +
+> +static bool is_cxl_mem_dev(struct pci_dev *dev)
+> +{
+> +	/*
+> +	 * The capability, status, and control fields in Device 0,
+> +	 * Function 0 DVSEC control the CXL functionality of the
+> +	 * entire device (CXL 3.0, 8.1.3).
+> +	 */
+> +	if (dev->devfn != PCI_DEVFN(0, 0))
+> +		return false;
+> +
+> +	/*
+> +	 * CXL Memory Devices must have the 502h class code set (CXL
+> +	 * 3.0, 8.1.12.1).
+> +	 */
+> +	if ((dev->class >> 8) != PCI_CLASS_MEMORY_CXL)
+> +		return false;
+> +
+> +	return true;
+> +}
+> +
+> +static int cxl_rch_handle_error_iter(struct pci_dev *dev, void *data)
+> +{
+> +	struct aer_err_info *info = (struct aer_err_info *)data;
+> +	const struct pci_error_handlers *err_handler;
+> +
+> +	if (!is_cxl_mem_dev(dev) || !cxl_error_is_native(dev))
+> +		return 0;
+> +
+> +	/* Protect dev->driver */
+> +	device_lock(&dev->dev);
+
+Unrelated but guard() might be nice to use here.  Perhaps that's
+in a later patch.
+
+> +
+> +	err_handler = dev->driver ? dev->driver->err_handler : NULL;
+> +	if (!err_handler)
+> +		goto out;
+> +
+> +	if (info->severity == AER_CORRECTABLE) {
+> +		if (err_handler->cor_error_detected)
+> +			err_handler->cor_error_detected(dev);
+> +	} else if (err_handler->error_detected) {
+> +		if (info->severity == AER_NONFATAL)
+> +			err_handler->error_detected(dev, pci_channel_io_normal);
+> +		else if (info->severity == AER_FATAL)
+> +			err_handler->error_detected(dev, pci_channel_io_frozen);
+> +	}
+> +out:
+> +	device_unlock(&dev->dev);
+> +	return 0;
+> +}
 
 
 
