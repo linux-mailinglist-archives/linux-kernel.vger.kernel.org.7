@@ -1,92 +1,127 @@
-Return-Path: <linux-kernel+bounces-838473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93910BAF3E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 08:36:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77B81BAF3F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 08:37:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F300175A04
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 06:36:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 315FD3B2FB5
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 06:37:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1951926F297;
-	Wed,  1 Oct 2025 06:35:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2FB826F2A8;
+	Wed,  1 Oct 2025 06:37:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G87NJZAY"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZlLDobO1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC66024167F
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 06:35:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1060D258ED2;
+	Wed,  1 Oct 2025 06:37:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759300553; cv=none; b=NVpqEZ4E/fHwduY1VIKwOhwqRUmR4v2QugE51wpfR3h5pcc7lymCm2QM51RyqfU8ssZ7XM/U0HeBtBFacJa6HZqB8tRuh5YOx6R0P4vXBmZhL34cuCEGBrS4SwX9Fm3uFGB5M3qUFRmuQRr67ULCAUG/SFKZMNSO3RmoY139tN4=
+	t=1759300637; cv=none; b=KMaUhivQYSKBFak139dPjqYcM9/SHX6azAa+naWRB+4PJlqmLfIR0Sa0+stCJxB7g7HYhzcAH/G7htrLlRbRV4t1BDa3lig3gWtPbCk2nyfTK+cC6+CvLspD8lbKK/AXTfjPdvW0SH0jGOS8jcrmIKCLyHlExEoR1XfD4zGyUOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759300553; c=relaxed/simple;
-	bh=8M+rC/tJvmhfbfPzx36kQC9pVw2SFMHjgSHET6OGNF8=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=VewJUwSE1+FxVawxzqjNwxj2c/N78zI75UR1Zuh38YMAMiNiX1m+soYMqAmj1CNcvmXu6RN+UgbKL7/6ILnC9ArCao7lmX+edOpxdXiqvLIISZkj/HaYKhOhBLLU7CbwJijXDvPxs04FLrOtyKzxnpN4cyFny1deJv7CaJHUmdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G87NJZAY; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-6349e3578adso12963318a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 23:35:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759300549; x=1759905349; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=8M+rC/tJvmhfbfPzx36kQC9pVw2SFMHjgSHET6OGNF8=;
-        b=G87NJZAYW9wnvpKWV+TPXsQLH9VLL8sQnB1i+RzjWkkaxkcxa2aZOPS5SEABD28JYW
-         VqgpJKkl6oaZjc33vgsv5qReXc6vCCAvwN/KMrWv6qxuOD05TtyCVmMvxdOffMDtVE5q
-         QID8RlEfwZPfPTSBobJdz24AjVxuz1YMaGzbUrhcWlURs03OXI3Qy1zIOoJOM9eh3AYZ
-         t51urkgfwCVG41ZsMrTMmoRJL+IqJ74YVhYgGDfs6f+T3BJYzDc5suwy8rj4FJwEdvn1
-         L74rc95DOx4FYoqUK0HB+MYo48A5LeLLpotAkuxR9h+X1Way5FqsDPT9frIATvZ7hbxZ
-         767g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759300549; x=1759905349;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8M+rC/tJvmhfbfPzx36kQC9pVw2SFMHjgSHET6OGNF8=;
-        b=ONdX70j7DjZ76KxxoWU87reQRV3bUCPWtVH+1Ma2JGdij7d8qL/Y97JPXyr91QKmWZ
-         043toIdb5AAWtkC62xhwfBtgyjIIY2pHoOvszQX66+8y4CVb2RoKEpsd0L6q3ZZ+AOl3
-         Zzw4e05Zf6A0N8dGjKRUYv6QzDAZeru+WVNjXNRi58OYxv2Jzg/ceFPk8mOtE+SHg37R
-         g585IsD5jxrwxgI8LY2CnOrShOEAVjo18ROias2xSBk7M3UglyO1ne7N1V+15vreUlVE
-         L03d3U4+1r2KIeHa38TZONq+6GJLSsa4nDay3znmlT2TH5c/fc6D7K1BP/Ud/tr6V8qy
-         +0vQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUjZEqKTIEOgfmaHC8cQaRB0Vh0thJ4Pqkb7+ULz9Ia8k61008vpyRhXMgrfa35xDd++YCVz2QKkFpxO94=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXBRb6DhGFpYHk8bDRk8KixstP8/sX9PB4I/eMzJEN/v6eLdO0
-	XK7OyqGYwYeZVfC4FJSOCJIiZyxFkrwsykywUuOEHb9VuXaVmluUUfYgZrR7Wx0QoMPAjFRCex3
-	cazLU9NOHc7MnhgVGrdVlBJX4mwarJVM=
-X-Gm-Gg: ASbGnctRIeD+bLutkKxmQNf7cFP9imKGIi9kRF8pJWYfbshKtnowXKWdf0usOoympBu
-	R+mTA8oItPGc6cWXqy84AFak9ezDUQ6ORny3shG5pJa0QyT9Nbvk0GoBOKQrfZDD1BceM1luTSL
-	kwr/pcZtVv2Hn4OZcUKN7iDT4KAz+2QkZ2LEL/c5p3zoRpP6V/asKhWLhP3UOQMHbVApzpkQoA0
-	wMvcczgI+bwLsRnDyPtLtRHzYrwNDIW
-X-Google-Smtp-Source: AGHT+IFhSXX+nUaYhO80kXEU0yzPB0CgeIXeTq5vOUpqxyC1AtlG+4GsR51QqMGGOM8phE9y25q6g3x8N6SySVVxVDs=
-X-Received: by 2002:a05:6402:358d:b0:634:4e0a:9d32 with SMTP id
- 4fb4d7f45d1cf-63678bce5ffmr2832698a12.7.1759300548968; Tue, 30 Sep 2025
- 23:35:48 -0700 (PDT)
+	s=arc-20240116; t=1759300637; c=relaxed/simple;
+	bh=MFt/DOSbolMTzbPZDX6+CtzfqaXSvRmbS6OfTX0PMhw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gTmQvUlqnkVUUDonuuYsK+XVhfBD4OsHn7IitfkrhGT8y8CAycOP6ArjsJP5/JLj44ACieoWo0zWvPFVL4ZnBLlZtiyo2Aw+K1vR8p1aHNyeQw4MOS+eYsORhlL6wNl58Pm/aCPpcfE4nq1wy1ni1Fd/7vzE7hW5sN1Vq/gQqGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZlLDobO1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CFBEC4CEF4;
+	Wed,  1 Oct 2025 06:37:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759300636;
+	bh=MFt/DOSbolMTzbPZDX6+CtzfqaXSvRmbS6OfTX0PMhw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ZlLDobO16k9jgOQPGvnroZDaSJV7m+bdNHF5dT24W846vxI/aQWNQmEQHNqOvu3Vo
+	 4GqPW8eFbdf5YPoOBENzK2E6P177a998kwMQLJwlcAMooR1mmiYZ7JwnPh72IQxgtT
+	 TYPc+LXrcAdpL1Y1rWSGePxRHA0LE7BJMIDPJ49RXvz259FZUaDdTAriXNGt+vKhxF
+	 YpTgS5wtB7KfDkoT6Y0aVeBgprzqjx/ZTHRMPZzi9yoBIIp4gAz1makUTQtLb++udx
+	 /QY//AgqDwz2irshY+gHM0lYz/qvI0xBCbNXVMgwyGWIbi1UNILwLY0dl0sJ8HkX23
+	 kQ6vPap13hVaw==
+Message-ID: <92fc6fcb-3604-43b2-b66a-7f2a9edc16b4@kernel.org>
+Date: Wed, 1 Oct 2025 15:37:08 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Philippe Simons <simons.philippe@gmail.com>
-Date: Wed, 1 Oct 2025 08:35:37 +0200
-X-Gm-Features: AS18NWCYhciIG058jyCqKMC1WKNMOiPJ72urBhVvFFESB8Xm5N9YYcnUQcQrheg
-Message-ID: <CADomA4-SQF3vyTNBK8gJsGRmC0DTr550S+RVoYiaKBRoW4TNBw@mail.gmail.com>
-Subject: Re: [PATCH RFT] arm64: dts: qcom: sm8250: Add MDSS_CORE reset to mdss
-To: luca.weiss@fairphone.com
-Cc: andersson@kernel.org, Conor Dooley <conor+dt@kernel.org>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, konradybcio@kernel.org, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
-	open list <linux-kernel@vger.kernel.org>, phone-devel@vger.kernel.org, 
-	Rob Herring <robh@kernel.org>, ~postmarketos/upstreaming@lists.sr.ht
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 09/15] blktrace: add definitions for struct
+ blk_io_trace2
+To: Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+ Jens Axboe <axboe@kernel.dk>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-btrace@vger.kernel.org,
+ John Garry <john.g.garry@oracle.com>, Hannes Reinecke <hare@suse.de>,
+ Christoph Hellwig <hch@lst.de>, Naohiro Aota <naohiro.aota@wdc.com>,
+ Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
+ Chaitanya Kulkarni <chaitanyak@nvidia.com>,
+ "Martin K . Petersen" <martin.petersen@oracle.com>
+References: <20250925150231.67342-1-johannes.thumshirn@wdc.com>
+ <20250925150231.67342-10-johannes.thumshirn@wdc.com>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <20250925150231.67342-10-johannes.thumshirn@wdc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Fix panel not enabled on sm8250.
+On 9/26/25 00:02, Johannes Thumshirn wrote:
+> Add definitions for the extended version of the blktrace protocol using a
+> wider action type to be able to record new actions in the kernel.
+> 
+> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+> ---
+>  include/uapi/linux/blktrace_api.h | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+> 
+> diff --git a/include/uapi/linux/blktrace_api.h b/include/uapi/linux/blktrace_api.h
+> index a3b1f35ac026..d58ef484de49 100644
+> --- a/include/uapi/linux/blktrace_api.h
+> +++ b/include/uapi/linux/blktrace_api.h
+> @@ -94,6 +94,7 @@ enum blktrace_notify {
+>  
+>  #define BLK_IO_TRACE_MAGIC	0x65617400
+>  #define BLK_IO_TRACE_VERSION	0x07
+> +#define BLK_IO_TRACE2_VERSION	0x08
+>  
+>  /*
+>   * The trace itself
+> @@ -113,6 +114,21 @@ struct blk_io_trace {
+>  	/* cgroup id will be stored here if exists */
+>  };
+>  
+> +struct blk_io_trace2 {
+> +	__u32 magic;		/* MAGIC << 8 | BLK_IO_TRACE2_VERSION */
+> +	__u32 sequence;		/* event number */
+> +	__u64 time;		/* in nanoseconds */
+> +	__u64 sector;		/* disk offset */
+> +	__u32 bytes;		/* transfer length */
+> +	__u32 pid;		/* who did it */
+> +	__u64 action;		/* what happened */
+> +	__u32 device;		/* device number */
+> +	__u32 cpu;		/* on what cpu did it happen */
+> +	__u16 error;		/* completion error */
+> +	__u16 pdu_len;		/* length of data after this trace */
+> +	__u8 pad[8];
 
-Tested-by: Philippe Simons <simons.philippe@gmail.com>
+Why 8 ? that makes the structure 4B 60 B. Padding to 12 would make it nicely
+aligned to 64B...
 
-Thanks
+> +	/* cgroup id will be stored here if exists */
+> +};
+>  /*
+>   * The remap event
+>   */
+
+
+-- 
+Damien Le Moal
+Western Digital Research
 
