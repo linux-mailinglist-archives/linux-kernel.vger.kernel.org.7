@@ -1,250 +1,180 @@
-Return-Path: <linux-kernel+bounces-838883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31DC6BB05A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 14:29:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6766ABB05B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 14:31:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA83E4A1FED
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 12:28:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 504103C0820
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 12:31:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B16092EB848;
-	Wed,  1 Oct 2025 12:28:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57C1519F127;
+	Wed,  1 Oct 2025 12:31:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pMl7mM9Y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ya11i5CU"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB74D2EAD09;
-	Wed,  1 Oct 2025 12:28:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ED2D18A6AD
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 12:31:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759321730; cv=none; b=LvVSrWSUgwBY7lI9YZ7Q9UR2tvZA8nvp30WSYi9pddQaXVG38VMwbmD37LnMr83s8kTmhgpzTQkydTi3gPsh7HYbwLiDeIYcoq2TaNk+TM+SdrcAHjLB2Th5UwZwG8daYi7NN5hN/KfykI5JARZMrQM+6M1DCvzX+bc0jvxWe1Y=
+	t=1759321899; cv=none; b=hHtlF3LWs7zIBbIDF6VjbMV13xwicAqYzs9nUk4Q1WBp7G2isLabsSIVkVSPC1YKy/GtA0S5aGXEPGM8ZPzxxlOycI+XMKdJk7iS6w3ESUcU+L1DgL6jnTRpEG9H4oUbxR90Is2+GdeQ8i2IMze3m9+6dD5V2hltHrpw8TDJomo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759321730; c=relaxed/simple;
-	bh=qKn+fAbzogVE3WSFyoWrdGdlZst0c1BmRiTf+la+zNM=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VvvRcTCZlmUq5mAbnRlsn6AZ/Ad6BTA6t0VWEeV0g9QO6+4pDgitXTqlT/VbFRJdWtwQLD/CrmqvoHKjV0TarvS3UDKCi+5t6TICrk/wb9XQT/TMB9HWJDOf7XiezoAdATIVAPFVKozj+i/BGix+jFIQY+7KDqGQiICnkY0nSiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pMl7mM9Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40E7EC4CEF4;
-	Wed,  1 Oct 2025 12:28:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759321730;
-	bh=qKn+fAbzogVE3WSFyoWrdGdlZst0c1BmRiTf+la+zNM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=pMl7mM9YEEF37W3mMep75kyO5Fx0kg3eKW0ABdWDvwNIyo3A4iGQkE4NXC+zDwiJc
-	 ABv+66cmawpkgiJgkxmQkLAN0w005pIZJCOi+bw/sn219/gub9GMx4HEMBg2WPpzB0
-	 A+YnPuEujyYd4RYiSp5rKByJyVP4XPTS8aoswYWtLv8PtTehmYCQvsSb4UUplN1LuD
-	 Wb3l7C2kPNVmolXVVbpPd1s0TGThxY7SpzCL0jNpga/PP17sPvz71mi5n7zf6Xkpls
-	 d3xA1CPBjq9RYmGj9XbIcLNpFGfTFWSqX7VtgISInLkjmvVjJbqVy3BsRLFupJlUhu
-	 4QsfSMWaJIl1A==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1v3vwu-0000000AndA-0XY3;
-	Wed, 01 Oct 2025 12:28:48 +0000
-Date: Wed, 01 Oct 2025 13:28:47 +0100
-Message-ID: <86jz1eztz4.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Steven Price <steven.price@arm.com>
-Cc: kvm@vger.kernel.org,
-	kvmarm@lists.linux.dev,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	linux-arm-kernel@lists.infradead.org,
+	s=arc-20240116; t=1759321899; c=relaxed/simple;
+	bh=LT6OsX0lf7O/SnduNG3xCio3YGyWrV3JydVjCVzZwTM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rpNNLXSk3WfFRwDR4Ont8VhDLn/p1IaPq28De8FOflE/VvzKlKIW1la/fIrmg9s0MgXjmhKkHUe8w9BFx/LbvQC54SiQE1HeWvcInndi92PlD1/3goo0qkGdJ0uPo5Dy7rv/RZBv2yaGWQCSNX0juAlcbis9u4iADKh+9Y4n8FA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ya11i5CU; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-3324523dfb2so6858412a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 05:31:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759321898; x=1759926698; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tFVvlaf3lil4r9hOm59jQkgdcxMqRbEMlT/+2CO02kA=;
+        b=Ya11i5CUj4v9iyiAaqwuXToHvsmK8zIeWrKRc3j+SEr8olnmP7231JjS28oPCbmKvJ
+         Yvgzzgu7Zqm2uOySk9L27Qc1Ji+rRoEfZ4JAP9c3OkZSNfUDsJkWMKhfkn9z9CmKqTgZ
+         La9x2kivAahV6YGwWiuoSyZLRUgWCGT1o/1lPThMO8XDdtIs0IYXh1CaoS10x1rXz8Gh
+         k5QNee8CciQs2eSSs8CbnQfYXPcDDNk69vconG9kSwfP6QD3ijVhas0UvNpX21O8bk7T
+         aoL1KwYGrzbyFWuUgNKBu4CVPNdcQ8//jydcj1RuGMXwO3QwDn0x4X9efpwc+RFX+69X
+         dDjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759321898; x=1759926698;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tFVvlaf3lil4r9hOm59jQkgdcxMqRbEMlT/+2CO02kA=;
+        b=EeScxl9B5cmUNDeyrZeLfsEd5Wt8yp30RliCRGzaGcIcYmgmezw8+YKFUPfGTekGDk
+         fapRXk2Ug7KCRoA6n6CMs8o+HDLSJxUW8sTG3tlm3aG3gL/k3w+LNT2xjNml7qUZ7oWI
+         69ErER0wqB/xqL4YLnicmfKwfoAJN489bgKwYQHvDSK+IQdM8Q1FFPU9NwVR27eBaQqH
+         n9hQ6DQ0goGBpWHNW3Jt2pYd/oGOstTOgj8yGiMk22pebVa3rYugJGh+a/84rf+0BiL/
+         eYjVXDbXtB1v1PEhLKBXZSqtgdOh/EzmFESnzIeieHC+VhwhHEnF6qiZbO2GsXjOpXkE
+         rNZg==
+X-Forwarded-Encrypted: i=1; AJvYcCW6BOimpT5m/aL+OugpI577vJevifPzuCD+44d7p0DBsVbtDo+AOyJ1i523HkTq0bapnS8VcqVoXFgLz3c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKs/YC2zmgp9uvAFyEzEhoLtjPKHH7bdYHE3qn7fR0JbROB36G
+	c7qO8g2+nc9PmnhHPk0HhtbC4fYcfFsyxtx3LnV9HfcJURuQKxlOVAsm
+X-Gm-Gg: ASbGncvn3iCR5xGOMRGoTSzECE0rBhseD0pYnssJoLNAIuLahz/hsofX82T8VY0dQiW
+	1h4i+nq5NZzBHDQ4G8ItHd/SZyt4Dbmfr0DW347OhbCl3KisAfy3SGT76HDa3sj0usxbpYINnHH
+	v9TyPMNf74eD4VcDKaryw8jZ2dYAbQc2zr2MGhZ4jVhdUq62QadcHB2/F3eYTlDdHeRGwg+AIfC
+	7ltZtSTcLsVkMNnaYOtXlkKhCxqn4aar6gZpQMH/VGr6hA2K9s9pLVRu32x164cXxXl9rGOuolO
+	6m7R3BaJY/17eVPBgPYIqP3ICTY+WGLuJpL9UxILzQVFzF13B851MzpPzRtDHdoHYCMyeXWsekz
+	hpFqJYLiHkvmeNN7ngKrS8FQsnBIa0SEzcN83/v4lrSe7pGrU4Eex
+X-Google-Smtp-Source: AGHT+IHSyE7SmrpnfhhqOTD87lPajcRX58kiO1gqfrmzhvB+s9NGFmNKGY55vASwBDmRxXxeRC63WA==
+X-Received: by 2002:a17:90b:4d82:b0:329:7285:6941 with SMTP id 98e67ed59e1d1-339a6f36bc3mr3479360a91.19.1759321897400;
+        Wed, 01 Oct 2025 05:31:37 -0700 (PDT)
+Received: from y740.local ([2401:4900:1f31:e91f:2d6d:e8a8:f2d7:94ae])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-339a6e9f0bcsm2277865a91.1.2025.10.01.05.31.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Oct 2025 05:31:36 -0700 (PDT)
+From: Sidharth Seela <sidharthseela@gmail.com>
+To: antonio@openvpn.net,
+	sd@queasysnail.net,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	shuah@kernel.org
+Cc: david.hunter.linux@gmail.com,
+	netdev@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Joey Gouly <joey.gouly@arm.com>,
-	Alexandru Elisei <alexandru.elisei@arm.com>,
-	Christoffer Dall <christoffer.dall@arm.com>,
-	Fuad Tabba <tabba@google.com>,
-	linux-coco@lists.linux.dev,
-	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
-	Gavin Shan <gshan@redhat.com>,
-	Shanker Donthineni <sdonthineni@nvidia.com>,
-	Alper Gun <alpergun@google.com>,
-	"Aneesh Kumar K . V" <aneesh.kumar@kernel.org>,
-	Emi Kisanuki <fj0570is@fujitsu.com>,
-	Vishal Annapurve <vannapurve@google.com>
-Subject: Re: [PATCH v10 06/43] arm64: RME: Define the user ABI
-In-Reply-To: <20250820145606.180644-7-steven.price@arm.com>
-References: <20250820145606.180644-1-steven.price@arm.com>
-	<20250820145606.180644-7-steven.price@arm.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	Sidharth Seela <sidharthseela@gmail.com>
+Subject: [PATCH net v6] selftest:net:ovpn: Fix uninit return values
+Date: Wed,  1 Oct 2025 18:01:08 +0530
+Message-ID: <20251001123107.96244-2-sidharthseela@gmail.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: steven.price@arm.com, kvm@vger.kernel.org, kvmarm@lists.linux.dev, catalin.marinas@arm.com, will@kernel.org, james.morse@arm.com, oliver.upton@linux.dev, suzuki.poulose@arm.com, yuzenghui@huawei.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, joey.gouly@arm.com, alexandru.elisei@arm.com, christoffer.dall@arm.com, tabba@google.com, linux-coco@lists.linux.dev, gankulkarni@os.amperecomputing.com, gshan@redhat.com, sdonthineni@nvidia.com, alpergun@google.com, aneesh.kumar@kernel.org, fj0570is@fujitsu.com, vannapurve@google.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed, 20 Aug 2025 15:55:26 +0100,
-Steven Price <steven.price@arm.com> wrote:
-> 
-> There is one (multiplexed) CAP which can be used to create, populate and
-> then activate the realm.
-> 
-> Co-developed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Signed-off-by: Steven Price <steven.price@arm.com>
-> Reviewed-by: Gavin Shan <gshan@redhat.com>
-> ---
-> Changes since v9:
->  * Improvements to documentation.
->  * Bump the magic number for KVM_CAP_ARM_RME to avoid conflicts.
-> Changes since v8:
->  * Minor improvements to documentation following review.
->  * Bump the magic numbers to avoid conflicts.
-> Changes since v7:
->  * Add documentation of new ioctls
->  * Bump the magic numbers to avoid conflicts
-> Changes since v6:
->  * Rename some of the symbols to make their usage clearer and avoid
->    repetition.
-> Changes from v5:
->  * Actually expose the new VCPU capability (KVM_ARM_VCPU_REC) by bumping
->    KVM_VCPU_MAX_FEATURES - note this also exposes KVM_ARM_VCPU_HAS_EL2!
-> ---
->  Documentation/virt/kvm/api.rst    | 71 +++++++++++++++++++++++++++++++
->  arch/arm64/include/uapi/asm/kvm.h | 49 +++++++++++++++++++++
->  include/uapi/linux/kvm.h          | 10 +++++
->  3 files changed, 130 insertions(+)
-> 
-> diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
-> index 6aa40ee05a4a..69c0a9eba6c5 100644
-> --- a/Documentation/virt/kvm/api.rst
-> +++ b/Documentation/virt/kvm/api.rst
-> @@ -3549,6 +3549,11 @@ Possible features:
->  	  Depends on KVM_CAP_ARM_EL2_E2H0.
->  	  KVM_ARM_VCPU_HAS_EL2 must also be set.
->  
-> +	- KVM_ARM_VCPU_REC: Allocate a REC (Realm Execution Context) for this
-> +	  VCPU. This must be specified on all VCPUs created in a Realm VM.
-> +	  Depends on KVM_CAP_ARM_RME.
-> +	  Requires KVM_ARM_VCPU_FINALIZE(KVM_ARM_VCPU_REC).
-> +
->  4.83 KVM_ARM_PREFERRED_TARGET
->  -----------------------------
->  
-> @@ -5122,6 +5127,7 @@ Recognised values for feature:
->  
->    =====      ===========================================
->    arm64      KVM_ARM_VCPU_SVE (requires KVM_CAP_ARM_SVE)
-> +  arm64      KVM_ARM_VCPU_REC (requires KVM_CAP_ARM_RME)
->    =====      ===========================================
->  
->  Finalizes the configuration of the specified vcpu feature.
-> @@ -6476,6 +6482,30 @@ the capability to be present.
->  
->  `flags` must currently be zero.
->  
-> +4.144 KVM_ARM_VCPU_RMM_PSCI_COMPLETE
-> +------------------------------------
-> +
-> +:Capability: KVM_CAP_ARM_RME
-> +:Architectures: arm64
-> +:Type: vcpu ioctl
-> +:Parameters: struct kvm_arm_rmm_psci_complete (in)
-> +:Returns: 0 if successful, < 0 on error
-> +
-> +::
-> +
-> +  struct kvm_arm_rmm_psci_complete {
-> +	__u64 target_mpidr;
-> +	__u32 psci_status;
-> +	__u32 padding[3];
-> +  };
-> +
-> +Where PSCI functions are handled by user space, the RMM needs to be informed of
-> +the target of the operation using `target_mpidr`, along with the status
-> +(`psci_status`). The RMM v1.0 specification defines two functions that require
-> +this call: PSCI_CPU_ON and PSCI_AFFINITY_INFO.
-> +
-> +If the kernel is handling PSCI then this is done automatically and the VMM
-> +doesn't need to call this ioctl.
+Fix functions that return undefined values. These issues were caught by
+running clang using LLVM=1 option.
 
-Why should userspace involved in this? Why can't this be a
-notification that the host delivers to the RMM when the vcpu is about
-to run?
+Clang warnings are as follows:
+ovpn-cli.c:1587:6: warning: variable 'ret' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
+ 1587 |         if (!sock) {
+      |             ^~~~~
+ovpn-cli.c:1635:9: note: uninitialized use occurs here
+ 1635 |         return ret;
+      |                ^~~
+ovpn-cli.c:1587:2: note: remove the 'if' if its condition is always false
+ 1587 |         if (!sock) {
+      |         ^~~~~~~~~~~~
+ 1588 |                 fprintf(stderr, "cannot allocate netlink socket\n");
+      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 1589 |                 goto err_free;
+      |                 ~~~~~~~~~~~~~~
+ 1590 |         }
+      |         ~
+ovpn-cli.c:1584:15: note: initialize the variable 'ret' to silence this warning
+ 1584 |         int mcid, ret;
+      |                      ^
+      |                       = 0
+ovpn-cli.c:2107:7: warning: variable 'ret' is used uninitialized whenever switch case is taken [-Wsometimes-uninitialized]
+ 2107 |         case CMD_INVALID:
+      |              ^~~~~~~~~~~
+ovpn-cli.c:2111:9: note: uninitialized use occurs here
+ 2111 |         return ret;
+      |                ^~~
+ovpn-cli.c:1939:12: note: initialize the variable 'ret' to silence this warning
+ 1939 |         int n, ret;
+      |                   ^
+      |
 
->  
->  .. _kvm_run:
->  
-> @@ -8662,6 +8692,47 @@ This capability indicate to the userspace whether a PFNMAP memory region
->  can be safely mapped as cacheable. This relies on the presence of
->  force write back (FWB) feature support on the hardware.
->  
-> +7.44 KVM_CAP_ARM_RME
-> +--------------------
-> +
-> +:Architectures: arm64
-> +:Target: VM
-> +:Parameters: args[0] provides an action, args[1] points to a structure in
-> +             memory for the action.
-> +:Returns: 0 on success, negative value on error
-> +
-> +Used to configure and set up the memory for a Realm. The available actions are:
-> +
-> +================================= =============================================
-> + KVM_CAP_ARM_RME_CONFIG_REALM     Takes struct arm_rme_config as args[1] and
-> +                                  configures realm parameters prior to it being
-> +                                  created.
-> +
-> +                                  Options are ARM_RME_CONFIG_RPV to set the
-> +                                  "Realm Personalization Value" and
-> +                                  ARM_RME_CONFIG_HASH_ALGO to set the hash
-> +                                  algorithm.
-> +
-> + KVM_CAP_ARM_RME_CREATE_REALM     Request the RMM to create the realm. The
-> +                                  realm's configuration parameters must be set
-> +                                  first.
-> +
-> + KVM_CAP_ARM_RME_INIT_RIPAS_REALM Takes struct arm_rme_init_ripas as args[1]
-> +                                  and sets the RIPAS (Realm IPA State) to
-> +                                  RIPAS_RAM of a specified area of the realm's
-> +                                  IPA.
-> +
-> + KVM_CAP_ARM_RME_POPULATE_REALM   Takes struct arm_rme_populate_realm as
-> +                                  args[1] and populates a region of protected
-> +                                  address space by copying the data from the
-> +                                  shared alias.
-> +
-> + KVM_CAP_ARM_RME_ACTIVATE_REALM   Request the RMM to activate the realm. No
-> +                                  changes can be made to the Realm's populated
-> +                                  memory, IPA state, configuration parameters
-> +                                  or vCPU additions after this step.
-> +================================= =============================================
-> +
+Fixes: 959bc330a439 ("testing/selftests: add test tool and scripts for ovpn module")
+Signed-off-by: Sidharth Seela <sidharthseela@gmail.com>
+---
+v6:
+	- Remove stray line near Fixes tag.
+	- Include ovpn prefix in commit message.
 
-These are not capabilities, they are actions that the VMM may perform
-on a VM. You don't configure a VM using capabilities. You use it to
-buy into some behaviours, but that's all.
+v5:
+	- Assign -ENOMEM to ret inside if block.
+	- Assign -EINVAL to ret inside case block.
+v4:
+	- Move changelog below sign-off.
+	- Remove double-hyphens in commit description.
+v3:
+	- Use prefix net.
+	- Remove so_txtime fix as default case calls error().
+	- Changelog before sign-off.
+	- Three dashes after sign-off
+v2:
+	- Use subsystem name "net".
+	- Add fixes tags.
+	- Remove txtimestamp fix as default case calls error.
+	- Assign constant error string instead of NULL.
 
-And then there is the semantic of this stuff. Why do I need something
-like KVM_CAP_ARM_RME_CREATE_REALM when I can just pass this as part of
-the VM type? Why do I need a new way to describe memory region when we
-already have memslots for that exact purpose?
-
-Overall, you are leaking the RMM interface into userspace, and that's
-an absolute show-stopper. We have an API, it is not pretty, but it
-exists. We don't need another one that will be just as broken. If the
-RMM needs some impedance matching, that's the kernel's job.
-
-	M.
-
+diff --git a/tools/testing/selftests/net/ovpn/ovpn-cli.c b/tools/testing/selftests/net/ovpn/ovpn-cli.c
+index 9201f2905f2c..8d0f2f61923c 100644
+--- a/tools/testing/selftests/net/ovpn/ovpn-cli.c
++++ b/tools/testing/selftests/net/ovpn/ovpn-cli.c
+@@ -1586,6 +1586,7 @@ static int ovpn_listen_mcast(void)
+ 	sock = nl_socket_alloc();
+ 	if (!sock) {
+ 		fprintf(stderr, "cannot allocate netlink socket\n");
++		ret = -ENOMEM;
+ 		goto err_free;
+ 	}
+ 
+@@ -2105,6 +2106,7 @@ static int ovpn_run_cmd(struct ovpn_ctx *ovpn)
+ 		ret = ovpn_listen_mcast();
+ 		break;
+ 	case CMD_INVALID:
++		ret = -EINVAL;
+ 		break;
+ 	}
+ 
 -- 
-Without deviation from the norm, progress is not possible.
+2.47.3
+
 
