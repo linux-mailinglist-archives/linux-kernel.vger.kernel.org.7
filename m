@@ -1,203 +1,153 @@
-Return-Path: <linux-kernel+bounces-838928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7E77BB0716
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 15:15:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9999EBB070D
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 15:14:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F3534A56B7
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 13:15:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D72919466BC
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 13:14:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB91C2ECD1D;
-	Wed,  1 Oct 2025 13:15:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F10A2EC562;
+	Wed,  1 Oct 2025 13:14:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hdsHXDKv"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZBSpN/gT"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 644762ECD01
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 13:15:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7129F12C544
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 13:14:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759324512; cv=none; b=od+Z6Mf/rwnQWMWVS2Si93r6bW3N5oshMgf8f+xuKIAim4xgd6w8a39oDgzeQ5ESxCiFpEm2PmZD/ShaN4YZT6Ol4b3ug6Nxa+FlLcTrEfUHUUMLGAUXBUxR8WpDMzrZSVkr9q1uDw/Dc0s62VQi8ocsa8OPBz6Y5Qr2UY/Bq6s=
+	t=1759324468; cv=none; b=mgdtKX5/jvwDwJB+0ZVZ4F37WPtbYyuJGM5bt4dw2Jjt9ihAR+f1cqGvN3E5eU4jldDltOthOnY5I6DG2nCb+znGNfFRrnRA/P8iFlFpPWKQ006Jv2OZeQ66RyrkU2jFMAHlByjcjB8mmeTpmscMCHiEZkglkpWQ/H27QQSk0Pw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759324512; c=relaxed/simple;
-	bh=uG4s+VHOckvehOTawPZf/vYBPxoNrNy6W//+X9+EXrc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TEVRi5FrozZL7dCVHTocOgiSATV4R1qYvwo6ai0EFtUQFNIcolIR/TDrBFeKpAymUc2u7LU5eqZlNnM03zD31FFu0FbbAjCIQdSglxit5kIHPYzkiQqSADEB5noKQbi60B0fG5/BAWXTxBC1xcauoX3P7x2S0BGI/H/eaWQY9uI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hdsHXDKv; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759324509;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0bx8l14XwDJ5Pj1IP3Yz3RKQJDDa242dHafLA9wGw0Q=;
-	b=hdsHXDKvIwMWx4lqtiDvJ6r5sQJsCmwOvVMUfLElXTCtWxJl07qIeTJREf14Kouv/Lurgz
-	sWwqGvYVcyAHDgvMY9zZQTKW0moAA3cK355I0XMnZSA1zz7ZhorYgPNy+gHxPG8I3MEy0r
-	SisB4y9XUv9E8y3dfmTIYzRnVBuwZC8=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-689-04H7c5e_P1KSj8ulv9Q36w-1; Wed,
- 01 Oct 2025 09:15:08 -0400
-X-MC-Unique: 04H7c5e_P1KSj8ulv9Q36w-1
-X-Mimecast-MFC-AGG-ID: 04H7c5e_P1KSj8ulv9Q36w_1759324507
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B79E619774EF;
-	Wed,  1 Oct 2025 13:15:06 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.40])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id B3E8030002C5;
-	Wed,  1 Oct 2025 13:15:02 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed,  1 Oct 2025 15:13:44 +0200 (CEST)
-Date: Wed, 1 Oct 2025 15:13:39 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>, David Howells <dhowells@redhat.com>,
-	Ingo Molnar <mingo@redhat.com>, Li RongQing <lirongqing@baidu.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC 2/1] seqlock: make the read_seqbegin_or_lock() API more
- simple and less error-prone ?
-Message-ID: <20251001131337.GC20441@redhat.com>
-References: <20250928161953.GA3112@redhat.com>
- <20250928162054.GB3121@redhat.com>
- <20251001130229.GO3245006@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1759324468; c=relaxed/simple;
+	bh=5o423ZijRvd8zuSTV5jup258SDTngq09c6GvYer2C1c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RWSHaT3HQ+rEwTOj//dG/BVA9JRuq2Ix09htSuzQUo/IMRJqCWj9618/oRQb7G7NRoEvXVjZEeZHa/AgSgvu+ZfqHAOrCMZ0aUgYhZO71/4UEYTz+m9tSXjhAInsT30X2WrI9wd/c7mSmIRglrXeG9rTRypnuioVkBBt59/tJ/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZBSpN/gT; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-78af9ebe337so369187b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 06:14:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759324465; x=1759929265; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QCTEJhugcYnaoj/BbhJFZS8Yru0sn+mS/h4vRBTxOWU=;
+        b=ZBSpN/gTcUNQzuoRLQM2ZWMU5eEII2WEGyVZYx37w4F578Zc/2UuQ3ehmZjwcjbGad
+         0d60oiOJTQOVgAmFZT84oFqRhuDbwHUTwU/rsPB+NzqHZQ8Em8r0WFCbJu911liZ9sOl
+         bgU31V/KjOz6571B3RhiciyPpfqdlzS6LU06DOgHrqkcqYNANKrxM+aodu7qlqB1/btq
+         Oy+AMA+RpQFPcqOUI5ElWxyI8nVo742m/GxMsijimNbtoBrx2r67AUTWq87c+6WC/Fbb
+         h9W7Rd3xk84k5LN0Orm0bbDVQO0VFjccD7ndHztnaPHAi/rFzr2fLS83XHD/P9WdPbZr
+         h12A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759324465; x=1759929265;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QCTEJhugcYnaoj/BbhJFZS8Yru0sn+mS/h4vRBTxOWU=;
+        b=CzMvB0PFDSLI5LQ0fWlcLYUwh8+Fy2xOlXKcZiVzIx6KyCXPQShahVIhUkF3w982ZG
+         pgHMvBFeVh1z+c17f9UVEtBt4odKdPeUj8IPrlpZJVXJrPJPnro00kjp2cw3KY5MUNvH
+         HKXQ7mA79vVlBD+USasSzJVzNQIa+Ka4y2X0f2NNj944547YOS68kjvNfkx00Rpg8TxU
+         SVZlryWhbSdVEU0JWN6/A613WOY4vebG2iWgzSP1cnBj56iq3Y3IdjcjpV4JsHi3bSQq
+         dgWbogPyz2kZRRsaXH5Kb5P32PXaiZdy7bBEDOelSfseVPjb2A4HqNo455apaZm4kL6t
+         Ru9A==
+X-Forwarded-Encrypted: i=1; AJvYcCV27Fk3cbzdmiUkI7kfq2pH7a31ho08gXecpxmezCamUvHSC/l8fLfTZ+En9ARq8taHIeYFsFktW2un2W4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxavj5u9/KMp0b/RQM0d4rsi+Gq7Wxqj7VpFQWVzc/nvKKJA9jt
+	m8XSNx/l5b/e2ZxhMoWaxtOVwWJOjNBJn+fEHhTOor2yRjqvtYRAoiek
+X-Gm-Gg: ASbGncuFUqQXIzogeG1WK3q+YGtOxdrX6OQLaoCz0gKY9HY48jcg1z/8iGtvKvaOd7t
+	2AohXwFejkFEUWxMu0KNX5kXFQKQbq9gBeV/0r8xSxIshwyLcLgZUJyxXoakMaajHHzky3GASys
+	a/lAQUiVReyxIYOIm27kYexHNk5YrlSsj8AovAYwy+z6xDwP6+fS03NjMeHTQPwYaTDXdraEvq7
+	taccVsZyb+knWBSBoTjhpPC1O+EKl8eFkQSUtq9sBlBGvN2FrFiyEbl0Z9jirZzyGvQryfECbBe
+	5vGKQFJ/dFHD0WK2tLV9jasIUD4iA1Fsr2y6HHJQw7PIeu0pN2W1WhXttb8qH+iiJuwMDiKgljK
+	7VEf0nTta7lh0n2zHnLmmEtR2XDvBQfoOTitAzdimgZwxhNk60F22WbFNRw02kj7OYv6lLgwE1E
+	pqTQwJvW2kiW4bLRbSHMa1TSKX2m9HIRJopTAFzZdKvkNvCpY=
+X-Google-Smtp-Source: AGHT+IEmzoGxhoPxh6/P3t6DmI1zkLDTL0S0tBdY+wi8AVFx9T7GOFm/8D8Q0FXSalhenNgGW0DD0A==
+X-Received: by 2002:a05:6a00:98f:b0:781:1a9f:2abb with SMTP id d2e1a72fcca58-78af422e5admr4501627b3a.24.1759324464584;
+        Wed, 01 Oct 2025 06:14:24 -0700 (PDT)
+Received: from debian.domain.name ([223.185.128.16])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78102b231ebsm16308139b3a.52.2025.10.01.06.14.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Oct 2025 06:14:23 -0700 (PDT)
+From: I Viswanath <viswanathiyyappan@gmail.com>
+To: Thangaraj.S@microchip.com,
+	Rengarajan.S@microchip.com,
+	UNGLinuxDriver@microchip.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: netdev@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev,
+	david.hunter.linux@gmail.com,
+	I Viswanath <viswanathiyyappan@gmail.com>
+Subject: [PATCH net] net: usb: lan78xx: fix use of improperly initialized dev->chipid in lan78xx_reset
+Date: Wed,  1 Oct 2025 18:44:09 +0530
+Message-ID: <20251001131409.155650-1-viswanathiyyappan@gmail.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251001130229.GO3245006@noisy.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Transfer-Encoding: 8bit
 
-On 10/01, Peter Zijlstra wrote:
-> On Sun, Sep 28, 2025 at 06:20:54PM +0200, Oleg Nesterov wrote:
->
-> > To simplify, suppose we add the new helper
-> >
-> > 	static inline int need_seqretry_xxx(seqlock_t *lock, int *seq)
-> > 	{
-> > 		int ret = !(*seq & 1) && read_seqretry(lock, *seq);
-> >
-> > 		if (ret)
-> > 			++*seq;	/* make this counter odd */
-                        ^^^^^^
-Hmm. just
-			*seq = 1;
-makes more sense
+dev->chipid is used in lan78xx_init_mac_address before it's initialized:
 
-> How about need_seqretry_or_lock() to stay in theme with
-> read_seqbegin_or_lock().
+lan78xx_reset() {
+    lan78xx_init_mac_address()
+        lan78xx_read_eeprom()
+            lan78xx_read_raw_eeprom() <- dev->chipid is used here
 
-I am fine with any name ;) This one looks good to me.
+    dev->chipid = ... <- dev->chipid is initialized correctly here
+}
 
-> > 	#define __XXX(lock, seq, lockless)	\
-> > 		for (int lockless = 1, seq; xxx(lock, &seq, lockless); lockless = 0)
-> >
-> > 	#define XXX(lock)	\
-> > 		__XXX(lock, __UNIQUE_ID(seq), __UNIQUE_ID(lockless))
-> >
-> >
-> > ?
->
-> Oh gawd, that thing had better not have control flow escape that loop.
+Reorder initialization so that dev->chipid is set before calling
+lan78xx_init_mac_address().
 
-Yes, yes. "continue" is fine, but break/return won't work.
-
-> But yes, I suppose something like this is far more useable than the
-> current thing.
-
-OK, great. So, modulo naming, how about the patch below?
-
-The new stuff should obviously go to include/linux/seqlock.h, xxx() can be
-probably uninlined. thread_group_cputime() is changed as an example.
-
-Oleg.
-
-
---- a/kernel/sched/cputime.c
-+++ b/kernel/sched/cputime.c
-@@ -306,6 +306,35 @@ static u64 read_sum_exec_runtime(struct task_struct *t)
- }
- #endif /* !CONFIG_64BIT */
+Signed-off-by: I Viswanath <viswanathiyyappan@gmail.com>
+---
  
-+static inline int xxx(seqlock_t *lock, int lockless, int *seq, unsigned long *flags)
-+{
-+	if (lockless) {
-+		*seq = read_seqbegin(lock);
-+		return 1;
-+	} else if (*seq & 1) {
-+		if (flags)
-+			read_sequnlock_excl_irqrestore(lock, *flags);
-+		else
-+			read_sequnlock_excl(lock);
-+		return 0;
-+	} else if (read_seqretry(lock, *seq)) {
-+		if (flags)
-+			read_seqlock_excl_irqsave(lock, *flags);
-+		else
-+			read_seqlock_excl(lock);
-+		*seq = 1;
-+		return 1;
-+	} else {
-+		return 0;
-+	}
-+}
-+
-+#define __XXX(lock, lockless, seq, flags)	\
-+	for (int lockless = 1, seq; xxx(lock, lockless, &seq, flags); lockless = 0)
-+
-+#define XXX(lock, flags)	\
-+	__XXX(lock, __UNIQUE_ID(lockless), __UNIQUE_ID(seq), flags)
-+
- /*
-  * Accumulate raw cputime values of dead tasks (sig->[us]time) and live
-  * tasks (sum on group iteration) belonging to @tsk's group.
-@@ -315,7 +344,6 @@ void thread_group_cputime(struct task_struct *tsk, struct task_cputime *times)
- 	struct signal_struct *sig = tsk->signal;
- 	u64 utime, stime;
- 	struct task_struct *t;
--	unsigned int seq, nextseq;
- 	unsigned long flags;
- 
- 	/*
-@@ -330,11 +358,7 @@ void thread_group_cputime(struct task_struct *tsk, struct task_cputime *times)
- 		(void) task_sched_runtime(current);
- 
- 	rcu_read_lock();
--	/* Attempt a lockless read on the first round. */
--	nextseq = 0;
--	do {
--		seq = nextseq;
--		flags = read_seqbegin_or_lock_irqsave(&sig->stats_lock, &seq);
-+	XXX(&sig->stats_lock, &flags) {
- 		times->utime = sig->utime;
- 		times->stime = sig->stime;
- 		times->sum_exec_runtime = sig->sum_sched_runtime;
-@@ -345,10 +369,7 @@ void thread_group_cputime(struct task_struct *tsk, struct task_cputime *times)
- 			times->stime += stime;
- 			times->sum_exec_runtime += read_sum_exec_runtime(t);
+KMSAN didn't detect this issue because dev->chipid is zero
+initialized from alloc_etherdev
+
+ drivers/net/usb/lan78xx.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
+index 1ff25f57329a..f3831ecaaec1 100644
+--- a/drivers/net/usb/lan78xx.c
++++ b/drivers/net/usb/lan78xx.c
+@@ -3238,10 +3238,6 @@ static int lan78xx_reset(struct lan78xx_net *dev)
  		}
--		/* If lockless access failed, take the lock. */
--		nextseq = 1;
--	} while (need_seqretry(&sig->stats_lock, seq));
--	done_seqretry_irqrestore(&sig->stats_lock, seq, flags);
-+	}
- 	rcu_read_unlock();
- }
+ 	} while (buf & HW_CFG_LRST_);
  
+-	ret = lan78xx_init_mac_address(dev);
+-	if (ret < 0)
+-		return ret;
+-
+ 	/* save DEVID for later usage */
+ 	ret = lan78xx_read_reg(dev, ID_REV, &buf);
+ 	if (ret < 0)
+@@ -3250,6 +3246,10 @@ static int lan78xx_reset(struct lan78xx_net *dev)
+ 	dev->chipid = (buf & ID_REV_CHIP_ID_MASK_) >> 16;
+ 	dev->chiprev = buf & ID_REV_CHIP_REV_MASK_;
+ 
++	ret = lan78xx_init_mac_address(dev);
++	if (ret < 0)
++		return ret;
++
+ 	/* Respond to the IN token with a NAK */
+ 	ret = lan78xx_read_reg(dev, USB_CFG0, &buf);
+ 	if (ret < 0)
+-- 
+2.47.3
 
 
