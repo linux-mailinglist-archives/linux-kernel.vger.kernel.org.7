@@ -1,124 +1,138 @@
-Return-Path: <linux-kernel+bounces-838962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EAC8BB083A
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 15:34:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CC73BB083D
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 15:35:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 342927A49DE
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 13:33:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32A953BAABE
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 13:35:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 376802EE268;
-	Wed,  1 Oct 2025 13:34:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D92722EE5F5;
+	Wed,  1 Oct 2025 13:35:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="htDhPPR8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D3As7FdG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9056712C544;
-	Wed,  1 Oct 2025 13:34:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 323BD12C544;
+	Wed,  1 Oct 2025 13:35:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759325676; cv=none; b=e7b9Bbfe/mr+92uRAKvAJul6n5XpNG4sL50zOFcHhYdjnjZ4swtY84me3N7W1cLbQX7iyapSXljpdNvUcALu+G8KxR/3dwPBh/XC5ZiLmhaEePPfA4PBT9QP1b210mZf3DXTZWTEJSr0r1nNGD4E/ZpKCi52rvHic+U5BCArn8U=
+	t=1759325744; cv=none; b=DwTO+QeumRjdL/0MYxffKX3izcW8P5XovttF+ZybvrDGgy13Z6eTF6PWA3PTAz/xUecSIdHeIvITXLlQMO05oe4wXqSTqOzaso3n9NehAI4fUc6w/Nj64xg67atPHSbdNEniyrs0joeOPaaspze+AycfnExXAS2kUjN39HhfYtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759325676; c=relaxed/simple;
-	bh=ZE4N66J3ktY8IRfvtbMhGxcc6MKDZ6AJh2VWt6887no=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hs2MY5GoTU5W9nCd0aG3HZy+Yy0aXX3W5zBvKB47xnGtR5+eaNc6ZrkhrO6jsUn7C25LMzdRLG2Su0PpzcIcTE44203LShEM0mnq1UY9oodW41RpBjwFj5kyBdSg/0VEJy9wzj0tfkUJ1YXm5yW2DQDEyZ3podMVTc2j35uJKss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=htDhPPR8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80094C4CEF4;
-	Wed,  1 Oct 2025 13:34:35 +0000 (UTC)
+	s=arc-20240116; t=1759325744; c=relaxed/simple;
+	bh=ugtWNem9sZvjDOpwvATrh1Z6YMwTTTLfOSaGjIGvpxs=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kI5VjFkDaaXKbaK0anU7wyNfqtaXfBWKqxtniyv7+gad2uXSDzJhO97UaGwzd5psbY75vXeiTwXKevDiK5mdLeOd8yiZys78xfL17y8jKArP4PkrlU1J3uJrCvMz3vFaCGOJpJzipRupFHsTBsKgjzwd6YhDXZ/xrOH4BzXcf38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D3As7FdG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90054C116C6;
+	Wed,  1 Oct 2025 13:35:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759325676;
-	bh=ZE4N66J3ktY8IRfvtbMhGxcc6MKDZ6AJh2VWt6887no=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=htDhPPR82n+Azi7xVfwV9rx1ZLKXr1DAbbOstPZbz5WID7FmNghgZI18zRXPN1QhS
-	 ZpzqVLoOUQ/gGfCQZ2Sf/taK7lVlMJyY6fzgdNKdtLRpWScoo9UFu0ONM8h/bhJU2A
-	 s8iNwkY+g9cbtXZ83gEaeCYSDAtTqT8DaD6B2IeOSOeq1OdYYq3n3uwNioWt4tLBY7
-	 mLx7GxeqbiFKj/DT6GrVq5xgbIZbX2PSHP4zE9DcOJoaLO3EZxnRuHhs3vFdfaUs75
-	 gsEoAYOWwL+1xRq7+nNiXwiWqnXM4U4uSTSGjuvJMGjn7ezehq/jHuMSPTay9J8+iT
-	 0J+AOl99jAE8A==
-Date: Wed, 1 Oct 2025 10:34:32 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Namhyung Kim <namhyung@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	James Clark <james.clark@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Andrii Nakryiko <andrii@kernel.org>
-Subject: Re: [PATCH 0/2] LIBBPF_DYNAMIC=1 fixes
-Message-ID: <aN0t6Bcd8MKmeBn7@x1>
-References: <20250919210654.317656-1-acme@kernel.org>
- <aM3SCGOXZsP3GZal@google.com>
- <CAP-5=fX6=7Ycp=Su2ahZS1R0wS9s4eozPPcBgMBG25UCaC6uBA@mail.gmail.com>
- <CAP-5=fW6tPRW2qdFE4AbXg+47CzTjDX5HEjenjTxgOZ35fFa8A@mail.gmail.com>
+	s=k20201202; t=1759325743;
+	bh=ugtWNem9sZvjDOpwvATrh1Z6YMwTTTLfOSaGjIGvpxs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=D3As7FdG5Gpq5dtc9npozl8E6d97ZMYzco37uZEjzNGntqU6zgnw+2CZ3IKVZTk13
+	 B2I5ZbkCeots+VvFa0csToU7XjkzziyjqE+4C5FhVzteSyRnVmbkiSf2zpRanjlZUM
+	 G1LtUZo8U420nbEnwhSc6aDdGBqlVosJ4rK56NfiIPcr4fZaKqm/0btNJoLqy/5OAX
+	 AsBgX1/MgarQ7PEShhqseDdBJSKiqfamh69WvaVnF0JKh+haqWMadjjQka5AQFunDS
+	 kRQ3+/OAQyNbU3Lo29sxIYbcTkkUwnapcEufEQ4a9ya3gv62VHJe/xkYwSOCZ4kAKt
+	 0wbf2boQ1rLZg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1v3wzd-0000000Aod6-0paf;
+	Wed, 01 Oct 2025 13:35:41 +0000
+Date: Wed, 01 Oct 2025 14:35:40 +0100
+Message-ID: <86h5wizqvn.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Steven Price <steven.price@arm.com>
+Cc: kvm@vger.kernel.org,
+	kvmarm@lists.linux.dev,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu
+ <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Joey Gouly <joey.gouly@arm.com>,
+	Alexandru Elisei <alexandru.elisei@arm.com>,
+	Christoffer Dall <christoffer.dall@arm.com>,
+	Fuad Tabba <tabba@google.com>,
+	linux-coco@lists.linux.dev,
+	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+	Gavin Shan <gshan@redhat.com>,
+	Shanker Donthineni <sdonthineni@nvidia.com>,
+	Alper Gun <alpergun@google.com>,
+	"Aneesh Kumar K . V"
+ <aneesh.kumar@kernel.org>,
+	Emi Kisanuki <fj0570is@fujitsu.com>,
+	Vishal Annapurve <vannapurve@google.com>
+Subject: Re: [PATCH v10 05/43] arm64: RME: Check for RME support at KVM init
+In-Reply-To: <2226e62f-76ca-4467-a8ae-460fd463df0a@arm.com>
+References: <20250820145606.180644-1-steven.price@arm.com>
+	<20250820145606.180644-6-steven.price@arm.com>
+	<86ms6azxt5.wl-maz@kernel.org>
+	<2226e62f-76ca-4467-a8ae-460fd463df0a@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fW6tPRW2qdFE4AbXg+47CzTjDX5HEjenjTxgOZ35fFa8A@mail.gmail.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: steven.price@arm.com, kvm@vger.kernel.org, kvmarm@lists.linux.dev, catalin.marinas@arm.com, will@kernel.org, james.morse@arm.com, oliver.upton@linux.dev, suzuki.poulose@arm.com, yuzenghui@huawei.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, joey.gouly@arm.com, alexandru.elisei@arm.com, christoffer.dall@arm.com, tabba@google.com, linux-coco@lists.linux.dev, gankulkarni@os.amperecomputing.com, gshan@redhat.com, sdonthineni@nvidia.com, alpergun@google.com, aneesh.kumar@kernel.org, fj0570is@fujitsu.com, vannapurve@google.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Tue, Sep 30, 2025 at 01:10:59PM -0700, Ian Rogers wrote:
-> On Fri, Sep 19, 2025 at 3:10 PM Ian Rogers <irogers@google.com> wrote:
-> >
-> > On Fri, Sep 19, 2025 at 2:58 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> > >
-> > > On Fri, Sep 19, 2025 at 06:06:52PM -0300, Arnaldo Carvalho de Melo wrote:
-> > > > Hi,
-> > > >
-> > > >       Please take a look, noticed after processing a patch from Ian
-> > > > for another such issue, on a hurry now, haven't checked when that
-> > > > emit_string was introduced.
-> >
-> > emit_strings was added in Linux v6.17 and libbpf was tagged as version
-> > 1.7 prior to that.
-> >
-> > Thanks,
-> > Ian
+On Wed, 01 Oct 2025 14:20:13 +0100,
+Steven Price <steven.price@arm.com> wrote:
 > 
-> Ping.
+> >> +static int rmi_check_version(void)
+> >> +{
+> >> +	struct arm_smccc_res res;
+> >> +	unsigned short version_major, version_minor;
+> >> +	unsigned long host_version = RMI_ABI_VERSION(RMI_ABI_MAJOR_VERSION,
+> >> +						     RMI_ABI_MINOR_VERSION);
+> >> +
+> >> +	arm_smccc_1_1_invoke(SMC_RMI_VERSION, host_version, &res);
+> > 
+> > Shouldn't you first check that RME is actually available, by looking
+> > at ID_AA64PFR0_EL1.RME?
 > 
-> When this lands I can rebase:
-> https://lore.kernel.org/lkml/20250830053549.1966520-1-irogers@google.com/
-> on it.
+> Well, you made a good point above that this isn't RME, it's CCA. And I
+> guess there's a possible world where the CCA interface could be
+> supported with something other than FEAT_RME (FEAT_RME2 maybe?) so I'm
+> not sure it necessarily a good idea to pin this on a CPU feature
+> bit.
 
-I'm testing this now.
+But you cannot have CCA without RME. You cannot have CCA with
+GICv3. And my point was more that RME could be used by something other
+than CCA  - I certainly don't anticipate someone else adopting the CCA
+interface for anything...
 
-- Arnaldo
- 
-> Thanks,
-> Ian
-> 
-> > > >
-> > > > - Arnaldo
-> > > >
-> > > > Arnaldo Carvalho de Melo (2):
-> > > >   perf bpf: Move the LIBBPF_CURRENT_VERSION_GEQ macro to bpf-utils.h
-> > > >   perf bpf: Check libbpf version to use
-> > > >     btf_dump_type_data_opts.emit_strings
-> > >
-> > > Acked-by: Namhyung Kim <namhyung@kernel.org>
-> > >
-> > > Thanks,
-> > > Namhyung
-> > >
-> > > >
-> > > >  tools/perf/util/bpf-event.c  | 2 ++
-> > > >  tools/perf/util/bpf-filter.c | 5 +----
-> > > >  tools/perf/util/bpf-utils.h  | 5 +++++
-> > > >  3 files changed, 8 insertions(+), 4 deletions(-)
-> > > >
-> > > > --
-> > > > 2.51.0
-> > > >
+> Ultimately what we want to know is whether the firmware thinks it can
+> supply us with the CCA interface and we don't really care how it
+> achieves it.
+
+I disagree. You rely on specific feature sets to be available (hell,
+everything is baked around GICv3... GICv5 anyone?).
+
+For this sort of stuff, you absolutely need to know what you are
+running on, not what some broken firmware tries to pretend it is.
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
