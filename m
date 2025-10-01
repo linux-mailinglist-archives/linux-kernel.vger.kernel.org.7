@@ -1,124 +1,92 @@
-Return-Path: <linux-kernel+bounces-839202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 602A7BB10B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 17:22:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87CFABB10CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 17:23:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAA5D188EFD9
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 15:22:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47F0A3B3CAB
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 15:23:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C17EB2765E1;
-	Wed,  1 Oct 2025 15:22:21 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E75F318DB01;
-	Wed,  1 Oct 2025 15:22:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E5812773D9;
+	Wed,  1 Oct 2025 15:23:31 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15EB218DB01;
+	Wed,  1 Oct 2025 15:23:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759332141; cv=none; b=NkhAtrmZNgOMaSI+QubeBzJ2Z2D2IH+FdxHEgYFbG45ObH4kzF9l8VlbE84BxnLhdLezpJtPlVtYyOBL/hx4ptSFAwSGXFsfOdjaYC3LzPdXIWWDFz5sS0SjRZq0akUcNLSgp10bg9HR1pceNFvkwygPpgM/DUX296x4EXmuTtU=
+	t=1759332211; cv=none; b=P2WppJLxz6yISIAi+np7r70ehcpbE61VCnm0Id6f/OT9Iv8evl7F48Y1J0F3/ox700PEwo15YkZArPUgPBrBVDd8suAkvvTB6vpIM4uMqkJnhQytjvaTJeLTFlUuozX5vBJ4P5/5Xx8JzGT3YedE65qQLolaSnAoDv3oYVFqu34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759332141; c=relaxed/simple;
-	bh=Q7Wjglx0bW6cmBXT78OZQGD3WEnnqIDV8cnmhObQUhE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nPyQoLAz/MQmKSXX8bCe6f7pHPXgBKZa0KafmpN/HKq9h2lrzY6RQVyMg0Zo22E13yCmxRzL4yw7Y1ioOC2ipHqWMLxZT8R0HYQBdiA75KS3JTh8Ps3l2bg0YB8evVwPq2HGfBLcVn2tsNzTc5Zy1RrvzPokjUzNvRm5WEhu3T8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 34E5A1424;
-	Wed,  1 Oct 2025 08:22:11 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D688B3F59E;
-	Wed,  1 Oct 2025 08:22:18 -0700 (PDT)
-Date: Wed, 1 Oct 2025 16:22:17 +0100
-From: Leo Yan <leo.yan@arm.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	James Clark <james.clark@linaro.org>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, llvm@lists.linux.dev,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 0/8] perf build: Support building with Clang
-Message-ID: <20251001152217.GQ7985@e132581.arm.com>
-References: <20250930-perf_build_android_ndk-v2-0-2ea440b7ef01@arm.com>
- <aN044EY-Ds9-E6iz@x1>
+	s=arc-20240116; t=1759332211; c=relaxed/simple;
+	bh=jVqxPRXRq6SK8y+VbZrMaNMlaS4JvvNTrxIHVPAj/Ck=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=vAE5PapdXosPgyLzMTmNMpM9oeN2DHslCJzcL/GIwtj3mGyVQagTIpQBceNpkRGm+cNhU+B4qg3WzDt2jomYZtCsNKCk81y1JF6jtQO5uC7JgN4wvKIDXJ/uNYjDRLoeJ2DYoapqRonQBCqbO3qc5QUAMAvegvg9507kVYKL7yY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ccJbJ0319z6K5kg;
+	Wed,  1 Oct 2025 23:23:08 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id 8C64B140114;
+	Wed,  1 Oct 2025 23:23:25 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 1 Oct
+ 2025 16:23:24 +0100
+Date: Wed, 1 Oct 2025 16:23:22 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Dave Jiang <dave.jiang@intel.com>
+CC: Terry Bowman <terry.bowman@amd.com>, <dave@stgolabs.net>,
+	<alison.schofield@intel.com>, <dan.j.williams@intel.com>,
+	<bhelgaas@google.com>, <shiju.jose@huawei.com>, <ming.li@zohomail.com>,
+	<Smita.KoralahalliChannabasappa@amd.com>, <rrichter@amd.com>,
+	<dan.carpenter@linaro.org>, <PradeepVineshReddy.Kodamati@amd.com>,
+	<lukas@wunner.de>, <Benjamin.Cheatham@amd.com>,
+	<sathyanarayanan.kuppuswamy@linux.intel.com>, <linux-cxl@vger.kernel.org>,
+	<alucerop@amd.com>, <ira.weiny@intel.com>, <linux-kernel@vger.kernel.org>,
+	<linux-pci@vger.kernel.org>
+Subject: Re: [PATCH v12 05/25] cxl: Move CXL driver RCH error handling into
+ CONFIG_CXL_RCH_RAS conditional block
+Message-ID: <20251001162322.00002849@huawei.com>
+In-Reply-To: <01bebc6a-c982-4826-8202-703a948c1d48@intel.com>
+References: <20250925223440.3539069-1-terry.bowman@amd.com>
+	<20250925223440.3539069-6-terry.bowman@amd.com>
+	<01bebc6a-c982-4826-8202-703a948c1d48@intel.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aN044EY-Ds9-E6iz@x1>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100012.china.huawei.com (7.191.174.184) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-On Wed, Oct 01, 2025 at 11:21:20AM -0300, Arnaldo Carvalho de Melo wrote:
-> On Tue, Sep 30, 2025 at 05:54:48PM +0100, Leo Yan wrote:
-> > This series adds support for building perf with Clang, following the
-> > discussion in [1]. Because the Android NDK uses Clang by default,
-> > enabling Clang builds naturally covers Android as well.
-> > 
-> > The series is organized as follows:
-> > 
-> >   - Patches 1–2: Fix two bugs found with Clang.
-> >   - Patches 3–6: Correct CROSS_ARCH and dismiss Clang build warnings.
-> >   - Patches 7–8: Enable Clang in the Makefile and update the
-> >     documentation.
-> > 
-> > Testing:
-> > 
-> >   - Clang 15.0.7 on Ubuntu 22.04.5: native and cross-compiling (aarch64)
-> >   - Clang 18.1.3 on Ubuntu 24.04.2: native and cross-compiling (aarch64)
-> >   - Android NDK r27d (latest LTS): cross-compiling (aarch64)
+> > diff --git a/drivers/cxl/core/ras.c b/drivers/cxl/core/ras.c
+> > index 0875ce8116ff..1ec4ea8c56f1 100644
+> > --- a/drivers/cxl/core/ras.c
+> > +++ b/drivers/cxl/core/ras.c
+> > @@ -126,6 +126,10 @@ void cxl_ras_exit(void)
+> >  	cancel_work_sync(&cxl_cper_prot_err_work);
+> >  }
+> >  
+> > +static void cxl_handle_cor_ras(struct cxl_dev_state *cxlds, void __iomem *ras_base);
+> > +static bool cxl_handle_ras(struct cxl_dev_state *cxlds, void __iomem *ras_base);
+> > +
+> > +#ifdef CONFIG_CXL_RCH_RAS  
 > 
->   LD      /tmp/build/perf/util/perf-util-in.o
->   LD      /tmp/build/perf/perf-util-in.o
->   AR      /tmp/build/perf/libperf-util.a
->   CC      /tmp/build/perf/pmu-events/pmu-events.o
->   LD      /tmp/build/perf/pmu-events/pmu-events-in.o
->   AR      /tmp/build/perf/libpmu-events.a
->   LINK    /tmp/build/perf/perf
-> make: Leaving directory '/git/perf-6.17.0-rc6/tools/perf'
-> + rm -rf /tmp/build/perf
-> + mkdir /tmp/build/perf
-> + make 'ARCH=' 'CROSS_COMPILE=' 'EXTRA_CFLAGS=' -C tools/perf 'O=/tmp/build/perf' 'CC=clang'
-> make: Entering directory '/git/perf-6.17.0-rc6/tools/perf'
->   BUILD:   Doing 'make -j28' parallel build
-> Makefile.config:494: *** No gnu/libc-version.h found, please install glibc-dev[el].  Stop.
-> make[1]: *** [Makefile.perf:289: sub-make] Error 2
-> make: *** [Makefile:76: all] Error 2
-> make: Leaving directory '/git/perf-6.17.0-rc6/tools/perf'
-> + exit 1
-> toolsbuilder@five:~$ cat dm.log/alpine\:3.22
+> I don't love this in the C file. If we are going to have a Kconfig that we can use to gate the code, maybe we need core/ras_rch.c? Don't forget to add the new object entry to KBuild for cxl_test when you do that. 
+> 
 
-A quick look: the build cannot find both libelf (feature-libelf=0) and
-glibc (feature-glibc=0), thus lead to build failure. It is good to
-know what the reason for the feature building failures:
+Seconded.  Seems worth an extra file to me as well.
 
-  tools/perf/feature/test-libelf.make.output
-  tools/perf/feature/test-glibc.make.output
-
-I am not surprised for the failure of libelf (this is common case
-that the package is not installed by default in a distro), but it is a
-bit confused for the glibc feature failure.
-
-It seems the issue occurs on Alpine 3.22, but the highest version
-supported in container-build is 3.21 [1]. Could you confirm whether
-the issue reproduces on other distros or versions?
-
-Thanks,
-Leo
-
-[1] https://github.com/acmel/linux-tools-container-builds/tree/main/alpine
+J
+> DJ
 
