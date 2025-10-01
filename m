@@ -1,91 +1,114 @@
-Return-Path: <linux-kernel+bounces-838862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52720BB04B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 14:15:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C59DCBB04E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 14:21:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAC6F189E70B
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 12:16:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 819CE2A216D
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 12:21:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C10ED224B04;
-	Wed,  1 Oct 2025 12:15:37 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01710285CAB;
+	Wed,  1 Oct 2025 12:21:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="B7+h2GLX"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1DBF1BDCF;
-	Wed,  1 Oct 2025 12:15:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAC48279DDB;
+	Wed,  1 Oct 2025 12:21:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759320937; cv=none; b=cLHbOMveJvOlKokDlrnSgAgk71ENXO625OhEv0JkQ54RrsjirjOYDzCmFLCVNkyp+mQlb3CeknhjmUz07naaAbSTGUpmQrRIio00pLcYTQ2sNzbO3YLN43x0GJtzZTZ2XUraL9BAug4PpgdQuAd3Ga0AtHGybvcVbmZjt84pPOI=
+	t=1759321268; cv=none; b=aLuAeP6XYxOu8/CF6NIDumvedetzBRPWSHqQdxrUm4oxI/am+ZX2Vlni36J+7F1awwDu19Z1lpSbX4ayvnhmr3NknXakAOCOwq/ejqeGj4H5PHr4QBbi+jREiteHbF20zZrwGjW8PMG7AcpwrYuiRrHDUkaSdAZ223lUjz2ZhWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759320937; c=relaxed/simple;
-	bh=Mve0cLEyn65HsDLL8hjL/NDcoAseOdEOViRrbizip0M=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A3gvgrZObcxRNZ4aawtxiLCjCoKym0L2NWYaNzm6+i4uHa0LmMSVmXUZcqUXbwa3DAn6+Tl+18CfLVe9Y/7ni3cdBCMrKD94YEBhgz6qIgnB2LALRRzSqGWJKikEZYQMvw8m9fI5tgzPZsYMUXN22+ZjaabWt4HVd0u7npiS9jE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf08.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay01.hostedemail.com (Postfix) with ESMTP id 9F840447DF;
-	Wed,  1 Oct 2025 12:15:27 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf08.hostedemail.com (Postfix) with ESMTPA id CAAB920026;
-	Wed,  1 Oct 2025 12:15:25 +0000 (UTC)
-Date: Wed, 1 Oct 2025 08:17:03 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] tracing/osnoise: Replace kmalloc + copy_from_user
- with memdup_user
-Message-ID: <20251001081703.3befdc7a@gandalf.local.home>
-In-Reply-To: <1ED366BF-BAF8-4140-B260-B2A40B5E5996@linux.dev>
-References: <20250925211736.81737-1-thorsten.blum@linux.dev>
-	<20250930172841.63dc86b5@gandalf.local.home>
-	<76B6CC10-1C0A-42D0-83E8-8CA8A7790BF0@linux.dev>
-	<20250930190932.26b49afe@gandalf.local.home>
-	<1ED366BF-BAF8-4140-B260-B2A40B5E5996@linux.dev>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1759321268; c=relaxed/simple;
+	bh=vjpwNsC5W3V+0SjL3ro24C9U/HdP0+ByapTuQH1XqfM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nbp9r4y/DWis4Z0Ez1Q9XYWupe1knCh6CDd1uxCrns8R4DFQWwg5yA3BwIDLuV/sjVCvB7HLSUC8e/RQUPSh1xZ4phbXP5D6Dggcc7G9S9e76nhMAI2J0loAx74NxrPywhHFAjGZA/E3UUcjPYz+yOuSF+LHJ2hz/VZc5V0uZ1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=B7+h2GLX; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id F29DD169;
+	Wed,  1 Oct 2025 14:19:27 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1759321168;
+	bh=vjpwNsC5W3V+0SjL3ro24C9U/HdP0+ByapTuQH1XqfM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=B7+h2GLXNOemy3KlDAhj4n9gW/kGO8m1n56ZKnonvIv/3th4t1sKjwOHR7pQ/x6gz
+	 9A7FYB7abcidVvHzo+/GuusgmHppl2pBxbIQaZE6iLb2P6jKzhyOGqcBP/GohZRIrW
+	 F5i5vVQOkTH0jz6JXE5dBFGkHAxNpZQVFhtBE48s=
+Date: Wed, 1 Oct 2025 15:20:51 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: Re: [PATCH 3/3] ACPI: property: Rework acpi_graph_get_next_endpoint()
+Message-ID: <20251001122051.GC14600@pendragon.ideasonboard.com>
+References: <20251001104320.1272752-1-sakari.ailus@linux.intel.com>
+ <20251001104320.1272752-4-sakari.ailus@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: 7ofshxyrjmjnkawwknwqdq4zpi1rdn1u
-X-Rspamd-Server: rspamout01
-X-Rspamd-Queue-Id: CAAB920026
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+cx549b/knm1bFJm4EvTie8uJJLg9T9cM=
-X-HE-Tag: 1759320925-115967
-X-HE-Meta: U2FsdGVkX1+LBQNKFu+vH1cd78TIlbkjE0Ucy8OTrPCYgfxVr153zwljK/I3vkhngZjeCmvQkuvgReKiRfRFCuYlFbc2KHP/t58HCxgXX67lBen9dIE48RDgwJrss8nUUEZJymsePkIX8FNPZP9O4tD8Bqp8HKAuJXUqW4q2u5+Khl1y03uuPg5GieV5wsuw3w1Rr5Gi1Vg+cb+APYBPqtBT4gO4gOLJn2vGqT8zG1ptxvO0ZuEfwKFaUD4bsKJQ3dTg//oqQuPpuX33F85+8WG0E7nPrXaU8EZsHx6tJbKM9GM2ho+m4aSTtuepM05cJ3EwrXGqKdsm8d9yEmYEnhgRJz7yxdXD
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251001104320.1272752-4-sakari.ailus@linux.intel.com>
 
-On Wed, 1 Oct 2025 11:11:16 +0200
-Thorsten Blum <thorsten.blum@linux.dev> wrote:
-
-> On 1. Oct 2025, at 01:09, Steven Rostedt wrote:
-> > Thanks, you can base it off of my for-next branch.  
+On Wed, Oct 01, 2025 at 01:43:20PM +0300, Sakari Ailus wrote:
+> Rework the code obtaining the next endpoint in
+> acpi_graph_get_next_endpoint(). The resulting code removes unnecessary
+> contitionals and should be easier to follow.
 > 
-> I think your for-next branch[1] doesn't include the fix a2501032de0d
-> ("tracing/osnoise: Fix slab-out-of-bounds in _parse_integer_limit()")
-> yet, does it? My patch would need to be applied on top of that.
+> Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+
+> ---
+>  drivers/acpi/property.c | 17 ++++++++++-------
+>  1 file changed, 10 insertions(+), 7 deletions(-)
 > 
-> Thanks,
-> Thorsten
-> 
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git/log/?h=for-next
+> diff --git a/drivers/acpi/property.c b/drivers/acpi/property.c
+> index 200e5d717f16..c07f45929a25 100644
+> --- a/drivers/acpi/property.c
+> +++ b/drivers/acpi/property.c
+> @@ -1421,14 +1421,17 @@ static struct fwnode_handle *acpi_graph_get_next_endpoint(
+>  	if (!port)
+>  		return NULL;
+>  
+> -	endpoint = acpi_get_next_subnode(port, prev);
+> -	while (!endpoint) {
+> -		port = acpi_get_next_subnode(fwnode, port);
+> -		if (!port)
+> +	do {
+> +		endpoint = acpi_get_next_subnode(port, prev);
+> +		if (endpoint)
+>  			break;
+> -		if (is_acpi_graph_node(port, "port"))
+> -			endpoint = acpi_get_next_subnode(port, NULL);
+> -	}
+> +
+> +		prev = NULL;
+> +
+> +		do {
+> +			port = acpi_get_next_subnode(fwnode, port);
+> +		} while (port && !is_acpi_graph_node(port, "port"));
+> +	} while (port);
+>  
+>  	/*
+>  	 * The names of the endpoint nodes begin with "endpoint@" followed by
 
-Interesting, because it failed to merge when I ran my script to merge all
-my "for-next" branches. :-/
+-- 
+Regards,
 
-Anyway, apply it on top v6.17.
-
-Thanks,
-
--- Steve
+Laurent Pinchart
 
