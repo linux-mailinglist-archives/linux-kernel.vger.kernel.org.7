@@ -1,139 +1,81 @@
-Return-Path: <linux-kernel+bounces-839090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FA8CBB0CCE
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 16:48:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C98DBB0C2F
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 16:45:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0B257B1D2C
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 14:46:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06E1717C81D
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 14:45:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A951627380A;
-	Wed,  1 Oct 2025 14:45:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDC1F264FB5;
+	Wed,  1 Oct 2025 14:44:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=dev.tdt.de header.i=@dev.tdt.de header.b="XZ5K3UHh"
-Received: from mxout70.expurgate.net (mxout70.expurgate.net [91.198.224.70])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lLPRAWme"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D02DD258EFB;
-	Wed,  1 Oct 2025 14:45:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.198.224.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 447A7258EFB
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 14:44:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759329958; cv=none; b=QoyZACqbxHa/rBSmXOn0MPYUP5xDdm0pE6qlifi4+VLfOUR7SDxt44F75nvmRd8/pyPtDY2MkIvSXt35S2YXzkoE15PlrXOcvRotz3dIq8u3aiitfaFuZhl0/i2fNMySEcXewE3ApELGS+JPgaGIO/s2iWyToEKylDUwlM1r050=
+	t=1759329887; cv=none; b=jRalFUeoJthEX/ADTo/ZPtEsqJnamZaS5CyV/IdNPuClHqB6My6wQUJqKKp8dH80tmDf5eg39ke0w3PT4xqC6cOFlCXrlwtEw8iJLpKdKeUqXBFZsRBJTmmUc/tRm1H2wWnvbaIZhlwIxJEQxrQos4WAvvjGZOef/GEsdZ6lCa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759329958; c=relaxed/simple;
-	bh=FGIIx4c5HQzcuPRSz7qxMUt6TC/KjLYO0XGFzcS/Yh8=;
-	h=MIME-Version:Content-Type:Date:From:To:Cc:Subject:In-Reply-To:
-	 References:Message-ID; b=hltF8UMhH7/6/sSOr/4NeCq2FfVVq5Xr50CCruMqGNkB0lEMPFxgxBpyCjimIwhYzJX3HYSrxd5mSDpouaTqK9XEXPM2Vz6E8xwREUFEQmZDIsA1c+kYgDICErxSgxMtbA392yuvnGn2Ij7foOWww7XrJ8iq2YFP3IOQWtu61vo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dev.tdt.de; spf=pass smtp.mailfrom=dev.tdt.de; dkim=temperror (0-bit key) header.d=dev.tdt.de header.i=@dev.tdt.de header.b=XZ5K3UHh; arc=none smtp.client-ip=91.198.224.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dev.tdt.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dev.tdt.de
-Received: from [194.37.255.9] (helo=mxout.expurgate.net)
-	by relay.expurgate.net with smtp (Exim 4.92)
-	(envelope-from <prvs=8383b478a6=fe@dev.tdt.de>)
-	id 1v3y5T-0016Hc-Qf; Wed, 01 Oct 2025 16:45:47 +0200
-Received: from [195.243.126.94] (helo=securemail.tdt.de)
-	by relay.expurgate.net with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <fe@dev.tdt.de>)
-	id 1v3y5S-00GF4k-RN; Wed, 01 Oct 2025 16:45:46 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dev.tdt.de;
-	s=z1-selector1; t=1759329945;
-	bh=U2vekvnUNVAKHRU2vk265JxBDAbZVo+RBzq+PxgeWwg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=XZ5K3UHhip6bfZGiDLXBUODRKxB3VS9290iLhKzUzH7nS2WBoTEDNbV0pN4DKFOrf
-	 m4AwDjg5B2ClaldZUKdFj4rLuHuUVP33CUHwOQcv3b5Tmi7VvpDD89jCHSM//oqB3T
-	 8M/jGkhAv8qzcyH/U1Q4gRSn/sk7/Mhve1mkEzSCs1lLsrM0IkxeKrTbVwWR/5Lc7u
-	 lu+82bkmYOtII1qnPz4vHIfCUccBl9amoVJn2EEdrxEamoZazwDi0Znvw5ahcxXZGg
-	 OEv5eQ8MyREz9BdnGBI6RVxloo/EVdxGT+H6Xzz9wM2KtSKg8EUWKXeq5YAzCQpIZp
-	 WpIKVNjDlenfQ==
-Received: from securemail.tdt.de (localhost [127.0.0.1])
-	by securemail.tdt.de (Postfix) with ESMTP id 23E9E240042;
-	Wed,  1 Oct 2025 16:45:45 +0200 (CEST)
-Received: from mail.dev.tdt.de (unknown [10.2.4.42])
-	by securemail.tdt.de (Postfix) with ESMTP id 12D1A240036;
-	Wed,  1 Oct 2025 16:45:45 +0200 (CEST)
-Received: from mail.dev.tdt.de (localhost [IPv6:::1])
-	by mail.dev.tdt.de (Postfix) with ESMTP id ADFF92696D;
-	Wed,  1 Oct 2025 16:45:44 +0200 (CEST)
+	s=arc-20240116; t=1759329887; c=relaxed/simple;
+	bh=XKgCqZSvIYQgNJ5rq66ADbyY0CMrNzf0QFZZC/1zHjk=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=cB9Tf1EgQy3Q//6dfFM6xHIGtcc95gseeiZeJ0xLLuQfQvmLt5DIHxD7BA1+q2nvxYX0r4noQRMP0/T0euf2uh0BrYjW0s3fWzEMUu9t5RSD8tjCt7066pSgNGsY9CMgoyJQPwLLpOaYHhe43uEnY2JAdSwMl+4/sJhC89LuTnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lLPRAWme; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF0E6C4CEF1;
+	Wed,  1 Oct 2025 14:44:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759329886;
+	bh=XKgCqZSvIYQgNJ5rq66ADbyY0CMrNzf0QFZZC/1zHjk=;
+	h=Date:From:To:Cc:Subject:From;
+	b=lLPRAWme7zGFpNd0rLnPR7bphi6RMT5ANP4odtT/Vh0WvppDklHc3vtnAsbOYZvyS
+	 fxVHxVXtN+teVoSyJ7TT9EVePbGNT7JFNMl/ra2/n/QcmOcySXHS0KqpB1FQWY/CRZ
+	 eEEqaa656UBbcQ584Df7WPIbB52aijPQqjRcAw/nO0DtPDp1CU433+MayR5aLx5C6/
+	 B6lo7+XklPwH4310SbcHPyT7S/0G8weEjwG3YRXj1qsvgGr2tY8E4fI0106UiqlSBr
+	 5Ub5uOqBgPDMArwKE0PYE8pG83ybBqa7/OSyM6c+9Y5cK3uuOtDL2u+EOkr0SFpep8
+	 V5U7qgNEv92Ew==
+Received: from rostedt by gandalf with local (Exim 4.98.2)
+	(envelope-from <rostedt@kernel.org>)
+	id 1v3y64-0000000Eb0J-3Xdy;
+	Wed, 01 Oct 2025 10:46:24 -0400
+Message-ID: <20251001144605.585204794@kernel.org>
+User-Agent: quilt/0.68
+Date: Wed, 01 Oct 2025 10:46:05 -0400
+From: Steven Rostedt <rostedt@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Subject: [for-next][PATCH 0/4] tracing: Removed unused tracepoints for v6.18
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Date: Wed, 01 Oct 2025 16:45:44 +0200
-From: Florian Eckert <fe@dev.tdt.de>
-To: Jiri Slaby <jirislaby@kernel.org>
-Cc: gregkh@linuxfoundation.org, kumaravel.thiagarajan@microchip.com,
-	andriy.shevchenko@linux.intel.com, pnewman@connecttech.com,
-	angelogioacchino.delregno@collabora.com, peterz@infradead.org,
-	yujiaoliang@vivo.com, arnd@kernel.org, cang1@live.co.uk,
-	macro@orcam.me.uk, schnelle@linux.ibm.com,
-	Eckert.Florian@googlemail.com, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org
-Subject: Re: [PATCH v2] serial: 8250_pcilib: Replace deprecated PCI functions
-In-Reply-To: <f6fe95e5-0dd3-4ce0-b741-06cacf283e4c@kernel.org>
-References: <20250930072743.791580-1-fe@dev.tdt.de>
- <f6fe95e5-0dd3-4ce0-b741-06cacf283e4c@kernel.org>
-Message-ID: <e19fa21955115f4621b47b170c3a2193@dev.tdt.de>
-X-Sender: fe@dev.tdt.de
-User-Agent: Roundcube Webmail/1.3.17
-Content-Transfer-Encoding: quoted-printable
-X-purgate-ID: 151534::1759329947-CA4F1A68-C7DE0F1C/0/0
-X-purgate: clean
-X-purgate-type: clean
 
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+unused-tracepoints/for-next
 
-On 2025-09-30 09:34, Jiri Slaby wrote:
-> On 30. 09. 25, 9:27, Florian Eckert wrote:
->> When the '8250_exar' module is loaded into the kernel, a kernel trace
->> with 'WARN_ON(legacy_iomap_table[bar])' is dumped to the console,
->> because the old pci table mapping is still used in '8250_pcilib'.
->>=20
->> The old function have been deprecated in commit e354bb84a4c1 ("PCI:
->> Deprecate pcim_iomap_table(), pcim_iomap_regions_request_all()").
->>=20
->> The remapping already takes or must take place in the driver that=20
->> calls
->> the function 'serial8250_pci_setup_port()'. The remapping should only=20
->> be
->> called once via 'pcim_iomap()'. Therefore the remapping moved to the
->> caller of 'serial8250_pci_setup_port()'.
->>=20
->> To replace the outdated/legacy iomap_table processing in '8250_pcilib'=
-=20
->> the
->> function signature of 'serial8250_pci_setup_port()' has been extended=20
->> with
->> an already iomapped address value. So this can be used directly=20
->> without
->> io mapping again.
->>=20
->> Signed-off-by: Florian Eckert <fe@dev.tdt.de>
->> ---
->>=20
->> v2:
->> * The function 'pcim_iomap()' returns a NULL pointer in the event of=20
->> an
->>    error, so error handling has been adjusted.
->=20
-> LGTM now.
->=20
-> Reviewed-by: Jiri Slaby <jirislaby@kernel.org>
+Head SHA1: 7b4321deeaabdc97f39da7fcdd6e61767e1cd29c
 
-Thanks for the review tag. Will this be included in linux next?
-Or do I need to do something? I also think that this should be=20
-backportet
-to the latest LTS kernel =E2=80=9C6.12.*=E2=80=9D. This is where I notice=
-d the problem.
 
---
+Steven Rostedt (4):
+      cdns2: Remove unused tracepoints
+      cdns3: Remove unused tracepoints
+      cdnsp: Remove unused tracepoints
+      cfg80211: Remove unused tracepoints
 
-Florian
+----
+ drivers/usb/cdns3/cdns3-trace.h            | 61 --------------------------
+ drivers/usb/cdns3/cdnsp-trace.h            | 25 -----------
+ drivers/usb/gadget/udc/cdns2/cdns2-trace.h | 69 ------------------------------
+ net/wireless/trace.h                       | 56 ------------------------
+ 4 files changed, 211 deletions(-)
 
