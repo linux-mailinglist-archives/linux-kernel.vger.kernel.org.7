@@ -1,111 +1,138 @@
-Return-Path: <linux-kernel+bounces-839407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24CE0BB1913
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 21:06:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FD25BB1919
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 21:08:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 362F97B222B
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 19:05:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 737C91944F9F
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 19:08:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABD212D7DF8;
-	Wed,  1 Oct 2025 19:06:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43D1A2D7DCC;
+	Wed,  1 Oct 2025 19:08:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="UO/2YdTR"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FhOUt0Hq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0490B2C159D
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 19:06:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B4917A305
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 19:07:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759345602; cv=none; b=Ph+4NTzZOPLUCTVhGVK95Iw8NGP/ctM2YswVFQBa+1ULW25qYdvE3/ESl+a6VdhtsMrvqXIxPf2L7k3QZCoWS8wGNtl5O+x7NbGatuj1nVuFnQGkHbWb4yEvBnLPWEFnIj3uFZmKap8eCfYdLDjDiuVjovokWcZE3+mt2aupdCs=
+	t=1759345679; cv=none; b=FpOzm8lNSreoLCd+p7uJJeexO2T16vshj6rLXbqkTc7m2fKsYLFhTsJWN1quqqkHv6rlficHOe9hlgpvvENzRNfoGH3Sthk7J+jHzJMl+5zaLHjy/pdN9wDNQfiezdt0abVlceZynQfnB6pGNGgX4mww9CEUrUj39s0drfx6oDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759345602; c=relaxed/simple;
-	bh=/7uFq056iE+/b/Ir+0Cr1OjZjng+VJ83X+iaLMe841U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H6gYQCjYT3bnaV44y3ylcpP9mwYMKtWCN/onT8blzUUv2fzFMuH7uPBCcDtRxb5IePsW1M8RRA4vyi9E35+EvysL/6a/Zy/X1VvnaggHDGur/d9KIhG9iqu6GchzygyavWrg5eF1u3/BlAsgs0zRlH8aDHNWc+hCHXQC9F1u+jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=UO/2YdTR; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b2e0513433bso39396166b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 12:06:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1759345598; x=1759950398; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=r1S8KRUqgAG1UODGHd0wi24X7As4LcyI2/rQbjVggMQ=;
-        b=UO/2YdTRvR2l9AJNjH2EkEEmrB31UHW5Z9TGuXc2+FPt7EHqIgbFNy6w92bGJK6qJ6
-         QYT3jbgGHGtElEz61whd3+Hgi5SAZ5J6Ulz/SQSijeFxOKtM9UPhag93zJ8ZQtxomMvs
-         bAw/PpsjzibG+bBj9KNPb9dd42/zULrVbJaiQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759345598; x=1759950398;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=r1S8KRUqgAG1UODGHd0wi24X7As4LcyI2/rQbjVggMQ=;
-        b=ScvCybpOgVe9BxRnCLeXj9klg2tF2mgEek8RNK5m+wkeZo4URTk8unbhMxLLBDxj4h
-         zx67d0q+s8KpIjnfM0sjfIZwbhKP+FWoh+I6rDdjiLQAqY5+ly24JSIJucuITwZgJWeR
-         ES959Va2I2y68oZIe+rXbn38BewF5DIEAtxd0PHWyEt9w+G3y40nXhAe3EWHIqA6F7sc
-         ZJMH9VKrXlwa2bgyz5W2yQtadFbA6szR2UU3UGVo5QU51Zp8+91zjciCjOz2oyyW+OBR
-         En8vGx1MDJc7UFJPM4oudsXockwK1w4IXgs9SOJuM3gF45uEDykjTQ4I5cH8cXxInnH2
-         tcUg==
-X-Forwarded-Encrypted: i=1; AJvYcCXb71iHpeEv2OTVKeA9gSlAUH2ylGrSpF2vptOmj1j4ciTgracxSGemTrfYdzY4iscJSdigqencmL+oJx4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwM1HzwGYHZb8rrmV6ENB7+1dA8NxIsKE0SZgsqzJF4WzzmJB8Y
-	jrm9NJE0HZS28pVTub0BQpQHM2B92vsL3BD7h0oIZddqJC0fIi/GGaYwZpTl1qqF6oIujFvmYeA
-	4CNL17d4=
-X-Gm-Gg: ASbGncubUIXhMcuJN/a6uskAL9VH/T1xDcVSBCh3PAHD5PYrKDSvT+CsQ+LXLqRKfr2
-	HpO8Y1xqLcHz1y2MTSCe8kozT3vpr4971XdkbaKlGCKmAPA/SOX03bQz21pYJq4wePvChRUIVst
-	nz+mOhNQXCvtYy3aPf4DqnOvl7CQImx2AIQvblPfcAwV33IzHu28e8q9Z7vS0JDEvLURfT9jMEY
-	8qrBKqGiZQ6q4INI8t4Hi5pyyfzhvfmKeI3kAaI+uxDoijxiZxS/fGPUNKjV0KJc+K5c/CZz/wx
-	Rmw7/9p/JWOo4WTDKkgowBPGu7uUaVkiBRiEg5hbogudUUhkQUnCkVee4Hhprzuk1OxF4BOJO4d
-	dNQQJoeVdjCsdzun4K00Ogf0n7GqshTq0gqsP8Fp5am817BPZhkhR6fkUWbUqyX+9uP67HNUtIl
-	+weiYYCYAD9e8zwx/q7faP
-X-Google-Smtp-Source: AGHT+IH5RGYAr+PMxJEOsSvsBMx7I2Hwdopl6Rx2UdrRCMZrvieL8o4MPN8dvibJG0wnVkb4+b9ynA==
-X-Received: by 2002:a17:907:2d90:b0:b3f:d232:5797 with SMTP id a640c23a62f3a-b46e585d4b7mr534781366b.22.1759345598080;
-        Wed, 01 Oct 2025 12:06:38 -0700 (PDT)
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com. [209.85.208.51])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b4869c4f74esm24096766b.67.2025.10.01.12.06.36
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 01 Oct 2025 12:06:37 -0700 (PDT)
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-61a8c134533so431298a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 12:06:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUb//r/kC1T4N31XYdT7Ca2Y75cZXHH4gqJXgfVCGSuJtIWRjnnarBsDr0N480j8uOal31LdFhPzlRk0zA=@vger.kernel.org
-X-Received: by 2002:a17:906:6a0c:b0:b3f:3efc:35d5 with SMTP id
- a640c23a62f3a-b46e585d400mr560815366b.15.1759345596314; Wed, 01 Oct 2025
- 12:06:36 -0700 (PDT)
+	s=arc-20240116; t=1759345679; c=relaxed/simple;
+	bh=J2rCYo9hx5xVnFjMSBxrFy3BO+6XPr4j7vkKq1FApB0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qjiyAr9QEayuI2YTW1KaK77pWOBZHRc03+OSM8yaewGAzr5CrlEbSmfEJWnitD+dx2OVWTGPdaOAQtIsxnsoTfTY8V3FO0npO2nl3L+2/WWWJqZfA1MLYv5U/X4ORL3hciL13LTPUmSE5FGm5zEkHE7/+ryc4190PINEyZbLA4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FhOUt0Hq; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759345677;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cl3C0qcTN+Ix2VE0R2sMuZEQqdS3zTb7qWEzzurdaLY=;
+	b=FhOUt0HqCWzDZrEXybH/fQeT6ChciM2iDF9WmsbrJ/BXXWzrlLQBeGB6DikM5xRDN/UJSo
+	ahaFglGu8jDi8YybLQkO5V6+3ndXHMqlxIHVyS7zrPRsXKCJJ+2rOxWuuWUGvtBA9cG4Hf
+	9uWB+mMajKUKoN7DH21tN87faKdP7LQ=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-499-0hfz0klgNsSebbZd5AbQrA-1; Wed,
+ 01 Oct 2025 15:07:53 -0400
+X-MC-Unique: 0hfz0klgNsSebbZd5AbQrA-1
+X-Mimecast-MFC-AGG-ID: 0hfz0klgNsSebbZd5AbQrA_1759345672
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7590C180028D;
+	Wed,  1 Oct 2025 19:07:52 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.40])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id D5686195608E;
+	Wed,  1 Oct 2025 19:07:48 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Wed,  1 Oct 2025 21:06:30 +0200 (CEST)
+Date: Wed, 1 Oct 2025 21:06:26 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Waiman Long <llong@redhat.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, David Howells <dhowells@redhat.com>,
+	Ingo Molnar <mingo@redhat.com>, Li RongQing <lirongqing@baidu.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] documentation: seqlock: fix the wrong documentation
+ of read_seqbegin_or_lock/need_seqretry
+Message-ID: <20251001190625.GA32506@redhat.com>
+References: <20250928161953.GA3112@redhat.com>
+ <20250928162029.GA3121@redhat.com>
+ <b83e9c1d-2623-4abf-8c63-1110a0b92d2e@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250929094107.34633-1-brgl@bgdev.pl> <CAHk-=whnmvjsan9Y=LcV0encJungD451VkdqYAKrRpk6YyA6-w@mail.gmail.com>
-In-Reply-To: <CAHk-=whnmvjsan9Y=LcV0encJungD451VkdqYAKrRpk6YyA6-w@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 1 Oct 2025 12:06:20 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whPqa8YnjjH=Np_Q8r+9xDrypJVL4SPtFzgN-Znjb6knA@mail.gmail.com>
-X-Gm-Features: AS18NWBQbwNSzGagnRky8eufGxCzgJDwgghbWOSeBBuByz1r-HbMKjsahJtuBw0
-Message-ID: <CAHk-=whPqa8YnjjH=Np_Q8r+9xDrypJVL4SPtFzgN-Znjb6knA@mail.gmail.com>
-Subject: Re: [GIT PULL] gpio updates for v6.18-rc1
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b83e9c1d-2623-4abf-8c63-1110a0b92d2e@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Wed, 1 Oct 2025 at 11:36, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+On 10/01, Waiman Long wrote:
 >
-> It's trivial to fix, but I should not be in the situation where I have
-> to fix it, and I should not be getting pull requests that don't even
-> build under trivial configurations.
+> On 9/28/25 12:20 PM, Oleg Nesterov wrote:
+> >
+> >--- a/Documentation/locking/seqlock.rst
+> >+++ b/Documentation/locking/seqlock.rst
+> >@@ -218,13 +218,14 @@ Read path, three categories:
+> >     according to a passed marker. This is used to avoid lockless readers
+> >     starvation (too much retry loops) in case of a sharp spike in write
+> >     activity. First, a lockless read is tried (even marker passed). If
+> >-   that trial fails (odd sequence counter is returned, which is used as
+> >-   the next iteration marker), the lockless read is transformed to a
+> >-   full locking read and no retry loop is necessary::
+> >+   that trial fails (sequence counter doesn't match), make the marker
+> >+   odd for the next iteration, the lockless read is transformed to a
+> >+   full locking read and no retry loop is necessary, for example::
+> >  	/* marker; even initialization */
+> >-	int seq = 0;
+> >+	int seq = 1;
+> >  	do {
+> >+		seq++; /* 2 on the 1st/lockless path, otherwise odd */
+> >  		read_seqbegin_or_lock(&foo_seqlock, &seq);
+> >  		/* ... [[read-side critical section]] ... */
+>
+> It is kind of odd to initialize the sequence to 1 and add an sequence
+> increment inside the loop.
 
-I see that it got fixed in the MFD tree, but this is not how things
-should work. At all.
+Sure. But a) in this patch my only point is that the current documentation is
+wrong, and b) the pseudo-code after this change becomes correct and the new
+pattern already have the users. For example, do_io_accounting() and more.
 
-                   Linus
+> Perhaps we can do something like:
+
+Perhaps. But could you please read the "RFC 2/1" thread? To me it is kind of
+odd that the simple loops like this example have to even touch the sequence
+counter inside the loop.
+
+> +static inline int need_seqretry_once(seqlock_t *lock, int *seq)
+> +{
+> +       int ret = !(*seq & 1) && read_seqretry(lock, *seq);
+> +
+> +       if (ret)
+> +               *seq = 1;       /* Enforce locking in next iteration */
+> +       return ret;
+> +}
+
+And this is exactly what I tried to propose in "RFC 2/1". Plus more...
+
+Oleg.
+
 
