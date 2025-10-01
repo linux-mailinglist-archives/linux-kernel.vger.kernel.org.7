@@ -1,136 +1,121 @@
-Return-Path: <linux-kernel+bounces-838631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74830BAFC8E
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 11:08:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19C10BAFC97
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 11:08:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BFFC3AF71B
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 09:08:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C85C93BC42F
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 09:08:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53F2E2D8DBD;
-	Wed,  1 Oct 2025 09:08:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A18CD274B39;
+	Wed,  1 Oct 2025 09:08:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b="RXDWkZy1"
-Received: from pdx-out-004.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-004.esa.us-west-2.outbound.mail-perimeter.amazon.com [44.246.77.92])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q9otv79I"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BBD0239E67;
-	Wed,  1 Oct 2025 09:08:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.246.77.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0D6B241663
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 09:08:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759309683; cv=none; b=n/cw6bjHKFAQa/p71JPH89bhegq/hfGE1CvANRPjWssjwpAwCp1NR+lJ6BG3jQ8WrZJS2WMnEPcGtHI+l/DTb2D3XOeUUCWWhshjnhwRdtxsu36T/5Wip4BfMVMJmZwSWpQgb9eD0v/bLEF9LW9ffLTcamOWa664vjpSB6x4hCs=
+	t=1759309694; cv=none; b=cUVnMfT/6kbJHbh/uW46xAvuPN5mQvc+VEPXBpoPxfMekpe98wYGSuK6dEtrx+I4WcD4TbHoJuxfd79cUbvkEjkqpYDl0TOwX+ENczk9yFopCTmOdGfQjqbO7pcZ2164gTM5gYpAWtbpNHRuRbHBx95Bw6GWWoAcCMdZu+nOTeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759309683; c=relaxed/simple;
-	bh=mzA2wfqe4qhLk9P03nBHLrjAgyXRLL77w450Dy43nQk=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BMj/tMyC2LbK+FqzF3jzgGhg3J2J81RcaHn6psLRWM/hHmaN7BV0o7iUgBSZa9v+sAp59HDvH2DTXfMU1XOa9PbYUGNyclQ4TGbfND+DprBxyyMxn1gadNZW+2a+8U8zbmBwdmcoQJNZTHvPJhGPhTY8/bJPjy7Qs5VQqdv5bxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b=RXDWkZy1; arc=none smtp.client-ip=44.246.77.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
+	s=arc-20240116; t=1759309694; c=relaxed/simple;
+	bh=cHh/cHIF2ix4T1MbAz3cbtmZwsbFRKUVOa1sotAMdYE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZNq5Q6qV5k8NXv6j1QW+NlZ7b7mai4Tq1Reed48Mw6g2UmanldolXYPK36Qqq4qbRGWquzk30tipxDb/ww1JiSseDmxPOzFsYZ+x2y6ZpeNQPOKFXzjQHs5e4M7y2nLaacszT3F23T14QjbO5SZuW38zPecUz2KfvU7+pX51erU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q9otv79I; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-3307de086d8so6454664a91.2
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 02:08:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazoncorp2;
-  t=1759309682; x=1790845682;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=6+nXW15w+7dBN6EUXm7aFj+3+vhO7ZTN7faFbVeZpUQ=;
-  b=RXDWkZy1pwJbG1OnCX2sDZl03JGCOiWeWpOpoZQPlLouzidgHWaFYRUG
-   TxQkSmIRUnrNtb18mIVHdVPVXWdqTtu+eioz503/OLma3+8ZyVDpCrbeA
-   uYNHRgrwq/aToo4SklbQVYtBT3nz/aCPk5ABjiPZ1Rk8DAXXZxl+6CUqi
-   GX3m+0HJX8ung+lYW341rdT95LThZ6/4VXvqpq0nA+WfGIWSYakOdKNhH
-   X9HTZWkFaiPf1uaXIJcM5Z6+JfsQno1e2O1GPIarDpsY4/TZn9h2+wziP
-   rFCz0U72+O7rR5h6yKhMfWh7HztaPmR9EyaFpurfix/Iu1rqnMTuvCFEz
-   w==;
-X-CSE-ConnectionGUID: 92LAiI7pQ+aZpl4wa2XNgA==
-X-CSE-MsgGUID: vs7DOnDiQkCkBcYNAumq0Q==
-X-IronPort-AV: E=Sophos;i="6.18,306,1751241600"; 
-   d="scan'208";a="4068769"
-Received: from ip-10-5-0-115.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.0.115])
-  by internal-pdx-out-004.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2025 09:08:00 +0000
-Received: from EX19MTAUWB002.ant.amazon.com [10.0.21.151:7533]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.36.10:2525] with esmtp (Farcaster)
- id 56bfb667-8496-4537-9162-31c05f1cace1; Wed, 1 Oct 2025 09:08:00 +0000 (UTC)
-X-Farcaster-Flow-ID: 56bfb667-8496-4537-9162-31c05f1cace1
-Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
- EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Wed, 1 Oct 2025 09:07:59 +0000
-Received: from dev-dsk-acsjakub-1b-6f9934e2.eu-west-1.amazon.com
- (172.19.75.107) by EX19D001UWA001.ant.amazon.com (10.13.138.214) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20; Wed, 1 Oct 2025
- 09:07:58 +0000
-Date: Wed, 1 Oct 2025 09:07:55 +0000
-From: Jakub Acs <acsjakub@amazon.de>
-To: David Hildenbrand <david@redhat.com>
-CC: <linux-mm@kvack.org>, Andrew Morton <akpm@linux-foundation.org>, Xu Xin
-	<xu.xin16@zte.com.cn>, Chengming Zhou <chengming.zhou@linux.dev>, Peter Xu
-	<peterx@redhat.com>, Axel Rasmussen <axelrasmussen@google.com>,
-	<linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: Re: [PATCH v2] mm/ksm: fix flag-dropping behavior in ksm_madvise
-Message-ID: <20251001090755.GA66706@dev-dsk-acsjakub-1b-6f9934e2.eu-west-1.amazon.com>
-References: <20250930130023.60106-1-acsjakub@amazon.de>
- <85f852f9-8577-4230-adc7-c52e7f479454@redhat.com>
+        d=gmail.com; s=20230601; t=1759309690; x=1759914490; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xdn/qXRMwLNp6Zd/Eb/BpsxnL14+u3sr4IN56KWCSQc=;
+        b=Q9otv79IzcCTZSc1wotjhDEpXDuYJxhhH320YokwjB9XET1iZ5ht1fvCsOoMFvJK3K
+         /bMJocRulncmUBN0a1BQsUoVoaDTRU8CyvGujuxvLxfKNdRmDR2vPx6UV0qMCwYEViEe
+         czhzyFkWs0Xy1js7fyYSRXhob05ShFvT25SJwPM885/rFUv4oh1TGRO3AcUwC/MZMH/H
+         MJILUt72PQcx07jZhvaAeqCN27MVGU7Oo0a1zkCp0QBpKZXlMP0nMFxebDSy7QxaRFsk
+         dFBPOuUwkULF1RmNKzMnIsDorbjM7PmaLp6NxE6N0l7ZOqtZeQcefvE5woeE4xvWlmIo
+         vmWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759309690; x=1759914490;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Xdn/qXRMwLNp6Zd/Eb/BpsxnL14+u3sr4IN56KWCSQc=;
+        b=nuvnatqAKI5oXfRCHqxyDbEdiNLCnRyOhTh2tECZKFaH0umyizQe75lSLuzk6XsCef
+         /2pec7J7Aif/kXGYF94xnoAUEooJL9fB+gt83BTU6CmCb6dMTlo7ji8Q5Y/b/5lunUnH
+         KSP51U/4cmhRi7cK0evLZ6WYp4/f0viN+5iMs3jRIxJzURFu9cgT5L1dVQaewatgQB4U
+         fq0XWubK48VQJUxIhw3arG0AbrdkSYwphAgp2D/+C4/aAt8dOzgLVPmS1qQ4lmo+u+Qj
+         +WyImvN5FY1kVkNdca6RNngYdRWQHczs3AyfA3k91VWU2y7pJJdEpajfnFr2dO+gpoP5
+         jfvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXS9rx435LP7lNPxTT/H3ajCkQxQ73ad8M8Kw+gQccvRYdGq8XeoZTRXanvDGyMBwADP2z4016QDkM3VX0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2dltcq6i+eIqxSEIpeg75w61xhfVmWb56lOPwRFHdyz8kdU0X
+	FeVH/g1cq1JlNGPW/2+DCkwUCNfh5iAdugmoThZRE3otZJr1byTZAZjA
+X-Gm-Gg: ASbGnctsaCQhRquP0qColok8HUtL4ZOIxii71BoTnKP2qvrVZN0VbALG6MmiPkcsJFh
+	dWfjesnqEDXuxNQFyP/5lvMiUY6/6A0n9Qwr8JXj+Ejbf4MXV5p5FUQrscS66qdBkabsryUb610
+	5xGzJXHHpCTclEjMqy4vPFITe3kN1IwpgP30hKlsZBk2yYnpKgQ93NNAQzWMWTMOUL85yd1QOI3
+	VMaAxkFOMWtVNpfOEu5drlPLgMPntq4++K8pOkwIBC3Sq1lVgytB3QrgYOOheqGdWjRbeXlYiLQ
+	nw2ORXxtc0TArmDJGI79OGBUpo+1/yUcjP6LJejZ0T4cb+lOTgI4B0JrSZxdTrE3TNKAZOWq6HV
+	j596aO7GA1yOjjfkfW4oxKHKv/tj0imPGATS7ZfOAa8+dG+ehnjJwYBOoncaNhR7Ky4O1UMWZVg
+	==
+X-Google-Smtp-Source: AGHT+IHCAXG1BqEfze3gHRwn6lpXtkf7tuj30SDlHiLv3IUP0y93ub/ofCCeyp+nvvaX5lId2eVgIA==
+X-Received: by 2002:a17:90b:4f85:b0:336:b60f:3935 with SMTP id 98e67ed59e1d1-339a6f08820mr2965105a91.23.1759309689779;
+        Wed, 01 Oct 2025 02:08:09 -0700 (PDT)
+Received: from ti-am64x-sdk.. ([157.50.93.46])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b57c55741e6sm15477230a12.29.2025.10.01.02.08.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Oct 2025 02:08:09 -0700 (PDT)
+From: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
+To: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
+Cc: linux-sound@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	skhan@linuxfoundation.org,
+	david.hunter.linux@gmail.com
+Subject: [PATCH] ALSA: emu10k1: Fix typo in docs
+Date: Wed,  1 Oct 2025 14:37:57 +0530
+Message-Id: <20251001090757.45991-1-bhanuseshukumar@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <85f852f9-8577-4230-adc7-c52e7f479454@redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-ClientProxiedBy: EX19D040UWA004.ant.amazon.com (10.13.139.93) To
- EX19D001UWA001.ant.amazon.com (10.13.138.214)
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 30, 2025 at 05:32:25PM +0200, David Hildenbrand wrote:
-> If we want a smaller patch for easier backporting, we could split
-> off the VM_MERGEABLE change into a separate patch and do all the
-> other ones for consistency in another
-> 
-> Reading what we do VM_HIGH_ARCH_BIT_* , we use BIT(), which does
-> 
-> 	#define BIT(nr)		(UL(1) << (nr))
-> 
-> So likely we should just clean it all up an use e.g.,
-> 
-> #define VM_NONE		0
-> #define VM_READ		BIT(0)
-> #define VM_WRITE	BIT(1)
-> 
-> etc.
-> 
-> So likely it's best to do in a first fix
-> 	#define VM_MERGEABLE	BIT(31)
-> 
-> And in a follow-up cleanup patch convert all the other ones.
+interally => internally
 
-Sent in v3: 
-https://lore.kernel.org/all/20251001090353.57523-1-acsjakub@amazon.de/
+Signed-off-by: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
+---
+ Note: No change in functionality intended.
+ Documentation/sound/cards/emu-mixer.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-It's the first time I sent a series, please let me know if I did
-something wrong :)
-
-> 
-> Sorry for not thinking about BIT() earlier
-> 
-
-No worries :)
-
-Kind Regards,
-Jakub
-
-
-
-Amazon Web Services Development Center Germany GmbH
-Tamara-Danz-Str. 13
-10243 Berlin
-Geschaeftsfuehrung: Christian Schlaeger
-Eingetragen am Amtsgericht Charlottenburg unter HRB 257764 B
-Sitz: Berlin
-Ust-ID: DE 365 538 597
+diff --git a/Documentation/sound/cards/emu-mixer.rst b/Documentation/sound/cards/emu-mixer.rst
+index d87a6338d3d8..edcedada4c96 100644
+--- a/Documentation/sound/cards/emu-mixer.rst
++++ b/Documentation/sound/cards/emu-mixer.rst
+@@ -66,7 +66,7 @@ FX-bus
+ 
+ name='Clock Source',index=0
+ ---------------------------
+-This control allows switching the word clock between interally generated
++This control allows switching the word clock between internally generated
+ 44.1 or 48 kHz, or a number of external sources.
+ 
+ Note: the sources for the 1616 CardBus card are unclear. Please report your
+-- 
+2.34.1
 
 
