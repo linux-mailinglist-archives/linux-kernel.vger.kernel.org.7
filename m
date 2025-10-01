@@ -1,139 +1,180 @@
-Return-Path: <linux-kernel+bounces-838836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3A99BB03F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 13:54:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3404DBB03F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 13:54:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D6191C1C56
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 11:54:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2D522A3B2B
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 11:54:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C9282E54DE;
-	Wed,  1 Oct 2025 11:54:22 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9048F2E611B;
+	Wed,  1 Oct 2025 11:54:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="n4yDCU+M";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="mandkC76";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="n4yDCU+M";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="mandkC76"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D86F82522BE;
-	Wed,  1 Oct 2025 11:54:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5161C2E5430
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 11:54:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759319662; cv=none; b=NETzgbbi2q7SxCnBRFIzEQVE113FFIvuwDfOPanCMDQGOMO37yyBk3G1FLsR79ttcfMKChKVbxSfsa+Xs8tib5e8CSsNo1yjDxj8IdQk3hN3LtIutqsqYN5DZrqJIWNEQPB+IRjptUfD/G6BHsAJK3piJJ+tb4nNFWtiautSaqc=
+	t=1759319687; cv=none; b=f00ChHLFUFK8lAT/YrnXUSkzDprCTlL1CWadCLWhMitQCZcouyOXgd/G1iioNtaA+82x2W98R7OWYEHwawjqm/STU+gYeBq0V9Ph+tJe04MYXXj5MFZoycavi42sSx6g59baxeWloxF5os6+4A44tV1oZubPzSyH382Kd/AJnJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759319662; c=relaxed/simple;
-	bh=dn/RO9C44OLTk3vcWX+GfhcDgE79GFNrEnVQCO2pM1g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l9GPT6kCCQ9t4u6VkzPN0r9cv3sJejC13+u5Pc49DiJZVuJqlJmxhOWMSZ102y/dNyPoGEIE6i9lhpcnWoaSHbxpbdDQloqrVV5XBqurDKThzmqQ8/ZaooykE3lJuoiRzpzR53DvzT5ddV7dN6A/0C7FXP7PK9izMsSgUBm8NSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from DESKTOP-L0HPE2S (unknown [111.225.242.229])
-	by APP-01 (Coremail) with SMTP id qwCowAA3j6FHFt1og8oGCg--.6039S2;
-	Wed, 01 Oct 2025 19:53:45 +0800 (CST)
-From: Haotian Zhang <vulab@iscas.ac.cn>
-To: Jacob Keller <jacob.e.keller@intel.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	intel-wired-lan@lists.osuosl.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Haotian Zhang <vulab@iscas.ac.cn>
-Subject: [PATCH v3] ice: ice_adapter: release xa entry on adapter allocation failure
-Date: Wed,  1 Oct 2025 19:53:36 +0800
-Message-ID: <20251001115336.1707-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.50.1.windows.1
+	s=arc-20240116; t=1759319687; c=relaxed/simple;
+	bh=eceOft7iVf1QqLlUjiro4ALjppCYNaBU/yL+srNJpfo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HnEk0vi3L1Hi5FQjIRf46XWld9VT4ZNcZqsqHY741MxPgf3j7CQmhBPch5EHpufiIIYu+50d7fIgL/Q1LnsYRIhAF8EOA43p+XL2iIZ3KRUiANgsCuDcyDiTi8/nsp9rQuKIsmU6CZuKoJRG0CKuOuuE4Dha7++5eUHh20lXhbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=n4yDCU+M; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=mandkC76; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=n4yDCU+M; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=mandkC76; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id AC52733740;
+	Wed,  1 Oct 2025 11:54:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759319682; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bJUof6DYKG7xkyj5R+cKI6gQiWlfED7Ou7gM8c1BhxA=;
+	b=n4yDCU+M8nzod9EOCWUEYuwenqyfrTNQM1Z6qUKjr5tCUh9qO/HUqKzspN9y+68atGhLgk
+	1hItkGzeogMfbeWCLfL2cNJkI3sdhgOAy28fsKrpO3mZGr2zAY3yilVEb+7hfMQSFM1Cw0
+	BEsrvHmtz7aF06hnVeN2gw+iZNQvdMI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759319682;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bJUof6DYKG7xkyj5R+cKI6gQiWlfED7Ou7gM8c1BhxA=;
+	b=mandkC76Ar3qf9stfBKWMyve4gW0uUo0JRXNShc7F0ql5BA9VM9cbQWrtWp/w1LsKiuw2d
+	zdSt6Jdr2iQDEqAw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=n4yDCU+M;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=mandkC76
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759319682; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bJUof6DYKG7xkyj5R+cKI6gQiWlfED7Ou7gM8c1BhxA=;
+	b=n4yDCU+M8nzod9EOCWUEYuwenqyfrTNQM1Z6qUKjr5tCUh9qO/HUqKzspN9y+68atGhLgk
+	1hItkGzeogMfbeWCLfL2cNJkI3sdhgOAy28fsKrpO3mZGr2zAY3yilVEb+7hfMQSFM1Cw0
+	BEsrvHmtz7aF06hnVeN2gw+iZNQvdMI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759319682;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bJUof6DYKG7xkyj5R+cKI6gQiWlfED7Ou7gM8c1BhxA=;
+	b=mandkC76Ar3qf9stfBKWMyve4gW0uUo0JRXNShc7F0ql5BA9VM9cbQWrtWp/w1LsKiuw2d
+	zdSt6Jdr2iQDEqAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A14BA13A3F;
+	Wed,  1 Oct 2025 11:54:42 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Y09ZJ4IW3WgAcwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 01 Oct 2025 11:54:42 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 3EA97A0A2D; Wed,  1 Oct 2025 13:54:38 +0200 (CEST)
+Date: Wed, 1 Oct 2025 13:54:38 +0200
+From: Jan Kara <jack@suse.cz>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs: assert ->i_lock held in __iget()
+Message-ID: <u3hbbwmmzdk6w4xehqyutp3zd3bfnilgxk7wtpvb55upl7ar5n@upbub3qtjh4p>
+References: <20250930235314.88372-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowAA3j6FHFt1og8oGCg--.6039S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7uryUtrWfWFyDAw13ZFy8Grg_yoW8KrWrpr
-	4DJry0yr40qrsYgr4DZF4xZryUua1fKrZ8KF4rJwnxuFZxJw1jvry5try7KFZ5A39agas8
-	Xa1DZw1UZw1DAw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9014x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
-	n2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
-	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
-	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
-	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1x
-	MIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIda
-	VFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBgsCA2jc2sWFEAABsz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250930235314.88372-1-mjguzik@gmail.com>
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: AC52733740
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FREEMAIL_TO(0.00)[gmail.com];
+	ARC_NA(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -4.01
 
-When ice_adapter_new() fails, the reserved XArray entry created by
-xa_insert() is not released. This causes subsequent insertions at
-the same index to return -EBUSY, potentially leading to
-NULL pointer dereferences.
+On Wed 01-10-25 01:53:14, Mateusz Guzik wrote:
+> Also remove the now redundant comment.
+> 
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 
-Reorder the operations as suggested by Przemek Kitszel:
-1. Check if adapter already exists (xa_load)
-2. Reserve the XArray slot (xa_reserve)
-3. Allocate the adapter (ice_adapter_new)
-4. Store the adapter (xa_store)
+Looks good. Feel free to add:
 
-Fixes: 0f0023c649c7 ("ice: do not init struct ice_adapter more times than needed")
-Suggested-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Suggested-by: Jacob Keller <jacob.e.keller@intel.com>
-Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
+Reviewed-by: Jan Kara <jack@suse.cz>
 
----
-Changes in v3:
-  - Reorder xa_load/xa_reserve/ice_adapter_new/xa_store calls as
-    suggested by Przemek Kitszel, instead of just adding xa_release().
-Changes in v2:
-  - Instead of checking the return value of xa_store(), fix the real bug
-    where a failed ice_adapter_new() would leave a stale entry in the
-    XArray.
-  - Use xa_release() to clean up the reserved entry, as suggested by
-    Jacob Keller.
----
- drivers/net/ethernet/intel/ice/ice_adapter.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+								Honza
 
-diff --git a/drivers/net/ethernet/intel/ice/ice_adapter.c b/drivers/net/ethernet/intel/ice/ice_adapter.c
-index b53561c34708..0a8a48cd4bce 100644
---- a/drivers/net/ethernet/intel/ice/ice_adapter.c
-+++ b/drivers/net/ethernet/intel/ice/ice_adapter.c
-@@ -99,19 +99,21 @@ struct ice_adapter *ice_adapter_get(struct pci_dev *pdev)
- 
- 	index = ice_adapter_xa_index(pdev);
- 	scoped_guard(mutex, &ice_adapters_mutex) {
--		err = xa_insert(&ice_adapters, index, NULL, GFP_KERNEL);
--		if (err == -EBUSY) {
--			adapter = xa_load(&ice_adapters, index);
-+		adapter = xa_load(&ice_adapters, index);
-+		if (adapter) {
- 			refcount_inc(&adapter->refcount);
- 			WARN_ON_ONCE(adapter->index != ice_adapter_index(pdev));
- 			return adapter;
- 		}
-+		err = xa_reserve(&ice_adapters, index, GFP_KERNEL);
- 		if (err)
- 			return ERR_PTR(err);
- 
- 		adapter = ice_adapter_new(pdev);
--		if (!adapter)
-+		if (!adapter) {
-+			xa_release(&ice_adapters, index);
- 			return ERR_PTR(-ENOMEM);
-+		}
- 		xa_store(&ice_adapters, index, adapter, GFP_KERNEL);
- 	}
- 	return adapter;
+> ---
+> 
+> verified this booted with ext4 on root, no splats
+> 
+>  include/linux/fs.h | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 9e9d7c757efe..4c773c4ee7aa 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -3368,11 +3368,9 @@ static inline bool is_zero_ino(ino_t ino)
+>  	return (u32)ino == 0;
+>  }
+>  
+> -/*
+> - * inode->i_lock must be held
+> - */
+>  static inline void __iget(struct inode *inode)
+>  {
+> +	lockdep_assert_held(&inode->i_lock);
+>  	atomic_inc(&inode->i_count);
+>  }
+>  
+> -- 
+> 2.34.1
+> 
 -- 
-2.50.1.windows.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
