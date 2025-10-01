@@ -1,191 +1,284 @@
-Return-Path: <linux-kernel+bounces-838479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C44CBBAF468
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 08:44:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80D93BAF46E
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 08:45:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DBB916D617
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 06:44:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 346E73A8ADD
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 06:45:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB80826FA70;
-	Wed,  1 Oct 2025 06:44:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D51B61E0DFE;
+	Wed,  1 Oct 2025 06:45:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="f3OOVoaW";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="xSOr+vjf"
-Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="aUZkunx5";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="T6/tIUcI";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="bTFuO2ap";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="KP33YJWM"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2C50FC0A;
-	Wed,  1 Oct 2025 06:44:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FDC217A309
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 06:45:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759301089; cv=none; b=NxBDc4nAx/h1odXUKlwuTTdt9mn8tF20xxFeDGzi6qm0HVZTtBkR7BZWCFIdIxr3bHguDfiUMllv6/qENWZ2EV1r7VmSBEDuWBJWF1fHA7FRy0dqy2X6H90q8MO/LclLhn60fGjOo1vpwGK8kKTlltn0sDtJfAAOrYbv3tqBIc4=
+	t=1759301121; cv=none; b=X0M4MnscRbz3RiPWxq9bAb4iAbMO3EXhjOnWK/lMAs9Z3ln3StmuZU7qL4H1YaQJud/YUdtznz18USgVHXMNrDc7kU1nSy5MvKj8Pxp3R6sgoB/INahvmzyzXZx3ESVY8Pj5zablbjOGoBk0YZVpAKcQkDKFs+Cl2IF/8i4JjSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759301089; c=relaxed/simple;
-	bh=Z8BCe4iaNeWsBEaGqmtX0eVcmR+lCvjMbO5uvQdSXPI=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=XHbHP9uN1HwUWz+vmydx6VDiBhmt2ogY79+NkvQdc6ZFFOngF2+7wL86GDYPYZMXqpjARt2JMQp1HFhZSaGGYWS80oV2tam01/PDiP/geUEII9cbLkJUnD4M6HV02Zb61dki95SgmJ2NBaJZSveqZJLb81yftDVIwj+XKCaXpSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=f3OOVoaW; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=xSOr+vjf; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfout.phl.internal (Postfix) with ESMTP id D0191EC016F;
-	Wed,  1 Oct 2025 02:44:45 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Wed, 01 Oct 2025 02:44:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1759301085;
-	 x=1759387485; bh=h2PY/hlOQdw6rIXoyxgJocjwCk9M0fTS2q6ugQ8vStE=; b=
-	f3OOVoaWj9LdGVQ6RtQMMoNU6teZtU4LDc/GtQ7Fb6I125mIMqkiXqVW3OXR4kaZ
-	w3II2aqG+UeH5P56lmx/k9OQhYgK6ELBFLWyJyK2x/zmkYmMML2iZi+z9917oQaw
-	XLeyW8+yW/kiEjQQ9aujQPSwnKmMFIvibVZcGZNd1fRtUIMxGQE6SqVCCu64P1NA
-	1H98hMJ/sFG6UfNRiHXTBK4bnMMLQXgWfEiMOsdo2+Kxuxh3N+Ymecq39RUCshfi
-	A64q76vXFJBNMJSriI7JRzXK6LsqJ7cUPeEozmD0ACf1yf2j7iOUtnhikyUJl7sM
-	cb33CETpIwQrcCtoS+dIew==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1759301085; x=
-	1759387485; bh=h2PY/hlOQdw6rIXoyxgJocjwCk9M0fTS2q6ugQ8vStE=; b=x
-	SOr+vjf5o49Cs3kdLa0KFfmES0CN5oX6gDHNUgTadphBVZ7SZg3yr3on32YOsK1K
-	a07Vpxb4f48DM4+GNlt6vyBrjRq1sSZ4Nyw/avfqUXgATomU1Y94C0F0u3EKTMLe
-	N0ODhY2zFD6PXp68+DIe7HEkJXKFxha0jl4GF3cZ2lI2pqkw+VzB31C0scRpdyix
-	RV3EKsPWsKyGrzlO4EI2n/wymIfI/uKAOL8W50/IaDXpJqtAZUUSMHLzlnMz1XVx
-	M9t0Nk/1ph8LO8GMeLrmmfr+uLwJeVbmY1a0N+lLZY01z07z78JfqGsqpIJDUDKz
-	KMCTzOrmGuDS6Qdt6tL1g==
-X-ME-Sender: <xms:3M3caIpfzTxAblV-d58n9nFgXChpTwPYDuc5ruVmk4IChRCROrueuw>
-    <xme:3M3caJd9DgLkriGdU-eNZfSGTLdHYR8aqktZaaVP6LCr4esldYgJTuMvPECpukm9m
-    kBbPzsdOfgaEUN3EPeY5DRFdcFpwzZn0Cw3tjEjdzpMXx-GlgAlG9LE>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdekvdeghecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
-    hnpedvfffgfefhgfdtiedvieetfefgkefhieegvdejfffgheeiuedttdetkeffhefgvden
-    ucffohhmrghinhepghhouggsohhlthdrohhrghdpghhnuhdrohhrghenucevlhhushhtvg
-    hrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdr
-    uggvpdhnsggprhgtphhtthhopeduvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoh
-    epmhgrrhhkrdhruhhtlhgrnhgusegrrhhmrdgtohhmpdhrtghpthhtohepsghoqhhunhdr
-    fhgvnhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtohepphgvthgvrhiisehinhhfrhgrug
-    gvrggurdhorhhgpdhrtghpthhtohepfihilhhlsehkvghrnhgvlhdrohhrghdprhgtphht
-    thhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoh
-    epfhhthhgrihhnsehlihhnuhigqdhmieekkhdrohhrghdprhgtphhtthhopehgvggvrhht
-    sehlihhnuhigqdhmieekkhdrohhrghdprhgtphhtthhopehlrghntggvrdihrghngheslh
-    hinhhugidruggvvhdprhgtphhtthhopegtohhrsggvtheslhifnhdrnhgvth
-X-ME-Proxy: <xmx:3M3caElhms60U0Ao69Bt2Dm8K8zQopNSyPlZUHP9GUO8mDllOWRU0A>
-    <xmx:3M3caKOA2frNA-FJj-6AiEo_14JZOv2ZvaIA9IqpKELmkVy5UIfHFA>
-    <xmx:3M3caO5YYqXqLB6gfDJ3VfI8XeVxd641akUYUTN7CWqrh3nRyzV0WA>
-    <xmx:3M3caOZQm4vC6bvNDg3DgNEbm3t89yjJXYVotEwUTDya-dr21BQj3Q>
-    <xmx:3c3caIT5lJMN91gr0HIkVMw4aQxhh0ZeYklDiDJMGJYj4a4ld3S2SOMJ>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 99C12700069; Wed,  1 Oct 2025 02:44:44 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1759301121; c=relaxed/simple;
+	bh=VxUm68KnN3zve6Y7r2MoaVHxMdaOwTiutr/1eLOAZ6c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=be3cs+2puTd1PsD/7QJkkdH6rDpQKfgM4Dj76u+up7qSgW+CQQjoxvGiD8pUdJDMeVqP8rinFf2eEWEvlYI15hRMB53b3ePwsqYK56sEzSHP9N3I6z20t54s7L4SCQbPH+qWWMmTFSuN1ObTaQcjBznC6Bc/o/y81Hv56Uk+gLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=aUZkunx5; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=T6/tIUcI; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=bTFuO2ap; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=KP33YJWM; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id D47A533777;
+	Wed,  1 Oct 2025 06:45:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1759301111; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=3PUW0GlmkITYxestkhaDP2QY5zJfTZgpkkxNAnVT6jw=;
+	b=aUZkunx5mDUXFOlN1mJVKwdPQ+wh0GesC1xVPPwI1IJQ9bK5oBN7Q4ry0g86ln4GnxL+7f
+	GzVAR1JeEj1beIucY9HD2M0E3F1vpIgxXQedLvbQ3+be7kHTAsvhreTtPyPk5NNjxnJORN
+	rXs63xs2cJeWZoUYJgXzMdPgHj7GPU4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1759301111;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=3PUW0GlmkITYxestkhaDP2QY5zJfTZgpkkxNAnVT6jw=;
+	b=T6/tIUcIYtTeVx41yEYdrJgLRBcRQ8EIIPdUZer1jiPJCn4XWMIVf0RVmnADq3HHB/he80
+	hofD6XCfuOsdKjBw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=bTFuO2ap;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=KP33YJWM
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1759301110; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=3PUW0GlmkITYxestkhaDP2QY5zJfTZgpkkxNAnVT6jw=;
+	b=bTFuO2apah1VMvPzz0pLOMyctDvBe/cC7423V6MekBaObevQjDWX4ufFHJE8tlzqnRuD1c
+	a6+a2/qO3fwxgnvrnTK1GMa9Mm4u9XF+KQ8Le/X16vcq9a281Id5AJb4g3ZnJRQLUwL9iB
+	M9p7BKyw01WAKrnX26/7zV/1WMBG3a4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1759301110;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=3PUW0GlmkITYxestkhaDP2QY5zJfTZgpkkxNAnVT6jw=;
+	b=KP33YJWMHNcXzO7iCGx9srRd13SA2JRXlkhzWg9aoR5Dymsj71sKje1AnaW1kij7qobscH
+	hhaF2nd8LFmnMcBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5C66313A3F;
+	Wed,  1 Oct 2025 06:45:10 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id NbbPFPbN3Gh5EAAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Wed, 01 Oct 2025 06:45:10 +0000
+Message-ID: <bfacbd41-48c6-4123-9fdd-3d82eb682673@suse.de>
+Date: Wed, 1 Oct 2025 08:45:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: Ah_uXtpTlO07
-Date: Wed, 01 Oct 2025 08:44:01 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Finn Thain" <fthain@linux-m68k.org>
-Cc: "Geert Uytterhoeven" <geert@linux-m68k.org>,
- "Peter Zijlstra" <peterz@infradead.org>, "Will Deacon" <will@kernel.org>,
- "Andrew Morton" <akpm@linux-foundation.org>,
- "Boqun Feng" <boqun.feng@gmail.com>, "Jonathan Corbet" <corbet@lwn.net>,
- "Mark Rutland" <mark.rutland@arm.com>, linux-kernel@vger.kernel.org,
- Linux-Arch <linux-arch@vger.kernel.org>, linux-m68k@vger.kernel.org,
- "Lance Yang" <lance.yang@linux.dev>
-Message-Id: <7de25cf0-595e-4b8e-b0da-6e5a66ec1358@app.fastmail.com>
-In-Reply-To: <60325e45-e4a7-d0cf-ba28-a1a811f9a890@linux-m68k.org>
-References: <cover.1757810729.git.fthain@linux-m68k.org>
- <abf2bf114abfc171294895b63cd00af475350dba.1757810729.git.fthain@linux-m68k.org>
- <CAMuHMdUgkVYyUvc85_P9TyTM5f-=mC=+X=vtCWN45EMPqF7iMg@mail.gmail.com>
- <6c295a4e-4d18-a004-5db8-db2e57afc957@linux-m68k.org>
- <57ac401b-222b-4c85-b719-9e671a4617cf@app.fastmail.com>
- <86be5cf0-065e-d55d-fdb6-b9cf6655165e@linux-m68k.org>
- <ec2982e3-2996-918e-f406-32f67a0decfe@linux-m68k.org>
- <e02f861b-706c-4f6d-bded-002601da954a@app.fastmail.com>
- <60325e45-e4a7-d0cf-ba28-a1a811f9a890@linux-m68k.org>
-Subject: Re: [RFC v2 2/3] atomic: Specify alignment for atomic_t and atomic64_t
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 05/29] drm/atomic_state_helper: Fix bridge state
+ initialization
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Jyri Sarha <jyri.sarha@iki.fi>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ Devarsh Thakkar <devarsht@ti.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20250902-drm-state-readout-v1-0-14ad5315da3f@kernel.org>
+ <20250902-drm-state-readout-v1-5-14ad5315da3f@kernel.org>
+ <9f17dfd9-a4d4-41e9-b988-bd8ca858e5e7@suse.de>
+ <20250915-heavenly-athletic-lionfish-aa7b8b@penduick>
+ <9520bcb5-df81-452c-902a-0c4c61156716@suse.de>
+ <20250923-dynamic-bumblebee-of-luck-d31a19@penduick>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20250923-dynamic-bumblebee-of-luck-d31a19@penduick>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: D47A533777
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[15];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[linux.intel.com,gmail.com,ffwll.ch,intel.com,linaro.org,kernel.org,ideasonboard.com,kwiboo.se,iki.fi,ti.com,lists.freedesktop.org,vger.kernel.org];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid]
+X-Spam-Score: -3.01
 
-On Wed, Oct 1, 2025, at 03:03, Finn Thain wrote:
-> On Tue, 30 Sep 2025, Arnd Bergmann wrote:
+Hi
 
->> What is the alignment of stack variables on m68k? E.g. if you have a 
->> function with two local variables, would that still be able to trigger 
->> the check?
->> 
->> int f(atomic64_t *a)
->> {
->>      u16 pad;
->>      u64 old;
->>      
->>      g(&pad);
->>      atomic64_try_cmpxchg(a, &old, 0);
->> }
->> 
+Am 23.09.25 um 11:33 schrieb Maxime Ripard:
+> On Mon, Sep 15, 2025 at 03:12:11PM +0200, Thomas Zimmermann wrote:
+>> Hi
+>>
+>> Am 15.09.25 um 13:27 schrieb Maxime Ripard:
+>>> On Tue, Sep 02, 2025 at 03:18:17PM +0200, Thomas Zimmermann wrote:
+>>>> Hi
+>>>>
+>>>> Am 02.09.25 um 10:32 schrieb Maxime Ripard:
+>>>>> Bridges implement their state using a drm_private_obj and an
+>>>>> hand-crafted reset implementation.
+>>>>>
+>>>>> Since drm_private_obj doesn't have a set of reset helper like the other
+>>>>> states, __drm_atomic_helper_bridge_reset() was initializing both the
+>>>>> drm_private_state and the drm_bridge_state structures.
+>>>>>
+>>>>> This initialization however was missing the drm_private_state.obj
+>>>>> pointer to the drm_private_obj the state was allocated for, creating a
+>>>>> NULL pointer dereference when trying to access it.
+>>>>>
+>>>>> Fixes: 751465913f04 ("drm/bridge: Add a drm_bridge_state object")
+>>>>> Signed-off-by: Maxime Ripard <mripard@kernel.org>
+>>>>> ---
+>>>>>     drivers/gpu/drm/drm_atomic_state_helper.c | 8 ++++++++
+>>>>>     1 file changed, 8 insertions(+)
+>>>>>
+>>>>> diff --git a/drivers/gpu/drm/drm_atomic_state_helper.c b/drivers/gpu/drm/drm_atomic_state_helper.c
+>>>>> index 7142e163e618ea0d7d9d828e1bd9ff2a6ec0dfeb..b962c342b16aabf4e3bea52a914e5deb1c2080ce 100644
+>>>>> --- a/drivers/gpu/drm/drm_atomic_state_helper.c
+>>>>> +++ b/drivers/gpu/drm/drm_atomic_state_helper.c
+>>>>> @@ -707,10 +707,17 @@ void drm_atomic_helper_connector_destroy_state(struct drm_connector *connector,
+>>>>>     	__drm_atomic_helper_connector_destroy_state(state);
+>>>>>     	kfree(state);
+>>>>>     }
+>>>>>     EXPORT_SYMBOL(drm_atomic_helper_connector_destroy_state);
+>>>>> +static void __drm_atomic_helper_private_obj_reset(struct drm_private_obj *obj,
+>>>>> +						  struct drm_private_state *state)
+>>>>> +{
+>>>>> +	memset(state, 0, sizeof(*state));
+>>>> This argument is guaranteed to be zero'd, I think. No need for a memset.
+>>>>
+>>>>> +	state->obj = obj;
+>>>>> +}
+>>>>> +
+>>>>>     /**
+>>>>>      * __drm_atomic_helper_private_obj_duplicate_state - copy atomic private state
+>>>>>      * @obj: CRTC object
+>>>>>      * @state: new private object state
+>>>>>      *
+>>>>> @@ -796,10 +803,11 @@ EXPORT_SYMBOL(drm_atomic_helper_bridge_destroy_state);
+>>>>>      */
+>>>>>     void __drm_atomic_helper_bridge_reset(struct drm_bridge *bridge,
+>>>>>     				      struct drm_bridge_state *state)
+>>>>>     {
+>>>>>     	memset(state, 0, sizeof(*state));
+>>>> Another unnecessary memset?
+>>> I guess the two can be seen as redundant, but I'd argue the one in
+>>> __drm_atomic_helper_private_obj_reset should still be there.
+>>>
+>>> What guarantees that the pointer points to a zero'd structure?
+>> We only call this helper after allocation AFAICT. And the DRM APIs already
+>> assume that allocation clears to zero.
+> Really? Do we have that documented anywhere?
+
+I don't think it's documented anywhere, but that's what Sima told me 
+when I tried to write similar code. The rule was to alloc zero'd memory 
+and than have init functions only set what is necessary, but keep others 
+to zero. I think it can be seen in certain places, where drivers set a 
+variety of flags or fields before calling an init helper. Creating a GEM 
+object from shmem is an example. [1]
+
+[1] 
+https://elixir.bootlin.com/linux/v6.17/source/drivers/gpu/drm/drm_gem_shmem_helper.c#L52
+
+Best regards
+Thomas
+
 >
-> I assume so:
+> And even then, there's nothing that requires that helper to be called
+> straight-away after allocation.
 >
-> int foo(void) {
->     short s;
->     long long ll;
->     return alignof(ll);
-> }
+> More importantly, do we really care about skipping them? Like, all the
+> other reset helpers are doing it, it's cheap, safe, why should we remove
+> it?
 >
-> # Compilation provided by Compiler Explorer at https://godbolt.org/
-> foo():
->         link.w %fp,#0
->         moveq #2,%d0
->         unlk %fp
->         rts
+> Maxime
 
-This just returns the guaranteed alignment of the 'long long'
-type based on -malign-int/-mno-align-int. Checking again I
-find that gcc's m68k-linux target aligns stack allocations
-to 4 bytes, though the m68k-unknown target apparently keeps
-the 2 byte alignment:
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
-https://gcc.gnu.org/legacy-ml/gcc-patches/2007-09/msg01572.html
 
-https://godbolt.org/z/48fGMj56W
-
-Surprisingly the godbolt.org link also shows a significant
-overhead when building the same code with -malign-int
-in the second tab. This is unrelated to the issue here,
-but I wonder if that is something to report to the gcc
-bug tracker if we ever get to building the kernel with
--malign-int. Similarly, I noticed that clang does not
-support the -malign-int flag on m68k at all.
-
->> Since there is nothing telling the compiler that the 'old' argument to 
->> atomic*_try_cmpcxchg() needs to be naturally aligned, maybe that check 
->> should be changed to only test for the ABI-guaranteed alignment? I think 
->> that would still be needed on x86-32.
->>  
->
-> I don't know why we would check the alignment of the 'old' quantity. It's 
-> going to be loaded into a register before being used, right?
-
-I was wondering about that as well, but checking for alignof(*old)
-probably can't hurt. The only architectures that actually have
-a custom arch_try_cmpxchg*() are s390 and x86 and those don't
-care about alignmnent of 'old', but it's possible that another
-architecture that can't handle unaligned load/store would add
-an inline asm implementation in the future and break if an
-alignment fixup happens in the middle of an ll/sc loop.
-
-      Arnd
 
