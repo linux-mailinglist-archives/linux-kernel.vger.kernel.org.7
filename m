@@ -1,77 +1,90 @@
-Return-Path: <linux-kernel+bounces-838431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDE9ABAF2C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 08:05:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34AF9BAF315
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 08:13:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 367BC2A245A
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 06:05:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 800774A556F
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 06:13:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA8002D7DDD;
-	Wed,  1 Oct 2025 06:04:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 294D52DF121;
+	Wed,  1 Oct 2025 06:11:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="eBB1J8+p"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	dkim=pass (2048-bit key) header.d=iokpp.de header.i=@iokpp.de header.b="Ig82TzVB"
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [81.169.146.167])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D9A417A305;
-	Wed,  1 Oct 2025 06:04:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759298692; cv=none; b=bdzt5bXxeBvbBpbEHQtl5jxCpVAfzEFkeesYWd1ZC6SrNV4y/JrJpA+sqkgiLW4ZnFIfRsZGEju12KKg1Jdm5hhH89DKX8MnqwP/cWO2TRI4qUbB+UVe099JZ9ukkksEMqn1RwAYEmc8LGT68csH0Pqlf2ak3DKfOrBOfq/WX5s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759298692; c=relaxed/simple;
-	bh=Zy3Chk3IsXVuwitOcu5ShYYmJKwChkzi6v/GovRBypE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uQ27DP4Rn3qSHWoaZaMZpt1ksJvb8zYcK0euugMx1kduFc6uOwpnGP1w6ujI7bLJwgn5pGtyMK/oE9H1F6dJAl8J/WD0JmCay2rcmJ9thg0d4zpkrE7xm37v4rAQK4ySEvHuiRRL278gpqmfAKQv2vW1EToFsiIbggO7iEozlBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=eBB1J8+p; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 85053faa9e8c11f08d9e1119e76e3a28-20251001
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=bPjJVKJWfX/QRF1O7LRg4cKSp0jf6hqcZ2RrU6a4XBs=;
-	b=eBB1J8+pPNqmoK64cRaBz/YGvd3tQJlmCPi9+xfrgYavgAYg8v7BMdPwn6tmMKYwvFkw/8BMWeLZ9bUxn220oUblqB+iqs5SZydI1ezKRJBbLh8ukew9abAX7OX/19CHzuBJEG8TeIs1gQ7tiCKLGyfknow62gbnlfTKvMP8tLY=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.6,REQID:c3295029-0cd6-4d07-ab49-5f497e1fd48b,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:a9d874c,CLOUDID:2f81ddf8-ebfe-43c9-88c9-80cb93f22ca4,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102|836|888|898,TC:-5,Content:
-	0|15|50,EDM:-3,IP:nil,URL:0,File:130,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,
-	OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 85053faa9e8c11f08d9e1119e76e3a28-20251001
-Received: from mtkmbs09n2.mediatek.inc [(172.21.101.94)] by mailgw01.mediatek.com
-	(envelope-from <chris.lu@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1909711436; Wed, 01 Oct 2025 14:04:41 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Wed, 1 Oct 2025 14:04:39 +0800
-Received: from mtksitap99.mediatek.inc (10.233.130.16) by
- mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1748.10 via Frontend Transport; Wed, 1 Oct 2025 14:04:39 +0800
-From: Chris Lu <chris.lu@mediatek.com>
-To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg
-	<johan.hedberg@gmail.com>, Luiz Von Dentz <luiz.dentz@gmail.com>
-CC: Sean Wang <sean.wang@mediatek.com>, Will Lee <will-cy.Lee@mediatek.com>,
-	SS Wu <ss.wu@mediatek.com>, Steve Lee <steve.lee@mediatek.com>,
-	linux-bluetooth <linux-bluetooth@vger.kernel.org>, linux-kernel
-	<linux-kernel@vger.kernel.org>, linux-mediatek
-	<linux-mediatek@lists.infradead.org>, Chris Lu <chris.lu@mediatek.com>
-Subject: [PATCH v1 2/2] Bluetooth: btusb: Add new VID/PID 0489/e170 for MT7922
-Date: Wed, 1 Oct 2025 14:04:37 +0800
-Message-ID: <20251001060437.2298529-3-chris.lu@mediatek.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20251001060437.2298529-1-chris.lu@mediatek.com>
-References: <20251001060437.2298529-1-chris.lu@mediatek.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCAF62DC781;
+	Wed,  1 Oct 2025 06:11:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=81.169.146.167
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759299095; cv=pass; b=Zr6pdOcujysXnbvBRdpwSu5quC+AqpoWMo02/kbTmwvTTwXmA539MWF4SHFNu2BvTsPbsT+eSXe/DAHrWTgisjYAHVJGDKMabGGT8rijObmfjYgEoWaDqwuI4Kn7bnn2eJh5/A6QtXGjKzjKKl2mwsRCPa4O7Z4vqxSLgHqum0I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759299095; c=relaxed/simple;
+	bh=HDws+0WHACs7h+lgatRJcrzTD8NRfGEzmeUc4oV7kVw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=nFZpy/blneg9aSjRO5rv+bHxJ+NTorpxxk+hTx+owyk8r1WMLdXopmyd812JQyEcdiXdfF5SIb1F0slY0Mu18NuoeRrPiZaAZkUEY4ntuQX02TRs5mr9BempdLh0G7Axnre3xWbLoDB9wvcd0M2G0n17Y8ccKxNFQEvZvgGmjCU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iokpp.de; spf=none smtp.mailfrom=iokpp.de; dkim=pass (2048-bit key) header.d=iokpp.de header.i=@iokpp.de header.b=Ig82TzVB; arc=pass smtp.client-ip=81.169.146.167
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iokpp.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=iokpp.de
+ARC-Seal: i=1; a=rsa-sha256; t=1759298897; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=enf3ITdm3r/+U8NCFFhW3QiG2wIePf+GxClWXngRzsVNSEWQl/GJCeJ6dWS2jTGihh
+    Nlk23Vu39cYitlHcIFrmLd55X6nF7gkNd94t7pQ+XCIyqfARbxxOq5kAE8DJ18hOvt4X
+    7hGB8lp9uRdgb2QMLFmcO25XD8ZJCrz9QO+E9ae6N7PeKg+r589DLUdndmO/pL+JLZe1
+    iyhoJL80oDV7Qa5Yw449qY3sR8k+lKrrdTJlr9DKjYobrV/rGoBSkFKhGDmhXOmlzUp4
+    AFTbnXGAojsRZPgpxVA3JKXDF5j9walgH/QOFpeFnCF6saw5h2fLKEmE5Qafdhmr9sN7
+    NzTA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1759298897;
+    s=strato-dkim-0002; d=strato.com;
+    h=Message-Id:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=DNRE7d9XoF6Bh3ymYMMqBGHCU94maYTRPui1GHqUTdo=;
+    b=FPFAODbbNxlGX1jdVwf2+9R1Ut3qZ152LVQXtvLZ+CRX88ubN+ZPy0EOQaxgu3AD9k
+    1acyHnLQxxXRbYzxdNkB/JHfXJU9Do4HpW+RJn9GJfD4IkZ0GsiRbvxsieHKzVI7uGb/
+    mmJq+iUdOulWIXxtvvtpgLuNytl/GbHkf7XlOazREDW4jgLYyolRK7XgqQy3jjTZFt4I
+    Rj9D/Nl359/qTwZMvpnUOYCYE6+HFpDlJoWsaGgdEOSWbeZGii4HM+DF171McoaJ9wGW
+    RZRYPVSVf+blaoh2Vvir5B5/0H6ZsxFoJTHrXSuhVwhEP/sn00FdfbHKczEycaZ0z15Z
+    yLVw==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1759298897;
+    s=strato-dkim-0002; d=iokpp.de;
+    h=Message-Id:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
+    bh=DNRE7d9XoF6Bh3ymYMMqBGHCU94maYTRPui1GHqUTdo=;
+    b=Ig82TzVBqfQTN+aRVVI5Z3tC1jPh6OL1kxdGgEjkE398dULrLJrwWoaF+EyWxVy5Pv
+    GZRTAEfVgt2vqjq+DyaJ3UgSZOES2TKU59IlBsqWfzsoREn4yUtxgxYz1VGAuQTCqmQh
+    MnNFeMR3Iw775cINhbiP3OUHkQYTb3p7t3hX/0p/NvJXDYHrMMVuUauDKJDxiWfJ1scP
+    63glXidYdKm4HiSKqOF/O/gKSqrrP+5BMVWBeEMV+2/JCaYLgnY9ore+eCaurFABXb11
+    RHLzXgcVhR2shx/qgebIy7LMUDTyzsYobTwriMg32hAIy+WkgdLUBKEAX1b5119Nf6vm
+    G+ow==
+X-RZG-AUTH: ":LmkFe0i9dN8c2t4QQyGBB/NDXvjDB6pBSfNuhhDSDt3O2JmZOo2yQsAdmCB+Gw=="
+Received: from Munilab01-lab.fritz.box
+    by smtp.strato.de (RZmta 53.3.2 AUTH)
+    with ESMTPSA id z9ebc619168GY7G
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+	(Client did not present a certificate);
+    Wed, 1 Oct 2025 08:08:16 +0200 (CEST)
+From: Bean Huo <beanhuo@iokpp.de>
+To: avri.altman@wdc.com,
+	bvanassche@acm.org,
+	alim.akhtar@samsung.com,
+	jejb@linux.ibm.com,
+	martin.petersen@oracle.com,
+	can.guo@oss.qualcomm.com,
+	ulf.hansson@linaro.org,
+	beanhuo@micron.com,
+	jens.wiklander@linaro.org
+Cc: linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bean Huo <beanhuo@iokpp.de>
+Subject: [PATCH v2 0/3] Add OP-TEE based RPMB driver for UFS devices
+Date: Wed,  1 Oct 2025 08:08:02 +0200
+Message-Id: <20251001060805.26462-1-beanhuo@iokpp.de>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,72 +92,56 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
 
-Add VID 0489 & PID e170 for MediaTek MT7922 USB Bluetooth chip.
+This patch series introduces OP-TEE based RPMB (Replay Protected Memory Block)
+support for UFS devices, extending the kernel-level secure storage capabilities
+that are currently available for eMMC devices.
 
-The information in /sys/kernel/debug/usb/devices about the Bluetooth
-device is listed as the below.
+Previously, OP-TEE required a userspace supplicant to access RPMB partitions,
+which created complex dependencies and reliability issues, especially during
+early boot scenarios. Recent work by Linaro has moved core supplicant
+functionality directly into the Linux kernel for eMMC devices, eliminating
+userspace dependencies and enabling immediate secure storage access. This series
+extends the same approach to UFS devices, which are used in enterprise and mobile
+applications that require secure storage capabilities.
 
-T:  Bus=06 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  2 Spd=480  MxCh= 0
-D:  Ver= 2.10 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
-P:  Vendor=0489 ProdID=e170 Rev= 1.00
-S:  Manufacturer=MediaTek Inc.
-S:  Product=Wireless_Device
-S:  SerialNumber=000000000
-C:* #Ifs= 3 Cfg#= 1 Atr=e0 MxPwr=100mA
-A:  FirstIf#= 0 IfCount= 3 Cls=e0(wlcon) Sub=01 Prot=01
-I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=125us
-E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-I:  If#= 1 Alt= 6 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  63 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  63 Ivl=1ms
-I:* If#= 2 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=(none)
-E:  Ad=8a(I) Atr=03(Int.) MxPS=  64 Ivl=125us
-E:  Ad=0a(O) Atr=03(Int.) MxPS=  64 Ivl=125us
-I:  If#= 2 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=(none)
-E:  Ad=8a(I) Atr=03(Int.) MxPS= 512 Ivl=125us
-E:  Ad=0a(O) Atr=03(Int.) MxPS= 512 Ivl=125us
+Benefits:
+- Eliminates dependency on userspace supplicant for UFS RPMB access
+- Enables early boot secure storage access (e.g., fTPM, secure UEFI variables)
+- Provides kernel-level RPMB access as soon as UFS driver is initialized
+- Removes complex initramfs dependencies and boot ordering requirements
+- Ensures reliable and deterministic secure storage operations
+- Supports both built-in and modular fTPM configurations.
 
-Signed-off-by: Chris Lu <chris.lu@mediatek.com>
----
- drivers/bluetooth/btusb.c | 2 ++
- 1 file changed, 2 insertions(+)
+v1 -- v2:
+	1. Added fix tag for patch [2/3]
+	2. Incorporated feedback and suggestions from Bart
 
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index a2cde2284163..6834592f3c39 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -687,6 +687,8 @@ static const struct usb_device_id quirks_table[] = {
- 						     BTUSB_WIDEBAND_SPEECH },
- 	{ USB_DEVICE(0x0489, 0xe153), .driver_info = BTUSB_MEDIATEK |
- 						     BTUSB_WIDEBAND_SPEECH },
-+	{ USB_DEVICE(0x0489, 0xe170), .driver_info = BTUSB_MEDIATEK |
-+						     BTUSB_WIDEBAND_SPEECH },
- 	{ USB_DEVICE(0x04ca, 0x3804), .driver_info = BTUSB_MEDIATEK |
- 						     BTUSB_WIDEBAND_SPEECH },
- 	{ USB_DEVICE(0x04ca, 0x38e4), .driver_info = BTUSB_MEDIATEK |
+RFC v1 -- v1:
+        1. Added support for all UFS RPMB regions based on https://github.com/OP-TEE/optee_os/issues/7532
+        2. Incorporated feedback and suggestions from Bart
+
+
+Bean Huo (3):
+  rpmb: move rpmb_frame struct and constants to common header
+  scsi: ufs: core: fix incorrect buffer duplication in
+    ufshcd_read_string_desc()
+  scsi: ufs: core: Add OP-TEE based RPMB driver for UFS devices
+
+ drivers/misc/Kconfig           |   2 +-
+ drivers/mmc/core/block.c       |  42 ------
+ drivers/ufs/core/Makefile      |   1 +
+ drivers/ufs/core/ufs-rpmb.c    | 253 +++++++++++++++++++++++++++++++++
+ drivers/ufs/core/ufshcd-priv.h |  13 ++
+ drivers/ufs/core/ufshcd.c      |  32 ++++-
+ include/linux/rpmb.h           |  44 ++++++
+ include/ufs/ufs.h              |   4 +
+ include/ufs/ufshcd.h           |   3 +
+ 9 files changed, 346 insertions(+), 48 deletions(-)
+ create mode 100644 drivers/ufs/core/ufs-rpmb.c
+
 -- 
-2.45.2
+2.34.1
 
 
