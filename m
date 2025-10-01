@@ -1,118 +1,119 @@
-Return-Path: <linux-kernel+bounces-838793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26DD4BB029D
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 13:30:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 502AEBB02A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 13:30:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBA814A6253
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 11:30:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 280537AFBA3
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 11:28:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7BD82C3266;
-	Wed,  1 Oct 2025 11:30:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E26621F462D;
+	Wed,  1 Oct 2025 11:30:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="qOewgJOB"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LsDD6oRb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C75D72C3770;
-	Wed,  1 Oct 2025 11:30:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4779422CBF1
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 11:30:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759318210; cv=none; b=XCk3tf5chvhu6MKDu6DNwbguacbzZioX90DuvbR6D4HU3dNlv4cvcqxSO4qDpR/a3Ce2ylYhzcSvdwJ/GdM3AsJnQmAc948LVv0aFokgmZV3M+qgvjTnnf3xth7Ky7Wjhu6t3oUxllCj6GF6D81lp7A/YWeC02G7LEU6QM8uBcI=
+	t=1759318226; cv=none; b=lBbDc01VgTtOjtn35ESD17zRasWdprZeR8XsANKqKw5vAOayy6q6W9eHephT7kieiE0qHZ6Sft07jPHUZdQy70NxrP9SRXQ1BNO/KKgl5Lcc9+Hnw3kz779Iz6puhyQOKA3QG6TkDh9P39GwSXL67rS4Xi5HzGAjS5O64vnXaFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759318210; c=relaxed/simple;
-	bh=TSN7wdoIY+RSiBU4VS9HFoh1mDkmc2W2ztVCZNYeegY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tRBSTpc/dASOYmi0Hh6CsPpf+05r7Mv6zPPEwHOm1YT/19OYj/KvqBmUyVCNAlW/Qr6KrVss8N9ojk9HUyhiOZsX0qfd48wGk6eQzbd9IPY0waXIMOtM75OtM4qkElp2GvpfqFz07EUJWeCbwz/CD1nCyQ44Dqqg+nrbrIEdI80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=qOewgJOB; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1759318203;
-	bh=TSN7wdoIY+RSiBU4VS9HFoh1mDkmc2W2ztVCZNYeegY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qOewgJOBumdbTEqeUO+6E1ND+PzsymTS1jyCR9u4D4PNk0/7VIvuKWOte+j5h8V08
-	 VQyDcA/1MO0Zzr2sVf+4ScAw2q7ENE3D/ESv/XBjIRh7ClnZ4S+7V8lRF7Pl5MmNfg
-	 kCEyIRSavX5f+sNvLQXJt6HqoLRNzKORTKXYBNSS2kIEXX+gIUCUPc1U7cB+Hf/pEZ
-	 +bR8w7RQPeFQjIUiS2GZnTzMwgX26J6uLKJOgNektxGbRBSN/EVxRliw+JsF0im0Qn
-	 Ns3ZHNP/oMvKkQeOjKQ7WTTBxJUlFUkdArcWjGcqGU/lXzVkJgAbcuxK15J/iV2OgT
-	 juAORtLROMc6g==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9EC1C17E00AC;
-	Wed,  1 Oct 2025 13:30:02 +0200 (CEST)
-Message-ID: <7909d937-aa93-44bf-a4d3-12849a14fdf4@collabora.com>
-Date: Wed, 1 Oct 2025 13:30:01 +0200
+	s=arc-20240116; t=1759318226; c=relaxed/simple;
+	bh=/O7hNSAsIGDyvmS3NbIwiUzg0VS3xLz1rSxyQ8x9G38=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HGubdwk+CtpmLea0MjwwwaJsuafgsZzgspPgA1Bx6kRo9OqzzUSO6Zmd0UkmLCuOxQJrgXJRL5KYVAGzQFfJdgpf5joeTm71uzxnEBKBEovISpsjGcweGl2XfZ3LgoRrvGOBT6u1Hi/te5XG6AMaQtZ7Y+RobnLJs2+5v9dYtSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LsDD6oRb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76BBDC116D0;
+	Wed,  1 Oct 2025 11:30:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759318225;
+	bh=/O7hNSAsIGDyvmS3NbIwiUzg0VS3xLz1rSxyQ8x9G38=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LsDD6oRbstHikBnhHFxza0IdPZ4pFsgJsoeZ9Cx9LPW3zCIwrd/qvR8X7LYfR+TQm
+	 K6dhD4cr5a6rlT4DWhHQLSBQQNIx95HefnUbyNLE6DCNBFpbnkaYDNe6hha6uGpIEN
+	 sif6szEFx6xinWa6q7i3326KN7Fqgjfm7aiirdm/FwKBSM4mS6JKiN18AtRnKyZUWN
+	 GFh5RIuVirTy6E4lN+C7hT+am73jlLQvXt84k7wTIOBduabZWKIeSQdx9E85QkHYKm
+	 I2DVxbpDH0iCFR+EbiUfnH5WtLQGPhNk4rj0hTpseN+a0LtRz5EMaUlOIrNp+wgd2b
+	 4CHM23E236Syw==
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 752ACF40066;
+	Wed,  1 Oct 2025 07:30:24 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-06.internal (MEProxy); Wed, 01 Oct 2025 07:30:24 -0400
+X-ME-Sender: <xms:0BDdaJ8AAKBpeHFnHKT535YpHuEvXE0WHonVWCPZvwiGT3vdhaUIGA>
+    <xme:0BDdaFkozq_uJ4gVNOXBBcB1WI_B30x_QF8SI3OR5hHD3rN7dMgcq51gN1cana-ZR
+    _l_IjiIwl2Gpx_bix_X2xuA_7RUFyaJvVXJpLPaHUGi7fh9NBhjN-g>
+X-ME-Received: <xmr:0BDdaGaDxiZEPQOD6J3FgW9x8mXmm3RqHQoJGd0ENdpn7dPUeMws6QY8B3axlQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdekfedtvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtuggjsehttdfstddttddvnecuhfhrohhmpefmihhrhihlucfu
+    hhhuthhsvghmrghuuceokhgrsheskhgvrhhnvghlrdhorhhgqeenucggtffrrghtthgvrh
+    hnpefhieekteelledugefhffekfffgjedtveevgffgjeeffeegvdekteetudeggefgkeen
+    ucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenuc
+    frrghrrghmpehmrghilhhfrhhomhepkhhirhhilhhlodhmvghsmhhtphgruhhthhhpvghr
+    shhonhgrlhhithihqdduieduudeivdeiheehqddvkeeggeegjedvkedqkhgrsheppehkvg
+    hrnhgvlhdrohhrghesshhhuhhtvghmohhvrdhnrghmvgdpnhgspghrtghpthhtohepudeg
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegthhgrohdrghgrohesihhnthgvlh
+    drtghomhdprhgtphhtthhopehlihhnuhigqdgtohgtoheslhhishhtshdrlhhinhhugidr
+    uggvvhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlh
+    drohhrghdprhgtphhtthhopeigkeeisehkvghrnhgvlhdrohhrghdprhgtphhtthhopegu
+    rghvvgdrhhgrnhhsvghnsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepug
+    grnhdrjhdrfihilhhlihgrmhhssehinhhtvghlrdgtohhmpdhrtghpthhtohephihilhhu
+    nhdrgihusehlihhnuhigrdhinhhtvghlrdgtohhm
+X-ME-Proxy: <xmx:0BDdaFMe7YZfxW49JDfYRoGKmqLl2b3wU2x0a4dIMcCPOO_0XQUd7g>
+    <xmx:0BDdaGe5PkpLZOoMD25G85OnJobxljGzJ8Xu5-f4-Pro9HRYs-YQ2g>
+    <xmx:0BDdaLGWN6q5vWjZuacIpd8FNbFl4c7zXkp7DHvPx9GhKP8MJoA5pw>
+    <xmx:0BDdaBt7oKVUFdz67r-FhLL3EYyjvUf0Okulij_dlNSUAyZ3BkJSmg>
+    <xmx:0BDdaFrq0Wr0p5ZavjqjSukS3oZiCzOlgXzpchYG4S_owGFlQtzO9T_v>
+Feedback-ID: i10464835:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 1 Oct 2025 07:30:23 -0400 (EDT)
+Date: Wed, 1 Oct 2025 12:30:21 +0100
+From: Kiryl Shutsemau <kas@kernel.org>
+To: Chao Gao <chao.gao@intel.com>
+Cc: linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	x86@kernel.org, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Dan Williams <dan.j.williams@intel.com>, Xu Yilun <yilun.xu@linux.intel.com>
+Subject: Re: [PATCH 2/2] coco/tdx-host: Expose TDX module version
+Message-ID: <oww7wb2ejpaa7v53vp7vhvk7irs2ivccxudjruwk3tepjjf7fd@txbol63ypkkc>
+References: <20251001022309.277238-1-chao.gao@intel.com>
+ <20251001022309.277238-3-chao.gao@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v5 13/13] spi: airoha: buffer must be 0xff-ed
- before writing
-To: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>,
- Lorenzo Bianconi <lorenzo@kernel.org>, Ray Liu <ray.liu@airoha.com>,
- Mark Brown <broonie@kernel.org>, Andy Shevchenko <andy@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-spi@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Andreas Gnau <andreas.gnau@iopsys.eu>
-References: <20250930022658.1485767-1-mikhail.kshevetskiy@iopsys.eu>
- <20250930022658.1485767-14-mikhail.kshevetskiy@iopsys.eu>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250930022658.1485767-14-mikhail.kshevetskiy@iopsys.eu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251001022309.277238-3-chao.gao@intel.com>
 
-Il 30/09/25 04:26, Mikhail Kshevetskiy ha scritto:
-> During writing, the entire flash page (including OOB) will be updated
-> with the values from the temporary buffer, so we need to fill the
-> untouched areas of the buffer with 0xff value to prevent accidental
-> data overwriting.
-> 
-> Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
-> ---
->   drivers/spi/spi-airoha-snfi.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/spi/spi-airoha-snfi.c b/drivers/spi/spi-airoha-snfi.c
-> index 437ab6745b1a..57b1950e853f 100644
-> --- a/drivers/spi/spi-airoha-snfi.c
-> +++ b/drivers/spi/spi-airoha-snfi.c
-> @@ -776,6 +776,7 @@ static ssize_t airoha_snand_dirmap_write(struct spi_mem_dirmap_desc *desc,
->   		return -EOPNOTSUPP;
->   	}
->   
-> +	memset(txrx_buf, 0xff, bytes);
+On Tue, Sep 30, 2025 at 07:22:45PM -0700, Chao Gao wrote:
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index c1ad1294560c..7560dcf8a53d 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -27333,6 +27333,7 @@ L:	x86@kernel.org
+>  L:	linux-coco@lists.linux.dev
+>  S:	Supported
+>  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/tdx
+> +F:	Documentation/ABI/testing/sysfs-devices-faux-tdx-host
+>  F:	Documentation/ABI/testing/sysfs-devices-virtual-misc-tdx_guest
+>  F:	arch/x86/boot/compressed/tdx*
+>  F:	arch/x86/coco/tdx/
 
-As you are refactoring this a bit, reading the function isn't straightforward
-without applying the series locally.
+The entry was updated recently:
 
-It looks like you're filling the entire txrx_buf with 0xff.
+https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/tree/MAINTAINERS?h=x86/tdx#n27325
 
-While that will work for sure, for the sake of performance you should change this
-to memset(0xff) only the portions of buffer that the next memcpy call will not
-overwrite, avoiding to effectively write twice to that buffer.
+I think you need to rebase onto current tip tree.
 
-Is there any reason why you didn't do just that?
-
-...also because, your commit message really looks like saying what I'm proposing
-to do here.
-
-Cheers,
-Angelo
-
->   	memcpy(txrx_buf + offs, buf, len);
->   
->   	err = airoha_snand_set_mode(as_ctrl, SPI_MODE_DMA);
-
-
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
