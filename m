@@ -1,126 +1,200 @@
-Return-Path: <linux-kernel+bounces-838617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EC35BAFBFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 10:59:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9395ABAFC04
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 11:00:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC83D3A89D6
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 08:59:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F2882A2DC5
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 09:00:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DE9A2D876A;
-	Wed,  1 Oct 2025 08:59:09 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 647672D8DBD;
+	Wed,  1 Oct 2025 09:00:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="HO1/oGz3"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 436BD17A2FC
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 08:59:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 349FC241663
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 09:00:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759309148; cv=none; b=GPW7z2ZatlRLWjQQKjATyPpLH7dcy43qtgKZyKPeG706uDWwH4jOx6GLw7vKOCKDpqvUKdhHYAm2WbQQg0Q7iy3OpB5t1r6gerCjcJmleFaemYydzGn8BrTrAiglzflOGnF2FJ3AS8X1WFkR3lB1k0wnyUZr1IJVwGYxKGJAkgE=
+	t=1759309239; cv=none; b=S0goraADhXRr4mbXxxRpBXfCH8JpwUkoIwYBwtnXSSFmACDEihLTZ3xV5iYVj1GWPPT5XKG7IchPpEO6sRnP/kDuqBA9tLLDgS0sdViHIk/XAYf22K9zIkQ9H5D+Dovf3Zoj8O9zpYtos0vQC6WEzOAJmdTpCPvnyW5KgzT2v6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759309148; c=relaxed/simple;
-	bh=pKSeD1yQbxWfwIkzPuax838bf9a0PUsuhLbY7KhUVSk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=AAeus9eRy50EMeZhFdhzi203xwgxVDzY8s3lYcut4pE9dw6APHDmRPxQEmzD0/CkYboTh7cuWj0CxXIZEiGsBmPuvF5AZfVjF4rmDnkFRUWkVGvcPiXC+UpqkAYfG0czlqF1cAHyGG7ow5hPI+t3I63drWMdhr/+TBh4a6vGTNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-90efeb58159so689044339f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 01:59:04 -0700 (PDT)
+	s=arc-20240116; t=1759309239; c=relaxed/simple;
+	bh=IBGDJ9xI+iaRW69KP/tdYDjC3SNvG6KLpfwYdwnlcuc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uGbrtseunDwyYWeJYrrLwH6vbQEXFYTxKAOrD4PF3gS9ggBzSvr8uxxDVGmAvN4l2APVRqoh5WhYL4iyXHZiW5AjEEl87CKOp4rupzBtMIL4h5/5ySGcVU67IyX+smLDf2vVwjVvv7NOQj43bpc1sfeJHQyROAJGWIKDNSpelfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=HO1/oGz3; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5918w7q1009634
+	for <linux-kernel@vger.kernel.org>; Wed, 1 Oct 2025 09:00:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	szyIyl3ywdRyFDo2nGhD2AXevcSAcrCxsinL7zZgAbM=; b=HO1/oGz3J4u2HI4t
+	9sK5l2QiGWUrjQclhV/2nuRQ/svp1NVqOHuYJx7e9ALqBX8F1MoxjwIS7pyk8O6h
+	iGypkL2LUmm1hnq5PCl7VmGc2nsCoWtvp+Aim+z2R/Uq5JB3qarY+Mw4mLD1QK40
+	hYKwyo3y5e9RHu2KAp/1Mm6GnsBSwBcHfwVCB/H/k5j/S+/dNdDRXA9J7Prj3PvL
+	OaetW5XmlLhZYYMZh/beRXMi6Hj4GaH8lE3dO/J+NCBXGf8qhOfOMpjxmtdDdxUx
+	Rm9HXxhBTOFFa9I2PmQkBZMeUBgl4tGM/hKUOcRGrTCZos3EkFMujueNtj6TRHYI
+	HHwBVg==
+Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e977urcv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 09:00:37 +0000 (GMT)
+Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b550fab38e9so4870724a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 02:00:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759309144; x=1759913944;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1759309236; x=1759914036;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=k1KfB6y2C45OVMbOJIacD6RmSooTpGw9Rdm3Od/mOis=;
-        b=bKmn8Z4E762qKlY6bYovxkubhs5jBiDgGMdIBHQFLdKwl4ZXqgXQeMVheJ1H/T4iqk
-         IYlYiepEKWF43QeIKADZX5fiydrkEySQWLPWRuEcrOCMfm4u3gCji42rUvGwPlk3Uqhr
-         UHAwZo21G3zEtAt1xQYB/zYDM1AAO4pHWGvfpdrnDjNVTRGKflvvyuOGqe6FQ0Nyofk5
-         XA2fjGIzEqRkmKDBGbSQNdKK5y9RAVTIU7sCeq6ACcsn0XvPb2GKi3ofXXZF+47gKbDI
-         6CQ06TC8WIhNxrv9O+RpexEukgFQYfoU5BPlBQFp18Q4VURlu9nakLOGk0CbTldEBL27
-         FMow==
-X-Gm-Message-State: AOJu0YzJoK7Fv3ewg1Ae7F6F+je49dJftKjpfzbf1K6OdnoP6XOQzWLg
-	dmKKA+TGNWJxPgvCNYKB/k4hukrPQs8ZmoFXkPVFC0Q4N7XYDEIDy60CWDNrAL5JGnZtOKkkINg
-	YI8CFNl8px0brpBY3dhzFdu1wXH9rI0YWFbNwBVdnm/CLotmKwAIip0ke9Qc=
-X-Google-Smtp-Source: AGHT+IFSQK8OA1WgNOdtLLGQC/ooKbzck8t158+sLp7rTMw99P7+bQawh6NBqiGcsF2MOukFIlND1Pza667OdJUdYL5D7jQVZabb
+        bh=szyIyl3ywdRyFDo2nGhD2AXevcSAcrCxsinL7zZgAbM=;
+        b=vY9jNeZR83mR9Zk6fPl2RQWGXj8rSyFIIZeMolnntHYLlbYeGdOXhQr73le89MOWAw
+         26PgJyqA24Om6TYuEMfjrsRuFAcybWLx5eWPjVtI0rbB2prptpZT31+x+B+f2LvvMrQD
+         O+9xWRFen89iWies+YxdtVuF57NFWUg5S5u6D7AC8lkUiArJsdDbXjHM6s8Lte5mbeiG
+         zz9MwscbPM3XgSfm1oA4ltbvr7o9IZZHIdjQUn5rcfbVeqCBmwx8AfsIfuFPYFsycvT3
+         pKHv75egkiXO7miz+v9mossm3apkmLmG6HS7VahO4AY8AvXHgm8qBFoPrIDp3AnpRPwP
+         h+4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWkgGN9s61EBxqOyZBTmy+eqF1xiFwgQ2gEwMmFRBhX869kuX0pjtRcbwZDWE+wV9SvUgaOWH90QMDKAfo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmRDkgrtHvFYIGh/bKQ6lF0QLsq4cGZieEYHrjGm6UwHybXt17
+	emslFv+yndLozkE61gXh1RBMZ0Sg8OpHvdjsCzmV0EPhh/DtQcActuqOCs9RG/UJtloRanX18ho
+	4efUNt4irN8dRE7Px5DmS4tI9/ZRIqCSyyeO1ZlQoBBfMYt8/KnFSjOhDcm2NoriovJY=
+X-Gm-Gg: ASbGncs5NmX9lJz9jpSyazlW3rhCwWhw1Z2wzI28IPJDYsPZKpcTzMtScUBPtV1zW4/
+	F0pbG2Kz+6cNsfVVk8sF8Nv45xWAO2RV1Jv11ripUDMVuY+4PjZA6I4ZG4hqokZhXOsHeFCuakh
+	4KObzTuErIgwxun8nb3tYjraV8MMPzpOo0H8tetJflNNJ+fjXfb9OSGDze3rrLmOgOAohLByEof
+	/ztcXjhRZX2LODLpOCbtWhdE0g5RDHWeMY/jHiAPurFPauq1jLpf02XSu9AXLbqn2g6wR84/ueW
+	r5vs7q79SVsi29TqvlQN67A4YEGCv65Z1lRKexcW2W12MDwC66s+uxun87IF6p8aQwS8UOBQuzh
+	miTc=
+X-Received: by 2002:a17:90b:1c0d:b0:334:e020:2f16 with SMTP id 98e67ed59e1d1-339a6ea6199mr2796926a91.11.1759309236412;
+        Wed, 01 Oct 2025 02:00:36 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFvv5afgkyPQe8VnW2f9+nAbRJTlLGvTNonccPLdcjNJP/11Dh4oVSSrJ6WJiv0Li8mMWqQew==
+X-Received: by 2002:a17:90b:1c0d:b0:334:e020:2f16 with SMTP id 98e67ed59e1d1-339a6ea6199mr2796885a91.11.1759309235908;
+        Wed, 01 Oct 2025 02:00:35 -0700 (PDT)
+Received: from [10.0.0.86] ([106.222.229.252])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-339a6f20ebbsm1794160a91.24.2025.10.01.02.00.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 01 Oct 2025 02:00:35 -0700 (PDT)
+Message-ID: <a2303c78-ea41-f5bc-33d1-9f21b9fc55de@oss.qualcomm.com>
+Date: Wed, 1 Oct 2025 14:30:30 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:608d:b0:8e0:f662:69e6 with SMTP id
- ca18e2360f4ac-937ac92ddebmr395219939f.11.1759309144246; Wed, 01 Oct 2025
- 01:59:04 -0700 (PDT)
-Date: Wed, 01 Oct 2025 01:59:04 -0700
-In-Reply-To: <68dc3ade.a70a0220.10c4b.015d.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68dced58.050a0220.25d7ab.0774.GAE@google.com>
-Subject: Forwarded: [PATCH] isofs: fix inode leak caused by disconnected
- dentries from exportfs
-From: syzbot <syzbot+1d79ebe5383fc016cf07@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH 0/2] Add support for QC08C format in iris driver
+Content-Language: en-US
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+        Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Bryan O'Donoghue <bod@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20250919-video-iris-ubwc-enable-v1-0-000d11edafd8@oss.qualcomm.com>
+ <b2538934-bda7-45e1-b368-8dc4d2c6f71b@linaro.org>
+From: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
+In-Reply-To: <b2538934-bda7-45e1-b368-8dc4d2c6f71b@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: G_6xH9OjoIUt1asDdh2tW_Pa7YyC1K7s
+X-Proofpoint-ORIG-GUID: G_6xH9OjoIUt1asDdh2tW_Pa7YyC1K7s
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDA0MyBTYWx0ZWRfXyasvKgctjOVR
+ MZFc0uwvH/6QSYZeKyOVYhOVObLdEZlFM89sW5NZpxuHthN2mDJ1sY+Wom9JhjVXEs2+/rFpNb5
+ A6oYnSJFJUM6PIZu43yDvW8humqC8mueD7MMLUBYl+ixjvlSZQOB6vwI2pFfCnzaZ7cdfium93b
+ KXREyiGVNr7M2VZOweXlGNzbDyvE22ONjY+8BD/MeNue+Oe9RTMODCmre3rz6xmqbDtcg7yTwXF
+ nZ32eoemRwD34KhMPX3C3+dDWUsHH3ANra7Lj6KRJYP2UcAvxAaNAbmJRB2d+fcSVsbCDQU8/QK
+ QfqWnh9ACV6tXInMemargEldL2dQdag1EhFb5tRKnugKIRfYb/R1yp2SwhxrMqAJDqQ7TRKEnT1
+ XcoZAs6GeneZugO6AoPImmx9FTbQ6g==
+X-Authority-Analysis: v=2.4 cv=Sf36t/Ru c=1 sm=1 tr=0 ts=68dcedb5 cx=c_pps
+ a=oF/VQ+ItUULfLr/lQ2/icg==:117 a=L4UNg9I9cQSOxNpRiiGXlA==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=NEAV23lmAAAA:8 a=VwQbUJbxAAAA:8
+ a=EUspDBNiAAAA:8 a=dVT4byVtXk9i-ovr3fQA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=3WC7DwWrALyhR5TkjVHa:22 a=HhbK4dLum7pmb74im6QT:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-01_02,2025-09-29_04,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 bulkscore=0 suspectscore=0 adultscore=0 spamscore=0
+ priorityscore=1501 malwarescore=0 lowpriorityscore=0 phishscore=0
+ impostorscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2509150000
+ definitions=main-2509270043
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-***
 
-Subject: [PATCH] isofs: fix inode leak caused by disconnected dentries from exportfs
-Author: kartikey406@gmail.com
+On 10/1/2025 2:09 PM, Neil Armstrong wrote:
+> Hi,
+> 
+> On 9/19/25 17:47, Dikshita Agarwal wrote:
+>> Add support for the QC08C color format in both the encoder and decoder
+>> paths of the iris driver. The changes include:
+>>
+>> - Adding QC08C format handling in the driver for both encoding and
+>> decoding.
+>> - Updating format enumeration to properly return supported formats.
+>> - Ensuring the correct HFI format is set for firmware communication.
+>> -Making all related changes required for seamless integration of QC08C
+>> support.
+>>
+>> The changes have been validated using v4l2-ctl, compliance, and GStreamer
+>> (GST) tests.
+>> Both GST and v4l2-ctl tests were performed using the NV12 format, as
+>> these clients do not support the QCOM-specific QC08C format, and all
+>> tests passed successfully.
+> 
+> Sorry but this means you didn't test the full decoding and encoding with
+> GST and v4l2-ctl using QC08C ?
+> So how did you test ?
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+I have tested the decoding and decoding with QC08C using
+https://github.com/quic/v4l-video-test-app
 
-When open_by_handle_at() is used with iso9660 filesystems, exportfs
-creates disconnected dentries during file handle resolution. If the
-operation fails (e.g., with -ESTALE during reconnect_path()), these
-dentries remain cached with their associated inodes.
+Thanks,
+Dikshita
 
-During unmount, shrink_dcache_for_umount() does not fully evict these
-disconnected dentries, leaving their inodes with non-zero reference
-counts. This triggers the "VFS: Busy inodes after unmount" warning
-and causes inode leaks that accumulate across mount/unmount cycles.
-
-The issue occurs because:
-1. open_by_handle_at() calls exportfs_decode_fh_raw() to resolve
-   file handles
-2. For iso9660 with Joliet extensions, this creates disconnected
-   dentries for both primary (iso9660) and secondary (Joliet) root
-   inodes
-3. When path reconnection fails with -ESTALE, the dentries are left
-   in DCACHE_DISCONNECTED state
-4. shrink_dcache_for_umount() in generic_shutdown_super() does not
-   aggressively evict these disconnected dentries
-5. The associated inodes (typically root inodes 1792 and 1807)
-   remain with i_count=1, triggering the busy inode check
-
-Add explicit shrink_dcache_sb() call in isofs_put_super() to ensure
-all cached dentries, including disconnected ones created by exportfs
-operations, are released before the superblock is destroyed.
-
-Reported-by: syzbot+1d79ebe5383fc016cf07@syzkaller.appspotmail.com
-Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
----
- fs/isofs/inode.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/fs/isofs/inode.c b/fs/isofs/inode.c
-index 6f0e6b19383c..bee410705442 100644
---- a/fs/isofs/inode.c
-+++ b/fs/isofs/inode.c
-@@ -52,6 +52,7 @@ static int isofs_dentry_cmp_ms(const struct dentry *dentry,
- static void isofs_put_super(struct super_block *sb)
- {
- 	struct isofs_sb_info *sbi = ISOFS_SB(sb);
-+	shrink_dcache_sb(sb);
- 
- #ifdef CONFIG_JOLIET
- 	unload_nls(sbi->s_nls_iocharset);
--- 
-2.43.0
-
+> 
+> Thanks,
+> Neil
+> 
+>>
+>> During v4l2-ctl testing, a regression was observed when using the NV12
+>> color format after adding QC08C support. A fix for this regression has
+>> also been posted [1].
+>>
+>> [1]:
+>> https://lore.kernel.org/linux-media/20250918103235.4066441-1-dikshita.agarwal@oss.qualcomm.com/T/#u
+>>
+>> Signed-off-by: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
+>> ---
+>> Dikshita Agarwal (2):
+>>        media: iris: Add support for QC08C format for decoder
+>>        media: iris: Add support for QC08C format for encoder
+>>
+>>   drivers/media/platform/qcom/iris/iris_buffer.c     | 17 ++++--
+>>   .../platform/qcom/iris/iris_hfi_gen1_command.c     | 15 ++++--
+>>   .../platform/qcom/iris/iris_hfi_gen2_command.c     | 21 +++++++-
+>>   .../platform/qcom/iris/iris_hfi_gen2_defines.h     |  1 +
+>>   drivers/media/platform/qcom/iris/iris_instance.h   |  7 ++-
+>>   .../media/platform/qcom/iris/iris_platform_gen2.c  |  1 +
+>>   drivers/media/platform/qcom/iris/iris_utils.c      |  3 +-
+>>   drivers/media/platform/qcom/iris/iris_vdec.c       | 61
+>> ++++++++++++++++++----
+>>   drivers/media/platform/qcom/iris/iris_venc.c       | 59
+>> +++++++++++++++++----
+>>   9 files changed, 152 insertions(+), 33 deletions(-)
+>> ---
+>> base-commit: 40b7a19f321e65789612ebaca966472055dab48c
+>> change-id: 20250918-video-iris-ubwc-enable-87eac6f41fa4
+>>
+>> Best regards,
+> 
 
