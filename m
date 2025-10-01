@@ -1,272 +1,310 @@
-Return-Path: <linux-kernel+bounces-838421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ACAFBAF257
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 07:29:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44DA0BAF278
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 07:36:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6092F1C107D
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 05:29:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B7BD3B5EAD
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 05:36:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BEB126A1AF;
-	Wed,  1 Oct 2025 05:29:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 487E22749E6;
+	Wed,  1 Oct 2025 05:36:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GHY+nvXC"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N9fE2soh"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 640D2261B64;
-	Wed,  1 Oct 2025 05:29:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759296565; cv=fail; b=KsewIj2UMMpZ7GMELDFrdZVse37fMYOG1eS4FYhkUfGnSvNhtBVi3pn8p0iLQpXGihEErJhLmOUej2QwLOQIbM9G5iMYlr0gIWAdhkQvjU+k0Q+BIUTOaIFEZL/25FL0K+ffzwpHrqb78PlQGFAVZ5o7NbGwz68/UpeOFEvAy8c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759296565; c=relaxed/simple;
-	bh=oZk1Mq4pkRk/zaZ9uX2tuJ4Y0tQJzS6PSXfrveG9Ahk=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=onHP8ukeSX4rjdadJcErTnrc9W1hDcWNXcUp0oCdgmq6U9mub0DAiT7WK/wOn1ubVdFy4LmmPGdaF393c6fW1vlUFVLxR72n+Z1Zwy4OJGLYFHYJbd7vlP7aAhPqD0Y8uR94nExmD6xVTg5iSrKQCOjQgpbROW6t1NmHQBadq1s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GHY+nvXC; arc=fail smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759296563; x=1790832563;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=oZk1Mq4pkRk/zaZ9uX2tuJ4Y0tQJzS6PSXfrveG9Ahk=;
-  b=GHY+nvXC7Y7Hswcpw4iuGzc/aCn6VQUgHP2OPK/26vhVuxi7naPRxHNI
-   JWpLIkVCV7UWGKVeSzIwaiNCuQupQxfwx4DPDk/Q0DJvFNoG66NcvCQFY
-   /FyLca2HyNSuP4yHf5tu1rVf+AZOXpq8ktig19K9BpJvU9dln/ys27KEt
-   QChCWx+h0Hsp91xHfyce1VpvcK6hLIOqyNbDl6MWKekOvwicCgghRgMj1
-   nxE+r9+BnpBVTquloInNDZRU4HjOBTL7FLdNQ0UM0E37+HOPgenmO/7Pi
-   IrnL0/YrQG3nCz8nPCognqIysCLQhU37iOK8NYCjj1Iawv9zPG83g+gkw
-   w==;
-X-CSE-ConnectionGUID: Y3KQ9Cz8RPmY1NZ8C879nQ==
-X-CSE-MsgGUID: gGQ7diylTo2SacUeh0sPUw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11569"; a="60776580"
-X-IronPort-AV: E=Sophos;i="6.18,305,1751266800"; 
-   d="scan'208";a="60776580"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2025 22:29:22 -0700
-X-CSE-ConnectionGUID: MR2b18UgQ16x7qre+GrfnA==
-X-CSE-MsgGUID: FpzAUTPrQFSHPKw0GOlYhA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,305,1751266800"; 
-   d="scan'208";a="183962228"
-Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2025 22:29:22 -0700
-Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
- fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Tue, 30 Sep 2025 22:29:21 -0700
-Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
- FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Tue, 30 Sep 2025 22:29:21 -0700
-Received: from PH0PR06CU001.outbound.protection.outlook.com (40.107.208.41) by
- edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Tue, 30 Sep 2025 22:29:21 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kghiE7Moe98LmpAk3BfvgXEtoz9k2uvOYS0VbrQd4tSn1tVpLxeUuNUr4nHSC0Mz4JBSaDNT/P2PkZY5OxOwn8uXUUxE1mJ/wfuFpero1NaPZWkkvBSdGFCShdXnBeYszHptoNMGISYwjGpm6kamZ5VRy8zQWQTeW6fbMuGxURKt90Yxjx2f8+RamgZ327PREdibnYEi2z9kEqPbeTbrY/kiO2O0HuwJo1liSZrp9+JulJ9dzFs90PyarfPPO1Jue+fmYfDRQr0a5gqvRdkgpnHR+TuYmR7x9QMoGBxo9IkysYbZ1sOajPyS9p4TkxSUNkt+WbdXUVVveQ4vSh7jQg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zgtNo58EjQMoUObC++3YFI4H2ft8JXbxwOVZxwgz/G8=;
- b=XpyLG7GJsNPF0t7u3umRFZ96JPTGklDZ9uxDazlO014VJUiydf7MYw9bUjsLwdVYEtpm0RKAJInz4XbCO3o1R/mCmWfHt/SDeFDZ4xFbel7wiCNqsR81tEgdtx/Xxbv3dUntiYY+Nf+he3eggMgH+GGJC2BD3cexAtPcE5eIGVYcgicgwTi7DvpTGz5p9H5jltFRcalmFxi/2/BiioqqHuHQ/g/uVvXIpjohPXle/6H/LKpESvn/c7OjdOyDiaysirw9RM9WKSOb85rh93fDxZmyzaPYBrvoNmBG5/XONJuRahKQX2X6Tyf1ITFgJLp/PKe702AJ8lJdxnu1vw6Hlw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from MN6PR11MB8102.namprd11.prod.outlook.com (2603:10b6:208:46d::9)
- by SA1PR11MB8595.namprd11.prod.outlook.com (2603:10b6:806:3a9::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.16; Wed, 1 Oct
- 2025 05:29:19 +0000
-Received: from MN6PR11MB8102.namprd11.prod.outlook.com
- ([fe80::15b2:ee05:2ae7:cfd6]) by MN6PR11MB8102.namprd11.prod.outlook.com
- ([fe80::15b2:ee05:2ae7:cfd6%6]) with mapi id 15.20.9160.017; Wed, 1 Oct 2025
- 05:29:19 +0000
-Message-ID: <ccc138d2-fa93-43f2-9733-e461396db769@intel.com>
-Date: Wed, 1 Oct 2025 07:29:14 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] ice: ice_adapter: release xa entry on adapter
- allocation failure
-To: Haotian Zhang <vulab@iscas.ac.cn>, Jacob Keller
-	<jacob.e.keller@intel.com>, Matthew Wilcox <willy@infradead.org>
-CC: Tony Nguyen <anthony.l.nguyen@intel.com>, Andrew Lunn
-	<andrew+netdev@lunn.ch>, "David S . Miller" <davem@davemloft.net>, "Eric
- Dumazet" <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, <intel-wired-lan@lists.osuosl.org>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250929024855.2037-1-vulab@iscas.ac.cn>
- <20250930015125.617-1-vulab@iscas.ac.cn>
-From: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Content-Language: en-US
-In-Reply-To: <20250930015125.617-1-vulab@iscas.ac.cn>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DU2PR04CA0205.eurprd04.prod.outlook.com
- (2603:10a6:10:28d::30) To MN6PR11MB8102.namprd11.prod.outlook.com
- (2603:10b6:208:46d::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4208624DD11
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 05:36:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759296974; cv=none; b=Na5s/zT/A5FJxCLdMvVr0+K+ZegwwWy//JCDtkKD5dN99J3Pgdxo5+sIZ8HIPGTVUf/A5EQVDCB6/evIhxWDC+L7tXGqPm3N/TKSvjC5d4+pObkT5KJQDuWqU5VFk5GTslQqjrkwH13yCv4Pyu8QYUW4wcxF2eXqHz0tMVYzFPw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759296974; c=relaxed/simple;
+	bh=q34zNznzGEMyfGPcEjFTGs2Jfob+XLVas6eFFMSYtFU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bkuxArHed6PkOBNrXxz4GQenIV3naXzQTZriSx+tL/X/o0j1dcN5Zl9AsYh7uhrPPHw3lKypyE2NRIb8rwW5zLhubIxW5ceSfluPo4GAYivpbOSFDwBgf7cEzYpbUmjau/zEjR1ehEYkp3coSfPVjg9zOsKCCBa2k8HRLgkuv68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N9fE2soh; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-46e491a5b96so29441215e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 22:36:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759296970; x=1759901770; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SJrboPAQ3bvQVq27/EG4Rsr76H/+se+9jLXRfCa8zmo=;
+        b=N9fE2soheAKPIJ2f1zAB2wDiCxy4UP+o59Og5IJ4eRtdYz+LK2u/waMd7UA2UPooek
+         wrheJUyWMOwIacL4sG6Scypu7vOL+OTICqC4sB53Jps8EfPD86PwyQ9wrg/ITW1Oyqhq
+         19yeViFkVsegOrgtg9Nje+QJTPul50RDlcZUAJPJBcI4QZbVRppOX9RDczVdSeJFLb3x
+         QNy7t62d+JQYBVstO75SLfxbhRCyyTD/AM7iWSF7yFX8+4caM9TBfn5onyXAua/VPnYV
+         0gxCOpRTf741wUMpBiQx86K437FS8TArIKzLlUogg2uLBGBioGkaGlgKEtRIJI4V9JFJ
+         RHDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759296970; x=1759901770;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SJrboPAQ3bvQVq27/EG4Rsr76H/+se+9jLXRfCa8zmo=;
+        b=vasUUHPUzv6A1Gi2VwHxP+k2M43opYU9omEXT2jRWyLncJ+iH7zrPJZ2ja68BM90WD
+         Cwazym/0fF9OzkvQ32fQwrWhZ8ouUKveOPIMfTPNDzctUH7JYqisUMMZdUFMZ4UK3x/a
+         iRmhq2TUW06FQYmE3Qp5QXzaNQVLzb6jJHR92yZiyE1wwAdN6zae3wn/CJiQp+Svisnk
+         vHR9xi+30ic/T1HZ0RXC5YZCrIrBGdtjmNPT0XVYv0D5Oepb0QkQ7Sl/01foQCR87AW9
+         Np74vdXEbwkDuIPRO3c2IJHBMOcD0AwzD11v27hIkB3voeFNSzovWST0HpDPynSXUFJD
+         javA==
+X-Forwarded-Encrypted: i=1; AJvYcCVRK74tLDrsBYZ5FIqowzzFlqbt/lP8ufki6yL8e3iY9HzsQShQwcPla2KukD71FX4ekexm+9197v8iWjM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNMukFnQey/NW7OgFaIOI4NeWTRUhKNMqFGki3BEKJbg7v9Duw
+	L4OUEPsOBkVvkfp0CK+ux/tlxIIjGtwl1fYILp3BcD4SSwNBjycc2ngHqsAvnVxLqo4u3tgsVre
+	zwaKdLdEVvxpANgKuf4KH5JihTvOvb9Y=
+X-Gm-Gg: ASbGncuqA2FhqFnl23a8XVxRAB3Bm5keEVKtbolrQL2ywAK/UA/hjVlSSIMKXpA5P6F
+	UUfJm+cpAtLKm3Adjnf2A+Vpxq5RfbGTauqVfRWYSP34yy8qpuwzlqSPKiNwKccAl6o1yZMi3p5
+	OsT0zefTFWiYbRVr4HxXPHWVBl/PiJ9YujpxT4NwwD27tPcEUeHK0CXSyCA2x1QQzn0y+g+sGbR
+	9YdgoZoVKbBj07fYJxssWIH227jC5lN
+X-Google-Smtp-Source: AGHT+IGl4qoOTXJavodfDxV6HJESDY/3a24Dq7hSw7IU0JyXat/2RujwJvhHxdQJ+/VFFZv/MM/yRAJC9AIJaLEF69Y=
+X-Received: by 2002:a05:600c:8b65:b0:43c:ec4c:25b4 with SMTP id
+ 5b1f17b1804b1-46e6127cccfmr17260215e9.10.1759296970493; Tue, 30 Sep 2025
+ 22:36:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN6PR11MB8102:EE_|SA1PR11MB8595:EE_
-X-MS-Office365-Filtering-Correlation-Id: 16923ba4-a2df-4eee-fa7b-08de00ab784f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014|7053199007;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?N2Q4bWhVRDVKV2JDQy8rc1A5VE1aR1crdGswR0VFVm9UK2FzUkY4TSthdTBw?=
- =?utf-8?B?MFJNWktwb0NyUm9vOWpsckRTeVNMVGpNcy9DUXMxdldSazFPZE5VRW93UXg1?=
- =?utf-8?B?S1NqU1ZZSmxQTHAxV2JzUmVRV0ZCalRqOTdrM2lzNGZHRHNtc3Ava1lxbHpM?=
- =?utf-8?B?cGNKTFgxVldnWmlxbEoxR3V1NkZ5S0FMMjlvZ1pEQ0dGNk5aWCthVkNKT1ZT?=
- =?utf-8?B?amRacjVBY2hMc29saXVNWDVLaG5XSTk5ZXlXcjBkRVNiN0ZlSGhxMkFnZVRG?=
- =?utf-8?B?bTY2OEdvbEIraGY4VTJ5RlE5OWh2UzN4dWd1MVV2WXdnakNJUWpHVEFndmYv?=
- =?utf-8?B?bWt4cXA3S0lJTEErZXB6UnpHMy9GcFVJZGl4NnZpaWhpVklabG1TRzFrYVEx?=
- =?utf-8?B?NURaR3M0V0Izamp3MHM4bERZRnJOSjZmaHk2dWN0eVl1U1JOMVFseTU4amZL?=
- =?utf-8?B?YkkzQ0MxUElFYWszbmlOVEx4RTZmY3RuOHBNU2dwZmV6b1lidlVhYmxHSkFN?=
- =?utf-8?B?TnUyMmhqb05lVFZqSzBMZ0JpNmo3RGJ4RzQrU0JEMmRHSUhhUzZ0UlNSQ3BC?=
- =?utf-8?B?cU5iSGJidGZtSC9kc3dCVHp3VTcyZ25yRVpicGNraUJVa2NlclNpUzJ3aXY0?=
- =?utf-8?B?K1hnVUtyVXNTZjhXL0ZCV2tVUFF5dWlSdDU2TC96U3hINVdDWVFmeE9qU3hN?=
- =?utf-8?B?SHlnektENFdHaHlWYmxPdjFPWlFOSTRkclhIZVd4Ums5TVlGZmlVV004VkhV?=
- =?utf-8?B?NnVJQUhFVXV2ZXRzSU55SjkvbFF4anlQWUhaUkVTNkZJUndXdHhmUnd4TERH?=
- =?utf-8?B?OGFsUVRCZzRoSGxtRXk3NkFIL2gzQVFnUVZBeUVXUmFsemk0QlVSMzVCbnJ1?=
- =?utf-8?B?alYxdDRVQ1dYeUN6VXlaQjBmcEM0SWxBWUhlOFVBVUc3Nm9OU09nMFAzZGNL?=
- =?utf-8?B?SHdrZWJSekV5bXNXdStmZzlIWlVrcElrSWp1NnhveXk1VDRqRVcwcXJLNjZY?=
- =?utf-8?B?eThUYllvZTBWVHFvMzRrbGZTOENWaUk4RUJMNk1YR3pteENrSS83VC9sSUJV?=
- =?utf-8?B?WFVxZWVJK1RFYUwzQ0hnbm5HblRCOHIwQ1FpZ25KT3NJaUJQTlpRaEVDbzdV?=
- =?utf-8?B?a0ozL3hGdkF5RGN6TE5HRHU3UlZLdnkwQW1ibDVDU1NyMmRyaTlMaFJaZ2dL?=
- =?utf-8?B?QkFHcHhDRC9neUJlSnY3K0Y3QUk5NVQ5dmtVSGxIRndTdUF2SFQvWGNWSXZ4?=
- =?utf-8?B?SE44WG43VzQ2NWpxRGtuWWs5SjE1R0lhdFA1cGM3dEpDNGQvQXBZS1crOVM0?=
- =?utf-8?B?T3FpdmxUS3Njd2pnd2xtL0hTNjZlU3NXRm15UzYxbnczU2xoYkcwZG5Jd1pD?=
- =?utf-8?B?TVBXUEZ4dDBtdkF1WWZwWkIvSEN6d0QwbXNrbXZGRTB6bDdDeVBiWjZxMnAv?=
- =?utf-8?B?MHJybkFSS2Robk05d0diWE8wYlZzd0kyVFRqVjREZXlFTFhsc3JCZGRJZi9R?=
- =?utf-8?B?eFIvODJqRGQrSWhybHl3bjR4ZEE3N0RzTlJzeDh0d3VjOTZUK0trbnVZRmVy?=
- =?utf-8?B?U1dMaWVsVVE0cm1wN0NIb3VQWlE1eTREWUxmanBUeGFWRmZRQkE2T2ZTbVN2?=
- =?utf-8?B?ZURzU0RWdEp1RWVHZ1NsblpHa3EvQi9tbWtNNU5XQTNRbXc0OHJJd3Y5TU4r?=
- =?utf-8?B?YUQ2N00xc0liY3dWc2RkMEZZOE5jQ2VTem9RaTNvK0NBcUNUMHo3dzZDTDZ6?=
- =?utf-8?B?T0tpUTlQb0M5SU03ellSQVpDOGhzWDBqSHNIZnR4WDVEZ0o3VHVOK0JPWkhF?=
- =?utf-8?B?c1M4UXg1amlOeC9SRUwxMUNKTUVwVWlra29acDZDZzQvQmh3YVJtMjFLaG0z?=
- =?utf-8?B?Uyt3Sk5jbmllcVlMVmZaMzhUZG1HUTRscmR1TFUyY1lkZy9IQ1N5eWprWHVJ?=
- =?utf-8?Q?8u8fUqNcARm1EEkMgND0lH2ysQawsnIH?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN6PR11MB8102.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?eDd3WnhzNlpYQjh4WlZVRlV4U2NTZ3ZYdXZITEhBQjIzQmVrUGJWMzlXVGdD?=
- =?utf-8?B?VEVvRTJRaGhqbnk5ZUxBVzVjdEl4OUhsZzk2ZjBOTjR6U0l1UFNXK3lyczFX?=
- =?utf-8?B?QzVHak91T1hZd1oyWUFMUXM0eGljMWhnTlcwSjNWbmtCUzVWMVBiajZrWHc0?=
- =?utf-8?B?SERyZk1CREhFWHNEL0hXbTNJaGo5RTFWOE9kRGpaZnVtbFByS1JJcWRCVHVC?=
- =?utf-8?B?WVJyb3BKZnpBM3Y1bU5qbnA4bEMyaDFZUXFhclNUMFlaeUhhYkxsTlVkZ1lW?=
- =?utf-8?B?Q215b3RTUXBHWjJjUmdKSG5CcGVJQ0xCWjJJNWNFNFN3NFZER3BiNzQ3WjE0?=
- =?utf-8?B?dGhwWXV2RUwyckpZYVpTYjdTem9SN2pOZUFKZmp6YXlOaEZjTitOSnVkN3g4?=
- =?utf-8?B?cmFCczh2ZE55bEZYRmY3Sm9JRmJiYkxVN0xZdlNJN3VGTjNrWG9PR3RqYWhY?=
- =?utf-8?B?WDMwcDNtakhsSmNWVUpyVnZ0Qld4MVJDSHhhOC85WjdkYUszRitDR1hzYVNO?=
- =?utf-8?B?eUVNQzZrUGN6ejRCZ0UvdHhVSjVWU0xQUCtwcFhNOGNtN09aR2xsMUVNbXpu?=
- =?utf-8?B?dEpWditlY1Y4ODMxZzArckh1TU5OYWluQXJmNkxsTDFnWXhqNXc3Y29wbmM3?=
- =?utf-8?B?RUJlcnRiS25HWEJ5Zjl1N0h6a3pjbWNURDQ5eThqbWJ0SGUvS0pLUUMxRGxo?=
- =?utf-8?B?c0EvM09XTS95aEN1MEtrOVJaMUpUa09Jc1UvWUVFWmJUOHBJQWJUMXc4UzNl?=
- =?utf-8?B?K2VBT1Z2UHNWVzNjWGVhMlMxUnRkWG9aMWdGWVR4NW53RnRJYS95ajVjbnU4?=
- =?utf-8?B?R09pcERneVBNekErdmlvL2twMWxCUjJGSWo1Z2lxaUlZVUs4c0ZlZzhNWkVI?=
- =?utf-8?B?TFhmOC9FajR0OHlzaE1zN0hZY2taYzhvblJxMHd3WHoybGFoaE9mS0J2NHZw?=
- =?utf-8?B?YjVQQVJCc3pNelhUNklIWU8vTVprbklyQmFKSlFlSFgyMTRhYktWOURuQTRI?=
- =?utf-8?B?S2ptb1oxYnIxNXZFV0R1ZXZWbGVvYXI0RDZCeGYrYXZiMVVFc3hheTFuZWF4?=
- =?utf-8?B?MmZNZHdNT1BSTml1Tjl3N1hUU0YvVUJxcXI0Q3FTOW9sa1laRDB3Q2JPK3Qy?=
- =?utf-8?B?Z25FL05mcHpYZU92K2JvakNpMDU1MHozdFNmcU5pOWpndlc1M2tMVGEwRWxK?=
- =?utf-8?B?K2c5bWlWRXhpUUk0eUNNM0QwdjFzVU5rKzlmVGN1eW4zenp5cyt0ZHpFb1Vk?=
- =?utf-8?B?WlAvYjNlM3k2WXBucmNoSkxMc2doVEg1Zzdldy8xMVpVWlk5Zm5RUjBtWTk5?=
- =?utf-8?B?ejB1cHJYbVIvVTMxcDdEZFozay9jM2hXSGRCMU5KcHE2d3JZUXJjaEZyeFQ1?=
- =?utf-8?B?M0ZCajl5eFpXcXpyZDNhTHFlQ1FUd045RkFBZUltbk54a2hVOGVpWVBtUDBZ?=
- =?utf-8?B?SlhISUdGTFhtdUJXeVk2bmhBMW5JRDlGcGFoaUN1YXRnR01BNFVWb3Njb3Bl?=
- =?utf-8?B?RW1kZE9EQjduWXNyNGliTUFOa3hPUG1PajJ2bllWZ0lzeEZTN2VFNDJaNmVl?=
- =?utf-8?B?TDdLbit4M292SWtCL2RUS2VoOFNxcGhBcVkxcVpJKy9jRDFvY1VMa0RCTXZS?=
- =?utf-8?B?OUFzSWxpaTMrMXhHTThNZlhKN3NwYTVyUnY5WWFnbEtKY3dQSC9jVnFrU0t6?=
- =?utf-8?B?bWpubzkxZ1V1aEluYkxUNUhhVDN0ck9PQUJ3UWpnVGQra1ZqSmpLbGZjb0lW?=
- =?utf-8?B?Z3psaENyODlsVWI3SW5GeVI1QVA2bmVnNkRaZGxXT2c2YVUrajdYN25KclVM?=
- =?utf-8?B?WjYvK1hwKzdpMDNKdFlpeVJRbzQ5YUhoSEFBRGJxa3BMU0lycU82VUMrNVJY?=
- =?utf-8?B?M1Q4amJFRzBObzVMdElCQlJjOVA4UEpFenNUakVHWTIzVDVuNHIxU1N0YzhS?=
- =?utf-8?B?Zloyck5yYnkyTjFkZ013R25ZcCtSOEFHcjJzVjgxNVR0RFU4TzRjQk9VRkt3?=
- =?utf-8?B?L1NMQy9adHhJU1NWaXVkekd0cTV6ZlI5TG4zT1VDd3pBWFhXbjVYY2ExYjRU?=
- =?utf-8?B?ZWd6eldoRXNxMUdLVHl1VHRVVkdHcUZ4TUJKS0J4UTFKVWdtOFpqem5udkwy?=
- =?utf-8?B?cUN6ZktWbDBDbmZ2RjNKV2F6emlBRkM0TUdHNWdyenh0bTRNOHMyVkphOW9K?=
- =?utf-8?B?Mnc9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 16923ba4-a2df-4eee-fa7b-08de00ab784f
-X-MS-Exchange-CrossTenant-AuthSource: MN6PR11MB8102.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2025 05:29:19.2427
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: viBpw1iPA7KdtGSl5OHkoheuSmmmN1PUUjvBiRVZhIrln46EQNc0qhwOSrrYXZ2zZPf0CarSV1RgUuWIVMA+TALMaZ2SaMl6CXXdq+rqKg8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB8595
-X-OriginatorOrg: intel.com
+References: <20250925151648.79510-1-clamor95@gmail.com> <20250925151648.79510-16-clamor95@gmail.com>
+ <3419823.yaVYbkx8dN@senjougahara> <CAPVz0n2CRV8d1w1hp-60SQ_caBTFyJE8tJaWerwyEuZHD1p_Nw@mail.gmail.com>
+In-Reply-To: <CAPVz0n2CRV8d1w1hp-60SQ_caBTFyJE8tJaWerwyEuZHD1p_Nw@mail.gmail.com>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Wed, 1 Oct 2025 08:35:59 +0300
+X-Gm-Features: AS18NWBi4bYPebuwB4xx20Y7NKjL9OGwnlxl3s7Rk7XozkUX3za7EYle47R5QzE
+Message-ID: <CAPVz0n3-VvtjHDPKoFiipYQFx=Xq6hph8WW=xa2UaC7iDf1MyA@mail.gmail.com>
+Subject: Re: [PATCH v3 15/22] staging: media: tegra-video: tegra20: simplify
+ format align calculations
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Sowjanya Komatineni <skomatineni@nvidia.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	=?UTF-8?Q?Jonas_Schw=C3=B6bel?= <jonasschwoebel@yahoo.de>, 
+	Dmitry Osipenko <digetx@gmail.com>, Charan Pedumuru <charan.pedumuru@gmail.com>, 
+	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>, Aaron Kling <webgeek1234@gmail.com>, 
+	Arnd Bergmann <arnd@arndb.de>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-staging@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/30/25 03:51, Haotian Zhang wrote:
-> When ice_adapter_new() fails, the reserved XArray entry created by
-> xa_insert() is not released. This causes subsequent insertions at
-> the same index to return -EBUSY, potentially leading to
-> NULL pointer dereferences.
-> 
-> Release the reserved entry with xa_release() when adapter allocation
-> fails to prevent this issue.
-> 
-> Fixes: 0f0023c649c7 ("ice: do not init struct ice_adapter more times than needed")
-> Suggested-by: Jacob Keller <jacob.e.keller@intel.com>
-> Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
-> 
-> ---
-> Changes in v2:
->    - Instead of checking the return value of xa_store(), fix the real bug
->      where a failed ice_adapter_new() would leave a stale entry in the
->      XArray.
->    - Use xa_release() to clean up the reserved entry, as suggested by
->      Jacob Keller.
+=D1=81=D1=80, 1 =D0=B6=D0=BE=D0=B2=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 08:07=
+ Svyatoslav Ryhel <clamor95@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> =D1=81=D1=80, 1 =D0=B6=D0=BE=D0=B2=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 07:=
+38 Mikko Perttunen <mperttunen@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5:
+> >
+> > On Friday, September 26, 2025 12:16=E2=80=AFAM Svyatoslav Ryhel wrote:
+> > > Simplify format align calculations by slightly modifying supported fo=
+rmats
+> > > structure. Adjusted U and V offset calculations for planar formats si=
+nce
+> > > YUV420P bits per pixel is 12 (1 full plane for Y + 2 * 1/4 planes for=
+ U
+> > > and V) so stride is width * 3/2, but offset must be calculated with p=
+lain
+> > > width since each plain has stride width * 1. This aligns with downstr=
+eam
+> >
+> > plane
+> >
+> > > behavior which uses same approach for offset calculations.
+> > >
+> > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > > ---
+> > >  drivers/staging/media/tegra-video/tegra20.c | 58 +++++++++----------=
+--
+> > >  drivers/staging/media/tegra-video/vi.h      |  3 +-
+> > >  2 files changed, 27 insertions(+), 34 deletions(-)
+> > >
+> > > diff --git a/drivers/staging/media/tegra-video/tegra20.c b/drivers/st=
+aging/media/tegra-video/tegra20.c
+> > > index 7c3ff843235d..b7a39723dfc2 100644
+> > > --- a/drivers/staging/media/tegra-video/tegra20.c
+> > > +++ b/drivers/staging/media/tegra-video/tegra20.c
+> > > @@ -280,20 +280,8 @@ static void tegra20_fmt_align(struct v4l2_pix_fo=
+rmat *pix, unsigned int bpp)
+> > >       pix->width  =3D clamp(pix->width,  TEGRA20_MIN_WIDTH,  TEGRA20_=
+MAX_WIDTH);
+> > >       pix->height =3D clamp(pix->height, TEGRA20_MIN_HEIGHT, TEGRA20_=
+MAX_HEIGHT);
+> > >
+> > > -     switch (pix->pixelformat) {
+> > > -     case V4L2_PIX_FMT_UYVY:
+> > > -     case V4L2_PIX_FMT_VYUY:
+> > > -     case V4L2_PIX_FMT_YUYV:
+> > > -     case V4L2_PIX_FMT_YVYU:
+> > > -             pix->bytesperline =3D roundup(pix->width, 2) * 2;
+> > > -             pix->sizeimage =3D roundup(pix->width, 2) * 2 * pix->he=
+ight;
+> > > -             break;
+> > > -     case V4L2_PIX_FMT_YUV420:
+> > > -     case V4L2_PIX_FMT_YVU420:
+> > > -             pix->bytesperline =3D roundup(pix->width, 8);
+> > > -             pix->sizeimage =3D roundup(pix->width, 8) * pix->height=
+ * 3 / 2;
+> > > -             break;
+> > > -     }
+> > > +     pix->bytesperline =3D DIV_ROUND_UP(pix->width * bpp, 8);
+> > > +     pix->sizeimage =3D pix->bytesperline * pix->height;
+> > >  }
+> > >
+> > >  /*
+> > > @@ -305,6 +293,7 @@ static void tegra20_channel_queue_setup(struct te=
+gra_vi_channel *chan)
+> > >  {
+> > >       unsigned int stride =3D chan->format.bytesperline;
+> > >       unsigned int height =3D chan->format.height;
+> > > +     unsigned int width =3D chan->format.width;
+> > >
+> > >       chan->start_offset =3D 0;
+> > >
+> > > @@ -321,8 +310,8 @@ static void tegra20_channel_queue_setup(struct te=
+gra_vi_channel *chan)
+> > >
+> > >       case V4L2_PIX_FMT_YUV420:
+> > >       case V4L2_PIX_FMT_YVU420:
+> > > -             chan->addr_offset_u =3D stride * height;
+> > > -             chan->addr_offset_v =3D chan->addr_offset_u + stride * =
+height / 4;
+> > > +             chan->addr_offset_u =3D width * height;
+> > > +             chan->addr_offset_v =3D chan->addr_offset_u + width * h=
+eight / 4;
+> > >
+> > >               /* For YVU420, we swap the locations of the U and V pla=
+nes. */
+> > >               if (chan->format.pixelformat =3D=3D V4L2_PIX_FMT_YVU420=
+)
+> > > @@ -332,14 +321,14 @@ static void tegra20_channel_queue_setup(struct =
+tegra_vi_channel *chan)
+> > >               chan->start_offset_v =3D chan->addr_offset_v;
+> > >
+> > >               if (chan->vflip) {
+> > > -                     chan->start_offset   +=3D stride * (height - 1)=
+;
+> > > -                     chan->start_offset_u +=3D (stride / 2) * ((heig=
+ht / 2) - 1);
+> > > -                     chan->start_offset_v +=3D (stride / 2) * ((heig=
+ht / 2) - 1);
+> > > +                     chan->start_offset   +=3D width * (height - 1);
+> > > +                     chan->start_offset_u +=3D (width / 2) * ((heigh=
+t / 2) - 1);
+> > > +                     chan->start_offset_v +=3D (width / 2) * ((heigh=
+t / 2) - 1);
+> > >               }
+> > >               if (chan->hflip) {
+> > > -                     chan->start_offset   +=3D stride - 1;
+> > > -                     chan->start_offset_u +=3D (stride / 2) - 1;
+> > > -                     chan->start_offset_v +=3D (stride / 2) - 1;
+> > > +                     chan->start_offset   +=3D width - 1;
+> > > +                     chan->start_offset_u +=3D (width / 2) - 1;
+> > > +                     chan->start_offset_v +=3D (width / 2) - 1;
+> > >               }
+> > >               break;
+> > >       }
+> > > @@ -576,20 +565,23 @@ static const struct tegra_vi_ops tegra20_vi_ops=
+ =3D {
+> > >       .vi_stop_streaming =3D tegra20_vi_stop_streaming,
+> > >  };
+> > >
+> > > -#define TEGRA20_VIDEO_FMT(MBUS_CODE, BPP, FOURCC)    \
+> > > -{                                                    \
+> > > -     .code    =3D MEDIA_BUS_FMT_##MBUS_CODE,           \
+> > > -     .bpp     =3D BPP,                                 \
+> > > -     .fourcc  =3D V4L2_PIX_FMT_##FOURCC,               \
+> > > +#define TEGRA20_VIDEO_FMT(DATA_TYPE, BIT_WIDTH, MBUS_CODE, BPP, FOUR=
+CC)      \
+> > > +{                                                                   =
+ \
+> > > +     .img_dt         =3D TEGRA_IMAGE_DT_##DATA_TYPE,                =
+   \
+> > > +     .bit_width      =3D BIT_WIDTH,                                 =
+   \
+> > > +     .code           =3D MEDIA_BUS_FMT_##MBUS_CODE,                 =
+   \
+> > > +     .bpp            =3D BPP,                                       =
+   \
+> > > +     .fourcc         =3D V4L2_PIX_FMT_##FOURCC,                     =
+   \
+> > >  }
+> > >
+> > >  static const struct tegra_video_format tegra20_video_formats[] =3D {
+> > > -     TEGRA20_VIDEO_FMT(UYVY8_2X8, 2, UYVY),
+> > > -     TEGRA20_VIDEO_FMT(VYUY8_2X8, 2, VYUY),
+> > > -     TEGRA20_VIDEO_FMT(YUYV8_2X8, 2, YUYV),
+> > > -     TEGRA20_VIDEO_FMT(YVYU8_2X8, 2, YVYU),
+> > > -     TEGRA20_VIDEO_FMT(UYVY8_2X8, 1, YUV420),
+> > > -     TEGRA20_VIDEO_FMT(UYVY8_2X8, 1, YVU420),
+> > > +     /* YUV422 */
+> > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, UYVY8_2X8, 16, UYVY),
+> > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, VYUY8_2X8, 16, VYUY),
+> > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, YUYV8_2X8, 16, YUYV),
+> > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, YVYU8_2X8, 16, YVYU),
+> > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, UYVY8_2X8, 12, YUV420),
+> > > +     TEGRA20_VIDEO_FMT(YUV422_8, 16, UYVY8_2X8, 12, YVU420),
+> > >  };
+> >
+> > Looking at the code, BPP seems to only be used for the line stride (i.e=
+. bytes per line) calculation. I think we should just make it 8 for the pla=
+nar formats (possibly with an explaining comment). With the current code, w=
+e end up with 'bytesperline' variables in places not being the actual bytes=
+ per line, which is confusing.
+> >
+> > Actually, we can then just make the 'bpp' field be bytes per pixel as i=
+t was before to avoid the discrepancy with Tegra210.
+> >
+>
+> No, this code is actually cleaner and in sync with what downstream
+> does, Tegra210 bytes per pixel is confusing since it totally neglects
+> formats with fractional bytes per pixel, it is impossible to set there
+> 3/2 for example, which is used by YUV420.
+>
+> According to downstream code bytes_per_line =3D
+> soc_mbus_bytes_per_line..., downstream directly name is bytes_per_line
+> and soc_mbus_bytes_per_line returns width * 3 / 2 which is correct
+> calculation (12 bits). Meanwhile for planar formats Tegra has 3
+> different buffers so with offset calculation plain width must be used
+> (which matches downstream).
+>
 
-this is a correct improvement, but please let me propose other options,
-with 2. being my favorite:
+If you mean use of BPP by VI, I can propose removing bytesperline and
+sizeimage configuration from VI entirely and leave this to per-SoC
+fmt_align function which does this already anyway and guards every
+time those values are referred. This way there will be no instances
+where "places not being the actual bytes per line" comes true.
 
-1. (just ice changes)
-change the call order to be:
-(note that it is under a mutex)
-xa_load() // return early if another adapter exists
-xa_reserve() // return early if no mem
-ice_adapter_new() // return early if err
-xa_store()
-
-
-2. (xarray changes)
-(perhaps I'm biased as the one introducing the error on error path):
-change xa_insert() to return 0 or -EEXIST when used as a reserving call
-(IOW: caller wanted to reserve, entry is reserved, so return should be 0
-(or -EEXIST if we really want to differentiate in the callers)).
-
-
-> ---
->   drivers/net/ethernet/intel/ice/ice_adapter.c | 4 +++-
->   1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/intel/ice/ice_adapter.c b/drivers/net/ethernet/intel/ice/ice_adapter.c
-> index b53561c34708..9eb100b11439 100644
-> --- a/drivers/net/ethernet/intel/ice/ice_adapter.c
-> +++ b/drivers/net/ethernet/intel/ice/ice_adapter.c
-> @@ -110,8 +110,10 @@ struct ice_adapter *ice_adapter_get(struct pci_dev *pdev)
->   			return ERR_PTR(err);
->   
->   		adapter = ice_adapter_new(pdev);
-> -		if (!adapter)
-> +		if (!adapter) {
-> +			xa_release(&ice_adapters, index);
->   			return ERR_PTR(-ENOMEM);
-> +		}
->   		xa_store(&ice_adapters, index, adapter, GFP_KERNEL);
->   	}
->   	return adapter;
-
+> > >
+> > >  const struct tegra_vi_soc tegra20_vi_soc =3D {
+> > > diff --git a/drivers/staging/media/tegra-video/vi.h b/drivers/staging=
+/media/tegra-video/vi.h
+> > > index bfadde8858d4..5cbc0606ed6c 100644
+> > > --- a/drivers/staging/media/tegra-video/vi.h
+> > > +++ b/drivers/staging/media/tegra-video/vi.h
+> > > @@ -281,7 +281,8 @@ enum tegra_image_dt {
+> > >   * @img_dt: MIPI CSI-2 data type (for CSI-2 only)
+> > >   * @bit_width: format width in bits per component (for CSI/Tegra210 =
+only)
+> > >   * @code: media bus format code
+> > > - * @bpp: bytes per pixel (when stored in memory)
+> > > + * @bpp: bytes per pixel (when stored in memory) for Tegra210,
+> > > + *    bits per pixel for Tegra20/Tegra30
+> > >   * @img_fmt: image format (for CSI/Tegra210 only)
+> > >   * @fourcc: V4L2 pixel format FCC identifier
+> > >   */
+> > >
 
