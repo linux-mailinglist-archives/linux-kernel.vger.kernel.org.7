@@ -1,163 +1,161 @@
-Return-Path: <linux-kernel+bounces-838685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 585C8BAFEE1
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 11:52:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0917BAFEE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 11:53:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E05FF1894E69
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 09:53:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C33B3AFE07
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 09:53:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF8B828B407;
-	Wed,  1 Oct 2025 09:52:38 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9442728D8FD;
+	Wed,  1 Oct 2025 09:53:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EPR1DRCi";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GUgTuCKS"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D2F238D42
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 09:52:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB6D326461F
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 09:53:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759312358; cv=none; b=AyW9SPSfvEj4pcIlVrH7OVT2o9J6La0y3XYjaSavdh0xwy0bYVzsRVRTM5XpYdv5+DsDroEqBoveXVuSf1AwRtoTiQ8Vk9p/ysWg9vyrGG/8Nc1LwnLkdvYfQbnfF+RvTQ4H4+pIl2/780JWJa2G2GgXOiqAYbs+3gMoPRM/Pb4=
+	t=1759312397; cv=none; b=JglFFzHDbkBJcPmccp8W1RFr/Nv2TgaWcjLGGPKl1LVL2Xeg/qngGkZNviOgk1Bd7SE/JNo++J16gVUx4WI3J+yk6iNDU7bZM9CSVjmyk9JLM97HwQ96jmJCdYKDRzbpBBB4zGRJJMcdBjCa48BkqlEZgYX2yMT146qLNZIpIgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759312358; c=relaxed/simple;
-	bh=ZvNjuBIWetmZgMgkVH98f3kni70B1lUqu4gu6U4p/II=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=mhKdVWuHPS7O63nW46oIk9UuZukPTK0RzT7nBVYt1FWU6D2tVUg0wTaF/f4Fu3+3I7DuQVmf46MHgjkJ66wROfG7dRocl6ddO6HyCb8/SnJusgnZ6uDK9iHgv+i4ciB5g4xKsI3gYOGdsjPF8hgGPFnowdQ9RFDyRHmAROou724=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-426cea3f07eso191105125ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 02:52:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759312356; x=1759917156;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zUPEEtMc3DMtN1d8jhk56MJLu/z9nXEU7Qzz7X5zZEc=;
-        b=EocSmD81YF1EkQ41MhusgRfuqS9rFqxy+33+8TPY4k3qU4hYe/D/DIfL8LOIc8ExrX
-         AuJKF4VxjlBk+gNX9zI0tWkG1rWlbrJbz9LK/q/WXZLkyMdGR3DlORJlqYIYYQwj7lwc
-         ZEy0AyfMxmtj3PLaLDoLCEjeIJfNgHpRazNH+8U2OwwI0ckbw7Jnsh/tZt3p/DzGNxVa
-         MkIlsUj2MZLYVXT2vSSxH0d9FRMfrlV1tetpD8Nmypd+OcO3Bvc+iLYtysfFsZ0mh4cY
-         svVFvvXwwIAsZHKyKiOPLZSPmcNYNvk2ZVFAeVuzTTSIYO67F8qvcePfSarlKlzoNlHv
-         6ZSg==
-X-Forwarded-Encrypted: i=1; AJvYcCXNgMb9TGN6DElPYtGEf48S5Klvt7aB1nFkT2ZkD2cndDIhQw5iPnG9S8ILyb84a9XJ177q72OccDhv59M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHFMhN/Osk883MgoB53DIOy344plKDe85Wy65/+a9Dw2Da4s86
-	20/X6Ak5HzI2uhfEnJD6EvCk4fm9fDn8JHMqOpnvmP13LBHTOvHvltdhK9Qm71sKgrbsKI4Bt5T
-	GM2Iaj7Gv7jPsqCmv2T301QZrPSZsNYHlsN/xi3/PTpLr2xBqrH6fRRo1lfQ=
-X-Google-Smtp-Source: AGHT+IH+IV63aA9VhXmOzGXFy2AdiNX3YA8kp1TuLbHVjPG4x4keqZpdrqtLdkXKvZTbPHN32/qJpnTV/7U8WcWkA27i9j7Wbp2v
+	s=arc-20240116; t=1759312397; c=relaxed/simple;
+	bh=TwWbXTtT8Jpkg4B1RDSQTmGxjVJ3owiNAOOqyjACHps=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=HmyCjS58gyJL7z/m0zTGuRKTko+eK4LdddMmnA3zLY9zfsd65uerqqzE3xJssflfKln/A12M63NM0WddFv3gTzzPvLwDIfjPwgQSo8UVBxqRIV+nleXkxAhUGa1TUOdm1J1fZAQnGXqJTX0HshAuYINLBDkXsdfnlQBlwrfXDJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EPR1DRCi; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GUgTuCKS; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1759312390;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vC3OdWWeJh+PxyArQwklWEXKC6IsarjbY4j/qJQw9X8=;
+	b=EPR1DRCirxmpEQD82QiIob5iu3hiJ56mO7g8NgNIsj5BIC7/IHWFQwfHnpxDeEI0xyEFVG
+	07QHFuz2HyqbqftKUOyAZw2n2BWEGe7ECiJkyGmHG1nq56fMwjWusz2jrsE7qopeFos8p5
+	o5nfzCXsdF4QG7pwkDYHRcy+duxKtyHPVjeGVhP7GoBqDe10IaW43/GMcSA5WFhF+bjYT3
+	3Zzzj2hvVz0V71vg7CNEHA/nqYDd3ue0KHaotGdxtkhqf2dfIfmfPU4LJxBz2b9prRdAfS
+	WTr+Za9T9WreICzcVdTb5hKJ2vrT1AVscAJyoeBxJICasVTv9xU2KqRAgS+mvg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1759312390;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vC3OdWWeJh+PxyArQwklWEXKC6IsarjbY4j/qJQw9X8=;
+	b=GUgTuCKS9J3TLo5ShX5zK7vo4RrlV4qdl+jspATQWR1tBU3sxw8XWAPR263UX4/vLu9UV7
+	n2JmfqL13y+ApsCg==
+To: Andrew Murray <amurray@thegoodpenguin.co.uk>
+Cc: Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] printk: console_flush_one_record() code cleanup
+In-Reply-To: <CALqELGwd1CiRAYNBVWsrgb5T3eJ9ugP+0wG2WKZGvSfowqgaaQ@mail.gmail.com>
+References: <20250927-printk_legacy_thread_console_lock-v2-0-cff9f063071a@thegoodpenguin.co.uk>
+ <20250927-printk_legacy_thread_console_lock-v2-2-cff9f063071a@thegoodpenguin.co.uk>
+ <84o6qsjduw.fsf@jogness.linutronix.de>
+ <CALqELGwd1CiRAYNBVWsrgb5T3eJ9ugP+0wG2WKZGvSfowqgaaQ@mail.gmail.com>
+Date: Wed, 01 Oct 2025 11:59:10 +0206
+Message-ID: <84seg3gd89.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:178f:b0:429:6c5a:61df with SMTP id
- e9e14a558f8ab-42d816011edmr42654615ab.3.1759312355923; Wed, 01 Oct 2025
- 02:52:35 -0700 (PDT)
-Date: Wed, 01 Oct 2025 02:52:35 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68dcf9e3.a00a0220.102ee.0057.GAE@google.com>
-Subject: [syzbot] [bcachefs?] kernel BUG in bch2_fs_free (2)
-From: syzbot <syzbot+f2fb0a1f147a67cd3ac1@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 
-Hello,
+On 2025-09-30, Andrew Murray <amurray@thegoodpenguin.co.uk> wrote:
+>> On 2025-09-27, Andrew Murray <amurray@thegoodpenguin.co.uk> wrote:
+>> > diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+>> > index 060d4919de320fe21fd7aca73ba497e27c4ff334..e2c1cacdb4164489c60fe38f1e2837eb838107d6 100644
+>> > --- a/kernel/printk/printk.c
+>> > +++ b/kernel/printk/printk.c
+>> > @@ -3193,6 +3194,7 @@ static bool console_flush_one_record(bool do_cond_resched, u64 *next_seq, bool *
+>> >       bool any_progress;
+>> >       int cookie;
+>> >
+>> > +     *any_usable = false;
+>>
+>> Since it is expected that @next_seq and @handover are initialized by
+>> their callers (if their callers are interested in the values), then I
+>> would expect @any_usable to be initialized by the
+>> caller. console_flush_one_record() never reads this variable.
+>
+> Yes, that's correct. Perhaps the comments for the parameters should
+> indicate otherwise?
 
-syzbot found the following issue on:
+They should clarify. For example, @next_seq is "valid only when this
+function returns true" but @handover validitiy is not specified and is
+also not related to the return value.
 
-HEAD commit:    fec734e8d564 Merge tag 'riscv-for-linus-v6.17-rc8' of git:..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14df3142580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4d8792ecb6308d0f
-dashboard link: https://syzkaller.appspot.com/bug?extid=f2fb0a1f147a67cd3ac1
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+I would like to see the helper function provide clear usage. If the
+caller is expected to initialize the parameters (which IMHO it should be
+the case for all of the pointer parameters), then that should be
+specified.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+>> > @@ -3280,21 +3284,16 @@ static bool console_flush_one_record(bool do_cond_resched, u64 *next_seq, bool *
+>> >   */
+>> >  static bool console_flush_all(bool do_cond_resched, u64 *next_seq, bool *handover)
+>> >  {
+>> > -     bool any_usable = false;
+>> > +     bool any_usable;
+>>
+>> Since console_flush_all() does read @any_usable, I would expect it to
+>> initialize @any_usable. So I would not remove this definition initialization.
+>
+> Prior to this series, console_flush_all would set any_usable to false.
+> It would be set to true if at any point a usable console is found,
+> that value would be returned, or otherwise false if handover or panic.
+> When the first patch split out this function, any_usable was kept as
+> it was, leading to any_usable being true, even if a handover or panic
+> had happened (hence additional checks needed, which are removed in
+> this patch).
+>
+> By setting any_usable at the start of flush_one_record, it allows for
+> any_usable to revert back to false, in the case where a once usable
+> console is no longer usable. Thus representing the situation for the
+> last record printed. It also makes console_flush_one_record easier to
+> understand, as the any_usable flag will always be set, rather than
+> only changing from false to true.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/c50776ae92ae/disk-fec734e8.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/b1489b275504/vmlinux-fec734e8.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/4b4c062dc0ea/bzImage-fec734e8.xz
+OK. But then just have console_flush_all() set @any_usable in the loop:
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+f2fb0a1f147a67cd3ac1@syzkaller.appspotmail.com
+static bool console_flush_all(bool do_cond_resched, u64 *next_seq, bool *handover)
+{
+	bool any_progress;
+	bool any_usable;
 
-bcachefs (loop0): error in recovery: EINTR
-  emergency read only at seq 11
-bcachefs (loop0): bch2_fs_start(): error starting filesystem EINTR
-bcachefs (loop0): shutting down
-------------[ cut here ]------------
-kernel BUG at fs/bcachefs/super.c:725!
-Oops: invalid opcode: 0000 [#1] SMP KASAN NOPTI
-CPU: 0 UID: 0 PID: 4520 Comm: syz.0.7943 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
-RIP: 0010:bch2_fs_free+0x59c/0x5a0 fs/bcachefs/super.c:725
-Code: e8 f9 d4 c9 fd e9 16 fc ff ff 89 d9 80 e1 07 38 c1 0f 8c 72 ff ff ff 48 89 df e8 df d4 c9 fd e9 65 ff ff ff e8 d5 57 66 fd 90 <0f> 0b 66 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 55 41
-RSP: 0018:ffffc90004b7f918 EFLAGS: 00010246
-RAX: ffffffff8459631b RBX: 0000000000000002 RCX: 0000000000080000
-RDX: ffffc9000c0d1000 RSI: 000000000007ffff RDI: 0000000000080000
-RBP: ffff888056a36000 R08: ffff888056a36047 R09: 1ffff1100ad46c08
-R10: dffffc0000000000 R11: ffffed100ad46c09 R12: 1ffff11013ec00f0
-R13: 0000000000000000 R14: ffffffff8e7a84a0 R15: ffff88809f600782
-FS:  00007f88c92746c0(0000) GS:ffff888125c12000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000200000057030 CR3: 0000000061ea0000 CR4: 0000000000350ef0
-Call Trace:
- <TASK>
- bch2_fs_get_tree+0xb6e/0x1520 fs/bcachefs/fs.c:2604
- vfs_get_tree+0x92/0x2b0 fs/super.c:1815
- do_new_mount+0x2a2/0x9e0 fs/namespace.c:3808
- do_mount fs/namespace.c:4136 [inline]
- __do_sys_mount fs/namespace.c:4347 [inline]
- __se_sys_mount+0x317/0x410 fs/namespace.c:4324
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f88c839066a
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f88c9273e68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007f88c9273ef0 RCX: 00007f88c839066a
-RDX: 0000200000000200 RSI: 0000200000000000 RDI: 00007f88c9273eb0
-RBP: 0000200000000200 R08: 00007f88c9273ef0 R09: 0000000001800402
-R10: 0000000001800402 R11: 0000000000000246 R12: 0000200000000000
-R13: 00007f88c9273eb0 R14: 0000000000005962 R15: 0000200000000540
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:bch2_fs_free+0x59c/0x5a0 fs/bcachefs/super.c:725
-Code: e8 f9 d4 c9 fd e9 16 fc ff ff 89 d9 80 e1 07 38 c1 0f 8c 72 ff ff ff 48 89 df e8 df d4 c9 fd e9 65 ff ff ff e8 d5 57 66 fd 90 <0f> 0b 66 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 55 41
-RSP: 0018:ffffc90004b7f918 EFLAGS: 00010246
-RAX: ffffffff8459631b RBX: 0000000000000002 RCX: 0000000000080000
-RDX: ffffc9000c0d1000 RSI: 000000000007ffff RDI: 0000000000080000
-RBP: ffff888056a36000 R08: ffff888056a36047 R09: 1ffff1100ad46c08
-R10: dffffc0000000000 R11: ffffed100ad46c09 R12: 1ffff11013ec00f0
-R13: 0000000000000000 R14: ffffffff8e7a84a0 R15: ffff88809f600782
-FS:  00007f88c92746c0(0000) GS:ffff888125c12000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000200000057030 CR3: 0000000061ea0000 CR4: 0000000000350ef0
+	*next_seq = 0;
+	*handover = false;
 
+	do {
+		any_usable = false;
+		any_progress = console_flush_one_record(do_cond_resched, next_seq,
+							handover, &any_usable);
+	} while (any_progress);
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+	return any_usable;
+}
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> Alternatively, it may be possible for console_flush_one_record to
+> return any_usable, thus dropping it as an argument and removing the
+> return of any_progress. Instead the caller could keep calling
+> console_flush_one_record until it returns false or until next_seq
+> stops increasing? Thus semantically, the return value of
+> console_flush_one_record tells you that nothing bad happened and you
+> can call it again, and the benefit of calling it again depends on if
+> progress is being made (as determined by the caller through the
+> existing seq argument).
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Sorry, I could not follow how this would work. It sounds like a
+simplification. If you can make it work, go for it.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+John
 
