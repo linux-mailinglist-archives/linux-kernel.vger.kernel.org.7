@@ -1,81 +1,120 @@
-Return-Path: <linux-kernel+bounces-838356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABB2DBAF054
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 04:42:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41B72BAF05F
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 04:44:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67B893A7BFA
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 02:42:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D045719410E5
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 02:44:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1BE3279DC6;
-	Wed,  1 Oct 2025 02:42:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25F5A27A93D;
+	Wed,  1 Oct 2025 02:44:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="ZFBoXrmi"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ttRgAU+r"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F85A28E3F;
-	Wed,  1 Oct 2025 02:42:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CA6C28E3F
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 02:44:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759286570; cv=none; b=X3Y7dBKLZvG084jAURlsGpEeh5QIL6uBR8HoNpipjx2qDFWYjtz9bO1+djUqJRB/53f9IoNPKrBqZ3h2/2Z5s0AjY6zMP9aEeJNhcyXux1TfqLgNGpa1caaLedDuemzVaA/IufZJm2w8CKzs9onImn0SnTazQyVz2uR+IH8rkc0=
+	t=1759286662; cv=none; b=Ca0HgIarvZgu1yLF6KJfwXQYcYDY83LUNPZe5D4bq22HCnLwzK/udkAHcah8WJHEBT7Ep40wYCDv2gPzOLQroiS4gRuQ2iJ7eTxHqfCy98p4KYrQriKQo9GwDua1ap2BDUUSjbFLCtv3s4Mn0fO5d6Ph8R1vHJkGn5TzXxFCFIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759286570; c=relaxed/simple;
-	bh=LKDu3Xku1VOHGL1/rP0ISGCcRasJyfPBl3DfDB9TcZM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Q/+gb6KqWBLBh2y5h0Ooa76mMnVxAVFmw651nxaRQltgGU44TwizdPwHSVKb0SonDInMV3mef3StPoWqbWtOkdxxM3eoKoQjNTVx3vL+1Z9BMLZW+V4aOmTPoyD0TYilRRFcan0ByskysCHcYuoPNDI9dcQMeMS2wMCtIgRKD+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=ZFBoXrmi; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1759286566;
-	bh=ZQ4G1nhO4fJCrWWO4BgcxbqmE8wNI73Tj0t3GM2e72g=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=ZFBoXrmi4x46zx5rkn/TXKgnk88GhqVOBNlE0vpAngnzuswBVqBCuD8fygmxvJUbq
-	 Zd+NhpkbpYbsw6adph0vkSqbB4wP3LkN/1rL6phz7FwuzrYY0ylj1VjpPOk8VR1StZ
-	 xP3O0WVuX7WF40WFj1P/gV+lXT0ANNRRJFZlvzwevEQbWEHtzzy2K1LFqIMEoKTqEU
-	 ObcdH8i+LgN5pzIn2T2SC5XVx2CJZFCvHsS/59pa043yFHkVBM6smC61lymxgFeC2p
-	 yTpjv7sG/u0LM4pfwqd3hOQ0S5iyc4bMd9KA8RudInwK6pqZDYEhWbh8WsbaUJ5AHE
-	 uIZFyalX0Km6g==
-Received: from [127.0.1.1] (unknown [120.20.48.42])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id A743264785;
-	Wed,  1 Oct 2025 10:42:44 +0800 (AWST)
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
- Leo Wang <leo.jt.wang@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
- george.kw.lee@fii-foxconn.com, bruce.jy.hung@fii-foxconn.com, 
- leo.jt.wang@fii-foxconn.com
-In-Reply-To: <20250930-leo-dts-add-shunt-resistor-v2-1-8712984f04c4@gmail.com>
-References: <20250930-leo-dts-add-shunt-resistor-v2-1-8712984f04c4@gmail.com>
-Subject: Re: [PATCH v2] ARM: dts: aspeed: clemente: Add HDD LED GPIO
-Message-Id: <175928656396.3584264.16163298971652448955.b4-ty@codeconstruct.com.au>
-Date: Wed, 01 Oct 2025 12:12:43 +0930
+	s=arc-20240116; t=1759286662; c=relaxed/simple;
+	bh=k91NTUDhUssUji9MJhdmtkiC7VaqJjlsTCOYLX42i1g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gQ0n6Je6BHUvOj51FM1dAqTM8XEx4gPFgjk2z3IJQyxWQ31pxtui6geGPhjnXGbCkbE+hDSLLhgnkrzUlLyO+DRnGWI43+5S5zOEs7sS7Qgw9BiNRjrg6Yoq6uCZMrhqiO4U7iVIcGiFT407e/Od7gxKVCwEkP7ffx3BLrX5g3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ttRgAU+r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23813C116D0
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 02:44:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759286662;
+	bh=k91NTUDhUssUji9MJhdmtkiC7VaqJjlsTCOYLX42i1g=;
+	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
+	b=ttRgAU+re1QfOgTUsJYEGBkaY5sJkurfUuoKPafm22hee4mBvUsfCz8+lnPzgv8d4
+	 ZOdgnV8fba3mPfHIywenzEHUDYZIP6vODhYrMcHJhSLdDPE2HjSFGBcgL9m1yi7LmE
+	 W7n+1yOtllzOEImsPbhBak+kD93G4zlgR7UkMNidvOgQcMplPmuKroueK3CHorgKyn
+	 CtjDLwmqqEmAxVu1+9/A4A9BrY1j+7n9xbmw+OyXSKiMcP4Dv6vu7kN9MibVjJsSje
+	 TSyEQyAq1nHm7QtDoRmOMwnpTAefVibRt4KoP7xFveey6CHlXTPwpNO4u0bMThDA1S
+	 sTMaZgwlFjwDA==
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-36d77de259bso61377201fa.3
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 19:44:22 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXnFGMT0RN803oN7LZP5QJ0hRkpuk6frQkbjU07lnyIpnBhs8YSs8jcEyDkFv/vAujXX+C+Jw77EwN9R1Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywcx/AVE4+nt6p1GfRdxXnll79zPIV82uk1H5Wr0fOnNWrAT6Wg
+	vrdzW0izp07JOrPHDxpfYTwiAEpzBN+/qmGYewcT8GzTCntz+4eqCcfb4MqU6q86zm89+Jxpbm6
+	YDq03W3zq5GiaXBzieAmbbAVawEwRpYU=
+X-Google-Smtp-Source: AGHT+IFQFAiOMKqVsvDwjwivvtKNdu8wmiPuFmG09MeyicmCKH2vmN2UpLtpz/sWXcpxHK2OBBrDx4wW/jvYc7IHYT4=
+X-Received: by 2002:a2e:b8c6:0:b0:364:45a:5159 with SMTP id
+ 38308e7fff4ca-373a745e30fmr5133711fa.30.1759286660527; Tue, 30 Sep 2025
+ 19:44:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+References: <20250925191600.3306595-1-wens@kernel.org> <20250925191600.3306595-3-wens@kernel.org>
+ <20250929180804.3bd18dd9@kernel.org> <20250930172022.3a6dd03e@kernel.org>
+In-Reply-To: <20250930172022.3a6dd03e@kernel.org>
+Reply-To: wens@kernel.org
+From: Chen-Yu Tsai <wens@kernel.org>
+Date: Wed, 1 Oct 2025 10:44:08 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66AKNyV0YegdnZPOV+bh6dNU9ecmtKRqw4HnBO+ZCrBDA@mail.gmail.com>
+X-Gm-Features: AS18NWA7fKCmJOgwyIEYi5Cp05qNoNNJdcUopK8PxdgcLYDSihGbZiKbNoeO0vw
+Message-ID: <CAGb2v66AKNyV0YegdnZPOV+bh6dNU9ecmtKRqw4HnBO+ZCrBDA@mail.gmail.com>
+Subject: Re: [PATCH net-next v8 2/2] net: stmmac: Add support for Allwinner
+ A523 GMAC200
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jernej Skrabec <jernej@kernel.org>, Samuel Holland <samuel@sholland.org>, netdev@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Andre Przywara <andre.przywara@arm.com>, Jernej Skrabec <jernej.skrabec@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 30 Sep 2025 10:49:23 +0800, Leo Wang wrote:
-> Define a GPIO expander pin for the HDD LED and expose it via the
-> LED subsystem. This allows the BMC to control the front panel
-> HDD activity LED.
-> 
-> 
+On Wed, Oct 1, 2025 at 8:20=E2=80=AFAM Jakub Kicinski <kuba@kernel.org> wro=
+te:
+>
+> On Mon, 29 Sep 2025 18:08:04 -0700 Jakub Kicinski wrote:
+> > On Fri, 26 Sep 2025 03:15:59 +0800 Chen-Yu Tsai wrote:
+> > > The Allwinner A523 SoC family has a second Ethernet controller, calle=
+d
+> > > the GMAC200 in the BSP and T527 datasheet, and referred to as GMAC1 f=
+or
+> > > numbering. This controller, according to BSP sources, is fully
+> > > compatible with a slightly newer version of the Synopsys DWMAC core.
+> > > The glue layer around the controller is the same as found around olde=
+r
+> > > DWMAC cores on Allwinner SoCs. The only slight difference is that sin=
+ce
+> > > this is the second controller on the SoC, the register for the clock
+> > > delay controls is at a different offset. Last, the integration includ=
+es
+> > > a dedicated clock gate for the memory bus and the whole thing is put =
+in
+> > > a separately controllable power domain.
+> >
+> > Hi Andrew, does this look good ?
+> >
+> > thread: https://lore.kernel.org/20250925191600.3306595-3-wens@kernel.or=
+g
+>
+> Adding Heiner and Russell, in case Andrew is AFK.
+>
+> We need an ack from PHY maintainers, the patch seems to be setting
+> delays regardless of the exact RMII mode. I don't know these things..
 
-Thanks, I've applied this to the BMC tree.
+AFAIK the delays only apply to the RGMII signal path, i.e. they are no-op
+for RMII. Also, the delays are unrelated to the 2ns delay required by RGMII=
+.
+These delays are more for tweaking minute signal length differences.
 
--- 
-Andrew Jeffery <andrew@codeconstruct.com.au>
-
+ChenYu
 
