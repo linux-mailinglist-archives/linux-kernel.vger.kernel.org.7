@@ -1,121 +1,145 @@
-Return-Path: <linux-kernel+bounces-838745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50F90BB00F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 12:51:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AFE8BB00F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 12:51:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D71783A758F
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 10:51:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B94431C1A6E
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 10:51:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 771BF2C0264;
-	Wed,  1 Oct 2025 10:51:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32BB333F6;
+	Wed,  1 Oct 2025 10:51:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UBJUsa6Q"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="dgOhwUZr"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1122F2882D0;
-	Wed,  1 Oct 2025 10:51:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92F4027A927
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 10:51:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759315868; cv=none; b=HUWavTw1TACmM5MDan+/MAdVhLXYRvzomPuLSfwvt6tMQCrc4FNIUonLReXuCfpET0ark+ahyblfUhX5SDa+UMnRQ0+QB+X0U6Ftw0ZJDXzW6bSvrSq/WSzZudsXJtGiLTQmbpjG9BdVsk/w4fO3wN4HK+t/k4D2V33swKxXgjs=
+	t=1759315906; cv=none; b=PVS56721lXBujzadtN6mcrkpaqR2ZnhzQE21Nk59RerGJUYqJXly42l1WVqJM0lf4pU39C1Mol4evAX07uJhwf+cGqhAb/KAlnhFz2UofKuJAxmYqy5GCBgdJTqODBmNxR9fl7TTrJP51jjJfAzPkj/C0+nzpnNswvEhmyosptA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759315868; c=relaxed/simple;
-	bh=7d1TeNea7S49qLQyujGBn5BCTJqyxTNSV5DhIggSMt8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PkLEJD7cg/LspYEZtemfdS/bE6lpUiXpS1+B6XzDLey7R1lCkbDAI1m8imEzQYNycbiAes9oydcjE10ZRbB7GY5m1o8rGXAp6nhl1JC8bSyWP870E7XSctYIdKZP9o28ca6BqN+DuuyZums+zQt1anb2u6jOzfd0OqxbTzbjCgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=UBJUsa6Q; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=7d1TeNea7S49qLQyujGBn5BCTJqyxTNSV5DhIggSMt8=; b=UBJUsa6QCfYotDZmcOY5GbdOEi
-	ZwsBD0brmBo8bH5T88CyeKJC0fRjs0ym6f75uCWKWjN5UrinRG959Mds4ZJEWJQHVB5wdgOI8NXWr
-	rFK/O/ZQfkjseOHJQrgN/oCixepYXX1/GgwncG+3M/hY4u5Fy5/5NbLtJNuBtZu1KPXirCsvHJL9y
-	GQaherlvkyQVq6sQuGmrE3j94n73MaG3vW5JwsEbbf8TwugbbhIvGnjN8oMAYihx7ktU2EYxPlMBZ
-	Bh+KMVz1Rf9UsSnYg97C7royMdX8Bl89N/BF+uGjJcSPx4E4c4Lhpxbwb4vzh2bCnFzluD4i1B9Im
-	PmTecqFg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v3uQE-0000000FJaJ-1lBV;
-	Wed, 01 Oct 2025 10:50:59 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 9D810300328; Wed, 01 Oct 2025 12:50:58 +0200 (CEST)
-Date: Wed, 1 Oct 2025 12:50:58 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Juergen Gross <jgross@suse.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, llvm@lists.linux.dev,
-	xin@zytor.com, "H. Peter Anvin" <hpa@zytor.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>
-Subject: Re: [PATCH v2 09/12] x86/msr: Use the alternatives mechanism for
- WRMSR
-Message-ID: <20251001105058.GP3419281@noisy.programming.kicks-ass.net>
-References: <20250930070356.30695-1-jgross@suse.com>
- <20250930070356.30695-10-jgross@suse.com>
- <20250930083137.GH3245006@noisy.programming.kicks-ass.net>
- <2df26cc0-53bc-499c-8c78-bc24fd8bf882@suse.com>
- <b2e07601-80d9-4a6e-a60a-6667d679494c@suse.com>
+	s=arc-20240116; t=1759315906; c=relaxed/simple;
+	bh=1CPftrf/QNZ3WFkDhM8YcV3g4PMpGfeZSdBHtVYjqa8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=heam7qkEV74DCTpKjUXAO6rTGJVTjPqCzS7QbjAanfPuASjnu/wzTk7UE7yXYT7npjKFBBWRXV5VNkKjHjjnkvh3iX74uceXKBjSPWQKLLOffyfYY/wuI9SccUf2bkeOZx626b5odVxqB/8mMQ2nNtPMmKoe7TnMagbk0irh9Hg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=dgOhwUZr; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1759315897;
+	bh=1CPftrf/QNZ3WFkDhM8YcV3g4PMpGfeZSdBHtVYjqa8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=dgOhwUZrt5C0ehefy4LQbNrRJRcj8IgLKIrq0rGHVdFOdvwU5vyYOrpqA6zcAyBN+
+	 J/IO4Br2P36wABWykJXQSqvHSdhSrZDj7QinIPsF2q54w+6d03uUg2N8HEq+OJvGBt
+	 W/3t8iJ7NrrHHhKBrGhXT7+vkZQM9jNZ1AjCA/lgT3qRKfkdwxqIJX8Mt3zsnfK6CP
+	 G0+9QNP02tb+0B3tZPwGT7K/920KunekcRzkIS+lqJxzUtStE32cm9UjO+uY3UVQ+r
+	 5dG7sa9SQR3skr28CmD706Y5G5Y/JQs+wUsJCZ/G0ssKe76KuEV0jCzMNtF7x9HLhp
+	 4T7I5v33B6I+g==
+Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id C708417E0C54;
+	Wed,  1 Oct 2025 12:51:36 +0200 (CEST)
+Date: Wed, 1 Oct 2025 12:51:30 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Steven
+ Price <steven.price@arm.com>, kernel@collabora.com, Rob Herring
+ <robh@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann
+ <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>
+Subject: Re: [PATCH v4 02/10] drm/panfrost: Handle inexistent GPU during
+ probe
+Message-ID: <20251001125130.76c134ae@fedora>
+In-Reply-To: <20251001022039.1215976-3-adrian.larumbe@collabora.com>
+References: <20251001022039.1215976-1-adrian.larumbe@collabora.com>
+	<20251001022039.1215976-3-adrian.larumbe@collabora.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <b2e07601-80d9-4a6e-a60a-6667d679494c@suse.com>
 
-On Wed, Oct 01, 2025 at 10:49:31AM +0200, Juergen Gross wrote:
+On Wed,  1 Oct 2025 03:20:23 +0100
+Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
 
-> Thinking more about that I believe there are additional problems:
+> Just in case we're dealing with a yet not recognised device.
 >=20
-> Having overlapping alternatives not starting at the same address will res=
-ult
-> in problems with length padding of the outer alternative in case the inner
-> one starting later is extending past the end of the outer one. This might=
- be
-> possible to handle, but it will be tedious.
+> Reviewed-by: Steven Price <steven.price@arm.com>
+> Signed-off-by: Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com>
 
-Yes, this must not happen.
+Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
 
-> Using your idea with pv_ops could result in the inner alternative not bei=
-ng
-> at the start of the outer alternative AND being not the initial code. This
-> would result in patching in the .altinstructions area instead of the norm=
-al
-> .text site, resulting in possible loss of a patching action if the patched
-> area would have been used as a replacement before.
+> ---
+>  drivers/gpu/drm/panfrost/panfrost_gpu.c | 15 +++++++++++++--
+>  1 file changed, 13 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_gpu.c b/drivers/gpu/drm/pa=
+nfrost/panfrost_gpu.c
+> index f94337a6c302..8d049a07d393 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_gpu.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_gpu.c
+> @@ -240,9 +240,10 @@ static const struct panfrost_model gpu_models[] =3D {
+>  	/* MediaTek MT8188 Mali-G57 MC3 */
+>  	GPU_MODEL(g57, 0x9093,
+>  		GPU_REV(g57, 0, 0)),
+> +	{0},
+>  };
+> =20
+> -static void panfrost_gpu_init_features(struct panfrost_device *pfdev)
+> +static int panfrost_gpu_init_features(struct panfrost_device *pfdev)
+>  {
+>  	u32 gpu_id, num_js, major, minor, status, rev;
+>  	const char *name =3D "unknown";
+> @@ -327,6 +328,12 @@ static void panfrost_gpu_init_features(struct panfro=
+st_device *pfdev)
+>  		break;
+>  	}
+> =20
+> +	if (!model->name) {
+> +		dev_err(pfdev->base.dev, "GPU model not found: mali-%s id rev %#x %#x\=
+n",
+> +			name, gpu_id, rev);
+> +		return -ENODEV;
+> +	}
+> +
+>  	bitmap_from_u64(pfdev->features.hw_features, hw_feat);
+>  	bitmap_from_u64(pfdev->features.hw_issues, hw_issues);
+> =20
+> @@ -347,6 +354,8 @@ static void panfrost_gpu_init_features(struct panfros=
+t_device *pfdev)
+> =20
+>  	dev_info(pfdev->base.dev, "shader_present=3D0x%0llx l2_present=3D0x%0ll=
+x",
+>  		 pfdev->features.shader_present, pfdev->features.l2_present);
+> +
+> +	return 0;
+>  }
+> =20
+>  void panfrost_cycle_counter_get(struct panfrost_device *pfdev)
+> @@ -489,7 +498,9 @@ int panfrost_gpu_init(struct panfrost_device *pfdev)
+>  	if (err)
+>  		return err;
+> =20
+> -	panfrost_gpu_init_features(pfdev);
+> +	err =3D panfrost_gpu_init_features(pfdev);
+> +	if (err)
+> +		return err;
+> =20
+>  	err =3D dma_set_mask_and_coherent(pfdev->base.dev,
+>  					DMA_BIT_MASK(FIELD_GET(0xff00,
 
-Not quite, the nested alternative was in the orig_insn part. So it would
-result in patching the orig text twice, once from the inner (which comes
-first in the patch list) and then once again from the outer (which comes
-later).
-
-> So in my opinion allowing alternatives to nest without all inner levels
-> starting at the same location as the outermost level would be a receipt f=
-or
-> failure.
-
-Certainly tricky, no argument there.
-
-> I think I'll write another patch to BUG() in case such a situation is bei=
-ng
-> detected.
-
-Fair enough; we should not currently have any such cases. And going by
-my attempt to make it work, its going to be really tricky in any case.
-
-But please put on a comment on why, which explains the constraints.
 
