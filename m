@@ -1,105 +1,134 @@
-Return-Path: <linux-kernel+bounces-839312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6DA5BB1561
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 19:15:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D711BB1564
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 19:16:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C46B3B9129
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 17:15:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D14194A3FBF
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 17:16:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3EDC2D191C;
-	Wed,  1 Oct 2025 17:15:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33FA32D29C4;
+	Wed,  1 Oct 2025 17:16:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bvvg2Kbi"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TKRrd63P"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C007226CF6
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 17:15:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3116B34BA40
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 17:16:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759338935; cv=none; b=ABDvvnh91NzB3vIwCNofzqXww4Jn3wUjwfo4UrmhmwCfB1ylv+fxdbXoU3nXJBNtM07+0W8XwdK6OBmavKGyBNMWj3WROet8Fa3l2uMLitHzw7Ijo/+WHsexTZHUGwKMAk0ILxrFiUP7tA8gVMZvjoKNGMJW7MJRs7pSVIcUZug=
+	t=1759338981; cv=none; b=aLwr8f2YmoqZxwD7LBufdlj7A3SJDL0ELPtr1RY+TP1m+2nqy5hLyMUPNrH1g2OLfAoCGzihyAVsvaFaBpOfZfq0ETlZF013HcuNI1T1ZUdTB9w7fCkQrcWKLB9KFGLwcpTJ7ctpNdYhBQqoOZaaFp7UAdkO5DftjPb62C+jeKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759338935; c=relaxed/simple;
-	bh=Fa/i0851KfrhtyZ/TxP3R6h5YD6Oc8Aog2S4zBr9bXg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XdBi+0S5B7lf7Si+yCSHazLulSFwoHYJYd0HmxQaHLYP1ZoDzyDhArlWAQhztL1FsyMPOSUmEYBATEAyUQlokliVxR6ei006O4pITiyF7Y6pc0XCStrI+j5SRenW1wx90YPdmZwCQcShCQ15gUctgJwP2uTcuDLOVmxnatLfsg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bvvg2Kbi; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759338933; x=1790874933;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=Fa/i0851KfrhtyZ/TxP3R6h5YD6Oc8Aog2S4zBr9bXg=;
-  b=bvvg2KbiWP6agDOGYQUfQpEGEMLP0E9VzqujC1FyKpECTVTFaDAnexRY
-   S9AdAy1woTqxZmx+HX+GcK7DBFispzBM3Ye4WnIwWjj5L3FQromizsVN5
-   qPtmB4Tq7Jrf5CkGOR6pClWlSysodZCPayK7gJJZXHsurG5ncHgWdIZyK
-   5OE2D03D8fIa7IZG0BiF7+z6w+o+hqpZt/BRO/2ngL10DDtbDLdrOlGHa
-   q4nK8jyJSEY7pF2zMpAbmvtu2jFaIdVlMB9RvU0Eh3jCdPT1W8nZozsQX
-   bbe5osVdZCOkRKQhhRx3wC/d73/BMs7fYAY5gBwQOeUOq/rYuocovAdHu
-   Q==;
-X-CSE-ConnectionGUID: zH2iui+2QVy7CvU4Zw64DA==
-X-CSE-MsgGUID: IiVEJWJYQjWpajrKgUffcg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11569"; a="60835763"
-X-IronPort-AV: E=Sophos;i="6.18,307,1751266800"; 
-   d="scan'208";a="60835763"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2025 10:15:31 -0700
-X-CSE-ConnectionGUID: b8I2ZVrEQqGGTyEbGAYWng==
-X-CSE-MsgGUID: a4I/CmJ2TLC3eCdWFoxF4g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,307,1751266800"; 
-   d="scan'208";a="209558498"
-Received: from davehans-spike.ostc.intel.com (HELO ray2.sr71.net) ([10.165.164.11])
-  by orviesa002.jf.intel.com with ESMTP; 01 Oct 2025 10:15:30 -0700
-From: Dave Hansen <dave.hansen@linux.intel.com>
-To: torvalds@linux-foundation.org
-Cc: x86@kernel.org,
-	linux-kernel@vger.kernel.org,
-	Dave Hansen <dave.hansen@linux.intel.com>
-Subject: [GIT PULL] x86/mm for 6.18-rc1
-Date: Wed,  1 Oct 2025 10:15:29 -0700
-Message-Id: <20251001171529.901044-1-dave.hansen@linux.intel.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1759338981; c=relaxed/simple;
+	bh=BU0iCG0Wn7FDxsjZpRitcTVVnTYoIX9uyhwNv3w1DQI=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=iLtsSHM3LUgI7XDkcA1ZWCm7LJIxzYa58Jn/vySa+B3A4fbCFGaKboVxgROKnmcApQ7L8ss0yt3R9+55IrFC3kxoLsLodV6ni+YD3PNyl0V6bTcWzVIaxoRce/OV6GgWUEcUAG+nbNXS9XVijDXxRmJNqwZFWvk8TpRL5sJI8RM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TKRrd63P; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-27eca7298d9so604965ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 10:16:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759338979; x=1759943779; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4ICohWyZWW3dghRAJfnyRv8OgV+aajXymuvEfhCyvZ0=;
+        b=TKRrd63PFYhpOJ97KcMHgfOeL8xPTOXkkckAxOnYaXdheXUfcyRbr7LcW4HurFp6/1
+         fHjQjmZ43n6XFgjgSTXlQzT9CM8I/EAPb1V6TehN4VJxgSK9pXXvx2r52kNXcaejXccy
+         sO/kngakKHqxJqS497wNIW4+F5AmlefQux3nlgZZ/NArbD0HsVRQ8kU/IN7wMVURbinP
+         7ZwsBJZZFz8ZK3PB1JBhknh8XjWVDJeCZMblGoaNBFyRuSHmMKuDwEuCxOfhGPdHTS5M
+         x9XzkkVfmAQuBjTvRTAzP7gkVKBNNK7i9eCjnbFN35sIhmK6+cVCFfu+N6YCA3fSVXS8
+         LigA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759338979; x=1759943779;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=4ICohWyZWW3dghRAJfnyRv8OgV+aajXymuvEfhCyvZ0=;
+        b=vwROns2sujZQKz1SsU2up3ls3fjmqrAtS0uOfKM4Py3k7vkSbWZ6mPMUCMwGNnoXdw
+         aL+Vj7r4T/Q8ELxyMJqJk2rgx8I/0EQvvmR4Pkl+WlMGJw2M8+2/wOqERVWx1aN7UU+L
+         XWWVb3yEY/+SjoeQPRwqufzlXY64xnGKrb1rm18Og8utUW5zsyiDEpNGDZR35MwDhz1V
+         eJVe4WhOE7WBeOp/sLZr+PGzyH7MvVoacDT/0LyaAu8O8rveyy4i5566QH4AscaKc+IV
+         uG69uf9jdnApjDHDTlXcCySV+C40XkY+pHQ9ujnjAQ1fT9cdZ4nxMI9ijubd0wE5xxLp
+         zdaw==
+X-Forwarded-Encrypted: i=1; AJvYcCXSeLXfA/mY3lfwkRTG/PxqTYK+PT2mGCQM/8n7fDUNo7lg2N5FYf0eZvbn66XWxa1TH+QvyjpoTEQJaBI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4kGEBOI4+oSzgKYo2G5tbuVmfCavLlfMfeEMAeByVRLSg5Ptt
+	6EUtP2cT7KKFYDhE4/LdRgTYWXbibKjUblbFaK9xx7KPdbqzLiWj2U1BMM2t2h/DGDfke0+LIJm
+	PT6bspg==
+X-Google-Smtp-Source: AGHT+IF8XxTPJPnhJV6cEfh65/DuXZ5l5db3pgS80gNyNI0nsre7FBM2PokXsB4xATcgCCV21X0DcrZFodU=
+X-Received: from pldm6.prod.google.com ([2002:a17:902:db86:b0:267:e559:12b])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:15ce:b0:265:47:a7bd
+ with SMTP id d9443c01a7336-28e7f28dfbemr49380785ad.4.1759338979403; Wed, 01
+ Oct 2025 10:16:19 -0700 (PDT)
+Date: Wed, 1 Oct 2025 10:16:17 -0700
+In-Reply-To: <CAGtprH-0B+cDARbK-xPGfx4sva+F1akbkX1gXts2VHaqyDWdzA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <CA+EHjTzdX8+MbsYOHAJn6Gkayfei-jE6Q_5HfZhnfwnMijmucw@mail.gmail.com>
+ <diqz7bxh386h.fsf@google.com> <a4976f04-959d-48ae-9815-d192365bdcc6@linux.dev>
+ <d2fa49af-112b-4de9-8c03-5f38618b1e57@redhat.com> <diqz4isl351g.fsf@google.com>
+ <aNq6Hz8U0BtjlgQn@google.com> <aNshILzpjAS-bUL5@google.com>
+ <CAGtprH_JgWfr2wPGpJg_mY5Sxf6E0dp5r-_4aVLi96To2pugXA@mail.gmail.com>
+ <aN1TgRpde5hq_FPn@google.com> <CAGtprH-0B+cDARbK-xPGfx4sva+F1akbkX1gXts2VHaqyDWdzA@mail.gmail.com>
+Message-ID: <aN1h4XTfRsJ8dhVJ@google.com>
+Subject: Re: [PATCH 1/6] KVM: guest_memfd: Add DEFAULT_SHARED flag, reject
+ user page faults if not set
+From: Sean Christopherson <seanjc@google.com>
+To: Vishal Annapurve <vannapurve@google.com>
+Cc: Ackerley Tng <ackerleytng@google.com>, David Hildenbrand <david@redhat.com>, 
+	Patrick Roy <patrick.roy@linux.dev>, Fuad Tabba <tabba@google.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Nikita Kalyazin <kalyazin@amazon.co.uk>, shivankg@amd.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+On Wed, Oct 01, 2025, Vishal Annapurve wrote:
+> On Wed, Oct 1, 2025 at 9:15=E2=80=AFAM Sean Christopherson <seanjc@google=
+.com> wrote:
+> >
+> > On Wed, Oct 01, 2025, Vishal Annapurve wrote:
+> > > On Mon, Sep 29, 2025 at 5:15=E2=80=AFPM Sean Christopherson <seanjc@g=
+oogle.com> wrote:
+> > > >
+> > > > Oh!  This got me looking at kvm_arch_supports_gmem_mmap() and thus
+> > > > KVM_CAP_GUEST_MEMFD_MMAP.  Two things:
+> > > >
+> > > >  1. We should change KVM_CAP_GUEST_MEMFD_MMAP into KVM_CAP_GUEST_ME=
+MFD_FLAGS so
+> > > >     that we don't need to add a capability every time a new flag co=
+mes along,
+> > > >     and so that userspace can gather all flags in a single ioctl.  =
+If gmem ever
+> > > >     supports more than 32 flags, we'll need KVM_CAP_GUEST_MEMFD_FLA=
+GS2, but
+> > > >     that's a non-issue relatively speaking.
+> > > >
+> > >
+> > > Guest_memfd capabilities don't necessarily translate into flags, so i=
+deally:
+> > > 1) There should be two caps, KVM_CAP_GUEST_MEMFD_FLAGS and
+> > > KVM_CAP_GUEST_MEMFD_CAPS.
+> >
+> > I'm not saying we can't have another GUEST_MEMFD capability or three, a=
+ll I'm
+> > saying is that for enumerating what flags can be passed to KVM_CREATE_G=
+UEST_MEMFD,
+> > KVM_CAP_GUEST_MEMFD_FLAGS is a better fit than a one-off KVM_CAP_GUEST_=
+MEMFD_MMAP.
+>=20
+> Ah, ok. Then do you envision the guest_memfd caps to still be separate
+> KVM caps per guest_memfd feature?
 
-Please pull a single x86/mm change for 6.18-rc1. This came out of Rik van
-Riel's work to get the INVLPGB instruction working. It just removes an
-open-coded TLB flush operation by using an existing helper.
-
---
-
-The following changes since commit c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9:
-
-  Linux 6.17-rc2 (2025-08-17 15:22:10 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git tags/x86_mm_for_6.18-rc1
-
-for you to fetch changes up to 86e6815b316ec0ea8c4bb3c16a033219a52b6060:
-
-  x86/mm: Change cpa_flush() to call flush_kernel_range() directly (2025-08-22 07:55:21 -0700)
-
-----------------------------------------------------------------
-Change cpa_flush() to call flush_kernel_range() directly
-
-----------------------------------------------------------------
-Yu-cheng Yu (1):
-      x86/mm: Change cpa_flush() to call flush_kernel_range() directly
-
- arch/x86/mm/pat/set_memory.c | 20 +++++++-------------
- 1 file changed, 7 insertions(+), 13 deletions(-)
+Yes?  No?  It depends on the feature and the actual implementation.  E.g.
+KVM_CAP_IRQCHIP enumerates support for a whole pile of ioctls.
 
