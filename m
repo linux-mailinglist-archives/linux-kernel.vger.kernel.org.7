@@ -1,97 +1,180 @@
-Return-Path: <linux-kernel+bounces-838669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BADBDBAFE18
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 11:37:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8216FBAFE21
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 11:37:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A15427AAD41
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 09:35:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 599177AB0A9
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 09:35:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E88F02D9ED5;
-	Wed,  1 Oct 2025 09:37:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4C172D9EC4;
+	Wed,  1 Oct 2025 09:37:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KHVKkJSA"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FG97sGvN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C97D42D978B
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 09:37:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2592527AC21;
+	Wed,  1 Oct 2025 09:37:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759311427; cv=none; b=bE9eJ4Lc1fNnIz+evP2lj7Q7Z+33OJh/71rCI5AqiVPsuvx7EhShVj1sAyKZ2cjNcOs90cIObwNKYnBCjtwDgpuzMtFd9zlKi4TUCOHsgllTjaPe/FdwVkLgyPV4qEtTLvlSwP7uKa60G8Ef6EExkP2uVy6yxVTRsNHH+2+nmng=
+	t=1759311450; cv=none; b=JMGvb8rcyZOX07tGzDoZ4ci1ZlfbxxXyxgZy233A8GEZDCUBZBZd/gfIJQxrwskrNLYSwDb+rHUearJ42zbtPHeAi5B/U39IBWGpLQYjbzE+PevhnoFSmDO7CTdH0kgVP6t0sEg6IfqB7e26ONsvTTTOmcbaYSD3HipQY+s5WFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759311427; c=relaxed/simple;
-	bh=smJzPZ2H+puqNQpL9LTWdRgBhAS8OfsmNfjleezYjpM=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=OrvC0j7L4vJQ4XDCT+VEIh+SQSdw4VipPkmgJ5z/modv+zV+jgQpoiXhZq2REx0D8sfRrVYiCk4wpm+L/Ruifrj7WfNbs5e6X6GlUuJ8gBa/CnUSk0Iwje0y5D3EDopIulKFwk0D8TOFVTJQhHgpSqk6hLMdlyBYISplbH8Ovdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KHVKkJSA; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759311424;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=00w3hkHfsTAxYQCvIOKAjdtuK2kAChIoMSa2X5uPZB0=;
-	b=KHVKkJSAH402JlKqHxOEcTUp9tJWlqpWsH3T8GJ3DwcZ75nuFSPptYWBJ8h9YuOeXi7UuG
-	B26olVMznKHO+75vGEmOtouoq5egPzp9oOaScOLzpgmu09I2QmwB8mcaNtODcAIZTRo5XF
-	c6qRTsy9UHTn0aK8CJbSO79i3gnjEWU=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-614-ngBKf_HyMku4dc3tcFSEpA-1; Wed,
- 01 Oct 2025 05:37:01 -0400
-X-MC-Unique: ngBKf_HyMku4dc3tcFSEpA-1
-X-Mimecast-MFC-AGG-ID: ngBKf_HyMku4dc3tcFSEpA_1759311419
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D0BBC1800451;
-	Wed,  1 Oct 2025 09:36:58 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.24])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 003CB30002C5;
-	Wed,  1 Oct 2025 09:36:53 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20251001083931.44528-1-bhanuseshukumar@gmail.com>
-References: <20251001083931.44528-1-bhanuseshukumar@gmail.com>
-To: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
-Cc: dhowells@redhat.com, Kent Overstreet <kent.overstreet@linux.dev>,
-    Jonathan Corbet <corbet@lwn.net>, Carlos Maiolino <cem@kernel.org>,
-    Paulo Alcantara <pc@manguebit.org>,
-    Alexander Viro <viro@zeniv.linux.org.uk>,
-    Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-    linux-bcachefs@vger.kernel.org, linux-doc@vger.kernel.org,
-    linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-    netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-    linux-kernel-mentees@lists.linuxfoundation.org,
-    skhan@linuxfoundation.org, david.hunter.linux@gmail.com
-Subject: Re: [PATCH] fs: doc: Fix typos
+	s=arc-20240116; t=1759311450; c=relaxed/simple;
+	bh=yUwz9b/V4agTqssJqQHqviKU+dbCf1nmT12k5bfGpK0=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bhrCkl/GitECO7DupYpw3REabba/9DgGmUwQ3rDDIKO+y9asoUVn+P9BV/oo+g3f9DDQoKSsEUvoZEiVVz9i4QuGAo3SWmBVbUTmu8xToOyLN1FOFX85Mnt1F1Lq5G7NsSGpQksC3zsaQE3kCo9kvmky7E1YZYITvx2MSKkuD/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FG97sGvN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABBD0C4CEF4;
+	Wed,  1 Oct 2025 09:37:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759311449;
+	bh=yUwz9b/V4agTqssJqQHqviKU+dbCf1nmT12k5bfGpK0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=FG97sGvNZXd8fesXtHKLgUPb5LZbDvRzvKO/kZxorNjvuJaepu3EJLgAQu/M2tRy0
+	 x/k7vWxK55gxum0CaPPhAfVunO3k+XD/tx3/kQ1GCeiW5KlqL0Gg/HnREhKzUYctMg
+	 Z9722ah9pSAWuyjzYJjhhvacQX4yzUR4jnzKpqeZ1QsYc3u4oBNC8yIFKOx1aX6vmN
+	 JA2A70xlzZ2MCpy/NsRP9PgCQJhMKdnBRNzE8jgZwM0exZmmWtMO6MoWm4pjIqU+OH
+	 USijivUwA8lQIG2ubyMJClLLRjZW5B6syXQcdDA4kT2hI6ocAVCarWmONdulrhRM3c
+	 vsr/cjEmvW7HQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1v3tH5-0000000AlAr-2Cby;
+	Wed, 01 Oct 2025 09:37:27 +0000
+Date: Wed, 01 Oct 2025 10:37:26 +0100
+Message-ID: <86plb7ync9.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Vincent Donnefort <vdonnefort@google.com>
+Cc: Oliver Upton <oliver.upton@linux.dev>,
+	joey.gouly@arm.com,
+	suzuki.poulose@arm.com,
+	yuzenghui@huawei.com,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	qperret@google.com,
+	sebastianene@google.com,
+	keirf@google.com,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	kernel-team@android.com
+Subject: Re: [PATCH v2] KVM: arm64: Check range args for pKVM mem transitions
+In-Reply-To: <aNJmA-1ZlikW2Knw@google.com>
+References: <20250919155056.2648137-1-vdonnefort@google.com>
+	<87plbkxcvv.wl-maz@kernel.org>
+	<aNG417MneSKBxyn8@google.com>
+	<aNHcxAJXHeS2T7TH@linux.dev>
+	<aNJmA-1ZlikW2Knw@google.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2077277.1759311412.1@warthog.procyon.org.uk>
-Date: Wed, 01 Oct 2025 10:36:52 +0100
-Message-ID: <2077278.1759311412@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: vdonnefort@google.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, qperret@google.com, sebastianene@google.com, keirf@google.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, kernel-team@android.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com> wrote:
-
-> Fix typos in doc comments
+On Tue, 23 Sep 2025 10:18:59 +0100,
+Vincent Donnefort <vdonnefort@google.com> wrote:
 > 
-> Signed-off-by: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
+> On Mon, Sep 22, 2025 at 04:33:24PM -0700, Oliver Upton wrote:
+> > On Mon, Sep 22, 2025 at 10:00:07PM +0100, Vincent Donnefort wrote:
+> > > On Sun, Sep 21, 2025 at 12:29:08PM +0100, Marc Zyngier wrote:
+> > > > On Fri, 19 Sep 2025 16:50:56 +0100,
+> > > > Vincent Donnefort <vdonnefort@google.com> wrote:
+> > > > > 
+> > > > > There's currently no verification for host issued ranges in most of the
+> > > > > pKVM memory transitions. The subsequent end boundary might therefore be
+> > > > > subject to overflow and could evade the later checks.
+> > > > > 
+> > > > > Close this loophole with an additional check_range_args() check on a per
+> > > > > public function basis.
+> > > > > 
+> > > > > host_unshare_guest transition is already protected via
+> > > > > __check_host_shared_guest(), while assert_host_shared_guest() callers
+> > > > > are already ignoring host checks.
+> > > > > 
+> > > > > Signed-off-by: Vincent Donnefort <vdonnefort@google.com>
+> > > > > 
+> > > > > ---
+> > > > > 
+> > > > >  v1 -> v2:
+> > > > >    - Also check for (nr_pages * PAGE_SIZE) overflow. (Quentin)
+> > > > >    - Rename to check_range_args().
+> > > > > 
+> > > > > diff --git a/arch/arm64/kvm/hyp/nvhe/mem_protect.c b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
+> > > > > index 8957734d6183..65fcd2148f59 100644
+> > > > > --- a/arch/arm64/kvm/hyp/nvhe/mem_protect.c
+> > > > > +++ b/arch/arm64/kvm/hyp/nvhe/mem_protect.c
+> > > > > @@ -712,6 +712,14 @@ static int __guest_check_page_state_range(struct pkvm_hyp_vm *vm, u64 addr,
+> > > > >  	return check_page_state_range(&vm->pgt, addr, size, &d);
+> > > > >  }
+> > > > >  
+> > > > > +static bool check_range_args(u64 start, u64 nr_pages, u64 *size)
+> > > > > +{
+> > > > > +	if (check_mul_overflow(nr_pages, PAGE_SIZE, size))
+> > > > > +		return false;
+> > > > > +
+> > > > > +	return start < (start + *size);
+> > > > 
+> > > > I will echo Oliver's concern on v1: you probably want to convert the
+> > > > boundary check to be inclusive of the end of the range. Otherwise, a
+> > > > range that ends at the top of the 64bit range will be represented as
+> > > > 0, and fail the  check despite being perfectly valid.
+> > > 
+> > > Do you mean allowing something like start == 0xfffffffffffff000 and size ==
+> > > 4096?
+> > 
+> > Yes, this is what I was alluding to on v1.
+> > 
+> > > But I guess that would still put all the following checks using "addr + size" at
+> > > risk. Also, I believe even the code in pgtable.c wouldn't support a such range
+> > > as it is also using a u64 end boundary.
+> > 
+> > I'm not sure I follow. Ranges are pretty commonly expressed as a range
+> > terminated by an exclusive value. This just hasn't been an issue yet as
+> > the page table code is only ever dealing with TTBR0 or VTTBR
+> > translations.
+> 
+> If I do exclude the end boundary, evading checks would be as simple as making
+> sure we overflow the end boundary?
+> 
+> e.g. __pkvm_host_share_guest(phys = 0xfffffffffffff000, size = 4096) 
+> 
+>         check_range_allowed_memory(phys, phys + size) /* nop */
+> 	....
+> 	for_each_hyp_page(page, phys, size) {  /* nop */
+>                ...
+> 	} 
+> 	...
+> 	/* Install a valid mapping to phys */
+> 	kvm_pgtable_stage2_map(&vm->pgt, ipa, size, phys, ...) 
 
-Reviewed-by: David Howells <dhowells@redhat.com>
+Why shouldn't this be as simple as this:
 
+static bool check_range_args(u64 start, u64 nr_pages, u64 *size)
+{
+	if (check_mul_overflow(nr_pages, PAGE_SIZE, size))
+		return false;
+
+	return start < (start + *size - 1);
+}
+
+which correctly deals with the boundary issue?
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
