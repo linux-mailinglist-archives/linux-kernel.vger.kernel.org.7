@@ -1,67 +1,67 @@
-Return-Path: <linux-kernel+bounces-839175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52629BB0F97
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 17:11:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC375BB0FA0
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 17:11:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2804323252
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 15:07:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02D471892325
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 15:08:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7449530BBA0;
-	Wed,  1 Oct 2025 15:03:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A10A030C0F7;
+	Wed,  1 Oct 2025 15:04:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="atVKkPsy"
-Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011037.outbound.protection.outlook.com [52.101.52.37])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="XrNMwhXE"
+Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013065.outbound.protection.outlook.com [40.93.201.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E24E30AADA;
-	Wed,  1 Oct 2025 15:03:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ECF830B511;
+	Wed,  1 Oct 2025 15:03:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.65
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759331038; cv=fail; b=s5T1pf6/di6Bd0S+n5a+DEEegUbwecV6KjGjeKvrLTPa6KWd7z1mIJNApw+N1bCKHXNPhabzT4dj4mm0CUo1IRbpyGDuuccGT4CYPoC6bryUmjGk7fyPVVEMpuwm1cbIRTHqkNK6AL7Bboo/SqLjv+1T3n1nqWNduTuxxbiH4HI=
+	t=1759331040; cv=fail; b=QhvQpWPh7suJyigWHUBIvuyPlEGdiSKCQJ6HHDB53yeeV69FNqqIXysM2IsTOoHtjiziTvqTZE/a/KUijgUW6ZxY5OaKnsaZPExwHv8NNj6LRgsiRQ+wPNhjwzOQ5wk4T8+o3bG6SGTTmPSfQrgUla5Ygp8FkNRw0D3Gw75bNb4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759331038; c=relaxed/simple;
-	bh=0y6FA6hp8XnL7jpO5ZgF6iKfJBjOZPBjfJrWpe4AHE0=;
+	s=arc-20240116; t=1759331040; c=relaxed/simple;
+	bh=ERvXOniV/bepGS8pB7dNJz2+Mg1/NG9GkYFZVKxa5sg=;
 	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=MsN1T1uKKlHlwHj/kFkjDPscFNunrgkUeqW2HamBdp86ZIIospQpuSkh+D7h5MvL8Fxr8Q/WrNRSrWcJRxfC/1288w037Z8qKaRkI3eAapxVrTeU+wrX036ssJf9Uog0HBrUfrmZDnArqkxNm5e1xUGh+1PwrkHNAYhs0OdLp1g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=atVKkPsy; arc=fail smtp.client-ip=52.101.52.37
+	 To:Cc:MIME-Version; b=lGUDdIz634LPeeeuczA/jLsnCJS4fZPO+5p9WCh7ojHVfRPI6XiEMh/rIK6vd9a98eTYNMTiWmOs7l0CoTOF6a0DwzKyrod0WmdD3spFaQvgV64H1cpkDNhJhIegchAZm21BZH65kAJfA/3iNoEN2AdMnK/qCtfaFYbouwqzaT8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=XrNMwhXE; arc=fail smtp.client-ip=40.93.201.65
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pRyllkH/Yz0SAL8PS/S+EAXudT5YFPOnqJsNAjFpz8o8OlVAf5+qU34BLzsPuY4HV7jdd63Sb1F8HOEKKGQ056cCOgCDrMWAQ3FPd0Ge+hyBQJ52wnUU5Y1GDtPiGxBwxqyjknVey+KyzZPjD2tm97T4cULgOOxBrtSW/QFMJvYgig6MTDkwyZF3nU47jg2A9yqCz+NqJ+/abjlzp1yEppDjWu3swtqR1LaKXdkAffLERKtgFyUl6kyDiwSJrkRGTKuvwPC1He1bLsTWqoQp9dqOzNJeB1EWwrhxaBRkrymyHK8JVazEWc2GEoN2Y3nZTaFuXF93nFHAcR9A3CX4lg==
+ b=gSEib6d/Lh0NFvZRYiez6aYqJV55/iuXgaZWo2FxpCNOcjwVLdcJdFt33voLhZV2GxFQpmm5IuYI7hAlv55VnGgicNkjzEd/qauT/dOQsCbQAYkxo7Cne3uecxdTCmgczIvWVcRyvxHQGI57+cLRBXbEvB8qJhtQoZIJuh+t9KAi7RT0nMezXrwXzzUKSwsIUZN/jR193Qi+9Tk8uIWajwjCU8vVcoRxpltoYMsDdioWnzutR5J3vyXQgHPTY9X+yMhMkyH5bcBmDBnOqT3VwM0/0GB7ILyIg5Yd5ZldhZ3o0PS5YO2DPsAlDUCGCXNXhMioHMZgw4vpm5dA9ywPpA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8jUtMdsHmG9/4qOVUv6cct+MMXitxbXFnNKu85Nb2OU=;
- b=F13y3UIGQaF7l7ngQRlAgO3FL53XnCYl8UNNQpKy3gHKCYzC8paTm5EKFY4lHUNS5HBBE9BwVMlvF/xWDfY3kS0FXNSvzJC3bzQ2mqbAesGIejd1zyFoaLA+VmW86P848xtwQJO1dBVJyEAEh1TskSMkk479JVVXybz2BD7l9sZ0ydjOLKw7NS03l+5YCQwa4ShVD1sqJ+Bb6FM72zVqwc72MHpra6ldiSfl//oS9f2CHgYWbxKD2laCb6nTFxtsKXPuTcEXhsdjttnLAuN/mnoLbUbnm+QMv5ihVuiQwFjyd5uhfW9OCwgxPSbxrB183W5ZFil+AfxVEkjECFe1dw==
+ bh=vH+S5ou7LvQwaGiOP9g19UDCEwDgzYmMuXjgJhvoqik=;
+ b=gp97AR0oz4xx/9/dU/AGlIQ0DL6/anmmmlOdo3OKf1hQBgwvP9aORMAZnEOtn1Fc9Eqss7M8PJgpStUeynBPniq9Pp/GuijkdutbpCrKrs+rH7+R9qn8pQjsA4idPY8iDHs90dHgO3+6GrVi379MnmJmxsAojPufeFfMBAkfTqdi0g8qEu7FeN0CMpwTQMjCKPvnb8jhT8lOU7kx0nZH8uC9iXxZuk+32K73R712f5blI4YN2YkYVmPR4JlZo+GrK4sB+DmJ9JZCsdX1xWMRD+L5bPu6fHOqWL450vwFhv8CEk4wZ1l7gQlI7fajk+R1AGlo0E23wTuFF8Oan7PjTg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8jUtMdsHmG9/4qOVUv6cct+MMXitxbXFnNKu85Nb2OU=;
- b=atVKkPsyLvZQLqz5kfbEzs5eDMU/PoyakiOtuwD66v10thtJOG8DpE9LtsRh7HlM+39eEab9hN2r3ACljT2gmTO7EBQWyuFhsedSRQ3yrzLuHxVY2FwePMXLPxHNEQnjCcLsXsblHGtGIIBwctoQnlrlUFjWV3Fw0v718pkCgD42kILMQX0tZ4g5wM2pMbUzT6ljPKRwrZrO/fB+m379mqRrTIkIe4QlLMSANQYWUD1ZeQPfjLgHlBm6Gj/3skUrxkP2a6/VpkmaCCdKPxiNHAFTwUcnpis9AsDIMHQSxO37p82y97XV/MdOFNuE874rmJ+vdFKl7IykDZWuu2KtZQ==
+ bh=vH+S5ou7LvQwaGiOP9g19UDCEwDgzYmMuXjgJhvoqik=;
+ b=XrNMwhXEZJgrGfq2shIBux845TJcUY27+/JX/JMroKKPGyV3J21itue87N8SkGE3++P1qe7nJ0mtyHgIo7s5F1speISDfGPLurNmk1UfWh3C68l8D8M4otLZy3pwwfyPxlmAQ2UbijTAGO8UZl/oWlIbrATDsdnV3R9dQIo8GMY5Lcd4NG77Gtw/Xqwnw6uNt84pFlOEpoEzDAyDJGe/GDAUxvxixG3Ev8nqCljn7MyMBPEJMgUJbgmkSjeOmBQ2fk1ebBIOKfDdlN9WUVWwA/BHCqfh/xDjaKwpiDLclZeqia5+UM6fzKcg3JL6/mxvonLOTKhtqKug2xJtMkRohQ==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by SJ0PR12MB5635.namprd12.prod.outlook.com (2603:10b6:a03:42a::9) with
+ by BY5PR12MB4241.namprd12.prod.outlook.com (2603:10b6:a03:20c::9) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.18; Wed, 1 Oct
- 2025 15:03:51 +0000
+ 2025 15:03:55 +0000
 Received: from CH2PR12MB3990.namprd12.prod.outlook.com
  ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
  ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9160.017; Wed, 1 Oct 2025
- 15:03:51 +0000
+ 15:03:55 +0000
 From: Alexandre Courbot <acourbot@nvidia.com>
-Date: Thu, 02 Oct 2025 00:03:13 +0900
-Subject: [PATCH RFC 1/2] rust: kernel: add bounded integer types
+Date: Thu, 02 Oct 2025 00:03:14 +0900
+Subject: [PATCH RFC 2/2] gpu: nova-core: demonstrate use of BoundedInt
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251002-bounded_ints-v1-1-dd60f5804ea4@nvidia.com>
+Message-Id: <20251002-bounded_ints-v1-2-dd60f5804ea4@nvidia.com>
 References: <20251002-bounded_ints-v1-0-dd60f5804ea4@nvidia.com>
 In-Reply-To: <20251002-bounded_ints-v1-0-dd60f5804ea4@nvidia.com>
 To: Joel Fernandes <joelagnelf@nvidia.com>, 
@@ -70,8 +70,8 @@ To: Joel Fernandes <joelagnelf@nvidia.com>,
 Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Alexandre Courbot <acourbot@nvidia.com>
 X-Mailer: b4 0.14.2
-X-ClientProxiedBy: TYCP286CA0006.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:26c::14) To CH2PR12MB3990.namprd12.prod.outlook.com
+X-ClientProxiedBy: TYCP286CA0166.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:3c6::17) To CH2PR12MB3990.namprd12.prod.outlook.com
  (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -80,246 +80,197 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|SJ0PR12MB5635:EE_
-X-MS-Office365-Filtering-Correlation-Id: b9927705-d3e8-4e8d-41bf-08de00fbbb7d
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|BY5PR12MB4241:EE_
+X-MS-Office365-Filtering-Correlation-Id: 376689b5-89e9-4679-db49-08de00fbbde3
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|10070799003|366016|376014|1800799024;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|10070799003|366016;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Q1V6L1BYUFZ0VGYzQTFsRW5UdmtkeGtEa0pJMlFMZUdnc3J3aGNhdFFXeHZ1?=
- =?utf-8?B?bnBYUWo1Nlc4Sk5DeUpVUThNQW9JeGtNQmVzZjlVRXd4SERnY2NjZ1RwQXZk?=
- =?utf-8?B?TDFieWYwcGNxY3Rna29yVGtSaExlOUZ5cWdTdllwWXdnZVR1dkhFZnVJYUNk?=
- =?utf-8?B?RXd2RmU2cG5GV01ITmlmNElKQUtzV0ZCdVhSYTN6SmlhYVRTRmpJbzRLckQ2?=
- =?utf-8?B?YkRCdnpsSFpGb0FwcHEzejRYWjc4Vy90TXdEWVFmZE81S3ovZ1RpOUR2cEND?=
- =?utf-8?B?OXRtR2tDZFFxQ1F5VzFmamFIRnllOWFoalpUaE9BU3lQNmdjYld5Y0RLOUlV?=
- =?utf-8?B?ODc3U2M0T1Jnenl3aWZhSGNzWVFBdWt0bmluUVVNUmpRT3dSZ3lxODFRWmVQ?=
- =?utf-8?B?aG42QWc0V2tsQm81TmlKaXVVMmw0ak5TRWVSa0xFZnl2dWJ3RDdXWGllYW1K?=
- =?utf-8?B?cUdReHNLZU5WWTFnYjhRdXh1bi9VM0FPeHRobS9UdVAya2p2bmVoMnhCaVBW?=
- =?utf-8?B?c3UxMncwZGcwUkthNVJGa28yTURLUDBKR2ZOeUdQbzBwdHlDUEpXcW1ESmxr?=
- =?utf-8?B?VnZNOWh0dk1nNzBQSFBpcjJZMHM4RGF1WHczclp4dnppNW1qQWV0UWJPaGxj?=
- =?utf-8?B?b0RGNmpSR2NxVk1YR28wTEl1aUN4KzQraUJETUFiNkorSFg2MVZSU1BqUjFo?=
- =?utf-8?B?Y0NVVVFoMUtUTjdvcTdVZVBQNC9DWVNRREl3RDhGdDFlT0tJQWZoTldhMDZn?=
- =?utf-8?B?TDQvSzNOeThCTUZ0aUs1ZGg1MWVJK0kzZzI4TGUrbkQ2NXE1blNGYlFpTTJi?=
- =?utf-8?B?U2lYRWwzd3RNNmNydnlRRGcyY2hzeUowRDlERG1vYTk5anN1TnFvS09nNFBo?=
- =?utf-8?B?ZFNNQmtOZHNMdmlYemw5aS9wYW1ldjBFMmZnZ3JSb01kUnV4Mll6eHJ1bzRn?=
- =?utf-8?B?ZFhjSlArQmFURkhBTXJDMysrdTNaNDI0NEhOMlJYVmRwcmI0VDZkU3hxZkY0?=
- =?utf-8?B?QnJEaDlGZ3lDUXNEcTdFVVFNMUloVittQXpVK2tNN00ybXk1VXJ3YklpVkRU?=
- =?utf-8?B?T1RUVFBJM09FWUNrSkFBeVJQbWNnMzZoaENLY0w2Tm45ZnRPemZxeXJIVVd5?=
- =?utf-8?B?VjVGbDE4UmFHUHk5ZTh4Q3piUFQrQ3VsWVpTeG9QZ3crai9hL1gwbjNrbXpq?=
- =?utf-8?B?UFdiM3YxMTNKL05mazBxUlkwQXVUd082SEZObHQzaHVNVHhCaEgyTXNSSFNV?=
- =?utf-8?B?WmJ1MGFBVUV6OUpYOFZlc1V1MHBTZ01nRURZakVUMi9Fa1VadFNDbFdkcUlN?=
- =?utf-8?B?dU9XMnRsMGVGdXRBMEFsbVZHR29aVFhtdXRkcHFRMmhBZytkSFBCaGpYREhn?=
- =?utf-8?B?SHM2YWFEMlRNL3lGa2NYdnNuTjExUktDcW9KMmRSc0dESUpwdEpKUWVkVHEv?=
- =?utf-8?B?aTBPTC9DaU9SMkFIVGhnbUxsci9HMjgyK3dQOXY3d3I1YTB5VTdOajY2Vmx1?=
- =?utf-8?B?S0dHWktpS1k3VzJLVjZkZjdhbXF6Q0kxOEVhalNudkpwNmFFUW90LzZ0NlNH?=
- =?utf-8?B?UzN6dTM3OEpPeEd1V2JQT29ueU5ndnd1dEpUM3pVMURZeGV5WTAxdHk0LzJI?=
- =?utf-8?B?Tk1pREhQSmYxWmNQTzRjQmRGeUE2ZTRaTTRwdUczNXB3T3ZwQllKVDhHdFFQ?=
- =?utf-8?B?LzFVU3ovRmVQWmQ5SWNlWlJlVHB3ZWdEaGhZK3EvYjYwWEJiVy8rY1NQd1Fx?=
- =?utf-8?B?VDcvbW04YStKR09SQmZ2VUxWeXYrR25ibkdMc0JHWU5hNmNlUjV6Vjd0bndm?=
- =?utf-8?B?R3N3OGxReUk5Qzl3bE1sL21tZmcrRmcyQ1hXWjl6YWhsVkU4SUhrcnRIT2Zu?=
- =?utf-8?B?UlA1OGZjYzRyVWRNVlFEVUd4dGt1aVl5ZGZvdHhDYUM2TGQ3R25MRDZsaHFr?=
- =?utf-8?Q?kkDMUq1+okgAwatBWX/5A/f3LRkycOyK?=
+	=?utf-8?B?TjRDVzMwcmZ6ZUVOUHNmTzhjRnFOQm9IblJSakk0Wk12SHJRNStXNTM0TVNr?=
+ =?utf-8?B?NjViUHZ0MzU1Q2grOGZGOXk1OENzRkVMR1djek9TaHlRWWRLc21vRUw4YXky?=
+ =?utf-8?B?N0pCZ0pDYkVldVJqeDFISTJuN1FEY0RUUDg4b0MweittREM5RjFZRUhTTVBM?=
+ =?utf-8?B?QlJvUzdWV2tZZGRBYkFDQTkyMStlRVFWc3FNSGV5eXR4RVNjUTVuRDUrTFpV?=
+ =?utf-8?B?Q2FpVzlRdGFxWUgvdlJxNWZwYXJzVlNCUmZybE5QbjNXaUdJNncrQzF3ek1k?=
+ =?utf-8?B?RE44TkFnVUN3ekhNL3dZLzZIeUI0Z3FQcitZWUFvWUVvUkI0Uyt5N05TbEE5?=
+ =?utf-8?B?b2dpVUhMenpOTEFFYmZ6OU9RemtXMmk0QUFCalhLQ3ZTOUN4N005ZkdTbnVj?=
+ =?utf-8?B?TDJvaFVoSjdSWHJHbEF2SnZVK3dIcGVFdTFIZDBGQlowUFNlelZFMml2L1Nx?=
+ =?utf-8?B?TDVrUUtSeTk2cU12RFlDMlQ4bG5RZmJqU1FkSkh1bXYzL0xQSGVoclcvNmFZ?=
+ =?utf-8?B?TThYZGwveTRMN0lMMk5VdCtpaVRzT0diTmF0ZmdHbnJrRlZLSzZBWmNLUko4?=
+ =?utf-8?B?aWZEL1JQK09Ja1ROZFFBdVRYQVhLOVI4dXlRTXViYVZwTUxuZFNUY2xyMlZ3?=
+ =?utf-8?B?bmVZdThNUUNNNDRPeWZwWnVSOW1QMmp2SHhlaDFBdDZ4SnRaQlZjMjFuSDZZ?=
+ =?utf-8?B?eGFjRnB3OE5VazladUQ3eVNIaS84SENJTnU3R01ka2g2TmFteUkvWnYwTSs5?=
+ =?utf-8?B?bE1iYVpKSFM4d2Y1eEhYTzJsZlNJcHhyVFNubXp6bE45WGhTSmR6OVdtTUFQ?=
+ =?utf-8?B?UzJtdzhRUXZyeThNeklSTTdvRTZlQVhzNXg0N3FReHlJMEJkTzArV1ZWcXVh?=
+ =?utf-8?B?WHpPaDI0dm4vamtPS0hNSTJOVkhsclBTbzFpWG9QeHphZVJ2WThNWWdpUDM5?=
+ =?utf-8?B?VzZPWHYwcXFrU01uMGI4OFFQQnFSVkVhelJhYXljUE0vNkt5S2FkSUY2MzhM?=
+ =?utf-8?B?NnVOK0pUNDU4MitKOHZ6ZnNSVEJ4RTdPUWpENDBWWkJqc052cVcyQmoxN09I?=
+ =?utf-8?B?VEVLVmlqM2hraXJvREtWa3pqVGZDcHpDbGthQzVhVmpBOHNwTjBDaG5jOStN?=
+ =?utf-8?B?T3RxaXFFZWxXYVF0amxuSkNBT2c1UHJKc3R2WmRUSXdVYXpTeG9rWHNoWkZm?=
+ =?utf-8?B?V1FXTVdtMllzY3VVZ0JNaEtFZGwxYk9QV1pZZjFEclVZRXNsZjVZdlRYSDlQ?=
+ =?utf-8?B?V0xDOUZlSjA4bnQwNU1pbldYbjM3eGV6cWdVaE1jdWxHNTJGRFpjKzR5MHEv?=
+ =?utf-8?B?bXhKMDkzb3VPQ2trWEdmYXJpYjZmajdOUW5VOW1VVGpoNVlscDk5NE1Bb2M0?=
+ =?utf-8?B?OXh6b0grbHdheWNmWWxlV2JITC9BRHhQRGYrWCtCckJLTjUybUVldDc0aTRa?=
+ =?utf-8?B?ZEJKaW91enBjNWlDWFZmcFBLTk9pb2NLREVyS1pXUjVHZ2xCRVBNYmpCV3pP?=
+ =?utf-8?B?OWpnaW1UTXRpNmR4a2hTTm50aE14cC9CMEY1R3lhbzlUTUVJaUU0YzdlMldn?=
+ =?utf-8?B?bHVkdVdJd08zNk5QdDU4aWV2b3R4bm5QSmxvRXZ0czBtTlRIL2tTdm1kUFBa?=
+ =?utf-8?B?VjZWSC9EUllvdjVhd3RsRXZxa3UvWWk5NHltMy9QRnRqVjdsdmlVR3dQdGZm?=
+ =?utf-8?B?RlpEUGJmUzlLZWpMazBrYzJyWExsazJyRmRuSytCb015VGpERU9pZDZvVldh?=
+ =?utf-8?B?QUltVU5oRVpTeGsvc0JkdkQwYy9sYlpVVitOMHc4dDhEalE2VlFJMjVoRzhT?=
+ =?utf-8?B?Y2RlMlgxSDFuZ1FtMkkyb2Q3UUtoWnBnWENsbElEUnJXVW52RjB2Z2l5ajlW?=
+ =?utf-8?B?bEhmbEFGaStER29WVytFMXVrMGlNbnFobEc4Q255OWJER3E1bngyS0N4MWd4?=
+ =?utf-8?Q?MiqqsIVI1Cf+Ywv0LqhNakySD86LZt99?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(10070799003)(366016);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZmRrcWRMRmc5bmZZM1Z5RlhWM3B1RnRac1NCSjhIR1NIam50UE0xSkJTd0tJ?=
- =?utf-8?B?L1lBSVhtcFZ0b25rb29uNHAyTEpmMGlNZ0lwWWl4Z0FaUGdsRzhHYWIvcXR3?=
- =?utf-8?B?ckpMdVBHaUxOcnFZTk02aVRJNzBhR3ZYVTJ6NzF4V0tDTGZ0cDZXUlRqaWxK?=
- =?utf-8?B?azludTZEM1hQdzJQWDdpbTZLY1FVbXlnNW1Wc3RQMy9vT1J2dXZuTFdibnF6?=
- =?utf-8?B?dytibU1aUDlIZnFMM3g3TnBvTHZKQ3BHR0lsYkZkSXJERUpubkFYVkxLeXgv?=
- =?utf-8?B?SjEzYXBObjZ5STYza1BHL0FFYVVGd05sM3dMZk9ETGwxM09YOGZpaHAxdXVV?=
- =?utf-8?B?blFPSU84ZzE1UUl5a0hySm54WC9mMFU3SFdVWjdUcEdWUmROYUpoOUQyZXBJ?=
- =?utf-8?B?VDRTZGIzNGNJbGJuL1BGZFNDc0NlYzkvTVZ1dUZLVmx0dk1jOHBwdnJSOUJP?=
- =?utf-8?B?ZUZGelVJTGZrdVBsVXFOWDR5Qzhpd3lGMDJSUzJWUWs1ZzRXN0UxeGlYak45?=
- =?utf-8?B?WklrbUpRRnRtRWVtVk8yOHNVd21GQS8xckZwZnZ1ZHhoVmo1cXV2UFU5RUNj?=
- =?utf-8?B?VVR1WDZYSGVhclZGd2dtUnJUci8rajBLRWJNWDVtUnJLWUxhajVjSDB6cnY4?=
- =?utf-8?B?TE5IdG93ZUZwclE5aUhGOHdSMUlySzQ1KzY5UzlOQjhOc2szTVBKdjBaU3pm?=
- =?utf-8?B?NStUQW5iam5WNUxNSEc5a0l6ek5hTkwycXQyYTRiZXFFN2JTUlpRMHoyQklp?=
- =?utf-8?B?dFU1ejhPZnNkZjJ0T2VHajdvZE8rUzBhUkNxYWVjamZiZldnL1p3QjhyZHhl?=
- =?utf-8?B?RTF1R3RKNWZ2YjBqcStqWWFNMTZCTmY3T2lpcng4ZUt0S1BOQ0lQeWlYR3Fr?=
- =?utf-8?B?cnlQc1E3WWtHT3RVdmdYVXhrVVNkYjBabCtVVVVsRk5tYUNVNy9EbjY4NDBR?=
- =?utf-8?B?MUh2SFVacE90eG9OcFNuVFpCRGFGVVYwZTg1M2IvZFZoWkdnd2I4K0IyaVE5?=
- =?utf-8?B?bUpFaWlwU0FubWIyRzNpQlFoMGZzNDdDTVgzTUkzTDkxR1c1M2ZLcCt5Q3dY?=
- =?utf-8?B?MmtlcjdtRXBERnJIa285NmNYcU1JZnhaQ0xYQTZFM2xOcmV3Y2YxN3lDeCth?=
- =?utf-8?B?VFFpMnRsTDh4dG9WN1dIU09NME9QaVUweWlpR0dKTXV3emErU0RTaGNWZ2FP?=
- =?utf-8?B?WFBCejE5OWh0QU5kZnl5SGQ2UjkvYkpYNTVuYXYzd3NqQzdGOFZWbnVUVm8v?=
- =?utf-8?B?cDhzaVZWclZkUnVDUEs5TUdSUHVWbithODdhemFaMmtldU9YNjIrUDhrL0Rh?=
- =?utf-8?B?WE5iNFlncVVUK0U3Yjk1SG5xck5ZTUVzTjZVdm5iNzNzbW5wOSttR2ZBaDFO?=
- =?utf-8?B?UkZoVnJ2TnI4Zjh6R2c3SjdRZENBWWo0T3dIUDhKQllzbm5sNmp5dWsxN2lz?=
- =?utf-8?B?TGF4TEdlVDBlbFVKcWUza3p2akh1czdBMDZBUC9rUzB4em94c1BmdHJ2cW1r?=
- =?utf-8?B?cUgvbEx6TDBodWJEbmFXNE51NDc4V1Ivb2dpdVA1QXYyV0VvVSt6Q2p5b2Rk?=
- =?utf-8?B?M0NmcmdoUlFEUERPWEhFZ0hQS3Z3R2doZmRmaStSaGZSbGF2eVZHMTFBT3oy?=
- =?utf-8?B?anJjRGttaDcweXBFb2lmYWhJVVljK0JwNFFuQTNpQjhXc1Q3eFZ4MEMvdVg4?=
- =?utf-8?B?SFNYYkZLaGFwQ2ZmbXhrM0owL2lYK0NLZW56eHNkTkdWVjcxbnA1WmNmNmZY?=
- =?utf-8?B?ajlGQkFUa3RNeFlURkYxR1BTV1k1WmdkRGk4L081TGNNUW01bGNoVWFBdEhL?=
- =?utf-8?B?VVBnc0Rid2U4ald5aUhvaktQZEt6UFRYZjl1dmN4Yk9YMDJYQXJ3TkhQODNq?=
- =?utf-8?B?MG9VUnJhNXZXd1VxN0NQTHFoZ2twL0xnb0dzRS9iTnQ5RTFEbm1aSzdTMmE5?=
- =?utf-8?B?Nmlhcy90cHZlcE1uZTVvSDFwQ2JHQzYybzNDVVYrNnpVWjZFa1VYR3RhVE1s?=
- =?utf-8?B?MjR0NVJ3aDlFaWxRSFFtRmNld1VLRThhNWhINGZaK3JGdDJkOCtzOUpleHBX?=
- =?utf-8?B?ZlhmblBXSE5iRHdaemZvNzhJV29wbG9iajZROFRvYVdadjI1WkpLM0I1SlFG?=
- =?utf-8?B?RlNBOHZOL0FFeEVpU0pkb2lkWnpUNnNIcDdZUzhLMmFHcmdUeXJpNUJvcVk2?=
- =?utf-8?Q?9QCubBCQz9YXbQADQjbaKeWpfkB2BVsIMaCk3qUcYI5p?=
+	=?utf-8?B?aVVMcEZpeTJlQmFHRmVJUmFibnFEeTI4ak93OEw4OWJZNWQrRi96YXZZcS94?=
+ =?utf-8?B?NWs2ZTN5bDcrOXo3TmswK0IwdjN5bmh1UGkrUXRmUTdpOFBxSHQ4aVd0OURQ?=
+ =?utf-8?B?L2N4c3RNQS9XR0pIVnBXbS9VQjdJYmdqamxwNG5Zc0RSQitFS1Y2a0thRWJP?=
+ =?utf-8?B?eGhFUXlPejNHd0JXT1laY04zQmg0dHdEVUVrRlJ0VWhOYjJtdFJ5eFNWby9m?=
+ =?utf-8?B?TmJ6SS9mV256Y1d4QmZLS1BuZFdudVB2QU5pQS9nbWo3Q1BXUTZ1bVhDeXVM?=
+ =?utf-8?B?ckVFbjNHMTFHS3Zpd2w2KzM0NUxlcTJ1UnFXMmRXQ1lHYVg3eWJZVUZiYzgw?=
+ =?utf-8?B?R3BXZDdqclF5ZWNuZTgwRVZxTi9LbFhnMDlCU1A5Vlh4bEFnNHVRYzFHWjYv?=
+ =?utf-8?B?eXptZm1oOWNFRkx1cWNreitLQjJVdWhnUklvbnN3UG8yODlvamllNExLNUEr?=
+ =?utf-8?B?N1JOeWhRdkQzSVFqMjRaZ3g2bEhmRXgrclFqd3JoK05GN0tacXNmUVdseWZP?=
+ =?utf-8?B?SDM4VmJoTUNuSy9vdzZDV3hqcHRTM0huTzlwR290ZDgzN0l1NTJCbUxvTUZu?=
+ =?utf-8?B?TTJ0YTRWTlJ2MEl3b2hjRUd5NWtaK2k2S3BGQzg2alZhb0dQdU83RmpDZlRB?=
+ =?utf-8?B?VThqZy9BekxTdWs5SXlpeVZzTnRhWVFSSnA2WFlBQXJVc1cvTVFnSm1kWHF1?=
+ =?utf-8?B?ZkIzdFBFYVlBTVRSRG9nTGY3Q0ZmQUFBSkU5K3p6bzJRZjM5THFGSjVKcmZk?=
+ =?utf-8?B?Tzg2SU1yWGhlQXdWSnRRUHFiRG9XYm0yclVXd1N6T2dwcitoYS9xL2FjOStH?=
+ =?utf-8?B?SFcwbnJMSnRxVld4alF5M1JWRStsaC9EMnlZYm5nKyswQlNMWHd4RTBQSVhF?=
+ =?utf-8?B?RUZwSjdTM2x3di9JdVdQV2hycStkaEppWEVKVkp3VUxIOXNzRDY0djhHc25z?=
+ =?utf-8?B?WmxTSVZaQlRkKzVxVUMvUjFOVEIrYmxEbjRvTUsydDlnZmVZampoNUJIRkxq?=
+ =?utf-8?B?R2M1MHFCZGVYbGNHQnZDQ1diVFlzL1Y0SjdmdndnNVJLQkFtSFkvWWZET0hF?=
+ =?utf-8?B?QVIyY0E1SmpENy9qL05mUndwekhyNUhDZEZGa28zaGlYWW9VaHlhcWVWTURP?=
+ =?utf-8?B?T25hcEpFeEx4NE1jcVZUZjNTREc5RDZiTU5IcG1maVZidk5aMFJwTGhvQ1lL?=
+ =?utf-8?B?MnovWmE5d1hWZ3ltdXRIaUZhQjhkYnk5WkpWSy9KWE9NWkVkQlVpdDBadmxS?=
+ =?utf-8?B?WSttZWVUTjBDT3d0THpCcmRrczBpVW1JRHNNTFdZZ2g4dFdGQnVHek50TXpa?=
+ =?utf-8?B?cXNUSWhQZnZ4THJPMnREUTdybHlNYmdvd2RHUW8zanZHVTl5U1FOZkhrOVZM?=
+ =?utf-8?B?Smh6blZpbWd5SG0wVGszMzltYnhvSnp2RVZrbmhjdGR2YUpQdVpGSHBHOWRE?=
+ =?utf-8?B?NlhDY3MrR2R3NHVJMEw5ZTJ0QVJDS3RkSy9BNjh1aXhyaFZSUTEwb0NBQU1j?=
+ =?utf-8?B?YnJlVE15ejhtb3dLQVN0WU1raEZmWGdySUl3c1RXWGJVd3Y1VWVlSXR4Vzhm?=
+ =?utf-8?B?Z1g5WnRRY3BtOTBKUzdXQ0V6VHBTdEYrMGc4bXdDUzZEdC84U29CK2tuV3pp?=
+ =?utf-8?B?RndjaXpyaUMyN2NzdlJCRGMvcEhwS0pid3VUTTNzQWZZcU44eVl4QU5nc2xW?=
+ =?utf-8?B?cWxiZENqUlowdVB6L2ZwT01hMUcvZ1VKSFhSeXA1cC9Yc3FBOXJKam80VHhX?=
+ =?utf-8?B?bFJXVGladGl4Q0dEZjJUQlFkc1djK3Y2TXgrdTcyUVpobmNMbG1CdVFaNXFn?=
+ =?utf-8?B?ZDMzdnU5Nk52R2ZXdUxMbHpLaTI2Umd3bWN3cW1NU0JSUWRtYzh4RGFaNTR5?=
+ =?utf-8?B?d0JHdCtLZThXSUJiZmVNNVhjN2FQeHdXdnROdXZFTG9yTElxU1VzOXhjY3Rh?=
+ =?utf-8?B?b05SWWJDT0p6WEJya2p5eEtZeVNZY0hCWTlKcVJXNmtSM2dHenpjaXQvbGZE?=
+ =?utf-8?B?R0wyT0doS09YV3I4NzhnelBsdEs2bmpCT0JCdXFVRWpRRlEvaVppNkk4b2I0?=
+ =?utf-8?B?RTE0UkJaVGY5NVpNL1RTdmM0U2QrMnRkeGpQQzh0alMzQmRhUUNaSmFKQnZQ?=
+ =?utf-8?B?ckliZnZVa1FkT3hSbHY5bnJnZjQ1M0o3WDdYWk13WkN4OHFVYUplb2xZOXZw?=
+ =?utf-8?Q?Er/7pmRPf4QFRuvOEAFTCys44Layyqa55DD0FE/RNOIX?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b9927705-d3e8-4e8d-41bf-08de00fbbb7d
+X-MS-Exchange-CrossTenant-Network-Message-Id: 376689b5-89e9-4679-db49-08de00fbbde3
 X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2025 15:03:51.6841
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2025 15:03:55.6789
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: CJmLO6gq+/0bT4g2HG56PrpIk4xYTMvtlPew6KjWrazamQTvLOipdl+dPGoRIHCYl8ntuwA9HCLHOAVlQct96g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB5635
+X-MS-Exchange-CrossTenant-UserPrincipalName: IjVl2+JFa/LuDKMWK1FEq4rPYgbRtNzXB4AGeCWbszPR2pdlT97359Vus2Tt9nXvQNu+FI9P/vdZrHMA46uZHg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4241
 
-Add the BoundedInt type, which restricts the number of bits allowed to
-be used in a given integer value. This is useful to carry guarantees
-when setting bitfields.
+Augment the register macro with two new bounded setter and getter
+methods, and showcase how they can be used in the driver.
 
 Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 ---
- rust/kernel/lib.rs |   1 +
- rust/kernel/num.rs | 120 +++++++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 121 insertions(+)
+ drivers/gpu/nova-core/falcon.rs      | 14 +++++++++-----
+ drivers/gpu/nova-core/regs/macros.rs | 34 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 43 insertions(+), 5 deletions(-)
 
-diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index fcffc3988a90392f1d5fc19f15c75d9ba7104f9a..21c1f452ee6a30d46d7ed7f0847488fac068042a 100644
---- a/rust/kernel/lib.rs
-+++ b/rust/kernel/lib.rs
-@@ -101,6 +101,7 @@
- pub mod mm;
- #[cfg(CONFIG_NET)]
- pub mod net;
-+pub mod num;
- pub mod of;
- #[cfg(CONFIG_PM_OPP)]
- pub mod opp;
-diff --git a/rust/kernel/num.rs b/rust/kernel/num.rs
-new file mode 100644
-index 0000000000000000000000000000000000000000..f452a4e229ca962ae0c2382d0cda55b5ee335973
---- /dev/null
-+++ b/rust/kernel/num.rs
-@@ -0,0 +1,120 @@
-+// SPDX-License-Identifier: GPL-2.0
+diff --git a/drivers/gpu/nova-core/falcon.rs b/drivers/gpu/nova-core/falcon.rs
+index 37e6298195e49a9a29e81226abe16cd410c9adbc..2ce2635c86d8cad6e61862d4bd1976d642090c5b 100644
+--- a/drivers/gpu/nova-core/falcon.rs
++++ b/drivers/gpu/nova-core/falcon.rs
+@@ -6,6 +6,7 @@
+ use hal::FalconHal;
+ use kernel::device;
+ use kernel::dma::DmaAddress;
++use kernel::num::BoundedInt;
+ use kernel::prelude::*;
+ use kernel::sync::aref::ARef;
+ use kernel::time::Delta;
+@@ -488,24 +489,27 @@ fn dma_wr<F: FalconFirmware<Target = E>>(
+         // Set up the base source DMA address.
+ 
+         regs::NV_PFALCON_FALCON_DMATRFBASE::default()
+-            .set_base((dma_start >> 8) as u32)
++            .set_base_bounded(BoundedInt::new((dma_start >> 8) as u32))
+             .write(bar, &E::ID);
+         regs::NV_PFALCON_FALCON_DMATRFBASE1::default()
+-            .set_base((dma_start >> 40) as u16)
++            .set_base_bounded(BoundedInt::try_from((dma_start >> 40) as u32)?)
+             .write(bar, &E::ID);
+ 
++        let r = regs::NV_PFALCON_FALCON_DMATRFBASE::read(bar, &E::ID).base_bounded();
++        pr_info!("BASE: {:x}\n", r);
 +
-+//! Numerical types for the kernel.
+         let cmd = regs::NV_PFALCON_FALCON_DMATRFCMD::default()
+             .set_size(DmaTrfCmdSize::Size256B)
+             .set_imem(target_mem == FalconMem::Imem)
+-            .set_sec(if sec { 1 } else { 0 });
++            .set_sec_bounded(BoundedInt::new(if sec { 1 } else { 0 }));
+ 
+         for pos in (0..num_transfers).map(|i| i * DMA_LEN) {
+             // Perform a transfer of size `DMA_LEN`.
+             regs::NV_PFALCON_FALCON_DMATRFMOFFS::default()
+-                .set_offs(load_offsets.dst_start + pos)
++                .set_offs_bounded(BoundedInt::try_from(load_offsets.dst_start + pos)?)
+                 .write(bar, &E::ID);
+             regs::NV_PFALCON_FALCON_DMATRFFBOFFS::default()
+-                .set_offs(src_start + pos)
++                .set_offs_bounded(BoundedInt::new(src_start + pos))
+                 .write(bar, &E::ID);
+             cmd.write(bar, &E::ID);
+ 
+diff --git a/drivers/gpu/nova-core/regs/macros.rs b/drivers/gpu/nova-core/regs/macros.rs
+index 754c14ee7f401688da51e138db71ccaa58445aa6..03a1830f492fdc1747767ed768ce2239e9ce41ec 100644
+--- a/drivers/gpu/nova-core/regs/macros.rs
++++ b/drivers/gpu/nova-core/regs/macros.rs
+@@ -565,6 +565,40 @@ pub(crate) fn [<set_ $field>](mut self, value: $to_type) -> Self {
+             self
+         }
+         );
 +
-+/// Integer type for which only the bits `0..NUM_BITS` are valid.
-+///
-+/// TODO: Find a better name? Bounded sounds like we also have a lower bound...
-+///
-+/// # Invariants
-+///
-+/// Only bits `0..NUM_BITS` can be set on this type.
-+#[repr(transparent)]
-+#[derive(Clone, Copy, PartialEq, Eq, Hash)]
-+pub struct BoundedInt<T, const NUM_BITS: u32>(T);
++        ::kernel::macros::paste!(
++        pub(crate) fn [<$field _bounded>](self) ->
++            ::kernel::num::BoundedInt<u32, { $hi + 1 - $lo }> {
++            const MASK: u32 = $name::[<$field:upper _MASK>];
++            const SHIFT: u32 = $name::[<$field:upper _SHIFT>];
++            // Ensure the returned type has the same width as the field.
++            ::kernel::static_assert!(
++                MASK >> SHIFT == ::kernel::num::BoundedInt::<u32, { $hi + 1 - $lo }>::MASK
++            );
 +
-+// TODO: this should be implemented by a macro for all integer types.
-+impl<const NUM_BITS: u32> BoundedInt<u32, NUM_BITS> {
-+    /// Mask of the valid bits for this type.
-+    pub const MASK: u32 = crate::bits::genmask_u32(0..=(NUM_BITS - 1));
++            let field = ((self.0 & MASK) >> SHIFT);
 +
-+    /// Validates that `value` is within the bounds supported by this type.
-+    const fn is_in_bounds(value: u32) -> bool {
-+        value & !Self::MASK == 0
-+    }
++            ::kernel::num::BoundedInt::<u32, { $hi + 1 - $lo }>::new(field)
++        }
 +
-+    /// Checks that `value` is valid for this type at compile-time and build a new value.
-+    ///
-+    /// # Examples
-+    ///
-+    /// ```
-+    /// use kernel::num::BoundedInt;
-+    ///
-+    /// assert_eq!(BoundedInt::<u32, 1>::new(1).get(), 1);
-+    /// assert_eq!(BoundedInt::<u32, 8>::new(0xff).get(), 0xff);
-+    /// assert_eq!(BoundedInt::<u32, { 10 - 3 }>::new(1).get(), 1);
-+    pub const fn new(value: u32) -> Self {
-+        crate::build_assert!(
-+            Self::is_in_bounds(value),
-+            "Provided parameter is larger than maximal supported value"
++        pub(crate) fn [<set_ $field _bounded>](
++            mut self,
++            value: ::kernel::num::BoundedInt<u32, { $hi + 1 - $lo }>
++        ) -> Self {
++            const MASK: u32 = $name::[<$field:upper _MASK>];
++            const SHIFT: u32 = $name::[<$field:upper _SHIFT>];
++            // Ensure the returned type has the same width as the field.
++            ::kernel::static_assert!(
++                MASK >> SHIFT == ::kernel::num::BoundedInt::<u32, { $hi + 1 - $lo }>::MASK
++            );
++
++            let value = (value.get() << SHIFT) & MASK;
++            self.0 = (self.0 & !MASK) | value;
++
++            self
++        }
 +        );
 +
-+        Self(value)
-+    }
-+
-+    /// Returns the contained value as a primitive type.
-+    pub const fn get(self) -> u32 {
-+        if !Self::is_in_bounds(self.0) {
-+            // SAFETY: Per the invariants, `self.0` cannot have bits set outside of `MASK`, so
-+            // this block will
-+            // never be reached.
-+            unsafe { core::hint::unreachable_unchecked() }
-+        }
-+        self.0
-+    }
-+}
-+
-+impl<const NUM_BITS: u32> From<BoundedInt<u32, NUM_BITS>> for u32 {
-+    fn from(value: BoundedInt<u32, NUM_BITS>) -> Self {
-+        value.get()
-+    }
-+}
-+
-+/// Attempt to convert a non-bounded integer to a bounded equivalent.
-+impl<const NUM_BITS: u32> TryFrom<u32> for BoundedInt<u32, NUM_BITS> {
-+    type Error = crate::error::Error;
-+
-+    fn try_from(value: u32) -> Result<Self, Self::Error> {
-+        if !Self::is_in_bounds(value) {
-+            Err(crate::prelude::EINVAL)
-+        } else {
-+            Ok(Self(value))
-+        }
-+    }
-+}
-+
-+/// Allow comparison with non-bounded values.
-+impl<const NUM_BITS: u32, T> PartialEq<T> for BoundedInt<T, NUM_BITS>
-+where
-+    T: PartialEq,
-+{
-+    fn eq(&self, other: &T) -> bool {
-+        self.0 == *other
-+    }
-+}
-+
-+impl<const NUM_BITS: u32, T> core::fmt::Debug for BoundedInt<T, NUM_BITS>
-+where
-+    T: core::fmt::Debug,
-+{
-+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-+        self.0.fmt(f)
-+    }
-+}
-+
-+impl<const NUM_BITS: u32, T> core::fmt::Display for BoundedInt<T, NUM_BITS>
-+where
-+    T: core::fmt::Display,
-+{
-+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-+        self.0.fmt(f)
-+    }
-+}
-+
-+impl<const NUM_BITS: u32, T> core::fmt::LowerHex for BoundedInt<T, NUM_BITS>
-+where
-+    T: core::fmt::LowerHex,
-+{
-+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-+        self.0.fmt(f)
-+    }
-+}
-+
-+impl<const NUM_BITS: u32, T> core::fmt::UpperHex for BoundedInt<T, NUM_BITS>
-+where
-+    T: core::fmt::UpperHex,
-+{
-+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-+        self.0.fmt(f)
-+    }
-+}
+     };
+ 
+     // Generates the `Debug` implementation for `$name`.
 
 -- 
 2.51.0
