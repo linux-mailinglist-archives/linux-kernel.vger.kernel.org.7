@@ -1,242 +1,153 @@
-Return-Path: <linux-kernel+bounces-838276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B69A7BAED9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 02:04:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15F2CBAEDA0
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 02:09:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D13F17B6D0
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 00:04:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3F8819208A0
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 00:09:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16D359463;
-	Wed,  1 Oct 2025 00:04:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD4519463;
+	Wed,  1 Oct 2025 00:09:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ROsUHBg0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FlVzb5Ie"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 422A429A1;
-	Wed,  1 Oct 2025 00:04:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CDA43C0C
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 00:09:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759277053; cv=none; b=uAilne5cWE7MfMGBGVDT4fm8Hw8lWDE9H1cQhjUUXSwLhyBJpWbJ/xIXaAnECbt1K+DtPVBwvz/0gy3miMfivcRSPG0IxnXobDemzGFSsCrK6zn/BsMATVwSkCiGPo8rQvCBDVVCa0uG/YHhoYzwF9mnk7+/CuwHSucneE/c4Bo=
+	t=1759277354; cv=none; b=dNudR7JYEGD3l0GzQTi26dcWiuFhTt3Xv2PssqM/G/CVHD1WO8ywgXuAwdMOChkimE/fqWj+xflTeq7vcIgsR3WjTO29yZ0AH8JmivF6LTlaQO0ppo3J4asqqLhUKcGHukNi68zmkykzWrKG8zh7RywIv+YggYgJ+MJC7QKOEjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759277053; c=relaxed/simple;
-	bh=6RstGi6qtLLB+zlmpNOCdc79aMmLjFORnqa57CQlV7c=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=jcZ9VHqJSLltFTIN57CkPrn4xXf6OuN+lJwHgSZcaLOaCsSzDKqoob67ZV4PCuWGBkzIp8pOQ936JSUWm9hYFRqxGLuJXfodLWYA99hsNuOGO8AEAzaovdbFiAafqOwAhRBTOZOIRkAp8qOuiuhLZoXNpfN1Jn0cYgIiJdH6kbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ROsUHBg0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3AACC4CEF0;
-	Wed,  1 Oct 2025 00:04:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759277053;
-	bh=6RstGi6qtLLB+zlmpNOCdc79aMmLjFORnqa57CQlV7c=;
-	h=Date:From:To:Cc:Subject:From;
-	b=ROsUHBg0x6WFi/QNqnyjAb3gE8pq+DBnSUU2O//DmSlEwejYYg/+hG6qdBku8laiW
-	 8VlgywwWgc5kl2x8HnMu+87+5+kqyWnJH1qPzFc2V7ahdAbKcDAD9X29P58ZQJuy9K
-	 8NwNBEBZXE5Gu+jiO1dp00sMDDq9AnB1L2F6UIzuA3avcO+et8gE9+hdITB845nkVP
-	 CcxZq1Gj7/JjVwy+EnF8aySPiqoO9NahxAL8SlCIWOv4/oz0mifi7XlipAyXmY6L2Z
-	 jIAcjCRVSfCGRlDJLDJcfK03utMqtihcqVi4fVptb+q2DnFvO9xngSGg/n6VFU0HX0
-	 oShBXKRDAo1ag==
-Received: by venus (Postfix, from userid 1000)
-	id B43F2180734; Wed, 01 Oct 2025 02:04:08 +0200 (CEST)
-Date: Wed, 1 Oct 2025 02:04:08 +0200
-From: Sebastian Reichel <sre@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: [GIT PULL] power-supply changes for 6.18
-Message-ID: <vflh2stqeaa6rnwipi77v2k6cb3jynzja7qf2iznttqz26zbfg@7snfbz5gjdlz>
+	s=arc-20240116; t=1759277354; c=relaxed/simple;
+	bh=0Iw9iuAwT2IPLSBMbT2SNcSiFIe4t8mpFaOBM+D3eFs=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=ezcI45LRjM9Lu3P2jmbrpp0lPCcoAgcVp2cFABLaIYngOyL/9Hq4x9ledQNEXYkyFdGAZbpYfGEDMr5Mse0+LQD6PK9HzAqUlwPIPB/UIhrwENeechqxdOtbMKPnuGZ63wZpjGd21AIYv+FL7dMEBmOE6YyniYZujzJgbERQFZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FlVzb5Ie; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2699ed6d43dso66567155ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 17:09:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759277352; x=1759882152; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NZaBe0K2iz4Ve4SNmKGp+0aX5t53tPftezY7VMX/ZW0=;
+        b=FlVzb5IeLF9uVfG6NnRQK8PHyVvPTgMM/C7RhUa1RhyJo08Idb/Co9yXa3/RguBLBo
+         OVvPlb2P6niRU/5JwyLN0z2h33pnNsLZlKOu3eMyKKgWObCEWmje7MUGsQhdbe/WTaaD
+         5uFYuTJxobZD6cW0wXeF64bUXBZwlatw9YPhMwPS0tNfMuUNwhqU8wjcxwqzRWkXHnlm
+         Lpg3x6Ywi6AKT52oeeuJYllEDE75NM++l3q/tUMQwQB/c7b5dR3iROzVd+pshYyyiSXS
+         S4k430mwcWKjWs6sDdLDTzu4vPpXPJKtnzip6W1wyROWPX9X5jQQSECbObgHfsFtAA5v
+         4qBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759277352; x=1759882152;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NZaBe0K2iz4Ve4SNmKGp+0aX5t53tPftezY7VMX/ZW0=;
+        b=LBQTZDYuNf9ceU2N4Rd2kLcmuVet6s+rmUqATEj36YQ58CJ5qEmXTg+QXkVt09CBpD
+         WoKmt20719h1kjnenvFUhRguRTPmOQ9ASzdYw1qwoYOs694kjq7atQYYTAwwTkeSELq4
+         PA8VWkwmz55xebf/HPUsAw3Jv+R53v7Q8bnQUzdEFmy2veI2U7MtA2OZBarcLJzhpLZO
+         3tcWD09dXjaxLGzAmwi7aXMgO6LKvkAfkTiu4b4f+V/cTlfwOtCX7Nt4LJd+qxGxfkMj
+         UAhder3QsGOnI0gubNIBbQS7HB3dub2kpuLSE6c2RS8Hy7MrQNsotT/UAwi+bHWaGI79
+         FllA==
+X-Forwarded-Encrypted: i=1; AJvYcCVyjhQkAsWcOPVB40YvEVBs1qPg/0q0Jkom2wVEfGyp8R2W+wNNC9aVon69dhOBZaXvx01/B6QwPnbHqe8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2eoGfCEX9vKxwBtviqE4USpa5xrX+Kk/7rF5+zko+Scwm6xFp
+	2o/0sgNjTaKqe+aHVRDV28vG5/jCeEQNNGu3bvCnlQgSRQ2TW2CQ1ZpwEihNJx/M57pusuigvLH
+	d+uSFTg==
+X-Google-Smtp-Source: AGHT+IEQr7X8zhrCcE7yur6wxLh3lSN3M1C/+U8kGIxy4Ja/7HgbLk0MlkSEQOAK7i11sdbL4d1PXCPOAb4=
+X-Received: from plbml6.prod.google.com ([2002:a17:903:34c6:b0:269:99ad:5abe])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ebd2:b0:250:1c22:e78
+ with SMTP id d9443c01a7336-28e7f26f2fdmr18119465ad.1.1759277351793; Tue, 30
+ Sep 2025 17:09:11 -0700 (PDT)
+Date: Wed, 1 Oct 2025 00:09:10 +0000
+In-Reply-To: <aNxwzc0a_xtTW7Ih@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="kjeqn6ue7kfqaix6"
-Content-Disposition: inline
+Mime-Version: 1.0
+References: <diqzecwjnk95.fsf@ackerleytng-ctop.c.googlers.com>
+ <CA+EHjTyY5C1QgkoAqvJ0kHM4nUvKc1e1nQ0Uq+BANtVEnZH90w@mail.gmail.com>
+ <CAGtprH-fE=G923ctBAcq5zFna+2WULhmHDSbXUsZKUrin29b4g@mail.gmail.com>
+ <CA+EHjTxvufYVA8LQWRKEX7zA0gWLQUHVO2LvwKc5JXVu-XAEEA@mail.gmail.com>
+ <CAGtprH_TfKT3oRPCLbh-ojLGXSfOQ2XA39pVhr47gb3ikPtUkw@mail.gmail.com>
+ <CA+EHjTxJZ_pb7+chRoZxvkxuib2YjbiHg=_+f4bpRt2xDFNCzQ@mail.gmail.com>
+ <aC86OsU2HSFZkJP6@google.com> <CA+EHjTxjt-mb_WbtVymaBvCb1EdJAVMV_uGb4xDs_ewg4k0C4g@mail.gmail.com>
+ <aC9QPoEUw_nLHhV4@google.com> <aNxwzc0a_xtTW7Ih@google.com>
+Message-ID: <aNxxJodpbHceb3rF@google.com>
+Subject: Re: [RFC PATCH v2 04/51] KVM: guest_memfd: Introduce
+ KVM_GMEM_CONVERT_SHARED/PRIVATE ioctls
+From: Sean Christopherson <seanjc@google.com>
+To: Fuad Tabba <tabba@google.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Yan Zhao <yan.y.zhao@intel.com>, Fuad Tabba <tabba@google.com>, 
+	Binbin Wu <binbin.wu@linux.intel.com>, Michael Roth <michael.roth@amd.com>, 
+	Ira Weiny <ira.weiny@intel.com>, Rick P Edgecombe <rick.p.edgecombe@intel.com>, 
+	Vishal Annapurve <vannapurve@google.com>, David Hildenbrand <david@redhat.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>
+Content-Type: text/plain; charset="us-ascii"
 
+On Tue, Sep 30, 2025, Sean Christopherson wrote:
+> Trimmed Cc again.
 
---kjeqn6ue7kfqaix6
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: [GIT PULL] power-supply changes for 6.18
-MIME-Version: 1.0
+And of course I forgot to actually Cc folks...
 
-Hi Linus,
-
-The following changes since commit 1b237f190eb3d36f52dffe07a40b5eb210280e00:
-
-  Linux 6.17-rc3 (2025-08-24 12:04:12 -0400)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.gi=
-t tags/for-v6.18
-
-for you to fetch changes up to 41307ec7df057239aae3d0f089cc35a0d735cdf8:
-
-  power: supply: qcom_battmgr: handle charging state change notifications (=
-2025-09-19 12:35:57 +0200)
-
-----------------------------------------------------------------
-power supply and reset changes for the 6.18 series
-
- * power-supply core
-  - introduce adc-battery-helper for capacity estimation based on
-    simple ADC readings of battery voltage and current
-  - add new property for battery internal resistance
-  - add new property for battery state of health
- * power-supply drivers
-  - ug3105_battery: convert to adc-battery-helper
-  - intel_dc_ti_battery: New driver for Intel Dollar Cove TI batteries
-  - rt9467-charger: add voltage and current ADC support
-  - sbs-charger: support multiple instances
-  - qcom_battmgr: add charge control support
-  - qcom_battmgr: add support for state of health and internal resistance
-  - max77705_charger: big driver cleanup
-  - max77705_charger: add support for setting charge current
-  - misc. minor fixes and cleanups
-
-----------------------------------------------------------------
-Andy Yan (1):
-      power: supply: cw2015: Fix a alignment coding style issue
-
-ChiYuan Huang (1):
-      power: supply: rt9467: Add properties for VBUS and IBUS reading
-
-Christophe JAILLET (1):
-      power: supply: Use devm_mutex_init()
-
-Christopher Ruehl (1):
-      power: supply: qcom_battmgr: add OOI chemistry
-
-Colin Ian King (1):
-      power: supply: 88pm860x: make fsm_state array static const, simplify =
-usage
-
-Darshan R. (1):
-      power: supply: gpio-charger: Clean up spacing for better readability
-
-Dzmitry Sankouski (8):
-      power: supply: max77976_charger: fix constant current reporting
-      mfd: max77705: max77705_charger: move active discharge setting to mfd=
- parent
-      power: supply: max77705_charger: refactoring: rename charger to chg
-      power: supply: max77705_charger: use regfields for config registers
-      power: supply: max77705_charger: return error when config fails
-      power: supply: max77705_charger: add writable properties
-      power: supply: max77705_charger: rework interrupts
-      power: supply: max77705_charger: use REGMAP_IRQ_REG_LINE macro
-
-Fabien Proriol (1):
-      power: supply: sbs-charger: Support multiple devices
-
-Fenglin Wu (8):
-      power: supply: core: Add resistance power supply property
-      power: supply: core: Add state_of_health power supply property
-      power: supply: qcom_battmgr: Add resistance power supply property
-      power: supply: qcom_battmgr: Add state_of_health property
-      power: supply: qcom_battmgr: update compats for SM8550 and X1E80100
-      dt-bindings: soc: qcom,pmic-glink: Add charge limit nvmem properties
-      power: supply: qcom_battmgr: Add charge control support
-      power: supply: qcom_battmgr: handle charging state change notificatio=
-ns
-
-Hans de Goede (6):
-      power: supply: Add adc-battery-helper
-      power: supply: ug3105_battery: Switch to adc-battery-helper
-      power: supply: ug3105_battery: Put FG in standby on remove and shutdo=
-wn
-      power: supply: adc-battery-helper: Add support for optional charge_fi=
-nished GPIO
-      power: supply: Add new Intel Dollar Cove TI battery driver
-      power: supply: intel_dc_ti_battery: Drop no longer relevant comment
-
-Marco Crivellari (2):
-      power: supply: replace use of system_wq with system_percpu_wq
-      power: supply: WQ_PERCPU added to alloc_workqueue users
-
-Miguel Garc=EDa (1):
-      power: supply: bq2415x: replace deprecated strcpy() with strscpy()
-
-Qianfeng Rong (1):
-      power: supply: use max() to improve code
-
-Sebastian Reichel (1):
-      Merge tag 'ib-max77705-for-v6.17-signed'
-
-Svyatoslav Ryhel (2):
-      dt-bindings: power: supply: bq27xxx: document optional interrupt
-      dt-bindings: power: supply: bq24190: document charge enable pin
-
-Waqar Hameed (1):
-      power: supply: Remove error prints for devm_add_action_or_reset()
-
-Xichao Zhao (2):
-      power: supply: Remove the use of dev_err_probe()
-      power: supply: rx51: remove redundant condition checks
-
- Documentation/ABI/testing/sysfs-class-power        |  37 ++
- .../devicetree/bindings/power/supply/bq24190.yaml  |   6 +
- .../devicetree/bindings/power/supply/bq27xxx.yaml  |  37 +-
- .../bindings/soc/qcom/qcom,pmic-glink.yaml         |  14 +
- drivers/mfd/max77705.c                             |   3 +
- drivers/power/supply/88pm860x_charger.c            |   8 +-
- drivers/power/supply/Kconfig                       |  16 +
- drivers/power/supply/Makefile                      |   2 +
- drivers/power/supply/ab8500_btemp.c                |   3 +-
- drivers/power/supply/adc-battery-helper.c          | 327 +++++++++++++++++
- drivers/power/supply/adc-battery-helper.h          |  62 ++++
- drivers/power/supply/bq2415x_charger.c             |   4 +-
- drivers/power/supply/bq24190_charger.c             |   2 +-
- drivers/power/supply/bq27xxx_battery.c             |  17 +-
- drivers/power/supply/cw2015_battery.c              |   8 +-
- drivers/power/supply/gpio-charger.c                |   7 +-
- drivers/power/supply/intel_dc_ti_battery.c         | 389 +++++++++++++++++=
-++++
- drivers/power/supply/ipaq_micro_battery.c          |   3 +-
- drivers/power/supply/max77705_charger.c            | 330 ++++++++++-------
- drivers/power/supply/max77976_charger.c            |  12 +-
- drivers/power/supply/mt6370-charger.c              |  18 +-
- drivers/power/supply/power_supply_sysfs.c          |   2 +
- drivers/power/supply/qcom_battmgr.c                | 324 ++++++++++++++++-
- drivers/power/supply/rk817_charger.c               |   6 +-
- drivers/power/supply/rt9467-charger.c              |  47 +--
- drivers/power/supply/rx51_battery.c                |   2 +-
- drivers/power/supply/sbs-charger.c                 |  16 +-
- drivers/power/supply/sbs-manager.c                 |   2 +-
- drivers/power/supply/ucs1002_power.c               |   2 +-
- drivers/power/supply/ug3105_battery.c              | 346 ++++--------------
- include/linux/power/max77705_charger.h             | 144 ++++----
- include/linux/power_supply.h                       |   2 +
- 32 files changed, 1609 insertions(+), 589 deletions(-)
- create mode 100644 drivers/power/supply/adc-battery-helper.c
- create mode 100644 drivers/power/supply/adc-battery-helper.h
- create mode 100644 drivers/power/supply/intel_dc_ti_battery.c
-
---kjeqn6ue7kfqaix6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmjcb/gACgkQ2O7X88g7
-+prZYg/8Cqb4tclZj+XL/VGtGrGbgo1a93hRTHqBqarGB66bkJYPXzCxKg4kSMAg
-NSGM+MTMZOlaQ9AENNgfIPNuTOPFiC0U6up2yGpqNK+6w6kF4f8PBCnhbLhUnjdo
-Cjn8qNXCZoM1ZqFq+FuLuEmprW9u12co67wYNDM/min3+pypz7zqwKMTQX+AI37R
-nD+/A4Y8O6fk4p/e24fPB51ggUZFv4LdRLQ6GyY5imVoI1a9hU6JmW157i8ZCJGe
-k2VNykyDf0zhXQHrvLO7zfPBSJJJsvI7S3+s/OpthxnQfOeuLlNv478P/RV/9K47
-5pT1jHNPdagCXqT1zfpGEnzSuXGYAf5gHn+qT7NXgDtJiB+Jl4DyLCaBSkkCpXI0
-aTEsEiTGwaa1zzQwQpPO2YG287FsbGuZTZe5sWmp/tn1WvGN7IK3uLLEq8/OPnq+
-+EvB4gvEr/UakYMhsCBiyVWFzcPPID21ELZMutTfKTfyz/poI9nzouIqYOnNe8bv
-AxdKpJowpm7Aw293QE9ensG5soTF/m8qU7fVLUva99xt9kg01GYFqhHkrhOEX/I0
-fR62kh1yz7SUT9n1w1S+AGu75Y1MMiElazKnHM3ghY4ehi1vja60FtPAxkr5uqLK
-o5VQ1+TkK0AQ/Mo6xNf0bIoyOkcWX1Faca+Za/JL5wjiR/O2SSY=
-=pFJs
------END PGP SIGNATURE-----
-
---kjeqn6ue7kfqaix6--
+> On Thu, May 22, 2025, Sean Christopherson wrote:
+> > On Thu, May 22, 2025, Fuad Tabba wrote:
+> > > From a conceptual point of view, I understand that the in-place conversion is
+> > > a property of guest_memfd. But that doesn't necessarily mean that the
+> > > interface between kvm <-> guest_memfd is a userspace IOCTL.
+> 
+> ...
+> 
+> > A decent comparison is vCPUs.  KVM _could_ route all ioctls through the VM, but
+> > that's unpleasant for all parties, as it'd be cumbersome for userspace, and
+> > unnecessarily complex and messy for KVM.  Similarly, routing guest_memfd state
+> > changes through KVM_SET_MEMORY_ATTRIBUTES is awkward from both design and mechanical
+> > perspectives.
+> > 
+> > Even if we disagree on how ugly/pretty routing conversions through kvm would be,
+> > which I'll allow is subjective, the bigger problem is that bouncing through
+> > KVM_SET_MEMORY_ATTRIBUTES would create an unholy mess of an ABI.
+> > 
+> > Today, KVM_SET_MEMORY_ATTRIBUTES is handled entirely within kvm, and any changes
+> > take effect irrespective of any memslot bindings.  And that didn't happen by
+> > chance; preserving and enforcing attribute changes independently of memslots was
+> > a key design requirement, precisely because memslots are ephemeral to a certain
+> > extent.
+> > 
+> > Adding support for in-place guest_memfd conversion will require new ABI, and so
+> > will be a "breaking" change for KVM_SET_MEMORY_ATTRIBUTES no matter what.  E.g.
+> > KVM will need to reject KVM_MEMORY_ATTRIBUTE_PRIVATE for VMs that elect to use
+> > in-place guest_memfd conversions.  But very critically, KVM can cripsly enumerate
+> > the lack of KVM_MEMORY_ATTRIBUTE_PRIVATE via KVM_CAP_MEMORY_ATTRIBUTES, the
+> > behavior will be very straightforward to document (e.g. CAP X is mutually excusive
+> > with KVM_MEMORY_ATTRIBUTE_PRIVATE), and it will be opt-in, i.e. won't truly be a
+> > breaking change.
+> > 
+> > If/when we move shareability to guest_memfd, routing state changes through
+> > KVM_SET_MEMORY_ATTRIBUTES will gain a subtle dependency on userspace having to
+> > create memslots in order for state changes to take effect.  That wrinkle would be
+> > weird and annoying to document, e.g. "if CAP X is enabled, the ioctl ordering is
+> > A => B => C, otherwise the ordering doesn't matter", and would create many more
+> > conundrums:
+> > 
+> >   - If a memslot needs to exist in order for KVM_SET_MEMORY_ATTRIBUTES to take effect,
+> >     what should happen if that memslot is deleted?
+> >   - If a memslot isn't found, should KVM_SET_MEMORY_ATTRIBUTES fail and report
+> >     an error, or silently do nothing?
+> >   - If KVM_SET_MEMORY_ATTRIBUTES affects multiple memslots that are bound to
+> >     multiple guest_memfd, how does KVM guarantee atomicity?  What happens if one
+> >     guest_memfd conversion succeeds, but a later fails?
+> 
+> Note, my above objections were purely about routing updates through a VM, e.g. due
+> to having to resolve memslots and whatnot.  I.e. I swear I'm not contradicting
+> myself by suggesting we reuse KVM_SET_MEMORY_ATTRIBUTES itself on the gmem file
+> descriptor.  I'm pretty sure past me didn't think at all about the actual uAPI,
+> only the roles and responsibilities.
 
