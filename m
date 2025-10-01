@@ -1,136 +1,127 @@
-Return-Path: <linux-kernel+bounces-838311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5198BAEF03
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 03:15:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5143BAEF13
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 03:19:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8A927A6586
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 01:14:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7102E2A2057
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 01:19:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74C671865FA;
-	Wed,  1 Oct 2025 01:15:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32E3A1F582C;
+	Wed,  1 Oct 2025 01:19:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="tNl78dNy"
-Received: from out203-205-221-149.mail.qq.com (out203-205-221-149.mail.qq.com [203.205.221.149])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LrRtf+I9"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 540D611CAF
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 01:15:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E9166BFCE
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 01:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759281345; cv=none; b=Oona7bnfcZ7uU67xKSlqAfnDAN10436irzWk8jdlX1lAhxPMDchHyfdOnjuwZVeLXfx8RcpNma2SdTgXXnycIS4h3WkRFboveI/TyZ9wqCAp7OrTCAEcPnPbESyXNZKX1GeMVOWC4PUrpXTWbmuieSFOowNa/Jql5l86ZtKygP4=
+	t=1759281588; cv=none; b=ZKH4s7jyvv5Nnl4bCGr+mSXXYy6S2szwQe0QVujZU6EyEgdvj0We6qGrPYuM0nfA12vEOi2ici+fESZOIeUC/iQO9g1ZtyzXR2B7clVDLIDB6ozhAxfSLghbeHCP7YIj8VDOOJEMVpio51MceJznpMpRq+geH0IYcOouJkNzt4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759281345; c=relaxed/simple;
-	bh=ob4T4yxLplSUvqQjGm1as1DY69R9UpksJ+Uy+p4I9EQ=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=PrV01xugLGBOD82+yCDGjTCAE2Gqj7Ydsd5FynA7/XbWUh+ICDxgdjHjMApD71c0NPoD1EjmjnWwpNXrv5vAbYDCOHP5jxRLfypvsZlthQ2xnGg03HU8AMl2j4zlFL5zlybCyIkxzw0tl3tJUINp+ywBzwA4VLuYfQLZCoVJILU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=tNl78dNy; arc=none smtp.client-ip=203.205.221.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1759281340;
-	bh=n4sm4uwqUsevMHIl11FkhxNg7pZdMeEC6XDT6aP0E8Q=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=tNl78dNy8xtHTUaChaP2zwSaclT5YxcvAeljf+BaRFs32QdTBu7bX68St3Rf91gSY
-	 DC+Z/88+2+mkRa/2jzVxaPPDEtZ0M+80mnOPuMiYLbf7ZeNBAsRuoOivdCyrjfS8oo
-	 nT26WUGxK5js8AzsmVb9mvDG03V3pEG4VBSdKf98=
-Received: from SSOC3-SH.company.local ([58.33.109.195])
-	by newxmesmtplogicsvrszb42-0.qq.com (NewEsmtp) with SMTP
-	id 3DB2F663; Wed, 01 Oct 2025 09:15:27 +0800
-X-QQ-mid: xmsmtpt1759281327tn5zipend
-Message-ID: <tencent_46288A6EC6007C3C980C22DB856268526209@qq.com>
-X-QQ-XMAILINFO: MVrhzCz4YLrfRB3C4lOmA9wEvdQR+OkVXpZQEk/Fm04bE1TloLLNpg9oYVYAm7
-	 RE12IL3QWd1OrGFZlfnLyJQxIZOWUWb9ISLxj3jyhYV/xeyzvw+u1hO/c7oZu1lUi3ZikrixyvEG
-	 as4FXdtZLB5BrWHREbEjJD2GReLB4uodJYaUvpJDDuycYduXGrDx4ApIN1MmSBxgNSfbB/5AnFej
-	 LYnu+r32wMtECj6jhYjL0GqeHehcJmPdifRbqBOgtE5WhiQRnXzcMyPoKT+Lz2T5BIAfY1KHSzKU
-	 jjzsrTdjVABwSww4X0YflF6nl/vp0luqlmxR5r6rHUIulHh6vKfOfipT3Bp1xnzAkeGYo+NUc7s2
-	 DMzAHYN1mDPlE7bJn273D5GZQojIVq/RQ/D7BuIIwdpZmOuL9trMS3yACTRvQk8PRLqv+GiFvmp1
-	 DF4iydlUYiDOxSBMkRqGnfAB0GHiiYyA5UHFHyahLHk6Pqf9HtTuG/mlSclgStLyUHoLqPDCKWHr
-	 7r9uD1ATnY/tNR3LQcOCxVGXTNXswn/znaQl+q20yvB64jpyyIHpil/e2jq/hDBCW0s3mt7wLRpz
-	 v5FwT7sZBI371kZr3ybpk1jynXYgj6sPsOdWZbm4MIxdKlkcrz2PFbkViN1GeAWc08++TQek1xa0
-	 AYxHbs+MDAonIfubCxw0wE3d/4cGn8gomkS/1v4XQYS/2vzXgNc4MB/RjXFj4l+WTRO882qX9iwC
-	 pKCraenWZsO5gym1QYpRuKG2j+rLozBIg2/VNqLJ2B2BXh3h6smzwbxBbRfLHD69upgTa+xdLoJz
-	 2HsJ7b+lL0Zpnp6Xz7rfJEh3fuWOwBm6j4LZLx+aRdqCUpkjU9odtrQm5wKxFi9Y2so4UcdyJNl/
-	 OnMX2JYFRcapNQ6BWDniP6jHk0d1LyYumypZCHF2R2Ld53AryEniswyjkZXmlQZ9h01uiJ5s6mTC
-	 d+22Kv+ZY8uiLyfM2uQ0P5ZdCimr1+hwNlhBw+bhCGEQrYQq030RhqJYCj7v3e+LbT8wf0icaSWG
-	 kW3Qq/Fq3XE3fMF4lZ92SaH6auPPhJgcF60vw39b+cTr8suE8sI6lhtU26za2on0IOthpirfSJVJ
-	 eQhgrP
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-From: Han Guangjiang <gj.han@foxmail.com>
-To: peterz@infradead.org
-Cc: bsegall@google.com,
-	dietmar.eggemann@arm.com,
-	fanggeng@lixiang.com,
-	gj.han@foxmail.com,
-	hanguangjiang@lixiang.com,
-	juri.lelli@redhat.com,
-	linux-kernel@vger.kernel.org,
-	mgorman@suse.de,
-	mingo@redhat.com,
-	rostedt@goodmis.org,
-	vincent.guittot@linaro.org,
-	vschneid@redhat.com,
-	yangchen11@lixiang.com
-Subject: Re: [PATCH] sched/fair: Fix DELAY_DEQUEUE issue related to cgroup throttling
-Date: Wed,  1 Oct 2025 09:15:27 +0800
-X-OQ-MSGID: <20251001011527.3797919-1-gj.han@foxmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250930125621.GO3419281@noisy.programming.kicks-ass.net>
-References: <20250930125621.GO3419281@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1759281588; c=relaxed/simple;
+	bh=M9LOgCF/ewjwjGXMPr8fRmpTuy9Zmufy4sDA1S784NI=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=fChNz5tp2KeiW6EfpO2DIVF4THkdvELtkwpt8dg5sliu/36oBZov/8bJooGMKZcSthPUM/VqycbvpO4Xtanmb/s5+dM9XuuRwAfxY60y+pSckvdP9xiTnT1EI/SKcOQ36T79JxmaG6blyGmLOAZpaOc/affmC2vjBlQmo6OQpGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jasonmiu.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LrRtf+I9; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jasonmiu.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-744bf8a764aso102601077b3.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 18:19:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759281586; x=1759886386; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ifegM91VMNYCdV3RhGc/5AKOzdvQHyhQ3tKlNLE40ko=;
+        b=LrRtf+I9RqZUX2K5hPAwb6Ln+U5W5QKjsmR+IyAyq/WXGOKye7hvkkViT+TT5eViiz
+         7vZlii6mRqEGnO9Uo0Nf5r85k+cRh1w9VScJF3/sK20EGLyYJ9jSkqQoOf3B+DDJnLT1
+         uf8jqjWVxdFFjwKknj96pRr2mkN3UOy+qySRa2pN+CXnWGWRRU8waHHCc2/0hJr2s06l
+         j/XHjOUTAwzOAuFQz3f2NjGsBf6U/8gzSjzBLnKCr9vqBykU3CIHw6jJBfJHSeVL0dqa
+         tiBnDiCoZOskekKrGK1Ud6+8Xam0oxE1aA23moUdzggpfC3rNLAJaflXYiip08qT6h3U
+         AAtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759281586; x=1759886386;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ifegM91VMNYCdV3RhGc/5AKOzdvQHyhQ3tKlNLE40ko=;
+        b=XRcV4uAlzvAkJXEBnKdezh5HSda+ZjGxx8yacLorGII6PMPwqPFvth7AZ6fucYntuY
+         gh/ylBbX7JyAMP7MijfeSPx5ONNPj87D01/f7dFjzxsZZ759GL1HME6+rXVNNw2KjAWG
+         7DtqGZISqaGC1l6TEulSrBuqzuM+GvWkoUIrhYo5tfvCd/qVW7ut9MzXGoQWGsEZ7uBE
+         y0jY2X03spXLrd63QmjwvjjHWqn+1GIqFniQRPtB+QDPe93BARLUN5MtvM1tQBRAuCjX
+         R5BpKjHKM1cD4f77mJldndJJMQzc3d7S6OqesKnM6Cfu9tqQ2gn7h1zZkXpfCAiChcWQ
+         Xd6g==
+X-Forwarded-Encrypted: i=1; AJvYcCUskmT0jo+VWOyLA2CcsQW7OSPEecowVJsPAK5DxaTVgU/W2IG5L53bRkUHwvFjD9dkc9zZ4Zcho24KTMg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSYP2AOFOkEz+QMLJfce6XQoJg8qv0Z5HEkbQs1BlxHtmFUoGm
+	TOvwwseikxvy0AGdGJTiHC+fk4eZR04/SZZGc1AK08DX3lVfiEMb0Mf6L3+SwAkWMtfBbx69cx9
+	NNSodNny1dN634Q==
+X-Google-Smtp-Source: AGHT+IHnDLAnHU4+42jOPdelDKDAAM8AUpJw1mxLW7+QMrPN8GTOVoPsFzFmqWP34QTuhqqEfQMVQ6uv+qBPag==
+X-Received: from ywbjd11.prod.google.com ([2002:a05:690c:6f0b:b0:775:154c:72c])
+ (user=jasonmiu job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:690c:360b:b0:735:8634:be49 with SMTP id 00721157ae682-77f6f117fcemr28154297b3.21.1759281585803;
+ Tue, 30 Sep 2025 18:19:45 -0700 (PDT)
+Date: Tue, 30 Sep 2025 18:19:38 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.618.g983fd99d29-goog
+Message-ID: <20251001011941.1513050-1-jasonmiu@google.com>
+Subject: [PATCH v1 0/3] Make KHO Stateless
+From: Jason Miu <jasonmiu@google.com>
+To: Alexander Graf <graf@amazon.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Baoquan He <bhe@redhat.com>, Changyuan Lyu <changyuanl@google.com>, 
+	David Matlack <dmatlack@google.com>, David Rientjes <rientjes@google.com>, 
+	Jason Gunthorpe <jgg@nvidia.com>, Jason Miu <jasonmiu@google.com>, Mike Rapoport <rppt@kernel.org>, 
+	Pasha Tatashin <pasha.tatashin@soleen.com>, Pratyush Yadav <pratyush@kernel.org>, 
+	kexec@lists.infradead.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
 
->> From: Han Guangjiang <hanguangjiang@lixiang.com>
->>
->> When both CPU cgroup and memory cgroup are enabled with parent cgroup
->> resource limits much smaller than child cgroup's, the system frequently
->> hangs with NULL pointer dereference:
->>
-> Is this the same issue as here:
->
->   https://lore.kernel.org/all/105ae6f1-f629-4fe7-9644-4242c3bed035@amd.com/T/#u
->
->   ?
+This series transitions KHO from an xarray-based metadata tracking system
+with serialization to using a radix tree data structure that can be
+passed directly to the next kernel.
 
-Yes, based on the patch modifications, I believe this is the same issue.
-When dequeue_entities() is executed on a delay_dequeued task while the
-cgroup is being throttled, it returns early and misses the
-__block_task() operation on the task. This leads to inconsistency
-between p->on_rq and se->on_rq.
+The key motivations for this change are to:
+- Eliminate the need for data serialization before kexec.
+- Remove the former KHO state machine by deprecating the finalize
+  and abort states.
+- Pass preservation metadata more directly to the next kernel via the FDT.
 
-When PI or scheduler switching occurs, the second dequeue_entities()
-call assumes the task is still in the CFS scheduler, but in reality
-it is no longer there.
+The new approach uses a radix tree to mark preserved pages. A page's
+physical address and its order are encoded into a single value. The tree
+is composed of multiple levels of page-sized tables, with leaf nodes
+being bitmap tables where each set bit represents a preserved page. The
+physical address of the radix tree's root is passed in the FDT, allowing
+the next kernel to reconstruct the preserved memory map.
 
-By the way, I have a question about the hrtick_update() in
-dequeue_entities(). Should it be changed to:
+The series includes the following changes:
 
-dequeue_entities()
-{
-    ...
-    if (p) {
-        hrtick_update(rq);
-    }
-    ...
-}
+1.  kho: Adopt KHO radix tree data structures: Replaces the xarray-based
+    tracker with the new radix tree implementation and removes the
+    serialization/finalization code, thereby eliminating the KHO finalize
+    and abort states.
+2.  memblock: Remove KHO notifier usage: Decouples the memblock subsystem
+    from the KHO notifier system, switching it to use direct KHO API calls
+    and adjusting KHO FDT completion timing.
+3.  kho: Remove notifier system infrastructure: Removes the now-unused
+    notifier infrastructure from the KHO core.
 
-And remove hrtick_update() from dequeue_task_fair()?
-Because for dequeue_delayed tasks, hrtick_update() will be executed
-twice in this proces.
 
-Also, should the return type of dequeue_entities() be changed to
-match dequeue_task_fair(), where true means the task was actually
-removed from the queue, and false means it was delay dequeued?
+Jason Miu (3):
+  kho: Adopt KHO radix tree data structures
+  memblock: Remove KHO notifier usage
+  kho: Remove notifier system infrastructure
 
-Thanks,
-Han Guangjiang
+ include/linux/kexec_handover.h |  44 +-
+ kernel/kexec_handover.c        | 788 +++++++++++++++------------------
+ mm/memblock.c                  |  45 +-
+ 3 files changed, 362 insertions(+), 515 deletions(-)
+
+-- 
+2.51.0.618.g983fd99d29-goog
 
 
