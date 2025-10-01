@@ -1,289 +1,146 @@
-Return-Path: <linux-kernel+bounces-839376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29F07BB1812
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 20:34:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 691C7BB1800
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 20:33:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96F4E19476AD
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 18:34:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A4B51947688
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 18:33:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 489542D6E53;
-	Wed,  1 Oct 2025 18:33:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9A252D4B6C;
+	Wed,  1 Oct 2025 18:33:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b="HHdG3Ruz"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jQWE0MOn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CD732D5934;
-	Wed,  1 Oct 2025 18:33:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759343632; cv=pass; b=Bw8b2rfxTyy5qRgEobY1LJTZZlUpJl3/ca4wo8OJTq2yHiDpqGfumCpxqePL0VZZXZqz3hCk59Hl9teLKluppoOegooS4ajDfA/JaBvHm/nKpQIdv0tWLlEaJeFcmM0ENprD4BMVNOQrHOaNG0WGZc6C+z8BXNB/W1sHT9sgnmM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759343632; c=relaxed/simple;
-	bh=6XPuX0m01ZFf2GseM0abEL1RU1m4cMag66VApjnqATw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=A3BgHzDZ6LLvGjUSPAMQWWVv7cPWdiDnNiRqCJxQRLHXIEXOyog0YjvyaZISb7ONuRn1Uz7m+LgUs3NF4irc/u63SR5x8rhy4FbAjY80gIW+bzzxUAUXOb5ZNXPtNluWRq09OFITS/2RV6VPWyn7K02lmXXVT8pAuBpflnH+oUU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b=HHdG3Ruz; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1759343611; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=gXAEQVDCK74OK0TzgTvTVA+MUfiCZiPJSqtb6A0RzFDlVAzkGWfdzklQ8xaf+QQ1bDrbZhTRe+Axr4oTSkK4UFTZNMkcDg2ZE2OqqeYTZjGoQXR8hf2OQ9iVPBNkpe93v4cjguLw3w8hIh7OYGF8/fX59rz0xB0+pVXtv5I8JGE=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1759343611; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=5Tf1KRNvIh/o3Lawrm1/DSWDlI3pzmdrutlzoqFE9jM=; 
-	b=WVl7sfPLoh73cyvsUaNf5DoDdmjA7cK0cAPKbo7E/XC4dwdGklj0IphxKz0vqB54Q8oFOWbzul0VEH/ek5nZGf7/AxDi4vuWGewAPd2CJ3s46kdnOZcZCFu8ZkuR+CZsBRQ+ZCK8ggaTzCv5d+Gjku6JgdNwjTLbbV6iVviJ4QU=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=ariel.dalessandro@collabora.com;
-	dmarc=pass header.from=<ariel.dalessandro@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1759343611;
-	s=zohomail; d=collabora.com; i=ariel.dalessandro@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=5Tf1KRNvIh/o3Lawrm1/DSWDlI3pzmdrutlzoqFE9jM=;
-	b=HHdG3Ruz4P6R9QgHFOYqkeIpbu1ln3qlPVXfSOXm7OUfyiZxyfaHqX0E5Khr3HWK
-	e+KQ1qOKYMrdkKpHO9hHjAxLH2HiXhKn+Vlc2JMYrVvli3IKwLze0hSbbbwWZO4mY4l
-	rqPFhfYx8Uko3TPhwfbvvwhHDKkwVP0viKtOYakE=
-Received: by mx.zohomail.com with SMTPS id 1759343610165605.9822601405356;
-	Wed, 1 Oct 2025 11:33:30 -0700 (PDT)
-From: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-To: andrew+netdev@lunn.ch,
-	angelogioacchino.delregno@collabora.com,
-	ariel.dalessandro@collabora.com,
-	conor+dt@kernel.org,
-	davem@davemloft.net,
-	edumazet@google.com,
-	krzk+dt@kernel.org,
-	kuba@kernel.org,
-	luiz.dentz@gmail.com,
-	pabeni@redhat.com,
-	robh@kernel.org
-Cc: devicetree@vger.kernel.org,
-	kernel@collabora.com,
-	linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH v3] dt-bindings: net: Convert Marvell 8897/8997 bindings to DT schema
-Date: Wed,  1 Oct 2025 15:33:20 -0300
-Message-ID: <20251001183320.83221-1-ariel.dalessandro@collabora.com>
-X-Mailer: git-send-email 2.51.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32FEF258EDF
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 18:33:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759343605; cv=none; b=Ym3vqLZZJF/VO1CDkxMTvv2/xIb150G9PMQaClRn0La17cQ19gVLtmbHqqTylQvJ+gGuDKAglRRF2BunufGhtc2yZ1lgaZDBwWhvgeJZvjGtqYb0wm2QUoMuH/RxvRhZXGKEW23jrAiLncnheD+eWgcOGszPLn2zGcp6JOkxkV8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759343605; c=relaxed/simple;
+	bh=ZLIoi/NYFfvh7MIGr5zx8UVJQvY41XwspSGk66LmUh0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RExUbzfhxmB9n6AIDKxMqxv1vkY3XDj5SLPUY6NftCUpHlyvXQhHKgTflT4U/4eoBEhmPm8iSO2Fn6+jbK3ipbRphVVXlFktCfn2N1pGI1lQqnAq2fq+5Mr38+kSSUn+1H7aKglE5IngZp8V9dOm+yPnTVRleo6ayQKE9XyZ7rM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jQWE0MOn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25BC5C4CEF9;
+	Wed,  1 Oct 2025 18:33:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759343604;
+	bh=ZLIoi/NYFfvh7MIGr5zx8UVJQvY41XwspSGk66LmUh0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jQWE0MOnhjMNSXVa/1zMRyDFAdNQm/EYGzhoxA0dysuEBW5+sHphaUoLTcrA3fhZE
+	 SATTt5c3i8IngdVcWA59VotNW/5nrxzWkHzxi+wbf5i7hoVihA4k6a0y1X6aQ87X9U
+	 bAhkHrcLC6Z/47y0IEhk439RnjbvtZEGT/PrBVnvrno6OAkpDpbwOzWAua12TyVEjH
+	 yNBG1HS/l1D5Isj0UQrlyg1GiQb2dw4FZnOprZbWQan/TCQ7J/GjUVTo0qWmTn7byA
+	 FlvITMTH9WrbipDPvhIAmjRcZRd0DmHruMt8RCP4fFT26VrHaS3dojWa/ELJrsLrLL
+	 N5ZfjZ/AMpwtQ==
+Date: Wed, 1 Oct 2025 11:33:21 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Ben Dooks <ben.dooks@codethink.co.uk>, Paul Walmsley <pjw@kernel.org>,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] RISC-V updates for v6.18-rc1
+Message-ID: <20251001183321.GA2760@quark>
+References: <2c804359-3d43-0fba-7173-a87f9aec4bd2@kernel.org>
+ <066d70c7-b0a7-45e5-9337-17901bc95664@codethink.co.uk>
+ <CAHk-=wgfpswvq0TypePyjv3dofO5YaUC_fSd_MjzY7jogCUnCg@mail.gmail.com>
+ <CAHk-=wgYcOiFvsJzFb+HfB4n6Wj6zM5H5EghUMfpXSCzyQVSfA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+In-Reply-To: <CAHk-=wgYcOiFvsJzFb+HfB4n6Wj6zM5H5EghUMfpXSCzyQVSfA@mail.gmail.com>
 
-Convert the existing text-based DT bindings for Marvell 8897/8997
-(sd8897/sd8997) bluetooth devices controller to a DT schema.
+On Tue, Sep 30, 2025 at 04:53:24PM -0700, Linus Torvalds wrote:
+> On Tue, 30 Sept 2025 at 09:04, Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> >
+> > Oh Christ. Is somebody seriously working on BE support in 2025?
+> 
+> Ok, I just googled this, and I am putting my foot down:
+> 
+>  WE ARE NOT PREEMPTIVELY SUPPORTING BIG-ENDIAN ON RISC-V
+> 
+> The documented "reasoning" for that craziness is too stupid for words,
+> but since riscv.org did put it in words, I'll just quote those words
+> here:
+> 
+>  "There are still applications where the way data is stored matters,
+> such as the protocols that move data across the Internet, which are
+> defined as big-endian. So when a little-endian system needs to inspect
+> or modify a network packet, it has to swap the big-endian values to
+> little-endian and back, a process that can take as many as 10-20
+> instructions on a RISC-V target which doesn’t implement the Zbb
+> extension"
+> 
+> In other words, it is suggesting that RISC-V add a big-endian mode due to
+> 
+>  (a) internet protocols - where byte swapping is not an issue
+> 
+>  (b) using "some RISC-V implementations don't do the existing Zbb
+> extension" as an excuse
+> 
+> This is plain insanity. First off, even if byte swapping was a real
+> cost for networking - it's not, the real costs tend to be all in
+> memory subsystems - just implement the damn Zbb extension.
+> 
+> Don't go "we're too incompetent to implement Zbb, so we're now asking
+> that EVERYBODY ELSE feel the pain of a much *worse* extension and
+> fragmenting RISC-V further".
+> 
+> I'm hoping this is some April fools joke, but that page is dated
+> "March 10, 2025". Close, but not close enough.
+> 
+> This is the kind of silly stuff that just makes RISC-V look bad.
+> 
+> Ben - I'm afraid that that page has "further reading" pointing to codethink.
+> 
+> I see some CONFIG_CPU_BIG_ENDIAN has already made it in, but this
+> needs to stop.
+> 
+> The mainline kernel is for mainline development. Not for random
+> experiments that make the world a worse place.
+> 
+> And yes, we're open source, and that very much means that anybody is
+> more than welcome to try to prove me wrong.
+> 
+> If it turns out that BE RISC-V becomes a real thing that is relevant
+> and actually finds a place in the RISC-V ecosystem, then _of_course_
+> we should support it at that point in the mainline kernel.
+> 
+> But I really do think that it actually makes RISC-V only worse, and
+> that we should *not* actively help the fragmentation.
 
-While here, bindings for "usb1286,204e" (USB interface) are dropped from
-the DT   schema definition as these are currently documented in file [0].
++1.  Please, let's not do big endian RISC-V kernels :(
 
-[0] Documentation/devicetree/bindings/net/btusb.txt
+This mistake was made for arm64, it's finally getting fixed.
+See https://lore.kernel.org/r/20250919184025.15416-1-will@kernel.org/
+Let's not make the same mistake again.
 
-Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
----
- .../net/bluetooth/marvell,sd8897-bt.yaml      | 79 ++++++++++++++++++
- .../devicetree/bindings/net/btusb.txt         |  2 +-
- .../bindings/net/marvell-bt-8xxx.txt          | 83 -------------------
- 3 files changed, 80 insertions(+), 84 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/net/bluetooth/marvell,sd8897-bt.yaml
- delete mode 100644 Documentation/devicetree/bindings/net/marvell-bt-8xxx.txt
+And as someone who works on optimized crypto and CRC code, the arm64 big
+endian kernel support has always been really problematic.  It's rarely
+tested, and code that produces incorrect outputs on arm64 big endian
+regularly gets committed and released.  It sometimes gets fixed, but not
+always; currently the arm64 SM3 and SM4 code produces incorrect outputs
+on big endian in mainline.  (I don't really care enough to fix it, TBH.)
 
-diff --git a/Documentation/devicetree/bindings/net/bluetooth/marvell,sd8897-bt.yaml b/Documentation/devicetree/bindings/net/bluetooth/marvell,sd8897-bt.yaml
-new file mode 100644
-index 0000000000000..a307c64cfa4d6
---- /dev/null
-+++ b/Documentation/devicetree/bindings/net/bluetooth/marvell,sd8897-bt.yaml
-@@ -0,0 +1,79 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/net/bluetooth/marvell,sd8897-bt.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Marvell 8897/8997 (sd8897/sd8997) bluetooth devices (SDIO)
-+
-+maintainers:
-+  - Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-+
-+allOf:
-+  - $ref: /schemas/net/bluetooth/bluetooth-controller.yaml#
-+
-+properties:
-+  compatible:
-+    enum:
-+      - marvell,sd8897-bt
-+      - marvell,sd8997-bt
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  marvell,cal-data:
-+    $ref: /schemas/types.yaml#/definitions/uint8-array
-+    description:
-+      Calibration data downloaded to the device during initialization.
-+    maxItems: 28
-+
-+  marvell,wakeup-pin:
-+    $ref: /schemas/types.yaml#/definitions/uint16
-+    description:
-+      Wakeup pin number of the bluetooth chip. Used by firmware to wakeup host
-+      system.
-+
-+  marvell,wakeup-gap-ms:
-+    $ref: /schemas/types.yaml#/definitions/uint16
-+    description:
-+      Wakeup latency of the host platform. Required by the chip sleep feature.
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+
-+    mmc {
-+        vmmc-supply = <&wlan_en_reg>;
-+        bus-width = <4>;
-+        cap-power-off-card;
-+        keep-power-in-suspend;
-+
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        bluetooth@2 {
-+            compatible = "marvell,sd8897-bt";
-+            reg = <2>;
-+            interrupt-parent = <&pio>;
-+            interrupts = <119 IRQ_TYPE_LEVEL_LOW>;
-+
-+            marvell,cal-data = /bits/ 8 <
-+                0x37 0x01 0x1c 0x00 0xff 0xff 0xff 0xff 0x01 0x7f 0x04 0x02
-+                0x00 0x00 0xba 0xce 0xc0 0xc6 0x2d 0x00 0x00 0x00 0x00 0x00
-+                0x00 0x00 0xf0 0x00>;
-+            marvell,wakeup-pin = /bits/ 16 <0x0d>;
-+            marvell,wakeup-gap-ms = /bits/ 16 <0x64>;
-+        };
-+    };
-+
-+...
-diff --git a/Documentation/devicetree/bindings/net/btusb.txt b/Documentation/devicetree/bindings/net/btusb.txt
-index f546b1f7dd6d2..a68022a57c51e 100644
---- a/Documentation/devicetree/bindings/net/btusb.txt
-+++ b/Documentation/devicetree/bindings/net/btusb.txt
-@@ -14,7 +14,7 @@ Required properties:
- 
- 
- Also, vendors that use btusb may have device additional properties, e.g:
--Documentation/devicetree/bindings/net/marvell-bt-8xxx.txt
-+Documentation/devicetree/bindings/net/bluetooth/marvell,sd8897-bt.yaml
- 
- Optional properties:
- 
-diff --git a/Documentation/devicetree/bindings/net/marvell-bt-8xxx.txt b/Documentation/devicetree/bindings/net/marvell-bt-8xxx.txt
-deleted file mode 100644
-index 957e5e5c2927c..0000000000000
---- a/Documentation/devicetree/bindings/net/marvell-bt-8xxx.txt
-+++ /dev/null
-@@ -1,83 +0,0 @@
--Marvell 8897/8997 (sd8897/sd8997) bluetooth devices (SDIO or USB based)
--------
--The 8997 devices supports multiple interfaces. When used on SDIO interfaces,
--the btmrvl driver is used and when used on USB interface, the btusb driver is
--used.
--
--Required properties:
--
--  - compatible : should be one of the following:
--	* "marvell,sd8897-bt" (for SDIO)
--	* "marvell,sd8997-bt" (for SDIO)
--	* "usb1286,204e"      (for USB)
--
--Optional properties:
--
--  - marvell,cal-data: Calibration data downloaded to the device during
--		      initialization. This is an array of 28 values(u8).
--		      This is only applicable to SDIO devices.
--
--  - marvell,wakeup-pin: It represents wakeup pin number of the bluetooth chip.
--		        firmware will use the pin to wakeup host system (u16).
--  - marvell,wakeup-gap-ms: wakeup gap represents wakeup latency of the host
--		      platform. The value will be configured to firmware. This
--		      is needed to work chip's sleep feature as expected (u16).
--  - interrupt-names: Used only for USB based devices (See below)
--  - interrupts : specifies the interrupt pin number to the cpu. For SDIO, the
--		 driver will use the first interrupt specified in the interrupt
--		 array. For USB based devices, the driver will use the interrupt
--		 named "wakeup" from the interrupt-names and interrupt arrays.
--		 The driver will request an irq based on this interrupt number.
--		 During system suspend, the irq will be enabled so that the
--		 bluetooth chip can wakeup host platform under certain
--		 conditions. During system resume, the irq will be disabled
--		 to make sure unnecessary interrupt is not received.
--
--Example:
--
--IRQ pin 119 is used as system wakeup source interrupt.
--wakeup pin 13 and gap 100ms are configured so that firmware can wakeup host
--using this device side pin and wakeup latency.
--
--Example for SDIO device follows (calibration data is also available in
--below example).
--
--&mmc3 {
--	vmmc-supply = <&wlan_en_reg>;
--	bus-width = <4>;
--	cap-power-off-card;
--	keep-power-in-suspend;
--
--	#address-cells = <1>;
--	#size-cells = <0>;
--	btmrvl: bluetooth@2 {
--		compatible = "marvell,sd8897-bt";
--		reg = <2>;
--		interrupt-parent = <&pio>;
--		interrupts = <119 IRQ_TYPE_LEVEL_LOW>;
--
--		marvell,cal-data = /bits/ 8 <
--			0x37 0x01 0x1c 0x00 0xff 0xff 0xff 0xff 0x01 0x7f 0x04 0x02
--			0x00 0x00 0xba 0xce 0xc0 0xc6 0x2d 0x00 0x00 0x00 0x00 0x00
--			0x00 0x00 0xf0 0x00>;
--		marvell,wakeup-pin = /bits/ 16 <0x0d>;
--		marvell,wakeup-gap-ms = /bits/ 16 <0x64>;
--	};
--};
--
--Example for USB device:
--
--&usb_host1_ohci {
--    #address-cells = <1>;
--    #size-cells = <0>;
--
--    mvl_bt1: bt@1 {
--	compatible = "usb1286,204e";
--	reg = <1>;
--	interrupt-parent = <&gpio0>;
--	interrupt-names = "wakeup";
--	interrupts = <119 IRQ_TYPE_LEVEL_LOW>;
--	marvell,wakeup-pin = /bits/ 16 <0x0d>;
--	marvell,wakeup-gap-ms = /bits/ 16 <0x64>;
--    };
--};
--- 
-2.51.0
+I recently added arm64 big endian to my own testing matrix.  But I look
+forward to dropping that, as well as *not* having to start testing on
+RISC-V big endian too...
 
+Of course, that's just one example from my own experience.  There's a
+lot more that CONFIG_CPU_BIG_ENDIAN creates problems for.
+
+- Eric
 
