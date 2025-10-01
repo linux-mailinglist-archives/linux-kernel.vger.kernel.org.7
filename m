@@ -1,130 +1,170 @@
-Return-Path: <linux-kernel+bounces-838858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33B0DBB049C
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 14:12:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8DB6BB04A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 14:13:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E91EB2A212B
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 12:12:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40F5A3B4957
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 12:13:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 644B22E92D9;
-	Wed,  1 Oct 2025 12:12:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 347392E92D0;
+	Wed,  1 Oct 2025 12:13:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="haK9n6CH"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="UmEzoVyU"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 299A82BE036
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 12:12:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99DE3537E9;
+	Wed,  1 Oct 2025 12:13:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759320748; cv=none; b=pRYEJBEwv/tU1gn17M2WJPvqmuv9w8GTMWqnMAKvGKfWSj1yFigH6+jIiLiq62f1pOwQcAuza7RonahNvh/Hr3mPd/C0GqHaFDrIVIPxxSlLeIW6q4WtQ4W22NgicZJSZlJTxcTeb6tAlwDIUqzrOO04MKFFgwErj8SiEvcVkQI=
+	t=1759320799; cv=none; b=qAtfkwtLGyGTTu0LU+0f8xDpLpkFZV2Jb8Y4PntZy//C5mB2sbn6NKq6JOpE/In+ei1T/3V6LxnJdV6dp1sR/IJOuGUFQbYrpO0AvJ6v6igVD5ZJKlvl9JBOnIMQX3DWNdlmMpz2y5P+pZVdogSmlBDSAcJ5Akmuw5uLcQRXZK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759320748; c=relaxed/simple;
-	bh=wm1BeP3OIG/CEpv0bx0FPzGIxfrbnvmyJFFdHO4c9MM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=goVs4YEdXMbXWfEueVAZAtECIj1EPO/0dC2wlGcTbVIVntLnhgHzQqU0bqOJKs3ck2XmilAAH7YBKJMm8WSWLby44VokC3c3zPzBmXm5Y7Bkh7osNJ1uHx2rwl/3EquMDCOVXyDWJKIDHzztIwr4M5KuYUrO+g+u/Yz7TXpHZ00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=haK9n6CH; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b472842981fso119469766b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 05:12:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759320745; x=1759925545; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HMNKUKq4O6fuNIsiIVyyJX5XuuNZnMram+bZtI5+QUE=;
-        b=haK9n6CH8B3B7s+yzcJ09ROj+WyVMVy/FAF8imtoDJQsyRuh0He8kPCEZlYBT8unTG
-         joyKlviP7y6nZmKKMhmjpMBghtWqYXV/C9JOmDP3qxGA/vP+iHZ4fUtf0hDFqKTw3JC9
-         WxK9S0FRLoAolwCnMdXNrGskEXEJCXsvnrKxq5aTwxumpol5y/rwTZP3E+m8lcQJMvek
-         HWff+Xp1TXNlIUSIIpJYws7uCz/kcLMna9o2plD8NnYkrmyh1rSdoh0Zm4TQszTEVwtH
-         E+LiJTUtHTLUqrq7kAIpfVo0zt7KX1PSAID5aAsfGP/VFu2dJxKG9jaDP/wq6/8P42qP
-         iBZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759320745; x=1759925545;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HMNKUKq4O6fuNIsiIVyyJX5XuuNZnMram+bZtI5+QUE=;
-        b=dcKR2v1JuHOR/4CC3747BnPcC7PzNN7Vv8itU5Q89wwKJp0LIo7am+f7VGLbvye8oc
-         vFfV49D9Ox0zKbI4qh9nnXVEPV9B3K6sDa6U0rMf+qF2bMn8MwNIzFTZmJ+pdRMYUe86
-         zdB0U5Wpww3KQDTlUdBESPkDxkFqq52biNRTvpapbiR9GNxZP+Q3iIQx/zdwhqlsnenJ
-         zRQ7W/CBoXz/i4PC4kAlcq0LQqBeWXHBxmiZ/9wOxR5Ss1Z5QBTxOtbiMkLdHOi9PO8a
-         PjSki4NomYadluKoE5rtkGq72Bx0eKq6FFKlC6fG526g8F1F4NkvFoAxxmEjYavxRRIG
-         +3Kg==
-X-Forwarded-Encrypted: i=1; AJvYcCXmoFhfgSnCKwPDnJQ4leBLW3HZoCJRcblLBSa0kbOb6w+L6mES2ptfoOZ1vbwhTQZqXhswUExRVFzfgVw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkF/DUwCl9RkhFipPv0BSXBg/XkyNlAZE8MLvVKlkNM3is0WcQ
-	ZG69r2n8Qj43q/um7EhllZNwSWyb6jkwaELNcRILbX6DFTXCQRZOR2x4a6mNDz7pMwajf9Xomnm
-	dp/QpLcNPNuOeCTn3q8aC4ls5ALOFIyc=
-X-Gm-Gg: ASbGnctQWLCwJC92N/ON5JnV+6LVfc8SX+tk8ax+a6Wrz2fevfCN47MdNr/uvFsMaX9
-	9gSFVR4aCXggqchPYvdz3NmGTk3RdecptOHi1bAyf1+8NjWR53QP54ZNTligE17R/7m/WI7nVJ8
-	wmbfHIOfIrQnsxZPaRu2kVPLf3lMCgbUGH7PWiYx8/BeUk5t3CSH7gbzFZqCnbqxxSiKknD+3wc
-	9YCOURObI5zl9KG8cObgft8DUqXOIH0MEGK/193WLYKv33k13ug7FxKSeQ+GIkK3w==
-X-Google-Smtp-Source: AGHT+IF8r80Y0ZoXsIQn0Y5R+RdX9mAD1JyxavDsPaW3QjZWyIinKq3HCORm57T6oAyaRkcFtYjYf2FoIDT7QGrslA8=
-X-Received: by 2002:a17:906:dc8a:b0:b10:9e5d:d173 with SMTP id
- a640c23a62f3a-b46e6339e6bmr357263366b.41.1759320745155; Wed, 01 Oct 2025
- 05:12:25 -0700 (PDT)
+	s=arc-20240116; t=1759320799; c=relaxed/simple;
+	bh=7hEM/r1j5wBKoJc3aCyzvjA7qiAo7dj9HLa2165QQYk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=so2gPYPC1YeulvkhULcmTp/potgGCdrodDrja/q2lHW56xk19/zfrJt7mHqyOq4YMMRPT5NIFcCecL9s0DG5y8vz0TIqyJLjA8p3zJ4gLvG65sAP8NlUiejhXJgSqJC5EleoVvor5lOGdkrEorI/KBvoy/aGLpnDOZ0C3uhVwQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=UmEzoVyU; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1759320795;
+	bh=7hEM/r1j5wBKoJc3aCyzvjA7qiAo7dj9HLa2165QQYk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=UmEzoVyU1SYHFm4kPxnXNQ81MvLM2PCaLisskdj7X7VCt+tk0nEM2pZH3KJF95WRE
+	 6KsrQXHYhmsVYWY7fLCel9K7QAwGnF0WPSqoPuYbsqQ3yl4Tgk5XZ+rEZb9wYYBU8D
+	 Gc9XNN4vXd14mZtEPoCA9fObvRR/QNXhc11Yz9lCVgqhhsCy4z/+cHtPPWTw7p2uex
+	 fxw0n7K8w9O9kKAoyQu3cPqcfXVKw+3cFvlZgCvWhda+emoZ0zWo0jF4gTjbjlbx3f
+	 KFzmZJ8zCBQtBDrQm16zconwlzsTtxRR5StXEXFkoKRcesEg4yN8uFw+Fod3WUxkeU
+	 JbQKTbQKjo0Fg==
+Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 2238217E131B;
+	Wed,  1 Oct 2025 14:13:15 +0200 (CEST)
+Date: Wed, 1 Oct 2025 14:13:10 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, Matthew Brost
+ <matthew.brost@intel.com>, Thomas =?UTF-8?B?SGVsbHN0csO2bQ==?=
+ <thomas.hellstrom@linux.intel.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Steven Price <steven.price@arm.com>,
+ Daniel Almeida <daniel.almeida@collabora.com>, Liviu Dudau
+ <liviu.dudau@arm.com>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] drm/gpuvm: add deferred vm_bo cleanup
+Message-ID: <20251001141310.0817a6c7@fedora>
+In-Reply-To: <20251001140418.57fb21f1@fedora>
+References: <20251001-vmbo-defer-v3-0-a3fe6b6ae185@google.com>
+	<20251001-vmbo-defer-v3-1-a3fe6b6ae185@google.com>
+	<20251001132739.41575fa5@fedora>
+	<CAH5fLghp+4dx6-JAfbSWDLz7WOdwtnLeuxdGhmVPax+HKbTv3w@mail.gmail.com>
+	<20251001140418.57fb21f1@fedora>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251001010010.9967-1-mjguzik@gmail.com> <zvd5obgxrkbqeifnuvvvhhjeh7t4cveziipwoii3hjaztxytpa@qlcxp4l2r5jg>
-In-Reply-To: <zvd5obgxrkbqeifnuvvvhhjeh7t4cveziipwoii3hjaztxytpa@qlcxp4l2r5jg>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Wed, 1 Oct 2025 14:12:13 +0200
-X-Gm-Features: AS18NWBAHDbuuueF6_VwFlNYhEG4JuTxqmkvI17PQrp5AyJYj9GIJmIn87xJWkQ
-Message-ID: <CAGudoHHZL0g9=eRqjUOS2sez8Mew7r1TRWaR+uX-7YuYomd3WA@mail.gmail.com>
-Subject: Re: [PATCH] fs: assert on ->i_count in iput_final()
-To: Jan Kara <jack@suse.cz>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 1, 2025 at 2:07=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
-> > diff --git a/fs/inode.c b/fs/inode.c
-> > index ec9339024ac3..fa82cb810af4 100644
-> > --- a/fs/inode.c
-> > +++ b/fs/inode.c
-> > @@ -1879,6 +1879,7 @@ static void iput_final(struct inode *inode)
-> >       int drop;
-> >
-> >       WARN_ON(inode->i_state & I_NEW);
-> > +     VFS_BUG_ON_INODE(atomic_read(&inode->i_count) !=3D 0, inode);
->
-> This seems pointless given when iput_final() is called...
->
+On Wed, 1 Oct 2025 14:04:18 +0200
+Boris Brezillon <boris.brezillon@collabora.com> wrote:
 
-This and the other check explicitly "wrap" the ->drop_inode call.
+> On Wed, 1 Oct 2025 13:45:36 +0200
+> Alice Ryhl <aliceryhl@google.com> wrote:
+>=20
+> > On Wed, Oct 1, 2025 at 1:27=E2=80=AFPM Boris Brezillon
+> > <boris.brezillon@collabora.com> wrote: =20
+> > >
+> > > On Wed, 01 Oct 2025 10:41:36 +0000
+> > > Alice Ryhl <aliceryhl@google.com> wrote:
+> > >   =20
+> > > > When using GPUVM in immediate mode, it is necessary to call
+> > > > drm_gpuvm_unlink() from the fence signalling critical path. However,
+> > > > unlink may call drm_gpuvm_bo_put(), which causes some challenges:
+> > > >
+> > > > 1. drm_gpuvm_bo_put() often requires you to take resv locks, which =
+you
+> > > >    can't do from the fence signalling critical path.
+> > > > 2. drm_gpuvm_bo_put() calls drm_gem_object_put(), which is often go=
+ing
+> > > >    to be unsafe to call from the fence signalling critical path.
+> > > >
+> > > > To solve these issues, add a deferred version of drm_gpuvm_unlink()=
+ that
+> > > > adds the vm_bo to a deferred cleanup list, and then clean it up lat=
+er.
+> > > >
+> > > > The new methods take the GEMs GPUVA lock internally rather than let=
+ting
+> > > > the caller do it because it also needs to perform an operation after
+> > > > releasing the mutex again. This is to prevent freeing the GEM while
+> > > > holding the mutex (more info as comments in the patch). This means =
+that
+> > > > the new methods can only be used with DRM_GPUVM_IMMEDIATE_MODE.
+> > > >
+> > > > Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+> > > > Signed-off-by: Alice Ryhl <aliceryhl@google.com>   =20
+> >  =20
+> > > > +/*
+> > > > + * Must be called with GEM mutex held. After releasing GEM mutex,
+> > > > + * drm_gpuvm_bo_defer_free_unlocked() must be called.
+> > > > + */
+> > > > +static void
+> > > > +drm_gpuvm_bo_defer_free_locked(struct kref *kref)
+> > > > +{
+> > > > +     struct drm_gpuvm_bo *vm_bo =3D container_of(kref, struct drm_=
+gpuvm_bo,
+> > > > +                                               kref);
+> > > > +     struct drm_gpuvm *gpuvm =3D vm_bo->vm;
+> > > > +
+> > > > +     if (!drm_gpuvm_resv_protected(gpuvm)) {
+> > > > +             drm_gpuvm_bo_list_del(vm_bo, extobj, true);
+> > > > +             drm_gpuvm_bo_list_del(vm_bo, evict, true);
+> > > > +     }
+> > > > +
+> > > > +     list_del(&vm_bo->list.entry.gem);
+> > > > +}
+> > > > +
+> > > > +/*
+> > > > + * GEM mutex must not be held. Called after drm_gpuvm_bo_defer_fre=
+e_locked().
+> > > > + */
+> > > > +static void
+> > > > +drm_gpuvm_bo_defer_free_unlocked(struct drm_gpuvm_bo *vm_bo)
+> > > > +{
+> > > > +     struct drm_gpuvm *gpuvm =3D vm_bo->vm;
+> > > > +
+> > > > +     llist_add(&vm_bo->list.entry.bo_defer, &gpuvm->bo_defer);   =
+=20
+> > >
+> > > Could we simply move this line to drm_gpuvm_bo_defer_free_locked()?
+> > > I might be missing something, but I don't really see a reason to
+> > > have it exposed as a separate operation.   =20
+> >=20
+> > No, if drm_gpuvm_bo_deferred_cleanup() is called in parallel (e.g.
+> > from a workqueue as we discussed), then this can lead to kfreeing the
+> > GEM while we hold the mutex. We must not add the vm_bo until it's safe
+> > to kfree the GEM. See the comment on
+> > drm_gpuvm_bo_defer_free_unlocked() below. =20
+>=20
+> Uh, right, I forgot that the lock was embedded in the BO, which we're
+> releasing a ref on in the cleanup path.
 
-> >       if (op->drop_inode)
-> >               drop =3D op->drop_inode(inode);
-> > @@ -1893,6 +1894,12 @@ static void iput_final(struct inode *inode)
-> >               return;
-> >       }
-> >
-> > +     /*
-> > +      * Re-check ->i_count in case the ->drop_inode() hooks played gam=
-es.
-> > +      * Note we only execute this if the verdict was to drop the inode=
-.
-> > +      */
-> > +     VFS_BUG_ON_INODE(atomic_read(&inode->i_count) !=3D 0, inode);
-> > +
->
-> I'm not sure this can catch much but OK...
->
+Would be good to document the race in the comment saying that
+gpuva.lock shouldn't be held though.
 
-It can catch drop routines which bumped the ref but did not release
-it, or which indicated to continue with drop while someone else
-snatched the reference.
 
-Preferaby the APIs would prevent that in the first place, but there is
-quite a bit of shit-shoveling before that happens.
+
 
