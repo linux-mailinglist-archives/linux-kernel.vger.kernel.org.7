@@ -1,158 +1,253 @@
-Return-Path: <linux-kernel+bounces-839556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14902BB1DFF
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 23:48:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F28BBBB1E08
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 23:51:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5C523AC162
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 21:48:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5A4B7A87E6
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 21:50:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFF59306B04;
-	Wed,  1 Oct 2025 21:48:34 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78DDD311C20;
+	Wed,  1 Oct 2025 21:51:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YHnzPXVm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC6F0145355
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 21:48:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5F6E2D29D1
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 21:51:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759355314; cv=none; b=AnseVl/wqQev6y8gFlPc7ywfYIbMskkB+kHjVBO1i175ShNnPs/gk01dwSn16ZLsH8PEVQYRSuJD1bKSiHIbwawmBegw4ZLLJoLrI/XkkRllNRsuurKseJqexC6TUKVxlYBoxJri51o4zkc/c1npLMOo3AeVkJFBHFe2fHxFmlM=
+	t=1759355499; cv=none; b=BZNIQaFKrA2nGtzkCXtSbiYtRKhEN+zgCLPDRnBFolwcm8aMmbAYswUP6U9e7NsJoHE1z4zzRo2VTE9uf75I0zHjb9PeL/VBhMJ1t7OHPRn3jGOPoTXl/iwpckkfSQLX2KSGniuO5ynzY2tsWsyvZEox9l1MMUY9KAM+Zydm7RE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759355314; c=relaxed/simple;
-	bh=pEhOwT1X7in50Kr5GHnScokN5PKyai0jXz2LjZohrqQ=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=hgzHTgmJGkPIGYCYu5peU+QoOUpAxs0EAxv1WNTDmCCZjOPW7jlLzTxCYz2wnEZwJCYoB3yMyu8htTnNWRkfhItgtKqnREZlXvYiVOVDWKUdJMFMLUvMR7YNKIF6OlYdSgHNfp34Lyd7djYXIz/1AYn7wNhiHhp705l3wSUUV3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-42d8c210d84so4159225ab.3
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 14:48:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759355311; x=1759960111;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1xa3U68yYOKHDPpIJxyjQuvshkNBKqLyHda+ZM1Ox+M=;
-        b=YrB64TOX+8BNH+ahFt8bDj3y3EHnrnyNhjbJWDs6GkrTK98BPMF78zXUeE3BVNshN3
-         sJLq7YKqAlwyh8DZft6hN9qf7MXWOV4yTqVp5JYTY6bI5vgwKmea9+qzMaKi59VwVMb6
-         T6m+NaM1m03M14Rtvnhvunb1QBrlHkD9Gfh10mbJIAnyixC1RpJmZLePWRfC1LVGifV+
-         IIVpSzvbHkbviRnjsk9NaB0d5srn5iUCRQiH3oP59ap77/y49Xg5hAmQmEZmmktlX9YP
-         eM+Ll3nG4OFJJf4eyY+kCHfm77/6k2oMKD5dR8HJOmrW5pKrnu78YgX/JE2ZZft8oiKk
-         skRA==
-X-Forwarded-Encrypted: i=1; AJvYcCVhqKdgsUyme+s9+ReKBPmnCMMMQzG5sz8ZmF2rlmoj4nLykfITFtumm8Klr/8C887cdqOiA7EzP+KC3WI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVd/9wu0wXVrGVVMWqpQjuS7DwysOF/QCFGYRIJMJFiAvoBxYd
-	zaj2AGlmGgabEt2IDRbmCloGUK+TlgxRXJdlEm2hTiU9an2Pog9jqJzzenpDlIAGuvYOERSCovX
-	8zEaCZQ6VydpfozH8SyH0D9qGA2pCrI1vlak9S4V5L9C82JwVLpHAkN+AQIA=
-X-Google-Smtp-Source: AGHT+IE5wIakhy9YKOvGa4bItMlG+QqKT5ISj5Gtsed52/sYxurOGRNJvjOCqe0+edpB/pU6Trd6c1gaRWScAELTJYj6aQy/Ow/o
+	s=arc-20240116; t=1759355499; c=relaxed/simple;
+	bh=9UL/1ASgh+3hLlEezmNNQbuDpvgLbZG38vZaP1sp9Cw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=U7TIeFcBtxVRgYB9+zsY8577YBG2yO0Il95KXaHXg5n7Gp1vosCYhkhRnqYQPZHc4obo+kCzF0gwZbvqhEOdwru9yrz8z4RNIU0LfBwzDrofa81pgzc0tYBOhL3qcARN0lI/Kh8illM2Bz/5A3mBDzKJgmElUbC47qQYTWZQMn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YHnzPXVm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52017C4CEFE
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 21:51:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759355499;
+	bh=9UL/1ASgh+3hLlEezmNNQbuDpvgLbZG38vZaP1sp9Cw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=YHnzPXVmYJpU0gGLoy4rmWgBozcuyd7kjcY1mASOMvPWR1E2W97F/5REOEdlPzHLp
+	 FsGudIuJyiZVWiLbZ7j9BaU7I+FWDD6PfLx4tOUcUfFqJzIu3ywBl+kA50uSBvX6N7
+	 Mv4etor1U88XQhqCuZB/ndjyJeX/82jE5Q8/lXqrJmeTWV/IUdxb4+nAIejZXs5JOS
+	 hXCqswDxm2+6J9mh80Kqs2X3QFnu3P5IajgGtE/f8MnFAJtTuxM78SKcGgoRBIh5Dt
+	 sLkY7AaGuox7VPgfceKMXJae+VNcGUuclrpfByx8IwqfWKMLYlS99Mghtsuz4DtO/T
+	 tUQBDmJ113cxw==
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b3f5e0e2bf7so70154566b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 14:51:39 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUghrKBapgw/VHLZkJgkVNImJcAMnJBV0wptaQuqXNFkURqJiG5izYDu2ct/Jxo+mF+YKcxkMZNgKn5wo0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhpR4gS/eiFMaNiNhNeQqAVgz1XaiwrJyoQNYrZpofzp4TN2Y4
+	GVa87UqpSootb2YRlLs+cVj2882bBZF6APVBht3/5Nr7OKHoP8tzw1j44CI8LEGRsOca93WeGAY
+	EpyRcDKp112k/Bf+jKoF3I0uArvL+MNU=
+X-Google-Smtp-Source: AGHT+IGCxqtUuxm7ClLljvd7wD37dNh3EkUg+6omScocWf+s5yMLrXQ4a566ZKctxfsdNuSze1VNwijvTfHBl0iVV7c=
+X-Received: by 2002:a17:906:c149:b0:b3d:b251:cded with SMTP id
+ a640c23a62f3a-b46e4d79a6fmr658959866b.16.1759355497775; Wed, 01 Oct 2025
+ 14:51:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1aa7:b0:428:f19b:2947 with SMTP id
- e9e14a558f8ab-42d8159ea64mr82287515ab.6.1759355310914; Wed, 01 Oct 2025
- 14:48:30 -0700 (PDT)
-Date: Wed, 01 Oct 2025 14:48:30 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68dda1ae.a00a0220.102ee.0065.GAE@google.com>
-Subject: [syzbot] [arm?] WARNING in copy_highpage
-From: syzbot <syzbot+d1974fc28545a3e6218b@syzkaller.appspotmail.com>
-To: catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	will@kernel.org
+References: <20251001180503.1353226-1-mssola@mssola.com>
+In-Reply-To: <20251001180503.1353226-1-mssola@mssola.com>
+From: Filipe Manana <fdmanana@kernel.org>
+Date: Wed, 1 Oct 2025 22:50:59 +0100
+X-Gmail-Original-Message-ID: <CAL3q7H7V0XQVvOiX8VwyZDzdM6qJeSbcq32sVYducLnNc4+ZWA@mail.gmail.com>
+X-Gm-Features: AS18NWDFuzHCWUUOoibJvyzdud3JgSuw4N--nCXlu1dmpQuNpPTXei3KsV4Ad1A
+Message-ID: <CAL3q7H7V0XQVvOiX8VwyZDzdM6qJeSbcq32sVYducLnNc4+ZWA@mail.gmail.com>
+Subject: Re: [PATCH v2] btrfs: prevent a double kfree on delayed-ref
+To: =?UTF-8?B?TWlxdWVsIFNhYmF0w6kgU29sw6A=?= <mssola@mssola.com>
+Cc: linux-btrfs@vger.kernel.org, clm@fb.com, dsterba@suse.com, 
+	fdmanana@suse.com, wqu@suse.com, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Wed, Oct 1, 2025 at 7:05=E2=80=AFPM Miquel Sabat=C3=A9 Sol=C3=A0 <mssola=
+@mssola.com> wrote:
+>
+> In the previous code it was possible to incur into a double kfree()
+> scenario when calling add_delayed_ref_head(). This could happen if the
+> record was reported to already exist in the
+> btrfs_qgroup_trace_extent_nolock() call, but then there was an error
+> later on add_delayed_ref_head(). In this case, since
+> add_delayed_ref_head() returned an error, the caller went to free the
+> record. Since add_delayed_ref_head() couldn't set this kfree'd pointer
+> to NULL, then kfree() would have acted on a non-NULL 'record' object
+> which was pointing to memory already freed by the callee.
+>
+> The problem comes from the fact that the responsibility to kfree the
+> object is on both the caller and the callee at the same time. Hence, the
+> fix for this is to shift the ownership of the 'qrecord' object out of
+> the add_delayed_ref_head(). That is, we will never attempt to kfree()
+> the given object inside of this function, and will expect the caller to
+> act on the 'qrecord' object on its own. The only exception where the
+> 'qrecord' object cannot be kfree'd is if it was inserted into the
+> tracing logic, for which we already have the 'qrecord_inserted_ret'
+> boolean to account for this. Hence, the caller has to kfree the object
+> only if add_delayed_ref_head() reports not to have inserted it on the
+> tracing logic.
+>
+> As a side-effect of the above, we must guarantee that
+> 'qrecord_inserted_ret' is properly initialized at the start of the
+> function, not at the end, and then set when an actual insert
+> happens. This way we avoid 'qrecord_inserted_ret' having an invalid
+> value on an early exit.
+>
+> The documentation from the add_delayed_ref_head() has also been updated
+> to reflect on the exact ownership of the 'qrecord' object.
+>
+> Fixes: 6ef8fbce0104 ("btrfs: fix missing error handling when adding delay=
+ed ref with qgroups enabled")
+> Signed-off-by: Miquel Sabat=C3=A9 Sol=C3=A0 <mssola@mssola.com>
 
-syzbot found the following issue on:
+Reviewed-by: Filipe Manana <fdmanana@suse.com>
 
-HEAD commit:    fec734e8d564 Merge tag 'riscv-for-linus-v6.17-rc8' of git:..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12187d34580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=13bd892ec3b155a2
-dashboard link: https://syzkaller.appspot.com/bug?extid=d1974fc28545a3e6218b
-compiler:       aarch64-linux-gnu-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
+Thanks. I've pushed this to for-next [1] and renamed the subject to be
+more specific:
 
-Unfortunately, I don't have any reproducer for this issue yet.
+"btrfs: fix double free of qgroup record after failure to add delayed ref h=
+ead"
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/fa3fbcfdac58/non_bootable_disk-fec734e8.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/d7e18b408aea/vmlinux-fec734e8.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/9b7984f47117/Image-fec734e8.gz.xz
+[1] https://github.com/btrfs/linux/commits/for-next/
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d1974fc28545a3e6218b@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 25189 at arch/arm64/mm/copypage.c:55 try_page_mte_tagging arch/arm64/include/asm/mte.h:93 [inline]
-WARNING: CPU: 1 PID: 25189 at arch/arm64/mm/copypage.c:55 copy_highpage+0x150/0x334 arch/arm64/mm/copypage.c:55
-Modules linked in:
-CPU: 1 UID: 0 PID: 25189 Comm: syz.2.7336 Not tainted syzkaller #0 PREEMPT 
-Hardware name: linux,dummy-virt (DT)
-pstate: 00402009 (nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : copy_highpage+0x150/0x334 arch/arm64/mm/copypage.c:55
-lr : copy_highpage+0xb4/0x334 arch/arm64/mm/copypage.c:25
-sp : ffff800088053940
-x29: ffff800088053940 x28: ffffc1ffc0acf800 x27: ffff800088053b10
-x26: ffffc1ffc0acf808 x25: ffffc1ffc037b1c0 x24: ffffc1ffc037b1c0
-x23: ffffc1ffc0acf800 x22: ffffc1ffc0acf800 x21: fff000002b3e0000
-x20: fff000000dec7000 x19: ffffc1ffc037b1c0 x18: 0000000000000000
-x17: fff07ffffcffa000 x16: ffff800080008000 x15: 0000000000000001
-x14: 0000000000000000 x13: 0000000000000003 x12: 000000000006d9ad
-x11: 0000000000000000 x10: 0000000000000010 x9 : 0000000000000000
-x8 : 0000000000000000 x7 : 0000000000000000 x6 : 0000000000000000
-x5 : ffff800088053b18 x4 : ffff80008032df94 x3 : 00000000ff000000
-x2 : 01ffc00003000001 x1 : 01ffc00003000001 x0 : 01ffc00003000001
-Call trace:
- try_page_mte_tagging arch/arm64/include/asm/mte.h:93 [inline] (P)
- copy_highpage+0x150/0x334 arch/arm64/mm/copypage.c:55 (P)
- copy_mc_highpage include/linux/highmem.h:383 [inline]
- folio_mc_copy+0x44/0x6c mm/util.c:740
- __migrate_folio.constprop.0+0xc4/0x23c mm/migrate.c:851
- migrate_folio+0x1c/0x2c mm/migrate.c:882
- move_to_new_folio+0x58/0x144 mm/migrate.c:1097
- migrate_folio_move mm/migrate.c:1370 [inline]
- migrate_folios_move mm/migrate.c:1719 [inline]
- migrate_pages_batch+0xaf4/0x1024 mm/migrate.c:1966
- migrate_pages_sync mm/migrate.c:2023 [inline]
- migrate_pages+0xb9c/0xcdc mm/migrate.c:2105
- do_mbind+0x20c/0x4a4 mm/mempolicy.c:1539
- kernel_mbind mm/mempolicy.c:1682 [inline]
- __do_sys_mbind mm/mempolicy.c:1756 [inline]
- __se_sys_mbind mm/mempolicy.c:1752 [inline]
- __arm64_sys_mbind+0xd0/0xd8 mm/mempolicy.c:1752
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x48/0x110 arch/arm64/kernel/syscall.c:49
- el0_svc_common.constprop.0+0x40/0xe0 arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x1c/0x28 arch/arm64/kernel/syscall.c:151
- el0_svc+0x34/0x10c arch/arm64/kernel/entry-common.c:879
- el0t_64_sync_handler+0xa0/0xe4 arch/arm64/kernel/entry-common.c:898
- el0t_64_sync+0x1a4/0x1a8 arch/arm64/kernel/entry.S:596
----[ end trace 0000000000000000 ]---
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> ---
+>
+> Changes in v2:
+>
+> - Change documentation to reflect that we are using an xarray instead of =
+an
+>   rbtree.
+> - Change warning to assertion on qrecord_insert_ret.
+> - Fix function notation on comments.
+> - Fix commit message as suggested
+>
+>  fs/btrfs/delayed-ref.c | 43 ++++++++++++++++++++++++++++++++----------
+>  1 file changed, 33 insertions(+), 10 deletions(-)
+>
+> diff --git a/fs/btrfs/delayed-ref.c b/fs/btrfs/delayed-ref.c
+> index 481802efaa14..f8fc26272f76 100644
+> --- a/fs/btrfs/delayed-ref.c
+> +++ b/fs/btrfs/delayed-ref.c
+> @@ -798,9 +798,13 @@ static void init_delayed_ref_head(struct btrfs_delay=
+ed_ref_head *head_ref,
+>  }
+>
+>  /*
+> - * helper function to actually insert a head node into the rbtree.
+> - * this does all the dirty work in terms of maintaining the correct
+> - * overall modification count.
+> + * Helper function to actually insert a head node into the xarray. This =
+does all
+> + * the dirty work in terms of maintaining the correct overall modificati=
+on
+> + * count.
+> + *
+> + * The caller is responsible for calling kfree() on @qrecord. More speci=
+fically,
+> + * if this function reports that it did not insert it as noted in
+> + * @qrecord_inserted_ret, then it's safe to call kfree() on it.
+>   *
+>   * Returns an error pointer in case of an error.
+>   */
+> @@ -814,7 +818,14 @@ add_delayed_ref_head(struct btrfs_trans_handle *tran=
+s,
+>         struct btrfs_delayed_ref_head *existing;
+>         struct btrfs_delayed_ref_root *delayed_refs;
+>         const unsigned long index =3D (head_ref->bytenr >> fs_info->secto=
+rsize_bits);
+> -       bool qrecord_inserted =3D false;
+> +
+> +       /*
+> +        * If 'qrecord_inserted_ret' is provided, then the first thing we=
+ need
+> +        * to do is to initialize it to false just in case we have an exi=
+t
+> +        * before trying to insert the record.
+> +        */
+> +       if (qrecord_inserted_ret)
+> +               *qrecord_inserted_ret =3D false;
+>
+>         delayed_refs =3D &trans->transaction->delayed_refs;
+>         lockdep_assert_held(&delayed_refs->lock);
+> @@ -833,6 +844,12 @@ add_delayed_ref_head(struct btrfs_trans_handle *tran=
+s,
+>
+>         /* Record qgroup extent info if provided */
+>         if (qrecord) {
+> +               /*
+> +                * Setting 'qrecord' but not 'qrecord_inserted_ret' will =
+likely
+> +                * result in a memory leakage.
+> +                */
+> +               ASSERT(qrecord_inserted_ret !=3D NULL);
+> +
+>                 int ret;
+>
+>                 ret =3D btrfs_qgroup_trace_extent_nolock(fs_info, delayed=
+_refs, qrecord,
+> @@ -840,12 +857,10 @@ add_delayed_ref_head(struct btrfs_trans_handle *tra=
+ns,
+>                 if (ret) {
+>                         /* Clean up if insertion fails or item exists. */
+>                         xa_release(&delayed_refs->dirty_extents, index);
+> -                       /* Caller responsible for freeing qrecord on erro=
+r. */
+>                         if (ret < 0)
+>                                 return ERR_PTR(ret);
+> -                       kfree(qrecord);
+> -               } else {
+> -                       qrecord_inserted =3D true;
+> +               } else if (qrecord_inserted_ret) {
+> +                       *qrecord_inserted_ret =3D true;
+>                 }
+>         }
+>
+> @@ -888,8 +903,6 @@ add_delayed_ref_head(struct btrfs_trans_handle *trans=
+,
+>                 delayed_refs->num_heads++;
+>                 delayed_refs->num_heads_ready++;
+>         }
+> -       if (qrecord_inserted_ret)
+> -               *qrecord_inserted_ret =3D qrecord_inserted;
+>
+>         return head_ref;
+>  }
+> @@ -1049,6 +1062,14 @@ static int add_delayed_ref(struct btrfs_trans_hand=
+le *trans,
+>                 xa_release(&delayed_refs->head_refs, index);
+>                 spin_unlock(&delayed_refs->lock);
+>                 ret =3D PTR_ERR(new_head_ref);
+> +
+> +               /*
+> +                * It's only safe to call kfree() on 'qrecord' if
+> +                * add_delayed_ref_head() has _not_ inserted it for
+> +                * tracing. Otherwise we need to handle this here.
+> +                */
+> +               if (!qrecord_reserved || qrecord_inserted)
+> +                       goto free_head_ref;
+>                 goto free_record;
+>         }
+>         head_ref =3D new_head_ref;
+> @@ -1071,6 +1092,8 @@ static int add_delayed_ref(struct btrfs_trans_handl=
+e *trans,
+>
+>         if (qrecord_inserted)
+>                 return btrfs_qgroup_trace_extent_post(trans, record, gene=
+ric_ref->bytenr);
+> +
+> +       kfree(record);
+>         return 0;
+>
+>  free_record:
+> --
+> 2.51.0
+>
 
