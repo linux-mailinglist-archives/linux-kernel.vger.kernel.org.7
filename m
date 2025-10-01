@@ -1,114 +1,106 @@
-Return-Path: <linux-kernel+bounces-839223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05E18BB1172
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 17:35:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25C5ABB114E
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 17:33:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CD053B7115
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 15:35:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8297E3BB49A
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 15:33:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D4F27B33E;
-	Wed,  1 Oct 2025 15:35:08 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F2E3223DD1;
-	Wed,  1 Oct 2025 15:35:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F55C149C7B;
+	Wed,  1 Oct 2025 15:33:39 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 548E5243367
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 15:33:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759332908; cv=none; b=RzPnRqcOhXrCfKRWMmxlO+mRjIS57+EYBBbnRMETFDk4zrCicK8U6XgeGE2MhjijJl6CxxWsKDn5qleLAqG9kxk3F5Hfu3PYMUrYBXv/jr9/i8XeLMeu8lJ/rw8ipN1hrrtNji7BsvAWFoIEQoz3hv9VuTL/TUckebecNuRbri8=
+	t=1759332819; cv=none; b=RSdDNsvTW4k+XGK4wRL+VFM0pWbVzAzeYaQYLo7+Mw4hb7RtGqXv177MW1NQJN1QgatjPPgHzbW7DnHQ2c7pg2Sd+qq0Ph6GdhhkhcSFDim10rbuhVUhvDGwevNfEfjGA63MUnaYOO5LB1KaepWhXk+uCRzbqr48I2KCMn3Zz/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759332908; c=relaxed/simple;
-	bh=59Mqh0CdSpOWIsPEyEauP63ultt2BPHEwJ6nY4gUEKs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q4G98jP0AQ9oBO8vg1f+Gw/YtB9GYBKi6ZH2VEkdyccdFUBEa93AHYdEZQxutLltW6FNvJJty0vBoTxdADvMJoI+Rmw276EYTSPa4TSL1sIxmC2t8BYToLkQapra+xvuZJwPbpCW4owFpvl5iYUhABS/dPtFYHLAY1o7+CzLrmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 608601692;
-	Wed,  1 Oct 2025 08:34:58 -0700 (PDT)
-Received: from [10.57.0.204] (unknown [10.57.0.204])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D1A183F59E;
-	Wed,  1 Oct 2025 08:35:01 -0700 (PDT)
-Message-ID: <99de8b04-7e7d-404b-aab8-5759a1f28c1a@arm.com>
-Date: Wed, 1 Oct 2025 16:34:59 +0100
+	s=arc-20240116; t=1759332819; c=relaxed/simple;
+	bh=b2ROy7pJUvmvpizoALmuXSfKM5WqsgV8jdrYsYCRhOY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=H4ShOoJi2sdseW3LlEOy5gf+Ix8EdJBx14gegBzEBlxFnen7I11twMMudK506iIUFBAw590UO5zXyuWnl+y6rRQF2MFsXLXvrlVewmIZeHhaUVbq2dnyNFt9AoEVLhgI5CIrijzf7PDRjjYRwuAPK1J4aD+WBZzHSwem9M7zZxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf16.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay08.hostedemail.com (Postfix) with ESMTP id 3692914014C;
+	Wed,  1 Oct 2025 15:33:30 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf16.hostedemail.com (Postfix) with ESMTPA id 773A92000E;
+	Wed,  1 Oct 2025 15:33:27 +0000 (UTC)
+Date: Wed, 1 Oct 2025 11:35:05 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: jpoimboe@kernel.org, rostedt@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 05/12] unwind: Add comment to
+ unwind_deferred_task_exit()
+Message-ID: <20251001113505.25281444@gandalf.local.home>
+In-Reply-To: <20250924080118.893367437@infradead.org>
+References: <20250924075948.579302904@infradead.org>
+	<20250924080118.893367437@infradead.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 05/43] arm64: RME: Check for RME support at KVM init
-To: Marc Zyngier <maz@kernel.org>
-Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- James Morse <james.morse@arm.com>, Oliver Upton <oliver.upton@linux.dev>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
- <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
- Alexandru Elisei <alexandru.elisei@arm.com>,
- Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
- linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
- Gavin Shan <gshan@redhat.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
- Alper Gun <alpergun@google.com>, "Aneesh Kumar K . V"
- <aneesh.kumar@kernel.org>, Emi Kisanuki <fj0570is@fujitsu.com>,
- Vishal Annapurve <vannapurve@google.com>
-References: <20250820145606.180644-1-steven.price@arm.com>
- <20250820145606.180644-6-steven.price@arm.com> <86ms6azxt5.wl-maz@kernel.org>
- <2226e62f-76ca-4467-a8ae-460fd463df0a@arm.com> <86h5wizqvn.wl-maz@kernel.org>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <86h5wizqvn.wl-maz@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Stat-Signature: 7c5ybzz6h17cu59mkcupwqiz4thyqnm7
+X-Rspamd-Server: rspamout08
+X-Rspamd-Queue-Id: 773A92000E
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/CFcaf/RKIM2DC6hcTHUFcz2XRrCMloJo=
+X-HE-Tag: 1759332807-167624
+X-HE-Meta: U2FsdGVkX1/wDDV+bqNp7UK+Q8h+FxnkEAUZEpp11uOLbQrTyg/ZgM5B5laTNoNS7/AC3fjKPWeDs4iYpsVE8s6qEkkUIQvat9+yT+27d1RIC94QVT87vxOayk0aSjKkvxtG6v6hW2kwgUSqrvl31cbotqsVDqLaujbQUCQf0genB+sqiuLffndhWbbtBwD2YPcmurJjYL2tdGtnzno9jJcJ0zlBJjx+ZCDgLw7bcLUBItiqtW1+5meHWqkYmjy2l3MJ995kMl2tMKuAebcepT0LTyr1436j+p5PZvI6eKyRqbid3DHQB0oCQYAgA9M+3Mnrg7HqiLb2GCFb9OGmDwARpjE6JaIG9JzXt4Rg64y7G890i/upbXRZf4hFXoQl
 
-On 01/10/2025 14:35, Marc Zyngier wrote:
-> On Wed, 01 Oct 2025 14:20:13 +0100,
-> Steven Price <steven.price@arm.com> wrote:
->>
->>>> +static int rmi_check_version(void)
->>>> +{
->>>> +	struct arm_smccc_res res;
->>>> +	unsigned short version_major, version_minor;
->>>> +	unsigned long host_version = RMI_ABI_VERSION(RMI_ABI_MAJOR_VERSION,
->>>> +						     RMI_ABI_MINOR_VERSION);
->>>> +
->>>> +	arm_smccc_1_1_invoke(SMC_RMI_VERSION, host_version, &res);
->>>
->>> Shouldn't you first check that RME is actually available, by looking
->>> at ID_AA64PFR0_EL1.RME?
->>
->> Well, you made a good point above that this isn't RME, it's CCA. And I
->> guess there's a possible world where the CCA interface could be
->> supported with something other than FEAT_RME (FEAT_RME2 maybe?) so I'm
->> not sure it necessarily a good idea to pin this on a CPU feature
->> bit.
-> 
-> But you cannot have CCA without RME. You cannot have CCA with
-> GICv3. And my point was more that RME could be used by something other
-> than CCA  - I certainly don't anticipate someone else adopting the CCA
-> interface for anything...
-> 
->> Ultimately what we want to know is whether the firmware thinks it can
->> supply us with the CCA interface and we don't really care how it
->> achieves it.
-> 
-> I disagree. You rely on specific feature sets to be available (hell,
-> everything is baked around GICv3... GICv5 anyone?).
-> 
-> For this sort of stuff, you absolutely need to know what you are
-> running on, not what some broken firmware tries to pretend it is.
+On Wed, 24 Sep 2025 09:59:53 +0200
+Peter Zijlstra <peterz@infradead.org> wrote:
 
-Well I don't agree, but equally I think the chances of the RMM interface
-existing without RME is nil, so I guess the extra check doesn't really
-matter. So I'll add it. In the (highly) unlikely event that it causes a
-problem then it would be easy enough to remove.
+> Explain why unwind_deferred_task_exit() exist and its constraints.
+> 
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> ---
+>  kernel/exit.c |    7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> --- a/kernel/exit.c
+> +++ b/kernel/exit.c
+> @@ -934,7 +934,6 @@ void __noreturn do_exit(long code)
+>  
+>  	tsk->exit_code = code;
+>  	taskstats_exit(tsk, group_dead);
+> -	unwind_deferred_task_exit(tsk);
+>  	trace_sched_process_exit(tsk, group_dead);
+>  
+>  	/*
+> @@ -945,6 +944,12 @@ void __noreturn do_exit(long code)
+>  	 * gets woken up by child-exit notifications.
+>  	 */
+>  	perf_event_exit_task(tsk);
+> +	/*
+> +	 * PF_EXITING (above) ensures unwind_deferred_request() will no
+> +	 * longer add new unwinds. While exit_mm() (below) will destroy the
+> +	 * abaility to do unwinds.
 
-Thanks,
-Steve
+
+I would state that it also flushes any unwind that is currently pending, as
+exit_mm() will prevent it from happening.
+
+-- Steve
+
+
+> +	 */
+> +	unwind_deferred_task_exit(tsk);
+>  
+>  	exit_mm();
+>  
+> 
 
 
