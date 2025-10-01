@@ -1,183 +1,142 @@
-Return-Path: <linux-kernel+bounces-839092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D104BB0CD7
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 16:48:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2769DBB0D16
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 16:50:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 007502A5A32
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 14:48:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D791016C77F
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 14:50:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDE5625DB1A;
-	Wed,  1 Oct 2025 14:48:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13F0B3064B3;
+	Wed,  1 Oct 2025 14:48:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RFtEbNoa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r76KOMt3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C4F172626;
-	Wed,  1 Oct 2025 14:48:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D573D303A20;
+	Wed,  1 Oct 2025 14:48:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759330101; cv=none; b=ruk96Ohs+4f/RZlsB25li9hV+QFfFgX1cqwrIet8Yhy+yH+XDOp1xATi6jmQJmmJidLWHq9G1rNgowXqjVvSiUBGC1/SQQyBZmS3hzSAS2xMD3fI0qQHoYJAWuHV11604EpWu4Nr1/RZM+EuZNXhUF8Dud+49WZNKLnrB4S8D/w=
+	t=1759330119; cv=none; b=P4DNL9TfJJeBXZ25N7nv6nWDMpgf/BCmaVoYgwdrAC9HtVB01QegqY6xn71AwibXAao7GPslYMbxHrt/f/YPxTlZQJA+WPM46QAJ8LK23c3xRlzExIeJlM1muaHledyekp8uQaeds6sxt3wVMtUi9Js92exZz/TNYgWDwkgoga8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759330101; c=relaxed/simple;
-	bh=IUQ/08mc8j3yUFCIJ/ggXNU/xiz+c770Pku4qWT2tHQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=i7hgiorfnVdGMmyJMDpQFMqGgddG3gU00IKjO2RLew2sNqsokwGg3tczNrVAjA6KAqxyJB+p8L6le1HwNWuYJL/YaTRA8KkN3kIqkaylw8eWWc2QvUMJrM5gCi7zlqH5VL3VOWqs8/z27SWfnAYXVi7PIytjMztaKnEzm0gjEHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RFtEbNoa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C053C4CEF1;
-	Wed,  1 Oct 2025 14:48:20 +0000 (UTC)
+	s=arc-20240116; t=1759330119; c=relaxed/simple;
+	bh=H2Rpde2Lnzmi1rrKiEk9cEd+o18Lx4S73RaemLuL/J0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=VzUXnmYtoVH0AmIl/2Yuk9ZEOZTc4H/GjrfGtWyHcy6ecL24bXRqqhaTtSQhIp4hROrX2DhT14wvZMpI4x8sdqfKMrOJPruqL7/jEANa6CsnFjspPWMdvPA+e8oAnPWh2EJey8gVBbaiB60rYzDHDb134rxTMHjY0DAbrCEW+Fk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r76KOMt3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53212C4CEFC;
+	Wed,  1 Oct 2025 14:48:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759330100;
-	bh=IUQ/08mc8j3yUFCIJ/ggXNU/xiz+c770Pku4qWT2tHQ=;
-	h=Date:From:To:Cc:Subject:Reply-To:From;
-	b=RFtEbNoaxzgFdCSARZ8YahBF4JCQn6VOoXSv1E6OPcRGieIYXRsvW7Lyw/mBkEu06
-	 T8IMUNWXFK1/nVaNsNDohnEXc2641F7zGznSP9C9nSOv6p+u69jA4kC/L/wNec821B
-	 RdZ/A+4o8TyALm5w//Ox4o99jhqDtotzGxHQakD+tQ5H80nTB5kYDjLzOFd5T5XQ+s
-	 MhnZR/n2QKDtEkRhuuE/Bakrb5lCp3aXUQxjaCbyNE1l8spCZnVBSD7dskgxj3vdMR
-	 ZzFIURB8MMvX+CIFePVNM8V4NkSfxVdqoL9pLcouBWV4tJhylqpn7lY4K9tkj3iO+j
-	 /WlplaoIT/iFw==
+	s=k20201202; t=1759330119;
+	bh=H2Rpde2Lnzmi1rrKiEk9cEd+o18Lx4S73RaemLuL/J0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=r76KOMt33iJbGQvvJTCb2tOk0tL1Zg7UZS6SE6LrL8QWR1m5koA5xspEnh9nc5Zj/
+	 h4RmJ7pIhFP/VP9nbsk2MrzRyyHIv50HhLUYFmwdpZs+G9kaWKSMvZDaSMhZmy7ghz
+	 O17qTPZKhprfs/Kr20/n0lBDksxg2RDEQaLhhiI3ahcx8c1rb6KAZOgw3hyGGsWPmg
+	 r/myOGTYt02w8oimpWnsEnNZ2nFDJX9kAvFvIEnp2cjO1HUDtLHatOn8uapDYzBJIn
+	 nk7I98MWEnGWiq/vurOXIBuDl/KvXJWAwU3PlTVt5Z+TOakTrExR45I9fZWoAnXxGt
+	 RfnaNmlZm/HXA==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 9A97FCE0F80; Wed,  1 Oct 2025 07:48:17 -0700 (PDT)
-Date: Wed, 1 Oct 2025 07:48:17 -0700
+	id 72A28CE11BD; Wed,  1 Oct 2025 07:48:34 -0700 (PDT)
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: rcu@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com, rostedt@goodmis.org,
-	andrii@kernel.org, ast@kernel.org, peterz@infradead.org,
+Cc: linux-kernel@vger.kernel.org,
+	kernel-team@meta.com,
+	rostedt@goodmis.org,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
 	bpf@vger.kernel.org
-Subject: [PATCH v2 0/21] Implement RCU Tasks Trace in terms of SRCU-fast and
- optimize
-Message-ID: <7fa58961-2dce-4e08-8174-1d1cc592210f@paulmck-laptop>
-Reply-To: paulmck@kernel.org
+Subject: [PATCH v2 07/21] rcutorture: Test srcu_expedite_current()
+Date: Wed,  1 Oct 2025 07:48:18 -0700
+Message-Id: <20251001144832.631770-7-paulmck@kernel.org>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <7fa58961-2dce-4e08-8174-1d1cc592210f@paulmck-laptop>
+References: <7fa58961-2dce-4e08-8174-1d1cc592210f@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Hello!
+This commit adds a ->exp_current member to the rcu_torture_ops structure
+to test the srcu_expedite_current() function.
 
-This v2 series re-implements RCU Tasks Trace in terms of SRCU-fast,
-reducing the size of the Linux-kernel RCU implementation by several
-hundred lines of code.  It also removes a conditional branch from the
-srcu_read_lock_fast() implementation in order to make SRCU-fast a bit
-more fastpath-friendly.  The patches are as follows:
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+Cc: Andrii Nakryiko <andrii@kernel.org>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: <bpf@vger.kernel.org>
+---
+ kernel/rcu/rcutorture.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-1.	Permit Tiny SRCU srcu_read_unlock() with interrupts disabled.
+diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
+index 485fa822b6a753..64803d09fc733a 100644
+--- a/kernel/rcu/rcutorture.c
++++ b/kernel/rcu/rcutorture.c
+@@ -389,6 +389,7 @@ struct rcu_torture_ops {
+ 	void (*deferred_free)(struct rcu_torture *p);
+ 	void (*sync)(void);
+ 	void (*exp_sync)(void);
++	void (*exp_current)(void);
+ 	unsigned long (*get_gp_state_exp)(void);
+ 	unsigned long (*start_gp_poll_exp)(void);
+ 	void (*start_gp_poll_exp_full)(struct rcu_gp_oldstate *rgosp);
+@@ -857,6 +858,11 @@ static void srcu_torture_synchronize_expedited(void)
+ 	synchronize_srcu_expedited(srcu_ctlp);
+ }
+ 
++static void srcu_torture_expedite_current(void)
++{
++	srcu_expedite_current(srcu_ctlp);
++}
++
+ static struct rcu_torture_ops srcu_ops = {
+ 	.ttype		= SRCU_FLAVOR,
+ 	.init		= rcu_sync_torture_init,
+@@ -871,6 +877,7 @@ static struct rcu_torture_ops srcu_ops = {
+ 	.deferred_free	= srcu_torture_deferred_free,
+ 	.sync		= srcu_torture_synchronize,
+ 	.exp_sync	= srcu_torture_synchronize_expedited,
++	.exp_current	= srcu_torture_expedite_current,
+ 	.same_gp_state	= same_state_synchronize_srcu,
+ 	.get_comp_state = get_completed_synchronize_srcu,
+ 	.get_gp_state	= srcu_torture_get_gp_state,
+@@ -919,6 +926,7 @@ static struct rcu_torture_ops srcud_ops = {
+ 	.deferred_free	= srcu_torture_deferred_free,
+ 	.sync		= srcu_torture_synchronize,
+ 	.exp_sync	= srcu_torture_synchronize_expedited,
++	.exp_current	= srcu_torture_expedite_current,
+ 	.same_gp_state	= same_state_synchronize_srcu,
+ 	.get_comp_state = get_completed_synchronize_srcu,
+ 	.get_gp_state	= srcu_torture_get_gp_state,
+@@ -1698,6 +1706,8 @@ rcu_torture_writer(void *arg)
+ 					ulo[i] = cur_ops->get_comp_state();
+ 				gp_snap = cur_ops->start_gp_poll();
+ 				rcu_torture_writer_state = RTWS_POLL_WAIT;
++				if (cur_ops->exp_current && !torture_random(&rand) % 0xff)
++					cur_ops->exp_current();
+ 				while (!cur_ops->poll_gp_state(gp_snap)) {
+ 					gp_snap1 = cur_ops->get_gp_state();
+ 					for (i = 0; i < ulo_size; i++)
+@@ -1718,6 +1728,8 @@ rcu_torture_writer(void *arg)
+ 					cur_ops->get_comp_state_full(&rgo[i]);
+ 				cur_ops->start_gp_poll_full(&gp_snap_full);
+ 				rcu_torture_writer_state = RTWS_POLL_WAIT_FULL;
++				if (cur_ops->exp_current && !torture_random(&rand) % 0xff)
++					cur_ops->exp_current();
+ 				while (!cur_ops->poll_gp_state_full(&gp_snap_full)) {
+ 					cur_ops->get_gp_state_full(&gp_snap1_full);
+ 					for (i = 0; i < rgo_size; i++)
+-- 
+2.40.1
 
-2.	Re-implement RCU Tasks Trace in terms of SRCU-fast.
-
-3.	context_tracking: Remove
-	rcu_task_trace_heavyweight_{enter,exit}().
-
-4.	Clean up after the SRCU-fastification of RCU Tasks Trace.
-
-5.	Move rcu_tasks_trace_srcu_struct out of #ifdef
-	CONFIG_TASKS_RCU_GENERIC.
-
-6.	Create an srcu_expedite_current() function.
-
-7.	Test srcu_expedite_current().
-
-8.	Add noinstr-fast rcu_read_{,un}lock_tasks_trace() APIs.
-
-9.	Update Requirements.rst for RCU Tasks Trace.
-
-10.	Deprecate rcu_read_{,un}lock_trace().
-
-11.	Create a DEFINE_SRCU_FAST().
-
-12.	Create an rcu_tasks_trace_expedite_current() function.
-
-13.	Test rcu_tasks_trace_expedite_current().
-
-14.	Make grace-period determination use ssp->srcu_reader_flavor.
-
-15.	Exercise DEFINE_STATIC_SRCU_FAST() and init_srcu_struct_fast().
-
-16.	Exercise DEFINE_STATIC_SRCU_FAST() and init_srcu_struct_fast().
-
-17.	Require special srcu_struct define/init for SRCU-fast readers.
-
-18.	Make SRCU-fast readers enforce use of SRCU-fast definition/init.
-
-19.	Update for SRCU-fast definitions and initialization.
-
-20.	Guard __DECLARE_TRACE() use of __DO_TRACE_CALL() with SRCU-fast.
-
-21.	Mark diagnostic functions as notrace.
-
-Changes since v1:
-
-o	Consolidate RCU Tasks Trace cleanup patches per Alexei Starovoitov
-	feedback.  This explains the decrease from 34 patches in v1 to
-	only 21 in this v2 series.
-
-o	While consolidating, consolidate the noinstr-fast patches and the
-	DEFINE_SRCU_FAST()/init_srcu_struct_fast() patches.
-
-o	Upgrade comments per Peter Zijlstra feedback.
-
-o	Extract Tiny SRCU bug fix into its own commit per Andrii Nakryiko
-	feedback.
-
-o	Switch srcu_expedite_current() from preempt_disable() to
-	migrate_disable() for PREEMPT_RT kernels per Zqiang feedback.
-
-o	Apply tags.
-
-https://lore.kernel.org/all/580ea2de-799a-4ddc-bde9-c16f3fb1e6e7@paulmck-laptop/
-
-						Thanx, Paul
-
-------------------------------------------------------------------------
-
- Documentation/RCU/Design/Requirements/Requirements.rst   |   33 
- b/Documentation/RCU/Design/Requirements/Requirements.rst |   12 
- b/Documentation/RCU/checklist.rst                        |   12 
- b/Documentation/RCU/whatisRCU.rst                        |    3 
- b/Documentation/admin-guide/kernel-parameters.txt        |   15 
- b/include/linux/notifier.h                               |    2 
- b/include/linux/rcupdate.h                               |   31 
- b/include/linux/rcupdate_trace.h                         |  107 +-
- b/include/linux/sched.h                                  |    1 
- b/include/linux/srcu.h                                   |   16 
- b/include/linux/srcutiny.h                               |    1 
- b/include/linux/srcutree.h                               |    8 
- b/include/linux/tracepoint.h                             |   45 -
- b/include/trace/perf.h                                   |    4 
- b/include/trace/trace_events.h                           |    4 
- b/init/init_task.c                                       |    3 
- b/kernel/context_tracking.c                              |   20 
- b/kernel/fork.c                                          |    3 
- b/kernel/rcu/Kconfig                                     |   18 
- b/kernel/rcu/rcu.h                                       |    9 
- b/kernel/rcu/rcuscale.c                                  |    7 
- b/kernel/rcu/rcutorture.c                                |    2 
- b/kernel/rcu/refscale.c                                  |    9 
- b/kernel/rcu/srcutiny.c                                  |   13 
- b/kernel/rcu/srcutree.c                                  |   58 +
- b/kernel/rcu/tasks.h                                     |  617 ---------------
- b/kernel/rcu/tree.c                                      |    2 
- b/kernel/rcu/update.c                                    |    8 
- b/kernel/tracepoint.c                                    |   21 
- b/scripts/checkpatch.pl                                  |    2 
- b/tools/testing/selftests/rcutorture/configs/rcu/TRACE01 |    1 
- b/tools/testing/selftests/rcutorture/configs/rcu/TRACE02 |    1 
- include/linux/rcupdate_trace.h                           |   81 +
- include/linux/sched.h                                    |    5 
- include/linux/srcu.h                                     |   40 
- include/linux/srcutiny.h                                 |   14 
- include/linux/srcutree.h                                 |   50 -
- kernel/rcu/Kconfig                                       |   25 
- kernel/rcu/rcutorture.c                                  |   32 
- kernel/rcu/srcutree.c                                    |   39 
- kernel/rcu/tasks.h                                       |  129 ---
- 41 files changed, 525 insertions(+), 978 deletions(-)
 
