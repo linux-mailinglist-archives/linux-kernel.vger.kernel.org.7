@@ -1,51 +1,48 @@
-Return-Path: <linux-kernel+bounces-838841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC1E7BB041D
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 13:57:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E889BBB0420
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 13:57:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F6822A3D96
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 11:57:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5A443B3462
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 11:57:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD54E2E7BC9;
-	Wed,  1 Oct 2025 11:57:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D4252E7BCE;
+	Wed,  1 Oct 2025 11:57:42 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8299B274FDB;
-	Wed,  1 Oct 2025 11:57:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDF4A2E7652;
+	Wed,  1 Oct 2025 11:57:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759319848; cv=none; b=MZ07TgK2VB3ZcljetljKz6dCQgWDVTeoZnaVuHJW6hW01+r7TG7YCaBQHHeyT6YeGMRyoxfYEy06U2bErIBZCDKGN8ur1XafiEuQeskmEL6U+o8ZhClwiAnf2YLcbyOfRtd8ooYhsLI5F8Oxu3zHJBnV+NbwXhcYCJM6nIJzCmI=
+	t=1759319862; cv=none; b=O1irqxNdRHMj5B7+BDjZQmMuWlRlibtnde1orwfAmeLmTcMTziqboTMv0JlaHC8iqtpcY1sReGaiTUMvk7QH0lApRFcYVjFfo1pGresaU6H/ALWnQBjUoR5FB22KnYQ3heyY7elphwGGfQRzgasUBdHj+v+s9s/DqxTA9yxeJh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759319848; c=relaxed/simple;
-	bh=BF5vlaRfBBcfg/QLrCOwGmvV/0Gv2eCviQVuNLH0MU8=;
+	s=arc-20240116; t=1759319862; c=relaxed/simple;
+	bh=Wku+p9ieJkSFmgR5WNUgksaqcifDe+FYFkhfSSc2Rc8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XvInywDM9YdYBWyJ6MPNdXeCI1UIp1sjpWvhQHRWr0n4Dq/Dv38dGC/0H+dPilD9lhQGgw1BJ7rFwyoEyqHvHD25MtvUp0IN8GgBandc1ZFQ5TJ0Rs7L53bbaPYnTySgQ+AATtu3xEM8yHF1iIIj1pIM/4Pj2fnODhfgyN3pUs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=RwtGNJwXRDfhjJLCZ2Qww9FE5Gvwl/y2BLuDQfT9Pid22KSPCShVMrorKfGW42rRaB/hfECDGngjC9lSaxws8IBFgjBH5BattsBjohnPFyOwoSbePeF6W+ro1C8BAUnMJxKPWjFoY74kJBnAROJC7KCNulpChINPhDcR2MJPgC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AEE3516F2;
-	Wed,  1 Oct 2025 04:57:17 -0700 (PDT)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8CC993F66E;
-	Wed,  1 Oct 2025 04:57:24 -0700 (PDT)
-Date: Wed, 1 Oct 2025 12:57:21 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Adam Young <admiyo@amperemail.onmicrosoft.com>
-Cc: Jassi Brar <jassisinghbrar@gmail.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Adam Young <admiyo@os.amperecomputing.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] Revert "mailbox/pcc: support mailbox management of the
- shared buffer"
-Message-ID: <20251001-masterful-benevolent-dolphin-a3fbea@sudeepholla>
-References: <20250926153311.2202648-1-sudeep.holla@arm.com>
- <2ef6360e-834f-474d-ac4d-540b8f0c0f79@amperemail.onmicrosoft.com>
- <CABb+yY2Uap0ePDmsy7x14mBJO9BnTcCKZ7EXFPdwigt5SO1LwQ@mail.gmail.com>
- <0f48a2b3-50c4-4f67-a8f6-853ad545bb00@amperemail.onmicrosoft.com>
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E0E6F16F2;
+	Wed,  1 Oct 2025 04:57:30 -0700 (PDT)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 810463F66E;
+	Wed,  1 Oct 2025 04:57:37 -0700 (PDT)
+Date: Wed, 1 Oct 2025 12:57:27 +0100
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: Artem Shimko <artyom.shimko@gmail.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+	Cristian Marussi <cristian.marussi@arm.com>, a.shimko.dev@gmail.com,
+	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drivers: scmi: Add completion timeout handling for raw
+ mode transfers
+Message-ID: <aN0T0tvsL6t6R3yF@pluto>
+References: <20250929142856.540590-1-a.shimko.dev@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,57 +52,126 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <0f48a2b3-50c4-4f67-a8f6-853ad545bb00@amperemail.onmicrosoft.com>
+In-Reply-To: <20250929142856.540590-1-a.shimko.dev@gmail.com>
 
-On Wed, Oct 01, 2025 at 01:25:42AM -0400, Adam Young wrote:
+On Mon, Sep 29, 2025 at 05:28:55PM +0300, Artem Shimko wrote:
+> Fix race conditions in SCMI raw mode implementation by adding proper
+> completion timeout handling. Multiple tests[1] in the SCMI test suite
+> were failing due to early clearing of SCMI_XFER_FLAG_IS_RAW flag in
+> scmi_xfer_raw_put() function.
+
+Hi Artem, 
+
 > 
-> On 9/29/25 20:19, Jassi Brar wrote:
-> > On Mon, Sep 29, 2025 at 12:11 PM Adam Young
-> > <admiyo@amperemail.onmicrosoft.com> wrote:
-> > > I posted a patch that addresses a few of these issues.  Here is a top
-> > > level description of the isse
-> > > 
-> > > 
-> > > The correct way to use the mailbox API would be to allocate a buffer for
-> > > the message,write the message to that buffer, and pass it in to
-> > > mbox_send_message.  The abstraction is designed to then provide
-> > > sequential access to the shared resource in order to send the messages
-> > > in order.  The existing PCC Mailbox implementation violated this
-> > > abstraction.  It requires each individual driver re-implement all of the
-> > > sequential ordering to access the shared buffer.
-> > > 
-> > > Why? Because they are all type 2 drivers, and the shared buffer is
-> > > 64bits in length:  32bits for signature, 16 bits for command, 16 bits
-> > > for status.  It would be execessive to kmalloc a buffer of this size.
-> > > 
-> > > This shows the shortcoming of the mailbox API.  The mailbox API assumes
-> > > that there is a large enough buffer passed in to only provide a void *
-> > > pointer to the message.  Since the value is small enough to fit into a
-> > > single register, it the mailbox abstraction could provide an
-> > > implementation that stored a union of a void * and word.
-> > > 
-> > Mailbox api does not make assumptions about the format of message
-> > hence it simply asks for void*.
-> > Probably I don't understand your requirement, but why can't you pass the pointer
-> > to the 'word' you want to use otherwise?
-> > 
-> > -jassi
-> The mbox_send_message call will then take the pointer value that you give it
-> and put it in a ring buffer.  The function then returns, and the value may
-> be popped off the stack before the message is actually sent.  In practice we
-> don't see this because much of the code that calls it is blocking code, so
-> the value stays on the stack until it is read.  Or, in the case of the PCC
-> mailbox, the value is never read or used.  But, as the API is designed, the
-> memory passed into to the function should expect to live longer than the
-> function call, and should not be allocated on the stack.
+> TRANS=raw
+> PROTOCOLS=base,clock,power_domain,performance,system_power,sensor,
+> voltage,reset,powercap,pin_control VERBOSE=5
+> 
 
-I’m still not clear on what exactly you are looking for. Let’s look at
-mbox_send_message(). It adds the provided data pointer to the queue, and then
-passes the same pointer to tx_prepare() just before calling send_data(). This
-is what I’ve been pointing out that you can obtain the buffer pointer there and
-use it to update the shared memory in the client driver.
+Glad to see that someone is using the test-suite im RAW mode out there
+in the real world :P
 
--- 
-Regards,
-Sudeep
+> The root cause:
+> Tests were failing on poll() system calls with this condition:
+>     if (!raw || (idx == SCMI_RAW_REPLY_QUEUE && !SCMI_XFER_IS_RAW(xfer)))
+>         return;
+> 
+> The SCMI_XFER_FLAG_IS_RAW flag was being cleared prematurely before
+> the transfer completion was properly acknowledged, causing the poll
+> to return on timeout and tests to fail.
+> 
+
+I have to say I had seen some anomalies, hardly reproducible, and I
+think you have a point here, good catch !
+
+The xfer flags handling is racy and it could lead to the observed
+anomalies...BUT....
+
+> Сhanges implemented:
+> 1. Add completion wait with timeout in  scmi_xfer_raw_worker()
+> 2. Signal completion in scmi_raw_message_report()
+> 
+
+.. I think the fix in your patch is overkill...it is really not needed
+to add another layer of synchronization like you are doing, because the
+bug is really around the xfer put and it is very well evident, now that
+you have pointed at it...
+
+What about, instead of your patch, this:
+
+-----8<----
+diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
+index 801d59e6b3bc..d3453130896a 100644
+--- a/drivers/firmware/arm_scmi/driver.c
++++ b/drivers/firmware/arm_scmi/driver.c
+@@ -822,6 +822,8 @@ __scmi_xfer_put(struct scmi_xfers_info *minfo, struct scmi_xfer *xfer)
+ 
+                        scmi_dec_count(info->dbg->counters, XFERS_INFLIGHT);
+                }
++               xfer->flags &= ~SCMI_XFER_FLAG_IS_RAW;
++               xfer->flags &= ~SCMI_XFER_FLAG_CHAN_SET;
+                hlist_add_head(&xfer->node, &minfo->free_xfers);
+        }
+        spin_unlock_irqrestore(&minfo->xfer_lock, flags);
+@@ -840,8 +842,6 @@ void scmi_xfer_raw_put(const struct scmi_handle *handle, struct scmi_xfer *xfer)
+ {
+        struct scmi_info *info = handle_to_scmi_info(handle);
+ 
+-       xfer->flags &= ~SCMI_XFER_FLAG_IS_RAW;
+-       xfer->flags &= ~SCMI_XFER_FLAG_CHAN_SET;
+        return __scmi_xfer_put(&info->tx_minfo, xfer);
+ }
+---->8----
+
+..because the xfer itself is refcounted properly, BUT as of now the
+flags are cleared out of the block inside __scmi_xfer_put:
+
+	if (refcount_dec_and_test(&xfer->users))
+
+...and that is the problem.
+
+The above patch solves for me all the observed anomalies...
+
+... probably EVEN BETTER if you just clear all:
+
+---8<-----
+diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
+index 801d59e6b3bc..914510de3abb 100644
+--- a/drivers/firmware/arm_scmi/driver.c
++++ b/drivers/firmware/arm_scmi/driver.c
+@@ -822,6 +822,7 @@ __scmi_xfer_put(struct scmi_xfers_info *minfo, struct scmi_xfer *xfer)
+ 
+                        scmi_dec_count(info->dbg->counters, XFERS_INFLIGHT);
+                }
++               xfer->flags = 0;
+                hlist_add_head(&xfer->node, &minfo->free_xfers);
+        }
+        spin_unlock_irqrestore(&minfo->xfer_lock, flags);
+@@ -840,8 +841,6 @@ void scmi_xfer_raw_put(const struct scmi_handle *handle, struct scmi_xfer *xfer)
+ {
+        struct scmi_info *info = handle_to_scmi_info(handle);
+ 
+-       xfer->flags &= ~SCMI_XFER_FLAG_IS_RAW;
+-       xfer->flags &= ~SCMI_XFER_FLAG_CHAN_SET;
+        return __scmi_xfer_put(&info->tx_minfo, xfer);
+ }
+
+---->8----
+ 
+...to simply clear all flags when xfer is put...
+
+If this solves for you too, please send a new patch with also a Fixes tag.
+
+Last but not least, are you running the test-suite against a Kernel
+configured with RAW cohexistence disabled ?
+
+	CONFIG_ARM_SCMI_RAW_MODE_SUPPORT_COEX = n
+
+...because having RAW COEX enabled when running the test-suite could lead to more
+false positives even with your patch applied, due to the interference of regular
+drivers..
+
+Thanks for this !
+Cristian
+
 
