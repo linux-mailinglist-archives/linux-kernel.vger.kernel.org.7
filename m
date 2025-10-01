@@ -1,309 +1,202 @@
-Return-Path: <linux-kernel+bounces-839286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BA62BB13FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 18:26:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DA28BB1408
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 18:31:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 210FA4A6AC0
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 16:26:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DF8F3B517C
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 16:31:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D178284880;
-	Wed,  1 Oct 2025 16:26:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74937284688;
+	Wed,  1 Oct 2025 16:31:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b="jtWD1GXm"
-Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IFJQFGqK"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E410226D4C2
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 16:26:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4228E202C48
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 16:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759336000; cv=none; b=qMaDZrkBe/XyY+21tGdS7N5tuTAOBHsbK+YJi5qbN05SIIe1YZ/P+qTTuo/+FQyaNK+zCPhr+2VArFtdV1z+s2bA8dbi6Zqk+ZWICLZgZeRRg/FaOiDZ0a4YZ+BLZL4oQCLm508Johvcje3dlEAdWgsT2SXVdilq64BpQnY9HHg=
+	t=1759336289; cv=none; b=IFB05rKrGb1TrLbk4Fjs2eLVFdMk2Cow1A3FcmpticgUrsVn8mDliim3p1tAY8BAoXMSceeK6vyJUqizFhZrG3Z0INVluxEBYLky+WuxvIu9a4/p7UTFH84ovUeEr5odUcg3KWph2VhAx2gCSY85zEcb6RyQx5gCdWDpwTwN1pA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759336000; c=relaxed/simple;
-	bh=DqBGCwXhXmBj9I2K6nBR8r/lOpwG9Z1hiCtHWa0KJt8=;
+	s=arc-20240116; t=1759336289; c=relaxed/simple;
+	bh=RP1vqmC3zoQ6sRRSEzky7NdKDsBOuulx9J4Zw7a3DaA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aVP/pA1fD1gCANlblDxdLx4XhaYunNsqXwGDOVL/f8dACfrrnne93MydSdhCcrOntyaLLuwwGRCcOdeEJRTv5prWBS4BFgfdJ//Vr2fZHMlTJuSFajpk6jarYjzwhLlK0/mSqnpzejFHrNCbtMeZErbWPqN+hWnGXi1BcJtccnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk; spf=pass smtp.mailfrom=thegoodpenguin.co.uk; dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b=jtWD1GXm; arc=none smtp.client-ip=209.85.166.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thegoodpenguin.co.uk
-Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-90926724bceso264539f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 09:26:38 -0700 (PDT)
+	 To:Cc:Content-Type; b=jdTUzFxqhtE+zKuV6WcrfLmMQyTjaEKrEQQX23c5pmp5678TeU+oCWmJuE5xrGEN4aJz5GIYd/wZ49OVSPyj2Dbgus1IsLTxeYEzzYV4MT2jvg/dOg2aGXS7v/+71zm4RMQ6EMhsVwOoLUfuQG/VsC5sHck0Q9rfF/SzcXafBZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IFJQFGqK; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2731ff54949so185995ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 09:31:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=thegoodpenguin-co-uk.20230601.gappssmtp.com; s=20230601; t=1759335998; x=1759940798; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=z8fLjEGl1PHOcP49OeF5B0SK322rqh01Lg9xclx26zY=;
-        b=jtWD1GXm7OY5I6DK4g/lDJGr+gT0AfgN6DZFrkbdBr6JpRE7RJ1PXzDQwVc6WgKk3H
-         o/FuEI3Tul5p2u1HOu6YpW+KW0z1g903elcAMUhqX0IMACqkyh9mdPi1WtmR3xiF3h5y
-         qRd8D5BYrXA5B7W58a5dXQSoxsZnNr8L0NXs/LvgW5bQTF9YYmpxiopGrTkYqLxxItp1
-         NJ0gQk/VptDwNxju20lKjuFGGefS4lDxfHFKH+lKqcBr4YFl4XaAxBOpRvUulr4UYrbR
-         70b2Vt3gEp7WkMPVtkwxzxlOXo1ZopO04070NzURxpYsiH7qrY2S5wyRc8e22CFMt7uk
-         sAtg==
+        d=google.com; s=20230601; t=1759336287; x=1759941087; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XdG7GxF5fqvjfIsAubrCH24e3CucQVnX0feF4WXkz4k=;
+        b=IFJQFGqKAqkXCqbt3xOVw6Y1qEe3baqizs2/h97o56kXCY9uUexUWr9JLsO4zIIyB0
+         vX8bdUJvfPe1uisvIc7sgPyqCDxoEAJvi+JCX7bTlquAw4Qn3Fon/EkpAt+/qzdgMrpn
+         /O4EVop/isArhA7dppex+1UhMWbJZB8aHPy6hpg5XgaqtJNbsXpo5Lr2+rQbvReyMjoi
+         YePt/VzDJHxyDneKFzfO2xgnr58EHrw5kcpTUaCZm0O9xc8LjfZlekCZv3TgNXDh+0fP
+         NbRvFziqSh+tjF1E2TDXZzKESI93WPCqKnKkO5tDvhRLkyN0kKr/CVuoxZji/2JYW66r
+         hgOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759335998; x=1759940798;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=z8fLjEGl1PHOcP49OeF5B0SK322rqh01Lg9xclx26zY=;
-        b=ORVZrkIYhwh5GvEXqZiihnWUwwyK0U+5ItkY2GDiYP5rLEFnhkZe9YwUFk3GaygF7z
-         vO4wh/Obbo5gkPDyLRzGusfZa51VEbWVG+lY+CV1UlwwFBIus8yB7GX7iw72wVesy5RV
-         2yZyPbE6hEnHX5fvrhwhGsZYT/BnVsphTIo1DFGN+OmThoVLBjVp+GkdwNajD1Wzivxt
-         QDJG+TqYr8wAIJZcomvveZrt0sKNmOq6UQ6t44c8F0yptmdPSFms64zdnspHDGnpqp55
-         zBsOErFjKdQhUXtVepbRNAR+x3hrZqc2Bo/QtPD1Lu8zY1XvBE24pknK0rzgHDLraTyc
-         VS9g==
-X-Forwarded-Encrypted: i=1; AJvYcCXHdCYieoFInzQlJdC7yS5hWgxqlSrvmOzl9UyzwZovN8opzPlwIRzjxRAlqzVV2wLfBGiuFv0LU286EAo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwfNpkDa5ZRHmFOgYoHMEm4IzwIFqeECDeS5VtnjciYqIgSo/Z
-	Tkbh/Ey67F515DS5x0zxS7/AkfpbPfDrZ387i9PqdTL8VpwNMWop5OxIOVl+Sig4AN4EaHkBnTx
-	t7gcOs3V9lpYa/8DYJviLl9t0GWsLEzCjs1KW9eixRA==
-X-Gm-Gg: ASbGnctHU/vsL8F3llojaxcIujjKbfZbdJi1AvxM1uaGnBl6sIbENENlhEJ3o0eeRPN
-	hR9Z6Y8bOo8ipXnYfQzRK34UlzGo1eF5AOeyjEE7CqRM+Q6mZxOyexZE0q4b6IdBVMZwQAiBi4T
-	BisnGFZV7VzO5+4clOJ45odMb40dgo25KyNDRsPk1O2+foX//e6312xpan1AxcanYQHJ8jFILqU
-	ldHFKVDT8ELeNwUmKKVETsMCZPVXHP7kXlmdrd5LsqCaUe7oL+o9TeezdWVKvTl
-X-Google-Smtp-Source: AGHT+IHmgdzSgJVNk1yBgNw16XHMCI78RmYOjuEnD4kwL/M9l6oilOiNC2ErhYWWInixS+CPorv7QqYbjHconAO/teY=
-X-Received: by 2002:a05:6e02:156e:b0:42d:89b9:5d30 with SMTP id
- e9e14a558f8ab-42d89b95f25mr19096885ab.19.1759335997812; Wed, 01 Oct 2025
- 09:26:37 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759336287; x=1759941087;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XdG7GxF5fqvjfIsAubrCH24e3CucQVnX0feF4WXkz4k=;
+        b=FNxsH6zZPSqjwZt/+2YfnQr8SCm2ToCHePzpy7fPtXnynluwvyYALIBPtuVt6i43jW
+         3PCuYpS/ZWPu9TIm2jxkeYYPcsf4NWQ4UDzJc02WAX4NpN0X+FB2ushgTmXFfuzVoocJ
+         X4MteiEdhJZp2NHhHX+IrWsh8x55QlCMPMRERYvnqtf0afZIAueKbcTkm6jvlJYqaxMJ
+         oNWEEOeBsdeBaQTh3ZbY1q2jKFRpMXSQXt+T3rE0nRIB8RHMaHbFeGQHV5GAD+XJvA4u
+         eRXrTFW6y0jEMgdgeKihSXQ64Hgn9KCrDns+VbEPjSYBKMFKnEBy57OiEiW7Vi+a0Va9
+         ZnZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVL9NRC117zO5d8Uj+mFg2B+Oy+ufi0LdyUtmABJz36TtfEcF5BVyjIqsHLXoE11Cky5MNYK+sVeYhgfi4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJZFAb5tHWfP+oqVwVm8VPGc/P5XRimrvu5euGmg3rOnRGryeI
+	BmgCSfLRhTOk1CqaPAVbp9YDicsihHbhIkQab9N2M+49ATPLy+/GpcV3NPKcseRlRJdSe4+cm8N
+	t+OCzsfaN6YGGKCulb6FLWYmCeB1+xfpMidM/Su+b
+X-Gm-Gg: ASbGncvbXuVS4SrFqcd+SqU7RifQY5T46HD37RGGBJl4CI4ZtsIFWI69tWMkk6lFHqX
+	5Qei6oimqbKc80SHl2DqL9L5K1UwLp42+PzxPH3v4hhYyjmMtzqUuBFQV/lYZgj7lGK62valRN0
+	/8kTbva7F3+Z26frPnZZdbunWQi+7y+YQt1qQxIUN28MQ7n7N4/iMJ1DdEohu+7ieHulgWWJQEN
+	4k1kxgiyezutBOi6EvAoR32iRn/gn9BKopuFYAJK83qVMmti7QphCB8X1/bzYHdIYOvnEg=
+X-Google-Smtp-Source: AGHT+IH0ExYqIBIG65vPcoT3DiNCO/ffAaeFUTJey4ev21imvkdenToERs6JxgJGYCVymJAxVxO6o81Q1Km8Zl9XVl4=
+X-Received: by 2002:a17:902:f70d:b0:268:cc5:5e44 with SMTP id
+ d9443c01a7336-28e8003e0b6mr5289075ad.6.1759336287136; Wed, 01 Oct 2025
+ 09:31:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250927-printk_legacy_thread_console_lock-v2-0-cff9f063071a@thegoodpenguin.co.uk>
- <20250927-printk_legacy_thread_console_lock-v2-2-cff9f063071a@thegoodpenguin.co.uk>
- <84o6qsjduw.fsf@jogness.linutronix.de> <CALqELGwd1CiRAYNBVWsrgb5T3eJ9ugP+0wG2WKZGvSfowqgaaQ@mail.gmail.com>
- <84seg3gd89.fsf@jogness.linutronix.de>
-In-Reply-To: <84seg3gd89.fsf@jogness.linutronix.de>
-From: Andrew Murray <amurray@thegoodpenguin.co.uk>
-Date: Wed, 1 Oct 2025 17:26:27 +0100
-X-Gm-Features: AS18NWCRyj7IzDMituJuuwtQmHAJkR9n_fPGePI6K4tE0EN2XiPPstOACEJVxyY
-Message-ID: <CALqELGw8wtbbihLsOcNgnV2vGoSR7kD8_tHmt7ESY4d3buwrLQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] printk: console_flush_one_record() code cleanup
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>, linux-kernel@vger.kernel.org
+References: <20250926163114.2626257-1-seanjc@google.com> <20250926163114.2626257-2-seanjc@google.com>
+ <CA+EHjTzdX8+MbsYOHAJn6Gkayfei-jE6Q_5HfZhnfwnMijmucw@mail.gmail.com>
+ <diqz7bxh386h.fsf@google.com> <a4976f04-959d-48ae-9815-d192365bdcc6@linux.dev>
+ <d2fa49af-112b-4de9-8c03-5f38618b1e57@redhat.com> <diqz4isl351g.fsf@google.com>
+ <aNq6Hz8U0BtjlgQn@google.com> <aNshILzpjAS-bUL5@google.com>
+ <CAGtprH_JgWfr2wPGpJg_mY5Sxf6E0dp5r-_4aVLi96To2pugXA@mail.gmail.com> <aN1TgRpde5hq_FPn@google.com>
+In-Reply-To: <aN1TgRpde5hq_FPn@google.com>
+From: Vishal Annapurve <vannapurve@google.com>
+Date: Wed, 1 Oct 2025 09:31:14 -0700
+X-Gm-Features: AS18NWCwG4Tg7c_g0xW6dmjiFJ7MkHG5Ng3nKWTTgLI8yGDTRQhsFalbbDRtIlI
+Message-ID: <CAGtprH-0B+cDARbK-xPGfx4sva+F1akbkX1gXts2VHaqyDWdzA@mail.gmail.com>
+Subject: Re: [PATCH 1/6] KVM: guest_memfd: Add DEFAULT_SHARED flag, reject
+ user page faults if not set
+To: Sean Christopherson <seanjc@google.com>
+Cc: Ackerley Tng <ackerleytng@google.com>, David Hildenbrand <david@redhat.com>, 
+	Patrick Roy <patrick.roy@linux.dev>, Fuad Tabba <tabba@google.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Nikita Kalyazin <kalyazin@amazon.co.uk>, shivankg@amd.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 1 Oct 2025 at 10:53, John Ogness <john.ogness@linutronix.de> wrote:
+On Wed, Oct 1, 2025 at 9:15=E2=80=AFAM Sean Christopherson <seanjc@google.c=
+om> wrote:
 >
-> On 2025-09-30, Andrew Murray <amurray@thegoodpenguin.co.uk> wrote:
-> >> On 2025-09-27, Andrew Murray <amurray@thegoodpenguin.co.uk> wrote:
-> >> > diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-> >> > index 060d4919de320fe21fd7aca73ba497e27c4ff334..e2c1cacdb4164489c60fe38f1e2837eb838107d6 100644
-> >> > --- a/kernel/printk/printk.c
-> >> > +++ b/kernel/printk/printk.c
-> >> > @@ -3193,6 +3194,7 @@ static bool console_flush_one_record(bool do_cond_resched, u64 *next_seq, bool *
-> >> >       bool any_progress;
-> >> >       int cookie;
-> >> >
-> >> > +     *any_usable = false;
-> >>
-> >> Since it is expected that @next_seq and @handover are initialized by
-> >> their callers (if their callers are interested in the values), then I
-> >> would expect @any_usable to be initialized by the
-> >> caller. console_flush_one_record() never reads this variable.
+> On Wed, Oct 01, 2025, Vishal Annapurve wrote:
+> > On Mon, Sep 29, 2025 at 5:15=E2=80=AFPM Sean Christopherson <seanjc@goo=
+gle.com> wrote:
+> > >
+> > > Oh!  This got me looking at kvm_arch_supports_gmem_mmap() and thus
+> > > KVM_CAP_GUEST_MEMFD_MMAP.  Two things:
+> > >
+> > >  1. We should change KVM_CAP_GUEST_MEMFD_MMAP into KVM_CAP_GUEST_MEMF=
+D_FLAGS so
+> > >     that we don't need to add a capability every time a new flag come=
+s along,
+> > >     and so that userspace can gather all flags in a single ioctl.  If=
+ gmem ever
+> > >     supports more than 32 flags, we'll need KVM_CAP_GUEST_MEMFD_FLAGS=
+2, but
+> > >     that's a non-issue relatively speaking.
+> > >
 > >
-> > Yes, that's correct. Perhaps the comments for the parameters should
-> > indicate otherwise?
+> > Guest_memfd capabilities don't necessarily translate into flags, so ide=
+ally:
+> > 1) There should be two caps, KVM_CAP_GUEST_MEMFD_FLAGS and
+> > KVM_CAP_GUEST_MEMFD_CAPS.
 >
-> They should clarify. For example, @next_seq is "valid only when this
-> function returns true" but @handover validitiy is not specified and is
-> also not related to the return value.
->
-> I would like to see the helper function provide clear usage. If the
-> caller is expected to initialize the parameters (which IMHO it should be
-> the case for all of the pointer parameters), then that should be
-> specified.
+> I'm not saying we can't have another GUEST_MEMFD capability or three, all=
+ I'm
+> saying is that for enumerating what flags can be passed to KVM_CREATE_GUE=
+ST_MEMFD,
+> KVM_CAP_GUEST_MEMFD_FLAGS is a better fit than a one-off KVM_CAP_GUEST_ME=
+MFD_MMAP.
 
-OK.
-
-
->
-> >> > @@ -3280,21 +3284,16 @@ static bool console_flush_one_record(bool do_cond_resched, u64 *next_seq, bool *
-> >> >   */
-> >> >  static bool console_flush_all(bool do_cond_resched, u64 *next_seq, bool *handover)
-> >> >  {
-> >> > -     bool any_usable = false;
-> >> > +     bool any_usable;
-> >>
-> >> Since console_flush_all() does read @any_usable, I would expect it to
-> >> initialize @any_usable. So I would not remove this definition initialization.
-> >
-> > Prior to this series, console_flush_all would set any_usable to false.
-> > It would be set to true if at any point a usable console is found,
-> > that value would be returned, or otherwise false if handover or panic.
-> > When the first patch split out this function, any_usable was kept as
-> > it was, leading to any_usable being true, even if a handover or panic
-> > had happened (hence additional checks needed, which are removed in
-> > this patch).
-> >
-> > By setting any_usable at the start of flush_one_record, it allows for
-> > any_usable to revert back to false, in the case where a once usable
-> > console is no longer usable. Thus representing the situation for the
-> > last record printed. It also makes console_flush_one_record easier to
-> > understand, as the any_usable flag will always be set, rather than
-> > only changing from false to true.
->
-> OK. But then just have console_flush_all() set @any_usable in the loop:
->
-> static bool console_flush_all(bool do_cond_resched, u64 *next_seq, bool *handover)
-> {
->         bool any_progress;
->         bool any_usable;
->
->         *next_seq = 0;
->         *handover = false;
->
->         do {
->                 any_usable = false;
->                 any_progress = console_flush_one_record(do_cond_resched, next_seq,
->                                                         handover, &any_usable);
->         } while (any_progress);
->
->         return any_usable;
-> }
-
-Yes, that seems like common sense, I have no idea why I didn't think of that :|
-
+Ah, ok. Then do you envision the guest_memfd caps to still be separate
+KVM caps per guest_memfd feature?
 
 >
-> > Alternatively, it may be possible for console_flush_one_record to
-> > return any_usable, thus dropping it as an argument and removing the
-> > return of any_progress. Instead the caller could keep calling
-> > console_flush_one_record until it returns false or until next_seq
-> > stops increasing? Thus semantically, the return value of
-> > console_flush_one_record tells you that nothing bad happened and you
-> > can call it again, and the benefit of calling it again depends on if
-> > progress is being made (as determined by the caller through the
-> > existing seq argument).
+> > 2) IMO they should both support namespace of 64 values at least from th=
+e get go.
 >
-> Sorry, I could not follow how this would work. It sounds like a
-> simplification. If you can make it work, go for it.
+> It's a limitation of KVM_CHECK_EXTENSION, and all of KVM's plumbing for i=
+octls.
+> Because KVM still supports 32-bit architectures, direct returns from ioct=
+ls are
+> forced to fit in 32-bit values to avoid unintentionally creating differen=
+t ABI
+> for 32-bit vs. 64-bit kernels.
+>
+> We could add KVM_CHECK_EXTENSION2 or KVM_CHECK_EXTENSION64 or something, =
+but I
+> honestly don't see the point.  The odds of guest_memfd supporting >32 fla=
+gs is
+> small, and the odds of that happening in the next ~5 years is basically z=
+ero.
+> All so that userspace can make one syscall instead of two for a path that=
+ isn't
+> remotely performance critical.
+>
+> So while I agree that being able to enumerate 64 flags from the get-go wo=
+uld be
+> nice to have, it's simply not worth the effort (unless someone has a clev=
+er idea).
 
-Against my patches, something like this:
+Ack.
 
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index 2c9b9383df76..f38295cc3645 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -3186,16 +3186,13 @@ static inline void
-printk_kthreads_check_locked(void) { }
-  *
-  * Requires the console_lock.
-  */
--static bool console_flush_one_record(bool do_cond_resched, u64
-*next_seq, bool *handover,
--                                    bool *any_usable)
-+static bool console_flush_one_record(bool do_cond_resched, u64
-*next_seq, bool *handover)
- {
-        struct console_flush_type ft;
-        struct console *con;
--       bool any_progress;
-        int cookie;
+>
+> > 3) The reservation scheme for upstream should ideally be LSB's first
+> > for the new caps/flags.
+>
+> We're getting way ahead of ourselves.  Nothing needs KVM_CAP_GUEST_MEMFD_=
+CAPS at
+> this time, so there's nothing to discuss.
+>
+> > guest_memfd will achieve multiple features in future, both upstream
+> > and in out-of-tree versions to deploy features before they make their
+>
+> When it comes to upstream uAPI and uABI, out-of-tree kernel code is irrel=
+evant.
+>
+> > way upstream. Generally the scheme followed by out-of-tree versions is
+> > to define a custom UAPI that won't conflict with upstream UAPIs in
+> > near future. Having a namespace of 32 values gives little space to
+> > avoid the conflict, e.g. features like hugetlb support will have to
+> > eat up at least 5 bits from the flags [1].
+>
+> Why on earth would out-of-tree code use KVM_CAP_GUEST_MEMFD_FLAGS?   Prov=
+iding
 
--       *any_usable = false;
--       any_progress = false;
-+       bool any_usable = false;
+I can imagine a scenario where KVM_CAP_GUEST_MEMFD_FLAGS is upstreamed
+and more flags landing in KVM_CAP_GUEST_MEMFD_FLAGS as supported over
+time afterwards. out-of-tree code may ingest KVM_CAP_GUEST_MEMFD_FLAGS
+in between.
 
-        printk_get_console_flush_type(&ft);
-
-@@ -3215,7 +3212,7 @@ static bool console_flush_one_record(bool
-do_cond_resched, u64 *next_seq, bool *
-
-                if (!console_is_usable(con, flags, !do_cond_resched))
-                        continue;
--               *any_usable = true;
-+               any_usable = true;
-
-                if (flags & CON_NBCON) {
-                        progress = nbcon_legacy_emit_next_record(con,
-handover, cookie,
-@@ -3239,7 +3236,6 @@ static bool console_flush_one_record(bool
-do_cond_resched, u64 *next_seq, bool *
-
-                if (!progress)
-                        continue;
--               any_progress = true;
-
-                /* Allow panic_cpu to take over the consoles safely. */
-                if (other_cpu_in_panic())
-@@ -3250,12 +3246,11 @@ static bool console_flush_one_record(bool
-do_cond_resched, u64 *next_seq, bool *
-        }
-        console_srcu_read_unlock(cookie);
-
--       return any_progress;
-+       return any_usable;
-
- unusable_srcu:
-        console_srcu_read_unlock(cookie);
- unusable:
--       *any_usable = false;
-        return false;
- }
-
-@@ -3286,15 +3281,15 @@ static bool console_flush_all(bool
-do_cond_resched, u64 *next_seq, bool *handove
- {
-        bool any_usable;
-        bool any_progress;
-+       u64 last_seq;
-
-        *next_seq = 0;
-        *handover = false;
-
-        do {
--               any_progress =
-console_flush_one_record(do_cond_resched, next_seq,
--                                                       handover, &any_usable);
--
--       } while (any_progress);
-+               last_seq = *next_seq;
-+               any_usable = console_flush_one_record(do_cond_resched,
-next_seq, handover);
-+       } while (*next_seq > last_seq);
-
-        return any_usable;
- }
-@@ -3674,21 +3669,20 @@ static int legacy_kthread_func(void *unused)
-        wait_event_interruptible(legacy_wait,
-                                 legacy_kthread_should_wakeup());
-
-+       u64 last_seq, next_seq = 0;
-        do {
--               bool any_usable;
-                bool handover = false;
--               u64 next_seq;
-
-                if (kthread_should_stop())
-                        return 0;
-
-                console_lock();
--               any_progress = console_flush_one_record(true, &next_seq,
--                                               &handover, &any_usable);
-+               last_seq = next_seq;
-+               console_flush_one_record(true, &next_seq, &handover);
-                if (!handover)
-                        __console_unlock();
-
--       } while (any_progress);
-+       } while (next_seq > last_seq);
-
-        goto wait_for_event;
- }
--- 
-2.34.1
-
-This also has the benefit of removing code (and more could be removed
-if the progress variable in console_flush_one_record is removed - i.e.
-we could unconditionally bail on panic and resched each time).
-
-Thanks,
-
-Andrew Murray
+> infrastructure to support an infinite (quite literally) number of out-of-=
+tree
+> capabilities and sub-ioctls, with practically zero chance of conflict, is=
+ not
+> difficult.  See internal b/378111418.
+>
+> But as above, this is not upstream's problem to solve.
+>
+> > [1] https://elixir.bootlin.com/linux/v6.17/source/include/uapi/asm-gene=
+ric/hugetlb_encode.h#L20
 
