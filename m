@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-838365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7FE5BAF083
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 04:55:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8A5EBAF086
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 04:55:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50AD21942E4C
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 02:55:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B61033B5EA3
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 02:55:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B328283FD4;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63045283FDB;
 	Wed,  1 Oct 2025 02:54:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M5+/N+mJ"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HgShaULn"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F74D27B346
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 02:54:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F19C427E1D0
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 02:54:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759287295; cv=none; b=IAPD7mmQ/zJsavR0jUGyvoCE9hHHhsaqaFu0i99tDcsjieMynkuiEUVhT2t5eCV2JumtMVZRepZLc/klX2liwfBH9XqSdHwvzPYWgt4/0iLqe2K9wvIELuB69oCeT0I2PGNZuyNxAKXin2IXmCDASGcCiZ2MLHmJpbQrMPYicYM=
+	t=1759287295; cv=none; b=kgii8Et7UurEwbRitNDFUBf6YvKaFhYou3EenzGOUK/CkcgYEBJajox5DHu+VAGXc6F1u7AqiXpYmO80jq+wGxVuYueNgnsah9IEy8v8yqEqIYM2uNuUc4W8lVfJPWzWcIe4LdghxOQRg/ZwwUbVv7/ftjAlABlOru1Kx8YL1I4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1759287295; c=relaxed/simple;
-	bh=ywSaXaJwOa73ESjkbxV1uYIawVM2AD2ld4kYPgNvf+w=;
+	bh=YS73C+hBeSoRqaytIT9NA8P9FF+ljv00QzUK/USjtbU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NQDXvQqmn9+8U1kGqtu/HVwBAO9c+gHvcdYhuBWUtOki/K5O4ykocZWOBQxvrPSX6/i5utRdGzMf6QRPOabpMdUApsVvFdBKu/DeUPCXKWpv4msurGNpLqGTOtC1qo8wBVLCQBTY1uMRTnDQcKjwshF9Pa4taxRA+6riBYphtqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M5+/N+mJ; arc=none smtp.client-ip=192.198.163.15
+	 MIME-Version; b=VA+OWn7NkaW6uLwXE/P1+ZTQOsiTTaP6E9XSEFuxPU/nBryovny8C0hF3ma3PYGOYdJ3x7CbNd/8YIXcCnzD0mljsc1/KyDe+Lr/Pp4mfueRaAUGZiK6bydvRuA/HYXdJrq1Mg6QIYTmGN5gUL+9t3NQOnSjgJ/NOgPNFre0REI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HgShaULn; arc=none smtp.client-ip=192.198.163.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
@@ -35,28 +35,28 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   t=1759287294; x=1790823294;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=ywSaXaJwOa73ESjkbxV1uYIawVM2AD2ld4kYPgNvf+w=;
-  b=M5+/N+mJX+i1CfHyHRyBK4BBLUF6KcE0pqfOr+2P4KP+Pt4l1p18saWf
-   WaCZyjaLGfiLs3IUcIpGj0yIdbPcRNb5ZuxBO1t09ccLcEHbRUnnnI6AW
-   fQbSmwZMKazhzAFQ8XneEA5EZxzBcZDqsC+Eci9wLj7US/bMp52yoNd4e
-   9dcurE9astqUbhwUmUijTI4hhe+qaGHmfY9r97xMF+EABBa/7mLVbK6q5
-   F8RYeiyvvALbuKHgvGaCehCMU8qm2dqOSJrbSXNR1AHpajSasPkwhqCa4
-   bpCwhzJd6J2ZgNNxYkfgV25d1GV3IfSs7+7fSsQLCPl8DIRbkfp6Z/ZhW
-   w==;
-X-CSE-ConnectionGUID: ifuVdQ/tTg65DEOcUW3GDg==
-X-CSE-MsgGUID: meq5BFaET22s6q188SXLYQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11569"; a="61662220"
+  bh=YS73C+hBeSoRqaytIT9NA8P9FF+ljv00QzUK/USjtbU=;
+  b=HgShaULnk8A/N2s3PRwWHvwjPGjrmOjLIx7A4BX1m3SbSFMpQRVQvFjf
+   rhGCcYG4HXvXDVcRI4Q/yKMC8ALTEMWmCw7fBLKm42IrgUrKCCBpAy5Ee
+   k0fnVZ73U6FMJBLl6TutEqtUop9Q5zoD/3HcL+PMQPn1GRwuKeicbPbUC
+   I4fLe3Dc2TcKE9QOyMA6f9Q2oboqYsWZURdFx0nORR8vNaYvlQnTyZsuA
+   UMs/mzwyv93Rq8waKJ191PoosmZo5qIT5yK/S8hnzuj0MTdb58vDWbzmP
+   XgLkloaV5wG75ywbcW5C29lbxeZ7CIZ9BdpE3CORjDXCOVcFzrsGiJxXQ
+   g==;
+X-CSE-ConnectionGUID: wre8aySJQ4KZoM0JwN4/gw==
+X-CSE-MsgGUID: vYKUtyILQMG9s7BbzcUhIQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11569"; a="61662229"
 X-IronPort-AV: E=Sophos;i="6.18,305,1751266800"; 
-   d="scan'208";a="61662220"
+   d="scan'208";a="61662229"
 Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2025 19:54:52 -0700
-X-CSE-ConnectionGUID: Ki9Qj/Y3Sj23MqwyRnL7EA==
-X-CSE-MsgGUID: wNCp/jOfSNKe60j4TIz5UA==
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2025 19:54:54 -0700
+X-CSE-ConnectionGUID: bzWHOaFnTyCXQJ1Li8MVag==
+X-CSE-MsgGUID: QbmrkhGFToSXPUBj6DeNOw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.18,305,1751266800"; 
-   d="scan'208";a="178629044"
+   d="scan'208";a="178629049"
 Received: from 984fee019967.jf.intel.com ([10.165.54.94])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2025 19:54:51 -0700
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2025 19:54:52 -0700
 From: Chao Gao <chao.gao@intel.com>
 To: linux-coco@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
@@ -71,15 +71,16 @@ To: linux-coco@lists.linux.dev,
 	paulmck@kernel.org,
 	nik.borisov@suse.com
 Cc: Chao Gao <chao.gao@intel.com>,
+	Farrah Chen <farrah.chen@intel.com>,
 	"Kirill A. Shutemov" <kas@kernel.org>,
 	Dave Hansen <dave.hansen@linux.intel.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Ingo Molnar <mingo@redhat.com>,
 	Borislav Petkov <bp@alien8.de>,
 	"H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH v2 03/21] x86/virt/tdx: Move low level SEAMCALL helpers out of <asm/tdx.h>
-Date: Tue, 30 Sep 2025 19:52:47 -0700
-Message-ID: <20251001025442.427697-4-chao.gao@intel.com>
+Subject: [PATCH v2 04/21] x86/virt/tdx: Prepare to support P-SEAMLDR SEAMCALLs
+Date: Tue, 30 Sep 2025 19:52:48 -0700
+Message-ID: <20251001025442.427697-5-chao.gao@intel.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20251001025442.427697-1-chao.gao@intel.com>
 References: <20251001025442.427697-1-chao.gao@intel.com>
@@ -91,224 +92,113 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Kai Huang <kai.huang@intel.com>
+P-SEAMLDR is another component alongside the TDX module within the
+protected SEAM range. P-SEAMLDR can update the TDX module at runtime.
+Software can talk with P-SEAMLDR via SEAMCALLs with the bit 63 of RAX
+(leaf number) set to 1 (a.k.a P-SEAMLDR SEAMCALLs).
 
-TDX host core code implements three seamcall*() helpers to make SEAMCALL
-to the TDX module.  Currently, they are implemented in <asm/tdx.h> and
-are exposed to other kernel code which includes <asm/tdx.h>.
+P-SEAMLDR SEAMCALLs differ from SEAMCALLs of the TDX module in terms of
+error codes and the handling of the current VMCS.
 
-However, other than the TDX host core, seamcall*() are not expected to
-be used by other kernel code directly.  For instance, for all SEAMCALLs
-that are used by KVM, the TDX host core exports a wrapper function for
-each of them.
+In preparation for adding support for P-SEAMLDR SEAMCALLs, do the two
+following changes to SEAMCALL low-level helpers:
 
-Move seamcall*() and related code out of <asm/tdx.h> and make them only
-visible to TDX host core.
+1) Tweak sc_retry() to retry on "lack of entropy" errors reported by
+   P-SEAMLDR because it uses a different error code.
 
-Since TDX host core tdx.c is already very heavy, don't put low level
-seamcall*() code there but to a new dedicated "seamcall.h".  Also,
-currently tdx.c has seamcall_prerr*() helpers which additionally print
-error message when calling seamcall*() fails.  Move them to "seamcall.h"
-as well.  In such way all low level SEAMCALL helpers are in a dedicated
-place, which is much more readable.
+2) Add seamldr_err() to log error messages on P-SEAMLDR SEAMCALL failures.
 
-Signed-off-by: Kai Huang <kai.huang@intel.com>
 Signed-off-by: Chao Gao <chao.gao@intel.com>
+Tested-by: Farrah Chen <farrah.chen@intel.com>
 ---
+Add seamldr_prerr() as a macro to be consistent with existing code. If
+maintainers would like to switch these to static inline functions then I
+would be happy to add a new patch to convert existing macros to static
+inline functions and build on that.
+
 v2:
- - new
+ - use a macro rather than an inline function for seamldr_err() for
+   consistency.
 ---
- arch/x86/include/asm/tdx.h       | 24 ----------
- arch/x86/virt/vmx/tdx/seamcall.h | 79 ++++++++++++++++++++++++++++++++
- arch/x86/virt/vmx/tdx/tdx.c      | 46 +------------------
- 3 files changed, 80 insertions(+), 69 deletions(-)
- create mode 100644 arch/x86/virt/vmx/tdx/seamcall.h
+ arch/x86/include/asm/tdx.h       |  5 +++++
+ arch/x86/virt/vmx/tdx/seamcall.h | 29 ++++++++++++++++++++++++++++-
+ 2 files changed, 33 insertions(+), 1 deletion(-)
 
 diff --git a/arch/x86/include/asm/tdx.h b/arch/x86/include/asm/tdx.h
-index cbea169b5fa0..e872a411a359 100644
+index e872a411a359..7ad026618a23 100644
 --- a/arch/x86/include/asm/tdx.h
 +++ b/arch/x86/include/asm/tdx.h
-@@ -97,31 +97,7 @@ static inline long tdx_kvm_hypercall(unsigned int nr, unsigned long p1,
- #endif /* CONFIG_INTEL_TDX_GUEST && CONFIG_KVM_GUEST */
+@@ -32,6 +32,11 @@
+ #define TDX_SUCCESS		0ULL
+ #define TDX_RND_NO_ENTROPY	0x8000020300000000ULL
  
- #ifdef CONFIG_INTEL_TDX_HOST
--u64 __seamcall(u64 fn, struct tdx_module_args *args);
--u64 __seamcall_ret(u64 fn, struct tdx_module_args *args);
--u64 __seamcall_saved_ret(u64 fn, struct tdx_module_args *args);
- void tdx_init(void);
--
--#include <asm/archrandom.h>
--
--typedef u64 (*sc_func_t)(u64 fn, struct tdx_module_args *args);
--
--static __always_inline u64 sc_retry(sc_func_t func, u64 fn,
--			   struct tdx_module_args *args)
--{
--	int retry = RDRAND_RETRY_LOOPS;
--	u64 ret;
--
--	do {
--		ret = func(fn, args);
--	} while (ret == TDX_RND_NO_ENTROPY && --retry);
--
--	return ret;
--}
--
--#define seamcall(_fn, _args)		sc_retry(__seamcall, (_fn), (_args))
--#define seamcall_ret(_fn, _args)	sc_retry(__seamcall_ret, (_fn), (_args))
--#define seamcall_saved_ret(_fn, _args)	sc_retry(__seamcall_saved_ret, (_fn), (_args))
- int tdx_enable(void);
- const char *tdx_dump_mce_info(struct mce *m);
- const struct tdx_sys_info *tdx_get_sysinfo(void);
++/* P-SEAMLDR SEAMCALL leaf function error codes */
++#define SEAMLDR_RND_NO_ENTROPY	0x8000000000030001ULL
++
++#define SEAMLDR_SEAMCALL_MASK	_BITUL(63)
++
+ #ifndef __ASSEMBLER__
+ 
+ #include <uapi/asm/mce.h>
 diff --git a/arch/x86/virt/vmx/tdx/seamcall.h b/arch/x86/virt/vmx/tdx/seamcall.h
-new file mode 100644
-index 000000000000..71b6ffddfa40
---- /dev/null
+index 71b6ffddfa40..3f462e58d68e 100644
+--- a/arch/x86/virt/vmx/tdx/seamcall.h
 +++ b/arch/x86/virt/vmx/tdx/seamcall.h
-@@ -0,0 +1,79 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/* Copyright (C) 2025 Intel Corporation */
-+#ifndef _X86_VIRT_SEAMCALL_H
-+#define _X86_VIRT_SEAMCALL_H
-+
-+#include <linux/printk.h>
-+#include <linux/types.h>
-+#include <asm/archrandom.h>
-+#include <asm/tdx.h>
-+
-+u64 __seamcall(u64 fn, struct tdx_module_args *args);
-+u64 __seamcall_ret(u64 fn, struct tdx_module_args *args);
-+u64 __seamcall_saved_ret(u64 fn, struct tdx_module_args *args);
-+
-+typedef u64 (*sc_func_t)(u64 fn, struct tdx_module_args *args);
-+
-+static __always_inline u64 sc_retry(sc_func_t func, u64 fn,
-+			   struct tdx_module_args *args)
-+{
-+	int retry = RDRAND_RETRY_LOOPS;
-+	u64 ret;
-+
-+	do {
-+		ret = func(fn, args);
-+	} while (ret == TDX_RND_NO_ENTROPY && --retry);
-+
-+	return ret;
-+}
-+
-+#define seamcall(_fn, _args)		sc_retry(__seamcall, (_fn), (_args))
-+#define seamcall_ret(_fn, _args)	sc_retry(__seamcall_ret, (_fn), (_args))
-+#define seamcall_saved_ret(_fn, _args)	sc_retry(__seamcall_saved_ret, (_fn), (_args))
-+
-+typedef void (*sc_err_func_t)(u64 fn, u64 err, struct tdx_module_args *args);
-+
-+static inline void seamcall_err(u64 fn, u64 err, struct tdx_module_args *args)
-+{
-+	pr_err("SEAMCALL (%llu) failed: %#016llx\n", fn, err);
-+}
-+
-+static inline void seamcall_err_ret(u64 fn, u64 err,
-+				    struct tdx_module_args *args)
-+{
-+	seamcall_err(fn, err, args);
-+	pr_err("RCX %#016llx RDX %#016llx R08 %#016llx\n",
-+			args->rcx, args->rdx, args->r8);
-+	pr_err("R09 %#016llx R10 %#016llx R11 %#016llx\n",
-+			args->r9, args->r10, args->r11);
-+}
-+
-+static __always_inline int sc_retry_prerr(sc_func_t func,
-+					  sc_err_func_t err_func,
-+					  u64 fn, struct tdx_module_args *args)
-+{
-+	u64 sret = sc_retry(func, fn, args);
-+
-+	if (sret == TDX_SUCCESS)
-+		return 0;
-+
-+	if (sret == TDX_SEAMCALL_VMFAILINVALID)
-+		return -ENODEV;
-+
-+	if (sret == TDX_SEAMCALL_GP)
-+		return -EOPNOTSUPP;
-+
-+	if (sret == TDX_SEAMCALL_UD)
-+		return -EACCES;
-+
-+	err_func(fn, sret, args);
-+	return -EIO;
-+}
-+
-+#define seamcall_prerr(__fn, __args)						\
-+	sc_retry_prerr(__seamcall, seamcall_err, (__fn), (__args))
-+
-+#define seamcall_prerr_ret(__fn, __args)					\
-+	sc_retry_prerr(__seamcall_ret, seamcall_err_ret, (__fn), (__args))
-+
-+#endif
-diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
-index f429a5fdced2..b367bb1d94ed 100644
---- a/arch/x86/virt/vmx/tdx/tdx.c
-+++ b/arch/x86/virt/vmx/tdx/tdx.c
-@@ -38,6 +38,7 @@
- #include <asm/cpu_device_id.h>
- #include <asm/processor.h>
- #include <asm/mce.h>
-+#include "seamcall.h"
- #include "tdx.h"
+@@ -14,6 +14,19 @@ u64 __seamcall_saved_ret(u64 fn, struct tdx_module_args *args);
  
- static u32 tdx_global_keyid __ro_after_init;
-@@ -58,51 +59,6 @@ static LIST_HEAD(tdx_memlist);
+ typedef u64 (*sc_func_t)(u64 fn, struct tdx_module_args *args);
  
- static struct tdx_sys_info tdx_sysinfo;
++static inline bool is_seamldr_call(u64 fn)
++{
++	return fn & SEAMLDR_SEAMCALL_MASK;
++}
++
++static inline bool sc_need_retry(u64 fn, u64 error_code)
++{
++	if (is_seamldr_call(fn))
++		return error_code == SEAMLDR_RND_NO_ENTROPY;
++	else
++		return error_code == TDX_RND_NO_ENTROPY;
++}
++
+ static __always_inline u64 sc_retry(sc_func_t func, u64 fn,
+ 			   struct tdx_module_args *args)
+ {
+@@ -22,7 +35,7 @@ static __always_inline u64 sc_retry(sc_func_t func, u64 fn,
  
--typedef void (*sc_err_func_t)(u64 fn, u64 err, struct tdx_module_args *args);
--
--static inline void seamcall_err(u64 fn, u64 err, struct tdx_module_args *args)
--{
--	pr_err("SEAMCALL (%llu) failed: %#016llx\n", fn, err);
--}
--
--static inline void seamcall_err_ret(u64 fn, u64 err,
--				    struct tdx_module_args *args)
--{
--	seamcall_err(fn, err, args);
--	pr_err("RCX %#016llx RDX %#016llx R08 %#016llx\n",
--			args->rcx, args->rdx, args->r8);
--	pr_err("R09 %#016llx R10 %#016llx R11 %#016llx\n",
--			args->r9, args->r10, args->r11);
--}
--
--static __always_inline int sc_retry_prerr(sc_func_t func,
--					  sc_err_func_t err_func,
--					  u64 fn, struct tdx_module_args *args)
--{
--	u64 sret = sc_retry(func, fn, args);
--
--	if (sret == TDX_SUCCESS)
--		return 0;
--
--	if (sret == TDX_SEAMCALL_VMFAILINVALID)
--		return -ENODEV;
--
--	if (sret == TDX_SEAMCALL_GP)
--		return -EOPNOTSUPP;
--
--	if (sret == TDX_SEAMCALL_UD)
--		return -EACCES;
--
--	err_func(fn, sret, args);
--	return -EIO;
--}
--
--#define seamcall_prerr(__fn, __args)						\
--	sc_retry_prerr(__seamcall, seamcall_err, (__fn), (__args))
--
--#define seamcall_prerr_ret(__fn, __args)					\
--	sc_retry_prerr(__seamcall_ret, seamcall_err_ret, (__fn), (__args))
--
- /*
-  * Do the module global initialization once and return its result.
-  * It can be done on any cpu.  It's always called with interrupts
+ 	do {
+ 		ret = func(fn, args);
+-	} while (ret == TDX_RND_NO_ENTROPY && --retry);
++	} while (sc_need_retry(fn, ret) && --retry);
+ 
+ 	return ret;
+ }
+@@ -48,6 +61,17 @@ static inline void seamcall_err_ret(u64 fn, u64 err,
+ 			args->r9, args->r10, args->r11);
+ }
+ 
++static inline void seamldr_err(u64 fn, u64 err, struct tdx_module_args *args)
++{
++	/*
++	 * Get the actual leaf number. No need to print the bit used to
++	 * differentiate between P-SEAMLDR and TDX module as the "P-SEAMLDR"
++	 * string in the error message already provides that information.
++	 */
++	fn &= ~SEAMLDR_SEAMCALL_MASK;
++	pr_err("P-SEAMLDR (%lld) failed: 0x%016llx\n", fn, err);
++}
++
+ static __always_inline int sc_retry_prerr(sc_func_t func,
+ 					  sc_err_func_t err_func,
+ 					  u64 fn, struct tdx_module_args *args)
+@@ -76,4 +100,7 @@ static __always_inline int sc_retry_prerr(sc_func_t func,
+ #define seamcall_prerr_ret(__fn, __args)					\
+ 	sc_retry_prerr(__seamcall_ret, seamcall_err_ret, (__fn), (__args))
+ 
++#define seamldr_prerr(__fn, __args)						\
++	sc_retry_prerr(__seamcall, seamldr_err, (__fn), (__args))
++
+ #endif
 -- 
 2.47.3
 
