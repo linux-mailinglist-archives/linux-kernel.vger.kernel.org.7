@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-838339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 652BABAEFE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 04:21:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED078BAEFFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 04:22:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E420F188AA09
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 02:22:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B19C67AF324
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 02:20:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D0D3273D8F;
-	Wed,  1 Oct 2025 02:21:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17B53279DB5;
+	Wed,  1 Oct 2025 02:21:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="Fs2lmO3r"
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="ShpwFGmp"
 Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FCE722D9E9
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 02:21:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D07032765CA
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 02:21:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759285298; cv=pass; b=sRdxZ/vIr4Ws9I8DWZBxO/tzalNJMzM588dsCQpcwqcawJWm1/GO/Ak18dXE0PvaDBThCjj1yAB9LBUxoTz/c1P7qMrua9nxgZSa3y+Ir3dZB3gN8snqJ0g488d8kBl9TsE2nT81JleK2vPPb6wiaSOw5fXTga0qU25jKYRugN8=
+	t=1759285302; cv=pass; b=Tyj2Dx+ZmatMv0bvJvJihyO+ORYNGP4BzxZiwqvns2ezL2UWsLI78eFY8CKp0IqkLjJVX7Ne2cu8PRIeIN1sQLGHDOk4QQcuqxLLDFqpIlv/W30jrL9QI9J7cE8YXDuKkVKFB5MTdZoQvO5/PGJE3/bwLBBOnCoweB1+rurL/N4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759285298; c=relaxed/simple;
-	bh=C4ZQ1ujTGuSFrp4PyJtNoj33e3P+89KmVR4ug6D6PqM=;
+	s=arc-20240116; t=1759285302; c=relaxed/simple;
+	bh=0X77hVB5IinZE2DDAqxZVMHHhy5p8Y4Cr+d0655vEnM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qDlJOdi4NHIw6rl/oXhNSQFgMJGhyiY73lyVNZ4STtpktAMaxkskAQtNlSXWNEjQUhRtf/rgIapGJ1/wV7pQwy10YS9laREHXKkVy8exCfEwDoEkVPbvErMyEMd3tisAfKhqxxVvAXJu9GVGBEC+B9hbvCGMgN6ESxcfdWXjPts=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=Fs2lmO3r; arc=pass smtp.client-ip=136.143.188.112
+	 MIME-Version:Content-Type; b=mX0BgG2K2ngmc7+Ydi+0sLV9kLCXOujGv3hyBgWjdwX4CC0nDVHHB16E81OgV2SD2cji6vnWWzLGWEn+JvKbeuKqVaHNjoy6fNJKLLp5aTjvr8ijNb23U3KzLSMKl9Ad+elvkpeHl12WCqYtriZeKc+DIFTQAu8ctp2dE/iZTxc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=ShpwFGmp; arc=pass smtp.client-ip=136.143.188.112
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1759285280; cv=none; 
+ARC-Seal: i=1; a=rsa-sha256; t=1759285284; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=Zl2HdCchYIzvPNOtjeBEvbE4uX1b14VNgEMezYKhW6W3wr9Vav0Qgh+Nv0lwABEfgvPFRjxK2Wkortlzd8sz3ZDl2lLx/R3enqxTb+9aNK4yYEcDCsadtTR80XckegSsgC7mbPu0D7BDGFGZSg8s6MyR0P+O16F1dIS+8fE939w=
+	b=FsOYxeoREEgkVUVlrRFvlchmgcqrWr5VqtXyaTEK/GDqEGhuMTv8RaE76lOEhlw5ObpWLc5CBHFFg2b2jFGi85mq/l3JGhKD1E/a1Zb3AgtgckZ9ZhH8i/XXnuzYCKIXQ96wx3yf/4x4Us+n7/4ZA0zi2wIjAvBYtU7OcFXKyXA=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1759285280; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=9mJpXwNQtuHdXoL5cocq46WnhPmhzO+1eFwpDevoV2Y=; 
-	b=ecQ80TOZf02MVHKpjLeFKH0XrHhanxhtvasEwH17XWGa+UDgZfOyxW/Smi3OFJHhfJoJDOet5kV32Nt/jnDbJjfGP8MlKWQx+G8nU9z6i2ar2AyP+UzyyyG09RDMAzLB+vIqV+finEUQxA48/Vz372ttzA/Pa9/SweGc2DYXQoI=
+	t=1759285284; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=NDV1dkD4lYlsoVNmEVl2YMbAz2WyWMuIkB4qJIoRD4I=; 
+	b=bDKo5z2LIpu0De3vz9sYP9gQAS83uqhKOehtmW64rNUGlYVspECrVHC/XCZd2CisXvOr5KQVaTuQCCarPYVbqbq+ukH76rd2e5krRU1ZtQ1A+uRUEzVarAwWZWDdjwsYNT//WYVpiLJR5ohIZWXuKUmIBhe0baXew2bp2qN1M98=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=collabora.com;
 	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
 	dmarc=pass header.from=<adrian.larumbe@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1759285280;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1759285284;
 	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
 	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=9mJpXwNQtuHdXoL5cocq46WnhPmhzO+1eFwpDevoV2Y=;
-	b=Fs2lmO3rOb2vBh+DMqWKWIrObahewpOaVKtES8NfSPB2C5AWYQX09vX49OW++eTC
-	CTBKUFRKc5DhMD70R+qDfxQO2W0wE82HqDup5StknB50Zquyw8/FhdCjRIvV4tuhJi+
-	EOy/x7vso+zKNgdMyo1lvR5HghyU5EdF9UfVNThs=
-Received: by mx.zohomail.com with SMTPS id 1759285279305734.4749112291295;
-	Tue, 30 Sep 2025 19:21:19 -0700 (PDT)
+	bh=NDV1dkD4lYlsoVNmEVl2YMbAz2WyWMuIkB4qJIoRD4I=;
+	b=ShpwFGmpj1YjuiNVp4BWgcKVKSNpM5XJnEYKXY8ncLcVfxpQ0S/B435l6y28muHf
+	9RvlE/7jOC4yAOEzJv7F1gJEJ86JuLH+HTWgOnnkJTUQb5VjAOhTlqJsXuJyBRyxodk
+	sj+kXlGx/dl+S8rCqXXZX8bh0lYNYbOyP/quRU9I=
+Received: by mx.zohomail.com with SMTPS id 1759285282788540.9452776271363;
+	Tue, 30 Sep 2025 19:21:22 -0700 (PDT)
 From: =?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>
 To: linux-kernel@vger.kernel.org
 Cc: dri-devel@lists.freedesktop.org,
@@ -63,9 +63,9 @@ Cc: dri-devel@lists.freedesktop.org,
 	Thomas Zimmermann <tzimmermann@suse.de>,
 	David Airlie <airlied@gmail.com>,
 	Simona Vetter <simona@ffwll.ch>
-Subject: [PATCH v4 02/10] drm/panfrost: Handle inexistent GPU during probe
-Date: Wed,  1 Oct 2025 03:20:23 +0100
-Message-ID: <20251001022039.1215976-3-adrian.larumbe@collabora.com>
+Subject: [PATCH v4 03/10] drm/panfrost: Handle job HW submit errors
+Date: Wed,  1 Oct 2025 03:20:24 +0100
+Message-ID: <20251001022039.1215976-4-adrian.larumbe@collabora.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251001022039.1215976-1-adrian.larumbe@collabora.com>
 References: <20251001022039.1215976-1-adrian.larumbe@collabora.com>
@@ -78,63 +78,80 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Just in case we're dealing with a yet not recognised device.
+Avoid waiting for the DRM scheduler job timedout handler, and instead, let
+the DRM scheduler core signal the error fence immediately when HW job
+submission fails.
 
-Reviewed-by: Steven Price <steven.price@arm.com>
+That means we must also decrement the runtime-PM refcnt for the device,
+because the job will never be enqueued or inflight.
+
+Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
 Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
 ---
- drivers/gpu/drm/panfrost/panfrost_gpu.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/panfrost/panfrost_job.c | 20 ++++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/panfrost/panfrost_gpu.c b/drivers/gpu/drm/panfrost/panfrost_gpu.c
-index f94337a6c302..8d049a07d393 100644
---- a/drivers/gpu/drm/panfrost/panfrost_gpu.c
-+++ b/drivers/gpu/drm/panfrost/panfrost_gpu.c
-@@ -240,9 +240,10 @@ static const struct panfrost_model gpu_models[] = {
- 	/* MediaTek MT8188 Mali-G57 MC3 */
- 	GPU_MODEL(g57, 0x9093,
- 		GPU_REV(g57, 0, 0)),
-+	{0},
- };
- 
--static void panfrost_gpu_init_features(struct panfrost_device *pfdev)
-+static int panfrost_gpu_init_features(struct panfrost_device *pfdev)
- {
- 	u32 gpu_id, num_js, major, minor, status, rev;
- 	const char *name = "unknown";
-@@ -327,6 +328,12 @@ static void panfrost_gpu_init_features(struct panfrost_device *pfdev)
- 		break;
- 	}
- 
-+	if (!model->name) {
-+		dev_err(pfdev->base.dev, "GPU model not found: mali-%s id rev %#x %#x\n",
-+			name, gpu_id, rev);
-+		return -ENODEV;
-+	}
-+
- 	bitmap_from_u64(pfdev->features.hw_features, hw_feat);
- 	bitmap_from_u64(pfdev->features.hw_issues, hw_issues);
- 
-@@ -347,6 +354,8 @@ static void panfrost_gpu_init_features(struct panfrost_device *pfdev)
- 
- 	dev_info(pfdev->base.dev, "shader_present=0x%0llx l2_present=0x%0llx",
- 		 pfdev->features.shader_present, pfdev->features.l2_present);
-+
-+	return 0;
+diff --git a/drivers/gpu/drm/panfrost/panfrost_job.c b/drivers/gpu/drm/panfrost/panfrost_job.c
+index a0123d0a1b7d..3f60adc9b69d 100644
+--- a/drivers/gpu/drm/panfrost/panfrost_job.c
++++ b/drivers/gpu/drm/panfrost/panfrost_job.c
+@@ -196,7 +196,7 @@ panfrost_enqueue_job(struct panfrost_device *pfdev, int slot,
+ 	return 1;
  }
  
- void panfrost_cycle_counter_get(struct panfrost_device *pfdev)
-@@ -489,7 +498,9 @@ int panfrost_gpu_init(struct panfrost_device *pfdev)
- 	if (err)
- 		return err;
+-static void panfrost_job_hw_submit(struct panfrost_job *job, int js)
++static int panfrost_job_hw_submit(struct panfrost_job *job, int js)
+ {
+ 	struct panfrost_device *pfdev = job->pfdev;
+ 	unsigned int subslot;
+@@ -208,10 +208,11 @@ static void panfrost_job_hw_submit(struct panfrost_job *job, int js)
  
--	panfrost_gpu_init_features(pfdev);
-+	err = panfrost_gpu_init_features(pfdev);
-+	if (err)
-+		return err;
+ 	ret = pm_runtime_get_sync(pfdev->base.dev);
+ 	if (ret < 0)
+-		return;
++		goto err_hwsubmit;
  
- 	err = dma_set_mask_and_coherent(pfdev->base.dev,
- 					DMA_BIT_MASK(FIELD_GET(0xff00,
+ 	if (WARN_ON(job_read(pfdev, JS_COMMAND_NEXT(js)))) {
+-		return;
++		ret = -EINVAL;
++		goto err_hwsubmit;
+ 	}
+ 
+ 	cfg = panfrost_mmu_as_get(pfdev, job->mmu);
+@@ -262,6 +263,12 @@ static void panfrost_job_hw_submit(struct panfrost_job *job, int js)
+ 			job, js, subslot, jc_head, cfg & 0xf);
+ 	}
+ 	spin_unlock(&pfdev->js->job_lock);
++
++	return 0;
++
++err_hwsubmit:
++	pm_runtime_put_autosuspend(pfdev->base.dev);
++	return ret;
+ }
+ 
+ static int panfrost_acquire_object_fences(struct drm_gem_object **bos,
+@@ -384,6 +391,7 @@ static struct dma_fence *panfrost_job_run(struct drm_sched_job *sched_job)
+ 	struct panfrost_device *pfdev = job->pfdev;
+ 	int slot = panfrost_job_get_slot(job);
+ 	struct dma_fence *fence = NULL;
++	int ret;
+ 
+ 	if (job->ctx->destroyed)
+ 		return ERR_PTR(-ECANCELED);
+@@ -405,7 +413,11 @@ static struct dma_fence *panfrost_job_run(struct drm_sched_job *sched_job)
+ 		dma_fence_put(job->done_fence);
+ 	job->done_fence = dma_fence_get(fence);
+ 
+-	panfrost_job_hw_submit(job, slot);
++	ret = panfrost_job_hw_submit(job, slot);
++	if (ret) {
++		dma_fence_put(fence);
++		return ERR_PTR(ret);
++	}
+ 
+ 	return fence;
+ }
 -- 
 2.51.0
 
