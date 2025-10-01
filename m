@@ -1,238 +1,183 @@
-Return-Path: <linux-kernel+bounces-839144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7174BB0EA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 17:03:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB709BB0F4F
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 17:09:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0F0F3A55E6
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 15:00:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3EF83A5565
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 15:04:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE821303A2B;
-	Wed,  1 Oct 2025 14:56:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A0AC26059E;
+	Wed,  1 Oct 2025 15:00:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="B8beRsMw";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="/fpq+Hfk";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="e7B17Kkc";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="weQKRlnn"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="NrvEnoNZ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42D8A25A33F
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 14:56:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE0D125D527
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 15:00:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759330579; cv=none; b=qrEIXAgyR4TQfqz3iGTcziwI3tzV5QJBqO6SEddpVjVhnOGnszRMpkyrGByVBLlno/4zbordtvUkq/11VedJBz3UZ65zZaR6NefOUg6bHfdANmiMQoJmcFBcoagta7CYUt3qPr/CCmt/6JoafTF4APOEUJ+XD8v3LT0Uw55bwvQ=
+	t=1759330820; cv=none; b=els1wMunm4AM/Hp3vFF7AWlOqSB9kVqWcfFMJltdIuPegB1vegSIxZB3eM/waIM1Qkqs9yATmphUDqXnS2zlYexrAiO5nNiPlg2pD41F/z8/o4dGJXoUBvMHg9l5qYs0gnNzecGbEsCuR9IRA9LXQ1Kx+HZFR2GOS/j8gjppx6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759330579; c=relaxed/simple;
-	bh=YLSbAkSdEatvfoYDJJNnEpPbNs8ZtNj4zXiFFAAVD6Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mIodTDu/VVLpBzFN7/7IXw5G/uzVwZWJYVes0TubXcl+vNMfAidUySCo+DZzfTLAso0PYYxO9SO/pzspOwIzqGefMqP1CYEHpr+9+WwtATXnFqVUYAfii+/7MuUrJtRmmcAwPsi1sUcZ4rvAEUCAOEnXhCMnRZQlWGT7KHQqvtQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=B8beRsMw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=/fpq+Hfk; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=e7B17Kkc; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=weQKRlnn; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id F1C221FB68;
-	Wed,  1 Oct 2025 14:56:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759330574; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mZhtT0gMzluiTXihxlk/KdiCQJObMccQuGLJ1fCA3Tw=;
-	b=B8beRsMwsgThdOpOnz46NTYz5Yw7rY5zsGfZ6HBNpLQ3kO4xnFd95SzbOwz5KWr9F/Qi/1
-	QRxxzpaRbJ4wiPMuyE35Wo/060bcGYB/d9Aexvh8xtOEnlOIGHT6ToyTZcjzWVxghp7SX1
-	TdhOld8jVhjPJ1NHmcZxRgNVLNxy3sM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759330574;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mZhtT0gMzluiTXihxlk/KdiCQJObMccQuGLJ1fCA3Tw=;
-	b=/fpq+Hfk71kDH7JbsCDVNdqbMlK62EG1d7p9A4Dw9EO2S1gyunXciSOwZI2aS4sYiB1nVj
-	aP7nEnRDrnO/IoBw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759330573; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mZhtT0gMzluiTXihxlk/KdiCQJObMccQuGLJ1fCA3Tw=;
-	b=e7B17KkcDsAGU+wBEg0xMqKhca2+w3HspG/SG/oscV8W8+NY2xf8Oa96zLMQGCQXTWCdlX
-	wzOnREFosnjQ2VoXm+axUyUBAfsYBUNEmHMSoHyx7nJO+Xz2ZEnKP4XQhvje2bsRk5nOQZ
-	NmxYTOdFhLyy2pG/X+197K+4SI90Cg0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759330573;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mZhtT0gMzluiTXihxlk/KdiCQJObMccQuGLJ1fCA3Tw=;
-	b=weQKRlnnB3ehydu6Q5++VBJftePIMuk/48sR33UW6Iatb1SxCFSDMooBITsTMot0VS40TD
-	BXPz7pUFYk5ugkDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E399913A42;
-	Wed,  1 Oct 2025 14:56:13 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id lmZZNw1B3WhrLwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 01 Oct 2025 14:56:13 +0000
-Message-ID: <4a793133-6cb3-42d4-948f-84eae6fa7df3@suse.cz>
-Date: Wed, 1 Oct 2025 16:59:02 +0200
+	s=arc-20240116; t=1759330820; c=relaxed/simple;
+	bh=rrOC8v605BCDBPVmayK2iE30qmCNfSK7T+Vnosdb5Lg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=coHnosb5pzAvDcBgqyr4fom6aK/Ajhl/bH1E2mFB5XarcnICE+mShWEJ04tnnXTihX07cCKfSD+X03rYMXO03MaWpxazVzNb28pNp3cR+GHpXMuFH7aCoo4jhdNTA3VAHGvx+4WYJkU1GDBZKoVsUwR3iP0AJJ5yg4SWRsZ/+EU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=NrvEnoNZ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5919mpUd016878
+	for <linux-kernel@vger.kernel.org>; Wed, 1 Oct 2025 15:00:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=98Gzg36v+XGldnSVXhb1o5X/kk59eIv9iOf
+	72j0wzB0=; b=NrvEnoNZCxX8fSW/28D4O18iLRakaQcQL+cDxGPzfAsw0tgjV85
+	WPrkpdMZg9UE/PbJ/CEo61AxQ1dLCfQfvdqJ6PFVGev+Ngr9Em8mZQ33dpWzbkgj
+	ogJ5Wn16E/NDDjA7NEdRdvMITNcmhNNDCpsjDjw8GNPveS1S5rZG+obRDwcLLkM3
+	v1UuFgCD0n4BOkMirCWJC3gH0XZs1e5jP/FWS21NAyWdfrFXQOVt8S3H8iTk66Iw
+	BIc5yVTECXPZzxQ0xU10GKPk0Q+LRvPUgIHKFupokL4mq4HDq44IvjmaOL/5SrPR
+	sX4ybhaRwRzGcRE/PyNPQuFkAswL10XX5Uw==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e93hmp9t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 15:00:17 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4dfe8dafd18so157912271cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 08:00:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759330814; x=1759935614;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=98Gzg36v+XGldnSVXhb1o5X/kk59eIv9iOf72j0wzB0=;
+        b=Hz7XVS4mmGvcZhrVKhiJwJk9I7KywXHm+i9kfxZREkt59cZgt4FVm7e/yA43M6j6km
+         fD33yJ4sqUW0hysUmUXM7k+rBUsa9plvoOdVeW7Gf897xuWCAgpXfUnLMqx3PX+9Itew
+         a1Pjit7RwTMZcmksp94DZQ0t4jaUAJ2rCVyrUOIyHM8qSZIDPMwce/jOiu0q19k1iIi3
+         liFW0kpluTsfefAsqH9uyEJoIEaef+g3Y+aa9JJL5Hvfgymo68la7UfW3mAFXPOakYYv
+         uFH8kmgbdygIGiuo36Kr+fSGjRBTw2LPU+UpBSf/Yqc//O8Met9c6QT/rJ6GXTrYUBUj
+         2yFw==
+X-Forwarded-Encrypted: i=1; AJvYcCXUEfZSUTsqd3jWbmSvcxZsBeloz20iBIaKa9tgWBan3RBb5VjHzuQv2IDUoJ1hazqDeqx9bognYL4f3Us=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxT+IFgYVbFBxTJPfntsSmVaMhyaR2s204VwpT0YfNvsLpSbrVc
+	ZjVtGKMBIpfVm9icJP0m5+7bQB36UkdJuXyN5LOgAR9neEA3LBj1L5y2U4OHUlr0denlvMFIbvQ
+	wXesxW23YVksze1fxogHyHPg4Mk9XYyfaYHH/XDjXax6wuInpjb2UhJ7MBcmkOBF0Ou0=
+X-Gm-Gg: ASbGncskEIFjr930d/KlVzNL9CWATKvxa+bT1X5hvg4g1Q8ehP3V7lWyfCAks8ztNXU
+	ulBfPV4APuvT9I4i4NeBpAt2YsRLipZ8eHTVdu2ZyG1QcyaxHicV6fxLt5eFxkfobbXXQv3KREf
+	OXCwitQhCAwV9yQlaeOnYTTgG2U5L5fgNcOTjqu2S7y76tFa6MpvBkxIFuIMunCaFG1N3OxS6kU
+	JtJMfwqy1dUM4/a/WqPelG/F7dzqsloEir12XRpdbqmNmNNMcscJ4MmQKvP2UxqH2qU+sZM4p9A
+	4IBntlE/7uOo18kDPJdnNzTPbIDEeayTlpu3NhhkDwlIgQQiE+HtseWdkIk=
+X-Received: by 2002:a05:622a:309:b0:4d6:acc6:752f with SMTP id d75a77b69052e-4e41de7315amr42569121cf.69.1759330813001;
+        Wed, 01 Oct 2025 08:00:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEx571d49HxGU0B/X9+gUUZRIikwYyAXb9VNnJW/EZEvrFqfK5Fk227camoyVPoXwaLVq76mQ==
+X-Received: by 2002:a05:622a:309:b0:4d6:acc6:752f with SMTP id d75a77b69052e-4e41de7315amr42568091cf.69.1759330812235;
+        Wed, 01 Oct 2025 08:00:12 -0700 (PDT)
+Received: from debian ([5.133.47.210])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e5b69bc0bsm37147955e9.3.2025.10.01.08.00.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Oct 2025 08:00:11 -0700 (PDT)
+From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+To: srini@kernel.org, robh@kernel.org
+Cc: krzk+dt@kernel.org, gregkh@linuxfoundation.org,
+        linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+Subject: [PATCH] dt-bindings: slimbus: fix warning from example
+Date: Wed,  1 Oct 2025 16:00:02 +0100
+Message-ID: <20251001150003.417472-1-srinivas.kandagatla@oss.qualcomm.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: page_alloc: avoid kswapd thrashing due to NUMA
- restrictions
-To: Johannes Weiner <hannes@cmpxchg.org>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Brendan Jackman <jackmanb@google.com>, Zi Yan <ziy@nvidia.com>,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Gregory Price <gourry@gourry.net>, Joshua Hahn <joshua.hahnjy@gmail.com>
-References: <20250919162134.1098208-1-hannes@cmpxchg.org>
-From: Vlastimil Babka <vbabka@suse.cz>
-Content-Language: en-US
-In-Reply-To: <20250919162134.1098208-1-hannes@cmpxchg.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_CC(0.00)[google.com,suse.com,nvidia.com,kvack.org,vger.kernel.org,gourry.net,gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -2.80
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDA0MSBTYWx0ZWRfX3pHN4Uu8JQfv
+ addz8cZjU0jQ/TMbcV5X6U0opN+OFdeJM3/pyQy+RwKrLb/Z6qR+vtpF/MKUUgKYLUJ7MBlbegB
+ Qt34dEB7aXXOjJD7B6UrmbEZ10DPRqXxHQ66UJigsaGaKH45YNcZkQBoE+/+SFdB6jLwrlBEBkZ
+ rMjQ5Qx+LIAgqceH4DWEDXRQYfmlOd1RF+Ka3gGeZpDK8/nHWmH08+6THBCUkGoO4ySylHqhbHI
+ q9lbXUKpm10a6uI96po/lOBDTY8thdf+BlHoH4wtmp+f71hlU72vrwvMgbvu+fBWoYZJz6Litqz
+ at2VzJaY5+RfWFeq6YvZMd1thcG3aQZgpQpJF65JZvF+1og6Rg13HiWweOD58D6x19k3+mDQaW5
+ iCxgNf2tRsN+aRFyKwrk4nqhSotWSA==
+X-Proofpoint-GUID: gjkJRvSuD76imt39jpGGf56QQRVwDRVh
+X-Proofpoint-ORIG-GUID: gjkJRvSuD76imt39jpGGf56QQRVwDRVh
+X-Authority-Analysis: v=2.4 cv=Rfydyltv c=1 sm=1 tr=0 ts=68dd4201 cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=ZsC4DHZuhs/kKio7QBcDoQ==:17
+ a=x6icFKpwvdMA:10 a=gEfo2CItAAAA:8 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=f5vYYIzMdUIQFJOv_x4A:9 a=kacYvNCVWA4VmyqE58fU:22 a=sptkURWiP4Gy88Gu7hUp:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-01_04,2025-09-29_04,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 priorityscore=1501 bulkscore=0 adultscore=0 lowpriorityscore=0
+ impostorscore=0 clxscore=1015 malwarescore=0 spamscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270041
 
-On 9/19/25 6:21 PM, Johannes Weiner wrote:
-> On NUMA systems without bindings, allocations check all nodes for free
-> space, then wake up the kswapds on all nodes and retry. This ensures
-> all available space is evenly used before reclaim begins. However,
-> when one process or certain allocations have node restrictions, they
-> can cause kswapds on only a subset of nodes to be woken up.
-> 
-> Since kswapd hysteresis targets watermarks that are *higher* than
-> needed for allocation, even *unrestricted* allocations can now get
-> suckered onto such nodes that are already pressured. This ends up
-> concentrating all allocations on them, even when there are idle nodes
-> available for the unrestricted requests.
-> 
-> This was observed with two numa nodes, where node0 is normal and node1
-> is ZONE_MOVABLE to facilitate hotplugging: a kernel allocation wakes
-> kswapd on node0 only (since node1 is not eligible); once kswapd0 is
-> active, the watermarks hover between low and high, and then even the
-> movable allocations end up on node0, only to be kicked out again;
-> meanwhile node1 is empty and idle.
+Fix below warnings generated dt_bindings_check for examples in the
+bindings.
 
-Is this because node1 is slow tier as Zi suggested, or we're talking
-about allocations that are from node0's cpu, while allocations on
-node1's cpu would be fine?
+Documentation/devicetree/bindings/slimbus/slimbus.example.dtb:
+slim@28080000 (qcom,slim-ngd-v1.5.0): 'audio-codec@1,0' does not match
+any of the regexes: '^pinctrl-[0-9]+$', '^slim@[0-9a-f]+$'
+        from schema $id:
+http://devicetree.org/schemas/slimbus/qcom,slim-ngd.yaml#
+Documentation/devicetree/bindings/slimbus/slimbus.example.dtb:
+slim@28080000 (qcom,slim-ngd-v1.5.0): #address-cells: 1 was expected
+        from schema $id:
+http://devicetree.org/schemas/slimbus/qcom,slim-ngd.yaml#
+Documentation/devicetree/bindings/slimbus/slimbus.example.dtb:
+slim@28080000 (qcom,slim-ngd-v1.5.0): 'dmas' is a required property
+        from schema $id:
+http://devicetree.org/schemas/slimbus/qcom,slim-ngd.yaml#
+Documentation/devicetree/bindings/slimbus/slimbus.example.dtb:
+slim@28080000 (qcom,slim-ngd-v1.5.0): 'dma-names' is a required
+property
+        from schema $id:
+http://devicetree.org/schemas/slimbus/qcom,slim-ngd.yaml#
 
-Also this sounds like something that ZONELIST_ORDER_ZONE handled until
-it was removed. But it wouldn't help with the NUMA binding case.
 
-> Similar behavior is possible when a process with NUMA bindings is
-> causing selective kswapd wakeups.
-> 
-> To fix this, on NUMA systems augment the (misleading) watermark test
-> with a check for whether kswapd is already active during the first
-> iteration through the zonelist. If this fails to place the request,
-> kswapd must be running everywhere already, and the watermark test is
-> good enough to decide placement.
+Fixes: 7cbba32a2d62 ("slimbus: qcom: remove unused qcom controller driver")
+Reported-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+---
+ .../devicetree/bindings/slimbus/slimbus.yaml     | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
 
-Suppose kswapd finished reclaim already, so this check wouldn't kick in.
-Wouldn't we be over-pressuring node0 still, just somewhat less?
+diff --git a/Documentation/devicetree/bindings/slimbus/slimbus.yaml b/Documentation/devicetree/bindings/slimbus/slimbus.yaml
+index 89017d9cda10..5a941610ce4e 100644
+--- a/Documentation/devicetree/bindings/slimbus/slimbus.yaml
++++ b/Documentation/devicetree/bindings/slimbus/slimbus.yaml
+@@ -75,16 +75,22 @@ examples:
+         #size-cells = <1>;
+         ranges;
+ 
+-        slim@28080000 {
++        controller@28080000 {
+             compatible = "qcom,slim-ngd-v1.5.0";
+             reg = <0x091c0000 0x2c000>;
+             interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>;
+-            #address-cells = <2>;
++            dmas = <&slimbam 3>, <&slimbam 4>;
++            dma-names = "rx", "tx";
++            #address-cells = <1>;
+             #size-cells = <0>;
+-
+-            audio-codec@1,0 {
++            slim@1 {
++              reg = <1>;
++              #address-cells = <2>;
++              #size-cells = <0>;
++              codec@1,0 {
+                 compatible = "slim217,1a0";
+                 reg = <1 0>;
++              };
+             };
++          };
+         };
+-    };
+-- 
+2.51.0
 
-> With this patch, unrestricted requests successfully make use of node1,
-> even while kswapd is reclaiming node0 for restricted allocations.
-> 
-> [gourry@gourry.net: don't retry if no kswapds were active]
-> Signed-off-by: Gregory Price <gourry@gourry.net>
-> Tested-by: Joshua Hahn <joshua.hahnjy@gmail.com>
-> Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
-> ---
->  mm/page_alloc.c | 24 ++++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
-> 
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index cf38d499e045..ffdaf5e30b58 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -3735,6 +3735,8 @@ get_page_from_freelist(gfp_t gfp_mask, unsigned int order, int alloc_flags,
->  	struct pglist_data *last_pgdat = NULL;
->  	bool last_pgdat_dirty_ok = false;
->  	bool no_fallback;
-> +	bool skip_kswapd_nodes = nr_online_nodes > 1;
-> +	bool skipped_kswapd_nodes = false;
->  
->  retry:
->  	/*
-> @@ -3797,6 +3799,19 @@ get_page_from_freelist(gfp_t gfp_mask, unsigned int order, int alloc_flags,
->  			}
->  		}
->  
-> +		/*
-> +		 * If kswapd is already active on a node, keep looking
-> +		 * for other nodes that might be idle. This can happen
-> +		 * if another process has NUMA bindings and is causing
-> +		 * kswapd wakeups on only some nodes. Avoid accidental
-> +		 * "node_reclaim_mode"-like behavior in this case.
-> +		 */
-> +		if (skip_kswapd_nodes &&
-> +		    !waitqueue_active(&zone->zone_pgdat->kswapd_wait)) {
-> +			skipped_kswapd_nodes = true;
-> +			continue;
-> +		}
-> +
->  		cond_accept_memory(zone, order, alloc_flags);
->  
->  		/*
-> @@ -3888,6 +3903,15 @@ get_page_from_freelist(gfp_t gfp_mask, unsigned int order, int alloc_flags,
->  		}
->  	}
->  
-> +	/*
-> +	 * If we skipped over nodes with active kswapds and found no
-> +	 * idle nodes, retry and place anywhere the watermarks permit.
-> +	 */
-> +	if (skip_kswapd_nodes && skipped_kswapd_nodes) {
-> +		skip_kswapd_nodes = false;
-> +		goto retry;
-> +	}
-> +
->  	/*
->  	 * It's possible on a UMA machine to get through all zones that are
 
