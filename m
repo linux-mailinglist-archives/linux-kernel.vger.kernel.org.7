@@ -1,106 +1,77 @@
-Return-Path: <linux-kernel+bounces-838844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51DC3BB0429
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 13:59:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1238BB042E
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 14:00:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A87473B78BE
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 11:59:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65CB11942D09
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 12:00:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B2E2E7F3A;
-	Wed,  1 Oct 2025 11:59:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8A332E7F3A;
+	Wed,  1 Oct 2025 11:59:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="EtOyDVxk"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WjE0QNHe"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CCAE2E7F3E
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 11:58:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2716A2DE715;
+	Wed,  1 Oct 2025 11:59:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759319940; cv=none; b=SfBdNrmIF0e5Wx254LaqOkKM23KQMHghszcBkHLbKgJatkAM2QyTgQjoIm5UibJ+CEs8vURJiLykmuN9ZBCaOHDtJmu4Jx7cuBzywCZpDKPGVnRg5QSDtwSvw7KzgLQawhydrmoWTHJRFtP9G1eb7pDQGFzG3ZkItukt9Y+VNFM=
+	t=1759319995; cv=none; b=nPlRS7nfrJUXQa4QPY1iVQ+5r924mo5OjkKWyKeclZKcHfr6xrQWGvHET/EQ/QTeky2ePpqKn7rI/o5u2hFn9NJZ8C1VW6Yhfpk8Nb2EHQnAhQG7l5cYkE0wI7ltNQhbVPGd66gykHIEk4xRdGhCoVekoipKyI6MifAWP3YZ9ls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759319940; c=relaxed/simple;
-	bh=NN5GgRIzCCi/hMERBMeR8ROhByBf62Xiy5LgeqicMs0=;
+	s=arc-20240116; t=1759319995; c=relaxed/simple;
+	bh=yasRxt5QP0TubpGRVpMM60tA67T2lNp2t5aBrR0AQ7s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YFt1t052GgVLOwepnIEgbLN3/33N+Hufg41QJT96xuFo4Yj3MqBkKPmwDmsfe7iSWrc5le4TGIz8NWnD6mxFxVzkkSYc4FA6M44o21qqN+4raCmpQExuCUHIb8XO8VlyARGiSykBiuJTZPe8UbJ3yBDkh55GNkKdu1tR63ayiNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=EtOyDVxk; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-330469eb750so8298757a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 04:58:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1759319937; x=1759924737; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=92Qglsz/Eya8BRF97YA+VHR4I83RleB9lL6/yCypHW8=;
-        b=EtOyDVxkDmGpPHMhNMtCS0WX0DvJmBIOPX2xb7iUHokwa71hwLb4uqG9mWbGBePQvr
-         DyWpOEqVxPNYp1cwpgPGNz7TgQjkY99MyVhcT+zijJ1bGaUnnxPZnHs5rXnhngYOivSt
-         /TFH0t8gS4oqGVRVLxjGULXXFiDHRsQ47aQFAkuvZ8D/zl95NK2zMlgR25StOVFEnq9M
-         cLCl9rO2yPM+O1q7snOP7/W/TbwZ0ORZeMUOCmFJSI3meRXW3kSQIeyshYO18a+DFqy7
-         tMFtPG9X6gA2VKjKLnt7cMxLYI60up+RNrP9AuJyzg/Mb+JY8e+TEwEohSXrNELEQOwN
-         afPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759319937; x=1759924737;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=92Qglsz/Eya8BRF97YA+VHR4I83RleB9lL6/yCypHW8=;
-        b=vjj8nYmLvEu+R/tFfdY2iTNvfpHDq3iik6EfNYjMo4vxVpLTtaVlH5NmJ4ahqLLWyf
-         qrcSgU7m/i21c2rMq4/ep69Fo/o1pu5WFDkVnQp3+pNqQS4W4H7HnmjLWZx5GgAZ0xkY
-         qba/zNn+jdhP116Gsaiyxwxu+DZwgSd4aLABEXComMMbqBN+ZMWm1AmhSwVWQZJekI4D
-         KtbzpdHn54HJuKgZc8ZwWh8y1jun6ZSxWYADNqZfed4SumV3rIwsNBl1jN5AYCeyqeBp
-         KILwbP19qE6bTI4pxWqEh6gdk/h4j6BmsKPfSmowuSt3YhE9zICO8Y/fKqwhw0DAvW05
-         HlwA==
-X-Forwarded-Encrypted: i=1; AJvYcCVrjbN1F/u41nWVP+xWz8x1CHk+lkzEX4iij7XoshqVWOxoDIJJCgj7hkcEeXbwrRRzAK8DqEtRoApPZGI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxY4hmGrbT+yDOrgfMZ818THOrZJYP7FCY1IbNEa5fQO37KRhah
-	iDk/W9Jzxy6MvyJZlXDJ5qoEI+j8X0M7100gx8hRdUJAjdHr+IpGFaSWuVZoxr14Yw==
-X-Gm-Gg: ASbGncuFFeLi8NYETJ9maLJ+XbchMFShMgihFkcOBTk/Bd+5LaZ56vA0Kth3mL/RsW5
-	uO4J9Gsl0m1/thvZitbqR6PF9MwNGfQOXjR3TXE4AfWaYRDq1fGF2Vk7MMtp+adlYTmA4Jz6XNW
-	N+YyKbvEoOyrAcb6bufFvbBjMKGEH97DAyaNy1mpcLBDImNqTsYbUWBgigc5sjB9+hJlWV6+6pz
-	1Ihfz9A9tkj7JffXDqo914AA5h0C5psY7/OMtt0ECX4l6l3+wa8AugwKijjgdeT5GwJdv2E/vo9
-	ZvLeDD78Kkncaut8wDCDaHUOiEJwEjGRhhVoUs+qnNtzEp1JwvHtq1Oyhynw4GGZze4dYAFTe9g
-	6QvSaalJbGQPH/9Z8ht/qYBM+pxnvzhXfTj0Nqv5cd29ce8PJYTw=
-X-Google-Smtp-Source: AGHT+IEkaLSylOZc5E7F3SXLckvWF+pTKi0KPQUlgdWEILUjfaUWCRhrpGbzZev8BbY9O4wUVAVUFw==
-X-Received: by 2002:a17:90b:3812:b0:335:2a00:6842 with SMTP id 98e67ed59e1d1-339a6f6aec8mr3679616a91.26.1759319936967;
-        Wed, 01 Oct 2025 04:58:56 -0700 (PDT)
-Received: from bytedance ([38.181.81.167])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b57c53db8d2sm15894243a12.24.2025.10.01.04.58.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Oct 2025 04:58:56 -0700 (PDT)
-Date: Wed, 1 Oct 2025 19:58:42 +0800
-From: Aaron Lu <ziqianlu@bytedance.com>
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Valentin Schneider <vschneid@redhat.com>,
-	Ben Segall <bsegall@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Xi Wang <xii@google.com>, linux-kernel@vger.kernel.org,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
-	Chuyi Zhou <zhouchuyi@bytedance.com>,
-	Jan Kiszka <jan.kiszka@siemens.com>,
-	Florian Bezdeka <florian.bezdeka@siemens.com>,
-	Songtang Liu <liusongtang@bytedance.com>,
-	Chen Yu <yu.c.chen@intel.com>,
-	Matteo Martelli <matteo.martelli@codethink.co.uk>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: [PATCH] sched/fair: Prevent cfs_rq from being unthrottled with
- zero runtime_remaining
-Message-ID: <20251001115842.GA674@bytedance>
-References: <20250929074645.416-1-ziqianlu@bytedance.com>
- <7c93d622-49fe-4e99-8142-aed69d48aa8a@amd.com>
- <20250930075602.GA510@bytedance>
- <658734b1-b02b-4e04-8479-ed17eb42c1f2@amd.com>
- <20250930110717.GC510@bytedance>
- <dc328049-b1e6-4558-bb9b-e2e1d186daeb@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cKwrxzj2o9GqqyIVaWgKTSvCEzZ+ktTpY7LJ66ZfdwlN3iUA+Kauln1iWOlyx32yIl5tW9bMtEo2RifZ0XeHo56W3/TTuH3WXnu5YXJTxferJjRp9G902UFtI1kyfEkAGdbybLneuoapaKnHFeYtE6fa2Vg85PGO9HdQQEfM1y8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WjE0QNHe; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759319993; x=1790855993;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=yasRxt5QP0TubpGRVpMM60tA67T2lNp2t5aBrR0AQ7s=;
+  b=WjE0QNHeDgu3DWW/736EDcERF2VYglZm2LSa45y4YwfwWk8RdJpvJDJn
+   4QU5tqkEFvdkyhOiHhz23kHB/uljsqHkYVXkdUK+lO0UxVzHdJ6shdL/P
+   92u6tbe7Z0vRoYzVThat+UoIZazyVWsIcviJJHTJ/+fjdqkxqzwsckVU9
+   N+3x/1GdrxNJU+R5IrlfrfzqXFBUFlRnutIF/lAxNEkOC3GvlBXDkBRs7
+   sWRgxRzbZQmr2p4GaiBdVsh26X6GKRCtBTDfyjh9Wfr6irU9tKNIRYBFN
+   bmKg82c6J9s6VMhHxG+dR05j8XslEEFRpFKXbhgfHOn9GdjLipLAwHPra
+   Q==;
+X-CSE-ConnectionGUID: zLIszrsvRBG4C3XJ1+wuJg==
+X-CSE-MsgGUID: Jk9pcgKrT6WATkL1OAbSGg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11569"; a="60804574"
+X-IronPort-AV: E=Sophos;i="6.18,306,1751266800"; 
+   d="scan'208";a="60804574"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2025 04:59:53 -0700
+X-CSE-ConnectionGUID: nERQSJBORcKpxb9lx/DIGQ==
+X-CSE-MsgGUID: /UxpTlybTf24alL71cqoqA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,306,1751266800"; 
+   d="scan'208";a="178819207"
+Received: from fpallare-mobl4.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.14])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2025 04:59:50 -0700
+Received: from kekkonen.localdomain (localhost [IPv6:::1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 0B133121163;
+	Wed, 01 Oct 2025 14:59:47 +0300 (EEST)
+Date: Wed, 1 Oct 2025 14:59:47 +0300
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Ma Ke <make24@iscas.ac.cn>
+Cc: bingbu.cao@intel.com, lixu.zhang@intel.com,
+	stanislaw.gruszka@linux.intel.com, mchehab@kernel.org,
+	wentong.wu@intel.com, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, akpm@linux-foundation.org
+Subject: Re: [PATCH v5] media: pci: intel: ivsc: improve device reference
+ counting in mei_ace driver
+Message-ID: <aN0XszBNLZPjoRfg@kekkonen.localdomain>
+References: <20250929013007.1920-1-make24@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -109,31 +80,72 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <dc328049-b1e6-4558-bb9b-e2e1d186daeb@amd.com>
+In-Reply-To: <20250929013007.1920-1-make24@iscas.ac.cn>
 
-On Tue, Sep 30, 2025 at 07:08:20PM +0530, K Prateek Nayak wrote:
-> Hello Aaron,
-> 
-> I'll merge the two replies in one.
-> 
-> On 9/30/2025 4:37 PM, Aaron Lu wrote:
-> > So in my original patch, cfs_rqs will (most likely) start with
-> > runtime_remaining == 1 and unthrottled after calling throttle_cfs_rq(),
-> > which will also start the B/W timer. The timer is not needed in this
-> > case when no cfs_rqs are actually throttled but it doesn't hurt. Looks
-> > like everything is OK, we do not need to do any special handling in
-> > enqueue_throttled_task(). Thoughts?
-> 
-> Now that I look at throttle_cfs_rq() properly, we'll only move the
-> runtime_remaining from 0 to 1 so few usecs worth of bandwidth
-> distributed at max should be okay. Sorry for the being overly cautious!
+Hi Ma,
 
-Never mind.
+Thanks for the update.
+
+On Mon, Sep 29, 2025 at 09:30:07AM +0800, Ma Ke wrote:
+> The device reference counting in mei_ace_setup_dev_link() was
+> incomplete, as the reference acquired by device_find_child_by_name()
+> was not released immediately on the success path. Add put_device() to
+> properly balance the reference count. Additionally, the redundant
+> put_device() in mei_ace_remove() is removed.
+> 
+> Found by code review.
+
+The patch seems fine but the commit message is a bit more dramatic than
+what reality justifies. I'll use this:
+
+Put the reference to csi_dev acquired during driver probe in
+mei_ace_setup_dev_link() inside the same function, instead of during driver
+unbind in mei_ace_remove(). This can be done as device_link_add() already
+takes a reference to csi_dev.
 
 > 
-> So your current approach should be good. Please feel free to include:
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+> ---
+> Changes in v5:
+> - jumped to err instead of err_put to avoid calling put_device() again in err_put as reviewer's instructions;
+> Changes in v4:
+> - updated the subject as suggestions;
+> Changes in v3:
+> - deleted the tag of Fixes and CC, and moved put_device() to immediately after device_link_add() as suggestions;
+> Changes in v2:
+> - modified the put_device() operations and the patch title as suggestions.
+> ---
+>  drivers/media/pci/intel/ivsc/mei_ace.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> Reviewed-by: K Prateek Nayak <kprateek.nayak@amd.com>
+> diff --git a/drivers/media/pci/intel/ivsc/mei_ace.c b/drivers/media/pci/intel/ivsc/mei_ace.c
+> index 98310b8511b1..b306a320b70f 100644
+> --- a/drivers/media/pci/intel/ivsc/mei_ace.c
+> +++ b/drivers/media/pci/intel/ivsc/mei_ace.c
+> @@ -414,10 +414,11 @@ static int mei_ace_setup_dev_link(struct mei_ace *ace)
+>  	/* setup link between mei_ace and mei_csi */
+>  	ace->csi_link = device_link_add(csi_dev, dev, DL_FLAG_PM_RUNTIME |
+>  					DL_FLAG_RPM_ACTIVE | DL_FLAG_STATELESS);
+> +	put_device(csi_dev);
+>  	if (!ace->csi_link) {
+>  		ret = -EINVAL;
+>  		dev_err(dev, "failed to link to %s\n", dev_name(csi_dev));
+> -		goto err_put;
+> +		goto err;
+>  	}
+>  
+>  	ace->csi_dev = csi_dev;
+> @@ -522,7 +523,6 @@ static void mei_ace_remove(struct mei_cl_device *cldev)
+>  	cancel_work_sync(&ace->work);
+>  
+>  	device_link_del(ace->csi_link);
+> -	put_device(ace->csi_dev);
+>  
+>  	pm_runtime_disable(&cldev->dev);
+>  	pm_runtime_set_suspended(&cldev->dev);
 
-Thanks!
+-- 
+Regards,
+
+Sakari Ailus
 
