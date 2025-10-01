@@ -1,175 +1,186 @@
-Return-Path: <linux-kernel+bounces-839345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A12EBB16FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 20:02:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A43A4BB1709
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 20:02:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7960717B9ED
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 18:02:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BAB419200DD
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 18:02:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8868F2D3EE0;
-	Wed,  1 Oct 2025 18:02:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B3582D3EEB;
+	Wed,  1 Oct 2025 18:02:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ps7x5FCI"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XVZi2/iO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 466FE258EF0;
-	Wed,  1 Oct 2025 18:01:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AB51258EF0;
+	Wed,  1 Oct 2025 18:02:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759341720; cv=none; b=XuxPebwFLkWlqzvblWhhTzibftXflV7XvP3crWMLKV2V1Bjfr681dSR086IkcHd3eAUHS/32uu+Ix7Saq/raUlNcB6rxB5vqdw6OWKhW3Wh4dKzmBCFM8SxlzOTd+RAbcImidYr4BiyBPfh5bv/CBTC2j+Pr7yjgZMZk/2WUfwI=
+	t=1759341741; cv=none; b=n+C86GDaNlSClj+kcokFHUR3BFZesZbn/PChgozQQGjctqBbTB0xWbsO0QM6ApHb7uCxENQ10EIOvQioJmiuujLylda8jajgL1Aem8ZnkMk+vl1hEnDiMR0gvmNrYypPR5IUmTDG1b4AkhbdY9dVVJZovb34B8waW8nBzEKkBqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759341720; c=relaxed/simple;
-	bh=OZTt/xPPJXX+7TnJZBoKo37mlN/sUWHl7tztDTk/5Iw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tpMBUNo0l7d2yLnF+fm6M8dW2Qx6AJN+VdrK72/SDvooIASctYsW87qoL48AlTA2Ude7UpfQupPaSG7hmkdRFaqLXfQl8t4dErTOvn/j21K/UZOM2xh54yOws5aG7dAf5cMEcgFhcNWXn4W9GTB5ZsADMFbZtpkCZY98eEWeF0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ps7x5FCI; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 591AauF2018941;
-	Wed, 1 Oct 2025 18:01:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=YuggLZ
-	X5iMXvtB6YQ9ETrPfHB3UZ2uFjZQlbGISsB5A=; b=ps7x5FCIAm81ZrYqN1SCpX
-	Fwu/yJWw6zILHk/+JiTKeK8NUHWJt07e5X9NQQBmw0wbqMrdVIuSYexghvc8QUMj
-	YbtpliRWpQJ/3nJbXbvKxjNnDTMz2hNO57HMsVF1BruUiLa6SDC3I3jnQvigiyL1
-	BjG8JW8bTZgmvBNkbmS1aefDL0aSrz46EDkwB3f7AYrSN18fD/LOc6sxP5Swrq4F
-	5nxq7dUis/Ta67hLi0rtaZ/QA/YynLMHZVZTTHSPUV/SosWB24IWdNhqJshub4Ik
-	LYWFDracWf+KT78WTQqhGS2yy5w7HUSjOK7NcA7Qe3imaGujcLPzbRknwn4P1Yag
-	==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49e7n81262-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 01 Oct 2025 18:01:53 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 591GwL6P024151;
-	Wed, 1 Oct 2025 18:01:51 GMT
-Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 49evy19v5q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 01 Oct 2025 18:01:51 +0000
-Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
-	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 591I1cSF24445610
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 1 Oct 2025 18:01:38 GMT
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A22A458067;
-	Wed,  1 Oct 2025 18:01:49 +0000 (GMT)
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8849F5805F;
-	Wed,  1 Oct 2025 18:01:48 +0000 (GMT)
-Received: from [9.61.247.182] (unknown [9.61.247.182])
-	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Wed,  1 Oct 2025 18:01:48 +0000 (GMT)
-Message-ID: <a4c448b2-6909-4efb-b41d-396ea8ececd3@linux.ibm.com>
-Date: Wed, 1 Oct 2025 11:01:47 -0700
+	s=arc-20240116; t=1759341741; c=relaxed/simple;
+	bh=+4Me4BxSNkEfQoSLvp5i2e5DL8lW97v/MeE2adVD+6U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ewc5H0sFuFDwAkH3v9fhdOseBJOjEtKbRC5UbgGpyhKNyF5cOq5U+nY8jq79d4N9XAIb1nzHMvSRdo+7BxLpKqUV7hm7J/bMzmZyAIdvCRHiSHKeIQy2ywL41B8YQ7erysczyRhI/qUljNoeDT9zNC4zqO/Ke0oIPHypJkf4ytQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XVZi2/iO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A45A3C4CEF1;
+	Wed,  1 Oct 2025 18:02:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759341741;
+	bh=+4Me4BxSNkEfQoSLvp5i2e5DL8lW97v/MeE2adVD+6U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XVZi2/iOWlLlql9b1mBipGNAG68Aqo3X4lSI8qvxKN+SPHJ+ZxN0+ZJC5V4bBZak5
+	 muk6GIkAbKPPw31dlESVhZaLXgQoenKFlvgUxGUQbisoJacAZGLzXTa/Dz4WPqCc91
+	 1W6x3jktFY6Jc0s0uEOcp+jn2Gbn1pA5nt1+z0vvSkBGiAA/q+M9QWDpXqThh0H83U
+	 aI27UCU/znvv2Ar/p7t5SAziDR2cN6/TQmTOq1hULoaScl9j/k5PD7uTZNQsbu5+/r
+	 4OkbhLP1JwjOIReaUvV7s9drmrnwFeHAEMCIy+rtiHuU3Xr4HtGOkSyH13dScBjb32
+	 RP9jlwpZlBkrw==
+Date: Wed, 1 Oct 2025 20:02:16 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: Askar Safin <safinaskar@gmail.com>, brauner@kernel.org, 
+	dhowells@redhat.com, g.branden.robinson@gmail.com, jack@suse.cz, 
+	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-man@vger.kernel.org, mtk.manpages@gmail.com, viro@zeniv.linux.org.uk
+Subject: Re: [PATCH v5 7/8] man/man2/open_tree{,_attr}.2: document new
+ open_tree_attr() API
+Message-ID: <5ukckeqipdkz6aigdy7rmtsmy5zav5x4rw2hrgbxiwfflrcmgb@jy7yr34cwyat>
+References: <20250925-new-mount-api-v5-7-028fb88023f2@cyphar.com>
+ <20251001003841.510494-1-safinaskar@gmail.com>
+ <2025-10-01-brawny-bronze-taste-mounds-zp8G2b@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 04/10] s390/pci: Add architecture specific resource/bus
- address translation
-To: Benjamin Block <bblock@linux.ibm.com>,
-        Niklas Schnelle <schnelle@linux.ibm.com>
-Cc: linux-s390@vger.kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        alex.williamson@redhat.com, helgaas@kernel.org, clg@redhat.com,
-        mjrosato@linux.ibm.com
-References: <20250924171628.826-1-alifm@linux.ibm.com>
- <20250924171628.826-5-alifm@linux.ibm.com>
- <2d049d60868c0f61e53e70a73881f8674368537a.camel@linux.ibm.com>
- <20251001160415.GC408411@p1gen4-pw042f0m>
-Content-Language: en-US
-From: Farhan Ali <alifm@linux.ibm.com>
-In-Reply-To: <20251001160415.GC408411@p1gen4-pw042f0m>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: OjM4jqVCkUZIXqsN743-_l4_-nJXb7Th
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAyNSBTYWx0ZWRfX87MJU4BoLddX
- N6TC4yhszZJHvAXE2CA9JgcyUio9K1GzaP6XX8BB7rnwwkV1oNm/YXQ2+ZdTI5uxuDDUcjgEfi7
- eOYEHSMR4FZ8ufZnTfcSc5hhHLYLoXXSUP5RpHWk5+8fIZ40kbQCJpsb1OHL0MkVauSI7BdyuP0
- BN/nLFI012nbswP4Sqd2nq1VyMsztm+9P+yzptR76G/oww93PGL0ZE2dwndre1U9h8uslkvAOOy
- GEcjMUQE+suRuQn/aGMm/yzoEVWNY5laQLO/U3I6zndQzuSl/+YUFa2rlss7A0rzV9Wp2zr8bnp
- JduLWYpJdI3CtRA6AgqH8MDodxKwbAB8ynHUKgj9x2R7smp+QehAfqgtf7ihxHvm2E36P0YxxbY
- 10halkeAeAuNIkzh1kwVp+o1sZ2FcQ==
-X-Proofpoint-GUID: OjM4jqVCkUZIXqsN743-_l4_-nJXb7Th
-X-Authority-Analysis: v=2.4 cv=T7qBjvKQ c=1 sm=1 tr=0 ts=68dd6c91 cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=q6S6Oyswo6crDdrvCj4A:9
- a=QEXdDO2ut3YA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-01_05,2025-09-29_04,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 impostorscore=0 lowpriorityscore=0 malwarescore=0 spamscore=0
- clxscore=1015 suspectscore=0 bulkscore=0 phishscore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270025
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="67r6dfiqg2gtq4zd"
+Content-Disposition: inline
+In-Reply-To: <2025-10-01-brawny-bronze-taste-mounds-zp8G2b@cyphar.com>
 
 
-On 10/1/2025 9:04 AM, Benjamin Block wrote:
-> On Thu, Sep 25, 2025 at 12:54:07PM +0200, Niklas Schnelle wrote:
->> On Wed, 2025-09-24 at 10:16 -0700, Farhan Ali wrote:
->>> +void pcibios_resource_to_bus(struct pci_bus *bus, struct pci_bus_region *region,
->>> +			     struct resource *res)
->>> +{
->>> +	struct zpci_bus *zbus = bus->sysdata;
->>> +	struct zpci_bar_struct *zbar;
->>> +	struct zpci_dev *zdev;
->>> +
->>> +	region->start = res->start;
->>> +	region->end = res->end;
->> When we don't find a BAR matching the resource this would become the
->> region used. I'm not sure what a better value would be if we don't find
->> a match though and that should hopefully not happen in sensible uses.
->> Also this would keep the existing behavior so seems fine.
-> I was wondering the same things, but I guess it matches what happens elsewhere
-> as well, if no match is found
->
-> 	void __weak pcibios_resource_to_bus(struct pci_bus *bus, struct pci_bus_region *region,
-> 				     struct resource *res)
-> 	{
-> 		...
-> 		resource_size_t offset = 0;
->
-> 		resource_list_for_each_entry(window, &bridge->windows) {
-> 			if (resource_contains(window->res, res)) {
-> 				offset = window->offset;
-> 				break;
-> 			}
-> 		}
->
-> 		region->start = res->start - offset;
-> 		region->end = res->end - offset;
-> 	}
->
-> So I guess that is fine.
->
-> The thing I'm also unclear on is whether it is OK to "throw out" this whole
-> logic about `resource_contains(window->res, res)` here and
-> `region_contains(&bus_region, region)` in the other original function?
-> I mean, the original function don't search for perfect matches, but also
-> matches where are contained in a given resource/region, which is different
-> from what we do here. Are we OK with not doing that at all?
+--67r6dfiqg2gtq4zd
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: Askar Safin <safinaskar@gmail.com>, brauner@kernel.org, 
+	dhowells@redhat.com, g.branden.robinson@gmail.com, jack@suse.cz, 
+	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-man@vger.kernel.org, mtk.manpages@gmail.com, viro@zeniv.linux.org.uk
+Subject: Re: [PATCH v5 7/8] man/man2/open_tree{,_attr}.2: document new
+ open_tree_attr() API
+Message-ID: <5ukckeqipdkz6aigdy7rmtsmy5zav5x4rw2hrgbxiwfflrcmgb@jy7yr34cwyat>
+References: <20250925-new-mount-api-v5-7-028fb88023f2@cyphar.com>
+ <20251001003841.510494-1-safinaskar@gmail.com>
+ <2025-10-01-brawny-bronze-taste-mounds-zp8G2b@cyphar.com>
+MIME-Version: 1.0
+In-Reply-To: <2025-10-01-brawny-bronze-taste-mounds-zp8G2b@cyphar.com>
 
-I had thought about doing the range check, similar to 
-resource_contains/region_contains rather than doing exact checks. But I 
-think the way we expose the topology of the devices, the offset in our 
-(s390x) case is zero. So I thought it should be safe to just doing exact 
-match and might help us catch any issues if its not exact.
+Hi Aleksa,
 
-Thanks
+On Wed, Oct 01, 2025 at 05:35:45PM +1000, Aleksa Sarai wrote:
+> On 2025-10-01, Askar Safin <safinaskar@gmail.com> wrote:
+> > Aleksa Sarai <cyphar@cyphar.com>:
+> > > +mntfd2 =3D open_tree(mntfd1, "", OPEN_TREE_CLONE,
+> > > +                   &attr, sizeof(attr));
+> >=20
+> > Your whole so-called "open_tree_attr example" doesn't contain any open_=
+tree_attr
+> > calls. :)
+> >=20
+> > I think you meant open_tree_attr here.
+>=20
+> Oops.
+>=20
+> >=20
+> > > +\&
+> > > +/* Create a new copy with the id-mapping cleared */
+> > > +memset(&attr, 0, sizeof(attr));
+> > > +attr.attr_clr =3D MOUNT_ATTR_IDMAP;
+> > > +mntfd3 =3D open_tree(mntfd1, "", OPEN_TREE_CLONE,
+> > > +                   &attr, sizeof(attr));
+> >=20
+> > And here.
+>=20
+> Oops x2.
+>=20
+> > Otherwise your whole patchset looks good. Add to whole patchset:
+> > Reviewed-by: Askar Safin <safinaskar@gmail.com>
 
-Farhan
+I've applied the patch, with the following amendment:
 
+	diff --git i/man/man2/open_tree.2 w/man/man2/open_tree.2
+	index 8b48f3b78..f6f2fbecd 100644
+	--- i/man/man2/open_tree.2
+	+++ w/man/man2/open_tree.2
+	@@ -683,14 +683,14 @@ .SS open_tree_attr()
+	 .\" Using .attr_clr is not strictly necessary but makes the intent cleare=
+r.
+	 attr.attr_set =3D MOUNT_ATTR_IDMAP;
+	 attr.userns_fd =3D nsfd2;
+	-mntfd2 =3D open_tree(mntfd1, "", OPEN_TREE_CLONE,
+	-                   &attr, sizeof(attr));
+	+mntfd2 =3D open_tree_attr(mntfd1, "", OPEN_TREE_CLONE,
+	+                        &attr, sizeof(attr));
+	 \&
+	 /* Create a new copy with the id-mapping cleared */
+	 memset(&attr, 0, sizeof(attr));
+	 attr.attr_clr =3D MOUNT_ATTR_IDMAP;
+	-mntfd3 =3D open_tree(mntfd1, "", OPEN_TREE_CLONE,
+	-                   &attr, sizeof(attr));
+	+mntfd3 =3D open_tree_attr(mntfd1, "", OPEN_TREE_CLONE,
+	+                        &attr, sizeof(attr));
+	 .EE
+	 .in
+	 .P
+
+
+(Hopefully I got it right.)
+
+
+Cheers,
+Alex
+
+>=20
+> --=20
+> Aleksa Sarai
+> Senior Software Engineer (Containers)
+> SUSE Linux GmbH
+> https://www.cyphar.com/
+
+
+
+--=20
+<https://www.alejandro-colomar.es>
+Use port 80 (that is, <...:80/>).
+
+--67r6dfiqg2gtq4zd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmjdbKcACgkQ64mZXMKQ
+wqlMiQ/9EykJJBkUIdFwo1qmdB5bkx84veu9BT1YydFqhzkaPbTYrR2wo9AVPrNl
+MNixrSBXH4geyrDmYtZGa1WRLDyB8aQ6Nl5QYjojKIkz9ziCV9hRLsNh8yYK+HtN
+Xck0IM2oK3Ze21RqusRV2wiPr9liTJ/G01zJzOBWPy0BcbQW872ymsR1rpRzAMM9
+34QeHdfnESkxd+3P//0B5yqVI91TXMBg1b0XxZlhdYfy7VyQ5TQjJk6F4bZymegt
+pvfRSEWEpcrd66S3e6yGnDzQDlSpIeXr9UkZqLq5r5UsRss4QHPc8a/N9jJ7nhmb
+U2itqIRMtThWgyZDZLetLW2IGVzTKP36a7ArCnx7djQd0LUMhXLArFSbYEtC2Co5
+DqiiB4N0nQlUZnn8ClR5znIOstyjdmYf7pi2CURkuEfrYIJHlJ5C7PKo09wUni3H
+MLaDczci3MG9oearRWOCGTSmOWjVMYLh6A4yXT+8nYsVsNXM9ZktC6iiKODKXcge
+9PTdL9kQpGYQAsvHMKK73/4dpmClAuz2ogvoXiooO/E9NTZb+vSv3rL0hFWEiDzz
+VQcNi9wp6OTlgKBLpcURrZYQf59EcdwKvA8AmvdSYP1zGis6ox5PoRvM0Bbqxqbw
+9Ftw2ay6PLRmIgdwh5uoYv8GYPEqIg9S6ziS2Tf9znnZh7suEPY=
+=4285
+-----END PGP SIGNATURE-----
+
+--67r6dfiqg2gtq4zd--
 
