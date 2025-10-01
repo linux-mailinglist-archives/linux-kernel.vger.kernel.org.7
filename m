@@ -1,64 +1,79 @@
-Return-Path: <linux-kernel+bounces-839472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70FA0BB1AF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 22:28:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1FD3BB1AFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 22:29:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25A833AE585
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 20:28:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8942F168CE0
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 20:28:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4911F2F066B;
-	Wed,  1 Oct 2025 20:28:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E07830171B;
+	Wed,  1 Oct 2025 20:28:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XXkd6wMc"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cq4JAETc"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04A0E25B663
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 20:28:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E29D42F0666
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 20:28:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759350498; cv=none; b=rU8PM3Q4i8PmPB+n/C7YNp4SJhdZSI977vieNj7jrOS2dosv0uah7CuLe0Lz61WGxPgC8Avn7rvsCWpreXeRKrJE1rZAIl1bwkHMKSt6yNP0FP0UjOzzKv73Hp18VJTU0q5xt105t52E59zOGyWp7gba/wL211e7t7yPayOcpXA=
+	t=1759350524; cv=none; b=fDdhtwlckGxkyjraJyf1oc8poNvX3Mz65a0sdMVcrE8u6bLBD1l99XvU+qnAWUWcilmTutr1FWlDOC4xi/pyaoFSLLzindh3zehuZPPlJ0z4kUCPlXdz3TGz9W6wqCAq8BaBBRilsHNDTpTB0nlzEsALmhGR9QBs+rG7EPYBPnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759350498; c=relaxed/simple;
-	bh=LlcH7vyJmv35KEF+YeiG5f2vq9X7M5kexM/dDzucHhM=;
+	s=arc-20240116; t=1759350524; c=relaxed/simple;
+	bh=JzNNoDWyqa/zS7UWyDTfg/U2MEu+uqwPpkYQr/cahAo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TZ1D+mFx3Tp3IChkvbFaWFx8eps/Qb3Znn9CKVhb5vEZ2FUoMNBB0LnlUMpCJRLEZit5mLpDKbfVmTmwLVaBQ915VOJ/tAwkjuyL7F0Mm/gRq5xT4VihrCsuOozNdoUFNxAIdIdYrlXLo2OEh6BCuqv72Q7N3sKe6UFlUUvn70w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XXkd6wMc; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759350497; x=1790886497;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=LlcH7vyJmv35KEF+YeiG5f2vq9X7M5kexM/dDzucHhM=;
-  b=XXkd6wMchSLOHgHmnqP0zBNLI7eilmVEEKPGlYye2hNKOAUYDYjd8iQM
-   pknxpWbSOF8TXUgCOzI5Ujs6l1gx8nPwQmmphJUtzJKbCNH8X5EBxtPnN
-   dADFSSUahz+0w2lHeG5Bm5F/i8Eimnhy4uPDEuuys8sTVCSqUenMGXt0V
-   Im07C0ViS5AC83LU43k0XUdSDeRti7QLq34Rqpw1+K0pb2nYazH9JZZkU
-   +DiXT4Eo2emkb9h1BQ3MakX6baPrnVVD2wNV3llT+bfO39uo7DvlsI+rN
-   8TBBL44YSZLJAK8vS/X67sjZfVmsLulbO70A84B96U3o8DyiZMiZz9pSH
-   A==;
-X-CSE-ConnectionGUID: Z6/rtb0cSqKXrxFgRhuICA==
-X-CSE-MsgGUID: Vd3FBxCERNqhJhYGwahZ0g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11569"; a="87083801"
-X-IronPort-AV: E=Sophos;i="6.18,307,1751266800"; 
-   d="scan'208";a="87083801"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2025 13:28:16 -0700
-X-CSE-ConnectionGUID: PQ55WtNDQVeh6uBnVQvKAQ==
-X-CSE-MsgGUID: M0TrMgDRQYu4klrdw2kHMA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,307,1751266800"; 
-   d="scan'208";a="215998890"
-Received: from gabaabhi-mobl2.amr.corp.intel.com (HELO [10.125.109.221]) ([10.125.109.221])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2025 13:28:15 -0700
-Message-ID: <b0fb40f6-8baa-498f-bb88-50113cb80f53@intel.com>
-Date: Wed, 1 Oct 2025 13:28:14 -0700
+	 In-Reply-To:Content-Type; b=TksdwYGtXdErvsHDFQDltvqir6SGPh+I55W/HyWlAIFvk/cgFhvBAu+fXdZmRRx/14iKI2RGlpsYcemu5UL5mVzt/dgHhehOC9xYJLBpeCT+vdUxNajXmQI0lABddJbHH+xKmtrhziw3tcjyoxKO7Tj6EeiGhz8A10P0ZR/jCzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cq4JAETc; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b47a5a17303so5019666b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 13:28:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759350520; x=1759955320; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+vx5hdGkahy1NQamogmVtVf5yuP6YF2+NsatonLX9Rk=;
+        b=Cq4JAETch3Ja9gyGU51OUW21+iWbkyzBoXxGXMvDNCr4hiHCv6F9a/qBlU1K+vDsmW
+         Gcij4MI56wnyelbiwiCWxyfWucJT3M2kPN5LF5Unf3OJtOGQSeHSRYT4+objcj8R2pmc
+         t4QWUGdyW6SkUwulWbdCP6qgvC+OtlzYDBpAntbVMVXj04r0iRCmlXvtnXUyGOgkSyL9
+         fBu+aUYVSgnn9OgLuF+EkYZGxTmubd0ridWIM3+erpxsuXDzQ6hNA7WJ5YBbgDEu8ouu
+         rLDuzins0N60VaS/Na4nQch+zccwWv+TVmJFSzaghoD+XmgwT9CHpDnhhxgU432joNBZ
+         6tmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759350520; x=1759955320;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+vx5hdGkahy1NQamogmVtVf5yuP6YF2+NsatonLX9Rk=;
+        b=pSZa5KZmOLkhxAaUia+lIhzFLTH0T79NOwb1w3NpuS+JDqE5OL9c4XosOh5flyjhqL
+         fsUxqMvMoXVQEzvsVClLpv1t5UJa/zEuWakE70QCh+sygSdgLOanL5VCiYHUrfCApzM8
+         v5JBrTbGQE8/il29rbNbHfBu9ZSlvWEFvlVM3fBFrURj4iX1rctgUumEdMdxukyZGmqj
+         9eTfiNddHyGMDJ/ZzbfrI12xlwO63rlF85P1tK0PbBNHEsphBxbTRV6gi9c0qL3lw2m3
+         1gOyLyTxO1dlNg6ez27D34flEorvGwWmEhuyk8ERXdQfRKK0Wz1ObiUm+m+vugVPJW9G
+         tqkw==
+X-Forwarded-Encrypted: i=1; AJvYcCVJm1EpZmqo2XkizbLmWSruE72PJZb8dl8FC+5Y6any2xG9T5om8EFLIXD3l6JXjYoJzmGnND0/4g/4EhE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0OlEmn2IyHhIQXNGWTYrg8mAfr7LYJx8RFYX/3Ta6Sa8dTWAV
+	8/9gMuDCA7MwcDC0pbYfnqbGuCTlj0wZKgHlaNG0UM3gSp3H49110u5/
+X-Gm-Gg: ASbGnctfKuObCFbqAE7n5RuM78pqoNspoaQLTB9pSBz2AEzmGXky5B1H6BTe2XA/my/
+	wC5Jlf/d6pnDbzd+gb1TaORDURroE0eFDxhCRRorO6SlgRXD3IvnsfX5WH8gipdj4bnJVuFBU7R
+	BfLqodDibYbU/7ALW9IRh7FKl70vp8BGQwmLFHfOhPNxBH1u1aQAsLaPXqhRBJT8+3x3tQ2QR8Z
+	hcnoBYegnCfOAWit6I+RqHZ0lg3z7Wyw0UFRo84p/tdl6iWgyEm/MErVK2gX5NLyWcxOo5gh8Lu
+	U7aJyfE6udz8J/GMTFv8f5GmYUKqjDwnxg6U9AvS2Z4V11w1TEDGBVkr2PlXROw5qrOM7CRTCQi
+	+lOXOJgXIvVUTpctjIodfcYEneUV7F2FG6G5/sRoqN5jGHEDqSgRT4B3Ie4cMLOEB4e8H1g==
+X-Google-Smtp-Source: AGHT+IFypxArnR4xsqK1PVKw3BTncFOVNbk0EzgLn+bv/Qi9HndoSHc9qYacyAg9i+F0I7m7EgQ4fQ==
+X-Received: by 2002:a17:907:7eaa:b0:b3a:6c29:3552 with SMTP id a640c23a62f3a-b46ea1277b3mr326729366b.8.1759350519925;
+        Wed, 01 Oct 2025 13:28:39 -0700 (PDT)
+Received: from [192.168.1.103] ([165.50.124.97])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b486970b23csm40909366b.61.2025.10.01.13.28.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 01 Oct 2025 13:28:39 -0700 (PDT)
+Message-ID: <581decf0-d360-4da8-a247-3b207d5ca21b@gmail.com>
+Date: Wed, 1 Oct 2025 21:28:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,154 +81,70 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 04/21] x86/mm/asi: set up asi_nonsensitive_pgd
-To: Brendan Jackman <jackmanb@google.com>, Andy Lutomirski <luto@kernel.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>,
- Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>,
- Roman Gushchin <roman.gushchin@linux.dev>
-Cc: peterz@infradead.org, bp@alien8.de, dave.hansen@linux.intel.com,
- mingo@redhat.com, tglx@linutronix.de, akpm@linux-foundation.org,
- david@redhat.com, derkling@google.com, junaids@google.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, reijiw@google.com,
- rientjes@google.com, rppt@kernel.org, vbabka@suse.cz, x86@kernel.org,
- yosry.ahmed@linux.dev
-References: <20250924-b4-asi-page-alloc-v1-0-2d861768041f@google.com>
- <20250924-b4-asi-page-alloc-v1-4-2d861768041f@google.com>
-From: Dave Hansen <dave.hansen@intel.com>
+Subject: Re: [PATCH] selftests/bpf: Add -Wsign-compare C compilation flag
+To: Eduard Zingerman <eddyz87@gmail.com>, andrii@kernel.org, ast@kernel.org,
+ daniel@iogearbox.net, martin.lau@linux.dev, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, shuah@kernel.org,
+ matttbe@kernel.org, martineau@kernel.org, geliang@kernel.org,
+ davem@davemloft.net, kuba@kernel.org, hawk@kernel.org, linux@jordanrome.com,
+ ameryhung@gmail.com, toke@redhat.com, houtao1@huawei.com,
+ emil@etsalapatis.com, yatsenko@meta.com, isolodrai@meta.com,
+ a.s.protopopov@gmail.com, dxu@dxuuu.xyz, memxor@gmail.com,
+ vmalik@redhat.com, bigeasy@linutronix.de, tj@kernel.org,
+ gregkh@linuxfoundation.org, paul@paul-moore.com,
+ bboscaccy@linux.microsoft.com, James.Bottomley@HansenPartnership.com,
+ mrpre@163.com, jakub@cloudflare.com
+Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, netdev@vger.kernel.org,
+ mptcp@lists.linux.dev, linux-kernel-mentees@lists.linuxfoundation.org,
+ skhan@linuxfoundation.org, david.hunter.linux@gmail.com
+References: <20250924162408.815137-1-mehdi.benhadjkhelifa@gmail.com>
+ <fbbeeee096dc14332c50b1086b2089f1b2f496d9.camel@gmail.com>
 Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20250924-b4-asi-page-alloc-v1-4-2d861768041f@google.com>
-Content-Type: text/plain; charset=UTF-8
+From: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+In-Reply-To: <fbbeeee096dc14332c50b1086b2089f1b2f496d9.camel@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 9/24/25 07:59, Brendan Jackman wrote:
-> Create the initial shared pagetable to hold all the mappings that will
-> be shared among ASI domains.
+On 10/1/25 9:23 PM, Eduard Zingerman wrote:
+> On Wed, 2025-09-24 at 17:23 +0100, Mehdi Ben Hadj Khelifa wrote:
+>> -Change all the source files and the corresponding headers
+>> to having matching sign comparisons.
+>>
+>> Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
+>> ---
+>> As suggested by the TODO, -Wsign-compare was added to the C compilation
+>> flags for the selftests/bpf/Makefile and all corresponding files in
+>> selftests and a single file under tools/lib/bpf/usdt.bpf.h have been
+>> carefully changed to account for correct sign comparisons either by
+>> explicit casting or changing the variable type.Only local variables
+>> and variables which are in limited scope have been changed in cases
+>> where it doesn't break the code.Other struct variables or global ones
+>> have left untouched to avoid other conflicts and opted to explicit
+>> casting in this case.This change will help avoid implicit type
+>> conversions and have predictable behavior.
+>>
+>> I have already compiled all bpf tests with no errors as well as the
+>> kernel and have ran all the selftests with no obvious side effects.
+>> I would like to know if it's more convinient to have all changes as
+>> a single patch like here or if it needs to be divided in some way
+>> and sent as a patch series.
+>>
+>> Best Regards,
+>> Mehdi Ben Hadj Khelifa
+>> ---
 > 
-> Mirror the physmap into the ASI pagetables, but with a maximum
-> granularity that's guaranteed to allow changing pageblock sensitivity
-> without having to allocate pagetables, and with everything as
-> non-present.
+> I don't understand why this change is necessary.
+> Have you found any bugs while doing this conversion?
+> 
+> [...]
 
-Could you also talk about what this granularity _actually_ is and why it
-has the property of never requiring page table alloc
-
-...
-> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-> index e98e85cf15f42db669696ba8195d8fc633351b26..7e0471d46767c63ceade479ae0d1bf738f14904a 100644
-> --- a/arch/x86/mm/init_64.c
-> +++ b/arch/x86/mm/init_64.c
-> @@ -7,6 +7,7 @@
->   *  Copyright (C) 2002,2003 Andi Kleen <ak@suse.de>
->   */
->  
-> +#include <linux/asi.h>
->  #include <linux/signal.h>
->  #include <linux/sched.h>
->  #include <linux/kernel.h>
-> @@ -746,7 +747,8 @@ phys_pgd_init(pgd_t *pgd_page, unsigned long paddr_start, unsigned long paddr_en
->  {
->  	unsigned long vaddr, vaddr_start, vaddr_end, vaddr_next, paddr_last;
->  
-> -	*pgd_changed = false;
-> +	if (pgd_changed)
-> +		*pgd_changed = false;
-
-This 'pgd_changed' hunk isn't mentioned in the changelog.
-
-...
-> @@ -797,6 +800,24 @@ __kernel_physical_mapping_init(unsigned long paddr_start,
->  
->  	paddr_last = phys_pgd_init(init_mm.pgd, paddr_start, paddr_end, page_size_mask,
->  				   prot, init, &pgd_changed);
-> +
-> +	/*
-> +	 * Set up ASI's unrestricted physmap. This needs to mapped at minimum 2M
-> +	 * size so that regions can be mapped and unmapped at pageblock
-> +	 * granularity without requiring allocations.
-> +	 */
-
-This took me a minute to wrap my head around.
-
-Here, I think you're trying to convey that:
-
-  1. There's a higher-level design decision that all sensitivity will be
-     done at a 2M granularity. A 2MB physical region is either sensitive
-     or not.
-  2. Because of #1, 1GB mappings are not cool because splitting a 1GB
-     mapping into 2MB needs to allocate a page table page.
-  3. 4k mappings are OK because they can also have their permissions
-     changed at a 2MB granularity. It's just more laborious.
-
-The "minimum 2M size" comment really threw me off because that, to me,
-also includes 1G which is a no-no here.
-
-I also can't help but wonder if it would have been easier and more
-straightforward to just start this whole exercise at 4k: force all the
-ASI tables to be 4k. Then, later, add the 2MB support and tie to
-pageblocks on after.
-
-
-> +	if (asi_nonsensitive_pgd) {
-> +		/*
-> +		 * Since most memory is expected to end up sensitive, start with
-> +		 * everything unmapped in this pagetable.
-> +		 */
-> +		pgprot_t prot_np = __pgprot(pgprot_val(prot) & ~_PAGE_PRESENT);
-> +
-> +		VM_BUG_ON((PAGE_SHIFT + pageblock_order) < page_level_shift(PG_LEVEL_2M));
-> +		phys_pgd_init(asi_nonsensitive_pgd, paddr_start, paddr_end, 1 << PG_LEVEL_2M,
-> +			      prot_np, init, NULL);
-> +	}
-
-I'm also kinda wondering what the purpose is of having a whole page
-table full of !_PAGE_PRESENT entries. It would be nice to know how this
-eventually gets turned into something useful.
-
+Hi Eduard,
+No I have not. It's more of a future proof patch / improvement rather 
+than a fixing patch as i mentioned in this email[1] with more detail.
+Regards,
+Mehdi
+[1]:https://lore.kernel.org/all/e3a0d8ff-d03d-4854-bf04-8ff8265b0257@gmail.com/
 
 
