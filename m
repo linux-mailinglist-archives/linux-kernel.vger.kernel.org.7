@@ -1,128 +1,142 @@
-Return-Path: <linux-kernel+bounces-839292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACEF9BB143E
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 18:39:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A9D2BB1441
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 18:39:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67EEC17B910
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 16:39:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 055DF17C071
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 16:39:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92DEF286D45;
-	Wed,  1 Oct 2025 16:39:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03CA4287262;
+	Wed,  1 Oct 2025 16:39:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lz31NxiM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LVaUbinE"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC0791459FA;
-	Wed,  1 Oct 2025 16:39:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA9E6287244
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 16:39:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759336763; cv=none; b=OqFRgNwfA8xg/PazB0P6ObZfeizWhGji9t9PCK3UIvI7vzk4Wcdw3OnsAsuFEJ7dJV5nH3qXWIi95qDLVmIwYj7P6IVrsQEmtBWwKwLalrJXlNtiNGDq6S52syG7eTXRzggmafKdgvNWNAqT5Y3uhYmJB06wnDb2oTgNOWgnhGQ=
+	t=1759336784; cv=none; b=m1rYejyfzW89tUFABwnxhMowCZhD8svVD6dZVfRDKN79b0isIXUTjPQVaGRZg82ryXI0K7X6qg8m6zCviopdSLrjVIeiOVoIzU8ri9yNAJQxvAgPpQpQz2qA3CRuyP3pAuw3lk/wDOaTJ+K3RG1WlVF9A8M0NQcbl1PkmG1+h1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759336763; c=relaxed/simple;
-	bh=fz4j4Nbyj1yHIo+rIFDNGxwIEr2ZuXwyHfkNKuiTq2U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kSlD40J2OVuYIjuLklD1GU270ZTf7VftEZ3ivDntXI0lJdCBQiG0H3jY8h6Jrr+8Wi/YYtXmHNPy6doay/Ajmfb2uXj+vns100G7zOdLy7nt1ZSsGIKJrwKzymg8yFtbinotqDDkAGQaKRrLcwEpSbenlUoWnshhlxixWQe9A4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lz31NxiM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E8AFC4CEF1;
-	Wed,  1 Oct 2025 16:39:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759336762;
-	bh=fz4j4Nbyj1yHIo+rIFDNGxwIEr2ZuXwyHfkNKuiTq2U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lz31NxiM8p6KCikaLC6ioXkj7c8yHu+95XqGkQv5s/J+UWV0mAQs1eSZ++tYG+BLM
-	 Forv7BI1KDSmZrf8n7U0QXosIUCmnjqaGREf7G9o1NfhdxV94yEM7rBj3adOwwrgOv
-	 tXtqpMaahxqwBfKcFBJuF/jPRKdwTLghJTvTALeUzvR6LlexrVt5Mrl2/6b9slp3d8
-	 4FmFn/wiB7eSEtKPs2Ht0OGrVGtuUOYWzJtuiYkFmmdfOn0ElE3FgGWBONjaZpMZ6L
-	 ikD2B60EFLQpWXxC03dTL/JviRcsPLvIrkwmc5ne1uo6zWD+N5HnGY2C4gVpzK/jK9
-	 d5Vz60OWdOLRA==
-Date: Wed, 1 Oct 2025 18:39:16 +0200
-From: Mike Rapoport <rppt@kernel.org>
-To: Wei Liu <wei.liu@kernel.org>
-Cc: Mukesh R <mrathor@linux.microsoft.com>,
-	Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
-	kys@microsoft.com, haiyangz@microsoft.com, decui@microsoft.com,
-	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] Introduce movable pages for Hyper-V guests
-Message-ID: <aN1ZNNe66f0SA-Cs@kernel.org>
-References: <175874669044.157998.15064894246017794777.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
- <0ef4d844-a0af-9fa6-2163-b83f80bc74b1@linux.microsoft.com>
- <aNyrlijDzaosdWxa@liuwe-devbox-ubuntu-v2.lamzopl0uupeniq2etz1fddiyg.xx.internal.cloudapp.net>
+	s=arc-20240116; t=1759336784; c=relaxed/simple;
+	bh=5pOEezS/qP6F4jEWoeOm7Fz3N7TCVGrsBiLzB3qwz1w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qDu+phQiC1ul3HObycKtZz0lT1OcDYFhWteKRxMn6TdV4mVlJhuBFEnUomIYNMyQDHzr8Ozi2lYTJ3cwh77hI6l/ykY97E+pnoHcN1Dw+hTKGCSPPgP/LVraABMYQHeGmcewr6IR2Vjbg4FcBgp1ZkJ0pcq51i5Rsw/KM0X2n9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LVaUbinE; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-77c1814ca1dso94281b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 09:39:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759336782; x=1759941582; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RmGKlN/jBsVenanHceP4S7aQlFVvNQtOwGJQtiqwWbA=;
+        b=LVaUbinEuK4XM9JBMP2MiBggPrSFpDlqa1rFmwMq79/y5Mse9lUi5GCYJ5Ag3oqV+q
+         iyfZ/sKixrbEpRWGx4d+1xq+7NWAzgKwvWOoG0AP8hmSCXR0GtEm7PkLWxtQsH/wo2T1
+         ZY1wuvPwuihxocXt27fu6e+wNI48FTpXtE6QhAIv8TNZFtawES2WKj7LXk2l+nkMDZHW
+         YOkcVOFUr7MJji4vN7g5g+8p3Se/MCLg+BRr02S0DprzdSBT641P0YAV+30AYtHsUnfK
+         Wri1ogMSLCXK1cpBpvs4GaO4sHfuktCXpR/iwWXUWD7g3t40h1oKlO+DHsOf7FRHfNwp
+         zSaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759336782; x=1759941582;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RmGKlN/jBsVenanHceP4S7aQlFVvNQtOwGJQtiqwWbA=;
+        b=PQWDIuV7Ihyqei+pj4BalYboZujgsOAwIlXZpEt/AZB7yy3Rt4XGkgTQXcmCpxOLdZ
+         TMJeOLGcRHS7nsqhYpRMM8+VUg5yfC4eu1Q6QgtOTQJkEUvm1WV53ADFhsCAiki3O+n+
+         z9/7yocGaeKubZ5+oqPa+sldNY7Dd1s0rmnDpq+k6gTJiGlAvLKzMoNk2A52sHVv7GtN
+         QHWZ0SrxUS9XvPYGlR4HhYl5U3Ewfi88CyGNjc7LE8s5JlPX3T4pZLwAP641XNVcHXy9
+         1U5q3O/a/oQyX7Stkxnv+u2Wl4st7KNYSlm9LuilKwj/api9+Ao1PVeAV/DoB/ZxMf4t
+         0j6g==
+X-Forwarded-Encrypted: i=1; AJvYcCVPVdKje8gd2/2K1sTmf4yfZWHRdHVSpR7QkXnFISpc1EDu7YTUXpqVk3kyTFBR912+7Y2/Qdbhtc/pIK0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKd2mTwEV5AHbeLVSzHlS6fLTomthSfgOkoOMMynpzhwWegK6w
+	EJofTbLz+16mnRmQYxbBlz+LxRy9jIlK9zNnHirXcB4Lrn6h79h3bFCBQ69uo2xv+tsyof7q2Fq
+	fxvelL3WrTYMIfdYlZ+u7ZDWMTtPKgs0=
+X-Gm-Gg: ASbGncu9LnhjmwbwdaZaxLR4JxhWSS6Wh2gUzNqskvLAhY15owsj0ODTkK+xzKhpML5
+	KS/4vBJq8guYywn/qg1IdbzkeIVG6eHdbNleY1RyWekN6qTiRL+f54pJT0NYj2m2sK5fApZSc0F
+	/b8omcss3U9tK4qChGJoVh7B1w13xZ7+x7f/BmwjkiRB1Y1oHYccHypJpuNzxR16QHtswE1Oefy
+	KiexugCzUzJ66rNJ18hSltoQWuAODZO9IzPVjFkfU5/ATE=
+X-Google-Smtp-Source: AGHT+IE9y4z9vj8j7yKhBcDb2apGorlG7PINT4jHURs+aWjIj8z/pwVAMIEXfRoJqNuQ3Mw/cwz7seK+Az+n+Pf6vm4=
+X-Received: by 2002:a17:90b:1e0e:b0:330:7a11:f111 with SMTP id
+ 98e67ed59e1d1-339a6f84d53mr4930805a91.35.1759336781992; Wed, 01 Oct 2025
+ 09:39:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aNyrlijDzaosdWxa@liuwe-devbox-ubuntu-v2.lamzopl0uupeniq2etz1fddiyg.xx.internal.cloudapp.net>
+References: <20251001132449.178759-1-jolsa@kernel.org>
+In-Reply-To: <20251001132449.178759-1-jolsa@kernel.org>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Wed, 1 Oct 2025 09:39:27 -0700
+X-Gm-Features: AS18NWBXWfduYxqUtnH1tABDYMsrbfqkNZtEA8ABmNwPyaBnTu4oL0vq-aat2Hk
+Message-ID: <CAEf4BzYMDgo2JQEkV7e6rnX1Jwu4QMFdqEsnRcxL2J0ukLxU=Q@mail.gmail.com>
+Subject: Re: [PATCH] uprobe: Move arch_uprobe_optimize right after handlers execution
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, bpf@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	x86@kernel.org, Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, 
+	John Fastabend <john.fastabend@gmail.com>, Hao Luo <haoluo@google.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Alan Maguire <alan.maguire@oracle.com>, David Laight <David.Laight@aculab.com>, 
+	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>, 
+	Ingo Molnar <mingo@kernel.org>, Jann Horn <jannh@google.com>, Alejandro Colomar <alx@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 01, 2025 at 04:18:30AM +0000, Wei Liu wrote:
-> +Mike Rapoport, our resident memory management expert.
-> 
-> On Fri, Sep 26, 2025 at 07:02:02PM -0700, Mukesh R wrote:
-> > On 9/24/25 14:30, Stanislav Kinsburskii wrote:
-> > >>From the start, the root-partition driver allocates, pins, and maps all
-> > > guest memory into the hypervisor at guest creation. This is simple: Linux
-> > > cannot move the pages, so the guest?s view in Linux and in Microsoft
-> > > Hypervisor never diverges.
-> > > 
-> > > However, this approach has major drawbacks:
-> > > - NUMA: affinity can?t be changed at runtime, so you can?t migrate guest memory closer to the CPUs running it ? performance hit.
-> > > - Memory management: unused guest memory can?t be swapped out, compacted, or merged.
-> > > - Provisioning time: upfront allocation/pinning slows guest create/destroy.
-> > > - Overcommit: no memory overcommit on hosts with pinned-guest memory.
-> > > 
-> > > This series adds movable memory pages for Hyper-V child partitions. Guest
-> > > pages are no longer allocated upfront; they?re allocated and mapped into
-> > > the hypervisor on demand (i.e., when the guest touches a GFN that isn?t yet
-> > > backed by a host PFN).
-> > > When a page is moved, Linux no longer holds it and it is unmapped from the hypervisor.
-> > > As a result, Hyper-V guests behave like regular Linux processes, enabling standard Linux memory features to apply to guests.
-> > > 
-> > > Exceptions (still pinned):
-> > >   1. Encrypted guests (explicit).
-> > >   2 Guests with passthrough devices (implicitly pinned by the VFIO framework).
-> > 
-> > 
-> > As I had commented internally, I am not fully comfortable about the
-> > approach here, specially around use of HMM, and the correctness of
-> > locking for shared memory regions, but my knowledge is from 4.15 and
-> > maybe outdated, and don't have time right now. So I won't object to it
-> > if other hard core mmu developers think there are no issues.
-> > 
-> 
-> Mike, I seem to remember you had a discussion with Stanislav about this?
-> Can you confirm that this is a reasonable approach?
+On Wed, Oct 1, 2025 at 6:25=E2=80=AFAM Jiri Olsa <jolsa@kernel.org> wrote:
 >
-> Better yet, if you have time to review the code, that would be great.
-> Note that there is a v2 on linux-hyperv.  But I would like to close
-> Mukesh's question first.
+> It's less confusing to optimize uprobe right after handlers execution
+> and before we do the check for changed ip register to avoid situations
+> where changed ip register would skip uprobe optimization.
+>
+> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> ---
+>  kernel/events/uprobes.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
 
-I only had time to skip through the patches and yes, this is a reasonable
-approach. I also confirmed privately with HMM maintainer a while ago that
-the use of HMM and MMU notifiers is correct.
+makes sense
 
-I don't know enough about mshv to see if there are corner cases that these
-patches don't cover, but conceptually they make memory model follow KVM
-best practices.
- 
-> > However, we won't be using this for minkernel, so would like a driver
-> > boot option to disable it upon boot that we can just set in minkernel
-> > init path. This option can also be used to disable it if problems are
-> > observed on the field. Minkernel design is still being worked on, so I
-> > cannot provide much details on it yet.
+Acked-by: Andrii Nakryiko <andrii@kernel.org>
 
-The usual way we do things in the kernel is to add functionality when it
-has users, so a boot option can be added later when minkernel design will
-be more mature and ready for upstream.
-
--- 
-Sincerely yours,
-Mike.
+> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> index 5dcf927310fd..c14ec27b976d 100644
+> --- a/kernel/events/uprobes.c
+> +++ b/kernel/events/uprobes.c
+> @@ -2765,6 +2765,9 @@ static void handle_swbp(struct pt_regs *regs)
+>
+>         handler_chain(uprobe, regs);
+>
+> +       /* Try to optimize after first hit. */
+> +       arch_uprobe_optimize(&uprobe->arch, bp_vaddr);
+> +
+>         /*
+>          * If user decided to take execution elsewhere, it makes little s=
+ense
+>          * to execute the original instruction, so let's skip it.
+> @@ -2772,9 +2775,6 @@ static void handle_swbp(struct pt_regs *regs)
+>         if (instruction_pointer(regs) !=3D bp_vaddr)
+>                 goto out;
+>
+> -       /* Try to optimize after first hit. */
+> -       arch_uprobe_optimize(&uprobe->arch, bp_vaddr);
+> -
+>         if (arch_uprobe_skip_sstep(&uprobe->arch, regs))
+>                 goto out;
+>
+> --
+> 2.51.0
+>
 
