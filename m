@@ -1,180 +1,219 @@
-Return-Path: <linux-kernel+bounces-839347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDDAFBB1718
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 20:04:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B8F5BB1728
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 20:05:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D0621C5201
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 18:04:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 173DD17EEA9
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 18:05:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 574B42D3EC1;
-	Wed,  1 Oct 2025 18:04:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC802D3A9C;
+	Wed,  1 Oct 2025 18:05:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I+40gXSB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mssola.com header.i=@mssola.com header.b="cZqoNd7j"
+Received: from mout-y-209.mailbox.org (mout-y-209.mailbox.org [91.198.250.237])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B53118A6CF;
-	Wed,  1 Oct 2025 18:04:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C82A18A6CF;
+	Wed,  1 Oct 2025 18:05:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.198.250.237
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759341862; cv=none; b=JHhUnFcN+qnwsunF3F3czz1nkdIOsAq4tg+W1xpl+urrfj+Z8hdU1Y5qF5K5s6e8xmtv0mIuFQpnQK6PhxfnZxMBcTQnyJ9TMOvtdajZZAPACIXzruQLHRfIPr0uOruR0dIDqJjxfwduWgwfcwiQvQQ8JZ2x9aB+3yG+7Crgikk=
+	t=1759341924; cv=none; b=redPl8VnJYLT8x/o3Tj+6SoOjF2sNj5v19g7YS57MbdHKsEpsbkb+QmydaXeDGvYdsCah/0Uw7suIDiAZEZOiO6HDZ6cIP1GliM0g3bqsuGOGIjLCdFGCKgh5LO8zYK8eCMp1+2bYtrbz052pZPNBDfQefVTw2/xHCiZ7MLxv0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759341862; c=relaxed/simple;
-	bh=UditdOJ+p+ZmjZaYpgQPQ5OHHZIaPFJQ9pa7o91UQJg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h4Fh7B+QxicnlNrr8BVHvDcZ5aF3nQ6syvKII2W9Hs+aljRTniihxTMReLrjYlEnydTM09HdULeS28b8fewMKd5TOcUTf/YrZEtJt7JbEwTfeayZBwaMykLzuMLah7KevfJGuTrfQIHeUuSLtAcOtK4oRPDQwZKKToChLop/eVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I+40gXSB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB1BAC4CEF1;
-	Wed,  1 Oct 2025 18:04:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759341862;
-	bh=UditdOJ+p+ZmjZaYpgQPQ5OHHZIaPFJQ9pa7o91UQJg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=I+40gXSBTvtBXh/2NOKHWoA/7qZULTZ+RhI4N6PGNzJoIn3hoa8/CwzVGKD7VnsS0
-	 JRf8A4DpdWbTxU5Mk4XKKZ4HbBQ6InUNvk/vhsuhiNvVgHWKk2DxgxbNEKso4P3FkL
-	 ZnBXnpXhssSZnKvDf1bjbhzEcCYahS9Re1nTPJhCDWFlbUJJtSkrzy417Ki0RpJbmC
-	 31g5ibkSBKpg9CTg3sHrRu0cawGsmOqAiSsuUoDFg8W7aZcbotFRi7N82gjpD4d5y1
-	 tayZZi9l8frhGlh0bFp4DkWGWm0+DUyvQw4wNy+fvpo8oAk8Pb23ojyRH4xQ+L2115
-	 bTWrJ1/sMDnjA==
-Date: Wed, 1 Oct 2025 19:04:17 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Jun Guo <Jun.Guo@cixtech.com>
-Cc: Peter Chen <peter.chen@cixtech.com>,
-	Fugang Duan <fugang.duan@cixtech.com>,
-	"robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"broonie@kernel.org" <broonie@kernel.org>,
-	"linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-	"michal.simek@amd.com" <michal.simek@amd.com>,
-	cix-kernel-upstream <cix-kernel-upstream@cixtech.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: =?utf-8?B?5Zue5aSNOiBbUEFUQ0ggMS8zXSBk?= =?utf-8?Q?t-bindings?=
- =?utf-8?Q?=3A?= spi: spi-cadence: document optional fifo-width DT property
-Message-ID: <20251001-simple-conclude-d9cd153cee3c@spud>
-References: <20250930075644.1665970-1-jun.guo@cixtech.com>
- <20250930075644.1665970-2-jun.guo@cixtech.com>
- <20250930-vocally-closable-136829bc9fed@spud>
- <SI6PR06MB7104F6012ADAFDBC7D553F9AFFE6A@SI6PR06MB7104.apcprd06.prod.outlook.com>
- <SI6PR06MB7104AE0345763471E67CD3C0FFE6A@SI6PR06MB7104.apcprd06.prod.outlook.com>
+	s=arc-20240116; t=1759341924; c=relaxed/simple;
+	bh=wUkPGaDQWDhHcSvlXVaBWW6SqgMU44UCN4D0iIho4pg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ijvWlUVSZ4Zi7xoR/WAkUqrFBURFb+4a+FKhFvr3LBWJC1nG8bI8UWkwbZzhRc8xEMUa+Z4S0cujeAontMdtxz/SLKyDnkOjFEee15HacUxMaiuStUj6A9uUuoPxd/lyAc+Bht5AA7saIPfW1fReBX5z9jtWV++WtgW7VYFmxgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mssola.com; spf=fail smtp.mailfrom=mssola.com; dkim=pass (2048-bit key) header.d=mssola.com header.i=@mssola.com header.b=cZqoNd7j; arc=none smtp.client-ip=91.198.250.237
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mssola.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=mssola.com
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-y-209.mailbox.org (Postfix) with ESMTPS id 4ccNBP1JMNzB0wT;
+	Wed,  1 Oct 2025 20:05:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mssola.com; s=MBO0001;
+	t=1759341917;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=4mETxxP1dPH/0H0Aw6jbUUKU/8uElFJRClXqFRq6ntg=;
+	b=cZqoNd7jTrYniX25unRV5KNPanvGLf9NbvmVEo3aQUGIBW/3TsQyO87znLcxRMewMvOUyz
+	ddC9AaGEQ1UnhpfCfZVrhiHQl0iISEDwIC2DdhavENwH07mBGzLoEw/dOsOjKvVY4iJhXW
+	7D0ffF13Sk7arU+M72VeaJmuwhYZQwPITjr9hs8zc+MnhP9p4oOZW5zAnQTI7dcoXFxdw8
+	DC7+gVQU7HEAuy38KW5QpHi0c9mFxiK794U9WEsWnZulYTVk1Uj8l6EFaxIfq/U2RzAp75
+	hQsKcbqdJbyffwi4XybFez8ktQA1+Mf9X7Q8PJkZOEfgj2SIewPaFhDx0ihKAQ==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=softfail (outgoing_mbo_mout: 2001:67c:2050:b231:465::202 is neither permitted nor denied by domain of mssola@mssola.com) smtp.mailfrom=mssola@mssola.com
+From: =?UTF-8?q?Miquel=20Sabat=C3=A9=20Sol=C3=A0?= <mssola@mssola.com>
+To: linux-btrfs@vger.kernel.org
+Cc: clm@fb.com,
+	dsterba@suse.com,
+	fdmanana@suse.com,
+	wqu@suse.com,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Miquel=20Sabat=C3=A9=20Sol=C3=A0?= <mssola@mssola.com>
+Subject: [PATCH v2] btrfs: prevent a double kfree on delayed-ref
+Date: Wed,  1 Oct 2025 20:05:03 +0200
+Message-ID: <20251001180503.1353226-1-mssola@mssola.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="RZlrBQmtaAPuQAyZ"
-Content-Disposition: inline
-In-Reply-To: <SI6PR06MB7104AE0345763471E67CD3C0FFE6A@SI6PR06MB7104.apcprd06.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 4ccNBP1JMNzB0wT
 
+In the previous code it was possible to incur into a double kfree()
+scenario when calling add_delayed_ref_head(). This could happen if the
+record was reported to already exist in the
+btrfs_qgroup_trace_extent_nolock() call, but then there was an error
+later on add_delayed_ref_head(). In this case, since
+add_delayed_ref_head() returned an error, the caller went to free the
+record. Since add_delayed_ref_head() couldn't set this kfree'd pointer
+to NULL, then kfree() would have acted on a non-NULL 'record' object
+which was pointing to memory already freed by the callee.
 
---RZlrBQmtaAPuQAyZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The problem comes from the fact that the responsibility to kfree the
+object is on both the caller and the callee at the same time. Hence, the
+fix for this is to shift the ownership of the 'qrecord' object out of
+the add_delayed_ref_head(). That is, we will never attempt to kfree()
+the given object inside of this function, and will expect the caller to
+act on the 'qrecord' object on its own. The only exception where the
+'qrecord' object cannot be kfree'd is if it was inserted into the
+tracing logic, for which we already have the 'qrecord_inserted_ret'
+boolean to account for this. Hence, the caller has to kfree the object
+only if add_delayed_ref_head() reports not to have inserted it on the
+tracing logic.
 
-On Wed, Oct 01, 2025 at 02:36:44PM +0000, Jun Guo wrote:
-> On Tue, Oct 01, 2025 at 02:52:00AM +0800, Conor Dooley wrote:
-> > On Tue, Sep 30, 2025 at 03:56:42PM +0800, Jun Guo wrote:
-> > > Add documentation for the optional 'fifo-width' device tree property
-> > > for the Cadence SPI controller.
-> > >
-> > > Signed-off-by: Jun Guo <jun.guo@cixtech.com>
-> > > ---
-> > >  .../devicetree/bindings/spi/spi-cadence.yaml          | 11 +++++++++=
-++
-> > >  1 file changed, 11 insertions(+)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/spi/spi-cadence.yaml b=
-/Documentation/devicetree/bindings/spi/spi-cadence.yaml
-> > > index 8de96abe9da1..b2e3f217473b 100644
-> > > --- a/Documentation/devicetree/bindings/spi/spi-cadence.yaml
-> > > +++ b/Documentation/devicetree/bindings/spi/spi-cadence.yaml
-> > > @@ -62,6 +62,17 @@ properties:
-> > >      items:
-> > >        - const: spi
-> > >
-> > > +  fifo-width:
-> > > +    description: |
-> > > +      This property specifies the FIFO data width (in bits) of the h=
-ardware.
-> > > +      It must be configured according to the actual FIFO width set d=
-uring
-> > > +      the IP design. For instance, if the hardware FIFO is 32 bits w=
-ide,
-> > > +      this property should be set to 32.
-> > > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > > +    minimum: 8
-> > > +    maximum: 32
-> > > +    default: 8
-> >
-> > I assume this differs from fifo-depth because this is the actual width
-> > of the registers rather than the number of elements of that width the
-> > FIFO can contain?
->=20
-> Thank you for your review. You are absolutely correct. The `fifo-width`
-> indeed refers to the physical width of the FIFO data registers (e.g., 8,
-> 16, or 32 bits), whereas `fifo-depth` describes how many elements of
->  that width the FIFO can store.
->=20
-> > However, this isn't something defined as common in spi-controller.yaml
-> > so you'll need a vendor prefix for the property if the property stays.
-> > This does, however, seem like something that can just be determined by
-> > the compatible and that your omission of a soc-specific one is what's
-> > lead you to introduce this property. Why not just use a sky1-specific
-> > compatible here?
->=20
-> You raise an excellent point, and I initially had the same thought. Howev=
-er,
-> after further consideration, I realized that the IP of Cadence SPI actual=
-ly
-> supports configurable FIFO width as a feature. The choice of using 8-bit,
-> 16-bit, or 32-bit FIFO width can be made by the SoC integrator based on
-> their specific requirements. This is therefore a feature of the Cadence IP
-> itself, rather than a chip vendor-specific design constraint.
->=20
-> For this reason, I believe defining a common `fifo-width` property for
-> Cadence SPI controllers is more appropriate, as it allows any SoC using
-> this IP with different FIFO width configurations to utilize this property,
-> without needing to create a specific compatible string for each SoC varia=
-nt.
+As a side-effect of the above, we must guarantee that
+'qrecord_inserted_ret' is properly initialized at the start of the
+function, not at the end, and then set when an actual insert
+happens. This way we avoid 'qrecord_inserted_ret' having an invalid
+value on an early exit.
 
-Except, you do need to create a soc-specific compatible string for every
-device, the fact that you didn't add one for your sky1 SoC was a mistake
-that you should fix. SoC-specific compatibles are a requirement.
-The "cnds,spi-r1p6" compatible seems to be used on Xilinx platforms,
-including a zynq platform that should probably be using the zynq
-soc-specific compatible. r1p6 sounds like some sort of version info, is
-that the version you are even using?
+The documentation from the add_delayed_ref_head() has also been updated
+to reflect on the exact ownership of the 'qrecord' object.
 
-Once you have added a compatible for the sky1, this property is not
-needed, since the depth can be determined from that. Any other user that
-wants to use non-default depths can also use their soc-specific
-compatibles for that purpose.
+Fixes: 6ef8fbce0104 ("btrfs: fix missing error handling when adding delayed ref with qgroups enabled")
+Signed-off-by: Miquel Sabaté Solà <mssola@mssola.com>
+---
 
->=20
-> Thank you for your valuable time and insightful suggestions. I look forwa=
-rd to
-> your further feedback on this approach.
+Changes in v2:
 
+- Change documentation to reflect that we are using an xarray instead of an
+  rbtree.
+- Change warning to assertion on qrecord_insert_ret.
+- Fix function notation on comments.
+- Fix commit message as suggested
 
---RZlrBQmtaAPuQAyZ
-Content-Type: application/pgp-signature; name="signature.asc"
+ fs/btrfs/delayed-ref.c | 43 ++++++++++++++++++++++++++++++++----------
+ 1 file changed, 33 insertions(+), 10 deletions(-)
 
------BEGIN PGP SIGNATURE-----
+diff --git a/fs/btrfs/delayed-ref.c b/fs/btrfs/delayed-ref.c
+index 481802efaa14..f8fc26272f76 100644
+--- a/fs/btrfs/delayed-ref.c
++++ b/fs/btrfs/delayed-ref.c
+@@ -798,9 +798,13 @@ static void init_delayed_ref_head(struct btrfs_delayed_ref_head *head_ref,
+ }
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaN1tIQAKCRB4tDGHoIJi
-0oMjAP4zsaaPAMU0SQSKmTQbp1DBvtpZf4mNFIjsMrVhWzKr3gD/Rsy8ig2pCubA
-Bo1QWNZbE3AbmsqSutDk71YJ13rf9QI=
-=XRtH
------END PGP SIGNATURE-----
+ /*
+- * helper function to actually insert a head node into the rbtree.
+- * this does all the dirty work in terms of maintaining the correct
+- * overall modification count.
++ * Helper function to actually insert a head node into the xarray. This does all
++ * the dirty work in terms of maintaining the correct overall modification
++ * count.
++ *
++ * The caller is responsible for calling kfree() on @qrecord. More specifically,
++ * if this function reports that it did not insert it as noted in
++ * @qrecord_inserted_ret, then it's safe to call kfree() on it.
+  *
+  * Returns an error pointer in case of an error.
+  */
+@@ -814,7 +818,14 @@ add_delayed_ref_head(struct btrfs_trans_handle *trans,
+ 	struct btrfs_delayed_ref_head *existing;
+ 	struct btrfs_delayed_ref_root *delayed_refs;
+ 	const unsigned long index = (head_ref->bytenr >> fs_info->sectorsize_bits);
+-	bool qrecord_inserted = false;
++
++	/*
++	 * If 'qrecord_inserted_ret' is provided, then the first thing we need
++	 * to do is to initialize it to false just in case we have an exit
++	 * before trying to insert the record.
++	 */
++	if (qrecord_inserted_ret)
++		*qrecord_inserted_ret = false;
 
---RZlrBQmtaAPuQAyZ--
+ 	delayed_refs = &trans->transaction->delayed_refs;
+ 	lockdep_assert_held(&delayed_refs->lock);
+@@ -833,6 +844,12 @@ add_delayed_ref_head(struct btrfs_trans_handle *trans,
+
+ 	/* Record qgroup extent info if provided */
+ 	if (qrecord) {
++		/*
++		 * Setting 'qrecord' but not 'qrecord_inserted_ret' will likely
++		 * result in a memory leakage.
++		 */
++		ASSERT(qrecord_inserted_ret != NULL);
++
+ 		int ret;
+
+ 		ret = btrfs_qgroup_trace_extent_nolock(fs_info, delayed_refs, qrecord,
+@@ -840,12 +857,10 @@ add_delayed_ref_head(struct btrfs_trans_handle *trans,
+ 		if (ret) {
+ 			/* Clean up if insertion fails or item exists. */
+ 			xa_release(&delayed_refs->dirty_extents, index);
+-			/* Caller responsible for freeing qrecord on error. */
+ 			if (ret < 0)
+ 				return ERR_PTR(ret);
+-			kfree(qrecord);
+-		} else {
+-			qrecord_inserted = true;
++		} else if (qrecord_inserted_ret) {
++			*qrecord_inserted_ret = true;
+ 		}
+ 	}
+
+@@ -888,8 +903,6 @@ add_delayed_ref_head(struct btrfs_trans_handle *trans,
+ 		delayed_refs->num_heads++;
+ 		delayed_refs->num_heads_ready++;
+ 	}
+-	if (qrecord_inserted_ret)
+-		*qrecord_inserted_ret = qrecord_inserted;
+
+ 	return head_ref;
+ }
+@@ -1049,6 +1062,14 @@ static int add_delayed_ref(struct btrfs_trans_handle *trans,
+ 		xa_release(&delayed_refs->head_refs, index);
+ 		spin_unlock(&delayed_refs->lock);
+ 		ret = PTR_ERR(new_head_ref);
++
++		/*
++		 * It's only safe to call kfree() on 'qrecord' if
++		 * add_delayed_ref_head() has _not_ inserted it for
++		 * tracing. Otherwise we need to handle this here.
++		 */
++		if (!qrecord_reserved || qrecord_inserted)
++			goto free_head_ref;
+ 		goto free_record;
+ 	}
+ 	head_ref = new_head_ref;
+@@ -1071,6 +1092,8 @@ static int add_delayed_ref(struct btrfs_trans_handle *trans,
+
+ 	if (qrecord_inserted)
+ 		return btrfs_qgroup_trace_extent_post(trans, record, generic_ref->bytenr);
++
++	kfree(record);
+ 	return 0;
+
+ free_record:
+--
+2.51.0
 
