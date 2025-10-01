@@ -1,359 +1,86 @@
-Return-Path: <linux-kernel+bounces-838538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65E52BAF6D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 09:34:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0359BAF6E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 09:35:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6273F4A4798
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 07:34:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 815FD17BD3C
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 07:35:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B622275872;
-	Wed,  1 Oct 2025 07:34:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC4BD1F582B;
+	Wed,  1 Oct 2025 07:35:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="NoJtlIu2"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KQLJ8os6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B41274FE3
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 07:34:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02E4C1F1538;
+	Wed,  1 Oct 2025 07:35:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759304065; cv=none; b=NmZZp6Slft+yG/J5WckQL4DWaaiuyYpkCKaIUTMle5Aj+s5LWK+6KP9ziHMTMmd1T+jWGh2NC0P4mmd9jbB69HpEijtUfJmjerDtNBiOVwp46j+4hp541DfUdnpKFLPNV+FnxY7Xi2x+1+A7tR0wfrkMsBIeuD+TUC6svYpgVf4=
+	t=1759304118; cv=none; b=FeuUvuphj0QXE98+l6H6w1S513gqWMRwW8ybFuOWFSxQSAApw0UToKAv7/ezwKyQlCQCTh/mQTwSU6AjJbscFkQQPjuhQXGpK4bEyZngnBb7oxJ+m4tV/D7+ItoL5ug07aTbDoQZeUr/Y8A07OgRG2waOGgZGjy6qATF/ISNsxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759304065; c=relaxed/simple;
-	bh=Rf4H9TynzVt1Lyq4dqEiXIdj3OavGVbmXN2dPpfuLM8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=PId1Q+niNcLegYSgS5NG17rVr1xq7wOTJt3vt/aqSxKt1s9PttvRCueMQy7//J0JxBZ6eIQWHLUF8MoZJNwvpQ4H+kxZ0LfXocKHlDtKX9dW85t2ZWSPIPLDM3sP9ZXPfQLRYxoZueqkeGhpaCBiqS/EkGpVbCVGgYecRSd81ZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=NoJtlIu2; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58ULmae9030546
-	for <linux-kernel@vger.kernel.org>; Wed, 1 Oct 2025 07:34:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:date:from:in-reply-to:message-id:references:subject:to; s=
-	qcppdkim1; bh=NpLFZShKKc/dLH3/RKojdQgBbxZSezqyQ9PQZX4YslE=; b=No
-	JtlIu2wo3OqBgbn6xPeBznl3D2DVkXG6q0ylu1eu3nsZsprqayIkbLDco4aO6GjH
-	j25ordIWWrcN5J/dpz5q/UpIYpWybp943rGkl/Gg6D8Y3ErhXIqz4Vhg3BCOFjLs
-	FzV3rg/1f5TyXuv0JRARVLP2IGp71p/uuLMLvEKjcpI0n00yNH7c+2kRuRj/H0I7
-	iLJfV7qHOBkGvGi936qklEwpAUcOqoFNJ1SbG8saKzPbz8kvsJPXcFhEwWHJuzRm
-	Wfm/Yi7khtLLN0hiynpU+zzs65+J1poYBtqBvXjV+4Fn5wB3w9ShzQHgdcQcnTYn
-	DtZfS39PfVGtrajjUHMQ==
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e8pdkfmy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 07:34:22 +0000 (GMT)
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-334b0876195so7234401a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 00:34:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759304062; x=1759908862;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NpLFZShKKc/dLH3/RKojdQgBbxZSezqyQ9PQZX4YslE=;
-        b=gnKyrXycSHt2agO+mS/E2qFVKhJxu1cg8C5QAhyt1WA5VTTcjAbht0f+dV+SNWtlgo
-         p17sPgg0qNETF8gzF0qEIxa27AA04IHnVGGN4OS8QhQvTQLR+ra36taWFPzfLgqyBP6M
-         MlswaRjwZGslm2AhLWbMsP61+sJ5QA4FrnOmQFBv8XAZtx8dX0NtG9fkzdbEhMD+aLZJ
-         sSDasMw4aDHm5mP5JemPb4EcJ2gU01Gn45GE/5n+KgwMxHI4pvE8NuqyDTdKkca8jehS
-         Zvvbp00/tl/wp4vrIbNsJWahK4pu798rlo7DdcV5QQv4BjaWpQJKIvzj5u7hIfCtG3kQ
-         5UUA==
-X-Forwarded-Encrypted: i=1; AJvYcCXqM3zPcb7MpHV9BbzU9S0RBduA5ZaS8HO8Vc4Otnp6HqLxE6K7xiKrIbY2k9ZeEQlSUb/6ZolD7muxqGY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCQHnwvlO1R6aGz+46ZdERIkrQ9VQqbVaJegkctqzVJoVEFZ9u
-	vMtCe72mJ4FWG2eEpWxaGHr8UG3N8uzXHRAn1oXM5g7B0PMf4gEHSy90LZ6U1ZykmEiC6Cc0NEi
-	ibWOVS3KAihaKH5FE0SfJ8K/qqyaHASWvwoXaiUaExcP6ng/jFqplc5UHFPxZOtLOPhk=
-X-Gm-Gg: ASbGncubOdhfKFZ5cF4H0SfXMB1ANrLBCKqcIl1D+SAkZN7GleWsUN1Ioiuz2MTdacU
-	XH8AMASHOr5RhvAzVF8NkRhcUMkV1TjYaCzyaTBCDRa0J3Z16H+fKtW2bE6wIU84M8cEB9ACMOR
-	Pf5thB7QWmqFAYB6WX1dNhvBmE3frwsQaACTbprHoC7vtkEAUQzCMHheQB1eMaEhMLkyfowMHWt
-	fnafBr2KZ2k6eyDSbJEF8+DErE1r1LvH/+/TXfbFs4jsP4xpbK9Edi7WNnUEqYORQdBIv4XV8/x
-	htPwBupHExoH4TNsvQcuehjZqP9PIyIlMiXAhFcTYmqPTDfK3/TeY3M4MOjzfF7Hw1wTX6IqmdZ
-	xWpQ=
-X-Received: by 2002:a17:90b:3144:b0:338:3e6f:2d63 with SMTP id 98e67ed59e1d1-339a6e28360mr2595357a91.6.1759304061930;
-        Wed, 01 Oct 2025 00:34:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHqhp5ZByqLJXN1nj/rJ75hI6VUocIQro//1ocqCgiiNl1aa2w2QssR4jg2Lxv5jlWUE0nPlw==
-X-Received: by 2002:a17:90b:3144:b0:338:3e6f:2d63 with SMTP id 98e67ed59e1d1-339a6e28360mr2595329a91.6.1759304061400;
-        Wed, 01 Oct 2025 00:34:21 -0700 (PDT)
-Received: from hu-okukatla-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-339a6effe77sm1642127a91.17.2025.10.01.00.34.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Oct 2025 00:34:20 -0700 (PDT)
-From: Odelu Kukatla <odelu.kukatla@oss.qualcomm.com>
-To: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: Raviteja Laggyshetty <raviteja.laggyshetty@oss.qualcomm.com>,
-        Odelu Kukatla <odelu.kukatla@oss.qualcomm.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mike Tipton <mike.tipton@oss.qualcomm.com>
-Subject: [PATCH v2 3/3] arm64: dts: qcom: sa8775p: Add reg and clocks for QoS configuration
-Date: Wed,  1 Oct 2025 13:03:44 +0530
-Message-Id: <20251001073344.6599-4-odelu.kukatla@oss.qualcomm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20251001073344.6599-1-odelu.kukatla@oss.qualcomm.com>
-References: <20251001073344.6599-1-odelu.kukatla@oss.qualcomm.com>
-X-Proofpoint-GUID: UP1EOqyRHAENL7Gdx5r1E8g6uopoe7qQ
-X-Authority-Analysis: v=2.4 cv=MYZhep/f c=1 sm=1 tr=0 ts=68dcd97f cx=c_pps
- a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=BfUXBPTVPglUz1mEt9YA:9
- a=uKXjsCUrEbL0IQVhDsJ9:22
-X-Proofpoint-ORIG-GUID: UP1EOqyRHAENL7Gdx5r1E8g6uopoe7qQ
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAzNiBTYWx0ZWRfX4VVRxmTMufji
- 5UwMsuZMNn1wjeForaWDDpvDAkVwzJvq2blrxZOmIiaZ2wRiVSwsPQuSmJHufGhqwFjyhMWAQB1
- LkADgMl6+VC760Lg/TiSgkMQWwx9zv4FTn8XIvHCB2mcBN4oEH9jSy9pNI/Q+fjuAnBiGcrDe6V
- /eUhl4fSs9jTBO7VQYBfPKvE54T7wvh4dIjytsmHnNeX03Wv/0IemhI0MwZO9QHQeLjGcCEhVLQ
- trAUzr2pZCxgG9rJqDek4dGk+5fYXF1HrCdUbOcXHkFWL98vFxH9+xE/jBPBGyjxPrpuKQo3lS3
- 0vwR8Lmlk/XTFER9lMM5zBgEjXJjjN4CK+hZiYkGi3dz0e08wT3c1VUQyYUZnZljO/d8EXOEv/b
- y4MhehPVwoYOSzO8qHPzjn48TqdB6g==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-01_01,2025-09-29_04,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 clxscore=1015 bulkscore=0 lowpriorityscore=0
- priorityscore=1501 phishscore=0 malwarescore=0 spamscore=0 impostorscore=0
- adultscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2509150000
- definitions=main-2509270036
+	s=arc-20240116; t=1759304118; c=relaxed/simple;
+	bh=K6Gczwx64pt8ByrFLS4NnTNZBEmkXcjHfCgLboOGRsY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rsRtjalf/VUiNjSivC+f084EKrl8tLwAl1mjm6QRDVf5j8Ee2hzAthQjfx2sQGC3pciUZQIKZiAr7rmii3pPwwHrHZR3IBCH4YS21OHp/3mndGSaS7XdCOXoHZUtQFRyTrlX256Yh5aCDo7Y6Q6ribp4dW8yZ4xtPYkqqINE/P4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KQLJ8os6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED8B2C4CEF4;
+	Wed,  1 Oct 2025 07:35:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759304117;
+	bh=K6Gczwx64pt8ByrFLS4NnTNZBEmkXcjHfCgLboOGRsY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=KQLJ8os6CnrR+Wp1r//hSBdzwsoSOHXtRfcuqr90JoFQceZRNHzDYJwjjOQYahWfx
+	 gNzdPudhgv2yDl52GAgDof5I6B8+pjHNwpHpYP3PRUWGRpmmG3r6QWnX0W+L+7hC2H
+	 usu71Tfb6kZ9wSd7df0fZyqKQu5b271dS9tfjjmoC7xwAGnw8BSwqBu+1/Jdwdg2jn
+	 bE1HubKxzm9YiTwftFuKquvNZCLvpo8llEmEkBXEBAd5NpNdqtTj4sfgQ2NX0pXeU9
+	 1VbnHIoLrLOOkKTlx+XidW0yW2zSiWeE4TDaRIRhI7oYMmOO2Jo8y69NvBfZFZ6gYn
+	 AGXnpSn1xmGPg==
+Message-ID: <394d53e6-c8d3-46c1-b4f4-25bf82541e7a@kernel.org>
+Date: Wed, 1 Oct 2025 16:35:07 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 15/15] blktrace: handle BLKTRACESETUP2 ioctl
+To: Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+ Jens Axboe <axboe@kernel.dk>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-btrace@vger.kernel.org,
+ John Garry <john.g.garry@oracle.com>, Hannes Reinecke <hare@suse.de>,
+ Christoph Hellwig <hch@lst.de>, Naohiro Aota <naohiro.aota@wdc.com>,
+ Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
+ Chaitanya Kulkarni <chaitanyak@nvidia.com>,
+ "Martin K . Petersen" <martin.petersen@oracle.com>
+References: <20250925150231.67342-1-johannes.thumshirn@wdc.com>
+ <20250925150231.67342-16-johannes.thumshirn@wdc.com>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <20250925150231.67342-16-johannes.thumshirn@wdc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add register addresses and clocks which need to be enabled for
-configuring QoS on sa8775p SoC.
+On 9/26/25 00:02, Johannes Thumshirn wrote:
+> Handle the BLKTRACESETUP2 ioctl, requesting an extended version of the
+> blktrace protocol from user-space.
+> 
+> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 
-Signed-off-by: Odelu Kukatla <odelu.kukatla@oss.qualcomm.com>
----
- arch/arm64/boot/dts/qcom/lemans.dtsi | 163 +++++++++++++++------------
- 1 file changed, 91 insertions(+), 72 deletions(-)
+Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
 
-diff --git a/arch/arm64/boot/dts/qcom/lemans.dtsi b/arch/arm64/boot/dts/qcom/lemans.dtsi
-index cf685cb186ed..3a02a515af0d 100644
---- a/arch/arm64/boot/dts/qcom/lemans.dtsi
-+++ b/arch/arm64/boot/dts/qcom/lemans.dtsi
-@@ -518,90 +518,18 @@
- 		};
- 	};
- 
--	aggre1_noc: interconnect-aggre1-noc {
--		compatible = "qcom,sa8775p-aggre1-noc";
--		#interconnect-cells = <2>;
--		qcom,bcm-voters = <&apps_bcm_voter>;
--	};
--
--	aggre2_noc: interconnect-aggre2-noc {
--		compatible = "qcom,sa8775p-aggre2-noc";
--		#interconnect-cells = <2>;
--		qcom,bcm-voters = <&apps_bcm_voter>;
--	};
--
- 	clk_virt: interconnect-clk-virt {
- 		compatible = "qcom,sa8775p-clk-virt";
- 		#interconnect-cells = <2>;
- 		qcom,bcm-voters = <&apps_bcm_voter>;
- 	};
- 
--	config_noc: interconnect-config-noc {
--		compatible = "qcom,sa8775p-config-noc";
--		#interconnect-cells = <2>;
--		qcom,bcm-voters = <&apps_bcm_voter>;
--	};
--
--	dc_noc: interconnect-dc-noc {
--		compatible = "qcom,sa8775p-dc-noc";
--		#interconnect-cells = <2>;
--		qcom,bcm-voters = <&apps_bcm_voter>;
--	};
--
--	gem_noc: interconnect-gem-noc {
--		compatible = "qcom,sa8775p-gem-noc";
--		#interconnect-cells = <2>;
--		qcom,bcm-voters = <&apps_bcm_voter>;
--	};
--
--	gpdsp_anoc: interconnect-gpdsp-anoc {
--		compatible = "qcom,sa8775p-gpdsp-anoc";
--		#interconnect-cells = <2>;
--		qcom,bcm-voters = <&apps_bcm_voter>;
--	};
--
--	lpass_ag_noc: interconnect-lpass-ag-noc {
--		compatible = "qcom,sa8775p-lpass-ag-noc";
--		#interconnect-cells = <2>;
--		qcom,bcm-voters = <&apps_bcm_voter>;
--	};
--
- 	mc_virt: interconnect-mc-virt {
- 		compatible = "qcom,sa8775p-mc-virt";
- 		#interconnect-cells = <2>;
- 		qcom,bcm-voters = <&apps_bcm_voter>;
- 	};
- 
--	mmss_noc: interconnect-mmss-noc {
--		compatible = "qcom,sa8775p-mmss-noc";
--		#interconnect-cells = <2>;
--		qcom,bcm-voters = <&apps_bcm_voter>;
--	};
--
--	nspa_noc: interconnect-nspa-noc {
--		compatible = "qcom,sa8775p-nspa-noc";
--		#interconnect-cells = <2>;
--		qcom,bcm-voters = <&apps_bcm_voter>;
--	};
--
--	nspb_noc: interconnect-nspb-noc {
--		compatible = "qcom,sa8775p-nspb-noc";
--		#interconnect-cells = <2>;
--		qcom,bcm-voters = <&apps_bcm_voter>;
--	};
--
--	pcie_anoc: interconnect-pcie-anoc {
--		compatible = "qcom,sa8775p-pcie-anoc";
--		#interconnect-cells = <2>;
--		qcom,bcm-voters = <&apps_bcm_voter>;
--	};
--
--	system_noc: interconnect-system-noc {
--		compatible = "qcom,sa8775p-system-noc";
--		#interconnect-cells = <2>;
--		qcom,bcm-voters = <&apps_bcm_voter>;
--	};
--
- 	/* Will be updated by the bootloader. */
- 	memory@80000000 {
- 		device_type = "memory";
-@@ -2689,6 +2617,62 @@
- 			reg = <0 0x010d2000 0 0x1000>;
- 		};
- 
-+		config_noc: interconnect@14c0000 {
-+			compatible = "qcom,sa8775p-config-noc";
-+			reg = <0x0 0x014c0000 0x0 0x13080>;
-+			#interconnect-cells = <2>;
-+			qcom,bcm-voters = <&apps_bcm_voter>;
-+		};
-+
-+		system_noc: interconnect@1680000 {
-+			compatible = "qcom,sa8775p-system-noc";
-+			reg = <0x0 0x01680000 0x0 0x15080>;
-+			#interconnect-cells = <2>;
-+			qcom,bcm-voters = <&apps_bcm_voter>;
-+		};
-+
-+		aggre1_noc: interconnect@16c0000 {
-+			compatible = "qcom,sa8775p-aggre1-noc";
-+			reg = <0x0 0x016c0000 0x0 0x18080>;
-+			#interconnect-cells = <2>;
-+			qcom,bcm-voters = <&apps_bcm_voter>;
-+			clocks = <&gcc GCC_AGGRE_UFS_PHY_AXI_CLK>,
-+				 <&gcc GCC_AGGRE_NOC_QUPV3_AXI_CLK>,
-+				 <&gcc GCC_AGGRE_USB2_PRIM_AXI_CLK>,
-+				 <&gcc GCC_AGGRE_USB3_PRIM_AXI_CLK>,
-+				 <&gcc GCC_AGGRE_USB3_SEC_AXI_CLK>;
-+		};
-+
-+		aggre2_noc: interconnect@1700000 {
-+			compatible = "qcom,sa8775p-aggre2-noc";
-+			reg = <0x0 0x01700000 0x0 0x1b080>;
-+			#interconnect-cells = <2>;
-+			qcom,bcm-voters = <&apps_bcm_voter>;
-+			clocks = <&gcc GCC_AGGRE_UFS_CARD_AXI_CLK>,
-+				 <&rpmhcc RPMH_IPA_CLK>;
-+		};
-+
-+		pcie_anoc: interconnect@1760000 {
-+			compatible = "qcom,sa8775p-pcie-anoc";
-+			reg = <0x0 0x01760000 0x0 0xc080>;
-+			#interconnect-cells = <2>;
-+			qcom,bcm-voters = <&apps_bcm_voter>;
-+		};
-+
-+		gpdsp_anoc: interconnect@1780000 {
-+			compatible = "qcom,sa8775p-gpdsp-anoc";
-+			reg = <0x0 0x01780000 0x0 0xe080>;
-+			#interconnect-cells = <2>;
-+			qcom,bcm-voters = <&apps_bcm_voter>;
-+		};
-+
-+		mmss_noc: interconnect@17a0000 {
-+			compatible = "qcom,sa8775p-mmss-noc";
-+			reg = <0x0 0x017a0000 0x0 0x40000>;
-+			#interconnect-cells = <2>;
-+			qcom,bcm-voters = <&apps_bcm_voter>;
-+		};
-+
- 		ufs_mem_hc: ufshc@1d84000 {
- 			compatible = "qcom,sa8775p-ufshc", "qcom,ufshc", "jedec,ufs-2.0";
- 			reg = <0x0 0x01d84000 0x0 0x3000>;
-@@ -2769,6 +2753,13 @@
- 				 <&apps_smmu 0x481 0x00>;
- 		};
- 
-+		lpass_ag_noc: interconnect@3c40000 {
-+			compatible = "qcom,sa8775p-lpass-ag-noc";
-+			reg = <0x0 0x03c40000 0x0 0x17200>;
-+			#interconnect-cells = <2>;
-+			qcom,bcm-voters = <&apps_bcm_voter>;
-+		};
-+
- 		ctcu@4001000 {
- 			compatible = "qcom,sa8775p-ctcu";
- 			reg = <0x0 0x04001000 0x0 0x1000>;
-@@ -3925,6 +3916,20 @@
- 			status = "disabled";
- 		};
- 
-+		dc_noc: interconnect@90e0000 {
-+			compatible = "qcom,sa8775p-dc-noc";
-+			reg = <0x0 0x090e0000 0x0 0x5080>;
-+			#interconnect-cells = <2>;
-+			qcom,bcm-voters = <&apps_bcm_voter>;
-+		};
-+
-+		gem_noc: interconnect@9100000 {
-+			compatible = "qcom,sa8775p-gem-noc";
-+			reg = <0x0 0x09100000 0x0 0xf6080>;
-+			#interconnect-cells = <2>;
-+			qcom,bcm-voters = <&apps_bcm_voter>;
-+		};
-+
- 		usb_0: usb@a600000 {
- 			compatible = "qcom,sa8775p-dwc3", "qcom,snps-dwc3";
- 			reg = <0 0x0a600000 0 0xfc100>;
-@@ -6875,6 +6880,13 @@
- 			status = "disabled";
- 		};
- 
-+		nspa_noc: interconnect@260c0000 {
-+			compatible = "qcom,sa8775p-nspa-noc";
-+			reg = <0x0 0x260c0000 0x0 0x16080>;
-+			#interconnect-cells = <2>;
-+			qcom,bcm-voters = <&apps_bcm_voter>;
-+		};
-+
- 		remoteproc_cdsp0: remoteproc@26300000 {
- 			compatible = "qcom,sa8775p-cdsp0-pas";
- 			reg = <0x0 0x26300000 0x0 0x10000>;
-@@ -7007,6 +7019,13 @@
- 			};
- 		};
- 
-+		nspb_noc: interconnect@2a0c0000 {
-+			compatible = "qcom,sa8775p-nspb-noc";
-+			reg = <0x0 0x2a0c0000 0x0 0x16080>;
-+			#interconnect-cells = <2>;
-+			qcom,bcm-voters = <&apps_bcm_voter>;
-+		};
-+
- 		remoteproc_cdsp1: remoteproc@2a300000 {
- 			compatible = "qcom,sa8775p-cdsp1-pas";
- 			reg = <0x0 0x2A300000 0x0 0x10000>;
+
 -- 
-2.17.1
-
+Damien Le Moal
+Western Digital Research
 
