@@ -1,159 +1,112 @@
-Return-Path: <linux-kernel+bounces-839316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 553AEBB1577
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 19:18:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98999BB1590
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 19:19:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F6672A57C0
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 17:18:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7AB94C1604
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 17:19:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BC342D372D;
-	Wed,  1 Oct 2025 17:17:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E27AA2D3739;
+	Wed,  1 Oct 2025 17:19:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fbmuVPMV"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VJSHYuyo"
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4669C239E75
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 17:17:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BECE32D3731
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 17:19:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759339077; cv=none; b=MfWU3wC4s79GhbbP7N/fULKjKlnsUmOFLurGkOIITfiKCUE3AGzYEIHSP+79yCFMVmf3bbsfIhhdV1VOVI1rSHuMgBWI1f2fnXpP/Sigd9wlJ2pY3B5fZBYaVJ44tuLcu2i9Yhggo9nUVoyyR1olfOWDs5ba2+9Bqb+Q203SSNc=
+	t=1759339148; cv=none; b=Z7yvQSEbuleR++qRUlcRHTjI1jvz2Bh8KgdvlThbHCgQmVJavKGrgnvLuax9dTJQn1m3Pf0TejwFemQ2xcZK5Sw5GG/c9iG66akOYD5zO+yr+7NwNj4HF7Nit+jqRlmhvNO9O80Pch3liX6Iy63CiXNQrXJNdWi+wKZYR4Jw5rY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759339077; c=relaxed/simple;
-	bh=Am6LZIbCSVgY5Se1Wi0yNwFcMvrDpjvjfrYu+0BmiNA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tgwFIvNmKcllTqZPn4fljWmYtkqGXojDjzY1hvkPRwN7KC/2YxmxuU/IVyetwKgKdIuJwPLVTd59sQ4GjFK48J4ovEGsiVyjF3yENEcgfWHQXs3DzqGsjPmUucc9JG90fwTrU+m5lKmlB8CtEgJFnxAnxYq9J9ATDU9kYB6nnZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fbmuVPMV; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-27d67abd215so13175ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 10:17:56 -0700 (PDT)
+	s=arc-20240116; t=1759339148; c=relaxed/simple;
+	bh=0kcmI8aEU5QUSDgRbCIIeZGutsdROd4SPxVbBnnnC9k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LWlus93iryzRP/9r+vp2aWuBx8tiVv3rHls0O6jEDJaGKgJ09qP4pvmfUzkG7P85TjWUL8WeOBHQVR/96Lditta6Bo8A+nHZGDKW3e5cqjN/w9hZ+KnaWguNtbkVN0Edh8TB6E6yNrh67MZLm8EZd/LGC73cHqiQW39GKyiEmF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VJSHYuyo; arc=none smtp.client-ip=209.85.219.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-79ad9aa2d95so2175236d6.1
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 10:19:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759339075; x=1759943875; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1y2h5vASQKA3UCiJzkscyc1EFC5PFd9siEd1bqRvvXw=;
-        b=fbmuVPMVZ0U1RZoG+4h3vXcvg10/pH1Uwe/Ix2hfrfJY/0UQbZ1U94tz0JDiD5ZxpK
-         cBiakhYHAEhaeeiqndcdU00lb1FjP4q9vjR4KD8d+N2uOYamLCxMYfprybnaCoRhXtLR
-         tm3lp6kEFu6+ZBV2Bfnd/KVoxo2ULHReAT/gl6c3Q4W7xk8Kmd3pUHRfqFicHXae6nCq
-         vXqKiq8qQaGE4NRAUjCDBjqnJ4+g7ErMV7b8HYlN+yYrczDcSkxFmT18eXv/kDV5Q7Z4
-         NLQdcno5s7UfqcMtd1w77HGxgNDCiKltujsDBB4qFWaRyg4AzGlZSGKFejizOGN7zEXG
-         15Ig==
+        d=gmail.com; s=20230601; t=1759339144; x=1759943944; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=zopXUsDspNb1mWWJAWkCzCfsfjyf3UGPV6M0TUuo+6k=;
+        b=VJSHYuyoToYFOjVIdIJvQi1fhRNLlqXY7aiWGsf4nO3XJCgHxowhiMzdUHw2cZ5Z3r
+         kKcBgcLSMI6mgI60yAKMSoghiHi/I3lKj32S5qRSb23eqgV/pA1Ng0FfEjKi33VMIDv1
+         yBfKx+G8JubA0m55Pj2Ly70lVhCuGiUhELGp2WrvGXEDlb02jixPJGiY1tntqkKLVJiE
+         jlxe6FQdaJogNM1NqKlK5BZb5h+WfdAlkJlgY36Zxl8q6SQYrCBUKpSpLVXpIbFj8/TP
+         QC7r7fO+PbEFNJN31PcT3ei/l1LcxoWLAUPJWOZOMj8f2DkI/POZV2GxgUiT0UKNPtN6
+         4fwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759339075; x=1759943875;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1y2h5vASQKA3UCiJzkscyc1EFC5PFd9siEd1bqRvvXw=;
-        b=mMgqW/wsM1Rsa8oqnM0igTafPw5P/rTq1+E24gjvr5u7PWWI8NxGllpVbyaatBfHtH
-         eeyou+5AbYhrcPG2N/8KISH2nfHvxjsVRU6wedMiVnIOPoLxiaLKNV6sVmy1Z+M8CzAH
-         Wl2sA9t5FpSnkLhBuShvrvFztfPBEkY4/AD1JHRQfOQWREzDkCIAFS/8WV4l9Hox7Lka
-         cMvzGyvmmVmjvgsM5Nj7/FOT3c6ZMRbviPYFkgaMDBhKsmx40rZBm2xMt/QukjDc5lVv
-         0SZoLel9UiW1x0y5NzdTcCwM6dgLhM20XJ/0lUY2ZFu/NmZeQbKPiKFoJmbzyTZG1MAH
-         X23w==
-X-Forwarded-Encrypted: i=1; AJvYcCUyDJu58qtaCMApNVtT5G6lzMU704JsWM3gm38xPQNouqUhYn/BmQfDCe/dot+aUfH2R9W5ginlSQ8A7cU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZTj2tBmrE6IeJlyJkkd4oswQrYP36YKMoeC6ostrsDj5x6MW4
-	tGjKzUbe74GHtYqQAiR4xi86r3iUJIrGeS/ZZZqcANEcoTCDwQQqGd3iQkGag2DsqZZG9175Xb2
-	OJbVaZi6VDgnU7dp9VYNOSPmGmYw1ZqNfdr0YSwGP
-X-Gm-Gg: ASbGnctWaHjIhqoa29p+ElEMN5aaij56waBJpJQr5cVB2IeMgga9A5xnie8XrQBjHzb
-	PWXqZPDvedxVaFSGemH897wOv//KAASSO9615ggZZz+6u8BGr/ialztFmVaroMTf/nl8aAN5Fig
-	Jmy2T6iEq1WLfT8lfyXxy5RIkJeY1BDCON4E4Uy/llxGTSJvGXRm1N8vQE55r2fEfY3rlA/GLEn
-	iWJaw5F6sWbr/Ccn42CmITwldQxtXvzDifC37XSp62nCCwylFUpGFCQxNIZQmd6
-X-Google-Smtp-Source: AGHT+IEc5YwjCgEyjWB8fCgIiAGbFywCUMBUm03Ih9N+XlFwOAjFHqrja3JrAWGFi1Rq4qqGQMM8IoASJRO0e7AT5hM=
-X-Received: by 2002:a17:902:e744:b0:275:8110:7a4d with SMTP id
- d9443c01a7336-28e8d88536amr266855ad.0.1759339075033; Wed, 01 Oct 2025
- 10:17:55 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759339144; x=1759943944;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zopXUsDspNb1mWWJAWkCzCfsfjyf3UGPV6M0TUuo+6k=;
+        b=EXMfBjfSVQm94lmYCIyFp1SULfGmAtHHld6gnOrmYp/JrsSOGN3jH3UU4GQLuPsejI
+         oa3yjQX34qYSBam/2A6oQhA9C2CI8Op0008hg/1yNyoqnjoVlSBXlIH+jCoh7sUY/qHj
+         fBieVuSLN4U4jXJ+wvkLF4sdM4CWJ0L3AqRDMzHw62bTFi0PJmo4ypic9Ac/+9auSLJt
+         foBNUGwH6h+BBJivsc5Q5bHGYyyRXQ7Dv23hXpW25y0cTKqo7k9P3m86Ifa/JOyqaEyR
+         NBiu5Qgoho5B3XxwUmwLe2/fAV2Rul93ptzKcaOUNQO+ZvG4MIz74xyGJgCdQq2hfMpi
+         U5/w==
+X-Forwarded-Encrypted: i=1; AJvYcCU5bHDcTsPuCf+/xZSpugIxfD/UAxAgFo+M0Veqt1vFDHrTMkce0FMmvUWp9Ijj1d1FdC26w1XeWr/zJNY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7j0wdUO9toomd1Q5QmLHk5AJxEYFCJwPHw59oP/fS+6Ssi1VI
+	DmDVlS96X+cQny0118zGJcleuDeDKOBqixgDaEibiP3tH4MJrsqfUmDY
+X-Gm-Gg: ASbGncvxpui66PIZZCLBmp7JSSOe+ut2DkaY2Da5Y4fpH445mYjM0iUaoL5rnW3QCWe
+	+SxOC6dJkGzm/HRzQIfSr5nhMOFB0py/KygPpH49qLog97fvMQpXrWup/DIuAp1i31UQfb1h818
+	ijAhD4AvZuNQV+rJ5orfA1K5VsPlD29eY57ud1zV724xSKDLN57+e2j5Pf0adD2A4fRxoxw3ovx
+	RcsJYX+DRKq1U/z3QWggK5bbNLSbPZGCunwxce01F/jHPZ+fRJxwqYo1CtuhsCd27b4e/nbolWu
+	HObrQUTv0vgtu7dmMvXRAHp/BVASlU4efZt9yljDRxbQk4gEtU/fPZvOy3C8yUFcfIbryns5tTq
+	AzueuRjzkjb+O9I91aDGp8dGk1sNoE4cBMKTyvJn6+g==
+X-Google-Smtp-Source: AGHT+IHQhkaGCWCGXg39uCPJptTD10njVMqUQyeE04a/E92c7P5/6wo4qNH+/bkTJGYyPUCAdw9t3w==
+X-Received: by 2002:a05:6214:f01:b0:78f:2eca:2000 with SMTP id 6a1803df08f44-8739be1b61fmr54866566d6.13.1759339144483;
+        Wed, 01 Oct 2025 10:19:04 -0700 (PDT)
+Received: from arch-box ([2607:fea8:54de:2200::9c5c])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-878bb53e2c5sm1905136d6.25.2025.10.01.10.19.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Oct 2025 10:19:03 -0700 (PDT)
+Date: Wed, 1 Oct 2025 13:19:01 -0400
+From: Albin Babu Varghese <albinbabuvarghese20@gmail.com>
+To: Helge Deller <deller@gmx.de>
+Cc: Simona Vetter <simona@ffwll.ch>,
+	syzbot+48b0652a95834717f190@syzkaller.appspotmail.com,
+	linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fbdev: Add bounds checking in bit_putcs to fix
+ vmalloc-out-of-bounds
+Message-ID: <aN1ihRfB-GHTEt_4@arch-box>
+References: <20250927075010.119671-1-albinbabuvarghese20@gmail.com>
+ <cb00a5e2-6e50-4b01-bcd7-33eeae57ed63@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250901160930.1785244-1-pbonzini@redhat.com> <20250901160930.1785244-5-pbonzini@redhat.com>
- <CAGtprH__G96uUmiDkK0iYM2miXb31vYje9aN+J=stJQqLUUXEg@mail.gmail.com>
- <74a390a1-42a7-4e6b-a76a-f88f49323c93@intel.com> <CAGtprH-mb0Cw+OzBj-gSWenA9kSJyu-xgXhsTjjzyY6Qi4E=aw@mail.gmail.com>
- <a2042a7b-2e12-4893-ac8d-50c0f77f26e9@intel.com>
-In-Reply-To: <a2042a7b-2e12-4893-ac8d-50c0f77f26e9@intel.com>
-From: Vishal Annapurve <vannapurve@google.com>
-Date: Wed, 1 Oct 2025 10:17:42 -0700
-X-Gm-Features: AS18NWBXpvVgjgMadlECNuwDjuYYFm9bGZUjR1YX4j5n77qq4tGA3oiOkJZz2YM
-Message-ID: <CAGtprH_nTBdX-VtMQJM4-y8KcB_F4CnafqpDX7ktASwhO0sxAg@mail.gmail.com>
-Subject: Re: [PATCH 4/7] x86/kexec: Disable kexec/kdump on platforms with TDX
- partial write erratum
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	bp@alien8.de, tglx@linutronix.de, peterz@infradead.org, mingo@redhat.com, 
-	hpa@zytor.com, thomas.lendacky@amd.com, x86@kernel.org, kas@kernel.org, 
-	rick.p.edgecombe@intel.com, dwmw@amazon.co.uk, kai.huang@intel.com, 
-	seanjc@google.com, reinette.chatre@intel.com, isaku.yamahata@intel.com, 
-	dan.j.williams@intel.com, ashish.kalra@amd.com, nik.borisov@suse.com, 
-	chao.gao@intel.com, sagis@google.com, farrah.chen@intel.com, 
-	Binbin Wu <binbin.wu@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <cb00a5e2-6e50-4b01-bcd7-33eeae57ed63@gmx.de>
 
-On Wed, Oct 1, 2025 at 7:32=E2=80=AFAM Dave Hansen <dave.hansen@intel.com> =
-wrote:
->
-> On 9/30/25 19:05, Vishal Annapurve wrote:
-> ...
-> >> Any workarounds are going to be slow and probably imperfect. That's no=
-t
-> >
-> > Do we really need to deploy workarounds that are complex and slow to
-> > get kdump working for the majority of the scenarios? Is there any
-> > analysis done for the risk with imperfect and simpler workarounds vs
-> > benefits of kdump functionality?
-> >
-> >> a great match for kdump. I'm perfectly happy waiting for fixed hardwar=
-e
-> >> from what I've seen.
-> >
-> > IIUC SPR/EMR - two CPU generations out there are impacted by this
-> > erratum and just disabling kdump functionality IMO is not the best
-> > solution here.
->
-> That's an eminently reasonable position. But we're speaking in broad
-> generalities and I'm unsure what you don't like about the status quo or
-> how you'd like to see things change.
+Hi Helge, Thanks for the review.
 
-Looks like the decision to disable kdump was taken between [1] -> [2].
-"The kernel currently doesn't track which page is TDX private memory.
-It's not trivial to reset TDX private memory.  For simplicity, this
-series simply disables kexec/kdump for such platforms.  This will be
-enhanced in the future."
-
-A patch [3] from the series[1], describes the issue as:
-"This problem is triggered by "partial" writes where a write transaction
-of less than cacheline lands at the memory controller.  The CPU does
-these via non-temporal write instructions (like MOVNTI), or through
-UC/WC memory mappings.  The issue can also be triggered away from the
-CPU by devices doing partial writes via DMA."
-
-And also mentions:
-"Also note only the normal kexec needs to worry about this problem, but
-not the crash kexec: 1) The kdump kernel only uses the special memory
-reserved by the first kernel, and the reserved memory can never be used
-by TDX in the first kernel; 2) The /proc/vmcore, which reflects the
-first (crashed) kernel's memory, is only for read.  The read will never
-"poison" TDX memory thus cause unexpected machine check (only partial
-write does)."
-
-What was the scenario that led to disabling kdump support altogether
-given the above description?
-
-[1] https://lore.kernel.org/lkml/cover.1727179214.git.kai.huang@intel.com/
-[2] https://lore.kernel.org/all/cover.1741778537.git.kai.huang@intel.com/
-[3] https://lore.kernel.org/lkml/6960ef6d7ee9398d164bf3997e6009df3e88cb67.1=
-727179214.git.kai.huang@intel.com/
-
->
-> Care to send along a patch representing the "best solution"? That should
-> clear things up.
->
+> I wonder if the image.height value should be capped in this case,
+> instead of not rendering any chars at all?
+> Something like (untested!):
+> 
+> +	if (image.dy >= info->var.yres)
+> +		return;
+> +       image.height = min(image.height, info->var.yres - image.dy);
+ 
+This looks like a better implementation than what I had. I thought it might be
+better to skip the entire row instead of rendering partially. I’m still new to
+this subsystem, so thanks for pointing this out. I’ll test the suggested
+changes and send a v2.
 
