@@ -1,144 +1,154 @@
-Return-Path: <linux-kernel+bounces-838728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CC7DBB0067
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 12:34:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7072BB007F
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 12:38:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 781AB3C42F0
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 10:34:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E59C23C6094
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 10:38:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8721D2BFC8F;
-	Wed,  1 Oct 2025 10:33:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CBCE2BEFF2;
+	Wed,  1 Oct 2025 10:38:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="feeq6UlI";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jcNScCXA"
-Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
+	dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b="V3z8i8o3"
+Received: from server-vie001.gnuweeb.org (server-vie001.gnuweeb.org [89.58.62.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9488C29BDBF;
-	Wed,  1 Oct 2025 10:33:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1590824A051;
+	Wed,  1 Oct 2025 10:38:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.62.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759314831; cv=none; b=Vk+mODBKuGHxeWrKjSGC+Jaq36cfNd19e7MFST9YZSGu8V8kAjpjU6VmDC3DY67P9fbPe0UJdVuQk+2E4Esv33vuBZRswFu5c/1nUovnjGXW9gNQrwPtLm9YdXBetU1ypf3UJ4QUWetIa2DleLCBWVe3OGYiYsM/Vnh9OSbXvmU=
+	t=1759315115; cv=none; b=sZ4+OkpJnXZofeMGAQyI2Bq/WelEquSJpmiEpDe/+oVipygDjypbtOY3d81nIFGl3oU8fjfLIvZY6udR20S/7lmM5EmjKsLB0x6TddIXTj1W9VBGSqpCOAg1Bt2UCIOoo8zuMhFbfrTUCW+bezzm5Lkn3+CuR9jIOl41zPZtVig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759314831; c=relaxed/simple;
-	bh=qdkXHIbNMbEMiYezbHUrizy/2CrJNGWYkQW0Pk6sQKk=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=GyF1C3LiQ6IlwQvhghUAQoDmC3uMxIu69jZrMFOUhL0ZNVj9lO96JBuBdtna4wMoysI8Ack4abCv06BS7NzcyjNAIABPRmzuj2ebrWBm2FmF5BrbBuWkCSc67rqDIQWm5efjrnb5Ym6vjd/8Jtbr4+T4MGC2C8rfiC15MjBKTSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=feeq6UlI; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jcNScCXA; arc=none smtp.client-ip=103.168.172.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfout.phl.internal (Postfix) with ESMTP id A63BCEC0038;
-	Wed,  1 Oct 2025 06:33:48 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Wed, 01 Oct 2025 06:33:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1759314828;
-	 x=1759401228; bh=agdHks9lyG6tctUiW+jhPBwjGNOe4D9oaDJAAzykNbo=; b=
-	feeq6UlItMRLW37EYs0oqpVkS+mHpM5WRWuj5gmt3o02aWCprD2uqlJEQdJ93/Tu
-	p0G3FEPnxSy6rLTKJIq8iNzFNIZS5KyC9GkpPef7K91LXf3EAJZuUzlfYXSS6KY4
-	Eej9oRKCmjQXgJl9ciuuEll3CzStLE6uAc2URdx1rxdlQcJgGh+xsFU9onJyycqA
-	D4o6Tck379swTGHapmd2lo02B87UXvpvwlpXxEJ2i+nn//r/fOAAyWOUEodBUjIC
-	yp61DV4klkIO8TErCwG1f/pB4IOlyS4SS28roR1k3FjtDCo5/J7+f43wPTkOg4vK
-	LzzFHUo+iltShiHLm9INyw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1759314828; x=
-	1759401228; bh=agdHks9lyG6tctUiW+jhPBwjGNOe4D9oaDJAAzykNbo=; b=j
-	cNScCXA55P3ijJujX5AC1s6FdnrzSaQ3cbH7ChbjzhGmpLorJjkfvuaJlg0DT9GW
-	Jpbmy9Y6raS0d0RxzfASKcZ2lnA1RSpDOuhs2IQGrJOMNGWD+jnuSoezwL50jJ4a
-	FjKwq39DwkxDS9Cr4A36iX1sfySK4mVeRKqJFlbUsqO6IflO7c/6QK0QXRE/Y940
-	/f3oPzXLqLpAzNrrPoSMwekJVebHJ/Z8H2KxXCD/+FINkRLdiCNQdEpX0zd6IeWW
-	AT5ljHjsYYOqK7rvvQZe6Lkll9Ac7ReZrnd6b6lFsmBffY7zgWnN3JZDCTFbEoss
-	bvj0nFarxGP+Uwah+8zJA==
-X-ME-Sender: <xms:iwPdaCvok4bwFWdJHIw0eGeeaJKu8TAEcYtPvuXaRMvf72LGvzcsVw>
-    <xme:iwPdaCRQw1yErdihbn5_94TGmGjr06wemewf_0P7NAqGFTEgOAS5Sp6iPVJA2YAmV
-    pf9tkLFAYyekxTFLmdnTJMQtsHq-8B9fJkpNucrrx3kakIBZkNb9_k>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdekvdeludcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
-    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
-    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopedvhedpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtoheprggthhhilhhlsegrtghhihhllhdrohhrghdprhgtphhtthhopehprg
-    hvvghlseguvghngidruggvpdhrtghpthhtohepfhdrfhgrihhnvghllhhisehgmhgrihhl
-    rdgtohhmpdhrtghpthhtohepshhuughiphhmrdhmuhhkhhgvrhhjvggvsehgmhgrihhlrd
-    gtohhmpdhrtghpthhtoheprhifrghrshhofiesghhmgidruggvpdhrtghpthhtohepsghr
-    ohhonhhivgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghonhhorheskhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtohepshhhuhgrhheskhgvrhhnvghlrdhorhhgpdhrtghpthht
-    ohepphgrthgthhgvsheskhgvrhhnvghltghirdhorhhg
-X-ME-Proxy: <xmx:iwPdaAGJg0r1tUvzifZedA6eI7BNl9Flp9oyz2bBWy6e87zZFDvjPg>
-    <xmx:iwPdaJO65jKR24UetwgrvhOp_NDxxzsQcXcriVnQJBldKs4gjw_xdg>
-    <xmx:iwPdaHeJOcjq3QFuAbbhVychvH-aNLrc3Ja6IwCRb_7D-sHJAoG1qg>
-    <xmx:iwPdaOQoZcXxtZuFNx82TNW1vE61hkgn2XVyPQZLlgrPxgxFnHSvGg>
-    <xmx:jAPdaBwIJjLJSXBM-6fIQBoA-5Xu-i0cqk1c3p5LjZscThAAzGjFd54Z>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 0C01C700065; Wed,  1 Oct 2025 06:33:47 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1759315115; c=relaxed/simple;
+	bh=poJwsjldxPN02UpyCS99Meg7MHiIEXO5cTadWf7egdM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jWI72ddkV6ccz0aCH4272RlPZTGMJBvijkH5IkEfzjzRMmadmHBxUmlfnSMdDUUp9ZiI56CNAh/oPLHuI+t/JBTs2e5YlXOsK9gYEuAjuEhe+5CYdZOBix72yyf3rBG45a+nvoVjoVX/vMAtjATkJ5x0+F9JKu+3wIcdxuYXG38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org; spf=pass smtp.mailfrom=gnuweeb.org; dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b=V3z8i8o3; arc=none smtp.client-ip=89.58.62.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnuweeb.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
+	s=new2025; t=1759315106;
+	bh=poJwsjldxPN02UpyCS99Meg7MHiIEXO5cTadWf7egdM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:
+	 Content-Transfer-Encoding:Message-ID:Date:From:Reply-To:Subject:To:
+	 Cc:In-Reply-To:References:Resent-Date:Resent-From:Resent-To:
+	 Resent-Cc:User-Agent:Content-Type:Content-Transfer-Encoding;
+	b=V3z8i8o3GuNfdAV8ip7PjU5udbRYSfauaNV/LUpTg8Z+qB7Db64QjVP3sppsWwzGC
+	 8sky4xBoaP3qzrRm5U553Zjr7JfAeRCXqylcB+6q+q8Uutd/qaDMtl9bxb01W+54VW
+	 oRSd1nlzMaOQPQvcioU5smcIhr+8OLQu8yA1J1eFf+zqEbSO9ky4OpKVm/UYDKuNKB
+	 8EwwZb1Cs8rL+WPVgRGzaFUwspdF7nxzA5CGmtqhJ0WQMPu/sRfqdzYUVdbFTHDnMq
+	 gQEvb+QiuyKPh63m/7uf1Lv4FLhFavvjqWe0OaU1QD07I18iaRcHihUToDkXGwfA+N
+	 TJPQ+1Qten0Sg==
+Received: from integral2.. (unknown [182.253.126.153])
+	by server-vie001.gnuweeb.org (Postfix) with ESMTPSA id 77DBE312793F;
+	Wed,  1 Oct 2025 10:38:23 +0000 (UTC)
+From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Ammar Faizi <ammarfaizi2@gnuweeb.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	io-uring Mailing List <io-uring@vger.kernel.org>,
+	Romain Pereira <rpereira@anl.gov>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	Christian Mazakas <christian.mazakas@gmail.com>
+Subject: [PATCH liburing] github: Test build against the installed liburing
+X-Gw-Bpl: wU/cy49Bu1yAPm0bW2qiliFUIEVf+EkEatAboK6pk2H2LSy2bfWlPAiP3YIeQ5aElNkQEhTV9Q==
+Date: Wed,  1 Oct 2025 17:38:03 +0700
+Message-Id: <20251001103803.1423513-1-ammarfaizi2@gnuweeb.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AHv4v8KaD7D7
-Date: Wed, 01 Oct 2025 12:33:26 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Naresh Kamboju" <naresh.kamboju@linaro.org>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
- linux-kernel@vger.kernel.org,
- "Linus Torvalds" <torvalds@linux-foundation.org>,
- "Andrew Morton" <akpm@linux-foundation.org>,
- "Guenter Roeck" <linux@roeck-us.net>, shuah <shuah@kernel.org>,
- patches@kernelci.org, lkft-triage@lists.linaro.org,
- "Pavel Machek" <pavel@denx.de>, "Jon Hunter" <jonathanh@nvidia.com>,
- "Florian Fainelli" <f.fainelli@gmail.com>,
- "Sudip Mukherjee" <sudipm.mukherjee@gmail.com>, rwarsow@gmx.de,
- "Conor Dooley" <conor@kernel.org>, hargar@microsoft.com,
- "Mark Brown" <broonie@kernel.org>, achill@achill.org,
- "Dan Carpenter" <dan.carpenter@linaro.org>, linux-fsdevel@vger.kernel.org,
- linux-block <linux-block@vger.kernel.org>,
- "Anders Roxell" <anders.roxell@linaro.org>,
- "Benjamin Copeland" <benjamin.copeland@linaro.org>
-Message-Id: <e18281db-8d13-4602-b009-97b8e43a07c0@app.fastmail.com>
-In-Reply-To: 
- <CA+G9fYvhoeNWOsYMvWRh+BA5dKDkoSRRGBuw5aeFTRzR_ofCvg@mail.gmail.com>
-References: <20250930143822.939301999@linuxfoundation.org>
- <CA+G9fYvhoeNWOsYMvWRh+BA5dKDkoSRRGBuw5aeFTRzR_ofCvg@mail.gmail.com>
-Subject: Re: [PATCH 5.10 000/122] 5.10.245-rc1 review
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 30, 2025, at 21:27, Naresh Kamboju wrote:
-> We are investigating and running bisections.
->
-> ### Test log
-> tst_test.c:1888: TINFO: === Testing on vfat ===
-> tst_test.c:1217: TINFO: Formatting /dev/loop0 with vfat opts='' extra 
-> opts=''
-> mkfs.vfat: Partitions or virtual mappings on device '/dev/loop0', not
-> making filesystem (use -I to override)
-> tst_test.c:1217: TBROK: mkfs.vfat failed with exit code 1
+When adding a new header file, the author might forget to add it to the
+installation path in the Makefile.
 
-The error message indicates that the loop device contains
-existing data and mkfs.vfat refuses to overwrite it, which
-would be part of your test environment.
+For example, commit 7e565c0116ba ("tests: test the query interface"),
+introduced an include to the query.h file via liburing.h, but the
+query.h file was not added to the installation entry, which resulted
+in the following error:
 
-Can you try adding the suggested '-I' flag to the mkfs.vfat
-invocation so it overrides the warning?
+  In file included from a.c:1:
+  /usr/include/liburing.h:19:10: fatal error: liburing/io_uring/query.h: No such file or directory
+     19 | #include "liburing/io_uring/query.h"
+        |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+  compilation terminated.
 
-    Arnd
+This kind of breakage is only caught by the liburing that's installed
+in the system. Make sure the GitHub CI covers it so we can catch the
+breakage earlier before a new release is tagged and distributed.
+
+Thanks to Romain Pereira for reporting the issue on GitHub!
+
+Link: https://github.com/axboe/liburing/issues/1470
+Cc: Romain Pereira <rpereira@anl.gov>
+Cc: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Christian Mazakas <christian.mazakas@gmail.com>
+Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+---
+ .github/workflows/ci.yml       | 18 ++++++++++++++++++
+ .github/workflows/test_build.c |  9 +++++++++
+ 2 files changed, 27 insertions(+)
+ create mode 100644 .github/workflows/test_build.c
+
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index 3c9a10d4e147..1056bdf41985 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -196,6 +196,17 @@ jobs:
+         run: |
+           sudo make install;
+ 
++      - name: Test build against the installed liburing
++        run: |
++          export TEST_FILE=".github/workflows/test_build.c";
++          if [ "$SANITIZE" -eq "1" ]; then
++            export SANITIZE_FLAGS="-fsanitize=address,undefined";
++          else
++            export SANITIZE_FLAGS="";
++          fi;
++          ${{matrix.build_args.cc}} -x c -o a.out $TEST_FILE -luring $SANITIZE_FLAGS;
++          ${{matrix.build_args.cxx}} -x c++ -o a.out $TEST_FILE -luring $SANITIZE_FLAGS;
++
+ 
+   alpine-musl-build:
+     needs: get_commit_list
+@@ -239,6 +250,13 @@ jobs:
+         run: |
+           make install;
+ 
++      - name: Test build against the installed liburing
++        shell: alpine.sh {0}
++        run: |
++          export TEST_FILE=".github/workflows/test_build.c";
++          gcc -x c -o a.out $TEST_FILE -luring;
++          g++ -x c++ -o a.out $TEST_FILE -luring;
++
+ 
+   codespell:
+     needs: get_commit_list
+diff --git a/.github/workflows/test_build.c b/.github/workflows/test_build.c
+new file mode 100644
+index 000000000000..a94fcdceef22
+--- /dev/null
++++ b/.github/workflows/test_build.c
+@@ -0,0 +1,9 @@
++#include <liburing.h>
++
++int main(void)
++{
++	struct io_uring ring;
++	io_uring_queue_init(8, &ring, 0);
++	io_uring_queue_exit(&ring);
++	return 0;
++}
+-- 
+Ammar Faizi
+
 
