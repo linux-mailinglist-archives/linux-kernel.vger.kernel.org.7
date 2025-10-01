@@ -1,162 +1,140 @@
-Return-Path: <linux-kernel+bounces-838911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D6A8BB0682
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 15:05:06 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DC1CBB0698
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 15:05:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BB882A03C6
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 13:05:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C93774E1081
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 13:05:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D0021FBEA8;
-	Wed,  1 Oct 2025 13:04:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3C48221DB9;
+	Wed,  1 Oct 2025 13:05:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="YUX3EtsG"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Se7Sz0lV"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 652CC1EEA3C
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 13:04:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78AD2203706
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 13:05:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759323897; cv=none; b=ZM3gQG1SXvbm1cc8AfqN6YxAbxYY330fiCUSJUjos2Q2iW11QlqNgvBDjTTteZEoWOJL2BFJoH+8S2z3aUhF+GS4s9mm+zD4dFMkvU5qWU77oyy5tCrAXoaUaoo6YGy28iPA9c1yTkYzJrT+IRi503Ry1YJPCGZoSnFvZ/8CIzk=
+	t=1759323932; cv=none; b=DkSNY13Oq8GSxZkXj93n40ZCKpwjC5nWY8NYueDmyWQ5OIX2W8tk27+pOi8af6qOh2m7+XgzTy6ZiqotRh66xoSniv8jDE54W80r+NhpCfvtYRjdNEj2kVKLjJuh3VZaPcR+kVocB+gJGpf9dRGDJhk5DQWNUhikREoDMhschb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759323897; c=relaxed/simple;
-	bh=Sd6yCdxS3n5TE903KsbIcaO2lzqa35LHjefQZurCtJE=;
-	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Gbf0cRCmqB9ElbG1LcyekUuNDIvQ056DgOuMSzNID4TSZtjUp40kp1Kf7GFXl6j9Coo84ZILmP9pFYsuG0hnvc3QVQTV1IZf7GpjcAvAeOjtL6KOIJYb6VJ9ZO+hKwZ5csdBGLYFuFmQCFbLBz6RxqbDL+QKO4s1dkaM4S5b1Os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=YUX3EtsG; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-27eceb38eb1so85672035ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 06:04:56 -0700 (PDT)
+	s=arc-20240116; t=1759323932; c=relaxed/simple;
+	bh=jBmuWH0YUH02uvaUnpyESyNBWMLetO9tuvs3IcDBVZQ=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=m5J71BwfPZN2is5hdvy835WtQ0lUqaYFMJWAjC1YNEgyoLJ3pUJ+8oAbF7O3C42oCAq+oK0mcACZS1CPSL6GzCKBv7NCNXznKDIokhce6yh1lWP0acWdNLL4iXROLFNsrS/xY4zXVraOIH72kDlwFShb6qSIf5F1XdYl3r9RPbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Se7Sz0lV; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b550db23c9eso828063a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 06:05:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1759323895; x=1759928695; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:references
-         :mime-version:in-reply-to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FHbqmA3oKpic6IfyRvOOe8x31ZYEYEaGDwcq5aemMoY=;
-        b=YUX3EtsGULfgO3jbr/yyY0xXUjnKvm9KSHwMEvLR29i5AfD8NVcNmxHTaeoWkXqDa2
-         +fz7+eZhD0b7REf1FTf57q0trH7Fvmn8i+Xz00LgxDJXUuhmAld99SIhADKnl6XNvefv
-         foMuvVWk25cc3qnCJUKOBHJbQXYj0+SFsQipoCqOHKAr6HEpG3RkjEyS0jPcF8Aj77/v
-         fUgqNyEzFEiNyF3LKX2KgK10Eq3WxKqM++EwxhtZlYWYCh7/vpK8faKdCXEQTy++eMKW
-         IrRhfYSTq2wcv9ODuCIAawLGSAt/tVpfJzXdlo+mJpRjJHQrJpKKvgZ151CeiY0k0Lkg
-         jpoQ==
+        d=gmail.com; s=20230601; t=1759323930; x=1759928730; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=OW6l6wKrmChiKbh7o74M96nQdgGsULiYNKDhud2+Lm0=;
+        b=Se7Sz0lVmzUHFL7SsLjlQGxP0QJykPNzaNC0heYDRZkQHijNIQeJm8ud/pKzvfPwvy
+         s6HOgrWLdXNNJmEjRTrA8cbq0eMzo9kXgmye38cuuxlEtpzulRQGZflPMn3dXl8KEyb/
+         w5RzSPChuKTODquLAL6bAXpm433q6Ffi/X5v8czctQ7TjgLTr54mrlWNQ/DLJKmI9Y0k
+         ogxI2rlwLCyshPXOHrP/I8wPezbT2E+okvex62ukiYTqb20lrnLcVPJroRox8T8nDO3Q
+         2cbKRBF/mpBdpGOBxMWqLBf6feE7iJ0lJg1lQcUEBqNS4r5q4eqzdNcUe2e69BSlNj69
+         n6eg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759323895; x=1759928695;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:references
-         :mime-version:in-reply-to:from:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=FHbqmA3oKpic6IfyRvOOe8x31ZYEYEaGDwcq5aemMoY=;
-        b=xOSLeDDWeHGGBJLkGLazyQMDJ7oO1GjabYIQNMsL5nSTty201UuPuFrig1HOZgwFJp
-         75npC+4B4DawoF9S3XGyE8v7dTAXO6O7h/FOvZm8giIekEt3KECM213n9FLvWfgod7qX
-         RbpOwgpzYfhnSkXIncRsnI/tgdcxavQv1bw/w+5Gfh7MEMuN2d2Ffa9aZ8KPAXWWF1gx
-         5cVSPKCAWpOTZ/HyYAg9pU8gmHOOT54qeNff3uQ3bqEIEUQLsRTPHEyuBYcQsOH0RrLa
-         uLJa/n2KQxlTucCPkJWFzKzmLkLCAhjt65yT4V5u6J8dryYlvgK3qnLwspnzAGDuhC61
-         0aEg==
-X-Forwarded-Encrypted: i=1; AJvYcCVP5tDyCMGV1r/ONGgLNu6DN9vYXaQ37OkC49TpEwo/ahTjplZv0uxawPALoVtySUy68N/Aq7Un/tsmxSM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhEYHh/LwXmzqB9Rsjt0iAkivmEH+XQtq88Vd3l4d7kASMAOwC
-	BGzlnVQPc83ZvRMTwYL+ajvl1WBjqcMQSDCM4dkocIpkwRSiUsAcq6CG8EuUGjJj2AMQytkL3q8
-	3mAAWepR/FifzOSrK3E2kd3JRZRTRLMMaCF7tZXEfIQ==
-X-Gm-Gg: ASbGnctquvoQLA8hJ5KAGc/A0zrG0U2xecXvrfiVdd7Wspc+rY7kE/sNY3CDKHM8nnE
-	cFDXdZMg//f3mDiHnPQlZVLIxJ2Vq37o+VF91dNkvQ/dGeCCFWXYtNjQrpTSl3mfJc7vNA568SX
-	obvfjh8K/qhrGAtW1B+V+2r9sOC2+laNUCov/aLFzLjDmYXE+2XjokJ2mVBRJEACyZ0mMXUeGrH
-	fi1ZYXNreArKlIyGTDtIR2Ij4BPC6pY+s4RxDPRGn54bDJW88VsJwQUT+UO1Ek=
-X-Google-Smtp-Source: AGHT+IHIX0BnzV5QR3ZUNafIRXxWw+fJ+TE74iOPYTO055yiV9YQx881LMKJ8ntEhbIPyMH/yj9fWYf3xbX9jssRLhM=
-X-Received: by 2002:a17:903:15cc:b0:26c:e270:6dad with SMTP id
- d9443c01a7336-28e7f43f288mr40560635ad.60.1759323893974; Wed, 01 Oct 2025
- 06:04:53 -0700 (PDT)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 1 Oct 2025 06:04:51 -0700
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 1 Oct 2025 06:04:51 -0700
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-In-Reply-To: <CACRpkda-ZvrAC4bNLnA+ao0Y8-Nd_-b89N6HU10hhEdaOUYAjw@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1759323930; x=1759928730;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OW6l6wKrmChiKbh7o74M96nQdgGsULiYNKDhud2+Lm0=;
+        b=s1wT8oqq+Rv2pZyyuqrd92GB6o8YTRTCPAiWTTZZAPtImoIgjzMO8NbndjPicpRkn7
+         DcEMrmjWjWs6aa+6aV2PhvN3YAw/ek8eEebQ5F/BonwIt4925nvsL43sip1CwhPv/Fd7
+         8hZ9TQyU4JH2D4jjFwATh15Bc8PtIK6tj7X97Cbmz0fr2Ig8jNa6qg6sKkjhpg4WN+78
+         vkgW33l1jLK6AhpcqkkzEq2Om9o+dzcreFy/SBsuUuK95+/Bv2oi/sbuZJbqraY9tp9f
+         cYcD0NWlPT25VGn3lNnjckRZzqllSIZiQmS+mCtU4zGdKLzXBfXM1KlvQ+dXTeov4cCc
+         UCdw==
+X-Forwarded-Encrypted: i=1; AJvYcCVpA8DUXRffHjnbH5vjauoIYx1+2Cv+gCqV/slsVKRNqiTwo4Qr8SR59nsoegVDJnLYA95Xt6Fia+aLo9U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZuhE2SeNzxRS9eTgi2Atn1WrJ4QUlAtzDvvM9+3Jp5G4nwq+1
+	SvnGXl+9CWyQFGyk7s35LU4fSUeb/YONxfSPqF1g5PVsf35SXx+uxpsv
+X-Gm-Gg: ASbGncsLmK1GoCUyGAKIVqVQXHfJLFSy2FknJ/iQ3sHb4H9WNuK6scsWQYR1One9oDc
+	w4AQgMu5ujYgWLf/Xy/bHHZNvyjPSBb73hM2HxmtlXqmNgJW1YP+HhiHncdc0dkyHrnBPRKuoDj
+	8Hyj8mXcCq5b0lehHq4x3ab7/LxrcX8xekLw6vn7cOLXNgE4gik6Shw0nUCKrpsXEDAR6+dxsTs
+	RG30EDwC9n/SCjEF54+mOeFrOzjTFBJqYmmw7FTiEZYcsBPvc7BiSyqmA4TuDhtbL7lSfrLKai5
+	nR4YfWPdTDPj4J0PvO+1hwVjJmrAMTZ7OO9FH57yKyhs7+QAAR3MkzRXV4Tif87A2p5eTNAbQrc
+	QRyHbWFp2Sf69UBFZ67gGbnHCGTC+hjN+yOMsnc7udEssFUZ2GfdaZMuj4wAqvkDAUEfSPc0qBP
+	DKbqW8ewDw/EJVorHNKKY=
+X-Google-Smtp-Source: AGHT+IHoa5xa4f1XTAIYI78HgS2grI+zOJxKw/L/F6af+N9ErpstXh/VbzIlNsFq6puzwXgpQewq9A==
+X-Received: by 2002:a05:6a21:32a0:b0:2e3:a914:aabe with SMTP id adf61e73a8af0-321d882a178mr2574832637.2.1759323929715;
+        Wed, 01 Oct 2025 06:05:29 -0700 (PDT)
+Received: from [172.20.45.103] (S0106a85e45f3df00.vc.shawcable.net. [174.7.235.4])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b57c557500dsm16012934a12.34.2025.10.01.06.05.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 01 Oct 2025 06:05:29 -0700 (PDT)
+Message-ID: <bfba2ef9-ecb7-4917-a7db-01b252d7be04@gmail.com>
+Date: Wed, 1 Oct 2025 06:05:28 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250924-gpio-shared-v1-0-775e7efeb1a3@linaro.org>
- <CACRpkdYcVtJjRHRJ8GgeU7rZDuyaJKu0vgcknb7DsHPjZGKGuA@mail.gmail.com> <CACRpkda-ZvrAC4bNLnA+ao0Y8-Nd_-b89N6HU10hhEdaOUYAjw@mail.gmail.com>
-Date: Wed, 1 Oct 2025 06:04:51 -0700
-X-Gm-Features: AS18NWB4-ek2de5G39SVs91_zyxyHsKkPvhufhJXGysoQ2YUW53Yv6YTbFeN0M4
-Message-ID: <CAMRc=Mdb_cUG+hKq8GyfUP1SYBh0p19J+4dFG7G3JSuZTr4n8Q@mail.gmail.com>
-Subject: Re: [PATCH RFC 0/9] gpio: improve support for shared GPIOs
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Kees Cook <kees@kernel.org>, Mika Westerberg <westeri@kernel.org>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Andy Shevchenko <andy@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, linux-hardening@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-sound@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [6.16.9 / 6.17.0 PANIC REGRESSION] block: fix lockdep warning
+ caused by lock dependency in elv_iosched_store
+From: Kyle Sanderson <kyle.leet@gmail.com>
+To: Nilay Shroff <nilay@linux.ibm.com>, linux-block@vger.kernel.org,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, axboe@kernel.dk
+Cc: hch@lst.de, ming.lei@redhat.com, hare@suse.de, sth@linux.ibm.com,
+ gjoyce@ibm.com, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250730074614.2537382-1-nilay@linux.ibm.com>
+ <20250730074614.2537382-3-nilay@linux.ibm.com>
+ <25a87311-70fd-4248-86e4-dd5fecf6cc99@gmail.com>
+Content-Language: en-CA
+In-Reply-To: <25a87311-70fd-4248-86e4-dd5fecf6cc99@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, 1 Oct 2025 12:53:07 +0200, Linus Walleij
-<linus.walleij@linaro.org> said:
-> Replying to self so Bartosz don't have to tell me off...
->
-> On Wed, Oct 1, 2025 at 10:49=E2=80=AFAM Linus Walleij <linus.walleij@lina=
-ro.org> wrote:
->
->> and every GPIO access on every system will be proxied
->> and then this better be fast.
->
-> What about I read the code before I talk :/
->
-> Inspecting patch 4/9 it is clear that only GPIOs that actually
-> need to be proxied are proxied.
->
->> Two things come to mind, and I bet you have thought of
->> them already:
->>
->> 1. Footprint: all systems using regulators will now have
->>    to compile in all this code as well.
->
-> This still holds. It could be a concern if it's a lot of code.
+On 9/30/2025 10:20 PM, Kyle Sanderson wrote:
+> On 7/30/2025 12:46 AM, Nilay Shroff wrote:
+>> To address this, move all sched_tags allocations and deallocations 
+>> outside
+>> of both the ->elevator_lock and the ->freeze_lock.
+> 
+> Hi Nilay,
+> 
+> I am coming off of a 36 hour travel stint, and 6.16.7 (I do not have 
+> that log, and it mightily messed up my xfs root requiring offline 
+> repair), 6.16.9, and 6.17.0 simply do not boot on my system. After 
+> unlocking with LUKS I get this panic consistently and immediately, and I 
+> believe this is the problematic commit which was unfortunately carried 
+> to the previous and current stable. I am using this udev rule: 
+> `ACTION=="add|change", KERNEL=="sd*[!0-9]|sr*|nvme*", ATTR{queue/ 
+> scheduler}="bfq"`
 
-It depends on how we implement this. If we just rip out the enable counting
-from regulator core entirely, then it would be transparent from the
-regulator's point of view and each platform could still select the new opti=
-on
-as required.
+Hi Greg,
 
-However there's the issue of regulator consumers who need to know when
-something changes on a regulator and to that end subscribe to the regulator
-notifer. Regulator core knows then it actually changes the GPIO so it emits
-the event. There are several ways to approach it but the best one seems to
-be: allow to subscribe for a per-descriptor event notifier (implementation
-details may include: only actually creating the notifier for shared GPIOs),
-and be notified about an actual change in value and then propagate it to
-regulator users. This would still be transparent and allow us to select
-HAVE_SHARED_GPIOS on a per-arch basis.
+Slept for a couple hours. This appears to be well known in block (the 
+fix is in the 6.18 pull) that it is causing panics on stable, and didn't 
+make it back to 6.17 past the initial merge window (as well as 6.16).
 
-Bartosz
+Presumably adjusting the request depth isn't common (if this is indeed 
+the problem)?
 
->
->> 2. Performance, I didn't quite get it if every GPIO on the
->>   system will be proxied through a layer of indirection
->>   if you select HAVE_SHARED_GPIOS
->>   but that would not be good, since some users are in
->>   fastpath such as IRQ handlers, and the old way of
->>   sharing GPIOs would just affect pins that are actually
->>   shared.
->
-> It is clear from patch 4/9 that this only affects GPIOs
-> that are actually shared, and those tend to not be
-> performance-critical so this concern is moot.
->
-> Yours,
-> Linus Walleij
->
+I also have ACTION=="add|change", KERNEL=="sd*[!0-9]|sr*|nvme*", 
+ATTR{queue/nr_requests}="1024" as a udev rule.
+
+Jens, is this the only patch from August that is needed to fix this panic?
+
+https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git/commit/?h=for-6.18/block&id=ba28afbd9eff2a6370f23ef4e6a036ab0cfda409
+
+Kyle.
+
+https://lore.kernel.org/all/37087b24-24f7-46a9-95c4-2a2f3dced09b@niklasfi.de/
+
+https://lore.kernel.org/all/175710207227.395498.3249940818566938241.b4-ty@kernel.dk/
+
 
