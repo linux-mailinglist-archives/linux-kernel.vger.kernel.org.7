@@ -1,135 +1,124 @@
-Return-Path: <linux-kernel+bounces-838747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2637BB0101
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 12:53:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 97C4FBB0110
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 12:54:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9E583A7F43
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 10:53:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B7D33A82BD
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 10:54:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C40222C0F83;
-	Wed,  1 Oct 2025 10:53:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 213FD2C0F83;
+	Wed,  1 Oct 2025 10:54:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="blYrOHjJ"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="fZz5QBbl"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 690652C08D0
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 10:53:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 779D827D771;
+	Wed,  1 Oct 2025 10:54:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759316002; cv=none; b=SEnipu8Fyn9WHfnKUcHR9fUp2vWH9mD1zxkYqC7S64RcE/pPrjKo5wkjCsddN5YLzSxkGVcINvHc9s8IoTyWhir75jAe5CozVkaFVaOnCn1ub2luO/ArKTHL2rTGrfnqh3WHeKJC5unn9GIDrnFazHcKee9dnPefm1YfR4mU2WU=
+	t=1759316076; cv=none; b=mFM6TI/IT7hA1oVkkm0PoqWAyAw/vDxCckBVF8DjL/RcWblTAvqG3DQ2TFlV+Aupg+ObQ2XX4wrA5pKEmnoxgWAzfL+jsJ1SGpnixubb8RooJVa6ON462m8JOOpsvVQsz0LwhEsF3w9+Q3zge9cyiK6QmQ4ROO9ATSe6YLvmBH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759316002; c=relaxed/simple;
-	bh=iRFBrL9jShE7DNB6IrQqexRe01xpLtZNZRY5DpG098k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Hf8P+do5X30QSQGLwvzI/NcbGElVrxt6MYVqOk2a2c0bDAdUh6zlOaCiwHT4pINFHLwu2lQoLost+rOOyofPQPqZ9SGBU2452a2KMzTpmUobdmeAsfGIoEPIxIBF5ZgTu+iNbA7L8kuY3qbNkaLN4r4tdkotpXyHSDx7PQXEkII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=blYrOHjJ; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-33c9f2bcdceso69323171fa.2
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 03:53:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759315998; x=1759920798; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UXaRvd/Tl3m+OCCyeRNRvJ/5mgQ4gfksuRE7c8W+vks=;
-        b=blYrOHjJ8Xv9hvrnjWXmR7AYvuEPqDvq55kOBz173UptwSMHu+MwAvpp3FQTzRpSPn
-         5AC98TBpFOdRUTe8w/J/Now1xyCYyxT27eL7voDXd9TCjSgaoqCVf1rwua5Tm4rw/XDY
-         8PN/8UW9e4kG8a1G3nchpZjpCybGIOUn7vYeUMd9yBARwr4148CEXvCt+PlzOWbvlwwC
-         o2PFHH5NWyN2O5Wxa4jSYk+eMHwZeETesrtUea1KrpsLa3JkDMXK9TgpmWjf6Gwz1Qux
-         U546VBbuVtREaQ2oeCryLodpiblOSi8kUVxs37AXD7K5zuwJVqA3P3CZiqi5gvrRG6uP
-         t1yQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759315998; x=1759920798;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UXaRvd/Tl3m+OCCyeRNRvJ/5mgQ4gfksuRE7c8W+vks=;
-        b=KL8wTD3Btjw9cgmpismWploCXU1NRwDVMgEzxd6wW2LhyKIYZan6M5AY5XuKixaVAb
-         N9mdns/aPDh4YS1PdvUUiyWa3S+reCwhnGXahMFRJxbX+AjUYxxNMBvwvNfmwVwal640
-         514FTLvfu2DsEX/2l2bveeJc/RVPumG4zRbrs7aLHqQD/4RZ1EbHkIHLejnn0Qk2LGHD
-         LTyJuxAdHBTan0FfMnHmvXRcYBGd3NVx0UZwvqJsvAfZYs2tkkyedtEQ7ofc9UKckSG+
-         Rxs+sokE9MqAWGDpvmIr9/SKw0VMCdqLQj+Zm7TiVpDcITlEOKCQZcRFWt7rtxQDRok1
-         2gkw==
-X-Forwarded-Encrypted: i=1; AJvYcCW9GEUrgt5Cv45sWkzrROoS7AbsY865TV/UQ/K+Eo6BWPY4jJDqime6J85uN3RqzUK07awHFeJungJ/fGM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YysyRcNAIn206+sVswoAkq//o6D5QlCYMhu2OgQ7vbL9/1pUTXL
-	SKmi7DIJ+aP0u4fjswCZDJfeXlYRhq6dXHjae5MZhY/I0LVu8gdDQAMX5OqtReva5Hcd93mPeGM
-	LYgnJZNYb/PiLvy3y9XLYmdLo/fwQGAFIqMXh42KuTg==
-X-Gm-Gg: ASbGncvbshi8WbxKNNTyYZYp7cNNio0NlzNvzL7o7CEFINtZxu6nltPNSUDgQaSy6MA
-	fioM21iAIfsvBiDCbHql6TPxPDkah0ZMN/MkZ7q7NSP8/rFB0hseJF4aCr4xoVIivVBvo6ignWN
-	pvwPf85+fUhzLbnFub59CAmWbmbyWDxP6AjcYXkj7tXTki6sRRSUImBxlfqBrzMTJl3TmY9Rsh3
-	mgFkzKyViPkKIxskh213YpMPVDjs6k=
-X-Google-Smtp-Source: AGHT+IHNsDtiUQt/i2npQARVssi0DJ3+LBTFoSnvhtZVkK/xmqXN8oNQNgTvZTXOiQqw4WqXcNYRSxbiHzvdCA73Ztc=
-X-Received: by 2002:a2e:a7c1:0:b0:372:9fd0:8c40 with SMTP id
- 38308e7fff4ca-373a740495dmr7206011fa.31.1759315998524; Wed, 01 Oct 2025
- 03:53:18 -0700 (PDT)
+	s=arc-20240116; t=1759316076; c=relaxed/simple;
+	bh=fCcJjN3ZPSE7Fa2VbJuzxB9W3FCX1nVxcbuvxXsy43Q=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mbyYcCkYA3+/XmXWiGuXqcz2OccORiufV8ZK2Muce3sQK9cWkDM3xS1o9OpPn+RH5+m+YH/ULhMjcC2fylLg6Vo4IZwfJX2s5Lsq7q7SfguobZVDRrSfExBSC0yv+BHs/Oyc5nsDWfNGsSQEgX9b1WzO/H+kXrZJzKzUWEwahP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=fZz5QBbl; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 591AsHEv3111395;
+	Wed, 1 Oct 2025 05:54:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1759316057;
+	bh=UYdxBV+94zA32DysCLFBKsalzqZRzMhjxb0wxmqa7s4=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=fZz5QBblX+c4TKgL0/CJxr6HPdTftxvkONJ2Fqj0ceZTEvUYMzt4SwyI5djQdfTCn
+	 KuSu3Td7ukii5E4y7T+g8FoyW37HJIt562gD4oJ1OlmfYtZBlfFcYJN+5WkTQILaKz
+	 Vj6JU2YLFimotW3XjP8xeRUbCjwsFunu7EB4gEIM=
+Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
+	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 591AsGCd2811532
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Wed, 1 Oct 2025 05:54:16 -0500
+Received: from DLEE200.ent.ti.com (157.170.170.75) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 1
+ Oct 2025 05:54:16 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE200.ent.ti.com
+ (157.170.170.75) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Wed, 1 Oct 2025 05:54:16 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 591AsGAW205422;
+	Wed, 1 Oct 2025 05:54:16 -0500
+Date: Wed, 1 Oct 2025 05:54:16 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Jacob Keller <jacob.e.keller@intel.com>
+CC: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+        Paolo
+ Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+        Eric Dumazet
+	<edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Andrew Lunn
+	<andrew+netdev@lunn.ch>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Simon
+ Horman <horms@kernel.org>,
+        Siddharth Vadapalli <s-vadapalli@ti.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <netdev@vger.kernel.org>
+Subject: Re: [PATCH V2 3/3] net: ethernet: ti: Remove IS_ERR_OR_NULL checks
+ for knav_dma_open_channel
+Message-ID: <20251001105416.frbebh5ws2rnxquu@quality>
+References: <20250930121609.158419-1-nm@ti.com>
+ <20250930121609.158419-4-nm@ti.com>
+ <0cae855b-e842-47a1-9aaf-b2a297ec32d6@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250924-gpio-shared-v1-0-775e7efeb1a3@linaro.org> <CACRpkdYcVtJjRHRJ8GgeU7rZDuyaJKu0vgcknb7DsHPjZGKGuA@mail.gmail.com>
-In-Reply-To: <CACRpkdYcVtJjRHRJ8GgeU7rZDuyaJKu0vgcknb7DsHPjZGKGuA@mail.gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 1 Oct 2025 12:53:07 +0200
-X-Gm-Features: AS18NWD2nrQaAyXYNX4TJo-95Uw5nXLztXmSEl4xWN8QeMmA2KtvYABQ1GxMrZg
-Message-ID: <CACRpkda-ZvrAC4bNLnA+ao0Y8-Nd_-b89N6HU10hhEdaOUYAjw@mail.gmail.com>
-Subject: Re: [PATCH RFC 0/9] gpio: improve support for shared GPIOs
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Kees Cook <kees@kernel.org>, Mika Westerberg <westeri@kernel.org>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Andy Shevchenko <andy@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, linux-hardening@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-sound@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <0cae855b-e842-47a1-9aaf-b2a297ec32d6@intel.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Replying to self so Bartosz don't have to tell me off...
+On 16:59-20250930, Jacob Keller wrote:
+> 
+> 
+> On 9/30/2025 5:16 AM, Nishanth Menon wrote:
+> > knav_dma_open_channel now only returns NULL on failure instead of error
+> > pointers. Replace IS_ERR_OR_NULL checks with simple NULL checks.
+> > 
+> > Suggested-by: Simon Horman <horms@kernel.org>
+> > Signed-off-by: Nishanth Menon <nm@ti.com>
+> > ---
+> > Changes in V2:
+> > * renewed version
+> > * Dropped the fixes since code refactoring was involved.
+> > 
+> 
+> Whats the justification for splitting this apart from patch 1 of 3?
+> 
+> It seems like we ought to just do all this in a single patch. I don't
+> see the value in splitting this apart into 3 patches, unless someone
+> else on the list thinks it is valuable.
 
-On Wed, Oct 1, 2025 at 10:49=E2=80=AFAM Linus Walleij <linus.walleij@linaro=
-.org> wrote:
+The only reason I have done that is to ensure the patches are
+bisectable. at patch #1, we are still returning -EINVAL, the driver
+should still function when we switch the return over to NULL.
 
-> and every GPIO access on every system will be proxied
-> and then this better be fast.
+[...]
 
-What about I read the code before I talk :/
-
-Inspecting patch 4/9 it is clear that only GPIOs that actually
-need to be proxied are proxied.
-
-> Two things come to mind, and I bet you have thought of
-> them already:
->
-> 1. Footprint: all systems using regulators will now have
->    to compile in all this code as well.
-
-This still holds. It could be a concern if it's a lot of code.
-
-> 2. Performance, I didn't quite get it if every GPIO on the
->   system will be proxied through a layer of indirection
->   if you select HAVE_SHARED_GPIOS
->   but that would not be good, since some users are in
->   fastpath such as IRQ handlers, and the old way of
->   sharing GPIOs would just affect pins that are actually
->   shared.
-
-It is clear from patch 4/9 that this only affects GPIOs
-that are actually shared, and those tend to not be
-performance-critical so this concern is moot.
-
-Yours,
-Linus Walleij
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+https://ti.com/opensource
 
