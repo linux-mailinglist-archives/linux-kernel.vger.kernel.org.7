@@ -1,220 +1,92 @@
-Return-Path: <linux-kernel+bounces-839323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EB7EBB15E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 19:30:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DE38BB15F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 19:34:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F29D019C086B
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 17:30:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A4641920A66
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 17:35:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0778F2517AA;
-	Wed,  1 Oct 2025 17:30:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86FAE2C08C8;
+	Wed,  1 Oct 2025 17:34:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F2IRa+j6"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KwlXQfzK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37CB91373
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 17:30:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE040254AE4;
+	Wed,  1 Oct 2025 17:34:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759339830; cv=none; b=OzvYnO5BBzk2EXVAYVNXHlMXLlaXZh9HBbSRyQoeBLhZl+k1EsxVXPgm5QirBcZaVY20mDEGwEMmgXu7kAeWJUQZlbgSQyjWEHF3obQwTvXUw17x04NnSkqKJR+c53capbmbAAGjLSd812QzWVhODdSbA0sS8aHhlicXRbGh6/o=
+	t=1759340074; cv=none; b=c+raqcVtytW2C7ZKLYl4GEdYzlZ86i5PlMjLCT9DNeOzx/Zlkx/tVaQLapnYEJrslcYsQIfmS+nqhFDLhHVQIK0yzdzcZZSsMZ6bcOAV6EAyTSprQustAxCydG2udaUW5QHLOFMPUFn/jV0vuqwTI1wUX+Rlf+kUGwhwYxEdOTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759339830; c=relaxed/simple;
-	bh=m5sFttBSbWu2DiIx+wH/bi6Smr8hAeeDmihDURhPTjg=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=AxOOJKzPsbyMNTYJiGA4HrbbWFw0Vugt2yt91mFUAkh5CkiQPhFpXq0CRFP+WtQncxuJgNol/3D+H36LXVmp9itBmJIZ23ejSI2L1O7OQTQGle5tIfkg6AuMloQcazhYfsKBNqrlo4/3tGkrTDRNBC/oLm4XJ9lLr7EnPU4ts3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F2IRa+j6; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759339828; x=1790875828;
-  h=date:from:to:cc:subject:message-id;
-  bh=m5sFttBSbWu2DiIx+wH/bi6Smr8hAeeDmihDURhPTjg=;
-  b=F2IRa+j6+zF5mPDpkc7xuofBORcFkOVeiWI91LEnWJlrGsX+VG9Ufymo
-   qwCdw+x2JpQRao+hGzRNuKO6BrWHwJh7xRiz0XpJbkmHGyqZRdZIu6RXq
-   lEwUnwX4Yb2suhr0V9rY3IuF4AiG/dXQfbd2QqOZEfrvKQRO19gSDKq5N
-   +mNge19tr5xdF9xxCzMsdmMIIAZmA12FglEFdmum7Wl6iZyyJ9SJYwl+I
-   lRgg9/OkCWZzZ5QGzrgzT5psnWRqBKc+PcDLNUfqGx9K5ezkRYV1aFuOE
-   R+g1YqqrN66/y5L8jzb/vjqXzVAv5eCRrv7EbZeWUA3ASpRxXnpp4yoHT
-   w==;
-X-CSE-ConnectionGUID: EAnS2e63RVGl2R9XEeajvg==
-X-CSE-MsgGUID: 15LVMi5ySF2xTlKwD8AgaA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11569"; a="61661027"
-X-IronPort-AV: E=Sophos;i="6.18,307,1751266800"; 
-   d="scan'208";a="61661027"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2025 10:30:27 -0700
-X-CSE-ConnectionGUID: f24b7PeySeqB4vuz1PKUzg==
-X-CSE-MsgGUID: McFFwj1sSwe0a3wnBBJXwg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,307,1751266800"; 
-   d="scan'208";a="184128505"
-Received: from lkp-server01.sh.intel.com (HELO 2f2a1232a4e4) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 01 Oct 2025 10:30:26 -0700
-Received: from kbuild by 2f2a1232a4e4 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v40em-0003DW-1W;
-	Wed, 01 Oct 2025 17:30:24 +0000
-Date: Thu, 02 Oct 2025 01:29:56 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Subject: [gustavoars:testing/wfamnae-next20250929] BUILD SUCCESS
- b8304375fc46cbbdfbb280e49742b305adddae9d
-Message-ID: <202510020146.1Z05v2TS-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1759340074; c=relaxed/simple;
+	bh=RcC007vheekuBms74xJJDKBu49gcwxLUFbD4TD8pQiw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qa3CsRSQhgSxChf7lnxBjGToROrwRk7BjsDdO2DmWNBujtIx5OK+lpX5A48xFMYZc6NcI2DAO0VSZZ/k0axc1KPMyvodmwP7vn4nQ46/BevXiMzCiHbPJkowIbBZR603Y8pcRGfFRt62MJQBxcV9PjPuDopO1mZxwjKo9neNkuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KwlXQfzK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B35EEC4CEF1;
+	Wed,  1 Oct 2025 17:34:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759340073;
+	bh=RcC007vheekuBms74xJJDKBu49gcwxLUFbD4TD8pQiw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=KwlXQfzKiLNV7NmYr1mkEoYSz40D8jpSdwPy4/7+8Zx1grmK2/ruJfHl0827kh4x4
+	 CfO5vUYnRvuwfQ5xFNSeh22R0PnJ8FlpIOdYXV1KBF3qV6z2xkCDFOfmSmUaLoQzDN
+	 99EXwygT3deejBz6u2PFOXyCqNK39I1VmQTi7+1D3dPcmBgVLRi/yhT+iIU0tkZTQh
+	 pcyaxMSqbyZQdgfXCmloXuGwRqsyPGQbPQdNjM7AmHjQl6bPyyuwSS9Ib5QG5JIo2h
+	 LzYO6G+aNIYP208EdRdPCquEWk4nWrql13yzjh5mf+MCdfVZM/0yPcKIk2x+t9pga2
+	 ap0/2r1yif09Q==
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Takashi Iwai <tiwai@suse.de>, Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Dhruva Gole <d-gole@ti.com>
+Subject: [PATCH v1] PM: runtime: Introduce one more usage counter guard
+Date: Wed, 01 Oct 2025 19:34:29 +0200
+Message-ID: <12752072.O9o76ZdvQC@rafael.j.wysocki>
+Organization: Linux Kernel Development
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20250929
-branch HEAD: b8304375fc46cbbdfbb280e49742b305adddae9d  net: inet_sock.h: Avoid thousands of -Wflex-array-member-not-at-end warnings
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-elapsed time: 1457m
+Follow previous commit 9a0abc39450a ("PM: runtime: Add auto-cleanup
+macros for "resume and get" operations") and define a runtime PM
+usage counter guard in which pm_runtime_get_noresume() and
+pm_runtime_put_noidle() will be used for incrementing and
+decrementing it, respectively.
 
-configs tested: 128
-configs skipped: 3
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Commit 9a0abc39450a is there in my linux-next branch.
 
-tested configs:
-alpha                             allnoconfig    gcc-15.1.0
-alpha                            allyesconfig    gcc-15.1.0
-arc                              allmodconfig    gcc-15.1.0
-arc                               allnoconfig    gcc-15.1.0
-arc                              allyesconfig    gcc-15.1.0
-arc                                 defconfig    gcc-15.1.0
-arc                   randconfig-001-20251001    gcc-8.5.0
-arc                   randconfig-002-20251001    gcc-8.5.0
-arm                              allmodconfig    gcc-15.1.0
-arm                               allnoconfig    clang-22
-arm                              allyesconfig    gcc-15.1.0
-arm                         assabet_defconfig    clang-18
-arm                        keystone_defconfig    gcc-15.1.0
-arm                   randconfig-001-20251001    gcc-14.3.0
-arm                   randconfig-002-20251001    clang-22
-arm                   randconfig-003-20251001    gcc-12.5.0
-arm                   randconfig-004-20251001    gcc-8.5.0
-arm64                            allmodconfig    clang-19
-arm64                             allnoconfig    gcc-15.1.0
-arm64                 randconfig-001-20251001    clang-22
-arm64                 randconfig-002-20251001    gcc-9.5.0
-arm64                 randconfig-003-20251001    gcc-8.5.0
-arm64                 randconfig-004-20251001    gcc-8.5.0
-csky                              allnoconfig    gcc-15.1.0
-csky                  randconfig-001-20251001    gcc-13.4.0
-csky                  randconfig-002-20251001    gcc-15.1.0
-hexagon                          allmodconfig    clang-17
-hexagon                           allnoconfig    clang-22
-hexagon                          allyesconfig    clang-22
-hexagon               randconfig-001-20251001    clang-22
-hexagon               randconfig-002-20251001    clang-22
-i386                             allmodconfig    gcc-14
-i386                              allnoconfig    gcc-14
-i386        buildonly-randconfig-001-20251001    clang-20
-i386        buildonly-randconfig-002-20251001    clang-20
-i386        buildonly-randconfig-003-20251001    gcc-14
-i386        buildonly-randconfig-004-20251001    clang-20
-i386        buildonly-randconfig-005-20251001    clang-20
-i386        buildonly-randconfig-006-20251001    clang-20
-i386                                defconfig    clang-20
-loongarch                        allmodconfig    clang-19
-loongarch                         allnoconfig    clang-22
-loongarch             randconfig-001-20251001    gcc-13.4.0
-loongarch             randconfig-002-20251001    gcc-15.1.0
-m68k                             allmodconfig    gcc-15.1.0
-m68k                              allnoconfig    gcc-15.1.0
-m68k                             allyesconfig    gcc-15.1.0
-microblaze                       allmodconfig    gcc-15.1.0
-microblaze                        allnoconfig    gcc-15.1.0
-microblaze                       allyesconfig    gcc-15.1.0
-microblaze                          defconfig    gcc-15.1.0
-mips                              allnoconfig    gcc-15.1.0
-mips                          eyeq6_defconfig    clang-22
-mips                        vocore2_defconfig    clang-22
-nios2                             allnoconfig    gcc-11.5.0
-nios2                               defconfig    gcc-11.5.0
-nios2                 randconfig-001-20251001    gcc-11.5.0
-nios2                 randconfig-002-20251001    gcc-11.5.0
-openrisc                          allnoconfig    gcc-15.1.0
-openrisc                         allyesconfig    gcc-15.1.0
-openrisc                            defconfig    gcc-15.1.0
-parisc                           allmodconfig    gcc-15.1.0
-parisc                            allnoconfig    gcc-15.1.0
-parisc                           allyesconfig    gcc-15.1.0
-parisc                              defconfig    gcc-15.1.0
-parisc                randconfig-001-20251001    gcc-8.5.0
-parisc                randconfig-002-20251001    gcc-8.5.0
-parisc64                         alldefconfig    gcc-15.1.0
-parisc64                            defconfig    gcc-15.1.0
-powerpc                          allmodconfig    gcc-15.1.0
-powerpc                           allnoconfig    gcc-15.1.0
-powerpc                          allyesconfig    clang-22
-powerpc                      mgcoge_defconfig    clang-22
-powerpc               randconfig-001-20251001    gcc-8.5.0
-powerpc               randconfig-002-20251001    clang-22
-powerpc               randconfig-003-20251001    clang-22
-powerpc                      tqm8xx_defconfig    clang-19
-powerpc64             randconfig-001-20251001    gcc-8.5.0
-powerpc64             randconfig-002-20251001    clang-22
-powerpc64             randconfig-003-20251001    gcc-13.4.0
-riscv                            allmodconfig    clang-22
-riscv                             allnoconfig    gcc-15.1.0
-riscv                            allyesconfig    clang-16
-riscv                               defconfig    clang-22
-riscv                 randconfig-001-20251001    clang-22
-riscv                 randconfig-002-20251001    gcc-8.5.0
-s390                             allmodconfig    clang-18
-s390                              allnoconfig    clang-22
-s390                             allyesconfig    gcc-15.1.0
-s390                                defconfig    clang-22
-s390                  randconfig-001-20251001    clang-22
-s390                  randconfig-002-20251001    gcc-12.5.0
-sh                               allmodconfig    gcc-15.1.0
-sh                                allnoconfig    gcc-15.1.0
-sh                               allyesconfig    gcc-15.1.0
-sh                                  defconfig    gcc-15.1.0
-sh                          r7780mp_defconfig    gcc-15.1.0
-sh                    randconfig-001-20251001    gcc-13.4.0
-sh                    randconfig-002-20251001    gcc-11.5.0
-sparc                            allmodconfig    gcc-15.1.0
-sparc                             allnoconfig    gcc-15.1.0
-sparc                               defconfig    gcc-15.1.0
-sparc                 randconfig-001-20251001    gcc-15.1.0
-sparc                 randconfig-002-20251001    gcc-8.5.0
-sparc64                             defconfig    clang-20
-sparc64               randconfig-001-20251001    gcc-8.5.0
-sparc64               randconfig-002-20251001    clang-20
-um                               allmodconfig    clang-19
-um                                allnoconfig    clang-22
-um                               allyesconfig    gcc-14
-um                                  defconfig    clang-22
-um                             i386_defconfig    gcc-14
-um                    randconfig-001-20251001    gcc-14
-um                    randconfig-002-20251001    gcc-14
-um                           x86_64_defconfig    clang-22
-x86_64                            allnoconfig    clang-20
-x86_64                           allyesconfig    clang-20
-x86_64      buildonly-randconfig-001-20251001    clang-20
-x86_64      buildonly-randconfig-002-20251001    clang-20
-x86_64      buildonly-randconfig-003-20251001    clang-20
-x86_64      buildonly-randconfig-004-20251001    clang-20
-x86_64      buildonly-randconfig-005-20251001    clang-20
-x86_64      buildonly-randconfig-006-20251001    clang-20
-x86_64                              defconfig    gcc-14
-x86_64                          rhel-9.4-rust    clang-20
-xtensa                            allnoconfig    gcc-15.1.0
-xtensa                randconfig-001-20251001    gcc-15.1.0
-xtensa                randconfig-002-20251001    gcc-10.5.0
+---
+ include/linux/pm_runtime.h |    3 +++
+ 1 file changed, 3 insertions(+)
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--- a/include/linux/pm_runtime.h
++++ b/include/linux/pm_runtime.h
+@@ -610,6 +610,9 @@ static inline int pm_runtime_put_autosus
+ 	return __pm_runtime_put_autosuspend(dev);
+ }
+ 
++DEFINE_GUARD(pm_runtime_noresume, struct device *,
++	     pm_runtime_get_noresume(_T), pm_runtime_put_noidle(_T));
++
+ DEFINE_GUARD(pm_runtime_active, struct device *,
+ 	     pm_runtime_get_sync(_T), pm_runtime_put(_T));
+ DEFINE_GUARD(pm_runtime_active_auto, struct device *,
+
+
+
 
