@@ -1,42 +1,47 @@
-Return-Path: <linux-kernel+bounces-838459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25968BAF375
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 08:19:08 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 787BEBAF37B
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 08:19:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A68301940C50
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 06:19:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2A3D94E1E7B
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 06:19:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92ECF26E16A;
-	Wed,  1 Oct 2025 06:19:00 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61DB62D77F1;
+	Wed,  1 Oct 2025 06:19:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JY7PtjwU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2202B1E5B63;
-	Wed,  1 Oct 2025 06:18:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA11A2405E3;
+	Wed,  1 Oct 2025 06:19:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759299540; cv=none; b=rdDnB7ZFzUG+ZlnHvToEi6jJW47OVmjfLddRYRFEtFXofkxI539Iu5BIQMIdjFjk6iYlsKPxhVwURF/XQYx7L3wAM06dD+N9J8KDXUjAncc3hx4BOuu2w1X+Jt7uxu52F3q9YGGShE4f5lPlr3XUYAxb4hahz5WYfDfunYUZR9E=
+	t=1759299554; cv=none; b=YZiaT15VdI655yI55Cl63kb4hqTGxT/8mO8X2mauRNOflvEm2/FMvHqF5sq9+dylV+MDqxxjZYVBxU5kY+wlYQQRQ/NGS6ZTPvTRkMJehEd08Ae4bIAw1ut/nWZfgrmYJHuW96Po/wz2SLGUgjaItCKQUY3lW72fXn9oD3JXlJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759299540; c=relaxed/simple;
-	bh=tE+0yJepW2V2w1DRVBg8Ox3t6Pll9UqKyDXb0OgrRTc=;
+	s=arc-20240116; t=1759299554; c=relaxed/simple;
+	bh=vGoNSaKouqF0DmdtOE+YsWzH9vurYXHj5mwYZnXoP4M=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IklxDGfB0OHB3nAK+Vy/bWhCVTurJClyF099mZqWALTV6551YHYJlctdfF00AWYcuBZqrMyLJrm8YTBUtz6J6jTh+m8u0+pJYv1WOTp44yy0D1VxpS7ojYxkqtj8Zo/zsS10aCI00lhx8fKrVgPvS1z6ID7WehQGhl8hbilqrvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.2.212] (p57bd9782.dip0.t-ipconnect.de [87.189.151.130])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id D634E6028F357;
-	Wed, 01 Oct 2025 08:18:40 +0200 (CEST)
-Message-ID: <bb5a2f4f-bf3d-4f3f-a8ef-e787d2912dc3@molgen.mpg.de>
-Date: Wed, 1 Oct 2025 08:18:39 +0200
+	 In-Reply-To:Content-Type; b=MU4lfWSSuRSrheGRawqE8mhm3SVH65oemjHh0C0Adi92M7y3mS8xlT0BdMf8VfLld8ASJCAG/FfKLsObbLDHeNI0Pe/k05CLFHOWdMUsecqba1/30QAKrUDRJqgLkwQZmesoyvv6E0snhYPrgP2u+Ay0iAEn2ue6h+68e/3bC3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JY7PtjwU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24C95C4CEF4;
+	Wed,  1 Oct 2025 06:19:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759299554;
+	bh=vGoNSaKouqF0DmdtOE+YsWzH9vurYXHj5mwYZnXoP4M=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JY7PtjwUokXr3FyxZ0x2Fg2GvvHstL2N5dmwwI3PSz/wfrlkDGkKzKU5zV3SujQqD
+	 wsYYALS/PP8IMCa9ICxucBvB3ZjVYb670moZfeRSGv5U9piel47l/iWuZbSqb2uWb4
+	 J3hHhjQo/a1RRid3F2QYS+HcO1h4/0Lo3z5X/MjVJPq/88RQoVPYfAepc+X6BVkV1+
+	 8/T5l0eZ09gau1kVCiyqjGvnEKiG3sQg6cGHfD4XmZ+AxE1MHSFfbTPeQJTsAuRsrv
+	 zOA/AZuWZbYCHtAC9iC4zgCV5pyamZU4+VV5UNNdEMFiO68bNDT/UmVXouyrMk7hJI
+	 ATDHnkiRMkcVQ==
+Message-ID: <255669b4-05fe-421c-898d-9649cf637187@kernel.org>
+Date: Wed, 1 Oct 2025 15:19:04 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -44,97 +49,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/2] Bluetooth: btusb: Add new VID/PID 0489/e170 for
- MT7922
-To: Chris Lu <chris.lu@mediatek.com>
-Cc: Marcel Holtmann <marcel@holtmann.org>,
- Johan Hedberg <johan.hedberg@gmail.com>,
- Luiz Von Dentz <luiz.dentz@gmail.com>, Sean Wang <sean.wang@mediatek.com>,
- Will Lee <will-cy.Lee@mediatek.com>, SS Wu <ss.wu@mediatek.com>,
- Steve Lee <steve.lee@mediatek.com>, linux-bluetooth@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
-References: <20251001060437.2298529-1-chris.lu@mediatek.com>
- <20251001060437.2298529-3-chris.lu@mediatek.com>
+Subject: Re: [PATCH v2 03/15] blktrace: split out relaying a blktrace event
+To: Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+ Jens Axboe <axboe@kernel.dk>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-btrace@vger.kernel.org,
+ John Garry <john.g.garry@oracle.com>, Hannes Reinecke <hare@suse.de>,
+ Christoph Hellwig <hch@lst.de>, Naohiro Aota <naohiro.aota@wdc.com>,
+ Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
+ Chaitanya Kulkarni <chaitanyak@nvidia.com>,
+ "Martin K . Petersen" <martin.petersen@oracle.com>
+References: <20250925150231.67342-1-johannes.thumshirn@wdc.com>
+ <20250925150231.67342-4-johannes.thumshirn@wdc.com>
+From: Damien Le Moal <dlemoal@kernel.org>
 Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <20251001060437.2298529-3-chris.lu@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Organization: Western Digital Research
+In-Reply-To: <20250925150231.67342-4-johannes.thumshirn@wdc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Dear Chris,
-
-
-Thank you for your patch. Same comments as in patch 1/1.
-
-Am 01.10.25 um 08:04 schrieb Chris Lu:
-> Add VID 0489 & PID e170 for MediaTek MT7922 USB Bluetooth chip.
+On 9/26/25 00:02, Johannes Thumshirn wrote:
+> Split out the code relaying a blktrace event to user-space using relayfs.
 > 
-> The information in /sys/kernel/debug/usb/devices about the Bluetooth
-> device is listed as the below.
+> This enables adding a second version supporting a new version of the
+> protocol.
 > 
-> T:  Bus=06 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  2 Spd=480  MxCh= 0
-> D:  Ver= 2.10 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
-> P:  Vendor=0489 ProdID=e170 Rev= 1.00
-> S:  Manufacturer=MediaTek Inc.
-> S:  Product=Wireless_Device
-> S:  SerialNumber=000000000
-> C:* #Ifs= 3 Cfg#= 1 Atr=e0 MxPwr=100mA
-> A:  FirstIf#= 0 IfCount= 3 Cls=e0(wlcon) Sub=01 Prot=01
-> I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=125us
-> E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-> E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-> I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-> E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-> I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-> E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-> I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-> E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-> I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-> E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-> I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-> E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-> I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-> E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-> I:  If#= 1 Alt= 6 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-> E:  Ad=83(I) Atr=01(Isoc) MxPS=  63 Ivl=1ms
-> E:  Ad=03(O) Atr=01(Isoc) MxPS=  63 Ivl=1ms
-> I:* If#= 2 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=(none)
-> E:  Ad=8a(I) Atr=03(Int.) MxPS=  64 Ivl=125us
-> E:  Ad=0a(O) Atr=03(Int.) MxPS=  64 Ivl=125us
-> I:  If#= 2 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=(none)
-> E:  Ad=8a(I) Atr=03(Int.) MxPS= 512 Ivl=125us
-> E:  Ad=0a(O) Atr=03(Int.) MxPS= 512 Ivl=125us
-> 
-> Signed-off-by: Chris Lu <chris.lu@mediatek.com>
-> ---
->   drivers/bluetooth/btusb.c | 2 ++
->   1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-> index a2cde2284163..6834592f3c39 100644
-> --- a/drivers/bluetooth/btusb.c
-> +++ b/drivers/bluetooth/btusb.c
-> @@ -687,6 +687,8 @@ static const struct usb_device_id quirks_table[] = {
->   						     BTUSB_WIDEBAND_SPEECH },
->   	{ USB_DEVICE(0x0489, 0xe153), .driver_info = BTUSB_MEDIATEK |
->   						     BTUSB_WIDEBAND_SPEECH },
-> +	{ USB_DEVICE(0x0489, 0xe170), .driver_info = BTUSB_MEDIATEK |
-> +						     BTUSB_WIDEBAND_SPEECH },
->   	{ USB_DEVICE(0x04ca, 0x3804), .driver_info = BTUSB_MEDIATEK |
->   						     BTUSB_WIDEBAND_SPEECH },
->   	{ USB_DEVICE(0x04ca, 0x38e4), .driver_info = BTUSB_MEDIATEK |
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 
-Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
+Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
 
-
-Kind regards,
-
-Paul
+-- 
+Damien Le Moal
+Western Digital Research
 
