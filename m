@@ -1,150 +1,144 @@
-Return-Path: <linux-kernel+bounces-838727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2771CBB005B
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 12:32:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CC7DBB0067
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 12:34:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75AB03A7961
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 10:32:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 781AB3C42F0
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 10:34:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9E622BEFF2;
-	Wed,  1 Oct 2025 10:32:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8721D2BFC8F;
+	Wed,  1 Oct 2025 10:33:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tKoY2KnL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="feeq6UlI";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jcNScCXA"
+Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2580828F935;
-	Wed,  1 Oct 2025 10:32:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9488C29BDBF;
+	Wed,  1 Oct 2025 10:33:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759314731; cv=none; b=N74K4r/NA7J0tvZu4fCCiIraL0UIJtrktZWuzqpVLpqspVAq6nJck7O4PKfDTsDEdZeh++8AJpNUaBI7o5l+hddnVKBQHIl15YUYjVTYRbNrRnShBzQUgzWPja0jTKEaj2hb/mPKkNW2/fCiti2W43dGXvljFe8P90xVXssUXS8=
+	t=1759314831; cv=none; b=Vk+mODBKuGHxeWrKjSGC+Jaq36cfNd19e7MFST9YZSGu8V8kAjpjU6VmDC3DY67P9fbPe0UJdVuQk+2E4Esv33vuBZRswFu5c/1nUovnjGXW9gNQrwPtLm9YdXBetU1ypf3UJ4QUWetIa2DleLCBWVe3OGYiYsM/Vnh9OSbXvmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759314731; c=relaxed/simple;
-	bh=P+YFqwjAsyQVj+ajZA/B1KBSZKrqZK9v+m3Wiyc2kV0=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=nKJkltrwx5ICbdouXDiXS0l0yUg1XJQP1Dby6K5UnH4pSmf8WbYKVZ2iTnmvd3ebfAZ5rrQHk5Ezakxs5bxqEBGlnGzpvvPkLlWp3shyH9HznneVR9qVdxHZ63GkoBFVEwE/lV/xrebFhRu/9e9Cgy5CmEcs9lKt+WFV72V3+Ac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tKoY2KnL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45AD1C4CEF4;
-	Wed,  1 Oct 2025 10:32:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759314728;
-	bh=P+YFqwjAsyQVj+ajZA/B1KBSZKrqZK9v+m3Wiyc2kV0=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=tKoY2KnL8Xj76oTVo6g45E3T5ntWA8T8f6WWl5EpA50rhnXgrX2/kqqr0xjJ19izW
-	 P/6MMZw0S7kFN2T7z2C8MLi4fVhnnuZD7wriXPiBnITh2FI7KK0KUG5HwPOeYshj13
-	 9pxzZtdM8rWiQA4U6VX0A7np0iOnn+5Jhb89q/+sRJWc7B3yFTiWDN4B5MebDNe4Vf
-	 zor/ax/V2JBHOiqkIKrHVcylkoDQdbldtm/B6vWL4nB8R3YPW7/3TddnoIbjNl7LGH
-	 SrZEE7ds/mGwl3LLCQtgGhwpbCgTRGEQdEADKiHn0J50zuq8zcDPsCawnFe3YSiNs3
-	 cuTjOCLJqxG8A==
+	s=arc-20240116; t=1759314831; c=relaxed/simple;
+	bh=qdkXHIbNMbEMiYezbHUrizy/2CrJNGWYkQW0Pk6sQKk=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=GyF1C3LiQ6IlwQvhghUAQoDmC3uMxIu69jZrMFOUhL0ZNVj9lO96JBuBdtna4wMoysI8Ack4abCv06BS7NzcyjNAIABPRmzuj2ebrWBm2FmF5BrbBuWkCSc67rqDIQWm5efjrnb5Ym6vjd/8Jtbr4+T4MGC2C8rfiC15MjBKTSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=feeq6UlI; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jcNScCXA; arc=none smtp.client-ip=103.168.172.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfout.phl.internal (Postfix) with ESMTP id A63BCEC0038;
+	Wed,  1 Oct 2025 06:33:48 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Wed, 01 Oct 2025 06:33:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1759314828;
+	 x=1759401228; bh=agdHks9lyG6tctUiW+jhPBwjGNOe4D9oaDJAAzykNbo=; b=
+	feeq6UlItMRLW37EYs0oqpVkS+mHpM5WRWuj5gmt3o02aWCprD2uqlJEQdJ93/Tu
+	p0G3FEPnxSy6rLTKJIq8iNzFNIZS5KyC9GkpPef7K91LXf3EAJZuUzlfYXSS6KY4
+	Eej9oRKCmjQXgJl9ciuuEll3CzStLE6uAc2URdx1rxdlQcJgGh+xsFU9onJyycqA
+	D4o6Tck379swTGHapmd2lo02B87UXvpvwlpXxEJ2i+nn//r/fOAAyWOUEodBUjIC
+	yp61DV4klkIO8TErCwG1f/pB4IOlyS4SS28roR1k3FjtDCo5/J7+f43wPTkOg4vK
+	LzzFHUo+iltShiHLm9INyw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1759314828; x=
+	1759401228; bh=agdHks9lyG6tctUiW+jhPBwjGNOe4D9oaDJAAzykNbo=; b=j
+	cNScCXA55P3ijJujX5AC1s6FdnrzSaQ3cbH7ChbjzhGmpLorJjkfvuaJlg0DT9GW
+	Jpbmy9Y6raS0d0RxzfASKcZ2lnA1RSpDOuhs2IQGrJOMNGWD+jnuSoezwL50jJ4a
+	FjKwq39DwkxDS9Cr4A36iX1sfySK4mVeRKqJFlbUsqO6IflO7c/6QK0QXRE/Y940
+	/f3oPzXLqLpAzNrrPoSMwekJVebHJ/Z8H2KxXCD/+FINkRLdiCNQdEpX0zd6IeWW
+	AT5ljHjsYYOqK7rvvQZe6Lkll9Ac7ReZrnd6b6lFsmBffY7zgWnN3JZDCTFbEoss
+	bvj0nFarxGP+Uwah+8zJA==
+X-ME-Sender: <xms:iwPdaCvok4bwFWdJHIw0eGeeaJKu8TAEcYtPvuXaRMvf72LGvzcsVw>
+    <xme:iwPdaCRQw1yErdihbn5_94TGmGjr06wemewf_0P7NAqGFTEgOAS5Sp6iPVJA2YAmV
+    pf9tkLFAYyekxTFLmdnTJMQtsHq-8B9fJkpNucrrx3kakIBZkNb9_k>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdekvdeludcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
+    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
+    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopedvhedpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtoheprggthhhilhhlsegrtghhihhllhdrohhrghdprhgtphhtthhopehprg
+    hvvghlseguvghngidruggvpdhrtghpthhtohepfhdrfhgrihhnvghllhhisehgmhgrihhl
+    rdgtohhmpdhrtghpthhtohepshhuughiphhmrdhmuhhkhhgvrhhjvggvsehgmhgrihhlrd
+    gtohhmpdhrtghpthhtoheprhifrghrshhofiesghhmgidruggvpdhrtghpthhtohepsghr
+    ohhonhhivgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghonhhorheskhgvrhhnvg
+    hlrdhorhhgpdhrtghpthhtohepshhhuhgrhheskhgvrhhnvghlrdhorhhgpdhrtghpthht
+    ohepphgrthgthhgvsheskhgvrhhnvghltghirdhorhhg
+X-ME-Proxy: <xmx:iwPdaAGJg0r1tUvzifZedA6eI7BNl9Flp9oyz2bBWy6e87zZFDvjPg>
+    <xmx:iwPdaJO65jKR24UetwgrvhOp_NDxxzsQcXcriVnQJBldKs4gjw_xdg>
+    <xmx:iwPdaHeJOcjq3QFuAbbhVychvH-aNLrc3Ja6IwCRb_7D-sHJAoG1qg>
+    <xmx:iwPdaOQoZcXxtZuFNx82TNW1vE61hkgn2XVyPQZLlgrPxgxFnHSvGg>
+    <xmx:jAPdaBwIJjLJSXBM-6fIQBoA-5Xu-i0cqk1c3p5LjZscThAAzGjFd54Z>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 0C01C700065; Wed,  1 Oct 2025 06:33:47 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 01 Oct 2025 12:32:02 +0200
-Message-Id: <DD6X0PXA0VAO.101O3FEAHJUH9@kernel.org>
-Subject: Re: [PATCH 0/2] rust: pci: expose is_virtfn() and reject VFs in
- nova-core
-Cc: "Alexandre Courbot" <acourbot@nvidia.com>, "Joel Fernandes"
- <joelagnelf@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>, "Zhi Wang"
- <zhiw@nvidia.com>, "Surath Mitra" <smitra@nvidia.com>, "David Airlie"
- <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Bjorn Helgaas"
- <bhelgaas@google.com>, =?utf-8?q?Krzysztof_Wilczy=C5=84ski?=
- <kwilczynski@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, <nouveau@lists.freedesktop.org>,
- <linux-pci@vger.kernel.org>, <rust-for-linux@vger.kernel.org>, "LKML"
- <linux-kernel@vger.kernel.org>
-To: "John Hubbard" <jhubbard@nvidia.com>, "Alistair Popple"
- <apopple@nvidia.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250930220759.288528-1-jhubbard@nvidia.com>
- <h6jdcfhhf3wuiwwj3bmqp5ohvy7il6sfyp6iufovdswgoz7vul@gjindki2pyeh>
- <e77bbcda-35a3-4ec6-ac24-316ab34a201a@nvidia.com>
-In-Reply-To: <e77bbcda-35a3-4ec6-ac24-316ab34a201a@nvidia.com>
+MIME-Version: 1.0
+X-ThreadId: AHv4v8KaD7D7
+Date: Wed, 01 Oct 2025 12:33:26 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Naresh Kamboju" <naresh.kamboju@linaro.org>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+ linux-kernel@vger.kernel.org,
+ "Linus Torvalds" <torvalds@linux-foundation.org>,
+ "Andrew Morton" <akpm@linux-foundation.org>,
+ "Guenter Roeck" <linux@roeck-us.net>, shuah <shuah@kernel.org>,
+ patches@kernelci.org, lkft-triage@lists.linaro.org,
+ "Pavel Machek" <pavel@denx.de>, "Jon Hunter" <jonathanh@nvidia.com>,
+ "Florian Fainelli" <f.fainelli@gmail.com>,
+ "Sudip Mukherjee" <sudipm.mukherjee@gmail.com>, rwarsow@gmx.de,
+ "Conor Dooley" <conor@kernel.org>, hargar@microsoft.com,
+ "Mark Brown" <broonie@kernel.org>, achill@achill.org,
+ "Dan Carpenter" <dan.carpenter@linaro.org>, linux-fsdevel@vger.kernel.org,
+ linux-block <linux-block@vger.kernel.org>,
+ "Anders Roxell" <anders.roxell@linaro.org>,
+ "Benjamin Copeland" <benjamin.copeland@linaro.org>
+Message-Id: <e18281db-8d13-4602-b009-97b8e43a07c0@app.fastmail.com>
+In-Reply-To: 
+ <CA+G9fYvhoeNWOsYMvWRh+BA5dKDkoSRRGBuw5aeFTRzR_ofCvg@mail.gmail.com>
+References: <20250930143822.939301999@linuxfoundation.org>
+ <CA+G9fYvhoeNWOsYMvWRh+BA5dKDkoSRRGBuw5aeFTRzR_ofCvg@mail.gmail.com>
+Subject: Re: [PATCH 5.10 000/122] 5.10.245-rc1 review
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Wed Oct 1, 2025 at 3:22 AM CEST, John Hubbard wrote:
-> On 9/30/25 5:29 PM, Alistair Popple wrote:
->> On 2025-10-01 at 08:07 +1000, John Hubbard <jhubbard@nvidia.com> wrote..=
-.
->>> Post-Kangrejos, the approach for NovaCore + VFIO has changed a bit: the
->>> idea now is that VFIO drivers, for NVIDIA GPUs that are supported by
->>> NovaCore, should bind directly to the GPU's VFs. (An earlier idea was t=
-o
->>> let NovaCore bind to the VFs, and then have NovaCore call into the uppe=
-r
->>> (VFIO) module via Aux Bus, but this turns out to be awkward and is no
->>> longer in favor.) So, in order to support that:
->>>
->>> Nova-core must only bind to Physical Functions (PFs) and regular PCI
->>> devices, not to Virtual Functions (VFs) created through SR-IOV.
->>>
->>> Add a method to check if a PCI device is a Virtual Function (VF). This
->>> allows Rust drivers to determine whether a device is a VF created
->>> through SR-IOV. This is required in order to implement VFIO, because
->>> drivers such as NovaCore must only bind to Physical Functions (PFs) or
->>> regular PCI devices. The VFs must be left unclaimed, so that a VFIO
->>> kernel module can claim them.
->>=20
->> Curiously based on a quick glance I didn't see any other drivers doing t=
-his
->> which makes me wonder why we're different here. But it seems likely thei=
-r
->> virtual functions are supported by the same driver rather than requiring=
- a
->> different VF specific driver (or I glanced too quickly!).
+On Tue, Sep 30, 2025, at 21:27, Naresh Kamboju wrote:
+> We are investigating and running bisections.
 >
-> I haven't checked into that, but it sounds reasonable.
+> ### Test log
+> tst_test.c:1888: TINFO: === Testing on vfat ===
+> tst_test.c:1217: TINFO: Formatting /dev/loop0 with vfat opts='' extra 
+> opts=''
+> mkfs.vfat: Partitions or virtual mappings on device '/dev/loop0', not
+> making filesystem (use -I to override)
+> tst_test.c:1217: TBROK: mkfs.vfat failed with exit code 1
 
-There are multiple cases:
+The error message indicates that the loop device contains
+existing data and mkfs.vfat refuses to overwrite it, which
+would be part of your test environment.
 
-Some devices have different PCI device IDs for their physical and virtual
-functions and different drivers handling then. One example for that is Inte=
-l
-IXGBE.
+Can you try adding the suggested '-I' flag to the mkfs.vfat
+invocation so it overrides the warning?
 
-But there are also some drivers, which do a similar check and just stop pro=
-bing
-if they detect a virtual function.
-
-So, this patch series does not do anything uncommon.
-
->> I'm guessing the proposal is to fail the probe() function in nova-core f=
-or
->> the VFs - I'm not sure but does the driver core continue to try probing =
-other
->> drivers if one fails probe()? It seems like this would be something best
->> filtered on in the device id table, although I understand that's not pos=
-sible
->> today.
-
-Yes, the driver core keeps going until it finds a driver that succeeds prob=
-ing
-or no driver is left to probe. (This behavior is also the reason for the na=
-me
-probe() in the first place.)
-
-However, nowadays we ideally know whether a driver fits a device before pro=
-be()
-is called, but there are still exceptions; with PCI virtual functions we've=
- just
-hit one of those.
-
-Theoretically, we could also indicate whether a driver handles virtual func=
-tions
-through a boolean in struct pci_driver, which would be a bit more elegant.
-
-If you want I can also pick this up with my SR-IOV RFC which will probably =
-touch
-the driver structure as well; I plan to send something in a few days.
+    Arnd
 
