@@ -1,108 +1,154 @@
-Return-Path: <linux-kernel+bounces-839197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA791BB1050
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 17:19:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26802BB1070
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 17:19:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A46E1883182
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 15:19:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C4AE1883768
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 15:19:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B30B91DA0E1;
-	Wed,  1 Oct 2025 15:18:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E61F6270542;
+	Wed,  1 Oct 2025 15:19:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="QMm1BpLJ"
-Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OuoqHnJB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 688FC1DE887
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 15:18:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B3B81DF97C;
+	Wed,  1 Oct 2025 15:19:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759331932; cv=none; b=VF/aDjAghIJKFtIkXesi8wYqakjrz8e7bS6qdj7YPxX1rSoZoiiF2z3s/5GcpI+d3srvwLf+cqUpUqWjE4z6bl9uIB6U5banHOwqRczYgyJ4vR1VLpSFJ9kg/Xw63WSZ2UFlmhgzggbYvbOBBmiejQ1GXOfqkMH3u+29bYUpVOI=
+	t=1759331955; cv=none; b=eJxi+zL1Juzj61apjs6VVSUw9BNooycsk8f4f2cz4i/eYi3t+RlgJbJG+0RcrXgbewzVvofZ89372pGaLAJV0WoCsHid47TzC4baHNCNzMS2ZKqVov0bvp6moZWQa7GApSv7or4jLkDE1tq23JjQExEIV0rdbOc2eZ2qId3i8Xc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759331932; c=relaxed/simple;
-	bh=clYzD45QF0l/Yb962K6im/hAIBEWMJ+l2kSiwON7t0s=;
+	s=arc-20240116; t=1759331955; c=relaxed/simple;
+	bh=WXEou4ARuKup3FH9I0+HUiGykmkp3l62lW8nRFhHN8A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aBWPdnBG75QkhuJ8aPfEBUoY/zXrwMnnfaBids2GejhsBwCRvXfsCw9Izt0ZAziJD1rpFbrKrHAlhcnZiQAvXIXGOaO6uVw+Bjz10SKqjZFvwMrGHRsos3a6WoQf+PpHJllZ3qT6ax8tzsVCecNYOowzK2vskiD14x1DFJgxDm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=QMm1BpLJ; arc=none smtp.client-ip=95.215.58.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 1 Oct 2025 15:18:34 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1759331928;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=g+43gDRdm6H7SxJLLcC/uCvEpRJ3obEeymWu8l17Qn8=;
-	b=QMm1BpLJLaBc+OxE44Y78T85IRKetxwt6i21WWNilNOUrZoHfyfuRKqY/YoWsdyRmW2GDW
-	9i/Q8v3+HcZkuD3ihe1Lpm9Y7z0ZnwK+9pcYpKTXwXR+mnWqUFyOgYZexto+7N9tIKvqr7
-	R856/ybadWpp37b8DjiPlTu+S9cgTe8=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: Jim Mattson <jmattson@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Sean Christopherson <seanjc@google.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
-	Tom Lendacky <thomas.lendacky@amd.com>, Perry Yuan <perry.yuan@amd.com>, 
-	Sohil Mehta <sohil.mehta@intel.com>, "Xin Li (Intel)" <xin@zytor.com>, 
-	Joerg Roedel <joerg.roedel@amd.com>, Avi Kivity <avi@redhat.com>, linux-kernel@vger.kernel.org, 
-	kvm@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] KVM: SVM: Disallow EFER.LMSLE when not supported
- by hardware
-Message-ID: <dcyhv3zfpoolrj4z5i57vx6og5afreewwpm45yclqkvdpjab7u@ykgaqcr5kyxf>
-References: <20251001001529.1119031-1-jmattson@google.com>
- <20251001001529.1119031-3-jmattson@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TjaJIgcx0SXeKHPd4nHdUcRh83eUnYC/QtKUUDn8YdoO1BJTXFl0Ovo6kOilug5kcTxv2OebwHrAyF+SW74i2q/rKrmvNG0EOCE+x10/QLWIDbjJK5G1t7+rCmOyPN9tIbJefxmri7ltTkDYp+sy5PFTkS6da+xa9yo8cajdGd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OuoqHnJB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8348FC4CEF1;
+	Wed,  1 Oct 2025 15:19:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759331954;
+	bh=WXEou4ARuKup3FH9I0+HUiGykmkp3l62lW8nRFhHN8A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OuoqHnJB4uDafvFk7iuZGQkcCUA3QEMjyIqZ6xDxBrSgY+YTmCQD/oPgtUKWKuyAW
+	 nCQIigEARI0lG1SCft2s3eJAulFR0CMjz49AhqI12m672C1dWwK7jcm5JssOMNHDX2
+	 4AcTOYPRovnCmZ9IxfiyTLkrV64NnLDCv9AlUesolUaIgz5mXGjipfaG0KAAZ8i8DT
+	 zBiu3UEjmuaBi/q5RLD1iW0xkOXjLVDYdrEvUFFFDVzh5OppCibjEUBe2ayQeM8ODX
+	 pvy110WPSJvRORa+F8LYwcrW+7V+6snvbd0bsfaPHkRAhS5xQfmeu9tMrOYIdM4u8X
+	 iVC0ZOSrnGjWg==
+Date: Wed, 1 Oct 2025 16:19:09 +0100
+From: Simon Horman <horms@kernel.org>
+To: Sidharth Seela <sidharthseela@gmail.com>
+Cc: antonio@openvpn.net, sd@queasysnail.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, shuah@kernel.org,
+	willemdebruijn.kernel@gmail.com, kernelxing@tencent.com,
+	nathan@kernel.org, nick.desaulniers+lkml@gmail.com,
+	morbo@google.com, justinstitt@google.com, netdev@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: Re: [PATCH net v3] selftest:net: Fix uninit return values
+Message-ID: <aN1GbUiQNSTgOUhN@horms.kernel.org>
+References: <20250929211241.55701-2-sidharthseela@gmail.com>
+ <aNueLn3Wy-2X_GeE@horms.kernel.org>
+ <CAJE-K+AeEYkAN8wX3FbBCbQMGTDsueA-YiC4w_qi+TZgUzkS-w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251001001529.1119031-3-jmattson@google.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJE-K+AeEYkAN8wX3FbBCbQMGTDsueA-YiC4w_qi+TZgUzkS-w@mail.gmail.com>
 
-On Tue, Sep 30, 2025 at 05:14:08PM -0700, Jim Mattson wrote:
-> Modern AMD CPUs do not support segment limit checks in 64-bit mode
-> (i.e. EFER.LMSLE must be zero). Do not allow a guest to set EFER.LMSLE
-> on a CPU that requires the bit to be zero.
+On Tue, Sep 30, 2025 at 03:17:02PM +0530, Sidharth Seela wrote:
+> On Tue, Sep 30, 2025 at 2:39 PM Simon Horman <horms@kernel.org> wrote:
+> > Hi,
+> >
+> > I don't want to block progress.
+> > But there are some format problems with the commit message.
+> >
+> > Locally, git truncates the commit message at the line above ('--').
+> > Which, omits a lot of useful information.
+> > Most critically your Signed-off-by line.
+> >
+> > There is also another '--' below. Just above the fixes tag.
+> > Which would cause a similar problem.
+> >
+> > And the v2/v3 information should go below the scissors ('---'),
+> > below your signed-off by line.
+> >
+> > Maybe the maintainers can fix this when applying,
+> > given how close we are to the pull for v6.18-rc1.
+> > And that I believe there has already been some
+> > discussion of this patch with the maintainers.
+> >
+> > > ovpn-cli.c:1587:6: warning: variable 'ret' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
+> > >  1587 |         if (!sock) {
+> > >       |             ^~~~~
+> > > ovpn-cli.c:1635:9: note: uninitialized use occurs here
+> > >  1635 |         return ret;
+> > >       |                ^~~
+> > > ovpn-cli.c:1587:2: note: remove the 'if' if its condition is always false
+> > >  1587 |         if (!sock) {
+> > >       |         ^~~~~~~~~~~~
+> > >  1588 |                 fprintf(stderr, "cannot allocate netlink socket\n");
+> > >       |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > >  1589 |                 goto err_free;
+> > >       |                 ~~~~~~~~~~~~~~
+> > >  1590 |         }
+> > >       |         ~
+> > > ovpn-cli.c:1584:15: note: initialize the variable 'ret' to silence this warning
+> > >  1584 |         int mcid, ret;
+> > >       |                      ^
+> > >       |                       = 0
+> > > ovpn-cli.c:2107:7: warning: variable 'ret' is used uninitialized whenever switch case is taken [-Wsometimes-uninitialized]
+> > >  2107 |         case CMD_INVALID:
+> > >       |              ^~~~~~~~~~~
+> > > ovpn-cli.c:2111:9: note: uninitialized use occurs here
+> > >  2111 |         return ret;
+> > >       |                ^~~
+> > > ovpn-cli.c:1939:12: note: initialize the variable 'ret' to silence this warning
+> > >  1939 |         int n, ret;
+> > >       |                   ^
+> > >       |
+> > > --
+> > > Fixes: 959bc330a439 ("testing/selftests: add test tool and scripts for ovpn module")
+> > > ovpn module")
+> > >
+> > > v3:
+> > >       - Use prefix net.
+> > >       - Remove so_txtime fix as default case calls error().
+> > >       - Changelog before sign-off.
+> > >       - Three dashes after sign-off
+> > >
+> > > v2:
+> > >       - Use subsystem name "net".
+> > >       - Add fixes tags.
+> > >       - Remove txtimestamp fix as default case calls error.
+> > >       - Assign constant error string instead of NULL.
+> > >
+> > > Signed-off-by: Sidharth Seela <sidharthseela@gmail.com>
+> > > ---
+> > >
+> >
+> > This is where the v2/v3 information should go.
+> >
+> > ...
 > 
-> For backwards compatibility, allow EFER.LMSLE to be set on CPUs that
-> support segment limit checks in 64-bit mode, even though KVM's
-> implementation of the feature is incomplete (e.g. KVM's emulator does
-> not enforce segment limits in 64-bit mode).
-> 
-> Fixes: eec4b140c924 ("KVM: SVM: Allow EFER.LMSLE to be set with nested svm")
-> 
-> Signed-off-by: Jim Mattson <jmattson@google.com>
+> Thankyou Simon, I didn't know that double hyphen would cause
+> an issue. Although I need a logical separator between commit message
+> and warning log, may I ask what could be used instead?
 
-Reviewed-by: Yosry Ahmed <yosry.ahmed@linux.dev>
+Good question. And, TBH, I didn't know that '--' does that either.
 
-> ---
->  arch/x86/kvm/svm/svm.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-> index 1bfebe40854f..78d0fc85d0bd 100644
-> --- a/arch/x86/kvm/svm/svm.c
-> +++ b/arch/x86/kvm/svm/svm.c
-> @@ -5351,7 +5351,9 @@ static __init int svm_hardware_setup(void)
->  
->  	if (nested) {
->  		pr_info("Nested Virtualization enabled\n");
-> -		kvm_enable_efer_bits(EFER_SVME | EFER_LMSLE);
-> +		kvm_enable_efer_bits(EFER_SVME);
-> +		if (!boot_cpu_has(X86_FEATURE_EFER_LMSLE_MBZ))
-> +			kvm_enable_efer_bits(EFER_LMSLE);
->  
->  		r = nested_svm_init_msrpm_merge_offsets();
->  		if (r)
-> -- 
-> 2.51.0.618.g983fd99d29-goog
-> 
+A blank line should certainly be safe.
+Perhaps ~~ and == are too.
+
+You can check by applying the resulting patch using git am.
 
