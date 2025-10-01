@@ -1,123 +1,131 @@
-Return-Path: <linux-kernel+bounces-838283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 626F0BAEDD0
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 02:16:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B863BAEDEF
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 02:25:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A88ED1C6BC9
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 00:16:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 361D63AE94B
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 00:25:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AF2E19F12A;
-	Wed,  1 Oct 2025 00:15:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4521119C556;
+	Wed,  1 Oct 2025 00:25:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PTYcjf2y"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="lYLR4hCZ"
+Received: from out203-205-221-242.mail.qq.com (out203-205-221-242.mail.qq.com [203.205.221.242])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14110186284
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 00:15:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E02018DB26;
+	Wed,  1 Oct 2025 00:25:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.242
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759277742; cv=none; b=kM5cL0cp69Xjo+8r8H/fXlDqB+kbCCCOs0dDVmoUzX0WfN3h02YW+fT0UvalscDnXP9gqCam1gxdMlNIfqDCeKBWLPwxiKz0FaSsaQ7TtOFseBB7j3SY/cujsO8HNCJ2DJMqt7Yn0X8pEsJW0PqhGnxfmWMBGnAexNarOIVGJmY=
+	t=1759278310; cv=none; b=FymzgtzB5Pvz4t4znaOIJ0kqFGxm6Nw31Baya8TPaVsJDPWMOqzFQp6OY8J7UWGxt/1APTggD8vkMGx1JhVm1i7yL+P74Hy/jhLBe7WxcaiQjav6cd6jAvXTSe+RZVaZVd2L4eBlITYHuigyaF8gkjfPoys0jpD5z5EcvBCWvg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759277742; c=relaxed/simple;
-	bh=Kducq2ZeSjXYvGI/ghOcZsk4NUusB8RxSwzsVgzEpgw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=V10YsgoY6j7bzYlwfDiMRqu6EX4xIWOd+72ga1AS29QK01Syg41guIlYHNV1TB7cPj6i2SjG5QxecIM4SLxia510/iuOdT491uqCHYwsVohla28j/SXQzcPT+TIFrAaOHup3nnQpOthIF0ea0WjGipj+x3w8HtN6Vv1cslM69Vc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jmattson.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PTYcjf2y; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jmattson.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-269a2b255aaso117821455ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 17:15:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759277740; x=1759882540; darn=vger.kernel.org;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LcYitO65fM6U+2guQlIxnINa19j5zqeVtzHxSXLQKIA=;
-        b=PTYcjf2yc8QM1y2Lp+iN4nMpe+n9kNDkkffxMdzj0fPBDS6XjVpE2a9Ss3io9NFAYz
-         RBLGGuRj83SfFkkprgVZyY9QiTwVxQZgxMLz/AFTB3hzHjewJSEw9xsj/2djSBm7hFCo
-         jciT3hYZquFauZBWnjen4a8D7hYgZoSjK7+Cj++4qOvC1maNaYO1qw1t6fuQeF5mpUeI
-         +eBmKt/pSNFm43CTAvT4FYTwaJGj9JINzZ+bHHH93bEveT07ASJOcEHT0XDiR3NyEa7c
-         gqYa2cV44pAVO6HPCf4MhcVncTZRQn9+VdeLlufUeHWDlV8eXLHAKMQdtYOpajAKwtNQ
-         zBWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759277740; x=1759882540;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LcYitO65fM6U+2guQlIxnINa19j5zqeVtzHxSXLQKIA=;
-        b=FVC8WeL694zlavvtDvM7K1FjYdykwK8Ad5JSy2BeE5Dvu7LCWIhwSc6XXzue74XfLE
-         Q7tW2dwEwRAoGRaFVvO4Zju5zRnnI4bl3bXsv2Wb7foZO4yaBk5h7atn0oQVHCr4ws1g
-         dY8GHNPOCfFXLUNSxHier79qg+aA7m/W+13XPkKCHPb9fcfFc1VraXVfUfLLAlY3JXK8
-         jBOYYBqy3L1fPBv4LePDIiY0vVo18zWAdpTKDQ6TRcDWpMMasouh+rP7fZfXaL1z/hqA
-         u9qi5VMpke8M4sA1fxIHgYrmahhwpk+hX5FALCyIM2us+qqgEafqHHtsrdCBIsFKITz8
-         jaCg==
-X-Forwarded-Encrypted: i=1; AJvYcCWsz77R3Z/I/XK/8PRT4nfArCFnyaiZHx7X1ilWBsd4Thypj379CvNeftT3t9f8ekWW4OY0BNWro88ywrA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxu1Smbzh3rszxModPukU6VACldoATR3wdzn7gVqL12YnJBrHAW
-	T6Nq7pGKDtwmU4Y1RRUVVecRgTZZyPB1Up9aM6cCglVVzI7y8MaJOyLE6hMLcI2ty7Lhl0SlGNf
-	MRhXE0YtEtO3RgA==
-X-Google-Smtp-Source: AGHT+IEIIEjWwhQ/2dq2CphjZTc2Klk/2tjbWkphIg3Eyh1AwnfRMWPBkeJy4YRaqzCXcKDyOONweBtc+rC66Q==
-X-Received: from plsm6.prod.google.com ([2002:a17:902:bb86:b0:267:dbc3:f98d])
- (user=jmattson job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:902:ef02:b0:269:a4ed:13c9 with SMTP id d9443c01a7336-28e7f2eee4amr16409815ad.30.1759277740288;
- Tue, 30 Sep 2025 17:15:40 -0700 (PDT)
-Date: Tue, 30 Sep 2025 17:14:08 -0700
-In-Reply-To: <20251001001529.1119031-1-jmattson@google.com>
+	s=arc-20240116; t=1759278310; c=relaxed/simple;
+	bh=bq4yFxx1HYQIW2bfM3PlOQWATujxdL6DB7bogzXV3p0=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=nkMFe5Hr5qLd/a8u1t2wU0zPi71jwJv6p2hbHznMNhAAjp9XRc+sOfTqak9j1yyawit/nbIJDsplj62rUMlqVN3OPpOWpzjssT8zplqhcOKwWvz1GpmchuPuih1BzAvBz+V2ovS516MsFuFD2xSXc6YVlhMjBaO8B4J50WFM9kM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=lYLR4hCZ; arc=none smtp.client-ip=203.205.221.242
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1759277998; bh=qOEFdnGNyH/+56s3eWv79VZSXfiYDJ78DUr6/PPdkwc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=lYLR4hCZWf93/fAzcFysWP8xYTS26Bbz3mjjtS33rrn54bjbLr+BEWNJrI264DDXl
+	 0La6cd3QrMWPnfz+xcedZJ31J5WXyO6FC5yRSNQSvqe0Szghgd3NGn6y6CjMF6SfUG
+	 g73teYayx8LABTnTkrw97ZlPjKSYvpN2/OPKV1jg=
+Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.230.220])
+	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
+	id 4F793E47; Wed, 01 Oct 2025 08:19:55 +0800
+X-QQ-mid: xmsmtpt1759277995ts7e8m12j
+Message-ID: <tencent_FF701BFF4BB31BF8255CBAEFBB9033779E08@qq.com>
+X-QQ-XMAILINFO: NvH2zBBgt3uTiE2eZS5Fne7onYDpCzE+1Poxhq8IsKDO+pP3+IlKZaSJlYZHQ3
+	 XawgWJVQljiwoIa0HK4CtnObZ5jFT2kXzTzGpNHEALhxyEcl2wdlxt25ZyUon78hfsXTr5rJtwJy
+	 AAIpQ/32aGthJwo4F1BuZXsK0b9ErqMZhYdnx5rs95UXXMPkOss9i5Q3A52i3Dw14KwD59f+aW9K
+	 NcEUs0BxocyJRJeIIojwwBj/hUyNdv/G5rpIcmkakURiwk0dkFCjNQpl7N/Evl12fmVpGu9b6UsT
+	 jqGh20jQpFntkcFwGzP4fzgGDwqbYpHwUDKZx5SkrN2cV9L9O6zxutiHlRm6fhmcKv+Qb8V7Jd3k
+	 JswvNAzM3PeKUiYV4Ii1yjKDuMlDuvITjgPCoFK6pH2RZThlc8qUaFj7xw0n6HUSZwQ9XPzAERLo
+	 AJuCUvdmZ6MELWYSOgBIsHqtesa/vBQgOn6yamw2Yb0glEDpeLTm5DRThqtnNT2nPUpep+oLG/il
+	 FYub6NtgIXHwsngSfxlGELfjQtPmlo3uiRrk+6hIWGvKVCVT7k53SxLDnqF+KvlJOuAyaNIN/8us
+	 56z2gdV/bbOviPQMMgPKJGaXJRhTbgoCMh+UkNYyZ8mBDRZ75EZEciHFBsUO6EAZySs+ygK9aZ8J
+	 SPddTMU7zftzCxzOyshPz8VYNFukyH7/3BuEaqayFrbJG999aGVGeSsC8E58z8ugkfQ722qWPY5u
+	 0kL0eqJhBgqtIWY1FPMKjSZEy0i6ca4JYUN/ms7pNSYP+BqAmbamLT0xcPjn9kMnUI5zqrIcOMt2
+	 gZyV2721Y5ay+8ETDAopJQMggYjHXol3IfoLjCa5eyJ6ch8WlpkG6sKoExoX0KtnrLmQTJU/InDD
+	 k6ChxFkXFA3e2G23HnszG1m9o0tKWjfZD7XdFHdz7sCZDb0dumeN8QtYCDOghSZrBQ1A64J0F77V
+	 zXVeVJX3LJKglDcIa5kcLyoIILoBc6pbdqCs4eKn/wENoQLIfMXhBnLQbJ6k/5gQkUDkJhguA=
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+From: Edward Adam Davis <eadavis@qq.com>
+To: lkp@intel.com
+Cc: eadavis@qq.com,
+	kent.overstreet@linux.dev,
+	linux-bcachefs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	oe-kbuild-all@lists.linux.dev,
+	syzbot+ba71155d3eacc8f42477@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH V2] bcachefs: Prevent written from exceeding sectors
+Date: Wed,  1 Oct 2025 08:19:57 +0800
+X-OQ-MSGID: <20251001001956.1053529-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <202510010446.t1B7jtcS-lkp@intel.com>
+References: <202510010446.t1B7jtcS-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251001001529.1119031-1-jmattson@google.com>
-X-Mailer: git-send-email 2.51.0.618.g983fd99d29-goog
-Message-ID: <20251001001529.1119031-3-jmattson@google.com>
-Subject: [PATCH v2 2/2] KVM: SVM: Disallow EFER.LMSLE when not supported by hardware
-From: Jim Mattson <jmattson@google.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Tom Lendacky <thomas.lendacky@amd.com>, 
-	Jim Mattson <jmattson@google.com>, Perry Yuan <perry.yuan@amd.com>, 
-	Sohil Mehta <sohil.mehta@intel.com>, "Xin Li (Intel)" <xin@zytor.com>, 
-	Joerg Roedel <joerg.roedel@amd.com>, Avi Kivity <avi@redhat.com>, linux-kernel@vger.kernel.org, 
-	kvm@vger.kernel.org, Yosry Ahmed <yosry.ahmed@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Modern AMD CPUs do not support segment limit checks in 64-bit mode
-(i.e. EFER.LMSLE must be zero). Do not allow a guest to set EFER.LMSLE
-on a CPU that requires the bit to be zero.
+syzbot reported btree node oob in bch2_btree_node_read_done. [1]
 
-For backwards compatibility, allow EFER.LMSLE to be set on CPUs that
-support segment limit checks in 64-bit mode, even though KVM's
-implementation of the feature is incomplete (e.g. KVM's emulator does
-not enforce segment limits in 64-bit mode).
+Add sanity check for written, avoid exceeding the allowed access limits
+for btree node.
 
-Fixes: eec4b140c924 ("KVM: SVM: Allow EFER.LMSLE to be set with nested svm")
+[1]
+BUG: KASAN: slab-out-of-bounds in bch2_btree_node_read_done+0x950/0x5550 fs/bcachefs/btree_io.c:1128
+Call Trace:
+ bch2_btree_node_read_done+0x950/0x5550 fs/bcachefs/btree_io.c:1128
+ btree_node_read_work+0x40e/0xe60 fs/bcachefs/btree_io.c:1440
+ bch2_btree_root_read+0x5f0/0x760 fs/bcachefs/btree_io.c:1928
+ read_btree_roots+0x2c6/0x840 fs/bcachefs/recovery.c:615
+ bch2_fs_recovery+0x261f/0x3a50 fs/bcachefs/recovery.c:1006
+ bch2_fs_start+0xaaf/0xda0 fs/bcachefs/super.c:1213
+ bch2_fs_get_tree+0xb39/0x1520 fs/bcachefs/fs.c:2488
+ vfs_get_tree+0x8f/0x2b0 fs/super.c:1815
+ do_new_mount+0x2a2/0x9e0 fs/namespace.c:3808
 
-Signed-off-by: Jim Mattson <jmattson@google.com>
+Reported-by: syzbot+ba71155d3eacc8f42477@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=ba71155d3eacc8f42477
+Tested-by: syzbot+ba71155d3eacc8f42477@syzkaller.appspotmail.com
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
 ---
- arch/x86/kvm/svm/svm.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+V1 -> V2: change msg data type to unsigned int for btree_sectors()
 
-diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-index 1bfebe40854f..78d0fc85d0bd 100644
---- a/arch/x86/kvm/svm/svm.c
-+++ b/arch/x86/kvm/svm/svm.c
-@@ -5351,7 +5351,9 @@ static __init int svm_hardware_setup(void)
+ fs/bcachefs/btree_io.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/fs/bcachefs/btree_io.c b/fs/bcachefs/btree_io.c
+index 590cd29f3e86..ab14fff1452f 100644
+--- a/fs/bcachefs/btree_io.c
++++ b/fs/bcachefs/btree_io.c
+@@ -1087,6 +1087,13 @@ int bch2_btree_node_read_done(struct bch_fs *c, struct bch_dev *ca,
+ 		     "bad magic: want %llx, got %llx",
+ 		     bset_magic(c), le64_to_cpu(b->data->magic));
  
- 	if (nested) {
- 		pr_info("Nested Virtualization enabled\n");
--		kvm_enable_efer_bits(EFER_SVME | EFER_LMSLE);
-+		kvm_enable_efer_bits(EFER_SVME);
-+		if (!boot_cpu_has(X86_FEATURE_EFER_LMSLE_MBZ))
-+			kvm_enable_efer_bits(EFER_LMSLE);
- 
- 		r = nested_svm_init_msrpm_merge_offsets();
- 		if (r)
++	btree_err_on(ptr_written >= btree_sectors(c),
++		     -BCH_ERR_btree_node_read_err_must_retry,
++		     c, ca, b, NULL, NULL,
++		     btree_node_bad_magic,
++		     "wrong written %u, btree sectors is %u",
++		     ptr_written, btree_sectors(c));
++
+ 	if (b->key.k.type == KEY_TYPE_btree_ptr_v2) {
+ 		struct bch_btree_ptr_v2 *bp =
+ 			&bkey_i_to_btree_ptr_v2(&b->key)->v;
 -- 
-2.51.0.618.g983fd99d29-goog
+2.43.0
 
 
