@@ -1,153 +1,131 @@
-Return-Path: <linux-kernel+bounces-839262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA637BB1332
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 18:00:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B6AF6BB1335
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 18:01:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A262162572
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 16:00:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77EA4164EE0
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 16:01:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EAED284892;
-	Wed,  1 Oct 2025 16:00:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB6992848AC;
+	Wed,  1 Oct 2025 16:01:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TQEOLb47"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="kQzgfdmI"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4B7E8C1F;
-	Wed,  1 Oct 2025 16:00:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8C6615CD7E
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 16:01:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759334445; cv=none; b=ZGwVb2DdSxTX1bjS1YP1ESKVMdQD8sppHN+l2PE7LJX16Kv8NS/puivduIPT1o31FZwTjKqkW5NusuJSr5pXYP7bqy78CwksITWq9XljHBVMvybaOuhsO4LrCgWUv01mP4hLzKnGek9c65qpECYH2R6NIce9G4ogumrMUvMjspE=
+	t=1759334499; cv=none; b=Fhy2AnjHPtlKToXDcgNs9Oz9yNr5HqpyjudpDlHrs4lrx4VxoK+dZLrki5c98JVgL5XqhF5IYULCb+BU1nyA+mn4LdZ7p7Wu4C468OAD59unKkWfeqO3DDFk3CFtvsF6Jm84vKJS+UsC6Lw2we5o0vpRcddW3k3hZE3BSO3mZlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759334445; c=relaxed/simple;
-	bh=Kud95JC/kjSqNGKVDEUj/bvmtU8GRAMh83YGQzqneJ4=;
+	s=arc-20240116; t=1759334499; c=relaxed/simple;
+	bh=QScjIjS+08rOjpmvtHUriwdOvh5yhFq6mIStf39uLrw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q0OUPhp+lpD9jMYNx+b56OaQH6G/JW/fGdUbKoJNl5fesEGvq5mcyYqEDkbEc8HqOWZTsqIJr0EF5zTu2MM+VhDLYro1qkwIAZC/OzmVS7GaMg4zVHhA7bUIgurQdS79ilOqDGT9gy3zL34wdWuk3x3+Viz1OndePslJgKEtBSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TQEOLb47; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEBEDC4CEF1;
-	Wed,  1 Oct 2025 16:00:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759334445;
-	bh=Kud95JC/kjSqNGKVDEUj/bvmtU8GRAMh83YGQzqneJ4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TQEOLb47JDBAkewsxigiu5rhZVNxM2UcNNg3ZD4pNbO8guqcsvDgHWgQCv5YhqPsE
-	 NUOOERaKMuVDCP+3kTB1q3uoGC/y4nujBPF4g+cWHhSlPCOr4iTjYnlyaojvUsoMmP
-	 uUi6PVtSbHIaRwpZw50mtY0WYwrQHcyt9qrd4B2Ity3T8EfQ2lk13xnEaBGZAZOPvS
-	 buIrs2xRqbKD33BkXXD+7ffy/gqSWbRjWw6ryEF/55us0q9mbEQQEP4zSujFtGKDlp
-	 sNCeOwe/Hj4I2qg46Mn+94rump9n9I/4s61gsuYRkmJvOmce6vg50Nn7KV3FqZSPiZ
-	 m/kn4aaUoKFQg==
-Date: Wed, 1 Oct 2025 17:00:41 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Conor Dooley <conor.dooley@microchip.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [RFC 0/5] microchip mpfs/pic64gx pinctrl questions
-Message-ID: <20251001-arrive-tattle-2dafbd375da0@spud>
-References: <20250926-manpower-glacial-e9756c82b427@spud>
- <CACRpkdYXh2MCs=vAif7BpxfYVRuDTkYYNwpV2t=J_ZRW+N4Vyg@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZBEheEIdv0B4MEGRmE80ifUwEWC5OMzOvmrNaXgMZASbnKaBJiJDH3WirMZxNEia8HABcP9yXfijRfIu6XWAtCj1MIyeRsnqjwTx/bUFiDHMjxeI2cSpmk+HPXQ0ggTQKJ5bitcBrnUA8IzPJDN3D/A92G8vlGoLfzWxX7Jtkj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=kQzgfdmI; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2681660d604so69423365ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 09:01:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1759334497; x=1759939297; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UH6IkusvJFATMVxIHkG8s4UMo8zcL0KjEQKMfxIzPfU=;
+        b=kQzgfdmI/f3Y1t9TODLCuBB9eDykGno4pJtp/odOKmQfFllcGX+59lOTSlDiYxq/I8
+         5/KN5e+V9PY5ukN1z3Nwg5cEyNMaNXDPQeaPfI0i8rtdEM2sUNe/frYQtU4bn5OnNpmg
+         ww9TQ6OhH+WmNqUaAmUHHU/nCl7J2MvQCc471kA+w+rSxSz+GBhYC50p6GGXXeMkVa5+
+         6BmkqHM4wI+evrqzOnKx6FtCFt8Se/xGQwqRqsv+/BqUIon9LU82S7o5D9jbnOiHWlC6
+         VZ65RziyTaDfyigL/cyCmQ+wc6FyIjYbwrrI+MmQkFJz9q1Z2SpODqK950Z7j6G6bTXV
+         h9+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759334497; x=1759939297;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UH6IkusvJFATMVxIHkG8s4UMo8zcL0KjEQKMfxIzPfU=;
+        b=hoUXd0CWC7sxrT6fNmEOy7dqDOHGaj5qeTUjh3+7XuD7dMOi5GIPa5BcTjezjHGhHG
+         KcBoInvj0OJLUEDiKlPUrX6V79McAufYYgUzvp5XDfQKZRYeOj/L6AQ/qkrHTbHJxDW9
+         FaXdXMUZJdl1oUkWvvK/kkejWZ2BIQkwj9asKShsdIt+Q8qtyS5YG5/M1qdZO1ZKXsvT
+         lhQcWi1LCFxYbZotVqga1kXSdPKPJLMvRdLB78GQ+XlhDwtYHcu0Yzq6mumHWccVqBgp
+         BD08LVf188vzwrBZAF3djkaPFi0Ki5a1u2vFbc4TPJBG/UHgKBN+BBttbQ4poh9aLYkG
+         R84Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXjdOPXUOfHkujSk6ZgoYgBmyQhoLL9XwFQ0q8ODd05mI7H/MHnU8ugiZoi2Wlpp3pfb7ajLRxXZJfjVXA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwthgZ18hDAJ3fLNJ2zpP5mhJoGHdKgKcsGyk+h8rHWTNECDjJZ
+	Vn+pAa3YYjDj/s5wszKzzko/W6UJgxjWNh9NVORVUsnelmwvShqILNB0SdS9vA+Gcz8=
+X-Gm-Gg: ASbGnctmPhfDuZ5FDIi7nlkxqu5cNsmgoTo3tWYEjHYUF+4Ftk16rLP5dkJKEq92a0t
+	WzkbYF4AkB5S66Fa3BleSg+x4nRj7dqSpf4FFvYOCjoXBntv/6iAQW8O9vw1P+O6L99v+Cm4Oo1
+	oNMFoIchPGoue/m0Nlw++F8imSD6cTVF6c0jqV7pt2m5EBdl3KFfU+1omJk3h7aTWxHm5RuAP/u
+	C/+gLzi5ucgu6GECLVu96dx7nK25aG0FXZuI2rfIKCHDVuytBnMGNZIum/6Jv2sYqYN5/MwhqBn
+	8RRb+4TfHAUB/fxpB9+nUUhm2t1owbi/upWKQ+1XTvGjUxcHD0X03nY6I/6F5TdniZm7gWwALnK
+	a8iGDZWN8zB7eMBky9lk3
+X-Google-Smtp-Source: AGHT+IExwHPQDdMmrUmU/Gt9OCBOCpSUvUeFlozS00WZfFCFEsNWqjNIoRXAmCYpPytPWPAcbS0LDQ==
+X-Received: by 2002:a17:902:db01:b0:26d:d860:3db1 with SMTP id d9443c01a7336-28e7f329234mr51251095ad.24.1759334494849;
+        Wed, 01 Oct 2025 09:01:34 -0700 (PDT)
+Received: from ziepe.ca ([130.41.10.202])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d1d24fdsm196895ad.93.2025.10.01.09.01.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Oct 2025 09:01:33 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1v3zGm-0000000D4Pi-2l7S;
+	Wed, 01 Oct 2025 13:01:32 -0300
+Date: Wed, 1 Oct 2025 13:01:32 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Johan Hovold <johan@kernel.org>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>, Sven Peter <sven@kernel.org>,
+	Janne Grunau <j@jannau.net>,
+	Rob Clark <robin.clark@oss.qualcomm.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Yong Wu <yong.wu@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Krishna Reddy <vdumpa@nvidia.com>, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/14] iommu: fix device leaks
+Message-ID: <20251001160132.GX2695987@ziepe.ca>
+References: <20250925122756.10910-1-johan@kernel.org>
+ <20250930182158.GS2695987@ziepe.ca>
+ <aNzxWZlWmQMokLd_@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="zSArzN4a0ml7zZ+a"
-Content-Disposition: inline
-In-Reply-To: <CACRpkdYXh2MCs=vAif7BpxfYVRuDTkYYNwpV2t=J_ZRW+N4Vyg@mail.gmail.com>
-
-
---zSArzN4a0ml7zZ+a
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <aNzxWZlWmQMokLd_@hovoldconsulting.com>
 
-On Wed, Oct 01, 2025 at 01:29:01PM +0200, Linus Walleij wrote:
-> Hi Conor,
->=20
-> thanks for your patches!
->=20
-> looking at the drivers it appears to be trying extensively to make use
-> of the pinmux =3D <>; property to mux entire groups of pins.
->=20
-> pinmux =3D <nn>; is supposed to mux *one* pin per group, not entire
-> groups of pins from one property. See
-> Documentation/devicetree/bindings/pinctrl/pinmux-node.yaml:
->=20
->   The pinmux property accepts an array of pinmux groups, each of them des=
-cribing
->   a single pin multiplexing configuration.
->=20
->   pincontroller {
->     state_0_node_a {
->       pinmux =3D <PINMUX_GROUP>, <PINMUX_GROUP>, ...;
->     };
->   };
->=20
-> So e.g. when you do this:
->=20
->        spi0_mssio: spi0-mssio-pins {
->          pinmux =3D <MPFS_PINFUNC(0, 0)>;
->        };
->=20
-> We all know SPI uses more than one pin so this is clearly abusing
-> the pinmux property.
->=20
-> It is unfortunate that so many drivers now use this "mux one pin
-> individually" concept that we cannot see the diversity of pin
-> controllers.
->=20
-> I cannot recommend using the pinmux property for this SoC.
->=20
-> What you need to do is to define the actual pins and groups
-> that you have.
->=20
-> Look for example at
-> Documentation/devicetree/bindings/pinctrl/cortina,gemini-pinctrl.txt
-> drivers/pinctrl/pinctrl-gemini.c
+On Wed, Oct 01, 2025 at 11:16:09AM +0200, Johan Hovold wrote:
 
-Does this driver have a mistake in L2074, using ARRAY_SIZE(idegrps) for
-dram?
+> This seems to be more a case of developers not reading documentation and
+> copying implementations from existing drivers.
 
-> arch/arm/boot/dts/gemini/gemini.dtsi
->=20
-> This is another SoC that muxes pins in groups, not in single per-pin
-> settings.
->=20
-> Notice that the driver in this case enumerates and registers all 323
-> pins on the package! This is done because some of the groups
-> are mutually exclusive and this way the pin control framework
-> will do its job to detect collisions between pin groups and disallow
-> this, and that is what pin control is supposed to be doing.
->=20
-> I.e. do not orient your design around which registers and settings
-> you have, and do not model your driver around that, instead
-> model the driver around which actual pins exist on the physical
-> component, how these are sorted into groups, how the groups
-> are related to function (such as the group of SPI pins being
-> related to the spi function) and define these pins, groups
-> and functions in your driver.
->=20
-> Yours,
-> Linus Walleij
+IMHO the drivers are mis-using of_xlate, it shouldn't be looking up
+drvdata at all.
+ 
+> > IDK if it is worth fixing like this, or if more effort should be put
+> > to make the drivers use of_xlate properly - the arm smmu drivers show
+> > the only way to use it..
+> 
+> As Robin pointed out, those drivers just drop the reference as they
+> should (even if I'd drop the reference after looking up the driver
+> data).
 
---zSArzN4a0ml7zZ+a
-Content-Type: application/pgp-signature; name="signature.asc"
+So I wrote the series to clean this up and drop the calls to
+of_find_device_by_node() and so on.
 
------BEGIN PGP SIGNATURE-----
+I left dart, exynos, msm and omap as-is, so I suggest you trim this
+series to only those drivers and rely on my version to fix the rest.
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaN1QKQAKCRB4tDGHoIJi
-0puOAQDMo5Bj9XIN7xULUdx0oMVaQc5LjDG9IFOX/1SCEL5IrQD8DmsobD2MGHc/
-ptOwAaumG6nss81NMRYXb1jRXfLSTQg=
-=IZ1k
------END PGP SIGNATURE-----
-
---zSArzN4a0ml7zZ+a--
+Jason
 
