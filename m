@@ -1,87 +1,80 @@
-Return-Path: <linux-kernel+bounces-838587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB5B6BAFA3F
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 10:31:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A167DBAFA57
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 10:31:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE28E3B20CC
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 08:31:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 302F21889739
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 08:32:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DF3F27A90A;
-	Wed,  1 Oct 2025 08:31:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 360FB283FC2;
+	Wed,  1 Oct 2025 08:31:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XDnLYHNF"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MqFrzzrq"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C12921DDC1D
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 08:31:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25EBD275AF5
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 08:31:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759307478; cv=none; b=TDEDp8CpkznQbBCaDhB5nO5mlc18r8jNXEuje1CVLRYIInpA76L3diFZPv5LaLlYXZvvxUVI58BeoyBtw4oAolkejQzFzCVbfu0fd4L3cd/5jyPrNxLaesNAq/XccKmXshw5XgLoYNsfUfh0fXqW2rEVpFYLxwvwQpBwWOdLIMg=
+	t=1759307502; cv=none; b=jYAmyJhWKnOr3JayLvgdGsm3jVsdfyja4nQLGaHhn0PPsPljUFk8hCIkWkQsKJpxtTJ4Yu0YpRGB0bxXuBY+dVknOsgsyxrLa02TsNxZc7rsDQS8LJ/KBzCJ5TQS2zhe0k1ibAnJ8Yub30a4PuVs9PhSqCIUBFYe/zoEUkreg3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759307478; c=relaxed/simple;
-	bh=rvWr+qW5iRruB8PE+IXtAXff+O7p4eTPZC0KfWJkMsg=;
+	s=arc-20240116; t=1759307502; c=relaxed/simple;
+	bh=wlepJl/FDglC7Iq5FuOQ6VBskFRpNf8YuU3NftOhPfw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZTxXUvHv+wNiYuj1q1TLb7IIeepslaGRadYZ8hJqf9IxsZLmuoTO78d09nRzH3NL+xvDSTX0/ACzCKnEhXAq0V/Vcf4zA0RGbkHMm5EBu6UQRtBoCaWJhDjFv7qRPuKCaQ8QXETdFQAZggG8QZVuHto+4cO7YK9badXfd4bG3Tc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XDnLYHNF; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759307474;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=fbIlFATZ6UVCcGy9lyO07KqDsSW2SUYrIm+1237ezXk=;
-	b=XDnLYHNF1A3DkYsb9Ai0MRpuAPPmToNSvyXxwTlhe02EJSfRqWd4HbCVy4H/Fcyyz0rtnj
-	qnYDTOh2XtumIoJvwPm7px655+WaddWMOjw9hvTgiOM0MHWw/49w6ntjlSzU3iolvsT8NJ
-	veGzA81FlIYXRme6Gwah6T1wvbfxFus=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-284-tGfYEA2yNcqbl7XkxV5FfA-1; Wed, 01 Oct 2025 04:31:13 -0400
-X-MC-Unique: tGfYEA2yNcqbl7XkxV5FfA-1
-X-Mimecast-MFC-AGG-ID: tGfYEA2yNcqbl7XkxV5FfA_1759307470
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3f384f10762so4280851f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 01:31:12 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=MTOYTJJ7IptSJM+MJ49iNosXmmcg5Z6vQufKxSuafQzQdnSgVsng/wEibOrD1OnDDW7L8zZ5S5NESsGHJvmDCrVz35okqQqv2YpQe1l2kChOiTGM/jm3DGuJMDi6jyxbMnB4rFcKu5S/0qrmDpgEKaqTuSXDdrqE+CNx2skWq0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MqFrzzrq; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-78115430134so4010202b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 01:31:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759307500; x=1759912300; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Q/BnQS5ICJGbt/butX83RKxPPfruJQzobXgxFKJ0MdI=;
+        b=MqFrzzrqmvEAtBO2NWim8lp+Ze+0Ee79O/9eg0AO4pUbTq8PqWgK+ANvRTn4S4uEYj
+         JDINeU+D9kJQ4vREinXqSKtO9xj7E18HjNDNU9Wa9mQxTRE0VdTLx8A01Imfpdv4lSrk
+         BQlIcuIhUwpyBSpD/bqso0LEqr4DVaLLHKgl/KHbtZkTyHAc6OfAJpCy8FqXaB/dA/Um
+         bhwJoUOL2T8+cUpHluIsA6U6n9NzH05hwyJIKujlpWdQ0hGj3c4kdi6mFiftJLY7rR97
+         RzI4tbUBuQh+SawbQGvJpXzMWP+MrxVRrtKh2QDGzDOY+0eJ5zUPvPXmG2CmIvdqN2kd
+         lp3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759307470; x=1759912270;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fbIlFATZ6UVCcGy9lyO07KqDsSW2SUYrIm+1237ezXk=;
-        b=FQw3x2/WKhbBp1aY8xQlDEsMLPsudKMTSujaT7i6KdNnNqFWGFSx34G9hqMISOnWiy
-         8DHqm+HhkbgizzkVwAGjpamPnLtlYqGXG9d25kZ0ACt1XRgXqKQgGSpHQet9iOp1ku2g
-         GrDZEFpA1sBwSTdOioGgngXzkC3xOovpuPM8Oixtut6M5F0/uK0DXSjjWdhCSNgMpuUk
-         UcSqB3s00I43P2m6JiH9UjwpxPn5InMwdSOkFD3g98yQuVnrnXBsOp5h2HYLGl92bOx/
-         NqYGBDaOiH5qRSvfCDsFSItOLYne4l6yuYSmhiQwZnZfB90hrc0Xjq+UOH4MZU5xHMxm
-         5APA==
-X-Forwarded-Encrypted: i=1; AJvYcCUQKQf9mW4NmRbP6b79iobfVsmImyA0DlqrZv7gG8f0wdXNtGiPjEhxeU2RTm2gdiUKFviLLbP3J2FTtO8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKADd01aIjGe8exB08vH0B87DW95qq6rBWgTgrYYsWsVGONjWG
-	Izr7EGd0dMaJhr87hxwNrevqtiIQZr6U+IpnFyvofD8Fs2C7dymRYbZLkqa8H/GVrfxTkKYNhlD
-	Wl9ug6hbnd650N1FprponzPLPoQKenikysuhpNXRU8fHXsgc5x/UTw6dQl/+4wV5/2Q==
-X-Gm-Gg: ASbGncvXxGqqW0teIjSyKyEF84WKsmw0x/LAJWqFv+MPVMPt3Z6UdwxLRKfRX63kGV/
-	jpW2WObVjjA5yNA/hPkyo6z4rglPs0vO+gHXhv6PlSm7FVTvOXbn1AjMlHyRbXfHav86j7xPoNa
-	jNjihrCSlEnOjc+xE6KpY/SpUVqLQAvuNlkhhoWPtC7rol2n/iyiSQWLuWPUn18WdY9S2r8gG5C
-	6UspPYHKNaxaCuplHWnuRIe621McF4jVuD+KmIi32mlf5ODtM3KMlU3AsTLj+KhPcGATnFOueMb
-	EEzcqu1sDjB+rgUuBuV5vYrcXZXH/Rn2FCpIzYiKDaqQSZ7CxdI4fbNfEjSwr3DOkK0O0oYUekb
-	WskvGzvuN
-X-Received: by 2002:a5d:588a:0:b0:3ec:248f:f86a with SMTP id ffacd0b85a97d-425578183aamr1941042f8f.48.1759307470279;
-        Wed, 01 Oct 2025 01:31:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEnDRo/HdWJbr5v9aDJ0k8vKbpUkQ5j+9O/NfoSAui1M83Tp2E1gqTmYLdgDjWsOAfIifq5WA==
-X-Received: by 2002:a5d:588a:0:b0:3ec:248f:f86a with SMTP id ffacd0b85a97d-425578183aamr1941007f8f.48.1759307469775;
-        Wed, 01 Oct 2025 01:31:09 -0700 (PDT)
-Received: from [192.168.3.141] (tmo-080-144.customers.d1-online.com. [80.187.80.144])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e61a029a0sm27915195e9.13.2025.10.01.01.31.08
+        d=1e100.net; s=20230601; t=1759307500; x=1759912300;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q/BnQS5ICJGbt/butX83RKxPPfruJQzobXgxFKJ0MdI=;
+        b=b75mKX2rkh2v05i2l2WSF1w5hug3ZXaa4MC1vxfHaynJMcYN3MmficHyIhDY3rQHoM
+         nL+zCfy8nbrKzlifovxxDAeGC18ZRmxjexQcCzoB6M/8UGgJyEw/3IxTyvYUQPVHFNk2
+         qqynuGeIQsQT1d4EQKjauhEErRH6TEPazldB2u3JMWymN58/AO0QA6w8Eae8urZ8nHmC
+         o0JModVLZ6hS8ZqqUXrfmW+9HLVD6FRcIEB3cXzsDOndSUztXY2P0Xbfn1/qcUaLK4Uy
+         VqyAQaiOYri1NLTmsTgUCuheykj8JpK/SoKW8bicrjvVPQf/NwBzuoosfU0eXhuUzFqk
+         ORew==
+X-Forwarded-Encrypted: i=1; AJvYcCWTW9q+3bGSEeGRk0dEV3VZYm1jjVO3PIgz7g4AkrKmHtlNw3pB254Lg+VHj0PXWXxAt9UoImSodaoxucc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9VEJq31amnsibID+HS88T4wR63iYawPjv9TtF8lGQ+S0/zQXo
+	CzfVCzGJp/vWuT2gx/fT0mRFTfOg1byBOUAup1chOAOOIrQ+c3oahA+J
+X-Gm-Gg: ASbGnctb7Z2ykgKVVzsFieq99uUWtXgxS8jZRmOmPHVBaMX8TJb2AU53KpYNIhZTpTM
+	uPJcqW/ZRT0fTNiRfO/VFflq+obsdIQVDSUkjPl8zv7CGvE1jEbOM4Kr3NhKypmQfMPHJfk84xP
+	EKbLKqwDbDXs/mkD2KDNtVSNwTxkHUIlAaa2AzOLnqwbyKrfLfpugrHSO46e3jC5E2Iuqn/dLGl
+	9mXZfws5qXzk8mg0PoosqhXPRTfP75jf7P+PFyDFB3FURsM6Efxnjm8Sz9nOsBQVVJZDCiV0w/y
+	3/PWRfKmnFF5cNZlmiakCo13ViPYnMzam9/nyJ9kCONAsYom8kfIcPBwsllitIn5EZgh2ejIbt+
+	RERLz11HN9MpAkkI6AwtNMMmI73PwFFDA6jKAYHAoMRKO2bfX8CF7ov7BbDL2Vg0zq9Le0mMysr
+	IyZ55c
+X-Google-Smtp-Source: AGHT+IGKzyuHahUxvEYMTvpgcvyvBiorHG33cuSCeL+2u5gG6jYyCteWnCT8fMENWTmD8XlLl3NMWw==
+X-Received: by 2002:a05:6a20:72a7:b0:30a:267b:b9e8 with SMTP id adf61e73a8af0-321e43a2022mr3642212637.36.1759307500186;
+        Wed, 01 Oct 2025 01:31:40 -0700 (PDT)
+Received: from [10.0.2.15] ([157.50.93.46])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b57c55bdefesm15501448a12.49.2025.10.01.01.31.20
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 01 Oct 2025 01:31:09 -0700 (PDT)
-Message-ID: <f07edfc2-0952-486f-ae47-5e3bbd77e4c0@redhat.com>
-Date: Wed, 1 Oct 2025 10:31:07 +0200
+        Wed, 01 Oct 2025 01:31:39 -0700 (PDT)
+Message-ID: <7cc900dd-a49a-4f37-88e9-6794e92fc7d4@gmail.com>
+Date: Wed, 1 Oct 2025 14:01:24 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,97 +82,65 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH mm-new v2 1/1] mm/khugepaged: abort collapse scan on
- non-swap entries
-To: Lance Yang <lance.yang@linux.dev>, akpm@linux-foundation.org
-Cc: lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, baohua@kernel.org,
- baolin.wang@linux.alibaba.com, dev.jain@arm.com, hughd@google.com,
- ioworker0@gmail.com, kirill@shutemov.name, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, mpenttil@redhat.com, npache@redhat.com,
- ryan.roberts@arm.com, ziy@nvidia.com, richard.weiyang@gmail.com
-References: <20251001032251.85888-1-lance.yang@linux.dev>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH] net: usb: lan78xx: Fix lost EEPROM read timeout
+ error(-ETIMEDOUT) in lan78xx_read_raw_eeprom
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Jakub Kicinski <kuba@kernel.org>, Thangaraj.S@microchip.com,
+ Rengarajan.S@microchip.com, UNGLinuxDriver@microchip.com,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ pabeni@redhat.com, netdev@vger.kernel.org, linux-usb@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ syzbot+62ec8226f01cb4ca19d9@syzkaller.appspotmail.com
+References: <20250930084902.19062-1-bhanuseshukumar@gmail.com>
+ <20250930173950.5d7636e2@kernel.org>
+ <5f936182-6a69-4d9a-9cec-96ec93aab82a@gmail.com>
+ <aNzbgjlz_J_GwQSt@pengutronix.de>
+ <e956c670-a6f5-474c-bed5-2891bb04d7d5@gmail.com>
+ <aNzlNkUKEFs0GFdL@pengutronix.de>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <20251001032251.85888-1-lance.yang@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
+In-Reply-To: <aNzlNkUKEFs0GFdL@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 01.10.25 05:22, Lance Yang wrote:
-> From: Lance Yang <lance.yang@linux.dev>
+On 01/10/25 13:54, Oleksij Rempel wrote:
+> On Wed, Oct 01, 2025 at 01:40:56PM +0530, Bhanu Seshu Kumar Valluri wrote:
+>> On 01/10/25 13:12, Oleksij Rempel wrote:
+>>> Hi,
+>>>
+>>> On Wed, Oct 01, 2025 at 10:07:21AM +0530, Bhanu Seshu Kumar Valluri wrote:
+>>>> On 01/10/25 06:09, Jakub Kicinski wrote:
+>>>>> On Tue, 30 Sep 2025 14:19:02 +0530 Bhanu Seshu Kumar Valluri wrote:
+>>>>>> +	if (dev->chipid == ID_REV_CHIP_ID_7800_) {
+>>>>>> +		int rc = lan78xx_write_reg(dev, HW_CFG, saved);
+>>>>>> +		/* If USB fails, there is nothing to do */
+>>>>>> +		if (rc < 0)
+>>>>>> +			return rc;
+>>>>>> +	}
+>>>>>> +	return ret;
+>>>>>
+>>>>> I don't think you need to add and handle rc here separately?
+>>>>> rc can only be <= so save the answer to ret and "fall thru"?
+>>>>
+>>>> The fall thru path might have been reached with ret holding EEPROM read timeout
+>>>> error status. So if ret is used instead of rc it might over write the ret with 0 when 
+>>>> lan78xx_write_reg returns success and timeout error status would be lost.
+>>>
+>>> Ack, I see. It may happen if communication with EEPROM will fail. The same
+>>> would happen on write path too. Is it happened with real HW or it is
+>>> some USB emulation test? For me it is interesting why EEPROM is timed
+>>> out.
+>>
+>> The sysbot's log with message "EEPROM read operation timeout" confirms that EEPROM read
+>> timeout occurring. I tested the same condition on EVB-LAN7800LC by simulating 
+>> timeout during probe.
 > 
-> Currently, special non-swap entries (like migration, hwpoison, or PTE
-> markers) are not caught early in hpage_collapse_scan_pmd(), leading to
-> failures deep in the swap-in logic.
+> Do you simulating timeout during probe by modifying the code, or it is
+> real HW issue?
 > 
-> hpage_collapse_scan_pmd()
->   `- collapse_huge_page()
->       `- __collapse_huge_page_swapin() -> fails!
-> 
-> As David suggested[1], this patch skips any such non-swap entries
-> early. If any one is found, the scan is aborted immediately with the
-> SCAN_PTE_NON_PRESENT result, as Lorenzo suggested[2], avoiding wasted
-> work.
-> 
-> [1] https://lore.kernel.org/linux-mm/7840f68e-7580-42cb-a7c8-1ba64fd6df69@redhat.com
-> [2] https://lore.kernel.org/linux-mm/7df49fe7-c6b7-426a-8680-dcd55219c8bd@lucifer.local
-> 
-> Suggested-by: David Hildenbrand <david@redhat.com>
-> Suggested-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Signed-off-by: Lance Yang <lance.yang@linux.dev>
-> ---
 
-Could have mentioned you adjust the flow of code to resemble what we 
-have in __collapse_huge_page_isolate().
+On my real hardware timeout didn't occur. So I simulated it once by modifying the code
+to confirm the BUG. The BUG has occurred confirming syzbot finding.
 
-Acked-by: David Hildenbrand <david@redhat.com>
-
--- 
-Cheers
-
-David / dhildenb
-
+Thanks. 
 
