@@ -1,163 +1,135 @@
-Return-Path: <linux-kernel+bounces-839040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A9ACBB0AFA
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 16:22:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C67C6BB0B06
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 16:23:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0554B189B5AD
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 14:23:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13D093C5074
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 14:23:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C53CA25F780;
-	Wed,  1 Oct 2025 14:22:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 849A026158B;
+	Wed,  1 Oct 2025 14:23:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AnFdWvwj"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gdW/Z6nF"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FF9D212B31
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 14:22:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FFAA48CFC
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 14:23:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759328572; cv=none; b=lzzqNWp677hg96c11qOqBpNmoj3dzUpEw5wWevkVekO99uwgdAOtiv7solOipHjSniBe7YW7Iw8CXCwk8g2EXeJS1w+xEDA4R6gH5ZGb/33IOu6Dsx67eitk0F2b9x1ESX595RtqZL/87tY/+V2HL0l27uYm7Gahh0JxHZ3mSqY=
+	t=1759328589; cv=none; b=ECe11bst5NL3ow+CrS55wNtvl/RA/qLMU0aQA1Fyfd01TNHMrjk52etUvVmiFoL074EkrYqh9n+j2Xtnt8gNGOZ2/kjniBFzXkMO7Pbb6LCuWp18HOJLEzuXG/s9hqKDcgRayTrQoDiGu3sQpNKATGUYDrNoCdZ9fQ7iOdsVLCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759328572; c=relaxed/simple;
-	bh=r//BOeg6hJFiIpgXCGuyUcHwsmeUXaZtItuSCfFTHEM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LNy3ZwxW7EVBJaWGZJPp3B8aVS2uLxVXdr9zXbQ6bfnIrxak4BmPpHLjSFK714P3XBY7r+l54X1S66P0JpORFfUMtqfpOrRMY+kQnpMEaREGxbQZdVtdHCDBmTaavUldtQqOfefqD1JhWhPmCKht//YkmYU7J6parQ1nbtbEeeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AnFdWvwj; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b5f2c1a7e48so929561a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 07:22:50 -0700 (PDT)
+	s=arc-20240116; t=1759328589; c=relaxed/simple;
+	bh=FmtIBDf5zkip6g4eD/UswZPBKwOpkuCPfzBvxBmzoQ8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FAaFzWfmW/XVZiSFnKOxdO3yd7JyJ7CJxhJMmddRlFMSpyP1RCklcSpCt+OwMByZEGnJKJENS27HdKcBmOoxk2ffow9Tj0mQj/Bstx+//lET15i5/KKL/47Mkr3p9NGdHcBnYVILXan8vlQJpGK/ppyDhEWiJcVW+458urjGxMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gdW/Z6nF; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2731ff54949so155025ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 07:23:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759328570; x=1759933370; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TZWPPQ16OuhZ6r+akwzEf9yapy+ye4jCYQdCK+8Qq+M=;
-        b=AnFdWvwjLnuMnEgtdiqGt28oZTIphJMJUYJBikA82HLCyxwwrzonbv5yZD1H0aJJtg
-         eTcbUjd+0fkjE+TaiRrb7NdXz1xpGukphjKGkhkVU9B1p6YODCHMRXDD+zCXfNwmtdpC
-         jiBfpLQaA3Yh8IqtlIekQ0andiiorSBV6auLv3gzc6Go2TXsyw4s9cqMuGaZCBRTpvZz
-         AseDC0oD0z0o5T9BrUM1i4nNYC8m5zypDiHa1tU/t1DW3bVrPRESTLSAKOLLJd7LfwJY
-         pzyCFIeZ+1yAS5334k2OPVOZhx2RtKNW2CImP5aAfd80Y7AD+NuoL7Zf63oJpKjmgvLB
-         nE8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759328570; x=1759933370;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1759328587; x=1759933387; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TZWPPQ16OuhZ6r+akwzEf9yapy+ye4jCYQdCK+8Qq+M=;
-        b=d7nVUYnDqjn/JNetUb4Bn+6qG4HxgFDZZ1rbETqGovqT4RuctpuNfUQGAXoU3cfYNP
-         bkuraacLW9DyeMYzc+v/QDUgVZAscR+M+zL8BeVKnS/wqu/8PVnD85Hua57PQUs0y4nf
-         yph6wgo+vzIDZenmh6/mo/hrkOV6n5YWIWcG22TlyqO5WrSvNraqB5EeEgNDwtvi8HQA
-         7aHOM7fsiGQxDSUy6H5mVhTFRbjJgZrEZV7C4SsfO4xxRoZghWlkpwpT45LVzTDaebZv
-         J1hCWDLmwYnRMWQSNl2PJ8GCbcKVl1xdqfTEF1U+BxE9mCbFHFHNKROJV69BvnuVGk9G
-         REtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXjfvqlWKnqIc9BUNYmQjc4fEhbf03NCBmGzSpaZwC6mbfS3jiEWlGgqyz2mFl4ALJFAVQmlJTjNapSHso=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCaE9/MUKJ10EUbQHKsqQh5XQSThdRscuIkR5XMfB3+dh3tx+o
-	hNC+CXY40KAvIYBgvFOlWlzSYh4jTzwI5xxIS9wC+A8wMQt2YuZcOKcaVF6GK0FYSGs=
-X-Gm-Gg: ASbGncuelOxurz0jfd/4UvGQ+l1gHALb8Okf/qZdTmz+6tJSLnYiaevLeYrNiQb/D4y
-	uUkcPRS54i5GwiQt2N3EhQulZWUs/2trCSRZt2bDwKQy5zVpfFcXRoFrVqGqtOQAZIP525y0b6l
-	25sRafRLYBm3POe8Cn+6VVtZJlDpNXMyzpFfnTWqDlsxtITQNVjZiz4btkzThresGuwAyDGOdKB
-	Ge0Zya2e7SROOZ0LsiGghVO5TxNrCkkOgFtGtLJtLaVueMWlQgWKOAWF9jcFf/jNpmlBjtVmclr
-	GbbgYWxOxptOdJL6i4HGS/GR1Ek8mI4Q956J01iTTb1Hz6GTAbisg0Mg4LViJ2x0zMRnoanGm+F
-	XOsMPzJOJ0sd65kx2si9+hWaaJGlO24/BdAWyJrQc2ayRm+7+Znmuv2rHAozZulbG0ZO7T8qIof
-	X/ftVCvM09r8MjC2069CL4S0jhzdLduOLofkVAwVRKcbqDF+b/
-X-Google-Smtp-Source: AGHT+IHqVeD/wJUVy5+C2bUJIvZQddubc9m4Xd4Qgoes6H6s3Vr0Kf8vrqdjy3H/lxWJPRN6L5BOvg==
-X-Received: by 2002:a17:902:f546:b0:264:70e9:dcb1 with SMTP id d9443c01a7336-28e7f440582mr49997025ad.56.1759328569779;
-        Wed, 01 Oct 2025 07:22:49 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:8417:c9b5:17c4:6237])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed6aca043sm186020025ad.138.2025.10.01.07.22.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Oct 2025 07:22:49 -0700 (PDT)
-Date: Wed, 1 Oct 2025 08:22:46 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Hiago De Franco <hiago.franco@toradex.com>,
-	Frank Li <Frank.Li@nxp.com>, Daniel Baluta <daniel.baluta@nxp.com>,
-	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/6] remoteproc: imx_rproc: Use device managed API to
- clean up the driver
-Message-ID: <aN05NsINB25lW_Lg@p14s>
-References: <20250926-imx_rproc_v3-v3-0-4c0ec279cc5f@nxp.com>
+        bh=IRDU21uoioJAyRtmdoNLfN5ywa86kEkXqLJeusadAtI=;
+        b=gdW/Z6nFLRNc4cAm1wrmorxHwQiAEeA6CEMmmZFMoFH7iQaiE7CdVb3SCEmKbrACX3
+         yh7X3cB3QpmsAAYdItjp8HHjJ5DsQhko1qDwxRQ2qh9RLghBlUo6Wnktvvt+VThSM+2S
+         aM5aCj6W0tEGW/ue/cMXv3BHj0IjQ+HQMtWN6sEgjNHiLA0ar5a0xTd15IpA7st66D5p
+         SKYoTEE4yxFyIVz6n4QHrPPyifOsgD9sFWbaHK4S/JkvuxlSdhI2LYuBkZqKfHejVDpc
+         FAJzU1j9kdV7KWbsHxuFLXsMkk0md6jH93AlLp+1aEBhu/xCHKQXNh6YGWo+BO1SyZMR
+         p3Sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759328587; x=1759933387;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IRDU21uoioJAyRtmdoNLfN5ywa86kEkXqLJeusadAtI=;
+        b=MCYHg6GDy4X4D55vGlCHfP73k4KqoYPCJKcXFSRAiX4SKJNlab7nlGJQTG+gNl4Oqv
+         NYQ+CT/PLxID9xmKows0NhKrvDRyPWYdTxxmzsylsjO6s+nqtDNrxPHhCyzcdO7dEhen
+         5mm9YvryzlgPAeHJ81y1EX8Y2UixBB0MmoqP2ExBS1qKWxxFYgrpqUPrnkaxQaIS/Drq
+         wiliPJ1uZyA15VZX3ystu8kDiByZAPNKIymJbC6kSeYNslNZ9ZxVJdLc5P7UXhUr1RDu
+         bt4VWgS84Rc+CoVhSdzzHiUk4HjcV70rL5GBf9tLTDZFNvgvs3btE7oEGZCWp3Y/9Va6
+         2T3g==
+X-Forwarded-Encrypted: i=1; AJvYcCVPDt2ZyUhqoEYo1GLXdb7MJnI8GVnffffPSAIsP6xqkb/JA6u1I7Zhvsb2/Y+UDRV1qgmi6q/w18IopV0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrTZaBINaLev2RA6AgFTVxeQ9m1uAO5F6yGiO4KW3HjaAIm2j4
+	enHNKeKnkKElsBx/uHqIF1JyeOXI5njh9SsijPN3M2F2eRfKlsZG3D+JZtsyTqWmkGRFiKljYDq
+	9UPjJnYhIbjqWWY5+T+o5ccuWDX27VYqw7mRdMTV6
+X-Gm-Gg: ASbGncubeDCw3H2SaVUZvqy1NkKWGvLx5LPIh1rA8JoRyYAHbi1lb7l59TZDbvXkViy
+	rWGyEu93Bq8rZyaAvsN9r8WPVzJVIL0g7gynR+1E8NPPSnrQkgk7w3KRX4D8H3HE+v73MOsOQCH
+	m5f2P1EeIEBUpHBsYT9kLkIgwYqoCfjHzCphcWvUIBhlAJ+JkG24wCtqKCoNDTLd7cS5AHmXzIZ
+	d9LvGKHiCMyz9/mbGIh6EriQfgew9/D2LfuyBW1FSnRUZ/xZuvYQoWl+onYd22Spx3StX5FyQjW
+	hZrHTw==
+X-Google-Smtp-Source: AGHT+IFjNi8Io1yPUrwHGeOkJcDsUObFSv7z+2KeefYqjzChvcYJ2tFoLRup7oLYrJhe7J5OIZo+sAxoga+39UD3Lok=
+X-Received: by 2002:a17:903:1aac:b0:27e:e96a:4c6 with SMTP id
+ d9443c01a7336-28e7fdd7471mr5306875ad.2.1759328587100; Wed, 01 Oct 2025
+ 07:23:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250926-imx_rproc_v3-v3-0-4c0ec279cc5f@nxp.com>
+References: <20250926163114.2626257-1-seanjc@google.com> <20250926163114.2626257-2-seanjc@google.com>
+ <CA+EHjTzdX8+MbsYOHAJn6Gkayfei-jE6Q_5HfZhnfwnMijmucw@mail.gmail.com>
+ <diqz7bxh386h.fsf@google.com> <a4976f04-959d-48ae-9815-d192365bdcc6@linux.dev>
+ <d2fa49af-112b-4de9-8c03-5f38618b1e57@redhat.com> <diqz4isl351g.fsf@google.com>
+ <aNq6Hz8U0BtjlgQn@google.com> <aNshILzpjAS-bUL5@google.com>
+In-Reply-To: <aNshILzpjAS-bUL5@google.com>
+From: Vishal Annapurve <vannapurve@google.com>
+Date: Wed, 1 Oct 2025 07:22:54 -0700
+X-Gm-Features: AS18NWDxYGbjgzSZArzj-LO4RB9noYp5lSx-_UA5Ump9xA5S6PZGo7guXq4xoNo
+Message-ID: <CAGtprH_JgWfr2wPGpJg_mY5Sxf6E0dp5r-_4aVLi96To2pugXA@mail.gmail.com>
+Subject: Re: [PATCH 1/6] KVM: guest_memfd: Add DEFAULT_SHARED flag, reject
+ user page faults if not set
+To: Sean Christopherson <seanjc@google.com>
+Cc: Ackerley Tng <ackerleytng@google.com>, David Hildenbrand <david@redhat.com>, 
+	Patrick Roy <patrick.roy@linux.dev>, Fuad Tabba <tabba@google.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Nikita Kalyazin <kalyazin@amazon.co.uk>, shivankg@amd.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 26, 2025 at 08:33:14PM +0800, Peng Fan wrote:
-> Tested on
-> i.MX8MP-EVK, i.MX8MM-EVK, i.MX93-11x11-EVK, i.MX8QXP-MEK, and i.MX8ULP-EVK.
-> 
-> Retested all the patches for V3 on above platforms. And pass build
-> with patch incremental applied with ARM64 defconfig. pass build for
-> imx_v6_v7_defconfig with all patches applied.
-> 
-> This is the 2nd series to cleanup the driver.
-> 
-> Patch 1:
-> Fix the runtime usage. This is not critical bug fix, so it could be
-> defered to 6.18.
-> 
-> Patch 2-6:
-> Use devres managed API to cleanup the error handling path and remove path.
-> 
-> Thanks to Ulf for the suggestion on the runtime PM fix in patch 1.
-> Thanks to Daniel and Frank for the internal reviewing.
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
-> Changes in v3:
-> - Follow Ulf's suggestion to address the runtime PM in patch 1, and add
->   Ulf's suggested-by tag. I dropped Frank and Daniel's tag in patch 1.
-> - With the changes in patch 1, the remove() is kept, then there are very
->   minor conflicts when picking remaining patches in V2, so I still keep
->   R-b tag from Frank and Daniel for patch 2-6.
-> - Link to v2: https://lore.kernel.org/r/20250923-imx_rproc_c2-v2-0-d31c437507e5@nxp.com
-> 
-> Changes in v2:
-> - Address a build warning in patch 4/6
-> - Add R-b from Frank and Daniel
-> - Link to v1: https://lore.kernel.org/r/20250917-imx_rproc_c2-v1-0-00ce23dc9c6e@nxp.com
-> 
-> ---
-> Peng Fan (6):
->       remoteproc: imx_rproc: Fix runtime PM cleanup and improve remove path
->       remoteproc: imx_rproc: Use devm_add_action_or_reset() for workqueue cleanup
->       remoteproc: imx_rproc: Use devm_add_action_or_reset() for mailbox cleanup
->       remoteproc: imx_rproc: Use devm_clk_get_enabled() and simplify cleanup
->       remoteproc: imx_rproc: Use devm_add_action_or_reset() for scu cleanup
->       remoteproc: imx_rproc: Use devm_rproc_add() helper
-> 
->  drivers/remoteproc/imx_rproc.c | 100 +++++++++++++++++++----------------------
->  1 file changed, 47 insertions(+), 53 deletions(-)
+On Mon, Sep 29, 2025 at 5:15=E2=80=AFPM Sean Christopherson <seanjc@google.=
+com> wrote:
+>
+> Oh!  This got me looking at kvm_arch_supports_gmem_mmap() and thus
+> KVM_CAP_GUEST_MEMFD_MMAP.  Two things:
+>
+>  1. We should change KVM_CAP_GUEST_MEMFD_MMAP into KVM_CAP_GUEST_MEMFD_FL=
+AGS so
+>     that we don't need to add a capability every time a new flag comes al=
+ong,
+>     and so that userspace can gather all flags in a single ioctl.  If gme=
+m ever
+>     supports more than 32 flags, we'll need KVM_CAP_GUEST_MEMFD_FLAGS2, b=
+ut
+>     that's a non-issue relatively speaking.
+>
 
-I will apply this set when 6.18-rc1 comes out.
+Guest_memfd capabilities don't necessarily translate into flags, so ideally=
+:
+1) There should be two caps, KVM_CAP_GUEST_MEMFD_FLAGS and
+KVM_CAP_GUEST_MEMFD_CAPS.
+2) IMO they should both support namespace of 64 values at least from the ge=
+t go.
+3) The reservation scheme for upstream should ideally be LSB's first
+for the new caps/flags.
 
-Mathieu
+guest_memfd will achieve multiple features in future, both upstream
+and in out-of-tree versions to deploy features before they make their
+way upstream. Generally the scheme followed by out-of-tree versions is
+to define a custom UAPI that won't conflict with upstream UAPIs in
+near future. Having a namespace of 32 values gives little space to
+avoid the conflict, e.g. features like hugetlb support will have to
+eat up at least 5 bits from the flags [1].
 
-
-> ---
-> base-commit: 8e2755d7779a95dd61d8997ebce33ff8b1efd3fb
-> change-id: 20250926-imx_rproc_v3-a50abed3288a
-> 
-> Best regards,
-> -- 
-> Peng Fan <peng.fan@nxp.com>
-> 
+[1] https://elixir.bootlin.com/linux/v6.17/source/include/uapi/asm-generic/=
+hugetlb_encode.h#L20
 
