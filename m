@@ -1,317 +1,282 @@
-Return-Path: <linux-kernel+bounces-839599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E4E4BB1FC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 00:27:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 35A3ABB1FCB
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 00:27:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64545189C451
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 22:27:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FA601882C65
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 22:27:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7966311960;
-	Wed,  1 Oct 2025 22:24:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEA4929A310;
+	Wed,  1 Oct 2025 22:25:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YxWQSvbt"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cT637a1H"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11B451E7C2E
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 22:24:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0462C28C849
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 22:25:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759357473; cv=none; b=eVMnG6ooOUEgyn9Bx3K4Tn3pm2pcGI3qlPdJQJaDXFMt9KhZAG17pRZeUlZuEDB/dMuFuhHczgBy70j28eeka8AmAUcQ3d2DKkNM1JOqDbKqgovKacXmJPQjTVGnybMFhWEKlMbmNyWwSSGWrL7eDCUVeW0f4arEGf4/HD8WY9U=
+	t=1759357539; cv=none; b=K+Lm1Rwa+o0kNoAL/PLOvzgoiaBH3Q3Aoe/M9fZ/LRtsM6Ms8lVy7sjWNteIHxW84EzSvjKjrbRPtPceJxWDfefOWYVYGlkQr8GqiJVmKi7J53TdKmbNu5mctV1w7jyo2HsfuaWN70FvvhDXDw8CsrJ6PUFEnZi51OuuJK9ZQWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759357473; c=relaxed/simple;
-	bh=hVce6S5I84XFHeiZCM/nN0xHXZReUryCXvdykFdkIpA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=qhgPzXYM3AEYH/gLihTDXdK/38h0ILziw9VCL0b+Lc8n1JqBNd1dgcBaE37GBzT7Wdfv+vjIEQ2sORGjgvXq6QcBCXf0iFZC6dvVbE06ILw4EgcX1Ok1ZrISW9GYLbSLXh2c+U5oQbYAhU2X7nhasMVNcghSegbEr0G7+5fXB0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YxWQSvbt; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-269a2b255aaso5938485ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 15:24:31 -0700 (PDT)
+	s=arc-20240116; t=1759357539; c=relaxed/simple;
+	bh=gurYv7OmG7JPJ89tnLTtMxBysLOPv42xZbrgsgp8n3E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aOoJaPe4n1qRQJmbZUsz+uBoD+h1UFLFjn3wfNqvoYqHcjLC8txVF+1BQhiZlhwD3bd7I4oEjlYJO9Rqk/R+KEzoDvLILYqASlGoCI3lZAuGPOc6hpH603Gp2sriP13Dln9rHUR9D1cJx3S2Dljng8M0JRXAMwlMJpF0cVCuxek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cT637a1H; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3f0ae439bc3so160939f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 15:25:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759357471; x=1759962271; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=73Hf7u2rrI0J4qCeXbvR8EaJjdYBMjTbk+N0QgWUrbs=;
-        b=YxWQSvbtjLcKhDBGP2PjwQxy4GYYfZGPcoGiNjPNvVi0//Iq32fjnYWCKykim7C1BQ
-         p/6J+nQFyc4UCsZs5KTXiytGbEDsT/U523tvza65mAS9HR4pAw2kkLvsjxM0/y+I2tjc
-         7Y97qUoiZi51oihoMyg3+nv+1eq4pA3tpZniDMK6b7QJcOeOknJCuq80Ir65GADjrAzI
-         QNyWqj7N9r9BUBSHaUCm1VgMyqdZjJ1a/ZO7GdP9jappyekHecy52/KSq9zaOHchu6Lh
-         rNTz04JWhsIs0YydzdAkCIWlaYSQOAvvJx6dzyCW3EZJKGRkt5jduJR9pp9CH15fJscL
-         Wg3g==
+        d=gmail.com; s=20230601; t=1759357535; x=1759962335; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vzvrs1VV2WDiIUvA5i+R/HiHvohIXfIQ0AqUBNp0VuQ=;
+        b=cT637a1H83BMjkUbEWsbSYymtE9rGewSjK86pSQbapKcrVKNtEK9WOVDhhRhvOkz6U
+         Ct2JBMHyvORK5srmMI/5i4br85DbA0IZjKM1rgNKOlrxllG6avk5NZs+E+wN/uZ1sZEb
+         1YsuKiF2aUxw65YedpVoDJDn5u/9R/aBTdX4zCAhJNCBEesP2/BQWNhfj3XzkH7w1qB+
+         LM85Drq+EO74cjbApFx/87Nljompm15Ke6NYiVTUWfLt7J14atUEUpzrn4LB1yKCZBGd
+         wnEi7OXAf8z1cPxxDdkdacePuV7MDoRLZX27RdUW0szqTgZLKomhsDABbnSiWlnAFBda
+         ieXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759357471; x=1759962271;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=73Hf7u2rrI0J4qCeXbvR8EaJjdYBMjTbk+N0QgWUrbs=;
-        b=I9lelxrQDIgCgO/W+IOQvrJUnG7iqf46i9bCNPEMkgJtK+a7EInsPlS1HMfcDRVBXP
-         ARiMbM14z/D9tMI2StKk66SDv0z28wyvyWnEbdN/JZULVXxt8d7p8A5tB5ZXJxR/LM7E
-         W4r6mvDDD1yS2rAsZzJXGdUE9SPrDWA6P47g/ivCtF06ofk2CEEtdkJdNP9DypNspgHR
-         a71QQY6XcWLt1fzlqxcGHhukbxjxrhRRVgIDEhc/FIklsRX/f8d6zEsbcyhc/a1DMg86
-         0OF45pAohZGwma8atWQErVCPN0tBuQvB3fYyXUr3LwUTB2ZMNTi+/UltzC6tM8s8jBrI
-         UIJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXULxCpeAjro0LcpAXnJ36Jnwd7mjK1svrM8oqm24Y/i1NKRCr+PSthzU1yPja1uoNknySQ8yMtIoNoKvI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywx4kc0jH5rSHaNd37lbGq3iEGd1nx9GgfxERU7NxqoFk2O2wAq
-	SQq4DLf7XInDthJtCNq7mQZc5f4eciVFGNPtOKapBLFrsHdTeFQ/hXPsSuIETpaSEK3ESgy4KBf
-	tM3k3xwYtZOjn3xiJN33kOPFg6Q==
-X-Google-Smtp-Source: AGHT+IGCpXl0I0+nSwagJsU1QGY2RcUpV5Mo6AawwSsWOc7zuSI5WI9xzUiHIJcaQ2A4ihXmA+srPzrIYwXmyTHPkg==
-X-Received: from plbma13.prod.google.com ([2002:a17:903:94d:b0:268:1af:fcff])
- (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:902:70c1:b0:269:9a7a:9a43 with SMTP id d9443c01a7336-28e7f167915mr42552505ad.10.1759357471377;
- Wed, 01 Oct 2025 15:24:31 -0700 (PDT)
-Date: Wed, 01 Oct 2025 22:24:30 +0000
-In-Reply-To: <aN1bXOg3x0ZdTI1D@google.com>
+        d=1e100.net; s=20230601; t=1759357535; x=1759962335;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vzvrs1VV2WDiIUvA5i+R/HiHvohIXfIQ0AqUBNp0VuQ=;
+        b=HJylALVmXq1nYTwDmGNlEnUHZDj1NtuKn8TN5gBRRKVdP/U0PtHkYFMtNnyWxF2oPa
+         Z/thwdUEB1qF3NRJSzgJ6nKO/DfpddJZzWw27dTqPcqxM9L/aN2mK3DyuuTI537uEFCc
+         YuTsNpleRWc2vKHSPeLumZ6eDUUhIW9po4rJ1xV3gHeopmcQ2fRXkk0c0i7kgoXt/mRE
+         MWH+ib4SrX+8p9WgbmZikD+dHswt4ayjRKUsUVWUfCzDpZNvBmc+DKWbz7p+XVLNvfIl
+         oKlFZp2E+oCEsiMbXBwScafIy56b5fdu07rwIwfBaZ1SFzvjWwy08Dvt2xcOfS6c+YV7
+         bkgA==
+X-Forwarded-Encrypted: i=1; AJvYcCXf+xZ+8gO/8Mr6HHBJ0Eg9qtAd7kvJnGmoqeaTzemIS1E9ystOsAZb6BLEZY5JZEmZjqFRDgWv3/158hU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyznSrf6X0mmQLwxTXAsdMJ5ZstFK1BCfVmAs7pOSqlXSkBNmfq
+	1CvoYDQ5xptAPyjE2nsqqLRbbjH2ChSfxzW0K1S6OIogkQlzgFh34aUgjMnNJ/vb1t7sr9HIAw4
+	l7GLgXCCY1s6s6U7pkQGT1fCzv7UF/iA=
+X-Gm-Gg: ASbGncuCkY1o6v/uOrHEy87gEDF76JED3tZARK8RDSd6qA06QrFNaJQOybl4OG+8LmE
+	A2jnbJBkSX6rpHh3DLOFonQUIzT0vn2pSrFSZTq/wdo3978mPJnwqMvrL1zCnAOWW4T3yK17zzl
+	3/ADGlDJuZaFx0tJhC47Y4x3pPeJ4FeGIkW0THTYKfDaiO9wrrfSgpMbdOpbOR0wg0zFSkkbQhP
+	KthNwV63RL+/kBMYJ+iKtJJrb9hYiIoNl/u/ItNeEQYT/Jt6wZpN17zsayR
+X-Google-Smtp-Source: AGHT+IHUnBKdFqH+zdDC55FLmxcJJANqI9YCx7pP1qHkYZGc1Je9nusm+GcGOviIHqQ5EYWixbHaoj2wSMOND3KK2p4=
+X-Received: by 2002:a5d:64c8:0:b0:40f:5eb7:f23e with SMTP id
+ ffacd0b85a97d-425577ecbedmr3263574f8f.1.1759357535110; Wed, 01 Oct 2025
+ 15:25:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1747264138.git.ackerleytng@google.com> <b784326e9ccae6a08388f1bf39db70a2204bdc51.1747264138.git.ackerleytng@google.com>
- <aNxqYMqtBKll-TgV@google.com> <diqzbjmrt000.fsf@google.com> <aN1bXOg3x0ZdTI1D@google.com>
-Message-ID: <diqz1pnmtg4h.fsf@google.com>
-Subject: Re: [RFC PATCH v2 02/51] KVM: guest_memfd: Introduce and use
- shareability to guard faulting
-From: Ackerley Tng <ackerleytng@google.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Yan Zhao <yan.y.zhao@intel.com>, Fuad Tabba <tabba@google.com>, 
-	Binbin Wu <binbin.wu@linux.intel.com>, Michael Roth <michael.roth@amd.com>, 
-	Ira Weiny <ira.weiny@intel.com>, Rick P Edgecombe <rick.p.edgecombe@intel.com>, 
-	Vishal Annapurve <vannapurve@google.com>, David Hildenbrand <david@redhat.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>
+MIME-Version: 1.0
+References: <20251001045456.313750-1-inwardvessel@gmail.com>
+In-Reply-To: <20251001045456.313750-1-inwardvessel@gmail.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 1 Oct 2025 15:25:22 -0700
+X-Gm-Features: AS18NWDFsjjNNsPBytmySk7rKJfVZ4JmUJORMaJDq5DI1Bp20yXRuNwLH5i4BL4
+Message-ID: <CAADnVQKQpEsgoR5xw0_32deMqT4Pc7ZOo8jwJWkarcOrZijPzw@mail.gmail.com>
+Subject: Re: [PATCH] memcg: introduce kfuncs for fetching memcg stats
+To: JP Kobryn <inwardvessel@gmail.com>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>, =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
+	Yosry Ahmed <yosryahmed@google.com>, Johannes Weiner <hannes@cmpxchg.org>, Tejun Heo <tj@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, 
+	"open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>, linux-mm <linux-mm@kvack.org>, bpf <bpf@vger.kernel.org>, 
+	Kernel Team <kernel-team@meta.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Sean Christopherson <seanjc@google.com> writes:
-
-> On Wed, Oct 01, 2025, Ackerley Tng wrote:
->> Sean Christopherson <seanjc@google.com> writes:
->> > On Wed, May 14, 2025, Ackerley Tng wrote:
->> >> +enum shareability {
->> >> +	SHAREABILITY_GUEST = 1,	/* Only the guest can map (fault) folios in this range. */
->> >> +	SHAREABILITY_ALL = 2,	/* Both guest and host can fault folios in this range. */
->> >> +};
->> >
->> > Rather than define new values and new KVM uAPI, I think we should instead simply
->> > support KVM_SET_MEMORY_ATTRIBUTES.  We'll probably need a new CAP, as I'm not sure
->> > supporting KVM_CHECK_EXTENSION+KVM_CAP_MEMORY_ATTRIBUTES on a gmem fd would be a
->> > good idea (e.g. trying to do KVM_CAP_GUEST_MEMFD_FLAGS on a gmem fd doesn't work
->> > because the whole point is to get flags _before_ creating the gmem instance).  But
->> > adding e.g. KVM_CAP_GUEST_MEMFD_MEMORY_ATTRIBUTES is easy enough.
->> >
->> 
->> I've read this a few times and I'm a bit confused, so just making sure:
->> you are suggesting that we reuse the KVM_SET_MEMORY_ATTRIBUTES ioctl as
->> a guest_memfd (not a VM) ioctl and still store private/shared state
->> within guest_memfd, right?
+On Tue, Sep 30, 2025 at 9:57=E2=80=AFPM JP Kobryn <inwardvessel@gmail.com> =
+wrote:
 >
-> Yep.  Something like:
+> When reading cgroup memory.stat files there is significant work the kerne=
+l
+> has to perform in string formatting the numeric data to text. Once a user
+> mode program gets this text further work has to be done, converting the
+> text back to numeric data. This work can be expensive for programs that
+> periodically sample this data over a large enough fleet.
 >
-> static long kvm_gmem_set_attributes(struct file *file, void __user *argp)
-> {
-> 	struct gmem_file *f = file->private_data;
-> 	struct inode *inode = file_inode(file);
-> 	struct kvm_memory_attributes attrs;
-> 	pgoff_t err_index;
-> 	int r;
+> As an alternative to reading memory.stat, introduce new kfuncs to allow
+> fetching specific memcg stats from within bpf cgroup iterator programs.
+> This approach eliminates the conversion work done by both the kernel and
+> user mode programs. Previously a program could open memory.stat and
+> repeatedly read from the associated file descriptor (while seeking back t=
+o
+> zero before each subsequent read). That action can now be replaced by
+> setting up a link to the bpf program once in advance and then reusing it =
+to
+> invoke the cgroup iterator program each time a read is desired. An exampl=
+e
+> program can be found here [0].
 >
-> 	if (copy_from_user(&attrs, argp, sizeof(attrs)))
-> 		return -EFAULT;
+> There is a significant perf benefit when using this approach. In terms of
+> elapsed time, the kfuncs allow a bpf cgroup iterator program to outperfor=
+m
+> the traditional file reading method, saving almost 80% of the time spent =
+in
+> kernel.
 >
-> 	if (attrs.flags)
-> 		return -EINVAL;
-> 	if (attrs.attributes & ~kvm_gmem_supported_mem_attributes(f))
-> 		return -EINVAL;
-> 	if (attrs.size == 0 || attrs.offset + attrs.size < attrs.offset)
-> 		return -EINVAL;
-> 	if (!PAGE_ALIGNED(attrs.offset) || !PAGE_ALIGNED(attrs.offset))
-> 		return -EINVAL;
+> control: elapsed time
+> real    0m14.421s
+> user    0m0.183s
+> sys     0m14.184s
 >
-> 	if (attrs.offset > inode->i_size ||
-> 	    attrs.offset + attrs.size > inode->i_size)
-> 		return -EINVAL;
+> experiment: elapsed time
+> real    0m3.250s
+> user    0m0.225s
+> sys     0m2.916s
+
+Nice, but github repo somewhere doesn't guarantee that
+the work is equivalent.
+Please add it as a selftest/bpf instead.
+Like was done in commit
+https://lore.kernel.org/bpf/20200509175921.2477493-1-yhs@fb.com/
+to demonstrate equivalence of 'cat /proc' vs iterator approach.
+
 >
-> 	r = __kvm_gmem_set_attributes(inode, &attrs, &err_index);
-> 	if (r) {
-> 		attrs.offset = err_index << PAGE_SHIFT;
-> 		if (copy_to_user(argp, &attrs, sizeof(attrs)))
-> 			return -EFAULT;
+> control: perf data
+> 22.24% a.out [kernel.kallsyms] [k] vsnprintf
+> 17.35% a.out [kernel.kallsyms] [k] format_decode
+> 12.60% a.out [kernel.kallsyms] [k] string
+> 12.12% a.out [kernel.kallsyms] [k] number
+>  8.06% a.out [kernel.kallsyms] [k] strlen
+>  5.21% a.out [kernel.kallsyms] [k] memcpy_orig
+>  4.26% a.out [kernel.kallsyms] [k] seq_buf_printf
+>  4.19% a.out [kernel.kallsyms] [k] memory_stat_format
+>  2.53% a.out [kernel.kallsyms] [k] widen_string
+>  1.62% a.out [kernel.kallsyms] [k] put_dec_trunc8
+>  0.99% a.out [kernel.kallsyms] [k] put_dec_full8
+>  0.72% a.out [kernel.kallsyms] [k] put_dec
+>  0.70% a.out [kernel.kallsyms] [k] memcpy
+>  0.60% a.out [kernel.kallsyms] [k] mutex_lock
+>  0.59% a.out [kernel.kallsyms] [k] entry_SYSCALL_64
 >
-> 		return r;
-> 	}
+> experiment: perf data
+> 8.17% memcgstat bpf_prog_c6d320d8e5cfb560_query [k] bpf_prog_c6d320d8e5cf=
+b560_query
+> 8.03% memcgstat [kernel.kallsyms] [k] memcg_node_stat_fetch
+> 5.21% memcgstat [kernel.kallsyms] [k] __memcg_slab_post_alloc_hook
+> 3.87% memcgstat [kernel.kallsyms] [k] _raw_spin_lock
+> 3.01% memcgstat [kernel.kallsyms] [k] entry_SYSRETQ_unsafe_stack
+> 2.49% memcgstat [kernel.kallsyms] [k] memcg_vm_event_fetch
+> 2.47% memcgstat [kernel.kallsyms] [k] __memcg_slab_free_hook
+> 2.34% memcgstat [kernel.kallsyms] [k] kmem_cache_free
+> 2.32% memcgstat [kernel.kallsyms] [k] entry_SYSCALL_64
+> 1.92% memcgstat [kernel.kallsyms] [k] mutex_lock
 >
-> 	return 0;
-> }
+> The overhead of string formatting and text conversion on the control side
+> is eliminated on the experimental side since the values are read directly
+> through shared memory with the bpf program. The kfunc/bpf approach also
+> provides flexibility in how this numeric data could be delivered to a use=
+r
+> mode program. It is possible to use a struct for example, with select
+> memory stat fields instead of an array. This opens up opportunities for
+> custom serialization as well since it is totally up to the bpf programmer
+> on how to lay out the data.
 >
-> static long kvm_gmem_ioctl(struct file *file, unsigned int ioctl,
-> 			   unsigned long arg)
-> {
-> 	switch (ioctl) {
-> 	case KVM_SET_MEMORY_ATTRIBUTES:
-> 		return kvm_gmem_set_attributes(file, (void __user *)arg);
-> 	default:
-> 		return -ENOTTY;
-> 	}
-> }
+> The patch also includes a kfunc for flushing stats. This is not required
+> for fetching stats, since the kernel periodically flushes memcg stats eve=
+ry
+> 2s. It is up to the programmer if they want the very latest stats or not.
 >
->> I think fundamentally the introduction of the guest_memfd ioctls was
->> motivated by how private/shared state is a property of memory and not a
->> property of the VM. (IIRC you were the one to most succinctly phrase it
->> this way on one of the guest_memfd biweeklies.) So I hope you don't mean
->> to revert to doing conversions through a VM ioctl.
+> [0] https://gist.github.com/inwardvessel/416d629d6930e22954edb094b4e23347
+>     https://gist.github.com/inwardvessel/28e0a9c8bf51ba07fa8516bceeb25669
+>     https://gist.github.com/inwardvessel/b05e1b9ea0f766f4ad78dad178c49703
 >
-> I do not.  Ah shoot.  I responded to my (much earlier) mail on this to clarify
-> exactly this point, but I botched the Cc and threading, and it didn't make it's
-> way to you.
+> Signed-off-by: JP Kobryn <inwardvessel@gmail.com>
+> ---
+>  mm/memcontrol.c | 67 +++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 67 insertions(+)
 >
-> https://lore.kernel.org/all/aNxxJodpbHceb3rF@google.com
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index 8dd7fbed5a94..aa8cbf883d71 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -870,6 +870,73 @@ unsigned long memcg_events_local(struct mem_cgroup *=
+memcg, int event)
+>  }
+>  #endif
 >
+> +static inline struct mem_cgroup *memcg_from_cgroup(struct cgroup *cgrp)
+> +{
+> +       return cgrp ? mem_cgroup_from_css(cgrp->subsys[memory_cgrp_id]) :=
+ NULL;
+> +}
+> +
+> +__bpf_kfunc static void memcg_flush_stats(struct cgroup *cgrp)
+> +{
+> +       struct mem_cgroup *memcg =3D memcg_from_cgroup(cgrp);
+> +
+> +       if (!memcg)
+> +               return;
+> +
+> +       mem_cgroup_flush_stats(memcg);
+> +}
 
-Phew. Good to have this clarified.
+css_rstat_flush() is sleepable, so this kfunc must be sleepable too.
+Not sure about the rest.
 
->> 
->> [...snip...]
->> 
->> I'd prefer not to have the module param choose between the use of
->> mem_attr_array and guest_memfd conversion in case we need both
->> mem_attr_array to support other stuff in future while supporting
->> conversions.
->
-> Luckily, we don't actually need to make a decision on this, because PRIVATE is
-> the only attribute that exists.  Which is partly why I want to go with a module
-> param.  We can make the behavior very definitive without significant risk of
-> causing ABI hell.
->
+> +
+> +__bpf_kfunc static unsigned long memcg_node_stat_fetch(struct cgroup *cg=
+rp,
+> +               enum node_stat_item item)
+> +{
+> +       struct mem_cgroup *memcg =3D memcg_from_cgroup(cgrp);
+> +
+> +       if (!memcg)
+> +               return 0;
+> +
+> +       return memcg_page_state_output(memcg, item);
+> +}
+> +
+> +__bpf_kfunc static unsigned long memcg_stat_fetch(struct cgroup *cgrp,
+> +               enum memcg_stat_item item)
+> +{
+> +       struct mem_cgroup *memcg =3D memcg_from_cgroup(cgrp);
+> +
+> +       if (!memcg)
+> +               return 0;
+> +
+> +       return memcg_page_state_output(memcg, item);
+> +}
+> +
+> +__bpf_kfunc static unsigned long memcg_vm_event_fetch(struct cgroup *cgr=
+p,
+> +               enum vm_event_item item)
+> +{
+> +       struct mem_cgroup *memcg =3D memcg_from_cgroup(cgrp);
+> +
+> +       if (!memcg)
+> +               return 0;
+> +
+> +       return memcg_events(memcg, item);
+> +}
+> +
+> +BTF_KFUNCS_START(bpf_memcontrol_kfunc_ids)
+> +BTF_ID_FLAGS(func, memcg_flush_stats)
+> +BTF_ID_FLAGS(func, memcg_node_stat_fetch)
+> +BTF_ID_FLAGS(func, memcg_stat_fetch)
+> +BTF_ID_FLAGS(func, memcg_vm_event_fetch)
+> +BTF_KFUNCS_END(bpf_memcontrol_kfunc_ids)
 
-Then maybe I'm misunderstanding the static_call() thing you were
-describing. Is it like, at KVM module initialization time,
+At least one of them must be sleepable and the rest probably too?
+All of them must be KF_TRUSTED_ARGS too.
 
-    if module_param == disable_tracking:
-        .__kvm_get_memory_attributes = read_attributes_from_guest_memfd
-    else
-        .__kvm_get_memory_attributes = read_attributes_from_mem_attr_array
+> +
+> +static const struct btf_kfunc_id_set bpf_memcontrol_kfunc_set =3D {
+> +       .owner          =3D THIS_MODULE,
+> +       .set            =3D &bpf_memcontrol_kfunc_ids,
+> +};
+> +
+> +static int __init bpf_memcontrol_kfunc_init(void)
+> +{
+> +       return register_btf_kfunc_id_set(BPF_PROG_TYPE_TRACING,
+> +                                        &bpf_memcontrol_kfunc_set);
+> +}
 
-With that, I can't have both CoCo private/shared state tracked in
-guest_memfd and RWX (as an example, could be any future attribute)
-tracked in mem_attr_array on the same VM.
-    
-> It's entirely possible I'm completely wrong and we'll end up with per-VM RWX
-> protections and no other per-gmem memory attributes, but as above, unwinding or
-> adjusting the module param will be a drop in the bucket compared to the effort
-> needed to add whatever support comes along.
->
-
-Is a module param a weaker userspace contract such that the definition
-for module params can be more flexibly adjusted?
-
->> > The kvm_memory_attributes structure is compatible, all that's needed AFAICT is a
->> > union to clarify it's a pgoff instead of an address when used for guest_memfd.
->> >
->> > diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
->> > index 52f6000ab020..e0d8255ac8d2 100644
->> > --- a/include/uapi/linux/kvm.h
->> > +++ b/include/uapi/linux/kvm.h
->> > @@ -1590,7 +1590,10 @@ struct kvm_stats_desc {
->> >  #define KVM_SET_MEMORY_ATTRIBUTES              _IOW(KVMIO,  0xd2, struct kvm_memory_attributes)
->> >  
->> >  struct kvm_memory_attributes {
->> > -       __u64 address;
->> > +       union {
->> > +               __u64 address;
->> > +               __u64 offset;
->> > +       };
->> >         __u64 size;
->> >         __u64 attributes;
->> >         __u64 flags;
->> >
->> 
->> struct kvm_memory_attributes doesn't have room for reporting the offset
->> at which conversion failed (error_offset in the new struct). How do we
->> handle this? Do we reuse the flags field, or do we not report
->> error_offset?
->
-> Write back at address/offset
-
-I think it might be surprising to the userspace program, when it wants
-to check the offset that it had requested and found that it changed due
-to an error, or upon decoding the error, be unable to find the original
-offset it had requested. Like,
-
-    printf("Error during conversion from offset=%lx with size=%lx, at
-           error_offset=%lx", attr.offset, attr.size, attr.error_offset)
-
-would be nicer than 
-
-    original_offset = attr.offset
-    printf("Error during conversion from offset=%lx with size=%lx, at
-           error_offset=%lx", original_offset, attr.size, attr.error_offset)
-           
-> (and update size too, which I probably forgot to do).
-
-Why does size need to be updated? I think u64 for size is great, and
-size is better than nr_pages since nr_pages differs on different
-platforms based on PAGE_SIZE and also nr_pages introduces the question
-of "was it hugetlb, or a native page size?".
-
-> Ugh, but it's defined _IOW.  I forget if that matters in practice (IIRC, it's not
-> enforced anywhere, i.e. purely informational for userspace).
->
-
-I didn't notice this IOW vs IORW part, but if it starts getting
-enforced/specified [1] or auto-documented we'd be in trouble.
-
-At this point, maybe it's better to just have a different ioctl number
-and struct definition. I feel that it would be easier for a user to
-associate/separate
-
-+ KVM_SET_MEMORY_ATTRIBUTES
-    + Is VM ioctl
-    + Is a write-only ioctl
-    + Is for setting memory attributes at a VM level
-    + Use struct kvm_memory_attributes for this
-+ KVM_GUEST_MEMFD_SET_MEMORY_ATTRIBUTES (name TBD)
-    + Is guest_memfd ioctl
-    + Is a read/write ioctl
-    + Is for setting memory attributes only for this guest_memfd
-    + Use struct guest_memfd_memory_attributes for this
-    + Also decode errors from this struct
-
-[1] https://lore.kernel.org/all/20250825181434.3340805-1-sashal@kernel.org/
-
->> >>  static int __kvm_gmem_prepare_folio(struct kvm *kvm, struct kvm_memory_slot *slot,
->> >>  				    pgoff_t index, struct folio *folio)
->> >>  {
->> >> @@ -333,7 +404,7 @@ static vm_fault_t kvm_gmem_fault_shared(struct vm_fault *vmf)
->> >>  
->> >>  	filemap_invalidate_lock_shared(inode->i_mapping);
->> >>  
->> >> -	folio = kvm_gmem_get_folio(inode, vmf->pgoff);
->> >> +	folio = kvm_gmem_get_shared_folio(inode, vmf->pgoff);
->> >
->> > I am fairly certain there's a TOCTOU bug here.  AFAICT, nothing prevents the
->> > underlying memory from being converted from shared=>private after checking that
->> > the page is SHARED.
->> >
->> 
->> Conversions take the filemap_invalidate_lock() too, along with
->> allocations, truncations.
->> 
->> Because the filemap_invalidate_lock() might be reused for other
->> fs-specific operations, I didn't do the mt_set_external_lock() thing to
->> lock at a low level to avoid nested locking or special maple tree code
->> to avoid taking the lock on other paths.
->
-> mt_set_external_lock() is a nop.  It exists purely for lockdep assertions.  Per
-> the comment for MT_FLAGS_LOCK_EXTERN, "mt_lock is not used", LOCK_EXTERN simply
-> tells maple tree to not use/take mt_lock.   I.e. it doesn't say "take this lock
-> instead", it says "I'll handle locking".
-
-Thanks for pointing this out!
-
-Conversions (and others) taking the filemap_invalidate_lock() probably
-fixes the TOCTOU bug, right?
+Why tracing only?
 
