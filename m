@@ -1,219 +1,150 @@
-Return-Path: <linux-kernel+bounces-839483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1175FBB1B48
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 22:50:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0063BB1B5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 22:51:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B308716E6D9
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 20:50:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF0943A6174
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 20:51:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A08DE2D6401;
-	Wed,  1 Oct 2025 20:50:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8DAE2F066B;
+	Wed,  1 Oct 2025 20:51:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UlJkZC+g"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=weathered-steel.dev header.i=@weathered-steel.dev header.b="ImUQ+auC"
+Received: from mx-out1.startmail.com (mx-out1.startmail.com [145.131.90.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FCA41946AA
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 20:50:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9776E1946AA;
+	Wed,  1 Oct 2025 20:51:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=145.131.90.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759351816; cv=none; b=bcF8mkE9PvhFvVD55WQDV6iXcvYszF5xQh0/fLif1tQJMc2N/w7p1NLo9EdgWAlCps/Mc/Ben+gYVSaoZc8byyuktCTISdxn5kF8uF4eaM7WnQRjvpy2MSVTEN/Rkge7XD4cEbYSiPSh93rGkkYvGdUs0FnELp29oZD8ChsAwbg=
+	t=1759351892; cv=none; b=j66Z7VWqmu2KBsSFFNvXdxO7qNGQQS2/sByXtMPwJr3yIzXyZXMF1+AV6asRI6Kv6Gm6oYu9f2WOUJPQ3CJIgnmGJ6hZKJuh0IJgtwAcYSvBPAjBTcQ3LawZ11fXhrBmZ0lfcES1cwcuHxKzw5hwKb29P0sYre/QeJrkeEl/pE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759351816; c=relaxed/simple;
-	bh=IB8uPb6EUBcGWblRPI+e7U2JqmalxFcJYmMrRUroNbE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SFd4xkNi7CzCjakSPQnINWb+Tou1cjs8MnoPlkoj+HWY7F00BW/jSVrHCalvNThFIY17PZ8Kz2PKJYtqB1elZmud54sOmr3VzYq2YYVj47zF2+KDROhC+M/n3DxbGnY3WuU1cTYbuSObV1qKBNrEBxK215zJcZJcA7XvurCE2+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UlJkZC+g; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759351815; x=1790887815;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=IB8uPb6EUBcGWblRPI+e7U2JqmalxFcJYmMrRUroNbE=;
-  b=UlJkZC+gMZBOJMYDC/P+KFqB8n4iFMTlKHCv95/8CkwCwT+xxLUWjDNY
-   +08Gq5FB7zdv1TbOhBSx5gjAuFH+hNiceJjP+aa20xXpfuERt7HHj0t/I
-   HlPEXmEhkAPTqjoZJbQPxxdFOQZGyxX8Zd/oWNSz3mmdgkzxJGCExYASN
-   n/Trq/f2uBAM92SpzaeUPbqktZ9pjF9I+CO9u/brKtolZGICbhodnJze2
-   oOEY+ShaefE7IFFcf/AU6IHdga+p+Zne5Xqa8FzWJURCz5Tg64yj0S3me
-   qta0dLCakAGu1CPUvLLPj9Mkoo7usd+TF8DqdvoTib2Ho7bnBaNHypwbX
-   g==;
-X-CSE-ConnectionGUID: F9Cs7N+fTWee25bG1EeoJQ==
-X-CSE-MsgGUID: 4iuaLDA1TtC/46V//q9J1A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11569"; a="61548718"
-X-IronPort-AV: E=Sophos;i="6.18,307,1751266800"; 
-   d="scan'208";a="61548718"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2025 13:50:14 -0700
-X-CSE-ConnectionGUID: PphuQsj6R32nVbv8mRQWjA==
-X-CSE-MsgGUID: Q6Riu27eRkCBy6UsEdHvtA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,307,1751266800"; 
-   d="scan'208";a="178166843"
-Received: from gabaabhi-mobl2.amr.corp.intel.com (HELO [10.125.109.221]) ([10.125.109.221])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2025 13:50:14 -0700
-Message-ID: <08338619-6aa1-4905-bdf8-bf1a90857307@intel.com>
-Date: Wed, 1 Oct 2025 13:50:13 -0700
+	s=arc-20240116; t=1759351892; c=relaxed/simple;
+	bh=VPaXP4qHSspQ17XY5CPQB+lhfh+9TEuQQnadpD+XA7s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KJ6JA/VhrdqQHadV0EYCrzA9Iwuqwp30mUzsqq0sIuIXqhoyyfG5zRYASwCYL9zRrPFzGJD/wiDv1T/6AunVdt/8Mva7GYhBf1iucJ771/ZuhBl2dd1PQafHprH+LGnqz6sxfsrR79CVGMEaIHtZQAZOnEjWrob1/u4XTyCjqK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weathered-steel.dev; spf=pass smtp.mailfrom=weathered-steel.dev; dkim=pass (2048-bit key) header.d=weathered-steel.dev header.i=@weathered-steel.dev header.b=ImUQ+auC; arc=none smtp.client-ip=145.131.90.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weathered-steel.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weathered-steel.dev
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=weathered-steel.dev;
+	s=startmail1; t=1759351881;
+	bh=QbcGgb5EQSRVJLoUkXO4xyhEsG9J13OKh/OXOofe7G8=;
+	h=Date:From:To:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To:From:Subject:To:Date:
+	 Sender:Content-Type:Content-Transfer-Encoding:Content-Disposition:
+	 Mime-Version:Reply-To:In-Reply-To:References:Message-Id:
+	 List-Unsubscribe:List-Unsubscribe-Post:Autocrypt;
+	b=ImUQ+auCIzrbzgelzjZy/hT/6tYbxImGUQmh64wCOdKDUl20Co1kP7cTJ9lhFDrbR
+	 qQ4QZlSxRPKLJxwjRAbiuePe78ERBtTjj3yUHwpj56F9g4Lcw7rD1f4TPANFVG6jzA
+	 F8rvWj2+w96g7boCQZFbxZUGtuIibAjiT8peB42+PcniofccflsEr6bINEsaBUNBqe
+	 +VCQyDAPoOkVF6bO0L4BKQEtA7NcZZXU1+GXhmBxJrgTAIP/l2WYOWAw2drtpyeLBx
+	 ZsINN8ZnA3JZrn9ueU0l92T0EVFjY1yF5FNaIT+VMSk6FtfjKRBYPfKM8y5CggJ8Dg
+	 fI1MewDrYAc9w==
+Date: Wed, 1 Oct 2025 20:51:16 +0000
+From: Elle Rhumsaa <elle@weathered-steel.dev>
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>, Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Drew Fustini <fustini@kernel.org>,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v15 1/7] pwm: Export `pwmchip_release` for external use
+Message-ID: <aN2T-IZKQfqcd7I4@archiso>
+References: <20250930-rust-next-pwm-working-fan-for-sending-v15-0-5661c3090877@samsung.com>
+ <CGME20250930122730eucas1p11afe23eee92daac1023a826768b1f92d@eucas1p1.samsung.com>
+ <20250930-rust-next-pwm-working-fan-for-sending-v15-1-5661c3090877@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 05/21] x86/mm/pat: mirror direct map changes to ASI
-To: Brendan Jackman <jackmanb@google.com>, Andy Lutomirski <luto@kernel.org>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>,
- Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>,
- Roman Gushchin <roman.gushchin@linux.dev>
-Cc: peterz@infradead.org, bp@alien8.de, dave.hansen@linux.intel.com,
- mingo@redhat.com, tglx@linutronix.de, akpm@linux-foundation.org,
- david@redhat.com, derkling@google.com, junaids@google.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, reijiw@google.com,
- rientjes@google.com, rppt@kernel.org, vbabka@suse.cz, x86@kernel.org,
- Yosry Ahmed <yosry.ahmed@linux.dev>
-References: <20250924-b4-asi-page-alloc-v1-0-2d861768041f@google.com>
- <20250924-b4-asi-page-alloc-v1-5-2d861768041f@google.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20250924-b4-asi-page-alloc-v1-5-2d861768041f@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250930-rust-next-pwm-working-fan-for-sending-v15-1-5661c3090877@samsung.com>
 
-On 9/24/25 07:59, Brendan Jackman wrote:
-> ASI has a separate PGD for the physmap, which needs to be kept in sync
-> with the unrestricted physmap with respect to permissions.
-
-So that leads to another thing... What about vmalloc()? Why doesn't it
-need to be in the ASI pgd?
-
-> +static inline bool is_direct_map(unsigned long vaddr)
-> +{
-> +	return within(vaddr, PAGE_OFFSET,
-> +		      PAGE_OFFSET + (max_pfn_mapped << PAGE_SHIFT));
-> +}
->  
->  static int __cpa_process_fault(struct cpa_data *cpa, unsigned long vaddr,
->  			       int primary)
-> @@ -1808,8 +1814,7 @@ static int __cpa_process_fault(struct cpa_data *cpa, unsigned long vaddr,
->  	 * one virtual address page and its pfn. TBD: numpages can be set based
->  	 * on the initial value and the level returned by lookup_address().
->  	 */
-> -	if (within(vaddr, PAGE_OFFSET,
-> -		   PAGE_OFFSET + (max_pfn_mapped << PAGE_SHIFT))) {
-> +	if (is_direct_map(vaddr)) {
->  		cpa->numpages = 1;
->  		cpa->pfn = __pa(vaddr) >> PAGE_SHIFT;
->  		return 0;
-> @@ -1981,6 +1986,27 @@ static int cpa_process_alias(struct cpa_data *cpa)
->  	return 0;
+On Tue, Sep 30, 2025 at 02:20:32PM +0200, Michal Wilczynski wrote:
+> The upcoming Rust abstraction layer for the PWM subsystem uses a custom
+> `dev->release` handler to safely manage the lifetime of its driver
+> data.
+> 
+> To prevent leaking the memory of the `struct pwm_chip` (allocated by
+> `pwmchip_alloc`), this custom handler must also call the original
+> `pwmchip_release` function to complete the cleanup.
+> 
+> Make `pwmchip_release` a global, exported function so that it can be
+> called from the Rust FFI bridge. This involves removing the `static`
+> keyword, adding a prototype to the public header, and exporting the
+> symbol.
+> 
+> Reviewed-by: Elle Rhumsaa <elle@weathered-steel.dev>
+> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
+> ---
+>  drivers/pwm/core.c  | 3 ++-
+>  include/linux/pwm.h | 6 ++++++
+>  2 files changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
+> index 0d66376a83ec350e0c3718959f4d794efd71595a..a33da3dff608fdff91251e5fd07b0dbd295be022 100644
+> --- a/drivers/pwm/core.c
+> +++ b/drivers/pwm/core.c
+> @@ -1600,12 +1600,13 @@ void pwmchip_put(struct pwm_chip *chip)
 >  }
+>  EXPORT_SYMBOL_GPL(pwmchip_put);
+>  
+> -static void pwmchip_release(struct device *pwmchip_dev)
+> +void pwmchip_release(struct device *pwmchip_dev)
+>  {
+>  	struct pwm_chip *chip = pwmchip_from_dev(pwmchip_dev);
+>  
+>  	kfree(chip);
+>  }
+> +EXPORT_SYMBOL_GPL(pwmchip_release);
+>  
+>  struct pwm_chip *pwmchip_alloc(struct device *parent, unsigned int npwm, size_t sizeof_priv)
+>  {
+> diff --git a/include/linux/pwm.h b/include/linux/pwm.h
+> index 8cafc483db53addf95591d1ac74287532c0fa0ee..d86061024b52172edf3845bf9252a966f120e365 100644
+> --- a/include/linux/pwm.h
+> +++ b/include/linux/pwm.h
+> @@ -485,6 +485,12 @@ int __pwmchip_add(struct pwm_chip *chip, struct module *owner);
+>  #define pwmchip_add(chip) __pwmchip_add(chip, THIS_MODULE)
+>  void pwmchip_remove(struct pwm_chip *chip);
 >  
 > +/*
-> + * Having updated the unrestricted PGD, reflect this change in the ASI
-> + * restricted address space too.
+> + * For FFI wrapper use only:
+> + * The Rust PWM abstraction needs this to properly free the pwm_chip.
 > + */
-> +static inline int mirror_asi_direct_map(struct cpa_data *cpa, int primary)
-> +{
-> +	struct cpa_data asi_cpa = *cpa;
+> +void pwmchip_release(struct device *dev);
 > +
-> +	if (!asi_enabled_static())
-> +		return 0;
-> +
-> +	/* Only need to do this for the real unrestricted direct map. */
-> +	if ((cpa->pgd && cpa->pgd != init_mm.pgd) || !is_direct_map(*cpa->vaddr))
-> +		return 0;
-> +	VM_WARN_ON_ONCE(!is_direct_map(*cpa->vaddr + (cpa->numpages * PAGE_SIZE)));
-> +
-> +	asi_cpa.pgd = asi_nonsensitive_pgd;
-> +	asi_cpa.curpage = 0;
-
-Please document what functionality this curpage=0 has. It's not clear.
-
-> +	return __change_page_attr(cpa, primary);
-> +}
-
-But let's say someone is doing something silly like:
-
-	set_memory_np(addr, size);
-	set_memory_p(addr, size);
-
-Won't that end up in here and make the "unrestricted PGD" have
-_PAGE_PRESENT==1 entries?
-
-Also, could we try and make the nomenclature consistent? We've got
-"unrestricted direct map" and "asi_nonsensitive_pgd" being used (at
-least). Could the terminology be made more consistent?
-
-One subtle thing here is that it's OK to allocate memory here when
-mirroring changes into 'asi_nonsensitive_pgd'. It's just not OK when
-flipping sensitivity. That seems worth a comment.
-
->  static int __change_page_attr_set_clr(struct cpa_data *cpa, int primary)
->  {
->  	unsigned long numpages = cpa->numpages;
-> @@ -2007,6 +2033,8 @@ static int __change_page_attr_set_clr(struct cpa_data *cpa, int primary)
->  		if (!debug_pagealloc_enabled())
->  			spin_lock(&cpa_lock);
->  		ret = __change_page_attr(cpa, primary);
-> +		if (!ret)
-> +			ret = mirror_asi_direct_map(cpa, primary);
->  		if (!debug_pagealloc_enabled())
->  			spin_unlock(&cpa_lock);
->  		if (ret)
+>  int __devm_pwmchip_add(struct device *dev, struct pwm_chip *chip, struct module *owner);
+>  #define devm_pwmchip_add(dev, chip) __devm_pwmchip_add(dev, chip, THIS_MODULE)
+>  
+> 
+> -- 
+> 2.34.1
 > 
 
-Is cpa->pgd ever have any values other than NULL or init_mm->pgd? I
-didn't see anything in a quick grep.
+Reviewed-by: Elle Rhumsaa <elle@weathered-steel.dev>
 
