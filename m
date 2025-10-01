@@ -1,131 +1,94 @@
-Return-Path: <linux-kernel+bounces-838287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B863BAEDEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 02:25:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A880BAEDE0
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 02:20:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 361D63AE94B
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 00:25:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89D4B3A9A9D
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 00:20:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4521119C556;
-	Wed,  1 Oct 2025 00:25:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B9F218A6A7;
+	Wed,  1 Oct 2025 00:20:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="lYLR4hCZ"
-Received: from out203-205-221-242.mail.qq.com (out203-205-221-242.mail.qq.com [203.205.221.242])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uTXWjDD5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E02018DB26;
-	Wed,  1 Oct 2025 00:25:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.242
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 745E22CCC5;
+	Wed,  1 Oct 2025 00:20:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759278310; cv=none; b=FymzgtzB5Pvz4t4znaOIJ0kqFGxm6Nw31Baya8TPaVsJDPWMOqzFQp6OY8J7UWGxt/1APTggD8vkMGx1JhVm1i7yL+P74Hy/jhLBe7WxcaiQjav6cd6jAvXTSe+RZVaZVd2L4eBlITYHuigyaF8gkjfPoys0jpD5z5EcvBCWvg8=
+	t=1759278024; cv=none; b=J5XEJJyDqIuVtyQt4Hx1+R5jDJqf60eX+7pn8kDHiVn1ZDretpsPEj3lmw5Gg2dFVyl+d/ri95hu0uJcsEV8XEjssmlfENlIYX4d2fprBOCfuYxJb3Jfp4+NRKjmo+tCU7KPobj9fi49YOEH5cYE+CycDMNChTq6wRlcuhMkauI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759278310; c=relaxed/simple;
-	bh=bq4yFxx1HYQIW2bfM3PlOQWATujxdL6DB7bogzXV3p0=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=nkMFe5Hr5qLd/a8u1t2wU0zPi71jwJv6p2hbHznMNhAAjp9XRc+sOfTqak9j1yyawit/nbIJDsplj62rUMlqVN3OPpOWpzjssT8zplqhcOKwWvz1GpmchuPuih1BzAvBz+V2ovS516MsFuFD2xSXc6YVlhMjBaO8B4J50WFM9kM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=lYLR4hCZ; arc=none smtp.client-ip=203.205.221.242
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1759277998; bh=qOEFdnGNyH/+56s3eWv79VZSXfiYDJ78DUr6/PPdkwc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=lYLR4hCZWf93/fAzcFysWP8xYTS26Bbz3mjjtS33rrn54bjbLr+BEWNJrI264DDXl
-	 0La6cd3QrMWPnfz+xcedZJ31J5WXyO6FC5yRSNQSvqe0Szghgd3NGn6y6CjMF6SfUG
-	 g73teYayx8LABTnTkrw97ZlPjKSYvpN2/OPKV1jg=
-Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.230.220])
-	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
-	id 4F793E47; Wed, 01 Oct 2025 08:19:55 +0800
-X-QQ-mid: xmsmtpt1759277995ts7e8m12j
-Message-ID: <tencent_FF701BFF4BB31BF8255CBAEFBB9033779E08@qq.com>
-X-QQ-XMAILINFO: NvH2zBBgt3uTiE2eZS5Fne7onYDpCzE+1Poxhq8IsKDO+pP3+IlKZaSJlYZHQ3
-	 XawgWJVQljiwoIa0HK4CtnObZ5jFT2kXzTzGpNHEALhxyEcl2wdlxt25ZyUon78hfsXTr5rJtwJy
-	 AAIpQ/32aGthJwo4F1BuZXsK0b9ErqMZhYdnx5rs95UXXMPkOss9i5Q3A52i3Dw14KwD59f+aW9K
-	 NcEUs0BxocyJRJeIIojwwBj/hUyNdv/G5rpIcmkakURiwk0dkFCjNQpl7N/Evl12fmVpGu9b6UsT
-	 jqGh20jQpFntkcFwGzP4fzgGDwqbYpHwUDKZx5SkrN2cV9L9O6zxutiHlRm6fhmcKv+Qb8V7Jd3k
-	 JswvNAzM3PeKUiYV4Ii1yjKDuMlDuvITjgPCoFK6pH2RZThlc8qUaFj7xw0n6HUSZwQ9XPzAERLo
-	 AJuCUvdmZ6MELWYSOgBIsHqtesa/vBQgOn6yamw2Yb0glEDpeLTm5DRThqtnNT2nPUpep+oLG/il
-	 FYub6NtgIXHwsngSfxlGELfjQtPmlo3uiRrk+6hIWGvKVCVT7k53SxLDnqF+KvlJOuAyaNIN/8us
-	 56z2gdV/bbOviPQMMgPKJGaXJRhTbgoCMh+UkNYyZ8mBDRZ75EZEciHFBsUO6EAZySs+ygK9aZ8J
-	 SPddTMU7zftzCxzOyshPz8VYNFukyH7/3BuEaqayFrbJG999aGVGeSsC8E58z8ugkfQ722qWPY5u
-	 0kL0eqJhBgqtIWY1FPMKjSZEy0i6ca4JYUN/ms7pNSYP+BqAmbamLT0xcPjn9kMnUI5zqrIcOMt2
-	 gZyV2721Y5ay+8ETDAopJQMggYjHXol3IfoLjCa5eyJ6ch8WlpkG6sKoExoX0KtnrLmQTJU/InDD
-	 k6ChxFkXFA3e2G23HnszG1m9o0tKWjfZD7XdFHdz7sCZDb0dumeN8QtYCDOghSZrBQ1A64J0F77V
-	 zXVeVJX3LJKglDcIa5kcLyoIILoBc6pbdqCs4eKn/wENoQLIfMXhBnLQbJ6k/5gQkUDkJhguA=
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-From: Edward Adam Davis <eadavis@qq.com>
-To: lkp@intel.com
-Cc: eadavis@qq.com,
-	kent.overstreet@linux.dev,
-	linux-bcachefs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	oe-kbuild-all@lists.linux.dev,
-	syzbot+ba71155d3eacc8f42477@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH V2] bcachefs: Prevent written from exceeding sectors
-Date: Wed,  1 Oct 2025 08:19:57 +0800
-X-OQ-MSGID: <20251001001956.1053529-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <202510010446.t1B7jtcS-lkp@intel.com>
-References: <202510010446.t1B7jtcS-lkp@intel.com>
+	s=arc-20240116; t=1759278024; c=relaxed/simple;
+	bh=m26ff45+YZIuIweKTgqVfUP8TSAnLz2buJEY7gdOkpw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=p11uZCc0fjkdB42N5IM9EoJzj+lUey905sjg0VGB3ZOiEr+erB8kCThD7qVkf9Uh6glFpb1ba8FZ6xgKo/6xp+zXAocoXdZ8qfwC+nOG8PEPSPVW2h1vt1WIxjzVlIzkt94YnXPh1nnubX1lIHpSSuYoPnBuN4P+iC0bQyijVBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uTXWjDD5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A99EC113D0;
+	Wed,  1 Oct 2025 00:20:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759278024;
+	bh=m26ff45+YZIuIweKTgqVfUP8TSAnLz2buJEY7gdOkpw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=uTXWjDD51MSeKOJohAhYHujiMKU3dMzHwPFwjMZCmZDPDtaKT/YGz0LPNp2Kc1FCJ
+	 qlCeE8zlY9NPC5tLrrFH6RJ+0BGIMqF84MJW45OLrxv50itI4hawITmuMdNbTXqDmX
+	 GBQH0tWqmJxTI8QCZ6bzVNJUQCXpz9qcgcN5zeLF8a1fdyzuGrnhQWxfnqoXXjHmQq
+	 dhCCuQklmO3GXCAUniqSLjGvKrCQDsM8s2tEiZ7rxl92QIA/jvJmdICrMWihvcDgwR
+	 Ln2m/wcXYJw6+YtM8Z+1e/ADU8dvhJiE9PjMazyW6R91j1az7ROl1xGilxZce/bWpa
+	 IxSQvIQGPXeoA==
+Date: Tue, 30 Sep 2025 17:20:22 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Heiner Kallweit <hkallweit1@gmail.com>, Russell King
+ <linux@armlinux.org.uk>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, Chen-Yu Tsai <wens@kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec
+ <jernej@kernel.org>, Samuel Holland <samuel@sholland.org>,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Andre Przywara <andre.przywara@arm.com>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>
+Subject: Re: [PATCH net-next v8 2/2] net: stmmac: Add support for Allwinner
+ A523 GMAC200
+Message-ID: <20250930172022.3a6dd03e@kernel.org>
+In-Reply-To: <20250929180804.3bd18dd9@kernel.org>
+References: <20250925191600.3306595-1-wens@kernel.org>
+	<20250925191600.3306595-3-wens@kernel.org>
+	<20250929180804.3bd18dd9@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-syzbot reported btree node oob in bch2_btree_node_read_done. [1]
+On Mon, 29 Sep 2025 18:08:04 -0700 Jakub Kicinski wrote:
+> On Fri, 26 Sep 2025 03:15:59 +0800 Chen-Yu Tsai wrote:
+> > The Allwinner A523 SoC family has a second Ethernet controller, called
+> > the GMAC200 in the BSP and T527 datasheet, and referred to as GMAC1 for
+> > numbering. This controller, according to BSP sources, is fully
+> > compatible with a slightly newer version of the Synopsys DWMAC core.
+> > The glue layer around the controller is the same as found around older
+> > DWMAC cores on Allwinner SoCs. The only slight difference is that since
+> > this is the second controller on the SoC, the register for the clock
+> > delay controls is at a different offset. Last, the integration includes
+> > a dedicated clock gate for the memory bus and the whole thing is put in
+> > a separately controllable power domain.  
+> 
+> Hi Andrew, does this look good ?
+> 
+> thread: https://lore.kernel.org/20250925191600.3306595-3-wens@kernel.org
 
-Add sanity check for written, avoid exceeding the allowed access limits
-for btree node.
+Adding Heiner and Russell, in case Andrew is AFK.
 
-[1]
-BUG: KASAN: slab-out-of-bounds in bch2_btree_node_read_done+0x950/0x5550 fs/bcachefs/btree_io.c:1128
-Call Trace:
- bch2_btree_node_read_done+0x950/0x5550 fs/bcachefs/btree_io.c:1128
- btree_node_read_work+0x40e/0xe60 fs/bcachefs/btree_io.c:1440
- bch2_btree_root_read+0x5f0/0x760 fs/bcachefs/btree_io.c:1928
- read_btree_roots+0x2c6/0x840 fs/bcachefs/recovery.c:615
- bch2_fs_recovery+0x261f/0x3a50 fs/bcachefs/recovery.c:1006
- bch2_fs_start+0xaaf/0xda0 fs/bcachefs/super.c:1213
- bch2_fs_get_tree+0xb39/0x1520 fs/bcachefs/fs.c:2488
- vfs_get_tree+0x8f/0x2b0 fs/super.c:1815
- do_new_mount+0x2a2/0x9e0 fs/namespace.c:3808
-
-Reported-by: syzbot+ba71155d3eacc8f42477@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=ba71155d3eacc8f42477
-Tested-by: syzbot+ba71155d3eacc8f42477@syzkaller.appspotmail.com
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
-V1 -> V2: change msg data type to unsigned int for btree_sectors()
-
- fs/bcachefs/btree_io.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/fs/bcachefs/btree_io.c b/fs/bcachefs/btree_io.c
-index 590cd29f3e86..ab14fff1452f 100644
---- a/fs/bcachefs/btree_io.c
-+++ b/fs/bcachefs/btree_io.c
-@@ -1087,6 +1087,13 @@ int bch2_btree_node_read_done(struct bch_fs *c, struct bch_dev *ca,
- 		     "bad magic: want %llx, got %llx",
- 		     bset_magic(c), le64_to_cpu(b->data->magic));
- 
-+	btree_err_on(ptr_written >= btree_sectors(c),
-+		     -BCH_ERR_btree_node_read_err_must_retry,
-+		     c, ca, b, NULL, NULL,
-+		     btree_node_bad_magic,
-+		     "wrong written %u, btree sectors is %u",
-+		     ptr_written, btree_sectors(c));
-+
- 	if (b->key.k.type == KEY_TYPE_btree_ptr_v2) {
- 		struct bch_btree_ptr_v2 *bp =
- 			&bkey_i_to_btree_ptr_v2(&b->key)->v;
--- 
-2.43.0
-
+We need an ack from PHY maintainers, the patch seems to be setting
+delays regardless of the exact RMII mode. I don't know these things..
 
