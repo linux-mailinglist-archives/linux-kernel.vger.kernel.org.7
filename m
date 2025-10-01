@@ -1,87 +1,140 @@
-Return-Path: <linux-kernel+bounces-839306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB211BB14EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 18:56:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3035BB14DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 18:55:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7E7C7A626A
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 16:54:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B169F1790CC
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 16:55:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8A6B2D0C82;
-	Wed,  1 Oct 2025 16:56:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C54352D028A;
+	Wed,  1 Oct 2025 16:55:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="duBNrr3X"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N31tAgfP"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2211E28C2D2;
-	Wed,  1 Oct 2025 16:56:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 720D22C11C9
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 16:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759337778; cv=none; b=hurL9hF2evD8dTVSOEvhWySIXsp0zkVxIvlmZz/UV1e01adA3VI1kOozow16FdZ1wrW8Vp5w1msUS2LW+9duI20RSB3KCMvTdN0Cpzvl26dvxdX85n32yNaMa9Z8XVqcN40B5IMtDIxv2/dAMiZSwrV0+2sHOOjSGSXlqIAO1hQ=
+	t=1759337739; cv=none; b=VyQPnZQOtXkQM6AJnvXEyu3Sk0mcsiVLGZbMlRTgOwcop/O00dMQlV2BB5CDVPN3Nge5s5XwD5KXO2A9rPccqGQADXEwrEd54paUp8JCfpPkvt7WNdTMOmssnpHAL9sDQhWIeiLJYbQoCBWFfYba6rL1hWJWB+p/KN/IOjA/b7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759337778; c=relaxed/simple;
-	bh=rpAjRFYNrwr9P/dKBIUH+iBTuw2t7D7elVjJUZZ01v8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ap+XAwrDOe4xnA4JvclmUf6SkqLv6At5uyTzGDdCh/m/hVkeMzW1siUJwqziQ0kdRulmjQzwrnI9F71Fq1UFdwJO4OXMjZmR0G29t7JmUEIiw2MEjJoANZPn9CO/VgqcNaBjagLrhfi0yaUq+SHSamambAGFMEdRH/4yzvUbWRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=duBNrr3X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A2B7C4CEF1;
-	Wed,  1 Oct 2025 16:56:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759337777;
-	bh=rpAjRFYNrwr9P/dKBIUH+iBTuw2t7D7elVjJUZZ01v8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=duBNrr3XK8WrXfwmvxSXZ0ToUjddax8jwkZwV0dgy6wn5pepDK4VMbIxGXUO8n1GJ
-	 GhcibkDUtSS7tx1S9lSSswSUS+nJ0vnNPn9kV6kyROkhzmLVOlpZcWaJILkCk1HAPU
-	 TRvFS5MumXBQ4CT8VTM5UmGyThr86gevB65Cb0+F0fTenbOFDItaGIyjuDGL45eLhY
-	 zqz1AnJXMzmjR7gy39lRUK+h7tgU3z7o9FF0f6mf/t+YycM75lvfP1Dr70/mLt82sF
-	 zmYvfVPB0HTNj3bfG/gG3fAzqlN54UHvGT91Jfk43ckvH7v1h3fm1qKcn1035l+Fly
-	 l2CX2mRMcjG4g==
-Date: Wed, 1 Oct 2025 09:54:55 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: gregkh@linuxfoundation.org, sashal@kernel.org, stable@vger.kernel.org,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Ard Biesheuvel <ardb@kernel.org>, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	Michael van der Westhuizen <rmikey@meta.com>,
-	Tobias Fleig <tfleig@meta.com>
-Subject: Re: [PATCH] stable: crypto: sha256 - fix crash at kexec
-Message-ID: <20251001165455.GF1592@sol>
-References: <20251001-stable_crash-v1-1-3071c0bd795e@debian.org>
- <20251001162305.GE1592@sol>
- <jm3bk53sqkqv6eg7rekzhn6bgld5byhkmksdjyxmrkifku2dmc@w7xnklqsrpee>
+	s=arc-20240116; t=1759337739; c=relaxed/simple;
+	bh=bdSNQRu0ZgmvA7NkEFIbkz4EwPs8ZTXoQe6ijtPHeIo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fMSGlnpBz29A6kAD0R5n9Q7o/dm55a67GeKrxC4SqFtnT+VFPX3ZXg5qgfvcrHeeIZB24EX1TtIQP/7Kr1xzrq+UPVMAICl21JfIPEIBrQHsEaPHFki/F9QrLKOSgsoMumIcyOFEjj237JgAduUJLaNPFXTc4yWvR+Ujb4vV9y4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N31tAgfP; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-46b303f755aso178415e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 09:55:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759337736; x=1759942536; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9HZmASq5Qqy3LTI2jCynB7v9iQGn0idqV2xlDJ/yI6Q=;
+        b=N31tAgfPRu8V5sI9Gs7IXaTE7s8lPV1RgR33hb+OnzqD2TJmAXFpFjZrVNfDIr2Vab
+         3uLlG0ZEdpu0Cm6elg95QndFZE1YZeZ9kvJJL8K/KyTvb+K+1wYMA3Sc32tUPkXiSyRF
+         Dz/LCGicUxsrVRgO9gxekPlwu4vDSC+E9P4+WhogQ8WuhlliSxdOS4pmtTDxLrWyEfrM
+         3qujzlhP0q0oGWMlLm+QMZlajt9WHX87J03eJVoEhT0zVM0Z84yt9pvTu25ZTd4P5XEs
+         JfThsMeFUPivocsnIe6ar3ikLeoT7bKiSKHxN10tsGaEVqh7lYCY9wvOZ38CKbFcyzOL
+         wVhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759337736; x=1759942536;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9HZmASq5Qqy3LTI2jCynB7v9iQGn0idqV2xlDJ/yI6Q=;
+        b=HSHB8RyvNrYvwZiv1YCs9AKwOy90sE52gCG/FQuSdvaaOHAViduYxQIJWAiSjQqRd8
+         z5NFrJZBZ2vBl1MCk9dGlV0Tpr8m9dosrHakBY6TluHgXBBQvuXJEAwsD5+YqEHFy6wP
+         elLTty6sZeLvHVWEpsHFgGeE1Q59axaMAYgQqXJFSeWmbbUnDtGvHgIWpm0i948hLzoa
+         1VXNgn2nidk+NRh9EaI5/r0RSK54zLv9XwuNH1e+aNsAqP+HKGqkVr4mxR5VCTYqWvme
+         4Wv2rckLrXxQv62/CQarZXd6oHAus1xSb5+/xVenZPpDGnJhP1h1TEI1WQTajzuoOHn/
+         Wj/g==
+X-Forwarded-Encrypted: i=1; AJvYcCVbog5WS+bWywVXgQLJHrlH71NdlRrlLtkhxE/UicbbS4qa3Ur/ub1NNHqYZYWmRQNwfJhS3lqNh7ojmlc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyodJ35Nkg3Srv2YmU+kpyOBmUWR6NC8EPiuRj0DWdLqMvlTvc2
+	r/GnubMSB71+1FNvY6wj9VwGsJm6Y+yHlhJ0a3gNyendDpnLHas4W7+3lFWR636b+cXaj1W9SPs
+	62WiKmVuphMzjOlery9BJWkm6UvXpE6c=
+X-Gm-Gg: ASbGncvD878ZK3yKqXL05/iGb+UGInmF3M8UkfbkWPA+JeVV4ClL3vAS0vdV10OVHs2
+	5AeWDzuOAKDeHtcwGlRWuePuQnXIwhywVhEc66eTCbI+jLz42TxctPJNoTPO7jhfh/Eel31vFwo
+	HpkNwOlI/GBM4c5/CBm8qMMkQYHFQTddbrhX6Os6/Op9XNx5AWA9RbBWUor1gVcmWxRKsr9JcTI
+	KC6ARRvAxNPUWIiblWx4lZIREPe2+JaxwHPb697KYV3Qk/aSi2uSAA4R5Ss
+X-Google-Smtp-Source: AGHT+IG/8VgsbJKipB++ALs7Ce1OTPDpby4knmF53KfWJc4jMZsIo2710eOnaosoB+gz+8sS+Y8rg15uWXHo8yWUtuA=
+X-Received: by 2002:a05:6000:2c0e:b0:406:5e66:ae65 with SMTP id
+ ffacd0b85a97d-4255782015emr3184877f8f.60.1759337735480; Wed, 01 Oct 2025
+ 09:55:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <jm3bk53sqkqv6eg7rekzhn6bgld5byhkmksdjyxmrkifku2dmc@w7xnklqsrpee>
+References: <68d26227.a70a0220.1b52b.02a4.GAE@google.com> <20251001095613.267475-1-listout@listout.xyz>
+ <20251001095613.267475-2-listout@listout.xyz>
+In-Reply-To: <20251001095613.267475-2-listout@listout.xyz>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 1 Oct 2025 09:55:24 -0700
+X-Gm-Features: AS18NWCWIJFE0RsLIgx7XI0N3IWWUd7fh23q62J3S9e27OHJLKuUzhWeJaFnFmM
+Message-ID: <CAADnVQLWjSA9W0Hr2QsQo=L38fyg5r3q4BE799KuJYPGhGinqA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] bpf: Skip scalar adjustment for BPF_NEG if dst is
+ a pointer
+To: Brahmajit Das <listout@listout.xyz>, Song Liu <song@kernel.org>, Eduard <eddyz87@gmail.com>
+Cc: syzbot+d36d5ae81e1b0a53ef58@syzkaller.appspotmail.com, 
+	Andrii Nakryiko <andrii@kernel.org>, Alexei Starovoitov <ast@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Hao Luo <haoluo@google.com>, 
+	John Fastabend <john.fastabend@gmail.com>, Jiri Olsa <jolsa@kernel.org>, 
+	KP Singh <kpsingh@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Stanislav Fomichev <sdf@fomichev.me>, 
+	syzkaller-bugs <syzkaller-bugs@googlegroups.com>, Yonghong Song <yonghong.song@linux.dev>, 
+	KaFai Wan <kafai.wan@linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 01, 2025 at 09:45:07AM -0700, Breno Leitao wrote:
-> Hello Eric,
-> 
-> On Wed, Oct 01, 2025 at 09:23:05AM -0700, Eric Biggers wrote:
-> 
-> > This looks fine, but technically 'unsigned int' would be more
-> > appropriate here, given the context.  If we look at the whole function
-> > in 6.12, we can see that it took an 'unsigned int' length:
-> 
-> Ack. Do you want me to send a v2 with `unsigned int` instead?
-> 
+On Wed, Oct 1, 2025 at 2:56=E2=80=AFAM Brahmajit Das <listout@listout.xyz> =
+wrote:
+>
+> In check_alu_op(), the verifier currently calls check_reg_arg() and
+> adjust_scalar_min_max_vals() unconditionally for BPF_NEG operations.
+> However, if the destination register holds a pointer, these scalar
+> adjustments are unnecessary and potentially incorrect.
+>
+> This patch adds a check to skip the adjustment logic when the destination
+> register contains a pointer.
+>
+> Reported-by: syzbot+d36d5ae81e1b0a53ef58@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=3Dd36d5ae81e1b0a53ef58
+> Fixes: aced132599b3 ("bpf: Add range tracking for BPF_NEG")
+> Suggested-by: KaFai Wan <kafai.wan@linux.dev>
+> Signed-off-by: Brahmajit Das <listout@listout.xyz>
+> ---
+>  kernel/bpf/verifier.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+> index e892df386eed..4b0924c38657 100644
+> --- a/kernel/bpf/verifier.c
+> +++ b/kernel/bpf/verifier.c
+> @@ -15645,7 +15645,8 @@ static int check_alu_op(struct bpf_verifier_env *=
+env, struct bpf_insn *insn)
+>                 }
+>
+>                 /* check dest operand */
+> -               if (opcode =3D=3D BPF_NEG) {
+> +               if (opcode =3D=3D BPF_NEG &&
+> +                   !__is_pointer_value(false, &regs[insn->dst_reg])) {
+>                         err =3D check_reg_arg(env, insn->dst_reg, DST_OP_=
+NO_MARK);
 
-Sure.  Could you also make it clear which kernel version(s) you are
-expecting the patch to be applied to?  Is it everything 5.4 through
-6.15?  It looks like this bug actually got exposed by f4da7afe07523f
-("kexec_file: increase maximum file size to 4G") in 6.0.  But
-backporting to older versions should be fine too, if it applies to them.
 
-- Eric
+The fix makes sense.
+
+Song,
+Eduard,
+
+please take a look.
 
