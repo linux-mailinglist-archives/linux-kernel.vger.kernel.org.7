@@ -1,154 +1,150 @@
-Return-Path: <linux-kernel+bounces-838731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7072BB007F
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 12:38:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DD18BB0079
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 12:38:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E59C23C6094
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 10:38:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBFE81897488
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 10:38:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CBCE2BEFF2;
-	Wed,  1 Oct 2025 10:38:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73FFE2C0269;
+	Wed,  1 Oct 2025 10:38:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b="V3z8i8o3"
-Received: from server-vie001.gnuweeb.org (server-vie001.gnuweeb.org [89.58.62.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="y+Qrg6t2"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1590824A051;
-	Wed,  1 Oct 2025 10:38:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.62.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1912627A929
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 10:38:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759315115; cv=none; b=sZ4+OkpJnXZofeMGAQyI2Bq/WelEquSJpmiEpDe/+oVipygDjypbtOY3d81nIFGl3oU8fjfLIvZY6udR20S/7lmM5EmjKsLB0x6TddIXTj1W9VBGSqpCOAg1Bt2UCIOoo8zuMhFbfrTUCW+bezzm5Lkn3+CuR9jIOl41zPZtVig=
+	t=1759315101; cv=none; b=i2W78J26qq/BUjgs1mWFA9fV80taz5rFlTtZ7Hi7MjpXx1wEYEKd0WFtOf+1FBz/ewZ3HS+kmFPvw/qpE85WxgeRq5kZJjpWt5kCRNu+aJTqFuWNlI6qopBabdnS8MdxvMw8c2boWnaX5aOV3ZCrnQ0S4TVIU1x/SM6I3IB8jqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759315115; c=relaxed/simple;
-	bh=poJwsjldxPN02UpyCS99Meg7MHiIEXO5cTadWf7egdM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jWI72ddkV6ccz0aCH4272RlPZTGMJBvijkH5IkEfzjzRMmadmHBxUmlfnSMdDUUp9ZiI56CNAh/oPLHuI+t/JBTs2e5YlXOsK9gYEuAjuEhe+5CYdZOBix72yyf3rBG45a+nvoVjoVX/vMAtjATkJ5x0+F9JKu+3wIcdxuYXG38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org; spf=pass smtp.mailfrom=gnuweeb.org; dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b=V3z8i8o3; arc=none smtp.client-ip=89.58.62.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnuweeb.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-	s=new2025; t=1759315106;
-	bh=poJwsjldxPN02UpyCS99Meg7MHiIEXO5cTadWf7egdM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:
-	 Content-Transfer-Encoding:Message-ID:Date:From:Reply-To:Subject:To:
-	 Cc:In-Reply-To:References:Resent-Date:Resent-From:Resent-To:
-	 Resent-Cc:User-Agent:Content-Type:Content-Transfer-Encoding;
-	b=V3z8i8o3GuNfdAV8ip7PjU5udbRYSfauaNV/LUpTg8Z+qB7Db64QjVP3sppsWwzGC
-	 8sky4xBoaP3qzrRm5U553Zjr7JfAeRCXqylcB+6q+q8Uutd/qaDMtl9bxb01W+54VW
-	 oRSd1nlzMaOQPQvcioU5smcIhr+8OLQu8yA1J1eFf+zqEbSO9ky4OpKVm/UYDKuNKB
-	 8EwwZb1Cs8rL+WPVgRGzaFUwspdF7nxzA5CGmtqhJ0WQMPu/sRfqdzYUVdbFTHDnMq
-	 gQEvb+QiuyKPh63m/7uf1Lv4FLhFavvjqWe0OaU1QD07I18iaRcHihUToDkXGwfA+N
-	 TJPQ+1Qten0Sg==
-Received: from integral2.. (unknown [182.253.126.153])
-	by server-vie001.gnuweeb.org (Postfix) with ESMTPSA id 77DBE312793F;
-	Wed,  1 Oct 2025 10:38:23 +0000 (UTC)
-From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Ammar Faizi <ammarfaizi2@gnuweeb.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	io-uring Mailing List <io-uring@vger.kernel.org>,
-	Romain Pereira <rpereira@anl.gov>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	Christian Mazakas <christian.mazakas@gmail.com>
-Subject: [PATCH liburing] github: Test build against the installed liburing
-X-Gw-Bpl: wU/cy49Bu1yAPm0bW2qiliFUIEVf+EkEatAboK6pk2H2LSy2bfWlPAiP3YIeQ5aElNkQEhTV9Q==
-Date: Wed,  1 Oct 2025 17:38:03 +0700
-Message-Id: <20251001103803.1423513-1-ammarfaizi2@gnuweeb.org>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1759315101; c=relaxed/simple;
+	bh=6WpRzUY1xB9VvC/VEjbYbB5z3j3GxfQ6hBgggjbZ6EA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GXA1yRepmFP2C68eEjyi1gsxA/1tzJfIMRlACrAt9L1WleJ0NNY2q/Jq8TmjOaITANTicOV1TPaq8XCTdkBLnJcvHLYZ0K2c+I7fXEjOeTAE9T4imfITZbbdZCsbpZPHEWYILs1JltRehVZntVQ1yr8Ryhc94GvJhUZyQVw0Xts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=y+Qrg6t2; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-46e384dfde0so74465145e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 03:38:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1759315097; x=1759919897; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4mF0RoLdx3iYd2wCJGbdBLKsyAovYaRReQN2weBYtMg=;
+        b=y+Qrg6t2+x2XATp4qoY42IpRtEEqTMo+ykgdzwd5GUoPd95dWiV0NKZVydDwFCv5TT
+         5EOiYYiElupqnYTbg6ahOFnzxnRnpRmyVQhpkIWiJkoI0XJhvBOZha9MoPxLBmEUAQih
+         7OiC5JbiOch7qdXoOnM7o5KH/2vwFlbgnkUxlw0JCOkxpNjvfjSfrfsijG33waVj9rp3
+         EgaXwCD6ivCBUpb3vb7ZrEuU4G4Ru5ovUfhZB/46618+I+TUP6BeITd5QuIeod+CqLG+
+         f9HUHKzdome3ICyoaRlY59BztYhqNTuYCTW/d/swcoDc+wS3iLXDv3smiC/9tMSLOFLe
+         p4Uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759315097; x=1759919897;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4mF0RoLdx3iYd2wCJGbdBLKsyAovYaRReQN2weBYtMg=;
+        b=I/VVX3SoP7+0V7Axk8Vx4UB07T/XMRNe6AA9rE5E7SpXis3qDby0AKbwQ4E55papd/
+         w06QJgbU1R8abIA5pPoyLscKEP681VrLmcnVtELxuhNV4lFPJ0epK2TEk1MMokc2gWva
+         aucLEhbSlmQiLx3SsY7vDdghcA3qWRTXSPzA/cWH89WLEzqS0PpeTv3IoKBo4WzpMin7
+         mSQGn74hdEvU6Iezz7ygGgKUEbbxobZeGr/bjW82jPsPNlGf2bgwS0Nvsgt3kWXWj0D2
+         s3BKtt/r8OwPBUQZ5LKURN5yxECeFgoI9EGuQQNZxcuWdNQRZS2RSeI4SSEyFZU1I9Wg
+         aL3g==
+X-Forwarded-Encrypted: i=1; AJvYcCWY24UwOI6hyrFcd/P7kWdtrFravg2Lc3uhc/9gxREFLY6gk2AP+s44JcYK0xW8lzqhhwMoYJXAIjarUiU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhOEiZNRukE/VL1BuKfMp5Tf99jyRFaDXm/dvYZMzE7b/fjN8O
+	vuZ7+gCjzZcpFy/b+tXB4YSzQQ73AmY3gJGuUmMjsJ72SRQGT7xRbQUPFrb6jfDIfDDuzJgYAeT
+	X2zQ5
+X-Gm-Gg: ASbGncuSeWzZW4DMSm3HBhQGoulQH9xhu46PsUhD8TE3xxtIxtuYBQqOXsDeHi+xKmT
+	Z3fg+a2uyp+HR3hhc+vU/LoJbM+/wlXhLDBFviIa6kNPULjGivv6eN3rfECu6sAJu+gzT8GaqGi
+	zRzFq2nVR/dLW3V6Ran3amvwgZJYo4W6vPDRy3fSJ6tvRd5PfPb/YgcDpYm3TzpG3ziXsuEMPyh
+	t9phRmjMWzVH3pX6pa9oaW1TpM3uxlCAvOBmYG9HvNFPcd+vqpR5iqA1KycjKYtSRg2kHukqXug
+	zvbOautipD9Wuc+DtsDzewFL1znvBlLyGaoypt740P7gFP0yCI7zo7vXhgcJIWb1XGxCwwPENN+
+	3y2AYTfxr+hIuAD8Nd1itgQc4jIZO44j4oCiR7R7o2LHcRNJ0zovL+GWdjSzzuIrVB5dbkGkVCJ
+	lqS0e7/62UkRwsPFGb5SyhZTEcVgc=
+X-Google-Smtp-Source: AGHT+IEaer9MYyjKdjU2yY0Pc7X/yiVBoIWcheLdIRRZJC17ULlWTNZ7OJDYC5pxYdi3TVVVua5g6A==
+X-Received: by 2002:a05:6000:2086:b0:410:3a4f:1298 with SMTP id ffacd0b85a97d-425577f3522mr2447321f8f.15.1759315097237;
+        Wed, 01 Oct 2025 03:38:17 -0700 (PDT)
+Received: from airbuntu (host86-146-64-97.range86-146.btcentralplus.com. [86.146.64.97])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fc7e2c6b3sm28297378f8f.54.2025.10.01.03.38.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Oct 2025 03:38:16 -0700 (PDT)
+Date: Wed, 1 Oct 2025 11:38:15 +0100
+From: Qais Yousef <qyousef@layalina.io>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Linux PM <linux-pm@vger.kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Pierre Gondois <pierre.gondois@arm.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Linux ACPI <linux-acpi@vger.kernel.org>,
+	Jie Zhan <zhanjie9@hisilicon.com>, rust-for-linux@vger.kernel.org,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>
+Subject: Re: [PATCH v3 1/4] cpufreq: Make drivers using CPUFREQ_ETERNAL
+ specify transition latency
+Message-ID: <20251001103815.a57cc3wyasyhmrmt@airbuntu>
+References: <5069803.31r3eYUQgx@rafael.j.wysocki>
+ <2264949.irdbgypaU6@rafael.j.wysocki>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <2264949.irdbgypaU6@rafael.j.wysocki>
 
-When adding a new header file, the author might forget to add it to the
-installation path in the Makefile.
+On 09/26/25 12:12, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> Commit a755d0e2d41b ("cpufreq: Honour transition_latency over
+> transition_delay_us") caused platforms where cpuinfo.transition_latency
+> is CPUFREQ_ETERNAL to get a very large transition latency whereas
+> previously it had been capped at 10 ms (and later at 2 ms).
+> 
+> This led to a user-observable regression between 6.6 and 6.12 as
+> described by Shawn:
+> 
+> "The dbs sampling_rate was 10000 us on 6.6 and suddently becomes
+>  6442450 us (4294967295 / 1000 * 1.5) on 6.12 for these platforms
+>  because the default transition delay was dropped [...].
+> 
+>  It slows down dbs governor's reacting to CPU loading change
+>  dramatically.  Also, as transition_delay_us is used by schedutil
+>  governor as rate_limit_us, it shows a negative impact on device
+>  idle power consumption, because the device gets slightly less time
+>  in the lowest OPP."
+> 
+> Evidently, the expectation of the drivers using CPUFREQ_ETERNAL as
+> cpuinfo.transition_latency was that it would be capped by the core,
+> but they may as well return a default transition latency value instead
+> of CPUFREQ_ETERNAL and the core need not do anything with it.
+> 
+> Accordingly, introduce CPUFREQ_DEFAULT_TRANSITION_LATENCY_NS and make
+> all of the drivers in question use it instead of CPUFREQ_ETERNAL.  Also
+> update the related Rust binding.
+> 
+> Fixes: a755d0e2d41b ("cpufreq: Honour transition_latency over transition_delay_us")
+> Closes: https://lore.kernel.org/linux-pm/20250922125929.453444-1-shawnguo2@yeah.net/
+> Reported-by: Shawn Guo <shawnguo@kernel.org>
+> Reviewed-by: Mario Limonciello (AMD) <superm1@kernel.org>
+> Reviewed-by: Jie Zhan <zhanjie9@hisilicon.com>
+> Cc: 6.6+ <stable@vger.kernel.org> # 6.6+
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-For example, commit 7e565c0116ba ("tests: test the query interface"),
-introduced an include to the query.h file via liburing.h, but the
-query.h file was not added to the installation entry, which resulted
-in the following error:
+The whole series LGTM. I think this is clearer now without the CPUFREQ_ETERNAL.
 
-  In file included from a.c:1:
-  /usr/include/liburing.h:19:10: fatal error: liburing/io_uring/query.h: No such file or directory
-     19 | #include "liburing/io_uring/query.h"
-        |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~
-  compilation terminated.
+Reviewed-by: Qais Yousef <qyousef@layalina.io>
 
-This kind of breakage is only caught by the liburing that's installed
-in the system. Make sure the GitHub CI covers it so we can catch the
-breakage earlier before a new release is tagged and distributed.
 
-Thanks to Romain Pereira for reporting the issue on GitHub!
+Cheers
 
-Link: https://github.com/axboe/liburing/issues/1470
-Cc: Romain Pereira <rpereira@anl.gov>
-Cc: Pavel Begunkov <asml.silence@gmail.com>
-Cc: Christian Mazakas <christian.mazakas@gmail.com>
-Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
----
- .github/workflows/ci.yml       | 18 ++++++++++++++++++
- .github/workflows/test_build.c |  9 +++++++++
- 2 files changed, 27 insertions(+)
- create mode 100644 .github/workflows/test_build.c
-
-diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
-index 3c9a10d4e147..1056bdf41985 100644
---- a/.github/workflows/ci.yml
-+++ b/.github/workflows/ci.yml
-@@ -196,6 +196,17 @@ jobs:
-         run: |
-           sudo make install;
- 
-+      - name: Test build against the installed liburing
-+        run: |
-+          export TEST_FILE=".github/workflows/test_build.c";
-+          if [ "$SANITIZE" -eq "1" ]; then
-+            export SANITIZE_FLAGS="-fsanitize=address,undefined";
-+          else
-+            export SANITIZE_FLAGS="";
-+          fi;
-+          ${{matrix.build_args.cc}} -x c -o a.out $TEST_FILE -luring $SANITIZE_FLAGS;
-+          ${{matrix.build_args.cxx}} -x c++ -o a.out $TEST_FILE -luring $SANITIZE_FLAGS;
-+
- 
-   alpine-musl-build:
-     needs: get_commit_list
-@@ -239,6 +250,13 @@ jobs:
-         run: |
-           make install;
- 
-+      - name: Test build against the installed liburing
-+        shell: alpine.sh {0}
-+        run: |
-+          export TEST_FILE=".github/workflows/test_build.c";
-+          gcc -x c -o a.out $TEST_FILE -luring;
-+          g++ -x c++ -o a.out $TEST_FILE -luring;
-+
- 
-   codespell:
-     needs: get_commit_list
-diff --git a/.github/workflows/test_build.c b/.github/workflows/test_build.c
-new file mode 100644
-index 000000000000..a94fcdceef22
---- /dev/null
-+++ b/.github/workflows/test_build.c
-@@ -0,0 +1,9 @@
-+#include <liburing.h>
-+
-+int main(void)
-+{
-+	struct io_uring ring;
-+	io_uring_queue_init(8, &ring, 0);
-+	io_uring_queue_exit(&ring);
-+	return 0;
-+}
--- 
-Ammar Faizi
-
+--
+Qais Yousef
 
