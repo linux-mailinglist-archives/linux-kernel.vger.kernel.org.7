@@ -1,150 +1,162 @@
-Return-Path: <linux-kernel+bounces-839484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0063BB1B5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 22:51:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F438BB1B5D
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 22:52:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF0943A6174
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 20:51:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E5FC2A63CA
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 20:52:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8DAE2F066B;
-	Wed,  1 Oct 2025 20:51:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B99992FD7DF;
+	Wed,  1 Oct 2025 20:52:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=weathered-steel.dev header.i=@weathered-steel.dev header.b="ImUQ+auC"
-Received: from mx-out1.startmail.com (mx-out1.startmail.com [145.131.90.139])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="qK5+6bq0";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="F373QN7N"
+Received: from fhigh-a8-smtp.messagingengine.com (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9776E1946AA;
-	Wed,  1 Oct 2025 20:51:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=145.131.90.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0A83283FD7
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 20:52:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759351892; cv=none; b=j66Z7VWqmu2KBsSFFNvXdxO7qNGQQS2/sByXtMPwJr3yIzXyZXMF1+AV6asRI6Kv6Gm6oYu9f2WOUJPQ3CJIgnmGJ6hZKJuh0IJgtwAcYSvBPAjBTcQ3LawZ11fXhrBmZ0lfcES1cwcuHxKzw5hwKb29P0sYre/QeJrkeEl/pE0=
+	t=1759351962; cv=none; b=sDff4/ByC/jyzTnpK0Qq5/QaT5vyUjXxs6Lju9OlAv2gc1BGh7w74JC2tjD3awC+KpX2VwmEzRnJ99h6ck50GtIg6QerIhJRARk5vlvSC029oHxcmOe78bOx45SHhmzYnlwgXr9Wc2LM71h1qh/8oleNVa8TA6y/bv+Z4eb0akQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759351892; c=relaxed/simple;
-	bh=VPaXP4qHSspQ17XY5CPQB+lhfh+9TEuQQnadpD+XA7s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KJ6JA/VhrdqQHadV0EYCrzA9Iwuqwp30mUzsqq0sIuIXqhoyyfG5zRYASwCYL9zRrPFzGJD/wiDv1T/6AunVdt/8Mva7GYhBf1iucJ771/ZuhBl2dd1PQafHprH+LGnqz6sxfsrR79CVGMEaIHtZQAZOnEjWrob1/u4XTyCjqK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weathered-steel.dev; spf=pass smtp.mailfrom=weathered-steel.dev; dkim=pass (2048-bit key) header.d=weathered-steel.dev header.i=@weathered-steel.dev header.b=ImUQ+auC; arc=none smtp.client-ip=145.131.90.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weathered-steel.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weathered-steel.dev
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=weathered-steel.dev;
-	s=startmail1; t=1759351881;
-	bh=QbcGgb5EQSRVJLoUkXO4xyhEsG9J13OKh/OXOofe7G8=;
-	h=Date:From:To:Subject:Message-ID:References:Mime-Version:
-	 Content-Type:Content-Disposition:In-Reply-To:From:Subject:To:Date:
-	 Sender:Content-Type:Content-Transfer-Encoding:Content-Disposition:
-	 Mime-Version:Reply-To:In-Reply-To:References:Message-Id:
-	 List-Unsubscribe:List-Unsubscribe-Post:Autocrypt;
-	b=ImUQ+auCIzrbzgelzjZy/hT/6tYbxImGUQmh64wCOdKDUl20Co1kP7cTJ9lhFDrbR
-	 qQ4QZlSxRPKLJxwjRAbiuePe78ERBtTjj3yUHwpj56F9g4Lcw7rD1f4TPANFVG6jzA
-	 F8rvWj2+w96g7boCQZFbxZUGtuIibAjiT8peB42+PcniofccflsEr6bINEsaBUNBqe
-	 +VCQyDAPoOkVF6bO0L4BKQEtA7NcZZXU1+GXhmBxJrgTAIP/l2WYOWAw2drtpyeLBx
-	 ZsINN8ZnA3JZrn9ueU0l92T0EVFjY1yF5FNaIT+VMSk6FtfjKRBYPfKM8y5CggJ8Dg
-	 fI1MewDrYAc9w==
-Date: Wed, 1 Oct 2025 20:51:16 +0000
-From: Elle Rhumsaa <elle@weathered-steel.dev>
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Drew Fustini <fustini@kernel.org>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v15 1/7] pwm: Export `pwmchip_release` for external use
-Message-ID: <aN2T-IZKQfqcd7I4@archiso>
-References: <20250930-rust-next-pwm-working-fan-for-sending-v15-0-5661c3090877@samsung.com>
- <CGME20250930122730eucas1p11afe23eee92daac1023a826768b1f92d@eucas1p1.samsung.com>
- <20250930-rust-next-pwm-working-fan-for-sending-v15-1-5661c3090877@samsung.com>
+	s=arc-20240116; t=1759351962; c=relaxed/simple;
+	bh=QzyE0+R58RgiQTk3Zug88mk/wlJ2AVPBey7eRgbNiiU=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=JA3MTdFuK3nuf6ekx7gEcymcFIqFzmrGd92V8sJxt3n+UGVMt6tWOoXp2ZCb9SDDruNFMcNh0D4YwDKvKnNF9eo0B1har1dbl+0H+AsmT1nKLt0KSMp3wZcDhQ8JeCH41EEBi6fHQwV37tSYDMgit7zDg86UNYTSfBzXI4xukdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=qK5+6bq0; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=F373QN7N; arc=none smtp.client-ip=103.168.172.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id A1195140017A;
+	Wed,  1 Oct 2025 16:52:38 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Wed, 01 Oct 2025 16:52:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1759351958;
+	 x=1759438358; bh=jElQQ9PX+0V5sqeyNaST6yqqr8qfdCvwBoU7CLgEs94=; b=
+	qK5+6bq0zPVE5zIunXwsiFzMIVB099c8exml7+QJApsStVDdbbDWgaVQSDTQnI7r
+	gPGXnDoCrASbuDLpPHjZmkm9kDuQ2v4+BMAjKi2EO6HqwXqcerTyIxOnRcZ+GxH5
+	GsQ34wKFRmQzhsNC/CWen/PWosSbYDuoc+5bdlmxvxXtg32yyPdE9JUlRw96C0rs
+	/tbdvuBMqa7xQ9ZzyK1xcrxm+IGZ6PbG9yV/KoIxcFvr4RTVT6MCUlGtK5qqvnJY
+	2xtgbX1b8ggiT6HRs5OtLBxbnnZVoYfNE5OJhvvq8H+mZuceqI/0OTHP3aSeNxKc
+	xnkpwmaoCRWz1q4xpk+r7w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1759351958; x=
+	1759438358; bh=jElQQ9PX+0V5sqeyNaST6yqqr8qfdCvwBoU7CLgEs94=; b=F
+	373QN7NihCkOrI+VN9YxZwLwhdUmhD7cRKlbHXdY7wMh5rTjXycKcYi2ZZRXxn8r
+	dn35QppbjXPmPivf0v4KwFWDOKWxeAn+CYHDAK4hYKKByUFKRNJO8EmK7wN8wS1o
+	dAPECR+dMRqrQwO35w6/HJXtQFEGjH8Zp0T4ssmtmr/0zBBlKk4QZJqjrodwkY0h
+	X+KR5hWXy1TKbDF/GVx11U2WCRcLHDUEgkqJ9hlKZRSU8qa3/o4LsMBWhkl6Rfhy
+	TEaBXr2j1NcsH42hnWM1UJALR1UtF/xqtoLklkxx/vg7wz1IFerG/RWn7MYYoxXl
+	Cs7bjj+woEDbpStaE4WIw==
+X-ME-Sender: <xms:lZTdaJETKfO1qfiNxl9hZ2rQ7rCxr1MtK1fjha8scMrDKBn_qc_gCQ>
+    <xme:lZTdaJJuTBNbkXKVPInsj9UuTeCnEiGf-1UNNmE2zC1iRVGGJDmuigBBdOJinnaF0
+    q5dq_tzQqyMcECrCayTsSU8bsJxIRoRxusM41rbNKzTEhDD6pvIPIA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdekgeduhecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthhqredtredtjeenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
+    hnpedvhfdvkeeuudevfffftefgvdevfedvleehvddvgeejvdefhedtgeegveehfeeljeen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
+    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopedufedpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtoheplhhinhhugiesrghrmhhlihhnuhigrdhorhhgrdhukhdprhgtphhtth
+    hopehrmhhkodhkvghrnhgvlhesrghrmhhlihhnuhigrdhorhhgrdhukhdprhgtphhtthho
+    pehrohhsthgvughtsehgohhoughmihhsrdhorhhgpdhrtghpthhtoheprghruggssehkvg
+    hrnhgvlhdrohhrghdprhgtphhtthhopegvsghighhgvghrsheskhgvrhhnvghlrdhorhhg
+    pdhrtghpthhtohepkhgvvghssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehnrghthh
+    grnheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhrihhvihgrlheskhgvrhhnvghl
+    rdhorhhgpdhrtghpthhtoheplhhinhhushdrfigrlhhlvghijheslhhinhgrrhhordhorh
+    hg
+X-ME-Proxy: <xmx:lZTdaFsErVrRlEn2dHr66ucnD-LOgrU6d9vsAe2CXLj-Nrd_wL8bLg>
+    <xmx:lZTdaM8k4xrN4C-HMtQOuo0lUlZN9t8w6NA3LLJuqVePmcDHWfVAqw>
+    <xmx:lZTdaETlupRQZ-Ph5aEzaBK_F6MXRjnbVEVglO_Y8kf6VEdthIU7PQ>
+    <xmx:lZTdaGVJunJInLI4WJU8QMslHtjuGQrt4N2SwyKhv65TSyk1ahwgLg>
+    <xmx:lpTdaMnySD3-diLxf8np-sfjgq9uwp1H3sAFgrQJ-xcXmwaaf6xkUKrd>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id C1C5E700065; Wed,  1 Oct 2025 16:52:37 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250930-rust-next-pwm-working-fan-for-sending-v15-1-5661c3090877@samsung.com>
+MIME-Version: 1.0
+X-ThreadId: AOvO0JZNdWB-
+Date: Wed, 01 Oct 2025 22:52:05 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Franz-Josef Haider" <fj.haider@outlook.com>,
+ "Linus Walleij" <linus.walleij@linaro.org>
+Cc: "Russell King" <linux@armlinux.org.uk>,
+ "Ard Biesheuvel" <ardb@kernel.org>,
+ "Russell King" <rmk+kernel@armlinux.org.uk>,
+ "Eric Biggers" <ebiggers@kernel.org>,
+ "Nathan Chancellor" <nathan@kernel.org>,
+ "Steven Rostedt" <rostedt@goodmis.org>, "Kees Cook" <kees@kernel.org>,
+ "Dave Vasilevsky" <dave@vasilevsky.ca>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, trivial@kernel.org
+Message-Id: <6d9bb65c-d693-4d99-8183-b605cabf9380@app.fastmail.com>
+In-Reply-To: 
+ <VI0P195MB273993B2928F985EAC763375EDE6A@VI0P195MB2739.EURP195.PROD.OUTLOOK.COM>
+References: 
+ <VI0P195MB2739D000BD1BF18B3B718F93ED1FA@VI0P195MB2739.EURP195.PROD.OUTLOOK.COM>
+ <CACRpkdZbwuf2Fgtq+jyqzqspb37-P6X4O9xqkG-mSb+afSjh3g@mail.gmail.com>
+ <VI0P195MB273993B2928F985EAC763375EDE6A@VI0P195MB2739.EURP195.PROD.OUTLOOK.COM>
+Subject: Re: [PATCH] ARM: Make sure CPU_ARM940T kernel can be built.
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 30, 2025 at 02:20:32PM +0200, Michal Wilczynski wrote:
-> The upcoming Rust abstraction layer for the PWM subsystem uses a custom
-> `dev->release` handler to safely manage the lifetime of its driver
-> data.
-> 
-> To prevent leaking the memory of the `struct pwm_chip` (allocated by
-> `pwmchip_alloc`), this custom handler must also call the original
-> `pwmchip_release` function to complete the cleanup.
-> 
-> Make `pwmchip_release` a global, exported function so that it can be
-> called from the Rust FFI bridge. This involves removing the `static`
-> keyword, adding a prototype to the public header, and exporting the
-> symbol.
-> 
-> Reviewed-by: Elle Rhumsaa <elle@weathered-steel.dev>
-> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
-> ---
->  drivers/pwm/core.c  | 3 ++-
->  include/linux/pwm.h | 6 ++++++
->  2 files changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
-> index 0d66376a83ec350e0c3718959f4d794efd71595a..a33da3dff608fdff91251e5fd07b0dbd295be022 100644
-> --- a/drivers/pwm/core.c
-> +++ b/drivers/pwm/core.c
-> @@ -1600,12 +1600,13 @@ void pwmchip_put(struct pwm_chip *chip)
->  }
->  EXPORT_SYMBOL_GPL(pwmchip_put);
->  
-> -static void pwmchip_release(struct device *pwmchip_dev)
-> +void pwmchip_release(struct device *pwmchip_dev)
->  {
->  	struct pwm_chip *chip = pwmchip_from_dev(pwmchip_dev);
->  
->  	kfree(chip);
->  }
-> +EXPORT_SYMBOL_GPL(pwmchip_release);
->  
->  struct pwm_chip *pwmchip_alloc(struct device *parent, unsigned int npwm, size_t sizeof_priv)
->  {
-> diff --git a/include/linux/pwm.h b/include/linux/pwm.h
-> index 8cafc483db53addf95591d1ac74287532c0fa0ee..d86061024b52172edf3845bf9252a966f120e365 100644
-> --- a/include/linux/pwm.h
-> +++ b/include/linux/pwm.h
-> @@ -485,6 +485,12 @@ int __pwmchip_add(struct pwm_chip *chip, struct module *owner);
->  #define pwmchip_add(chip) __pwmchip_add(chip, THIS_MODULE)
->  void pwmchip_remove(struct pwm_chip *chip);
->  
-> +/*
-> + * For FFI wrapper use only:
-> + * The Rust PWM abstraction needs this to properly free the pwm_chip.
-> + */
-> +void pwmchip_release(struct device *dev);
-> +
->  int __devm_pwmchip_add(struct device *dev, struct pwm_chip *chip, struct module *owner);
->  #define devm_pwmchip_add(dev, chip) __devm_pwmchip_add(dev, chip, THIS_MODULE)
->  
-> 
-> -- 
-> 2.34.1
-> 
+On Wed, Oct 1, 2025, at 18:04, Franz-Josef Haider wrote:
+> On 9/30/25 15:09, Linus Walleij wrote:
+>> On Thu, Sep 25, 2025 at 11:33=E2=80=AFPM Franz-Josef Haider <fj.haide=
+r@outlook.com> wrote:
+>>
+>>> From 33ce5a26ef08199625bc5bb01a176047bfacff91 Mon Sep 17 00:00:00 20=
+01
+>>> From: Franz-Josef Haider <fj.haider@outlook.com>
+>
+> Hello, I have done this change because when trying to "select=20
+> CPU_ARM940T" from a Kconfig for a device with arm940t cpu, the build=20
+> ends up failing with errors like
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 arch/arm/lib/ashldi3.S: Asse=
+mbler messages:
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 arch/arm/lib/ashldi3.S:44: E=
+rror: cannot honor width suffix=20
+> -- `rsb ip,r2,#32'
+>
+> With the change I am able to build a kernel which runs on a device wit=
+h=20
+> arm940t cpu (with the patch "ARM: Add missing mmu flags entry to arm94=
+0=20
+> proc info." which I've submitted as well. And with the necessary mach=20
+> files etc).
+>
+> I can elaborate on this in the commit message and also adjust the=20
+> condition to include the other CPU types you mentioned.
 
-Reviewed-by: Elle Rhumsaa <elle@weathered-steel.dev>
+Hi Franz-Josef,
+
+We removed support for ARMv4T NOMMU a couple of years ago in
+commit 2f618d5ef5dd ("ARM: remove support for NOMMU ARMv4/v5"),
+in order to simplify the Kconfig CPU selection.
+
+Adding a new platform in turn means you'll have to add that
+infrastructure we skipped back then, and the dependency here
+is only a very small part of that.
+
+Do you have a public git tree with the rest of your patches?
+
+     Arnd
 
