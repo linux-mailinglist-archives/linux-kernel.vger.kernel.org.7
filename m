@@ -1,95 +1,39 @@
-Return-Path: <linux-kernel+bounces-838930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3C13BB0723
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 15:17:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C291EBB074A
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 15:20:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32FED1926911
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 13:17:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B79D52A0BB0
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 13:20:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4777E2EC57F;
-	Wed,  1 Oct 2025 13:17:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="sxSyGSR/";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ItTL2eou";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="nBTKxE2C";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ga03/4WG"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D5932980A8
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 13:17:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5D362ED866;
+	Wed,  1 Oct 2025 13:20:25 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4065228489C;
+	Wed,  1 Oct 2025 13:20:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759324636; cv=none; b=Fo9xmse3j2J757EMXYlh4Yf8mQUetGtCwucItnf+eGjCN8/jS9wMHklcoSM0SGVxolcafh4Ak3mZFG84fk91J3OQMFDgCK+tmB56cWnN5RnoL4CVQqInzrpwNo7H2kYcIMIoeLJkKE9agx35AdDzgv8L/32R7hshm5gEPxXKT8c=
+	t=1759324825; cv=none; b=BpctRRuznojSy0pmwEZ+A7d78qVF2Rq213UkFE3cC1ZKp9mKIymS65oZVG6tcNgTWJAU1TdFEuM+3GHioAXWIHqDNY6V0A/Gg3/vYJYslptS7DJ3WSTud9AMvCGrjLxgbguoYnStdvvc+hEt8X8CnFw93CqxOnuLjskNj9QYEyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759324636; c=relaxed/simple;
-	bh=nF9es9/WIczao8YSFCjg4z1d/Hv7Cj1JHGYDhyhICzg=;
+	s=arc-20240116; t=1759324825; c=relaxed/simple;
+	bh=SzvKklzVX6W0EPRa0KwrDs/5Evfvr+B1xb2KqTfE6pc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YxZRysRXBShFrz0VUf5hZZ+t6kMCQB+jgELM7FZHJhHo/+nzwDcDmTOq6jaccRBra6E6pLTBKzAC7oZwdScjZ8+E6QdoCHZVUon9XH6tzCf/f9+oTrhwInVe7IOT8M/iSr0N2QiwrxVWpqxSlqpMgc1glK6N6ADz6Z/ydVrOdD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=sxSyGSR/; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ItTL2eou; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=nBTKxE2C; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ga03/4WG; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 9FF2D1FB66;
-	Wed,  1 Oct 2025 13:17:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759324632; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WmRrN30rfew7e/j2Ph45WjnBsE+EVhv1bOJ8ZOYpilQ=;
-	b=sxSyGSR/05AfwtKZW9+4jdwaNmsSnhB+gyiMe3kPKkWQRjNCOHzM/oypF7Fj1JqOE9wddo
-	jMZ9UPUxIYrdvaivVhEZGQdjwLV95/0+mtQiRKalZYizeuJNUWnDPvjtkQ7mbhRtJBRn94
-	4i020G8YVJscSoxjdsdpBysieOezSoM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759324632;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WmRrN30rfew7e/j2Ph45WjnBsE+EVhv1bOJ8ZOYpilQ=;
-	b=ItTL2eou8Wl55gSlsfk2xBhlGn0fW9gOu1DjoPIU2fQvVhlvsKKo9OqhD9qepKtTf8FQU1
-	KBO/dXpB0OX89uCg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=nBTKxE2C;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="Ga03/4WG"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759324631; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WmRrN30rfew7e/j2Ph45WjnBsE+EVhv1bOJ8ZOYpilQ=;
-	b=nBTKxE2CepeBww3zK1xK18HiHHlmS4yHFNTHwMb33LlWKEKzQY8gWCEeGovIsS2ceib6uR
-	zQkWjlKYcc7Yk8GP4UL90bXvD6LpWtYtZ20wH3BggZayt8ChXYkIUSXv6zvmFg+2YOP7/o
-	TF3Sglo9FpWe4fR/YNvnvHMWuI3qZeM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759324631;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WmRrN30rfew7e/j2Ph45WjnBsE+EVhv1bOJ8ZOYpilQ=;
-	b=Ga03/4WGFp5aYpkn4UvpK3mtiZ39QXlhD6z5ou2eOXXgFe2Yb0LM1NA+Yu+zWdkKHihxLZ
-	E9VIWO+maVJCeFCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8A18613A3F;
-	Wed,  1 Oct 2025 13:17:10 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ZsoyIdYp3WjqDwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 01 Oct 2025 13:17:10 +0000
-Message-ID: <5e057255-ccd4-4250-8653-73040e14354f@suse.cz>
-Date: Wed, 1 Oct 2025 15:19:59 +0200
+	 In-Reply-To:Content-Type; b=Ci/8ZzjMc9TOTqhWruMMKo8zfhLsb/1c8oTqJnuDkWg7s8zV0UFoGaumWclEmXEqMY5VB3LNvtxAIo4VrkFzafpTj5wLBAMYkZiBBksXa2V+VEC14Gf8eoUtPg/UBFeOFJY1h6iIQQsmikuOb9Vp8ChAVW6/j4PSYRoxWlYL50o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 79DF316F2;
+	Wed,  1 Oct 2025 06:20:13 -0700 (PDT)
+Received: from [10.57.0.204] (unknown [10.57.0.204])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 87D133F59E;
+	Wed,  1 Oct 2025 06:20:16 -0700 (PDT)
+Message-ID: <2226e62f-76ca-4467-a8ae-460fd463df0a@arm.com>
+Date: Wed, 1 Oct 2025 14:20:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,122 +41,335 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] mm/page_owner: Rename proc-prefixed variables for
- clarity
-To: Hu Song <husong@kylinos.cn>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Brendan Jackman <jackmanb@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
- Zi Yan <ziy@nvidia.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20250930092153.843109-1-husong@kylinos.cn>
-Content-Language: en-US
-From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <20250930092153.843109-1-husong@kylinos.cn>
+Subject: Re: [PATCH v10 05/43] arm64: RME: Check for RME support at KVM init
+To: Marc Zyngier <maz@kernel.org>
+Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ James Morse <james.morse@arm.com>, Oliver Upton <oliver.upton@linux.dev>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
+ <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
+ Alexandru Elisei <alexandru.elisei@arm.com>,
+ Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
+ linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+ Gavin Shan <gshan@redhat.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+ Alper Gun <alpergun@google.com>, "Aneesh Kumar K . V"
+ <aneesh.kumar@kernel.org>, Emi Kisanuki <fj0570is@fujitsu.com>,
+ Vishal Annapurve <vannapurve@google.com>
+References: <20250820145606.180644-1-steven.price@arm.com>
+ <20250820145606.180644-6-steven.price@arm.com> <86ms6azxt5.wl-maz@kernel.org>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <86ms6azxt5.wl-maz@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 9FF2D1FB66
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:dkim,suse.cz:mid,suse.cz:email]
-X-Spam-Score: -4.51
 
-On 9/30/25 11:21 AM, Hu Song wrote:
-> From: Song Hu <husong@kylinos.cn>
+On 01/10/2025 12:05, Marc Zyngier wrote:
+> On Wed, 20 Aug 2025 15:55:25 +0100,
+> Steven Price <steven.price@arm.com> wrote:
+>>
+>> Query the RMI version number and check if it is a compatible version. A
+>> static key is also provided to signal that a supported RMM is available.
+>>
+>> Functions are provided to query if a VM or VCPU is a realm (or rec)
+>> which currently will always return false.
+>>
+>> Later patches make use of struct realm and the states as the ioctls
+>> interfaces are added to support realm and REC creation and destruction.
+>>
+>> Reviewed-by: Gavin Shan <gshan@redhat.com>
+>> Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>> Signed-off-by: Steven Price <steven.price@arm.com>
+>> ---
+>> Changes since v8:
+>>  * No need to guard kvm_init_rme() behind 'in_hyp_mode'.
+>> Changes since v6:
+>>  * Improved message for an unsupported RMI ABI version.
+>> Changes since v5:
+>>  * Reword "unsupported" message from "host supports" to "we want" to
+>>    clarify that 'we' are the 'host'.
+>> Changes since v2:
+>>  * Drop return value from kvm_init_rme(), it was always 0.
+>>  * Rely on the RMM return value to identify whether the RSI ABI is
+>>    compatible.
+>> ---
+>>  arch/arm64/include/asm/kvm_emulate.h | 18 +++++++++
+>>  arch/arm64/include/asm/kvm_host.h    |  4 ++
+>>  arch/arm64/include/asm/kvm_rme.h     | 56 ++++++++++++++++++++++++++++
+>>  arch/arm64/include/asm/virt.h        |  1 +
+>>  arch/arm64/kvm/Makefile              |  2 +-
+>>  arch/arm64/kvm/arm.c                 |  5 +++
+>>  arch/arm64/kvm/rme.c                 | 56 ++++++++++++++++++++++++++++
+>>  7 files changed, 141 insertions(+), 1 deletion(-)
+>>  create mode 100644 arch/arm64/include/asm/kvm_rme.h
+>>  create mode 100644 arch/arm64/kvm/rme.c
+>>
+>> diff --git a/arch/arm64/include/asm/kvm_emulate.h b/arch/arm64/include/asm/kvm_emulate.h
+>> index fa8a08a1ccd5..ab4093e41c4b 100644
+>> --- a/arch/arm64/include/asm/kvm_emulate.h
+>> +++ b/arch/arm64/include/asm/kvm_emulate.h
+>> @@ -674,4 +674,22 @@ static inline void vcpu_set_hcrx(struct kvm_vcpu *vcpu)
+>>  			vcpu->arch.hcrx_el2 |= HCRX_EL2_SCTLR2En;
+>>  	}
+>>  }
+>> +
+>> +static inline bool kvm_is_realm(struct kvm *kvm)
+>> +{
+>> +	if (static_branch_unlikely(&kvm_rme_is_available) && kvm)
 > 
-> The `proc_page_owner_operations` and related variables were renamed to
-> `page_owner_fops` to better reflect their association with `debugfs` rather
-> than `/proc`. This improves code clarity and aligns with kernel naming
-> conventions.
+> Under what circumstances would you call this with a NULL pointer?
+
+kvm_vm_ioctl_check_extension() is the culprit. I guess this could be
+handled with an equivalent to kvm_pvm_ext_allowed().
+
+>> +		return kvm->arch.is_realm;
+>> +	return false;
+>> +}
+>> +
+>> +static inline enum realm_state kvm_realm_state(struct kvm *kvm)
+>> +{
+>> +	return READ_ONCE(kvm->arch.realm.state);
+>> +}
+>> +
+>> +static inline bool vcpu_is_rec(struct kvm_vcpu *vcpu)
+>> +{
+>> +	return false;
+>> +}
+>> +
+>>  #endif /* __ARM64_KVM_EMULATE_H__ */
+>> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+>> index 2f2394cce24e..d1511ce26191 100644
+>> --- a/arch/arm64/include/asm/kvm_host.h
+>> +++ b/arch/arm64/include/asm/kvm_host.h
+>> @@ -27,6 +27,7 @@
+>>  #include <asm/fpsimd.h>
+>>  #include <asm/kvm.h>
+>>  #include <asm/kvm_asm.h>
+>> +#include <asm/kvm_rme.h>
+>>  #include <asm/vncr_mapping.h>
+>>  
+>>  #define __KVM_HAVE_ARCH_INTC_INITIALIZED
+>> @@ -404,6 +405,9 @@ struct kvm_arch {
+>>  	 * the associated pKVM instance in the hypervisor.
+>>  	 */
+>>  	struct kvm_protected_vm pkvm;
+>> +
+>> +	bool is_realm;
+>> +	struct realm realm;
 > 
-> Signed-off-by: Song Hu <husong@kylinos.cn>
+> Given that pkvm and CCA are pretty much exclusive, I don't think we
+> need to store both states separately. Make those a union.
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Ack
 
-how bout going even further and renaming to:
-
-show_stacks_fops
-count_threshold_fops
-
-static means we can't collide with other files using the same name so no
-need for page_owner prefix everywhere
-
-> ---
->  mm/page_owner.c | 13 ++++++-------
->  1 file changed, 6 insertions(+), 7 deletions(-)
+>>  };
+>>  
+>>  struct kvm_vcpu_fault_info {
+>> diff --git a/arch/arm64/include/asm/kvm_rme.h b/arch/arm64/include/asm/kvm_rme.h
+>> new file mode 100644
+>> index 000000000000..9c8a0b23e0e4
+>> --- /dev/null
+>> +++ b/arch/arm64/include/asm/kvm_rme.h
+>> @@ -0,0 +1,56 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +/*
+>> + * Copyright (C) 2023 ARM Ltd.
+>> + */
+>> +
+>> +#ifndef __ASM_KVM_RME_H
+>> +#define __ASM_KVM_RME_H
 > 
-> diff --git a/mm/page_owner.c b/mm/page_owner.c
-> index c3ca21132c2c..bb88b72b6062 100644
-> --- a/mm/page_owner.c
-> +++ b/mm/page_owner.c
-> @@ -848,7 +848,7 @@ static void init_early_allocated_pages(void)
->  		init_zones_in_node(pgdat);
->  }
->  
-> -static const struct file_operations proc_page_owner_operations = {
-> +static const struct file_operations page_owner_fops = {
->  	.read		= read_page_owner,
->  	.llseek		= lseek_page_owner,
->  };
-> @@ -929,7 +929,7 @@ static int page_owner_stack_open(struct inode *inode, struct file *file)
->  	return seq_open_private(file, &page_owner_stack_op, 0);
->  }
->  
-> -static const struct file_operations page_owner_stack_operations = {
-> +static const struct file_operations page_owner_stack_fops = {
->  	.open		= page_owner_stack_open,
->  	.read		= seq_read,
->  	.llseek		= seq_lseek,
-> @@ -948,7 +948,7 @@ static int page_owner_threshold_set(void *data, u64 val)
->  	return 0;
->  }
->  
-> -DEFINE_SIMPLE_ATTRIBUTE(proc_page_owner_threshold, &page_owner_threshold_get,
-> +DEFINE_SIMPLE_ATTRIBUTE(page_owner_threshold_fops, &page_owner_threshold_get,
->  			&page_owner_threshold_set, "%llu");
->  
->  
-> @@ -961,13 +961,12 @@ static int __init pageowner_init(void)
->  		return 0;
->  	}
->  
-> -	debugfs_create_file("page_owner", 0400, NULL, NULL,
-> -			    &proc_page_owner_operations);
-> +	debugfs_create_file("page_owner", 0400, NULL, NULL, &page_owner_fops);
->  	dir = debugfs_create_dir("page_owner_stacks", NULL);
->  	debugfs_create_file("show_stacks", 0400, dir, NULL,
-> -			    &page_owner_stack_operations);
-> +			     &page_owner_stack_fops);
->  	debugfs_create_file("count_threshold", 0600, dir, NULL,
-> -			    &proc_page_owner_threshold);
-> +			    &page_owner_threshold_fops);
->  
->  	return 0;
->  }
+> None of that is about RME. This is about CCA, which is purely a SW
+> construct, and not a CPU architecture feature.
+> 
+> So 's/rme/cca/' everywhere that describe something that is not a
+> direct effect of FEAT_RME being implemented on the CPU, but instead
+> something that is CCA-specific.
+
+Ok, it's a lot of churn but you've got a good point.
+
+>> +
+>> +/**
+>> + * enum realm_state - State of a Realm
+>> + */
+>> +enum realm_state {
+>> +	/**
+>> +	 * @REALM_STATE_NONE:
+>> +	 *      Realm has not yet been created. rmi_realm_create() may be
+>> +	 *      called to create the realm.
+>> +	 */
+>> +	REALM_STATE_NONE,
+>> +	/**
+>> +	 * @REALM_STATE_NEW:
+>> +	 *      Realm is under construction, not eligible for execution. Pages
+>> +	 *      may be populated with rmi_data_create().
+>> +	 */
+>> +	REALM_STATE_NEW,
+>> +	/**
+>> +	 * @REALM_STATE_ACTIVE:
+>> +	 *      Realm has been created and is eligible for execution with
+>> +	 *      rmi_rec_enter(). Pages may no longer be populated with
+>> +	 *      rmi_data_create().
+>> +	 */
+>> +	REALM_STATE_ACTIVE,
+>> +	/**
+>> +	 * @REALM_STATE_DYING:
+>> +	 *      Realm is in the process of being destroyed or has already been
+>> +	 *      destroyed.
+>> +	 */
+>> +	REALM_STATE_DYING,
+>> +	/**
+>> +	 * @REALM_STATE_DEAD:
+>> +	 *      Realm has been destroyed.
+>> +	 */
+>> +	REALM_STATE_DEAD
+>> +};
+>> +
+>> +/**
+>> + * struct realm - Additional per VM data for a Realm
+>> + *
+>> + * @state: The lifetime state machine for the realm
+>> + */
+>> +struct realm {
+>> +	enum realm_state state;
+>> +};
+>> +
+>> +void kvm_init_rme(void);
+>> +
+>> +#endif /* __ASM_KVM_RME_H */
+>> diff --git a/arch/arm64/include/asm/virt.h b/arch/arm64/include/asm/virt.h
+>> index aa280f356b96..db73c9bfd8c9 100644
+>> --- a/arch/arm64/include/asm/virt.h
+>> +++ b/arch/arm64/include/asm/virt.h
+>> @@ -82,6 +82,7 @@ void __hyp_reset_vectors(void);
+>>  bool is_kvm_arm_initialised(void);
+>>  
+>>  DECLARE_STATIC_KEY_FALSE(kvm_protected_mode_initialized);
+>> +DECLARE_STATIC_KEY_FALSE(kvm_rme_is_available);
+> 
+> Same thing about RME.
+> 
+>>  
+>>  static inline bool is_pkvm_initialized(void)
+>>  {
+>> diff --git a/arch/arm64/kvm/Makefile b/arch/arm64/kvm/Makefile
+>> index 3ebc0570345c..70fa017831b3 100644
+>> --- a/arch/arm64/kvm/Makefile
+>> +++ b/arch/arm64/kvm/Makefile
+>> @@ -16,7 +16,7 @@ CFLAGS_handle_exit.o += -Wno-override-init
+>>  kvm-y += arm.o mmu.o mmio.o psci.o hypercalls.o pvtime.o \
+>>  	 inject_fault.o va_layout.o handle_exit.o config.o \
+>>  	 guest.o debug.o reset.o sys_regs.o stacktrace.o \
+>> -	 vgic-sys-reg-v3.o fpsimd.o pkvm.o \
+>> +	 vgic-sys-reg-v3.o fpsimd.o pkvm.o rme.o \
+>>  	 arch_timer.o trng.o vmid.o emulate-nested.o nested.o at.o \
+>>  	 vgic/vgic.o vgic/vgic-init.o \
+>>  	 vgic/vgic-irqfd.o vgic/vgic-v2.o \
+>> diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
+>> index 888f7c7abf54..76177c56f1ef 100644
+>> --- a/arch/arm64/kvm/arm.c
+>> +++ b/arch/arm64/kvm/arm.c
+>> @@ -40,6 +40,7 @@
+>>  #include <asm/kvm_nested.h>
+>>  #include <asm/kvm_pkvm.h>
+>>  #include <asm/kvm_ptrauth.h>
+>> +#include <asm/kvm_rme.h>
+>>  #include <asm/sections.h>
+>>  
+>>  #include <kvm/arm_hypercalls.h>
+>> @@ -59,6 +60,8 @@ enum kvm_wfx_trap_policy {
+>>  static enum kvm_wfx_trap_policy kvm_wfi_trap_policy __read_mostly = KVM_WFX_NOTRAP_SINGLE_TASK;
+>>  static enum kvm_wfx_trap_policy kvm_wfe_trap_policy __read_mostly = KVM_WFX_NOTRAP_SINGLE_TASK;
+>>  
+>> +DEFINE_STATIC_KEY_FALSE(kvm_rme_is_available);
+>> +
+>>  DECLARE_KVM_HYP_PER_CPU(unsigned long, kvm_hyp_vector);
+>>  
+>>  DEFINE_PER_CPU(unsigned long, kvm_arm_hyp_stack_base);
+>> @@ -2836,6 +2839,8 @@ static __init int kvm_arm_init(void)
+>>  
+>>  	in_hyp_mode = is_kernel_in_hyp_mode();
+>>  
+>> +	kvm_init_rme();
+>> +
+>>  	if (cpus_have_final_cap(ARM64_WORKAROUND_DEVICE_LOAD_ACQUIRE) ||
+>>  	    cpus_have_final_cap(ARM64_WORKAROUND_1508412))
+>>  		kvm_info("Guests without required CPU erratum workarounds can deadlock system!\n" \
+>> diff --git a/arch/arm64/kvm/rme.c b/arch/arm64/kvm/rme.c
+>> new file mode 100644
+>> index 000000000000..67cf2d94cb2d
+>> --- /dev/null
+>> +++ b/arch/arm64/kvm/rme.c
+>> @@ -0,0 +1,56 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright (C) 2023 ARM Ltd.
+>> + */
+>> +
+>> +#include <linux/kvm_host.h>
+>> +
+>> +#include <asm/rmi_cmds.h>
+>> +#include <asm/virt.h>
+>> +
+>> +static int rmi_check_version(void)
+>> +{
+>> +	struct arm_smccc_res res;
+>> +	unsigned short version_major, version_minor;
+>> +	unsigned long host_version = RMI_ABI_VERSION(RMI_ABI_MAJOR_VERSION,
+>> +						     RMI_ABI_MINOR_VERSION);
+>> +
+>> +	arm_smccc_1_1_invoke(SMC_RMI_VERSION, host_version, &res);
+> 
+> Shouldn't you first check that RME is actually available, by looking
+> at ID_AA64PFR0_EL1.RME?
+
+Well, you made a good point above that this isn't RME, it's CCA. And I
+guess there's a possible world where the CCA interface could be
+supported with something other than FEAT_RME (FEAT_RME2 maybe?) so I'm
+not sure it necessarily a good idea to pin this on a CPU feature bit.
+
+Ultimately what we want to know is whether the firmware thinks it can
+supply us with the CCA interface and we don't really care how it
+achieves it.
+
+>> +
+>> +	if (res.a0 == SMCCC_RET_NOT_SUPPORTED)
+>> +		return -ENXIO;
+>> +
+>> +	version_major = RMI_ABI_VERSION_GET_MAJOR(res.a1);
+>> +	version_minor = RMI_ABI_VERSION_GET_MINOR(res.a1);
+>> +
+>> +	if (res.a0 != RMI_SUCCESS) {
+>> +		unsigned short high_version_major, high_version_minor;
+>> +
+>> +		high_version_major = RMI_ABI_VERSION_GET_MAJOR(res.a2);
+>> +		high_version_minor = RMI_ABI_VERSION_GET_MINOR(res.a2);
+>> +
+>> +		kvm_err("Unsupported RMI ABI (v%d.%d - v%d.%d) we want v%d.%d\n",
+>> +			version_major, version_minor,
+>> +			high_version_major, high_version_minor,
+>> +			RMI_ABI_MAJOR_VERSION,
+>> +			RMI_ABI_MINOR_VERSION);
+>> +		return -ENXIO;
+>> +	}
+>> +
+>> +	kvm_info("RMI ABI version %d.%d\n", version_major, version_minor);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +void kvm_init_rme(void)
+>> +{
+>> +	if (PAGE_SIZE != SZ_4K)
+>> +		/* Only 4k page size on the host is supported */
+>> +		return;
+> 
+> Move the comment above the check (same thing below).
+
+Ack.
+
+Thanks,
+Steve
 
 
