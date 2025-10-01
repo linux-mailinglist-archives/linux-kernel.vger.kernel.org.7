@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-839507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FD52BB1C1A
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 23:06:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF757BB1C26
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 23:06:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A7BA188C439
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 21:06:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17F2E2A6732
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 21:06:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45D7C311973;
-	Wed,  1 Oct 2025 21:04:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7944230C0F0;
+	Wed,  1 Oct 2025 21:04:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oxrhPPOm"
-Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="o8IV+b2/"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37D443112BC
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 21:04:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40382311953
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 21:04:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759352645; cv=none; b=kxbhFRL5ZE2brVevN94WNZm6mC/geNkEaaBEh/ZssIwnCF8LmpFSsrkfYtjxwat1yuPy1RiE8tB9vs2fwleN1hsXJ1Fa9VpyM/dOFMBa28l13Gae3kgtZGNHYkEVjhMC4mu7jJAV1IjLXwzwTL3yjwAMr/AeAko5ERDn1Mf2qTQ=
+	t=1759352647; cv=none; b=pxyKqKeWMYBO3vkr+akH28WxrvXigaa7e8Lgu9RHJL3JJZrAj69ZWM9p/L1CGTspkoBF/itD5O05OFNjjhI8IqEIlB5nY7h7RnmhZ0JkM0uiPqjUunZY6nIVhkZX7uo0BjsP9yN4IMt3BTtl2g5M3JUvdhOgwuFRhoqSdXXQCso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759352645; c=relaxed/simple;
-	bh=DRYUDExVWqLdJx9CQihH/WVn5tjIj8wKdtaKatPJHTg=;
+	s=arc-20240116; t=1759352647; c=relaxed/simple;
+	bh=zG+BMEqFMjLimSd+uHsTmtpB2rdFbSN9A/I9ca/nWJc=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=mqPOSZGPxvo8thyorxBjoRNCigFPEPlh7SjWAZyH399TziyhDq93MoKI1Rrt6cfJRfNOtTdpssyyY9CtGdXCofyvc45hfp68XoLAnB4jDcqfhTy08KrnWC+6PFzzgs61Fq09ms0vHqipt1d/oBZW1QJlMSBoFX1e6QRosgQFN/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oxrhPPOm; arc=none smtp.client-ip=209.85.221.73
+	 To:Cc:Content-Type; b=NPiemp49UCLNVC8H2gg+qzBYtfrRmBxMQMgTi6zGuPFbZ0ZLZ0VAsd39q3i8gVRG4UyP+M+wkz2A4kAx0ep74hCeCF8BjhaxnyKQ9TNSeBUbqOuK1GPBBnTAkwMN92g8hI018AvzDeDcl+FHcCIgQFIKD3W4ZjhMtVvk2vXnKXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=o8IV+b2/; arc=none smtp.client-ip=209.85.128.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
-Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3f6b44ab789so86937f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 14:04:02 -0700 (PDT)
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-46e3e177893so1535965e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 14:04:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759352641; x=1759957441; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1759352642; x=1759957442; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vE8eXwwbGKy5p5WbHU/i1dMObS51JLHu730fwFC+Odw=;
-        b=oxrhPPOmXUBYITnhFzHIpIkkoeKNcX23Rmm02DLrZknKOLSK2ftkw4aeZhxBYYxy23
-         vWpX081AFeTDbokDVj/qfqtNfEnn/Wv2fdo+a1SHwLPK0yH5gXP6KYxRXgT1yKWNGw3Z
-         wIUIE8rLdXtZg/omEhGoRJa+TMtYeWzgNJbFSIArN3BGjYkZMdYH4nJBPMMEJfWgVvlL
-         nF5DHWb3fATaz83kIf5sPFc/oHY86MgNusqGAkAsFjpMGrKeqIjAQxiDzZ/RBpj08n4D
-         z3Z9NdmIH+lin1O+CQ+CHWnvu1QqwIJMGRtN5HkF/NAF/Q0ylXijI59T28V9z9+KIFj3
-         17qw==
+        bh=wjS59fjLSBp23Zb/zP6WgADegb2YBV3/Wv9KxGpAaxY=;
+        b=o8IV+b2/1q6jm/GUPgeWTEe9y0iy1F+1PX3QUYe0GKXACEcW44HFdL9tySc7wgH4hc
+         LpT69GZCpXaUFfNwXgDVglEkXeFe2mJHPN/TwE4Y2VTFGCbZIKnOt7e32l/PPJUJAFy/
+         /rl82LVCKOZI4A++vApXFh1mmwqziu66kIjbQqmomI//tLJBaTYSs/2sH7opr8guFf8v
+         YnD+BXVVy/4B5l46gq7wDYp9G00mkkxlnER5N+ldHQsI9PPD9wViFcB1aB84ttFS30BA
+         ObF+w5pCP5uCdFrsfczejRY9RFah/smeQo8bPOiJogLLSv7tPWAECRVJdvGn151dEKc1
+         iafg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759352641; x=1759957441;
+        d=1e100.net; s=20230601; t=1759352642; x=1759957442;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vE8eXwwbGKy5p5WbHU/i1dMObS51JLHu730fwFC+Odw=;
-        b=eEdZMSuCiyo5GeRL2wAdya7Eueh9HyOamVGgJcpLcOmSsLZq8kUfHCJQmCiDSfqRUL
-         WinDoFPlbrcLwcL/T/8arbAiVFDaCUxG9qYx6NrjKhQoAoxln+OPZ5WnpOvoAN1lQ7br
-         0TiR9uYwJ22ZT0Y86iJ0X4Qc2FPk7f5DEIzeD9zFv7fIxjrN/vm3MY11LLiDfK6JVgUq
-         +DM8nFATGsv8cmtO9sA739DiU89Z29kLrh1pf+SB3fP6TKshQdAa3kTUhT4vAGdIGxRT
-         KOY1QYG2/JnPF/pM2CHWb8/lLebfsd13RNrkPoiAu8Z8/Qd6Din2F43KFERvY7OEEWa7
-         20eA==
-X-Forwarded-Encrypted: i=1; AJvYcCUvMFgCI36YNrPiykOXzl8wep8FZ8nxzBo0iAp1KNA+zZ/4QHDkjAomRMmc4GQi9TsFh9kj1O7BLyNJ3DE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDcpfcaE46Hp5JH6Vu6BrscUV6/lTGL4W3Nh8BGV6ImDQbxU/i
-	9n+Fvl/tS7cWGZzagkh5+uoKrKAKlIg/uOs3xhn6/aPoE8Fy7alXCXc66dYEeAzkxlw3Oq1myg=
+        bh=wjS59fjLSBp23Zb/zP6WgADegb2YBV3/Wv9KxGpAaxY=;
+        b=jxVg8EHaEgnCG89WZjgWGNCDuNZw9DVFDW4mN91CrEQ5VbwU8HgpMlB168cAfdBirL
+         5cRyrLsGCh1jhnFhDe9QluC2QCc/q9oiXFb0P+QWngI6LBOQQDu3ngH93ER/2dEW/fem
+         ZH/6c4zkeIIIRtfsmFloBjL2e9Jp+Zwby8AaUTgit/vaCd2PocTshYb2lD3EYeU9LsAp
+         7S1Kw8BUEFq/WDFbpRzF90B2c+cejO6fpjMJ/BwdZJCyCDXoN/toUrozQ7iJvJUvXtBz
+         NcExDMJuc1zGffJCMzczICruiFvHHLJ2GiNx8GEm3H3qkPKpcW1nyLEZuz5hi3fobfoh
+         01og==
+X-Forwarded-Encrypted: i=1; AJvYcCU+K0tra5PFa/+SQiaQkYkYIXmWeNTHVe6m2CnaGTgqLIDgjz/i8RAma4QoCMQ3b8zrYYOnSbfz1EVg8pw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz61R/QAzcbabLt6wwzhRxjo9sPD5GLfoBJFJ7SQ6Ew1UiAfrki
+	KOBzTyfOg0Ubm+n8DRJjTCL2G/322OcJ8vR2wBKChovXM+p6roHk3gb5nhaOgkZTCDmdvj3ajA=
 	=
-X-Google-Smtp-Source: AGHT+IH7ZtZzU237M2m1tNwTXmJBPEEEg2ifHIsvYzIIZQnXlN2lH+rAVb8JyGkAh+fVohPUM/1C32AM
-X-Received: from wmlv6.prod.google.com ([2002:a05:600c:2146:b0:46e:19f9:cfe9])
- (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:8414:b0:46e:206a:78cc
- with SMTP id 5b1f17b1804b1-46e612c9042mr40692505e9.28.1759352641678; Wed, 01
- Oct 2025 14:04:01 -0700 (PDT)
-Date: Wed,  1 Oct 2025 23:02:11 +0200
+X-Google-Smtp-Source: AGHT+IEuIn0Xw8cSb0i16YD4euJ4+Kdw5OD8+fY/WVV0z4DuW0G513nRxE00Rg9xEjZ/WTTSw7yU1AAt
+X-Received: from wmcu7.prod.google.com ([2002:a7b:c047:0:b0:46e:3190:9ce])
+ (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:820c:b0:46e:4882:94c7
+ with SMTP id 5b1f17b1804b1-46e612cb269mr38395125e9.28.1759352642677; Wed, 01
+ Oct 2025 14:04:02 -0700 (PDT)
+Date: Wed,  1 Oct 2025 23:02:12 +0200
 In-Reply-To: <20251001210201.838686-22-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,14 +73,14 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251001210201.838686-22-ardb+git@google.com>
 X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5792; i=ardb@kernel.org;
- h=from:subject; bh=u6utO88LPPilhPgrmOnUNkYpCEnFY27X7HNtZdaOtj0=;
- b=owGbwMvMwCVmkMcZplerG8N4Wi2JIePutA9cXKLzKkytjZfvzuMw27rm9IWJmorzmss7FggGd
- Tm/kFjfUcrCIMbFICumyCIw+++7nacnStU6z5KFmcPKBDKEgYtTACaiYsLwv25T0T8WyXkR2rOy
- xBgyucWuPZu+c35P51XpqCxjrQq1xQz/3Zkj9jtHHaqsdJ52+exfZmlp3ycpykUPWr0XWZw6cje DHwA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=9679; i=ardb@kernel.org;
+ h=from:subject; bh=2x6PFDcDyExpe+QvLhnrBBMaZb8fzyr9//78pWmLSeM=;
+ b=owGbwMvMwCVmkMcZplerG8N4Wi2JIePutC8aWtMOahe/uP15eVdzpfyKr+IGu7exxaxkcM5rX
+ +RYwv2qo5SFQYyLQVZMkUVg9t93O09PlKp1niULM4eVCWQIAxenAEwkcRUjQwdTaMu7taGPZ98u
+ lwx8s7Px0My84NWPth/49DM9af5WG6CKr+tNrpyZcUZph+bui8JeH/80b/1yz3l5gtNDxsddDT8 yOAA=
 X-Mailer: git-send-email 2.51.0.618.g983fd99d29-goog
-Message-ID: <20251001210201.838686-31-ardb+git@google.com>
-Subject: [PATCH v2 09/20] lib/crc: Switch ARM and arm64 to 'ksimd' scoped
+Message-ID: <20251001210201.838686-32-ardb+git@google.com>
+Subject: [PATCH v2 10/20] lib/crypto: Switch ARM and arm64 to 'ksimd' scoped
  guard API
 From: Ard Biesheuvel <ardb+git@google.com>
 To: linux-arm-kernel@lists.infradead.org
@@ -103,174 +103,301 @@ For symmetry, do the same for 32-bit ARM too.
 
 Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
 ---
- lib/crc/arm/crc-t10dif.h   | 16 +++++-----------
- lib/crc/arm/crc32.h        | 11 ++++-------
- lib/crc/arm64/crc-t10dif.h | 16 +++++-----------
- lib/crc/arm64/crc32.h      | 16 ++++++----------
- 4 files changed, 20 insertions(+), 39 deletions(-)
+ lib/crypto/arm/chacha-glue.c        |  6 ++----
+ lib/crypto/arm/poly1305-glue.c      |  6 ++----
+ lib/crypto/arm/sha1.h               | 13 ++++++-------
+ lib/crypto/arm/sha256.h             | 14 +++++++-------
+ lib/crypto/arm/sha512.h             |  6 +++---
+ lib/crypto/arm64/chacha-neon-glue.c | 11 ++++-------
+ lib/crypto/arm64/poly1305-glue.c    |  6 ++----
+ lib/crypto/arm64/sha1.h             |  7 +++----
+ lib/crypto/arm64/sha256.h           | 15 +++++++--------
+ lib/crypto/arm64/sha512.h           |  8 ++++----
+ 10 files changed, 40 insertions(+), 52 deletions(-)
 
-diff --git a/lib/crc/arm/crc-t10dif.h b/lib/crc/arm/crc-t10dif.h
-index 2edf7e9681d0..133a773b8248 100644
---- a/lib/crc/arm/crc-t10dif.h
-+++ b/lib/crc/arm/crc-t10dif.h
-@@ -7,7 +7,6 @@
+diff --git a/lib/crypto/arm/chacha-glue.c b/lib/crypto/arm/chacha-glue.c
+index 88ec96415283..9c2e8d5edf20 100644
+--- a/lib/crypto/arm/chacha-glue.c
++++ b/lib/crypto/arm/chacha-glue.c
+@@ -14,7 +14,6 @@
  
- #include <crypto/internal/simd.h>
+ #include <asm/cputype.h>
+ #include <asm/hwcap.h>
+-#include <asm/neon.h>
+ #include <asm/simd.h>
  
+ asmlinkage void chacha_block_xor_neon(const struct chacha_state *state,
+@@ -90,9 +89,8 @@ void chacha_crypt_arch(struct chacha_state *state, u8 *dst, const u8 *src,
+ 	do {
+ 		unsigned int todo = min_t(unsigned int, bytes, SZ_4K);
+ 
+-		kernel_neon_begin();
+-		chacha_doneon(state, dst, src, todo, nrounds);
+-		kernel_neon_end();
++		scoped_ksimd()
++			chacha_doneon(state, dst, src, todo, nrounds);
+ 
+ 		bytes -= todo;
+ 		src += todo;
+diff --git a/lib/crypto/arm/poly1305-glue.c b/lib/crypto/arm/poly1305-glue.c
+index 2d86c78af883..3e4624477e9f 100644
+--- a/lib/crypto/arm/poly1305-glue.c
++++ b/lib/crypto/arm/poly1305-glue.c
+@@ -6,7 +6,6 @@
+  */
+ 
+ #include <asm/hwcap.h>
+-#include <asm/neon.h>
+ #include <asm/simd.h>
+ #include <crypto/internal/poly1305.h>
+ #include <linux/cpufeature.h>
+@@ -39,9 +38,8 @@ void poly1305_blocks_arch(struct poly1305_block_state *state, const u8 *src,
+ 		do {
+ 			unsigned int todo = min_t(unsigned int, len, SZ_4K);
+ 
+-			kernel_neon_begin();
+-			poly1305_blocks_neon(state, src, todo, padbit);
+-			kernel_neon_end();
++			scoped_ksimd()
++				poly1305_blocks_neon(state, src, todo, padbit);
+ 
+ 			len -= todo;
+ 			src += todo;
+diff --git a/lib/crypto/arm/sha1.h b/lib/crypto/arm/sha1.h
+index fa1e92419000..a4296ffefd05 100644
+--- a/lib/crypto/arm/sha1.h
++++ b/lib/crypto/arm/sha1.h
+@@ -4,7 +4,6 @@
+  *
+  * Copyright 2025 Google LLC
+  */
 -#include <asm/neon.h>
  #include <asm/simd.h>
  
  static __ro_after_init DEFINE_STATIC_KEY_FALSE(have_neon);
-@@ -22,21 +21,16 @@ asmlinkage void crc_t10dif_pmull8(u16 init_crc, const u8 *buf, size_t len,
- static inline u16 crc_t10dif_arch(u16 crc, const u8 *data, size_t length)
+@@ -22,12 +21,12 @@ static void sha1_blocks(struct sha1_block_state *state,
  {
- 	if (length >= CRC_T10DIF_PMULL_CHUNK_SIZE) {
--		if (static_branch_likely(&have_pmull)) {
--			if (crypto_simd_usable()) {
--				kernel_neon_begin();
--				crc = crc_t10dif_pmull64(crc, data, length);
--				kernel_neon_end();
--				return crc;
--			}
-+		if (static_branch_likely(&have_pmull) && crypto_simd_usable()) {
-+			scoped_ksimd()
-+				return crc_t10dif_pmull64(crc, data, length);
- 		} else if (length > CRC_T10DIF_PMULL_CHUNK_SIZE &&
- 			   static_branch_likely(&have_neon) &&
- 			   crypto_simd_usable()) {
- 			u8 buf[16] __aligned(16);
- 
--			kernel_neon_begin();
--			crc_t10dif_pmull8(crc, data, length, buf);
--			kernel_neon_end();
-+			scoped_ksimd()
-+				crc_t10dif_pmull8(crc, data, length, buf);
- 
- 			return crc_t10dif_generic(0, buf, sizeof(buf));
- 		}
-diff --git a/lib/crc/arm/crc32.h b/lib/crc/arm/crc32.h
-index 018007e162a2..32ad299319cd 100644
---- a/lib/crc/arm/crc32.h
-+++ b/lib/crc/arm/crc32.h
-@@ -10,7 +10,6 @@
+ 	if (IS_ENABLED(CONFIG_KERNEL_MODE_NEON) &&
+ 	    static_branch_likely(&have_neon) && likely(may_use_simd())) {
+-		kernel_neon_begin();
+-		if (static_branch_likely(&have_ce))
+-			sha1_ce_transform(state, data, nblocks);
+-		else
+-			sha1_transform_neon(state, data, nblocks);
+-		kernel_neon_end();
++		scoped_ksimd() {
++			if (static_branch_likely(&have_ce))
++				sha1_ce_transform(state, data, nblocks);
++			else
++				sha1_transform_neon(state, data, nblocks);
++		}
+ 	} else {
+ 		sha1_block_data_order(state, data, nblocks);
+ 	}
+diff --git a/lib/crypto/arm/sha256.h b/lib/crypto/arm/sha256.h
+index da75cbdc51d4..df861cc5b9ff 100644
+--- a/lib/crypto/arm/sha256.h
++++ b/lib/crypto/arm/sha256.h
+@@ -4,7 +4,7 @@
+  *
+  * Copyright 2025 Google LLC
+  */
+-#include <asm/neon.h>
++#include <asm/simd.h>
  #include <crypto/internal/simd.h>
+ 
+ asmlinkage void sha256_block_data_order(struct sha256_block_state *state,
+@@ -22,12 +22,12 @@ static void sha256_blocks(struct sha256_block_state *state,
+ {
+ 	if (IS_ENABLED(CONFIG_KERNEL_MODE_NEON) &&
+ 	    static_branch_likely(&have_neon) && crypto_simd_usable()) {
+-		kernel_neon_begin();
+-		if (static_branch_likely(&have_ce))
+-			sha256_ce_transform(state, data, nblocks);
+-		else
+-			sha256_block_data_order_neon(state, data, nblocks);
+-		kernel_neon_end();
++		scoped_ksimd() {
++			if (static_branch_likely(&have_ce))
++				sha256_ce_transform(state, data, nblocks);
++			else
++				sha256_block_data_order_neon(state, data, nblocks);
++		}
+ 	} else {
+ 		sha256_block_data_order(state, data, nblocks);
+ 	}
+diff --git a/lib/crypto/arm/sha512.h b/lib/crypto/arm/sha512.h
+index f147b6490d6c..35b80e7e7db7 100644
+--- a/lib/crypto/arm/sha512.h
++++ b/lib/crypto/arm/sha512.h
+@@ -6,6 +6,7 @@
+  */
+ 
+ #include <asm/neon.h>
++#include <asm/simd.h>
+ #include <crypto/internal/simd.h>
+ 
+ static __ro_after_init DEFINE_STATIC_KEY_FALSE(have_neon);
+@@ -20,9 +21,8 @@ static void sha512_blocks(struct sha512_block_state *state,
+ {
+ 	if (IS_ENABLED(CONFIG_KERNEL_MODE_NEON) &&
+ 	    static_branch_likely(&have_neon) && likely(crypto_simd_usable())) {
+-		kernel_neon_begin();
+-		sha512_block_data_order_neon(state, data, nblocks);
+-		kernel_neon_end();
++		scoped_ksimd()
++			sha512_block_data_order_neon(state, data, nblocks);
+ 	} else {
+ 		sha512_block_data_order(state, data, nblocks);
+ 	}
+diff --git a/lib/crypto/arm64/chacha-neon-glue.c b/lib/crypto/arm64/chacha-neon-glue.c
+index d0188f974ca5..a3d109f0ce1e 100644
+--- a/lib/crypto/arm64/chacha-neon-glue.c
++++ b/lib/crypto/arm64/chacha-neon-glue.c
+@@ -25,7 +25,6 @@
+ #include <linux/module.h>
  
  #include <asm/hwcap.h>
 -#include <asm/neon.h>
  #include <asm/simd.h>
  
- static __ro_after_init DEFINE_STATIC_KEY_FALSE(have_crc32);
-@@ -44,9 +43,8 @@ static inline u32 crc32_le_arch(u32 crc, const u8 *p, size_t len)
- 			len -= n;
- 		}
- 		n = round_down(len, 16);
+ asmlinkage void chacha_block_xor_neon(const struct chacha_state *state,
+@@ -67,9 +66,8 @@ void hchacha_block_arch(const struct chacha_state *state,
+ 	if (!static_branch_likely(&have_neon) || !crypto_simd_usable()) {
+ 		hchacha_block_generic(state, out, nrounds);
+ 	} else {
 -		kernel_neon_begin();
--		crc = crc32_pmull_le(p, n, crc);
+-		hchacha_block_neon(state, out, nrounds);
 -		kernel_neon_end();
 +		scoped_ksimd()
-+			crc = crc32_pmull_le(p, n, crc);
- 		p += n;
- 		len -= n;
++			hchacha_block_neon(state, out, nrounds);
  	}
-@@ -73,9 +71,8 @@ static inline u32 crc32c_arch(u32 crc, const u8 *p, size_t len)
- 			len -= n;
- 		}
- 		n = round_down(len, 16);
+ }
+ EXPORT_SYMBOL(hchacha_block_arch);
+@@ -84,9 +82,8 @@ void chacha_crypt_arch(struct chacha_state *state, u8 *dst, const u8 *src,
+ 	do {
+ 		unsigned int todo = min_t(unsigned int, bytes, SZ_4K);
+ 
 -		kernel_neon_begin();
--		crc = crc32c_pmull_le(p, n, crc);
+-		chacha_doneon(state, dst, src, todo, nrounds);
 -		kernel_neon_end();
 +		scoped_ksimd()
-+			crc = crc32c_pmull_le(p, n, crc);
- 		p += n;
- 		len -= n;
- 	}
-diff --git a/lib/crc/arm64/crc-t10dif.h b/lib/crc/arm64/crc-t10dif.h
-index c4521a7f1ee9..dcbee08801d6 100644
---- a/lib/crc/arm64/crc-t10dif.h
-+++ b/lib/crc/arm64/crc-t10dif.h
-@@ -9,7 +9,6 @@
++			chacha_doneon(state, dst, src, todo, nrounds);
  
- #include <crypto/internal/simd.h>
+ 		bytes -= todo;
+ 		src += todo;
+diff --git a/lib/crypto/arm64/poly1305-glue.c b/lib/crypto/arm64/poly1305-glue.c
+index 31aea21ce42f..c83ce7d835d9 100644
+--- a/lib/crypto/arm64/poly1305-glue.c
++++ b/lib/crypto/arm64/poly1305-glue.c
+@@ -6,7 +6,6 @@
+  */
  
+ #include <asm/hwcap.h>
 -#include <asm/neon.h>
  #include <asm/simd.h>
- 
- static __ro_after_init DEFINE_STATIC_KEY_FALSE(have_asimd);
-@@ -24,21 +23,16 @@ asmlinkage u16 crc_t10dif_pmull_p64(u16 init_crc, const u8 *buf, size_t len);
- static inline u16 crc_t10dif_arch(u16 crc, const u8 *data, size_t length)
- {
- 	if (length >= CRC_T10DIF_PMULL_CHUNK_SIZE) {
--		if (static_branch_likely(&have_pmull)) {
--			if (crypto_simd_usable()) {
--				kernel_neon_begin();
--				crc = crc_t10dif_pmull_p64(crc, data, length);
--				kernel_neon_end();
--				return crc;
--			}
-+		if (static_branch_likely(&have_pmull) && crypto_simd_usable()) {
-+			scoped_ksimd()
-+				return crc_t10dif_pmull_p64(crc, data, length);
- 		} else if (length > CRC_T10DIF_PMULL_CHUNK_SIZE &&
- 			   static_branch_likely(&have_asimd) &&
- 			   crypto_simd_usable()) {
- 			u8 buf[16];
+ #include <crypto/internal/poly1305.h>
+ #include <linux/cpufeature.h>
+@@ -38,9 +37,8 @@ void poly1305_blocks_arch(struct poly1305_block_state *state, const u8 *src,
+ 		do {
+ 			unsigned int todo = min_t(unsigned int, len, SZ_4K);
  
 -			kernel_neon_begin();
--			crc_t10dif_pmull_p8(crc, data, length, buf);
+-			poly1305_blocks_neon(state, src, todo, padbit);
 -			kernel_neon_end();
 +			scoped_ksimd()
-+				crc_t10dif_pmull_p8(crc, data, length, buf);
++				poly1305_blocks_neon(state, src, todo, padbit);
  
- 			return crc_t10dif_generic(0, buf, sizeof(buf));
- 		}
-diff --git a/lib/crc/arm64/crc32.h b/lib/crc/arm64/crc32.h
-index 6e5dec45f05d..2b5cbb686a13 100644
---- a/lib/crc/arm64/crc32.h
-+++ b/lib/crc/arm64/crc32.h
-@@ -2,7 +2,6 @@
- 
- #include <asm/alternative.h>
- #include <asm/cpufeature.h>
+ 			len -= todo;
+ 			src += todo;
+diff --git a/lib/crypto/arm64/sha1.h b/lib/crypto/arm64/sha1.h
+index f822563538cc..3d0da0045fed 100644
+--- a/lib/crypto/arm64/sha1.h
++++ b/lib/crypto/arm64/sha1.h
+@@ -4,7 +4,6 @@
+  *
+  * Copyright 2025 Google LLC
+  */
 -#include <asm/neon.h>
  #include <asm/simd.h>
+ #include <linux/cpufeature.h>
  
+@@ -20,9 +19,9 @@ static void sha1_blocks(struct sha1_block_state *state,
+ 		do {
+ 			size_t rem;
+ 
+-			kernel_neon_begin();
+-			rem = __sha1_ce_transform(state, data, nblocks);
+-			kernel_neon_end();
++			scoped_ksimd()
++				rem = __sha1_ce_transform(state, data, nblocks);
++
+ 			data += (nblocks - rem) * SHA1_BLOCK_SIZE;
+ 			nblocks = rem;
+ 		} while (nblocks);
+diff --git a/lib/crypto/arm64/sha256.h b/lib/crypto/arm64/sha256.h
+index a211966c124a..0a9f9d70bb43 100644
+--- a/lib/crypto/arm64/sha256.h
++++ b/lib/crypto/arm64/sha256.h
+@@ -4,7 +4,7 @@
+  *
+  * Copyright 2025 Google LLC
+  */
+-#include <asm/neon.h>
++#include <asm/simd.h>
  #include <crypto/internal/simd.h>
-@@ -24,9 +23,8 @@ static inline u32 crc32_le_arch(u32 crc, const u8 *p, size_t len)
- 		return crc32_le_base(crc, p, len);
+ #include <linux/cpufeature.h>
  
- 	if (len >= min_len && cpu_have_named_feature(PMULL) && crypto_simd_usable()) {
--		kernel_neon_begin();
--		crc = crc32_le_arm64_4way(crc, p, len);
--		kernel_neon_end();
-+		scoped_ksimd()
-+			crc = crc32_le_arm64_4way(crc, p, len);
+@@ -27,17 +27,16 @@ static void sha256_blocks(struct sha256_block_state *state,
+ 			do {
+ 				size_t rem;
  
- 		p += round_down(len, 64);
- 		len %= 64;
-@@ -44,9 +42,8 @@ static inline u32 crc32c_arch(u32 crc, const u8 *p, size_t len)
- 		return crc32c_base(crc, p, len);
+-				kernel_neon_begin();
+-				rem = __sha256_ce_transform(state,
+-							    data, nblocks);
+-				kernel_neon_end();
++				scoped_ksimd()
++					rem = __sha256_ce_transform(state, data,
++								    nblocks);
++
+ 				data += (nblocks - rem) * SHA256_BLOCK_SIZE;
+ 				nblocks = rem;
+ 			} while (nblocks);
+ 		} else {
+-			kernel_neon_begin();
+-			sha256_block_neon(state, data, nblocks);
+-			kernel_neon_end();
++			scoped_ksimd()
++				sha256_block_neon(state, data, nblocks);
+ 		}
+ 	} else {
+ 		sha256_block_data_order(state, data, nblocks);
+diff --git a/lib/crypto/arm64/sha512.h b/lib/crypto/arm64/sha512.h
+index 6abb40b467f2..1b6c3974d553 100644
+--- a/lib/crypto/arm64/sha512.h
++++ b/lib/crypto/arm64/sha512.h
+@@ -5,7 +5,7 @@
+  * Copyright 2025 Google LLC
+  */
  
- 	if (len >= min_len && cpu_have_named_feature(PMULL) && crypto_simd_usable()) {
--		kernel_neon_begin();
--		crc = crc32c_le_arm64_4way(crc, p, len);
--		kernel_neon_end();
-+		scoped_ksimd()
-+			crc = crc32c_le_arm64_4way(crc, p, len);
+-#include <asm/neon.h>
++#include <asm/simd.h>
+ #include <crypto/internal/simd.h>
+ #include <linux/cpufeature.h>
  
- 		p += round_down(len, 64);
- 		len %= 64;
-@@ -64,9 +61,8 @@ static inline u32 crc32_be_arch(u32 crc, const u8 *p, size_t len)
- 		return crc32_be_base(crc, p, len);
+@@ -25,9 +25,9 @@ static void sha512_blocks(struct sha512_block_state *state,
+ 		do {
+ 			size_t rem;
  
- 	if (len >= min_len && cpu_have_named_feature(PMULL) && crypto_simd_usable()) {
--		kernel_neon_begin();
--		crc = crc32_be_arm64_4way(crc, p, len);
--		kernel_neon_end();
-+		scoped_ksimd()
-+			crc = crc32_be_arm64_4way(crc, p, len);
- 
- 		p += round_down(len, 64);
- 		len %= 64;
+-			kernel_neon_begin();
+-			rem = __sha512_ce_transform(state, data, nblocks);
+-			kernel_neon_end();
++			scoped_ksimd()
++				rem = __sha512_ce_transform(state, data, nblocks);
++
+ 			data += (nblocks - rem) * SHA512_BLOCK_SIZE;
+ 			nblocks = rem;
+ 		} while (nblocks);
 -- 
 2.51.0.618.g983fd99d29-goog
 
