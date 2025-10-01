@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-838982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F2A0BB0906
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 15:49:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 158A3BB0951
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 15:58:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 295FB2A1398
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 13:49:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9A9C3B6F5C
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 13:58:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5726A2FC016;
-	Wed,  1 Oct 2025 13:49:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 154C12FD1A1;
+	Wed,  1 Oct 2025 13:58:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NlqwsgHc"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K1LKbfYf"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC2922FBE0B
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 13:49:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E4692FCBF1
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 13:58:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759326553; cv=none; b=fpEDBIV4y1vaWwrYCZWyV8dR5JdnXZMEx8SS9tRvme99KodfngfAhiiFwfUW6hVGn8bey1RaE/IyBA3MLv3TFaOU24ak9o7znfiFtDGjarZv7gIE3ipkc9OHlvX5n5XX+QSKfCN+zS4uo80G/8iibP4JItyr5//f00bUjPmemDo=
+	t=1759327101; cv=none; b=BxX/0SoCNu1ZQ1kaPdY521QJWIi1fw93XOFHGiyAA2Z7ukirvTRmg6fAWtIBxlF7mz+azgIubgHU+pBjTeXGDwIaEf4NND7WY/nB9t5dx+/ut4TW15QM93wicjq3Ypa8IixwBF4XIKJ6OxWVnxRe7Ld5QHfQff1bLGMOsjGLZGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759326553; c=relaxed/simple;
-	bh=oUMtdNZYK6Fyw7iywZcExti86DdeEspgiPN/lnLvNww=;
+	s=arc-20240116; t=1759327101; c=relaxed/simple;
+	bh=AErz9DRE4zvoV1QAhCMy5Ce5EIwMk6a2u/GPbn+LmQ4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cG7GnUa/Xf7fLH/oIjSUXa1ZmEQzuDvU6lJBT6eeprzabNXqog3wxpwo4si+lbFEOEvWG/y1gkZFPuQS3Jv/8zdzQSfluug3Ia3qfZsOBQP5K8c5uccN3MVuWNoamDuac6HF5AFid5LN3YwLMYxtOUcn9J+sk3v/mkoz2XFE0KE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NlqwsgHc; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3b9edf4cf6cso6534498f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 06:49:11 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=EY6gUYbwAfKdoZ4S2w+z3XA9/ibdrI+SHDQVK19rIQp02WCxzA0cdRxNsT3XRX8d59eNSrmPNFROscduaUqoLxXK/nSD+RVqO6eevq2Q8KUu+dEgCjsyAEg6kq+pgZRIYq50YZO8+UKMScQQpih2LgAzDD9ZTh7hPjLzccyvsT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K1LKbfYf; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-782e93932ffso3973576b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 06:58:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759326550; x=1759931350; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1759327099; x=1759931899; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=aXTHbm1yGkE2/zORBswhWrACx80/EC1QRjdLtiEom4Q=;
-        b=NlqwsgHc3VMPskc1Wanto0WarOUnYXNYz7//IivTe5CGIP4mmC2TSnWOgswNtDO70f
-         KbKzT7Ry1DXR2LDvsQqsdYfh049PDvlA+vxxIhSBmNiFKG1JEp+IaIHoYl3EudEX9PfS
-         AZQ4KDZuc+gTEENn5waj1QD7oBc19E1noskNsTWcFi1aIQ8rWeAbn/gqnVxxzInlXSz1
-         lb0XnzsAKKMCZdmOL5PXXCJdilupD4/XOZUpfRuF+8LxJvMsTim3+xydxqxqaL09QDZG
-         g8IGSo0jhktxodWxjac58td2ycXUYxgHApj8ckIKCaHqoBlubOGIsaNn5Wb3JoYl2ENW
-         q9RA==
+        bh=cHICQ9kYf8w+w6O3p0zJJOxecrN+M89vOZ1OdrVwWEc=;
+        b=K1LKbfYfUGXFWYvfX9kmYN4cWonxTWwRsQHoZ/jqJmu2PUT3AZ+tIn6EUVgftXh8tB
+         4WXSJ2H2fGyw4k2cz5iknj4W9+t4WvIgkeQAZChB4l+giybjKfJDerXnTOpfPNbAglXC
+         tj82md1n4DRn171jFJGeQs6jGmklWW4Rlg3Gy0dViy+sW44/D0J862hcZaf6X+V6ysu3
+         /6e1ag5aAFU+CM4J3aewn6HBL74th60oJYAGw2MiR7R6jLXlkQE+UzN2Ptj9lcCX1JvD
+         uc5cFR9Efhdo1E+n0KB9ZzUz9vPQ6CHBWFSUY4ttEqc7yeeEeEIHvmkVNPrh64/CGTNt
+         z51g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759326550; x=1759931350;
+        d=1e100.net; s=20230601; t=1759327099; x=1759931899;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aXTHbm1yGkE2/zORBswhWrACx80/EC1QRjdLtiEom4Q=;
-        b=j/EexBAqJX8BargHfLhehEIeL/+wnJtsKCox2IVu+SYZDn7Y0p6QT/bx9a8gNqjkyQ
-         dmoDX4sukbfnGvx1Nda5puJVOwoU2/WPG38n90XmEbHgD7o+pGdgoLoN27zjV7+10acy
-         CACnNri38dOwZhWigkf5r6q1LS4bht8/tuKrW9UFzCLF12Y1Hr2+EKTSkarVOa/jEetp
-         NI8yBQoG/xwrFWfq0nFjykDYzKJbCF47g85vEvSgE88gQ33cCZZOAMsMXCRuKn0LPvMN
-         hjPptFzlvBjvGE32OqmHNuGzT2LzrnRXrmYUlcDjCqjw67ApMxGW23ggll27mA5ZXEGM
-         Zxvw==
-X-Forwarded-Encrypted: i=1; AJvYcCU7yuDu5gcvYJV+Nju7JeoUKLFJ1mz4g0ZOC52VgRvUgeavHtKCp7djcoCBigO8hugiL643gf3/rEGmLDo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvnnSWjg0czs032wCMD1c7s5YrPYkgWxII7oUzr8/QqLXk2RiN
-	hcq76//zJjRo7NY0K60w29zReKLMp5P06mkQcx2zxPVM2fRotI/tFq0TscFH8gMTays=
-X-Gm-Gg: ASbGncsFRb3iSeAjcOrpyl9jW9X7fLXd14m1RNShgJEjSevnYfqcgye45RrpNthD00Z
-	0dG8fo3OODQGdAR9PkW9ZG3sDjAKZOus9pgR3VYXL7bcXBzWEbrT9h9Vc6QXcHCCq71zt5QH5eW
-	jhGnsbpY+Bcdc/UAX6b3JlFgjhwC+NOwBOl3kjvLPR9odbKDaTx7Qy5ogENoxPdmks8PPo79NOP
-	bXJNLt6yFbrSM2wl+44D0uJJMiSepPTtDr4eiZ6oU7o6vqxLck8DAHO06quXHGWuypsLvyfsM3i
-	qHOjN5ufLekSopvXoWo5/EkGMW2ErK4ab2t2QjSOQqhPY98jvdrrdFd6+zxHXMOjR/z54PMYfGV
-	lgo5kmA5Ri6Iwt1G4sQVSmgwGaHE8PNDE4VVz958PKSi88Js52tQx
-X-Google-Smtp-Source: AGHT+IGLrHf4UIk1KWnOc/zaVSe2/+LGCHS141wLHD+2YH4GOoHIJk5yG2sHN2EHQfFgXGXp5sFacQ==
-X-Received: by 2002:a05:6000:2001:b0:3ee:f10c:6baa with SMTP id ffacd0b85a97d-4255780b811mr2734622f8f.37.1759326550066;
-        Wed, 01 Oct 2025 06:49:10 -0700 (PDT)
-Received: from [192.168.1.3] ([185.48.76.109])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-41f0c467ecasm14427731f8f.38.2025.10.01.06.49.08
+        bh=cHICQ9kYf8w+w6O3p0zJJOxecrN+M89vOZ1OdrVwWEc=;
+        b=KR6Uc4iFy7mdHR67RHoD7rFKBAk+NHfeiBxyLNdY7ryLDl1YzL3e8ajYJmoC+eLStT
+         PkFBNi9hRO7wcMbHHkVDJf3QJTN+eo1EG1RgPA8BTU8g3kSjVvqeW43zXf3C16KoC2rv
+         IRXDvHw9Me3ycN8P2VnZ5Qd9ZxkdlcZcAvZstAVHqOhRFSijzUtzO5YC97TcPnIBVBey
+         ysyERNTsVGMpXAuaz1uvNE9dINULSlHG/oidvRR0ay7AL4Cdvgr+iDRkvBlhN847VvWq
+         WNXGU7hFMe5zaGRsQW/q+P1AtenkdZdEmxzU0HyxLsvvhOmSqA8v8Dr2WR3/BL3J7pp+
+         bFbw==
+X-Forwarded-Encrypted: i=1; AJvYcCV7XnwSaXX8tqjsTwFnQSCnFKd2J7JN7ib3TW9MmKEtcdchb8DWfHFqDACWS68FKT6Hao/ubmv2P1zNngw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzql/1UcgVFTJMOhmF+Q+fZbiCF9npxN2FnsGquoxoX6zComcOG
+	V60UvzJwB3qoUt3K7/BPnPIPY5XYGID5RFJFWOT+GdzQo+hsHtN2ThfO
+X-Gm-Gg: ASbGnctjJZS0CL178C/32UoVCQdZmcAuEHanw10xK8r1azxV1GpxnjATbOI1NoJOva8
+	yW/yceIh0IdDPgAnVPp/FKY5GYnuzmLgY/Rj9UNg8AahdGc4gcscmMxrcxDL97Et9lvMJ5QecbN
+	kigjtjy0GeAd4Lg0yab4T6+lbk79kcjGVm7mdchn93woDoKbZgNuqHn/DbJzTTWb8J5DvlAh9YC
+	ODM31E0de8imxjEshTz9EF8m51dZbA57tKUsfMDrygbNlxE+C7eLsctuccD7A02bHldCm0ZVXDB
+	aK+0I+KWTq94n5ADZSyRMz+XfCFVWQ7OBG5YgPRgOZgenJgESlRSS+LkhEpxDW2n/Hv3ecTRqDx
+	Intc08g5O1vGKJmCIQlDEvfoSEMxN7cUUuFdQF18rB15r9Zayfx6z8pcN0aQnfT9cNQ/+0A==
+X-Google-Smtp-Source: AGHT+IEVrUrSHnJxKWleti3ip/7ssnZbESbu792noCsfEcKl9fEdE1xbBALgSKgo50vIeSR68LO4xQ==
+X-Received: by 2002:a17:90b:2249:b0:330:852e:2bcc with SMTP id 98e67ed59e1d1-339a6f38013mr4558738a91.21.1759327099110;
+        Wed, 01 Oct 2025 06:58:19 -0700 (PDT)
+Received: from [10.0.2.15] ([157.50.95.38])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3399be87425sm2129797a91.1.2025.10.01.06.58.13
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 01 Oct 2025 06:49:09 -0700 (PDT)
-Message-ID: <6baf0f01-a333-4bca-b39d-d01f8624e170@linaro.org>
-Date: Wed, 1 Oct 2025 14:49:08 +0100
+        Wed, 01 Oct 2025 06:58:18 -0700 (PDT)
+Message-ID: <425ef7bd-011c-4b05-99fe-2b0e3313c3ce@gmail.com>
+Date: Wed, 1 Oct 2025 19:19:13 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,76 +81,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] perf test: Extend branch stack sampling test for
- arm64 BRBE
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Anshuman Khandual <anshuman.khandual@arm.com>,
- "Rob Herring (Arm)" <robh@kernel.org>,
- Adam Young <admiyo@os.amperecomputing.com>, Will Deacon <will@kernel.org>,
- German Gomez <german.gomez@arm.com>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org, Ian Rogers <irogers@google.com>
-References: <20250813-james-brbe-test-v1-0-76a0144b73fb@linaro.org>
- <CAP-5=fXdFQCgeF5DRH=-cUErz2opU98H6u1cTTO3ZPJ7SMQfMw@mail.gmail.com>
+Subject: Re: [PATCH] fs: doc: Fix typos
+To: Carlos Maiolino <cem@kernel.org>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+ Jonathan Corbet <corbet@lwn.net>, David Howells <dhowells@redhat.com>,
+ Paulo Alcantara <pc@manguebit.org>, Alexander Viro
+ <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>,
+ Jan Kara <jack@suse.cz>, linux-bcachefs@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-xfs@vger.kernel.org, netfs@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org,
+ linux-kernel-mentees@lists.linuxfoundation.org, skhan@linuxfoundation.org,
+ david.hunter.linux@gmail.com
+References: <DrG_H24-pk-ha8vkOEHoZYVXyMFA60c_g4l7cZX4Z7lnKQIM4FjdI_qS-UIpFxa-t7T_JDAOSqKjew7M0wmYYw==@protonmail.internalid>
+ <20251001083931.44528-1-bhanuseshukumar@gmail.com>
+ <kp4tzf7hvtorldoktxelrvway6w4v4idmu5q3egeaacs7eg2tz@dovkk323ir3b>
 Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <CAP-5=fXdFQCgeF5DRH=-cUErz2opU98H6u1cTTO3ZPJ7SMQfMw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
+In-Reply-To: <kp4tzf7hvtorldoktxelrvway6w4v4idmu5q3egeaacs7eg2tz@dovkk323ir3b>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-
-On 18/08/2025 10:38 pm, Ian Rogers wrote:
-> On Wed, Aug 13, 2025 at 6:39 AM James Clark <james.clark@linaro.org> wrote:
+On 01/10/25 17:32, Carlos Maiolino wrote:
+> On Wed, Oct 01, 2025 at 02:09:31PM +0530, Bhanu Seshu Kumar Valluri wrote:
+>> Fix typos in doc comments
 >>
->> Refactor and add some extra tests for all platforms which were useful
->> when developing and testing the BRBE (Branch Buffer Extension) driver
->> [1]. Then lastly extend the test for new features which are BRBE
->> specific.
->>
->> Tested on the Arm FVP RevC model [2] and Intel Raptor Lake.
->>
->> [1]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=58074a0fce66
->> [2]: https://developer.arm.com/Tools%20and%20Software/Fixed%20Virtual%20Platforms
->>
->> Signed-off-by: James Clark <james.clark@linaro.org>
+>> Signed-off-by: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
 > 
-> Reviewed-by: Ian Rogers <irogers@google.com>
+> Perhaps would be better to split this into subsystem-specific patches?
 > 
-> Thanks,
-> Ian
+> This probably needs to be re-sent anyway as bcachefs was removed from
+> mainline.
 > 
+I just did a google search and understood about frozen state of bcachefs
+in linux kernel since 6.17 release onward. It is going to be maintained 
+externally. 
 
-Hi Arnaldo,
+Thanks for your comment. I will resend the patch excluding bcachefs.
 
-If you have a chance can you take this one please. It still applies 
-cleanly to perf-tools-next.
+Thanks.
 
-Thanks
-James
-
->> ---
->> James Clark (3):
->>        perf test: Refactor brstack test
->>        perf test: Add syscall and address tests to brstack test
->>        perf test: Extend branch stack sampling test for Arm64 BRBE
->>
->>   tools/perf/tests/builtin-test.c        |   1 +
->>   tools/perf/tests/shell/test_brstack.sh | 106 ++++++++++++++++++++++++++++++---
->>   tools/perf/tests/tests.h               |   1 +
->>   tools/perf/tests/workloads/Build       |   2 +
->>   tools/perf/tests/workloads/traploop.c  |  31 ++++++++++
->>   5 files changed, 132 insertions(+), 9 deletions(-)
->> ---
->> base-commit: 6235ce77749f45cac27f630337e2fdf04e8a6c73
->> change-id: 20250811-james-brbe-test-f5a20dffd734
->>
->> Best regards,
->> --
->> James Clark <james.clark@linaro.org>
->>
 
 
