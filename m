@@ -1,216 +1,147 @@
-Return-Path: <linux-kernel+bounces-838979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72329BB08F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 15:48:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 041A7BB0900
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 15:48:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AF4F3B09CA
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 13:48:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EB5C4A05B5
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 13:48:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F30D2FC025;
-	Wed,  1 Oct 2025 13:48:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24E682FC028;
+	Wed,  1 Oct 2025 13:48:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="vqC6kgC5"
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="n+WQA5md"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEDB72FBE17
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 13:48:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1D872FBE14
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 13:48:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759326483; cv=none; b=UMIEBcdztoJp/EjnU9CYDuC065oIiELZ7SvDPhhXfNPeJoPOKMVXqw+JU1VGQFb+9LToAG6N1ZhN+nKQk+HKV9JeLayFN3rDdBi5g/fMMwXFeabvtyOdDIvXlhqRRdbHuJ+/5u20OoZQ2xwp9HpHrog6ff35X6Ye5dH59CREbY4=
+	t=1759326504; cv=none; b=uKBdT2cmhL4Tw5x05IABjONw3vRqnWHNGHKqYRjsVC8n9w8QX9uMOCwli7Gq/69c2SOVjYLi8s3CADmwDmcsgt9ms3K40ycecv0J6y8dkEa0M5rN6koWqGMIfAKtNesV/yQ6UbWFYX1NN3BncVLq8rlryNpw75ZNkkxZTSIkxAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759326483; c=relaxed/simple;
-	bh=GwWiPxXWApSuBjTieyfbH0uVPyK1qpzobUKX5yWOe8Y=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=IRKNh8Pk7i4gzRh3+EMI71JRALKB1uMNGbzg8MNd5hnxmL0mODsZqbLeJaEImuZMkDbATV97GwdIazGfpKvVwtXu6085FVAvoZEcCvTFVlOsDKwfnTwcvounzKS/JXBjikE1RC6cqAme3iEDLMEFncT6g2s3KFvDRrrEyJY9BI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca; spf=pass smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=vqC6kgC5; arc=none smtp.client-ip=209.85.219.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ndufresne.ca
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-7900f7f4ba9so63213276d6.0
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 06:48:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1759326480; x=1759931280; darn=vger.kernel.org;
-        h=mime-version:user-agent:references:in-reply-to:date:cc:to:from
-         :subject:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=GwWiPxXWApSuBjTieyfbH0uVPyK1qpzobUKX5yWOe8Y=;
-        b=vqC6kgC5WJx43JKAZUo4OKxI5cD8wS1kM0pPUBM9r6Q7BZOf6e/51l6rEqWVNizAfp
-         Opy/HojCfjeeDcRIu8IepjriyXP8iAPuKv2gyWOWRDHrtUHWd2687Ea/GIKY558i8hxB
-         LMREcOMXyc4IZJPHGcV1/Jvxb69JX6paLieAr6y+qikWD0lCYg9lzR761XOtYCsFom2j
-         zhajVMyuPrlUCqAGr3CfLW9+LwrzSWs6WCKPFf1Cix08AF+y6rI8w8J4z/n3D1YOmZwy
-         eAdG8v40dmI5Lp0MUqMIQ0/iRefgEVLZYRSAi5eAQxYHVxeuGGyhUWd2QbBgDkQ+sd+Q
-         gJmA==
+	s=arc-20240116; t=1759326504; c=relaxed/simple;
+	bh=fp3v57qBuLEjj+J/x49VyV5FvxQeWmOVI+OPPyz4H7U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mJvfxq26y+joOBFurVQDl76tZH6NtfYKTcrnEnAz/m/KxePvq//vC4K3ALSWcqET3cuoCo0PeK4nE+N1KeFwkixtDrgj+BayU7TegCmwF9Z4bdesKDvv43RdQKHvsRw+DbLeJUoQuski5tGAfH+DtzBKaqLK8P719Q4l6THJ0RY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=n+WQA5md; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5918wM6N024443
+	for <linux-kernel@vger.kernel.org>; Wed, 1 Oct 2025 13:48:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	fp3v57qBuLEjj+J/x49VyV5FvxQeWmOVI+OPPyz4H7U=; b=n+WQA5md74ejqI22
+	weutqrqOSh8bHER/YgP7ORqarjnx1x7Q6u2QU+m0t3Lgnn8Hr547sOFtCtOpdVdo
+	VmzJNle/CIt6lSESTN5+mnCqR9WmQ6qEVGXOSctw7w9fDABsyH5X5YlBy/qWGQ1Q
+	wFFvroYetQDlqWXwFB7GeRHuK8p9JNqCZkvr0znuzjODxrwLfd5D735ii9598kQe
+	bChngM/JygPhnrKHpyQZUoSHS2Q8TeJQfkVvVvVcRn5i4g7NhtRgXbf/XQTBTQBo
+	WUxTXtxv1872zW77Fjh3QFjVsXR+UInS1z7367YDXPEF0hlFF5wmi41WBwq7m0e9
+	QD+cbw==
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e59n5462-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 13:48:21 +0000 (GMT)
+Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-b550fab38e9so5055900a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 06:48:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759326480; x=1759931280;
-        h=mime-version:user-agent:references:in-reply-to:date:cc:to:from
-         :subject:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GwWiPxXWApSuBjTieyfbH0uVPyK1qpzobUKX5yWOe8Y=;
-        b=VBidQCjTgBk7dEbnUhYH2p42ppNxiOWJpU/O50CNq3uCM+ShTCdsyxYiHEBzhspEf1
-         KCAEdYDPSuIOtAzEvbLzB4oqBZ+3Kz/MIGSLxLNGm2IjBArVDFJdi+M8sBtVzckrS7EO
-         BXBL42SvpSwPI3DK1F3pp1MM44C5UUuSfe2yh0VL7zGTV89e4bpSnaY08Zcnlox928Td
-         H9n3/mqOlun6tEXnQNHWRKpFNYspUUB624e8Ln1e8Xp3C0nedjn+Uyd54MvNtk+UleME
-         QmTCMPf+0wrwMqiQQaplwlLBGNDyj0//ZaH4DA+0oxhKMMjJqlbB4jxD8u5pkQS0V7+W
-         ODOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXoJOHjrtUuajJf+/ymqeqXUrJ4aKotFbFDdbgPN1C6yED52aDvDQOcrnLE+Oy8eL+lBNHv1bRmiZ4BWZY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzaYzysrzW9KU0UQD1XItlwb//8iJeHQ0rgMFEV1PmazDnfFWxq
-	1cLwLD+LNJkqC9oPw/X6oWbRUBUvy6BzEBGr+4VJn20rNiz3UO7arzGhMMYloJWkfs4=
-X-Gm-Gg: ASbGnctnShzD0Lv9M6bTY+kBfRVMZRBqgtMcYKBRJ0yjRMNHQoTfef+XJWvlvSML0jK
-	tio/ewwIJ/9e6EYOE2rDCUshEWdbwNRla+nrxe8+9U3XkCNlcJIrcM6cuSuOsqTnM9q0gjLZf0k
-	Kmdb4Q4dd2x+mE+/JlhuD2hIvymQwd3nXvhvKe4mf/oQYAxM4ZhB4sx3zrzRAmq2iglHb8hK6hu
-	G7qH/nhOA1j2rLECdLRV5mr4Um60m8JKotPCjvNvsfU5u/47oGG/+GLKUFk5rXWtMxWjVXdMSmb
-	o+T7XRwd5vE24VV9o8oqmKmoYs05Xl4AQG2Eas8xc/MG6aOlqh8hoV9Mr6HRZYUDBF+gcZbx1NR
-	6D5jHn3UJMvVQv33SvhmR45loXezhGp/l61TsJyZ0I6LXYo0QVx2S
-X-Google-Smtp-Source: AGHT+IHiblZwtYX3wgFUO/7OpMhacfKleAAxOFFJx1Q7ftMvPB1RMJ+PB8Ib9Ip55aCTEP2Txr59Ow==
-X-Received: by 2002:a05:622a:5c88:b0:4de:1d0e:5cd4 with SMTP id d75a77b69052e-4e41c732f0fmr44326791cf.30.1759326479606;
-        Wed, 01 Oct 2025 06:47:59 -0700 (PDT)
-Received: from ?IPv6:2606:6d00:17:ebd3::5ac? ([2606:6d00:17:ebd3::5ac])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-80167b8b79esm110958756d6.38.2025.10.01.06.47.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Oct 2025 06:47:58 -0700 (PDT)
-Message-ID: <971675c3d0a5f033d9eb68698dd9985a0a122aa9.camel@ndufresne.ca>
-Subject: Re: [PATCH 0/2] Add support for QC08C format in iris driver
-From: Nicolas Dufresne <nicolas@ndufresne.ca>
-To: Neil Armstrong <neil.armstrong@linaro.org>, Dikshita Agarwal	
- <dikshita.agarwal@oss.qualcomm.com>, Vikash Garodia	
- <vikash.garodia@oss.qualcomm.com>, Abhinav Kumar <abhinav.kumar@linux.dev>,
-  Bryan O'Donoghue	 <bod@kernel.org>, Mauro Carvalho Chehab
- <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Wed, 01 Oct 2025 09:47:57 -0400
-In-Reply-To: <b2538934-bda7-45e1-b368-8dc4d2c6f71b@linaro.org>
-References: 
-	<20250919-video-iris-ubwc-enable-v1-0-000d11edafd8@oss.qualcomm.com>
-	 <b2538934-bda7-45e1-b368-8dc4d2c6f71b@linaro.org>
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-8im6X2nzMFe6Gk5DQ8ir"
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+        d=1e100.net; s=20230601; t=1759326500; x=1759931300;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fp3v57qBuLEjj+J/x49VyV5FvxQeWmOVI+OPPyz4H7U=;
+        b=LIbdto1EiCQt4KiorFR8LymxrMxrVrTp1tQNbMgKdIg4LJWr8LKhVPaLWnw1gaP2Q8
+         ZrpgsiJ8v0PSqnaAOE6gOI53aoVtO9jMr0wzF+WwyHBJ46gQeIdTkRgChkkvSUBRAsHq
+         iW8p2HaU/tqzL4FgSO/LRC/oG4oa1DxOtaQW+ORLELS4oCPaetp/xrmIPju/IyKNaDgL
+         b6HTSzYBK98jljGvkFMNLUAwHOzWFBvJBelY07BtjLXbJ/UbQi6jC8/O684+XkYKsYc3
+         30gXJU0+Gu1flE8cgO5LvKYhq26AhAQ24dfdsW4ZUORNGEERbaarJlr8JcYuyGtZLbR0
+         DBHw==
+X-Forwarded-Encrypted: i=1; AJvYcCVBBOm+9+d79UzVbHW2F1KHU+Pa+7FZ5jQV4x3+/8mAFFTnxX7fyvzX0w0UUm6Dzj3ywyb5iC7tdUXLdAA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzz4dY3fXdteHPs9MkkQqRVrE1WydS3H4Xx7ehs6WvWoQhvNV+X
+	laJjRecAnCzwc1BvM7QW7C90nK/vmPF/UlhPnPOLC/nV/aU/4G11Rob5n+cymJ35/Ay5RHLa5OD
+	j5ui90irFZPj1qjhPm2S5oroiGw8EfDKpaqJuJyC64X3cIv3RqcyANl0mto9SjU91QPyhqM/DEh
+	WNUotC0TrhSzcqR6K/Z2zZ7MjRFRnhJAFxj2U262a/YQ==
+X-Gm-Gg: ASbGnctW8++NyE+OTVwysIxTbOPCbfxUEFgcXye3AoaU4YpMvG0kHUsnJVagZRlPZeW
+	AXPgK9geYdAkStkBhe/yrgSJNzJMlWZNvHiUVUj+c7agDkp1ygZosi5QeYzKTto1znbaZUFjoS9
+	kx3j62lfOjgjSjocQYIVvWhjC/fZkIBvmKQA7lJ8bWMiuW0jhcTyxXHL9k3v0=
+X-Received: by 2002:a17:90b:17cf:b0:32b:d183:facf with SMTP id 98e67ed59e1d1-339a6f66d48mr3342752a91.28.1759326500230;
+        Wed, 01 Oct 2025 06:48:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGGEoqW8Gg2lgK86qxAwu+nfXe3G5OJ2NfYflPendMDk34x4Ydw1dWzOJ1aSl3n8ThNvGAbpRjrnFNtVgBSIzw=
+X-Received: by 2002:a17:90b:17cf:b0:32b:d183:facf with SMTP id
+ 98e67ed59e1d1-339a6f66d48mr3342716a91.28.1759326499769; Wed, 01 Oct 2025
+ 06:48:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-
-
---=-8im6X2nzMFe6Gk5DQ8ir
+References: <20250925-v3_glymur_introduction-v1-0-24b601bbecc0@oss.qualcomm.com>
+ <20250925-v3_glymur_introduction-v1-16-24b601bbecc0@oss.qualcomm.com> <cd91e7f2-72bf-48f2-891e-4e6cd36b1e24@oss.qualcomm.com>
+In-Reply-To: <cd91e7f2-72bf-48f2-891e-4e6cd36b1e24@oss.qualcomm.com>
+From: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
+Date: Wed, 1 Oct 2025 19:18:07 +0530
+X-Gm-Features: AS18NWBhYwOecFTI7PUFOxMVtEHAFfH7cHQ1cCOcmiaMyYqMB14HKhsIE_TTwpI
+Message-ID: <CADhhZXau4EPEvf6Ngo+p4Jv=NPF6TYxcWtt2tV+MyrmOxp7OOQ@mail.gmail.com>
+Subject: Re: [PATCH 16/24] arm64: boot: dts: glymur-crd: Add Volume down/up
+ keys support
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Pankaj Patil <pankaj.patil@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-GUID: Wt63puCEERcDTitr7Fb69Qou6rw2C9T-
+X-Authority-Analysis: v=2.4 cv=O4g0fR9W c=1 sm=1 tr=0 ts=68dd3125 cx=c_pps
+ a=rz3CxIlbcmazkYymdCej/Q==:117 a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10
+ a=EUspDBNiAAAA:8 a=QrdbydHfbqU_mCGI0rsA:9 a=QEXdDO2ut3YA:10
+ a=bFCP_H2QrGi7Okbo017w:22
+X-Proofpoint-ORIG-GUID: Wt63puCEERcDTitr7Fb69Qou6rw2C9T-
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAwMSBTYWx0ZWRfX/0+cImCUvgxY
+ tvreNB4YcweJOinAE7eeZcqK2gNPhl3/sT2I53yRk6MbhLAgsbuUYkvn4c25xwPTAKEmFB00CgP
+ 1IQODAveiuAp6EbpFJpqOtReNAWRQ7ZN8KxZ8EPpVF95LQFC8B50l3VXQKqOdmn4H4Fk1uGSKhq
+ uXad88sB7rRSnJX7yys9D6HvRu54kVebaZVvgb5qKaJ8t6JOsCUNxldRgf02trZOGMk0n83TkJP
+ bQHTK/4rl/S1JXjRCa/XlW2gX8bDu3/E/J94C6cBu9DyjHnNumKCpyACuIHm8VGQX0J0XmOr/RC
+ F452UqIF4yhkUjpe78wcOulADSUBGVfMkk4mBNQd89z7BPInm9GO7ORDX8Vdp+by9YlpBUVxnoW
+ w44mfOI4ODKIYmb/sFpJl0pB9Alo7A==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-01_04,2025-09-29_04,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 phishscore=0 clxscore=1015 priorityscore=1501 lowpriorityscore=0
+ spamscore=0 impostorscore=0 bulkscore=0 suspectscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270001
 
-Hi,
+Hi Konrad,
 
-Le mercredi 01 octobre 2025 =C3=A0 10:39 +0200, Neil Armstrong a =C3=A9crit=
-=C2=A0:
-> Hi,
->=20
-> On 9/19/25 17:47, Dikshita Agarwal wrote:
-> > Add support for the QC08C color format in both the encoder and decoder
-> > paths of the iris driver. The changes include:
-> >=20
-> > - Adding QC08C format handling in the driver for both encoding and
-> > decoding.
-> > - Updating format enumeration to properly return supported formats.
-> > - Ensuring the correct HFI format is set for firmware communication.
-> > -Making all related changes required for seamless integration of QC08C
-> > support.
-> >=20
-> > The changes have been validated using v4l2-ctl, compliance, and GStream=
-er
-> > (GST) tests.
-> > Both GST and v4l2-ctl tests were performed using the NV12 format, as
-> > these clients do not support the QCOM-specific QC08C format, and all
-> > tests passed successfully.
->=20
-> Sorry but this means you didn't test the full decoding and encoding with =
-GST
-> and v4l2-ctl using QC08C ?
-> So how did you test ?
+On Thu, Sep 25, 2025 at 4:46=E2=80=AFPM Konrad Dybcio
+<konrad.dybcio@oss.qualcomm.com> wrote:
+>
+> On 9/25/25 8:32 AM, Pankaj Patil wrote:
+> > From: Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>
+> >
+> > Add Volume Down/Up keys for Glymur CRD.
+>
+> Does the CRD have these physical keys, or are they routed to the
+> debug board?
 
-We've made addition of V4L2/DRM format mapping trivial lately in GStreamer.=
- So
-trivial, that my colleague Robert Mader made the changes for you, and this
-change is just waiting for someone with the hardware to test.
+Yes, it seems to be routed only over the debug board.
+The keyboard too has the vol+ key, but seems no direct key having
+vol+/gpio6 on CRD.
+(sorry should this patch be dropped then for this reason i guess?)
 
-https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/8195
+>
+> Konrad
 
-With that you can visually test it by rendering through OpenGL or your disp=
-lay
-controller if supported. This gives option to use glimagesink, waylandsink,=
- and
-possibly kmssink, but not sure for the later.
-
-What would need to work harder would be fluster testing. Going through GL w=
-ill
-mean converting from YUV to RGB back to YUV, which can damage the pictures
-slightly, resulting in different MD5.
-
-regards,
-Nicolas
-
->=20
-> Thanks,
-> Neil
->=20
-> >=20
-> > During v4l2-ctl testing, a regression was observed when using the NV12
-> > color format after adding QC08C support. A fix for this regression has
-> > also been posted [1].
-> >=20
-> > [1]:
-> > https://lore.kernel.org/linux-media/20250918103235.4066441-1-dikshita.a=
-garwal@oss.qualcomm.com/T/#u
-> >=20
-> > Signed-off-by: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
-> > ---
-> > Dikshita Agarwal (2):
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media: iris: Add support for QC08C=
- format for decoder
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media: iris: Add support for QC08C=
- format for encoder
-> >=20
-> > =C2=A0 drivers/media/platform/qcom/iris/iris_buffer.c=C2=A0=C2=A0=C2=A0=
-=C2=A0 | 17 ++++--
-> > =C2=A0 .../platform/qcom/iris/iris_hfi_gen1_command.c=C2=A0=C2=A0=C2=A0=
-=C2=A0 | 15 ++++--
-> > =C2=A0 .../platform/qcom/iris/iris_hfi_gen2_command.c=C2=A0=C2=A0=C2=A0=
-=C2=A0 | 21 +++++++-
-> > =C2=A0 .../platform/qcom/iris/iris_hfi_gen2_defines.h=C2=A0=C2=A0=C2=A0=
-=C2=A0 |=C2=A0 1 +
-> > =C2=A0 drivers/media/platform/qcom/iris/iris_instance.h=C2=A0=C2=A0 |=
-=C2=A0 7 ++-
-> > =C2=A0 .../media/platform/qcom/iris/iris_platform_gen2.c=C2=A0 |=C2=A0 =
-1 +
-> > =C2=A0 drivers/media/platform/qcom/iris/iris_utils.c=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 |=C2=A0 3 +-
-> > =C2=A0 drivers/media/platform/qcom/iris/iris_vdec.c=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 | 61
-> > ++++++++++++++++++----
-> > =C2=A0 drivers/media/platform/qcom/iris/iris_venc.c=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 | 59 +++++++++++++++++-
-> > ---
-> > =C2=A0 9 files changed, 152 insertions(+), 33 deletions(-)
-> > ---
-> > base-commit: 40b7a19f321e65789612ebaca966472055dab48c
-> > change-id: 20250918-video-iris-ubwc-enable-87eac6f41fa4
-> >=20
-> > Best regards,
->=20
-
---=-8im6X2nzMFe6Gk5DQ8ir
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaN0xDQAKCRDZQZRRKWBy
-9MA4AP9Wnbk1p1fA9WS9eZnfnfvuJohBg8nrG8sTKlfaHftc6wEAwGh9enUFIa14
-IZhYzQqBaFqyPDvB4BlNfMDrr5KeSAs=
-=PwN1
------END PGP SIGNATURE-----
-
---=-8im6X2nzMFe6Gk5DQ8ir--
+Regards,
+Kamal
 
