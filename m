@@ -1,192 +1,163 @@
-Return-Path: <linux-kernel+bounces-838828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF86DBB03B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 13:46:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7FECBB03C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 13:48:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 356171C4496
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 11:46:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A11AD7A9584
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 11:46:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBFDE2E1EFF;
-	Wed,  1 Oct 2025 11:45:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jgOfs8kT"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4734B2E229F;
+	Wed,  1 Oct 2025 11:48:18 +0000 (UTC)
+Received: from mail.simonwunderlich.de (mail.simonwunderlich.de [23.88.38.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44BA72E1EE0
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 11:45:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4F5527703C;
+	Wed,  1 Oct 2025 11:48:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=23.88.38.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759319153; cv=none; b=b0l5Qdp4BGMDxWX2LrqJlxKCd4bnN2IKZrKynQLEmvzJphyk2OJG+qnnsC9bicdLDz532zG19gK3a2BjtTWyr8vsxhNgFghDX+UNitTzzZD94E204KgtQWjhyN14fcXhEIX6j+YbGA+TNs7aU09P26VygB7GWrLcK5axHBz7tPc=
+	t=1759319297; cv=none; b=EBPcszDu5lGDu8q/W1TC3rilK1bYzg6WE+2UGdafiMV4gq2nemzEXcwQmdFvRqD73h/ujcLlFb9xuvSKCYxouPyxZsGi1HjWp0k4uDQUR9gjNWZ6x9AETcDpFp/fC7ySEfnnup3pa25qPPYXMV5OpgaZjfumIeHoqE8CeHqo+t8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759319153; c=relaxed/simple;
-	bh=IW/TjE+6F4KXE3ZnE6nFsWMzV7JK07LvsZD+VuiRmuk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BnDuY17zYHRqZUFz2EkZmXh9MWgOhKHn27nt1q39hpAN9kSOA//GZz+M5Nc2jQjmMtUFlY3e/tkEuSUdlGKJtt4JvqPUKGIktAnz+E7ohw7xadZF+bajf2p7WSLHnz8vm9w6gzPdCKWnQrpAPrNM5Y4t8LeNRH91P1F7BiIIduo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jgOfs8kT; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3f2cf786abeso4995365f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 04:45:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759319149; x=1759923949; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VviCcFP3Jcgv6/FMyDDvQbhSqrw1FId3gqaJAc0zZRY=;
-        b=jgOfs8kTgXQRY6LdnHd8MHlJ+dBrmePqdMrdf3H5m85jWEyNcaFdJ7TZQlJ2zurF+d
-         vESTZ+QjFTAVURI7cCSjlxEhTkCe/3aHpvLgy/7hG3BrN+UKdDZIfHxAL8KsnPyGh79P
-         DcM3O3k1woBkkYRXguLlk6PcBowwfOC1sb6eLiJlqQD1xSgMipgUQjPcykrOvKEzW2ak
-         gO05U/+1IAKz9dpL5qoOD1t3PCpY4/5T+5Wf+EDuC8c9zHD+BHrlgQ1103v9sg0KCn2/
-         vpgve4vsrBpyker+exx70O9l+D1Y9Km7h2lh6yz2uhgBF101ID0Me7Pz80Iz4U2GDy3s
-         d1WA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759319149; x=1759923949;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VviCcFP3Jcgv6/FMyDDvQbhSqrw1FId3gqaJAc0zZRY=;
-        b=FdCNCgS+Gp5qTAV5Bryp+M2rki79JmvHQH5kZ8Jqc0rSuUsyX9WsKjOndCIQcq1na3
-         JJvBZTS4BJhz3QLZqkCKNs+X0seOMe55P+ZoDcZf2NWAoD7pIgLIZTC3Gc2g2giPrL42
-         pnlstFZdykePfpuprg5BGxFXd9RME4UJ8VfmRPuzsS8xdmfGIrbjq2O7Ck7Shx77S+sV
-         THNkbNHjWzF+8+OOEQsMFCEDUJ7mccdsguFGV/XRwiwxjObgDJMdubxbXtDTs297F5rb
-         pl4E9lO9gYoenbeNgSkgcMjwI5b2qHdjzAVg7R44/hjhFrm2WvX19z/rSqCcUOa9amYB
-         qWnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVIDHzQ194rDi6ZTiI/qwDTxmPrBMQcQ3SG3Z2nuKam0TFlZD70FqKsatiEtyuMCT1CJRkMFpFMsaa0DlI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMu5JzgbS0RpNyse1s3zd0BgJJDFNtYzjCI9EW1BKR8z53pn2G
-	HLUzCTY6OOXkrSEkOO7lGaf7h6sZi99YyYSWED90tnrDxQQzjP89kJhvmXWnLl2SuRefR2S+lzC
-	Vy9q717/ppsd8423da785mjnWJQqdwLAIBLzCUhBB
-X-Gm-Gg: ASbGncu79qXDhLczJ2YWBTDNVhpOtivtzOfJu2OnxLcP+iwRBrOTw6M79BjOGQ4HyP+
-	MPCHb1PbweUS0C7nYD0+/CZHXpb2dLp1eiA+B3M60OdcGoLLY68fkNEq27a1tQSUjR9ak8CD3CN
-	IQgsU4Sb+uJOdVbfosg0++rNvyWBNf2T7SjHQYjPUYbXU+F9iGde99xbFMLFK5cOENFsjXFKbe1
-	gRERxW+oJShKtUebYXLsaDJsbyE5lHzNDa3ApAiORJbL6crV7Od8N4n3O3V6/0pc0bV
-X-Google-Smtp-Source: AGHT+IH2YWNMKHFi6t5kKvcv1ZOzoaYRa805PT2+7dBFyjV52rsAx9pBNC4BGfFbOqvAMUG1FgAm/Wijr9S7daE4QzA=
-X-Received: by 2002:a05:6000:186e:b0:3e9:b208:f2d2 with SMTP id
- ffacd0b85a97d-42557a15a22mr2477227f8f.50.1759319149319; Wed, 01 Oct 2025
- 04:45:49 -0700 (PDT)
+	s=arc-20240116; t=1759319297; c=relaxed/simple;
+	bh=8voT62oZgp4naNokBhr1QSxLG19Gn93M1T5OgAhUMtM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=MeWuniLh2i2tw2m9g0ffigq8mLees0na+lnxInbwuyRPKtJQeWp/e7NQw5o7UZ2UpwRhaH8zmRvGml85QUDk4+UkmTnj9RhZgfTeOPF2GTxDmGEGE4ncMVZXawLL+upQGQMC41sQU6E/qJay70HE82VK51ofpzYiv+8yJnAHBA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=simonwunderlich.de; spf=pass smtp.mailfrom=simonwunderlich.de; arc=none smtp.client-ip=23.88.38.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=simonwunderlich.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=simonwunderlich.de
+Received: from sven-desktop.home.narfation.org (p200300C5973A2bE00000000000000C00.dip0.t-ipconnect.de [IPv6:2003:c5:973a:2be0::c00])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.simonwunderlich.de (Postfix) with ESMTPSA id C57DAFA12C;
+	Wed,  1 Oct 2025 13:48:06 +0200 (CEST)
+From: Sven Eckelmann <se@simonwunderlich.de>
+Date: Wed, 01 Oct 2025 13:47:26 +0200
+Subject: [PATCH] serial: ar933x: Add polling support
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251001-vmbo-defer-v3-0-a3fe6b6ae185@google.com>
- <20251001-vmbo-defer-v3-1-a3fe6b6ae185@google.com> <20251001132739.41575fa5@fedora>
-In-Reply-To: <20251001132739.41575fa5@fedora>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Wed, 1 Oct 2025 13:45:36 +0200
-X-Gm-Features: AS18NWBngU-2nkqnXugLMYJ5aD04zIT_sFpqKVAk2neDLCbOKa2QWYVXO5xOGRA
-Message-ID: <CAH5fLghp+4dx6-JAfbSWDLz7WOdwtnLeuxdGhmVPax+HKbTv3w@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] drm/gpuvm: add deferred vm_bo cleanup
-To: Boris Brezillon <boris.brezillon@collabora.com>
-Cc: Danilo Krummrich <dakr@kernel.org>, Matthew Brost <matthew.brost@intel.com>, 
-	=?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Steven Price <steven.price@arm.com>, Daniel Almeida <daniel.almeida@collabora.com>, 
-	Liviu Dudau <liviu.dudau@arm.com>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251001-ar933x-kgdb-support-v1-1-5fffd9e36a01@simonwunderlich.de>
+X-B4-Tracking: v=1; b=H4sIAM0U3WgC/x3MMQqAMAxA0atIZgNtNYNeRRyqRg2CllRFKN7d4
+ viG/xNEVuEIbZFA+ZYox55hywLG1e8Lo0zZ4Iwja4xFr01VPbgt04DxCuHQEx3NVJMdnKcGchm
+ UZ3n+a9e/7wcXSglIZQAAAA==
+X-Change-ID: 20251001-ar933x-kgdb-support-25f5451b2a59
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Jiri Slaby <jirislaby@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
+ Sven Eckelmann <se@simonwunderlich.de>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3029; i=se@simonwunderlich.de;
+ h=from:subject:message-id; bh=8voT62oZgp4naNokBhr1QSxLG19Gn93M1T5OgAhUMtM=;
+ b=kA0DAAoWTQ93K9MU9csByyZiAGjdFNCiddfJQBd24bxkVsSADioXXJTzfGqXOAT2bk114CGq2
+ Ih1BAAWCgAdFiEEvNRvz7MH7R/zlvHFTQ93K9MU9csFAmjdFNAACgkQTQ93K9MU9cuNxAEA09u2
+ OamUKVXw/v1zDdAsze+u+xUnew8rWqbNmNrm+dUBAN6A7vjWbns3h9ZFCcFPGYvxj0DC/stTnYs
+ qYm1PVIgK
+X-Developer-Key: i=se@simonwunderlich.de; a=openpgp;
+ fpr=522D7163831C73A635D12FE5EC371482956781AF
 
-On Wed, Oct 1, 2025 at 1:27=E2=80=AFPM Boris Brezillon
-<boris.brezillon@collabora.com> wrote:
->
-> On Wed, 01 Oct 2025 10:41:36 +0000
-> Alice Ryhl <aliceryhl@google.com> wrote:
->
-> > When using GPUVM in immediate mode, it is necessary to call
-> > drm_gpuvm_unlink() from the fence signalling critical path. However,
-> > unlink may call drm_gpuvm_bo_put(), which causes some challenges:
-> >
-> > 1. drm_gpuvm_bo_put() often requires you to take resv locks, which you
-> >    can't do from the fence signalling critical path.
-> > 2. drm_gpuvm_bo_put() calls drm_gem_object_put(), which is often going
-> >    to be unsafe to call from the fence signalling critical path.
-> >
-> > To solve these issues, add a deferred version of drm_gpuvm_unlink() tha=
-t
-> > adds the vm_bo to a deferred cleanup list, and then clean it up later.
-> >
-> > The new methods take the GEMs GPUVA lock internally rather than letting
-> > the caller do it because it also needs to perform an operation after
-> > releasing the mutex again. This is to prevent freeing the GEM while
-> > holding the mutex (more info as comments in the patch). This means that
-> > the new methods can only be used with DRM_GPUVM_IMMEDIATE_MODE.
-> >
-> > Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
-> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+KGDB requires at least the polling hooks .poll_get_char and .poll_put_char
+to transmit/receive character via the serial driver.
 
-> > +/*
-> > + * Must be called with GEM mutex held. After releasing GEM mutex,
-> > + * drm_gpuvm_bo_defer_free_unlocked() must be called.
-> > + */
-> > +static void
-> > +drm_gpuvm_bo_defer_free_locked(struct kref *kref)
-> > +{
-> > +     struct drm_gpuvm_bo *vm_bo =3D container_of(kref, struct drm_gpuv=
-m_bo,
-> > +                                               kref);
-> > +     struct drm_gpuvm *gpuvm =3D vm_bo->vm;
-> > +
-> > +     if (!drm_gpuvm_resv_protected(gpuvm)) {
-> > +             drm_gpuvm_bo_list_del(vm_bo, extobj, true);
-> > +             drm_gpuvm_bo_list_del(vm_bo, evict, true);
-> > +     }
-> > +
-> > +     list_del(&vm_bo->list.entry.gem);
-> > +}
-> > +
-> > +/*
-> > + * GEM mutex must not be held. Called after drm_gpuvm_bo_defer_free_lo=
-cked().
-> > + */
-> > +static void
-> > +drm_gpuvm_bo_defer_free_unlocked(struct drm_gpuvm_bo *vm_bo)
-> > +{
-> > +     struct drm_gpuvm *gpuvm =3D vm_bo->vm;
-> > +
-> > +     llist_add(&vm_bo->list.entry.bo_defer, &gpuvm->bo_defer);
->
-> Could we simply move this line to drm_gpuvm_bo_defer_free_locked()?
-> I might be missing something, but I don't really see a reason to
-> have it exposed as a separate operation.
+Signed-off-by: Sven Eckelmann <se@simonwunderlich.de>
+---
+ drivers/tty/serial/ar933x_uart.c | 62 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 62 insertions(+)
 
-No, if drm_gpuvm_bo_deferred_cleanup() is called in parallel (e.g.
-from a workqueue as we discussed), then this can lead to kfreeing the
-GEM while we hold the mutex. We must not add the vm_bo until it's safe
-to kfree the GEM. See the comment on
-drm_gpuvm_bo_defer_free_unlocked() below.
+diff --git a/drivers/tty/serial/ar933x_uart.c b/drivers/tty/serial/ar933x_uart.c
+index 8bb33556b31208a1707ca7a48db0aa2ca81452bd..5b491db9d2fc01e051f629f224024ac4dc4d35ff 100644
+--- a/drivers/tty/serial/ar933x_uart.c
++++ b/drivers/tty/serial/ar933x_uart.c
+@@ -560,6 +560,64 @@ static int ar933x_uart_verify_port(struct uart_port *port,
+ 	return 0;
+ }
+ 
++#ifdef CONFIG_CONSOLE_POLL
++static int ar933x_poll_get_char(struct uart_port *port)
++{
++	struct ar933x_uart_port *up =
++		container_of(port, struct ar933x_uart_port, port);
++	unsigned int rdata;
++	unsigned char ch;
++	u32 imr;
++
++	/* Disable all interrupts */
++	imr = ar933x_uart_read(up, AR933X_UART_INT_EN_REG);
++	ar933x_uart_write(up, AR933X_UART_INT_EN_REG, 0);
++
++	rdata = ar933x_uart_read(up, AR933X_UART_DATA_REG);
++	if ((rdata & AR933X_UART_DATA_RX_CSR) == 0) {
++		/* Enable interrupts */
++		ar933x_uart_write(up, AR933X_UART_INT_EN_REG, imr);
++		return NO_POLL_CHAR;
++	}
++
++	/* remove the character from the FIFO */
++	ar933x_uart_write(up, AR933X_UART_DATA_REG,
++			  AR933X_UART_DATA_RX_CSR);
++
++	ch = rdata & AR933X_UART_DATA_TX_RX_MASK;
++
++	/* Enable interrupts */
++	ar933x_uart_write(up, AR933X_UART_INT_EN_REG, imr);
++
++	return ch;
++}
++
++static void ar933x_poll_put_char(struct uart_port *port, unsigned char c)
++{
++	struct ar933x_uart_port *up =
++		container_of(port, struct ar933x_uart_port, port);
++	u32 imr;
++
++	/* Disable all interrupts */
++	imr = ar933x_uart_read(up, AR933X_UART_INT_EN_REG);
++	ar933x_uart_write(up, AR933X_UART_INT_EN_REG, 0);
++
++	/* Wait until FIFO is empty */
++	while (!(ar933x_uart_read(up, AR933X_UART_DATA_REG) & AR933X_UART_DATA_TX_CSR))
++		cpu_relax();
++
++	/* Write a character */
++	ar933x_uart_putc(up, c);
++
++	/* Wait until FIFO is empty */
++	while (!(ar933x_uart_read(up, AR933X_UART_DATA_REG) & AR933X_UART_DATA_TX_CSR))
++		cpu_relax();
++
++	/* Enable interrupts */
++	ar933x_uart_write(up, AR933X_UART_INT_EN_REG, imr);
++}
++#endif
++
+ static const struct uart_ops ar933x_uart_ops = {
+ 	.tx_empty	= ar933x_uart_tx_empty,
+ 	.set_mctrl	= ar933x_uart_set_mctrl,
+@@ -576,6 +634,10 @@ static const struct uart_ops ar933x_uart_ops = {
+ 	.request_port	= ar933x_uart_request_port,
+ 	.config_port	= ar933x_uart_config_port,
+ 	.verify_port	= ar933x_uart_verify_port,
++#ifdef CONFIG_CONSOLE_POLL
++	.poll_get_char	= ar933x_poll_get_char,
++	.poll_put_char	= ar933x_poll_put_char,
++#endif
+ };
+ 
+ static int ar933x_config_rs485(struct uart_port *port, struct ktermios *termios,
 
-> > +}
-> > +
-> > +static void
-> > +drm_gpuvm_bo_defer_free(struct kref *kref)
-> > +{
-> > +     struct drm_gpuvm_bo *vm_bo =3D container_of(kref, struct drm_gpuv=
-m_bo,
-> > +                                               kref);
-> > +
-> > +     mutex_lock(&vm_bo->obj->gpuva.lock);
-> > +     drm_gpuvm_bo_defer_free_locked(kref);
-> > +     mutex_unlock(&vm_bo->obj->gpuva.lock);
-> > +
-> > +     /*
-> > +      * It's important that the GEM stays alive for the duration in wh=
-ich we
-> > +      * hold the mutex, but the instant we add the vm_bo to bo_defer,
-> > +      * another thread might call drm_gpuvm_bo_deferred_cleanup() and =
-put
-> > +      * the GEM. Therefore, to avoid kfreeing a mutex we are holding, =
-we add
-> > +      * the vm_bo to bo_defer *after* releasing the GEM's mutex.
-> > +      */
-> > +     drm_gpuvm_bo_defer_free_unlocked(vm_bo);
-> > +}
+---
+base-commit: f83ec76bf285bea5727f478a68b894f5543ca76e
+change-id: 20251001-ar933x-kgdb-support-25f5451b2a59
 
-Alice
+Best regards,
+-- 
+Sven Eckelmann <se@simonwunderlich.de>
+
 
