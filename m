@@ -1,194 +1,167 @@
-Return-Path: <linux-kernel+bounces-839597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66CB2BB1FB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 00:26:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BAA1BB1FC8
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 00:27:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19DBD1763AD
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 22:26:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 106C117C087
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 22:27:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AE63312828;
-	Wed,  1 Oct 2025 22:24:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 308CD311C2E;
+	Wed,  1 Oct 2025 22:24:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iopsys.eu header.i=@iopsys.eu header.b="mDNLZ0SI"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11020102.outbound.protection.outlook.com [52.101.69.102])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="en9PSW5a";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="o4tLFKfU"
+Received: from fhigh-a1-smtp.messagingengine.com (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8499E2BDC00;
-	Wed,  1 Oct 2025 22:24:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.102
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759357458; cv=fail; b=Bkzqur2b+f+yfTeJ18oyzkv0DngeOXFLuF17VF5fZOk5LSjByPBNHZ0A9av0SLOfgM97GPG7RY4tqM/gDlFSD8mhdNnjkkRpw7NcHV6CATTMRl/iRuldyWXIBjIt5+ZI2orZDU8Ea4BhYjMMwZfJpnS8yXtDtIhGz04Y1vUo9gM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759357458; c=relaxed/simple;
-	bh=7yFHZDTm9S6W8TJZL/M1/sCMtKCsZubnBVOvfenNeoI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=kJZXh3eEj8zHStxp5k/LD5uqucfImlJw5vpoQIC5M02K4gokzqcCYtyq1vPMmdPdspeHEa62lFqKRTsO70wMSftF0RkhgMwjdAao5d+AlWnzoRzloJveamUMctg/UriKsuS8PKv6dvFuzE/dZbuhXHsMuxkyRXz8QNNf1vULK2w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iopsys.eu; spf=pass smtp.mailfrom=genexis.eu; dkim=pass (2048-bit key) header.d=iopsys.eu header.i=@iopsys.eu header.b=mDNLZ0SI; arc=fail smtp.client-ip=52.101.69.102
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iopsys.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=genexis.eu
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QwuDoFka4l+b55zrMBDzOpqXPP+EM+HjSp1tAae6oxWakzWVaUarCnXJcturthLCRdz4mOxLcqWKeCH5Sz8UjP18M7baCuws9ruXA65c+rQJtfggIlAHMk4bXT3vN4/3uUcJ3yuh1aY+TJkFJdbOegDxhlODjn2wAVn6/qdL9rBTbgtfa/6J7kOun1eyX+Fkv8DM51ihd2uyS7MpCTG2Dx2uEWY4aXzOcs6OZ/BUdy34pooz5kg3J0MpQY7cI0Z3awYv2XoCeROzKF0NuRCTA1j0G8nINedQvou/bTbbPhHrtx/CiqLG5OIxAWG2N+sR9dpj9Ux7I5OOxvUrrdlaKg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Ux1isKseYcwD6TYau7kY/FyTZaKVnyeDUD3WyihxIOc=;
- b=DvSNU2yVwtn2Nubw9hNZJ/CunEslb9uxYz6GhXGYCfGQ2x4vANMuuSXIvsmonjWV7C/3n/bA9z36SdjRkc5MJNnJcm9NyVaPgSoDFcv9MSMyJXvQGbiMmwrXxUQI7Z0KvVHNhb/cfJpmo410ZGUIAzImR1/QkGlKzhJEyOIDfKyiVCvcgY2kfh+vODOo/29ec9MNoBLEvI9jo5Jo33oC71atG4HZUr9j+PawuDXvSYCPw63m5I6tcIOx4UBx0uCYXYTWU2+VseDwq97ywDbRUlUR5NXivKaGxHLThXpxayRedz0RUmvGgOjd676wAFfk4oTr6MEoB7xsE6lkgdZIFA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=genexis.eu; dmarc=pass action=none header.from=iopsys.eu;
- dkim=pass header.d=iopsys.eu; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iopsys.eu;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ux1isKseYcwD6TYau7kY/FyTZaKVnyeDUD3WyihxIOc=;
- b=mDNLZ0SIqdJWWmUaLvvqh91Q3vNmQ1K0KpHhWUvDlAUQ/4QcjY0geti8VJq098aDYlyTrLLarNhGUvwpit+sT6JDKWPhCHMnRp+BwuKVYtsPdyNRD8m93W8kjD8r98zvbHToIJ/bLyAYbHDJpXiBMY/dhFSLPRE0UsjjwdgilFLjmE0ReUgtlTLaXpcVuD2poZwsp+97gqJsnmJOJEmQp+Nr1cZ9XxOOUfhjTre+aWH2amsPwLBeB+uJlMor/zshW3bVcGTzZBibq5FW7CXk2PTDjQMXbYc9kmikfZs36ynhgqZ7Pe2fpng5Z/fxEIAInfYWHjJHVEmkJWlVMt6DOA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=iopsys.eu;
-Received: from GV2PR08MB8121.eurprd08.prod.outlook.com (2603:10a6:150:7d::22)
- by PA4PR08MB6302.eurprd08.prod.outlook.com (2603:10a6:102:ed::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.18; Wed, 1 Oct
- 2025 22:24:07 +0000
-Received: from GV2PR08MB8121.eurprd08.prod.outlook.com
- ([fe80::4cd3:da80:2532:daa0]) by GV2PR08MB8121.eurprd08.prod.outlook.com
- ([fe80::4cd3:da80:2532:daa0%3]) with mapi id 15.20.9160.017; Wed, 1 Oct 2025
- 22:24:07 +0000
-From: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
-To: Lorenzo Bianconi <lorenzo@kernel.org>,
-	Ray Liu <ray.liu@airoha.com>,
-	Mark Brown <broonie@kernel.org>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>,
-	Andreas Gnau <andreas.gnau@iopsys.eu>
-Subject: [PATCH v6 13/13] spi: airoha: buffer must be 0xff-ed before writing
-Date: Thu,  2 Oct 2025 01:23:46 +0300
-Message-ID: <20251001222347.3386506-14-mikhail.kshevetskiy@iopsys.eu>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251001222347.3386506-1-mikhail.kshevetskiy@iopsys.eu>
-References: <20251001222347.3386506-1-mikhail.kshevetskiy@iopsys.eu>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: FR4P281CA0447.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:c6::13) To GV2PR08MB8121.eurprd08.prod.outlook.com
- (2603:10a6:150:7d::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B4F3286D40
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 22:24:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759357483; cv=none; b=tvWfej1s8aGUQ3LP/FiIbKgiG6KHLMR0LMTduxooJdjzXFsGgXaPL5bdrDT6Y2gnkR8yhpck58QtekG7ztpBvc2CqNZO5ji3uSjcXagzHbeHS/ob9HPmhzJFKLyG9gu8Szc9PmrXadf37PSjpnM0+D63ZD/ZPwPYO9bh+rXZv5I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759357483; c=relaxed/simple;
+	bh=L7DfzCifVc4WHoPfx7Tkgs8WK81wXV+GfP9ozRZUHlY=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=qBxyxAvWdSpyW9loWCj5y0kfu/qP/LqWEkd708m0opLkzdxpywnhQo54FRfDM8uK9JuKBUwc5HyYVx2NGwu8Lm95ChpbF2PPXL3rYhG35tKPqBMkZNn3aKC7vSgpEIJRURI9iTR50o+S9mk44NEsOtJq7GybGbgnc0ypPVks/4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=en9PSW5a; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=o4tLFKfU; arc=none smtp.client-ip=103.168.172.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id A140514001C4;
+	Wed,  1 Oct 2025 18:24:39 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Wed, 01 Oct 2025 18:24:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1759357479;
+	 x=1759443879; bh=moxgaLcuMbxH/PiuEMrkm58H9wq1j46Mre9sz1eZFrM=; b=
+	en9PSW5aUsT/tAn9sZ5AqEoNTZNclDv+PpBZVW6Zwd8lZx84O6Q6pDrcGsZuFyUr
+	NPFdELNL7QMbw+ndiO9t4Wl5877iF5ZCgwZbcs/pK0jfOv5aeBUFgCaeRJViYtpw
+	fGlg3ZUFY3vi/B3iO5DjxIPLa3vi+N4mEMS0kOrSKa6yPT32vVHH6e9AE+fNu07d
+	DoYaQn70RX+JVE313Sa7YqG3CYvP6vTsbatamCJu/OT+AEqDgSu1A88uLeb66By5
+	A48q31P3JVMlszXIj/iTaCdPC0gx91wyBxSvWswJdJJonyR0LBXx7p6CrqXaKePk
+	e3HkKfsAD243Jd+3T7aDCw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1759357479; x=
+	1759443879; bh=moxgaLcuMbxH/PiuEMrkm58H9wq1j46Mre9sz1eZFrM=; b=o
+	4tLFKfUwpO/iAV1NRanH5sdMTvzUWd87kSHuBQdoQBidQx4720+bBpcTXGG693pq
+	tES1ggytGbdgi2IyftuYFOAt0DMvsQ597YU6K73gKWXNTwxVEdzJytonOAHAUykC
+	wkeWe98Dd2JXmIvlRoIgQnx4gN/T9PMw6Q94aLT1qEDQWSEe8jBRqRVLGwPeFlC5
+	EJBJZU0w7pBkgI4yyxERxpwtlEkqcISdWfCJpatK5Ebxo8Lrdd4iRU3bDzBgcjwn
+	SbKOcRq58SGiXT2rAAbJMo3EE+tsEVsTu6pN4OakTNNiBQBSeZz46C/TKaN9gnAE
+	oiXZvkiwYN0L8BcTjdjrA==
+X-ME-Sender: <xms:J6rdaN7BHPRLX-YZccSKtiEKJ7bLz6bcVOEcDCHZsTxU_rJgVZgC5g>
+    <xme:J6rdaFvTot4X-yU5dMg28uk6H1s1IkVehZ2X8bMIfEgD3gAnJNQPGM8SBIt9TbMWW
+    aiG9VjJSXn25QSeJUH7GZ0CcFNfgyHn2BhyalYuS_-puVQcgK4BRVD_>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdekgeeffecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
+    hnpeefhfehteffuddvgfeigefhjeetvdekteekjeefkeekleffjeetvedvgefhhfeihfen
+    ucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenuc
+    frrghrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghp
+    thhtohephedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepthhorhhvrghlughsse
+    hlihhnuhigqdhfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehlihhnuhigqdgr
+    rhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtth
+    hopehlihhnuhigqdhrihhstghvsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhr
+    tghpthhtohepshhotgeslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehlih
+    hnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:J6rdaFmr_cOJVKurTwkfHQfAeBDUqcJPs7910tHDJd-dLerBzJsGZw>
+    <xmx:J6rdaKJa7WLna1HZt0nzSx18G3VzWsGeIz74toCM__u4bKYsmeldqA>
+    <xmx:J6rdaC7ySs51HgL9LASjKYKOO7nV6BVUvxKoZHDw6SjfsNUz1HEMVw>
+    <xmx:J6rdaG2QFuF5vrwC7VFh4GdA_jYdXPUOwJVHwhbUZcF9Q4qmh9C_VA>
+    <xmx:J6rdaBQ_l0QntbWP7eqbqqLYXK1pGWhKB5kjWYzbGysZtfc3dFScNwsU>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 49DD5700065; Wed,  1 Oct 2025 18:24:39 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: GV2PR08MB8121:EE_|PA4PR08MB6302:EE_
-X-MS-Office365-Filtering-Correlation-Id: 97a1df31-f970-4485-6168-08de01393c85
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|52116014|376014|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?XwM4zMsYdWX/H6Y+K/fOeETVtwac3xtusO7C/wmorlm3HJiNbzkH0vFzHsbh?=
- =?us-ascii?Q?rqfoK/205YJFZ/JHkCoSxIHolKL0dM4sRMnc5ZeIMSI08HhEy9/LMVrT2Jyk?=
- =?us-ascii?Q?U5ZCBsbcB0bEHh8IHzC1bGUtG5oap03WEXpEr7HjOBFwQbUu9PUBLGjMGD3B?=
- =?us-ascii?Q?hbCCHUXmenDiRDUNqJyd49wQ1dHHKJAnKII1wn8kcJDknXeHgnNIj2xZ/m3m?=
- =?us-ascii?Q?X1g4BKFf0p3Jd4y7vQL7kz5ll8R6K0dUCLmhEdU6SVM/AYbUOS9fuwyrf2YY?=
- =?us-ascii?Q?YV3S9fPdoed0ailWglT4htFu5HNWX4fM7AdQgKuNq+4uckUzvDntvr8L5d+d?=
- =?us-ascii?Q?QTCI+aOdL1ZwF3SJ1j+4kA8M8p6I9IchHTZe31BMj+WVx4zUJNdSA0O4hOQI?=
- =?us-ascii?Q?wz9+u9Iqsr1luxkHU+odgA1Plzawvbd7olj2jifg3BnPG4FKLhFReWd7s58c?=
- =?us-ascii?Q?0FRnTmChdjrwjlC+yU/Bjz7IGSb/bXNvHoCLgMmtWqacgwoR2/LOiXCPhnUM?=
- =?us-ascii?Q?Tjh/XJzqz+lNKt/ucS3ueA3We7ysLLVLTDMIU8fxEfbQzxuqYqtUWJs79o0u?=
- =?us-ascii?Q?rYrN75KRFl00rtVupWXBnH01f0u1ulzNaAbJpH0Xt2Edtf1GWB7dZsJ6dn4n?=
- =?us-ascii?Q?zeOgdl6IPRmjpips8zCVMPhfmnFOi18skugFysmdgRV/vIR4RwTOzoOt4IXQ?=
- =?us-ascii?Q?k7LusXsHuTiFfAF5U0hzj9nVqrFMxOfbHLtcYO4ArLHz6gCK+T+T7uFhojqw?=
- =?us-ascii?Q?KFqXBJvThOOwe1u9XS85541d7D3Q0/z2CHmT2ZKxJ4TiZn1M/9uFQWSWpzgs?=
- =?us-ascii?Q?tea/jS3+NEP2x9QUsjQpWSdxyOUrafjrtXvb2T5q7jPSOMbw3vP8tF2jWot9?=
- =?us-ascii?Q?NxbWVZrJ/TNd+atazSEccXs+gLXQN57vuPh4Ntq7MGHQHBVV08zMuVA1TkA+?=
- =?us-ascii?Q?RO/fxSlvQKPmFEGWqn1ZW39ulh9wvdGh5VzsFM4RFUolT1wJz3KuBgeRtsjO?=
- =?us-ascii?Q?zrRf/Zoyl/oUBsPXyKfzzT9WVLPjxnLVtpHZeeI0M9S7WbI0NVNPLH/A9XsJ?=
- =?us-ascii?Q?TwT6CxvhN/kZjaP7QcGBexCoJuOrR9COA7MnVzAYubThIRSeBEYZmfvcT6uc?=
- =?us-ascii?Q?qQ5f4MuxLIcmuZMoxOQM1ok/LNVW4RZlK8ffp0EaS+iB7row/j43Cft2QDFd?=
- =?us-ascii?Q?ICc33LPI2yV6POvUu/kuu94yTrVPaPQEd/vAgBL+QfJ4mpCBDay3CfXLyGP7?=
- =?us-ascii?Q?y3PAneuIg/uSd6Z9Q0oWxl73PUNjFK0eM7kNhs1Qh1gI1+VT3kEpdEoyKKUO?=
- =?us-ascii?Q?MLjsNxly0Pt/C+FFZ5gbf1ghTUUBaXuqc6QqvBXd71sL6I0yVm8tf0V4p3Da?=
- =?us-ascii?Q?agWx4a70UV19umCUEJJtu7vxdjux5AThSffSYW8JQu2WC8cnj58Zjkl1h1so?=
- =?us-ascii?Q?E6tomPyWY2T8qmbsbFJSeSWIezunLZv+CVA0JQEi6ntlHPR0bqec0YFXh/wc?=
- =?us-ascii?Q?cDmCLq6taTG0nX+QsrqoslwIFeU8wa9vXtIp?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR08MB8121.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(376014)(1800799024)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?UbdRM79pDUH8z8V59IejjUr3KL441vc6JJW/ksgN3mSwvKle7cqtGQadyZCO?=
- =?us-ascii?Q?oQhpbw+Frvx2y31xWL+o0LcO5RskbS0bQq2UJc8jiiyQjbOynEk50XGoO4hi?=
- =?us-ascii?Q?Odkvb/QM4u1GRHr9i4Ejd0lOYHQ8WSJeF4NeyRS64ZVQNhFZey+pLpw0dm+A?=
- =?us-ascii?Q?9llc6K2Y3vemicvdOso+38BxGey7l2p+brK4HApTVB55YnGNpqEbfYpwPbYv?=
- =?us-ascii?Q?tRK0xsQkh1NPGNHvce/vS+9Mhq7eUmb862BnkguaSy2epckEdasB5JroRgdj?=
- =?us-ascii?Q?wr3/WUtGe+Pj9nHA12ePKNMAUHIv77dcBS3o15w4qGNSHvYz+6gAahSQ72P1?=
- =?us-ascii?Q?QlXFHtprDaNNvqTmk7XWAWBjgBw37O+xkZTYLrqLLCdX/u3uTGnMDRzND0ac?=
- =?us-ascii?Q?c8uU+MrEsk7atbtpDph7hNIaGjeLpokG+/NmrGn3B/GPJweONKxHVfrWPRQy?=
- =?us-ascii?Q?cvtwzKOdAR+DI16PkQSRsW2SJ+VlSkLNPcqeVJAf6H14YQCnkThb2tPM03Dq?=
- =?us-ascii?Q?NaeXutSMli549D2HpHkYHFD2B/NO3wEIuN4sOwleufTuG2PQGg7cZS+cckbL?=
- =?us-ascii?Q?/wlpy2k8JnvO8DAVMIt/ofSd5YIkjaKagvwTwAvtNxgWdD4u0IO2RgUoA5g7?=
- =?us-ascii?Q?W/oSUdIO10vFDJCLHwB7qQfVtnH7aoxJxRFiESj3mT6i9iLivkUYanHRXcbX?=
- =?us-ascii?Q?JU2xU7SPhpQnsU2Dyeq2ASHLiDlF5cqB95mZXy0/098ZDyaA6Oa/Tf5IeGeJ?=
- =?us-ascii?Q?HYIZYbcCnM3ZUECjefiepO1npqY/3j9YBH2+H9L3FPNBNdUTEVXaJhLyeSkP?=
- =?us-ascii?Q?dY53/ZhDAYEOtU+7MD9fUSW3OjfY0SQaF4eHdgpnyf1W6hcZiMoQ9E79KY1C?=
- =?us-ascii?Q?6fNt1kuGKzCzGgb1mbEVF57gRmtNgvC6/w8DnIwDxqp/LRUbwHYbxe6O8vVP?=
- =?us-ascii?Q?wGEk0iCo4wg9AyTg3GH1GwhOHv7m2hYgqiG/OK2DxOcFp6Dmf6GciicB94tm?=
- =?us-ascii?Q?xjXgMgndM0eWbnFDGvUXLO/o8YqU+XmjbUQxsGBw19Pcx7lj/UPNihhKlo9I?=
- =?us-ascii?Q?uS1au+Vn2XtznhJk6Ss6lWPjpJOrf/onersQ2HJe4Lwnp0q1vuPNnmvTf0Se?=
- =?us-ascii?Q?WsEdt/BLBCUSLz/UVlzjemuXqWrbMHZy+7u3h96Lhe0ZJOpNGDoiAdKDQDkX?=
- =?us-ascii?Q?cIHxZdQx7o2AppuzFlAaEssmgpEtRYa/g7ta0kqikWm+vbMb8tlST7yzYtoW?=
- =?us-ascii?Q?YLpg2sDeB2t52i/NEJZZHKUc8N9jaAFxDFIR2yeBnRmocZ+272H8BWY0BhUT?=
- =?us-ascii?Q?FUoPRad+K1SBrjXXCvH011T6M5X6NEimCN1FkwYUiJxxtauaetS5jwe9O/rM?=
- =?us-ascii?Q?fZyXFBF4TtHEsSTtSbG8bpDa37ai1Xl9Oeg4kLeHQBX5vvpYjlzR73FgOSoS?=
- =?us-ascii?Q?g/LWiBL41PzaaL6WWuJMQg+gkaPir/7eQBYf/TT1D0SgxiecUGHF8rbjM+j3?=
- =?us-ascii?Q?9fyhEh3udWaVNNstpdGk7A/1/QutzMo6Gk9a3/yDGWdfyXtTc1qf0WMvn4mb?=
- =?us-ascii?Q?WmrKM/AhBZyrsUcdeL7P0WYRApTWBwDpYBJT2nGuF4mzqkG/0/I+dyU4oipG?=
- =?us-ascii?Q?fsJIKQNrojenutUK6+6j54o=3D?=
-X-OriginatorOrg: iopsys.eu
-X-MS-Exchange-CrossTenant-Network-Message-Id: 97a1df31-f970-4485-6168-08de01393c85
-X-MS-Exchange-CrossTenant-AuthSource: GV2PR08MB8121.eurprd08.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2025 22:24:07.4968
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8d891be1-7bce-4216-9a99-bee9de02ba58
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: mBjXzwalB+TnJP8lT3wyDJ9yhT+0kaCQBvdLqUT/b55iLJFexuDrWD6f56lBAZfc+0Z2N6u3xxHp4U2fvSnKG9woEt6xmnAnd/qFyM8n3pU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR08MB6302
+X-ThreadId: AjqV-Bcf-9VR
+Date: Thu, 02 Oct 2025 00:24:18 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Linus Torvalds" <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-riscv@lists.infradead.org, soc@lists.linux.dev
+Message-Id: <ce4be3de-eae9-4a73-9d85-e47976ef8372@app.fastmail.com>
+In-Reply-To: <54b49f7b-9232-44d7-9ae3-ecc1826f17d7@app.fastmail.com>
+References: <54b49f7b-9232-44d7-9ae3-ecc1826f17d7@app.fastmail.com>
+Subject: [GIT PULL 1/5] soc: new SoC support for 6.18
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-During writing, the entire flash page (including OOB) will be updated
-with the values from the temporary buffer, so we need to fill the
-untouched areas of the buffer with 0xff value to prevent accidental
-data overwriting.
+The following changes since commit b320789d6883cc00ac78ce83bccbfe7ed58afcf0:
 
-Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
----
- drivers/spi/spi-airoha-snfi.c | 4 ++++
- 1 file changed, 4 insertions(+)
+  Linux 6.17-rc4 (2025-08-31 15:33:07 -0700)
 
-diff --git a/drivers/spi/spi-airoha-snfi.c b/drivers/spi/spi-airoha-snfi.c
-index 437ab6745b1a..8408aee9c06e 100644
---- a/drivers/spi/spi-airoha-snfi.c
-+++ b/drivers/spi/spi-airoha-snfi.c
-@@ -776,7 +776,11 @@ static ssize_t airoha_snand_dirmap_write(struct spi_mem_dirmap_desc *desc,
- 		return -EOPNOTSUPP;
- 	}
- 
-+	if (offs > 0)
-+		memset(txrx_buf, 0xff, offs);
- 	memcpy(txrx_buf + offs, buf, len);
-+	if (bytes > offs + len)
-+		memset(txrx_buf + offs + len, 0xff, bytes - offs - len);
- 
- 	err = airoha_snand_set_mode(as_ctrl, SPI_MODE_DMA);
- 	if (err < 0)
--- 
-2.51.0
+are available in the Git repository at:
 
+  https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git soc-newsoc-6.18
+
+for you to fetch changes up to fee2f45def0379ed140de4db8f998edb1d78e619:
+
+  riscv: dts: eswin: add HiFive Premier P550 board device tree (2025-09-25 08:29:06 +0200)
+
+----------------------------------------------------------------
+soc: new SoC support for 6.18
+
+Pinkesh Vaghela adds support for the ESWIN EIC7700 SoC, as
+described in [1]:
+
+ "Add support for ESWIN EIC7700 SoC consisting of SiFive Quad-Core
+  P550 CPU cluster and the first development board that uses it, the
+  SiFive HiFive Premier P550.
+
+  This patch series adds initial device tree and also adds ESWIN
+  architecture support.
+
+  Boot-tested using intiramfs with Linux v6.17-rc3 on HiFive Premier
+  P550 board using U-Boot 2024.01 and OpenSBI 1.4."
+
+[1] https://lore.kernel.org/linux-riscv/20250825132427.1618089-1-pinkesh.vaghela@einfochips.com/
+
+----------------------------------------------------------------
+Darshan Prajapati (2):
+      dt-bindings: riscv: Add SiFive P550 CPU compatible
+      dt-bindings: interrupt-controller: Add ESWIN EIC7700 PLIC
+
+Min Lin (2):
+      riscv: dts: add initial support for EIC7700 SoC
+      riscv: dts: eswin: add HiFive Premier P550 board device tree
+
+Pinkesh Vaghela (1):
+      riscv: Add Kconfig option for ESWIN platforms
+
+Pritesh Patel (1):
+      dt-bindings: riscv: Add SiFive HiFive Premier P550 board
+
+ .../interrupt-controller/sifive,plic-1.0.0.yaml    |   1 +
+ Documentation/devicetree/bindings/riscv/cpus.yaml  |   1 +
+ Documentation/devicetree/bindings/riscv/eswin.yaml |  29 ++
+ MAINTAINERS                                        |   9 +
+ arch/riscv/Kconfig.socs                            |   6 +
+ arch/riscv/boot/dts/Makefile                       |   1 +
+ arch/riscv/boot/dts/eswin/Makefile                 |   2 +
+ .../boot/dts/eswin/eic7700-hifive-premier-p550.dts |  29 ++
+ arch/riscv/boot/dts/eswin/eic7700.dtsi             | 345 +++++++++++++++++++++
+ 9 files changed, 423 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/riscv/eswin.yaml
+ create mode 100644 arch/riscv/boot/dts/eswin/Makefile
+ create mode 100644 arch/riscv/boot/dts/eswin/eic7700-hifive-premier-p550.dts
+ create mode 100644 arch/riscv/boot/dts/eswin/eic7700.dtsi
 
