@@ -1,228 +1,161 @@
-Return-Path: <linux-kernel+bounces-838756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C683BB0144
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 13:00:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEEB8BB013E
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 13:00:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C3873B4D23
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 11:00:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FD333A8982
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 11:00:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5AEA2C3254;
-	Wed,  1 Oct 2025 11:00:27 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 607C12C21F8;
-	Wed,  1 Oct 2025 11:00:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADD312C21FC;
+	Wed,  1 Oct 2025 11:00:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="BVcY/f+X"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 478E6284681
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 11:00:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759316427; cv=none; b=ImSyUbzUBoV52tNp5xsy02a/K6MsJq+V3oU7GbPYaECMWitulSZqIeb8UemWLSiyt2rK4LovbkRNSew15jHXwyEy+ySJioVvfC5XUlbFBNNhiIwSjMfiNOBuYmeMbYRKFv02SufUlJm0crT+F8h6yQj20ooqtdqNsY0760D8bys=
+	t=1759316425; cv=none; b=G4HVk5iQwRoY2zEmayyjNuJ7orhlVRZHArxhA96kQWqynfUewhGmUXtBsOgUVomvU8EnBuGxgciJDnBTi5QeuwDydLSo+zwhWTO8QNXxKeqmg3oR/znFRY8uE+CVMVh8Raaofb4abUIRYLrNW2rp0R79OAOwgbj091hwgz5JM2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759316427; c=relaxed/simple;
-	bh=3ru9c1ecAoC6W72Wb/VITcP/ZIDp+n1MNRQULN/BlhI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j4U7SVha5Tm9ppFaKfc/eR3xuotDtihN7XL/e8IqSq8gOHFsCTNZUrJT5tilFPIfF9//0PIlaM/JD8e7bDvJ0bK76yoqa6IAylXlGCfku5iMAv8QkIXC1CAmGOAXVSs60Z2XpZBsbH4aK79akfqtkTR6vUdMhE/K2SFsUukw0yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8995816F2;
-	Wed,  1 Oct 2025 04:00:15 -0700 (PDT)
-Received: from [10.57.0.204] (unknown [10.57.0.204])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 06CB33F59E;
-	Wed,  1 Oct 2025 04:00:18 -0700 (PDT)
-Message-ID: <747ab990-d02d-4e7c-9007-a7ac73bb1062@arm.com>
-Date: Wed, 1 Oct 2025 12:00:14 +0100
+	s=arc-20240116; t=1759316425; c=relaxed/simple;
+	bh=SW3XEJJoCSwUDOgZwA8JUPnvb5XNbAOw9b1x8zcyrL8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Jtl+pBNp5rdX8v3m/nszgHW4s8LQO1GOguVGlgiCR9xgP6LvqvySrqg+LC+mzSrLV5hWl5jPObbVMBAiLfqpeUN6kfWqHYiOBQ5LVpGaTyM0dVS6miE5n8wuAsHYiSHpkt+yHlplpEotPEvM18YnCYi5kR6q+zHZcc2c18T78kg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=BVcY/f+X; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1759316421;
+	bh=SW3XEJJoCSwUDOgZwA8JUPnvb5XNbAOw9b1x8zcyrL8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=BVcY/f+X469vGIJQQSyZP0xFq3AxplPhuYCUUZk/GmTbeVX/t11C0onkeH5KYHsOH
+	 9XpyoB4TnsArqN705kTdmdbrpsUbYUmRf5nzLtN+PL9xaWKncLDXcyzbBFeOBGzgnl
+	 DpK7G/sHviOKR4DR5oIfs8plIAS/Bdl2L5Y634//vZIRvVrPLL9t3GVs+yVAOFIXYu
+	 kGbWdAny8t3/h8H4c/pZS1hweAHJBs16dfe5dI7/sHT13tBltNMHPmj2rT6CVAi3eZ
+	 RVHdLojjuSOXO2aG7I9hXBod0BAndT0mWFa1+8l72u37238Ynxo6/nAFgZhJbX1MOa
+	 LX9jJKCXOXZmQ==
+Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 23AB117E02B0;
+	Wed,  1 Oct 2025 13:00:21 +0200 (CEST)
+Date: Wed, 1 Oct 2025 13:00:17 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Steven
+ Price <steven.price@arm.com>, kernel@collabora.com, Rob Herring
+ <robh@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann
+ <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>
+Subject: Re: [PATCH v4 06/10] drm/panfrost: Don't rework job IRQ enable mask
+ in the enable path
+Message-ID: <20251001130017.5eefe8ce@fedora>
+In-Reply-To: <20251001022039.1215976-7-adrian.larumbe@collabora.com>
+References: <20251001022039.1215976-1-adrian.larumbe@collabora.com>
+	<20251001022039.1215976-7-adrian.larumbe@collabora.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 03/43] arm64: RME: Add SMC definitions for calling the
- RMM
-To: Marc Zyngier <maz@kernel.org>
-Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- James Morse <james.morse@arm.com>, Oliver Upton <oliver.upton@linux.dev>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
- <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
- Alexandru Elisei <alexandru.elisei@arm.com>,
- Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
- linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
- Gavin Shan <gshan@redhat.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
- Alper Gun <alpergun@google.com>, "Aneesh Kumar K . V"
- <aneesh.kumar@kernel.org>, Emi Kisanuki <fj0570is@fujitsu.com>,
- Vishal Annapurve <vannapurve@google.com>
-References: <20250820145606.180644-1-steven.price@arm.com>
- <20250820145606.180644-4-steven.price@arm.com> <86o6qrym2b.wl-maz@kernel.org>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <86o6qrym2b.wl-maz@kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-Hi Marc,
+On Wed,  1 Oct 2025 03:20:27 +0100
+Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
 
-On 01/10/2025 11:05, Marc Zyngier wrote:
-> On Wed, 20 Aug 2025 15:55:23 +0100,
-> Steven Price <steven.price@arm.com> wrote:
->>
->> The RMM (Realm Management Monitor) provides functionality that can be
->> accessed by SMC calls from the host.
->>
->> The SMC definitions are based on DEN0137[1] version 1.0-rel0
->>
->> [1] https://developer.arm.com/documentation/den0137/1-0rel0/
->>
->> Reviewed-by: Gavin Shan <gshan@redhat.com>
->> Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->> Signed-off-by: Steven Price <steven.price@arm.com>
->> ---
->> Changes since v9:
->>  * Corrected size of 'ripas_value' in struct rec_exit. The spec states
->>    this is an 8-bit type with padding afterwards (rather than a u64).
->> Changes since v8:
->>  * Added RMI_PERMITTED_GICV3_HCR_BITS to define which bits the RMM
->>    permits to be modified.
->> Changes since v6:
->>  * Renamed REC_ENTER_xxx defines to include 'FLAG' to make it obvious
->>    these are flag values.
->> Changes since v5:
->>  * Sorted the SMC #defines by value.
->>  * Renamed SMI_RxI_CALL to SMI_RMI_CALL since the macro is only used for
->>    RMI calls.
->>  * Renamed REC_GIC_NUM_LRS to REC_MAX_GIC_NUM_LRS since the actual
->>    number of available list registers could be lower.
->>  * Provided a define for the reserved fields of FeatureRegister0.
->>  * Fix inconsistent names for padding fields.
->> Changes since v4:
->>  * Update to point to final released RMM spec.
->>  * Minor rearrangements.
->> Changes since v3:
->>  * Update to match RMM spec v1.0-rel0-rc1.
->> Changes since v2:
->>  * Fix specification link.
->>  * Rename rec_entry->rec_enter to match spec.
->>  * Fix size of pmu_ovf_status to match spec.
->> ---
->>  arch/arm64/include/asm/rmi_smc.h | 269 +++++++++++++++++++++++++++++++
->>  1 file changed, 269 insertions(+)
->>  create mode 100644 arch/arm64/include/asm/rmi_smc.h
->>
->> diff --git a/arch/arm64/include/asm/rmi_smc.h b/arch/arm64/include/asm/rmi_smc.h
->> new file mode 100644
->> index 000000000000..1000368f1bca
->> --- /dev/null
->> +++ b/arch/arm64/include/asm/rmi_smc.h
-> 
-> [...]
-> 
->> +#define RMI_PERMITTED_GICV3_HCR_BITS	(ICH_HCR_EL2_UIE |		\
->> +					 ICH_HCR_EL2_LRENPIE |		\
->> +					 ICH_HCR_EL2_NPIE |		\
->> +					 ICH_HCR_EL2_VGrp0EIE |		\
->> +					 ICH_HCR_EL2_VGrp0DIE |		\
->> +					 ICH_HCR_EL2_VGrp1EIE |		\
->> +					 ICH_HCR_EL2_VGrp1DIE |		\
->> +					 ICH_HCR_EL2_TDIR)
-> 
-> Why should KVM care about what bits the RMM wants to use? Also, why
-> should KVM be forbidden to use the TALL0, TALL1 and TC bits? If
-> interrupt delivery is the host's business, then the RMM has no
-> business interfering with the GIC programming.
+> Up until now, panfrost_job_enable_interrupts() would always recalculate t=
+he
+> same job IRQ enablement mask, which is effectively a constant.
+>=20
+> Replace it with a compile-time constant value, and also in another couple
+> places where an equivalent expression was being used.
+>=20
+> Signed-off-by: Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com>
 
-The RMM receives the guest's GIC state in a field within the REC entry
-structure (enter.gicv3_hcr). The RMM spec states that the above is the
-list of fields that will be considered and that everything else must be
-0[1]. So this is used to filter the configuration to make sure it's
-valid for the RMM.
+Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
 
-In terms of TALL0/TALL1/TC bits: these control trapping to EL2, and when
-in a realm guest the RMM is EL2 - so it's up to the RMM to configure
-these bits appropriately as it is the RMM which will have to deal with
-the trap.
-
-[1] RWVGFJ in the 1.0 spec from
-https://developer.arm.com/documentation/den0137/latest
-
->> +
->> +struct rec_enter {
->> +	union { /* 0x000 */
->> +		u64 flags;
->> +		u8 padding0[0x200];
->> +	};
->> +	union { /* 0x200 */
->> +		u64 gprs[REC_RUN_GPRS];
->> +		u8 padding1[0x100];
->> +	};
->> +	union { /* 0x300 */
->> +		struct {
->> +			u64 gicv3_hcr;
->> +			u64 gicv3_lrs[REC_MAX_GIC_NUM_LRS];
->> +		};
->> +		u8 padding2[0x100];
->> +	};
->> +	u8 padding3[0x400];
->> +};
->> +
->> +#define RMI_EXIT_SYNC			0x00
->> +#define RMI_EXIT_IRQ			0x01
->> +#define RMI_EXIT_FIQ			0x02
->> +#define RMI_EXIT_PSCI			0x03
->> +#define RMI_EXIT_RIPAS_CHANGE		0x04
->> +#define RMI_EXIT_HOST_CALL		0x05
->> +#define RMI_EXIT_SERROR			0x06
->> +
->> +struct rec_exit {
->> +	union { /* 0x000 */
->> +		u8 exit_reason;
->> +		u8 padding0[0x100];
->> +	};
->> +	union { /* 0x100 */
->> +		struct {
->> +			u64 esr;
->> +			u64 far;
->> +			u64 hpfar;
->> +		};
->> +		u8 padding1[0x100];
->> +	};
->> +	union { /* 0x200 */
->> +		u64 gprs[REC_RUN_GPRS];
->> +		u8 padding2[0x100];
->> +	};
->> +	union { /* 0x300 */
->> +		struct {
->> +			u64 gicv3_hcr;
->> +			u64 gicv3_lrs[REC_MAX_GIC_NUM_LRS];
->> +			u64 gicv3_misr;
-> 
-> Why do we care about ICH_MISR_EL2? Surely we get everything in the
-> registers themselves, right? I think this goes back to my question
-> above: why is the RMM getting in the way of ICH_*_EL2 accesses?
-
-As mentioned above, the state of the guest's GIC isn't passed through
-the CPU's registers, but instead using the rec_enter/rec_exit
-structures. So unlike a normal guest entry we don't set all the CPU's
-register state before entering, but instead hand over a shared data
-structure and the RMM is responsible for actually programming the
-registers on the CPU. Since many of the registers are (deliberately)
-unavailable to the host (e.g. all the GPRs) it makes some sense the RMM
-also handles the GIC registers save/restore.
-
-Thanks,
-Steve
-
->> +			u64 gicv3_vmcr;
->> +		};
-> 
-> Thanks,
-> 
-> 	M.
-> 
+> ---
+>  drivers/gpu/drm/panfrost/panfrost_device.h |  4 ++++
+>  drivers/gpu/drm/panfrost/panfrost_job.c    | 19 ++++---------------
+>  2 files changed, 8 insertions(+), 15 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_device.h b/drivers/gpu/drm=
+/panfrost/panfrost_device.h
+> index 474b232bb38e..ac7147ed806b 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_device.h
+> +++ b/drivers/gpu/drm/panfrost/panfrost_device.h
+> @@ -26,6 +26,10 @@ struct panfrost_perfcnt;
+> =20
+>  #define MAX_PM_DOMAINS 5
+> =20
+> +#define ALL_JS_INT_MASK					\
+> +	(GENMASK(16 + NUM_JOB_SLOTS - 1, 16) |		\
+> +	 GENMASK(NUM_JOB_SLOTS - 1, 0))
+> +
+>  enum panfrost_drv_comp_bits {
+>  	PANFROST_COMP_BIT_GPU,
+>  	PANFROST_COMP_BIT_JOB,
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_job.c b/drivers/gpu/drm/pa=
+nfrost/panfrost_job.c
+> index ba934437a8ea..54764ce91dea 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_job.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_job.c
+> @@ -428,17 +428,10 @@ static struct dma_fence *panfrost_job_run(struct dr=
+m_sched_job *sched_job)
+> =20
+>  void panfrost_job_enable_interrupts(struct panfrost_device *pfdev)
+>  {
+> -	int j;
+> -	u32 irq_mask =3D 0;
+> -
+>  	clear_bit(PANFROST_COMP_BIT_JOB, pfdev->is_suspended);
+> =20
+> -	for (j =3D 0; j < NUM_JOB_SLOTS; j++) {
+> -		irq_mask |=3D MK_JS_MASK(j);
+> -	}
+> -
+> -	job_write(pfdev, JOB_INT_CLEAR, irq_mask);
+> -	job_write(pfdev, JOB_INT_MASK, irq_mask);
+> +	job_write(pfdev, JOB_INT_CLEAR, ALL_JS_INT_MASK);
+> +	job_write(pfdev, JOB_INT_MASK, ALL_JS_INT_MASK);
+>  }
+> =20
+>  void panfrost_job_suspend_irq(struct panfrost_device *pfdev)
+> @@ -757,9 +750,7 @@ panfrost_reset(struct panfrost_device *pfdev,
+>  		drm_sched_start(&pfdev->js->queue[i].sched, 0);
+> =20
+>  	/* Re-enable job interrupts now that everything has been restarted. */
+> -	job_write(pfdev, JOB_INT_MASK,
+> -		  GENMASK(16 + NUM_JOB_SLOTS - 1, 16) |
+> -		  GENMASK(NUM_JOB_SLOTS - 1, 0));
+> +	job_write(pfdev, JOB_INT_MASK, ALL_JS_INT_MASK);
+> =20
+>  	dma_fence_end_signalling(cookie);
+>  }
+> @@ -832,9 +823,7 @@ static irqreturn_t panfrost_job_irq_handler_thread(in=
+t irq, void *data)
+> =20
+>  	/* Enable interrupts only if we're not about to get suspended */
+>  	if (!test_bit(PANFROST_COMP_BIT_JOB, pfdev->is_suspended))
+> -		job_write(pfdev, JOB_INT_MASK,
+> -			  GENMASK(16 + NUM_JOB_SLOTS - 1, 16) |
+> -			  GENMASK(NUM_JOB_SLOTS - 1, 0));
+> +		job_write(pfdev, JOB_INT_MASK, ALL_JS_INT_MASK);
+> =20
+>  	return IRQ_HANDLED;
+>  }
 
 
