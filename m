@@ -1,87 +1,114 @@
-Return-Path: <linux-kernel+bounces-839246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1F2FBB1290
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 17:45:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71971BB12B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 17:47:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E4BC16A1FB
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 15:45:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39370168BCA
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 15:47:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9646A27D780;
-	Wed,  1 Oct 2025 15:45:30 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14F03281375;
+	Wed,  1 Oct 2025 15:47:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qUT6gmV/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2A9F1459FA
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 15:45:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67ADE25484B;
+	Wed,  1 Oct 2025 15:47:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759333530; cv=none; b=S2THxEuEouzZI0pyQzWqfxruQrwxKLc787SUXl5eijy28WV7SGkzb4bm1sD9UhNzSGLwOL8437JSDl7fXPVcil5Vuwy7l5NELb5mRbwjAcikTfze0OY1f6xcHwWPdLLJ+2VfRIu6ghwIAfHOx6T3agDJR+od8p8z6A5Yc3wsjn4=
+	t=1759333636; cv=none; b=gas3NBYO0wR15AJQ76L1ZqW2KCouRppDCwXrnZoBTMRuh9nerld2mT0TJ7R1+SbROpPUb2UBZ7a3tBRI70HjjarchsPJpR9hVxZsybuYMXUlQDNQD8G+ova/aUk6BxvgSskGapbiI/lzMOk0G5TB99LyNvvQpatZVSJss04oJq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759333530; c=relaxed/simple;
-	bh=l3+j1qBtWVeJbLqlOoYwmRcgTQWLmfgBE3R7wFAstRo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BBeBeApa/boXSkvRyYyX/QbrLogJvbb4w+Q/xngSSlgTVaa897fZLuPnvKrkacl+Au33DlePsPGl81dVC7/h4bddEDUzNhPWqQ0ZwM8ubYEtKjAXHYXSr6C95nE1M0FLr4JCi5ZEN8tqmcIMr5J9iEHNCKnTb1CMUcHIaFuMWRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf18.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay10.hostedemail.com (Postfix) with ESMTP id 6563BC0166;
-	Wed,  1 Oct 2025 15:45:26 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf18.hostedemail.com (Postfix) with ESMTPA id B6A1F31;
-	Wed,  1 Oct 2025 15:45:24 +0000 (UTC)
-Date: Wed, 1 Oct 2025 11:47:02 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: jpoimboe@kernel.org, rostedt@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 09/12] unwind: Make unwind_task_info::unwind_mask
- consistent
-Message-ID: <20251001114702.06e2b1d8@gandalf.local.home>
-In-Reply-To: <20250924080119.384384486@infradead.org>
-References: <20250924075948.579302904@infradead.org>
-	<20250924080119.384384486@infradead.org>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1759333636; c=relaxed/simple;
+	bh=NjW3kska/Uq+inmxvoWI0aPOX9KLbT5E2CZBOBPzilI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZpV6fJ4mef2z51wVICM+DAWg1fNNai0EqTyqT877DsJKjsBVZzvNNt53b5a/zSAZ+JdbwDHVXqJ2NcqgY70TKE+HemJL/DYV9hS4UelPaqsDLDrI9OPO/FwZ9LHoOaCGf8TPZ1nRSbXjlqYY6CyScaXK5ReX1h/r2sPwUDo0gYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qUT6gmV/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A4A9C4CEF1;
+	Wed,  1 Oct 2025 15:47:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759333636;
+	bh=NjW3kska/Uq+inmxvoWI0aPOX9KLbT5E2CZBOBPzilI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qUT6gmV/QKIgrqsrOF2Q1C9xWXS+a2d1A/arnF4ojhnpSEu31ezovmtaN7nKUTre9
+	 9+u6fY3bskaH0euvOsYffpxmRx2hHBXSIV3b2+7O7fFGFELtBC+kLr9H7bHFKOYpXW
+	 Hk5lW7ZueJuZGsi2MutNUNGypJE6boSZFodcSikKZMsXB89u3HaDkrv6w+T+WybFx1
+	 CNsgTg6WtnOqyMCJSCJzc7kggzmUZY0t9Qvc7SWT7C6mYV+Psfc52OfOzNnP5biR3J
+	 4bhSb+xRwdRw6zOROQmD2OZD5wyRDcheZWz1e7h35GjfyKzcy7ff8WQx5b/Gu++RCE
+	 2a807wnIHPyFw==
+Date: Wed, 1 Oct 2025 16:47:12 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Conor Dooley <conor.dooley@microchip.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [RFC 2/5] dt-bindings: pinctrl: add pic64gx "gpio2" pinmux
+Message-ID: <20251001-grunge-unroll-d7a48294570a@spud>
+References: <20250926-manpower-glacial-e9756c82b427@spud>
+ <20250926-gilled-muppet-6ac08937cea6@spud>
+ <CACRpkdYoECsAGwUno0b_nz-iBB=iwO0Js_6k4O5k+xhig2NYkg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: g158948skhodmx6tbwzf39gubiss9f7d
-X-Rspamd-Server: rspamout01
-X-Rspamd-Queue-Id: B6A1F31
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+OMW4XSFp4Dig02OXKk246amWPi9EXI+k=
-X-HE-Tag: 1759333524-461601
-X-HE-Meta: U2FsdGVkX1/zVpPXzhVGhC4Y+71/FCLiJlnm/QiGd4rgK0kGR4FcS8p5zKH7IEMeqt3Dz4eZT85hCeB6PvfDKatZ9mkFGo8v9JBrEiI7oWnQLd0Bv8qvgE0wwgsjVl9mZNDSTkjGMHEHZJooLP1mL6JnrL1/aEipRUWB9WaWJF0bGfiOgVuz9K4/++CITy51cPeHkHQPHkb6KFUzAYViQ1KKLdLwHJqWPVVLn6vw6zYPLPPfRv4g2A2puKTgdNUiHLxjiMl+umRAiPv8KXF+p9nfcUXA6jnzbNKh1g4X/auUg2lbU71+MwXPQYVeAf6TFzympqBbpiuEdXALRevRDTy7HZHKkMguNaMzZb9SO8LbGZjp8TfT+HB34EhyY+44
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="AH55XWIVqMGAByzb"
+Content-Disposition: inline
+In-Reply-To: <CACRpkdYoECsAGwUno0b_nz-iBB=iwO0Js_6k4O5k+xhig2NYkg@mail.gmail.com>
 
-On Wed, 24 Sep 2025 09:59:57 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
 
-> @@ -324,7 +324,8 @@ void unwind_deferred_cancel(struct unwin
->  	guard(rcu)();
->  	/* Clear this bit from all threads */
->  	for_each_process_thread(g, t) {
-> -		clear_bit(bit, &t->unwind_info.unwind_mask);
-> +		atomic_long_andnot(UNWIND_USED,
-> +				   &t->unwind_info.unwind_mask);
+--AH55XWIVqMGAByzb
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Shouldn't this be:
+On Wed, Oct 01, 2025 at 01:32:37PM +0200, Linus Walleij wrote:
+> On Fri, Sep 26, 2025 at 4:33=E2=80=AFPM Conor Dooley <conor@kernel.org> w=
+rote:
+>=20
+> > pin     role (1/0)
+> > ---     ----------
+> > E14     MAC_0_MDC/GPIO_2_0
+> > E15     MAC_0_MDIO/GPIO_2_1
+> > F16     MAC_1_MDC/GPIO_2_2
+> > F17     MAC_1_MDIO/GPIO_2_3
+>=20
+> So this is a group you can name "mac_grp" and a function
+> you can name "mac".
+>=20
+> > D19     SPI_0_CLK/GPIO_2_4
+> > B18     SPI_0_SS0/GPIO_2_5
+> (...)
+> > E19     SPI_0_DO/GPIO_2_10
+> > C7      SPI_0_DI/GPIO_2_11
+>=20
+> These pins would be "spi0_grp", function "spi0".
+>=20
+> etc. No need for "pinmux" properties just use classix
+> group and function strings.
 
-		atomic_long_andnot(BIT(bit), &t->unwind_info.unwind_mask);
+tbh, I found it hard to understand the "line" between using a pinmux
+property and where stuff should be described in groups or functions in a
+driver. What is that line?
 
- ?
+--AH55XWIVqMGAByzb
+Content-Type: application/pgp-signature; name="signature.asc"
 
-As BIT(bit) != UNWIND_USED.
+-----BEGIN PGP SIGNATURE-----
 
--- Steve
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaN1NAAAKCRB4tDGHoIJi
+0sqBAP4i3U4tZDfeeiZSYod7V9gfVIy15bm/aaFK8wAoHw1+OQEAnbmJgtVTFNOA
+jdwWfVgCKEzExwZX9em1+lTlvBRXmQc=
+=v4Gv
+-----END PGP SIGNATURE-----
 
->  		if (t->unwind_info.cache)
->  			clear_bit(bit, &t->unwind_info.cache->unwind_completed);
->  	}
+--AH55XWIVqMGAByzb--
 
