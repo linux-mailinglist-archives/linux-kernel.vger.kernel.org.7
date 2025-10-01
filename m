@@ -1,146 +1,120 @@
-Return-Path: <linux-kernel+bounces-839374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 691C7BB1800
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 20:33:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ECB9BB180C
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 20:33:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A4B51947688
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 18:33:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE3DE19476D3
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 18:34:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9A252D4B6C;
-	Wed,  1 Oct 2025 18:33:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACCEE2D5937;
+	Wed,  1 Oct 2025 18:33:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jQWE0MOn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nZ0jdwUA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32FEF258EDF
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 18:33:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BA6C25DB1A;
+	Wed,  1 Oct 2025 18:33:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759343605; cv=none; b=Ym3vqLZZJF/VO1CDkxMTvv2/xIb150G9PMQaClRn0La17cQ19gVLtmbHqqTylQvJ+gGuDKAglRRF2BunufGhtc2yZ1lgaZDBwWhvgeJZvjGtqYb0wm2QUoMuH/RxvRhZXGKEW23jrAiLncnheD+eWgcOGszPLn2zGcp6JOkxkV8=
+	t=1759343630; cv=none; b=f61ol9lQA/xPoPmL0jm52/SVW4nv6twlRSlJhafl+oGrSkfEn/+ffH6PlzEcjrTIwNimxBLDEaVa0F5sgkCkRki8ZoV/fSdrcWtcSCAM9EmqguPjcQD80asxnhYp9GPhA0vg9xipCtrW3uEyXQ1umzQzN4XeKrfnHFG6D8GeFhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759343605; c=relaxed/simple;
-	bh=ZLIoi/NYFfvh7MIGr5zx8UVJQvY41XwspSGk66LmUh0=;
+	s=arc-20240116; t=1759343630; c=relaxed/simple;
+	bh=Xb2lH0sV16eeETFsmOI0Y8doM7vNsNLpecPTgoVug9M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RExUbzfhxmB9n6AIDKxMqxv1vkY3XDj5SLPUY6NftCUpHlyvXQhHKgTflT4U/4eoBEhmPm8iSO2Fn6+jbK3ipbRphVVXlFktCfn2N1pGI1lQqnAq2fq+5Mr38+kSSUn+1H7aKglE5IngZp8V9dOm+yPnTVRleo6ayQKE9XyZ7rM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jQWE0MOn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25BC5C4CEF9;
-	Wed,  1 Oct 2025 18:33:24 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Oi0Hp+yBdhQVg3IYpavlB8wjNA1hsQMLMS1+cGp1oJ3WJpKwcP6K0u8sa0qCqBYDt9ISaVBH+xvIvTPubntpfqsyQ1MUSSB761u/2xX4Lryhn0LNVJwhtg2K4Z+oXOU9oc/yh4EndmVmw0PBENUuHCxVde+2YTtj2+TW8gUPSk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nZ0jdwUA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC8B4C4CEF1;
+	Wed,  1 Oct 2025 18:33:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759343604;
-	bh=ZLIoi/NYFfvh7MIGr5zx8UVJQvY41XwspSGk66LmUh0=;
+	s=k20201202; t=1759343629;
+	bh=Xb2lH0sV16eeETFsmOI0Y8doM7vNsNLpecPTgoVug9M=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jQWE0MOnhjMNSXVa/1zMRyDFAdNQm/EYGzhoxA0dysuEBW5+sHphaUoLTcrA3fhZE
-	 SATTt5c3i8IngdVcWA59VotNW/5nrxzWkHzxi+wbf5i7hoVihA4k6a0y1X6aQ87X9U
-	 bAhkHrcLC6Z/47y0IEhk439RnjbvtZEGT/PrBVnvrno6OAkpDpbwOzWAua12TyVEjH
-	 yNBG1HS/l1D5Isj0UQrlyg1GiQb2dw4FZnOprZbWQan/TCQ7J/GjUVTo0qWmTn7byA
-	 FlvITMTH9WrbipDPvhIAmjRcZRd0DmHruMt8RCP4fFT26VrHaS3dojWa/ELJrsLrLL
-	 N5ZfjZ/AMpwtQ==
-Date: Wed, 1 Oct 2025 11:33:21 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Ben Dooks <ben.dooks@codethink.co.uk>, Paul Walmsley <pjw@kernel.org>,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] RISC-V updates for v6.18-rc1
-Message-ID: <20251001183321.GA2760@quark>
-References: <2c804359-3d43-0fba-7173-a87f9aec4bd2@kernel.org>
- <066d70c7-b0a7-45e5-9337-17901bc95664@codethink.co.uk>
- <CAHk-=wgfpswvq0TypePyjv3dofO5YaUC_fSd_MjzY7jogCUnCg@mail.gmail.com>
- <CAHk-=wgYcOiFvsJzFb+HfB4n6Wj6zM5H5EghUMfpXSCzyQVSfA@mail.gmail.com>
+	b=nZ0jdwUAbWT/9x4SadJIY2f4V/NL3jEI+DJHNGWWhIxzczO13aFPh/6klDqwA8bL9
+	 cLcgoW557k6R40KFRWM8Tw9dxoZPfUa4sqnn8MgwMwVsxuoUTexDoY+TuVR2m1U1LS
+	 n41xfrN/iRQlc0P/yScu/JOxqqa+e5I/Xtmu3ug1AsYLlMjpsxgNJxDZ3AO2ymxE33
+	 FF51i9KgZCiSognZU8iMD11mIHZVDtNyEEG0T6AJJ0ptTU3EYOhaDlHvaGxzCvSmau
+	 EIO8mt5aff/aLLg/CfFJgfFyqDGqOGBw0+yZ08QoUJXsAuH6HptbAodY1Tba5+7l2p
+	 jFjG/5jVsEFpA==
+Date: Wed, 1 Oct 2025 19:33:44 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Kevin Tung <kevin.tung.openbmc@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Amithash Prasasd <amithash@meta.com>,
+	Kevin Tung <Kevin.Tung@quantatw.com>,
+	Ken Chen <Ken.Chen@quantatw.com>, Leo Yang <Leo-Yang@quantatw.com>
+Subject: Re: [PATCH v3 1/2] dt-bindings: arm: aspeed: add Meta Yosemite5 board
+Message-ID: <20251001-bonding-surging-af8cd0d09e07@spud>
+References: <20251001-yv5_add_dts-v3-0-54190fbc0785@gmail.com>
+ <20251001-yv5_add_dts-v3-1-54190fbc0785@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="N49fSXuRnpf7iDQV"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHk-=wgYcOiFvsJzFb+HfB4n6Wj6zM5H5EghUMfpXSCzyQVSfA@mail.gmail.com>
+In-Reply-To: <20251001-yv5_add_dts-v3-1-54190fbc0785@gmail.com>
 
-On Tue, Sep 30, 2025 at 04:53:24PM -0700, Linus Torvalds wrote:
-> On Tue, 30 Sept 2025 at 09:04, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > Oh Christ. Is somebody seriously working on BE support in 2025?
-> 
-> Ok, I just googled this, and I am putting my foot down:
-> 
->  WE ARE NOT PREEMPTIVELY SUPPORTING BIG-ENDIAN ON RISC-V
-> 
-> The documented "reasoning" for that craziness is too stupid for words,
-> but since riscv.org did put it in words, I'll just quote those words
-> here:
-> 
->  "There are still applications where the way data is stored matters,
-> such as the protocols that move data across the Internet, which are
-> defined as big-endian. So when a little-endian system needs to inspect
-> or modify a network packet, it has to swap the big-endian values to
-> little-endian and back, a process that can take as many as 10-20
-> instructions on a RISC-V target which doesn’t implement the Zbb
-> extension"
-> 
-> In other words, it is suggesting that RISC-V add a big-endian mode due to
-> 
->  (a) internet protocols - where byte swapping is not an issue
-> 
->  (b) using "some RISC-V implementations don't do the existing Zbb
-> extension" as an excuse
-> 
-> This is plain insanity. First off, even if byte swapping was a real
-> cost for networking - it's not, the real costs tend to be all in
-> memory subsystems - just implement the damn Zbb extension.
-> 
-> Don't go "we're too incompetent to implement Zbb, so we're now asking
-> that EVERYBODY ELSE feel the pain of a much *worse* extension and
-> fragmenting RISC-V further".
-> 
-> I'm hoping this is some April fools joke, but that page is dated
-> "March 10, 2025". Close, but not close enough.
-> 
-> This is the kind of silly stuff that just makes RISC-V look bad.
-> 
-> Ben - I'm afraid that that page has "further reading" pointing to codethink.
-> 
-> I see some CONFIG_CPU_BIG_ENDIAN has already made it in, but this
-> needs to stop.
-> 
-> The mainline kernel is for mainline development. Not for random
-> experiments that make the world a worse place.
-> 
-> And yes, we're open source, and that very much means that anybody is
-> more than welcome to try to prove me wrong.
-> 
-> If it turns out that BE RISC-V becomes a real thing that is relevant
-> and actually finds a place in the RISC-V ecosystem, then _of_course_
-> we should support it at that point in the mainline kernel.
-> 
-> But I really do think that it actually makes RISC-V only worse, and
-> that we should *not* actively help the fragmentation.
 
-+1.  Please, let's not do big endian RISC-V kernels :(
+--N49fSXuRnpf7iDQV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This mistake was made for arm64, it's finally getting fixed.
-See https://lore.kernel.org/r/20250919184025.15416-1-will@kernel.org/
-Let's not make the same mistake again.
+On Wed, Oct 01, 2025 at 04:47:50PM +0800, Kevin Tung wrote:
+> Document the new compatibles used on Meta Yosemite5.
+>=20
+> Signed-off-by: Kevin Tung <kevin.tung.openbmc@gmail.com>
 
-And as someone who works on optimized crypto and CRC code, the arm64 big
-endian kernel support has always been really problematic.  It's rarely
-tested, and code that produces incorrect outputs on arm64 big endian
-regularly gets committed and released.  It sometimes gets fixed, but not
-always; currently the arm64 SM3 and SM4 code produces incorrect outputs
-on big endian in mainline.  (I don't really care enough to fix it, TBH.)
+You've repeatedly ignored my ack, so I assume you don't want it.
+Maybe you want a nak instead?
 
-I recently added arm64 big endian to my own testing matrix.  But I look
-forward to dropping that, as well as *not* having to start testing on
-RISC-V big endian too...
+> ---
+>  Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml b/D=
+ocumentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+> index 456dbf7b5ec8f4442be815284e1ad085287dc443..6f2b12f96bd6ce31b4175e109=
+a78d931dffdfe28 100644
+> --- a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+> +++ b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+> @@ -89,6 +89,7 @@ properties:
+>                - facebook,minerva-cmc
+>                - facebook,santabarbara-bmc
+>                - facebook,yosemite4-bmc
+> +              - facebook,yosemite5-bmc
+>                - ibm,blueridge-bmc
+>                - ibm,everest-bmc
+>                - ibm,fuji-bmc
+>=20
+> --=20
+> 2.51.0
+>=20
 
-Of course, that's just one example from my own experience.  There's a
-lot more that CONFIG_CPU_BIG_ENDIAN creates problems for.
+--N49fSXuRnpf7iDQV
+Content-Type: application/pgp-signature; name="signature.asc"
 
-- Eric
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaN10CAAKCRB4tDGHoIJi
+0rToAP48ObGVhLOzqtINSi0uK5cZGsYs4Yk4UKr5h8fYmM++rQD/bO5IqlbvGU3Q
+ohXJpk3bM7P7wKsfp835IM8Bn2xMTAE=
+=on5v
+-----END PGP SIGNATURE-----
+
+--N49fSXuRnpf7iDQV--
 
