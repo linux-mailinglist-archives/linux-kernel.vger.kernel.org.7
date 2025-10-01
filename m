@@ -1,108 +1,131 @@
-Return-Path: <linux-kernel+bounces-838690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18E03BAFF11
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 11:59:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19872BAFF1D
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 11:59:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C571E17C6BD
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 09:59:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8D643A4B79
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 09:59:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 428BD296BCD;
-	Wed,  1 Oct 2025 09:59:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF2081C8611;
+	Wed,  1 Oct 2025 09:59:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UM1iNgds"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R6t+EpOt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 951331C8611;
-	Wed,  1 Oct 2025 09:59:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FF5529A31C;
+	Wed,  1 Oct 2025 09:59:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759312747; cv=none; b=YIG/khYvI0wpKg6qX7qvlC4YHT7kTwXsVXHeBdcaJlhJgmnsNJtp+XTjCsrnePVmCoWurw+gKilWTHT80dZYK3Cs+5kMN5qMQLsejSBhK89bKTJd/FLxB/vAEwL/xv0QdpXQFn7sjpAzdETKqJFykhwvaLW95ubsT/bCvGElS64=
+	t=1759312750; cv=none; b=jVHyVzhP6OsTFvlEy4rgxrSarrPfM+UM6n1pmDsJ8bqZjBcOKiYnw03xpI8Bo2aYAl6A9qu9OPCfDGfYyJYtsLk0BLbPifQQyzP0ySvWBtGm3KqGvMWLUk9PThmAvWhp31huc+ngLSKwUoc5IgzhvH4yPE9zDAK9ytlTxmrHubY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759312747; c=relaxed/simple;
-	bh=NiLZp9i7KhYZ7sEUFqq6diLm8LTYjZqIgXXtKVXc9wU=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ERwgsHd/E2jwukrOg2U3EZMPzQBeyOuejncFNBJv53MD0ky+KoTeYbYkPAWhCRP3cFBHJGELORRxmk8qu07YIwvfxiRj3Zg4zgyTgSGz1Z9G8xKt9qH/a7qGcDe47K9kIQd8RMe5KtzpvMEpy+agm1dzY87PbCvMF/08oftCDGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UM1iNgds; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB296C4CEF4;
-	Wed,  1 Oct 2025 09:59:04 +0000 (UTC)
+	s=arc-20240116; t=1759312750; c=relaxed/simple;
+	bh=zQh3WXGk/9eQB/zxNVg6iMZ/HSaTpK+7Py1m4QRWrMc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NgN55eq+ggEBiAxP2XlPgjCBADWFjIO/UaotFWnATBkqsPZPJ0xloNVTybfnYG01XZRiLl44dYNRYk7I3PgS5LSn9w1m90B/1GnLM97K30INMw23109EID9dogxVth3/zZYyPu1ysSTtjHlRIi8SkCRFySb8ETP+wVLVzjVxy1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R6t+EpOt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3385BC4CEF7;
+	Wed,  1 Oct 2025 09:59:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759312746;
-	bh=NiLZp9i7KhYZ7sEUFqq6diLm8LTYjZqIgXXtKVXc9wU=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=UM1iNgdsB2mm9da/VZps4E3syLEiJrW8/NUlOaL0mdt9/ZNqBDjWAKWETTm44WuLh
-	 60mSZlikZ7IMcJmvkuLObmDxpjG0omSGrlTWCUW0NvHD2q3UwBwUGh9OdkWb/3Dprb
-	 Dinj1L3Fbicb6cOpTgFpF7HYhcX3I+upNAaJXqjbY1wXTN+EXUEh3mK6T4+7PuzdYc
-	 QNbO3TjZ2zE3xDgp6n2Noc0pkPsx+6S54bXANIRT319sUuMeUxqmlmyD6nzRe2zMgW
-	 pOEl5x+iSAiaCROXbwXqNhj8lIZa9b04i/E9wYOHKTbllTM2gx6Teb/bRxrb+3Rthe
-	 Jsw1F6rRm3gIQ==
-Message-ID: <bffe3d02-076c-47af-8770-2b89c1dccf08@kernel.org>
-Date: Wed, 1 Oct 2025 11:59:03 +0200
+	s=k20201202; t=1759312749;
+	bh=zQh3WXGk/9eQB/zxNVg6iMZ/HSaTpK+7Py1m4QRWrMc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=R6t+EpOtg9phG1/VYTsHF/VnAqKQkR6zUFARBtsmb9XSfTLAFLHML9KiG8+rgeBmf
+	 Xm4/t1KD6j8c4eANQ6SdQON0liiDinPdJOvaOAKEFH7itPWtDtAiixf6wSV+34xZIJ
+	 y0nYVeevlSWlrQTEAYyzMm7XuFxw+fmNfSlNsMIdBwqSRhxDrQa5wTs2dU9XpXETRV
+	 pg5WB/6RopBuv7eUkTTduH08uSpQjN+mHcaGkIGKbUvVlm2sRbp1n2ryrjawqhlAQr
+	 k+zTngMNdWV/0KFWUIY21RFFvxE9pT9RiaBQAvg9S6aIYV6nZ14iDy0nswzwFNIWHf
+	 XwjkH6qftQTwA==
+Date: Wed, 1 Oct 2025 10:59:04 +0100
+From: Lee Jones <lee@kernel.org>
+To: Dzmitry Sankouski <dsankouski@gmail.com>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH v4 3/3] dt-bindings: max77705: add interrupt-controller
+ property
+Message-ID: <20251001095904.GQ8757@google.com>
+References: <20250925-starqltechn-correct_max77705_nodes-v4-0-93b706bdda58@gmail.com>
+ <20250925-starqltechn-correct_max77705_nodes-v4-3-93b706bdda58@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Hans Verkuil <hverkuil+cisco@kernel.org>
-Subject: Re: [PATCH] staging: media: av7110: Replace msleep() with
- usleep_range() in tuner function
-To: Pratibimba Khadka <pratibimbakhadka@gmail.com>, mchehab@kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Al Viro <viro@zeniv.linux.org.uk>,
- "open list:MEDIA INPUT INFRASTRUCTURE (V4L/DVB)"
- <linux-media@vger.kernel.org>,
- "open list:STAGING SUBSYSTEM" <linux-staging@lists.linux.dev>,
- open list <linux-kernel@vger.kernel.org>
-References: <20250626173229.10967-1-pratibimbakhadka@gmail.com>
-Content-Language: en-US, nl
-In-Reply-To: <20250626173229.10967-1-pratibimbakhadka@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250925-starqltechn-correct_max77705_nodes-v4-3-93b706bdda58@gmail.com>
 
-On 26/06/2025 19:32, Pratibimba Khadka wrote:
-> Replace msleep(10) with usleep_range(10000, 12000) in the PLL lock
-> waiting loop of nexusca_stv0297_tuner_set_params().
+On Thu, 25 Sep 2025, Dzmitry Sankouski wrote:
+
+> Add interrupt-controller property, because max77705 has dedicated interrupt
+> source register to determine which sub device triggered an interrupt.
 > 
-> usleep_range() is preferred over msleep() for short delays (< 20ms) as
-> it provides better accuracy and allows the scheduler flexibility for
-> power management optimizations. The 10-12ms range maintains the same
-> timing behavior while giving the kernel scheduler room to optimize.
-> 
-> This change improves timing precision during the PLL lock detection
-> phase without affecting the overall functionality of the tuner
-> configuration process.
-> 
-> Signed-off-by: Pratibimba Khadka <pratibimbakhadka@gmail.com>
+> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+> ---
+> Changes in v4:
+> - fix commit message: node -> property
+> - fix commit message: minor reword and punctuation
 
-Thank you for your patch, but I'm not taking this patch. It's an old driver,
-and msleep is perfectly fine here.
+Please also fix the subject line.  Format should be:
 
-Regards,
-
-	Hans
+  dt-bindings: mfd: <device>: Subject line starting with an uppercase char
 
 > ---
->  drivers/staging/media/av7110/av7110.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  Documentation/devicetree/bindings/mfd/maxim,max77705.yaml | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
 > 
-> diff --git a/drivers/staging/media/av7110/av7110.c b/drivers/staging/media/av7110/av7110.c
-> index bc9a2a40afcb..7f6c610579c8 100644
-> --- a/drivers/staging/media/av7110/av7110.c
-> +++ b/drivers/staging/media/av7110/av7110.c
-> @@ -1827,7 +1827,7 @@ static int nexusca_stv0297_tuner_set_params(struct dvb_frontend *fe)
->  		if (i2c_transfer(&av7110->i2c_adap, &readmsg, 1) == 1)
->  			if (data[0] & 0x40)
->  				break;
-> -		msleep(10);
-> +		usleep_range(10000, 12000);
->  	}
+> diff --git a/Documentation/devicetree/bindings/mfd/maxim,max77705.yaml b/Documentation/devicetree/bindings/mfd/maxim,max77705.yaml
+> index 0ec89f0adc64..d265c8213a08 100644
+> --- a/Documentation/devicetree/bindings/mfd/maxim,max77705.yaml
+> +++ b/Documentation/devicetree/bindings/mfd/maxim,max77705.yaml
+> @@ -26,6 +26,18 @@ properties:
+>    interrupts:
+>      maxItems: 1
 >  
->  	return 0;
+> +  interrupt-controller:
+> +    description:
+> +      The driver implements an interrupt controller for the sub devices.
+> +      The interrupt number mapping is as follows
+> +      0 - charger
+> +      1 - topsys
+> +      2 - fuelgauge
+> +      3 - usb type-c management block.
+> +
+> +  '#interrupt-cells':
+> +    const: 1
+> +
+>    haptic:
+>      type: object
+>      additionalProperties: false
+> @@ -120,8 +132,10 @@ examples:
+>              reg = <0x66>;
+>              interrupt-parent = <&pm8998_gpios>;
+>              interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
+> +            interrupt-controller;
+>              pinctrl-0 = <&chg_int_default>;
+>              pinctrl-names = "default";
+> +            #interrupt-cells = <1>;
+>  
+>              leds {
+>                  compatible = "maxim,max77705-rgb";
+> 
+> -- 
+> 2.39.5
+> 
 
+-- 
+Lee Jones [李琼斯]
 
