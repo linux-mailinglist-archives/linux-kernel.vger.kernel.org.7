@@ -1,163 +1,201 @@
-Return-Path: <linux-kernel+bounces-838881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71012BB0596
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 14:26:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E945BB059C
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 14:26:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 533611898563
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 12:26:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAB8319452F3
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 12:27:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B6222EB5A2;
-	Wed,  1 Oct 2025 12:26:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A10982EB853;
+	Wed,  1 Oct 2025 12:26:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YfhBiI6q"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qc0wqb4q";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="o47yNtek";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qc0wqb4q";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="o47yNtek"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E28672EA727
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 12:26:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57F272EACF8
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 12:26:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759321581; cv=none; b=Vf+gGb7JEWmnE7yj/hz928w+nedY18aJfuloVRiRMhLeCo0IRzcsPqwwDrkbJ5CZXjLoCQ3j+4h9OUVCqvH+vQdFkax/eCyURXg49yuHZFcUjtJKu7/3jrhKoT76h7gj5O+Ij/G2PW4D96yPhNLk0FzRJ6oX80ADErkCp4X/DJA=
+	t=1759321595; cv=none; b=SP3z4IQVf0OMw3kbNmS4bTmwO+nglqVKzmsX+YKfIFOww6EKVc0UXadgit5bmyNXx/VuKDG66ZTDWCkSMhSeZklGshKkQdgcz5Ok8Ldm1N7Yz5MjmXrQbhkkEBDow4pFVVg7rRgtxGnv8ckPlGmuxzT4T6mCtsHDwkyAXop65kw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759321581; c=relaxed/simple;
-	bh=qy7txqkW5BSNHP6j1XZzAPzZUyZMeeypr7i2u3XbOBo=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AXeP+bBBhhu2o4uvkOi+KWwq8EwPLBoVV6HgZ+vx9xf2ZBYivuHu5mWV7yLrQbK+xOSMw/sUk6VwVkz2HkVMTp/bZmk1UUOkDvRLSbRrKWgXXWr4gi5OFc7/8wkT08uaMcy+HGdZFQphA3zukLNHZ9EktXEd8OSMXj46CNHEz5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YfhBiI6q; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3f2cf786abeso5023268f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 05:26:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759321578; x=1759926378; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=IPoFH2OgXjiMR/517MdQhxgMLk7cY9ZkfsDrDGNqx3Q=;
-        b=YfhBiI6q/0ps1qYbkkNEavc5y3qyTCVQQMDEiLvWaqDs/LKHkikWTDtlZSD41UgneI
-         xiD4iyqEiP1Zp8ktEsaqbip0sNqIRXBApHcPXG+ik+UQDcxMTsDKlIO7AH4BBOOP1ubL
-         pa9e4KwU20fafB5nkU7rCSBWVi11CoNKOG/A43rEUXZ0oTuPmJR1W1GuD/4jwYRKn5Dh
-         tM2fm38WjEgzqHW3v5+Zmkr3dtDCLGMTMa98adNL91SbVYUJqPfC9fCeWFNiIW+7lWUs
-         O0sEMJ4lVrjBC6g18SxFW8znT2Fd5k4ab0mUwmF3tX9UV9H0i+t5Ux7DxdkapL0qpBp+
-         35Mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759321578; x=1759926378;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IPoFH2OgXjiMR/517MdQhxgMLk7cY9ZkfsDrDGNqx3Q=;
-        b=nZ1CrzDthdOueWCgoWDBtVjeXcxUE43LhCoQJoLL7XMSVKa17EJ/7yWi1XeDM/vRCT
-         mKxak30pEtz2IHGcgzHQraao54JrcqqDwaUOC45WXAWWOqSFwjrcgnDYETJrfSeWWbLd
-         Htn0pgD582udAsFimHE6VxHVhAVy27pTdPr9nFkED3Ir1N7CTXxgU+NiXLew2vvOUAEC
-         POYKTCarBxZPPsXZOJhJBu60MSg73rQ3a8/OLfdZPlMbyuA40gh73OK091xl7ghV0xzX
-         Yfq863d/r6j5kWcHPdW+zRPhhHPkajUVFwISPUUCWNbVnPWgXqx9Hi2Ioa55w3+9N4vC
-         N7cw==
-X-Forwarded-Encrypted: i=1; AJvYcCXM0/WSmkYWBWhxdhEFE5S0VkBzGBT/N7aVSUld+em6jnb3sPZVmLxnXx843sUWQYCwtBwJxf9xSfdlhes=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhUDmr/RR8sqj5p/ombYeZnBwkKuco8OxtPS+1pqPOMc1uT1Zy
-	Lr3NVNvgTGjU2liPeaaREGUgpd1d8AnDgEcZ/DMwWhe3XZmOOGWcwnL2
-X-Gm-Gg: ASbGncuIFRE3VElrl1yl1v6Ak7YwGLcczzporeBdnp1ijjsEp88RgW7JBviX43Ymct/
-	tAsYIK+td0YuZEdfr7NKA/YJcU612HZ8jkWXBm5k5gVg56rqx1cQrZnYchOgBiUJt8p1OO4z41s
-	N/DEZqq4F5NWcK+1k1Cy8N/JZ/JtCEdWwBhPiPiYMEUnwhgI+LS3FgItzQ/77t0+PaS9qUTinfS
-	TG4lBOXGLF9PW5RaqQ7ahZKuLButho4q0zI4SAKtTj328rYxfrg5X4TOmqhvLzaN6DcB5aIbifw
-	Fz1OWQdWefAKqYIYBPAtEdLW4maL9uc09csqJ2uTVUV5+WI9kQ2H1+Dz3k2T0JStWbSm2VsMBww
-	nuZFkd/HYSXRduFE/FQC1
-X-Google-Smtp-Source: AGHT+IFMxUehZm4RmBk35T4ErE35MfkeyTks80Tv+WCuRXdWd7WgPUOMXsBPsVBVvEuiXnecwU5VwA==
-X-Received: by 2002:a05:6000:2408:b0:3ee:155e:f61f with SMTP id ffacd0b85a97d-42557803a43mr1866587f8f.8.1759321577941;
-        Wed, 01 Oct 2025 05:26:17 -0700 (PDT)
-Received: from krava ([2a02:8308:a00c:e200::31e0])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fc82f2965sm26918628f8f.55.2025.10.01.05.26.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Oct 2025 05:26:17 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Wed, 1 Oct 2025 14:26:16 +0200
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-	bpf@vger.kernel.org, daniel@iogearbox.net, andrii@kernel.org,
-	martin.lau@kernel.org, peterz@infradead.org, kuba@kernel.org,
-	linux-kernel@vger.kernel.org, mingo@kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [GIT PULL] BPF changes for 6.18
-Message-ID: <aN0d6PAFg5UTKuOc@krava>
-References: <20250928154606.5773-1-alexei.starovoitov@gmail.com>
- <CAHk-=whR4OLqN_h1Er14wwS=FcETU9wgXVpgvdzh09KZwMEsBA@mail.gmail.com>
- <aN0JVRynHxqKy4lw@krava>
+	s=arc-20240116; t=1759321595; c=relaxed/simple;
+	bh=Y2lOccTT6DHYE1YxsduTzoZeS06ygXIVnQ/arTuWchQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b6rTWjgjOJE3j288/iAnx2QLuaY6XyDHPjBkl+YWImkyiRPjhTSxDQrj0yiCEa/5FUngB/yrfKR/W2sKvHBPvgYLIEEhdxRIqbOq1ktwy4p/yVwQvd7hIIc080MHaUtpgMKx3h7EDS0NmX+r90VW7gf2O/MF0MqRmVqCSYg0g2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qc0wqb4q; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=o47yNtek; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qc0wqb4q; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=o47yNtek; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 292741F80F;
+	Wed,  1 Oct 2025 12:26:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759321591; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=k4ZI2Tw0qp+ZL8CdEKa6XhK0mA/qTvAEXVyDVeiKM34=;
+	b=qc0wqb4qK6ljg8zCjrP842ipgPTACcGTVPh+L7fZIvgVzS9Q9iOnvs3+xErscazP9ursxe
+	8gNewe6lRSix4OcmR+34eAIe0b9J8RyYyjnewQxg/Rx0DPpxPFBm3Q0PJ4w4I1BPK5J3wU
+	n9t6CtScxiKd6YNlaVAvIZvwxn+2M8c=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759321591;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=k4ZI2Tw0qp+ZL8CdEKa6XhK0mA/qTvAEXVyDVeiKM34=;
+	b=o47yNtekbfbORhcvHglmybgkxa1cGObNuz3nbil4DoWLkLXq9uYKMNDd5BZKI9chulxyla
+	Q12uaaZZay5x41AQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759321591; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=k4ZI2Tw0qp+ZL8CdEKa6XhK0mA/qTvAEXVyDVeiKM34=;
+	b=qc0wqb4qK6ljg8zCjrP842ipgPTACcGTVPh+L7fZIvgVzS9Q9iOnvs3+xErscazP9ursxe
+	8gNewe6lRSix4OcmR+34eAIe0b9J8RyYyjnewQxg/Rx0DPpxPFBm3Q0PJ4w4I1BPK5J3wU
+	n9t6CtScxiKd6YNlaVAvIZvwxn+2M8c=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759321591;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=k4ZI2Tw0qp+ZL8CdEKa6XhK0mA/qTvAEXVyDVeiKM34=;
+	b=o47yNtekbfbORhcvHglmybgkxa1cGObNuz3nbil4DoWLkLXq9uYKMNDd5BZKI9chulxyla
+	Q12uaaZZay5x41AQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1AAB013A42;
+	Wed,  1 Oct 2025 12:26:31 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id wLF6Bvcd3WjZfQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 01 Oct 2025 12:26:31 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id A5D45A0A2D; Wed,  1 Oct 2025 14:26:30 +0200 (CEST)
+Date: Wed, 1 Oct 2025 14:26:30 +0200
+From: Jan Kara <jack@suse.cz>
+To: Deepanshu Kartikey <kartikey406@gmail.com>
+Cc: jack@suse.cz, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzbot+1d79ebe5383fc016cf07@syzkaller.appspotmail.com
+Subject: Re: [PATCH] isofs: fix inode leak caused by disconnected dentries
+ from exportfs
+Message-ID: <okjvr65bw4u3ird44qfzuby2dptgn7bs74wsijq2jpj73ydlus@clx3fwq63nrt>
+References: <20251001094310.1672933-1-kartikey406@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aN0JVRynHxqKy4lw@krava>
+In-Reply-To: <20251001094310.1672933-1-kartikey406@gmail.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MISSING_XM_UA(0.00)[];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	URIBL_BLOCKED(0.00)[appspotmail.com:email,suse.com:email,imap1.dmz-prg2.suse.org:helo];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TAGGED_RCPT(0.00)[1d79ebe5383fc016cf07];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -2.30
 
-On Wed, Oct 01, 2025 at 12:58:29PM +0200, Jiri Olsa wrote:
-> On Tue, Sep 30, 2025 at 07:09:43PM -0700, Linus Torvalds wrote:
-> > [ Jiri added to participants ]
-> > 
-> > On Sun, 28 Sept 2025 at 08:46, Alexei Starovoitov
-> > <alexei.starovoitov@gmail.com> wrote:
-> > >
-> > > Note, there is a trivial conflict between tip and bpf-next trees:
-> > > in kernel/events/uprobes.c between commit:
-> > >   4363264111e12 ("uprobe: Do not emulate/sstep original instruction when ip is changed")
-> > > from the bpf-next tree and commit:
-> > >   ba2bfc97b4629 ("uprobes/x86: Add support to optimize uprobes")
-> > > from the tip tree:
-> > > https://lore.kernel.org/all/aNVMR5rjA2geHNLn@sirena.org.uk/
-> > > since Jiri's two separate uprobe/bpf related patch series landed
-> > > in different trees. One was mostly uprobe. Another was mostly bpf.
-> > 
-> > So the conflict isn't complicated and I did it the way linux-next did
-> > it, but honestly, the placement of that arch_uprobe_optimize() thing
-> > isn't obvious.
-> > 
-> > My first reaction was to put it before the instruction_pointer()
-> > check, because it seems like whatever rewriting the arch wants to do
-> > might as well be done regardless.
-> > 
-> > It's very confusing how it's sometimes skipped, and sometimes not
-> > skipped. For example. if the uprobe is skipped because of
-> > single-stepping disabling it, the arch optimization still *will* be
-> > done, because the "skip_sstep()" test is done after - but other
-> > skipping tests are done before.
-> > 
-> > Jiri, it would be good to just add a note about when that optimization
-> > is done and when not done. Because as-is, it's very confusing.
-> > 
-> > The answer may well be "it doesn't matter, semantics are the same" (I
-> > suspect that _is_ the answer), but even so that current ordering is
-> > just confusing when it sometimes goes through that
-> > arch_uprobe_optimize() and sometimes skips it.
+On Wed 01-10-25 15:13:10, Deepanshu Kartikey wrote:
+> When open_by_handle_at() is used with iso9660 filesystems, exportfs
+> creates disconnected dentries during file handle resolution. If the
+> operation fails (e.g., with -ESTALE during reconnect_path()), these
+> dentries remain cached with their associated inodes.
 > 
-> yes, either way will work fine, but perhaps the other way round to
-> first optimize and then skip uprobe if needed is less confusing
+> During unmount, shrink_dcache_for_umount() does not fully evict these
+> disconnected dentries, leaving their inodes with non-zero reference
+> counts. This triggers the "VFS: Busy inodes after unmount" warning
+> and causes inode leaks that accumulate across mount/unmount cycles.
 > 
-> > 
-> > Side note: the conflict in the selftests was worse, and the magic to
-> > build it is not obvious. It errors out randomly with various kernel
-> > configs with useless error messages, and I eventually just gave up
-> > entirely with a
-> > 
-> >    attempt to use poisoned ‘gettid’
-> > 
-> > error.
-> > 
-> >              Linus
+> The issue occurs because:
+> 1. open_by_handle_at() calls exportfs_decode_fh_raw() to resolve
+>    file handles
+> 2. For iso9660 with Joliet extensions, this creates disconnected
+>    dentries for both primary (iso9660) and secondary (Joliet) root
+>    inodes
+> 3. When path reconnection fails with -ESTALE, the dentries are left
+>    in DCACHE_DISCONNECTED state
+
+True, but when reconnection fails, exportfs_decode_fh_raw() calls dput() on
+the created dentry and dput() immediately destroys DCACHE_DISCONNECTED
+dentries. So I'm not following how these dentries could still survive until
+umount(). Can you please explain?
+
+> 4. shrink_dcache_for_umount() in generic_shutdown_super() does not
+>    aggressively evict these disconnected dentries
+> 5. The associated inodes (typically root inodes 1792 and 1807)
+>    remain with i_count=1, triggering the busy inode check
 > 
-> I ended up with changes below, should I send formal patches?
+> Add explicit shrink_dcache_sb() call in isofs_put_super() to ensure
+> all cached dentries, including disconnected ones created by exportfs
+> operations, are released before the superblock is destroyed.
 
-I sent out the bpf selftest fixes:
-  https://lore.kernel.org/bpf/20251001122223.170830-1-jolsa@kernel.org/T/#t
+This is almost certainly a wrong way of fixing the problem. First we need
+to better understand why DCACHE_DISCONNECTED aren't getting properly
+evicted...
 
-will send the uprobe fix shortly
+								Honza
 
-jirka
+> 
+> Reported-by: syzbot+1d79ebe5383fc016cf07@syzkaller.appspotmail.com
+> Tested-by: syzbot+1d79ebe5383fc016cf07@syzkaller.appspotmail.com
+> Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
+> ---
+>  fs/isofs/inode.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/fs/isofs/inode.c b/fs/isofs/inode.c
+> index 6f0e6b19383c..bee410705442 100644
+> --- a/fs/isofs/inode.c
+> +++ b/fs/isofs/inode.c
+> @@ -52,6 +52,7 @@ static int isofs_dentry_cmp_ms(const struct dentry *dentry,
+>  static void isofs_put_super(struct super_block *sb)
+>  {
+>  	struct isofs_sb_info *sbi = ISOFS_SB(sb);
+> +	shrink_dcache_sb(sb);
+>  
+>  #ifdef CONFIG_JOLIET
+>  	unload_nls(sbi->s_nls_iocharset);
+> -- 
+> 2.43.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
