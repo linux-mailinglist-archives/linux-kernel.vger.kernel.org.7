@@ -1,145 +1,98 @@
-Return-Path: <linux-kernel+bounces-839634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3563BBB20CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 01:09:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60C70BB20D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 01:09:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A0077A33E3
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 23:07:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C4683C78E8
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 23:09:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A60D27A929;
-	Wed,  1 Oct 2025 23:08:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21A69296BC1;
+	Wed,  1 Oct 2025 23:08:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mFSmg++M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6276253B64
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 23:08:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="k9/Bxxex"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3338C25C70D;
+	Wed,  1 Oct 2025 23:08:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759360128; cv=none; b=iyWn3vZY9H+1geWKG8eAHyhXw7WAjbrDBscI1Ho6HbHIb63SAwMolr3+1DdWjrsKXy3OjWawrY60NsNPkIWUHmW2e30i7VpJMC+eGoBjB3h+mSkUNA1+Lo1gabd4i16HUEuuK/RdRddUCo1V3WaIkPrMz6AWk2FA7i62lPNVG2k=
+	t=1759360130; cv=none; b=JsUmnxDCSUY2ZJhdeE/y8P7d2+GBGVuWDYTtdE/km2ZddUu0Op4IPbeg8Q9ne/Wsk8zmM8R78dEHZUVeIcXnKBexHFa63v+O/bphvuZccGsGvYYBk37hQjMS5+xX6JlsTgg2PBAwejgernrQv4AmrwIiW6PITKHg9cQqEU5AAmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759360128; c=relaxed/simple;
-	bh=uC7+SkQxHX79e7P59XRO3n8LOn1nPaYTpHe/mdkbnLU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lXHk3RbFqRP2PkLmMMu1NtA/wjO/K3ENtqz0DTTIce538nAinO91lrIxqUzc0bZLnaqFhIkcvDzHxsFQ+grEd6Rmy8BhbwCwS4XwGcy42tt/nqnQ8iXR83vz23tw10wtIMb/KeYhvwVuYHBo02RPlj1g2VVcK02/JpWqrekQGLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mFSmg++M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8239AC4AF09
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 23:08:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759360128;
-	bh=uC7+SkQxHX79e7P59XRO3n8LOn1nPaYTpHe/mdkbnLU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=mFSmg++MvgmrfL3akCilA8OmLMtG9NDdweW8sYr4UmerF9AnmZEOqCQh0PuNHTB7k
-	 Il/Psr8L0HSR85LZ59KvOPpJhMHyA+dP2qmDRGTjfYNZDi1AlG490riH+Jaixfq+sX
-	 aWAXLTWXlwSstV8A/uhZXfZghCisXGi+go5oMap6yMe34join6LVcluQrRepQS3R8+
-	 /zvgL7vGxLk/HeXmCaGSTLE1Gf+8FT9sJSr+apMlLu63j9pzeR8B8kLNdSSZLM0GvZ
-	 ZCxcIJ/THfGI3tbbuP8DvYNYuvPJBLBoTKDID35paxRdnRKN1PeCmxP4PTCzj/+6a7
-	 4PT+TsMsN0Zcw==
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-63667e8069aso860190a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 16:08:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXgcMSPO7qReroOANJkFr6Z09Y2MsUpwB0d1Iew76/ymO0RWNwFpYL1LH+UeSMrwMlzekmPHyIYQ386qz8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxS7+p2vFvd5E1p790t+nHTWYg9cC9co1MJb76N24G+9Y8e4t4W
-	diRsu3w6b2XxycEXmRinLAv9QQYiqf4dpLD/YhyE3loWE615dtcm1lzXm9WKEtaFJyL5YXi1Izv
-	rP5EyMVnXaPBJ+wzHvVTRVQK8YHvjCLM=
-X-Google-Smtp-Source: AGHT+IH1oHfBuJPuNT3uNmxhwKyMZbsyj6k7cL5F90DffNcKq/rLEh/FLGhMTH8FbDRTUI2oK4jclo7MtZrAij72FWg=
-X-Received: by 2002:a05:6402:2713:b0:634:a546:de4c with SMTP id
- 4fb4d7f45d1cf-63678ce6b05mr5532974a12.17.1759360127038; Wed, 01 Oct 2025
- 16:08:47 -0700 (PDT)
+	s=arc-20240116; t=1759360130; c=relaxed/simple;
+	bh=YMmsb4G1uzXBYcOqTyh1VxCZc8xEot6/8E8vBWAsaHM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CVA1Gs7yF2shqBy9r7oi1VDGzuD8a7/k1Wkgf633iNinE60gs8sftO3Wk627+uAth7sqhbD2xXqHJVjtrxvX2RyRFxGm6vlEuwWQZHiEf6+PtW+hA9K8/n68O08EbzTLWNmj9hno6FeSoCW7Y29g7OFu3YsvBmwAKx0taP2mmu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=k9/Bxxex; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from romank-3650.corp.microsoft.com (unknown [131.107.1.188])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 57DD6211B7A0;
+	Wed,  1 Oct 2025 16:08:48 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 57DD6211B7A0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1759360128;
+	bh=r6gpP7tkcYevXHNP/4erkMaiUhflR5w3HHz5mWg+LZ4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=k9/BxxexLZ8ap7S3zS5dZIV7et0as3F8ey3TIGz3o0sQLI2ozkzAAeAAGv3lzyvig
+	 8h6vPo0Kj8l/83Wp0BxcOi/j5p1D5KPSN6fhZti8/U7CvONrFEW+0+Am92GFMt7cSk
+	 jUHohM4R1lVBHt+2o7usbZevScKqnqmBOoEXHXmk=
+From: Roman Kisel <romank@linux.microsoft.com>
+To: decui@microsoft.com,
+	eahariha@linux.microsoft.com,
+	haiyangz@microsoft.com,
+	kys@microsoft.com,
+	mhklinux@outlook.com,
+	nunodasneves@linux.microsoft.com,
+	wei.liu@kernel.org,
+	linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: benhill@microsoft.com,
+	bperkins@microsoft.com,
+	sunilmut@microsoft.com,
+	romank@linux.microsoft.com
+Subject: [PATCH hyperv-next] hyperv: Remove the spurious null directive line
+Date: Wed,  1 Oct 2025 16:08:46 -0700
+Message-ID: <20251001230847.5002-1-romank@linux.microsoft.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250912032619.9846-1-ethan.ferguson@zetier.com>
- <20250912032619.9846-2-ethan.ferguson@zetier.com> <PUZPR04MB6316E73EE47154A64F8733DA8118A@PUZPR04MB6316.apcprd04.prod.outlook.com>
- <408ad037-639a-4051-831b-b663c0d2d772@zetier.com>
-In-Reply-To: <408ad037-639a-4051-831b-b663c0d2d772@zetier.com>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Thu, 2 Oct 2025 08:08:32 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd9pMJik+1BRywYm-5-9bx9uHni6mucP6DvQufKuWM17pQ@mail.gmail.com>
-X-Gm-Features: AS18NWBxPxJwDAbI-6fUmVgf4caID4PmsdMuRVdoG3BhWC6adWslpEctcYCPyNo
-Message-ID: <CAKYAXd9pMJik+1BRywYm-5-9bx9uHni6mucP6DvQufKuWM17pQ@mail.gmail.com>
-Subject: Re: [PATCH v7 1/1] exfat: Add support for FS_IOC_{GET,SET}FSLABEL
-To: Ethan Ferguson <ethan.ferguson@zetier.com>
-Cc: "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "cpgs@samsung.com" <cpgs@samsung.com>, 
-	"sj1557.seo@samsung.com" <sj1557.seo@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 2, 2025 at 1:34=E2=80=AFAM Ethan Ferguson <ethan.ferguson@zetie=
-r.com> wrote:
->
-> Hi,
->
-> On 9/28/25 06:28, Yuezhang.Mo@sony.com wrote:
-> > On Fri, Sep 12, 2025 11:26 Ethan Ferguson <ethan.ferguson@zetier.com> w=
-rote:
-> >> +int exfat_read_volume_label(struct super_block *sb, struct exfat_uni_=
-name *label_out)
-> >> +{
-> >> +       int ret, i;
-> >> +       struct exfat_sb_info *sbi =3D EXFAT_SB(sb);
-> >> +       struct exfat_entry_set_cache es;
-> >> +       struct exfat_dentry *ep;
-> >> +
-> >> +       mutex_lock(&sbi->s_lock);
-> >> +
-> >> +       memset(label_out, 0, sizeof(*label_out));
-> >> +       ret =3D exfat_get_volume_label_dentry(sb, &es);
-> >> +       if (ret < 0) {
-> >> +               /*
-> >> +                * ENOENT signifies that a volume label dentry doesn't=
- exist
-> >> +                * We will treat this as an empty volume label and not=
- fail.
-> >> +                */
-> >> +               if (ret =3D=3D -ENOENT)
-> >> +                       ret =3D 0;
-> >> +
-> >> +               goto unlock;
-> >> +       }
-> >> +
-> >> +       ep =3D exfat_get_dentry_cached(&es, 0);
-> >> +       label_out->name_len =3D ep->dentry.volume_label.char_count;
-> >> +       if (label_out->name_len > EXFAT_VOLUME_LABEL_LEN) {
-> >> +               ret =3D -EIO;
-> >> +               goto unlock;
-> >> +       }
-> >> +
-> >> +       for (i =3D 0; i < label_out->name_len; i++)
-> >> +               label_out->name[i] =3D le16_to_cpu(ep->dentry.volume_l=
-abel.volume_label[i]);
-> >> +
-> >> +unlock:
-> >> +       mutex_unlock(&sbi->s_lock);
-> >> +       return ret;
-> >> +}
-> >
-> > Hi Ethan Ferguson,
-> >
-> > This function has a buffer leak due to a missed call to
-> > exfat_put_dentry_set(). Please fix it.
-> >
-> > Thanks
-> Apologies that I missed that, I would be more than happy to submit a fixe=
-d patch for this,
-> but I checked the dev branch of the exfat tree and noticed some lines wer=
-e added to fix this
-> problem in my commit. If true, this is fine by me, and I will sign off on=
- it, but I just
-> want to make sure that's true, because if so then I don't think another p=
-atch by me is needed.
-I have directly updated it. So you don't need to submit the updated
-patch to the list.
-Thanks.
->
-> Thank you!
+The file contains a line that consists of the lone # symbol
+followed by a newline. While that is a valid syntax as
+defined by the C99+ grammar (6.10.7 "Null directive"), it
+serves no apparent purpose in this case.
+
+Remove the null preprocessor directive. No functional changes.
+
+Fixes: e68bda71a238 ("hyperv: Add new Hyper-V headers in include/hyperv")
+Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
+---
+ include/hyperv/hvgdk_mini.h | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/include/hyperv/hvgdk_mini.h b/include/hyperv/hvgdk_mini.h
+index 1be7f6a02304..77abddfc750e 100644
+--- a/include/hyperv/hvgdk_mini.h
++++ b/include/hyperv/hvgdk_mini.h
+@@ -597,8 +597,6 @@ struct ms_hyperv_tsc_page {	 /* HV_REFERENCE_TSC_PAGE */
+ #define HV_SYNIC_SINT_AUTO_EOI		(1ULL << 17)
+ #define HV_SYNIC_SINT_VECTOR_MASK	(0xFF)
+ 
+-#
+-
+ /* Hyper-V defined statically assigned SINTs */
+ #define HV_SYNIC_INTERCEPTION_SINT_INDEX 0x00000000
+ #define HV_SYNIC_IOMMU_FAULT_SINT_INDEX  0x00000001
+
+base-commit: e3ec97c3abaf2fb68cc755cae3229288696b9f3d
+-- 
+2.43.0
+
 
