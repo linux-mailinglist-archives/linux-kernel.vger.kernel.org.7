@@ -1,246 +1,126 @@
-Return-Path: <linux-kernel+bounces-838810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85540BB0315
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 13:36:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01167BB031E
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 13:37:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA0B52A3120
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 11:36:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54E974A7DA6
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 11:37:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A82E42D6603;
-	Wed,  1 Oct 2025 11:35:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F9712C3248;
+	Wed,  1 Oct 2025 11:37:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="szEo/DGw";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2XT83wDD";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="szEo/DGw";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2XT83wDD"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F52lhUAZ"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283CF2C3263
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 11:35:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 401242882D0
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 11:37:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759318548; cv=none; b=XuwcmHla6Ibj1BP+68716dcaoSol9x+rwNSMaDcfuuFqg7rWYntk8XfcB10MdIxumzzHcp8UCSm7x7GarII9WGWtI+vUthe4HCf2y1sYfQpLirNF8oU84K31Z5R5oAVM+4+/0NbydDPnLju5nXJBUVQNilN9GXzAsmcuv0i78TI=
+	t=1759318625; cv=none; b=d41VqqfsDAnFf62xAWVnSooYTWTnBKf80cnO7FzBwk4znyWxFDSZJJFhKZtysYl9FUVMetBF2Kad8UzwjQyjfVdDbfQvknVwmW0jf5x0CN/IeEz+Pc25P3UpG08cutb0V6KxIAXBOteuXas76nSu5iy9rX1bzx34xU84q+1eb2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759318548; c=relaxed/simple;
-	bh=6Ad0lsz8gmQqqo1hp3c9AyoD0fsFi30BvBHucV50IGc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NfxMAEs1ZKKTxn5g+8b+n7EWPlVk/Qrfh5yI7oDQOuijG6v5okzgvHGsgK0JLJJZHuUKT6L4dAmACDlLERa/IsVuDo4kt4kE6CJ1j3LiMhA1+Evw8G0gQMvcFluWlYy5sdzTZ87Y+sMZEuS5rJsUDsBUr9XRTCbDoTDYBG6aUi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=szEo/DGw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2XT83wDD; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=szEo/DGw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2XT83wDD; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 186F3336CE;
-	Wed,  1 Oct 2025 11:35:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759318544; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WDEo3ASRhQvw+aReLbl1V7zNFjYQm+NIo9wkgd7UiqI=;
-	b=szEo/DGwXESSdOXMZl+okmUt/nifNcaF5R9rEV1NVdU9gFqb0iIpCfTfcPnqUn6cKvxjf9
-	1MuzlNiReDOz+zcvKz+UBUmWUddhPDEpUNfRCFE4kIiWM9tfc+/YVkxNkXUJ0Frgkvtmhn
-	2C0CaHeu6U8oxKI8bu0x4R56SO88V2I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759318544;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WDEo3ASRhQvw+aReLbl1V7zNFjYQm+NIo9wkgd7UiqI=;
-	b=2XT83wDDRKig0YV7MR1f4REKgD1p1C9m27DggWEXFST8WaxoB80Mo0C/3tvTQRjttv6rqb
-	vjLKWvWLOcHLc6Cg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759318544; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WDEo3ASRhQvw+aReLbl1V7zNFjYQm+NIo9wkgd7UiqI=;
-	b=szEo/DGwXESSdOXMZl+okmUt/nifNcaF5R9rEV1NVdU9gFqb0iIpCfTfcPnqUn6cKvxjf9
-	1MuzlNiReDOz+zcvKz+UBUmWUddhPDEpUNfRCFE4kIiWM9tfc+/YVkxNkXUJ0Frgkvtmhn
-	2C0CaHeu6U8oxKI8bu0x4R56SO88V2I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759318544;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WDEo3ASRhQvw+aReLbl1V7zNFjYQm+NIo9wkgd7UiqI=;
-	b=2XT83wDDRKig0YV7MR1f4REKgD1p1C9m27DggWEXFST8WaxoB80Mo0C/3tvTQRjttv6rqb
-	vjLKWvWLOcHLc6Cg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0B64113A3F;
-	Wed,  1 Oct 2025 11:35:44 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 6LjAAhAS3Wi2bAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 01 Oct 2025 11:35:44 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id B01F8A0A2D; Wed,  1 Oct 2025 13:35:39 +0200 (CEST)
-Date: Wed, 1 Oct 2025 13:35:39 +0200
-From: Jan Kara <jack@suse.cz>
-To: Roman Gushchin <roman.gushchin@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	linux-kernel@vger.kernel.org, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
-	Jan Kara <jack@suse.cz>, linux-mm@kvack.org
-Subject: Re: [PATCH] mm: readahead: make thp readahead conditional to
- mmap_miss logic
-Message-ID: <hm56lqfeqcpjjpwkzuo4ktv7ayt763htehpi7ie2d47q52gm3w@mgbj42ivvv5g>
-References: <20250930054815.132075-1-roman.gushchin@linux.dev>
+	s=arc-20240116; t=1759318625; c=relaxed/simple;
+	bh=Oh9tqT4BXfVxU9Z6FlbTpMfqC65Bh6cRSDairEHuhx4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ozELNZH+h/wYBNki2QW8BPeankV6AiBSFLM9mv1VwDe8jxpblRjaIovB5y4O9BdPu+VuYPMApXpkstY62Wa+59ffFFcyHelCSPoRdf0FNLNbXBHxvoWl0XRvqJ3NpA+19V2VrrPmIzT2iU7NExAN/+MF9dWrbszR4R5LemIntqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=F52lhUAZ; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-57b7c83cc78so953312e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 04:37:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1759318622; x=1759923422; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yA7aQRihrsbAM2bYPKB7h4TTWbFXDP3J7TuvZ5SMQX0=;
+        b=F52lhUAZ+z3M7IW9S/RJjHdbesG/xia29zuhJ/Dor9J5s2Uu2X5IGHj0Sy6w6mBN+H
+         l5qnojNbC2u1RZtkAASw9SwEDXzhThAwby3leLMlMfBVSzSmcIMtPwmWohOWJuaD33Pe
+         uiYo4KOJlVgHZctsF0j07FOfeQ1ktRfNNO7kJTJkAL1KJaQOJHY2H3Mx6QWk85qhqSGQ
+         Hl9bf8TyYLlibhj7QnrvJW6vBGxG69NDUUIaZg4pAAVjQU5um9wzLAyCRpOH35dh50H3
+         R7DPjFPp9TpaeUVJ2LVMKR09ltSyu+S2fL88smi4G18IWlRfp+qJH1Z9u+vSgiKgO6pd
+         7A/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759318622; x=1759923422;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yA7aQRihrsbAM2bYPKB7h4TTWbFXDP3J7TuvZ5SMQX0=;
+        b=Dut+5a8need3E069XEVZfP9pfc8xrLW6DmDNZs57BB2ESSQqfIaSVwTpLifTMyyMba
+         wmWRvffP/TSoiqSGtRAXbeiOw4rsCpv4cB1g0kJlZy6Q4tb04C+RDaIt1fs6s5V/JQ9c
+         CiXxl5assD6lVAA80IU4vkXnB6OAbz3w9sJIX2M+NeB7UBNn6bE9NwBlx/xW69MpcLqy
+         UzedM2vvhmJn7S8rAAXoN2L0QPnJUEa3R1gVekiWIoJFUjEi65UWgUxgDWMUDfVXWVPw
+         MGTi3nac1AS+yLVJ97NfLve39ckwyos/spIWDMDQ3Bp8BzOyVn0jh7jjW1vK0IiXSvOg
+         cJAw==
+X-Forwarded-Encrypted: i=1; AJvYcCXbYEbzfrBurAEsejJ6eq8eRNeFAngIPA+smGvoY0d3b2sZc3iJdS2DYPC7E71l5ewXpEbq3H0E6fsd9fk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzT2wzu5aHQTsAGIweRNulyzIxvOfDA2yjFLxLvXSI0H+XjRapP
+	nkNdzA0AyjYJhFQWWPnmLghXSo+WOhd+xCyDHW+RKiVKDmp/FqBwIoC4BKtC0jCH+AGJp/vIhuA
+	5XtMtveUYtGoJPHLhG2xWLTQA3lwSC3N0C7Ne5VdI2A==
+X-Gm-Gg: ASbGnct2MJL29layLHN1Nquyeppjdo5QINKk7G1V6u0q06qsUVjbnFC7IstKra4tI5l
+	M7YJiX3vfK1HWadJivW317Kpu77HcGrTOC+k4jJgBlq2eTNi5ELuEqOQ4YefrUlqghhNVFzrvwf
+	veeiHXDvAghTyuLCcj86KKKHiFFZTDnUxnFCD5inlVXUE7ijxVRqi0DTkMnh3G1E+sJrrdSIEau
+	VYT9t778dYs8UKmAr5jZiicLYnekeY=
+X-Google-Smtp-Source: AGHT+IEZ39wDf5y2+FoKl/S9Pd1gyU4eNs2R/nqxRPqYxaEmOIsx03SIZ7rGxTx1idd5o96eAnjGrysxostm2ToXY7o=
+X-Received: by 2002:a05:6512:3b88:b0:585:1a9b:8b9a with SMTP id
+ 2adb3069b0e04-5897c348c2dmr2779744e87.9.1759318622276; Wed, 01 Oct 2025
+ 04:37:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250930054815.132075-1-roman.gushchin@linux.dev>
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	MISSING_XM_UA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_EQ_ENVFROM(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,linux.dev:email,suse.com:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -3.80
+References: <20250926-manpower-glacial-e9756c82b427@spud> <20250926-unshackle-jury-79f701f97e94@spud>
+ <CACRpkdZ5RCcaNJB_3ufAgpDtdJBKfOVrMbJVAQWaVSOkY0-XNQ@mail.gmail.com>
+In-Reply-To: <CACRpkdZ5RCcaNJB_3ufAgpDtdJBKfOVrMbJVAQWaVSOkY0-XNQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 1 Oct 2025 13:36:49 +0200
+X-Gm-Features: AS18NWA9lQqxjLhryh6mWRwM5YU-v3y1Ej1S_ygRo7gjKky6YWFY61RMFP-QRag
+Message-ID: <CACRpkdZo=c0BnSLm=FKRMNYKEaPAHBgtfhD9txhPofts4ApDkw@mail.gmail.com>
+Subject: Re: [RFC 3/5] pinctrl: add polarfire soc iomux0 pinmux driver
+To: Conor Dooley <conor@kernel.org>
+Cc: Conor Dooley <conor.dooley@microchip.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue 30-09-25 07:48:15, Roman Gushchin wrote:
-> Commit 4687fdbb805a ("mm/filemap: Support VM_HUGEPAGE for file mappings")
-> introduced a special handling for VM_HUGEPAGE mappings: even if the
-> readahead is disabled, 1 or 2 HPAGE_PMD_ORDER pages are
-> allocated.
-> 
-> This change causes a significant regression for containers with a
-> tight memory.max limit, if VM_HUGEPAGE is widely used. Prior to this
-> commit, mmap_miss logic would eventually lead to the readahead
-> disablement, effectively reducing the memory pressure in the
-> cgroup. With this change the kernel is trying to allocate 1-2 huge
-> pages for each fault, no matter if these pages are used or not
-> before being evicted, increasing the memory pressure multi-fold.
-> 
-> To fix the regression, let's make the new VM_HUGEPAGE conditional
-> to the mmap_miss check, but keep independent from the ra->ra_pages.
-> This way the main intention of commit 4687fdbb805a ("mm/filemap:
-> Support VM_HUGEPAGE for file mappings") stays intact, but the
-> regression is resolved.
-> 
-> The logic behind this changes is simple: even if a user explicitly
-> requests using huge pages to back the file mapping (using VM_HUGEPAGE
-> flag), under a very strong memory pressure it's better to fall back
-> to ordinary pages.
-> 
-> Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
-> Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: linux-mm@kvack.org
+On Wed, Oct 1, 2025 at 1:34=E2=80=AFPM Linus Walleij <linus.walleij@linaro.=
+org> wrote:
+> On Fri, Sep 26, 2025 at 4:33=E2=80=AFPM Conor Dooley <conor@kernel.org> w=
+rote:
+>
+> > +static const struct pinctrl_pin_desc mpfs_iomux0_pinctrl_pins[] =3D {
+> > +       PINCTRL_PIN(0, "spi0"),
+> > +       PINCTRL_PIN(1, "spi1"),
+> > +       PINCTRL_PIN(2, "i2c0"),
+> > +       PINCTRL_PIN(3, "i2c1"),
+> > +       PINCTRL_PIN(4, "can0"),
+> > +       PINCTRL_PIN(5, "can1"),
+> > +       PINCTRL_PIN(6, "qspi"),
+> > +       PINCTRL_PIN(7, "uart0"),
+> > +       PINCTRL_PIN(8, "uart1"),
+> > +       PINCTRL_PIN(9, "uart2"),
+> > +       PINCTRL_PIN(10, "uart3"),
+> > +       PINCTRL_PIN(11, "uart4"),
+> > +       PINCTRL_PIN(12, "mdio0"),
+> > +       PINCTRL_PIN(13, "mdio1"),
+>
+> This looks like it is abusing the API. These things do not look like
+> "pins" at all, rather these are all groups, right?
 
-It would be good to get confirmation from Matthew that indeed this
-preserves what he had in mind with commit 4687fdbb805a92 but the change
-looks good to me. Feel free to add:
+Or maybe they are rather functions. Like there is a function spi0
+that can be mapped to a set of pins such as spi0_grp =3D <1, 2, 3, 4...>
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+I recommend a refresher with
+https://docs.kernel.org/driver-api/pin-control.html
+and work from there, and avoid looking too much at other
+drivers that don't necessarily do the right thing.
 
-								Honza
-
-> ---
->  mm/filemap.c | 40 +++++++++++++++++++++-------------------
->  1 file changed, 21 insertions(+), 19 deletions(-)
-> 
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index a52dd38d2b4a..b67d7981fafb 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -3235,34 +3235,20 @@ static struct file *do_sync_mmap_readahead(struct vm_fault *vmf)
->  	DEFINE_READAHEAD(ractl, file, ra, mapping, vmf->pgoff);
->  	struct file *fpin = NULL;
->  	vm_flags_t vm_flags = vmf->vma->vm_flags;
-> +	bool force_thp_readahead = false;
->  	unsigned short mmap_miss;
->  
-> -#ifdef CONFIG_TRANSPARENT_HUGEPAGE
->  	/* Use the readahead code, even if readahead is disabled */
-> -	if ((vm_flags & VM_HUGEPAGE) && HPAGE_PMD_ORDER <= MAX_PAGECACHE_ORDER) {
-> -		fpin = maybe_unlock_mmap_for_io(vmf, fpin);
-> -		ractl._index &= ~((unsigned long)HPAGE_PMD_NR - 1);
-> -		ra->size = HPAGE_PMD_NR;
-> -		/*
-> -		 * Fetch two PMD folios, so we get the chance to actually
-> -		 * readahead, unless we've been told not to.
-> -		 */
-> -		if (!(vm_flags & VM_RAND_READ))
-> -			ra->size *= 2;
-> -		ra->async_size = HPAGE_PMD_NR;
-> -		ra->order = HPAGE_PMD_ORDER;
-> -		page_cache_ra_order(&ractl, ra);
-> -		return fpin;
-> -	}
-> -#endif
-> -
-> +	if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE) &&
-> +	    (vm_flags & VM_HUGEPAGE) && HPAGE_PMD_ORDER <= MAX_PAGECACHE_ORDER)
-> +		force_thp_readahead = true;
->  	/*
->  	 * If we don't want any read-ahead, don't bother. VM_EXEC case below is
->  	 * already intended for random access.
->  	 */
->  	if ((vm_flags & (VM_RAND_READ | VM_EXEC)) == VM_RAND_READ)
->  		return fpin;
-> -	if (!ra->ra_pages)
-> +	if (!ra->ra_pages && !force_thp_readahead)
->  		return fpin;
->  
->  	if (vm_flags & VM_SEQ_READ) {
-> @@ -3283,6 +3269,22 @@ static struct file *do_sync_mmap_readahead(struct vm_fault *vmf)
->  	if (mmap_miss > MMAP_LOTSAMISS)
->  		return fpin;
->  
-> +	if (force_thp_readahead) {
-> +		fpin = maybe_unlock_mmap_for_io(vmf, fpin);
-> +		ractl._index &= ~((unsigned long)HPAGE_PMD_NR - 1);
-> +		ra->size = HPAGE_PMD_NR;
-> +		/*
-> +		 * Fetch two PMD folios, so we get the chance to actually
-> +		 * readahead, unless we've been told not to.
-> +		 */
-> +		if (!(vm_flags & VM_RAND_READ))
-> +			ra->size *= 2;
-> +		ra->async_size = HPAGE_PMD_NR;
-> +		ra->order = HPAGE_PMD_ORDER;
-> +		page_cache_ra_order(&ractl, ra);
-> +		return fpin;
-> +	}
-> +
->  	if (vm_flags & VM_EXEC) {
->  		/*
->  		 * Allow arch to request a preferred minimum folio order for
-> -- 
-> 2.51.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Yours,
+Linus Walleij
 
