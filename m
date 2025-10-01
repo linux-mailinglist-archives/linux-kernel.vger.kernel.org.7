@@ -1,168 +1,132 @@
-Return-Path: <linux-kernel+bounces-839258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A19F3BB130D
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 17:56:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 354CBBB1319
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 17:59:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 310251940FF7
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 15:56:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C698D1943EF9
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 15:59:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D5D32820D5;
-	Wed,  1 Oct 2025 15:56:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DDnGZVRS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 813A8284880;
+	Wed,  1 Oct 2025 15:58:52 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D317C3C1F;
-	Wed,  1 Oct 2025 15:56:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B010C27FD43;
+	Wed,  1 Oct 2025 15:58:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759334186; cv=none; b=FA0VigOYJGGdyxoKKXpUySd+gvN1mx6mAHeIjDPF3RVJKGQTGumfaVn3k7joK9cWwxU0ZTfw+7/xGrl/v3JIxeH1n5C+Kd7iXPbuRW7NkVde9XTYNvDbStEY9+gz8PuSlXBplxCSGjhV9FuHnfiqLcLwbwphTedQfitOmB5dGUs=
+	t=1759334332; cv=none; b=pA8VxMF0yV8a3kF7MQ9+K0q0PVVlLIK2T+AmCNDWrvM81XLmgJP8FdHMhzZO55+7msHn/qS8vaKTAj5NbbP6qq1afnJtmokY+hYjbyW5jhrHKCJm4D2wntDfrfYOt9LXG8h8RmqZLMvdLyQXYjenES+BtmnkwMvCEc6hfKPQsJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759334186; c=relaxed/simple;
-	bh=dpDxbJEa9xHDq32Iw4dhO02Kxs37V/TEEB8swDIuAXU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OqjE2Wlyf3OvbLrZyqf4ms1PrEyUV6cIUYJnk9RxnPNNRHcwyC/M3SpsBfF0fRSwErICJMWI6IdSaJgXSmy3TJHgN3e0zxZhd6WShB/6TZzInOSlBP1rgNLckNBHdoUv9JPiDDlhIbmi+HA+Mxk/hdCnrVsj9XnEk8uQmKxaRqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DDnGZVRS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F883C4CEF1;
-	Wed,  1 Oct 2025 15:56:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759334186;
-	bh=dpDxbJEa9xHDq32Iw4dhO02Kxs37V/TEEB8swDIuAXU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DDnGZVRSsuogS4Rz0rpmzlM5UBo6GlPks/QrPDVktYTRkHIlNBDcuEgF5G/HQaTFG
-	 LJNoyXC0SKBmi9hhUjpPUhAKR6Z78s0oZIbynz+7PgGZG81tpqFFXRS70J5NS530vo
-	 GDs7SZEicBivPJu/feQHSOFqIN+LYCgMq8O7FqvC2t5Fb5/BMdnDaxFTFcJeT5kt0k
-	 WBWij5+tglL96vr3PohqhG6CjjW+iVAgZ45C3JJeBOrh+ZUIV2z0cQkMj8rYvsRMlZ
-	 qo/TUbqtuHTg8OoyaKGOPJf/2I6hp+xtoWTG4H+xY5W9ADS220IgM0yYzviJ3cgz95
-	 aZHMgHOmeV7Rw==
-Date: Wed, 1 Oct 2025 10:56:25 -0500
-From: Rob Herring <robh@kernel.org>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-mediatek@lists.infradead.org, lee@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, matthias.bgg@gmail.com, lgirdwood@gmail.com,
-	broonie@kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	kernel@collabora.com, wenst@chromium.org,
-	igor.belwon@mentallysanemainliners.org,
-	=?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado <nfraprado@collabora.com>
-Subject: Re: [PATCH v6 8/9] dt-bindings: mfd: Add binding for MediaTek MT6363
- series SPMI PMIC
-Message-ID: <20251001155625.GE1833526-robh@kernel.org>
-References: <20251001111316.31828-1-angelogioacchino.delregno@collabora.com>
- <20251001111316.31828-9-angelogioacchino.delregno@collabora.com>
+	s=arc-20240116; t=1759334332; c=relaxed/simple;
+	bh=9iXkA7Hb7umjY+DYrImBDguUqZV9CGperOpBzoBALnU=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PWBcGI2x6dbdG10HdzWMHu4MVwN+Y620YcTg7kKwrYaGt+ZN+c0RQj1AOcSeU0L9u+8PRnAGhRazOgNfY1wsSdwJeibUbdI+uqzKmZVIXYfwLCEPROscIaHNC7LtXNbSBq65f3RGuADjnCRrV88xw4xaGRiATNKJQWvoWHMPLAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ccKJn416nz6K8pH;
+	Wed,  1 Oct 2025 23:55:37 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1EA641402EB;
+	Wed,  1 Oct 2025 23:58:46 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 1 Oct
+ 2025 16:58:44 +0100
+Date: Wed, 1 Oct 2025 16:58:43 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Terry Bowman <terry.bowman@amd.com>
+CC: <dave@stgolabs.net>, <dave.jiang@intel.com>, <alison.schofield@intel.com>,
+	<dan.j.williams@intel.com>, <bhelgaas@google.com>, <shiju.jose@huawei.com>,
+	<ming.li@zohomail.com>, <Smita.KoralahalliChannabasappa@amd.com>,
+	<rrichter@amd.com>, <dan.carpenter@linaro.org>,
+	<PradeepVineshReddy.Kodamati@amd.com>, <lukas@wunner.de>,
+	<Benjamin.Cheatham@amd.com>, <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	<linux-cxl@vger.kernel.org>, <alucerop@amd.com>, <ira.weiny@intel.com>,
+	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>
+Subject: Re: [PATCH v12 07/25] CXL/PCI: Move CXL DVSEC definitions into
+ uapi/linux/pci_regs.h
+Message-ID: <20251001165843.0000321e@huawei.com>
+In-Reply-To: <20250925223440.3539069-8-terry.bowman@amd.com>
+References: <20250925223440.3539069-1-terry.bowman@amd.com>
+	<20250925223440.3539069-8-terry.bowman@amd.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251001111316.31828-9-angelogioacchino.delregno@collabora.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500012.china.huawei.com (7.191.174.4) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-On Wed, Oct 01, 2025 at 01:13:15PM +0200, AngeloGioacchino Del Regno wrote:
-> Add a binding for the MediaTek MT6363/6373 (and similar) multi
-> function PMICs connected over SPMI.
-> 
-> These PMICs are found on board designs using newer MediaTek SoCs,
-> such as the Dimensity 9400 Smartphone chip, or the Chromebook
-> MT8196 chip.
-> 
-> Reviewed-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
-> Link: https://lore.kernel.org/r/20250715140224.206329-8-angelogioacchino.delregno@collabora.com
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> ---
->  .../bindings/mfd/mediatek,mt6363.yaml         | 115 ++++++++++++++++++
->  1 file changed, 115 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/mediatek,mt6363.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/mediatek,mt6363.yaml b/Documentation/devicetree/bindings/mfd/mediatek,mt6363.yaml
-> new file mode 100644
-> index 000000000000..6f477186a9c6
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/mediatek,mt6363.yaml
-> @@ -0,0 +1,115 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mfd/mediatek,mt6363.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: MediaTek MT6363 series SPMI PMICs multi-function device
-> +
-> +maintainers:
-> +  - AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> +
-> +description: |
-> +  Some MediaTek Power Management ICs (PMICs) found in board designs with
-> +  the Helio, Dimensity and/or Kompanio series of SoCs are interfaced to
-> +  the chip via the System Power Management Interface (SPMI) bus.
-> +
-> +  These PMICs are multi-function devices with various sub modules.
-> +  For example, those may include one, or more of the following:
-> +  - Auxiliary ADC Controller
-> +  - Clock Controller
-> +  - eFuses
-> +  - GPIO Controller
-> +  - Interrupt Controller
-> +  - Keys
-> +  - LEDs Controller
-> +  - Regulators
-> +  - RTC
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - mediatek,mt6363
-> +      - mediatek,mt6373
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  '#address-cells':
-> +    const: 1
-> +
-> +  '#size-cells':
-> +    const: 0
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  interrupt-controller: true
-> +
-> +  "#interrupt-cells":
-> +    const: 3
-> +
-> +patternProperties:
-> +  "^adc@[0-9a-f]+$":
-> +    type: object
-> +    $ref: /schemas/iio/adc/mediatek,mt6359-auxadc.yaml#
-> +
-> +  "^regulators@[0-9a-f]+$":
-> +    type: object
-> +    properties:
-> +      compatible:
-> +        contains:
-> +          enum:
-> +            - mediatek,mt6363-regulator
-> +            - mediatek,mt6373-regulator
-> +    oneOf:
-> +      - $ref: /schemas/regulator/mediatek,mt6363-regulator.yaml#
-> +      - $ref: /schemas/regulator/mediatek,mt6373-regulator.yaml#
-> +    additionalProperties: true
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - '#address-cells'
+On Thu, 25 Sep 2025 17:34:22 -0500
+Terry Bowman <terry.bowman@amd.com> wrote:
 
-#size-cells should be required too. With that fixed,
+> The CXL DVSECs are currently defined in cxl/core/cxlpci.h. These are not
+> accessible to other subsystems.
+> 
+> Change DVSEC name formatting to follow the existing PCI format in
+> pci_regs.h. The current format uses CXL_DVSEC_XYZ. Change to be PCI_DVSEC_CXL_XYZ.
+> Reuse the existing formatting.
+> 
+> Update existing occurrences to match the name change.
+> 
+> Update the inline documentation to refer to latest CXL spec version.
+> 
+> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Maybe we discussed it in earlier versions and I've forgotten but generally renaming
+uapi defines is a non starter.
+
+I was kind of assuming lspci used these, but nope, it uses hard coded
+value of 3 and it's own defines for the fields. (A younger me even reviewed
+the patch adding those :) )
+
+https://github.com/pciutils/pciutils/blob/master/ls-ecaps.c#L1279
+
+However, that doesn't mean other code isn't already using those defines.
+
+Minimum I think would be to state here why you think we can get away with
+this change. 
+
+Personally I'd just not bother changing that one.
+
+Jonathan
+
+
+
+> diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
+> index f5b17745de60..bd03799612d3 100644
+> --- a/include/uapi/linux/pci_regs.h
+> +++ b/include/uapi/linux/pci_regs.h
+> @@ -1234,9 +1234,64 @@
+>  /* Deprecated old name, replaced with PCI_DOE_DATA_OBJECT_DISC_RSP_3_TYPE */
+>  #define PCI_DOE_DATA_OBJECT_DISC_RSP_3_PROTOCOL		PCI_DOE_DATA_OBJECT_DISC_RSP_3_TYPE
+>  
+> -/* Compute Express Link (CXL r3.1, sec 8.1.5) */
+> -#define PCI_DVSEC_CXL_PORT				3
+
+This is a userspace header. We can't rename existing definitions
+as we have no idea who is using them.   Only option would be to
+add a comment making the old ones deprecated and adding new ones alongside.
+
+
+> -#define PCI_DVSEC_CXL_PORT_CTL				0x0c
+> -#define PCI_DVSEC_CXL_PORT_CTL_UNMASK_SBR		0x00000001
+
+....
+
+> +/* CXL 3.2 8.1.5: Extensions DVSEC for Ports */
+> +#define PCI_DVSEC_CXL_PORT_EXT					3
+> +#define   PCI_DVSEC_CXL_PORT_EXT_CTL_OFFSET			0x0c
+> +#define    PCI_DVSEC_CXL_PORT_EXT_CTL_UNMASK_SBR		0x00000001
+
 
