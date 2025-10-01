@@ -1,233 +1,224 @@
-Return-Path: <linux-kernel+bounces-838984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFD19BB091B
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 15:50:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3607BB091E
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 15:52:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 332483B6B00
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 13:50:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21B2718865A5
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 13:52:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77B802FC867;
-	Wed,  1 Oct 2025 13:50:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6357A2FC873;
+	Wed,  1 Oct 2025 13:52:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="StWNG2X4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ez26qg66"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A63C82FC022;
-	Wed,  1 Oct 2025 13:50:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E93102FC039
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 13:52:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759326644; cv=none; b=LwXjy6dFkiSjESP9b5OfMt/sC0TSW3LMgPsd1QpoYy0G4w/cmKQ9aVuR9PVhINU+uQJ60kmK1nWxkhoDtsKczR1KKeeW5SYuglOm3httuuuVjFWh3YEwJB3D9RbgiF1uZ6j67XlfhDPQcYeNHCGlR8YcehX9KHM8g/BgaAftsiM=
+	t=1759326726; cv=none; b=JJqhglYrfkh84OXq3q8QCaYPvUhB6f0Vemvo5wvq6U00eri6c4GwQ82GKTAeEvPE1Igv4lM1xsYy1JJBe9VfA1qNNF8/bC5JvEkXcl8RLc1qzVQTHIK+8Zm0LZVdqu8qDfXSu/2c+wYxDYAySTb4suXsw6GhTLRGL9UHJ2XOjdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759326644; c=relaxed/simple;
-	bh=ZdhaWAfKmxbKABNyDvOv6tEXnr56Ewe14zIvrLNS+q0=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QSZ7eSvr9W/eIlDLEAzRjv7fQAgwXEwrMI3qCwqn6NetOjUqdATeVpkMJK/85PoxnUM1XH/Gx6YHldWOB4p1NSnvOkNcN3Bsy+wuSBolM6QHE6DuSSWF15TG9EPsx8tXD4oQcIlDX1wb1lfG80QRzPF3GFe9aSvY2MQ3Q3ap+tk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=StWNG2X4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 112B2C4CEF1;
-	Wed,  1 Oct 2025 13:50:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759326644;
-	bh=ZdhaWAfKmxbKABNyDvOv6tEXnr56Ewe14zIvrLNS+q0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=StWNG2X43Oln/YTs39wgGNy2vivNkf3C+7Q9ZKEkvKLqU6ivY6UUbwJO2s5fpqi7V
-	 zDyY4ias5QmrcL4bn0bOcijCxxS86WzRffaQ4k15osdCSYrKYXn+X5yqpIXiUo+6Gw
-	 or8kEjUjJ35ksXmKxgKnM71neNwPM2fy0yx8t50Lv1maBWMbjdqV0A6wcZLmsmQlCP
-	 HRy9aMRLl40+wdbLBWI6IAh18rjqwovKTacejOeqZv2qbz+QXrqBGN6n4yw2sR4NLT
-	 zAV0f19ZTdgAuxYn/PblZd93t56iNeYq5AkXM5ORfZj7e7aOD9OLgVimcTxq7IoHZD
-	 WwCFwRSr/Bspg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1v3xE9-0000000Aor0-4Bb3;
-	Wed, 01 Oct 2025 13:50:42 +0000
-Date: Wed, 01 Oct 2025 14:50:41 +0100
-Message-ID: <86frc2zq6m.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Steven Price <steven.price@arm.com>
-Cc: kvm@vger.kernel.org,
-	kvmarm@lists.linux.dev,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Joey Gouly <joey.gouly@arm.com>,
-	Alexandru Elisei <alexandru.elisei@arm.com>,
-	Christoffer Dall <christoffer.dall@arm.com>,
-	Fuad Tabba <tabba@google.com>,
-	linux-coco@lists.linux.dev,
-	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
-	Gavin Shan <gshan@redhat.com>,
-	Shanker Donthineni <sdonthineni@nvidia.com>,
-	Alper Gun <alpergun@google.com>,
-	"Aneesh Kumar K . V" <aneesh.kumar@kernel.org>,
-	Emi Kisanuki <fj0570is@fujitsu.com>,
-	Vishal Annapurve <vannapurve@google.com>
-Subject: Re: [PATCH v10 09/43] KVM: arm64: Allow passing machine type in KVM creation
-In-Reply-To: <20250820145606.180644-10-steven.price@arm.com>
-References: <20250820145606.180644-1-steven.price@arm.com>
-	<20250820145606.180644-10-steven.price@arm.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1759326726; c=relaxed/simple;
+	bh=bGbHlw2eKIPmYJdXE30mKWDvbuu4jTPqTVve+5FMcg8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ECoKKPjzVR10XT0cX15M7RgEg3aQgIOtL0v0voqfTLOswPlTvLbRWoie9R3Oy85kjA+zCr3FM67kTvyPalzqBgvwYCgbGIdCE+rypGtmYnSpf+RamsFRVbsLYXnytfu8xJrZJZGX0w0Srsqy2/NP8sJVzxQSJJd/dpF/qoNt+qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ez26qg66; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-62105d21297so14307443a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 06:52:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759326723; x=1759931523; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CTnQz2B97Go8SjHIgN1IQAu6SiGkVevP1PQobrwF0MU=;
+        b=Ez26qg66V0LNJga29oLz0SK/AKrXwaZvX/hRUdvs8Co2OfSaouAkS8efITC1dIXZwu
+         U6DTV32w0+RlsJLwvOr724q5BUfID+uSp5EJxTQqhsCZTCpLz9mR2xFGSBUrc+FNvm5y
+         u57s1wngYKgWYFRaZL4SXY9fmTz0cAj6WZc/yO9iqLCqYZ0/aKdcsH1X5rSKLuxtveud
+         q+ePLJawmDRmqpbeE5/uicDS1EXv2j48AhaacbGeqssRCXvHVpzzzBA9m9l1TXZHsrm0
+         IIdTHiBqPOBcNwXfGcUs6vxUY88y48s+javhHtuE9wQLg1At2pxmrNRqcnXw3ms2zojT
+         Sy0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759326723; x=1759931523;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=CTnQz2B97Go8SjHIgN1IQAu6SiGkVevP1PQobrwF0MU=;
+        b=od5ahMdDF5WTesUASq1GtEjlGK62lFjdIU69zLE6YhZbZYKiJ9LIjFRBb1s51rqYNo
+         qH1L+ntRj9LwZrHhExxba1iZQi4rpYU5c/Y4AHBmm1Gxa9Q3K+cTudxUk1M0bEIsviyv
+         Awd49Dp1YFxAdUI+ABjnT9SCel5AJEXYTC2g2k73rsIMiD4rlvy5OnIP9JFePvZI+/lK
+         5Q9BSOZvRVEj8iYDX/D1PPRbQCABIIj74PHtVcznVfphPTcVMoO6/wl8n0K4jMsVkpET
+         DbDi581Ung81woN00asYCnl9IRtgqfn5M1RX6lVBRsM4sGHWBFEAd2X3mrtBATJSGThj
+         jDTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXHdt2P+vpv/awR9stEmR4lxi5f7zNYPiE4a5FV/GJWCM4TXLwK/RjkhGE9R8IvfhbpTP/ymAWLCv9WTZ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9qBmv/htQwD/mifv6W95UqPmOEYxTy9JhqpT9Qnof5+gGKLu5
+	TA0R1tSxYnsLzmD96PQiE42ZdtuTBb0G+snw4bEINwLbU+Tw4taoV4Ok
+X-Gm-Gg: ASbGncvCOvVVwTymckEQJdtnMEHO43dPrb4CTfa8duW74wXWyDdVLa41feZJlVcAvw6
+	hbdKzrUfTITI7dgNSP9gVHasHCdnqjfqVy4ZwKAYUyDLrLh6OVFiLs7ZKBqfWs1Gw3BAwH/lTuC
+	7PO/71MzZZsTMNCqvTtUtZhJZ5i9/q6M5peckRFoBydbwsbDxo8weNk/Qud1n41YS2BAgWtzGbJ
+	mIw5mBE9ofarKi0iUfBPzBBtrvs7Yqw93Igh1+m+54FImClQiLPGN3swKAhLCoFHk0L/z9m8lgd
+	3KmZxeFdsrCiuyOHmk+8H40LP3sauCr6+HdkJECbUH4hQtiySdiO5zlLUuKWUU9xCv7Ij7NDW5a
+	dRoefaAiiYgM3Q6tnwfINCKEiyq+YSOFm8FvM3+S8rM6nr0EYBw==
+X-Google-Smtp-Source: AGHT+IFNRbieOT/gTxdexKZNxiO5EyAejMAeg6/o1NCJvpQm6IlPGrWwds2Gzsok2Sgd/21onM1YkQ==
+X-Received: by 2002:a05:6402:270c:b0:61c:7090:c7de with SMTP id 4fb4d7f45d1cf-63678bb6f54mr4184514a12.13.1759326722811;
+        Wed, 01 Oct 2025 06:52:02 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-634a364fedesm11797486a12.14.2025.10.01.06.52.02
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 01 Oct 2025 06:52:02 -0700 (PDT)
+Date: Wed, 1 Oct 2025 13:52:01 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: Lance Yang <lance.yang@linux.dev>
+Cc: Wei Yang <richard.weiyang@gmail.com>, akpm@linux-foundation.org,
+	david@redhat.com, lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com, baohua@kernel.org,
+	baolin.wang@linux.alibaba.com, dev.jain@arm.com, hughd@google.com,
+	ioworker0@gmail.com, kirill@shutemov.name,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	mpenttil@redhat.com, npache@redhat.com, ryan.roberts@arm.com,
+	ziy@nvidia.com
+Subject: Re: [PATCH mm-new v2 1/1] mm/khugepaged: abort collapse scan on
+ non-swap entries
+Message-ID: <20251001135201.fgidcx2w7jnmxinh@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20251001032251.85888-1-lance.yang@linux.dev>
+ <20251001085425.5iq2mgfom6sqkbbx@master>
+ <1d09acbf-ccc9-4f06-9392-669c98e34661@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: steven.price@arm.com, kvm@vger.kernel.org, kvmarm@lists.linux.dev, catalin.marinas@arm.com, will@kernel.org, james.morse@arm.com, oliver.upton@linux.dev, suzuki.poulose@arm.com, yuzenghui@huawei.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, joey.gouly@arm.com, alexandru.elisei@arm.com, christoffer.dall@arm.com, tabba@google.com, linux-coco@lists.linux.dev, gankulkarni@os.amperecomputing.com, gshan@redhat.com, sdonthineni@nvidia.com, alpergun@google.com, aneesh.kumar@kernel.org, fj0570is@fujitsu.com, vannapurve@google.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1d09acbf-ccc9-4f06-9392-669c98e34661@linux.dev>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-On Wed, 20 Aug 2025 15:55:29 +0100,
-Steven Price <steven.price@arm.com> wrote:
-> 
-> Previously machine type was used purely for specifying the physical
-> address size of the guest. Reserve the higher bits to specify an ARM
-> specific machine type and declare a new type 'KVM_VM_TYPE_ARM_REALM'
-> used to create a realm guest.
-> 
-> Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Reviewed-by: Gavin Shan <gshan@redhat.com>
-> Signed-off-by: Steven Price <steven.price@arm.com>
-> ---
-> Changes since v9:
->  * Explictly set realm.state to REALM_STATE_NONE rather than rely on the
->    zeroing of the structure.
-> Changes since v7:
->  * Add some documentation explaining the new machine type.
-> Changes since v6:
->  * Make the check for kvm_rme_is_available more visible and report an
->    error code of -EPERM (instead of -EINVAL) to make it explicit that
->    the kernel supports RME, but the platform doesn't.
-> ---
->  Documentation/virt/kvm/api.rst | 16 ++++++++++++++--
->  arch/arm64/kvm/arm.c           | 16 ++++++++++++++++
->  arch/arm64/kvm/mmu.c           |  3 ---
->  include/uapi/linux/kvm.h       | 19 +++++++++++++++----
->  4 files changed, 45 insertions(+), 9 deletions(-)
-> 
-> diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
-> index 69c0a9eba6c5..fad3191df311 100644
-> --- a/Documentation/virt/kvm/api.rst
-> +++ b/Documentation/virt/kvm/api.rst
-> @@ -181,8 +181,20 @@ flag KVM_VM_MIPS_VZ.
->  ARM64:
->  ^^^^^^
->  
-> -On arm64, the physical address size for a VM (IPA Size limit) is limited
-> -to 40bits by default. The limit can be configured if the host supports the
-> +On arm64, the machine type identifier is used to encode a type and the
-> +physical address size for the VM. The lower byte (bits[7-0]) encode the
-> +address size and the upper bits[11-8] encode a machine type. The machine
-> +types that might be available are:
-> +
-> + ======================   ============================================
-> + KVM_VM_TYPE_ARM_NORMAL   A standard VM
-> + KVM_VM_TYPE_ARM_REALM    A "Realm" VM using the Arm Confidential
-> +                          Compute extensions, the VM's memory is
-> +                          protected from the host.
-> + ======================   ============================================
-> +
-> +The physical address size for a VM (IPA Size limit) is limited to 40bits
-> +by default. The limit can be configured if the host supports the
->  extension KVM_CAP_ARM_VM_IPA_SIZE. When supported, use
->  KVM_VM_TYPE_ARM_IPA_SIZE(IPA_Bits) to set the size in the machine type
->  identifier, where IPA_Bits is the maximum width of any physical
-> diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
-> index 8c0e9ec34f0a..5b582b705eee 100644
-> --- a/arch/arm64/kvm/arm.c
-> +++ b/arch/arm64/kvm/arm.c
-> @@ -172,6 +172,22 @@ int kvm_arch_init_vm(struct kvm *kvm, unsigned long type)
->  	mutex_unlock(&kvm->lock);
->  #endif
->  
-> +	if (type & ~(KVM_VM_TYPE_ARM_MASK | KVM_VM_TYPE_ARM_IPA_SIZE_MASK))
-> +		return -EINVAL;
-> +
-> +	switch (type & KVM_VM_TYPE_ARM_MASK) {
-> +	case KVM_VM_TYPE_ARM_NORMAL:
-> +		break;
-> +	case KVM_VM_TYPE_ARM_REALM:
-> +		if (!static_branch_unlikely(&kvm_rme_is_available))
-> +			return -EPERM;
+On Wed, Oct 01, 2025 at 06:05:57PM +0800, Lance Yang wrote:
+>
+>
+>On 2025/10/1 16:54, Wei Yang wrote:
+>> On Wed, Oct 01, 2025 at 11:22:51AM +0800, Lance Yang wrote:
+>> > From: Lance Yang <lance.yang@linux.dev>
+>> > 
+>> > Currently, special non-swap entries (like migration, hwpoison, or PTE
+>> > markers) are not caught early in hpage_collapse_scan_pmd(), leading to
+>> > failures deep in the swap-in logic.
+>> > 
+>> > hpage_collapse_scan_pmd()
+>> > `- collapse_huge_page()
+>> >      `- __collapse_huge_page_swapin() -> fails!
+>> > 
+>> > As David suggested[1], this patch skips any such non-swap entries
+>> > early. If any one is found, the scan is aborted immediately with the
+>> > SCAN_PTE_NON_PRESENT result, as Lorenzo suggested[2], avoiding wasted
+>> > work.
+>> > 
+>> > [1] https://lore.kernel.org/linux-mm/7840f68e-7580-42cb-a7c8-1ba64fd6df69@redhat.com
+>> > [2] https://lore.kernel.org/linux-mm/7df49fe7-c6b7-426a-8680-dcd55219c8bd@lucifer.local
+>> > 
+>> > Suggested-by: David Hildenbrand <david@redhat.com>
+>> > Suggested-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+>> > Signed-off-by: Lance Yang <lance.yang@linux.dev>
+>> > ---
+>> > v1 -> v2:
+>> > - Skip all non-present entries except swap entries (per David) thanks!
+>> > - https://lore.kernel.org/linux-mm/20250924100207.28332-1-lance.yang@linux.dev/
+>> > 
+>> > mm/khugepaged.c | 32 ++++++++++++++++++--------------
+>> > 1 file changed, 18 insertions(+), 14 deletions(-)
+>> > 
+>> > diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+>> > index 7ab2d1a42df3..d0957648db19 100644
+>> > --- a/mm/khugepaged.c
+>> > +++ b/mm/khugepaged.c
+>> > @@ -1284,7 +1284,23 @@ static int hpage_collapse_scan_pmd(struct mm_struct *mm,
+>> > 	for (addr = start_addr, _pte = pte; _pte < pte + HPAGE_PMD_NR;
+>> > 	     _pte++, addr += PAGE_SIZE) {
+>> > 		pte_t pteval = ptep_get(_pte);
+>> > -		if (is_swap_pte(pteval)) {
+>> 
+>> It looks is_swap_pte() is mis-leading?
+>
+>Hmm.. not to me, IMO. is_swap_pte() just means:
+>
+>!pte_none(pte) && !pte_present(pte)
+>
+>> 
+>> > +		if (pte_none(pteval) || is_zero_pfn(pte_pfn(pteval))) {
+>> > +			++none_or_zero;
+>> > +			if (!userfaultfd_armed(vma) &&
+>> > +			    (!cc->is_khugepaged ||
+>> > +			     none_or_zero <= khugepaged_max_ptes_none)) {
+>> > +				continue;
+>> > +			} else {
+>> > +				result = SCAN_EXCEED_NONE_PTE;
+>> > +				count_vm_event(THP_SCAN_EXCEED_NONE_PTE);
+>> > +				goto out_unmap;
+>> > +			}
+>> > +		} else if (!pte_present(pteval)) {
+>> > +			if (non_swap_entry(pte_to_swp_entry(pteval))) {
+>> > +				result = SCAN_PTE_NON_PRESENT;
+>> > +				goto out_unmap;
+>> > +			}
+>> > +
+>> > 			++unmapped;
+>> > 			if (!cc->is_khugepaged ||
+>> > 			    unmapped <= khugepaged_max_ptes_swap) {
+>> > @@ -1293,7 +1309,7 @@ static int hpage_collapse_scan_pmd(struct mm_struct *mm,
+>> > 				 * enabled swap entries.  Please see
+>> > 				 * comment below for pte_uffd_wp().
+>> > 				 */
+>> > -				if (pte_swp_uffd_wp_any(pteval)) {
+>> > +				if (pte_swp_uffd_wp(pteval)) {
+>> 
+>> I am not sure why we want to change this. There is no description in the
+>> change log.
+>> 
+>> Would you mind giving some hint on this?
+>
+>The reason is that pte_swp_uffd_wp_any(pte) is broader than what
+>we need :)
+>
+>static inline bool pte_swp_uffd_wp_any(pte_t pte)
+>{
+>#ifdef CONFIG_PTE_MARKER_UFFD_WP
+>	if (!is_swap_pte(pte))
+>		return false;
+>
+>	if (pte_swp_uffd_wp(pte))
+>		return true;
+>
+>	if (pte_marker_uffd_wp(pte))
+>		return true;
+>#endif
+>	return false;
+>}
+>
+>In the context within hpage_collapse_scan_pmd(), we are already inside
+>an is_swap_pte() block, and we have just handled all non-swap entries
+>(which would include pte_marker_uffd_wp()).
+>
+>So we only need to check if the swap entry itself is write-protected
+>for userfaultfd ;)
+>
+>Hope that explains it. I skipped it in the changelog as it's a tiny
+>cleanup ...
 
-EPERM? That's rather odd. You can only do that if the CCA capability
-has been advertised. So asking for it when you can find that it is not
-there deserves more of an EINVAL response.
+Thanks, I got it.
 
-> +		WRITE_ONCE(kvm->arch.realm.state, REALM_STATE_NONE);
-> +		kvm->arch.is_realm = true;
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
->  	kvm_init_nested(kvm);
->  
->  	ret = kvm_share_hyp(kvm, kvm + 1);
-> diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
-> index de10dbde4761..130f28dfb3cb 100644
-> --- a/arch/arm64/kvm/mmu.c
-> +++ b/arch/arm64/kvm/mmu.c
-> @@ -881,9 +881,6 @@ static int kvm_init_ipa_range(struct kvm *kvm,
->  	if (kvm_is_realm(kvm))
->  		kvm_ipa_limit = kvm_realm_ipa_limit();
->  
-> -	if (type & ~KVM_VM_TYPE_ARM_IPA_SIZE_MASK)
-> -		return -EINVAL;
-> -
+Generally, looks good to me.
 
-How about the *other* bits? You need to be able to detect that
-userspace is using the reserved bits and error out.
-
->  	phys_shift = KVM_VM_TYPE_ARM_IPA_SIZE(type);
->  	if (is_protected_kvm_enabled()) {
->  		phys_shift = kvm_ipa_limit;
-> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-> index 7dafb443368a..b70ecee918de 100644
-> --- a/include/uapi/linux/kvm.h
-> +++ b/include/uapi/linux/kvm.h
-> @@ -672,14 +672,25 @@ struct kvm_enable_cap {
->  #define KVM_S390_SIE_PAGE_OFFSET 1
->  
->  /*
-> - * On arm64, machine type can be used to request the physical
-> - * address size for the VM. Bits[7-0] are reserved for the guest
-> - * PA size shift (i.e, log2(PA_Size)). For backward compatibility,
-> - * value 0 implies the default IPA size, 40bits.
-> + * On arm64, machine type can be used to request both the machine type and
-> + * the physical address size for the VM.
-> + *
-> + * Bits[11-8] are reserved for the ARM specific machine type.
-> + *
-> + * Bits[7-0] are reserved for the guest PA size shift (i.e, log2(PA_Size)).
-> + * For backward compatibility, value 0 implies the default IPA size, 40bits.
->   */
-> +#define KVM_VM_TYPE_ARM_SHIFT		8
-> +#define KVM_VM_TYPE_ARM_MASK		(0xfULL << KVM_VM_TYPE_ARM_SHIFT)
-> +#define KVM_VM_TYPE_ARM(_type)		\
-> +	(((_type) << KVM_VM_TYPE_ARM_SHIFT) & KVM_VM_TYPE_ARM_MASK)
-> +#define KVM_VM_TYPE_ARM_NORMAL		KVM_VM_TYPE_ARM(0)
-> +#define KVM_VM_TYPE_ARM_REALM		KVM_VM_TYPE_ARM(1)
-
-Why can't that be just "PROTECTED", using bit 31, just like pKVM?  I
-don't see the point in deviating from an established practice.
-
-	M.
+Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
 
 -- 
-Without deviation from the norm, progress is not possible.
+Wei Yang
+Help you, Help me
 
