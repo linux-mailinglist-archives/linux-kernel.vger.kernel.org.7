@@ -1,132 +1,87 @@
-Return-Path: <linux-kernel+bounces-839248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E487EBB12A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 17:46:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1F2FBB1290
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 17:45:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71D404A7BB8
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 15:45:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E4BC16A1FB
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 15:45:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CF952836B5;
-	Wed,  1 Oct 2025 15:45:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ese3G9sZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9646A27D780;
+	Wed,  1 Oct 2025 15:45:30 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C89F724A076;
-	Wed,  1 Oct 2025 15:45:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2A9F1459FA
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 15:45:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759333547; cv=none; b=mJoq/2OsxLlY7jsmot5iaOv4nuxpEGrlussrMZT67J6uN4GRJ88CxyEPnSYDt/v+op8yJvZCAg8A7zZu6OW3raeKsy+Jt1aopM/U4s1Ecb2RcVcz+/sNeyu9pznds5RRl6LEBr89NupR9IUXuwns7sGZMCRmm+I26tN/NypOZr8=
+	t=1759333530; cv=none; b=S2THxEuEouzZI0pyQzWqfxruQrwxKLc787SUXl5eijy28WV7SGkzb4bm1sD9UhNzSGLwOL8437JSDl7fXPVcil5Vuwy7l5NELb5mRbwjAcikTfze0OY1f6xcHwWPdLLJ+2VfRIu6ghwIAfHOx6T3agDJR+od8p8z6A5Yc3wsjn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759333547; c=relaxed/simple;
-	bh=x5yZqp2j81o6ikd9WELOhul7OQSX3CvtRTHcmQH7oc4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ouPiH+AkZu0cSnOIxq01w9/OaNXt8ldgiVn2c1Xlc/D0BcgsuTdMSC8gM89EXHeGQLws8lYogU27kIRtftDquplzzguo64IV9d99TtfgA3oxE9wf97PBm9myyeCttpv+8FP9alAvj5PAHCtIEGNBPro9txvZSWVascsgQle/nlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ese3G9sZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31518C4CEF1;
-	Wed,  1 Oct 2025 15:45:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759333547;
-	bh=x5yZqp2j81o6ikd9WELOhul7OQSX3CvtRTHcmQH7oc4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ese3G9sZMvHcld91d8f78fic/QzY+eT35PbYV9gwPsX2j3sRp1/wvJ+PItnAX3Ek9
-	 X90lHON/i90ACPFzsrtJRMemxm3NiNionj+O7hs4E8L9N5faO8lJKHahPF5/117SYI
-	 AS5Rkv7DRzBsKt5XM+2xIkNCSEXZqF6c+F7YU3ZJjiHQZlGsbpMcji9PnPQdOOTPag
-	 1gqJ7jrQPL+QB0lzSq30BhmF13y6Vzl6ijRePxfee4kmuyflHa5Cs/z9ytzmXtJ8ln
-	 W+2xZRayKrbV83ouCf3szt4yWtJtYdTWOFlk4l5GSO6CTyqe7I1Q92g1IbTIc9P0yL
-	 V8643V28kFusw==
-Date: Wed, 1 Oct 2025 16:45:43 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Conor Dooley <conor.dooley@microchip.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [RFC 3/5] pinctrl: add polarfire soc iomux0 pinmux driver
-Message-ID: <20251001-backless-cattle-a98db634d7f0@spud>
-References: <20250926-manpower-glacial-e9756c82b427@spud>
- <20250926-unshackle-jury-79f701f97e94@spud>
- <CACRpkdZ5RCcaNJB_3ufAgpDtdJBKfOVrMbJVAQWaVSOkY0-XNQ@mail.gmail.com>
- <CACRpkdZo=c0BnSLm=FKRMNYKEaPAHBgtfhD9txhPofts4ApDkw@mail.gmail.com>
+	s=arc-20240116; t=1759333530; c=relaxed/simple;
+	bh=l3+j1qBtWVeJbLqlOoYwmRcgTQWLmfgBE3R7wFAstRo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BBeBeApa/boXSkvRyYyX/QbrLogJvbb4w+Q/xngSSlgTVaa897fZLuPnvKrkacl+Au33DlePsPGl81dVC7/h4bddEDUzNhPWqQ0ZwM8ubYEtKjAXHYXSr6C95nE1M0FLr4JCi5ZEN8tqmcIMr5J9iEHNCKnTb1CMUcHIaFuMWRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf18.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay10.hostedemail.com (Postfix) with ESMTP id 6563BC0166;
+	Wed,  1 Oct 2025 15:45:26 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf18.hostedemail.com (Postfix) with ESMTPA id B6A1F31;
+	Wed,  1 Oct 2025 15:45:24 +0000 (UTC)
+Date: Wed, 1 Oct 2025 11:47:02 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: jpoimboe@kernel.org, rostedt@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 09/12] unwind: Make unwind_task_info::unwind_mask
+ consistent
+Message-ID: <20251001114702.06e2b1d8@gandalf.local.home>
+In-Reply-To: <20250924080119.384384486@infradead.org>
+References: <20250924075948.579302904@infradead.org>
+	<20250924080119.384384486@infradead.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="kI56dZubP/jGKITa"
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZo=c0BnSLm=FKRMNYKEaPAHBgtfhD9txhPofts4ApDkw@mail.gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: g158948skhodmx6tbwzf39gubiss9f7d
+X-Rspamd-Server: rspamout01
+X-Rspamd-Queue-Id: B6A1F31
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+OMW4XSFp4Dig02OXKk246amWPi9EXI+k=
+X-HE-Tag: 1759333524-461601
+X-HE-Meta: U2FsdGVkX1/zVpPXzhVGhC4Y+71/FCLiJlnm/QiGd4rgK0kGR4FcS8p5zKH7IEMeqt3Dz4eZT85hCeB6PvfDKatZ9mkFGo8v9JBrEiI7oWnQLd0Bv8qvgE0wwgsjVl9mZNDSTkjGMHEHZJooLP1mL6JnrL1/aEipRUWB9WaWJF0bGfiOgVuz9K4/++CITy51cPeHkHQPHkb6KFUzAYViQ1KKLdLwHJqWPVVLn6vw6zYPLPPfRv4g2A2puKTgdNUiHLxjiMl+umRAiPv8KXF+p9nfcUXA6jnzbNKh1g4X/auUg2lbU71+MwXPQYVeAf6TFzympqBbpiuEdXALRevRDTy7HZHKkMguNaMzZb9SO8LbGZjp8TfT+HB34EhyY+44
 
+On Wed, 24 Sep 2025 09:59:57 +0200
+Peter Zijlstra <peterz@infradead.org> wrote:
 
---kI56dZubP/jGKITa
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> @@ -324,7 +324,8 @@ void unwind_deferred_cancel(struct unwin
+>  	guard(rcu)();
+>  	/* Clear this bit from all threads */
+>  	for_each_process_thread(g, t) {
+> -		clear_bit(bit, &t->unwind_info.unwind_mask);
+> +		atomic_long_andnot(UNWIND_USED,
+> +				   &t->unwind_info.unwind_mask);
 
-On Wed, Oct 01, 2025 at 01:36:49PM +0200, Linus Walleij wrote:
-> On Wed, Oct 1, 2025 at 1:34=E2=80=AFPM Linus Walleij <linus.walleij@linar=
-o.org> wrote:
-> > On Fri, Sep 26, 2025 at 4:33=E2=80=AFPM Conor Dooley <conor@kernel.org>=
- wrote:
-> >
-> > > +static const struct pinctrl_pin_desc mpfs_iomux0_pinctrl_pins[] =3D {
-> > > +       PINCTRL_PIN(0, "spi0"),
-> > > +       PINCTRL_PIN(1, "spi1"),
-> > > +       PINCTRL_PIN(2, "i2c0"),
-> > > +       PINCTRL_PIN(3, "i2c1"),
-> > > +       PINCTRL_PIN(4, "can0"),
-> > > +       PINCTRL_PIN(5, "can1"),
-> > > +       PINCTRL_PIN(6, "qspi"),
-> > > +       PINCTRL_PIN(7, "uart0"),
-> > > +       PINCTRL_PIN(8, "uart1"),
-> > > +       PINCTRL_PIN(9, "uart2"),
-> > > +       PINCTRL_PIN(10, "uart3"),
-> > > +       PINCTRL_PIN(11, "uart4"),
-> > > +       PINCTRL_PIN(12, "mdio0"),
-> > > +       PINCTRL_PIN(13, "mdio1"),
-> >
-> > This looks like it is abusing the API. These things do not look like
-> > "pins" at all, rather these are all groups, right?
->=20
-> Or maybe they are rather functions. Like there is a function spi0
-> that can be mapped to a set of pins such as spi0_grp =3D <1, 2, 3, 4...>
+Shouldn't this be:
 
-They're not actually package pins at all that are being configured here,
-it's internal routing inside the FPGA. It does operate on a function
-level, but I don't think there's a neat mapping to the pinctrl subsystem
-which (AFAIU) considers functions to contain groups, which in turn
-contain pins. I suppose it could be thought of that, for example, spi0
-is actually a function containing 4 (or 5, don't ask - or do if you want
-to read a rant about pointlessly confusing design) "pins" in 1 group.
+		atomic_long_andnot(BIT(bit), &t->unwind_info.unwind_mask);
 
-If I could just work in terms of functions only, and avoid groups or
-pins at all, feels (to me ofc) like it'd maybe match the purpose of this
-aspect of the hardware better.
+ ?
 
-> I recommend a refresher with
-> https://docs.kernel.org/driver-api/pin-control.html
-> and work from there, and avoid looking too much at other
-> drivers that don't necessarily do the right thing.
+As BIT(bit) != UNWIND_USED.
 
+-- Steve
 
---kI56dZubP/jGKITa
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaN1MowAKCRB4tDGHoIJi
-0gcRAP44XAvGLeqrYk2OkMBa2621o7zkzzEonTIinYljBT17owD/XXq5ppx3h4SQ
-2F9fF68YwFSJ+Rm8N0WKHgTB3TWQfwE=
-=rJ7h
------END PGP SIGNATURE-----
-
---kI56dZubP/jGKITa--
+>  		if (t->unwind_info.cache)
+>  			clear_bit(bit, &t->unwind_info.cache->unwind_completed);
+>  	}
 
