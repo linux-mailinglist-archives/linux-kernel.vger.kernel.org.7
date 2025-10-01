@@ -1,95 +1,47 @@
-Return-Path: <linux-kernel+bounces-838530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A9BEBAF66C
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 09:26:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11C0DBAF672
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 09:28:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2B043A850B
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 07:26:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4E8A3A2685
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 07:28:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72EE924290D;
-	Wed,  1 Oct 2025 07:26:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A05C265CC0;
+	Wed,  1 Oct 2025 07:28:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="VNlnvK+o";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="IjP7RogM";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="VNlnvK+o";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="IjP7RogM"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YR2q9Bge"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9DAE537E9
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 07:26:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A52F6537E9;
+	Wed,  1 Oct 2025 07:28:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759303593; cv=none; b=h/WfKQE8JQbWIq+UMwU3tifLzfrIRIdmAwScQsjqkeLOSbkynGuW8on3n7BVsYFTpnbS2g+uosg1tsW1g+mrfYm735L/Lw6qPZZZu46UrYOtxvWy+KYXeaz7e8IQzUWesEaC9Dh/DjTShaVwJ8uhHcfzHJcG9e9oHIj5t+SxYvQ=
+	t=1759303700; cv=none; b=QLQbyD8SRArJEKRdK/WaRKzvU2vz7Vc8Un5oSUflBig4VXoWdCmu7Qr6rPCgXCu6P2PbPloS8PeYkfzYzBqosOnJGpUSPd0gV65E6TZB7F187D6kmcHrSrpOyvPdmeAnS/v1l1ELho0HvDvN/NpTpPazq5ixhLKbeC14Hr7Rh6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759303593; c=relaxed/simple;
-	bh=IwuqPxpVDOB/EDqFDD+Gzqb0EzgmfIOVeCRMxs++Yh4=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=bvBvVIHDgn3I+JcahfIO5t0skJiVls1rc/SS/W+G0FgmvWP/AGHTzg1Gd54iFrldQLMfec3em4u1+931y46yTRH7qFVR9muDq+6+82XwD9j+Eu6xpRSUgJf/gScwN4eRmi1AsE/uIyctU8+uPqRnlHbQ6xFMISak8N39bUQ2vUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=VNlnvK+o; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=IjP7RogM; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=VNlnvK+o; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=IjP7RogM; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 7338F33792;
-	Wed,  1 Oct 2025 07:26:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1759303589; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ljBjy/LjeL7uYel8A4Fv7mzFx9XdqLEcQZBp9TZ9/rA=;
-	b=VNlnvK+oMtsPDbDYbjubnbidFBSgez2uqiV8C2D/Ckm7+zOfGyXPvA2uS8eNO94zxLH2XN
-	D0kjRwIR3FCnLVdD383JO5MOAmQrOhuNlV4iBBhH5HXx5CYqrjGpB6tQkvqNS5nwByGckN
-	ic1EM667CQ2txbiIln9BKhItB9e9P3E=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1759303589;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ljBjy/LjeL7uYel8A4Fv7mzFx9XdqLEcQZBp9TZ9/rA=;
-	b=IjP7RogMgihdImOk8yEmupUMqVfiUEbd3o1tUQvKJTbYV9dg5e98Xok+e5SzBq1IUdfKI/
-	lwfjV9R9ip1sw1Dw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=VNlnvK+o;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=IjP7RogM
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1759303589; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ljBjy/LjeL7uYel8A4Fv7mzFx9XdqLEcQZBp9TZ9/rA=;
-	b=VNlnvK+oMtsPDbDYbjubnbidFBSgez2uqiV8C2D/Ckm7+zOfGyXPvA2uS8eNO94zxLH2XN
-	D0kjRwIR3FCnLVdD383JO5MOAmQrOhuNlV4iBBhH5HXx5CYqrjGpB6tQkvqNS5nwByGckN
-	ic1EM667CQ2txbiIln9BKhItB9e9P3E=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1759303589;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ljBjy/LjeL7uYel8A4Fv7mzFx9XdqLEcQZBp9TZ9/rA=;
-	b=IjP7RogMgihdImOk8yEmupUMqVfiUEbd3o1tUQvKJTbYV9dg5e98Xok+e5SzBq1IUdfKI/
-	lwfjV9R9ip1sw1Dw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4355713A3F;
-	Wed,  1 Oct 2025 07:26:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id WixID6XX3Gj7HAAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Wed, 01 Oct 2025 07:26:29 +0000
-Message-ID: <5949fd73-3ca4-4bd9-8092-2d9923dcbfd3@suse.de>
-Date: Wed, 1 Oct 2025 09:26:28 +0200
+	s=arc-20240116; t=1759303700; c=relaxed/simple;
+	bh=8cp6oO64kLabsVM8vZT5ZgINgHloK8gIrBnrdoicDeE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DKKX+/2MoxmWkQNOCmg7s3FzBJTQ46Z8zJWFwUxAO/herl7m5EjMQlTg7YooKPZHzWFxe4npzU4BeAyqstXWCk8VOqFBst7EFvb8zcuM0cbr1Adko3FdXCBv39QK0nsCBTyP72WJPZOJPXLWTIpd7Jxl5F6KR0u7NvWS5L2AQpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YR2q9Bge; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1CD5C4CEF4;
+	Wed,  1 Oct 2025 07:28:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759303700;
+	bh=8cp6oO64kLabsVM8vZT5ZgINgHloK8gIrBnrdoicDeE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=YR2q9Bge0oD6j5WSs3jtZ8Niwz7Z+M6i5iNGjNRvnUM1CKBtNC/ckOj7+rnIb+TMe
+	 Oe/OPhnxdBBB+FwXrFxOh3XBWzilerpW33fppqMbqJUJNEZDx6WVm+ECxwPYcL/Xjs
+	 ohlpxwWHxPTaSQROoyCpqGmIQ9DodNSuEGWrrWJqmAfvNMxvDRRcOo6KOtK5s3yP4u
+	 DQ9NYa6cO/rdgvpievtjHnTtIZk1PXfQPgZZgyLLtIMHhiwuh8dxhFTh9LWJeWO694
+	 tiN4nF5r4k7UyhdXlXMKFV2N95UpX7Q4RjEIpQPWUI4VMT/Hn2Yq5Wpac8KWaki0b+
+	 YXT95UshLGe3w==
+Message-ID: <bf4e4215-941d-4fe2-91b7-9f5b2316a24f@kernel.org>
+Date: Wed, 1 Oct 2025 16:28:11 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,138 +49,43 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: PROBLEM: AST2500 BMC video output disabled by reboot (regression)
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: Nick Bowler <nbowler@draconx.ca>
-Cc: Doug Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, regressions@lists.linux.dev
-References: <wpwd7rit6t4mnu6kdqbtsnk5bhftgslio6e2jgkz6kgw6cuvvr@xbfswsczfqsi>
- <CAD=FV=Xp7zOQ2iEVf896P074RW911F-e2Qa36deD0e8fWksFBA@mail.gmail.com>
- <u7ek3ccya4c3c4rteliskjjfczpmrt4vmqo5c6kjdotxdgitn7@ko24dpb35pq4>
- <ef6558a9-c44a-4c66-967c-187f260f73e1@suse.de>
- <xeipdyk2i2lpkg4rrvz4cl2l3ch62sl4zoa73qvlms3ek3zkci@y7xqbgjulaet>
- <cox6kpackepnunrlhpsssvgdmjd24477cc7mide52xptmmoxyr@ijjotb3xju3v>
- <f1de37ae-2ae4-4513-98fd-18617016704a@suse.de>
+Subject: Re: [PATCH v2 12/15] blktrace: expose ZONE APPEND completions to
+ blktrace
+To: Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+ Jens Axboe <axboe@kernel.dk>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-btrace@vger.kernel.org,
+ John Garry <john.g.garry@oracle.com>, Hannes Reinecke <hare@suse.de>,
+ Christoph Hellwig <hch@lst.de>, Naohiro Aota <naohiro.aota@wdc.com>,
+ Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
+ Chaitanya Kulkarni <chaitanyak@nvidia.com>,
+ "Martin K . Petersen" <martin.petersen@oracle.com>
+References: <20250925150231.67342-1-johannes.thumshirn@wdc.com>
+ <20250925150231.67342-13-johannes.thumshirn@wdc.com>
+From: Damien Le Moal <dlemoal@kernel.org>
 Content-Language: en-US
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <f1de37ae-2ae4-4513-98fd-18617016704a@suse.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 7338F33792
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	URIBL_BLOCKED(0.00)[suse.de:dkim,suse.de:mid,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,bootlin.com:url];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:mid,bootlin.com:url]
-X-Spam-Score: -4.51
+Organization: Western Digital Research
+In-Reply-To: <20250925150231.67342-13-johannes.thumshirn@wdc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Nick
+On 9/26/25 00:02, Johannes Thumshirn wrote:
+> Expose ZONE APPEND completions as a block trace completion action to
+> blktrace.
+> 
+> As tracing of zoned block commands needs the upper 32bit of the widened
+> 64bit action, only add traces to blktrace if user-space has requested
+> version 2 of the blktrace protocol.
+> 
+> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 
-Am 18.09.25 um 13:17 schrieb Thomas Zimmermann:
-> Hi
->
-> Am 18.09.25 um 04:04 schrieb Nick Bowler:
->> On Wed, Sep 17, 2025 at 11:14:45AM -0400, Nick Bowler wrote:
->>> On Fri, Aug 29, 2025 at 03:07:14PM +0200, Thomas Zimmermann wrote:
->>>> The ast driver doesn't do much during shutdown. Could you please 
->>>> out-comment
->>>> the lines at either [2] xor [3] and report on either effect? These 
->>>> calls
->>>> turn of the video chip's memory access and sync pulses. Not doing 
->>>> that might
->>>> resolve the problem.
->>>>
->>>> [2] 
->>>> https://elixir.bootlin.com/linux/v6.16.3/source/drivers/gpu/drm/ast/ast_mode.c#L835
->>>> [3] 
->>>> https://elixir.bootlin.com/linux/v6.16.3/source/drivers/gpu/drm/ast/ast_mode.c#L839
->>> I can try this.
->> OK, I tested 6.17-rc6 and reproduced the problem on this version.  Then:
->>
->>    - Deleting [2] (only) appears to make no difference whatsoever. That
->>      is, deleting the following line in ast_mode.c:
->>
->>        ast_set_index_reg_mask(ast, AST_IO_VGASRI, 0x01, 0xdf, 
->> AST_IO_VGASR1_SD);
->>
->>    - Deleting [3] (only) appears sufficient to make things work again,
->>      that is, deleting the following line in ast_mode.c:
->>
->>        ast_set_index_reg_mask(ast, AST_IO_VGACRI, 0xb6, 0xfc, vgacrb6);
->
-> Please test if the attached patch fixes the problem for you.
+Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
 
-Have you been able to test the patch?
-
-Best regards
-Thomas
-
->
-> Best regards
-> Thomas
->
->>
->> Thanks,
->>    Nick
->
 
 -- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
-
+Damien Le Moal
+Western Digital Research
 
