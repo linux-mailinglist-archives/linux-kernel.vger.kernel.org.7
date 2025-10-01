@@ -1,171 +1,131 @@
-Return-Path: <linux-kernel+bounces-838815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25BC8BB0353
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 13:39:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB051BB0366
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 13:41:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1C8E1C44F9
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 11:39:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0F4B1887A6E
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 11:41:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B378A2D8DA3;
-	Wed,  1 Oct 2025 11:39:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56A882D6605;
+	Wed,  1 Oct 2025 11:40:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hyfhWXjK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="S05kqDyN"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB09C22A4FE;
-	Wed,  1 Oct 2025 11:39:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5A052C3263;
+	Wed,  1 Oct 2025 11:40:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759318783; cv=none; b=EUrxrOiVGTUYbyKgMCX0lsWY4kbkzw/n665X7Efc6tQtWs2OZWLoHnXe1AKLVeJjwjGiT9uyQg/l+cMEx4dpB/OV0/YnyOGLRfKxjJGJ3aq5UVNntEyzKQWGnT651MUn+OzkvDCmtA30Aj2Qgct2D/YjpoKGZS7FLOIt+yfI79U=
+	t=1759318857; cv=none; b=pT/VEK2VhginoKWmJYyoguubqHKJZdpKYwbLxpc3IErDwk2IUL3FegYoE+qrneX+AYfsuTGtkEJ2VRfaHFL5er6y8iEDLUz9YWkJeB/GJLudquv5s5e5f+bayFBkImejROfCQN/9OJYEpf75QEuCHjaFn+ITxTzl5RcGbcLX2G0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759318783; c=relaxed/simple;
-	bh=Ezy7+mtT4eps9wTpBlbZkP1mFfCZBHTp5E+V6UHQD4c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UwuXmc6Gw7PvyRhIKXx+GtxFV0pLRzXaimW09uqODJCjKS92sOXfwvajbyOzBUtpFaW+ikS6vGbi/1tq833zIkrIIRSdeLa/GlxNzMda4V65pfKF16Hwl1pcssZI+6I6q0GN2GYxNoKHW25+yaOI2hwHBzaHPPBICdn2o5CT8yU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hyfhWXjK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB4B8C4CEF4;
-	Wed,  1 Oct 2025 11:39:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759318782;
-	bh=Ezy7+mtT4eps9wTpBlbZkP1mFfCZBHTp5E+V6UHQD4c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hyfhWXjKKeqTsPAKqst9VMRZTuHnr79Sn85JR9oApnhJZe1TO5oXMimv1OZ2K5t1Q
-	 9MiMpANH+0eOS4bcbwboljFqvrlf7T7uAAqpI3hYX8SgDpEKW89XvVN/UZ5DYJEoku
-	 FCsdu0jIgr5dBxYfu2TGJvAqsoQRkfMXMl/1F9lyU95/QyzDKaMdhpvL1V7Ya/B2mh
-	 pfedbt0u93fTYkQVaxWkIHD9fK5BbrTidNe/CqVFgP1WMiwVDvBVcc7cf3aq3rnWzp
-	 eISxrrXcYtNF0j6R+nLIOAcxLwM1v6bQ7c0J8gD109M3HZIzW3eQE3Urg+TrWFUG6k
-	 2FEfVcfX3pxjQ==
-Date: Wed, 1 Oct 2025 14:39:37 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Alex Williamson <alex.williamson@redhat.com>
-Cc: Jason Gunthorpe <jgg@nvidia.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	dri-devel@lists.freedesktop.org, iommu@lists.linux.dev,
-	Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>,
-	kvm@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-mm@kvack.org,
-	linux-pci@vger.kernel.org, Logan Gunthorpe <logang@deltatee.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Vivek Kasireddy <vivek.kasireddy@intel.com>,
-	Will Deacon <will@kernel.org>
-Subject: Re: [PATCH v4 07/10] vfio/pci: Add dma-buf export config for MMIO
- regions
-Message-ID: <20251001113937.GH324804@unreal>
-References: <cover.1759070796.git.leon@kernel.org>
- <b1b44823f93fd9e7fa73dc165141d716cb74fa90.1759070796.git.leon@kernel.org>
- <20250929151740.21f001e3.alex.williamson@redhat.com>
- <20250930075748.GF324804@unreal>
- <20250930100758.1605d5a5.alex.williamson@redhat.com>
+	s=arc-20240116; t=1759318857; c=relaxed/simple;
+	bh=pe7+znf6mpyZlP+jxhc4JLkMrXrdb9R9nlQiJWAL+Ro=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CC7EtD/yHGEeu9c7uLps1GsqgN6mu/4d3bMCVSfNeQ1rL/1p2zxltEziKyK+iAidRAuK4rjAz0gDanVcVkxNzWg8NvrnlLjlPmH9WM5Ig3aEfDDzhD7nOvLMVM7JfitFTYTi3bQkcLKj+CrqO6KBHUwHTLjA8bVJCHES+SnQuWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=S05kqDyN; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1759318854;
+	bh=pe7+znf6mpyZlP+jxhc4JLkMrXrdb9R9nlQiJWAL+Ro=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=S05kqDyNRj+pe9gVvonHeRgxc9guOFsO7g6gLLdPFYpQ/9tT5CQdQdvMTE1VksqrB
+	 rmrGEPCDvOKU2Dc/a68BHzcbqMBSseRUjeHmSnVf2ZORiPxtBzoVfecyuvQyDPAIrR
+	 KOKTA6Bbbb0Eu4S+tUrceHpnEzJACVC1xROtoMHBywqK7g5K8jxdC8cXjihSr7OdST
+	 Dfrb9c66uo1GUqRSUSzWyPhLD5+QHxyjbXB3y5dL6UBRm+hXEMujV4+OKBKodLC1KG
+	 1XQ6P8rkBoWLo0I+jl6Ed/Brji/egH4mmYS5DTotXN26ouvfonaX0EYe02QSgSRPsR
+	 84ai4DMes2oDQ==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 769AE17E12DA;
+	Wed,  1 Oct 2025 13:40:53 +0200 (CEST)
+Message-ID: <bddf658c-c9b1-48c7-b39c-0720e9d4c934@collabora.com>
+Date: Wed, 1 Oct 2025 13:40:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250930100758.1605d5a5.alex.williamson@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] clk: mediatek: Pass device to clk_hw_register for
+ PLLs
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Guangjie Song <guangjie.song@mediatek.com>,
+ Laura Nao <laura.nao@collabora.com>,
+ =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
+ Yassine Oudjana <y.oudjana@protonmail.com>
+Cc: kernel@collabora.com, Krzysztof Kozlowski
+ <krzysztof.kozlowski@linaro.org>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <20250929-mtk-pll-rpm-v1-0-49541777878d@collabora.com>
+ <20250929-mtk-pll-rpm-v1-3-49541777878d@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250929-mtk-pll-rpm-v1-3-49541777878d@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 30, 2025 at 10:07:58AM -0600, Alex Williamson wrote:
-> On Tue, 30 Sep 2025 10:57:48 +0300
-> Leon Romanovsky <leon@kernel.org> wrote:
+Il 29/09/25 14:13, Nicolas Frattaroli ha scritto:
+> Passing the struct device pointer to clk_hw_register allows for runtime
+> power management to work for the registered clocks. However, the
+> mediatek PLL clocks do not do this.
 > 
-> > On Mon, Sep 29, 2025 at 03:17:40PM -0600, Alex Williamson wrote:
-> > > On Sun, 28 Sep 2025 17:50:17 +0300
-> > > Leon Romanovsky <leon@kernel.org> wrote:
-> > >   
-> > > > From: Leon Romanovsky <leonro@nvidia.com>
-> > > > 
-> > > > Add new kernel config which indicates support for dma-buf export
-> > > > of MMIO regions, which implementation is provided in next patches.
-> > > > 
-> > > > Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
-> > > > ---
-> > > >  drivers/vfio/pci/Kconfig | 20 ++++++++++++++++++++
-> > > >  1 file changed, 20 insertions(+)
-> > > > 
-> > > > diff --git a/drivers/vfio/pci/Kconfig b/drivers/vfio/pci/Kconfig
-> > > > index 2b0172f54665..55ae888bf26a 100644
-> > > > --- a/drivers/vfio/pci/Kconfig
-> > > > +++ b/drivers/vfio/pci/Kconfig
-> > > > @@ -55,6 +55,26 @@ config VFIO_PCI_ZDEV_KVM
-> > > >  
-> > > >  	  To enable s390x KVM vfio-pci extensions, say Y.
-> > > >  
-> > > > +config VFIO_PCI_DMABUF
-> > > > +	bool "VFIO PCI extensions for DMA-BUF"
-> > > > +	depends on VFIO_PCI_CORE
-> > > > +	depends on PCI_P2PDMA && DMA_SHARED_BUFFER
-> > > > +	default y
-> > > > +	help
-> > > > +	  Enable support for VFIO PCI extensions that allow exporting
-> > > > +	  device MMIO regions as DMA-BUFs for peer devices to access via
-> > > > +	  peer-to-peer (P2P) DMA.
-> > > > +
-> > > > +	  This feature enables a VFIO-managed PCI device to export a portion
-> > > > +	  of its MMIO BAR as a DMA-BUF file descriptor, which can be passed
-> > > > +	  to other userspace drivers or kernel subsystems capable of
-> > > > +	  initiating DMA to that region.
-> > > > +
-> > > > +	  Say Y here if you want to enable VFIO DMABUF-based MMIO export
-> > > > +	  support for peer-to-peer DMA use cases.
-> > > > +
-> > > > +	  If unsure, say N.
-> > > > +
-> > > >  source "drivers/vfio/pci/mlx5/Kconfig"
-> > > >  
-> > > >  source "drivers/vfio/pci/hisilicon/Kconfig"  
-> > > 
-> > > This is only necessary if we think there's a need to build a kernel with
-> > > P2PDMA and VFIO_PCI, but not VFIO_PCI_DMABUF.  Does that need really
-> > > exist?  
-> > 
-> > It is used to filter build of vfio_pci_dmabuf.c - drivers/vfio/pci/Makefile:
-> > vfio-pci-core-$(CONFIG_VFIO_PCI_DMABUF) += vfio_pci_dmabuf.o
+> Change this by adding a struct device pointer argument to
+> mtk_clk_register_pll, and fix up the only other user of it. Also add a
+> new member to the struct mtk_clk_pll for the struct device pointer,
+> which is set by mtk_clk_register_pll and is used by
+> mtk_clk_register_pll_ops.
 > 
-> Maybe my question of whether it needs to exist at all is too broad.
-> Does it need to be a user visible Kconfig option?  Where do we see the
-> need to preclude this feature from vfio-pci if the dependencies are
-> enabled?
+> If mtk_clk_register_pll is called with a NULL struct device pointer,
+> then everything still works as expected; the clock core will simply
+> treat them as previously, i.e. without runtime power management.
+> 
+> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+> ---
+>   drivers/clk/mediatek/clk-pll.c   | 9 ++++++---
+>   drivers/clk/mediatek/clk-pll.h   | 4 +++-
+>   drivers/clk/mediatek/clk-pllfh.c | 2 +-
+>   3 files changed, 10 insertions(+), 5 deletions(-)
+> 
 
-The dependencies are for the platform and not for the devices. For
-example, hisilicon device mentioned in other email doesn't support
-p2p, but the platform most likely support.
+..snip..
 
-I don't have strong feelings about this config and at least for our use
-case will always be enabled. I can hide it from the users.
+> diff --git a/drivers/clk/mediatek/clk-pllfh.c b/drivers/clk/mediatek/clk-pllfh.c
+> index 83630ee07ee976bf980c8cf2dd35ea24c1b40821..62bfe4a480f14a0a742fb094aff0e6d1a79fe0c3 100644
+> --- a/drivers/clk/mediatek/clk-pllfh.c
+> +++ b/drivers/clk/mediatek/clk-pllfh.c
+> @@ -220,7 +220,7 @@ int mtk_clk_register_pllfhs(struct device_node *node,
+>   		if (use_fhctl)
+>   			hw = mtk_clk_register_pllfh(pll, pllfh, base);
+>   		else
+> -			hw = mtk_clk_register_pll(pll, base);
+> +			hw = mtk_clk_register_pll(NULL, pll, base);
+>   
 
-> 
-> > > I also find it unusual to create the Kconfig before adding the
-> > > supporting code.  Maybe this could be popped to the end or rolled into
-> > > the last patch if we decided to keep it.  Thanks,  
-> > 
-> > It is leftover from previous version, I can squash it, but first we need
-> > to decide what to do with pcim_p2pdma_init() call, if it needs to be
-> > guarded or not.
-> 
-> As in the other thread, I think it would be cleaner in an IS_ENABLED
-> branch.  I'm tempted to suggest we filter out EOPNOTSUPP to allow it to
-> be unconditional, but I understand your point with the list_head
-> initialization.  Thanks,
+Seriously, you've done all that work in patch [2/4], and now you're doing that
+just only with PLLFH?
 
-We can add dmabuf list to struct unconditionally, as memory overhead is
-negligible. It will allow us to drop IS_ENABLED() too.
+Nicolas, c'mon. It's just 5 minutes ahead. :-D
 
-Thanks
+Cheers,
+Angelo
 
+>   		if (IS_ERR(hw)) {
+>   			pr_err("Failed to register %s clk %s: %ld\n",
 > 
-> Alex
-> 
-> 
+
 
