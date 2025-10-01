@@ -1,126 +1,133 @@
-Return-Path: <linux-kernel+bounces-838811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01167BB031E
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 13:37:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28B5CBB035D
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 13:40:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54E974A7DA6
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 11:37:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D88911635EE
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 11:40:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F9712C3248;
-	Wed,  1 Oct 2025 11:37:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08E7D2D063B;
+	Wed,  1 Oct 2025 11:40:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F52lhUAZ"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="FOndS1C0"
+Received: from r3-17.sinamail.sina.com.cn (r3-17.sinamail.sina.com.cn [202.108.3.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 401242882D0
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 11:37:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2487622A4FE
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 11:40:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759318625; cv=none; b=d41VqqfsDAnFf62xAWVnSooYTWTnBKf80cnO7FzBwk4znyWxFDSZJJFhKZtysYl9FUVMetBF2Kad8UzwjQyjfVdDbfQvknVwmW0jf5x0CN/IeEz+Pc25P3UpG08cutb0V6KxIAXBOteuXas76nSu5iy9rX1bzx34xU84q+1eb2A=
+	t=1759318837; cv=none; b=ahgAEGY5xt7E+iEoO4TrlmccwXqzlR8jWyl15dDkNoMv0IQmx7XaYWJAoC/gq4zBEJM3bTDlyRb9dyvVDvug4acdwBGQu/tRjwsqbH/LCBl7GryLFPNy9ggTAhyCe0dcchzea1aBZZEXtzlodmIq4ckT9CEJAi9CAwmguWKjaG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759318625; c=relaxed/simple;
-	bh=Oh9tqT4BXfVxU9Z6FlbTpMfqC65Bh6cRSDairEHuhx4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ozELNZH+h/wYBNki2QW8BPeankV6AiBSFLM9mv1VwDe8jxpblRjaIovB5y4O9BdPu+VuYPMApXpkstY62Wa+59ffFFcyHelCSPoRdf0FNLNbXBHxvoWl0XRvqJ3NpA+19V2VrrPmIzT2iU7NExAN/+MF9dWrbszR4R5LemIntqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=F52lhUAZ; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-57b7c83cc78so953312e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 04:37:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759318622; x=1759923422; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yA7aQRihrsbAM2bYPKB7h4TTWbFXDP3J7TuvZ5SMQX0=;
-        b=F52lhUAZ+z3M7IW9S/RJjHdbesG/xia29zuhJ/Dor9J5s2Uu2X5IGHj0Sy6w6mBN+H
-         l5qnojNbC2u1RZtkAASw9SwEDXzhThAwby3leLMlMfBVSzSmcIMtPwmWohOWJuaD33Pe
-         uiYo4KOJlVgHZctsF0j07FOfeQ1ktRfNNO7kJTJkAL1KJaQOJHY2H3Mx6QWk85qhqSGQ
-         Hl9bf8TyYLlibhj7QnrvJW6vBGxG69NDUUIaZg4pAAVjQU5um9wzLAyCRpOH35dh50H3
-         R7DPjFPp9TpaeUVJ2LVMKR09ltSyu+S2fL88smi4G18IWlRfp+qJH1Z9u+vSgiKgO6pd
-         7A/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759318622; x=1759923422;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yA7aQRihrsbAM2bYPKB7h4TTWbFXDP3J7TuvZ5SMQX0=;
-        b=Dut+5a8need3E069XEVZfP9pfc8xrLW6DmDNZs57BB2ESSQqfIaSVwTpLifTMyyMba
-         wmWRvffP/TSoiqSGtRAXbeiOw4rsCpv4cB1g0kJlZy6Q4tb04C+RDaIt1fs6s5V/JQ9c
-         CiXxl5assD6lVAA80IU4vkXnB6OAbz3w9sJIX2M+NeB7UBNn6bE9NwBlx/xW69MpcLqy
-         UzedM2vvhmJn7S8rAAXoN2L0QPnJUEa3R1gVekiWIoJFUjEi65UWgUxgDWMUDfVXWVPw
-         MGTi3nac1AS+yLVJ97NfLve39ckwyos/spIWDMDQ3Bp8BzOyVn0jh7jjW1vK0IiXSvOg
-         cJAw==
-X-Forwarded-Encrypted: i=1; AJvYcCXbYEbzfrBurAEsejJ6eq8eRNeFAngIPA+smGvoY0d3b2sZc3iJdS2DYPC7E71l5ewXpEbq3H0E6fsd9fk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzT2wzu5aHQTsAGIweRNulyzIxvOfDA2yjFLxLvXSI0H+XjRapP
-	nkNdzA0AyjYJhFQWWPnmLghXSo+WOhd+xCyDHW+RKiVKDmp/FqBwIoC4BKtC0jCH+AGJp/vIhuA
-	5XtMtveUYtGoJPHLhG2xWLTQA3lwSC3N0C7Ne5VdI2A==
-X-Gm-Gg: ASbGnct2MJL29layLHN1Nquyeppjdo5QINKk7G1V6u0q06qsUVjbnFC7IstKra4tI5l
-	M7YJiX3vfK1HWadJivW317Kpu77HcGrTOC+k4jJgBlq2eTNi5ELuEqOQ4YefrUlqghhNVFzrvwf
-	veeiHXDvAghTyuLCcj86KKKHiFFZTDnUxnFCD5inlVXUE7ijxVRqi0DTkMnh3G1E+sJrrdSIEau
-	VYT9t778dYs8UKmAr5jZiicLYnekeY=
-X-Google-Smtp-Source: AGHT+IEZ39wDf5y2+FoKl/S9Pd1gyU4eNs2R/nqxRPqYxaEmOIsx03SIZ7rGxTx1idd5o96eAnjGrysxostm2ToXY7o=
-X-Received: by 2002:a05:6512:3b88:b0:585:1a9b:8b9a with SMTP id
- 2adb3069b0e04-5897c348c2dmr2779744e87.9.1759318622276; Wed, 01 Oct 2025
- 04:37:02 -0700 (PDT)
+	s=arc-20240116; t=1759318837; c=relaxed/simple;
+	bh=QttgXNcY3DKptGytbA0jQ4zm5hNyvtXNVIzxcUlz2l8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=u0CBo1SaQONbbwYP0kNv3nAkX/oOdtVsYPNSQm8POyQj2PTX4pE1pHFe7OZZ9mvmwKBP5j2PRNtP2Hvbtk1UhSZLXoZYC4wVZdRQUkloLZsHSehTjMN9KM2WWze3ujPM4nuLAujiE6gBQtz3cSsq4KBfHNz2OCRXnKFlbLX8REE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=FOndS1C0; arc=none smtp.client-ip=202.108.3.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1759318830;
+	bh=e3V1FdjHBCPy/1p2bRqYE7gwc6BM93ewy3VLg8BIeqY=;
+	h=From:Subject:Date:Message-ID;
+	b=FOndS1C0AC1y4y+qxOYz8QJATXdxsaRvOwchL2bJOj/YanXh2iRy+72uL+TBd6OpQ
+	 7YT9OPh+2Ax1MOb2zjUgZJdQEFEUikbqYgmEDPxidBSNXUCfQ/CO97TR3YqLwwFtay
+	 qeiSgxwSpPz3vxuyGiMzlqTzOAKJ+tDoTCBjajb4=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.34) with ESMTP
+	id 68DD129300000E25; Wed, 1 Oct 2025 19:37:57 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 2365426291757
+X-SMAIL-UIID: A21855FE0C2F468A916A051A0C98918F-20251001-193757-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+7d23dc5cd4fa132fb9f3@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [fs?] WARNING in free_mnt_ns
+Date: Wed,  1 Oct 2025 19:37:44 +0800
+Message-ID: <20251001113745.7851-1-hdanton@sina.com>
+In-Reply-To: <68dc3ade.a70a0220.10c4b.015c.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250926-manpower-glacial-e9756c82b427@spud> <20250926-unshackle-jury-79f701f97e94@spud>
- <CACRpkdZ5RCcaNJB_3ufAgpDtdJBKfOVrMbJVAQWaVSOkY0-XNQ@mail.gmail.com>
-In-Reply-To: <CACRpkdZ5RCcaNJB_3ufAgpDtdJBKfOVrMbJVAQWaVSOkY0-XNQ@mail.gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 1 Oct 2025 13:36:49 +0200
-X-Gm-Features: AS18NWA9lQqxjLhryh6mWRwM5YU-v3y1Ej1S_ygRo7gjKky6YWFY61RMFP-QRag
-Message-ID: <CACRpkdZo=c0BnSLm=FKRMNYKEaPAHBgtfhD9txhPofts4ApDkw@mail.gmail.com>
-Subject: Re: [RFC 3/5] pinctrl: add polarfire soc iomux0 pinmux driver
-To: Conor Dooley <conor@kernel.org>
-Cc: Conor Dooley <conor.dooley@microchip.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 1, 2025 at 1:34=E2=80=AFPM Linus Walleij <linus.walleij@linaro.=
-org> wrote:
-> On Fri, Sep 26, 2025 at 4:33=E2=80=AFPM Conor Dooley <conor@kernel.org> w=
-rote:
->
-> > +static const struct pinctrl_pin_desc mpfs_iomux0_pinctrl_pins[] =3D {
-> > +       PINCTRL_PIN(0, "spi0"),
-> > +       PINCTRL_PIN(1, "spi1"),
-> > +       PINCTRL_PIN(2, "i2c0"),
-> > +       PINCTRL_PIN(3, "i2c1"),
-> > +       PINCTRL_PIN(4, "can0"),
-> > +       PINCTRL_PIN(5, "can1"),
-> > +       PINCTRL_PIN(6, "qspi"),
-> > +       PINCTRL_PIN(7, "uart0"),
-> > +       PINCTRL_PIN(8, "uart1"),
-> > +       PINCTRL_PIN(9, "uart2"),
-> > +       PINCTRL_PIN(10, "uart3"),
-> > +       PINCTRL_PIN(11, "uart4"),
-> > +       PINCTRL_PIN(12, "mdio0"),
-> > +       PINCTRL_PIN(13, "mdio1"),
->
-> This looks like it is abusing the API. These things do not look like
-> "pins" at all, rather these are all groups, right?
+> Date: Tue, 30 Sep 2025 13:17:34 -0700	[thread overview]
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    449c2b302c8e Merge tag 'vfs-6.18-rc1.async' of git://git.k..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=15b43858580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=595e5938a1dd5b4e
+> dashboard link: https://syzkaller.appspot.com/bug?extid=7d23dc5cd4fa132fb9f3
+> compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11c9ad04580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=160bf27c580000
 
-Or maybe they are rather functions. Like there is a function spi0
-that can be mapped to a set of pins such as spi0_grp =3D <1, 2, 3, 4...>
+#syz test
 
-I recommend a refresher with
-https://docs.kernel.org/driver-api/pin-control.html
-and work from there, and avoid looking too much at other
-drivers that don't necessarily do the right thing.
-
-Yours,
-Linus Walleij
+--- l/include/linux/ns_common.h
++++ n/include/linux/ns_common.h
+@@ -38,7 +38,7 @@ extern const struct proc_ns_operations t
+ extern const struct proc_ns_operations timens_for_children_operations;
+ 
+ struct ns_common {
+-	u32 ns_type;
++	u32 ns_type, gi;
+ 	struct dentry *stashed;
+ 	const struct proc_ns_operations *ops;
+ 	unsigned int inum;
+--- l/kernel/nscommon.c
++++ n/kernel/nscommon.c
+@@ -57,6 +57,7 @@ int __ns_common_init(struct ns_common *n
+ 	ns->ops = ops;
+ 	ns->ns_id = 0;
+ 	ns->ns_type = ns_type;
++	ns->gi = 0;
+ 	RB_CLEAR_NODE(&ns->ns_tree_node);
+ 	INIT_LIST_HEAD(&ns->ns_list_node);
+ 
+@@ -66,6 +67,7 @@ int __ns_common_init(struct ns_common *n
+ 
+ 	if (inum) {
+ 		ns->inum = inum;
++		ns->gi++;
+ 		return 0;
+ 	}
+ 	return proc_alloc_inum(&ns->inum);
+@@ -73,5 +75,7 @@ int __ns_common_init(struct ns_common *n
+ 
+ void __ns_common_free(struct ns_common *ns)
+ {
++	if (ns->gi)
++		return;
+ 	proc_free_inum(ns->inum);
+ }
+--- l/fs/namespace.c
++++ n/fs/namespace.c
+@@ -3026,7 +3026,7 @@ static struct file *open_detached_copy(s
+ 	mnt = __do_loopback(path, recursive);
+ 	if (IS_ERR(mnt)) {
+ 		namespace_unlock();
+-		free_mnt_ns(ns);
++		put_mnt_ns(ns);
+ 		return ERR_CAST(mnt);
+ 	}
+ 
+--
 
