@@ -1,100 +1,87 @@
-Return-Path: <linux-kernel+bounces-839303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01CFBBB14D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 18:54:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB211BB14EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 18:56:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0C2D171A04
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 16:54:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7E7C7A626A
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 16:54:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AD002BE62E;
-	Wed,  1 Oct 2025 16:53:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8A6B2D0C82;
+	Wed,  1 Oct 2025 16:56:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="e1gkShnm"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="duBNrr3X"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EF511373;
-	Wed,  1 Oct 2025 16:53:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2211E28C2D2;
+	Wed,  1 Oct 2025 16:56:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759337629; cv=none; b=L76d/ARHyVolESwcKeof5MVSwtsQO6+sPwjiOHLgcT+Wm0x0AWO9DyrA+81Psa+Ys7yWjSJmkw01UVnOi0ECA/UFWHS+/x3QPCGS+8WanDrOsFRwSkAk1QutnRZ4M1YfAzOAKPdPftYepYt5dVFCIW6ed4WVof5F6ysnAfD/4ng=
+	t=1759337778; cv=none; b=hurL9hF2evD8dTVSOEvhWySIXsp0zkVxIvlmZz/UV1e01adA3VI1kOozow16FdZ1wrW8Vp5w1msUS2LW+9duI20RSB3KCMvTdN0Cpzvl26dvxdX85n32yNaMa9Z8XVqcN40B5IMtDIxv2/dAMiZSwrV0+2sHOOjSGSXlqIAO1hQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759337629; c=relaxed/simple;
-	bh=P32gxchqra0nGyRnN6ybBTNOyNQvXQZ4xfdZWywRGCA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UU6Yigz7qxaRQ8TDCagCZtmTBj+9DTPUy71YchlhvE3q8l8bdrYgfitoxLudln/kAs9uHkmE47bOyOKsBSXoL23NI0SAz2fKinaEOUtimyI+GuA4v8XS0zf7dex06Lm/tMPOlOyMXymyB9IL1mwLqb3Ps0us1oyWf4HL/pSXpD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=e1gkShnm; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=ibzNKx/gRXGnc4tiiG6OxYzIZRUZZP1ZY3ujHEfJkWU=; b=e1gkShnmJaB0Supwo7SgLY7Eqd
-	Zvgl2nXKG4JUnkaZJc//qyDKXaWuJoCn05Aezxnvig+xiDZ+kfYoBw6DrShItI4vAskZJxu3/4Bne
-	5GiDJzqBotIt9VSbsMZ0MtLDzCqWyjxAh8Pu3L1sbUrXBPbeE091wMJzDGT80NWOhpls0BhJHb1Ot
-	px5/Pphug1qdZU7BZikFatZc/WXlq3ySBl4TiYGDvsTdTsnhAgauS92IcIz+drWFQqN4hv7i4C/nv
-	xGfDTAUtzLnhIHxN27C2zNDAASIM9dPcLwk4bfLbX8wbZgkr3u58oreBHdvuSNFdVziyV8IN0jWO4
-	ZFeetP0g==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v405F-00000008aUQ-1ba1;
-	Wed, 01 Oct 2025 16:53:41 +0000
-Message-ID: <81c03cb3-5c97-4a6d-bf20-53c5afde2b42@infradead.org>
-Date: Wed, 1 Oct 2025 09:53:40 -0700
+	s=arc-20240116; t=1759337778; c=relaxed/simple;
+	bh=rpAjRFYNrwr9P/dKBIUH+iBTuw2t7D7elVjJUZZ01v8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ap+XAwrDOe4xnA4JvclmUf6SkqLv6At5uyTzGDdCh/m/hVkeMzW1siUJwqziQ0kdRulmjQzwrnI9F71Fq1UFdwJO4OXMjZmR0G29t7JmUEIiw2MEjJoANZPn9CO/VgqcNaBjagLrhfi0yaUq+SHSamambAGFMEdRH/4yzvUbWRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=duBNrr3X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A2B7C4CEF1;
+	Wed,  1 Oct 2025 16:56:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759337777;
+	bh=rpAjRFYNrwr9P/dKBIUH+iBTuw2t7D7elVjJUZZ01v8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=duBNrr3XK8WrXfwmvxSXZ0ToUjddax8jwkZwV0dgy6wn5pepDK4VMbIxGXUO8n1GJ
+	 GhcibkDUtSS7tx1S9lSSswSUS+nJ0vnNPn9kV6kyROkhzmLVOlpZcWaJILkCk1HAPU
+	 TRvFS5MumXBQ4CT8VTM5UmGyThr86gevB65Cb0+F0fTenbOFDItaGIyjuDGL45eLhY
+	 zqz1AnJXMzmjR7gy39lRUK+h7tgU3z7o9FF0f6mf/t+YycM75lvfP1Dr70/mLt82sF
+	 zmYvfVPB0HTNj3bfG/gG3fAzqlN54UHvGT91Jfk43ckvH7v1h3fm1qKcn1035l+Fly
+	 l2CX2mRMcjG4g==
+Date: Wed, 1 Oct 2025 09:54:55 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: gregkh@linuxfoundation.org, sashal@kernel.org, stable@vger.kernel.org,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Ard Biesheuvel <ardb@kernel.org>, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	Michael van der Westhuizen <rmikey@meta.com>,
+	Tobias Fleig <tfleig@meta.com>
+Subject: Re: [PATCH] stable: crypto: sha256 - fix crash at kexec
+Message-ID: <20251001165455.GF1592@sol>
+References: <20251001-stable_crash-v1-1-3071c0bd795e@debian.org>
+ <20251001162305.GE1592@sol>
+ <jm3bk53sqkqv6eg7rekzhn6bgld5byhkmksdjyxmrkifku2dmc@w7xnklqsrpee>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fs: doc: Fix typos
-To: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>,
- Kent Overstreet <kent.overstreet@linux.dev>, Jonathan Corbet
- <corbet@lwn.net>, Carlos Maiolino <cem@kernel.org>,
- David Howells <dhowells@redhat.com>, Paulo Alcantara <pc@manguebit.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- linux-bcachefs@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
- netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org
-Cc: linux-kernel-mentees@lists.linuxfoundation.org,
- skhan@linuxfoundation.org, david.hunter.linux@gmail.com
-References: <20251001083931.44528-1-bhanuseshukumar@gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20251001083931.44528-1-bhanuseshukumar@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <jm3bk53sqkqv6eg7rekzhn6bgld5byhkmksdjyxmrkifku2dmc@w7xnklqsrpee>
 
-
-
-On 10/1/25 1:39 AM, Bhanu Seshu Kumar Valluri wrote:
-> Fix typos in doc comments
+On Wed, Oct 01, 2025 at 09:45:07AM -0700, Breno Leitao wrote:
+> Hello Eric,
 > 
-> Signed-off-by: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
-
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-
-
-Thanks.
-
-> ---
->  Note: No change in functionality intended.
+> On Wed, Oct 01, 2025 at 09:23:05AM -0700, Eric Biggers wrote:
 > 
->  Documentation/filesystems/bcachefs/future/idle_work.rst  | 6 +++---
->  Documentation/filesystems/xfs/xfs-online-fsck-design.rst | 2 +-
->  fs/netfs/buffered_read.c                                 | 2 +-
->  fs/xfs/xfs_linux.h                                       | 2 +-
->  include/linux/fs.h                                       | 4 ++--
->  5 files changed, 8 insertions(+), 8 deletions(-)
+> > This looks fine, but technically 'unsigned int' would be more
+> > appropriate here, given the context.  If we look at the whole function
+> > in 6.12, we can see that it took an 'unsigned int' length:
+> 
+> Ack. Do you want me to send a v2 with `unsigned int` instead?
+> 
 
--- 
-~Randy
+Sure.  Could you also make it clear which kernel version(s) you are
+expecting the patch to be applied to?  Is it everything 5.4 through
+6.15?  It looks like this bug actually got exposed by f4da7afe07523f
+("kexec_file: increase maximum file size to 4G") in 6.0.  But
+backporting to older versions should be fine too, if it applies to them.
 
+- Eric
 
