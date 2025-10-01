@@ -1,87 +1,227 @@
-Return-Path: <linux-kernel+bounces-838663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 363C7BAFDD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 11:30:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EED9BAFDDC
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 11:30:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B8097A2D38
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 09:28:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A132168B28
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 09:30:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 187232D94B4;
-	Wed,  1 Oct 2025 09:30:08 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DE202D978C;
+	Wed,  1 Oct 2025 09:30:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VD+hvNvR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48FC52D8795
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 09:30:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73A031C8611
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 09:30:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759311007; cv=none; b=Hri/gqF2H76xeVc9Z4CZ8FT8gc/NTbGrXKvLVb57qkggplafL/xr4aHHMvuc4ViPt4nvdfOHORIpnqMVyR4lZ7D/1MYEUH2DRrGIX9ZsT5LsUWTA9ocN94IWkoSk5XrUdYhV4LP2V6Fji/EyLusGc5jxi1833pB34CraiI929Po=
+	t=1759311043; cv=none; b=R2fLAemXxV+Oka/xeUAUJyYqrtyc/9thfsB1QyOZCJ3VDTlmwTe9SgbnEzVvno8Ew7CMijDa0V2ry/IuoAxxTP5ktYkQe311A6183jP6mdiGFY8c35c6Gw0fcmmfNxBrO5KEX1G/BGOCkQA0ySf24EUb00y9lGQwZzCHTosT4Mg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759311007; c=relaxed/simple;
-	bh=7IdksFICc5IuOWEXd7aUzwYkTHW+Bmy8yNN8EQFwoIY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=h0ofJ4+O1JtescPLCFbs0i3MtbXfmr7E2Z315UM/14hQVc4nl5TZr2396/w2Is3NTvj0D0eo3D12IUl96b296pJMwzxSjQ54ymRwGy2vZq1/libSy053uXXbmiJJvz7xxvuFKTbaAkU+Rf1/zeX5RySJabodVuKfvIbAl5n8SNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-42575c5c876so100138205ab.3
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 02:30:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759311003; x=1759915803;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qeL1halpTk1lPXz1iLxLY/NDHJ3J8ZXOjg5TCEIi5Dc=;
-        b=gw6Crv9XxlKQxesHIybaB3KOTMK6Enwd+Oslj3Ei11vGK6+BkTboBhvoNkf+dK8LwQ
-         DqU3dsmd+lBK+OSvW+FnrfJ1oBOqBpCsb/ZzCxAL0cuNuvWu+8ezB7KW5KmpXg8dGkha
-         24ied4AdzwKKgn0J8Jx62crydNBOCYqcUr8I/wbdnQAC+OfMo9Bg2FtWFJkKjQcoCxAN
-         X5FUf9OXaxlOJx2aaZbnk6bJjZfBaUp82WO2IBZkHz5NsQe+yhJH34XMppyDWowIUwhT
-         XkEqFmdKCoH372iMwKSlpQeT9W0CRNx7uOxAeD9U7l/WOn8lkN3/SoQlJY2OcchxSMPJ
-         xrOA==
-X-Forwarded-Encrypted: i=1; AJvYcCXwnT8kkS5ImWzEb2Z7q5/jdlyz9l1fcCCmWueCimSC01889bFPvEhZ1ctu0iepZZGs65LXeXCQmQ5EW4M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgJBZYne32BQjVEUV2MPTk/w6vHfz5CY4n6d2hJiH/yN12YJ1w
-	LD9nz5FNxrRUpoEWRHacj6CK4pwvoYUFDAYzK/eArSI0FMi+fJo3GiO2XgGRhbaUK0kmPN0RhVH
-	EcYqNJ94PGJVbcHttIm3qY8Icmn3RFalU5LCTPBIgFeAUMtbWZOW2nwz2VZo=
-X-Google-Smtp-Source: AGHT+IFm5GqoDeqx08yXxQeSmC04SdpI5Ytia/nKRuqZWzVfZXUrEWpdnRj38wlMGuS0R4OVPzsSPLEgB5xsSfsL8HXJ36sIVqoo
+	s=arc-20240116; t=1759311043; c=relaxed/simple;
+	bh=SDnfVM3ubQYBlLvGAuhTvc+aBP5kwXyNhNvMC6/5rII=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=J1SqACYrIjFtLibpahKKN1VyYa1z0ZbeVTQdyqkSirHxMHJCuX55UJpx30DNCUIlmagSWzu153mjV+xaDiOh/1CepgnXgniuUsfuEcp+utLJEYsffKsll4cBsFdExSbFYgcBylhZ8DnrWLeDYLmoqBcphsavPz2qdQSZhpOzGoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VD+hvNvR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1049AC16AAE
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 09:30:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759311043;
+	bh=SDnfVM3ubQYBlLvGAuhTvc+aBP5kwXyNhNvMC6/5rII=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=VD+hvNvR5lVR8OAgW5XMRwuEYufegwavcNqmmXUU8MmMj3ZQVI2rS9KK2TKRVZOzp
+	 8oGvj5/vhZgTVekJ4Ac60Z2soVHV2m9ZtJ1U7hIlrj4tdA+DwPIu6Dp0P2WLd7CmX5
+	 34/ex68pgQ1tGI69bglVSafCoOzO3eJJBST3xcaTYgjm0+50HUuDItAmr9M49SGA3g
+	 unNzycvkeWagMaWHsFDWxIr/boJ8xZikqaLGelBas0dsCBx64MzEWIKb0ezWii16at
+	 0SKIrXFLc3AAXQkm3BMVgn5o5u72akcJ1rfbH1NnWKMJW7GjmVAYBt/d8k743vv0ag
+	 TaYH0HVg714qQ==
+Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-30cce5be7d0so2986485fac.0
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 02:30:43 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX373jkCXdZpsLhSTBAIKJOOBEuEgwD0X2Qv4Lj81UrL0efJxUEsB/Jm8hu2/GbyuqlxQjTID+NgtV46k4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzCTs6tLNjZz2LbsjUB6lypx/wEXWg+Vs6CGW97x/yguF3KikY
+	c6D4QGXws25fR68+fIwcWmYHq+B2c+ZqZ9+TltI7dFK2YA53CarRY8PtSXTe1Lj9O0RkFN/1RHS
+	ih3d1/vA+qGNupqmrT9CpS1aXxwEGudI=
+X-Google-Smtp-Source: AGHT+IFMq6gPIM8p2T5XZpW4CClVk3+8KJLeY5qho96aUc03KRZOpsIj5FDWDPo1KqM47wypNBQ0TV6LKrn1U7P55u0=
+X-Received: by 2002:a05:6870:2056:b0:332:598e:e7b9 with SMTP id
+ 586e51a60fabf-39bb3c3ed3emr1390973fac.46.1759311042347; Wed, 01 Oct 2025
+ 02:30:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a26:b0:426:3ab1:74b2 with SMTP id
- e9e14a558f8ab-42d81664ce3mr32362935ab.16.1759311003261; Wed, 01 Oct 2025
- 02:30:03 -0700 (PDT)
-Date: Wed, 01 Oct 2025 02:30:03 -0700
-In-Reply-To: <20251001085853.1672001-1-kartikey406@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68dcf49b.a00a0220.102ee.0055.GAE@google.com>
-Subject: Re: [syzbot] [isofs?] VFS: Busy inodes after unmount (use-after-free) (3)
-From: syzbot <syzbot+1d79ebe5383fc016cf07@syzkaller.appspotmail.com>
-To: kartikey406@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20250926102320.4053167-1-treapking@chromium.org>
+ <CAJZ5v0i-iT-3nEjX7Nm2s91GSm0OTXQ3yZSf2Q3VRNTOseREHw@mail.gmail.com> <CAEXTbpfUEDf_L3wVJEwD=Wjhx05X6Z2F-rbZT5L7vUR8GUAWTQ@mail.gmail.com>
+In-Reply-To: <CAEXTbpfUEDf_L3wVJEwD=Wjhx05X6Z2F-rbZT5L7vUR8GUAWTQ@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 1 Oct 2025 11:30:30 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hgOxOFA+LBNm+n3BVhuJOYD4F5LBj2BQA7fwLDAtcD=g@mail.gmail.com>
+X-Gm-Features: AS18NWD5MXCZLHGjgbPUqgbKk5Xv_nA5WrnUDJcqS3Pi5ZCufO045FcJZrPL8cE
+Message-ID: <CAJZ5v0hgOxOFA+LBNm+n3BVhuJOYD4F5LBj2BQA7fwLDAtcD=g@mail.gmail.com>
+Subject: Re: [PATCH v4] PM: sleep: Don't wait for SYNC_STATE_ONLY device links
+To: Pin-yen Lin <treapking@chromium.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, linux-kernel@vger.kernel.org, 
+	Hsin-Te Yuan <yuanhsinte@chromium.org>, Chen-Yu Tsai <wenst@chromium.org>, linux-pm@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+Hi,
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+On Wed, Oct 1, 2025 at 1:08=E2=80=AFAM Pin-yen Lin <treapking@chromium.org>=
+ wrote:
+>
+> Hi Rafael,
+>
+> On Sat, Sep 27, 2025 at 8:13=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.=
+org> wrote:
+> >
+> > On Fri, Sep 26, 2025 at 12:23=E2=80=AFPM Pin-yen Lin <treapking@chromiu=
+m.org> wrote:
+> > >
+> > > Device links with DL_FLAG_SYNC_STATE_ONLY should not affect suspend
+> > > and resume, and functions like device_reorder_to_tail() and
+> > > device_link_add() doesn't try to reorder the consumers with such flag=
+.
+> > >
+> > > However, dpm_wait_for_consumers() and dpm_wait_for_suppliers() doesn'=
+t
+> > > check this flag before triggering dpm_wait, leading to potential hang
+> > > during suspend/resume.
+> > >
+> > > This can be reproduced on MT8186 Corsola Chromebook with devicetree l=
+ike:
+> > >
+> > > usb-a-connector {
+> > >         compatible =3D "usb-a-connector";
+> > >         port {
+> > >                 usb_a_con: endpoint {
+> > >                         remote-endpoint =3D <&usb_hs>;
+> > >                 };
+> > >         };
+> > > };
+> > >
+> > > usb_host {
+> > >         compatible =3D "mediatek,mt8186-xhci", "mediatek,mtk-xhci";
+> > >         port {
+> > >                 usb_hs: endpoint {
+> > >                         remote-endpoint =3D <&usb_a_con>;
+> > >                 };
+> > >         };
+> > > };
+> > >
+> > > In this case, the two nodes form a cycle and a SYNC_STATE_ONLY devlin=
+k
+> > > between usb_host (supplier) and usb-a-connector (consumer) is created=
+.
+> > >
+> > > Export device_link_flag_is_sync_state_only() and use it to check this=
+ in
+> > > dpm_wait_for_consumers() and dpm_wait_for_suppliers() to fix this.
+> > >
+> > > Fixes: 05ef983e0d65a ("driver core: Add device link support for SYNC_=
+STATE_ONLY flag")
+> > > Signed-off-by: Pin-yen Lin <treapking@chromium.org>
+> > > ---
+> > >
+> > > Changes in v4:
+> > > - Remove inline for device_link_flag_is_sync_state_only()
+> > >
+> > > Changes in v3:
+> > > - Squash to one patch and fix the export approach
+> > >
+> > > Changes in v2:
+> > > - Update commit message
+> > > - Use device_link_flag_is_sync_state_only()
+> > >
+> > >  drivers/base/base.h       | 1 +
+> > >  drivers/base/core.c       | 2 +-
+> > >  drivers/base/power/main.c | 6 ++++--
+> > >  3 files changed, 6 insertions(+), 3 deletions(-)
+> > >
+> > > diff --git a/drivers/base/base.h b/drivers/base/base.h
+> > > index 123031a757d9..80415b140ce7 100644
+> > > --- a/drivers/base/base.h
+> > > +++ b/drivers/base/base.h
+> > > @@ -248,6 +248,7 @@ void device_links_driver_cleanup(struct device *d=
+ev);
+> > >  void device_links_no_driver(struct device *dev);
+> > >  bool device_links_busy(struct device *dev);
+> > >  void device_links_unbind_consumers(struct device *dev);
+> > > +bool device_link_flag_is_sync_state_only(u32 flags);
+> > >  void fw_devlink_drivers_done(void);
+> > >  void fw_devlink_probing_done(void);
+> > >
+> > > diff --git a/drivers/base/core.c b/drivers/base/core.c
+> > > index d22d6b23e758..a54ec6df1058 100644
+> > > --- a/drivers/base/core.c
+> > > +++ b/drivers/base/core.c
+> > > @@ -287,7 +287,7 @@ static bool device_is_ancestor(struct device *dev=
+, struct device *target)
+> > >  #define DL_MARKER_FLAGS                (DL_FLAG_INFERRED | \
+> > >                                  DL_FLAG_CYCLE | \
+> > >                                  DL_FLAG_MANAGED)
+> > > -static inline bool device_link_flag_is_sync_state_only(u32 flags)
+> > > +bool device_link_flag_is_sync_state_only(u32 flags)
+> > >  {
+> > >         return (flags & ~DL_MARKER_FLAGS) =3D=3D DL_FLAG_SYNC_STATE_O=
+NLY;
+> > >  }
+> > > diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
+> > > index 2ea6e05e6ec9..73a1916170ae 100644
+> > > --- a/drivers/base/power/main.c
+> > > +++ b/drivers/base/power/main.c
+> > > @@ -282,7 +282,8 @@ static void dpm_wait_for_suppliers(struct device =
+*dev, bool async)
+> > >          * walking.
+> > >          */
+> > >         list_for_each_entry_rcu_locked(link, &dev->links.suppliers, c=
+_node)
+> > > -               if (READ_ONCE(link->status) !=3D DL_STATE_DORMANT)
+> > > +               if (READ_ONCE(link->status) !=3D DL_STATE_DORMANT &&
+> > > +                   !device_link_flag_is_sync_state_only(link->flags)=
+)
+> > >                         dpm_wait(link->supplier, async);
+> > >
+> > >         device_links_read_unlock(idx);
+> > > @@ -339,7 +340,8 @@ static void dpm_wait_for_consumers(struct device =
+*dev, bool async)
+> > >          * unregistration).
+> > >          */
+> > >         list_for_each_entry_rcu_locked(link, &dev->links.consumers, s=
+_node)
+> > > -               if (READ_ONCE(link->status) !=3D DL_STATE_DORMANT)
+> > > +               if (READ_ONCE(link->status) !=3D DL_STATE_DORMANT &&
+> > > +                   !device_link_flag_is_sync_state_only(link->flags)=
+)
+> > >                         dpm_wait(link->consumer, async);
+> > >
+> > >         device_links_read_unlock(idx);
+> > > --
+> >
+> > Rebased on top of linux-pm.git/linux-next and applied as 6.18 material
+> > with some minor edits in the subject and changelog.
+> >
+> > Thanks!
+>
+> Thanks for updating the commit message and applying the patch.
+>
+> However, I can't find this patch at
+> https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git/log/?=
+h=3Dlinux-next
+>
+> Did I check the wrong place for this?
 
-Reported-by: syzbot+1d79ebe5383fc016cf07@syzkaller.appspotmail.com
-Tested-by: syzbot+1d79ebe5383fc016cf07@syzkaller.appspotmail.com
+Yes, it was on the bleeding-edge branch for CI build testing coverage.
 
-Tested on:
+It has been added to the linux-next branch now.
 
-commit:         50c19e20 Merge tag 'nolibc-20250928-for-6.18-1' of git..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1172a334580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=cfc4e6ee70d55834
-dashboard link: https://syzkaller.appspot.com/bug?extid=1d79ebe5383fc016cf07
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=129e0a7c580000
-
-Note: testing is done by a robot and is best-effort only.
+Thanks!
 
