@@ -1,134 +1,196 @@
-Return-Path: <linux-kernel+bounces-838307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 230C0BAEEAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 03:00:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84272BAEEB7
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 03:03:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D544D4E01ED
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 01:00:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1E9019402B8
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 01:03:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E9872367D1;
-	Wed,  1 Oct 2025 01:00:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFFFA236A8B;
+	Wed,  1 Oct 2025 01:03:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YY+d0cNy"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="gOIT35jJ"
+Received: from fhigh-a5-smtp.messagingengine.com (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E7122AEF5
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 01:00:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FC832556E;
+	Wed,  1 Oct 2025 01:03:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759280417; cv=none; b=mzv6rrGAkt0Hg7xA5xE2d+jC+YUhLLexJwUmcKB/XLZrEo//ZGHDgPNK2kX2OGKaoM39NpgYvMdKU0xyWEvOc6wsSJ6opCOU5Zn74FQSpGY9CKGyV9KOfJMGqGtXukDLJpFUPc0pEecZCj6+hDKkbaR0DDwYaE2YAlxcK8xLtqw=
+	t=1759280606; cv=none; b=J1M9ErU1reeDJYncnLUiuSPE0+fIg24If4TQRIADn9JwGkUE2pqTfb8Eio5rI6XESv3LYUhVx5UQFglRAWR8DHM0tMVZvrQACu0opXIMrVTgIzPILVoixJ5+Ped3XOcXkFOnMFbMVb/ck0p+2KND3yronsMK4L2tOCPJZED0/vw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759280417; c=relaxed/simple;
-	bh=6jXxieDqFD8fazb/6FJlIG0MiiYnqGvFkdIC+NnRbnQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PsVwqCayqkjFzWyL8dKHH1JxbRZ064LpCiDyrCiD6U0i+4qPCUtPpy8eYKufRgG06qF4wFIpi4NNMqKfabTsm99d4prMYt7JySGKRcYh5mblxVWHQ25qLfKacFU5rL90mao1uAeXcisl92Bdg1mGJ6M+CvexxL9hiygiJ2uIrWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YY+d0cNy; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-46e37d6c21eso44782115e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 18:00:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759280414; x=1759885214; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rCvWtFisL/5u6+Z59vMZno7OXVHIR/I5WLUeHX/+HKo=;
-        b=YY+d0cNyzGEQfdBce34CnY8Y5J0nP6MHNXNoHn/YixzcOFLd+SR9NgoJBy0PPOURB2
-         JXhjTrcMblGwUX9mZIXoftj9SBuwk8ywxzgcHZu6Pv2+xFTJ/91jHS9DfI4vqWfVJW3b
-         DPujH12xm7XUmqmzwWoCxs8RGWj6zb/aM6K8bR2cbyURjTErna8D6kZU57Xb5zmK2GBF
-         L30jTbNB9IZRMRq7RGtyzCC3+nBhl1VqdeTeQYqGKADTgsk0vGmd5So0oLd5HRFLRuQV
-         ECwZPDHPsfBMiXtCh4J9tJd+2h4RkcoMUxYaj5OSwl+2VOK9shk1pNIHLZxwlvCGS6de
-         d6iA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759280414; x=1759885214;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rCvWtFisL/5u6+Z59vMZno7OXVHIR/I5WLUeHX/+HKo=;
-        b=gmyHKvuuylJbtBjfDP4u7jLb68HqiG68u3rxxatX43N1J50iLErLOF68N6+BszudP5
-         brb/+tVPkZPOC7LYnDL9qQPUQdvORrgThD9zJMCk6iW/X8q/DgcQEg6REs0PYzwj4ZIo
-         qG2J3fCSMd7DlF5UZpUNA89nPFhYDEKWJhmoGxFJlPun12WTwwOIz+hPBv/TJEiC0owi
-         5o1wgrPCfNsSX15n7Yw7UTDzlQuAhej5zVgt31qbLz8kl2h5QNfdKdHNeM4rRFWWj/cS
-         OI5sWWDbp/UgO0GhsUr0Suodsoc1Yxn5xGnM99cMDkLbYSOD2YuYUABSXGii4XX4MayQ
-         yk1A==
-X-Forwarded-Encrypted: i=1; AJvYcCXX7qPoKyKAppkrcjf/XXWD+TYLL8N3PSQFwnK2xxPQriJIJG5m4jz/s/NwhobW/4Cz/9Qhy7DPDV2V0x0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yynm7vyvGllP3XjvI3BQAutLPOEmk7NUSvBrXlJwXeVpL4fJo1R
-	AtSFnmOOoPYCJYbEt7J2rz9tyMhzkdOQp6ZL3lDhPX2ZwhFjRyRGoev/
-X-Gm-Gg: ASbGnctc/OoDQ1I3qv7/kYiqiHOUm/XDxtK8qsIYBwr79d9ujeBT2wc8UFihVs/1CgA
-	SALfBAzkTMjzVWTw4Du1EH+gCYVV1bhTTOADp1e92FR5X2Btp27NGA999cuwp7cdViCUJ0tvXiT
-	O08eOME7MisDe5/FweEkNTLVP++fzycC9PAEnJpEru71/UPakboGbtIQ4b5UMmcVaDneo82kZnc
-	0IDdf58yyDS81etXiFVRTHP+2xcOom+/JKmJsTls2HpGNtlN387kZ6RPobcpU1LJE1qph710FTg
-	5HDHS74VB4VoqHEakhzVzbAYwc7/I9AMg3t3QzQq2hBViIhRcm43BC5sQlNASXZIO/t8PNt7gD0
-	TTnN3DxvF+QHzXG2FIx6ffg5G/Ud4G9KPTgLauWouQsdwbSr8VFNOc1YAEbHb9t9a5CE2xXKbMt
-	xEu0gE3MfPoHWnSyt6Y2athWc=
-X-Google-Smtp-Source: AGHT+IEKINZ8voVJfqELLMtiD76UXBJ16fK/Vnhpwcd4y7UWCbT3YRZ4FZ+yoP1+6vpFBcsBZnBwNg==
-X-Received: by 2002:a05:600c:3543:b0:46e:4921:9443 with SMTP id 5b1f17b1804b1-46e612e3f92mr13029195e9.37.1759280414007;
-        Tue, 30 Sep 2025 18:00:14 -0700 (PDT)
-Received: from f.. (cst-prg-21-74.cust.vodafone.cz. [46.135.21.74])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e619b9c88sm14576005e9.22.2025.09.30.18.00.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Sep 2025 18:00:13 -0700 (PDT)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH] fs: assert on ->i_count in iput_final()
-Date: Wed,  1 Oct 2025 03:00:10 +0200
-Message-ID: <20251001010010.9967-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1759280606; c=relaxed/simple;
+	bh=NvRw842uN22jxnvSyEp39EnvRN2HqvRlGd6W1aQfD9A=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=l1SR6woeRMBfiv7QbIkdtGmexu8zWMgPThFqqxvUx8s008AO2i/u7Bn21RNXVA7Ue+0oEBLHUce9FwXP1Qbw/BhRNyZLyZGUGtJXKR5fmGG94tXltaSi2miCU91fUI5zC2PM1lWg2XUF8cEe9qJUv1eIp6BjOgB6ZISZgOqbk3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=gOIT35jJ; arc=none smtp.client-ip=103.168.172.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 05FB514000B5;
+	Tue, 30 Sep 2025 21:03:22 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-02.internal (MEProxy); Tue, 30 Sep 2025 21:03:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+	1759280602; x=1759367002; bh=NuCyfF8qzbXchBGONiYIuvd6quu2IunfxbV
+	es7Qlwco=; b=gOIT35jJfBLTfx6piT/NT0dedZTnIto88G7+K3lIvdGweqowxxg
+	OF5CblCd1ZxLeju7fMY6U0MLZGojLGwmc9l1wRKGqn5O6A8tFrmTPtpxAtRW1A93
+	FKhsaJUgw4S07qZ3ttY9cM8hudfB8T6/94jMbKOnxsH0H6BAxGNB8Am4tyl+Ii6H
+	DihXePjdtL7jd6f05lLsXQCdSHnp6aAyKt/zu+mGYzy4sYt/Ne5oCXE8KWwKDJty
+	MI/eiIWrgLzoEhstNJduoHJpXGJdLtwtyOKbLOQjQIS59UOwvTxAKJRceilWsDe8
+	gfIt3egtpYbqnkSuxWT4o0Bz4FG91Ot1XEg==
+X-ME-Sender: <xms:2X3caJJ1v1K3o6XppVsZnC_jdrmF-gsNWw9ItHrnQYV-Tlrwo3khog>
+    <xme:2X3caNQMvWi0ct2oYKBBb3Bl4wX2UDhEL78FKkUIN8bqLuIqxna3X3YmFvA07ACbK
+    8VcAiYjipPWGg4Uyl1e3X2_7AfaOvSbE8a1jmbRGpLinjztZnp9n-c>
+X-ME-Received: <xmr:2X3caBP8DedZqNpr_YH4y4ut-h_pOX09uDSLzKYHLKDKU78eAbZ-mGBMdhHgM9PknEtaDEYq8D94jJOw7H_VWis84l2-08vWM0A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdekudekhecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefujgfkfhggtgesthdtredttddtvdenucfhrhhomhephfhinhhnucfvhhgr
+    ihhnuceofhhthhgrihhnsehlihhnuhigqdhmieekkhdrohhrgheqnecuggftrfgrthhtvg
+    hrnhepteeukefggfduiedtkeeihfffieehkeffffevffegieetgfetgeejieegledtheek
+    necuffhomhgrihhnpehgohgusgholhhtrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
+    enucfrrghrrghmpehmrghilhhfrhhomhepfhhthhgrihhnsehlihhnuhigqdhmieekkhdr
+    ohhrghdpnhgspghrtghpthhtohepuddvpdhmohguvgepshhmthhpohhuthdprhgtphhtth
+    hopegrrhhnugesrghrnhgusgdruggvpdhrtghpthhtohepghgvvghrtheslhhinhhugidq
+    mheikehkrdhorhhgpdhrtghpthhtohepphgvthgvrhiisehinhhfrhgruggvrggurdhorh
+    hgpdhrtghpthhtohepfihilhhlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrkhhp
+    mheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepsghoqhhunh
+    drfhgvnhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtoheptghorhgsvghtsehlfihnrdhn
+    vghtpdhrtghpthhtohepmhgrrhhkrdhruhhtlhgrnhgusegrrhhmrdgtohhmpdhrtghpth
+    htoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:2X3caKXkWx8PpQVU69_ZgLuobm9KTNUb3hCz_DDMEoLLATeTudaokA>
+    <xmx:2X3caMi5mESBJTxWU8ffJJSm5qkMAw1DNF4VszZQOj0drPtnXZZZow>
+    <xmx:2X3caLhpvoXgeCnUGtR3pdd1MeTjJWKte_oebKKH_VoH6OXxQ0GdtA>
+    <xmx:2X3caCFemKMywKTcjR9mcL3lKN7EGGbagQtRord8EmnnN00tVCBjKA>
+    <xmx:2X3caDv5hnGZnCvziBa3UgO0dOFy5Us0mJ45q0MSrySdmKsLGxpQr8Iq>
+Feedback-ID: i58a146ae:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 30 Sep 2025 21:03:17 -0400 (EDT)
+Date: Wed, 1 Oct 2025 11:03:16 +1000 (AEST)
+From: Finn Thain <fthain@linux-m68k.org>
+To: Arnd Bergmann <arnd@arndb.de>
+cc: Geert Uytterhoeven <geert@linux-m68k.org>, 
+    Peter Zijlstra <peterz@infradead.org>, Will Deacon <will@kernel.org>, 
+    Andrew Morton <akpm@linux-foundation.org>, 
+    Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
+    Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org, 
+    Linux-Arch <linux-arch@vger.kernel.org>, linux-m68k@vger.kernel.org, 
+    Lance Yang <lance.yang@linux.dev>
+Subject: Re: [RFC v2 2/3] atomic: Specify alignment for atomic_t and
+ atomic64_t
+In-Reply-To: <e02f861b-706c-4f6d-bded-002601da954a@app.fastmail.com>
+Message-ID: <60325e45-e4a7-d0cf-ba28-a1a811f9a890@linux-m68k.org>
+References: <cover.1757810729.git.fthain@linux-m68k.org> <abf2bf114abfc171294895b63cd00af475350dba.1757810729.git.fthain@linux-m68k.org> <CAMuHMdUgkVYyUvc85_P9TyTM5f-=mC=+X=vtCWN45EMPqF7iMg@mail.gmail.com> <6c295a4e-4d18-a004-5db8-db2e57afc957@linux-m68k.org>
+ <57ac401b-222b-4c85-b719-9e671a4617cf@app.fastmail.com> <86be5cf0-065e-d55d-fdb6-b9cf6655165e@linux-m68k.org> <ec2982e3-2996-918e-f406-32f67a0decfe@linux-m68k.org> <e02f861b-706c-4f6d-bded-002601da954a@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 
-Notably make sure the count is 0 after the return from ->drop_inode(),
-provided we are going to drop.
 
-Inspired by suspicious games played by f2fs.
+On Tue, 30 Sep 2025, Arnd Bergmann wrote:
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
+> On Tue, Sep 30, 2025, at 04:18, Finn Thain wrote:
+> >
+> > It turned out that the problem wasn't dynamic allocations, it was a 
+> > local variable in the core locking code (kernel/locking/rwsem.c): a 
+> > misaligned long used with an atomic operation (cmpxchg). To get 
+> > natural alignment for 64-bit quantities, I had to align other local 
+> > variables as well, such as the one in ktime_get_real_ts64_mg() that's 
+> > used with atomic64_try_cmpxchg(). The atomic_t branch in my github 
+> > repo has the patches I wrote for that.
+> 
+> It looks like the variable you get the warning for is not even the 
+> atomic64_t but the 'old' argument to atomic64_try_cmpxchg(), at least in 
+> some of the cases you found if not all of them.
+> 
+> I don't see where why there is a requirement to have that aligned at 
+> all, even if we do require the atomic64_t to be naturally aligned, and I 
+> would expect the same warning to hit on x86-32 and the other 
+> architectures with 4-byte alignment of u64 variable on stack and .data.
+> 
 
-boots on ext4 without splats
+Right -- there's only one memory operand in a CAS instruction on m68k, and 
+there's only one pointer in the C implementation in asm-generic.
 
- fs/inode.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+> > To silence the misalignment WARN from CONFIG_DEBUG_ATOMIC, for 64-bit 
+> > atomic operations, for my small m68k .config, it was also necesary to 
+> > increase ARCH_SLAB_MINALIGN to 8. However, I'm not advocating a 
+> > ARCH_SLAB_MINALIGN increase, as that wastes memory.
+> 
+> Have you tried to quantify the memory waste here?
 
-diff --git a/fs/inode.c b/fs/inode.c
-index ec9339024ac3..fa82cb810af4 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -1879,6 +1879,7 @@ static void iput_final(struct inode *inode)
- 	int drop;
- 
- 	WARN_ON(inode->i_state & I_NEW);
-+	VFS_BUG_ON_INODE(atomic_read(&inode->i_count) != 0, inode);
- 
- 	if (op->drop_inode)
- 		drop = op->drop_inode(inode);
-@@ -1893,6 +1894,12 @@ static void iput_final(struct inode *inode)
- 		return;
- 	}
- 
-+	/*
-+	 * Re-check ->i_count in case the ->drop_inode() hooks played games.
-+	 * Note we only execute this if the verdict was to drop the inode.
-+	 */
-+	VFS_BUG_ON_INODE(atomic_read(&inode->i_count) != 0, inode);
-+
- 	state = inode->i_state;
- 	if (!drop) {
- 		WRITE_ONCE(inode->i_state, state | I_WILL_FREE);
--- 
-2.34.1
+I think it's entirely workload dependent. The memory efficiency question 
+comes down to the misalignment distance as a proportion of the size of the 
+allocation.
 
+> I assume that most slab allocations are already 8-byte aligned, at least 
+> kmalloc() with size>4, while custom caches are usually done for larger 
+> structures where an extra average of 2 bytes per allocation may not be 
+> that bad.
+> 
+> > diff --git a/include/linux/instrumented.h b/include/linux/instrumented.h
+> > index 402a999a0d6b..cd569a87c0a8 100644
+> > --- a/include/linux/instrumented.h
+> > +++ b/include/linux/instrumented.h
+> > @@ -68,7 +68,7 @@ static __always_inline void 
+> > instrument_atomic_read(const volatile void *v, size_
+> >  {
+> >  	kasan_check_read(v, size);
+> >  	kcsan_check_atomic_read(v, size);
+> > -	WARN_ON_ONCE(IS_ENABLED(CONFIG_DEBUG_ATOMIC) && ((unsigned long)v & 
+> > (size - 1)));
+> > +	WARN_ON_ONCE(IS_ENABLED(CONFIG_DEBUG_ATOMIC) && ((unsigned long)v & 
+> > (size - 1) & 3));
+> >  }
+> 
+> What is the alignment of stack variables on m68k? E.g. if you have a 
+> function with two local variables, would that still be able to trigger 
+> the check?
+> 
+> int f(atomic64_t *a)
+> {
+>      u16 pad;
+>      u64 old;
+>      
+>      g(&pad);
+>      atomic64_try_cmpxchg(a, &old, 0);
+> }
+> 
+
+I assume so:
+
+int foo(void) {
+    short s;
+    long long ll;
+    return alignof(ll);
+}
+
+# Compilation provided by Compiler Explorer at https://godbolt.org/
+foo():
+        link.w %fp,#0
+        moveq #2,%d0
+        unlk %fp
+        rts
+
+> Since there is nothing telling the compiler that the 'old' argument to 
+> atomic*_try_cmpcxchg() needs to be naturally aligned, maybe that check 
+> should be changed to only test for the ABI-guaranteed alignment? I think 
+> that would still be needed on x86-32.
+>  
+
+I don't know why we would check the alignment of the 'old' quantity. It's 
+going to be loaded into a register before being used, right?
 
