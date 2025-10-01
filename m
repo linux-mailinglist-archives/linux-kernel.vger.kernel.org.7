@@ -1,612 +1,281 @@
-Return-Path: <linux-kernel+bounces-839496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D82E2BB1BC3
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 23:02:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 458EABB1C68
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 23:08:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24FEC19C3F8D
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 21:03:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2AD016A05D
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 21:08:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C8330DEA9;
-	Wed,  1 Oct 2025 21:02:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3230E3128C8;
+	Wed,  1 Oct 2025 21:04:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="jcEwFVUC"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="K9vtyEeP"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A5D61C5F13
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 21:02:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2487E313540
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 21:04:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759352559; cv=none; b=A5m5FjLa4DB7a5XHOF2vfgeIyTVACz6hh9UKB0435aBDM7BJmwEXFckxL+Y73e3HNbwMi/UTBYQA3xxM78V5IjYIlm4YE/69Z+pF7c9YhfzrZswGETVFIFdUdA1lfUf0zZW2CIF+/zgQr0sieo8YJDLGEOvvM2HObM9oxl1LUb8=
+	t=1759352658; cv=none; b=MmIdkmrKIg49/OWDch//XxP1JPR0zuaSj5UjLr4FlJP6rBfWzV5Ah3wY4UpdshbTkeFqbRt6gFoKKVd31CEaiIt8j4fnPfHjJhErc94GbCQMdNYAvLagGGLmSZYTmdEhNAc2td9KU4vv3nk0WiDtgPR576lL20cFxYDhuuso29Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759352559; c=relaxed/simple;
-	bh=q9y0gWMca2klJppfop+nGytevhGuLzjHvkG3oguHnBg=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=lOQcRN6wqukefJoAxK+07z2MOo3ocj7KiqKQjvlYZYsyxBB83MRHCyp+fOtzgmGNbh3HxAKhsjC7C9EIJ3WTE51FEbaP+PTOqbYnNwNkRAIp92svv0Q7xPN90C2c11xQGAl+uQg5bQiMrT+jqMsFGRqmHwwcykEG/LrFgIf84VA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=jcEwFVUC; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 591Ic9s7022677
-	for <linux-kernel@vger.kernel.org>; Wed, 1 Oct 2025 21:02:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	pWqdJYIgBrFAk/VfJaE8W7hboLe7bmM+zzZwNVqEq3g=; b=jcEwFVUCNmXpe4Hx
-	Sw/v2WMFPD6phRbFbDegjtGk92GQIFNujZBL9pIfyegiHHHlEMNpbQ96WIhogOIi
-	yIueEOnyDO8kxbeMtbdU200j5vg9E+WRufclP0LHVVLR9eQXJ5ZpPTS0GZBF7UIl
-	priz9x9aq7yrK6u2mQ3vb7Jfop325EBTi/TctO/ibhpv/7i2DfENiMvCCEjLg1m4
-	bBS6yT06EXJuH18oThldxrZtXFNeeF6wZXXq/TaEbR59P98QizUbqzVfsJScJZ0T
-	T66xSOXGAzc+6LIPqMyBfZGE6dTt1SNhHggGmhUw4fHCp+iRHV/o3LRrw5wKTbZr
-	GaZ+cg==
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e59n67uw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 21:02:35 +0000 (GMT)
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-32eb18b5500so454026a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 14:02:35 -0700 (PDT)
+	s=arc-20240116; t=1759352658; c=relaxed/simple;
+	bh=NrkKCf7Vf8E5XPoueeWIQqRDMvrxqVXoVSGlKLkPssM=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=eIfAEKDJUJo/NP7afjX3HcLetnML8gNvB2e+L1hr8HDn6L6wQXcGOtCuBtAM3s6uX9lWrB+6wHbaCqmgFsoUSZz+Nb+G/WE6I8hSkvVatLQiBNjxIp7iEiFRDF6WRK2A+AAVyWPPwyXibud+tAiXL+9gMFupnIn2e4jHsIQJliY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=K9vtyEeP; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-46e4cc8ed76so727055e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 14:04:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759352654; x=1759957454; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=x1XNfcXLPxTuycG48FvJ57h34RR7WVga1h96zHJSpsk=;
+        b=K9vtyEeP6b+LhqaPIRy3gPlAzw+DEK8+hFVGzJFjV+uXsPeikni2cxgnbo8m9DcO9X
+         vejlkAAfFSYm1Xj5dZZj7+/ccZ9jQSseH0ouun2gVX3U/Jidiw7cuZqc32JBdI2dySnB
+         ACDFwfGFuxSevLXbvUFgJ6bIXX3w3r3EhKltrB0xtIh3BQPiBOrCYZnIObW2aKSFG+8f
+         +AGRb6GA7te/u0oeQhpDK7zdbzPzT4d4CszJdkV7OZEev9LwvK88HaaJCeWMVg+zL7UY
+         EtQU/xOTpWzUunkEzgn1Gqz/UiQGHOdQ6EmjZufFzVovXu/6JH4vj5kizjTlq1Js4BPo
+         z9pg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759352554; x=1759957354;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pWqdJYIgBrFAk/VfJaE8W7hboLe7bmM+zzZwNVqEq3g=;
-        b=tGxMfe54LY+K9HgBGJnH0whnJOkwLTJk9lQvigSTgSexVRJU9hiBy0iE8RhZgHl7m3
-         n+f9ztD2eXuJg5NuaR1bmVO6gt3MhTpAoLOZIkVUx/RVA6kjFDhLHgkq5RJgCkPdbcCE
-         pjHff1C9AKJzC774ffjpwvLmVIf1gLuppSXSFhF9leH9unJv+LTWG1/tg9D4Mx3oAWJy
-         yDIyi7jSfwG+V5SyQlybqfqSV7+OHRVN4iFMhXrTqGw+wJAkPYlhMJDFHrm9kH+VZpyz
-         0yNQHCE5rRIhPYw01fXVPAtflGhWBaq30RIMq+MyuZg1iTFAtM68G7NDqwzEaZrgoEgr
-         r+Bg==
-X-Forwarded-Encrypted: i=1; AJvYcCWpOQUcWEJvTZbS2t/S6syzzvIrKeL8eIS0YyMbS3cfHNN95O6ERE71f275peV8yNfo8793YzsBt1Jm+3I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGBqFUQhf6MEkChXDWGM7p+HcsFyeQD58olgsjl5YTTZybj01o
-	GKPaNfQVkk8pgjjbL+hPOr8Zs92cPwkhnMv/uMPvuSIbs1Skmby0Z2LBz1sYlNItctyBrZIf0Lv
-	3IDwJl9WhmHjP8dDyvyktAojZeoTyfoA+bh7BAjLNanokoX69fIn7XUxGvB04OZr6RI4=
-X-Gm-Gg: ASbGnct4PpOpdDbJIjLETDqI368gXwLdgKQDLof64OhVloOZpT3K5y4yCzFHMuMky5+
-	Oq2PD0+MQtxwcBmJ5WA/om6UY1w5s9c7YV8rxfRaOSQlNMSwoKVTPF2ZdBG7MfuBlmYRBOhTfWB
-	tRjAqmC+UGSYzylcb3nGRfOUNmO5ZRvEY7Asi8ou1aqw/Scn2APb0L61/ciSQbFWKIPhi0V4vLT
-	Z4AeJmWvdU6S1zytne2FQ1hcdt9O0Kz2S/86jYbT0pTLhT7g34ibUstg9/7H360xyBK/nlhbf//
-	X6w0UT1neXDwGYpNADKoO0RkTOMahKovoltferjfz0sQyH+yYpCWcDmYza6fXWONjCk=
-X-Received: by 2002:a17:90b:4d86:b0:338:3d3c:3e03 with SMTP id 98e67ed59e1d1-339a6f93accmr5793959a91.35.1759352553791;
-        Wed, 01 Oct 2025 14:02:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH+adF5Hw1qoHbQQDpjT41fXsJfxm6K0JOkLji8AXIaoSONPxkixcPS43sXq5iToRh0+l8CaQ==
-X-Received: by 2002:a17:90b:4d86:b0:338:3d3c:3e03 with SMTP id 98e67ed59e1d1-339a6f93accmr5793895a91.35.1759352553114;
-        Wed, 01 Oct 2025 14:02:33 -0700 (PDT)
-Received: from [192.168.1.9] ([117.244.71.19])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-339b4f6adc7sm583074a91.27.2025.10.01.14.02.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 01 Oct 2025 14:02:32 -0700 (PDT)
-Message-ID: <845ea929-d245-44b1-a0f5-2ea67ca595d9@oss.qualcomm.com>
-Date: Thu, 2 Oct 2025 02:32:21 +0530
+        d=1e100.net; s=20230601; t=1759352654; x=1759957454;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=x1XNfcXLPxTuycG48FvJ57h34RR7WVga1h96zHJSpsk=;
+        b=qBJAIoxJSiF6oi1u/SVPtkw9l2x+iKdti5GRAMqhmrEvjOC0sf9S1xUsKxWt/ExKYR
+         g3OLGjikvv0p+Ro2QAp6W/+v6/nvwXsQc/5aDmyXVAr1jov8AvxFc3L2ZPwAAUHfQ8vj
+         MrEt4eo5cDn1Mn0/YM1pYONZ7RjLb8lHOohCwuazFOX3wEKh5LOP7JsiU0KXmN2vjsZ+
+         8LpY4hLOJ2VxtGUQfdpSP8p9UBkpy86w84gQn/DrojeNdx9pTyMcKFU6ww7cP84au5iZ
+         6DWCeUoONv0/CD5p0yX52QvUgmuEWwgATbAy9HcPRCIN/q/Gep49/7Tet7DIn5KOHXPy
+         KMVg==
+X-Forwarded-Encrypted: i=1; AJvYcCVcsPU9HySHF8crbPHu6cAAaSFl40DmInhCRW+W9npYLBLu3oVuEagYeS6oM2HZscLsCX00LkBIJals/zE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMDFxrjgMDZwAkdSnCPDaTdSDqkE4X6L17IQDRVHLvL3mksswO
+	UQVCom3MxgPpJEaYtaRA+jiNGXfz7NykuIW6wnwHKJNZ2OV0ilLyoSwtFGVEmCaL8js7Wid0rQ=
+	=
+X-Google-Smtp-Source: AGHT+IF4pAXl5Kz4VKrEzIr4Pw9yb2GP5tMgq1HmwMabQ5THhboAs0iCENwI8BZUxUuDCIiW3R3H9LbE
+X-Received: from wmbh26.prod.google.com ([2002:a05:600c:a11a:b0:45d:cfa4:ce0d])
+ (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:45d0:b0:46e:1d8d:cfa2
+ with SMTP id 5b1f17b1804b1-46e612bab92mr36541765e9.20.1759352654487; Wed, 01
+ Oct 2025 14:04:14 -0700 (PDT)
+Date: Wed,  1 Oct 2025 23:02:22 +0200
+In-Reply-To: <20251001210201.838686-22-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-From: Akhil P Oommen <akhilpo@oss.qualcomm.com>
-Subject: Re: [PATCH 12/17] drm/msm/adreno: Introduce A8x GPU Support
-To: Connor Abbott <cwabbott0@gmail.com>, rob.clark@oss.qualcomm.com
-Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Sean Paul <sean@poorly.run>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar
- <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Jonathan Marek <jonathan@marek.ca>,
-        Jordan Crouse
- <jordan@cosmicpenguin.net>,
-        Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux.dev, devicetree@vger.kernel.org
-References: <20250930-kaana-gpu-support-v1-0-73530b0700ed@oss.qualcomm.com>
- <20250930-kaana-gpu-support-v1-12-73530b0700ed@oss.qualcomm.com>
- <ks3ppjsy35wka2at5nxrr74l5mvzr4l6ovm5ncohanu2gn3ytl@gt2mzwjehq73>
- <CACSVV00AFEJVti7BryA-_sosmBKCuDtX7+NEi4aL4X98AqR1Qg@mail.gmail.com>
- <CACu1E7H0Y9wLwN=ztx+YSQLMQuqOF0hYPqvF-VdXyFW65og6og@mail.gmail.com>
-Content-Language: en-US
-In-Reply-To: <CACu1E7H0Y9wLwN=ztx+YSQLMQuqOF0hYPqvF-VdXyFW65og6og@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: uNLn42_rirnneA2AwnrhPrvThd8TFZM5
-X-Authority-Analysis: v=2.4 cv=O4g0fR9W c=1 sm=1 tr=0 ts=68dd96eb cx=c_pps
- a=0uOsjrqzRL749jD1oC5vDA==:117 a=2kejHg7nZSoTgEpwAwsXNQ==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=e5mUnYsNAAAA:8 a=EUspDBNiAAAA:8
- a=FJEtwSaB2erPM9T07OEA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=mQ_c8vxmzFEMiUWkPHU9:22 a=Vxmtnl_E_bksehYqCbjh:22
-X-Proofpoint-ORIG-GUID: uNLn42_rirnneA2AwnrhPrvThd8TFZM5
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAwMSBTYWx0ZWRfX8wMSwDwjWNLF
- dj1nmPpJFWxT+srQ0kz6FNDiUxUtcffv8LgNCAeA4f8oBcbLEBzFvKqI4TxUdWZ91tTcN6nwrvp
- DrTfUMXL+oOTpa16EtS9asUkvZUmyDiQeseWCTi9SO7rMbdCujn9acLvTPXEQtMA2SfsGK/sybw
- lN4JPWDpaQmP3sjYRr2BsnzYwUBwAhBbqP/eZgprsvJyCuII26JFSa755vQE9kpFhygMt3Ii3oA
- OalMyk8jTleefOG4ZuAhecbWHuFb/9G1B3Evkves0uP/5lSkrm+qtCy15YiL5wFoUNY4rwLRp3r
- zALw5uR3evL6ZeEKTglFX0v9o3wJguvnnycjiXaPot/IQd8QxHHt9sNMq43av+3fFjpnWME3Gx3
- lptpIYyvde3D3M+DkfAnUs7H28TFvw==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-01_06,2025-09-29_04,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 phishscore=0 clxscore=1015 priorityscore=1501 lowpriorityscore=0
- spamscore=0 impostorscore=0 bulkscore=0 suspectscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270001
+Mime-Version: 1.0
+References: <20251001210201.838686-22-ardb+git@google.com>
+X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6908; i=ardb@kernel.org;
+ h=from:subject; bh=AKLCnRRN0mrxopEXea8EITSSalYE601b/mp0OMxmCUA=;
+ b=owGbwMvMwCVmkMcZplerG8N4Wi2JIePudPllFx24g4Qqp876JueqIbU3bdpm9jenXldn3VCqc
+ 7xwoXx6RykLgxgXg6yYIovA7L/vdp6eKFXrPEsWZg4rE8gQBi5OAZjI/3JGhpfBSQwSSv8eLPfY
+ NFdq3fNCmQ7XN/e1mDiza847V+1/8Izhn2WKrPTZCa8PqC/9+8/01/oEz/e2W6NvM6rtUG1RPc+ VwAIA
+X-Mailer: git-send-email 2.51.0.618.g983fd99d29-goog
+Message-ID: <20251001210201.838686-42-ardb+git@google.com>
+Subject: [PATCH v2 20/20] arm64/fpsimd: Allocate kernel mode FP/SIMD buffers
+ on the stack
+From: Ard Biesheuvel <ardb+git@google.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	herbert@gondor.apana.org.au, linux@armlinux.org.uk, 
+	Ard Biesheuvel <ardb@kernel.org>, Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Kees Cook <keescook@chromium.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Mark Brown <broonie@kernel.org>, 
+	Eric Biggers <ebiggers@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On 9/30/2025 2:11 PM, Connor Abbott wrote:
-> On Tue, Sep 30, 2025 at 10:08 AM Rob Clark <rob.clark@oss.qualcomm.com> wrote:
->>
->> On Tue, Sep 30, 2025 at 12:43 AM Dmitry Baryshkov
->> <dmitry.baryshkov@oss.qualcomm.com> wrote:
->>>
->>> On Tue, Sep 30, 2025 at 11:18:17AM +0530, Akhil P Oommen wrote:
->>>> A8x is the next generation of Adreno GPUs, featuring a significant
->>>> hardware design change. A major update to the design is the introduction
->>>> of Slice architecture. Slices are sort of mini-GPUs within the GPU which
->>>> are more independent in processing Graphics and compute workloads. Also,
->>>> in addition to the BV and BR pipe we saw in A7x, CP has more concurrency
->>>> with additional pipes.
->>>>
->>>> From a software interface perspective, these changes have a significant
->>>> impact on the KMD side. First, the GPU register space has been extensively
->>>> reorganized. Second, to avoid  a register space explosion caused by the
->>>> new slice architecture and additional pipes, many registers are now
->>>> virtualized, instead of duplicated as in A7x. KMD must configure an
->>>> aperture register with the appropriate slice and pipe ID before accessing
->>>> these virtualized registers.
->>>>
->>>> This patch adds only a skeleton support for the A8x family. An A8x GPU
->>>> support will be added in an upcoming patch.
->>>
->>> Consider this lands in a commit message. What would it mean in the Git
->>> history?
+From: Ard Biesheuvel <ardb@kernel.org>
 
-Commit text is not just for git history. This sentence is for a reviewer 
-who is going through the patches one by one.
+Commit aefbab8e77eb16b5
 
->>>
->>>>
->>>> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
->>>> ---
->>>>  drivers/gpu/drm/msm/Makefile                      |    1 +
->>>>  drivers/gpu/drm/msm/adreno/a6xx_gpu.c             |  103 +-
->>>>  drivers/gpu/drm/msm/adreno/a6xx_gpu.h             |   21 +
->>>>  drivers/gpu/drm/msm/adreno/a8xx_gpu.c             | 1238 +++++++++++++++++++++
->>>>  drivers/gpu/drm/msm/adreno/adreno_gpu.h           |    7 +
->>>>  drivers/gpu/drm/msm/registers/adreno/a6xx.xml     |    1 -
->>>>  drivers/gpu/drm/msm/registers/adreno/a6xx_gmu.xml |    1 +
->>>>  7 files changed, 1344 insertions(+), 28 deletions(-)
->>>>
->>>> diff --git a/drivers/gpu/drm/msm/Makefile b/drivers/gpu/drm/msm/Makefile
->>>> index 7acf2cc13cd047eb7f5b3f14e1a42a1cc145e087..8aa7d07303fb0cd66869767cb6298b38a621b366 100644
->>>> --- a/drivers/gpu/drm/msm/Makefile
->>>> +++ b/drivers/gpu/drm/msm/Makefile
->>>> @@ -24,6 +24,7 @@ adreno-y := \
->>>>       adreno/a6xx_gmu.o \
->>>>       adreno/a6xx_hfi.o \
->>>>       adreno/a6xx_preempt.o \
->>>> +     adreno/a8xx_gpu.o \
->>>>
->>>>  adreno-$(CONFIG_DEBUG_FS) += adreno/a5xx_debugfs.o \
->>>>
->>>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
->>>> index bd4f98b5457356c5454d0316e59d7e8253401712..4aeeaceb1fb30a9d68ac636c14249e3853ef73ac 100644
->>>> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
->>>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
->>>> @@ -239,14 +239,21 @@ static void a6xx_set_pagetable(struct a6xx_gpu *a6xx_gpu,
->>>>       }
->>>>
->>>>       if (!sysprof) {
->>>> -             if (!adreno_is_a7xx(adreno_gpu)) {
->>>> +             if (!(adreno_is_a7xx(adreno_gpu) || adreno_is_a8xx(adreno_gpu))) {
->>>
->>> Here and in several other similar places:
->>>
->>>                 if (!adreno_is_a7xx(adreno_gpu) &&
->>>                     !adreno_is_a8xx(adreno_gpu))) {
+  ("arm64: fpsimd: Preserve/restore kernel mode NEON at context switch")
 
-Ack
+added a 'kernel_fpsimd_state' field to struct thread_struct, which is
+the arch-specific portion of struct task_struct, and is allocated for
+each task in the system. The size of this field is 528 bytes, resulting
+in non-trivial bloat of task_struct, and the resulting memory overhead
+may impact performance on systems with many processes.
 
->>>
->>>>                       /* Turn off protected mode to write to special registers */
->>>>                       OUT_PKT7(ring, CP_SET_PROTECTED_MODE, 1);
->>>>                       OUT_RING(ring, 0);
->>>>               }
->>>>
->>>> -             OUT_PKT4(ring, REG_A6XX_RBBM_PERFCTR_SRAM_INIT_CMD, 1);
->>>> -             OUT_RING(ring, 1);
->>>> +             if (adreno_is_a8xx(adreno_gpu)) {
->>>> +                     OUT_PKT4(ring, REG_A8XX_RBBM_PERFCTR_SRAM_INIT_CMD, 1);
->>>> +                     OUT_RING(ring, 1);
->>>> +                     OUT_PKT4(ring, REG_A8XX_RBBM_SLICE_PERFCTR_SRAM_INIT_CMD, 1);
->>>> +                     OUT_RING(ring, 1);
->>>> +             } else {
->>>> +                     OUT_PKT4(ring, REG_A6XX_RBBM_PERFCTR_SRAM_INIT_CMD, 1);
->>>> +                     OUT_RING(ring, 1);
->>>> +             }
->>>>       }
->>>>
->>>>       /* Execute the table update */
->>>> @@ -275,7 +282,7 @@ static void a6xx_set_pagetable(struct a6xx_gpu *a6xx_gpu,
->>>>        * to make sure BV doesn't race ahead while BR is still switching
->>>>        * pagetables.
->>>>        */
->>>> -     if (adreno_is_a7xx(&a6xx_gpu->base)) {
->>>> +     if (adreno_is_a7xx(&a6xx_gpu->base) && adreno_is_a8xx(&a6xx_gpu->base)) {
->>>>               OUT_PKT7(ring, CP_THREAD_CONTROL, 1);
->>>>               OUT_RING(ring, CP_THREAD_CONTROL_0_SYNC_THREADS | CP_SET_THREAD_BR);
->>>>       }
->>>> @@ -289,20 +296,22 @@ static void a6xx_set_pagetable(struct a6xx_gpu *a6xx_gpu,
->>>>       OUT_RING(ring, CACHE_INVALIDATE);
->>>>
->>>>       if (!sysprof) {
->>>> +             u32 reg_status = adreno_is_a8xx(adreno_gpu) ?
->>>> +                     REG_A8XX_RBBM_PERFCTR_SRAM_INIT_STATUS :
->>>> +                     REG_A6XX_RBBM_PERFCTR_SRAM_INIT_STATUS;
->>>>               /*
->>>>                * Wait for SRAM clear after the pgtable update, so the
->>>>                * two can happen in parallel:
->>>>                */
->>>>               OUT_PKT7(ring, CP_WAIT_REG_MEM, 6);
->>>>               OUT_RING(ring, CP_WAIT_REG_MEM_0_FUNCTION(WRITE_EQ));
->>>> -             OUT_RING(ring, CP_WAIT_REG_MEM_POLL_ADDR_LO(
->>>> -                             REG_A6XX_RBBM_PERFCTR_SRAM_INIT_STATUS));
->>>> +             OUT_RING(ring, CP_WAIT_REG_MEM_POLL_ADDR_LO(reg_status));
->>>>               OUT_RING(ring, CP_WAIT_REG_MEM_POLL_ADDR_HI(0));
->>>>               OUT_RING(ring, CP_WAIT_REG_MEM_3_REF(0x1));
->>>>               OUT_RING(ring, CP_WAIT_REG_MEM_4_MASK(0x1));
->>>>               OUT_RING(ring, CP_WAIT_REG_MEM_5_DELAY_LOOP_CYCLES(0));
->>>>
->>>> -             if (!adreno_is_a7xx(adreno_gpu)) {
->>>> +             if (!(adreno_is_a7xx(adreno_gpu) || adreno_is_a8xx(adreno_gpu))) {
->>>>                       /* Re-enable protected mode: */
->>>>                       OUT_PKT7(ring, CP_SET_PROTECTED_MODE, 1);
->>>>                       OUT_RING(ring, 1);
->>>> @@ -441,6 +450,7 @@ static void a7xx_submit(struct msm_gpu *gpu, struct msm_gem_submit *submit)
->>>>       struct a6xx_gpu *a6xx_gpu = to_a6xx_gpu(adreno_gpu);
->>>>       struct msm_ringbuffer *ring = submit->ring;
->>>>       unsigned int i, ibs = 0;
->>>> +     u32 rbbm_perfctr_cp0, cp_always_on_counter;
->>>>
->>>>       adreno_check_and_reenable_stall(adreno_gpu);
->>>>
->>>> @@ -460,10 +470,16 @@ static void a7xx_submit(struct msm_gpu *gpu, struct msm_gem_submit *submit)
->>>>       if (gpu->nr_rings > 1)
->>>>               a6xx_emit_set_pseudo_reg(ring, a6xx_gpu, submit->queue);
->>>>
->>>> -     get_stats_counter(ring, REG_A7XX_RBBM_PERFCTR_CP(0),
->>>> -             rbmemptr_stats(ring, index, cpcycles_start));
->>>> -     get_stats_counter(ring, REG_A6XX_CP_ALWAYS_ON_COUNTER,
->>>> -             rbmemptr_stats(ring, index, alwayson_start));
->>>> +     if (adreno_is_a8xx(adreno_gpu)) {
->>>> +             rbbm_perfctr_cp0 = REG_A8XX_RBBM_PERFCTR_CP(0);
->>>> +             cp_always_on_counter = REG_A8XX_CP_ALWAYS_ON_COUNTER;
->>>> +     } else {
->>>> +             rbbm_perfctr_cp0 = REG_A7XX_RBBM_PERFCTR_CP(0);
->>>> +             cp_always_on_counter = REG_A6XX_CP_ALWAYS_ON_COUNTER;
->>>> +     }
->>>> +
->>>> +     get_stats_counter(ring, rbbm_perfctr_cp0, rbmemptr_stats(ring, index, cpcycles_start));
->>>> +     get_stats_counter(ring, cp_always_on_counter, rbmemptr_stats(ring, index, alwayson_start));
->>>>
->>>>       OUT_PKT7(ring, CP_THREAD_CONTROL, 1);
->>>>       OUT_RING(ring, CP_SET_THREAD_BOTH);
->>>> @@ -510,10 +526,8 @@ static void a7xx_submit(struct msm_gpu *gpu, struct msm_gem_submit *submit)
->>>>               OUT_RING(ring, 0x00e); /* IB1LIST end */
->>>>       }
->>>>
->>>> -     get_stats_counter(ring, REG_A7XX_RBBM_PERFCTR_CP(0),
->>>> -             rbmemptr_stats(ring, index, cpcycles_end));
->>>> -     get_stats_counter(ring, REG_A6XX_CP_ALWAYS_ON_COUNTER,
->>>> -             rbmemptr_stats(ring, index, alwayson_end));
->>>> +     get_stats_counter(ring, rbbm_perfctr_cp0, rbmemptr_stats(ring, index, cpcycles_end));
->>>> +     get_stats_counter(ring, cp_always_on_counter, rbmemptr_stats(ring, index, alwayson_end));
->>>>
->>>>       /* Write the fence to the scratch register */
->>>>       OUT_PKT4(ring, REG_A6XX_CP_SCRATCH(2), 1);
->>>> @@ -706,8 +720,11 @@ static int a6xx_calc_ubwc_config(struct adreno_gpu *gpu)
->>>>       /* Copy the data into the internal struct to drop the const qualifier (temporarily) */
->>>>       *cfg = *common_cfg;
->>>>
->>>> -     cfg->ubwc_swizzle = 0x6;
->>>> -     cfg->highest_bank_bit = 15;
->>>> +     /* Use common config as is for A8x */
->>>> +     if (!adreno_is_a8xx(gpu)) {
->>>> +             cfg->ubwc_swizzle = 0x6;
->>>> +             cfg->highest_bank_bit = 15;
->>>> +     }
->>>>
->>>>       if (adreno_is_a610(gpu)) {
->>>>               cfg->highest_bank_bit = 13;
->>>> @@ -818,7 +835,7 @@ static void a6xx_set_ubwc_config(struct msm_gpu *gpu)
->>>>                 cfg->macrotile_mode);
->>>>  }
->>>>
->>>> -static void a7xx_patch_pwrup_reglist(struct msm_gpu *gpu)
->>>> +void a7xx_patch_pwrup_reglist(struct msm_gpu *gpu)
->>>>  {
->>>>       struct adreno_gpu *adreno_gpu = to_adreno_gpu(gpu);
->>>>       struct a6xx_gpu *a6xx_gpu = to_a6xx_gpu(adreno_gpu);
->>>> @@ -868,7 +885,7 @@ static void a7xx_patch_pwrup_reglist(struct msm_gpu *gpu)
->>>>       lock->dynamic_list_len = 0;
->>>>  }
->>>>
->>>> -static int a7xx_preempt_start(struct msm_gpu *gpu)
->>>> +int a7xx_preempt_start(struct msm_gpu *gpu)
->>>>  {
->>>>       struct adreno_gpu *adreno_gpu = to_adreno_gpu(gpu);
->>>>       struct a6xx_gpu *a6xx_gpu = to_a6xx_gpu(adreno_gpu);
->>>> @@ -925,7 +942,7 @@ static int a6xx_cp_init(struct msm_gpu *gpu)
->>>>       return a6xx_idle(gpu, ring) ? 0 : -EINVAL;
->>>>  }
->>>>
->>>> -static int a7xx_cp_init(struct msm_gpu *gpu)
->>>> +int a7xx_cp_init(struct msm_gpu *gpu)
->>>>  {
->>>>       struct adreno_gpu *adreno_gpu = to_adreno_gpu(gpu);
->>>>       struct a6xx_gpu *a6xx_gpu = to_a6xx_gpu(adreno_gpu);
->>>> @@ -993,7 +1010,7 @@ static bool a6xx_ucode_check_version(struct a6xx_gpu *a6xx_gpu,
->>>>               return false;
->>>>
->>>>       /* A7xx is safe! */
->>>> -     if (adreno_is_a7xx(adreno_gpu) || adreno_is_a702(adreno_gpu))
->>>> +     if (adreno_is_a7xx(adreno_gpu) || adreno_is_a702(adreno_gpu) || adreno_is_a8xx(adreno_gpu))
->>>>               return true;
->>>>
->>>>       /*
->>>> @@ -2161,7 +2178,7 @@ void a6xx_bus_clear_pending_transactions(struct adreno_gpu *adreno_gpu, bool gx_
->>>>  void a6xx_gpu_sw_reset(struct msm_gpu *gpu, bool assert)
->>>>  {
->>>>       /* 11nm chips (e.g. ones with A610) have hw issues with the reset line! */
->>>> -     if (adreno_is_a610(to_adreno_gpu(gpu)))
->>>> +     if (adreno_is_a610(to_adreno_gpu(gpu)) || adreno_is_a8xx(to_adreno_gpu(gpu)))
->>>>               return;
->>>>
->>>>       gpu_write(gpu, REG_A6XX_RBBM_SW_RESET_CMD, assert);
->>>> @@ -2192,7 +2209,12 @@ static int a6xx_gmu_pm_resume(struct msm_gpu *gpu)
->>>>
->>>>       msm_devfreq_resume(gpu);
->>>>
->>>> -     adreno_is_a7xx(adreno_gpu) ? a7xx_llc_activate(a6xx_gpu) : a6xx_llc_activate(a6xx_gpu);
->>>> +     if (adreno_is_a8xx(adreno_gpu))
->>>> +             a8xx_llc_activate(a6xx_gpu);
->>>> +     else if (adreno_is_a7xx(adreno_gpu))
->>>> +             a7xx_llc_activate(a6xx_gpu);
->>>> +     else
->>>> +             a6xx_llc_activate(a6xx_gpu);
->>>>
->>>>       return ret;
->>>>  }
->>>> @@ -2561,10 +2583,8 @@ static struct msm_gpu *a6xx_gpu_init(struct drm_device *dev)
->>>>       adreno_gpu->base.hw_apriv =
->>>>               !!(config->info->quirks & ADRENO_QUIRK_HAS_HW_APRIV);
->>>>
->>>> -     /* gpu->info only gets assigned in adreno_gpu_init() */
->>>> -     is_a7xx = config->info->family == ADRENO_7XX_GEN1 ||
->>>> -               config->info->family == ADRENO_7XX_GEN2 ||
->>>> -               config->info->family == ADRENO_7XX_GEN3;
->>>> +     /* gpu->info only gets assigned in adreno_gpu_init(). A8x is included intentionally */
->>>> +     is_a7xx = config->info->family >= ADRENO_7XX_GEN1;
->>>
->>> Is A8xx also a part of is_a7xx? What about the A9XX which will come at
->>> some point in future?
+This allocation is only used if the task is scheduled out or interrupted
+by a softirq while using the FP/SIMD unit in kernel mode, and so it is
+possible to transparently allocate this buffer on the caller's stack
+instead.
 
-I think this is okay for now. I have a separate patch which reworks the 
-cx_mem initialization. That will completely remove the above ugliness.
+So tweak the 'ksimd' scoped guard implementation so that a stack buffer
+is allocated and passed to both kernel_neon_begin() and
+kernel_neon_end(), and record it in the task struct. Passing the address
+to both functions, and checking the addresses for consistency ensures
+that callers of the updated bare begin/end API use it in a manner that
+is consistent with the new context switch semantics.
 
- >>>
->>>>
->>>>       a6xx_llc_slices_init(pdev, a6xx_gpu, is_a7xx);
->>>>
->>>> +
->>>> +int a8xx_gpu_feature_probe(struct msm_gpu *gpu)
->>>> +{
->>>> +     struct adreno_gpu *adreno_gpu = to_adreno_gpu(gpu);
->>>> +     struct a6xx_gpu *a6xx_gpu = to_a6xx_gpu(adreno_gpu);
->>>> +     u32 fuse_val;
->>>> +     int ret;
->>>> +
->>>> +     /*
->>>> +      * Assume that if qcom scm isn't available, that whatever
->>>> +      * replacement allows writing the fuse register ourselves.
->>>> +      * Users of alternative firmware need to make sure this
->>>> +      * register is writeable or indicate that it's not somehow.
->>>> +      * Print a warning because if you mess this up you're about to
->>>> +      * crash horribly.
->>>> +      */
->>>> +     if (!qcom_scm_is_available()) {
->>>
->>> How can it be not available here?
+Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+---
+ arch/arm64/include/asm/neon.h      |  4 +--
+ arch/arm64/include/asm/processor.h |  2 +-
+ arch/arm64/include/asm/simd.h      |  7 ++--
+ arch/arm64/kernel/fpsimd.c         | 34 +++++++++++++-------
+ 4 files changed, 31 insertions(+), 16 deletions(-)
 
-Just in case someone loads Linux kernel in EL2.
-
->>>
->>>> +             dev_warn_once(gpu->dev->dev,
->>>> +                     "SCM is not available, poking fuse register\n");
->>>> +             a6xx_llc_write(a6xx_gpu, REG_A7XX_CX_MISC_SW_FUSE_VALUE,
->>>> +                     A7XX_CX_MISC_SW_FUSE_VALUE_RAYTRACING |
->>>> +                     A7XX_CX_MISC_SW_FUSE_VALUE_FASTBLEND |
->>>> +                     A7XX_CX_MISC_SW_FUSE_VALUE_LPAC);
->>>> +             adreno_gpu->has_ray_tracing = true;
->>>> +             return 0;
->>>> +     }
->>>> +
->>>> +     ret = qcom_scm_gpu_init_regs(QCOM_SCM_GPU_ALWAYS_EN_REQ |
->>>> +                                  QCOM_SCM_GPU_TSENSE_EN_REQ);
->>>> +     if (ret)
->>>> +             return ret;
->>>> +
->>>> +     /*
->>>> +      * On a750 raytracing may be disabled by the firmware, find out
->>>
->>> It's a8xx-related code, why do you have a750 in the comment?
->>
->> This is actually related to >= a750..  from a brief look it seems like
->> the whole fuse thing can be split into a helper and shared btwn
->> a7xx/a8xx?
-> 
-> It seems like we can just reuse a7xx_cx_mem_init() with maybe some
-> slight changes to the generation check instead of copying and pasting
-> it here.
-> 
-
-I forgot to squash this duplication. Yeah, we can reuse a7xx_cx_mem_init().
-
-> Connor
-> 
->>
->> BR,
->> -R
->>
->>>> +      * whether that's the case. The scm call above sets the fuse
->>>> +      * register.
->>>> +      */
->>>> +     fuse_val = a6xx_llc_read(a6xx_gpu,
->>>> +                              REG_A7XX_CX_MISC_SW_FUSE_VALUE);
->>>> +     adreno_gpu->has_ray_tracing =
->>>> +             !!(fuse_val & A7XX_CX_MISC_SW_FUSE_VALUE_RAYTRACING);
->>>> +
->>>> +     return 0;
->>>> +}
->>>> +
->>>> +
->>>> +#define GBIF_CLIENT_HALT_MASK                BIT(0)
->>>> +#define GBIF_ARB_HALT_MASK           BIT(1)
->>>> +#define VBIF_XIN_HALT_CTRL0_MASK     GENMASK(3, 0)
->>>> +#define VBIF_RESET_ACK_MASK          0xF0
->>>> +#define GPR0_GBIF_HALT_REQUEST               0x1E0
->>>> +
->>>> +void a8xx_bus_clear_pending_transactions(struct adreno_gpu *adreno_gpu, bool gx_off)
->>>> +{
->>>> +     struct msm_gpu *gpu = &adreno_gpu->base;
->>>> +
->>>> +     if (gx_off) {
->>>> +             /* Halt the gx side of GBIF */
->>>> +             gpu_write(gpu, REG_A8XX_RBBM_GBIF_HALT, 1);
->>>> +             spin_until(gpu_read(gpu, REG_A8XX_RBBM_GBIF_HALT_ACK) & 1);
->>>> +     }
->>>> +
->>>> +     /* Halt new client requests on GBIF */
->>>> +     gpu_write(gpu, REG_A6XX_GBIF_HALT, GBIF_CLIENT_HALT_MASK);
->>>> +     spin_until((gpu_read(gpu, REG_A6XX_GBIF_HALT_ACK) &
->>>> +                     (GBIF_CLIENT_HALT_MASK)) == GBIF_CLIENT_HALT_MASK);
->>>> +
->>>> +     /* Halt all AXI requests on GBIF */
->>>> +     gpu_write(gpu, REG_A6XX_GBIF_HALT, GBIF_ARB_HALT_MASK);
->>>> +     spin_until((gpu_read(gpu,  REG_A6XX_GBIF_HALT_ACK) &
->>>> +                     (GBIF_ARB_HALT_MASK)) == GBIF_ARB_HALT_MASK);
->>>> +
->>>> +     /* The GBIF halt needs to be explicitly cleared */
->>>> +     gpu_write(gpu, REG_A6XX_GBIF_HALT, 0x0);
->>>> +}
->>>> +
->>>> +int a8xx_gmu_get_timestamp(struct msm_gpu *gpu, uint64_t *value)
->>>> +{
->>>> +     struct adreno_gpu *adreno_gpu = to_adreno_gpu(gpu);
->>>> +     struct a6xx_gpu *a6xx_gpu = to_a6xx_gpu(adreno_gpu);
->>>> +
->>>> +     mutex_lock(&a6xx_gpu->gmu.lock);
->>>> +
->>>> +     /* Force the GPU power on so we can read this register */
->>>> +     a6xx_gmu_set_oob(&a6xx_gpu->gmu, GMU_OOB_PERFCOUNTER_SET);
->>>> +
->>>> +     *value = gpu_read64(gpu, REG_A8XX_CP_ALWAYS_ON_COUNTER);
->>>> +
->>>> +     a6xx_gmu_clear_oob(&a6xx_gpu->gmu, GMU_OOB_PERFCOUNTER_SET);
->>>> +
->>>> +     mutex_unlock(&a6xx_gpu->gmu.lock);
->>>> +
->>>> +     return 0;
->>>> +}
->>>> +
->>>> +u64 a8xx_gpu_busy(struct msm_gpu *gpu, unsigned long *out_sample_rate)
->>>> +{
->>>> +     struct adreno_gpu *adreno_gpu = to_adreno_gpu(gpu);
->>>> +     struct a6xx_gpu *a6xx_gpu = to_a6xx_gpu(adreno_gpu);
->>>> +     u64 busy_cycles;
->>>> +
->>>> +     /* 19.2MHz */
->>>> +     *out_sample_rate = 19200000;
->>>> +
->>>> +     busy_cycles = gmu_read64(&a6xx_gpu->gmu,
->>>> +                     REG_A8XX_GMU_CX_GMU_POWER_COUNTER_XOCLK_0_L,
->>>> +                     REG_A8XX_GMU_CX_GMU_POWER_COUNTER_XOCLK_0_H);
->>>> +
->>>> +     return busy_cycles;
->>>> +}
->>>> +
->>>> +bool a8xx_progress(struct msm_gpu *gpu, struct msm_ringbuffer *ring)
->>>> +{
->>>> +     return true;
->>>> +}
->>>> diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.h b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
->>>> index 9831401c3bc865b803c2f9759d5e2ffcd79d19f8..6a2157f31122ba0c2f2a7005c98e3e4f1ada6acc 100644
->>>> --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.h
->>>> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
->>>> @@ -90,6 +90,13 @@ struct adreno_reglist {
->>>>       u32 value;
->>>>  };
->>>>
->>>> +/* Reglist with pipe information */
->>>> +struct adreno_reglist_pipe {
->>>> +     u32 offset;
->>>> +     u32 value;
->>>> +     u32 pipe;
->>>> +};
->>>> +
->>>>  struct adreno_speedbin {
->>>>       uint16_t fuse;
->>>>       uint16_t speedbin;
->>>> diff --git a/drivers/gpu/drm/msm/registers/adreno/a6xx.xml b/drivers/gpu/drm/msm/registers/adreno/a6xx.xml
->>>> index ddde2e03b748f447b5e57571e2b04c68f8f2efc2..c3a202c8dce65d414c89bf76f1cb458b206b4eca 100644
->>>> --- a/drivers/gpu/drm/msm/registers/adreno/a6xx.xml
->>>> +++ b/drivers/gpu/drm/msm/registers/adreno/a6xx.xml
->>>> @@ -4876,7 +4876,6 @@ by a particular renderpass/blit.
->>>>  <domain name="A6XX_CX_MISC" width="32" prefix="variant" varset="chip">
->>>>       <reg32 offset="0x0001" name="SYSTEM_CACHE_CNTL_0"/>
->>>>       <reg32 offset="0x0002" name="SYSTEM_CACHE_CNTL_1"/>
->>>> -     <reg32 offset="0x0087" name="SLICE_ENABLE_FINAL" variants="A8XX-"/>
->>>
->>> Why?
-
-This chunk should be part of another patch. Will fix this. Thanks.
-
--Akhil
-
->>>>       <reg32 offset="0x0039" name="CX_MISC_TCM_RET_CNTL" variants="A7XX-"/>
->>>>       <reg32 offset="0x0087" name="CX_MISC_SLICE_ENABLE_FINAL" variants="A8XX"/>
->>>>       <reg32 offset="0x0400" name="CX_MISC_SW_FUSE_VALUE" variants="A7XX-">
->>>> diff --git a/drivers/gpu/drm/msm/registers/adreno/a6xx_gmu.xml b/drivers/gpu/drm/msm/registers/adreno/a6xx_gmu.xml
->>>> index 5dce7934056dd6472c368309b4894f0ed4a4d960..c4e00b1263cda65dce89c2f16860e5bf6f1c6244 100644
->>>> --- a/drivers/gpu/drm/msm/registers/adreno/a6xx_gmu.xml
->>>> +++ b/drivers/gpu/drm/msm/registers/adreno/a6xx_gmu.xml
->>>> @@ -60,6 +60,7 @@ xsi:schemaLocation="https://gitlab.freedesktop.org/freedreno/ rules-fd.xsd">
->>>>       <reg32 offset="0x1f400" name="GMU_ICACHE_CONFIG"/>
->>>>       <reg32 offset="0x1f401" name="GMU_DCACHE_CONFIG"/>
->>>>       <reg32 offset="0x1f40f" name="GMU_SYS_BUS_CONFIG"/>
->>>> +     <reg32 offset="0x1f50b" name="GMU_MRC_GBIF_QOS_CTRL"/>
->>>>       <reg32 offset="0x1f800" name="GMU_CM3_SYSRESET"/>
->>>>       <reg32 offset="0x1f801" name="GMU_CM3_BOOT_CONFIG"/>
->>>>       <reg32 offset="0x1f81a" name="GMU_CM3_FW_BUSY"/>
->>>>
->>>> --
->>>> 2.51.0
->>>>
->>>
->>> --
->>> With best wishes
->>> Dmitry
+diff --git a/arch/arm64/include/asm/neon.h b/arch/arm64/include/asm/neon.h
+index d4b1d172a79b..acebee4605b5 100644
+--- a/arch/arm64/include/asm/neon.h
++++ b/arch/arm64/include/asm/neon.h
+@@ -13,7 +13,7 @@
+ 
+ #define cpu_has_neon()		system_supports_fpsimd()
+ 
+-void kernel_neon_begin(void);
+-void kernel_neon_end(void);
++void kernel_neon_begin(struct user_fpsimd_state *);
++void kernel_neon_end(struct user_fpsimd_state *);
+ 
+ #endif /* ! __ASM_NEON_H */
+diff --git a/arch/arm64/include/asm/processor.h b/arch/arm64/include/asm/processor.h
+index 4f8d677b73ee..93bca4d454d7 100644
+--- a/arch/arm64/include/asm/processor.h
++++ b/arch/arm64/include/asm/processor.h
+@@ -172,7 +172,7 @@ struct thread_struct {
+ 	unsigned long		fault_code;	/* ESR_EL1 value */
+ 	struct debug_info	debug;		/* debugging */
+ 
+-	struct user_fpsimd_state	kernel_fpsimd_state;
++	struct user_fpsimd_state	*kernel_fpsimd_state;
+ 	unsigned int			kernel_fpsimd_cpu;
+ #ifdef CONFIG_ARM64_PTR_AUTH
+ 	struct ptrauth_keys_user	keys_user;
+diff --git a/arch/arm64/include/asm/simd.h b/arch/arm64/include/asm/simd.h
+index d9f83c478736..7ddb25df5c98 100644
+--- a/arch/arm64/include/asm/simd.h
++++ b/arch/arm64/include/asm/simd.h
+@@ -43,8 +43,11 @@ static __must_check inline bool may_use_simd(void) {
+ 
+ #endif /* ! CONFIG_KERNEL_MODE_NEON */
+ 
+-DEFINE_LOCK_GUARD_0(ksimd, kernel_neon_begin(), kernel_neon_end())
++DEFINE_LOCK_GUARD_1(ksimd,
++		    struct user_fpsimd_state,
++		    kernel_neon_begin(_T->lock),
++		    kernel_neon_end(_T->lock))
+ 
+-#define scoped_ksimd()	scoped_guard(ksimd)
++#define scoped_ksimd()	scoped_guard(ksimd, &(struct user_fpsimd_state){})
+ 
+ #endif
+diff --git a/arch/arm64/kernel/fpsimd.c b/arch/arm64/kernel/fpsimd.c
+index c37f02d7194e..ea9192a180aa 100644
+--- a/arch/arm64/kernel/fpsimd.c
++++ b/arch/arm64/kernel/fpsimd.c
+@@ -1488,21 +1488,23 @@ static void fpsimd_load_kernel_state(struct task_struct *task)
+ 	 * Elide the load if this CPU holds the most recent kernel mode
+ 	 * FPSIMD context of the current task.
+ 	 */
+-	if (last->st == &task->thread.kernel_fpsimd_state &&
++	if (last->st == task->thread.kernel_fpsimd_state &&
+ 	    task->thread.kernel_fpsimd_cpu == smp_processor_id())
+ 		return;
+ 
+-	fpsimd_load_state(&task->thread.kernel_fpsimd_state);
++	fpsimd_load_state(task->thread.kernel_fpsimd_state);
+ }
+ 
+ static void fpsimd_save_kernel_state(struct task_struct *task)
+ {
+ 	struct cpu_fp_state cpu_fp_state = {
+-		.st		= &task->thread.kernel_fpsimd_state,
++		.st		= task->thread.kernel_fpsimd_state,
+ 		.to_save	= FP_STATE_FPSIMD,
+ 	};
+ 
+-	fpsimd_save_state(&task->thread.kernel_fpsimd_state);
++	BUG_ON(!cpu_fp_state.st);
++
++	fpsimd_save_state(task->thread.kernel_fpsimd_state);
+ 	fpsimd_bind_state_to_cpu(&cpu_fp_state);
+ 
+ 	task->thread.kernel_fpsimd_cpu = smp_processor_id();
+@@ -1773,6 +1775,7 @@ void fpsimd_update_current_state(struct user_fpsimd_state const *state)
+ void fpsimd_flush_task_state(struct task_struct *t)
+ {
+ 	t->thread.fpsimd_cpu = NR_CPUS;
++	t->thread.kernel_fpsimd_state = NULL;
+ 	/*
+ 	 * If we don't support fpsimd, bail out after we have
+ 	 * reset the fpsimd_cpu for this task and clear the
+@@ -1833,7 +1836,7 @@ void fpsimd_save_and_flush_cpu_state(void)
+  * The caller may freely use the FPSIMD registers until kernel_neon_end() is
+  * called.
+  */
+-void kernel_neon_begin(void)
++void kernel_neon_begin(struct user_fpsimd_state *s)
+ {
+ 	if (WARN_ON(!system_supports_fpsimd()))
+ 		return;
+@@ -1866,8 +1869,16 @@ void kernel_neon_begin(void)
+ 		 * mode in task context. So in this case, setting the flag here
+ 		 * is always appropriate.
+ 		 */
+-		if (IS_ENABLED(CONFIG_PREEMPT_RT) || !in_serving_softirq())
++		if (IS_ENABLED(CONFIG_PREEMPT_RT) || !in_serving_softirq()) {
++			/*
++			 * Record the caller provided buffer as the kernel mode
++			 * FP/SIMD buffer for this task, so that the state can
++			 * be preserved and restored on a context switch.
++			 */
++			if (cmpxchg(&current->thread.kernel_fpsimd_state, NULL, s))
++				BUG();
+ 			set_thread_flag(TIF_KERNEL_FPSTATE);
++		}
+ 	}
+ 
+ 	/* Invalidate any task state remaining in the fpsimd regs: */
+@@ -1886,7 +1897,7 @@ EXPORT_SYMBOL_GPL(kernel_neon_begin);
+  * The caller must not use the FPSIMD registers after this function is called,
+  * unless kernel_neon_begin() is called again in the meantime.
+  */
+-void kernel_neon_end(void)
++void kernel_neon_end(struct user_fpsimd_state *s)
+ {
+ 	if (!system_supports_fpsimd())
+ 		return;
+@@ -1899,8 +1910,9 @@ void kernel_neon_end(void)
+ 	if (!IS_ENABLED(CONFIG_PREEMPT_RT) && in_serving_softirq() &&
+ 	    test_thread_flag(TIF_KERNEL_FPSTATE))
+ 		fpsimd_load_kernel_state(current);
+-	else
+-		clear_thread_flag(TIF_KERNEL_FPSTATE);
++	else if (test_and_clear_thread_flag(TIF_KERNEL_FPSTATE))
++		if (cmpxchg(&current->thread.kernel_fpsimd_state, s, NULL) != s)
++			BUG();
+ }
+ EXPORT_SYMBOL_GPL(kernel_neon_end);
+ 
+@@ -1936,7 +1948,7 @@ void __efi_fpsimd_begin(void)
+ 	WARN_ON(preemptible());
+ 
+ 	if (may_use_simd()) {
+-		kernel_neon_begin();
++		kernel_neon_begin(&efi_fpsimd_state);
+ 	} else {
+ 		/*
+ 		 * If !efi_sve_state, SVE can't be in use yet and doesn't need
+@@ -1985,7 +1997,7 @@ void __efi_fpsimd_end(void)
+ 		return;
+ 
+ 	if (!efi_fpsimd_state_used) {
+-		kernel_neon_end();
++		kernel_neon_end(&efi_fpsimd_state);
+ 	} else {
+ 		if (system_supports_sve() && efi_sve_state_used) {
+ 			bool ffr = true;
+-- 
+2.51.0.618.g983fd99d29-goog
 
 
