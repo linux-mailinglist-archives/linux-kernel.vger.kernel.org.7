@@ -1,105 +1,158 @@
-Return-Path: <linux-kernel+bounces-838464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9958ABAF393
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 08:22:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACD9FBAF399
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 08:23:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5455E3C6767
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 06:22:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D2423C80A8
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 06:23:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AC882D6605;
-	Wed,  1 Oct 2025 06:22:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CZaVY9S4"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 530C62D7D42;
+	Wed,  1 Oct 2025 06:23:11 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E19417A305
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 06:22:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 553551547CC;
+	Wed,  1 Oct 2025 06:23:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759299766; cv=none; b=MwrH07izNCO/G4MNP70mbiPMbmt3mkTPI7mQvLr4Paw2O4Wjc4UdHI0AHo79FhqvXQdlhBrKq3xTNLAWs5NlcjN6jcB8BzbonfAz45O7390F2+z6j4NV2XOv8A/wKj4ZbVPJBod9nB3ySlbA/+o7p6jzBNs5DHOJ5hcyhSjHwlg=
+	t=1759299790; cv=none; b=RWwmDCNfSX9x4COBDpRFuanAovxUVVyv054pWZN3CeHtrj3/j8eNRm5ftRHG4yKrJqulK6Bql97fPhKycZMlDgAEIrA7Nw/wppkvbFCiK0B48xoVExc0/vDf8gOBemxrWXGG8pG4+3pHwHQigBK7M8oayB5sanDMyD7ZN3iHtzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759299766; c=relaxed/simple;
-	bh=Jkzbo1gBTocRzXpJgz6IdpcssNc9wqVP/s/XEKzd86U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WxZcvSRHg+qrrYt11VCUy0xiggspDAoTMtCG0C4yfU+CVFWR9THZnUM9hmoe4QewowGhrxCZ3Rhr6ydrVZkNi4pyCosheMIeCmdx2eSgqKgwmVoN6LDmNLq2npJXXTp9zOQkIH3OVedGgp7pJu1MCDvvEvVsx/Ur8hrbOznWq9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CZaVY9S4; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-57e36125e8aso6354813e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 23:22:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759299762; x=1759904562; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Jkzbo1gBTocRzXpJgz6IdpcssNc9wqVP/s/XEKzd86U=;
-        b=CZaVY9S4oSydABjyp+Ci5j9z9JeXtil1JpfPMndBo0Vv1puuRJIcgFW86eowoh0y/B
-         /ymCIbbKbhXFAZbC/CyHArIhqDMEEXwKxoByiDYRxn32Tfb/T2/sBN5DGWbjM1UYrkoF
-         3hpg3iCuGsms3zVGm8FwTaMKTw/UZSm3pU2pyKJeeM0O7F/g36iwDdFMuwigqAAnqb61
-         3oqY7IZfRYyWU3GH/zTnl3v5v/bw/zKHGVVlLwAakIMkvCkifxsvKwrLnWBRR7NOoRjQ
-         qldOZXcG1p1qDoYPh1/XTrYnp2189iFyF8zeegRC+F18IhnNRkk4BD751IT702CV6CaK
-         C4tA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759299762; x=1759904562;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Jkzbo1gBTocRzXpJgz6IdpcssNc9wqVP/s/XEKzd86U=;
-        b=hWNkgjkvgPNnSxrJC/qBbcJ7Fk11t+A/LKWU5IrSL3tzvxFFuQZfGbXKtwnQbxLBU/
-         oiddyXFkaJTwAV9DdY2I0DuERcTiDLAVW1y89O+q1myN9QCks9N/jl5mG52T2sgtjwus
-         Hjd3spDbdj2SknB8qt/AYdSQhyb8QSwHQO6l+vXbA1KvRsOttw1BwrD8DRcozDgkwHWJ
-         tGE93LeucLEkg9F/Are3BAnLeNEJ5PiViNbzc+FuGLoCGBcEiXCskhLIuYYKFZPMtJKu
-         WSt//sIgSGju3WpE/OBDOm5xP5vsjstRP7DEz1RMFY+/r5d3yPu8YGZpJni/7U02hAqg
-         pEpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU0NCTHICIhJRY1Ieuxygjxl4dhdcx1WTq+XD7/qeDOBMfQMtWlPTzYWBDmmPs2oYoDpdT2UIDfvCqL7oE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOE7xXnrngKQ+XUiOQo4n0h+clCSwvPKIfmhRtbEe7cwz9sIIr
-	gMflr+IIMrlgjcaOsA2TLxYIoe57PLwPY8ptHQm245GYao+hd43pGqTkwuX95Htwx8FrvlQ/U5h
-	7sxzhtuvBxcEkzCfVn4tqOAxq+vrxF1isDa3JatONmA==
-X-Gm-Gg: ASbGncv5YMuabtgU6ofMs/OywV1Yt0cnEwvjtpNweTI2TF6v52qrRvvxhaQkPxLKboN
-	WmVSGiVctfbD7zumz1kmtbwvgynk6Dtabr2ImdKsH4HKU9mbteEhb5B9yC67ipOpOQ8bKmcB+KE
-	V62smkIBLARBdYMW4XSxC3XeDUbAKGeLOKRk7z64WGRpDURP92b8gvDqhdVpiWx9ITobyi4Pbi8
-	iVyaIfeekeMZT/5WEVhBc8Ns9Q6dQg=
-X-Google-Smtp-Source: AGHT+IFDxYob5oKkyC+td6gReKhRgBQ0qAzJ2bKwhcp2a+hxMNqK3eKLU5W8xv4pJwFlU3vH+EYVG2LSKSjXnLZrsrk=
-X-Received: by 2002:a05:6512:31cd:b0:579:f0fc:429f with SMTP id
- 2adb3069b0e04-58af9f7562bmr691627e87.49.1759299761748; Tue, 30 Sep 2025
- 23:22:41 -0700 (PDT)
+	s=arc-20240116; t=1759299790; c=relaxed/simple;
+	bh=XWiTnvz4Y+70vsPTxHbzlRhkz9uhp4rhanDjXsmK0jE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ly3GzY87epyw0BWcWU+Ii6X3SSTQZCw1culPMdok2TgdITSOcCMc5fPkeHRVVN9smdiEyEaCKKVaEbDrf98OLiAeYKsRT9EO+P1HIVCu1u0UEPEhjWOYJPS2NWOw2yxzi13KGsnyhK3s9GG8cMMCrl+S52uzadwXD1lBgWpJf08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.2.212] (p57bd9782.dip0.t-ipconnect.de [87.189.151.130])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id CBA3D6028F357;
+	Wed, 01 Oct 2025 08:22:38 +0200 (CEST)
+Message-ID: <73fdb56c-df62-4576-8602-fb330cac0dd7@molgen.mpg.de>
+Date: Wed, 1 Oct 2025 08:22:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250917-gpio-generic-flags-v1-0-69f51fee8c89@linaro.org> <20250917-gpio-generic-flags-v1-2-69f51fee8c89@linaro.org>
-In-Reply-To: <20250917-gpio-generic-flags-v1-2-69f51fee8c89@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 1 Oct 2025 08:22:28 +0200
-X-Gm-Features: AS18NWArlnL3SWUPzr0b7NRywCYEVXigtEYCqqstGC-_Umyd9moG7bazfHNJA2A
-Message-ID: <CACRpkdYHcTcMXB7Z=4mNjXuj5N8fRQXA1CGSgoTjVRuAw8+Ovw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] gpio: generic: move GPIO_GENERIC_ flags to the
- correct header
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH ath-next] wifi: ath10k: avoid unnecessary wait for service
+ ready message
+To: Baochen Qiang <baochen.qiang@oss.qualcomm.com>,
+ Jeff Johnson <jjohnson@kernel.org>, Kalle Valo <kvalo@kernel.org>,
+ Baochen Qiang <quic_bqiang@quicinc.com>
+Cc: Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+ linux-wireless@vger.kernel.org, ath10k@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250811-ath10k-avoid-unnecessary-wait-v1-1-db2deb87c39b@oss.qualcomm.com>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20250811-ath10k-avoid-unnecessary-wait-v1-1-db2deb87c39b@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 17, 2025 at 10:54=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl=
-> wrote:
+Dear Baochen,
 
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
-> These flags are specific to gpio-mmio and belong in linux/gpio/generic.h
-> so move them there.
->
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Thank you for your patch, and sorry for the late reply.
 
-Yours,
-Linus Walleij
+
+Am 11.08.25 um 11:26 schrieb Baochen Qiang:
+> Commit e57b7d62a1b2 ("wifi: ath10k: poll service ready message before
+> failing") works around the failure in waiting for the service ready
+> message by active polling. Note the polling is triggered after initial
+> wait timeout, which means that the wait-till-timeout can not be avoided
+> even the message is ready.
+> 
+> A possible fix is to do polling once before wait as well, however this
+> can not handle the race that the message arrives right after polling.
+> So the solution is to do periodic polling until timeout.
+> 
+> Tested-on: QCA6174 hw3.2 PCI WLAN.RM.4.4.1-00309-QCARMSWPZ-1
+> 
+> Fixes: e57b7d62a1b2 ("wifi: ath10k: poll service ready message before failing")
+> Reported-by: Paul Menzel <pmenzel@molgen.mpg.de>
+> Closes: https://lore.kernel.org/all/97a15967-5518-4731-a8ff-d43ff7f437b0@molgen.mpg.de
+> Signed-off-by: Baochen Qiang <baochen.qiang@oss.qualcomm.com>
+> ---
+>   drivers/net/wireless/ath/ath10k/wmi.c | 39 +++++++++++++++++------------------
+>   1 file changed, 19 insertions(+), 20 deletions(-)
+> 
+> diff --git a/drivers/net/wireless/ath/ath10k/wmi.c b/drivers/net/wireless/ath/ath10k/wmi.c
+> index cb8ae751eb312109f74985580065c3b9d3806d51..e595b0979a56d3110ce0acf534e718a4a1f36a0b 100644
+> --- a/drivers/net/wireless/ath/ath10k/wmi.c
+> +++ b/drivers/net/wireless/ath/ath10k/wmi.c
+> @@ -1764,33 +1764,32 @@ void ath10k_wmi_put_wmi_channel(struct ath10k *ar, struct wmi_channel *ch,
+>   
+>   int ath10k_wmi_wait_for_service_ready(struct ath10k *ar)
+>   {
+> +	unsigned long timeout = jiffies + WMI_SERVICE_READY_TIMEOUT_HZ;
+>   	unsigned long time_left, i;
+>   
+> -	time_left = wait_for_completion_timeout(&ar->wmi.service_ready,
+> -						WMI_SERVICE_READY_TIMEOUT_HZ);
+> -	if (!time_left) {
+> -		/* Sometimes the PCI HIF doesn't receive interrupt
+> -		 * for the service ready message even if the buffer
+> -		 * was completed. PCIe sniffer shows that it's
+> -		 * because the corresponding CE ring doesn't fires
+> -		 * it. Workaround here by polling CE rings once.
+> -		 */
+> -		ath10k_warn(ar, "failed to receive service ready completion, polling..\n");
+> -
+> +	/* Sometimes the PCI HIF doesn't receive interrupt
+> +	 * for the service ready message even if the buffer
+> +	 * was completed. PCIe sniffer shows that it's
+> +	 * because the corresponding CE ring doesn't fires
+> +	 * it. Workaround here by polling CE rings. Since
+> +	 * the message could arrive at any time, continue
+> +	 * polling until timeout.
+
+I would have also re-flowed the comment to make it take up less lines.
+
+> +	 */
+> +	do {
+>   		for (i = 0; i < CE_COUNT; i++)
+>   			ath10k_hif_send_complete_check(ar, i, 1);
+>   
+> +		/* The 100 ms granularity is a tradeoff considering scheduler
+> +		 * overhead and response latency
+> +		 */
+>   		time_left = wait_for_completion_timeout(&ar->wmi.service_ready,
+> -							WMI_SERVICE_READY_TIMEOUT_HZ);
+> -		if (!time_left) {
+> -			ath10k_warn(ar, "polling timed out\n");
+> -			return -ETIMEDOUT;
+> -		}
+> -
+> -		ath10k_warn(ar, "service ready completion received, continuing normally\n");
+> -	}
+> +							msecs_to_jiffies(100));
+> +		if (time_left)
+> +			return 0;
+> +	} while (time_before(jiffies, timeout));
+>   
+> -	return 0;
+> +	ath10k_warn(ar, "failed to receive service ready completion\n");
+> +	return -ETIMEDOUT;
+>   }
+>   
+>   int ath10k_wmi_wait_for_unified_ready(struct ath10k *ar)
+
+Great to have this improved upstream!
+
+Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
+
+
+Kind regards,
+
+Paul
 
