@@ -1,284 +1,144 @@
-Return-Path: <linux-kernel+bounces-838480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80D93BAF46E
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 08:45:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2859BAF477
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 08:45:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 346E73A8ADD
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 06:45:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73DDF2A1CF9
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 06:45:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D51B61E0DFE;
-	Wed,  1 Oct 2025 06:45:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E67AF238D32;
+	Wed,  1 Oct 2025 06:45:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="aUZkunx5";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="T6/tIUcI";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="bTFuO2ap";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="KP33YJWM"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MNWtR0hK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FDC217A309
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 06:45:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EC9F1E51D;
+	Wed,  1 Oct 2025 06:45:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759301121; cv=none; b=X0M4MnscRbz3RiPWxq9bAb4iAbMO3EXhjOnWK/lMAs9Z3ln3StmuZU7qL4H1YaQJud/YUdtznz18USgVHXMNrDc7kU1nSy5MvKj8Pxp3R6sgoB/INahvmzyzXZx3ESVY8Pj5zablbjOGoBk0YZVpAKcQkDKFs+Cl2IF/8i4JjSs=
+	t=1759301146; cv=none; b=ZpxF4Dqe5ztzEUcjxRW7/pU1mg+FD8AFKIcc+Snn3lXdOob9CH/ZWrfBlGOLFSThEF+Xy2nWMCYA8s4eAFeRjjGzeINj4k1WYoNMlzAe+46Cbazru52SXojI8/UdmGpwL3l3IxCe8mz8gkoOqhTO0erpgUQ48+uWCZBbFIqhlu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759301121; c=relaxed/simple;
-	bh=VxUm68KnN3zve6Y7r2MoaVHxMdaOwTiutr/1eLOAZ6c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=be3cs+2puTd1PsD/7QJkkdH6rDpQKfgM4Dj76u+up7qSgW+CQQjoxvGiD8pUdJDMeVqP8rinFf2eEWEvlYI15hRMB53b3ePwsqYK56sEzSHP9N3I6z20t54s7L4SCQbPH+qWWMmTFSuN1ObTaQcjBznC6Bc/o/y81Hv56Uk+gLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=aUZkunx5; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=T6/tIUcI; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=bTFuO2ap; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=KP33YJWM; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id D47A533777;
-	Wed,  1 Oct 2025 06:45:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1759301111; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=3PUW0GlmkITYxestkhaDP2QY5zJfTZgpkkxNAnVT6jw=;
-	b=aUZkunx5mDUXFOlN1mJVKwdPQ+wh0GesC1xVPPwI1IJQ9bK5oBN7Q4ry0g86ln4GnxL+7f
-	GzVAR1JeEj1beIucY9HD2M0E3F1vpIgxXQedLvbQ3+be7kHTAsvhreTtPyPk5NNjxnJORN
-	rXs63xs2cJeWZoUYJgXzMdPgHj7GPU4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1759301111;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=3PUW0GlmkITYxestkhaDP2QY5zJfTZgpkkxNAnVT6jw=;
-	b=T6/tIUcIYtTeVx41yEYdrJgLRBcRQ8EIIPdUZer1jiPJCn4XWMIVf0RVmnADq3HHB/he80
-	hofD6XCfuOsdKjBw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=bTFuO2ap;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=KP33YJWM
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1759301110; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=3PUW0GlmkITYxestkhaDP2QY5zJfTZgpkkxNAnVT6jw=;
-	b=bTFuO2apah1VMvPzz0pLOMyctDvBe/cC7423V6MekBaObevQjDWX4ufFHJE8tlzqnRuD1c
-	a6+a2/qO3fwxgnvrnTK1GMa9Mm4u9XF+KQ8Le/X16vcq9a281Id5AJb4g3ZnJRQLUwL9iB
-	M9p7BKyw01WAKrnX26/7zV/1WMBG3a4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1759301110;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=3PUW0GlmkITYxestkhaDP2QY5zJfTZgpkkxNAnVT6jw=;
-	b=KP33YJWMHNcXzO7iCGx9srRd13SA2JRXlkhzWg9aoR5Dymsj71sKje1AnaW1kij7qobscH
-	hhaF2nd8LFmnMcBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5C66313A3F;
-	Wed,  1 Oct 2025 06:45:10 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id NbbPFPbN3Gh5EAAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Wed, 01 Oct 2025 06:45:10 +0000
-Message-ID: <bfacbd41-48c6-4123-9fdd-3d82eb682673@suse.de>
-Date: Wed, 1 Oct 2025 08:45:09 +0200
+	s=arc-20240116; t=1759301146; c=relaxed/simple;
+	bh=S3BBcYbHKl5+u2lBNg/DeL95jsSme/g+zCYH0vYca60=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PcX5opF51cxLCkIpg0YaFM4a5DRv0L+0h2mBaPJT/FX2MeusKYIb7gju4dv4jeI9JahgvxVr2i5bLByT5IJXpBKkbtGWFz8bNlvAZx3pWTOzb/t3TGDZps7mod1fJQ5DvXMyqzkGo7wflyFROcVHO0yhSZKXtx7gIVAj82I6yXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MNWtR0hK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47337C4CEF4;
+	Wed,  1 Oct 2025 06:45:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759301145;
+	bh=S3BBcYbHKl5+u2lBNg/DeL95jsSme/g+zCYH0vYca60=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MNWtR0hK0BKb5ys12O9iBwDqIe/9D/MRS8XILtSLBld4BKn96AYg9gZUoY7d+gXX0
+	 BF3pl2RDK3wb1/4WKglQrsRuITwRH3z540jXc1xaZMjfIuixbbVtxF+fRNozrccOKJ
+	 mD+0pn+G5Jf8EVGMX3dtDgT+QfAKe3dYgwgEOinrKV3KeFfdxlbTaHR5H8vCHuRfcC
+	 ZAoVS0yacqrtKEX49FzIVu8fBcuarS2wKdB9Y8wfNGLNQpiIZNoUuOLKNWcBDIHYo5
+	 zmGi76LH/Ycx8d+YJIOLjFnEvmF3om04yRrFoSwtjWftkIwxq8Kf+CEkPYGx8Dm1gL
+	 bwRdoO2nyuJxw==
+Date: Wed, 1 Oct 2025 08:45:40 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Askar Safin <safinaskar@gmail.com>
+Cc: cyphar@cyphar.com, brauner@kernel.org, dhowells@redhat.com, 
+	g.branden.robinson@gmail.com, jack@suse.cz, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-man@vger.kernel.org, 
+	mtk.manpages@gmail.com, viro@zeniv.linux.org.uk
+Subject: Re: [PATCH v5 7/8] man/man2/open_tree{,_attr}.2: document new
+ open_tree_attr() API
+Message-ID: <ugko3x7tuqrmbyb326aw3dvtvmdozvtps6hc6ff3lmtsijoube@aem2acyk6t2q>
+References: <20250925-new-mount-api-v5-7-028fb88023f2@cyphar.com>
+ <20251001003841.510494-1-safinaskar@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 05/29] drm/atomic_state_helper: Fix bridge state
- initialization
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Jyri Sarha <jyri.sarha@iki.fi>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Devarsh Thakkar <devarsht@ti.com>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20250902-drm-state-readout-v1-0-14ad5315da3f@kernel.org>
- <20250902-drm-state-readout-v1-5-14ad5315da3f@kernel.org>
- <9f17dfd9-a4d4-41e9-b988-bd8ca858e5e7@suse.de>
- <20250915-heavenly-athletic-lionfish-aa7b8b@penduick>
- <9520bcb5-df81-452c-902a-0c4c61156716@suse.de>
- <20250923-dynamic-bumblebee-of-luck-d31a19@penduick>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20250923-dynamic-bumblebee-of-luck-d31a19@penduick>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: D47A533777
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[linux.intel.com,gmail.com,ffwll.ch,intel.com,linaro.org,kernel.org,ideasonboard.com,kwiboo.se,iki.fi,ti.com,lists.freedesktop.org,vger.kernel.org];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid]
-X-Spam-Score: -3.01
-
-Hi
-
-Am 23.09.25 um 11:33 schrieb Maxime Ripard:
-> On Mon, Sep 15, 2025 at 03:12:11PM +0200, Thomas Zimmermann wrote:
->> Hi
->>
->> Am 15.09.25 um 13:27 schrieb Maxime Ripard:
->>> On Tue, Sep 02, 2025 at 03:18:17PM +0200, Thomas Zimmermann wrote:
->>>> Hi
->>>>
->>>> Am 02.09.25 um 10:32 schrieb Maxime Ripard:
->>>>> Bridges implement their state using a drm_private_obj and an
->>>>> hand-crafted reset implementation.
->>>>>
->>>>> Since drm_private_obj doesn't have a set of reset helper like the other
->>>>> states, __drm_atomic_helper_bridge_reset() was initializing both the
->>>>> drm_private_state and the drm_bridge_state structures.
->>>>>
->>>>> This initialization however was missing the drm_private_state.obj
->>>>> pointer to the drm_private_obj the state was allocated for, creating a
->>>>> NULL pointer dereference when trying to access it.
->>>>>
->>>>> Fixes: 751465913f04 ("drm/bridge: Add a drm_bridge_state object")
->>>>> Signed-off-by: Maxime Ripard <mripard@kernel.org>
->>>>> ---
->>>>>     drivers/gpu/drm/drm_atomic_state_helper.c | 8 ++++++++
->>>>>     1 file changed, 8 insertions(+)
->>>>>
->>>>> diff --git a/drivers/gpu/drm/drm_atomic_state_helper.c b/drivers/gpu/drm/drm_atomic_state_helper.c
->>>>> index 7142e163e618ea0d7d9d828e1bd9ff2a6ec0dfeb..b962c342b16aabf4e3bea52a914e5deb1c2080ce 100644
->>>>> --- a/drivers/gpu/drm/drm_atomic_state_helper.c
->>>>> +++ b/drivers/gpu/drm/drm_atomic_state_helper.c
->>>>> @@ -707,10 +707,17 @@ void drm_atomic_helper_connector_destroy_state(struct drm_connector *connector,
->>>>>     	__drm_atomic_helper_connector_destroy_state(state);
->>>>>     	kfree(state);
->>>>>     }
->>>>>     EXPORT_SYMBOL(drm_atomic_helper_connector_destroy_state);
->>>>> +static void __drm_atomic_helper_private_obj_reset(struct drm_private_obj *obj,
->>>>> +						  struct drm_private_state *state)
->>>>> +{
->>>>> +	memset(state, 0, sizeof(*state));
->>>> This argument is guaranteed to be zero'd, I think. No need for a memset.
->>>>
->>>>> +	state->obj = obj;
->>>>> +}
->>>>> +
->>>>>     /**
->>>>>      * __drm_atomic_helper_private_obj_duplicate_state - copy atomic private state
->>>>>      * @obj: CRTC object
->>>>>      * @state: new private object state
->>>>>      *
->>>>> @@ -796,10 +803,11 @@ EXPORT_SYMBOL(drm_atomic_helper_bridge_destroy_state);
->>>>>      */
->>>>>     void __drm_atomic_helper_bridge_reset(struct drm_bridge *bridge,
->>>>>     				      struct drm_bridge_state *state)
->>>>>     {
->>>>>     	memset(state, 0, sizeof(*state));
->>>> Another unnecessary memset?
->>> I guess the two can be seen as redundant, but I'd argue the one in
->>> __drm_atomic_helper_private_obj_reset should still be there.
->>>
->>> What guarantees that the pointer points to a zero'd structure?
->> We only call this helper after allocation AFAICT. And the DRM APIs already
->> assume that allocation clears to zero.
-> Really? Do we have that documented anywhere?
-
-I don't think it's documented anywhere, but that's what Sima told me 
-when I tried to write similar code. The rule was to alloc zero'd memory 
-and than have init functions only set what is necessary, but keep others 
-to zero. I think it can be seen in certain places, where drivers set a 
-variety of flags or fields before calling an init helper. Creating a GEM 
-object from shmem is an example. [1]
-
-[1] 
-https://elixir.bootlin.com/linux/v6.17/source/drivers/gpu/drm/drm_gem_shmem_helper.c#L52
-
-Best regards
-Thomas
-
->
-> And even then, there's nothing that requires that helper to be called
-> straight-away after allocation.
->
-> More importantly, do we really care about skipping them? Like, all the
-> other reset helpers are doing it, it's cheap, safe, why should we remove
-> it?
->
-> Maxime
-
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="xmhs745kvpjmwrei"
+Content-Disposition: inline
+In-Reply-To: <20251001003841.510494-1-safinaskar@gmail.com>
 
 
+--xmhs745kvpjmwrei
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: Askar Safin <safinaskar@gmail.com>
+Cc: cyphar@cyphar.com, brauner@kernel.org, dhowells@redhat.com, 
+	g.branden.robinson@gmail.com, jack@suse.cz, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-man@vger.kernel.org, 
+	mtk.manpages@gmail.com, viro@zeniv.linux.org.uk
+Subject: Re: [PATCH v5 7/8] man/man2/open_tree{,_attr}.2: document new
+ open_tree_attr() API
+Message-ID: <ugko3x7tuqrmbyb326aw3dvtvmdozvtps6hc6ff3lmtsijoube@aem2acyk6t2q>
+References: <20250925-new-mount-api-v5-7-028fb88023f2@cyphar.com>
+ <20251001003841.510494-1-safinaskar@gmail.com>
+MIME-Version: 1.0
+In-Reply-To: <20251001003841.510494-1-safinaskar@gmail.com>
+
+Hi Askar,
+
+On Wed, Oct 01, 2025 at 03:38:41AM +0300, Askar Safin wrote:
+> Aleksa Sarai <cyphar@cyphar.com>:
+> > +mntfd2 =3D open_tree(mntfd1, "", OPEN_TREE_CLONE,
+> > +                   &attr, sizeof(attr));
+>=20
+> Your whole so-called "open_tree_attr example" doesn't contain any open_tr=
+ee_attr
+> calls. :)
+>=20
+> I think you meant open_tree_attr here.
+
+I'll wait for Aleksa to confirm before applying and amending.
+
+> > +\&
+> > +/* Create a new copy with the id-mapping cleared */
+> > +memset(&attr, 0, sizeof(attr));
+> > +attr.attr_clr =3D MOUNT_ATTR_IDMAP;
+> > +mntfd3 =3D open_tree(mntfd1, "", OPEN_TREE_CLONE,
+> > +                   &attr, sizeof(attr));
+>=20
+> And here.
+>=20
+> Otherwise your whole patchset looks good. Add to whole patchset:
+> Reviewed-by: Askar Safin <safinaskar@gmail.com>
+
+Thanks!  I'll retro-fit that to the commits I've aplied already too, as
+I haven't pushed them to master yet.
+
+
+Have a lovely day!
+Alex
+
+--=20
+<https://www.alejandro-colomar.es>
+Use port 80 (that is, <...:80/>).
+
+--xmhs745kvpjmwrei
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmjczg0ACgkQ64mZXMKQ
+wqkQOxAAhBW2r6vgnhWSIcUgonkPBEki5gwvsq/37mKGIdH8p/5DDSaD/1165e62
+WnB/LE5dv+m6Qs79kKzswijiXv1sHyr3MmzDUhwq8P73+DrHbVJgKLBoFZIv8j+E
+YGbN7ZWT+/JbbpO3/tfoHRvfKZ4mbl5GXpu2VZBgD03+tAW1nzDrmoUwfscVgnGI
+USH40XEEAt1+OVwwHBWXyi+S/Pqml/RRmlKH3WXFVwnI+NoUHKKg6OYX7fKMuvr0
+HM2XZiemIrGuDHuXr1GA+U+dIVHQTk/6bFiad35lqAHwXWaZ6FodFF8+aUCOd06K
+Ao4Ay2foi9nsam3ZzEdwLS866z0Pv3sHshjmd+ALkfw9yEA8E9dGdLtpSX4PKbeD
+evKEZXhAXjGH+87oq+YnmsJ06qpM/wFYr1v1hmlo0SyfO2HYCusJU9MX2RRPye/S
+hQlRivZ29QvWOegQSRcOIolacow/Ol2wuPnxyLfUNywjO4dIwrec3PY4K1FMPGnb
+zITkySWMg4zEkxpzjD6+vh/TIuiKthKqV5AmPsGwlsU5qjzFE/wdIpuWED0fU9Rh
+9MK/cQu5x/6Z54t8RY7LaEtpW/krRY5uBgv4C6w2hDBtMTYLgQ0ecWKZZNiwFqfI
+hcDDbrYxvKV9gG0IkVtGk7DneDJ47+cxo/djy6cH1FPR7QVvC2E=
+=EEI7
+-----END PGP SIGNATURE-----
+
+--xmhs745kvpjmwrei--
 
