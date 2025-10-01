@@ -1,86 +1,133 @@
-Return-Path: <linux-kernel+bounces-838539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0359BAF6E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 09:35:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A86E6BAF6F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 09:36:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 815FD17BD3C
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 07:35:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1F104A5E6A
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 07:36:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC4BD1F582B;
-	Wed,  1 Oct 2025 07:35:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDBC02737F9;
+	Wed,  1 Oct 2025 07:36:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KQLJ8os6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="vwmsyiQO"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02E4C1F1538;
-	Wed,  1 Oct 2025 07:35:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70A71271A6D;
+	Wed,  1 Oct 2025 07:36:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759304118; cv=none; b=FeuUvuphj0QXE98+l6H6w1S513gqWMRwW8ybFuOWFSxQSAApw0UToKAv7/ezwKyQlCQCTh/mQTwSU6AjJbscFkQQPjuhQXGpK4bEyZngnBb7oxJ+m4tV/D7+ItoL5ug07aTbDoQZeUr/Y8A07OgRG2waOGgZGjy6qATF/ISNsxE=
+	t=1759304170; cv=none; b=dfx0Cfo4FuPMaRW/UPiOKUJL+fdFgFSgXmhIca5eK/8O+kN772+CkJLIaT+HQFCT+ZQKRswF64s1UGfW/kgJZGlvhvxBqPNoUn4u9oKxd109rnGoP9C4oephl88rX9FU5ZvQd/GgD//LzAMuMfEfwJdHPW8sluqjPHgSdD/cVF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759304118; c=relaxed/simple;
-	bh=K6Gczwx64pt8ByrFLS4NnTNZBEmkXcjHfCgLboOGRsY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rsRtjalf/VUiNjSivC+f084EKrl8tLwAl1mjm6QRDVf5j8Ee2hzAthQjfx2sQGC3pciUZQIKZiAr7rmii3pPwwHrHZR3IBCH4YS21OHp/3mndGSaS7XdCOXoHZUtQFRyTrlX256Yh5aCDo7Y6Q6ribp4dW8yZ4xtPYkqqINE/P4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KQLJ8os6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED8B2C4CEF4;
-	Wed,  1 Oct 2025 07:35:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759304117;
-	bh=K6Gczwx64pt8ByrFLS4NnTNZBEmkXcjHfCgLboOGRsY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KQLJ8os6CnrR+Wp1r//hSBdzwsoSOHXtRfcuqr90JoFQceZRNHzDYJwjjOQYahWfx
-	 gNzdPudhgv2yDl52GAgDof5I6B8+pjHNwpHpYP3PRUWGRpmmG3r6QWnX0W+L+7hC2H
-	 usu71Tfb6kZ9wSd7df0fZyqKQu5b271dS9tfjjmoC7xwAGnw8BSwqBu+1/Jdwdg2jn
-	 bE1HubKxzm9YiTwftFuKquvNZCLvpo8llEmEkBXEBAd5NpNdqtTj4sfgQ2NX0pXeU9
-	 1VbnHIoLrLOOkKTlx+XidW0yW2zSiWeE4TDaRIRhI7oYMmOO2Jo8y69NvBfZFZ6gYn
-	 AGXnpSn1xmGPg==
-Message-ID: <394d53e6-c8d3-46c1-b4f4-25bf82541e7a@kernel.org>
-Date: Wed, 1 Oct 2025 16:35:07 +0900
+	s=arc-20240116; t=1759304170; c=relaxed/simple;
+	bh=UsMNIjvGJVyJ7tDDftxNgWMz1WD7mTq1TrKVNfRAicc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gImdw3PTYV69lZV4JeW0hE5XU5RSSnlXIDuX39bjfuXFqVM9nBqUjKWEZg2R9wP8VJD/KAFgxKWH7hY0FaxUVR3qd/4NDGdbx0/MQxHVHRFn4GZ1EENhpzM+aMrbg6Dru4yHxDOdRZWqwb0O9hWLJIZBIaNrQF7AU+eBkgwg+RI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=vwmsyiQO; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4cc6DH3VL1z9sNr;
+	Wed,  1 Oct 2025 09:35:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1759304159;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hcrsTh+hEPackjWv/9APJh7H0cTIxXTrQiTVJGyI2tg=;
+	b=vwmsyiQOwf8iOVBO0MmRrXqkCGzaMCJypcSlCaEyCN8oHLb88utiZtLR8uqfCkbajJCbnc
+	4dW5AqMcVR43OShY9zmuY6VE9+tAJsjZXWP5SSy2+fH/8U+uvmPEVhagyjmPnhy1KBTdFs
+	hP/1JTSipCHJnMQmGHsWWCHUpjd09euuI+Mp+qDZV3cYW7Q3aFJItnf/P+0TFZ/HA4LCfP
+	twP/LmbcGFi/FRiQcgNnAhWYGl27A0Gl4Z5dexJ2gNgjm37Ajq0L0q7Ms8FVIst9VcXVtr
+	Qfd9H9mlktM6gHfoJKbXaTm6/BjB37QqtVhEi4tgAJ8md4FzHt3IzlUf5Ef+yg==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=none;
+	spf=pass (outgoing_mbo_mout: domain of cyphar@cyphar.com designates 2001:67c:2050:b231:465::2 as permitted sender) smtp.mailfrom=cyphar@cyphar.com
+Date: Wed, 1 Oct 2025 17:35:45 +1000
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Askar Safin <safinaskar@gmail.com>
+Cc: alx@kernel.org, brauner@kernel.org, dhowells@redhat.com, 
+	g.branden.robinson@gmail.com, jack@suse.cz, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-man@vger.kernel.org, 
+	mtk.manpages@gmail.com, viro@zeniv.linux.org.uk
+Subject: Re: [PATCH v5 7/8] man/man2/open_tree{,_attr}.2: document new
+ open_tree_attr() API
+Message-ID: <2025-10-01-brawny-bronze-taste-mounds-zp8G2b@cyphar.com>
+References: <20250925-new-mount-api-v5-7-028fb88023f2@cyphar.com>
+ <20251001003841.510494-1-safinaskar@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 15/15] blktrace: handle BLKTRACESETUP2 ioctl
-To: Johannes Thumshirn <johannes.thumshirn@wdc.com>,
- Jens Axboe <axboe@kernel.dk>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
- Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-btrace@vger.kernel.org,
- John Garry <john.g.garry@oracle.com>, Hannes Reinecke <hare@suse.de>,
- Christoph Hellwig <hch@lst.de>, Naohiro Aota <naohiro.aota@wdc.com>,
- Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
- Chaitanya Kulkarni <chaitanyak@nvidia.com>,
- "Martin K . Petersen" <martin.petersen@oracle.com>
-References: <20250925150231.67342-1-johannes.thumshirn@wdc.com>
- <20250925150231.67342-16-johannes.thumshirn@wdc.com>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20250925150231.67342-16-johannes.thumshirn@wdc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-On 9/26/25 00:02, Johannes Thumshirn wrote:
-> Handle the BLKTRACESETUP2 ioctl, requesting an extended version of the
-> blktrace protocol from user-space.
-> 
-> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-
-Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="q6bi4f7rvsmlajn7"
+Content-Disposition: inline
+In-Reply-To: <20251001003841.510494-1-safinaskar@gmail.com>
+X-Rspamd-Queue-Id: 4cc6DH3VL1z9sNr
 
 
--- 
-Damien Le Moal
-Western Digital Research
+--q6bi4f7rvsmlajn7
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v5 7/8] man/man2/open_tree{,_attr}.2: document new
+ open_tree_attr() API
+MIME-Version: 1.0
+
+On 2025-10-01, Askar Safin <safinaskar@gmail.com> wrote:
+> Aleksa Sarai <cyphar@cyphar.com>:
+> > +mntfd2 =3D open_tree(mntfd1, "", OPEN_TREE_CLONE,
+> > +                   &attr, sizeof(attr));
+>=20
+> Your whole so-called "open_tree_attr example" doesn't contain any open_tr=
+ee_attr
+> calls. :)
+>=20
+> I think you meant open_tree_attr here.
+
+Oops.
+
+>=20
+> > +\&
+> > +/* Create a new copy with the id-mapping cleared */
+> > +memset(&attr, 0, sizeof(attr));
+> > +attr.attr_clr =3D MOUNT_ATTR_IDMAP;
+> > +mntfd3 =3D open_tree(mntfd1, "", OPEN_TREE_CLONE,
+> > +                   &attr, sizeof(attr));
+>=20
+> And here.
+
+Oops x2.
+
+> Otherwise your whole patchset looks good. Add to whole patchset:
+> Reviewed-by: Askar Safin <safinaskar@gmail.com>
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+https://www.cyphar.com/
+
+--q6bi4f7rvsmlajn7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJEEABYKADkWIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaNzZ0RsUgAAAAAAEAA5t
+YW51MiwyLjUrMS4xMSwyLDIACgkQKJf60rfpRG/BEAEA6OtNrlmi0mI2ASXOWxjz
+PKAfbnGtZ1VdIfPzn0PtX4cA/jr8mhDIqP2v6TGtzHEo+O1PYFC3Oxg5LxdeT9G5
+VE8F
+=Dvsc
+-----END PGP SIGNATURE-----
+
+--q6bi4f7rvsmlajn7--
 
