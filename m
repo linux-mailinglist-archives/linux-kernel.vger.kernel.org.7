@@ -1,175 +1,126 @@
-Return-Path: <linux-kernel+bounces-838616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A124BAFBF2
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 10:57:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EC35BAFBFB
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 10:59:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 325883A8BD5
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 08:57:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC83D3A89D6
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 08:59:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 473072D8766;
-	Wed,  1 Oct 2025 08:57:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fl3B83Zp"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DE9A2D876A;
+	Wed,  1 Oct 2025 08:59:09 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 022422989B5
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 08:57:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 436BD17A2FC
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 08:59:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759309047; cv=none; b=s3Imu+jEsq4+lYedtMda5j3jNpDD/IbMZrOCXoj7wVlK5v5TUJmffc487zByBjIhFU8C9fiNh0VfBLWWRC2zgIJicPue+8d1OmDkFrQbgHicP3yyvMJuzhYYBx2/UDhk+Ll+MdlQXgE7sCgxmVAdepfmDUVZ8yRcCz8f/mWRUGw=
+	t=1759309148; cv=none; b=GPW7z2ZatlRLWjQQKjATyPpLH7dcy43qtgKZyKPeG706uDWwH4jOx6GLw7vKOCKDpqvUKdhHYAm2WbQQg0Q7iy3OpB5t1r6gerCjcJmleFaemYydzGn8BrTrAiglzflOGnF2FJ3AS8X1WFkR3lB1k0wnyUZr1IJVwGYxKGJAkgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759309047; c=relaxed/simple;
-	bh=k9SxVIm4/yH7EwdOtG9iVyaWlVa8cX/lDmaADceMdq0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UDX5MjdLYS1pYfJpzesNxomwqZmEaMe9Zi00vqiFtTx63tK6TfYQCQDvvwvTjxUZLCjf5gvETxEp9ZuiU4azuWu6NuhV1YA5VY9e1Q7aAUiqgD4ybmsI4ta9BGj9RHyFviMoYtsMUaWRAVc4ltOkRp/1CDYxqCEWCcaLRFSMVPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fl3B83Zp; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-27ee41e074dso65932305ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 01:57:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759309045; x=1759913845; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=iRXPyeGU3kLEllAg/cKWCvTTzigpysI7ZlcrsfYX+pA=;
-        b=Fl3B83ZpA36Wfy9UWWRH9/6iNewMgD3IT1R8Hf8hiHZ6p4IlxTGG5eXjxMmxjaAfhN
-         u5LI2wHoaJLGRCl7BphnV9Snx4FJIcm/3oq1nRVKV+mLHVrydJ9qVimuyYDs9ZwkL14N
-         IHZ+9q0CA8YXtLRyhMDQowgxZnv/IDID0wZQSYHJgPIHdBB28omUaHkikY0FQg5HcGKl
-         7WlGFvz7568f2T9NEce8agSb0TrmhhKq09sXc+SpcTS4H9dOwzGCtlc3kLrGNo4VjJFa
-         sWId27/W7svdpYIyBkAqhgN9l4XsGYsJxIpz+aD4VNd4TBSlh7kFFPpwjFmJedBGF9i2
-         nt8A==
+	s=arc-20240116; t=1759309148; c=relaxed/simple;
+	bh=pKSeD1yQbxWfwIkzPuax838bf9a0PUsuhLbY7KhUVSk=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=AAeus9eRy50EMeZhFdhzi203xwgxVDzY8s3lYcut4pE9dw6APHDmRPxQEmzD0/CkYboTh7cuWj0CxXIZEiGsBmPuvF5AZfVjF4rmDnkFRUWkVGvcPiXC+UpqkAYfG0czlqF1cAHyGG7ow5hPI+t3I63drWMdhr/+TBh4a6vGTNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-90efeb58159so689044339f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 01:59:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759309045; x=1759913845;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iRXPyeGU3kLEllAg/cKWCvTTzigpysI7ZlcrsfYX+pA=;
-        b=tGbwUgmONIZBoK0ekPlvPCojHrbZGAaclApDuDi6N5aq4imt4qFDSUdzaJsUuRMb3m
-         Ug67QWJlMxxjNhOen2tCOiR8yYDcX5/CcPwMNn/9ITRkI1rmBCQ0DehQmsSNp96himad
-         ffEoYI14cyvuuyMKkUqNc/0D2XXAl0uzB2YGQoZ+aver65EjAM5ylGLg0nqnfBpF7xpR
-         erbPRhLWj0XCP9UjY8+D+gOBqY5dLOAt8PcbMP23kHY+gnuCfwC4OLEEYpSAw4ZBDUQ7
-         totv5h2ifmvPuSJHMkmSqPGkQmtTrgaPyZiYRkcC+Izntw7C1LxcfZgEBt4yGs7nuQ12
-         dyRg==
-X-Forwarded-Encrypted: i=1; AJvYcCVwH71ajO0HQpLbHoel27aburJ3Rq8I8V+ZT+dZDFGX+wTAiwz0V8eXg2+hj+VvMtDDv83PX1VnAJoAg+0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyq3Yf9OeM32tkINnCT7X+mikvtc2PDnuEBlmRIVqpTkpE+nGL1
-	+hy21cjpwm/Y7AmuaTOoIchroD+Sm5tg26sTttGlZg5lb+AGN2oOfEAU
-X-Gm-Gg: ASbGncvHtHi52wOfAcJjtWd3S+Z6tPI2q7FlxVukFF/bKNWlozq9NzZUIBObHEq/Sg5
-	UYPLNpKcMqS/afW19ukjoQIV3PtKr+Sa/kHWKHEoaFMgnWUQ/pL37wrBoMg4Sgx44mPjJR0ceNa
-	/UVovWTaE+Mb5hk656OcuAXChi2bNpK8z/6tKY8P+0Ss4pmYdiNnDQarDFZp0ZSaZLeR8u8uvwc
-	+ypgtBzCHKbZTkHCd+855OsVZvDhP7krZDUKrqX5iXVkWM7FwbECktylliI1diMNjL6T7MFuIxv
-	cCyMjjiCw1ousKHoLDc6RWqswR9LjqteCgmjhu1j692lKeOgOXyEbKJ73d3juGDHFyhCfpCt/ov
-	8SMh+CBcc/G8xBmYIe9uvZ8UOqkJ2eDGmRPTarSzB9ElYGPPTTecpdWL8rVsHnhLNOE2QF9KVO1
-	udV6c=
-X-Google-Smtp-Source: AGHT+IG61FIjH34dziMXtOWfv5flwguk/t3Ek5Rl9JJ2mkWhY2/XOOReKC9NTp1ictu/iFlnRBa13A==
-X-Received: by 2002:a17:902:f78a:b0:266:63de:eefc with SMTP id d9443c01a7336-28e7f29382bmr32482615ad.14.1759309045134;
-        Wed, 01 Oct 2025 01:57:25 -0700 (PDT)
-Received: from ti-am64x-sdk.. ([157.50.93.46])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed66d43d4sm182186965ad.16.2025.10.01.01.57.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Oct 2025 01:57:24 -0700 (PDT)
-From: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: bhanuseshukumar@gmail.com,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	skhan@linuxfoundation.org,
-	david.hunter.linux@gmail.com
-Subject: [PATCH] of: doc: Fix typo in doc comments.
-Date: Wed,  1 Oct 2025 14:27:16 +0530
-Message-Id: <20251001085716.45361-1-bhanuseshukumar@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1759309144; x=1759913944;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=k1KfB6y2C45OVMbOJIacD6RmSooTpGw9Rdm3Od/mOis=;
+        b=bKmn8Z4E762qKlY6bYovxkubhs5jBiDgGMdIBHQFLdKwl4ZXqgXQeMVheJ1H/T4iqk
+         IYlYiepEKWF43QeIKADZX5fiydrkEySQWLPWRuEcrOCMfm4u3gCji42rUvGwPlk3Uqhr
+         UHAwZo21G3zEtAt1xQYB/zYDM1AAO4pHWGvfpdrnDjNVTRGKflvvyuOGqe6FQ0Nyofk5
+         XA2fjGIzEqRkmKDBGbSQNdKK5y9RAVTIU7sCeq6ACcsn0XvPb2GKi3ofXXZF+47gKbDI
+         6CQ06TC8WIhNxrv9O+RpexEukgFQYfoU5BPlBQFp18Q4VURlu9nakLOGk0CbTldEBL27
+         FMow==
+X-Gm-Message-State: AOJu0YzJoK7Fv3ewg1Ae7F6F+je49dJftKjpfzbf1K6OdnoP6XOQzWLg
+	dmKKA+TGNWJxPgvCNYKB/k4hukrPQs8ZmoFXkPVFC0Q4N7XYDEIDy60CWDNrAL5JGnZtOKkkINg
+	YI8CFNl8px0brpBY3dhzFdu1wXH9rI0YWFbNwBVdnm/CLotmKwAIip0ke9Qc=
+X-Google-Smtp-Source: AGHT+IFSQK8OA1WgNOdtLLGQC/ooKbzck8t158+sLp7rTMw99P7+bQawh6NBqiGcsF2MOukFIlND1Pza667OdJUdYL5D7jQVZabb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6602:608d:b0:8e0:f662:69e6 with SMTP id
+ ca18e2360f4ac-937ac92ddebmr395219939f.11.1759309144246; Wed, 01 Oct 2025
+ 01:59:04 -0700 (PDT)
+Date: Wed, 01 Oct 2025 01:59:04 -0700
+In-Reply-To: <68dc3ade.a70a0220.10c4b.015d.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68dced58.050a0220.25d7ab.0774.GAE@google.com>
+Subject: Forwarded: [PATCH] isofs: fix inode leak caused by disconnected
+ dentries from exportfs
+From: syzbot <syzbot+1d79ebe5383fc016cf07@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-synthetized => synthesized
-definied => defined
-sucess => success
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Signed-off-by: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
+***
+
+Subject: [PATCH] isofs: fix inode leak caused by disconnected dentries from exportfs
+Author: kartikey406@gmail.com
+
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+
+When open_by_handle_at() is used with iso9660 filesystems, exportfs
+creates disconnected dentries during file handle resolution. If the
+operation fails (e.g., with -ESTALE during reconnect_path()), these
+dentries remain cached with their associated inodes.
+
+During unmount, shrink_dcache_for_umount() does not fully evict these
+disconnected dentries, leaving their inodes with non-zero reference
+counts. This triggers the "VFS: Busy inodes after unmount" warning
+and causes inode leaks that accumulate across mount/unmount cycles.
+
+The issue occurs because:
+1. open_by_handle_at() calls exportfs_decode_fh_raw() to resolve
+   file handles
+2. For iso9660 with Joliet extensions, this creates disconnected
+   dentries for both primary (iso9660) and secondary (Joliet) root
+   inodes
+3. When path reconnection fails with -ESTALE, the dentries are left
+   in DCACHE_DISCONNECTED state
+4. shrink_dcache_for_umount() in generic_shutdown_super() does not
+   aggressively evict these disconnected dentries
+5. The associated inodes (typically root inodes 1792 and 1807)
+   remain with i_count=1, triggering the busy inode check
+
+Add explicit shrink_dcache_sb() call in isofs_put_super() to ensure
+all cached dentries, including disconnected ones created by exportfs
+operations, are released before the superblock is destroyed.
+
+Reported-by: syzbot+1d79ebe5383fc016cf07@syzkaller.appspotmail.com
+Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
 ---
- drivers/of/irq.c     | 2 +-
- drivers/of/overlay.c | 2 +-
- include/linux/of.h   | 8 ++++----
- 3 files changed, 6 insertions(+), 6 deletions(-)
+ fs/isofs/inode.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/of/irq.c b/drivers/of/irq.c
-index 74aaea61de13..8951a69390b7 100644
---- a/drivers/of/irq.c
-+++ b/drivers/of/irq.c
-@@ -163,7 +163,7 @@ const __be32 *of_irq_parse_imap_parent(const __be32 *imap, int len, struct of_ph
-  * @out_irq:	structure of_phandle_args updated by this function
-  *
-  * This function is a low-level interrupt tree walking function. It
-- * can be used to do a partial walk with synthetized reg and interrupts
-+ * can be used to do a partial walk with synthesized reg and interrupts
-  * properties, for example when resolving PCI interrupts when no device
-  * node exist for the parent. It takes an interrupt specifier structure as
-  * input, walks the tree looking for any interrupt-map properties, translates
-diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
-index 1af6f52d0708..255e8362f600 100644
---- a/drivers/of/overlay.c
-+++ b/drivers/of/overlay.c
-@@ -135,7 +135,7 @@ static BLOCKING_NOTIFIER_HEAD(overlay_notify_chain);
-  * @nb:		Notifier block to register
-  *
-  * Register for notification on overlay operations on device tree nodes. The
-- * reported actions definied by @of_reconfig_change. The notifier callback
-+ * reported actions defined by @of_reconfig_change. The notifier callback
-  * furthermore receives a pointer to the affected device tree node.
-  *
-  * Note that a notifier callback is not supposed to store pointers to a device
-diff --git a/include/linux/of.h b/include/linux/of.h
-index a62154aeda1b..231093032ce0 100644
---- a/include/linux/of.h
-+++ b/include/linux/of.h
-@@ -1127,7 +1127,7 @@ static inline bool of_phandle_args_equal(const struct of_phandle_args *a1,
-  * Search for a property in a device node and count the number of u8 elements
-  * in it.
-  *
-- * Return: The number of elements on sucess, -EINVAL if the property does
-+ * Return: The number of elements on success, -EINVAL if the property does
-  * not exist or its length does not match a multiple of u8 and -ENODATA if the
-  * property does not have a value.
-  */
-@@ -1146,7 +1146,7 @@ static inline int of_property_count_u8_elems(const struct device_node *np,
-  * Search for a property in a device node and count the number of u16 elements
-  * in it.
-  *
-- * Return: The number of elements on sucess, -EINVAL if the property does
-+ * Return: The number of elements on success, -EINVAL if the property does
-  * not exist or its length does not match a multiple of u16 and -ENODATA if the
-  * property does not have a value.
-  */
-@@ -1165,7 +1165,7 @@ static inline int of_property_count_u16_elems(const struct device_node *np,
-  * Search for a property in a device node and count the number of u32 elements
-  * in it.
-  *
-- * Return: The number of elements on sucess, -EINVAL if the property does
-+ * Return: The number of elements on success, -EINVAL if the property does
-  * not exist or its length does not match a multiple of u32 and -ENODATA if the
-  * property does not have a value.
-  */
-@@ -1184,7 +1184,7 @@ static inline int of_property_count_u32_elems(const struct device_node *np,
-  * Search for a property in a device node and count the number of u64 elements
-  * in it.
-  *
-- * Return: The number of elements on sucess, -EINVAL if the property does
-+ * Return: The number of elements on success, -EINVAL if the property does
-  * not exist or its length does not match a multiple of u64 and -ENODATA if the
-  * property does not have a value.
-  */
+diff --git a/fs/isofs/inode.c b/fs/isofs/inode.c
+index 6f0e6b19383c..bee410705442 100644
+--- a/fs/isofs/inode.c
++++ b/fs/isofs/inode.c
+@@ -52,6 +52,7 @@ static int isofs_dentry_cmp_ms(const struct dentry *dentry,
+ static void isofs_put_super(struct super_block *sb)
+ {
+ 	struct isofs_sb_info *sbi = ISOFS_SB(sb);
++	shrink_dcache_sb(sb);
+ 
+ #ifdef CONFIG_JOLIET
+ 	unload_nls(sbi->s_nls_iocharset);
 -- 
-2.34.1
+2.43.0
 
 
