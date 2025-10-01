@@ -1,162 +1,159 @@
-Return-Path: <linux-kernel+bounces-839317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8326EBB158E
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 19:19:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 553AEBB1577
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 19:18:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63BFE7A2A41
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 17:17:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F6672A57C0
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 17:18:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 751DA2D3A93;
-	Wed,  1 Oct 2025 17:18:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BC342D372D;
+	Wed,  1 Oct 2025 17:17:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b="ksINNn9R"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fbmuVPMV"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 790A81F4CBF;
-	Wed,  1 Oct 2025 17:18:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759339123; cv=pass; b=nhEonpOXuMYnJ5rwzrqCTmuErMMFVMOy4sm9VL1MjkGVOL7s5PGp/HkEdCu0DvVhrUxXIMsUxXMwQjGG//LX6HPCf+JpghbsWV+3edShCT84KjA8dw8e+em7FI0VDLtb2KBcoHllpRvYfE+Cyw7rQ4mCgMU2yIGW6KJNhgqaLMU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759339123; c=relaxed/simple;
-	bh=5oopaJWCCa9McYN/u5FuVWHmY0aTOrreGFImxV+XzOY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ed8srSPMl49HtS3J9EpFfnuofjw73Flr3YxlCMhunBg3amQ0+Rdx4B6bYK77Bxn0RXB9lSdJ0TPO6Xdix+YCtwMc0pQmxze6T6BVoYtyTycvCEWwTyQOrRN6D42NCLVROEggL/8xbe+P2i5KgZHlxQOsRsBcRCj21lcKh2w2ilA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b=ksINNn9R; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1759339054; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=g6eeKVe8q5UYu/Zyv+4f8spD2OVynk46aIqjrhPwvud4pg/yFU6GJ8m/Y+1A38QxhJIyMHo9XvP2zVwJvaf/koqQdRI7iWsrnIYH03ufiggiwoc8wIKBaqBtmNuHNS3TWVaLJgEmt6Fefs8/PbI5VQDaVTNFQ38gfghwAncUdSI=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1759339054; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=SkWCXVZn9oQwr9fOneaWYc16aLwPTVni5B0m5Fk1lXU=; 
-	b=PXCmVyZKF60Fi3lkeBl8zsfau5T0mvo/+YUBztmCZGuI3hDgh8QllEmRMfQbbgGMoKMd6NpZArnRZfrbBQ6qU0VMrSsDFscLsUkiHKPlNfxm2mHOvEE/MuGlBOc92dOt6bAR2SQCSepwaMg2H0rHrr1SVIUaN7fmLbAM2i5Vss8=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=ariel.dalessandro@collabora.com;
-	dmarc=pass header.from=<ariel.dalessandro@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1759339053;
-	s=zohomail; d=collabora.com; i=ariel.dalessandro@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=SkWCXVZn9oQwr9fOneaWYc16aLwPTVni5B0m5Fk1lXU=;
-	b=ksINNn9Ry5kbkov/RYjCPthrjeR/B3ir8QZC1VLMfigTV/SQeRC/9naX5P5o+oQt
-	gcY1Xc/8D9yh670ZLUBONiSf31YNccaNSXJ9MVf3Ct2t0tT28Smz/yZBpoLObK3k8S4
-	J9608xI9dzJLMBP3t+Ok40Iuj+DdtKnf3vUZ3udU=
-Received: by mx.zohomail.com with SMTPS id 175933905208321.77046877084581;
-	Wed, 1 Oct 2025 10:17:32 -0700 (PDT)
-Message-ID: <a3b54ec9-e4d7-4d56-8493-f40be81f803e@collabora.com>
-Date: Wed, 1 Oct 2025 14:17:16 -0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4669C239E75
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 17:17:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759339077; cv=none; b=MfWU3wC4s79GhbbP7N/fULKjKlnsUmOFLurGkOIITfiKCUE3AGzYEIHSP+79yCFMVmf3bbsfIhhdV1VOVI1rSHuMgBWI1f2fnXpP/Sigd9wlJ2pY3B5fZBYaVJ44tuLcu2i9Yhggo9nUVoyyR1olfOWDs5ba2+9Bqb+Q203SSNc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759339077; c=relaxed/simple;
+	bh=Am6LZIbCSVgY5Se1Wi0yNwFcMvrDpjvjfrYu+0BmiNA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tgwFIvNmKcllTqZPn4fljWmYtkqGXojDjzY1hvkPRwN7KC/2YxmxuU/IVyetwKgKdIuJwPLVTd59sQ4GjFK48J4ovEGsiVyjF3yENEcgfWHQXs3DzqGsjPmUucc9JG90fwTrU+m5lKmlB8CtEgJFnxAnxYq9J9ATDU9kYB6nnZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fbmuVPMV; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-27d67abd215so13175ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 10:17:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759339075; x=1759943875; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1y2h5vASQKA3UCiJzkscyc1EFC5PFd9siEd1bqRvvXw=;
+        b=fbmuVPMVZ0U1RZoG+4h3vXcvg10/pH1Uwe/Ix2hfrfJY/0UQbZ1U94tz0JDiD5ZxpK
+         cBiakhYHAEhaeeiqndcdU00lb1FjP4q9vjR4KD8d+N2uOYamLCxMYfprybnaCoRhXtLR
+         tm3lp6kEFu6+ZBV2Bfnd/KVoxo2ULHReAT/gl6c3Q4W7xk8Kmd3pUHRfqFicHXae6nCq
+         vXqKiq8qQaGE4NRAUjCDBjqnJ4+g7ErMV7b8HYlN+yYrczDcSkxFmT18eXv/kDV5Q7Z4
+         NLQdcno5s7UfqcMtd1w77HGxgNDCiKltujsDBB4qFWaRyg4AzGlZSGKFejizOGN7zEXG
+         15Ig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759339075; x=1759943875;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1y2h5vASQKA3UCiJzkscyc1EFC5PFd9siEd1bqRvvXw=;
+        b=mMgqW/wsM1Rsa8oqnM0igTafPw5P/rTq1+E24gjvr5u7PWWI8NxGllpVbyaatBfHtH
+         eeyou+5AbYhrcPG2N/8KISH2nfHvxjsVRU6wedMiVnIOPoLxiaLKNV6sVmy1Z+M8CzAH
+         Wl2sA9t5FpSnkLhBuShvrvFztfPBEkY4/AD1JHRQfOQWREzDkCIAFS/8WV4l9Hox7Lka
+         cMvzGyvmmVmjvgsM5Nj7/FOT3c6ZMRbviPYFkgaMDBhKsmx40rZBm2xMt/QukjDc5lVv
+         0SZoLel9UiW1x0y5NzdTcCwM6dgLhM20XJ/0lUY2ZFu/NmZeQbKPiKFoJmbzyTZG1MAH
+         X23w==
+X-Forwarded-Encrypted: i=1; AJvYcCUyDJu58qtaCMApNVtT5G6lzMU704JsWM3gm38xPQNouqUhYn/BmQfDCe/dot+aUfH2R9W5ginlSQ8A7cU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZTj2tBmrE6IeJlyJkkd4oswQrYP36YKMoeC6ostrsDj5x6MW4
+	tGjKzUbe74GHtYqQAiR4xi86r3iUJIrGeS/ZZZqcANEcoTCDwQQqGd3iQkGag2DsqZZG9175Xb2
+	OJbVaZi6VDgnU7dp9VYNOSPmGmYw1ZqNfdr0YSwGP
+X-Gm-Gg: ASbGnctWaHjIhqoa29p+ElEMN5aaij56waBJpJQr5cVB2IeMgga9A5xnie8XrQBjHzb
+	PWXqZPDvedxVaFSGemH897wOv//KAASSO9615ggZZz+6u8BGr/ialztFmVaroMTf/nl8aAN5Fig
+	Jmy2T6iEq1WLfT8lfyXxy5RIkJeY1BDCON4E4Uy/llxGTSJvGXRm1N8vQE55r2fEfY3rlA/GLEn
+	iWJaw5F6sWbr/Ccn42CmITwldQxtXvzDifC37XSp62nCCwylFUpGFCQxNIZQmd6
+X-Google-Smtp-Source: AGHT+IEc5YwjCgEyjWB8fCgIiAGbFywCUMBUm03Ih9N+XlFwOAjFHqrja3JrAWGFi1Rq4qqGQMM8IoASJRO0e7AT5hM=
+X-Received: by 2002:a17:902:e744:b0:275:8110:7a4d with SMTP id
+ d9443c01a7336-28e8d88536amr266855ad.0.1759339075033; Wed, 01 Oct 2025
+ 10:17:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/12] MediaTek dt-bindings sanitization (MT8173)
-To: Rob Herring <robh@kernel.org>
-Cc: airlied@gmail.com, amergnat@baylibre.com, andrew+netdev@lunn.ch,
- andrew-ct.chen@mediatek.com, angelogioacchino.delregno@collabora.com,
- broonie@kernel.org, chunkuang.hu@kernel.org, conor+dt@kernel.org,
- davem@davemloft.net, dmitry.torokhov@gmail.com, edumazet@google.com,
- flora.fu@mediatek.com, heiko@sntech.de, houlong.wei@mediatek.com,
- jeesw@melfas.com, kernel@collabora.com, krzk+dt@kernel.org, kuba@kernel.org,
- lgirdwood@gmail.com, linus.walleij@linaro.org,
- louisalexis.eyraud@collabora.com, luiz.dentz@gmail.com,
- maarten.lankhorst@linux.intel.com, marcel@holtmann.org,
- matthias.bgg@gmail.com, mchehab@kernel.org, minghsiu.tsai@mediatek.com,
- mripard@kernel.org, p.zabel@pengutronix.de, pabeni@redhat.com,
- sean.wang@kernel.org, simona@ffwll.ch, support.opensource@diasemi.com,
- tiffany.lin@mediatek.com, tzimmermann@suse.de, yunfei.dong@mediatek.com,
- devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-bluetooth@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-sound@vger.kernel.org, netdev@vger.kernel.org
-References: <20250911151001.108744-1-ariel.dalessandro@collabora.com>
- <20250923214834.GC91441-robh@kernel.org>
-Content-Language: en-US
-From: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-In-Reply-To: <20250923214834.GC91441-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+References: <20250901160930.1785244-1-pbonzini@redhat.com> <20250901160930.1785244-5-pbonzini@redhat.com>
+ <CAGtprH__G96uUmiDkK0iYM2miXb31vYje9aN+J=stJQqLUUXEg@mail.gmail.com>
+ <74a390a1-42a7-4e6b-a76a-f88f49323c93@intel.com> <CAGtprH-mb0Cw+OzBj-gSWenA9kSJyu-xgXhsTjjzyY6Qi4E=aw@mail.gmail.com>
+ <a2042a7b-2e12-4893-ac8d-50c0f77f26e9@intel.com>
+In-Reply-To: <a2042a7b-2e12-4893-ac8d-50c0f77f26e9@intel.com>
+From: Vishal Annapurve <vannapurve@google.com>
+Date: Wed, 1 Oct 2025 10:17:42 -0700
+X-Gm-Features: AS18NWBXpvVgjgMadlECNuwDjuYYFm9bGZUjR1YX4j5n77qq4tGA3oiOkJZz2YM
+Message-ID: <CAGtprH_nTBdX-VtMQJM4-y8KcB_F4CnafqpDX7ktASwhO0sxAg@mail.gmail.com>
+Subject: Re: [PATCH 4/7] x86/kexec: Disable kexec/kdump on platforms with TDX
+ partial write erratum
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	bp@alien8.de, tglx@linutronix.de, peterz@infradead.org, mingo@redhat.com, 
+	hpa@zytor.com, thomas.lendacky@amd.com, x86@kernel.org, kas@kernel.org, 
+	rick.p.edgecombe@intel.com, dwmw@amazon.co.uk, kai.huang@intel.com, 
+	seanjc@google.com, reinette.chatre@intel.com, isaku.yamahata@intel.com, 
+	dan.j.williams@intel.com, ashish.kalra@amd.com, nik.borisov@suse.com, 
+	chao.gao@intel.com, sagis@google.com, farrah.chen@intel.com, 
+	Binbin Wu <binbin.wu@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Rob,
+On Wed, Oct 1, 2025 at 7:32=E2=80=AFAM Dave Hansen <dave.hansen@intel.com> =
+wrote:
+>
+> On 9/30/25 19:05, Vishal Annapurve wrote:
+> ...
+> >> Any workarounds are going to be slow and probably imperfect. That's no=
+t
+> >
+> > Do we really need to deploy workarounds that are complex and slow to
+> > get kdump working for the majority of the scenarios? Is there any
+> > analysis done for the risk with imperfect and simpler workarounds vs
+> > benefits of kdump functionality?
+> >
+> >> a great match for kdump. I'm perfectly happy waiting for fixed hardwar=
+e
+> >> from what I've seen.
+> >
+> > IIUC SPR/EMR - two CPU generations out there are impacted by this
+> > erratum and just disabling kdump functionality IMO is not the best
+> > solution here.
+>
+> That's an eminently reasonable position. But we're speaking in broad
+> generalities and I'm unsure what you don't like about the status quo or
+> how you'd like to see things change.
 
-On 9/23/25 6:48 PM, Rob Herring wrote:
-> On Thu, Sep 11, 2025 at 12:09:49PM -0300, Ariel D'Alessandro wrote:
->> This patch series continues the effort to address Device Tree validation
->> warnings for MediaTek platforms, with a focus on MT8173. It follows the
->> initial cleanup series by Angelo [0].
->>
->> Similarly to the ongoing MT8183 work done by Julien Massot, this patchset
->> eliminates several of the remaining warnings by improving or converting DT
->> bindings to YAML, adding missing properties, and updating device tree files
->> accordingly.
->>
->> [0] https://www.spinics.net/lists/kernel/msg5780177.html
->>
->> Changes in v2:
->> * Wrapped commit messages to 75 columns line wrap.
->> * Replaced "YAML" by "DT schema" in patches subject and content.
->> * mt8173-mdp: Fixed properties: compatible, clocks, iommus and
->>    mediatek,vpu.
->> * mt8173-vpu: Fixed line wrap. Dropped memory-region property description.
->> * mediatek,mmsys: Dropped patch as it's not a binding issue.
->> * mediatek,od: Rewrote commit log with details on DT schema users missing
->>    the related property. Rewrote mediatek,gce-client-reg property.
->> * mediatek,ufoe: Rewrote commit log with details on DT schema users missing
->>    the related property. Rewrote mediatek,gce-client-reg property.
->> * marvell,sd8897-bt: Moved to net/bluetooth/. Added missing ref to
->>    bluetooth-controller.yaml. Dropped example. Updated reference in another
->>    file. Minor fixes in properties.
->> * mediatek,mt8173-rt5650: Dropped unnecessary quotes and unused label.
->> * dlg,da9211: Dropped enable-gpios description. Rewrote generic example
->>    node names. Minor fixes in properties.
->> * melfas,mip4_ts: Dropped unnecessary quotes. Added "active high" to
->>    ce-gpios property description.
->> * mediatek,jpeg: Dropped patch as it doesn't apply.
->>
->> Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
->>
->> Ariel D'Alessandro (12):
->>    dt-bindings: media: Convert MediaTek mt8173-mdp bindings to DT schema
->>    dt-bindings: media: Convert MediaTek mt8173-vpu bindings to DT schema
->>    dt-bindings: net: Convert Marvell 8897/8997 bindings to DT schema
->>    dt-bindings: ASoC: Convert MediaTek RT5650 codecs bindings to DT
->>      schema
->>    dt-bindings: display: mediatek,od: Add mediatek,gce-client-reg
->>      property
->>    dt-bindings: display: mediatek,ufoe: Add mediatek,gce-client-reg
->>      property
->>    arm64: dts: mediatek: mt8173: Fix mt8173-pinctrl node names
->>    dt-bindings: pinctrl: mt65xx: Allow gpio-line-names
->>    dt-bindings: regulator: Convert Dialog DA9211 Regulators to DT schema
->>    arm64: dts: mediatek: mt8173-elm: Drop unused bank supply
->>    dt-bindings: soc: mediatek: pwrap: Add power-domains property
->>    dt-bindings: input: Convert MELFAS MIP4 Touchscreen to DT schema
-> 
-> As we're close to the merge window, I applied patches 2, 8, and 11.
+Looks like the decision to disable kdump was taken between [1] -> [2].
+"The kernel currently doesn't track which page is TDX private memory.
+It's not trivial to reset TDX private memory.  For simplicity, this
+series simply disables kexec/kdump for such platforms.  This will be
+enhanced in the future."
 
-Great, I can see that patches 5 and 6 were also applied (with small 
-modifications).
+A patch [3] from the series[1], describes the issue as:
+"This problem is triggered by "partial" writes where a write transaction
+of less than cacheline lands at the memory controller.  The CPU does
+these via non-temporal write instructions (like MOVNTI), or through
+UC/WC memory mappings.  The issue can also be triggered away from the
+CPU by devices doing partial writes via DMA."
 
-Thanks!
+And also mentions:
+"Also note only the normal kexec needs to worry about this problem, but
+not the crash kexec: 1) The kdump kernel only uses the special memory
+reserved by the first kernel, and the reserved memory can never be used
+by TDX in the first kernel; 2) The /proc/vmcore, which reflects the
+first (crashed) kernel's memory, is only for read.  The read will never
+"poison" TDX memory thus cause unexpected machine check (only partial
+write does)."
 
--- 
-Ariel D'Alessandro
-Software Engineer
+What was the scenario that led to disabling kdump support altogether
+given the above description?
 
-Collabora Ltd.
-Platinum Building, St John's Innovation Park, Cambridge CB4 0DS, UK 
-Registered in England & Wales, no. 5513718
+[1] https://lore.kernel.org/lkml/cover.1727179214.git.kai.huang@intel.com/
+[2] https://lore.kernel.org/all/cover.1741778537.git.kai.huang@intel.com/
+[3] https://lore.kernel.org/lkml/6960ef6d7ee9398d164bf3997e6009df3e88cb67.1=
+727179214.git.kai.huang@intel.com/
 
+>
+> Care to send along a patch representing the "best solution"? That should
+> clear things up.
+>
 
