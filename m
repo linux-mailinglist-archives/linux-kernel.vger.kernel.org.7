@@ -1,95 +1,39 @@
-Return-Path: <linux-kernel+bounces-838750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53159BB011D
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 12:56:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C683BB0144
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 13:00:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFCE9188B579
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 10:56:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C3873B4D23
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 11:00:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 857BD2C0F7D;
-	Wed,  1 Oct 2025 10:56:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="oasM6Diy";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="pZNUj2vW";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="oasM6Diy";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="pZNUj2vW"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CF7A2C0F93
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 10:56:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5AEA2C3254;
+	Wed,  1 Oct 2025 11:00:27 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 607C12C21F8;
+	Wed,  1 Oct 2025 11:00:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759316173; cv=none; b=P4WQtR83dFO9S2n/IeQKkff8GFnqvd7SUadQ7FWaQrUApcqlb3C5S9T2hrUM/a9EqS7e2r7eFp4ge4gCMGVYN7t/Cg/sM8Dt+m4KSRmoM8b9CvH+OXLILskM2465F+TeZPoxX/tJNLWzU4dPE8FKuJQv+rttaQTkKgqNh0UcNEY=
+	t=1759316427; cv=none; b=ImSyUbzUBoV52tNp5xsy02a/K6MsJq+V3oU7GbPYaECMWitulSZqIeb8UemWLSiyt2rK4LovbkRNSew15jHXwyEy+ySJioVvfC5XUlbFBNNhiIwSjMfiNOBuYmeMbYRKFv02SufUlJm0crT+F8h6yQj20ooqtdqNsY0760D8bys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759316173; c=relaxed/simple;
-	bh=GzFCidf8TZm02g/wFHUsnPOxpLGXomChw4tgFQx2eeM=;
+	s=arc-20240116; t=1759316427; c=relaxed/simple;
+	bh=3ru9c1ecAoC6W72Wb/VITcP/ZIDp+n1MNRQULN/BlhI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W2u0Dba7ndT/23/RIP2FRBTBRdeQYuFsoNNsxIgvud3ZZjyl/6tSpw6NMGQgyj0PU6Oc55jqY2+GnSsM6YHn7SjyH97s1v0jxfuVzTkVSwGh3uxskiO3Dp4DkkmX8H/pOnuvklRwQjxq04zKGyoLm5oNcy1L46Jh2rvFM9bCeTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=oasM6Diy; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=pZNUj2vW; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=oasM6Diy; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=pZNUj2vW; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id D0AC922ACA;
-	Wed,  1 Oct 2025 10:56:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759316169; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DpePL461P7LsNb38EA5EBCrLN87PvsNeyDTc8FDW4ww=;
-	b=oasM6DiyM2kyMCNTGIAYlVkqmuNLZi8GAubQecgC+xqhk20yQDljW8iTL9YJmLPw1O5OFW
-	z8pBByI1Z/DIrd9ncqSoxwme6OV4WBmIgVTl7F7AP+DSK6y2B/edVMEVU622UH7oq5awIt
-	fyWkwEDG/TxDXiK8ToWQ3gNCaXhEjks=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759316169;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DpePL461P7LsNb38EA5EBCrLN87PvsNeyDTc8FDW4ww=;
-	b=pZNUj2vWzGza9ZshzzOh9mzR2No65ac/H9H9BRuOMF5WGnimvNxVZNMaGiBeOS2fsIe5HL
-	OdWIUP3n5cPmGOCQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=oasM6Diy;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=pZNUj2vW
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759316169; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DpePL461P7LsNb38EA5EBCrLN87PvsNeyDTc8FDW4ww=;
-	b=oasM6DiyM2kyMCNTGIAYlVkqmuNLZi8GAubQecgC+xqhk20yQDljW8iTL9YJmLPw1O5OFW
-	z8pBByI1Z/DIrd9ncqSoxwme6OV4WBmIgVTl7F7AP+DSK6y2B/edVMEVU622UH7oq5awIt
-	fyWkwEDG/TxDXiK8ToWQ3gNCaXhEjks=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759316169;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DpePL461P7LsNb38EA5EBCrLN87PvsNeyDTc8FDW4ww=;
-	b=pZNUj2vWzGza9ZshzzOh9mzR2No65ac/H9H9BRuOMF5WGnimvNxVZNMaGiBeOS2fsIe5HL
-	OdWIUP3n5cPmGOCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B9A6713A42;
-	Wed,  1 Oct 2025 10:56:09 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id l3XrLMkI3WgGYAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 01 Oct 2025 10:56:09 +0000
-Message-ID: <602271e2-86c9-4a63-845a-b84407d3aa51@suse.cz>
-Date: Wed, 1 Oct 2025 12:58:50 +0200
+	 In-Reply-To:Content-Type; b=j4U7SVha5Tm9ppFaKfc/eR3xuotDtihN7XL/e8IqSq8gOHFsCTNZUrJT5tilFPIfF9//0PIlaM/JD8e7bDvJ0bK76yoqa6IAylXlGCfku5iMAv8QkIXC1CAmGOAXVSs60Z2XpZBsbH4aK79akfqtkTR6vUdMhE/K2SFsUukw0yo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8995816F2;
+	Wed,  1 Oct 2025 04:00:15 -0700 (PDT)
+Received: from [10.57.0.204] (unknown [10.57.0.204])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 06CB33F59E;
+	Wed,  1 Oct 2025 04:00:18 -0700 (PDT)
+Message-ID: <747ab990-d02d-4e7c-9007-a7ac73bb1062@arm.com>
+Date: Wed, 1 Oct 2025 12:00:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,110 +41,188 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] mm/page_owner: add options 'print_handle' and
- 'print_stack' for 'show_stacks'
-To: Michal Hocko <mhocko@suse.com>,
- Mauricio Faria de Oliveira <mfo@igalia.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Oscar Salvador <osalvador@suse.de>, Suren Baghdasaryan <surenb@google.com>,
- Brendan Jackman <jackmanb@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
- Zi Yan <ziy@nvidia.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- kernel-dev@igalia.com
-References: <20250924174023.261125-1-mfo@igalia.com>
- <aNVpFn9W0jYYr9vs@tiehlicka> <4c2a467113efd085530eb055e4a4e1fe@igalia.com>
- <aNY49sdoFVe03m_Y@tiehlicka> <d9af42d5cb9d427632087c5f51e50501@igalia.com>
- <aNvjDsBuw3hqwy31@tiehlicka>
-Content-Language: en-US
-From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <aNvjDsBuw3hqwy31@tiehlicka>
+Subject: Re: [PATCH v10 03/43] arm64: RME: Add SMC definitions for calling the
+ RMM
+To: Marc Zyngier <maz@kernel.org>
+Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ James Morse <james.morse@arm.com>, Oliver Upton <oliver.upton@linux.dev>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
+ <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
+ Alexandru Elisei <alexandru.elisei@arm.com>,
+ Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
+ linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+ Gavin Shan <gshan@redhat.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+ Alper Gun <alpergun@google.com>, "Aneesh Kumar K . V"
+ <aneesh.kumar@kernel.org>, Emi Kisanuki <fj0570is@fujitsu.com>,
+ Vishal Annapurve <vannapurve@google.com>
+References: <20250820145606.180644-1-steven.price@arm.com>
+ <20250820145606.180644-4-steven.price@arm.com> <86o6qrym2b.wl-maz@kernel.org>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <86o6qrym2b.wl-maz@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MID_RHS_MATCH_FROM(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: D0AC922ACA
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
 
-On 9/30/25 4:02 PM, Michal Hocko wrote:
-> On Fri 26-09-25 13:47:15, Mauricio Faria de Oliveira wrote:
->>> My main question is whether this should squashed into the existing file
->>> with a rather strange semantic of controling the file content depending
->>> on a different file content. Instead, would it make more sense to add
->>> two more files, one to display your requested key:value data and another
->>> to resolve key -> stack trace?
+Hi Marc,
+
+On 01/10/2025 11:05, Marc Zyngier wrote:
+> On Wed, 20 Aug 2025 15:55:23 +0100,
+> Steven Price <steven.price@arm.com> wrote:
 >>
->> I see your point. Either way works for me, honestly.
->> Let me justify the current way, but it's certainly OK to change it, if
->> that is preferred.
+>> The RMM (Realm Management Monitor) provides functionality that can be
+>> accessed by SMC calls from the host.
 >>
->> The use of option files has precedents in page_owner itself
->> (count_threshould) and ftrace (/sys/kernel/debug/trace/options/*).
+>> The SMC definitions are based on DEN0137[1] version 1.0-rel0
 >>
->> The use of output files needs more code/complexity for a similar result,
->> AFAICT (I actually started it this way, but changed it to minimize
->> changes). 
->> The reason is debugfs_create_bool() is more specialized/simpler to
->> handle than debugfs_create_file().
+>> [1] https://developer.arm.com/documentation/den0137/1-0rel0/
 >>
->> It ends up with a similar pattern in a common "__stack_print()" to avoid
->> duplicate code (conditions on parameters to configure the output), and
->> it adds:
->> - 2 ops structs per file (file_operations and seq_operations, as in
->> 'show_stacks'), for plumbing different behaviors down to different
->> functions, to call the common function with different parameters.
->> - It should be possible to reduce it with private fields (from
->> debugfs_create_file(data) to seq_file.private), however, since
->> seq_file.private is used (iterator in stack_start|next()), this needs
->> more code: a new struct for the private field (to store the current
->> iterator and add the new parameters).
+>> Reviewed-by: Gavin Shan <gshan@redhat.com>
+>> Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>> Signed-off-by: Steven Price <steven.price@arm.com>
+>> ---
+>> Changes since v9:
+>>  * Corrected size of 'ripas_value' in struct rec_exit. The spec states
+>>    this is an 8-bit type with padding afterwards (rather than a u64).
+>> Changes since v8:
+>>  * Added RMI_PERMITTED_GICV3_HCR_BITS to define which bits the RMM
+>>    permits to be modified.
+>> Changes since v6:
+>>  * Renamed REC_ENTER_xxx defines to include 'FLAG' to make it obvious
+>>    these are flag values.
+>> Changes since v5:
+>>  * Sorted the SMC #defines by value.
+>>  * Renamed SMI_RxI_CALL to SMI_RMI_CALL since the macro is only used for
+>>    RMI calls.
+>>  * Renamed REC_GIC_NUM_LRS to REC_MAX_GIC_NUM_LRS since the actual
+>>    number of available list registers could be lower.
+>>  * Provided a define for the reserved fields of FeatureRegister0.
+>>  * Fix inconsistent names for padding fields.
+>> Changes since v4:
+>>  * Update to point to final released RMM spec.
+>>  * Minor rearrangements.
+>> Changes since v3:
+>>  * Update to match RMM spec v1.0-rel0-rc1.
+>> Changes since v2:
+>>  * Fix specification link.
+>>  * Rename rec_entry->rec_enter to match spec.
+>>  * Fix size of pmu_ovf_status to match spec.
+>> ---
+>>  arch/arm64/include/asm/rmi_smc.h | 269 +++++++++++++++++++++++++++++++
+>>  1 file changed, 269 insertions(+)
+>>  create mode 100644 arch/arm64/include/asm/rmi_smc.h
 >>
->> So, I went for the (IMHO) simpler and smaller implementation with option
->> files instead of output files.
->>
->> Please let me know which way is preferred, and I'll send v2 with that
->> (in addition to the changelog suggestions).
+>> diff --git a/arch/arm64/include/asm/rmi_smc.h b/arch/arm64/include/asm/rmi_smc.h
+>> new file mode 100644
+>> index 000000000000..1000368f1bca
+>> --- /dev/null
+>> +++ b/arch/arm64/include/asm/rmi_smc.h
 > 
-> Sure, I see. The main problem with the option file is that it is
-> inherently suited for a single consumer which is a hard assumption to
-> make at this stage. So I think it is worth having a separate 2 files
-> which provide the missing functionality.
+> [...]
+> 
+>> +#define RMI_PERMITTED_GICV3_HCR_BITS	(ICH_HCR_EL2_UIE |		\
+>> +					 ICH_HCR_EL2_LRENPIE |		\
+>> +					 ICH_HCR_EL2_NPIE |		\
+>> +					 ICH_HCR_EL2_VGrp0EIE |		\
+>> +					 ICH_HCR_EL2_VGrp0DIE |		\
+>> +					 ICH_HCR_EL2_VGrp1EIE |		\
+>> +					 ICH_HCR_EL2_VGrp1DIE |		\
+>> +					 ICH_HCR_EL2_TDIR)
+> 
+> Why should KVM care about what bits the RMM wants to use? Also, why
+> should KVM be forbidden to use the TALL0, TALL1 and TC bits? If
+> interrupt delivery is the host's business, then the RMM has no
+> business interfering with the GIC programming.
 
-Agreed, we should prioritize a better userspace API over having simpler
-kernel implementation.
+The RMM receives the guest's GIC state in a field within the REC entry
+structure (enter.gicv3_hcr). The RMM spec states that the above is the
+list of fields that will be considered and that everything else must be
+0[1]. So this is used to filter the configuration to make sure it's
+valid for the RMM.
 
-Will count_threshold apply the same to the new file that prints only
-handles? I guess it will?
+In terms of TALL0/TALL1/TC bits: these control trapping to EL2, and when
+in a realm guest the RMM is EL2 - so it's up to the RMM to configure
+these bits appropriately as it is the RMM which will have to deal with
+the trap.
 
-Also the handles to stack translation file could perhaps support
-"seeking" to a specific handle if you're interested in only a few
-handles. Perhaps not necessary though if you plan to read it all just once.
+[1] RWVGFJ in the 1.0 spec from
+https://developer.arm.com/documentation/den0137/latest
 
-> Thanks!
+>> +
+>> +struct rec_enter {
+>> +	union { /* 0x000 */
+>> +		u64 flags;
+>> +		u8 padding0[0x200];
+>> +	};
+>> +	union { /* 0x200 */
+>> +		u64 gprs[REC_RUN_GPRS];
+>> +		u8 padding1[0x100];
+>> +	};
+>> +	union { /* 0x300 */
+>> +		struct {
+>> +			u64 gicv3_hcr;
+>> +			u64 gicv3_lrs[REC_MAX_GIC_NUM_LRS];
+>> +		};
+>> +		u8 padding2[0x100];
+>> +	};
+>> +	u8 padding3[0x400];
+>> +};
+>> +
+>> +#define RMI_EXIT_SYNC			0x00
+>> +#define RMI_EXIT_IRQ			0x01
+>> +#define RMI_EXIT_FIQ			0x02
+>> +#define RMI_EXIT_PSCI			0x03
+>> +#define RMI_EXIT_RIPAS_CHANGE		0x04
+>> +#define RMI_EXIT_HOST_CALL		0x05
+>> +#define RMI_EXIT_SERROR			0x06
+>> +
+>> +struct rec_exit {
+>> +	union { /* 0x000 */
+>> +		u8 exit_reason;
+>> +		u8 padding0[0x100];
+>> +	};
+>> +	union { /* 0x100 */
+>> +		struct {
+>> +			u64 esr;
+>> +			u64 far;
+>> +			u64 hpfar;
+>> +		};
+>> +		u8 padding1[0x100];
+>> +	};
+>> +	union { /* 0x200 */
+>> +		u64 gprs[REC_RUN_GPRS];
+>> +		u8 padding2[0x100];
+>> +	};
+>> +	union { /* 0x300 */
+>> +		struct {
+>> +			u64 gicv3_hcr;
+>> +			u64 gicv3_lrs[REC_MAX_GIC_NUM_LRS];
+>> +			u64 gicv3_misr;
+> 
+> Why do we care about ICH_MISR_EL2? Surely we get everything in the
+> registers themselves, right? I think this goes back to my question
+> above: why is the RMM getting in the way of ICH_*_EL2 accesses?
+
+As mentioned above, the state of the guest's GIC isn't passed through
+the CPU's registers, but instead using the rec_enter/rec_exit
+structures. So unlike a normal guest entry we don't set all the CPU's
+register state before entering, but instead hand over a shared data
+structure and the RMM is responsible for actually programming the
+registers on the CPU. Since many of the registers are (deliberately)
+unavailable to the host (e.g. all the GPRs) it makes some sense the RMM
+also handles the GIC registers save/restore.
+
+Thanks,
+Steve
+
+>> +			u64 gicv3_vmcr;
+>> +		};
+> 
+> Thanks,
+> 
+> 	M.
+> 
 
 
