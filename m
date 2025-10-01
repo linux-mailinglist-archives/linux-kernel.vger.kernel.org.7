@@ -1,149 +1,123 @@
-Return-Path: <linux-kernel+bounces-838610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB547BAFBC8
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 10:52:15 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E48D7BAFBCE
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 10:52:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 402504A47FA
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 08:52:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C8CCA4E2629
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 08:52:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EEA6235C01;
-	Wed,  1 Oct 2025 08:52:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SMwwT9kQ"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03B2E284B2F;
+	Wed,  1 Oct 2025 08:52:07 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3773427B35D
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 08:52:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE58528C5D5
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 08:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759308722; cv=none; b=S4we16Q/5x0z3QXGGXCsTsGSRHp/mnOSHfSKWefzp6m4RD4XYucoVRKZqjlWC87TYL79YFLHEWaKCEKaRXDDEZ8HRzaZmPKMA3Ptn4rSwkWqpT1UQaEUIayb6542V1RSSHntcKFsVftJJjBQL7gFyazGDXkC6vZkeN4mGAurJV0=
+	t=1759308726; cv=none; b=M/K5c2Edp9TXsAXXVAKtLPbrCPwGmFn+E8xzFUHaO6Lnc6I8u6yRadgYs/eOhL1NFziMOjqflJL7LdDA/aLG242xb685TGUpNKLcOKe9v2h1Oy6ad0+KK4lBEphN6tWD6vSddjP9kXF/Y/rUB7e1scoMGQxSMpHejBeBFplk58w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759308722; c=relaxed/simple;
-	bh=J/dzWtKuI6KBjBEpLOQM0goLapAMplM4s0j7SX3F+KQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mcIJFLwu0ANK6vDlXl2JKwwPtB4DJt79//ajcLWJJaqeDtKxieWGpKGQtX0pvOqoXNyAU5nHTH5FLK1OrHLoq2uamGFPtWz9ehDqxg2OYq4PdmCBUy0e/kQP75UDr4oOKgL/ZjyVCrtmvViJ4+QC1rMv7w8nmA5LwgDlY5apJuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SMwwT9kQ; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-271067d66fbso71781485ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 01:52:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759308720; x=1759913520; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qp4XEa7ToS5FljKv+e4kbXkPaJ8IiCtEps0yhLGiUvo=;
-        b=SMwwT9kQAT+026Dlsnx8iiaALwf7jm8DFODZwPw+8OKaVgo5O5I7k6P6ARfdyHhKJM
-         +9S6bWFignCoMU5KsyyBxZJzOFJY1b3Sqi/kriUkeHU4OpNFb8Vo9o4rwSxLvijJsSJN
-         1o0OPLA4H4xtBZsjgLgGXxlkSxZBcnoupT7Q3YsLYV+Dt73/OKDtrXBzBkEfJmFCqRHK
-         pa04WzI2M021yQRgaMbYXkXpwftgtE+blSl7VKCfVqQXHadbC+zmmuhDmiguBfaMk/KV
-         ok8ReOPg7HXAOB120/FJG5rFKtwUmysYo2WnBnrCoBsIlTDpvS6Daastd7kiYN1ARfAK
-         p/og==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759308720; x=1759913520;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qp4XEa7ToS5FljKv+e4kbXkPaJ8IiCtEps0yhLGiUvo=;
-        b=v3OhMcps7it+c/o6yafjSys5JcSMV2rnFV32A48tVNkXlPcNv9wnJg6J0UmDrNC1dW
-         gevXT11uccT4ohM/awhLEVXDny/Y49tqOoWElZR+FVSvhLG2SpscfXNiO8HWet0ip4d5
-         wXOyWZ8zZsilyLPXyDN5sgITZRws0sJcAO7d5cvUZD4oCLEULtT2oQtGFDbD5H7fU0KC
-         1WmgOp+rrR3OTOGJ/YKdEU/oalvhU+vWk6z9sxISf4cTS03hFxbrLz9r35T3I5rv5ahJ
-         Enbzm83rZvqRIycj3JnQj4vIx/WQKOFIF6etM88Ng3zMqnbEE5WWKKeCu36Kli2TNiiR
-         +tbA==
-X-Forwarded-Encrypted: i=1; AJvYcCUDGi4T+pTmyLoU/Xh2ZzX9sQicy4IoWvO8pTwUq3GmQSqXkZHl6Mb7MDuJlQEDyMuIZaAfoWEKs3xLSsQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQTSDzH1R4NFItC8Kq8c1OWHqDSzpaDXRh5gx3A+CFWSVQ3jbZ
-	5TD44HbI9wft4NC+ubTL5CVS99P3SC0ES2dZYpEV2wZxJrPmlJlwHPAf
-X-Gm-Gg: ASbGncvKpgih6k4hWABOTiHobM/xPJNZoe/IirhPAOlvl3L2kovnffyJrJyHkxHWJN5
-	PUEmUO8G6oOCKl+LBdMvMk/Y0mUZ6my27nynqHHWPAyH9+pFL6BTcgUJxbwSO3E+pyBaUmGLmr6
-	val4fd1Tpnzoc15logu+SQqU/jYl+IA4Tn2wXBMliacC2/5m4Kvbu0YdR42lE/QO8P/jNdAh53O
-	zUOyB3oMrRWKx0Zc2FBa2jBFHzAGkfPmsa8dNyelI5toM91ytxJk0TfFNB5rAsRiiv5RgdQFslA
-	2b88uYdeIW4eCLibU+z7k0ZTdSGnYWqodXqWeVJ2ln7DZV1fc/V9CsRRTMrdqm9Cap4xN7dR/HP
-	r2a5NRjd9RqrCkuhxmiuWijgFCzIVcUGImyOPh+C0h2+bOKoGK7CM6SF4HD3b
-X-Google-Smtp-Source: AGHT+IEHdZm9mfkBKVeO9ICnDi0prrIOk7t9NdFH7Nb8A1i6qAUcHyz3K7tduBTbrUHYsSRsis4o3w==
-X-Received: by 2002:a17:903:189:b0:24e:3cf2:2453 with SMTP id d9443c01a7336-28e7f326956mr31904445ad.61.1759308720391;
-        Wed, 01 Oct 2025 01:52:00 -0700 (PDT)
-Received: from localhost.localdomain ([129.227.63.233])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed68821c8sm178451175ad.74.2025.10.01.01.51.57
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 01 Oct 2025 01:51:59 -0700 (PDT)
-From: fuqiang wang <fuqiang.wng@gmail.com>
-To: Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: fuqiang wang <fuqiang.wng@gmail.com>,
-	yu chen <chen.yu@easystack.com>,
-	dongxu zhang <dongxu.zhang@easystack.com>
-Subject: [PATCH] avoid hv timer fallback to sw timer if delay exceeds period
-Date: Wed,  1 Oct 2025 16:50:39 +0800
-Message-ID: <20251001085039.91635-1-fuqiang.wng@gmail.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1759308726; c=relaxed/simple;
+	bh=YXxqZhHvVCrfQKAVL9HvF3Qy579n1KlGnF1ayZ64yuM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n7KYPFfereuqZOmpts01W7yPPw40pGHITFIsM14JH6fxzl7AGbxB9vdsYr+qUga5/U+xIQZINGNYX0k3biE5+R9J4jcHs91DR0JuCBEMcbyZEZD9NgslO3hwnRnmVEVYu0Oobn7sP7m2T5Beks2dSUpimlULoem/TgU/aXiHcQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1v3sYv-0002sc-Ox; Wed, 01 Oct 2025 10:51:49 +0200
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1v3sYu-001Nty-0q;
+	Wed, 01 Oct 2025 10:51:48 +0200
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1v3sYu-006Sbg-0S;
+	Wed, 01 Oct 2025 10:51:48 +0200
+Date: Wed, 1 Oct 2025 10:51:48 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
+Cc: Thangaraj.S@microchip.com, Rengarajan.S@microchip.com,
+	UNGLinuxDriver@microchip.com, andrew+netdev@lunn.ch,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	syzbot+62ec8226f01cb4ca19d9@syzkaller.appspotmail.com
+Subject: Re: [PATCH] net: usb: lan78xx: Fix lost EEPROM read timeout
+ error(-ETIMEDOUT) in lan78xx_read_raw_eeprom
+Message-ID: <aNzrpEaYwoNwcbrd@pengutronix.de>
+References: <20250930084902.19062-1-bhanuseshukumar@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250930084902.19062-1-bhanuseshukumar@gmail.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-When the guest uses the APIC periodic timer, if the delay exceeds the
-period, the delta will be negative. nsec_to_cycles() may then convert this
-delta into an absolute value larger than guest_l1_tsc, resulting in a
-negative tscdeadline. Since the hv timer supports a maximum bit width of
-cpu_preemption_timer_multi + 32, this causes the hv timer setup to fail and
-switch to the sw timer.
+On Tue, Sep 30, 2025 at 02:19:02PM +0530, Bhanu Seshu Kumar Valluri wrote:
+> Syzbot reported read of uninitialized variable BUG with following call stack.
+> 
+> lan78xx 8-1:1.0 (unnamed net_device) (uninitialized): EEPROM read operation timeout
+> =====================================================
+> BUG: KMSAN: uninit-value in lan78xx_read_eeprom drivers/net/usb/lan78xx.c:1095 [inline]
+> BUG: KMSAN: uninit-value in lan78xx_init_mac_address drivers/net/usb/lan78xx.c:1937 [inline]
+> BUG: KMSAN: uninit-value in lan78xx_reset+0x999/0x2cd0 drivers/net/usb/lan78xx.c:3241
+>  lan78xx_read_eeprom drivers/net/usb/lan78xx.c:1095 [inline]
+>  lan78xx_init_mac_address drivers/net/usb/lan78xx.c:1937 [inline]
+>  lan78xx_reset+0x999/0x2cd0 drivers/net/usb/lan78xx.c:3241
+>  lan78xx_bind+0x711/0x1690 drivers/net/usb/lan78xx.c:3766
+>  lan78xx_probe+0x225c/0x3310 drivers/net/usb/lan78xx.c:4707
+> 
+> Local variable sig.i.i created at:
+>  lan78xx_read_eeprom drivers/net/usb/lan78xx.c:1092 [inline]
+>  lan78xx_init_mac_address drivers/net/usb/lan78xx.c:1937 [inline]
+>  lan78xx_reset+0x77e/0x2cd0 drivers/net/usb/lan78xx.c:3241
+>  lan78xx_bind+0x711/0x1690 drivers/net/usb/lan78xx.c:3766
+> 
+> The function lan78xx_read_raw_eeprom failed to properly propagate EEPROM
+> read timeout errors (-ETIMEDOUT). In the fallthrough path, it first
+> attempted to restore the pin configuration for LED outputs and then
+> returned only the status of that restore operation, discarding the
+> original timeout error.
+> 
+> As a result, callers could mistakenly treat the data buffer as valid
+> even though the EEPROM read had actually timed out with no data or partial
+> data.
+> 
+> To fix this, handle errors in restoring the LED pin configuration separately.
+> If the restore succeeds, return any prior EEPROM timeout error correctly
+> to the caller.
+> 
+> Reported-by: syzbot+62ec8226f01cb4ca19d9@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=62ec8226f01cb4ca19d9
+> Fixes: 8b1b2ca83b20 ("net: usb: lan78xx: Improve error handling in EEPROM and OTP operations")
+> Signed-off-by: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
 
-Moreover, due to the commit 98c25ead5eda ("KVM: VMX: Move preemption timer
-<=> hrtimer dance to common x86"), if the guest is using the sw timer
-before blocking, it will continue to use the sw timer after being woken up,
-and will not switch back to the hv timer until the relevant APIC timer
-register is reprogrammed.  Since the periodic timer does not require
-frequent APIC timer register programming, the guest may continue to use the
-software timer for an extended period.
+Reviewed-by: Oleksij Rempel <o.rempel@pengutronix.de> 
 
-The reproduction steps and patch verification results at link [1].
-
-[1]: https://github.com/cai-fuqiang/kernel_test/tree/master/period_timer_test
-
-Fixes: 98c25ead5eda ("KVM: VMX: Move preemption timer <=> hrtimer dance to common x86")
-Signed-off-by: fuqiang wang <fuqiang.wng@gmail.com>
----
- arch/x86/kvm/lapic.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-index 5fc437341e03..afd349f4d933 100644
---- a/arch/x86/kvm/lapic.c
-+++ b/arch/x86/kvm/lapic.c
-@@ -2036,6 +2036,9 @@ static void advance_periodic_target_expiration(struct kvm_lapic *apic)
- 	u64 tscl = rdtsc();
- 	ktime_t delta;
- 
-+	u64 delta_cycles_u;
-+	u64 delta_cycles_s;
-+
- 	/*
- 	 * Synchronize both deadlines to the same time source or
- 	 * differences in the periods (caused by differences in the
-@@ -2047,8 +2050,11 @@ static void advance_periodic_target_expiration(struct kvm_lapic *apic)
- 		ktime_add_ns(apic->lapic_timer.target_expiration,
- 				apic->lapic_timer.period);
- 	delta = ktime_sub(apic->lapic_timer.target_expiration, now);
-+	delta_cycles_u = nsec_to_cycles(apic->vcpu, abs(delta));
-+	delta_cycles_s = delta > 0 ? delta_cycles_u : -delta_cycles_u;
-+
- 	apic->lapic_timer.tscdeadline = kvm_read_l1_tsc(apic->vcpu, tscl) +
--		nsec_to_cycles(apic->vcpu, delta);
-+		delta_cycles_s;
- }
- 
- static void start_sw_period(struct kvm_lapic *apic)
 -- 
-2.47.0
-
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
