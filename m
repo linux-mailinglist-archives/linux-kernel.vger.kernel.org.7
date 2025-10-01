@@ -1,142 +1,160 @@
-Return-Path: <linux-kernel+bounces-839293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A9D2BB1441
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 18:39:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1285FBB1453
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 18:41:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 055DF17C071
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 16:39:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 629EC4A22C6
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 16:41:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03CA4287262;
-	Wed,  1 Oct 2025 16:39:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79BE82773F3;
+	Wed,  1 Oct 2025 16:41:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LVaUbinE"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="pIK+xUiS"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA9E6287244
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 16:39:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D244288AD
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 16:41:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759336784; cv=none; b=m1rYejyfzW89tUFABwnxhMowCZhD8svVD6dZVfRDKN79b0isIXUTjPQVaGRZg82ryXI0K7X6qg8m6zCviopdSLrjVIeiOVoIzU8ri9yNAJQxvAgPpQpQz2qA3CRuyP3pAuw3lk/wDOaTJ+K3RG1WlVF9A8M0NQcbl1PkmG1+h1A=
+	t=1759336900; cv=none; b=P42wLHht2iMqcbmBPy2YtkgwZsy2EDLZejWwtyrJh3yylJGz2D/8SGIr/yNdeDciTWmQ6Y8DMfuaRU/X8reHfloT8222w96nSJCRJaTVbjWGuGDC28OXiY+DZVosM5qrwdXXKhQYYwCeIWL1bNtM0XtWj+cWvjXsSPAUqwS4cDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759336784; c=relaxed/simple;
-	bh=5pOEezS/qP6F4jEWoeOm7Fz3N7TCVGrsBiLzB3qwz1w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qDu+phQiC1ul3HObycKtZz0lT1OcDYFhWteKRxMn6TdV4mVlJhuBFEnUomIYNMyQDHzr8Ozi2lYTJ3cwh77hI6l/ykY97E+pnoHcN1Dw+hTKGCSPPgP/LVraABMYQHeGmcewr6IR2Vjbg4FcBgp1ZkJ0pcq51i5Rsw/KM0X2n9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LVaUbinE; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-77c1814ca1dso94281b3a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 09:39:42 -0700 (PDT)
+	s=arc-20240116; t=1759336900; c=relaxed/simple;
+	bh=a1XoZxtaZXzc8savHnGOQOVy8U9jDAKbQJJWbfvFnHQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WQ+rNJnAJnV970U9EvPFDI0aqsuLd/CtfnmOWIKfna1/9qYn4ht6OMLID+vT9PyQr2ixONzIwojX1dauqfAURN+C6r00Qg144RWyiVzB7OrJPom7PwhG2vpXKuCtghzaZ1o3WU6PC6Q9fuNpcVa0imcu0KP2mLZ3tTsaxfKW0QM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=pIK+xUiS; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4ddf60466d4so564991cf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 09:41:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759336782; x=1759941582; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RmGKlN/jBsVenanHceP4S7aQlFVvNQtOwGJQtiqwWbA=;
-        b=LVaUbinEuK4XM9JBMP2MiBggPrSFpDlqa1rFmwMq79/y5Mse9lUi5GCYJ5Ag3oqV+q
-         iyfZ/sKixrbEpRWGx4d+1xq+7NWAzgKwvWOoG0AP8hmSCXR0GtEm7PkLWxtQsH/wo2T1
-         ZY1wuvPwuihxocXt27fu6e+wNI48FTpXtE6QhAIv8TNZFtawES2WKj7LXk2l+nkMDZHW
-         YOkcVOFUr7MJji4vN7g5g+8p3Se/MCLg+BRr02S0DprzdSBT641P0YAV+30AYtHsUnfK
-         Wri1ogMSLCXK1cpBpvs4GaO4sHfuktCXpR/iwWXUWD7g3t40h1oKlO+DHsOf7FRHfNwp
-         zSaA==
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1759336896; x=1759941696; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=x8Pdh4UPxBNFa+jIlOxZr+0N7CcxwrBzi/u8gKDgJeo=;
+        b=pIK+xUiSd+4SmGlRfnZwSqHstmXUrPLo2VGzgmbOJFExLiD2HgP8nYDLMBOg9FbxHz
+         oAWrb/BjFohZ4tIk0mEMpqVUSbvofJed4u2sSipMpm1+BWPshr7q+tMS/g94Pb1fZ957
+         U1gk/CDAqt4pJGd+2uFM+156tsuLRQGCvTexvrWzxX5+GvLrvQumQTY0yOhl2BqTrR9E
+         N5I+v9QdMArXRUVvk2jvH80e972vSbrmh1V3fgpzVmKDtDa8HPrZDjG0zSgDA5mIy1XB
+         iUr27J60OTQHRi9OVqR1sL4QJZ3hm0yJjvnaJMzTwtAIziJlp08MBgUNEgvG0exuP1T5
+         eaLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759336782; x=1759941582;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RmGKlN/jBsVenanHceP4S7aQlFVvNQtOwGJQtiqwWbA=;
-        b=PQWDIuV7Ihyqei+pj4BalYboZujgsOAwIlXZpEt/AZB7yy3Rt4XGkgTQXcmCpxOLdZ
-         TMJeOLGcRHS7nsqhYpRMM8+VUg5yfC4eu1Q6QgtOTQJkEUvm1WV53ADFhsCAiki3O+n+
-         z9/7yocGaeKubZ5+oqPa+sldNY7Dd1s0rmnDpq+k6gTJiGlAvLKzMoNk2A52sHVv7GtN
-         QHWZ0SrxUS9XvPYGlR4HhYl5U3Ewfi88CyGNjc7LE8s5JlPX3T4pZLwAP641XNVcHXy9
-         1U5q3O/a/oQyX7Stkxnv+u2Wl4st7KNYSlm9LuilKwj/api9+Ao1PVeAV/DoB/ZxMf4t
-         0j6g==
-X-Forwarded-Encrypted: i=1; AJvYcCVPVdKje8gd2/2K1sTmf4yfZWHRdHVSpR7QkXnFISpc1EDu7YTUXpqVk3kyTFBR912+7Y2/Qdbhtc/pIK0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKd2mTwEV5AHbeLVSzHlS6fLTomthSfgOkoOMMynpzhwWegK6w
-	EJofTbLz+16mnRmQYxbBlz+LxRy9jIlK9zNnHirXcB4Lrn6h79h3bFCBQ69uo2xv+tsyof7q2Fq
-	fxvelL3WrTYMIfdYlZ+u7ZDWMTtPKgs0=
-X-Gm-Gg: ASbGncu9LnhjmwbwdaZaxLR4JxhWSS6Wh2gUzNqskvLAhY15owsj0ODTkK+xzKhpML5
-	KS/4vBJq8guYywn/qg1IdbzkeIVG6eHdbNleY1RyWekN6qTiRL+f54pJT0NYj2m2sK5fApZSc0F
-	/b8omcss3U9tK4qChGJoVh7B1w13xZ7+x7f/BmwjkiRB1Y1oHYccHypJpuNzxR16QHtswE1Oefy
-	KiexugCzUzJ66rNJ18hSltoQWuAODZO9IzPVjFkfU5/ATE=
-X-Google-Smtp-Source: AGHT+IE9y4z9vj8j7yKhBcDb2apGorlG7PINT4jHURs+aWjIj8z/pwVAMIEXfRoJqNuQ3Mw/cwz7seK+Az+n+Pf6vm4=
-X-Received: by 2002:a17:90b:1e0e:b0:330:7a11:f111 with SMTP id
- 98e67ed59e1d1-339a6f84d53mr4930805a91.35.1759336781992; Wed, 01 Oct 2025
- 09:39:41 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759336896; x=1759941696;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=x8Pdh4UPxBNFa+jIlOxZr+0N7CcxwrBzi/u8gKDgJeo=;
+        b=vwELocxfnOPVIRDPKso9lBX9uYFG2fGdlU+p25eQigRSOLkyJShoFH7CP8wZEDFKKm
+         4q2fk4iVDKaP9cHWQVXd/cBtt2arqwyL3rkKbdpdr+MlW239huFl1A34M0Y59IrtqcRi
+         MiyjySRmwnWdqFrooa6uXMw6dUHDnE9ggbnXnvS58ziSuRB6vyTioMZBjGuY1lx0JM8X
+         tJE7vhhXLGZtOUpHze6VE5i8wJ+UIYLEEyE1z09YHiEKW2sRfZJE75Fx0Xs6hAehKzYY
+         NMQSFjueJUfwFnViyZa6+LsEsyJ5jl7ymrH5UYsCtixjXmyhiZ71y4zxTkdkILsjNHgy
+         2kgw==
+X-Forwarded-Encrypted: i=1; AJvYcCVeYLumMOf2zfG5sm/cVN1XFZBiRoa7RVVUL7sP3Fgp0oJMd0tpLe4s95oaiJtsQFf4pk/IBhOgR3zh/NQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIeBAg4TAXWPpbSN1adNWsD0aEo3yOC1KH0dF/IJe8ma5AsAB9
+	wS0IaVgdoOfxQOBqqVeKURu/gN32oADFSSpM3SkzhBXmQjW69AIw4rFQKJiOPuXOTI4=
+X-Gm-Gg: ASbGnctjD95N6yQnsko+hGLxMM2WJOgwRQEgDxLtRhwesN5egL+cnu4MrCoJ2Jg7fTf
+	IiEQoQycQoQi4vj7wkuOUhQzazfQHWZTZ/1LCDfAuhg0mcypWLD0+2+VaY0vOok6BlSgbuFQCK3
+	oygtxq6a24zhJnlysB38mManBkHn54fs8kEYrLXlcdvfyNF6/oxXpmnmCF4U8xu0QLnmAWpWpcA
+	ynSEVeLfeccI4WySIqB1NricJQxK0kMascvAxbhS0RV6DXT6lGVDr3E2tts/XKL72+AjjJidOdS
+	1ok/qtLj8RlHtStd0phLXE49n61ZoI+Kog82R7AcAIGCSoMYaQ8GwtBriM3SYz9qOt353lzFFx8
+	DpEm7d+a2gf2bVnUea3T7SV9vgDxhBKZ9rKFyu10+VT9guw==
+X-Google-Smtp-Source: AGHT+IGPb0Edu1K4J4/cuc8wtsu5FZIIzXcuwfIai0CmgIW3O2Li8d+X8dt0nP89wSlyBM1hFk3zHQ==
+X-Received: by 2002:a05:622a:2cf:b0:4b7:81df:95e2 with SMTP id d75a77b69052e-4e41ea16a29mr49675751cf.40.1759336896110;
+        Wed, 01 Oct 2025 09:41:36 -0700 (PDT)
+Received: from localhost ([2603:7000:c01:2716:929a:4aff:fe16:c778])
+        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-877796a1c72sm8001285a.46.2025.10.01.09.41.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Oct 2025 09:41:35 -0700 (PDT)
+Date: Wed, 1 Oct 2025 12:41:31 -0400
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Brendan Jackman <jackmanb@google.com>, Zi Yan <ziy@nvidia.com>,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	Gregory Price <gourry@gourry.net>,
+	Joshua Hahn <joshua.hahnjy@gmail.com>
+Subject: Re: [PATCH] mm: page_alloc: avoid kswapd thrashing due to NUMA
+ restrictions
+Message-ID: <20251001164131.GB1597553@cmpxchg.org>
+References: <20250919162134.1098208-1-hannes@cmpxchg.org>
+ <4a793133-6cb3-42d4-948f-84eae6fa7df3@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251001132449.178759-1-jolsa@kernel.org>
-In-Reply-To: <20251001132449.178759-1-jolsa@kernel.org>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Wed, 1 Oct 2025 09:39:27 -0700
-X-Gm-Features: AS18NWBXWfduYxqUtnH1tABDYMsrbfqkNZtEA8ABmNwPyaBnTu4oL0vq-aat2Hk
-Message-ID: <CAEf4BzYMDgo2JQEkV7e6rnX1Jwu4QMFdqEsnRcxL2J0ukLxU=Q@mail.gmail.com>
-Subject: Re: [PATCH] uprobe: Move arch_uprobe_optimize right after handlers execution
-To: Jiri Olsa <jolsa@kernel.org>
-Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, bpf@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	x86@kernel.org, Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, 
-	John Fastabend <john.fastabend@gmail.com>, Hao Luo <haoluo@google.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Alan Maguire <alan.maguire@oracle.com>, David Laight <David.Laight@aculab.com>, 
-	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>, 
-	Ingo Molnar <mingo@kernel.org>, Jann Horn <jannh@google.com>, Alejandro Colomar <alx@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4a793133-6cb3-42d4-948f-84eae6fa7df3@suse.cz>
 
-On Wed, Oct 1, 2025 at 6:25=E2=80=AFAM Jiri Olsa <jolsa@kernel.org> wrote:
->
-> It's less confusing to optimize uprobe right after handlers execution
-> and before we do the check for changed ip register to avoid situations
-> where changed ip register would skip uprobe optimization.
->
-> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> ---
->  kernel/events/uprobes.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
+On Wed, Oct 01, 2025 at 04:59:02PM +0200, Vlastimil Babka wrote:
+> On 9/19/25 6:21 PM, Johannes Weiner wrote:
+> > On NUMA systems without bindings, allocations check all nodes for free
+> > space, then wake up the kswapds on all nodes and retry. This ensures
+> > all available space is evenly used before reclaim begins. However,
+> > when one process or certain allocations have node restrictions, they
+> > can cause kswapds on only a subset of nodes to be woken up.
+> > 
+> > Since kswapd hysteresis targets watermarks that are *higher* than
+> > needed for allocation, even *unrestricted* allocations can now get
+> > suckered onto such nodes that are already pressured. This ends up
+> > concentrating all allocations on them, even when there are idle nodes
+> > available for the unrestricted requests.
+> > 
+> > This was observed with two numa nodes, where node0 is normal and node1
+> > is ZONE_MOVABLE to facilitate hotplugging: a kernel allocation wakes
+> > kswapd on node0 only (since node1 is not eligible); once kswapd0 is
+> > active, the watermarks hover between low and high, and then even the
+> > movable allocations end up on node0, only to be kicked out again;
+> > meanwhile node1 is empty and idle.
+> 
+> Is this because node1 is slow tier as Zi suggested, or we're talking
+> about allocations that are from node0's cpu, while allocations on
+> node1's cpu would be fine?
 
-makes sense
+It applies in either case. The impetus for this fix was from behavior
+in a tiered system, but this seems like a general NUMA problem to me.
 
-Acked-by: Andrii Nakryiko <andrii@kernel.org>
+Say you have a VM where you use an extra node for runtime resizing,
+making it ZONE_MOVABLE to keep it hotpluggable.
 
-> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-> index 5dcf927310fd..c14ec27b976d 100644
-> --- a/kernel/events/uprobes.c
-> +++ b/kernel/events/uprobes.c
-> @@ -2765,6 +2765,9 @@ static void handle_swbp(struct pt_regs *regs)
->
->         handler_chain(uprobe, regs);
->
-> +       /* Try to optimize after first hit. */
-> +       arch_uprobe_optimize(&uprobe->arch, bp_vaddr);
-> +
->         /*
->          * If user decided to take execution elsewhere, it makes little s=
-ense
->          * to execute the original instruction, so let's skip it.
-> @@ -2772,9 +2775,6 @@ static void handle_swbp(struct pt_regs *regs)
->         if (instruction_pointer(regs) !=3D bp_vaddr)
->                 goto out;
->
-> -       /* Try to optimize after first hit. */
-> -       arch_uprobe_optimize(&uprobe->arch, bp_vaddr);
-> -
->         if (arch_uprobe_skip_sstep(&uprobe->arch, regs))
->                 goto out;
->
-> --
-> 2.51.0
->
+> > Similar behavior is possible when a process with NUMA bindings is
+> > causing selective kswapd wakeups.
+> > 
+> > To fix this, on NUMA systems augment the (misleading) watermark test
+> > with a check for whether kswapd is already active during the first
+> > iteration through the zonelist. If this fails to place the request,
+> > kswapd must be running everywhere already, and the watermark test is
+> > good enough to decide placement.
+> 
+> Suppose kswapd finished reclaim already, so this check wouldn't kick in.
+> Wouldn't we be over-pressuring node0 still, just somewhat less?
+
+Yes. And we've seen that to a degree, where kswapd goes to sleep
+intermittently and the occasional (high - low) batch of fresh pages
+makes it into node0 until kswapd is woken up again.
+
+It still fixed the big picture pathological case, though, where
+*everything* was just concentrated on node0. So I figured why
+complicate it. But there would be room for some hysteresis.
+
+Another option could be, instead of checking kswapds, to check the
+watermarks against the high thresholds on that first zonelist
+iteration. After all, that's where a recently-gone-to-sleep would
+leave the watermark level.
+
+But it would need a fudge factor too, to account for the fact that
+kswapd might overreclaim past the high watermark. And the overreclaim
+factor is something that has historically fluctuated quite a bit
+between systems and kernel versions. So this could be too
+fragile. Kswapd being active is a very definitive signal comparably.
 
