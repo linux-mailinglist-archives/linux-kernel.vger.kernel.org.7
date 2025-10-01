@@ -1,83 +1,81 @@
-Return-Path: <linux-kernel+bounces-838966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79E67BB089A
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 15:38:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AFBBBB08A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 15:39:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 590E34A6C51
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 13:38:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0EA04A6B01
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 13:39:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF2802EE612;
-	Wed,  1 Oct 2025 13:38:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uP9V0mCL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 576E92110E;
-	Wed,  1 Oct 2025 13:38:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CBAF2EFD81;
+	Wed,  1 Oct 2025 13:39:21 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 839A02EE5F5;
+	Wed,  1 Oct 2025 13:39:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759325897; cv=none; b=CXLBPD78qUdKUAhg2wH6Ybpk58HmsSzYU0LC9q5MkHR7XvZ16UWzmZF8PSK0h7o7nveX75zGOogJ9Zqgd/lQR407T32yEKOb0U8+uqqPvfwlHmkr2x2BJKKfBqIHdc2HoxuJUC03sL1TkL1MFhx7fDkEF0E/zqUD/JZXo0ddVzQ=
+	t=1759325961; cv=none; b=pntxCStKuCirhT+mqJHSWorUlBsULa+pSdK7LzSrMCVpA/VXl8EAA25V+ncD6DKFTBNUF+MpDcandZ4nC948Ow3JOLg2Zso9qQMmC27rV5uzMXMSCMOjylwSavGuNHQKMkla1rZCryczpPJZwie/jjjbLE35HfR23BLHkCdjQ8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759325897; c=relaxed/simple;
-	bh=XxwenTZYHKcchxhkGdvccTjyuxdR+m+3PbPB7SIZTHU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fg4MqCluIsJ35X8ccXXTrgac7EkLVZePRdS7VjS1+fP6ft2Zp2vmjcgEV+2m4Ql/yOIY2uQVJVWgaJtqS/AfDD+nxWfRi8Npe0hriuUyO0v2pGQZLqGFOO4uKSgbjAB85bSn6e2sZS9wQWa+FgLsQ56otBSuuzf7s28nOT74RG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uP9V0mCL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79F27C4CEF4;
-	Wed,  1 Oct 2025 13:38:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759325896;
-	bh=XxwenTZYHKcchxhkGdvccTjyuxdR+m+3PbPB7SIZTHU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uP9V0mCLlRgPiDEHjT+xveEwmxeA2TSvx6WIcAepPNm+T95yesdvDX5bppIKz3BTy
-	 dtCT6DzJSxpPNGPxLmrfmq9YWtFvkIr9BFFwMAyXkJtUMbdN5862eXUeMZsi86CDM9
-	 o/59J0gLPJ/FrvoJps3Obb6TgbFWm1ArEnfco1BeATPsYlJpexSqnSHnnPrHP5E9xe
-	 OLRGW6FixiStzmyNt8D0JvMXG5Yvf4PoNtrMMpXgu/N93pLc7qWO1BiCtXDU8qXVK5
-	 ujz8JFb9IZxLEMt+2hkQt0WBsHrdJ7+orFC42hzEoz9jQguPX3z7vWWdaewhVvk5Xx
-	 D1b8eDZLv+MSQ==
-Date: Wed, 1 Oct 2025 10:38:13 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
+	s=arc-20240116; t=1759325961; c=relaxed/simple;
+	bh=UtXb5OiK4CU4HHYjuDw7cW8cwma1Sgv5RlEAG4NZbEw=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gbq42ctGb9zUCYaUmsmER3i+YI1oVIGCWi5Fbfe/OpzzHwbiFkmo2lZCcqLpUnKd1eSeoR2uO6RkVA7wuLdPDZCNOAE3J5UkR+NjnK2OW8ZZSriMIHufQiVUNuAMDbI4aDQW7BTE5Iqtjg0oyG6Hn/hE6I1NuETmmludX3hR5wc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 443B216F2;
+	Wed,  1 Oct 2025 06:39:05 -0700 (PDT)
+Received: from localhost (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E624E3F59E;
+	Wed,  1 Oct 2025 06:39:12 -0700 (PDT)
+Date: Wed, 1 Oct 2025 14:39:10 +0100
+From: Leo Yan <leo.yan@arm.com>
+To: James Clark <james.clark@linaro.org>,
+	Mike Leach <mike.leach@linaro.org>,
 	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] perf sched: Avoid union type punning undefined
- behavior
-Message-ID: <aN0uxfZAT8pp8svS@x1>
-References: <20250914183353.1962899-1-irogers@google.com>
- <CAP-5=fV59uES4ZkNHDUypeO0XSnjkUTDWLydvaymEsegyeSb-w@mail.gmail.com>
+	Jonathan Corbet <corbet@lwn.net>, coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH v2 5/6] coresight: Add format attribute for setting the
+ timestamp interval
+Message-ID: <20251001133910.GO7985@e132581.arm.com>
+References: <20250814-james-cs-syncfreq-v2-0-c76fcb87696d@linaro.org>
+ <20250814-james-cs-syncfreq-v2-5-c76fcb87696d@linaro.org>
+ <20250930151414.GK7985@e132581.arm.com>
+ <3a731a9e-0621-42b6-b7fc-4b0fd9b7da6e@linaro.org>
+ <20251001132815.GN7985@e132581.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fV59uES4ZkNHDUypeO0XSnjkUTDWLydvaymEsegyeSb-w@mail.gmail.com>
+In-Reply-To: <20251001132815.GN7985@e132581.arm.com>
 
-On Tue, Sep 30, 2025 at 01:05:33PM -0700, Ian Rogers wrote:
-> On Sun, Sep 14, 2025 at 11:33 AM Ian Rogers <irogers@google.com> wrote:
-> >
-> > A union is used to set the priv value in thread (a void*) to a boolean
-> > value through type punning. Undefined behavior sanitizer fails on this.
-> >
-> > Signed-off-by: Ian Rogers <irogers@google.com>
+On Wed, Oct 01, 2025 at 02:28:15PM +0100, Coresight ML wrote:
+
+[...]
+
+> > Unfortunately that won't work because you'd have to always include
+> > coresight-etm4x.h. This file is compiled for both arm32 and arm64 so it
+> > would break the arm32 build.
+> > 
+> > I could define the TTR_CFG_FLD_ts_level_* stuff somewhere else but then it
+> > becomes messier than just doing the #ifdefs here.
 > 
-> Ping.
+> ATTR_CFG_FLD_ts_level_* is only used in coresight-etm4x-core.c, it is not
+> used in coresight-etm-perf.c. Thus, we don't need to include
+> coresight-etm4x.h in coresight-etm-perf.c. Do I miss anything?
 
-Thanks, applied to perf-tools-next,
+Now I understand that you are using GEN_PMU_FORMAT_ATTR, so need to
+used TTR_CFG_FLD_ts_level_* macro defined in coresight-etm4x.h.
 
-- Arnaldo
+Thanks,
+Leo
 
