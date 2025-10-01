@@ -1,93 +1,75 @@
-Return-Path: <linux-kernel+bounces-839299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FB47BB1487
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 18:45:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F335BB1477
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 18:45:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A91057A8AB6
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 16:44:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B71C2A0E1C
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 16:45:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A343288CA6;
-	Wed,  1 Oct 2025 16:45:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="grt/R0so"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FBEB2C0323;
+	Wed,  1 Oct 2025 16:45:14 +0000 (UTC)
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE5D31EBA19;
-	Wed,  1 Oct 2025 16:45:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D949A2BDC0A
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 16:45:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759337118; cv=none; b=JimRg528vhe/IilB308kIyiTQ3++Z4g7BNPKFXSHaXZYhMXZLm3ZRr4HJPfxqCHHFpEP95dlPdwv3E1g1yb7LBc734PWeLuIJqxSW4XM735uWg1qBjAFWeZlnbEgCxuSN4FhWSETcACb1jdmxUvpk2NJxPEKLt9SRUgdVVygzz4=
+	t=1759337113; cv=none; b=sNsH0uFxEaQ/BANFDJiv26Zrhtm6IybKZEbCZ5gzv6MULZDltrnp+lboiUJSeml4lvXYuXfI5aw6R3euYUq/xxqRvO5XfBASb1FUUFH7oJkBnkgKlbe6heS0e9qS97jCP0VDwgMPUB8w8xO79N0N8NLx1QLW93QAeAdGhZnWmiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759337118; c=relaxed/simple;
-	bh=MlqpAikH1OWmKnPftKwstAu69RtadIFDLdyHc9NLlCA=;
+	s=arc-20240116; t=1759337113; c=relaxed/simple;
+	bh=K7YWwtRoXyrnO3YXAJ6rlkNgEypHfVsTVv9EU7Z16Qs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M8hM6VQvJVDLen2LB/lXl0C0vyw28+WLwdhU5dFrB1RPdOlX4uUN+ZVhfgGR/SbNIiQ/cUMqM+DtE/e8tyN1vPf0Jq9jZw1faUiuAdTdsgbbERY3bZiTo3aGP/7BmwS2qAqwF9VQsGyl9XsIg7AiefrCdazMxLNW+gTqi96ho1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=grt/R0so; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E1B1C4CEF9;
-	Wed,  1 Oct 2025 16:45:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759337117;
-	bh=MlqpAikH1OWmKnPftKwstAu69RtadIFDLdyHc9NLlCA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=grt/R0so3wGZBLWpTvtis4YVWYu0OWep3ecKNHvbq7qnybhqzve3CRlAwyGup1A0m
-	 ZrU5gzan7fvGY+HBDacq9cQVhu0kD/9p5zyxIRXlbfTE//GuC03KL8xX/DzZYBYHfg
-	 ERyVJYc45o+Gv/5N/HK/VQMVCTd5fX+Qz92sDRMbes4AgKrxiE13uPZTBeVLUxFqHp
-	 7CWCOVLqlb4dDxrfw4YDP8hdWAfu5hV3+V92AWWv7uzT6GHzUtowxz6+RJZ0yRbr2K
-	 6HRzFTdg6/mkV8ko8OxuQ/Vw5UUFLujZsbJ6PWs+JaM5XcAlYTHRx+dEI5wgAzFmmZ
-	 yQjKV8fw8MCKQ==
-Date: Wed, 1 Oct 2025 09:45:05 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Paolo Abeni <pabeni@redhat.com>, Tariq Toukan <tariqt@nvidia.com>,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Leon Romanovsky <leon@kernel.org>, Mark Bloch <mbloch@nvidia.com>,
-	netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Gal Pressman <gal@nvidia.com>,
-	Leon Romanovsky <leonro@nvidia.com>,
-	Michael Guralnik <michaelgur@nvidia.com>,
-	Moshe Shemesh <moshe@nvidia.com>, Will Deacon <will@kernel.org>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Justin Stitt <justinstitt@google.com>, linux-s390@vger.kernel.org,
-	llvm@lists.linux.dev, Ingo Molnar <mingo@redhat.com>,
-	Bill Wendling <morbo@google.com>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Salil Mehta <salil.mehta@huawei.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
-	Yisen Zhuang <yisen.zhuang@huawei.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Leon Romanovsky <leonro@mellanox.com>, linux-arch@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Guralnik <michaelgur@mellanox.com>, patches@lists.linux.dev,
-	Niklas Schnelle <schnelle@linux.ibm.com>,
-	Jijie Shao <shaojijie@huawei.com>, Simon Horman <horms@kernel.org>,
-	Patrisious Haddad <phaddad@nvidia.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Eric Dumazet <edumazet@google.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>
-Subject: Re: [PATCH net-next V6] net/mlx5: Improve write-combining test
- reliability for ARM64 Grace CPUs
-Message-ID: <20251001164505.GA379753@ax162>
-References: <1759093688-841357-1-git-send-email-tariqt@nvidia.com>
- <651ee9fe-706e-4471-a71b-e7a12b42cc3e@redhat.com>
- <20251001145514.GC3024065@nvidia.com>
- <20251001163655.GA370262@ax162>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MRPSkFsibwW3jIOf0GfHX57zzcXAttdY/13rK6LEYMwMa1RmjGUbmT8jMk+R9dQsz1To+yVHI5RYqKUoU41iXQR+UxC/iFi2IvdtT06c0zieIdtGWSfnFRZzjGg+jlB6e14C8vdZHdRJFDJX6cWHgqK41L0Gujdc0dVW19WKvYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b3d50882cc2so15964966b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 09:45:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759337110; x=1759941910;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8RpMi9Th+Po7AoazGbT2yu6utd+ZudWSIE+dBXn6AEw=;
+        b=qB/dz64xk/ePRkUO8LubIHC17XPAKQsRHTCEY51HrfUPNSvWCITIhLjqiJpDsjc61M
+         bPJcgLya5sHEvwcHAWB9gcwaK/dAwxAmkfcu6gWfmv9WmUhJb7S+s6wUbEGzOLCKR8Vs
+         blLid0VAzQHy8tN0VsbPoG1hzveiQtf9u26MnxwVfF1+/C5snvuMwEZIFq17RuD09cEP
+         ADWe6QxTS4iGbZzYR7pROaEyALwOTrH+votcielNkvQObqYzbIRvpEqZ+CXY4me54KVK
+         crQYDptD/g1J/n/oEr0AvKXtCl1VHczMSrlxPlAgba7ZkFd0kRULnA2hqqDKd3aunabB
+         oi0A==
+X-Forwarded-Encrypted: i=1; AJvYcCWmiI2phOCVEXf3JjRZDXdmyICVBvqFRdDyy5jL+U+HkeXbieWa1Q/lT9QKepjlSTs1FXrleYbu+VloVtU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPuXSq6amlVT6ddgb+NcmWemcvNFc1AvgpZTAajTaw8NlBdDcT
+	ekJVW0yO00Dl5X1tdbIwYMqyK58ko6sGIUFHW4gveCR2tgvLELRmzt6P
+X-Gm-Gg: ASbGnct7xGf2DfM2L/vYjDMvR8I/aJhDYNDbW0JLMDAHJp5tGL9s66NJpBJegHowbg1
+	ONpc5Y2RSyP0hPa/a8dOXI71xiMIR5h7+lQjAlrG9IMvXjNm+vc3Ye7nVYzwKJIJyzRngHrWG2R
+	7wPTNdHWKS2SRUeMKY2JgbJgdERXXh+9ZqGODLI0vCSXF6MFGqYoKMmW5H1124JV+FFOHqmqBOn
+	UaGoK6q4OnWssG2H/9mAwMjou8NdijQGWDW3g/bZSAV+K1mohESn0yg42xcO83bwU9XFcTp+0EO
+	k17xiQKoPvrfMN0A5G5+f96egskn5K8Ju+1/yfj2h41wAMNn7bE1tJxj6j91bchA8MEOsOwrnPP
+	dESAI+IG9VSOtkSv3piQqSFYUydFtWKEv8w7eRQ==
+X-Google-Smtp-Source: AGHT+IFaatL0zRpXljYvk9pU9uM41+0gFgUFUB28SfXW6ic2vlnE+OWGmtK1CqAf9k3bMM7SwTnkww==
+X-Received: by 2002:a17:907:1c95:b0:b3c:31c2:b57d with SMTP id a640c23a62f3a-b46e99531a7mr534332566b.55.1759337109937;
+        Wed, 01 Oct 2025 09:45:09 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff:74::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b486a178610sm1548866b.92.2025.10.01.09.45.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Oct 2025 09:45:09 -0700 (PDT)
+Date: Wed, 1 Oct 2025 09:45:07 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: gregkh@linuxfoundation.org, sashal@kernel.org, stable@vger.kernel.org, 
+	Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, 
+	Ard Biesheuvel <ardb@kernel.org>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-team@meta.com, Michael van der Westhuizen <rmikey@meta.com>, 
+	Tobias Fleig <tfleig@meta.com>
+Subject: Re: [PATCH] stable: crypto: sha256 - fix crash at kexec
+Message-ID: <jm3bk53sqkqv6eg7rekzhn6bgld5byhkmksdjyxmrkifku2dmc@w7xnklqsrpee>
+References: <20251001-stable_crash-v1-1-3071c0bd795e@debian.org>
+ <20251001162305.GE1592@sol>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,15 +78,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251001163655.GA370262@ax162>
+In-Reply-To: <20251001162305.GE1592@sol>
 
-On Wed, Oct 01, 2025 at 09:36:55AM -0700, Nathan Chancellor wrote:
-> Removing the semicolon resolves the issue for me and matches the format
-> of .arch_extension in the rest of the kernel. I am guessing binutils
-> became less strict with parsing at some point.
+Hello Eric,
 
-Looks like 2.40 is the first fixed release.
+On Wed, Oct 01, 2025 at 09:23:05AM -0700, Eric Biggers wrote:
 
-  https://sourceware.org/bugzilla/show_bug.cgi?id=29519
-  https://sourceware.org/git/gitweb.cgi?p=binutils-gdb.git;h=e8f20526238199c18afe163a230eafe19b51fca0
+> This looks fine, but technically 'unsigned int' would be more
+> appropriate here, given the context.  If we look at the whole function
+> in 6.12, we can see that it took an 'unsigned int' length:
+
+Ack. Do you want me to send a v2 with `unsigned int` instead?
+
+> This also suggests that files with lengths greater than UINT_MAX are
+> still broken.  Is that okay?
+
+I've tested it but kexec fails to load it, so, it seems we are safe
+here:
+
+	# kexec --load kernel --initrd foo 
+	kexec_file_load failed: File too large
+
+> Anyway, I'm glad that I fixed all these functions to use size_t lengths
+> in newer kernels...
+
+Thanks for that!
+--breno
 
