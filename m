@@ -1,150 +1,236 @@
-Return-Path: <linux-kernel+bounces-838566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06CBDBAF8E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 10:12:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF3CBBAF8F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 10:12:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B3CBC4E15FE
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 08:12:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F9853AF5C2
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 08:12:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B8B8280330;
-	Wed,  1 Oct 2025 08:11:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15E2A279DDB;
+	Wed,  1 Oct 2025 08:12:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="hhZlevLn"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="IVczpYBv"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A63927B35D;
-	Wed,  1 Oct 2025 08:11:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6C70279355
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 08:12:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759306317; cv=none; b=L5/3ykF9Vtl29vyJ5M/yeyXmOUCLXfrGgIbKDfz8DQQ1i/RB0A274n5ZilPUmEkq5yzBHEi/CG8GPYOd8oP3xrk+tjouSIEsBn59tnBgcsRE8D7q7jxKKwc/9UiF0+XGxkQ4CVNO2l9ZZUJlwk9nTxMmYcEJQjlHJv+5rVD5kKI=
+	t=1759306370; cv=none; b=F2rDGjn/TyNo8nRq+xwtKua64LvirG7ByWLs5/3pn3QUQC1SrHGvycJaVrVRHKT4SmE83MKn4oZmLmTOBFs/yR0v9ItoXI2bMOf6b+jDLOdutcAzgU7UbZ0noZMH3kaTP3T8KxrVhhJUZVsqOQQ4gSdJkR0kH0c4uN9n9uieJvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759306317; c=relaxed/simple;
-	bh=Zy3Chk3IsXVuwitOcu5ShYYmJKwChkzi6v/GovRBypE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HU+VeEq6GVmWqkzLv+sOe1xdQKRRI9HTFGUJiEqF8CXGGVLs4X2hr1q7sqRDb/+iieppSdPDdTFi9J8sbmgV2/vVSkz+RDJEgBEGRlPOL14/+KJtNB0D4ae+bOXJ2yn2UXSYcfYa2PmFrBl/eajhPzA1uuydfR+gmSBahrKoY+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=hhZlevLn; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 4662f5aa9e9e11f0b33aeb1e7f16c2b6-20251001
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=bPjJVKJWfX/QRF1O7LRg4cKSp0jf6hqcZ2RrU6a4XBs=;
-	b=hhZlevLnu2oeuBuzEdrrZgj+4p/Uh8QEGClZ4ceEj4OXpUB7tQxR+OwvdrvhXqDI9WanP5iU5W+H47P/aByh18MfV+mHPLOaZWP1aunIJ5ENZF6m2iE+GhMPAE5k6AcymVsPW+LOWA/OHAiQbEs+FZJWWXoSJY7Bp++1tiLIXgU=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.6,REQID:26d465ee-74c0-4fbe-95d0-c231403e891d,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:a9d874c,CLOUDID:b62f206d-8443-424b-b119-dc42e68239b0,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102|836|888|898,TC:-5,Content:
-	0|15|50,EDM:-3,IP:nil,URL:0,File:130,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,
-	OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 4662f5aa9e9e11f0b33aeb1e7f16c2b6-20251001
-Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw02.mediatek.com
-	(envelope-from <chris.lu@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1643499817; Wed, 01 Oct 2025 16:11:47 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Wed, 1 Oct 2025 16:11:45 +0800
-Received: from mtksitap99.mediatek.inc (10.233.130.16) by
- mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1748.10 via Frontend Transport; Wed, 1 Oct 2025 16:11:45 +0800
-From: Chris Lu <chris.lu@mediatek.com>
-To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg
-	<johan.hedberg@gmail.com>, Luiz Von Dentz <luiz.dentz@gmail.com>
-CC: Sean Wang <sean.wang@mediatek.com>, Will Lee <will-cy.Lee@mediatek.com>,
-	SS Wu <ss.wu@mediatek.com>, Steve Lee <steve.lee@mediatek.com>,
-	linux-bluetooth <linux-bluetooth@vger.kernel.org>, linux-kernel
-	<linux-kernel@vger.kernel.org>, linux-mediatek
-	<linux-mediatek@lists.infradead.org>, Chris Lu <chris.lu@mediatek.com>
-Subject: [PATCH v2 2/2] Bluetooth: btusb: MT7922: Add VID/PID 0489/e170
-Date: Wed, 1 Oct 2025 16:11:44 +0800
-Message-ID: <20251001081144.2384434-3-chris.lu@mediatek.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20251001081144.2384434-1-chris.lu@mediatek.com>
-References: <20251001081144.2384434-1-chris.lu@mediatek.com>
+	s=arc-20240116; t=1759306370; c=relaxed/simple;
+	bh=/ykmk2fkekJndu1S7aDPXYfJRdmiCohbXJjZADcy7R4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iRdQyCXnAC9KuD0/TvXOMXIOSoRp7zLyNXQAgq0wZxxxbM2axGijBPQpBFCl1TzNaYOpJULy24mGY7AbrX49CYRbT07LtQRheAiywz5HSUuMF8bnVY6o0QSgWBjDsGHetXimxCmcC5YUibf4zzQ+84zhUITxF+Cmxy6d/a2YhMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=IVczpYBv; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-61a54560c1fso1212882a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 01:12:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1759306366; x=1759911166; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/wta+A7F956rwxD04gcs4FdCT+k6OzI/an4+vTIk+CQ=;
+        b=IVczpYBv2qLCeWjInXrrmtVuhT8dPmMMc43wBtgblij+igRlqvbOk8RWyVYd6YXgAI
+         l1Cn5c/nQNJspUmcT1yqY8/XFGPQPMeE4mFBTHelL1Hf9rdt0EctoG7v2djXU34NhIBM
+         XsRGpGswui+f2xMtXvqNTi0b6ikh9VYaNl0hFPnyHE/VVRgFgE+tU0HhBM6mXrrAcwZA
+         80365TNXfzZCHJF3hpDU4vMg7+Zb06avzz62QpmFTbUSrXp5c/ehSLwKbiSUSJpGQz1k
+         d/3JpvGco+2DsAjnJ/SRpdYeHnIal82pq12B/mHTFbPxrjMcHNoFjPZkTpnLNDrZ/6uX
+         IFUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759306366; x=1759911166;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/wta+A7F956rwxD04gcs4FdCT+k6OzI/an4+vTIk+CQ=;
+        b=g0hWlXw5d6RXtAAXTzGuNt9cIDX9fA+7+2d1KunW87Fma4/MLPM8fQSqPmp0ZLsOZC
+         EwNVqBYaf1NwNLaqTiPGWtlUwHn9SJmGs9IJicJmlkzSXoFk5oi2ik9X281xEaX1bY/N
+         0yT3c/tAvtRKYRFgfKj7dqL8ZaNctR60HHYqDqWfQ7dLLSMa0DIUnvj09Pc5QemBHHzc
+         F5LF851X3IVstOocKiJWNcdDpHTFpodE38gK4FhNWtRseecnhmtuZ9vQevAcl+BBUbja
+         Jr7eD+TGjkFN0g8MpcuGV9ea4v2ABpQKU5/uvT8JxRnAjBU/KhA+FkmEYE8eZDFpXlfC
+         BRtA==
+X-Forwarded-Encrypted: i=1; AJvYcCXOgITexG6xvb0lXM69cNqu5SYc3RFIPlRKdvwCx/PiDhpT+7SivFWFIkk3pfR4hRtQqmpbsn3r1rxFrnE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaauvKu97eVoQvjXtsWpfiSKvGRfWQhc2GGsE5qHD5KigPWpok
+	5EdGJjgBuPYID9ywEtaQMOo5nJ8VnDcISiUFsPyDcrjxWFjFUPwBYTf6VX8qs/J1iiwF2+sSGqB
+	jHZY6mGYBU88EJ/z+cxQnUEUuXqjIrIWfXmOpmpezmg==
+X-Gm-Gg: ASbGncuSZI/ev5W6uGmter4zn5GrjDu9I0nbT7y7MgRDA4+iJxgn0Uej9S2QFnRJyao
+	HoGVnRfQ8LHvndFRTAGx6ESCVEt3usHa4OcKAMXLU95CKN/afZNtqfsC6aANioygqfT8hWnAuDP
+	EnOx7YZaTxQPGmQYr1K7roAVXBeDpOY6IzwDTGTfOPYDmCtiz64XkX3tD3MdXjcX9i9WyTe9+fO
+	Lzp1S/Qypvma80G+EtmYpzEVQRozX4=
+X-Google-Smtp-Source: AGHT+IHxoxX3gNePX92jgrf3o5NGrsKnxP1/TaoEMmDFGG51CJYv4H8WcqjR9qqpRa0ecLRvIjN9Sz2BUF6bF5jNxvU=
+X-Received: by 2002:a05:6402:354f:b0:62f:935e:5f56 with SMTP id
+ 4fb4d7f45d1cf-63678e7ba35mr1645295a12.7.1759306366111; Wed, 01 Oct 2025
+ 01:12:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+References: <20250924-vmscape-bhb-v1-0-da51f0e1934d@linux.intel.com> <20250930012102.iayl5otar3lim23i@desk>
+In-Reply-To: <20250930012102.iayl5otar3lim23i@desk>
+From: Jinpu Wang <jinpu.wang@ionos.com>
+Date: Wed, 1 Oct 2025 10:12:33 +0200
+X-Gm-Features: AS18NWDjsMAcIoTBRAqX3j_rJS61kSImXarv5R47JeNrqoZozENyZbt4z5E7ip0
+Message-ID: <CAMGffEmJM+NZVM4HaXA6jmdjB1C6nPNxmLizD9P-3CojfVLsXw@mail.gmail.com>
+Subject: Re: [PATCH 0/2] VMSCAPE optimization for BHI variant
+To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Cc: x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	David Kaplan <david.kaplan@amd.com>, Sean Christopherson <seanjc@google.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, asit.k.mallick@intel.com, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, tao1.zhang@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add VID 0489 & PID e170 for MediaTek MT7922 USB Bluetooth chip.
+On Tue, Sep 30, 2025 at 3:22=E2=80=AFAM Pawan Gupta
+<pawan.kumar.gupta@linux.intel.com> wrote:
+>
+> On Mon, Sep 29, 2025 at 07:12:03AM +0200, Jack Wang wrote:
+> > From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+> >
+> > Hi Pawan,
+> >
+> > Thx for the patches, I tested them on our Intel SierraForest machine wi=
+th
+> > fio 4k randread/randwrite from guest, qemu virtio-blk, noticed nice
+> > performance improvement comparing to the default IBPB before exit to
+> > userspace mitigation. eg with default IBPB mitigation fio gets 204k IOP=
+S,
+> > with this new Clear BHB before exit to userspace gets 323k IOPS.
+>
+> Thanks for sharing the results.
+>
+> I realized the LFENCE in the clear_bhb_long_loop() is not required. The
+> ring3 transition after the loop should be serializing anyways. Below patc=
+h
+> gets rid of that LFENCE. It should give some performance boost as well.
+>
+> --- 8< ---
+> From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+> Subject: [PATCH] x86/vmscape: Remove LFENCE from BHB clearing long loop
+>
+> Long loop is used to clear the branch history when switching from a guest
+> to host userspace. The LFENCE barrier is not required as ring transition
+> itself acts as a barrier.
+>
+> Move the prologue, LFENCE and epilogue out of __CLEAR_BHB_LOOP macro to
+> allow skipping the LFENCE in the long loop variant. Rename the long loop
+> function to clear_bhb_long_loop_no_barrier() to reflect the change.
+>
+> Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Yes, I can confirm with this change on top, I get almost same
+performance as vmscape=3Doff for fio test.
 
-The information in /sys/kernel/debug/usb/devices about the Bluetooth
-device is listed as the below.
-
-T:  Bus=06 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  2 Spd=480  MxCh= 0
-D:  Ver= 2.10 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
-P:  Vendor=0489 ProdID=e170 Rev= 1.00
-S:  Manufacturer=MediaTek Inc.
-S:  Product=Wireless_Device
-S:  SerialNumber=000000000
-C:* #Ifs= 3 Cfg#= 1 Atr=e0 MxPwr=100mA
-A:  FirstIf#= 0 IfCount= 3 Cls=e0(wlcon) Sub=01 Prot=01
-I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=125us
-E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
-I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-I:  If#= 1 Alt= 6 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  63 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  63 Ivl=1ms
-I:* If#= 2 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=(none)
-E:  Ad=8a(I) Atr=03(Int.) MxPS=  64 Ivl=125us
-E:  Ad=0a(O) Atr=03(Int.) MxPS=  64 Ivl=125us
-I:  If#= 2 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=(none)
-E:  Ad=8a(I) Atr=03(Int.) MxPS= 512 Ivl=125us
-E:  Ad=0a(O) Atr=03(Int.) MxPS= 512 Ivl=125us
-
-Signed-off-by: Chris Lu <chris.lu@mediatek.com>
----
- drivers/bluetooth/btusb.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index a2cde2284163..6834592f3c39 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -687,6 +687,8 @@ static const struct usb_device_id quirks_table[] = {
- 						     BTUSB_WIDEBAND_SPEECH },
- 	{ USB_DEVICE(0x0489, 0xe153), .driver_info = BTUSB_MEDIATEK |
- 						     BTUSB_WIDEBAND_SPEECH },
-+	{ USB_DEVICE(0x0489, 0xe170), .driver_info = BTUSB_MEDIATEK |
-+						     BTUSB_WIDEBAND_SPEECH },
- 	{ USB_DEVICE(0x04ca, 0x3804), .driver_info = BTUSB_MEDIATEK |
- 						     BTUSB_WIDEBAND_SPEECH },
- 	{ USB_DEVICE(0x04ca, 0x38e4), .driver_info = BTUSB_MEDIATEK |
--- 
-2.45.2
-
+Thx for pushing the performance further.
+> ---
+>  arch/x86/entry/entry_64.S            | 32 +++++++++++++++++-----------
+>  arch/x86/include/asm/entry-common.h  |  2 +-
+>  arch/x86/include/asm/nospec-branch.h |  4 ++--
+>  3 files changed, 23 insertions(+), 15 deletions(-)
+>
+> diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+> index f5f62af080d8..bb456a3c652e 100644
+> --- a/arch/x86/entry/entry_64.S
+> +++ b/arch/x86/entry/entry_64.S
+> @@ -1525,10 +1525,6 @@ SYM_CODE_END(rewind_stack_and_make_dead)
+>   * Target Selection, rather than taking the slowpath via its_return_thun=
+k.
+>   */
+>  .macro __CLEAR_BHB_LOOP outer_loop_count:req, inner_loop_count:req
+> -       ANNOTATE_NOENDBR
+> -       push    %rbp
+> -       mov     %rsp, %rbp
+> -
+>         movl    $\outer_loop_count, %ecx
+>         ANNOTATE_INTRA_FUNCTION_CALL
+>         call    1f
+> @@ -1560,10 +1556,7 @@ SYM_CODE_END(rewind_stack_and_make_dead)
+>         jnz     1b
+>  .Lret2_\@:
+>         RET
+> -5:     lfence
+> -
+> -       pop     %rbp
+> -       RET
+> +5:
+>  .endm
+>
+>  /*
+> @@ -1573,7 +1566,15 @@ SYM_CODE_END(rewind_stack_and_make_dead)
+>   * setting BHI_DIS_S for the guests.
+>   */
+>  SYM_FUNC_START(clear_bhb_loop)
+> +       ANNOTATE_NOENDBR
+> +       push    %rbp
+> +       mov     %rsp, %rbp
+> +
+>         __CLEAR_BHB_LOOP 5, 5
+> +
+> +       lfence
+> +       pop     %rbp
+> +       RET
+>  SYM_FUNC_END(clear_bhb_loop)
+>  EXPORT_SYMBOL_GPL(clear_bhb_loop)
+>  STACK_FRAME_NON_STANDARD(clear_bhb_loop)
+> @@ -1584,8 +1585,15 @@ STACK_FRAME_NON_STANDARD(clear_bhb_loop)
+>   * protects the kernel, but to mitigate the guest influence on the host
+>   * userspace either IBPB or this sequence should be used. See VMSCAPE bu=
+g.
+>   */
+> -SYM_FUNC_START(clear_bhb_long_loop)
+> +SYM_FUNC_START(clear_bhb_long_loop_no_barrier)
+> +       ANNOTATE_NOENDBR
+> +       push    %rbp
+> +       mov     %rsp, %rbp
+> +
+>         __CLEAR_BHB_LOOP 12, 7
+> -SYM_FUNC_END(clear_bhb_long_loop)
+> -EXPORT_SYMBOL_GPL(clear_bhb_long_loop)
+> -STACK_FRAME_NON_STANDARD(clear_bhb_long_loop)
+> +
+> +       pop     %rbp
+> +       RET
+> +SYM_FUNC_END(clear_bhb_long_loop_no_barrier)
+> +EXPORT_SYMBOL_GPL(clear_bhb_long_loop_no_barrier)
+> +STACK_FRAME_NON_STANDARD(clear_bhb_long_loop_no_barrier)
+> diff --git a/arch/x86/include/asm/entry-common.h b/arch/x86/include/asm/e=
+ntry-common.h
+> index b7b9af1b6413..c70454bdd0e3 100644
+> --- a/arch/x86/include/asm/entry-common.h
+> +++ b/arch/x86/include/asm/entry-common.h
+> @@ -98,7 +98,7 @@ static inline void arch_exit_to_user_mode_prepare(struc=
+t pt_regs *regs,
+>                 if (cpu_feature_enabled(X86_FEATURE_IBPB_EXIT_TO_USER))
+>                         indirect_branch_prediction_barrier();
+>                 else if (cpu_feature_enabled(X86_FEATURE_CLEAR_BHB_EXIT_T=
+O_USER))
+> -                       clear_bhb_long_loop();
+> +                       clear_bhb_long_loop_no_barrier();
+>
+>                 this_cpu_write(x86_pred_flush_pending, false);
+>         }
+> diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/=
+nospec-branch.h
+> index 32d52f32a5e7..151f5de1a430 100644
+> --- a/arch/x86/include/asm/nospec-branch.h
+> +++ b/arch/x86/include/asm/nospec-branch.h
+> @@ -388,9 +388,9 @@ extern void write_ibpb(void);
+>
+>  #ifdef CONFIG_X86_64
+>  extern void clear_bhb_loop(void);
+> -extern void clear_bhb_long_loop(void);
+> +extern void clear_bhb_long_loop_no_barrier(void);
+>  #else
+> -static inline void clear_bhb_long_loop(void) {}
+> +static inline void clear_bhb_long_loop_no_barrier(void) {}
+>  #endif
+>
+>  extern void (*x86_return_thunk)(void);
 
