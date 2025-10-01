@@ -1,178 +1,157 @@
-Return-Path: <linux-kernel+bounces-839353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 972CFBB1769
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 20:16:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCC5EBB1777
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 20:17:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 470981C5E61
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 18:16:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 719BE3C09C1
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 18:17:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A59322D24B6;
-	Wed,  1 Oct 2025 18:16:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88E952D3EDB;
+	Wed,  1 Oct 2025 18:17:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LhbUZI0F"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="V7ztuWXc"
+Received: from mail-ot1-f98.google.com (mail-ot1-f98.google.com [209.85.210.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F716139D1B
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 18:16:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CE7C268C42
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 18:17:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759342600; cv=none; b=qBwQWFc+ygQ7wsE53NWUyl0oXKI9Dnoa9M7iMtauZXWyfQp89GtNsNuJBjAk13oKnSR0nIfAA1dO+lJe++FNB5cKflRe3f+xwY+Bo5v7/KPiy5n4KcfrAmyPA4xkNGIMLLubBtxVGi4PQoxRgKKvuiYwrUOxgUMHOi+mgBNv6Ss=
+	t=1759342644; cv=none; b=rv4Z0GevF3rF0qJNVE09Ppw7abxkFCQN4J3xf0ATx/0gjZ/OJtTgR6hazc4LKcn8nGk22yonVnYlwE2JE/fHuLZnjSahwDSrY0hes1ZIHYD1iW3O3sQPLT/zqxb9BZGJ18Sz4exdsetTLIi3HHmMGe8sT3gj8kB8hrYG2FSAj0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759342600; c=relaxed/simple;
-	bh=C3elPI9v7C6y0EwKsTNJ7aKVDWwycBt2YooymvV8Ass=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CMPNMKMpQ+z5SCZ1S/LUhLGxrCAuS2hO5AhoYk2e7wKc6RhcdR7GP36KgcPp8XxwpI8ImwH99IFggobMmgFWeHuI/lxi+8VZg+Pe/tWKZgFwxJBj/EcLO0oLclmj9eDYtAn/W6TnN5SViusmi48wQUsG5kz4aWZCyHnoxrObE1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LhbUZI0F; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759342597;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Hl5yRJD3IkUvsBwDHH8M7CQ5CZxrZ7ikFZVETEwQEng=;
-	b=LhbUZI0F0FZsKxTLkFtjRUzvuRePKRKxVcSmlBWPTcplLCnZz6QFdOl9UQ8Aik9L1UNVP2
-	YaNhcCn2XM0R51lQrk4BXqwiZA5H0xAjeImpDRL9Crd5JywzWC1h7NNSd8VOiYDEJCN5u7
-	syqCywWIHBAmUwl0K5l1pdsJNrIkovs=
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com
- [209.85.166.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-85-saCo1OKSOReLxWjsgXI6kg-1; Wed, 01 Oct 2025 14:16:35 -0400
-X-MC-Unique: saCo1OKSOReLxWjsgXI6kg-1
-X-Mimecast-MFC-AGG-ID: saCo1OKSOReLxWjsgXI6kg_1759342595
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-42b18fa4b81so507535ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 11:16:35 -0700 (PDT)
+	s=arc-20240116; t=1759342644; c=relaxed/simple;
+	bh=4D2u5+7Q4n316L058k0BKdEZoe/mLPgqNFtIcDxFUac=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kekjdb2ma1/Lj7joNeax1ET5J6YukYKjwWDLswdKK/cY9UX0zR0M0yNGO/4CrnUQHPUOiW7uZUHHBQHkgrKgkhTRg8ELRfv3k1HEKGFjLl8ZliFetCdE2f6qzqEGPYC9+XnyNR8Yn8fNLbEIZNM4iUQ+x4T70hklNS5iuhvANLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=V7ztuWXc; arc=none smtp.client-ip=209.85.210.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-ot1-f98.google.com with SMTP id 46e09a7af769-7abbdf3c476so124192a34.1
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 11:17:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759342595; x=1759947395;
-        h=content-transfer-encoding:mime-version:organization:references
-         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Hl5yRJD3IkUvsBwDHH8M7CQ5CZxrZ7ikFZVETEwQEng=;
-        b=qu9BDlY1xtLKIsNNyZerMs40/xoZHtv/3B4uuTohEXVsG5ukTVpKStrCAinvcQODTF
-         XFoqx5R9oudwi/NAoS/rSduXSnE2smzfkLAFIMesBrjRBBVNX7/L1bGEJHyjzRIb3bJ4
-         9Bi0LyK1EeO1XIz9xwwUhGtNzGWLY06jgC56LL9QhsPWaETC7s88Sukttt6TSEERPG9u
-         d8cX0xPcst8zjYnWOkt6yd3BWWWB26A7ShN3Ln5+wLfIRXWjhLPyKsII2vPGAiOQvDsq
-         bVtaqDH1/VuSvYjW9c9K6p+JZ7PW5AHvRJLHVuZNvB1mMb8nF9vewi/78cXd+nrpHjI8
-         dckg==
-X-Forwarded-Encrypted: i=1; AJvYcCUm++GrEzEIpHt2LPpxkjH6KNCWEuC+eK9FWzS5LRHf5fkGrZywD/2rKC5zAbUhrtk1g4N5WUMejpEMTqU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZT3drbYNAzVS50b674v8PokjBQTlyt8akjsZNSWAx1rMMxxyd
-	5bbffRnhZse7T6E3VN8XMNRtT38Bf4Vt60ywfdeLylQm/vBRQ13JXY03UltEa8Rpcq01g2ILNQc
-	IYN+15uZ3M6zzQFupB/pqniIhx/6ucs8LKKPH2TA85bOoTeq0KBGAchmD+Jc+ZPHcMA==
-X-Gm-Gg: ASbGncsot++YYjYGH4wqTmw/f+Su8Q3MhfWDF4SUh/kQh7WyekJydp07dN/XrkZHM5Q
-	aganQYUx/kNRG66WLOP6EEpwOo9fiX1F/Ugz53dEsdKIQ8xnoO00hU4O54QwmDqXW73zAweRGfv
-	6rdi1cg4IfIbJV1XP0MR0aumLf4ee1CRNiV278qb6aUiprOIoGWrC1ogDVZg+n9Nbh51ORsD/ay
-	csSqy6dXhGkS1rXVi3lTzWOJSXvbgAw9RmSuehNEU+oEYwmwQcqJMQhRO/dC9hI4udnTh/TF1Tr
-	/EvbFP9uTKPL5u/Rps5d02Ma/j/31R/z+vErX480Iie76Jwt
-X-Received: by 2002:a05:6e02:156a:b0:427:8d45:a545 with SMTP id e9e14a558f8ab-42d8167ffcbmr26826635ab.6.1759342594745;
-        Wed, 01 Oct 2025 11:16:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHz1/E65PrFu+RbIoFX/NgQBsZUTxT4dfgeMXQ472VKwtzi9DsWrZBCgFVcbSRmX9luhz8ANQ==
-X-Received: by 2002:a05:6e02:156a:b0:427:8d45:a545 with SMTP id e9e14a558f8ab-42d8167ffcbmr26826495ab.6.1759342594322;
-        Wed, 01 Oct 2025 11:16:34 -0700 (PDT)
-Received: from redhat.com ([38.15.36.11])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-57b5e9ec3afsm62945173.5.2025.10.01.11.16.32
+        d=1e100.net; s=20230601; t=1759342642; x=1759947442;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:dkim-signature:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ecfc2ylaD/7+laCYwVlEzsbxMMAjlj+CWU7OhEl57sc=;
+        b=MwRa/0IECND2Yiss+etOJQMY+KkPWxsIueDMDFBsbGJHHv92TYPoo1oGvR9SpUeYO3
+         xMtsTESAncCCVwrqLGzpXqgSlLVLFS5b+UTFpxAKCJZUapOi565FXcZJymR56hXqoRBU
+         KemFPOgPDRhMyiXrG/4hQfByMiUZwylumXBbqu2en/YAAUdLp6AInkVTwoPwkia0DRgZ
+         aP001w89SAMTsTUaYDWMhAnxRdRwhKOSsfjW9QD6H+HZaOvIxRYYnZTwi2zBXtzmAoia
+         DLEwk+1Ck5bTvfkdt/opkqBanyXZdS2ExuYXLlaUkBn4bA7FotPNYKaW1Rx/VHKbsBWM
+         /VUA==
+X-Forwarded-Encrypted: i=1; AJvYcCV2LkQufb6sITL6HNuUkS9srO4NPggpqvpqUlC8qYfyvZH3oLu34kq5iKNBdsyjz6cJFxx3qUy+ZVngTfc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4JdH7DO2Rt+wPW+gG8qMwBEIDLqfntXav2JjA7Cefe7AhWdv5
+	YtyBQlDyWm1E4Ti9l9KpNvxye/YGz5G1DZnj3mTCCW1drrNsPbVXO8dxews4jA3LNBoOfxyjUV2
+	S67pI47Z1lX9x9nn7F+TK27m1f6droFKjfNtVGEuIY5Cj8jkjw+VTWSk3UBZaEciie8BbEIyxL0
+	fuaJRr0xeueZz8dzT6TjhuLZxb5mbAemMOxXkWGj9xrAjQ8N58Ern/P+d/GXb49iNqYsrhW96Ci
+	ULYd6XFFt6yPoOt
+X-Gm-Gg: ASbGnctEYPrG7IO6lzjRkHxYtAbrl67SW0UhuMRQtNIqKN417MwiWcfkp5rGQR3mJVc
+	Sv1wYtbkzYul1L2qfXsOrP8sgR3n4NtPDBt39VeN34m6ODuqqaX3QnVIb4s/mripsr1dmL0Liyt
+	vH7QBrEzEuboN4vFaGe1vMiQReAidSlPn8zwKte46G7ZkChbmOv1wot+DcyUIIPO7UkOqTj1GOO
+	bdt+6fXfMtMAQCL501C1/d9d9CeAAMBUcpVL5qV96DJZ3uk3P2/kigyCYr27W1AVPsML/6nDc95
+	hBLfPwAzBlyExhCTy5qdbb5l0tMswwjb1j2mNuKfFRPiPWi0CsEnolusrZ3g51o5DP2d6qRUXL5
+	iAy4L/Gi+otZ8pFg9vgN3GSXAC4fZYyLCecILmr6ghIDa9dbaN43YHLDO1y3evL+qCW844VEpH4
+	s=
+X-Google-Smtp-Source: AGHT+IFuzXoEfn0Uw+ZoDtsfsjWmmPrcZ0duxNdgKKoQSO5kp6eK0XwT23Qdy34kgA9zw/urybYwM3AqO4jD
+X-Received: by 2002:a05:6830:67d6:b0:758:21cc:a45c with SMTP id 46e09a7af769-7bddcf0e095mr3257913a34.22.1759342642334;
+        Wed, 01 Oct 2025 11:17:22 -0700 (PDT)
+Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-0.dlp.protect.broadcom.com. [144.49.247.0])
+        by smtp-relay.gmail.com with ESMTPS id 46e09a7af769-7bf419f511fsm10180a34.5.2025.10.01.11.17.22
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 01 Oct 2025 11:17:22 -0700 (PDT)
+X-Relaying-Domain: broadcom.com
+X-CFilter-Loop: Reflected
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-87561645c1cso41019085a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 11:17:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1759342641; x=1759947441; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ecfc2ylaD/7+laCYwVlEzsbxMMAjlj+CWU7OhEl57sc=;
+        b=V7ztuWXch+CaYdGpnMpGbAJJyYNbibHDHc5DXMdw7UR3EEBERaL8GwDk80pYIXBnK1
+         fyxk0e8n0s3Ip8OH11vSRUZTP8LMFUv2aw7qRUZj+FzTWzI4M3tAJiVU7wXSzeKLW4N9
+         ia+c2PoFhTrRghPBHBZ8b0ysnnuYft4Y4yxmM=
+X-Forwarded-Encrypted: i=1; AJvYcCWLaxMIeZBuZAQUggo1KK0dWDxekJtf9H3tthZXdPJGu+3XmMKL9y7eMhHZ6MwknmhjhshYvd1fH0gSTqU=@vger.kernel.org
+X-Received: by 2002:a05:620a:3193:b0:866:73f7:259d with SMTP id af79cd13be357-873796bd7eemr589522185a.61.1759342641387;
+        Wed, 01 Oct 2025 11:17:21 -0700 (PDT)
+X-Received: by 2002:a05:620a:3193:b0:866:73f7:259d with SMTP id af79cd13be357-873796bd7eemr589514985a.61.1759342640724;
+        Wed, 01 Oct 2025 11:17:20 -0700 (PDT)
+Received: from mail.broadcom.net ([192.19.144.250])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4e55c9e78cfsm3847671cf.27.2025.10.01.11.17.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Oct 2025 11:16:33 -0700 (PDT)
-Date: Wed, 1 Oct 2025 12:16:31 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: John Hubbard <jhubbard@nvidia.com>, Alexandre Courbot
- <acourbot@nvidia.com>, Danilo Krummrich <dakr@kernel.org>, Joel Fernandes
- <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>, Alistair Popple
- <apopple@nvidia.com>, Zhi Wang <zhiw@nvidia.com>, Surath Mitra
- <smitra@nvidia.com>, David Airlie <airlied@gmail.com>, Simona Vetter
- <simona@ffwll.ch>, Bjorn Helgaas <bhelgaas@google.com>, Krzysztof
- =?UTF-8?B?V2lsY3p5xYRza2k=?= <kwilczynski@kernel.org>, Miguel Ojeda
- <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng
- <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?UTF-8?B?QmrDtnJu?=
- Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl
- <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
- nouveau@lists.freedesktop.org, linux-pci@vger.kernel.org,
- rust-for-linux@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/2] rust: pci: expose is_virtfn() and reject VFs in
- nova-core
-Message-ID: <20251001121631.7f2e68f5.alex.williamson@redhat.com>
-In-Reply-To: <20251001144629.GA3024065@nvidia.com>
-References: <20250930220759.288528-1-jhubbard@nvidia.com>
-	<DD6K5GQ143FZ.KGWUVMLB3Z26@nvidia.com>
-	<fb5c2be5-b104-4314-a1f5-728317d0ca53@nvidia.com>
-	<20251001144629.GA3024065@nvidia.com>
-Organization: Red Hat
+        Wed, 01 Oct 2025 11:17:20 -0700 (PDT)
+From: Kamal Dasu <kamal.dasu@broadcom.com>
+To: peng.fan@oss.nxp.com,
+	andersson@kernel.org,
+	baolin.wang@linux.alibaba.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	florian.fainelli@broadcom.com
+Cc: bcm-kernel-feedback-list@broadcom.com,
+	linux-remoteproc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Kamal Dasu <kamal.dasu@broadcom.com>
+Subject: [PATCH v2 0/3] Adding brcmstb-hwspinlock support
+Date: Wed,  1 Oct 2025 14:16:38 -0400
+Message-Id: <20251001181641.1561472-1-kamal.dasu@broadcom.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 
-On Wed, 1 Oct 2025 11:46:29 -0300
-Jason Gunthorpe <jgg@nvidia.com> wrote:
+This is a standalone patch for the hardware semaphore feature for
+all brcmstb SoCs that have the same hardware semaphore registers
+hence platform driver compatible uses:
+	  '.compatible = "brcm,brcmstb-hwspinlock"'
 
-> On Tue, Sep 30, 2025 at 06:26:23PM -0700, John Hubbard wrote:
-> > On 9/30/25 5:26 PM, Alexandre Courbot wrote:  
-> > > On Wed Oct 1, 2025 at 7:07 AM JST, John Hubbard wrote:  
-> > >> Post-Kangrejos, the approach for NovaCore + VFIO has changed a bit: the
-> > >> idea now is that VFIO drivers, for NVIDIA GPUs that are supported by
-> > >> NovaCore, should bind directly to the GPU's VFs. (An earlier idea was to
-> > >> let NovaCore bind to the VFs, and then have NovaCore call into the upper
-> > >> (VFIO) module via Aux Bus, but this turns out to be awkward and is no
-> > >> longer in favor.) So, in order to support that:
-> > >>
-> > >> Nova-core must only bind to Physical Functions (PFs) and regular PCI
-> > >> devices, not to Virtual Functions (VFs) created through SR-IOV.  
-> > > 
-> > > Naive question: will guests also see the passed-through VF as a VF? If
-> > > so, wouldn't this change also prevents guests from using Nova?  
-> > 
-> > I'm also new to this area. I would expect that guests *must* see
-> > these as PFs, otherwise...nothing makes any sense.
+The patch has been tested to work as builtin as well as a module.
 
-To answer this specific question, a VF essentially appears as a PF to
-the VM.  The relationship between a PF and VF is established when
-SR-IOV is configured and in part requires understanding the offset and
-stride of the VF enumeration, none of which is visible to the VM.  The
-gaps in VF devices (ex. device ID register) are also emulated in the
-hypervisor stack.
+v2 changes:
+Adressed following review comments:
+ - fixed ordering of obj brcmstb_hwspinlock.o in Makefile 
+ - fixed ordering of 'config HWSPINLOCK_BRCMSTB' block in Kconfig
+ - Renamed BRCMSTB_MAX_SEMAPHORES to BRCMSTB_NUM_SEMAPHORES
+ - Removed unecessary platfrom_set_drvdata(pdev, bank);
 
-> > Maybe Alex Williamson or Jason Gunthorpe (+CC) can chime in.  
-> 
-> Driver should never do something like this.
-> 
-> Novacore should work on a VF pretending to be a PF in a VM, and it
-> should work directly on that same VF outside a VM.
-> 
-> It is not the job of driver to make binding decisions like 'oh VFs of
-> this devices are usually VFIO so I will fail probe'.
-> 
-> VFIO users should use the disable driver autobinding sysfs before
-> creating SRIOV instance to prevent this auto binding and then bind
-> VFIO manually.
-> 
-> Or userspace can manually unbind novacore from the VF and rebind VFIO.
+Also addressing duplicate PATCH 1/3 sent in error as part of v1 change.
 
-But this is also true, unbinding "native" host drivers is a fact of
-life for vfio and we do have the sriov_drivers_autoprobe sysfs
-attributes if a user wants to set a policy for automatically probing VF
-drivers for a PF.
+v1 changes:
+based on fixes made to Intial patch :
+url:    https://github.com/intel-lab-lkp/linux/commits/Kamal-Dasu/dt-bindings-brcmstb-hwspinlock-support-for-hwspinlock/20250712-034624
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+patch link:    https://lore.kernel.org/r/20250711154221.928164-4-kamal.dasu%40broadcom.com
+patch subject: [PATCH 2/4] hwspinlock: brcmstb hardware semaphore support
 
-I think the question would be whether a "bare" VF really provides a
-useful device for nova-core to bind to or if we're just picking it up
-because the ID table matches.  It's my impression that we require a
-fair bit of software emulation/virtualization in the host vGPU driver to
-turn the VF into something that can work like a PF in the VM and I
-don't know that we can require nova-core to make use of a VF without
-that emulation/virtualization layer.  For example, aren't VRAM
-allocations for a VF done as part of profiling the VF through the vGPU
-host driver?  Thanks,
+All the review comments and build warning have been fixed.
 
-Alex
+Kamal Dasu (3):
+  dt-bindings: hwlock:  Adding brcmstb-hwspinlock support
+  hwspinlock: brcmstb hardware semaphore support
+  MAINTAINERS: adding entry for BRCMSTB HWSPINLOCK driver
+
+ .../hwlock/brcm,brcmstb-hwspinlock.yaml       | 36 +++++++
+ MAINTAINERS                                   |  8 ++
+ drivers/hwspinlock/Kconfig                    | 11 ++-
+ drivers/hwspinlock/Makefile                   |  1 +
+ drivers/hwspinlock/brcmstb_hwspinlock.c       | 96 +++++++++++++++++++
+ 5 files changed, 151 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/hwlock/brcm,brcmstb-hwspinlock.yaml
+ create mode 100644 drivers/hwspinlock/brcmstb_hwspinlock.c
+
+-- 
+2.34.1
 
 
