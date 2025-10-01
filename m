@@ -1,100 +1,156 @@
-Return-Path: <linux-kernel+bounces-839033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F3A6BB0ACA
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 16:19:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53231BB0AC4
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 16:19:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F4131890035
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 14:20:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 666223B4E64
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 14:19:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1150F2580EC;
-	Wed,  1 Oct 2025 14:19:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B334205E26;
+	Wed,  1 Oct 2025 14:19:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AILS6Cd7"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p753WmTg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59B9023E32D
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 14:19:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 716C821D596
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 14:19:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759328383; cv=none; b=KMOxmdQZiEsY4PGy4z/+d2Ijsb2rNVH7W0qSzK8Ggd+hk43fa8PmkPr+fN5q12vFl7o/lGMaPWflkZGO3mnb96nART+2fUaTGffzTU4VCp0eH4Hsm/YgECpdXPgoOKbP0rUPixY/BpWmyZV6iMgPBKZfs985FCvADd/QLyqC8Dc=
+	t=1759328355; cv=none; b=Va683Hf8ri6PPrkaDshMxfZGllfWR0RQ3atww5gQDRxdtWWMm0+NzWxdIuxxpv+9DKIcSiLnk6ySgFwLmTcRMHg3xkyg3mq5TW7yPfGEaOLlx+wB8gKj0IJy+NpJb3SlXcYa3jcoQ846CG8AS7hlarKMhWAIzn6YVU8z2j81MZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759328383; c=relaxed/simple;
-	bh=G/jjU2TfIOrHy8eHO94iP3qPgO2EprU2mJD/htT6HG8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Alrf7l29oF7yuLKpXwBe3B8AOJcpabf6q20lm4OIcCgi2OwTTlj3gKmE1BzG14DwLcbXszA3VjLxERjYMEK4ANOIuGlvO9JyTKvOzGFIfT3oReutGDcPZ8z9o2u7tIz2enWZHwjNsmSQAuMIStB4GCueBQO0+Svyn6oV8W+8MI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AILS6Cd7; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759328380;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=th22CVHHRF16+pDNVIT1p3bZ2phIhHgtEHYs26Cgu1M=;
-	b=AILS6Cd7ooh3tvH+swrOCLvzkBa3Az8Cf38LfGCQARxjf6oLL9AcJLNR4IrDuRgutP5wIQ
-	tlWLSjGwP5FWVimkCo7wq6q5DE858qHg/Jl7h3Wj5rwBFkitLaxXsWY2R8sP/PdgKSC29G
-	w6fNzr39MsjhGvMtfuoJg+LX5QH5aec=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-546-Sfqu8UdUMKSobrlY-eucpg-1; Wed,
- 01 Oct 2025 10:19:38 -0400
-X-MC-Unique: Sfqu8UdUMKSobrlY-eucpg-1
-X-Mimecast-MFC-AGG-ID: Sfqu8UdUMKSobrlY-eucpg_1759328377
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 90A26180057A;
-	Wed,  1 Oct 2025 14:19:37 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.40])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 3474919560B4;
-	Wed,  1 Oct 2025 14:19:34 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed,  1 Oct 2025 16:18:15 +0200 (CEST)
-Date: Wed, 1 Oct 2025 16:18:12 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: Re: [GIT PULL 05/12 for v6.18] pidfs
-Message-ID: <20251001141812.GA31331@redhat.com>
-References: <20250926-vfs-618-e880cf3b910f@brauner>
- <20250926-vfs-pidfs-3e8a52b6f08b@brauner>
+	s=arc-20240116; t=1759328355; c=relaxed/simple;
+	bh=yMblZnDjqlbOR4ZLBbmTC5UUDDnK/Eg2kXIyzuIRACE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qTb+NI4mMQh/372n4qsn+Idw4ylUqwdN/FiBC+O1vT4YRj4EtXYUcnvB/C+hI1mfay70p8ol98b8CvdQ1WUHHi0Z2lnjqmwcragxbFBlI798rEUwmceCMdtfzv3nxrHGvdN/w9ewegOOUYMPXENByMqouac3Px6HmfA2kvasG+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p753WmTg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25231C4AF0B
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 14:19:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759328355;
+	bh=yMblZnDjqlbOR4ZLBbmTC5UUDDnK/Eg2kXIyzuIRACE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=p753WmTg2pMUqfgH+1weZ5z+4hJWHKycasXcafvyOFQfcxS/vbHQXtBv//tOGA8SY
+	 G7oNIwpa8EJNfeeaYiO3TMP0Z0HeITObbwTEUJOGvyx5aj4+P7GjLk3G7i5iPA51l7
+	 giPY7RTis9f7xeWjjdYewAe7Ot8NwgYrH+nL5+p5oNnp8EOSHWoJKmpzHtFUIFRAze
+	 84pvlGoMftDJL5rSWA6etnuLNLRrkFNj/szH3fZPYLW3YMZb+OvF9j6tUs18oMv23H
+	 Ye4LhkzPkPQBMr/7psdxU4rSZvJ6uL/sywIAa4u3C9atnKL/OfZNEDBHcYr5kNCWAR
+	 3E/4nyp49nQrA==
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-6228de280a4so14170172a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 07:19:15 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXBHHSneJCOoifjvfdvUYxItUUE8i0W73XGKanIH0cFk3Lq9TH8kTKftPTx6a87iokqMz0+RNNhSkLXzd8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIjXKmcu9296YesuERMkHUxex+oPJn47G26FbDlgsvwW9TeO9t
+	BUvuzRkGPAfAyIipUGttcq3OLImsr6iUgzhulHedGlXMvFkqYHl16qMjIwVWUTjOAR0iG4W9znv
+	RpIsvIZ1RFFW+fozkukcDVFsRhDE/+A==
+X-Google-Smtp-Source: AGHT+IEib3WTgGYwGHEPa4ulr4/SbwtLGnJ8FYdVRNdQ4ERtJxf58Nv2Gj/CunqC+JHaW9i70nNh/81x9NCsd62GAPA=
+X-Received: by 2002:a17:907:94d5:b0:b3e:580a:184f with SMTP id
+ a640c23a62f3a-b46e0cb30f8mr494888066b.4.1759328353696; Wed, 01 Oct 2025
+ 07:19:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250926-vfs-pidfs-3e8a52b6f08b@brauner>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+References: <20250724132808.101351-1-srinivas.kandagatla@oss.qualcomm.com>
+ <CAL_JsqKG+dcMgp1QF4F3Oxh5Shvagg6cSde=g1JMcEAquZhH_Q@mail.gmail.com>
+ <990cb5af-3846-44a3-b373-ded62d3309b9@oss.qualcomm.com> <CAL_Jsq+zC91GPdzQQa9F8KEw5UL4xc13u5U_5vTyQG1WeJa5rw@mail.gmail.com>
+ <82906e08-9583-4f4c-91ad-d5b53b2dffd6@kernel.org> <CAL_JsqLtLbCqzHzcaGAuYwxqr=e9HZFX8X20tndx7US-XjhH3Q@mail.gmail.com>
+In-Reply-To: <CAL_JsqLtLbCqzHzcaGAuYwxqr=e9HZFX8X20tndx7US-XjhH3Q@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 1 Oct 2025 09:19:02 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqLcinpeJyib+JG7UFspUqXDTzCLguF3Nt4JJY9YncTb9A@mail.gmail.com>
+X-Gm-Features: AS18NWA7ezyHf-quZ8SAVzOquJtCbJ4iMZCy1XnnFDJCGg9M-CxsvZzGUG7jqiA
+Message-ID: <CAL_JsqLcinpeJyib+JG7UFspUqXDTzCLguF3Nt4JJY9YncTb9A@mail.gmail.com>
+Subject: Re: [PATCH] slimbus: qcom: remove unused qcom controller driver
+To: Srinivas Kandagatla <srini@kernel.org>, 
+	Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 09/26, Christian Brauner wrote:
++Greg
+
+On Fri, Sep 19, 2025 at 12:25=E2=80=AFPM Rob Herring <robh@kernel.org> wrot=
+e:
 >
-> Oleg Nesterov (3):
->       pid: make __task_pid_nr_ns(ns => NULL) safe for zombie callers
-...
-> gaoxiang17 (1):
->       pid: Add a judgment for ns null in pid_nr_ns
+> On Fri, Sep 5, 2025 at 12:30=E2=80=AFAM Srinivas Kandagatla <srini@kernel=
+.org> wrote:
+> >
+> >
+> >
+> > On 9/5/25 12:08 AM, Rob Herring wrote:
+> > > On Tue, Aug 19, 2025 at 8:44=E2=80=AFAM Srinivas Kandagatla
+> > > <srinivas.kandagatla@oss.qualcomm.com> wrote:
+> > >>
+> > >> Thanks Rob for reporting this,
+> > >>
+> > >> On 8/19/25 2:35 PM, Rob Herring wrote:
+> > >>> On Thu, Jul 24, 2025 at 8:28=E2=80=AFAM <srinivas.kandagatla@oss.qu=
+alcomm.com> wrote:
+> > >>>>
+> > >>>> From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+> > >>>>
+> > >>>> Qcom Slimbus controller driver is totally unused and dead code, th=
+ere is
+> > >>>> no point in keeping this driver in the kernel without users.
+> > >>>>
+> > >>>> This patch removes the driver along with device tree bindings.
+> > >>>>
+> > >>>> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualco=
+mm.com>
+> > >>>> ---
+> > >>>>  .../bindings/slimbus/qcom,slim.yaml           |  86 --
+> > >>>>  drivers/slimbus/Kconfig                       |   7 -
+> > >>>>  drivers/slimbus/Makefile                      |   3 -
+> > >>>>  drivers/slimbus/qcom-ctrl.c                   | 735 -------------=
+-----
+> > >>>>  4 files changed, 831 deletions(-)
+> > >>>>  delete mode 100644 Documentation/devicetree/bindings/slimbus/qcom=
+,slim.yaml
+> > >>>>  delete mode 100644 drivers/slimbus/qcom-ctrl.c
+> > >>>
+> > >>> This adds warnings to dt_binding_check:
+> > >>>
+> > >>> Documentation/devicetree/bindings/slimbus/slimbus.example.dtb:
+> > >>> /example-0/soc/slim@28080000: failed to match any schema with
+> > >>> compatible: ['qcom,apq8064-slim', 'qcom,slim']
+> > >>
+> > >> Will replace this example with slim-ngd and fold it in the original =
+patch.
+> > >
+> > > Still warning in linux-next...
+> > Its done now!
+>
+> Now I get this:
+>
+> Documentation/devicetree/bindings/slimbus/slimbus.example.dtb:
+> slim@28080000 (qcom,slim-ngd-v1.5.0): 'audio-codec@1,0' does not match
+> any of the regexes: '^pinctrl-[0-9]+$', '^slim@[0-9a-f]+$'
+>         from schema $id:
+> http://devicetree.org/schemas/slimbus/qcom,slim-ngd.yaml#
+> Documentation/devicetree/bindings/slimbus/slimbus.example.dtb:
+> slim@28080000 (qcom,slim-ngd-v1.5.0): #address-cells: 1 was expected
+>         from schema $id:
+> http://devicetree.org/schemas/slimbus/qcom,slim-ngd.yaml#
+> Documentation/devicetree/bindings/slimbus/slimbus.example.dtb:
+> slim@28080000 (qcom,slim-ngd-v1.5.0): 'dmas' is a required property
+>         from schema $id:
+> http://devicetree.org/schemas/slimbus/qcom,slim-ngd.yaml#
+> Documentation/devicetree/bindings/slimbus/slimbus.example.dtb:
+> slim@28080000 (qcom,slim-ngd-v1.5.0): 'dma-names' is a required
+> property
+>         from schema $id:
+> http://devicetree.org/schemas/slimbus/qcom,slim-ngd.yaml#
 
-Oh... I already tried to complain twice
+Still failing in linux-next.
 
-	https://lore.kernel.org/all/20250819142557.GA11345@redhat.com/
-	https://lore.kernel.org/all/20250901153054.GA5587@redhat.com/
-
-One of these patches should be reverted. It doesn't really hurt, but it makes
-no sense to check ns != NULL twice.
-
-Oleg.
-
+Rob
 
