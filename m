@@ -1,153 +1,163 @@
-Return-Path: <linux-kernel+bounces-839039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7C08BB0AF7
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 16:22:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A9ACBB0AFA
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 16:22:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DF913C83CC
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 14:22:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0554B189B5AD
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 14:23:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1B5C261B60;
-	Wed,  1 Oct 2025 14:21:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C53CA25F780;
+	Wed,  1 Oct 2025 14:22:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ciNAmB7M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AnFdWvwj"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E340B262D14;
-	Wed,  1 Oct 2025 14:21:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FF9D212B31
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 14:22:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759328519; cv=none; b=S3jNPiLeNXpGquHf2RKf2HUJ89r8Yb/kvKv5JzsOWJA8IeWF4/1tdsas2kZ10ZPAfDK+yPLZR8osf32issD5tsqEQY0YoZdZgonLs0DfVYbw6jo3rFgzFnzWvM7kqh0sXEa0Qw8vL2Hv9OVnXlJyl1LuxyihcFooMVuNZSLija0=
+	t=1759328572; cv=none; b=lzzqNWp677hg96c11qOqBpNmoj3dzUpEw5wWevkVekO99uwgdAOtiv7solOipHjSniBe7YW7Iw8CXCwk8g2EXeJS1w+xEDA4R6gH5ZGb/33IOu6Dsx67eitk0F2b9x1ESX595RtqZL/87tY/+V2HL0l27uYm7Gahh0JxHZ3mSqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759328519; c=relaxed/simple;
-	bh=P+/PrC2Paa9jeoCYGpGbT0KQUaERjFuR3yZyDVz8sng=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AlVahxqD4KFqwb5HHwbjmP82Jx3qY/f92UNEdHZE5eRO4Geg7xyybGpPsmih3faPaxClQyhdTWIhgzfcsW34blX23o9+joEBxkttALwy0UKPnO5A9vYz3xTlhKDJ9dqWI2RevZNLjWKVI7gxf5eiBulCfLBPdQlE2UO/kuU+OUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ciNAmB7M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCCB9C4CEF1;
-	Wed,  1 Oct 2025 14:21:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759328518;
-	bh=P+/PrC2Paa9jeoCYGpGbT0KQUaERjFuR3yZyDVz8sng=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ciNAmB7M9OULJaEhYNIRw4kXGnTeZAZz16TSOaUP8qc+c9KXLp3cxc3/hnZzwLFO/
-	 V6rwk4liZfuEFgsg7uHmJgB7ADID7X9oU9PLqMGDWgLbNVGKA7r2f5hckGrJEatuY4
-	 qzyJpkCP3JC8DpYgvHs6iXOUb2YXtpyeePCrg1nT4OAYEhy+0J/8m5DTt8+aquDCVD
-	 fNxLWQdVSV73EJtx8MFEOXirO5ZToH+LAPno7J6rIuo0QK+8fKZdG5JMEL76BAqthZ
-	 wVdxDPIQZFMGegwm0qO3JucyFj8Tgbt6sILuZ4wHuuQDSI0p9LGWY3SezH61spJD7q
-	 9981v8dMoKYFA==
-Message-ID: <b8c1365a-545d-40ae-a39c-e15a3e1f07e7@kernel.org>
-Date: Wed, 1 Oct 2025 15:21:55 +0100
+	s=arc-20240116; t=1759328572; c=relaxed/simple;
+	bh=r//BOeg6hJFiIpgXCGuyUcHwsmeUXaZtItuSCfFTHEM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LNy3ZwxW7EVBJaWGZJPp3B8aVS2uLxVXdr9zXbQ6bfnIrxak4BmPpHLjSFK714P3XBY7r+l54X1S66P0JpORFfUMtqfpOrRMY+kQnpMEaREGxbQZdVtdHCDBmTaavUldtQqOfefqD1JhWhPmCKht//YkmYU7J6parQ1nbtbEeeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AnFdWvwj; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b5f2c1a7e48so929561a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 07:22:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1759328570; x=1759933370; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TZWPPQ16OuhZ6r+akwzEf9yapy+ye4jCYQdCK+8Qq+M=;
+        b=AnFdWvwjLnuMnEgtdiqGt28oZTIphJMJUYJBikA82HLCyxwwrzonbv5yZD1H0aJJtg
+         eTcbUjd+0fkjE+TaiRrb7NdXz1xpGukphjKGkhkVU9B1p6YODCHMRXDD+zCXfNwmtdpC
+         jiBfpLQaA3Yh8IqtlIekQ0andiiorSBV6auLv3gzc6Go2TXsyw4s9cqMuGaZCBRTpvZz
+         AseDC0oD0z0o5T9BrUM1i4nNYC8m5zypDiHa1tU/t1DW3bVrPRESTLSAKOLLJd7LfwJY
+         pzyCFIeZ+1yAS5334k2OPVOZhx2RtKNW2CImP5aAfd80Y7AD+NuoL7Zf63oJpKjmgvLB
+         nE8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759328570; x=1759933370;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TZWPPQ16OuhZ6r+akwzEf9yapy+ye4jCYQdCK+8Qq+M=;
+        b=d7nVUYnDqjn/JNetUb4Bn+6qG4HxgFDZZ1rbETqGovqT4RuctpuNfUQGAXoU3cfYNP
+         bkuraacLW9DyeMYzc+v/QDUgVZAscR+M+zL8BeVKnS/wqu/8PVnD85Hua57PQUs0y4nf
+         yph6wgo+vzIDZenmh6/mo/hrkOV6n5YWIWcG22TlyqO5WrSvNraqB5EeEgNDwtvi8HQA
+         7aHOM7fsiGQxDSUy6H5mVhTFRbjJgZrEZV7C4SsfO4xxRoZghWlkpwpT45LVzTDaebZv
+         J1hCWDLmwYnRMWQSNl2PJ8GCbcKVl1xdqfTEF1U+BxE9mCbFHFHNKROJV69BvnuVGk9G
+         REtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXjfvqlWKnqIc9BUNYmQjc4fEhbf03NCBmGzSpaZwC6mbfS3jiEWlGgqyz2mFl4ALJFAVQmlJTjNapSHso=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCaE9/MUKJ10EUbQHKsqQh5XQSThdRscuIkR5XMfB3+dh3tx+o
+	hNC+CXY40KAvIYBgvFOlWlzSYh4jTzwI5xxIS9wC+A8wMQt2YuZcOKcaVF6GK0FYSGs=
+X-Gm-Gg: ASbGncuelOxurz0jfd/4UvGQ+l1gHALb8Okf/qZdTmz+6tJSLnYiaevLeYrNiQb/D4y
+	uUkcPRS54i5GwiQt2N3EhQulZWUs/2trCSRZt2bDwKQy5zVpfFcXRoFrVqGqtOQAZIP525y0b6l
+	25sRafRLYBm3POe8Cn+6VVtZJlDpNXMyzpFfnTWqDlsxtITQNVjZiz4btkzThresGuwAyDGOdKB
+	Ge0Zya2e7SROOZ0LsiGghVO5TxNrCkkOgFtGtLJtLaVueMWlQgWKOAWF9jcFf/jNpmlBjtVmclr
+	GbbgYWxOxptOdJL6i4HGS/GR1Ek8mI4Q956J01iTTb1Hz6GTAbisg0Mg4LViJ2x0zMRnoanGm+F
+	XOsMPzJOJ0sd65kx2si9+hWaaJGlO24/BdAWyJrQc2ayRm+7+Znmuv2rHAozZulbG0ZO7T8qIof
+	X/ftVCvM09r8MjC2069CL4S0jhzdLduOLofkVAwVRKcbqDF+b/
+X-Google-Smtp-Source: AGHT+IHqVeD/wJUVy5+C2bUJIvZQddubc9m4Xd4Qgoes6H6s3Vr0Kf8vrqdjy3H/lxWJPRN6L5BOvg==
+X-Received: by 2002:a17:902:f546:b0:264:70e9:dcb1 with SMTP id d9443c01a7336-28e7f440582mr49997025ad.56.1759328569779;
+        Wed, 01 Oct 2025 07:22:49 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:8417:c9b5:17c4:6237])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed6aca043sm186020025ad.138.2025.10.01.07.22.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Oct 2025 07:22:49 -0700 (PDT)
+Date: Wed, 1 Oct 2025 08:22:46 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Peng Fan <peng.fan@nxp.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Hiago De Franco <hiago.franco@toradex.com>,
+	Frank Li <Frank.Li@nxp.com>, Daniel Baluta <daniel.baluta@nxp.com>,
+	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/6] remoteproc: imx_rproc: Use device managed API to
+ clean up the driver
+Message-ID: <aN05NsINB25lW_Lg@p14s>
+References: <20250926-imx_rproc_v3-v3-0-4c0ec279cc5f@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] slimbus: qcom: remove unused qcom controller driver
-To: Rob Herring <robh@kernel.org>, Srinivas Kandagatla <srini@kernel.org>,
- Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
- linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250724132808.101351-1-srinivas.kandagatla@oss.qualcomm.com>
- <CAL_JsqKG+dcMgp1QF4F3Oxh5Shvagg6cSde=g1JMcEAquZhH_Q@mail.gmail.com>
- <990cb5af-3846-44a3-b373-ded62d3309b9@oss.qualcomm.com>
- <CAL_Jsq+zC91GPdzQQa9F8KEw5UL4xc13u5U_5vTyQG1WeJa5rw@mail.gmail.com>
- <82906e08-9583-4f4c-91ad-d5b53b2dffd6@kernel.org>
- <CAL_JsqLtLbCqzHzcaGAuYwxqr=e9HZFX8X20tndx7US-XjhH3Q@mail.gmail.com>
- <CAL_JsqLcinpeJyib+JG7UFspUqXDTzCLguF3Nt4JJY9YncTb9A@mail.gmail.com>
-Content-Language: en-US
-From: Srinivas Kandagatla <srini@kernel.org>
-In-Reply-To: <CAL_JsqLcinpeJyib+JG7UFspUqXDTzCLguF3Nt4JJY9YncTb9A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250926-imx_rproc_v3-v3-0-4c0ec279cc5f@nxp.com>
 
-
-
-On 10/1/25 3:19 PM, Rob Herring wrote:
-> +Greg
+On Fri, Sep 26, 2025 at 08:33:14PM +0800, Peng Fan wrote:
+> Tested on
+> i.MX8MP-EVK, i.MX8MM-EVK, i.MX93-11x11-EVK, i.MX8QXP-MEK, and i.MX8ULP-EVK.
 > 
-> On Fri, Sep 19, 2025 at 12:25 PM Rob Herring <robh@kernel.org> wrote:
->>
->> On Fri, Sep 5, 2025 at 12:30 AM Srinivas Kandagatla <srini@kernel.org> wrote:
->>>
->>>
->>>
->>> On 9/5/25 12:08 AM, Rob Herring wrote:
->>>> On Tue, Aug 19, 2025 at 8:44 AM Srinivas Kandagatla
->>>> <srinivas.kandagatla@oss.qualcomm.com> wrote:
->>>>>
->>>>> Thanks Rob for reporting this,
->>>>>
->>>>> On 8/19/25 2:35 PM, Rob Herring wrote:
->>>>>> On Thu, Jul 24, 2025 at 8:28 AM <srinivas.kandagatla@oss.qualcomm.com> wrote:
->>>>>>>
->>>>>>> From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
->>>>>>>
->>>>>>> Qcom Slimbus controller driver is totally unused and dead code, there is
->>>>>>> no point in keeping this driver in the kernel without users.
->>>>>>>
->>>>>>> This patch removes the driver along with device tree bindings.
->>>>>>>
->>>>>>> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
->>>>>>> ---
->>>>>>>  .../bindings/slimbus/qcom,slim.yaml           |  86 --
->>>>>>>  drivers/slimbus/Kconfig                       |   7 -
->>>>>>>  drivers/slimbus/Makefile                      |   3 -
->>>>>>>  drivers/slimbus/qcom-ctrl.c                   | 735 ------------------
->>>>>>>  4 files changed, 831 deletions(-)
->>>>>>>  delete mode 100644 Documentation/devicetree/bindings/slimbus/qcom,slim.yaml
->>>>>>>  delete mode 100644 drivers/slimbus/qcom-ctrl.c
->>>>>>
->>>>>> This adds warnings to dt_binding_check:
->>>>>>
->>>>>> Documentation/devicetree/bindings/slimbus/slimbus.example.dtb:
->>>>>> /example-0/soc/slim@28080000: failed to match any schema with
->>>>>> compatible: ['qcom,apq8064-slim', 'qcom,slim']
->>>>>
->>>>> Will replace this example with slim-ngd and fold it in the original patch.
->>>>
->>>> Still warning in linux-next...
->>> Its done now!
->>
->> Now I get this:
->>
->> Documentation/devicetree/bindings/slimbus/slimbus.example.dtb:
->> slim@28080000 (qcom,slim-ngd-v1.5.0): 'audio-codec@1,0' does not match
->> any of the regexes: '^pinctrl-[0-9]+$', '^slim@[0-9a-f]+$'
->>         from schema $id:
->> http://devicetree.org/schemas/slimbus/qcom,slim-ngd.yaml#
->> Documentation/devicetree/bindings/slimbus/slimbus.example.dtb:
->> slim@28080000 (qcom,slim-ngd-v1.5.0): #address-cells: 1 was expected
->>         from schema $id:
->> http://devicetree.org/schemas/slimbus/qcom,slim-ngd.yaml#
->> Documentation/devicetree/bindings/slimbus/slimbus.example.dtb:
->> slim@28080000 (qcom,slim-ngd-v1.5.0): 'dmas' is a required property
->>         from schema $id:
->> http://devicetree.org/schemas/slimbus/qcom,slim-ngd.yaml#
->> Documentation/devicetree/bindings/slimbus/slimbus.example.dtb:
->> slim@28080000 (qcom,slim-ngd-v1.5.0): 'dma-names' is a required
->> property
->>         from schema $id:
->> http://devicetree.org/schemas/slimbus/qcom,slim-ngd.yaml#
+> Retested all the patches for V3 on above platforms. And pass build
+> with patch incremental applied with ARM64 defconfig. pass build for
+> imx_v6_v7_defconfig with all patches applied.
 > 
-> Still failing in linux-next.
-
-Rob, sorry for delay..
-
-will send a fix,
-
-
---srini
-
+> This is the 2nd series to cleanup the driver.
 > 
-> Rob
+> Patch 1:
+> Fix the runtime usage. This is not critical bug fix, so it could be
+> defered to 6.18.
+> 
+> Patch 2-6:
+> Use devres managed API to cleanup the error handling path and remove path.
+> 
+> Thanks to Ulf for the suggestion on the runtime PM fix in patch 1.
+> Thanks to Daniel and Frank for the internal reviewing.
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+> Changes in v3:
+> - Follow Ulf's suggestion to address the runtime PM in patch 1, and add
+>   Ulf's suggested-by tag. I dropped Frank and Daniel's tag in patch 1.
+> - With the changes in patch 1, the remove() is kept, then there are very
+>   minor conflicts when picking remaining patches in V2, so I still keep
+>   R-b tag from Frank and Daniel for patch 2-6.
+> - Link to v2: https://lore.kernel.org/r/20250923-imx_rproc_c2-v2-0-d31c437507e5@nxp.com
+> 
+> Changes in v2:
+> - Address a build warning in patch 4/6
+> - Add R-b from Frank and Daniel
+> - Link to v1: https://lore.kernel.org/r/20250917-imx_rproc_c2-v1-0-00ce23dc9c6e@nxp.com
+> 
+> ---
+> Peng Fan (6):
+>       remoteproc: imx_rproc: Fix runtime PM cleanup and improve remove path
+>       remoteproc: imx_rproc: Use devm_add_action_or_reset() for workqueue cleanup
+>       remoteproc: imx_rproc: Use devm_add_action_or_reset() for mailbox cleanup
+>       remoteproc: imx_rproc: Use devm_clk_get_enabled() and simplify cleanup
+>       remoteproc: imx_rproc: Use devm_add_action_or_reset() for scu cleanup
+>       remoteproc: imx_rproc: Use devm_rproc_add() helper
+> 
+>  drivers/remoteproc/imx_rproc.c | 100 +++++++++++++++++++----------------------
+>  1 file changed, 47 insertions(+), 53 deletions(-)
 
+I will apply this set when 6.18-rc1 comes out.
+
+Mathieu
+
+
+> ---
+> base-commit: 8e2755d7779a95dd61d8997ebce33ff8b1efd3fb
+> change-id: 20250926-imx_rproc_v3-a50abed3288a
+> 
+> Best regards,
+> -- 
+> Peng Fan <peng.fan@nxp.com>
+> 
 
