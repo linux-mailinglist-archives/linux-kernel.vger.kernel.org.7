@@ -1,338 +1,150 @@
-Return-Path: <linux-kernel+bounces-838726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98B96BB004F
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 12:31:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2771CBB005B
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 12:32:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8EA31940057
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 10:32:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75AB03A7961
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 10:32:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED97C27144E;
-	Wed,  1 Oct 2025 10:31:41 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9E622BEFF2;
+	Wed,  1 Oct 2025 10:32:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tKoY2KnL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 072583770B
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 10:31:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2580828F935;
+	Wed,  1 Oct 2025 10:32:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759314701; cv=none; b=RPtD1Sfz8kuu3RLV3LmeXUmyO+P2lNgl5xJ4rUcFRU86ujAXV//moqaZ7YpOgIpXeu5/smIPAzeNBsk7+u1Rf1b1MUOZGPfzlfF3dmwTIPFamVnQPlnyg8ltbY4kJC6fhXaj3nH3LuiYZE52YNQEGI7ET4ruzYyJ7IVflTll9ak=
+	t=1759314731; cv=none; b=N74K4r/NA7J0tvZu4fCCiIraL0UIJtrktZWuzqpVLpqspVAq6nJck7O4PKfDTsDEdZeh++8AJpNUaBI7o5l+hddnVKBQHIl15YUYjVTYRbNrRnShBzQUgzWPja0jTKEaj2hb/mPKkNW2/fCiti2W43dGXvljFe8P90xVXssUXS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759314701; c=relaxed/simple;
-	bh=lC/Ht4lvxcJknyKTTGWMSHnCmys4XvWIrjmrB/eWvvE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=slObJIW/Mkc/oC63wnINvDRcy+IuqJzpTek5Zqk2CjH5ndOV2eSSnDJgroB7s7wkXoMxWVFZfaP7mYLUGzzU80+gi6oJKKetnvqg6djYPqTnNhw+l7fP/eAAYbozezhVidvIn2WjpxkP1HKO8XhPaDhrWhcuK05nSwnj3gX5xCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1v3u7C-0003Zd-Bw; Wed, 01 Oct 2025 12:31:18 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1v3u7C-001OfZ-08;
-	Wed, 01 Oct 2025 12:31:18 +0200
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1v3u7B-006UDM-31;
-	Wed, 01 Oct 2025 12:31:17 +0200
-Date: Wed, 1 Oct 2025 12:31:17 +0200
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Jiada Wang <jiada_wang@mentor.com>, dmaengine@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 02/10] dmaengine: imx-sdma: fix spba-bus handling for
- i.MX8M
-Message-ID: <20251001103117.zpwyxnqret5sjwq6@pengutronix.de>
-References: <20250911-v6-16-topic-sdma-v2-0-d315f56343b5@pengutronix.de>
- <20250911-v6-16-topic-sdma-v2-2-d315f56343b5@pengutronix.de>
- <aMQ53pZQD4tj+GvN@lizhi-Precision-Tower-5810>
- <20250912152748.gn66fmmrqyqlqdrb@pengutronix.de>
- <aMRRECxBqzRqGYwf@lizhi-Precision-Tower-5810>
+	s=arc-20240116; t=1759314731; c=relaxed/simple;
+	bh=P+YFqwjAsyQVj+ajZA/B1KBSZKrqZK9v+m3Wiyc2kV0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=nKJkltrwx5ICbdouXDiXS0l0yUg1XJQP1Dby6K5UnH4pSmf8WbYKVZ2iTnmvd3ebfAZ5rrQHk5Ezakxs5bxqEBGlnGzpvvPkLlWp3shyH9HznneVR9qVdxHZ63GkoBFVEwE/lV/xrebFhRu/9e9Cgy5CmEcs9lKt+WFV72V3+Ac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tKoY2KnL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45AD1C4CEF4;
+	Wed,  1 Oct 2025 10:32:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759314728;
+	bh=P+YFqwjAsyQVj+ajZA/B1KBSZKrqZK9v+m3Wiyc2kV0=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=tKoY2KnL8Xj76oTVo6g45E3T5ntWA8T8f6WWl5EpA50rhnXgrX2/kqqr0xjJ19izW
+	 P/6MMZw0S7kFN2T7z2C8MLi4fVhnnuZD7wriXPiBnITh2FI7KK0KUG5HwPOeYshj13
+	 9pxzZtdM8rWiQA4U6VX0A7np0iOnn+5Jhb89q/+sRJWc7B3yFTiWDN4B5MebDNe4Vf
+	 zor/ax/V2JBHOiqkIKrHVcylkoDQdbldtm/B6vWL4nB8R3YPW7/3TddnoIbjNl7LGH
+	 SrZEE7ds/mGwl3LLCQtgGhwpbCgTRGEQdEADKiHn0J50zuq8zcDPsCawnFe3YSiNs3
+	 cuTjOCLJqxG8A==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aMRRECxBqzRqGYwf@lizhi-Precision-Tower-5810>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 01 Oct 2025 12:32:02 +0200
+Message-Id: <DD6X0PXA0VAO.101O3FEAHJUH9@kernel.org>
+Subject: Re: [PATCH 0/2] rust: pci: expose is_virtfn() and reject VFs in
+ nova-core
+Cc: "Alexandre Courbot" <acourbot@nvidia.com>, "Joel Fernandes"
+ <joelagnelf@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>, "Zhi Wang"
+ <zhiw@nvidia.com>, "Surath Mitra" <smitra@nvidia.com>, "David Airlie"
+ <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Bjorn Helgaas"
+ <bhelgaas@google.com>, =?utf-8?q?Krzysztof_Wilczy=C5=84ski?=
+ <kwilczynski@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, <nouveau@lists.freedesktop.org>,
+ <linux-pci@vger.kernel.org>, <rust-for-linux@vger.kernel.org>, "LKML"
+ <linux-kernel@vger.kernel.org>
+To: "John Hubbard" <jhubbard@nvidia.com>, "Alistair Popple"
+ <apopple@nvidia.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250930220759.288528-1-jhubbard@nvidia.com>
+ <h6jdcfhhf3wuiwwj3bmqp5ohvy7il6sfyp6iufovdswgoz7vul@gjindki2pyeh>
+ <e77bbcda-35a3-4ec6-ac24-316ab34a201a@nvidia.com>
+In-Reply-To: <e77bbcda-35a3-4ec6-ac24-316ab34a201a@nvidia.com>
 
-On 25-09-12, Frank Li wrote:
-> On Fri, Sep 12, 2025 at 05:27:48PM +0200, Marco Felsch wrote:
-> > On 25-09-12, Frank Li wrote:
-> > > On Thu, Sep 11, 2025 at 11:56:43PM +0200, Marco Felsch wrote:
-> > > > Starting with i.MX8M* devices there are multiple spba-busses so we can't
-> > > > just search the whole DT for the first spba-bus match and take it.
-> > > > Instead we need to check for each device to which bus it belongs and
-> > > > setup the spba_{start,end}_addr accordingly per sdma_channel.
-> > > >
-> > > > While on it, don't ignore errors from of_address_to_resource() if they
-> > > > are valid.
-> > > >
-> > > > Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
-> > >
-> > > I think the below method should be better.
-> > >
-> > > of_translate_address(per_address) == OF_BAD_ADDR to check if belong spba-bus
-> >
-> > The SDMA engine doesn't have to be part of the SPBA bus, please see the
-> > i.MX8MM for example.
-> 
-> which one, can you point me?
+On Wed Oct 1, 2025 at 3:22 AM CEST, John Hubbard wrote:
+> On 9/30/25 5:29 PM, Alistair Popple wrote:
+>> On 2025-10-01 at 08:07 +1000, John Hubbard <jhubbard@nvidia.com> wrote..=
+.
+>>> Post-Kangrejos, the approach for NovaCore + VFIO has changed a bit: the
+>>> idea now is that VFIO drivers, for NVIDIA GPUs that are supported by
+>>> NovaCore, should bind directly to the GPU's VFs. (An earlier idea was t=
+o
+>>> let NovaCore bind to the VFs, and then have NovaCore call into the uppe=
+r
+>>> (VFIO) module via Aux Bus, but this turns out to be awkward and is no
+>>> longer in favor.) So, in order to support that:
+>>>
+>>> Nova-core must only bind to Physical Functions (PFs) and regular PCI
+>>> devices, not to Virtual Functions (VFs) created through SR-IOV.
+>>>
+>>> Add a method to check if a PCI device is a Virtual Function (VF). This
+>>> allows Rust drivers to determine whether a device is a VF created
+>>> through SR-IOV. This is required in order to implement VFIO, because
+>>> drivers such as NovaCore must only bind to Physical Functions (PFs) or
+>>> regular PCI devices. The VFs must be left unclaimed, so that a VFIO
+>>> kernel module can claim them.
+>>=20
+>> Curiously based on a quick glance I didn't see any other drivers doing t=
+his
+>> which makes me wonder why we're different here. But it seems likely thei=
+r
+>> virtual functions are supported by the same driver rather than requiring=
+ a
+>> different VF specific driver (or I glanced too quickly!).
+>
+> I haven't checked into that, but it sounds reasonable.
 
-The imx8mm.dtsi, e.g. the SDMA2 [1] is not part of the SPBA bus but
-serves as DMA for devices within the SPBA bus [2].
+There are multiple cases:
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/freescale/imx8mm.dtsi?h=v6.17#n525
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/freescale/imx8mm.dtsi?h=v6.17#n305
+Some devices have different PCI device IDs for their physical and virtual
+functions and different drivers handling then. One example for that is Inte=
+l
+IXGBE.
 
-> spba_bus = of_get_parent(chan->slave->of_node);
-> 
-> Actaully you get dma consumers' spba-bus, not dmaengine one.
+But there are also some drivers, which do a similar check and just stop pro=
+bing
+if they detect a virtual function.
 
-I know that and this is intended because the dmaengine is not part of
-the SPBA bus. There was only one SPBA bus but this changed with the
-i.MX8M* SoCs and the driver is not aware of this (as explained within
-the commit message).
+So, this patch series does not do anything uncommon.
 
-That beeing said, the dmaegine was never part of the SPBA bus, e.g. see
-the imx6qdl.dtsi. There only one SDMA engine exists which is not part of
-the SPBA bus but it serves as DMA engine for devices within the SPBA
-bus:
+>> I'm guessing the proposal is to fail the probe() function in nova-core f=
+or
+>> the VFs - I'm not sure but does the driver core continue to try probing =
+other
+>> drivers if one fails probe()? It seems like this would be something best
+>> filtered on in the device id table, although I understand that's not pos=
+sible
+>> today.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm/boot/dts/nxp/imx/imx6qdl.dtsi?h=v6.17#n932
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm/boot/dts/nxp/imx/imx6qdl.dtsi?h=v6.17#n299
+Yes, the driver core keeps going until it finds a driver that succeeds prob=
+ing
+or no driver is left to probe. (This behavior is also the reason for the na=
+me
+probe() in the first place.)
 
-The driver logic only worked because there was only one SPBA bus.
+However, nowadays we ideally know whether a driver fits a device before pro=
+be()
+is called, but there are still exceptions; with PCI virtual functions we've=
+ just
+hit one of those.
 
-> And I also confused
-> 
->  +	if (sdmac->per_address2 >= sdmac->spba_start_addr &&
->  +			sdmac->per_address2 <= sdmac->spba_end_addr)
->   		sdmac->watermark_level |= SDMA_WATERMARK_LEVEL_SP;
-> 
->  -	if (sdmac->per_address >= sdma->spba_start_addr &&
->  -			sdmac->per_address <= sdma->spba_end_addr)
->  +	if (sdmac->per_address >= sdmac->spba_start_addr &&
->  +			sdmac->per_address <= sdmac->spba_end_addr)
->   		sdmac->watermark_level |= SDMA_WATERMARK_LEVEL_DP;
-> 
-> what's purpsoe of this code, check if dma target address in spba_bus ?
+Theoretically, we could also indicate whether a driver handles virtual func=
+tions
+through a boolean in struct pci_driver, which would be a bit more elegant.
 
-I didn't add this code, just adapted it. But yes somehow the address is
-checked.
-
-> And only here use spba_start_addr!
-
-Again I didn't added the code. I just fixed it for multi SPBA bus SoCs.
-
-Regards,
-  Marco
-
-
-> 
-> Frank
-> 
-> >
-> > Regards,
-> >   Marco
-> >
-> > > aips3: bus@30800000 {
-> > > 	...
-> > >         ranges = <0x30800000 0x30800000 0x400000>,
-> > >                  <0x8000000 0x8000000 0x10000000>;
-> > >
-> > >                         spba1: spba-bus@30800000 {
-> > >                                 compatible = "fsl,spba-bus", "simple-bus";
-> > >                                 #address-cells = <1>;
-> > >                                 #size-cells = <1>;
-> > >                                 reg = <0x30800000 0x100000>;
-> > >                                 ranges;
-> > >
-> > > 				...
-> > > 				sdma1:
-> > >
-> > > };
-> > >
-> > > of_translate_address() will 1:1 map at spba-bus@30800000 spba1.
-> > > then
-> > > reach ranges = <0x30800000 0x30800000 0x400000> of aips3
-> > >
-> > > if per_address is not in this range, it should return OF_BAD_ADDR. So
-> > > needn't parse reg of bus@30800000 at all.
-> > >
-> > > Frank
-> > >
-> > > > ---
-> > > >  drivers/dma/imx-sdma.c | 58 ++++++++++++++++++++++++++++++++++----------------
-> > > >  1 file changed, 40 insertions(+), 18 deletions(-)
-> > > >
-> > > > diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
-> > > > index 3ecb917214b1268b148a29df697b780bc462afa4..56daaeb7df03986850c9c74273d0816700581dc0 100644
-> > > > --- a/drivers/dma/imx-sdma.c
-> > > > +++ b/drivers/dma/imx-sdma.c
-> > > > @@ -429,6 +429,8 @@ struct sdma_desc {
-> > > >   * @event_mask:		event mask used in p_2_p script
-> > > >   * @watermark_level:	value for gReg[7], some script will extend it from
-> > > >   *			basic watermark such as p_2_p
-> > > > + * @spba_start_addr:	SDMA controller SPBA bus start address
-> > > > + * @spba_end_addr:	SDMA controller SPBA bus end address
-> > > >   * @shp_addr:		value for gReg[6]
-> > > >   * @per_addr:		value for gReg[2]
-> > > >   * @status:		status of dma channel
-> > > > @@ -461,6 +463,8 @@ struct sdma_channel {
-> > > >  	dma_addr_t			per_address, per_address2;
-> > > >  	unsigned long			event_mask[2];
-> > > >  	unsigned long			watermark_level;
-> > > > +	u32				spba_start_addr;
-> > > > +	u32				spba_end_addr;
-> > > >  	u32				shp_addr, per_addr;
-> > > >  	enum dma_status			status;
-> > > >  	struct imx_dma_data		data;
-> > > > @@ -534,8 +538,6 @@ struct sdma_engine {
-> > > >  	u32				script_number;
-> > > >  	struct sdma_script_start_addrs	*script_addrs;
-> > > >  	const struct sdma_driver_data	*drvdata;
-> > > > -	u32				spba_start_addr;
-> > > > -	u32				spba_end_addr;
-> > > >  	unsigned int			irq;
-> > > >  	dma_addr_t			bd0_phys;
-> > > >  	struct sdma_buffer_descriptor	*bd0;
-> > > > @@ -1236,8 +1238,6 @@ static void sdma_channel_synchronize(struct dma_chan *chan)
-> > > >
-> > > >  static void sdma_set_watermarklevel_for_p2p(struct sdma_channel *sdmac)
-> > > >  {
-> > > > -	struct sdma_engine *sdma = sdmac->sdma;
-> > > > -
-> > > >  	int lwml = sdmac->watermark_level & SDMA_WATERMARK_LEVEL_LWML;
-> > > >  	int hwml = (sdmac->watermark_level & SDMA_WATERMARK_LEVEL_HWML) >> 16;
-> > > >
-> > > > @@ -1263,12 +1263,12 @@ static void sdma_set_watermarklevel_for_p2p(struct sdma_channel *sdmac)
-> > > >  		swap(sdmac->event_mask[0], sdmac->event_mask[1]);
-> > > >  	}
-> > > >
-> > > > -	if (sdmac->per_address2 >= sdma->spba_start_addr &&
-> > > > -			sdmac->per_address2 <= sdma->spba_end_addr)
-> > > > +	if (sdmac->per_address2 >= sdmac->spba_start_addr &&
-> > > > +			sdmac->per_address2 <= sdmac->spba_end_addr)
-> > > >  		sdmac->watermark_level |= SDMA_WATERMARK_LEVEL_SP;
-> > > >
-> > > > -	if (sdmac->per_address >= sdma->spba_start_addr &&
-> > > > -			sdmac->per_address <= sdma->spba_end_addr)
-> > > > +	if (sdmac->per_address >= sdmac->spba_start_addr &&
-> > > > +			sdmac->per_address <= sdmac->spba_end_addr)
-> > > >  		sdmac->watermark_level |= SDMA_WATERMARK_LEVEL_DP;
-> > > >
-> > > >  	sdmac->watermark_level |= SDMA_WATERMARK_LEVEL_CONT;
-> > > > @@ -1447,6 +1447,31 @@ static void sdma_desc_free(struct virt_dma_desc *vd)
-> > > >  	kfree(desc);
-> > > >  }
-> > > >
-> > > > +static int sdma_config_spba_slave(struct dma_chan *chan)
-> > > > +{
-> > > > +	struct sdma_channel *sdmac = to_sdma_chan(chan);
-> > > > +	struct device_node *spba_bus;
-> > > > +	struct resource spba_res;
-> > > > +	int ret;
-> > > > +
-> > > > +	spba_bus = of_get_parent(chan->slave->of_node);
-> > > > +	/* Device doesn't belong to the spba-bus */
-> > > > +	if (!of_device_is_compatible(spba_bus, "fsl,spba-bus"))
-> > > > +		return 0;
-> > > > +
-> > > > +	ret = of_address_to_resource(spba_bus, 0, &spba_res);
-> > > > +	of_node_put(spba_bus);
-> > > > +	if (ret) {
-> > > > +		dev_err(sdmac->sdma->dev, "Failed to get spba-bus resources\n");
-> > > > +		return -EINVAL;
-> > > > +	}
-> > > > +
-> > > > +	sdmac->spba_start_addr = spba_res.start;
-> > > > +	sdmac->spba_end_addr = spba_res.end;
-> > > > +
-> > > > +	return 0;
-> > > > +}
-> > > > +
-> > > >  static int sdma_alloc_chan_resources(struct dma_chan *chan)
-> > > >  {
-> > > >  	struct sdma_channel *sdmac = to_sdma_chan(chan);
-> > > > @@ -1527,6 +1552,8 @@ static void sdma_free_chan_resources(struct dma_chan *chan)
-> > > >
-> > > >  	sdmac->event_id0 = 0;
-> > > >  	sdmac->event_id1 = 0;
-> > > > +	sdmac->spba_start_addr = 0;
-> > > > +	sdmac->spba_end_addr = 0;
-> > > >
-> > > >  	sdma_set_channel_priority(sdmac, 0);
-> > > >
-> > > > @@ -1837,6 +1864,7 @@ static int sdma_config(struct dma_chan *chan,
-> > > >  {
-> > > >  	struct sdma_channel *sdmac = to_sdma_chan(chan);
-> > > >  	struct sdma_engine *sdma = sdmac->sdma;
-> > > > +	int ret;
-> > > >
-> > > >  	memcpy(&sdmac->slave_config, dmaengine_cfg, sizeof(*dmaengine_cfg));
-> > > >
-> > > > @@ -1867,6 +1895,10 @@ static int sdma_config(struct dma_chan *chan,
-> > > >  		sdma_event_enable(sdmac, sdmac->event_id1);
-> > > >  	}
-> > > >
-> > > > +	ret = sdma_config_spba_slave(chan);
-> > > > +	if (ret)
-> > > > +		return ret;
-> > > > +
-> > > >  	return 0;
-> > > >  }
-> > > >
-> > > > @@ -2235,11 +2267,9 @@ static struct dma_chan *sdma_xlate(struct of_phandle_args *dma_spec,
-> > > >  static int sdma_probe(struct platform_device *pdev)
-> > > >  {
-> > > >  	struct device_node *np = pdev->dev.of_node;
-> > > > -	struct device_node *spba_bus;
-> > > >  	const char *fw_name;
-> > > >  	int ret;
-> > > >  	int irq;
-> > > > -	struct resource spba_res;
-> > > >  	int i;
-> > > >  	struct sdma_engine *sdma;
-> > > >  	s32 *saddr_arr;
-> > > > @@ -2375,14 +2405,6 @@ static int sdma_probe(struct platform_device *pdev)
-> > > >  			dev_err(&pdev->dev, "failed to register controller\n");
-> > > >  			goto err_register;
-> > > >  		}
-> > > > -
-> > > > -		spba_bus = of_find_compatible_node(NULL, NULL, "fsl,spba-bus");
-> > > > -		ret = of_address_to_resource(spba_bus, 0, &spba_res);
-> > > > -		if (!ret) {
-> > > > -			sdma->spba_start_addr = spba_res.start;
-> > > > -			sdma->spba_end_addr = spba_res.end;
-> > > > -		}
-> > > > -		of_node_put(spba_bus);
-> > > >  	}
-> > > >
-> > > >  	/*
-> > > >
-> > > > --
-> > > > 2.47.3
-> > > >
-> > >
-> 
+If you want I can also pick this up with my SR-IOV RFC which will probably =
+touch
+the driver structure as well; I plan to send something in a few days.
 
