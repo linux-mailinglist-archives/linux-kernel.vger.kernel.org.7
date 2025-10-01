@@ -1,219 +1,117 @@
-Return-Path: <linux-kernel+bounces-838425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9B3CBAF2A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 08:00:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DA9BBAF2A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 08:00:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62B712A1276
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 06:00:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF7A82A1FC3
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 06:00:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4070E26529B;
-	Wed,  1 Oct 2025 06:00:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42BB32D73BE;
+	Wed,  1 Oct 2025 06:00:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nJoNubzx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kFr2iLw3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74B8827F74B;
-	Wed,  1 Oct 2025 06:00:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95F41242D60;
+	Wed,  1 Oct 2025 06:00:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759298404; cv=none; b=XdB6R+01Gdx1XYmkdFPbzAnHfRV8SIcXpJ4+I5iR5HXb3fju/x9986J/fuL79dZ8w/HWBfzWmA+rHSXycZhXXMEo85t8KkZIff8tcCFBf8N2g8d6wtM0URKdZB2a18GLtQzvhwnkyWzCxFCADAYEkCVYdWzYdHnGc6kZttU2HHI=
+	t=1759298411; cv=none; b=R1qwfcWwokdcDeRCmAqWG7wDK7geCCmRFHAAZUyTbUMMVthZ6mxFPMoa4W05xsCUtlvICJAfy2vZ6KUhzsqdNYajCZJN/dix/FeG4vJApZsoiprT4WP1uSqliwSXWHIZpj2JQcv9y+bLgLdkGxpFzh9ZvRXWc9x2RKb5mw4MOBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759298404; c=relaxed/simple;
-	bh=BL+aFBzA9dlLWjXJCXVuikVhV/kBThl2YlDnC4VRyxo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PUiY9C3qrGu/IC8NMLp5SxteNLp4+hE/Vf3lqjQmF5XMCAi6n+RSlVET/8BkNmvKXG61C6ebGEdrkcC0U4JrNTo/i6gp/4PcCvPSviA3v7IEK3XaFDU0EGOOlnM6ABS4nkVZwj18pCB6kC0B/wotYYk2vJXVB3kqp7vQjfNOw9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nJoNubzx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC7E2C4CEF5;
-	Wed,  1 Oct 2025 06:00:03 +0000 (UTC)
+	s=arc-20240116; t=1759298411; c=relaxed/simple;
+	bh=tX3W4sS6g+fbHZHPYibXiAaWLtvO7ViWxdZMFzQElRM=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=l+21+yhv/jMjlDgNHbAjc5zUzlt682g+Jz+KPmSHJVn9/h/1WRx0/nZhNgAJ4+0Sa4K8xBHoLCy04nQAZ4CHsvULN/hq1xtcNPsqsI4b7gVR9MZ9wf/mPLmhNE31FBncTEgYBdw86oXRlXsEv/Ubh8YuDPbuegKxPzY96YMsjBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kFr2iLw3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EE86C4CEF4;
+	Wed,  1 Oct 2025 06:00:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759298404;
-	bh=BL+aFBzA9dlLWjXJCXVuikVhV/kBThl2YlDnC4VRyxo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nJoNubzxfsFRjlfmaL9Hnx11xwd97uKJuurs+fRG1FTDKyEaac+39+u/vd73SpdmL
-	 wVlmUCwqd4LB4tpS4ic173g1xVisffNBLtRfUbsO23h5hAE4txXOOxD1+I3TtmOVEq
-	 OgKe8sgYqk1XyFuKqIETnxQ9TAul3I/9bZw3/R2ywFva6K06ndhpGjBfRh8vGuaYZX
-	 QoLx++WPUTAMvQ/7k9U1rmXGCHt5tEmhcav7CcuVZA6Y9OQD4E49H/FQJJHZfBCf4v
-	 WlgnVJrBMA4rBDDTQ8M2ILo0yZ03YUkCjIIBJEbNXTUNPlajhNgmuz0bWn3bWrqgfk
-	 0umhPVtI+0nVA==
-Date: Wed, 1 Oct 2025 06:00:02 +0000
-From: Wei Liu <wei.liu@kernel.org>
-To: Mukesh Rathor <mrathor@linux.microsoft.com>
-Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org, kys@microsoft.com,
-	haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-	arnd@arndb.de
-Subject: Re: [PATCH v2 4/6] x86/hyperv: Add trampoline asm code to transition
- from hypervisor
-Message-ID: <20251001060002.GA603271@liuwe-devbox-debian-v2.local>
-References: <20250923214609.4101554-1-mrathor@linux.microsoft.com>
- <20250923214609.4101554-5-mrathor@linux.microsoft.com>
+	s=k20201202; t=1759298411;
+	bh=tX3W4sS6g+fbHZHPYibXiAaWLtvO7ViWxdZMFzQElRM=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=kFr2iLw3eY+CaGq9+3amCiVaeIz1zKmFyUba50HisCQ0+cMsn1Fb092Z00Sp+Kg2f
+	 NX1WxIc/NRc8Qk86dciuOxqbkjzlve22B53ax0ktEWKsjJcJRowCfy4etPyA5axwzO
+	 S4FwtG++A8CkTnuXM5FXA3sx56A5BrbAF4ov4RhIK0e8pGDK+C0OBkfT8psvx+3CGQ
+	 H9cdn4YEjPQlkJcKh/tEbNxgWnP3u1auyZ3X96O0w68Ug/ED0psw1v9Lpz8UvBm9AY
+	 gdNlRjVW5y/dRCSazAuWHF892b7vGKVlwVnHNOxNn5K+IJed07dIvg+N5V2aeJdtJH
+	 nXIqS1E6fOpdQ==
+Date: Tue, 30 Sep 2025 23:00:07 -0700
+From: Kees Cook <kees@kernel.org>
+To: Andrew Donnellan <ajd@linux.ibm.com>,
+ Vegard Nossum <vegard.nossum@oracle.com>
+CC: Linus Torvalds <torvalds@linux-foundation.org>,
+ Masahiro Yamada <masahiroy@kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>, Petr Vorel <pvorel@suse.cz>,
+ linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v2] kconfig: Avoid prompting for transitional symbols
+User-Agent: K-9 Mail for Android
+In-Reply-To: <01f772073dba88daf7f5acd824d10fc37412c99e.camel@linux.ibm.com>
+References: <20250930154514.it.623-kees@kernel.org> <01f772073dba88daf7f5acd824d10fc37412c99e.camel@linux.ibm.com>
+Message-ID: <B1170B95-F9B4-43F5-90A7-B31076CDA3F3@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250923214609.4101554-5-mrathor@linux.microsoft.com>
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 23, 2025 at 02:46:07PM -0700, Mukesh Rathor wrote:
-> Introduce a small asm stub to transition from the hypervisor to Linux
-> after devirtualization. Devirtualization means disabling hypervisor on
-> the fly, so after it is done, the code is running on physical processor
-> instead of virtual, and hypervisor is gone. This can be done by a
-> root/dom0 vm only.
 
-I want to scrub "dom0" from comments and commit messages. We drew
-parallels to Xen when we first wrote this code, but it's not a useful
-term externally. "root" or "root partition" should be sufficient.
 
-> 
-> At a high level, during panic of either the hypervisor or the dom0 (aka
-> root), the NMI handler asks hypervisor to devirtualize. As part of that,
-> the arguments include an entry point to return back to Linux. This asm
-> stub implements that entry point.
-> 
-> The stub is entered in protected mode, uses temporary gdt and page table
-> to enable long mode and get to kernel entry point which then restores full
-> kernel context to resume execution to kexec.
-> 
-> Signed-off-by: Mukesh Rathor <mrathor@linux.microsoft.com>
-> ---
->  arch/x86/hyperv/hv_trampoline.S | 101 ++++++++++++++++++++++++++++++++
->  1 file changed, 101 insertions(+)
->  create mode 100644 arch/x86/hyperv/hv_trampoline.S
-> 
-> diff --git a/arch/x86/hyperv/hv_trampoline.S b/arch/x86/hyperv/hv_trampoline.S
-> new file mode 100644
-> index 000000000000..25f02ff12286
-> --- /dev/null
-> +++ b/arch/x86/hyperv/hv_trampoline.S
-> @@ -0,0 +1,101 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * X86 specific Hyper-V kdump/crash related code.
-> + *
-> + * Copyright (C) 2025, Microsoft, Inc.
-> + *
-> + */
-> +#include <linux/linkage.h>
-> +#include <asm/alternative.h>
-> +#include <asm/msr.h>
-> +#include <asm/processor-flags.h>
-> +#include <asm/nospec-branch.h>
-> +
-> +/*
-> + * void noreturn hv_crash_asm32(arg1)
-> + *    arg1 == edi == 32bit PA of struct hv_crash_tramp_data
-> + *
-> + * The hypervisor jumps here upon devirtualization in protected mode. This
-> + * code gets copied to a page in the low 4G ie, 32bit space so it can run
-> + * in the protected mode. Hence we cannot use any compile/link time offsets or
-> + * addresses. It restores long mode via temporary gdt and page tables and
-> + * eventually jumps to kernel code entry at HV_CRASHDATA_OFFS_C_entry.
-> + *
-> + * PreCondition (ie, Hypervisor call back ABI):
-> + *  o CR0 is set to 0x0021: PE(prot mode) and NE are set, paging is disabled
-> + *  o CR4 is set to 0x0
-> + *  o IA32_EFER is set to 0x901 (SCE and NXE are set)
-> + *  o EDI is set to the Arg passed to HVCALL_DISABLE_HYP_EX.
-> + *  o CS, DS, ES, FS, GS are all initialized with a base of 0 and limit 0xFFFF
-> + *  o IDTR, TR and GDTR are initialized with a base of 0 and limit of 0xFFFF
-> + *  o LDTR is initialized as invalid (limit of 0)
-> + *  o MSR PAT is power on default.
-> + *  o Other state/registers are cleared. All TLBs flushed.
-> + */
-> +
-> +#define HV_CRASHDATA_OFFS_TRAMPCR3    0x0    /*  0 */
-> +#define HV_CRASHDATA_OFFS_KERNCR3     0x8    /*  8 */
-> +#define HV_CRASHDATA_OFFS_GDTRLIMIT  0x12    /* 18 */
-> +#define HV_CRASHDATA_OFFS_CS_JMPTGT  0x28    /* 40 */
-> +#define HV_CRASHDATA_OFFS_C_entry    0x30    /* 48 */
-> +
-> +	.text
-> +	.code32
-> +
+On September 30, 2025 9:21:07 PM PDT, Andrew Donnellan <ajd@linux=2Eibm=2E=
+com> wrote:
+>On Tue, 2025-09-30 at 08:45 -0700, Kees Cook wrote:
+>> The "transitional" symbol keyword, while working with the "olddefconfig=
+"
+>> target, was prompting during "oldconfig"=2E This occurred because these
+>> symbols were not being marked as user-defined when they received values
+>> from transitional symbols that had user values=2E The "olddefconfig" ta=
+rget
+>> explicitly doesn't prompt for anything, so this deficiency wasn't notic=
+ed=2E
+>>=20
+>> The issue manifested when a symbol's value came from a transitional
+>> symbol's user value but the receiving symbol wasn't marked with
+>> SYMBOL_DEF_USER=2E Thus the "oldconfig" logic would then prompt for the=
+se
+>> symbols unnecessarily=2E
+>>=20
+>> Check after value calculation whether a symbol without a user value
+>> gets its value from a single transitional symbol that does have a user
+>> value=2E In such cases, mark the receiving symbol as user-defined to
+>> prevent prompting=2E
+>>=20
+>> Update regression tests to verify that symbols with transitional defaul=
+ts
+>> are not prompted in "oldconfig", except when conditional defaults evalu=
+ate
+>> to 'no' and should legitimately be prompted=2E
+>>=20
+>> Build tested with "make testconfig"=2E
+>>=20
+>> Reported-by: Linus Torvalds <torvalds@linux-foundation=2Eorg>
+>> Closes:
+>> https://lore=2Ekernel=2Eorg/lkml/CAHk-=3DwgZjUk4Cy2XgNkTrQoO8XCmNUHrTe5=
+D519Fij1POK+3qw@mail=2Egmail=2Ecom/
+>> Fixes: 05020835c86e ("kconfig: Add transitional symbol attribute for mi=
+gration
+>> support")
+>
+>I think this should be f9afce4f32e9=2E
 
-I recently learned that instrumentation may be problematic for context
-switching code. I have not studied this code and noinstr usage in tree
-extensively so cannot make a judgement here.
+Indeed=2E I fixed this before I pushed it to -next; thank you!
 
-It is worth checking out the recent discussion on the VTL transition
-code.
+-Kees
 
-https://lore.kernel.org/linux-hyperv/27e50bb7-7f0e-48fb-bdbc-6c6d606e7113@redhat.com/
 
-And check out the in-tree document Documentation/core-api/entry.rst.
-
-Wei
-
-> +SYM_CODE_START(hv_crash_asm32)
-> +	UNWIND_HINT_UNDEFINED
-> +	ENDBR
-> +	movl	$X86_CR4_PAE, %ecx
-> +	movl	%ecx, %cr4
-> +
-> +	movl %edi, %ebx
-> +	add $HV_CRASHDATA_OFFS_TRAMPCR3, %ebx
-> +	movl %cs:(%ebx), %eax
-> +	movl %eax, %cr3
-> +
-> +	/* Setup EFER for long mode now */
-> +	movl	$MSR_EFER, %ecx
-> +	rdmsr
-> +	btsl	$_EFER_LME, %eax
-> +	wrmsr
-> +
-> +	/* Turn paging on using the temp 32bit trampoline page table */
-> +	movl %cr0, %eax
-> +	orl $(X86_CR0_PG), %eax
-> +	movl %eax, %cr0
-> +
-> +	/* since kernel cr3 could be above 4G, we need to be in the long mode
-> +	 * before we can load 64bits of the kernel cr3. We use a temp gdt for
-> +	 * that with CS.L=1 and CS.D=0 */
-> +	mov %edi, %eax
-> +	add $HV_CRASHDATA_OFFS_GDTRLIMIT, %eax
-> +	lgdtl %cs:(%eax)
-> +
-> +	/* not done yet, restore CS now to switch to CS.L=1 */
-> +	mov %edi, %eax
-> +	add $HV_CRASHDATA_OFFS_CS_JMPTGT, %eax
-> +	ljmp %cs:*(%eax)
-> +SYM_CODE_END(hv_crash_asm32)
-> +
-> +	/* we now run in full 64bit IA32-e long mode, CS.L=1 and CS.D=0 */
-> +	.code64
-> +	.balign 8
-> +SYM_CODE_START(hv_crash_asm64)
-> +	UNWIND_HINT_UNDEFINED
-> +	ENDBR
-> +	/* restore kernel page tables so we can jump to kernel code */
-> +	mov %edi, %eax
-> +	add $HV_CRASHDATA_OFFS_KERNCR3, %eax
-> +	movq %cs:(%eax), %rbx
-> +	movq %rbx, %cr3
-> +
-> +	mov %edi, %eax
-> +	add $HV_CRASHDATA_OFFS_C_entry, %eax
-> +	movq %cs:(%eax), %rbx
-> +	ANNOTATE_RETPOLINE_SAFE
-> +	jmp *%rbx
-> +
-> +	int $3
-> +
-> +SYM_INNER_LABEL(hv_crash_asm_end, SYM_L_GLOBAL)
-> +SYM_CODE_END(hv_crash_asm64)
-> -- 
-> 2.36.1.vfs.0.0
-> 
-> 
+--=20
+Kees Cook
 
