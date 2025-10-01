@@ -1,375 +1,271 @@
-Return-Path: <linux-kernel+bounces-838934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C291EBB074A
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 15:20:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64741BB0771
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 15:23:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B79D52A0BB0
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 13:20:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B28F03A9694
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 13:22:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5D362ED866;
-	Wed,  1 Oct 2025 13:20:25 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4065228489C;
-	Wed,  1 Oct 2025 13:20:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 478282ED84C;
+	Wed,  1 Oct 2025 13:22:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="EzVH3F3a"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A508912C544
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 13:22:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759324825; cv=none; b=BpctRRuznojSy0pmwEZ+A7d78qVF2Rq213UkFE3cC1ZKp9mKIymS65oZVG6tcNgTWJAU1TdFEuM+3GHioAXWIHqDNY6V0A/Gg3/vYJYslptS7DJ3WSTud9AMvCGrjLxgbguoYnStdvvc+hEt8X8CnFw93CqxOnuLjskNj9QYEyw=
+	t=1759324971; cv=none; b=HpQ7Ev5muxi4GPEDqHa3Fr1p+GkwkC16kox4/7WUdX9rphtc+oJP9OzOG5UZxwZ1MVbCB/1pg0Nnn5xXrPPkzEQTBl6Q9Ag8CWvP9QqqKfrH/CYov/UXyGY/i7p2m1xH//ES2Lj8jnD+WfI5Y1yBQcxsEtoFjfGPG8/qQS4LrDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759324825; c=relaxed/simple;
-	bh=SzvKklzVX6W0EPRa0KwrDs/5Evfvr+B1xb2KqTfE6pc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ci/8ZzjMc9TOTqhWruMMKo8zfhLsb/1c8oTqJnuDkWg7s8zV0UFoGaumWclEmXEqMY5VB3LNvtxAIo4VrkFzafpTj5wLBAMYkZiBBksXa2V+VEC14Gf8eoUtPg/UBFeOFJY1h6iIQQsmikuOb9Vp8ChAVW6/j4PSYRoxWlYL50o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 79DF316F2;
-	Wed,  1 Oct 2025 06:20:13 -0700 (PDT)
-Received: from [10.57.0.204] (unknown [10.57.0.204])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 87D133F59E;
-	Wed,  1 Oct 2025 06:20:16 -0700 (PDT)
-Message-ID: <2226e62f-76ca-4467-a8ae-460fd463df0a@arm.com>
-Date: Wed, 1 Oct 2025 14:20:13 +0100
+	s=arc-20240116; t=1759324971; c=relaxed/simple;
+	bh=yOS1la7tFfk/E20MZjQcEn6S65k24fLO7P0Llku+CcE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=l0qLdbehTq2mWIzPnT6yffokt6F5coKtN0EcfHG8Gam6n7Vpu5rv0ApWV91Apog9ZTSqDAhhltubL4z1c2RhkmCmM6OwXMtOJP3tG8zdClgleMC20JpnF96+3zcKB3RfgDNPQ9tPGUFT+TMcqoFpj5+apn7l7IFe88adE0Qn0Zk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=EzVH3F3a; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [127.0.1.1] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6DD7AED;
+	Wed,  1 Oct 2025 15:21:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1759324877;
+	bh=yOS1la7tFfk/E20MZjQcEn6S65k24fLO7P0Llku+CcE=;
+	h=From:Subject:Date:To:Cc:From;
+	b=EzVH3F3aVrDvGkJ6K3h9zd3D6RRAeKHRJuySkZxlOXnnV+s6pZ4249FmGkdslHinW
+	 BoL4TAsYuFFMoBbDIHja8grSZ2ASEWE9aEH7OmMPhf2QVW/jF/QRKyX+F5E8eIWwAO
+	 oPxMr/DiRMhOt72p0vM5O7RSPGUvRurn4KD/fIHA=
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Subject: [PATCH v6 00/11] drm: Add new pixel formats for Xilinx Zynqmp
+Date: Wed, 01 Oct 2025 16:22:12 +0300
+Message-Id: <20251001-xilinx-formats-v6-0-014b076b542a@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 05/43] arm64: RME: Check for RME support at KVM init
-To: Marc Zyngier <maz@kernel.org>
-Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- James Morse <james.morse@arm.com>, Oliver Upton <oliver.upton@linux.dev>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
- <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
- Alexandru Elisei <alexandru.elisei@arm.com>,
- Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
- linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
- Gavin Shan <gshan@redhat.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
- Alper Gun <alpergun@google.com>, "Aneesh Kumar K . V"
- <aneesh.kumar@kernel.org>, Emi Kisanuki <fj0570is@fujitsu.com>,
- Vishal Annapurve <vannapurve@google.com>
-References: <20250820145606.180644-1-steven.price@arm.com>
- <20250820145606.180644-6-steven.price@arm.com> <86ms6azxt5.wl-maz@kernel.org>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <86ms6azxt5.wl-maz@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAUr3WgC/3XPy2rDMBCF4VcJWldlLpJcd9X3KFnIujSCxipSM
+ A7B714lpRjqevkfmA/mJmooKVTxeriJEqZUUx5bmKeDcCc7fgSZfGtBQAqRQM7pM42zjLmc7aX
+ K2GEPaAhfmEU7+iohpvkBvh9bn1K95HJ9+BPe1x+KQP2lJpQgYYjkNKrOD/iWfLA1j0O2xT+7f
+ BZ3caJfRQOi3ijUFDTA1DlrNNkdhVeFkDYKN6UHDzEgmL7XO4paFSazUVRTmMgygDO+ox1Fr4q
+ i7Ue6Ka5TZJgYDcM/yrIs3199czXLAQAA
+X-Change-ID: 20241120-xilinx-formats-f71901621833
+To: Vishal Sagar <vishal.sagar@amd.com>, 
+ Anatoliy Klymenko <anatoliy.klymenko@amd.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Michal Simek <michal.simek@amd.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ Geert Uytterhoeven <geert@linux-m68k.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+ Pekka Paalanen <ppaalanen@gmail.com>, 
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
+ Pekka Paalanen <pekka.paalanen@collabora.com>, 
+ Dmitry Baryshkov <lumag@kernel.org>
+X-Mailer: b4 0.15-dev-c25d1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7168;
+ i=tomi.valkeinen@ideasonboard.com; h=from:subject:message-id;
+ bh=yOS1la7tFfk/E20MZjQcEn6S65k24fLO7P0Llku+CcE=;
+ b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBo3SsbAWlb99mfRuxxQUFJWVZEo/XvGWtVD2RE/
+ mKL7RyUqcKJAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCaN0rGwAKCRD6PaqMvJYe
+ 9UwwEACDTN3FabMsbZXuqsakfdNYxieHDNIbOCvygc2aEQqHoQZLnVUPqq0u/kzRLEugDOKrQVG
+ GMEtmjYBowCHyWZpzhY1e92jARUwZR3nnOorBGFP32yzCQNQVkpn5xVrYHl+pPOKPpe3pTZRcuw
+ +6x1xpVUG+4P0+mAxdHTP7wuluHTtNGPiLAPE+j706fPz2rdlgDQoA22dczggMXcfTnguvoDpWT
+ CUDQU/dk61VzxaB2vAvvV7N3DJEx0P9K85T/2L9b4dVetvYrpaT0Dke9atl+DYavwZ2AObBv0+1
+ en8aIBQZ/fhcYFCfhJO8XLjKYJO7UieN9doAhOufnXGdVLYzc1h5rC3JuEGuLZ6+TVaQ6xAqDHT
+ 1oBce9jGlYByzhg0AZEWxEa7wpZYcEM25frU1cK3Ep6TbsuUjntZ5LIyD+FKlSlToTUGVQfz78o
+ Hvfr8SwvQhZr0hNCEvYEHgEZPafjzcB1tPSy6zvCAAQZmbb3pAudKzQ0G9YukabZfTxlGDOWlct
+ itKNQa93EzymNLd4+yrTwAlbFiSB8IWrrW1j2RpPdFj+7njic8LQzDY0PnT9E6V+Nm0/LLRBIt4
+ 3us49gX4aWKgyZYuHHYVFiatmAQftiYpRx/Q2ta1+jEtDPFyE8tnUkGivgQr9wWyafhT05U/Fd8
+ 7POHdaacnqAgQTQ==
+X-Developer-Key: i=tomi.valkeinen@ideasonboard.com; a=openpgp;
+ fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
 
-On 01/10/2025 12:05, Marc Zyngier wrote:
-> On Wed, 20 Aug 2025 15:55:25 +0100,
-> Steven Price <steven.price@arm.com> wrote:
->>
->> Query the RMI version number and check if it is a compatible version. A
->> static key is also provided to signal that a supported RMM is available.
->>
->> Functions are provided to query if a VM or VCPU is a realm (or rec)
->> which currently will always return false.
->>
->> Later patches make use of struct realm and the states as the ioctls
->> interfaces are added to support realm and REC creation and destruction.
->>
->> Reviewed-by: Gavin Shan <gshan@redhat.com>
->> Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->> Signed-off-by: Steven Price <steven.price@arm.com>
->> ---
->> Changes since v8:
->>  * No need to guard kvm_init_rme() behind 'in_hyp_mode'.
->> Changes since v6:
->>  * Improved message for an unsupported RMI ABI version.
->> Changes since v5:
->>  * Reword "unsupported" message from "host supports" to "we want" to
->>    clarify that 'we' are the 'host'.
->> Changes since v2:
->>  * Drop return value from kvm_init_rme(), it was always 0.
->>  * Rely on the RMM return value to identify whether the RSI ABI is
->>    compatible.
->> ---
->>  arch/arm64/include/asm/kvm_emulate.h | 18 +++++++++
->>  arch/arm64/include/asm/kvm_host.h    |  4 ++
->>  arch/arm64/include/asm/kvm_rme.h     | 56 ++++++++++++++++++++++++++++
->>  arch/arm64/include/asm/virt.h        |  1 +
->>  arch/arm64/kvm/Makefile              |  2 +-
->>  arch/arm64/kvm/arm.c                 |  5 +++
->>  arch/arm64/kvm/rme.c                 | 56 ++++++++++++++++++++++++++++
->>  7 files changed, 141 insertions(+), 1 deletion(-)
->>  create mode 100644 arch/arm64/include/asm/kvm_rme.h
->>  create mode 100644 arch/arm64/kvm/rme.c
->>
->> diff --git a/arch/arm64/include/asm/kvm_emulate.h b/arch/arm64/include/asm/kvm_emulate.h
->> index fa8a08a1ccd5..ab4093e41c4b 100644
->> --- a/arch/arm64/include/asm/kvm_emulate.h
->> +++ b/arch/arm64/include/asm/kvm_emulate.h
->> @@ -674,4 +674,22 @@ static inline void vcpu_set_hcrx(struct kvm_vcpu *vcpu)
->>  			vcpu->arch.hcrx_el2 |= HCRX_EL2_SCTLR2En;
->>  	}
->>  }
->> +
->> +static inline bool kvm_is_realm(struct kvm *kvm)
->> +{
->> +	if (static_branch_unlikely(&kvm_rme_is_available) && kvm)
-> 
-> Under what circumstances would you call this with a NULL pointer?
+Add new DRM pixel formats and add support for those in the Xilinx zynqmp
+display driver.
 
-kvm_vm_ioctl_check_extension() is the culprit. I guess this could be
-handled with an equivalent to kvm_pvm_ext_allowed().
+All other formats except XVUY2101010 are already supported in upstream
+gstreamer, but gstreamer's kmssink does not have the support yet, as it
+obviously cannot support the formats without kernel having the formats.
 
->> +		return kvm->arch.is_realm;
->> +	return false;
->> +}
->> +
->> +static inline enum realm_state kvm_realm_state(struct kvm *kvm)
->> +{
->> +	return READ_ONCE(kvm->arch.realm.state);
->> +}
->> +
->> +static inline bool vcpu_is_rec(struct kvm_vcpu *vcpu)
->> +{
->> +	return false;
->> +}
->> +
->>  #endif /* __ARM64_KVM_EMULATE_H__ */
->> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
->> index 2f2394cce24e..d1511ce26191 100644
->> --- a/arch/arm64/include/asm/kvm_host.h
->> +++ b/arch/arm64/include/asm/kvm_host.h
->> @@ -27,6 +27,7 @@
->>  #include <asm/fpsimd.h>
->>  #include <asm/kvm.h>
->>  #include <asm/kvm_asm.h>
->> +#include <asm/kvm_rme.h>
->>  #include <asm/vncr_mapping.h>
->>  
->>  #define __KVM_HAVE_ARCH_INTC_INITIALIZED
->> @@ -404,6 +405,9 @@ struct kvm_arch {
->>  	 * the associated pKVM instance in the hypervisor.
->>  	 */
->>  	struct kvm_protected_vm pkvm;
->> +
->> +	bool is_realm;
->> +	struct realm realm;
-> 
-> Given that pkvm and CCA are pretty much exclusive, I don't think we
-> need to store both states separately. Make those a union.
+Xilinx has support for these formats in their BSP kernel, and Xilinx has
+a branch here, adding the support to gstreamer kmssink:
 
-Ack
+https://github.com/Xilinx/gst-plugins-bad.git xlnx-rebase-v1.18.5
 
->>  };
->>  
->>  struct kvm_vcpu_fault_info {
->> diff --git a/arch/arm64/include/asm/kvm_rme.h b/arch/arm64/include/asm/kvm_rme.h
->> new file mode 100644
->> index 000000000000..9c8a0b23e0e4
->> --- /dev/null
->> +++ b/arch/arm64/include/asm/kvm_rme.h
->> @@ -0,0 +1,56 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +/*
->> + * Copyright (C) 2023 ARM Ltd.
->> + */
->> +
->> +#ifndef __ASM_KVM_RME_H
->> +#define __ASM_KVM_RME_H
-> 
-> None of that is about RME. This is about CCA, which is purely a SW
-> construct, and not a CPU architecture feature.
-> 
-> So 's/rme/cca/' everywhere that describe something that is not a
-> direct effect of FEAT_RME being implemented on the CPU, but instead
-> something that is CCA-specific.
+New formats added:
 
-Ok, it's a lot of churn but you've got a good point.
+DRM_FORMAT_Y8
+- 8-bit Y-only
+- fourcc: "GREY"
+- gstreamer: GRAY8
 
->> +
->> +/**
->> + * enum realm_state - State of a Realm
->> + */
->> +enum realm_state {
->> +	/**
->> +	 * @REALM_STATE_NONE:
->> +	 *      Realm has not yet been created. rmi_realm_create() may be
->> +	 *      called to create the realm.
->> +	 */
->> +	REALM_STATE_NONE,
->> +	/**
->> +	 * @REALM_STATE_NEW:
->> +	 *      Realm is under construction, not eligible for execution. Pages
->> +	 *      may be populated with rmi_data_create().
->> +	 */
->> +	REALM_STATE_NEW,
->> +	/**
->> +	 * @REALM_STATE_ACTIVE:
->> +	 *      Realm has been created and is eligible for execution with
->> +	 *      rmi_rec_enter(). Pages may no longer be populated with
->> +	 *      rmi_data_create().
->> +	 */
->> +	REALM_STATE_ACTIVE,
->> +	/**
->> +	 * @REALM_STATE_DYING:
->> +	 *      Realm is in the process of being destroyed or has already been
->> +	 *      destroyed.
->> +	 */
->> +	REALM_STATE_DYING,
->> +	/**
->> +	 * @REALM_STATE_DEAD:
->> +	 *      Realm has been destroyed.
->> +	 */
->> +	REALM_STATE_DEAD
->> +};
->> +
->> +/**
->> + * struct realm - Additional per VM data for a Realm
->> + *
->> + * @state: The lifetime state machine for the realm
->> + */
->> +struct realm {
->> +	enum realm_state state;
->> +};
->> +
->> +void kvm_init_rme(void);
->> +
->> +#endif /* __ASM_KVM_RME_H */
->> diff --git a/arch/arm64/include/asm/virt.h b/arch/arm64/include/asm/virt.h
->> index aa280f356b96..db73c9bfd8c9 100644
->> --- a/arch/arm64/include/asm/virt.h
->> +++ b/arch/arm64/include/asm/virt.h
->> @@ -82,6 +82,7 @@ void __hyp_reset_vectors(void);
->>  bool is_kvm_arm_initialised(void);
->>  
->>  DECLARE_STATIC_KEY_FALSE(kvm_protected_mode_initialized);
->> +DECLARE_STATIC_KEY_FALSE(kvm_rme_is_available);
-> 
-> Same thing about RME.
-> 
->>  
->>  static inline bool is_pkvm_initialized(void)
->>  {
->> diff --git a/arch/arm64/kvm/Makefile b/arch/arm64/kvm/Makefile
->> index 3ebc0570345c..70fa017831b3 100644
->> --- a/arch/arm64/kvm/Makefile
->> +++ b/arch/arm64/kvm/Makefile
->> @@ -16,7 +16,7 @@ CFLAGS_handle_exit.o += -Wno-override-init
->>  kvm-y += arm.o mmu.o mmio.o psci.o hypercalls.o pvtime.o \
->>  	 inject_fault.o va_layout.o handle_exit.o config.o \
->>  	 guest.o debug.o reset.o sys_regs.o stacktrace.o \
->> -	 vgic-sys-reg-v3.o fpsimd.o pkvm.o \
->> +	 vgic-sys-reg-v3.o fpsimd.o pkvm.o rme.o \
->>  	 arch_timer.o trng.o vmid.o emulate-nested.o nested.o at.o \
->>  	 vgic/vgic.o vgic/vgic-init.o \
->>  	 vgic/vgic-irqfd.o vgic/vgic-v2.o \
->> diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
->> index 888f7c7abf54..76177c56f1ef 100644
->> --- a/arch/arm64/kvm/arm.c
->> +++ b/arch/arm64/kvm/arm.c
->> @@ -40,6 +40,7 @@
->>  #include <asm/kvm_nested.h>
->>  #include <asm/kvm_pkvm.h>
->>  #include <asm/kvm_ptrauth.h>
->> +#include <asm/kvm_rme.h>
->>  #include <asm/sections.h>
->>  
->>  #include <kvm/arm_hypercalls.h>
->> @@ -59,6 +60,8 @@ enum kvm_wfx_trap_policy {
->>  static enum kvm_wfx_trap_policy kvm_wfi_trap_policy __read_mostly = KVM_WFX_NOTRAP_SINGLE_TASK;
->>  static enum kvm_wfx_trap_policy kvm_wfe_trap_policy __read_mostly = KVM_WFX_NOTRAP_SINGLE_TASK;
->>  
->> +DEFINE_STATIC_KEY_FALSE(kvm_rme_is_available);
->> +
->>  DECLARE_KVM_HYP_PER_CPU(unsigned long, kvm_hyp_vector);
->>  
->>  DEFINE_PER_CPU(unsigned long, kvm_arm_hyp_stack_base);
->> @@ -2836,6 +2839,8 @@ static __init int kvm_arm_init(void)
->>  
->>  	in_hyp_mode = is_kernel_in_hyp_mode();
->>  
->> +	kvm_init_rme();
->> +
->>  	if (cpus_have_final_cap(ARM64_WORKAROUND_DEVICE_LOAD_ACQUIRE) ||
->>  	    cpus_have_final_cap(ARM64_WORKAROUND_1508412))
->>  		kvm_info("Guests without required CPU erratum workarounds can deadlock system!\n" \
->> diff --git a/arch/arm64/kvm/rme.c b/arch/arm64/kvm/rme.c
->> new file mode 100644
->> index 000000000000..67cf2d94cb2d
->> --- /dev/null
->> +++ b/arch/arm64/kvm/rme.c
->> @@ -0,0 +1,56 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/*
->> + * Copyright (C) 2023 ARM Ltd.
->> + */
->> +
->> +#include <linux/kvm_host.h>
->> +
->> +#include <asm/rmi_cmds.h>
->> +#include <asm/virt.h>
->> +
->> +static int rmi_check_version(void)
->> +{
->> +	struct arm_smccc_res res;
->> +	unsigned short version_major, version_minor;
->> +	unsigned long host_version = RMI_ABI_VERSION(RMI_ABI_MAJOR_VERSION,
->> +						     RMI_ABI_MINOR_VERSION);
->> +
->> +	arm_smccc_1_1_invoke(SMC_RMI_VERSION, host_version, &res);
-> 
-> Shouldn't you first check that RME is actually available, by looking
-> at ID_AA64PFR0_EL1.RME?
+DRM_FORMAT_Y10_P32
+- 10-bit Y-only, three pixels packed into 32-bits
+- fourcc: "YPA4"
+- gstreamer: GRAY10_LE32
 
-Well, you made a good point above that this isn't RME, it's CCA. And I
-guess there's a possible world where the CCA interface could be
-supported with something other than FEAT_RME (FEAT_RME2 maybe?) so I'm
-not sure it necessarily a good idea to pin this on a CPU feature bit.
+DRM_FORMAT_XV15
+- Like NV12, but with 10-bit components
+- fourcc: "XV15"
+- gstreamer: NV12_10LE32
 
-Ultimately what we want to know is whether the firmware thinks it can
-supply us with the CCA interface and we don't really care how it
-achieves it.
+DRM_FORMAT_XV20
+- Like NV16, but with 10-bit components
+- fourcc: "XV20"
+- gstreamer: NV16_10LE32
 
->> +
->> +	if (res.a0 == SMCCC_RET_NOT_SUPPORTED)
->> +		return -ENXIO;
->> +
->> +	version_major = RMI_ABI_VERSION_GET_MAJOR(res.a1);
->> +	version_minor = RMI_ABI_VERSION_GET_MINOR(res.a1);
->> +
->> +	if (res.a0 != RMI_SUCCESS) {
->> +		unsigned short high_version_major, high_version_minor;
->> +
->> +		high_version_major = RMI_ABI_VERSION_GET_MAJOR(res.a2);
->> +		high_version_minor = RMI_ABI_VERSION_GET_MINOR(res.a2);
->> +
->> +		kvm_err("Unsupported RMI ABI (v%d.%d - v%d.%d) we want v%d.%d\n",
->> +			version_major, version_minor,
->> +			high_version_major, high_version_minor,
->> +			RMI_ABI_MAJOR_VERSION,
->> +			RMI_ABI_MINOR_VERSION);
->> +		return -ENXIO;
->> +	}
->> +
->> +	kvm_info("RMI ABI version %d.%d\n", version_major, version_minor);
->> +
->> +	return 0;
->> +}
->> +
->> +void kvm_init_rme(void)
->> +{
->> +	if (PAGE_SIZE != SZ_4K)
->> +		/* Only 4k page size on the host is supported */
->> +		return;
-> 
-> Move the comment above the check (same thing below).
+DRM_FORMAT_X403
+- 10-bit planar 4:4:4, with three samples packed into 32-bits
+- fourcc: "X403"
+- gstreamer: Y444_10LE32
 
-Ack.
+XVUY2101010
+- 10-bit 4:4:4, one pixel in 32 bits
+- fourcc: "XY30"
 
-Thanks,
-Steve
+Some notes:
+
+I know the 8-bit greyscale format has been discussed before, and the
+guidance was to use DRM_FORMAT_R8. While I'm not totally against that, I
+would argue that adding DRM_FORMAT_Y8 makes sense, as:
+
+1) We can mark it as 'is_yuv' in the drm_format_info, and this can help
+   the drivers handle e.g. full/limited range. Probably some hardware
+   handles grayscale as a value used for all RGB components, in which case
+   R8 makes sense, but when the hardware handles the Y-only pixels as YCbCr,
+   where Cb and Cr are "neutral", it makes more sense to consider the
+   format as an YUV format rather than RGB.
+
+2) We can have the same fourcc as in v4l2. While not strictly necessary,
+   it's a constant source of confusion when the fourccs differ.
+
+3) It (possibly) makes more sense for the user to use Y8/GREY format
+   instead of R8, as, in my experience, the documentation usually refers
+   to gray(scale) format or Y-only format.
+
+As we add new Y-only formats, it makes sense to have similar terms, so
+we need to adjust the Y10_P32 format name accordingly.
+
+I have made some adjustments to the formats compared to the Xilinx's
+branch. E.g. The DRM_FORMAT_Y10_P32 format in Xilinx's kmssink uses
+fourcc "Y10 ", and DRM_FORMAT_Y10. I didn't like those, as the format is
+a packed format, three 10-bit pixels in a 32-bit container, and I think
+Y10 means a 10-bit pixel in a 16-bit container.
+
+Generally speaking, if someone has good ideas for the format define
+names or fourccs, speak up, as it's not easy to invent good names =).
+That said, keeping them the same as in the Xilinx trees will, of course,
+be slightly easier for the users of Xilinx platforms.
+
+I made WIP additions to modetest to support most of these formats,
+partially based on Xilinx's code:
+
+https://github.com/tomba/libdrm.git xilinx
+
+A few thoughts about that:
+
+modetest uses bo_create_dumb(), and as highlighted in recent discussions
+in the kernel list [1], dumb buffers are only for RGB formats. They may
+work for non-RGB formats, but that's platform specific. None of the
+formats I add here are RGB formats. Do we want to go this way with
+modetest?
+
+I also feel that the current structure of modetest is not well suited to
+more complicated formats. Both the buffer allocation is a bit more
+difficult (see "Add virtual_width and pixels_per_container"), and the
+drawing is complicated (see, e.g., "Add support for DRM_FORMAT_XV15 &
+DRM_FORMAT_XV20").
+
+I have recently added support for these Xilinx formats to both kms++ [2] and
+pykms/pixutils [3][4] (WIP), and it's not been easy... But I have to say I
+think I like the template based version in kms++. That won't work in
+modetest, of course, but a non-templated version might be implementable,
+but probably much slower.
+
+In any case, I slighly feel it's not worth merging the modetest patches
+I have for these formats: they complicate the code quite a bit, break
+the RGB-only rule, and I'm not sure if there really are (m)any users. If
+we want to add support to modetest, I think a bigger rewrite of the test
+pattern code might be in order.
+
+[1] https://lore.kernel.org/all/20250109150310.219442-26-tzimmermann%40suse.de/
+[2] git@github.com:tomba/kmsxx.git xilinx
+[3] git@github.com:tomba/pykms.git xilinx
+[4] git@github.com:tomba/pixutils.git xilinx
+
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+---
+Changes in v6:
+- Added tags for reviews
+- Rebased on v6.17
+- Link to v5: https://lore.kernel.org/r/20250425-xilinx-formats-v5-0-c74263231630@ideasonboard.com
+
+Changes in v5:
+- Add comment about Y-only formats, clarifying how the display pipeline
+  handles them (they're handled as YCbCr, with Cb and Cr as "neutral")
+- Clarify X403 format in the patch description
+- Set unused Y-only CSC offsets to 0 (instead of 0x1800).
+- Add R-bs
+- Link to v4: https://lore.kernel.org/r/20250326-xilinx-formats-v4-0-322a300c6d72@ideasonboard.com
+
+Changes in v4:
+- Reformat the drm_format_info entries a bit
+- Calculate block size only once in drm_format_info_bpp()
+- Declare local variables in separate lines
+- Add review tags
+- Fix commit message referring to Y10_LE32 (should be Y10_P32)
+- Link to v3: https://lore.kernel.org/r/20250212-xilinx-formats-v3-0-90d0fe106995@ideasonboard.com
+
+Changes in v3:
+- Drop "drm: xlnx: zynqmp: Fix max dma segment size". It is already
+  pushed.
+- Add XVUY2101010 format.
+- Rename DRM_FORMAT_Y10_LE32 to DRM_FORMAT_Y10_P32.
+- Link to v2: https://lore.kernel.org/r/20250115-xilinx-formats-v2-0-160327ca652a@ideasonboard.com
+
+Changes in v2:
+- I noticed V4L2 already has fourcc Y10P, referring to MIPI-style packed
+  Y10 format. So I changed Y10_LE32 fourcc to YPA4. If logic has any
+  relevance here, P means packed, A means 10, 4 means "in 4 bytes".
+- Added tags to "Fix max dma segment size" patch
+- Updated description for "Add warning for bad bpp"
+- Link to v1: https://lore.kernel.org/r/20241204-xilinx-formats-v1-0-0bf2c5147db1@ideasonboard.com
+
+---
+Tomi Valkeinen (11):
+      drm/fourcc: Add warning for bad bpp
+      drm/fourcc: Add DRM_FORMAT_XV15/XV20
+      drm/fourcc: Add DRM_FORMAT_Y8
+      drm/fourcc: Add DRM_FORMAT_Y10_P32
+      drm/fourcc: Add DRM_FORMAT_X403
+      drm/fourcc: Add DRM_FORMAT_XVUY2101010
+      drm: xlnx: zynqmp: Use drm helpers when calculating buffer sizes
+      drm: xlnx: zynqmp: Add support for XV15 & XV20
+      drm: xlnx: zynqmp: Add support for Y8 and Y10_P32
+      drm: xlnx: zynqmp: Add support for X403
+      drm: xlnx: zynqmp: Add support for XVUY2101010
+
+ drivers/gpu/drm/drm_fourcc.c       | 28 ++++++++++++++++---
+ drivers/gpu/drm/xlnx/zynqmp_disp.c | 55 +++++++++++++++++++++++++++++++++++---
+ include/uapi/drm/drm_fourcc.h      | 29 ++++++++++++++++++++
+ 3 files changed, 105 insertions(+), 7 deletions(-)
+---
+base-commit: e5f0a698b34ed76002dc5cff3804a61c80233a7a
+change-id: 20241120-xilinx-formats-f71901621833
+
+Best regards,
+-- 
+Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
 
 
