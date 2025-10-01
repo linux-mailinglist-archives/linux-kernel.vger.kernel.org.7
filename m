@@ -1,222 +1,139 @@
-Return-Path: <linux-kernel+bounces-838843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37D7EBB0426
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 13:58:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51DC3BB0429
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 13:59:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECC6D16156F
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 11:58:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A87473B78BE
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 11:59:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09E092E889C;
-	Wed,  1 Oct 2025 11:58:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B2E2E7F3A;
+	Wed,  1 Oct 2025 11:59:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qZCPm84S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="EtOyDVxk"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 288182E611B;
-	Wed,  1 Oct 2025 11:58:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CCAE2E7F3E
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 11:58:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759319924; cv=none; b=fVeQWB7Z1SY4R08gWo6TSpDeYja11FEEWEZXreVWIQYN4NgYYw/GPA6DbH+xWom+SC9mo1mUzsoRjS2HhDfAgTPiVyVvsEWgnthW4f6DM0dYlIeXAzJ10Tr9RW0/MeAkwO5cWx/1Gf+uzjM2PA8YVu+1/23ZkPUap/Bak44GbYQ=
+	t=1759319940; cv=none; b=SfBdNrmIF0e5Wx254LaqOkKM23KQMHghszcBkHLbKgJatkAM2QyTgQjoIm5UibJ+CEs8vURJiLykmuN9ZBCaOHDtJmu4Jx7cuBzywCZpDKPGVnRg5QSDtwSvw7KzgLQawhydrmoWTHJRFtP9G1eb7pDQGFzG3ZkItukt9Y+VNFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759319924; c=relaxed/simple;
-	bh=q2oyD5KugDIaW6JSBh1QBJ0TUR6MW5UO2WCtAgLmeh8=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LMIJhE1DmN+XEtQdpKi1cC2VRCm7mOHjK5y329aLWhwBOk5dbAE2KoNVX7clCujy0nitrTO6lGzNW6pgy7UBRhE53hw8DVcgHD3OadtdqbdVdspI6cdgNqwJNr+56SClLrgueTcpX3iDa0RseSLaRers9ZhQbK13/q4KbXfl1FE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qZCPm84S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABEC3C4CEF4;
-	Wed,  1 Oct 2025 11:58:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759319923;
-	bh=q2oyD5KugDIaW6JSBh1QBJ0TUR6MW5UO2WCtAgLmeh8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=qZCPm84S00rcJ/5DZZiAQBlbVyFTQO+QHK5ZY/4bD3YhlyN4HVP7XkS2p9o0/WGh3
-	 Fu0nDDQctiP6lxSelsLnadRvYKULsWI1WRhAhmH6CXE1dLQ89MYv9TvbMUz125aMY0
-	 b7MnaqQtvm381/diXi6A8LLLTaUlgQvmOS3WMVGXEudJ5Tjr//6BHC0XKb6J7bBdHg
-	 V1waUBZjdW9YJvCaUhesrG2cMrLgerZcmHlbd6wtZ1SApJXoP+jvecGK65TRwkZ/iq
-	 L2rqLAFdjZC53pMBqGe9hGrOgSBfKJol4kn4Fhtc/G9JstpqBcvX0WfuNp+3Jwww3a
-	 pUBGKgU9Bopng==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1v3vTl-0000000AnCw-1j7p;
-	Wed, 01 Oct 2025 11:58:41 +0000
-Date: Wed, 01 Oct 2025 12:58:40 +0100
-Message-ID: <86ldluzvdb.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Steven Price <steven.price@arm.com>
-Cc: kvm@vger.kernel.org,
-	kvmarm@lists.linux.dev,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu
- <yuzenghui@huawei.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Joey Gouly <joey.gouly@arm.com>,
-	Alexandru Elisei <alexandru.elisei@arm.com>,
-	Christoffer Dall <christoffer.dall@arm.com>,
-	Fuad Tabba <tabba@google.com>,
-	linux-coco@lists.linux.dev,
-	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
-	Gavin Shan <gshan@redhat.com>,
-	Shanker Donthineni <sdonthineni@nvidia.com>,
-	Alper Gun <alpergun@google.com>,
-	"Aneesh Kumar K . V"
- <aneesh.kumar@kernel.org>,
-	Emi Kisanuki <fj0570is@fujitsu.com>,
-	Vishal Annapurve <vannapurve@google.com>
-Subject: Re: [PATCH v10 03/43] arm64: RME: Add SMC definitions for calling the RMM
-In-Reply-To: <747ab990-d02d-4e7c-9007-a7ac73bb1062@arm.com>
-References: <20250820145606.180644-1-steven.price@arm.com>
-	<20250820145606.180644-4-steven.price@arm.com>
-	<86o6qrym2b.wl-maz@kernel.org>
-	<747ab990-d02d-4e7c-9007-a7ac73bb1062@arm.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1759319940; c=relaxed/simple;
+	bh=NN5GgRIzCCi/hMERBMeR8ROhByBf62Xiy5LgeqicMs0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YFt1t052GgVLOwepnIEgbLN3/33N+Hufg41QJT96xuFo4Yj3MqBkKPmwDmsfe7iSWrc5le4TGIz8NWnD6mxFxVzkkSYc4FA6M44o21qqN+4raCmpQExuCUHIb8XO8VlyARGiSykBiuJTZPe8UbJ3yBDkh55GNkKdu1tR63ayiNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=EtOyDVxk; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-330469eb750so8298757a91.2
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 04:58:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1759319937; x=1759924737; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=92Qglsz/Eya8BRF97YA+VHR4I83RleB9lL6/yCypHW8=;
+        b=EtOyDVxkDmGpPHMhNMtCS0WX0DvJmBIOPX2xb7iUHokwa71hwLb4uqG9mWbGBePQvr
+         DyWpOEqVxPNYp1cwpgPGNz7TgQjkY99MyVhcT+zijJ1bGaUnnxPZnHs5rXnhngYOivSt
+         /TFH0t8gS4oqGVRVLxjGULXXFiDHRsQ47aQFAkuvZ8D/zl95NK2zMlgR25StOVFEnq9M
+         cLCl9rO2yPM+O1q7snOP7/W/TbwZ0ORZeMUOCmFJSI3meRXW3kSQIeyshYO18a+DFqy7
+         tMFtPG9X6gA2VKjKLnt7cMxLYI60up+RNrP9AuJyzg/Mb+JY8e+TEwEohSXrNELEQOwN
+         afPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759319937; x=1759924737;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=92Qglsz/Eya8BRF97YA+VHR4I83RleB9lL6/yCypHW8=;
+        b=vjj8nYmLvEu+R/tFfdY2iTNvfpHDq3iik6EfNYjMo4vxVpLTtaVlH5NmJ4ahqLLWyf
+         qrcSgU7m/i21c2rMq4/ep69Fo/o1pu5WFDkVnQp3+pNqQS4W4H7HnmjLWZx5GgAZ0xkY
+         qba/zNn+jdhP116Gsaiyxwxu+DZwgSd4aLABEXComMMbqBN+ZMWm1AmhSwVWQZJekI4D
+         KtbzpdHn54HJuKgZc8ZwWh8y1jun6ZSxWYADNqZfed4SumV3rIwsNBl1jN5AYCeyqeBp
+         KILwbP19qE6bTI4pxWqEh6gdk/h4j6BmsKPfSmowuSt3YhE9zICO8Y/fKqwhw0DAvW05
+         HlwA==
+X-Forwarded-Encrypted: i=1; AJvYcCVrjbN1F/u41nWVP+xWz8x1CHk+lkzEX4iij7XoshqVWOxoDIJJCgj7hkcEeXbwrRRzAK8DqEtRoApPZGI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxY4hmGrbT+yDOrgfMZ818THOrZJYP7FCY1IbNEa5fQO37KRhah
+	iDk/W9Jzxy6MvyJZlXDJ5qoEI+j8X0M7100gx8hRdUJAjdHr+IpGFaSWuVZoxr14Yw==
+X-Gm-Gg: ASbGncuFFeLi8NYETJ9maLJ+XbchMFShMgihFkcOBTk/Bd+5LaZ56vA0Kth3mL/RsW5
+	uO4J9Gsl0m1/thvZitbqR6PF9MwNGfQOXjR3TXE4AfWaYRDq1fGF2Vk7MMtp+adlYTmA4Jz6XNW
+	N+YyKbvEoOyrAcb6bufFvbBjMKGEH97DAyaNy1mpcLBDImNqTsYbUWBgigc5sjB9+hJlWV6+6pz
+	1Ihfz9A9tkj7JffXDqo914AA5h0C5psY7/OMtt0ECX4l6l3+wa8AugwKijjgdeT5GwJdv2E/vo9
+	ZvLeDD78Kkncaut8wDCDaHUOiEJwEjGRhhVoUs+qnNtzEp1JwvHtq1Oyhynw4GGZze4dYAFTe9g
+	6QvSaalJbGQPH/9Z8ht/qYBM+pxnvzhXfTj0Nqv5cd29ce8PJYTw=
+X-Google-Smtp-Source: AGHT+IEkaLSylOZc5E7F3SXLckvWF+pTKi0KPQUlgdWEILUjfaUWCRhrpGbzZev8BbY9O4wUVAVUFw==
+X-Received: by 2002:a17:90b:3812:b0:335:2a00:6842 with SMTP id 98e67ed59e1d1-339a6f6aec8mr3679616a91.26.1759319936967;
+        Wed, 01 Oct 2025 04:58:56 -0700 (PDT)
+Received: from bytedance ([38.181.81.167])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b57c53db8d2sm15894243a12.24.2025.10.01.04.58.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Oct 2025 04:58:56 -0700 (PDT)
+Date: Wed, 1 Oct 2025 19:58:42 +0800
+From: Aaron Lu <ziqianlu@bytedance.com>
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: Valentin Schneider <vschneid@redhat.com>,
+	Ben Segall <bsegall@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Xi Wang <xii@google.com>, linux-kernel@vger.kernel.org,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
+	Chuyi Zhou <zhouchuyi@bytedance.com>,
+	Jan Kiszka <jan.kiszka@siemens.com>,
+	Florian Bezdeka <florian.bezdeka@siemens.com>,
+	Songtang Liu <liusongtang@bytedance.com>,
+	Chen Yu <yu.c.chen@intel.com>,
+	Matteo Martelli <matteo.martelli@codethink.co.uk>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Re: [PATCH] sched/fair: Prevent cfs_rq from being unthrottled with
+ zero runtime_remaining
+Message-ID: <20251001115842.GA674@bytedance>
+References: <20250929074645.416-1-ziqianlu@bytedance.com>
+ <7c93d622-49fe-4e99-8142-aed69d48aa8a@amd.com>
+ <20250930075602.GA510@bytedance>
+ <658734b1-b02b-4e04-8479-ed17eb42c1f2@amd.com>
+ <20250930110717.GC510@bytedance>
+ <dc328049-b1e6-4558-bb9b-e2e1d186daeb@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: steven.price@arm.com, kvm@vger.kernel.org, kvmarm@lists.linux.dev, catalin.marinas@arm.com, will@kernel.org, james.morse@arm.com, oliver.upton@linux.dev, suzuki.poulose@arm.com, yuzenghui@huawei.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, joey.gouly@arm.com, alexandru.elisei@arm.com, christoffer.dall@arm.com, tabba@google.com, linux-coco@lists.linux.dev, gankulkarni@os.amperecomputing.com, gshan@redhat.com, sdonthineni@nvidia.com, alpergun@google.com, aneesh.kumar@kernel.org, fj0570is@fujitsu.com, vannapurve@google.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dc328049-b1e6-4558-bb9b-e2e1d186daeb@amd.com>
 
-On Wed, 01 Oct 2025 12:00:14 +0100,
-Steven Price <steven.price@arm.com> wrote:
+On Tue, Sep 30, 2025 at 07:08:20PM +0530, K Prateek Nayak wrote:
+> Hello Aaron,
 > 
-> Hi Marc,
+> I'll merge the two replies in one.
 > 
-> On 01/10/2025 11:05, Marc Zyngier wrote:
-> > On Wed, 20 Aug 2025 15:55:23 +0100,
-> > Steven Price <steven.price@arm.com> wrote:
-> >>
-> >> The RMM (Realm Management Monitor) provides functionality that can be
-> >> accessed by SMC calls from the host.
-> >>
-> >> The SMC definitions are based on DEN0137[1] version 1.0-rel0
-> >>
-> >> [1] https://developer.arm.com/documentation/den0137/1-0rel0/
-> >>
-> >> Reviewed-by: Gavin Shan <gshan@redhat.com>
-> >> Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> >> Signed-off-by: Steven Price <steven.price@arm.com>
-> >> ---
-> >> Changes since v9:
-> >>  * Corrected size of 'ripas_value' in struct rec_exit. The spec states
-> >>    this is an 8-bit type with padding afterwards (rather than a u64).
-> >> Changes since v8:
-> >>  * Added RMI_PERMITTED_GICV3_HCR_BITS to define which bits the RMM
-> >>    permits to be modified.
-> >> Changes since v6:
-> >>  * Renamed REC_ENTER_xxx defines to include 'FLAG' to make it obvious
-> >>    these are flag values.
-> >> Changes since v5:
-> >>  * Sorted the SMC #defines by value.
-> >>  * Renamed SMI_RxI_CALL to SMI_RMI_CALL since the macro is only used for
-> >>    RMI calls.
-> >>  * Renamed REC_GIC_NUM_LRS to REC_MAX_GIC_NUM_LRS since the actual
-> >>    number of available list registers could be lower.
-> >>  * Provided a define for the reserved fields of FeatureRegister0.
-> >>  * Fix inconsistent names for padding fields.
-> >> Changes since v4:
-> >>  * Update to point to final released RMM spec.
-> >>  * Minor rearrangements.
-> >> Changes since v3:
-> >>  * Update to match RMM spec v1.0-rel0-rc1.
-> >> Changes since v2:
-> >>  * Fix specification link.
-> >>  * Rename rec_entry->rec_enter to match spec.
-> >>  * Fix size of pmu_ovf_status to match spec.
-> >> ---
-> >>  arch/arm64/include/asm/rmi_smc.h | 269 +++++++++++++++++++++++++++++++
-> >>  1 file changed, 269 insertions(+)
-> >>  create mode 100644 arch/arm64/include/asm/rmi_smc.h
-> >>
-> >> diff --git a/arch/arm64/include/asm/rmi_smc.h b/arch/arm64/include/asm/rmi_smc.h
-> >> new file mode 100644
-> >> index 000000000000..1000368f1bca
-> >> --- /dev/null
-> >> +++ b/arch/arm64/include/asm/rmi_smc.h
-> > 
-> > [...]
-> > 
-> >> +#define RMI_PERMITTED_GICV3_HCR_BITS	(ICH_HCR_EL2_UIE |		\
-> >> +					 ICH_HCR_EL2_LRENPIE |		\
-> >> +					 ICH_HCR_EL2_NPIE |		\
-> >> +					 ICH_HCR_EL2_VGrp0EIE |		\
-> >> +					 ICH_HCR_EL2_VGrp0DIE |		\
-> >> +					 ICH_HCR_EL2_VGrp1EIE |		\
-> >> +					 ICH_HCR_EL2_VGrp1DIE |		\
-> >> +					 ICH_HCR_EL2_TDIR)
-> > 
-> > Why should KVM care about what bits the RMM wants to use? Also, why
-> > should KVM be forbidden to use the TALL0, TALL1 and TC bits? If
-> > interrupt delivery is the host's business, then the RMM has no
-> > business interfering with the GIC programming.
+> On 9/30/2025 4:37 PM, Aaron Lu wrote:
+> > So in my original patch, cfs_rqs will (most likely) start with
+> > runtime_remaining == 1 and unthrottled after calling throttle_cfs_rq(),
+> > which will also start the B/W timer. The timer is not needed in this
+> > case when no cfs_rqs are actually throttled but it doesn't hurt. Looks
+> > like everything is OK, we do not need to do any special handling in
+> > enqueue_throttled_task(). Thoughts?
 > 
-> The RMM receives the guest's GIC state in a field within the REC entry
-> structure (enter.gicv3_hcr). The RMM spec states that the above is the
-> list of fields that will be considered and that everything else must be
-> 0[1]. So this is used to filter the configuration to make sure it's
-> valid for the RMM.
+> Now that I look at throttle_cfs_rq() properly, we'll only move the
+> runtime_remaining from 0 to 1 so few usecs worth of bandwidth
+> distributed at max should be okay. Sorry for the being overly cautious!
+
+Never mind.
+
 > 
-> In terms of TALL0/TALL1/TC bits: these control trapping to EL2, and when
-> in a realm guest the RMM is EL2 - so it's up to the RMM to configure
-> these bits appropriately as it is the RMM which will have to deal with
-> the trap.
-
-And I claim this is *wrong*. Again, if the host is in charge of
-interrupt injection, then the RMM has absolutely no business is
-deciding what can or cannot be trapped. There is zero information
-exposed by these traps that the host is not already aware of.
-
-> [1] RWVGFJ in the 1.0 spec from
-> https://developer.arm.com/documentation/den0137/latest
-
-Well, until someone explains what this is protecting against, I
-consider this as broken.
-
-> >> +	union { /* 0x300 */
-> >> +		struct {
-> >> +			u64 gicv3_hcr;
-> >> +			u64 gicv3_lrs[REC_MAX_GIC_NUM_LRS];
-> >> +			u64 gicv3_misr;
-> > 
-> > Why do we care about ICH_MISR_EL2? Surely we get everything in the
-> > registers themselves, right? I think this goes back to my question
-> > above: why is the RMM getting in the way of ICH_*_EL2 accesses?
+> So your current approach should be good. Please feel free to include:
 > 
-> As mentioned above, the state of the guest's GIC isn't passed through
-> the CPU's registers, but instead using the rec_enter/rec_exit
-> structures. So unlike a normal guest entry we don't set all the CPU's
-> register state before entering, but instead hand over a shared data
-> structure and the RMM is responsible for actually programming the
-> registers on the CPU. Since many of the registers are (deliberately)
-> unavailable to the host (e.g. all the GPRs) it makes some sense the RMM
-> also handles the GIC registers save/restore.
+> Reviewed-by: K Prateek Nayak <kprateek.nayak@amd.com>
 
-And I claim this is nonsense. There is nothing in these registers that
-the host doesn't need to know about, which is why they are basically
-copied over.
-
-It all feels just wrong.
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+Thanks!
 
