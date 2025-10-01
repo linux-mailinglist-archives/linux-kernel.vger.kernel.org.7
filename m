@@ -1,109 +1,277 @@
-Return-Path: <linux-kernel+bounces-838415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC770BAF22F
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 07:16:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B585EBAF24B
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 07:20:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B7D318987BA
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 05:16:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6976D2A1693
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 05:20:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ECE7255F5E;
-	Wed,  1 Oct 2025 05:16:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F4C52561A7;
+	Wed,  1 Oct 2025 05:20:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="pop+VGZd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RTpedSWf"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8792F2522BA;
-	Wed,  1 Oct 2025 05:16:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF93F23816D
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 05:20:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759295770; cv=none; b=fX6c+6USNUJO07i6oy3iSJlFOT0jjZ2jLnspU8kdPK/qfQTE3oQGWXI4LT9zNXzMWIHKYsdNmrG499tBRGMyYNxit+1BUD7VPQkEDTN2rhfB7wP7BEpj0ICE6MwJC88RerQajTGFj5FCA4jJsFXA9SLRAZPxz0HTHMMKsfC+Xg8=
+	t=1759296038; cv=none; b=iZ1yH/EN9O3edy6izimT+EgwGmJX62L6nNRkb0XKNF2E3bDUCrc4cr5awO3He9yAPpPdIiUmMiPO+4a+aDkEKsirZFeCKbRT3/0y/byEVe85xvbHsfZ1qdoOqJUtIyft/n5aXxI7JGY0GPGsr8IgK6BdssOttSbvcQgr/H0WAvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759295770; c=relaxed/simple;
-	bh=YnE0dy5W4cZnBVjbHXTJaql1n2ab4p6ekpKHo2MGa8U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S25MHUpKDw4WuTao1bVMIamC7F4Bjjw1GvdGFuHbq62nXXGpyGvqIMamhxmW/jFe2Yle3l0KP9IWtNTPMKemRMGDTqN4Y7zCEs0T8iU/EH7rMFed+/KRET0dDSUsZ4hmLKnDvxlpTq/5ibLaRvY7Ssg25hw4SJA6IWrQkJ64ENk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=pop+VGZd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C5C2C4CEF4;
-	Wed,  1 Oct 2025 05:16:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1759295769;
-	bh=YnE0dy5W4cZnBVjbHXTJaql1n2ab4p6ekpKHo2MGa8U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pop+VGZdjhx4JrQhKoooC1eA8uOhDH3HurBbdm6mDeoQGFJrko88CrwLj1o4aOkxX
-	 0X4+C9QBNrJp3J29eOewMBGUWzb6h3ROK46xR/bkaZ8T+sRBioF7fTUVxVAuRCmiPd
-	 XIKZWJzPeUGOkwRWV0IERr/5h3tSKzGcgo5ZuDNU=
-Date: Wed, 1 Oct 2025 07:16:06 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Hugo Villeneuve <hugo@hugovil.com>
-Cc: Jiri Slaby <jirislaby@kernel.org>, fvallee@eukrea.fr,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-	Hugo Villeneuve <hvilleneuve@dimonoff.com>
-Subject: Re: [PATCH 12/15] serial: sc16is7xx: add missing space between macro
- args (checkpatch)
-Message-ID: <2025100132-usage-sandstone-8a9f@gregkh>
-References: <20250924153740.806444-1-hugo@hugovil.com>
- <20250924153740.806444-13-hugo@hugovil.com>
- <a6bb8046-1e71-4766-afa8-e9d303ba57b8@kernel.org>
- <20250930160828.546867810b4a17c36a5030c6@hugovil.com>
+	s=arc-20240116; t=1759296038; c=relaxed/simple;
+	bh=pavEtnoo8vrFDTJ6BQAdYsqVXpuXcYgxwvBxXZ6E4n0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uQu1uTgFPQJx6XpsjMthjQqrXEx9IpQhyb4BLkbg+9BO33uaRCdoyylJENmrcNr5blNbK/3P4QCxEA/hgHTtU7z80RtzYTIJ9sXSJzP+FR9WZD2i4Lz2Y9W6Tv/8PkDawWkIT8YaCTb44ZOtWdX/se6/O/MBkeHrUiNFF+hxRuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RTpedSWf; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-27eda3a38ceso16359795ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 22:20:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759296036; x=1759900836; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aH4GQA68OgOjz0m0FNs9gjF+dMkismSV7fAIc1tlIUY=;
+        b=RTpedSWfmzZlYOIPT2XNjXY4FEI9oOyWONu3q7WjbFfC+GPbqUalwkwQ8xXjPasyQ0
+         0VkcvSYJ+jxZz2CDg3nOJU1q+rpVB/CaKC6BNnPok8P+ScQ2xHTVdv3YQyp7FFCueMUm
+         N5w/39fVbNn7h8xFwJNIuR8inQR72tx+CMjWiOtbhiXFfCgo9SJkrGIuK36MiB92ONP4
+         RW5XHNLckn1jkit6Av+N5lNQ301R9adOT5X73P5i10EJ5nBIt58ojb31nszLQ197QbFr
+         fNl/dnhNKINtHctVlwvf69OcrTgbFiU3MHM/+ao6cC6cuQki5c4VbFkqsdpFfCyYUCR+
+         ojMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759296036; x=1759900836;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aH4GQA68OgOjz0m0FNs9gjF+dMkismSV7fAIc1tlIUY=;
+        b=jarSZS7QAgCkIjgvDGm/f0BkVZqQ6rakfc32pgB8OADpGaKcmlfQTe/QShQDrsfrwD
+         B6uZ+G6WQebrZQcjY66JDDzHMZ/YROhCrR3dtW0Y9rymBLMCMGJP+vVfKS1T8GSPZnZU
+         Td5GpklH/E91zvmEX9iNK64hdayZecEhPKCnRNNYjysKdc8nlKf+VWnOBU7pdWA9bMB/
+         pZK0cGuOeOljwXUB+QR7AzdWLvU6mJPBpXaCkYHERAh6SUTN+z54CtAme0/G7JzmRoET
+         UPLeaJ2uh8PXJhI+oKiSJsxNTD+yylNcqwNHJFBuOK2oq4W45J5F8oTanN1r+tBxm9rK
+         eK+A==
+X-Forwarded-Encrypted: i=1; AJvYcCXuEhbH5KvQIeURs835Ku54KsswdLlUbg6bqXu1SciHi7+/zQH2pfvSuBvhzNBqOBHePeM/UJENvYRtnS4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywTi0ERherAFqCj0AiIWv8S1aOgMHGs9CPI5u/sy6T0iWQ7cDM
+	3quyRf7FLhkjV0UYHZn9QvJxRnr8AEoHV79KCReve6SFEz1GS9SitMO4
+X-Gm-Gg: ASbGncuG4VOuthoyqUwQc8nqOkESnbM+Tk6iBcvPIbASndoJE067qbafpjasFmslnxA
+	Fj20TEuPn/ETV7Ce2Iee70wca5fnCLD/QtUZoN3eA2EXcACoJjh4jOf4lzkP2zq6FA1S6c31D7Q
+	37LXRhgOJ9k02AyH3FIypXUN7o3K6uW7OJkIgx40TO+VBHggqHAuYUMcOK3MdAfTlEBNbwI+lkA
+	Q3nn76VYKos4eG2c6cU9WEEn4yenqIiPeEo+svbsfC5UXHHdiQqunU9RXp5z5GKFmrbWuLRrV+S
+	c9KrGxGyZfJuvXiZbnxfA/yNbj0BlXVqWDycw38GfBWGj8A5gdk9SMvxpnngG0Xj+ix2/EvGKVD
+	DIbWg2lifmtWv+UPPXcvQpuEmffRm6A6/kuoX2Q0CqiUX3CqP1nWlGbeMoOPvDhpGTJ1ZeE3QqS
+	/0+R7msVpzKx0/iw2vPlk=
+X-Google-Smtp-Source: AGHT+IEQBKkMmRJFhaLk6aiUUkZoMWjQ9aJLtNwc/fNJqUJtv9OSvqT5Ztf+nL1s0I42Kh7r/e+d+g==
+X-Received: by 2002:a17:903:41d0:b0:273:a653:bacf with SMTP id d9443c01a7336-28e7ec78ddbmr14326235ad.0.1759296035825;
+        Tue, 30 Sep 2025 22:20:35 -0700 (PDT)
+Received: from [172.20.45.103] (S0106a85e45f3df00.vc.shawcable.net. [174.7.235.4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-27ed671738esm176840585ad.46.2025.09.30.22.20.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Sep 2025 22:20:34 -0700 (PDT)
+Message-ID: <25a87311-70fd-4248-86e4-dd5fecf6cc99@gmail.com>
+Date: Tue, 30 Sep 2025 22:20:44 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250930160828.546867810b4a17c36a5030c6@hugovil.com>
+User-Agent: Mozilla Thunderbird
+Subject: [6.16.9 / 6.17.0 PANIC REGRESSION] block: fix lockdep warning caused
+ by lock dependency in elv_iosched_store
+To: Nilay Shroff <nilay@linux.ibm.com>, linux-block@vger.kernel.org,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: axboe@kernel.dk, hch@lst.de, ming.lei@redhat.com, hare@suse.de,
+ sth@linux.ibm.com, gjoyce@ibm.com, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250730074614.2537382-1-nilay@linux.ibm.com>
+ <20250730074614.2537382-3-nilay@linux.ibm.com>
+Content-Language: en-CA
+From: Kyle Sanderson <kyle.leet@gmail.com>
+In-Reply-To: <20250730074614.2537382-3-nilay@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 30, 2025 at 04:08:28PM -0400, Hugo Villeneuve wrote:
-> Hi Jiri,
+On 7/30/2025 12:46 AM, Nilay Shroff wrote:
+> To address this, move all sched_tags allocations and deallocations outside
+> of both the ->elevator_lock and the ->freeze_lock. Since the lifetime of
+> the elevator queue and its associated sched_tags is closely tied, the
+> allocated sched_tags are now stored in the elevator queue structure. Then,
+> during the actual elevator switch (which runs under ->freeze_lock and
+> ->elevator_lock), the pre-allocated sched_tags are assigned to the
+> appropriate q->hctx. Once the elevator switch is complete and the locks
+> are released, the old elevator queue and its associated sched_tags are
+> freed.
+> ...
 > 
-> On Mon, 29 Sep 2025 08:15:56 +0200
-> Jiri Slaby <jirislaby@kernel.org> wrote:
+> [1] https://lore.kernel.org/all/0659ea8d-a463-47c8-9180-43c719e106eb@linux.ibm.com/
 > 
-> > On 24. 09. 25, 17:37, Hugo Villeneuve wrote:
-> > > From: Hugo Villeneuve <hvilleneuve@dimonoff.com>
-> > > 
-> > > Fix the following checkpatch error:
-> > > 
-> > >      ERROR: space required after that ',' (ctx:VxV)
-> > >      +#define to_sc16is7xx_one(p,e)...
-> > > 
-> > > Signed-off-by: Hugo Villeneuve <hvilleneuve@dimonoff.com>
-> > > ---
-> > >   drivers/tty/serial/sc16is7xx.c | 2 +-
-> > >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/tty/serial/sc16is7xx.c b/drivers/tty/serial/sc16is7xx.c
-> > > index a05be92f7e776..9d04d665ec9ab 100644
-> > > --- a/drivers/tty/serial/sc16is7xx.c
-> > > +++ b/drivers/tty/serial/sc16is7xx.c
-> > > @@ -365,7 +365,7 @@ static struct uart_driver sc16is7xx_uart = {
-> > >   	.nr		= SC16IS7XX_MAX_DEVS,
-> > >   };
-> > >   
-> > > -#define to_sc16is7xx_one(p,e)	((container_of((p), struct sc16is7xx_one, e)))
-> > > +#define to_sc16is7xx_one(p, e)	((container_of((p), struct sc16is7xx_one, e)))
-> > 
-> > Or perhaps make it type-safe and more obvious by switching it to an inline?
-> 
-> Not easy to do, because this macro is also used with the second
-> argument "e" not always being used with the same member name. At the
-> same time, this is what makes this macro more complex than it should
-> be. I will convert it to an inline and simplify it by removing the
-> second argument (and of course adapt the code where the new, simpler,
-> inline function no longer works).
+> Reported-by: Stefan Haberland <sth@linux.ibm.com>
+> Closes: https://lore.kernel.org/all/0659ea8d-a463-47c8-9180-43c719e106eb@linux.ibm.com/
+> Reviewed-by: Ming Lei <ming.lei@redhat.com>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: Hannes Reinecke <hare@suse.de>
+> Signed-off-by: Nilay Shroff <nilay@linux.ibm.com>
 
-Please don't use an inline fuction for container_of() as you will just
-need to change it later in the future when you really want to use
-container_of_const() instead :)
+Hi Nilay,
 
-thanks,
+I am coming off of a 36 hour travel stint, and 6.16.7 (I do not have 
+that log, and it mightily messed up my xfs root requiring offline 
+repair), 6.16.9, and 6.17.0 simply do not boot on my system. After 
+unlocking with LUKS I get this panic consistently and immediately, and I 
+believe this is the problematic commit which was unfortunately carried 
+to the previous and current stable. I am using this udev rule: 
+`ACTION=="add|change", KERNEL=="sd*[!0-9]|sr*|nvme*", 
+ATTR{queue/scheduler}="bfq"`
 
-greg k-h
+ > Sep 30 21:19:39 moon kernel: io scheduler bfq registered
+ > Sep 30 21:19:39 moon kernel: ------------[ cut here ]------------
+ > Sep 30 21:19:39 moon kernel: kernel BUG at mm/slub.c:563!
+ > Sep 30 21:19:39 moon kernel: Oops: general protection fault, probably 
+for non-canonical address 0x2cdf52296eacb08: 0000 [#1] SMP NOPTI
+ > Sep 30 21:19:39 moon kernel: CPU: 2 UID: 0 PID: 791 Comm: 
+(udev-worker) Not tainted 6.17.0-061700-generic #202509282239 
+PREEMPT(voluntary)
+ > Sep 30 21:19:39 moon kernel: Hardware name: Supermicro Super 
+Server/A2SDi-8C-HLN4F, BIOS 2.0 03/08/2024
+ > Sep 30 21:19:39 moon kernel: RIP: 0010:kfree+0x6b/0x360
+ > Sep 30 21:19:39 moon kernel: Code: 80 48 01 d8 0f 82 f6 02 00 00 48 
+c7 c2 00 00 00 80 48 2b 15 af 3f 61 01 48 01 d0 48 c1 e8 0c 48 c1 e0 06 
+48 03 05 8d 3f 61 01 <48> 8b 50 08 49 89 c4 f6 c2 01 0f 85 2f 02 00 00 
+0f 1f 44 00 00 41
+ > Sep 30 21:19:39 moon kernel: RSP: 0018:ffffc9e804257930 EFLAGS: 00010207
+ > Sep 30 21:19:39 moon kernel: RAX: 02cdf52296eacb00 RBX: 
+b37de27a3ab2cae5 RCX: 0000000000000000
+ > Sep 30 21:19:39 moon kernel: RDX: 000076bb00000000 RSI: 
+ffffffff983b7c31 RDI: b37de27a3ab2cae5
+ > Sep 30 21:19:39 moon kernel: RBP: ffffc9e804257978 R08: 
+0000000000000000 R09: 0000000000000000
+ > Sep 30 21:19:39 moon kernel: R10: 0000000000000000 R11: 
+0000000000000000 R12: ffff894589365840
+ > Sep 30 21:19:39 moon kernel: R13: ffff89458c7c20e0 R14: 
+0000000000000000 R15: ffff89458c7c20e0
+ > Sep 30 21:19:39 moon kernel: FS:  0000721ca92168c0(0000) 
+GS:ffff898464f80000(0000) knlGS:0000000000000000
+ > Sep 30 21:19:39 moon kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 
+0000000080050033
+ > Sep 30 21:19:39 moon kernel: CR2: 00005afd46663fc8 CR3: 
+0000000111bf4000 CR4: 00000000003506f0
+ > Sep 30 21:19:39 moon kernel: Call Trace:
+ > Sep 30 21:19:39 moon kernel:  <TASK>
+ > Sep 30 21:19:39 moon kernel:  ? kfree+0x2dd/0x360
+ > Sep 30 21:19:39 moon kernel:  kvfree+0x31/0x40
+ > Sep 30 21:19:39 moon kernel:  blk_mq_free_tags+0x4b/0x70
+ > Sep 30 21:19:39 moon kernel:  blk_mq_free_map_and_rqs+0x4d/0x70
+ > Sep 30 21:19:39 moon kernel:  blk_mq_free_sched_tags+0x35/0x90
+ > Sep 30 21:19:39 moon kernel:  elevator_change_done+0x53/0x200
+ > Sep 30 21:19:39 moon kernel:  elevator_change+0xdf/0x190
+ > Sep 30 21:19:39 moon kernel:  elv_iosched_store+0x151/0x190
+ > Sep 30 21:19:39 moon kernel:  queue_attr_store+0xf1/0x120
+ > Sep 30 21:19:39 moon kernel:  ? putname+0x65/0x90
+ > Sep 30 21:19:39 moon kernel:  ? aa_file_perm+0x54/0x2e0
+ > Sep 30 21:19:39 moon kernel:  ? _copy_from_iter+0x9d/0x690
+ > Sep 30 21:19:39 moon kernel:  sysfs_kf_write+0x6f/0x90
+ > Sep 30 21:19:39 moon kernel:  kernfs_fop_write_iter+0x15e/0x210
+ > Sep 30 21:19:39 moon kernel:  vfs_write+0x271/0x490
+ > Sep 30 21:19:39 moon kernel:  ksys_write+0x6f/0xf0
+ > Sep 30 21:19:39 moon kernel:  __x64_sys_write+0x19/0x30
+ > Sep 30 21:19:39 moon kernel:  x64_sys_call+0x79/0x2330
+ > Sep 30 21:19:39 moon kernel:  do_syscall_64+0x80/0xac0
+ > Sep 30 21:19:39 moon kernel:  ? 
+arch_exit_to_user_mode_prepare.isra.0+0xd/0xe0
+ > Sep 30 21:19:39 moon kernel:  ? do_syscall_64+0xb6/0xac0
+ > Sep 30 21:19:39 moon kernel:  ? 
+arch_exit_to_user_mode_prepare.isra.0+0xd/0xe0
+ > Sep 30 21:19:39 moon kernel:  ? __seccomp_filter+0x47/0x5d0
+ > Sep 30 21:19:39 moon kernel:  ? __x64_sys_fcntl+0x97/0x130
+ > Sep 30 21:19:39 moon kernel:  ? 
+arch_exit_to_user_mode_prepare.isra.0+0xd/0xe0
+ > Sep 30 21:19:39 moon kernel:  ? do_syscall_64+0xb6/0xac0
+ > Sep 30 21:19:39 moon kernel:  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+ > Sep 30 21:19:39 moon kernel: RIP: 0033:0x721ca911c5a4
+ > Sep 30 21:19:39 moon kernel: Code: c7 00 16 00 00 00 b8 ff ff ff ff 
+c3 66 2e 0f 1f 84 00 00 00 00 00 f3 0f 1e fa 80 3d a5 ea 0e 00 00 74 13 
+b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 54 c3 0f 1f 00 55 48 89 e5 
+48 83 ec 20 48 89
+ > Sep 30 21:19:39 moon kernel: RSP: 002b:00007ffdfffb8b58 EFLAGS: 
+00000202 ORIG_RAX: 0000000000000001
+ > Sep 30 21:19:39 moon kernel: RAX: ffffffffffffffda RBX: 
+0000000000000003 RCX: 0000721ca911c5a4
+ > Sep 30 21:19:39 moon kernel: RDX: 0000000000000003 RSI: 
+00007ffdfffb8df0 RDI: 000000000000002a
+ > Sep 30 21:19:39 moon kernel: RBP: 00007ffdfffb8b80 R08: 
+0000721ca9202228 R09: 00007ffdfffb8bd0
+ > Sep 30 21:19:39 moon kernel: R10: 0000000000000000 R11: 
+0000000000000202 R12: 0000000000000003
+ > Sep 30 21:19:39 moon kernel: R13: 00007ffdfffb8df0 R14: 
+00005afd465c5100 R15: 0000000000000003
+ > Sep 30 21:19:39 moon kernel:  </TASK>
+ > Sep 30 21:19:39 moon kernel: Modules linked in: bfq nfsd tcp_bbr 
+sch_fq auth_rpcgss nfs_acl lockd grace nvme_fabrics efi_pstore sunrpc 
+nfnetlink dmi_sysfs ip_tables x_tables autofs4 xfs btrfs blake2b_generic 
+dm_crypt raid10 raid456 async_raid6_recov async_memcpy async_pq 
+async_xor asy>
+ > Sep 30 21:19:39 moon kernel: Oops: general protection fault, probably 
+for non-canonical address 0x3ce12d676eacb08: 0000 [#2] SMP NOPTI
+ > Sep 30 21:19:39 moon kernel: ---[ end trace 0000000000000000 ]---
+ > Sep 30 21:19:39 moon kernel: CPU: 3 UID: 0 PID: 792 Comm: 
+(udev-worker) Tainted: G      D             6.17.0-061700-generic 
+#202509282239 PREEMPT(voluntary)
+ > Sep 30 21:19:39 moon kernel: Tainted: [D]=DIE
+ > Sep 30 21:19:39 moon kernel: Hardware name: Supermicro Super 
+Server/A2SDi-8C-HLN4F, BIOS 2.0 03/08/2024
+ > Sep 30 21:19:39 moon kernel: RIP: 0010:kfree+0x6b/0x360
+ > Sep 30 21:19:40 moon kernel: Code: 80 48 01 d8 0f 82 f6 02 00 00 48 
+c7 c2 00 00 00 80 48 2b 15 af 3f 61 01 48 01 d0 48 c1 e8 0c 48 c1 e0 06 
+48 03 05 8d 3f 61 01 <48> 8b 50 08 49 89 c4 f6 c2 01 0f 85 2f 02 00 00 
+0f 1f 44 00 00 41
+ > Sep 30 21:19:40 moon kernel: RSP: 0018:ffffc9e80425f990 EFLAGS: 00010207
+ > Sep 30 21:19:40 moon kernel: RAX: 03ce12d676eacb00 RBX: 
+f3854f723ab2cae5 RCX: 0000000000000000
+ > Sep 30 21:19:40 moon kernel: RDX: 000076bb00000000 RSI: 
+ffffffff983b7c31 RDI: f3854f723ab2cae5
+ > Sep 30 21:19:40 moon kernel: RBP: ffffc9e80425f9d8 R08: 
+0000000000000000 R09: 0000000000000000
+ > Sep 30 21:19:40 moon kernel: R10: 0000000000000000 R11: 
+0000000000000000 R12: ffff894580056160
+ > Sep 30 21:19:40 moon kernel: R13: ffff89458c7c20e0 R14: 
+0000000000000000 R15: ffff89458c7c20e0
+ > Sep 30 21:19:40 moon kernel: FS:  0000721ca92168c0(0000) 
+GS:ffff898465000000(0000) knlGS:0000000000000000
+ > Sep 30 21:19:40 moon kernel: RIP: 0010:kfree+0x6b/0x360
+ > Sep 30 21:19:40 moon kernel: CS:  0010 DS: 0000 ES: 0000 CR0: 
+0000000080050033
+ > Sep 30 21:19:40 moon kernel: Code: 80 48 01 d8 0f 82 f6 02 00 00 48 
+c7 c2 00 00 00 80 48 2b 15 af 3f 61 01 48 01 d0 48 c1 e8 0c 48 c1 e0 06 
+48 03 05 8d 3f 61 01 <48> 8b 50 08 49 89 c4 f6 c2 01 0f 85 2f 02 00 00 
+0f 1f 44 00 00 41
+ > Sep 30 21:19:40 moon kernel: CR2: 00007ffdfffb5b70 CR3: 
+000000010c1aa000 CR4: 00000000003506f0
+ > Sep 30 21:19:40 moon kernel: RSP: 0018:ffffc9e804257930 EFLAGS: 00010207
+ > Sep 30 21:19:40 moon kernel: Call Trace:
+ > Sep 30 21:19:40 moon kernel:
+ > Sep 30 21:19:40 moon kernel: RAX: 02cdf52296eacb00 RBX: 
+b37de27a3ab2cae5 RCX: 0000000000000000
+ > Sep 30 21:19:40 moon kernel:  <TASK>
+ > Sep 30 21:19:40 moon kernel:  ? kfree+0x2dd/0x360
+ > Sep 30 21:19:40 moon kernel: RDX: 000076bb00000000 RSI: 
+ffffffff983b7c31 RDI: b37de27a3ab2cae5
+ > Sep 30 21:19:40 moon kernel:  kvfree+0x31/0x40
+ > Sep 30 21:19:40 moon kernel:  blk_mq_free_tags+0x4b/0x70
+ > Sep 30 21:19:40 moon kernel:  blk_mq_free_map_and_rqs+0x4d/0x70
+ > Sep 30 21:19:40 moon kernel: RBP: ffffc9e804257978 R08: 
+0000000000000000 R09: 0000000000000000
+ > Sep 30 21:19:40 moon kernel:  blk_mq_free_sched_tags+0x35/0x90
+ > Sep 30 21:19:40 moon kernel: R10: 0000000000000000 R11: 
+0000000000000000 R12: ffff894589365840
+ > Sep 30 21:19:40 moon kernel:  elevator_change_done+0x53/0x200
+
+
+
 
