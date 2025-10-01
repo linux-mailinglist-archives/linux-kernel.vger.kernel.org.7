@@ -1,61 +1,59 @@
-Return-Path: <linux-kernel+bounces-839110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2058BB0D5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 16:53:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7313BB0E32
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 16:57:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C14C04C40D9
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 14:52:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FC66161DAF
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 14:56:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDEE330AD09;
-	Wed,  1 Oct 2025 14:48:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E0D53101C5;
+	Wed,  1 Oct 2025 14:50:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f6DwVI9B"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ipkGi75C"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 954D2306D5F;
-	Wed,  1 Oct 2025 14:48:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84E112F0C46;
+	Wed,  1 Oct 2025 14:49:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759330122; cv=none; b=ch4tswwvdUAxPRZ8eF55P2HkG0DHaoZPcLeaJG9yf+UhcKMH/DHdpgAADo3fcsM17fwVMrHjYbV0c7JzCeZv36rdSXAhBxjZuxU70IvX4nZfxY3GE62gWrLMiKt6pQpPgXrmGk/rjw0tZDxSJ1q/jGAjP+hDmS3Og6H7DKw7AMQ=
+	t=1759330199; cv=none; b=iMWYnPqgHABKqiD/UFxnJ66V1T2utZfmTsta/rK+F6HWoZ15Ozu00jyZuY4FMwMowoxQCzYw7H3/QliJAgOIyJzn3wMXnNWrstONIGjokVYJSPkUJctVL9tAPRISaCOkufdtEbPt29jLVsFKmMf8TVIT4ENbH84zgiFxFbrNv34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759330122; c=relaxed/simple;
-	bh=5+6cap8BHuj7LD+F6jHOG4xWIftMKuTGrdQG1g1VuNA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=DVBZlZcJVIReFHUkLeRIzLlqOv2iKed8tH5TzH6+9vt2BGdpo9R40bpSGMSYyJSIKgu5DgNoi23nmXkeGiIgF25MMO7rL8dbu7QO5HqSC1VYbEQqr0xowCEIcJN+Sp4A+N1wEeyLDJ3/4Voav3Rdq0BdbCenZYQUIhl5q7PDOuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f6DwVI9B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DB44C4AF0D;
-	Wed,  1 Oct 2025 14:48:42 +0000 (UTC)
+	s=arc-20240116; t=1759330199; c=relaxed/simple;
+	bh=TvUQuLsyiUO80ZMNlVDcKbFKJj2Mi6vaFGMLmY+UYIY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IFMGCPEXCOS5wo5ZgHQoUrp71NWgxv280+p5Fh5mEXXuCXZzzO2Yz5OexlbwAAGxgKrIV/Ilkypqf7cy/ORAHn2GOIEBK/u5tpfqhEbFfKwIQnIK9XVU1OXTkwrRcD2S5C7lmK9gRDHepR+13HvStQD2ss3qfwXZ1nomeyCfTyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ipkGi75C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0ACC6C4CEF9;
+	Wed,  1 Oct 2025 14:49:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759330122;
-	bh=5+6cap8BHuj7LD+F6jHOG4xWIftMKuTGrdQG1g1VuNA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=f6DwVI9BxTl3oHt6mA0HcILf8ik6GGSoZ0OLMhSbPeoGtYBlGknaaIg6sYgLEEguR
-	 wPtFMJUy87rjzytPd91EVFqoMrnOS0Yw64gp0VE0nDUS2jOQFZNfxQ+u6WeUaJYHN6
-	 dZ1iz9q8Wi+AUUKU7bKpetA+ezX3VJX8XKptL919h58Bgs798QdmpIGLyVsNHi2qdi
-	 JtazPj6Fx34F4JOxe1x1gYbpEfNcdMUlbuFiz2iyCaTFjPipUCs42ItPGJCDizjE0x
-	 wQERutENschQzUoKLXZLgF0YvesXC6RK02dOW9wfpP8j6z7/hSNkqEJk9WDDgUoFDf
-	 JUcGle4fbQ2ZQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 970E1CE158E; Wed,  1 Oct 2025 07:48:34 -0700 (PDT)
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: rcu@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	kernel-team@meta.com,
-	rostedt@goodmis.org,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Leon Hwang <leon.hwang@linux.dev>,
-	Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Subject: [PATCH v2 21/21] rcu: Mark diagnostic functions as notrace
-Date: Wed,  1 Oct 2025 07:48:32 -0700
-Message-Id: <20251001144832.631770-21-paulmck@kernel.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <7fa58961-2dce-4e08-8174-1d1cc592210f@paulmck-laptop>
-References: <7fa58961-2dce-4e08-8174-1d1cc592210f@paulmck-laptop>
+	s=k20201202; t=1759330199;
+	bh=TvUQuLsyiUO80ZMNlVDcKbFKJj2Mi6vaFGMLmY+UYIY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ipkGi75ClgU7QKkuVHl7ZVHwpRXQyMkzsZ9OBleiulvIyGmMJIYGvu74dFax6mkmY
+	 STAYFVH8zCKuxAzHKgn3rYQnU9V9KnWbZDDAGMfUC6AJiD0yDzfdgx4SsW+Fhg9reR
+	 9T9oWp2qJKKTEKP0pZEniw34n/tqqfglWEWo7F3k7L3V4LRFJBXtwvMQ+T84y9JNym
+	 EFJbOQZD7y1zb7fxPLW5WtMCZGzlwz+ydCD+r9NmJTWto/21uynEU1ok0EdZRDyaMr
+	 tIQmnmohmNO7pIIeReem6AHl42kPNuVRbiFdnGl2AEsxwARsoeMRajIiIjaSCvCc7S
+	 APP17gVjvDNJQ==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
+	(envelope-from <mchehab+huawei@kernel.org>)
+	id 1v3y9V-0000000BLI0-0S4r;
+	Wed, 01 Oct 2025 16:49:57 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: "Jonathan Corbet" <corbet@lwn.net>,
+	Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org
+Subject: [PATCH 00/23] Fix media uAPI cross references
+Date: Wed,  1 Oct 2025 16:49:23 +0200
+Message-ID: <cover.1759329363.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,75 +61,208 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-The rcu_lockdep_current_cpu_online(), rcu_read_lock_sched_held(),
-rcu_read_lock_held(), rcu_read_lock_bh_held(), rcu_read_lock_any_held()
-are used by tracing-related code paths, so putting traces on them is
-unlikely to make anyone happy.  This commit therefore marks them all
-"notrace".
+In the past, media used Docbook to generate documentation, together
+with some logic to ensure that cross-references would match the
+actual defined uAPI.
 
-Reported-by: Leon Hwang <leon.hwang@linux.dev>
-Reported-by: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
----
- kernel/rcu/tree.c   | 2 +-
- kernel/rcu/update.c | 8 ++++----
- 2 files changed, 5 insertions(+), 5 deletions(-)
+The rationale is that we wanted to automatically check for uAPI
+documentation gaps.
 
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 31690ffa452afe..8ddd07fed36334 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -4021,7 +4021,7 @@ bool rcu_cpu_online(int cpu)
-  * RCU on an offline processor during initial boot, hence the check for
-  * rcu_scheduler_fully_active.
-  */
--bool rcu_lockdep_current_cpu_online(void)
-+bool notrace rcu_lockdep_current_cpu_online(void)
- {
- 	struct rcu_data *rdp;
- 	bool ret = false;
-diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
-index c912b594ba987f..dfeba9b3539508 100644
---- a/kernel/rcu/update.c
-+++ b/kernel/rcu/update.c
-@@ -117,7 +117,7 @@ static bool rcu_read_lock_held_common(bool *ret)
- 	return false;
- }
- 
--int rcu_read_lock_sched_held(void)
-+int notrace rcu_read_lock_sched_held(void)
- {
- 	bool ret;
- 
-@@ -342,7 +342,7 @@ EXPORT_SYMBOL_GPL(debug_lockdep_rcu_enabled);
-  * Note that rcu_read_lock() is disallowed if the CPU is either idle or
-  * offline from an RCU perspective, so check for those as well.
-  */
--int rcu_read_lock_held(void)
-+int notrace rcu_read_lock_held(void)
- {
- 	bool ret;
- 
-@@ -367,7 +367,7 @@ EXPORT_SYMBOL_GPL(rcu_read_lock_held);
-  * Note that rcu_read_lock_bh() is disallowed if the CPU is either idle or
-  * offline from an RCU perspective, so check for those as well.
-  */
--int rcu_read_lock_bh_held(void)
-+int notrace rcu_read_lock_bh_held(void)
- {
- 	bool ret;
- 
-@@ -377,7 +377,7 @@ int rcu_read_lock_bh_held(void)
- }
- EXPORT_SYMBOL_GPL(rcu_read_lock_bh_held);
- 
--int rcu_read_lock_any_held(void)
-+int notrace rcu_read_lock_any_held(void)
- {
- 	bool ret;
- 
+The same logic was migrated to Sphinx. Back then, broken links
+were reported. However, recent versions of it and/or changes at
+conf.py disabled such checks.
+
+The result is that several symbols are now not cross-referenced,
+and we don't get warnings anymore when something breaks.
+
+This series consist on 2 parts:
+
+Part 1: extra patches to parse_data_structs.py and kernel_include.py;
+Part 2: media documentation fixes.
+
+I'm not sure what's the best strategy to merge it, as some patches
+belong to doc while others are media. So, they can be merged on
+either one of the tree, or split on two series and merged in
+separate or even being merged via a PR applied on both trees.
+
+IMO, the latter is the better strategy.
+
+Anyway, let's submit the series for review and discuss later about
+its merge strategy.
+
+Mauro Carvalho Chehab (23):
+  tools: docs: parse_data_structs.py: drop contents header
+  tools: docs: parse_data_structs.py: output a line number
+  docs: kernel_include.py: fix line numbers for TOC
+  docs: kernel_include.py: propose alternatives
+  tools: docs: parse_data_structs: make process_exceptions two stages
+  tools: docs: parse_data_structs.py: get rid of process_exceptions()
+  tools: docs: parse_data_structs.py: add namespace support
+  tools: docs: parse_data_structs.py: accept more reftypes
+  docs: media: dvb: use TOC instead of file contents at headers
+  docs: media: dvb: enable warnings for most headers
+  docs: media: rc: use TOC instead of file contents for LIRC header
+  docs: media: mediactl: use TOC instead of file contents
+  docs: kernel_include.py: use get_close_matches() to propose
+    alternatives
+  docs: media: add missing c namespace to V4L headers
+  docs: media: videodev2.h.rst.exceptions: fix namespace on refs
+  media: docs: add a missing reference for VIDIOC_QUERY_CTRL
+  media: docs: videodev2.h.rst.exceptions: ignore struct
+    __kernel_v4l2_timeval
+  media: docs: add some C domain missing references
+  docs: cec: cec.h.rst.exceptions: fix broken references from cec.h
+  docs: cec: show broken xrefs and show TOC instead of cec.h content
+  docs: media: dmx_types: place kerneldoc at the right namespace
+  docs: media: dvb: headers: warn about broken cross references
+  docs: media: dvb: fix dmx.h.rst.exceptions
+
+ Documentation/sphinx/kernel_include.py        | 110 ++++++-
+ .../userspace-api/media/cec/cec-header.rst    |   8 +-
+ .../media/cec/cec.h.rst.exceptions            |   3 +
+ .../media/dvb/dmx.h.rst.exceptions            |  82 +++--
+ .../userspace-api/media/dvb/dmx_types.rst     |   1 +
+ .../media/dvb/frontend.h.rst.exceptions       |   5 +-
+ .../userspace-api/media/dvb/headers.rst       |  31 +-
+ .../media/mediactl/media-header.rst           |   8 +-
+ .../media/mediactl/media.h.rst.exceptions     |   3 +
+ .../userspace-api/media/rc/lirc-header.rst    |  14 +-
+ .../userspace-api/media/v4l/app-pri.rst       |   1 +
+ .../userspace-api/media/v4l/audio.rst         |   1 +
+ .../userspace-api/media/v4l/biblio.rst        |   1 +
+ .../userspace-api/media/v4l/buffer.rst        |   2 +
+ .../media/v4l/capture-example.rst             |   1 +
+ .../userspace-api/media/v4l/capture.c.rst     |   1 +
+ .../media/v4l/colorspaces-defs.rst            |   1 +
+ .../media/v4l/colorspaces-details.rst         |   1 +
+ .../userspace-api/media/v4l/colorspaces.rst   |   1 +
+ .../userspace-api/media/v4l/common-defs.rst   |   1 +
+ .../userspace-api/media/v4l/common.rst        |   1 +
+ .../userspace-api/media/v4l/compat.rst        |   1 +
+ .../userspace-api/media/v4l/control.rst       |   1 +
+ .../userspace-api/media/v4l/crop.rst          |   1 +
+ .../userspace-api/media/v4l/depth-formats.rst |   1 +
+ .../userspace-api/media/v4l/dev-decoder.rst   |   1 +
+ .../userspace-api/media/v4l/dev-encoder.rst   |   1 +
+ .../userspace-api/media/v4l/dev-event.rst     |   1 +
+ .../userspace-api/media/v4l/dev-mem2mem.rst   |   1 +
+ .../userspace-api/media/v4l/dev-meta.rst      |   1 +
+ .../userspace-api/media/v4l/dev-osd.rst       |   1 +
+ .../userspace-api/media/v4l/dev-overlay.rst   |   1 +
+ .../userspace-api/media/v4l/dev-radio.rst     |   1 +
+ .../userspace-api/media/v4l/dev-sdr.rst       |   1 +
+ .../media/v4l/dev-stateless-decoder.rst       |   1 +
+ .../userspace-api/media/v4l/dev-subdev.rst    |   1 +
+ .../userspace-api/media/v4l/dev-touch.rst     |   1 +
+ .../userspace-api/media/v4l/devices.rst       |   1 +
+ .../userspace-api/media/v4l/dv-timings.rst    |   1 +
+ .../media/v4l/ext-ctrls-camera.rst            |   1 +
+ .../media/v4l/ext-ctrls-codec-stateless.rst   |   1 +
+ .../media/v4l/ext-ctrls-codec.rst             |   1 +
+ .../media/v4l/ext-ctrls-colorimetry.rst       |   1 +
+ .../media/v4l/ext-ctrls-detect.rst            |   1 +
+ .../userspace-api/media/v4l/ext-ctrls-dv.rst  |   1 +
+ .../media/v4l/ext-ctrls-flash.rst             |   1 +
+ .../media/v4l/ext-ctrls-fm-rx.rst             |   1 +
+ .../media/v4l/ext-ctrls-fm-tx.rst             |   1 +
+ .../media/v4l/ext-ctrls-image-process.rst     |   1 +
+ .../media/v4l/ext-ctrls-image-source.rst      |   1 +
+ .../media/v4l/ext-ctrls-jpeg.rst              |   1 +
+ .../media/v4l/ext-ctrls-rf-tuner.rst          |   1 +
+ .../media/v4l/extended-controls.rst           |   1 +
+ .../userspace-api/media/v4l/field-order.rst   |   1 +
+ .../userspace-api/media/v4l/fourcc.rst        |   1 +
+ .../userspace-api/media/v4l/hsv-formats.rst   |   1 +
+ .../userspace-api/media/v4l/libv4l.rst        |   1 +
+ .../userspace-api/media/v4l/meta-formats.rst  |   1 +
+ .../media/v4l/metafmt-c3-isp.rst              |   1 +
+ .../userspace-api/media/v4l/metafmt-d4xx.rst  |   1 +
+ .../media/v4l/metafmt-generic.rst             |   1 +
+ .../media/v4l/metafmt-intel-ipu3.rst          |   1 +
+ .../media/v4l/metafmt-pisp-be.rst             |   1 +
+ .../media/v4l/metafmt-pisp-fe.rst             |   1 +
+ .../media/v4l/metafmt-rkisp1.rst              |   1 +
+ .../userspace-api/media/v4l/metafmt-uvc.rst   |   1 +
+ .../userspace-api/media/v4l/metafmt-vivid.rst |   1 +
+ .../media/v4l/metafmt-vsp1-hgo.rst            |   1 +
+ .../media/v4l/metafmt-vsp1-hgt.rst            |   1 +
+ .../userspace-api/media/v4l/pixfmt-bayer.rst  |   1 +
+ .../userspace-api/media/v4l/pixfmt-cnf4.rst   |   1 +
+ .../media/v4l/pixfmt-compressed.rst           |   1 +
+ .../media/v4l/pixfmt-indexed.rst              |   1 +
+ .../userspace-api/media/v4l/pixfmt-intro.rst  |   1 +
+ .../userspace-api/media/v4l/pixfmt-inzi.rst   |   1 +
+ .../userspace-api/media/v4l/pixfmt-m420.rst   |   1 +
+ .../media/v4l/pixfmt-packed-hsv.rst           |   1 +
+ .../media/v4l/pixfmt-packed-yuv.rst           |   1 +
+ .../media/v4l/pixfmt-reserved.rst             |   1 +
+ .../userspace-api/media/v4l/pixfmt-rgb.rst    |   1 +
+ .../media/v4l/pixfmt-sdr-cs08.rst             |   1 +
+ .../media/v4l/pixfmt-sdr-cs14le.rst           |   1 +
+ .../media/v4l/pixfmt-sdr-cu08.rst             |   1 +
+ .../media/v4l/pixfmt-sdr-cu16le.rst           |   1 +
+ .../media/v4l/pixfmt-sdr-pcu16be.rst          |   1 +
+ .../media/v4l/pixfmt-sdr-pcu18be.rst          |   1 +
+ .../media/v4l/pixfmt-sdr-pcu20be.rst          |   1 +
+ .../media/v4l/pixfmt-sdr-ru12le.rst           |   1 +
+ .../media/v4l/pixfmt-srggb10-ipu3.rst         |   1 +
+ .../media/v4l/pixfmt-srggb10.rst              |   1 +
+ .../media/v4l/pixfmt-srggb10alaw8.rst         |   1 +
+ .../media/v4l/pixfmt-srggb10dpcm8.rst         |   1 +
+ .../media/v4l/pixfmt-srggb10p.rst             |   1 +
+ .../media/v4l/pixfmt-srggb12.rst              |   1 +
+ .../media/v4l/pixfmt-srggb12p.rst             |   1 +
+ .../media/v4l/pixfmt-srggb14.rst              |   1 +
+ .../media/v4l/pixfmt-srggb14p.rst             |   1 +
+ .../media/v4l/pixfmt-srggb16.rst              |   1 +
+ .../media/v4l/pixfmt-srggb8-pisp-comp.rst     |   1 +
+ .../userspace-api/media/v4l/pixfmt-srggb8.rst |   1 +
+ .../media/v4l/pixfmt-tch-td08.rst             |   1 +
+ .../media/v4l/pixfmt-tch-td16.rst             |   1 +
+ .../media/v4l/pixfmt-tch-tu08.rst             |   1 +
+ .../media/v4l/pixfmt-tch-tu16.rst             |   1 +
+ .../userspace-api/media/v4l/pixfmt-uv8.rst    |   1 +
+ .../media/v4l/pixfmt-v4l2-mplane.rst          |   1 +
+ .../userspace-api/media/v4l/pixfmt-v4l2.rst   |   1 +
+ .../userspace-api/media/v4l/pixfmt-y12i.rst   |   1 +
+ .../userspace-api/media/v4l/pixfmt-y16i.rst   |   1 +
+ .../userspace-api/media/v4l/pixfmt-y8i.rst    |   1 +
+ .../media/v4l/pixfmt-yuv-luma.rst             |   1 +
+ .../media/v4l/pixfmt-yuv-planar.rst           |   1 +
+ .../userspace-api/media/v4l/pixfmt-z16.rst    |   1 +
+ .../userspace-api/media/v4l/pixfmt.rst        |   1 +
+ .../userspace-api/media/v4l/planar-apis.rst   |   1 +
+ .../userspace-api/media/v4l/querycap.rst      |   1 +
+ .../userspace-api/media/v4l/sdr-formats.rst   |   1 +
+ .../media/v4l/selection-api-configuration.rst |   1 +
+ .../media/v4l/selection-api-examples.rst      |   1 +
+ .../media/v4l/selection-api-intro.rst         |   1 +
+ .../media/v4l/selection-api-targets.rst       |   1 +
+ .../media/v4l/selection-api-vs-crop-api.rst   |   1 +
+ .../userspace-api/media/v4l/selection-api.rst |   1 +
+ .../media/v4l/selections-common.rst           |   1 +
+ .../userspace-api/media/v4l/standard.rst      |   1 +
+ .../media/v4l/subdev-formats.rst              |   1 +
+ .../userspace-api/media/v4l/tch-formats.rst   |   1 +
+ .../userspace-api/media/v4l/tuner.rst         |   1 +
+ .../userspace-api/media/v4l/user-func.rst     |   1 +
+ .../media/v4l/v4l2-selection-flags.rst        |   1 +
+ .../media/v4l/v4l2-selection-targets.rst      |   1 +
+ .../userspace-api/media/v4l/v4l2.rst          |   1 +
+ .../media/v4l/v4l2grab-example.rst            |   1 +
+ .../userspace-api/media/v4l/v4l2grab.c.rst    |   1 +
+ .../userspace-api/media/v4l/video.rst         |   1 +
+ .../userspace-api/media/v4l/videodev.rst      |   9 +-
+ .../media/v4l/videodev2.h.rst.exceptions      | 288 +++++++++---------
+ .../media/v4l/vidioc-queryctrl.rst            |   8 +
+ .../userspace-api/media/v4l/yuv-formats.rst   |   1 +
+ tools/docs/lib/parse_data_structs.py          | 230 ++++++++------
+ tools/docs/parse-headers.py                   |   5 +-
+ 141 files changed, 608 insertions(+), 324 deletions(-)
+
 -- 
-2.40.1
+2.51.0
 
 
