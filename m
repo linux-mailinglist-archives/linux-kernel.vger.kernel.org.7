@@ -1,143 +1,123 @@
-Return-Path: <linux-kernel+bounces-838550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B17BBAF7B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 09:48:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 366D4BAF7C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 09:49:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02D2C3A6F0A
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 07:48:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 363B84A4152
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 07:49:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B560827586C;
-	Wed,  1 Oct 2025 07:48:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12874275AF5;
+	Wed,  1 Oct 2025 07:48:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h+C8Rr4Z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="EwIHvDe2"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BEAA2701B6;
-	Wed,  1 Oct 2025 07:48:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02DEC2701B6;
+	Wed,  1 Oct 2025 07:48:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759304900; cv=none; b=E5C7wp0BvXA4BzxZEThw6XVLGHVYJdMshTo3+c3zAhgB3/O0bIoG/o/hzy3YU2+g9D0L29OMnvq9GsD6eWsxXz2xwRfynBsEeoYIX5RslpzVRfqGONSEWfDGEK4Mia17Aa5yiBxLBtyFAy5mpnFOkl0nno25zUIC5x47uao7/I4=
+	t=1759304934; cv=none; b=HXI2055HzxMq8tynpFIiquVwKyXMzi3rodWJb+Dy6u/RdT0nKCOuOl7yHZclCHfp0TIaNjP0rxzi7FHfq9OX9q/eA7iVcEgCGrBDpMdDOeWrtZcZqaBi/m3IfkJ1ZLK2r3Ts9l1HyM0IcekIMwSV+u1Q0zcBO3O5dRgFzD1Jk28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759304900; c=relaxed/simple;
-	bh=rWPGsQN+XNq2hfe7G3UjPeCAighM6a5T/THiWLH/wVs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SAk05/dW3Fst80PX8L45lyyDp8nz85Ac+FUzgHJbRqVGn/vgvUOrOAq7kM2bf5XeipKy34fRHPOhDEyOH1E4CAAo2KSFyUCh4HNECWFT87EZ4EAf61rW8V82sIwNXdvjoJ5u2VvnRyHQhAW3HqnLeHTKX67KtZJAtPiK++r5974=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h+C8Rr4Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32DEBC4CEF4;
-	Wed,  1 Oct 2025 07:48:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759304898;
-	bh=rWPGsQN+XNq2hfe7G3UjPeCAighM6a5T/THiWLH/wVs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=h+C8Rr4ZbzOuqCKBO54f2SxgEjjfGFF8Dnz5M51GzJYh27lleyo7vGlaHklFCl3wo
-	 n1+tnjKYzd3v99oL9a1SbSpvr4YgtL9IFrQL++YimIAsY/MYR5FVu/XoZVmxeGzGcr
-	 /J6HKb1yLbdoRi5j2jyEoI7zUUHHjiDpR/DRupiqncLLjtuOi8ML+tPR7pLKp/2EmS
-	 FYFdF7iGAzqiVEc62vWQornfH2251xcBW7H3CPGg4j70W2v1NuHgtVRogsGcV+Seap
-	 3P7spLgEDxZW1TkuA75yao8i1U3cB1wo1uiBojfgShoe9UhvdTP9HT4cgalPE/91+U
-	 i0oh1pCQwBVWA==
-Message-ID: <fb62594c-d881-4f06-9cf0-ca44968e5d3b@kernel.org>
-Date: Wed, 1 Oct 2025 16:48:10 +0900
+	s=arc-20240116; t=1759304934; c=relaxed/simple;
+	bh=xanXrnd+paLIxbBH8CYU/83eubfWkVKYzJ5W+YVzdvE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NF60O2ylxxqb8MH1ienPZ6xSUGS7n9cGd2pcWLCCuWMDv+nhVj8hrBUTyXxcQIQf9yV69KKVuEEKUCHTWtOzCMp7QuOgC76wuzqNyTs0m/Pf0AaSgqpjB9ZOuVTTx1cHeOHhtrM6Bu4nTmR6BB/zqhouCqOH6OwAnZmRh3+5s/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=EwIHvDe2; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=yWirnlgUqsih5agjfKLNMjvXyjJWT1GudlldLMjLJAE=; b=EwIHvDe29Y/0FaTlnyxYT5CQfP
+	ml164IF5wdv/3j8q8YWcPrwHGW20AGyWUk81CksirHPTMUmDpWSwCdnKgTQgpwTJHQJ3rmbs8kOjG
+	YJk8JOGNK3NKp6k8z+j75aCB5paTDJA60bCoHOfI2WMAZMPW3jdoAQeOOaDo5UV8nyCBTtb7Ks+ym
+	oaqe6xR4e1Ne+68rElBtwSwCoEwczUHcu90Oc53yaL6aK6V4upb6MU9zdB+Vb0M/L0ucvLp5u1jQu
+	P3ufPMZ5kg4ImM/9grAYs3aI76n3ovKFV9ll+jH0qj08I875wEveobVBve+PDGx4H4AVQoxagUO7q
+	NM8Uq8Eg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:33724)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1v3rZp-000000000BF-100I;
+	Wed, 01 Oct 2025 08:48:41 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1v3rZn-000000005JE-3RiQ;
+	Wed, 01 Oct 2025 08:48:39 +0100
+Date: Wed, 1 Oct 2025 08:48:39 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: Jakub Kicinski <kuba@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Chen-Yu Tsai <wens@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej@kernel.org>,
+	Samuel Holland <samuel@sholland.org>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Andre Przywara <andre.przywara@arm.com>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>
+Subject: Re: [PATCH net-next v8 2/2] net: stmmac: Add support for Allwinner
+ A523 GMAC200
+Message-ID: <aNzc17ZW56gLX87v@shell.armlinux.org.uk>
+References: <20250925191600.3306595-1-wens@kernel.org>
+ <20250925191600.3306595-3-wens@kernel.org>
+ <20250929180804.3bd18dd9@kernel.org>
+ <20250930172022.3a6dd03e@kernel.org>
+ <d5aaff54-04dd-4631-847c-a2e9bd5ad038@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH blktrace v2 03/22] blktrace: add definitions for
- BLKTRACESETUP2
-To: Johannes Thumshirn <johannes.thumshirn@wdc.com>,
- Jens Axboe <axboe@kernel.dk>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
- Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-btrace@vger.kernel.org,
- John Garry <john.g.garry@oracle.com>, Hannes Reinecke <hare@suse.de>,
- Christoph Hellwig <hch@lst.de>, Naohiro Aota <naohiro.aota@wdc.com>,
- Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
- Chaitanya Kulkarni <chaitanyak@nvidia.com>,
- "Martin K . Petersen" <martin.petersen@oracle.com>
-References: <20250925150427.67394-1-johannes.thumshirn@wdc.com>
- <20250925150427.67394-4-johannes.thumshirn@wdc.com>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20250925150427.67394-4-johannes.thumshirn@wdc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d5aaff54-04dd-4631-847c-a2e9bd5ad038@redhat.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On 9/26/25 00:04, Johannes Thumshirn wrote:
-> Add definitions for a new BLKTRACESETUP2 ioctl(2).
+On Wed, Oct 01, 2025 at 09:25:07AM +0200, Paolo Abeni wrote:
+> On 10/1/25 2:20 AM, Jakub Kicinski wrote:
+> > On Mon, 29 Sep 2025 18:08:04 -0700 Jakub Kicinski wrote:
+> >> On Fri, 26 Sep 2025 03:15:59 +0800 Chen-Yu Tsai wrote:
+> >>> The Allwinner A523 SoC family has a second Ethernet controller, called
+> >>> the GMAC200 in the BSP and T527 datasheet, and referred to as GMAC1 for
+> >>> numbering. This controller, according to BSP sources, is fully
+> >>> compatible with a slightly newer version of the Synopsys DWMAC core.
+> >>> The glue layer around the controller is the same as found around older
+> >>> DWMAC cores on Allwinner SoCs. The only slight difference is that since
+> >>> this is the second controller on the SoC, the register for the clock
+> >>> delay controls is at a different offset. Last, the integration includes
+> >>> a dedicated clock gate for the memory bus and the whole thing is put in
+> >>> a separately controllable power domain.  
+> >>
+> >> Hi Andrew, does this look good ?
+> >>
+> >> thread: https://lore.kernel.org/20250925191600.3306595-3-wens@kernel.org
+> > 
+> > Adding Heiner and Russell, in case Andrew is AFK.
+> > 
+> > We need an ack from PHY maintainers, the patch seems to be setting
+> > delays regardless of the exact RMII mode. I don't know these things..
 > 
-> This new ioctl(2) will request a new, updated structure layout from the
-> kernel which enhances the storage size of the 'action' field in order to
-> store additional tracepoints.
-> 
-> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-> ---
->  blktrace_api.h | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
-> 
-> diff --git a/blktrace_api.h b/blktrace_api.h
-> index 172b4c2..9f435a5 100644
-> --- a/blktrace_api.h
-> +++ b/blktrace_api.h
-> @@ -139,9 +139,24 @@ struct blk_user_trace_setup {
->  	__u32 pid;
->  };
->  
-> +/*
-> + * User setup structure passed with BLKTRACESETUP2
-> + */
-> +struct blk_user_trace_setup2 {
-> +	char name[32];			/* output */
-> +	__u64 act_mask;			/* input */
-> +	__u32 buf_size;			/* input */
-> +	__u32 buf_nr;			/* input */
-> +	__u64 start_lba;
-> +	__u64 end_lba;
-> +	__u32 pid;
-> +	__u32 reserved;			/* for futute use */
-> +};
+> The net-next PR is upon us, let's defer even this series to the next cycle.
 
-Kernel side defined:
-
-+struct blk_user_trace_setup2 {
-+	char name[32];		/* output */
-+	__u64 act_mask;		/* input */
-+	__u32 buf_size;		/* input */
-+	__u32 buf_nr;		/* input */
-+	__u64 start_lba;
-+	__u64 end_lba;
-+	__u32 pid;
-+	__u32 flags;		/* currently unused */
-+	__u64 reserved[7];
-+};
-
-So not the same struct fields and size...
-
-Why not use the definition in include/uapi/linux/blktrace_api.h ?
-
-> +
->  #define BLKTRACESETUP _IOWR(0x12,115,struct blk_user_trace_setup)
->  #define BLKTRACESTART _IO(0x12,116)
->  #define BLKTRACESTOP _IO(0x12,117)
->  #define BLKTRACETEARDOWN _IO(0x12,118)
-> +#define BLKTRACESETUP2 _IOWR(0x12, 142, struct blk_user_trace_setup2)
-
-Same here. This is in include/uapi/linux/fs.h, so why duplicate it ?
-
->  
->  #endif
-
+Would've been nice to have been given the opportunity to respond to
+Jakub's email before that decision was made. Not all of us are in
+the US timezone. (Jakub's email came in gone 1am my time.)
 
 -- 
-Damien Le Moal
-Western Digital Research
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
