@@ -1,171 +1,756 @@
-Return-Path: <linux-kernel+bounces-838972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E90DBB08C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 15:44:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DAC1BB08D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 15:45:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB1A84A6BBC
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 13:44:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61CBF4A79C9
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 13:45:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C035E2EF665;
-	Wed,  1 Oct 2025 13:44:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d8fVYTZj"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B79F2F0671;
+	Wed,  1 Oct 2025 13:44:48 +0000 (UTC)
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38B492EF653
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 13:44:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16B1B29D270
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 13:44:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759326251; cv=none; b=V8a64RD6XnX4XSttK911OidIFhWcPRzvY2czjvuYjomeBuOCnym5EpblcceXOVthNKpkaOGtke+WZnvTZCOkZBIqfao8RNOx4417K/UXRsS7OHTIkcv1+ZPjR8yOdX24Q5gVTZSU5fcc1YG1m4yVj0dojYC3KOHJHtipjNxnmHc=
+	t=1759326287; cv=none; b=fGUHSz+14qISCn+EbZ/AgIiZETCeMfw2BM3y8nJVl68EyQf/kJJj+KP5ACvuisVhPKNEcdTkbQoZBGs8s7xnnxH47SghPCHseUE+j69SNLB8OuvBrwq+/ZaBot7gSbfxM+o6K7bRSE+aixLFld5WvfrHpO4T9krXUcCgWbb7fcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759326251; c=relaxed/simple;
-	bh=zZG41IIPpecftPSR/BMuKoOK5Drk5rCESRq1EzmErag=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GCmg7Jmg8H6Lvd0+BC00HSLHpDq+mkC6S2qvF8p4KU5wXIqs0RYnWXuqETvziz+FKcApg1d1vAQyYjROLOCwNmxWuLHeEgcqhjNeUFfqFPUPSu7pXgM8i95ZDcY47FMEJEUa8oZchY+DIqn4s9KT0GtoLIQ4rAHseQRJMQnkb7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=d8fVYTZj; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-46e47cca387so54724895e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 06:44:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759326247; x=1759931047; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sk9/01sjLhSDKrsz2vI2OXUeP/F7c38Pwscg4TdgVDU=;
-        b=d8fVYTZjCsKyvZALElY1lsLUXATVDT8AzqlDb4am5IdPnsgxUl95tP2R2i8hr2f8ry
-         EL2Cu8Woz6/bBb2oyMaI8PuUiwujxLFxSV+qwIwyRPCaul9fG6HzWSJOxHnsoFIXYtes
-         o6LZXUWcpJDxvwq7VTYhmHtrze+Djf20PEXQINA1p/rcQI+/NmA594cIZ0/YX5GOXlax
-         ULJAisesNkNHdaNz6BDGQAxibpaYSKTGbOBoGIL+GrbGpkPrQgK4RqT3k7YgBzGCcnDH
-         pCDASkbL7Xj5lnqXgV/Pq8b89j0J4mv7kyXG0euLKbTeQeqgRbIQQkW2zX8BgichHeMT
-         jFzw==
+	s=arc-20240116; t=1759326287; c=relaxed/simple;
+	bh=ltq/mJj2q33Np4Y/fNkZB1CUEZ+TUrCUeYd3aqHRLko=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lisD1klf+3RYfPbiCtvwtAH8ZF1576Iccn0r0wFBfad8zX+8q7Q5IHpEYXH62zTdGRhu9pKIJrD78YHj9wwpCCImEoMUbW88pDfE7tGL+FdhjbUtGfKXL5u5E1LYSFl+/tVcjyD8ZuUJmUCw+9GkEXOtPMRdnPIONOJMfQu7MME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-781206cce18so1155634b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 06:44:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759326247; x=1759931047;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sk9/01sjLhSDKrsz2vI2OXUeP/F7c38Pwscg4TdgVDU=;
-        b=oRIKlYqB6Twr7x7RCGNdt7I9DvM5gDLRDkvVUB7nIXtq3NFcRRdXLLkc19SOpBun5N
-         OVXTD0jPRyPqWXeX5dX9rHGBe4P4+5A1vGqe5sWjrAf2QYbg8tYGgAUQa1ZjzHpqmfaO
-         vHbxl5nIKtWEbLnAhlSRIc7u4LW5/FVEJiHquZM/zzSxmlNehZOYD5DUCDFSOJA47mLH
-         96iQQfgS9ub4ZQBDZql5VnT583qXw99b1l0zePvnrRODBQNWCjQS3tT6O1jYkfVokXyK
-         8NEpgaotuiFeNnIhGWrTbdWngyLIgyNyugNH44L3psHc0IIgqLU7uwJHVakxcoi/C6GF
-         fQ/w==
-X-Forwarded-Encrypted: i=1; AJvYcCXwkm/7HnobHR/CtFoeWB4PjUV6gkCHLU8WLg6RXsRyimoo0jHsKiKfyPiTXSQ9iCeT60MUCrlTB5SWa7M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKBzraLA9BhPkBGsKRnynG3GpAzK0Au9PbAaf+jsf05Q1Yu0IY
-	/LIVOCONJEz6LMR57G2vsdakX2fqeZmH3N1lAtdCAa2XoTFeqLSmqItm9CoAZObXPi/xUIFHm5I
-	aRjWYZTQ=
-X-Gm-Gg: ASbGnct69+s6PhMtFagV45T1xeygOGXawUIj/4nSK/iqiuw9g4aV5H+XdMYOxTsj5OH
-	smK3oo4JSYzdOjpl8oDdDDqarExrVNO7igxK8X3ayEjsOz6CWnZvMiDarz9R8wvwzDTA85W5xOJ
-	M02GZhlrHb/TiMV5uh87tMzk4D7c4Mok0Bdk7X2jMLy1gg1zJh9470iRciML5HeUCggNi7omYlh
-	Qr2WgxH5b+Pi+50wM4YnSvEWaXVxz5EefF5/eHKDwraAgjjiVXwOKvHBsqBY8Jz4zv1VBTCtntB
-	84nWAawd0pxUMyAJ0CqU1xdB24wP+0szpBOtCyFP+9mhY04XwCy/qsVxfBLqo7vNN6NinFV3xy0
-	AeLrpQr6bHWMUtfrXxX9XpnqPzqJBl8vtROOj6xnIm6dP4URBJYhGg/CJx7zWlf8=
-X-Google-Smtp-Source: AGHT+IEWE5njzkAVMh0iSC7VPEQmyUpucrPcJT/AcJg5bY23uL7H8GGcf4J5p6a5shSngpQ//r/sAg==
-X-Received: by 2002:a05:600c:c162:b0:46e:49dd:525e with SMTP id 5b1f17b1804b1-46e612bc070mr25722595e9.21.1759326247407;
-        Wed, 01 Oct 2025 06:44:07 -0700 (PDT)
-Received: from [192.168.1.3] ([185.48.76.109])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e6199250bsm41317945e9.3.2025.10.01.06.44.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 01 Oct 2025 06:44:06 -0700 (PDT)
-Message-ID: <708a5bbd-2bad-4f94-8fd1-6bd10825ba71@linaro.org>
-Date: Wed, 1 Oct 2025 14:44:06 +0100
+        d=1e100.net; s=20230601; t=1759326284; x=1759931084;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=N2t7onTp0eUitHsc1ao/TO2r8jK0/pbqVgfSSmMMwDs=;
+        b=G0l6cXzFKAJ70DyUpqKPBuxQaQWg0DDnp/ccKPcLw76N9dYI4KNOB0tBZY97GXgsVR
+         7qie/BrEF99Bg266/xe1k4F0OkQWMkRojvFi4+FCaWkiXAb9fq03kRvxGFbNyCbr+shq
+         TRweoGe7eHstzNBTEy1mbN3Zd/enc5vpbAOBgE6if49ik0CxkHi0ZJkU3L62nnU0ecmv
+         thbSmhAiBp/iKTXxGspdCy5zWnJHffS90n7halfRoijQpkJohosDUMHsM/yn8o70ZQEM
+         gaZzur/kxIAHpNPYPGelRgQ7rjOi0K+tYh9PhHxQqXab+DgXW8vQ5W33bgJP2AgmIXGa
+         rTKg==
+X-Forwarded-Encrypted: i=1; AJvYcCXPsfIRDJDGvvEWIXcDk/2t5zQbRL9jhyD6PeOa34Wn+t7vB/ZrYe8vWqZz9R94yVippX3mLyeKYze5biU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywdjdb/AdmGESdd1ffIkTv6WXWRzgjnIkHJUgoTIRBrDDWLA7DU
+	NdZ4TqPHVmOukqu8OEP4LVsRsGozPnlC7/xXr9/91EZplPabsEmAICG1
+X-Gm-Gg: ASbGncs+kVBTZoAduzrJeu1UZDzhPChw2xDvCYbQc4xHJVz8sSbyc4TcwZUS4IH+4xQ
+	oidD6+GAlSNRMAUvXs4U9CSX/3JwzSsefZNeAfdD2NK87p2n0zGw14hRIvoG96CM09ZNTLiM3W7
+	AXh5kKJMKQ32IqZ0lYMHaqNhqDPuiltSnLBGZ4nA9GOiovaF58jSrD92m5c78jBq7qBks+UTHev
+	qKue+O5rt82UpkTAcczXO8cqUnC6G2qghoXKcOrGTsNBZwCNfbY1JsBHpIHJ3DryHJJSZfIMVqA
+	8r/Z48S+9nljLxwBoGW/BFIJWuucrVTNw+qDeJLjMW8CAh3Cz7Zj4+wCRqNhoZ9rjwcMefTuVXh
+	SsBIDssB/HwMzSLPoeCfToPV3+NRzqF1X8w==
+X-Google-Smtp-Source: AGHT+IF8oxwvGnJmdX//1C2nMMAf4sD2XSeL+azrp3c0CA0Vrkobm/UfXPoSy8H0T1mcLezuXqGVbg==
+X-Received: by 2002:a05:6a00:4303:b0:77f:5cbb:16a3 with SMTP id d2e1a72fcca58-787c76db16emr8716029b3a.5.1759326284009;
+        Wed, 01 Oct 2025 06:44:44 -0700 (PDT)
+Received: from ankit-lapy.. ([2401:4900:8fca:69bd:75b:5049:291:c56e])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78102c06e67sm16180730b3a.91.2025.10.01.06.44.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Oct 2025 06:44:43 -0700 (PDT)
+From: Ankit@web.codeaurora.org, Bhalani@web.codeaurora.org,
+	er.ankitbhalani@gmail.com
+To: gregkh@linuxfoundation.org
+Cc: linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	abrahamadekunle50@gmail.com,
+	julia.lawall@inria.fr,
+	viro@zeniv.linux.org.uk,
+	dan.carpenter@linaro.org,
+	zhaochenguang@kylinos.cn,
+	straube.linux@gmail.com,
+	mingo@kernel.org,
+	tglx@linutronix.de,
+	philipp.g.hortmann@gmail.com,
+	vivek.balachandhar@gmail.com,
+	rodrigo.gobbi.7@gmail.com,
+	hansg@kernel.org,
+	nathan@kernel.org,
+	Ankit Bhalani <er.ankitbhalani@gmail.com>
+Subject: [PATCH] staging: rtl8723bs: fix block comment style to match kernel coding guidline
+Date: Wed,  1 Oct 2025 19:14:33 +0530
+Message-ID: <20251001134433.16513-1-er.ankitbhalani@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/6] coresight: Add format attribute for setting the
- timestamp interval
-To: Leo Yan <leo.yan@arm.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
- Mike Leach <mike.leach@linaro.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jonathan Corbet <corbet@lwn.net>, coresight@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org
-References: <20250814-james-cs-syncfreq-v2-0-c76fcb87696d@linaro.org>
- <20250814-james-cs-syncfreq-v2-5-c76fcb87696d@linaro.org>
- <20250930151414.GK7985@e132581.arm.com>
- <3a731a9e-0621-42b6-b7fc-4b0fd9b7da6e@linaro.org>
- <20251001132815.GN7985@e132581.arm.com>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <20251001132815.GN7985@e132581.arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+From: Ankit Bhalani <er.ankitbhalani@gmail.com>
 
+Update block comments to follow the Linux kernel coding style
+recommendations. This include:
 
-On 01/10/2025 2:28 pm, Leo Yan wrote:
-> On Wed, Oct 01, 2025 at 01:40:37PM +0100, James Clark wrote:
-> 
-> [...]
-> 
->>>> @@ -103,6 +111,9 @@ static struct attribute *etm_config_formats_attr[] = {
->>>>    	&format_attr_configid.attr,
->>>>    	&format_attr_branch_broadcast.attr,
->>>>    	&format_attr_cc_threshold.attr,
->>>> +#if IS_ENABLED(CONFIG_CORESIGHT_SOURCE_ETM4X)
->>>> +	&format_attr_ts_level.attr,
->>>> +#endif
->>>
->>> By using .visible() callback for attrs, we can improve a bit code
->>> without spreading "#ifdef IS_ENABLED()" in this file. E.g.,
->>>
->>>      static umode_t format_attr_is_visible(struct kobject *kobj,
->>>                                      struct attribute *attr, int n)
->>>      {
->>>           struct device *dev = kobj_to_dev(kobj);
->>>
->>>           if (attr == &format_attr_ts_level.attr &&
->>> 	    !IS_ENABLED(CONFIG_CORESIGHT_SOURCE_ETM4X))
->>>                   return 0;
->>>
->>>           return attr->mode;
->>>      }
->>>
->>> Otherwise, LGTM:
->>>
->>> Reviewed-by: Leo Yan <leo.yan@arm.com>
->>>
->>
->> Unfortunately that won't work because you'd have to always include
->> coresight-etm4x.h. This file is compiled for both arm32 and arm64 so it
->> would break the arm32 build.
->>
->> I could define the TTR_CFG_FLD_ts_level_* stuff somewhere else but then it
->> becomes messier than just doing the #ifdefs here.
-> 
-> ATTR_CFG_FLD_ts_level_* is only used in coresight-etm4x-core.c, it is not
-> used in coresight-etm-perf.c. Thus, we don't need to include
-> coresight-etm4x.h in coresight-etm-perf.c. Do I miss anything?
+ - Ensuring proper formatting and alignment for multi-line
+   comments.
 
-Yes, GEN_PMU_FORMAT_ATTR() uses them but it makes it hard to see.
+Signed-off-by: Ankit Bhalani <er.ankitbhalani@gmail.com>
+---
+ .../staging/rtl8723bs/core/rtw_ieee80211.c    |  26 +++--
+ drivers/staging/rtl8723bs/core/rtw_io.c       |  48 ++++-----
+ drivers/staging/rtl8723bs/core/rtw_mlme.c     |  75 ++++++-------
+ drivers/staging/rtl8723bs/core/rtw_mlme_ext.c | 102 ++++++++++--------
+ drivers/staging/rtl8723bs/core/rtw_pwrctrl.c  |  10 +-
+ drivers/staging/rtl8723bs/core/rtw_security.c |  87 +++++++--------
+ .../staging/rtl8723bs/core/rtw_wlan_util.c    |   6 +-
+ 7 files changed, 186 insertions(+), 168 deletions(-)
 
-> 
-> A similiar case is the attr 'cc_threshold' is only used by ETMv4, it is
-> exported always. It is not bad for me to always expose these attrs but
-> in the are ignored in the ETMv3 driver - so we even don't need to
-> bother adding .visible() callback.
-> 
-
-I disagree with always showing them. I think they should be hidden if 
-they're not used, or at least return an error to avoid confusing users. 
-It also wastes config bits if they're allocated but never used.
-
-Either way, this was done because of the header mechanics which can only 
-be avoided by adding more changes than just the #ifdefs. There are also 
-already ETM4 #ifdefs in the file.
-
-> Thanks,
-> Leo
+diff --git a/drivers/staging/rtl8723bs/core/rtw_ieee80211.c b/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
+index 53d4c113b19c..c31e64600c0a 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
++++ b/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
+@@ -132,9 +132,11 @@ u8 *rtw_set_ie(u8 *pbuf,
+ 	return pbuf + len + 2;
+ }
+ 
+-/*----------------------------------------------------------------------------
+-index: the information element id index, limit is the limit for search
+------------------------------------------------------------------------------*/
++/*
++ * ----------------------------------------------------------------------------
++ * index: the information element id index, limit is the limit for search
++ * ----------------------------------------------------------------------------
++ */
+ u8 *rtw_get_ie(u8 *pbuf, signed int index, signed int *len, signed int limit)
+ {
+ 	signed int tmp, i;
+@@ -769,21 +771,27 @@ static int rtw_ieee802_11_parse_vendor_specific(u8 *pos, uint elen,
+ {
+ 	unsigned int oui;
+ 
+-	/* first 3 bytes in vendor specific information element are the IEEE
++	/*
++	 * first 3 bytes in vendor specific information element are the IEEE
+ 	 * OUI of the vendor. The following byte is used a vendor specific
+-	 * sub-type. */
++	 * sub-type.
++	 */
+ 	if (elen < 4)
+ 		return -1;
+ 
+ 	oui = get_unaligned_be24(pos);
+ 	switch (oui) {
+ 	case OUI_MICROSOFT:
+-		/* Microsoft/Wi-Fi information elements are further typed and
+-		 * subtyped */
++		/*
++		 * Microsoft/Wi-Fi information elements are further typed and
++		 * subtyped
++		 */
+ 		switch (pos[3]) {
+ 		case 1:
+-			/* Microsoft OUI (00:50:F2) with OUI Type 1:
+-			 * real WPA information element */
++			/*
++			 * Microsoft OUI (00:50:F2) with OUI Type 1:
++			 * real WPA information element
++			 */
+ 			elems->wpa_ie = pos;
+ 			elems->wpa_ie_len = elen;
+ 			break;
+diff --git a/drivers/staging/rtl8723bs/core/rtw_io.c b/drivers/staging/rtl8723bs/core/rtw_io.c
+index 79d543d88278..80653768d5a5 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_io.c
++++ b/drivers/staging/rtl8723bs/core/rtw_io.c
+@@ -5,25 +5,23 @@
+  *
+  ******************************************************************************/
+ /*
+-
+-The purpose of rtw_io.c
+-
+-a. provides the API
+-
+-b. provides the protocol engine
+-
+-c. provides the software interface between caller and the hardware interface
+-
+-
+-Compiler Flag Option:
+-
+-1. CONFIG_SDIO_HCI:
+-    a. USE_SYNC_IRP:  Only sync operations are provided.
+-    b. USE_ASYNC_IRP:Both sync/async operations are provided.
+-
+-jackson@realtek.com.tw
+-
+-*/
++ * The purpose of rtw_io.c
++ *
++ * a. provides the API
++ *
++ * b. provides the protocol engine
++ *
++ * c. provides the software interface between caller and the hardware interface
++ *
++ *
++ * Compiler Flag Option:
++ *
++ * 1. CONFIG_SDIO_HCI:
++ *     a. USE_SYNC_IRP:  Only sync operations are provided.
++ *     b. USE_ASYNC_IRP:Both sync/async operations are provided.
++ *
++ * jackson@realtek.com.tw
++ */
+ 
+ #include <drv_types.h>
+ 
+@@ -135,10 +133,10 @@ int rtw_init_io_priv(struct adapter *padapter, void (*set_intf_ops)(struct adapt
+ }
+ 
+ /*
+-* Increase and check if the continual_io_error of this @param dvobjprive is larger than MAX_CONTINUAL_IO_ERR
+-* @return true:
+-* @return false:
+-*/
++ * Increase and check if the continual_io_error of this @param dvobjprive is larger than MAX_CONTINUAL_IO_ERR
++ * @return true:
++ * @return false:
++ */
+ int rtw_inc_and_chk_continual_io_error(struct dvobj_priv *dvobj)
+ {
+ 	int error_count = atomic_inc_return(&dvobj->continual_io_error);
+@@ -150,8 +148,8 @@ int rtw_inc_and_chk_continual_io_error(struct dvobj_priv *dvobj)
+ }
+ 
+ /*
+-* Set the continual_io_error of this @param dvobjprive to 0
+-*/
++ * Set the continual_io_error of this @param dvobjprive to 0
++ */
+ void rtw_reset_continual_io_error(struct dvobj_priv *dvobj)
+ {
+ 	atomic_set(&dvobj->continual_io_error, 0);
+diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme.c b/drivers/staging/rtl8723bs/core/rtw_mlme.c
+index 692d0c2b766d..5cf52559ff1e 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_mlme.c
++++ b/drivers/staging/rtl8723bs/core/rtw_mlme.c
+@@ -185,10 +185,9 @@ void _rtw_free_network_nolock(struct	mlme_priv *pmlmepriv, struct wlan_network *
+ }
+ 
+ /*
+-	return the wlan_network with the matching addr
+-
+-	Shall be called under atomic context... to avoid possible racing condition...
+-*/
++ * return the wlan_network with the matching addr
++ * Shall be called under atomic context... to avoid possible racing condition...
++ */
+ struct wlan_network *_rtw_find_network(struct __queue *scanned_queue, u8 *addr)
+ {
+ 	struct list_head	*phead, *plist;
+@@ -292,10 +291,9 @@ void rtw_free_network_nolock(struct adapter *padapter, struct wlan_network *pnet
+ }
+ 
+ /*
+-	return the wlan_network with the matching addr
+-
+-	Shall be called under atomic context... to avoid possible racing condition...
+-*/
++ * return the wlan_network with the matching addr
++ * Shall be called under atomic context... to avoid possible racing condition...
++ */
+ struct	wlan_network *rtw_find_network(struct __queue *scanned_queue, u8 *addr)
+ {
+ 	struct	wlan_network *pnetwork = _rtw_find_network(scanned_queue, addr);
+@@ -455,8 +453,8 @@ static void update_current_network(struct adapter *adapter, struct wlan_bssid_ex
+ }
+ 
+ /*
+-Caller must hold pmlmepriv->lock first.
+-*/
++ * Caller must hold pmlmepriv->lock first.
++ */
+ void rtw_update_scanned_network(struct adapter *adapter, struct wlan_bssid_ex *target)
+ {
+ 	struct list_head	*plist, *phead;
+@@ -489,8 +487,10 @@ void rtw_update_scanned_network(struct adapter *adapter, struct wlan_bssid_ex *t
+ 
+ 	}
+ 
+-	/* If we didn't find a match, then get a new network slot to initialize
+-	 * with this beacon's information */
++	/*
++	 * If we didn't find a match, then get a new network slot to initialize
++	 * with this beacon's information
++	 */
+ 	if (!target_find) {
+ 		if (list_empty(&pmlmepriv->free_bss_pool.queue)) {
+ 			/* If there are no more slots, expire the oldest */
+@@ -823,8 +823,8 @@ static void find_network(struct adapter *adapter)
+ }
+ 
+ /*
+-*rtw_free_assoc_resources: the caller has to lock pmlmepriv->lock
+-*/
++ * rtw_free_assoc_resources: the caller has to lock pmlmepriv->lock
++ */
+ void rtw_free_assoc_resources(struct adapter *adapter, int lock_scanned_queue)
+ {
+ 	struct	mlme_priv *pmlmepriv = &adapter->mlmepriv;
+@@ -859,8 +859,8 @@ void rtw_free_assoc_resources(struct adapter *adapter, int lock_scanned_queue)
+ }
+ 
+ /*
+-*rtw_indicate_connect: the caller has to lock pmlmepriv->lock
+-*/
++ * rtw_indicate_connect: the caller has to lock pmlmepriv->lock
++ */
+ void rtw_indicate_connect(struct adapter *padapter)
+ {
+ 	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
+@@ -880,8 +880,8 @@ void rtw_indicate_connect(struct adapter *padapter)
+ }
+ 
+ /*
+-*rtw_indicate_disconnect: the caller has to lock pmlmepriv->lock
+-*/
++ * rtw_indicate_disconnect: the caller has to lock pmlmepriv->lock
++ */
+ void rtw_indicate_disconnect(struct adapter *padapter)
+ {
+ 	struct	mlme_priv *pmlmepriv = &padapter->mlmepriv;
+@@ -1402,6 +1402,7 @@ void rtw_stadel_event_callback(struct adapter *adapter, u8 *pbuf)
+ 
+ 		if (adapter->stapriv.asoc_sta_count == 1) {/* a sta + bc/mc_stainfo (not Ibss_stainfo) */
+ 			u8 ret = _SUCCESS;
++
+ 			spin_lock_bh(&pmlmepriv->scanned_queue.lock);
+ 			/* free old ibss network */
+ 			pwlan = rtw_find_network(&pmlmepriv->scanned_queue, tgt_network->network.mac_address);
+@@ -1453,9 +1454,9 @@ void rtw_wmm_event_callback(struct adapter *padapter, u8 *pbuf)
+ }
+ 
+ /*
+-* _rtw_join_timeout_handler - Timeout/failure handler for CMD JoinBss
+-* @adapter: pointer to struct adapter structure
+-*/
++ * _rtw_join_timeout_handler - Timeout/failure handler for CMD JoinBss
++ * @adapter: pointer to struct adapter structure
++ */
+ void _rtw_join_timeout_handler(struct timer_list *t)
+ {
+ 	struct adapter *adapter = timer_container_of(adapter, t,
+@@ -1497,9 +1498,9 @@ void _rtw_join_timeout_handler(struct timer_list *t)
+ }
+ 
+ /*
+-* rtw_scan_timeout_handler - Timeout/Failure handler for CMD SiteSurvey
+-* @adapter: pointer to struct adapter structure
+-*/
++ * rtw_scan_timeout_handler - Timeout/Failure handler for CMD SiteSurvey
++ * @adapter: pointer to struct adapter structure
++ */
+ void rtw_scan_timeout_handler(struct timer_list *t)
+ {
+ 	struct adapter *adapter = timer_container_of(adapter, t,
+@@ -1616,10 +1617,10 @@ void rtw_set_scan_deny(struct adapter *adapter, u32 ms)
+ }
+ 
+ /*
+-* Select a new roaming candidate from the original @param candidate and @param competitor
+-* @return true: candidate is updated
+-* @return false: candidate is not updated
+-*/
++ * Select a new roaming candidate from the original @param candidate and @param competitor
++ * @return true: candidate is updated
++ * @return false: candidate is not updated
++ */
+ static int rtw_check_roaming_candidate(struct mlme_priv *mlme
+ 	, struct wlan_network **candidate, struct wlan_network *competitor)
+ {
+@@ -1699,10 +1700,10 @@ int rtw_select_roaming_candidate(struct mlme_priv *mlme)
+ }
+ 
+ /*
+-* Select a new join candidate from the original @param candidate and @param competitor
+-* @return true: candidate is updated
+-* @return false: candidate is not updated
+-*/
++ * Select a new join candidate from the original @param candidate and @param competitor
++ * @return true: candidate is updated
++ * @return false: candidate is not updated
++ */
+ static int rtw_check_join_candidate(struct mlme_priv *mlme
+ 	, struct wlan_network **candidate, struct wlan_network *competitor)
+ {
+@@ -1743,11 +1744,11 @@ static int rtw_check_join_candidate(struct mlme_priv *mlme
+ }
+ 
+ /*
+-Calling context:
+-The caller of the sub-routine will be in critical section...
+-The caller must hold the following spinlock
+-pmlmepriv->lock
+-*/
++ * Calling context:
++ * The caller of the sub-routine will be in critical section...
++ * The caller must hold the following spinlock
++ * pmlmepriv->lock
++ */
+ 
+ int rtw_select_and_join_from_scanned_queue(struct mlme_priv *pmlmepriv)
+ {
+diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c b/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
+index bc980d21d50e..306cd78163bf 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
++++ b/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
+@@ -18,9 +18,11 @@ static struct mlme_handler mlme_sta_tbl[] = {
+ 	{WIFI_PROBEREQ,		"OnProbeReq",	&OnProbeReq},
+ 	{WIFI_PROBERSP,		"OnProbeRsp",		&OnProbeRsp},
+ 
+-	/*----------------------------------------------------------
+-					below 2 are reserved
+-	-----------------------------------------------------------*/
++	/*
++	 *-----------------------------------------------------------
++	 * below 2 are reserved
++	 *-----------------------------------------------------------
++	 */
+ 	{0,					"DoReserved",		&DoReserved},
+ 	{0,					"DoReserved",		&DoReserved},
+ 	{WIFI_BEACON,		"OnBeacon",		&OnBeacon},
+@@ -50,9 +52,11 @@ static struct action_handler OnAction_tbl[] = {
+ 
+ static u8 null_addr[ETH_ALEN] = {0, 0, 0, 0, 0, 0};
+ 
+-/**************************************************
+-OUI definitions for the vendor specific IE
+-***************************************************/
++/*
++ ***************************************************
++ * OUI definitions for the vendor specific IE
++ ***************************************************
++ */
+ unsigned char RTW_WPA_OUI[] = {0x00, 0x50, 0xf2, 0x01};
+ unsigned char WMM_OUI[] = {0x00, 0x50, 0xf2, 0x02};
+ unsigned char WPS_OUI[] = {0x00, 0x50, 0xf2, 0x04};
+@@ -64,9 +68,11 @@ unsigned char WMM_PARA_OUI[] = {0x00, 0x50, 0xf2, 0x02, 0x01, 0x01};
+ 
+ static unsigned char REALTEK_96B_IE[] = {0x00, 0xe0, 0x4c, 0x02, 0x01, 0x20};
+ 
+-/********************************************************
+-ChannelPlan definitions
+-*********************************************************/
++/*
++ *********************************************************
++ * ChannelPlan definitions
++ *********************************************************
++ */
+ static struct rt_channel_plan_2g	RTW_ChannelPlan2G[RT_CHANNEL_DOMAIN_2G_MAX] = {
+ 	{{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}, 13},		/*  0x00, RT_CHANNEL_DOMAIN_2G_WORLD , Passive scan CH 12, 13 */
+ 	{{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}, 13},		/*  0x01, RT_CHANNEL_DOMAIN_2G_ETSI1 */
+@@ -187,11 +193,11 @@ int rtw_ch_set_search_ch(struct rt_channel_info *ch_set, const u32 ch)
+ 	return i;
+ }
+ 
+-/****************************************************************************
+-
+-Following are the initialization functions for WiFi MLME
+-
+-*****************************************************************************/
++/*
++ *****************************************************************************
++ * Following are the initialization functions for WiFi MLME
++ *****************************************************************************
++ */
+ 
+ int init_hw_mlme_ext(struct adapter *padapter)
+ {
+@@ -498,11 +504,11 @@ void mgt_dispatcher(struct adapter *padapter, union recv_frame *precv_frame)
+ 	}
+ }
+ 
+-/****************************************************************************
+-
+-Following are the callback functions for each subtype of the management frames
+-
+-*****************************************************************************/
++/*
++ ****************************************************************************
++ * Following are the callback functions for each subtype of the management frames
++ ****************************************************************************
++ */
+ 
+ unsigned int OnProbeReq(struct adapter *padapter, union recv_frame *precv_frame)
+ {
+@@ -1943,11 +1949,11 @@ inline struct xmit_frame *alloc_mgtxmitframe(struct xmit_priv *pxmitpriv)
+ 	return _alloc_mgtxmitframe(pxmitpriv, false);
+ }
+ 
+-/****************************************************************************
+-
+-Following are some TX functions for WiFi MLME
+-
+-*****************************************************************************/
++/*
++ ****************************************************************************
++ * Following are some TX functions for WiFi MLME
++ ****************************************************************************
++ */
+ 
+ void update_mgnt_tx_rate(struct adapter *padapter, u8 rate)
+ {
+@@ -3790,11 +3796,11 @@ unsigned int send_beacon(struct adapter *padapter)
+ 		return _SUCCESS;
+ }
+ 
+-/****************************************************************************
+-
+-Following are some utility functions for WiFi MLME
+-
+-*****************************************************************************/
++/*
++ ****************************************************************************
++ * Following are some utility functions for WiFi MLME
++ ****************************************************************************
++ */
+ 
+ void site_survey(struct adapter *padapter)
+ {
+@@ -4386,11 +4392,11 @@ static void process_80211d(struct adapter *padapter, struct wlan_bssid_ex *bssid
+ 	}
+ }
+ 
+-/****************************************************************************
+-
+-Following are the functions to report events
+-
+-*****************************************************************************/
++/*
++ ******************************************************************************
++ * Following are the functions to report events
++ ******************************************************************************
++ */
+ 
+ void report_survey_event(struct adapter *padapter, union recv_frame *precv_frame)
+ {
+@@ -4686,11 +4692,13 @@ void report_add_sta_event(struct adapter *padapter, unsigned char *MacAddr, int
+ 	rtw_enqueue_cmd(pcmdpriv, pcmd_obj);
+ }
+ 
+-/****************************************************************************
+-
+-Following are the event callback functions
+-
+-*****************************************************************************/
++/*
++ *****************************************************************************
++ *
++ * Following are the event callback functions
++ *
++ *****************************************************************************
++ */
+ 
+ /* for sta/adhoc mode */
+ void update_sta_info(struct adapter *padapter, struct sta_info *psta)
+@@ -4857,8 +4865,10 @@ void mlmeext_joinbss_event_callback(struct adapter *padapter, int join_res)
+ 
+ 		rtw_sta_media_status_rpt(padapter, psta, 1);
+ 
+-		/* wakeup macid after join bss successfully to ensure
+-			the subsequent data frames can be sent out normally */
++		/*
++		 * wakeup macid after join bss successfully to ensure
++		 * the subsequent data frames can be sent out normally
++		 */
+ 		rtw_hal_macid_wakeup(padapter, psta->mac_id);
+ 	}
+ 
+@@ -4934,11 +4944,11 @@ void mlmeext_sta_del_event_callback(struct adapter *padapter)
+ 		rtw_mlmeext_disconnect(padapter);
+ }
+ 
+-/****************************************************************************
+-
+-Following are the functions for the timer handlers
+-
+-*****************************************************************************/
++/*
++ ****************************************************************************
++ * Following are the functions for the timer handlers
++ ****************************************************************************
++ */
+ void _linked_info_dump(struct adapter *padapter)
+ {
+ 	int i;
+diff --git a/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c b/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c
+index 6a2583d0d3eb..8789a581d539 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c
++++ b/drivers/staging/rtl8723bs/core/rtw_pwrctrl.c
+@@ -1005,11 +1005,11 @@ inline void rtw_set_ips_deny(struct adapter *padapter, u32 ms)
+ }
+ 
+ /*
+-* rtw_pwr_wakeup - Wake the NIC up from: 1)IPS. 2)USB autosuspend
+-* @adapter: pointer to struct adapter structure
+-* @ips_deffer_ms: the ms will prevent from falling into IPS after wakeup
+-* Return _SUCCESS or _FAIL
+-*/
++ * rtw_pwr_wakeup - Wake the NIC up from: 1)IPS. 2)USB autosuspend
++ * @adapter: pointer to struct adapter structure
++ * @ips_deffer_ms: the ms will prevent from falling into IPS after wakeup
++ * Return _SUCCESS or _FAIL
++ */
+ 
+ int _rtw_pwr_wakeup(struct adapter *padapter, u32 ips_deffer_ms, const char *caller)
+ {
+diff --git a/drivers/staging/rtl8723bs/core/rtw_security.c b/drivers/staging/rtl8723bs/core/rtw_security.c
+index e9f382c280d9..6357365cb63a 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_security.c
++++ b/drivers/staging/rtl8723bs/core/rtw_security.c
+@@ -30,8 +30,8 @@ const char *security_type_str(u8 value)
+ /* WEP related ===== */
+ 
+ /*
+-	Need to consider the fragment  situation
+-*/
++ * Need to consider the fragment  situation
++ */
+ void rtw_wep_encrypt(struct adapter *padapter, u8 *pxmitframe)
+ {																	/*  exclude ICV */
+ 	union {
+@@ -342,23 +342,23 @@ static const unsigned short Sbox1[2][256] = {      /* Sbox for hash (can be in R
+ 	}
+ };
+ 
+- /*
+-**********************************************************************
+-* Routine: Phase 1 -- generate P1K, given TA, TK, IV32
+-*
+-* Inputs:
+-*     tk[]      = temporal key                         [128 bits]
+-*     ta[]      = transmitter's MAC address            [ 48 bits]
+-*     iv32      = upper 32 bits of IV                  [ 32 bits]
+-* Output:
+-*     p1k[]     = Phase 1 key                          [ 80 bits]
+-*
+-* Note:
+-*     This function only needs to be called every 2**16 packets,
+-*     although in theory it could be called every packet.
+-*
+-**********************************************************************
+-*/
++/*
++ **********************************************************************
++ * Routine: Phase 1 -- generate P1K, given TA, TK, IV32
++ *
++ * Inputs:
++ *     tk[]      = temporal key                         [128 bits]
++ *     ta[]      = transmitter's MAC address            [ 48 bits]
++ *     iv32      = upper 32 bits of IV                  [ 32 bits]
++ * Output:
++ *     p1k[]     = Phase 1 key                          [ 80 bits]
++ *
++ * Note:
++ *     This function only needs to be called every 2**16 packets,
++ *     although in theory it could be called every packet.
++ *
++ **********************************************************************
++ */
+ static void phase1(u16 *p1k, const u8 *tk, const u8 *ta, u32 iv32)
+ {
+ 	signed int  i;
+@@ -385,28 +385,28 @@ static void phase1(u16 *p1k, const u8 *tk, const u8 *ta, u32 iv32)
+ 
+ 
+ /*
+-**********************************************************************
+-* Routine: Phase 2 -- generate RC4KEY, given TK, P1K, IV16
+-*
+-* Inputs:
+-*     tk[]      = Temporal key                         [128 bits]
+-*     p1k[]     = Phase 1 output key                   [ 80 bits]
+-*     iv16      = low 16 bits of IV counter            [ 16 bits]
+-* Output:
+-*     rc4key[]  = the key used to encrypt the packet   [128 bits]
+-*
+-* Note:
+-*     The value {TA, IV32, IV16} for Phase1/Phase2 must be unique
+-*     across all packets using the same key TK value. Then, for a
+-*     given value of TK[], this TKIP48 construction guarantees that
+-*     the final RC4KEY value is unique across all packets.
+-*
+-* Suggested implementation optimization: if PPK[] is "overlaid"
+-*     appropriately on RC4KEY[], there is no need for the final
+-*     for loop below that copies the PPK[] result into RC4KEY[].
+-*
+-**********************************************************************
+-*/
++ **********************************************************************
++ * Routine: Phase 2 -- generate RC4KEY, given TK, P1K, IV16
++ *
++ * Inputs:
++ *     tk[]      = Temporal key                         [128 bits]
++ *     p1k[]     = Phase 1 output key                   [ 80 bits]
++ *     iv16      = low 16 bits of IV counter            [ 16 bits]
++ * Output:
++ *     rc4key[]  = the key used to encrypt the packet   [128 bits]
++ *
++ * Note:
++ *     The value {TA, IV32, IV16} for Phase1/Phase2 must be unique
++ *     across all packets using the same key TK value. Then, for a
++ *     given value of TK[], this TKIP48 construction guarantees that
++ *     the final RC4KEY value is unique across all packets.
++ *
++ * Suggested implementation optimization: if PPK[] is "overlaid"
++ *     appropriately on RC4KEY[], there is no need for the final
++ *     for loop below that copies the PPK[] result into RC4KEY[].
++ *
++ **********************************************************************
++ */
+ static void phase2(u8 *rc4key, const u8 *tk, const u16 *p1k, u16 iv16)
+ {
+ 	signed int  i;
+@@ -1514,7 +1514,7 @@ static int omac1_aes_128_vector(u8 *key, size_t num_elem,
+ 	return 0;
+ }
+ 
+-/**
++/*
+  * omac1_aes_128 - One-Key CBC MAC (OMAC1) hash with AES-128 (aka AES-CMAC)
+  * @key: 128-bit key for the hash operation
+  * @data: Data buffer for which a MAC is determined
+@@ -1525,7 +1525,8 @@ static int omac1_aes_128_vector(u8 *key, size_t num_elem,
+  * This is a mode for using block cipher (AES in this case) for authentication.
+  * OMAC1 was standardized with the name CMAC by NIST in a Special Publication
+  * (SP) 800-38B.
+- * modify for CONFIG_IEEE80211W */
++ * modify for CONFIG_IEEE80211W
++ */
+ int omac1_aes_128(u8 *key, u8 *data, size_t data_len, u8 *mac)
+ {
+ 	return omac1_aes_128_vector(key, 1, &data, &data_len, mac);
+diff --git a/drivers/staging/rtl8723bs/core/rtw_wlan_util.c b/drivers/staging/rtl8723bs/core/rtw_wlan_util.c
+index 0c6072d08661..064050a0821b 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_wlan_util.c
++++ b/drivers/staging/rtl8723bs/core/rtw_wlan_util.c
+@@ -1021,9 +1021,9 @@ void HTOnAssocRsp(struct adapter *padapter)
+ 
+ 	/* handle A-MPDU parameter field */
+ 	/*
+-		AMPDU_para [1:0]:Max AMPDU Len => 0:8k , 1:16k, 2:32k, 3:64k
+-		AMPDU_para [4:2]:Min MPDU Start Spacing
+-	*/
++	 * AMPDU_para [1:0]:Max AMPDU Len => 0:8k , 1:16k, 2:32k, 3:64k
++	 * AMPDU_para [4:2]:Min MPDU Start Spacing
++	 */
+ 	max_AMPDU_len = pmlmeinfo->HT_caps.u.HT_cap_element.AMPDU_para & 0x03;
+ 
+ 	min_MPDU_spacing = (pmlmeinfo->HT_caps.u.HT_cap_element.AMPDU_para & 0x1c) >> 2;
+-- 
+2.43.0
 
 
