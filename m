@@ -1,93 +1,177 @@
-Return-Path: <linux-kernel+bounces-839115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FC17BB0D6F
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 16:53:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE750BB0E21
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 16:56:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23CCF2A696E
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 14:53:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B2CE1883D94
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 14:56:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADE88264623;
-	Wed,  1 Oct 2025 14:49:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E8630FF10;
+	Wed,  1 Oct 2025 14:50:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="i+WuAo1C"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LNTLK0bd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8291D2868B
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 14:49:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C7472EA74D;
+	Wed,  1 Oct 2025 14:49:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759330181; cv=none; b=WS9nCTiCH05TmASWQ4qoj7B/khrdSxKN2/Dv4FQiC2ZecrT3ZTSsIZsAT+CJcmB1zLZkyepJenSjor1BdAme3nKmuHzrEQIBJXZjaONisOKr+IODd4SWJCDF4BrE3CIphiHvng4x43SFJnytjAhP5iItXPTgaLnEOGLeIcCmwT8=
+	t=1759330199; cv=none; b=WUkdiaplFiyFYtXajxXxAho1SUPPaJUZuwhogqDOZjMqe1La+P7hg8uEPs/5ocWx16jztzjcbjE9PYJ0QZY3H/I+fbll6d8DVEA3TrFD+n/gDd4EQqZj7c1HwZALhojEJBkwyPwlo7n1GBdywIyBMaw455qBc78z0gpgfuTVhKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759330181; c=relaxed/simple;
-	bh=+w9NjcsiicJAEUo3EzWiAH/IE+n1vDtbrhogIf/eJTQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=YeENT32DctyH2ZNsgIkxDtGFmtPlNL/aAk5zHnWW/am9RfMfNA7dFHq6oqeC/AXvK/zr8L3MrvRaBynaxlhtinVYeDJ1Ip4njCuxK9q7jNyYNhZBLUlMP07kFATBoLFzoOx4j69aTDbhm3Xuhz1EkabV06crTlXq24JdTTBO5Ms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=i+WuAo1C; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=+w9NjcsiicJAEUo3EzWiAH/IE+n1vDtbrhogIf/eJTQ=;
-	t=1759330179; x=1760539779; b=i+WuAo1C3NUyRrDT5woJm2uI5eOTlOTmpgSuCMfmBvJpFgY
-	yYgQqJ/S3aQf0RqCwwknane7VA/mZnGCxe+2eF1FIePs+jVxLUSIK1sJKl6kXHwoKBwKKSSE1QvDb
-	9CMr18X1fw2zug7WgrKAPioLtPzUMYI70SNWraJEmCH8uZB+cPXYglSFd5CSxCmj5VB9XBHhRWMZS
-	V1VyFLUusK6ckRL4l16Bg7Qbs7zmF4duFsL4fKgtrXqLyVuBVwMtQdZ0vfTTeMhYGrjiBdR+N0Zp9
-	UsKphVdRUXbBYWalptVqWHwOw4CHA0rxpczV/CRzKkszp+Tidz0Uw53w0BFv5W2g==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98.2)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1v3y95-00000005y4F-1TKn;
-	Wed, 01 Oct 2025 16:49:31 +0200
-Message-ID: <1a4ee34782868893a237ba70e518dca17147f013.camel@sipsolutions.net>
-Subject: Re: [for-next][PATCH 4/4] cfg80211: Remove unused tracepoints
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland
- <mark.rutland@arm.com>,  Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Andrew Morton <akpm@linux-foundation.org>
-Date: Wed, 01 Oct 2025 16:49:29 +0200
-In-Reply-To: <20251001144625.373974129@kernel.org>
-References: <20251001144605.585204794@kernel.org>
-	 <20251001144625.373974129@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1759330199; c=relaxed/simple;
+	bh=cpudc7RxxWHkEhpC0NFFpbwb/vOwgTPsZ8i0Bb1r0y4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=foAIvAzyj0rcD3CgBHeU/Z2g1Mh7g5HS5TFpwJGl26tSd1w85V4F88uGHCJeNJl1gBOXQYBrvNVOIpZbruxoTTKF16M/AZB9nfTLqShWsRrOVa6rHP8PPwhvjzsXm466jy817sfiCZKb4bRLApK4bF4kMW8PZvcOflD4gbxzxGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LNTLK0bd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 171EFC4CEFC;
+	Wed,  1 Oct 2025 14:49:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759330199;
+	bh=cpudc7RxxWHkEhpC0NFFpbwb/vOwgTPsZ8i0Bb1r0y4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=LNTLK0bdEFGF1PCtKmj9vCgGEdMBQprPG8h3wkc9bzMAMcFUlie4WywkPrWbm1RDX
+	 9qXIvxVQg5LbqTGbS3/BWvcPWO1NiKXSsJmYFRzHAHZUS1Xh53BmNUou8oP4z4rAIo
+	 7pcKOziYZHwHQPN7hLaHFxCyI3YdX2WzCdFQJJjZWZJ4GKur7EqplW8OJ4wFj7F7S8
+	 ljwMIgWaFSZfPMW4X9XL2rKlJJ0EB/Uxd9LZtlxqiQk0WZnjDhd7nk9AhZotjUAFfr
+	 yAInPl7iu3s5Vx+R3GWhs6/YIM/v/+nUoeajugEvuQ1ZiGR+ugoJSFBxu4MFohxa+V
+	 2ZDqaWS0YkWqw==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
+	(envelope-from <mchehab+huawei@kernel.org>)
+	id 1v3y9V-0000000BLIR-1JUm;
+	Wed, 01 Oct 2025 16:49:57 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: "Jonathan Corbet" <corbet@lwn.net>,
+	Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	"Mauro Carvalho Chehab" <mchehab@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org
+Subject: [PATCH 07/23] tools: docs: parse_data_structs.py: add namespace support
+Date: Wed,  1 Oct 2025 16:49:30 +0200
+Message-ID: <cc27ec60ceb3bdac4197fb7266d2df8155edacda.1759329363.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <cover.1759329363.git.mchehab+huawei@kernel.org>
+References: <cover.1759329363.git.mchehab+huawei@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-On Wed, 2025-10-01 at 10:46 -0400, Steven Rostedt wrote:
-> From: Steven Rostedt <rostedt@goodmis.org>
->=20
-> Tracepoints that are defined take up around 5K each, even if they are not
-> used. If they are defined and not used, then they waste memory for unused
-> code. Soon unused tracepoints will cause warnings.
->=20
-> Remove the unused tracepoints of the cfg80211 subsystem. They are:
->=20
-> cfg80211_chandef_dfs_required
-> cfg80211_return_u32
-> cfg80211_return_uint
-> cfg80211_send_rx_auth
+C domain supports a ".. c:namespace::" tag that allows setting a
+symbol namespace. This is used within the kernel to avoid warnings
+about duplicated symbols. This is specially important for syscalls,
+as each subsystem may have their own documentation for them.
+This is specially true for ioctl.
 
-This is in net-next [1], should go to Linus's tree whenever that is
-pulled [2].
+When such tag is used, all C domain symbols have c++ style,
+e.g. they'll become "{namespace}.{reference}".
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/com=
-mit/?id=3D58febb47b961a91d0d12ee0c1618a7843c0908ce
+Allow specifying C namespace at the exception files, avoiding
+the need of override rules for every symbol.
 
-[2] https://lore.kernel.org/lkml/20251001131156.27805-1-pabeni@redhat.com/
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+---
+ tools/docs/lib/parse_data_structs.py | 43 +++++++++++++++++++++-------
+ 1 file changed, 32 insertions(+), 11 deletions(-)
 
-johannes
+diff --git a/tools/docs/lib/parse_data_structs.py b/tools/docs/lib/parse_data_structs.py
+index cbdbf7dfe785..0d537e989ea7 100755
+--- a/tools/docs/lib/parse_data_structs.py
++++ b/tools/docs/lib/parse_data_structs.py
+@@ -53,11 +53,19 @@ class ParseDataStructs:
+ 
+         replace <type> <old_symbol> <new_reference>
+ 
+-    Replaces how old_symbol with a new reference. The new_reference can be:
++       Replaces how old_symbol with a new reference. The new_reference can be:
++
+         - A simple symbol name;
+         - A full Sphinx reference.
+ 
+-    On both cases, <type> can be:
++    3. Namespace rules
++
++        namespace <namespace>
++
++       Sets C namespace to be used during cross-reference generation. Can
++       be overridden by replace rules.
++
++    On ignore and replace rules, <type> can be:
+         - ioctl: for defines that end with _IO*, e.g. ioctl definitions
+         - define: for other defines
+         - symbol: for symbols defined within enums;
+@@ -71,6 +79,8 @@ class ParseDataStructs:
+         ignore ioctl VIDIOC_ENUM_FMT
+         replace ioctl VIDIOC_DQBUF vidioc_qbuf
+         replace define V4L2_EVENT_MD_FL_HAVE_FRAME_SEQ :c:type:`v4l2_event_motion_det`
++
++        namespace MC
+     """
+ 
+     # Parser regexes with multiple ways to capture enums and structs
+@@ -140,6 +150,7 @@ class ParseDataStructs:
+ 
+         self.symbols = {}
+ 
++        self.namespace = None
+         self.ignore = []
+         self.replace = []
+ 
+@@ -173,6 +184,11 @@ class ParseDataStructs:
+                                          match.group(3)))
+                     continue
+ 
++                match = re.match(r"^namespace\s+(\S+)", line)
++                if match:
++                    self.namespace = match.group(1)
++                    continue
++
+                 sys.exit(f"{name}:{ln}: invalid line: {line}")
+ 
+     def apply_exceptions(self):
+@@ -237,18 +253,23 @@ class ParseDataStructs:
+         ref_type = defs.get("ref_type")
+ 
+         # Determine ref_link based on symbol type
+-        if ref_type:
+-            if symbol_type == "enum":
+-                ref_link = f"{ref_type}:`{symbol}`"
+-            else:
+-                if not ref_name:
+-                    ref_name = symbol.lower()
++        if ref_type or self.namespace:
++            if not ref_name:
++                ref_name = symbol.lower()
+ 
+-                # c-type references don't support hash
+-                if ref_type == ":ref" and replace_underscores:
+-                    ref_name = ref_name.replace("_", "-")
++            # c-type references don't support hash
++            if ref_type == ":ref" and replace_underscores:
++                ref_name = ref_name.replace("_", "-")
+ 
++            # C domain references may have namespaces
++            if ref_type.startswith(":c:"):
++                if self.namespace:
++                    ref_name = f"{self.namespace}.{ref_name}"
++
++            if ref_type:
+                 ref_link = f"{ref_type}:`{symbol} <{ref_name}>`"
++            else:
++                ref_link = f"`{symbol} <{ref_name}>`"
+         else:
+             ref_link = symbol
+ 
+-- 
+2.51.0
+
 
