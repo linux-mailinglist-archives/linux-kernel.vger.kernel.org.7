@@ -1,223 +1,183 @@
-Return-Path: <linux-kernel+bounces-839062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDB59BB0BC6
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 16:37:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FFA6BB0BD5
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 16:37:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA1FA3C18DD
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 14:36:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B08E4C34F7
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 14:36:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D994F30277F;
-	Wed,  1 Oct 2025 14:35:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA40D25A2AE;
+	Wed,  1 Oct 2025 14:35:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="fOtAU7L9"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cf8KahY/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF4CF2FCBF1
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 14:35:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CBE31B21BF
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 14:35:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759329327; cv=none; b=OEbgrYQcN96jXwfwFF3CetDknQtlacYAGYQrCV2Bp7E9L6pCW8LxVsZyN7Ls2foaRmR2gjdLr2f6yb8/umONRz1whNvozV5IzVJYiOB9dQovERgVFmXTWiqyVor67vp1AWeA8fCsaJ05e4D3gr0i37mEfowA5PpnXay/ERWmtGo=
+	t=1759329343; cv=none; b=nRwbYwD0CC+VEz2Ex4F1ae3t5dS1uvMvcTj48Nx69ISd5ryi4K/q1STJfHvdcz6FqZ58i554Cg4iuK3UvXmC0K4+ZsBdLe/7S8S1XGQi2jeP+vYjLf6RNURv94yMyGYtcPCyQ0LQg0W1KniTFd91qfQ3YAajtVkcsfI4m4QiBX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759329327; c=relaxed/simple;
-	bh=fmSTQ+NAhyqd5hnJaZ0RF1b/fo5Oy35WVR6j4Ev0AlA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nR3vNXXE2U5BEJz8QvT1QbEsatxMfS7UZSPNK4lR323tEQMhS1cL3jL68qf8HhA8kvFMtWJY2ZihRFh5e7b9Ged8RWmTzxitnyMMnAmROE9mYMWvXQK5G/zLi3zLIcBa2vBK964qrsvSyQs8SXtKf1IGkEbP3S3jgChPYBJx/f8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=fOtAU7L9; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-636de696e18so318141a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 07:35:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1759329323; x=1759934123; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wv1v1rCyNVZow/EufS/6YnSEiovq7wLtWvMHkvWDLt8=;
-        b=fOtAU7L9nJF2PGvJwISkBUEGqihK0pBaIYQwjV8kDlNTiZ3KYtHg7nh5tKHyN16aO1
-         eETZTsMCxhE0JnElaSknurdBh9C2cWoZDQypLnEVFwzeguL2+8Cn8cTnht3xHNqLkPDD
-         X6k1VyvLSpEjwVVRTRn0CeTScUn5UlPKU2PEPTyS6UjkayxN4xteAhNyBpWub1lUq+iK
-         26CTL6L/Qyn9vTwH4ntHIl7cMF6WvrLuK+alipruWjg72BCpbz7q6RITiY3CGH+BoupP
-         j5YcmjtNsQFTyoe5l/yz1g9TEsBcEpdpNDmBCYbhZIwMYnCCOBIi5ApzQA4ZmSHekNXl
-         ImYw==
+	s=arc-20240116; t=1759329343; c=relaxed/simple;
+	bh=8Xy4sMtogkr0cSJciI4vHvitmU2HOnL+Yn4jgG0c7Wc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qEriyTztn9I3z4PyoGybnOsUN5Hx/Fa0i9xaiCQdfcfxGVQVmdaDaamsWVpvQrsqieNLuosaWctwObFfUIu4GC5aOPqoKBOziBeIR9IRYUr5OSbFHjgkU2qz8CcXOVakI7fXmNXplFtlPgvAGxY41qjoP9Bte8rglf3PB3bsMas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cf8KahY/; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759329339;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BoSJ/UNITIMkV6E4NWf6uVIJcLK8gRuM5n7XzbDfFos=;
+	b=cf8KahY/d1DLAO1HBtAzoJO3Z74pnqGVaM6wXT+hNE7hkXWUElpasCu2kT7fMTcCYED3ys
+	9zzkgDvV2VMtEa1DNQeUbjH+bBblu7iX8rkzxcWYo2CLEaP/TOOKJ1cCxNGiaHQUx9m4Mc
+	yKPntJsQourmQZA5ikZSj0EEcEFLPfs=
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
+ [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-9-fdiY0uWINESwWB9xSRlohA-1; Wed, 01 Oct 2025 10:35:38 -0400
+X-MC-Unique: fdiY0uWINESwWB9xSRlohA-1
+X-Mimecast-MFC-AGG-ID: fdiY0uWINESwWB9xSRlohA_1759329338
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4de35879e7dso122262411cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 07:35:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759329323; x=1759934123;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wv1v1rCyNVZow/EufS/6YnSEiovq7wLtWvMHkvWDLt8=;
-        b=A8L4NOawvPl8BbEreY73+lJXBbcCOR18a2Vb4edYepoI52BrAIV6yWZ/qWufKPd1cB
-         FU1ycbj6BbyA8iPupwL0L0hqfLgA8ABjK+ThbkZl2A0u85xiqDDZbA6ATOdARE3b+cA0
-         6WVD5J4KJ1U7F/Knphq9xctewSvGTicwiyex44eg78lBe/p8uzX2G35h5lbZ1F3muTLi
-         lNWx+y1P38DkgGhXitaALHDnFwm1AAR8OBLiATD+WnxAuleRE531LERzkARzTTJSe1B6
-         Q8NTmogmEEtn3CdkEVj7hVPx/9M3Rdn1ufl5e+3n2G1y/yILM2T/b3wg720h7DARfezt
-         UxxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUiE6w+K4pSWZ4Cty1hX3ulYnSPvpgIDsS2bHD6xsG6fUGqGii5yCCnNs+/f6BTg1Ymxc74Y8M5RomSzWY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDJyFmpb/Pj8TEM6LQlyJ4BrFHqEW7QdsLgbBrN02dPT/GxdP8
-	QXqIQ1tKEjXxdvR+IJzFlJJcj5kpN8bqkr335vlBz+mwQ8VXqjv2+w7Wqs43YV0fhYg=
-X-Gm-Gg: ASbGncudKkyOEKiKq7EasUtCp8wI+WkwMEEsnHdpZOiiNFJuXMbvoYemlxDSVwdubfo
-	a/fjAVDjm8+lQMD4OsI17LT2b92oBu4ktszBkuq/BdYCsDirEbtWL39HtP7CN5apIBVri0sQsN8
-	0p4xIWA87d+w3ss/uu9znuiUxJj/1WCYuzES2FWPOAwaMH64hA2xqwGAfFwCsOqSX8haYegu2v1
-	x5/BzGBOjBz23/UoHaGYrIYfbiLDSCF0TUMiJmD6b7SceH+6qNyyyQ/Pow3bSy05Sg83D0zXwqj
-	0ndzJm7UJG7pjQiKsUM4rtUJTUaUF3bm1cuWfH35El15zYUIqllyvi8mUBQCWac14UPCARy/zIY
-	QQUW4F6FFFEOWBAZwBwGRQSS8a72EuDTMDvFhUfhprEc5
-X-Google-Smtp-Source: AGHT+IHXTlr6hMwOEdJJpqBV4TMV8ge8bItPiUQfnDU+pVip/S84k8hnYZeWqUPXz9KdDsMvP84M+w==
-X-Received: by 2002:aa7:c60c:0:b0:634:bc7b:440e with SMTP id 4fb4d7f45d1cf-63678c9f531mr3386752a12.36.1759329323126;
-        Wed, 01 Oct 2025 07:35:23 -0700 (PDT)
-Received: from localhost ([2001:4090:a245:8496:49da:2c07:5e9a:7fb9])
-        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-634b46dca59sm10770760a12.8.2025.10.01.07.35.21
+        d=1e100.net; s=20230601; t=1759329338; x=1759934138;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BoSJ/UNITIMkV6E4NWf6uVIJcLK8gRuM5n7XzbDfFos=;
+        b=Oc81f9MLbFaP6lYswZIsEh9qFg8P66pkcmTyzLCpw4m2pCptmTR7OAzG7x1quvQuQ1
+         wARiiPfiEq/pYDzaA2P1V4ugOKCF5e6PoVQtSRtNRMWFwW0CmxJsfsla/EMt/WstwPZ6
+         6i5tw3KYXuxz1DGgXurEtmXWj3E/SrSBuuoBIzGCaYIVbZTPt9AHk9cfBdcFSdE8mZAk
+         vKVVAiuippgM+eZhekUKt1P1FHLBzb4MVvWzN9LA/wW8v7yKfwMC9cvRbrZTG89aSE4J
+         fXYcoLYAQlc+HGJk5MPkrNpy1k4f1e/JO68xH2QThthgTVIPRCHtfs96QgDfAhORBlXk
+         liDw==
+X-Forwarded-Encrypted: i=1; AJvYcCUzLRbfwUKsajakE0okf6ecJuD8oLZ/3yQ2TOksqSMl0sQHg9Es8pFkzSTCpALJS68+/Xv2ch08GvHFaas=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyakOSQAwT1/74lSiMr6KDp+JhSneilEESmHb0mMhNThZ5rv1lW
+	5o7/fAoAHmQl+DU6AFYyhmbBX308LzGIYj3ppqxSLAT7NN6nSVh9CQAl1VFcB3652D3v7iocDRU
+	Vh0VF4W/htyHCIZQ+wmno/vF7uyBQR9VHEvZpyt2u0/hnCPqlkdB8SRFb3e1BTdzYXg==
+X-Gm-Gg: ASbGnctKG69FtZLVaFwy1kA/0RMqgb0q4dHUJpJAcV3R3H2Y3nNnHzrWrF/RWitFphn
+	c/5hP4qSypK272Sefg2zsWeLmEUUrns7g9O5Q6kBrXXwwzJ9sZec1xAuMP3b1nuEzj5BLZoHLaJ
+	gbLcQT8JBD0kc94bFKAmimMFGPHMP9Bp+Th/G94fzZaIj14LWqa2NUNRAZeVWQdNEJ0NSGMyWc5
+	MCqH/5xmVQWh+jj8S8ZxG4+8mpTJ/dq0uoznw6L30swBQuUkvnOIC1zN0eMorEqc+oBXvB9n8a8
+	cKwHmmIzdMnEZKX+qhxZ33kwlVlJb7NKlaNjqw==
+X-Received: by 2002:a05:622a:488a:b0:4dd:e207:fe4 with SMTP id d75a77b69052e-4e41eb17812mr47774431cf.59.1759329337748;
+        Wed, 01 Oct 2025 07:35:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEhLIp5lzdVDeFvG81gfpmp2z3qIn9O0rp5mce0smNOD1AJWGIvivjhG4Il9kTcoZYm63Jv2w==
+X-Received: by 2002:a05:622a:488a:b0:4dd:e207:fe4 with SMTP id d75a77b69052e-4e41eb17812mr47773831cf.59.1759329337136;
+        Wed, 01 Oct 2025 07:35:37 -0700 (PDT)
+Received: from x1.local ([142.188.210.50])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4db09f19dbesm121035751cf.4.2025.10.01.07.35.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Oct 2025 07:35:22 -0700 (PDT)
-From: "Markus Schneider-Pargmann (TI.com)" <msp@baylibre.com>
-Date: Wed, 01 Oct 2025 16:34:18 +0200
-Subject: [PATCH v3 6/6] arm64: dts: ti: k3-am62p5-sk: Set wakeup-source
- system-states
+        Wed, 01 Oct 2025 07:35:36 -0700 (PDT)
+Date: Wed, 1 Oct 2025 10:35:35 -0400
+From: Peter Xu <peterx@redhat.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	Axel Rasmussen <axelrasmussen@google.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	James Houghton <jthoughton@google.com>,
+	Nikita Kalyazin <kalyazin@amazon.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Ujwal Kundur <ujwal.kundur@gmail.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andrea Arcangeli <aarcange@redhat.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Michal Hocko <mhocko@suse.com>, Muchun Song <muchun.song@linux.dev>,
+	Oscar Salvador <osalvador@suse.de>, Hugh Dickins <hughd@google.com>,
+	Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v3 1/4] mm: Introduce vm_uffd_ops API
+Message-ID: <aN08NxRLz7Wx0Qh4@x1.local>
+References: <20250926211650.525109-1-peterx@redhat.com>
+ <20250926211650.525109-2-peterx@redhat.com>
+ <f1da3505-f17f-4829-80c1-696b1d99057d@redhat.com>
+ <aNwmE11LirPtEuGW@x1.local>
+ <f409cbe7-7865-45ab-af9a-6d5108bc5ad4@redhat.com>
+ <aNw_GrZsql_M04T0@x1.local>
+ <43d78ba7-8829-4a19-bdf3-d192a62cdac4@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251001-topic-am62-dt-partialio-v6-15-v3-6-7095fe263ece@baylibre.com>
-References: <20251001-topic-am62-dt-partialio-v6-15-v3-0-7095fe263ece@baylibre.com>
-In-Reply-To: <20251001-topic-am62-dt-partialio-v6-15-v3-0-7095fe263ece@baylibre.com>
-To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, 
- Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Vishal Mahaveer <vishalm@ti.com>, 
- Kevin Hilman <khilman@baylibre.com>, Dhruva Gole <d-gole@ti.com>, 
- Sebin Francis <sebin.francis@ti.com>, Kendall Willis <k-willis@ti.com>, 
- Akashdeep Kaur <a-kaur@ti.com>, 
- "Markus Schneider-Pargmann (TI.com)" <msp@baylibre.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3461; i=msp@baylibre.com;
- h=from:subject:message-id; bh=fmSTQ+NAhyqd5hnJaZ0RF1b/fo5Oy35WVR6j4Ev0AlA=;
- b=owGbwMvMwCXWejAsc4KoVzDjabUkhoy7NtIOJyXa982e0NF0+aJG1Yfla+P23fDaE/LkRt2yL
- cKteh+dOkpZGMS4GGTFFFk6E0PT/svvPJa8aNlmmDmsTCBDGLg4BeAiDxkZbkTyMO75rFOZcfnN
- Qk+ezG+JlVqCSpem10/tUfomHSkSzsiwrX1JX/ZhruQD7ZnJBVKno+ytZedOTdP+9JjD+9inXZb
- MAA==
-X-Developer-Key: i=msp@baylibre.com; a=openpgp;
- fpr=BADD88DB889FDC3E8A3D5FE612FA6A01E0A45B41
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <43d78ba7-8829-4a19-bdf3-d192a62cdac4@redhat.com>
 
-The CANUART pins of mcu_mcan0, mcu_mcan1, mcu_uart0 and wkup_uart0 are
-powered during Partial-IO and I/O Only + DDR and are capable of waking
-up the system in these states. Specify the states in which these units
-can do a wakeup on this board.
+On Wed, Oct 01, 2025 at 03:58:14PM +0200, David Hildenbrand wrote:
+> > > > > I briefly wondered whether we could use actual UFFD_FEATURE_* here, but they
+> > > > > are rather unsuited for this case here (e.g., different feature flags for
+> > > > > hugetlb support/shmem support etc).
+> > > > > 
+> > > > > But reading "uffd_ioctls" below, can't we derive the suitable vma flags from
+> > > > > the supported ioctls?
+> > > > > 
+> > > > > _UFFDIO_COPY | _UFDIO_ZEROPAGE -> VM_UFFD_MISSING
+> > > > > _UFFDIO_WRITEPROTECT -> VM_UFFD_WP
+> > > > > _UFFDIO_CONTINUE -> VM_UFFD_MINOR
+> > > > 
+> > > > Yes we can deduce that, but it'll be unclear then when one stares at a
+> > > > bunch of ioctls and cannot easily digest the modes the memory type
+> > > > supports.  Here, the modes should be the most straightforward way to
+> > > > describe the capability of a memory type.
+> > > 
+> > > I rather dislike the current split approach between vm-flags and ioctls.
+> > > 
+> > > I briefly thought about abstracting it for internal purposes further and
+> > > just have some internal backend ("memory type") flags.
+> > > 
+> > > UFFD_BACKEND_FEAT_MISSING -> _UFFDIO_COPY and VM_UFFD_MISSING
+> > > UFFD_BACKEND_FEAT_ZEROPAGE -> _UFDIO_ZEROPAGE
+> > > UFFD_BACKEND_FEAT_WP -> _UFFDIO_WRITEPROTECT and VM_UFFD_WP
+> > > UFFD_BACKEND_FEAT_MINOR -> _UFFDIO_CONTINUE and VM_UFFD_MINOR
+> > > UFFD_BACKEND_FEAT_POISON -> _UFFDIO_POISON
+> > 
+> > This layer of mapping can be helpful to some, but maybe confusing to
+> > others.. who is familiar with existing userfaultfd definitions.
+> > 
+> 
+> Just wondering, is this confusing to you, and if so, which part?
+> 
+> To me it makes perfect sense and cleans up this API and not have to sets of
+> flags that are somehow interlinked.
 
-Note that the UARTs are not capable of wakeup in Partial-IO because of
-of a UART mux on the board not being powered during Partial-IO.
+It adds the extra layer of mapping that will only be used in vm_uffd_ops
+and the helper that will consume it.
 
-Add pincontrol definitions for mcu_mcan0 and mcu_mcan1 for wakeup from
-Partial-IO. Add these as wakeup pinctrl entries for both devices.
+But I confess this might be subjective.
 
-Signed-off-by: Markus Schneider-Pargmann (TI.com) <msp@baylibre.com>
----
- arch/arm64/boot/dts/ti/k3-am62p5-sk.dts | 71 +++++++++++++++++++++++++++++++++
- 1 file changed, 71 insertions(+)
+> 
+> > > > 
+> > > > If hugetlbfs supported ZEROPAGE, then we can deduce the ioctls the other
+> > > > way round, and we can drop the uffd_ioctls.  However we need the ioctls now
+> > > > for hugetlbfs to make everything generic.
+> > > 
+> > > POISON is not a VM_ flag, so that wouldn't work completely, right?
+> > 
+> > Logically speaking, POISON should be meaningful if MISSING|MINOR is
+> > supported.  However, in reality, POISON should always be supported across
+> > all types..
+> 
+> Do you know what the plans are with guest_memfd?
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts b/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
-index a064a632680ec69dba9dbe591fd49caeb9ac1111..36116210fbe6111ee8bb9a1736ed02bec0f20b67 100644
---- a/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
-+++ b/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
-@@ -716,12 +716,52 @@ AM62PX_MCU_IOPAD(0x028, PIN_OUTPUT, 0)	/* (D7) WKUP_UART0_TXD */
- 		>;
- 		bootph-all;
- 	};
-+
-+	mcu_mcan0_tx_pins_default: mcu-mcan0-tx-default-pins {
-+		pinctrl-single,pins = <
-+			AM62PX_MCU_IOPAD(0x034, PIN_OUTPUT, 0) /* (D6) MCU_MCAN0_TX */
-+		>;
-+	};
-+
-+	mcu_mcan0_rx_pins_default: mcu-mcan0-rx-default-pins {
-+		pinctrl-single,pins = <
-+			AM62PX_MCU_IOPAD(0x038, PIN_INPUT, 0) /* (B3) MCU_MCAN0_RX */
-+		>;
-+	};
-+
-+	mcu_mcan0_rx_pins_wakeup: mcu-mcan0-rx-wakeup-pins {
-+		pinctrl-single,pins = <
-+			AM62PX_MCU_IOPAD(0x038, PIN_INPUT | PIN_WKUP_EN, 0) /* (B3) MCU_MCAN0_RX */
-+		>;
-+	};
-+
-+	mcu_mcan1_tx_pins_default: mcu-mcan1-tx-default-pins {
-+		pinctrl-single,pins = <
-+			AM62PX_MCU_IOPAD(0x03c, PIN_OUTPUT, 0) /* (E5) MCU_MCAN1_TX */
-+		>;
-+	};
-+
-+	mcu_mcan1_rx_pins_default: mcu-mcan1-rx-default-pins {
-+		pinctrl-single,pins = <
-+			AM62PX_MCU_IOPAD(0x040, PIN_INPUT, 0) /* (D4) MCU_MCAN1_RX */
-+		>;
-+	};
-+
-+	mcu_mcan1_rx_pins_wakeup: mcu-mcan1-rx-wakeup-pins {
-+		pinctrl-single,pins = <
-+			AM62PX_MCU_IOPAD(0x040, PIN_INPUT | PIN_WKUP_EN, 0) /* (D4) MCU_MCAN1_RX */
-+		>;
-+	};
- };
- 
- &wkup_uart0 {
- 	/* WKUP UART0 is used by DM firmware */
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&wkup_uart0_pins_default>;
-+	wakeup-source = <&system_io_ddr>,
-+			<&system_deep_sleep>,
-+			<&system_mcu_only>,
-+			<&system_standby>;
- 	status = "reserved";
- 	bootph-all;
- };
-@@ -763,4 +803,35 @@ &epwm1 {
- 	status = "okay";
- };
- 
-+&mcu_mcan0 {
-+	pinctrl-names = "default", "wakeup";
-+	pinctrl-0 = <&mcu_mcan0_tx_pins_default>, <&mcu_mcan0_rx_pins_default>;
-+	pinctrl-1 = <&mcu_mcan0_tx_pins_default>, <&mcu_mcan0_rx_pins_wakeup>;
-+	wakeup-source = <&system_partial_io>,
-+			<&system_io_ddr>,
-+			<&system_deep_sleep>,
-+			<&system_mcu_only>,
-+			<&system_standby>;
-+	status = "okay";
-+};
-+
-+&mcu_mcan1 {
-+	pinctrl-names = "default", "wakeup";
-+	pinctrl-0 = <&mcu_mcan1_tx_pins_default>, <&mcu_mcan1_rx_pins_default>;
-+	pinctrl-1 = <&mcu_mcan1_tx_pins_default>, <&mcu_mcan1_rx_pins_wakeup>;
-+	wakeup-source = <&system_partial_io>,
-+			<&system_io_ddr>,
-+			<&system_deep_sleep>,
-+			<&system_mcu_only>,
-+			<&system_standby>;
-+	status = "okay";
-+};
-+
-+&mcu_uart0 {
-+	wakeup-source = <&system_io_ddr>,
-+			<&system_deep_sleep>,
-+			<&system_mcu_only>,
-+			<&system_standby>;
-+};
-+
- #include "k3-am62p-ti-ipc-firmware.dtsi"
+I am not aware of anyone discussing this yet, but IMHO we need to support
+it at least for the !CoCo use cases.
+
+I do not know how CoCo manages poisoned pages, e.g. if they are kept being
+encrypted or not even if corrupted.
+
+Thanks,
 
 -- 
-2.51.0
+Peter Xu
 
 
