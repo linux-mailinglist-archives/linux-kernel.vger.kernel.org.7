@@ -1,281 +1,233 @@
-Return-Path: <linux-kernel+bounces-839518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 458EABB1C68
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 23:08:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96C7EBB1BF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 23:05:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2AD016A05D
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 21:08:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6C8B19C4319
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 21:05:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3230E3128C8;
-	Wed,  1 Oct 2025 21:04:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F6FE310627;
+	Wed,  1 Oct 2025 21:04:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="K9vtyEeP"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="i0Zb6ZN0"
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2487E313540
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 21:04:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D27730FC28
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 21:03:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759352658; cv=none; b=MmIdkmrKIg49/OWDch//XxP1JPR0zuaSj5UjLr4FlJP6rBfWzV5Ah3wY4UpdshbTkeFqbRt6gFoKKVd31CEaiIt8j4fnPfHjJhErc94GbCQMdNYAvLagGGLmSZYTmdEhNAc2td9KU4vv3nk0WiDtgPR576lL20cFxYDhuuso29Y=
+	t=1759352640; cv=none; b=le1YiAcRge9F8T4pLHVRmmixIoi/6I/VZ8oIhcz9ICVXbh9BO/So7bBfoV2+sWSGJUz8pskQzOhrhM0iFB7p1ea4FQn1wr+sFuq3r7U3uUtKB/YMIFz9WyrpyDHE3joznG8iHlMIBHJNMeQWXvH5ww3Fin2MCcp1IucyuJW5w8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759352658; c=relaxed/simple;
-	bh=NrkKCf7Vf8E5XPoueeWIQqRDMvrxqVXoVSGlKLkPssM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=eIfAEKDJUJo/NP7afjX3HcLetnML8gNvB2e+L1hr8HDn6L6wQXcGOtCuBtAM3s6uX9lWrB+6wHbaCqmgFsoUSZz+Nb+G/WE6I8hSkvVatLQiBNjxIp7iEiFRDF6WRK2A+AAVyWPPwyXibud+tAiXL+9gMFupnIn2e4jHsIQJliY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=K9vtyEeP; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-46e4cc8ed76so727055e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 14:04:15 -0700 (PDT)
+	s=arc-20240116; t=1759352640; c=relaxed/simple;
+	bh=4105Z/5hGdN1tVTRN0xK8sG6WEId1RBapbjPdK8pf2g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aaynfPswdaF5My3rsyCnhpZ5WQ1bSwpQVhu56Fa4Bi6XULpJYwDKzwa4Nj4miZ/igs5j5Ze6a0nIfqyofxSnQaBH1j06+Zma5Dlq0NS9VmjwygMYHYNTZM0wgNN07uaAf1iNXJg7rYnV1Istkv97wLOlrEPnz6LqOKQA4ulMe/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=i0Zb6ZN0; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4df2911ac5aso2073071cf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 14:03:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759352654; x=1759957454; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=x1XNfcXLPxTuycG48FvJ57h34RR7WVga1h96zHJSpsk=;
-        b=K9vtyEeP6b+LhqaPIRy3gPlAzw+DEK8+hFVGzJFjV+uXsPeikni2cxgnbo8m9DcO9X
-         vejlkAAfFSYm1Xj5dZZj7+/ccZ9jQSseH0ouun2gVX3U/Jidiw7cuZqc32JBdI2dySnB
-         ACDFwfGFuxSevLXbvUFgJ6bIXX3w3r3EhKltrB0xtIh3BQPiBOrCYZnIObW2aKSFG+8f
-         +AGRb6GA7te/u0oeQhpDK7zdbzPzT4d4CszJdkV7OZEev9LwvK88HaaJCeWMVg+zL7UY
-         EtQU/xOTpWzUunkEzgn1Gqz/UiQGHOdQ6EmjZufFzVovXu/6JH4vj5kizjTlq1Js4BPo
-         z9pg==
+        d=soleen.com; s=google; t=1759352637; x=1759957437; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/8R4ckxlGGkZLYacM+hUbGwqr1ufUw/TwOnVgoT0mKE=;
+        b=i0Zb6ZN0f4+0hfEOhumLvgMXrurfvrSLqLDyiUYRJsh/eGZTjivfVr+fSg6X5l6k5z
+         Ah5ET9XvAoOwUNAZ8SzSDke9lkma397b9ytpkmfTSgoKjAWiMfw8iU3dAMSHUk3LiDOe
+         975s+ITiZZkHFpvnFyFR2aTIjxPI++YMKSHP1rlLrJ5rE8svRrf4pj4glgYcL8KzJjab
+         /m6SZgQaDQcTWj/cvNDpm23pXZTwGXW5ZB9/EjpM/tdqQCMZdQhok+XMhnkljnmbDfW2
+         FBpGwk5RdA7mEIRm6NQbzxdDDQN8SCw2SqPlupOfIoF1pLIdbuMYBjwb3Ex3qHm1//8D
+         w9Jg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759352654; x=1759957454;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=x1XNfcXLPxTuycG48FvJ57h34RR7WVga1h96zHJSpsk=;
-        b=qBJAIoxJSiF6oi1u/SVPtkw9l2x+iKdti5GRAMqhmrEvjOC0sf9S1xUsKxWt/ExKYR
-         g3OLGjikvv0p+Ro2QAp6W/+v6/nvwXsQc/5aDmyXVAr1jov8AvxFc3L2ZPwAAUHfQ8vj
-         MrEt4eo5cDn1Mn0/YM1pYONZ7RjLb8lHOohCwuazFOX3wEKh5LOP7JsiU0KXmN2vjsZ+
-         8LpY4hLOJ2VxtGUQfdpSP8p9UBkpy86w84gQn/DrojeNdx9pTyMcKFU6ww7cP84au5iZ
-         6DWCeUoONv0/CD5p0yX52QvUgmuEWwgATbAy9HcPRCIN/q/Gep49/7Tet7DIn5KOHXPy
-         KMVg==
-X-Forwarded-Encrypted: i=1; AJvYcCVcsPU9HySHF8crbPHu6cAAaSFl40DmInhCRW+W9npYLBLu3oVuEagYeS6oM2HZscLsCX00LkBIJals/zE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMDFxrjgMDZwAkdSnCPDaTdSDqkE4X6L17IQDRVHLvL3mksswO
-	UQVCom3MxgPpJEaYtaRA+jiNGXfz7NykuIW6wnwHKJNZ2OV0ilLyoSwtFGVEmCaL8js7Wid0rQ=
-	=
-X-Google-Smtp-Source: AGHT+IF4pAXl5Kz4VKrEzIr4Pw9yb2GP5tMgq1HmwMabQ5THhboAs0iCENwI8BZUxUuDCIiW3R3H9LbE
-X-Received: from wmbh26.prod.google.com ([2002:a05:600c:a11a:b0:45d:cfa4:ce0d])
- (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:45d0:b0:46e:1d8d:cfa2
- with SMTP id 5b1f17b1804b1-46e612bab92mr36541765e9.20.1759352654487; Wed, 01
- Oct 2025 14:04:14 -0700 (PDT)
-Date: Wed,  1 Oct 2025 23:02:22 +0200
-In-Reply-To: <20251001210201.838686-22-ardb+git@google.com>
+        d=1e100.net; s=20230601; t=1759352637; x=1759957437;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/8R4ckxlGGkZLYacM+hUbGwqr1ufUw/TwOnVgoT0mKE=;
+        b=YxTaAuE7TfmiNXAeiHQ1KpRt+Fidkki3oPy8CHfb1wT+BJIvK4IehCgOnglfdTrYjo
+         R0fv3JKx+mDKk1uHFgppDjyb9b3xKPq+7q+kVIM+/SN0BysSx8OZbiymprv7rXUAV8Om
+         4qznm2Y1x0XP4uARWWXUcJO0jSY5ExFqBpOa8fOtv9SMoSUzXlQRImk+DCeqOfEysIkB
+         lgQcrbcaar9qFfxBpEn+sUpeYcGqEnLvpFE2yWuICJdgTuiu14I4CvLHCG1GLdNAnYO0
+         VfhniN6UCM2vVkwKdiHqtpbOTOEbvfNK4HW1oQKA2KHsetj2Cw/6++0CE/Kcf8iUir+P
+         wwNA==
+X-Forwarded-Encrypted: i=1; AJvYcCWRredhTjcxmOhcG204PUvNDuOSN86X3NfaZUlgb/H1HzQ81BVandUCMXRrlmEuHYuaJGIRvvhQu99Ce1g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSju5FmKxAGzZmJpl1NesqL4Rw3mVycZ32FN3km3S2DfIjOq+P
+	Xg4RMQrgq7mbejFjC9BbwzT8JLts/oYD6oAULdnn2NrCeV3bt0CJkWo8cTeH8AAYlduS9+p7j3Y
+	w/GF7dmL68rxY6LOeLcw1NRvnMeYnkCJ3oyKXuE3WLg==
+X-Gm-Gg: ASbGnctmk5hVYcjCUxhYRbe9Wr/ji0TA6al/ikXNWB/GcgzQS+kksdZ3bEAoIszMYnp
+	toRb60ef86EgU8KiiliCgNIcoX6wDyF7K1AJmHsKaJCw2WKIX3HCXyeLoSgK4M45m9iQhgxPBnq
+	MyuP+/iBb8Y0Nv2RmgdamLu8lSO/Ed/XJCi+HaIrEzy5w97iMhAT2JfO7AybXPG7w3IBjaGq+kG
+	TH0XgnyJ6lGEVmeJOywc/oT9Ae3
+X-Google-Smtp-Source: AGHT+IHaT8f3IGH0wGTAIKWNGc+wQvt8RfNaa66LDPUvvqcvMX2b9yoXuqRxIA4IpTokJk4759Ot+dBCeq72YxFQH1A=
+X-Received: by 2002:a05:622a:8c:b0:4d9:5ce:374a with SMTP id
+ d75a77b69052e-4e41de71c93mr65042911cf.53.1759352636890; Wed, 01 Oct 2025
+ 14:03:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251001210201.838686-22-ardb+git@google.com>
-X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6908; i=ardb@kernel.org;
- h=from:subject; bh=AKLCnRRN0mrxopEXea8EITSSalYE601b/mp0OMxmCUA=;
- b=owGbwMvMwCVmkMcZplerG8N4Wi2JIePudPllFx24g4Qqp876JueqIbU3bdpm9jenXldn3VCqc
- 7xwoXx6RykLgxgXg6yYIovA7L/vdp6eKFXrPEsWZg4rE8gQBi5OAZjI/3JGhpfBSQwSSv8eLPfY
- NFdq3fNCmQ7XN/e1mDiza847V+1/8Izhn2WKrPTZCa8PqC/9+8/01/oEz/e2W6NvM6rtUG1RPc+ VwAIA
-X-Mailer: git-send-email 2.51.0.618.g983fd99d29-goog
-Message-ID: <20251001210201.838686-42-ardb+git@google.com>
-Subject: [PATCH v2 20/20] arm64/fpsimd: Allocate kernel mode FP/SIMD buffers
- on the stack
-From: Ard Biesheuvel <ardb+git@google.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	herbert@gondor.apana.org.au, linux@armlinux.org.uk, 
-	Ard Biesheuvel <ardb@kernel.org>, Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Kees Cook <keescook@chromium.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Mark Brown <broonie@kernel.org>, 
-	Eric Biggers <ebiggers@kernel.org>
+MIME-Version: 1.0
+References: <20250916-luo-pci-v2-0-c494053c3c08@kernel.org>
+ <20250916-luo-pci-v2-6-c494053c3c08@kernel.org> <20250929175704.GK2695987@ziepe.ca>
+ <CAF8kJuNfCG08FU=BmLtoh6+Z4V5vPHOMew9NMyCWQxJ=2MLfxg@mail.gmail.com>
+ <CA+CK2bBFZn7EGOJakvQs3SX3i-b_YiTLf5_RhW_B4pLjm2WBuw@mail.gmail.com>
+ <2025093030-shrewdly-defiant-1f3e@gregkh> <CA+CK2bDH=7H58kbwDM1zQ37uN_k61H_Fu8np1TjuG_uEVfT1oA@mail.gmail.com>
+ <2025093052-resupply-unmixable-e9bb@gregkh> <CA+CK2bCBFZDsaEywbfCzDJrH3oXyMmSffV-x7bOs8qC7NT7nAg@mail.gmail.com>
+ <2025100147-scrubbed-untold-fc55@gregkh>
+In-Reply-To: <2025100147-scrubbed-untold-fc55@gregkh>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Wed, 1 Oct 2025 17:03:19 -0400
+X-Gm-Features: AS18NWCXBo3N9-wt7szYuAOizDJQam1vtml22whdpVU-nHHawPcXDZeIceT_zwo
+Message-ID: <CA+CK2bA0acjg-CEKufERu_ov4up3E4XTkJ6kbEDCny0iASrFVQ@mail.gmail.com>
+Subject: Re: [PATCH v2 06/10] PCI/LUO: Save and restore driver name
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Chris Li <chrisl@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>, Bjorn Helgaas <bhelgaas@google.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Len Brown <lenb@kernel.org>, 
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, David Matlack <dmatlack@google.com>, 
+	Pasha Tatashin <tatashin@google.com>, Jason Miu <jasonmiu@google.com>, 
+	Vipin Sharma <vipinsh@google.com>, Saeed Mahameed <saeedm@nvidia.com>, 
+	Adithya Jayachandran <ajayachandra@nvidia.com>, Parav Pandit <parav@nvidia.com>, William Tu <witu@nvidia.com>, 
+	Mike Rapoport <rppt@kernel.org>, Leon Romanovsky <leon@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Ard Biesheuvel <ardb@kernel.org>
+Hi Greg,
 
-Commit aefbab8e77eb16b5
+On Wed, Oct 1, 2025 at 1:06=E2=80=AFAM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Tue, Sep 30, 2025 at 11:56:58AM -0400, Pasha Tatashin wrote:
+> > > > A driver that preserves state across a reboot already has an implic=
+it
+> > > > contract with its future self about that data's format. The GUID
+> > > > simply makes that contract explicit and machine-checkable. It does =
+not
+> > > > have to be GUID, but nevertheless there has to be a specific contra=
+ct.
+> > >
+> > > So how are you going to "version" these GUID?  I see you use "schema =
+Vx"
+> >
+> > Driver developer who changes a driver to support live-update.
+>
+> I do not understand this response, sorry.
 
-  ("arm64: fpsimd: Preserve/restore kernel mode NEON at context switch")
+Sorry for the confusion, I misunderstood your question. I thought you
+were asking who would add a new field to a driver. My answer was that
+it would be the developer who is adding support for the Live Update
+feature to that specific driver.
+I now realize you were asking about how the GUID would be versioned.
+Using a GUID was just one of several ideas. My main point is that we
+need some form of versioned compatibility identifier, whether it's a
+string or a number. This would allow the system to verify that the new
+driver can understand the preserved data for this device from the
+previous kernel before it binds to the device.
 
-added a 'kernel_fpsimd_state' field to struct thread_struct, which is
-the arch-specific portion of struct task_struct, and is allocated for
-each task in the system. The size of this field is 528 bytes, resulting
-in non-trivial bloat of task_struct, and the resulting memory overhead
-may impact performance on systems with many processes.
+> > > above, but how is that really going to work in the end?  Lots of data
+> > > structures change underneath the base driver that it knows nothing
+> > > about, not to mention basic things like compiler flags and the like
+> > > (think about how we have changed things for spectre issues over the
+> > > years...)
+> >
+> > We are working on versioning protocol, the GUID I am suggesting is not
+> > to protect "struct" coherency, but just to identify which driver to
+> > bind to which device compatability.
+>
+> So you have a new way of matching drivers to devices?  That's odd.
 
-This allocation is only used if the task is scheduled out or interrupted
-by a softirq while using the FP/SIMD unit in kernel mode, and so it is
-possible to transparently allocate this buffer on the caller's stack
-instead.
+Correct. For a device that persists across a live update, the driver
+matching logic in the new kernel would need to be altered
 
-So tweak the 'ksimd' scoped guard implementation so that a stack buffer
-is allocated and passed to both kernel_neon_begin() and
-kernel_neon_end(), and record it in the task struct. Passing the address
-to both functions, and checking the addresses for consistency ensures
-that callers of the updated bare begin/end API use it in a manner that
-is consistent with the new context switch semantics.
+Unless, the device can stay unbound into initramfs, as Jason suggested
+earlier in the thread. But, still probing would need to be altered to
+keep the device unbound.
 
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
----
- arch/arm64/include/asm/neon.h      |  4 +--
- arch/arm64/include/asm/processor.h |  2 +-
- arch/arm64/include/asm/simd.h      |  7 ++--
- arch/arm64/kernel/fpsimd.c         | 34 +++++++++++++-------
- 4 files changed, 31 insertions(+), 16 deletions(-)
+> > > And when can you delete an old "schema"?  This feels like you are
+> > > forcing future developers to maintain things "for forever"...
+> >
+> > This won't be an issue because of how live update support is planned.
+> > The support model will be phased and limited:
+> >
+> > Initially, and for a while there will be no stability guarantees
+> > between different kernel versions.
+> > Eventually, we will support specific, narrow upgrade paths (e.g.,
+> > minor-to-minor, or stable-A to stable-A+1).
+> > Downgrades and arbitrary version jumps ("any-to-any") will not be
+> > supported upstream. Since we only ever need to handle a well-defined
+> > forward path, the code for old, irrelevant schemas can always be
+> > removed. There is no "forever".
+>
+> This is kernel code, it is always "forever", sorry.
 
-diff --git a/arch/arm64/include/asm/neon.h b/arch/arm64/include/asm/neon.h
-index d4b1d172a79b..acebee4605b5 100644
---- a/arch/arm64/include/asm/neon.h
-+++ b/arch/arm64/include/asm/neon.h
-@@ -13,7 +13,7 @@
- 
- #define cpu_has_neon()		system_supports_fpsimd()
- 
--void kernel_neon_begin(void);
--void kernel_neon_end(void);
-+void kernel_neon_begin(struct user_fpsimd_state *);
-+void kernel_neon_end(struct user_fpsimd_state *);
- 
- #endif /* ! __ASM_NEON_H */
-diff --git a/arch/arm64/include/asm/processor.h b/arch/arm64/include/asm/processor.h
-index 4f8d677b73ee..93bca4d454d7 100644
---- a/arch/arm64/include/asm/processor.h
-+++ b/arch/arm64/include/asm/processor.h
-@@ -172,7 +172,7 @@ struct thread_struct {
- 	unsigned long		fault_code;	/* ESR_EL1 value */
- 	struct debug_info	debug;		/* debugging */
- 
--	struct user_fpsimd_state	kernel_fpsimd_state;
-+	struct user_fpsimd_state	*kernel_fpsimd_state;
- 	unsigned int			kernel_fpsimd_cpu;
- #ifdef CONFIG_ARM64_PTR_AUTH
- 	struct ptrauth_keys_user	keys_user;
-diff --git a/arch/arm64/include/asm/simd.h b/arch/arm64/include/asm/simd.h
-index d9f83c478736..7ddb25df5c98 100644
---- a/arch/arm64/include/asm/simd.h
-+++ b/arch/arm64/include/asm/simd.h
-@@ -43,8 +43,11 @@ static __must_check inline bool may_use_simd(void) {
- 
- #endif /* ! CONFIG_KERNEL_MODE_NEON */
- 
--DEFINE_LOCK_GUARD_0(ksimd, kernel_neon_begin(), kernel_neon_end())
-+DEFINE_LOCK_GUARD_1(ksimd,
-+		    struct user_fpsimd_state,
-+		    kernel_neon_begin(_T->lock),
-+		    kernel_neon_end(_T->lock))
- 
--#define scoped_ksimd()	scoped_guard(ksimd)
-+#define scoped_ksimd()	scoped_guard(ksimd, &(struct user_fpsimd_state){})
- 
- #endif
-diff --git a/arch/arm64/kernel/fpsimd.c b/arch/arm64/kernel/fpsimd.c
-index c37f02d7194e..ea9192a180aa 100644
---- a/arch/arm64/kernel/fpsimd.c
-+++ b/arch/arm64/kernel/fpsimd.c
-@@ -1488,21 +1488,23 @@ static void fpsimd_load_kernel_state(struct task_struct *task)
- 	 * Elide the load if this CPU holds the most recent kernel mode
- 	 * FPSIMD context of the current task.
- 	 */
--	if (last->st == &task->thread.kernel_fpsimd_state &&
-+	if (last->st == task->thread.kernel_fpsimd_state &&
- 	    task->thread.kernel_fpsimd_cpu == smp_processor_id())
- 		return;
- 
--	fpsimd_load_state(&task->thread.kernel_fpsimd_state);
-+	fpsimd_load_state(task->thread.kernel_fpsimd_state);
- }
- 
- static void fpsimd_save_kernel_state(struct task_struct *task)
- {
- 	struct cpu_fp_state cpu_fp_state = {
--		.st		= &task->thread.kernel_fpsimd_state,
-+		.st		= task->thread.kernel_fpsimd_state,
- 		.to_save	= FP_STATE_FPSIMD,
- 	};
- 
--	fpsimd_save_state(&task->thread.kernel_fpsimd_state);
-+	BUG_ON(!cpu_fp_state.st);
-+
-+	fpsimd_save_state(task->thread.kernel_fpsimd_state);
- 	fpsimd_bind_state_to_cpu(&cpu_fp_state);
- 
- 	task->thread.kernel_fpsimd_cpu = smp_processor_id();
-@@ -1773,6 +1775,7 @@ void fpsimd_update_current_state(struct user_fpsimd_state const *state)
- void fpsimd_flush_task_state(struct task_struct *t)
- {
- 	t->thread.fpsimd_cpu = NR_CPUS;
-+	t->thread.kernel_fpsimd_state = NULL;
- 	/*
- 	 * If we don't support fpsimd, bail out after we have
- 	 * reset the fpsimd_cpu for this task and clear the
-@@ -1833,7 +1836,7 @@ void fpsimd_save_and_flush_cpu_state(void)
-  * The caller may freely use the FPSIMD registers until kernel_neon_end() is
-  * called.
-  */
--void kernel_neon_begin(void)
-+void kernel_neon_begin(struct user_fpsimd_state *s)
- {
- 	if (WARN_ON(!system_supports_fpsimd()))
- 		return;
-@@ -1866,8 +1869,16 @@ void kernel_neon_begin(void)
- 		 * mode in task context. So in this case, setting the flag here
- 		 * is always appropriate.
- 		 */
--		if (IS_ENABLED(CONFIG_PREEMPT_RT) || !in_serving_softirq())
-+		if (IS_ENABLED(CONFIG_PREEMPT_RT) || !in_serving_softirq()) {
-+			/*
-+			 * Record the caller provided buffer as the kernel mode
-+			 * FP/SIMD buffer for this task, so that the state can
-+			 * be preserved and restored on a context switch.
-+			 */
-+			if (cmpxchg(&current->thread.kernel_fpsimd_state, NULL, s))
-+				BUG();
- 			set_thread_flag(TIF_KERNEL_FPSTATE);
-+		}
- 	}
- 
- 	/* Invalidate any task state remaining in the fpsimd regs: */
-@@ -1886,7 +1897,7 @@ EXPORT_SYMBOL_GPL(kernel_neon_begin);
-  * The caller must not use the FPSIMD registers after this function is called,
-  * unless kernel_neon_begin() is called again in the meantime.
-  */
--void kernel_neon_end(void)
-+void kernel_neon_end(struct user_fpsimd_state *s)
- {
- 	if (!system_supports_fpsimd())
- 		return;
-@@ -1899,8 +1910,9 @@ void kernel_neon_end(void)
- 	if (!IS_ENABLED(CONFIG_PREEMPT_RT) && in_serving_softirq() &&
- 	    test_thread_flag(TIF_KERNEL_FPSTATE))
- 		fpsimd_load_kernel_state(current);
--	else
--		clear_thread_flag(TIF_KERNEL_FPSTATE);
-+	else if (test_and_clear_thread_flag(TIF_KERNEL_FPSTATE))
-+		if (cmpxchg(&current->thread.kernel_fpsimd_state, s, NULL) != s)
-+			BUG();
- }
- EXPORT_SYMBOL_GPL(kernel_neon_end);
- 
-@@ -1936,7 +1948,7 @@ void __efi_fpsimd_begin(void)
- 	WARN_ON(preemptible());
- 
- 	if (may_use_simd()) {
--		kernel_neon_begin();
-+		kernel_neon_begin(&efi_fpsimd_state);
- 	} else {
- 		/*
- 		 * If !efi_sve_state, SVE can't be in use yet and doesn't need
-@@ -1985,7 +1997,7 @@ void __efi_fpsimd_end(void)
- 		return;
- 
- 	if (!efi_fpsimd_state_used) {
--		kernel_neon_end();
-+		kernel_neon_end(&efi_fpsimd_state);
- 	} else {
- 		if (system_supports_sve() && efi_sve_state_used) {
- 			bool ffr = true;
--- 
-2.51.0.618.g983fd99d29-goog
+I'm sorry, but I don't quite understand what you mean. There is no
+stable internal kernel API; the upstream tree is constantly evolving
+with features being added, improved, and removed.
 
+> If you want "minor to minor" update, how is that going to work given
+> that you do not add changes only to "minor" releases (that being the
+> 6.12.y the "y" number).
+
+You are correct. Initially, our plan is to allow live updates to break
+between any kernel version. However, it is my hope that we will
+eventually stabilize this process and only allow breakages between,
+for example, versions 6.n and 6.n+2, and eventually from one stable
+release to stable+2. This would create a well-defined window for
+safely removing deprecated data formats and the code that handles them
+from the kernel.
+
+> Remember, Linux does not use "semantic versioning" as its release
+> numbering is older than that scheme.  It just does "this version is
+> newer than that version" and that's it.  You can't really take anything
+> else from the number.
+
+Understood. If that's the case, we could use stable releases as the
+basis for defining when a live update can break. It would take longer
+to achieve, but it is a possibility. These are the kinds of questions
+that will be discussed at the LPC Liveupdate MC. If you are attending
+LPC, I encourage you to join the discussion, as your thoughts on how
+we can frame long-term live update support would be very valuable.
+
+> And if this isn't for "upstream" at all, then why have it?  We can't add
+> new features and support it if we can't actually use it and it's only
+> for out-of-tree vendor kernels.
+
+Our goal is to have full support in the upstream kernel. Downstream
+users will then need to adapt live updates to their specific needs.
+For example, if a live update from version A to version C is broken, a
+downstream user would either have to update incrementally from A to B
+and then to C, or they would have to internally fix whatever is
+causing the breakage before performing the live update.
+
+> And how will you document properly a "well defined forward path"?  That
+> should be done first, before you have any code here that we are
+> reviewing.
+
+Currently, and for the near future, live updates will only be
+supported within the same kernel version.
+
+> Please do that, get people to agree on the idea and how it will work
+> before asking us to review code.
+
+This is an industry-wide effort. We have engineers from Amazon,
+Google, Microsoft, Nvidia, and other companies meeting bi-weekly to
+discuss Live Update support, and sending and landing patches upstream.
+We are also organizing an LPC Live Update Micro Conference where the
+versioning strategy will be a topic.
+
+For now, we have agreed that the live update can break between and
+kernel versions or with any commit while the feature is under active
+development. This approach allows us the flexibility to build the core
+functionality while we collaboratively define the long-term versioning
+and stability model.
+
+Thank you,
+Pasha
 
