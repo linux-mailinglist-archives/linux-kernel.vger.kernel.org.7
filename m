@@ -1,383 +1,136 @@
-Return-Path: <linux-kernel+bounces-838759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A37E0BB0159
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 13:06:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C02FBB016B
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 13:09:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9805F189C65F
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 11:06:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D7EE1899203
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 11:09:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 665D82C237C;
-	Wed,  1 Oct 2025 11:06:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F134D2C237E;
+	Wed,  1 Oct 2025 11:09:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fO5S/ltQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UG+ZJM+F"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C6CF19DF4F;
-	Wed,  1 Oct 2025 11:06:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 975EA2C2363
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 11:09:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759316761; cv=none; b=RMb9tDc7h26h/KUyLJJXjJouZOy2kelHE4QGQI1skDdtJKUD9cAiGAYtPUYHRjNkscMONwJjO1qbf0MjjDOq9oWDuA/Bhl4JBAN7J90Nf/LtkvJu2Jzq5BArEuIPICVS+B9KhyQihA/039TKfzyES3LcdEKMXcqV4F6OYnXxfyE=
+	t=1759316953; cv=none; b=VvkLaTkzNIijx5+Yug0aaMVgOMmMmzuhTzI0+l+oA7YaEEexUR3wCUahY3fvnGmpd9eIhiHrZZttWSDpSnu3+vQsv0xFmBqK1icAA/OTkyf7++q38aku2JAnaUUzzcyMxat6aXQe1fDQX2CXBqPSLasdFlW+MBbqjQpcc1bmJ2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759316761; c=relaxed/simple;
-	bh=BBQTY11uPcvv9rvZ3xpgazdEbhNoa7n1ec1bbV18sIk=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nXcs2HKpCa//S5WLhyOd150VcAE0N2b8rmjSZWv/Ut5zXB1r3M7ptPhnI4oB6sh7t5BuaC/bjrbPbCQSFI5aItsQkrcwwsffNvqlsnw/V948xEBh6wYqxm9T9GRIPTz3p6HBinA7ew61gI5p7KRk5K0YnURbV/0+1eTZE2CYjTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fO5S/ltQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D19A4C4CEF4;
-	Wed,  1 Oct 2025 11:06:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759316761;
-	bh=BBQTY11uPcvv9rvZ3xpgazdEbhNoa7n1ec1bbV18sIk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=fO5S/ltQCfJbMtQ6/ZUyMaSOM6TbHn3SBVMfywlHB9NeL1YHyjF5tLPSpc5XQ3rop
-	 SKku27McJ+bfiTFkcX9LDFyjSeFp6xvQ69OOZaVZmudG5qLL3w0NBWuGB3ckCwm8zl
-	 VRZs3g69e2F6E724KnFiZux7FRE93kcbpsBjRqGjuvuOCNwZ6ZulDA6OJ9Ib1/f6KB
-	 Dz9VsaAE6iNvA0FPInNtD0d/d/SPJcVZLr26kUaUkPr/1V4VMJhKcK+sxlvznxME9Z
-	 ZxhGYbH04e5IMm5WCZ9mNN1K23lVLVU/1kIzyXdBUTCnOIYMZ+JKEJtEz7cCoKEqeh
-	 2mouohLM6mL0Q==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1v3uek-0000000AmO3-29VK;
-	Wed, 01 Oct 2025 11:05:58 +0000
-Date: Wed, 01 Oct 2025 12:05:58 +0100
-Message-ID: <86ms6azxt5.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Steven Price <steven.price@arm.com>
-Cc: kvm@vger.kernel.org,
-	kvmarm@lists.linux.dev,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Joey Gouly <joey.gouly@arm.com>,
-	Alexandru Elisei <alexandru.elisei@arm.com>,
-	Christoffer Dall <christoffer.dall@arm.com>,
-	Fuad Tabba <tabba@google.com>,
-	linux-coco@lists.linux.dev,
-	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
-	Gavin Shan <gshan@redhat.com>,
-	Shanker Donthineni <sdonthineni@nvidia.com>,
-	Alper Gun <alpergun@google.com>,
-	"Aneesh Kumar K . V" <aneesh.kumar@kernel.org>,
-	Emi Kisanuki <fj0570is@fujitsu.com>,
-	Vishal Annapurve <vannapurve@google.com>
-Subject: Re: [PATCH v10 05/43] arm64: RME: Check for RME support at KVM init
-In-Reply-To: <20250820145606.180644-6-steven.price@arm.com>
-References: <20250820145606.180644-1-steven.price@arm.com>
-	<20250820145606.180644-6-steven.price@arm.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1759316953; c=relaxed/simple;
+	bh=M0I3kYZ7l8Sp3ipz6zF/OIoci5Fwg8ccQA1jT9mCF94=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OZKTzCUiVKWF5/nQjRQMwaydQn7IeFjkrZ/wriMaN+PWswwOnJhBUa5NqyNRaGVPWVBLqRjraazYAy2L1t7yghYpLoYnug3GtboNzDx1Tv2kplxtZIqFtRFXY2xq54LG2e6z3O7eUUWWbC9mnCiS8TAyMbIpx9ZvinvW1yCtCro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UG+ZJM+F; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-367444a3e2aso82364261fa.2
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 04:09:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1759316950; x=1759921750; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=M0I3kYZ7l8Sp3ipz6zF/OIoci5Fwg8ccQA1jT9mCF94=;
+        b=UG+ZJM+FjpuVvAmGTaFLeqJWy0XF3RQFC4YmF2iA1WLhzz7tmAjBiW0BKOwQw25Kmh
+         pQKhKBo7bMDJXnRSRyFjjSr+pJpKXwg6QJOAS0EpG7BTM5iWAPgRoU+GifeTA7+vcYE0
+         mcB8ZBsRDQZ6QAl0fY5a5uPcIdhVUgkLH00kTuiR1i4LhKb8YuYa9oAceHTOot8VLkZA
+         WAYJIt5bNF0W2inR3EoGtXHGhHNjt+WEVHiAJ/TRAOjdBOW+CSH0we2eQThfqRoEnofZ
+         jIhtNzC5d8ID5QD9umE0m5lV8GVWHMVgNlJsvZQ3N5zp4cWzXv2D8fN+vROmen5GXiBO
+         NNOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759316950; x=1759921750;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=M0I3kYZ7l8Sp3ipz6zF/OIoci5Fwg8ccQA1jT9mCF94=;
+        b=Wj6AKD6GzQeXLJ5FjE4dj/eEQfwperG006l29me56J94zAjCyvo1quZgzCH9KakixR
+         haPJQmhNcPRSFVfyvOdl5zLu0S+96VWkUPrWq+YLwfCXukYm2sTt82+XJQ0CbsBX8zZP
+         dR7Oi84XBifKStHKnBgtcalJtqIC6v6h3fHnVxjQpALrKjeUyj2TY2ppKrY2zTI/BK8/
+         cYbSJKgHdZ+TER1tdT5ZoJKoqPP25Atlotg4AfRG16Ps9WnTQaBD0/NJAdyd72+QTm9R
+         IK/3Ac0aoE8nnbNI6+VQLlhomuJxhhNTF+KVlIfD75uglRYPFPktH1TniLoT4jD1LUIE
+         Xj5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVPknrhJpMHzgaSzcWe2lrG7/4Jxn1vS+zu0kg8GZAqbTmrdE+obYhChPXbyftgq6/v9WOs2dFZsmlIh/I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjT/ZJbCyJRzZIBdvfPTK59iXJNu+S2ckaWaSXtSmyClsflyvO
+	9sIjtiDBX1QIVdoi9GuZ5uM6SZKph4Rhpp+F7wwcKEVLykatMwUrfaa0HeMb/9jkQyubZzQ9fa6
+	Gss8KuWbQsRzmMdHMQAZ5SCbhbKjnoJiZlAMgf23mIw==
+X-Gm-Gg: ASbGncszm/g37RS4EiU/TC6O0GXdwiVfCJQVPrdneatQAng+uQcl7YfzfZIuFlMQqkN
+	qA/mq+qKEK/dfvyIBe+GyFkbct35+bT/T59gyclE5ifyA3tSPAqkMx4BauLgWiCTgn0GXzXoIOY
+	5H+YkJRXKzS4/TUdtXW+udxuVjzytSDuq0z+2KfEogHtAXl/16+faEym2b/Saj8PYKwoKFfNGge
+	pqG8R03WfgVNNSOA3L3lTaGLJIoMbk=
+X-Google-Smtp-Source: AGHT+IFy9CWT3bu76of2jYZb51gRK/Cq6YQPN0H+wluFSLdTiVauO/GCXAncvl72byP2xI5nDha1WBbbYYwXFWOfJAA=
+X-Received: by 2002:a05:651c:1502:b0:372:9e15:8979 with SMTP id
+ 38308e7fff4ca-373a73b9d30mr8076211fa.24.1759316949664; Wed, 01 Oct 2025
+ 04:09:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: steven.price@arm.com, kvm@vger.kernel.org, kvmarm@lists.linux.dev, catalin.marinas@arm.com, will@kernel.org, james.morse@arm.com, oliver.upton@linux.dev, suzuki.poulose@arm.com, yuzenghui@huawei.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, joey.gouly@arm.com, alexandru.elisei@arm.com, christoffer.dall@arm.com, tabba@google.com, linux-coco@lists.linux.dev, gankulkarni@os.amperecomputing.com, gshan@redhat.com, sdonthineni@nvidia.com, alpergun@google.com, aneesh.kumar@kernel.org, fj0570is@fujitsu.com, vannapurve@google.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+References: <20250922152640.154092-1-herve.codina@bootlin.com> <20250922152640.154092-8-herve.codina@bootlin.com>
+In-Reply-To: <20250922152640.154092-8-herve.codina@bootlin.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 1 Oct 2025 13:08:57 +0200
+X-Gm-Features: AS18NWDfJ_jX8XpCwqHlGuZJbQzWdgArWZS71xjJ6JCb9D_RiGMuZ4KagfHEr2I
+Message-ID: <CACRpkdZPURiag1cUQZ319_QA83u+qOCSRALxpe10_+cTcevy+Q@mail.gmail.com>
+Subject: Re: [PATCH v4 7/8] soc: renesas: Add support for Renesas RZ/N1 GPIO
+ Interrupt Multiplexer
+To: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Hoan Tran <hoan@os.amperecomputing.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Saravana Kannan <saravanak@google.com>, Serge Semin <fancer.lancer@gmail.com>, 
+	Phil Edworthy <phil.edworthy@renesas.com>, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, Pascal Eberhard <pascal.eberhard@se.com>, 
+	Miquel Raynal <miquel.raynal@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 20 Aug 2025 15:55:25 +0100,
-Steven Price <steven.price@arm.com> wrote:
-> 
-> Query the RMI version number and check if it is a compatible version. A
-> static key is also provided to signal that a supported RMM is available.
-> 
-> Functions are provided to query if a VM or VCPU is a realm (or rec)
-> which currently will always return false.
-> 
-> Later patches make use of struct realm and the states as the ioctls
-> interfaces are added to support realm and REC creation and destruction.
-> 
-> Reviewed-by: Gavin Shan <gshan@redhat.com>
-> Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Signed-off-by: Steven Price <steven.price@arm.com>
-> ---
-> Changes since v8:
->  * No need to guard kvm_init_rme() behind 'in_hyp_mode'.
-> Changes since v6:
->  * Improved message for an unsupported RMI ABI version.
-> Changes since v5:
->  * Reword "unsupported" message from "host supports" to "we want" to
->    clarify that 'we' are the 'host'.
-> Changes since v2:
->  * Drop return value from kvm_init_rme(), it was always 0.
->  * Rely on the RMM return value to identify whether the RSI ABI is
->    compatible.
-> ---
->  arch/arm64/include/asm/kvm_emulate.h | 18 +++++++++
->  arch/arm64/include/asm/kvm_host.h    |  4 ++
->  arch/arm64/include/asm/kvm_rme.h     | 56 ++++++++++++++++++++++++++++
->  arch/arm64/include/asm/virt.h        |  1 +
->  arch/arm64/kvm/Makefile              |  2 +-
->  arch/arm64/kvm/arm.c                 |  5 +++
->  arch/arm64/kvm/rme.c                 | 56 ++++++++++++++++++++++++++++
->  7 files changed, 141 insertions(+), 1 deletion(-)
->  create mode 100644 arch/arm64/include/asm/kvm_rme.h
->  create mode 100644 arch/arm64/kvm/rme.c
-> 
-> diff --git a/arch/arm64/include/asm/kvm_emulate.h b/arch/arm64/include/asm/kvm_emulate.h
-> index fa8a08a1ccd5..ab4093e41c4b 100644
-> --- a/arch/arm64/include/asm/kvm_emulate.h
-> +++ b/arch/arm64/include/asm/kvm_emulate.h
-> @@ -674,4 +674,22 @@ static inline void vcpu_set_hcrx(struct kvm_vcpu *vcpu)
->  			vcpu->arch.hcrx_el2 |= HCRX_EL2_SCTLR2En;
->  	}
->  }
-> +
-> +static inline bool kvm_is_realm(struct kvm *kvm)
-> +{
-> +	if (static_branch_unlikely(&kvm_rme_is_available) && kvm)
+Hi Herve,
 
-Under what circumstances would you call this with a NULL pointer?
+thanks for your patch!
 
-> +		return kvm->arch.is_realm;
-> +	return false;
-> +}
-> +
-> +static inline enum realm_state kvm_realm_state(struct kvm *kvm)
-> +{
-> +	return READ_ONCE(kvm->arch.realm.state);
-> +}
-> +
-> +static inline bool vcpu_is_rec(struct kvm_vcpu *vcpu)
-> +{
-> +	return false;
-> +}
-> +
->  #endif /* __ARM64_KVM_EMULATE_H__ */
-> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-> index 2f2394cce24e..d1511ce26191 100644
-> --- a/arch/arm64/include/asm/kvm_host.h
-> +++ b/arch/arm64/include/asm/kvm_host.h
-> @@ -27,6 +27,7 @@
->  #include <asm/fpsimd.h>
->  #include <asm/kvm.h>
->  #include <asm/kvm_asm.h>
-> +#include <asm/kvm_rme.h>
->  #include <asm/vncr_mapping.h>
->  
->  #define __KVM_HAVE_ARCH_INTC_INITIALIZED
-> @@ -404,6 +405,9 @@ struct kvm_arch {
->  	 * the associated pKVM instance in the hypervisor.
->  	 */
->  	struct kvm_protected_vm pkvm;
-> +
-> +	bool is_realm;
-> +	struct realm realm;
+On Mon, Sep 22, 2025 at 5:27=E2=80=AFPM Herve Codina (Schneider Electric)
+<herve.codina@bootlin.com> wrote:
 
-Given that pkvm and CCA are pretty much exclusive, I don't think we
-need to store both states separately. Make those a union.
+> On the Renesas RZ/N1 SoC, GPIOs can generate interruptions. Those
+> interruption lines are multiplexed by the GPIO Interrupt Multiplexer in
+> order to map 32 * 3 GPIO interrupt lines to 8 GIC interrupt lines.
+>
+> The GPIO interrupt multiplexer IP does nothing but select 8 GPIO
+> IRQ lines out of the 96 available to wire them to the GIC input lines.
+>
+> Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.co=
+m>
 
->  };
->  
->  struct kvm_vcpu_fault_info {
-> diff --git a/arch/arm64/include/asm/kvm_rme.h b/arch/arm64/include/asm/kvm_rme.h
-> new file mode 100644
-> index 000000000000..9c8a0b23e0e4
-> --- /dev/null
-> +++ b/arch/arm64/include/asm/kvm_rme.h
-> @@ -0,0 +1,56 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Copyright (C) 2023 ARM Ltd.
-> + */
-> +
-> +#ifndef __ASM_KVM_RME_H
-> +#define __ASM_KVM_RME_H
+This looks like some complicated code to reimplement hierarchical
+irq domains.
 
-None of that is about RME. This is about CCA, which is purely a SW
-construct, and not a CPU architecture feature.
+Can't you just select IRQ_DOMAIN_HIERARCHY and let
+the existing infrastructure in GPIOLIB_IRQCHIP handle
+this?
 
-So 's/rme/cca/' everywhere that describe something that is not a
-direct effect of FEAT_RME being implemented on the CPU, but instead
-something that is CCA-specific.
+This kind of remapping and handling is exactly what the
+.child_to_parent_hwirq() callback in struct gpio_irq_chip
+is for. This function can fail if you run out if IRQ lines.
 
-> +
-> +/**
-> + * enum realm_state - State of a Realm
-> + */
-> +enum realm_state {
-> +	/**
-> +	 * @REALM_STATE_NONE:
-> +	 *      Realm has not yet been created. rmi_realm_create() may be
-> +	 *      called to create the realm.
-> +	 */
-> +	REALM_STATE_NONE,
-> +	/**
-> +	 * @REALM_STATE_NEW:
-> +	 *      Realm is under construction, not eligible for execution. Pages
-> +	 *      may be populated with rmi_data_create().
-> +	 */
-> +	REALM_STATE_NEW,
-> +	/**
-> +	 * @REALM_STATE_ACTIVE:
-> +	 *      Realm has been created and is eligible for execution with
-> +	 *      rmi_rec_enter(). Pages may no longer be populated with
-> +	 *      rmi_data_create().
-> +	 */
-> +	REALM_STATE_ACTIVE,
-> +	/**
-> +	 * @REALM_STATE_DYING:
-> +	 *      Realm is in the process of being destroyed or has already been
-> +	 *      destroyed.
-> +	 */
-> +	REALM_STATE_DYING,
-> +	/**
-> +	 * @REALM_STATE_DEAD:
-> +	 *      Realm has been destroyed.
-> +	 */
-> +	REALM_STATE_DEAD
-> +};
-> +
-> +/**
-> + * struct realm - Additional per VM data for a Realm
-> + *
-> + * @state: The lifetime state machine for the realm
-> + */
-> +struct realm {
-> +	enum realm_state state;
-> +};
-> +
-> +void kvm_init_rme(void);
-> +
-> +#endif /* __ASM_KVM_RME_H */
-> diff --git a/arch/arm64/include/asm/virt.h b/arch/arm64/include/asm/virt.h
-> index aa280f356b96..db73c9bfd8c9 100644
-> --- a/arch/arm64/include/asm/virt.h
-> +++ b/arch/arm64/include/asm/virt.h
-> @@ -82,6 +82,7 @@ void __hyp_reset_vectors(void);
->  bool is_kvm_arm_initialised(void);
->  
->  DECLARE_STATIC_KEY_FALSE(kvm_protected_mode_initialized);
-> +DECLARE_STATIC_KEY_FALSE(kvm_rme_is_available);
+Inspect drivers/gpio/Kconfig driver that select
+IRQ_DOMAIN_HIERARCHY for examples of how to
+do this.
 
-Same thing about RME.
+Even if your GPIO driver is not using GPIOLIB_IRQCHIP (in that
+case: why not?) I think you still need to use IRQ_DOMAIN_HIERARCHY
+for this.
 
->  
->  static inline bool is_pkvm_initialized(void)
->  {
-> diff --git a/arch/arm64/kvm/Makefile b/arch/arm64/kvm/Makefile
-> index 3ebc0570345c..70fa017831b3 100644
-> --- a/arch/arm64/kvm/Makefile
-> +++ b/arch/arm64/kvm/Makefile
-> @@ -16,7 +16,7 @@ CFLAGS_handle_exit.o += -Wno-override-init
->  kvm-y += arm.o mmu.o mmio.o psci.o hypercalls.o pvtime.o \
->  	 inject_fault.o va_layout.o handle_exit.o config.o \
->  	 guest.o debug.o reset.o sys_regs.o stacktrace.o \
-> -	 vgic-sys-reg-v3.o fpsimd.o pkvm.o \
-> +	 vgic-sys-reg-v3.o fpsimd.o pkvm.o rme.o \
->  	 arch_timer.o trng.o vmid.o emulate-nested.o nested.o at.o \
->  	 vgic/vgic.o vgic/vgic-init.o \
->  	 vgic/vgic-irqfd.o vgic/vgic-v2.o \
-> diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
-> index 888f7c7abf54..76177c56f1ef 100644
-> --- a/arch/arm64/kvm/arm.c
-> +++ b/arch/arm64/kvm/arm.c
-> @@ -40,6 +40,7 @@
->  #include <asm/kvm_nested.h>
->  #include <asm/kvm_pkvm.h>
->  #include <asm/kvm_ptrauth.h>
-> +#include <asm/kvm_rme.h>
->  #include <asm/sections.h>
->  
->  #include <kvm/arm_hypercalls.h>
-> @@ -59,6 +60,8 @@ enum kvm_wfx_trap_policy {
->  static enum kvm_wfx_trap_policy kvm_wfi_trap_policy __read_mostly = KVM_WFX_NOTRAP_SINGLE_TASK;
->  static enum kvm_wfx_trap_policy kvm_wfe_trap_policy __read_mostly = KVM_WFX_NOTRAP_SINGLE_TASK;
->  
-> +DEFINE_STATIC_KEY_FALSE(kvm_rme_is_available);
-> +
->  DECLARE_KVM_HYP_PER_CPU(unsigned long, kvm_hyp_vector);
->  
->  DEFINE_PER_CPU(unsigned long, kvm_arm_hyp_stack_base);
-> @@ -2836,6 +2839,8 @@ static __init int kvm_arm_init(void)
->  
->  	in_hyp_mode = is_kernel_in_hyp_mode();
->  
-> +	kvm_init_rme();
-> +
->  	if (cpus_have_final_cap(ARM64_WORKAROUND_DEVICE_LOAD_ACQUIRE) ||
->  	    cpus_have_final_cap(ARM64_WORKAROUND_1508412))
->  		kvm_info("Guests without required CPU erratum workarounds can deadlock system!\n" \
-> diff --git a/arch/arm64/kvm/rme.c b/arch/arm64/kvm/rme.c
-> new file mode 100644
-> index 000000000000..67cf2d94cb2d
-> --- /dev/null
-> +++ b/arch/arm64/kvm/rme.c
-> @@ -0,0 +1,56 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2023 ARM Ltd.
-> + */
-> +
-> +#include <linux/kvm_host.h>
-> +
-> +#include <asm/rmi_cmds.h>
-> +#include <asm/virt.h>
-> +
-> +static int rmi_check_version(void)
-> +{
-> +	struct arm_smccc_res res;
-> +	unsigned short version_major, version_minor;
-> +	unsigned long host_version = RMI_ABI_VERSION(RMI_ABI_MAJOR_VERSION,
-> +						     RMI_ABI_MINOR_VERSION);
-> +
-> +	arm_smccc_1_1_invoke(SMC_RMI_VERSION, host_version, &res);
-
-Shouldn't you first check that RME is actually available, by looking
-at ID_AA64PFR0_EL1.RME?
-
-> +
-> +	if (res.a0 == SMCCC_RET_NOT_SUPPORTED)
-> +		return -ENXIO;
-> +
-> +	version_major = RMI_ABI_VERSION_GET_MAJOR(res.a1);
-> +	version_minor = RMI_ABI_VERSION_GET_MINOR(res.a1);
-> +
-> +	if (res.a0 != RMI_SUCCESS) {
-> +		unsigned short high_version_major, high_version_minor;
-> +
-> +		high_version_major = RMI_ABI_VERSION_GET_MAJOR(res.a2);
-> +		high_version_minor = RMI_ABI_VERSION_GET_MINOR(res.a2);
-> +
-> +		kvm_err("Unsupported RMI ABI (v%d.%d - v%d.%d) we want v%d.%d\n",
-> +			version_major, version_minor,
-> +			high_version_major, high_version_minor,
-> +			RMI_ABI_MAJOR_VERSION,
-> +			RMI_ABI_MINOR_VERSION);
-> +		return -ENXIO;
-> +	}
-> +
-> +	kvm_info("RMI ABI version %d.%d\n", version_major, version_minor);
-> +
-> +	return 0;
-> +}
-> +
-> +void kvm_init_rme(void)
-> +{
-> +	if (PAGE_SIZE != SZ_4K)
-> +		/* Only 4k page size on the host is supported */
-> +		return;
-
-Move the comment above the check (same thing below).
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+Yours,
+Linus Walleij
 
