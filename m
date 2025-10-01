@@ -1,151 +1,115 @@
-Return-Path: <linux-kernel+bounces-838262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02E97BAED49
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 02:00:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35164BAED52
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 02:00:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DDCA1943E71
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 00:00:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E892A3ACAE2
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 00:00:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6484F2D373E;
-	Tue, 30 Sep 2025 23:59:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F43127B329;
+	Wed,  1 Oct 2025 00:00:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BO8zcD6+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b="TghmYT0c"
+Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B976D2D24B8
-	for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 23:59:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83A09299AA9
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 00:00:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759276789; cv=none; b=FYAFfVgPgAcSVHbAkaBwIeZH6cd2rwki8rf4g9VWJ0+jdR/pYuyuisUi/k9hv/gooCSngkhuB9PKcu+oOzPpqx3mSxxXn8De5ZLRcuxz7L4g2JevrLt8ozqi+UiJOg5OdVi52au3OuDsvbmntEj3Mm0Yan7A2KdcVGcMMD2iqWk=
+	t=1759276814; cv=none; b=l3luqpRcPyRrIGqWrStMlsx0TSdv8ZyKoCPpPniWmchxGY6GQ3l0vXcmvDI5xNMIMt11aOJ9/+kX2Gd0R20MfOn3+IeVcIHPGgUF+C2tDlpsRqCmOp6/9BW2wrdr57zo0dyeGz7RxijXWmqkVEg9RFvpz56BWaTRyN0wjUZFJ9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759276789; c=relaxed/simple;
-	bh=9+ypJPfJFq86tYWdYX0GSRCWy6EW1SG5gKgpNCtWVKg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=pJzBbCx+HmBr1zPFRXkkrp5K+7Xk2maVknTvPCxXXfDYUl7KviT3fs0sUQmWf5uyTRs54IeId3yNEIRJMObDz6Jcg2W5LA7FfR/GwzCmj5z1g3af7G3SLMXws37OTDP9Tz5oP2yWd+qmVYbyHZ1HS7gZioVTpW3QNnJ+3WRgPqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BO8zcD6+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 250F3C4CEF0;
-	Tue, 30 Sep 2025 23:59:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759276789;
-	bh=9+ypJPfJFq86tYWdYX0GSRCWy6EW1SG5gKgpNCtWVKg=;
-	h=From:Date:Subject:To:Cc:From;
-	b=BO8zcD6+951UBkvCFIr0AzZHpjHIChoIGsdWt0WEErSoukWLN1gmNDUMFzfQ4lwgL
-	 +LJe5IMTNnpQNi43tTHc5/g2oJhiAe5Loc6juwBT+bOOfS/8iQgsEcq2yd2uRdCFup
-	 ES2s5xPvd+CBTtU8On9pjGXHobn48v2LCT2001BJk3Idcbf928hWDDuIMpYBoPHncu
-	 gIIhVf75ZTQRu68o1TqEh1Pc7KsBjLB7TA1TKaumMTfdoyFJXeNCkYXfupGhfBE8Pc
-	 YW4nHVwSb1cMiYtTnx75cH+ulEHKStMiKTYPoI6dJ7+DZ77/b0Tg45KmC98EweBr8w
-	 WRjflLMZsnbXQ==
-Received: by venus (Postfix, from userid 1000)
-	id 23F52180734; Wed, 01 Oct 2025 01:59:45 +0200 (CEST)
-From: Sebastian Reichel <sre@kernel.org>
-Date: Wed, 01 Oct 2025 01:59:42 +0200
-Subject: [PATCH v2] drm/panel: sitronix-st7789v: fix sync flags for
- t28cp45tn89
+	s=arc-20240116; t=1759276814; c=relaxed/simple;
+	bh=UeF2kqlCiIsaahRpM1/ipTFg2h1NF4GwDR0zFLgVyTc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Y32u2wO4tqD5rKKWc27rlZ5yXFf6Mofv/dRYJoLUUif9FbJYbp+2Ldf1zn1ImEabxEdXdsyLcers4CMMRcq+hfN+qss4iTnkYcLE5kM1uRzYM11czF+LSQAdPoD/I/QXnsW0Z+T+tTpb6o0wciNYxBwpgnQYUZCzRA7C8Ui7lWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b=TghmYT0c; arc=none smtp.client-ip=185.67.36.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout01.posteo.de (Postfix) with ESMTPS id D0360240027
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 02:00:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.net; s=2017;
+	t=1759276804; bh=kVsZQDI/xfxsAZ5IkF6mAwe7hS/maPtJ1Z1KLoSdD6g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 From;
+	b=TghmYT0cobh/aAWpE/+WC3uSIfn34a/88xLyR25VAxgW+wWfLGCcUsgKkx1Zil26o
+	 lMnz73FpUb581PBoSvA7RGl0VNur0Wfv8uMYsTzBVgkZlN1MSE8etqDiWT+FZPGfJ6
+	 /MQzTUR9YH3VOg4bWvKEJWbqxkkdJZ8LdyI3+5TSVwuODcTwa/RC4K/02da+XXtx5i
+	 ktXqbbFDiagBAhhkRvj50vEKoJoshebNRJe3dtPs/jsg7k4yIBk1zhpz/44Y4WmX9y
+	 YbW2zJ0RMrLfV8r8sF7WLG/GyvGaJkOiGvX5ZzkH87BooP5RWwvZMu1/usgGxH/CmV
+	 ebfMNKnwljGfg==
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4cbw6C5Mq1z6v0R;
+	Wed,  1 Oct 2025 02:00:03 +0200 (CEST)
+From: Charalampos Mitrodimas <charmitro@posteo.net>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Greg KH <greg@kroah.com>,  Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>,  Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the tty tree
+In-Reply-To: <20250729151404.03ac580e@canb.auug.org.au>
+References: <20250729151404.03ac580e@canb.auug.org.au>
+Date: Wed, 01 Oct 2025 00:00:04 +0000
+Message-ID: <87frc3sd8d.fsf@posteo.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251001-t28cp45tn89-fix-v2-1-67fe8e3046ca@collabora.com>
-X-B4-Tracking: v=1; b=H4sIAO1u3GgC/3WNQQ7CIBBFr9LMWgxMIRlceQ/TBeLUklRogDSap
- ncXu3f5XvLf36BwDlzg0m2QeQ0lpNgATx34ycUni/BoDCjRSItaVCS/aFMjWTGGt5C2V0ZKZiI
- HbbVkbvoo3obGUyg15c9xsKqf/d9alVCCmEaD2FtP+urTPLt7yu7s0wuGfd+/mMUvDLIAAAA=
-X-Change-ID: 20250924-t28cp45tn89-fix-0931500ee88a
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Michael Riesch <michael.riesch@collabora.com>, 
- Sebastian Reichel <sre@kernel.org>
-Cc: Marek Vasut <marek.vasut@mailbox.org>, dri-devel@lists.freedesktop.org, 
- linux-kernel@vger.kernel.org, kernel@collabora.com, 
- Sebastian Reichel <sebastian.reichel@collabora.com>, 
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
- Marek Vasut <marek.vasut+renesas@mailbox.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2344;
- i=sebastian.reichel@collabora.com; h=from:subject:message-id;
- bh=nWmSmVpgqf7NoNa9pIPbQK1R30xznDAzAmwY8655seU=;
- b=owEBbQKS/ZANAwAKAdju1/PIO/qaAcsmYgBo3G7wJyaqavCnMROe12KZrIsvsY//6Qi0Tvyzo
- aZPD64uIg6JAjMEAAEKAB0WIQTvZg0HRj+Lcmp5VBPY7tfzyDv6mgUCaNxu8AAKCRDY7tfzyDv6
- mqrMD/sFVbzsUjw9hKacyX+Xu6l8webQ1M7j840zDT5eghtCoueScWxNwNgCekU+llKSE9KmjkX
- 2wOjdAD1QBqoZN516bxAeXR/kcaAN8ELyFYtd6h8QONSKH1pAImWuN/DLM5hErQaXoNNkbM/OdH
- wcgXBrZKpglQTgNHA8WD1w7QRWHmHtoY7IXxq0TbVdtz0bgRU14fIs2ShEZkPQcilfTt0a3qfzu
- Jg9Kp1HSZtcNHgPzXv19BE+2dZ8AiJ0pdV+11vP3Yya4cg2KJ6XUSUvM2CSf6MFT6v0JHBC1Vqh
- AkCvymYRvE5Zhtt/FGp397U+UHxOeo8a7mzmkIg4iL/fTS5OsCj4TwUoz6RIx3pxB6iqTlfqkRL
- 8OaU0/C7AJMqUu8yiTDqkg+VDY8+6SKQsxBPn2UTmntXYXwD+M+3k7B/hSJ4E+p/eL8ZYgMjmqS
- PqndKQY411HIc1ypK/xSKf6hAkjqa2OeoLTiDZgZghtevcLOLcxqj7R9VYHgmGgkehCJTVtJLGT
- jvIuJMNirfwYT09xRCl8q+5abIh4MxGYMed3EOkjEtUL+aaH618iPISTHsP7lSV3ulxx/d3cXuA
- 7+ufy6OqkBRZ5grwwonaBzD1IHL0UkZJkfGPkc4UHFPEliJLFxqGu2e+YZUVgottI1KtfHHGm4k
- oBW9oGDLHdFTpcQ==
-X-Developer-Key: i=sebastian.reichel@collabora.com; a=openpgp;
- fpr=EF660D07463F8B726A795413D8EED7F3C83BFA9A
+Content-Type: text/plain
 
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
-I planned to set the polarity of horizontal and vertical sync, but
-accidentally described vertical sync twice with different polarity
-instead.
+> Hi all,
+>
+> After merging the tty tree, today's linux-next build (x86_64
+> modules_install) failed like this:
+>
+> depmod: ERROR: Cycle detected: 8250 -> 8250_base -> 8250
+> depmod: ERROR: Found 2 modules in dependency cycles!
 
-Note, that there is no functional change, because the driver only
-makes use of DRM_MODE_FLAG_P[HV]SYNC to divert from the default
-active-low polarity.
+The cycle was introduced by commit
 
-Reported-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Closes: https://lore.kernel.org/all/20250923132616.GH20765@pendragon.ideasonboard.com/
-Fixes: a411558cc143 ("drm/panel: sitronix-st7789v: add Inanbo T28CP45TN89 support")
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
----
-Changes in v2:
-- Link to v1: https://lore.kernel.org/r/20250924-t28cp45tn89-fix-v1-1-8e8f52239c84@collabora.com
-- Add comment requested by Marek
-- Collect Reviewed-by tags
----
- drivers/gpu/drm/panel/panel-sitronix-st7789v.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+  b20d6576cdb3 ("serial: 8250: export RSA functions")
 
-diff --git a/drivers/gpu/drm/panel/panel-sitronix-st7789v.c b/drivers/gpu/drm/panel/panel-sitronix-st7789v.c
-index 04d91929eedda092b966b8cffdef5b267748f190..d5f821d6b23cb19dc01312e4eb3ed3fcfb254d42 100644
---- a/drivers/gpu/drm/panel/panel-sitronix-st7789v.c
-+++ b/drivers/gpu/drm/panel/panel-sitronix-st7789v.c
-@@ -249,6 +249,11 @@ static const struct drm_display_mode default_mode = {
- 	.flags = DRM_MODE_FLAG_PHSYNC | DRM_MODE_FLAG_PVSYNC,
- };
- 
-+/*
-+ * The mode data for this panel has been reverse engineered without access
-+ * to the panel datasheet / manual. Using DRM_MODE_FLAG_PHSYNC like all
-+ * other panels results in garbage data on the display.
-+ */
- static const struct drm_display_mode t28cp45tn89_mode = {
- 	.clock = 6008,
- 	.hdisplay = 240,
-@@ -261,7 +266,7 @@ static const struct drm_display_mode t28cp45tn89_mode = {
- 	.vtotal = 320 + 8 + 4 + 4,
- 	.width_mm = 43,
- 	.height_mm = 57,
--	.flags = DRM_MODE_FLAG_PVSYNC | DRM_MODE_FLAG_NVSYNC,
-+	.flags = DRM_MODE_FLAG_NHSYNC | DRM_MODE_FLAG_PVSYNC,
- };
- 
- static const struct drm_display_mode et028013dma_mode = {
+which exported RSA functions from 8250.ko to 8250_base.ko to fix this
+issue:
 
----
-base-commit: e5f0a698b34ed76002dc5cff3804a61c80233a7a
-change-id: 20250924-t28cp45tn89-fix-0931500ee88a
+  ERROR: modpost: "rsa_autoconfig" [drivers/tty/serial/8250/8250_base.ko] undefined!
+  ERROR: modpost: "rsa_reset" [drivers/tty/serial/8250/8250_base.ko] undefined!
+  ERROR: modpost: "rsa_disable" [drivers/tty/serial/8250/8250_base.ko] undefined!
+  ERROR: modpost: "rsa_enable" [drivers/tty/serial/8250/8250_base.ko] undefined!
 
-Best regards,
--- 
-Sebastian Reichel <sebastian.reichel@collabora.com>
+which was a regression introduced in this patchset[1].
 
+Before this patchset there's no issue at all:
+
+  INSTALL /tmp/test_cycle/lib/modules/6.16.0-rc2/kernel/drivers/tty/serial/8250/8250.ko
+  INSTALL /tmp/test_cycle/lib/modules/6.16.0-rc2/kernel/drivers/tty/serial/8250/8250_base.ko
+  INSTALL /tmp/test_cycle/lib/modules/6.16.0-rc2/kernel/drivers/tty/serial/8250/8250_exar.ko
+  INSTALL /tmp/test_cycle/lib/modules/6.16.0-rc2/kernel/drivers/tty/serial/8250/8250_lpss.ko
+  INSTALL /tmp/test_cycle/lib/modules/6.16.0-rc2/kernel/drivers/tty/serial/8250/8250_mid.ko
+  INSTALL /tmp/test_cycle/lib/modules/6.16.0-rc2/kernel/drivers/tty/serial/8250/8250_pci.ko
+  INSTALL /tmp/test_cycle/lib/modules/6.16.0-rc2/kernel/drivers/tty/serial/8250/8250_pericom.ko
+  INSTALL /tmp/test_cycle/lib/modules/6.16.0-rc2/kernel/drivers/tty/serial/serial_base.ko
+
+So circular dependency landed in b20d6576cdb3 since 8250_base already
+depends on 8250.
+
+I'm guessing the fix would be to merge 8250_base.ko into 8250.ko in
+drivers/tty/serial/8250/Makefile?
+
+Stephen, I mistakenly sent this off-list to you, ignore it.
+
+[1]: https://lore.kernel.org/all/20250611100319.186924-1-jirislaby@kernel.org/
+
+>
+> I can't see what would have caused this (it actually appeared yesterday).
+> I am not even sure it is something in the tty tree.
 
