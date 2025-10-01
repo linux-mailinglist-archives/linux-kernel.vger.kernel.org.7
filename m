@@ -1,76 +1,163 @@
-Return-Path: <linux-kernel+bounces-839363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25186BB17B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 20:24:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8080BBB17C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 20:26:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAA7A2A245D
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 18:24:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02417188D3AF
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 18:26:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD8002D3EEB;
-	Wed,  1 Oct 2025 18:24:33 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15A3C2D46BB;
+	Wed,  1 Oct 2025 18:26:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ggQQZR28"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8DA518A6CF
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 18:24:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E09F49620;
+	Wed,  1 Oct 2025 18:25:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759343073; cv=none; b=Wa/CuBVM0fDgvMf+5otNTnaBUwgtH33FXO/SxBrwlOtgxGoU78kmb9pt0UEMltXpDIRi9VBdLo8fmMdOdDYyYXuqTfxv2HuwYBQRMQazdvKplcXz1FfXCLiVO0bxgo4l1mXCWBS/N6LUdfCTA93Qd5D0BsohviV1G7jQi91NnBc=
+	t=1759343160; cv=none; b=XLh3DizaJWo7xChT3ZwF+NJAssSaujpIOhEsYHsTMoyo/uISyax6xCnaHH0Aoc2gJYVxZP6qUZ8dXEjXqF4yhW9Uw84NfKq3jnq4xhg3iLRVOSGNzaihi/NROwFvMAztmBCMnDLq6gI2K3i3aNefIBobu3aDjiME0wE45DHxDQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759343073; c=relaxed/simple;
-	bh=MZIUTDUlLfJirMX9evaXHDyNYsjcHZ9WEC/P7k9Odow=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=dg3o9LH/eiVwqrzQMLiNkCezliAZ4M39tKet842+qU6Pla1LOlHX45PxCHMg8LH7E4vLg1wH+WEZmNnZ59DfszUN6SNojWIEO3vhBJ59BJ6hL5tYs0Zl1/sPviPBoB4Oj1bAIDjjEEB8Ta3lVaHvqUi/OaVaUguS42F9izEiIeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-8877131dec5so15532439f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 11:24:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759343071; x=1759947871;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MZIUTDUlLfJirMX9evaXHDyNYsjcHZ9WEC/P7k9Odow=;
-        b=KtVRdBMa+z9AA2LNOSZbOFrSxJR+w/43TxcuT+eWjvuhoSuoLvJ5URNF/14RIOxajj
-         /OUl54lHyrQSwGVEQg/Qs6USWCu562zOS6H2ffEQLflZ+kvO08z9WEYCq33cbHWWtBfW
-         0QVJc/6fM+KGru9hS69lMkC/BTr+QTrKBiJ02jNONB7FKQvcLozB3ZwjHStV5Up8nBSt
-         42defcLAf0AhGttbe3gE2b8157Bv2K4Kp1f7koEJFP9crTf8Ng4NFROez45NV1YUaSdW
-         JyKk7ZHQAc6Fezy7IVY1SgMATS18KxnuSjQn2r9AgIyczdtBRQga/SO3skGzxZF7EHJ+
-         /Fqw==
-X-Gm-Message-State: AOJu0YxUhJ7fEHSwfIvmiaxomNtJed8rJzApwZ7NX6DVpA77fvFR/RXS
-	mupUZkvugnT9ouJMcMK2UEAoZEMt5Bfs0p3O9jd/Gs5kgcWz6vNzZ8dhuKZvu2c15WCgdWZBvH1
-	nbDxOuseM/dv1rVRDiJefqZopv2misdElnfXXX/LOASA3VJ5N+6R+Ny11hrU=
-X-Google-Smtp-Source: AGHT+IHyPjXHbfSeZGGx+61PuloHwRJgOQEpNFZhSVMoKDjdC8phAQ71nY//V84stsIEsmJnJNCBdQpHRfC0dKBJHDAzEjAJ5ADM
+	s=arc-20240116; t=1759343160; c=relaxed/simple;
+	bh=5tYNT4AGhA/+brjUhG2yYDjWkEhcuOCmBfZz1pB8S80=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oyZcVx06cRIHXMYZ2QRnj4qr8u0ZTk6wjy0IF0iCuHKdRhscfCxgFRxmOYKCJmBF3f2Les76GVL/iKZumqYTaMI6gyH4owcbW06S9n64fCaGRGc9vyuZLwGWgUEfOqzneq8lOnuEuXRnAt/NKWIRijbhGuDpwDOVMRBi2hLgTos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ggQQZR28; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D2A2C4CEF1;
+	Wed,  1 Oct 2025 18:25:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759343159;
+	bh=5tYNT4AGhA/+brjUhG2yYDjWkEhcuOCmBfZz1pB8S80=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ggQQZR28GyrqV38FAse77cgleFho3+rhhrF1fmbm4xBVbG8ZvrODWbxMN1//DAiM9
+	 lr0hmlEL4hzMrny7caHA5VOPxXg2sP4qyZEycboXHPcLxTYov6qcp7AZjpwucGsTly
+	 zlBBopr9omwfkXqzFwWO55kxXGpO8jJJsg/R+piBqu3/6X/hX+Eq9G+PCMQ1Siv35o
+	 u2OMbtituhHO22VoDospws+EJmTNswQ6ZziJQGYZaMmgXL6fotsjl8T48QklpqNney
+	 2JwK1LkMwQSIz4BlKzdi5eLT1DU9cfDvvoEfTL9oikVfmvhFlP55NmAmjCJP7TMk8z
+	 QUCFZItEvHHdQ==
+Date: Wed, 1 Oct 2025 15:25:56 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Leo Yan <leo.yan@arm.com>
+Cc: Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	James Clark <james.clark@linaro.org>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, llvm@lists.linux.dev,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v2 0/8] perf build: Support building with Clang
+Message-ID: <aN1yNKxXLnMtQczW@x1>
+References: <20250930-perf_build_android_ndk-v2-0-2ea440b7ef01@arm.com>
+ <aN044EY-Ds9-E6iz@x1>
+ <20251001152217.GQ7985@e132581.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:6b81:b0:910:9b90:cd7b with SMTP id
- ca18e2360f4ac-937ad4ac873mr624613539f.12.1759343071008; Wed, 01 Oct 2025
- 11:24:31 -0700 (PDT)
-Date: Wed, 01 Oct 2025 11:24:30 -0700
-In-Reply-To: <68dadf0e.050a0220.1696c6.001d.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68dd71de.050a0220.1696c6.0029.GAE@google.com>
-Subject: Forwarded: WARNING in f2fs_delete_entry (2)
-From: syzbot <syzbot+c07d47c7bc68f47b9083@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251001152217.GQ7985@e132581.arm.com>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+On Wed, Oct 01, 2025 at 04:22:17PM +0100, Leo Yan wrote:
+> On Wed, Oct 01, 2025 at 11:21:20AM -0300, Arnaldo Carvalho de Melo wrote:
+> > On Tue, Sep 30, 2025 at 05:54:48PM +0100, Leo Yan wrote:
+> > > This series adds support for building perf with Clang, following the
+> > > discussion in [1]. Because the Android NDK uses Clang by default,
+> > > enabling Clang builds naturally covers Android as well.
+> > > 
+> > > The series is organized as follows:
+> > > 
+> > >   - Patches 1–2: Fix two bugs found with Clang.
+> > >   - Patches 3–6: Correct CROSS_ARCH and dismiss Clang build warnings.
+> > >   - Patches 7–8: Enable Clang in the Makefile and update the
+> > >     documentation.
+> > > 
+> > > Testing:
+> > > 
+> > >   - Clang 15.0.7 on Ubuntu 22.04.5: native and cross-compiling (aarch64)
+> > >   - Clang 18.1.3 on Ubuntu 24.04.2: native and cross-compiling (aarch64)
+> > >   - Android NDK r27d (latest LTS): cross-compiling (aarch64)
+> > 
+> >   LD      /tmp/build/perf/util/perf-util-in.o
+> >   LD      /tmp/build/perf/perf-util-in.o
+> >   AR      /tmp/build/perf/libperf-util.a
+> >   CC      /tmp/build/perf/pmu-events/pmu-events.o
+> >   LD      /tmp/build/perf/pmu-events/pmu-events-in.o
+> >   AR      /tmp/build/perf/libpmu-events.a
+> >   LINK    /tmp/build/perf/perf
+> > make: Leaving directory '/git/perf-6.17.0-rc6/tools/perf'
+> > + rm -rf /tmp/build/perf
+> > + mkdir /tmp/build/perf
+> > + make 'ARCH=' 'CROSS_COMPILE=' 'EXTRA_CFLAGS=' -C tools/perf 'O=/tmp/build/perf' 'CC=clang'
+> > make: Entering directory '/git/perf-6.17.0-rc6/tools/perf'
+> >   BUILD:   Doing 'make -j28' parallel build
+> > Makefile.config:494: *** No gnu/libc-version.h found, please install glibc-dev[el].  Stop.
+> > make[1]: *** [Makefile.perf:289: sub-make] Error 2
+> > make: *** [Makefile:76: all] Error 2
+> > make: Leaving directory '/git/perf-6.17.0-rc6/tools/perf'
+> > + exit 1
+> > toolsbuilder@five:~$ cat dm.log/alpine\:3.22
+ 
+> A quick look: the build cannot find both libelf (feature-libelf=0) and
+> glibc (feature-glibc=0), thus lead to build failure. It is good to
+> know what the reason for the feature building failures:
+ 
+>   tools/perf/feature/test-libelf.make.output
+>   tools/perf/feature/test-glibc.make.output
+ 
+> I am not surprised for the failure of libelf (this is common case
+> that the package is not installed by default in a distro), but it is a
+> bit confused for the glibc feature failure.
+ 
+> It seems the issue occurs on Alpine 3.22, but the highest version
+> supported in container-build is 3.21 [1]. Could you confirm whether
+> the issue reproduces on other distros or versions?
 
-***
+It was in all alpine versions I have containers to test on:
 
-Subject: WARNING in f2fs_delete_entry (2)
-Author: zlatistiv@gmail.com
+toolsbuilder@five:~$ grep FAIL dm.log.old/summary 
+   3    71.85 almalinux:9-i386              : FAIL clang version 17.0.6 (AlmaLinux OS Foundation 17.0.6-5.el9)
+   5    78.60 alpine:3.16                   : FAIL gcc version 11.2.1 20220219 (Alpine 11.2.1_git20220219) 
+   6    59.77 alpine:3.17                   : FAIL gcc version 12.2.1 20220924 (Alpine 12.2.1_git20220924-r4) 
+   7    56.89 alpine:3.18                   : FAIL gcc version 12.2.1 20220924 (Alpine 12.2.1_git20220924-r10) 
+   8    60.86 alpine:3.19                   : FAIL gcc version 13.2.1 20231014 (Alpine 13.2.1_git20231014) 
+   9    60.18 alpine:3.20                   : FAIL gcc version 13.2.1 20240309 (Alpine 13.2.1_git20240309) 
+  10    64.58 alpine:3.22                   : FAIL gcc version 14.2.0 (Alpine 14.2.0) 
+  11    63.36 alpine:edge                   : FAIL gcc version 14.2.0 (Alpine 14.2.0) 
+toolsbuilder@five:~$
 
-#syz test
+  GEN     /tmp/build/perf/python/perf.cpython-312-x86_64-linux-musl.so
+make: Leaving directory '/git/perf-6.17.0-rc6/tools/perf'
++ rm -rf /tmp/build/perf
++ mkdir /tmp/build/perf
++ make 'ARCH=' 'CROSS_COMPILE=' 'EXTRA_CFLAGS=' -C tools/perf 'O=/tmp/build/perf' 'CC=clang'
+make: Entering directory '/git/perf-6.17.0-rc6/tools/perf'
+  BUILD:   Doing 'make -j28' parallel build
+Makefile.config:494: *** No gnu/libc-version.h found, please install glibc-dev[el].  Stop.
+make[1]: *** [Makefile.perf:289: sub-make] Error 2
+make: *** [Makefile:76: all] Error 2
+make: Leaving directory '/git/perf-6.17.0-rc6/tools/perf'
++ exit 1
+toolsbuilder@five:~
+$
+
+lemme try to reapply those patches and get the
+tools/perf/feature/test-libelf.make.output and
+tools/perf/feature/test-glibc.make.output files.
+
+- Arnaldo
 
