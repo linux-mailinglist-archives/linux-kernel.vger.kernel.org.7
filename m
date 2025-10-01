@@ -1,178 +1,360 @@
-Return-Path: <linux-kernel+bounces-838278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1A2BBAEDA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 02:10:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4897EBAEDAF
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 02:11:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93C9C17C01E
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 00:10:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA4D417BB60
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 00:11:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F5814C83;
-	Wed,  1 Oct 2025 00:10:28 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F48DF59;
+	Wed,  1 Oct 2025 00:11:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="Vcih7bHQ"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 941253C17
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 00:10:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92F9F4C6E
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 00:11:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759277428; cv=none; b=MMFx+ACn9FMLo7OMhG33r+LAaDFLVr3I15XPvkzgaOlCUx7rFpnvp2qKq67wW5GoHH5aWX+e+fTxabFD/XmHpeKHZeZAMvqGfMKb6UiZYGId+PLNAoJkzIkhsM/J2XlKIvZL1Vwxet/dinvWiMMiHq6KHLyvRnNW2mFHhlRCDbA=
+	t=1759277487; cv=none; b=RP2D34pEZQbtwFgRM6g6UX7i0Z9IZgnAjPIqp5amyovAzwf9qZ1ULDG3axirneedLf7+0oea0b9MQr2pAzDhWNxl+StV5uNcI3Wa9/ZF72wKTnh09BM9L7kXebmT8rqJD3DtHnQeHbNeCEpom91u+wfH495NZMCZ7NHl6m6Uu0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759277428; c=relaxed/simple;
-	bh=TGTKyLufNOQ3H3ooF+m6a2mb4Vu5MXgrcwIQlGfTCWY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=tIhPe+uX0ZfkeRf5oMeaYx5PAi3QnAFgf1TSs9XP13I0ndox/Haj04r9CD3KFlWv069VTll9ETIeTkXk+aVL7rlbkV5yX//bmX26en7IOcEoljdU8/ATax7MPJ/yFT54af51avI+iQ57HQ6w16taps6mNxhgIeWCESNljGw4DPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-4297610aacaso49260535ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 17:10:26 -0700 (PDT)
+	s=arc-20240116; t=1759277487; c=relaxed/simple;
+	bh=qqbs3iPe0XOer+lM3og6iPt6OwIdfi4M4GbyCfUy+ls=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XjNckfKn4uj/ataUJZJE8hWxm1IJRhEC7lMOMXRwmDHFszulZ6VfaYKenGwWolAv9H+zMVNI6zcX6o8c0cBedJE7hdPGeMLi+Hypgez5pqp/H8BIrA654M1/nBwyUBrpYFkWjArAY96g3g/MXJkDTe6Cl3OturmWoC9y+y3c7rI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=Vcih7bHQ; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2699ef1b4e3so12656615ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 17:11:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1759277484; x=1759882284; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4DSU3acyqxN1lYkbp2Gqvkb9p2L/gX/8eplXEY/yyd0=;
+        b=Vcih7bHQSEOB9w0EQ9SbZR2xazMJSJq8EVKwEhkjfRSQgzxh5F+fymTXCgCzlGVJ6c
+         FokmRyLqw6G948FR5pd2yrNE+8KXYcUCnXqAX2fdS9sAk2B26/nmmJu5vzWAV20LqKql
+         tuedib0MQUWASP53Yj06BAmcvaXPra5FlD+gNmLKWpoqwu9fJJ9AZGF37PV5uVP47O/g
+         XryKyPnXxl11ovXCN0nkDSPg3MVSLlyski7tCCXXw0snQXr1CjRhOv6IFk1Q3sKzYzOt
+         eYzXurcP1SDdzluhd868/MuuGHavGSqn6J1zHlX9dnQnloEr2FD4ooQhB28GHoe/Lzr7
+         mI5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759277426; x=1759882226;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EH7mdCMD3QzQ+wDIVk8XqrGvENnZL/IOytWntk+pKGo=;
-        b=JXXGWo5SXBVMRf6zopgCAlJJcu6mIUqbKeNoaOvCha4W3pRc69Jy6CjpsisuyoMjjL
-         zh8q1PgM2RT/kdgD6zaQ6ADVzJbCfJEs+0+JC+JiJ+CgXD7AFwdYuULNksV9LU3JwXnv
-         I5rNjrFNR44l+W8wH5r+PrO4aXtcSzhMcECOu/0X4pbzGXKAUF/AQfE6Bg2LrbTbmbMF
-         OGbPvUTrRw8ux75VTdz99/HGchvVkbsfmdXDYvPEFSZkDDiarhvLf//PE1RpZAx2ugP5
-         +nB1cD6Kp76Xr/qf3alRPdQQuqhsbYVJfOHg/83aZTQeDqswI48PSZIFb8rvwyILbFEX
-         7f4w==
-X-Gm-Message-State: AOJu0YzjVXG/SGZGBwc7bMxnUZJF6BhCphxV3G6yPdQccVAYrTsd/bja
-	QASCT/IuIiX7iIVWPh9BcvB9pxUJ90Eiu4QO5TDscBkz6XSlafBfXhvn1Ma5azVDpmoqgeNHXHJ
-	jIRFrMVfU3eaimCdlsmMCVjHp97zzMePfKdggkK7plK0qiY5vSA52yBmCpR8=
-X-Google-Smtp-Source: AGHT+IE4IYmN5tJ/GqE46Z6vhm8KZFi897z5wSjD0U++NSALc4QvYX5b/RvB3/KFvQ4Pws8xl32+gIo+4p4gADo10Mzl7HK3CgPq
+        d=1e100.net; s=20230601; t=1759277484; x=1759882284;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4DSU3acyqxN1lYkbp2Gqvkb9p2L/gX/8eplXEY/yyd0=;
+        b=ruRVla6a8TnHF5jqxhQVCrRPh4GCUsJAgqegyLwpg3+xg4+svIci23HTa6h+h33Lx4
+         FyA3y/+GTK63EQhGY6jyuhjuwgpOUciUQ7W6O57PVYu23Sl5/7oOyAnMzKxX8hoM62gz
+         KVTvWtNXDDcp2upaVJtk2Pi1SFMM3DBgbWy8CoXkCnj/ayT14tUa2JRcPrJK41dkYr+S
+         Jh/6kUxEP+YSY2PRU1xlSlM3BU3LSVSDc0ggg3Q7uRU799AbLdRVqwpRwXrM0z0rMnER
+         A3QBBR8Pi84jH/lGvQDIBF9QMxXgmTbxpfIdDSiNES77SXrHCUUPdcqUjQek8MJVOMPF
+         Jc8w==
+X-Forwarded-Encrypted: i=1; AJvYcCW8E+k8kcKTmuUrhAn0cP+pU3RYMbUMqZiw2FmQ4AXnwMpjnZXst9TDybz4MSAG8GoHQ9aLubQEgDPmw0U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWv2dR/thPsaFO0lGYmD6k6MEMewkQQlVpD0FLfEj2POTgzEBe
+	+Cafj9LkRc/MTaeZs2ZYe6ktZlla8RRZQT0IQh5OpLLBxM59Qe8MAwClekqHQqUsItqF0DDbe7A
+	qT/17CHliSF+g6AUNW2Ky3SdtIHDsKZUNHCuOyyZBMw==
+X-Gm-Gg: ASbGnctCoWJJhgmCr0D2p+JYLjEqNWkxzCGeeGTe3OHGGYesl3t95j+WtMYUejiXTeK
+	S9Qes6w5xBYC6zPLgpWbYVVWDdyFBD1kLS6AFz35jf3WmgdtUiYoq+Wh2HBH3N1yT5wrBO7YYBr
+	jp4+8q/eod4wT2/SR2WwabLmRckYTIynWK8EfALpIZJ7Fa8Tlntj/PqqWSKkQ9QdsKMSfr5thBt
+	tuTtRpwA/f2LZwaW97LkEaw6zoap1k/qUcvLQwOE2U5P1dE8Fmh7QHAzh/bYK3o
+X-Google-Smtp-Source: AGHT+IH3GE/DZ3MSHAOXxAHWgBR+LMCCV37xzgvUOEqpCJDrI3crv9C/h9WRhJLTqZyHasjKOWfldDQut/rNgNRPZ0k=
+X-Received: by 2002:a17:902:d4cb:b0:25c:b66e:9c2a with SMTP id
+ d9443c01a7336-28e7f2fa9b7mr11054465ad.6.1759277483763; Tue, 30 Sep 2025
+ 17:11:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2492:b0:42d:8253:bdb8 with SMTP id
- e9e14a558f8ab-42d8253bf60mr13984295ab.13.1759277425603; Tue, 30 Sep 2025
- 17:10:25 -0700 (PDT)
-Date: Tue, 30 Sep 2025 17:10:25 -0700
-In-Reply-To: <68335d8e.a70a0220.253bc2.008b.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68dc7171.050a0220.25d7ab.076c.GAE@google.com>
-Subject: Forwarded: [PATCH] ext4: add validation checks for corrupted extent headers
-From: syzbot <syzbot+9db318d6167044609878@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <20250926065235.13623-1-409411716@gms.tku.edu.tw> <20250926065617.14361-1-409411716@gms.tku.edu.tw>
+In-Reply-To: <20250926065617.14361-1-409411716@gms.tku.edu.tw>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Tue, 30 Sep 2025 17:11:12 -0700
+X-Gm-Features: AS18NWBvBb_ZPhcEO5KRhrM9SZABPhK814Z1fs3a4G2IOurdkxPcQ3z475xIaJo
+Message-ID: <CADUfDZpu=rK4WwSmhNgxHQd2zeNvn8a7TmKCYuTL5T7dZ0x_4A@mail.gmail.com>
+Subject: Re: [PATCH v3 3/6] lib/base64: rework encode/decode for speed and
+ stricter validation
+To: Guan-Chun Wu <409411716@gms.tku.edu.tw>
+Cc: akpm@linux-foundation.org, axboe@kernel.dk, ceph-devel@vger.kernel.org, 
+	ebiggers@kernel.org, hch@lst.de, home7438072@gmail.com, idryomov@gmail.com, 
+	jaegeuk@kernel.org, kbusch@kernel.org, linux-fscrypt@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org, 
+	sagi@grimberg.me, tytso@mit.edu, visitorckw@gmail.com, xiubli@redhat.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Fri, Sep 26, 2025 at 12:01=E2=80=AFAM Guan-Chun Wu <409411716@gms.tku.ed=
+u.tw> wrote:
+>
+> The old base64 implementation relied on a bit-accumulator loop, which was
+> slow for larger inputs and too permissive in validation. It would accept
+> extra '=3D', missing '=3D', or even '=3D' appearing in the middle of the =
+input,
+> allowing malformed strings to pass. This patch reworks the internals to
+> improve performance and enforce stricter validation.
+>
+> Changes:
+>  - Encoder:
+>    * Process input in 3-byte blocks, mapping 24 bits into four 6-bit
+>      symbols, avoiding bit-by-bit shifting and reducing loop iterations.
+>    * Handle the final 1-2 leftover bytes explicitly and emit '=3D' only w=
+hen
+>      requested.
+>  - Decoder:
+>    * Based on the reverse lookup tables from the previous patch, decode
+>      input in 4-character groups.
+>    * Each group is looked up directly, converted into numeric values, and
+>      combined into 3 output bytes.
+>    * Explicitly handle padded and unpadded forms:
+>       - With padding: input length must be a multiple of 4, and '=3D' is
+>         allowed only in the last two positions. Reject stray or early '=
+=3D'.
+>       - Without padding: validate tail lengths (2 or 3 chars) and require
+>         unused low bits to be zero.
+>    * Removed the bit-accumulator style loop to reduce loop iterations.
+>
+> Performance (x86_64, Intel Core i7-10700 @ 2.90GHz, avg over 1000 runs,
+> KUnit):
+>
+> Encode:
+>   64B   ~90ns   -> ~32ns   (~2.8x)
+>   1KB  ~1332ns  -> ~510ns  (~2.6x)
+>
+> Decode:
+>   64B  ~1530ns  -> ~64ns   (~23.9x)
+>   1KB ~27726ns  -> ~982ns  (~28.3x)
+>
+> Co-developed-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+> Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+> Co-developed-by: Yu-Sheng Huang <home7438072@gmail.com>
+> Signed-off-by: Yu-Sheng Huang <home7438072@gmail.com>
+> Signed-off-by: Guan-Chun Wu <409411716@gms.tku.edu.tw>
+> ---
+>  lib/base64.c | 150 +++++++++++++++++++++++++++++++++++++--------------
+>  1 file changed, 110 insertions(+), 40 deletions(-)
+>
+> diff --git a/lib/base64.c b/lib/base64.c
+> index b20fdf168..fd1db4611 100644
+> --- a/lib/base64.c
+> +++ b/lib/base64.c
+> @@ -93,26 +93,43 @@ static const s8 base64_rev_tables[][256] =3D {
+>  int base64_encode(const u8 *src, int srclen, char *dst, bool padding, en=
+um base64_variant variant)
+>  {
+>         u32 ac =3D 0;
+> -       int bits =3D 0;
+> -       int i;
+>         char *cp =3D dst;
+>         const char *base64_table =3D base64_tables[variant];
+>
+> -       for (i =3D 0; i < srclen; i++) {
+> -               ac =3D (ac << 8) | src[i];
+> -               bits +=3D 8;
+> -               do {
+> -                       bits -=3D 6;
+> -                       *cp++ =3D base64_table[(ac >> bits) & 0x3f];
+> -               } while (bits >=3D 6);
+> -       }
+> -       if (bits) {
+> -               *cp++ =3D base64_table[(ac << (6 - bits)) & 0x3f];
+> -               bits -=3D 6;
+> +       while (srclen >=3D 3) {
+> +               ac =3D ((u32)src[0] << 16) |
+> +                        ((u32)src[1] << 8) |
+> +                        (u32)src[2];
+> +
+> +               *cp++ =3D base64_table[ac >> 18];
+> +               *cp++ =3D base64_table[(ac >> 12) & 0x3f];
+> +               *cp++ =3D base64_table[(ac >> 6) & 0x3f];
+> +               *cp++ =3D base64_table[ac & 0x3f];
+> +
+> +               src +=3D 3;
+> +               srclen -=3D 3;
+>         }
+> -       while (bits < 0) {
+> -               *cp++ =3D '=3D';
+> -               bits +=3D 2;
+> +
+> +       switch (srclen) {
+> +       case 2:
+> +               ac =3D ((u32)src[0] << 16) |
+> +                    ((u32)src[1] << 8);
+> +
+> +               *cp++ =3D base64_table[ac >> 18];
+> +               *cp++ =3D base64_table[(ac >> 12) & 0x3f];
+> +               *cp++ =3D base64_table[(ac >> 6) & 0x3f];
+> +               if (padding)
+> +                       *cp++ =3D '=3D';
+> +               break;
+> +       case 1:
+> +               ac =3D ((u32)src[0] << 16);
+> +               *cp++ =3D base64_table[ac >> 18];
+> +               *cp++ =3D base64_table[(ac >> 12) & 0x3f];
+> +               if (padding) {
+> +                       *cp++ =3D '=3D';
+> +                       *cp++ =3D '=3D';
+> +               }
+> +               break;
+>         }
+>         return cp - dst;
+>  }
+> @@ -128,39 +145,92 @@ EXPORT_SYMBOL_GPL(base64_encode);
+>   *
+>   * Decodes a string using the selected Base64 variant.
+>   *
+> - * This implementation hasn't been optimized for performance.
+> - *
+>   * Return: the length of the resulting decoded binary data in bytes,
+>   *        or -1 if the string isn't a valid Base64 string.
+>   */
+>  int base64_decode(const char *src, int srclen, u8 *dst, bool padding, en=
+um base64_variant variant)
+>  {
+> -       u32 ac =3D 0;
+> -       int bits =3D 0;
+> -       int i;
+>         u8 *bp =3D dst;
+> -       s8 ch;
+> -
+> -       for (i =3D 0; i < srclen; i++) {
+> -               if (src[i] =3D=3D '=3D') {
+> -                       ac =3D (ac << 6);
+> -                       bits +=3D 6;
+> -                       if (bits >=3D 8)
+> -                               bits -=3D 8;
+> -                       continue;
+> -               }
+> -               ch =3D base64_rev_tables[variant][(u8)src[i]];
+> -               if (ch =3D=3D -1)
+> +       s8 input1, input2, input3, input4;
+> +       u32 val;
+> +
+> +       if (srclen =3D=3D 0)
+> +               return 0;
 
-***
+Doesn't look like this special case is necessary; all the if and while
+conditions below are false if srclen =3D=3D 0, so the function will just
+end up returning 0 in that case anyways. It would be nice to avoid
+this branch, especially as it seems like an uncommon case.
 
-Subject: [PATCH] ext4: add validation checks for corrupted extent headers
-Author: kartikey406@gmail.com
+> +
+> +       /* Validate the input length for padding */
+> +       if (unlikely(padding && (srclen & 0x03) !=3D 0))
+> +               return -1;
+> +
+> +       while (srclen >=3D 4) {
+> +               /* Decode the next 4 characters */
+> +               input1 =3D base64_rev_tables[variant][(u8)src[0]];
+> +               input2 =3D base64_rev_tables[variant][(u8)src[1]];
+> +               input3 =3D base64_rev_tables[variant][(u8)src[2]];
+> +               input4 =3D base64_rev_tables[variant][(u8)src[3]];
+> +
+> +               /* Return error if any Base64 character is invalid */
+> +               if (unlikely(input1 < 0 || input2 < 0 || (!padding && (in=
+put3 < 0 || input4 < 0))))
+> +                       return -1;
+> +
+> +               /* Handle padding */
+> +               if (unlikely(padding && ((input3 < 0 && input4 >=3D 0) ||
+> +                                        (input3 < 0 && src[2] !=3D '=3D'=
+) ||
+> +                                        (input4 < 0 && src[3] !=3D '=3D'=
+) ||
+> +                                        (srclen > 4 && (input3 < 0 || in=
+put4 < 0)))))
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+Would be preferable to check and strip the padding (i.e. decrease
+srclen) before this main loop. That way we could avoid several
+branches in this hot loop that are only necessary to handle the
+padding chars.
 
+> +                       return -1;
+> +               val =3D ((u32)input1 << 18) |
+> +                     ((u32)input2 << 12) |
+> +                     ((u32)((input3 < 0) ? 0 : input3) << 6) |
+> +                     (u32)((input4 < 0) ? 0 : input4);
+> +
+> +               *bp++ =3D (u8)(val >> 16);
+> +
+> +               if (input3 >=3D 0)
+> +                       *bp++ =3D (u8)(val >> 8);
+> +               if (input4 >=3D 0)
+> +                       *bp++ =3D (u8)val;
+> +
+> +               src +=3D 4;
+> +               srclen -=3D 4;
+> +       }
+> +
+> +       /* Handle leftover characters when padding is not used */
+> +       if (!padding && srclen > 0) {
+> +               switch (srclen) {
+> +               case 2:
+> +                       input1 =3D base64_rev_tables[variant][(u8)src[0]]=
+;
+> +                       input2 =3D base64_rev_tables[variant][(u8)src[1]]=
+;
+> +                       if (unlikely(input1 < 0 || input2 < 0))
+> +                               return -1;
+> +
+> +                       val =3D ((u32)input1 << 6) | (u32)input2; /* 12 b=
+its */
+> +                       if (unlikely(val & 0x0F))
+> +                               return -1; /* low 4 bits must be zero */
+> +
+> +                       *bp++ =3D (u8)(val >> 4);
+> +                       break;
+> +               case 3:
+> +                       input1 =3D base64_rev_tables[variant][(u8)src[0]]=
+;
+> +                       input2 =3D base64_rev_tables[variant][(u8)src[1]]=
+;
+> +                       input3 =3D base64_rev_tables[variant][(u8)src[2]]=
+;
+> +                       if (unlikely(input1 < 0 || input2 < 0 || input3 <=
+ 0))
+> +                               return -1;
+> +
+> +                       val =3D ((u32)input1 << 12) |
+> +                             ((u32)input2 << 6) |
+> +                             (u32)input3; /* 18 bits */
+> +
+> +                       if (unlikely(val & 0x03))
+> +                               return -1; /* low 2 bits must be zero */
+> +
+> +                       *bp++ =3D (u8)(val >> 10);
+> +                       *bp++ =3D (u8)((val >> 2) & 0xFF);
 
-syzbot reported use-after-free bugs in extent tree operations, particularly
-in ext4_ext_binsearch_idx() and ext4_ext_binsearch() called from
-ext4_find_extent(), as well as crashes in ext4_ext_correct_indexes() and
-ext4_ext_map_blocks().
+"& 0xFF" is redundant with the cast to u8.
 
-The crashes occur when extent headers contain invalid data (wrong magic
-number or freed memory). This can happen during concurrent operations on
-the same inode where extent tree modifications lead to stale pointers.
+Best,
+Caleb
 
-Add validation checks at key points:
-1. In ext4_find_extent(): validate extent headers before calling
-   ext4_ext_binsearch_idx() and ext4_ext_binsearch()
-2. In ext4_ext_correct_indexes(): validate path and depth before
-   dereferencing path[depth]
-3. In ext4_ext_map_blocks(): validate extent header after getting
-   the path from ext4_find_extent()
-
-These defensive checks prevent crashes from invalid extent headers,
-though the root cause of the corruption needs further investigation.
-The checks ensure the code fails gracefully with -EFSCORRUPTED rather
-than crashing on invalid memory access.
-
-Reported-by: syzbot+9db318d6167044609878@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=9db318d6167044609878
-Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
----
- fs/ext4/extents.c | 24 ++++++++++++++++++++----
- 1 file changed, 20 insertions(+), 4 deletions(-)
-
-diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-index ca5499e9412b..fef9db80d65c 100644
---- a/fs/ext4/extents.c
-+++ b/fs/ext4/extents.c
-@@ -930,7 +930,11 @@ ext4_find_extent(struct inode *inode, ext4_lblk_t block,
- 	while (i) {
- 		ext_debug(inode, "depth %d: num %d, max %d\n",
- 			  ppos, le16_to_cpu(eh->eh_entries), le16_to_cpu(eh->eh_max));
--
-+		if (!eh || le16_to_cpu(eh->eh_magic) != EXT4_EXT_MAGIC || le16_to_cpu(eh->eh_entries) > le16_to_cpu(eh->eh_max)) {
-+			EXT4_ERROR_INODE(inode, "invalid extent header before binsearch_idx");
-+			ret = -EFSCORRUPTED;
-+			goto err;
-+		}
- 		ext4_ext_binsearch_idx(inode, path + ppos, block);
- 		path[ppos].p_block = ext4_idx_pblock(path[ppos].p_idx);
- 		path[ppos].p_depth = i;
-@@ -952,12 +956,17 @@ ext4_find_extent(struct inode *inode, ext4_lblk_t block,
- 	path[ppos].p_ext = NULL;
- 	path[ppos].p_idx = NULL;
- 
-+	if (!eh || le16_to_cpu(eh->eh_magic) != EXT4_EXT_MAGIC || le16_to_cpu(eh->eh_entries) > le16_to_cpu(eh->eh_max)) {
-+		EXT4_ERROR_INODE(inode, "invalid extent header before binsearch");
-+		ret = -EFSCORRUPTED;
-+		goto err;
-+	}
- 	/* find extent */
- 	ext4_ext_binsearch(inode, path + ppos, block);
- 	/* if not an empty leaf */
- 	if (path[ppos].p_ext)
- 		path[ppos].p_block = ext4_ext_pblock(path[ppos].p_ext);
--
-+
- 	ext4_ext_show_path(inode, path);
- 
- 	return path;
-@@ -1708,7 +1717,8 @@ static int ext4_ext_correct_indexes(handle_t *handle, struct inode *inode,
- 	struct ext4_extent *ex;
- 	__le32 border;
- 	int k, err = 0;
--
-+	if (!path || depth < 0 || depth > EXT4_MAX_EXTENT_DEPTH)
-+		return -EFSCORRUPTED;
- 	eh = path[depth].p_hdr;
- 	ex = path[depth].p_ext;
- 
-@@ -4200,6 +4210,7 @@ int ext4_ext_map_blocks(handle_t *handle, struct inode *inode,
- 	unsigned int allocated_clusters = 0;
- 	struct ext4_allocation_request ar;
- 	ext4_lblk_t cluster_offset;
-+	struct ext4_extent_header *eh;
- 
- 	ext_debug(inode, "blocks %u/%u requested\n", map->m_lblk, map->m_len);
- 	trace_ext4_ext_map_blocks_enter(inode, map->m_lblk, map->m_len, flags);
-@@ -4212,7 +4223,12 @@ int ext4_ext_map_blocks(handle_t *handle, struct inode *inode,
- 	}
- 
- 	depth = ext_depth(inode);
--
-+	eh = path[depth].p_hdr;
-+	if (!eh || le16_to_cpu(eh->eh_magic) != EXT4_EXT_MAGIC || le16_to_cpu(eh->eh_entries) > le16_to_cpu(eh->eh_max)) {
-+		EXT4_ERROR_INODE(inode, "invalid extent header at depth %d", depth);
-+		err = -EFSCORRUPTED;
-+		goto out;
-+	}
- 	/*
- 	 * consistent leaf must not be empty;
- 	 * this situation is possible, though, _during_ tree modification;
--- 
-2.43.0
-
+> +                       break;
+> +               default:
+>                         return -1;
+> -               ac =3D (ac << 6) | ch;
+> -               bits +=3D 6;
+> -               if (bits >=3D 8) {
+> -                       bits -=3D 8;
+> -                       *bp++ =3D (u8)(ac >> bits);
+>                 }
+>         }
+> -       if (ac & ((1 << bits) - 1))
+> -               return -1;
+> +
+>         return bp - dst;
+>  }
+>  EXPORT_SYMBOL_GPL(base64_decode);
+> --
+> 2.34.1
+>
+>
 
