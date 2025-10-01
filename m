@@ -1,92 +1,95 @@
-Return-Path: <linux-kernel+bounces-839583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49961BB1F62
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 00:17:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27079BB1E98
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 00:05:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD9261922868
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 22:17:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD72F17C779
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 22:05:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F723243969;
-	Wed,  1 Oct 2025 22:17:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5D7D311975;
+	Wed,  1 Oct 2025 22:05:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="DnRHlmJ0"
-Received: from sonic305-28.consmr.mail.ne1.yahoo.com (sonic305-28.consmr.mail.ne1.yahoo.com [66.163.185.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Ha4LZ4Fo"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07E16EEC0
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 22:17:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.185.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81DFD238142
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 22:05:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759357034; cv=none; b=N7BuMiyftKtUV8XeUjk0LyvmjIessPY2fEAnNbTYoY36nwQdySx0Gmo7eeuHyOV6AIZpsI9eJY0ISar6LK9jZvXZ8uvqLIrZ0VYqY6dZ1nmDMNvl98/3a2URuSV39Rf27WD5ptxNAPjY1IX4gwoSeFohs/M4hYsmtSg9cG35cRo=
+	t=1759356342; cv=none; b=IPgYIDHwTyQkWJXQhyR1HahlYPxRLY2U3MhNkhYLp7qllz6I+5zgW94MtE3UXY4K8MskZO0ctE7LoFEqQN6ocxQc1r72rk6vlc/xgsi8KFTS+UIyixqbzVPK8Mxcrm6pZcmkiK38chF3R0vGGt5NhVQ2JHbf+ib90S1KG7nkVrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759357034; c=relaxed/simple;
-	bh=O4vgldMJkfJVR3WKnspyouNxUzyUTx1wJmAoHTW+4Ww=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ghwR3u1u5yw25uPHzXQ7c8pJ9RdpNaudsErcHwT3i+c/glR+UiRo8K9loEYwYViKMSNcEi2MtEjGJ8bPKonooEfY1dHZLowZLhyUew40/Z3+Zt8Y5oUgdrYOIHz7/eoWlQRvON7XQBPY1vxfh8/vK6UhsKYq8xt14lBibzLPS4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=DnRHlmJ0; arc=none smtp.client-ip=66.163.185.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1759357031; bh=GHB9c/lhZUSJNqBAsqXREjpMs70P0O1p9YElSjptZzU=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=DnRHlmJ0pVw/G7PBewMtoYeHWYRW5xqDXtOAnNd41ANGwar+ybpMRN4PetHuzJdGdXgjLICav6QSjdY3kbCSozCfIdImws5hSSDcviKdTxnMVCc1F+QHfGdi3HGt2Z4lAaGP/DIAZsojxlwuwWLPXUbEp9DX6bcRGRrqQ9tSdoyOymF9Op+Od18+2G4X9tfeKtj2KyLtl5EcNVYMu9HY4jljkL9EfktCW505eTTQuhwGiq0Y4qTLDuJ07fnkXZGc2WMoMRw/fH1jT/lyA6oepbjURmsujik3jlW4Ac8Wr9McDbtBWbMzBBY87IBkkvYJ1V1vT3gZ0MBBNDZH8YLaVQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1759357031; bh=hXuod+zluj0xrwNf1xkeuv4S5WFEC6b90vzJKA1NkfI=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=MMiEkan4shSIftzjzbHgt6412ed6qsT6XcFnf2Ok8G1NB14uvmR5rmaNbf4PUVtmXITbq+rdRnRl0l/Q71L0Nmex3FXv0HCJnJyquGWir4mGtMdiviEVrVMBH9dFR4Iy9217jNG6Crv/1LJqO6NV3r3gZQpVJ5DkaH+NEw7x6QAHAQ2yW5TMwuMpqSkftzS8AoPR0SITWEDoTzlFUXSxBcgxBMdqTCjFiEmDYU1YLPObIC+kLvpL5wuhbyFWP2h0IwL01nUYjmBBdDuvuVxh5lqYD6j7MFHPumHAV+qHMJSw5GFk9wILsqcTQAPxStmGDSKMbkp3FkE9wmDJ5dGrEQ==
-X-YMail-OSG: m_NG6hYVM1l9VPNbPf6AaCglffgtfgGJp9RQeuwz1BOXfDZkAOfOK2sgSd8yfLO
- cWgZAS77A0I.Qp67rSksqqqwOU3CTsaGtjVZ9ZTdZ2nQ.ZmkRgNkzOurGMzucpE0v8yb1qmClRHu
- 7KbpJctjF9E0z7qAdZMuuFnIQ0xwZwFhnHxq4ljfe1por1VGS10gBlgYoWTsrJsW26o5uBdeU.dC
- 2yb4wOcHLQPLN.HJyj5KE1Sfyhtk.OYR8Qo8kISACbSmdsRBuN9SY1U8OmkHNzqu3DgTRuezA._5
- 2qwmpd3lr0pCxRQl4QzfNnlCVbr7guwewMgPcpP45ZNdPdjRmvA3paL8u7UxJm_7v6N5dGHrC1P2
- pIxwkVxfS3PvzCLgbD2OKPddNC540V8rU32gDGxbozQA9mKN5u2Kd5uEHZ3_Fi9hMdYpMg1ElU.I
- COdEhtW5YgaemsTjDtjYuHR6C0e34MhA.tZUuLthrYVitCoP6QOREyFOKXRzMahHnLzjsBRiOkme
- MoqD73_SG.eeF5YhZmGc9JussRo62lyFxZTsUP6GH2Paj0Yau1iKMjfKgabBFaSd1P0I6KYgWwvn
- QT.Ooc7RUurj4Exx5H2bnZDVBlriJQYgEBQRuA1qepl96.pvoUPg1bh_6t5i79kbY.w.IBeYrjfE
- y75gkKrJosfDX24tgD846vr1CRG4NfKBzNdDjStsf6oVgnjp4CWv8FzbLJCA.hUGxdaUgsudeTEH
- st2yFfrIHUjM6PneMxMgoyr5LkOi4Rk9IcYIcIYIf4NYvMTg2RoaSo2ZrOFUHoIFyXTpe2dF8bHd
- xkT4XNv_aDTmKqPyoJgSBrxvVhmcGxzH3k1q.Tp8AQVELNdCS93dcKC4h3zR4_30r5raPGKbvg4l
- Abg6_7IXwmBOj.oNiy9YNuRTwFY_yBa9yuUBgv85R.lUDQ0NlJ5mDCqEK.iDzbIZWJfrtKbS0FpL
- 4g5.nIE2pKWr_x9VsZGyTSUK4WPC2fAJf_BZ8hWopq57bOxqCPfINK6CTG9RQ5h6TZh_H3_IMlpf
- bH3LcMo9sXAY_msQ0wCqIjXwqb1spxpx0i4UIPSXRrnTKGyJPI3ITpTm2qIvP7ub_vvd19T_n05l
- jv5xtqlsqsetBskoRxlo3VlBCRXUxpDhtz.2bdbp_zOA.GbRAWMBa_iED1i1tEg0UlDFfYWw3UY5
- mRKudl80KV47TMsJHJ640rM4S8caYWm1wuh6gOML7t5p_sQGM_mzVq6bb3fA9jYMJ7t8So1Rdcsg
- eaRae4gPAsLOloep5yqn8uDsuHFUU79HUa1lthZ.c_gDk_RP7zzcRoenAJWC91Sjh3_yW32JMhYi
- qMCmmGeGALVnYLx.rz9HvyBcnV1MMLxrP6z7rvU1tB85_UgRAduH1BMPwR.p7zgJH7Ul.FC5ISbE
- eUoFoMftNQ9YnX2YM2fDJMSauRPK3U8oKKE8pt__hCOmJkXNA93YHlp2ewkiSB9M6TFddqwoUJmC
- SbSImMW9b40uVEJSq9tqZPEhBgbzsQqjhrCqgJBmv2Lgy4xSCIVP_ZIn51Iy.DB1SGNbqGdNh51t
- p2ozDqGB63ovNGE0mWl77W5o_fiQQK6eEMRuVVZigcmeezrFd47haJuCrn6HTqQkG5XjQQIJpjqg
- Oda4xyKqRJMWXkYrwRkuUa_nny4wSiBkORM4pAD3L7sKrJR4nNtiH7_alDjutc84P1H5DsjM5Jfq
- KPip1L3j09UMEctonekdeqzIW18yzPJ.CaAa7sXqFivKHj4Ot6ZSdLyKPjQGQNdv59yqr6BeGNje
- AFhceYumV9OzMZLKuJbkgMEcgEMkdI0k00j1162WWzpsrHooBLFij.32V2lYrp3pwIqTrTr_YmTD
- Gb2FzTRitWoG4lc02WDe8RO4iGI9uT2S1mHz4DZrJ3RnZMjFxedI_e92lnw4qBraXcW1AxwPjEI2
- jmQAJkNShYHuU9Lnb7DQ0CvXwno0lpsx0LQso6OYp_xKqgS7BQis3NRDLCU1r_qpNSxsOmm6LZ6m
- UoimNexyfW4SOQOXuZnPTBWfDHQTYa4jOJhlt7NnUB2BEQbSVJ61fC2C8pzQYAqqR3K3P98OiRkT
- cZg6kCzIUn8o.eGfWo4U0KeBdtCDla8KTdTjKBBxskG8BfnP0LJT7me17JPPwwBVKahf5WqkjV1b
- 2.eNeJklitDO.QD1vtCQVBJG7TKkxIZV0IEvk18hEBAYS.INX_4lJEukYJp8A6EhH9_eUs3I4Vsy
- 8cCZiL_bVh_m.lTsw52M2kfe8cICzqNXVtZxiZ7He86iZP5E4FHTQnHXnzr0vspKZHtH_yZGxMNi
- nC25xoB5668mPUunSpbIxMGPG
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: deeb574e-584b-4ed3-bea1-ed12d77e7f16
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.ne1.yahoo.com with HTTP; Wed, 1 Oct 2025 22:17:11 +0000
-Received: by hermes--production-gq1-66b66ffd5-4kj8j (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 49e653aa15d96dc3c9cb4665110aa952;
-          Wed, 01 Oct 2025 21:56:56 +0000 (UTC)
-From: Casey Schaufler <casey@schaufler-ca.com>
-To: casey@schaufler-ca.com,
-	paul@paul-moore.com,
-	linux-security-module@vger.kernel.org
-Cc: jmorris@namei.org,
-	serge@hallyn.com,
-	keescook@chromium.org,
-	john.johansen@canonical.com,
-	penguin-kernel@i-love.sakura.ne.jp,
-	stephen.smalley.work@gmail.com,
-	linux-kernel@vger.kernel.org,
-	selinux@vger.kernel.org
-Subject: [PATCH 2/2] LSM: Allow reservation of netlabel
-Date: Wed,  1 Oct 2025 14:56:43 -0700
-Message-ID: <20251001215643.31465-3-casey@schaufler-ca.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251001215643.31465-1-casey@schaufler-ca.com>
-References: <20251001215643.31465-1-casey@schaufler-ca.com>
+	s=arc-20240116; t=1759356342; c=relaxed/simple;
+	bh=9QggdL6fGbd2hr3ymExV7iFJbMfOs4Ept9ZR40FEjLc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oYYPaBuYIGJJcVUlo+g0mif6mRnBC8loQbH4W8k9c7zDPk80nJgQkd9tgAqkbgQ5+x/hUBDWhxb5xOd3OE80Ae/EEMRrcND8NaFECdCRn+RxOb0+uyETg/yJoWxK191evnGLFQowVKxqk0LDNnkrouNbZqNVW6tCbaeso09o71Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Ha4LZ4Fo; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 591Ibvbc032054
+	for <linux-kernel@vger.kernel.org>; Wed, 1 Oct 2025 22:05:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=2E82fWMJs7/CltSb2bc3lU2woFhMHzKTAIE
+	lMVu/z78=; b=Ha4LZ4Fo0k1WjYvzIlc8wzeiX+X4GqWVv0C6thmcID+Nq0QA75r
+	pzWtGB7EkPKQenbLnSZHwxQRXQgwvR0ZgDu6FZjN1VEl7eAixHKkcd4P1j7neH2+
+	BQ4s+7cdmNjRIon8dEmmVeVzo483QDFTCMqdVQQrgtU6E+GEg3t1uDPnYLmV6KYI
+	+gE/bZrSv6A+6s5+Y11K3d5Q3LQXGgK11GtB0FBSKx/s02/LSRxv/fvwdhMqsjaJ
+	ADTSOYEeoljVutvh2PRzdKuDJzFerz0pGLPzD9HbXZGE7Z/rI2DSaNxOzVzzFj7Y
+	A4Zg9tp2HqHjFOhwPjn/qd0miBklQ7FEecg==
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e6x5x45j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 22:05:39 +0000 (GMT)
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-32eb864fe90so552031a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 15:05:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759356338; x=1759961138;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2E82fWMJs7/CltSb2bc3lU2woFhMHzKTAIElMVu/z78=;
+        b=cVmJ32tMesBhvnVLkhoka6rbIk2PkJ5+s4nCh9+F92DfqjtpXXacreA6rvFgJKA0IB
+         7aP9VBU+UbUc9GTQVpHwFBlu1mkz22NdSqTbA21OpUbUXB1xHQgmqsEWHnWXsNFiEokl
+         EjtULj5B/Ni9gaCQZ2LnVEHec11nC+DnjI+JWRCCnGqNtc3f2AQtBMLvLNZLnZel7a/I
+         RqtFnOO//ZE9AYAioagJsngX3D02IYBJra1LeVSGXDGUk2F7gvpzcd+IJbdOjT+DweOP
+         WGrYdsztCswj+CdhEt8XgAd4sbOkMQPJpXIDxeyuV3x6FUZ9rdaagZlpmPBJXAT+VWVw
+         17yw==
+X-Forwarded-Encrypted: i=1; AJvYcCUJh9nYuepJXpDU9ysoXK6eyaIal7pSwkoz58PAilf2+TH0QxvYk/2TzLVkiA/OzRJdIGnYhqf6Jw0mu5I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxamWPTRFAVmvrfC35nvJU/iueT+J1CGI0g+G3Fx9HrsZB+Vu1j
+	qTxtppfa5WsJnx2gBzn0xO636y8mbW2fg6HWTjHOkJk2SzqiVqwNCCdxdCdwp47B2fyaoQrtXb1
+	FnVovOFRNCJbiZFHdzkJepp8z6w2hx9wRIwFgrO/uiIXoZbpzILicp0EIm2zAYTGUr60=
+X-Gm-Gg: ASbGncuqG/bFJZj8Gzp+vKPGI1uSlARB+RwZv1jkkIGS1f9EKLgSUf6NBUky3Cm9hZP
+	l6FZCTFSa1zoH0OTtVPVAVTLbYi6+08d53O46zQAsz8OQ8KWWxSu3FHhD4nQaw5svRa3T9PZA6k
+	+i+Z6D6oyE7gVGzwP/k+KWdugOjzncB5ZWsc7HOocz5H4K78eeBgDo+06n86FfJv+3hMZJRVMSU
+	7N3kPn1ncKMtwLuohTiYIC0hRF+2mUgujh167iaL8avGVkXqYL8gLA55CT50u6MQPivpJ7XNfKB
+	MYJaeL0PxmGW1/shIYeaeh+HL6PKT7lsqcBYE4Q/jtMzfxdacMO0GCCeNeZqD0Ua8XK0BaqEeYI
+	dTXiBpW/Xn00svMEJbcHtbA==
+X-Received: by 2002:a17:90b:4a4f:b0:329:ed5b:ecd5 with SMTP id 98e67ed59e1d1-339a6f077fdmr5548830a91.19.1759356337586;
+        Wed, 01 Oct 2025 15:05:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHpG0a+/1ddOhqZgj2PUQhFUXjO9C38MdvW9oBXkB4sjVIrrjyTq0zZe7rYuFj7BM7r6xga8w==
+X-Received: by 2002:a17:90b:4a4f:b0:329:ed5b:ecd5 with SMTP id 98e67ed59e1d1-339a6f077fdmr5548793a91.19.1759356337055;
+        Wed, 01 Oct 2025 15:05:37 -0700 (PDT)
+Received: from hu-wcheng-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-339b4ea3c3dsm702085a91.5.2025.10.01.15.05.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Oct 2025 15:05:36 -0700 (PDT)
+From: Wesley Cheng <wesley.cheng@oss.qualcomm.com>
+To: krzk+dt@kernel.org, conor+dt@kernel.org, konrad.dybcio@oss.qualcomm.com,
+        dmitry.baryshkov@oss.qualcomm.com, kishon@kernel.org, vkoul@kernel.org,
+        gregkh@linuxfoundation.org, robh@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Wesley Cheng <wesley.cheng@oss.qualcomm.com>
+Subject: [PATCH v4 00/10] Introduce Glymur USB support
+Date: Wed,  1 Oct 2025 15:05:24 -0700
+Message-Id: <20251001220534.3166401-1-wesley.cheng@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,350 +97,92 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: 3MHSV9JtJEsXZSiXKHdIaUMlef1M_X3G
+X-Proofpoint-ORIG-GUID: 3MHSV9JtJEsXZSiXKHdIaUMlef1M_X3G
+X-Authority-Analysis: v=2.4 cv=ZtPg6t7G c=1 sm=1 tr=0 ts=68dda5b3 cx=c_pps
+ a=0uOsjrqzRL749jD1oC5vDA==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=x6icFKpwvdMA:10 a=K6vXddHitPicjvNs8NYA:9 a=mQ_c8vxmzFEMiUWkPHU9:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAxOCBTYWx0ZWRfX5lVmqTxwLxH8
+ x/npGXga7k6mR1SMm01CQPf5sxe1I60kWhRZmXuaZQnkX+12RRdKwNZ9AiAvgza85jg/vjHC7MG
+ 2yVO3pRpTRYJ0B43xqPFiAZzRZnvclhfl+qOlFW5m/1L/Tg5MnKRpCRpRjnQRq+7vzIfe9cBm7a
+ jUI0QsOp86IRGvTDzxgAWzlQXuENFN8U/n/TdBWN3KRxFt/Udw88wXFV5gJxZ3hxRsqV9CI7b9N
+ qD/Tmpc0X0KbKmIFbUcnmvaxMHpl2xsCa1h5e1ECotjjGtLXEXe7PPwPO/2Eck8aoBNtQNm+4i4
+ ee6gp2aJEKoYUU1sHAAf/cxQ39zSLWRkRNGhmplxqugbRKfZrP3DfnQgqD/ihq/BBbWGyM7wZLS
+ SJ/1OJyMOYzNw+IJUaDORsr7u74/Yg==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-01_06,2025-09-29_04,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 spamscore=0 priorityscore=1501 malwarescore=0 bulkscore=0
+ suspectscore=0 clxscore=1015 lowpriorityscore=0 adultscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270018
 
-Allow LSMs to request exclusive access to the netlabel facility.
-Provide mechanism for LSMs to determine if they have access to
-netlabel. Update the current users of netlabel, SELinux and Smack,
-to use and respect the exclusive use of netlabel.
+This series enables the PHY level changes that are required to support
+the type C based controllers and the multiport controller.  The typeC
+ports utilize a usb43dp based QMP PHY for the SSUSB path, while using
+the M31 eUSB2 PHY for the HSUSB path.  For the multiport controller,
+it will utilize two QMP UNI PHYs for the SSUSB path, and two M31 eUSB2
+PHYs for the HSUSB path.
 
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
----
- include/linux/lsm_hooks.h           |  1 +
- security/security.c                 |  6 +++++
- security/selinux/hooks.c            |  7 +++---
- security/selinux/include/netlabel.h |  5 ++++
- security/selinux/netlabel.c         |  4 ++--
- security/smack/smack.h              |  5 ++++
- security/smack/smack_lsm.c          | 36 +++++++++++++++++++++--------
- security/smack/smackfs.c            | 20 +++++++++++++++-
- 8 files changed, 69 insertions(+), 15 deletions(-)
+-----
+Changes in v4:
+- Updated DT bindings change for QMP combo PHY to have IF/THEN blocks
+to handle the newly added clkref, and fixed the commit message as well
+- Added a new header with v8 offsets for the PCS MISC register set,
+and refgen current load for the QMP combo PHY driver
+- RE-added the headers for the QMP combo PHY
 
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 69c1b509577a..e49b5617383f 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -117,6 +117,7 @@ struct lsm_blob_sizes {
- 	int lbs_tun_dev;
- 	int lbs_bdev;
- 	bool lbs_secmark; /* expressed desire for secmark use */
-+	bool lbs_netlabel; /* expressed desire for netlabel use */
- };
- 
- /*
-diff --git a/security/security.c b/security/security.c
-index e59e3d403de6..9eca10844b56 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -289,6 +289,12 @@ static void __init lsm_set_blob_sizes(struct lsm_blob_sizes *needed)
- 		else
- 			blob_sizes.lbs_secmark = true;
- 	}
-+	if (needed->lbs_netlabel) {
-+		if (blob_sizes.lbs_netlabel)
-+			needed->lbs_netlabel = false;
-+		else
-+			blob_sizes.lbs_netlabel = true;
-+	}
- }
- 
- /* Prepare LSM for initialization. */
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 5b6db7d8effb..24edeef41d25 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -182,7 +182,7 @@ static int selinux_secmark_enabled(void)
- static int selinux_peerlbl_enabled(void)
- {
- 	return (selinux_policycap_alwaysnetwork() ||
--		netlbl_enabled() || selinux_xfrm_enabled());
-+		selinux_netlbl_enabled() || selinux_xfrm_enabled());
- }
- 
- static int selinux_netcache_avc_callback(u32 event)
-@@ -5863,7 +5863,7 @@ static unsigned int selinux_ip_forward(void *priv, struct sk_buff *skb,
- 				 SECCLASS_PACKET, PACKET__FORWARD_IN, &ad))
- 			return NF_DROP;
- 
--	if (netlbl_enabled())
-+	if (selinux_netlbl_enabled())
- 		/* we do this in the FORWARD path and not the POST_ROUTING
- 		 * path because we want to make sure we apply the necessary
- 		 * labeling before IPsec is applied so we can leverage AH
-@@ -5880,7 +5880,7 @@ static unsigned int selinux_ip_output(void *priv, struct sk_buff *skb,
- 	struct sock *sk;
- 	u32 sid;
- 
--	if (!netlbl_enabled())
-+	if (!selinux_netlbl_enabled())
- 		return NF_ACCEPT;
- 
- 	/* we do this in the LOCAL_OUT path and not the POST_ROUTING path
-@@ -7185,6 +7185,7 @@ struct lsm_blob_sizes selinux_blob_sizes __ro_after_init = {
- 	.lbs_tun_dev = sizeof(struct tun_security_struct),
- 	.lbs_ib = sizeof(struct ib_security_struct),
- 	.lbs_secmark = true,
-+	.lbs_netlabel = true,
- };
- 
- #ifdef CONFIG_PERF_EVENTS
-diff --git a/security/selinux/include/netlabel.h b/security/selinux/include/netlabel.h
-index 5731c0dcd3e8..5be82aa8e7ca 100644
---- a/security/selinux/include/netlabel.h
-+++ b/security/selinux/include/netlabel.h
-@@ -134,4 +134,9 @@ static inline int selinux_netlbl_socket_connect_locked(struct sock *sk,
- }
- #endif /* CONFIG_NETLABEL */
- 
-+static inline bool selinux_netlbl_enabled(void)
-+{
-+	return selinux_blob_sizes.lbs_netlabel && netlbl_enabled();
-+}
-+
- #endif
-diff --git a/security/selinux/netlabel.c b/security/selinux/netlabel.c
-index d51dfe892312..a6c58b8e7bfd 100644
---- a/security/selinux/netlabel.c
-+++ b/security/selinux/netlabel.c
-@@ -199,7 +199,7 @@ int selinux_netlbl_skbuff_getsid(struct sk_buff *skb,
- 	int rc;
- 	struct netlbl_lsm_secattr secattr;
- 
--	if (!netlbl_enabled()) {
-+	if (!selinux_netlbl_enabled()) {
- 		*type = NETLBL_NLTYPE_NONE;
- 		*sid = SECSID_NULL;
- 		return 0;
-@@ -444,7 +444,7 @@ int selinux_netlbl_sock_rcv_skb(struct sk_security_struct *sksec,
- 	u32 perm;
- 	struct netlbl_lsm_secattr secattr;
- 
--	if (!netlbl_enabled())
-+	if (!selinux_netlbl_enabled())
- 		return 0;
- 
- 	netlbl_secattr_init(&secattr);
-diff --git a/security/smack/smack.h b/security/smack/smack.h
-index 89bf62ad60f1..46e513f27e0a 100644
---- a/security/smack/smack.h
-+++ b/security/smack/smack.h
-@@ -374,6 +374,11 @@ static inline struct smack_known **smack_key(const struct key *key)
- }
- #endif /* CONFIG_KEYS */
- 
-+static inline bool smack_netlabel(void)
-+{
-+	return smack_blob_sizes.lbs_netlabel;
-+}
-+
- /*
-  * Is the directory transmuting?
-  */
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index ee86818633c1..4cbdb8c91a07 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -2575,6 +2575,9 @@ static int smack_netlbl_add(struct sock *sk)
- 	struct smack_known *skp = ssp->smk_out;
- 	int rc;
- 
-+	if (!smack_netlabel())
-+		return 0;
-+
- 	local_bh_disable();
- 	bh_lock_sock_nested(sk);
- 
-@@ -2606,6 +2609,9 @@ static void smack_netlbl_delete(struct sock *sk)
- {
- 	struct socket_smack *ssp = smack_sock(sk);
- 
-+	if (!smack_netlabel())
-+		return;
-+
- 	/*
- 	 * Take the label off the socket if one is set.
- 	 */
-@@ -2656,7 +2662,7 @@ static int smk_ipv4_check(struct sock *sk, struct sockaddr_in *sap)
- 		/*
- 		 * Clear the socket netlabel if it's set.
- 		 */
--		if (!rc)
-+		if (!rc && smack_netlabel())
- 			smack_netlbl_delete(sk);
- 	}
- 	rcu_read_unlock();
-@@ -3982,6 +3988,8 @@ static struct smack_known *smack_from_secattr(struct netlbl_lsm_secattr *sap,
- 	int acat;
- 	int kcat;
- 
-+	if (!smack_netlabel())
-+		return smack_net_ambient;
- 	/*
- 	 * Netlabel found it in the cache.
- 	 */
-@@ -4132,6 +4140,9 @@ static struct smack_known *smack_from_netlbl(const struct sock *sk, u16 family,
- 	struct socket_smack *ssp = NULL;
- 	struct smack_known *skp = NULL;
- 
-+	if (!smack_netlabel())
-+		return NULL;
-+
- 	netlbl_secattr_init(&secattr);
- 
- 	if (sk)
-@@ -4202,7 +4213,7 @@ static int smack_socket_sock_rcv_skb(struct sock *sk, struct sk_buff *skb)
- 		rc = smk_access(skp, ssp->smk_in, MAY_WRITE, &ad);
- 		rc = smk_bu_note("IPv4 delivery", skp, ssp->smk_in,
- 					MAY_WRITE, rc);
--		if (rc != 0)
-+		if (rc != 0 && smack_netlabel())
- 			netlbl_skbuff_err(skb, family, rc, 0);
- 		break;
- #if IS_ENABLED(CONFIG_IPV6)
-@@ -4390,7 +4401,7 @@ static int smack_inet_conn_request(const struct sock *sk, struct sk_buff *skb,
- 	if (skp == NULL) {
- 		skp = smack_from_netlbl(sk, family, skb);
- 		if (skp == NULL)
--			skp = &smack_known_huh;
-+			skp = smack_net_ambient;
- 	}
- 
- #ifdef CONFIG_AUDIT
-@@ -4411,8 +4422,11 @@ static int smack_inet_conn_request(const struct sock *sk, struct sk_buff *skb,
- 	/*
- 	 * Save the peer's label in the request_sock so we can later setup
- 	 * smk_packet in the child socket so that SO_PEERCRED can report it.
-+	 *
-+	 * Only do this if Smack is using netlabel.
- 	 */
--	req->peer_secid = skp->smk_secid;
-+	if (smack_netlabel())
-+		req->peer_secid = skp->smk_secid;
- 
- 	/*
- 	 * We need to decide if we want to label the incoming connection here
-@@ -4425,10 +4439,13 @@ static int smack_inet_conn_request(const struct sock *sk, struct sk_buff *skb,
- 	hskp = smack_ipv4host_label(&addr);
- 	rcu_read_unlock();
- 
--	if (hskp == NULL)
--		rc = netlbl_req_setattr(req, &ssp->smk_out->smk_netlabel);
--	else
--		netlbl_req_delattr(req);
-+	if (smack_netlabel()) {
-+		if (hskp == NULL)
-+			rc = netlbl_req_setattr(req,
-+						&ssp->smk_out->smk_netlabel);
-+		else
-+			netlbl_req_delattr(req);
-+	}
- 
- 	return rc;
- }
-@@ -4446,7 +4463,7 @@ static void smack_inet_csk_clone(struct sock *sk,
- 	struct socket_smack *ssp = smack_sock(sk);
- 	struct smack_known *skp;
- 
--	if (req->peer_secid != 0) {
-+	if (smack_netlabel() && req->peer_secid != 0) {
- 		skp = smack_from_secid(req->peer_secid);
- 		ssp->smk_packet = skp;
- 	} else
-@@ -5031,6 +5048,7 @@ struct lsm_blob_sizes smack_blob_sizes __ro_after_init = {
- 	.lbs_superblock = sizeof(struct superblock_smack),
- 	.lbs_xattr_count = SMACK_INODE_INIT_XATTRS,
- 	.lbs_secmark = true,
-+	.lbs_netlabel = true,
- };
- 
- static const struct lsm_id smack_lsmid = {
-diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
-index b1e5e62f5cbd..b2487f676e0a 100644
---- a/security/smack/smackfs.c
-+++ b/security/smack/smackfs.c
-@@ -79,7 +79,7 @@ static DEFINE_MUTEX(smk_net6addr_lock);
-  * If it isn't somehow marked, use this.
-  * It can be reset via smackfs/ambient
-  */
--struct smack_known *smack_net_ambient;
-+struct smack_known *smack_net_ambient = &smack_known_floor;
- 
- /*
-  * This is the level in a CIPSO header that indicates a
-@@ -671,6 +671,9 @@ static void smk_cipso_doi(void)
- 	struct cipso_v4_doi *doip;
- 	struct netlbl_audit nai;
- 
-+	if (!smack_netlabel())
-+		return;
-+
- 	smk_netlabel_audit_set(&nai);
- 
- 	rc = netlbl_cfg_map_del(NULL, PF_INET, NULL, NULL, &nai);
-@@ -711,6 +714,9 @@ static void smk_unlbl_ambient(char *oldambient)
- 	int rc;
- 	struct netlbl_audit nai;
- 
-+	if (!smack_netlabel())
-+		return;
-+
- 	smk_netlabel_audit_set(&nai);
- 
- 	if (oldambient != NULL) {
-@@ -834,6 +840,8 @@ static ssize_t smk_set_cipso(struct file *file, const char __user *buf,
- 	 */
- 	if (!smack_privileged(CAP_MAC_ADMIN))
- 		return -EPERM;
-+	if (!smack_netlabel())
-+		return -EINVAL;
- 	if (*ppos != 0)
- 		return -EINVAL;
- 	if (format == SMK_FIXED24_FMT &&
-@@ -1156,6 +1164,8 @@ static ssize_t smk_write_net4addr(struct file *file, const char __user *buf,
- 	 */
- 	if (!smack_privileged(CAP_MAC_ADMIN))
- 		return -EPERM;
-+	if (!smack_netlabel())
-+		return -EINVAL;
- 	if (*ppos != 0)
- 		return -EINVAL;
- 	if (count < SMK_NETLBLADDRMIN || count > PAGE_SIZE - 1)
-@@ -1414,6 +1424,8 @@ static ssize_t smk_write_net6addr(struct file *file, const char __user *buf,
- 	 */
- 	if (!smack_privileged(CAP_MAC_ADMIN))
- 		return -EPERM;
-+	if (!smack_netlabel())
-+		return -EINVAL;
- 	if (*ppos != 0)
- 		return -EINVAL;
- 	if (count < SMK_NETLBLADDRMIN || count > PAGE_SIZE - 1)
-@@ -1585,6 +1597,8 @@ static ssize_t smk_write_doi(struct file *file, const char __user *buf,
- 
- 	if (!smack_privileged(CAP_MAC_ADMIN))
- 		return -EPERM;
-+	if (!smack_netlabel())
-+		return -EINVAL;
- 
- 	if (count >= sizeof(temp) || count == 0)
- 		return -EINVAL;
-@@ -1652,6 +1666,8 @@ static ssize_t smk_write_direct(struct file *file, const char __user *buf,
- 
- 	if (!smack_privileged(CAP_MAC_ADMIN))
- 		return -EPERM;
-+	if (!smack_netlabel())
-+		return -EINVAL;
- 
- 	if (count >= sizeof(temp) || count == 0)
- 		return -EINVAL;
-@@ -1730,6 +1746,8 @@ static ssize_t smk_write_mapped(struct file *file, const char __user *buf,
- 
- 	if (!smack_privileged(CAP_MAC_ADMIN))
- 		return -EPERM;
-+	if (!smack_netlabel())
-+		return -EINVAL;
- 
- 	if (count >= sizeof(temp) || count == 0)
- 		return -EINVAL;
--- 
-2.51.0
+Changes in v3:
+- Fixed some incorrect patch ordering.
+- Alphabetized Glymur QMP settings for combo and UNI setting arrays
+
+Changes in v2:
+- Updated QMP combo PHY to properly handle the refgen-supply and to
+remove the primary core reference/tag
+- Updated QMP UNI PHY to properly handle the refgen-supply and added
+a separate IF/THEN block to handle the new clkref
+- Updated M31 eUSB2 to make clocks and clocks-name required for sm8750
+and optional for Glymur
+- Fixed missing PCS MISC table
+- Added SMB2370 repeater changes
+
+Wesley Cheng (10):
+  dt-bindings: phy: qcom,sc8280xp-qmp-usb43dp-phy: Add Glymur compatible
+  dt-bindings: phy: qcom,qmp-usb: Add Glymur USB UNI PHY compatible
+  dt-bindings: phy: qcom-m31-eusb2: Add Glymur compatible
+  dt-bindings: usb: qcom,snps-dwc3: Add Glymur compatible
+  dt-bindings: phy: qcom,snps-eusb2-repeater: Add SMB2370 compatible
+  phy: qualcomm: Update the QMP clamp register for V6
+  phy: qualcomm: qmp-combo: Update QMP PHY with Glymur settings
+  phy: qualcomm: qmp-usb: Add support for Glymur USB UNI PHY
+  phy: qualcomm: m31-eusb2: Make clkref an optional resource
+  phy: qualcomm: eusb2-repeater: Add SMB2370 eUSB2 repeater support
+
+ .../bindings/phy/qcom,m31-eusb2-phy.yaml      |  21 +-
+ .../phy/qcom,sc8280xp-qmp-usb3-uni-phy.yaml   |  35 +
+ .../phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml    |  76 ++-
+ .../phy/qcom,snps-eusb2-repeater.yaml         |   1 +
+ .../bindings/usb/qcom,snps-dwc3.yaml          |  26 +
+ .../phy/qualcomm/phy-qcom-eusb2-repeater.c    |  18 +
+ drivers/phy/qualcomm/phy-qcom-m31-eusb2.c     |   2 +-
+ drivers/phy/qualcomm/phy-qcom-qmp-combo.c     | 350 +++++++++-
+ .../phy/qualcomm/phy-qcom-qmp-pcs-aon-v6.h    |  12 +
+ .../phy/qualcomm/phy-qcom-qmp-pcs-aon-v8.h    |  17 +
+ .../phy/qualcomm/phy-qcom-qmp-pcs-misc-v5.h   |  12 +
+ .../phy/qualcomm/phy-qcom-qmp-pcs-misc-v8.h   |  12 +
+ .../qualcomm/phy-qcom-qmp-qserdes-lalb-v8.h   | 639 ++++++++++++++++++
+ drivers/phy/qualcomm/phy-qcom-qmp-usb.c       | 163 +++++
+ .../phy/qualcomm/phy-qcom-qmp-usb43-pcs-v8.h  |  33 +
+ .../phy-qcom-qmp-usb43-qserdes-com-v8.h       | 224 ++++++
+ drivers/phy/qualcomm/phy-qcom-qmp.h           |   4 +
+ 17 files changed, 1620 insertions(+), 25 deletions(-)
+ create mode 100644 drivers/phy/qualcomm/phy-qcom-qmp-pcs-aon-v6.h
+ create mode 100644 drivers/phy/qualcomm/phy-qcom-qmp-pcs-aon-v8.h
+ create mode 100644 drivers/phy/qualcomm/phy-qcom-qmp-pcs-misc-v5.h
+ create mode 100644 drivers/phy/qualcomm/phy-qcom-qmp-pcs-misc-v8.h
+ create mode 100644 drivers/phy/qualcomm/phy-qcom-qmp-qserdes-lalb-v8.h
+ create mode 100644 drivers/phy/qualcomm/phy-qcom-qmp-usb43-pcs-v8.h
+ create mode 100644 drivers/phy/qualcomm/phy-qcom-qmp-usb43-qserdes-com-v8.h
 
 
