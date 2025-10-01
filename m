@@ -1,119 +1,180 @@
-Return-Path: <linux-kernel+bounces-839381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27DC6BB1842
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 20:37:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DDCEBB184B
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 20:38:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C9CDE4E1B37
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 18:37:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F8307B0977
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 18:36:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 067502D5C95;
-	Wed,  1 Oct 2025 18:37:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02AF02D5C7A;
+	Wed,  1 Oct 2025 18:38:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ReP/Bp1P"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b="PfjXeWvF"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 107992D593A
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 18:37:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759343849; cv=none; b=bmF4U5LwkhPAGZLq0Iau3WlNslRoidqgCDxtmvp+pXsljaffwpHN+PrxW68DasgmB8WnN0XbmylWvt6oFHGmfZrqUTDwOs9JbhkYCd/BWunXLF+DseYeRsq8HuA1a0YgafMK1/wU+E4Mr3WsqB5yubKY1rBAZS2pG/YZDnf0AUo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759343849; c=relaxed/simple;
-	bh=+5IkJFQ7HOAN9t0e0c8Z504rwCoejlXiTWiCk6Ioxww=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=oDrnvMsXykx5hMhLv5+mw7RxLuNHC4R54it2q4NR+frbd52GoRPBczzvIguJOxyhRGeBWEh32hKXHr+xan1nhpJhMcmGCcM3A2CtYc/HTZMJxl+pbiq39VF3otUljE5TwEeP1o/TxRHfTxI0UKCveadLPOWbWDSy9xIqooLFvaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ReP/Bp1P; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-76e2ea933b7so86827b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 11:37:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759343847; x=1759948647; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=+5IkJFQ7HOAN9t0e0c8Z504rwCoejlXiTWiCk6Ioxww=;
-        b=ReP/Bp1PeQYK1sLr8cNLWwHj1m8fKLNNR1EMEYnC4lRnozdFkyyZo+xC39CMv6bqDU
-         wsdK6ZqBaBYWT7ajwduGlxoV1zCIcUUU2JtVhTLmdVFmPbt3LEGEd4KMV0j1k5pBGRM6
-         CcAmrSGlWUwMBjjPhLKMcNmFFHr2oq9WEcV9gDRe0G7o+5BsBPrUNJfzygidPlBa+qZc
-         x+2fgCwLCJ2D8xfUjv8m3bizOCPEitRPXQcOV3uKT9Ds28Iyq4ovKick5zDyXvOcfvw8
-         QXrKTXuSXLh0+0L3CCmWKVvL69vQ8Y1OLi+9JIMmP9bFHMDCk3Oq1bm9Dy5/X+FJrNsO
-         KBKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759343847; x=1759948647;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+5IkJFQ7HOAN9t0e0c8Z504rwCoejlXiTWiCk6Ioxww=;
-        b=NT6UQRctNnD9hK/kxSU7tkS9fGMPJDRgw4sKAThLXjf/ZCs0o6zRy+eOlvy4al20Bz
-         q6eUc23g7W9sfrIqcRawlx7TG6H2ekJ6jqy0+XyD21dw4jfxp36QR9XK+P/dkF+2Hq+t
-         ViyizInEAQfjLuZY7hnmvnDC5xdiB/4rskfq/si2YgPAVJVF/1grs/oh+L7ZqJN5USgv
-         KhI5zBjZFmvZlyeEOjBvUYxB2OkjIuLDU757Go7rRCAdbQGZatFvizNYZvNAGR07LPDR
-         M4vA+30l7uP3/7sMMMhz8NNa4DkeGR6wa80nfwOG29K/hY5IhwXN+79lqytKyk7cZVZF
-         Akug==
-X-Forwarded-Encrypted: i=1; AJvYcCXnfIIhPI5tYSk8Nq8W1L83OLo9BcqYzEIlw26FXOEwl6973kgDOSqm1jJA3a4R70eC7mocaeCSCvMwDEc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4HUAF0SaPQ5mon+kMmhOL5yaH4OBiAs4KKZZMuJitmsEQhx1J
-	NFjvaZdcBjm1r4iBHa43WZe+y3oMyiH4TagiMmmZ4lAtwKtdckP0W5X0
-X-Gm-Gg: ASbGncv4845mgeM/a/vt1/WBjVZxS19izpCj7ltdlsbvygf/v6pUTh9fDx3DaYa7K4k
-	vgV0o2+XUCfcANItZIjadaIt48YDKJyhSzOjmN6DAZ5YQDjxzepn6e7vRW6j/qTTU1qhcHseXYQ
-	TOW533o74JFX9XmBtEWcNPWyz8U4gpUIYut33gJtNKTaSvaczrhGut6IhUbB5BAUrGp35McWNHv
-	/uhjKOuoZ7FiPgmLCLo8Hfvw2STz+kYbKDYGMIUyDYkeNScteY0CpJLRBwkFqn2Z9TThmwQ2pB9
-	reB+/0/pHiez2aC0fMhfaOVh0YDyZy+wPyXzkORBACEvca/qayjgXLhRBSQIuKbQKAbqP6yacBf
-	9ck1vIw61efRXReHXq1aZOk8e57sRXjnNdSQybkK9ZPOOrFWXYDNFsk/IhxFTHLNdxYLT8zsTRZ
-	MxcJvNtg==
-X-Google-Smtp-Source: AGHT+IHwGIweaktnau5NNmxNvpzDHY9rRZNzCTIssDNODC6+bmeuAJHCv3egmKb0AfhtHgEMmo2j6A==
-X-Received: by 2002:a05:6a21:4e8a:b0:2b9:5bdc:8e28 with SMTP id adf61e73a8af0-32a24dc771bmr847091637.15.1759343847383;
-        Wed, 01 Oct 2025 11:37:27 -0700 (PDT)
-Received: from ?IPv6:2a03:83e0:115c:1:1ed4:e17:bedc:abbb? ([2620:10d:c090:500::6:420a])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6099f3b041sm177268a12.24.2025.10.01.11.37.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Oct 2025 11:37:27 -0700 (PDT)
-Message-ID: <5ddd7fb4f2282fe697f1e7617206424b828d269c.camel@gmail.com>
-Subject: Re: [PATCH v3 2/2] selftests/bpf: Add test for BPF_NEG alu on
- CONST_PTR_TO_MAP
-From: Eduard Zingerman <eddyz87@gmail.com>
-To: Brahmajit Das <listout@listout.xyz>, 
-	syzbot+d36d5ae81e1b0a53ef58@syzkaller.appspotmail.com
-Cc: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
- daniel@iogearbox.net, 	haoluo@google.com, john.fastabend@gmail.com,
- jolsa@kernel.org, kpsingh@kernel.org, 	linux-kernel@vger.kernel.org,
- martin.lau@linux.dev, sdf@fomichev.me, 	song@kernel.org,
- syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev, 
-	kafai.wan@linux.dev
-Date: Wed, 01 Oct 2025 11:37:25 -0700
-In-Reply-To: <20251001095613.267475-3-listout@listout.xyz>
-References: <68d26227.a70a0220.1b52b.02a4.GAE@google.com>
-	 <20251001095613.267475-1-listout@listout.xyz>
-	 <20251001095613.267475-3-listout@listout.xyz>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97AD5285C8D;
+	Wed,  1 Oct 2025 18:38:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759343911; cv=pass; b=VcAO8U6yWJcRFoFTK1JWWUY2kb/SCKFP6NhTEDAfwDSWalg9w5bvm3+CJgHii6YIV1f7KXMcRiE9OP1cZ263RY3sgw5pYoDYkmHJvxWcjOHsxe+3i11bjSjl8ysUUA4E3SVifabUy0HD9N5TtTUiZsDxeEkkjCqkwN/pGig8BwU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759343911; c=relaxed/simple;
+	bh=+QF+n3LOx3LexgHOZSauGyH/TtFkOSt0J+V8Fdxp7HE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cbP+st0qTg4zgiTZdCN54WpWxizOg6TjJ/UXhCNCZukdkLPXQ5e/G16Amkrsm0UtYCmkqWP8bd0IFcaeMbO0+uk9x0rcNtWGJkyKxnR5k9KNSDxMTbUPeiosdEY40KI2K/IzbS03dt+yIIlVvGPZLM4zopmb3gSJrjl9ZVgPfcU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b=PfjXeWvF; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1759343899; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=lep1bEIN9ZDEArpYVe3pXGa0pZTqz1JaRsEfh5hmZt742ZDHGgZd4iyL/nyWA36F4Iv0H6MEM7obcO8ke1utbNIGWjNJSnOJWi1wKWTJ7cQubOvH4Lpnc4CkESJ65DmvxJaLq3jNf3pz2URcG3EsMu3OtWIXASRKp/gGYlu9ptI=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1759343899; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Ek7F2mrrsq+BqJrZYPH5KFCvcL/nkiJq6tvKo2uH9ms=; 
+	b=BlaXKNJJevekvHH2q4jGrkjyOuyOftZzqL/NOazItM9Wkq+GoI50LwKzTc0N28vCm2MGe+OzVjaI8AePIjdzhgcdiC+ogEa0bWpqXketAkuFii4qb/Cz6FF+eCv6Q0V3M3W2mU2wT1rBEFEHtsXzD2A9pLpA2jGy+Ct2TG8mJbw=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=ariel.dalessandro@collabora.com;
+	dmarc=pass header.from=<ariel.dalessandro@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1759343898;
+	s=zohomail; d=collabora.com; i=ariel.dalessandro@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=Ek7F2mrrsq+BqJrZYPH5KFCvcL/nkiJq6tvKo2uH9ms=;
+	b=PfjXeWvFg0Xsb/jpfKo+8pqZI4oeBwJ/l5kT8YnmiBiIexncryEU+HlnfNPFiv4N
+	SCZAcRv4wleArEfkEyJnmn2l7qvvChyw/0Gt4V5jdaCylExx3CX24ZIaisDKAF/+8KK
+	IR2ySfvdB638KRDffgILy5xaTGiHcdKLQcaFNKxo=
+Received: by mx.zohomail.com with SMTPS id 1759343896314557.1843119775383;
+	Wed, 1 Oct 2025 11:38:16 -0700 (PDT)
+From: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+To: angelogioacchino.delregno@collabora.com,
+	ariel.dalessandro@collabora.com,
+	conor+dt@kernel.org,
+	dmitry.torokhov@gmail.com,
+	krzk+dt@kernel.org,
+	robh@kernel.org
+Cc: devicetree@vger.kernel.org,
+	kernel@collabora.com,
+	linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3] dt-bindings: input: Convert MELFAS MIP4 Touchscreen to DT schema
+Date: Wed,  1 Oct 2025 15:38:09 -0300
+Message-ID: <20251001183809.83472-1-ariel.dalessandro@collabora.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-On Wed, 2025-10-01 at 15:26 +0530, Brahmajit Das wrote:
-> From: KaFai Wan <kafai.wan@linux.dev>
->=20
-> Add a test case for BPF_NEG operation on CONST_PTR_TO_MAP. Tests if
-> BPF_NEG operation on map_ptr is rejected in unprivileged mode and is a
-> scalar value and do not trigger Oops in privileged mode.
->=20
-> Signed-off-by: KaFai Wan <kafai.wan@linux.dev>
-> ---
+Convert the existing text-based DT bindings for MELFAS MIP4 Touchscreen
+controller to a DT schema.
 
-Can confirm, the test reproduces original issue,
-patch #1 fixes it.
+Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+---
+ .../input/touchscreen/melfas,mip4_ts.yaml     | 56 +++++++++++++++++++
+ .../input/touchscreen/melfas_mip4.txt         | 20 -------
+ 2 files changed, 56 insertions(+), 20 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/input/touchscreen/melfas,mip4_ts.yaml
+ delete mode 100644 Documentation/devicetree/bindings/input/touchscreen/melfas_mip4.txt
 
-Acked-by: Eduard Zingerman <eddyz87@gmail.com>
+diff --git a/Documentation/devicetree/bindings/input/touchscreen/melfas,mip4_ts.yaml b/Documentation/devicetree/bindings/input/touchscreen/melfas,mip4_ts.yaml
+new file mode 100644
+index 0000000000000..314be65c56caa
+--- /dev/null
++++ b/Documentation/devicetree/bindings/input/touchscreen/melfas,mip4_ts.yaml
+@@ -0,0 +1,56 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/input/touchscreen/melfas,mip4_ts.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: MELFAS MIP4 Touchscreen
++
++maintainers:
++  - Ariel D'Alessandro <ariel.dalessandro@collabora.com>
++
++properties:
++  compatible:
++    const: melfas,mip4_ts
++
++  reg:
++    description: I2C address of the chip (0x48 or 0x34)
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  ce-gpios:
++    description:
++      GPIO connected to the CE (chip enable) pin of the chip (active high)
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - interrupts
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/gpio/gpio.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        touchscreen@34 {
++            compatible = "melfas,mip4_ts";
++            reg = <0x34>;
++
++            interrupts-extended = <&tlmm 13 IRQ_TYPE_EDGE_FALLING>;
++            ce-gpios = <&tlmm 12 GPIO_ACTIVE_HIGH>;
++
++            pinctrl-0 = <&touchscreen_default>;
++            pinctrl-names = "default";
++        };
++    };
++
++...
+diff --git a/Documentation/devicetree/bindings/input/touchscreen/melfas_mip4.txt b/Documentation/devicetree/bindings/input/touchscreen/melfas_mip4.txt
+deleted file mode 100644
+index b2ab5498e5190..0000000000000
+--- a/Documentation/devicetree/bindings/input/touchscreen/melfas_mip4.txt
++++ /dev/null
+@@ -1,20 +0,0 @@
+-* MELFAS MIP4 Touchscreen
+-
+-Required properties:
+-- compatible: must be "melfas,mip4_ts"
+-- reg: I2C slave address of the chip (0x48 or 0x34)
+-- interrupts: interrupt to which the chip is connected
+-
+-Optional properties:
+-- ce-gpios: GPIO connected to the CE (chip enable) pin of the chip
+-
+-Example:
+-	i2c@00000000 {
+-		touchscreen: melfas_mip4@48 {
+-			compatible = "melfas,mip4_ts";
+-			reg = <0x48>;
+-			interrupt-parent = <&gpio>;
+-			interrupts = <0 IRQ_TYPE_EDGE_FALLING>;
+-			ce-gpios = <&gpio 0 GPIO_ACTIVE_HIGH>;
+-		};
+-	};
+-- 
+2.51.0
 
-[...]
 
