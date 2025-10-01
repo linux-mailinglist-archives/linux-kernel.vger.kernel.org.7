@@ -1,53 +1,85 @@
-Return-Path: <linux-kernel+bounces-838310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5044BAEEEB
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 03:12:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5198BAEF03
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 03:15:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40AFF19423C6
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 01:13:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8A927A6586
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 01:14:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4551F23B61E;
-	Wed,  1 Oct 2025 01:12:39 +0000 (UTC)
-Received: from zg8tmja2lje4os43os4xodqa.icoremail.net (zg8tmja2lje4os43os4xodqa.icoremail.net [206.189.79.184])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5F32199E89;
-	Wed,  1 Oct 2025 01:12:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=206.189.79.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74C671865FA;
+	Wed,  1 Oct 2025 01:15:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="tNl78dNy"
+Received: from out203-205-221-149.mail.qq.com (out203-205-221-149.mail.qq.com [203.205.221.149])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 540D611CAF
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 01:15:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759281158; cv=none; b=dQ4qZqh/mHCTgCi4twzpmNpZOArjEDfQELYguvfvpVz9J0FH0Q8cijMQQbhhkXMuyzKcHFIcSz+m+jwAu26/Q2nJHkY5TOGVqevCWe3tm3eH87Y0mXDbziknxQfOTTl+LzHBsDzNzJiKDiK31SEHehqvgY5K2pHlnDMqHiCjAio=
+	t=1759281345; cv=none; b=Oona7bnfcZ7uU67xKSlqAfnDAN10436irzWk8jdlX1lAhxPMDchHyfdOnjuwZVeLXfx8RcpNma2SdTgXXnycIS4h3WkRFboveI/TyZ9wqCAp7OrTCAEcPnPbESyXNZKX1GeMVOWC4PUrpXTWbmuieSFOowNa/Jql5l86ZtKygP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759281158; c=relaxed/simple;
-	bh=q0JdKKTXzAih7r1RyDvfJtbjpNr/H6/DDu4JY/5CF1M=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VEtvf/s4CU1c6vJcsNBTMNJKuhMs7X2WjFMWu3mEuw27rpogpGTS2Fdk73K/YUmVt/IlPKtCb+RMqrDD93BbNSjLijORra+aZ99ikoZ3e+El4jRLcU0zYXuRgmomVPa7L1ZkfFubsX4O0XsCd71f5vrQGc40224GPJga9f61+aw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn; spf=pass smtp.mailfrom=zju.edu.cn; arc=none smtp.client-ip=206.189.79.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zju.edu.cn
-Received: from zju.edu.cn (unknown [218.12.19.54])
-	by mtasvr (Coremail) with SMTP id _____wBXImref9xo9vmOAg--.18271S3;
-	Wed, 01 Oct 2025 09:11:59 +0800 (CST)
-Received: from ubuntu.localdomain (unknown [218.12.19.54])
-	by mail-app2 (Coremail) with SMTP id zC_KCgBHX0PYf9xol2tyAg--.36817S2;
-	Wed, 01 Oct 2025 09:11:57 +0800 (CST)
-From: Duoming Zhou <duoming@zju.edu.cn>
-To: netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	pabeni@redhat.com,
-	kuba@kernel.org,
-	edumazet@google.com,
-	davem@davemloft.net,
-	andrew+netdev@lunn.ch,
-	UNGLinuxDriver@microchip.com,
-	alexandre.belloni@bootlin.com,
-	claudiu.manoil@nxp.com,
-	vladimir.oltean@nxp.com,
-	Duoming Zhou <duoming@zju.edu.cn>
-Subject: [PATCH v2 net] net: mscc: ocelot: Fix use-after-free caused by cyclic delayed work
-Date: Wed,  1 Oct 2025 09:11:49 +0800
-Message-Id: <20251001011149.55073-1-duoming@zju.edu.cn>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1759281345; c=relaxed/simple;
+	bh=ob4T4yxLplSUvqQjGm1as1DY69R9UpksJ+Uy+p4I9EQ=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=PrV01xugLGBOD82+yCDGjTCAE2Gqj7Ydsd5FynA7/XbWUh+ICDxgdjHjMApD71c0NPoD1EjmjnWwpNXrv5vAbYDCOHP5jxRLfypvsZlthQ2xnGg03HU8AMl2j4zlFL5zlybCyIkxzw0tl3tJUINp+ywBzwA4VLuYfQLZCoVJILU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=tNl78dNy; arc=none smtp.client-ip=203.205.221.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1759281340;
+	bh=n4sm4uwqUsevMHIl11FkhxNg7pZdMeEC6XDT6aP0E8Q=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=tNl78dNy8xtHTUaChaP2zwSaclT5YxcvAeljf+BaRFs32QdTBu7bX68St3Rf91gSY
+	 DC+Z/88+2+mkRa/2jzVxaPPDEtZ0M+80mnOPuMiYLbf7ZeNBAsRuoOivdCyrjfS8oo
+	 nT26WUGxK5js8AzsmVb9mvDG03V3pEG4VBSdKf98=
+Received: from SSOC3-SH.company.local ([58.33.109.195])
+	by newxmesmtplogicsvrszb42-0.qq.com (NewEsmtp) with SMTP
+	id 3DB2F663; Wed, 01 Oct 2025 09:15:27 +0800
+X-QQ-mid: xmsmtpt1759281327tn5zipend
+Message-ID: <tencent_46288A6EC6007C3C980C22DB856268526209@qq.com>
+X-QQ-XMAILINFO: MVrhzCz4YLrfRB3C4lOmA9wEvdQR+OkVXpZQEk/Fm04bE1TloLLNpg9oYVYAm7
+	 RE12IL3QWd1OrGFZlfnLyJQxIZOWUWb9ISLxj3jyhYV/xeyzvw+u1hO/c7oZu1lUi3ZikrixyvEG
+	 as4FXdtZLB5BrWHREbEjJD2GReLB4uodJYaUvpJDDuycYduXGrDx4ApIN1MmSBxgNSfbB/5AnFej
+	 LYnu+r32wMtECj6jhYjL0GqeHehcJmPdifRbqBOgtE5WhiQRnXzcMyPoKT+Lz2T5BIAfY1KHSzKU
+	 jjzsrTdjVABwSww4X0YflF6nl/vp0luqlmxR5r6rHUIulHh6vKfOfipT3Bp1xnzAkeGYo+NUc7s2
+	 DMzAHYN1mDPlE7bJn273D5GZQojIVq/RQ/D7BuIIwdpZmOuL9trMS3yACTRvQk8PRLqv+GiFvmp1
+	 DF4iydlUYiDOxSBMkRqGnfAB0GHiiYyA5UHFHyahLHk6Pqf9HtTuG/mlSclgStLyUHoLqPDCKWHr
+	 7r9uD1ATnY/tNR3LQcOCxVGXTNXswn/znaQl+q20yvB64jpyyIHpil/e2jq/hDBCW0s3mt7wLRpz
+	 v5FwT7sZBI371kZr3ybpk1jynXYgj6sPsOdWZbm4MIxdKlkcrz2PFbkViN1GeAWc08++TQek1xa0
+	 AYxHbs+MDAonIfubCxw0wE3d/4cGn8gomkS/1v4XQYS/2vzXgNc4MB/RjXFj4l+WTRO882qX9iwC
+	 pKCraenWZsO5gym1QYpRuKG2j+rLozBIg2/VNqLJ2B2BXh3h6smzwbxBbRfLHD69upgTa+xdLoJz
+	 2HsJ7b+lL0Zpnp6Xz7rfJEh3fuWOwBm6j4LZLx+aRdqCUpkjU9odtrQm5wKxFi9Y2so4UcdyJNl/
+	 OnMX2JYFRcapNQ6BWDniP6jHk0d1LyYumypZCHF2R2Ld53AryEniswyjkZXmlQZ9h01uiJ5s6mTC
+	 d+22Kv+ZY8uiLyfM2uQ0P5ZdCimr1+hwNlhBw+bhCGEQrYQq030RhqJYCj7v3e+LbT8wf0icaSWG
+	 kW3Qq/Fq3XE3fMF4lZ92SaH6auPPhJgcF60vw39b+cTr8suE8sI6lhtU26za2on0IOthpirfSJVJ
+	 eQhgrP
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+From: Han Guangjiang <gj.han@foxmail.com>
+To: peterz@infradead.org
+Cc: bsegall@google.com,
+	dietmar.eggemann@arm.com,
+	fanggeng@lixiang.com,
+	gj.han@foxmail.com,
+	hanguangjiang@lixiang.com,
+	juri.lelli@redhat.com,
+	linux-kernel@vger.kernel.org,
+	mgorman@suse.de,
+	mingo@redhat.com,
+	rostedt@goodmis.org,
+	vincent.guittot@linaro.org,
+	vschneid@redhat.com,
+	yangchen11@lixiang.com
+Subject: Re: [PATCH] sched/fair: Fix DELAY_DEQUEUE issue related to cgroup throttling
+Date: Wed,  1 Oct 2025 09:15:27 +0800
+X-OQ-MSGID: <20251001011527.3797919-1-gj.han@foxmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250930125621.GO3419281@noisy.programming.kicks-ass.net>
+References: <20250930125621.GO3419281@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,147 +87,50 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zC_KCgBHX0PYf9xol2tyAg--.36817S2
-X-CM-SenderInfo: qssqjiasttq6lmxovvfxof0/1tbiAwcFAWja4PwNmwBXsv
-X-CM-DELIVERINFO: =?B?ZyILFQXKKxbFmtjJiESix3B1w3uoVhYI+vyen2ZzBEkOnu5chDpkB+ZdGnv/zQ0PbP
-	CR18SN7MKHUZcowJmI/0r0+FuZkoxDnL9qxjx8CbkOtwEWXF1pVDRDKTRMEzIdZgkDnI84
-	L7LJngXVdj3aU/9+ZkIg0M1swJt1lqBa7L+lo6kJcaim2N7Nn+Z2cKbEYgHFLw==
-X-Coremail-Antispam: 1Uk129KBj93XoWxKr1xuw18uFy3Ar1rCw45urX_yoW7XF4Up3
-	y5K3y7C3y8Xw4jqFs0vr40qw15KFnYkFsrJr4xZr4UC3WrJr15XF18tFWY9FWDJrWkZFyS
-	va1DX392ya4qyabCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUB0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIEc7CjxVAF
-	wI0_Cr1j6rxdM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx
-	1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv
-	67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7xvr2IYc2
-	Ij64vIr40E4x8a64kEw24lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l
-	4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67
-	AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8I
-	cVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI
-	8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v2
-	6r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU7xwIDUUUU
 
-The origin code calls cancel_delayed_work() in ocelot_stats_deinit()
-to cancel the cyclic delayed work item ocelot->stats_work. However,
-cancel_delayed_work() may fail to cancel the work item if it is already
-executing. While destroy_workqueue() does wait for all pending work items
-in the work queue to complete before destroying the work queue, it cannot
-prevent the delayed work item from being rescheduled within the
-ocelot_check_stats_work() function. This limitation exists because the
-delayed work item is only enqueued into the work queue after its timer
-expires. Before the timer expiration, destroy_workqueue() has no visibility
-of this pending work item. Once the work queue appears empty,
-destroy_workqueue() proceeds with destruction. When the timer eventually
-expires, the delayed work item gets queued again, leading to the following
-warning:
+>> From: Han Guangjiang <hanguangjiang@lixiang.com>
+>>
+>> When both CPU cgroup and memory cgroup are enabled with parent cgroup
+>> resource limits much smaller than child cgroup's, the system frequently
+>> hangs with NULL pointer dereference:
+>>
+> Is this the same issue as here:
+>
+>   https://lore.kernel.org/all/105ae6f1-f629-4fe7-9644-4242c3bed035@amd.com/T/#u
+>
+>   ?
 
-workqueue: cannot queue ocelot_check_stats_work on wq ocelot-switch-stats
-WARNING: CPU: 2 PID: 0 at kernel/workqueue.c:2255 __queue_work+0x875/0xaf0
-...
-RIP: 0010:__queue_work+0x875/0xaf0
-...
-RSP: 0018:ffff88806d108b10 EFLAGS: 00010086
-RAX: 0000000000000000 RBX: 0000000000000101 RCX: 0000000000000027
-RDX: 0000000000000027 RSI: 0000000000000004 RDI: ffff88806d123e88
-RBP: ffffffff813c3170 R08: 0000000000000000 R09: ffffed100da247d2
-R10: ffffed100da247d1 R11: ffff88806d123e8b R12: ffff88800c00f000
-R13: ffff88800d7285c0 R14: ffff88806d0a5580 R15: ffff88800d7285a0
-FS:  0000000000000000(0000) GS:ffff8880e5725000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fe18e45ea10 CR3: 0000000005e6c000 CR4: 00000000000006f0
-Call Trace:
- <IRQ>
- ? kasan_report+0xc6/0xf0
- ? __pfx_delayed_work_timer_fn+0x10/0x10
- ? __pfx_delayed_work_timer_fn+0x10/0x10
- call_timer_fn+0x25/0x1c0
- __run_timer_base.part.0+0x3be/0x8c0
- ? __pfx_delayed_work_timer_fn+0x10/0x10
- ? rcu_sched_clock_irq+0xb06/0x27d0
- ? __pfx___run_timer_base.part.0+0x10/0x10
- ? try_to_wake_up+0xb15/0x1960
- ? _raw_spin_lock_irq+0x80/0xe0
- ? __pfx__raw_spin_lock_irq+0x10/0x10
- tmigr_handle_remote_up+0x603/0x7e0
- ? __pfx_tmigr_handle_remote_up+0x10/0x10
- ? sched_balance_trigger+0x1c0/0x9f0
- ? sched_tick+0x221/0x5a0
- ? _raw_spin_lock_irq+0x80/0xe0
- ? __pfx__raw_spin_lock_irq+0x10/0x10
- ? tick_nohz_handler+0x339/0x440
- ? __pfx_tmigr_handle_remote_up+0x10/0x10
- __walk_groups.isra.0+0x42/0x150
- tmigr_handle_remote+0x1f4/0x2e0
- ? __pfx_tmigr_handle_remote+0x10/0x10
- ? ktime_get+0x60/0x140
- ? lapic_next_event+0x11/0x20
- ? clockevents_program_event+0x1d4/0x2a0
- ? hrtimer_interrupt+0x322/0x780
- handle_softirqs+0x16a/0x550
- irq_exit_rcu+0xaf/0xe0
- sysvec_apic_timer_interrupt+0x70/0x80
- </IRQ>
-...
+Yes, based on the patch modifications, I believe this is the same issue.
+When dequeue_entities() is executed on a delay_dequeued task while the
+cgroup is being throttled, it returns early and misses the
+__block_task() operation on the task. This leads to inconsistency
+between p->on_rq and se->on_rq.
 
-The following diagram reveals the cause of the above warning:
+When PI or scheduler switching occurs, the second dequeue_entities()
+call assumes the task is still in the CFS scheduler, but in reality
+it is no longer there.
 
-CPU 0 (remove)             | CPU 1 (delayed work callback)
-mscc_ocelot_remove()       |
-  ocelot_deinit()          | ocelot_check_stats_work()
-    ocelot_stats_deinit()  |
-      cancel_delayed_work()|   ...
-                           |   queue_delayed_work()
-      destroy_workqueue()  | (wait a time)
-                           | __queue_work() //UAF
+By the way, I have a question about the hrtick_update() in
+dequeue_entities(). Should it be changed to:
 
-The above scenario actually constitutes a UAF vulnerability.
+dequeue_entities()
+{
+    ...
+    if (p) {
+        hrtick_update(rq);
+    }
+    ...
+}
 
-The ocelot_stats_deinit() is only invoked when initialization
-failure or resource destruction, so we must ensure that any
-delayed work items cannot be rescheduled.
+And remove hrtick_update() from dequeue_task_fair()?
+Because for dequeue_delayed tasks, hrtick_update() will be executed
+twice in this proces.
 
-Replace cancel_delayed_work() with disable_delayed_work_sync()
-to guarantee proper cancellation of the delayed work item and
-ensure completion of any currently executing work before the
-workqueue is deallocated.
+Also, should the return type of dequeue_entities() be changed to
+match dequeue_task_fair(), where true means the task was actually
+removed from the queue, and false means it was delay dequeued?
 
-A deadlock concern was considered: ocelot_stats_deinit() is called
-in a process context and is not holding any locks that the delayed
-work item might also need. Therefore, the use of the _sync() variant
-is safe here.
-
-This bug was identified through static analysis. To reproduce the
-issue and validate the fix, I simulated ocelot-switch device by
-writing a kernel module and prepared the necessary resources for
-the virtual ocelot-switch device's probe process. Then, removing
-the virtual device will trigger the mscc_ocelot_remove() function,
-which in turn destroys the workqueue.
-
-Fixes: a556c76adc05 ("net: mscc: Add initial Ocelot switch support")
-Signed-off-by: Duoming Zhou <duoming@zju.edu.cn>
----
-Changes in v2:
-  - Replace cancel_delayed_work() with disable_delayed_work_sync().
-
- drivers/net/ethernet/mscc/ocelot_stats.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/mscc/ocelot_stats.c b/drivers/net/ethernet/mscc/ocelot_stats.c
-index 545710dadcf5..d2be1be37716 100644
---- a/drivers/net/ethernet/mscc/ocelot_stats.c
-+++ b/drivers/net/ethernet/mscc/ocelot_stats.c
-@@ -1021,6 +1021,6 @@ int ocelot_stats_init(struct ocelot *ocelot)
- 
- void ocelot_stats_deinit(struct ocelot *ocelot)
- {
--	cancel_delayed_work(&ocelot->stats_work);
-+	disable_delayed_work_sync(&ocelot->stats_work);
- 	destroy_workqueue(ocelot->stats_queue);
- }
--- 
-2.34.1
+Thanks,
+Han Guangjiang
 
 
