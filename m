@@ -1,181 +1,123 @@
-Return-Path: <linux-kernel+bounces-839276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ADF5BB13AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 18:15:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7F51BB13B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 18:17:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59B144C3B76
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 16:15:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AAD84C24AC
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 16:17:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F637284686;
-	Wed,  1 Oct 2025 16:15:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5216327F749;
+	Wed,  1 Oct 2025 16:17:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HPDwwCZ4"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ShjPxmBT"
+Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1919B2749C7
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 16:15:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F023426A0A7
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 16:17:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759335336; cv=none; b=Ye++EZuR0H6AxbQiUcdKTME00vjefIl4ht+P5L2ahH7m/6/v90yQWOElefpXRA1Qj3vDy6PGRhlIuJMOQaOeWd3ZWlQlrCbAKuddAWAGIezDvIB22tg1XkhhY3R5DzdiSo2VvKG+euxT7eHIrCPA3LttrSvgC++XDVtUywBVK4E=
+	t=1759335459; cv=none; b=cln3IfM3UG7gOiieiceBvOeiAIbGznCRsLkfJIi5J7WirV670iP9QT8x8hftFqqOoGRgjPCyxdgqV8ilk54jyFLl+63ib6LfG5YrJpGFePlk92sNLyP34ZUI1K25CcDbMLSFqSWd2MVHPORi9K3ByZUq4peDU+Ugsha58SVcv+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759335336; c=relaxed/simple;
-	bh=LkT3cQyzUP8PrJPHTEYebA8l9D+znF7mvx2yHe3Bzk8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=TrelERpfY6Fzjt1jh0D1WBPPJpof2p02Nw3GSEyhiD5ziYTz+9TMt9vgK/gBvWGxPv1P1nj6CxhPQgskSMg1e/fJq3CKpxLMwR+ll/6rufnQn4ft0jaxp2botIM7vrlnszRyGALQLnVloUMEAxoPp+Z1ik1tv8yfr0A/pwZJuBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HPDwwCZ4; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-277f0ea6ee6so94433775ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 09:15:34 -0700 (PDT)
+	s=arc-20240116; t=1759335459; c=relaxed/simple;
+	bh=42WEIdqkfFBAo1Dv2IyGMKfPr9BeV+nb3loEHQqymqM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bfHQnm/9ArlUqGa4Vb2+aqTpMEzwyl4fr/sSlt8sJpZ0+DF3o/GOB+81HQw3piHjhs7/eoKV3kFHNEnemiFekP0As3EqgTW5m46A8UZD57TDDTUwXPY4XZEg7jfkUxWuqO+kJiokOniLDbcwR32Q/B1itTtSByjdSYqQXWftiFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ShjPxmBT; arc=none smtp.client-ip=209.85.166.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-42d8b15548eso110095ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 09:17:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759335334; x=1759940134; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iAee651rAQS/C/Qwa2CpN1beksC4sJ/ZDg6HvycKd2g=;
-        b=HPDwwCZ48RnPdUCFdD+U/gwiKLtzqTPWvyI/UECO+BYP6IC3TcjUGC046GBIlYnwp5
-         nNbFpIfeQwIn3vH+stuaVdHnwWoD1cDoUzhYmJSoa9cubkdHuJ58UFvmG496xJP7qSWX
-         0JplsjYQecVcL0MIvweLS5I2E8z8rtR3EbGPaJczo4eIzc93QPHJ14KBvfug+iwFJQbi
-         fwMcZU6n6S52ObQo3CJZe3a27I7JxKPmlu2cX81MczyAUjn7WB90fZp0O1lfNv5GMb8x
-         lndmEAH3zrGi+VA1XdRKqVrVa28ZrUYxMhXU7eHc/tlPzhabU7/O7T4Xt58vXJqQKIFF
-         LfoA==
+        d=linuxfoundation.org; s=google; t=1759335457; x=1759940257; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=te+5NbOWKHS/5qX08a4TSadV7+LggdZYvrui5XC1Ixg=;
+        b=ShjPxmBTojb+yE6Ftg2K7Jn4bsobqVuN/uCu+P93cDM7qAe+5CLzEd3KvzOVi9X+5k
+         28cIzR0iB9A3BkLDRwnwuRj/phUlgsBi6p8mDjWr6vg2IKd+ZJq/8bws/O3ySCAjfPmn
+         y2GaFR2pkGD/0ngwIIy/1QGRir0jaFrQ0QQHA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759335334; x=1759940134;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=iAee651rAQS/C/Qwa2CpN1beksC4sJ/ZDg6HvycKd2g=;
-        b=mJtUFnOOJY8+2b2uCQy4yJlH7T41yMaujfa5bEoGH7fY3bJ57CQ5/UyZaOpzgtMgNc
-         l1QXT4FdJdV8eV2pFf4nqm2bP9iQ4Oo7trI07ULMrU1CIL6cA5922cP6FmqXT9QZYf37
-         noWyJV40UC8ID1cwrWCvB08CWEaR3805ckAIKX14BU8Gn/cSCll/2yjFVfzBzhkFdatT
-         40YRX3oD+nEjHiy8fmb+a+oEn0Skj7DmjQUx2EsURle3i91g2cWoJEsZY1QlFfO6VKf4
-         +Abf24xI3StpflTIN+e5rStwUt2l8J0XH/HxMCr6RyboKX70i7aSiWW769aA7L4Bt5+h
-         JGJw==
-X-Forwarded-Encrypted: i=1; AJvYcCURpqbttQN694mZYucSsejRNNwBQngyCD995CdOSTtWd/1fW1x0ioAkt1RO+Jd+t9SDDV+AeMEDbYZLq90=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy744C0fGZH4Si2i0eWsy98Id+su/GluBWgWgQDcmkhyd9itXhl
-	a60eW7m3OqKD/ARlSiJ+/mM/vW/Ce0ivlv7fELQfEPOL7bhaxmMHb/wLVN+hNvucXA1eK+etAl4
-	BaMOKLg==
-X-Google-Smtp-Source: AGHT+IFT9qvjDww9U012OeW5sqCPQWLNIV0YHoXictQooBDBzTabAydQhDyqW9+2yml0/Q14YFKLLVp8/eY=
-X-Received: from pjbgd14.prod.google.com ([2002:a17:90b:fce:b0:32b:8b8d:c2ba])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:2384:b0:264:befb:829c
- with SMTP id d9443c01a7336-28e7f2a11eamr47188085ad.9.1759335334236; Wed, 01
- Oct 2025 09:15:34 -0700 (PDT)
-Date: Wed, 1 Oct 2025 09:15:32 -0700
-In-Reply-To: <CAGtprH_JgWfr2wPGpJg_mY5Sxf6E0dp5r-_4aVLi96To2pugXA@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1759335457; x=1759940257;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=te+5NbOWKHS/5qX08a4TSadV7+LggdZYvrui5XC1Ixg=;
+        b=eygHg6EuxuksJ8E5cGVyKZIl+Ry5YM1Nar5Ga3GwHng4TQ/R6UzDkO90KcYHT4qcXA
+         3Y0GzVb/Uac2NGvrY36mp0kZzLzT+Fl1xpdnUl60QqiHigJ4K9pi6w5mHydqSmUbnTfY
+         1jxAHhRjLo8fE5S1RCGFZtGLGakeP4/VbM+0cZlktci6KKsfKv5HE7sTyM6dHw07snGg
+         wWCXOvQ3ibF3qVEELLCTacrNDjXUy0cP0dtQLmpDpz1nJuH/0GZOrubc4ckF0f62sNly
+         dVoJBq4fook1L7anxwsGR9QQNKIHP4qzCYe7qfrzUyVM6tYE2eBYGa6oWRCTvAaltdJA
+         KCuA==
+X-Forwarded-Encrypted: i=1; AJvYcCV9esaYCBwyN4JDKbqor093Ty2dDT0qjvM4ulM0LJbw7Em9PltV1K5RFM7Fo894YKCAdfcAYt4LGZsB2Hc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXf1HPIa1bmN6nOdQpXypsQkpb7EThJ2nQVAIOqxlQhYGdQgO0
+	EUTEUTsDaHQu5UJzz+FJs0EmNilkj512E1HKsJtlAgGc0IRG8CgoEaXWxXHzvoX0YUI=
+X-Gm-Gg: ASbGncunC6FrFzyLtyejycg+7OGw4SQvgvvN6B4zS/tYTSTEMWWA9yhrNGH7JQwGJRX
+	kRbxTtWYXRKyNDkT3W4mZ2Inh2iWoFFYiXHeL9HwJkQuu+PDD5UYMJ5bpYQs53LzCCY91XuI3B7
+	9gyUuwFL+j099jPfN2vs8G8ef5YF01oelk3Z3KAqw3B01/zNuW5IDc0u62tG6W7H5gIR/Wczoup
+	gvGEpcJrgrAf8d2mOVkAABh+J1MMZsIbcVX7qXSgNSZe6sg29QXzkQas+e4bxJmC/R/Gzjt2lFn
+	NH7YVwSBG9APhzJFO1ja1Jja2XzOv/mVjGzWZfaCTpix5xUb9YWec+KcQQiiUqtugxRsUv5BBjp
+	5TR0JioixyL3DI2oQmH+Lh2QdD8rZoLnFzbA9tJgRePcXR0lDVpp3njD8PsA=
+X-Google-Smtp-Source: AGHT+IH0excAHZ+jMnE2ocUE86didFlaIgYk6DkZJGEMwQnc3kqU0Y4RCbD9igEPUrB7EaQwDn6QJQ==
+X-Received: by 2002:a05:6e02:1c24:b0:429:792a:a8b1 with SMTP id e9e14a558f8ab-42d8161793bmr59555515ab.15.1759335456959;
+        Wed, 01 Oct 2025 09:17:36 -0700 (PDT)
+Received: from [192.168.1.14] ([38.175.187.108])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-578cd957c45sm1392409173.34.2025.10.01.09.17.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 01 Oct 2025 09:17:36 -0700 (PDT)
+Message-ID: <92cf1715-4295-4ef0-b6fd-0774f4fcbf11@linuxfoundation.org>
+Date: Wed, 1 Oct 2025 10:17:35 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250926163114.2626257-1-seanjc@google.com> <20250926163114.2626257-2-seanjc@google.com>
- <CA+EHjTzdX8+MbsYOHAJn6Gkayfei-jE6Q_5HfZhnfwnMijmucw@mail.gmail.com>
- <diqz7bxh386h.fsf@google.com> <a4976f04-959d-48ae-9815-d192365bdcc6@linux.dev>
- <d2fa49af-112b-4de9-8c03-5f38618b1e57@redhat.com> <diqz4isl351g.fsf@google.com>
- <aNq6Hz8U0BtjlgQn@google.com> <aNshILzpjAS-bUL5@google.com> <CAGtprH_JgWfr2wPGpJg_mY5Sxf6E0dp5r-_4aVLi96To2pugXA@mail.gmail.com>
-Message-ID: <aN1TgRpde5hq_FPn@google.com>
-Subject: Re: [PATCH 1/6] KVM: guest_memfd: Add DEFAULT_SHARED flag, reject
- user page faults if not set
-From: Sean Christopherson <seanjc@google.com>
-To: Vishal Annapurve <vannapurve@google.com>
-Cc: Ackerley Tng <ackerleytng@google.com>, David Hildenbrand <david@redhat.com>, 
-	Patrick Roy <patrick.roy@linux.dev>, Fuad Tabba <tabba@google.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Nikita Kalyazin <kalyazin@amazon.co.uk>, shivankg@amd.com
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.1 00/73] 6.1.155-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ achill@achill.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <20250930143820.537407601@linuxfoundation.org>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20250930143820.537407601@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 01, 2025, Vishal Annapurve wrote:
-> On Mon, Sep 29, 2025 at 5:15=E2=80=AFPM Sean Christopherson <seanjc@googl=
-e.com> wrote:
-> >
-> > Oh!  This got me looking at kvm_arch_supports_gmem_mmap() and thus
-> > KVM_CAP_GUEST_MEMFD_MMAP.  Two things:
-> >
-> >  1. We should change KVM_CAP_GUEST_MEMFD_MMAP into KVM_CAP_GUEST_MEMFD_=
-FLAGS so
-> >     that we don't need to add a capability every time a new flag comes =
-along,
-> >     and so that userspace can gather all flags in a single ioctl.  If g=
-mem ever
-> >     supports more than 32 flags, we'll need KVM_CAP_GUEST_MEMFD_FLAGS2,=
- but
-> >     that's a non-issue relatively speaking.
-> >
->=20
-> Guest_memfd capabilities don't necessarily translate into flags, so ideal=
-ly:
-> 1) There should be two caps, KVM_CAP_GUEST_MEMFD_FLAGS and
-> KVM_CAP_GUEST_MEMFD_CAPS.
+On 9/30/25 08:47, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.155 release.
+> There are 73 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 02 Oct 2025 14:37:59 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.155-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-I'm not saying we can't have another GUEST_MEMFD capability or three, all I=
-'m
-saying is that for enumerating what flags can be passed to KVM_CREATE_GUEST=
-_MEMFD,
-KVM_CAP_GUEST_MEMFD_FLAGS is a better fit than a one-off KVM_CAP_GUEST_MEMF=
-D_MMAP.
+Compiled and booted on my test system. No dmesg regressions.
 
-> 2) IMO they should both support namespace of 64 values at least from the =
-get go.
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
 
-It's a limitation of KVM_CHECK_EXTENSION, and all of KVM's plumbing for ioc=
-tls.
-Because KVM still supports 32-bit architectures, direct returns from ioctls=
- are
-forced to fit in 32-bit values to avoid unintentionally creating different =
-ABI
-for 32-bit vs. 64-bit kernels.
-
-We could add KVM_CHECK_EXTENSION2 or KVM_CHECK_EXTENSION64 or something, bu=
-t I
-honestly don't see the point.  The odds of guest_memfd supporting >32 flags=
- is
-small, and the odds of that happening in the next ~5 years is basically zer=
-o.
-All so that userspace can make one syscall instead of two for a path that i=
-sn't
-remotely performance critical.
-
-So while I agree that being able to enumerate 64 flags from the get-go woul=
-d be
-nice to have, it's simply not worth the effort (unless someone has a clever=
- idea).
-
-> 3) The reservation scheme for upstream should ideally be LSB's first
-> for the new caps/flags.
-
-We're getting way ahead of ourselves.  Nothing needs KVM_CAP_GUEST_MEMFD_CA=
-PS at
-this time, so there's nothing to discuss.
-
-> guest_memfd will achieve multiple features in future, both upstream
-> and in out-of-tree versions to deploy features before they make their
-
-When it comes to upstream uAPI and uABI, out-of-tree kernel code is irrelev=
-ant.
-
-> way upstream. Generally the scheme followed by out-of-tree versions is
-> to define a custom UAPI that won't conflict with upstream UAPIs in
-> near future. Having a namespace of 32 values gives little space to
-> avoid the conflict, e.g. features like hugetlb support will have to
-> eat up at least 5 bits from the flags [1].
-
-Why on earth would out-of-tree code use KVM_CAP_GUEST_MEMFD_FLAGS?   Provid=
-ing
-infrastructure to support an infinite (quite literally) number of out-of-tr=
-ee
-capabilities and sub-ioctls, with practically zero chance of conflict, is n=
-ot
-difficult.  See internal b/378111418.
-
-But as above, this is not upstream's problem to solve.
-
-> [1] https://elixir.bootlin.com/linux/v6.17/source/include/uapi/asm-generi=
-c/hugetlb_encode.h#L20
+thanks,
+-- Shuah
 
