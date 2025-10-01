@@ -1,202 +1,136 @@
-Return-Path: <linux-kernel+bounces-839287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DA28BB1408
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 18:31:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2B88BB1414
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 18:31:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DF8F3B517C
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 16:31:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAE6F3B7515
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 16:31:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74937284688;
-	Wed,  1 Oct 2025 16:31:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D6FD2857F5;
+	Wed,  1 Oct 2025 16:31:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IFJQFGqK"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ez6OFCTb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4228E202C48
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 16:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A790D239E8B;
+	Wed,  1 Oct 2025 16:31:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759336289; cv=none; b=IFB05rKrGb1TrLbk4Fjs2eLVFdMk2Cow1A3FcmpticgUrsVn8mDliim3p1tAY8BAoXMSceeK6vyJUqizFhZrG3Z0INVluxEBYLky+WuxvIu9a4/p7UTFH84ovUeEr5odUcg3KWph2VhAx2gCSY85zEcb6RyQx5gCdWDpwTwN1pA=
+	t=1759336305; cv=none; b=SKVDdFzwWiCEHfuQD95cTZ0bmaMXyhtHIYEVHtQelVgDEToAxDOVfnwDwHaJ8cYfKFjCTNGZyAaxWDWHCqjkl77o1G/iQYjnlP7/J4r7UcJhDlFVWfz2o6/Z85Tyygr1HeEfGhZOAiKAEjPPypo6wfzH7VUdYqfg4VibYRhbGQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759336289; c=relaxed/simple;
-	bh=RP1vqmC3zoQ6sRRSEzky7NdKDsBOuulx9J4Zw7a3DaA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jdTUzFxqhtE+zKuV6WcrfLmMQyTjaEKrEQQX23c5pmp5678TeU+oCWmJuE5xrGEN4aJz5GIYd/wZ49OVSPyj2Dbgus1IsLTxeYEzzYV4MT2jvg/dOg2aGXS7v/+71zm4RMQ6EMhsVwOoLUfuQG/VsC5sHck0Q9rfF/SzcXafBZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IFJQFGqK; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2731ff54949so185995ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 09:31:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759336287; x=1759941087; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XdG7GxF5fqvjfIsAubrCH24e3CucQVnX0feF4WXkz4k=;
-        b=IFJQFGqKAqkXCqbt3xOVw6Y1qEe3baqizs2/h97o56kXCY9uUexUWr9JLsO4zIIyB0
-         vX8bdUJvfPe1uisvIc7sgPyqCDxoEAJvi+JCX7bTlquAw4Qn3Fon/EkpAt+/qzdgMrpn
-         /O4EVop/isArhA7dppex+1UhMWbJZB8aHPy6hpg5XgaqtJNbsXpo5Lr2+rQbvReyMjoi
-         YePt/VzDJHxyDneKFzfO2xgnr58EHrw5kcpTUaCZm0O9xc8LjfZlekCZv3TgNXDh+0fP
-         NbRvFziqSh+tjF1E2TDXZzKESI93WPCqKnKkO5tDvhRLkyN0kKr/CVuoxZji/2JYW66r
-         hgOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759336287; x=1759941087;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XdG7GxF5fqvjfIsAubrCH24e3CucQVnX0feF4WXkz4k=;
-        b=FNxsH6zZPSqjwZt/+2YfnQr8SCm2ToCHePzpy7fPtXnynluwvyYALIBPtuVt6i43jW
-         3PCuYpS/ZWPu9TIm2jxkeYYPcsf4NWQ4UDzJc02WAX4NpN0X+FB2ushgTmXFfuzVoocJ
-         X4MteiEdhJZp2NHhHX+IrWsh8x55QlCMPMRERYvnqtf0afZIAueKbcTkm6jvlJYqaxMJ
-         oNWEEOeBsdeBaQTh3ZbY1q2jKFRpMXSQXt+T3rE0nRIB8RHMaHbFeGQHV5GAD+XJvA4u
-         eRXrTFW6y0jEMgdgeKihSXQ64Hgn9KCrDns+VbEPjSYBKMFKnEBy57OiEiW7Vi+a0Va9
-         ZnZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVL9NRC117zO5d8Uj+mFg2B+Oy+ufi0LdyUtmABJz36TtfEcF5BVyjIqsHLXoE11Cky5MNYK+sVeYhgfi4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJZFAb5tHWfP+oqVwVm8VPGc/P5XRimrvu5euGmg3rOnRGryeI
-	BmgCSfLRhTOk1CqaPAVbp9YDicsihHbhIkQab9N2M+49ATPLy+/GpcV3NPKcseRlRJdSe4+cm8N
-	t+OCzsfaN6YGGKCulb6FLWYmCeB1+xfpMidM/Su+b
-X-Gm-Gg: ASbGncvbXuVS4SrFqcd+SqU7RifQY5T46HD37RGGBJl4CI4ZtsIFWI69tWMkk6lFHqX
-	5Qei6oimqbKc80SHl2DqL9L5K1UwLp42+PzxPH3v4hhYyjmMtzqUuBFQV/lYZgj7lGK62valRN0
-	/8kTbva7F3+Z26frPnZZdbunWQi+7y+YQt1qQxIUN28MQ7n7N4/iMJ1DdEohu+7ieHulgWWJQEN
-	4k1kxgiyezutBOi6EvAoR32iRn/gn9BKopuFYAJK83qVMmti7QphCB8X1/bzYHdIYOvnEg=
-X-Google-Smtp-Source: AGHT+IH0ExYqIBIG65vPcoT3DiNCO/ffAaeFUTJey4ev21imvkdenToERs6JxgJGYCVymJAxVxO6o81Q1Km8Zl9XVl4=
-X-Received: by 2002:a17:902:f70d:b0:268:cc5:5e44 with SMTP id
- d9443c01a7336-28e8003e0b6mr5289075ad.6.1759336287136; Wed, 01 Oct 2025
- 09:31:27 -0700 (PDT)
+	s=arc-20240116; t=1759336305; c=relaxed/simple;
+	bh=euC6S3LiJG7HoABb999DdDDuS1mO+zTyN+ac3MVNApE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DBf3Jkple8Agvy50731WdNlfx4msYctbh5NpXCA2cudh2FzkUBJcAidiJEx3xxN9Gw1sL53r8movggdgQrvlyFXGXPvKXnOgFGEofISQyG/ZoJ7fYEi9cvsPTrr5JYtupRKUjQCiFagcIgbVKmeFulQdxjlaTITmv3vPKKlgkO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ez6OFCTb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F14ECC4CEF1;
+	Wed,  1 Oct 2025 16:31:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759336305;
+	bh=euC6S3LiJG7HoABb999DdDDuS1mO+zTyN+ac3MVNApE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ez6OFCTbMYLimCzxtqaRhwayDyeKNMZFV9p2OfwD0PeyjCazvNn/yEn8AeW0ocQIo
+	 o7KDW0MUki5v9QClr61J3yaWYq0IsM0AnO3CJbVWWcRvxjwndNLjKHEnCV9UZ8w9jO
+	 SjcBGOOU7yJLOm0hEzY+53QrOGGy6P+y3140tttzA9aj7jsWfLYhgAq3nJ8VAuk1Bi
+	 0OzSaA0jojTNQflLq5OLzKL6ukzWa7/iDG8qFzoUMGWBNqN7b0hpAf/lbqUV6T1e6t
+	 wBP2dTd10B4mkZyx5Brx0yPKQZFBEtW6h1SUcDmd2wzwEwBTz3jtaFjSQRGmk44QAd
+	 9pTkSzOL8E+Vw==
+Date: Wed, 1 Oct 2025 11:31:39 -0500
+From: Rob Herring <robh@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: phy: qcom,sc8280xp-qmp-usb43dp: do not
+ reference whole usb-switch.yaml
+Message-ID: <20251001163139.GA1877961-robh@kernel.org>
+References: <20250902-topic-sm8x50-fix-qmp-usb43dp-usb-switch-v1-1-5b4a51c8c5a8@linaro.org>
+ <20250905175533.GA1000951-robh@kernel.org>
+ <nwtt76n4t7tlf26ex47wrot7g7nldtmavbzgwmluls3egamjsi@mkomopb6fjh6>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250926163114.2626257-1-seanjc@google.com> <20250926163114.2626257-2-seanjc@google.com>
- <CA+EHjTzdX8+MbsYOHAJn6Gkayfei-jE6Q_5HfZhnfwnMijmucw@mail.gmail.com>
- <diqz7bxh386h.fsf@google.com> <a4976f04-959d-48ae-9815-d192365bdcc6@linux.dev>
- <d2fa49af-112b-4de9-8c03-5f38618b1e57@redhat.com> <diqz4isl351g.fsf@google.com>
- <aNq6Hz8U0BtjlgQn@google.com> <aNshILzpjAS-bUL5@google.com>
- <CAGtprH_JgWfr2wPGpJg_mY5Sxf6E0dp5r-_4aVLi96To2pugXA@mail.gmail.com> <aN1TgRpde5hq_FPn@google.com>
-In-Reply-To: <aN1TgRpde5hq_FPn@google.com>
-From: Vishal Annapurve <vannapurve@google.com>
-Date: Wed, 1 Oct 2025 09:31:14 -0700
-X-Gm-Features: AS18NWCwG4Tg7c_g0xW6dmjiFJ7MkHG5Ng3nKWTTgLI8yGDTRQhsFalbbDRtIlI
-Message-ID: <CAGtprH-0B+cDARbK-xPGfx4sva+F1akbkX1gXts2VHaqyDWdzA@mail.gmail.com>
-Subject: Re: [PATCH 1/6] KVM: guest_memfd: Add DEFAULT_SHARED flag, reject
- user page faults if not set
-To: Sean Christopherson <seanjc@google.com>
-Cc: Ackerley Tng <ackerleytng@google.com>, David Hildenbrand <david@redhat.com>, 
-	Patrick Roy <patrick.roy@linux.dev>, Fuad Tabba <tabba@google.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Nikita Kalyazin <kalyazin@amazon.co.uk>, shivankg@amd.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <nwtt76n4t7tlf26ex47wrot7g7nldtmavbzgwmluls3egamjsi@mkomopb6fjh6>
 
-On Wed, Oct 1, 2025 at 9:15=E2=80=AFAM Sean Christopherson <seanjc@google.c=
-om> wrote:
->
-> On Wed, Oct 01, 2025, Vishal Annapurve wrote:
-> > On Mon, Sep 29, 2025 at 5:15=E2=80=AFPM Sean Christopherson <seanjc@goo=
-gle.com> wrote:
-> > >
-> > > Oh!  This got me looking at kvm_arch_supports_gmem_mmap() and thus
-> > > KVM_CAP_GUEST_MEMFD_MMAP.  Two things:
-> > >
-> > >  1. We should change KVM_CAP_GUEST_MEMFD_MMAP into KVM_CAP_GUEST_MEMF=
-D_FLAGS so
-> > >     that we don't need to add a capability every time a new flag come=
-s along,
-> > >     and so that userspace can gather all flags in a single ioctl.  If=
- gmem ever
-> > >     supports more than 32 flags, we'll need KVM_CAP_GUEST_MEMFD_FLAGS=
-2, but
-> > >     that's a non-issue relatively speaking.
-> > >
-> >
-> > Guest_memfd capabilities don't necessarily translate into flags, so ide=
-ally:
-> > 1) There should be two caps, KVM_CAP_GUEST_MEMFD_FLAGS and
-> > KVM_CAP_GUEST_MEMFD_CAPS.
->
-> I'm not saying we can't have another GUEST_MEMFD capability or three, all=
- I'm
-> saying is that for enumerating what flags can be passed to KVM_CREATE_GUE=
-ST_MEMFD,
-> KVM_CAP_GUEST_MEMFD_FLAGS is a better fit than a one-off KVM_CAP_GUEST_ME=
-MFD_MMAP.
+On Tue, Sep 30, 2025 at 10:10:25PM +0300, Dmitry Baryshkov wrote:
+> On Fri, Sep 05, 2025 at 12:55:33PM -0500, Rob Herring wrote:
+> > On Tue, Sep 02, 2025 at 06:10:05PM +0200, Neil Armstrong wrote:
+> > > Both bindings describe a different layout of the ports properties,
+> > > leading to errors when validating DT using this PHY bindings as
+> > > reported by Rob Herring.
+> > > 
+> > > Reported-by: Rob Herring <robh@kernel.org>
+> > > Closes: https://lore.kernel.org/all/175462129176.394940.16810637795278334342.robh@kernel.org/
+> > > Fixes: 3bad7fe22796 ("dt-bindings: phy: qcom,sc8280xp-qmp-usb43dp: Reference usb-switch.yaml to allow mode-switch")
+> > > Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> > > ---
+> > >  .../devicetree/bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml    | 8 +++++---
+> > >  1 file changed, 5 insertions(+), 3 deletions(-)
+> > > 
+> > > diff --git a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml
+> > > index c8bc512df08b5694c8599f475de78679a4438449..5005514d7c3a1e4a8893883497fd204bc04e12be 100644
+> > > --- a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml
+> > > +++ b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml
+> > > @@ -73,8 +73,11 @@ properties:
+> > >      description:
+> > >        See include/dt-bindings/phy/phy-qcom-qmp.h
+> > >  
+> > > -  mode-switch: true
+> > > -  orientation-switch: true
+> > > +  mode-switch:
+> > > +    $ref: /schemas/usb/usb-switch.yaml#properties/mode-switch
+> > > +
+> > > +  orientation-switch:
+> > > +    $ref: /schemas/usb/usb-switch.yaml#properties/orientation-switch
 
-Ah, ok. Then do you envision the guest_memfd caps to still be separate
-KVM caps per guest_memfd feature?
+Looking at this again, this isn't even correct and I don't think it 
+works. It's missing a '/' and  should be ...#/properties/... to be a 
+valid json pointer.
 
->
-> > 2) IMO they should both support namespace of 64 values at least from th=
-e get go.
->
-> It's a limitation of KVM_CHECK_EXTENSION, and all of KVM's plumbing for i=
-octls.
-> Because KVM still supports 32-bit architectures, direct returns from ioct=
-ls are
-> forced to fit in 32-bit values to avoid unintentionally creating differen=
-t ABI
-> for 32-bit vs. 64-bit kernels.
->
-> We could add KVM_CHECK_EXTENSION2 or KVM_CHECK_EXTENSION64 or something, =
-but I
-> honestly don't see the point.  The odds of guest_memfd supporting >32 fla=
-gs is
-> small, and the odds of that happening in the next ~5 years is basically z=
-ero.
-> All so that userspace can make one syscall instead of two for a path that=
- isn't
-> remotely performance critical.
->
-> So while I agree that being able to enumerate 64 flags from the get-go wo=
-uld be
-> nice to have, it's simply not worth the effort (unless someone has a clev=
-er idea).
+I thought we checked this...
 
-Ack.
+> > 
+> > This is a pattern we try to avoid with references at a property level. I 
+> > prefer you make port and ports not required in usb-switch.yaml.
+> 
+> But this solution is also not perfect. E.g.
+> Documentation/devicetree/bindings/phy/fsl,imx8mq-usb-phy.yaml should
+> only allow the orienttion-switch property, while using
+> allOf:$ref:usb-switch.yaml allows all three (orientation-switch,
+> mode-switch, retimer-switch).
 
->
-> > 3) The reservation scheme for upstream should ideally be LSB's first
-> > for the new caps/flags.
->
-> We're getting way ahead of ourselves.  Nothing needs KVM_CAP_GUEST_MEMFD_=
-CAPS at
-> this time, so there's nothing to discuss.
->
-> > guest_memfd will achieve multiple features in future, both upstream
-> > and in out-of-tree versions to deploy features before they make their
->
-> When it comes to upstream uAPI and uABI, out-of-tree kernel code is irrel=
-evant.
->
-> > way upstream. Generally the scheme followed by out-of-tree versions is
-> > to define a custom UAPI that won't conflict with upstream UAPIs in
-> > near future. Having a namespace of 32 values gives little space to
-> > avoid the conflict, e.g. features like hugetlb support will have to
-> > eat up at least 5 bits from the flags [1].
->
-> Why on earth would out-of-tree code use KVM_CAP_GUEST_MEMFD_FLAGS?   Prov=
-iding
+That can be handled like this:
 
-I can imagine a scenario where KVM_CAP_GUEST_MEMFD_FLAGS is upstreamed
-and more flags landing in KVM_CAP_GUEST_MEMFD_FLAGS as supported over
-time afterwards. out-of-tree code may ingest KVM_CAP_GUEST_MEMFD_FLAGS
-in between.
+$ref: usb-switch.yaml
+properties:
+  orientation-switch: true
+additionalProperties: false
 
-> infrastructure to support an infinite (quite literally) number of out-of-=
-tree
-> capabilities and sub-ioctls, with practically zero chance of conflict, is=
- not
-> difficult.  See internal b/378111418.
->
-> But as above, this is not upstream's problem to solve.
->
-> > [1] https://elixir.bootlin.com/linux/v6.17/source/include/uapi/asm-gene=
-ric/hugetlb_encode.h#L20
+Though if you need unevaluatedProperties for some other reason, then 
+that won't enforce it and it's just documentation. In that case, then 
+perhaps usb-switch.yaml is not the right granularity and should be split 
+up.
+
+I put this into the category of "this is the least of our problems". I'm 
+not that interested in enforcing what common properties a device uses or 
+not. It's undocumented properties I'm worried about or lack of 
+constraints (on reg, clocks, interrupts, etc.).
+
+Rob
 
