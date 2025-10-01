@@ -1,144 +1,123 @@
-Return-Path: <linux-kernel+bounces-839409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A13CDBB1925
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 21:14:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66B42BB192C
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 21:17:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CEE03C6BB9
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 19:14:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22D652A3BEC
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 19:17:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1F92D7DD7;
-	Wed,  1 Oct 2025 19:14:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7639238D32;
+	Wed,  1 Oct 2025 19:17:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wOsMzrdD"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="a4fv59BV"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5019523D7DB
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 19:14:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A82C085626
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 19:17:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759346077; cv=none; b=hbADd8n/A+ilIYHFSCCZVB3F/oxEhI1yjKKUrOq/Zm/sfypL1+4zZYPIEHGZl9N2lq5FA+lj5FHdB1DPOU/ajAKBnWikkdLB7KZ4sDkk7uJmsgWrKpz5zH1iGHWv+9Yr1JoXMAZfu/Waruo4j24Ngj16hnc87NNtkLVga67DJjY=
+	t=1759346227; cv=none; b=TC1P7+Wr0qqmvHp7/PbPbC0bH2b0tIZnd2Aw3nDIAXAWYkdl3srpM/b6dO556H01VfKoYefxDRBNeCVic9y8GY+ldJZAYuBLxccopt/qAcmma7RujEQVPiTILtGJUSITM8Btq33BA9Z2SNj/5BKrXKN01AGFAQY+HCh8UVeECRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759346077; c=relaxed/simple;
-	bh=vU2bRCzOPz9cqFE+fRPp0KSU/JqJXG1CNpMF2SQ0dXk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R7dEf3ttgcmQYaXDJbdgy0ZAoxgri7rStLvDKMX06DDYcqUYggrefO87+A2nEJS4LhepraNVrms7S6cH8RChLFL2774spGa45ck4u5w96g2EkuSqpy1dYuxTr9sq/e5HRC8qSKMSvDjR5ZLbzHqtJyzuQnkJSq2c8b7AVLWwmm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wOsMzrdD; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-57bd04f2e84so234536e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 12:14:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759346073; x=1759950873; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gpYWttYdrlKxMJNuC4/+/3P23bCufP7vQF7gyhcuZQE=;
-        b=wOsMzrdD+S7fxIiMmQqhBtvdGNvn1N2/qXS7odyyMMbfGlZLJ1wQrhqKFVbNi60ivC
-         x4HCHhlkxxr+M6iTn1TOlMClUAdhXH/xf/VoMRkP7AhxPPFBGFrUXsMUyXmnCcLomvs/
-         71b644mm+Llh9frR60YplYtJxthbcdTeDMZhn+Fqy1rl39I6KtJSNhAh0v2Ls7ufJDsl
-         NwNzLSPrIUWWakX/h43L/GDHv2Eyrl2FOh61jwwxyYPBv7zBBfGSXDceHsyrVFtprhzf
-         mUxTEgYiZzGLclr7bNsTUNr9z1j0Jsw+Y+WRKtkvALs2JRFXo+Sh/1jTSbtO1HBP1NNC
-         ytzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759346073; x=1759950873;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gpYWttYdrlKxMJNuC4/+/3P23bCufP7vQF7gyhcuZQE=;
-        b=keOmUiJG+vIRboYxraHm9GnzWZybSGdjRKfu40addXsquSdC8jy0U1AW0B5Xf9Oi3k
-         AqiU+8MpcQU+wesS0geEVqRn5BIdUIGQc7yYV5dqlIffBHbGY6Yqd2Yf+IwpgZaxnUM9
-         5fBoDRqmtzjJ36wfYKLG33Eq53QZyA0L6iyLBqk0gGel5OaHegnL5wVeZY2TMDRBTTNv
-         fCVPk8ZfB2Wko7Gb3f9qRqv1srnEH9a6U9JRYp7szysjpnwAKYyLepiyIlajcd0U6tQb
-         fbX4XqZYQmcMqfpToxraUy937UOe9nPC3Xp0BUJGnEpgKlwcxpgS8Kix+M0zogNfxLGk
-         2Hcw==
-X-Forwarded-Encrypted: i=1; AJvYcCUzw+B2u8O63TC/HstV/F4ZOShioqlZnf/8VNzouIKzAtJUktpFckzTj+I1tW+jQkeXCtgKsQEC3Gu3SMQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzk44i2oVQfeua0NgfI+rq7VxqduyQ7K57OJIFFjQJjO/U3Z5sG
-	Xz3/LVD5ArtgkZLZD/brwEx1F1LYlzePmf03K8AsZut6Y7sdJVXgl0QCa4DaxMSJ1ePzCcbuxLj
-	LMvu6Zv0hj7qKNqzxZCiY5EwuESWEtlBIjf2M3mU62w==
-X-Gm-Gg: ASbGncuy0En6TmqK0Z9A9lEzr6lQgfsiAm6GFpMllvczCYX6EPyVFDze9eCYDIsPYV8
-	Lh5yZN46I7kiWXNSO7Go0vLeEUs31Kqg2CW3UIDTqE0yvb+5JTvTalGlOEbhcNuFu1nZY/q6Z8B
-	N4bKJ5mB2r7/GZLZHnnHgYKVepG0yfCOmeVzwVIHW5FKHp7cmb7F8WvmPxRf4TGjRtaNy6FYtJJ
-	jqMbDVUqxNt7qFMT6GaI/3aD5PE+eM=
-X-Google-Smtp-Source: AGHT+IGMkX2miJlksEsdM7PXcVzHNnO384Za6SpV35+lEVYqmGUHyp9bwhwrzCQ3loRfE0DrPQkJgxZVFLD3fAKGmIc=
-X-Received: by 2002:a05:6512:3b8d:b0:57d:ffa4:56eb with SMTP id
- 2adb3069b0e04-58af9f6ad77mr1525367e87.31.1759346073280; Wed, 01 Oct 2025
- 12:14:33 -0700 (PDT)
+	s=arc-20240116; t=1759346227; c=relaxed/simple;
+	bh=QD+2CS5WYsq+yF7x49GXgjmDptCLj73Dl6AujVQN/rE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XKuMi4/+ubuePWyonIjxKgxEiKLQnW7hdwfb+o0DnoT2CKSwfktCMDNadKGW0IkXQRtbmUuGx7m/THsWfCCuryv5tgo07xTNlNVv3N9sX+IADg8gFOi3Sxctxq1RyyPTDvSU4CPltQPqunmHiyGrklTaMGial/Bnj66wlfoEoS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=a4fv59BV; arc=none smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 591I1Lxn007104;
+	Wed, 1 Oct 2025 19:16:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=corp-2025-04-25; bh=z6PtmBeGzMc1ENkGjQvF6qfyhLLPU
+	BtoV6yyRMwgP6k=; b=a4fv59BV6h+dBLVAYuMp0zDcglvNdSuTiyA2CXBUHTljj
+	e//7X0bI53atRN+9M4qFtDBHDr+EdrXXt1RYBCs4COxUqGju+DvkBcTl5LpQNaZs
+	047Ys4LwYGFybsDMBaOEWPga2wW3Yg/FMPcLzTlwUBbO9gK6zVUBbTLwX3JOqayt
+	fBkKdtUDL4NLRonhD3f3ms/8ExpVhSnxgFbl3b3eLT72afp1VZRXtcn9YBAlzC7L
+	WJPjnRstR9mw0l8t9+8DR9zSS6NpjTl+amWWtDr2gbf56/n4Il5UG47kC/AoQq9z
+	eeUz+VuhbtFnyBx9NlfP3jhqiIdVdQqN9zmOYZdqQ==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 49gm3bj554-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 01 Oct 2025 19:16:57 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 591IjNke002872;
+	Wed, 1 Oct 2025 19:16:56 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 49e6ca3nr2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 01 Oct 2025 19:16:56 +0000
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 591JGta8031667;
+	Wed, 1 Oct 2025 19:16:55 GMT
+Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 49e6ca3nq2-1;
+	Wed, 01 Oct 2025 19:16:55 +0000
+From: Alok Tiwari <alok.a.tiwari@oracle.com>
+To: eperezma@redhat.com, mst@redhat.com, jasowang@redhat.com,
+        xuanzhuo@linux.alibaba.com, virtualization@lists.linux.dev
+Cc: alok.a.tiwari@oracle.com, linux-kernel@vger.kernel.org
+Subject: [PATCH] virtio_vdpa: fix misleading return in void function
+Date: Wed,  1 Oct 2025 12:16:50 -0700
+Message-ID: <20251001191653.1713923-1-alok.a.tiwari@oracle.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <VI0P195MB2739D000BD1BF18B3B718F93ED1FA@VI0P195MB2739.EURP195.PROD.OUTLOOK.COM>
- <CACRpkdZbwuf2Fgtq+jyqzqspb37-P6X4O9xqkG-mSb+afSjh3g@mail.gmail.com> <VI0P195MB273993B2928F985EAC763375EDE6A@VI0P195MB2739.EURP195.PROD.OUTLOOK.COM>
-In-Reply-To: <VI0P195MB273993B2928F985EAC763375EDE6A@VI0P195MB2739.EURP195.PROD.OUTLOOK.COM>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 1 Oct 2025 21:14:22 +0200
-X-Gm-Features: AS18NWBTQ0S6ldFMcXWF5q6y_CGyKZtR3CUF--U4-z61ZpL9iuM7LkWUlYqHj60
-Message-ID: <CACRpkdYLbFTnDn-X=TRb-P_SmwZkxiEFk5PG_y-12_shQrpO6Q@mail.gmail.com>
-Subject: Re: [PATCH] ARM: Make sure CPU_ARM940T kernel can be built.
-To: Franz-Josef Haider <fj.haider@outlook.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: linux@armlinux.org.uk, ardb@kernel.org, rmk+kernel@armlinux.org.uk, 
-	ebiggers@kernel.org, nathan@kernel.org, rostedt@goodmis.org, kees@kernel.org, 
-	dave@vasilevsky.ca, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, trivial@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-01_05,2025-09-29_04,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 bulkscore=0
+ malwarescore=0 mlxscore=0 spamscore=0 adultscore=0 phishscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2509150000 definitions=main-2510010167
+X-Proofpoint-GUID: OpshimxygmZO8hLUltBxPUo2nGt7wuee
+X-Authority-Analysis: v=2.4 cv=GsJPO01C c=1 sm=1 tr=0 ts=68dd7e29 b=1 cx=c_pps
+ a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
+ a=x6icFKpwvdMA:10 a=yPCof4ZbAAAA:8 a=8Npo_5w1ayzuIXqtqSsA:9 cc=ntf
+ awl=host:13622
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTMwMDE2MiBTYWx0ZWRfXyp/UBh4+MBRZ
+ qT8jRMkAVRvG+xIGJjouKS3Px05Qu5Ril2p93+bV6+x641ks8d/h6jSacJw1rIn0CXFAxV1TEkP
+ qDdTtUO5FLUi0qpBHDdE/e/TbjQYjycHUSPAKWSeOd+NL0dzgUUIFMvJaUl32uyJlPK3+MzahrU
+ uU8x1g11mtxsax+DftB9QxRRpphq27Eqk3nacUdg1Y4iyVLmoKPEgQKF0hYcgnQZZ+jU4iQeK9r
+ SXIlmqmCbbsXMGI+KI9kok7pnXOMH9oS7BRiYwPAjQboOehKDMdxXTU+mx88RnQYRs3bmgvedjp
+ sm9ncioVA+RAUHmiF/1D1TfGr0yAHlpRkHKLmsoi/2ie8ViGfjJkJBWaLCT55+qR4I9KZHTQSlU
+ If0+whPv+6wppNxfe4TPG3bDu5qKLh51OQJZIjPC2RReK4dAh/s=
+X-Proofpoint-ORIG-GUID: OpshimxygmZO8hLUltBxPUo2nGt7wuee
 
-On Wed, Oct 1, 2025 at 6:04=E2=80=AFPM Franz-Josef Haider <fj.haider@outloo=
-k.com> wrote:
+virtio_vdpa_set_status() is declared as returning void, but it used
+"return vdpa_set_status()" Since vdpa_set_status() also returns
+void, the return statement is unnecessary and misleading.
+Remove it.
 
-> Hello, I have done this change because when trying to "select CPU_ARM940T=
-" from a Kconfig for a device with arm940t cpu, the build ends up failing w=
-ith errors like
->             arch/arm/lib/ashldi3.S: Assembler messages:
->             arch/arm/lib/ashldi3.S:44: Error: cannot honor width suffix -=
-- `rsb ip,r2,#32'
->             arch/arm/lib/ashldi3.S:45: Error: thumb conditional instructi=
-on should be in IT block -- `movmi r1,r1,lsl r2'
->             arch/arm/lib/ashldi3.S:46: Error: thumb conditional instructi=
-on should be in IT block -- `movpl r1,r0,lsl r3'
->             arch/arm/lib/ashldi3.S:48: Error: thumb conditional instructi=
-on should be in IT block -- `lsrmi r3,r0,ip'
->             arch/arm/lib/ashldi3.S:49: Error: thumb conditional instructi=
-on should be in IT block -- `orrmi r1,r1,r3'
->             arch/arm/lib/ashldi3.S:50: Error: cannot honor width suffix -=
-- `mov r0,r0,lsl r2'
->             arch/arm/lib/ashldi3.S:43: Error: immediate value out of rang=
-e
->             make[3]: *** [scripts/Makefile.build:430: arch/arm/lib/ashldi=
-3.o] Error 1
->             make[2]: *** [scripts/Makefile.build:556: arch/arm/lib] Error=
- 2
->             make[2]: *** Waiting for unfinished jobs....
-> With the change I am able to build a kernel which runs on a device with a=
-rm940t cpu (with the patch "ARM: Add missing mmu flags entry to arm940 proc=
- info." which I've submitted as well. And with the necessary mach files etc=
-).
->
-> I can elaborate on this in the commit message and also adjust the conditi=
-on to include the other CPU types you mentioned.
+Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
+---
+ drivers/virtio/virtio_vdpa.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Yes please, thanks a lot Franz-Josef!
+diff --git a/drivers/virtio/virtio_vdpa.c b/drivers/virtio/virtio_vdpa.c
+index 657b07a60788..1abecaf76465 100644
+--- a/drivers/virtio/virtio_vdpa.c
++++ b/drivers/virtio/virtio_vdpa.c
+@@ -80,7 +80,7 @@ static void virtio_vdpa_set_status(struct virtio_device *vdev, u8 status)
+ {
+ 	struct vdpa_device *vdpa = vd_get_vdpa(vdev);
+ 
+-	return vdpa_set_status(vdpa, status);
++	vdpa_set_status(vdpa, status);
+ }
+ 
+ static void virtio_vdpa_reset(struct virtio_device *vdev)
+-- 
+2.50.1
 
-Also add:
-Cc: stable@vger.kernel.org
-
-in the bottom of the patch so this goes into stable.
-
-Then eventually submit the patch to Russell's patch tracker when
-we have reviewed it.
-
-We (ARM SoC maintainers) are interested on what kind of system this is.
-We really need to know if there are actively maintained ARM940t boards,
-and with you posting this it seems the answer is yes, so please tell us
-a bit about this device and what you're using it for.
-
-Yours,
-Linus Walleij
 
