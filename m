@@ -1,92 +1,124 @@
-Return-Path: <linux-kernel+bounces-838683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B9FEBAFEBA
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 11:51:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B3E2BAFEC3
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 11:51:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B55497A6BAA
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 09:49:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55A0D2A28E3
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 09:51:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5FA428B407;
-	Wed,  1 Oct 2025 09:51:08 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9692C283FE0;
-	Wed,  1 Oct 2025 09:51:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DDBA2951A7;
+	Wed,  1 Oct 2025 09:51:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lW8kFH1O"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDBCF28D8D2;
+	Wed,  1 Oct 2025 09:51:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759312268; cv=none; b=J7AIwVaM+TZX6ZCqjFU78znZdWJZconIW4COrGx7VLVe++KdRyB/LTQwP4gV0ONX4kNWN7xN6oa055TASdAwz96iQQ9a9e14GZzW8h8NSe/ioFjaLuLDvQRE3XoHNLPD13B9NX5OqwsdAE1sCNzEiFrUji7o9SsOd1UhA/3fLkM=
+	t=1759312273; cv=none; b=AvhMqgLH/O//kxMI+OP0Ajts+YvJc7U7kDXAzaQTnnSX8jaBp/2J0afN0qTEKaT5+60srr3/afmmZ7pl+wURPbnl9o83w77/jBHXRP1KofhtFtAL3ppuMGga3lHV+rT0BsZ2aprhNBp6MBp2s8JmaOp7+wgMiP/XKgh8BuWknM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759312268; c=relaxed/simple;
-	bh=aG9X/nBTvdHnT9so3FXeo/rkketdD1DtnDDPfN07l/k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CW7mFIaO9I/CFqaDVJ7hgMUXefJTLQGrENLiLbq5A2IunMnHtgeQemReiuFR/nJC5+x8ssZiCkUZxn0miVJ/m8NrWRLjjVxU94vXpeJ545qJPddsiMncZdFY9AB1Tn8bcgywte6nBVG9b0FRKQcwrNe0X7m2CCH6YqpX5jr5jGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B3CFC16F8;
-	Wed,  1 Oct 2025 02:50:53 -0700 (PDT)
-Received: from [10.1.197.69] (eglon.cambridge.arm.com [10.1.197.69])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 636BF3F59E;
-	Wed,  1 Oct 2025 02:50:56 -0700 (PDT)
-Message-ID: <d5cc20a2-d25d-453b-9c94-d1f2f22cbe1f@arm.com>
-Date: Wed, 1 Oct 2025 10:51:00 +0100
+	s=arc-20240116; t=1759312273; c=relaxed/simple;
+	bh=kyLfflee9tTqpv7bAy4zsW2J4GJPgUPc5d3I+CZhIpM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZpfTtu6v/PHLo6hqfV/JYSwebyJhThrwFFJci1/FD3dTAHG3vcu10XuyggoeqVhWObjiLpAd+BHYxAypg8socoqSzpOz2BJQAGRhsMhsgWGBvE2ouMFu2cWUNDGW3ZM6I24ZM1A0HN2bAGmTcYN7EVN0fupTOUzRfrNqH0Ugf6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lW8kFH1O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B8DAC4CEF4;
+	Wed,  1 Oct 2025 09:51:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759312272;
+	bh=kyLfflee9tTqpv7bAy4zsW2J4GJPgUPc5d3I+CZhIpM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lW8kFH1O/o+UjhzVNXeT8HnRkH50tl8LPsqYZyy6Ojw57G3beeAk0/PpON3dk0CUD
+	 1vfe+oBpAGveZdggfWeqKTdM/PLNtdWSxXEHSayrSaVC9VrsJuFTK6t7x2ZbjlQIxK
+	 6rJXQAtedIM9kd3/FRqqvQollHb3xOFxOKJhP3ocPyYIhhmV1+p/YTjxx7OS/Z4Ccj
+	 eYgVZqmFOLX4r4KrcgLaA1dmAlmSUXmCuIDi71ATlyHY3GzQQVMTx4uSaA5t7hG0iM
+	 4mtmLiUb0Iu98x+/g/iWfB1J1o6jr6NUvuRbItjXlOEFHXfaWUJss0vwHmyFidr2Pz
+	 Qc6OUyr/wg9JA==
+Date: Wed, 1 Oct 2025 10:51:08 +0100
+From: Lee Jones <lee@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the mfd tree
+Message-ID: <20251001095108.GO8757@google.com>
+References: <aMqxWGx0asGTWZ2V@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 15/29] arm_mpam: Reset MSC controls from cpu hp
- callbacks
-To: "Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
-Cc: D Scott Phillips OS <scott@os.amperecomputing.com>,
- "carl@os.amperecomputing.com" <carl@os.amperecomputing.com>,
- "lcherian@marvell.com" <lcherian@marvell.com>,
- "bobo.shaobowang@huawei.com" <bobo.shaobowang@huawei.com>,
- "baolin.wang@linux.alibaba.com" <baolin.wang@linux.alibaba.com>,
- Jamie Iles <quic_jiles@quicinc.com>, Xin Hao <xhao@linux.alibaba.com>,
- "peternewman@google.com" <peternewman@google.com>,
- "dfustini@baylibre.com" <dfustini@baylibre.com>,
- "amitsinght@marvell.com" <amitsinght@marvell.com>,
- David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
- Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
- "fenghuay@nvidia.com" <fenghuay@nvidia.com>,
- "baisheng.gao@unisoc.com" <baisheng.gao@unisoc.com>,
- Jonathan Cameron <jonathan.cameron@huawei.com>, Rob Herring
- <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
- Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
- <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>
-References: <20250910204309.20751-1-james.morse@arm.com>
- <20250910204309.20751-16-james.morse@arm.com>
- <OSZPR01MB8798CC570B0B9483109C58CE8B1AA@OSZPR01MB8798.jpnprd01.prod.outlook.com>
-Content-Language: en-GB
-From: James Morse <james.morse@arm.com>
-In-Reply-To: <OSZPR01MB8798CC570B0B9483109C58CE8B1AA@OSZPR01MB8798.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aMqxWGx0asGTWZ2V@sirena.org.uk>
 
-Hi Shaopeng,
+On Wed, 17 Sep 2025, Mark Brown wrote:
 
-On 30/09/2025 03:51, Shaopeng Tan (Fujitsu) wrote:
-> There is a space in "cpu hp" in the title.
+> Hi all,
+> 
+> After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
+> 
+> x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_get':
+> gpio-stmpe.c:(.text+0x213ed29): undefined reference to `stmpe_reg_read'
+> x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_get_direction':
+> gpio-stmpe.c:(.text+0x213eeb2): undefined reference to `stmpe_reg_read'
+> x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_irq_sync_unlock':
+> gpio-stmpe.c:(.text+0x213f266): undefined reference to `stmpe_reg_write'
+> x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x213f3ef): undefined reference to `stmpe_reg_read'
+> x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x213f472): undefined reference to `stmpe_reg_read'
+> x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_irq':
+> gpio-stmpe.c:(.text+0x213fd27): undefined reference to `stmpe_block_read'
+> x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x2140005): undefined reference to `stmpe_reg_write'
+> x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x2140089): undefined reference to `stmpe_reg_write'
+> x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_disable':
+> gpio-stmpe.c:(.text+0x21402dc): undefined reference to `stmpe_disable'
+> x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_set':
+> gpio-stmpe.c:(.text+0x21404a4): undefined reference to `stmpe_reg_write'
+> x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x214051e): undefined reference to `stmpe_set_bits'
+> x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_direction_output':
+> gpio-stmpe.c:(.text+0x21406a4): undefined reference to `stmpe_set_bits'
+> x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_direction_input':
+> gpio-stmpe.c:(.text+0x2140805): undefined reference to `stmpe_set_bits'
+> x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_request':
+> gpio-stmpe.c:(.text+0x214093e): undefined reference to `stmpe_set_altfunc'
+> x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_dbg_show_one':
+> gpio-stmpe.c:(.text+0x2140ac0): undefined reference to `stmpe_reg_read'
+> x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x2140c8c): undefined reference to `stmpe_reg_read'
+> x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x2140cb1): undefined reference to `stmpe_reg_read'
+> x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x2140d61): undefined reference to `stmpe_reg_read'
+> x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x2140f6c): undefined reference to `stmpe_reg_read'
+> x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_probe':
+> gpio-stmpe.c:(.text+0x21416b2): undefined reference to `stmpe_enable'
+> x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x214193e): undefined reference to `stmpe_disable'
+> make[3]: *** [/tmp/next/build/scripts/Makefile.vmlinux:91: vmlinux.unstripped] Error 1
+> make[2]: *** [/tmp/next/build/Makefile:1242: vmlinux] Error 2
+> make[2]: *** Waiting for unfinished jobs....
+> make[1]: *** [/tmp/next/build/Makefile:248: __sub-make] Error 2
+> make: *** [Makefile:248: __sub-make] Error 2
+> Command exited with non-zero status 2
+> 
+> Caused by commit
+> 
+>    df6a44003953f ("mfd: stmpe: Allow building as module")
+> 
+> which needs commit
+> 
+>    03db20aaa3ba3 ("gpio: stmpe: Allow to compile as a module")
+> 
+> from the gpio tree.  I have used the version from yesterday instead.
 
-Yeah, I'm inconsistent in how I spell that. I'll fix it.
+Isn't the later already in -next?
 
-
-Thanks,
-
-James
+-- 
+Lee Jones [李琼斯]
 
