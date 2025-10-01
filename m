@@ -1,307 +1,181 @@
-Return-Path: <linux-kernel+bounces-839451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 887E7BB1A49
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 21:45:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD383BB1A4F
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 21:46:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C7B72A486E
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 19:45:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5679A19228FF
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 19:47:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96957271448;
-	Wed,  1 Oct 2025 19:45:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="M28XBKuT"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68F8726FDA8;
+	Wed,  1 Oct 2025 19:46:29 +0000 (UTC)
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58DDA2AD0C;
-	Wed,  1 Oct 2025 19:45:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34F9278F5D
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 19:46:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759347922; cv=none; b=SqP/t50TwsLARUB2FRZsGDtzUfUtfK8swQqtW1jmKwmemuMNiv2XITP7xeQfwWAmozea8c6GCrts8V45nbQ2jsqgptL3sKTmX3ab8sbBRzsCMX59yvTKs3OT40Pm8fSVd3nc5z7gcW7qNvNOTf4UNUzCs+TH1gM5xhkmZsdoxz4=
+	t=1759347988; cv=none; b=ac+bkhdSoC5KiMrFb3wdFWglBGIJm5CxKJdGoqEET1GtzH/JeNg0hOTjLJbwrjg0oCh5qS/EUO+3xmSvYmRzLUxsNRYJcbVS30gM8awcc2tz7ET6ACwtjE612zN5f03D6H5lfRYIu+qZBaJrVarYjk/0tFJipslQYAsN7K7Gm3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759347922; c=relaxed/simple;
-	bh=d+32j7mykuQLclysPTsyNlCE3t+aPfRKTi1XybG5tOY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uokZXcenIO5nu29m+vDe9/DBOSkn4RFI2p5y5NEV0e82eVFSpiVRPdnn5CQHC7JomucRmcgOKdWjn4ZTIHCyUX9CxlcCoIxivkO0YyWdt1XQr0wsu2L7q1SaAIrfNftRzficaL1AD0GpMlQbeNtmwcbcwtX7m6NwZ6teqkxnZTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=M28XBKuT; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1759347918;
-	bh=d+32j7mykuQLclysPTsyNlCE3t+aPfRKTi1XybG5tOY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=M28XBKuTwKb9b7bD7Wl9dNYQ16Kzdr7LhCjlGuqtZxLOTRTBN5+VVibHU8EvPgl3v
-	 7nJA1Bp8V9OrNKCgBwLVfV+lyaiTBl8b3UYp7ZNOsCjcs0al/cmsbq6xeiVgS3bxUT
-	 thvOMM8KQDEBoGsCaBxBzjccRW3tVhDo6enSwMFcBakNzBlqz5KLALJ/dC6RjNYTj8
-	 h6yfNoYIWWIbYRjvJ0u746dVnMFektmEPwW/qnZKdQs4usFz6uEDG6dzdcCd4K7mXm
-	 b7K9Fs2hTyqvju7BkuIsFqUXYDcstXBw0akqUibWlwitKJlD908B+G+Ir8N1QlM6yp
-	 QskoDPmq2jznA==
-Received: from [10.40.0.100] (185-67-175-126.lampert.tv [185.67.175.126])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: mriesch)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 732AC17E12C0;
-	Wed,  1 Oct 2025 21:45:17 +0200 (CEST)
-Message-ID: <9f1dbc4d-d4c7-4c1c-b48a-355a83e18e5c@collabora.com>
-Date: Wed, 1 Oct 2025 21:45:16 +0200
+	s=arc-20240116; t=1759347988; c=relaxed/simple;
+	bh=RIdIb6zx1WW1qhGtBR5/lLht3Qe4tk06rHKgRADMKEQ=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=FW+C3H+CRfmeVI6FgJu6aghp4HjLe7AUT5RGbR0+zqDVoTc5eU6elOYebFD/qZORheWsc2NGi1AvSJ/LGUesOs4ZbtyjR47ZJDgI5+FHgJkc1RYyJ71JYxeK9SVKB+J/rf0wKINl7gTy3BfmCtNKWCvv9o7WLu7zDez6ilSTLGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-9286199b46fso26207939f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 12:46:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759347986; x=1759952786;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ql/Ot4y0cihorogIf7YKkewbTCHB+GiRiFTLWynohQQ=;
+        b=lyWO1KK4kV4kyVWm9097Z3u//vymNHvEMJ6WF9VItmKsaHg0z9O9+0eSjjOX2cL/5Q
+         kGy6dWJWUtEPNRhHqlqnFiqTkm9aBWl+9ie8JsmanRwo8SXNwBW9tBqo/ImCllK8mQYV
+         gXeV51BypRKuNML8bgLC7RQsgnGBSMi3kk59PS4gnrQclXHfDunrzVC3CZ7x9I+72Ikm
+         fG/nU/1fxAmtYe/nIajCPlk7Dz3G9mxQw4dM937RBujQGEM0hUFW8t7tfCofVeuk1XW+
+         SJ81izhkTglcX1xo9YnokV4uW2o8vp0yWwNSuXOnFMb8+PiO3+4DIgpBjcd/0d33y/ZU
+         Nj/g==
+X-Forwarded-Encrypted: i=1; AJvYcCVk7Nm7l2Bo9tpytyPSd0Ax1jGioodWpNm/BKuIUSsCH1XBQnt9O728hi+9srjr+iSkfta9asT3xmSd1G4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTycnLspM85B0iRAjsxOCXkvTXgWND1QaAByCRO54C8Mm9NB6n
+	8M6UIrgBiIYK0pZUDiMV9o1rY9FH7stbVbgQ67ZoWPzqNTXTU6h6ByyvFXhhmQ0LPqSBX0/o6pp
+	eE8j8OC1qfaiSPoLwAz9o9fRcTpJOZcqpZN7pfmuf9QRKfTMmYzdMoV+kBRw=
+X-Google-Smtp-Source: AGHT+IFBKhQFQnnrgTcFcFXd9HK8fgpdFuJfS/MY/ZXi6rwziYuzS9/413ZnJucBR3HratS4XkG2X4+H7/P6zXTcbxgLXxXon2KQ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 03/27] media: media-entity: Introduce
- media_entity_context
-To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Kieran Bingham <kieran.bingham@ideasonboard.com>,
- Nicolas Dufresne <nicolas.dufresne@collabora.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Tomasz Figa
- <tfiga@chromium.org>, Marek Szyprowski <m.szyprowski@samsung.com>,
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Hans Verkuil <hverkuil@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-References: <20250724-multicontext-mainline-2025-v2-0-c9b316773486@ideasonboard.com>
- <20250724-multicontext-mainline-2025-v2-3-c9b316773486@ideasonboard.com>
-Content-Language: en-US
-From: Michael Riesch <michael.riesch@collabora.com>
-In-Reply-To: <20250724-multicontext-mainline-2025-v2-3-c9b316773486@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1807:b0:42d:86cc:1bcd with SMTP id
+ e9e14a558f8ab-42d86cc1c65mr35927815ab.3.1759347986267; Wed, 01 Oct 2025
+ 12:46:26 -0700 (PDT)
+Date: Wed, 01 Oct 2025 12:46:26 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68dd8512.050a0220.25d7ab.077a.GAE@google.com>
+Subject: [syzbot] [btrfs?] WARNING in __cow_file_range_inline
+From: syzbot <syzbot+e74e4a74c03733ebac54@syzkaller.appspotmail.com>
+To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Jacopo,
+Hello,
 
-Thanks for your patch. Looks good to me, but found a few typos.
+syzbot found the following issue on:
 
-On 7/24/25 16:10, Jacopo Mondi wrote:
-> Introduce the 'struct media_entity_context' type, which serves for
-> reference counting and introduce two new media entity operations to
-> allow drivers to allocate and free a media entity context.
-> 
-> The newly introduced type will be used as a base type for the
-> device context types (video_device_context and v4l2_subdevice_context)
-> that will be introduced in the next patches.
-> 
-> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> ---
->  drivers/media/mc/mc-entity.c |  46 ++++++++++++++++++++
->  include/media/media-entity.h | 101 +++++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 147 insertions(+)
-> 
-> diff --git a/drivers/media/mc/mc-entity.c b/drivers/media/mc/mc-entity.c
-> index 045590905582054c46656e20463271b1f93fa6b4..b4a9f0a0aa7353d7a3333f20903980956b3df4a7 100644
-> --- a/drivers/media/mc/mc-entity.c
-> +++ b/drivers/media/mc/mc-entity.c
-> @@ -1673,3 +1673,49 @@ struct media_link *__media_entity_next_link(struct media_entity *entity,
->  	return NULL;
->  }
->  EXPORT_SYMBOL_GPL(__media_entity_next_link);
-> +
-> +static void media_entity_release_context(struct kref *refcount)
-> +{
-> +	struct media_entity_context *ctx =
-> +		container_of(refcount, struct media_entity_context, refcount);
-> +
-> +	ctx->entity->ops->destroy_context(ctx);
-> +}
-> +
-> +struct media_entity_context *
-> +media_entity_context_get(struct media_entity_context *ctx)
-> +{
-> +	if (!ctx)
-> +		return ERR_PTR(-EINVAL);
-> +
-> +	kref_get(&ctx->refcount);
-> +
-> +	return ctx;
-> +}
-> +EXPORT_SYMBOL_GPL(media_entity_context_get);
-> +
-> +void media_entity_context_put(struct media_entity_context *ctx)
-> +{
-> +	if (!ctx)
-> +		return;
-> +
-> +	kref_put(&ctx->refcount, media_entity_release_context);
-> +}
-> +EXPORT_SYMBOL_GPL(media_entity_context_put);
-> +
-> +void media_entity_init_context(struct media_entity *entity,
-> +			       struct media_entity_context *ctx)
-> +{
-> +	if (!ctx)
-> +		return;
-> +
-> +	ctx->entity = entity;
-> +	kref_init(&ctx->refcount);
-> +	INIT_LIST_HEAD(&ctx->list);
-> +}
-> +EXPORT_SYMBOL_GPL(media_entity_init_context);
-> +
-> +void media_entity_cleanup_context(struct media_entity_context *ctx)
-> +{
-> +}
-> +EXPORT_SYMBOL_GPL(media_entity_cleanup_context);
-> diff --git a/include/media/media-entity.h b/include/media/media-entity.h
-> index 64cf590b11343f68a456c5870ca2f32917c122f9..32298fe8a18c6ee3c1dbcff9ef869548904417a7 100644
-> --- a/include/media/media-entity.h
-> +++ b/include/media/media-entity.h
-> @@ -15,6 +15,7 @@
->  #include <linux/bug.h>
->  #include <linux/container_of.h>
->  #include <linux/fwnode.h>
-> +#include <linux/kref.h>
->  #include <linux/list.h>
->  #include <linux/media.h>
->  #include <linux/minmax.h>
-> @@ -248,6 +249,37 @@ struct media_pad {
->  	struct media_pipeline *pipe;
->  };
->  
-> +/**
-> + * struct media_entity_context - A media entity execution context
-> + * @mdev_context: The media device context this media entity is bound to.
-> + *		  The field is initialized when the entity is bound to a media
-> + *		  device context.
-> + * @entity: The media entity this context belongs to
-> + * @refcount: The kref reference counter
-> + * list: The list entry to link the entity context in the media device context
-> + *
-> + * This type represent the 'base class' used to implement execution context for
-> + * video device contexts and subdevice contexts. Those types embedds an instance
+HEAD commit:    fec734e8d564 Merge tag 'riscv-for-linus-v6.17-rc8' of git:..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1073b142580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bf99f2510ef92ba5
+dashboard link: https://syzkaller.appspot.com/bug?extid=e74e4a74c03733ebac54
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
 
-Typo 'embedds' -> 'embed'?
+Unfortunately, I don't have any reproducer for this issue yet.
 
-> + * of 'struct media_entity_context' as their first member, allowing the MC core
-> + * to implement type polymorphism and handle video device and subdevice contexts
-> + * transparently.
-> + *
-> + * The main function of this type is to provide reference counting for the
-> + * 'dervived' device context types. The video device and subdevice core
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-fec734e8.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/9cf7097db7bd/vmlinux-fec734e8.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/ca6d872c8346/bzImage-fec734e8.xz
 
-Typo 'dervived' -> 'derived'?
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e74e4a74c03733ebac54@syzkaller.appspotmail.com
 
-> + * populates the 'context_release' function pointer that implement specific
-> + * clean-up operations, similar to what a 'virtual destructor' would do in C++.
-> + *
-> + * Drivers are not expected to use this type directly, but only the MC core
-> + * will.
-> + */
-> +struct media_device_context;
-> +struct media_entity_context {
-> +	struct media_device_context *mdev_context;
-> +	struct media_entity *entity;
-> +	struct kref refcount;
-> +	struct list_head list;
-> +};
-> +
->  /**
->   * struct media_entity_operations - Media entity operations
->   * @get_fwnode_pad:	Return the pad number based on a fwnode endpoint or
-> @@ -269,6 +301,15 @@ struct media_pad {
->   *			media_entity_has_pad_interdep().
->   *			Optional: If the operation isn't implemented all pads
->   *			will be considered as interdependent.
-> + * @alloc_context:	Allocate a media entity context. Drivers are allowed to
-> + *			sub-class the entity context type by defining a driver
-> + *			specific type that embeds an instance of either a
-> + *			video_device_context or subdevice_context as first
-> + *			member, and allocate the size of a driver-specific type
-> + *			in the implementation of this operation. Returns 0 for
-> + *			success, or an error code < 0 otherwise.
-> + * @destroy_context:	Release a media entity context previously allocated by
-> + *			the driver.
->   *
->   * .. note::
->   *
-> @@ -284,6 +325,9 @@ struct media_entity_operations {
->  	int (*link_validate)(struct media_link *link);
->  	bool (*has_pad_interdep)(struct media_entity *entity, unsigned int pad0,
->  				 unsigned int pad1);
-> +	int (*alloc_context)(struct media_entity *entity,
-> +			     struct media_entity_context **context);
-> +	void (*destroy_context)(struct media_entity_context *context);
->  };
->  
->  /**
-> @@ -1448,3 +1492,60 @@ struct media_link *__media_entity_next_link(struct media_entity *entity,
->  					     MEDIA_LNK_FL_DATA_LINK))
->  
->  #endif
-> +
-> +/**
-> + * media_entity_context_get - Increase the media entity context reference count
-> + *			      and return a reference to it
-> + *
-> + * @ctx: the media entity context
-> + *
-> + * Increase the media entity context reference count. The reference count
-> + * is increased by the V4L2 core when:
-> + *
-> + * * a new context is allocated when bounding a media entity to a media device
-> + *   context (by kref_init())
-> + * * the media pipeline the context is part of starts streaming
-> + *
-> + * The entity context gets automatically decreased by the V4L2 core when:
-> + *
-> + * * a context is unbound
-> + * * the pipeline stops streaming
-> + */
-> +struct media_entity_context *
-> +media_entity_context_get(struct media_entity_context *ctx);
-> +
-> +/**
-> + * media_entity_context_put - Decrease the media entity context reference count
-> + *
-> + * @ctx: the media entity context
-> + *
-> + * Decrease the media entity context reference count. The reference count
-> + * is decreased by the V4L2 core when:
-> + *
-> + * * the file handle the context is associated with is closed
-> + * * the media pipeline the context is part of is stopped
-> + */
-> +void media_entity_context_put(struct media_entity_context *ctx);
-> +
-> +/**
-> + * media_entity_init_context - Initialize the media entity context
-> + *
-> + * @entity: the media entity this context belongs to
-> + * @ctx: the media entity context
-> + *
-> + * Initialize the media entity context by initializing the kref reference
-> + * counter. The intended caller of this function are the video device context
-> + * and subdevic context initialize functions.
+loop0: detected capacity change from 0 to 32768
+BTRFS: device fsid e417788f-7a09-42b2-9266-8ddc5d5d35d2 devid 1 transid 8 /dev/loop0 (7:0) scanned by syz.0.0 (5360)
+BTRFS info (device loop0): first mount of filesystem e417788f-7a09-42b2-9266-8ddc5d5d35d2
+BTRFS info (device loop0): using xxhash64 (xxhash64-generic) checksum algorithm
+BTRFS warning (device loop0): space cache v1 is being deprecated and will be removed in a future release, please use -o space_cache=v2
+BTRFS info (device loop0): rebuilding free space tree
+BTRFS info (device loop0): disabling free space tree
+BTRFS info (device loop0): clearing compat-ro feature flag for FREE_SPACE_TREE (0x1)
+BTRFS info (device loop0): clearing compat-ro feature flag for FREE_SPACE_TREE_VALID (0x2)
+BTRFS info (device loop0): setting nodatasum
+BTRFS info (device loop0): allowing degraded mounts
+BTRFS info (device loop0): enabling disk space caching
+BTRFS info (device loop0): force clearing of disk cache
+BTRFS info (device loop0): force zlib compression, level 3
+------------[ cut here ]------------
+BTRFS: Transaction aborted (error -28)
+WARNING: CPU: 0 PID: 5360 at fs/btrfs/inode.c:635 __cow_file_range_inline+0xdc4/0x1260 fs/btrfs/inode.c:635
+Modules linked in:
+CPU: 0 UID: 0 PID: 5360 Comm: syz.0.0 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:__cow_file_range_inline+0xdc4/0x1260 fs/btrfs/inode.c:635
+Code: 00 e8 10 94 da fd 84 c0 74 29 e8 57 f1 f3 fd e9 6d 01 00 00 e8 4d f1 f3 fd 90 48 c7 c7 20 dd ed 8b 44 89 e6 e8 fd 80 b7 fd 90 <0f> 0b 90 90 e9 72 fc ff ff e8 6e a5 b0 07 41 89 c7 31 ff 89 c6 e8
+RSP: 0018:ffffc9000d556680 EFLAGS: 00010246
+RAX: 10ba3533504e6700 RBX: 0000000000000000 RCX: 0000000000100000
+RDX: ffffc9000e17a000 RSI: 0000000000034014 RDI: 0000000000034015
+RBP: ffffc9000d556870 R08: 0000000000000003 R09: 0000000000000004
+R10: dffffc0000000000 R11: fffffbfff1c3a234 R12: 00000000ffffffe4
+R13: 1ffff1100641d3c8 R14: ffff8880320e9e40 R15: ffff888052e34001
+FS:  00007ff11f0e36c0(0000) GS:ffff88808d007000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000200000000440 CR3: 0000000043940000 CR4: 0000000000352ef0
+Call Trace:
+ <TASK>
+ cow_file_range_inline+0x2fc/0x3d0 fs/btrfs/inode.c:692
+ cow_file_range+0x449/0x10a0 fs/btrfs/inode.c:1297
+ btrfs_run_delalloc_range+0x3f9/0xf80 fs/btrfs/inode.c:2352
+ writepage_delalloc+0xf06/0x1a60 fs/btrfs/extent_io.c:1435
+ extent_writepage fs/btrfs/extent_io.c:1779 [inline]
+ extent_write_cache_pages fs/btrfs/extent_io.c:2463 [inline]
+ btrfs_writepages+0x12df/0x22c0 fs/btrfs/extent_io.c:2596
+ do_writepages+0x32e/0x550 mm/page-writeback.c:2634
+ filemap_fdatawrite_wbc mm/filemap.c:386 [inline]
+ __filemap_fdatawrite_range mm/filemap.c:419 [inline]
+ filemap_fdatawrite_range+0x1a5/0x250 mm/filemap.c:437
+ btrfs_fdatawrite_range fs/btrfs/file.c:3859 [inline]
+ start_ordered_ops fs/btrfs/file.c:1518 [inline]
+ btrfs_sync_file+0x3a1/0x1160 fs/btrfs/file.c:1600
+ generic_write_sync include/linux/fs.h:3043 [inline]
+ btrfs_do_write_iter+0x59a/0x710 fs/btrfs/file.c:1470
+ iter_file_splice_write+0x975/0x10e0 fs/splice.c:738
+ do_splice_from fs/splice.c:938 [inline]
+ direct_splice_actor+0x101/0x160 fs/splice.c:1161
+ splice_direct_to_actor+0x5a5/0xcc0 fs/splice.c:1105
+ do_splice_direct_actor fs/splice.c:1204 [inline]
+ do_splice_direct+0x181/0x270 fs/splice.c:1230
+ do_sendfile+0x4da/0x7e0 fs/read_write.c:1370
+ __do_sys_sendfile64 fs/read_write.c:1431 [inline]
+ __se_sys_sendfile64+0x13e/0x190 fs/read_write.c:1417
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7ff11e18eec9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ff11f0e3038 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
+RAX: ffffffffffffffda RBX: 00007ff11e3e5fa0 RCX: 00007ff11e18eec9
+RDX: 0000000000000000 RSI: 0000000000000005 RDI: 0000000000000006
+RBP: 00007ff11e211f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000040001 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007ff11e3e6038 R14: 00007ff11e3e5fa0 R15: 00007ffcc89ac948
+ </TASK>
 
-Typo "subdevic" -> "subdevice"
 
-> + */
-> +void media_entity_init_context(struct media_entity *entity,
-> +			       struct media_entity_context *ctx);
-> +
-> +/**
-> + * media_entity_cleanup_context - Cleanup the media entity context
-> + *
-> + * @ctx: the media entity context
-> + *
-> + * Cleanup the media entity context. The intended caller of this function are
-> + * the video device and subdevice context cleanup functions.
-> + */
-> +void media_entity_cleanup_context(struct media_entity_context *ctx);
-> 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Best regards,
-Michael
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
