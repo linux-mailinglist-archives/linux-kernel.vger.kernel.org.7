@@ -1,111 +1,102 @@
-Return-Path: <linux-kernel+bounces-838545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CF85BAF76B
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 09:43:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D33D6BAF76E
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 09:43:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04F174A14D5
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 07:43:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C09724A10B7
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 07:43:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85A58274650;
-	Wed,  1 Oct 2025 07:43:22 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32DF22750ED;
+	Wed,  1 Oct 2025 07:43:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lKqRPDt4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B081273D66
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 07:43:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F87B274641;
+	Wed,  1 Oct 2025 07:43:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759304602; cv=none; b=tLHD7FeAWD1daEaqthEZOUp84QzWdCKfduaFCVmcfIKLOjdBH63oQX8Ll1j3ItPsWr9bwBuoyScwNFsrHRdC837e92bD9/A1VwBgnde7x+CJs6xJQCrT3oWTb6nNhSA+RiBfwYXai4MkvBFheRXOs+rKyUSVaJJuDDtwiBZSxiw=
+	t=1759304602; cv=none; b=q43Y8vfbJ9cE94Bh/OJZO2qi7GJrg/1BybxSxrH6XH+4VkMLfwms0BWpsYhnahxvctN1V68PvLIaq2YxXleeyY3YHDvVgGCu2I4KITywVxSbs9kTtFlNC8j98v3B2sSfT0Y5qZYVln95xR1C64PZTIsKLEW/m4oGF1oZuSH9FxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1759304602; c=relaxed/simple;
-	bh=gwQUi+de6VXVjLGqT/JXgA7Hht52xsPf+ID99icPCbM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YCJJ9sfga2Hd+P4u1LY7DDYoKOLAhEYb7l0wdTo5G/0g3Kx0HGf3jnCQHVX5jjYmCryLe5wQgCbEpVjl87l62xRJ+s2brPr6UUA7t71wIBZOYndntR7EVC6TAH9H8/hU+vNkbsfg+eUeq1Ns9bVRfRSYneK6mxbQGmwDTtSbvT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1v3rUK-00074Z-FU; Wed, 01 Oct 2025 09:43:00 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1v3rUJ-001NRj-0M;
-	Wed, 01 Oct 2025 09:42:59 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1v3rUJ-006RWI-01;
-	Wed, 01 Oct 2025 09:42:59 +0200
-Date: Wed, 1 Oct 2025 09:42:58 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, Thangaraj.S@microchip.com,
-	Rengarajan.S@microchip.com, UNGLinuxDriver@microchip.com,
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzbot+62ec8226f01cb4ca19d9@syzkaller.appspotmail.com
-Subject: Re: [PATCH] net: usb: lan78xx: Fix lost EEPROM read timeout
- error(-ETIMEDOUT) in lan78xx_read_raw_eeprom
-Message-ID: <aNzbgjlz_J_GwQSt@pengutronix.de>
-References: <20250930084902.19062-1-bhanuseshukumar@gmail.com>
- <20250930173950.5d7636e2@kernel.org>
- <5f936182-6a69-4d9a-9cec-96ec93aab82a@gmail.com>
+	bh=cfZ7p+/7eGMo3PeLFhhrLfU/Op7FeF3y5mHLShzI7YA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jsva487+ZZ7i8U1EpBnlZbDHsIoFIJH+mCmZe/ohp6jUwVS3wKh9S/knvBQh5oJnJnZfjB/r+eG+Jr12dDIaRvvKy8GDaqwwkRCarOcJZewI4KVWeXGrmP6Mjn8akLQohPXdbLT+X64VrW3FotYjM86pxHfklTwgRr+ZzHVEgeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lKqRPDt4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 839BFC4CEF4;
+	Wed,  1 Oct 2025 07:43:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759304601;
+	bh=cfZ7p+/7eGMo3PeLFhhrLfU/Op7FeF3y5mHLShzI7YA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=lKqRPDt4XYVblxd7JBoQqHkc8JJbketQswX43yH8SKngcctJ1c9KmtnmPibx3sOrl
+	 V1SG1tr6pWiPCvZTL+QrQQOwyZko0OARespj0TOfZlYheRHP/xBOZxc7K9E+LY4AK2
+	 N3pOukUxLfcEzztnuyw4XrBwUE+jxDsO9Aue8ieji8cS8tMdcLVkerZJmsDZf3iyJj
+	 Q3UH5SHgo31ixjFSSMQRuoasmyLFOyo5nv4/7Kf9amxOT0BgMAGjwWhkJADga/n1x4
+	 itoOMZUAjHWhT3atTL5pAK7jO++s6dc8kxrMZIbxtgGcPeM+UhAZQHaoyBISXF3tkc
+	 Xr462EfS6eGAg==
+Message-ID: <6eb2eab1-7a9c-4c07-a9b1-be6557247a4c@kernel.org>
+Date: Wed, 1 Oct 2025 16:43:11 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <5f936182-6a69-4d9a-9cec-96ec93aab82a@gmail.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH blktrace v2 02/22] blkparse: fix compiler warning
+To: Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+ Jens Axboe <axboe@kernel.dk>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-btrace@vger.kernel.org,
+ John Garry <john.g.garry@oracle.com>, Hannes Reinecke <hare@suse.de>,
+ Christoph Hellwig <hch@lst.de>, Naohiro Aota <naohiro.aota@wdc.com>,
+ Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
+ Chaitanya Kulkarni <chaitanyak@nvidia.com>,
+ "Martin K . Petersen" <martin.petersen@oracle.com>
+References: <20250925150427.67394-1-johannes.thumshirn@wdc.com>
+ <20250925150427.67394-3-johannes.thumshirn@wdc.com>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <20250925150427.67394-3-johannes.thumshirn@wdc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi,
-
-On Wed, Oct 01, 2025 at 10:07:21AM +0530, Bhanu Seshu Kumar Valluri wrote:
-> On 01/10/25 06:09, Jakub Kicinski wrote:
-> > On Tue, 30 Sep 2025 14:19:02 +0530 Bhanu Seshu Kumar Valluri wrote:
-> >> +	if (dev->chipid == ID_REV_CHIP_ID_7800_) {
-> >> +		int rc = lan78xx_write_reg(dev, HW_CFG, saved);
-> >> +		/* If USB fails, there is nothing to do */
-> >> +		if (rc < 0)
-> >> +			return rc;
-> >> +	}
-> >> +	return ret;
-> > 
-> > I don't think you need to add and handle rc here separately?
-> > rc can only be <= so save the answer to ret and "fall thru"?
+On 9/26/25 00:04, Johannes Thumshirn wrote:
+> GCC (15.2.1) warns on about the following string truncation in blkparse.c
 > 
-> The fall thru path might have been reached with ret holding EEPROM read timeout
-> error status. So if ret is used instead of rc it might over write the ret with 0 when 
-> lan78xx_write_reg returns success and timeout error status would be lost.
+> gcc -o blkparse.o -c -Wall -O2 -g -W -D_GNU_SOURCE -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 blkparse.c
+> blkparse.c: In function ‘main’:
+> blkparse.c:2103:68: warning: ‘):’ directive output may be truncated writing 2 bytes into a region of size between 1 and 41 [-Wformat-truncation=]
+>  2103 |                         snprintf(line, sizeof(line) - 1, "CPU%d (%s):",
+>       |                                                                    ^~
+> In function ‘show_device_and_cpu_stats’,
+>     inlined from ‘show_stats’ at blkparse.c:3064:3,
+>     inlined from ‘main’ at blkparse.c:3386:3:
+> blkparse.c:2103:25: note: ‘snprintf’ output between 9 and 49 bytes into a destination of size 47
+>  2103 |                         snprintf(line, sizeof(line) - 1, "CPU%d (%s):",
+>       |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>  2104 |                                  j, get_dev_name(pdi, name, sizeof(name)));
+>       |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> gcc -Wall -O2 -g -W -D_GNU_SOURCE -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64  -o blkparse blkparse.o blkparse_fmt.o rbtree.o act_mask.o
+> 
+> Add two more bytes to the string in order to mitigate the compiler warning.
+> 
+> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 
-Ack, I see. It may happen if communication with EEPROM will fail. The same
-would happen on write path too. Is it happened with real HW or it is
-some USB emulation test? For me it is interesting why EEPROM is timed
-out.
+Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
 
-Best Regards,
-Oleksij
+
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Damien Le Moal
+Western Digital Research
 
