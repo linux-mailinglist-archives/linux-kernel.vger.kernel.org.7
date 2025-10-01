@@ -1,227 +1,199 @@
-Return-Path: <linux-kernel+bounces-838664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EED9BAFDDC
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 11:30:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 927A3BAFDE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 11:32:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A132168B28
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 09:30:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44A5F1C6E01
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 09:32:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DE202D978C;
-	Wed,  1 Oct 2025 09:30:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3563D2D97AF;
+	Wed,  1 Oct 2025 09:32:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VD+hvNvR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="I5hSRx9H"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73A031C8611
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 09:30:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E367F35977;
+	Wed,  1 Oct 2025 09:32:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759311043; cv=none; b=R2fLAemXxV+Oka/xeUAUJyYqrtyc/9thfsB1QyOZCJ3VDTlmwTe9SgbnEzVvno8Ew7CMijDa0V2ry/IuoAxxTP5ktYkQe311A6183jP6mdiGFY8c35c6Gw0fcmmfNxBrO5KEX1G/BGOCkQA0ySf24EUb00y9lGQwZzCHTosT4Mg=
+	t=1759311155; cv=none; b=hLoUV2A16ugjTK1yp47Na29jBExDEcyV56FXOJx1QXVpORKkugGJdqZcxsVfanNijuWS+MH4+GKULMt4cgd4dh26VlqnVhBRvhRoptX2b/7ylMDdStvMsF2/AudbajmB/RG6ZZabdDgWJ8eI3k/sKg7pRXgU92yjk2LaPrDc4Zk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759311043; c=relaxed/simple;
-	bh=SDnfVM3ubQYBlLvGAuhTvc+aBP5kwXyNhNvMC6/5rII=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J1SqACYrIjFtLibpahKKN1VyYa1z0ZbeVTQdyqkSirHxMHJCuX55UJpx30DNCUIlmagSWzu153mjV+xaDiOh/1CepgnXgniuUsfuEcp+utLJEYsffKsll4cBsFdExSbFYgcBylhZ8DnrWLeDYLmoqBcphsavPz2qdQSZhpOzGoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VD+hvNvR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1049AC16AAE
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 09:30:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759311043;
-	bh=SDnfVM3ubQYBlLvGAuhTvc+aBP5kwXyNhNvMC6/5rII=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=VD+hvNvR5lVR8OAgW5XMRwuEYufegwavcNqmmXUU8MmMj3ZQVI2rS9KK2TKRVZOzp
-	 8oGvj5/vhZgTVekJ4Ac60Z2soVHV2m9ZtJ1U7hIlrj4tdA+DwPIu6Dp0P2WLd7CmX5
-	 34/ex68pgQ1tGI69bglVSafCoOzO3eJJBST3xcaTYgjm0+50HUuDItAmr9M49SGA3g
-	 unNzycvkeWagMaWHsFDWxIr/boJ8xZikqaLGelBas0dsCBx64MzEWIKb0ezWii16at
-	 0SKIrXFLc3AAXQkm3BMVgn5o5u72akcJ1rfbH1NnWKMJW7GjmVAYBt/d8k743vv0ag
-	 TaYH0HVg714qQ==
-Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-30cce5be7d0so2986485fac.0
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 02:30:43 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX373jkCXdZpsLhSTBAIKJOOBEuEgwD0X2Qv4Lj81UrL0efJxUEsB/Jm8hu2/GbyuqlxQjTID+NgtV46k4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzCTs6tLNjZz2LbsjUB6lypx/wEXWg+Vs6CGW97x/yguF3KikY
-	c6D4QGXws25fR68+fIwcWmYHq+B2c+ZqZ9+TltI7dFK2YA53CarRY8PtSXTe1Lj9O0RkFN/1RHS
-	ih3d1/vA+qGNupqmrT9CpS1aXxwEGudI=
-X-Google-Smtp-Source: AGHT+IFMq6gPIM8p2T5XZpW4CClVk3+8KJLeY5qho96aUc03KRZOpsIj5FDWDPo1KqM47wypNBQ0TV6LKrn1U7P55u0=
-X-Received: by 2002:a05:6870:2056:b0:332:598e:e7b9 with SMTP id
- 586e51a60fabf-39bb3c3ed3emr1390973fac.46.1759311042347; Wed, 01 Oct 2025
- 02:30:42 -0700 (PDT)
+	s=arc-20240116; t=1759311155; c=relaxed/simple;
+	bh=V3TMuotS0sFVsytD6YSO99/qgAzB4uInxJsGz7nPwB8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=I2QzzTfH9Kz806HWqtihGHs1oDIhwFWBSitaA9Z/YvwoONM5bf5BnwRO8M+rwzWdz+LdgW/Ka8geG4X9sySGnwCsoMCkNdWnKZXvUB95h7/ksqXOEfOkiq8elJ6BMPQ8bTDyILgRrRmvpyUo66C7oiyJV8eTTQj5LlEfnc7JbGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=I5hSRx9H; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5919R3xu023218;
+	Wed, 1 Oct 2025 09:32:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=kiemtK
+	JmuPJKF/4jmmq0+oOyRI0uHGd8jAqCvv8beUk=; b=I5hSRx9Hgi+ByCA2RJDhbI
+	4Zz8OwegLU0QOWN+GmmPEOR9D0G/6y7CxbsK2UJAjWdA1kARB3JOSvS2QyjkW7Z0
+	EdA96vVCTNulyaph26FdfBIF0XdLyb0bwyCvc/w8mjODIoP46htRBDkK7Lz3nB0A
+	pWMzAn/y+z6k067KehnS6FCLiXl6VAM9nCH5FxK5/PNI7yupuHfv1TR44PMRMtSd
+	vD8HLScACvg5QYkvLKP3DHdy+67+LZ4xUm6anlmUWiWxXG7H7lYAz+xPKV2NHeoh
+	2W8A5kGa0SlZk/ywTKCo4IL2tJ1xv0chgHCfgS4h2ob47vqHo1r4aYD815ioE/aQ
+	==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49e6bhnyc3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 01 Oct 2025 09:32:23 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5918lOQo007293;
+	Wed, 1 Oct 2025 09:32:22 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49eurjyyvr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 01 Oct 2025 09:32:22 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5919WIeY36307392
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 1 Oct 2025 09:32:18 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 957FC20043;
+	Wed,  1 Oct 2025 09:32:18 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 159DD20040;
+	Wed,  1 Oct 2025 09:32:18 +0000 (GMT)
+Received: from [9.111.38.10] (unknown [9.111.38.10])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed,  1 Oct 2025 09:32:18 +0000 (GMT)
+Message-ID: <18a1c26f-036a-44c3-9c53-82cd86d79340@linux.ibm.com>
+Date: Wed, 1 Oct 2025 11:32:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250926102320.4053167-1-treapking@chromium.org>
- <CAJZ5v0i-iT-3nEjX7Nm2s91GSm0OTXQ3yZSf2Q3VRNTOseREHw@mail.gmail.com> <CAEXTbpfUEDf_L3wVJEwD=Wjhx05X6Z2F-rbZT5L7vUR8GUAWTQ@mail.gmail.com>
-In-Reply-To: <CAEXTbpfUEDf_L3wVJEwD=Wjhx05X6Z2F-rbZT5L7vUR8GUAWTQ@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 1 Oct 2025 11:30:30 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hgOxOFA+LBNm+n3BVhuJOYD4F5LBj2BQA7fwLDAtcD=g@mail.gmail.com>
-X-Gm-Features: AS18NWD5MXCZLHGjgbPUqgbKk5Xv_nA5WrnUDJcqS3Pi5ZCufO045FcJZrPL8cE
-Message-ID: <CAJZ5v0hgOxOFA+LBNm+n3BVhuJOYD4F5LBj2BQA7fwLDAtcD=g@mail.gmail.com>
-Subject: Re: [PATCH v4] PM: sleep: Don't wait for SYNC_STATE_ONLY device links
-To: Pin-yen Lin <treapking@chromium.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, Pavel Machek <pavel@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>, linux-kernel@vger.kernel.org, 
-	Hsin-Te Yuan <yuanhsinte@chromium.org>, Chen-Yu Tsai <wenst@chromium.org>, linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] KVM: s390: Remove unused return variable in
+ kvm_arch_vcpu_ioctl_set_fpu
+To: Thorsten Blum <thorsten.blum@linux.dev>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Claudio Imbrenda <imbrenda@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev
+ <agordeev@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>
+Cc: kvm@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20250916131238.2489818-3-thorsten.blum@linux.dev>
+Content-Language: en-US
+From: Janosch Frank <frankja@linux.ibm.com>
+Autocrypt: addr=frankja@linux.ibm.com; keydata=
+ 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
+In-Reply-To: <20250916131238.2489818-3-thorsten.blum@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=Se/6t/Ru c=1 sm=1 tr=0 ts=68dcf527 cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VnNF1IyMAAAA:8 a=IGrXz5sEf57Iun4jFoEA:9
+ a=QEXdDO2ut3YA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAxMCBTYWx0ZWRfX9/wY5NcDypmU
+ wzO4gEfVGnaW/EWZVgifr+S0VvtAnrIk1ZNLiuZJPCQw2jWHX2mbDtfDKJiAXm+RfjlZQsKS0jr
+ V4vi7fnR6dwkOyUNqNlMUwpfXNeImi+k+5G62TUtFpqVN0qeGaLU3eWAePSgOVz9hKQ0fwRpsT5
+ oVrRycWcDrtRDeU/lpmMr/DlDsTKAe+8N4XgSwt84vfsteVfWRSeae9N6URT21BHh0Tzke9OVfS
+ k05fMo3DDal9mPmvboiovag+49KZzSlSVAYdf97n1eT3TPxQwhQa2OjvQITBSKd2KQPmivzVgqn
+ YFo6rxh8On5lz02i2p2+Veli0KsnigCPF96qdnYN9T/JcCxzOCdp8AQQk4fx2sAM2J78hbEwxwf
+ KlxJIedsdrBi50VFz/S6pmRZd7ZxqA==
+X-Proofpoint-GUID: J0_JOq3r8hYqgZc3f9wv778s57COSv3D
+X-Proofpoint-ORIG-GUID: J0_JOq3r8hYqgZc3f9wv778s57COSv3D
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-01_02,2025-09-29_04,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 malwarescore=0 suspectscore=0 bulkscore=0 lowpriorityscore=0
+ clxscore=1011 phishscore=0 priorityscore=1501 adultscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270010
 
-Hi,
+On 9/16/25 3:12 PM, Thorsten Blum wrote:
+> kvm_arch_vcpu_ioctl_set_fpu() always returns 0 and the local return
+> variable 'ret' is not used anymore. Remove it.
+> 
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 
-On Wed, Oct 1, 2025 at 1:08=E2=80=AFAM Pin-yen Lin <treapking@chromium.org>=
- wrote:
->
-> Hi Rafael,
->
-> On Sat, Sep 27, 2025 at 8:13=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.=
-org> wrote:
-> >
-> > On Fri, Sep 26, 2025 at 12:23=E2=80=AFPM Pin-yen Lin <treapking@chromiu=
-m.org> wrote:
-> > >
-> > > Device links with DL_FLAG_SYNC_STATE_ONLY should not affect suspend
-> > > and resume, and functions like device_reorder_to_tail() and
-> > > device_link_add() doesn't try to reorder the consumers with such flag=
-.
-> > >
-> > > However, dpm_wait_for_consumers() and dpm_wait_for_suppliers() doesn'=
-t
-> > > check this flag before triggering dpm_wait, leading to potential hang
-> > > during suspend/resume.
-> > >
-> > > This can be reproduced on MT8186 Corsola Chromebook with devicetree l=
-ike:
-> > >
-> > > usb-a-connector {
-> > >         compatible =3D "usb-a-connector";
-> > >         port {
-> > >                 usb_a_con: endpoint {
-> > >                         remote-endpoint =3D <&usb_hs>;
-> > >                 };
-> > >         };
-> > > };
-> > >
-> > > usb_host {
-> > >         compatible =3D "mediatek,mt8186-xhci", "mediatek,mtk-xhci";
-> > >         port {
-> > >                 usb_hs: endpoint {
-> > >                         remote-endpoint =3D <&usb_a_con>;
-> > >                 };
-> > >         };
-> > > };
-> > >
-> > > In this case, the two nodes form a cycle and a SYNC_STATE_ONLY devlin=
-k
-> > > between usb_host (supplier) and usb-a-connector (consumer) is created=
-.
-> > >
-> > > Export device_link_flag_is_sync_state_only() and use it to check this=
- in
-> > > dpm_wait_for_consumers() and dpm_wait_for_suppliers() to fix this.
-> > >
-> > > Fixes: 05ef983e0d65a ("driver core: Add device link support for SYNC_=
-STATE_ONLY flag")
-> > > Signed-off-by: Pin-yen Lin <treapking@chromium.org>
-> > > ---
-> > >
-> > > Changes in v4:
-> > > - Remove inline for device_link_flag_is_sync_state_only()
-> > >
-> > > Changes in v3:
-> > > - Squash to one patch and fix the export approach
-> > >
-> > > Changes in v2:
-> > > - Update commit message
-> > > - Use device_link_flag_is_sync_state_only()
-> > >
-> > >  drivers/base/base.h       | 1 +
-> > >  drivers/base/core.c       | 2 +-
-> > >  drivers/base/power/main.c | 6 ++++--
-> > >  3 files changed, 6 insertions(+), 3 deletions(-)
-> > >
-> > > diff --git a/drivers/base/base.h b/drivers/base/base.h
-> > > index 123031a757d9..80415b140ce7 100644
-> > > --- a/drivers/base/base.h
-> > > +++ b/drivers/base/base.h
-> > > @@ -248,6 +248,7 @@ void device_links_driver_cleanup(struct device *d=
-ev);
-> > >  void device_links_no_driver(struct device *dev);
-> > >  bool device_links_busy(struct device *dev);
-> > >  void device_links_unbind_consumers(struct device *dev);
-> > > +bool device_link_flag_is_sync_state_only(u32 flags);
-> > >  void fw_devlink_drivers_done(void);
-> > >  void fw_devlink_probing_done(void);
-> > >
-> > > diff --git a/drivers/base/core.c b/drivers/base/core.c
-> > > index d22d6b23e758..a54ec6df1058 100644
-> > > --- a/drivers/base/core.c
-> > > +++ b/drivers/base/core.c
-> > > @@ -287,7 +287,7 @@ static bool device_is_ancestor(struct device *dev=
-, struct device *target)
-> > >  #define DL_MARKER_FLAGS                (DL_FLAG_INFERRED | \
-> > >                                  DL_FLAG_CYCLE | \
-> > >                                  DL_FLAG_MANAGED)
-> > > -static inline bool device_link_flag_is_sync_state_only(u32 flags)
-> > > +bool device_link_flag_is_sync_state_only(u32 flags)
-> > >  {
-> > >         return (flags & ~DL_MARKER_FLAGS) =3D=3D DL_FLAG_SYNC_STATE_O=
-NLY;
-> > >  }
-> > > diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
-> > > index 2ea6e05e6ec9..73a1916170ae 100644
-> > > --- a/drivers/base/power/main.c
-> > > +++ b/drivers/base/power/main.c
-> > > @@ -282,7 +282,8 @@ static void dpm_wait_for_suppliers(struct device =
-*dev, bool async)
-> > >          * walking.
-> > >          */
-> > >         list_for_each_entry_rcu_locked(link, &dev->links.suppliers, c=
-_node)
-> > > -               if (READ_ONCE(link->status) !=3D DL_STATE_DORMANT)
-> > > +               if (READ_ONCE(link->status) !=3D DL_STATE_DORMANT &&
-> > > +                   !device_link_flag_is_sync_state_only(link->flags)=
-)
-> > >                         dpm_wait(link->supplier, async);
-> > >
-> > >         device_links_read_unlock(idx);
-> > > @@ -339,7 +340,8 @@ static void dpm_wait_for_consumers(struct device =
-*dev, bool async)
-> > >          * unregistration).
-> > >          */
-> > >         list_for_each_entry_rcu_locked(link, &dev->links.consumers, s=
-_node)
-> > > -               if (READ_ONCE(link->status) !=3D DL_STATE_DORMANT)
-> > > +               if (READ_ONCE(link->status) !=3D DL_STATE_DORMANT &&
-> > > +                   !device_link_flag_is_sync_state_only(link->flags)=
-)
-> > >                         dpm_wait(link->consumer, async);
-> > >
-> > >         device_links_read_unlock(idx);
-> > > --
-> >
-> > Rebased on top of linux-pm.git/linux-next and applied as 6.18 material
-> > with some minor edits in the subject and changelog.
-> >
-> > Thanks!
->
-> Thanks for updating the commit message and applying the patch.
->
-> However, I can't find this patch at
-> https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git/log/?=
-h=3Dlinux-next
->
-> Did I check the wrong place for this?
+Reviewed-by: Janosch Frank <frankja@linux.ibm.com>
 
-Yes, it was on the bleeding-edge branch for CI build testing coverage.
+Thanks, picked
 
-It has been added to the linux-next branch now.
+> ---
+>   arch/s390/kvm/kvm-s390.c | 4 +---
+>   1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+> index bf6fa8b9ca73..f61cb8a5ea77 100644
+> --- a/arch/s390/kvm/kvm-s390.c
+> +++ b/arch/s390/kvm/kvm-s390.c
+> @@ -4367,8 +4367,6 @@ int kvm_arch_vcpu_ioctl_get_sregs(struct kvm_vcpu *vcpu,
+>   
+>   int kvm_arch_vcpu_ioctl_set_fpu(struct kvm_vcpu *vcpu, struct kvm_fpu *fpu)
+>   {
+> -	int ret = 0;
+> -
+>   	vcpu_load(vcpu);
+>   
+>   	vcpu->run->s.regs.fpc = fpu->fpc;
+> @@ -4379,7 +4377,7 @@ int kvm_arch_vcpu_ioctl_set_fpu(struct kvm_vcpu *vcpu, struct kvm_fpu *fpu)
+>   		memcpy(vcpu->run->s.regs.fprs, &fpu->fprs, sizeof(fpu->fprs));
+>   
+>   	vcpu_put(vcpu);
+> -	return ret;
+> +	return 0;
+>   }
+>   
+>   int kvm_arch_vcpu_ioctl_get_fpu(struct kvm_vcpu *vcpu, struct kvm_fpu *fpu)
 
-Thanks!
 
