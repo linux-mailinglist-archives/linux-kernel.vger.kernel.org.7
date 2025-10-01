@@ -1,70 +1,74 @@
-Return-Path: <linux-kernel+bounces-838429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 017D2BAF2B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 08:04:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C863FBAF2BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 08:04:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFBEF3AACFC
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 06:04:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 888B43B21EB
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 06:04:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D308257AC2;
-	Wed,  1 Oct 2025 06:04:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 602F827FB2F;
+	Wed,  1 Oct 2025 06:04:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b="cN/94/8G"
-Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="Z2gIyHft"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB97C23C8AA;
-	Wed,  1 Oct 2025 06:04:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.94
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759298660; cv=pass; b=bKebeOuCM2KgL4zoVo7HIy0yzLwEXTNfahQC1xwh39Y3mIWHYPgVdS3m3sytZF3KQmm4YCMDSfizGyjkx8qK93JPpVWHajjHKS/PWUv8zK7sTnJE24zvr2YGCS42aK/tWpxbfw4PA9uEgNohDh0inF+kY//LAUuxcThNCRotmcA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759298660; c=relaxed/simple;
-	bh=SGJ7F7f+BSgPcdMjTeUtiZj9dNe/Bu7K1pwrqKqmi5M=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=t8XZSK8I5n4UIubyVqBuVBKbiMAkZMNnmLMxZgZu2ybPqpbt4fr2THXV/ASfvzKcna0PmrlEFSGk+kcW3LWBESd5v0IvcmDSfXT2DJifAnLmu5Bb3PK4RQnq5kRlvyDqGEHZSV2BsBUNFqsgw/nJzV1+lp5LphSkTBomz5g7vDs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b=cN/94/8G; arc=pass smtp.client-ip=136.143.188.94
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1759298641; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=EDFEQhRp5WHix1Smy2ciXXj8vM9O7D4/SdXkhSzlxmZaQ8b6zoQf4SILsCtxvJeRacdAqUSdzhImMQ5Q+S/OsZlUg+Q8/SwBYiu/CGu2DHf2sFjE18e8j3hbSXr4lB4NAmB8MjYtxjWu8kdgxsD8WV+ps3622W61u6BQJQi53/Q=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1759298641; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=QB/yhut3QVT8pqvoLVYMTyBpZhMcos5NCHWzyAFrkQE=; 
-	b=n3xDCMuPG4HI5hsaCy8Y7N9PFWTbsk8NqNCvzjFo2A4u5tfEkRMl+tjH+To/8+UTMed32uMjrp6eX2eXwBAUiJToYdfpIWFP3agY2DveOqXa6yKsXqAgQswzXiJRgxJMdS/qB2FZMvsGNm8KwW95CQrgp7YZtA8UAaCFStmpOk4=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=ming.li@zohomail.com;
-	dmarc=pass header.from=<ming.li@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1759298641;
-	s=zm2022; d=zohomail.com; i=ming.li@zohomail.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Transfer-Encoding:Feedback-ID:Reply-To;
-	bh=QB/yhut3QVT8pqvoLVYMTyBpZhMcos5NCHWzyAFrkQE=;
-	b=cN/94/8G6TKQegYodm8YymZKzFaeVHU71Np1kxylsyn2BqGG4zXB4qtq/ad1xvn6
-	z1ESr7kNsxRR56uAvd2oDQfbudGU/PcEhw5/JyinVCrKiOu35DPfCqhv9/f1glAAf1a
-	I87AkFBqiEIoGbDOQLYVJWdFSfPRcrP6kIhwByX4=
-Received: by mx.zohomail.com with SMTPS id 1759298640059998.7891591675034;
-	Tue, 30 Sep 2025 23:04:00 -0700 (PDT)
-From: Li Ming <ming.li@zohomail.com>
-To: dave@stgolabs.net,
-	jonathan.cameron@huawei.com,
-	dave.jiang@intel.com,
-	alison.schofield@intel.com,
-	vishal.l.verma@intel.com,
-	ira.weiny@intel.com,
-	dan.j.williams@intel.com,
-	shiju.jose@huawei.com
-Cc: linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Li Ming <ming.li@zohomail.com>
-Subject: [PATCH v3 1/1] cxl/port: Avoid missing port component registers setup
-Date: Wed,  1 Oct 2025 14:03:37 +0800
-Message-Id: <20251001060337.431639-1-ming.li@zohomail.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DA18239E70;
+	Wed,  1 Oct 2025 06:04:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759298690; cv=none; b=oN7qtHWCBWBcQtlU8ktQRwevDCYNtiQqZ8Rnv9FQycN27l05qKuBkHTlxfZpEA6uO7ReNveNchNzRd4tEOJWIDdT6UXTkLdU9+c0rEi5fAVwvULEa52Oo7SvEl+KMMgoDHLpNDHXbQ85QCold/uHWTsbTqPWYwLm8HJZUcw4D6U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759298690; c=relaxed/simple;
+	bh=hNSz9gW/ii+2++SFfjkFQgoFOQmuMDgJIY1Y0EaD1Jc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UB7K3SX8pWNQW1HYpKH1Tgvsx8L96E1JkjSdAEfU2LqeMraOdH2f8ARlxHS1sbqMOGqTdfJ82mqxa/AciqKhwTVSrkYxZ6hS7Sy9tcaO9SW3KP5qo17DaNrgUgctc4GvwasM11TE8u9RqWb1/ynkzWXIzJm/7yMY+pma4g0WJhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=Z2gIyHft; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 84cb3f629e8c11f08d9e1119e76e3a28-20251001
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=ixDkZdmZjEhnbu/X1A3+4I5hcb/jbkxBCb7Z/1tYu+Y=;
+	b=Z2gIyHftnqPe+bVu19RYmQEkxlNfOq6MuqKyFN36wPbEkTK0lk8Duivopxt3bion7YEt2UALxxeGk8iajBwpNI48bX11JjOXTuV3IcfRsbQobxbqHsLuaqbY0JWJdO1R1Rw3UyYyOxRX+A11pJfvGzY86GjwHuhp2oWZRjXOm1I=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.6,REQID:56207e3f-02a1-46ef-9d38-9919eb13f1fd,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:a9d874c,CLOUDID:5499dbe9-2ff9-4246-902c-2e3f7acb03c4,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102|836|888|898,TC:-5,Content:0|15|5
+	0,EDM:-3,IP:nil,URL:0,File:130,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,
+	OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 84cb3f629e8c11f08d9e1119e76e3a28-20251001
+Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw01.mediatek.com
+	(envelope-from <chris.lu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1158140492; Wed, 01 Oct 2025 14:04:40 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Wed, 1 Oct 2025 14:04:39 +0800
+Received: from mtksitap99.mediatek.inc (10.233.130.16) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1748.10 via Frontend Transport; Wed, 1 Oct 2025 14:04:39 +0800
+From: Chris Lu <chris.lu@mediatek.com>
+To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg
+	<johan.hedberg@gmail.com>, Luiz Von Dentz <luiz.dentz@gmail.com>
+CC: Sean Wang <sean.wang@mediatek.com>, Will Lee <will-cy.Lee@mediatek.com>,
+	SS Wu <ss.wu@mediatek.com>, Steve Lee <steve.lee@mediatek.com>,
+	linux-bluetooth <linux-bluetooth@vger.kernel.org>, linux-kernel
+	<linux-kernel@vger.kernel.org>, linux-mediatek
+	<linux-mediatek@lists.infradead.org>, Chris Lu <chris.lu@mediatek.com>
+Subject: [PATCH v1 0/2] Add two new ID for MediaTek's Bluetooth
+Date: Wed, 1 Oct 2025 14:04:35 +0800
+Message-ID: <20251001060437.2298529-1-chris.lu@mediatek.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,102 +76,23 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Feedback-ID: rr080112270f03e9fa526107d7f29c96340000121ea283752c0e86ac80962e2a5e455b3b9209b024ed4c16a1:zu0801122716c4fdacd7ca08e715a4fa1800006ac98176b65f2107132009134120a9ccec6988953a28e9ba50:rf0801122dba65126e536d26798d6b6a7e00009a1a09397bb8d296d201aa06820ed2985fc34c254c83d75f09a337454096d1:ZohoMail
-X-ZohoMailClient: External
+Content-Type: text/plain
 
-port->nr_dports is used to represent how many dports added to the cxl
-port, it will increase in add_dport() when a new dport is being added to
-the cxl port, but it will not be reduced when a dport is removed from
-the cxl port.
+In response to the customer's request, add the following two
+VID/PID to the USB driver table so that btusb driver can support
+the corresponding MT7920/MT7922 modules.
 
-Currently, when the first dport is added to a cxl port, it will trigger
-component registers setup on the cxl port, the implementation is using
-port->nr_dports to confirm if the dport is the first dport.
+1. VID/PID 0489/e135 for MT7920
+2. VID/PID 0489/e170 for MT7922
 
-A corner case here is that adding dport could fail after port->nr_dports
-updating and before checking port->nr_dports for component registers
-setup. If the failure happens during the first dport attaching, it will
-cause that CXL subsystem has not chance to execute component registers
-setup for the cxl port. the failure flow like below:
+Chris Lu (2):
+  Bluetooth: btusb: Add new VID/PID 0489/e135 for MT7920
+  Bluetooth: btusb: Add new VID/PID 0489/e170 for MT7922
 
-port->nr_dports = 0
-dport 1 adding to the port:
-	add_dport()	# port->nr_dports: 1
-	failed on devm_add_action_or_reset() or sysfs_create_link()
-	return error	# port->nr_dports: 1
-dport 2 adding to the port:
-	add_dport()	# port->nr_dports: 2
-	no failure
-	skip component registers setup because of port->nr_dports is 2
+ drivers/bluetooth/btusb.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-The solution here is that moving component registers setup closer to
-add_dport(), so if add_dport() is executed correctly for the first
-dport, component registers setup on the port will be executed
-immediately after that.
-
-Fixes: f6ee24913de2 ("cxl: Move port register setup to when first dport appear")
-Signed-off-by: Li Ming <ming.li@zohomail.com>
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
----
-v3:
-- add fix tag
-- add review tags
-
-v2:
-- remove dport from port->dports in case of component registers setup
-  failed.
-
-base-commit: 46037455cbb748c5e85071c95f2244e81986eb58 cxl/next
----
- drivers/cxl/core/port.c | 26 ++++++++++++++------------
- 1 file changed, 14 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/cxl/core/port.c b/drivers/cxl/core/port.c
-index d5f71eb1ade8..8128fd2b5b31 100644
---- a/drivers/cxl/core/port.c
-+++ b/drivers/cxl/core/port.c
-@@ -1182,6 +1182,20 @@ __devm_cxl_add_dport(struct cxl_port *port, struct device *dport_dev,
- 	if (rc)
- 		return ERR_PTR(rc);
- 
-+	/*
-+	 * Setup port register if this is the first dport showed up. Having
-+	 * a dport also means that there is at least 1 active link.
-+	 */
-+	if (port->nr_dports == 1 &&
-+	    port->component_reg_phys != CXL_RESOURCE_NONE) {
-+		rc = cxl_port_setup_regs(port, port->component_reg_phys);
-+		if (rc) {
-+			xa_erase(&port->dports, (unsigned long)dport->dport_dev);
-+			return ERR_PTR(rc);
-+		}
-+		port->component_reg_phys = CXL_RESOURCE_NONE;
-+	}
-+
- 	get_device(dport_dev);
- 	rc = devm_add_action_or_reset(host, cxl_dport_remove, dport);
- 	if (rc)
-@@ -1200,18 +1214,6 @@ __devm_cxl_add_dport(struct cxl_port *port, struct device *dport_dev,
- 
- 	cxl_debugfs_create_dport_dir(dport);
- 
--	/*
--	 * Setup port register if this is the first dport showed up. Having
--	 * a dport also means that there is at least 1 active link.
--	 */
--	if (port->nr_dports == 1 &&
--	    port->component_reg_phys != CXL_RESOURCE_NONE) {
--		rc = cxl_port_setup_regs(port, port->component_reg_phys);
--		if (rc)
--			return ERR_PTR(rc);
--		port->component_reg_phys = CXL_RESOURCE_NONE;
--	}
--
- 	return dport;
- }
- 
 -- 
-2.34.1
+2.45.2
 
 
