@@ -1,190 +1,190 @@
-Return-Path: <linux-kernel+bounces-839494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 694B5BB1BAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 23:00:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7266EBB1BCF
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 23:04:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 156352A46E5
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 21:00:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0F4019C3ED1
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 21:04:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E04FA309EEA;
-	Wed,  1 Oct 2025 21:00:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 836A030F54B;
+	Wed,  1 Oct 2025 21:03:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=weathered-steel.dev header.i=@weathered-steel.dev header.b="YldTa0CJ"
-Received: from mx-out1.startmail.com (mx-out1.startmail.com [145.131.90.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vfDXZuXw"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CE1E3093BD;
-	Wed,  1 Oct 2025 21:00:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=145.131.90.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 063193C2F
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 21:03:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759352425; cv=none; b=gK+1TfZ8CkWsCzLMgRb7GEO7vy0SiqEyqmHhJG4VOsyPe39hpIqPGVpjLS0bGAMyjqiDZhPiVZuxlJ8Bei+iOgUaCXB8zbjBhcQwYzC4VoLsngOvqZ8+zG5PCHttCI0gB4gxzMpJjMY70HSztZcEsH+HWLDTqXEmY0an3btMuSE=
+	t=1759352634; cv=none; b=GnCqm0PDKCjqd8MVJUqnWVSl1aLoR9dUqWuU1uwD3INn9lM9LEFIGxURpyGkA9XMgy2vfZdk4ZasTTEC244m2ahFlpeX3AfHN86e4QykN2ko8bzJJL0k1BZHEVHJkr42RMjaso+B+rauPp9bkO1PIQLLV9IiUo46cGSJ3PeCWho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759352425; c=relaxed/simple;
-	bh=yk+mN31wNVhjALTh/hyQr0hUeTRsG/yDmF37onFFrvg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o5BSONVqd9CH5VPsf+u9bRFZBfRKxQOm1GxnxePhLCoo9Gv2DiTWXV1zvOvvesOjh3+HWGG09BrMUsrlbOPyCdWI8lxIKhDQbv0jZj22mVuqoAcVFjmemSqOcE8fshd6V+JeT5ZrOQNe6y3KUuXPX7uXdIrFUurEsKpdYCxaaBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weathered-steel.dev; spf=pass smtp.mailfrom=weathered-steel.dev; dkim=pass (2048-bit key) header.d=weathered-steel.dev header.i=@weathered-steel.dev header.b=YldTa0CJ; arc=none smtp.client-ip=145.131.90.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weathered-steel.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weathered-steel.dev
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=weathered-steel.dev;
-	s=startmail1; t=1759352421;
-	bh=omvTbOOO6blAUUDT41IFfrpds2YN8KtJB4Y6/99fD5w=;
-	h=Date:From:To:Subject:Message-ID:References:Mime-Version:
-	 Content-Type:Content-Disposition:In-Reply-To:From:Subject:To:Date:
-	 Sender:Content-Type:Content-Transfer-Encoding:Content-Disposition:
-	 Mime-Version:Reply-To:In-Reply-To:References:Message-Id:
-	 List-Unsubscribe:List-Unsubscribe-Post:Autocrypt;
-	b=YldTa0CJfdILoG1R5UcB0m6FtP3D4DDAlJ73Y1Xuinh+ita5kCpIMX4EchAJB9aEH
-	 lAuc0FXIc54G0gW/3bKtk8k6nMbPB+bZ3qvNumahjoD0OmJ9ZJE36VCNb9cKr5kmpN
-	 GpLL4EzyVi2dflE0SOHMN8/aEVVWD5QZVKjqV5Jhqttw+bccaX7YP8jAP4HD389D5q
-	 ULlps7z09UAXJ51SOOfwrgE2RRu0lZLfroaZVOp8Pn9SjBCdLfxjKFZl+O3WrP51D6
-	 /63Sbrlh71hKJZ4REUum7ZXVOZO0mCmEFE3keiYw+CNAD0qo2jhIP9sqwUt4k3SJQN
-	 DZsXzwQuDjGug==
-Date: Wed, 1 Oct 2025 21:00:18 +0000
-From: Elle Rhumsaa <elle@weathered-steel.dev>
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Drew Fustini <fustini@kernel.org>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v15 7/7] riscv: dts: thead: Add PWM fan and thermal
- control
-Message-ID: <aN2WYmcYHHZSccPm@archiso>
-References: <20250930-rust-next-pwm-working-fan-for-sending-v15-0-5661c3090877@samsung.com>
- <CGME20250930122738eucas1p2ee9244532b39860f982fd7daa4cf788e@eucas1p2.samsung.com>
- <20250930-rust-next-pwm-working-fan-for-sending-v15-7-5661c3090877@samsung.com>
+	s=arc-20240116; t=1759352634; c=relaxed/simple;
+	bh=bnST/+pYfP/TMY4VR5FyiAIZhfYyRRy1HEjiErUkCu8=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Y8yXc0UT7aMvlVXkxNOAnRN621hAVJOg40EkrgebmF5zjSNtSeL6yEP2wPAeVRN/fRrBnPbzyRQV1dL6VbZzk1YO90aqFqhuiT3y0DnBCiX9fxRVdtPvxKCejM0PLLYPj1zvx/T+VEJ2Pf+F6GPOWEijB39e6ORVaFmgqu7pLMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vfDXZuXw; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-46e36686ca1so7980035e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 14:03:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759352631; x=1759957431; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=mh7/i7zcB22S2CzefD890RUAPYawXfWFtiDRY7l6NUg=;
+        b=vfDXZuXwFczDw2ed9ipfsby1SmLDUKPjs9Hr4SoUig87N3dhYSCohA3ucr2dhIjzDd
+         ex/7N5fIm7mNLRWxqrVboztb1m8e/pwXN9eYhKi9MtvG8aypjWW11GNhcdCdN/lqJZtc
+         X6a7ZjpjBOGxVLQofAXMBPtVnS0wxxyQDEyli4Evw2L9dfsv9RFCu/nyTrqNAsdu/1vb
+         SbuJ39l3NIbgSguu6+gnRgKLRjS1yj4CPk1dahNYkGTQaA9/8dgx99cK5gP7LFc6zJWi
+         5k3ahDKIZPs3GCq5Sv0k6E/tyTux/sKE5OVw4q8o3u5XWR2kc5ZU5F+Pp6DC7fQTeJJx
+         hRzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759352631; x=1759957431;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mh7/i7zcB22S2CzefD890RUAPYawXfWFtiDRY7l6NUg=;
+        b=kfPkncdqYR9/QEBKoc5fxo1tmw0gJ5u6Qv/w12R8mJLqpoB4d6L5ebpiuUlUNSUFkq
+         3iW7MbyPTDQvUoll3DCoxGVb+Vb/LQvGWmdzGyjxzTBecYJt4cR4/6rGJqnpecX5vqYm
+         gcf5PyIV+Hvl6sdN3szdXSM2ArwVPMN0vI/8rl7bgt0DYcyViXuMnH2UG5OzkQBeBgXP
+         eyKCuDetxLoKt/Zsls1yN3tFsFl3YJVhEu2t05B1mNPC2MN1LAIAnZqIZ8EBsGkbDLcR
+         b+pJRz2oXOMmobks5ur3FSGFrHWP0sbHuBa8J6zTdd6w9L0MDc7HEC8OXAdiZHuEU4QS
+         lhPA==
+X-Forwarded-Encrypted: i=1; AJvYcCWjwCJq3OOztdaNbSJ4sIUWczAPgf5OgUY5LpHBxT8smOhVbFZ2cl/IXZL5IWDsSkkCvMhLsV0jCjrvBEY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNgCjmpc7GL7g+BN4xMvRwcPLP4l+NstFDGvQtSCrGPVIPvehA
+	nZEFkoOiNu78hFfX0fLIW81KRG0CcF8vkgG29ESlZiuI8ua0xtLkS14UNqh1pQWXKFMCaG+OrA=
+	=
+X-Google-Smtp-Source: AGHT+IFBMS8hi1wkfsj481SIim8P9Op+nN93AzKtiaxeNmzJcEHjTwqfw2LjqxqLf09sJn85QILeZVIL
+X-Received: from wmbgz3.prod.google.com ([2002:a05:600c:8883:b0:45f:29fc:83d])
+ (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:45d0:b0:45b:88d6:8ddb
+ with SMTP id 5b1f17b1804b1-46e612e6d66mr40444975e9.37.1759352631471; Wed, 01
+ Oct 2025 14:03:51 -0700 (PDT)
+Date: Wed,  1 Oct 2025 23:02:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250930-rust-next-pwm-working-fan-for-sending-v15-7-5661c3090877@samsung.com>
+X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4715; i=ardb@kernel.org;
+ h=from:subject; bh=WkWvbQEHwdkhBMEajkwjYNbG84VXFWD0ftiu/zUgP00=;
+ b=owGbwMvMwCVmkMcZplerG8N4Wi2JIePutNN86w1dFLNusO+d3vjJZto6tcz77XHJSgbZi7vPF
+ 9T4XfXqKGVhEONikBVTZBGY/ffdztMTpWqdZ8nCzGFlAhnCwMUpABOp0mRkuMP+8OxjWU19Oxsj
+ vlz9lsr2f77lR+3Ed37avIt90eHHbAz/Ey7OWZT5rnHJwYgbyiznuZcEtsyRjqm/9H1DkvG0wHt ruQE=
+X-Mailer: git-send-email 2.51.0.618.g983fd99d29-goog
+Message-ID: <20251001210201.838686-22-ardb+git@google.com>
+Subject: [PATCH v2 00/20] arm64: Move kernel mode FPSIMD buffer to the stack
+From: Ard Biesheuvel <ardb+git@google.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	herbert@gondor.apana.org.au, linux@armlinux.org.uk, 
+	Ard Biesheuvel <ardb@kernel.org>, Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Kees Cook <keescook@chromium.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Mark Brown <broonie@kernel.org>, 
+	Eric Biggers <ebiggers@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Sep 30, 2025 at 02:20:38PM +0200, Michal Wilczynski wrote:
-> Add Device Tree nodes to enable a PWM controlled fan and it's associated
-> thermal management for the Lichee Pi 4A board.
-> 
-> This enables temperature-controlled active cooling for the Lichee Pi 4A
-> board based on SoC temperature.
-> 
-> Reviewed-by: Drew Fustini <fustini@kernel.org>
-> Tested-by: Drew Fustini <fustini@kernel.org>
-> Reviewed-by: Elle Rhumsaa <elle@weathered-steel.dev>
-> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
-> ---
->  arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts | 67 +++++++++++++++++++++++
->  1 file changed, 67 insertions(+)
-> 
-> diff --git a/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts b/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
-> index 4020c727f09e8e2286fdc7fecd79dbd8eba69556..c58c2085ca92a3234f1350500cedae4157f0c35f 100644
-> --- a/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
-> +++ b/arch/riscv/boot/dts/thead/th1520-lichee-pi-4a.dts
-> @@ -28,9 +28,76 @@ aliases {
->  	chosen {
->  		stdout-path = "serial0:115200n8";
->  	};
-> +
-> +	thermal-zones {
-> +		cpu-thermal {
-> +			polling-delay = <1000>;
-> +			polling-delay-passive = <1000>;
-> +			thermal-sensors = <&pvt 0>;
-> +
-> +			trips {
-> +				fan_config0: fan-trip0 {
-> +					temperature = <39000>;
-> +					hysteresis = <5000>;
-> +					type = "active";
-> +				};
-> +
-> +				fan_config1: fan-trip1 {
-> +					temperature = <50000>;
-> +					hysteresis = <5000>;
-> +					type = "active";
-> +				};
-> +
-> +				fan_config2: fan-trip2 {
-> +					temperature = <60000>;
-> +					hysteresis = <5000>;
-> +					type = "active";
-> +				};
-> +			};
-> +
-> +			cooling-maps {
-> +				map-active-0 {
-> +					cooling-device = <&fan 1 1>;
-> +					trip = <&fan_config0>;
-> +				};
-> +
-> +				map-active-1 {
-> +					cooling-device = <&fan 2 2>;
-> +					trip = <&fan_config1>;
-> +				};
-> +
-> +				map-active-2 {
-> +					cooling-device = <&fan 3 3>;
-> +					trip = <&fan_config2>;
-> +				};
-> +			};
-> +		};
-> +	};
-> +
-> +	fan: pwm-fan {
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&fan_pins>;
-> +		compatible = "pwm-fan";
-> +		#cooling-cells = <2>;
-> +		pwms = <&pwm 1 10000000 0>;
-> +		cooling-levels = <0 66 196 255>;
-> +	};
-> +
->  };
->  
->  &padctrl0_apsys {
-> +	fan_pins: fan-0 {
-> +		pwm1-pins {
-> +			pins = "GPIO3_3"; /* PWM1 */
-> +			function = "pwm";
-> +			bias-disable;
-> +			drive-strength = <25>;
-> +			input-disable;
-> +			input-schmitt-disable;
-> +			slew-rate = <0>;
-> +		};
-> +	};
-> +
->  	uart0_pins: uart0-0 {
->  		tx-pins {
->  			pins = "UART0_TXD";
-> 
-> -- 
-> 2.34.1
-> 
+From: Ard Biesheuvel <ardb@kernel.org>
 
-Reviewed-by: Elle Rhumsaa <elle@weathered-steel.dev>
+Move the buffer for preserving/restoring the kernel mode FPSIMD state on a
+context switch out of struct thread_struct, and onto the stack, so that
+the memory cost is not imposed needlessly on all tasks in the system.
+
+Changes since v1:
+- Add a patch reverting the arm64 support for the generic
+  kernel_fpu_begin()/end() API, which is problematic on arm64.
+
+- Introduce a new 'ksimd' scoped guard that encapsulates the calls the
+  kernel_neon_begin() and kernel_neon_end() at a higher level of
+  abstraction. This makes it straight-forward to plumb in the stack
+  buffer without complicating the callers.
+
+- Move all kernel mode NEON users on arm64 (and some on ARM) over to the
+  new API.
+
+- Add Mark's ack to patches #6 - #8
+
+Cc: Marc Zyngier <maz@kernel.org>
+Cc: Will Deacon <will@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Eric Biggers <ebiggers@kernel.org>
+
+Ard Biesheuvel (20):
+  arm64: Revert support for generic kernel mode FPU
+  arm64/simd: Add scoped guard API for kernel mode SIMD
+  ARM/simd: Add scoped guard API for kernel mode SIMD
+  crypto: aegis128-neon - Move to more abstract 'ksimd' guard API
+  raid6: Move to more abstract 'ksimd' guard API
+  crypto/arm64: aes-ce-ccm - Avoid pointless yield of the NEON unit
+  crypto/arm64: sm4-ce-ccm - Avoid pointless yield of the NEON unit
+  crypto/arm64: sm4-ce-gcm - Avoid pointless yield of the NEON unit
+  lib/crc: Switch ARM and arm64 to 'ksimd' scoped guard API
+  lib/crypto: Switch ARM and arm64 to 'ksimd' scoped guard API
+  crypto/arm64: aes-ccm - Switch to 'ksimd' scoped guard API
+  crypto/arm64: aes-blk - Switch to 'ksimd' scoped guard API
+  crypto/arm64: aes-gcm - Switch to 'ksimd' scoped guard API
+  crypto/arm64: nhpoly1305 - Switch to 'ksimd' scoped guard API
+  crypto/arm64: polyval - Switch to 'ksimd' scoped guard API
+  crypto/arm64: sha3 - Switch to 'ksimd' scoped guard API
+  crypto/arm64: sm3 - Switch to 'ksimd' scoped guard API
+  crypto/arm64: sm4 - Switch to 'ksimd' scoped guard API
+  arm64/xorblocks:  Switch to 'ksimd' scoped guard API
+  arm64/fpsimd: Allocate kernel mode FP/SIMD buffers on the stack
+
+ arch/arm/include/asm/simd.h              |   7 +
+ arch/arm64/Kconfig                       |   1 -
+ arch/arm64/Makefile                      |   9 +-
+ arch/arm64/crypto/aes-ce-ccm-glue.c      | 116 +++++------
+ arch/arm64/crypto/aes-ce-glue.c          |  87 ++++----
+ arch/arm64/crypto/aes-glue.c             | 139 ++++++-------
+ arch/arm64/crypto/aes-neonbs-glue.c      | 150 +++++++-------
+ arch/arm64/crypto/ghash-ce-glue.c        |  27 ++-
+ arch/arm64/crypto/nhpoly1305-neon-glue.c |   5 +-
+ arch/arm64/crypto/polyval-ce-glue.c      |  12 +-
+ arch/arm64/crypto/sha3-ce-glue.c         |  10 +-
+ arch/arm64/crypto/sm3-ce-glue.c          |  15 +-
+ arch/arm64/crypto/sm3-neon-glue.c        |  16 +-
+ arch/arm64/crypto/sm4-ce-ccm-glue.c      |  55 +++--
+ arch/arm64/crypto/sm4-ce-cipher-glue.c   |  10 +-
+ arch/arm64/crypto/sm4-ce-gcm-glue.c      |  65 +++---
+ arch/arm64/crypto/sm4-ce-glue.c          | 214 +++++++++-----------
+ arch/arm64/crypto/sm4-neon-glue.c        |  25 +--
+ arch/arm64/include/asm/fpu.h             |  15 --
+ arch/arm64/include/asm/neon.h            |   4 +-
+ arch/arm64/include/asm/processor.h       |   2 +-
+ arch/arm64/include/asm/simd.h            |  10 +
+ arch/arm64/include/asm/xor.h             |  22 +-
+ arch/arm64/kernel/fpsimd.c               |  34 +++-
+ arch/arm64/lib/Makefile                  |   6 +-
+ crypto/aegis128-neon.c                   |  33 ++-
+ lib/crc/arm/crc-t10dif.h                 |  16 +-
+ lib/crc/arm/crc32.h                      |  11 +-
+ lib/crc/arm64/crc-t10dif.h               |  16 +-
+ lib/crc/arm64/crc32.h                    |  16 +-
+ lib/crypto/arm/chacha-glue.c             |   6 +-
+ lib/crypto/arm/poly1305-glue.c           |   6 +-
+ lib/crypto/arm/sha1.h                    |  13 +-
+ lib/crypto/arm/sha256.h                  |  14 +-
+ lib/crypto/arm/sha512.h                  |   6 +-
+ lib/crypto/arm64/chacha-neon-glue.c      |  11 +-
+ lib/crypto/arm64/poly1305-glue.c         |   6 +-
+ lib/crypto/arm64/sha1.h                  |   7 +-
+ lib/crypto/arm64/sha256.h                |  15 +-
+ lib/crypto/arm64/sha512.h                |   8 +-
+ lib/raid6/Makefile                       |  33 ++-
+ lib/raid6/neon.c                         |  17 +-
+ lib/raid6/recov_neon.c                   |  15 +-
+ 43 files changed, 597 insertions(+), 708 deletions(-)
+ delete mode 100644 arch/arm64/include/asm/fpu.h
+
+-- 
+2.51.0.618.g983fd99d29-goog
+
 
