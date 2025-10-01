@@ -1,130 +1,126 @@
-Return-Path: <linux-kernel+bounces-838960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87FA6BB081C
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 15:29:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11FBCBB0825
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 15:30:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A8DD1C28D9
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 13:29:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B74E01C2885
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 13:30:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 671CD2ED85D;
-	Wed,  1 Oct 2025 13:29:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 928392EE276;
+	Wed,  1 Oct 2025 13:30:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="pyhUXrGr"
-Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ciq.com header.i=@ciq.com header.b="XRWN3H2D"
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0041D299A81;
-	Wed,  1 Oct 2025 13:29:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CE6D45948
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 13:30:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759325372; cv=none; b=eOMoYk3iEb1ZP2ROYZgkQ8nCsHIs8FYCFHnuOZgLMPjK2dAAiLV0WS0uDUX319HtOzp27z74Io4iaDpPjN15YpOwzGzQgv6r0hVxlFWAxWTO/ZiBrVCpXhFKT1jVycP8/y+tIQZhd8nJkyfOrDIsMtu4IRe3UT+s5adH9v0LmL4=
+	t=1759325433; cv=none; b=FI+9seLJHQU4HOux7HhgXIf+jYQ1lSW9l68bzmYma1Z+ISmF/tAkE3xgbl8WOH1fV/lqCEpy6wqvJRPO72fxuWmX1+54ui31DxT5+ADCuvUMR5xFL84XkzOXDwdCgJDZqLWqnOkVtd8L9L9uGKLrmStjIIH7qT5zlhw5iO+vQTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759325372; c=relaxed/simple;
-	bh=OZC0tt3exZ8mrMSmgLzrE/u/RYsfs/kNrj2o8ax8fOA=;
-	h=Date:From:To:Cc:Message-Id:In-Reply-To:References:Mime-Version:
-	 Content-Type:Subject; b=gL8hIax2Y9d2b8F3g0plKymig4Y0CdA660H2fSiadb54xHC7YLB7/fjGDx5Z/EcRHUP5LkQ3sgztMMxBgLH+k+4InX8yqrL+DfUd1AqPCmpBV5DN33pF4mbiZ+KxNqJuDnYqF6N1UyhIgC25l7D5bV/9VNSl/Z8TvrQyhBZKKoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=pyhUXrGr; arc=none smtp.client-ip=162.243.120.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
-	; s=x; h=Subject:Content-Transfer-Encoding:Mime-Version:Message-Id:Cc:To:From
-	:Date:subject:date:message-id:reply-to;
-	bh=/2kuQRr7Hq1T+cMeHaxihzxf/gDDuGxrcXHk1gQvul0=; b=pyhUXrGrpmcPd/+/gO3+Q39F/C
-	6poPPEuq5TcMFNqfAvhtWpE5+huArnZAXLNA+6A7XKpH3mOGo9kpobzuhp4ym/PhMv7SM25Sfg6BJ
-	Ti1hJxGwbkmYFqUWxgxhHjaN7uDbbRG284KyWpdyDWGd/Gs9Ptf0P87kYvl7sQvkbZBQ=;
-Received: from modemcable168.174-80-70.mc.videotron.ca ([70.80.174.168]:41924 helo=pettiford)
-	by mail.hugovil.com with esmtpa (Exim 4.92)
-	(envelope-from <hugo@hugovil.com>)
-	id 1v3wtW-0003Gk-EN; Wed, 01 Oct 2025 09:29:23 -0400
-Date: Wed, 1 Oct 2025 09:29:20 -0400
-From: Hugo Villeneuve <hugo@hugovil.com>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Jiri Slaby <jirislaby@kernel.org>, fvallee@eukrea.fr,
- linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, Hugo Villeneuve
- <hvilleneuve@dimonoff.com>
-Message-Id: <20251001092920.e6d5ffa046937fc850f1ab6a@hugovil.com>
-In-Reply-To: <2025100132-usage-sandstone-8a9f@gregkh>
-References: <20250924153740.806444-1-hugo@hugovil.com>
-	<20250924153740.806444-13-hugo@hugovil.com>
-	<a6bb8046-1e71-4766-afa8-e9d303ba57b8@kernel.org>
-	<20250930160828.546867810b4a17c36a5030c6@hugovil.com>
-	<2025100132-usage-sandstone-8a9f@gregkh>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1759325433; c=relaxed/simple;
+	bh=SktQ3kOlhBAC2x3vmzqqiWJIKayZPjyxZa2VPO2W95s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=boRQalNEIRxJIgJlAC05yWXqM5KSgLRG2d2xA/dKUv6iLIe9QIIp0N732FuKycAl/MopWrPZAbgON/AuTLTJvzuUuHXWlzScGUeHlRsf3P25ZOKDHIYejzooiNlPy/zTSuqNNxCQp8vurklWEojWV2qU0SR04oW8WS8L0dPFQhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ciq.com; spf=pass smtp.mailfrom=ciq.com; dkim=pass (2048-bit key) header.d=ciq.com header.i=@ciq.com header.b=XRWN3H2D; arc=none smtp.client-ip=209.85.222.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ciq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ciq.com
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-8572d7b2457so126022185a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 06:30:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ciq.com; s=s1; t=1759325430; x=1759930230; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YCwcUuDlR2HsB5Hk2ZIMgqVF/pdzyf7iXfwKEpkpRxM=;
+        b=XRWN3H2DBctRwacMAgmIgy7S3DPK5sifTGOkdehLWCgX6Xh85EJM4HafWsaiqhmLYD
+         Txh1P5B268DaqKix3HPqNO81gomC1KYvQOUFrMIj6nmzHIPYDkS6RGIsudW372UZ4/u7
+         1siql3blj3BL9vSGyvZqh2cp65N1VPKtMnTbX5QuKthv5vws+qKRxDYWRVCxR+XOrKfh
+         T6dIbnde1KL+9ZLSG5Fqgbo6VD6WTmS3duo2m2K7mptm5YNlUZhBn6/nzyLOmQ9Tl5Fz
+         cQOInFASfxJf+2zOmbMpXWIEsUlHsBUGChLRtL6+wV5VSYxOoyVxqIDlpGjqVa80xV35
+         4FIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759325430; x=1759930230;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YCwcUuDlR2HsB5Hk2ZIMgqVF/pdzyf7iXfwKEpkpRxM=;
+        b=JZEY80KXNmu11dGMf/n1qi+cIkA+OplCADHpckukMwCfDD9QA4yKPHWlhJaXaz1kvx
+         /GBCvBsfiUH6x8Tc6KXjhaupKB6klf9ddzLWs4VoxnjC7RU0CG80tfksYIdHInnjnFAU
+         pgwl4qbiZs+lRdEJX4lzUFa2CwoR/j9DjIXSEtWQ+/jGYic99dqyaTIlwMGiVYZXPyWN
+         FYCZNQmw6qm2qIrGWXzQfNB63ZkGsxHBhXYNb3lJdXwCC71Ih9bV56HDM6Ojjpr57293
+         xtPJh1+CfYWKQniU1KC23Yo5Yn/41bb/w3i3zMNMHjslpfTJ19oazQkdiGAUsO8V+GFv
+         goNw==
+X-Forwarded-Encrypted: i=1; AJvYcCWevSY5aaPTVbhUyS3M3GL4j/LYUBsRVm5pT3SUOosmQjeFwIxgeBEI6tMp4eR1sKQswqFaq+jvJ/hrFaA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7bH2W+nXv+GotgbLzP7Ncl6TbeMRA934zWUKd08xwN5ULoD0c
+	nxfU+XcQqnEIlOm3dLyXFwWsaspFVAW4+sRKxcyWiHtJj3rQ2bp3I37SO/xHzmK1QTqoljtXAS7
+	D6x4+g9N6ypfsYQTvfgzgxPIq/9t0HLDNR/40Fm/1HA==
+X-Gm-Gg: ASbGncunG3HGWS67mFw8aIEkPslUOP5q86dPiz7qzyiKdDDhDPoN/W8QAKjaCriCc9L
+	3kEUJJBQEGz3D54jOwc5Ugls0n6Aotw9bmjM2pO9Qd2dJnV/xhUQKogzD2jOVYvWyzGWc7IapJ3
+	FOs+in4Rl5AcUzcaI9YLoVK+VhhU1Cm6wT0Y6J+zoUznptxpzI7w6xYmy9sEe5S0cpjXB7cemgD
+	ZUUnMrVbNxBFKt3qciHA2jJFwIsJXX7
+X-Google-Smtp-Source: AGHT+IFMFqctsC/gdxMYa79bTEHX3fAs8ipIL5VVoN11C3E29xDno2ZFwjrwO6xWIEz3lEpIgS6pt5gaKnnHsGAh2P4=
+X-Received: by 2002:a05:620a:4508:b0:84f:8eb3:9648 with SMTP id
+ af79cd13be357-86ee226f9b2mr1216961185a.36.1759325430066; Wed, 01 Oct 2025
+ 06:30:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 70.80.174.168
-X-SA-Exim-Mail-From: hugo@hugovil.com
-X-Spam-Level: 
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	* -3.0 NICE_REPLY_A Looks like a legit reply (A)
-Subject: Re: [PATCH 12/15] serial: sc16is7xx: add missing space between
- macro args (checkpatch)
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
+MIME-Version: 1.0
+References: <20250930143821.852512002@linuxfoundation.org>
+In-Reply-To: <20250930143821.852512002@linuxfoundation.org>
+From: Brett Mastbergen <bmastbergen@ciq.com>
+Date: Wed, 1 Oct 2025 09:30:18 -0400
+X-Gm-Features: AS18NWDMzWRD62Q2toC84MiLOfA3LeeQx4tD34WUJj7d19lC0jxZJv7F6icp5OE
+Message-ID: <CAOBMUviHCYvHce4qoy_WXNK1tragYg2k5DbgpAxy_1dk3YtD=w@mail.gmail.com>
+Subject: Re: [PATCH 6.12 00/89] 6.12.50-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, 
+	achill@achill.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,
+On Tue, Sep 30, 2025 at 11:27=E2=80=AFAM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.12.50 release.
+> There are 89 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 02 Oct 2025 14:37:59 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.12.50-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.12.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+>
 
-On Wed, 1 Oct 2025 07:16:06 +0200
-Greg KH <gregkh@linuxfoundation.org> wrote:
+Builds successfully.  Boots and works on qemu and Dell XPS 15 9520 w/
+Intel Core i7-12600H
 
-> On Tue, Sep 30, 2025 at 04:08:28PM -0400, Hugo Villeneuve wrote:
-> > Hi Jiri,
-> > 
-> > On Mon, 29 Sep 2025 08:15:56 +0200
-> > Jiri Slaby <jirislaby@kernel.org> wrote:
-> > 
-> > > On 24. 09. 25, 17:37, Hugo Villeneuve wrote:
-> > > > From: Hugo Villeneuve <hvilleneuve@dimonoff.com>
-> > > > 
-> > > > Fix the following checkpatch error:
-> > > > 
-> > > >      ERROR: space required after that ',' (ctx:VxV)
-> > > >      +#define to_sc16is7xx_one(p,e)...
-> > > > 
-> > > > Signed-off-by: Hugo Villeneuve <hvilleneuve@dimonoff.com>
-> > > > ---
-> > > >   drivers/tty/serial/sc16is7xx.c | 2 +-
-> > > >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > 
-> > > > diff --git a/drivers/tty/serial/sc16is7xx.c b/drivers/tty/serial/sc16is7xx.c
-> > > > index a05be92f7e776..9d04d665ec9ab 100644
-> > > > --- a/drivers/tty/serial/sc16is7xx.c
-> > > > +++ b/drivers/tty/serial/sc16is7xx.c
-> > > > @@ -365,7 +365,7 @@ static struct uart_driver sc16is7xx_uart = {
-> > > >   	.nr		= SC16IS7XX_MAX_DEVS,
-> > > >   };
-> > > >   
-> > > > -#define to_sc16is7xx_one(p,e)	((container_of((p), struct sc16is7xx_one, e)))
-> > > > +#define to_sc16is7xx_one(p, e)	((container_of((p), struct sc16is7xx_one, e)))
-> > > 
-> > > Or perhaps make it type-safe and more obvious by switching it to an inline?
-> > 
-> > Not easy to do, because this macro is also used with the second
-> > argument "e" not always being used with the same member name. At the
-> > same time, this is what makes this macro more complex than it should
-> > be. I will convert it to an inline and simplify it by removing the
-> > second argument (and of course adapt the code where the new, simpler,
-> > inline function no longer works).
-> 
-> Please don't use an inline fuction for container_of() as you will just
-> need to change it later in the future when you really want to use
-> container_of_const() instead :)
+Tested-by: Brett Mastbergen <bmastbergen@ciq.com>
 
-Noted. I will simplify the macro and leave it as a macro then.
-
-Would you suggest to also convert container_of to
-container_of_const in this patch series?
-
-Hugo.
+Thanks,
+Brett
 
