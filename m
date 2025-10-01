@@ -1,96 +1,88 @@
-Return-Path: <linux-kernel+bounces-839640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A55A5BB20F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 01:23:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A4F5BB2101
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 01:24:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6295D1C43A3
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 23:23:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 599764A3D2A
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 23:24:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA53F2BEFE4;
-	Wed,  1 Oct 2025 23:23:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UA7GIn/K"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6448729B775;
+	Wed,  1 Oct 2025 23:24:05 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EA592BE02B;
-	Wed,  1 Oct 2025 23:23:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D81024A076
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 23:24:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759360986; cv=none; b=ZCw6mpguhRa3xVUIAUz0uAFpyG/8RB03HDyp0bLTOu8z/1FcLdNJiyLRbq2NECOI/SEIkc+Ugwelzgtzm91o3bEqJzxBy2EsUy6LxvXu0UnklFxWf6AwYcXwMJZreOXDGS7g8h/2ErACRpj4ZWYsjXzZqYlPaSh0Nc9XKrhR2cs=
+	t=1759361045; cv=none; b=X/rY5d/0S+FVG4VKvQJqtlsFzNeqGYWZz/TeoP44A/ibdRBt5x9eb6ASJd0a1SI9sZTGvUGyov1RckWmVtDaW+NrrujaAD2EUp7REwaVINGpul6RjoLPglXRVdscbI26m203bLgKySHDnGVBIqvWEttbk2IQfKAKse+0Kgba2pA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759360986; c=relaxed/simple;
-	bh=OaJwKx164mjwazfI+P9qEAACr+27VZ/B3fB9uZpCc4M=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=TjamRd/eCoqF4Xj5dutGKex4ZZa5+8eHmcWJPmbHlr/j+YsMdfuxKua/F8G42U7oF7BNM766plu/xUb8cJE2ueVDcXGRozRgpQDnq5jMLvNkr+ptgGgX3pnq6/Y1f2NIqVw1JhAitZcxvJxBhu+KNqTJhzT70ZFg/hwZMj8+2kc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UA7GIn/K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4147AC4CEF1;
-	Wed,  1 Oct 2025 23:23:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759360985;
-	bh=OaJwKx164mjwazfI+P9qEAACr+27VZ/B3fB9uZpCc4M=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=UA7GIn/KFJJN1NH1fqz1mA1eeiqFEgJFdF+6Jo/sig0lvXRw+qrJaSfaoRTaCEvtb
-	 cr0p3yHAC052R12Mtr2vSt/g++NaJ7O0WC4bVHD/hoYiV6Tz4slqFia6oyQtymAGcl
-	 77+9619aQSbBfq7yL/67gpv14fKSo2rLLfd+ETtaEFaVNDjrF7BbaBAWyWSgbG0Z6/
-	 nMNTNltxRz0uPEn6kIA2VrKkZXl3UBPlYUBHJjkWiA5L3F6y7cj3Do4IkRJt4FJsaP
-	 5klxpiUTy1hCoeqTmhwCACYxKeDYbjY9S87Ul72hFvjECs8w6FWuUpmHIvtg28abUq
-	 RqyIRcDkXz7zg==
-Date: Thu, 2 Oct 2025 08:23:01 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: chenyuan_fl@163.com, mhiramat@kernel.org, bigeasy@linutronix.de,
- chenyuan@kylinos.cn, john.ogness@linutronix.de,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- mathieu.desnoyers@efficios.com, rostedt@goodmis.org
-Subject: Re: [PATCH v4] tracing: Fix race condition in kprobe initialization
- causing NULL pointer dereference
-Message-Id: <20251002082301.a20b2d5ea4379c33cd9c5953@kernel.org>
-In-Reply-To: <20251001123200.GN4067720@noisy.programming.kicks-ass.net>
-References: <20251001003707.3eaf9ad062d5cad96f49b9ba@kernel.org>
-	<20251001022025.44626-1-chenyuan_fl@163.com>
-	<20251001123200.GN4067720@noisy.programming.kicks-ass.net>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1759361045; c=relaxed/simple;
+	bh=Yb8Vrh4uA3QvnqJ8boNP4TvqcHP9z9p7y1sjVIL2Gdk=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=A8YMadloYu/6f1RO8aZUjxXo6K9gMWB5T56DVbkAbgG8UN13uirJH2v77cNk9Gc0Hh/nDYlIWGQSB4pk3Aq3ny/PAycuNAAsslNAo6cfcNAYcku/T3msngO9NvToSB0bBXY8bx0+IjJ3xm+bax/Z2eM9Cq6S0MIuye9jrpZVX6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-937e5f9ea74so46094839f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 16:24:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759361042; x=1759965842;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4O3mEcf6qsBybWP1wjmafctGXSIfcjSxLwzlg0v4NRY=;
+        b=tYwKJJo9DKG2fLe8nMlyPRoRdKj/0Qjk9/QlGL/z8gpHW4o0l7LLwEK5fzooUFO1J4
+         dVAY6vDt3oNueNZO7Y3eF4te/rqyUbTMk4hli31WPl4XUuOxbqEaYW5WxTkxjYK3JYev
+         lbQ9ewzavoyIWPZLV7nQvVbypJ9CYnvT+4FSarerRTIJNroou2IgK0YF3GDFnbOWLYPZ
+         eeVC7emepQ4pfcB4zJCf3W4gdW9/u5SbC9oqT/AwpDxHt7NOb7BOnkNPXsHAjxx/5R2Y
+         CgqDlBMB4hwA/vNp76Uc2iFucEbrPuxkOrgHBFPBUZozk8V/qNtrGD0FBUvkfKHHqvpE
+         jfLw==
+X-Forwarded-Encrypted: i=1; AJvYcCWrNiTbwnnaCn++9inBz71fC+q7n7aQFGWykdcRKmxquw9kLK2amsI/2nGnRN6iEhu2KtX4lxcP+bGVBfk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnOvkyTQ6vpR8hg5HNRVT+muW8WAMW9lVAuvUdmChGx8K9uMBN
+	OdXJsL6TqaGALiCuBn8c49UeUABR4kf1qa9HTYoNbhot+MEuGpcp2Nx/NeFSD7wqbWaLj612r6q
+	fVZDKXdSv42YgEhTgL5tt2O3/EKdaag8GnCDTqlN9q9L3JR+xONCUawcUfFA=
+X-Google-Smtp-Source: AGHT+IGOe6mvjPv/yBekmWM/bVWYvVryfamq1nInf3uEj/wLuMJbXmq85Di4OUwk4jbCkukFpdW42zetU1J7veV15eiQpcBPo02o
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Received: by 2002:a05:6602:2b06:b0:936:acb:5864 with SMTP id
+ ca18e2360f4ac-937a8239b3dmr834902139f.5.1759361042600; Wed, 01 Oct 2025
+ 16:24:02 -0700 (PDT)
+Date: Wed, 01 Oct 2025 16:24:02 -0700
+In-Reply-To: <aN1yNdQbiSD7jMTl@chandna.localdomain>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68ddb812.a00a0220.102ee.006a.GAE@google.com>
+Subject: Re: [syzbot] [bpf?] [net?] BUG: sleeping function called from invalid
+ context in sock_map_delete_elem
+From: syzbot <syzbot+1f1fbecb9413cdbfbef8@syzkaller.appspotmail.com>
+To: chandna.linuxkernel@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 1 Oct 2025 14:32:00 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
+Hello,
 
-> On Wed, Oct 01, 2025 at 03:20:25AM +0100, chenyuan_fl@163.com wrote:
-> 
-> > 
-> > v1->v2: Fix race analysis (per Masami) - kprobe arms in class->reg().
-> > v2->v3: Adopt RELEASE/ACQUIRE semantics per Peter/John's suggestions,
-> >         aligning with Steven's clarification on barrier purposes.
-> > v3->v4: Introduce load_flag() (Masami) and optimize barrier usage in
-> >         checks/clear (Peter).
-> 
-> Stuff like this ought to go below the --- such that git-am and similar
-> tools throw it out.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Yeah, let me remove it manually this time.
+Reported-by: syzbot+1f1fbecb9413cdbfbef8@syzkaller.appspotmail.com
+Tested-by: syzbot+1f1fbecb9413cdbfbef8@syzkaller.appspotmail.com
 
-Yuan, please put changelogs like below next time:
+Tested on:
 
----
-  v1->v2: Fix race analysis (per Masami) - kprobe arms in class->reg().
-  ...
+commit:         080ffb4b Merge tag 'i3c/for-6.18' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=142856e2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=17002aecfc286d89
+dashboard link: https://syzkaller.appspot.com/bug?extid=1f1fbecb9413cdbfbef8
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=131b912f980000
 
-
-
-Thank you,
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Note: testing is done by a robot and is best-effort only.
 
