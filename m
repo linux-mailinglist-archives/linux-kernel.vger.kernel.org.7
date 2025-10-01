@@ -1,119 +1,137 @@
-Return-Path: <linux-kernel+bounces-838715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C9C9BAFFEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 12:23:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8AA2BB0025
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 12:27:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BF574A7EB8
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 10:23:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A15D53AAB52
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 10:27:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 476792BE649;
-	Wed,  1 Oct 2025 10:23:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IEi0leiv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 913C92BE059;
+	Wed,  1 Oct 2025 10:27:50 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ED8023507C;
-	Wed,  1 Oct 2025 10:23:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF8D03D6F;
+	Wed,  1 Oct 2025 10:27:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759314211; cv=none; b=fBtWmAa0wYh+85aXN6cOiEfm8TefKQEdrQMkDBWPWxWHpgv/QCYD4w+nfB4K29wUmvYDP3N0+JZpUTDSGm+15zBG7HC+qjDKgrqIjbwBjkQ3JkK0WwmHA6ICk2/fqM3qxSz8jhDjb6g4pAf8LkQuhxa7B6qYnS5nk/9w7lwGFKM=
+	t=1759314470; cv=none; b=EqJLvdKz2tXnfNpxIXosEz4AwINyPHsDDph/0c9rotzg3FV6LubKpY//kYe3KV+CTzjkIR0KshPueZtmGl1J8NiGlA6YwJ6Gjf6FV4bwYwjYjS9Ec/QnJ78KL1rijvXJUJ4oRaA3TvPYymqjnJ8KQTm8Mg4YIQKUR+cbfCS3tjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759314211; c=relaxed/simple;
-	bh=AALh+QgcdxTgVsm2Rm8hI3nipsDKnmlWFJxhPOr+liI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uXnoWX54cfRAjxtj7+xdiMhiJ5b5Ov71kOY3925xGl/e2OhYmjpY4kpqHZBgkXni15jfYH0J2jyBzVvYsMKOEFpJANv7tej+Zdaff2klbEkIoNmuJ6zSVxk7nyZYO2orRU6Hk8pyHZlU7sa5rgKjURGwahD+AveuU4+c0zo4uKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IEi0leiv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49CD4C4CEF4;
-	Wed,  1 Oct 2025 10:23:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759314210;
-	bh=AALh+QgcdxTgVsm2Rm8hI3nipsDKnmlWFJxhPOr+liI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IEi0leivXfyS1pd8i+p/LooJS581IdRk5OJvdTAXrn4Fpg1Nmwb3H2AWg39+CV+ZA
-	 AUcfAWJf19mMvPxjtL4iIl7KzvkQu4eiXu+/mLr//i1bx4WF3bhrs/E4JbJcaZzMxl
-	 b76OCiKNnWVWS9XXpp6sl7QE/NRGadnJNiPee9eXHp1udXYHOhDclqheHydPwEHgnH
-	 86WusEtL4z6txIqRAxGvABsgz9ayBD86d3M2lB7MldiNxwfcp1I0PTtRHQKMpH2wcz
-	 jt+/3+0/4oIoNGl9VqHbxmpUxDZUUZVhswEyk6d8ChvxoGnZEjneaVAu6K4adsORTA
-	 P4WQ+/bo9ixPA==
-Date: Wed, 1 Oct 2025 11:23:27 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org,
-	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org, akpm@linux-foundation.org,
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
-	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, achill@achill.org,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>, linux-fsdevel@vger.kernel.org,
-	linux-block <linux-block@vger.kernel.org>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Ben Copeland <benjamin.copeland@linaro.org>
-Subject: Re: [PATCH 5.10 000/122] 5.10.245-rc1 review
-Message-ID: <aN0BH9j_TJkFg2pM@finisterre.sirena.org.uk>
-References: <20250930143822.939301999@linuxfoundation.org>
- <CA+G9fYvhoeNWOsYMvWRh+BA5dKDkoSRRGBuw5aeFTRzR_ofCvg@mail.gmail.com>
+	s=arc-20240116; t=1759314470; c=relaxed/simple;
+	bh=hOhbvOuB9xX15ewmHB0NCurTEP2o/mUQ2PvITYw/qc0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Q70QVsk+BThdJ8VEjid7GiZhwDxo978EmdWo7Aap8Gk6abCqMDFqr3Or+80b/Lx96PXEg10kzKVYFZRVtRi1avz2ivKCY3bSa/AXPTrf06qs8M+DN4ONiq0tAzw+KPLWQh4+NY0CxdI8kjbFjmAjfM6SvxbxkDr5KG/v6HVGpkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 3d47aae89eb111f08b9f7d2eb6caa7cf-20251001
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:b2f3825a-54ff-447c-8974-0017c9e1af58,IP:0,U
+	RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:-5
+X-CID-META: VersionHash:6493067,CLOUDID:7063d4e6da54a6d2203a4296ff57f84a,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:81|82|102|850,TC:nil,Content:0|50,EDM:-3
+	,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV
+	:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 3d47aae89eb111f08b9f7d2eb6caa7cf-20251001
+Received: from localhost [(10.44.16.150)] by mailgw.kylinos.cn
+	(envelope-from <pengyu@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 1312932590; Wed, 01 Oct 2025 18:27:32 +0800
+From: pengyu <pengyu@kylinos.cn>
+To: tj@kernel.org,
+	jiangshanlai@gmail.com,
+	oliver.sang@intel.com
+Cc: changlianzhi@uniontech.com,
+	dmitry.torokhov@gmail.com,
+	gregkh@linuxfoundation.org,
+	jirislaby@kernel.org,
+	legion@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	lkp@intel.com,
+	mingo@kernel.org,
+	myrrhperiwinkle@qtmlabs.xyz,
+	oe-lkp@lists.linux.dev,
+	pengyu@kylinos.cn,
+	syzbot+79c403850e6816dc39cf@syzkaller.appspotmail.com,
+	tglx@linutronix.de
+Subject: [PATCH v2 1/2] workqueue: Add initialization macro for work items that disabled by default
+Date: Wed,  1 Oct 2025 18:23:40 +0800
+Message-Id: <20251001102341.600251-1-pengyu@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <202509301323.34d956e1-lkp@intel.com>
+References: <202509301323.34d956e1-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Csa2GXldnUFay7IA"
-Content-Disposition: inline
-In-Reply-To: <CA+G9fYvhoeNWOsYMvWRh+BA5dKDkoSRRGBuw5aeFTRzR_ofCvg@mail.gmail.com>
-X-Cookie: If in doubt, mumble.
+Content-Transfer-Encoding: 8bit
 
+In certain scenarios, workqueue tasks that are disabled by default are
+required. Similar to DECLARE_TASKLET_DISABLED, the DECLARE_WORK_DISABLED
+macro is added to achieve this functionality.
 
---Csa2GXldnUFay7IA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: pengyu <pengyu@kylinos.cn>
+---
+ include/linux/workqueue.h | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-On Wed, Oct 01, 2025 at 12:57:27AM +0530, Naresh Kamboju wrote:
-> On Tue, 30 Sept 2025 at 20:24, Greg Kroah-Hartman
+diff --git a/include/linux/workqueue.h b/include/linux/workqueue.h
+index 45d5dd470ff6..b6c72d59351b 100644
+--- a/include/linux/workqueue.h
++++ b/include/linux/workqueue.h
+@@ -102,6 +102,7 @@ enum wq_misc_consts {
+ /* Convenience constants - of type 'unsigned long', not 'enum'! */
+ #define WORK_OFFQ_BH		(1ul << WORK_OFFQ_BH_BIT)
+ #define WORK_OFFQ_FLAG_MASK	(((1ul << WORK_OFFQ_FLAG_BITS) - 1) << WORK_OFFQ_FLAG_SHIFT)
++#define WORK_OFFQ_DISABLED	(1ul  << WORK_OFFQ_DISABLE_SHIFT)
+ #define WORK_OFFQ_DISABLE_MASK	(((1ul << WORK_OFFQ_DISABLE_BITS) - 1) << WORK_OFFQ_DISABLE_SHIFT)
+ #define WORK_OFFQ_POOL_NONE	((1ul << WORK_OFFQ_POOL_BITS) - 1)
+ #define WORK_STRUCT_NO_POOL	(WORK_OFFQ_POOL_NONE << WORK_OFFQ_POOL_SHIFT)
+@@ -110,6 +111,8 @@ enum wq_misc_consts {
+ #define WORK_DATA_INIT()	ATOMIC_LONG_INIT((unsigned long)WORK_STRUCT_NO_POOL)
+ #define WORK_DATA_STATIC_INIT()	\
+ 	ATOMIC_LONG_INIT((unsigned long)(WORK_STRUCT_NO_POOL | WORK_STRUCT_STATIC))
++#define WORK_DATA_DISABLED_INIT()	\
++		ATOMIC_LONG_INIT((unsigned long)(WORK_STRUCT_NO_POOL | WORK_STRUCT_STATIC | WORK_OFFQ_DISABLED))
+ 
+ struct delayed_work {
+ 	struct work_struct work;
+@@ -242,6 +245,13 @@ struct execute_work {
+ 	__WORK_INIT_LOCKDEP_MAP(#n, &(n))				\
+ 	}
+ 
++#define __WORK_DISABLED_INITIALIZER(n, f) {					\
++	.data = WORK_DATA_DISABLED_INIT(),				\
++	.entry	= { &(n).entry, &(n).entry },				\
++	.func = (f),							\
++	__WORK_INIT_LOCKDEP_MAP(#n, &(n))				\
++	}
++
+ #define __DELAYED_WORK_INITIALIZER(n, f, tflags) {			\
+ 	.work = __WORK_INITIALIZER((n).work, (f)),			\
+ 	.timer = __TIMER_INITIALIZER(delayed_work_timer_fn,\
+@@ -251,6 +261,9 @@ struct execute_work {
+ #define DECLARE_WORK(n, f)						\
+ 	struct work_struct n = __WORK_INITIALIZER(n, f)
+ 
++#define DECLARE_WORK_DISABLED(n, f)						\
++	struct work_struct n = __WORK_DISABLED_INITIALIZER(n, f)
++
+ #define DECLARE_DELAYED_WORK(n, f)					\
+ 	struct delayed_work n = __DELAYED_WORK_INITIALIZER(n, f, 0)
+ 
+-- 
+2.25.1
 
-> The following LTP syscalls failed on stable-rc 5.10.
-> Noticed on both 5.10.243-rc1 and 5.10.245-rc1
->=20
-> First seen on 5.10.243-rc1.
->=20
->  ltp-syscalls
->   - fanotify13
->   - fanotify14
->   - fanotify15
->   - fanotify16
->   - fanotify21
->   - landlock04
->   - ioctl_ficlone02
-
-> Test regression: LTP syscalls fanotify13/14/15/16/21 TBROK: mkfs.vfat
-> failed with exit code 1
-
-I'm also seeing some issues with fcntl34, but that's a timeout so I'm
-not convinced it's real.  The bisect looked like noise.
-
---Csa2GXldnUFay7IA
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjdAR4ACgkQJNaLcl1U
-h9Dv4Qf/Whchx7Nr2OJDScQUh+gNKZqjJR0pdJ/Fa+srX8GaUMVNqceDTnhu3UWd
-JmT04jEJYcKw4g5Gs5yy2uS6kkzXrYGLzVmGSVbRmll9w9fKLiSXYM0s0vUbzyhj
-0pqX3f5PtWyc8F5o/bM82n0OjFa50FF2DLpt288ZkRiR0PBoiVdEPTdOFsmpCMZt
-/fxmfxcs/h+Gf78+Vig+ek27lM0Zfst2Cuw8pp91o2Vf2aWxZ3zsLdF6zGNkWeBV
-WstLE2hM7BCc7vYGO86AmqcOuOeW08YwCq+n4YcI0R0H+MxctP7rY7TOv87sThEg
-A4YUm2S5/slLao4oF58XgQP1bYm0yA==
-=KUL6
------END PGP SIGNATURE-----
-
---Csa2GXldnUFay7IA--
 
