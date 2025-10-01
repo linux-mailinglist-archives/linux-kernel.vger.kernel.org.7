@@ -1,99 +1,79 @@
-Return-Path: <linux-kernel+bounces-839023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5B44BB0A87
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 16:12:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B523BB0A93
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 16:14:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F44D3C4A92
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 14:12:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 457DF17CB7B
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 14:14:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CC423019D1;
-	Wed,  1 Oct 2025 14:12:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 859C2302176;
+	Wed,  1 Oct 2025 14:14:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tsuwt1em"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ltgKe/dZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F27E32EF673;
-	Wed,  1 Oct 2025 14:12:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D81A32FF65C;
+	Wed,  1 Oct 2025 14:14:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759327947; cv=none; b=sHOytMioe0jGH0DOli7WRl8LpGVhFRbq8aH1HwNJt3Hnfi28iub2WjAdSdAfw0/WSWl2Ci7tlHzNVylpNyIQUwi5H5F4ebzK2NbKITcDj0CFDUkpVEbHLlIX7usjpRW44+GPic9jcBkpXe9i0bFjiSbUAJEq3/TncNT9sAMyMYA=
+	t=1759328051; cv=none; b=Glo+J4c/RI71O0LQmalA5L/6sOQWGFVpD3MmS9U25JfngZIJEn+k/Ug4ruJ+CxL4+8cVccSzjBexTtwqih+pxLIEyzuki2cAWG4KlcCnlhnEQfnHiaSFbCXzq+tUjOlZUPdV0/1ILDmQrjtdDrmUx7ufpWNBafKblCr9SA+KmMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759327947; c=relaxed/simple;
-	bh=Dagdj+pBkU5b35TssFwjm1mScGAsUNjKJeP8NfuSdOc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jDrJ2HL2MITb7dyLhi5brHkV3Hlx4yRWk0pMFGUxeDaW2YV2DpCsVnx0SUf8B31oJiMiKZQGAfEVK4dhESNvTkIbYUVrz9+CEa2CUqTriTbDjCjryQ7zFjCP8IFD3SY81fZmAvifZl7ZCKt5VTJgJFpSXEAYIjevwLCEjOmnVFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tsuwt1em; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21E00C4CEF1;
-	Wed,  1 Oct 2025 14:12:25 +0000 (UTC)
+	s=arc-20240116; t=1759328051; c=relaxed/simple;
+	bh=1E19GaIv/tCKahDxgHNKX9sTojjjSiAdKY2Em4ESOVw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=K2HcuZxS01yYh00lCfLBnlBFrcwu4bkbWhQrczU68EghbZvzY6U2PcyAnDyeo+IzQaR/XQG36r6KYCvLaLsRpwDT8SCm/vy4m3Nh+dhxYvbN7DZifNGcO7WRJd9qevwA/MVlzEy0ltZcHUlvbqBbIsLi+G/yxC3z1mVkkcepzL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ltgKe/dZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 682DFC4CEF1;
+	Wed,  1 Oct 2025 14:14:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759327946;
-	bh=Dagdj+pBkU5b35TssFwjm1mScGAsUNjKJeP8NfuSdOc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tsuwt1emZB1OiUoepyGEFrxBJJZLMm48v+IgBtFG2KzMHXQuoKVfSqPQWwsHyQ2Lg
-	 XMigxHoeSCNe4X3f6W1pqhp8J4Emu4noDDx+AEQgrQxZ96KHd+FEpoeJjU/KAGrMYN
-	 CVxW3hcQ+tWzbhN137ZbWBif5GBVNNi/BsnqluXmsx9xx5HBGx3aYOPh4d7eCMiHLv
-	 HEAybwfeUj4y4TrJuMwyMkZlLb5ZxBirjvJOhq0Glqvh0N2sD3q7H8lUraNopk0mW7
-	 BWRsKNz3pmFV0shR/T0/lP0+6V3MBbvCk4q7QdELW3bpxROQ7IQcGq0DS/u/+F/feN
-	 yIOEQjnoAgEYA==
-Date: Wed, 1 Oct 2025 11:12:23 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: kan.liang@linux.intel.com
-Cc: peterz@infradead.org, mingo@redhat.com, namhyung@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com, jolsa@kernel.org,
-	alexander.shishkin@linux.intel.com, mark.rutland@arm.com,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	dave.hansen@linux.intel.com
-Subject: Re: [PATCH] MAINTAINERS: Remove myself from perf_events subsystem
-Message-ID: <aN02x4MxhK3YjI35@x1>
-References: <20250925162428.3516894-1-kan.liang@linux.intel.com>
+	s=k20201202; t=1759328051;
+	bh=1E19GaIv/tCKahDxgHNKX9sTojjjSiAdKY2Em4ESOVw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ltgKe/dZ2YG8Se9kxwmcmadJRiWJGXzV+0RSOhfr7KO3U02B07IvcRkUS+VA/wY7v
+	 vtJpz8VDP82bdgjMKOVDaHtZM7wIuNwYzcBlnIHbxDfJoTbvmPtjrt/+RgMKtHGSqr
+	 obY+8K1ZgaNdIwXOtA+m5LqSkAkh6Ydvkn6p93MGI8rEQ85g0GdY1sFql/8R54Cms/
+	 scJ8eO8VXde93ZPL+szGkvVkforcb0ToEgHyp91DmO4dTJmzra+29hywJfgBzEE2Lb
+	 +GXLB0LcBBHI0L87+8bS++AT0BC+q4gp2oj0y0BK0OInVGIuyMxuMvcqehmSY/pnwd
+	 gLtdURS+vun9g==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
+	(envelope-from <mchehab+huawei@kernel.org>)
+	id 1v3xar-0000000BJ5W-24NS;
+	Wed, 01 Oct 2025 16:14:09 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: "Jonathan Corbet" <corbet@lwn.net>,
+	Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/1] man pages: Add a SEE ALSO pointing to Kernel source
+Date: Wed,  1 Oct 2025 16:13:58 +0200
+Message-ID: <cover.1759327966.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250925162428.3516894-1-kan.liang@linux.intel.com>
+Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-On Thu, Sep 25, 2025 at 09:24:28AM -0700, kan.liang@linux.intel.com wrote:
-> From: Kan Liang <kan.liang@linux.intel.com>
-> 
-> I'm stepping down as the Reviewer of perf_events subsystem.
-> It has been an honor and a pleasure to work with everyone to improve the
-> perf_events subsystem. However, due to personal reasons, I have to leave
-> Intel. I believe it would be difficult for me to continue in this role
-> any further.
-> 
-> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+It is interesting to point to what Kernel file contains documented
+item at kernel-doc man pages.
 
-I'm sorry to see you go, best wishes for your next endeavour!
+Mauro Carvalho Chehab (1):
+  kernel-doc: output source file name at SEE ALSO
 
-Thanks, applied to perf-tools-next,
+ scripts/lib/kdoc/kdoc_item.py   | 3 ++-
+ scripts/lib/kdoc/kdoc_output.py | 3 ++-
+ scripts/lib/kdoc/kdoc_parser.py | 8 +++++---
+ 3 files changed, 9 insertions(+), 5 deletions(-)
 
-- Arnaldo
+-- 
+2.51.0
 
-> ---
->  MAINTAINERS | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index fe168477caa4..2c788294cf84 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -19759,7 +19759,6 @@ R:	Alexander Shishkin <alexander.shishkin@linux.intel.com>
->  R:	Jiri Olsa <jolsa@kernel.org>
->  R:	Ian Rogers <irogers@google.com>
->  R:	Adrian Hunter <adrian.hunter@intel.com>
-> -R:	"Liang, Kan" <kan.liang@linux.intel.com>
->  L:	linux-perf-users@vger.kernel.org
->  L:	linux-kernel@vger.kernel.org
->  S:	Supported
-> -- 
-> 2.38.1
 
