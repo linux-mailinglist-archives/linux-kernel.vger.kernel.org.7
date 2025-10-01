@@ -1,257 +1,188 @@
-Return-Path: <linux-kernel+bounces-839188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64921BB0FD9
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 17:13:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0D3BBB1013
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 17:15:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FEE97A572F
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 15:11:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AF7E1887187
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 15:14:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A29227380A;
-	Wed,  1 Oct 2025 15:13:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8244A23E356;
+	Wed,  1 Oct 2025 15:13:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l6rEkY0j"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ci6/nRZ/"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6093825CC42
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 15:13:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 064BE26056E
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 15:13:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759331585; cv=none; b=U4fNAtqZjC2ZvhbiPsVAoGnJVenbuUgDfzTvAi9bvIBS8YJMTBjlM5BFjmjhvPP/MRwBLmMVDp7qNQpxcEbKMuIO8ElOaytQq4jjk9s6LACwi2Lp5/h7yY63RPBqU+k/BtpJmTK0gDBCmv5oPmNVaDRMJkIjPUcBdk10VBrL3+Y=
+	t=1759331613; cv=none; b=U6QXWgGIX0QYZVlxz6iWt41+dZhOKizxfyulw9cp92DDe+rZ/hkmeGYCAcunToCGFsllkEqiM9kywNY3nHzL9n6rb3DuIzXUCbSCANFXHt6x6OSmc8V8+sQUPn+OetmQcjlwxSb8iNbmcY9K2V7LmIRPL62P3iEo9CBX9kyFeSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759331585; c=relaxed/simple;
-	bh=cBTQbubFHk/p43qF50UFte2bzCBJxRCCG61aIRtyjQg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=edChcr7kkbygyo3/u4LR93f1ajFzxqIkATmqPxZ3g2HK1pjl4IoNeVyXIviV8WZ2o7xjWBX4O0UTBAY3R4nwY+hvA7MU6LpUY2qUmuZ24/fhUc1vfk3cLt/gpcaUXqHcK0Qu4Tnx8hQAlMazfxxaBvVlebyvjsQJOlrSTW9dX+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l6rEkY0j; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b3b3a6f4dd4so809481566b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 08:13:03 -0700 (PDT)
+	s=arc-20240116; t=1759331613; c=relaxed/simple;
+	bh=zRnYw0c/jEYg6tUfOIO2XTCeocsoj1LuLA2X2KUMWjo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=sB9CJrtch/ZPKJasJ58cH++RxaH6YdiMjYjQgHJvnyhSPomXZIHa8XypobTRadNAKmlyk04iHzx9zCS+940eAaEcXfzOlwVh2XALfuuDH/x55HurxGl9NR+9dytl+dJAUDkOsBTsKUtK0hDyg0XRc4X9KXI2E/zJ2LhDlZAfqH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ci6/nRZ/; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b3da3b34950so671064966b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 08:13:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759331582; x=1759936382; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1XjTjcbNYqZIHJp/Mr9lrDhDVC6yBEMk777WPg0hfC0=;
-        b=l6rEkY0j5mh7DlK98huVb0VQSK8EH3jLW7v+vVlOd3g70ubEHW5bOfdoKVa++zcANr
-         4M1smt99KC9U2uGoRS8zNMfUAwldOKfvYE+XMYJL+fvv3yiMWMIi0ElVdjtESPvOtCm3
-         JrgcCxPmOXD5em56mxQVvt83IvXX8eOT2nFiSsMCe2U6cgVWoTSrm+hI3IRaCgu7wE3V
-         gZfTHHfQ1gLK+qqSEnc8TaCISVdTnDCvytY0vNGPtlxgHfrb3IX7NvOBz6L5GjePOBP3
-         KQQCvcRIuKkhYqtbr5KAVHpMDDtT20Pc60oxyfDNjFWMMAc39Kzk4BmBUik9CU+rYwb/
-         ezAw==
+        d=linaro.org; s=google; t=1759331609; x=1759936409; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SEEUny1Be1BFGwKqqn+oNj/RmCjib3ttC0W23b9Ns+s=;
+        b=ci6/nRZ/4MuEYA0OJYZnxVJ21xzIPaqeqzs2qApreXIib0h2sZYflSBjBTDUvZvJ1J
+         9ZKLaZTaQTRqKXmns1BvGnil/+2OgVe8LlsZVNkNzWx72AVeSSg7qpTcoFeQSofpKxYR
+         rUUb7ceVKyS7LwM38RUxelEOWRm+eKXMynAhMQF/f+TAB0PU5CPznmftXaTee1xflzSE
+         IP7aGHRzddI2diFu7+fs3WrjkdxX8JckmFnJ9sjNniKcKsPQEMXMcVRbWDGmtskepumI
+         vC763HRwKFF7E1KIMrWmrCQ1j1C18K07+LX2Uq43H5/aifgtNN8zWA92boOUBUt4Nqq/
+         zNFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759331582; x=1759936382;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1XjTjcbNYqZIHJp/Mr9lrDhDVC6yBEMk777WPg0hfC0=;
-        b=BW5iYew6DxQx3xb+6ZHE6jyZ90yPNLJBPDc/sv2uyR7ENJ7YWiovU3JXDMiifkv3wX
-         GI3pdn9WyKxb/DbzluGe6N+1sSpyejlhwSQt28cvhwTR5jOVy54D5fasJq7l3RtLLwtx
-         Bljizr9dgSR7585CPK+NnMHikUMJyTqmqtrVwxjcjqpBbOFwUhzuyhjynp9UdzG+Z7k6
-         EJ9mfX3WPc6BXq8EyJEPedyhOSewMd3InjBE6sZvp2we2D2HlJ+VJx+OL5sB1H9AvTyo
-         tpzbJQCtQhui1glK3YwQULSaNTSLZIvmx9y0XLM1ZU+mBLutoGPrR+dKJFaMg0vy2jyQ
-         880w==
-X-Gm-Message-State: AOJu0YzF/NOmWNgRX2lG+q5zLpxslU3XjzUwbryY/dRguKBibNd+HsJ0
-	MOCvxrv38LOOxcCxzMkF5IV3+as2rwC0BAYySkSOiznU8h4+JwG7TOI+2zucV9Nns0/Nc04sCpj
-	o6e6A24MED81W8jNwfWrAA81qO+w8SAw=
-X-Gm-Gg: ASbGncueMsDb15Wo1rvSXh9iExIpNfBzMYQFdxkdCUwPyFHJvAR1jBx8wp5HdDAkg9O
-	w6TSsvn+PJElbjQ5G9D8N/Du8P1fw/UHItwR0fnd8TH5XSSg4rCV4aTJFBCQuzzzJZNBTB0eXeZ
-	f540Ia501lbqSCEpQ7alkcrTEZCrYRQz3geZ/yG9a7mLDRgdnGw/7+ANjgbMVC2ZGlqCD7CuWjk
-	KMVBIqRQ+31uvWYmaFMYl7YkkmQ
-X-Google-Smtp-Source: AGHT+IE8+7qWD8qCg7JxkoAVb360Rlh0BtE7ebN6X53g+sayyjBBcfQBFOY6M5xodOoHyJcnTn40NdC7xl9uU1UxWNk=
-X-Received: by 2002:a17:907:7291:b0:b2d:830a:8c0a with SMTP id
- a640c23a62f3a-b46e879fe65mr373156466b.35.1759331581406; Wed, 01 Oct 2025
- 08:13:01 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759331609; x=1759936409;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SEEUny1Be1BFGwKqqn+oNj/RmCjib3ttC0W23b9Ns+s=;
+        b=NQpOwlfoWaoVmMnBPcCGsNIbTIv1sGQGuXOetnvJYl4bXyLpZqkXLM6E4+E3S1VCNf
+         kUGGVGvNa79lTrqmrk9abgrtGDoZfPeb1S52v6t53xOO4KjKg/gpe5JeJja083/Q6Q7v
+         KIyr5ibyZu2Y7kADFRU4i9uMA9r4nLBh6BgywaYMFHl9+Kz4yaiMQsZUeYMi2vzx64b6
+         DoB/JP0oT30RdobglwyPUSnrN3kd+CHvYZXiG8IJ46rfK+OqWalPFxitaWUtKlaitDKe
+         +8/l0vmHR1RmiC3WcJ6A7Dr5Bd1uBwafEo97tpkGldVPI6fPSIZkm1JNxhqsb0UWBCEN
+         g+eA==
+X-Forwarded-Encrypted: i=1; AJvYcCWscHvVkyfSurkK5TGR7SdNpnCkxu6xi/ufQfGPlslkRJxV0l93QDti6xxsZU8SSXGvxHX4tLA5Ut2Z7rs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpC2Ipekz3JVsCum/G0wyLlip7blEC9r6I8MoFgDK2BfmVq2J1
+	HUIIKez2B8eEEG5hr0yK8v/lnAoWhaA9rU7a7NzGlwLXCVT8OkUxq28Hj5+E97YfWZk=
+X-Gm-Gg: ASbGncslxy9HglFDMcoqqhEMZQZXdUoRXiydFDmkBWk33+3NP4Qw9fe1DnEqV6kmcfm
+	qqyaxXp82QmAKHyaxM3yVwU6z2PyrksRtHp4NEctW2ftFZfYXQ3wWgkLXuFaEt36znIPSrHq9AN
+	D8XS11jpuyr6xRJvu29XDv1zkOj5GLMoXzqdcH+EViUmzURBtuZflUJXkIRGaaQQO5LJ6NdwQJJ
+	znK7CgBR5djMX45Gz82eWTSXrZrKxrMX68xU3bUCHrY4ncTE3NKPftRiySwSXzlJHgkFtar7lNG
+	3Zrv2jwV6T+IMlKdOS7y/I72Br/oCGYQmKMD6PiXElLnTXSMwE61DTVdRGNYidxn3Lv61YOAyEt
+	JLtNjCJ/rqYi+YgfPGyswvB4sG7vB+zYkwxSazgR8y7ZlGSYOkXIIhLlezzsDdzxFMKl2YVcM0G
+	72EwByx8GEJvy3f2Q5vTLVL90e1MxIXcdPOQy8
+X-Google-Smtp-Source: AGHT+IHBCc4NxqsoRLhxkWHk/fgJ6Xl1FY/slzvWV2YPuSfVBu5/dMpl+l0CNjy2qT0HCYNogprb6A==
+X-Received: by 2002:a17:906:3746:b0:b47:70bf:645 with SMTP id a640c23a62f3a-b4770bf06f8mr246716466b.58.1759331609281;
+        Wed, 01 Oct 2025 08:13:29 -0700 (PDT)
+Received: from puffmais2.c.googlers.com (224.138.204.35.bc.googleusercontent.com. [35.204.138.224])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b3cedacd973sm797226866b.49.2025.10.01.08.13.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Oct 2025 08:13:28 -0700 (PDT)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Date: Wed, 01 Oct 2025 16:13:16 +0100
+Subject: [PATCH] clk: samsung: clk-pll: simplify samsung_pll_lock_wait()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251001111451.299163-1-yongxuan.wang@sifive.com> <20251001111451.299163-3-yongxuan.wang@sifive.com>
-In-Reply-To: <20251001111451.299163-3-yongxuan.wang@sifive.com>
-From: Andy Chiu <andybnac@gmail.com>
-Date: Wed, 1 Oct 2025 10:12:50 -0500
-X-Gm-Features: AS18NWB48rhZKhYKYgQCtVpejlgXkcDO3ynhSUpp0Lt7TIl_P5VDkGkvEoTvjaI
-Message-ID: <CAFTtA3MSxexbb8b063rfST1QDtj8Urhg9VCuDSCnpezW9_BAqQ@mail.gmail.com>
-Subject: Re: [PATCH v 2/2] selftests: riscv: Add test for the Vector ptrace interface
-To: Yong-Xuan Wang <yongxuan.wang@sifive.com>
-Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	greentime.hu@sifive.com, vincent.chen@sifive.com, 
-	Shuah Khan <shuah@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Charlie Jenkins <charlie@rivosinc.com>, linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20251001-samsung-clk-pll-simplification-v1-1-d12def9e74b2@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAAxF3WgC/x2NQQrCMBAAv1L23IXsiqB+pfQQ4qYupjFk2yKE/
+ t3gcQ4z08Ckqhg8hgZVDjX95A40DhBePi+C+uwM7PhKzhGaX23PC4b0xpISmq4ladTgt67iRRz
+ H252YmKFHSpWo3/9gms/zB//yC0hwAAAA
+X-Change-ID: 20251001-samsung-clk-pll-simplification-3e02f8912122
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+X-Mailer: b4 0.14.2
 
-Hi Yong-Xuan,
+readl_relaxed_poll_timeout_atomic() has been updated in 2023 in
+commit 7349a69cf312 ("iopoll: Do not use timekeeping in
+read_poll_timeout_atomic()") to avoid usage of timekeeping APIs. It
+also never used udelay() when no delay was given.
 
-On Wed, Oct 1, 2025 at 6:15=E2=80=AFAM Yong-Xuan Wang <yongxuan.wang@sifive=
-.com> wrote:
->
-> Add a test case that does some basic verification of the Vector ptrace
-> interface. This forks a child process then using ptrace to inspect and
-> manipulate the v31 register of the child.
->
-> Signed-off-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
-> ---
->  tools/testing/selftests/riscv/vector/Makefile |   5 +-
->  .../selftests/riscv/vector/vstate_ptrace.c    | 132 ++++++++++++++++++
->  2 files changed, 136 insertions(+), 1 deletion(-)
->  create mode 100644 tools/testing/selftests/riscv/vector/vstate_ptrace.c
->
-> diff --git a/tools/testing/selftests/riscv/vector/Makefile b/tools/testin=
-g/selftests/riscv/vector/Makefile
-> index 6f7497f4e7b3..45f25e9dd264 100644
-> --- a/tools/testing/selftests/riscv/vector/Makefile
-> +++ b/tools/testing/selftests/riscv/vector/Makefile
-> @@ -2,7 +2,7 @@
->  # Copyright (C) 2021 ARM Limited
->  # Originally tools/testing/arm64/abi/Makefile
->
-> -TEST_GEN_PROGS :=3D v_initval vstate_prctl
-> +TEST_GEN_PROGS :=3D v_initval vstate_prctl vsate_ptrace
->  TEST_GEN_PROGS_EXTENDED :=3D vstate_exec_nolibc v_exec_initval_nolibc
->
->  include ../../lib.mk
-> @@ -26,3 +26,6 @@ $(OUTPUT)/v_initval: v_initval.c $(OUTPUT)/sys_hwprobe.=
-o $(OUTPUT)/v_helpers.o
->  $(OUTPUT)/v_exec_initval_nolibc: v_exec_initval_nolibc.c
->         $(CC) -nostdlib -static -include ../../../../include/nolibc/nolib=
-c.h \
->                 -Wall $(CFLAGS) $(LDFLAGS) $^ -o $@ -lgcc
-> +
-> +$(OUTPUT)/vstate_ptrace: vstate_ptrace.c $(OUTPUT)/sys_hwprobe.o $(OUTPU=
-T)/v_helpers.o
-> +       $(CC) -static -o$@ $(CFLAGS) $(LDFLAGS) $^
-> diff --git a/tools/testing/selftests/riscv/vector/vstate_ptrace.c b/tools=
-/testing/selftests/riscv/vector/vstate_ptrace.c
-> new file mode 100644
-> index 000000000000..8a7bcf318e59
-> --- /dev/null
-> +++ b/tools/testing/selftests/riscv/vector/vstate_ptrace.c
-> @@ -0,0 +1,132 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +#include <stdio.h>
-> +#include <stdlib.h>
-> +#include <asm/ptrace.h>
-> +#include <linux/elf.h>
-> +#include <sys/ptrace.h>
-> +#include <sys/uio.h>
-> +#include <sys/wait.h>
-> +#include "../../kselftest.h"
-> +#include "v_helpers.h"
-> +
-> +int parent_set_val, child_set_val;
-> +
-> +static long do_ptrace(enum __ptrace_request op, pid_t pid, long type, si=
-ze_t size, void *data)
-> +{
-> +       struct iovec v_iovec =3D {
-> +               .iov_len =3D size,
-> +               .iov_base =3D data
-> +       };
-> +
-> +       return ptrace(op, pid, type, &v_iovec);
-> +}
-> +
-> +static int do_child(void)
-> +{
-> +       int out;
-> +
-> +       if (ptrace(PTRACE_TRACEME, -1, NULL, NULL)) {
-> +               ksft_perror("PTRACE_TRACEME failed\n");
-> +               return EXIT_FAILURE;
-> +       }
-> +
-> +       asm volatile (".option push\n\t"
-> +               ".option        arch, +v\n\t"
-> +               "vsetivli       x0, 1, e32, m1, ta, ma\n\t"
-> +               "vmv.s.x        v31, %[in]\n\t"
-> +               "ebreak\n\t"
-> +               "vmv.x.s        %[out], v31\n\t"
-> +               ".option pop\n\t"
-> +               : [out] "=3Dr" (out)
-> +               : [in] "r" (child_set_val));
-> +
-> +       if (out !=3D parent_set_val)
-> +               return EXIT_FAILURE;
-> +
-> +       return EXIT_SUCCESS;
-> +}
-> +
-> +static void do_parent(pid_t child)
-> +{
-> +       int status;
-> +       void *data =3D NULL;
-> +
-> +       /* Attach to the child */
-> +       while (waitpid(child, &status, 0)) {
-> +               if (WIFEXITED(status)) {
-> +                       ksft_test_result(WEXITSTATUS(status) =3D=3D 0, "S=
-ETREGSET vector\n");
-> +                       goto out;
-> +               } else if (WIFSTOPPED(status) && (WSTOPSIG(status) =3D=3D=
- SIGTRAP)) {
-> +                       size_t size, t;
-> +                       void *data, *v31;
-> +                       struct __riscv_v_regset_state *v_regset_hdr;
-> +                       struct user_regs_struct *gpreg;
-> +
-> +                       size =3D sizeof(*v_regset_hdr);
-> +                       data =3D malloc(size);
-> +                       if (!data)
-> +                               goto out;
-> +                       v_regset_hdr =3D (struct __riscv_v_regset_state *=
-)data;
-> +
-> +                       if (do_ptrace(PTRACE_GETREGSET, child, NT_RISCV_V=
-ECTOR, size, data))
-> +                               goto out;
-> +
-> +                       ksft_print_msg("vlenb %ld\n", v_regset_hdr->vlenb=
-);
-> +                       data =3D realloc(data, size + v_regset_hdr->vlenb=
- * 32);
-> +                       if (!data)
-> +                               goto out;
-> +                       v31 =3D (void *)(data + size + v_regset_hdr->vlen=
-b * 31);
-> +                       size +=3D v_regset_hdr->vlenb * 32;
-> +
-> +                       if (do_ptrace(PTRACE_GETREGSET, child, NT_RISCV_V=
-ECTOR, size, data))
-> +                               goto out;
-> +
-> +                       ksft_test_result(*(int *)v31 =3D=3D child_set_val=
-, "GETREGSET vector\n");
-> +
-> +                       *(int *)v31 =3D parent_set_val;
-> +                       if (do_ptrace(PTRACE_SETREGSET, child, NT_RISCV_V=
-ECTOR, size, data))
-> +                               goto out;
-> +
-> +                       /* move the pc forward */
-> +                       size =3D sizeof(*gpreg);
-> +                       data =3D realloc(data, size);
-> +                       gpreg =3D (struct user_regs_struct *)data;
-> +
-> +                       if (do_ptrace(PTRACE_GETREGSET, child, NT_PRSTATU=
-S, size, data))
-> +                               goto out;
-> +
-> +                       gpreg->pc +=3D 2;
+With the implementation avoiding timekeeping APIs, and with a caller
+not passing a delay, the timeout argument simply becomes a loop
+counter.
 
-Just nitpicking here, simply adding 2 may fail if the program is not
-compiled with C. You may either +=3D4 and use ".option norvc" in the asm
-or determine the size of ebreak by decoding it.
+Therefore the code here can be simplified to unconditionally use
+readl_relaxed_poll_timeout_atomic(). The difference being the last
+argument, the timeout (loop counter). Simply adjust it to pass the
+more generous counter in all cases.
 
-with or without the fix,
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+ drivers/clk/samsung/clk-pll.c | 31 ++++++++++---------------------
+ 1 file changed, 10 insertions(+), 21 deletions(-)
 
-Reviewed-by: Andy Chiu <andybnac@gmail.com>
+diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
+index 7bea7be1d7e45c32f0b303ffa55ce9cde4a4f71d..a7e693f6983ec073bedd633ed8da7efafc1a20bb 100644
+--- a/drivers/clk/samsung/clk-pll.c
++++ b/drivers/clk/samsung/clk-pll.c
+@@ -17,8 +17,7 @@
+ #include "clk.h"
+ #include "clk-pll.h"
+ 
+-#define PLL_TIMEOUT_US		20000U
+-#define PLL_TIMEOUT_LOOPS	1000000U
++#define PLL_TIMEOUT_LOOPS	20000U
+ 
+ struct samsung_clk_pll {
+ 	struct clk_hw		hw;
+@@ -84,7 +83,7 @@ arch_initcall(samsung_pll_disable_early_timeout);
+ static int samsung_pll_lock_wait(struct samsung_clk_pll *pll,
+ 				 unsigned int reg_mask)
+ {
+-	int i, ret;
++	int ret;
+ 	u32 val;
+ 
+ 	/*
+@@ -93,25 +92,15 @@ static int samsung_pll_lock_wait(struct samsung_clk_pll *pll,
+ 	 * initialized, another when the timekeeping is suspended. udelay() also
+ 	 * cannot be used when the clocksource is not running on arm64, since
+ 	 * the current timer is used as cycle counter. So a simple busy loop
+-	 * is used here in that special cases. The limit of iterations has been
+-	 * derived from experimental measurements of various PLLs on multiple
+-	 * Exynos SoC variants. Single register read time was usually in range
+-	 * 0.4...1.5 us, never less than 0.4 us.
++	 * is used here.
++	 * The limit of iterations has been derived from experimental
++	 * measurements of various PLLs on multiple Exynos SoC variants. Single
++	 * register read time was usually in range 0.4...1.5 us, never less than
++	 * 0.4 us.
+ 	 */
+-	if (pll_early_timeout || timekeeping_suspended) {
+-		i = PLL_TIMEOUT_LOOPS;
+-		while (i-- > 0) {
+-			if (readl_relaxed(pll->con_reg) & reg_mask)
+-				return 0;
+-
+-			cpu_relax();
+-		}
+-		ret = -ETIMEDOUT;
+-	} else {
+-		ret = readl_relaxed_poll_timeout_atomic(pll->con_reg, val,
+-					val & reg_mask, 0, PLL_TIMEOUT_US);
+-	}
+-
++	ret = readl_relaxed_poll_timeout_atomic(pll->con_reg, val,
++						val & reg_mask, 0,
++						PLL_TIMEOUT_LOOPS);
+ 	if (ret < 0)
+ 		pr_err("Could not lock PLL %s\n", clk_hw_get_name(&pll->hw));
+ 
+
+---
+base-commit: 3b9b1f8df454caa453c7fb07689064edb2eda90a
+change-id: 20251001-samsung-clk-pll-simplification-3e02f8912122
+
+Best regards,
+-- 
+André Draszik <andre.draszik@linaro.org>
+
 
