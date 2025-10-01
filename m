@@ -1,174 +1,126 @@
-Return-Path: <linux-kernel+bounces-838659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97C94BAFD7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 11:28:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13861BAFDA0
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 11:28:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28FFC189BC5E
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 09:28:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 916F31C2D15
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 09:28:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87DBD2D94B6;
-	Wed,  1 Oct 2025 09:28:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 331922D9EC8;
+	Wed,  1 Oct 2025 09:28:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BHKMtLub"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SZk4BoDg"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 187BB283CA7
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 09:28:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A8B12989B5
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 09:28:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759310898; cv=none; b=HQP7pB83Y44bXJ6MbAQWaXifpRMeZ22cIdWAZZ16fj/HoPLDaFAR6fz5Tg8qI6nHGfJV9O8gSDINuCs0NOoX9UEcWcFYsz7MOB+r7I2Ug/GY/WrY5VUSWOEkdd2L3ulwKB6reHfEmp/gx3Wlz2YqyhT6Hdhevy/H8YVOCc4SZnE=
+	t=1759310919; cv=none; b=HIGV/Y++J1vKxAT3sjrX0o3M6XYHIn6OaPgU2KYcIcomLen5xVORty6atg6XFl8ZaQQCBK9Qp3x1MBKiNS1N/Zo1pjN5uME7SqfGnVHhmih+ZpmNlJzP/IYWC85NN3lnjkZad3iXljFot3XU1VximXtfakBGqLMuOIJwryBY0lg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759310898; c=relaxed/simple;
-	bh=u8Q/puU00m1+Ma30hn2PbTN/YeCwD3+SnWOZqn5KRRE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HZWG0LcSjWoJ/iHKbZLK4LTfPJXUiGsLXHQsRet7xlzjvdaG7S3i8tQjjwNisabKnu1DarHW5li8eyAmzN4+BlzJEXYQhBzPedWLOZLGfnDqQLLJuE2Pw/9KUR04We2cFXwPmgpIrf4QZv0fZ7JegvfKQVtXjbIOqhebRPKT5jk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BHKMtLub; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759310896;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ybtVMUpvDW3U/F2Zx0MRGWKL6mjqpdZhKS9ovQqZCJg=;
-	b=BHKMtLubZVnUb3kgB8l8GqsQOgsRsfJQJORgdf1eigTzkrvrcMBtWwXXK7JK45Gcw8Q6aR
-	DLMdlexDdwY70oyFUA059g04mpYC6ew0fNiD55sKAkoeE0Gy1K+I4VXBrY3sVzbjTOJMQC
-	i+NHFO2+xR92ZRiQRCz9b0OuIXQrQnk=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-67-_gPxDmcXNsmO0uMLTjYyeg-1; Wed, 01 Oct 2025 05:28:14 -0400
-X-MC-Unique: _gPxDmcXNsmO0uMLTjYyeg-1
-X-Mimecast-MFC-AGG-ID: _gPxDmcXNsmO0uMLTjYyeg_1759310894
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3f93db57449so3886804f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 02:28:14 -0700 (PDT)
+	s=arc-20240116; t=1759310919; c=relaxed/simple;
+	bh=eWhaWIh1Ch5W+HrhvE/7nWxIJ4BqD2s5kUI/3gBmyEA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TAhlMFLVcD6m6Q57xma2OiPwieagDJl4dSwg42wuoeW/Ikv+Rg2gNv1YEKd7eDbIfN4dqBOtF7NY2i+VTvna/77vdjaih0TmbEEKXEFbspYRWKH9pFa+m0YJMEmaiVO2Ul3X04RWzD5edP91ckZMu1hfGlJFhQrvcDqQGR5O6M4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SZk4BoDg; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-46e504975dbso26381825e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 02:28:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759310916; x=1759915716; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eWhaWIh1Ch5W+HrhvE/7nWxIJ4BqD2s5kUI/3gBmyEA=;
+        b=SZk4BoDgsFAf5kMvr7CbXBjcwCX04Gigy/5uI9mf3QxITYphuXHHOPFGqSL+otUVU0
+         2S+ooXPjysDGDq5LyrNPJHYnCXbCx6H/PQoEKlPmttcSprij44r05SUx7xUq7wQ2zxYw
+         nfFKg2EPAo2A2HpO0LMagnc18VPUsVaw9ualx5ys9clXOxrxYzqV/vNwKXVXf9+la+tC
+         nqJ54pGhDvCFFMcNYqLV1bA1Es7uY6AOJ910q57gfDxP3FhMZrQHPHl1RhY2WEHlXP9T
+         aEuYrwYCfYP16Y7s1ETYGvYUfW0Sa3RHGsEsE1dAcO9uF+AXd/FQtKom+Xfidit8qAOy
+         v7sw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759310894; x=1759915694;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ybtVMUpvDW3U/F2Zx0MRGWKL6mjqpdZhKS9ovQqZCJg=;
-        b=lp8YsD753Z3oNfQOl4+kmDkQGCCxOSDUTlgOUWU7ihmxUKHeIj9yFaAnc/qtQU6Le3
-         D63v9UxPjoUSw+ON8pY1AHAN1MQWUIxP/LEZqKuyAKBm3mqPyzfTSajmlKLbCL27OPJL
-         mK7a147GwfCgJ36C8iG6hZIExKSmf2pki2AGMfAZ6dYQYHST/5NmkvSVk4w+j/A2FLU/
-         UzBHvUpHo0LunCfiZYhBKN4tg2WMighxsgB0Rkzne4kfBTZLHMV+qGAPX1Ktm7Ch54cK
-         3BcBmrXl6ft75GDTf1/iG+kI5CrXOgTFF3yMCtDihUaJo+JhPRicIWEpZHnXG6GsOCI5
-         g2GQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU/uy/nCAdGwY0LqALxVVHwa1YA/fw+VVYFurXwkELgbirOyx7Cbro/je+iaS7eCmZkCrAY3BlYfJJGjtc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZmhFaf2Flfk0DH5VEZhdmGLsVt4PIiwQDhMsadVjX9Wo9JyTl
-	Ezx6cRv/4V7RhSK2i7RDM7YaEZzapDGuLnwkTC82sq3TYMmDjBmohXFKjTa8TnnYlvw3mZlTg6P
-	jgypmk4Cd7ivH/1uFhB6Lc+kIMr7a4jgLpE3izGn4CMFY/SA4sTabdIP2O4H1L5G4Fw==
-X-Gm-Gg: ASbGncvDECMCVpoNuOqCOwxCLeT0cfKIVPB5j+QH4XFrnAbvBWPL4yQzP7dPZEmFRir
-	YIW8o3fBW9vmJMXK2FaXI00rhZr2yESrRAVRGLiRA8If405AsjjyqcM72ZjEtO9Di8GSiqjwWsy
-	Zs45l044Gj8XO0FATvc7u5rAB6VUx2veYDE0rzVbU7/cXzukgXOeJm5NESQjQ+5t4KYfW7o6YBc
-	XtoWGEHNFx2BuauYoGwfYLIQ4/YnofEkYQPAdgpB8C1iGUClHNh97jof7ijG8zUPKrtiWwUra1W
-	sPII3FM4kTfcGCdbIhDQeVSHFrgjGAg7sF/dI4tFydoXSwDtumMs+/kB0wrfMqprp/pGZFn4ROY
-	0UvFejteKsI1J+OKK2w==
-X-Received: by 2002:a5d:588a:0:b0:3ec:248f:f86a with SMTP id ffacd0b85a97d-425578183aamr2084091f8f.48.1759310893710;
-        Wed, 01 Oct 2025 02:28:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH2jGX49TGzAee2RWy6ApUBj/jwFn2OVqWsFJymuz8OiVF8ehgSB3/azRECWeXusX/4XaZBCg==
-X-Received: by 2002:a5d:588a:0:b0:3ec:248f:f86a with SMTP id ffacd0b85a97d-425578183aamr2084020f8f.48.1759310893212;
-        Wed, 01 Oct 2025 02:28:13 -0700 (PDT)
-Received: from ?IPV6:2a0d:3344:2712:7e10:4d59:d956:544f:d65c? ([2a0d:3344:2712:7e10:4d59:d956:544f:d65c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fac4a5e41sm28042341f8f.0.2025.10.01.02.28.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 01 Oct 2025 02:28:12 -0700 (PDT)
-Message-ID: <651ee9fe-706e-4471-a71b-e7a12b42cc3e@redhat.com>
-Date: Wed, 1 Oct 2025 11:28:09 +0200
+        d=1e100.net; s=20230601; t=1759310916; x=1759915716;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eWhaWIh1Ch5W+HrhvE/7nWxIJ4BqD2s5kUI/3gBmyEA=;
+        b=WkuxuOe9RtEpimlRHw0dj9TsryUkNEelcLG1O1YWVzCj2YDZ5WMicOVNYt4/sUrzBO
+         IwbzkdzBk8D8dK/21efnOgiqWzev/01L4dwyO5rYl5m8HDNYvpXHsY4zcyNSmySWTgg+
+         YWzCez1M8p4m1N1nYf/7JnKfsdmns2yvJ0nzhySeATxvvs5rXNTUuSWQ89VGR25KMGG6
+         3vuqYuwkKLcrCBfvWPg0yxVo5cH8dFHFy+sv8ag19ZRzU3571UcwVzdRKXFfmgZBbHLW
+         deFJbqMzjQ1YNk2mPek3cJY8/neA5ptD6Dus6YPeUsqUb+fGGleVXxS9NE/kTW/ZyVoU
+         wlzw==
+X-Forwarded-Encrypted: i=1; AJvYcCVyAB4r/qUDT7QxjfWysjGcnfM4O8AsyPT98YUXxAcHHfMLT5T/DnFoIt8eFhUIHv0pvAugHNh56kNHLYA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYWib7P/8pKT4x5hCEW4/CL8tFavUol1VjaekRg90rxCCBTcf3
+	u/yoR8AmYmK6ONOzWkv4f2LslGxg0EO8npIxOTR3qnAI/vPvmBUynAtgblV/7ix9jnwFj2tPpI4
+	U/zmsB7UaS5eYyETrSc/uvjLfW0QhwE0SQosYlhyQ
+X-Gm-Gg: ASbGncspnHpXDLkC8H9aIK1ws7I+/xWIRuHC3/KES9Ywgz3lIFUWwj/IsiPdnRsqWHq
+	ufUZb1XLWh6WoPc/DDC0Y6Xgnj0Z7kuvZXekymY6FLPf09m8Qx23+cCYj8fLZyu02/emrgwyUPR
+	mW9G4MKQEb3+OgfQ1K/32jz0bf3c0RhD2Jj2dEnajFuqYA3IYeWpZouZ7Ao81W1eYIup2pMoWoz
+	dT+xnI2nnWwhoucec2UuI8MLn8HQEBCdwARE1pVXygx+/rfDLxX+GbAoq9GIG/qnqwgtkCoNtpq
+	EKs=
+X-Google-Smtp-Source: AGHT+IFcom3ihUiZsvQc7Ctd6T7AFUDP+BI45kum3YBKQg7Ja8eF4g1jmM9Rz4a7lPBApkzRM7m3vX/ZWyyP9taYRzo=
+X-Received: by 2002:a05:600c:1d12:b0:46e:3d41:5fe7 with SMTP id
+ 5b1f17b1804b1-46e612dcff2mr22205905e9.29.1759310915370; Wed, 01 Oct 2025
+ 02:28:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next V6] net/mlx5: Improve write-combining test
- reliability for ARM64 Grace CPUs
-To: Tariq Toukan <tariqt@nvidia.com>
-Cc: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
- Mark Bloch <mbloch@nvidia.com>, netdev@vger.kernel.org,
- linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
- Gal Pressman <gal@nvidia.com>, Leon Romanovsky <leonro@nvidia.com>,
- Jason Gunthorpe <jgg@nvidia.com>, Michael Guralnik <michaelgur@nvidia.com>,
- Moshe Shemesh <moshe@nvidia.com>, Will Deacon <will@kernel.org>,
- Alexander Gordeev <agordeev@linux.ibm.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
- Vasily Gorbik <gor@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Justin Stitt <justinstitt@google.com>,
- linux-s390@vger.kernel.org, llvm@lists.linux.dev,
- Ingo Molnar <mingo@redhat.com>, Bill Wendling <morbo@google.com>,
- Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <ndesaulniers@google.com>,
- Salil Mehta <salil.mehta@huawei.com>, Sven Schnelle <svens@linux.ibm.com>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
- Yisen Zhuang <yisen.zhuang@huawei.com>, Arnd Bergmann <arnd@arndb.de>,
- Leon Romanovsky <leonro@mellanox.com>, linux-arch@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, Mark Rutland <mark.rutland@arm.com>,
- Michael Guralnik <michaelgur@mellanox.com>, patches@lists.linux.dev,
- Niklas Schnelle <schnelle@linux.ibm.com>, Jijie Shao <shaojijie@huawei.com>,
- Simon Horman <horms@kernel.org>, Patrisious Haddad <phaddad@nvidia.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, Eric Dumazet <edumazet@google.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Jakub Kicinski <kuba@kernel.org>,
- "David S. Miller" <davem@davemloft.net>
-References: <1759093688-841357-1-git-send-email-tariqt@nvidia.com>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <1759093688-841357-1-git-send-email-tariqt@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250925-core-cstr-cstrings-v2-0-78e0aaace1cd@gmail.com> <20250925-core-cstr-cstrings-v2-18-78e0aaace1cd@gmail.com>
+In-Reply-To: <20250925-core-cstr-cstrings-v2-18-78e0aaace1cd@gmail.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Wed, 1 Oct 2025 11:28:23 +0200
+X-Gm-Features: AS18NWC0UIhXtF3ngdaaXlg7HajAeA8SvMGIxlOaATZh6gKK8pvCVQpA1AHU2RE
+Message-ID: <CAH5fLgh84SZznuv_BHMxSe4riF=YZekCp1Kx6KmiipzTOHmRsw@mail.gmail.com>
+Subject: Re: [PATCH v2 18/19] rust: io: replace `kernel::c_str!` with C-Strings
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	FUJITA Tomonori <fujita.tomonori@gmail.com>, Andrew Lunn <andrew@lunn.ch>, 
+	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Breno Leitao <leitao@debian.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, 
+	Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
+	Leon Romanovsky <leon@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Brendan Higgins <brendan.higgins@linux.dev>, 
+	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, Jens Axboe <axboe@kernel.dk>, 
+	Alexandre Courbot <acourbot@nvidia.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, nouveau@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, netdev@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Thu, Sep 25, 2025 at 3:56=E2=80=AFPM Tamir Duberstein <tamird@gmail.com>=
+ wrote:
+>
+> C-String literals were added in Rust 1.77. Replace instances of
+> `kernel::c_str!` with C-String literals where possible.
+>
+> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 
-On 9/28/25 11:08 PM, Tariq Toukan wrote:
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/wc.c b/drivers/net/ethernet/mellanox/mlx5/core/wc.c
-> index 999d6216648a..c281153bd411 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/wc.c
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/wc.c
-> @@ -7,6 +7,10 @@
->  #include "mlx5_core.h"
->  #include "wq.h"
->  
-> +#if IS_ENABLED(CONFIG_KERNEL_MODE_NEON) && IS_ENABLED(CONFIG_ARM64)
-> +#include <asm/neon.h>
-> +#endif
-> +
->  #define TEST_WC_NUM_WQES 255
->  #define TEST_WC_LOG_CQ_SZ (order_base_2(TEST_WC_NUM_WQES))
->  #define TEST_WC_SQ_LOG_WQ_SZ TEST_WC_LOG_CQ_SZ
-> @@ -255,6 +259,27 @@ static void mlx5_wc_destroy_sq(struct mlx5_wc_sq *sq)
->  	mlx5_wq_destroy(&sq->wq_ctrl);
->  }
->  
-> +static void mlx5_iowrite64_copy(struct mlx5_wc_sq *sq, __be32 mmio_wqe[16],
-> +				size_t mmio_wqe_size, unsigned int offset)
-> +{
-> +#if IS_ENABLED(CONFIG_KERNEL_MODE_NEON) && IS_ENABLED(CONFIG_ARM64)
-> +	if (cpu_has_neon()) {
-> +		kernel_neon_begin();
-> +		asm volatile
-> +		(".arch_extension simd;\n\t"
-
-Here I'm observing build errors with aarch64-linux-gnu-gcc 12.1.1
-20220507 (Red Hat Cross 12.1.1-1):
-
-/tmp/cchqHdeI.s: Assembler messages:
-/tmp/cchqHdeI.s:746: Error: unknown architectural extension `simd;'
-
-I can't reproduce the error on any recent compiler version via
-godbolt.org, so I *think* this should not block/be reverted for the MR,
-but could you please have a look soonish?
-
-Thanks,
-
-Paolo
-
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
