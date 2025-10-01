@@ -1,168 +1,96 @@
-Return-Path: <linux-kernel+bounces-838352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74B57BAF023
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 04:24:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B96EBAF038
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 04:35:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29DC54A5842
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 02:24:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE3BD192772A
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 02:36:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCB67275B03;
-	Wed,  1 Oct 2025 02:23:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D08AB255E53;
+	Wed,  1 Oct 2025 02:35:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Mg1OGnc7"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="BZS10cwL"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF75D270542
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 02:23:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7552019CC3E;
+	Wed,  1 Oct 2025 02:35:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759285429; cv=none; b=Y+iqNyQSEsa79FGQhi6TKW+VgXpB8pTZscmlHGkSqRLwFWFzJ6P/Hk9j0eAMutL/1xkXvDfHNaN+MU2zVzRjYycdFlVjQ2tEnSa/B223tDIRRhJnGhvx5nvhVqggaEpTdgkD+7eTmmEV86jkNhHDsPaUlfzpGTXWD5spzL2Z+uw=
+	t=1759286147; cv=none; b=NslGDyUPqYo7Kfsp2XVwzXIetrGtMp5aXe8uavd8s3a4cEkVFSrfZXKSLFg+8j/ecSZlfC/lo7KwMQytycBrAxdXxNpEYmcspsXsSPV9gLqEdJYn3UnuIasD9Ig66uuPF+6cx5XbLHl6ylX1x8S6kTH6mRBpKY/GqlizZnTa7NI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759285429; c=relaxed/simple;
-	bh=WxXsKqyjvjdx1jE1eDRPPZIssIPZhCk1RArR1l+TZM8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=caFuQH1Q6OxGgW2btFCMxobV1KVgD6dPO8yuMHt40U7D9VpCbo7pnjx/36gSVj0QnBLFtuGQGZpQLxN3zdv6I1vzVv3byEkigrdU+/xvU7iIPp9UMkMCzEGgAMpcxcNyzwzPvmI+o2DAAXDS74c+cMc41yULPy5NYDE+Kyeumc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Mg1OGnc7; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759285426; x=1790821426;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=WxXsKqyjvjdx1jE1eDRPPZIssIPZhCk1RArR1l+TZM8=;
-  b=Mg1OGnc7WM2C4jRUUrlyKdBIXj3VI5BzLcbiqDaKJjv3ON+zL+otw8fo
-   wHWYHFa1P6CXofj1LmZMyt3XGrG7LrkscmxEOPcnvRntzCOnWvzAx1hjz
-   eKf6L9DkGb5yCPom76DzvuMI+Hle5CwaEcfMBxI/J07kXtlUMTuMfBrlT
-   qUm5nJbmv/kHpVLBQvPW5NAx1Outsh70Zm2CKB92Kikcl9PCJMjlFUyIB
-   RVOPo7Auvn12JxGkOZbnKZ5GvrHd/2Z7NXtKswHcshyIjkZtI9sNE98tD
-   gBF9LxskxPShrLQhPIzs8Ov+6xOa+pT9cFdBb4JNPB9v0Nehi0Dy+VpV5
-   A==;
-X-CSE-ConnectionGUID: aLHZNFvTTrahCuK+0hZxpQ==
-X-CSE-MsgGUID: 1/ae4iBBSzCnrzIqLjnxtA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11569"; a="61445010"
-X-IronPort-AV: E=Sophos;i="6.18,305,1751266800"; 
-   d="scan'208";a="61445010"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2025 19:23:46 -0700
-X-CSE-ConnectionGUID: M0C/LwP+SzG+oRNWd6CY5Q==
-X-CSE-MsgGUID: Pf1CYrooQpWz68horitnaw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,305,1751266800"; 
-   d="scan'208";a="183079922"
-Received: from 984fee019967.jf.intel.com ([10.165.54.94])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Sep 2025 19:23:46 -0700
-From: Chao Gao <chao.gao@intel.com>
-To: linux-coco@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	x86@kernel.org
-Cc: Chao Gao <chao.gao@intel.com>,
-	"Kirill A. Shutemov" <kas@kernel.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Xu Yilun <yilun.xu@linux.intel.com>
-Subject: [PATCH 2/2] coco/tdx-host: Expose TDX module version
-Date: Tue, 30 Sep 2025 19:22:45 -0700
-Message-ID: <20251001022309.277238-3-chao.gao@intel.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251001022309.277238-1-chao.gao@intel.com>
-References: <20251001022309.277238-1-chao.gao@intel.com>
+	s=arc-20240116; t=1759286147; c=relaxed/simple;
+	bh=K9fCsMOCdUbvRNo/t+o2bC2PyvUlczEgu2UBaPD1egI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=mo+pUaw2HmBngh0DUOZY5Ztv3kuo5gMcmh9QSPbpJSkqm7puwRkF1skCQUeA8KlXw/ku9P79R8+WVSy4uJJLQuTuW8UBXXr6iENR/WieLpLVxc/tcSAz9T3iZ8qxW5ih1fjPmONxRjY1S9rRjYydJWQkc/dcIPqOrB5AoNJQGFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=BZS10cwL; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1759286143;
+	bh=K9fCsMOCdUbvRNo/t+o2bC2PyvUlczEgu2UBaPD1egI=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=BZS10cwLGFLV5nsN0uVkLFHIq48Oo2il5WbyDSJvHm3dHPjdTV8wixUYy5gUITgc0
+	 Jyx8eIPnhDSPxODugl67iAIXBGYrAnuuNV0m8yiiz/+klC2aHN4/PzO4YJ4yEzUWsF
+	 xhEVltPYvy9tosuvwWUrB8rKBgJpe90p7deCnbFp+a40msHMA6uyxPB3EVctuJwO6E
+	 3wGaeCNu5f4IgFDQ2/M6MAC53VQUcmGn6XchruaP2BRoaOvcBulzpYnRPTD362gqYB
+	 IzkD40nZKAx/QBIIFJXTNmOReFZUB5cOSvX45trBXVN6NzJPDVrJIwISBEVZCmtCXb
+	 GGLBCpTvd9RyA==
+Received: from [IPv6:2405:6e00:243e:cd99:1d87:95e3:706d:5dc7] (unknown [120.20.48.42])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 49F6F749D1;
+	Wed,  1 Oct 2025 10:35:40 +0800 (AWST)
+Message-ID: <045c7bcd3a852e626f11e5b78c07939feac0e298.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v3 0/3] arm64: dts: nuvoton: add NPCM845 SoC and EVB
+ support
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Tomer Maimon <tmaimon77@gmail.com>
+Cc: "Rob Herring (Arm)" <robh@kernel.org>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, venture@google.com, yuenn@google.com, 
+	openbmc@lists.ozlabs.org, benjaminfair@google.com, joel@jms.id.au, 
+	krzk+dt@kernel.org, tali.perry1@gmail.com, conor+dt@kernel.org, 
+	avifishman70@gmail.com
+Date: Wed, 01 Oct 2025 12:05:38 +0930
+In-Reply-To: <CAP6Zq1jmmhqYu3C7KHFK2tz9zjW352Bbw4cXeOYSjNSTELrp5Q@mail.gmail.com>
+References: <20250925200625.573902-1-tmaimon77@gmail.com>
+	 <175890301752.880349.2331946518360447485.robh@kernel.org>
+	 <CAP6Zq1jmmhqYu3C7KHFK2tz9zjW352Bbw4cXeOYSjNSTELrp5Q@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Currently these is no way to know the TDX module version from the
-userspace. such information is helpful for bug reporting or
-debugging.
+On Mon, 2025-09-29 at 12:15 +0300, Tomer Maimon wrote:
+> Hi Rob,
+>=20
+> Thanks for your comments
+>=20
+> Most of the warnings occur because the compatible strings are located
+> in .txt device tree binding rather than in the .yaml file.
+>=20
+> The only change that needs to be done is in ti,tmp100 that
+>=20
+> Could you approve the patches, avoiding NPCM845 compatible warnings?
+> Meanwhile, I will work on converting the txt to yaml
 
-With the tdx-host device in place, expose the TDX module version as
-a device attribute via sysfs.
+I think it's best we get the conversion done, and then subsequently
+apply the apply this series. See:
 
-Signed-off-by: Chao Gao <chao.gao@intel.com>
----
- .../ABI/testing/sysfs-devices-faux-tdx-host   |  6 +++++
- MAINTAINERS                                   |  1 +
- drivers/virt/coco/tdx-host/tdx-host.c         | 25 ++++++++++++++++++-
- 3 files changed, 31 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/ABI/testing/sysfs-devices-faux-tdx-host
+https://docs.kernel.org/process/maintainer-soc.html#validating-devicetree-f=
+iles
 
-diff --git a/Documentation/ABI/testing/sysfs-devices-faux-tdx-host b/Documentation/ABI/testing/sysfs-devices-faux-tdx-host
-new file mode 100644
-index 000000000000..18d4a4a71b80
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-devices-faux-tdx-host
-@@ -0,0 +1,6 @@
-+What:		/sys/devices/faux/tdx_host/version
-+Contact:	linux-coco@lists.linux.dev
-+Description:	(RO) Report the version of the loaded TDX module. The TDX module
-+		version is formatted as x.y.z, where "x" is the major version,
-+		"y" is the minor version and "z" is the update version. Versions
-+		are used for bug reporting, TD-Preserving updates and etc.
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c1ad1294560c..7560dcf8a53d 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -27333,6 +27333,7 @@ L:	x86@kernel.org
- L:	linux-coco@lists.linux.dev
- S:	Supported
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/tdx
-+F:	Documentation/ABI/testing/sysfs-devices-faux-tdx-host
- F:	Documentation/ABI/testing/sysfs-devices-virtual-misc-tdx_guest
- F:	arch/x86/boot/compressed/tdx*
- F:	arch/x86/coco/tdx/
-diff --git a/drivers/virt/coco/tdx-host/tdx-host.c b/drivers/virt/coco/tdx-host/tdx-host.c
-index 49c205913ef6..968a19f4e01a 100644
---- a/drivers/virt/coco/tdx-host/tdx-host.c
-+++ b/drivers/virt/coco/tdx-host/tdx-host.c
-@@ -22,6 +22,29 @@ MODULE_DEVICE_TABLE(x86cpu, tdx_host_ids);
- 
- static struct faux_device *fdev;
- 
-+static ssize_t version_show(struct device *dev, struct device_attribute *attr,
-+			    char *buf)
-+{
-+	const struct tdx_sys_info *tdx_sysinfo = tdx_get_sysinfo();
-+	const struct tdx_sys_info_version *ver;
-+
-+	if (!tdx_sysinfo)
-+		return -ENXIO;
-+
-+	ver = &tdx_sysinfo->version;
-+
-+	return sysfs_emit(buf, "%u.%u.%02u\n", ver->major_version,
-+					       ver->minor_version,
-+					       ver->update_version);
-+}
-+static DEVICE_ATTR_RO(version);
-+
-+static struct attribute *tdx_host_attrs[] = {
-+	&dev_attr_version.attr,
-+	NULL,
-+};
-+ATTRIBUTE_GROUPS(tdx_host);
-+
- static int __init tdx_host_init(void)
- {
- 	int r;
-@@ -34,7 +57,7 @@ static int __init tdx_host_init(void)
- 	if (r)
- 		return r;
- 
--	fdev = faux_device_create(KBUILD_MODNAME, NULL, NULL);
-+	fdev = faux_device_create_with_groups(KBUILD_MODNAME, NULL, NULL, tdx_host_groups);
- 	if (!fdev)
- 		return -ENODEV;
- 
--- 
-2.47.3
+and
 
+https://docs.kernel.org/process/maintainer-soc-clean-dts.html#strict-dts-dt=
+-schema-and-dtc-compliance
+
+Andrew
 
