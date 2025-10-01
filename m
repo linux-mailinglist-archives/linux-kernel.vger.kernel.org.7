@@ -1,158 +1,195 @@
-Return-Path: <linux-kernel+bounces-838621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8179BAFC1F
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 11:03:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFD8EBAFC2D
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 11:04:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E6CF2A2F61
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 09:03:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93E8E3B2EC5
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 09:03:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 950842D9484;
-	Wed,  1 Oct 2025 09:03:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 675982D8DD0;
+	Wed,  1 Oct 2025 09:03:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="BCcdx13r"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b="gq5cdMSm"
+Received: from mail-24418.protonmail.ch (mail-24418.protonmail.ch [109.224.244.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9464727F16A
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 09:02:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AC6F27F16A
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 09:03:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759309380; cv=none; b=q7RsXBj9/+/pmAhIzCFqJVU00rXuuMdz6sStNYBnOcIVwl4Yhk/0v9V8jvOzqmW08Hzdu3Hzzd9QEXMetosMQs2irUX9iisaovl5NfN8TIc073qUyA9/ns5viFWPoTX5Uzl7Qr6vijY8anLVskGpPKURtsNVwc2/7n7+kTvto/8=
+	t=1759309428; cv=none; b=gbMS+E+yrcT+hvalgq3SEDuL4oBgQp9wy3vL953MMESm92Z4nT+AQyi1BJeH70nt1e1NcNNp7hPLtHU/ZMj+YIw+rjUGxDhNomkLDxxElU5xf2Zbrt97Qi1efdph0f8rhTZ6qr91MHgL+FHFg0aftPZ4AbnQhjpjZtIyaND4bb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759309380; c=relaxed/simple;
-	bh=rz85/arNz6RsO3g0zililQ8uETwv+F0iyZRoWVQC+EE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gRv5mCXzv20E668g6UyFFGCDzCLDPMtb7EDVJQJYjNrNOlXP1LKEyiLsPnibURISjHQayGdYWvzaAR2NGtSLzrbgwdoGmNkC8YWS3UtILcfpWkCJKJSm7E/E2P8jpTz8vPaHqTSN0XtB3OrfzT9ZY2WrJ6jTblzGmO1aXhUDYrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=BCcdx13r; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5917KfUa020544
-	for <linux-kernel@vger.kernel.org>; Wed, 1 Oct 2025 09:02:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ZPfFz+jJCaCOBtaru36gwrt+7dEJBz4BRIuDpZVmIA8=; b=BCcdx13rnITI8ibx
-	ZWmYphcSmweMZGvlDEINVH610zwPBu3VzVjK01VAhTl0Ov3bPR315XcEEH7e9IjQ
-	nHmRXKVFyeUVIR65WC3gJ/mOhlld3Qo6x6zhPGKCiZYhUDc8CGscbnhBiuLYjYA9
-	uwQXEvAgoJUSW3+QXp+WcJWFyvQjG+QyshfqvfzaAjcbII5zbaqxkd0AIr3ZwIsB
-	IYw37j5gO038nJuXYQNFRvzNxUABAD6tX3KWmogw6wH/z58M+ueS2KlmYoAhdbxU
-	sGGckbI3XAHV1nNvO70PYnMkGFKUZ28QzU2jeElyiLhRPr8Tt8C30ZCZ7VwORBA7
-	7xW+3g==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49gyu1889c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 09:02:58 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4e4b4e6f75fso710671cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 02:02:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759309377; x=1759914177;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZPfFz+jJCaCOBtaru36gwrt+7dEJBz4BRIuDpZVmIA8=;
-        b=fMkvhs5JS7n9kk1Bj2xYv2pvOrsUZwsWl0FRQmQ4h7aQhrRuUOYwtNv9N0KcvB0Kg2
-         aodxgNkXa8T9R2RxCo0xCGvX/Ns7XEejT2YYXWwpLPGvbY2eegLf+Oxbq9oXvDNQMn97
-         QwrWnjKGVI46fKf7lDyGoJd3RtUl1NfKBYy4mDZG2jWmQW4BLfn7ZA41YTiWnv6+aI4p
-         wPLVSKhe36tXQXUGYrg1saXK3Qd1F9czK5S+74K/bzE1ITnRqHRoca9j5O6jFnJEuWo/
-         sO6aNfaBJEnIhBIdLocFF0/CTCO8PDwI9rF5+zixxe0RvcN0agu+OwKbnHw1bhynbazh
-         YkAA==
-X-Forwarded-Encrypted: i=1; AJvYcCW/1Da/OtvPCpDdP2ZktFT+ghGjlPfnk5Nl34edHtRefYoPCIV/2F6Lh5w+ovBPca8HDBH+C0gpCNU4wmI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhnxXLt1cOwUar4fdWHQa+C+VlIrr3ZV/5vIwhUHNQGPchvWes
-	EsAi4rTWWJVSdUipefNwmXFCDEFxded5FycTBO6Zh9AxOdTi581k8k6Pru/QRESH3uDzBsepp8k
-	TEHgHG/cHG7GgsJG6wPPOzYnbDqKm8R+3zIgwgK8AKmJ0DlnjlV3349SFq09cnsp5IJQ=
-X-Gm-Gg: ASbGncv1pifyw+vYpb7mvWwyqY0PIbilAFMseB/NCGv91nmSupJpw/rjB1gNW96lTte
-	8F23Q8zI+WbA8a6AfQzRzjRgNYG8kAbBPpL2oi3dy5Cvf+hBE51sEoaJGvWcdw8HEb6NiKjnTFa
-	caUuHsUfC+VdHLM9+jZ1weNhjGFHvzCNDd4PgSInrGzyxjJxPbYtii8XxuObG+5go5qJQwG6RJi
-	fiqT04Ht64tcYt4cSImN/U5UH/PKzd3ZlGOYypWQItO1FnGpjKFKbsKtt2kyTJtqTN+pLZV+Hh8
-	xW2vAvp3AXkUgmhWKixwKnTfe9+///tA7pG2TAAsbGXkLPHJpZDAfSZnRWajf0lBJCU5zxuG8CD
-	Gz8qqVXshW0tG9aGXW+aZwDYVkTk=
-X-Received: by 2002:ac8:5a06:0:b0:4b7:7dbf:9a81 with SMTP id d75a77b69052e-4e41c1605aemr23476171cf.1.1759309377415;
-        Wed, 01 Oct 2025 02:02:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFU9Szphg/SN7TMvpOPbN0MRBm6lNfueGopwk8fIzSbGuR1BhVcLsJaaOfRkusSv6notyn1SQ==
-X-Received: by 2002:ac8:5a06:0:b0:4b7:7dbf:9a81 with SMTP id d75a77b69052e-4e41c1605aemr23475831cf.1.1759309376823;
-        Wed, 01 Oct 2025 02:02:56 -0700 (PDT)
-Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-634a3ae2cd7sm11618651a12.31.2025.10.01.02.02.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 01 Oct 2025 02:02:56 -0700 (PDT)
-Message-ID: <c0567a7c-9d21-4fd4-8140-99e72184dc2e@oss.qualcomm.com>
-Date: Wed, 1 Oct 2025 11:02:54 +0200
+	s=arc-20240116; t=1759309428; c=relaxed/simple;
+	bh=JGTVZKqlDvgAlmZDqY993i//RJ29Pi67qV7iYqgd7q8=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Ee0S3n51lbC4lKgQ0GTPjzBn7rsIHBzvlbs07WLz9jfuqdXKIiZqqbJ7ni3iOCwi5EZ4q4gY7Zdgj1kQR8WBTgVdzCLitM2f0G8piLAnTkosjzjPLTF4VTpWW1geY/KwPmgH05gMTT8qBiVBToQ7bER24RRKtb98sUY3VPK5Qow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=gq5cdMSm; arc=none smtp.client-ip=109.224.244.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
+	s=protonmail3; t=1759309417; x=1759568617;
+	bh=k2cd0h/lNPW6oKirfHBNFEiPHjT+8NPzCf04+VSLOsg=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=gq5cdMSmMRJ5eEdQ74b46Afg4C59ln8vt80/KmbouM+MFTl2033f/pBX9xzcIeq3c
+	 enT4MAXopZCXXM6u8MfmhBxjUT6n5m1ghFZIaA2NLIUKRLBpebo7Nl/W+xz25bSdkL
+	 pM227Wrf+Pf1aQ+0s6p0RpRpMvHjcnf3aX8YNIB7KGbhAhc8bcRGXGXurIHssikDkl
+	 1q8ZroZcQt16iBc6K+0cXAsicmMEPNQQEwLMybDsThZ0uWpfeXrXHudarIT9Ec323i
+	 DZ8DMK1X2WbiT+Fk9grZNvAGMjnvy5Kb/X5WF3YPKUnQOnedseFZJOWs8WudYT4Zme
+	 ksS29du6VknaQ==
+Date: Wed, 01 Oct 2025 09:03:31 +0000
+To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Benno Lossin <lossin@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, Leon Romanovsky <leon@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, Viresh Kumar
+	<vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, =?utf-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Asahi Lina <lina+kernel@asahilina.net>
+From: Oliver Mangold <oliver.mangold@pm.me>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-pm@vger.kernel.org, linux-pci@vger.kernel.org, Oliver Mangold <oliver.mangold@pm.me>
+Subject: [PATCH v12 0/4] New trait OwnableRefCounted for ARef<->Owned conversion.
+Message-ID: <20251001-unique-ref-v12-0-fa5c31f0c0c4@pm.me>
+Feedback-ID: 31808448:user:proton
+X-Pm-Message-ID: 05f6e75cf8354eecb1d79bcf61223bca92da5f3d
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 00/11] arm64: dts: qcom: sdm845-lg-{common, judyln}:
- Improve HW support in dts
-To: Paul Sajna <sajattack@postmarketos.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, David Heidelberg <david@ixit.cz>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org,
-        Amir Dahan <system64fumo@protonmail.com>,
-        Christopher Brown <crispybrown@gmail.com>
-References: <20250928-judyln-dts-v3-0-b14cf9e9a928@postmarketos.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250928-judyln-dts-v3-0-b14cf9e9a928@postmarketos.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=RfGdyltv c=1 sm=1 tr=0 ts=68dcee42 cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VwQbUJbxAAAA:8 a=Gbw9aFdXAAAA:8
- a=sfOm8-O8AAAA:8 a=pGLkceISAAAA:8 a=bvKeCVLL_wdwnHjQap0A:9 a=QEXdDO2ut3YA:10
- a=uxP6HrT_eTzRwkO_Te1X:22 a=9vIz8raoGPyDa4jBFAYH:22 a=TvTJqdcANYtsRzA46cdi:22
-X-Proofpoint-ORIG-GUID: 1WmyP78wTKd0Il35wwBnVDqPvMp9O9Cs
-X-Proofpoint-GUID: 1WmyP78wTKd0Il35wwBnVDqPvMp9O9Cs
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDAxMDA1OCBTYWx0ZWRfXwdMaGV2ozNu/
- 4IPaYQudQ8t2h+kmoWZzL+Rl+7lzDW7GAhMrgjBQLKKpVRItY9cRimUg0AMawuPmtAGzwGi4CX/
- IFRyz7SPv5tjEm8q4/GryR5eYjLRz5W+Ep2XIIPj8bTqKsH6CmYUBOUh9xl0yyz0KzJdkOcJ5wJ
- W8K3uJLhXKneSMkxsmjcmITwck9MOd5C2cBHrWG4CNZjDt3yhwXUhArWeZ8szWLe/MWx4zhoR9G
- /75mmBNhm+9DG8y2l3DOjYWTK61+lMMhVDiqHV5ciKTeb9l0BneRsZDBRM319Czwr/ttXmcVzOO
- ieI2GoLH1O/3gfUxL/gXG2MGJLBKutY5WEoeVKI8tMywz7u33Yg5SNj2WeWoxc6ArwoO2w0Q1Em
- RPMUSEb38/KtxahV/dlJd2eRXlbg0A==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-01_02,2025-09-29_04,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 lowpriorityscore=0 malwarescore=0 adultscore=0
- priorityscore=1501 suspectscore=0 phishscore=0 bulkscore=0 clxscore=1015
- spamscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2509150000
- definitions=main-2510010058
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 9/29/25 7:05 AM, Paul Sajna wrote:
-> Rollup of improved hardware support via devicetree for LG G7 ThinQ 
-> (judyln) from sdm845-mainline kernel fork
-> 
-> Notably, this patch-series enables full DRM acceleration and wifi,
-> among other small improvements in individual commits
-> 
-> after this patch-series the main things that remain to be worked
-> on include touchscreen, audio, and modem.
-> 
-> Depends upon panel driver patch-series https://lore.kernel.org/all/20250910-judyln-panel-v1-1-825c74403bbb@postmarketos.org/T/#r9a976ca01e309b6c03100e984a26a0ffc2fe2002
-> 
-> Co-developed-by: Amir Dahan <system64fumo@protonmail.com>
-> Co-developed-by: Christopher Brown <crispybrown@gmail.com>
-> Signed-off-by: Amir Dahan <system64fumo@protonmail.com>
-> Signed-off-by: Christopher Brown <crispybrown@gmail.com>
-> Signed-off-by: Paul Sajna <sajattack@postmarketos.org>
-> ---
-> Changes in v3:
+This allows to convert between ARef<T> and Owned<T> by
+implementing the new trait OwnedRefCounted.
 
-Please run `b4 trailers -u` before resending to pick up any tags
-you received in review
+This way we will have a shared/unique reference counting scheme
+for types with built-in refcounts in analogy to Arc/UniqueArc.
 
-Konrad
+Signed-off-by: Oliver Mangold <oliver.mangold@pm.me>
+---
+Changes in v12:
+-
+- Rebase onto v6.17-rc1 (Andreas's work).
+- moved kernel/types/ownable.rs to kernel/owned.rs
+- Drop OwnableMut, make DerefMut depend on Unpin instead. I understood
+  ML discussion as that being okay, but probably needs further scrunity.
+- Lots of more documentation changes suggested by reviewers.
+- Usage example for Ownable/Owned.
+- Link to v11: https://lore.kernel.org/r/20250618-unique-ref-v11-0-49eadcdc=
+0aa6@pm.me
+
+Changes in v11:
+- Rework of documentation. I tried to honor all requests for changes "in
+  spirit" plus some clearifications and corrections of my own.
+- Dropping `SimpleOwnedRefCounted` by request from Alice, as it creates a
+  potentially problematic blanket implementation (which a derive macro that
+  could be created later would not have).
+- Dropping Miguel's "kbuild: provide `RUSTC_HAS_DO_NOT_RECOMMEND` symbol"
+  patch, as it is not needed anymore after dropping `SimpleOwnedRefCounted`=
+.
+  (I can add it again, if it is considered useful anyway).
+- Link to v10: https://lore.kernel.org/r/20250502-unique-ref-v10-0-25de64c0=
+307f@pm.me
+
+Changes in v10:
+- Moved kernel/ownable.rs to kernel/types/ownable.rs
+- Fixes in documentation / comments as suggested by Andreas Hindborg
+- Added Reviewed-by comment for Andreas Hindborg
+- Fix rustfmt of pid_namespace.rs
+- Link to v9: https://lore.kernel.org/r/20250325-unique-ref-v9-0-e91618c1de=
+26@pm.me
+
+Changes in v9:
+- Rebase onto v6.14-rc7
+- Move Ownable/OwnedRefCounted/Ownable, etc., into separate module
+- Documentation fixes to Ownable/OwnableMut/OwnableRefCounted
+- Add missing SAFETY documentation to ARef example
+- Link to v8: https://lore.kernel.org/r/20250313-unique-ref-v8-0-3082ffc67a=
+31@pm.me
+
+Changes in v8:
+- Fix Co-developed-by and Suggested-by tags as suggested by Miguel and Boqu=
+n
+- Some small documentation fixes in Owned/Ownable patch
+- removing redundant trait constraint on DerefMut for Owned as suggested by=
+ Boqun Feng
+- make SimpleOwnedRefCounted no longer implement RefCounted as suggested by=
+ Boqun Feng
+- documentation for RefCounted as suggested by Boqun Feng
+- Link to v7: https://lore.kernel.org/r/20250310-unique-ref-v7-0-4caddb78aa=
+05@pm.me
+
+Changes in v7:
+- Squash patch to make Owned::from_raw/into_raw public into parent
+- Added Signed-off-by to other people's commits
+- Link to v6: https://lore.kernel.org/r/20250310-unique-ref-v6-0-1ff5355861=
+7e@pm.me
+
+Changes in v6:
+- Changed comments/formatting as suggested by Miguel Ojeda
+- Included and used new config flag RUSTC_HAS_DO_NOT_RECOMMEND,
+  thus no changes to types.rs will be needed when the attribute
+  becomes available.
+- Fixed commit message for Owned patch.
+- Link to v5: https://lore.kernel.org/r/20250307-unique-ref-v5-0-bffeb63327=
+7e@pm.me
+
+Changes in v5:
+- Rebase the whole thing on top of the Ownable/Owned traits by Asahi Lina.
+- Rename AlwaysRefCounted to RefCounted and make AlwaysRefCounted a
+  marker trait instead to allow to obtain an ARef<T> from an &T,
+  which (as Alice pointed out) is unsound when combined with UniqueRef/Owne=
+d.
+- Change the Trait design and naming to implement this feature,
+  UniqueRef/UniqueRefCounted is dropped in favor of Ownable/Owned and
+  OwnableRefCounted is used to provide the functions to convert
+  between Owned and ARef.
+- Link to v4: https://lore.kernel.org/r/20250305-unique-ref-v4-1-a8fdef7b1c=
+2c@pm.me
+
+Changes in v4:
+- Just a minor change in naming by request from Andreas Hindborg,
+  try_shared_to_unique() -> try_from_shared(),
+  unique_to_shared() -> into_shared(),
+  which is more in line with standard Rust naming conventions.
+- Link to v3: https://lore.kernel.org/r/Z8Wuud2UQX6Yukyr@mango
+
+---
+Asahi Lina (1):
+      rust: types: Add Ownable/Owned types
+
+Oliver Mangold (3):
+      `AlwaysRefCounted` is renamed to `RefCounted`.
+      rust: Add missing SAFETY documentation for `ARef` example
+      rust: Add `OwnableRefCounted`
+
+ rust/kernel/auxiliary.rs        |   7 +-
+ rust/kernel/block/mq/request.rs |  14 +-
+ rust/kernel/cred.rs             |   7 +-
+ rust/kernel/device.rs           |   9 +-
+ rust/kernel/device/property.rs  |   7 +-
+ rust/kernel/drm/device.rs       |   9 +-
+ rust/kernel/drm/gem/mod.rs      |   7 +-
+ rust/kernel/fs/file.rs          |  13 +-
+ rust/kernel/lib.rs              |   1 +
+ rust/kernel/mm.rs               |  12 +-
+ rust/kernel/mm/mmput_async.rs   |   7 +-
+ rust/kernel/opp.rs              |   7 +-
+ rust/kernel/owned.rs            | 318 ++++++++++++++++++++++++++++++++++++=
+++++
+ rust/kernel/pci.rs              |   7 +-
+ rust/kernel/pid_namespace.rs    |   7 +-
+ rust/kernel/platform.rs         |   7 +-
+ rust/kernel/sync/aref.rs        |  67 ++++++---
+ rust/kernel/task.rs             |   7 +-
+ rust/kernel/types.rs            |   4 +-
+ 19 files changed, 474 insertions(+), 43 deletions(-)
+---
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+change-id: 20250305-unique-ref-29fcd675f9e9
+
+Best regards,
+--=20
+Oliver Mangold <oliver.mangold@pm.me>
+
+
 
