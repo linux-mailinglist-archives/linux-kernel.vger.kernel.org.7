@@ -1,150 +1,245 @@
-Return-Path: <linux-kernel+bounces-838606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62720BAFBAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 10:49:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81606BAFBB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 10:49:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2253F4A5A9F
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 08:49:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C7FE2A047F
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 08:49:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F8FC27F16A;
-	Wed,  1 Oct 2025 08:49:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FF1E27F16A;
+	Wed,  1 Oct 2025 08:49:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zkfrDGu+"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QRlqkMxc"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE9E419DF5F
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 08:49:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4209235C01
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 08:49:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759308564; cv=none; b=XRvhivuAc0TwQKV4qYYICJf3md64fgWswUHp4qLbI/GWh9OtT9efDjfofh4yMuNmt96J2AL7vB41CoAKIO5hwvnIOm2DJBN50MZlecO114v+WTWxhrUFwZSk3AA5X9YUa7tpyYyJ+7a5FNNhkfnTPWaDv5Z/Tgmhibv1DWDw9nc=
+	t=1759308576; cv=none; b=rZ93NgajEcSYO6NLJiNdcwuakHSvfMc5SzwE06AcstSztIR01IcVR1na/IS8CZDneBaFQtasWwM02w/O8opXy8icV5xjw1xsyCjMbP1eQL9Bib+YX42x3S2OFsgHVz4fXMLDnmPs13EUq2h28cG6aDxNdlzT/p+g1ZT9BiPxNko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759308564; c=relaxed/simple;
-	bh=8rIcT1Pqs3Ea0y+ldBE56b1g4vr0kel/gXDqeQVGlIE=;
+	s=arc-20240116; t=1759308576; c=relaxed/simple;
+	bh=QRJ9liXxFkfG7M561OyeuFb7bBN/oesi5Tc/NH8DBeY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y8p4TQ+IG6CATh3YDEPPeYgDak1jJM3+V/hsMrtG7PEgw8+YMlGVBKobiEkVvvx6u+K9X52WJamsu/mtc3ONZ53hRMVcpqE9bFs2CQJipjf6ajA26IPGDpCtuoiAVniGroB5XN2tS0F8YziV6b7XQdZa6R9Hfkj7XWLdvlYM2dI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zkfrDGu+; arc=none smtp.client-ip=209.85.208.177
+	 To:Cc:Content-Type; b=MxftxKzW6cyAHaiUHzDFuGOlouy68tK/rzeuft5dS1n3GZ89QHZLJU1rnD5vkZP0yJVNk++Um5NVDkbBMZIfGUHaMivSJN32mzbCkJ9L9KWhBe/h1o1+HIRZosiJ+EYb5t2gq8HEHKlw50nVmNjI3barlLATid58qr0T5WiiHVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QRlqkMxc; arc=none smtp.client-ip=209.85.215.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-367874aeeacso50523111fa.1
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 01:49:22 -0700 (PDT)
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b608df6d2a0so236760a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 01:49:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759308561; x=1759913361; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1759308573; x=1759913373; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=V0MU6aIf0UKaVQXy6RXiIl/s8w4p6CMU+2iv6BbdgNc=;
-        b=zkfrDGu+OWGi3FG8ITAaOuQBN1lu+3NuDJaQ2yrnNFnH/u4ixV3mjNpWXUlAp6+tpa
-         EX6re+C2MTBLzc8+tP2BGCqAmohTb6v4M7n01C4APyZ6weYstslPeSeKGecOJzJZWXBO
-         dHUTGYoXnL/KSJbvNr8GWGvwo/Fb45TO1CzVJ4i3gOzmtLQgGyieA4xc3OaVmeumXkwn
-         8lhRf7ibgDZsV1U/4E/J13OYbqg6YgoBJ3XS37jH3D74Vl/Hal+T6qhgJXZCzPRyBX5N
-         mVMJbwIiMb3Qhyuq6WZKybFR1gzRX5URh/ZKdRBuwn2ltYr++hyKpz0xopO4lH4DySv9
-         qXUA==
+        bh=5lUFEDOlwk0GibJmBfeInBIlGX8sUYIM/tZA+M7nygI=;
+        b=QRlqkMxcCSflo5XSydV/qUWSvDiP8n/E5+8n0VGvGurCKoK5xAfgEPxBDyqZhJ19bk
+         S0GxHoeWoItQftkE6VzFDBTmWc/6QwnJLwImDw/0Mtir/i13rqlYPHSn8iGe+YSN61uq
+         /n2C7Qc3MnNz34J0AJPK6mXjwqfvqETazX4aDDRs6FCuFM5GDlqwPkDpY0Y4yD6FWHBb
+         iWWOwErWlnPPKTneEU8gf0HzTgKYWDdkmaQ3sMZqUZu9J0IwQSbrE17L/gsbw+cehYJ8
+         Lvx66TJl/hpOHxuMrgthJGHkofzBmKLPZCirdGTnYqolnFxCBHXfaVbBSVm/hyLcfGt7
+         YnHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759308561; x=1759913361;
+        d=1e100.net; s=20230601; t=1759308573; x=1759913373;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=V0MU6aIf0UKaVQXy6RXiIl/s8w4p6CMU+2iv6BbdgNc=;
-        b=Vaehppig9uD3cjBeGyeKg+zose3eVEdOjs1SXiL9kjinhVQhSJWORnYr2ZfmPehGWs
-         XJUJVNJPOw6MAVu7OeFWDqDtKLh6y+lKL8WmWwxbGpsuo4fiv1IL6lDdW+uTEBrZzEhR
-         gcjCXoC6W2eKp3Hjgb4Newpouo6bOUBSNSL7c3InDI3qQ7Q7M5HKc2LC8gVhD3+KeHGN
-         jLNYGLyucbhOsMowpTmTejEogPdoj6rDf2e/I6/9gmNIOaMYbYFzz0XxxqWkO0P5R4qj
-         Ew2EbJNKaViMU0VbZdzO2Dsxt7jvBN5tqzgWha6OkTLRXiSF4E8kSjoiw3+nn6ZHHGCk
-         lN+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVFWCqBLLK7fvGHZtE0bS4UKR+do3sBIXqecjN5QX+IaT+xTngA4ZqElwtjrQ5EvHA/aqxISjuP0JRJge4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkJbAw6ingWbsGRPMK3sDY80wAVyI1MNOCMB82od1QivrMwMjg
-	aKbRkGb0TPoI9p0ctrldbODFs2hFjy+lM+lAEVdJaj2ZiHxVUn1cK/dpoYp7lyTKFS5NZqsyLpK
-	dWlgd5No5NNXqiojhu8HkeaNNARFgqg7WdT6lez8WSQ==
-X-Gm-Gg: ASbGncvYdOCkliMrft7M6MpbKsbthfyr/3zkYB8OShguEgoKsq9dfFgrqYup3tJZI7Q
-	gPeoQWej6ZOUft22KNREL278GKeax6gBZ2KJhDBc6bRtGqWDNMDBAebb/zp4+tlExW+N3rjMzeM
-	Xlzj3+jSrbnvuP2zNeYuPrNbroRp6teMUHGNU/lT3KUyQHTR5RxlxgPkAmxMEvpZyu8dBRAwDeR
-	MFHbIsy4vEn6ob53tCXeliL4KDI7Lo=
-X-Google-Smtp-Source: AGHT+IE/zKf4qFF1V06mzijknnV4vH7ubPftpR9/pcWP4CKpLmmmcoKCGAvUGlvDb6zfdbCLMmIHYOCJfvmvwXDpg0U=
-X-Received: by 2002:a05:651c:1592:b0:372:9468:8f99 with SMTP id
- 38308e7fff4ca-373a752cee4mr8095951fa.35.1759308560647; Wed, 01 Oct 2025
- 01:49:20 -0700 (PDT)
+        bh=5lUFEDOlwk0GibJmBfeInBIlGX8sUYIM/tZA+M7nygI=;
+        b=nN05W+68+M/wFKoBT4SRu8tsaFJN3ZsoghP91ti7k6kypwYkJWolsTK+NnpRrhZT/j
+         6ykGDXpbjyYpAfOMWSIAZHHiHBFvjCkGNMgOhyHkeSArcdhs9/L/wnf9f0nQOV77ofSo
+         HFRrkveGGpvtAccvXvxYRmBUPys6Sd1Jl9RLdP93U9PPJfC37nfj/UH71EplLUyHYx48
+         ZICpxgowXem0B3p5i/2qOcrYyKHeW1YbEQHDfN3KkB1BY6dTmfHSoXynryT8NqiDX8ni
+         lMgIrQKSoRDyqCDOQXbaFC4QdqdzUcChtGzu/xzDsBrjlCfT7kRYERvKUp/WGTUsG1T6
+         k5VA==
+X-Forwarded-Encrypted: i=1; AJvYcCVQLNQVsPjzGZB3XtCuEoAi9eTyjQUeoC6coilZrmqymJMudW8tiaWwKMjbwMpbyHFsDyaLhI3RUHWO4o4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUw6cGy8nGJdpQpC/XYf3PGGXQ0rB9y02Yy/4kqXN993XbUTfT
+	+mmgbtejSmz/QXGJlikMKvbUWISiSd9neQqF1wHrz5McQWCLxYLbN8Cmbz+g03e1EuuStO7g+1a
+	8fq+bArET7EDFIf1hoF9SUc3M42vZtyZelRZqLuZjdA==
+X-Gm-Gg: ASbGncs5SLw2Qg0POemG56ZwwJS6SteFa5oAWVLDtNYx9oOejk99Pr6AlyVX4NB0ZK0
+	CUpyoLhO3HcjRzQf+xaS6oNIRug/zBjkyz0+IEC6ac9p3He008LTPG9AWtZq79G0+p1IjbVy72E
+	5sfzC1WcVLu9YZvnYvFsr6XR2y8A+ya3720jvC9GjgAkcEvuGj2KphYUkpWae77CblXNUGqCrDp
+	NMVAj8DDYoAWn72AmMPUO9NS1+NrUknWg0EWO5a65f46q9R/Vinjkz8uUQvX7r32N9CG89jgwvu
+	y3w2KUrmONnYjpmEDsJ8IWmkjiHJxT4=
+X-Google-Smtp-Source: AGHT+IHXdQvGj6eUadzCY2tlzRyfpnMGPewfjVo1faJS14ozece7Ob1BLBpJl8+EOXhQG2U/4x219HPYP7/eaFUDrEs=
+X-Received: by 2002:a17:903:b85:b0:25d:5b09:a201 with SMTP id
+ d9443c01a7336-28e7f2c6207mr36488825ad.27.1759308572985; Wed, 01 Oct 2025
+ 01:49:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250924-gpio-shared-v1-0-775e7efeb1a3@linaro.org>
-In-Reply-To: <20250924-gpio-shared-v1-0-775e7efeb1a3@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 1 Oct 2025 10:49:09 +0200
-X-Gm-Features: AS18NWD8uQhySPgdZVvT54DJFS2VbD05G4rr5WTDsYs0mXBgIhMrAJorsb0mOuY
-Message-ID: <CACRpkdYcVtJjRHRJ8GgeU7rZDuyaJKu0vgcknb7DsHPjZGKGuA@mail.gmail.com>
-Subject: Re: [PATCH RFC 0/9] gpio: improve support for shared GPIOs
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Kees Cook <kees@kernel.org>, Mika Westerberg <westeri@kernel.org>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Andy Shevchenko <andy@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, linux-hardening@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-sound@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20250930143831.236060637@linuxfoundation.org>
+In-Reply-To: <20250930143831.236060637@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 1 Oct 2025 14:19:21 +0530
+X-Gm-Features: AS18NWCvl1H8hhR2E11ihfNR1mldgcGLnS6MK4rJ4AfPqydTb0hfPaefWVGOAA0
+Message-ID: <CA+G9fYvN7QxsZqQhHKqw-K4kn=rby4HmEyn=zhN-M_7uk=qLKA@mail.gmail.com>
+Subject: Re: [PATCH 6.16 000/143] 6.16.10-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, 
+	achill@achill.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Bartosz,
+On Tue, 30 Sept 2025 at 20:31, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.16.10 release.
+> There are 143 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 02 Oct 2025 14:37:59 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.16.10-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.16.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-I see the big picture of this plan!
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-One quick comment:
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-On Wed, Sep 24, 2025 at 4:51=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
- wrote:
+## Build
+* kernel: 6.16.10-rc1
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git
+* git commit: e1acc616e91adfbab433eb599e00d88f0bcdb07f
+* git describe: v6.16.9-144-ge1acc616e91a
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.16.y/build/v6.16=
+.9-144-ge1acc616e91a
 
-> I'm Cc'ing some people that may help with reviewing/be interested in
-> this: OF maintainers (because the main target are OF systems initially),
-> Mark Brown because most users of GPIOD_FLAGS_BIT_NONEXCLUSIVE live
-> in audio or regulator drivers and one of the goals of this series is
-> dropping the hand-crafted GPIO enable counting via struct
-> regulator_enable_gpio in regulator core),
+## Test Regressions (compared to v6.16.8-150-gfef8d1e3eca6)
 
-...and that is what I thought as well, so:
+## Metric Regressions (compared to v6.16.8-150-gfef8d1e3eca6)
 
->       arm64: select HAVE_SHARED_GPIOS for ARCH_QCOM
+## Test Fixes (compared to v6.16.8-150-gfef8d1e3eca6)
 
-why would we be selecting this per-subarch?
+## Metric Fixes (compared to v6.16.8-150-gfef8d1e3eca6)
 
-What will happen is that CONFIG_REGULATOR will select
-it and since everyone and their dog is using regulator, what
-will happen is that every system will have this enabled,
-and every GPIO access on every system will be proxied
-and then this better be fast.
+## Test result summary
+total: 351365, pass: 323894, fail: 6740, skip: 20731, xfail: 0
 
-Two things come to mind, and I bet you have thought of
-them already:
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 139 total, 138 passed, 1 failed
+* arm64: 57 total, 56 passed, 1 failed
+* i386: 18 total, 18 passed, 0 failed
+* mips: 34 total, 27 passed, 7 failed
+* parisc: 4 total, 4 passed, 0 failed
+* powerpc: 40 total, 39 passed, 1 failed
+* riscv: 25 total, 25 passed, 0 failed
+* s390: 22 total, 22 passed, 0 failed
+* sh: 5 total, 5 passed, 0 failed
+* sparc: 4 total, 3 passed, 1 failed
+* x86_64: 49 total, 47 passed, 2 failed
 
-1. Footprint: all systems using regulators will now have
-   to compile in all this code as well.
+## Test suites summary
+* boot
+* commands
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-kcmp
+* kselftest-kvm
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-mincore
+* kselftest-mm
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-rust
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-tc-testing
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-x86
+* kunit
+* kvm-unit-tests
+* lava
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-build-clang
+* log-parser-build-gcc
+* log-parser-test
+* ltp-capability
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-syscalls
+* ltp-tracing
+* modules
+* perf
+* rcutorture
+* rt-tests-cyclicdeadline
+* rt-tests-pi-stress
+* rt-tests-pmqtest
+* rt-tests-rt-migrate-test
+* rt-tests-signaltest
 
-2. Performance, I didn't quite get it if every GPIO on the
-  system will be proxied through a layer of indirection
-  if you select HAVE_SHARED_GPIOS
-  but that would not be good, since some users are in
-  fastpath such as IRQ handlers, and the old way of
-  sharing GPIOs would just affect pins that are actually
-  shared.
-
-I don't know of a good generic solution for (2) to be honest,
-last resort would be something like runtime patching of
-calls when a GPIO becomes shared and that is really
-advanced but maybe necessary to get a performant and
-generic solution.
-
-Yours,
-Linus Walleij
+--
+Linaro LKFT
+https://lkft.linaro.org
 
