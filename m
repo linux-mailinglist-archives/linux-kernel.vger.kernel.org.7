@@ -1,283 +1,329 @@
-Return-Path: <linux-kernel+bounces-838708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38DB6BAFF95
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 12:18:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D7DF0BAFF98
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 12:18:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D94C63ADFEA
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 10:18:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CE7C3AE650
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 10:18:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B798829AAEA;
-	Wed,  1 Oct 2025 10:18:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D14029992A;
+	Wed,  1 Oct 2025 10:18:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="CAFBr3cM"
-Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013058.outbound.protection.outlook.com [52.101.72.58])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ja95ato+"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F73A1A3165;
-	Wed,  1 Oct 2025 10:17:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.58
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759313880; cv=fail; b=hgVpHrdyCJYq8GNovHPeSRqAamgRHv6ZgR/pF2cZdAHWseCyyC/CTJdVjQh9IPfvN7dnn7enf3S4zbuAUjjhWbraBh7yYcsbxBe6NiexQ2E/J2mm5BFqUkNvgpKmowTUAvMbQLTIjXSNPjY3RBV2ZeG6XM6E3caUTCs0uGx4APg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759313880; c=relaxed/simple;
-	bh=nrG9WHTwVsalwVpnnmgQxxFvBA7peFPREudz2SG4zSY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=VkEy1PjLvUv8ZpvRG1FjliSPZpMPt7qOz24Ds1Cy6HCNpuQiupSrzQUCV/UNZX74iMO/HEnFMvRRgCPrUnLVwsV6Zgu4g8UiPZQ7JoCaRfiCGlzXz42PYuGQSx8axfmRNJrTo/uyH9ObBBvjitcfdsnutXHxePsoZUHnUQTvifI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=CAFBr3cM; arc=fail smtp.client-ip=52.101.72.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CgWJJnnAJkD4RjGDi8HDIH0m7/YJPuo+a7jbF5W4heBh4xWowExP0gsysLfQb5rxopPVd6Qmz3AuLlg7alfFkC8Km/z5wDJmAol59h7vRif+DZ9/ES/kYam2zTQWbDfKc0YIgKZTVinIYHEuPiU8lK/ReT6Ek2jrqvQICbgv7Uax6MBH4DNmeE13P2K4ROYmZ3Mjk/bgV6dxW9OIDH5MTm4UPOO2YJeAOucQYuGLXvwKwqS2fbS+SAcg5YQzsv9at9ILWVUhggtQVY1qOqkFjw7KBjgQaFBtRN6tZt6Pn7O/9XZg2IblNkpl0UJTB9MciW4oNhqSMsdAJaSw2Lk8wQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bYnhGtSxEJaqTh1UukkQR1gYwtLmb2eP7GaHStGkQn4=;
- b=E09DaZI5X0IkTl+0rE+mY6mFySYIWNTw52yCft+zmsHnLj6nLwPr2ZNaYXDLjsn7SxCS9WdYgTXeB9O7hWXC8xEFB6NnJZ+910fHDU+Z9z8eju+o3lIXgNUBZAcinkYcNIHhIY59v3r3PSW5jF3nmjpv6z+1zYcXj+Ujc7Xx7TdoWf724hw/fDfWLmaElwB9DFafR4bvN5APup1uIku2iNwAaHh14oNLAjfF4ACwt+8JuEUF22j1ESIM11Q9LqPIH+PYspcEaVjw5vShDD66tLoObzRrRvTfBB21bq5pl/vNuqRIgHjJR8do8WD2MpPdOLgVWg+DwApU9z5vYTPTyA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bYnhGtSxEJaqTh1UukkQR1gYwtLmb2eP7GaHStGkQn4=;
- b=CAFBr3cMM67Xv3WMLeQztXwy9JOlukIbpcpftMOqOuDqQlffdLiAYSKZQyXH1EdAFEixSRWEYoSY8K1BJ8+UoF2OcQP+dgY/PA2aOxWvNbiyx1e7z2dS0Y9Cp49ijdeFb6zRrM2B23/uPKBz7kLTK/v1ks6gfkA/pfMJJ1qLo7HIBd1gtMNZYBpGKEe7O53ZNDl5QOV8pv7bHNTHhbv+1c54IT9eZeBj4HV50va0GK7wSGT40XGRcf1eLu+s08557rejh8uC3QfsuAQ+EXxHZbr41+uUb1DBRzF8HluE/vYu1xilj0LzdlnXv0b4E7uDqvAAeAW1DYDyRRUvdQG29w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DBBPR04MB7740.eurprd04.prod.outlook.com (2603:10a6:10:1ee::23)
- by AM7PR04MB6951.eurprd04.prod.outlook.com (2603:10a6:20b:10f::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.17; Wed, 1 Oct
- 2025 10:17:55 +0000
-Received: from DBBPR04MB7740.eurprd04.prod.outlook.com
- ([fe80::7a71:369b:fb82:59d7]) by DBBPR04MB7740.eurprd04.prod.outlook.com
- ([fe80::7a71:369b:fb82:59d7%6]) with mapi id 15.20.9182.009; Wed, 1 Oct 2025
- 10:17:55 +0000
-Date: Wed, 1 Oct 2025 18:17:32 +0800
-From: Jeff Chen <jeff.chen_1@nxp.com>
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	briannorris@chromium.org, francesco@dolcini.it,
-	tsung-hsien.hsieh@nxp.com, s.hauer@pengutronix.de,
-	brian.hsu@nxp.com
-Subject: Re: [PATCH v5 18/22] wifi: nxpwifi: add core files
-Message-ID: <aNz/vOlApzVzMLZy@nxpwireless-Inspiron-14-Plus-7440>
-References: <20250804154018.3563834-1-jeff.chen_1@nxp.com>
- <20250804154018.3563834-19-jeff.chen_1@nxp.com>
- <6b8ff5139bb9c361468840046b757dfa5ebe1aba.camel@sipsolutions.net>
- <aM2bmc49cJXDmcf3@nxpwireless-Inspiron-14-Plus-7440>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aM2bmc49cJXDmcf3@nxpwireless-Inspiron-14-Plus-7440>
-X-ClientProxiedBy: SG2P153CA0006.APCP153.PROD.OUTLOOK.COM (2603:1096::16) To
- DBBPR04MB7740.eurprd04.prod.outlook.com (2603:10a6:10:1ee::23)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B95091A3165
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 10:18:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759313894; cv=none; b=i8Z78S6vd1+b1QrCjdoo2+dw5e3FXf/Q0uMdwr/OYkisFYhmitUAnJ1cokyzyWiB+ykGS0LTUzBhQQbSnCDtM+m6ZDGtyupob61MnlzCBZmrzpfgVaXz3f8mu3SkGNxf9R02vEM6q6Qnt212o3zFX0ne72YHEsd0Bg5k7Jqshls=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759313894; c=relaxed/simple;
+	bh=5odNuqzjnRPKzNOPYsgV9ApoKyRj6fT7pI7CUBknz2k=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=O4cIhFx3kUMrpwlJNri4gzaS7cYbpNv/qPTPYjBHdUoYpFmlghywNLJvLgbG43IwCCMdWVSYQegY6e98sqXcA1SWMyg2afZtQOk8Q91WbGBdQa4mrCiOl1+IPvo74EEPsA7p9G8d/Kh0FbaLLPbGFVR1yOX/PTTaD8VZtKuT23s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ja95ato+; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-277f0ea6ee6so90127885ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 03:18:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759313892; x=1759918692; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wVjzhac2/7CNw9Es+ykENwtYeWjltG28Fn53f4nEIe0=;
+        b=Ja95ato+LNFdtVgIc8X2V6fXLs5c45cGFYlCD7fTr+2Dme0dQdfDNRWxysii7lXLzN
+         ASlETsd8S3CQ2r06T1CklxF2ixugqN83OpFEWFlLaL+Na7u+jR4QypzJwbsnLTXhIZ6I
+         IwDJGC4lULstkS6475ztm8lr2+LHDhY5wGw1MUhXlUZo2IWoYHEJFH5AYCah9MpinXut
+         F/CXZ/EoOV1OSSvNho/3FC8DSndzybIvt9hItqVlwWIVGvcc7OkIJNqPk23Wq4L+8sQD
+         QDrCZoR+vmFhRIvTU0c7br2lI4ujgaS1W1EX808XwXFAM/LXoqFgd/wwn6S36JbxSttr
+         BcnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759313892; x=1759918692;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wVjzhac2/7CNw9Es+ykENwtYeWjltG28Fn53f4nEIe0=;
+        b=VxLaPmZ1mGLpUh1uU4BmcJc1+J4bAf7aiK7qzNDyHoA3RTKhJvUN3VjbyqFIBglyPE
+         8dmwmQwrDO5Do0HSQp74qO2iJnaMWZYHRpMJnQwhpWchXEM4yd6YEClwmBDaGmmzLlI8
+         HwLg/XziqafmzPasjlrtA+j9dEL/qyZQ0MiZ3ChlkGqcopUD958jZ6anjdbXfj/sTqzf
+         Xnrd6Apa+eTl1jtM4EGMTq6Fnup4F909gbCADVLH026u8q3s/vsReD8CoZUvslvxWiW+
+         ly+nYX12S7TKDVFMrhgVecx11l4PzNZEdRY0Q4yzxSDj1pgP9sDI4Zr6Vvo8v9HjAW5f
+         +EBg==
+X-Forwarded-Encrypted: i=1; AJvYcCUptVer8A4GQv6b9d1Ad7slYu5z4YF7Jh0bmPCfwZaFl/BldVkaY83JbIM4GtAvmqHPBnTGoj8LIiA234I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmMEyIT83cqHQTiUuC+mmbJOa4NJEwqYq3b+m1txjmMk1xt+0r
+	kl/W7gAt+lg618r3yFlVpd7y5j0ks/YxAZ9Tv6P/Qmv7xNIXKfbDIulWtgDKMs60IYR9yNqQSkN
+	ru+P1p4Rk93hgNFymsq3zFJN4Eg==
+X-Google-Smtp-Source: AGHT+IH3/UwZotGsVgSZHuoT5n5Xo4BXNmDVYcUbgIEep1ky9MnljUnSllPi+qyg6Yd8nz6gX6uPHjFaQ4H70gXl1Q==
+X-Received: from plbiy5.prod.google.com ([2002:a17:903:1305:b0:267:b6b7:9ac3])
+ (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:903:19e6:b0:24a:a6c8:d6c4 with SMTP id d9443c01a7336-28e7f2dcc13mr36461995ad.26.1759313891933;
+ Wed, 01 Oct 2025 03:18:11 -0700 (PDT)
+Date: Wed, 01 Oct 2025 10:18:10 +0000
+In-Reply-To: <aNvoB6DWSbda2lXQ@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DBBPR04MB7740:EE_|AM7PR04MB6951:EE_
-X-MS-Office365-Filtering-Correlation-Id: b8e97fee-7f2d-45b5-ecfd-08de00d3c975
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|19092799006|52116014|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Mvf0sSHCw15N/hoOyTe4bmTv/LLSSiiDhRbc6Ou1ys6ERQHG53Tvr2ctLzs3?=
- =?us-ascii?Q?2Sd9vQ9X/jBjUU54WFSxBUWyJk7f2wJ0lSff69FIk67fQgOsNSP/93H5dh2K?=
- =?us-ascii?Q?PhLuULs0viSoVgy4aeL/IjNet2yuCu12CmEyHJXlA4Q9yO9h4ZIymOujqwof?=
- =?us-ascii?Q?iBHrWKdFbPv+0EvaAfWkjxP88jabW6c/tq5OO0kizoxQWW3LyrS6a/f0EumV?=
- =?us-ascii?Q?2I5RYnJ6XcLpXXPKlGwoUU4QBTDrmfujTrFLfJdf2ab6/Ix7D+myN3QRVo9G?=
- =?us-ascii?Q?o4xdMZfmwQ3LYStU8XVI7MYYA3XpHIAHU1Thq8Jiom4ZhBfv36kuqKeOul9N?=
- =?us-ascii?Q?5Ix3Lp3gtcSl1bLrz814H7eqdxovC22e61fTBR8XLBeTJX65/R9LtpJfaHXl?=
- =?us-ascii?Q?aBApdBgNtRzbtDsB8U+tlqZRLoE5EsHZ6cERqHUTetmocAQYlBvKB365brwq?=
- =?us-ascii?Q?Q1rZ0xZQ6BAYAS44gPPfghiXY3y8/U8LjBizk+zIFERl1xS4DwfN5qIB3IHN?=
- =?us-ascii?Q?o4bji9NufprvCvxI2LWTtCjaIG2zzyfOQvPXKNIIWxkSpR1xFvI3SslRagR0?=
- =?us-ascii?Q?6qY9Fn+R2hMnPbp3ixkrOoD/jN46a7/yxdIGIWOOCpZWwhV6d4CVElvcaiL2?=
- =?us-ascii?Q?j4s8SRk3AszGeZ/sokDO+oyM3LuZGiJBMhQJtTkH9UPXp9Bcae251S73+HFM?=
- =?us-ascii?Q?x7bV8Zps2d3ECMhiTv5xqIOZvpfz5uX9m0BP1XPzGcrZ3RqX97SmGuQ7Hyng?=
- =?us-ascii?Q?n0osW+IxW3W66AH5TEHDZVWwByi870RZ6nKBErYnPddSjeIOEK+2pwESJwUb?=
- =?us-ascii?Q?XtraIs1GZtwJOJmZerBKvZ6OP8BiqOSQUNkuL2q0xNifJePWxqZHqqMhs+Ue?=
- =?us-ascii?Q?QJGN8KLOJ/szlZM+CpEJE9WEanyJ94c7ylUmjKqWXiLt4rmY6VrzoB0m7FFo?=
- =?us-ascii?Q?0l5BGNYqVVwzT+UFkDUy5B50i71t0KZYZKqhDYGKnFtATuKOsLBMzsy9Mz7s?=
- =?us-ascii?Q?ipYH1wQrUU7N7Jw3I/JJ/d3vKmYHqvIszDrGBOO1ePUNNFAUxdupYFHgvfyC?=
- =?us-ascii?Q?kE92KXLAo/eq7X5Sck3PkdR+qXCn4gR6QlzHwv/y6wbv9IXhrt0EhRN7LLNa?=
- =?us-ascii?Q?TC4guE2ebS3MF9vNKMcYj7o7+a1jDET83XxTyhz99hQK8kjy2H7zDDr6ooXK?=
- =?us-ascii?Q?DlMDq1riEjjY0TVT/BXPR3vQ3JHBoLeflvhe7d2I37QWm1LXhlDJtSI1hGrf?=
- =?us-ascii?Q?ZK4Pbgr1mnL+Paz8IzWJFLu5qpyv1Vbqm+2oHXpvD+xggyAIH5YwdfoFTLgl?=
- =?us-ascii?Q?tUSVMxcgZ/xsjLIW3v6Zoxv5h4D8+SFr4mCFMfaurFR+2LOz2gugG27m0MMB?=
- =?us-ascii?Q?bi/Jlkwejjb7hIGtSSkQoC1wmsF7kflibGbs4k+T4HG//XgwVzwGOdeLntUX?=
- =?us-ascii?Q?3Kvui53qS8eH64GSN2J/tnmyGcFJr1gj8KiL49wjF6aPYo/+ByM5E6+QbRvU?=
- =?us-ascii?Q?GIb3RucAGxjWLY/o9zc65acBBN9pS7ec7YAd?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DBBPR04MB7740.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(19092799006)(52116014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Uw81qCb5QKlJRZy7X55Pd58UhgcHwIZxLdX52+nvb4tuYQ5EAde3eGZWEDkW?=
- =?us-ascii?Q?JdBVxCFlwJJrA5tvMOHFSfuQ20hPedWRHIf7ZuefrTRqFBnndPmKb/A1IdOQ?=
- =?us-ascii?Q?9MiBQXuHTPxcuP2i7hHmGw03DlFTm7izDBj5qZt1PnMcBs1krOueCmHRqClU?=
- =?us-ascii?Q?U3SkZOFlZaQUxxWqLJ2+Jkp1JqhxXn6DP/J/ehNHnk0qSVwfOTE25XAZZx60?=
- =?us-ascii?Q?lEkaCASiEfiqLP2sM95dNZyBsIkysY9TgS9s/fKuhwRX5kcXdUR0mgaDqZG1?=
- =?us-ascii?Q?uWzYT85s3Cwdvv3G8bhjBHL4qtbe7kMjXhE0r9w8WHRlkeF5hoD+JIuXSa6N?=
- =?us-ascii?Q?uma9uB/lGbIqobiAYtfoHCVvSwLh6IzRiv+JM6rRltIDoRdgdY/r0hQbUOr/?=
- =?us-ascii?Q?Y2Zs3deBcv15wEuOARL7jrNsK6yinyeqG3mPH3oPSHHl511h4jKmbCnk+2d3?=
- =?us-ascii?Q?QKoZQt4BUcxMspeDeRoV2/jK5Rig5ud0NSKCLzF+pfcRuq2Cp1pGALZbNa3f?=
- =?us-ascii?Q?EpzPI8URgAIYGVwSPNECYlzSzt3ta8ARtZMEcygTIDHZnsMuOtpjlQefVBr9?=
- =?us-ascii?Q?JL3hMtp0tE6661FxlaacPouOtwt0uVkeAVIsInhYX9CMu5Ftiodk5u+5S/Xs?=
- =?us-ascii?Q?zekRc7D50d/yfNuvvn4DQpLPk1NgzPtkwL8h5eLe4VjU3y5YPobl07jJvSHa?=
- =?us-ascii?Q?RcGnubQ7lBIJCQKkVfSZ9BF/HUYgifgfCT5y2DSELezgVBgOxNFRFi1VqG8t?=
- =?us-ascii?Q?fzZV57mbz7EL3/ILfdJXlydpS2qVhm0gVbgDdKVHokQhnwKHsynTIBh8+VZj?=
- =?us-ascii?Q?YINrBoVFzg/KCaT4IW8dBTyHXxyA5SFca4VseJbObwClan2xzKMGCWoPh/6m?=
- =?us-ascii?Q?BohOA0Yw0BqrhNjuUVJALufFFmiufOjgbe/UBPoArbKVhmQrjWJnlX4URFn4?=
- =?us-ascii?Q?nkwqMh1PTnyWZZ/DOSVCOjeSsD390i9Enc/FGOx+pCefd9NnHmW2pdbtAu8p?=
- =?us-ascii?Q?WQ/knbXerlxQ+DHsgjqahnw85k7N/cP4oLEtRwUfS2KF4E9uPYHTWqetQEjy?=
- =?us-ascii?Q?kOX2GhGDijMs8qkEMkgDxDiWwOdN0XYoFcU7QyKJPlaEAvujY/1Dd2UZvQtM?=
- =?us-ascii?Q?xhYIibb7DxnJCLzs0CMNCfg0OV4QmZ0O6OOIF5AbCIqMgiIOBdpI/sUCS/Dh?=
- =?us-ascii?Q?dCNlUasHX7UmUbEbCr5ry1M/f8lykmefPVWRaJtHcQ3lI4majhBe0//rzJYN?=
- =?us-ascii?Q?pG+th3bzKXPhfNMDYBjCqxUzo6UxQ5m3JseDsk6DISA/Vqr8p2WqsFjUqNzi?=
- =?us-ascii?Q?YZmf+UGXzw625XD3xmtRSnYjwnLxj7V8mOZZslU/b3euMLOaQB/dwTv2spY6?=
- =?us-ascii?Q?WVHzHUpAjDGpFZL13nopcYrtBW8OprVP4PTjQH0uCim1tdSuKaGfVSxxwlE7?=
- =?us-ascii?Q?kM1XsHD6bDdTvntbr1FGXRS6OGFUGbOdZug70yVQqMz2llUfSuM5G4GXTjtl?=
- =?us-ascii?Q?4ncQ92Cq50ciAWeb5vS8xe1MMPaWcl42U4WTDGbC/cQ8sezR786s65P9BiPE?=
- =?us-ascii?Q?D+UKkdVDhjRcOCczD3wlEzQLSFu3/zwHhDl86oGk?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b8e97fee-7f2d-45b5-ecfd-08de00d3c975
-X-MS-Exchange-CrossTenant-AuthSource: DBBPR04MB7740.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2025 10:17:55.3482
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: uHq61aGfKnIP5uFNSlQiOz/AHYUpU8GO08gEzjGUI2MaB/b/UFG3t1Z4pBCVWG/4MBhn/ydtECABN0zNVmSTRA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR04MB6951
+Mime-Version: 1.0
+References: <20250926163114.2626257-1-seanjc@google.com> <20250926163114.2626257-6-seanjc@google.com>
+ <diqztt0l1pol.fsf@google.com> <aNrCqhA_hhUjflPA@google.com>
+ <diqzfrc41kns.fsf@google.com> <aNvoB6DWSbda2lXQ@google.com>
+Message-ID: <diqz7bxfsz6l.fsf@google.com>
+Subject: Re: [PATCH 5/6] KVM: selftests: Add wrappers for mmap() and munmap()
+ to assert success
+From: Ackerley Tng <ackerleytng@google.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>, 
+	Fuad Tabba <tabba@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, Sep 20, 2025 at 02:06:17 AM +0800, Jeff Chen wrote:
-> On Thu, Sep 04, 2025 at 01:37:20 PM +0200, Johannes Berg wrote:
-> > On Mon, 2025-08-04 at 23:40 +0800, Jeff Chen wrote:
-> > > 
-> > > +/* The main process.
-> > > + *
-> > > + * This function is the main procedure of the driver and handles various driver
-> > > + * operations. It runs in a loop and provides the core functionalities.
-> > > + *
-> > > + * The main responsibilities of this function are -
-> > > + *      - Ensure concurrency control
-> > > + *      - Handle pending interrupts and call interrupt handlers
-> > > + *      - Wake up the card if required
-> > > + *      - Handle command responses and call response handlers
-> > > + *      - Handle events and call event handlers
-> > > + *      - Execute pending commands
-> > > + *      - Transmit pending data packets
-> > > + */
-> > > +void nxpwifi_main_process(struct nxpwifi_adapter *adapter)
-> > > +{
-> > > +	unsigned long flags;
-> > > +
-> > > +	spin_lock_irqsave(&adapter->main_proc_lock, flags);
-> > > +
-> > > +	/* Check if already processing */
-> > > +	if (adapter->nxpwifi_processing || adapter->main_locked) {
-> > > +		adapter->more_task_flag = true;
-> > > +		spin_unlock_irqrestore(&adapter->main_proc_lock, flags);
-> > > +		return;
-> > > +	}
-> > > +
-> > > +	adapter->nxpwifi_processing = true;
-> > > +	spin_unlock_irqrestore(&adapter->main_proc_lock, flags);
-> > 
-> > 
-> > This makes me very nervous, it at least means it's super hard to
-> > understand when this may or may not be running ... It's also the sort of
-> > custom locking that's kind of frowned upon.
+Sean Christopherson <seanjc@google.com> writes:
 
-Hi Johannes, may I have your thoughts on the proposed plan to remove
-custom locking and rely on workqueue.
+> On Tue, Sep 30, 2025, Ackerley Tng wrote:
+>> Sean Christopherson <seanjc@google.com> writes:
+>> > To be perfectly honest, I forgot test_util.h existed :-)
+>>
+>> Merging/dropping one of kvm_util.h vs test_util.h is a good idea. The
+>> distinction is not clear and it's already kind of messy between the two.
+>
+> That's a topic for another day.
+>
+>> It's a common pattern in KVM selftests to have a syscall/ioctl wrapper
+>> foo() that asserts defaults and a __foo() that doesn't assert anything
+>> and allows tests to assert something else, but I have a contrary
+>> opinion.
+>>
+>> I think it's better that tests be explicit about what they're testing
+>> for, so perhaps it's better to use macros like TEST_ASSERT_EQ() to
+>> explicitly call a function and check the results.
+>
+> No, foo() and __foo() is a well-established pattern in the kernel, and in KVM
+> selftests it is a very well-established pattern for syscalls and ioctls.  And
+> I feel very, very strong about handling errors in the core infrastructure.
+>
+> Relying on developers to remember to add an assert is 100% guaranteed to result
+> in missed asserts.  That makes everyone's life painful, because inevitably an
+> ioctl will fail on someone else's system, and then they're stuck debugging a
+> super random failure with no insight into what the developer _meant_ to do.
+>
+> And requiring developers to write (i.e. copy+paste) boring, uninteresting code
+> to handle failures adds a lot of friction to development, is a terrible use of
+> developers' time, and results in _awful_ error messages.  Bad or missing error
+> messages in tests have easily wasted tens of hours of just _my_ time; I suspect
+> the total cost throughout the KVM community can be measured in tens of days.
+>
+> E.g. pop quiz, what state did I clobber that generated this error message with
+> a TEST_ASSERT_EQ(ret, 0)?  Answer at the bottom.
+>
+>   ==== Test Assertion Failure ====
+>   lib/x86/processor.c:1128: ret == 0
+>   pid=2456 tid=2456 errno=22 - Invalid argument
+>      1	0x0000000000415465: vcpu_load_state at processor.c:1128
+>      2	0x0000000000402805: save_restore_vm at hyperv_evmcs.c:221
+>      3	0x000000000040204d: main at hyperv_evmcs.c:286
+>      4	0x000000000041df43: __libc_start_call_main at libc-start.o:?
+>      5	0x00000000004200ec: __libc_start_main_impl at ??:?
+>      6	0x0000000000402220: _start at ??:?
+>   0xffffffffffffffff != 0 (ret != 0)
+>
+> You might say "oh, I can go look at the source".  But what if you don't have the
+> source because you got a test failure from CI?  Or because the assert came from
+> a bug report due to a failure in someone else's CI pipeline?
+>
+> That is not a contrived example.  Before the ioctl assertion framework was added,
+> KVM selftests was littered with such garbage.  Note, I'm not blaming developers
+> in any way.  After having to add tens of asserts on KVM ioctls just to write a
+> simple test, it's entirely natural to become fatigued and start throwing in
+> TEST_ASSERT_EQ(ret, 0) or TEST_ASSERT(!ret, "ioctl failed").
+>
+> There's also the mechanics of requiring the caller to assert.  KVM ioctls that
+> return a single value, e.g. register accessors, then need to use an out-param to
+> communicate the value or error code, e.g. this
+>
+> 	val = vcpu_get_reg(vcpu, reg_id);
+> 	TEST_ASSERT_EQ(val, 0);
+>
+> would become this:
+>
+> 	ret = vcpu_get_reg(vcpu, reg_id, &val);
+> 	TEST_ASSERT_EQ(ret, 0);
+> 	TEST_ASSERT_EQ(val, 0);
+>
+> But of course, the developer would bundle that into:
+>
+> 	TEST_ASSERT(!ret && !val, "get_reg failed");
+>
+> And then the user is really sad when the "!val" condition fails, because they
+> can't even tell.  Again, this't a contrived example, it literally happend to me
+> when dealing with the guest_memfd NUMA testcase, and was what prompted me to
+> write this syscall framework.  This also shows the typical error message that a
+> developer will write.
+>
+> This TEST_ASSERT() failed on me due to a misguided cleanup I made:
+>
+> 	ret = syscall(__NR_get_mempolicy, &get_policy, &get_nodemask,
+> 		      maxnode, mem, MPOL_F_ADDR);
+> 	TEST_ASSERT(!ret && get_policy == MPOL_DEFAULT && get_nodemask == 0,
+> 		"Policy should be MPOL_DEFAULT and nodes zero");
+>
+> generating this error message:
+>
+>   ==== Test Assertion Failure ====
+>   guest_memfd_test.c:120: !ret && get_policy == MPOL_DEFAULT && get_nodemask == 0
+>   pid=52062 tid=52062 errno=22 - Invalid argument
+>      1	0x0000000000404113: test_mbind at guest_memfd_test.c:120 (discriminator 6)
+>      2	 (inlined by) __test_guest_memfd at guest_memfd_test.c:409 (discriminator 6)
+>      3	0x0000000000402320: test_guest_memfd at guest_memfd_test.c:432
+>      4	 (inlined by) main at guest_memfd_test.c:529
+>      5	0x000000000041eda3: __libc_start_call_main at libc-start.o:?
+>      6	0x0000000000420f4c: __libc_start_main_impl at ??:?
+>      7	0x00000000004025c0: _start at ??:?
+>   Policy should be MPOL_DEFAULT and nodes zero
+>
+> At first glance, it would appear that get_mempolicy() failed with -EINVAL.  Nope.
+> ret==0, but errno was left set from an earlier syscall.  It took me a few minutes
+> of digging and a run with strace to figure out that get_mempolicy() succeeded.
+>
+> Constrast that with:
+>
+>         kvm_get_mempolicy(&policy, &nodemask, maxnode, mem, MPOL_F_ADDR);
+>         TEST_ASSERT(policy == MPOL_DEFAULT && !nodemask,
+>                     "Wanted MPOL_DEFAULT (%u) and nodemask 0x0, got %u and 0x%lx",
+>                     MPOL_DEFAULT, policy, nodemask);
+>
+>   ==== Test Assertion Failure ====
+>   guest_memfd_test.c:120: policy == MPOL_DEFAULT && !nodemask
+>   pid=52700 tid=52700 errno=22 - Invalid argument
+>      1	0x0000000000404915: test_mbind at guest_memfd_test.c:120 (discriminator 6)
+>      2	 (inlined by) __test_guest_memfd at guest_memfd_test.c:407 (discriminator 6)
+>      3	0x0000000000402320: test_guest_memfd at guest_memfd_test.c:430
+>      4	 (inlined by) main at guest_memfd_test.c:527
+>      5	0x000000000041eda3: __libc_start_call_main at libc-start.o:?
+>      6	0x0000000000420f4c: __libc_start_main_impl at ??:?
+>      7	0x00000000004025c0: _start at ??:?
+>   Wanted MPOL_DEFAULT (0) and nodemask 0x0, got 1 and 0x1
+>
+> Yeah, there's still some noise with errno=22, but it's fairly clear that the
+> returned values mismatches, and super obvious that the syscall succeeded when
+> looking at the code.  This is not a cherry-picked example.  There are hundreds,
+> if not thousands, of such asserts in KVM selftests and KVM-Unit-Tests in
+> particular.  And that's when developers _aren't_ forced to manually add boilerplate
+> asserts in ioctls succeeding.
+>
+> For people that are completely new to KVM selftests, I can appreciate that it
+> might take a while to acclimate to the foo() and __foo() pattern, but I have a
+> hard time believing that it adds significant cognitive load after you've spent
+> a decent amount of time in KVM selftests.  And I 100% want to cater to the people
+> that are dealing with KVM selftests day in, day out.
+>
 
-thanks,
-Jeff
- 
-> Hi Johannes,
-> 
-> Thanks for the detailed feedback. We agree this is hard to reason about.
-> The use of "main_locked" and "more_task_flag" is a workaround to avoid
-> reentrancy and race conditions between SDIO interrupt and workqueue execution.
-> However, it introduces implicit state transitions that are difficult to follow.
-> 
-> > Could this not be with wiphy mutex and be very clear? Though maybe you
-> > wouldn't want TX to go through that ... and maybe it can't since sdio
-> > calls it? But that seems odd, why is it both a worker and called for
-> > every interrupt? Should it even be a single function for those two
-> > cases?
-> > 
-> > Also it sets more_task_flag when it's entered while already running, but
-> > that's just weird? Should other work coming in really get processed by
-> > the SDIO interrupt processing?
-> > 
-> > It seems to me this is one of those awful design things inherited by
-> > mwifiex that just happens to work? Can you document it well? If so maybe
-> > do that and that can say why it really needs to be this way. If not, you
-> > should probably change it completely and redesign it from first
-> > principles, i.e. figure out what it has to do and build it accordingly?
-> 
-> We plan to remove this custom locking and instead rely solely on the workqueue
-> model. Specifically:
-> 
-> - SDIO interrupt will only queue "main_work", not call "nxpwifi_main_process()"
->   directly.
-> - "nxpwifi_main_process()" will be the single consumer of all driver-side tasks.
-> - Interrupt status will be latched and processed in "nxpwifi_main_process()" to
->   ensure no events are missed.
-> 
-> This change will eliminate the need for, "more_task_flag" and "main_proc_lock",
-> reduce concurrency complexity.
-> 
-> To better reflect its actual purpose, the main_locked flag will be renamed to
-> iface_changing. This flag is specifically used to prevent nxpwifi_main_process()
-> from running while cfg80211_ops.change_virtual_intf() is executing.
-> 
-> To ensure proper synchronization, iface_changing is always set/unset under
-> wiphy_lock(), which is held during change_virtual_intf(). In nxpwifi_main_process(),
-> we only read iface_changing, so to make this safe, we also hold wiphy_lock() while
-> reading it. This avoids races and makes the locking model clearer.
->  
-> > The whole function is also everything and the kitchen sink, could use
-> > some serious refactoring?
-> > 
-> > > +		if (adapter->delay_null_pkt && !adapter->cmd_sent &&
-> > > +		    !adapter->curr_cmd && !is_command_pending(adapter) &&
-> > > +		    (nxpwifi_wmm_lists_empty(adapter) &&
-> > > +		     nxpwifi_bypass_txlist_empty(adapter) &&
-> > > +		     skb_queue_empty(&adapter->tx_data_q))) {
-> > > +			if (!nxpwifi_send_null_packet
-> > > +			    (nxpwifi_get_priv(adapter, NXPWIFI_BSS_ROLE_STA),
-> > > +			     NXPWIFI_TxPD_POWER_MGMT_NULL_PACKET |
-> > > +			     NXPWIFI_TxPD_POWER_MGMT_LAST_PACKET)) {
-> > > +				adapter->delay_null_pkt = false;
-> > > +				adapter->ps_state = PS_STATE_SLEEP;
-> > > +			}
-> > > +			break;
-> > > +		}
-> > > +	} while (true);
-> > 
-> > 
-> > Sao that ... those conditions are awful? If this were a separate
-> > function at least you could write it in multiple lines with return
-> > true/false there.
-> 
-> Absolutely agreed. The function is doing too much. We plan to refactor it into smaller,
-> purpose-specific helpers.
-> 
-> > > +/* CFG802.11
-> > 
-> > (side note: there's really no such thing as "CFG802.11" FWIW, it was
-> > always just called "cfg80211")
-> > 
-> > johannes
-> > 
-> 
+Thanks for taking the time to write this up. I'm going to start a list
+of "most useful explanations" and this will go on that list.
+
+>> Or perhaps it should be more explicit, like in the name, that an
+>> assertion is made within this function?
+>
+> No, that's entirely inflexible, will lead to confusion, and adds a copious amount
+> of noise.  E.g. this
+>
+> 	/* emulate hypervisor clearing CR4.OSXSAVE */
+> 	vcpu_sregs_get(vcpu, &sregs);
+> 	sregs.cr4 &= ~X86_CR4_OSXSAVE;
+> 	vcpu_sregs_set(vcpu, &sregs);
+>
+> versus
+>
+> 	/* emulate hypervisor clearing CR4.OSXSAVE */
+> 	vcpu_sregs_get_assert(vcpu, &sregs);
+> 	sregs.cr4 &= ~X86_CR4_OSXSAVE;
+> 	vcpu_sregs_set_assert(vcpu, &sregs);
+>
+> The "assert" is pure noise and makes it harder to see the "get" versus "set".
+>
+> If we instead annotate the the "no_assert" case, then we'll end up with ambigous
+> cases where a developer won't be able to determine if an unannotated API asserts
+> or not, and conflict cases where a "no_assert" API _does_ assert, just not on the
+> primary ioctl it's invoking.
+>
+> IMO, foo() and __foo() is quite explicit once you become accustomed to the
+> environment.
+>
+>> In many cases a foo() exists without the corresponding __foo(), which
+>> seems to be discouraging testing for error cases.
+>
+> That's almost always because no one has needed __foo().
+>
+>> Also, I guess especially for vcpu_run(), tests would like to loop/take
+>> different actions based on different errnos and then it gets a bit
+>> unwieldy to have to avoid functions that have assertions within them.
+>
+> vcpu_run() is a special case.  KVM_RUN is so much more than a normal ioctl, and
+> so having vcpu_run() follow the "standard" pattern isn't entirely feasible.
+>
+> Speaking of vcpu_run(), and directly related to idea of having developers manually
+> do TEST_ASSERT_EQ(), one of the top items on my selftests todo list is to have
+> vcpu_run() handle GUEST_ASSERT and GUEST_PRINTF whenever possible.  Having to add
+> UCALL_PRINTF handling just to get a debug message out of a test's guest code is
+> beyond frustrating.  Ditto for the 60+ tests that had to manually add UCALL_ABORT
+> handling, which leads to tests having code like this, which then gets copy+pasted
+> all over the place and becomes a nightmare to maintain.
+
++1000 this is exactly where I had to avoid assertions!
+
+>
+> static void __vcpu_run_expect(struct kvm_vcpu *vcpu, unsigned int cmd)
+> {
+> 	struct ucall uc;
+>
+> 	vcpu_run(vcpu);
+> 	switch (get_ucall(vcpu, &uc)) {
+> 	case UCALL_ABORT:
+> 		REPORT_GUEST_ASSERT(uc);
+> 		break;
+> 	default:
+> 		if (uc.cmd == cmd)
+> 			return;
+>
+> 		TEST_FAIL("Unexpected ucall: %lu", uc.cmd);
+> 	}
+> }
+>
+>> I can see people forgetting to add TEST_ASSERT_EQ()s to check results of
+>> setup/teardown functions but I think those errors would surface some
+>> other way anyway.
+>
+> Heh, I don't mean to be condescending, but I highly doubt you'll have this
+> opinion after you've had to debug a completely unfamiliar test that's failing
+> in weird ways, for the tenth time.
+>
+>> Not a strongly-held opinion,
+>
+> As you may have noticed, I have extremely strong opinions in this area :-)
+>
+>> and no major concerns on the naming either. It's a selftest after all and
+>> IIUC we're okay to have selftest interfaces change anyway?
+>
+> Yes, changes are fine.  It's the churn I want to avoid.
+>
+> Oh, and here's the "answer" to the TEST_ASSERT_EQ() failure:
+>
+>   ==== Test Assertion Failure ====
+>   include/kvm_util.h:794: !ret
+>   pid=43866 tid=43866 errno=22 - Invalid argument
+>      1	0x0000000000415486: vcpu_sregs_set at kvm_util.h:794 (discriminator 4)
+>      2	 (inlined by) vcpu_load_state at processor.c:1125 (discriminator 4)
+>      3	0x0000000000402805: save_restore_vm at hyperv_evmcs.c:221
+>      4	0x000000000040204d: main at hyperv_evmcs.c:286
+>      5	0x000000000041dfc3: __libc_start_call_main at libc-start.o:?
+>      6	0x000000000042016c: __libc_start_main_impl at ??:?
+>      7	0x0000000000402220: _start at ??:?
+>   KVM_SET_SREGS failed, rc: -1 errno: 22 (Invalid argument)
 
