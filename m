@@ -1,186 +1,162 @@
-Return-Path: <linux-kernel+bounces-838912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EF2DBB0684
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 15:05:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D6A8BB0682
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 15:05:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CBAD2A3720
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 13:05:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BB882A03C6
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 13:05:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05F0421CA14;
-	Wed,  1 Oct 2025 13:05:03 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D0021FBEA8;
+	Wed,  1 Oct 2025 13:04:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="YUX3EtsG"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C546212572
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 13:04:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 652CC1EEA3C
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 13:04:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759323902; cv=none; b=GDaO9UCeHC7VvUTPOc1e5WQs/80QB5m+jjcQkqfvfwwxmxapcU/ik6KnpsFZ4r/orIoe3vtWwzX/SOWsVK/DmH/ZniEt26rPhcU6tIy3ygnCbk7tdzbCh2VQxw6TbY5bO1WUhAqpHSsyeC7BHUkgKKDsZJcajfIS4CpFeVFrpPM=
+	t=1759323897; cv=none; b=ZM3gQG1SXvbm1cc8AfqN6YxAbxYY330fiCUSJUjos2Q2iW11QlqNgvBDjTTteZEoWOJL2BFJoH+8S2z3aUhF+GS4s9mm+zD4dFMkvU5qWU77oyy5tCrAXoaUaoo6YGy28iPA9c1yTkYzJrT+IRi503Ry1YJPCGZoSnFvZ/8CIzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759323902; c=relaxed/simple;
-	bh=lCdM8Ah7f9siwPk1NgsZaY5JPUTlBRBFs0s9yqMejNs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RzIByovfhQFhm+Thw5s0El7oxpgHvVZUp+VI6g5z7ufEhYR+PYK+s18+PL6848iexKxa5P4LA+CyAo2Qbrw5ByK+uXH4E1CZzXc9bkpvQVSPGwpywklFvQ6oq19PGmjpWeJ+PLiqlFNlbbPWdLuc8gV2g6gBNTEPM/xwpKarms0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1v3wVX-0006cN-RX; Wed, 01 Oct 2025 15:04:35 +0200
-Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1v3wVV-001Q4u-1w;
-	Wed, 01 Oct 2025 15:04:33 +0200
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.98.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1v3wVV-0000000AG1g-27OZ;
-	Wed, 01 Oct 2025 15:04:33 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	=?UTF-8?q?Hubert=20Wi=C5=9Bniewski?= <hubert.wisniewski.25632@gmail.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	stable@vger.kernel.org,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	Lukas Wunner <lukas@wunner.de>,
-	Russell King <linux@armlinux.org.uk>,
-	Xu Yang <xu.yang_2@nxp.com>,
-	linux-usb@vger.kernel.org
-Subject: [PATCH net v2 1/1] net: usb: asix: hold PM usage ref to avoid PM/MDIO + RTNL deadlock
-Date: Wed,  1 Oct 2025 15:04:32 +0200
-Message-ID: <20251001130432.2444863-1-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.47.3
+	s=arc-20240116; t=1759323897; c=relaxed/simple;
+	bh=Sd6yCdxS3n5TE903KsbIcaO2lzqa35LHjefQZurCtJE=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Gbf0cRCmqB9ElbG1LcyekUuNDIvQ056DgOuMSzNID4TSZtjUp40kp1Kf7GFXl6j9Coo84ZILmP9pFYsuG0hnvc3QVQTV1IZf7GpjcAvAeOjtL6KOIJYb6VJ9ZO+hKwZ5csdBGLYFuFmQCFbLBz6RxqbDL+QKO4s1dkaM4S5b1Os=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=YUX3EtsG; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-27eceb38eb1so85672035ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 06:04:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1759323895; x=1759928695; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:references
+         :mime-version:in-reply-to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FHbqmA3oKpic6IfyRvOOe8x31ZYEYEaGDwcq5aemMoY=;
+        b=YUX3EtsGULfgO3jbr/yyY0xXUjnKvm9KSHwMEvLR29i5AfD8NVcNmxHTaeoWkXqDa2
+         +fz7+eZhD0b7REf1FTf57q0trH7Fvmn8i+Xz00LgxDJXUuhmAld99SIhADKnl6XNvefv
+         foMuvVWk25cc3qnCJUKOBHJbQXYj0+SFsQipoCqOHKAr6HEpG3RkjEyS0jPcF8Aj77/v
+         fUgqNyEzFEiNyF3LKX2KgK10Eq3WxKqM++EwxhtZlYWYCh7/vpK8faKdCXEQTy++eMKW
+         IrRhfYSTq2wcv9ODuCIAawLGSAt/tVpfJzXdlo+mJpRjJHQrJpKKvgZ151CeiY0k0Lkg
+         jpoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759323895; x=1759928695;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:references
+         :mime-version:in-reply-to:from:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=FHbqmA3oKpic6IfyRvOOe8x31ZYEYEaGDwcq5aemMoY=;
+        b=xOSLeDDWeHGGBJLkGLazyQMDJ7oO1GjabYIQNMsL5nSTty201UuPuFrig1HOZgwFJp
+         75npC+4B4DawoF9S3XGyE8v7dTAXO6O7h/FOvZm8giIekEt3KECM213n9FLvWfgod7qX
+         RbpOwgpzYfhnSkXIncRsnI/tgdcxavQv1bw/w+5Gfh7MEMuN2d2Ffa9aZ8KPAXWWF1gx
+         5cVSPKCAWpOTZ/HyYAg9pU8gmHOOT54qeNff3uQ3bqEIEUQLsRTPHEyuBYcQsOH0RrLa
+         uLJa/n2KQxlTucCPkJWFzKzmLkLCAhjt65yT4V5u6J8dryYlvgK3qnLwspnzAGDuhC61
+         0aEg==
+X-Forwarded-Encrypted: i=1; AJvYcCVP5tDyCMGV1r/ONGgLNu6DN9vYXaQ37OkC49TpEwo/ahTjplZv0uxawPALoVtySUy68N/Aq7Un/tsmxSM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhEYHh/LwXmzqB9Rsjt0iAkivmEH+XQtq88Vd3l4d7kASMAOwC
+	BGzlnVQPc83ZvRMTwYL+ajvl1WBjqcMQSDCM4dkocIpkwRSiUsAcq6CG8EuUGjJj2AMQytkL3q8
+	3mAAWepR/FifzOSrK3E2kd3JRZRTRLMMaCF7tZXEfIQ==
+X-Gm-Gg: ASbGnctquvoQLA8hJ5KAGc/A0zrG0U2xecXvrfiVdd7Wspc+rY7kE/sNY3CDKHM8nnE
+	cFDXdZMg//f3mDiHnPQlZVLIxJ2Vq37o+VF91dNkvQ/dGeCCFWXYtNjQrpTSl3mfJc7vNA568SX
+	obvfjh8K/qhrGAtW1B+V+2r9sOC2+laNUCov/aLFzLjDmYXE+2XjokJ2mVBRJEACyZ0mMXUeGrH
+	fi1ZYXNreArKlIyGTDtIR2Ij4BPC6pY+s4RxDPRGn54bDJW88VsJwQUT+UO1Ek=
+X-Google-Smtp-Source: AGHT+IHIX0BnzV5QR3ZUNafIRXxWw+fJ+TE74iOPYTO055yiV9YQx881LMKJ8ntEhbIPyMH/yj9fWYf3xbX9jssRLhM=
+X-Received: by 2002:a17:903:15cc:b0:26c:e270:6dad with SMTP id
+ d9443c01a7336-28e7f43f288mr40560635ad.60.1759323893974; Wed, 01 Oct 2025
+ 06:04:53 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 1 Oct 2025 06:04:51 -0700
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 1 Oct 2025 06:04:51 -0700
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+In-Reply-To: <CACRpkda-ZvrAC4bNLnA+ao0Y8-Nd_-b89N6HU10hhEdaOUYAjw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20250924-gpio-shared-v1-0-775e7efeb1a3@linaro.org>
+ <CACRpkdYcVtJjRHRJ8GgeU7rZDuyaJKu0vgcknb7DsHPjZGKGuA@mail.gmail.com> <CACRpkda-ZvrAC4bNLnA+ao0Y8-Nd_-b89N6HU10hhEdaOUYAjw@mail.gmail.com>
+Date: Wed, 1 Oct 2025 06:04:51 -0700
+X-Gm-Features: AS18NWB4-ek2de5G39SVs91_zyxyHsKkPvhufhJXGysoQ2YUW53Yv6YTbFeN0M4
+Message-ID: <CAMRc=Mdb_cUG+hKq8GyfUP1SYBh0p19J+4dFG7G3JSuZTr4n8Q@mail.gmail.com>
+Subject: Re: [PATCH RFC 0/9] gpio: improve support for shared GPIOs
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Kees Cook <kees@kernel.org>, Mika Westerberg <westeri@kernel.org>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Andy Shevchenko <andy@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, linux-hardening@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sound@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Prevent USB runtime PM (autosuspend) for AX88772* in bind.
+On Wed, 1 Oct 2025 12:53:07 +0200, Linus Walleij
+<linus.walleij@linaro.org> said:
+> Replying to self so Bartosz don't have to tell me off...
+>
+> On Wed, Oct 1, 2025 at 10:49=E2=80=AFAM Linus Walleij <linus.walleij@lina=
+ro.org> wrote:
+>
+>> and every GPIO access on every system will be proxied
+>> and then this better be fast.
+>
+> What about I read the code before I talk :/
+>
+> Inspecting patch 4/9 it is clear that only GPIOs that actually
+> need to be proxied are proxied.
+>
+>> Two things come to mind, and I bet you have thought of
+>> them already:
+>>
+>> 1. Footprint: all systems using regulators will now have
+>>    to compile in all this code as well.
+>
+> This still holds. It could be a concern if it's a lot of code.
 
-usbnet enables runtime PM (autosuspend) by default, so disabling it via
-the usb_driver flag is ineffective. On AX88772B, autosuspend shows no
-measurable power saving with current driver (no link partner, admin
-up/down). The ~0.453 W -> ~0.248 W drop on v6.1 comes from phylib powering
-the PHY off on admin-down, not from USB autosuspend.
+It depends on how we implement this. If we just rip out the enable counting
+from regulator core entirely, then it would be transparent from the
+regulator's point of view and each platform could still select the new opti=
+on
+as required.
 
-The real hazard is that with runtime PM enabled, ndo_open() (under RTNL)
-may synchronously trigger autoresume (usb_autopm_get_interface()) into
-asix_resume() while the USB PM lock is held. Resume paths then invoke
-phylink/phylib and MDIO, which also expect RTNL, leading to possible
-deadlocks or PM lock vs MDIO wake issues.
+However there's the issue of regulator consumers who need to know when
+something changes on a regulator and to that end subscribe to the regulator
+notifer. Regulator core knows then it actually changes the GPIO so it emits
+the event. There are several ways to approach it but the best one seems to
+be: allow to subscribe for a per-descriptor event notifier (implementation
+details may include: only actually creating the notifier for shared GPIOs),
+and be notified about an actual change in value and then propagate it to
+regulator users. This would still be transparent and allow us to select
+HAVE_SHARED_GPIOS on a per-arch basis.
 
-To avoid this, keep the device runtime-PM active by taking a usage
-reference in ax88772_bind() and dropping it in unbind(). A non-zero PM
-usage count blocks runtime suspend regardless of userspace policy
-(.../power/control - pm_runtime_allow/forbid), making this approach
-robust against sysfs overrides.
+Bartosz
 
-System sleep/resume is unchanged.
-
-Fixes: 4a2c7217cd5a ("net: usb: asix: ax88772: manage PHY PM from MAC")
-Reported-by: Hubert Wiśniewski <hubert.wisniewski.25632@gmail.com>
-Closes: https://lore.kernel.org/all/DCGHG5UJT9G3.2K1GHFZ3H87T0@gmail.com
-Tested-by: Hubert Wiśniewski <hubert.wisniewski.25632@gmail.com>
-Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Closes: https://lore.kernel.org/all/b5ea8296-f981-445d-a09a-2f389d7f6fdd@samsung.com
-Cc: stable@vger.kernel.org
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
-Changes in v2:
-- Switch from pm_runtime_forbid()/allow() to pm_runtime_get_noresume()/put()
-  as suggested by Alan Stern, to block autosuspend robustly.
-- Reword commit message to clarify the actual deadlock condition
-  (autoresume under RTNL) as pointed out by Oliver Neukum.
-- Keep explanation in commit message, shorten in-code comment.
-
-Link to the measurement results:
-https://lore.kernel.org/all/aMkPMa650kfKfmF4@pengutronix.de/
----
- drivers/net/usb/asix_devices.c | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
-
-diff --git a/drivers/net/usb/asix_devices.c b/drivers/net/usb/asix_devices.c
-index 792ddda1ad49..5c939446515b 100644
---- a/drivers/net/usb/asix_devices.c
-+++ b/drivers/net/usb/asix_devices.c
-@@ -625,6 +625,21 @@ static void ax88772_suspend(struct usbnet *dev)
- 		   asix_read_medium_status(dev, 1));
- }
- 
-+/* Notes on PM callbacks and locking context:
-+ *
-+ * - asix_suspend()/asix_resume() are invoked for both runtime PM and
-+ *   system-wide suspend/resume. For struct usb_driver the ->resume()
-+ *   callback does not receive pm_message_t, so the resume type cannot
-+ *   be distinguished here.
-+ *
-+ * - The MAC driver must hold RTNL when calling phylink interfaces such as
-+ *   phylink_suspend()/resume(). Those calls will also perform MDIO I/O.
-+ *
-+ * - Taking RTNL and doing MDIO from a runtime-PM resume callback (while
-+ *   the USB PM lock is held) is fragile. Since autosuspend brings no
-+ *   measurable power saving for this device with current driver version, it is
-+ *   disabled below.
-+ */
- static int asix_suspend(struct usb_interface *intf, pm_message_t message)
- {
- 	struct usbnet *dev = usb_get_intfdata(intf);
-@@ -919,6 +934,13 @@ static int ax88772_bind(struct usbnet *dev, struct usb_interface *intf)
- 	if (ret)
- 		goto initphy_err;
- 
-+	/* Keep this interface runtime-PM active by taking a usage ref.
-+	 * Prevents runtime suspend while bound and avoids resume paths
-+	 * that could deadlock (autoresume under RTNL while USB PM lock
-+	 * is held, phylink/MDIO wants RTNL).
-+	 */
-+	pm_runtime_get_noresume(&intf->dev);
-+
- 	return 0;
- 
- initphy_err:
-@@ -948,6 +970,8 @@ static void ax88772_unbind(struct usbnet *dev, struct usb_interface *intf)
- 	phylink_destroy(priv->phylink);
- 	ax88772_mdio_unregister(priv);
- 	asix_rx_fixup_common_free(dev->driver_priv);
-+	/* Drop the PM usage ref taken in bind() */
-+	pm_runtime_put(&intf->dev);
- }
- 
- static void ax88178_unbind(struct usbnet *dev, struct usb_interface *intf)
-@@ -1600,6 +1624,10 @@ static struct usb_driver asix_driver = {
- 	.resume =	asix_resume,
- 	.reset_resume =	asix_resume,
- 	.disconnect =	usbnet_disconnect,
-+	/* usbnet will force supports_autosuspend=1; we explicitly forbid RPM
-+	 * per-interface in bind to keep autosuspend disabled for this driver
-+	 * by using pm_runtime_forbid().
-+	 */
- 	.supports_autosuspend = 1,
- 	.disable_hub_initiated_lpm = 1,
- };
--- 
-2.47.3
-
+>
+>> 2. Performance, I didn't quite get it if every GPIO on the
+>>   system will be proxied through a layer of indirection
+>>   if you select HAVE_SHARED_GPIOS
+>>   but that would not be good, since some users are in
+>>   fastpath such as IRQ handlers, and the old way of
+>>   sharing GPIOs would just affect pins that are actually
+>>   shared.
+>
+> It is clear from patch 4/9 that this only affects GPIOs
+> that are actually shared, and those tend to not be
+> performance-critical so this concern is moot.
+>
+> Yours,
+> Linus Walleij
+>
 
