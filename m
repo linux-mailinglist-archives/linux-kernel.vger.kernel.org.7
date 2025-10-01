@@ -1,147 +1,132 @@
-Return-Path: <linux-kernel+bounces-839247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADB99BB1298
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 17:45:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E487EBB12A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 17:46:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EDF016B77D
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 15:45:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71D404A7BB8
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 15:45:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC36127D780;
-	Wed,  1 Oct 2025 15:45:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CF952836B5;
+	Wed,  1 Oct 2025 15:45:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hio8FR4k"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ese3G9sZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C573219A89;
-	Wed,  1 Oct 2025 15:45:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C89F724A076;
+	Wed,  1 Oct 2025 15:45:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759333539; cv=none; b=lPyrSFCWDNt+4TYHYIV9w/W5M5Bhr2HgBheyySfmwyFChv0mRNzMHUXRvuFmTx0kfR/Emoy+jel6f8iEnQwbdkv1ZLOnVQNzolXVZJJF5R+61H9xk6C6+fC0uo882BsB5Lga18I8/3lmss2SEfbpiN0Bnuh8sJ6DFEXszzGTufk=
+	t=1759333547; cv=none; b=mJoq/2OsxLlY7jsmot5iaOv4nuxpEGrlussrMZT67J6uN4GRJ88CxyEPnSYDt/v+op8yJvZCAg8A7zZu6OW3raeKsy+Jt1aopM/U4s1Ecb2RcVcz+/sNeyu9pznds5RRl6LEBr89NupR9IUXuwns7sGZMCRmm+I26tN/NypOZr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759333539; c=relaxed/simple;
-	bh=C+zDEytAGVJtHdXPlshDYcbrYHV+WvMLrd6CmfU3n5E=;
+	s=arc-20240116; t=1759333547; c=relaxed/simple;
+	bh=x5yZqp2j81o6ikd9WELOhul7OQSX3CvtRTHcmQH7oc4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qCo8Ggs+HJURnll9Hrz0WyWynFuVnt0/GvPoqylNLynQzJBXHkBTAm3zUBu32D9iG8aif2KoZjWS5LQZr4fYecqfFgfM+AOkczP9ucG3qBc9lMA1IYEPu2M6ehFYsl/DFdAzgLs7KPQzWt+3SXNYTq2vlW2Bm5g39tZ1Xu6owN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hio8FR4k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 033A8C4CEF5;
-	Wed,  1 Oct 2025 15:45:38 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ouPiH+AkZu0cSnOIxq01w9/OaNXt8ldgiVn2c1Xlc/D0BcgsuTdMSC8gM89EXHeGQLws8lYogU27kIRtftDquplzzguo64IV9d99TtfgA3oxE9wf97PBm9myyeCttpv+8FP9alAvj5PAHCtIEGNBPro9txvZSWVascsgQle/nlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ese3G9sZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31518C4CEF1;
+	Wed,  1 Oct 2025 15:45:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759333539;
-	bh=C+zDEytAGVJtHdXPlshDYcbrYHV+WvMLrd6CmfU3n5E=;
+	s=k20201202; t=1759333547;
+	bh=x5yZqp2j81o6ikd9WELOhul7OQSX3CvtRTHcmQH7oc4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Hio8FR4kA5VN0FqaJFABg54URHc3ZtZuM2f5hhr38F2OCEbCbmhoEZ6QG5FCD4ocJ
-	 EvC9bBZRwtO/2jBalZ4176+ioSAAq4L3+b8rU0F3rGlWX5WwXvPDCXj4cCn/dnmvX3
-	 gwlwrjZHhF0+T72rQjf5/J+2NH420hRW8/BWwkEFl7QwN+7XYrzi0qU3Tfnkkx1Z9k
-	 PAZWAItoLXvAFQqByBxlBDJ+ubch8hb/WqWoADG2gBt7UEgIi5k58QY3p9Jm/1xtQ3
-	 k0fokyljbqM1s/G534QTz0i0aILhAFGQnQveVCZRIcuOqTLbm3as6orHe27mmqUpZB
-	 SyPdfb8kw2yTg==
-Date: Wed, 1 Oct 2025 10:45:37 -0500
-From: Rob Herring <robh@kernel.org>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-mediatek@lists.infradead.org, lee@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, matthias.bgg@gmail.com, lgirdwood@gmail.com,
-	broonie@kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	kernel@collabora.com, wenst@chromium.org,
-	igor.belwon@mentallysanemainliners.org
-Subject: Re: [PATCH v6 1/9] dt-bindings: regulator: Document MediaTek MT6316
- PMIC Regulators
-Message-ID: <20251001154537.GA1833526-robh@kernel.org>
-References: <20251001111316.31828-1-angelogioacchino.delregno@collabora.com>
- <20251001111316.31828-2-angelogioacchino.delregno@collabora.com>
+	b=Ese3G9sZMvHcld91d8f78fic/QzY+eT35PbYV9gwPsX2j3sRp1/wvJ+PItnAX3Ek9
+	 X90lHON/i90ACPFzsrtJRMemxm3NiNionj+O7hs4E8L9N5faO8lJKHahPF5/117SYI
+	 AS5Rkv7DRzBsKt5XM+2xIkNCSEXZqF6c+F7YU3ZJjiHQZlGsbpMcji9PnPQdOOTPag
+	 1gqJ7jrQPL+QB0lzSq30BhmF13y6Vzl6ijRePxfee4kmuyflHa5Cs/z9ytzmXtJ8ln
+	 W+2xZRayKrbV83ouCf3szt4yWtJtYdTWOFlk4l5GSO6CTyqe7I1Q92g1IbTIc9P0yL
+	 V8643V28kFusw==
+Date: Wed, 1 Oct 2025 16:45:43 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Conor Dooley <conor.dooley@microchip.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [RFC 3/5] pinctrl: add polarfire soc iomux0 pinmux driver
+Message-ID: <20251001-backless-cattle-a98db634d7f0@spud>
+References: <20250926-manpower-glacial-e9756c82b427@spud>
+ <20250926-unshackle-jury-79f701f97e94@spud>
+ <CACRpkdZ5RCcaNJB_3ufAgpDtdJBKfOVrMbJVAQWaVSOkY0-XNQ@mail.gmail.com>
+ <CACRpkdZo=c0BnSLm=FKRMNYKEaPAHBgtfhD9txhPofts4ApDkw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="kI56dZubP/jGKITa"
 Content-Disposition: inline
-In-Reply-To: <20251001111316.31828-2-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <CACRpkdZo=c0BnSLm=FKRMNYKEaPAHBgtfhD9txhPofts4ApDkw@mail.gmail.com>
 
-On Wed, Oct 01, 2025 at 01:13:08PM +0200, AngeloGioacchino Del Regno wrote:
-> Add bindings for the regulators found in the MediaTek MT6316 PMIC,
-> usually found in board designs using the MT6991 Dimensity 9400 and
-> on MT8196 Kompanio SoC for Chromebooks.
-> 
-> This chip is fully controlled by SPMI and has multiple variants
-> providing different phase configurations.
-> 
-> Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
-> Link: https://lore.kernel.org/r/20250715140224.206329-2-angelogioacchino.delregno@collabora.com
 
-Why do we want a link to v5 here in the git history forever? You've seen 
-Linus' recent comments on Link usage?
+--kI56dZubP/jGKITa
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> ---
->  .../regulator/mediatek,mt6316b-regulator.yaml | 46 +++++++++++++++++++
->  .../regulator/mediatek,mt6316c-regulator.yaml | 46 +++++++++++++++++++
->  .../regulator/mediatek,mt6316d-regulator.yaml | 41 +++++++++++++++++
->  3 files changed, 133 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/regulator/mediatek,mt6316b-regulator.yaml
->  create mode 100644 Documentation/devicetree/bindings/regulator/mediatek,mt6316c-regulator.yaml
->  create mode 100644 Documentation/devicetree/bindings/regulator/mediatek,mt6316d-regulator.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/regulator/mediatek,mt6316b-regulator.yaml b/Documentation/devicetree/bindings/regulator/mediatek,mt6316b-regulator.yaml
-> new file mode 100644
-> index 000000000000..e7a6b70cdab2
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/regulator/mediatek,mt6316b-regulator.yaml
-> @@ -0,0 +1,46 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/regulator/mediatek,mt6316b-regulator.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: MediaTek MT6316 BP/VP SPMI PMIC Regulators
-> +
-> +maintainers:
-> +  - AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> +
-> +description:
-> +  The MediaTek MT6316BP/VP PMICs are fully controlled by SPMI interface, both
-> +  feature four step-down DC/DC (buck) converters, and provides 2+2 Phases,
-> +  joining Buck 1+2 for the first phase, and Buck 3+4 for the second phase.
-> +
-> +properties:
-> +  compatible:
-> +    const: mediatek,mt6316b-regulator
-> +
-> +  vbuck12:
-> +    type: object
-> +    $ref: regulator.yaml#
-> +    unevaluatedProperties: false
-> +
-> +  vbuck34:
-> +    type: object
-> +    $ref: regulator.yaml#
-> +    unevaluatedProperties: false
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    pmic {
-> +      regulators {
-> +        compatible = "mediatek,mt6316b-regulator";
-> +
-> +        vbuck12 {
-> +          regulator-min-microvolt = <450000>;
-> +          regulator-max-microvolt = <965000>;
-> +          regulator-always-on;
-> +        };
-> +      };
-> +    };
+On Wed, Oct 01, 2025 at 01:36:49PM +0200, Linus Walleij wrote:
+> On Wed, Oct 1, 2025 at 1:34=E2=80=AFPM Linus Walleij <linus.walleij@linar=
+o.org> wrote:
+> > On Fri, Sep 26, 2025 at 4:33=E2=80=AFPM Conor Dooley <conor@kernel.org>=
+ wrote:
+> >
+> > > +static const struct pinctrl_pin_desc mpfs_iomux0_pinctrl_pins[] =3D {
+> > > +       PINCTRL_PIN(0, "spi0"),
+> > > +       PINCTRL_PIN(1, "spi1"),
+> > > +       PINCTRL_PIN(2, "i2c0"),
+> > > +       PINCTRL_PIN(3, "i2c1"),
+> > > +       PINCTRL_PIN(4, "can0"),
+> > > +       PINCTRL_PIN(5, "can1"),
+> > > +       PINCTRL_PIN(6, "qspi"),
+> > > +       PINCTRL_PIN(7, "uart0"),
+> > > +       PINCTRL_PIN(8, "uart1"),
+> > > +       PINCTRL_PIN(9, "uart2"),
+> > > +       PINCTRL_PIN(10, "uart3"),
+> > > +       PINCTRL_PIN(11, "uart4"),
+> > > +       PINCTRL_PIN(12, "mdio0"),
+> > > +       PINCTRL_PIN(13, "mdio1"),
+> >
+> > This looks like it is abusing the API. These things do not look like
+> > "pins" at all, rather these are all groups, right?
+>=20
+> Or maybe they are rather functions. Like there is a function spi0
+> that can be mapped to a set of pins such as spi0_grp =3D <1, 2, 3, 4...>
 
-One complete example for the pmic please rather than incomplete child 
-node examples.
+They're not actually package pins at all that are being configured here,
+it's internal routing inside the FPGA. It does operate on a function
+level, but I don't think there's a neat mapping to the pinctrl subsystem
+which (AFAIU) considers functions to contain groups, which in turn
+contain pins. I suppose it could be thought of that, for example, spi0
+is actually a function containing 4 (or 5, don't ask - or do if you want
+to read a rant about pointlessly confusing design) "pins" in 1 group.
 
-Rob
+If I could just work in terms of functions only, and avoid groups or
+pins at all, feels (to me ofc) like it'd maybe match the purpose of this
+aspect of the hardware better.
+
+> I recommend a refresher with
+> https://docs.kernel.org/driver-api/pin-control.html
+> and work from there, and avoid looking too much at other
+> drivers that don't necessarily do the right thing.
+
+
+--kI56dZubP/jGKITa
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaN1MowAKCRB4tDGHoIJi
+0gcRAP44XAvGLeqrYk2OkMBa2621o7zkzzEonTIinYljBT17owD/XXq5ppx3h4SQ
+2F9fF68YwFSJ+Rm8N0WKHgTB3TWQfwE=
+=rJ7h
+-----END PGP SIGNATURE-----
+
+--kI56dZubP/jGKITa--
 
