@@ -1,345 +1,359 @@
-Return-Path: <linux-kernel+bounces-839636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 536E7BB20DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 01:11:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D02ABBB20E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 01:12:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34B477AE4C2
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 23:09:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F17E1893AE7
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 23:12:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1536228641F;
-	Wed,  1 Oct 2025 23:11:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7377426B742;
+	Wed,  1 Oct 2025 23:12:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QOt9YZWM"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j8d7M/Zi"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6347520468D;
-	Wed,  1 Oct 2025 23:11:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759360262; cv=fail; b=r1PTGqNkOb1bUJqEtDfkiFMMrH18DwyOTgvNNsIFw13f/GATsgNqGGRumOGau49Tc/velAnYzdz/y+LyAM00tquqFiqNCFRDomVXXDFBt1St8CVOD2C64Vox2g+28TFmPTX+2+2YXxnrt9vky0D0SgQ+uUU8YVCOs3APesPwlus=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759360262; c=relaxed/simple;
-	bh=zTl7eCaM4PGTpvNXQUlOjeqgRwLqL+nwOdlskYCQktk=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=tHm3zM/KNuWQYGgpmmlUjFueOSpXtkBl1ykXabNmlm9fsGIZquyrCNAixOCb9SiITZfQ4h+Uu2DSNbid7ItODOe6DVBrQRWSkVP6a/pyT11mP769aOYQkpPFXnvkKiGfEUzdLGiaKf7CEbffoKNvaU3V3pHKwWhPlznbkTWzPFo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QOt9YZWM; arc=fail smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6E7E14A4CC
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 23:11:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759360321; cv=none; b=CwaA43KAyu6RUE9yqRIeiDhS6+aeobvek1mi80FOsR6TnAnSPXbNQZOwby+guJ5DVFqlz80GHAUqONnUedSmyMdZA8C4neqqBPlH/JFaGaTPRGbD80ldtoLyJ10/bJJaOBxNbejY6mUKwnMVhbz/aQG2PHHqyrm/+nIhEvezyiI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759360321; c=relaxed/simple;
+	bh=EoVYwOP+p0Ur4QWrj0wTbgfrG7TlL90RvLFDlvdF5Uk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GdKgAGbPStJwJaYdxNwfOuWo6ewVQqRHw0N+d/e+5F/CnZY1e5NlByLdjKQmmRMdQDlI70MzvdgaslxmA2sQEPqVcq7HABwZRGnHlOMcmeA+mqzTrpnfDeifmXVb5f1/LxJcPuaoaP4e1XFI+LBBiVmpTecABAlkFK873nS4YLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j8d7M/Zi; arc=none smtp.client-ip=192.198.163.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759360260; x=1790896260;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:mime-version;
-  bh=zTl7eCaM4PGTpvNXQUlOjeqgRwLqL+nwOdlskYCQktk=;
-  b=QOt9YZWMRreN6excHk9CdFJGtDaKwFK9gmSjXpUPMwR7PQWsVKIrVMve
-   e1xQkhZ8DvpKqD/B/EmrBOgUuax8ogad9iwWHseZ9kbS0vRaujjCzMZQh
-   J/gaXTjei3SBWGK4BV4zeyD6dbRqjnss7LVjFUONLpl1gPFwVPzJoX1mj
-   wzhMuALqRJP9jYLsy9cb1hKd4/3nfjzmDPE3OXPXDhEWjdQ53WNwEDRmJ
-   N6fMGN1OKNT9kq1Qi7av10N/B/c7Qm5PxMs3f9DHU9I0CewfxlbkKKIo1
-   B1LJydU8PiXBy9+DbCF/CMdHGrDWG/gT7zoMNTCENYM2G+4LNDwPcTkaG
-   Q==;
-X-CSE-ConnectionGUID: akejIdCORW2AAJRyrmTL5A==
-X-CSE-MsgGUID: nrodDBW6S9yF0OWqiIkogA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11569"; a="60686543"
+  t=1759360319; x=1790896319;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=EoVYwOP+p0Ur4QWrj0wTbgfrG7TlL90RvLFDlvdF5Uk=;
+  b=j8d7M/Zi4WRmVRWERYAQqlynHvirbqpTy79ttwnULekzCNerlBTq2Gid
+   W+q488I43POT5VooUnPCkb0oTks+7DPxdLvEvHte65CobGRH9nv3meX9C
+   ZaDYoESc45/4Wq8McUcvUXm4ymW+xgWDnGVwhEQv3NGo3Lyh19GOXaGiQ
+   Bw6W0gPMsbfsGQdvoovT/oqZgQ56WBf0SnolOlEY9IF9uQoJdBbHaODnR
+   GF16zg66YJZAiiPFHLCAgJteAi4igQlUQ1kknFhAwcisDbu/eX914hEOX
+   OPjO6CdiUXtzYarQTS1/URfDIhY3MsMXe8Sk1phF84lprKkJu2AItAL7K
+   w==;
+X-CSE-ConnectionGUID: fd35eXmKSFez4X+9FV2z0w==
+X-CSE-MsgGUID: FXyF8FfoQk26lswdXO7TvA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11569"; a="60686625"
 X-IronPort-AV: E=Sophos;i="6.18,308,1751266800"; 
-   d="asc'?scan'208";a="60686543"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2025 16:10:59 -0700
-X-CSE-ConnectionGUID: n3H2VG6RSuyJdOkmMW2sgw==
-X-CSE-MsgGUID: Q/phzKjzTLOwuTrTaF3miQ==
+   d="scan'208";a="60686625"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2025 16:11:59 -0700
+X-CSE-ConnectionGUID: hYMZbWhCRnGM0cadoE9SDg==
+X-CSE-MsgGUID: K6JnkKeKRbiLkZnMxKEuRw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.18,308,1751266800"; 
-   d="asc'?scan'208";a="209855307"
-Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2025 16:11:00 -0700
-Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
- fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Wed, 1 Oct 2025 16:10:59 -0700
-Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
- FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Wed, 1 Oct 2025 16:10:59 -0700
-Received: from PH7PR06CU001.outbound.protection.outlook.com (52.101.201.21) by
- edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Wed, 1 Oct 2025 16:10:58 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pLOS5S8EN7E5McZm9/JRAO+0/SfiTAw6lvY9gRiiGCZaNFtI6kBXOGKsf3VrWh+YXOXW4mevY25N2Wg3Hr5NDULxno8mulyn9iE6VQc2+bCESc6n9p2CZr+3sZi8GDAMkv8weB53rWz7zvwqTkkHeOiZpK1d0c/+JmF0bv7YUM/ssJGBqNQ6w691RHe7Zjq6zu/6fW+gngGRu3QcS7BxN03E3wgWN2cMVsvS7d6t0+LoBuUGAOOLrQb/EqT955d6MYpnNR9RookIPWWW1D370PIyZpz3hENAeIIbrxx+T73/GC5HL6n2nr4sEsQj9z8FzYKYvBKiWEH/FsBtCDVX/Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Xqe9o9mxpGnwwKLDY2zevuxv6CA+6RmBFDukkcW3dGc=;
- b=LAS6lGfS+NR3cf3+EMXnr6S2SnJoctWGavM+t+gCWUoadcUuMcDiTAGPTrVwb1av9tEiDJ3uUDfUoRZK24fMlIzR3wkrwN97fnyyfcvdZsdn6+lh80pq3y/LmKIyUyifqZ89htQRAtVghA3j7YYka4rgV3EoMQ273wu01oeb0cnQtcH5llhICUTsddeQI0IihSGVf33e0jzLzVbdXpmPyWgEsuF6GOvKAOAGEsNoKAvYsMqrkCtY7Gc64jrjBoj47QY1QrZ5bivljdB5zmL6FykfOJ9JtRJweqazv8kp2dq7cS8tRTrpRxSkoYZqxfl7G7KZoWwGqNfJ5SSsh6P5xw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CO1PR11MB5089.namprd11.prod.outlook.com (2603:10b6:303:9b::16)
- by IA1PR11MB7200.namprd11.prod.outlook.com (2603:10b6:208:42f::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.18; Wed, 1 Oct
- 2025 23:10:56 +0000
-Received: from CO1PR11MB5089.namprd11.prod.outlook.com
- ([fe80::81f7:c6c0:ca43:11c3]) by CO1PR11MB5089.namprd11.prod.outlook.com
- ([fe80::81f7:c6c0:ca43:11c3%4]) with mapi id 15.20.9160.017; Wed, 1 Oct 2025
- 23:10:56 +0000
-Message-ID: <d15ad6a2-db2e-481a-ab16-f0358e65aa8d@intel.com>
-Date: Wed, 1 Oct 2025 16:10:54 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] ice: ice_adapter: release xa entry on adapter
- allocation failure
-To: Haotian Zhang <vulab@iscas.ac.cn>, Tony Nguyen
-	<anthony.l.nguyen@intel.com>, Przemek Kitszel <przemyslaw.kitszel@intel.com>
-CC: Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	<intel-wired-lan@lists.osuosl.org>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20251001115336.1707-1-vulab@iscas.ac.cn>
-Content-Language: en-US
-From: Jacob Keller <jacob.e.keller@intel.com>
-Autocrypt: addr=jacob.e.keller@intel.com; keydata=
- xjMEaFx9ShYJKwYBBAHaRw8BAQdAE+TQsi9s60VNWijGeBIKU6hsXLwMt/JY9ni1wnsVd7nN
- J0phY29iIEtlbGxlciA8amFjb2IuZS5rZWxsZXJAaW50ZWwuY29tPsKTBBMWCgA7FiEEIEBU
- qdczkFYq7EMeapZdPm8PKOgFAmhcfUoCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AA
- CgkQapZdPm8PKOiZAAEA4UV0uM2PhFAw+tlK81gP+fgRqBVYlhmMyroXadv0lH4BAIf4jLxI
- UPEL4+zzp4ekaw8IyFz+mRMUBaS2l+cpoBUBzjgEaFx9ShIKKwYBBAGXVQEFAQEHQF386lYe
- MPZBiQHGXwjbBWS5OMBems5rgajcBMKc4W4aAwEIB8J4BBgWCgAgFiEEIEBUqdczkFYq7EMe
- apZdPm8PKOgFAmhcfUoCGwwACgkQapZdPm8PKOjbUQD+MsPBANqBUiNt+7w0dC73R6UcQzbg
- cFx4Yvms6cJjeD4BAKf193xbq7W3T7r9BdfTw6HRFYDiHXgkyoc/2Q4/T+8H
-In-Reply-To: <20251001115336.1707-1-vulab@iscas.ac.cn>
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature";
-	boundary="------------0CjROvoY1QnDfyhFSqbUeL7I"
-X-ClientProxiedBy: MW4PR04CA0266.namprd04.prod.outlook.com
- (2603:10b6:303:88::31) To CO1PR11MB5089.namprd11.prod.outlook.com
- (2603:10b6:303:9b::16)
+   d="scan'208";a="202633185"
+Received: from lkp-server01.sh.intel.com (HELO 2f2a1232a4e4) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 01 Oct 2025 16:11:57 -0700
+Received: from kbuild by 2f2a1232a4e4 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v45zH-0003Qt-1o;
+	Wed, 01 Oct 2025 23:11:55 +0000
+Date: Thu, 2 Oct 2025 07:11:53 +0800
+From: kernel test robot <lkp@intel.com>
+To: syzbot <syzbot+9db318d6167044609878@syzkaller.appspotmail.com>,
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Cc: oe-kbuild-all@lists.linux.dev
+Subject: Re: Forwarded: [PATCH] ext4: fix use-after-free in
+ ext4_ext_insert_extent()
+Message-ID: <202510020639.uRHSs90S-lkp@intel.com>
+References: <68dbf53f.a00a0220.102ee.004a.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PR11MB5089:EE_|IA1PR11MB7200:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1f36d29f-3489-482f-9948-08de013fc6b0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?K1A2aFY0RnNmTGlWd2lINWRBcGJlNGo2eVRJU1pOZ2d2Zmgwd21pSVZRQU1q?=
- =?utf-8?B?aHFkN3g3U1NrcE4zL2crYmF1bjFzWWxGcUpNcUNPWGJSQTB5SFZHYUlRcEdr?=
- =?utf-8?B?c2NrUEtRQXVyUkFHc0lIUTQvN2UxSG8wcWEvUjhra2NrMWExdlFNVFpqMm9S?=
- =?utf-8?B?QXB2Y21wMVd4eDJ1SFVaWSt2Wk5XM1BhaE5TNmxuUEkxajdObFdxZEZKeHV4?=
- =?utf-8?B?SXpKalVkSHVjK2lzR05pUm5xZlJFMVZ3NGhCVFNHVGhlL21FSTJvUVovV2FF?=
- =?utf-8?B?WDY5NjFZZE1wTmp5YXZ1clExVGhXSGV4VnhxYkV6SzRnVllIVkx0OW5mR1Fl?=
- =?utf-8?B?RENPaGs3MitNdjMraWNFU2s4Z3VKTzVkYjdUNUxjSjVxcWtDaE1wM3F2WTha?=
- =?utf-8?B?VENhd0poQU8vNEVxb08wSzhZcFBKam9VT0lNMjVHWStYV2x4OWx0Qkh6UDhr?=
- =?utf-8?B?VThlL2dDMi9tYVJubkl3ZHZyc2RrSHdHeXpsWWE0aHI4TXg2NWtadkE4UlJZ?=
- =?utf-8?B?WUh5OTNjUWdORjN4SFZyVjB2b0plY1hWdVl6VFllYTVWZmlaSW5xdDN6b1dp?=
- =?utf-8?B?S0VJenN2dmhlWVQ0ZC8xZWRlSlRodjhiWm1waGlkaXhLZ0JXSmZYbXpMYVRj?=
- =?utf-8?B?WTVPOXBmdC9TZlVFRkszbXRCbURyOTRmbU1sNldwbjVZN3FBcUczWm5IUEth?=
- =?utf-8?B?WGNWc1h5dExvai90T2pJS1RoRWMrRzhmL3UrZFdOa1FrZC9aR014VmpDMkow?=
- =?utf-8?B?aHdKY25XbWxPcDI2UDVLb0dJSzNwZ01kVHdmWWtaUDdvZTJmUWV4Q2xhbTJh?=
- =?utf-8?B?UVZKZXBjRzF1ZldqamQ2UXdlMmFxaktTTk96b0NPWHVYVjhDVmVvVlBSVDFV?=
- =?utf-8?B?dlppWGFCRjF6OXo4NHhOQlNDSVVhTWVTbzRDdDJxMG5kejRjbDdBK0xCdDk4?=
- =?utf-8?B?NENJUGc5N1J0RXc4N1k5NUN1ZmNHUDBYSkFTbnhSRU9TVWduZ2ZxQUlmUE9n?=
- =?utf-8?B?a1RodmtWREVqZmhRaU53YlgreDNROGhGenlHMTVXTzM2K2JIVzc1QlJSUkph?=
- =?utf-8?B?OFBtKzkvcStNbW8reVhZOENqcVord3d5VEI3ek5EekZXV1A3MFJXQkMrRXVh?=
- =?utf-8?B?NlpJeDlVVThFSmVoYTJlSFBmQjE4M2UvTUJjdnYzalhXV0hNNlpRN010Szdi?=
- =?utf-8?B?T2R4d0NpdlBLVVRFOGhrTkY5ODlMOHVsMzdIdm54azNORFNqTkh3SmxtbElq?=
- =?utf-8?B?YWlROGxFanpSYm9KVEdhQUlxdEY5eFcvTUg0NFhJSEptUllVdWJUVlluaGt6?=
- =?utf-8?B?T1BaSEEzZVdpT1BOTmkvcC80eXdJZzI5enlhUW5Zd2FvdmJBYzYvYjZjZi9P?=
- =?utf-8?B?Q3ZwbTZsWDBhLzdXQXJMS2ZyeXNBV1h6TW0yTWpMbi95Qzhxdk4wZU04OGFp?=
- =?utf-8?B?cStNN2RtWXluNGlMV3l5R3pUMXJWU3FyQW8rTXIxTHpKOURQb0YySGdSSE9F?=
- =?utf-8?B?dldvUEk1WmRKd2w4Z2ovb0MvaHBZd3JrMTErZlowaThJQTFlbENCS2dhdWZJ?=
- =?utf-8?B?cVFWdjlWMFQyaGt3eXZQNWlETlNuelhyVzRqamtWdFYya2lSaUFGY2ZKRmcy?=
- =?utf-8?B?c3EwZ0J2VXkvd0FRNitmaUN0V2ZGaTZPN2Ewcjh3MkdMWG4yaG1nSFAwek44?=
- =?utf-8?B?VXdvSDFlUVMwOFdBN2F5Qlc2Ym1RSUFTekxTOXRKUTVwSjJwUGtiSFNaK2E4?=
- =?utf-8?B?bzVlUHUwTnQzSzRWd3grVEovaVFrWFE0NkRnekh5dCt6bzloaTkzUmppb1Rk?=
- =?utf-8?B?bGdlVkJ0OGJXK2hPUlJLc01oRktvbmthd25kSVFFOGxZMDB5ajZYczZOZW5X?=
- =?utf-8?B?YmlhSWdQMGFaV1JHbkdoMG5qdHcxUnQ0empjcDVwOTkreWkrVk1vc0tWUlFV?=
- =?utf-8?Q?vlGmh8pl4pCw9DCfuOfe878arg6GmpSX?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR11MB5089.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?SmhURVV1VlVBRFQ0TXZoYUUrUE1qRFVLTGRxcTg2M3FwVWIwWmEzbTJxZERy?=
- =?utf-8?B?VWRzVURHTzJWc1VRSTdYMWtaM2dNbVM5MHNpV2tnZ201QmZjZ1NxSjhsOERH?=
- =?utf-8?B?c0NQMkVIQ2tLdGttOEpSVFFzS0s2UGsreE1ENm1pTDNOZ0RydWZuSmYrNVRu?=
- =?utf-8?B?Um5mSUVwV0ZQenZUczJxbVdEUUhaRi9kNUZ2OTRBTkJkMTdsd2UzTE92d1Ra?=
- =?utf-8?B?YzRYM29Ma0JCa3R4RHZPVkIwWFdaR0Q3OHUzR3NYaWFFSEJtaTYyWEdjajFM?=
- =?utf-8?B?QktNZU5Ia2pnbkJoOWZVdy9rakk0ZHdmSlJsZHVSZnVpQTBtQXJrODdxQldw?=
- =?utf-8?B?eG1MdjRDUGpXMG1tbFBVc3dvekZwM09xV1dMREFCUThkY0NGSFlGMFdhTkJj?=
- =?utf-8?B?MDhZV3ZDVFhUZ291N1QwK29pRmpud0dDVExwNjMzTGZRMHhKbWdxY01iRy96?=
- =?utf-8?B?aEVzVUlCV1RGemFBVmhpZXBJZzlXOWsvZUM5YWIxUE16YjRSQlVjZVlua2hD?=
- =?utf-8?B?RmI4YU5OV3BPY015bklkODYxMnN3cFVMWkZEckRJYUZrYldsdm12eER2ZzVS?=
- =?utf-8?B?OVBZdks3ckt5VEFEc1N6QU9kMkJvRXlzS0p0NUFsNkN6c1VTZUx3TjdyWFJu?=
- =?utf-8?B?eW16QkszaHkvODNDVDFOcUM3cmF1YmxVVThrVk1oNjNybUFRdVVRdVRxU2E5?=
- =?utf-8?B?ajFmQUp5dkt1VlAwa1hhYW9BZUhzREdhc2t6Q3R2TXRaaDU5alVTb2hiMUc3?=
- =?utf-8?B?MysyYXhIemd1Nm1PQStnWVpubmlUM1dGeHUrQWp2aThzOXZ6bjRjVGtWdkcw?=
- =?utf-8?B?T0VPT0lqUCtKcUttclFMeUxRN3RGQ0pqWkRNMU9Ld0w3TVBwOWpTY0VRemFi?=
- =?utf-8?B?VUZmQWRYbnN4Z3pHZDBQMWNNYzVuSXBIdkdvSUNYU2FQTllQN0NOeHFnVVhC?=
- =?utf-8?B?MTllYlhQaWdFOVpqdVZOdFNyaHZsT2NxUlpsekYzOW9wTFpmUk03aGY4K2xL?=
- =?utf-8?B?bjhsZ0lWd2tUKzBzV2tSSDhINUNYRVZrNU9od2RHUHpGNHh6bGVmVmdQaGJo?=
- =?utf-8?B?cnhmOG5FRmlrcEdnUjVqa3NNcFZnbUtJQXZ5TStBTVhQblpSMDR2NVQ5YU16?=
- =?utf-8?B?eGVsTHJZM2hNVlV6VTBZWnRRSSt0eEQ2Yjc5Vys1K05sY0lwOWZjNTdheERJ?=
- =?utf-8?B?TDhvMXdncDEvUStuR3F3NEk4ejVtZW9VRVFGeWFVOWIrWnhqallIaVhOV0RB?=
- =?utf-8?B?eHNPZHJyRHNXc3Z5YlJqM1N1KzhWemp0OGtzNGJTVVhJSnl1elJYRHN6TGxm?=
- =?utf-8?B?VjRvdVlDUU40UmhaL0FuTHo4RHJFbmV5Rko3a1cramRyeFYvYzdNWmo1RVVr?=
- =?utf-8?B?cTdvOElFMktKU3E2NVljM0dnbkc2NjFEZDI5YVg5MnN1V0hZSnNpa1FFMkRU?=
- =?utf-8?B?YVVQUG1pcHJXQ0Y5UGZSWm0zOExLTGVHZ3VBQTlSUVZjUWJtbU9SWUQrUEhR?=
- =?utf-8?B?N20xSlN0U3pyTS82UnZjSTFxT09JN3JRNmV3TjhZSldldkQySmk2Q09tUE9C?=
- =?utf-8?B?OTJPaUwvUDBaTFRIOE5iT09sNWRYc1NuaWJZajJlaUZFandYSHA5bW5hTjBM?=
- =?utf-8?B?cmp1dmQ3ZG0zTE1sazVhenlNSXdzZG04biszdUI2WXZFSWtGWDFwTURVT0ZN?=
- =?utf-8?B?MW1pbTM1NFZONmRnWTM1MjVnaTdYWjN0WEVxQ0FpV3NjQjM4M3ZLUStPUDRF?=
- =?utf-8?B?dDhDbjhMZE1GM0hUYlZUMlVvZ0FRNXRwV001WmRQbzlUZ1RVVmhCYzlLRWIx?=
- =?utf-8?B?RFY1eEpRVXdJdGV5cEdvRG5mOUtSRzFQZFBpVTE3cTMwUkF4SVNSZ1pTd0t1?=
- =?utf-8?B?NndLN3ZhYTNIUXljb2tLVG9pMS9Zc3NONTFPbENPVnpEWGwxS1ozeWV5UGUz?=
- =?utf-8?B?THU0YWovV1hEMUhtTjlDWVkwa3NhL1FEdStsVUVuTkdnNGh1c3BzOWJmbjdm?=
- =?utf-8?B?S2VmcTlPRjdQajU4Nm5Ua1dkYTdjak11QWV0bnp5M05tVDJDcCttUC9TTFoz?=
- =?utf-8?B?MktCTmxoYlNjalRGbEMxZEZqdXU5RkRCNzdhU09CK1BrMWlJZkFINkxOQ1o4?=
- =?utf-8?B?S2N4eTdVTnZZSGExWFpwZUZGQ1lKY3QrZjJYcXhlWmE2N0VFY3U3NTdKdnQv?=
- =?utf-8?B?TVE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1f36d29f-3489-482f-9948-08de013fc6b0
-X-MS-Exchange-CrossTenant-AuthSource: CO1PR11MB5089.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2025 23:10:56.3063
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zlS2Grap3Bn7xn6ckCnH65soxYhXnjD7RxELdJa4m3qYeWSIrUVQJ6IP+xPgDUP25nBSubgx1qDpPSJdwWG0X1WEABMtVdafME7DhCv9W2Q=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB7200
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <68dbf53f.a00a0220.102ee.004a.GAE@google.com>
 
---------------0CjROvoY1QnDfyhFSqbUeL7I
-Content-Type: multipart/mixed; boundary="------------6a3Kg0FumdqnWL2SWPj6y15I";
- protected-headers="v1"
-From: Jacob Keller <jacob.e.keller@intel.com>
-To: Haotian Zhang <vulab@iscas.ac.cn>,
- Tony Nguyen <anthony.l.nguyen@intel.com>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, intel-wired-lan@lists.osuosl.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-ID: <d15ad6a2-db2e-481a-ab16-f0358e65aa8d@intel.com>
-Subject: Re: [PATCH v3] ice: ice_adapter: release xa entry on adapter
- allocation failure
-References: <20251001115336.1707-1-vulab@iscas.ac.cn>
-In-Reply-To: <20251001115336.1707-1-vulab@iscas.ac.cn>
+Hi syzbot,
 
---------------6a3Kg0FumdqnWL2SWPj6y15I
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+kernel test robot noticed the following build warnings:
 
+[auto build test WARNING on tytso-ext4/dev]
+[also build test WARNING on linus/master v6.17 next-20250929]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
+url:    https://github.com/intel-lab-lkp/linux/commits/syzbot/Forwarded-PATCH-ext4-fix-use-after-free-in-ext4_ext_insert_extent/20250930-232453
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git dev
+patch link:    https://lore.kernel.org/r/68dbf53f.a00a0220.102ee.004a.GAE%40google.com
+patch subject: Forwarded: [PATCH] ext4: fix use-after-free in ext4_ext_insert_extent()
+config: arc-randconfig-r073-20251001 (https://download.01.org/0day-ci/archive/20251002/202510020639.uRHSs90S-lkp@intel.com/config)
+compiler: arc-linux-gcc (GCC) 13.4.0
 
-On 10/1/2025 4:53 AM, Haotian Zhang wrote:
-> When ice_adapter_new() fails, the reserved XArray entry created by
-> xa_insert() is not released. This causes subsequent insertions at
-> the same index to return -EBUSY, potentially leading to
-> NULL pointer dereferences.
->=20
-> Reorder the operations as suggested by Przemek Kitszel:
-> 1. Check if adapter already exists (xa_load)
-> 2. Reserve the XArray slot (xa_reserve)
-> 3. Allocate the adapter (ice_adapter_new)
-> 4. Store the adapter (xa_store)
->=20
-> Fixes: 0f0023c649c7 ("ice: do not init struct ice_adapter more times th=
-an needed")
-> Suggested-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-> Suggested-by: Jacob Keller <jacob.e.keller@intel.com>
-> Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
->=20
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510020639.uRHSs90S-lkp@intel.com/
 
-Thanks. I think this flow is a bit easier to understand and everything
-works well now.
+New smatch warnings:
+fs/ext4/extents.c:2089 ext4_ext_insert_extent() warn: inconsistent indenting
 
-Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
+Old smatch warnings:
+arch/arc/include/asm/thread_info.h:62 current_thread_info() error: uninitialized symbol 'sp'.
+fs/ext4/extents.c:4456 ext4_ext_map_blocks() error: uninitialized symbol 'ex'.
+fs/ext4/extents.c:4456 ext4_ext_map_blocks() error: uninitialized symbol 'depth'.
 
-> ---
-> Changes in v3:
->   - Reorder xa_load/xa_reserve/ice_adapter_new/xa_store calls as
->     suggested by Przemek Kitszel, instead of just adding xa_release().
-> Changes in v2:
->   - Instead of checking the return value of xa_store(), fix the real bu=
-g
->     where a failed ice_adapter_new() would leave a stale entry in the
->     XArray.
->   - Use xa_release() to clean up the reserved entry, as suggested by
->     Jacob Keller.
-> ---
->  drivers/net/ethernet/intel/ice/ice_adapter.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
->=20
-> diff --git a/drivers/net/ethernet/intel/ice/ice_adapter.c b/drivers/net=
-/ethernet/intel/ice/ice_adapter.c
-> index b53561c34708..0a8a48cd4bce 100644
-> --- a/drivers/net/ethernet/intel/ice/ice_adapter.c
-> +++ b/drivers/net/ethernet/intel/ice/ice_adapter.c
-> @@ -99,19 +99,21 @@ struct ice_adapter *ice_adapter_get(struct pci_dev =
-*pdev)
-> =20
->  	index =3D ice_adapter_xa_index(pdev);
->  	scoped_guard(mutex, &ice_adapters_mutex) {
-> -		err =3D xa_insert(&ice_adapters, index, NULL, GFP_KERNEL);
-> -		if (err =3D=3D -EBUSY) {
-> -			adapter =3D xa_load(&ice_adapters, index);
-> +		adapter =3D xa_load(&ice_adapters, index);
-> +		if (adapter) {
->  			refcount_inc(&adapter->refcount);
->  			WARN_ON_ONCE(adapter->index !=3D ice_adapter_index(pdev));
->  			return adapter;
->  		}
-> +		err =3D xa_reserve(&ice_adapters, index, GFP_KERNEL);
->  		if (err)
->  			return ERR_PTR(err);
-> =20
->  		adapter =3D ice_adapter_new(pdev);
-> -		if (!adapter)
-> +		if (!adapter) {
-> +			xa_release(&ice_adapters, index);
+vim +2089 fs/ext4/extents.c
 
-Strictly we might not actually need xa_release now, because xa_load will
-return NULL on a reserved entry, then xa_reserve will be a no-op if the
-entry is already reserved, I believe, but I think its best to keep it
-for clarity and because it frees up otherwise unused memory which seems
-important since ice_adapter_new should only really fail if we're out of
-memory. Additionally, this is an error path and not something that
-happens every run so it is unlikely to be part of a performance critical
-bottleneck.
+  1969	
+  1970	/*
+  1971	 * ext4_ext_insert_extent:
+  1972	 * tries to merge requested extent into the existing extent or
+  1973	 * inserts requested extent as new one into the tree,
+  1974	 * creating new leaf in the no-space case.
+  1975	 */
+  1976	struct ext4_ext_path *
+  1977	ext4_ext_insert_extent(handle_t *handle, struct inode *inode,
+  1978			       struct ext4_ext_path *path,
+  1979			       struct ext4_extent *newext, int gb_flags)
+  1980	{
+  1981		struct ext4_extent_header *eh;
+  1982		struct ext4_extent *ex, *fex;
+  1983		struct ext4_extent *nearex; /* nearest extent */
+  1984		int depth, len, err = 0;
+  1985		ext4_lblk_t next;
+  1986		int mb_flags = 0, unwritten;
+  1987	
+  1988		if (gb_flags & EXT4_GET_BLOCKS_DELALLOC_RESERVE)
+  1989			mb_flags |= EXT4_MB_DELALLOC_RESERVED;
+  1990		if (unlikely(ext4_ext_get_actual_len(newext) == 0)) {
+  1991			EXT4_ERROR_INODE(inode, "ext4_ext_get_actual_len(newext) == 0");
+  1992			err = -EFSCORRUPTED;
+  1993			goto errout;
+  1994		}
+  1995		depth = ext_depth(inode);
+  1996		ex = path[depth].p_ext;
+  1997		eh = path[depth].p_hdr;
+  1998		if (unlikely(path[depth].p_hdr == NULL)) {
+  1999			EXT4_ERROR_INODE(inode, "path[%d].p_hdr == NULL", depth);
+  2000			err = -EFSCORRUPTED;
+  2001			goto errout;
+  2002		}
+  2003	
+  2004		/* try to insert block into found extent and return */
+  2005		if (ex && !(gb_flags & EXT4_GET_BLOCKS_PRE_IO)) {
+  2006	
+  2007			/*
+  2008			 * Try to see whether we should rather test the extent on
+  2009			 * right from ex, or from the left of ex. This is because
+  2010			 * ext4_find_extent() can return either extent on the
+  2011			 * left, or on the right from the searched position. This
+  2012			 * will make merging more effective.
+  2013			 */
+  2014			if (ex < EXT_LAST_EXTENT(eh) &&
+  2015			    (le32_to_cpu(ex->ee_block) +
+  2016			    ext4_ext_get_actual_len(ex) <
+  2017			    le32_to_cpu(newext->ee_block))) {
+  2018				ex += 1;
+  2019				goto prepend;
+  2020			} else if ((ex > EXT_FIRST_EXTENT(eh)) &&
+  2021				   (le32_to_cpu(newext->ee_block) +
+  2022				   ext4_ext_get_actual_len(newext) <
+  2023				   le32_to_cpu(ex->ee_block)))
+  2024				ex -= 1;
+  2025	
+  2026			/* Try to append newex to the ex */
+  2027			if (ext4_can_extents_be_merged(inode, ex, newext)) {
+  2028				ext_debug(inode, "append [%d]%d block to %u:[%d]%d"
+  2029					  "(from %llu)\n",
+  2030					  ext4_ext_is_unwritten(newext),
+  2031					  ext4_ext_get_actual_len(newext),
+  2032					  le32_to_cpu(ex->ee_block),
+  2033					  ext4_ext_is_unwritten(ex),
+  2034					  ext4_ext_get_actual_len(ex),
+  2035					  ext4_ext_pblock(ex));
+  2036				err = ext4_ext_get_access(handle, inode,
+  2037							  path + depth);
+  2038				if (err)
+  2039					goto errout;
+  2040				unwritten = ext4_ext_is_unwritten(ex);
+  2041				ex->ee_len = cpu_to_le16(ext4_ext_get_actual_len(ex)
+  2042						+ ext4_ext_get_actual_len(newext));
+  2043				if (unwritten)
+  2044					ext4_ext_mark_unwritten(ex);
+  2045				nearex = ex;
+  2046				goto merge;
+  2047			}
+  2048	
+  2049	prepend:
+  2050			/* Try to prepend newex to the ex */
+  2051			if (ext4_can_extents_be_merged(inode, newext, ex)) {
+  2052				ext_debug(inode, "prepend %u[%d]%d block to %u:[%d]%d"
+  2053					  "(from %llu)\n",
+  2054					  le32_to_cpu(newext->ee_block),
+  2055					  ext4_ext_is_unwritten(newext),
+  2056					  ext4_ext_get_actual_len(newext),
+  2057					  le32_to_cpu(ex->ee_block),
+  2058					  ext4_ext_is_unwritten(ex),
+  2059					  ext4_ext_get_actual_len(ex),
+  2060					  ext4_ext_pblock(ex));
+  2061				err = ext4_ext_get_access(handle, inode,
+  2062							  path + depth);
+  2063				if (err)
+  2064					goto errout;
+  2065	
+  2066				unwritten = ext4_ext_is_unwritten(ex);
+  2067				ex->ee_block = newext->ee_block;
+  2068				ext4_ext_store_pblock(ex, ext4_ext_pblock(newext));
+  2069				ex->ee_len = cpu_to_le16(ext4_ext_get_actual_len(ex)
+  2070						+ ext4_ext_get_actual_len(newext));
+  2071				if (unwritten)
+  2072					ext4_ext_mark_unwritten(ex);
+  2073				nearex = ex;
+  2074				goto merge;
+  2075			}
+  2076		}
+  2077	
+  2078		depth = ext_depth(inode);
+  2079		eh = path[depth].p_hdr;
+  2080		if (le16_to_cpu(eh->eh_entries) < le16_to_cpu(eh->eh_max))
+  2081			goto has_space;
+  2082	
+  2083		/* probably next leaf has space for us? */
+  2084		fex = EXT_LAST_EXTENT(eh);
+  2085		next = EXT_MAX_BLOCKS;
+  2086		if (le16_to_cpu(eh->eh_magic) != EXT4_EXT_MAGIC ||
+  2087		   le16_to_cpu(eh->eh_entries) == 0) {
+  2088			EXT4_ERROR_INODE(inode, "corrupted extent header");
+> 2089			 err = -EFSCORRUPTED;
+  2090			goto errout;
+  2091		}
+  2092		if (le32_to_cpu(newext->ee_block) > le32_to_cpu(fex->ee_block))
+  2093			next = ext4_ext_next_leaf_block(path);
+  2094		if (next != EXT_MAX_BLOCKS) {
+  2095			struct ext4_ext_path *npath;
+  2096	
+  2097			ext_debug(inode, "next leaf block - %u\n", next);
+  2098			npath = ext4_find_extent(inode, next, NULL, gb_flags);
+  2099			if (IS_ERR(npath)) {
+  2100				err = PTR_ERR(npath);
+  2101				goto errout;
+  2102			}
+  2103			BUG_ON(npath->p_depth != path->p_depth);
+  2104			eh = npath[depth].p_hdr;
+  2105			if (le16_to_cpu(eh->eh_entries) < le16_to_cpu(eh->eh_max)) {
+  2106				ext_debug(inode, "next leaf isn't full(%d)\n",
+  2107					  le16_to_cpu(eh->eh_entries));
+  2108				ext4_free_ext_path(path);
+  2109				path = npath;
+  2110				goto has_space;
+  2111			}
+  2112			ext_debug(inode, "next leaf has no free space(%d,%d)\n",
+  2113				  le16_to_cpu(eh->eh_entries), le16_to_cpu(eh->eh_max));
+  2114			ext4_free_ext_path(npath);
+  2115		}
+  2116	
+  2117		/*
+  2118		 * There is no free space in the found leaf.
+  2119		 * We're gonna add a new leaf in the tree.
+  2120		 */
+  2121		if (gb_flags & EXT4_GET_BLOCKS_METADATA_NOFAIL)
+  2122			mb_flags |= EXT4_MB_USE_RESERVED;
+  2123		path = ext4_ext_create_new_leaf(handle, inode, mb_flags, gb_flags,
+  2124						path, newext);
+  2125		if (IS_ERR(path))
+  2126			return path;
+  2127		depth = ext_depth(inode);
+  2128		eh = path[depth].p_hdr;
+  2129	
+  2130	has_space:
+  2131		nearex = path[depth].p_ext;
+  2132	
+  2133		err = ext4_ext_get_access(handle, inode, path + depth);
+  2134		if (err)
+  2135			goto errout;
+  2136	
+  2137		if (!nearex) {
+  2138			/* there is no extent in this leaf, create first one */
+  2139			ext_debug(inode, "first extent in the leaf: %u:%llu:[%d]%d\n",
+  2140					le32_to_cpu(newext->ee_block),
+  2141					ext4_ext_pblock(newext),
+  2142					ext4_ext_is_unwritten(newext),
+  2143					ext4_ext_get_actual_len(newext));
+  2144			nearex = EXT_FIRST_EXTENT(eh);
+  2145		} else {
+  2146			if (le32_to_cpu(newext->ee_block)
+  2147				   > le32_to_cpu(nearex->ee_block)) {
+  2148				/* Insert after */
+  2149				ext_debug(inode, "insert %u:%llu:[%d]%d before: "
+  2150						"nearest %p\n",
+  2151						le32_to_cpu(newext->ee_block),
+  2152						ext4_ext_pblock(newext),
+  2153						ext4_ext_is_unwritten(newext),
+  2154						ext4_ext_get_actual_len(newext),
+  2155						nearex);
+  2156				nearex++;
+  2157			} else {
+  2158				/* Insert before */
+  2159				BUG_ON(newext->ee_block == nearex->ee_block);
+  2160				ext_debug(inode, "insert %u:%llu:[%d]%d after: "
+  2161						"nearest %p\n",
+  2162						le32_to_cpu(newext->ee_block),
+  2163						ext4_ext_pblock(newext),
+  2164						ext4_ext_is_unwritten(newext),
+  2165						ext4_ext_get_actual_len(newext),
+  2166						nearex);
+  2167			}
+  2168			len = EXT_LAST_EXTENT(eh) - nearex + 1;
+  2169			if (len > 0) {
+  2170				ext_debug(inode, "insert %u:%llu:[%d]%d: "
+  2171						"move %d extents from 0x%p to 0x%p\n",
+  2172						le32_to_cpu(newext->ee_block),
+  2173						ext4_ext_pblock(newext),
+  2174						ext4_ext_is_unwritten(newext),
+  2175						ext4_ext_get_actual_len(newext),
+  2176						len, nearex, nearex + 1);
+  2177				memmove(nearex + 1, nearex,
+  2178					len * sizeof(struct ext4_extent));
+  2179			}
+  2180		}
+  2181	
+  2182		le16_add_cpu(&eh->eh_entries, 1);
+  2183		path[depth].p_ext = nearex;
+  2184		nearex->ee_block = newext->ee_block;
+  2185		ext4_ext_store_pblock(nearex, ext4_ext_pblock(newext));
+  2186		nearex->ee_len = newext->ee_len;
+  2187	
+  2188	merge:
+  2189		/* try to merge extents */
+  2190		if (!(gb_flags & EXT4_GET_BLOCKS_PRE_IO))
+  2191			ext4_ext_try_to_merge(handle, inode, path, nearex);
+  2192	
+  2193		/* time to correct all indexes above */
+  2194		err = ext4_ext_correct_indexes(handle, inode, path);
+  2195		if (err)
+  2196			goto errout;
+  2197	
+  2198		err = ext4_ext_dirty(handle, inode, path + path->p_depth);
+  2199		if (err)
+  2200			goto errout;
+  2201	
+  2202		return path;
+  2203	
+  2204	errout:
+  2205		ext4_free_ext_path(path);
+  2206		return ERR_PTR(err);
+  2207	}
+  2208	
 
-Thanks!
-
->  			return ERR_PTR(-ENOMEM);
-> +		}
->  		xa_store(&ice_adapters, index, adapter, GFP_KERNEL);
->  	}
->  	return adapter;
-
-
---------------6a3Kg0FumdqnWL2SWPj6y15I--
-
---------------0CjROvoY1QnDfyhFSqbUeL7I
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wnoEABYIACMWIQQgQFSp1zOQVirsQx5qll0+bw8o6AUCaN20/wUDAAAAAAAKCRBqll0+bw8o6LZX
-AQDymcfL8jAc7f+MZhj61W/FMb5VfitfYV7Aw9QKoPESCgD4op1kiniSm67ZBLUshWrM5IR5j5WL
-7NL4VwTnSYzSDQ==
-=Smwe
------END PGP SIGNATURE-----
-
---------------0CjROvoY1QnDfyhFSqbUeL7I--
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
