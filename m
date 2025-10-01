@@ -1,115 +1,99 @@
-Return-Path: <linux-kernel+bounces-838263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35164BAED52
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 02:00:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F28FBBAED59
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 02:01:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E892A3ACAE2
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 00:00:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29C7A7ACEA4
+	for <lists+linux-kernel@lfdr.de>; Tue, 30 Sep 2025 23:59:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F43127B329;
-	Wed,  1 Oct 2025 00:00:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A012935942;
+	Wed,  1 Oct 2025 00:01:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b="TghmYT0c"
-Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AdK7wDUh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83A09299AA9
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 00:00:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEAF3139E;
+	Wed,  1 Oct 2025 00:01:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759276814; cv=none; b=l3luqpRcPyRrIGqWrStMlsx0TSdv8ZyKoCPpPniWmchxGY6GQ3l0vXcmvDI5xNMIMt11aOJ9/+kX2Gd0R20MfOn3+IeVcIHPGgUF+C2tDlpsRqCmOp6/9BW2wrdr57zo0dyeGz7RxijXWmqkVEg9RFvpz56BWaTRyN0wjUZFJ9M=
+	t=1759276874; cv=none; b=F4neBTNeP99vQDzZf7456tu7C2Y2vFBY9bGrdkeGN9U6bdJ5nGhfMGIfKlOJxh5koQhFA/wF02gNMO1DpYgOMbW9BK0h43V1TYa3ulBgYchkRlyOW+vFaizAaUetM9J8c5DZug5Hxj4NTTU+Z2hSJGx7pN/pwh7cDOr3pkR6wb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759276814; c=relaxed/simple;
-	bh=UeF2kqlCiIsaahRpM1/ipTFg2h1NF4GwDR0zFLgVyTc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Y32u2wO4tqD5rKKWc27rlZ5yXFf6Mofv/dRYJoLUUif9FbJYbp+2Ldf1zn1ImEabxEdXdsyLcers4CMMRcq+hfN+qss4iTnkYcLE5kM1uRzYM11czF+LSQAdPoD/I/QXnsW0Z+T+tTpb6o0wciNYxBwpgnQYUZCzRA7C8Ui7lWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b=TghmYT0c; arc=none smtp.client-ip=185.67.36.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout01.posteo.de (Postfix) with ESMTPS id D0360240027
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 02:00:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.net; s=2017;
-	t=1759276804; bh=kVsZQDI/xfxsAZ5IkF6mAwe7hS/maPtJ1Z1KLoSdD6g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
-	 From;
-	b=TghmYT0cobh/aAWpE/+WC3uSIfn34a/88xLyR25VAxgW+wWfLGCcUsgKkx1Zil26o
-	 lMnz73FpUb581PBoSvA7RGl0VNur0Wfv8uMYsTzBVgkZlN1MSE8etqDiWT+FZPGfJ6
-	 /MQzTUR9YH3VOg4bWvKEJWbqxkkdJZ8LdyI3+5TSVwuODcTwa/RC4K/02da+XXtx5i
-	 ktXqbbFDiagBAhhkRvj50vEKoJoshebNRJe3dtPs/jsg7k4yIBk1zhpz/44Y4WmX9y
-	 YbW2zJ0RMrLfV8r8sF7WLG/GyvGaJkOiGvX5ZzkH87BooP5RWwvZMu1/usgGxH/CmV
-	 ebfMNKnwljGfg==
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4cbw6C5Mq1z6v0R;
-	Wed,  1 Oct 2025 02:00:03 +0200 (CEST)
-From: Charalampos Mitrodimas <charmitro@posteo.net>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Greg KH <greg@kroah.com>,  Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>,  Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the tty tree
-In-Reply-To: <20250729151404.03ac580e@canb.auug.org.au>
-References: <20250729151404.03ac580e@canb.auug.org.au>
-Date: Wed, 01 Oct 2025 00:00:04 +0000
-Message-ID: <87frc3sd8d.fsf@posteo.net>
+	s=arc-20240116; t=1759276874; c=relaxed/simple;
+	bh=OS51U7OU5GJ0yf/o9GaQhMdAvaYjkphStJrxtY7XLnM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SI5q1jBs96O+g0DHcntZpmzKO/Siq34KS3TEUKEG2NvhxYq/9KxVoiIhRW+RoAi95aK34Id2HWF9FbRsHeZfJIBfUQfwW/SRikxK/KiRBeEAjowQ5x4wN1wQ5ueMjOhKQOsrvN/SBEnLPlzuNxLPqmy0VzeKbo89buJpPA8eEfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AdK7wDUh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04E64C4CEF0;
+	Wed,  1 Oct 2025 00:01:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759276873;
+	bh=OS51U7OU5GJ0yf/o9GaQhMdAvaYjkphStJrxtY7XLnM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AdK7wDUhqAanqU5rG9sXWDlEBCTU3CexIcGMHyiKw0YKz/JijEWlO59/TSW74OgXD
+	 BZlO5Nwdwd/OIoyB68U8hG11JOyLJWTOyVPrhFiiTvLnzJMKJ5o+9YXZH5CCkBWqO5
+	 OmQKto6Kx3VWX/IvEa+ea8whSIqr1PJoxOMrV61jzV3UmYA1mYlWy1alF+PvBeHccX
+	 Pj0L3iNJzg86fdKGykOFi6+p0bpWvrhhkOmrmuIgNQ/DnJZLPpEsFbcV5kzcjc34RE
+	 pTFSuiN+m9sEa3haCPGUtFrJuQRDoKqWJednXnht0UBdX3QSCmpDeLvw0fbBUmzwkz
+	 d8aqFwpcOLxpw==
+Date: Tue, 30 Sep 2025 17:01:11 -0700
+From: Drew Fustini <fustini@kernel.org>
+To: Michal Wilczynski <m.wilczynski@samsung.com>
+Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>, Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Elle Rhumsaa <elle@weathered-steel.dev>
+Subject: Re: [PATCH v15 5/7] dt-bindings: pwm: thead: Add T-HEAD TH1520 PWM
+ controller
+Message-ID: <aNxvR5eNAB3NKbtT@x1>
+References: <20250930-rust-next-pwm-working-fan-for-sending-v15-0-5661c3090877@samsung.com>
+ <CGME20250930122735eucas1p1c49ed11a4a48155c123ead6aec4b64a2@eucas1p1.samsung.com>
+ <20250930-rust-next-pwm-working-fan-for-sending-v15-5-5661c3090877@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250930-rust-next-pwm-working-fan-for-sending-v15-5-5661c3090877@samsung.com>
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+On Tue, Sep 30, 2025 at 02:20:36PM +0200, Michal Wilczynski wrote:
+> Add the Device Tree binding documentation for the T-HEAD
+> TH1520 SoC PWM controller.
+> 
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Tested-by: Drew Fustini <fustini@kernel.org>
 
-> Hi all,
->
-> After merging the tty tree, today's linux-next build (x86_64
-> modules_install) failed like this:
->
-> depmod: ERROR: Cycle detected: 8250 -> 8250_base -> 8250
-> depmod: ERROR: Found 2 modules in dependency cycles!
+Minor comment: if you do end doing another rev for other reasons, then
+please remove the Tested-by and use this instead:
 
-The cycle was introduced by commit
+Acked-by: Drew Fustini <fustini@kernel.org>
 
-  b20d6576cdb3 ("serial: 8250: export RSA functions")
-
-which exported RSA functions from 8250.ko to 8250_base.ko to fix this
-issue:
-
-  ERROR: modpost: "rsa_autoconfig" [drivers/tty/serial/8250/8250_base.ko] undefined!
-  ERROR: modpost: "rsa_reset" [drivers/tty/serial/8250/8250_base.ko] undefined!
-  ERROR: modpost: "rsa_disable" [drivers/tty/serial/8250/8250_base.ko] undefined!
-  ERROR: modpost: "rsa_enable" [drivers/tty/serial/8250/8250_base.ko] undefined!
-
-which was a regression introduced in this patchset[1].
-
-Before this patchset there's no issue at all:
-
-  INSTALL /tmp/test_cycle/lib/modules/6.16.0-rc2/kernel/drivers/tty/serial/8250/8250.ko
-  INSTALL /tmp/test_cycle/lib/modules/6.16.0-rc2/kernel/drivers/tty/serial/8250/8250_base.ko
-  INSTALL /tmp/test_cycle/lib/modules/6.16.0-rc2/kernel/drivers/tty/serial/8250/8250_exar.ko
-  INSTALL /tmp/test_cycle/lib/modules/6.16.0-rc2/kernel/drivers/tty/serial/8250/8250_lpss.ko
-  INSTALL /tmp/test_cycle/lib/modules/6.16.0-rc2/kernel/drivers/tty/serial/8250/8250_mid.ko
-  INSTALL /tmp/test_cycle/lib/modules/6.16.0-rc2/kernel/drivers/tty/serial/8250/8250_pci.ko
-  INSTALL /tmp/test_cycle/lib/modules/6.16.0-rc2/kernel/drivers/tty/serial/8250/8250_pericom.ko
-  INSTALL /tmp/test_cycle/lib/modules/6.16.0-rc2/kernel/drivers/tty/serial/serial_base.ko
-
-So circular dependency landed in b20d6576cdb3 since 8250_base already
-depends on 8250.
-
-I'm guessing the fix would be to merge 8250_base.ko into 8250.ko in
-drivers/tty/serial/8250/Makefile?
-
-Stephen, I mistakenly sent this off-list to you, ignore it.
-
-[1]: https://lore.kernel.org/all/20250611100319.186924-1-jirislaby@kernel.org/
-
->
-> I can't see what would have caused this (it actually appeared yesterday).
-> I am not even sure it is something in the tty tree.
+Thanks,
+Drew
 
