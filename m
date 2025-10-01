@@ -1,135 +1,222 @@
-Return-Path: <linux-kernel+bounces-838781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00665BB0201
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 13:22:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB166BB01F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 13:21:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89872189D741
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 11:22:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C787177596
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 11:21:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D4A129BDBD;
-	Wed,  1 Oct 2025 11:22:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B68932C3250;
+	Wed,  1 Oct 2025 11:21:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iXdYR8BM"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="27x6QSsL";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="gIzBnHXK";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="27x6QSsL";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="gIzBnHXK"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1585C2581
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 11:22:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 986D72C3265
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 11:21:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759317728; cv=none; b=M8e0RIUfo5fb+QbPZXy6DfKV7wgTL9HOuWVQAaWgCpEWR0G8uz79W0kjErY8xY9XSbATrMR39uVQHS2pSG/e16USRAOQoqm0tlkssLLOhTHJ0yt/QwXkrafeW7+Ji6WsNDHettAMe43t+7KRAODlkUmtO8t1/lRaCrCaYZu9DTc=
+	t=1759317668; cv=none; b=oH2nIJPLW9bKEl5lDL2x5weaz951Lpk4A6eNmqKqaFOpqToMBqO1ZJXmwtxhV4gytDAx9nXW8gcRcNLS34fczVcx0v7T45L3SYN/Q+2WkjWGflhyOeoOWTMMGest4xuREYZM0huM6K2Si4YAcjo1gmgFmv+SNM9LQm2jhQIcXow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759317728; c=relaxed/simple;
-	bh=MHUSi4P/U4csGmhflVuOc3gtRv4O4p5QklistO68IOQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ljdWM0fiZEbFaUECYJ62YKeoyk9K/xqR1MAcmHunhNH22UoonUJgz8ii9IRmd1Re1w+u2A9dvYgn3Y9azbdB4C6JFBcKRwhlzpmVu+3hbS2BpcLH4+1KSK/01gPlaOkvDyir3Q4qlK5VmsthYW6eniGSUA+Ijbm2Aq2Xki6Fn+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iXdYR8BM; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759317726;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1759317668; c=relaxed/simple;
+	bh=hmF/lI8pMoVG47HFC2l+uHYvXKY+xODQGwkcduME3/w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rDCOnL5tXpuDDP0Wx22jNGhhlHUVn27BovJMnggHNzkkpj3OQV4IC2SpDKw5ZotlR/rMLDcnm535O+PvdPt42u2VDHBSA+xyBnVPOwgnWTxOJ7kT4l6DsW9ezSdr1xSHMzlPpC4LWiNvjyhkwX6P+XUR7SaSVxdfzCGoiKHEuiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=27x6QSsL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=gIzBnHXK; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=27x6QSsL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=gIzBnHXK; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 30F041FB6C;
+	Wed,  1 Oct 2025 11:21:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759317663; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ql3BeV8zLppnm7zJzsQP4NuOCJwg+ayk79UQ80gXYqg=;
-	b=iXdYR8BMmDBxquLWQGAE/DAvT49wRvs8MiQqLoQ0z1aWy3r4p3iPN5no0t4a28QdFSCTZI
-	SyCv+OXZLw5hG0bAWEihz1eFx9D1Ms4ft/4Y56EXGUT1H18zGscclT5u5kZluC0CpfYpGw
-	ni5teKlvJSlIRHZIK3EXXEyGBeMjNiM=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-677-VtswpfXZOKuai15z_zn67w-1; Wed, 01 Oct 2025 07:22:05 -0400
-X-MC-Unique: VtswpfXZOKuai15z_zn67w-1
-X-Mimecast-MFC-AGG-ID: VtswpfXZOKuai15z_zn67w_1759317724
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3ecdfe971abso4657919f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 04:22:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759317724; x=1759922524;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ql3BeV8zLppnm7zJzsQP4NuOCJwg+ayk79UQ80gXYqg=;
-        b=NdXqrmiFiEuhARdJDpJLcQJUOMm9ZsuFtcPwGsjf+S6dMipSdSohjdAh8oM3IL4KoP
-         ZoycSmjG1eqOKXAvWZRtRYkzTRT224zrtgneP9EauH1tj4g91uV14eJ7Rqfs175IsTe7
-         U+fKghMxxa1PehXcsjvC3tSHmf0aQ3Cp9UcKhg1hqjcj+bj6E/psbY0fOj29PfR1cuuq
-         /kF8vDP+Dl9YZiVZ1OnKI2rs7ESMqJpGK7NivEH+micWyAvBFUFph7yVISGlbL72p4Kd
-         virBX3siScNUwBUxT3TUTgEUIyy8+W/SOGkc95BX5mgJMl+DMSOOsgAv103XQgWVW0qB
-         CYqw==
-X-Forwarded-Encrypted: i=1; AJvYcCVq9MjApKfITphNgI24OyJhPW5OoQHf+Sla3TEJPxvxUNtepuMhfJgGY/0u3tbHKvFAuhLksn8CXqPBKRY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRGH9OYve71Fvlp8zuyFiyUfNK9CkelS/nk8gy5bYDZsaHaeGq
-	EYoxWR8111BRH2S2uspqr6kVTwLseTED4g3HQfA9z/gmkhk17ZT6p5f2kmSzONZki/Tb22Zr7fC
-	JOUwad/WEVrhefxf7dB9F28dMZPEuExHYUk3GNqeQ92bHCzr++cDeMHzq3dbXYlLNTA==
-X-Gm-Gg: ASbGncuyb+JU7r4NH2Q556nDD4KzWMXY6xxCWUFlLjMzdNdemW5jUZ8HcPe9pz2Wh4X
-	NjTis8MK7+8rqp7QK/WwpRIR7zo3ikEnUuD8J0Oyq4pp9LgSnocWnvFsivbkQHGco9GFaxnOp4f
-	AS15gSm3vvjAB3L+JQf3wuTx6qnbnN8ZXfYROzG76YN06Xn2oRrCWOXf4e/RC6FaRogDJipP/hi
-	rFN5mcNh4HGJ1kp2PUk4nJnrHUA6owHHZMKC6MTZrxrB5+78B34f2oEJUibItAQOE0q3Lk/gYe/
-	71+ROulX7C+1vkQs/JVwjBLxQg05okwoQ3ODrlk=
-X-Received: by 2002:a05:6000:1a8e:b0:3ec:a019:3936 with SMTP id ffacd0b85a97d-42557816dadmr2479669f8f.55.1759317723710;
-        Wed, 01 Oct 2025 04:22:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE2YMfWSirAsieLM5wvLlIAO/DtCA3N6PuMAY/Nmj+lVBGtH+Oqh6a2oWTtM5/KVZ/v7RwKwA==
-X-Received: by 2002:a05:6000:1a8e:b0:3ec:a019:3936 with SMTP id ffacd0b85a97d-42557816dadmr2479627f8f.55.1759317723082;
-        Wed, 01 Oct 2025 04:22:03 -0700 (PDT)
-Received: from redhat.com ([2a0d:6fc0:1518:6900:b69a:73e1:9698:9cd3])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fb89fb264sm27105223f8f.20.2025.10.01.04.22.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Oct 2025 04:22:02 -0700 (PDT)
-Date: Wed, 1 Oct 2025 07:22:00 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: patchwork-bot+netdevbpf@kernel.org
-Cc: Jakub Kicinski <kuba@kernel.org>, linux-kernel@vger.kernel.org,
-	zhangjiao2@cmss.chinamobile.com, jasowang@redhat.com,
-	eperezma@redhat.com, kvm@vger.kernel.org,
-	virtualization@lists.linux.dev, netdev@vger.kernel.org
-Subject: Re: [PATCH net] vhost: vringh: Fix copy_to_iter return value check
-Message-ID: <20251001071456-mutt-send-email-mst@kernel.org>
-References: <cd637504a6e3967954a9e80fc1b75e8c0978087b.1758723310.git.mst@redhat.com>
- <175893420700.108864.10199269230355246073.git-patchwork-notify@kernel.org>
+	bh=PF0wBi19hCMZbudds09SMu1E6+Thus+lwXfrPMqv/OQ=;
+	b=27x6QSsLnXfDgXY7pdEYSiZXKKor/atJajs4IHb9CiYvXbS8LZJh6jeOaQbyhHf70Z9x/U
+	zjgMZjaizsIsEe9ybGSqit0kpkCYa+AR0LWJVR3rD51nn+pRT9YXH7CFV6QuoYDicAYhl8
+	fvUeahFf8QDGGEgBVG3JSRYAvzxrg58=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759317663;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PF0wBi19hCMZbudds09SMu1E6+Thus+lwXfrPMqv/OQ=;
+	b=gIzBnHXKDLn2i76VXzzgf1C9Z5lCSTfOVvUxwyauayG+U5gMiznPQijHtafE1CiYcSX5tG
+	WsnNmvjEr6y6TpBA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759317663; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PF0wBi19hCMZbudds09SMu1E6+Thus+lwXfrPMqv/OQ=;
+	b=27x6QSsLnXfDgXY7pdEYSiZXKKor/atJajs4IHb9CiYvXbS8LZJh6jeOaQbyhHf70Z9x/U
+	zjgMZjaizsIsEe9ybGSqit0kpkCYa+AR0LWJVR3rD51nn+pRT9YXH7CFV6QuoYDicAYhl8
+	fvUeahFf8QDGGEgBVG3JSRYAvzxrg58=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759317663;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PF0wBi19hCMZbudds09SMu1E6+Thus+lwXfrPMqv/OQ=;
+	b=gIzBnHXKDLn2i76VXzzgf1C9Z5lCSTfOVvUxwyauayG+U5gMiznPQijHtafE1CiYcSX5tG
+	WsnNmvjEr6y6TpBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 218DF13A3F;
+	Wed,  1 Oct 2025 11:21:03 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id CarzB58O3WjSZwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 01 Oct 2025 11:21:03 +0000
+Message-ID: <138f3057-8aab-4bfb-a541-dbf1a51a32bb@suse.cz>
+Date: Wed, 1 Oct 2025 13:23:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <175893420700.108864.10199269230355246073.git-patchwork-notify@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/4] mm/page_alloc: Perform appropriate batching in
+ drain_pages_zone
+To: "Christoph Lameter (Ampere)" <cl@gentwo.org>,
+ Joshua Hahn <joshua.hahnjy@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Johannes Weiner <hannes@cmpxchg.org>, Chris Mason <clm@fb.com>,
+ Kiryl Shutsemau <kirill@shutemov.name>, Brendan Jackman
+ <jackmanb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Suren Baghdasaryan <surenb@google.com>, Zi Yan <ziy@nvidia.com>,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, kernel-team@meta.com,
+ Mel Gorman <mgorman@techsingularity.net>
+References: <20250925184446.200563-1-joshua.hahnjy@gmail.com>
+ <567be36f-d4ef-e5bc-e11c-3718272d3dfe@gentwo.org>
+Content-Language: en-US
+From: Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <567be36f-d4ef-e5bc-e11c-3718272d3dfe@gentwo.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TAGGED_RCPT(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_TO(0.00)[gentwo.org,gmail.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -2.80
 
-On Sat, Sep 27, 2025 at 12:50:07AM +0000, patchwork-bot+netdevbpf@kernel.org wrote:
-> Hello:
+On 9/26/25 6:21 PM, Christoph Lameter (Ampere) wrote:
+> On Thu, 25 Sep 2025, Joshua Hahn wrote:
 > 
-> This patch was applied to netdev/net.git (main)
-> by Jakub Kicinski <kuba@kernel.org>:
+>>> So we need an explanation as to why there is such high contention on the
+>>> lock first before changing the logic here.
+>>>
+>>> The current logic seems to be designed to prevent the lock contention you
+>>> are seeing.
+>>
+>> This is true, but my concern was mostly with the value that is being used
+>> for the batching (2048 seems too high). But as I explain below, it seems
+>> like the min(2048, count) operation is a no-op anyways, since it is never
+>> called with count > 1000 (at least from the benchmarks that I was running,
+>> on my machine).
 > 
-> On Thu, 25 Sep 2025 02:04:08 -0400 you wrote:
-> > The return value of copy_to_iter can't be negative, check whether the
-> > copied length is equal to the requested length instead of checking for
-> > negative values.
-> > 
-> > Cc: zhang jiao <zhangjiao2@cmss.chinamobile.com>
-> > Link: https://lore.kernel.org/all/20250910091739.2999-1-zhangjiao2@cmss.chinamobile.com
-> > Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-> > 
-> > [...]
 > 
-> Here is the summary with links:
->   - [net] vhost: vringh: Fix copy_to_iter return value check
->     https://git.kernel.org/netdev/net/c/439263376c2c
+> The problem is that you likely increase zone lock contention with a
+> reduced batch size.
 > 
-> You are awesome, thank you!
-> -- 
-> Deet-doot-dot, I am a bot.
-> https://korg.docs.kernel.org/patchwork/pwbot.html
-> 
+> Actually that there is a lock in the pcp structure is weird and causes
+> cacheline bouncing on such hot paths. Access should be only from the cpu
 
+The hot paths only access the lock local to them so should not cause
+bouncing.
 
-It's probably stable material. Does netdev still have a separate
-stable process? I'm not sure I remember.
+> that owns this structure. Remote cleaning (if needed) can be triggered via
+> IPIs.
 
--- 
-MST
+It used to be that way but Mel changed it to the current implementation
+few years ago. IIRC one motivation was to avoid disabling irqs (that
+provide exclusion with IPI handlers), hence the spin_trylock() approach
+locally and spin_lock() for remote flushing.
+
+Today we could use local_trylock() instead of spin_trylock()
+theoretically. The benefit is being inline, unlike spin_trylock() (on
+x86). But an IPI handler (that must succeed and can't give up if the
+lock is already taken by the operation it interrupted) wouldn't work
+with that - it can't give up nor "spin". So the remote flushes would
+need to use queue/flush work instead and then the preempt disable +
+local_trylock() would be enough (work handler can't interrupt a preempt
+disabled section). I don't know if that would make the remote flushes
+too expensive though or whether they only happen in such slowpaths to be
+acceptable.
+
+> This is the way it used to be and the way it was tested for high core
+> counts years ago.
+> 
+> You seem to run 176 cores here so its similar to what we tested way back
+> when. If all cores are accessing the pcp structure then you have
+> significant cacheline bouncing. Removing the lock and going back to the
+> IPI solution would likely remove the problem.
+
+I doubt the problem here is about cacheline bouncing of pcp. AFAIK it's
+free_frozen_page_commit() will be called under preempt_disable()
+(pcpu_spin_trylock does that) and do a potentially long
+free_pcppages_bulk() operation under spin_lock_irqsave(&zone->lock). So
+multiple cpus with similarly long free_pcppages_bulk() will spin on the
+zone lock with irqs disabled.
+Breaking down the time zone lock is held to smaller batches will help
+that and reduce the irqs disabled time. But there might be still long
+preemption disabled times for the pcp, and that's IIRC enough to cause
+rcu_sched stalls? So patch 4/4 also relinquishes the pcp lock itself
+(i.e. enables preemption), which we already saw from the lkp report
+isn't trivial to do. But none of this is about pcp cacheline bouncing,
+AFAICS.
+
+> The cachelines of the allocator per cpu structures are usually very hot
+> and should only be touched in rare circumstances from other cpus.
+
+It should be rare enough to not be an issue.
+
+> Having a loop over all processors accessing all the hot percpus structurs
+> is likely causing significant performance issues and therefore the issues
+> that you are seeing here.
+> 
+> 
+> 
 
 
