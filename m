@@ -1,151 +1,224 @@
-Return-Path: <linux-kernel+bounces-838720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E0FBBB001F
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 12:27:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94A11BB002E
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 12:28:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 160872A3707
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 10:27:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA7BC3AB616
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 10:28:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C56632D9484;
-	Wed,  1 Oct 2025 10:26:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7D932BE658;
+	Wed,  1 Oct 2025 10:28:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m23S06zB"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=est.tech header.i=@est.tech header.b="A0oT3eK/"
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010058.outbound.protection.outlook.com [52.101.84.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDFDF2BE647;
-	Wed,  1 Oct 2025 10:26:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759314411; cv=none; b=MQxR4DH3Ze5WT7rCsFFrkFKb/WlEv4CbjAUKv/jOAYKPzO/KjC6tqCgi+5UyTQonnuO4Rvc7YZkowmiGFLjbm/7vp4ErumjmrKbJWwMIUfRBXC2bmtHadE3jnqDEg+B31dSy3gLeqNjoInRvLI8aKOuTHty8cfMSF20L4L/7GT0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759314411; c=relaxed/simple;
-	bh=sFcKzsZMTlZYAPhM32GPmHYLBxCNLYAjCZlrziwQj6s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fn3dekJkzqukQSjjSP4jCqR4hO+dWaq9SrVnVljFqywfFhX3Yxg31egwAVGwu9c1P4qW02Kb5aEiOfBP5Zi36CrK7EtI3DmZW6VsnOvisWJ85bOvkoZpYI/dJ6Ma+wl2M1b4Pkhb/1dvSv3B6hR6xk1+HlJfA1GugGkDI4YH/do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m23S06zB; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759314409; x=1790850409;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=sFcKzsZMTlZYAPhM32GPmHYLBxCNLYAjCZlrziwQj6s=;
-  b=m23S06zBXKkrO6+QrNSwGHT0NAdcq7NWCT7On9g42FnqRC1wwCNt+8NE
-   pOioQe+ZsfIS+ZAD+QMQxSLF78toCmH6Q9F7e7zJhG5qQ2aLovqHpGgHl
-   nThyzGONcGiDj292y5lhChuHmuL+XLAObZGCu7vh1P8/mrXESAa1fR12U
-   FOOPLsqq68evxqUipIutOFmvwEnPC8xrVp9FuDtCXdk/rTlF6j31CY/hI
-   hoRI94wLmNf/jxO+sJZvCO7W+pMs9IxmLmCJ0qTzlqdy9v0GnQfN1L95J
-   IF5NkfCFeu3zMtmLdM36iAIZh40u4IfNjR8u3nA4q2bqX4jC6h8zaL8jQ
-   g==;
-X-CSE-ConnectionGUID: 2NSRNtjXSUSvqS8lYIZDww==
-X-CSE-MsgGUID: Pj2Tq6JMTO+DFDRDYuuvyg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11569"; a="71834073"
-X-IronPort-AV: E=Sophos;i="6.18,306,1751266800"; 
-   d="scan'208";a="71834073"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2025 03:26:46 -0700
-X-CSE-ConnectionGUID: 9BgI1KxySbGifppoLWkdbQ==
-X-CSE-MsgGUID: +NHM8WlGTByygzZxhXaCXg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,306,1751266800"; 
-   d="scan'208";a="182778111"
-Received: from fpallare-mobl4.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.14])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2025 03:26:40 -0700
-Received: from punajuuri.localdomain (unknown [192.168.240.130])
-	by kekkonen.fi.intel.com (Postfix) with ESMTP id 935DC120DA3;
-	Wed, 01 Oct 2025 13:26:36 +0300 (EEST)
-Received: from sailus by punajuuri.localdomain with local (Exim 4.98.2)
-	(envelope-from <sakari.ailus@linux.intel.com>)
-	id 1v3u2e-00000005L63-29B6;
-	Wed, 01 Oct 2025 13:26:36 +0300
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: linux-acpi@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 1/1] ACPI: property: Return present device nodes only on fwnode interface
-Date: Wed,  1 Oct 2025 13:26:36 +0300
-Message-ID: <20251001102636.1272722-2-sakari.ailus@linux.intel.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251001102636.1272722-1-sakari.ailus@linux.intel.com>
-References: <20251001102636.1272722-1-sakari.ailus@linux.intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0FA329E110;
+	Wed,  1 Oct 2025 10:28:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.58
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759314496; cv=fail; b=YWvjRiBK5Lokc5JipKKz2Onq+D4VaA+Fx390yKrOlVPBsQ8vAhzidV3/Zy53L4pnVGb08xvjhx4WyN/YPy/+UE6YEKhEzu5ngNKNRaSsSgtONSG2P/iqAOSclMusETOediRN7HDmWYZ3xN8e75vZuKVytDeqRWDyjC3tHlQQyYU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759314496; c=relaxed/simple;
+	bh=TRF19tc3nCTFsi4BKUW3Bm6de3cZg5Q234MrDMLT1qo=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=aQYyc9oDyWDJ+PLnIrykyEYWupnhAVDuotueXxEKYkuudtlh4jSqFIrJf8h5SUsbs4NCJoCTQKFOB3yJ2WfQU6GC1Drcl7jnunTA6TgzJ9xP9e+ulXHaMo3ncLqwFGyWbPP5kVzG0Eb9jtZgDdl/c6khFH7OyS8TXvEO0YszgIY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=est.tech; spf=pass smtp.mailfrom=est.tech; dkim=pass (2048-bit key) header.d=est.tech header.i=@est.tech header.b=A0oT3eK/; arc=fail smtp.client-ip=52.101.84.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=est.tech
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=est.tech
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qOPRnjrrApGGTVNY9NhzDV5+fqcqwg4dKLdxgE3K+gP07zCspJNevG2xOqVuf/C/Xl9h0HgPSXBwGq/FnoEEWhUFYc3CE75+Xdavx2Qn0+kWoMzAaCdyGLgSi8BKz5f0BcHHs6bDf3U/aL6Lr8tm6NJ9Fo5nDfmaUzJ/5EniI/b3dg+vqirGJc3c/WS21eje+wZbK+fkOcNHIW9mf7vU91kfBhAceC5LnMWb4P18f88BbzaEeqbOAaNiDgAL1289agEFmmJ9gR+dLFjw3Uiw1/rR4GmM11Xd44yr7p3eQngz31iKDj2QH3Mr4l9dzm7fP1cUhaszHnpWtL/yjHFZmw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0fNKRolXzxsTNulfxfYW3iTW0LaM41/a00kY0wHDGeQ=;
+ b=XgzbXjUGv53o4i1DkB67mko6MoCIOsnA6nhyWzVsNIx56UBxQiZQJmDWLwQoy3dAE680YqgIKbk1OJ5VYn8AJiePlSCsa7iFqPFey3KtRQXKQBz1sswZLm5eP8pmyTXBXqkUNtWW1iXuk07FETpKxwX5celTr6Be/OjGn+JTwPt/69mswA7n64znQQcQJ5Lb1ViBuC1jeFV8/xKYS7gFPnSsltu4kxam7c8P7zRXv4yvxZfQCyp54Bhe10iODNNOGXosh76A5Ee5/FXOv1xWPE68OWKYgKaOaWE12CCIpNwavC1pKWEJTqsGKYAH2MqXsgi1vg3s+SIOoN9NQFJR0Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=est.tech; dmarc=pass action=none header.from=est.tech;
+ dkim=pass header.d=est.tech; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=est.tech; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0fNKRolXzxsTNulfxfYW3iTW0LaM41/a00kY0wHDGeQ=;
+ b=A0oT3eK/8SG4vM3bh37NoLqbQEZ0dQM02XKceMeSHRPTHmGeQM/GAI2gDGQuVKGSTt8CWpAxWEUdbK7Dm2YfouTfqvu4XyJZ+vPmzHfLq8CRqGbNzKni1U2yYcghC0IXus4SQ+OuYw2DlbwWfNtb3rINE28hOYaMVpVoQ8e9Chra5Qcn0Ypy74qxdX8R7N6hm+KB7+3HN9UP+/8GP9fLN9UwglGNQe6pjAyUW3gyexc9raW/FLFulD9l3dssU2D0Cistm0rEsby1WHcc9ZvncsQzm2yrdCZxNgjVGMU2Y24dE5ZmqCFSPIw3mVyKVV08CijhknehpQrMah9IAL25Iw==
+Received: from GV1P189MB1988.EURP189.PROD.OUTLOOK.COM (2603:10a6:150:63::5) by
+ GV1P189MB2787.EURP189.PROD.OUTLOOK.COM (2603:10a6:150:1f0::17) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9160.17; Wed, 1 Oct 2025 10:28:09 +0000
+Received: from GV1P189MB1988.EURP189.PROD.OUTLOOK.COM
+ ([fe80::43a0:f7df:aa6d:8dc7]) by GV1P189MB1988.EURP189.PROD.OUTLOOK.COM
+ ([fe80::43a0:f7df:aa6d:8dc7%4]) with mapi id 15.20.9160.015; Wed, 1 Oct 2025
+ 10:28:09 +0000
+From: Tung Quang Nguyen <tung.quang.nguyen@est.tech>
+To: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
+CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"tipc-discussion@lists.sourceforge.net"
+	<tipc-discussion@lists.sourceforge.net>,
+	"linux-kernel-mentees@lists.linuxfoundation.org"
+	<linux-kernel-mentees@lists.linuxfoundation.org>, "skhan@linuxfoundation.org"
+	<skhan@linuxfoundation.org>, "david.hunter.linux@gmail.com"
+	<david.hunter.linux@gmail.com>, Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit
+	<hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, Jon Maloy
+	<jmaloy@redhat.com>, "davem@davemloft.net" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Simon Horman <horms@kernel.org>
+Subject: RE: [PATCH] net: doc: Fix typos in docs
+Thread-Topic: [PATCH] net: doc: Fix typos in docs
+Thread-Index: AQHcMp5rXqenrtMrRUCifh9z+PayL7StFk7Q
+Date: Wed, 1 Oct 2025 10:28:09 +0000
+Message-ID:
+ <GV1P189MB198840D92F47A423791FF803C6E6A@GV1P189MB1988.EURP189.PROD.OUTLOOK.COM>
+References: <20251001064102.42296-1-bhanuseshukumar@gmail.com>
+In-Reply-To: <20251001064102.42296-1-bhanuseshukumar@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=est.tech;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: GV1P189MB1988:EE_|GV1P189MB2787:EE_
+x-ms-office365-filtering-correlation-id: 68d862e9-1fcd-46d1-5b60-08de00d5379b
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|376014|1800799024|366016|38070700021;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?b5Z5y8l6cOJb32p2RAjNZputTRNdMBF2/UQgyYu0wNynWuMIV/S9eQTZVwWn?=
+ =?us-ascii?Q?mFTja63K3LFnX2D6f8IvtALjl88VqcRDeOzHR6fXWJJWj9+0np7lfaTAJcCZ?=
+ =?us-ascii?Q?Vx8Bk0OxYxkJZfSi4z6gii5yj71sSndmkzY51CwckQqRVArBbSB8wWyAb8CM?=
+ =?us-ascii?Q?o7VP1CPawo6ZYneAm0/DrQ3xNt+V//Glk1274sDm30jYSXr9KJbRwq2R05BU?=
+ =?us-ascii?Q?vOIU80EuKozkseaKHfdz9e4u1+9efask2Th5b5eSOt6A/SasvJLSYcN3EAmh?=
+ =?us-ascii?Q?imABNFFKjSC45Ul2gEu1OBnfn8JYKsve2yj2bB5FTA0oG9JrvYVn57x5lbwH?=
+ =?us-ascii?Q?+SKSddrSbnAVkpNLTzFmT76ebE6dSr4vnawVKP8YNxIRC+9G6HyVjWS60Ov7?=
+ =?us-ascii?Q?2zZXXs8dY+Cxxy9ddDnsJ3JshOAglyfzbahbOy8X7iuhQ6gp49NYiMQOp41v?=
+ =?us-ascii?Q?J4WAlIq0vV1vfNuAnZYHDsB/BWt4vFQ9zHa/hhC9+uajkax9NLIYSwYcAaIj?=
+ =?us-ascii?Q?2k6E+o4T8OZYCng/Lw8yxY/E2Ae1pUj85ISgi0gghz68wentik+iXGhMRjiA?=
+ =?us-ascii?Q?yOoB7ME4LbGiZloaDI+Qm18ngWDttXviuAWmSJKq/2vbt+iYeajxbPypTo4m?=
+ =?us-ascii?Q?tajGephbgnJjclQOsgslArTSBRa77bVZCA6JHXk2DALarUH3Y7zN4L1oVpkI?=
+ =?us-ascii?Q?IJSITLkeEB8TXZ92edXYEsCNmQEe3dZ43UWvDwlWkKJ+A3QlqGqGCHzz6agu?=
+ =?us-ascii?Q?3e0utg+KC7vJjhxHUpLQ9cvF+3+zwh+XnokSKJ5yLwOze1UyqKKpEd2+5uns?=
+ =?us-ascii?Q?EdrTIu0Snr3e1jqugUoNor0rGhj111Bg5NqtyEWW1ExTb6xyR0yRPZPspHgt?=
+ =?us-ascii?Q?pVO37jG2itTuvxhpkdrVLK07dQC+eJh094+W7bX9v4wSrYL/zm4r13Xh3oeK?=
+ =?us-ascii?Q?puplsDyfgnMYYe+PyU5lrJ+tQfV0OZ+vTmXIn7XaMDMUAEHXJYfwgm+FFedE?=
+ =?us-ascii?Q?HNSw2TIe98ldPbj8auXrKL/lQSu/TylnCKtI6KooXLO6B85AwXnNoLPLADAS?=
+ =?us-ascii?Q?+QSDqzEmFGVALHKCkZQ5Ls+uPZdlMh4laukFxqejAhHrLGZ4r9fG2ilM+cT8?=
+ =?us-ascii?Q?qvdSIScQfyRFgDeT5V8Gn9vOdXJ1oaBJngbzRCAZyyvXbLQORl+FD/Je62aZ?=
+ =?us-ascii?Q?hhupgaYvFYJLwzNMGojTfIFXJvojtUpcNC6Pt6Yo7iqRaqZ7UymiihwJOVHI?=
+ =?us-ascii?Q?2Eww1z4OSZOkN6PMr+bGoL4n8pzn+7VauzLmV/euvHd4rn7toQpvb5lQtdSs?=
+ =?us-ascii?Q?t2CxdcF1zLLCZtQiJJmK4AFUFgATAW6EWai1NOCBu8WTHVFDbbkJoU3rpkQg?=
+ =?us-ascii?Q?ckOpQTBDv9z6mu5Gt/M4kLd/ANznEKNRL1iMnXJ2Wy47+J2tn6kW6qFL+ypv?=
+ =?us-ascii?Q?Tzc4k2SorajzZePqa4ehgX3bFS7r8PsD4DIbp1yedzkoQKb4nTPPPncenp58?=
+ =?us-ascii?Q?EmKqzhMRr9GBV/VBmA8HONsHJKiyhuTaTI1r?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV1P189MB1988.EURP189.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?lsF9ALLdkK6kT+JBEUU+kKUA/7tnf5IkQxCfnVqEPyZVsHv8VDoT8hx9u/sK?=
+ =?us-ascii?Q?eRynPANa7Iy8GLdQH4d/CpMmAdYyGaclRkFxLgBFx95n+mvt27DshWDG9z0V?=
+ =?us-ascii?Q?B+LJFzRRsp0LEk97/36mTBPBFZh7gYraj7+/oPuHcyFXBDI1vRBcTueYkm0i?=
+ =?us-ascii?Q?58oLU5LXhFprznVHb9Ijmo6TKal9gDrg/ZNadnI3Us1+OgLonhczcvIbRWXx?=
+ =?us-ascii?Q?ydQMJBpLO8ltCgFf3l3SjWeAKjZvzV6FT6jI4du+FqnCjyHqC9Ra5RbOy1Hw?=
+ =?us-ascii?Q?3XS9Dj+4lpK/xfxUL5Pp2kDFgGddn+JTb1UhbdY+2eAIVAIyUqIjDGR82ZfA?=
+ =?us-ascii?Q?cyvw8K2KBpDLMcNSPGXHgpfh451k/wM0xCtEgXheGgenqcwjr7zkhTY5Pl05?=
+ =?us-ascii?Q?4JbcwlILJmvGKkjvR6Lnfneb+N0QYo8QzGg61P9wPu/0vvo0c9Kpojb9beRC?=
+ =?us-ascii?Q?7AqsjFCGNADMRLKsn4s6h056M75VTNjptN7JIr9Yz6yiXK8eyv8tUKk3Ejbh?=
+ =?us-ascii?Q?PYMBu9F99LjY4MBzZBH1JTqwlCX9wcUe75hfZy6nsY8oSFDpPzY4JsbiZ+cV?=
+ =?us-ascii?Q?90bFt9GfjYile2uHxFnzwJeeb7qHIqkYBhKxMBV1cZQ2kHppcWLzYgLAGQVE?=
+ =?us-ascii?Q?SnSdwb2sEJ3dRNI/26kMRQZ0qmsYDrIGMTqmLfOb/ys39TF4OSKlIJstxHle?=
+ =?us-ascii?Q?2DaZ6YevUv7oX82tGJ7S1VzT3WwZ7Cd1w3uEaX4MxfACqQovA3GNAh396lC+?=
+ =?us-ascii?Q?XX6PZEtwCob8PL0Da1oDb5A5rQ5aW10GChgsWc79G7FML9XmPnifcH40l7in?=
+ =?us-ascii?Q?ZW4rWE9sDh/BfsNPpi4hCCr8dEXA/lNGWYDAWzKpixifMTHkkzdRxyL7Ihes?=
+ =?us-ascii?Q?8cXZjeqrpdeJ2aWCfsOCafg7pR2nWOg+YmDpQUi9EzGEfRMFrEdbsJnSYtX1?=
+ =?us-ascii?Q?3pgGWeBCS5eKcqmWOhLbk8VzsyIht6WwSeCqqWutRt0oaEGN2kbXfXawIItA?=
+ =?us-ascii?Q?4ki0htKA51i1U199/E3oZ0OYPqbWZPxz6UkMPk36oSF/GC8gMFxZ7tW7Yvz+?=
+ =?us-ascii?Q?uCxF7rXsxHHjCZQQCO3t0bU45lZwRLC28KkgSYyK0CYAKICgJ671bdPHXnG8?=
+ =?us-ascii?Q?9d8xw1o4MUhj6SPVojXxC/mgsFuJND06mgkhtJWZv0ghICIzdA+pnhUQ1N9U?=
+ =?us-ascii?Q?9m60I+rHHt0xDjjTWS/rTAR9c6eGf8+AuEyCfVZN1oAssqvmE5DYlGIhUqKG?=
+ =?us-ascii?Q?nBVNvo9V33YekIY/DrDCNHm6NkzUI4UkzCPl2c6LH/MBGEIy/6MgDjTBOo1Z?=
+ =?us-ascii?Q?MqQd5Se95TmceWjHQVNErQmNRwf9MAcEjX5KaChCZMskZnnfdSLCUw8Y9Bgc?=
+ =?us-ascii?Q?npUxmvhZ7Uw8MVQeWCJF3iedBsObHI6HT0Ic5exYISWmi1tqPn2JhxckyJY0?=
+ =?us-ascii?Q?d5uxM2KHYm1vRmXZomuoUKddMEvwU/qD9q2yP/pmh37FD19kGTJWb1HqdwRz?=
+ =?us-ascii?Q?6nDSV5r7RWlajTr8yxgZUO0OxufXjmX+9g84BNtrJJSJMUz6T2R7URn0FzbO?=
+ =?us-ascii?Q?KifKYRNm6JegDuDwwHJsCzRLfyy0xP/hqx88X+22?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: est.tech
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: GV1P189MB1988.EURP189.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: 68d862e9-1fcd-46d1-5b60-08de00d5379b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Oct 2025 10:28:09.3774
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: d2585e63-66b9-44b6-a76e-4f4b217d97fd
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: +S8eqhWarMQMlBTjF3Ku/ZOayq5G4loqEmvNJPXtvPvZ6yLJLNoTJKEQoSn64i0vSdzEsYu4GVKwcypJBFQc9UXTCATGPjOPzt61193dkbI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1P189MB2787
 
-fwnode_graph_get_next_subnode() may return fwnode backed by ACPI device
-nodes and there has been no check these devices are present in the system,
-unlike there has been on fwnode OF backend. In order to provide consistent
-behaviour towards callers, add a check for device presence by introducing
-a new function acpi_get_next_present_subnode(), used as the
-get_next_child_node() fwnode operation that also checks device node
-presence.
+>Subject: [PATCH] net: doc: Fix typos in docs
+>
+>Fix typos in doc comments.
+>
+>Signed-off-by: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
+>---
+> include/linux/phy.h | 4 ++--
+> net/tipc/crypto.c   | 2 +-
+> net/tipc/topsrv.c   | 4 ++--
+> 3 files changed, 5 insertions(+), 5 deletions(-)
+>
+>diff --git a/net/tipc/crypto.c b/net/tipc/crypto.c index
+>ea5bb131ebd0..751904f10aab 100644
+>--- a/net/tipc/crypto.c
+>+++ b/net/tipc/crypto.c
+>@@ -1797,7 +1797,7 @@ int tipc_crypto_xmit(struct net *net, struct sk_buff
+>**skb,
+>  * @b: bearer where the message has been received
+>  *
+>  * If the decryption is successful, the decrypted skb is returned directl=
+y or
+>- * as the callback, the encryption header and auth tag will be trimed out
+>+ * as the callback, the encryption header and auth tag will be trimmed
+>+ out
+>  * before forwarding to tipc_rcv() via the tipc_crypto_rcv_complete().
+>  * Otherwise, the skb will be freed!
+>  * Note: RX key(s) can be re-aligned, or in case of no key suitable, TX d=
+iff --git
+>a/net/tipc/topsrv.c b/net/tipc/topsrv.c index ffe577bf6b51..ebe993ebcd48
+>100644
+>--- a/net/tipc/topsrv.c
+>+++ b/net/tipc/topsrv.c
+>@@ -57,7 +57,7 @@
+>  * @conn_idr: identifier set of connection
+>  * @idr_lock: protect the connection identifier set
+>  * @idr_in_use: amount of allocated identifier entry
+>- * @net: network namspace instance
+>+ * @net: network namespace instance
+>  * @awork: accept work item
+>  * @rcv_wq: receive workqueue
+>  * @send_wq: send workqueue
+>@@ -83,7 +83,7 @@ struct tipc_topsrv {
+>  * @sock: socket handler associated with connection
+>  * @flags: indicates connection state
+>  * @server: pointer to connected server
+>- * @sub_list: lsit to all pertaing subscriptions
+>+ * @sub_list: list to all pertaing subscriptions
+Replace "pertaing" with "pertaining"
 
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
----
- drivers/acpi/property.c | 24 +++++++++++++++++++++++-
- 1 file changed, 23 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/acpi/property.c b/drivers/acpi/property.c
-index 436019d96027..10bab30300f3 100644
---- a/drivers/acpi/property.c
-+++ b/drivers/acpi/property.c
-@@ -1318,6 +1318,28 @@ struct fwnode_handle *acpi_get_next_subnode(const struct fwnode_handle *fwnode,
- 	return NULL;
- }
- 
-+/*
-+ * acpi_get_next_present_subnode - Return the next present child node handle for a fwnode
-+ * @fwnode: Firmware node to find the next child node for.
-+ * @child: Handle to one of the device's child nodes or a null handle.
-+ *
-+ * Like acpi_get_next_subnode(), but the device nodes returned by
-+ * acpi_get_next_present_subnode() are guaranteed to be present.
-+ *
-+ * Returns: The next sub-node fwnode handle.
-+ */
-+static struct fwnode_handle *
-+acpi_get_next_present_subnode(const struct fwnode_handle *fwnode,
-+			      struct fwnode_handle *child)
-+{
-+	do {
-+		child = acpi_get_next_subnode(fwnode, child);
-+	} while (is_acpi_device_node(child) &&
-+		 !acpi_device_is_present(to_acpi_device_node(child)));
-+
-+	return child;
-+}
-+
- /**
-  * acpi_node_get_parent - Return parent fwnode of this fwnode
-  * @fwnode: Firmware node whose parent to get
-@@ -1662,7 +1684,7 @@ static int acpi_fwnode_irq_get(const struct fwnode_handle *fwnode,
- 		.property_read_string_array =				\
- 			acpi_fwnode_property_read_string_array,		\
- 		.get_parent = acpi_node_get_parent,			\
--		.get_next_child_node = acpi_get_next_subnode,		\
-+		.get_next_child_node = acpi_get_next_present_subnode,	\
- 		.get_named_child_node = acpi_fwnode_get_named_child_node, \
- 		.get_name = acpi_fwnode_get_name,			\
- 		.get_name_prefix = acpi_fwnode_get_name_prefix,		\
--- 
-2.47.3
+>  * @sub_lock: lock protecting the subscription list
+>  * @rwork: receive work item
+>  * @outqueue: pointer to first outbound message in queue
+>--
+>2.34.1
+>
 
 
