@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-839422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0F72BB1971
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 21:27:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 203F6BB1974
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 21:27:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54C7F3BBA97
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 19:27:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C63FF2A6E7C
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 19:27:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 161C82FE58C;
-	Wed,  1 Oct 2025 19:26:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CA882D6E6F;
+	Wed,  1 Oct 2025 19:26:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H31OWF3Q"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aMYDDm8j"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ECCA2D876A
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 19:26:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F1F52EACF8
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 19:26:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759346816; cv=none; b=aKrnaWKSRegp/a917G7Qx+gczV5ruWyhG8isb0jnM274RY33d4SsTU+kX0UUPRMc5U2zY0EINaY7a6DUUOkhKB2Fa1lMKb/Ya0joRLAsG3jDHTkU2jpb5T3l8Ys6bySXxiLoMHB5VJqzglL2as1rQ75D/PElXtSH2YYwX87QHAE=
+	t=1759346817; cv=none; b=VDcCYbpUgJeu+WfipeedzgZiuuZZRpd4xnxDi+wS0AP7gaHC6oq0mfzxXNX5xSscoL1CFkPSJEkUcC/YRFw/j6ZnaKYHtET5tIGGiCU7UuhlbdiOJDaV0ksETzSwXo78+NIkNvUlKbA9c13sgfWpZXuXwAviS7KFX8MHmszDiJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759346816; c=relaxed/simple;
-	bh=5LOLgDuRoV2shXqOUtSYOTm+9rMW+12+m4ljmK1VYqI=;
+	s=arc-20240116; t=1759346817; c=relaxed/simple;
+	bh=ZVp9FIATnWymDAEfVzq5zKbM1xcp8hPB8sUKQ+bCiCs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KGRqUHBuSq1pgYpLQUHTLdhVWsnXL7R71j19kUEXoy3H7Kkr6vACqAdV65I1okaEkrIii8kC1rgRxZ2vUtgImbjtJQQfMMyYfBQorkmuf3byowDxCSnhHG9z/7MjgQP1VfUpvaYD0iIZXFAMzW+owQNgDW7qYECK8X2LBzsSOVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H31OWF3Q; arc=none smtp.client-ip=209.85.167.53
+	 MIME-Version; b=j0cizFT8+ypkmV0TRQqyVle3W7neLe8I8TiiW1wqmN4L9AtA9B3N8Iel7+F6uBmXC+vCLNjwd7zxjbc6A4M782+r1SVcfccYxsDZSb0ec6+Eec6qqIIKLCRCUqNjB4eiZ6bi0zB54pU7HPdrZ/j7R9FilPt7M2i4PEyOEslJXYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aMYDDm8j; arc=none smtp.client-ip=209.85.167.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-57ea78e0618so243692e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 12:26:54 -0700 (PDT)
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-579d7104c37so242541e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 12:26:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20230601; t=1759346813; x=1759951613; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=FuOmVyVQXsumRDN0WySluCU+eClCoeXEAXwSkpYGp4g=;
-        b=H31OWF3QACtUraPEv/plAmElYGHQDG9MWSoQGPgZ3RFb7Va5w95RCb033TW64aBW6/
-         DzJKRemsKk2Nkf01XH8laV5v440AnTbO283NeDwjarVD2e8XR+L8TcqWsyB66h5028Pd
-         4B4V8MiHjtIcOhN+LEqqO8X/QPwH2E2SDOE7nSasAEfDdTITMykNelE6u1y3L8Im5KzC
-         Q9I0wd4VDNaj8UFs9C8jbgGueGyJFxIsjh9VaYYkCoaUdxXBiNxM2cwVhO0tuPP5on91
-         CTRzBtlAWUCMWuBEAftYL5j4k8HfSFKL6GAkXSG2qIMLfoCzpkMQnyuvQavw7EEm4gOI
-         pQRQ==
+        bh=0yCAVXUd+Xggdo34An12Zy3AWPX111PHofILGlMoG8c=;
+        b=aMYDDm8jnCat9++0cksdn4Umvyzopri3Dx0APAZN0O7sM4nQ+ENRpTfB3nMGhOx9Qq
+         /MWMh3YVNZZ5G8YpkVApZYb+ENHoPYAvAMkLvShXM11MYij18k1TTBtrKRzR80yhPh1Y
+         IRvWdp9OeHyB2JnAUkLcRpjOSG8nSytF0RrK6rscDeAxL+YWusAGwRLiSdLbIgo/Ty5c
+         qAtbwAshnR+/WvDuCQr8iqnUYeRG6XWNaf53ygi/Orq+XqLgWFwsmxaZOX/Lrud62Wjp
+         2tSHhmWXTY5frAYj2U+qFvr2k7R3zSJCsTPhU6gjAsGtP8WqjQZOdkNA+r9u+CD86bfa
+         y7wA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1759346813; x=1759951613;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=FuOmVyVQXsumRDN0WySluCU+eClCoeXEAXwSkpYGp4g=;
-        b=Q+E7NDof2znYSAYnX9dwYA/y6DOsKn2wStpfZznVSjDwjW1R4pi2k3yHDUUoVE1/K/
-         VrbOeHT2vEfcSHNJUMsZRMB3zMBhQvCX+Ry4h2xwc6G3v8g/IrkuJlbHudYjf7/P5P7f
-         BayirKOjNRvGx85LJoMfVJJp+xRx5hzoHnwUEjh6IuK2nd0nWjP4Ky/y4Ut4N7BGsXDv
-         zL6Txk9e4aUrWWiw98kU2YzzsnLooUUJTN6uLJK0dE7l7LTCmSJhyZ/iZ+R8qxohNX8Y
-         y/7M88v62aKuzgwJ+GgMuge4/g//wPPV4tPLDAiulk7iL+DgEJ/X01IJiw488B84HZnM
-         IVVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVbzC+l2UzjmqxF2PumeWV6ayqkqmny8XNrow703yJYhtv9U6TlCI9/Vr4mWkHUaVc9ErXkh5flerL0QCU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YziJWIBItggtVLURIYseRSc8EK4iiqOKuQTKjQy2fm9KhbHyTwG
-	zmc9tefcGD8RtY2De+Ab06y/vz8ZlPRWuDELpDtGIvN3hUVShYRJvpnT
-X-Gm-Gg: ASbGncu1RnV1k5hN2wc1lFAGHrShnkQ1gQ48fZ/CN6x7EzCDfbtdCaTA0/SzORdgxJi
-	d66OUajxXxyhOCTJPmHmc4t5kPuY7cfAZn2mwS1txh4WIViVNKyuQM2quv1fxvjePJlqsLI0Tgi
-	s7KZvfc/bGSeWJEeAlW3plM71tBlPLs0RiIRUPW4bK4r/e2XJbTonJAV2ZV8Ysw8z6V4TPyb6KC
-	zkJLsWvfpEFrUctgmFWC+Np/EqsmP/8Fedcub+vF24yP5odCk4CTKpvEzjuBuhTRF8ipMCvM4VS
-	F0/1GUOZJOIqpRF1rWCu32oJghIjPy6knEF+Uxb+fFC+6ss8W5uvEPY7OXDXvzYBJPBfpyJXu8K
-	IsuPxL9eDn9ZFl4bKm3g0CVFU5GXFnFpI9pBN0RalviI0AO08X7E=
-X-Google-Smtp-Source: AGHT+IHZQHFJ0S5f1OcQHCfxhezQQXZPltJgxW4zc1dj/mXykewUGOJa1V03DnNOst08ID094gfxBA==
-X-Received: by 2002:a05:6512:3e0a:b0:578:ed03:7b70 with SMTP id 2adb3069b0e04-58af9f6afccmr1528057e87.28.1759346812509;
-        Wed, 01 Oct 2025 12:26:52 -0700 (PDT)
+        bh=0yCAVXUd+Xggdo34An12Zy3AWPX111PHofILGlMoG8c=;
+        b=dOZE8E3R3vdSltgOB1YxgnlVUbFAfJ5pF3/FKb077UNyQPfT9G0aDQ0MWLD+hEFup4
+         pzXRNqh8wgAIoT8pL9zC6Ykw7zsQ/ytUh2VXC7lRr7bLdjZ4z5YgTa69+NJxB4aAs5Ps
+         Ot1vwIs84roaI8FBm0C+sFnenLi7N1lExFe2TKyuUNLlZ6Cbe+hA0Pl6wWATt4JRJ7Gf
+         vQb42/r0rk2hVjC1sf3dQfjfRITIU87vK1gS5ZdozlBVcuN1R/4Pixc2u1R3dkv3Dfod
+         SdrE+U9oY2fZw+k5Z3YvTKNR2iG+E1CG+d+OXGP/xSnJ33AJvLadKshKiL2I+d11nVAI
+         Byzw==
+X-Forwarded-Encrypted: i=1; AJvYcCU2bOvSDqpqB5tTg0C10gR+VqtPiU850UY9gJ8IWEAB05L0UWJlYpb5y1k35bpZX6cDYT/6GdR9Zxh7RtQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXo2O6gG2wUdd6fjm1FxVFw5On9ps1JiW+AAO2/ooF5DoMIekN
+	noFyuh0Vu5GoMATLAV/C5Kw7NBU9dc1rs5IfMylYqmMp+W+gy/YnMKMb
+X-Gm-Gg: ASbGncuICK00bSIrCzxaFn7hGbf7CIgAlk7MpBVJp1oPQ6FucfAtukUjLjo/Rlc6s0D
+	mz47/v6SynSNVfFhO/dGyqPY+y9/5/plFTu4Gdoz83MEnuV35cIfFnQsLyqs7ucQcIn25Hsspxa
+	pQ+ChKRfzi2eeF4acT0W7jPccQ3q1ykmgI6BeF7gOK9Zz/nX/85kZD0H5KlHiffc+E1cJuATTAB
+	vpox7c7cs8QPoJNBLYwg6+WoF0RL/VhMkDOhxn3wuc+zyPUSuN5AdGQqb3yz4MKewE++exS/PIK
+	FSKKEpbsu3Ku5IqDnBFGH/0gWEbhn+6z6m2GYZPNhJFsTdE1w/k/b6QLDZ4n2gVPafKtmTEay+P
+	v1RX5YkoUwtnQgE8sU4sIEkMiByccSD2u4dbu7Niq8iZxHVC7I3g=
+X-Google-Smtp-Source: AGHT+IF5fzKNeL87En2CtBg9XIbVfY39t145FRGMU6tdsljRKNoG0mSUH5/2UDHarr9y/rtlcz5Xkw==
+X-Received: by 2002:a05:6512:23a9:b0:57b:8a82:1e27 with SMTP id 2adb3069b0e04-58af9f0d388mr1273724e87.13.1759346813320;
+        Wed, 01 Oct 2025 12:26:53 -0700 (PDT)
 Received: from localhost.localdomain ([2001:9b1:d5a0:a500::24b])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58b0112414fsm136627e87.28.2025.10.01.12.26.51
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58b0112414fsm136627e87.28.2025.10.01.12.26.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Wed, 01 Oct 2025 12:26:52 -0700 (PDT)
 From: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
@@ -80,9 +80,9 @@ Cc: Michal Hocko <mhocko@kernel.org>,
 	LKML <linux-kernel@vger.kernel.org>,
 	Uladzislau Rezki <urezki@gmail.com>,
 	Michal Hocko <mhocko@suse.com>
-Subject: [PATCH v3 04/10] mm/vmalloc: Defer freeing partly initialized vm_struct
-Date: Wed,  1 Oct 2025 21:26:40 +0200
-Message-ID: <20251001192647.195204-5-urezki@gmail.com>
+Subject: [PATCH v3 05/10] mm/vmalloc: Handle non-blocking GFP in __vmalloc_area_node()
+Date: Wed,  1 Oct 2025 21:26:41 +0200
+Message-ID: <20251001192647.195204-6-urezki@gmail.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20251001192647.195204-1-urezki@gmail.com>
 References: <20251001192647.195204-1-urezki@gmail.com>
@@ -94,100 +94,132 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-__vmalloc_area_node() may call free_vmap_area() or vfree() on
-error paths, both of which can sleep. This becomes problematic
-if the function is invoked from an atomic context, such as when
-GFP_ATOMIC or GFP_NOWAIT is passed via gfp_mask.
+Make __vmalloc_area_node() respect non-blocking GFP masks such
+as GFP_ATOMIC and GFP_NOWAIT.
 
-To fix this, unify error paths and defer the cleanup of partly
-initialized vm_struct objects to a workqueue. This ensures that
-freeing happens in a process context and avoids invalid sleeps
-in atomic regions.
+- Add memalloc_apply_gfp_scope()/memalloc_restore_scope()
+  helpers to apply a proper scope.
+- Apply memalloc_apply_gfp_scope()/memalloc_restore_scope()
+  around vmap_pages_range() for page table setup.
+- Set "nofail" to false if a non-blocking mask is used, as
+  they are mutually exclusive.
+
+This is particularly important for page table allocations that
+internally use GFP_PGTABLE_KERNEL, which may sleep unless such
+scope restrictions are applied. For example:
+
+<snip>
+__pte_alloc_kernel()
+  pte_alloc_one_kernel(&init_mm);
+    pagetable_alloc_noprof(GFP_PGTABLE_KERNEL & ~__GFP_HIGHMEM, 0);
+<snip>
+
+Note: in most cases, PTE entries are established only up to the
+level required by current vmap space usage, meaning the page tables
+are typically fully populated during the mapping process.
 
 Acked-by: Michal Hocko <mhocko@suse.com>
 Reviewed-by: Baoquan He <bhe@redhat.com>
 Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
 ---
- include/linux/vmalloc.h |  6 +++++-
- mm/vmalloc.c            | 34 +++++++++++++++++++++++++++++++---
- 2 files changed, 36 insertions(+), 4 deletions(-)
+ include/linux/vmalloc.h |  2 ++
+ mm/vmalloc.c            | 52 +++++++++++++++++++++++++++++++++--------
+ 2 files changed, 44 insertions(+), 10 deletions(-)
 
 diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
-index eb54b7b3202f..1e43181369f1 100644
+index 1e43181369f1..e8e94f90d686 100644
 --- a/include/linux/vmalloc.h
 +++ b/include/linux/vmalloc.h
-@@ -50,7 +50,11 @@ struct iov_iter;		/* in uio.h */
+@@ -332,4 +332,6 @@ bool vmalloc_dump_obj(void *object);
+ static inline bool vmalloc_dump_obj(void *object) { return false; }
  #endif
  
- struct vm_struct {
--	struct vm_struct	*next;
-+	union {
-+		struct vm_struct *next;	  /* Early registration of vm_areas. */
-+		struct llist_node llnode; /* Asynchronous freeing on error paths. */
-+	};
-+
- 	void			*addr;
- 	unsigned long		size;
- 	unsigned long		flags;
++unsigned int memalloc_apply_gfp_scope(gfp_t gfp_mask);
++void memalloc_restore_scope(unsigned int flags);
+ #endif /* _LINUX_VMALLOC_H */
 diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index d83c01caaabe..9e29dd767c41 100644
+index 9e29dd767c41..d8bcd87239b5 100644
 --- a/mm/vmalloc.c
 +++ b/mm/vmalloc.c
-@@ -3687,6 +3687,35 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
- 	return nr_allocated;
+@@ -3716,6 +3716,42 @@ static void defer_vm_area_cleanup(struct vm_struct *area)
+ 		schedule_work(&cleanup_vm_area);
  }
  
-+static LLIST_HEAD(pending_vm_area_cleanup);
-+static void cleanup_vm_area_work(struct work_struct *work)
++/*
++ * Page tables allocations ignore external GFP. Enforces it by
++ * the memalloc scope API. It is used by vmalloc internals and
++ * KASAN shadow population only.
++ *
++ * GFP to scope mapping:
++ *
++ * non-blocking (no __GFP_DIRECT_RECLAIM) - memalloc_noreclaim_save()
++ * GFP_NOFS - memalloc_nofs_save()
++ * GFP_NOIO - memalloc_noio_save()
++ *
++ * Returns a flag cookie to pair with restore.
++ */
++unsigned int
++memalloc_apply_gfp_scope(gfp_t gfp_mask)
 +{
-+	struct vm_struct *area, *tmp;
-+	struct llist_node *head;
++	unsigned int flags = 0;
 +
-+	head = llist_del_all(&pending_vm_area_cleanup);
-+	if (!head)
-+		return;
++	if (!gfpflags_allow_blocking(gfp_mask))
++		flags = memalloc_noreclaim_save();
++	else if ((gfp_mask & (__GFP_FS | __GFP_IO)) == __GFP_IO)
++		flags = memalloc_nofs_save();
++	else if ((gfp_mask & (__GFP_FS | __GFP_IO)) == 0)
++		flags = memalloc_noio_save();
 +
-+	llist_for_each_entry_safe(area, tmp, head, llnode) {
-+		if (!area->pages)
-+			free_vm_area(area);
-+		else
-+			vfree(area->addr);
-+	}
++	/* 0 - no scope applied. */
++	return flags;
 +}
 +
-+/*
-+ * Helper for __vmalloc_area_node() to defer cleanup
-+ * of partially initialized vm_struct in error paths.
-+ */
-+static DECLARE_WORK(cleanup_vm_area, cleanup_vm_area_work);
-+static void defer_vm_area_cleanup(struct vm_struct *area)
++void
++memalloc_restore_scope(unsigned int flags)
 +{
-+	if (llist_add(&area->llnode, &pending_vm_area_cleanup))
-+		schedule_work(&cleanup_vm_area);
++	if (flags)
++		memalloc_flags_restore(flags);
 +}
 +
  static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
  				 pgprot_t prot, unsigned int page_shift,
  				 int node)
-@@ -3718,8 +3747,7 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
+@@ -3732,6 +3768,10 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
+ 
+ 	array_size = (unsigned long)nr_small_pages * sizeof(struct page *);
+ 
++	/* __GFP_NOFAIL and "noblock" flags are mutually exclusive. */
++	if (!gfpflags_allow_blocking(gfp_mask))
++		nofail = false;
++
+ 	if (!(gfp_mask & (GFP_DMA | GFP_DMA32)))
+ 		gfp_mask |= __GFP_HIGHMEM;
+ 
+@@ -3797,22 +3837,14 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
+ 	 * page tables allocations ignore external gfp mask, enforce it
+ 	 * by the scope API
+ 	 */
+-	if ((gfp_mask & (__GFP_FS | __GFP_IO)) == __GFP_IO)
+-		flags = memalloc_nofs_save();
+-	else if ((gfp_mask & (__GFP_FS | __GFP_IO)) == 0)
+-		flags = memalloc_noio_save();
+-
++	flags = memalloc_apply_gfp_scope(gfp_mask);
+ 	do {
+ 		ret = vmap_pages_range(addr, addr + size, prot, area->pages,
+ 			page_shift);
+ 		if (nofail && (ret < 0))
+ 			schedule_timeout_uninterruptible(1);
+ 	} while (nofail && (ret < 0));
+-
+-	if ((gfp_mask & (__GFP_FS | __GFP_IO)) == __GFP_IO)
+-		memalloc_nofs_restore(flags);
+-	else if ((gfp_mask & (__GFP_FS | __GFP_IO)) == 0)
+-		memalloc_noio_restore(flags);
++	memalloc_restore_scope(flags);
+ 
+ 	if (ret < 0) {
  		warn_alloc(gfp_mask, NULL,
- 			"vmalloc error: size %lu, failed to allocated page array size %lu",
- 			nr_small_pages * PAGE_SIZE, array_size);
--		free_vm_area(area);
--		return NULL;
-+		goto fail;
- 	}
- 
- 	set_vm_area_page_order(area, page_shift - PAGE_SHIFT);
-@@ -3796,7 +3824,7 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
- 	return area->addr;
- 
- fail:
--	vfree(area->addr);
-+	defer_vm_area_cleanup(area);
- 	return NULL;
- }
- 
 -- 
 2.47.3
 
