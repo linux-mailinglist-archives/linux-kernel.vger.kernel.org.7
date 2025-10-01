@@ -1,161 +1,167 @@
-Return-Path: <linux-kernel+bounces-838778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DBD0BB01DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 13:17:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22DE7BB01EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 13:19:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A693E188DB23
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 11:17:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EC7D188F3A8
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 11:19:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CD552C3248;
-	Wed,  1 Oct 2025 11:17:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF3DA15C158;
+	Wed,  1 Oct 2025 11:19:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b="idQyanWl"
-Received: from mx13.kaspersky-labs.com (mx13.kaspersky-labs.com [91.103.66.164])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Pz8/tY2W"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E88D15C158;
-	Wed,  1 Oct 2025 11:17:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.103.66.164
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF2022C3250
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 11:19:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759317429; cv=none; b=anIhLDEku3Q30pp5x80/XkG3/+Aag/wegNzGj9l1rczdfD+STvSffW/NhiJGMwRM7btagGNBV67dLFlS339fm6e0z9c2LkWLQJXihpVTpwj7OYK7Ibcba+Pxd6/7dEhY1kjMSEH967ibJ7papXFOA/5LRc+U+hbs1HKqphPPL5k=
+	t=1759317547; cv=none; b=kbmkoO8QXTHkrkj9XE7RPWDcPuhSb/wdlTVLzNLx0ebUDfDXvPJV9wcsSj0jK/SsgIwJZ1DWPtO6JejC4/uI7uzYFkD11HcRTEIbt+U63c01/Erdx42k50DrsCp2jXsqOkyXNy74HwSg2ETFDRlDFkvAekyPbMihnBbctx+3SIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759317429; c=relaxed/simple;
-	bh=niZcM15/aM2MHoBvHoPHQLRuvWK0disCzNRRmfsO2Rk=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sUBBeRld8x1F6j10H1sY2mQUGQc88sOrGYECuxhyyvDOIf6ouKpVYeZF7FpxVgpTKLfBCgtoJqxPVtMrmDXsTx0OXBqS1WAUzaWtvSh8eCH9PdDEIXcA5RR/5kJUDsaely3OBH9mhqd9fIdlEMEoCR5VNvFCziy5fWhSonra+FU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaspersky.com; spf=pass smtp.mailfrom=kaspersky.com; dkim=pass (2048-bit key) header.d=kaspersky.com header.i=@kaspersky.com header.b=idQyanWl; arc=none smtp.client-ip=91.103.66.164
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kaspersky.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kaspersky.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kaspersky.com;
-	s=mail202505; t=1759317425;
-	bh=zDsXdTX+O9NGT9chMSJOKcjuCs1HpuSIsAqYU7ZmRWc=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	b=idQyanWl32Fu0h+kd6dqIXG+6U1iE9f4xkV0jHmVOIQc6DVET9dyx7ihZKeDpflEy
-	 2Cptu0WOSgzoQWJLQ7pFUgQki0LioIB7hy8hLa7gsWIDhfnxqWwbukFh4UWzRJ5Q4d
-	 E2dEPdWqMUOo+NLlrvOAcHJn602SJcDSHOhK5W67L+5P+HgP68Bvh4+qHVEUzXG2lS
-	 /PgfZ4PpYaU6+3DZ+m2n4vx2uVWrXTGz5aaTCpJdLbmSZ4P284ULiWRWHzB3hkdzL8
-	 n7+qN3M1LR9/iX/iFdmdf9Gu5MJytCOaVVhi03ClkSogzBvjYJ5AdHySLdG0DZ0z2w
-	 lh8j3ban4iFxA==
-Received: from relay13.kaspersky-labs.com (localhost [127.0.0.1])
-	by relay13.kaspersky-labs.com (Postfix) with ESMTP id 105C43E1F09;
-	Wed,  1 Oct 2025 14:17:05 +0300 (MSK)
-Received: from mail-hq2.kaspersky.com (unknown [91.103.66.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(Client CN "mail-hq2.kaspersky.com", Issuer "Kaspersky MailRelays CA G3" (verified OK))
-	by mailhub13.kaspersky-labs.com (Postfix) with ESMTPS id 089FB3E2127;
-	Wed,  1 Oct 2025 14:17:02 +0300 (MSK)
-Received: from zhigulin-p.avp.ru (10.16.104.190) by HQMAILSRV2.avp.ru
- (10.64.57.52) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.36; Wed, 1 Oct
- 2025 14:17:02 +0300
-From: Pavel Zhigulin <Pavel.Zhigulin@kaspersky.com>
-To: Ayush Sawal <ayush.sawal@chelsio.com>
-CC: Pavel Zhigulin <Pavel.Zhigulin@kaspersky.com>, Andrew Lunn
-	<andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, Leon Romanovsky <leon@kernel.org>, Steffen Klassert
-	<steffen.klassert@secunet.com>, Cosmin Ratiu <cratiu@nvidia.com>, Zhu Yanjun
-	<yanjun.zhu@linux.dev>, Harsh Jain <harsh@chelsio.com>, Atul Gupta
-	<atul.gupta@chelsio.com>, Herbert Xu <herbert@gondor.apana.org.au>, Ganesh
- Goudar <ganeshgr@chelsio.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
-Subject: [PATCH] net: fix potential use-after-free in ch_ipsec_xfrm_add_state() callback
-Date: Wed, 1 Oct 2025 14:16:43 +0300
-Message-ID: <20251001111646.806130-1-Pavel.Zhigulin@kaspersky.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1759317547; c=relaxed/simple;
+	bh=1HFBdPH4nuIY6H6y/ZojnkMEpQ1m1rGMA+QhLTxwZMs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mGB9uX15jUOhn4SGn3vM/vk06omx2Jff/zTtBqBkrhqYJHxleCKoE4c/GW1UCdI1ORuUS8yQ+/TasZaFWIj8vugYUAfyZGOIFmqCYTEvoo73wSt3MyRwdaRgs1vmGcc9yg7kASOws7BiraItE9MwVtx2fosL8RWUwV5qE0OOl2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Pz8/tY2W; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-36d77ae9de5so64924641fa.2
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 04:19:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1759317543; x=1759922343; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LzALmU9leCk7b6gYpUMB7NSJN6+Tl6di9Bbt+pXEhZg=;
+        b=Pz8/tY2WHeO3OFRM/UQGLGE7Ilxule3+QElQwLZQR0zfOx3uo4jw4ogCA9oOQ1Iggp
+         GMCon4idiaqvEu2nXW71zOTkVYFCyBff+W33OovwPlR4tUYwc2X7R0GLI15lBV+r/n3E
+         8+JC23Xc1cuDdF2y8olns7eJvGjG4uyGCC03MZXvt3zULG346ic9PzTBZgwE05OEvD5o
+         tV9Ed7FYneS8cvexWhyvXGgf0Obd9bE6yvxD+Ba72dv163ktRMMUCDkUBZBp0b0sdWlY
+         1EmEr4trX53xFV5Q5hGQVib+85Q0BFBERK4Xk4LVPf/YAZGCJAjuGn/fBYbmIKJiAmVG
+         N70Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759317543; x=1759922343;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LzALmU9leCk7b6gYpUMB7NSJN6+Tl6di9Bbt+pXEhZg=;
+        b=rJkMJ1MN4fQfe+6Bli4fWFO5l6IJHIDvA3Kr3PdOpuJrKsu+6bX1xVPEWARqx36Tg2
+         DsMiTaK9pXmvJG3JvPKovUVl0OGm/ndeouMReBQHEwGxTMWTUHiMmee2PeJcwTgnfQ0a
+         TyOClrzMEIQ0OyzeFGSCVyaKZylpO49H+TWZRfj5zjdkCMOEgs6HiyQbYytTLv2QVuYJ
+         q1T7aQ43cqoJ9RQ6hYCJE7o2Dcyb45OEyOv9rooHgS9ZvtnV0byF3chtxoYqOKmxBnzP
+         cCHpeQ+txrvxRCgPObLKPiTY48sD8EhgRjjG1+/e2r2+YNpWBIfaw1XIrx2zqTvdlJP8
+         TdBg==
+X-Forwarded-Encrypted: i=1; AJvYcCUz+CqgUiIPBk2H93gh++ygSjmnBrhUrG5eLjQBiP0/PcImZOCDtuY8BA9RGXbNVlVwI+qoUc5gh4lInWY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysfJufQlwaqE8QFbT5sDn1PIYgccVJNt/pPd1kSK8f3FCvq2+7
+	3uSwEVl3xzQoxvayUaR9U9Z91JaN8oSUHFnII6UPRC/Am0A0QggsicR9x9kyWpGZTcb6zNGH6ZP
+	czIu5oBR++T9zpW2t9YjX5IACKwojhK2DXgyCBIjYEQ==
+X-Gm-Gg: ASbGncumDGK4wijMCYrR9SrIyftzzWPKD0+3S9OF3tdaBRnGlVMZnP5iXLe2nKN21CP
+	zSEs3azvF6nwgGr00DT6pky1bbAC0nZi3iydOBPyoFIkEBr0UP3aDM96l5A2QWI/IIWtMDMqFnV
+	BHx0knNQ0tMoXmnIF0r0C+Llh8DX3bT90IN4gQP9K5Uoi0X0zd7sZ05n5uiqc5dl9ktgg8whxXq
+	1qhtMfn28icsddpWn0hMkcMB4nL+Wg=
+X-Google-Smtp-Source: AGHT+IEjhWzPMlj17Uy7qd2LicirAASApXwhCe4VbKO72/os2UztLtK5uJY9uTbzBv/l7QF9CdPnWL/3cGWP9kZX9p4=
+X-Received: by 2002:a05:651c:1988:b0:373:a537:69f6 with SMTP id
+ 38308e7fff4ca-373a74c163dmr11755181fa.33.1759317542967; Wed, 01 Oct 2025
+ 04:19:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: HQMAILSRV2.avp.ru (10.64.57.52) To HQMAILSRV2.avp.ru
- (10.64.57.52)
-X-KSE-ServerInfo: HQMAILSRV2.avp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 10/01/2025 11:10:03
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 0
-X-KSE-AntiSpam-Info: Lua profiles 196735 [Oct 01 2025]
-X-KSE-AntiSpam-Info: Version: 6.1.1.11
-X-KSE-AntiSpam-Info: Envelope from: Pavel.Zhigulin@kaspersky.com
-X-KSE-AntiSpam-Info: LuaCore: 68 0.3.68
- 1da783151ba96b73e1c53137281aec6cc92e0a0f
-X-KSE-AntiSpam-Info: {Tracking_cluster_exceptions}
-X-KSE-AntiSpam-Info: {Tracking_real_kaspersky_domains}
-X-KSE-AntiSpam-Info: {Tracking_uf_ne_domains}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: zhigulin-p.avp.ru:5.0.1,7.1.1;kaspersky.com:5.0.1,7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1
-X-KSE-AntiSpam-Info: {Tracking_white_helo}
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: Rate: 0
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Deterministic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 10/01/2025 11:11:00
-X-KSE-AttachmentFiltering-Interceptor-Info: no applicable attachment filtering
- rules found
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 10/1/2025 10:17:00 AM
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
-X-KSE-AttachmentFiltering-Interceptor-Info: no applicable attachment filtering
- rules found
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
-X-KSMG-AntiPhishing: NotDetected
-X-KSMG-AntiSpam-Interceptor-Info: not scanned
-X-KSMG-AntiSpam-Status: not scanned, disabled by settings
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/10/01 07:34:00 #27871058
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 52
+References: <20250925-ltm8054-driver-v2-0-bb61a401a0dc@bootlin.com>
+ <5331035.LvFx2qVVIh@fw-rgant> <20250927-spoon-yearning-c1a8df796173@spud> <5926760.DvuYhMxLoT@fw-rgant>
+In-Reply-To: <5926760.DvuYhMxLoT@fw-rgant>
+From: David Lechner <dlechner@baylibre.com>
+Date: Wed, 1 Oct 2025 13:18:51 +0200
+X-Gm-Features: AS18NWBS8-yzFEbPE539-aBIzutpc2mebsewYlTX4Q1OfyH7iUd46IqQowJM_Kg
+Message-ID: <CAMknhBGOpODxmzU9J9nqGDKGzn6KKFV5Ed3okLvecKtHhNRB9A@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] regulator: dt-bindings: Add Linear Technology
+ LTM8054 regulator
+To: Romain Gantois <romain.gantois@bootlin.com>
+Cc: Conor Dooley <conor@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jonathan Cameron <jic23@kernel.org>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Hans de Goede <hansg@kernel.org>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-iio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-In ch_ipsec_xfrm_add_state() there is not check of try_module_get
-return value. It is very unlikely, but try_module_get() could return
-false value, which could cause use-after-free error.
+On Wed, Oct 1, 2025 at 9:12=E2=80=AFAM Romain Gantois
+<romain.gantois@bootlin.com> wrote:
+>
+> On Sunday, 28 September 2025 00:31:05 CEST Conor Dooley wrote:
+> ...
+> > > >
+> > > > > +  lltc,fb-voltage-divider:
+> > > > Why does this property have a ?linear? vendor prefix?
+> > > > Shouldn't it be adi to match the other property and compatible?
+> > >
+> > > This component was originally from Linear Technology, before it was
+> > > acquired by Analog Devices. The new properties and compatibles have t=
+he
+> > > Analog Devices prefix, but the "fb-voltage-divider" property is alrea=
+dy
+> > > used by the LTC3676 and LTC3589 regulators, so I left the Linear
+> > > Technology prefix for this one to avoid introducing a new property ju=
+st
+> > > to specify a vendor prefix change.
+> > >
+> > > I don't have a strong opinion about this though.
+> >
+> > Do they share the same driver?
+>
+> They do not. However, they use it in the exact same way, and I would've
+> liked to factor out the handling of this property in a future patch. This
+> would also make it easier to handle other types of feedback pin circuits
+> and have a generic binding for "regulators using a feedback pin connected
+> to some kind of analog circuit".
+>
+> For example:
+>
+> Vout----+
+>         |
+>         |
+>        +++
+>        | |
+>        | | Rtop
+>        | |
+>        +++
+>         |
+>         |
+>  FB ----+
+>         |
+>      +--+--+
+>      |  |  |
+>      |  |  |CCS
+>      +--v--+
+>         |
+>         |
+>        -+-
+>         -
+>
+> This is all speculation at this point though, so I don't mind changing th=
+e
+> property to "adi,fb-voltage-divider" and handling the different compatibl=
+es
+> when it comes to it.
+>
 
-This fix adds checking the result of try_module_get call
-
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
-
-Fixes: 6dad4e8ab3ec ("chcr: Add support for Inline IPSec")
-Signed-off-by: Pavel Zhigulin <Pavel.Zhigulin@kaspersky.com>
----
- .../net/ethernet/chelsio/inline_crypto/ch_ipsec/chcr_ipsec.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/chelsio/inline_crypto/ch_ipsec/chcr_ipsec.c b/drivers/net/ethernet/chelsio/inline_crypto/ch_ipsec/chcr_ipsec.c
-index ecd9a0bd5e18..3a5277630afa 100644
---- a/drivers/net/ethernet/chelsio/inline_crypto/ch_ipsec/chcr_ipsec.c
-+++ b/drivers/net/ethernet/chelsio/inline_crypto/ch_ipsec/chcr_ipsec.c
-@@ -35,6 +35,8 @@
-  *	Atul Gupta (atul.gupta@chelsio.com)
-  */
-
-+#include "asm-generic/errno-base.h"
-+#include "linux/compiler.h"
- #define pr_fmt(fmt) "ch_ipsec: " fmt
-
- #include <linux/kernel.h>
-@@ -301,7 +303,8 @@ static int ch_ipsec_xfrm_add_state(struct net_device *dev,
- 		sa_entry->esn = 1;
- 	ch_ipsec_setkey(x, sa_entry);
- 	x->xso.offload_handle = (unsigned long)sa_entry;
--	try_module_get(THIS_MODULE);
-+	if (unlikely(!try_module_get(THIS_MODULE)))
-+		res = -ENODEV;
- out:
- 	return res;
- }
---
-2.43.0
-
+Could we just make it `fb-voltage-divider-ohms`? The -ohms suffix
+makes it match the standard property-units suffix which already has
+the uint32-array type. There are a couple of bindings that have
+`vout-voltage-divider` without a vendor prefix, so it sounds like this
+pattern is considered somewhat of a standard property already. But I
+think it would be better with the -ohms suffix. For example, there is
+already `gw,voltage-divider-ohms` as well. But there are so many
+similar properties without the suffix, it is kind of the defacto
+standard already, so might be better to stick with that rather than
+making it even more different variants than there already are.
 
