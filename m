@@ -1,109 +1,145 @@
-Return-Path: <linux-kernel+bounces-839320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F19B0BB15A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 19:21:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B27F7BB15AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 19:22:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 783824C19F2
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 17:21:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D854179EF3
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 17:22:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 202BB2D3A6A;
-	Wed,  1 Oct 2025 17:21:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fm1s2YkN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78E0E2D372E;
-	Wed,  1 Oct 2025 17:21:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B05502D3A6F;
+	Wed,  1 Oct 2025 17:22:31 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D953229BDBF;
+	Wed,  1 Oct 2025 17:22:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759339299; cv=none; b=Ee7JDlM0nLxgORO3SOUoGYRpXAF4Bj0wkYpz5kexvRd+j5/atEUm8HVNU+grRrIEHwUEJ/O+KtmTa5qajswnz2XVkI+JaHEH5T/xoPKZFJg/SCoGvobw/NJOMfQrvfoIwzDInxzyBdy/SgtHRxfwP8FnmxjbnW9U+HKruqpdzqs=
+	t=1759339351; cv=none; b=UDatUE3XPWOlt3tUt8zyRB8r4KZhJlmftoQH/nTuyFYQhiQAUcvUw7AxMrZiUrkWlzxzrE0wVypprtXLtaeGD8sGOXmO2VixN4Bs8YBbLxsbFOrMJOAxSAvGIqD2Z+j8T+rbg+lIYhnXaEgTpDFySFEe45uCQGXt46V1dKDe0Aw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759339299; c=relaxed/simple;
-	bh=HyTDnAffjvigGqtHt+eqnaxvoS5wThfd8l8xoAJoL8I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=evovthQIjsfAKg8KxWSdEAx0odgz5VwMZ1NZCo3gR6ZQjBAeLknLcp3EhRO0hRyBeVJkA+LUUysVY2qIJHiTfCO/MxfyEwn4SsQZLYt3Tt6c7bhvnxakZvA/2TnQpZtqOxq/yMEK1+Zw/hYKkQ7odouBX0oAW0yrtzlYD4ciRQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fm1s2YkN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2A3DC4CEF1;
-	Wed,  1 Oct 2025 17:21:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759339299;
-	bh=HyTDnAffjvigGqtHt+eqnaxvoS5wThfd8l8xoAJoL8I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fm1s2YkN2RXkjDOYbHCWLai2V393zjfHb3r4BOOWoeSDf6P6/DkBSjZepXLxN9qmK
-	 m1lUMKQWw6voui+Knq1CYMdzTIS2dMQRJBSQQRkffVFosyZKYQ1VDf/NmLXpwE2nbG
-	 S2NXzCRqFxjBx3MPrWHb6nQlWzfVJTeyge3RTFoFptdp86/W7jmrBwSQZVVUSKo8GX
-	 YFX3NSxXCNT+/W2wzSur4R3SOTV2mA1kro2DW2hSoaN3fi4YnCPQy8IscyymGZ2uyq
-	 sMlstsjVgpL9SMNwr6SNAM3m/IRd6OGobiJ8BHxmFvP3Paf7OvYtPpcClY7k3ijJ8V
-	 leoLvs4miDf3Q==
-Date: Wed, 1 Oct 2025 18:21:35 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Lee Jones <lee@kernel.org>
-Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the mfd tree
-Message-ID: <aN1jHx0sgkOFAYM4@finisterre.sirena.org.uk>
-References: <aMqxWGx0asGTWZ2V@sirena.org.uk>
- <20251001095108.GO8757@google.com>
- <aN0CkwO7vxzpp30I@finisterre.sirena.org.uk>
- <20251001125028.GS8757@google.com>
+	s=arc-20240116; t=1759339351; c=relaxed/simple;
+	bh=KtHH5slsD8Ox5MoPLqaiqd9jBeTgdv0YVlgjsuTd720=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JeQ/hRdBhIQQ6iZ6RvF0jz2W7NGYip87U/gsbrm77z7tejO6zx5hicaCLyKpEYRrn1+QB9ZQLt4OKEkzUTKxloSWFhKycmZdstl1lPL4ww7512R2u3ICB4iU79jvM++mIYYv1Wl36uA1Vigug06opDDDeH6cgm72U2HneI284/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DDF2116F8;
+	Wed,  1 Oct 2025 10:22:19 -0700 (PDT)
+Received: from [10.57.66.40] (unknown [10.57.66.40])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 30AE33F59E;
+	Wed,  1 Oct 2025 10:22:22 -0700 (PDT)
+Message-ID: <69b1c489-b4cb-4bee-aff1-6c76fc48cf29@arm.com>
+Date: Wed, 1 Oct 2025 19:22:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ZsqiOUGwz3fM7XsN"
-Content-Disposition: inline
-In-Reply-To: <20251001125028.GS8757@google.com>
-X-Cookie: If in doubt, mumble.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v5 13/18] mm: Map page tables with privileged pkey
+To: David Hildenbrand <david@redhat.com>, linux-hardening@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+ Andy Lutomirski <luto@kernel.org>, Catalin Marinas
+ <catalin.marinas@arm.com>, Dave Hansen <dave.hansen@linux.intel.com>,
+ Ira Weiny <ira.weiny@intel.com>, Jann Horn <jannh@google.com>,
+ Jeff Xu <jeffxu@chromium.org>, Joey Gouly <joey.gouly@arm.com>,
+ Kees Cook <kees@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Marc Zyngier <maz@kernel.org>,
+ Mark Brown <broonie@kernel.org>, Matthew Wilcox <willy@infradead.org>,
+ Maxwell Bland <mbland@motorola.com>, "Mike Rapoport (IBM)"
+ <rppt@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Pierre Langlois <pierre.langlois@arm.com>,
+ Quentin Perret <qperret@google.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org, x86@kernel.org
+References: <20250815085512.2182322-1-kevin.brodsky@arm.com>
+ <20250815085512.2182322-14-kevin.brodsky@arm.com>
+ <48ed62b1-cceb-4bce-923c-25c11dbccc37@redhat.com>
+Content-Language: en-GB
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+In-Reply-To: <48ed62b1-cceb-4bce-923c-25c11dbccc37@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+On 01/10/2025 17:28, David Hildenbrand wrote:
+> On 15.08.25 10:55, Kevin Brodsky wrote:
+>
+> Just wondering, should the patch subject be:
+>
+> "mm: protect page tables with privileged pkey" ?
+>
+> At least patch #2 tells me that set_memory_pkey() will set the
+> protection key, and the function is called
+> "kpkeys_protect_pgtable_memory"?
+>
+> Just trying to connect the dots here :)
 
---ZsqiOUGwz3fM7XsN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+That's fair! I suppose I meant "map with privileged pkey" in the sense
+of "modify the mapping/PTE to set the pkey". But I see how that can be
+confusing, as we're not creating any mapping. I'll reword that in v6.
 
-On Wed, Oct 01, 2025 at 01:50:28PM +0100, Lee Jones wrote:
-> On Wed, 01 Oct 2025, Mark Brown wrote:
+>
+>> If CONFIG_KPKEYS_HARDENED_PGTABLES is enabled, map allocated page
+>> table pages using a privileged pkey (KPKEYS_PKEY_PGTABLES), so that
+>> page tables can only be written under guard(kpkeys_hardened_pgtables).
+>>
+>> This patch is a no-op if CONFIG_KPKEYS_HARDENED_PGTABLES is disabled
+>> (default).
+>>
+>> Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
+>> ---
+>>   include/linux/mm.h | 4 ++++
+>>   1 file changed, 4 insertions(+)
+>>
+>> diff --git a/include/linux/mm.h b/include/linux/mm.h
+>> index d9371d992033..4880cb7a4cb9 100644
+>> --- a/include/linux/mm.h
+>> +++ b/include/linux/mm.h
+>> @@ -34,6 +34,7 @@
+>>   #include <linux/slab.h>
+>>   #include <linux/cacheinfo.h>
+>>   #include <linux/rcuwait.h>
+>> +#include <linux/kpkeys.h>
+>>     struct mempolicy;
+>>   struct anon_vma;
+>> @@ -2979,6 +2980,8 @@ static inline bool __pagetable_ctor(struct
+>> ptdesc *ptdesc)
+>>         __folio_set_pgtable(folio);
+>>       lruvec_stat_add_folio(folio, NR_PAGETABLE);
+>> +    if (kpkeys_protect_pgtable_memory(folio))
+>> +        return false;
+>>       return true;
+>>   }
+>>   @@ -2989,6 +2992,7 @@ static inline void pagetable_dtor(struct
+>> ptdesc *ptdesc)
+>>       ptlock_free(ptdesc);
+>>       __folio_clear_pgtable(folio);
+>>       lruvec_stat_sub_folio(folio, NR_PAGETABLE);
+>> +    kpkeys_unprotect_pgtable_memory(folio);
+>
+> This is all rather nasty. Not your fault.
+>
+> In the near future page tables will not be folios, and the whole
+> ptdesc_folio() conversion will not make any sense.
 
-> > Your tree gets merged first so we get a build failure when your tree is
-> > merged, it would get sorted out eventually when the gpio trees are added
-> > but all the intermediate builds are broken.
+Ah, interesting. Any patches/series I should be aware of?
 
-> Interesting.
+>
+> Likely you should make kpkeys_protect_pgtable_memory() etc. consume an
+> address range, or a page range right from the start.
 
-> I thought the point of -next was to test everything integrated.
+Got it. That said, as per the discussion on the cover letter [1], it's
+quite likely that we'll have to change the approach completely anyway
+(i.e. allocate PTPs from a dedicated pool where the pkey is already set).
 
-It is, but part of how we do that is we add a tree at a time and see if
-they break - there's byproducts of the whole process like pending-fixes
-which allows fixes to be tested without all the new work in -next.
+- Kevin
 
-> Thanks for the heads-up though.  I'll wait until this has been merged
-> before sending out my own PR to Linus.
-
-Note that this has kept everything added after it out of -next.
-
---ZsqiOUGwz3fM7XsN
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjdYxwACgkQJNaLcl1U
-h9BrAQf9Fmztt3vsQM63QmvaHqsaKpAiiFrLUVCplP45CuzRfC4KVgb2gSBALTrW
-fo83Nj0nKk5wJiugKSgS4mME65zYHg7LRAz9cJh0ZUk9mvi6Py9vydFsmFHuTI8H
-sjy1iuzHw+aIVeHHPB5JBgrC7ymFFtqYCFGNfXMp0EJexsAs6HmD02Svcxg1GUrh
-ZZULSZ51z8jz8Q0y2/wxfSezued1bn26SnKCCg1eMXz4z6RquD+uMqvKHyu2AxFt
-FFTuOQnIEBCCMVTHvRuwpxss+RI8asWs0XmjwtgABNYNLSTFeuq7kGnFyEiS2ev7
-5CNdkxHxu5oX69dRzrB6lswW9IeQEw==
-=xwUQ
------END PGP SIGNATURE-----
-
---ZsqiOUGwz3fM7XsN--
+[1] lore.kernel.org/r/aMwd7IJVECEy8mzf@willie-the-truck
 
