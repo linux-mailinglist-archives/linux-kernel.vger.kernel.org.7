@@ -1,689 +1,314 @@
-Return-Path: <linux-kernel+bounces-839398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DEB1BB18D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 21:01:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AFD2BB18E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 21:02:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CF587B11BB
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 18:59:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9CF57B19C6
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 19:00:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0061302767;
-	Wed,  1 Oct 2025 19:00:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1F2A2ED141;
+	Wed,  1 Oct 2025 19:01:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Nixn0W5P"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OHP9XiY4"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92FD42D7803
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 19:00:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759345221; cv=none; b=YT305yZq16V4eZd8irNatK952NcXJuYzjWXCO209WMtVgMkvvPJyI6DdD7z/lK8qD72vav3G2HERXqHTLKDTEjxQhY8n8Cze6EADxW4NMmmcwyvUHJPMQgv0kbdghZDvrRBrZnBydWuFqbTOWF5TktKNG8WiJ0NWguns4nK88fs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759345221; c=relaxed/simple;
-	bh=5jIddfi3VJ3U3gMJ5kaxZCddqKJJIzIkKh2fX2j/PcY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=H5T0oJvKAQgJxZN4Ht29C11foi0hU99UnG6IGxpVNAxp8IlkyiXBKDhpwzJxWffasmfbjY+T5OsuwAi1vdmXcyXsL1OgIkK4kjWkj/gOxEbWLMNBVmYdtxHIdjLv0imj5e6ZTi/C5hN1fCPJoaGscz84RbDXqTHwUDTdZuuufjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Nixn0W5P; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 591IbtME023327
-	for <linux-kernel@vger.kernel.org>; Wed, 1 Oct 2025 19:00:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	1KOAZ03h/8+A3+Djsp+OivlfKdZFRb9XoRD+cQMQ2Iw=; b=Nixn0W5PpKaPWHFD
-	gq9j3U1UETOEyU60Ms0I+Bcya3MztQzGq+yxDUMOu2jwo/9UaHiZBEk67+9q94TB
-	t8VSvpH3nQSzUWoMEsrzKmzypKjYKh+dYcqjWLQskttfCh8gq7jEISPqiUbLPazs
-	rj5ck/yDwB2HSMdphwJTU4ftIrkOzM0aYXIfHs/Dtzg2IF5hTcmA+VlvEudAqTL7
-	ioBgL050MYcdoZQCB9kP9mNI264Hk4ZLh2/8WReZ9OWrHXdknBo6840OWgp6sigR
-	TZrc+rSh1rib1m2+CbwUOVhRiC1CpuKHG3LqZkbWWbOb5na1HlPn7ss/+VI8wFJe
-	onzIPg==
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e8a65n4x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 19:00:17 +0000 (GMT)
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-3309eab0740so61896a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 12:00:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759345216; x=1759950016;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1KOAZ03h/8+A3+Djsp+OivlfKdZFRb9XoRD+cQMQ2Iw=;
-        b=XqmQ54vkaoH0CJ2LAh86YkqzvyY3eWp4bYk3gEKP/uGlb4FDzvmJ50S+Lr9K4wvtBt
-         hxCtDe0/OMNEguuzyeVxwNKPmS9OatPLWV9mc4WloB5+dt7/kG7tozjZsCo85zuiYp/1
-         924uMDyVdte95ek/T0NwAetjIePWQ/rQDEtb2UwP5BDEJotcNuvM6KNlWG3yBEDznh9K
-         ZdSAmRiTDtdoDip8twsN7Oynv7UxR3IibIu2Yw/+MhSfVTL7rcBYa3kSv2U5JMNglruQ
-         6C7/mAMuYQjkmu/k2mOU8y6YS02KNgHXvT+wldenNSMgdsk+SDkGHUfpXAuOxjw/ja9e
-         UYmg==
-X-Forwarded-Encrypted: i=1; AJvYcCUT9SWgy4trGEJT7YAwguuO9I4PyAy/xSJzy2UvFpbJjcGox4CFPfKljagk8sLY+gF/6RoQpXQmuM3CUJo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHbBiwEcD0CNE6xiKnoGClJHnhJ6S08HjB9BGzM7DMpEcz3xr6
-	8cuXJru6RZcMTP8jVtYJvPL2zsXn4WQr6CMqq0ziPsSthBUSXv4yeLiFkQkgolIfD99amDO2r3R
-	mlYKR4dof3XIMUQNHeRJiLuXeYBfvmBeRr4fwwkeL6KOZTcX04uPPy94UQDTlUINfCdwXfO3G5b
-	Y=
-X-Gm-Gg: ASbGnctqIZNnN8aO80IY8vFIQD+8zOmtWRebHYPs9FnHc6f3viwykX7axhTvQZ7J9w0
-	65a/y3kQmTz4GesT0gTyJOl/2PQBNJufybKnrBCwvrxG4VwAIKEBjVqp2x/JaXyun3JMmU4uN5i
-	ulrI4djLLJ+McSP7M7q7TOBggMI+VAgif7BCDkNas7eEPGqGfaPhfhN+j9HA8YfhKPKNcdInohB
-	DK38/hzsP+sNzEvn5kAEV4Z6GIIHmVAU7Dltdcg2aMwEiJRxmLIKVY+X+biAl4ohmUgEXD5MnEi
-	FY13yGFDxLa1V6Grn9ocz3S+T3HKIQNXQ+N54fac6i9c2/+FjwLM4NKRnJQfthX0HUqvOLJQ0YO
-	JF/ez4wzppmhvdt5ZFoUkx54AsGIusA==
-X-Received: by 2002:a17:90b:33d0:b0:32b:e4ca:3e03 with SMTP id 98e67ed59e1d1-339a701232bmr2600686a91.6.1759345215775;
-        Wed, 01 Oct 2025 12:00:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEueyukjr/vxi6oC66TGJ6y/uozrSiEscPYur7UGAZ/3Xdaugd8kUkU/drqOK6EWv/dUOf6CQ==
-X-Received: by 2002:a17:90b:33d0:b0:32b:e4ca:3e03 with SMTP id 98e67ed59e1d1-339a701232bmr2600655a91.6.1759345215024;
-        Wed, 01 Oct 2025 12:00:15 -0700 (PDT)
-Received: from gu-dmadival-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-339a701cbffsm2950074a91.21.2025.10.01.12.00.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Oct 2025 12:00:14 -0700 (PDT)
-From: Deepa Guthyappa Madivalara <deepa.madivalara@oss.qualcomm.com>
-Date: Wed, 01 Oct 2025 12:00:08 -0700
-Subject: [PATCH 5/5] media: iris: Add internal buffer calculation for AV1
- decoder
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ECFD2D63E5;
+	Wed,  1 Oct 2025 19:00:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759345259; cv=fail; b=hMo707+M4f2zAIYOl/WcZAMiXbCR1xr5EL7yOpQ6Y51Njrt8an8Ziyfxi5YViIF6bbDl9Hxb9ey0lvTfJl8Mf40+HUxhTEH117NLMCz+ERYEQbKMBUUWPn+IxT+vvfk3rkQJXo+uqqO4m++VtP/XmXIxSNPPG69bE5pzVQkQBs0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759345259; c=relaxed/simple;
+	bh=1vwsJW2KLyaGCq9gdIoimFkFmZEFRH3MBKwGpthKiHQ=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=B6/TdMpkTSNONal4JschFpzOolNc9/uKD+SjHttqGxI/wGT1eR68saYVeAg1ILRrigRVTIWyOeyyOeM51pTVZQA6DmGWhkMHmy9pGifAMlaOCFdNBUN0ct0Oy6vzXNC9p//CKBjF6Yji+ZCBhvXHmzS9iM47cTlHO+5mXASRpt4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OHP9XiY4; arc=fail smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759345258; x=1790881258;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=1vwsJW2KLyaGCq9gdIoimFkFmZEFRH3MBKwGpthKiHQ=;
+  b=OHP9XiY4R7Srbg6d1zq4K810wmAK1WKdVaw8YpY6Qg+3bIu2CXTAfth5
+   DupEUgGEmxdBiE99mehnulNW8puR6ykaQrwn00M71alnSmXJI+/qv2kDf
+   mBjSR8wS6XTcpO1oVu6LsYgGH2fzMCZaFFWbZiURs+v1ZSuvNLlNL6PvD
+   ncc113ddkORIWoPd4INwY4qzNoTxpJZyCR1sW682yuq/LzDmYFGjeYcvl
+   CyJTiRqF9n6lStwJYWh1NpfHXINWBzX9gQTVRERaEPbtDDcTYG1lK9lXB
+   54fX8mOoOeVm3Qke9MhWY39zn+Nw3clWcDFbB8gQVlgyZLxGu0i2anJ4p
+   Q==;
+X-CSE-ConnectionGUID: Sqvd6lV2S0aKuXzFode1Hg==
+X-CSE-MsgGUID: ogTL0jOWSlOZuuhB019Ijw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="65453443"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="65453443"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2025 12:00:58 -0700
+X-CSE-ConnectionGUID: CoIhalLMTQmy+5a9ymJ97A==
+X-CSE-MsgGUID: FfpiX0tTRgiD7NWUZZVKIA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,307,1751266800"; 
+   d="scan'208";a="178484769"
+Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2025 12:00:57 -0700
+Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Wed, 1 Oct 2025 12:00:56 -0700
+Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
+ FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Wed, 1 Oct 2025 12:00:56 -0700
+Received: from BN1PR04CU002.outbound.protection.outlook.com (52.101.56.17) by
+ edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Wed, 1 Oct 2025 12:00:56 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Sn5C632lzLiP03qPqC6Bo8t79BfZpmKywpYzXtEDmCeWByLZLfcchh4s+BL/h1DMxwlZs2sz3+boBlNgKOrUgRUEIVYG3QJyzGJ/x6aExP0l7PVTFT5coiwmKxE9soiN+/MlHfSKacqierAws/p7QW0akimIVu5oOwpGUxJWgdnyk5GsoR8z+0sgQxrtL3HIeGPrM/SYZfYqw8ij0ZYfcVNez36OZ5/h9hTSgb/elugNttE9dq3YOMyctwJTYhyHY55LEP7lSj/xOqFkgs/ig/DHv2Iol992GKimHUu2jx60lnyRs6aVc/D3wE0MVkaP1Eqj2Q6tQxTbE9Y5m7yoGQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1vwsJW2KLyaGCq9gdIoimFkFmZEFRH3MBKwGpthKiHQ=;
+ b=alHGYwTmj4qnnsvST+dztCH26aS3RMOdFgTga4C5uvn46qLE2cXaEu0NH2Tg5N/VOKonBmrclqxonFJc197TE4xORDf/8XthExVuT0LDSGETUAdg+NJ5glQeLsgkpJLPPu89BsBmjDfvI1I8VROD5HgVcX4DINSLMwUjM0B3JPwp90d/eHqGlxZnam9PxZAYUQY0VWAyIibf+9Q82IPgc8GbpJQ/QzgDAyO2shNd02WjwanptxQeuCr0n0IK8atlFrezTJP2aAKd81MMq1DeeieFFalnjQESAPYx506oREqTKS7fmZBRdTOESVd1V7qvdtmw3IGw0n0V7dLcOku4OQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from MN0PR11MB5963.namprd11.prod.outlook.com (2603:10b6:208:372::10)
+ by CY8PR11MB7057.namprd11.prod.outlook.com (2603:10b6:930:53::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.17; Wed, 1 Oct
+ 2025 19:00:52 +0000
+Received: from MN0PR11MB5963.namprd11.prod.outlook.com
+ ([fe80::edb2:a242:e0b8:5ac9]) by MN0PR11MB5963.namprd11.prod.outlook.com
+ ([fe80::edb2:a242:e0b8:5ac9%5]) with mapi id 15.20.9160.017; Wed, 1 Oct 2025
+ 19:00:51 +0000
+From: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+To: "Huang, Kai" <kai.huang@intel.com>, "binbin.wu@linux.intel.com"
+	<binbin.wu@linux.intel.com>
+CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "linux-coco@lists.linux.dev"
+	<linux-coco@lists.linux.dev>, "Zhao, Yan Y" <yan.y.zhao@intel.com>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "kas@kernel.org"
+	<kas@kernel.org>, "seanjc@google.com" <seanjc@google.com>, "mingo@redhat.com"
+	<mingo@redhat.com>, "pbonzini@redhat.com" <pbonzini@redhat.com>,
+	"tglx@linutronix.de" <tglx@linutronix.de>, "Yamahata, Isaku"
+	<isaku.yamahata@intel.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "kirill.shutemov@linux.intel.com"
+	<kirill.shutemov@linux.intel.com>, "Annapurve, Vishal"
+	<vannapurve@google.com>, "Gao, Chao" <chao.gao@intel.com>, "bp@alien8.de"
+	<bp@alien8.de>, "x86@kernel.org" <x86@kernel.org>
+Subject: Re: [PATCH v3 06/16] x86/virt/tdx: Improve PAMT refcounters
+ allocation for sparse memory
+Thread-Topic: [PATCH v3 06/16] x86/virt/tdx: Improve PAMT refcounters
+ allocation for sparse memory
+Thread-Index: AQHcKPM0eZqFwOSc+ES1GzTBQe5/Z7SaG0KAgAZudgCAAWNPAIAAI4MAgApzb4CAAKnbgIAAi6yA
+Date: Wed, 1 Oct 2025 19:00:51 +0000
+Message-ID: <404c3dddef3025537d2942386ab0ea0f72ab9dc3.camel@intel.com>
+References: <20250918232224.2202592-1-rick.p.edgecombe@intel.com>
+	 <20250918232224.2202592-7-rick.p.edgecombe@intel.com>
+	 <f1018ab125eb18f431ddb3dd50501914b396ee2b.camel@intel.com>
+	 <e455cb2c-a51c-494e-acc1-12743c4f4d3f@linux.intel.com>
+	 <7ad102d6105b6244c32e0daebcdb2ac46a5dcc68.camel@intel.com>
+	 <19889f85-cfd0-4283-bd32-935ef92b3b93@linux.intel.com>
+	 <ca13c7f77f2d36fa12e25cf2b9fb61861c9ed38c.camel@intel.com>
+	 <894408f8987034fcbe945f7c46b68a840d333527.camel@intel.com>
+In-Reply-To: <894408f8987034fcbe945f7c46b68a840d333527.camel@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Evolution 3.44.4-0ubuntu2 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MN0PR11MB5963:EE_|CY8PR11MB7057:EE_
+x-ms-office365-filtering-correlation-id: a3339da8-a480-4425-716d-08de011cd70e
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016|38070700021;
+x-microsoft-antispam-message-info: =?utf-8?B?eStyS0NBZ1dCNXRHbGZhRTFneG11Skd5REdiRW5LT1ZtbWVaS2wwemxXM293?=
+ =?utf-8?B?NTdvb3RJNnZLUWJBNHZURzlqT25ZV0NZamE4R1Z6ZmNkT2ZHakFMZWt6Wncz?=
+ =?utf-8?B?aVJkcmtuUTQ3ajZXTEJ6MndHQ3RmMFl4T01BWW9BUElGSVdwUFFQbWVGNXZl?=
+ =?utf-8?B?VHhycDRvR3JaY2RCaU1IU2U5bW5zZHh0djg5YkhNRDdBSFM2ckxnd0UxVVdq?=
+ =?utf-8?B?RXlhRHZnVGV4a25WQ09JdWZYc3VPNjg3NE5LTzF5MmJ5YkJzdjlQRk1GekE2?=
+ =?utf-8?B?NjhKRW1HSSttUGp2RU8rZWI2dlliZHdUUFY1MDVQb1h6Z3A3TWpvcUV5RmpH?=
+ =?utf-8?B?d09hOEJjZ0d0amE1NTM4VlhxNFRuT0hlK0FldkwxaW9McVhSTHJhbEtLWmFu?=
+ =?utf-8?B?dDR5V05PcWJXZTBKNDlsWUtCaFFOVmVnQWlYa0hKVlp3aWxaTXVZQy9BV2ZZ?=
+ =?utf-8?B?MG9XSjY3U2dnajlOdTlDY21MTzVwL3Q4K0JlWExkV1pVc2dYUmg3ck1iOHJH?=
+ =?utf-8?B?dDBDY2g0Q3RubnlvOXQveHV6ZElobXZydDRkU3gzMmhtNktvS0dIZXJadTJs?=
+ =?utf-8?B?S1dsRFc2Um81U2VOaGcvSkFrcW9TUlJlSGNieitydGlyR3JpUlZobjZOc2dY?=
+ =?utf-8?B?RjZSZG85YmJUcHRpdFpCa2dRL3hkZFA2VE9lcjFqNXpEMXM0NGNqc2Y4SUxx?=
+ =?utf-8?B?K0tva05HTXNKYUVkZ2J6U3F4Z1RCTE1ndGFRdm5zL2FNR1E5dmxYUUtYbmp3?=
+ =?utf-8?B?VWoyeVNnclFDSWMwQWswcFRLOSs0c2ZxV1prTUVFNk95SlAzRy9PS3dmRldZ?=
+ =?utf-8?B?NzkwbEFZYW9UZTdKQjJVTmgrb3lHaDZZczlDTEJTR0UwVkh1Rk1vMXNFZFRQ?=
+ =?utf-8?B?bklLaHVUMEJQV3FZcTYreVRNSlpLaGU2VGpzNXdicWhVa09iWjhzRis2K0h1?=
+ =?utf-8?B?WHU3cDJUN0lKQkJNM3dSU1JBQzBjcUZBYkdTRUpMN2p1S3cwTGhHT25yTlhY?=
+ =?utf-8?B?VTE4WFlqVlVlckovWXNOMHFWUFpGTjMwUVI3ODlqWExPanpMNmZjVzd1R0N2?=
+ =?utf-8?B?YTVhQ213Z2V1L2M3YlZad3FncU1uV2MrVXlCb00vTmR5d3Y0L0xIVmUraXJj?=
+ =?utf-8?B?dktEOFpGRlpHQStadGF1ZS96bzRSS21PSURsKzY1TjhZcllzQTBOOHhqODhC?=
+ =?utf-8?B?WExKSUxjQS9tajVITWFSbEIxeFIvK1VQbVJZOWhTdzVJeHFoUnY5OGI4THAz?=
+ =?utf-8?B?RlBnM1NFMkN3VU5seGlkNE16RFJOMS8rQlAwWXVRYnB6NHdKSmlqZnhTZ29C?=
+ =?utf-8?B?K0F4OG9hTnE3YmVzVi82RnpWVlZyRGNydWFzZUtUNzNsc3ArQldnTmxOdG1Q?=
+ =?utf-8?B?ZHNkV0xaUnEzTEFGd2xYT0NwSW9VbWdaMGJXc1djM3ljcXhYbG91Z2cxdlVV?=
+ =?utf-8?B?dUhYZW5mWVMwRjJKNVM5bExHRlc0RWY2Rm4xbWN1Z01sc3dyYjF0MkNpRVM2?=
+ =?utf-8?B?WGtVd3BCcEMxLy9yM05CTUdmMy9TS2w1L0NlWSsrdkwzaTdiTkhHczRpUnRh?=
+ =?utf-8?B?YW1wOGZQL2oxZFREUlBtZWNidXk5cGpxMi9STDQrenl3SmpUVU8rNG1mRmRs?=
+ =?utf-8?B?cXN1KytWRWJ4Ly9IbXl6eG1mVEs2Mks5QlpaTktZb09oN0M1MWxYOTZVa3Bn?=
+ =?utf-8?B?OEJsaFhiM1Y3MWtGU0hTYzBsaG4yNk1HMlZ3NXhLTXZnM3cySXlabm8xTGdH?=
+ =?utf-8?B?NG01Q1Z6ckMwY0NvWkpMa3pZNVQweEVEN0dvZkg5MWJTVEIrL3pSUk1YS1ZS?=
+ =?utf-8?B?a3VaQUFxUFBvZVdJd2REakIrOEt0OXFQZEtXZEtOMmlBYnBmZ1BTNVk2UHhW?=
+ =?utf-8?B?cVZjYWRjTFE1dGJubU1Nd1BtTUZKMUZsc2hDV2h1ei9aUTVYSGFhcU4zQUtG?=
+ =?utf-8?B?Uk9uSkpMR3dyYXRvaWdwQ0hyU0YvUFJUK0ZRTVJCY1h2bi9pc1E0VzVYdXVQ?=
+ =?utf-8?B?WjZ2WXZRem9IQUJvNWxSRUZWNFhFK2dxVi9jdElrYTNteExIVFRkaFFQbzNQ?=
+ =?utf-8?Q?8uSmw0?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB5963.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?cWlrR3NQODErYS9FWEkwZ3JCaGhhczU3dm1jalNZMmFmL1IrQ3J1SFBQNkNR?=
+ =?utf-8?B?UG5qSXhyZXpZVytxSkc4UHVJbUE5RU1BaERoMm9oSG9rTXhoRjZ1TEFxUWhY?=
+ =?utf-8?B?RHRyVlZaUjl1aWtBRm90Z0UrdU1FdkpCWFh1b094QVBZUlp1bExJU0ZNV3U3?=
+ =?utf-8?B?aENOQ28rK2RJcHNHR2l6L3hyaVkyZ0dIMm9OZ1JBTVZIU2VzRzVtS2NEOUpn?=
+ =?utf-8?B?ZnNyZGRybGhwQjhZYTRpT21ERXZuaVRnSHA5YUJaakhIQmRLZFp3OE4ra3Vy?=
+ =?utf-8?B?T0ZZQ2NJSlB5N0FlL0poMHZOMVcvOVlRWmxIaTZCSHhjWWVTd1U2aGR3aDNR?=
+ =?utf-8?B?bnZTNXFHQXAvcFh5eDQ4T0RvdWpYd3U2RGMvSVlnR1doSU02Ry9yeTRYTUtu?=
+ =?utf-8?B?NldDK3Nlbzh1RzJrT2VaQW9iaGpzVjR6U0ljcU11bnBZYkc1UnhtaHNtSjZI?=
+ =?utf-8?B?Ylp0Q1dJZEdTQ2gyWGRmTTFBYi9POEpVbThlb3RHOUhvd0I1cnZrZ3d0M243?=
+ =?utf-8?B?ektjcGlNWFduSk1TQnZ0V2FHZEE3ZUJFcVNFbGxEcEQ5MTZ6MXZGaTJON3ZZ?=
+ =?utf-8?B?emNhT2lodnFuR3VpRVF3SUVRYUU3NjdnTHB6dVlVN0hrNTJuZzd0SXg1dGlP?=
+ =?utf-8?B?NVpVTXFVTWYrdysvM1FXSEt3VndoQ3JCeHRoK1hOR1U2cU5ITWVORlhGZytQ?=
+ =?utf-8?B?OXp2Ylp2Qk1GOS8zNjBsZ2pvMVNkN2QweVl0d2toSW1ISW9jaWtRR283cEtv?=
+ =?utf-8?B?bVdPSDVMQlh0a09RTDlINlBxL2hrVFhXRXdKU1hFYzRwTENFYUplSFlqRFdW?=
+ =?utf-8?B?ZXlYNm41eGUzdFJPeVNNTk1ZclQ3NDdDRHFTVTJLSkMzZXdQaGNXRXJlN0pP?=
+ =?utf-8?B?SmxPRUp5YU9QK3Y4a0IvNjQvTzFQL2UyRVp6UDJ4eEtXQ3ZpODRjS01KMHZI?=
+ =?utf-8?B?VVY0WDZJRENHa3pOMHEvaHBCTFBVZ0htaDJRS0xXRU1jbEp0dnJ0dVNmTzhY?=
+ =?utf-8?B?SnZ4eUxYV2luQmI4UVNLcXUxMlp4SUZFOXN5UXlCTTU2V210RFhYZVRqMlU2?=
+ =?utf-8?B?U3JqMlpkS09wUmw4TnZ0SVZHWDZGZGxmZHpSL0U2VTJzNTdiT1pObXBFV24z?=
+ =?utf-8?B?VUJLVXhrM1VqWm1VV05PR20xbklUNmM1TnZ5N1R2eVhaTmZjbHcyMDE5U3hM?=
+ =?utf-8?B?TmdYekljRlhlcm5aeVhKdkpuOFJtdGdIbzNzejJkeS9XK1E5RHpKWlk4SDdM?=
+ =?utf-8?B?dXBCd0ZHNys3bnAydTR4Y1kzbWNKYU9wSkxac2ZPREtuOHgwN3MrcjczeGRw?=
+ =?utf-8?B?NXVTenVIYmJzbWI3L0d2YWloaGFzT2JYcHZVUXJ4Rkp6VUYwL1lnekRDSFZv?=
+ =?utf-8?B?NWJqWG8vV1hFeUREbThwRzFJV0oyRzk5dmJhallsK1UwRXNUdWlPdGg3enBY?=
+ =?utf-8?B?VkQ4VU85NllTWnlydGJTYXNOQ1hqaW9WK3ZabXFMZFFVcGQ5ZVF0Syt2alFt?=
+ =?utf-8?B?WW91V2d4QmR1T2dncitjMGhlbWZCT3pPUUV6eTBKa25pdE9sRnpiMUdMTUsy?=
+ =?utf-8?B?cS9WV1FyaXd0QkRpR3RDQ004NG92QStZc3NHS1NSNk56REs3MzhxcVlkbzk2?=
+ =?utf-8?B?RWJzd0VVOUswMEo4Y3dBUkZpaVp1SXAzMGl5TUo1WlZqWi82VW5ueVRwZWJ5?=
+ =?utf-8?B?ckc3TzdveDk0T0w0c2hvd1ZnSU1zcTJPVE5pSHoxd051TVVNaGhXbHArdUhs?=
+ =?utf-8?B?a1cxTy9OSXJ1a09DT1VZei9KOXNwSDhFaFVnTU8rR1BsR0lmVHl0bzhWYVpx?=
+ =?utf-8?B?eTNMTjJleWRHV20rTW4wSy8rbzg4QzdJUGRic3c1VENKY2Q1aEFoamZ3Z0dt?=
+ =?utf-8?B?VU15ZHBpdlVodklBVEplSlJWdnVwU29CWDBUVjJqR2IzU3F1MlZtRVZxU0l3?=
+ =?utf-8?B?d1NLV1g1b1c2dGRFMGpkdDN2QWRoQ0tXME5tVno4bm12alJsTnV4d2tWZDVH?=
+ =?utf-8?B?RFUxSjliZmFUQWhSK01FSkg1VHZzQkJYUDZOa3Q5eDArQ0FlMm5lazlZTDdR?=
+ =?utf-8?B?N0xlRUFORXNVcVRHN2p4MkZ1SUpMWXl2b09IdGw1OWd6aTg2U0xRU2hsRHVE?=
+ =?utf-8?B?dk82NlhCeDJCaGsvaklpNUhuUlpSd2F4OW5ueXR6WXVGOTdPYjBjcGFWQUFT?=
+ =?utf-8?B?T2c9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <D66DEC0B21DE4E4F9D4A376F99A4BD81@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251001-av1_irisdecoder-v1-5-9fb08f3b96a0@oss.qualcomm.com>
-References: <20251001-av1_irisdecoder-v1-0-9fb08f3b96a0@oss.qualcomm.com>
-In-Reply-To: <20251001-av1_irisdecoder-v1-0-9fb08f3b96a0@oss.qualcomm.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
-        Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Bryan O'Donoghue <bod@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Deepa Guthyappa Madivalara <deepa.madivalara@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1759345209; l=21608;
- i=deepa.madivalara@oss.qualcomm.com; s=20250814; h=from:subject:message-id;
- bh=5jIddfi3VJ3U3gMJ5kaxZCddqKJJIzIkKh2fX2j/PcY=;
- b=2i+jRcTmQmaLvnck4SAJ/vlPSo9H4V8neX0hjBQZTzzlU3aaHpH5RLgppboQkXipcSfmb7m88
- Cwc5j4vHxmEBY01KpNYN+frFPX0IUD0526tIG6rPbGfuDjs7AUg4eT3
-X-Developer-Key: i=deepa.madivalara@oss.qualcomm.com; a=ed25519;
- pk=MOEXgyokievn+bgpHdS6Ixh/KQYyS90z2mqIbQ822FQ=
-X-Authority-Analysis: v=2.4 cv=RZKdyltv c=1 sm=1 tr=0 ts=68dd7a41 cx=c_pps
- a=vVfyC5vLCtgYJKYeQD43oA==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=sQh4-ETvhkXFb8uWvMAA:9
- a=QEXdDO2ut3YA:10 a=rl5im9kqc5Lf4LNbBjHf:22
-X-Proofpoint-GUID: dS36mAl74BITyhNA9BdcD7ZeOulW8jZ-
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAzMyBTYWx0ZWRfX0r9yqrey4UE5
- 1PlCQwWIMGobTnX7PuP4fanFKLjR6KeK25DpJBA6+mrmdOAZdzKD+KxfvDaR26dqKILQ3V2n0cP
- 5QQthCNGLesUBmto1luHwiEcCqhZeuyRhRSsMIKQVje9eb2LWlL8QxdEDS3V4C3Uo5HDV1/FGhg
- FbV6noJ7TAiCLnDC0OJGuptYDmeR7USxkni+jjcCmz0Bd494i9Cg6Jh9j5m2gnVgCBcs4jQOLQK
- Gt7vL+DErlYHq3AmuhUO6sWx4LAhU+qHcAAzOsSCUWZiqEhRxXOHNIidV5a2XQG466VhBg8ZFO7
- r5OM9F4C6CI4EL96eb93PTeFujObLlyBS/f4TFXe977DJxwrWzRS1HJg3Kqny08MSUsowX9vnox
- Uses9FDucf6u8qPCvvTF1LA1gMsoXg==
-X-Proofpoint-ORIG-GUID: dS36mAl74BITyhNA9BdcD7ZeOulW8jZ-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-01_05,2025-09-29_04,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 malwarescore=0 priorityscore=1501 adultscore=0 phishscore=0
- impostorscore=0 spamscore=0 bulkscore=0 lowpriorityscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270033
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB5963.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a3339da8-a480-4425-716d-08de011cd70e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Oct 2025 19:00:51.1681
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: VMwPlqjVpY9F/+BevsFr0jDxx6QNry505eRULh09/e41x4rAo2PXrHuq9dqDyr0CbEOB5cisPTZnknY+wxj8BcJX8pm4fPdbjqqUip70eP4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB7057
+X-OriginatorOrg: intel.com
 
-Implement internal buffer count and size calculations for AV1 decoder.
-
-Signed-off-by: Deepa Guthyappa Madivalara <deepa.madivalara@oss.qualcomm.com>
----
- drivers/media/platform/qcom/iris/iris_buffer.h     |   1 +
- .../platform/qcom/iris/iris_hfi_gen2_command.c     |   1 -
- drivers/media/platform/qcom/iris/iris_vpu_buffer.c | 255 ++++++++++++++++++++-
- drivers/media/platform/qcom/iris/iris_vpu_buffer.h | 105 +++++++++
- 4 files changed, 357 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/media/platform/qcom/iris/iris_buffer.h b/drivers/media/platform/qcom/iris/iris_buffer.h
-index 5ef365d9236c7cbdee24a4614789b3191881968b..75bb767761824c4c02e0df9b765896cc093be333 100644
---- a/drivers/media/platform/qcom/iris/iris_buffer.h
-+++ b/drivers/media/platform/qcom/iris/iris_buffer.h
-@@ -27,6 +27,7 @@ struct iris_inst;
-  * @BUF_SCRATCH_1: buffer to store decoding/encoding context data for HW
-  * @BUF_SCRATCH_2: buffer to store encoding context data for HW
-  * @BUF_VPSS: buffer to store VPSS context data for HW
-+ * @BUF_PARTIAL: buffer for AV1 IBC data
-  * @BUF_TYPE_MAX: max buffer types
-  */
- enum iris_buffer_type {
-diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c b/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
-index e3a8b031b3f191a6d18e1084db34804a8172439c..000bf75ba74ace5e10585910cda02975b0c34304 100644
---- a/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
-+++ b/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
-@@ -488,7 +488,6 @@ static int iris_hfi_gen2_set_linear_stride_scanline(struct iris_inst *inst, u32
- 
- static int iris_hfi_gen2_set_tier(struct iris_inst *inst, u32 plane)
- {
--	struct iris_inst_hfi_gen2 *inst_hfi_gen2 = to_iris_inst_hfi_gen2(inst);
- 	u32 port = iris_hfi_gen2_get_port(inst, V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE);
- 	u32 tier = inst->fw_caps[TIER].value;
- 
-diff --git a/drivers/media/platform/qcom/iris/iris_vpu_buffer.c b/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
-index 4463be05ce165adef6b152eb0c155d2e6a7b3c36..17d3a7ae79e994257d596906cb4c17250a11a0cb 100644
---- a/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
-+++ b/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
-@@ -9,6 +9,14 @@
- #include "iris_hfi_gen2_defines.h"
- 
- #define HFI_MAX_COL_FRAME 6
-+#define HFI_COLOR_FORMAT_YUV420_NV12_UBWC_Y_TILE_HEIGHT (8)
-+#define HFI_COLOR_FORMAT_YUV420_NV12_UBWC_Y_TILE_WIDTH (32)
-+#define HFI_COLOR_FORMAT_YUV420_NV12_UBWC_UV_TILE_HEIGHT (8)
-+#define HFI_COLOR_FORMAT_YUV420_NV12_UBWC_UV_TILE_WIDTH (16)
-+#define HFI_COLOR_FORMAT_YUV420_TP10_UBWC_Y_TILE_HEIGHT (4)
-+#define HFI_COLOR_FORMAT_YUV420_TP10_UBWC_Y_TILE_WIDTH (48)
-+#define HFI_COLOR_FORMAT_YUV420_TP10_UBWC_UV_TILE_HEIGHT (4)
-+#define HFI_COLOR_FORMAT_YUV420_TP10_UBWC_UV_TILE_WIDTH (24)
- 
- #ifndef SYSTEM_LAL_TILE10
- #define SYSTEM_LAL_TILE10 192
-@@ -39,6 +47,31 @@ static u32 hfi_buffer_bin_h264d(u32 frame_width, u32 frame_height, u32 num_vpp_p
- 	return size_h264d_hw_bin_buffer(n_aligned_w, n_aligned_h, num_vpp_pipes);
- }
- 
-+static u32 size_av1d_hw_bin_buffer(u32 frame_width, u32 frame_height, u32 num_vpp_pipes)
-+{
-+	u32 size_yuv, size_bin_hdr, size_bin_res;
-+
-+	size_yuv = ((frame_width * frame_height) <= BIN_BUFFER_THRESHOLD) ?
-+		((BIN_BUFFER_THRESHOLD * 3) >> 1) :
-+		((frame_width * frame_height * 3) >> 1);
-+	size_bin_hdr = size_yuv * AV1_CABAC_HDR_RATIO_HD_TOT;
-+	size_bin_res = size_yuv * AV1_CABAC_RES_RATIO_HD_TOT;
-+	size_bin_hdr = ALIGN(size_bin_hdr / num_vpp_pipes,
-+			     DMA_ALIGNMENT) * num_vpp_pipes;
-+	size_bin_res = ALIGN(size_bin_res / num_vpp_pipes,
-+			     DMA_ALIGNMENT) * num_vpp_pipes;
-+
-+	return size_bin_hdr + size_bin_res;
-+}
-+
-+static u32 hfi_buffer_bin_av1d(u32 frame_width, u32 frame_height, u32 num_vpp_pipes)
-+{
-+	u32 n_aligned_h = ALIGN(frame_height, 16);
-+	u32 n_aligned_w = ALIGN(frame_width, 16);
-+
-+	return size_av1d_hw_bin_buffer(n_aligned_w, n_aligned_h, num_vpp_pipes);
-+}
-+
- static u32 size_h265d_hw_bin_buffer(u32 frame_width, u32 frame_height, u32 num_vpp_pipes)
- {
- 	u32 product = frame_width * frame_height;
-@@ -110,6 +143,20 @@ static u32 hfi_buffer_comv_h265d(u32 frame_width, u32 frame_height, u32 _comv_bu
- 	return (_size * (_comv_bufcount)) + 512;
- }
- 
-+static u32 hfi_buffer_comv_av1d(u32 frame_width, u32 frame_height, u32 comv_bufcount)
-+{
-+	u32 size;
-+
-+	size =  2 * ALIGN(MAX(((frame_width + 63) / 64) *
-+		((frame_height + 63) / 64) * 512,
-+		((frame_width + 127) / 128) *
-+		((frame_height + 127) / 128) * 2816),
-+		DMA_ALIGNMENT);
-+	size *= comv_bufcount;
-+
-+	return size;
-+}
-+
- static u32 size_h264d_bse_cmd_buf(u32 frame_height)
- {
- 	u32 height = ALIGN(frame_height, 32);
-@@ -174,6 +221,20 @@ static u32 hfi_buffer_persist_h264d(void)
- 		    DMA_ALIGNMENT);
- }
- 
-+static u32 hfi_buffer_persist_av1d(u32 max_width, u32 max_height, u32 total_ref_count)
-+{
-+	u32 comv_size, size;
-+
-+	comv_size =  hfi_buffer_comv_av1d(max_width, max_height, total_ref_count);
-+	size = ALIGN((SIZE_AV1D_SEQUENCE_HEADER * 2 + SIZE_AV1D_METADATA +
-+	AV1D_NUM_HW_PIC_BUF * (SIZE_AV1D_TILE_OFFSET + SIZE_AV1D_QM) +
-+	AV1D_NUM_FRAME_HEADERS * (SIZE_AV1D_FRAME_HEADER +
-+	2 * SIZE_AV1D_PROB_TABLE) + comv_size + HDR10_HIST_EXTRADATA_SIZE +
-+	SIZE_AV1D_METADATA * AV1D_NUM_HW_PIC_BUF), DMA_ALIGNMENT);
-+
-+	return ALIGN(size, DMA_ALIGNMENT);
-+}
-+
- static u32 hfi_buffer_non_comv_h264d(u32 frame_width, u32 frame_height, u32 num_vpp_pipes)
- {
- 	u32 size_bse = size_h264d_bse_cmd_buf(frame_height);
-@@ -459,6 +520,148 @@ static u32 hfi_buffer_line_h264d(u32 frame_width, u32 frame_height,
- 	return ALIGN((size + vpss_lb_size), DMA_ALIGNMENT);
- }
- 
-+static u32 size_av1d_lb_opb_wr1_nv12_ubwc(u32 frame_width, u32 frame_height)
-+{
-+	u32 y_width, y_width_a = 128;
-+
-+	y_width = ALIGN(frame_width, y_width_a);
-+
-+	return (256 * ((y_width + 31) / 32 + (AV1D_MAX_TILE_COLS - 1)));
-+}
-+
-+static u32 size_av1d_lb_opb_wr1_tp10_ubwc(u32 frame_width, u32 frame_height)
-+{
-+	u32 y_width, y_width_a = 256;
-+
-+	y_width = ALIGN(frame_width, 192);
-+	y_width = ALIGN(y_width * 4 / 3, y_width_a);
-+
-+	return (256 * ((y_width + 47) / 48 + (AV1D_MAX_TILE_COLS - 1)));
-+}
-+
-+static u32 hfi_buffer_line_av1d(u32 frame_width, u32 frame_height,
-+				bool is_opb, u32 num_vpp_pipes)
-+{
-+	u32 size, vpss_lb_size, opbwrbufsize, opbwr8, opbwr10;
-+
-+	size = ALIGN(size_av1d_lb_fe_top_data(frame_width, frame_height),
-+		     DMA_ALIGNMENT) +
-+		ALIGN(size_av1d_lb_fe_top_ctrl(frame_width, frame_height),
-+		      DMA_ALIGNMENT) +
-+		ALIGN(size_av1d_lb_fe_left_data(frame_width, frame_height),
-+		      DMA_ALIGNMENT) * num_vpp_pipes +
-+		ALIGN(size_av1d_lb_fe_left_ctrl(frame_width, frame_height),
-+		      DMA_ALIGNMENT) * num_vpp_pipes +
-+		ALIGN(size_av1d_lb_se_left_ctrl(frame_width, frame_height),
-+		      DMA_ALIGNMENT) * num_vpp_pipes +
-+		ALIGN(size_av1d_lb_se_top_ctrl(frame_width, frame_height),
-+		      DMA_ALIGNMENT) +
-+		ALIGN(size_av1d_lb_pe_top_data(frame_width, frame_height),
-+		      DMA_ALIGNMENT) +
-+		ALIGN(size_av1d_lb_vsp_top(frame_width, frame_height),
-+		      DMA_ALIGNMENT) +
-+		ALIGN(size_av1d_lb_recon_dma_metadata_wr
-+		      (frame_width, frame_height), DMA_ALIGNMENT) * 2 +
-+		ALIGN(size_av1d_qp(frame_width, frame_height), DMA_ALIGNMENT);
-+		opbwr8 = size_av1d_lb_opb_wr1_nv12_ubwc(frame_width, frame_height);
-+		opbwr10 = size_av1d_lb_opb_wr1_tp10_ubwc(frame_width, frame_height);
-+		opbwrbufsize = opbwr8 >= opbwr10 ? opbwr8 : opbwr10;
-+	size = ALIGN((size + opbwrbufsize), DMA_ALIGNMENT);
-+	if (is_opb) {
-+		vpss_lb_size = size_vpss_lb(frame_width, frame_height);
-+		size = ALIGN((size + vpss_lb_size) * 2, DMA_ALIGNMENT);
-+	}
-+
-+	return size;
-+}
-+
-+static u32 size_av1d_ibc_nv12_ubwc(u32 frame_width, u32 frame_height)
-+{
-+	u32 size;
-+	u32 y_width_a = 128, y_height_a = 32;
-+	u32 uv_width_a = 128, uv_height_a = 32;
-+	u32 ybufsize, uvbufsize, y_width, y_height, uv_width, uv_height;
-+	u32 y_meta_width_a = 64, y_meta_height_a = 16;
-+	u32 uv_meta_width_a = 64, uv_meta_height_a = 16;
-+	u32 meta_height, meta_stride, meta_size;
-+	u32 tile_width_y = HFI_COLOR_FORMAT_YUV420_NV12_UBWC_Y_TILE_WIDTH;
-+	u32 tile_height_y = HFI_COLOR_FORMAT_YUV420_NV12_UBWC_Y_TILE_HEIGHT;
-+	u32 tile_width_uv = HFI_COLOR_FORMAT_YUV420_NV12_UBWC_UV_TILE_WIDTH;
-+	u32 tile_height_uv = HFI_COLOR_FORMAT_YUV420_NV12_UBWC_UV_TILE_HEIGHT;
-+
-+	y_width = ALIGN(frame_width, y_width_a);
-+	y_height = ALIGN(frame_height, y_height_a);
-+	uv_width = ALIGN(frame_width, uv_width_a);
-+	uv_height = ALIGN(((frame_height + 1) >> 1), uv_height_a);
-+	ybufsize = ALIGN((y_width * y_height), HFI_ALIGNMENT_4096);
-+	uvbufsize = ALIGN(uv_width * uv_height, HFI_ALIGNMENT_4096);
-+	size = ybufsize + uvbufsize;
-+	meta_stride = ALIGN(((frame_width + (tile_width_y - 1)) / tile_width_y),
-+			    y_meta_width_a);
-+	meta_height = ALIGN(((frame_height + (tile_height_y - 1)) / tile_height_y),
-+			    y_meta_height_a);
-+	meta_size = ALIGN(meta_stride * meta_height, HFI_ALIGNMENT_4096);
-+	size += meta_size;
-+	meta_stride = ALIGN(((((frame_width + 1) >> 1) + (tile_width_uv - 1)) /
-+				tile_width_uv),	uv_meta_width_a);
-+	meta_height = ALIGN(((((frame_height + 1) >> 1) + (tile_height_uv - 1)) /
-+				tile_height_uv), uv_meta_height_a);
-+	meta_size = ALIGN(meta_stride * meta_height, HFI_ALIGNMENT_4096);
-+	size += meta_size;
-+
-+	return size;
-+}
-+
-+static u32 size_av1d_ibc_tp10_ubwc(u32 frame_width, u32 frame_height)
-+{
-+	u32 size;
-+	u32 y_width_a = 256, y_height_a = 16,
-+		uv_width_a = 256, uv_height_a = 16;
-+	u32 ybufsize, uvbufsize, y_width, y_height, uv_width, uv_height;
-+	u32 y_meta_width_a = 64, y_meta_height_a = 16,
-+		uv_meta_width_a = 64, uv_meta_height_a = 16;
-+	u32 meta_height, meta_stride, meta_size;
-+	u32 tile_width_y = HFI_COLOR_FORMAT_YUV420_TP10_UBWC_Y_TILE_WIDTH;
-+	u32 tile_height_y = HFI_COLOR_FORMAT_YUV420_TP10_UBWC_Y_TILE_HEIGHT;
-+	u32 tile_width_uv = HFI_COLOR_FORMAT_YUV420_TP10_UBWC_UV_TILE_WIDTH;
-+	u32 tile_height_uv = HFI_COLOR_FORMAT_YUV420_TP10_UBWC_UV_TILE_HEIGHT;
-+
-+	y_width = ALIGN(frame_width, 192);
-+	y_width = ALIGN(y_width * 4 / 3, y_width_a);
-+	y_height = ALIGN(frame_height, y_height_a);
-+	uv_width = ALIGN(frame_width, 192);
-+	uv_width = ALIGN(uv_width * 4 / 3, uv_width_a);
-+	uv_height = ALIGN(((frame_height + 1) >> 1), uv_height_a);
-+	ybufsize = ALIGN(y_width * y_height, HFI_ALIGNMENT_4096);
-+	uvbufsize = ALIGN(uv_width * uv_height, HFI_ALIGNMENT_4096);
-+	size = ybufsize + uvbufsize;
-+	meta_stride = ALIGN(((frame_width + (tile_width_y - 1)) / tile_width_y),
-+			    y_meta_width_a);
-+	meta_height = ALIGN(((frame_height + (tile_height_y - 1)) / tile_height_y),
-+			    y_meta_height_a);
-+	meta_size = ALIGN(meta_stride * meta_height, HFI_ALIGNMENT_4096);
-+	size += meta_size;
-+	meta_stride = ALIGN(((((frame_width + 1) >> 1) + (tile_width_uv - 1)) /
-+				tile_width_uv), uv_meta_width_a);
-+	meta_height = ALIGN(((((frame_height + 1) >> 1) + (tile_height_uv - 1)) /
-+				tile_height_uv), uv_meta_height_a);
-+	meta_size = ALIGN(meta_stride * meta_height, HFI_ALIGNMENT_4096);
-+	size += meta_size;
-+
-+	return size;
-+}
-+
-+static u32 hfi_buffer_ibc_av1d(u32 frame_width, u32 frame_height)
-+{
-+	u32 size, ibc8, ibc10;
-+
-+	ibc8 = size_av1d_ibc_nv12_ubwc(frame_width, frame_height);
-+	ibc10 = size_av1d_ibc_tp10_ubwc(frame_width, frame_height);
-+	size = ibc8 >= ibc10 ? ibc8 : ibc10;
-+
-+	return ALIGN(size, DMA_ALIGNMENT);
-+}
-+
- static u32 iris_vpu_dec_bin_size(struct iris_inst *inst)
- {
- 	u32 num_vpp_pipes = inst->core->iris_platform_data->num_vpp_pipe;
-@@ -472,6 +675,8 @@ static u32 iris_vpu_dec_bin_size(struct iris_inst *inst)
- 		return hfi_buffer_bin_h265d(width, height, num_vpp_pipes);
- 	else if (inst->codec == V4L2_PIX_FMT_VP9)
- 		return hfi_buffer_bin_vp9d(width, height, num_vpp_pipes);
-+	else if (inst->codec == V4L2_PIX_FMT_AV1)
-+		return hfi_buffer_bin_av1d(width, height, num_vpp_pipes);
- 
- 	return 0;
- }
-@@ -487,18 +692,33 @@ static u32 iris_vpu_dec_comv_size(struct iris_inst *inst)
- 		return hfi_buffer_comv_h264d(width, height, num_comv);
- 	else if (inst->codec == V4L2_PIX_FMT_HEVC)
- 		return hfi_buffer_comv_h265d(width, height, num_comv);
--
-+	else if (inst->codec == V4L2_PIX_FMT_AV1) {
-+		if (inst->fw_caps[DRAP].value)
-+			return 0;
-+		else
-+			return hfi_buffer_comv_av1d(width, height, num_comv);
-+	}
- 	return 0;
- }
- 
- static u32 iris_vpu_dec_persist_size(struct iris_inst *inst)
- {
-+	struct platform_inst_caps *caps;
-+
- 	if (inst->codec == V4L2_PIX_FMT_H264)
- 		return hfi_buffer_persist_h264d();
- 	else if (inst->codec == V4L2_PIX_FMT_HEVC)
- 		return hfi_buffer_persist_h265d(0);
- 	else if (inst->codec == V4L2_PIX_FMT_VP9)
- 		return hfi_buffer_persist_vp9d();
-+	else if (inst->codec == V4L2_PIX_FMT_AV1) {
-+		caps = inst->core->iris_platform_data->inst_caps;
-+		if (inst->fw_caps[DRAP].value)
-+			return hfi_buffer_persist_av1d(caps->max_frame_width,
-+			caps->max_frame_height, 16);
-+		else
-+			return hfi_buffer_persist_av1d(0, 0, 0);
-+	}
- 
- 	return 0;
- }
-@@ -545,6 +765,8 @@ static u32 iris_vpu_dec_line_size(struct iris_inst *inst)
- 	else if (inst->codec == V4L2_PIX_FMT_VP9)
- 		return hfi_buffer_line_vp9d(width, height, out_min_count, is_opb,
- 			num_vpp_pipes);
-+	else if (inst->codec == V4L2_PIX_FMT_AV1)
-+		return hfi_buffer_line_av1d(width, height, is_opb, num_vpp_pipes);
- 
- 	return 0;
- }
-@@ -653,6 +875,15 @@ static u32 iris_vpu_enc_bin_size(struct iris_inst *inst)
- 				  num_vpp_pipes, inst->hfi_rc_type);
- }
- 
-+static u32 iris_vpu_dec_partial_size(struct iris_inst *inst)
-+{
-+	struct v4l2_format *f = inst->fmt_src;
-+	u32 height = f->fmt.pix_mp.height;
-+	u32 width = f->fmt.pix_mp.width;
-+
-+	return hfi_buffer_ibc_av1d(width, height);
-+}
-+
- static inline
- u32 hfi_buffer_comv_enc(u32 frame_width, u32 frame_height, u32 lcu_size,
- 			u32 num_recon, u32 standard)
-@@ -1414,7 +1645,9 @@ static int output_min_count(struct iris_inst *inst)
- 
- 	/* fw_min_count > 0 indicates reconfig event has already arrived */
- 	if (inst->fw_min_count) {
--		if (iris_split_mode_enabled(inst) && inst->codec == V4L2_PIX_FMT_VP9)
-+		if (iris_split_mode_enabled(inst) &&
-+		    (inst->codec == V4L2_PIX_FMT_VP9 ||
-+		     inst->codec == V4L2_PIX_FMT_VP9))
- 			return min_t(u32, 4, inst->fw_min_count);
- 		else
- 			return inst->fw_min_count;
-@@ -1422,6 +1655,8 @@ static int output_min_count(struct iris_inst *inst)
- 
- 	if (inst->codec == V4L2_PIX_FMT_VP9)
- 		output_min_count = 9;
-+	else if (inst->codec == V4L2_PIX_FMT_AV1)
-+		output_min_count = 11;
- 
- 	return output_min_count;
- }
-@@ -1444,6 +1679,7 @@ u32 iris_vpu_buf_size(struct iris_inst *inst, enum iris_buffer_type buffer_type)
- 		{BUF_PERSIST,     iris_vpu_dec_persist_size         },
- 		{BUF_DPB,         iris_vpu_dec_dpb_size             },
- 		{BUF_SCRATCH_1,   iris_vpu_dec_scratch1_size        },
-+		{BUF_PARTIAL,     iris_vpu_dec_partial_size         },
- 	};
- 
- 	static const struct iris_vpu_buf_type_handle enc_internal_buf_type_handle[] = {
-@@ -1510,14 +1746,20 @@ static u32 internal_buffer_count(struct iris_inst *inst,
- 	    buffer_type == BUF_PERSIST) {
- 		return 1;
- 	} else if (buffer_type == BUF_COMV || buffer_type == BUF_NON_COMV) {
--		if (inst->codec == V4L2_PIX_FMT_H264 || inst->codec == V4L2_PIX_FMT_HEVC)
-+		if (inst->codec == V4L2_PIX_FMT_H264 ||
-+		    inst->codec == V4L2_PIX_FMT_HEVC ||
-+		    inst->codec == V4L2_PIX_FMT_AV1)
- 			return 1;
- 	}
-+
- 	return 0;
- }
- 
- static inline int iris_vpu_dpb_count(struct iris_inst *inst)
- {
-+	if (inst->codec == V4L2_PIX_FMT_AV1)
-+		return 11;
-+
- 	if (iris_split_mode_enabled(inst)) {
- 		return inst->fw_min_count ?
- 			inst->fw_min_count : inst->buffers[BUF_OUTPUT].min_count;
-@@ -1536,9 +1778,13 @@ int iris_vpu_buf_count(struct iris_inst *inst, enum iris_buffer_type buffer_type
- 			return MIN_BUFFERS;
- 		else
- 			return output_min_count(inst);
-+	case BUF_NON_COMV:
-+		if (inst->codec == V4L2_PIX_FMT_AV1)
-+			return 0;
-+		else
-+			return 1;
- 	case BUF_BIN:
- 	case BUF_COMV:
--	case BUF_NON_COMV:
- 	case BUF_LINE:
- 	case BUF_PERSIST:
- 		return internal_buffer_count(inst, buffer_type);
-@@ -1546,6 +1792,7 @@ int iris_vpu_buf_count(struct iris_inst *inst, enum iris_buffer_type buffer_type
- 	case BUF_SCRATCH_2:
- 	case BUF_VPSS:
- 	case BUF_ARP:
-+	case BUF_PARTIAL:
- 		return 1; /* internal buffer count needed by firmware is 1 */
- 	case BUF_DPB:
- 		return iris_vpu_dpb_count(inst);
-diff --git a/drivers/media/platform/qcom/iris/iris_vpu_buffer.h b/drivers/media/platform/qcom/iris/iris_vpu_buffer.h
-index 04f0b7400a1e4e1d274d690a2761b9e57778e8b7..0e767d425320ef1d6d74b8d92d42ad810339f53a 100644
---- a/drivers/media/platform/qcom/iris/iris_vpu_buffer.h
-+++ b/drivers/media/platform/qcom/iris/iris_vpu_buffer.h
-@@ -11,6 +11,7 @@ struct iris_inst;
- #define MIN_BUFFERS			4
- 
- #define DMA_ALIGNMENT			256
-+#define HFI_ALIGNMENT_4096      4096
- 
- #define NUM_HW_PIC_BUF			32
- #define LCU_MAX_SIZE_PELS 64
-@@ -81,6 +82,22 @@ struct iris_inst;
- #define MAX_PE_NBR_DATA_LCU64_LINE_BUFFER_SIZE	384
- #define MAX_FE_NBR_DATA_LUMA_LINE_BUFFER_SIZE	640
- 
-+#define AV1_CABAC_HDR_RATIO_HD_TOT 2
-+#define AV1_CABAC_RES_RATIO_HD_TOT 2
-+#define AV1D_LCU_MAX_SIZE_PELS 128
-+#define AV1D_LCU_MIN_SIZE_PELS 64
-+#define AV1D_MAX_TILE_COLS     64
-+#define MAX_PE_NBR_DATA_LCU32_LINE_BUFFER_SIZE 192
-+#define MAX_PE_NBR_DATA_LCU16_LINE_BUFFER_SIZE 96
-+#define AV1D_NUM_HW_PIC_BUF    16
-+#define AV1D_NUM_FRAME_HEADERS 16
-+#define SIZE_AV1D_SEQUENCE_HEADER 768
-+#define SIZE_AV1D_METADATA        512
-+#define SIZE_AV1D_FRAME_HEADER    1280
-+#define SIZE_AV1D_TILE_OFFSET     65536
-+#define SIZE_AV1D_QM              3328
-+#define SIZE_AV1D_PROB_TABLE      22784
-+
- #define SIZE_SLICE_CMD_BUFFER (ALIGN(20480, 256))
- #define SIZE_SPS_PPS_SLICE_HDR (2048 + 4096)
- #define SIZE_BSE_SLICE_CMD_BUF ((((8192 << 2) + 7) & (~7)) * 3)
-@@ -146,6 +163,94 @@ static inline u32 size_h264d_qp(u32 frame_width, u32 frame_height)
- 	return DIV_ROUND_UP(frame_width, 64) * DIV_ROUND_UP(frame_height, 64) * 128;
- }
- 
-+static inline u32 size_av1d_lb_fe_top_data(u32 frame_width, u32 frame_height)
-+{
-+	return (ALIGN(frame_width, AV1D_LCU_MAX_SIZE_PELS) * ((16 * 10) >> 3) +
-+	ALIGN(frame_width, AV1D_LCU_MAX_SIZE_PELS) / 2 * ((16 * 6) >> 3) * 2);
-+}
-+
-+static inline u32 size_av1d_lb_fe_left_data(u32 frame_width, u32 frame_height)
-+{
-+	return (32 * (ALIGN(frame_height, AV1D_LCU_MAX_SIZE_PELS) +
-+		ALIGN(frame_height, AV1D_LCU_MAX_SIZE_PELS) /
-+		AV1D_LCU_MIN_SIZE_PELS * 16) +
-+	16 * (ALIGN(frame_height, AV1D_LCU_MAX_SIZE_PELS) / 2 +
-+		ALIGN(frame_height, AV1D_LCU_MAX_SIZE_PELS) /
-+		AV1D_LCU_MIN_SIZE_PELS * 8) * 2 +
-+	24 * (ALIGN(frame_height, AV1D_LCU_MAX_SIZE_PELS) +
-+		ALIGN(frame_height, AV1D_LCU_MAX_SIZE_PELS) /
-+		AV1D_LCU_MIN_SIZE_PELS * 16) +
-+	24 * (ALIGN(frame_height, AV1D_LCU_MAX_SIZE_PELS) / 2 +
-+		ALIGN(frame_height, AV1D_LCU_MAX_SIZE_PELS) /
-+		AV1D_LCU_MIN_SIZE_PELS * 12) * 2 +
-+	24 * (ALIGN(frame_height, AV1D_LCU_MAX_SIZE_PELS) +
-+		ALIGN(frame_height, AV1D_LCU_MAX_SIZE_PELS) /
-+		AV1D_LCU_MIN_SIZE_PELS * 16) +
-+	16 * (ALIGN(frame_height, AV1D_LCU_MAX_SIZE_PELS) +
-+		ALIGN(frame_height, AV1D_LCU_MAX_SIZE_PELS) /
-+		AV1D_LCU_MIN_SIZE_PELS * 16) +
-+	16 * (ALIGN(frame_height, AV1D_LCU_MAX_SIZE_PELS) / 2 +
-+		ALIGN(frame_height, AV1D_LCU_MAX_SIZE_PELS) /
-+		AV1D_LCU_MIN_SIZE_PELS * 12) * 2);
-+}
-+
-+static inline u32 size_av1d_lb_fe_top_ctrl(u32 frame_width, u32 frame_height)
-+{
-+	return (10 * ((frame_width + AV1D_LCU_MIN_SIZE_PELS - 1) /
-+		AV1D_LCU_MIN_SIZE_PELS) * 128 / 8);
-+}
-+
-+static inline u32 size_av1d_lb_fe_left_ctrl(u32 frame_width, u32 frame_height)
-+{
-+	return (16 * ((ALIGN(frame_height, AV1D_LCU_MAX_SIZE_PELS) / 16) +
-+	(ALIGN(frame_height, AV1D_LCU_MAX_SIZE_PELS) /
-+	AV1D_LCU_MIN_SIZE_PELS)) +
-+	3 * 16 * (ALIGN(frame_height, AV1D_LCU_MAX_SIZE_PELS) /
-+	AV1D_LCU_MIN_SIZE_PELS));
-+}
-+
-+static inline u32 size_av1d_lb_se_top_ctrl(u32 frame_width, u32 frame_height)
-+{
-+	return (((frame_width + 7) / 8) * 16);
-+}
-+
-+static inline u32 size_av1d_lb_se_left_ctrl(u32 frame_width, u32 frame_height)
-+{
-+	return (max(((frame_height + 15) / 16) *
-+		MAX_SE_NBR_CTRL_LCU16_LINE_BUFFER_SIZE,
-+		max(((frame_height + 31) / 32) *
-+		MAX_SE_NBR_CTRL_LCU32_LINE_BUFFER_SIZE,
-+		((frame_height + 63) / 64) *
-+		MAX_SE_NBR_CTRL_LCU64_LINE_BUFFER_SIZE)));
-+}
-+
-+static inline u32 size_av1d_lb_pe_top_data(u32 frame_width, u32 frame_height)
-+{
-+	return (max(((frame_width + 15) / 16) *
-+	MAX_PE_NBR_DATA_LCU16_LINE_BUFFER_SIZE,
-+	max(((frame_width + 31) / 32) *
-+	MAX_PE_NBR_DATA_LCU32_LINE_BUFFER_SIZE,
-+	((frame_width + 63) / 64) *
-+	MAX_PE_NBR_DATA_LCU64_LINE_BUFFER_SIZE)));
-+}
-+
-+static inline u32 size_av1d_lb_vsp_top(u32 frame_width, u32 frame_height)
-+{
-+	return (max(((frame_width + 63) / 64) * 1280,
-+		    ((frame_width + 127) / 128) * 2304));
-+}
-+
-+static inline u32 size_av1d_lb_recon_dma_metadata_wr(u32 frame_width,
-+						     u32 frame_height)
-+{
-+	return ((ALIGN(frame_height, 8) / (4 / 2)) * 64);
-+}
-+
-+static inline u32 size_av1d_qp(u32 frame_width, u32 frame_height)
-+{
-+	return size_h264d_qp(frame_width, frame_height);
-+}
-+
- u32 iris_vpu_buf_size(struct iris_inst *inst, enum iris_buffer_type buffer_type);
- u32 iris_vpu33_buf_size(struct iris_inst *inst, enum iris_buffer_type buffer_type);
- int iris_vpu_buf_count(struct iris_inst *inst, enum iris_buffer_type buffer_type);
-
--- 
-2.34.1
-
+T24gV2VkLCAyMDI1LTEwLTAxIGF0IDEwOjQwICswMDAwLCBIdWFuZywgS2FpIHdyb3RlOg0KPiBP
+biBXZWQsIDIwMjUtMTAtMDEgYXQgMDA6MzIgKzAwMDAsIEVkZ2Vjb21iZSwgUmljayBQIHdyb3Rl
+Og0KPiA+IA0KPiA+IFBhcnQgb2YgdGhlIHByb2JsZW0gaXMgdGhhdCB0ZHhfZmluZF9wYW10X3Jl
+ZmNvdW50KCkgZXhwZWN0cyB0aGUgaHBhIHBhc3NlZCBpbg0KPiA+IHRvIGJlIFBNRCBhbGlnbmVk
+LiBUaGUgb3RoZXIgY2FsbGVycyBvZiB0ZHhfZmluZF9wYW10X3JlZmNvdW50KCkgYWxzbyBtYWtl
+IHN1cmUNCj4gPiB0aGF0IHRoZSBQQSBwYXNzZWQgaW4gaXMgMk1CIGFsaWduZWQgYmVmb3JlIGNh
+bGxpbmcsIGFuZCBjb21wdXRlIHRoaXMgc3RhcnRpbmcNCj4gPiB3aXRoIGEgUEZOLiBTbyB0byB0
+cnkgdG8gbWFrZSBpdCBlYXNpZXIgdG8gcmVhZCBhbmQgYmUgY29ycmVjdCB3aGF0IGRvIHlvdSB0
+aGluaw0KPiA+IGFib3V0IHRoZSBiZWxvdzoNCj4gPiANCj4gPiBzdGF0aWMgYXRvbWljX3QgKnRk
+eF9maW5kX3BhbXRfcmVmY291bnQodW5zaWduZWQgbG9uZyBwZm4pIHsNCj4gPiAgICAgdW5zaWdu
+ZWQgbG9uZyBocGEgPSBBTElHTl9ET1dOKHBmbiwgUE1EX1NJWkUpOw0KPiANCj4gU2hvdWxkbid0
+IGl0IGJlOg0KPiANCj4gCWhwYSA9IEFMSUdOX0RPV04oUEZOX1BIWVMocGZuKSwgUE1EX1NJWkUp
+KTsNCj4gPw0KDQpFcnIsIHllcy4NCg0KPiA+IA0KPiA+ICAgICByZXR1cm4gJnBhbXRfcmVmY291
+bnRzW2hwYSAvIFBNRF9TSVpFXTsNCj4gPiB9DQo+ID4gDQo+ID4gLyoNCj4gPiAgKiAnc3RhcnRf
+cGZuJyBpcyBpbmNsdXNpdmUgYW5kICdlbmRfcGZuJyBpcyBleGNsdXNpdmUuwqANCj4gPiANCj4g
+DQo+IEkgdGhpbmsgJ2VuZF9wZm4nIGlzIGV4Y2x1c2l2ZSBpcyBhIGxpdHRsZSBiaXQgY29uZnVz
+aW5nPw0KPiANCg0KSXQncyB0cnlpbmcgdG8gc2F5IHRoYXQgZW5kX3BmbiBpcyBhbiBleGNsdXNp
+dmUgcmFuZ2UgdmFsdWUsIHNvIHRoZSByYW5nZSBpbg0KcXVlc3Rpb24gZG9lcyBub3QgYWN0dWFs
+bHkgaW5jbHVkZSBlbmRfcGZuLiBUaGF0IGlzIGhvdyB0aGUgY2FsbGluZyBjb2RlIGxvb2tlZA0K
+dG8gbWUsIGJ1dCBwbGVhc2UgY2hlY2suDQoNCk1heWJlIEkgY2FuIGNsYXJpZnkgdGhhdCBzdGFy
+dF9wZm4gYW5kIGVuZF9wZm4gYXJlIGEgcmFuZ2U/IEl0IHNlZW1zIHJlZHVuZGFudC4NCg0KPiAg
+IEl0IHNvdW5kcyBsaWtlDQo+IHRoZSBwaHlzaWNhbCByYW5nZSBmcm9tIFBGTl9QSFlTKGVuZF9w
+Zm4gLSAxKSB0byBQRk5fUEhZUyhlbmRfcGZuKSBpcyBhbHNvDQo+IGV4Y2x1c2l2ZSwgYnV0IGl0
+IGlzIGFjdHVhbGx5IG5vdD8NCj4gDQoNCk5vdCBzdXJlIHdoYXQgeW91IG1lYW4uIEZvciBjbGFy
+aXR5LCB3aGVuIGRlc2NyaWJpbmcgYSByYW5nZSBzb21ldGltZXMgdGhlIHN0YXJ0DQpvciBlbmQg
+aW5jbHVkZSB0aGF0IHZhbHVlLCBhbmQgc29tZXRpbWVzIHRoZXkgZG9uJ3QuIFNvIGV4Y2x1c2l2
+ZSBoZXJlIG1lYW5zDQp0aGF0IHRoZSBlbmRfcGZuIGlzIG5vdCBpbmNsdWRlZCBpbiB0aGUgcmFu
+Z2UuIEFzIGluIHdlIGRvbid0IG5lZWQgYSByZWZjb3VudA0KYWxsb2NhdGlvbiBmb3IgZW5kX3Bm
+bi4NCg0KPiAgIFRvIG1lIGl0J3MgbW9yZSBsaWtlIG9ubHkgdGhlIHBoeXNpY2FsDQo+IGFkZHJl
+c3MgUEZOX1BIWVMoZW5kX3BmbikgaXMgZXhjbHVzaXZlLg0KPiANCj4gPiBDb21wdXRlIHRoZcKg
+DQo+ID4gICogcGFnZSByYW5nZSB0byBiZSBpbmNsdXNpdmUgb2YgdGhlIHN0YXJ0IGFuZCBlbmQg
+cmVmY291bnQNCj4gPiAgKiBhZGRyZXNzZXMgYW5kIGF0IGxlYXN0IGEgcGFnZSBpbiBzaXplLiBU
+aGUgdGVhcmRvd24gbG9naWMgbmVlZHMNCj4gPiAgKiB0byBoYW5kbGUgcG90ZW50aWFsbHkgb3Zl
+cmxhcHBpbmcgcmVmY291bnRzIG1hcHBpbmdzIHJlc3VsdGluZw0KPiA+ICAqIGZyb20gdGhpcy4N
+Cj4gPiAgKi8NCj4gPiBzdGFydCA9ICh1bnNpZ25lZCBsb25nKXRkeF9maW5kX3BhbXRfcmVmY291
+bnQoc3RhcnRfcGZuKTsNCj4gPiBlbmQgICA9ICh1bnNpZ25lZCBsb25nKXRkeF9maW5kX3BhbXRf
+cmVmY291bnQoZW5kX3BmbiAtIDEpOw0KPiA+IHN0YXJ0ID0gQUxJR05fRE9XTihzdGFydCwgUEFH
+RV9TSVpFKTsNCj4gPiBlbmQgICA9IEFMSUdOX0RPV04oZW5kLCBQQUdFX1NJWkUpICsgUEFHRV9T
+SVpFOw0KPiANCj4gVGhpcyBsb29rcyBmaW5lIHRvIG1lLiAgSSBtZWFuIHRoZSByZXN1bHQgc2hv
+dWxkIGJlIGNvcnJlY3QsIGJ1dCB0aGUNCj4gJ2VuZF9wZm4gLSAxJyAoZHVlIHRvICdlbmRfcGZu
+JyBpcyBleGNsdXNpdmUpIGlzIGEgYml0IGNvbmZ1c2luZyB0byBtZSBhcw0KPiBzYWlkIGFib3Zl
+LCBidXQgbWF5YmUgaXQncyBvbmx5IG1lLCBzbyBmZWVsIGZyZWUgdG8gaWdub3JlLg0KDQpTb3Jy
+eSwgSSdtIG5vdCBmb2xsb3dpbmcgdGhlIGNvbmZ1c2lvbi4gTWF5YmUgd2UgY2FuIGhhdmUgYSBx
+dWljayBjaGF0IHdoZW4geW91DQpjb21lIG9ubGluZS4NCg0KPiANCj4gT3IsIGFzIHNhaWQgYWJv
+dmUsIEkgdGhpbmsgdGhlIHByb2JsZW0gb2YgdGhlICJBYm92ZSBmaXgiIGlzIHdoZW4NCj4gY2Fs
+Y3VsYXRpbmcgdGhlIEBlbmQgd2UgZGlkbid0IGNvbnNpZGVyIHRoZSBjYXNlIHdoZXJlIGl0IGVx
+dWFscyB0byBAc3RhcnQNCj4gYW5kIGlzIGFscmVhZHkgcGFnZSBhbGlnbmVkLiAgRG9lcyBiZWxv
+dyB3b3JrIChhc3N1bWluZw0KPiB0ZHhfZmluZF9wYW10X3JlZmNvdW50KCkgc3RpbGwgdGFrZXMg
+J2hwYScpPw0KPiANCj4gICAgIHN0YXJ0ID0gKHVuc2lnbmVkIGxvbmcpdGR4X2ZpbmRfcGFtdF9y
+ZWZjb3VudChQRk5fUEhZUyhzdGFydF9wZm4pKTsNCj4gICAgIGVuZCAgID0gKHVuc2lnbmVkIGxv
+bmcpdGR4X2ZpbmRfcGFtdF9yZWZjb3VudChQRk5fUEhZUyhlbmRfcGZuKSAtIDEpKTsNCj4gICAg
+IHN0YXJ0ID0gUEFHRV9BTElHTl9ET1dOKHN0YXJ0KTsNCj4gICAgIGVuZCAgID0gUEFHRV9BTElH
+Tl9ET1dOKGVuZCkgKyBQQUdFX1NJWkU7DQoNClRoZSByZWZjb3VudHMgYXJlIGFjdHVhbGx5IHBl
+ciBwYWdlL3BmbiBub3QgcGVyIFBBLiBTbyBJIHRoaW5rIGludHJvZHVjaW5nIHRoZQ0KY29uY2Vw
+dCBvZiBhIHJlZmNvdW50IGZvciBhIFBBLCBlc3BlY2lhbGx5IGFzIHBhcnQgb2YgdGhlIGludGVy
+ZmFjZXMgaXMgYWRkaW5nDQpjb25mdXNpb24uIFRoZSBtYXRoIGhhcHBlbnMgdG8gd29yayBvdXQs
+IGJ1dCBpdCdzIGEgbGF5ZXIgb2YgaW5kaXJlY3Rpb24uDQoNClRoZSBvdGhlciBwcm9ibGVtIHRo
+aXMgY29sbGlkZXMgd2l0aCBpcyB0aGF0IHRkeF9maW5kX3BhbXRfcmVmY291bnQoKSBjYWxsZXJz
+DQphbGwgaGF2ZSB0byBjb252ZXJ0IFBGTiB0byBQQS4gVGhpcyBzaG91bGQgYmUgZml4ZWQuDQoN
+Cg0KSSBndWVzcyB3ZSBhcmUgcmVhbGx5IGRvaW5nIHR3byBzZXBhcmF0ZSBjYWxjdWxhdGlvbnMu
+IEZpcnN0IGNhbGN1bGF0ZSB0aGUgcmFuZ2UNCm9mIHJlZmNvdW50cyB3ZSBuZWVkLCBhbmQgdGhl
+biBjYWxjdWxhdGUgdGhlIHJhbmdlIG9mIHZtYWxsb2Mgc3BhY2Ugd2UgbmVlZC4gSG93DQphYm91
+dCB0aGlzLCBpcyBpdCBjbGVhcmVyIHRvIHlvdT8gSXQgaXMgdmVyeSBzcGVjaWZpYyBhYm91dCB3
+aGF0L3doeSB3ZSBhY3R1YWxseQ0KYXJlIGRvaW5nLCBidXQgYXQgdGhlIGV4cGVuc2Ugb2YgbWlu
+aW1pemluZyBvcGVyYXRpb25zLiBJbiB0aGlzIHNsb3cgcGF0aCwgSQ0KdGhpbmsgY2xhcml0eSBp
+cyB0aGUgcHJpb3JpdHkuDQoNCnN0YXRpYyBpbnQgYWxsb2NfcGFtdF9yZWZjb3VudCh1bnNpZ25l
+ZCBsb25nIHN0YXJ0X3BmbiwgdW5zaWduZWQgbG9uZyBlbmRfcGZuKQ0Kew0KCXVuc2lnbmVkIGxv
+bmcgcmVmY291bnRfZmlyc3QsIHJlZmNvdW50X2xhc3Q7DQoJdW5zaWduZWQgbG9uZyBtYXBwaW5n
+X3N0YXJ0LCBtYXBwaW5nX2VuZDsNCg0KCS8qDQoJICogJ3N0YXJ0X3BmbicgaXMgaW5jbHVzaXZl
+IGFuZCAnZW5kX3BmbicgaXMgZXhjbHVzaXZlLiBGaW5kIHRoZQ0KCSAqIHJhbmdlIG9mIHJlZmNv
+dW50cyB0aGUgcGZuIHJhbmdlIHdpbGwgbmVlZC4NCgkgKi8NCglyZWZjb3VudF9maXJzdCA9ICh1
+bnNpZ25lZCBsb25nKXRkeF9maW5kX3BhbXRfcmVmY291bnQoc3RhcnRfcGZuKTsNCglyZWZjb3Vu
+dF9sYXN0ICAgPSAodW5zaWduZWQgbG9uZyl0ZHhfZmluZF9wYW10X3JlZmNvdW50KGVuZF9wZm4g
+LSAxKTsNCg0KCS8qDQoJICogQ2FsY3VsYXRlIHRoZSBwYWdlIGFsaWduZWQgcmFuZ2UgdGhhdCBp
+bmNsdWRlcyB0aGUgcmVmY291bnRzLiBUaGUNCgkgKiB0ZWFyZG93biBsb2dpYyBuZWVkcyB0byBo
+YW5kbGUgcG90ZW50aWFsbHkgb3ZlcmxhcHBpbmcgcmVmY291bnQNCgkgKiBtYXBwaW5ncyByZXN1
+bHRpbmcgZnJvbSB0aGUgYWxpZ25tZW50cy4NCgkgKi8NCgltYXBwaW5nX3N0YXJ0ID0gcm91bmRf
+ZG93bihyZWZjb3VudF9maXJzdCwgUEFHRV9TSVpFKTsNCgltYXBwaW5nX2VuZCAgID0gcm91bmRf
+dXAocmVmY291bnRfbGFzdCArIHNpemVvZigqcGFtdF9yZWZjb3VudHMpLA0KUEFHRV9TSVpFKTsN
+Cg0KDQoJcmV0dXJuIGFwcGx5X3RvX3BhZ2VfcmFuZ2UoJmluaXRfbW0sIG1hcHBpbmdfc3RhcnQs
+IG1hcHBpbmdfZW5kIC0NCm1hcHBpbmdfc3RhcnQsDQoJCQkJICAgcGFtdF9yZWZjb3VudF9wb3B1
+bGF0ZSwgTlVMTCk7DQp9DQoNCj4gDQo+IEFueXdheSwgZG9uJ3QgaGF2ZSBzdHJvbmcgb3Bpbmlv
+biBoZXJlLCBzbyB1cCB0byB5b3UuDQoNCg==
 
