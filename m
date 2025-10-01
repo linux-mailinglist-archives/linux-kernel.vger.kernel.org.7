@@ -1,308 +1,189 @@
-Return-Path: <linux-kernel+bounces-839075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5566BB0C2C
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 16:44:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7112BB0C62
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 16:46:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 446AC189E682
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 14:45:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF82F3C3156
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 14:45:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFFC726A0A7;
-	Wed,  1 Oct 2025 14:44:25 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2E9A25A2AE;
-	Wed,  1 Oct 2025 14:44:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759329865; cv=none; b=CtTc/KpZAfwG0Dt+uYcHD2k6bgUPQCgS73aL06xxGmV4U7dDnU1s/UBAR49wwNa6GlCwuLtYhGPBJFj30f+ql2PJdIvKAevkRcblFbUiyXYzy+YuCNhuY660wLNGe+Cg67VpYXdzkdboQDvAqrzO8dQHLK78PaKHc17GlxKdusU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759329865; c=relaxed/simple;
-	bh=1Lcqc85C00iYU4HRastdvLjqrHRP5c0EmvdBfz/P9i8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Lg8iOviUzEjWc7vS2TVd0LzyUrWUa7B+2YjDuUmtDAsi4vmSHAG6P0Jv+yhNAxpNk+cOGjQ5YdViK4wMjr35y82mcrPk8DoDjxJZr91DYDfssQJFSNXsWiZmURmr940xN32xyuj5bq8/hKrNVqiu1LiBCbMTb+pI/rYMK/GA/70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2E54A16F2;
-	Wed,  1 Oct 2025 07:44:13 -0700 (PDT)
-Received: from [10.57.0.204] (unknown [10.57.0.204])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 20E6F3F66E;
-	Wed,  1 Oct 2025 07:44:14 -0700 (PDT)
-Message-ID: <47a7bc06-9d44-42f8-88df-f6db3bc997bc@arm.com>
-Date: Wed, 1 Oct 2025 15:44:11 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95441273D8F;
+	Wed,  1 Oct 2025 14:44:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="pB5+vFy+"
+Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010068.outbound.protection.outlook.com [52.101.56.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 113FA302761;
+	Wed,  1 Oct 2025 14:44:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759329891; cv=fail; b=mGIxrbgSCDQbQqTDROu+00G7q5IacM3AHhKfGt3cWGIkzwePQWk89l3a/lwcDReh03i/XoVc+Umx/xADLMMbaFZFegKY0nDmR9nDVqR/HhI8nhvVT8ynAQC4QNKhWe/6eRoQPg/ST+Q1M2u88Bnv6JkyVJdGcB4rThUryjxNS+A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759329891; c=relaxed/simple;
+	bh=5MwQSCuMtQCGs1Qdsju+0pnBBzYDXy1r0FyEMZFP49c=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MqBQrATflP4413gVFRZ0EoikzUvVUPUSj72le33x6l9+gPy/0M32dY5T4nVZvuGStgGtPwi5Hx6pj1zM2okj3ezVaTrFxul0AbqC7VnbonzAM0J+xbb9ooQTX/LX8jr6LfIOKcxSL7Yi79BWg9OklpnKtcUbYpwt1pkOoGHMjf4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=pB5+vFy+; arc=fail smtp.client-ip=52.101.56.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ClwpIgUiakctVBrWcoOV1Wg+s7Imgwrr06sdXTANQBFaoi4NWyCAUeuNe3ZiUrhzH0YPsVClCxehdqyQQFOsmQrKtc2AP4/62TBKlN52/cI954K1TZyuNkk12biagdt8fPLzQFyjErA9lzxx9zEt5HAgYKw3aur8Ta2QAH3tljsJFVm5FBoWbUzFftY2nyCn+HNEVPjVsc0JX6nWuv1yIcl9I8kLXAJKQBCEJjSHHmy/t8RJnHLmrYEyLI6nSvHp8hRfpS7km4Kv4Ae59ZYhlmSRTrfR0xGVbzgVYhTW0zBC1qHJJSLapjqOKdGfe8Ca3C4xv/6Z1W5guPzrp/zXcw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=t52gg9TijEzuOXsUMPXK5lYGU4Ypd2S+Qedq+NdBIAM=;
+ b=OZwspI2Bo0GLGZKLRyYIryQGl6ClofZOQKZ+32ptk9Qt3a5pdxW/GGea8OXp+PIW+mseu/MBbebXt1yAruwUYGQGzP3P3ltC5BzLz7q6asb3T7s4tUDE/543K3CkRDc74Mjecg0i0nzTZhXcLBEhK+RnOfw7mLFL0vKuBtwcWrjrP9d0hK3ZjdgnROJuVruGnKn7ielOLyIef2y4ciWxP2gWpbd5TJ/rOZOOz1gA7n41O8YCch6yHP1P56AOG99wFatD4nwjkzAOSmSCOJGZrFTD5nfCz6r4ryHHQJOr63IFWEqxuuaoOy3DS8O994uehahD2qTs18xt9I0C+MKbJQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=gmail.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=t52gg9TijEzuOXsUMPXK5lYGU4Ypd2S+Qedq+NdBIAM=;
+ b=pB5+vFy+1CD0JLdpkm+TIdBsLnCiaGLIywoE6TI6yPdaZdBN03+FYVup4EwLAJkH1PNh7SqmB4HwaUqOhbLkAtEqoKUEvxrwfZI4eujK52kCPwsUV9R13mfHb7G4NypQ6bkkE8oDJtpju2xmwbFvzvjDTlSbPvZimvNS2sYMMms=
+Received: from SJ0PR03CA0059.namprd03.prod.outlook.com (2603:10b6:a03:33e::34)
+ by SA1PR12MB8742.namprd12.prod.outlook.com (2603:10b6:806:373::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.18; Wed, 1 Oct
+ 2025 14:44:43 +0000
+Received: from SJ1PEPF00001CE1.namprd05.prod.outlook.com
+ (2603:10b6:a03:33e:cafe::fa) by SJ0PR03CA0059.outlook.office365.com
+ (2603:10b6:a03:33e::34) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9182.15 via Frontend Transport; Wed,
+ 1 Oct 2025 14:44:42 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ SJ1PEPF00001CE1.mail.protection.outlook.com (10.167.242.9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9182.15 via Frontend Transport; Wed, 1 Oct 2025 14:44:42 +0000
+Received: from purico-ed09host.amd.com (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Wed, 1 Oct
+ 2025 07:44:41 -0700
+From: Ashish Kalra <Ashish.Kalra@amd.com>
+To: <kfatyuip@gmail.com>
+CC: <davem@davemloft.net>, <herbert@gondor.apana.org.au>,
+	<john.allen@amd.com>, <linux-crypto@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <thomas.lendacky@amd.com>
+Subject: Re: [PATCH] crypto: ccp/sfs - Use DIV_ROUND_UP for set_memory_uc() size calculation
+Date: Wed, 1 Oct 2025 14:44:31 +0000
+Message-ID: <20251001144431.247305-1-Ashish.Kalra@amd.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251001075820.185748-1-kfatyuip@gmail.com>
+References: <20251001075820.185748-1-kfatyuip@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 06/43] arm64: RME: Define the user ABI
-To: Marc Zyngier <maz@kernel.org>
-Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- James Morse <james.morse@arm.com>, Oliver Upton <oliver.upton@linux.dev>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
- <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
- Alexandru Elisei <alexandru.elisei@arm.com>,
- Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
- linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
- Gavin Shan <gshan@redhat.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
- Alper Gun <alpergun@google.com>, "Aneesh Kumar K . V"
- <aneesh.kumar@kernel.org>, Emi Kisanuki <fj0570is@fujitsu.com>,
- Vishal Annapurve <vannapurve@google.com>
-References: <20250820145606.180644-1-steven.price@arm.com>
- <20250820145606.180644-7-steven.price@arm.com> <86jz1eztz4.wl-maz@kernel.org>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <86jz1eztz4.wl-maz@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: satlexmb08.amd.com (10.181.42.217) To satlexmb07.amd.com
+ (10.181.42.216)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00001CE1:EE_|SA1PR12MB8742:EE_
+X-MS-Office365-Filtering-Correlation-Id: c981e84b-6a84-4b4c-a467-08de00f90ea4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|1800799024|36860700013|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?+7ZRPKVc9lwWkup/3E5VDECGrBLqMhosFlqdZNsNOyHGODI2Ot4S+sl3id36?=
+ =?us-ascii?Q?bzMDyMaiSLhhJb4arRLIWqjyJA6Jki/kDEuy26VNJ0QcazNg++HQ3djLjloK?=
+ =?us-ascii?Q?2/+hjdfVRHbU5P+qoReOiWYm1ZyrIhuWEhuIr6YargHJC3Pu8l2APDrRyobV?=
+ =?us-ascii?Q?wa95gLHiZTl44SqjAtFs0D3feOH6j2h+KAHEgupCLJ+qMxp8Fq4cmSDXh366?=
+ =?us-ascii?Q?ax4H1XIImgHXjigOhm3meYzvBmZjAO3M9r+DRu2sD4Nda+ZNPjH8m+GUISCX?=
+ =?us-ascii?Q?FqKubZvGPFqCEGiVFyVZdS0kHOicYH1EJzeR0+5+SxNQ0WJmxcfkjWuS+pqZ?=
+ =?us-ascii?Q?/naGizNoKca/xgAJARRLG5MD/zALhmu5SzffWksTmAZSWq+055FEypAPZuMZ?=
+ =?us-ascii?Q?v9wV/IbfXmOEZ+0aWHhJdj6GHvyVl6UNZmVQfAIoyxYIYNBr7MfOOOWllan5?=
+ =?us-ascii?Q?RHWJqdXzLl5ENSSw63Seq3BvileKO9mkrIHo03BWrIhRg+jVJUs1/9wOJ++L?=
+ =?us-ascii?Q?8OOiWeGAmOKMFYL2oXLeCK15yCPv5kLFCO1bEufxHfAUwPB3otVK6eFzozB2?=
+ =?us-ascii?Q?qmf3HUgdFOvDtuTJHkxesyZ5rl85/rCsF3ZWSZx1uevcTkJdYZ2P8EgVG1nc?=
+ =?us-ascii?Q?QQKhrtpcmQQbSjOu8q7yVr+uPLVk1lVoPnW3OVCLOCKapk7xJW9VlJroBkOK?=
+ =?us-ascii?Q?BxJpI/nw5r1fc41M74AselIoHWc4TYxpnuQEc+npC1ZcraAU2mNNbSNLOpmC?=
+ =?us-ascii?Q?Lr/xYOlwAuOJAuh9gb/n5ZdC82P1tsltKT+yNFl9ARUj5oPfx8VTLUZBLS65?=
+ =?us-ascii?Q?qnbfQleaoONaGR7WyuaQMAOPptRRtFCokOSowjcvbzlfUOofbCENnvMoXmA7?=
+ =?us-ascii?Q?Ta002ItuyeR68NJ4QVNtRb0WOTmvtvReUBfhi6JOtlbFWPtVhkfNoTQxO7Ea?=
+ =?us-ascii?Q?HAA86ECjcaDCGykevxr5/CuLzvQQIXmjzshwjO0GI/w7olc3lh9TqhPNsjMQ?=
+ =?us-ascii?Q?AN+waIN4UwLeU51PRS6OTdOOQYDIzfCPYWjuSCcNjU5YR/k3JS9Awyb2Z4wU?=
+ =?us-ascii?Q?UF3VWh8ZYLB4CFVkIl4EzyrgoPBtH36viYamhOfcpqE+lowxNiuYwC2FvSA7?=
+ =?us-ascii?Q?2SzhHLmEL1dqwKpeRo4tls15JNlbh0JC9YQmx+f7RJ+wIyzKAqto7SB8hBRx?=
+ =?us-ascii?Q?To/fRNgGAjNKMQkpoiiXUsP24etInNOLUdYKqyqeoYqsicelXAzpeAJuS/V5?=
+ =?us-ascii?Q?Vdj8GFKUpLJSf2ut7QrxiUYxnvNz4v/zctFa0QRjpFlJoreyVyEBfSBSrtqJ?=
+ =?us-ascii?Q?ZUszUTFPswBaSHsZy1VKEY0sjGj4PZzHMeVIbeUIljj85KO9gqKx/hPiJu5B?=
+ =?us-ascii?Q?zywO9Nilu2JuQwdr1IyMJGXE9LPyBQ9lJqt4df0WM+8bMnQbnc4H2qRwMbuP?=
+ =?us-ascii?Q?lgigSxE3bPWPOC2bZC1Q8bpV2g5trPhV+mHyVI0QqqXxuyhPpCo/bntdqZYJ?=
+ =?us-ascii?Q?0wEgdWxNADCvzawPE/AR94XxuPnndSDKx58Q/NXCenWrkYqy51rcr8YY1Gh/?=
+ =?us-ascii?Q?mrU0TaRedVOmAqWm62I=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(1800799024)(36860700013)(7053199007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2025 14:44:42.4379
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c981e84b-6a84-4b4c-a467-08de00f90ea4
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF00001CE1.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8742
 
-On 01/10/2025 13:28, Marc Zyngier wrote:
-> On Wed, 20 Aug 2025 15:55:26 +0100,
-> Steven Price <steven.price@arm.com> wrote:
->>
->> There is one (multiplexed) CAP which can be used to create, populate and
->> then activate the realm.
->>
->> Co-developed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->> Signed-off-by: Steven Price <steven.price@arm.com>
->> Reviewed-by: Gavin Shan <gshan@redhat.com>
->> ---
->> Changes since v9:
->>  * Improvements to documentation.
->>  * Bump the magic number for KVM_CAP_ARM_RME to avoid conflicts.
->> Changes since v8:
->>  * Minor improvements to documentation following review.
->>  * Bump the magic numbers to avoid conflicts.
->> Changes since v7:
->>  * Add documentation of new ioctls
->>  * Bump the magic numbers to avoid conflicts
->> Changes since v6:
->>  * Rename some of the symbols to make their usage clearer and avoid
->>    repetition.
->> Changes from v5:
->>  * Actually expose the new VCPU capability (KVM_ARM_VCPU_REC) by bumping
->>    KVM_VCPU_MAX_FEATURES - note this also exposes KVM_ARM_VCPU_HAS_EL2!
->> ---
->>  Documentation/virt/kvm/api.rst    | 71 +++++++++++++++++++++++++++++++
->>  arch/arm64/include/uapi/asm/kvm.h | 49 +++++++++++++++++++++
->>  include/uapi/linux/kvm.h          | 10 +++++
->>  3 files changed, 130 insertions(+)
->>
->> diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
->> index 6aa40ee05a4a..69c0a9eba6c5 100644
->> --- a/Documentation/virt/kvm/api.rst
->> +++ b/Documentation/virt/kvm/api.rst
->> @@ -3549,6 +3549,11 @@ Possible features:
->>  	  Depends on KVM_CAP_ARM_EL2_E2H0.
->>  	  KVM_ARM_VCPU_HAS_EL2 must also be set.
->>  
->> +	- KVM_ARM_VCPU_REC: Allocate a REC (Realm Execution Context) for this
->> +	  VCPU. This must be specified on all VCPUs created in a Realm VM.
->> +	  Depends on KVM_CAP_ARM_RME.
->> +	  Requires KVM_ARM_VCPU_FINALIZE(KVM_ARM_VCPU_REC).
->> +
->>  4.83 KVM_ARM_PREFERRED_TARGET
->>  -----------------------------
->>  
->> @@ -5122,6 +5127,7 @@ Recognised values for feature:
->>  
->>    =====      ===========================================
->>    arm64      KVM_ARM_VCPU_SVE (requires KVM_CAP_ARM_SVE)
->> +  arm64      KVM_ARM_VCPU_REC (requires KVM_CAP_ARM_RME)
->>    =====      ===========================================
->>  
->>  Finalizes the configuration of the specified vcpu feature.
->> @@ -6476,6 +6482,30 @@ the capability to be present.
->>  
->>  `flags` must currently be zero.
->>  
->> +4.144 KVM_ARM_VCPU_RMM_PSCI_COMPLETE
->> +------------------------------------
->> +
->> +:Capability: KVM_CAP_ARM_RME
->> +:Architectures: arm64
->> +:Type: vcpu ioctl
->> +:Parameters: struct kvm_arm_rmm_psci_complete (in)
->> +:Returns: 0 if successful, < 0 on error
->> +
->> +::
->> +
->> +  struct kvm_arm_rmm_psci_complete {
->> +	__u64 target_mpidr;
->> +	__u32 psci_status;
->> +	__u32 padding[3];
->> +  };
->> +
->> +Where PSCI functions are handled by user space, the RMM needs to be informed of
->> +the target of the operation using `target_mpidr`, along with the status
->> +(`psci_status`). The RMM v1.0 specification defines two functions that require
->> +this call: PSCI_CPU_ON and PSCI_AFFINITY_INFO.
->> +
->> +If the kernel is handling PSCI then this is done automatically and the VMM
->> +doesn't need to call this ioctl.
-> 
-> Why should userspace involved in this? Why can't this be a
-> notification that the host delivers to the RMM when the vcpu is about
-> to run?
+>From: Kieran Moy <kfatyuip@gmail.com>
 
-This is only when PSCI is being handled by user space. If the kernel
-(i.e KVM) is handling PSCI then indeed there's no user space involvement.
+>The SFS driver allocates a 2MB command buffer using snp_alloc_hv_fixed_pages(),
+>but set_memory_uc() is called with SFS_NUM_PAGES_CMDBUF which assumes 4KB pages.
+>This mismatch could lead to incomplete cache attribute updates on the buffer if
+>the payload size is not strictly page-aligned.
 
-I'm not sure how we could avoid this when PSCI is being implemented in
-user space. Or am I missing something?
+>Switch to using DIV_ROUND_UP(SFS_MAX_PAYLOAD_SIZE, PAGE_SIZE) to calculate the
+>number of pages required for the attribute update. This approach follows kernel
+>coding best practices, improves code robustness, and ensures that all buffer
+>regions are properly covered regardless of current or future PAGE_SIZE values.
 
->>  
->>  .. _kvm_run:
->>  
->> @@ -8662,6 +8692,47 @@ This capability indicate to the userspace whether a PFNMAP memory region
->>  can be safely mapped as cacheable. This relies on the presence of
->>  force write back (FWB) feature support on the hardware.
->>  
->> +7.44 KVM_CAP_ARM_RME
->> +--------------------
->> +
->> +:Architectures: arm64
->> +:Target: VM
->> +:Parameters: args[0] provides an action, args[1] points to a structure in
->> +             memory for the action.
->> +:Returns: 0 on success, negative value on error
->> +
->> +Used to configure and set up the memory for a Realm. The available actions are:
->> +
->> +================================= =============================================
->> + KVM_CAP_ARM_RME_CONFIG_REALM     Takes struct arm_rme_config as args[1] and
->> +                                  configures realm parameters prior to it being
->> +                                  created.
->> +
->> +                                  Options are ARM_RME_CONFIG_RPV to set the
->> +                                  "Realm Personalization Value" and
->> +                                  ARM_RME_CONFIG_HASH_ALGO to set the hash
->> +                                  algorithm.
->> +
->> + KVM_CAP_ARM_RME_CREATE_REALM     Request the RMM to create the realm. The
->> +                                  realm's configuration parameters must be set
->> +                                  first.
->> +
->> + KVM_CAP_ARM_RME_INIT_RIPAS_REALM Takes struct arm_rme_init_ripas as args[1]
->> +                                  and sets the RIPAS (Realm IPA State) to
->> +                                  RIPAS_RAM of a specified area of the realm's
->> +                                  IPA.
->> +
->> + KVM_CAP_ARM_RME_POPULATE_REALM   Takes struct arm_rme_populate_realm as
->> +                                  args[1] and populates a region of protected
->> +                                  address space by copying the data from the
->> +                                  shared alias.
->> +
->> + KVM_CAP_ARM_RME_ACTIVATE_REALM   Request the RMM to activate the realm. No
->> +                                  changes can be made to the Realm's populated
->> +                                  memory, IPA state, configuration parameters
->> +                                  or vCPU additions after this step.
->> +================================= =============================================
->> +
-> 
-> These are not capabilities, they are actions that the VMM may perform
-> on a VM. You don't configure a VM using capabilities. You use it to
-> buy into some behaviours, but that's all.
-> 
-> And then there is the semantic of this stuff. Why do I need something
-> like KVM_CAP_ARM_RME_CREATE_REALM when I can just pass this as part of
-> the VM type? Why do I need a new way to describe memory region when we
-> already have memslots for that exact purpose?
-> 
-> Overall, you are leaking the RMM interface into userspace, and that's
-> an absolute show-stopper. We have an API, it is not pretty, but it
-> exists. We don't need another one that will be just as broken. If the
-> RMM needs some impedance matching, that's the kernel's job.
+>Using DIV_ROUND_UP is also consistent with Linux kernel style for page counting,
+>which avoids hidden bugs in case the payload size ever changes and is not a
+>multiple of PAGE_SIZE, or if the kernel is built with a non-default page size.
 
-So I'll admit the (ab)use of capabilities to set up the realm is a bit
-of a hack. I initially did it this way to maintain some compatibility
-with a prototype implementation, but it's taken until v10 for anyone to
-express displeasure with the approach! It would of course be possible to
-implement these are separate ioctls.
+>Signed-off-by: Kieran Moy <kfatyuip@gmail.com>
+>---
+> drivers/crypto/ccp/sfs.c | 3 ++-
+> 1 file changed, 2 insertions(+), 1 deletion(-)
 
-However, it seems we need to pin down the semantics before I do that
-refactoring.
+>diff --git a/drivers/crypto/ccp/sfs.c b/drivers/crypto/ccp/sfs.c
+>index 2f4beaafe7ec..3397895160c0 100644
+>--- a/drivers/crypto/ccp/sfs.c
+>+++ b/drivers/crypto/ccp/sfs.c
+>@@ -277,7 +277,8 @@ int sfs_dev_init(struct psp_device *psp)
+> 	/*
+> 	* SFS command buffer must be mapped as non-cacheable.
+> 	*/
+>-	ret = set_memory_uc((unsigned long)sfs_dev->command_buf, SFS_NUM_PAGES_CMDBUF);
+>+	ret = set_memory_uc((unsigned long)sfs_dev->command_buf,
+>+			   DIV_ROUND_UP(SFS_MAX_PAYLOAD_SIZE, PAGE_SIZE));
 
-KVM_CAP_ARM_RME_CREATE_REALM
-============================
+I am not sure, i find the maths quite straightforward: 
 
-The desire is that you can configure the aspects of the realm piecemeal
-and then later trigger the SMC to the RMM. This avoids the need for a
-big structure (which will grow with new features) containing all the
-configuration. It also allows KVM_CAP_ARM_RME_CONFIG_REALM to validate
-each configuration and provide immediate failure when a configuration
-option is invalid.
-
-Would you prefer ditching KVM_CAP_ARM_RME_CONFIG_REALM and passing a
-structure of all the configuration options to
-KVM_CAP_ARM_RME_CREATE_REALM? It would make identifying what part of an
-invalid configuration is problematic harder. And we'd probably therefore
-need to add a new discovery mechanism to find e.g. which hash algorithms
-are supported.
-
-KVM_CAP_ARM_RME_INIT_RIPAS_REALM
-================================
-
-This is a property that doesn't exist for a normal guest and as such the
-VMM is going to have to do something extra to describe which areas of
-RAM are protected and which are shared. I guess with the recent
-guest_memfd changes it might be possible to pull that from the
-guest_memfd instance(s). But note that it's entirely valid (from the CCA
-perspective) to have both protected and shared regions that are not
-backed at guest start. So setting the RIPAS to RAM (i.e. making an area
-of memory protected) is independent of the guest_memfd backing status.
-
-KVM_CAP_ARM_RME_POPULATE_REALM
-==============================
-
-This ties in with the above. This is effectively doing a data-preserving
-conversion of shared to protected. We need some form of this to set the
-initial data for the guest (boot loader/kernel image etc).
-
-In this patch set this API is a little broken as it requires double
-backing (both a valid VMA in the VMM and allocation in the guest_memfd).
-My expectation was to replace this with a version that simply does an
-in-place data-preserving conversion in guest_memfd. The only drawback is
-that this requires a double memcpy() - KVM would need to copy the data
-to a temporary buffer, and then the RMM would copy it back (after
-dealing with memory encryption setup).
-
-The alternative would be to provide a separate input buffer for
-POPULATE_REALM. That could e.g. be a mmap()ed file, but that moves CCA
-further away from a standard interface.
-
-KVM_CAP_ARM_RME_ACTIVATE_REALM
-==============================
-
-This is easiest to drop - we could just do this step when the VMM first
-tries to start a VCPU. The main benefits are:
-
- * It makes error reporting more obvious (you can tell the difference
-between the RMM failing the activate and something else preventing a
-VCPU entry).
-
- * It makes the KVM code slightly clearer because the state transition
-is triggered by an obvious action from the VMM, and there's less
-potential for races.
-
-
-I agree it's a shame that the VMM can't just use the standard KVM
-interface for realm guest setup. But there are some fundamental
-differences between a normal guest and a realm guest. So the VMM will
-need to be enlightened. Feel free to comment on the above if you have
-suggestions on how the above API can be improved.
+The command buffer is allocated using snp_alloc_hv_fixed_pages() or alloc_pages() using
+an order of 9, which should be allocating 512 pages and returning a 2MB aligned address 
+and then set_memory_uc() is (SFS_MAX_PAYLOAD_SIZE / PAGE_SIZE) which computes 512 pages.
+Also the payload size here is page-aligned and is a constant.
 
 Thanks,
-Steve
+Ashish
 
+> 	if (ret) {
+> 		dev_dbg(dev, "Set memory uc failed\n");
+> 		goto cleanup_cmd_buf;
 
