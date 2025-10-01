@@ -1,1774 +1,379 @@
-Return-Path: <linux-kernel+bounces-838571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 791D9BAF915
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 10:13:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15096BAF92B
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 10:18:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A4327ADE94
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 08:11:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD9EC3B3B38
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 08:18:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1816F27B354;
-	Wed,  1 Oct 2025 08:13:28 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 452D127FB0E;
+	Wed,  1 Oct 2025 08:17:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="nCejubU7"
+Received: from mx0b-00128a01.pphosted.com (mx0b-00128a01.pphosted.com [148.163.139.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A0DC27E077
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 08:13:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759306405; cv=none; b=CjxkmKuTBY2uHpPtPaSiWi/ucHUCkCLElMNhcFmguUVHBfuhNVSmiWvGk4X55EltHIcH/W2PKvXlDbzm6TBwzEEAuZLLTNBEuCGoenbyd25nKuTz7JoIUwd60TpKk6Z9qOyp3UEoXEcX9boFqACTQ7A65BRM2M/IVUjNagZMwcs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759306405; c=relaxed/simple;
-	bh=ypdOfHqt+r8L06ZKE+Nmqu1J/jKDt0kk3KW66gyuRUY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=chmYztdkYvdCZvhhH0WqB6qTlk1fZj5/FiIo2yCOgkjdt+1eci/aaE8+rHYBtd24hdYuO0fSEo1YB+kvOTZJS8t7p0f3ssyrgDk/JfySR8x7qUQ99R8p0OLncR0AbBGuiJStVpg/LFUdTEbPHkzzwroPjkxoMWLcLzXjvICfS1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <s.hauer@pengutronix.de>)
-	id 1v3rxH-0004Pe-AX; Wed, 01 Oct 2025 10:12:55 +0200
-Received: from dude02.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::28])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <s.hauer@pengutronix.de>)
-	id 1v3rxG-001NZi-2k;
-	Wed, 01 Oct 2025 10:12:54 +0200
-Received: from localhost ([::1] helo=dude02.red.stw.pengutronix.de)
-	by dude02.red.stw.pengutronix.de with esmtp (Exim 4.98.2)
-	(envelope-from <s.hauer@pengutronix.de>)
-	id 1v3rxG-00000001m9N-3AXP;
-	Wed, 01 Oct 2025 10:12:54 +0200
-From: Sascha Hauer <s.hauer@pengutronix.de>
-Date: Wed, 01 Oct 2025 10:12:54 +0200
-Subject: [PATCH v7 2/2] clk: add TI CDCE6214 clock driver
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF9221E3DCF;
+	Wed,  1 Oct 2025 08:17:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.139.77
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759306673; cv=fail; b=MyYtbOiqGsDe44AuOSPzi2QOg5Y4qzuYvoK4iUKRd+mQ8kNdmLp/OUwwyZmpgz17NBmE1EZKpfj+Ovyk2/vyHujGM0QmRsYXeNCQ+w4cLC30o+Fs/j1F2xx7uQzkVoptaIaAp89Il0CJUxbCo/2fieqt+I5eynytfqKzeMbA8F0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759306673; c=relaxed/simple;
+	bh=NdeGv1gbsTVTQkwCD/la7BOMEpGTn6MlziIWzDZTBf8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=nLsZBT67pqZgyViGOpukB6HFW+m/yOgIg0FF/4gMFqQGvUkDMXKOTj5mGcUw4SNzlrK7sfi5Ien/QMcSxaVkoEZog4ajL/TtDKdhJJEGrgbUOmla0eiwGus9ctEgXHT31n12h2ukYccMI0OUkFkA0pAYRWEfNuudYLtOFhXiN5M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=nCejubU7; arc=fail smtp.client-ip=148.163.139.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167091.ppops.net [127.0.0.1])
+	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5917Y9TS009883;
+	Wed, 1 Oct 2025 04:17:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=DKIM; bh=NdeGv
+	1gbsTVTQkwCD/la7BOMEpGTn6MlziIWzDZTBf8=; b=nCejubU7xTv8yhgyi1kVB
+	caR6mXsxBcp0qxo7Q8m7QTgbpSmc6vEC9gv+P9rK/oC+JuVf0KJYd3aJQpfn1Sta
+	PRHOuYgLDajaqdN0omhr0KXkqdlYFoB97/jfGzHUXFlgjcfn5GF2e5NHRlaGg2H5
+	ZABa2yYvLIYOuDKAQWN8byM24cpH8IGYa/y1KuXEQdOGmCDcTys5WUcUyk1dNWZT
+	0GbiLg381x9NE5qxTdpTRduhrzHq4u7XE9s60c0pZNjFnyZG+xDWSTWGXRlQ2MN+
+	coqoxb8vcetWhcPPIoJNmeO4rro/sRfWgBo9rTz3o5aYuhI5N9Co0R95nD0c4kte
+	g==
+Received: from ph8pr06cu001.outbound.protection.outlook.com (mail-westus3azon11012000.outbound.protection.outlook.com [40.107.209.0])
+	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 49e9p8mbw5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 01 Oct 2025 04:17:21 -0400 (EDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=RXX49IZO/66O6T7z5+HmtNUJ2hXYCe5/xgdruFQ8Cvq6/9ARV+dbeH2RK/dbI+yARp6nd03V2ujHcbLDt9O7ePUoonPbxMMuwLtvxUEyXwvQh3N6g21v9ICSpDIuS1LgyZy7NFp3T45k06cscQnj3sIJUuXaYPkTF8xOAOsDufNrXjzshsQyyN/CJORLbKQnLfxLc/EL6fzwW9g1EXn72cIZY4xAttfDjG9/GO2/sUj9pRibgMLH8Paj3n0UiaW46JrSKQ/+EIThk0Q9iXvBA/7QW4uTLnEoCm+aOSNWMwxQvL2BCod84ld5pJWXqiAKRoJZ47bxLsQVS3/oRq09/Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NdeGv1gbsTVTQkwCD/la7BOMEpGTn6MlziIWzDZTBf8=;
+ b=TclGLdnJLDt+1czOqEhJMVN9p8+bJLGL+M7wRW+hD6VpKTllswgCdM/CdhrfYKCvCXWY+7+xZuZ/6Ur7q27rDLarHEF7/2+n1JChGd64ZcL4dR2y7eZVfvm0bDw4YYj35pg3xj8MhfGB7KJKsrQ6ZX3oVuSpH5PMbExMLp9r8pWEjIhwUBvaPp3aV0FpqFiEAb+Ymfa6IX0BQRE9Bj2AndCMqgwRSfE/CspPGU6n7Iapf/zfyK33L9fdtqPcWoqcsZ21CImcJEFXqE9ZfysgkCkA9cpYkb3Zh6nJON/nun4bDHQZWWTn/pUYQzzhLsP/amtKz5WghNJgX7VB+br+8g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=analog.com; dmarc=pass action=none header.from=analog.com;
+ dkim=pass header.d=analog.com; arc=none
+Received: from PH0PR03MB7141.namprd03.prod.outlook.com (2603:10b6:510:296::20)
+ by LV3PR03MB7429.namprd03.prod.outlook.com (2603:10b6:408:1a0::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9182.14; Wed, 1 Oct
+ 2025 08:17:18 +0000
+Received: from PH0PR03MB7141.namprd03.prod.outlook.com
+ ([fe80::c559:3d31:1af3:b01]) by PH0PR03MB7141.namprd03.prod.outlook.com
+ ([fe80::c559:3d31:1af3:b01%6]) with mapi id 15.20.9160.015; Wed, 1 Oct 2025
+ 08:17:18 +0000
+From: "Paller, Kim Seer" <KimSeer.Paller@analog.com>
+To: Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>
+CC: "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Subject: RE: [PATCH 2/2] hwmon: (pmbus/max17616): add driver for max17616
+Thread-Topic: [PATCH 2/2] hwmon: (pmbus/max17616): add driver for max17616
+Thread-Index: AQHcMcd7ONt9sabL10CRUiKB72zuh7SrheoAgAFtN5A=
+Date: Wed, 1 Oct 2025 08:17:18 +0000
+Message-ID:
+ <PH0PR03MB7141CE6B03549500A57E2B42F9E6A@PH0PR03MB7141.namprd03.prod.outlook.com>
+References: <20250930-upstream-max17616-v1-0-1525a85f126c@analog.com>
+ <20250930-upstream-max17616-v1-2-1525a85f126c@analog.com>
+ <c0ebd50a-0e44-4262-ab10-33803b3dbfb7@roeck-us.net>
+In-Reply-To: <c0ebd50a-0e44-4262-ab10-33803b3dbfb7@roeck-us.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-dg-rorf: true
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PH0PR03MB7141:EE_|LV3PR03MB7429:EE_
+x-ms-office365-filtering-correlation-id: 67e5db42-bd6d-4c93-0306-08de00c2f031
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700021;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?bTVpMGhad1p1QXBNd21nSkJzMkxwaHBhRTNiYUNXMnl4ZktzQ2c2WVkxNUlz?=
+ =?utf-8?B?M3pvSmc5MEdaaW9iMmIrbHNYR2tabEVtNUhnY3lSNTB4aUFEZHhyRE5mYlc4?=
+ =?utf-8?B?MTMvTXU5dHFieFAzSytHckRYZkhjcHNqd0wwSVZMdldIeHJrZ29MeWlFd0l1?=
+ =?utf-8?B?bEZMSGtjeXFzQzRId2dVNGtsVDRMTEhCWnNpOUdMWDA4eGhaTnRMamhXWmhY?=
+ =?utf-8?B?UXcyMVozdjVHUHlvU0lTN25wcDlZcXFibzNVWFhyNXRRVHdUWHZFb05Mb1o2?=
+ =?utf-8?B?SUI5MXQwWi93WDJaMXhOem5nSyt6UUxiQVV6TTFxZHFLNko5WU1XV2xZUHA5?=
+ =?utf-8?B?d0hyN0E0S3ZwRFUrS0JZcUk3a2sxVDgwK1dTclVkUk1nejBwYkt4RTlvQ0Uy?=
+ =?utf-8?B?ZDZWL2NPTjlubjFLYXFVS0lLVVVuTkNFVXlIeGxudWJ2UlAxOWJCSTZWKzNE?=
+ =?utf-8?B?MkRaZ3Z1bk1GR0hGcFFBUGhRSXlPNnhsSUEzVG5XaWtqL0dBbHl4b01CclZT?=
+ =?utf-8?B?c2E1N0pRSkRFSE1nb3Q1eXhQRDhPdWVKM2JZRWZkODN4MStMTUFIbUhTYk5D?=
+ =?utf-8?B?MkRlNFBIekg2SVBrSENuenFUSHlmeU9ZalpuNUZzUzhUczl4dnpldFBYaXUy?=
+ =?utf-8?B?L2ljTkorcm9lRTU5SmJpL1ZDZm43K3FIUFhMWnRyanc4bHhMd3l1cWxwdmQ0?=
+ =?utf-8?B?aFgxbUgvRnlacDMreUNnNk5xYTdndFVmdHk3a0tQQ3JEN3FJbkRGVUpTZlBh?=
+ =?utf-8?B?Q0g5bHhGMy85T0x0VWFYTzdieEQveE9jazFhR1BIRzhaQjhsMVNrOStZWlNo?=
+ =?utf-8?B?U3o1WEgvSVJnWkpCWFAzTkhPYkhHTTNRc3BMMytHQXlOSlM0TU1nbDJXbjJL?=
+ =?utf-8?B?YVNIeEViUWZXUkRpVXgxUkEycStLYUovRjF4OWp6MHlKSlI5ZWt2Z3dlVE5l?=
+ =?utf-8?B?YVhaZHZSb0xOQ3Q1Sng3RHd1LzhvKy9wRG4zYXJWVlNkdUxKcHNJM2Z3cVJz?=
+ =?utf-8?B?TThRWFMrTjEvVVpQVU9XTXExNGV3NCtsa1dORUZKbGljS3dSMlR5MHEyOUpL?=
+ =?utf-8?B?TWNNc0wzYjJaOEhJbFlPbEJyRklVNDJMMmFTZGFNUTM0REgrRElsbGg0S2tF?=
+ =?utf-8?B?VTdwclo0L1NCaWpyOTJ3RjEwQWlwNTYvMGNVVFVBK3VxTnc4RFRSZVhsTG51?=
+ =?utf-8?B?OUQvZm8wWlRVUFV0WXE5Y2xlbHc3K1FzSnRLellnK29CRG1MSkhCVEJRSGo3?=
+ =?utf-8?B?Uzl0aFZZTFQvdnZGQnlIUDJ0VHFkOVRUbVZ4eGRBWlhuakxDdng1eDZLQ3VT?=
+ =?utf-8?B?Zjl2S3lxM1UxSjh2eU9oL0QrT3ZIcVFWSml4THRIbXBtbFdETVFOWkFwb3NN?=
+ =?utf-8?B?dU5GNlNBVkZtU3RVMmdiS1FBWWp6Nm9zci9OMGpMZ1UyV1VtT3pxb2cwVTMy?=
+ =?utf-8?B?ZWNHVjBqMXhWOG5ORjlpMHpIYTgzRkhlUXhHZ2Y1VzV4WWJ6TU5zRVIwWW1R?=
+ =?utf-8?B?bjJZalZKTVJCUUN2ZSt4WEVJdUlvV0NIWS9JMVVleFE0U2xaL1o0MGw5N2pi?=
+ =?utf-8?B?cWk5QUMyU1dkRGZncW53aVZ5TW1BMmtBalFyS004R1ZkT2tEZk56dlE4MG9v?=
+ =?utf-8?B?aFJERVRCbUd2U3doaVlnZGx0ejAzY0Z6ZFBEZDQ3cnlIVEIvWUh0UVhBQ3NX?=
+ =?utf-8?B?NlRNOGEyWWc2b1FnT2dUNVlxcnVqZ0hFVFZaSS84Q0EvWVk5d0YwZnVRbHBz?=
+ =?utf-8?B?TE1lVGdHRWtFTjdTTitMRWNXYUs3M2R4L2VJM3NJWnBFTE1hbFAzWThYL3Zl?=
+ =?utf-8?B?Qkc4VUJKdURhbHZpcGhuUU9GZXpFUWJuRjNab01SZm5nNXcyNiswSGVsbElN?=
+ =?utf-8?B?SlNxa2ZVdDlqR2ZMYzVVVmJFUHk3ZEErRkRtajNYMDh4VjVKQVZJUlVwM0l0?=
+ =?utf-8?B?SFYyU2UzRDJkaVRPb2Q5c2FkaW8zU2xrVTFlcTNqaEhrMG01MUgzeHgwTjJ2?=
+ =?utf-8?B?V1B3bnYwM0xBPT0=?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR03MB7141.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?TVJwYjRob0wxcUZYc0FlbGlJNjZvbFhzUFhmNkdVRVN0MFQwZWxYTnJMekty?=
+ =?utf-8?B?dnNPTjdEVEhNTTNXSnVROEJBVTJjSktVQno3ZjBuRERVNXN5MEJKeFdtWUxJ?=
+ =?utf-8?B?aWh5UlF4OEtGN3BOVzNTMVVOMWw0dzNKR3IrOGdUa0d1ajVRMkkyNVNQc0hu?=
+ =?utf-8?B?aUZhVVY4Sk1Bc2cxRm9wTGR4VHNSYkRLTmhBUENqSXhKdTlSTVUyOGhtQmVi?=
+ =?utf-8?B?NjlkRUkrV0RYVUkwT0Yrb1pHVTNuYkFyTGZoNnI4dTBOODZtTTJ2TlA3UUNh?=
+ =?utf-8?B?eE91ZFFaUTJrSWM1ZUtYZFJQbE9nb1F5Ly9oZHZYb0RhNU41SlB3MjRjaDNJ?=
+ =?utf-8?B?L0pyVjhnNEVXQmFFY25XazdqVVhUS3ZFalpIbEw0RDEwbWtqSkhPR1FLRXRl?=
+ =?utf-8?B?Y0RwZTgwNm0yaUxHTXpEM3Y3dEt1cUhoMlBZUDRTZU8rcWpqZFRqWXAva01n?=
+ =?utf-8?B?SC9MY052WmVZc3ZCYVJFQTNrQ3grVk9qUmhYV2JDTGpFM21YRm9FN0d1TGh0?=
+ =?utf-8?B?VG5oTmovU1FMZENQaFhXMEJ6ZmVCMTQ0cS9TTnpNYzluNmFvdVE3RmJLdVZ5?=
+ =?utf-8?B?RkpHM3FXOWVabHlxSDRaUGdaVDNuM1hZNEsxcTg1a3N3R1UxTFR4YTZkZDBh?=
+ =?utf-8?B?NTlKMkFNaEJwTERQcWhSN3BKQXQrNjVnbHdpZG5ZWlQ2UkpmS3R0UHNOVHN5?=
+ =?utf-8?B?RXlSUm53Q0hNa3JiWWtSaWhvZ2NLOE1XUklhMFZpWHUwSVNpWUtseTBEL05V?=
+ =?utf-8?B?SjJvK0R6aExla1RJaXR5MFozZHBTMFJDb3pJVUY2aG54bjRpd0FqNmxEbWlp?=
+ =?utf-8?B?aDBrT0ErbHhRTDRMNEkyNXlUbnFyUlRSYUFQRWlDNmMydElUT3NXc1NrVzMz?=
+ =?utf-8?B?TVdaVjdEMG9pS013RUwzWTlYVHlnR2M2aEpQWjJZYWFRUDFDUkZKS1IzT3VM?=
+ =?utf-8?B?RXdaR1VEUlphOE5wcW5iMHhBN203aEpQZUE1U0trck9BaGpSblE0NTI4dUY2?=
+ =?utf-8?B?cFlLVVh1TEYxY1NtSWZDWmZpbUlXVWRHWlBnQmxSbWhHL05weHdYTUcxdG5m?=
+ =?utf-8?B?RUQxbmRlYVA2c2FhcFF0Mmd6bC9wRTRHVXVvSUlmMVZSM2s3dmJmMTVuak96?=
+ =?utf-8?B?OVlLcXQ3WXVSMzBHSFlOSjRObnhvWGpzdFZ3bUE2YTAxa1k4RVFibmNsUnBO?=
+ =?utf-8?B?V2Rra0hIWTFrdzBDQ1VpNDNUdGt1d2UrRU1LbVFsejY2bDk2eFExQmRKSzNk?=
+ =?utf-8?B?Qjlja3FnL2kvYVVnTXVIU1IvRVhMMzdEVzVzdzg4MUNCNVpzWGJyK2IxQTBD?=
+ =?utf-8?B?ZTlrQ3RMZW9mSXBRVnJsdDBjd2RHRlFxTEYzWXBmVWtFa0l1czkzK0E1WXNo?=
+ =?utf-8?B?bDVwY21vVVRPalVOejVReThRRzBuV3M5ZGNTQlZuMjcrNVVYaGRaeGVManJw?=
+ =?utf-8?B?dmUxYXRRQ1g5aFB0YmVWQWFTZGh4d2xtVlJOWTZIaHVTbFpjazhic0Fjdk13?=
+ =?utf-8?B?SkpNVmIrUlY1K0FxUzVlL0duQnVCbnpYVlZNcHU5VTJwVDVueGNOaWJMb0NE?=
+ =?utf-8?B?a2NxbUxTU0VTMFNHaEVJM3JUODNQZDdvcW9Ba0JzWi9ndDQ2RzFFeXlCNldy?=
+ =?utf-8?B?WFkrejRpcXRqalZ0VGNzQXZ4NjFqcXFMRlVjRlRvRXYyYTFkUGt1UGdZUXFC?=
+ =?utf-8?B?T3hTS1Z4SEozVmpDM2hNUCtPbllpMlo4b0F5VDRVdWUyV0RIRHRLRHdQZk5U?=
+ =?utf-8?B?bXJSVE13R2dZdEpEZDNwOHhkYnAxazlMOEl4K0MyeFBNcEZXd1doSE1BOUR0?=
+ =?utf-8?B?alVTUWR1UDRGMCs5Y3pScWRhS1ZLU1NTOTZBbzN1KzYrQ0wzRjc4L3d5b2FV?=
+ =?utf-8?B?SUJmVGx5Yi8raHpsc2hkR3Zubk1HWlRjQm91dStCa01Ua016RUhyY1lBTENs?=
+ =?utf-8?B?eWNja1FEdm81R2ZhOTNMc0ZESWNuL1pNMlYxMWxiVVRxY2ZtdG9EY1hpSk9n?=
+ =?utf-8?B?d2FhRVhYMk1lMDNKN1VESWM4b3RHOGYvWVBqYTF6Z1IvdkVkWUl5d3g2cEpO?=
+ =?utf-8?B?NXdzeFBnblFkQTlvd09KMFE4QmpVQjNxQnNxTVMxcnRLb3RJRnhMLzFOOUFn?=
+ =?utf-8?Q?ZZhs6Nu7/mFbqAlK+XM3LUgqu?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20251001-clk-cdce6214-v7-2-5f8b44da95a5@pengutronix.de>
-References: <20251001-clk-cdce6214-v7-0-5f8b44da95a5@pengutronix.de>
-In-Reply-To: <20251001-clk-cdce6214-v7-0-5f8b44da95a5@pengutronix.de>
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, kernel@pengutronix.de, 
- Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
- =?utf-8?q?Alvin_=C5=A0ipraga?= <alsi@bang-olufsen.dk>, 
- Sascha Hauer <s.hauer@pengutronix.de>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1759306374; l=46157;
- i=s.hauer@pengutronix.de; s=20230412; h=from:subject:message-id;
- bh=ypdOfHqt+r8L06ZKE+Nmqu1J/jKDt0kk3KW66gyuRUY=;
- b=9ntut/lr+uYyem7z5/awXD43NxvYtd9TxloMbcZOSfHWnVREZgUxh3KJrnVo52/HZeEDDblrh
- bdbdg5CHYKzDjtemk3OFu5UdhEp4I0HYfS4M3Qt6RejwU0ICety+SvG
-X-Developer-Key: i=s.hauer@pengutronix.de; a=ed25519;
- pk=4kuc9ocmECiBJKWxYgqyhtZOHj5AWi7+d0n/UjhkwTg=
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: s.hauer@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-OriginatorOrg: analog.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR03MB7141.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 67e5db42-bd6d-4c93-0306-08de00c2f031
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Oct 2025 08:17:18.6426
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: s8XE5chClKK6jg+nBQbsSgVtyEfk7uHK7cXS1clm0B7IeR1Sy+xCDBR8laBHfQJRzisJf1UJIjS5rieQPZJHTUPqJinpiXj0b9VZ+E+TpuA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR03MB7429
+X-Proofpoint-GUID: hBK0Np2iX0LxbdvG7iKxXsxXtQ3s7t9T
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDA0NyBTYWx0ZWRfX5DBkXdYjRNmA
+ rlPUKLy455qNZ03hEJlMHwBZR/LO56izfVLuiSQ9Iw8Xd7U2+krkCgBMXNGKi9coYX3rsokd1ig
+ RctD5GH1NczjStpuK6I+y6IJ2IVG1jlA7+Mb1bjatkefVBWazuCge0j8GEv7k4blGETyFO33G9K
+ hKN++I1s60l+Qiw5bVmoa0VymPDiPyr1vhTteMfaeFx5hik37W7lh/BcoGXDkKP4oX2sf87NU4D
+ T58aoipzs66yr38OQc0JLHTTTMgIVDk4OWmSLT+7ahQktswlzCm3Dc9LhEDRf+M3iUwork0Pxl8
+ 9Zd89VEkWFBfwwFi9Iq6pZZTM/Jo/fTxakIR1FUCE1bSEzorkq0jkKYZldhtU3Kh9KZeCeRb6dU
+ YOWSeArJjUV6pKH3EFyQETcSBmVK5w==
+X-Authority-Analysis: v=2.4 cv=bLsb4f+Z c=1 sm=1 tr=0 ts=68dce391 cx=c_pps
+ a=6APEVz27trGWNYyenu7PEA==:117 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=x6icFKpwvdMA:10 a=gAnH3GRIAAAA:8 a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8
+ a=07d9gI8wAAAA:8 a=JEMt5wYyb7BP_yuy7qYA:9 a=QEXdDO2ut3YA:10
+ a=e2CUPOnPG4QKp8I52DXD:22 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-ORIG-GUID: hBK0Np2iX0LxbdvG7iKxXsxXtQ3s7t9T
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-01_02,2025-09-29_04,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 adultscore=0 clxscore=1015 malwarescore=0 phishscore=0
+ priorityscore=1501 spamscore=0 suspectscore=0 lowpriorityscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270047
 
-The CDCE6214 is a Ultra-Low Power Clock Generator With One PLL, Four
-Differential Outputs, Two Inputs, and Internal EEPROM. This patch adds
-a common clk framework driver for this chip.
-
-- Two inputs (PRIREF and SECREF)
-- Programmable 8bit divider or x2 multiplier between input and PLL
-- 16b integer / 24bit fractional PLL
-- Two programmable /4, /5, /6 dividers after PLL (PSA/PSB)
-- Four outputs (OUT1-OUT4) with programmable 14b dividers,
-  muxable between PSA, PSB and PLL input
-- One output (OUT0) fed from PLL input
-
-- PRIREF can be configured as LVCMOS or differential input
-- SECREF can be configured as LVCMOS, differential or oscillator input
-- OUT0 is a LVCMOS output
-- OUT1 and OUT4 can be configured as LVDS, LP-HCSL or LVCMOS outputs
-- OUT2 and OUT3 can be configured as LVDS or LP-HCSL outputs
-
-All clocks are registered without parent rate propagation, so each of
-the clocks must be configured separately via device tree or consumer.
-
-Signed-off-by: Alvin Šipraga <alsi@bang-olufsen.dk>
-Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
----
- drivers/clk/Kconfig        |    9 +
- drivers/clk/Makefile       |    1 +
- drivers/clk/clk-cdce6214.c | 1620 ++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 1630 insertions(+)
-
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 4d56475f94fc1e28823fe6aee626a96847d4e6d5..2fdab52844722536a0e12489640031b9673e76a2 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -178,6 +178,15 @@ config COMMON_CLK_BM1880
- 	help
- 	  This driver supports the clocks on Bitmain BM1880 SoC.
- 
-+config COMMON_CLK_CDCE6214
-+	tristate "Clock driver for TI CDCE6214 clock synthesizer"
-+	depends on I2C
-+	depends on PINCTRL
-+	select GENERIC_PINCONF
-+	select REGMAP_I2C
-+	help
-+	  This driver supports TI CDCE6214 programmable 1-PLL clock synthesizer.
-+
- config COMMON_CLK_CDCE706
- 	tristate "Clock driver for TI CDCE706 clock synthesizer"
- 	depends on I2C
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index 18ed29cfdc1133b6c254190c6092eb263366d5ac..92fd9f027d2d4c96a36495f14059cc7eaaf71b55 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -50,6 +50,7 @@ obj-$(CONFIG_COMMON_CLK_AXI_CLKGEN)	+= clk-axi-clkgen.o
- obj-$(CONFIG_ARCH_AXXIA)		+= clk-axm5516.o
- obj-$(CONFIG_COMMON_CLK_BD718XX)	+= clk-bd718x7.o
- obj-$(CONFIG_COMMON_CLK_BM1880)		+= clk-bm1880.o
-+obj-$(CONFIG_COMMON_CLK_CDCE6214)	+= clk-cdce6214.o
- obj-$(CONFIG_COMMON_CLK_CDCE706)	+= clk-cdce706.o
- obj-$(CONFIG_COMMON_CLK_CDCE925)	+= clk-cdce925.o
- obj-$(CONFIG_ARCH_CLPS711X)		+= clk-clps711x.o
-diff --git a/drivers/clk/clk-cdce6214.c b/drivers/clk/clk-cdce6214.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..d012b79f3788097684809c4a804561461db4fe43
---- /dev/null
-+++ b/drivers/clk/clk-cdce6214.c
-@@ -0,0 +1,1620 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Driver for the TI CDCE6214 clock generator
-+ *
-+ * datasheet available at https://www.ti.com/lit/gpn/cdce6214
-+ *
-+ * Copyright (c) 2023 Alvin Šipraga <alsi@bang-olufsen.dk>
-+ * Copyright (c) 2025 Sascha Hauer <s.hauer@pengutronix.de>
-+ */
-+
-+#include <linux/i2c.h>
-+#include <linux/of.h>
-+#include <linux/clk-provider.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/module.h>
-+#include <linux/regmap.h>
-+#include <linux/bitfield.h>
-+#include <linux/pinctrl/pinmux.h>
-+#include <linux/pinctrl/pinctrl.h>
-+#include <linux/pinctrl/pinconf.h>
-+#include <linux/pinctrl/pinconf-generic.h>
-+#include <dt-bindings/clock/ti,cdce6214.h>
-+
-+#define R0	0
-+#define RO_I2C_A0			BIT(15)
-+#define RO_PDN_INPUT_SEL		BIT(14)
-+#define RO_GPIO4_DIR_SEL		BIT(13)
-+#define RO_GPIO1_DIR_SEL		BIT(12)
-+#define RO_ZDM_CLOCKSEL			BIT(10)
-+#define RO_ZDM_EN			BIT(8)
-+#define RO_SYNC				BIT(5)
-+#define RO_RECAL			BIT(4)
-+#define RO_RESETN_SOFT			BIT(3)
-+#define RO_SWRST			BIT(2)
-+#define RO_POWERDOWN			BIT(1)
-+#define RO_MODE				BIT(0)
-+
-+#define R1	1
-+#define R1_GPIO4_INPUT_SEL		GENMASK(15, 12)
-+#define R1_GPIO3_INPUT_SEL		GENMASK(11, 8)
-+#define R1_GPIO2_INPUT_SEL		GENMASK(7, 4)
-+#define R1_GPIO1_INPUT_SEL		GENMASK(3, 0)
-+
-+#define R2	2
-+#define R2_GPIO4_OUTPUT_SEL		GENMASK(9, 6)
-+#define R2_GPIO1_OUTPUT_SEL		GENMASK(5, 2)
-+#define R2_REFSEL_SW			GENMASK(1, 0)
-+
-+#define R3	3
-+#define R3_DISABLE_CRC			BIT(13)
-+#define R3_UPDATE_CRC			BIT(12)
-+#define R3_NVMCOMMIT			BIT(11)
-+#define R3_REGCOMMIT			BIT(10)
-+#define R3_REGCOMMIT_PAGE		BIT(9)
-+#define R3_FREQ_DEC_REG			BIT(6)
-+#define R3_FREQ_INC_REG			BIT(5)
-+#define R3_FREQ_INC_DEC_REG_MODE	BIT(4)
-+#define R3_FREQ_INC_DEC_EN		BIT(3)
-+
-+#define R4	4
-+#define R4_CH4_PD			BIT(7)
-+#define R4_CH3_PD			BIT(6)
-+#define R4_CH2_PD			BIT(5)
-+#define R4_CH1_PD			BIT(4)
-+#define R4_POST_EE_DLY			GENMASK(3, 0)
-+
-+#define R5	5
-+#define R5_PLL_VCOBUFF_LDO_PD		BIT(8)
-+#define R5_PLL_VCO_LDO_PD		BIT(7)
-+#define R5_PLL_VCO_BUFF_PD		BIT(6)
-+#define R5_PLL_CP_LDO_PD		BIT(5)
-+#define R5_PLL_LOCKDET_PD		BIT(4)
-+#define R5_PLL_PSB_PD			BIT(3)
-+#define R5_PLL_PSA_PD			BIT(2)
-+#define R5_PLL_PFD_PD			BIT(1)
-+
-+#define R7	7
-+#define R7_NVMCRCERR			BIT(5)
-+#define R7_LOCK_DET_S			BIT(1)
-+#define R7_LOCK_DET			BIT(0)
-+
-+#define R9	9
-+#define R9_NVMLCRC			GENMASK(15, 0)
-+
-+#define R10	10
-+#define R10_NVMSCRC			GENMASK(15, 0)
-+
-+#define R11	11
-+#define R11_NVM_RD_ADDR			GENMASK(5, 0)
-+
-+#define R12	12
-+#define R12_NVM_RD_DATA			GENMASK(15, 0)
-+
-+#define R13	13
-+#define R13_NVM_WR_ADDR			GENMASK(5, 0)
-+
-+#define R14	14
-+#define R14_NVM_WR_DATA			GENMASK(15, 0)
-+
-+#define R15	15
-+#define R15_EE_LOCK			GENMASK(15, 12)
-+#define R15_CAL_MUTE			BIT(5)
-+
-+#define R24	24
-+#define R24_IP_PRIREF_BUF_SEL		BIT(15)
-+#define R24_IP_XO_CLOAD			GENMASK(12, 8)
-+#define R24_IP_BIAS_SEL_XO		GENMASK(5, 2)
-+#define R24_IP_SECREF_BUF_SEL		GENMASK(1, 0)
-+#define R24_IP_SECREF_BUF_SEL_XTAL	0
-+#define R24_IP_SECREF_BUF_SEL_LVCMOS	1
-+#define R24_IP_SECREF_BUF_SEL_DIFF	2
-+
-+#define R25	25
-+#define R25_IP_REF_TO_OUT4_EN		BIT(14)
-+#define R25_IP_REF_TO_OUT3_EN		BIT(13)
-+#define R25_IP_REF_TO_OUT2_EN		BIT(12)
-+#define R25_IP_REF_TO_OUT1_EN		BIT(11)
-+#define R25_IP_BYP_OUT0_EN		BIT(10)
-+#define R25_REF_CH_MUX			BIT(9)
-+#define R25_IP_RDIV			GENMASK(7, 0)
-+
-+#define R27	27
-+#define R27_MASH_ORDER			GENMASK(1, 0)
-+
-+#define R30	30
-+#define R30_PLL_NDIV			GENMASK(14, 0)
-+
-+#define R31	31
-+#define R31_PLL_NUM_15_0		GENMASK(15, 0)
-+
-+#define R32	32
-+#define R32_PLL_NUM_23_16		GENMASK(7, 0)
-+
-+#define R33	33
-+#define R33_PLL_DEN_15_0		GENMASK(15, 0)
-+
-+#define R34	34
-+#define R34_PLL_DEN_23_16		GENMASK(7, 0)
-+
-+#define R41	41
-+#define R41_SSC_EN			BIT(15)
-+
-+#define R42	42
-+#define R42_SSC_TYPE			BIT(5)
-+#define R42_SSC_SEL			GENMASK(3, 1)
-+
-+#define R43	43
-+#define R43_FREQ_INC_DEC_DELTA		GENMASK(15, 0)
-+
-+#define R47	47
-+#define R47_PLL_CP_DN			GENMASK(12, 7)
-+#define R47_PLL_PSB			GENMASK(6, 5)
-+#define R47_PLL_PSA			GENMASK(4, 3)
-+
-+#define R48	48
-+#define R48_PLL_LF_RES			GENMASK(14, 11)
-+#define R48_PLL_CP_UP			GENMASK(5, 0)
-+
-+#define R49	49
-+#define R49_PLL_LF_ZCAP			GENMASK(4, 0)
-+
-+#define R50	50
-+#define R50_PLL_LOCKDET_WINDOW		GENMASK(10, 8)
-+
-+#define R51	51
-+#define R51_PLL_PFD_DLY_EN		BIT(10)
-+#define R51_PLL_PFD_CTRL		BIT(6)
-+
-+#define R52	52
-+#define R52_PLL_NCTRL_EN		BIT(6)
-+#define R52_PLL_CP_EN			BIT(3)
-+
-+#define R55	55
-+#define R55_PLL_LF_3_PCTRIM		GENMASK(9, 8)
-+#define R55_PLL_LF_3_PRTRIM		GENMASK(7, 6)
-+
-+#define R56	56
-+#define R56_CH1_MUX			GENMASK(15, 14)
-+#define R56_CH1_DIV			GENMASK(13, 0)
-+
-+#define R57	57
-+#define R57_CH1_LPHCSL_EN		BIT(14)
-+#define R57_CH1_1P8VDET			BIT(12)
-+#define R57_CH1_GLITCHLESS_EN		BIT(9)
-+#define R57_CH1_SYNC_DELAY		GENMASK(8, 4)
-+#define R57_CH1_SYNC_EN			BIT(3)
-+#define R57_CH1_MUTE_SEL		BIT(1)
-+#define R57_CH1_MUTE			BIT(0)
-+
-+#define R59	59
-+#define R59_CH1_LVDS_EN			BIT(15)
-+#define R59_CH1_CMOSN_EN		BIT(14)
-+#define R59_CH1_CMOSP_EN		BIT(13)
-+#define R59_CH1_CMOSN_POL		BIT(12)
-+#define R59_CH1_CMOSP_POL		BIT(11)
-+
-+#define R60	60
-+#define R60_CH1_DIFFBUF_IBIAS_TRIM	GENMASK(15, 12)
-+#define R60_CH1_LVDS_CMTRIM_INC		GENMASK(11, 10)
-+#define R60_CH1_LVDS_CMTRIM_DEC		GENMASK(5, 4)
-+#define R60_CH1_CMOS_SLEW_RATE_CTRL	GENMASK(3, 0)
-+
-+#define R62	62
-+#define R62_CH2_MUX			GENMASK(15, 14)
-+#define R62_CH2_DIV			GENMASK(13, 0)
-+
-+#define R63	63
-+#define R63_CH2_LPHCSL_EN		BIT(13)
-+#define R63_CH2_1P8VDET			BIT(12)
-+#define R63_CH2_GLITCHLESS_EN		BIT(9)
-+#define R63_CH2_SYNC_DELAY		GENMASK(8, 4)
-+#define R63_CH2_SYNC_EN			BIT(3)
-+#define R63_CH2_MUTE_SEL		BIT(1)
-+#define R63_CH2_MUTE			BIT(0)
-+
-+#define R65	65
-+#define R65_CH2_LVDS_CMTRIM_DEC		GENMASK(14, 13)
-+#define R65_CH2_LVDS_EN			BIT(11)
-+
-+#define R66	66
-+#define R66_CH2_LVDS_CMTRIM_IN		GENMASK(5, 4)
-+#define R66_CH2_DIFFBUF_IBIAS_TRIM	GENMASK(3, 0)
-+
-+#define R67	67
-+#define R67_CH3_MUX			GENMASK(15, 14)
-+#define R67_CH3_DIV			GENMASK(13, 0)
-+
-+#define R68	68
-+#define R68_CH3_LPHCSL_EN		BIT(13)
-+#define R68_CH3_1P8VDET			BIT(12)
-+#define R68_CH3_GLITCHLESS_EN		BIT(9)
-+#define R68_CH3_SYNC_DELAY		GENMASK(8, 4)
-+#define R68_CH3_SYNC_EN			BIT(3)
-+#define R68_CH3_MUTE_SEL		BIT(1)
-+#define R68_CH3_MUTE			BIT(0)
-+
-+#define R70	70
-+#define R70_CH3_LVDS_EN			BIT(11)
-+
-+#define R71	71
-+#define R71_CH3_LVDS_CMTRIM_DEC		GENMASK(10, 9)
-+#define R71_CH3_LVDS_CMTRIM_INC		GENMASK(5, 4)
-+#define R71_CH3_DIFFBUF_IBIAS_TR	GENMASK(3, 0)
-+
-+#define R72	72
-+#define R72_CH4_MUX			GENMASK(15, 14)
-+#define R72_CH4_DIV			GENMASK(13, 0)
-+
-+#define R73	73
-+#define R73_CH4_LPHCSL_EN		BIT(13)
-+#define R73_CH4_1P8VDET			BIT(12)
-+#define R73_CH4_GLITCHLESS_EN		BIT(9)
-+#define R73_CH4_SYNC_DELAY		GENMASK(8, 4)
-+#define R73_CH4_SYNC_EN			BIT(3)
-+#define R73_CH4_MUTE_SEL		BIT(1)
-+#define R73_CH4_MUTE			BIT(0)
-+
-+#define R75	75
-+#define R75_CH4_LVDS_EN			BIT(15)
-+#define R75_CH4_CMOSP_EN		BIT(14)
-+#define R75_CH4_CMOSN_EN		BIT(13)
-+#define R75_CH4_CMOSP_POL		BIT(12)
-+#define R75_CH4_CMOSN_POL		BIT(11)
-+
-+#define R76	76
-+#define R76_CH4_DIFFBUF_IBIAS_TRIM	GENMASK(9, 6)
-+#define R76_CH4_LVDS_CMTRIM_IN		GENMASK(5, 4)
-+#define R76_CH4_CMOS_SLEW_RATE_CTRL	GENMASK(3, 0)
-+
-+#define R77	77
-+#define R77_CH4_LVDS_CMTRIM_DEC		GENMASK(1, 0)
-+
-+#define R78	78
-+#define R78_CH0_EN			BIT(12)
-+
-+#define R79	79
-+#define R79_SAFETY_1P8V_MODE		BIT(9)
-+#define R79_CH0_CMOS_SLEW_RATE_CTRL	GENMASK(3, 0)
-+
-+#define R81	81
-+#define R81_PLL_LOCK_MASK		BIT(3)
-+
-+#define CDCE6214_VCO_MIN 2335000000
-+#define CDCE6214_VCO_MAX 2625000000
-+#define CDCE6214_PLL_NDIV_MIN 24
-+#define CDCE6214_DENOM_DEFAULT 0x1000000
-+
-+#define CDCE6214_CLK_PRIREF	0
-+#define CDCE6214_CLK_SECREF	1
-+
-+static const char * const clk_names[] = {
-+	[CDCE6214_CLK_PRIREF] = "priref",
-+	[CDCE6214_CLK_SECREF] = "secref",
-+	[CDCE6214_CLK_OUT0] = "out0",
-+	[CDCE6214_CLK_OUT1] = "out1",
-+	[CDCE6214_CLK_OUT2] = "out2",
-+	[CDCE6214_CLK_OUT3] = "out3",
-+	[CDCE6214_CLK_OUT4] = "out4",
-+	[CDCE6214_CLK_PLL] = "pll",
-+	[CDCE6214_CLK_PSA] = "psa",
-+	[CDCE6214_CLK_PSB] = "psb",
-+};
-+
-+#define CDCE6214_NUM_CLOCKS	ARRAY_SIZE(clk_names)
-+
-+struct cdce6214;
-+
-+struct cdce6214_clock {
-+	struct clk_hw hw;
-+	struct cdce6214 *priv;
-+	unsigned int index;
-+};
-+
-+struct cdce6214 {
-+	struct i2c_client *client;
-+	struct device *dev;
-+	struct regmap *regmap;
-+	struct gpio_desc *reset_gpio;
-+	struct cdce6214_clock clk[CDCE6214_NUM_CLOCKS];
-+};
-+
-+static inline struct cdce6214_clock *hw_to_cdce6214_clk(struct clk_hw *hw)
-+{
-+	return container_of(hw, struct cdce6214_clock, hw);
-+}
-+
-+static struct clk_hw *cdce6214_of_clk_get(struct of_phandle_args *clkspec,
-+					  void *data)
-+{
-+	struct cdce6214 *priv = data;
-+	unsigned int idx = clkspec->args[0];
-+
-+	if (idx >= CDCE6214_NUM_CLOCKS)
-+		return ERR_PTR(-EINVAL);
-+	if (idx <= CDCE6214_CLK_SECREF)
-+		return ERR_PTR(-EINVAL);
-+
-+	return &priv->clk[idx].hw;
-+}
-+
-+static const struct regmap_config cdce6214_regmap_config = {
-+	.reg_bits = 16,
-+	.val_bits = 16,
-+	.reg_stride = 1,
-+	.max_register = 0x0055,
-+};
-+
-+static int cdce6214_configure(struct cdce6214 *priv)
-+{
-+	regmap_update_bits(priv->regmap, R2, R2_REFSEL_SW,
-+			   FIELD_PREP(R2_REFSEL_SW, 2));
-+
-+	return 0;
-+}
-+
-+static unsigned long cdce6214_clk_out0_recalc_rate(struct clk_hw *hw,
-+						   unsigned long parent_rate)
-+{
-+	struct cdce6214_clock *clock = hw_to_cdce6214_clk(hw);
-+	struct cdce6214 *priv = clock->priv;
-+	unsigned int val, div;
-+
-+	regmap_read(priv->regmap, R25, &val);
-+
-+	div = FIELD_GET(R25_IP_RDIV, val);
-+
-+	if (!div)
-+		return parent_rate * 2;
-+
-+	return DIV_ROUND_UP_ULL((u64)parent_rate, div);
-+}
-+
-+static int cdce6214_clk_out0_determine_rate(struct clk_hw *hw,
-+					    struct clk_rate_request *req)
-+{
-+	unsigned int div;
-+
-+	if (req->rate >= req->best_parent_rate)
-+		req->rate = req->best_parent_rate * 2;
-+
-+	div = DIV_ROUND_CLOSEST(req->best_parent_rate, req->rate);
-+
-+	req->rate = DIV_ROUND_UP_ULL((u64)req->best_parent_rate, div);
-+
-+	return 0;
-+}
-+
-+static int cdce6214_clk_out0_set_rate(struct clk_hw *hw, unsigned long rate,
-+				      unsigned long parent_rate)
-+{
-+	struct cdce6214_clock *clock = hw_to_cdce6214_clk(hw);
-+	struct cdce6214 *priv = clock->priv;
-+	unsigned int div;
-+
-+	if (rate >= parent_rate) {
-+		regmap_update_bits(priv->regmap, R25, R25_IP_RDIV, FIELD_PREP(R25_IP_RDIV, 0));
-+		return 0;
-+	}
-+
-+	div = DIV_ROUND_CLOSEST(parent_rate, rate);
-+	if (div > R25_IP_RDIV)
-+		div = R25_IP_RDIV;
-+
-+	regmap_update_bits(priv->regmap, R25, R25_IP_RDIV, FIELD_PREP(R25_IP_RDIV, div));
-+
-+	return 0;
-+}
-+
-+static u8 cdce6214_clk_out0_get_parent(struct clk_hw *hw)
-+{
-+	struct cdce6214_clock *clock = hw_to_cdce6214_clk(hw);
-+	struct cdce6214 *priv = clock->priv;
-+	unsigned int val;
-+
-+	regmap_read(priv->regmap, R2, &val);
-+
-+	if (FIELD_GET(R2_REFSEL_SW, val) == 2)
-+		return 1;
-+
-+	return 0;
-+}
-+
-+static int cdce6214_clk_out0_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct cdce6214_clock *clock = hw_to_cdce6214_clk(hw);
-+	struct cdce6214 *priv = clock->priv;
-+
-+	regmap_update_bits(priv->regmap, R25, R25_REF_CH_MUX, FIELD_PREP(R25_REF_CH_MUX, index));
-+
-+	return 0;
-+}
-+
-+static const struct clk_ops cdce6214_clk_out0_ops = {
-+	.recalc_rate = cdce6214_clk_out0_recalc_rate,
-+	.determine_rate = cdce6214_clk_out0_determine_rate,
-+	.set_rate = cdce6214_clk_out0_set_rate,
-+	.get_parent = cdce6214_clk_out0_get_parent,
-+	.set_parent = cdce6214_clk_out0_set_parent,
-+};
-+
-+static unsigned int cdce6214_clk_out_mask(unsigned int index)
-+{
-+	switch (index) {
-+	case CDCE6214_CLK_OUT1:
-+		return R4_CH1_PD;
-+	case CDCE6214_CLK_OUT2:
-+		return R4_CH2_PD;
-+	case CDCE6214_CLK_OUT3:
-+		return R4_CH3_PD;
-+	case CDCE6214_CLK_OUT4:
-+		return R4_CH4_PD;
-+	default:
-+		return 0;
-+	};
-+}
-+
-+static int cdce6214_clk_out_prepare(struct clk_hw *hw)
-+{
-+	struct cdce6214_clock *clock = hw_to_cdce6214_clk(hw);
-+	struct cdce6214 *priv = clock->priv;
-+	unsigned int mask = cdce6214_clk_out_mask(clock->index);
-+
-+	if (!mask)
-+		return -EINVAL;
-+
-+	return regmap_clear_bits(priv->regmap, R4, mask);
-+}
-+
-+static void cdce6214_clk_out_unprepare(struct clk_hw *hw)
-+{
-+	struct cdce6214_clock *clock = hw_to_cdce6214_clk(hw);
-+	struct cdce6214 *priv = clock->priv;
-+	unsigned int mask = cdce6214_clk_out_mask(clock->index);
-+
-+	if (!mask)
-+		return;
-+
-+	regmap_set_bits(priv->regmap, R4, mask);
-+}
-+
-+static int cdce6214_clk_out_is_prepared(struct clk_hw *hw)
-+{
-+	struct cdce6214_clock *clock = hw_to_cdce6214_clk(hw);
-+	struct cdce6214 *priv = clock->priv;
-+	unsigned int mask = cdce6214_clk_out_mask(clock->index);
-+	unsigned int val;
-+
-+	if (!mask)
-+		return -EINVAL;
-+
-+	regmap_read(priv->regmap, R4, &val);
-+
-+	return !(val & mask);
-+}
-+
-+static unsigned long cdce6214_clk_out_recalc_rate(struct clk_hw *hw,
-+						  unsigned long parent_rate)
-+{
-+	struct cdce6214_clock *clock = hw_to_cdce6214_clk(hw);
-+	struct cdce6214 *priv = clock->priv;
-+	unsigned int val, div;
-+	unsigned long r;
-+
-+	switch (clock->index) {
-+	case CDCE6214_CLK_OUT1:
-+		regmap_read(priv->regmap, R56, &val);
-+		div = FIELD_GET(R56_CH1_DIV, val);
-+		break;
-+	case CDCE6214_CLK_OUT2:
-+		regmap_read(priv->regmap, R62, &val);
-+		div = FIELD_GET(R62_CH2_DIV, val);
-+		break;
-+	case CDCE6214_CLK_OUT3:
-+		regmap_read(priv->regmap, R67, &val);
-+		div = FIELD_GET(R67_CH3_DIV, val);
-+		break;
-+	case CDCE6214_CLK_OUT4:
-+		regmap_read(priv->regmap, R72, &val);
-+		div = FIELD_GET(R72_CH4_DIV, val);
-+		break;
-+	};
-+
-+	if (!div)
-+		div = 1;
-+
-+	r = DIV_ROUND_UP_ULL((u64)parent_rate, div);
-+
-+	return r;
-+}
-+
-+static unsigned int cdce6214_get_out_div(unsigned long rate, unsigned long parent_rate)
-+{
-+	unsigned int div;
-+
-+	div = divider_get_val(rate, parent_rate, NULL, 14, CLK_DIVIDER_ONE_BASED);
-+
-+	if (div < 1)
-+		div = 1;
-+
-+	return div;
-+}
-+
-+static int cdce6214_clk_out_determine_rate(struct clk_hw *hw,
-+					   struct clk_rate_request *req)
-+{
-+	unsigned int div = cdce6214_get_out_div(req->rate, req->best_parent_rate);
-+
-+	req->rate = DIV_ROUND_UP_ULL((u64)req->best_parent_rate, div);
-+
-+	return 0;
-+}
-+
-+static int cdce6214_clk_out_set_rate(struct clk_hw *hw, unsigned long rate,
-+				     unsigned long parent_rate)
-+{
-+	unsigned int div = cdce6214_get_out_div(rate, parent_rate);
-+	struct cdce6214_clock *clock = hw_to_cdce6214_clk(hw);
-+	struct cdce6214 *priv = clock->priv;
-+
-+	switch (clock->index) {
-+	case CDCE6214_CLK_OUT1:
-+		regmap_update_bits(priv->regmap, R56, R56_CH1_DIV,
-+				   FIELD_PREP(R56_CH1_DIV, div));
-+		break;
-+	case CDCE6214_CLK_OUT2:
-+		regmap_update_bits(priv->regmap, R62, R62_CH2_DIV,
-+				   FIELD_PREP(R62_CH2_DIV, div));
-+		break;
-+	case CDCE6214_CLK_OUT3:
-+		regmap_update_bits(priv->regmap, R67, R67_CH3_DIV,
-+				   FIELD_PREP(R67_CH3_DIV, div));
-+		break;
-+	case CDCE6214_CLK_OUT4:
-+		regmap_update_bits(priv->regmap, R72, R72_CH4_DIV,
-+				   FIELD_PREP(R72_CH4_DIV, div));
-+		break;
-+	};
-+
-+	return 0;
-+}
-+
-+static u8 cdce6214_clk_out_get_parent(struct clk_hw *hw)
-+{
-+	struct cdce6214_clock *clock = hw_to_cdce6214_clk(hw);
-+	struct cdce6214 *priv = clock->priv;
-+	unsigned int val, idx;
-+
-+	switch (clock->index) {
-+	case CDCE6214_CLK_OUT1:
-+		regmap_read(priv->regmap, R56, &val);
-+		idx = FIELD_GET(R56_CH1_MUX, val);
-+		break;
-+	case CDCE6214_CLK_OUT2:
-+		regmap_read(priv->regmap, R62, &val);
-+		idx = FIELD_GET(R62_CH2_MUX, val);
-+		break;
-+	case CDCE6214_CLK_OUT3:
-+		regmap_read(priv->regmap, R67, &val);
-+		idx = FIELD_GET(R67_CH3_MUX, val);
-+		break;
-+	case CDCE6214_CLK_OUT4:
-+		regmap_read(priv->regmap, R72, &val);
-+		idx = FIELD_GET(R72_CH4_MUX, val);
-+		break;
-+	};
-+
-+	return idx;
-+}
-+
-+static int cdce6214_clk_out_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct cdce6214_clock *clock = hw_to_cdce6214_clk(hw);
-+	struct cdce6214 *priv = clock->priv;
-+
-+	switch (clock->index) {
-+	case CDCE6214_CLK_OUT1:
-+		regmap_update_bits(priv->regmap, R56, R56_CH1_MUX, FIELD_PREP(R56_CH1_MUX, index));
-+		break;
-+	case CDCE6214_CLK_OUT2:
-+		regmap_update_bits(priv->regmap, R62, R62_CH2_MUX, FIELD_PREP(R62_CH2_MUX, index));
-+		break;
-+	case CDCE6214_CLK_OUT3:
-+		regmap_update_bits(priv->regmap, R67, R67_CH3_MUX, FIELD_PREP(R67_CH3_MUX, index));
-+		break;
-+	case CDCE6214_CLK_OUT4:
-+		regmap_update_bits(priv->regmap, R72, R72_CH4_MUX, FIELD_PREP(R72_CH4_MUX, index));
-+		break;
-+	};
-+
-+	return 0;
-+}
-+
-+static const struct clk_ops cdce6214_clk_out_ops = {
-+	.prepare = cdce6214_clk_out_prepare,
-+	.unprepare = cdce6214_clk_out_unprepare,
-+	.is_prepared = cdce6214_clk_out_is_prepared,
-+	.recalc_rate = cdce6214_clk_out_recalc_rate,
-+	.determine_rate = cdce6214_clk_out_determine_rate,
-+	.set_rate = cdce6214_clk_out_set_rate,
-+	.get_parent = cdce6214_clk_out_get_parent,
-+	.set_parent = cdce6214_clk_out_set_parent,
-+};
-+
-+static int pll_calc_values(unsigned long parent_rate, unsigned long out,
-+			   unsigned long *ndiv, unsigned long *num, unsigned long *den)
-+{
-+	u64 a;
-+
-+	if (out < CDCE6214_VCO_MIN || out > CDCE6214_VCO_MAX)
-+		return -EINVAL;
-+
-+	*den = 10000000;
-+	*ndiv = out / parent_rate;
-+	a = out % parent_rate;
-+	a *= *den;
-+	do_div(a, parent_rate);
-+	*num = a;
-+
-+	return 0;
-+}
-+
-+static unsigned long cdce6214_clk_pll_recalc_rate(struct clk_hw *hw,
-+						  unsigned long parent_rate)
-+{
-+	struct cdce6214_clock *clock = hw_to_cdce6214_clk(hw);
-+	struct cdce6214 *priv = clock->priv;
-+	unsigned long ndiv, num, den;
-+	unsigned int val;
-+
-+	regmap_read(priv->regmap, R30, &val);
-+	ndiv = FIELD_GET(R30_PLL_NDIV, val);
-+
-+	regmap_read(priv->regmap, R31, &val);
-+	num = FIELD_GET(R31_PLL_NUM_15_0, val);
-+
-+	regmap_read(priv->regmap, R32, &val);
-+	num |= FIELD_GET(R32_PLL_NUM_23_16, val) << 16;
-+
-+	regmap_read(priv->regmap, R33, &val);
-+	den = FIELD_GET(R33_PLL_DEN_15_0, val);
-+
-+	regmap_read(priv->regmap, R34, &val);
-+	den |= FIELD_GET(R34_PLL_DEN_23_16, val) << 16;
-+
-+	if (!den)
-+		den = CDCE6214_DENOM_DEFAULT;
-+
-+	return parent_rate * ndiv + DIV_ROUND_CLOSEST(parent_rate * num, den);
-+}
-+
-+static int cdce6214_clk_pll_determine_rate(struct clk_hw *hw,
-+					   struct clk_rate_request *req)
-+{
-+	req->rate = clamp(req->rate, CDCE6214_VCO_MIN, CDCE6214_VCO_MAX);
-+
-+	if (req->rate < req->best_parent_rate * CDCE6214_PLL_NDIV_MIN)
-+		return -EINVAL;
-+
-+	req->min_rate = CDCE6214_VCO_MIN;
-+	req->max_rate = CDCE6214_VCO_MAX;
-+
-+	return 0;
-+}
-+
-+static bool cdce6214_pll_locked(struct cdce6214 *priv)
-+{
-+	unsigned int val;
-+
-+	regmap_read(priv->regmap, R7, &val);
-+
-+	return val & R7_LOCK_DET;
-+}
-+
-+static int cdce6214_wait_pll_lock(struct cdce6214 *priv)
-+{
-+	unsigned int val;
-+	int ret;
-+
-+	ret = regmap_read_poll_timeout(priv->regmap, R7, val,
-+				       val & R7_LOCK_DET, 0, 1000);
-+	if (ret)
-+		dev_err(priv->dev, "Timeout waiting for PLL lock\n");
-+
-+	return ret;
-+}
-+
-+#define R5_PLL_POWER_BITS (R5_PLL_VCOBUFF_LDO_PD | \
-+			   R5_PLL_VCO_LDO_PD | \
-+			   R5_PLL_VCO_BUFF_PD)
-+
-+static int cdce6214_clk_pll_prepare(struct clk_hw *hw)
-+{
-+	struct cdce6214_clock *clock = hw_to_cdce6214_clk(hw);
-+	struct cdce6214 *priv = clock->priv;
-+
-+	regmap_clear_bits(priv->regmap, R5, R5_PLL_POWER_BITS);
-+
-+	regmap_set_bits(priv->regmap, R0, RO_RECAL);
-+
-+	return cdce6214_wait_pll_lock(priv);
-+}
-+
-+static void cdce6214_clk_pll_unprepare(struct clk_hw *hw)
-+{
-+	struct cdce6214_clock *clock = hw_to_cdce6214_clk(hw);
-+	struct cdce6214 *priv = clock->priv;
-+
-+	regmap_set_bits(priv->regmap, R5, R5_PLL_POWER_BITS);
-+}
-+
-+static bool cdce6214_clk_pll_powered(struct cdce6214 *priv)
-+{
-+	unsigned int val;
-+
-+	regmap_read(priv->regmap, R5, &val);
-+
-+	return (val & R5_PLL_POWER_BITS) == 0;
-+}
-+
-+static int cdce6214_clk_pll_is_prepared(struct clk_hw *hw)
-+{
-+	struct cdce6214_clock *clock = hw_to_cdce6214_clk(hw);
-+	struct cdce6214 *priv = clock->priv;
-+
-+	return cdce6214_pll_locked(priv);
-+}
-+
-+static int cdce6214_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
-+				     unsigned long parent_rate)
-+{
-+	struct cdce6214_clock *clock = hw_to_cdce6214_clk(hw);
-+	struct cdce6214 *priv = clock->priv;
-+	unsigned long ndiv, num, den;
-+	int ret;
-+
-+	ret = pll_calc_values(parent_rate, rate, &ndiv, &num, &den);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (den == CDCE6214_DENOM_DEFAULT)
-+		den = 0;
-+
-+	regmap_update_bits(priv->regmap, R34, R34_PLL_DEN_23_16,
-+			   FIELD_PREP(R34_PLL_DEN_23_16, den >> 16));
-+	regmap_update_bits(priv->regmap, R33, R33_PLL_DEN_15_0,
-+			   FIELD_PREP(R33_PLL_DEN_15_0, den & 0xffff));
-+	regmap_update_bits(priv->regmap, R32, R32_PLL_NUM_23_16,
-+			   FIELD_PREP(R32_PLL_NUM_23_16, num >> 16));
-+	regmap_update_bits(priv->regmap, R31, R31_PLL_NUM_15_0,
-+			   FIELD_PREP(R31_PLL_NUM_15_0, num & 0xffff));
-+	regmap_update_bits(priv->regmap, R30, R30_PLL_NDIV,
-+			   FIELD_PREP(R30_PLL_NDIV, ndiv));
-+
-+	regmap_update_bits(priv->regmap, R3, R3_FREQ_INC_DEC_REG_MODE | R3_FREQ_INC_DEC_EN,
-+			   R3_FREQ_INC_DEC_REG_MODE | R3_FREQ_INC_DEC_EN);
-+
-+	if (cdce6214_clk_pll_powered(priv)) {
-+		regmap_set_bits(priv->regmap, R0, RO_RECAL);
-+		ret = cdce6214_wait_pll_lock(priv);
-+	}
-+
-+	return ret;
-+}
-+
-+static const struct clk_ops cdce6214_clk_pll_ops = {
-+	.prepare = cdce6214_clk_pll_prepare,
-+	.unprepare = cdce6214_clk_pll_unprepare,
-+	.is_prepared = cdce6214_clk_pll_is_prepared,
-+	.recalc_rate = cdce6214_clk_pll_recalc_rate,
-+	.determine_rate = cdce6214_clk_pll_determine_rate,
-+	.set_rate = cdce6214_clk_pll_set_rate,
-+};
-+
-+static unsigned int cdce6214_clk_psx_mask(int index)
-+{
-+	switch (index) {
-+	case CDCE6214_CLK_PSA:
-+		return R5_PLL_PSA_PD;
-+	case CDCE6214_CLK_PSB:
-+		return R5_PLL_PSB_PD;
-+	default:
-+		return 0;
-+	};
-+}
-+
-+static int cdce6214_clk_psx_prepare(struct clk_hw *hw)
-+{
-+	struct cdce6214_clock *clock = hw_to_cdce6214_clk(hw);
-+	struct cdce6214 *priv = clock->priv;
-+	unsigned int mask = cdce6214_clk_psx_mask(clock->index);
-+
-+	if (!mask)
-+		return -EINVAL;
-+
-+	return regmap_clear_bits(priv->regmap, R5, mask);
-+}
-+
-+static void cdce6214_clk_psx_unprepare(struct clk_hw *hw)
-+{
-+	struct cdce6214_clock *clock = hw_to_cdce6214_clk(hw);
-+	struct cdce6214 *priv = clock->priv;
-+	unsigned int mask = cdce6214_clk_psx_mask(clock->index);
-+
-+	if (!mask)
-+		return;
-+
-+	regmap_set_bits(priv->regmap, R5, mask);
-+}
-+
-+static int cdce6214_clk_psx_is_prepared(struct clk_hw *hw)
-+{
-+	struct cdce6214_clock *clock = hw_to_cdce6214_clk(hw);
-+	struct cdce6214 *priv = clock->priv;
-+	unsigned int mask = cdce6214_clk_psx_mask(clock->index);
-+	unsigned int val;
-+
-+	if (!mask)
-+		return -EINVAL;
-+
-+	regmap_read(priv->regmap, R5, &val);
-+
-+	return !(val & mask);
-+}
-+
-+static unsigned long cdce6214_clk_psx_recalc_rate(struct clk_hw *hw,
-+						  unsigned long parent_rate)
-+{
-+	struct cdce6214_clock *clock = hw_to_cdce6214_clk(hw);
-+	struct cdce6214 *priv = clock->priv;
-+	const unsigned int psx[] = { 4, 5, 6, 6 };
-+	unsigned int val, div;
-+
-+	regmap_read(priv->regmap, R47, &val);
-+
-+	switch (clock->index) {
-+	case CDCE6214_CLK_PSA:
-+		div = psx[FIELD_GET(R47_PLL_PSA, val)];
-+		break;
-+	case CDCE6214_CLK_PSB:
-+		div = psx[FIELD_GET(R47_PLL_PSB, val)];
-+		break;
-+	};
-+
-+	return DIV_ROUND_UP_ULL((u64)parent_rate, div);
-+}
-+
-+static int cdce6214_get_psx_div(unsigned long rate, unsigned long parent_rate)
-+{
-+	unsigned int div = DIV_ROUND_CLOSEST(parent_rate, rate);
-+
-+	return clamp(div, 4, 6);
-+}
-+
-+static int cdce6214_clk_psx_determine_rate(struct clk_hw *hw,
-+					   struct clk_rate_request *req)
-+{
-+	unsigned int div = cdce6214_get_psx_div(req->rate, req->best_parent_rate);
-+
-+	req->rate = DIV_ROUND_UP_ULL((u64)req->best_parent_rate, div);
-+
-+	return 0;
-+}
-+
-+static int cdce6214_clk_psx_set_rate(struct clk_hw *hw, unsigned long rate,
-+				     unsigned long parent_rate)
-+{
-+	unsigned int div = cdce6214_get_psx_div(rate, parent_rate);
-+	struct cdce6214_clock *clock = hw_to_cdce6214_clk(hw);
-+	struct cdce6214 *priv = clock->priv;
-+
-+	switch (clock->index) {
-+	case CDCE6214_CLK_PSA:
-+		regmap_update_bits(priv->regmap, R47, R47_PLL_PSA,
-+				   FIELD_PREP(R47_PLL_PSA, div));
-+		break;
-+	case CDCE6214_CLK_PSB:
-+		regmap_update_bits(priv->regmap, R47, R47_PLL_PSB,
-+				   FIELD_PREP(R47_PLL_PSB, div));
-+		break;
-+	};
-+
-+	return 0;
-+}
-+
-+static const struct clk_ops cdce6214_clk_psx_ops = {
-+	.prepare = cdce6214_clk_psx_prepare,
-+	.unprepare = cdce6214_clk_psx_unprepare,
-+	.is_prepared = cdce6214_clk_psx_is_prepared,
-+	.recalc_rate = cdce6214_clk_psx_recalc_rate,
-+	.determine_rate = cdce6214_clk_psx_determine_rate,
-+	.set_rate = cdce6214_clk_psx_set_rate,
-+};
-+
-+static int cdce6214_clk_register(struct cdce6214 *priv)
-+{
-+	struct clk_init_data init[CDCE6214_NUM_CLOCKS] = { 0 };
-+	struct clk_parent_data pdata_out0[2] = {};
-+	struct clk_parent_data pdata_out[4] = {};
-+	struct clk_parent_data pdata_pll = {};
-+	struct clk_parent_data pdata_psx = {};
-+	int i, ret;
-+
-+	pdata_out0[0].fw_name = "priref";
-+	pdata_out0[1].fw_name = "secref";
-+
-+	init[CDCE6214_CLK_OUT0].ops = &cdce6214_clk_out0_ops;
-+	init[CDCE6214_CLK_OUT0].num_parents = ARRAY_SIZE(pdata_out);
-+	init[CDCE6214_CLK_OUT0].parent_data = pdata_out0;
-+	init[CDCE6214_CLK_OUT0].flags = CLK_SET_RATE_NO_REPARENT;
-+
-+	pdata_out[0].hw = &priv->clk[CDCE6214_CLK_PSA].hw;
-+	pdata_out[1].hw = &priv->clk[CDCE6214_CLK_PSB].hw;
-+	pdata_out[3].hw = &priv->clk[CDCE6214_CLK_OUT0].hw;
-+
-+	for (i = CDCE6214_CLK_OUT1; i <= CDCE6214_CLK_OUT4; i++) {
-+		init[i].ops = &cdce6214_clk_out_ops;
-+		init[i].num_parents = ARRAY_SIZE(pdata_out);
-+		init[i].parent_data = pdata_out;
-+		init[i].flags = CLK_SET_RATE_NO_REPARENT;
-+	}
-+
-+	init[CDCE6214_CLK_PLL].ops = &cdce6214_clk_pll_ops;
-+	init[CDCE6214_CLK_PLL].num_parents = 1;
-+	pdata_pll.hw = &priv->clk[CDCE6214_CLK_OUT0].hw;
-+	init[CDCE6214_CLK_PLL].parent_data = &pdata_pll;
-+
-+	pdata_psx.hw = &priv->clk[CDCE6214_CLK_PLL].hw;
-+	for (i = CDCE6214_CLK_PSA; i <= CDCE6214_CLK_PSB; i++) {
-+		init[i].ops = &cdce6214_clk_psx_ops;
-+		init[i].num_parents = 1;
-+		init[i].parent_data = &pdata_psx;
-+	}
-+
-+	for (i = 0; i < CDCE6214_NUM_CLOCKS; i++) {
-+		struct cdce6214_clock *clk = &priv->clk[i];
-+		char name[128];
-+
-+		if (!init[i].ops)
-+			continue;
-+
-+		snprintf(name, sizeof(name), "%s_%s", dev_name(priv->dev), clk_names[i]);
-+		init[i].name = name;
-+		clk->hw.init = &init[i];
-+		clk->priv = priv;
-+		clk->index = i;
-+		ret = devm_clk_hw_register(priv->dev, &clk->hw);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+enum cdce6214_pin_name {
-+	NONE,
-+	PRIREF,
-+	SECREF,
-+	OUT0,
-+	OUT1,
-+	OUT2,
-+	OUT3,
-+	OUT4,
-+};
-+
-+static const struct pinctrl_pin_desc cdce6214_pinctrl_pins[] = {
-+	PINCTRL_PIN(PRIREF, "priref"),
-+	PINCTRL_PIN(SECREF, "secref"),
-+	PINCTRL_PIN(OUT0, "out0"),
-+	PINCTRL_PIN(OUT1, "out1"),
-+	PINCTRL_PIN(OUT2, "out2"),
-+	PINCTRL_PIN(OUT3, "out3"),
-+	PINCTRL_PIN(OUT4, "out4"),
-+};
-+
-+enum cdce6214_io_standards {
-+	cdce6214_iostd_min,
-+	cdce6214_iostd_cmos,
-+	cdce6214_iostd_lvds,
-+	cdce6214_iostd_lp_hcsl,
-+	cdce6214_iostd_xtal,
-+	cdce6214_iostd_diff,
-+	cdce6214_iostd_max
-+};
-+
-+#define PIN_CONFIG_IOSTANDARD		(PIN_CONFIG_END + 1)
-+#define PIN_CONFIG_CMOSN_MODE		(PIN_CONFIG_END + 2)
-+#define PIN_CONFIG_CMOSP_MODE		(PIN_CONFIG_END + 3)
-+#define PIN_CONFIG_XO_CLOAD		(PIN_CONFIG_END + 4)
-+#define PIN_CONFIG_XO_BIAS		(PIN_CONFIG_END + 5)
-+
-+static const struct pinconf_generic_params cdce6214_dt_params[] = {
-+	{"ti,io-standard", PIN_CONFIG_IOSTANDARD, cdce6214_iostd_min},
-+	{"ti,cmosn-mode", PIN_CONFIG_CMOSN_MODE, CDCE6214_CMOS_MODE_LOW},
-+	{"ti,cmosp-mode", PIN_CONFIG_CMOSP_MODE, CDCE6214_CMOS_MODE_HIGH},
-+	{"ti,xo-cload-femtofarad", PIN_CONFIG_XO_CLOAD, CDCE6214_CMOS_MODE_HIGH},
-+	{"ti,xo-bias-microampere", PIN_CONFIG_XO_BIAS, CDCE6214_CMOS_MODE_HIGH},
-+};
-+
-+static const struct pin_config_item cdce6214_conf_items[] = {
-+	PCONFDUMP(PIN_CONFIG_IOSTANDARD, "IO-standard", NULL, true),
-+	PCONFDUMP(PIN_CONFIG_CMOSN_MODE, "CMOS-N mode", NULL, true),
-+	PCONFDUMP(PIN_CONFIG_CMOSP_MODE, "CMOS-P mode", NULL, true),
-+	PCONFDUMP(PIN_CONFIG_XO_CLOAD, "XO cload", "fF", true),
-+	PCONFDUMP(PIN_CONFIG_XO_BIAS, "XO bias", "uA", true),
-+};
-+
-+static int cdce6214_pinconf_get_iostd(struct cdce6214 *priv, unsigned int pin)
-+{
-+	struct regmap *reg = priv->regmap;
-+	unsigned int r24, r57, r59, r63, r65, r68, r70, r73, r75;
-+
-+	switch (pin) {
-+	case OUT0:
-+		return cdce6214_iostd_cmos;
-+	case OUT1:
-+		regmap_read(reg, R57, &r57);
-+		regmap_read(reg, R59, &r59);
-+		if (r59 & R59_CH1_LVDS_EN)
-+			return cdce6214_iostd_lvds;
-+		if (r57 & R57_CH1_LPHCSL_EN)
-+			return cdce6214_iostd_lp_hcsl;
-+		return cdce6214_iostd_cmos;
-+	case OUT2:
-+		regmap_read(reg, R63, &r63);
-+		regmap_read(reg, R65, &r65);
-+		if (r65 & R65_CH2_LVDS_EN)
-+			return cdce6214_iostd_lvds;
-+		if (r63 & R63_CH2_LPHCSL_EN)
-+			return cdce6214_iostd_lp_hcsl;
-+		return cdce6214_iostd_min;
-+	case OUT3:
-+		regmap_read(reg, R68, &r68);
-+		regmap_read(reg, R70, &r70);
-+		if (r70 & R70_CH3_LVDS_EN)
-+			return cdce6214_iostd_lvds;
-+		if (r68 & R68_CH3_LPHCSL_EN)
-+			return cdce6214_iostd_lp_hcsl;
-+		return cdce6214_iostd_min;
-+	case OUT4:
-+		regmap_read(reg, R73, &r73);
-+		regmap_read(reg, R75, &r75);
-+		if (r75 & R75_CH4_LVDS_EN)
-+			return cdce6214_iostd_lvds;
-+		if (r73 & R73_CH4_LPHCSL_EN)
-+			return cdce6214_iostd_lp_hcsl;
-+		return cdce6214_iostd_cmos;
-+	case PRIREF:
-+		regmap_read(reg, R24, &r24);
-+		if (r24 & R24_IP_PRIREF_BUF_SEL)
-+			return cdce6214_iostd_lvds;
-+		else
-+			return cdce6214_iostd_cmos;
-+	case SECREF:
-+		regmap_read(reg, R24, &r24);
-+		if (r24 & R24_IP_SECREF_BUF_SEL)
-+			return cdce6214_iostd_cmos;
-+		else
-+			return cdce6214_iostd_xtal;
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static int cdce6214_pinconf_get_cmos_mode(struct cdce6214 *priv, unsigned int pin)
-+{
-+	unsigned int reg, val;
-+
-+	switch (pin) {
-+	case OUT0:
-+	case OUT2:
-+	case OUT3:
-+	case PRIREF:
-+	case SECREF:
-+		return -ENOTSUPP;
-+	case OUT1:
-+		reg = R59;
-+		break;
-+	case OUT4:
-+		reg = R75;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	regmap_read(priv->regmap, reg, &val);
-+
-+	return val;
-+}
-+
-+static int cdce6214_pinconf_get_cmosn_mode(struct cdce6214 *priv, unsigned int pin)
-+{
-+	int val;
-+
-+	val = cdce6214_pinconf_get_cmos_mode(priv, pin);
-+	if (val < 0)
-+		return val;
-+
-+	if (!(val & R59_CH1_CMOSN_EN))
-+		return CDCE6214_CMOS_MODE_DISABLED;
-+	if (val & R59_CH1_CMOSN_POL)
-+		return CDCE6214_CMOS_MODE_HIGH;
-+	else
-+		return CDCE6214_CMOS_MODE_LOW;
-+}
-+
-+static int cdce6214_pinconf_get_cmosp_mode(struct cdce6214 *priv, unsigned int pin)
-+{
-+	int val;
-+
-+	val = cdce6214_pinconf_get_cmos_mode(priv, pin);
-+	if (val < 0)
-+		return val;
-+
-+	if (!(val & R59_CH1_CMOSP_EN))
-+		return CDCE6214_CMOS_MODE_DISABLED;
-+	if (val & R59_CH1_CMOSP_POL)
-+		return CDCE6214_CMOS_MODE_HIGH;
-+	else
-+		return CDCE6214_CMOS_MODE_LOW;
-+}
-+
-+static const unsigned short ip_xo_cload[] = {
-+	/* index is the register value */
-+	3000, 3200, 3400, 3600, 3800, 4000, 4200, 4400,
-+	4600, 4800, 5000, 5200, 5400, 5600, 5800, 6000,
-+	6200, 6400, 6500, 6700, 6900, 7100, 7300, 7500,
-+	7700, 7900, 8100, 8300, 8500, 8700, 8900, 9000
-+};
-+
-+static int cdce6214_pinconf_get_xo_cload(struct cdce6214 *priv, unsigned int pin)
-+{
-+	unsigned int val;
-+
-+	if (pin != SECREF)
-+		return -ENOTSUPP;
-+
-+	regmap_read(priv->regmap, R24, &val);
-+
-+	val = FIELD_GET(R24_IP_XO_CLOAD, val);
-+
-+	if (val >= ARRAY_SIZE(ip_xo_cload))
-+		return -EINVAL;
-+
-+	return ip_xo_cload[val];
-+}
-+
-+static const unsigned short ip_bias_sel_xo[] = {
-+	/* index is the register value */
-+	0, 14, 29, 44,
-+	59, 148, 295, 443,
-+	591, 884, 1177, 1468, 1758
-+};
-+
-+static int cdce6214_pinconf_get_xo_bias(struct cdce6214 *priv, unsigned int pin)
-+{
-+	unsigned int val;
-+
-+	if (pin != SECREF)
-+		return -ENOTSUPP;
-+
-+	regmap_read(priv->regmap, R24, &val);
-+
-+	val = FIELD_GET(R24_IP_BIAS_SEL_XO, val);
-+
-+	if (val >= ARRAY_SIZE(ip_bias_sel_xo))
-+		return -EINVAL;
-+
-+	return ip_bias_sel_xo[val];
-+}
-+
-+static int cdce6214_pinconf_get(struct pinctrl_dev *pctldev, unsigned int pin,
-+				unsigned long *config)
-+{
-+	struct cdce6214 *priv = pinctrl_dev_get_drvdata(pctldev);
-+	unsigned int param = pinconf_to_config_param(*config);
-+	int arg = 0;
-+
-+	switch (param) {
-+	case PIN_CONFIG_IOSTANDARD:
-+		arg = cdce6214_pinconf_get_iostd(priv, pin);
-+		break;
-+	case PIN_CONFIG_CMOSN_MODE:
-+		arg = cdce6214_pinconf_get_cmosn_mode(priv, pin);
-+		break;
-+	case PIN_CONFIG_CMOSP_MODE:
-+		arg = cdce6214_pinconf_get_cmosp_mode(priv, pin);
-+		break;
-+	case PIN_CONFIG_XO_CLOAD:
-+		arg = cdce6214_pinconf_get_xo_cload(priv, pin);
-+		break;
-+	case PIN_CONFIG_XO_BIAS:
-+		arg = cdce6214_pinconf_get_xo_bias(priv, pin);
-+		break;
-+	default:
-+		return -ENOTSUPP;
-+	}
-+
-+	if (arg < 0)
-+		return arg;
-+
-+	*config = pinconf_to_config_packed(param, arg);
-+
-+	return 0;
-+}
-+
-+static int cdce6214_pinconf_set_iostd(struct cdce6214 *priv, unsigned int pin,
-+				      unsigned int param)
-+{
-+	struct regmap *reg = priv->regmap;
-+
-+	switch (pin) {
-+	case OUT0:
-+		if (param == CDCE6214_IOSTD_CMOS)
-+			break;
-+		goto err_illegal_fmt;
-+	case OUT1:
-+		switch (param) {
-+		case CDCE6214_IOSTD_CMOS:
-+			regmap_clear_bits(reg, R59, R59_CH1_LVDS_EN);
-+			regmap_clear_bits(reg, R57, R57_CH1_LPHCSL_EN);
-+			break;
-+		case CDCE6214_IOSTD_LVDS:
-+			regmap_clear_bits(reg, R57, R57_CH1_LPHCSL_EN);
-+			regmap_set_bits(reg, R59, R59_CH1_LVDS_EN);
-+			break;
-+		case CDCE6214_IOSTD_LP_HCSL:
-+			regmap_clear_bits(reg, R59, R59_CH1_LVDS_EN);
-+			regmap_set_bits(reg, R57, R57_CH1_LPHCSL_EN);
-+			break;
-+		default:
-+			goto err_illegal_fmt;
-+		}
-+		break;
-+	case OUT2:
-+		switch (param) {
-+		case CDCE6214_IOSTD_LVDS:
-+			regmap_set_bits(reg, R65, R65_CH2_LVDS_EN);
-+			regmap_clear_bits(reg, R63, R63_CH2_LPHCSL_EN);
-+			break;
-+		case CDCE6214_IOSTD_LP_HCSL:
-+			regmap_set_bits(reg, R63, R63_CH2_LPHCSL_EN);
-+			regmap_clear_bits(reg, R65, R65_CH2_LVDS_EN);
-+			break;
-+		default:
-+			goto err_illegal_fmt;
-+		}
-+		break;
-+	case OUT3:
-+		switch (param) {
-+		case CDCE6214_IOSTD_LVDS:
-+			regmap_set_bits(reg, R70, R70_CH3_LVDS_EN);
-+			regmap_clear_bits(reg, R68, R68_CH3_LPHCSL_EN);
-+			break;
-+		case CDCE6214_IOSTD_LP_HCSL:
-+			regmap_set_bits(reg, R70, R70_CH3_LVDS_EN);
-+			regmap_clear_bits(reg, R68, R65_CH2_LVDS_EN);
-+			break;
-+		}
-+		break;
-+	case OUT4:
-+		switch (param) {
-+		case CDCE6214_IOSTD_CMOS:
-+			regmap_clear_bits(reg, R75, R75_CH4_LVDS_EN);
-+			regmap_clear_bits(reg, R73, R73_CH4_LPHCSL_EN);
-+			break;
-+		case CDCE6214_IOSTD_LVDS:
-+			regmap_clear_bits(reg, R73, R73_CH4_LPHCSL_EN);
-+			regmap_set_bits(reg, R75, R75_CH4_LVDS_EN);
-+			break;
-+		case CDCE6214_IOSTD_LP_HCSL:
-+			regmap_clear_bits(reg, R75, R75_CH4_LVDS_EN);
-+			regmap_set_bits(reg, R72, R73_CH4_LPHCSL_EN);
-+			break;
-+		default:
-+			goto err_illegal_fmt;
-+		}
-+		break;
-+	case PRIREF:
-+		switch (param) {
-+		case CDCE6214_IOSTD_CMOS:
-+			regmap_clear_bits(reg, R24, R24_IP_PRIREF_BUF_SEL);
-+			break;
-+		case CDCE6214_IOSTD_DIFF:
-+			regmap_set_bits(reg, R24, R24_IP_PRIREF_BUF_SEL);
-+			break;
-+		default:
-+			goto err_illegal_fmt;
-+		}
-+		break;
-+	case SECREF:
-+		switch (param) {
-+		case CDCE6214_IOSTD_CMOS:
-+			regmap_update_bits(reg, R24, R24_IP_SECREF_BUF_SEL,
-+					   R24_IP_SECREF_BUF_SEL_LVCMOS);
-+			break;
-+		case CDCE6214_IOSTD_XTAL:
-+			regmap_update_bits(reg, R24, R24_IP_SECREF_BUF_SEL,
-+					   R24_IP_SECREF_BUF_SEL_XTAL);
-+			break;
-+		case CDCE6214_IOSTD_DIFF:
-+			regmap_update_bits(reg, R24, R24_IP_SECREF_BUF_SEL,
-+					   R24_IP_SECREF_BUF_SEL_DIFF);
-+			break;
-+		default:
-+			goto err_illegal_fmt;
-+		}
-+
-+		break;
-+	}
-+
-+	return 0;
-+
-+err_illegal_fmt:
-+
-+	return -EINVAL;
-+}
-+
-+static int cdce6214_pinconf_set_cmosn_mode(struct cdce6214 *priv, unsigned int pin,
-+					   unsigned int param)
-+{
-+	unsigned int reg, val;
-+
-+	switch (pin) {
-+	case OUT1:
-+		reg = R59;
-+		break;
-+	case OUT4:
-+		reg = R75;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	switch (param) {
-+	case CDCE6214_CMOS_MODE_LOW:
-+		val = R59_CH1_CMOSN_EN;
-+		break;
-+	case CDCE6214_CMOS_MODE_HIGH:
-+		val = R59_CH1_CMOSN_POL | R59_CH1_CMOSN_EN;
-+		break;
-+	case CDCE6214_CMOS_MODE_DISABLED:
-+		val = 0;
-+		break;
-+	}
-+
-+	/* Relevant fields are identical for register 59 and 75 */
-+	regmap_update_bits(priv->regmap, reg, R59_CH1_CMOSN_POL | R59_CH1_CMOSN_EN, val);
-+
-+	return 0;
-+}
-+
-+static int cdce6214_pinconf_set_cmosp_mode(struct cdce6214 *priv, unsigned int pin,
-+					   unsigned int param)
-+{
-+	unsigned int reg, val;
-+
-+	switch (pin) {
-+	case OUT1:
-+		reg = R59;
-+		break;
-+	case OUT4:
-+		reg = R75;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	switch (param) {
-+	case CDCE6214_CMOS_MODE_LOW:
-+		val = R59_CH1_CMOSP_EN;
-+		break;
-+	case CDCE6214_CMOS_MODE_HIGH:
-+		val = R59_CH1_CMOSP_POL | R59_CH1_CMOSP_EN;
-+		break;
-+	case CDCE6214_CMOS_MODE_DISABLED:
-+		val = 0;
-+		break;
-+	}
-+
-+	/* Relevant fields are identical for register 59 and 75 */
-+	regmap_update_bits(priv->regmap, reg, R59_CH1_CMOSP_POL | R59_CH1_CMOSP_EN, val);
-+
-+	return 0;
-+}
-+
-+static int cdce6214_pinconf_set_xo_cload(struct cdce6214 *priv, unsigned int pin,
-+					 unsigned int param)
-+{
-+	int i;
-+
-+	if (pin != SECREF)
-+		return -EINVAL;
-+
-+	for (i = 0; i < ARRAY_SIZE(ip_xo_cload); i++)
-+		if (param <= ip_xo_cload[i])
-+			break;
-+
-+	if (i >= ARRAY_SIZE(ip_xo_cload))
-+		i = ARRAY_SIZE(ip_xo_cload) - 1;
-+
-+	regmap_update_bits(priv->regmap, R24, R24_IP_XO_CLOAD,
-+			   FIELD_PREP(R24_IP_XO_CLOAD, i));
-+
-+	return 0;
-+}
-+
-+static int cdce6214_pinconf_set_xo_bias(struct cdce6214 *priv, unsigned int pin,
-+					unsigned int param)
-+{
-+	int i;
-+
-+	if (pin != SECREF)
-+		return -EINVAL;
-+
-+	for (i = 0; i < ARRAY_SIZE(ip_bias_sel_xo); i++)
-+		if (param <= ip_bias_sel_xo[i])
-+			break;
-+
-+	if (i >= ARRAY_SIZE(ip_bias_sel_xo))
-+		i = ARRAY_SIZE(ip_bias_sel_xo) - 1;
-+
-+	regmap_update_bits(priv->regmap, R24, R24_IP_BIAS_SEL_XO,
-+			   FIELD_PREP(R24_IP_BIAS_SEL_XO, i));
-+
-+	return 0;
-+}
-+
-+static int cdce6214_pinconf_set_one(struct cdce6214 *priv,
-+			unsigned int pin, unsigned long config)
-+{
-+	unsigned int param;
-+	u32 param_val;
-+	int ret;
-+
-+	param = pinconf_to_config_param(config);
-+	param_val = pinconf_to_config_argument(config);
-+
-+	switch (param) {
-+	case PIN_CONFIG_IOSTANDARD:
-+		ret = cdce6214_pinconf_set_iostd(priv, pin, param_val);
-+		break;
-+	case PIN_CONFIG_CMOSN_MODE:
-+		ret = cdce6214_pinconf_set_cmosn_mode(priv, pin, param_val);
-+		break;
-+	case PIN_CONFIG_CMOSP_MODE:
-+		ret = cdce6214_pinconf_set_cmosp_mode(priv, pin, param_val);
-+		break;
-+	case PIN_CONFIG_XO_CLOAD:
-+		ret = cdce6214_pinconf_set_xo_cload(priv, pin, param_val);
-+		break;
-+	case PIN_CONFIG_XO_BIAS:
-+		ret = cdce6214_pinconf_set_xo_bias(priv, pin, param_val);
-+		break;
-+	default:
-+		dev_err(priv->dev, "Property %u not supported\n", param);
-+		ret = -ENOTSUPP;
-+	}
-+
-+	return ret;
-+}
-+
-+static int cdce6214_pinconf_set(struct pinctrl_dev *pctldev,
-+			unsigned int pin, unsigned long *configs,
-+			unsigned int num_configs)
-+{
-+	struct cdce6214 *priv = pinctrl_dev_get_drvdata(pctldev);
-+	int ret, i;
-+
-+	for (i = 0; i < num_configs; i++) {
-+		ret = cdce6214_pinconf_set_one(priv, pin, configs[i]);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int rtc_pinctrl_get_groups_count(struct pinctrl_dev *pctldev)
-+{
-+	return 0;
-+}
-+
-+static const char *rtc_pinctrl_get_group_name(struct pinctrl_dev *pctldev,
-+					      unsigned int group)
-+{
-+	return NULL;
-+}
-+
-+static const struct pinctrl_ops rtc_pinctrl_ops = {
-+	.get_groups_count = rtc_pinctrl_get_groups_count,
-+	.get_group_name = rtc_pinctrl_get_group_name,
-+	.dt_node_to_map = pinconf_generic_dt_node_to_map_pin,
-+	.dt_free_map = pinconf_generic_dt_free_map,
-+};
-+
-+static const struct pinconf_ops cdce6214_pinconf_ops = {
-+	.is_generic = true,
-+	.pin_config_get = cdce6214_pinconf_get,
-+	.pin_config_set = cdce6214_pinconf_set,
-+};
-+
-+static struct pinctrl_desc cdce6214_pdesc = {
-+	.name = "cdce6214-pinctrl",
-+	.pins = cdce6214_pinctrl_pins,
-+	.npins = ARRAY_SIZE(cdce6214_pinctrl_pins),
-+	.pctlops = &rtc_pinctrl_ops,
-+	.owner = THIS_MODULE,
-+	.confops = &cdce6214_pinconf_ops,
-+	.num_custom_params = ARRAY_SIZE(cdce6214_dt_params),
-+	.custom_params = cdce6214_dt_params,
-+	.custom_conf_items = cdce6214_conf_items,
-+};
-+
-+static int cdce6214_probe(struct i2c_client *client)
-+{
-+	struct device *dev = &client->dev;
-+	struct cdce6214 *priv;
-+	struct pinctrl_dev *pctl;
-+	int ret;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->client = client;
-+	priv->dev = dev;
-+	i2c_set_clientdata(client, priv);
-+	dev_set_drvdata(dev, priv);
-+
-+	priv->reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_LOW);
-+	if (IS_ERR(priv->reset_gpio)) {
-+		return dev_err_probe(dev, PTR_ERR(priv->reset_gpio),
-+				     "failed to get reset gpio\n");
-+	}
-+
-+	priv->regmap = devm_regmap_init_i2c(client, &cdce6214_regmap_config);
-+	if (IS_ERR(priv->regmap))
-+		return dev_err_probe(dev, PTR_ERR(priv->regmap),
-+				     "failed to init regmap\n");
-+
-+	ret = cdce6214_configure(priv);
-+	if (ret)
-+		return ret;
-+
-+	ret = devm_pinctrl_register_and_init(dev, &cdce6214_pdesc, priv, &pctl);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "pinctrl register failed");
-+
-+	ret = pinctrl_enable(pctl);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "pinctrl enable failed");
-+
-+	ret = cdce6214_clk_register(priv);
-+	if (ret)
-+		return dev_err_probe(dev, ret,
-+				     "failed to register clocks\n");
-+
-+	return devm_of_clk_add_hw_provider(dev, cdce6214_of_clk_get, priv);
-+}
-+
-+static const struct of_device_id cdce6214_ids[] = {
-+	{ .compatible = "ti,cdce6214" },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, cdce6214_ids);
-+
-+static struct i2c_driver cdce6214_driver = {
-+	.driver = {
-+		.name = "cdce6214",
-+		.of_match_table = cdce6214_ids,
-+		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
-+	},
-+	.probe = cdce6214_probe,
-+};
-+module_i2c_driver(cdce6214_driver);
-+
-+MODULE_AUTHOR("Alvin Šipraga <alsi@bang-olufsen.dk>");
-+MODULE_AUTHOR("Sascha Hauer <s.hauer@pengutronix.de>");
-+MODULE_DESCRIPTION("TI CDCE6214 driver");
-+MODULE_LICENSE("GPL");
-
--- 
-2.47.3
-
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBHdWVudGVyIFJvZWNrIDxncm9l
+Y2s3QGdtYWlsLmNvbT4gT24gQmVoYWxmIE9mIEd1ZW50ZXIgUm9lY2sNCj4gU2VudDogVHVlc2Rh
+eSwgU2VwdGVtYmVyIDMwLCAyMDI1IDY6MjcgUE0NCj4gVG86IFBhbGxlciwgS2ltIFNlZXIgPEtp
+bVNlZXIuUGFsbGVyQGFuYWxvZy5jb20+OyBSb2IgSGVycmluZw0KPiA8cm9iaEBrZXJuZWwub3Jn
+PjsgS3J6eXN6dG9mIEtvemxvd3NraSA8a3J6aytkdEBrZXJuZWwub3JnPjsgQ29ub3IgRG9vbGV5
+DQo+IDxjb25vcitkdEBrZXJuZWwub3JnPjsgSm9uYXRoYW4gQ29yYmV0IDxjb3JiZXRAbHduLm5l
+dD4NCj4gQ2M6IGxpbnV4LWh3bW9uQHZnZXIua2VybmVsLm9yZzsgZGV2aWNldHJlZUB2Z2VyLmtl
+cm5lbC5vcmc7IGxpbnV4LQ0KPiBrZXJuZWxAdmdlci5rZXJuZWwub3JnOyBsaW51eC1kb2NAdmdl
+ci5rZXJuZWwub3JnDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggMi8yXSBod21vbjogKHBtYnVzL21h
+eDE3NjE2KTogYWRkIGRyaXZlciBmb3INCj4gbWF4MTc2MTYNCj4gDQo+IFtFeHRlcm5hbF0NCj4g
+DQo+IE9uIDkvMjkvMjUgMjI6MDIsIEtpbSBTZWVyIFBhbGxlciB3cm90ZToNCj4gPiBBZGQgc3Vw
+cG9ydCBmb3IgTUFYMTc2MTYvTUFYMTc2MTZBIGN1cnJlbnQtbGltaXRlciB3aXRoDQo+ID4gb3Zl
+cnZvbHRhZ2Uvc3VyZ2UsIHVuZGVydm9sdGFnZSwgcmV2ZXJzZSBwb2xhcml0eSwgbG9zcyBvZiBn
+cm91bmQNCj4gPiBwcm90ZWN0aW9uIHdpdGggUE1CdXMgaW50ZXJmYWNlLiBUaGUgUE1CdXMgaW50
+ZXJmYWNlIGFsbG93cyBtb25pdG9yaW5nDQo+ID4gb2YgaW5wdXQvb3V0cHV0IHZvbHRhZ2VzLCBv
+dXRwdXQgY3VycmVudCBhbmQgdGVtcGVyYXR1cmUuDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBL
+aW0gU2VlciBQYWxsZXIgPGtpbXNlZXIucGFsbGVyQGFuYWxvZy5jb20+DQo+IA0KPiBJIGFtIGEg
+Yml0IGNvbmNlcm5lZCBhYm91dCBWT1VUX1VWX0ZBVUxUX0xJTUlUIHdoaWNoIGlzIGNvbXBsZXRl
+bHkgbm9uLQ0KPiBzdGFuZGFyZC4NCj4gRGlkIHlvdSBjaGVjayB3aXRoIHJlYWwgaGFyZHdhcmUg
+dGhhdCBpbjJfbGNyaXQgaXMgbm90IGluc3RhbnRpYXRlZCA/DQoNClllcywgY2hlY2tlZCBvbiB0
+aGUgaGFyZHdhcmUgaXQgaXMgbm90IGluc3RhbnRpYXRlZC4NCg0KPiANCj4gVGhhbmtzLA0KPiBH
+dWVudGVyDQo+IA0KPiA+IC0tLQ0KPiA+ICAgRG9jdW1lbnRhdGlvbi9od21vbi9pbmRleC5yc3Qg
+ICAgfCAgMSArDQo+ID4gICBEb2N1bWVudGF0aW9uL2h3bW9uL21heDE3NjE2LnJzdCB8IDYyDQo+
+ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysNCj4gPiAgIE1BSU5UQUlORVJTICAg
+ICAgICAgICAgICAgICAgICAgIHwgIDIgKysNCj4gPiAgIGRyaXZlcnMvaHdtb24vcG1idXMvS2Nv
+bmZpZyAgICAgIHwgIDkgKysrKysNCj4gPiAgIGRyaXZlcnMvaHdtb24vcG1idXMvTWFrZWZpbGUg
+ICAgIHwgIDEgKw0KPiA+ICAgZHJpdmVycy9od21vbi9wbWJ1cy9tYXgxNzYxNi5jICAgfCA3Mw0K
+PiArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrDQo+ID4gICA2IGZpbGVz
+IGNoYW5nZWQsIDE0OCBpbnNlcnRpb25zKCspDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvRG9jdW1l
+bnRhdGlvbi9od21vbi9pbmRleC5yc3QNCj4gPiBiL0RvY3VtZW50YXRpb24vaHdtb24vaW5kZXgu
+cnN0IGluZGV4DQo+ID4NCj4gNTFhNWJkZjc1YjA4NjU2ZWU2NDk5YzZiNWM1MGE1MWZjNGQ3YzIx
+MC4uNjJjNWQxMGYxNmFlNzIyZGQyZTZhNGY4DQo+IDk1M2ENCj4gPiBlMjRiNWY1NDE2NjYgMTAw
+NjQ0DQo+ID4gLS0tIGEvRG9jdW1lbnRhdGlvbi9od21vbi9pbmRleC5yc3QNCj4gPiArKysgYi9E
+b2N1bWVudGF0aW9uL2h3bW9uL2luZGV4LnJzdA0KPiA+IEBAIC0xNTEsNiArMTUxLDcgQEAgSGFy
+ZHdhcmUgTW9uaXRvcmluZyBLZXJuZWwgRHJpdmVycw0KPiA+ICAgICAgbWF4MTYxOQ0KPiA+ICAg
+ICAgbWF4MTY2MDENCj4gPiAgICAgIG1heDE2NjgNCj4gPiArICAgbWF4MTc2MTYNCj4gPiAgICAg
+IG1heDE5Nw0KPiA+ICAgICAgbWF4MjA3MzANCj4gPiAgICAgIG1heDIwNzUxDQo+ID4gZGlmZiAt
+LWdpdCBhL0RvY3VtZW50YXRpb24vaHdtb24vbWF4MTc2MTYucnN0DQo+ID4gYi9Eb2N1bWVudGF0
+aW9uL2h3bW9uL21heDE3NjE2LnJzdA0KPiA+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0DQo+ID4gaW5k
+ZXgNCj4gPg0KPiAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwLi45MzY0
+NDcxNTlmODdhOWM2YjI3MGI5DQo+IDAzYzQ2Yg0KPiA+IDQzYTkwY2FkZGIyMw0KPiA+IC0tLSAv
+ZGV2L251bGwNCj4gPiArKysgYi9Eb2N1bWVudGF0aW9uL2h3bW9uL21heDE3NjE2LnJzdA0KPiA+
+IEBAIC0wLDAgKzEsNjIgQEANCj4gPiArLi4gU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IEdQTC0y
+LjANCj4gPiArDQo+ID4gK0tlcm5lbCBkcml2ZXIgbWF4MTc2MTYNCj4gPiArPT09PT09PT09PT09
+PT09PT09PT0NCj4gPiArDQo+ID4gK1N1cHBvcnRlZCBjaGlwczoNCj4gPiArDQo+ID4gKyAgKiBB
+bmFsb2cgRGV2aWNlcyBNQVgxNzYxNi9NQVgxNzYxNkENCj4gPiArDQo+ID4gKyAgICBQcmVmaXg6
+ICdtYXgxNzYxNicNCj4gPiArDQo+ID4gKyAgICBBZGRyZXNzZXMgc2Nhbm5lZDogLQ0KPiA+ICsN
+Cj4gPiArICAgIERhdGFzaGVldDoNCj4gPiArIGh0dHBzOi8vd3d3LmFuYWxvZy5jb20vbWVkaWEv
+ZW4vdGVjaG5pY2FsLWRvY3VtZW50YXRpb24vZGF0YS1zaGVldHMvDQo+ID4gKyBtYXgxNzYxNi1t
+YXgxNzYxNmEucGRmDQo+ID4gKw0KPiA+ICtBdXRob3I6DQo+ID4gKw0KPiA+ICsgIC0gS2ltIFNl
+ZXIgUGFsbGVyIDxraW1zZWVyLnBhbGxlckBhbmFsb2cuY29tPg0KPiA+ICsNCj4gPiArDQo+ID4g
+K0Rlc2NyaXB0aW9uDQo+ID4gKy0tLS0tLS0tLS0tDQo+ID4gKw0KPiA+ICtUaGlzIGRyaXZlciBz
+dXBwb3J0cyBoYXJkd2FyZSBtb25pdG9yaW5nIGZvciBBbmFsb2cgRGV2aWNlcw0KPiA+ICtNQVgx
+NzYxNi9NQVgxNzYxNkEgQ3VycmVudC1MaW1pdGVyIHdpdGggT1YvU3VyZ2UsIFVWLCBSZXZlcnNl
+DQo+ID4gK1BvbGFyaXR5LCBMb3NzIG9mIEdyb3VuZCBQcm90ZWN0aW9uIHdpdGggUE1CdXMgSW50
+ZXJmYWNlLg0KPiA+ICsNCj4gPiArVGhlIE1BWDE3NjE2L01BWDE3NjE2QSBpcyBhIDNWIHRvIDgw
+ViwgN0EgY3VycmVudC1saW1pdGVyIHdpdGgNCj4gPiArb3ZlcnZvbHRhZ2UsIHN1cmdlLCB1bmRl
+cnZvbHRhZ2UsIHJldmVyc2UgcG9sYXJpdHksIGFuZCBsb3NzIG9mDQo+ID4gK2dyb3VuZCBwcm90
+ZWN0aW9uLiBUaHJvdWdoIHRoZSBQTUJ1cyBpbnRlcmZhY2UsIHRoZSBkZXZpY2UgY2FuDQo+ID4g
+K21vbml0b3IgaW5wdXQvb3V0cHV0IHZvbHRhZ2VzLCBvdXRwdXQgY3VycmVudCBhbmQgdGVtcGVy
+YXR1cmUuDQo+ID4gKw0KPiA+ICtUaGUgZHJpdmVyIGlzIGEgY2xpZW50IGRyaXZlciB0byB0aGUg
+Y29yZSBQTUJ1cyBkcml2ZXIuIFBsZWFzZSBzZWUNCj4gPiArRG9jdW1lbnRhdGlvbi9od21vbi9w
+bWJ1cy5yc3QgZm9yIGRldGFpbHMgb24gUE1CdXMgY2xpZW50IGRyaXZlcnMuDQo+ID4gKw0KPiA+
+ICtVc2FnZSBOb3Rlcw0KPiA+ICstLS0tLS0tLS0tLQ0KPiA+ICsNCj4gPiArVGhpcyBkcml2ZXIg
+ZG9lcyBub3QgYXV0by1kZXRlY3QgZGV2aWNlcy4gWW91IHdpbGwgaGF2ZSB0bw0KPiA+ICtpbnN0
+YW50aWF0ZSB0aGUgZGV2aWNlcyBleHBsaWNpdGx5LiBQbGVhc2Ugc2VlDQo+ID4gK0RvY3VtZW50
+YXRpb24vaTJjL2luc3RhbnRpYXRpbmctZGV2aWNlcy5yc3QNCj4gPiArZm9yIGRldGFpbHMuDQo+
+ID4gKw0KPiA+ICtQbGF0Zm9ybSBkYXRhIHN1cHBvcnQNCj4gPiArLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tDQo+ID4gKw0KPiA+ICtUaGUgZHJpdmVyIHN1cHBvcnRzIHN0YW5kYXJkIFBNQnVzIGRyaXZl
+ciBwbGF0Zm9ybSBkYXRhLg0KPiA+ICsNCj4gPiArU3lzZnMgZW50cmllcw0KPiA+ICstLS0tLS0t
+LS0tLS0tDQo+ID4gKw0KPiA+ICs9PT09PT09PT09PT09PT09PSA9PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09DQo+ID4gK2luMV9sYWJlbCAgICAgICAgICJ2aW4iDQo+ID4g
+K2luMV9pbnB1dCAgICAgICAgIE1lYXN1cmVkIGlucHV0IHZvbHRhZ2UNCj4gPiAraW4xX2FsYXJt
+CSAgSW5wdXQgdm9sdGFnZSBhbGFybQ0KPiA+ICtpbjJfbGFiZWwJICAidm91dDEiDQo+ID4gK2lu
+Ml9pbnB1dAkgIE1lYXN1cmVkIG91dHB1dCB2b2x0YWdlDQo+ID4gK2N1cnIxX2xhYmVsCSAgImlv
+dXQxIg0KPiA+ICtjdXJyMV9pbnB1dAkgIE1lYXN1cmVkIG91dHB1dCBjdXJyZW50Lg0KPiA+ICtj
+dXJyMV9hbGFybQkgIE91dHB1dCBjdXJyZW50IGFsYXJtDQo+ID4gK3RlbXAxX2lucHV0ICAgICAg
+IE1lYXN1cmVkIHRlbXBlcmF0dXJlDQo+ID4gK3RlbXAxX2FsYXJtICAgICAgIENoaXAgdGVtcGVy
+YXR1cmUgYWxhcm0NCj4gPiArPT09PT09PT09PT09PT09PT0gPT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PQ0KPiA+IGRpZmYgLS1naXQgYS9NQUlOVEFJTkVSUyBiL01BSU5U
+QUlORVJTIGluZGV4DQo+ID4NCj4gODlkMzVmYWY5M2M5ZDJlOTg0YjczZjVjMDlkMDkwNDRlZTZl
+ZGRiMi4uMjY3YWI0MjgyNjBhMjljMzhmYTUwODE5DQo+IDBiZGYNCj4gPiBhMjY3N2JiYTU4Yzgg
+MTAwNjQ0DQo+ID4gLS0tIGEvTUFJTlRBSU5FUlMNCj4gPiArKysgYi9NQUlOVEFJTkVSUw0KPiA+
+IEBAIC0xNDkyMyw2ICsxNDkyMyw4IEBAIEw6CWxpbnV4LWh3bW9uQHZnZXIua2VybmVsLm9yZw0K
+PiA+ICAgUzoJU3VwcG9ydGVkDQo+ID4gICBXOglodHRwczovL2V6LmFuYWxvZy5jb20vbGludXgt
+c29mdHdhcmUtZHJpdmVycw0KPiA+ICAgRjoNCj4gCURvY3VtZW50YXRpb24vZGV2aWNldHJlZS9i
+aW5kaW5ncy9od21vbi9wbWJ1cy9hZGksbWF4MTc2MTYueWENCj4gbWwNCj4gPiArRjoJRG9jdW1l
+bnRhdGlvbi9od21vbi9tYXgxNzYxNi5yc3QNCj4gPiArRjoJZHJpdmVycy9od21vbi9wbWJ1cy9t
+YXgxNzYxNi5jDQo+ID4NCj4gPiAgIE1BWDIxNzUgU0RSIFRVTkVSIERSSVZFUg0KPiA+ICAgTToJ
+UmFtZXNoIFNoYW5tdWdhc3VuZGFyYW0gPHJhc2hhbm11QGdtYWlsLmNvbT4NCj4gPiBkaWZmIC0t
+Z2l0IGEvZHJpdmVycy9od21vbi9wbWJ1cy9LY29uZmlnIGIvZHJpdmVycy9od21vbi9wbWJ1cy9L
+Y29uZmlnDQo+ID4gaW5kZXgNCj4gPg0KPiBkYTA0ZmY2ZGYyOGJkMTI5MDljOTE0MDY2MmQ2Yjkz
+MmExNTBiZDk3Li5kZWY1ZmFhZDhmZGY1NmViMzFmZTIxNjMyDQo+IDJlYQ0KPiA+IGQ1N2VlNDNh
+MWFjNSAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL2h3bW9uL3BtYnVzL0tjb25maWcNCj4gPiAr
+KysgYi9kcml2ZXJzL2h3bW9uL3BtYnVzL0tjb25maWcNCj4gPiBAQCAtMzIwLDYgKzMyMCwxNSBA
+QCBjb25maWcgU0VOU09SU19NQVgxNjYwMQ0KPiA+ICAgCSAgVGhpcyBkcml2ZXIgY2FuIGFsc28g
+YmUgYnVpbHQgYXMgYSBtb2R1bGUuIElmIHNvLCB0aGUgbW9kdWxlIHdpbGwNCj4gPiAgIAkgIGJl
+IGNhbGxlZCBtYXgxNjYwMS4NCj4gPg0KPiA+ICtjb25maWcgU0VOU09SU19NQVgxNzYxNg0KPiA+
+ICsJdHJpc3RhdGUgIkFuYWxvZyBEZXZpY2VzIE1BWDE3NjE2L01BWDE3NjE2QSINCj4gPiArCWhl
+bHANCj4gPiArCSAgSWYgeW91IHNheSB5ZXMgaGVyZSB5b3UgZ2V0IGhhcmR3YXJlIG1vbml0b3Jp
+bmcgc3VwcG9ydCBmb3IgQW5hbG9nDQo+ID4gKwkgIERldmljZXMgTUFYMTc2MTYvTUFYMTc2MTZB
+Lg0KPiA+ICsNCj4gPiArCSAgVGhpcyBkcml2ZXIgY2FuIGFsc28gYmUgYnVpbHQgYXMgYSBtb2R1
+bGUuIElmIHNvLCB0aGUgbW9kdWxlIHdpbGwNCj4gPiArCSAgYmUgY2FsbGVkIG1heDE3NjE2Lg0K
+PiA+ICsNCj4gPiAgIGNvbmZpZyBTRU5TT1JTX01BWDIwNzMwDQo+ID4gICAJdHJpc3RhdGUgIk1h
+eGltIE1BWDIwNzEwLCBNQVgyMDczMCwgTUFYMjA3MzQsIE1BWDIwNzQzIg0KPiA+ICAgCWhlbHAN
+Cj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9od21vbi9wbWJ1cy9NYWtlZmlsZQ0KPiA+IGIvZHJp
+dmVycy9od21vbi9wbWJ1cy9NYWtlZmlsZSBpbmRleA0KPiA+DQo+IDRjNWZmM2YzMmM1ZWNiZWEw
+NjlkY2U4YWYzZTNlODM2NTg5MmIyNzguLjljZWJlNDg4ZmRmMThiMmFhMTY0YzBmYzJhDQo+IGM3
+DQo+ID4gZDFkOGZmZDJiOTcwIDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvaHdtb24vcG1idXMv
+TWFrZWZpbGUNCj4gPiArKysgYi9kcml2ZXJzL2h3bW9uL3BtYnVzL01ha2VmaWxlDQo+ID4gQEAg
+LTMxLDYgKzMxLDcgQEAgb2JqLSQoQ09ORklHX1NFTlNPUlNfTFRDNDI4NikJKz0gbHRjNDI4Ni5v
+DQo+ID4gICBvYmotJChDT05GSUdfU0VOU09SU19NQVgxNTMwMSkJKz0gbWF4MTUzMDEubw0KPiA+
+ICAgb2JqLSQoQ09ORklHX1NFTlNPUlNfTUFYMTYwNjQpCSs9IG1heDE2MDY0Lm8NCj4gPiAgIG9i
+ai0kKENPTkZJR19TRU5TT1JTX01BWDE2NjAxKQkrPSBtYXgxNjYwMS5vDQo+ID4gK29iai0kKENP
+TkZJR19TRU5TT1JTX01BWDE3NjE2KQkrPSBtYXgxNzYxNi5vDQo+ID4gICBvYmotJChDT05GSUdf
+U0VOU09SU19NQVgyMDczMCkJKz0gbWF4MjA3MzAubw0KPiA+ICAgb2JqLSQoQ09ORklHX1NFTlNP
+UlNfTUFYMjA3NTEpCSs9IG1heDIwNzUxLm8NCj4gPiAgIG9iai0kKENPTkZJR19TRU5TT1JTX01B
+WDMxNzg1KQkrPSBtYXgzMTc4NS5vDQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvaHdtb24vcG1i
+dXMvbWF4MTc2MTYuYw0KPiA+IGIvZHJpdmVycy9od21vbi9wbWJ1cy9tYXgxNzYxNi5jIG5ldyBm
+aWxlIG1vZGUgMTAwNjQ0IGluZGV4DQo+ID4NCj4gMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAw
+MDAwMDAwMDAwMDAwMC4uMWQ0YTBkZGI5NWJiNmU4MzQ5OTMyDQo+IDA2MmJlMGQNCj4gPiA5MThm
+OTM1Y2Q4NDYNCj4gPiAtLS0gL2Rldi9udWxsDQo+ID4gKysrIGIvZHJpdmVycy9od21vbi9wbWJ1
+cy9tYXgxNzYxNi5jDQo+ID4gQEAgLTAsMCArMSw3MyBAQA0KPiA+ICsvLyBTUERYLUxpY2Vuc2Ut
+SWRlbnRpZmllcjogR1BMLTIuMA0KPiA+ICsvKg0KPiA+ICsgKiBIYXJkd2FyZSBtb25pdG9yaW5n
+IGRyaXZlciBmb3IgQW5hbG9nIERldmljZXMgTUFYMTc2MTYvTUFYMTc2MTZBDQo+ID4gKyAqDQo+
+ID4gKyAqIENvcHlyaWdodCAoQykgMjAyNSBBbmFsb2cgRGV2aWNlcywgSW5jLg0KPiA+ICsgKi8N
+Cj4gPiArDQo+ID4gKyNpbmNsdWRlIDxsaW51eC9lcnIuaD4NCj4gPiArI2luY2x1ZGUgPGxpbnV4
+L2kyYy5oPg0KPiA+ICsjaW5jbHVkZSA8bGludXgvbW9kX2RldmljZXRhYmxlLmg+DQo+ID4gKyNp
+bmNsdWRlIDxsaW51eC9tb2R1bGUuaD4NCj4gPiArDQo+ID4gKyNpbmNsdWRlICJwbWJ1cy5oIg0K
+PiA+ICsNCj4gPiArc3RhdGljIHN0cnVjdCBwbWJ1c19kcml2ZXJfaW5mbyBtYXgxNzYxNl9pbmZv
+ID0gew0KPiA+ICsJLnBhZ2VzID0gMSwNCj4gPiArCS5mb3JtYXRbUFNDX1ZPTFRBR0VfSU5dID0g
+ZGlyZWN0LA0KPiA+ICsJLm1bUFNDX1ZPTFRBR0VfSU5dID0gNTEyLA0KPiA+ICsJLmJbUFNDX1ZP
+TFRBR0VfSU5dID0gLTE4LA0KPiA+ICsJLlJbUFNDX1ZPTFRBR0VfSU5dID0gLTEsDQo+ID4gKw0K
+PiA+ICsJLmZvcm1hdFtQU0NfVk9MVEFHRV9PVVRdID0gZGlyZWN0LA0KPiA+ICsJLm1bUFNDX1ZP
+TFRBR0VfT1VUXSA9IDUxMiwNCj4gPiArCS5iW1BTQ19WT0xUQUdFX09VVF0gPSAtMTgsDQo+ID4g
+KwkuUltQU0NfVk9MVEFHRV9PVVRdID0gLTEsDQo+ID4gKw0KPiA+ICsJLmZvcm1hdFtQU0NfQ1VS
+UkVOVF9PVVRdID0gZGlyZWN0LA0KPiA+ICsJLm1bUFNDX0NVUlJFTlRfT1VUXSA9IDU4NDUsDQo+
+ID4gKwkuYltQU0NfQ1VSUkVOVF9PVVRdID0gODAsDQo+ID4gKwkuUltQU0NfQ1VSUkVOVF9PVVRd
+ID0gLTEsDQo+ID4gKw0KPiA+ICsJLmZvcm1hdFtQU0NfVEVNUEVSQVRVUkVdID0gZGlyZWN0LA0K
+PiA+ICsJLm1bUFNDX1RFTVBFUkFUVVJFXSA9IDcxLA0KPiA+ICsJLmJbUFNDX1RFTVBFUkFUVVJF
+XSA9IDE5NjUzLA0KPiA+ICsJLlJbUFNDX1RFTVBFUkFUVVJFXSA9IC0xLA0KPiA+ICsNCj4gPiAr
+CS5mdW5jWzBdID0gIFBNQlVTX0hBVkVfVklOIHwgUE1CVVNfSEFWRV9WT1VUIHwNCj4gUE1CVVNf
+SEFWRV9JT1VUIHwNCj4gPiArCQkgICAgUE1CVVNfSEFWRV9URU1QIHwgUE1CVVNfSEFWRV9TVEFU
+VVNfVk9VVCB8DQo+ID4gKwkJICAgIFBNQlVTX0hBVkVfU1RBVFVTX0lPVVQgfA0KPiBQTUJVU19I
+QVZFX1NUQVRVU19JTlBVVCB8DQo+ID4gKwkJICAgIFBNQlVTX0hBVkVfU1RBVFVTX1RFTVAsDQo+
+ID4gK307DQo+ID4gKw0KPiA+ICtzdGF0aWMgaW50IG1heDE3NjE2X3Byb2JlKHN0cnVjdCBpMmNf
+Y2xpZW50ICpjbGllbnQpIHsNCj4gPiArCXJldHVybiBwbWJ1c19kb19wcm9iZShjbGllbnQsICZt
+YXgxNzYxNl9pbmZvKTsgfQ0KPiA+ICsNCj4gPiArc3RhdGljIGNvbnN0IHN0cnVjdCBpMmNfZGV2
+aWNlX2lkIG1heDE3NjE2X2lkW10gPSB7DQo+ID4gKwl7ICJtYXgxNzYxNiIgfSwNCj4gPiArCXsg
+fQ0KPiA+ICt9Ow0KPiA+ICtNT0RVTEVfREVWSUNFX1RBQkxFKGkyYywgbWF4MTc2MTZfaWQpOw0K
+PiA+ICsNCj4gPiArc3RhdGljIGNvbnN0IHN0cnVjdCBvZl9kZXZpY2VfaWQgbWF4MTc2MTZfb2Zf
+bWF0Y2hbXSA9IHsNCj4gPiArCXsgLmNvbXBhdGlibGUgPSAiYWRpLG1heDE3NjE2IiB9LA0KPiA+
+ICsJeyB9DQo+ID4gK307DQo+ID4gK01PRFVMRV9ERVZJQ0VfVEFCTEUob2YsIG1heDE3NjE2X29m
+X21hdGNoKTsNCj4gPiArDQo+ID4gK3N0YXRpYyBzdHJ1Y3QgaTJjX2RyaXZlciBtYXgxNzYxNl9k
+cml2ZXIgPSB7DQo+ID4gKwkuZHJpdmVyID0gew0KPiA+ICsJCS5uYW1lID0gIm1heDE3NjE2IiwN
+Cj4gPiArCQkub2ZfbWF0Y2hfdGFibGUgPSBtYXgxNzYxNl9vZl9tYXRjaCwNCj4gPiArCX0sDQo+
+ID4gKwkucHJvYmUgPSBtYXgxNzYxNl9wcm9iZSwNCj4gPiArCS5pZF90YWJsZSA9IG1heDE3NjE2
+X2lkLA0KPiA+ICt9Ow0KPiA+ICttb2R1bGVfaTJjX2RyaXZlcihtYXgxNzYxNl9kcml2ZXIpOw0K
+PiA+ICsNCj4gPiArTU9EVUxFX0FVVEhPUigiS2ltIFNlZXIgUGFsbGVyIDxraW1zZWVyLnBhbGxl
+ckBhbmFsb2cuY29tPiIpOw0KPiA+ICtNT0RVTEVfREVTQ1JJUFRJT04oIlBNQnVzIGRyaXZlciBm
+b3IgQW5hbG9nIERldmljZXMNCj4gPiArTUFYMTc2MTYvTUFYMTc2MTZBIik7IE1PRFVMRV9MSUNF
+TlNFKCJHUEwiKTsNCj4gPiArTU9EVUxFX0lNUE9SVF9OUygiUE1CVVMiKTsNCj4gPg0KDQo=
 
