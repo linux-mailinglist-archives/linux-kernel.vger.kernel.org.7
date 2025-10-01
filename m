@@ -1,452 +1,202 @@
-Return-Path: <linux-kernel+bounces-838914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C3FBBB06A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 15:06:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 838CDBB06B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 15:08:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 434FD3C3BE6
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 13:06:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E46C3A3F8B
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 13:08:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 113D72EB5DA;
-	Wed,  1 Oct 2025 13:06:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 803242EC57B;
+	Wed,  1 Oct 2025 13:08:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WqCHPUdG"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="C73SZ3ou";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="T54pUyfT";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ugGB9i4n";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lgKgLzzr"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63547298CC7;
-	Wed,  1 Oct 2025 13:06:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F18392EC548
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 13:08:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759323976; cv=none; b=NyuiV393NooV3LpNhunxMrJqui4FcPn05TVHaqqheVbRpj/ZapQnZo0MsfGJU43SUCxHn5S1OjkGCKtKkL6bYoHVdGuKEYGDz5Yh0WJrwkVFApLWAxZa78KmcukNfM6FgIMJLAcwJKm3XjJWePWjJHiLjkqZnjUT3rM4/Nwdg4c=
+	t=1759324087; cv=none; b=tI55rB6/C0BMv4gnIdpV4aDknyPvSFOlsM7xthzVBUuXslB5HavsDspF/MZD/VFh1ojlGUL4PW5vMbcXUQNGo+wakq01ACGxfWtFGspUvfEIk1oifuQZcYtzcLXstQQ4LgHU7rb4WZW4pWuOhFyH3UDeTkVX6lyVbG+UpBYT9f4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759323976; c=relaxed/simple;
-	bh=1OvWXAsAy/BF+wJJPiElN+MW6S/Mwt/1rUX6f9nUC38=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=alyu6PEVrOCq2UkeusEK6Y7StKXKbBMSjDKupASb6Vxgsze2yHKqwjad9sG6f1TXRuJG/WOiQKDUDafh+ivvzAqqEEnrWJ02mTg7hokcoQczmTU6TNqS9H+4R57OShWTK0WAUMOM3/B7uzOYWKGX7d0I7M8oi/q7fIK+31QQGmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WqCHPUdG; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759323975; x=1790859975;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=1OvWXAsAy/BF+wJJPiElN+MW6S/Mwt/1rUX6f9nUC38=;
-  b=WqCHPUdGp1N7MScBTK57F8i/uiQoyYvhqkLgfNdeKrPq7tj8h8X98zQX
-   HZCUct7b1utukfxMehAxHLne+ihqOu0zk6VEK5famwkBLU/wdPRvLT+oB
-   BNeMx/Z0FUN2suMx4SGHqq8LCciLCrWtzz1Mo7ENOh6+NdsdgPQXUtKUu
-   bvYmE0mlOjFScs5sqwjr9pBZx8mTCW+S3sl7gFMKk7eb2Sr1C4NiP3pn5
-   Okmd86aSO6jFx9M9lJr++pxeUdgiMxxJsA9zoSz7M8MOs/dCYpBiYEY9b
-   hEsJEpt/SAmePZAnJbGm0Awk4PysH7e3pgUrUL2RU/ypiRWWvV0/Brrw1
-   Q==;
-X-CSE-ConnectionGUID: VrrjYIrfQdaD5UPwybluEA==
-X-CSE-MsgGUID: 67LlVoqWSseyta55jCgXfw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11569"; a="61304378"
-X-IronPort-AV: E=Sophos;i="6.18,306,1751266800"; 
-   d="scan'208";a="61304378"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2025 06:06:14 -0700
-X-CSE-ConnectionGUID: KJ8xa463RxeQYSsGQ3Snbg==
-X-CSE-MsgGUID: +GAg8q1aQJaGMen2XLcsBg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,306,1751266800"; 
-   d="scan'208";a="178068987"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.85])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2025 06:06:10 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Wed, 1 Oct 2025 16:06:06 +0300 (EEST)
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, 
-    =?ISO-8859-2?Q?Krzysztof_Wilczy=F1ski?= <kw@linux.com>, 
-    "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, 
-    LKML <linux-kernel@vger.kernel.org>, 
-    Lucas De Marchi <lucas.demarchi@intel.com>, 
-    Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH 2/2] PCI: Resources outside their window must set
- IORESOURCE_UNSET
-In-Reply-To: <CAMuHMdUbaQDXsowZETimLJ-=gLCofeP+LnJp_txetuBQ0hmcPQ@mail.gmail.com>
-Message-ID: <c17c5ec1-132d-3588-2a4d-a0e6639cf748@linux.intel.com>
-References: <20250924134228.1663-1-ilpo.jarvinen@linux.intel.com> <20250924134228.1663-3-ilpo.jarvinen@linux.intel.com> <CAMuHMdVtVzcL3AX0uetNhKr-gLij37Ww+fcWXxnYpO3xRAOthA@mail.gmail.com> <4c28cd58-fd0d-1dff-ad31-df3c488c464f@linux.intel.com>
- <CAMuHMdUbaQDXsowZETimLJ-=gLCofeP+LnJp_txetuBQ0hmcPQ@mail.gmail.com>
+	s=arc-20240116; t=1759324087; c=relaxed/simple;
+	bh=5DLcHOoX9VrKRa+fcanJh9nwu+xxw6WNlyYp9tKftF4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EHflHxjXYM2jdYcU9yJ4IKXQ82jXCKoQGVmDN8lauGEHyftaJs6th3u2JEgIg4BiQRvX1atQXo4ty2rDdd3RD80f05L6ogCGNmGoUV/viszW2M5C5RwBaC/N94L7dqwT//ElR9YWfy3NDVV9Vni7fpqjFWM9GxvNlBpn5J8PecU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=C73SZ3ou; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=T54pUyfT; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ugGB9i4n; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=lgKgLzzr; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 8D6B71FB66;
+	Wed,  1 Oct 2025 13:08:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759324083; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iE6s1H1dfuzBde0bw3bQ07y/kyptyyDWPHTywqdSxQE=;
+	b=C73SZ3outgK4mQS4I4+1ZHk2Eypnp+02eeC0yJt9T4RKXkgfrLtF2XMZ3QYHijLht07xzo
+	kNQqntAPmMSyCOi2VJbpbiIP2egoPxUlBuCItMzuhE7BCkmEcR8QwmV23dPOBALzaTYlUh
+	aEP3my+QSkYWTqX9bkuU6J/Kp93/3q0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759324083;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iE6s1H1dfuzBde0bw3bQ07y/kyptyyDWPHTywqdSxQE=;
+	b=T54pUyfT6XxVwf8wIwAnLT3unxuFqBGUd+/1fQW2+YweA25yIi3VA3Gq6KdieN1guh5DXX
+	oEpQmbGUvTFxAtAw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=ugGB9i4n;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=lgKgLzzr
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759324082; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iE6s1H1dfuzBde0bw3bQ07y/kyptyyDWPHTywqdSxQE=;
+	b=ugGB9i4nrvaCXQLUE1GiGbWKQWCw4veUIf8IFBraUNiE2CSa6B5tea9DAX6BC6kIIz0H2G
+	k//EBsWAPpcv8qK5uLeGShR783T9ugStnHx3pL973RaskqxQe+e72hmOG5tt6XLNDavLVf
+	1Hoamwt/YumTO8RuKvKBGmBCVnLUuQA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759324082;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iE6s1H1dfuzBde0bw3bQ07y/kyptyyDWPHTywqdSxQE=;
+	b=lgKgLzzrzq1h/XxcpFycm3PPEcQz2c5ysZrDE6tf4uI40vzPFsUCnN4GjPne4t3en5U5wv
+	l3mqQRuUKjt6iRAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 81B4213A3F;
+	Wed,  1 Oct 2025 13:08:02 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ZcKhH7In3WjXDAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 01 Oct 2025 13:08:02 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 2C315A094B; Wed,  1 Oct 2025 15:07:58 +0200 (CEST)
+Date: Wed, 1 Oct 2025 15:07:58 +0200
+From: Jan Kara <jack@suse.cz>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, brauner@kernel.org, viro@zeniv.linux.org.uk, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs: assert on ->i_count in iput_final()
+Message-ID: <7ck3szsab4zb3uzgh6aub5kmvm2slold5la2oyi264klwjel36@crjlqzwdmrgh>
+References: <20251001010010.9967-1-mjguzik@gmail.com>
+ <zvd5obgxrkbqeifnuvvvhhjeh7t4cveziipwoii3hjaztxytpa@qlcxp4l2r5jg>
+ <CAGudoHHZL0g9=eRqjUOS2sez8Mew7r1TRWaR+uX-7YuYomd3WA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-270159347-1759323966=:982"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGudoHHZL0g9=eRqjUOS2sez8Mew7r1TRWaR+uX-7YuYomd3WA@mail.gmail.com>
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 8D6B71FB66
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	URIBL_BLOCKED(0.00)[suse.cz:dkim,suse.cz:email,suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCPT_COUNT_FIVE(0.00)[6];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	MISSING_XM_UA(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:dkim,suse.cz:email,suse.com:email]
+X-Spam-Score: -4.01
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-
---8323328-270159347-1759323966=:982
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-
-On Wed, 1 Oct 2025, Geert Uytterhoeven wrote:
-> On Tue, 30 Sept 2025 at 18:32, Ilpo J=C3=A4rvinen
-> <ilpo.jarvinen@linux.intel.com> wrote:
-> > On Tue, 30 Sep 2025, Geert Uytterhoeven wrote:
-> > > On Fri, 26 Sept 2025 at 04:40, Ilpo J=C3=A4rvinen
-> > > <ilpo.jarvinen@linux.intel.com> wrote:
-> > > > PNP resources are checked for conflicts with the other resource in =
-the
-> > > > system by quirk_system_pci_resources() that walks through all PCI
-> > > > resources. quirk_system_pci_resources() correctly filters out resou=
-rce
-> > > > with IORESOURCE_UNSET.
-> > > >
-> > > > Resources that do not reside within their bridge window, however, a=
-re
-> > > > not properly initialized with IORESOURCE_UNSET resulting in bogus
-> > > > conflicts detected in quirk_system_pci_resources():
-> > > >
-> > > > pci 0000:00:02.0: VF BAR 2 [mem 0x00000000-0x1fffffff 64bit pref]
-> > > > pci 0000:00:02.0: VF BAR 2 [mem 0x00000000-0xdfffffff 64bit pref]: =
-contains BAR 2 for 7 VFs
-> > > > ...
-> > > > pci 0000:03:00.0: VF BAR 2 [mem 0x00000000-0x1ffffffff 64bit pref]
-> > > > pci 0000:03:00.0: VF BAR 2 [mem 0x00000000-0x3dffffffff 64bit pref]=
-: contains BAR 2 for 31 VFs
-> > > > ...
-> > > > pnp 00:04: disabling [mem 0xfc000000-0xfc00ffff] because it overlap=
-s 0000:03:00.0 BAR 9 [mem 0x00000000-0x3dffffffff 64bit pref]
-> > > > pnp 00:05: disabling [mem 0xc0000000-0xcfffffff] because it overlap=
-s 0000:00:02.0 BAR 9 [mem 0x00000000-0xdfffffff 64bit pref]
-> > > > pnp 00:05: disabling [mem 0xfedc0000-0xfedc7fff] because it overlap=
-s 0000:03:00.0 BAR 9 [mem 0x00000000-0x3dffffffff 64bit pref]
-> > > > pnp 00:05: disabling [mem 0xfeda0000-0xfeda0fff] because it overlap=
-s 0000:03:00.0 BAR 9 [mem 0x00000000-0x3dffffffff 64bit pref]
-> > > > pnp 00:05: disabling [mem 0xfeda1000-0xfeda1fff] because it overlap=
-s 0000:03:00.0 BAR 9 [mem 0x00000000-0x3dffffffff 64bit pref]
-> > > > pnp 00:05: disabling [mem 0xc0000000-0xcfffffff disabled] because i=
-t overlaps 0000:03:00.0 BAR 9 [mem 0x00000000-0x3dffffffff 64bit pref]
-> > > > pnp 00:05: disabling [mem 0xfed20000-0xfed7ffff] because it overlap=
-s 0000:03:00.0 BAR 9 [mem 0x00000000-0x3dffffffff 64bit pref]
-> > > > pnp 00:05: disabling [mem 0xfed90000-0xfed93fff] because it overlap=
-s 0000:03:00.0 BAR 9 [mem 0x00000000-0x3dffffffff 64bit pref]
-> > > > pnp 00:05: disabling [mem 0xfed45000-0xfed8ffff] because it overlap=
-s 0000:03:00.0 BAR 9 [mem 0x00000000-0x3dffffffff 64bit pref]
-> > > > pnp 00:05: disabling [mem 0xfee00000-0xfeefffff] because it overlap=
-s 0000:03:00.0 BAR 9 [mem 0x00000000-0x3dffffffff 64bit pref]
-> > > >
-> > > > Mark resources that are not contained within their bridge window wi=
-th
-> > > > IORESOURCE_UNSET in __pci_read_base() which resolves the false
-> > > > positives for the overlap check in quirk_system_pci_resources().
-> > > >
-> > > > Fixes: f7834c092c42 ("PNP: Don't check for overlaps with unassigned=
- PCI BARs")
-> > > > Signed-off-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+On Wed 01-10-25 14:12:13, Mateusz Guzik wrote:
+> On Wed, Oct 1, 2025 at 2:07 PM Jan Kara <jack@suse.cz> wrote:
+> > > diff --git a/fs/inode.c b/fs/inode.c
+> > > index ec9339024ac3..fa82cb810af4 100644
+> > > --- a/fs/inode.c
+> > > +++ b/fs/inode.c
+> > > @@ -1879,6 +1879,7 @@ static void iput_final(struct inode *inode)
+> > >       int drop;
 > > >
-> > > Thanks for your patch, which is now commit 06b77d5647a4d6a7 ("PCI:
-> > > Mark resources IORESOURCE_UNSET when outside bridge windows") in
-> > > linux-next/master next-20250929 pci/next
->=20
-> > > This replaces the actual resources by their sizes in the boot log on
-> > > e.g. on R-Car M2-W:
+> > >       WARN_ON(inode->i_state & I_NEW);
+> > > +     VFS_BUG_ON_INODE(atomic_read(&inode->i_count) != 0, inode);
+> >
+> > This seems pointless given when iput_final() is called...
+> >
+> 
+> This and the other check explicitly "wrap" the ->drop_inode call.
+
+I understand but given iput() has just decremented i_count to 0 before
+calling iput_final() this beginning of the "wrap" looks pretty pointless to
+me.
+
+> > >       if (op->drop_inode)
+> > >               drop = op->drop_inode(inode);
+> > > @@ -1893,6 +1894,12 @@ static void iput_final(struct inode *inode)
+> > >               return;
+> > >       }
 > > >
-> > >      pci-rcar-gen2 ee090000.pci: host bridge /soc/pci@ee090000 ranges=
-:
-> > >      pci-rcar-gen2 ee090000.pci:      MEM 0x00ee080000..0x00ee08ffff =
--> 0x00ee080000
-> > >      pci-rcar-gen2 ee090000.pci: PCI: revision 11
-> > >      pci-rcar-gen2 ee090000.pci: PCI host bridge to bus 0000:00
-> > >      pci_bus 0000:00: root bus resource [bus 00]
-> > >      pci_bus 0000:00: root bus resource [mem 0xee080000-0xee08ffff]
-> > >      pci 0000:00:00.0: [1033:0000] type 00 class 0x060000 conventiona=
-l PCI endpoint
-> > >     -pci 0000:00:00.0: BAR 0 [mem 0xee090800-0xee090bff]
-> > >     -pci 0000:00:00.0: BAR 1 [mem 0x40000000-0x7fffffff pref]
+> > > +     /*
+> > > +      * Re-check ->i_count in case the ->drop_inode() hooks played games.
+> > > +      * Note we only execute this if the verdict was to drop the inode.
+> > > +      */
+> > > +     VFS_BUG_ON_INODE(atomic_read(&inode->i_count) != 0, inode);
+> > > +
 > >
-> > What is going to be the parent of these resources? They don't seem to f=
-all
-> > under the root bus resource above in which case the output change is
-> > intentional so they don't appear as if address range would be "okay".
->=20
-> >From /proc/iomem:
->=20
->     ee080000-ee08ffff : pci@ee090000
->       ee080000-ee080fff : 0000:00:01.0
->         ee080000-ee080fff : ohci_hcd
->       ee081000-ee0810ff : 0000:00:02.0
->         ee081000-ee0810ff : ehci_hcd
->     ee090000-ee090bff : ee090000.pci pci@ee090000
-
-Okay, so this seem to appear in the resource tree but not among the root=20
-bus resources.
-
->     ee0c0000-ee0cffff : pci@ee0d0000
->       ee0c0000-ee0c0fff : 0001:01:01.0
->         ee0c0000-ee0c0fff : ohci_hcd
->       ee0c1000-ee0c10ff : 0001:01:02.0
->         ee0c1000-ee0c10ff : ehci_hcd
->=20
-> > When IORESOURCE_UNSET is set in a resource, %pR does not print the star=
-t
-> > and end addresses.
->=20
-> Yeah, that's how I found this commit, without bisecting ;-)
->=20
-> > >     +pci 0000:00:00.0: BAR 0 [mem size 0x00000400]
-> > >     +pci 0000:00:00.0: BAR 1 [mem size 0x40000000 pref]
-> > >      pci 0000:00:01.0: [1033:0035] type 00 class 0x0c0310 conventiona=
-l PCI endpoint
-> > >     -pci 0000:00:01.0: BAR 0 [mem 0x00000000-0x00000fff]
-> > >     +pci 0000:00:01.0: BAR 0 [mem size 0x00001000]
+> > I'm not sure this can catch much but OK...
 > >
-> > For this resource, it's very much intentional. It's a zero-based BAR wh=
-ich
-> > was left without IORESOURCE_UNSET prior to my patch leading to others p=
-art
-> > of the kernel to think that resource range valid and in use (in your
-> > case it's so small it wouldn't collide with anything but it wasn't
-> > properly set up resource, nonetheless).
-> >
-> > >      pci 0000:00:01.0: supports D1 D2
-> > >      pci 0000:00:01.0: PME# supported from D0 D1 D2 D3hot
-> > >      pci 0000:00:02.0: [1033:00e0] type 00 class 0x0c0320 conventiona=
-l PCI endpoint
-> > >     -pci 0000:00:02.0: BAR 0 [mem 0x00000000-0x000000ff]
-> > >     +pci 0000:00:02.0: BAR 0 [mem size 0x00000100]
-> >
-> > And this as well is very much intentional.
-> >
-> > >      pci 0000:00:02.0: supports D1 D2
-> > >      pci 0000:00:02.0: PME# supported from D0 D1 D2 D3hot
-> > >      PCI: bus0: Fast back to back transfers disabled
-> > >      pci 0000:00:01.0: BAR 0 [mem 0xee080000-0xee080fff]: assigned
-> > >      pci 0000:00:02.0: BAR 0 [mem 0xee081000-0xee0810ff]: assigned
-> > >      pci_bus 0000:00: resource 4 [mem 0xee080000-0xee08ffff]
-> > >
-> > > Is that intentional?
-> >
-> > There's also that pci_dbg() in the patch which would show the original
-> > addresses (print the resource before setting IORESOURCE_UNSET) but to s=
-ee
-> > it one would need to enable it with dyndbg=3D... Bjorn was thinking of
-> > making that pci_info() though so it would appear always.
-> >
-> > Was this the entire PCI related diff? I don't see those 0000:00:00.0 BA=
-Rs
-> > getting assigned anywhere.
->=20
-> The above log is almost complete (lacked enabling the device afterwards).
->=20
-> AFAIU, the BARs come from the reg and ranges properties in the
-> PCI controller nodes;
-> https://elixir.bootlin.com/linux/v6.17/source/arch/arm/boot/dts/renesas/r=
-8a7791.dtsi#L1562
+> 
+> It can catch drop routines which bumped the ref but did not release
+> it, or which indicated to continue with drop while someone else
+> snatched the reference.
 
-Thanks, although I had already found this line by grep. I was just=20
-expecting the address appear among root bus resources too.
+Right. 
 
-Curiously enough, pci_register_host_bridge() seems to try to add some=20
-resource from that list into bus and it's what prints those "root bus=20
-resource" lines and ee090000 is not among the printed lines despite=20
-appearing in /proc/iomem. As is, the resource tree and PCI bus view on the=
-=20
-resources seems to be in disagreement and I'm not sure what to make of it.
+> Preferaby the APIs would prevent that in the first place, but there is
+> quite a bit of shit-shoveling before that happens.
 
-But before considering going into that direction or figuring out why this=
-=20
-ee090000 resource does not appear among root bus resources, could you=20
-check if the attached patch changes behavior for the resource which are=20
-non-zero based?
+Agreed.
 
---=20
- i.
+								Honza
 
-> The full related log for this device, for both instances, with the pci_db=
-g()
-> changes to pci_info():
->=20
->      pci-rcar-gen2 ee090000.pci: host bridge /soc/pci@ee090000 ranges:
->      pci-rcar-gen2 ee090000.pci:      MEM 0x00ee080000..0x00ee08ffff
-> -> 0x00ee080000
->      pci-rcar-gen2 ee090000.pci: PCI: revision 11
->      pci-rcar-gen2 ee090000.pci: PCI host bridge to bus 0000:00
->      pci_bus 0000:00: root bus resource [bus 00]
->      pci_bus 0000:00: root bus resource [mem 0xee080000-0xee08ffff]
->      pci 0000:00:00.0: [1033:0000] type 00 class 0x060000 conventional
-> PCI endpoint
->     -pci 0000:00:00.0: BAR 0 [mem 0xee090800-0xee090bff]
->     -pci 0000:00:00.0: BAR 1 [mem 0x40000000-0x7fffffff pref]
->     +pci 0000:00:00.0: BAR 0 [mem 0xee090800-0xee090bff]: no initial
-> claim (no window)
->     +pci 0000:00:00.0: BAR 0 [mem size 0x00000400]
->     +pci 0000:00:00.0: BAR 1 [mem 0x40000000-0x7fffffff pref]: no
-> initial claim (no window)
->     +pci 0000:00:00.0: BAR 1 [mem size 0x40000000 pref]
->      pci 0000:00:01.0: [1033:0035] type 00 class 0x0c0310 conventional
-> PCI endpoint
->     -pci 0000:00:01.0: BAR 0 [mem 0x00000000-0x00000fff]
->     +pci 0000:00:01.0: BAR 0 [mem 0x00000000-0x00000fff]: no initial
-> claim (no window)
->     +pci 0000:00:01.0: BAR 0 [mem size 0x00001000]
->      pci 0000:00:01.0: supports D1 D2
->      pci 0000:00:01.0: PME# supported from D0 D1 D2 D3hot
->      pci 0000:00:02.0: [1033:00e0] type 00 class 0x0c0320 conventional
-> PCI endpoint
->     -pci 0000:00:02.0: BAR 0 [mem 0x00000000-0x000000ff]
->     +pci 0000:00:02.0: BAR 0 [mem 0x00000000-0x000000ff]: no initial
-> claim (no window)
->     +pci 0000:00:02.0: BAR 0 [mem size 0x00000100]
->      pci 0000:00:02.0: supports D1 D2
->      pci 0000:00:02.0: PME# supported from D0 D1 D2 D3hot
->      PCI: bus0: Fast back to back transfers disabled
->      pci 0000:00:01.0: BAR 0 [mem 0xee080000-0xee080fff]: assigned
->      pci 0000:00:02.0: BAR 0 [mem 0xee081000-0xee0810ff]: assigned
->      pci_bus 0000:00: resource 4 [mem 0xee080000-0xee08ffff]
->      pci 0000:00:01.0: enabling device (0140 -> 0142)
->      pci 0000:00:02.0: enabling device (0140 -> 0142)
->      pci-rcar-gen2 ee0d0000.pci: host bridge /soc/pci@ee0d0000 ranges:
->      pci-rcar-gen2 ee0d0000.pci:      MEM 0x00ee0c0000..0x00ee0cffff
-> -> 0x00ee0c0000
->      pci-rcar-gen2 ee0d0000.pci: PCI: revision 11
->      pci-rcar-gen2 ee0d0000.pci: PCI host bridge to bus 0001:01
->      pci_bus 0001:01: root bus resource [bus 01]
->      pci_bus 0001:01: root bus resource [mem 0xee0c0000-0xee0cffff]
->      pci 0001:01:00.0: [1033:0000] type 00 class 0x060000 conventional
-> PCI endpoint
->     -pci 0001:01:00.0: BAR 0 [mem 0xee0d0800-0xee0d0bff]
->     -pci 0001:01:00.0: BAR 1 [mem 0x40000000-0x7fffffff pref]
->     +pci 0001:01:00.0: BAR 0 [mem 0xee0d0800-0xee0d0bff]: no initial
-> claim (no window)
->     +pci 0001:01:00.0: BAR 0 [mem size 0x00000400]
->     +pci 0001:01:00.0: BAR 1 [mem 0x40000000-0x7fffffff pref]: no
-> initial claim (no window)
->     +pci 0001:01:00.0: BAR 1 [mem size 0x40000000 pref]
->      pci 0001:01:01.0: [1033:0035] type 00 class 0x0c0310 conventional
-> PCI endpoint
->     -pci 0001:01:01.0: BAR 0 [mem 0x00000000-0x00000fff]
->     +pci 0001:01:01.0: BAR 0 [mem 0x00000000-0x00000fff]: no initial
-> claim (no window)
->     +pci 0001:01:01.0: BAR 0 [mem size 0x00001000]
->      pci 0001:01:01.0: supports D1 D2
->      pci 0001:01:01.0: PME# supported from D0 D1 D2 D3hot
->      pci 0001:01:02.0: [1033:00e0] type 00 class 0x0c0320 conventional
-> PCI endpoint
->     -pci 0001:01:02.0: BAR 0 [mem 0x00000000-0x000000ff]
->     +pci 0001:01:02.0: BAR 0 [mem 0x00000000-0x000000ff]: no initial
-> claim (no window)
->     +pci 0001:01:02.0: BAR 0 [mem size 0x00000100]
->      pci 0001:01:02.0: supports D1 D2
->      pci 0001:01:02.0: PME# supported from D0 D1 D2 D3hot
->      PCI: bus1: Fast back to back transfers disabled
->      pci 0001:01:01.0: BAR 0 [mem 0xee0c0000-0xee0c0fff]: assigned
->      pci 0001:01:02.0: BAR 0 [mem 0xee0c1000-0xee0c10ff]: assigned
->      pci_bus 0001:01: resource 4 [mem 0xee0c0000-0xee0cffff]
->      pci 0001:01:01.0: enabling device (0140 -> 0142)
->      pci 0001:01:02.0: enabling device (0140 -> 0142)
->=20
-> > You didn't report any issues beyond textual changes in the log, I suppo=
-se
-> > there were none beyond the log differences?
->=20
-> Sorry, I should have done a little bit more testing.  This is the funny
-> on-chip Renesas R-Car Gen2 PCI host controller with integrated OHCI/EHCI
-> PCI devices.  I don't have any USB devices connected, but "lspci -v"
-> output is the same before/after, and the OHCI/EHCI drivers probe fine.
->=20
-> BTW, I am seeing similar changes on rts7751r2d (qemu SuperH target r2d):
->=20
->      PCI host bridge to bus 0000:00
->      pci_bus 0000:00: root bus resource [io  0x1000-0x3fffff]
->      pci_bus 0000:00: root bus resource [mem 0xfd000000-0xfdffffff]
->      pci_bus 0000:00: No busn resource found for root bus, will use [bus =
-00-ff]
->      pci 0000:00:00.0: [1054:350e] type 00 class 0x060000 conventional
-> PCI endpoint
->      pci 0000:00:00.0: [Firmware Bug]: BAR 0: invalid; can't size
->      pci 0000:00:00.0: [Firmware Bug]: BAR 1: invalid; can't size
->      pci 0000:00:00.0: [Firmware Bug]: BAR 2: invalid; can't size
->      pci 0000:00:02.0: [10ec:8139] type 00 class 0x020000 conventional
-> PCI endpoint
->     -pci 0000:00:02.0: BAR 0 [io  0x0000-0x00ff]
->     -pci 0000:00:02.0: BAR 1 [mem 0x00000000-0x000000ff]
->     -pci 0000:00:02.0: ROM [mem 0x00000000-0x0007ffff pref]
->     +pci 0000:00:02.0: BAR 0 [io  0x0000-0x00ff]: no initial claim (no wi=
-ndow)
->     +pci 0000:00:02.0: BAR 0 [io  size 0x0100]
->     +pci 0000:00:02.0: BAR 1 [mem 0x00000000-0x000000ff]: no initial
-> claim (no window)
->     +pci 0000:00:02.0: BAR 1 [mem size 0x00000100]
->     +pci 0000:00:02.0: ROM [mem 0x00000000-0x0007ffff pref]: no
-> initial claim (no window)
->     +pci 0000:00:02.0: ROM [mem size 0x00080000 pref]
->      pci_bus 0000:00: busn_res: [bus 00-ff] end is updated to 00
->      pci 0000:00:02.0: ROM [mem 0xfd000000-0xfd07ffff pref]: assigned
->      pci 0000:00:02.0: BAR 0 [io  0x1000-0x10ff]: assigned
->      pci 0000:00:02.0: BAR 1 [mem 0xfd080000-0xfd0800ff]: assigned
->=20
-> All of these look legitimate to me, as they all start at zero.
->=20
-> Thanks!
->=20
->=20
-> Gr{oetje,eeting}s,
->=20
->                         Geert
->=20
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
-8k.org
->=20
-> In personal conversations with technical people, I call myself a hacker. =
-But
-> when I'm talking to journalists I just say "programmer" or something like=
- that.
->                                 -- Linus Torvalds
->=20
---8323328-270159347-1759323966=:982
-Content-Type: text/x-diff; name=host_bridge_res.patch
-Content-Transfer-Encoding: BASE64
-Content-ID: <e5962baa-c2fa-b608-eaf0-852bf3a88a79@linux.intel.com>
-Content-Description: 
-Content-Disposition: attachment; filename=host_bridge_res.patch
-
-RnJvbTogSWxwbyBKw6RydmluZW4gPGlscG8uamFydmluZW5AbGludXguaW50
-ZWwuY29tPg0KU3ViamVjdDogW1BBVENIXSBQQ0k6IENoZWNrIGFsc28gaG9z
-dCBicmlkZ2Ugd2luZG93cyBpbiBwYnVzX3NlbGVjdF93aW5kb3dfZm9yX3Jl
-c19hZGRyKCkNCg0KQ2hlY2sgYWxzbyBob3N0IGJyaWRnZSB3aW5kb3dzIGlu
-IHBidXNfc2VsZWN0X3dpbmRvd19mb3JfcmVzX2FkZHIoKSBhcw0KdGhleSBk
-b24ndCBzZWVtIHRvIGFwcGVhciBpbiBhcHBlYXIgYXMgcm9vdCBidXMgcmVz
-b3VyY2VzLg0KDQpTaWduZWQtb2ZmLWJ5OiBJbHBvIErDpHJ2aW5lbiA8aWxw
-by5qYXJ2aW5lbkBsaW51eC5pbnRlbC5jb20+DQoNCi0tLQ0KIGRyaXZlcnMv
-cGNpL3Byb2JlLmMgfCAxNyArKysrKysrKysrKysrKysrLQ0KIDEgZmlsZSBj
-aGFuZ2VkLCAxNiBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pDQoNCmRp
-ZmYgLS1naXQgYS9kcml2ZXJzL3BjaS9wcm9iZS5jIGIvZHJpdmVycy9wY2kv
-cHJvYmUuYw0KaW5kZXggMDk3Mzg5ZjI1ODUzLi42NmYwNzYzMTEzY2IgMTAw
-NjQ0DQotLS0gYS9kcml2ZXJzL3BjaS9wcm9iZS5jDQorKysgYi9kcml2ZXJz
-L3BjaS9wcm9iZS5jDQpAQCAtMjA2LDEwICsyMDYsMTIgQEAgc3RhdGljIHZv
-aWQgX19wY2lfc2l6ZV9yb20oc3RydWN0IHBjaV9kZXYgKmRldiwgdW5zaWdu
-ZWQgaW50IHBvcywgdTMyICpzaXplcykNCiB9DQogDQogc3RhdGljIHN0cnVj
-dCByZXNvdXJjZSAqcGJ1c19zZWxlY3Rfd2luZG93X2Zvcl9yZXNfYWRkcigN
-Ci0JCQkJCWNvbnN0IHN0cnVjdCBwY2lfYnVzICpidXMsDQorCQkJCQlzdHJ1
-Y3QgcGNpX2J1cyAqYnVzLA0KIAkJCQkJY29uc3Qgc3RydWN0IHJlc291cmNl
-ICpyZXMpDQogew0KIAl1bnNpZ25lZCBsb25nIHR5cGUgPSByZXMtPmZsYWdz
-ICYgSU9SRVNPVVJDRV9UWVBFX0JJVFM7DQorCXN0cnVjdCBwY2lfaG9zdF9i
-cmlkZ2UgKmhvc3RfYnJpZGdlOw0KKwlzdHJ1Y3QgcmVzb3VyY2VfZW50cnkg
-KndpbmRvdzsNCiAJc3RydWN0IHJlc291cmNlICpyOw0KIA0KIAlwY2lfYnVz
-X2Zvcl9lYWNoX3Jlc291cmNlKGJ1cywgcikgew0KQEAgLTIyMiw2ICsyMjQs
-MTkgQEAgc3RhdGljIHN0cnVjdCByZXNvdXJjZSAqcGJ1c19zZWxlY3Rfd2lu
-ZG93X2Zvcl9yZXNfYWRkcigNCiAJCWlmIChyZXNvdXJjZV9jb250YWlucyhy
-LCByZXMpKQ0KIAkJCXJldHVybiByOw0KIAl9DQorDQorCWlmICghcGNpX2lz
-X3Jvb3RfYnVzKGJ1cykpDQorCQlyZXR1cm4gTlVMTDsNCisNCisJaG9zdF9i
-cmlkZ2UgPSBwY2lfZmluZF9ob3N0X2JyaWRnZShidXMpOw0KKwlyZXNvdXJj
-ZV9saXN0X2Zvcl9lYWNoX2VudHJ5KHdpbmRvdywgJmhvc3RfYnJpZGdlLT53
-aW5kb3dzKSB7DQorCQlpZiAoKHdpbmRvdy0+cmVzLT5mbGFncyAmIElPUkVT
-T1VSQ0VfVFlQRV9CSVRTKSAhPSB0eXBlKQ0KKwkJCWNvbnRpbnVlOw0KKw0K
-KwkJaWYgKHJlc291cmNlX2NvbnRhaW5zKHdpbmRvdy0+cmVzLCByZXMpKQ0K
-KwkJCXJldHVybiByOw0KKwl9DQorDQogCXJldHVybiBOVUxMOw0KIH0NCiAN
-Cg0KLS0gDQp0ZzogKDc5NzBlNWQwMzhkNS4uKSBmaXgvY2hlY2staG9zdC1i
-cmlkZ2Utd2luZG93cyAoZGVwZW5kcyBvbjogZml4L2lvdi1yZXNvdXJjZS1p
-bml0KQ0K
-
---8323328-270159347-1759323966=:982--
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
