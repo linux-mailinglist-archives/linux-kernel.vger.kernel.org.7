@@ -1,151 +1,150 @@
-Return-Path: <linux-kernel+bounces-839235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0802CBB11FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 17:42:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 012F9BB120B
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 17:42:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9082718931FF
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 15:42:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C8833C535D
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 15:42:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADC5927B35F;
-	Wed,  1 Oct 2025 15:42:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 650A927F183;
+	Wed,  1 Oct 2025 15:42:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="D89cEK9/"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="eAoGuViM"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C90F1FCCF8;
-	Wed,  1 Oct 2025 15:42:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDE3D2045B7
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 15:42:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759333332; cv=none; b=Ha//UPqWcIccwcxVUm2Q56jOJcLRzcoU5A2kUBnpfBOfmgrJogShZBBzPvFreLO7TB0bssWXOGUf0RnBhh+J7md52CX+S96W/odKYRnD3aKOoCLU2dipy7ehhLF6aUvCfCQRlvKEtqVlo1NQbEQ2tO6diyz2CUFxsBc+IqQZQg0=
+	t=1759333353; cv=none; b=DlZkHFfumUV3BMrPifU0lIFf/P8kGLMdtIwqJJsjl7UwUIQFUn5o4HoL/oULTyfC363uUjrlFEidtMXDg00MlPbgMQblwNRLYp1fOn7vvLL0ySREwzye27HHmYDSDFQ7l4niBLtBppZq7+3zjXEU7Ew4P0cdMFARXFxEmKjTWDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759333332; c=relaxed/simple;
-	bh=5LgfWDLXbU3+ZSJ+d2bp+2xL5GUQjmcurD5GvPXYjOk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TiUucL0YbKZzfAwOExQFAPXW9dL1Kz6EaeKHkO7PsYRzrLU/JTbCFchJFJDFRvaFqkWDvMUNYzPNLg1R4dQnNjb7hyfzfa75phwqkYMfEKAxZgqwdU0NX9e5gToMTxV2Cc2neDliuPJ/xGKmtxT6269p+zl4OWPQhJPUOxomb68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=D89cEK9/; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759333330; x=1790869330;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=5LgfWDLXbU3+ZSJ+d2bp+2xL5GUQjmcurD5GvPXYjOk=;
-  b=D89cEK9/FjxrcrGxtq59M6QzPNUDSaSL0L6g55Qn2+RghJt5ZlrWgTG0
-   0UHJG7A4+jT8mcI7eG8b6qJ2i2b0Gd9w/x9QTEVm01IePavqEGG5Pyra7
-   SOY1mTy8kYiOnOW9Q8R+UUJ5uWTUd5tlgPfSfHMHUBWZDxDEDi3UOIWMK
-   4lUN0jk+Pe08ydmW2vCGsruE9CTcxST9Cv6BdxJHnurj67pkhq2yvrgC9
-   jHI082yqbjr/AeKPr+0sqW82As7TYrAkBX22GdyyDNGMZJKkkfkfKaAhI
-   6hA76zl3oaZc5dCeewGfWd29bttA6wJej6wFWert78Ej+wOsIMM5wDZq/
-   w==;
-X-CSE-ConnectionGUID: e5Sybbs1TlGUdABCzfsmlA==
-X-CSE-MsgGUID: 6gds1fCUQbmJxHG4PNpD5g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11569"; a="60648067"
-X-IronPort-AV: E=Sophos;i="6.18,307,1751266800"; 
-   d="scan'208";a="60648067"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2025 08:42:06 -0700
-X-CSE-ConnectionGUID: /Fxn0tAsSRGjTZSibRpw8g==
-X-CSE-MsgGUID: xTz3/MZ5TSG7ykeCg6zfrA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,307,1751266800"; 
-   d="scan'208";a="183998916"
-Received: from tfalcon-desk.amr.corp.intel.com (HELO [10.125.109.218]) ([10.125.109.218])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2025 08:42:05 -0700
-Message-ID: <e89ea10b-edb5-4e37-8eef-0fb99fc5b19f@intel.com>
-Date: Wed, 1 Oct 2025 08:42:04 -0700
+	s=arc-20240116; t=1759333353; c=relaxed/simple;
+	bh=IFmXaUEVCdfmu4h7uBdcd60/SgHLRG5fK16lXlhnfi4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XHx8a/DKfqYloKVjOdwPeKlJ2/JYNZYuRB1JTa6eDm3iC6jve24XkAARjSZ3ivYdJ68urE4VmZ+nacBvISACNXD//qEPh0iWkKrQ2O+CrKxksIq9UMDhhwZPUL3OWenca7CRGvNGsgQ7h94psTqeXLgeJF62jjLbCvIqxJo5fLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=eAoGuViM; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 722EA1A0F88;
+	Wed,  1 Oct 2025 15:42:21 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 45EC5606BF;
+	Wed,  1 Oct 2025 15:42:21 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E6375102F1A3E;
+	Wed,  1 Oct 2025 17:42:07 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1759333340; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=HMmBhCThKM49GDvXBon6ScZQqtxnNu2vGA60ajonRrk=;
+	b=eAoGuViMv3sS/djX+80W2N/Ha4y8f5AGU5UP/SVorMoE++0n7PUkIOEIhAJ3hAUMlMayQ6
+	IOdTySEdA7fFUHanPA+atTEYIdbylUSKo+TCCmVeoP802o0D0sQ6ZEsUanqPU5oUdUIM83
+	RJ7WEkk1ls21EfWl3VczG/x7TjlqiqUnTUQ6IL1lt2Ex4ioelt2njhvQfTaeQ8/1hPLRtw
+	YLHBqIRoABDSq86ueI3rRxrc1ghmNYCOKTQeDC14gL46PiObRnjWla5q7noyxMhvS/jg3N
+	jLGGWdTh4gcLW2wLshAmpfSrRqLkDzfjsC6tHMAXNusHQHLrKXvKLXsTnpZ6nA==
+Date: Wed, 1 Oct 2025 17:42:05 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Wolfram Sang
+ <wsa+renesas@sang-engineering.com>, Hoan Tran
+ <hoan@os.amperecomputing.com>, Bartosz Golaszewski <brgl@bgdev.pl>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>, Saravana Kannan
+ <saravanak@google.com>, Serge Semin <fancer.lancer@gmail.com>, Phil
+ Edworthy <phil.edworthy@renesas.com>, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, Pascal Eberhard
+ <pascal.eberhard@se.com>, Miquel Raynal <miquel.raynal@bootlin.com>, Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v4 7/8] soc: renesas: Add support for Renesas RZ/N1 GPIO
+ Interrupt Multiplexer
+Message-ID: <20251001174205.71a08017@bootlin.com>
+In-Reply-To: <CACRpkdZPURiag1cUQZ319_QA83u+qOCSRALxpe10_+cTcevy+Q@mail.gmail.com>
+References: <20250922152640.154092-1-herve.codina@bootlin.com>
+	<20250922152640.154092-8-herve.codina@bootlin.com>
+	<CACRpkdZPURiag1cUQZ319_QA83u+qOCSRALxpe10_+cTcevy+Q@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] dmaengine: idxd: drain ATS translations when disabling
- WQ
-To: Vinicius Costa Gomes <vinicius.gomes@intel.com>, dmaengine@vger.kernel.org
-Cc: vkoul@kernel.org, linux-kernel@vger.kernel.org
-References: <20251001012226.1664994-1-vinicius.gomes@intel.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20251001012226.1664994-1-vinicius.gomes@intel.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
+Hi Linus,
 
+On Wed, 1 Oct 2025 13:08:57 +0200
+Linus Walleij <linus.walleij@linaro.org> wrote:
 
-On 9/30/25 6:22 PM, Vinicius Costa Gomes wrote:
-> From: Nikhil Rao <nikhil.rao@intel.com>
+> Hi Herve,
 > 
-> There's an errata[1], for the Disable WQ command that it
-> does not guaranteee that address translations are drained. If WQ
-> configuration is updated, pending address translations can use an
-> updated WQ configuration, resulting an invalid translation response
-> that is cached in the device translation cache.
+> thanks for your patch!
 > 
-> Replace the Disable WQ command with a Drain WQ command followed by a
-> Reset WQ command, this guarantees that all ATS translations are
-> drained from the device before changing WQ configuration.
+> On Mon, Sep 22, 2025 at 5:27 PM Herve Codina (Schneider Electric)
+> <herve.codina@bootlin.com> wrote:
 > 
-> [1] https://cdrdv2.intel.com/v1/dl/getcontent/843306 ("Intel DSA May
-> Cause Invalid Translation Caching")
+> > On the Renesas RZ/N1 SoC, GPIOs can generate interruptions. Those
+> > interruption lines are multiplexed by the GPIO Interrupt Multiplexer in
+> > order to map 32 * 3 GPIO interrupt lines to 8 GIC interrupt lines.
+> >
+> > The GPIO interrupt multiplexer IP does nothing but select 8 GPIO
+> > IRQ lines out of the 96 available to wire them to the GIC input lines.
+> >
+> > Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.com>  
 > 
-> Signed-off-by: Nikhil Rao <nikhil.rao@intel.com>
-> Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
-> Signed-off-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+> This looks like some complicated code to reimplement hierarchical
+> irq domains.
+> 
+> Can't you just select IRQ_DOMAIN_HIERARCHY and let
+> the existing infrastructure in GPIOLIB_IRQCHIP handle
+> this?
+> 
+> This kind of remapping and handling is exactly what the
+> .child_to_parent_hwirq() callback in struct gpio_irq_chip
+> is for. This function can fail if you run out if IRQ lines.
+> 
+> Inspect drivers/gpio/Kconfig driver that select
+> IRQ_DOMAIN_HIERARCHY for examples of how to
+> do this.
+> 
+> Even if your GPIO driver is not using GPIOLIB_IRQCHIP (in that
+> case: why not?) I think you still need to use IRQ_DOMAIN_HIERARCHY
+> for this.
+> 
 
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-> ---
->  drivers/dma/idxd/device.c | 19 +++++++++++++++++--
->  1 file changed, 17 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/dma/idxd/device.c b/drivers/dma/idxd/device.c
-> index 5cf419fe6b46..c2cdf41b6e57 100644
-> --- a/drivers/dma/idxd/device.c
-> +++ b/drivers/dma/idxd/device.c
-> @@ -16,6 +16,7 @@ static void idxd_cmd_exec(struct idxd_device *idxd, int cmd_code, u32 operand,
->  			  u32 *status);
->  static void idxd_device_wqs_clear_state(struct idxd_device *idxd);
->  static void idxd_wq_disable_cleanup(struct idxd_wq *wq);
-> +static int idxd_wq_config_write(struct idxd_wq *wq);
->  
->  /* Interrupt control bits */
->  void idxd_unmask_error_interrupts(struct idxd_device *idxd)
-> @@ -215,14 +216,28 @@ int idxd_wq_disable(struct idxd_wq *wq, bool reset_config)
->  		return 0;
->  	}
->  
-> +	/*
-> +	 * Disable WQ does not drain address translations, if WQ attributes are
-> +	 * changed before translations are drained, pending translations can
-> +	 * be issued using updated WQ attibutes, resulting in invalid
-> +	 * translations being cached in the device translation cache.
-> +	 *
-> +	 * To make sure pending translations are drained before WQ
-> +	 * attributes are changed, we use a WQ Drain followed by WQ Reset and
-> +	 * then restore the WQ configuration.
-> +	 */
-> +	idxd_wq_drain(wq);
-> +
->  	operand = BIT(wq->id % 16) | ((wq->id / 16) << 16);
-> -	idxd_cmd_exec(idxd, IDXD_CMD_DISABLE_WQ, operand, &status);
-> +	idxd_cmd_exec(idxd, IDXD_CMD_RESET_WQ, operand, &status);
->  
->  	if (status != IDXD_CMDSTS_SUCCESS) {
-> -		dev_dbg(dev, "WQ disable failed: %#x\n", status);
-> +		dev_dbg(dev, "WQ reset failed: %#x\n", status);
->  		return -ENXIO;
->  	}
->  
-> +	idxd_wq_config_write(wq);
-> +
->  	if (reset_config)
->  		idxd_wq_disable_cleanup(wq);
->  	clear_bit(wq->id, idxd->wq_enable_map);
+I don't see how IRQ_DOMAIN_HIERARCHY would help.
 
+The irq-mux only muxes irq signal without performing any operations usually
+done by an interrupt controller.
+
+That's why I used interrupt-map in the irq-mux.
+
+The only information needed by the irq-mux is the interrupt line muxing that
+needs to be applied. This information is available in the interrupt-map.
+
+If we introduce IRQ_DOMAIN_HIERARCHY, either it is done at gpio controller
+level to route gpio interrupts to GIC interrupts and, in that case, the
+irq-mux is skipped and cannot apply the muxing.
+
+Or it is introduced at irq-mux level and irq-mux need to be an interrupt
+controller but is component is not an interrupt controller.
+
+Maybe I missed some points or I misunderstood the purpose of
+IRQ_DOMAIN_HIERARCHY.
+
+Can you give me some details on how IRQ_DOMAIN_HIERARCHY should be
+used in my case?
+
+Best regards,
+Hervé
 
