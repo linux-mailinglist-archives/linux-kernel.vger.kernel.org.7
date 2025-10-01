@@ -1,209 +1,105 @@
-Return-Path: <linux-kernel+bounces-839311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37F57BB152B
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 19:12:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C6DA5BB1561
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 19:15:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDF433BD158
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 17:12:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C46B3B9129
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 17:15:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5423C2D3212;
-	Wed,  1 Oct 2025 17:12:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3EDC2D191C;
+	Wed,  1 Oct 2025 17:15:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="o65fI6Fr"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bvvg2Kbi"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01177208961;
-	Wed,  1 Oct 2025 17:12:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C007226CF6
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 17:15:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759338736; cv=none; b=aYrTu9kWdddCqTH1+j+4NK2jClvNCY/4u4K+Ic3tNxVfXkt0qZa08/MFwZYp3WOgX/qQ2qHpxhhi/plN0IhYUY7MrNSRqz+9MQstqq/uafeVRJKFk7PYPoRWOjtLTeUcrm2qU89bMl/pFY2sBARli4ygraOtTLzbDd9GEAv2ZXc=
+	t=1759338935; cv=none; b=ABDvvnh91NzB3vIwCNofzqXww4Jn3wUjwfo4UrmhmwCfB1ylv+fxdbXoU3nXJBNtM07+0W8XwdK6OBmavKGyBNMWj3WROet8Fa3l2uMLitHzw7Ijo/+WHsexTZHUGwKMAk0ILxrFiUP7tA8gVMZvjoKNGMJW7MJRs7pSVIcUZug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759338736; c=relaxed/simple;
-	bh=34+af5IfF8veVSpDh8Qy62YfotRj59YHSDUjGOuN8fA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KvIyXKEOEvWRIljN00DcNsS7A7A/JZS7Zg8MPUztRt03lb6V7LL25EiTTpZT9l/zh7fnaGfG5URAZGj+fTqHnKAZTQQvV53AyxCx1pkn0yEMMCyO99xmBV+ksY/ZXhZlVwD0BWyT/0kLZoQ9+y9CXenz1bo41WU4rhGd8v7Er6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=o65fI6Fr; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 591F8Goi031811;
-	Wed, 1 Oct 2025 17:12:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=+vB7oY
-	6MwN17dyHDtLI+zfPEG2gHbxQn1oTiIwFJfPE=; b=o65fI6FrV9QJCbRTpnOymC
-	NvVKAHoMM1plcGdaTDsyKb3df106qog05jSXN8ILRJtPYEUyj4hAv58ThKErCIMk
-	AR2ZFji2OppeUS29MAxNViHfRDXBNGhYZP+xTxCO91NzwL/xa5CB44gk7GgWsffd
-	A7rMUch/zCH2tblCXBWHWYvHsUWU4I2FTWXQh5fQ2nja4Tjfy8V/x2KeGhIZl26c
-	hyhiHQswex+T5bAroGUU0X3fpkXcyN+L9uUjC2cSHyysASUFnBnQJGlz5trVizIK
-	QilqvFX7liP5pGUM8b6ryxe7p6L5n9498771/072gjoaW8mynnm9XC4vJ8lDQceg
-	==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49e5br0bq0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 01 Oct 2025 17:12:06 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 591ECEpN024198;
-	Wed, 1 Oct 2025 17:12:05 GMT
-Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 49evy19mwa-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 01 Oct 2025 17:12:05 +0000
-Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
-	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 591HC42j32244350
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 1 Oct 2025 17:12:04 GMT
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C807E58052;
-	Wed,  1 Oct 2025 17:12:04 +0000 (GMT)
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 082655805A;
-	Wed,  1 Oct 2025 17:12:04 +0000 (GMT)
-Received: from [9.61.247.182] (unknown [9.61.247.182])
-	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Wed,  1 Oct 2025 17:12:03 +0000 (GMT)
-Message-ID: <ae5b191d-ffc6-4d40-a44b-d08e04cac6be@linux.ibm.com>
-Date: Wed, 1 Oct 2025 10:12:03 -0700
+	s=arc-20240116; t=1759338935; c=relaxed/simple;
+	bh=Fa/i0851KfrhtyZ/TxP3R6h5YD6Oc8Aog2S4zBr9bXg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XdBi+0S5B7lf7Si+yCSHazLulSFwoHYJYd0HmxQaHLYP1ZoDzyDhArlWAQhztL1FsyMPOSUmEYBATEAyUQlokliVxR6ei006O4pITiyF7Y6pc0XCStrI+j5SRenW1wx90YPdmZwCQcShCQ15gUctgJwP2uTcuDLOVmxnatLfsg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bvvg2Kbi; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759338933; x=1790874933;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Fa/i0851KfrhtyZ/TxP3R6h5YD6Oc8Aog2S4zBr9bXg=;
+  b=bvvg2KbiWP6agDOGYQUfQpEGEMLP0E9VzqujC1FyKpECTVTFaDAnexRY
+   S9AdAy1woTqxZmx+HX+GcK7DBFispzBM3Ye4WnIwWjj5L3FQromizsVN5
+   qPtmB4Tq7Jrf5CkGOR6pClWlSysodZCPayK7gJJZXHsurG5ncHgWdIZyK
+   5OE2D03D8fIa7IZG0BiF7+z6w+o+hqpZt/BRO/2ngL10DDtbDLdrOlGHa
+   q4nK8jyJSEY7pF2zMpAbmvtu2jFaIdVlMB9RvU0Eh3jCdPT1W8nZozsQX
+   bbe5osVdZCOkRKQhhRx3wC/d73/BMs7fYAY5gBwQOeUOq/rYuocovAdHu
+   Q==;
+X-CSE-ConnectionGUID: zH2iui+2QVy7CvU4Zw64DA==
+X-CSE-MsgGUID: IiVEJWJYQjWpajrKgUffcg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11569"; a="60835763"
+X-IronPort-AV: E=Sophos;i="6.18,307,1751266800"; 
+   d="scan'208";a="60835763"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2025 10:15:31 -0700
+X-CSE-ConnectionGUID: b8I2ZVrEQqGGTyEbGAYWng==
+X-CSE-MsgGUID: a4I/CmJ2TLC3eCdWFoxF4g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,307,1751266800"; 
+   d="scan'208";a="209558498"
+Received: from davehans-spike.ostc.intel.com (HELO ray2.sr71.net) ([10.165.164.11])
+  by orviesa002.jf.intel.com with ESMTP; 01 Oct 2025 10:15:30 -0700
+From: Dave Hansen <dave.hansen@linux.intel.com>
+To: torvalds@linux-foundation.org
+Cc: x86@kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dave Hansen <dave.hansen@linux.intel.com>
+Subject: [GIT PULL] x86/mm for 6.18-rc1
+Date: Wed,  1 Oct 2025 10:15:29 -0700
+Message-Id: <20251001171529.901044-1-dave.hansen@linux.intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 01/10] PCI: Avoid saving error values for config space
-To: Benjamin Block <bblock@linux.ibm.com>
-Cc: linux-s390@vger.kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        alex.williamson@redhat.com, helgaas@kernel.org, clg@redhat.com,
-        schnelle@linux.ibm.com, mjrosato@linux.ibm.com
-References: <20250924171628.826-1-alifm@linux.ibm.com>
- <20250924171628.826-2-alifm@linux.ibm.com>
- <20251001151543.GB408411@p1gen4-pw042f0m>
-Content-Language: en-US
-From: Farhan Ali <alifm@linux.ibm.com>
-In-Reply-To: <20251001151543.GB408411@p1gen4-pw042f0m>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI2MDIxNCBTYWx0ZWRfX/fTUB/Q0no6h
- 6GMzLMz+Fy/SliM4qS9S+RJRnuOfcKiqlbNCafUyG0QB4GgKuDU142iYc4BRIvq1hZfP7xt/a7k
- CrVRVOJMimT1vkFA1mmE/nweTgApUdd/wpr96cgx1WRaeTsoRWX/ZAEiW2hetOl0H40s3hYPFyQ
- 1PL9Q0Rvur3LjU4PyuooKfmNzrX69ekahGsqPHf2rnd2hXDube+jLD7OFCxKhB2cAzhfhbBzDTv
- /GIx1FKl1iOPH+DMUKK1Vy++VfJdVp31R3e8Y/tr42y/WXdNFNHH/wDhm+qcJf3Clf3U6fzkmEb
- GOEZM33fRM1YZQcYZkvA+a1ZZvk4zw1+i+O6NzaEgAtLsbsIGqt4ByfScx1rrF82HrOPB+7jpWT
- f7EBAAAggmsUeTHvA1A7RkvGgtROQA==
-X-Proofpoint-GUID: 1McfUhojab5bfGNOEFYPJnj_Ovr4WebU
-X-Authority-Analysis: v=2.4 cv=LLZrgZW9 c=1 sm=1 tr=0 ts=68dd60e6 cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=T5_8E-leH3MX88Le9nUA:9
- a=QEXdDO2ut3YA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-ORIG-GUID: 1McfUhojab5bfGNOEFYPJnj_Ovr4WebU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-01_05,2025-09-29_04,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 impostorscore=0 bulkscore=0 malwarescore=0 suspectscore=0
- clxscore=1015 priorityscore=1501 phishscore=0 lowpriorityscore=0 adultscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509260214
+Content-Transfer-Encoding: 8bit
 
+Hi Linus,
 
-On 10/1/2025 8:15 AM, Benjamin Block wrote:
-> On Wed, Sep 24, 2025 at 10:16:19AM -0700, Farhan Ali wrote:
->> @@ -1792,6 +1798,14 @@ static void pci_restore_pcix_state(struct pci_dev *dev)
->>   int pci_save_state(struct pci_dev *dev)
->>   {
->>   	int i;
->> +	u32 val;
->> +
->> +	pci_read_config_dword(dev, PCI_COMMAND, &val);
->> +	if (PCI_POSSIBLE_ERROR(val)) {
->> +		pci_warn(dev, "Device config space inaccessible, will only be partially restored\n");
->> +		return -EIO;
-> Should it set `dev->state_saved` to `false`, to be on the save side?
-> Not sure whether we run a risk of restoring an old, outdated state otherwise.
+Please pull a single x86/mm change for 6.18-rc1. This came out of Rik van
+Riel's work to get the INVLPGB instruction working. It just removes an
+open-coded TLB flush operation by using an existing helper.
 
-AFAIU if the state_saved flag was set to true then any state that we 
-have saved should be valid and should be okay to be restored from. We 
-just want to avoid saving any invalid data.
+--
 
+The following changes since commit c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9:
 
->
->> +	}
->> +
->>   	/* XXX: 100% dword access ok here? */
->>   	for (i = 0; i < 16; i++) {
->>   		pci_read_config_dword(dev, i * 4, &dev->saved_config_space[i]);
->> @@ -1854,6 +1868,14 @@ static void pci_restore_config_space_range(struct pci_dev *pdev,
->>   
->>   static void pci_restore_config_space(struct pci_dev *pdev)
->>   {
->> +	if (!pdev->state_saved) {
->> +		pci_warn(pdev, "No saved config space, restoring BARs\n");
->> +		pci_restore_bars(pdev);
->> +		pci_write_config_word(pdev, PCI_COMMAND,
->> +				PCI_COMMAND_MEMORY | PCI_COMMAND_IO);
-> Is this really something that ought to be universally enabled? I thought this
-> depends on whether attached resources are IO and/or MEM?
->
-> 	int pci_enable_resources(struct pci_dev *dev, int mask)
-> 	{
-> 		...
-> 		pci_dev_for_each_resource(dev, r, i) {
-> 			...
-> 			if (r->flags & IORESOURCE_IO)
-> 				cmd |= PCI_COMMAND_IO;
-> 			if (r->flags & IORESOURCE_MEM)
-> 				cmd |= PCI_COMMAND_MEMORY;
-> 		}
-> 		...
-> 	}
->
-> Also IIRC, especially on s390, we never have IO resources?
->
-> 	int zpci_setup_bus_resources(struct zpci_dev *zdev)
-> 	{
-> 		...
-> 		for (i = 0; i < PCI_STD_NUM_BARS; i++) {
-> 			...
-> 			/* only MMIO is supported */
-> 			flags = IORESOURCE_MEM;
-> 			if (zdev->bars[i].val & 8)
-> 				flags |= IORESOURCE_PREFETCH;
-> 			if (zdev->bars[i].val & 4)
-> 				flags |= IORESOURCE_MEM_64;
-> 			...
-> 		}
-> 		...
-> 	}
->
-> So I guess this would have to have some form of the same logic as in
-> `pci_enable_resources()`, after restoring the BARs.
->
-> Or am I missing something?
+  Linux 6.17-rc2 (2025-08-17 15:22:10 -0700)
 
-As per my understanding of the spec, setting both I/O Space and Memory 
-Space should be safe. The spec also mentions if a function doesn't 
-support IO/Memory space access it could hardwire the bit to zero. We 
-could add the logic to iterate through all the resources and set the 
-bits accordingly, but in this case trying a best effort restoration it 
-should be fine?
+are available in the Git repository at:
 
-Also I didn't see any issues testing on s390x with the NVMe, RoCE and 
-NETD devices, but I could have missed something.
+  https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git tags/x86_mm_for_6.18-rc1
 
-Thanks
+for you to fetch changes up to 86e6815b316ec0ea8c4bb3c16a033219a52b6060:
 
-Farhan
+  x86/mm: Change cpa_flush() to call flush_kernel_range() directly (2025-08-22 07:55:21 -0700)
 
+----------------------------------------------------------------
+Change cpa_flush() to call flush_kernel_range() directly
 
->
->> +		return;
->> +	}
+----------------------------------------------------------------
+Yu-cheng Yu (1):
+      x86/mm: Change cpa_flush() to call flush_kernel_range() directly
+
+ arch/x86/mm/pat/set_memory.c | 20 +++++++-------------
+ 1 file changed, 7 insertions(+), 13 deletions(-)
 
