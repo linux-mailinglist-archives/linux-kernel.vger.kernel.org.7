@@ -1,189 +1,219 @@
-Return-Path: <linux-kernel+bounces-838424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69790BAF296
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 07:54:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9B3CBAF2A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 08:00:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C281E3C71B7
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 05:54:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62B712A1276
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 06:00:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5426A2C2368;
-	Wed,  1 Oct 2025 05:54:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4070E26529B;
+	Wed,  1 Oct 2025 06:00:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Rd8DgxMM"
-Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010035.outbound.protection.outlook.com [52.101.56.35])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nJoNubzx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4089227EA8;
-	Wed,  1 Oct 2025 05:54:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.35
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759298073; cv=fail; b=jELmQp6GQco1B35JggrEBtIVye6np5sBTNGCJBMUS3fd2sLT+lMtLuhX0wNxWGfKBLW84O+Nf68eX1ImADnHA2Y4cRUO574Eg9kKopIWEV/L1KHMuOOLusqFi2mDdZaUPOYn+z9bFhCUlZs8XQvICAHwoT9PHrx5Ok6ueFwv/TQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759298073; c=relaxed/simple;
-	bh=cJC8PW2oyIXjcHd3A8Fu1En/6JYg2CFboQqw4ffKTKs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=AVVFqReJHALPWjPMN+G8Y5bAp0dgxd54zwNR3T6MkIwZlu73LF+gkQbtFh+9IjkpUR3QENKXRj63pFWdZX+cEbP4yt7LVJDnBPL8vmiSOom+ewRGztIF0yWvQZVT5ju/wyLkVditT7S/Zvu1uiMTl4UsoCbA5TbRDwQTdMvlj0U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Rd8DgxMM; arc=fail smtp.client-ip=52.101.56.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bGetsMlozuuUDhdAHdAcdRhqbKEzpb3YSN3SDeKyu2/Z6racOUJt9qBs3DNZERS2NwEosqqBZTHfSYKyXCT3jE9a8DPGDcZNIzkI6OpD9O4Sbq3GxkYCFHKK0l67mqd8nfNQW4HyKXqzYub4h6dHM1hnTpbXG5IYM2CbmsO+dkxMBzriis5ULPnLJoMbq+7KXjPcYsVPVlTeyxmqCBr14QXiqEm6xaagilnsCj2VJ2b3Ta1rWsA9qNUyEvL7zSRexDnL5J+o8rHU9RgxXD4h5Quo9eGgH97mMRB048+/rtxdzAU6Oxt+s7lTXnfVIHTURI9YDWQUiwnyt7pGJZfTxA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=m5tqe33OnkQDXfYejllPg35VfGVR1SrmkH8+NJIgTaw=;
- b=HfYweWa+XRZlUSHyGs6JIwhyUBu4u8i6zp8hea5pBMTztVRADzJMjUcNPYsRtIP2fiI54Hl6hBYJQPXVHycEv17/wlJpMtjntT+yTSYuKQfeDI1AFKozx/L+7WPBPFNnZQCpzuG9fNbttseexBaIxdQXKAhZum0heVcLU5UC5Iyc7uzfPqqroPiBvl2z3ElAcL00CkulEKG+H6H1rWDKNhhIQav1lnn8IqzNNk03QMF5gWHxVIw9HC+k5vEA93JDSP7X7KPTTIoWGhPzubA2tv+L9LbM60+E7Qq463HFAL+oE3P+GcKgIS8wlmGJntNtskcS39NXIU8biQyah5S7rQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=m5tqe33OnkQDXfYejllPg35VfGVR1SrmkH8+NJIgTaw=;
- b=Rd8DgxMMNhfjRhK79BSuf0nJAAAWjzRzIEKsgMVW09X+N5z4Qn+rACC0imSEmSKucyCOfOaJ6DOS2TR+J8jWiJlbu9F5VlS+xtXvrAIVrutpFyDxvVCZMVLXb85q7vjmyzzARXNuB9nfBobVOx3yN90Wombz0/JtvZIBPk4xZ/u0t4Pzytl5lIKFEkBwRXmvkuSbIrx4rd7XzUqvWQwT5dKm3lTW/o+mJVczrWhN5bggqp6lGaQ0gu+UZ2CxUbxmWNBrm2cNB28jPJ5yieHkvXbwgtMCBeENkBTMn6AnZp7zdegwhGUqRx6azdfIm8J7obebMdvBdlR8pEUVunG4Ew==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
- SJ2PR12MB8926.namprd12.prod.outlook.com (2603:10b6:a03:53b::5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9160.18; Wed, 1 Oct 2025 05:54:28 +0000
-Received: from DS0PR12MB7726.namprd12.prod.outlook.com
- ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
- ([fe80::953f:2f80:90c5:67fe%4]) with mapi id 15.20.9160.015; Wed, 1 Oct 2025
- 05:54:28 +0000
-Date: Wed, 1 Oct 2025 15:54:23 +1000
-From: Alistair Popple <apopple@nvidia.com>
-To: John Hubbard <jhubbard@nvidia.com>
-Cc: rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	dakr@kernel.org, acourbot@nvidia.com, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>, linux-kernel@vger.kernel.org, 
-	nouveau@lists.freedesktop.org
-Subject: Re: [PATCH v3 00/13] gpu: nova-core: Boot GSP to RISC-V active
-Message-ID: <ymocqvbgqyf54fsmeorol5thd5kuglg2mf4fdue4mp72cms5tp@a7clilzgcnnd>
-References: <20250930131648.411720-1-apopple@nvidia.com>
- <f285b6e1-775e-47da-bcd9-b9ad7e218a98@nvidia.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f285b6e1-775e-47da-bcd9-b9ad7e218a98@nvidia.com>
-X-ClientProxiedBy: SY6PR01CA0107.ausprd01.prod.outlook.com
- (2603:10c6:10:111::22) To DS0PR12MB7726.namprd12.prod.outlook.com
- (2603:10b6:8:130::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74B8827F74B;
+	Wed,  1 Oct 2025 06:00:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759298404; cv=none; b=XdB6R+01Gdx1XYmkdFPbzAnHfRV8SIcXpJ4+I5iR5HXb3fju/x9986J/fuL79dZ8w/HWBfzWmA+rHSXycZhXXMEo85t8KkZIff8tcCFBf8N2g8d6wtM0URKdZB2a18GLtQzvhwnkyWzCxFCADAYEkCVYdWzYdHnGc6kZttU2HHI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759298404; c=relaxed/simple;
+	bh=BL+aFBzA9dlLWjXJCXVuikVhV/kBThl2YlDnC4VRyxo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PUiY9C3qrGu/IC8NMLp5SxteNLp4+hE/Vf3lqjQmF5XMCAi6n+RSlVET/8BkNmvKXG61C6ebGEdrkcC0U4JrNTo/i6gp/4PcCvPSviA3v7IEK3XaFDU0EGOOlnM6ABS4nkVZwj18pCB6kC0B/wotYYk2vJXVB3kqp7vQjfNOw9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nJoNubzx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC7E2C4CEF5;
+	Wed,  1 Oct 2025 06:00:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759298404;
+	bh=BL+aFBzA9dlLWjXJCXVuikVhV/kBThl2YlDnC4VRyxo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nJoNubzxfsFRjlfmaL9Hnx11xwd97uKJuurs+fRG1FTDKyEaac+39+u/vd73SpdmL
+	 wVlmUCwqd4LB4tpS4ic173g1xVisffNBLtRfUbsO23h5hAE4txXOOxD1+I3TtmOVEq
+	 OgKe8sgYqk1XyFuKqIETnxQ9TAul3I/9bZw3/R2ywFva6K06ndhpGjBfRh8vGuaYZX
+	 QoLx++WPUTAMvQ/7k9U1rmXGCHt5tEmhcav7CcuVZA6Y9OQD4E49H/FQJJHZfBCf4v
+	 WlgnVJrBMA4rBDDTQ8M2ILo0yZ03YUkCjIIBJEbNXTUNPlajhNgmuz0bWn3bWrqgfk
+	 0umhPVtI+0nVA==
+Date: Wed, 1 Oct 2025 06:00:02 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Mukesh Rathor <mrathor@linux.microsoft.com>
+Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org, kys@microsoft.com,
+	haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+	arnd@arndb.de
+Subject: Re: [PATCH v2 4/6] x86/hyperv: Add trampoline asm code to transition
+ from hypervisor
+Message-ID: <20251001060002.GA603271@liuwe-devbox-debian-v2.local>
+References: <20250923214609.4101554-1-mrathor@linux.microsoft.com>
+ <20250923214609.4101554-5-mrathor@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|SJ2PR12MB8926:EE_
-X-MS-Office365-Filtering-Correlation-Id: ab83f0c1-6d81-4ebe-edf5-08de00aefba2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?d5LtOo9t9skV/0u72M4FP7yQLcRW2bdYn84UlGxk482KV7ujHReFDuiIDIgk?=
- =?us-ascii?Q?wQYpp9rJTAt1pnvwUfpezHNXkRW+DDV+Ypc7+iVBcyWF4rfuoLmzjJuoh7MN?=
- =?us-ascii?Q?tUToMJGpfv7/ZamIICbBGSARJhMwSl2eK9ToYddkNr+qbPHTXX0aVGbtF2rl?=
- =?us-ascii?Q?6ZzYddIz8b6aBtjpE9iigsj811s1/mN6dggPBIwrIZLadQUWIiwLgRXMYAKg?=
- =?us-ascii?Q?hNBuWL8Fp9A1xKUMugVKnCZL3lnXYt0+zK8o2e1jXN5D+BT0jJVnJMqHAKEq?=
- =?us-ascii?Q?sMaW3C++XzNriSX0ETGIZGXWmEw+TLLbeQVQLVyxq77plmgpP5dbbj7QmpiR?=
- =?us-ascii?Q?+U0CTW0tcVsO6IKFvpUHTBj91uvcLaL2zxOPaKUuS9MreWMXCz37CT8nNfyx?=
- =?us-ascii?Q?+uaNiYA+gBkag+aAfDIC0s4XFcZBRzRTFZNMxFRahdjgmAgwoeytoM+/45Yn?=
- =?us-ascii?Q?BQD9THWnjS97JCo/CNUZBbv6Qyvf6+O8OYMIdtH7UxImLd1Jcj/rp6LMIe6u?=
- =?us-ascii?Q?WCtDhvIFf6hWNkZAzUY1JBlocOKZdBfIEQQFZCZuZ3ZJsY/c03P9r5CGNbbs?=
- =?us-ascii?Q?sQoNpEu5zsWU/6zesFMVOa2V8hcCcVGEYg2ifjUFdus2rFZd/olUyzlckq0d?=
- =?us-ascii?Q?QoDlJ3IXrD2/9RpAGQHSxy29AstZwuDP7iH5jSZb0PLS/1Pi19TKOG4a/8zI?=
- =?us-ascii?Q?g+QoA+CI3yfjuRMbjPg7miRvYtu0JdroR5+Mv4S3qREhbQ5/QSUkdxcAW+oN?=
- =?us-ascii?Q?cW2ViiWpzwADvu/aJfCqYhYpoJzXN23TexjLFHMSrnSmak+od9vBriIPLyEr?=
- =?us-ascii?Q?TW51MgurourBbI63ip1QpQMNq+lJ1lq6Pgh/MZDjGsqT25mXDBwddW8QNh3J?=
- =?us-ascii?Q?g/5uJaZTbSD8rRM2Lf7Gc8OfdBJIpXWL+ut6D1RDQp2NSqLLqzcmsDIKIZcw?=
- =?us-ascii?Q?I/t3er43wvIVR4owQofA3tXHaBd+lR7Emc5nFOJiWlAM+Jq9OeH9u/tsZW3H?=
- =?us-ascii?Q?KvBuHpzCzEp0JJSybP1BYafxpDJfaBISj5fOWcqmvSTpqn29KWX+oOzwcAke?=
- =?us-ascii?Q?/OGd0PbzdNYyF+Tb+Hpg3kj0QgUIqqwE4lzt3dwImLm6U+VWIKzBGFz/Wf0p?=
- =?us-ascii?Q?oPYox40EIqJime1TH3IvhpCwiMSYylcGb1iCDVckU+OzE/Blk5ktc+EgO3JI?=
- =?us-ascii?Q?TI4DRBZ657iQ/C01twMHcuEHCd+bppPoIe8fvW0zC/hINYmU64vF42fFn71q?=
- =?us-ascii?Q?AbMb8vFvS/A+OK4D7zq6JO9S1BcuKe32zOp7iFevdHAfpFJHQyM8myRIrFUu?=
- =?us-ascii?Q?vjHwbKNXnHnEASYpco6abHG8UNb6weZwDuVhmPUXdRApQiu4jxjh2o6RZa52?=
- =?us-ascii?Q?2ojJt8yZqFbKBtbTRSh1JCF9lBENH1962mtEckZ1ffxMXygkNxAc77XpOpRk?=
- =?us-ascii?Q?PEIunXOJi8EPp8X2d/VR9AjJLdsjUqNkfbn+GB38MDY27X7ubLnomw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?2cygizmDVrLUId20MWliFnc6RykPv+FMqdd7GcmUGtAcfwkSxNAyvAAlIx5h?=
- =?us-ascii?Q?USkbmEZE91vAlFoID7hEdumkaUTaV3qiocwMrpNAWJHzoLjC6Lhof12xRjvJ?=
- =?us-ascii?Q?ZGZDGGNrt/m6eKyznSvbBinzXNryvyDcwswUSHv5bsqtD+tqcBOYFmSGc/jo?=
- =?us-ascii?Q?FqENlkK4A3Wo0ZrASjRw/YIuRQCV9yWcmA81viFEdzwfa9G06wUewoY647DE?=
- =?us-ascii?Q?qlPaXdvHL9OFLFcPjL/9iEgd1KnH8d6uzUXrbJ5Cvfa/9B0tY4VH/ugvLdlV?=
- =?us-ascii?Q?f0MCPgqb4lEpJSZQscBL/EeVByR2tITwq2m9Es1WItrlmEfslizo9HsVQSGg?=
- =?us-ascii?Q?nMZXQE6j59Vo624wOCNHeOC44beyone9IOgSNxR+mhBtS8IJ9auM/0QbHGlP?=
- =?us-ascii?Q?2MM27OOpB422EEVR8w0mUjnXUlU2NvJoQFwEDDLhyYL9rmZTSu782RxgVQD0?=
- =?us-ascii?Q?eJXkM+soNG7c+Mw+nwUDiITqmYOOSAi/bso1dOh4cpzqDgTKhbXl1E2VHYTT?=
- =?us-ascii?Q?YvpDahMFRQRNfeBuLDgUGaaXuoXm9f0i7BwBpHhQP4RPqHi6F25dfOIrqzxf?=
- =?us-ascii?Q?A/Sc0VUC5IcpuAp9pHWc5rKLGbh0KKiYSze7MWet+Vclv2QXsqUGRDYBH0ju?=
- =?us-ascii?Q?6MGJxfDXSntgd++4ElkWyIL6DUuiwJS6L6I/H4TkBiMeEyx92/9KiVydgW6n?=
- =?us-ascii?Q?ce8lZAt4c/gaqJzlMD8+dfcLLf/h4IfM/qUJlZlehQO8Sio2M40smgQz1sYX?=
- =?us-ascii?Q?3R7jMN20aoiUt1vmCon/mvSD5miKeVFD4JgELYTwJ8QRYr1jWdxBH/qj78oh?=
- =?us-ascii?Q?qPLWEb73dsH5maN0X0a36vyAmW3jcE9JCHc5G1BITa7hZinZTi96U6uQCOSn?=
- =?us-ascii?Q?gFh5N8smgP/Sh83PQubG6b7+J0EKvMlW/xmhGOmxSJ/8Riy7+4Q4IweCv0ds?=
- =?us-ascii?Q?BQ4hKvtlwTEptYy7apeFz13eRW70csWrfh0fk2ibHOeRp63IO8IGOWWclNi3?=
- =?us-ascii?Q?PA2BCi0KXuZh0KNRY4xufFIcLNBXWEO2tHbsz9J2kF2xTHOr0jpRfNVYRoVe?=
- =?us-ascii?Q?vasx8ZBSZLMDPWZf527C8WMmTcYw22Z165SiZSwsZmrN5Fq7n17QesqaAsc8?=
- =?us-ascii?Q?pjdpps/vEFoBnPvOt4hUT4skhZ2xW1TOKSHVNzhRfFGUL991i2T9lJANCjbX?=
- =?us-ascii?Q?WRs2jApO5exz89Qqj/xBfnwixf8hnfaBIz4ICzz9yUbVkUqHjWQPRLq7L8X+?=
- =?us-ascii?Q?GrGQCMJ+UjbkYMavRFiDvH5EKkdx4gICfUcgc5UqtVh3iUos+y5M6Nani4u0?=
- =?us-ascii?Q?CyCiMZp11zWFh7fz4SuXSFfhTSMwUUnL9KMZPSrtCH8vwBb9gnhgFnDZ9Kjz?=
- =?us-ascii?Q?sQcFuXubA5H3JDGfZngxSwRK/vN3F+Q4+awVwtYBKlKK9GmqaPXt0hZrMZa6?=
- =?us-ascii?Q?RTeusKyXcn3jrtTYfYd2KeL+/ldrIFq2Cyb3fCKA1x58XlzkquSzBWEiEq6t?=
- =?us-ascii?Q?cFZ6YcY8sSPz9A7kSwWEy75zKPRKPI6CsuGEvSNXhBb6IHu45SWUfaTvaWsF?=
- =?us-ascii?Q?jovcx0+IQZsCje8xHAfNHXFgrYKf7VMp3eaFVOOJ?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ab83f0c1-6d81-4ebe-edf5-08de00aefba2
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2025 05:54:28.0956
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: sfO3TG4Q++2wY07Id0/MEb8Aso39aXHt52g5GwpJe6g1CF+IhEVC8vtmLUC03EGjYjwINP4x+cea67ZaNdJDoA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8926
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250923214609.4101554-5-mrathor@linux.microsoft.com>
 
-On 2025-10-01 at 12:02 +1000, John Hubbard <jhubbard@nvidia.com> wrote...
-> On 9/30/25 6:16 AM, Alistair Popple wrote:
-> > Changes since v2:
-> > 
-> > The main change since v2 has been to make all firmware bindings
-> > completely opaque. It has been made clear this is a pre-requisite for
+On Tue, Sep 23, 2025 at 02:46:07PM -0700, Mukesh Rathor wrote:
+> Introduce a small asm stub to transition from the hypervisor to Linux
+> after devirtualization. Devirtualization means disabling hypervisor on
+> the fly, so after it is done, the code is running on physical processor
+> instead of virtual, and hypervisor is gone. This can be done by a
+> root/dom0 vm only.
+
+I want to scrub "dom0" from comments and commit messages. We drew
+parallels to Xen when we first wrote this code, but it's not a useful
+term externally. "root" or "root partition" should be sufficient.
+
 > 
-> Any hints about where to see this aspect would be welcome. 
-
-The changes to fw.rs in patch 5 for example.
-
-> ...
+> At a high level, during panic of either the hypervisor or the dom0 (aka
+> root), the NMI handler asks hypervisor to devirtualize. As part of that,
+> the arguments include an entry point to return back to Linux. This asm
+> stub implements that entry point.
 > 
-> > A full tree including the prerequisites for this patch series is available
-> > at https://github.com/apopple-nvidia/linux/tree/nova-core-for-upstream.
-> > 
-> > [1] - https://lore.kernel.org/rust-for-linux/20250911-nova_firmware-v5-0-5a8a33bddca1@nvidia.com/
-> > [2] - https://github.com/apopple-nvidia/linux/tree/nova-core-for-upstream-v2
+> The stub is entered in protected mode, uses temporary gdt and page table
+> to enable long mode and get to kernel entry point which then restores full
+> kernel context to resume execution to kexec.
 > 
-> Could you maybe push up a nova-core-for-upstream-v3 branch please?
+> Signed-off-by: Mukesh Rathor <mrathor@linux.microsoft.com>
+> ---
+>  arch/x86/hyperv/hv_trampoline.S | 101 ++++++++++++++++++++++++++++++++
+>  1 file changed, 101 insertions(+)
+>  create mode 100644 arch/x86/hyperv/hv_trampoline.S
+> 
+> diff --git a/arch/x86/hyperv/hv_trampoline.S b/arch/x86/hyperv/hv_trampoline.S
+> new file mode 100644
+> index 000000000000..25f02ff12286
+> --- /dev/null
+> +++ b/arch/x86/hyperv/hv_trampoline.S
+> @@ -0,0 +1,101 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * X86 specific Hyper-V kdump/crash related code.
+> + *
+> + * Copyright (C) 2025, Microsoft, Inc.
+> + *
+> + */
+> +#include <linux/linkage.h>
+> +#include <asm/alternative.h>
+> +#include <asm/msr.h>
+> +#include <asm/processor-flags.h>
+> +#include <asm/nospec-branch.h>
+> +
+> +/*
+> + * void noreturn hv_crash_asm32(arg1)
+> + *    arg1 == edi == 32bit PA of struct hv_crash_tramp_data
+> + *
+> + * The hypervisor jumps here upon devirtualization in protected mode. This
+> + * code gets copied to a page in the low 4G ie, 32bit space so it can run
+> + * in the protected mode. Hence we cannot use any compile/link time offsets or
+> + * addresses. It restores long mode via temporary gdt and page tables and
+> + * eventually jumps to kernel code entry at HV_CRASHDATA_OFFS_C_entry.
+> + *
+> + * PreCondition (ie, Hypervisor call back ABI):
+> + *  o CR0 is set to 0x0021: PE(prot mode) and NE are set, paging is disabled
+> + *  o CR4 is set to 0x0
+> + *  o IA32_EFER is set to 0x901 (SCE and NXE are set)
+> + *  o EDI is set to the Arg passed to HVCALL_DISABLE_HYP_EX.
+> + *  o CS, DS, ES, FS, GS are all initialized with a base of 0 and limit 0xFFFF
+> + *  o IDTR, TR and GDTR are initialized with a base of 0 and limit of 0xFFFF
+> + *  o LDTR is initialized as invalid (limit of 0)
+> + *  o MSR PAT is power on default.
+> + *  o Other state/registers are cleared. All TLBs flushed.
+> + */
+> +
+> +#define HV_CRASHDATA_OFFS_TRAMPCR3    0x0    /*  0 */
+> +#define HV_CRASHDATA_OFFS_KERNCR3     0x8    /*  8 */
+> +#define HV_CRASHDATA_OFFS_GDTRLIMIT  0x12    /* 18 */
+> +#define HV_CRASHDATA_OFFS_CS_JMPTGT  0x28    /* 40 */
+> +#define HV_CRASHDATA_OFFS_C_entry    0x30    /* 48 */
+> +
+> +	.text
+> +	.code32
+> +
 
-Done.
- 
-> thanks,
+I recently learned that instrumentation may be problematic for context
+switching code. I have not studied this code and noinstr usage in tree
+extensively so cannot make a judgement here.
+
+It is worth checking out the recent discussion on the VTL transition
+code.
+
+https://lore.kernel.org/linux-hyperv/27e50bb7-7f0e-48fb-bdbc-6c6d606e7113@redhat.com/
+
+And check out the in-tree document Documentation/core-api/entry.rst.
+
+Wei
+
+> +SYM_CODE_START(hv_crash_asm32)
+> +	UNWIND_HINT_UNDEFINED
+> +	ENDBR
+> +	movl	$X86_CR4_PAE, %ecx
+> +	movl	%ecx, %cr4
+> +
+> +	movl %edi, %ebx
+> +	add $HV_CRASHDATA_OFFS_TRAMPCR3, %ebx
+> +	movl %cs:(%ebx), %eax
+> +	movl %eax, %cr3
+> +
+> +	/* Setup EFER for long mode now */
+> +	movl	$MSR_EFER, %ecx
+> +	rdmsr
+> +	btsl	$_EFER_LME, %eax
+> +	wrmsr
+> +
+> +	/* Turn paging on using the temp 32bit trampoline page table */
+> +	movl %cr0, %eax
+> +	orl $(X86_CR0_PG), %eax
+> +	movl %eax, %cr0
+> +
+> +	/* since kernel cr3 could be above 4G, we need to be in the long mode
+> +	 * before we can load 64bits of the kernel cr3. We use a temp gdt for
+> +	 * that with CS.L=1 and CS.D=0 */
+> +	mov %edi, %eax
+> +	add $HV_CRASHDATA_OFFS_GDTRLIMIT, %eax
+> +	lgdtl %cs:(%eax)
+> +
+> +	/* not done yet, restore CS now to switch to CS.L=1 */
+> +	mov %edi, %eax
+> +	add $HV_CRASHDATA_OFFS_CS_JMPTGT, %eax
+> +	ljmp %cs:*(%eax)
+> +SYM_CODE_END(hv_crash_asm32)
+> +
+> +	/* we now run in full 64bit IA32-e long mode, CS.L=1 and CS.D=0 */
+> +	.code64
+> +	.balign 8
+> +SYM_CODE_START(hv_crash_asm64)
+> +	UNWIND_HINT_UNDEFINED
+> +	ENDBR
+> +	/* restore kernel page tables so we can jump to kernel code */
+> +	mov %edi, %eax
+> +	add $HV_CRASHDATA_OFFS_KERNCR3, %eax
+> +	movq %cs:(%eax), %rbx
+> +	movq %rbx, %cr3
+> +
+> +	mov %edi, %eax
+> +	add $HV_CRASHDATA_OFFS_C_entry, %eax
+> +	movq %cs:(%eax), %rbx
+> +	ANNOTATE_RETPOLINE_SAFE
+> +	jmp *%rbx
+> +
+> +	int $3
+> +
+> +SYM_INNER_LABEL(hv_crash_asm_end, SYM_L_GLOBAL)
+> +SYM_CODE_END(hv_crash_asm64)
 > -- 
-> John Hubbard
+> 2.36.1.vfs.0.0
+> 
 > 
 
