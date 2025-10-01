@@ -1,126 +1,186 @@
-Return-Path: <linux-kernel+bounces-838660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13861BAFDA0
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 11:28:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44CDCBAFDCA
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 11:29:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 916F31C2D15
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 09:28:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A529E1897155
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 09:30:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 331922D9EC8;
-	Wed,  1 Oct 2025 09:28:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BF0D1865FA;
+	Wed,  1 Oct 2025 09:29:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SZk4BoDg"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XBwxTJ2D"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A8B12989B5
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 09:28:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E534A2D94B6
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 09:29:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759310919; cv=none; b=HIGV/Y++J1vKxAT3sjrX0o3M6XYHIn6OaPgU2KYcIcomLen5xVORty6atg6XFl8ZaQQCBK9Qp3x1MBKiNS1N/Zo1pjN5uME7SqfGnVHhmih+ZpmNlJzP/IYWC85NN3lnjkZad3iXljFot3XU1VximXtfakBGqLMuOIJwryBY0lg=
+	t=1759310974; cv=none; b=JWe3l/tQY5dDbluj117HVDxD5K/b/aiXTumTI6Lq+9xF1Dg1mts1Cv/w48oxYkgcFDAHd4LJlEmH/sX7YSCE6xe5jR6NYMUkPJAHW808Wiex8WHP/Y0v4KyOBEhBLB20mz8hADqvMxL3jRsk22gUl3weCGX0Vd2kVF3GplbzTqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759310919; c=relaxed/simple;
-	bh=eWhaWIh1Ch5W+HrhvE/7nWxIJ4BqD2s5kUI/3gBmyEA=;
+	s=arc-20240116; t=1759310974; c=relaxed/simple;
+	bh=5JM1eelR1r2YpA1IVQMHYwf6ukkmJ2S/ulu6sMz9+kE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TAhlMFLVcD6m6Q57xma2OiPwieagDJl4dSwg42wuoeW/Ikv+Rg2gNv1YEKd7eDbIfN4dqBOtF7NY2i+VTvna/77vdjaih0TmbEEKXEFbspYRWKH9pFa+m0YJMEmaiVO2Ul3X04RWzD5edP91ckZMu1hfGlJFhQrvcDqQGR5O6M4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SZk4BoDg; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-46e504975dbso26381825e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 02:28:37 -0700 (PDT)
+	 To:Cc:Content-Type; b=QAcDbBcPb88WNd/2aHZxlgzzQwJLLHj004qLu2Gxw8lbBoNfOX34YFPQmdZvvKnCOyyijyQ3Kkz0Uos+q+Wd+6gkTNtMPqkLkRzvsOOy2gTYVEN6EGNRsdQvFXfD68ECjj20D8g/jx+22rpvIEB8VN9DkDTb3wAsj1yNxE7XgSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XBwxTJ2D; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-46e34bd8eb2so25545655e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 02:29:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759310916; x=1759915716; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1759310971; x=1759915771; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=eWhaWIh1Ch5W+HrhvE/7nWxIJ4BqD2s5kUI/3gBmyEA=;
-        b=SZk4BoDgsFAf5kMvr7CbXBjcwCX04Gigy/5uI9mf3QxITYphuXHHOPFGqSL+otUVU0
-         2S+ooXPjysDGDq5LyrNPJHYnCXbCx6H/PQoEKlPmttcSprij44r05SUx7xUq7wQ2zxYw
-         nfFKg2EPAo2A2HpO0LMagnc18VPUsVaw9ualx5ys9clXOxrxYzqV/vNwKXVXf9+la+tC
-         nqJ54pGhDvCFFMcNYqLV1bA1Es7uY6AOJ910q57gfDxP3FhMZrQHPHl1RhY2WEHlXP9T
-         aEuYrwYCfYP16Y7s1ETYGvYUfW0Sa3RHGsEsE1dAcO9uF+AXd/FQtKom+Xfidit8qAOy
-         v7sw==
+        bh=2WKLYLKrfpejFEaruF+EeGPfFEMHs6sMpTeLbEZAdC4=;
+        b=XBwxTJ2DyV0Kosmp8OHdzud2o21b+t9tzV/GtjnPpDOFR5BT7wgwQgNiLg2SLRFc4Y
+         z7v+baNWxPGnoRzN5HPqvvUpuW+u/t7kJyMrOYA7HQsZOd2JVBdSEC+9Ci8IbJJTCAlB
+         WMo3ojY+mZnnZJ1scBbpbjxaqXrrBXthBICtYBE/lYo4qClOmuAOPfZA/WzxDS1ZqXIA
+         XV/QncKK3ftGlQmvtbqN/vZ2AMQfX7cFtHvGPe7z0+fZ5sawlJr0K2R6ASjR2DAPZHbT
+         NdK3Y9FhZYdKFuPHbAYSwfgYsJIXi2uvjCCdcwnvGzX1wrzqqxLhBEdOer64PgDN4jpH
+         tPbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759310916; x=1759915716;
+        d=1e100.net; s=20230601; t=1759310971; x=1759915771;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=eWhaWIh1Ch5W+HrhvE/7nWxIJ4BqD2s5kUI/3gBmyEA=;
-        b=WkuxuOe9RtEpimlRHw0dj9TsryUkNEelcLG1O1YWVzCj2YDZ5WMicOVNYt4/sUrzBO
-         IwbzkdzBk8D8dK/21efnOgiqWzev/01L4dwyO5rYl5m8HDNYvpXHsY4zcyNSmySWTgg+
-         YWzCez1M8p4m1N1nYf/7JnKfsdmns2yvJ0nzhySeATxvvs5rXNTUuSWQ89VGR25KMGG6
-         3vuqYuwkKLcrCBfvWPg0yxVo5cH8dFHFy+sv8ag19ZRzU3571UcwVzdRKXFfmgZBbHLW
-         deFJbqMzjQ1YNk2mPek3cJY8/neA5ptD6Dus6YPeUsqUb+fGGleVXxS9NE/kTW/ZyVoU
-         wlzw==
-X-Forwarded-Encrypted: i=1; AJvYcCVyAB4r/qUDT7QxjfWysjGcnfM4O8AsyPT98YUXxAcHHfMLT5T/DnFoIt8eFhUIHv0pvAugHNh56kNHLYA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYWib7P/8pKT4x5hCEW4/CL8tFavUol1VjaekRg90rxCCBTcf3
-	u/yoR8AmYmK6ONOzWkv4f2LslGxg0EO8npIxOTR3qnAI/vPvmBUynAtgblV/7ix9jnwFj2tPpI4
-	U/zmsB7UaS5eYyETrSc/uvjLfW0QhwE0SQosYlhyQ
-X-Gm-Gg: ASbGncspnHpXDLkC8H9aIK1ws7I+/xWIRuHC3/KES9Ywgz3lIFUWwj/IsiPdnRsqWHq
-	ufUZb1XLWh6WoPc/DDC0Y6Xgnj0Z7kuvZXekymY6FLPf09m8Qx23+cCYj8fLZyu02/emrgwyUPR
-	mW9G4MKQEb3+OgfQ1K/32jz0bf3c0RhD2Jj2dEnajFuqYA3IYeWpZouZ7Ao81W1eYIup2pMoWoz
-	dT+xnI2nnWwhoucec2UuI8MLn8HQEBCdwARE1pVXygx+/rfDLxX+GbAoq9GIG/qnqwgtkCoNtpq
-	EKs=
-X-Google-Smtp-Source: AGHT+IFcom3ihUiZsvQc7Ctd6T7AFUDP+BI45kum3YBKQg7Ja8eF4g1jmM9Rz4a7lPBApkzRM7m3vX/ZWyyP9taYRzo=
-X-Received: by 2002:a05:600c:1d12:b0:46e:3d41:5fe7 with SMTP id
- 5b1f17b1804b1-46e612dcff2mr22205905e9.29.1759310915370; Wed, 01 Oct 2025
- 02:28:35 -0700 (PDT)
+        bh=2WKLYLKrfpejFEaruF+EeGPfFEMHs6sMpTeLbEZAdC4=;
+        b=Hc5qmWhyAHOEc8w8ERbLxJ42mNWUlEq3AZuFM4XXDcjlbb1AqXtIaouGl7KWdqSm5D
+         U0g+boNgZ9jkEcm0VE92z5KaiH4BMl/cRCc4qNm+v+sAcEwBb47k3F8vqgt7SeZoYAwI
+         BfURzFndS1aH/m8XrOF+iNJOZeY8DY3MF4ePzgtkmTfWDJ6G9ffRi8rRec24Jy3YEKg7
+         j4U9yWFkqRP76BnfQEJVaFNIV86Uekn6hyLC+/gfyOnUEoASLsEfMNqy2zj6/Wbbqe0Z
+         HXB+egzjTYT2LjGelH7cAsA8CMUzE3V68VVdUubXtsKkx7Ehi7rgNWelhyafUiryqGfi
+         CacQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUi4WNRnTH/bSS/z0kV0idAgoBmh9MO0Twd2l1GneJDRaRI7TweVsLGO6Y5zanAmA2DwwS/1JueriPinJE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxs/6+zoTlW5vZCL+IEGt82TQMakSEs5CL98baJ0gqNd12XxLoA
+	7LRrjKGLovGHoAzWLBEj59ZWsKTpDlDOrSbsKTjAEgCxqG2gprVt2z3uWbXj3KNpkahcN53mLYu
+	g2oBV/Uu8e444pPQPMullUWDBjviSW9E=
+X-Gm-Gg: ASbGncvpAxluMNoNRoZnkxwI8/FB+YJlB0sILPnXnlg7rXy9g3oa/9FrJoho+09nWB1
+	Lusto9MdNs16ourOxFsR07p5Cwm86FLIK6LwYBEeeqIk9r/k5xRKViGFfhmr0yl0HXm9CveXoPY
+	IFu46x5N6ZNrfPAUP/Shx3dtECz80rchIp3laUs7Vgl3aZZDxAnieBccBQ6C9uujwwoljnrHegt
+	Mg4P3ETdE5MqwdULLjDxekeyvHTbOHi
+X-Google-Smtp-Source: AGHT+IFHnGmRHmJr+YpPGsnnoZoqfJyt9jk/+n5kLjP1CHOy6XhDxWRnAYIfrfCsIi4lEcHTSz6IGQr7yPIPxN5B9f4=
+X-Received: by 2002:a05:600c:1f96:b0:46e:27f7:80ce with SMTP id
+ 5b1f17b1804b1-46e612be465mr23677905e9.23.1759310970863; Wed, 01 Oct 2025
+ 02:29:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250925-core-cstr-cstrings-v2-0-78e0aaace1cd@gmail.com> <20250925-core-cstr-cstrings-v2-18-78e0aaace1cd@gmail.com>
-In-Reply-To: <20250925-core-cstr-cstrings-v2-18-78e0aaace1cd@gmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Wed, 1 Oct 2025 11:28:23 +0200
-X-Gm-Features: AS18NWC0UIhXtF3ngdaaXlg7HajAeA8SvMGIxlOaATZh6gKK8pvCVQpA1AHU2RE
-Message-ID: <CAH5fLgh84SZznuv_BHMxSe4riF=YZekCp1Kx6KmiipzTOHmRsw@mail.gmail.com>
-Subject: Re: [PATCH v2 18/19] rust: io: replace `kernel::c_str!` with C-Strings
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+References: <20250903161718.180488-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250903161718.180488-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdUacF5UfiLTXuWOXAZZvEJ-St5+awkWML_HDp9b38=sXw@mail.gmail.com>
+In-Reply-To: <CAMuHMdUacF5UfiLTXuWOXAZZvEJ-St5+awkWML_HDp9b38=sXw@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Wed, 1 Oct 2025 10:29:03 +0100
+X-Gm-Features: AS18NWBlqD2UHra31fOQuHsSKmsMOeniTxCTqefAG_2I-HhVlcZOHoipA4udDNA
+Message-ID: <CA+V-a8sr3aMAnf5-RihtCSBFj6f-FYMoM6+NHWrE5A6FVc-zjQ@mail.gmail.com>
+Subject: Re: [PATCH v8 2/6] clk: renesas: rzv2h-cpg: Add support for DSI clocks
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, 
 	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
 	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	FUJITA Tomonori <fujita.tomonori@gmail.com>, Andrew Lunn <andrew@lunn.ch>, 
-	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
 	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Breno Leitao <leitao@debian.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Russ Weight <russ.weight@linux.dev>, 
-	Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
-	Leon Romanovsky <leon@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Brendan Higgins <brendan.higgins@linux.dev>, 
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, Jens Axboe <axboe@kernel.dk>, 
-	Alexandre Courbot <acourbot@nvidia.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, nouveau@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, netdev@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
-	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
+	Biju Das <biju.das.jz@bp.renesas.com>, Magnus Damm <magnus.damm@gmail.com>, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 25, 2025 at 3:56=E2=80=AFPM Tamir Duberstein <tamird@gmail.com>=
- wrote:
->
-> C-String literals were added in Rust 1.77. Replace instances of
-> `kernel::c_str!` with C-String literals where possible.
->
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+Hi Geert,
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+Thank you for the review.
+
+On Wed, Sep 24, 2025 at 2:05=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Wed, 3 Sept 2025 at 18:17, Prabhakar <prabhakar.csengg@gmail.com> wrot=
+e:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Add support for PLLDSI and PLLDSI divider clocks.
+> >
+> > Introduce the `renesas-rzv2h-cpg-pll.h` header to centralize and share
+> > PLLDSI related data structures, limits, and algorithms between the
+> > RZ/V2H(P) CPG and DSI drivers.
+> >
+> > The DSI PLL is functionally similar to the CPG's PLLDSI, but has slight=
+ly
+> > different parameter limits and omits the programmable divider present i=
+n
+> > CPG. To ensure precise frequency calculations, especially for milliHz-l=
+evel
+> > accuracy needed by the DSI driver, the shared algorithm allows both dri=
+vers
+> > to compute PLL parameters consistently using the same logic and input
+> > clock.
+> >
+> > Co-developed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> > --- a/drivers/clk/renesas/rzv2h-cpg.c
+> > +++ b/drivers/clk/renesas/rzv2h-cpg.c
+>
+> > +static int rzv2h_cpg_plldsi_div_determine_rate(struct clk_hw *hw,
+> > +                                              struct clk_rate_request =
+*req)
+> > +{
+> > +       struct rzv2h_plldsi_div_clk *dsi_div =3D to_plldsi_div_clk(hw);
+> > +       struct pll_clk *pll_clk =3D to_pll(clk_hw_get_parent(hw));
+> > +       struct rzv2h_cpg_priv *priv =3D dsi_div->priv;
+> > +       struct rzv2h_pll_div_pars *dsi_params;
+> > +       struct rzv2h_pll_dsi_info *dsi_info;
+> > +       u64 rate_millihz;
+> > +
+> > +       dsi_info =3D &priv->pll_dsi_info[pll_clk->pll.instance];
+> > +       dsi_params =3D &dsi_info->pll_dsi_parameters;
+> > +
+> > +       rate_millihz =3D mul_u32_u32(req->rate, MILLI);
+> > +       if (rate_millihz =3D=3D dsi_params->div.error_millihz + dsi_par=
+ams->div.freq_millihz)
+> > +               goto exit_determine_rate;
+> > +
+> > +       if (!rzv2h_get_pll_dtable_pars(dsi_info->pll_dsi_limits, dsi_pa=
+rams, dsi_div->dtable,
+> > +                                      rate_millihz)) {
+> > +               dev_err(priv->dev,
+> > +                       "failed to determine rate for req->rate: %lu\n"=
+,
+> > +                       req->rate);
+> > +               return -EINVAL;
+> > +       }
+> > +
+> > +exit_determine_rate:
+> > +       req->rate =3D DIV_ROUND_CLOSEST_ULL(dsi_params->div.freq_millih=
+z, MILLI);
+> > +       req->best_parent_rate =3D req->rate * dsi_params->div.divider_v=
+alue;
+> > +       dsi_info->req_pll_dsi_rate =3D req->best_parent_rate;
+> > +
+> > +       return 0;
+> > +};
+>
+> Unneeded semicolon (there are three more below).
+I will fix that.
+
+Cheers,
+Prabhakar
 
