@@ -1,132 +1,111 @@
-Return-Path: <linux-kernel+bounces-838840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F396EBB0417
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 13:56:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC1E7BB041D
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 13:57:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 576481C6187
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 11:56:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F6822A3D96
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 11:57:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 899632E6CC0;
-	Wed,  1 Oct 2025 11:56:05 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775C22E6CB5
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 11:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD54E2E7BC9;
+	Wed,  1 Oct 2025 11:57:28 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8299B274FDB;
+	Wed,  1 Oct 2025 11:57:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759319765; cv=none; b=eX8GE7lU0Uujg26EHHOKNDjKvYhMJqexutaNi6UY+otprETdopXBP1a6wsv7zsljFg589xPPiEVgVShG9JQZwfSUYMkrBRSYrKjk96zzqhdfv7cEAJPcXv+UuS82lHS8o41AcNqXdazkQpYYzY5LuxpOo0tAOMcLtEQYq3NpzRc=
+	t=1759319848; cv=none; b=MZ07TgK2VB3ZcljetljKz6dCQgWDVTeoZnaVuHJW6hW01+r7TG7YCaBQHHeyT6YeGMRyoxfYEy06U2bErIBZCDKGN8ur1XafiEuQeskmEL6U+o8ZhClwiAnf2YLcbyOfRtd8ooYhsLI5F8Oxu3zHJBnV+NbwXhcYCJM6nIJzCmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759319765; c=relaxed/simple;
-	bh=hQpF1Iqn3WI6D3mtWlGaWw4TQCpOGsrjtU/m50nTA1k=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=FpxtLHzEjevKxbTwubOB4RBOfZquJ3gG4v0TMq/8p+kdHOp0Nfcbz4NznQl7p3izVnIbHSoYgaK2gSXj/MuzC2BWg7oAG1L2SJY5xzFPFRu4XREIPWezYtG3L1O0OCp50CSJavGzrcTerNdaTEmV8oT5Yy+sICZqwqaVnD4q39o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-426d38c1e8fso65484065ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 04:56:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759319762; x=1759924562;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nCLzBHJe2tcPS2MXQSPvQiBSPpx7UXQuJ6D7zzszeUM=;
-        b=mWYICxwidMmWlQotAv3t7DgKLftUOgEvcghoiQsOoEzLCpHXG+GePaymla1+KBM7n7
-         crBIbZppct5/F/2g6f6nDWysjHHHKDwS5ZL/I/1CFu4V0vFhmOUJjqg0CZzkrm45yV39
-         THR8pZYr7FMryLPJdaFOtJdRlx31fhljnfMRnBZ3Bgk5Y8YIRwkiQUvttYKn0ncjnzoB
-         rP3daNRBcz2ZNW92+j2h1dtKA8C5bRoc1sIVy8Dm8JxiOgPR8qXFCMrVQhpkGkWCTAI5
-         5Upg1HfIuiryVxRJ0448EqF+GyyA15WmdO7irxPzvMuN7iA3A6P/0B6iKVRk1aTZrSjT
-         4+yg==
-X-Forwarded-Encrypted: i=1; AJvYcCVYj/ehaKz7uWGfMTTitKr7Cr/3r9i0MfFctYTc+hKeAuAmyD9Kaa5C81JTI97sDnGkDybxg24Y653LG9Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCuheZgzax978RQFoeZ5bC16vP6KIy/g1MHjYS5Ptiaf6MX1UM
-	AOoRtmOB+m1p3+hwkXLcyp4aG/pd4qr0h4xpgR8IqwLOmu7rpeoptgvrWmyaw3+b9/RVPVICR3t
-	rA2RnO+FCb9JXBH4I+EDyo11kgC816w3hU4R5ntpM/+e3F8eN3znIO2L+JrA=
-X-Google-Smtp-Source: AGHT+IFveMTsVpkAlSbv6DKc3s1n83Wb3r0QG0NA3r5uVlqM5OyOQhqs6Y+xrWV8wyAVkAZPkzN+u2F6ZBWn3rz/r3RQJrBavM6W
+	s=arc-20240116; t=1759319848; c=relaxed/simple;
+	bh=BF5vlaRfBBcfg/QLrCOwGmvV/0Gv2eCviQVuNLH0MU8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XvInywDM9YdYBWyJ6MPNdXeCI1UIp1sjpWvhQHRWr0n4Dq/Dv38dGC/0H+dPilD9lhQGgw1BJ7rFwyoEyqHvHD25MtvUp0IN8GgBandc1ZFQ5TJ0Rs7L53bbaPYnTySgQ+AATtu3xEM8yHF1iIIj1pIM/4Pj2fnODhfgyN3pUs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AEE3516F2;
+	Wed,  1 Oct 2025 04:57:17 -0700 (PDT)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8CC993F66E;
+	Wed,  1 Oct 2025 04:57:24 -0700 (PDT)
+Date: Wed, 1 Oct 2025 12:57:21 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Adam Young <admiyo@amperemail.onmicrosoft.com>
+Cc: Jassi Brar <jassisinghbrar@gmail.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Adam Young <admiyo@os.amperecomputing.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] Revert "mailbox/pcc: support mailbox management of the
+ shared buffer"
+Message-ID: <20251001-masterful-benevolent-dolphin-a3fbea@sudeepholla>
+References: <20250926153311.2202648-1-sudeep.holla@arm.com>
+ <2ef6360e-834f-474d-ac4d-540b8f0c0f79@amperemail.onmicrosoft.com>
+ <CABb+yY2Uap0ePDmsy7x14mBJO9BnTcCKZ7EXFPdwigt5SO1LwQ@mail.gmail.com>
+ <0f48a2b3-50c4-4f67-a8f6-853ad545bb00@amperemail.onmicrosoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:180b:b0:42d:89e7:7f94 with SMTP id
- e9e14a558f8ab-42d89e780demr2643605ab.28.1759319762634; Wed, 01 Oct 2025
- 04:56:02 -0700 (PDT)
-Date: Wed, 01 Oct 2025 04:56:02 -0700
-In-Reply-To: <20251001113745.7851-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68dd16d2.050a0220.25d7ab.0775.GAE@google.com>
-Subject: Re: [syzbot] [fs?] WARNING in free_mnt_ns
-From: syzbot <syzbot+7d23dc5cd4fa132fb9f3@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0f48a2b3-50c4-4f67-a8f6-853ad545bb00@amperemail.onmicrosoft.com>
 
-Hello,
+On Wed, Oct 01, 2025 at 01:25:42AM -0400, Adam Young wrote:
+> 
+> On 9/29/25 20:19, Jassi Brar wrote:
+> > On Mon, Sep 29, 2025 at 12:11 PM Adam Young
+> > <admiyo@amperemail.onmicrosoft.com> wrote:
+> > > I posted a patch that addresses a few of these issues.  Here is a top
+> > > level description of the isse
+> > > 
+> > > 
+> > > The correct way to use the mailbox API would be to allocate a buffer for
+> > > the message,write the message to that buffer, and pass it in to
+> > > mbox_send_message.  The abstraction is designed to then provide
+> > > sequential access to the shared resource in order to send the messages
+> > > in order.  The existing PCC Mailbox implementation violated this
+> > > abstraction.  It requires each individual driver re-implement all of the
+> > > sequential ordering to access the shared buffer.
+> > > 
+> > > Why? Because they are all type 2 drivers, and the shared buffer is
+> > > 64bits in length:  32bits for signature, 16 bits for command, 16 bits
+> > > for status.  It would be execessive to kmalloc a buffer of this size.
+> > > 
+> > > This shows the shortcoming of the mailbox API.  The mailbox API assumes
+> > > that there is a large enough buffer passed in to only provide a void *
+> > > pointer to the message.  Since the value is small enough to fit into a
+> > > single register, it the mailbox abstraction could provide an
+> > > implementation that stored a union of a void * and word.
+> > > 
+> > Mailbox api does not make assumptions about the format of message
+> > hence it simply asks for void*.
+> > Probably I don't understand your requirement, but why can't you pass the pointer
+> > to the 'word' you want to use otherwise?
+> > 
+> > -jassi
+> The mbox_send_message call will then take the pointer value that you give it
+> and put it in a ring buffer.  The function then returns, and the value may
+> be popped off the stack before the message is actually sent.  In practice we
+> don't see this because much of the code that calls it is blocking code, so
+> the value stays on the stack until it is read.  Or, in the case of the PCC
+> mailbox, the value is never read or used.  But, as the API is designed, the
+> memory passed into to the function should expect to live longer than the
+> function call, and should not be allocated on the stack.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in __ns_common_free
+I’m still not clear on what exactly you are looking for. Let’s look at
+mbox_send_message(). It adds the provided data pointer to the queue, and then
+passes the same pointer to tx_prepare() just before calling send_data(). This
+is what I’ve been pointing out that you can obtain the buffer pointer there and
+use it to update the shared memory in the client driver.
 
-------------[ cut here ]------------
-ida_free called for id=986 which is not allocated.
-WARNING: CPU: 0 PID: 6550 at lib/idr.c:592 ida_free+0x1f9/0x2e0 lib/idr.c:592
-Modules linked in:
-CPU: 0 UID: 0 PID: 6550 Comm: syz.1.18 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
-RIP: 0010:ida_free+0x1f9/0x2e0 lib/idr.c:592
-Code: 77 f6 41 83 fe 3e 76 72 e8 d4 eb 77 f6 48 8b 7c 24 28 4c 89 ee e8 07 39 0d 00 90 48 c7 c7 e0 cf cf 8c 89 ee e8 a8 c5 36 f6 90 <0f> 0b 90 90 e8 ae eb 77 f6 48 b8 00 00 00 00 00 fc ff df 48 01 c3
-RSP: 0018:ffffc90003f0f990 EFLAGS: 00010282
-RAX: 0000000000000000 RBX: 1ffff920007e1f33 RCX: ffffffff81796528
-RDX: ffff8880272cdac0 RSI: ffffffff81796535 RDI: 0000000000000001
-RBP: 00000000000003da R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000001 R12: ffff88801e6db000
-R13: 0000000000000293 R14: 00000000000003da R15: ffff88801e6db078
-FS:  0000000000000000(0000) GS:ffff888124e79000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f2984627286 CR3: 000000007e5e2000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- __ns_common_free+0x7d/0xa0 kernel/nscommon.c:80
- free_mnt_ns fs/namespace.c:4096 [inline]
- namespace_unlock+0x7f9/0xa30 fs/namespace.c:1701
- put_mnt_ns fs/namespace.c:6135 [inline]
- put_mnt_ns+0xf5/0x120 fs/namespace.c:6126
- free_nsproxy+0x3a/0x400 kernel/nsproxy.c:188
- put_nsproxy include/linux/nsproxy.h:107 [inline]
- switch_task_namespaces+0xeb/0x100 kernel/nsproxy.c:241
- do_exit+0x86a/0x2bf0 kernel/exit.c:960
- do_group_exit+0xd3/0x2a0 kernel/exit.c:1102
- get_signal+0x2671/0x26d0 kernel/signal.c:3034
- arch_do_signal_or_restart+0x8f/0x790 arch/x86/kernel/signal.c:337
- exit_to_user_mode_loop+0x7a/0x100 kernel/entry/common.c:40
- exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
- syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
- syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
- do_syscall_64+0x419/0x4b0 arch/x86/entry/syscall_64.c:100
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fc7c378eec9
-Code: Unable to access opcode bytes at 0x7fc7c378ee9f.
-RSP: 002b:00007fc7c461c038 EFLAGS: 00000246 ORIG_RAX: 0000000000000110
-RAX: fffffffffffffff4 RBX: 00007fc7c39e5fa0 RCX: 00007fc7c378eec9
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000020000
-RBP: 00007fc7c3811f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007fc7c39e6038 R14: 00007fc7c39e5fa0 R15: 00007ffe2b65def8
- </TASK>
-
-
-Tested on:
-
-commit:         50c19e20 Merge tag 'nolibc-20250928-for-6.18-1' of git..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11d95d04580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b28601618dc289ee
-dashboard link: https://syzkaller.appspot.com/bug?extid=7d23dc5cd4fa132fb9f3
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1292e942580000
-
+-- 
+Regards,
+Sudeep
 
