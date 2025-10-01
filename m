@@ -1,152 +1,133 @@
-Return-Path: <linux-kernel+bounces-839305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D233ABB14E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 18:55:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3A2FBB14F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 18:58:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69EF9194583F
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 16:56:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3FA64A3BBA
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 16:58:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBBBF2D1F4E;
-	Wed,  1 Oct 2025 16:55:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60DE52D062A;
+	Wed,  1 Oct 2025 16:58:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="D+Ixwi7j"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="SmoPHkHx"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D07292C11D1
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 16:55:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B263928137D;
+	Wed,  1 Oct 2025 16:58:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759337740; cv=none; b=UwbvoI/9ku6UG/YTJ5vn6aql6Kf5ZqZMj9DV6tujRkDiEr1Vkx/j57uyRxkteIAkXH0IYk0dVtLDU7f+7VnBQgq8iQgpSkOwIvXYCW3Vz9+AYW3w3tcKZgwDxW/Dow8WhszZHmMUWHaAgWxEiH7/Z4V8rlq8gei2LMDe6d+a1UI=
+	t=1759337919; cv=none; b=MiPyb9R97n9mvi3DgHjqcFT0yM03yTUDawj2yucHNHb2jV3OvfXn8iXyyuJ80GDgYH94bNRwkR8lUJBmTDcKn0W3VnGDqe3vSD9hpYvBapseAts6DQ6RlB09yaESCXnih19VN4Qrnw81DHKzpJmvG4BY9/dqfB3ujH3Un1jm4Io=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759337740; c=relaxed/simple;
-	bh=Nw4Avdnnjq56W3DhoQg3b0JPdrX5PkzeIu2m81xC9L8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ocmd6sdsBAHsumcN45JvYJz5zbKBuEEwdMzD3gEoZpgkqjRhsPAGPpUZ/A0sTjGKjaiq9K7NQ7NlKHcKXpGKNRzvEHxbnKDoVdtoA3B7WbTCWPSe2+uWkpw/j/PtI/pJgS+NLLdlpl62Kl18zB28LB+0R5Zf6yF7CuLoiGKA3YY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=D+Ixwi7j; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-28973df6a90so40817215ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 09:55:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759337738; x=1759942538; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UNyQbvzow/mhpmYas76FE2CqqCPGeJucQxrLl/NhhQI=;
-        b=D+Ixwi7jcH/3rHMn04X0UhB/2l8eDnwKgn6rtSfq18dlttzon+chcFO00+9PCe7Ts5
-         BQwCIPUdGY6tPZxiww3r335GVwB6nk79V9MiAfJEhrSj+d38OZE9Am1ksRBvncK9sxZ8
-         024E5RI8WGS5FHrI9Z3WMkJ3En97KVh7UihyZTiQz0PbtK3dwNV4SiSteO2Siq2/cYPY
-         2r6FmaAHSWr2g+PaYxHA5ylOMh0gUoEqi7v2E5lP51+SxmSIxchH1f9fzXM7IHA37Ig3
-         /O1c6uxKvXs9JUKC/Bj1rM0uI/W8t7lxDIujR0adZ5uwTBGkdMPB2Kn3Rim4222/BvQi
-         zkQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759337738; x=1759942538;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=UNyQbvzow/mhpmYas76FE2CqqCPGeJucQxrLl/NhhQI=;
-        b=ayAXnsVrrnlli6VVZZ5XOzLzRwVlycADgxqKz1Ip51c49caLhN6wHnv/8MWYq/JadJ
-         4y8kyyV68me5iw+A5W04fZM1poIjAB7GJUtZMlCUhoMTPiP6I1X78ISdcCaMfQK8cRBl
-         UQGCG9yGiWgQCdjTqEKyVwlgujniQHDXT6rl/B3YENJQGsG6PD6jyh3M5RPmNvB6tKkx
-         6TGGd+epGGDN5oFrn3nGgFKWJoZPft4myMKvZub8tY+Y2BJqM3fyIIm3CrnkbCHWPMAz
-         Fxt81nee0E2+xeD1p5u1eCCJ0X/FF+bmlrdVysQCMLoZQEyUsourmjWWkag2//IVLKtp
-         5EEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU1kfb+ilNZP92R2AktLH+OOzrOP0ydgaeBT6hg3bHrHh0cS34b597Tp2VRd/yWkTyyUiiq6fIf0yir6WE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTiYmtFYV1AvPMKWbMM2mxC4rJAa/ZKviY91enPB3sy097/dyq
-	zM5uAUnYTEFE92ef1F+EziNhOSDK3x8N6bcA+V9uPeFwj+jEKxLgiy2eTk9TZuaNUXGs9Y3qdE2
-	z3AzHmg==
-X-Google-Smtp-Source: AGHT+IFbleLiOllM8oSjGlHNtpxd2L2C0N5Mjl8Um+LgOUG3P+4Gw9bm6dL1Mb6vYImkIrK2MyoFExzw6SI=
-X-Received: from plw21.prod.google.com ([2002:a17:903:45d5:b0:268:11e:8271])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:db03:b0:279:fa:30fe
- with SMTP id d9443c01a7336-28e7f2b5302mr58620075ad.26.1759337738221; Wed, 01
- Oct 2025 09:55:38 -0700 (PDT)
-Date: Wed, 1 Oct 2025 09:55:36 -0700
-In-Reply-To: <CAGtprH9sU7bA=Cb11vdy=bELXEmx6JA9H5goJUjPzvgC2URxAg@mail.gmail.com>
+	s=arc-20240116; t=1759337919; c=relaxed/simple;
+	bh=Qh7KxPXWt/CfsqUGwj+AGUKWsRL22jtI/i4SqoHDvuo=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rXkT8Vc/J/mdv95vyAzEEZE89RT05xw/UWyJwZvG8iJQb4U4TJzNaIDiFGqAwKdRsY7Gnb67WwOCEuSHqlE6OjNHGP+22eErBaswOfJX57Ya60Eg9TPojSEhM0CdpnS7rqrphVc/pQoEZgcxxenWf8wgecnBWEOHWsrs21SH1k0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=SmoPHkHx; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 591Gw9c32711373;
+	Wed, 1 Oct 2025 11:58:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1759337889;
+	bh=iTpxZ9ru9UqyaX58xqLKVwXiK/FxAvZ1ncan5yozrCE=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=SmoPHkHxXUqEl/EwoZySTE7UaA5+k0GAB3wrOylYlxn69j3OzA7l6IlUGVLc5XFES
+	 Jszshhl8wf4NYbiTKCKVqoTR8+MLc/YsSHMtNEerFg/19hkZSuhUl2iR2rXjPuDi5t
+	 y3Dk02COdGubZzcEfoaybF42eWTUZOgRub8ekgxg=
+Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 591Gw95r615388
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Wed, 1 Oct 2025 11:58:09 -0500
+Received: from DLEE201.ent.ti.com (157.170.170.76) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 1
+ Oct 2025 11:58:08 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE201.ent.ti.com
+ (157.170.170.76) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Wed, 1 Oct 2025 11:58:08 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 591Gw85r861915;
+	Wed, 1 Oct 2025 11:58:08 -0500
+Date: Wed, 1 Oct 2025 11:58:08 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Simon Horman <horms@kernel.org>
+CC: Jacob Keller <jacob.e.keller@intel.com>,
+        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?=
+	<u.kleine-koenig@baylibre.com>,
+        Paolo Abeni <pabeni@redhat.com>, Jakub
+ Kicinski <kuba@kernel.org>,
+        Eric Dumazet <edumazet@google.com>,
+        "David S.
+ Miller" <davem@davemloft.net>,
+        Andrew Lunn <andrew+netdev@lunn.ch>,
+        Santosh
+ Shilimkar <ssantosh@kernel.org>,
+        Siddharth Vadapalli <s-vadapalli@ti.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <netdev@vger.kernel.org>
+Subject: Re: [PATCH V2 3/3] net: ethernet: ti: Remove IS_ERR_OR_NULL checks
+ for knav_dma_open_channel
+Message-ID: <20251001165808.lnatvc224dpewpe7@unscathed>
+References: <20250930121609.158419-1-nm@ti.com>
+ <20250930121609.158419-4-nm@ti.com>
+ <0cae855b-e842-47a1-9aaf-b2a297ec32d6@intel.com>
+ <20251001105416.frbebh5ws2rnxquu@quality>
+ <aN1Pwh3B8xhEoQmh@horms.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1747264138.git.ackerleytng@google.com> <b784326e9ccae6a08388f1bf39db70a2204bdc51.1747264138.git.ackerleytng@google.com>
- <aNxqYMqtBKll-TgV@google.com> <CAGtprH9sU7bA=Cb11vdy=bELXEmx6JA9H5goJUjPzvgC2URxAg@mail.gmail.com>
-Message-ID: <aN1dCAuOfy5RADR0@google.com>
-Subject: Re: [RFC PATCH v2 02/51] KVM: guest_memfd: Introduce and use
- shareability to guard faulting
-From: Sean Christopherson <seanjc@google.com>
-To: Vishal Annapurve <vannapurve@google.com>
-Cc: Ackerley Tng <ackerleytng@google.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Yan Zhao <yan.y.zhao@intel.com>, 
-	Fuad Tabba <tabba@google.com>, Binbin Wu <binbin.wu@linux.intel.com>, 
-	Michael Roth <michael.roth@amd.com>, Ira Weiny <ira.weiny@intel.com>, 
-	Rick P Edgecombe <rick.p.edgecombe@intel.com>, David Hildenbrand <david@redhat.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <aN1Pwh3B8xhEoQmh@horms.kernel.org>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Wed, Oct 01, 2025, Vishal Annapurve wrote:
-> On Tue, Sep 30, 2025 at 4:40=E2=80=AFPM Sean Christopherson <seanjc@googl=
-e.com> wrote:
-> >
-> > > +};
-> > > +
-> > > +enum shareability {
-> > > +     SHAREABILITY_GUEST =3D 1, /* Only the guest can map (fault) fol=
-ios in this range. */
-> > > +     SHAREABILITY_ALL =3D 2,   /* Both guest and host can fault foli=
-os in this range. */
-> > > +};
-> >
-> > Rather than define new values and new KVM uAPI, I think we should inste=
-ad simply
-> > support KVM_SET_MEMORY_ATTRIBUTES.  We'll probably need a new CAP, as I=
-'m not sure
-> > supporting KVM_CHECK_EXTENSION+KVM_CAP_MEMORY_ATTRIBUTES on a gmem fd w=
-ould be a
-> > good idea (e.g. trying to do KVM_CAP_GUEST_MEMFD_FLAGS on a gmem fd doe=
-sn't work
-> > because the whole point is to get flags _before_ creating the gmem inst=
-ance).  But
-> > adding e.g. KVM_CAP_GUEST_MEMFD_MEMORY_ATTRIBUTES is easy enough.
-> >
-> > But for specifying PRIVATE vs. SHARED, I don't see any reason to define=
- new uAPI.
-> > I also don't want an entirely new set of terms in KVM to describe the s=
-ame things.
-> > PRIVATE and SHARED are far from perfect, but they're better than https:=
-//xkcd.com/927.
-> > And if we ever want to let userspace restrict RWX protections in gmem, =
-we'll have
-> > a ready-made way to do so.
-> >
->=20
-> I don't understand why we need to reuse KVM_SET_MEMORY_ATTRIBUTES. It
-> anyways is a new ABI as it's on a guest_memfd FD instead of KVM FD.
+On 16:58-20251001, Simon Horman wrote:
+> On Wed, Oct 01, 2025 at 05:54:16AM -0500, Nishanth Menon wrote:
+> > On 16:59-20250930, Jacob Keller wrote:
+> > > 
+> > > 
+> > > On 9/30/2025 5:16 AM, Nishanth Menon wrote:
+> > > > knav_dma_open_channel now only returns NULL on failure instead of error
+> > > > pointers. Replace IS_ERR_OR_NULL checks with simple NULL checks.
+> > > > 
+> > > > Suggested-by: Simon Horman <horms@kernel.org>
+> > > > Signed-off-by: Nishanth Menon <nm@ti.com>
+> > > > ---
+> > > > Changes in V2:
+> > > > * renewed version
+> > > > * Dropped the fixes since code refactoring was involved.
+> > > > 
+> > > 
+> > > Whats the justification for splitting this apart from patch 1 of 3?
+> > > 
+> > > It seems like we ought to just do all this in a single patch. I don't
+> > > see the value in splitting this apart into 3 patches, unless someone
+> > > else on the list thinks it is valuable.
+> > 
+> > The only reason I have done that is to ensure the patches are
+> > bisectable. at patch #1, we are still returning -EINVAL, the driver
+> > should still function when we switch the return over to NULL.
+> 
+> Maybe we can simplify things and squash all three patches into one.
+> They seem inter-related.
 
-Yes, it's new functionality, but the semantics are the same (modulo s/addre=
-ss/offset),
-which makes life easier for KVM and its developers.  Specifically I want to=
- avoid
-ending up with two entirely different ways for describing private vs. share=
-d memory.
-E.g. I don't want to have to translate between SHAREABILITY_GUEST and PRIVA=
-TE,
-in code or in conversation.
+I have no issues as the SoC driver maintainer.. just need direction on
+logistics: I will need either the network maintainers to agree to take
+it in OR with their ack, I can queue it up.
 
-> RWX protections seem to be pagetable configuration rather than
-> guest_memfd properties. Can mmap flags + kvm userfaultfd help enforce
-> RWX protections?
-
-No, because mmap() is optional.  Potential use cases are for (seletively)
-restricting _guest_ access as well as host access.  mmap() isn't a good fit
-regardless, as that's much more about describing what the process wants, no=
-t
-the properties of the underlying memory.
-
-E.g. read-only and noexec file systems exist for a reason.
+-- 
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+https://ti.com/opensource
 
