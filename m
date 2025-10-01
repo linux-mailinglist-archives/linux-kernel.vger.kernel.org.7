@@ -1,232 +1,158 @@
-Return-Path: <linux-kernel+bounces-839272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66A82BB138C
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 18:10:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93136BB1395
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 18:12:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 026307A8896
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 16:08:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6346C19481E1
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 16:12:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59FA8285418;
-	Wed,  1 Oct 2025 16:10:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="rv7pdWQx"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F375E2857F5;
+	Wed,  1 Oct 2025 16:12:25 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1F70284896
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 16:09:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D16C34BA28;
+	Wed,  1 Oct 2025 16:12:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759334999; cv=none; b=b9tmjUdc7Mmt0+w+XSOk2JMixM/NjKarl3K3IeuNs19UMW7ZdDTlEcSlKWr+eku7j37aPpxo1gTESR0f9+ffuVfLvEZmpjDFsVlLN6fo+UYCOgIwWfRwG2lRySV+hflAefv9+IwElt17qGIvjaf/KgLyzyFeqILblmrUwJ0shs0=
+	t=1759335145; cv=none; b=PVuMVIAOmyGx/vGGiOf/ULjy3igYFzS5jF8yugIIvX3ldVSKgERnRR/eZ2IkH8bJhqMShyHul3s/bE37js3CyK7AJlOZcuok39n92v72HTs4v+V8IXJDkJM2e8hzQM1wgQhydKAobvyExmNgCFzt+yEyGvlhNcqF6cnh2JddLpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759334999; c=relaxed/simple;
-	bh=2k01JO4kLyXEdsY63gzIBYkAfPijzflAQjkb2arWM9o=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VzGItj6RzZdLtmP+dZ6vg0eB5CYyTmodSkT7Z/RTe+/CH1F/Tt8CaqGKJbiTkSq1Dr1hs0vqh4GnjhHv9RRVjmby+FrAgYFRdLJpiIVM4Jml+niyBhc2zOAuyiWBoEos5veH8MlpnwDrmWv8Eq33SvE7IGMuRWoxPRSJ3cl3o1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=rv7pdWQx; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 4531AC02465;
-	Wed,  1 Oct 2025 16:09:37 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 093A5606BF;
-	Wed,  1 Oct 2025 16:09:55 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E7266102F1A3E;
-	Wed,  1 Oct 2025 18:09:24 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1759334993; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=9CvJDGBSoVXbt+J412aK4yig9hsCig6aqy7YzBwhW2U=;
-	b=rv7pdWQxzoqrjN3bhcDG6IeHqv9N+XFI6QwkO+p2auYuGPT6LdtWBCRBaL+JXAoVwiZp3M
-	GCz4Tg3Kp9FHaQ9ya4b1XoJUTf6IrVRO2rb9kWsrBaj8QlhrQSzkcUKcKaIjBJevIfdKML
-	Wq9Hw3uoV22IEeAse398wh3dpFWcPNP4997mm0bXmVga+Na0ZqDBIom3Xkc/v8U54fbN0P
-	dUv7sLcbxNiQ6FHk4AuZ6ks4JvbyqGVlVceYlp2gOFBy2i4u7ZoQOFNKAjjRBjtVSLzzx1
-	IWzQUOqHYmLJoe+mlbvD6F85QWGNZgLSYs8vBFGYgIlNgCS9dU1HYJqlbZYC9A==
-Date: Wed, 1 Oct 2025 18:09:22 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Damon Ding <damon.ding@rock-chips.com>
-Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
- Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
- simona@ffwll.ch, shawnguo@kernel.org, s.hauer@pengutronix.de,
- kernel@pengutronix.de, festevam@gmail.com, inki.dae@samsung.com,
- sw0312.kim@samsung.com, kyungmin.park@samsung.com, krzk@kernel.org,
- alim.akhtar@samsung.com, jingoohan1@gmail.com, p.zabel@pengutronix.de,
- hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com,
- dmitry.baryshkov@oss.qualcomm.com, dianders@chromium.org,
- m.szyprowski@samsung.com, jani.nikula@intel.com,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v6 11/18] drm/display: bridge_connector: Ensure last
- bridge determines EDID/modes detection capabilities
-Message-ID: <20251001180922.6bbe42ac@booty>
-In-Reply-To: <20250930090920.131094-12-damon.ding@rock-chips.com>
-References: <20250930090920.131094-1-damon.ding@rock-chips.com>
-	<20250930090920.131094-12-damon.ding@rock-chips.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1759335145; c=relaxed/simple;
+	bh=9AKfBEaF4yzTvDwYTJVSbIKmdGVfNtriXroo62Fl6vw=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oj9UjDuXMPyqhNNGzdeVrkPy3s46gSA3A1/Bd2sThVOt0/mntt3WTdwrZtln1oKU4JmS/h99m8V2BnXX8kLy0GJ9Kca5Zroy0HE4Ugl2F/96jNSByWQw5P0rkS+3T7IqV1SKWhonxllRpTPlbwOLy8Q2mQ2PUX6g8FMcb0De938=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ccKdT2sKbz6L52D;
+	Thu,  2 Oct 2025 00:10:05 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id E3E19140142;
+	Thu,  2 Oct 2025 00:12:18 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 1 Oct
+ 2025 17:12:17 +0100
+Date: Wed, 1 Oct 2025 17:12:16 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Terry Bowman <terry.bowman@amd.com>
+CC: <dave@stgolabs.net>, <dave.jiang@intel.com>, <alison.schofield@intel.com>,
+	<dan.j.williams@intel.com>, <bhelgaas@google.com>, <shiju.jose@huawei.com>,
+	<ming.li@zohomail.com>, <Smita.KoralahalliChannabasappa@amd.com>,
+	<rrichter@amd.com>, <dan.carpenter@linaro.org>,
+	<PradeepVineshReddy.Kodamati@amd.com>, <lukas@wunner.de>,
+	<Benjamin.Cheatham@amd.com>, <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	<linux-cxl@vger.kernel.org>, <alucerop@amd.com>, <ira.weiny@intel.com>,
+	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>
+Subject: Re: [PATCH v12 10/25] CXL/AER: Update PCI class code check to use
+ FIELD_GET()
+Message-ID: <20251001171216.00005fa0@huawei.com>
+In-Reply-To: <20250925223440.3539069-11-terry.bowman@amd.com>
+References: <20250925223440.3539069-1-terry.bowman@amd.com>
+	<20250925223440.3539069-11-terry.bowman@amd.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+X-ClientProxiedBy: lhrpeml100010.china.huawei.com (7.191.174.197) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-Hello Damon,
+On Thu, 25 Sep 2025 17:34:25 -0500
+Terry Bowman <terry.bowman@amd.com> wrote:
 
-On Tue, 30 Sep 2025 17:09:13 +0800
-Damon Ding <damon.ding@rock-chips.com> wrote:
-
-> When multiple bridges are present, EDID detection capability
-> (DRM_BRIDGE_OP_EDID) takes precedence over modes detection
-> (DRM_BRIDGE_OP_MODES). To ensure the above two capabilities are
-> determined by the last bridge in the chain, we handle three cases:
+> Update the AER driver's is_cxl_mem_dev() to use FIELD_GET() while checking
+> for a CXL Endpoint class code.
 > 
-> Case 1: The later bridge declares only DRM_BRIDGE_OP_MODES
->  - If the previous bridge declares DRM_BRIDGE_OP_EDID, set
->    &drm_bridge_connector.bridge_edid to NULL and set
->    &drm_bridge_connector.bridge_modes to the later bridge.
->  - Ensure modes detection capability of the later bridge will not
->    be ignored.
+> Introduce a genmask bitmask for checking PCI class codes and locate in
+> include/uapi/linux/pci_regs.h.
 > 
-> Case 2: The later bridge declares only DRM_BRIDGE_OP_EDID
->  - If the previous bridge declares DRM_BRIDGE_OP_MODES, set
->    &drm_bridge_connector.bridge_modes to NULL and set
->    &drm_bridge_connector.bridge_edid to the later bridge.
->  - Although EDID detection capability has higher priority, this
->    operation is for balance and makes sense.
+> Update the function documentation to reference the latest CXL
+> specification.
 > 
-> Case 3: the later bridge declares both of them
->  - Assign later bridge as &drm_bridge_connector.bridge_edid and
->    and &drm_bridge_connector.bridge_modes to this bridge.
->  - Just leave transfer of these two capabilities as before.
+> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+> 
 
-I think the whole explanation can be more concisely rewritten as:
+The way that class code definitions work in pci_ids.h is somewhat odd
+in my opinion, so I'd like input from Bjorn, Lukas etc on whether a
+generic mask definition is a good idea or more likely to cause problems.
 
-If the later bridge declares OP_EDID, OP_MODES or both, then both
-.bridge_modes and .bridge_edid should be set to NULL (if any was set
-from a previous bridge), and then .bridge_modes and/or .bridge_edid be
-set to the later bridge as is done already.
+See for example. 
+#define PCI_BASE_CLASS_STORAGE		0x01
+...
 
-Does this look correct (i.e. does it convey the same meaning)?
+#define PCI_CLASS_STORAGE_SATA		0x0106
+#define PCI_CLASS_STORAGE_SATA_AHCI	0x010601
 
-> --- a/drivers/gpu/drm/display/drm_bridge_connector.c
-> +++ b/drivers/gpu/drm/display/drm_bridge_connector.c
-> @@ -640,6 +640,7 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
->  	struct drm_connector *connector;
->  	struct i2c_adapter *ddc = NULL;
->  	struct drm_bridge *bridge, *panel_bridge = NULL;
-> +	struct drm_bridge *pre_bridge_edid, *pre_bridge_modes;
->  	unsigned int supported_formats = BIT(HDMI_COLORSPACE_RGB);
->  	unsigned int max_bpc = 8;
->  	bool support_hdcp = false;
-> @@ -668,6 +669,9 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
+
+This variability in what is called CLASS_* leads to fun
+situations like in drivers/ata/ahci.c where we have some
+PCI_CLASS_* shifted and some not...
+
+> ---
+> 
+> Changes in v11->v12:
+> 
+> Changes in v10->v11:
+> - Add #include <linux/bitfield.h> to cxl_ras.c
+> - Removed line wrapping at "(CXL 3.2, 8.1.12.1)".
+> ---
+>  drivers/pci/pcie/aer.c         | 1 +
+>  drivers/pci/pcie/aer_cxl_rch.c | 6 +++---
+>  include/uapi/linux/pci_regs.h  | 2 ++
+>  3 files changed, 6 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+> index befa73ace9bb..6ba8f84add70 100644
+> --- a/drivers/pci/pcie/aer.c
+> +++ b/drivers/pci/pcie/aer.c
+> @@ -30,6 +30,7 @@
+>  #include <linux/kfifo.h>
+>  #include <linux/ratelimit.h>
+>  #include <linux/slab.h>
+> +#include <linux/bitfield.h>
+>  #include <acpi/apei.h>
+>  #include <acpi/ghes.h>
+>  #include <ras/ras_event.h>
+> diff --git a/drivers/pci/pcie/aer_cxl_rch.c b/drivers/pci/pcie/aer_cxl_rch.c
+> index bfe071eebf67..c3e2d4cbe8cc 100644
+> --- a/drivers/pci/pcie/aer_cxl_rch.c
+> +++ b/drivers/pci/pcie/aer_cxl_rch.c
+> @@ -17,10 +17,10 @@ static bool is_cxl_mem_dev(struct pci_dev *dev)
+>  		return false;
+>  
+>  	/*
+> -	 * CXL Memory Devices must have the 502h class code set (CXL
+> -	 * 3.0, 8.1.12.1).
+> +	 * CXL Memory Devices must have the 502h class code set
+> +	 * (CXL 3.2, 8.1.12.1).
 >  	 */
->  	connector_type = DRM_MODE_CONNECTOR_Unknown;
->  	drm_for_each_bridge_in_chain(encoder, bridge) {
-> +		pre_bridge_edid = bridge_connector->bridge_edid;
-> +		pre_bridge_modes = bridge_connector->bridge_modes;
+> -	if ((dev->class >> 8) != PCI_CLASS_MEMORY_CXL)
+> +	if (FIELD_GET(PCI_CLASS_CODE_MASK, dev->class) != PCI_CLASS_MEMORY_CXL)
+>  		return false;
+>  
+>  	return true;
+> diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
+> index bd03799612d3..802a7384f99a 100644
+> --- a/include/uapi/linux/pci_regs.h
+> +++ b/include/uapi/linux/pci_regs.h
+> @@ -73,6 +73,8 @@
+>  #define PCI_CLASS_PROG		0x09	/* Reg. Level Programming Interface */
+>  #define PCI_CLASS_DEVICE	0x0a	/* Device class */
+>  
+> +#define PCI_CLASS_CODE_MASK     __GENMASK(23, 8)
 > +
->  		if (!bridge->interlace_allowed)
->  			connector->interlace_allowed = false;
->  		if (!bridge->ycbcr_420_allowed)
-> @@ -681,6 +685,44 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
->  			bridge_connector->bridge_detect = bridge;
->  		if (bridge->ops & DRM_BRIDGE_OP_MODES)
->  			bridge_connector->bridge_modes = bridge;
-> +
-> +		/*
-> +		 * When multiple bridges are present, EDID detection capability
-> +		 * (DRM_BRIDGE_OP_EDID) takes precedence over modes detection
-> +		 * (DRM_BRIDGE_OP_MODES). To ensure the above two capabilities
-> +		 * are determined by the last bridge in the chain, we handle
-> +		 * three cases:
-> +		 *
-> +		 * Case 1: The later bridge declares only DRM_BRIDGE_OP_MODES
-> +		 *  - If the previous bridge declares DRM_BRIDGE_OP_EDID, set
-> +		 *    &drm_bridge_connector.bridge_edid to NULL and set
-> +		 *    &drm_bridge_connector.bridge_modes to the later bridge.
-> +		 *  - Ensure modes detection capability of the later bridge
-> +		 *    will not be ignored.
-> +		 *
-> +		 * Case 2: The later bridge declares only DRM_BRIDGE_OP_EDID
-> +		 *  - If the previous bridge declares DRM_BRIDGE_OP_MODES, set
-> +		 *    &drm_bridge_connector.bridge_modes to NULL and set
-> +		 *    &drm_bridge_connector.bridge_edid to the later bridge.
-> +		 *  - Although EDID detection capability has higher priority,
-> +		 *    this operation is for balance and makes sense.
-> +		 *
-> +		 * Case 3: the later bridge declares both of them
-> +		 *  - Assign later bridge as &drm_bridge_connector.bridge_edid
-> +		 *    and &drm_bridge_connector.bridge_modes to this bridge.
-> +		 *  - Just leave transfer of these two capabilities as before.
-> +		 */
-> +		if (bridge->ops & DRM_BRIDGE_OP_EDID &&
-> +		    !(bridge->ops & DRM_BRIDGE_OP_MODES)) {
-> +			if (pre_bridge_modes)
-> +				bridge_connector->bridge_modes = NULL;
-> +		}
-> +		if (bridge->ops & DRM_BRIDGE_OP_MODES &&
-> +		    !(bridge->ops & DRM_BRIDGE_OP_EDID)) {
-> +			if (pre_bridge_edid)
-> +				bridge_connector->bridge_edid = NULL;
-> +		}
-> +
+>  #define PCI_CACHE_LINE_SIZE	0x0c	/* 8 bits */
+>  #define PCI_LATENCY_TIMER	0x0d	/* 8 bits */
+>  #define PCI_HEADER_TYPE		0x0e	/* 8 bits */
 
-If the above rewrite is correct, then I think this patch can be
-rewritten in a simple way (build tested only):
-
-diff --git a/drivers/gpu/drm/display/drm_bridge_connector.c b/drivers/gpu/drm/display/drm_bridge_connector.c
-index a5bdd6c10643..bd5dbafe88bc 100644
---- a/drivers/gpu/drm/display/drm_bridge_connector.c
-+++ b/drivers/gpu/drm/display/drm_bridge_connector.c
-@@ -672,14 +672,18 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
-                if (!bridge->ycbcr_420_allowed)
-                        connector->ycbcr_420_allowed = false;
- 
--               if (bridge->ops & DRM_BRIDGE_OP_EDID)
--                       bridge_connector->bridge_edid = bridge;
-+               if (bridge->ops & DRM_BRIDGE_OP_EDID || bridge->ops & DRM_BRIDGE_OP_MODES) {
-+                       bridge_connector->bridge_edid = NULL;
-+                       bridge_connector->bridge_modes = NULL;
-+                       if (bridge->ops & DRM_BRIDGE_OP_EDID)
-+                               bridge_connector->bridge_edid = bridge;
-+                       if (bridge->ops & DRM_BRIDGE_OP_MODES)
-+                               bridge_connector->bridge_modes = bridge;
-+               }
-                if (bridge->ops & DRM_BRIDGE_OP_HPD)
-                        bridge_connector->bridge_hpd = bridge;
-                if (bridge->ops & DRM_BRIDGE_OP_DETECT)
-                        bridge_connector->bridge_detect = bridge;
--               if (bridge->ops & DRM_BRIDGE_OP_MODES)
--                       bridge_connector->bridge_modes = bridge;
-                if (bridge->ops & DRM_BRIDGE_OP_HDMI) {
-                        if (bridge_connector->bridge_hdmi)
-                                return ERR_PTR(-EBUSY);
-
-Another thing to note is that this patch conflicts with [0], which I
-plan to apply in the next few days. The two patches are orthogonal but
-they insist on the same lines (those assigning
-bridge_connector->bridge_* = bridge). Not a big deal, whichever patch
-comes later will be easily adapted. Just wanted to ensure you are aware.
-
-[0] https://lore.kernel.org/all/20250926-drm-bridge-alloc-getput-bridge-connector-v2-1-138b4bb70576@bootlin.com/
-
-Best regards,
-Luca
-
--- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
 
