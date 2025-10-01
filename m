@@ -1,169 +1,216 @@
-Return-Path: <linux-kernel+bounces-838973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB475BB08CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 15:44:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72329BB08F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 15:48:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4690C1926D45
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 13:45:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AF4F3B09CA
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 13:48:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45BD72EF65C;
-	Wed,  1 Oct 2025 13:44:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F30D2FC025;
+	Wed,  1 Oct 2025 13:48:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tAZQS6W0";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ImepUTZ9";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qPDGAH8H";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2vI/BOL5"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="vqC6kgC5"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 045EB2EF662
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 13:44:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEDB72FBE17
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 13:48:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759326278; cv=none; b=kyPHnf7B0xC2kLuZaT7S8JAzOrGxBpNCx02UhXapVq/LZL7f1gNnwIt5f90zeG7PbBqddl03N/3DKuPWHEVf/xyZgKcFeTqjqrhtzxFiq4kXzghY7t8HOJQ54/Mr6gRenlrhFIzYR2X79EIWxnV61Dy1155EPsitjdYXdaG6eVE=
+	t=1759326483; cv=none; b=UMIEBcdztoJp/EjnU9CYDuC065oIiELZ7SvDPhhXfNPeJoPOKMVXqw+JU1VGQFb+9LToAG6N1ZhN+nKQk+HKV9JeLayFN3rDdBi5g/fMMwXFeabvtyOdDIvXlhqRRdbHuJ+/5u20OoZQ2xwp9HpHrog6ff35X6Ye5dH59CREbY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759326278; c=relaxed/simple;
-	bh=qnkQn0A6KGDvcva2esuMlW0oO5TUAFsi8rVWOErsEy4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k6vR6l4OqwAFNqAj1LbJIoKsPsP0xpRN8lPpzEE0EVSZDz9QKOPDoVSiPqTAgA5PryxB2DGrgY5R+dAnQgp2uzkV09ZgDuScMu0Wo43y9Qg/thG2qep23sAfb4i+6tTL2Ka/9Klhgf5iP/ldRKuxQYzoz6AIvDOYX7c/fmWvwSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tAZQS6W0; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ImepUTZ9; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qPDGAH8H; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2vI/BOL5; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id DDEF91FB78;
-	Wed,  1 Oct 2025 13:44:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759326270; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RXKm7uHno0RVrdO73gZiJiNWmspDgiTH3SIvPr6Kuoc=;
-	b=tAZQS6W0FbVDQeHSwQjxvc272crMvd4NBWS1wZw7slpKHmXmg3kBzznZ0CS4RvhNlg9vJd
-	65PsILbe+5cHsTQm2oDb107QA3clz2+qlkI5GvrPijUN62bGp5/XPp7rtZPvpTeViIrPCk
-	kYVVZjXBFD8BTB4qhNkhrFQY1GfetT4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759326270;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RXKm7uHno0RVrdO73gZiJiNWmspDgiTH3SIvPr6Kuoc=;
-	b=ImepUTZ9j4xdyUYX1G71yNrcxM7HqH5lzp3dv9QxXsvjUY4EbsZ/7Z3E1vHNMtkaLUOMhW
-	gXB2akPgAMVKoCAg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=qPDGAH8H;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="2vI/BOL5"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759326269; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RXKm7uHno0RVrdO73gZiJiNWmspDgiTH3SIvPr6Kuoc=;
-	b=qPDGAH8HeVB1km9OJ37bqLFvz98qM5hOngA7YJgjUURS88LsWeKUPqMvM/CYAeDR7zyf30
-	LYrvTMoaipqBdUYpmf35ZKHLjZzCg3B3G8g6lsfSoc9/Otyb0EAOUVBYW+VMRraNnb72Za
-	GKrqsuLtv56952NDNWUVHG9h/Rj87KA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759326269;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RXKm7uHno0RVrdO73gZiJiNWmspDgiTH3SIvPr6Kuoc=;
-	b=2vI/BOL5LTZ2nP5Obmklz30pGvsvgQ5xks0R41jESgSffubPqLzvrfSdL9epIWClBCuGig
-	5Tn8B/oXUBeUD2DQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C869E13A3F;
-	Wed,  1 Oct 2025 13:44:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 2MuFMD0w3WhwGAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 01 Oct 2025 13:44:29 +0000
-Message-ID: <e261a18d-0ea3-4fba-9774-aa58270809af@suse.cz>
-Date: Wed, 1 Oct 2025 15:47:10 +0200
+	s=arc-20240116; t=1759326483; c=relaxed/simple;
+	bh=GwWiPxXWApSuBjTieyfbH0uVPyK1qpzobUKX5yWOe8Y=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=IRKNh8Pk7i4gzRh3+EMI71JRALKB1uMNGbzg8MNd5hnxmL0mODsZqbLeJaEImuZMkDbATV97GwdIazGfpKvVwtXu6085FVAvoZEcCvTFVlOsDKwfnTwcvounzKS/JXBjikE1RC6cqAme3iEDLMEFncT6g2s3KFvDRrrEyJY9BI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca; spf=pass smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=vqC6kgC5; arc=none smtp.client-ip=209.85.219.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ndufresne.ca
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-7900f7f4ba9so63213276d6.0
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 06:48:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1759326480; x=1759931280; darn=vger.kernel.org;
+        h=mime-version:user-agent:references:in-reply-to:date:cc:to:from
+         :subject:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=GwWiPxXWApSuBjTieyfbH0uVPyK1qpzobUKX5yWOe8Y=;
+        b=vqC6kgC5WJx43JKAZUo4OKxI5cD8wS1kM0pPUBM9r6Q7BZOf6e/51l6rEqWVNizAfp
+         Opy/HojCfjeeDcRIu8IepjriyXP8iAPuKv2gyWOWRDHrtUHWd2687Ea/GIKY558i8hxB
+         LMREcOMXyc4IZJPHGcV1/Jvxb69JX6paLieAr6y+qikWD0lCYg9lzR761XOtYCsFom2j
+         zhajVMyuPrlUCqAGr3CfLW9+LwrzSWs6WCKPFf1Cix08AF+y6rI8w8J4z/n3D1YOmZwy
+         eAdG8v40dmI5Lp0MUqMIQ0/iRefgEVLZYRSAi5eAQxYHVxeuGGyhUWd2QbBgDkQ+sd+Q
+         gJmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759326480; x=1759931280;
+        h=mime-version:user-agent:references:in-reply-to:date:cc:to:from
+         :subject:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GwWiPxXWApSuBjTieyfbH0uVPyK1qpzobUKX5yWOe8Y=;
+        b=VBidQCjTgBk7dEbnUhYH2p42ppNxiOWJpU/O50CNq3uCM+ShTCdsyxYiHEBzhspEf1
+         KCAEdYDPSuIOtAzEvbLzB4oqBZ+3Kz/MIGSLxLNGm2IjBArVDFJdi+M8sBtVzckrS7EO
+         BXBL42SvpSwPI3DK1F3pp1MM44C5UUuSfe2yh0VL7zGTV89e4bpSnaY08Zcnlox928Td
+         H9n3/mqOlun6tEXnQNHWRKpFNYspUUB624e8Ln1e8Xp3C0nedjn+Uyd54MvNtk+UleME
+         QmTCMPf+0wrwMqiQQaplwlLBGNDyj0//ZaH4DA+0oxhKMMjJqlbB4jxD8u5pkQS0V7+W
+         ODOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXoJOHjrtUuajJf+/ymqeqXUrJ4aKotFbFDdbgPN1C6yED52aDvDQOcrnLE+Oy8eL+lBNHv1bRmiZ4BWZY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaYzysrzW9KU0UQD1XItlwb//8iJeHQ0rgMFEV1PmazDnfFWxq
+	1cLwLD+LNJkqC9oPw/X6oWbRUBUvy6BzEBGr+4VJn20rNiz3UO7arzGhMMYloJWkfs4=
+X-Gm-Gg: ASbGnctnShzD0Lv9M6bTY+kBfRVMZRBqgtMcYKBRJ0yjRMNHQoTfef+XJWvlvSML0jK
+	tio/ewwIJ/9e6EYOE2rDCUshEWdbwNRla+nrxe8+9U3XkCNlcJIrcM6cuSuOsqTnM9q0gjLZf0k
+	Kmdb4Q4dd2x+mE+/JlhuD2hIvymQwd3nXvhvKe4mf/oQYAxM4ZhB4sx3zrzRAmq2iglHb8hK6hu
+	G7qH/nhOA1j2rLECdLRV5mr4Um60m8JKotPCjvNvsfU5u/47oGG/+GLKUFk5rXWtMxWjVXdMSmb
+	o+T7XRwd5vE24VV9o8oqmKmoYs05Xl4AQG2Eas8xc/MG6aOlqh8hoV9Mr6HRZYUDBF+gcZbx1NR
+	6D5jHn3UJMvVQv33SvhmR45loXezhGp/l61TsJyZ0I6LXYo0QVx2S
+X-Google-Smtp-Source: AGHT+IHiblZwtYX3wgFUO/7OpMhacfKleAAxOFFJx1Q7ftMvPB1RMJ+PB8Ib9Ip55aCTEP2Txr59Ow==
+X-Received: by 2002:a05:622a:5c88:b0:4de:1d0e:5cd4 with SMTP id d75a77b69052e-4e41c732f0fmr44326791cf.30.1759326479606;
+        Wed, 01 Oct 2025 06:47:59 -0700 (PDT)
+Received: from ?IPv6:2606:6d00:17:ebd3::5ac? ([2606:6d00:17:ebd3::5ac])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-80167b8b79esm110958756d6.38.2025.10.01.06.47.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Oct 2025 06:47:58 -0700 (PDT)
+Message-ID: <971675c3d0a5f033d9eb68698dd9985a0a122aa9.camel@ndufresne.ca>
+Subject: Re: [PATCH 0/2] Add support for QC08C format in iris driver
+From: Nicolas Dufresne <nicolas@ndufresne.ca>
+To: Neil Armstrong <neil.armstrong@linaro.org>, Dikshita Agarwal	
+ <dikshita.agarwal@oss.qualcomm.com>, Vikash Garodia	
+ <vikash.garodia@oss.qualcomm.com>, Abhinav Kumar <abhinav.kumar@linux.dev>,
+  Bryan O'Donoghue	 <bod@kernel.org>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Date: Wed, 01 Oct 2025 09:47:57 -0400
+In-Reply-To: <b2538934-bda7-45e1-b368-8dc4d2c6f71b@linaro.org>
+References: 
+	<20250919-video-iris-ubwc-enable-v1-0-000d11edafd8@oss.qualcomm.com>
+	 <b2538934-bda7-45e1-b368-8dc4d2c6f71b@linaro.org>
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-8im6X2nzMFe6Gk5DQ8ir"
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] mm/page_owner: simplify zone iteration logic in
- init_early_allocated_pages()
-To: Hu Song <husong@kylinos.cn>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Brendan Jackman <jackmanb@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
- Zi Yan <ziy@nvidia.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20250930092153.843109-1-husong@kylinos.cn>
- <20250930092153.843109-2-husong@kylinos.cn>
-Content-Language: en-US
-From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <20250930092153.843109-2-husong@kylinos.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MID_RHS_MATCH_FROM(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:dkim,suse.cz:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,kylinos.cn:email];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: DDEF91FB78
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
 
-On 9/30/25 11:21 AM, Hu Song wrote:
-> From: Song Hu <husong@kylinos.cn>
-> 
-> The current implementation uses nested loops: first iterating over all
-> online nodes, then over zones within each node. This can be simplified
-> by using the for_each_populated_zone() macro which directly iterates
-> through all populated zones.
-> 
-> This change:
-> 1. Removes the intermediate init_zones_in_node() function
-> 2. Simplifies init_early_allocated_pages() to use direct zone iteration
-> 3. Updates init_pages_in_zone() to take only zone parameter and access
->    node_id via zone->zone_pgdat
-> 
-> The functionality remains identical, but the code is cleaner and more
-> maintainable.
-> 
-> Signed-off-by: Song Hu <husong@kylinos.cn>
 
-LGTM.
+--=-8im6X2nzMFe6Gk5DQ8ir
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+Hi,
 
+Le mercredi 01 octobre 2025 =C3=A0 10:39 +0200, Neil Armstrong a =C3=A9crit=
+=C2=A0:
+> Hi,
+>=20
+> On 9/19/25 17:47, Dikshita Agarwal wrote:
+> > Add support for the QC08C color format in both the encoder and decoder
+> > paths of the iris driver. The changes include:
+> >=20
+> > - Adding QC08C format handling in the driver for both encoding and
+> > decoding.
+> > - Updating format enumeration to properly return supported formats.
+> > - Ensuring the correct HFI format is set for firmware communication.
+> > -Making all related changes required for seamless integration of QC08C
+> > support.
+> >=20
+> > The changes have been validated using v4l2-ctl, compliance, and GStream=
+er
+> > (GST) tests.
+> > Both GST and v4l2-ctl tests were performed using the NV12 format, as
+> > these clients do not support the QCOM-specific QC08C format, and all
+> > tests passed successfully.
+>=20
+> Sorry but this means you didn't test the full decoding and encoding with =
+GST
+> and v4l2-ctl using QC08C ?
+> So how did you test ?
+
+We've made addition of V4L2/DRM format mapping trivial lately in GStreamer.=
+ So
+trivial, that my colleague Robert Mader made the changes for you, and this
+change is just waiting for someone with the hardware to test.
+
+https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/8195
+
+With that you can visually test it by rendering through OpenGL or your disp=
+lay
+controller if supported. This gives option to use glimagesink, waylandsink,=
+ and
+possibly kmssink, but not sure for the later.
+
+What would need to work harder would be fluster testing. Going through GL w=
+ill
+mean converting from YUV to RGB back to YUV, which can damage the pictures
+slightly, resulting in different MD5.
+
+regards,
+Nicolas
+
+>=20
+> Thanks,
+> Neil
+>=20
+> >=20
+> > During v4l2-ctl testing, a regression was observed when using the NV12
+> > color format after adding QC08C support. A fix for this regression has
+> > also been posted [1].
+> >=20
+> > [1]:
+> > https://lore.kernel.org/linux-media/20250918103235.4066441-1-dikshita.a=
+garwal@oss.qualcomm.com/T/#u
+> >=20
+> > Signed-off-by: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
+> > ---
+> > Dikshita Agarwal (2):
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media: iris: Add support for QC08C=
+ format for decoder
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 media: iris: Add support for QC08C=
+ format for encoder
+> >=20
+> > =C2=A0 drivers/media/platform/qcom/iris/iris_buffer.c=C2=A0=C2=A0=C2=A0=
+=C2=A0 | 17 ++++--
+> > =C2=A0 .../platform/qcom/iris/iris_hfi_gen1_command.c=C2=A0=C2=A0=C2=A0=
+=C2=A0 | 15 ++++--
+> > =C2=A0 .../platform/qcom/iris/iris_hfi_gen2_command.c=C2=A0=C2=A0=C2=A0=
+=C2=A0 | 21 +++++++-
+> > =C2=A0 .../platform/qcom/iris/iris_hfi_gen2_defines.h=C2=A0=C2=A0=C2=A0=
+=C2=A0 |=C2=A0 1 +
+> > =C2=A0 drivers/media/platform/qcom/iris/iris_instance.h=C2=A0=C2=A0 |=
+=C2=A0 7 ++-
+> > =C2=A0 .../media/platform/qcom/iris/iris_platform_gen2.c=C2=A0 |=C2=A0 =
+1 +
+> > =C2=A0 drivers/media/platform/qcom/iris/iris_utils.c=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 |=C2=A0 3 +-
+> > =C2=A0 drivers/media/platform/qcom/iris/iris_vdec.c=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 | 61
+> > ++++++++++++++++++----
+> > =C2=A0 drivers/media/platform/qcom/iris/iris_venc.c=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 | 59 +++++++++++++++++-
+> > ---
+> > =C2=A0 9 files changed, 152 insertions(+), 33 deletions(-)
+> > ---
+> > base-commit: 40b7a19f321e65789612ebaca966472055dab48c
+> > change-id: 20250918-video-iris-ubwc-enable-87eac6f41fa4
+> >=20
+> > Best regards,
+>=20
+
+--=-8im6X2nzMFe6Gk5DQ8ir
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaN0xDQAKCRDZQZRRKWBy
+9MA4AP9Wnbk1p1fA9WS9eZnfnfvuJohBg8nrG8sTKlfaHftc6wEAwGh9enUFIa14
+IZhYzQqBaFqyPDvB4BlNfMDrr5KeSAs=
+=PwN1
+-----END PGP SIGNATURE-----
+
+--=-8im6X2nzMFe6Gk5DQ8ir--
 
