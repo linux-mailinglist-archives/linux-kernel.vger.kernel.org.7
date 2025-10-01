@@ -1,180 +1,86 @@
-Return-Path: <linux-kernel+bounces-839217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90759BB1133
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 17:31:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3972BB1127
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 17:30:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 435AC2A177C
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 15:31:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A6EB1944C66
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 15:30:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BD8620468E;
-	Wed,  1 Oct 2025 15:31:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X9s2vJhw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D054B256C76;
+	Wed,  1 Oct 2025 15:30:20 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ED69275860
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 15:31:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA1A258EFB
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 15:30:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759332676; cv=none; b=Tuv+nBODtGEn27GN+3MqdpeOocLMIBFJufBnFRt5QN81e8gyIxuOJYo8KxWBMW/2z3OLjyjVv+XfNj08qtXu3H7vMjgGuF5rt2E9+4Y+OaZgDTJNd/Yvxsx4gJu/7IwBD0RtYdffhtsYARoj0BPNmt/TakRznuWRe62WcuaVfJo=
+	t=1759332620; cv=none; b=mA5yRQdUizLzIWDtama2g7b+YSC3F64bSL8+010WxLvdErq+O9bGuuupSssMlrw8Tzp5u2VzfgEBd4Ldd8X3zKIZBUgq8Tg0cm2b+BAf94LRtWMAuINzB202Vu2yTwi7R8p7oQE3FDN6xFbGbt59+FHgJ9ByJNQRLHhy5kOKIEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759332676; c=relaxed/simple;
-	bh=JDTAEyiZbcLvVT3hNia51TXKC13VHjeiGUJS8Hgu32o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SsZgJAMKj6bLm90LAIZ0mIZfmHfo0MG7aWqpHwVu++sjRUmVp3D/Xxa4VruzUXzgYfMGzxhveWXUwuPN+kJwa+0EL6+GVnU3vr2EZFOvaqkWIYUy8SvgbNlPy1N3WwdSNGs++qerr8mjLg5XJTLY3rCSxUWc58MAk3oMbatAK7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X9s2vJhw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEE48C4CEFE
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 15:31:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759332675;
-	bh=JDTAEyiZbcLvVT3hNia51TXKC13VHjeiGUJS8Hgu32o=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=X9s2vJhwFvLYgnC7gK/o4ZbL5fgFDbWMo2m9DC8rtEEL4x7JKB9d/kOIlK6IYksaN
-	 ijhj3/MjlbSKUq9Cl3tPq3qd/b1tYIW3KmahqNu87DAYfkDQw2S5qap5UV98S0admZ
-	 qoho8gFivpdh6iRA7RKqJs/Zdn1xWauCh/w8Pi2m/gvqKzs2sFuRz2vrMA6JrKvxta
-	 9deqCRJK7jSWhpKZ6fV2sHYyxMocueDWW/lHZFl/xf28Xr/J1r3NfrCV187VMuIBXh
-	 Wq6sHMJNs7zHCcA3E+xXXTMZqKFCgApgkYRjXMcnAWJ3oafrGKHZjtl7xZUqe/nTfH
-	 stqn8akp4VTkg==
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-afcb7ae31caso1114657166b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 08:31:15 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV1uppBLAKnh9V3bW98rldUN2g7WbCL+UR5TLtewH3N4krIH9zaUe0TzgBcfIVYXFjpKh4+AM1oa9/gUPI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzfd8xRlRnXcqEbtdrQlvO2Rg+RJVAyB9F2CQm4W4m6H5Fnab+4
-	a+gDH0rvLhzPAtQ5L85GqZxmqKC44jUKMaI3wFoizsR1SzKUZvwGfxCtnfGu58fpa60pmk8pgJf
-	4Tqw+ZDJXsN7+1efJjawwNvHEFfogDw==
-X-Google-Smtp-Source: AGHT+IGuAt8OqaKidKIuidndmLKgwuYuRdG+PcQotC2WNIt9dyJsL6bKltHzJtdGvoLIdTuZkQcvUO0000wUNzWaOnw=
-X-Received: by 2002:a17:906:730f:b0:b2e:6b3b:fbe7 with SMTP id
- a640c23a62f3a-b46df909bf3mr469061166b.0.1759332674337; Wed, 01 Oct 2025
- 08:31:14 -0700 (PDT)
+	s=arc-20240116; t=1759332620; c=relaxed/simple;
+	bh=CXwG/R+Rnn7AkKam2k9JX1aU4zJyU59IGQaNQgzAeno=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BYDobvufUicWVmUEWYCpCl+CbT8pZ4yoG1tgHlWLfexQ7tEQXuJhTGFRAtWzRfa7tDHE2HkervQg/QC8YD68awTW7sptSxaDnfWQtAW4BCAZVRh8gDIIAFJarMjpbXZVlNT3riFmylXre2Ci2bvLqau9N4L8nzdl7IqIadZM39g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf10.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay05.hostedemail.com (Postfix) with ESMTP id 9AC0E55EB1;
+	Wed,  1 Oct 2025 15:30:09 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf10.hostedemail.com (Postfix) with ESMTPA id CECBA2F;
+	Wed,  1 Oct 2025 15:30:07 +0000 (UTC)
+Date: Wed, 1 Oct 2025 11:31:45 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: jpoimboe@kernel.org, rostedt@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/12] task_work: Fix NMI race condition
+Message-ID: <20251001113145.72e10530@gandalf.local.home>
+In-Reply-To: <20250924080118.425949403@infradead.org>
+References: <20250924075948.579302904@infradead.org>
+	<20250924080118.425949403@infradead.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250724132808.101351-1-srinivas.kandagatla@oss.qualcomm.com>
- <CAL_JsqKG+dcMgp1QF4F3Oxh5Shvagg6cSde=g1JMcEAquZhH_Q@mail.gmail.com>
- <990cb5af-3846-44a3-b373-ded62d3309b9@oss.qualcomm.com> <CAL_Jsq+zC91GPdzQQa9F8KEw5UL4xc13u5U_5vTyQG1WeJa5rw@mail.gmail.com>
- <82906e08-9583-4f4c-91ad-d5b53b2dffd6@kernel.org> <CAL_JsqLtLbCqzHzcaGAuYwxqr=e9HZFX8X20tndx7US-XjhH3Q@mail.gmail.com>
- <CAL_JsqLcinpeJyib+JG7UFspUqXDTzCLguF3Nt4JJY9YncTb9A@mail.gmail.com>
- <b8c1365a-545d-40ae-a39c-e15a3e1f07e7@kernel.org> <b3147370-11da-4202-abac-36218487578f@oss.qualcomm.com>
-In-Reply-To: <b3147370-11da-4202-abac-36218487578f@oss.qualcomm.com>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 1 Oct 2025 10:31:02 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+_FoOFQ92SBx1neViyzAeiVkpn2DWqi4Nt4FFoz4pR_g@mail.gmail.com>
-X-Gm-Features: AS18NWD3T-H-3Cqx3KV0EYQQkvmNWsSh9Yljc8XF87P_qTz1x5FFABioQlBsZU4
-Message-ID: <CAL_Jsq+_FoOFQ92SBx1neViyzAeiVkpn2DWqi4Nt4FFoz4pR_g@mail.gmail.com>
-Subject: Re: [PATCH] slimbus: qcom: remove unused qcom controller driver
-To: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-Cc: Srinivas Kandagatla <srini@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: wm1u53iazytns5ejtjdsh13a91rrk6bk
+X-Rspamd-Server: rspamout01
+X-Rspamd-Queue-Id: CECBA2F
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+NQk0AiKdfmpm0DXOLHjBnoUgAsU6cNCw=
+X-HE-Tag: 1759332607-190467
+X-HE-Meta: U2FsdGVkX1/lqmIJhBB/K2L6Gh7XKgysIB7soH30sjN++xRp9QFU3SXockUFgkpFdSHQjf46BNjBnd0r8pBpg5ZnaeFJh4aDfPWFwTQj3qYY0qcpHmdb2oRUB/87A4cjRZiAqjGI0hKvP6YmXXmSg6PTwfYotZ0h0JdYb6zeqpy9o2hTwMHfLd2jmTyYE5yO/i1a6XYIQFO/Fdv7ff8w8jKQ7BO3zT99Np/GaIX9lQaPME9ZUSLrCJJWkfhwVIkZ35KhM2XoFv4DIZTHJevm/hRq/TfO7+7RONmgp1VvUCt4QJpF/yT82oskjDom3RAjE/TMb9gqP9IGpOdMamqhU6xLq8rM1ieR2yyMKT7hfytNzJSne2uYu8+79DZbJJ4nJGh4j8H82tdVuuuzbgWLeLwuYRU0wMN1e6ol4QX6UMvimJlMmq9/Rt6GQKKx/jh2/X0HnEi+pQ2mMLcbrFe7Lg==
 
-On Wed, Oct 1, 2025 at 10:03=E2=80=AFAM Srinivas Kandagatla
-<srinivas.kandagatla@oss.qualcomm.com> wrote:
->
-> On 10/1/25 3:21 PM, Srinivas Kandagatla wrote:
-> >
-> >
-> > On 10/1/25 3:19 PM, Rob Herring wrote:
-> >> +Greg
-> >>
-> >> On Fri, Sep 19, 2025 at 12:25=E2=80=AFPM Rob Herring <robh@kernel.org>=
- wrote:
-> >>>
-> >>> On Fri, Sep 5, 2025 at 12:30=E2=80=AFAM Srinivas Kandagatla <srini@ke=
-rnel.org> wrote:
-> >>>>
-> >>>>
-> >>>>
-> >>>> On 9/5/25 12:08 AM, Rob Herring wrote:
-> >>>>> On Tue, Aug 19, 2025 at 8:44=E2=80=AFAM Srinivas Kandagatla
-> >>>>> <srinivas.kandagatla@oss.qualcomm.com> wrote:
-> >>>>>>
-> >>>>>> Thanks Rob for reporting this,
-> >>>>>>
-> >>>>>> On 8/19/25 2:35 PM, Rob Herring wrote:
-> >>>>>>> On Thu, Jul 24, 2025 at 8:28=E2=80=AFAM <srinivas.kandagatla@oss.=
-qualcomm.com> wrote:
-> >>>>>>>>
-> >>>>>>>> From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-> >>>>>>>>
-> >>>>>>>> Qcom Slimbus controller driver is totally unused and dead code, =
-there is
-> >>>>>>>> no point in keeping this driver in the kernel without users.
-> >>>>>>>>
-> >>>>>>>> This patch removes the driver along with device tree bindings.
-> >>>>>>>>
-> >>>>>>>> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qual=
-comm.com>
-> >>>>>>>> ---
-> >>>>>>>>  .../bindings/slimbus/qcom,slim.yaml           |  86 --
-> >>>>>>>>  drivers/slimbus/Kconfig                       |   7 -
-> >>>>>>>>  drivers/slimbus/Makefile                      |   3 -
-> >>>>>>>>  drivers/slimbus/qcom-ctrl.c                   | 735 -----------=
--------
-> >>>>>>>>  4 files changed, 831 deletions(-)
-> >>>>>>>>  delete mode 100644 Documentation/devicetree/bindings/slimbus/qc=
-om,slim.yaml
-> >>>>>>>>  delete mode 100644 drivers/slimbus/qcom-ctrl.c
-> >>>>>>>
-> >>>>>>> This adds warnings to dt_binding_check:
-> >>>>>>>
-> >>>>>>> Documentation/devicetree/bindings/slimbus/slimbus.example.dtb:
-> >>>>>>> /example-0/soc/slim@28080000: failed to match any schema with
-> >>>>>>> compatible: ['qcom,apq8064-slim', 'qcom,slim']
-> >>>>>>
-> >>>>>> Will replace this example with slim-ngd and fold it in the origina=
-l patch.
-> >>>>>
-> >>>>> Still warning in linux-next...
-> >>>> Its done now!
-> >>>
-> >>> Now I get this:
-> >>>
-> >>> Documentation/devicetree/bindings/slimbus/slimbus.example.dtb:
-> >>> slim@28080000 (qcom,slim-ngd-v1.5.0): 'audio-codec@1,0' does not matc=
-h
-> >>> any of the regexes: '^pinctrl-[0-9]+$', '^slim@[0-9a-f]+$'
-> >>>         from schema $id:
-> >>> http://devicetree.org/schemas/slimbus/qcom,slim-ngd.yaml#
-> >>> Documentation/devicetree/bindings/slimbus/slimbus.example.dtb:
-> >>> slim@28080000 (qcom,slim-ngd-v1.5.0): #address-cells: 1 was expected
-> >>>         from schema $id:
-> >>> http://devicetree.org/schemas/slimbus/qcom,slim-ngd.yaml#
-> >>> Documentation/devicetree/bindings/slimbus/slimbus.example.dtb:
-> >>> slim@28080000 (qcom,slim-ngd-v1.5.0): 'dmas' is a required property
-> >>>         from schema $id:
-> >>> http://devicetree.org/schemas/slimbus/qcom,slim-ngd.yaml#
-> >>> Documentation/devicetree/bindings/slimbus/slimbus.example.dtb:
-> >>> slim@28080000 (qcom,slim-ngd-v1.5.0): 'dma-names' is a required
-> >>> property
-> >>>         from schema $id:
-> >>> http://devicetree.org/schemas/slimbus/qcom,slim-ngd.yaml#
-> >>
-> >> Still failing in linux-next.
->
-> I was running the check against the the yaml file which missed this
-> warnings, I should have run this against the folder instead which could
-> have caught this. May be this is something that could be improved in the
-> check by pulling in the dependency yamls too.
->
->
-> make -j`nproc` dt_binding_check
-> DT_SCHEMA_FILES=3DDocumentation/devicetree/bindings/slimbus/slimbus.yaml
+On Wed, 24 Sep 2025 09:59:49 +0200
+Peter Zijlstra <peterz@infradead.org> wrote:
 
-You can also do just "DT_SCHEMA_FILES=3Dslimbus". It's just a substring
-match on the path.
+>   __schedule()
+>   // disable irqs
+>       <NMI>
+> 	  task_work_add(current, work, TWA_NMI_CURRENT);
+>       </NMI>
+>   // current = next;
+>   // enable irqs
+>       <IRQ>
+> 	  task_work_set_notify_irq()
+> 	  test_and_set_tsk_thread_flag(current,
+>                                        TIF_NOTIFY_RESUME); // wrong task!
+>       </IRQ>
+>   // original task skips task work on its next return to user (or exit!)
+> 
+> Fixes: 466e4d801cd4 ("task_work: Add TWA_NMI_CURRENT as an additional notify mode.")
+> Reported-by: Josh Poimboeuf <jpoimboe@kernel.org>
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 
-But any example could use any schema, so you ultimately have to run
-just 'make dt_binding_check' without DT_SCHEMA_FILES.
+Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 
-Rob
+-- Steve
 
