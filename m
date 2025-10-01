@@ -1,216 +1,129 @@
-Return-Path: <linux-kernel+bounces-838385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36251BAF0C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 05:02:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 74DE3BAF0D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 05:04:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4DC72A1A64
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 03:02:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36A3D17FC0B
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 03:04:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E22B027AC54;
-	Wed,  1 Oct 2025 03:02:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 361AC27BF84;
+	Wed,  1 Oct 2025 03:04:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="MvJUXIMy"
-Received: from pdx-out-014.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-014.esa.us-west-2.outbound.mail-perimeter.amazon.com [35.83.148.184])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="F68qHZMu"
+Received: from omta38.uswest2.a.cloudfilter.net (omta38.uswest2.a.cloudfilter.net [35.89.44.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AF3A46B5;
-	Wed,  1 Oct 2025 03:02:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.83.148.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B8B1DF97C
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 03:04:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759287764; cv=none; b=kvUm7c74KO3OLGXW/gEO5K3d7BWNWmZVvYGxLZmfxtg9GRtTumbCz6P/O2IdZWOTYP5MVrrke9xvUtbMnFU+k4DSldZ2BULRiOHXD2yUV5NoukUIfKYexOc7VnMifxVrfSojI70txvkRGEESALvcXdFJfubE6V48R9/RuJPnhxQ=
+	t=1759287859; cv=none; b=EmWLUhI2TPf6sEKK+iTJ2t5avxg7si8dVQRJmWT+WpSV9X8d2jwGRmow0S1ET3/azLKtv7yAX/EbDFIDPHiGGqidxfmvzUaPELPhFqgu0TdBkMyz0putSCPsvcbNrhqYNH6Qzgli1kgNBQU08mzASMhJqiR5ywiDJMGyA+7H55E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759287764; c=relaxed/simple;
-	bh=whn4o977e6ZiB5yPUkCpLeHhE7jNoVwdjwkN52NNJxc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CsBVVPj6YZxygs1ml36TFov9/VP7q4muezZojap6VxgHtT5KOv0smWrabfMOPufhVaB5QYS9IlpXJtrhDgGR9uZ+0bEuH0iCrw/u41Uat8x2mYTupY4AFgqS8KHFku8kVKuvtsZvWXV7wgG/s8R3Pb3qX5H44TVIcRrgjHACVh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=MvJUXIMy; arc=none smtp.client-ip=35.83.148.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1759287762; x=1790823762;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=p8R7A51WEVdgSz5MeW6Bhqev9k9kLLp4VwDvPagdCTM=;
-  b=MvJUXIMy2QifLWZWM/OAeUV9KqthMA9rYp/w7ig1QC1qkKD6JEGMAY8k
-   4gU/jwiFxKkmBhU2jLahKwxGiEPTBfAx6N512WIU97jgvR/TbxwEeUNGz
-   ODtg6710IINCWS2czAiKqjTvZsjH/5xQqJdI8TTZlBHfGxk82kCPOxTds
-   JRfqn4Y4KpHoyjumEVdBgum2KiOn1+1/Rm9NtbndEea5MkBIy4I372esl
-   4Z7KFTd9jJ8HC4aOHIm8Xa76dILGWqWd2cOaXugzu4I3QnIeZed0RToK8
-   Exf47m3mhh6rSFbVSoHrxglfJ8CWdAAubooJtUNNpkzrzFmZOJjJHMtOR
-   A==;
-X-CSE-ConnectionGUID: MRZA34sNSsG895oXGBtAkg==
-X-CSE-MsgGUID: QQys0kR4Ri2gSlmA/rYtRA==
-X-IronPort-AV: E=Sophos;i="6.18,305,1751241600"; 
-   d="scan'208";a="3850333"
-Received: from ip-10-5-12-219.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.12.219])
-  by internal-pdx-out-014.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2025 03:02:40 +0000
-Received: from EX19MTAUWC001.ant.amazon.com [10.0.21.151:20538]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.36.10:2525] with esmtp (Farcaster)
- id 8cbb2507-5691-45d7-8d59-02f4da147527; Wed, 1 Oct 2025 03:02:40 +0000 (UTC)
-X-Farcaster-Flow-ID: 8cbb2507-5691-45d7-8d59-02f4da147527
-Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
- EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Wed, 1 Oct 2025 03:02:40 +0000
-Received: from b0be8375a521.amazon.com (10.37.244.7) by
- EX19D001UWA001.ant.amazon.com (10.13.138.214) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Wed, 1 Oct 2025 03:02:38 +0000
-From: Kohei Enju <enjuk@amazon.com>
-To: <syzbot+938fcd548c303fe33c1a@syzkaller.appspotmail.com>
-CC: <jgg@ziepe.ca>, <leon@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-rdma@vger.kernel.org>, <syzkaller-bugs@googlegroups.com>
-Subject: Re: [syzbot] [rdma?] KMSAN: uninit-value in ib_nl_handle_ip_res_resp
-Date: Wed, 1 Oct 2025 12:02:10 +0900
-Message-ID: <20251001030227.84476-1-enjuk@amazon.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <68dc3dac.a00a0220.102ee.004f.GAE@google.com>
-References: <68dc3dac.a00a0220.102ee.004f.GAE@google.com>
+	s=arc-20240116; t=1759287859; c=relaxed/simple;
+	bh=ifdEVCSmfeq6YiF1BSc/ORyDHXWpxmZAePTywu7Uxck=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pMp4R91sAc9mgFFAB0yfK32+wLFtSYfLSPtGeLw1w3bReGhXjTgPoe4BKY9VEHPLaLyg4PaM/BhnIqxWk1amTPjUPHKl6GlC5mZnKhin84vQGG+4N0DodLsbT7TuB4EgdeBZq5ncFgCX3xXyUpzw/BybTCwyclRqhxCVuH17X7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=F68qHZMu; arc=none smtp.client-ip=35.89.44.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-6007b.ext.cloudfilter.net ([10.0.30.166])
+	by cmsmtp with ESMTPS
+	id 3jJPvLriAeNqi3n8Zvsi9E; Wed, 01 Oct 2025 03:04:15 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id 3n8Zv53QZp0Hq3n8ZvhJAY; Wed, 01 Oct 2025 03:04:15 +0000
+X-Authority-Analysis: v=2.4 cv=H/nbw/Yi c=1 sm=1 tr=0 ts=68dc9a2f
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=De7t3naRBfxtA5xB3EgA:9 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=5PkxsPutvdKk2z/ipz7uZ5LYOkOuVqmY2FwGjozjSPA=; b=F68qHZMuPb6XM3BqD3rCaBvyUx
+	8OxIURUjig2WoNEOk7phipOZOltY4QDJNEiKGLajB1eDdjlVfP1Us8CKBTaSpMuPmpoqUBdMkNE3n
+	Dzw9kRQKB2cFAPtTnnpl7kq/t2GdsKXXtF8gnEneqCibAVOSkrjjXAz3dgYPZ+hK4OLx2Y5B1Q+Ms
+	B33892QoZmXTqUfgyUOd4budcmXnfWE6vG9zlX449qr+N/yVqWMIAFQ9ftXmTzITUUvps4r6TcWx7
+	cEeP3dAcyHRSqwNF9c8qaP4cXEQ7BYNgoHhUV5EdOLqzlqegwEPIjBZ+su+DRPR471R0EI3lULikz
+	c4+tdI8w==;
+Received: from c-73-92-56-26.hsd1.ca.comcast.net ([73.92.56.26]:57704 helo=[10.0.1.116])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <re@w6rz.net>)
+	id 1v3n8W-00000000bhO-2S43;
+	Tue, 30 Sep 2025 21:04:12 -0600
+Message-ID: <63cc4202-5114-4e9d-bb1f-1f138ef434f7@w6rz.net>
+Date: Tue, 30 Sep 2025 20:04:09 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D031UWA002.ant.amazon.com (10.13.139.96) To
- EX19D001UWA001.ant.amazon.com (10.13.138.214)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.1 00/73] 6.1.155-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
+References: <20250930143820.537407601@linuxfoundation.org>
+Content-Language: en-US
+From: Ron Economos <re@w6rz.net>
+In-Reply-To: <20250930143820.537407601@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.92.56.26
+X-Source-L: No
+X-Exim-ID: 1v3n8W-00000000bhO-2S43
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-92-56-26.hsd1.ca.comcast.net ([10.0.1.116]) [73.92.56.26]:57704
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 16
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfP+vv2VEJWvDWdPRwpSa/tdhwzeBF7RQrG86vJkuKu3AjRT3v3OPAW2XGKmFooOPPW5s8RpLh91fx1BMnMgW0Nbecsxm0iQQ1yGbvqyJlZphtznpZWkX
+ MC/GdMHr2HUTLTVSnf0O6A5ngk13ah2zdnNm039K7Kg2gJUDx98XieMFkkTSlxAS5PHu3avbMW6gLypsMqSlSLtAMazxlbsfwfo=
 
-On Tue, 30 Sep 2025 13:29:32 -0700, syzbot wrote:
+On 9/30/25 07:47, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.155 release.
+> There are 73 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 02 Oct 2025 14:37:59 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.155-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
->Hello,
->
->syzbot found the following issue on:
->
->HEAD commit:    1896ce8eb6c6 Merge tag 'fsverity-for-linus' of git://git.k..
->git tree:       upstream
->console output: https://syzkaller.appspot.com/x/log.txt?x=153d0092580000
->kernel config:  https://syzkaller.appspot.com/x/.config?x=6eca10e0cdef44f
->dashboard link: https://syzkaller.appspot.com/bug?extid=938fcd548c303fe33c1a
->compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
->userspace arch: i386
->
->Unfortunately, I don't have any reproducer for this issue yet.
->
->Downloadable assets:
->disk image: https://storage.googleapis.com/syzbot-assets/d0fbab3c0b62/disk-1896ce8e.raw.xz
->vmlinux: https://storage.googleapis.com/syzbot-assets/71c7b444e106/vmlinux-1896ce8e.xz
->kernel image: https://storage.googleapis.com/syzbot-assets/96a4aa63999d/bzImage-1896ce8e.xz
->
->IMPORTANT: if you fix the issue, please add the following tag to the commit:
->Reported-by: syzbot+938fcd548c303fe33c1a@syzkaller.appspotmail.com
->
->netlink: 8 bytes leftover after parsing attributes in process `syz.8.3246'.
->=====================================================
->BUG: KMSAN: uninit-value in hex_byte_pack include/linux/hex.h:13 [inline]
->BUG: KMSAN: uninit-value in ip6_string+0xef4/0x13a0 lib/vsprintf.c:1490
-> hex_byte_pack include/linux/hex.h:13 [inline]
-> ip6_string+0xef4/0x13a0 lib/vsprintf.c:1490
-> ip6_addr_string+0x18a/0x3e0 lib/vsprintf.c:1509
-> ip_addr_string+0x245/0xee0 lib/vsprintf.c:1633
-> pointer+0xc09/0x1bd0 lib/vsprintf.c:2542
-> vsnprintf+0xf8a/0x1bd0 lib/vsprintf.c:2930
-> vprintk_store+0x3ae/0x1530 kernel/printk/printk.c:2279
-> vprintk_emit+0x307/0xcd0 kernel/printk/printk.c:2426
-> vprintk_default+0x3f/0x50 kernel/printk/printk.c:2465
-> vprintk+0x36/0x50 kernel/printk/printk_safe.c:82
-> _printk+0x17e/0x1b0 kernel/printk/printk.c:2475
-> ib_nl_process_good_ip_rsep drivers/infiniband/core/addr.c:128 [inline]
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-I see when gid is not initialized in nla_for_each_attr loop, this should
-return early.
+Tested-by: Ron Economos <re@w6rz.net>
 
-I think the splat occurrs when gid is not found, so a simple fix might
-be like:
-
-diff --git a/drivers/infiniband/core/addr.c b/drivers/infiniband/core/addr.c
-index be0743dac3ff..c03a308bcda5 100644
---- a/drivers/infiniband/core/addr.c
-+++ b/drivers/infiniband/core/addr.c
-@@ -103,15 +103,21 @@ static void ib_nl_process_good_ip_rsep(const struct nlmsghdr *nlh)
-        struct addr_req *req;
-        int len, rem;
-        int found = 0;
-+       bool gid_found = false;
-
-        head = (const struct nlattr *)nlmsg_data(nlh);
-        len = nlmsg_len(nlh);
-
-        nla_for_each_attr(curr, head, len, rem) {
--               if (curr->nla_type == LS_NLA_TYPE_DGID)
-+               if (curr->nla_type == LS_NLA_TYPE_DGID) {
-                        memcpy(&gid, nla_data(curr), nla_len(curr));
-+                       gid_found = true;
-+               }
-        }
-
-+       if (!gid_found)
-+               return;
-+
-        spin_lock_bh(&lock);
-        list_for_each_entry(req, &req_list, list) {
-                if (nlh->nlmsg_seq != req->seq)
-
-> ib_nl_handle_ip_res_resp+0x963/0x9d0 drivers/infiniband/core/addr.c:141
-> rdma_nl_rcv_msg drivers/infiniband/core/netlink.c:-1 [inline]
-> rdma_nl_rcv_skb drivers/infiniband/core/netlink.c:239 [inline]
-> rdma_nl_rcv+0xefa/0x11c0 drivers/infiniband/core/netlink.c:259
-> netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
-> netlink_unicast+0xf04/0x12b0 net/netlink/af_netlink.c:1346
-> netlink_sendmsg+0x10b3/0x1250 net/netlink/af_netlink.c:1896
-> sock_sendmsg_nosec net/socket.c:714 [inline]
-> __sock_sendmsg+0x333/0x3d0 net/socket.c:729
-> ____sys_sendmsg+0x7e0/0xd80 net/socket.c:2617
-> ___sys_sendmsg+0x271/0x3b0 net/socket.c:2671
-> __sys_sendmsg+0x1aa/0x300 net/socket.c:2703
-> __compat_sys_sendmsg net/compat.c:346 [inline]
-> __do_compat_sys_sendmsg net/compat.c:353 [inline]
-> __se_compat_sys_sendmsg net/compat.c:350 [inline]
-> __ia32_compat_sys_sendmsg+0xa4/0x100 net/compat.c:350
-> ia32_sys_call+0x3f6c/0x4310 arch/x86/include/generated/asm/syscalls_32.h:371
-> do_syscall_32_irqs_on arch/x86/entry/syscall_32.c:83 [inline]
-> __do_fast_syscall_32+0xb0/0x150 arch/x86/entry/syscall_32.c:306
-> do_fast_syscall_32+0x38/0x80 arch/x86/entry/syscall_32.c:331
-> do_SYSENTER_32+0x1f/0x30 arch/x86/entry/syscall_32.c:369
-> entry_SYSENTER_compat_after_hwframe+0x84/0x8e
->
->Local variable gid.i created at:
-> ib_nl_process_good_ip_rsep drivers/infiniband/core/addr.c:102 [inline]
-> ib_nl_handle_ip_res_resp+0x254/0x9d0 drivers/infiniband/core/addr.c:141
-> rdma_nl_rcv_msg drivers/infiniband/core/netlink.c:-1 [inline]
-> rdma_nl_rcv_skb drivers/infiniband/core/netlink.c:239 [inline]
-> rdma_nl_rcv+0xefa/0x11c0 drivers/infiniband/core/netlink.c:259
->
->CPU: 0 UID: 0 PID: 17455 Comm: syz.8.3246 Not tainted syzkaller #0 PREEMPT(none) 
->Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
->=====================================================
->
->
->---
->This report is generated by a bot. It may contain errors.
->See https://goo.gl/tpsmEJ for more information about syzbot.
->syzbot engineers can be reached at syzkaller@googlegroups.com.
->
->syzbot will keep track of this issue. See:
->https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->
->If the report is already addressed, let syzbot know by replying with:
->#syz fix: exact-commit-title
->
->If you want to overwrite report's subsystems, reply with:
->#syz set subsystems: new-subsystem
->(See the list of subsystem names on the web dashboard)
->
->If the report is a duplicate of another one, reply with:
->#syz dup: exact-subject-of-another-report
->
->If you want to undo deduplication, reply with:
->#syz undup
->
 
