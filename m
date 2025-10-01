@@ -1,172 +1,125 @@
-Return-Path: <linux-kernel+bounces-839383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6452DBB1857
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 20:40:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79BEFBB185D
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 20:40:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 251203B3E98
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 18:40:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B2AE1C7077
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 18:40:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AED992D63E5;
-	Wed,  1 Oct 2025 18:40:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CE962D63EF;
+	Wed,  1 Oct 2025 18:40:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PKaR9bBz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L5I5+QMH"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A235253F03;
-	Wed,  1 Oct 2025 18:40:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96E092D595B
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 18:40:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759344027; cv=none; b=QnCQDNEvMplZOVsYUaG0AFHHZiX9LC5FMyOKdg+cltpOGEqZQbAxnKA1GqmhZdTCpEAsJAGVIRTG8vgmlGMOG6kx+GeMM2huEtmwRprpjDOSx6qj5D4Glfh4atjoAJjZOnIjsCnahad2IhxY8agrAGLz48yoN3UfjBrs9cONgII=
+	t=1759344040; cv=none; b=llxHpGs4hh4zzZsjgdgQkUwDi4tRWtizJRrk+QpclhgOcBoY6E4yIN5ukq2yTHK81h2fo6hpauIqv9Hva2nuAhzE1qIUevAfSIdJ30qm8nzuGCYAATXzcqsRiUyI1wNgtFAkr/0kMeqrSDV24uJCToAxajUtGcKFMsJORNFwnfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759344027; c=relaxed/simple;
-	bh=Zvia04J9o7jWgxHG1OQx00r4MlbA4yAGZGqEcbUw7mE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HqynXcZE4C0WqWpmrxzPzC+cg40hQGMmHA+/T17IX3uBmA+Ihw2DobruI2OA3V6gPadQIK3c6nyO2FKc/zk9z81Y3Tl0PGSVAyatQZT+Xx40jvF9j67PmqPVUqn0VSHNbjUH6Qw0Dh32I3kCWMFU5vJI2Us5whV5tJfLwbeO124=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PKaR9bBz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEFAAC4CEF1;
-	Wed,  1 Oct 2025 18:40:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759344026;
-	bh=Zvia04J9o7jWgxHG1OQx00r4MlbA4yAGZGqEcbUw7mE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PKaR9bBzMerwiLC0K1jOIDU1nypit4mR2Jiso5nk7bcAlUfRJoZvfUKC3yqyW8ZS+
-	 HiSFGR2A2SXiohlwbSuAeuuquzVXBhBVxl77AXt+UN4bsJuVL1dCXs6cmUE2n2txBH
-	 XwZvTORr+66vmwprYD2lmzYT1x/xRMArAHzXj7gaEHUH49XCCZCWdHtXUTCrH1RjmP
-	 VmedGQiJXbPVCnPOLVbuU/QLKAQX1IgJjZE2bEymJVzHTk7h5xRIOOA8uGW6jrlq5W
-	 F8XAaWpMgA63Ni8iKBTheBIv6AsNACVxf67w2PPIfkaekH6xFhc3cSmxTvBck7PeZR
-	 pqUg6ial7WtcQ==
-Date: Wed, 1 Oct 2025 19:40:21 +0100
-From: Conor Dooley <conor@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Romain Gantois <romain.gantois@bootlin.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Hans de Goede <hansg@kernel.org>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-iio@vger.kernel.org
-Subject: Re: [PATCH v2 1/5] regulator: dt-bindings: Add Linear Technology
- LTM8054 regulator
-Message-ID: <20251001-glacial-synthetic-6faa84d6d047@spud>
-References: <20250925-ltm8054-driver-v2-0-bb61a401a0dc@bootlin.com>
- <5331035.LvFx2qVVIh@fw-rgant>
- <20250927-spoon-yearning-c1a8df796173@spud>
- <5926760.DvuYhMxLoT@fw-rgant>
- <CAMknhBGOpODxmzU9J9nqGDKGzn6KKFV5Ed3okLvecKtHhNRB9A@mail.gmail.com>
+	s=arc-20240116; t=1759344040; c=relaxed/simple;
+	bh=1umPVrMN25rwtFM9uAPR5FtEtbF3kEcUkN60uAVDZI8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=gfUPQYunontDtDeiQw5SChswEkkQnOqKd7FIm4kcVxYOQ7nu6FShm/jTy29kF87qHuFV4xSdtorbXdmn0Z2Rsinp4zho2mkGmQa4PFlUA+92EernVpSvwEbL/XFSvULKYOZsugtWo0jdL3hO5N9Ffh46afQ/ZYzE4MBXSFMC7k8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L5I5+QMH; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-329a41dc2ebso291124a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 11:40:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759344037; x=1759948837; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=MDEJ0lu1+GJ/IUFWINEx2UnZw97BBaeZD5EhIvxkjMY=;
+        b=L5I5+QMHtgKoXh3KKNHFDT7RZM0N0beLpSElit0R6zOcchdxQ59x99KNzr68Bif+Ai
+         KrXjdMBupOkkzXLn8xMGLU2OHwBiXun6djZyls2y0jtmXhPOP9cry+c93JnKX9MbqOiJ
+         lsp9SLL1972DXHf0dmKnGYb+cSpKJhz+yU1O2fNaL3lTJlz8Rx5Px6rXkVdvRyglQXx2
+         5sxUzwQqDeiY6s8xfat223VH9Bg4jDAbc5hiSFxQUOGt+/5p/st/W3FFkqEmGoW0Qloz
+         6730+id/5t3gL+ViXyKdfMAJBWfojFqzRG+x9GGmL0a9JfIfFyXvJB+/POd4K1hBC4EI
+         LAfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759344037; x=1759948837;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MDEJ0lu1+GJ/IUFWINEx2UnZw97BBaeZD5EhIvxkjMY=;
+        b=kDwNZPZ8VHKNm+fRuFIAz1gWZDtSFE5Y9w/gK80AngU3d92rOLwIcfPmx0jAylgQuR
+         gUHkfPqNQraoejGYUnlrXPsvHJdPiEdzBpcS+WDSas03XAXzlgp39RpFcUSopXkWbyOW
+         m9cpAnJahPfS6mF/LjoepW5WmhwMmvDIIubLVsKZozjSoDtmrH9k49pUAQVEIp8Njkqd
+         b0ts79RMdv4T617BJx59rg5KUuOAaDeVez2AoqfxO27Hs8q7ZBugFb/Gjd4x2pvgfG3i
+         E4IrcpqjDd4psN55fEZ3lKEFAq6CLq7g+39rIrH2lIsD6oh212xiajEUxXWozKrJAuOA
+         OfRw==
+X-Forwarded-Encrypted: i=1; AJvYcCXxaAsHyMA2ZJhe2rLn3F24QInaNYvc2xN+pmwksZ5sCQ+Y7eFwx5x6B+hkE1KNsG46kwOPdMMB45SKXlo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyrg1H+CsXOhTsC8f248p5xH10m512fcYhvSgPO6WZyHsbR3kVS
+	4bu67GdBtTAeHXzHHn61RnSw9rQJ9NERhWND6Vb+SM+jX7hEZHmn27bh
+X-Gm-Gg: ASbGncv4P4GWMVTgQk9tjDUEM9NusGXw81xD5TjR8R7wD++PzbLhrpqEnsX0UaAo5nc
+	xelei2gSheuztggSoi6QHGvsbVynkiXe+vwUiSMPBpUpvN5PQyY0GdI9b6bHF4FA/zYtGUlRDzG
+	Z0yFQdfJ8Qbq2/+ipkgoGgTbek3jWmqmo7JkA/YXdEXlipT8SXQWV/edWa/FdTVmdiwjvueqIJ8
+	bGQkFnsnqjU1ewewVaGzHI5nrXcMA90xh2AF2y0tO0xmaJ4a0UJBNBplCozH6hIuSFJhMrVeMtS
+	deVb0QBtsx0ZWeixVOb3j/LnMoDzseVwMJyUg4WuqQww8GNgkD3c2ebQeaSLjgiUVWXd0vUlPzQ
+	4Vwl2H7kr0bjyIaKqUePy3VkZLptx4/vvPJwHApneDwrem0VYN58KrUevo5IGMxyoq5vfG0s=
+X-Google-Smtp-Source: AGHT+IE9d7N5NG4XiPa9maEZ3RHrGA6o00yJybkBashehg2u+Wl6ekgRkDIwbZ+lXbWcT5ia5gUc1w==
+X-Received: by 2002:a17:90b:4d84:b0:330:4a1d:223c with SMTP id 98e67ed59e1d1-339a6e955e2mr5211655a91.15.1759344036919;
+        Wed, 01 Oct 2025 11:40:36 -0700 (PDT)
+Received: from ?IPv6:2a03:83e0:115c:1:1ed4:e17:bedc:abbb? ([2620:10d:c090:500::6:420a])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6099f594afsm184384a12.37.2025.10.01.11.40.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Oct 2025 11:40:36 -0700 (PDT)
+Message-ID: <15515a5f10587827b33b3e9eaeb854d5c96e88c6.camel@gmail.com>
+Subject: Re: [PATCH v3 0/2] bpf: Fix verifier crash on BPF_NEG with pointer
+ register
+From: Eduard Zingerman <eddyz87@gmail.com>
+To: Brahmajit Das <listout@listout.xyz>, 
+	syzbot+d36d5ae81e1b0a53ef58@syzkaller.appspotmail.com
+Cc: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
+ daniel@iogearbox.net, 	haoluo@google.com, john.fastabend@gmail.com,
+ jolsa@kernel.org, kpsingh@kernel.org, 	linux-kernel@vger.kernel.org,
+ martin.lau@linux.dev, sdf@fomichev.me, 	song@kernel.org,
+ syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev, 
+	kafai.wan@linux.dev
+Date: Wed, 01 Oct 2025 11:40:35 -0700
+In-Reply-To: <20251001095613.267475-1-listout@listout.xyz>
+References: <68d26227.a70a0220.1b52b.02a4.GAE@google.com>
+	 <20251001095613.267475-1-listout@listout.xyz>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="awo5i5GvxHVK+9Fg"
-Content-Disposition: inline
-In-Reply-To: <CAMknhBGOpODxmzU9J9nqGDKGzn6KKFV5Ed3okLvecKtHhNRB9A@mail.gmail.com>
 
-
---awo5i5GvxHVK+9Fg
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Oct 01, 2025 at 01:18:51PM +0200, David Lechner wrote:
-> On Wed, Oct 1, 2025 at 9:12=E2=80=AFAM Romain Gantois
-> <romain.gantois@bootlin.com> wrote:
-> >
-> > On Sunday, 28 September 2025 00:31:05 CEST Conor Dooley wrote:
-> > ...
-> > > > >
-> > > > > > +  lltc,fb-voltage-divider:
-> > > > > Why does this property have a ?linear? vendor prefix?
-> > > > > Shouldn't it be adi to match the other property and compatible?
-> > > >
-> > > > This component was originally from Linear Technology, before it was
-> > > > acquired by Analog Devices. The new properties and compatibles have=
- the
-> > > > Analog Devices prefix, but the "fb-voltage-divider" property is alr=
-eady
-> > > > used by the LTC3676 and LTC3589 regulators, so I left the Linear
-> > > > Technology prefix for this one to avoid introducing a new property =
-just
-> > > > to specify a vendor prefix change.
-> > > >
-> > > > I don't have a strong opinion about this though.
-> > >
-> > > Do they share the same driver?
-> >
-> > They do not. However, they use it in the exact same way, and I would've
-> > liked to factor out the handling of this property in a future patch. Th=
-is
-> > would also make it easier to handle other types of feedback pin circuits
-> > and have a generic binding for "regulators using a feedback pin connect=
-ed
-> > to some kind of analog circuit".
-> >
-> > For example:
-> >
-> > Vout----+
-> >         |
-> >         |
-> >        +++
-> >        | |
-> >        | | Rtop
-> >        | |
-> >        +++
-> >         |
-> >         |
-> >  FB ----+
-> >         |
-> >      +--+--+
-> >      |  |  |
-> >      |  |  |CCS
-> >      +--v--+
-> >         |
-> >         |
-> >        -+-
-> >         -
-> >
-> > This is all speculation at this point though, so I don't mind changing =
-the
-> > property to "adi,fb-voltage-divider" and handling the different compati=
-bles
-> > when it comes to it.
-> >
+On Wed, 2025-10-01 at 15:26 +0530, Brahmajit Das wrote:
+> This patch fixes a crash in the BPF verifier triggered when the BPF_NEG
+> operation is applied to a pointer-typed register. The verifier now
+> checks that the destination register is not a pointer before performing
+> the operation.
 >=20
-> Could we just make it `fb-voltage-divider-ohms`? The -ohms suffix
-> makes it match the standard property-units suffix which already has
-> the uint32-array type. There are a couple of bindings that have
-> `vout-voltage-divider` without a vendor prefix, so it sounds like this
-> pattern is considered somewhat of a standard property already. But I
-> think it would be better with the -ohms suffix. For example, there is
-> already `gw,voltage-divider-ohms` as well. But there are so many
-> similar properties without the suffix, it is kind of the defacto
-> standard already, so might be better to stick with that rather than
-> making it even more different variants than there already are.
+> Tested with syzkaller reproducer and new BPF sefltest.
+> Closes: https://syzkaller.appspot.com/bug?extid=3Dd36d5ae81e1b0a53ef58
 
-Ye, by all means standardise it. I suppose that means insertion into
-regulator.yaml, which usually also means a regulator- prefix - unless
-you're eyeing something wider than that?
+Nit: In the future, could you please include links to previous
+     patch-set versions in the cover letter?  These links are usually
+     accompanied with a short description of changes from version to
+     version.
 
---awo5i5GvxHVK+9Fg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaN11lQAKCRB4tDGHoIJi
-0tYpAP9FY+HpyoPKgEW68hevYOBRqe7TxW8twZPmPJyCHwP9wwEAoZTLPs9Tbt7J
-dAt9TII1TqGXkk23tg08ARjPQaCVIQU=
-=Wv5y
------END PGP SIGNATURE-----
-
---awo5i5GvxHVK+9Fg--
+>=20
+> Brahmajit Das (1):
+>   bpf: Skip scalar adjustment for BPF_NEG if dst is a pointer
+>=20
+> KaFai Wan (1):
+>   selftests/bpf: Add test for BPF_NEG alu on CONST_PTR_TO_MAP
+>=20
+>  kernel/bpf/verifier.c                          |  3 ++-
+>  .../bpf/progs/verifier_value_illegal_alu.c     | 18 ++++++++++++++++++
+>  2 files changed, 20 insertions(+), 1 deletion(-)
 
