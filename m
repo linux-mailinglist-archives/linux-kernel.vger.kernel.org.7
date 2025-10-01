@@ -1,139 +1,173 @@
-Return-Path: <linux-kernel+bounces-839178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DB06BB0FBB
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 17:11:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49B9CBB0E98
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 17:02:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 138951779E3
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 15:08:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34FF519C0903
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 15:01:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80A67248F73;
-	Wed,  1 Oct 2025 15:04:52 +0000 (UTC)
-Received: from mxct.zte.com.cn (mxct.zte.com.cn [58.251.27.85])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D38C5306B1C;
+	Wed,  1 Oct 2025 14:56:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eg8yIOYW";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1TzFs0ci"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A637B1D5CC6;
-	Wed,  1 Oct 2025 15:04:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=58.251.27.85
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6077926E71F
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 14:56:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759331092; cv=none; b=ZD2rMBEoHDi1G+gvmf11Efo0lChTOrsvV4yzCygnOFUwyVShHTvOgHmtSb3WAGqvPHD2TTHcD/UzG2fZsI04rvVupcwS1/NsIFeVz8E35cdCiDfKVF7YfKwTjQpzraKxe5Sm78XcUvCMmFbJDSDM4AFR08hT31S6/tcc+qJsLzw=
+	t=1759330606; cv=none; b=RlmXBOO2nVdvicoFMpRZIDSG+F4c5v7KIe1yHmr+XK5R1XVnV+WN9ZFb18q33iEwLCUmpOKc4P3FuJHL/KrCfCCPdvigOTpYs48o21MRNX1HOAxlP8au7tueYHjQH1G3AASyCf/6e9CLUI/TXSD3Kq0Zuc0Swk+/asai6GGy4K4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759331092; c=relaxed/simple;
-	bh=IK4dePlvCveFAFH/EYgvFWzfcjIWISEuQcfZHYuLnXA=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=ER1qkgFsP9s5ZrZHb4sKW+If9A317p2doXNqGgZfViAN1uXTmEDA4nDfE/u4F+HIo6IUXam6HMmNbxKcdHmT7UzlfcrgtavlrX4/9JFbmtGSrllCOjRgidBsIxj4iziwHsuXeUSgweOjqawFJHewAMLJZ7Ul4vOFzge4K//ktoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=58.251.27.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mxde.zte.com.cn (unknown [10.35.20.165])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mxct.zte.com.cn (FangMail) with ESMTPS id 4ccJ104W99zVvc;
-	Wed, 01 Oct 2025 22:56:52 +0800 (CST)
-Received: from mxhk.zte.com.cn (unknown [192.168.250.137])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mxde.zte.com.cn (FangMail) with ESMTPS id 4ccJ0r16mBz5qdvq;
-	Wed, 01 Oct 2025 22:56:44 +0800 (CST)
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4ccJ0f3XlBz8Xs6y;
-	Wed, 01 Oct 2025 22:56:34 +0800 (CST)
-Received: from xaxapp02.zte.com.cn ([10.88.97.241])
-	by mse-fl2.zte.com.cn with SMTP id 591EuQFk092290;
-	Wed, 1 Oct 2025 22:56:26 +0800 (+08)
-	(envelope-from xu.xin16@zte.com.cn)
-Received: from mapi (xaxapp02[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Wed, 1 Oct 2025 22:56:27 +0800 (CST)
-Date: Wed, 1 Oct 2025 22:56:27 +0800 (CST)
-X-Zmail-TransId: 2afa68dd411b2a3-0609f
-X-Mailer: Zmail v1.0
-Message-ID: <202510012256278259zrhgATlLA2C510DMD3qI@zte.com.cn>
+	s=arc-20240116; t=1759330606; c=relaxed/simple;
+	bh=DSUc9pfoQ+Y16E5od2msQ42hBfl43pFOqLqPE5guTLw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=mzsDxw16pFMWR8kEJJBxp/+ZRGIDFegLeoKtcuIF2c44VEA4J7DyFyE2EVry9b03GIlv4NQICDrMHQLDTQ4rvhBEtMk08px3Q2VEY9b8fX9+ZoXTFbMS4dUQp+f6F5vEeBqOcvtjc45rMSNrEaiqp+QnG7UgYFQI9jAhv/erpNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eg8yIOYW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1TzFs0ci; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1759330602;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=k86pFraRxRk/kzNe91Jwqta9P8GQT0RrkwicCsr3eUY=;
+	b=eg8yIOYWKZNzT94N6xkS8Y+Zxo9EZunWrk6gYJO0wlB0n1F1mVO94GwVWbCoOC+tCEg+12
+	ODfSLnsh9iLH8EK2Qqe+eACgLtK6HiECzppcIM1nuHw/f/ARCavhA1ZjvjOCEXGZHD2Fo0
+	uU0/gjTXe8NGjhhOccQQqFruOHV2KQqGikLUF+vYHp9OmLWCA3rKa3xNOhKwK/yz6p/MHK
+	VUMVXEiXF5H+/RaXjozHDSGk5gGNOjYG04rIquVDDZV0GzRKIKHjowFK3f/q4+J+ma0+66
+	QwpteoyDwrnNqyWpzhqVUDAyVhgXcfwhL37IuHHESAXD+7Eds8ewSKrcUvtm2w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1759330602;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=k86pFraRxRk/kzNe91Jwqta9P8GQT0RrkwicCsr3eUY=;
+	b=1TzFs0ci1RxD5UfBHpHSCYCm8oF4zFcHZ2k4Bs/L4C4Z1/wYl9wKgwKnjm0u7phqQMAWiU
+	52TXXSlM68WZwrCw==
+To: Marcos Paulo de Souza <mpdesouza@suse.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Petr Mladek <pmladek@suse.com>, Steven
+ Rostedt <rostedt@goodmis.org>, Sergey Senozhatsky
+ <senozhatsky@chromium.org>, Jason Wessel <jason.wessel@windriver.com>,
+ Daniel Thompson <danielt@kernel.org>, Douglas Anderson
+ <dianders@chromium.org>
+Cc: linux-kernel@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net,
+ Marcos Paulo de Souza <mpdesouza@suse.com>
+Subject: Re: [PATCH v5 2/5] printk: nbcon: Introduce KDB helpers
+In-Reply-To: <20250930-nbcon-kgdboc-v5-2-8125893cfb4f@suse.com>
+References: <20250930-nbcon-kgdboc-v5-0-8125893cfb4f@suse.com>
+ <20250930-nbcon-kgdboc-v5-2-8125893cfb4f@suse.com>
+Date: Wed, 01 Oct 2025 17:02:41 +0206
+Message-ID: <84h5wihdqu.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <xu.xin16@zte.com.cn>
-To: <akpm@linux-foundation.org>, <david@redhat.com>
-Cc: <chengming.zhou@linux.dev>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>,
-        <tujinjiang@huawei.com>, <shr@devkernel.io>
-Subject: =?UTF-8?B?W1BBVENIIGxpbnV4LW5leHQgMC8yXSBrc206IGZpeCBleGVjL2ZvcmsgaW5oZXJpdGFuY2U=?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 591EuQFk092290
-X-TLS: YES
-X-SPF-DOMAIN: zte.com.cn
-X-ENVELOPE-SENDER: xu.xin16@zte.com.cn
-X-SPF: None
-X-SOURCE-IP: 10.35.20.165 unknown Wed, 01 Oct 2025 22:56:52 +0800
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 68DD4133.000/4ccJ104W99zVvc
+MIME-Version: 1.0
+Content-Type: text/plain
 
-From: xu xin <xu.xin16@zte.com.cn>
+On 2025-09-30, Marcos Paulo de Souza <mpdesouza@suse.com> wrote:
+> diff --git a/kernel/printk/nbcon.c b/kernel/printk/nbcon.c
+> index 558ef31779760340ce42608294d91d5401239f1d..c23abed5933527cb7c6bcc42057fadbb44a43446 100644
+> --- a/kernel/printk/nbcon.c
+> +++ b/kernel/printk/nbcon.c
+> @@ -1855,3 +1855,69 @@ void nbcon_device_release(struct console *con)
+>  	console_srcu_read_unlock(cookie);
+>  }
+>  EXPORT_SYMBOL_GPL(nbcon_device_release);
+> +
+> +/**
+> + * nbcon_kdb_try_acquire - Try to acquire nbcon console, enter unsafe
+> + *				section, and initialized nbcon write context
 
-This series aim to fix exec/fork inheritance and introduce ksm-utils tools
-including ksm-set and ksm-get, you can see the detail in PATCH 1.
+                               initialize ---^^^^^^^^^^^
 
-Problem
-=======
-In some extreme scenarios, however, this inheritance of MMF_VM_MERGE_ANY during
-exec/fork can fail. For example, when the scanning frequency of ksmd is tuned
-extremely high, a process carrying MMF_VM_MERGE_ANY may still fail to pass it to
-the newly exec'd process. This happens because ksm_execve() is executed too early
-in the do_execve flow (prematurely adding the new mm_struct to the ksm_mm_slot list).
+And technically it is not initializing the write context, just the
+console ownership context. I'm not sure it is really necessary to
+mention that.
 
-As a result, before do_execve completes, ksmd may have already performed a scan and
-found that this new mm_struct has no VM_MERGEABLE VMAs, thus clearing its
-MMF_VM_MERGE_ANY flag. Consequently, when the new program executes, the flag
-MMF_VM_MERGE_ANY inheritance fails!
+> + * @con:	The nbcon console to acquire
+> + * @wctxt:	The nbcon write context to be used on success
+> + *
+> + * Context:	Under console_srcu_read_lock() for emiting a single kdb message
 
-Reproduce
-========
-Prepare ksm-utils in the prerequisite PATCH, and simply do as follows
+                                       emitting ---^^^^^^^
 
-echo 1 > /sys/kernel/mm/ksm/run;
-echo 2000 > /sys/kernel/mm/ksm/pages_to_scan;
-echo 0 > /sys/kernel/mm/ksm/sleep_millisecs;
-ksm-set -s on [NEW_PROGRAM_BIN] &
-ksm-get -a -e
+"./scripts/checkpatch.pl --codespell" is your friend. ;-)
 
-you can see like this:
-Pid         Comm                Merging_pages  Ksm_zero_pages    Ksm_profit     Ksm_mergeable     Ksm_merge_any
-206         NEW_PROGRAM_BIN     7680           0                 30965760       yes               no
+> + *		using the given con->write_atomic() callback. Can be called
+> + *		only when the console is usable at the moment.
+> + *
+> + * Return:	True if the console was acquired. False otherwise.
+> + *
+> + * kdb emits messages on consoles registered for printk() without
+> + * storing them into the ring buffer. It has to acquire the console
+> + * ownerhip so that it could call con->write_atomic() callback a safe way.
+> + *
+> + * This function acquires the nbcon console using priority NBCON_PRIO_EMERGENCY
+> + * and marks it unsafe for handover/takeover.
+> + */
+> +bool nbcon_kdb_try_acquire(struct console *con,
+> +			   struct nbcon_write_context *wctxt)
+> +{
+> +	struct nbcon_context *ctxt = &ACCESS_PRIVATE(wctxt, ctxt);
+> +
+> +	memset(ctxt, 0, sizeof(*ctxt));
+> +	ctxt->console = con;
+> +	ctxt->prio    = NBCON_PRIO_EMERGENCY;
+> +
+> +	if (!nbcon_context_try_acquire(ctxt, false))
+> +		return false;
+> +
+> +	if (!nbcon_context_enter_unsafe(ctxt))
+> +		return false;
+> +
+> +	return true;
+> +}
+> +
+> +/**
+> + * nbcon_kdb_release - Exit unsafe section and release the nbcon console
+> + *
+> + * @wctxt:	The nbcon write context initialized by a successful
+> + *		nbcon_kdb_try_acquire()
+> + *
+> + * Context:	Under console_srcu_read_lock() for emiting a single kdb message
 
-Note:
-If the first time don't reproduce the issue, pkill NEW_PROGRAM_BIN and try run it
-again. Usually, we can reproduce it in 5 times.
+                                       emitting ---^^^^^^^
 
-Root reason
-===========
-The commit d7597f59d1d33 ("mm: add new api to enable ksm per process") clear the
-flag MMF_VM_MERGE_ANY when ksmd found no VM_MERGEABLE VMAs.
+> + *		using the given con->write_atomic() callback. Can be called
+> + *		only when the console is usable at the moment.
 
-xu xin (2):
-  tools: add ksm-utils tools
-  mm/ksm: fix exec/fork inheritance support for prctl
+I do not think the "Context" is relevant. It must be called if
+a previous call to nbcon_kdb_try_acquire() was successful.
 
- mm/ksm.c                     |   8 +-
- tools/mm/Makefile            |  12 +-
- tools/mm/ksm-utils/Makefile  |  10 +
- tools/mm/ksm-utils/ksm-get.c | 397 +++++++++++++++++++++++++++++++++++
- tools/mm/ksm-utils/ksm-set.c | 144 +++++++++++++
- 5 files changed, 567 insertions(+), 4 deletions(-)
- create mode 100644 tools/mm/ksm-utils/Makefile
- create mode 100644 tools/mm/ksm-utils/ksm-get.c
- create mode 100644 tools/mm/ksm-utils/ksm-set.c
+> + */
+> +void nbcon_kdb_release(struct nbcon_write_context *wctxt)
+> +{
+> +	struct nbcon_context *ctxt = &ACCESS_PRIVATE(wctxt, ctxt);
+> +
+> +	if (!nbcon_context_exit_unsafe(ctxt))
+> +		return;
+> +
+> +	nbcon_context_release(ctxt);
+> +
+> +	/*
+> +	 * Flush any new printk() messages added when the console was blocked.
+> +	 * Only the console used by the given write context was	blocked.
+> +	 * The console was locked only when the write_atomic() callback
+> +	 * was usable.
+> +	 */
+> +	__nbcon_atomic_flush_pending_con(ctxt->console,
+> +					 prb_next_reserve_seq(prb), false);
 
--- 
-2.25.1
+This can all be one line. 100 characters is the official limit for code.
+
+> +}
 
