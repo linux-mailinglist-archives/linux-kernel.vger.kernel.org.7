@@ -1,421 +1,240 @@
-Return-Path: <linux-kernel+bounces-839200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77900BB1091
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 17:20:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 218C0BB10B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 17:22:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66D7C1883B9A
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 15:20:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13A347A6741
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 15:21:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB27726D4F7;
-	Wed,  1 Oct 2025 15:19:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFA8B2BEFF9;
+	Wed,  1 Oct 2025 15:22:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="nR+MbZnL"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="VAI+IoqS";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="X6LUsY5c"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 900AC202F70
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 15:19:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759331996; cv=none; b=qr2T2NaUPlzvIjchDoiMWGuqbn6hb+OGz2a1DhSVMf7cX6XzbKqs7853/GJ/nXNd6GWGnmy+fxpTrEwNdguVc/EuDkvv4+0/JLKEAEDfK2Vx2Rx/rTlKgpPHv5TEK14LRMtm4XFJ1BFguchFWDXywBPmObMZkQCKZv8wVE1u1sI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759331996; c=relaxed/simple;
-	bh=zZETUdqrdinLtX9xv+ceX8tP9fngMdmnHtNs3GZIGzA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=H/iuuZlrzM3X4w/o3WdFaGaFSGFjNSza02k9qShNcwfUJ0bqoymkvx9ui5wj2uRVU1ovD50967ovsA9+w0QzQVugk4s65ifNyoWltWB672Bh2HNR5vQ8Csrs3ADTWEZf1RS1A0DebLPhOBanjeJ5LJA7op5GEgVoenHVmFscUbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=nR+MbZnL; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1759331992;
-	bh=zZETUdqrdinLtX9xv+ceX8tP9fngMdmnHtNs3GZIGzA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=nR+MbZnLTi04wSJwEiGOsR9IM0FqcVWj/ytqm0LbgTsuYN/RpZWpWLjYKvzvQ0G5x
-	 ot4jHEWa0TZliMHFoykwQHUoAEGkJ4mmQqA0/6cYljXZ+EnHt3W0HjBdOlD7E9e3WR
-	 ORhqWn8Fu7a816iuo9KDr23BHlVCIciQg2qeXUOpvoI5CRJ5hLOqn4o2kJy2oxRnwU
-	 IV/DRjcPWFoQ7RmbZsLLWU8AclFNAJzca2ZoUIrIdQbb7PkqdxCJQWWiRUGH/d0JAn
-	 5MYpUJsfULWn6ZkznT0f/25UA+AaO+0egbjsnHEcFD9EDVpd0ffvUbBMlLsA/vSuz+
-	 vy5MtkNfH3rtQ==
-Received: from fedora (unknown [IPv6:2a01:e0a:2c:6930:d919:a6e:5ea1:8a9f])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 546D317E055D;
-	Wed,  1 Oct 2025 17:19:52 +0200 (CEST)
-Date: Wed, 1 Oct 2025 17:19:48 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Steven
- Price <steven.price@arm.com>, kernel@collabora.com, Rob Herring
- <robh@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann
- <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
- <simona@ffwll.ch>
-Subject: Re: [PATCH v4 10/10] drm/panfrost: Rename panfrost_job functions to
- reflect real role
-Message-ID: <20251001171948.003493d2@fedora>
-In-Reply-To: <20251001022039.1215976-11-adrian.larumbe@collabora.com>
-References: <20251001022039.1215976-1-adrian.larumbe@collabora.com>
-	<20251001022039.1215976-11-adrian.larumbe@collabora.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AB901E5B88;
+	Wed,  1 Oct 2025 15:22:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759332141; cv=fail; b=YlDF/NLf0HayHy3zv0wHDN5n7ig4jmC3lEvGQUuH+RwWYAYANhe8fsiYosl5/o0JZRib+lWxTJSX8BAow2qwiy+t/jnAJod/bTU5RWxeAi/WxbBrd/Yh1DNQCKNzxrv9fLn421giHepwjr4ISKhEaeCtnxbGugMsRjHDIsFNplI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759332141; c=relaxed/simple;
+	bh=/3LPKuob5T9IVaYHHc55AU9x7chERw8d4E0jHZ734AA=;
+	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=IVNHKb+5QEUk7EJYF7JbXXhkxtdRlqqARyYhGYUVFC9GjCRUWbAShDpfPE1XsJEHTlugvoYg+1AZYMgs6h0VBn/4nx7aPRIZGbOVl0Mw3ew1GOz8rNC6sR2e9cIcqemCAfzeG5me/faIH4HS8uXKnPc1LQ8lJiKANvGi0zB/SxE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=VAI+IoqS; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=X6LUsY5c; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 591CrEgm014306;
+	Wed, 1 Oct 2025 15:21:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2025-04-25; bh=hei9KAlZ1uBCy2R5Pw/OKZIRZyaS152X3ijai4QbeK0=; b=
+	VAI+IoqSVu2oz0rUL8kji/zWzlGv6M1hI7fCK8YMN17IYtH+uY5G8NCuPplzmOLB
+	Zwv2P1nOXkt8TFNTW/h1TgmjaQ/NrkXuoMM/MoUBorwevp6wLvvaH3v5dGYKv98l
+	JC8xMISAfbV4XjjmD87rpvS6+7w3OiOSo1nlbSLV7poTkepJj9IkVDgBf1OjuXAL
+	aWHSEGPRu/9A5uuLUP1/H02o+Xyp41Zkl2FNUBwCCrQ0Dn+8tFPZ/xrceeUxRB06
+	XFdUM6WQKEXf0bCkq+cWtpUS6IwiaaStFAKDBENNhe+2n4v1Ef1XmOkfWMNsXsF/
+	5DSa8zqNMgQlJPszdA43Tg==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 49gmrfskrd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 01 Oct 2025 15:21:42 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 591ElYEm012292;
+	Wed, 1 Oct 2025 15:21:40 GMT
+Received: from mw6pr02cu001.outbound.protection.outlook.com (mail-westus2azon11012042.outbound.protection.outlook.com [52.101.48.42])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 49e6c9bh0h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 01 Oct 2025 15:21:40 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=a/kvdfltpqx/mdsmw5N+QzynYfbhGpt4iIPWhc977QufMOh7lrKN4nuBJVMa73Xx9U1uJkqGRG8kZ2JJQ/Lt71LUaPEHNf+JG6n9/QTXBmD19k8P49Jf5keiv9hQB3qOScMu6zAfhO7pJSqJPevoAve+qiSeqi+iVE/rTs3exnqVF259AratKpdxHqt27YqbXz8lDI4uEyEXzo2goEjaShpzC2b92w3L9WNszwbXFSLpdzlRClM6tG2JDjHG0PMBDebXFkHyHIfjaD8YVeAstZ7o317wdUpCGA2JjHTe+Cy0vRPKrMf8ZiDcBuuGafb6vIOZ6HH52QVLttl4y0Mghw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hei9KAlZ1uBCy2R5Pw/OKZIRZyaS152X3ijai4QbeK0=;
+ b=C62V73KqhHsj3pdJa7rVipws8VUT6TCblSBq0mzf+vhM+Ly1xc2HNHIKUpHnllZ2+zAWVnHA+fR3aMK2LZJOyfGqIs4pZ/Rqg3L3RhdD4GascCK8r35F3XZyFw2AluLHB1YI0s/jUycGqc1lxACCCn2fke2eVGvShO0v/0nDA606T761yeaPRkWsn5ADd+hyA4Bs9LYYrIS3WXlcbk8dPgnZkTiBOfhhVrFl80ha7tlzrT2q4rX3eR/zQDZmcqZQiFz+TeTR2oRPWQIsmC3mDNSlTV39i2DjA+w4Mp0yhyLWhVE4lCcASBO2aL04254pwRwEjjB0lAkNkHuO0rsrQw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hei9KAlZ1uBCy2R5Pw/OKZIRZyaS152X3ijai4QbeK0=;
+ b=X6LUsY5cJQ4RE/vjaDqLQdyCdAGbaUNEmZ8gtlHLofe2q+11E8asU4/umqnXbSUMJx3KJOWHviV1PpjvMp+RLLF14g+DCUSdmwaY+61BppFVM+lIMEsXUcmXgYzf7D6rDDuScrAJlSMcvzhOsufX3Rs0TJ1e/k+VZgie8MLX8tU=
+Received: from SJ0PR10MB5437.namprd10.prod.outlook.com (2603:10b6:a03:3aa::8)
+ by CYXPR10MB7897.namprd10.prod.outlook.com (2603:10b6:930:da::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.18; Wed, 1 Oct
+ 2025 15:21:35 +0000
+Received: from SJ0PR10MB5437.namprd10.prod.outlook.com
+ ([fe80::e4e9:670b:5d8f:f2af]) by SJ0PR10MB5437.namprd10.prod.outlook.com
+ ([fe80::e4e9:670b:5d8f:f2af%5]) with mapi id 15.20.9160.017; Wed, 1 Oct 2025
+ 15:21:35 +0000
+Message-ID: <fe006b01-3d9a-40fd-93d8-50c029add094@oracle.com>
+Date: Wed, 1 Oct 2025 20:51:21 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5.15 000/151] 5.15.194-rc1 review
+From: Vijayendra Suman <vijayendra.suman@oracle.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+        f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, rwarsow@gmx.de,
+        conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+        achill@achill.org
+References: <20250930143827.587035735@linuxfoundation.org>
+ <c2943ed5-d739-4dbe-b231-ec10d4e169c5@oracle.com>
+Content-Language: en-US
+In-Reply-To: <c2943ed5-d739-4dbe-b231-ec10d4e169c5@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P123CA0378.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:18e::23) To SJ0PR10MB5437.namprd10.prod.outlook.com
+ (2603:10b6:a03:3aa::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ0PR10MB5437:EE_|CYXPR10MB7897:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1b1f07a8-f4fb-4c9a-f899-08de00fe351b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZmtUR0xsK3JDdkJYVEgvQTJSSGRQOFBxc08xeGVvdWVIcFppUWsvQWp2dDVl?=
+ =?utf-8?B?azRYRTV0MnBGY290bDdlR1Vjd0J2QUcwbDRKcHB0aGRPamVkcU9FZEJqMU93?=
+ =?utf-8?B?Y2Z0ekpWazdscGpiVU9QazBIVFJMN0VIUUovempyRFdWSzlDaFlBZmlyRHVR?=
+ =?utf-8?B?NjVyRThBMGZxMVJiVWoxZkdDcTZ4czgvMDl4dFpHa1JkL284NWZCcnJndDhB?=
+ =?utf-8?B?RnE3RUhPVlRKVUJyb2F1c2hkMFZ0Wm9UVVBPZjVZd2J4ZlZvbWFwT3NIWnNT?=
+ =?utf-8?B?VDJONndwOXBwdkl5QUFTZDVnZzNuNEFjdDlrN1NRTExGNzRxNnhWYUM4RkVk?=
+ =?utf-8?B?OXpRckYyMGNDUTZyWlp5UTh2d1QyUEJvWjNnUHZLb1h6eDNWN2QvUHZveDBT?=
+ =?utf-8?B?a0daVDhCNXBJMWxQVUhldjlqRTdRQjBSb0lvOXdSTlFwYUJjcVFzcGpscjA4?=
+ =?utf-8?B?QXdtSmVUSXJOU2hMNlNzbDBMbFNrVm5POE1rUzRpWThTTmZHRmQ0STRMYWk3?=
+ =?utf-8?B?a20vOTJ3TVpLb0x3L3ArMmVIdGVYSjR5Q1Vld0JibHVxcXBNb21KWjU2RU84?=
+ =?utf-8?B?bWNtUG5TZHRXb2tLYnFaRFFwUnVQNUZ3OTR2TXVYYVE3aFlUVktZU0pOcngx?=
+ =?utf-8?B?bGRVaVlUZ2pnaitodkRMeGZSeXN6MGhPNEFZdWI5RGlESE5zV0M4Z2RacG9H?=
+ =?utf-8?B?SElXZm52bFVrODJSa3BrbHVrNVpHQTFYQ2NLNVdoMEloMnJ2Zm5pTEVNYm4z?=
+ =?utf-8?B?YUFHb28wMUhaOWp0Uk1wVmt6YkJESVFNSEhkZ2U3UkxDVkIzR0hzTmQxdDFu?=
+ =?utf-8?B?QWlBNFpJT1NlWTYyeC9JZ1Q4YkV1WVVxVi9zdWExc3U1SGRSL1hKR2tUbWZF?=
+ =?utf-8?B?Z1RabXlFcnZSS2dIaFRrZlloRktJN0NUeHpKR0JCazAxMi81R0NTaFN4L3Zu?=
+ =?utf-8?B?US9WK2VZTktweDgra3RxUlQ1cmJPOGY0ZHdFZFJLeHZOMnFDT0lUbncySzIz?=
+ =?utf-8?B?dzdFWGdIYVVMWHlHaUo4TElYV1RHMjJ4R09XV0E0a1RVQ1ZtN1U3UmpmanZF?=
+ =?utf-8?B?WitYK2QrS3dkWks3Z3ZtU2RrK0xvVG9haTV1S3drU3R0b0NVOTB0elB1ZUJ0?=
+ =?utf-8?B?K0ZjTnU5Yis2NUgvQzNGSjc4NUt1Z054MUpFT2txbjIxdXV0RGU5aWZJQmlC?=
+ =?utf-8?B?QWpJMUlweVRCVnU1amNRbDJZMFZsYm9tSWJwR3E5Zk5zMmRmdXZnN3FHaUNP?=
+ =?utf-8?B?VDZVNXZrc1RJMXFEaWQ1WUJQbW1GbmJNWGJrQlpSdjZIdUg5UmdBVlVlNjA2?=
+ =?utf-8?B?czNiZlVWOE9PMVZONVpCQ1pFeit5R1lGNFBrQldib0RCampQbSsrUnlHVjZ6?=
+ =?utf-8?B?OFNxRVowNFBaYkxjQWgyTGs2MWlBdTd4WUNTekUzQmtaREl3SUc5WGlGbzNB?=
+ =?utf-8?B?emtOV1U0VHZ4ejJvQ09SUFVNL2RGeHdTeVJ0clFtN3dZQXZ1VjRjTlQ1TktL?=
+ =?utf-8?B?VmNMQXg3d1UzT2lVS1RmcndUN0UyTlZYdjFHRm5pSEpiY3haRDg3K0lNRVNO?=
+ =?utf-8?B?TEh5ZjJheG9paWswdXdnR3JUMW93dGJENTUvTEl6VURhVmM3WHVld3l2bjU2?=
+ =?utf-8?B?WDZaQW81VEEvQmxZY08yNlhSSTdUd0NlN0tlbFBiKzJtZmcxWFZ6amlpclJJ?=
+ =?utf-8?B?VndDZnNJSEk0RXN4U2JUU0hPY29nUEZ4Y1BSTGtNV0Uxc0g5OGk3by9nYmlj?=
+ =?utf-8?B?RDQxaUNXMmR6S1d5S3lORU5jZ1hyN3hkMDRoL2UyV21iY2poL0RDYm1LU2Jm?=
+ =?utf-8?B?KzVCU2Z4U2Nla0g4MFpXaFR1QlZKYnBvYWNKMVViUDFFRU1WMUxqbU1RS2p1?=
+ =?utf-8?B?dmxyNnBJNi9RakJlQTA5cURIRTVBV0c3aGJiSkRqOTZTNmltSHNmK1VjaXQ5?=
+ =?utf-8?Q?7R++CD9wTpJt5ISYuooH/4fm+xmNLUmb?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB5437.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?QzNmS0JvWitTV29CQ20weFJkMkptY2hTcVhQb3B4MFlmc0NmbnNHdEJRY2hn?=
+ =?utf-8?B?bXIxajNEV2FLc3Y3UUtUb1ZyRGx1YkJPb2JZQ0gzcHZJSHZGS3llaVZOeFN1?=
+ =?utf-8?B?TThsZVMwUWhBaUJSeWRabGFSTFphU3libWdBbWJ2UWswZGNEdGNmbElCZUJK?=
+ =?utf-8?B?cG8wdVBVcGpSaVpUSEUxcTNPeWxFMGNzSS9tQ2psVitFcWxucEVlUGwva2Fo?=
+ =?utf-8?B?cy9MZDB3clMxUjBmcytrVXF4Q25YZUpUdVV2V0lmQXRDWno1eGxTdko5ZUgx?=
+ =?utf-8?B?bjNQMzA0b1pGOC9XWFBDcW1TRnQzZ1UxVXJRZ3U3bnRvbCtYa0tKN0NkYks0?=
+ =?utf-8?B?UjhYUERzOEtzUXZBd3h6NlRkSlVHaWxZTWExNnZpa1l1Q1hZb3lNaW41RS80?=
+ =?utf-8?B?aTIvM056bnpxdGFhQzFWVUY2bTBMQWZKeGVlT05tWWZmc3JFWGhVc1NpOHBx?=
+ =?utf-8?B?ZnUyNVFJU1pGSEJCRGtoSDJ1Y0ljNVVONkJMcEFPY0VLNmdQUjNhd3BMNldI?=
+ =?utf-8?B?dVk1ckJrTlBtbzM4YVNyOStZSVZEL1Y2OVY4VVExWDI2REFJdVlpYjZBZ3hn?=
+ =?utf-8?B?TTdpQmY5Z0grb29lYS9MN2cwamtsTnNqQ3h0bzdxMXZMa0QwSzd4WDhxNzRI?=
+ =?utf-8?B?N2REckFrYjJnb2RRSkF2cmRFd0Y5MXNpejNpaklOcHBnS2NJWGo2aGJkNHYr?=
+ =?utf-8?B?UU5TVFNoeHlqVVZueUdGYmFsRmdTbWhwdndwTkRDWTErN1VRZlRWb2xOa0JD?=
+ =?utf-8?B?dVdLMzhWOHVSQ1BaQjRsNjQ0ZldBU1VveVdjNUN5dk1JZ041NjNVdHJ4czJx?=
+ =?utf-8?B?S0xXZXZvYmhjSy9TNjFSeGpCdXZzTHpSQTUyYU9EdVpZUDdHL051Unh6c1Zi?=
+ =?utf-8?B?RnNKV3VoYkE4SnpIRFJwbHp6UWpwakt3cDY1aExRMjBrdVU5Q2l1TjNtdXhr?=
+ =?utf-8?B?bE5iMVExWDlKOWs1bWkwMmVudmlMQUhGT2dKNFFYMlBrWEVGTUFmNUpvbUdO?=
+ =?utf-8?B?bDdlb3RnVnBBVi82M2NrWm1tdmVERnkrVGpOZXZwTzF0ZzNoRmVSclcrSkNR?=
+ =?utf-8?B?VStJN2RhUzd4b0U4aFlvdmJYNTFyOElXbTdxbHRNRzRuSHIxcVQ5akdSSEV5?=
+ =?utf-8?B?QWtKOW9pMG5PUndldk53MkxxTS85M0RNcVRKMHZuSDlKMmhxTFN3aUxKd0ha?=
+ =?utf-8?B?eE1DdkZyU1JIaEhmcUpPTUdkUmtpb2RVNjFxUEM1cXBJcm84Q2U2eDBUZWt5?=
+ =?utf-8?B?VnBTYmdGVklaU3ZlbDJnbHpNZThiMFVROUV2K25yQnpHZ3ZPK0paSHpzdFNZ?=
+ =?utf-8?B?bHNjckVpSHpXS3dWT0F6SngvUmpETFRCVGY3T09sanJXVHZmVmpFL0FiaXVt?=
+ =?utf-8?B?b2RMU2pVY05TUEFkMTZmZEVhY0FmajJTVnpHQlVicGFTUWtLUW5XZ1pISzA4?=
+ =?utf-8?B?YlJvbWlYaTl3M094SnEyUEFFb2JZdDY0RUQrenJuckx5WG5Nc3I5WUJHRmRL?=
+ =?utf-8?B?VG9ROE5lbFVqSzFsTXhqWENUUHBEZFR3Q1lncXh5K3IzczlCVm5UK3c5MUZz?=
+ =?utf-8?B?MlcwY1kxNmwyY21vSk9VdUR0WnpWNjhVa2NIeENJL2d3Um4yRmh0cDBQUzZX?=
+ =?utf-8?B?UCtxM3dma000eWNOQWwxMUlrYTNZTnhGcGdpRWR1cE9ZeEFCZ2c3NVNpTGtH?=
+ =?utf-8?B?dTVjbFRaMzhhNE16RXlBZzJvNXNEcFQxRjBiOW9YQnVNSVA0Sno5Y2VGWEd6?=
+ =?utf-8?B?K0NqYmh2ay9OQk1oN0EwZVYvb09vTytoYy8yMlE5WW1yOGNRQWwvejg0aTRl?=
+ =?utf-8?B?SEVUQlRhTEZrSDJHRWo3UngwTXR3LzFscDRRVEZ1S1ZvcFprdnpZbGlVQ0ZU?=
+ =?utf-8?B?ZGhUTk1CSTROaktVeiswZHJjNzdVVUFHdFBETWFpNWhFbit1QXN4a1U1WE5B?=
+ =?utf-8?B?c0FxdTBlTGtBVURhZHBpeEY2MTlCcnN4NlN0TkxQYndVTTc5cElEVUVFcG0r?=
+ =?utf-8?B?V2owZGJSbGRFUExLVW1OalMzRHNRREx5empYTEdWOHQvQzF2VlhXeSsxeTBt?=
+ =?utf-8?B?N1d6M05ycnh4T25keC9aaEdMdFlnbXExWVF3UVg2Z2QvUWZIbWdqZXFZU0V6?=
+ =?utf-8?B?d1FqR21nSjVZNy9vVXYwTG53M0pqdzErd2s4WHZvYzR6Rkc4OVN2Um8rRC8z?=
+ =?utf-8?B?SlE9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	d5Y5PbKYBao8DvBcRaPCzqXI/ExEfHIRWz2SFd+Mq3pBO4aEfTwsApUoSeoemJp70I/rn3ktBLmUFGyhAkaUKuWyFFZcodpTJ0noEs9dvfz/IKn1xaKnQ+7RfiCKM8EHxQyTOn7tfAm9q7SoQppgKFReEYrPbjaMmGDoeO5Z4JLxa8YNo3N9/tubPOJd2+9VVEk8lss0jxMQtoFXQHpGJa0b5tFaiBZYYgnNZBsu7st/DbhuO3AIGYrBFZwsXT5+2uXXZPI13DS630hWsMe/Hg2Kul3bPNYX1/mHQucnsIR/C6sABYW/+ZfONKVQnMvIXt5r2psSCFMxo8AUrG5hGwE71F5wLSv7hQHP/7/2+cYMF2GQpySzbL+su/04rDqDUFE8AswJk7rAA4FBFbqCIB3trs8SSJjbJdl1bu1O1LECnBSD2J8SExEnpkXzO1Bl5iWJKxkUdEJaecbM6T6Pf6TA3mJNu5Kzwn9PySuRayKkW+aDdgPmE8K6pgUsWlvN25Jzs0/WUSJswZe+LNG6taEwLga5yHBEmaOseMJsPB8C6cZjMrs1asrvWXPlSAK2xSZc80GYJv9VB8ORbC6jy+e3Wxp3sjZwxuiRWxGVD+c=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1b1f07a8-f4fb-4c9a-f899-08de00fe351b
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB5437.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2025 15:21:35.1728
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: nwldU4bLE6YHft3wbmjN2rJtRkhS7NG4Dx+H9An8RiuLmpHqzWfccFdMOF5sYQchnA4NHAml5Z2kOC9P0w9sA8rwi4ahaXUcvHSmQVhkPUA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYXPR10MB7897
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-01_04,2025-09-29_04,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 mlxscore=0
+ mlxlogscore=999 malwarescore=0 phishscore=0 bulkscore=0 spamscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2509150000 definitions=main-2510010133
+X-Proofpoint-ORIG-GUID: MfLLLMyyzrRltq5qphs8oFxVp6_U6sM5
+X-Proofpoint-GUID: MfLLLMyyzrRltq5qphs8oFxVp6_U6sM5
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTMwMDE3MCBTYWx0ZWRfX6qoxDaHjFoAH
+ o3RoKl9JdT7Bf6+Rz7C2PrfFGS/yYWAWuH0cfCUYn0KPV4yZQ1JUwOnxZ03WJ9oDTj1jRkJ8Tev
+ 4QCzAKwN0gARhR+e+FdrdquNVd1znBuPn/9eEsUS4zr5iLMsVeLDggil1KM/WvGbH/BduCXBMkz
+ FLghG4EflX71y1/ETt7jyPCTgIY47qBRYjRGOhGQYtSYyAOgZ6Seaa6943x3GK1XERpLDDV+4eZ
+ 7KlEuyUyqnhk0B3ePs5WKMvYvHrfG06F2iytfIBxdCMlM5kJlwgI44jxGGVdd/uO4d9POWSks1f
+ PZ5sTQHOHea8OZVDNhznGukB4RYpHmuy/6i51tJL4qedwzU1Z3GW2yBfOiaGyK1w8zqYUitEwG+
+ 68M+pcNAoskOkcfg2OX4+s850pkEQi9cFhjsYIxQdcOVhPgxdIc=
+X-Authority-Analysis: v=2.4 cv=VpMuwu2n c=1 sm=1 tr=0 ts=68dd4707 b=1 cx=c_pps
+ a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=x6icFKpwvdMA:10 a=GoEa3M9JfhUA:10 a=yPCof4ZbAAAA:8 a=cqBTJz3nk7irSwHFp80A:9
+ a=QEXdDO2ut3YA:10 a=QYH75iMubAgA:10 cc=ntf awl=host:12090
 
-On Wed,  1 Oct 2025 03:20:31 +0100
-Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
+Correction, there is an extra '>' in my "Tested-by:"
 
-> panfrost_job_* prefixed functions in panfrost_job.c deal with both
-> panfrost_job objects and also the more general JM (Job Manager) side of
-> the device itself. This is confusing.
->=20
-> Reprefix functions that program the JM to panfrosot_jm_* instead.
->=20
-> Signed-off-by: Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com>
 
-Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+On 01/10/25 3:54 pm, Vijayendra Suman wrote:
+> No issues were seen on x86_64 and aarch64 platforms with our testing.
+> 
+> Tested-by: Vijayendra Suman <vijayendra.suman@oracle.com>>
+Tested-by: Vijayendra Suman <vijayendra.suman@oracle.com>
 
-> ---
->  drivers/gpu/drm/panfrost/panfrost_device.c | 14 +++----
->  drivers/gpu/drm/panfrost/panfrost_drv.c    |  4 +-
->  drivers/gpu/drm/panfrost/panfrost_job.c    | 48 +++++++++++-----------
->  drivers/gpu/drm/panfrost/panfrost_job.h    | 16 ++++----
->  4 files changed, 41 insertions(+), 41 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_device.c b/drivers/gpu/drm=
-/panfrost/panfrost_device.c
-> index f1d811a6de6c..c61b97af120c 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_device.c
-> +++ b/drivers/gpu/drm/panfrost/panfrost_device.c
-> @@ -259,7 +259,7 @@ int panfrost_device_init(struct panfrost_device *pfde=
-v)
->  	if (err)
->  		goto out_gpu;
-> =20
-> -	err =3D panfrost_job_init(pfdev);
-> +	err =3D panfrost_jm_init(pfdev);
->  	if (err)
->  		goto out_mmu;
-> =20
-> @@ -269,7 +269,7 @@ int panfrost_device_init(struct panfrost_device *pfde=
-v)
-> =20
->  	return 0;
->  out_job:
-> -	panfrost_job_fini(pfdev);
-> +	panfrost_jm_fini(pfdev);
->  out_mmu:
->  	panfrost_mmu_fini(pfdev);
->  out_gpu:
-> @@ -290,7 +290,7 @@ int panfrost_device_init(struct panfrost_device *pfde=
-v)
->  void panfrost_device_fini(struct panfrost_device *pfdev)
->  {
->  	panfrost_perfcnt_fini(pfdev);
-> -	panfrost_job_fini(pfdev);
-> +	panfrost_jm_fini(pfdev);
->  	panfrost_mmu_fini(pfdev);
->  	panfrost_gpu_fini(pfdev);
->  	panfrost_devfreq_fini(pfdev);
-> @@ -407,9 +407,9 @@ void panfrost_device_reset(struct panfrost_device *pf=
-dev, bool enable_job_int)
->  	panfrost_gpu_power_on(pfdev);
->  	panfrost_mmu_reset(pfdev);
-> =20
-> -	panfrost_job_reset_interrupts(pfdev);
-> +	panfrost_jm_reset_interrupts(pfdev);
->  	if (enable_job_int)
-> -		panfrost_job_enable_interrupts(pfdev);
-> +		panfrost_jm_enable_interrupts(pfdev);
->  }
-> =20
->  static int panfrost_device_runtime_resume(struct device *dev)
-> @@ -451,11 +451,11 @@ static int panfrost_device_runtime_suspend(struct d=
-evice *dev)
->  {
->  	struct panfrost_device *pfdev =3D dev_get_drvdata(dev);
-> =20
-> -	if (!panfrost_job_is_idle(pfdev))
-> +	if (!panfrost_jm_is_idle(pfdev))
->  		return -EBUSY;
-> =20
->  	panfrost_devfreq_suspend(pfdev);
-> -	panfrost_job_suspend_irq(pfdev);
-> +	panfrost_jm_suspend_irq(pfdev);
->  	panfrost_mmu_suspend_irq(pfdev);
->  	panfrost_gpu_suspend_irq(pfdev);
->  	panfrost_gpu_power_off(pfdev);
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/pa=
-nfrost/panfrost_drv.c
-> index 2b57f6813714..3b79ebbccdf5 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_drv.c
-> +++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
-> @@ -606,7 +606,7 @@ panfrost_open(struct drm_device *dev, struct drm_file=
- *file)
->  		goto err_free;
->  	}
-> =20
-> -	ret =3D panfrost_job_open(file);
-> +	ret =3D panfrost_jm_open(file);
->  	if (ret)
->  		goto err_job;
-> =20
-> @@ -625,7 +625,7 @@ panfrost_postclose(struct drm_device *dev, struct drm=
-_file *file)
->  	struct panfrost_file_priv *panfrost_priv =3D file->driver_priv;
-> =20
->  	panfrost_perfcnt_close(file);
-> -	panfrost_job_close(file);
-> +	panfrost_jm_close(file);
-> =20
->  	panfrost_mmu_ctx_put(panfrost_priv->mmu);
->  	kfree(panfrost_priv);
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_job.c b/drivers/gpu/drm/pa=
-nfrost/panfrost_job.c
-> index 3ae984f6290f..4a213db9962d 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_job.c
-> +++ b/drivers/gpu/drm/panfrost/panfrost_job.c
-> @@ -426,18 +426,18 @@ static struct dma_fence *panfrost_job_run(struct dr=
-m_sched_job *sched_job)
->  	return fence;
->  }
-> =20
-> -void panfrost_job_reset_interrupts(struct panfrost_device *pfdev)
-> +void panfrost_jm_reset_interrupts(struct panfrost_device *pfdev)
->  {
->  	job_write(pfdev, JOB_INT_CLEAR, ALL_JS_INT_MASK);
->  }
-> =20
-> -void panfrost_job_enable_interrupts(struct panfrost_device *pfdev)
-> +void panfrost_jm_enable_interrupts(struct panfrost_device *pfdev)
->  {
->  	clear_bit(PANFROST_COMP_BIT_JOB, pfdev->is_suspended);
->  	job_write(pfdev, JOB_INT_MASK, ALL_JS_INT_MASK);
->  }
-> =20
-> -void panfrost_job_suspend_irq(struct panfrost_device *pfdev)
-> +void panfrost_jm_suspend_irq(struct panfrost_device *pfdev)
->  {
->  	set_bit(PANFROST_COMP_BIT_JOB, pfdev->is_suspended);
-> =20
-> @@ -499,8 +499,8 @@ static void panfrost_job_handle_err(struct panfrost_d=
-evice *pfdev,
->  	}
->  }
-> =20
-> -static void panfrost_job_handle_done(struct panfrost_device *pfdev,
-> -				     struct panfrost_job *job)
-> +static void panfrost_jm_handle_done(struct panfrost_device *pfdev,
-> +				    struct panfrost_job *job)
->  {
->  	/* Set ->jc to 0 to avoid re-submitting an already finished job (can
->  	 * happen when we receive the DONE interrupt while doing a GPU reset).
-> @@ -513,7 +513,7 @@ static void panfrost_job_handle_done(struct panfrost_=
-device *pfdev,
->  	pm_runtime_put_autosuspend(pfdev->base.dev);
->  }
-> =20
-> -static void panfrost_job_handle_irq(struct panfrost_device *pfdev, u32 s=
-tatus)
-> +static void panfrost_jm_handle_irq(struct panfrost_device *pfdev, u32 st=
-atus)
->  {
->  	struct panfrost_job *done[NUM_JOB_SLOTS][2] =3D {};
->  	struct panfrost_job *failed[NUM_JOB_SLOTS] =3D {};
-> @@ -588,7 +588,7 @@ static void panfrost_job_handle_irq(struct panfrost_d=
-evice *pfdev, u32 status)
->  		}
-> =20
->  		for (i =3D 0; i < ARRAY_SIZE(done[0]) && done[j][i]; i++)
-> -			panfrost_job_handle_done(pfdev, done[j][i]);
-> +			panfrost_jm_handle_done(pfdev, done[j][i]);
->  	}
-> =20
->  	/* And finally we requeue jobs that were waiting in the second slot
-> @@ -606,7 +606,7 @@ static void panfrost_job_handle_irq(struct panfrost_d=
-evice *pfdev, u32 status)
->  			struct panfrost_job *canceled =3D panfrost_dequeue_job(pfdev, j);
-> =20
->  			dma_fence_set_error(canceled->done_fence, -ECANCELED);
-> -			panfrost_job_handle_done(pfdev, canceled);
-> +			panfrost_jm_handle_done(pfdev, canceled);
->  		} else if (!atomic_read(&pfdev->reset.pending)) {
->  			/* Requeue the job we removed if no reset is pending */
->  			job_write(pfdev, JS_COMMAND_NEXT(j), JS_COMMAND_START);
-> @@ -614,7 +614,7 @@ static void panfrost_job_handle_irq(struct panfrost_d=
-evice *pfdev, u32 status)
->  	}
->  }
-> =20
-> -static void panfrost_job_handle_irqs(struct panfrost_device *pfdev)
-> +static void panfrost_jm_handle_irqs(struct panfrost_device *pfdev)
->  {
->  	u32 status =3D job_read(pfdev, JOB_INT_RAWSTAT);
-> =20
-> @@ -622,7 +622,7 @@ static void panfrost_job_handle_irqs(struct panfrost_=
-device *pfdev)
->  		pm_runtime_mark_last_busy(pfdev->base.dev);
-> =20
->  		spin_lock(&pfdev->js->job_lock);
-> -		panfrost_job_handle_irq(pfdev, status);
-> +		panfrost_jm_handle_irq(pfdev, status);
->  		spin_unlock(&pfdev->js->job_lock);
->  		status =3D job_read(pfdev, JOB_INT_RAWSTAT);
->  	}
-> @@ -703,7 +703,7 @@ panfrost_reset(struct panfrost_device *pfdev,
->  		dev_err(pfdev->base.dev, "Soft-stop failed\n");
-> =20
->  	/* Handle the remaining interrupts before we reset. */
-> -	panfrost_job_handle_irqs(pfdev);
-> +	panfrost_jm_handle_irqs(pfdev);
-> =20
->  	/* Remaining interrupts have been handled, but we might still have
->  	 * stuck jobs. Let's make sure the PM counters stay balanced by
-> @@ -748,7 +748,7 @@ panfrost_reset(struct panfrost_device *pfdev,
->  		drm_sched_start(&pfdev->js->queue[i].sched, 0);
-> =20
->  	/* Re-enable job interrupts now that everything has been restarted. */
-> -	panfrost_job_enable_interrupts(pfdev);
-> +	panfrost_jm_enable_interrupts(pfdev);
-> =20
->  	dma_fence_end_signalling(cookie);
->  }
-> @@ -813,11 +813,11 @@ static const struct drm_sched_backend_ops panfrost_=
-sched_ops =3D {
->  	.free_job =3D panfrost_job_free
->  };
-> =20
-> -static irqreturn_t panfrost_job_irq_handler_thread(int irq, void *data)
-> +static irqreturn_t panfrost_jm_irq_handler_thread(int irq, void *data)
->  {
->  	struct panfrost_device *pfdev =3D data;
-> =20
-> -	panfrost_job_handle_irqs(pfdev);
-> +	panfrost_jm_handle_irqs(pfdev);
-> =20
->  	/* Enable interrupts only if we're not about to get suspended */
->  	if (!test_bit(PANFROST_COMP_BIT_JOB, pfdev->is_suspended))
-> @@ -826,7 +826,7 @@ static irqreturn_t panfrost_job_irq_handler_thread(in=
-t irq, void *data)
->  	return IRQ_HANDLED;
->  }
-> =20
-> -static irqreturn_t panfrost_job_irq_handler(int irq, void *data)
-> +static irqreturn_t panfrost_jm_irq_handler(int irq, void *data)
->  {
->  	struct panfrost_device *pfdev =3D data;
->  	u32 status;
-> @@ -842,7 +842,7 @@ static irqreturn_t panfrost_job_irq_handler(int irq, =
-void *data)
->  	return IRQ_WAKE_THREAD;
->  }
-> =20
-> -int panfrost_job_init(struct panfrost_device *pfdev)
-> +int panfrost_jm_init(struct panfrost_device *pfdev)
->  {
->  	struct drm_sched_init_args args =3D {
->  		.ops =3D &panfrost_sched_ops,
-> @@ -875,8 +875,8 @@ int panfrost_job_init(struct panfrost_device *pfdev)
->  		return js->irq;
-> =20
->  	ret =3D devm_request_threaded_irq(pfdev->base.dev, js->irq,
-> -					panfrost_job_irq_handler,
-> -					panfrost_job_irq_handler_thread,
-> +					panfrost_jm_irq_handler,
-> +					panfrost_jm_irq_handler_thread,
->  					IRQF_SHARED, KBUILD_MODNAME "-job",
->  					pfdev);
->  	if (ret) {
-> @@ -899,8 +899,8 @@ int panfrost_job_init(struct panfrost_device *pfdev)
->  		}
->  	}
-> =20
-> -	panfrost_job_reset_interrupts(pfdev);
-> -	panfrost_job_enable_interrupts(pfdev);
-> +	panfrost_jm_reset_interrupts(pfdev);
-> +	panfrost_jm_enable_interrupts(pfdev);
-> =20
->  	return 0;
-> =20
-> @@ -912,7 +912,7 @@ int panfrost_job_init(struct panfrost_device *pfdev)
->  	return ret;
->  }
-> =20
-> -void panfrost_job_fini(struct panfrost_device *pfdev)
-> +void panfrost_jm_fini(struct panfrost_device *pfdev)
->  {
->  	struct panfrost_job_slot *js =3D pfdev->js;
->  	int j;
-> @@ -927,7 +927,7 @@ void panfrost_job_fini(struct panfrost_device *pfdev)
->  	destroy_workqueue(pfdev->reset.wq);
->  }
-> =20
-> -int panfrost_job_open(struct drm_file *file)
-> +int panfrost_jm_open(struct drm_file *file)
->  {
->  	struct panfrost_file_priv *panfrost_priv =3D file->driver_priv;
->  	int ret;
-> @@ -949,7 +949,7 @@ int panfrost_job_open(struct drm_file *file)
->  	return 0;
->  }
-> =20
-> -void panfrost_job_close(struct drm_file *file)
-> +void panfrost_jm_close(struct drm_file *file)
->  {
->  	struct panfrost_file_priv *panfrost_priv =3D file->driver_priv;
->  	struct panfrost_jm_ctx *jm_ctx;
-> @@ -961,7 +961,7 @@ void panfrost_job_close(struct drm_file *file)
->  	xa_destroy(&panfrost_priv->jm_ctxs);
->  }
-> =20
-> -int panfrost_job_is_idle(struct panfrost_device *pfdev)
-> +int panfrost_jm_is_idle(struct panfrost_device *pfdev)
->  {
->  	struct panfrost_job_slot *js =3D pfdev->js;
->  	int i;
-> diff --git a/drivers/gpu/drm/panfrost/panfrost_job.h b/drivers/gpu/drm/pa=
-nfrost/panfrost_job.h
-> index 30eda74e3c34..da96c674d62b 100644
-> --- a/drivers/gpu/drm/panfrost/panfrost_job.h
-> +++ b/drivers/gpu/drm/panfrost/panfrost_job.h
-> @@ -60,16 +60,16 @@ void panfrost_jm_ctx_put(struct panfrost_jm_ctx *jm_c=
-tx);
->  struct panfrost_jm_ctx *panfrost_jm_ctx_get(struct panfrost_jm_ctx *jm_c=
-tx);
->  struct panfrost_jm_ctx *panfrost_jm_ctx_from_handle(struct drm_file *fil=
-e, u32 handle);
-> =20
-> -int panfrost_job_init(struct panfrost_device *pfdev);
-> -void panfrost_job_fini(struct panfrost_device *pfdev);
-> -int panfrost_job_open(struct drm_file *file);
-> -void panfrost_job_close(struct drm_file *file);
-> +int panfrost_jm_init(struct panfrost_device *pfdev);
-> +void panfrost_jm_fini(struct panfrost_device *pfdev);
-> +int panfrost_jm_open(struct drm_file *file);
-> +void panfrost_jm_close(struct drm_file *file);
-> +void panfrost_jm_reset_interrupts(struct panfrost_device *pfdev);
-> +void panfrost_jm_enable_interrupts(struct panfrost_device *pfdev);
-> +void panfrost_jm_suspend_irq(struct panfrost_device *pfdev);
-> +int panfrost_jm_is_idle(struct panfrost_device *pfdev);
->  int panfrost_job_get_slot(struct panfrost_job *job);
->  int panfrost_job_push(struct panfrost_job *job);
->  void panfrost_job_put(struct panfrost_job *job);
-> -void panfrost_job_reset_interrupts(struct panfrost_device *pfdev);
-> -void panfrost_job_enable_interrupts(struct panfrost_device *pfdev);
-> -void panfrost_job_suspend_irq(struct panfrost_device *pfdev);
-> -int panfrost_job_is_idle(struct panfrost_device *pfdev);
-> =20
->  #endif
+Sorry for the noise.
 
+Vijay
 
