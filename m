@@ -1,94 +1,87 @@
-Return-Path: <linux-kernel+bounces-838452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D832BBAF324
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 08:14:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 200D4BAF2D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 08:10:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E2054A5562
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 06:14:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5BD03A7E96
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 06:10:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38F242D77ED;
-	Wed,  1 Oct 2025 06:14:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B68FB27F74B;
+	Wed,  1 Oct 2025 06:10:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iokpp.de header.i=@iokpp.de header.b="H9w8aLTK"
-Received: from mo4-p02-ob.smtp.rzone.de (mo4-p02-ob.smtp.rzone.de [85.215.255.84])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Ev6x48Vl"
+Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013002.outbound.protection.outlook.com [40.93.196.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CAF81B808;
-	Wed,  1 Oct 2025 06:14:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B9C26CE02
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 06:10:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.2
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759299262; cv=pass; b=hq9CLxzlueGYHmPBJeqNA8GANxmoCdDXc09d08y1p0p1UvCWz1SY7cELVdkwqrAuLdCmrOo3S2opcfzqJ9odjyCghpezktm7JgzA0dZkC957eWg+cEEFhQR3WIK6ofiVQemmooF3bYRqKWU89ZeFub+QbBZch9QlkfCJAc+TgDE=
+	t=1759299023; cv=fail; b=byVevhoRRyxPD0NBGEPVOevRnNA/dZqh68+PNumEVEWihPrY6DcyOF29/SZ+gishESMDbTkpPAY17hdrnZn8q7yhK6soUF4NgFUBARjspywbe7uwJjQev1q8c8w0ueS9vAG7g1nFslei30991Aew0PqyLK3hohas/BXrzBJZ/2E=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759299262; c=relaxed/simple;
-	bh=lBQFQ17ZpjzPpYGEDHwGB7twj+0FCcbWOCQfh3VI+Jg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gRK+pVzUDhRO1FT3CILEufDO7vz1hLt3v70qczXipUNFeAOfL69hCvKhUVeA5MGGez7f/lQ5VajbQ7P4pg+0Ccr7uclivKPRIsWxeMfgREIY+88JsuZRNMCaCMtQH5fkvrpYLEWlnr1gz0AeRHoja4AnywxoTajDY0pA+L7DYFQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iokpp.de; spf=none smtp.mailfrom=iokpp.de; dkim=pass (2048-bit key) header.d=iokpp.de header.i=@iokpp.de header.b=H9w8aLTK; arc=pass smtp.client-ip=85.215.255.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iokpp.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=iokpp.de
-ARC-Seal: i=1; a=rsa-sha256; t=1759298901; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=M/IViSOfgyizqnYCoKlRuxDEwFuVPPF0DhL1NItHgl5iMhF1u8twDNCplg799Ra1cw
-    Hv7LBdU4rhNN0Dn6yax5+zCbn0DjY/FPJafEI3B62NL9Axk7c8ZqaboNql8dISF9G2uz
-    iBv70N1y6AWGgeOvDNR4q0xYYv5I+qLH4mbDnlqAPW+tNHFQBJ0EKhi5Qqb+KMrS4VbZ
-    WvdpwTQCYgzMDTC1ePa7SgCzPUCxiFs04fsWSn7LVbgrIOPEaFqknU6wjjbxGfB9yK8L
-    0RIhHUCy0K3+D8l9KEbhYFhJZBUGYwcJs4xNxLj+zGQYGDLA+XQ3YVQ1LUOWbxMndQKx
-    OfOQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1759298901;
-    s=strato-dkim-0002; d=strato.com;
-    h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Cc:Date:
-    From:Subject:Sender;
-    bh=fwPEBhbpjfg2zPCa/NOMKd/VYDayRsr/k1oZNVD7huc=;
-    b=rUxvofiI1Y5KFs/2rdqAdEGnmTv/VNSfHq20U8UBAcsAKiCQ+i2JLfATJaAJ1+HamT
-    lXGGEBfZnr9oKcWJdCQt6j5UhuU8RmAOLzwhMm7STVQJHJN0OrDj/59wKNQDS4GuWLrN
-    y5WY7ZCovBQU9/9LHlW6qVTo5FMZBX/TLjONF+pfhNA2U5a7OwETWabXVNfAasNL5GG/
-    /jaXG2dZycmgz8uiEfI9obZZMbcjnmbTx8X0oolgTIeIWPR4ToolSVidn2pycwWG6xRJ
-    lxExLaYRMhmshu4bnwSSzs3dWm7tbbmmBqcXzeH/ocVLK2SIXiL0wOjyl61TSpqfQIF2
-    tiJQ==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo02
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1759298901;
-    s=strato-dkim-0002; d=iokpp.de;
-    h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Cc:Date:
-    From:Subject:Sender;
-    bh=fwPEBhbpjfg2zPCa/NOMKd/VYDayRsr/k1oZNVD7huc=;
-    b=H9w8aLTK2ZzzMCoY7z9YOb0RwNV4k44qcAi+setbUhW6TDQt9oQpouFduThepkp10W
-    8jAm2X1B1W9Dkf2im641YQdbpTZWWmC4bkf9r1yDwj5Rxr1iAEU1J7RDWsTcmvi+jZF1
-    tvbBbq/7tQkfXdpjxsA5t0EA0+QIpHMiIMTskTfWJ2I3bE07VJVTTl2XPmTdu/9Bg+fU
-    0KeFcE3+JIHUdgGMmsMgZbOkxOk6D6PKiIekn5gCPLpDDLHFLg2rho2/5IEUX9FHdwkk
-    YBznBgqzJ3zlKJIGx+XtbylbhuFPgSxeGCxmwhIea8EPmGFU7RgKGM1VHuzl2wWcfXfi
-    vvBg==
-X-RZG-AUTH: ":LmkFe0i9dN8c2t4QQyGBB/NDXvjDB6pBSfNuhhDSDt3O2JmZOo2yQsAdmCB+Gw=="
-Received: from Munilab01-lab.fritz.box
-    by smtp.strato.de (RZmta 53.3.2 AUTH)
-    with ESMTPSA id z9ebc619168KY7J
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Wed, 1 Oct 2025 08:08:20 +0200 (CEST)
-From: Bean Huo <beanhuo@iokpp.de>
-To: avri.altman@wdc.com,
-	bvanassche@acm.org,
-	alim.akhtar@samsung.com,
-	jejb@linux.ibm.com,
-	martin.petersen@oracle.com,
-	can.guo@oss.qualcomm.com,
-	ulf.hansson@linaro.org,
-	beanhuo@micron.com,
-	jens.wiklander@linaro.org
-Cc: linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/3] scsi: ufs: core: Add OP-TEE based RPMB driver for UFS devices
-Date: Wed,  1 Oct 2025 08:08:05 +0200
-Message-Id: <20251001060805.26462-4-beanhuo@iokpp.de>
+	s=arc-20240116; t=1759299023; c=relaxed/simple;
+	bh=NimiVPGLvt8kd6Ax+fiDzqJHltRhmQiEmYcNik97rS0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AYOpmwWQjbRWSs8B1IePIWm2JKUexUEI17lWefxoNy+uWKpf2Z5reOPFKPWbNoy+BcqbV7tf71lnf5hooxytkpJeo3Vbj9zVzVRzNyy1zhlSptFJMChdqtE3SyVFrjWu39DteBjpISihSNGOdOSMUWYyuJz3tUxfp+ZuCHvOXGE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Ev6x48Vl; arc=fail smtp.client-ip=40.93.196.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=TEwVuIRFkhMgb2KvLpl65a/6Dz6tbMiOugFFclCYygxmoPbw46692LtG5zOlMUq1qDQO2Nb0eoDbSUJDdp1ezuaLpqULtFcLvEbjDRuWNUQ2pAeVEqNPls2qr+r0ogPr392Ji3TPWl9bjTBwfvlvWO0BcXOLcdp1whJN3sMWxtP5UEfDN7gfzu53TS9inqEwZ27AIKIDUYeFMHuNc5oogwz5N8Nuh5ud3b6Mx6L1yGf4u4ulccG3pd4pZUTzp8jHX1/u92YldoAowiWkDgo7lpnX6laMby+F/BK8wbxwhZCbwZr3qq+MZToXR26WA8kRfiRtsnGwUnroYErY074gHA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/zCo4VfqKq/XMGB9Jclzh+TeVBxOX4bF5JOYIwFn1jM=;
+ b=dhOqlfr8gRKGw8iv6pRc0ChxPyIv8P/UTnU1DoahBblTlHm2Xs5XDXCkNadFJ2Yi3Z0MmL6TZZ1dLprgWzSLf42B5n1H+p50VRdPUtlO4t4oMw7uwIk2H15nAIx9mnd03D99JQBjE8QLHIze7l6bxRYUNz2HdSvwL0C4YFxt7oSUwhez5ZdjlhRpJi/Z3tL87qKArItR/z+nnuHFFrWYXuWGrfZchliZU/AWxhkkL7id9pmZ/ApmgoHkoKWF+Oq50jPgh5KZk88c1AVkGq6cPIVxD0bT+KspGc7BAzJ4QkdJ47Z338ZyLePDU758aNW8ytR62zQOK27DxC+YMJjIvA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=nvidia.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/zCo4VfqKq/XMGB9Jclzh+TeVBxOX4bF5JOYIwFn1jM=;
+ b=Ev6x48VlhinWWoIDhWBxpGUB6dY0+rqJhgK1Sn8rLDsbAsMrazf0D/9XiEsxLiOYfpc66kgX9s7wvfeaqSUOXNT32DQIuzJc9hMJivgZvQkiX/DZ88g57XVbfl13CwZYyLNZpMgjGMbztSLZwbpQ/W3eoJVHGqAEgKbjecJ05Ak=
+Received: from SJ0PR05CA0200.namprd05.prod.outlook.com (2603:10b6:a03:330::25)
+ by CH2PR12MB4312.namprd12.prod.outlook.com (2603:10b6:610:af::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.18; Wed, 1 Oct
+ 2025 06:10:14 +0000
+Received: from SJ5PEPF00000207.namprd05.prod.outlook.com
+ (2603:10b6:a03:330:cafe::76) by SJ0PR05CA0200.outlook.office365.com
+ (2603:10b6:a03:330::25) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9182.8 via Frontend Transport; Wed, 1
+ Oct 2025 06:10:14 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ SJ5PEPF00000207.mail.protection.outlook.com (10.167.244.40) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9182.15 via Frontend Transport; Wed, 1 Oct 2025 06:10:14 +0000
+Received: from purico-ed03host.amd.com (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Tue, 30 Sep
+ 2025 23:10:08 -0700
+From: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+To: <jgg@nvidia.com>, <nicolinc@nvidia.com>
+CC: <linux-kernel@vger.kernel.org>, <robin.murphy@arm.com>, <will@kernel.org>,
+	<joro@8bytes.org>, <kevin.tian@intel.com>, <jsnitsel@redhat.com>,
+	<vasant.hegde@amd.com>, <iommu@lists.linux.dev>, <santosh.shukla@amd.com>,
+	<sairaj.arunkodilkar@amd.com>, <jon.grimm@amd.com>,
+	<prashanthpra@google.com>, <wvw@google.com>, <wnliu@google.com>,
+	<gptran@google.com>, <kpsingh@google.com>, <joao.m.martins@oracle.com>,
+	<alejandro.j.jimenez@oracle.com>, Suravee Suthikulpanit
+	<suravee.suthikulpanit@amd.com>
+Subject: [PATCH v2 00/12] iommu/amd: Introduce Nested Translation support
+Date: Wed, 1 Oct 2025 06:09:42 +0000
+Message-ID: <20251001060954.5030-1-suravee.suthikulpanit@amd.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251001060805.26462-1-beanhuo@iokpp.de>
-References: <20251001060805.26462-1-beanhuo@iokpp.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,477 +89,125 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain
+X-ClientProxiedBy: satlexmb08.amd.com (10.181.42.217) To satlexmb07.amd.com
+ (10.181.42.216)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF00000207:EE_|CH2PR12MB4312:EE_
+X-MS-Office365-Filtering-Correlation-Id: 303e47f8-2cc1-47dc-ad48-08de00b12fca
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|7416014|376014|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?fIgHvLONBoW6HZ4LOlzOntHpgPpefsae5008V8zfjDRnUUIHZY2cX2wGmgGX?=
+ =?us-ascii?Q?+DqE8/5HcctxzpgJbLbjOY8/nL/KO8Q376uOAqrbzUWVXiccxBwOkGGYSEbv?=
+ =?us-ascii?Q?yJseqrvvdTBTovq6U5w8EeNzrLUI/C/hKHacho7UmAp++YuJJWTbELRN1x4g?=
+ =?us-ascii?Q?1x0bxm0qJ9GO5TM5HBx+r18cUkgq2JOzx/pbl9JWmnkKA1UIVg1f9Hvrv+rz?=
+ =?us-ascii?Q?SGoD6VE5C1yJTAydFqcFMji+jEryhKEetCA5GHPpW0DKCK/jaXiTVaZ/KE5i?=
+ =?us-ascii?Q?FnmT+szmM50p10AJ2DEiwmxlkO7AAWakt2/FJSyT/LXOHiH28EmYtEmbOafZ?=
+ =?us-ascii?Q?fcuDp1bLvH4cKUhSF+NJrh+/6rjyKVMgK8OjJFJSB4jGs0epVzu0tymxtO6+?=
+ =?us-ascii?Q?FJKU9KI7DYFTHmEicdxisX/UUjOhDNLfHiPh6w2jcBmNyBRomCW1rav5FiD5?=
+ =?us-ascii?Q?rgejZHFDPtP83E9duEDhSXvRZKT4AxEwtZypwfNiCBIuhlJFKMWrICMfQKyM?=
+ =?us-ascii?Q?9gnxKQ82K8AEo301yRCZ9ln7WZQNTkCoP+x/bUNLRPjQUUQayhlanldG29XT?=
+ =?us-ascii?Q?uHxqzAnKocjOUZSwQuB/kbV7eqTWJ808b0K3BiBu8I3s+eoYDEY16lBJ6Ydx?=
+ =?us-ascii?Q?XLf9CZQeaNffL9uBU1IF0HIeUWOlb1h8y09XA0jDwaxaqwOWFsHyiK2f+W3K?=
+ =?us-ascii?Q?Iw2KqU/sFAhnkpleX0dgPgfjP0wQBSdJanBLoTN8ArNtm7JBLvAEDI1tg5cF?=
+ =?us-ascii?Q?YhWxm5JuypW5qveaLpIcs1RDZaEw8z9etR4Iaedq+lEA2SfVSscnhwOve/+t?=
+ =?us-ascii?Q?175CQ+SzlVwGIoPAsVlHsJh9749xDTV4DUcxZ2FL8378YFTNnN+IX7LZvKC8?=
+ =?us-ascii?Q?KOwntOHR9FRAGzmhO55bhVJd7J1RjIe9vWr/ymEJ862qo1VGltFXpZWSRegB?=
+ =?us-ascii?Q?cmYRmGLnhG0kXLU3/3eyOz1+pi1WF0EsPtM8esROME5+/bC2OjxRp8yX4ufZ?=
+ =?us-ascii?Q?vruzD5Bs43YKTFKqm2+qFngIapbWZXiHBJMzibKfSCA6kDY1qbmnUu7Fc55P?=
+ =?us-ascii?Q?o6ejaC+vXdiTFEWDKMAIOzYSsyFOF4x0tXR2vIwfS0oL7VqzU2jEujrMgj2x?=
+ =?us-ascii?Q?cR7rl3sLOVAjCm2XAZeddLb7B7ihkMVW8KWoFQDgOsOpGtvbIO+J7kNHjP/R?=
+ =?us-ascii?Q?ROu+WLQ0OsAtgNSC3mtdQFwZdGSpeK4tDS6DDoNTlcLogDmLSBMq3YkVsFr7?=
+ =?us-ascii?Q?ohLVtEkVZaiTyOUKNNNoPhtvmnk6tBXJo11kML/v33N/3zgHY004ELmMBAgq?=
+ =?us-ascii?Q?4CDCv2hg1lFQTzEWScEhKEkfW7OYAhYUt3OMUgwi1D8e4a6P1W7JHRdiiILG?=
+ =?us-ascii?Q?4goplaY1QHnr/s9dZY7MZCFKS1rhzcBlhmybei8ajCmB0OE12eMFsFCdNvSg?=
+ =?us-ascii?Q?nYZOSvW9ygdqf26lyJnlEp638NQ2ZW4fqXjiW/ugWUqjOM89YmBawACI8gz0?=
+ =?us-ascii?Q?w4en+B5LVxz2WGF3sk8cuYh6wl1TLwObGIou?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(7416014)(376014)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2025 06:10:14.2950
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 303e47f8-2cc1-47dc-ad48-08de00b12fca
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF00000207.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4312
 
-From: Bean Huo <beanhuo@micron.com>
+This series introduces support for AMD IOMMU nested page table translation
+with the host (v1) and guest (v2) page tables.
 
-This patch adds OP-TEE based RPMB support for UFS devices. This enables secure RPMB operations on
-UFS devices through OP-TEE, providing the same functionality available for eMMC devices and
-extending kernel-based secure storage support to UFS-based systems.
+In this mode, the AMD IOMMU driver configures the Device Table Entry (DTE)
+with host page table root pointer, which is configured by allocating domain
+with page table type IOMMU_HWPT_ALLOC_NEST_PARENT.
 
-Benefits of OP-TEE based RPMB implementation:
-- Eliminates dependency on userspace supplicant for RPMB access
-- Enables early boot secure storage access (e.g., fTPM, secure UEFI variables)
-- Provides kernel-level RPMB access as soon as UFS driver is initialized
-- Removes complex initramfs dependencies and boot ordering requirements
-- Ensures reliable and deterministic secure storage operations
-- Supports both built-in and modular fTPM configurations
+The guest page tables and Guest CR3 (GCR3) tables are managed by Guest OS,
+and stored in the guest DTE (gDTE) in guest memory. VMM is responsible for
+passing gDTE information to the host IOMMU driver using struct
+iommu_hwpt_amd_guest when allocating a domain type IOMMU_DOMAIN_NESTED.
+Then, the gDTE is parsed and program onto host DTE by the AMD IOMMU driver.
 
-Co-developed-by: Can Guo <can.guo@oss.qualcomm.com>
-Signed-off-by: Can Guo <can.guo@oss.qualcomm.com>
-Signed-off-by: Bean Huo <beanhuo@micron.com>
----
- drivers/misc/Kconfig           |   2 +-
- drivers/ufs/core/Makefile      |   1 +
- drivers/ufs/core/ufs-rpmb.c    | 253 +++++++++++++++++++++++++++++++++
- drivers/ufs/core/ufshcd-priv.h |  13 ++
- drivers/ufs/core/ufshcd.c      |  30 +++-
- include/ufs/ufs.h              |   4 +
- include/ufs/ufshcd.h           |   3 +
- 7 files changed, 301 insertions(+), 5 deletions(-)
- create mode 100644 drivers/ufs/core/ufs-rpmb.c
+In addition, this series introduces base code for IOMMUFD vIOMMU for AMD
+IOMMU, and implements vIOMMU-based nested domain allocation interface.
+The struct nested_domain to store nested domain information, and
+set_dte_nested() helper function to handle DTE programing for the nested
+domain.
 
-diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-index b9ca56930003..46ffa62eac6e 100644
---- a/drivers/misc/Kconfig
-+++ b/drivers/misc/Kconfig
-@@ -106,7 +106,7 @@ config PHANTOM
- 
- config RPMB
- 	tristate "RPMB partition interface"
--	depends on MMC
-+	depends on MMC || SCSI_UFSHCD
- 	help
- 	  Unified RPMB unit interface for RPMB capable devices such as eMMC and
- 	  UFS. Provides interface for in-kernel security controllers to access
-diff --git a/drivers/ufs/core/Makefile b/drivers/ufs/core/Makefile
-index cf820fa09a04..51e1867e524e 100644
---- a/drivers/ufs/core/Makefile
-+++ b/drivers/ufs/core/Makefile
-@@ -2,6 +2,7 @@
- 
- obj-$(CONFIG_SCSI_UFSHCD)		+= ufshcd-core.o
- ufshcd-core-y				+= ufshcd.o ufs-sysfs.o ufs-mcq.o
-+ufshcd-core-$(CONFIG_RPMB)		+= ufs-rpmb.o
- ufshcd-core-$(CONFIG_DEBUG_FS)		+= ufs-debugfs.o
- ufshcd-core-$(CONFIG_SCSI_UFS_BSG)	+= ufs_bsg.o
- ufshcd-core-$(CONFIG_SCSI_UFS_CRYPTO)	+= ufshcd-crypto.o
-diff --git a/drivers/ufs/core/ufs-rpmb.c b/drivers/ufs/core/ufs-rpmb.c
-new file mode 100644
-index 000000000000..84cdcf8efeb3
---- /dev/null
-+++ b/drivers/ufs/core/ufs-rpmb.c
-@@ -0,0 +1,253 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * UFS OP-TEE based RPMB Driver
-+ *
-+ * Copyright (C) 2025 Micron Technology, Inc.
-+ * Copyright (C) 2025 Qualcomm Technologies, Inc.
-+ *
-+ * Authors:
-+ *	Bean Huo <beanhuo@micron.com>
-+ *	Can Guo <can.guo@oss.qualcomm.com>
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/device.h>
-+#include <linux/kernel.h>
-+#include <linux/types.h>
-+#include <linux/rpmb.h>
-+#include <linux/string.h>
-+#include <linux/list.h>
-+#include <ufs/ufshcd.h>
-+#include <linux/unaligned.h>
-+#include "ufshcd-priv.h"
-+
-+#define UFS_RPMB_SEC_PROTOCOL		0xEC	/* JEDEC UFS application */
-+#define UFS_RPMB_SEC_PROTOCOL_ID	0x01	/* JEDEC UFS RPMB protocol ID, CDB byte3 */
-+
-+static const struct bus_type ufs_rpmb_bus_type = {
-+	.name = "ufs_rpmb",
-+};
-+
-+/* UFS RPMB device structure */
-+struct ufs_rpmb_dev {
-+	u8 region_id;
-+	struct device dev;
-+	struct rpmb_dev *rdev;
-+	struct ufs_hba *hba;
-+	struct list_head node;
-+};
-+
-+static int ufs_sec_submit(struct ufs_hba *hba, u16 spsp, void *buffer, size_t len, bool send)
-+{
-+	struct scsi_device *sdev = hba->ufs_rpmb_wlun;
-+	u8 cdb[12] = { };
-+
-+	cdb[0] = send ? SECURITY_PROTOCOL_OUT : SECURITY_PROTOCOL_IN;
-+	cdb[1] = UFS_RPMB_SEC_PROTOCOL;
-+	put_unaligned_be16(spsp, &cdb[2]);
-+	put_unaligned_be32(len, &cdb[6]);
-+
-+	return scsi_execute_cmd(sdev, cdb, send ? REQ_OP_DRV_OUT : REQ_OP_DRV_IN,
-+				buffer, len, /*timeout=*/30 * HZ, 0, NULL);
-+}
-+
-+/* UFS RPMB route frames implementation */
-+static int ufs_rpmb_route_frames(struct device *dev, u8 *req, unsigned int req_len, u8 *resp,
-+					unsigned int resp_len)
-+{
-+	struct ufs_rpmb_dev *ufs_rpmb = dev_get_drvdata(dev);
-+	struct rpmb_frame *frm_out = (struct rpmb_frame *)req;
-+	bool need_result_read = true;
-+	u16 req_type, protocol_id;
-+	struct ufs_hba *hba;
-+	int ret;
-+
-+	if (!ufs_rpmb) {
-+		dev_err(dev, "Missing driver data\n");
-+		return -ENODEV;
-+	}
-+
-+	if (!req || !req_len || !resp || !resp_len)
-+		return -EINVAL;
-+
-+	hba = ufs_rpmb->hba;
-+
-+	req_type = be16_to_cpu(frm_out->req_resp);
-+
-+	switch (req_type) {
-+	case RPMB_PROGRAM_KEY:
-+		if (req_len != sizeof(struct rpmb_frame) || resp_len != sizeof(struct rpmb_frame))
-+			return -EINVAL;
-+		break;
-+	case RPMB_GET_WRITE_COUNTER:
-+		if (req_len != sizeof(struct rpmb_frame) || resp_len != sizeof(struct rpmb_frame))
-+			return -EINVAL;
-+		need_result_read = false;
-+		break;
-+	case RPMB_WRITE_DATA:
-+		if (req_len % sizeof(struct rpmb_frame) || resp_len != sizeof(struct rpmb_frame))
-+			return -EINVAL;
-+		break;
-+	case RPMB_READ_DATA:
-+		if (req_len != sizeof(struct rpmb_frame) || resp_len % sizeof(struct rpmb_frame))
-+			return -EINVAL;
-+		need_result_read = false;
-+		break;
-+	default:
-+		dev_err(dev, "Unknown request type=0x%04x\n", req_type);
-+		return -EINVAL;
-+	}
-+
-+	protocol_id = ufs_rpmb->region_id << 8 | UFS_RPMB_SEC_PROTOCOL_ID;
-+
-+	ret = ufs_sec_submit(hba, protocol_id, req, req_len, true);
-+	if (ret) {
-+		dev_err(dev, "Command failed with ret=%d\n", ret);
-+		return ret;
-+	}
-+
-+	if (need_result_read) {
-+		struct rpmb_frame *frm_resp = (struct rpmb_frame *)resp;
-+
-+		memset(frm_resp, 0, sizeof(*frm_resp));
-+		frm_resp->req_resp = cpu_to_be16(RPMB_RESULT_READ);
-+		ret = ufs_sec_submit(hba, protocol_id, resp, resp_len, true);
-+		if (ret) {
-+			dev_err(dev, "Result read request failed with ret=%d\n", ret);
-+			return ret;
-+		}
-+	}
-+
-+	if (!ret) {
-+		ret = ufs_sec_submit(hba, protocol_id, resp, resp_len, false);
-+		if (ret)
-+			dev_err(dev, "Response read failed with ret=%d\n", ret);
-+	}
-+
-+	return ret;
-+}
-+
-+static void ufs_rpmb_device_release(struct device *dev)
-+{
-+	struct ufs_rpmb_dev *ufs_rpmb = dev_get_drvdata(dev);
-+
-+	if (ufs_rpmb->rdev)
-+		rpmb_dev_unregister(ufs_rpmb->rdev);
-+}
-+
-+/* UFS RPMB device registration */
-+int ufs_rpmb_probe(struct ufs_hba *hba)
-+{
-+	struct ufs_rpmb_dev *ufs_rpmb, *it, *tmp;
-+	struct rpmb_dev *rdev;
-+	u8 cid[16] = { };
-+	int region;
-+	u8 *sn;
-+	u32 cap;
-+	int ret;
-+
-+	if (!hba->ufs_rpmb_wlun) {
-+		dev_info(hba->dev, "No RPMB LUN, skip RPMB registration\n");
-+		return -ENODEV;
-+	}
-+
-+	/* Get the UNICODE serial number data */
-+	sn = hba->dev_info.serial_number;
-+	if (!sn) {
-+		dev_err(hba->dev, "Serial number not available\n");
-+		return -EINVAL;
-+	}
-+
-+	INIT_LIST_HEAD(&hba->rpmbs);
-+
-+	/* Copy serial number into device ID (max 15 chars + NUL). */
-+	strscpy(cid, sn, sizeof(cid));
-+
-+	struct rpmb_descr descr = {
-+		.type = RPMB_TYPE_UFS,
-+		.route_frames = ufs_rpmb_route_frames,
-+		.dev_id_len = sizeof(cid),
-+		.reliable_wr_count = hba->dev_info.rpmb_io_size,
-+	};
-+
-+	for (region = 0; region < 4; region++) {
-+		cap = hba->dev_info.rpmb_region_size[region];
-+		if (!cap)
-+			continue;
-+
-+		ufs_rpmb = devm_kzalloc(hba->dev, sizeof(*ufs_rpmb), GFP_KERNEL);
-+		if (!ufs_rpmb) {
-+			ret = -ENOMEM;
-+			goto err_out;
-+		}
-+
-+		ufs_rpmb->hba = hba;
-+		ufs_rpmb->dev.parent = &hba->ufs_rpmb_wlun->sdev_gendev;
-+		ufs_rpmb->dev.bus = &ufs_rpmb_bus_type;
-+		ufs_rpmb->dev.release = ufs_rpmb_device_release;
-+		dev_set_name(&ufs_rpmb->dev, "ufs_rpmb%d", region);
-+
-+		/* Set driver data BEFORE device_register */
-+		dev_set_drvdata(&ufs_rpmb->dev, ufs_rpmb);
-+
-+		ret = device_register(&ufs_rpmb->dev);
-+		if (ret) {
-+			dev_err(hba->dev, "Failed to register UFS RPMB device %d\n", region);
-+			put_device(&ufs_rpmb->dev);
-+			goto err_out;
-+		}
-+
-+		/* Make CID unique for this region by appending region numbe */
-+		cid[sizeof(cid) - 1] = region;
-+		descr.dev_id = (void *)cid;
-+		descr.capacity = cap;
-+
-+		/* Register RPMB device */
-+		rdev = rpmb_dev_register(&ufs_rpmb->dev, &descr);
-+		if (IS_ERR(rdev)) {
-+			dev_err(hba->dev, "Failed to register UFS RPMB device.\n");
-+			device_unregister(&ufs_rpmb->dev);
-+			ret = PTR_ERR(rdev);
-+			goto err_out;
-+		}
-+
-+		ufs_rpmb->rdev = rdev;
-+		ufs_rpmb->region_id = region;
-+
-+		list_add_tail(&ufs_rpmb->node, &hba->rpmbs);
-+
-+		dev_info(hba->dev, "UFS RPMB region %d registered (capacity=%u)\n", region, cap);
-+	}
-+
-+	return 0;
-+err_out:
-+	list_for_each_entry_safe(it, tmp, &hba->rpmbs, node) {
-+		list_del(&it->node);
-+		device_unregister(&it->dev);
-+	}
-+
-+	return ret;
-+}
-+
-+/* UFS RPMB remove handler */
-+void ufs_rpmb_remove(struct ufs_hba *hba)
-+{
-+	struct ufs_rpmb_dev *ufs_rpmb, *tmp;
-+
-+	if (list_empty(&hba->rpmbs))
-+		return;
-+
-+	/* Remove all registered RPMB devices */
-+	list_for_each_entry_safe(ufs_rpmb, tmp, &hba->rpmbs, node) {
-+		dev_info(hba->dev, "Removing UFS RPMB region %d\n", ufs_rpmb->region_id);
-+		/* Remove from list first */
-+		list_del(&ufs_rpmb->node);
-+		/* Unregister device */
-+		device_unregister(&ufs_rpmb->dev);
-+	}
-+
-+	dev_info(hba->dev, "All UFS RPMB devices unregistered\n");
-+}
-+
-+MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("OP-TEE RPMB subsystem based UFS RPMB driver");
-diff --git a/drivers/ufs/core/ufshcd-priv.h b/drivers/ufs/core/ufshcd-priv.h
-index d0a2c963a27d..523828d6b1d5 100644
---- a/drivers/ufs/core/ufshcd-priv.h
-+++ b/drivers/ufs/core/ufshcd-priv.h
-@@ -411,4 +411,17 @@ static inline u32 ufshcd_mcq_get_sq_head_slot(struct ufs_hw_queue *q)
- 	return val / sizeof(struct utp_transfer_req_desc);
- }
- 
-+#ifdef CONFIG_RPMB
-+int ufs_rpmb_probe(struct ufs_hba *hba);
-+void ufs_rpmb_remove(struct ufs_hba *hba);
-+#else
-+static inline int ufs_rpmb_probe(struct ufs_hba *hba)
-+{
-+	return 0;
-+}
-+static inline void ufs_rpmb_remove(struct ufs_hba *hba)
-+{
-+}
-+#endif
-+
- #endif /* _UFSHCD_PRIV_H_ */
-diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-index 79c7588be28a..ec1670d94946 100644
---- a/drivers/ufs/core/ufshcd.c
-+++ b/drivers/ufs/core/ufshcd.c
-@@ -5240,10 +5240,15 @@ static void ufshcd_lu_init(struct ufs_hba *hba, struct scsi_device *sdev)
- 	    desc_buf[UNIT_DESC_PARAM_LU_WR_PROTECT] == UFS_LU_POWER_ON_WP)
- 		hba->dev_info.is_lu_power_on_wp = true;
- 
--	/* In case of RPMB LU, check if advanced RPMB mode is enabled */
--	if (desc_buf[UNIT_DESC_PARAM_UNIT_INDEX] == UFS_UPIU_RPMB_WLUN &&
--	    desc_buf[RPMB_UNIT_DESC_PARAM_REGION_EN] & BIT(4))
--		hba->dev_info.b_advanced_rpmb_en = true;
-+	/* In case of RPMB LU, check if advanced RPMB mode is enabled, and get region size */
-+	if (desc_buf[UNIT_DESC_PARAM_UNIT_INDEX] == UFS_UPIU_RPMB_WLUN) {
-+		if (desc_buf[RPMB_UNIT_DESC_PARAM_REGION_EN] & BIT(4))
-+			hba->dev_info.b_advanced_rpmb_en = true;
-+		hba->dev_info.rpmb_region_size[0] = desc_buf[RPMB_UNIT_DESC_PARAM_REGION0_SIZE];
-+		hba->dev_info.rpmb_region_size[1] = desc_buf[RPMB_UNIT_DESC_PARAM_REGION1_SIZE];
-+		hba->dev_info.rpmb_region_size[2] = desc_buf[RPMB_UNIT_DESC_PARAM_REGION2_SIZE];
-+		hba->dev_info.rpmb_region_size[3] = desc_buf[RPMB_UNIT_DESC_PARAM_REGION3_SIZE];
-+	}
- 
- 
- 	kfree(desc_buf);
-@@ -8151,8 +8156,11 @@ static int ufshcd_scsi_add_wlus(struct ufs_hba *hba)
- 		ufshcd_upiu_wlun_to_scsi_wlun(UFS_UPIU_RPMB_WLUN), NULL);
- 	if (IS_ERR(sdev_rpmb)) {
- 		ret = PTR_ERR(sdev_rpmb);
-+		hba->ufs_rpmb_wlun = NULL;
-+		dev_err(hba->dev, "%s: RPMB WLUN not found\n", __func__);
- 		goto remove_ufs_device_wlun;
- 	}
-+	hba->ufs_rpmb_wlun = sdev_rpmb;
- 	ufshcd_blk_pm_runtime_init(sdev_rpmb);
- 	scsi_device_put(sdev_rpmb);
- 
-@@ -8425,6 +8433,7 @@ static int ufs_get_device_desc(struct ufs_hba *hba)
- 	int err;
- 	u8 model_index;
- 	u8 *desc_buf;
-+	u8 serial_index;
- 	struct ufs_dev_info *dev_info = &hba->dev_info;
- 
- 	desc_buf = kzalloc(QUERY_DESC_MAX_SIZE, GFP_KERNEL);
-@@ -8460,6 +8469,7 @@ static int ufs_get_device_desc(struct ufs_hba *hba)
- 				UFS_DEV_HID_SUPPORT;
- 
- 	model_index = desc_buf[DEVICE_DESC_PARAM_PRDCT_NAME];
-+	serial_index = desc_buf[DEVICE_DESC_PARAM_SN];
- 
- 	err = ufshcd_read_string_desc(hba, model_index,
- 				      &dev_info->model, SD_ASCII_STD);
-@@ -8469,6 +8479,12 @@ static int ufs_get_device_desc(struct ufs_hba *hba)
- 		goto out;
- 	}
- 
-+	err = ufshcd_read_string_desc(hba, serial_index, &dev_info->serial_number, SD_RAW);
-+	if (err < 0) {
-+		dev_err(hba->dev, "%s: Failed reading Serial Number. err = %d\n", __func__, err);
-+		goto out;
-+	}
-+
- 	hba->luns_avail = desc_buf[DEVICE_DESC_PARAM_NUM_LU] +
- 		desc_buf[DEVICE_DESC_PARAM_NUM_WLU];
- 
-@@ -8504,6 +8520,8 @@ static void ufs_put_device_desc(struct ufs_hba *hba)
- 
- 	kfree(dev_info->model);
- 	dev_info->model = NULL;
-+	kfree(dev_info->serial_number);
-+	dev_info->serial_number = NULL;
- }
- 
- /**
-@@ -8647,6 +8665,8 @@ static int ufshcd_device_geo_params_init(struct ufs_hba *hba)
- 	else if (desc_buf[GEOMETRY_DESC_PARAM_MAX_NUM_LUN] == 0)
- 		hba->dev_info.max_lu_supported = 8;
- 
-+	hba->dev_info.rpmb_io_size = desc_buf[GEOMETRY_DESC_PARAM_RPMB_RW_SIZE];
-+
- out:
- 	kfree(desc_buf);
- 	return err;
-@@ -8832,6 +8852,7 @@ static int ufshcd_add_lus(struct ufs_hba *hba)
- 
- 	ufs_bsg_probe(hba);
- 	scsi_scan_host(hba->host);
-+	ufs_rpmb_probe(hba);
- 
- out:
- 	return ret;
-@@ -10391,6 +10412,7 @@ void ufshcd_remove(struct ufs_hba *hba)
- 		ufshcd_rpm_get_sync(hba);
- 	ufs_hwmon_remove(hba);
- 	ufs_bsg_remove(hba);
-+	ufs_rpmb_remove(hba);
- 	ufs_sysfs_remove_nodes(hba->dev);
- 	cancel_delayed_work_sync(&hba->ufs_rtc_update_work);
- 	blk_mq_destroy_queue(hba->tmf_queue);
-diff --git a/include/ufs/ufs.h b/include/ufs/ufs.h
-index 72fd385037a6..1d44e2b32253 100644
---- a/include/ufs/ufs.h
-+++ b/include/ufs/ufs.h
-@@ -651,6 +651,10 @@ struct ufs_dev_info {
- 	u8 rtt_cap; /* bDeviceRTTCap */
- 
- 	bool hid_sup;
-+
-+	u8 *serial_number;
-+	u8 rpmb_io_size;
-+	u8 rpmb_region_size[4];
- };
- 
- /*
-diff --git a/include/ufs/ufshcd.h b/include/ufs/ufshcd.h
-index 1d3943777584..17e97a45ef71 100644
---- a/include/ufs/ufshcd.h
-+++ b/include/ufs/ufshcd.h
-@@ -984,6 +984,7 @@ struct ufs_hba {
- 	struct Scsi_Host *host;
- 	struct device *dev;
- 	struct scsi_device *ufs_device_wlun;
-+	struct scsi_device *ufs_rpmb_wlun;
- 
- #ifdef CONFIG_SCSI_UFS_HWMON
- 	struct device *hwmon_device;
-@@ -1140,6 +1141,8 @@ struct ufs_hba {
- 	int critical_health_count;
- 	atomic_t dev_lvl_exception_count;
- 	u64 dev_lvl_exception_id;
-+
-+	struct list_head rpmbs;
- };
- 
- /**
+The series is separated into two parts:
+ * Patch 1-7 are preparatory patches.
+ * Patch 8-12 implement nest-parent and nested domains support
+   for IOMMUFD vIOMMU.
+
+Thanks,
+Suravee
+
+Note: This series is rebased on top of:
+ * [PATCH v5] iommu/amd: Add support for hw_info for iommu capability query
+   https://lore.kernel.org/linux-iommu/20250926141901.511313-1-suravee.suthikulpanit@amd.com/T/#u 
+
+Changes from V1:
+(https://lore.kernel.org/linux-iommu/20250820113009.5233-1-suravee.suthikulpanit@amd.com/)
+ * Patch 10: Introduce struct nested_domain instead of reusing
+             struct protection_domain.
+ * Patch 11: Introduce set_dte_nested() insted of reusing set_dte_entry().
+ * Patch 12: Introduce struct iommu_viommu_amd and base code for IOMMUFD
+             vIOMMU. This is mainly to allow nested domain integration with
+             struct iommufd_viommu_ops.alloc_domain_nested for vIOMMU-based
+             nesting support.
+
+Suravee Suthikulpanit (12):
+  iommu/amd: Rename DEV_DOMID_MASK to DTE_DOMID_MASK
+  iommu/amd: Make amd_iommu_pdom_id_alloc() non-static
+  iommu/amd: Make amd_iommu_pdom_id_free() non-static
+  iommu/amd: Make amd_iommu_device_flush_dte() non-static
+  iommu/amd: Make amd_iommu_update_dte256() non-static
+  iommu/amd: Make amd_iommu_make_clear_dte() non-static inline
+  iommu/amd: Make amd_iommu_completion_wait() non-static
+  iommufd: Introduce data struct for AMD nested domain allocation
+  iommu/amd: Add support for nest parent domain allocation
+  iommu/amd: Add support for nested domain allocation
+  iommu/amd: Add support for nested domain attach/detach
+  iommu/amd: Introduce IOMMUFD vIOMMU support for AMD
+
+ drivers/iommu/amd/Makefile          |   2 +-
+ drivers/iommu/amd/amd_iommu.h       |  33 ++++++
+ drivers/iommu/amd/amd_iommu_types.h |  45 +++++--
+ drivers/iommu/amd/init.c            |   3 +
+ drivers/iommu/amd/iommu.c           | 178 ++++++++++++++++++++--------
+ drivers/iommu/amd/iommufd.c         |   8 ++
+ drivers/iommu/amd/iommufd.h         |   2 +
+ drivers/iommu/amd/nested.c          | 172 +++++++++++++++++++++++++++
+ include/uapi/linux/iommufd.h        |  30 +++++
+ 9 files changed, 413 insertions(+), 60 deletions(-)
+ create mode 100644 drivers/iommu/amd/nested.c
+
 -- 
 2.34.1
 
