@@ -1,98 +1,93 @@
-Return-Path: <linux-kernel+bounces-839448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EED17BB1A37
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 21:43:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 624D3BB1A3D
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 21:43:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CC2319C1E6F
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 19:43:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 152F12A77B1
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 19:43:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C6D42ED168;
-	Wed,  1 Oct 2025 19:42:54 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73D202D593A;
+	Wed,  1 Oct 2025 19:43:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="JpF34wNW"
+Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7671D2EC0A4;
-	Wed,  1 Oct 2025 19:42:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10976283C93;
+	Wed,  1 Oct 2025 19:43:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759347773; cv=none; b=JTHR0kGb4QUkZLKzT/7UHuDcc7yMQuwpyi78Z+VRB1A+Cca1tDigNGIDoGtc2Uv29r1EBruwqmTnEyUpelKUxZhZp0SKq0SYnAsCrq3sgmm1JlDDBFWTNAGXJd/q3kZClTQKLdTqCWF1tgP28HiC5wm0rIhhNonEzRH0DyLw5Vc=
+	t=1759347813; cv=none; b=Ay1PGodTmD9YZkaCP2LpCBSwTzmkgiiN48xli+M/mUbhGjZ+3BQq6ZJB3LmaifqM7Yd6ATKW0YQCDa9gEkBRymZFy7e8ljwP/v8bNrmDddp8iawE7Tg/+HpgzjQf23DmGrD5oMZgKuhc+Y7pIci4gHsorJpyQDirR0mb5DPQ/sE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759347773; c=relaxed/simple;
-	bh=CdagSpuF9oXI+jPkv6GtSabR0qdqb4WJVr7dVOaM3Ds=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XgmQ/v7hdcGUS4R7tJ959GH1Boi/q4UFucwZBUOo/dKFq1JbDr7/428khAMBcTLK4ZUdq8zcpYwYUuc5/uafSHolfQDrZm4VcFC/M6zUFKTKzxaAeuW8SbOXh6xmdwkvKPDx+OT4hYhPF6cC8yR1vjRmNHC36lXSaAJzPUoMtiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (2.8.3.0.0.0.0.0.0.0.0.0.0.0.0.0.a.5.c.d.c.d.9.1.0.b.8.0.1.0.0.2.ip6.arpa [IPv6:2001:8b0:19dc:dc5a::382])
+	s=arc-20240116; t=1759347813; c=relaxed/simple;
+	bh=be3+GIr8n+qVKRBsFtvqGAvLzdWKRQw3g4nKiI4TU48=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dD5oLBpk1A77BYln9jJ57oe9C7i+iV3spBWZ1ey5s+ZjR4auHhB30C/FlQclIFEcgis72YEPRyTwN+WLzdvx/c9RW5c8Vl99VbNK0sOcTckLKMGji/FmtP40MlxV+jABU5s2Hst66zQIJA6JdXIyO9B+/rr9ieLg2E+OM9g0jhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=JpF34wNW; arc=none smtp.client-ip=199.89.3.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 004.mia.mailroute.net (Postfix) with ESMTP id 4ccQMk66cQzm0yPs;
+	Wed,  1 Oct 2025 19:43:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1759347808; x=1761939809; bh=+MqMQ4UB5ZzsW/uQoNzbhXI2
+	y/YqvAtZJHjg8vOG7qQ=; b=JpF34wNWKUzHKZ/Vp/Dg7UdsFIcDakbKwbURVNL/
+	pJrxaQU6vFEdDjFi5jjEL8IGHNeC8hBAf4Rm/INZu2shV0+Crv4tq7zkFzv4dUZ7
+	cxppx/pJp52nBpBmHRrRBopnUs19P7G1e5NyLR5cmvtMT/I5nuQ5f08dPQkkrbun
+	Ae6Do0y6HZnVvXgazymfbzUwR7lgbhiwZljh3sZ5OAa7M6MtbnA2Vzi4y8GT/cuX
+	4po4QZiIzlbotQkGcWVKyYbvbLB+gIQsxL7qn57bHUIICFCBKHZeoNRSW/bxgNCk
+	rmRZnMWnbzNYuRWIg8zYhZhz7IRtF0L3yN+Q2o0VuHAg1g==
+X-Virus-Scanned: by MailRoute
+Received: from 004.mia.mailroute.net ([127.0.0.1])
+ by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id dhISQHHwVx-0; Wed,  1 Oct 2025 19:43:28 +0000 (UTC)
+Received: from [100.119.48.131] (unknown [104.135.180.219])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: sam@gentoo.org)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id E311E340E36;
-	Wed, 01 Oct 2025 19:42:49 +0000 (UTC)
-From: Sam James <sam@gentoo.org>
-To: "David S. Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>
-Cc: Sam James <sam@gentoo.org>,
-	Stian Halseth <stian@itx.no>,
-	sparclinux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/3] sparc: don't reference obsolete termio struct for TC* constants
-Date: Wed,  1 Oct 2025 20:42:17 +0100
-Message-ID: <3ffe89f049619167c17e2359ce9d8ea9270b76eb.1759347737.git.sam@gentoo.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <fc2e8775d55f43e08eb79d326d6fdd89291898dd.1759347737.git.sam@gentoo.org>
-References: <fc2e8775d55f43e08eb79d326d6fdd89291898dd.1759347737.git.sam@gentoo.org>
+	(Authenticated sender: bvanassche@acm.org)
+	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4ccQMX0RcVzm0ysd;
+	Wed,  1 Oct 2025 19:43:19 +0000 (UTC)
+Message-ID: <b6a82f74-f64a-4706-8663-c6a72332fbb2@acm.org>
+Date: Wed, 1 Oct 2025 12:43:18 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] scsi: ufs: core: fix incorrect buffer duplication
+ in ufshcd_read_string_desc()
+To: Bean Huo <beanhuo@iokpp.de>, avri.altman@wdc.com,
+ alim.akhtar@samsung.com, jejb@linux.ibm.com, martin.petersen@oracle.com,
+ can.guo@oss.qualcomm.com, ulf.hansson@linaro.org, beanhuo@micron.com,
+ jens.wiklander@linaro.org
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251001060805.26462-1-beanhuo@iokpp.de>
+ <20251001060805.26462-3-beanhuo@iokpp.de>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20251001060805.26462-3-beanhuo@iokpp.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Similar in nature to ab107276607af90b13a5994997e19b7b9731e251. glibc-2.42
-drops the legacy termio struct, but the ioctls.h header still defines some
-TC* constants in terms of termio (via sizeof). Hardcode the values instead.
+On 9/30/25 11:08 PM, Bean Huo wrote:
+> The function ufshcd_read_string_desc() was duplicating memory starting
+> from the beginning of struct uc_string_id, which included the length
+> and type fields. As a result, the allocated buffer contained unwanted
+> metadata in addition to the string itself.
+> 
+> The correct behavior is to duplicate only the Unicode character array in
+> the structure. Update the code so that only the actual string content is
+> copied into the new buffer.
 
-This fixes building Python for example, which falls over like:
-  ./Modules/termios.c:1119:16: error: invalid application of 'sizeof' to incomplete type 'struct termio'
-
-Link: https://bugs.gentoo.org/961769
-Link: https://bugs.gentoo.org/962600
-Co-authored-by: Stian Halseth <stian@itx.no>
-Signed-off-by: Sam James <sam@gentoo.org>
----
-v2: Fix title...
-
- arch/sparc/include/uapi/asm/ioctls.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/arch/sparc/include/uapi/asm/ioctls.h b/arch/sparc/include/uapi/asm/ioctls.h
-index 7fd2f5873c9e7..b493dea7ca377 100644
---- a/arch/sparc/include/uapi/asm/ioctls.h
-+++ b/arch/sparc/include/uapi/asm/ioctls.h
-@@ -5,10 +5,10 @@
- #include <asm/ioctl.h>
- 
- /* Big T */
--#define TCGETA		_IOR('T', 1, struct termio)
--#define TCSETA		_IOW('T', 2, struct termio)
--#define TCSETAW		_IOW('T', 3, struct termio)
--#define TCSETAF		_IOW('T', 4, struct termio)
-+#define TCGETA          0x5405
-+#define TCSETA          0x5406
-+#define TCSETAW         0x5407
-+#define TCSETAF         0x5408
- #define TCSBRK		_IO('T', 5)
- #define TCXONC		_IO('T', 6)
- #define TCFLSH		_IO('T', 7)
--- 
-2.51.0
-
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
 
