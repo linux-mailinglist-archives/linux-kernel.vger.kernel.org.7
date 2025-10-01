@@ -1,206 +1,219 @@
-Return-Path: <linux-kernel+bounces-839471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A250BBB1AF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 22:27:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70FA0BB1AF3
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 22:28:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57F783AA343
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 20:27:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25A833AE585
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 20:28:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9455C2FBE13;
-	Wed,  1 Oct 2025 20:27:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4911F2F066B;
+	Wed,  1 Oct 2025 20:28:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sg4bTlQY"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XXkd6wMc"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68F132ED164
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 20:27:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04A0E25B663
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 20:28:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759350441; cv=none; b=qStSECXnIHrI5Ou+smoTlo3zdKSJudLvX17Mb88N2tNS6eXKOFs7+Qqj4n163/A/gQQWt6QHMze1UAlSMxKYmCgxJ4q7ooL+q7bazGssT2zIMK688lrqJbyf6HY3rC5GxbieoFeYOEh0L6QEaYp9dgIQCayaH4GZKc5BSgq4gM0=
+	t=1759350498; cv=none; b=rU8PM3Q4i8PmPB+n/C7YNp4SJhdZSI977vieNj7jrOS2dosv0uah7CuLe0Lz61WGxPgC8Avn7rvsCWpreXeRKrJE1rZAIl1bwkHMKSt6yNP0FP0UjOzzKv73Hp18VJTU0q5xt105t52E59zOGyWp7gba/wL211e7t7yPayOcpXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759350441; c=relaxed/simple;
-	bh=G963DtS/1FnUYe8Bk64aERAuIQSpK29BvJuSKXZoyJw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FCtxujsh1NM4BiYDGENiKoeU2uRFpNDcZdIuNsmgvzbzFXE/c4mDAtMOluqlQDHqXk2GTDLHGNUX+HZBKc6vZt9zrO2xycQ8cMdK4nHslnYJ+856Tjyw6WFigta9CcWL2puMxXCMZzL/Ppuy4rWupn/I5baHjaYREVZ3U8FpnJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sg4bTlQY; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-279e2554c8fso2208065ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 13:27:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759350439; x=1759955239; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0Y2TB2deAhvzJ9TnIqGPiw7EFDMg7t0R4+4KfZC05qo=;
-        b=Sg4bTlQYx2n+eCGcFsR0VvyMOfoXzyyjTaGy8GADmnlY0wxmr+toLg88lpj92+G7E/
-         kIvwXxuad1I/fon/LeERqF1gRdbdbLMpDCv8urjcd65awb7eP+vf5ea3O3UCYtdELbmM
-         4dJUkpWjFpqfIFNx4bG8zfw0fUDQqA1RN4YGLseb8atelBuUZkRKOYAanRDnak/z7/r0
-         Pmh2Bq9xg5UdjeTu1aCzUQvDclXFxib2rDiQnPeRcYhijJmtK/G6NKhqyNbxveJylOXT
-         /2wvR9vlEeNsP7Ug3TtyOxhUaNGpjiNmn4/lbf/mTqv+8D8JPaNaEvD9AqmJTvS8nCSq
-         MdqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759350439; x=1759955239;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0Y2TB2deAhvzJ9TnIqGPiw7EFDMg7t0R4+4KfZC05qo=;
-        b=QekKoMMo+WNdHm54M6zuzxcbP/Yan3cIjiyxZzlCbcUXQZbZSunLHOYqSELCNbfrNE
-         6IyataiHEkeBBk4qk082hQQ1tQGcOiMlws69tRSBztDCod/dJRMah/mBtbUjCdIMVp2G
-         0KypOpv+9DME/qCn8+xULiBuQkjE6Z0SbKH3P86pUozpt0vBoCnagGqRsPI8pxYNnMEu
-         wt1Rcr2wDPUFgRPidHk7m8OsIBKSG9nO8aZuKxYYoH/8t0L+iM3JezXJ/cOzCtGdSZHJ
-         CQRFsSy5rym35OciGeriXURqEJxQmim+24+SK2uxFl0W7zjZRCBEQcwrNJej5+yU12EJ
-         5mhg==
-X-Forwarded-Encrypted: i=1; AJvYcCURNohYVrn2rRao0/bklJHWheJwTtPefQZ25/rYJ6+qqCnXP3XNvnbV8untEZ9BqhnViHnPLrIoAB7XmSo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7bqNpkpDcX4pIMxjnM7UbKH/8kWMMlAlHaE95D9c6CLeEWiIp
-	paw+Xo78sluIUt7o9YwhH0zb3FxW3jk1NatBpU+ISycFvpDUTQyl6wwXPHhshw==
-X-Gm-Gg: ASbGnctlybVUJoF+zskIb2xVWlgz/sdf04IBE9onGjWpDLc5khCx024jlPjO4JlyD98
-	LfOQPvZ9ew4pj2ukL6ZvK5/U50noUowQINGr8XF3G+ldG5k52YcCg2QJLOSas0Sj55WNxJpwadI
-	8p8G7tyTo56psnN9vl9k7oTO1uJvtFCevToisBt7GzGaElXUOZvolfOhT7Ffxcttu/lpiWZuCB1
-	Y2iEhKRFnWlWDJzAI7Bd6f5DG3UggEMtDqZKtIn73MGUQ+3CeJpzk1cRlhcp5IW8sstw4yJZ2za
-	4h1Ubc489eGJJQoc3a07YPi2F099WMCBHnSTrTZS+8YcSRiYthKccxw8hT75VqFrzvIguHC+vkJ
-	e0wgV2aJPSP/CQc9loqbyIkSJZBqJCcQPDHZ3xY1pZ9Z8EduBsKdRSMC9/UG8It0hHOa/rT5DF5
-	z793uUz7qfv2MIFN8dmDmd9MeGQzLk2uB4miovDA==
-X-Google-Smtp-Source: AGHT+IFSHOpmU+tiZFi1WwF/0IqSVMuQDH3frGeMOd5w+e2OLJaFmNhJOspRWyZINZN6L9DIiNzoBg==
-X-Received: by 2002:a17:902:fc44:b0:27d:6777:2833 with SMTP id d9443c01a7336-28e7f319f34mr61832625ad.47.1759350438619;
-        Wed, 01 Oct 2025 13:27:18 -0700 (PDT)
-Received: from deepanshu-kernel-hacker.. ([2405:201:682f:389d:2f27:4b44:4a2e:f965])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d1280a1sm4709695ad.51.2025.10.01.13.27.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Oct 2025 13:27:18 -0700 (PDT)
-From: Deepanshu Kartikey <kartikey406@gmail.com>
-To: jack@suse.cz
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] isofs: fix inode leak caused by disconnected dentries from exportfs
-Date: Thu,  2 Oct 2025 01:57:13 +0530
-Message-ID: <20251001202713.2077654-1-kartikey406@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1759350498; c=relaxed/simple;
+	bh=LlcH7vyJmv35KEF+YeiG5f2vq9X7M5kexM/dDzucHhM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TZ1D+mFx3Tp3IChkvbFaWFx8eps/Qb3Znn9CKVhb5vEZ2FUoMNBB0LnlUMpCJRLEZit5mLpDKbfVmTmwLVaBQ915VOJ/tAwkjuyL7F0Mm/gRq5xT4VihrCsuOozNdoUFNxAIdIdYrlXLo2OEh6BCuqv72Q7N3sKe6UFlUUvn70w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XXkd6wMc; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759350497; x=1790886497;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=LlcH7vyJmv35KEF+YeiG5f2vq9X7M5kexM/dDzucHhM=;
+  b=XXkd6wMchSLOHgHmnqP0zBNLI7eilmVEEKPGlYye2hNKOAUYDYjd8iQM
+   pknxpWbSOF8TXUgCOzI5Ujs6l1gx8nPwQmmphJUtzJKbCNH8X5EBxtPnN
+   dADFSSUahz+0w2lHeG5Bm5F/i8Eimnhy4uPDEuuys8sTVCSqUenMGXt0V
+   Im07C0ViS5AC83LU43k0XUdSDeRti7QLq34Rqpw1+K0pb2nYazH9JZZkU
+   +DiXT4Eo2emkb9h1BQ3MakX6baPrnVVD2wNV3llT+bfO39uo7DvlsI+rN
+   8TBBL44YSZLJAK8vS/X67sjZfVmsLulbO70A84B96U3o8DyiZMiZz9pSH
+   A==;
+X-CSE-ConnectionGUID: Z6/rtb0cSqKXrxFgRhuICA==
+X-CSE-MsgGUID: Vd3FBxCERNqhJhYGwahZ0g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11569"; a="87083801"
+X-IronPort-AV: E=Sophos;i="6.18,307,1751266800"; 
+   d="scan'208";a="87083801"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2025 13:28:16 -0700
+X-CSE-ConnectionGUID: PQ55WtNDQVeh6uBnVQvKAQ==
+X-CSE-MsgGUID: M0TrMgDRQYu4klrdw2kHMA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,307,1751266800"; 
+   d="scan'208";a="215998890"
+Received: from gabaabhi-mobl2.amr.corp.intel.com (HELO [10.125.109.221]) ([10.125.109.221])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2025 13:28:15 -0700
+Message-ID: <b0fb40f6-8baa-498f-bb88-50113cb80f53@intel.com>
+Date: Wed, 1 Oct 2025 13:28:14 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 04/21] x86/mm/asi: set up asi_nonsensitive_pgd
+To: Brendan Jackman <jackmanb@google.com>, Andy Lutomirski <luto@kernel.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>,
+ Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>,
+ Roman Gushchin <roman.gushchin@linux.dev>
+Cc: peterz@infradead.org, bp@alien8.de, dave.hansen@linux.intel.com,
+ mingo@redhat.com, tglx@linutronix.de, akpm@linux-foundation.org,
+ david@redhat.com, derkling@google.com, junaids@google.com,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, reijiw@google.com,
+ rientjes@google.com, rppt@kernel.org, vbabka@suse.cz, x86@kernel.org,
+ yosry.ahmed@linux.dev
+References: <20250924-b4-asi-page-alloc-v1-0-2d861768041f@google.com>
+ <20250924-b4-asi-page-alloc-v1-4-2d861768041f@google.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20250924-b4-asi-page-alloc-v1-4-2d861768041f@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Jan,
+On 9/24/25 07:59, Brendan Jackman wrote:
+> Create the initial shared pagetable to hold all the mappings that will
+> be shared among ASI domains.
+> 
+> Mirror the physmap into the ASI pagetables, but with a maximum
+> granularity that's guaranteed to allow changing pageblock sensitivity
+> without having to allocate pagetables, and with everything as
+> non-present.
 
-Thank you for the review. You're absolutely right - my initial explanation was incorrect. I've done extensive debugging to understand the actual mechanism causing the leak.
+Could you also talk about what this granularity _actually_ is and why it
+has the property of never requiring page table alloc
 
-Root Cause Analysis
-===================
+...
+> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
+> index e98e85cf15f42db669696ba8195d8fc633351b26..7e0471d46767c63ceade479ae0d1bf738f14904a 100644
+> --- a/arch/x86/mm/init_64.c
+> +++ b/arch/x86/mm/init_64.c
+> @@ -7,6 +7,7 @@
+>   *  Copyright (C) 2002,2003 Andi Kleen <ak@suse.de>
+>   */
+>  
+> +#include <linux/asi.h>
+>  #include <linux/signal.h>
+>  #include <linux/sched.h>
+>  #include <linux/kernel.h>
+> @@ -746,7 +747,8 @@ phys_pgd_init(pgd_t *pgd_page, unsigned long paddr_start, unsigned long paddr_en
+>  {
+>  	unsigned long vaddr, vaddr_start, vaddr_end, vaddr_next, paddr_last;
+>  
+> -	*pgd_changed = false;
+> +	if (pgd_changed)
+> +		*pgd_changed = false;
 
-The leak occurs specifically with CONFIG_JOLIET=y through the following sequence:
+This 'pgd_changed' hunk isn't mentioned in the changelog.
 
-1. Joliet Root Switching During Mount
---------------------------------------
+...
+> @@ -797,6 +800,24 @@ __kernel_physical_mapping_init(unsigned long paddr_start,
+>  
+>  	paddr_last = phys_pgd_init(init_mm.pgd, paddr_start, paddr_end, page_size_mask,
+>  				   prot, init, &pgd_changed);
+> +
+> +	/*
+> +	 * Set up ASI's unrestricted physmap. This needs to mapped at minimum 2M
+> +	 * size so that regions can be mapped and unmapped at pageblock
+> +	 * granularity without requiring allocations.
+> +	 */
 
-In isofs_fill_super(), when Joliet extensions are detected:
-- Primary root inode 1792 is created with i_count=1, i_nlink=3
-- During Joliet switching, iput(inode) is called on inode 1792
-- i_count decrements to 0, but generic_drop_inode() returns false (i_nlink=3 > 0)
-- Inode 1792 remains cached at i_count=0
-- New Joliet root inode 1920 is created and attached to sb->s_root
+This took me a minute to wrap my head around.
 
-Debugging output:
-  [9.653617] isofs: switching roots, about to iput ino=1792, i_count=1
-  [9.653676] isofs: after iput, getting new root
-  [9.653880] isofs: old inode after iput ino=1792, i_count=0, i_nlink=3
-  [9.654219] isofs: got new root ino=1920, i_count=1
+Here, I think you're trying to convey that:
 
-2. open_by_handle_at() Triggers Reconnection
----------------------------------------------
+  1. There's a higher-level design decision that all sensitivity will be
+     done at a 2M granularity. A 2MB physical region is either sensitive
+     or not.
+  2. Because of #1, 1GB mappings are not cool because splitting a 1GB
+     mapping into 2MB needs to allocate a page table page.
+  3. 4k mappings are OK because they can also have their permissions
+     changed at a 2MB granularity. It's just more laborious.
 
-When the system call attempts to resolve a file handle:
-- exportfs_decode_fh_raw() calls fh_to_dentry() which returns inode 1856
-- The dentry is marked DCACHE_DISCONNECTED
-- reconnect_path() is invoked to connect the path to root
-- This calls reconnect_one() to walk up the directory tree
+The "minimum 2M size" comment really threw me off because that, to me,
+also includes 1G which is a no-no here.
 
-3. Reference Accumulation in reconnect_one()
----------------------------------------------
+I also can't help but wonder if it would have been easier and more
+straightforward to just start this whole exercise at 4k: force all the
+ASI tables to be 4k. Then, later, add the 2MB support and tie to
+pageblocks on after.
 
-I instrumented reconnect_one() to track dentry reference counts:
 
-  [8.010398] reconnect_one: called for inode 1856
-  [8.010735] isofs: __isofs_iget got inode 1792, i_count=1
-  [8.011041] After fh_to_parent: d_count=1
-  [8.011319] After exportfs_get_name: d_count=2
-  [8.011769] After lookup_one_unlocked: d_count=3
+> +	if (asi_nonsensitive_pgd) {
+> +		/*
+> +		 * Since most memory is expected to end up sensitive, start with
+> +		 * everything unmapped in this pagetable.
+> +		 */
+> +		pgprot_t prot_np = __pgprot(pgprot_val(prot) & ~_PAGE_PRESENT);
+> +
+> +		VM_BUG_ON((PAGE_SHIFT + pageblock_order) < page_level_shift(PG_LEVEL_2M));
+> +		phys_pgd_init(asi_nonsensitive_pgd, paddr_start, paddr_end, 1 << PG_LEVEL_2M,
+> +			      prot_np, init, NULL);
+> +	}
 
-The parent dentry (inode 1792) accumulates 3 references:
-1. Initial reference from fh_to_parent()
-2. Additional reference taken by exportfs_get_name()
-3. Another reference taken by lookup_one_unlocked()
+I'm also kinda wondering what the purpose is of having a whole page
+table full of !_PAGE_PRESENT entries. It would be nice to know how this
+eventually gets turned into something useful.
 
-Then lookup_one_unlocked() creates a dentry for inode 1807:
-  [8.015179] isofs: __isofs_iget got inode 1807, i_count=1
-  [8.016169] lookup returns tmp (inode 1807), d_count=1
 
-The code enters the tmp != dentry branch and calls dput(tmp), then goes to 
-out_reconnected.
-
-4. Insufficient Cleanup
------------------------
-
-For inode 1807, I traced through dput():
-  [10.083359] fast_dput: lockref_put_return returned 0
-  [10.083699] fast_dput: RETAINING dentry for inode 1807, d_flags=0x240043
-
-The dentry refcount goes to 0, but retain_dentry() returns true because of 
-the DCACHE_REFERENCED flag (0x40 in 0x240043). The dentry is kept in cache 
-with refcount 0, still holding the inode reference.
-
-For inode 1792:
-  [10.084125] fast_dput: lockref_put_return returned 2
-
-At out_reconnected, only one dput(parent) is called, decrementing from 3 to 2. 
-Two references remain leaked.
-
-5. Unmount Failure
-------------------
-
-At unmount time:
-- shrink_dcache_for_umount() doesn't evict dentries with positive refcounts (1792)
-- Doesn't aggressively evict retained dentries with refcount 0 (1807)
-- Both inodes appear as leaked with i_count=1
-
-  [10.155385] LEAKED INODE: ino=1807, i_count=1, i_state=0x0, i_nlink=1
-  [10.155604] LEAKED INODE: ino=1792, i_count=1, i_state=0x0, i_nlink=1
-
-Why shrink_dcache_sb() Works
-=============================
-
-Calling shrink_dcache_sb() in isofs_put_super() forces eviction of:
-- Dentries with extra references that weren't properly released
-- Retained dentries sitting in cache at refcount 0
-
-This ensures cleanup happens before the superblock is destroyed.
-
-Open Questions
-==============
-
-1. Are exportfs_get_name() and lookup_one_unlocked() supposed to take 
-   references to the parent dentry that the caller must release? Should 
-   reconnect_one() be calling dput(parent) multiple times, or are these 
-   functions leaking references?
-
-2. Is adding shrink_dcache_sb() in put_super() the appropriate fix, or 
-   should this be handled in the reconnection error path when 
-   reconnect_one() fails?
-
-3. Does this indicate a broader issue with how exportfs handles parent 
-   dentry references during failed path reconnections that might affect 
-   other filesystems?
-
-I can investigate further into the implementation of exportfs_get_name() 
-and lookup_one_unlocked() to understand where exactly the extra references 
-are taken if that would be helpful.
-
-Best regards,
-Deepanshu Kartikey
 
