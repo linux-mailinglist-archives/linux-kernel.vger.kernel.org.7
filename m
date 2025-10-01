@@ -1,348 +1,158 @@
-Return-Path: <linux-kernel+bounces-839555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44C95BB1DF9
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 23:41:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14902BB1DFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 23:48:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5B8D2A3682
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 21:41:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5C523AC162
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 21:48:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B80EF31196C;
-	Wed,  1 Oct 2025 21:41:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Excnw8LI"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFF59306B04;
+	Wed,  1 Oct 2025 21:48:34 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7117617A2FC;
-	Wed,  1 Oct 2025 21:41:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC6F0145355
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 21:48:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759354903; cv=none; b=KESl0hc4CP6i0sRBUHcLWTuiRFZccN69bQq8z6fOBWT8HG4I+NTCQ3a6yp5iGXuRdZxSQZ3wpuRCXNdZZ1M1smwl2zSPdTg7q7rNQpVb8+O1aiJR3yn2/r6LMSiKjdwcY3d5XLaCwSKVnulSpTmmPhyyO+u1U7/dD6OErxaT6uc=
+	t=1759355314; cv=none; b=AnseVl/wqQev6y8gFlPc7ywfYIbMskkB+kHjVBO1i175ShNnPs/gk01dwSn16ZLsH8PEVQYRSuJD1bKSiHIbwawmBegw4ZLLJoLrI/XkkRllNRsuurKseJqexC6TUKVxlYBoxJri51o4zkc/c1npLMOo3AeVkJFBHFe2fHxFmlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759354903; c=relaxed/simple;
-	bh=teBzgg6W66TCegIEp7ZYSh7bHyXJUjH+ENcqJQ17cqs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k2sp9IxXHZ5Bb4wSiGrnZw1xqlGtTDCTXmNTfd1HU7wKpKyqqRX3u0K5lMg/4E1OKQWDEM64/FCXPVS1zSdZSykLWfvS9u6VBlKkY0732BPlIdfpHZo7j5la2g45sIwRFUmn4niEVOWtR0elShSJsRiQM6B2q+60x99M32IioxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Excnw8LI; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1759354899;
-	bh=teBzgg6W66TCegIEp7ZYSh7bHyXJUjH+ENcqJQ17cqs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Excnw8LIXnQ/LNhbk55aewH9+GfqyTaDKYKtMOVqBxvZYHyJUcxX8isJFBk+RUbGY
-	 VnEtzqf5we8wjMq+M70lpd3rMDHY7xiFrQcRqg9UVxlHzo7GfsHKJKpBLER7AHdRVW
-	 +/ywcqH6Nozs/jUdF9eibULEFlx7n71aoNPlbq8OSn0PDnQk2zWY30VVUd7TXuyTHe
-	 E7Wu/5FVm/uprZnT+5/4M3OQ70dXE1nNCyiIb1AQ5RBs+clm7Ck35PGhfbNCD6ftec
-	 6hkFb3jKCKiKWyjvAGKMwkI/YLMcXi4y7IBWqmwPzM72kqf/jHLY19pkfSGW+qAyJk
-	 BYkh82tLhWAcg==
-Received: from [10.40.0.100] (185-67-175-126.lampert.tv [185.67.175.126])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: mriesch)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id C3CE917E12C0;
-	Wed,  1 Oct 2025 23:41:38 +0200 (CEST)
-Message-ID: <b8e03fd2-3a44-48bb-8707-4aecabbbfd9c@collabora.com>
-Date: Wed, 1 Oct 2025 23:41:38 +0200
+	s=arc-20240116; t=1759355314; c=relaxed/simple;
+	bh=pEhOwT1X7in50Kr5GHnScokN5PKyai0jXz2LjZohrqQ=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=hgzHTgmJGkPIGYCYu5peU+QoOUpAxs0EAxv1WNTDmCCZjOPW7jlLzTxCYz2wnEZwJCYoB3yMyu8htTnNWRkfhItgtKqnREZlXvYiVOVDWKUdJMFMLUvMR7YNKIF6OlYdSgHNfp34Lyd7djYXIz/1AYn7wNhiHhp705l3wSUUV3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-42d8c210d84so4159225ab.3
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 14:48:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759355311; x=1759960111;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1xa3U68yYOKHDPpIJxyjQuvshkNBKqLyHda+ZM1Ox+M=;
+        b=YrB64TOX+8BNH+ahFt8bDj3y3EHnrnyNhjbJWDs6GkrTK98BPMF78zXUeE3BVNshN3
+         sJLq7YKqAlwyh8DZft6hN9qf7MXWOV4yTqVp5JYTY6bI5vgwKmea9+qzMaKi59VwVMb6
+         T6m+NaM1m03M14Rtvnhvunb1QBrlHkD9Gfh10mbJIAnyixC1RpJmZLePWRfC1LVGifV+
+         IIVpSzvbHkbviRnjsk9NaB0d5srn5iUCRQiH3oP59ap77/y49Xg5hAmQmEZmmktlX9YP
+         eM+Ll3nG4OFJJf4eyY+kCHfm77/6k2oMKD5dR8HJOmrW5pKrnu78YgX/JE2ZZft8oiKk
+         skRA==
+X-Forwarded-Encrypted: i=1; AJvYcCVhqKdgsUyme+s9+ReKBPmnCMMMQzG5sz8ZmF2rlmoj4nLykfITFtumm8Klr/8C887cdqOiA7EzP+KC3WI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVd/9wu0wXVrGVVMWqpQjuS7DwysOF/QCFGYRIJMJFiAvoBxYd
+	zaj2AGlmGgabEt2IDRbmCloGUK+TlgxRXJdlEm2hTiU9an2Pog9jqJzzenpDlIAGuvYOERSCovX
+	8zEaCZQ6VydpfozH8SyH0D9qGA2pCrI1vlak9S4V5L9C82JwVLpHAkN+AQIA=
+X-Google-Smtp-Source: AGHT+IE5wIakhy9YKOvGa4bItMlG+QqKT5ISj5Gtsed52/sYxurOGRNJvjOCqe0+edpB/pU6Trd6c1gaRWScAELTJYj6aQy/Ow/o
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 06/26] media: v4l2-ioctl: Introduce VIDIOC_BIND_CONTEXT
-To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Kieran Bingham <kieran.bingham@ideasonboard.com>,
- Nicolas Dufresne <nicolas.dufresne@collabora.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Tomasz Figa
- <tfiga@chromium.org>, Marek Szyprowski <m.szyprowski@samsung.com>,
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Hans Verkuil <hverkuil@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-References: <20250717-multicontext-mainline-2025-v1-0-81ac18979c03@ideasonboard.com>
- <20250717-multicontext-mainline-2025-v1-6-81ac18979c03@ideasonboard.com>
-Content-Language: en-US
-From: Michael Riesch <michael.riesch@collabora.com>
-In-Reply-To: <20250717-multicontext-mainline-2025-v1-6-81ac18979c03@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1aa7:b0:428:f19b:2947 with SMTP id
+ e9e14a558f8ab-42d8159ea64mr82287515ab.6.1759355310914; Wed, 01 Oct 2025
+ 14:48:30 -0700 (PDT)
+Date: Wed, 01 Oct 2025 14:48:30 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68dda1ae.a00a0220.102ee.0065.GAE@google.com>
+Subject: [syzbot] [arm?] WARNING in copy_highpage
+From: syzbot <syzbot+d1974fc28545a3e6218b@syzkaller.appspotmail.com>
+To: catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	will@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Jacopo,
+Hello,
 
-On 7/17/25 12:45, Jacopo Mondi wrote:
-> Introduce a new ioctl in V4L2 to allocate a video device context and
-> associate it with a media device context.
-> 
-> The ioctl is valid only if support for MEDIA_CONTROLLER is compiled in
-> as it calls into the entity ops to let driver allocate a new context and
-> binds the newly created context with the media context associated
-> with the file descriptor provided by userspace as the new ioctl
-> argument.
+syzbot found the following issue on:
 
-I would have expected that the execution context of the video device
-already exists and is not allocated at ioctl call time. If I understand
-it correctly
+HEAD commit:    fec734e8d564 Merge tag 'riscv-for-linus-v6.17-rc8' of git:..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12187d34580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=13bd892ec3b155a2
+dashboard link: https://syzkaller.appspot.com/bug?extid=d1974fc28545a3e6218b
+compiler:       aarch64-linux-gnu-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
 
- - after opening a video device, no context is allocated, but in
-   v4l2_fh_release the reference counter of the context is decreased.
-   This smells fishy. Note that the user may not call the ioctl.
- - after opening a video device there is no context. This could imply
-   that two operating modes are required (with a context and without a
-   context), which would seem unnecessarily complex.
- - What happens if the VIDIOC_BIND_CONTEXT ioctl is called more than
-   once? (IIUC vfh->context gets overwritten but the old context is not
-   released)
+Unfortunately, I don't have any reproducer for this issue yet.
 
-(Just found that a later patch introduces default contexts. Should this
-address the comments above, consider rearranging the patches so that
-default contexts are introduced first.)
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/fa3fbcfdac58/non_bootable_disk-fec734e8.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/d7e18b408aea/vmlinux-fec734e8.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/9b7984f47117/Image-fec734e8.gz.xz
 
-> The newly allocated video context is then stored in the v4l2-fh that
-> represent the open file handle on which the ioctl has been called.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+d1974fc28545a3e6218b@syzkaller.appspotmail.com
 
-Couldn't the same be achieved by
- - v4l2_fh_open allocates a new context
- - v4l2_fh_release releases it (already implemented)
- - ioctl takes the existing context and binds it to the media device
-   context
-Then,
- - open/release are symmetric and not fishy
- - after open but before the ioctl call the user can safely operate on a
-   context
- - calling ioctl twice will be idempotent (check already implemented in
-   media_device_bind_context())
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 25189 at arch/arm64/mm/copypage.c:55 try_page_mte_tagging arch/arm64/include/asm/mte.h:93 [inline]
+WARNING: CPU: 1 PID: 25189 at arch/arm64/mm/copypage.c:55 copy_highpage+0x150/0x334 arch/arm64/mm/copypage.c:55
+Modules linked in:
+CPU: 1 UID: 0 PID: 25189 Comm: syz.2.7336 Not tainted syzkaller #0 PREEMPT 
+Hardware name: linux,dummy-virt (DT)
+pstate: 00402009 (nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : copy_highpage+0x150/0x334 arch/arm64/mm/copypage.c:55
+lr : copy_highpage+0xb4/0x334 arch/arm64/mm/copypage.c:25
+sp : ffff800088053940
+x29: ffff800088053940 x28: ffffc1ffc0acf800 x27: ffff800088053b10
+x26: ffffc1ffc0acf808 x25: ffffc1ffc037b1c0 x24: ffffc1ffc037b1c0
+x23: ffffc1ffc0acf800 x22: ffffc1ffc0acf800 x21: fff000002b3e0000
+x20: fff000000dec7000 x19: ffffc1ffc037b1c0 x18: 0000000000000000
+x17: fff07ffffcffa000 x16: ffff800080008000 x15: 0000000000000001
+x14: 0000000000000000 x13: 0000000000000003 x12: 000000000006d9ad
+x11: 0000000000000000 x10: 0000000000000010 x9 : 0000000000000000
+x8 : 0000000000000000 x7 : 0000000000000000 x6 : 0000000000000000
+x5 : ffff800088053b18 x4 : ffff80008032df94 x3 : 00000000ff000000
+x2 : 01ffc00003000001 x1 : 01ffc00003000001 x0 : 01ffc00003000001
+Call trace:
+ try_page_mte_tagging arch/arm64/include/asm/mte.h:93 [inline] (P)
+ copy_highpage+0x150/0x334 arch/arm64/mm/copypage.c:55 (P)
+ copy_mc_highpage include/linux/highmem.h:383 [inline]
+ folio_mc_copy+0x44/0x6c mm/util.c:740
+ __migrate_folio.constprop.0+0xc4/0x23c mm/migrate.c:851
+ migrate_folio+0x1c/0x2c mm/migrate.c:882
+ move_to_new_folio+0x58/0x144 mm/migrate.c:1097
+ migrate_folio_move mm/migrate.c:1370 [inline]
+ migrate_folios_move mm/migrate.c:1719 [inline]
+ migrate_pages_batch+0xaf4/0x1024 mm/migrate.c:1966
+ migrate_pages_sync mm/migrate.c:2023 [inline]
+ migrate_pages+0xb9c/0xcdc mm/migrate.c:2105
+ do_mbind+0x20c/0x4a4 mm/mempolicy.c:1539
+ kernel_mbind mm/mempolicy.c:1682 [inline]
+ __do_sys_mbind mm/mempolicy.c:1756 [inline]
+ __se_sys_mbind mm/mempolicy.c:1752 [inline]
+ __arm64_sys_mbind+0xd0/0xd8 mm/mempolicy.c:1752
+ __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+ invoke_syscall+0x48/0x110 arch/arm64/kernel/syscall.c:49
+ el0_svc_common.constprop.0+0x40/0xe0 arch/arm64/kernel/syscall.c:132
+ do_el0_svc+0x1c/0x28 arch/arm64/kernel/syscall.c:151
+ el0_svc+0x34/0x10c arch/arm64/kernel/entry-common.c:879
+ el0t_64_sync_handler+0xa0/0xe4 arch/arm64/kernel/entry-common.c:898
+ el0t_64_sync+0x1a4/0x1a8 arch/arm64/kernel/entry.S:596
+---[ end trace 0000000000000000 ]---
 
-> 
-> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> ---
->  drivers/media/v4l2-core/v4l2-dev.c   | 10 ++++++
->  drivers/media/v4l2-core/v4l2-fh.c    |  1 +
->  drivers/media/v4l2-core/v4l2-ioctl.c | 64 ++++++++++++++++++++++++++++++++++++
->  include/media/v4l2-ioctl.h           |  7 ++++
->  include/uapi/linux/videodev2.h       | 11 +++++++
->  5 files changed, 93 insertions(+)
-> 
-> diff --git a/drivers/media/v4l2-core/v4l2-dev.c b/drivers/media/v4l2-core/v4l2-dev.c
-> index c83c37843c9e7beb899a4b2bd176273c3dec381b..bc6502b4ce21cc0ad53136e1637d1c926e31dd89 100644
-> --- a/drivers/media/v4l2-core/v4l2-dev.c
-> +++ b/drivers/media/v4l2-core/v4l2-dev.c
-> @@ -606,6 +606,10 @@ static void determine_valid_ioctls(struct video_device *vdev)
->  		__set_bit(_IOC_NR(VIDIOC_ENUM_FREQ_BANDS), valid_ioctls);
->  
->  	if (is_vid) {
-> +#ifdef CONFIG_MEDIA_CONTROLLER
-> +		__set_bit(_IOC_NR(VIDIOC_BIND_CONTEXT), valid_ioctls);
-> +#endif
-> +
->  		/* video specific ioctls */
->  		if ((is_rx && (ops->vidioc_enum_fmt_vid_cap ||
->  			       ops->vidioc_enum_fmt_vid_overlay)) ||
-> @@ -661,12 +665,18 @@ static void determine_valid_ioctls(struct video_device *vdev)
->  		SET_VALID_IOCTL(ops, VIDIOC_G_FMT, vidioc_g_fmt_meta_cap);
->  		SET_VALID_IOCTL(ops, VIDIOC_S_FMT, vidioc_s_fmt_meta_cap);
->  		SET_VALID_IOCTL(ops, VIDIOC_TRY_FMT, vidioc_try_fmt_meta_cap);
-> +#ifdef CONFIG_MEDIA_CONTROLLER
-> +		__set_bit(_IOC_NR(VIDIOC_BIND_CONTEXT), valid_ioctls);
-> +#endif
->  	} else if (is_meta && is_tx) {
->  		/* metadata output specific ioctls */
->  		SET_VALID_IOCTL(ops, VIDIOC_ENUM_FMT, vidioc_enum_fmt_meta_out);
->  		SET_VALID_IOCTL(ops, VIDIOC_G_FMT, vidioc_g_fmt_meta_out);
->  		SET_VALID_IOCTL(ops, VIDIOC_S_FMT, vidioc_s_fmt_meta_out);
->  		SET_VALID_IOCTL(ops, VIDIOC_TRY_FMT, vidioc_try_fmt_meta_out);
-> +#ifdef CONFIG_MEDIA_CONTROLLER
-> +		__set_bit(_IOC_NR(VIDIOC_BIND_CONTEXT), valid_ioctls);
-> +#endif
->  	}
->  	if (is_vbi) {
->  		/* vbi specific ioctls */
-> diff --git a/drivers/media/v4l2-core/v4l2-fh.c b/drivers/media/v4l2-core/v4l2-fh.c
-> index 90eec79ee995a2d214590beeacc91b9f8f33236d..f7af444d2344541ccae1eae230b39d4cbc47f6bd 100644
-> --- a/drivers/media/v4l2-core/v4l2-fh.c
-> +++ b/drivers/media/v4l2-core/v4l2-fh.c
-> @@ -93,6 +93,7 @@ int v4l2_fh_release(struct file *filp)
->  	struct v4l2_fh *fh = filp->private_data;
->  
->  	if (fh) {
-> +		video_device_context_put(fh->context);
->  		v4l2_fh_del(fh);
->  		v4l2_fh_exit(fh);
->  		kfree(fh);
-> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
-> index 46da373066f4ec786b87ef18b8372abee621332f..bade64cc62b66dd6237ccd5338aa6dd8ab00ef8c 100644
-> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
-> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-> @@ -9,6 +9,7 @@
->   */
->  
->  #include <linux/compat.h>
-> +#include <linux/file.h>
->  #include <linux/mm.h>
->  #include <linux/module.h>
->  #include <linux/slab.h>
-> @@ -350,6 +351,13 @@ static void v4l_print_format(const void *arg, bool write_only)
->  	}
->  }
->  
-> +static void v4l_print_context(const void *arg, bool write_only)
-> +{
-> +	const struct v4l2_context *c = arg;
-> +
-> +	pr_cont("context=%u\n", c->context_fd);
-> +}
-> +
->  static void v4l_print_framebuffer(const void *arg, bool write_only)
->  {
->  	const struct v4l2_framebuffer *p = arg;
-> @@ -2151,6 +2159,61 @@ static int v4l_overlay(const struct v4l2_ioctl_ops *ops,
->  	return ops->vidioc_overlay(file, fh, *(unsigned int *)arg);
->  }
->  
-> +static int v4l_bind_context(const struct v4l2_ioctl_ops *ops,
-> +			    struct file *file, void *fh, void *arg)
-> +{
-> +	struct video_device *vdev = video_devdata(file);
-> +	struct media_device_context *mdev_context;
-> +	struct v4l2_fh *vfh =
-> +		test_bit(V4L2_FL_USES_V4L2_FH, &vdev->flags) ? fh : NULL;
-> +	struct v4l2_context *c = arg;
-> +	int ret;
-> +
-> +	/*
-> +	 * TODO: do not __set_bit(_IOC_NR(VIDIOC_BIND_CONTEXT), valid_ioctls)
-> +	 * if V4L2_FL_USES_V4L2_FH isn't set or the driver does not implement
-> +	 * alloc_context and destroy_context.
-> +	 */
-> +	if (!vfh)
-> +		return -ENOTTY;
-> +
-> +	if (!vdev->entity.ops || !vdev->entity.ops->alloc_context ||
-> +	    !vdev->entity.ops->destroy_context)
-> +		return -ENOTTY;
-> +
-> +	mdev_context = media_device_context_get_from_fd(c->context_fd);
-> +	if (!mdev_context)
-> +		return -EINVAL;
-> +
-> +	/* Let the driver allocate the per-file handle context. */
-> +	ret = vdev->entity.ops->alloc_context(&vdev->entity,
-> +					      (struct media_entity_context **)
-> +					      &vfh->context);
-> +	if (ret)
-> +		goto err_put_mdev_context;
-> +
-> +	/*
-> +	 * Bind the newly created video device context to the media device
-> +	 * context identified by the file descriptor.
-> +	 */
-> +	ret = media_device_bind_context(mdev_context,
-> +					(struct media_entity_context *)
-> +					vfh->context);
-> +	if (ret)
-> +		goto err_put_context;
-> +
-> +	media_device_context_put(mdev_context);
-> +
-> +	return 0;
-> +
-> +err_put_context:
-> +	video_device_context_put(vfh->context);
-> +err_put_mdev_context:
-> +	media_device_context_put(mdev_context);
-> +
-> +	return ret;
-> +}
-> +
->  static int v4l_reqbufs(const struct v4l2_ioctl_ops *ops,
->  				struct file *file, void *fh, void *arg)
->  {
-> @@ -2998,6 +3061,7 @@ static const struct v4l2_ioctl_info v4l2_ioctls[] = {
->  	IOCTL_INFO(VIDIOC_DBG_G_CHIP_INFO, v4l_dbg_g_chip_info, v4l_print_dbg_chip_info, INFO_FL_CLEAR(v4l2_dbg_chip_info, match)),
->  	IOCTL_INFO(VIDIOC_QUERY_EXT_CTRL, v4l_query_ext_ctrl, v4l_print_query_ext_ctrl, INFO_FL_CTRL | INFO_FL_CLEAR(v4l2_query_ext_ctrl, id)),
->  	IOCTL_INFO(VIDIOC_REMOVE_BUFS, v4l_remove_bufs, v4l_print_remove_buffers, INFO_FL_PRIO | INFO_FL_QUEUE | INFO_FL_CLEAR(v4l2_remove_buffers, type)),
-> +	IOCTL_INFO(VIDIOC_BIND_CONTEXT, v4l_bind_context, v4l_print_context, 0),
->  };
->  #define V4L2_IOCTLS ARRAY_SIZE(v4l2_ioctls)
->  
-> diff --git a/include/media/v4l2-ioctl.h b/include/media/v4l2-ioctl.h
-> index 82695c3a300a73219f262fb556ed61a8f09d273e..6d9edfd9ca912972ad15acdc07014dee1ed36ab6 100644
-> --- a/include/media/v4l2-ioctl.h
-> +++ b/include/media/v4l2-ioctl.h
-> @@ -18,6 +18,7 @@
->  #include <linux/videodev2.h>
->  
->  struct v4l2_fh;
-> +struct video_device_context;
->  
->  /**
->   * struct v4l2_ioctl_ops - describe operations for each V4L2 ioctl
-> @@ -149,6 +150,8 @@ struct v4l2_fh;
->   *	:ref:`VIDIOC_TRY_FMT <vidioc_g_fmt>` ioctl logic for metadata capture
->   * @vidioc_try_fmt_meta_out: pointer to the function that implements
->   *	:ref:`VIDIOC_TRY_FMT <vidioc_g_fmt>` ioctl logic for metadata output
-> + * @vidioc_bind_context: pointer to the function that implements
-> + *	:ref:`VIDIOC_BIND_CONTEXT <vidioc_bind_context>` ioctl
->   * @vidioc_reqbufs: pointer to the function that implements
->   *	:ref:`VIDIOC_REQBUFS <vidioc_reqbufs>` ioctl
->   * @vidioc_querybuf: pointer to the function that implements
-> @@ -402,6 +405,10 @@ struct v4l2_ioctl_ops {
->  	int (*vidioc_try_fmt_meta_out)(struct file *file, void *fh,
->  				       struct v4l2_format *f);
->  
-> +	/* Context handlers */
-> +	int (*vidioc_bind_context)(struct file *file, void *fh,
-> +				   struct video_device_context *c);
-> +
->  	/* Buffer handlers */
->  	int (*vidioc_reqbufs)(struct file *file, void *fh,
->  			      struct v4l2_requestbuffers *b);
-> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-> index 3dd9fa45dde1066d52a68581625a39e7ec92c9b7..0b9aa89e2479620dbbaa54f1aadff7aaa7a3d0f7 100644
-> --- a/include/uapi/linux/videodev2.h
-> +++ b/include/uapi/linux/videodev2.h
-> @@ -1057,6 +1057,14 @@ struct v4l2_jpegcompression {
->  					* always use APP0 */
->  };
->  
-> +/*
-> + *     V I D E O   D E V I C E   C O N T E X T
-> + */
-> +
-> +struct v4l2_context {
-> +	__u32 context_fd;
 
-Reserve some space for the future?
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-> +};
-> +
->  /*
->   *	M E M O R Y - M A P P I N G   B U F F E R S
->   */
-> @@ -2818,6 +2826,9 @@ struct v4l2_remove_buffers {
->  #define VIDIOC_REMOVE_BUFS	_IOWR('V', 104, struct v4l2_remove_buffers)
->  
->  
-> +/* Context handling */
-> +#define VIDIOC_BIND_CONTEXT	_IOW('V', 105, struct v4l2_context)
-> +
->  /* Reminder: when adding new ioctls please add support for them to
->     drivers/media/v4l2-core/v4l2-compat-ioctl32.c as well! */
->  
-> 
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-Best regards,
-Michael
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
