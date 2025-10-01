@@ -1,171 +1,109 @@
-Return-Path: <linux-kernel+bounces-839428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36B19BB1983
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 21:28:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E52BBB1992
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 21:29:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A5794A08D2
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 19:28:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F21D8192841E
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 19:30:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C83D83054C3;
-	Wed,  1 Oct 2025 19:27:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 689452D7DF8;
+	Wed,  1 Oct 2025 19:29:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lFg+pFuI"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="Br0NpJ0t"
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 727D6303C8D
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 19:26:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 424722D6E6F
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 19:29:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759346821; cv=none; b=NNXOvMEdu6JFB1r9VEbGmyM5amjp0IwRduoQcZ52oPMKQf0h1VsFGQPtlFybZJfA2ZNJdDz/Wh1J7meSRzkfe5KcJVprwRM1nzZnSH6AvUVSQQDKS7f61d/ltg1NYDErqVZtuP36zuke0Xk+ZxTVnkuvLLP0fx4NLFYPVxbz8Zk=
+	t=1759346976; cv=none; b=brrsoqNwfYECsF/xvopHhIW1hanHWkPNxSyB6F3G+Zx3HLXptlngZUSur6vFEvYdq+Pro0fNwUAS7cdlOD4x20VH2hj+owwKV0paDvHpDHCGn/HZIaZvXtyDj3Gi0Kr5kZfryisp0zmoG5jr7nzPyLbrBf8qmgkJSXwPBu/MvmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759346821; c=relaxed/simple;
-	bh=5W64q7JqsQ31eJoMJDFs0Iex3EGFmVJC2o273KNKjFQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UgrgDdQkioQ3aBqfDIlaZio4lji3/a0NrU9ie9w7GJFEyh1vbsMw+Mkztx4miIdEgAUaQYt/vfX6KY2tMNMYv2YAh/ziKV1M+lOWoylzunZCbA2oeavxLzb/VJF0/KGiWBcDb/k9Jp1Ftl5DU7zn6D2uqhQHi2Twj75jZwUIuzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lFg+pFuI; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-57e8e67aa3eso1969421e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 12:26:59 -0700 (PDT)
+	s=arc-20240116; t=1759346976; c=relaxed/simple;
+	bh=DiDU5kDNSMZr+Mxe770JushwLa5d5oXzQtjmkdtoPJ0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WptOBMYoKNkuQzpv3ddegGI8YBLUj/754Iua3SdG/t6Bzhmw9uRpke5mM37wiclJIBYIVri208EQb7B0WjV/Xc+QmKa9ui3k3v4u+cRue4RE8+G2Dm7ByC/oQ8Nr9xZ0ICuiCpHQWEmTqGJoVnQ/keI16So7ju+jIOSkzEdPFSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=Br0NpJ0t; arc=none smtp.client-ip=209.85.222.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-85cee530df9so26981785a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 12:29:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759346818; x=1759951618; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eGcXmCAAujJZjKkzb6sJy5VjUrvDSK+t0JgV9AfB/HU=;
-        b=lFg+pFuIMtCRv7IdAWQjOZbVoH0noDbD8Li9DnktpxyPZScg5yraOTVBk96iX3rDFv
-         KUluvM+Oc9NrNpJTkhxKngIHc0XhqEGNYS7roTl9/wSBOgx/yUhe7A65HjC4F75OONaA
-         zmHlKw1c1vclVpdBTkKbFyxQqwWtZYci/trIQpJVBUar+dR4k5KHdyEWL7hCj1v29Bhe
-         L7d8eRX1XpesHsdMNMEzlGnWtKCx2f7X+hKvwSvQQMkfftliIwAmtpmBS5SFx4F/11Z1
-         jo+BqY+FrQ6Kz5TGz+rNU8InY46VonZWaOnNY6gLYiKrVZTtxixKhkNPS901Cmglrp9J
-         fjeg==
+        d=soleen.com; s=google; t=1759346974; x=1759951774; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=DiDU5kDNSMZr+Mxe770JushwLa5d5oXzQtjmkdtoPJ0=;
+        b=Br0NpJ0tmp2VOWUOfxgvB8E4PmPbzGUocJw7tpDT+HLd5RF08eTCiziXQzIB+k0hWL
+         Rlx5yImJ8Fc3xEiS1AS8G1z6ZlpUhEfq1URZWGcVfcT5UqL/DsU17gCcSXEQdoej+ou+
+         X+chkB15ue9lmimyMIf6Zh13pXaOyL0fghwMcwy/IdYhzClimLKLF3C1ikYEIZb5xsq3
+         6Q8mQRRZEwVBixxVGBsiOMlVsYsa/aq9wtSS1TRYNBBOoKE67PmGq2FtbldTVCWlQzjJ
+         K2P8g1QQ5vgzl6C4TXxemD/NxtqSfcVafvJvAb3HZMlPpvmbLJIYk7K9ZMG0H3mZ6LQ5
+         q2+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759346818; x=1759951618;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eGcXmCAAujJZjKkzb6sJy5VjUrvDSK+t0JgV9AfB/HU=;
-        b=KroO05qc8bQxQVTVHilL0Z1mpHjexESDsmdrfc2gYybRuq2M3x3JfsGufcgG3SbQJQ
-         JJQUw9X/4GIA25O0FD0fr/UjIHqRroxl0hdsT2IVHSxe6AuKk+jxgAEpKQUuwDK+srDm
-         8bJ3eQ5aGRWQhIZep79qxu+A2I6rGD4YOldUmTdO6ZsvfMqrxygap8b/+ttcGskSvkPi
-         CcM6y3eZjEf9MfYaOWvu7IHXEiFzj27T9kDurb7iawBOQhAE7mSrSqDLwZKoKLh20AGj
-         y6UkgexEU7pHLc05l15Um0IclPlWfsDpRePQ54xKzVMjtf3c971Ru5xzhx25qWqnylj/
-         fOfw==
-X-Forwarded-Encrypted: i=1; AJvYcCWwObB9EkQqD+CD90ePXbUzzXiBz5E2zgKY1pcpSdYL0B6qLy6M/WcvyRfDYhyFpdxBB3SAS3CsOgEZpzU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlWmIVWeZCpOZscaXZDY8tcmOZ8xsY3tjY6OyOFKmB5emOlZLR
-	ZRDY758FplBRQD71vGXwOItcBWWoa/JOXjoBz6xbfkaN5nrvdsXv7Ki2HfcCACV3XD8=
-X-Gm-Gg: ASbGnctaeXa8iX2w+3R7p0JdJOQxRrN9fjH6TlDDAeOw6rPWr6sBkc72/1Ds2kFqWIq
-	Dm6SdN73bL3Zx6i98/5WX7CbxmOvoIAh97Sim/K9+4/nCPMOkI6g0lmQNaicmj0k9f33QK7vy68
-	gxCSIqhSu9ReZ5lueBHeookSeeqGIV7MbgJUtKE5CNsmx+kAbKf7fz47QlJzhDEFPWsG9hEJDeN
-	xr0iluIm3YcIJqatOMFEFgR0EK9o+5r2Z5dbMx2hLbFiPD8d8MurokfFLb3mlPKeHEWml8FJ1xI
-	MGsc1SRhtBEGA/qCugESapATpRByvwg0G+m9/3cs2c6nSAa7PP1qfvUnxN/WAe6UojGMZ3JrKxd
-	iBwsdc5K1aAGsotQyFTCuRehxVYOtXcmeU+de7xnd
-X-Google-Smtp-Source: AGHT+IFj81R2vtq1WyCNBYlhGONs/CusB8poOp8hUY/5PYbf+QgHwaSgauT7SatCZSoEjPU1zHqd6A==
-X-Received: by 2002:a05:6512:3da6:b0:585:1a9b:8b9a with SMTP id 2adb3069b0e04-58b00b5eb5cmr248354e87.9.1759346817420;
-        Wed, 01 Oct 2025 12:26:57 -0700 (PDT)
-Received: from localhost.localdomain ([2001:9b1:d5a0:a500::24b])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58b0112414fsm136627e87.28.2025.10.01.12.26.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Oct 2025 12:26:56 -0700 (PDT)
-From: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
-To: linux-mm@kvack.org,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: Michal Hocko <mhocko@kernel.org>,
-	Baoquan He <bhe@redhat.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Uladzislau Rezki <urezki@gmail.com>
-Subject: [PATCH v3 10/10] mm: kvmalloc: Add non-blocking support for vmalloc
-Date: Wed,  1 Oct 2025 21:26:46 +0200
-Message-ID: <20251001192647.195204-11-urezki@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251001192647.195204-1-urezki@gmail.com>
-References: <20251001192647.195204-1-urezki@gmail.com>
+        d=1e100.net; s=20230601; t=1759346974; x=1759951774;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DiDU5kDNSMZr+Mxe770JushwLa5d5oXzQtjmkdtoPJ0=;
+        b=RBb5M1ycYMFfcQAMl8s7NKjpVTAPIarcfA1DzTi16EIPCmg8lMnPNwd/TLZQLvSuzM
+         hjCAX3Ygu5mZrnZGfE77hu8AdH3ZWYXOz+9xAjDQNSH/afoeMBJQY3sEhCHRjkTNEyqQ
+         cuP1vNwsU9dhamcyFM2ww+CaiJ1DBTFll15TSSHQllGauzPL/Crkt/MCdbW+RkyoRIpW
+         vHihnej3Eh8umELTnCLHm42jv6CQnpf25tp2EcnLgEWuhjihaINFad981IT1jl38i4Qo
+         npxDQQ3QquXZ9X0+BHrPUQs+8nJ+I7vgXuJ/F43t3npakiT3mC55O9fD+SpmUkkf25K9
+         JMSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXyY5hdt6DGdJfd9CxGIv/bcO8Cf3L3NHnjmc+/xJUmE8aIBldr1kc+D7bgvdoYOEB+iaLCROqRUi2mgGE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZIu33uHcJSoBhQzK3CQM6/BulaUE05yGfI8/4+sPpTmPPi5l4
+	9W3jy2icP5xb39S1xl0Dn7pC/6HQShrZRCT0o92g5Zcn8MNKoyiyYZGFI/FmIl13I52fqzXlUXc
+	Z7vVdR7ATlSVjpz591kuHxCN6wOEFw79RMpfDBPAymw==
+X-Gm-Gg: ASbGnct0yoC2Fb673u8831vZ0AzujtnqfUsYcnKaTzpRUc7t2fDLeWigeF2EG0QLoiB
+	3vrW5CXAVQ4LfJ2/JdGgrsqYkDT34lEcgVe6afRk6SfFBmZwQ7QG3OsVd+bDzhyZdy/3VaYALOY
+	mqo+sAeM+gYDUIojt7YWOhQ+vr8IGa5njiMhX50WH9Tb5S7xU4rbHwf0FPjyDch8YoEg52C+agw
+	+/AcrjKxqzv3qsOngk4Fxl6q05GTKiT4GnDdHA=
+X-Google-Smtp-Source: AGHT+IHLfUtJRDbSEiqp3HI8RohV/rxnmgmEUMJROYiapU6sPgPZbCtMF1schxAdaren0qy9DIa6IJf+JD4Oi5EVlp8=
+X-Received: by 2002:a05:620a:46a5:b0:813:6c7:4517 with SMTP id
+ af79cd13be357-87373014d2amr691418385a.38.1759346973949; Wed, 01 Oct 2025
+ 12:29:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250928190624.3735830-1-skhawaja@google.com> <20250928190624.3735830-14-skhawaja@google.com>
+ <20250929160034.GG2695987@ziepe.ca> <CA+CK2bDqDz3k0gXamJEbKUL7RPBLVjaA5=Jum=CF84wR+50izA@mail.gmail.com>
+ <20250930135916.GN2695987@ziepe.ca> <CAAywjhRGrGjZK3jQptieVWmdzvjfNtTYrp2ChTZJSmFyrBaRqw@mail.gmail.com>
+ <20250930210504.GU2695987@ziepe.ca> <CAAywjhRQONuHsxTGQZ5R=EJbOHUD+xOF_CYjkNRbUyCQkORwig@mail.gmail.com>
+ <20251001114742.GV2695987@ziepe.ca>
+In-Reply-To: <20251001114742.GV2695987@ziepe.ca>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Wed, 1 Oct 2025 15:28:56 -0400
+X-Gm-Features: AS18NWAgzH0R_qApV1olEBzdsQ5SwFOWeLqmballrV_7tsox0MHuJnbyv7tMWY8
+Message-ID: <CA+CK2bAvnTTz+vPg7v38_1dajRZQHyPQ8iDmziiW8GFUqy6=Ag@mail.gmail.com>
+Subject: Re: [RFC PATCH 13/15] iommufd: Persist iommu domains for live update
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Samiullah Khawaja <skhawaja@google.com>, David Woodhouse <dwmw2@infradead.org>, 
+	Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>, 
+	Will Deacon <will@kernel.org>, iommu@lists.linux.dev, YiFei Zhu <zhuyifei@google.com>, 
+	Robin Murphy <robin.murphy@arm.com>, Pratyush Yadav <pratyush@kernel.org>, 
+	Kevin Tian <kevin.tian@intel.com>, linux-kernel@vger.kernel.org, 
+	Saeed Mahameed <saeedm@nvidia.com>, Adithya Jayachandran <ajayachandra@nvidia.com>, 
+	Parav Pandit <parav@nvidia.com>, Leon Romanovsky <leonro@nvidia.com>, William Tu <witu@nvidia.com>, 
+	Vipin Sharma <vipinsh@google.com>, dmatlack@google.com, Chris Li <chrisl@kernel.org>, 
+	praan@google.com
+Content-Type: text/plain; charset="UTF-8"
 
-Extend __kvmalloc_node_noprof() to handle non-blocking GFP flags
-(GFP_NOWAIT and GFP_ATOMIC). Previously such flags were rejected,
-returning NULL. With this change:
+> > 3. On FINISH, the IOMMU core updates the context entries of preserved
+> > devices to point to the new domain.
+>
+> No, finish should never do anything on the restore path, IMHO. User
+> should directly attach the newly created HWPT when it is ready.
 
-- kvmalloc() can fall back to vmalloc() if non-blocking contexts;
-- for non-blocking allocations the VM_ALLOW_HUGE_VMAP option is
-  disabled, since the huge mapping path still contains might_sleep();
-- documentation update to reflect that GFP_NOWAIT and GFP_ATOMIC
-  are now supported.
-
-Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
----
- mm/slub.c | 19 +++++++++++++------
- 1 file changed, 13 insertions(+), 6 deletions(-)
-
-diff --git a/mm/slub.c b/mm/slub.c
-index 584a5ff1828b..3de0719e24e9 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -7018,7 +7018,7 @@ static gfp_t kmalloc_gfp_adjust(gfp_t flags, size_t size)
-  * Uses kmalloc to get the memory but if the allocation fails then falls back
-  * to the vmalloc allocator. Use kvfree for freeing the memory.
-  *
-- * GFP_NOWAIT and GFP_ATOMIC are not supported, neither is the __GFP_NORETRY modifier.
-+ * GFP_NOWAIT and GFP_ATOMIC are supported, the __GFP_NORETRY modifier is not.
-  * __GFP_RETRY_MAYFAIL is supported, and it should be used only if kmalloc is
-  * preferable to the vmalloc fallback, due to visible performance drawbacks.
-  *
-@@ -7027,6 +7027,7 @@ static gfp_t kmalloc_gfp_adjust(gfp_t flags, size_t size)
- void *__kvmalloc_node_noprof(DECL_BUCKET_PARAMS(size, b), unsigned long align,
- 			     gfp_t flags, int node)
- {
-+	bool allow_block;
- 	void *ret;
- 
- 	/*
-@@ -7039,16 +7040,22 @@ void *__kvmalloc_node_noprof(DECL_BUCKET_PARAMS(size, b), unsigned long align,
- 	if (ret || size <= PAGE_SIZE)
- 		return ret;
- 
--	/* non-sleeping allocations are not supported by vmalloc */
--	if (!gfpflags_allow_blocking(flags))
--		return NULL;
--
- 	/* Don't even allow crazy sizes */
- 	if (unlikely(size > INT_MAX)) {
- 		WARN_ON_ONCE(!(flags & __GFP_NOWARN));
- 		return NULL;
- 	}
- 
-+	/*
-+	 * For non-blocking the VM_ALLOW_HUGE_VMAP is not used
-+	 * because the huge-mapping path in vmalloc contains at
-+	 * least one might_sleep() call.
-+	 *
-+	 * TODO: Revise huge-mapping path to support non-blocking
-+	 * flags.
-+	 */
-+	allow_block = gfpflags_allow_blocking(flags);
-+
- 	/*
- 	 * kvmalloc() can always use VM_ALLOW_HUGE_VMAP,
- 	 * since the callers already cannot assume anything
-@@ -7056,7 +7063,7 @@ void *__kvmalloc_node_noprof(DECL_BUCKET_PARAMS(size, b), unsigned long align,
- 	 * protection games.
- 	 */
- 	return __vmalloc_node_range_noprof(size, align, VMALLOC_START, VMALLOC_END,
--			flags, PAGE_KERNEL, VM_ALLOW_HUGE_VMAP,
-+			flags, PAGE_KERNEL, allow_block ? VM_ALLOW_HUGE_VMAP:0,
- 			node, __builtin_return_address(0));
- }
- EXPORT_SYMBOL(__kvmalloc_node_noprof);
--- 
-2.47.3
-
+But, finish is our indicator that a particular session (VM) is out of
+blackout, and now we are free to do slow things, such as
+re-allocating/recreating page tables. Why start it before a VM is out
+of blackout?
 
