@@ -1,359 +1,462 @@
-Return-Path: <linux-kernel+bounces-839637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D02ABBB20E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 01:12:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08A72BB20F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 01:23:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F17E1893AE7
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 23:12:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B597D4A3BD3
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 23:23:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7377426B742;
-	Wed,  1 Oct 2025 23:12:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EE6D29E11A;
+	Wed,  1 Oct 2025 23:23:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j8d7M/Zi"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="FMh9DG61"
+Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013062.outbound.protection.outlook.com [40.107.201.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6E7E14A4CC
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 23:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759360321; cv=none; b=CwaA43KAyu6RUE9yqRIeiDhS6+aeobvek1mi80FOsR6TnAnSPXbNQZOwby+guJ5DVFqlz80GHAUqONnUedSmyMdZA8C4neqqBPlH/JFaGaTPRGbD80ldtoLyJ10/bJJaOBxNbejY6mUKwnMVhbz/aQG2PHHqyrm/+nIhEvezyiI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759360321; c=relaxed/simple;
-	bh=EoVYwOP+p0Ur4QWrj0wTbgfrG7TlL90RvLFDlvdF5Uk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GdKgAGbPStJwJaYdxNwfOuWo6ewVQqRHw0N+d/e+5F/CnZY1e5NlByLdjKQmmRMdQDlI70MzvdgaslxmA2sQEPqVcq7HABwZRGnHlOMcmeA+mqzTrpnfDeifmXVb5f1/LxJcPuaoaP4e1XFI+LBBiVmpTecABAlkFK873nS4YLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j8d7M/Zi; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759360319; x=1790896319;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=EoVYwOP+p0Ur4QWrj0wTbgfrG7TlL90RvLFDlvdF5Uk=;
-  b=j8d7M/Zi4WRmVRWERYAQqlynHvirbqpTy79ttwnULekzCNerlBTq2Gid
-   W+q488I43POT5VooUnPCkb0oTks+7DPxdLvEvHte65CobGRH9nv3meX9C
-   ZaDYoESc45/4Wq8McUcvUXm4ymW+xgWDnGVwhEQv3NGo3Lyh19GOXaGiQ
-   Bw6W0gPMsbfsGQdvoovT/oqZgQ56WBf0SnolOlEY9IF9uQoJdBbHaODnR
-   GF16zg66YJZAiiPFHLCAgJteAi4igQlUQ1kknFhAwcisDbu/eX914hEOX
-   OPjO6CdiUXtzYarQTS1/URfDIhY3MsMXe8Sk1phF84lprKkJu2AItAL7K
-   w==;
-X-CSE-ConnectionGUID: fd35eXmKSFez4X+9FV2z0w==
-X-CSE-MsgGUID: FXyF8FfoQk26lswdXO7TvA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11569"; a="60686625"
-X-IronPort-AV: E=Sophos;i="6.18,308,1751266800"; 
-   d="scan'208";a="60686625"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2025 16:11:59 -0700
-X-CSE-ConnectionGUID: hYMZbWhCRnGM0cadoE9SDg==
-X-CSE-MsgGUID: K6JnkKeKRbiLkZnMxKEuRw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,308,1751266800"; 
-   d="scan'208";a="202633185"
-Received: from lkp-server01.sh.intel.com (HELO 2f2a1232a4e4) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 01 Oct 2025 16:11:57 -0700
-Received: from kbuild by 2f2a1232a4e4 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v45zH-0003Qt-1o;
-	Wed, 01 Oct 2025 23:11:55 +0000
-Date: Thu, 2 Oct 2025 07:11:53 +0800
-From: kernel test robot <lkp@intel.com>
-To: syzbot <syzbot+9db318d6167044609878@syzkaller.appspotmail.com>,
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Cc: oe-kbuild-all@lists.linux.dev
-Subject: Re: Forwarded: [PATCH] ext4: fix use-after-free in
- ext4_ext_insert_extent()
-Message-ID: <202510020639.uRHSs90S-lkp@intel.com>
-References: <68dbf53f.a00a0220.102ee.004a.GAE@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F96F228CBC;
+	Wed,  1 Oct 2025 23:23:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.62
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759360984; cv=fail; b=DY1ZWFtP8yvfp3BEg9ut9y36fk2aV1FPKjoGfHTjKlYYmHRmGJEL1A9xFx6I7BDZyNdkUIWEV1/4ZT13Mp5GYBO6UGMKVdMZiGrNtzjqwPeU3juNUz0XxGdNBukG4qL+9siLszSSJI8obyceX6PBnaQp6YGdxvtOQq+iYYlz3bo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759360984; c=relaxed/simple;
+	bh=fNqFtuvL8bNcdc9eVDfc51LHSgaL9xV91GpJQPGNTUI=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TCYt2rvYNnXSwApjriwqe82GwvNPJaxl0H7+zWUzlz7mg1dVN5i7bImG775EKsAsS4lWZ4FvX2Xp21REuZy0U028AO+/6IGZ21VgDnzQ/m4A3rI+L41Rw6uomt1EowZU1OsvwtCyH0tLOI4PLmaE0mehG3yn+7hbLlf2/K+JjVE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=FMh9DG61; arc=fail smtp.client-ip=40.107.201.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Pf3Kk1C8tA7OpEhA31/DVi1nP2Urs+MEOW2TxZ2cNX/pgRMVlzpoeJlJNZXNhX3wsWStY3stP+p4DGtMHs9InmzemS6aJw2fxdZHxXSvy7Q7hn8znO6RwyLirRMTTqFKqedXmZrlR1dL2TYPz8u0RFAlmtPIrvtpjgLquakK9oBeeKVs+POLsDHV74ijfj21FygIwOAiSis4WMM3bCHOnYBj+tcA/llmNleVnFNWsGzSjCUd6AZ20JxOqWsUz0ZZZorrbDHQJXoAo60UCYOtgdx15WnfMV92TpmwbMDuR95ZCZQjZ20W22tVeBimNqquVKtlj8HxVMwJNBB6LTRilw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KiAG++CfWN6gJmYWhMrn6DYvmziM8jC9WixskkC33cY=;
+ b=Ko9g/oWK+nYf37vXIRMpEz1GBAr6bZ7tZyPHx4d9r6XvNMUilmas5b0R4nLkGMyRwbaFvlyYwSMhQ2dmIU+lW5eyqMiR/Bq6I17IGefO2/nMqn5Vr1mAQD+mTbpuDVel8tIVwp/bKVCmCK+m5FV61/Te47vDKz+VFBZnQOvqZaFgcL7YXQBlX4JjpxAYZoacrIMKgUoY9s2+7gglroPxr2Cx1Wfck3N+pRsuMhodpORlK0BEezNJv4gBJUAX/7cwD2DMMfPOkMcN1zOkSO68rDza6QePUKgKmSHOPlSlstxWsZQLLFbnKoeqkE2YOkHBnKX49k2GHpWyQbfPjCTJwA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KiAG++CfWN6gJmYWhMrn6DYvmziM8jC9WixskkC33cY=;
+ b=FMh9DG61lJDNTI4rYo5RqH81hIDZkB+cD+eIsL/ucyELfghg1Rw8RTK3ZhrQ/3eUr/NG1HISRvJkmMgHnso5MFGwcqyRirtRf3zf8/C67Z42t2G4waI4sJ3rLt0e6lqlv9LvH/1nfBpJJsfbUM9V2K+KFVatw+gt69uZXXxY2fs=
+Received: from BY3PR10CA0017.namprd10.prod.outlook.com (2603:10b6:a03:255::22)
+ by CH1PR12MB9672.namprd12.prod.outlook.com (2603:10b6:610:2b0::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.15; Wed, 1 Oct
+ 2025 23:22:53 +0000
+Received: from CO1PEPF000044FA.namprd21.prod.outlook.com
+ (2603:10b6:a03:255:cafe::7b) by BY3PR10CA0017.outlook.office365.com
+ (2603:10b6:a03:255::22) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9182.14 via Frontend Transport; Wed,
+ 1 Oct 2025 23:22:50 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ CO1PEPF000044FA.mail.protection.outlook.com (10.167.241.200) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9203.1 via Frontend Transport; Wed, 1 Oct 2025 23:22:53 +0000
+Received: from localhost (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Wed, 1 Oct
+ 2025 16:22:51 -0700
+Date: Wed, 1 Oct 2025 18:15:16 -0500
+From: Michael Roth <michael.roth@amd.com>
+To: Ackerley Tng <ackerleytng@google.com>
+CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<yan.y.zhao@intel.com>, <tabba@google.com>, <binbin.wu@linux.intel.com>,
+	<rick.p.edgecombe@intel.com>, <vannapurve@google.com>, <david@redhat.com>,
+	<pbonzini@redhat.com>
+Subject: Re: [RFC PATCH v2 32/51] KVM: guest_memfd: Support guestmem_hugetlb
+ as custom allocator
+Message-ID: <20251001231516.i7smszhzoxqebddz@amd.com>
+References: <cover.1747264138.git.ackerleytng@google.com>
+ <4d16522293c9a3eacdbe30148b6d6c8ad2eb5908.1747264138.git.ackerleytng@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <68dbf53f.a00a0220.102ee.004a.GAE@google.com>
+In-Reply-To: <4d16522293c9a3eacdbe30148b6d6c8ad2eb5908.1747264138.git.ackerleytng@google.com>
+X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
+ (10.181.42.216)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000044FA:EE_|CH1PR12MB9672:EE_
+X-MS-Office365-Filtering-Correlation-Id: 40fce601-03b3-4545-c772-08de0141722d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014|30052699003|7416014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?o3KSnz4rYAdIv/Bu42EkLXImTZtxpoLFMUCOoYL0wxmX0KgYGr1/eBWfkG90?=
+ =?us-ascii?Q?kEAg6rdCUn84qybs9Zw+cP5AbHzwzPf/bcV8GmOGZ5Ma7JqvR1L6XRN+Yh4X?=
+ =?us-ascii?Q?IybxW4jD56Q6sjnzlXC0xjnBj6e5qHo6tbrd89hVrKpXRX3s0KnpR4D8xLdG?=
+ =?us-ascii?Q?xlCccadGCoHYWbEODD8Ddml1wTDHVyKn/Dclsep/D41gYrOV9+yvt/pQWFsL?=
+ =?us-ascii?Q?na6pEltpuH9QYIog6oIWzG4xTNUFLFyPrbie/HBeeMU2ULLqhY6Sj5W+Qj5U?=
+ =?us-ascii?Q?ZC4s57a281SkO/FHtMOHdjGsiuT8SJQdNqsM0vDmSnFmaqcTJl+PrpWNkJzU?=
+ =?us-ascii?Q?wV0a+i3hqZ2ecVZT5F/DmeL4TonlweRzoiGDYNgb4p2XD3dYEpvZ9RiWe0fB?=
+ =?us-ascii?Q?G0BD718EWJMkscnBF2e8B22NhZdbwvhwSZio4ghhdzFbvqlD7cFvfcJdcCOd?=
+ =?us-ascii?Q?EBYtXu1+fB+8Qtwrm4c9bKktdfww1LYgJnNDFzv87GGF2Uhkhw0UCKTEFzYF?=
+ =?us-ascii?Q?tjuQc3li3k410GsKQ92L1JmAxpuUPvcJ3kyYyXoCVBs4dCeJWDinRgnpKL02?=
+ =?us-ascii?Q?1KpOJ5dfb27epEzkjjYunM1107tfdg/Bgp/xCZb8/Kzd4ntZpuYIdccmpiVo?=
+ =?us-ascii?Q?bVH4BJr6QMm66MUKoJAADddwcZjQvLsguEjWBRn54/9Qhn6QiPGNKUbZWQh8?=
+ =?us-ascii?Q?0JonuSGcQEP1apAYsRL0WodJKnSb5i2xfL4vGfGX+JqMYOavi7fCPL/5k6sY?=
+ =?us-ascii?Q?gUGe2HEbRzIOA7hTWLCQavq5w+M9/1lh/TLRISg6P3Winj5vwuXWB/RdaMNv?=
+ =?us-ascii?Q?aazMEj4pgJtRj1Q33A+msOp6kTm0nImgUuE1bV5La80Qtvp99sXEAMV6NFUX?=
+ =?us-ascii?Q?QgtpX7Pq1Y2euDpq9A1GPS1o12s9wMNFXufjIQeoZ7OyOpV7UlX0ahzuBxJ4?=
+ =?us-ascii?Q?9LxJLbYQkZ/AjkwvNXjV53umtXGY54jryLomndFcVOE/YKQb09h7Jqo6vehJ?=
+ =?us-ascii?Q?/tNCAjvlHKSvN439Q+SJekcVx9lJec8Nx8FioiISUL7kyWLp4WEiXhKwzfc+?=
+ =?us-ascii?Q?5DSk5VmyL8+bT3OdyuBQHQDFsyumdYW7zuML+u+iGuZpebNyu1UZvJiGZZXu?=
+ =?us-ascii?Q?aLaOqFYYiIU24rok0iw1u31dKMLVRA1Bwh+btWaDFjnD+CydA/MmEiJXmk9p?=
+ =?us-ascii?Q?5VqlAzO62LHJC+3wsAmpmjUdKHUbkPqy0Y5IVXk/GIcr9oPyey5eK/QrNwLX?=
+ =?us-ascii?Q?NM6kDf7G4gg2YAsy9Qt0cNuOxwfoywkFoO/5w9u+UpVU9yzJNbZeQLfj9oUd?=
+ =?us-ascii?Q?f+6e7I2CNRyLsSHMfSeBwrUApflV5yeUOGQ9qW+P7JZeoQwmVzsSBuB0rcJd?=
+ =?us-ascii?Q?9dUFG+jsgrcs0KKjcdzr0wiu7MKDEeHPakRdtJQh0EcObSce2HTF5xyV2WcM?=
+ =?us-ascii?Q?Deh1RkO5L3D7pWd7QrxtdUhnhr3+lhCQyu922SsU2iJSYJvT4VYcHoV7bz2I?=
+ =?us-ascii?Q?Aea8PI9BONHdwfhFDBTJ6dJ3qRGMeZcvJklwIsV95PPBmr9RAFwknv8R6v/8?=
+ =?us-ascii?Q?wnqgXyX64BRVQ+918kg=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014)(30052699003)(7416014)(7053199007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2025 23:22:53.1927
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 40fce601-03b3-4545-c772-08de0141722d
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000044FA.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH1PR12MB9672
 
-Hi syzbot,
+Taking Sean's cue on trimming Cc list:
 
-kernel test robot noticed the following build warnings:
+On Wed, May 14, 2025 at 04:42:11PM -0700, Ackerley Tng wrote:
+> This patch adds support for guestmem_hugetlb as the first custom
+> allocator in guest_memfd.
+> 
+> If requested at guest_memfd creation time, the custom allocator will
+> be used in initialization and cleanup.
+> 
+> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
+> 
+> Change-Id: I1eb9625dc761ecadcc2aa21480cfdfcf9ab7ce67
+> ---
+>  include/uapi/linux/kvm.h |   1 +
+>  virt/kvm/Kconfig         |   5 +
+>  virt/kvm/guest_memfd.c   | 203 +++++++++++++++++++++++++++++++++++++--
+>  3 files changed, 199 insertions(+), 10 deletions(-)
+> 
 
-[auto build test WARNING on tytso-ext4/dev]
-[also build test WARNING on linus/master v6.17 next-20250929]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+<snip>
 
-url:    https://github.com/intel-lab-lkp/linux/commits/syzbot/Forwarded-PATCH-ext4-fix-use-after-free-in-ext4_ext_insert_extent/20250930-232453
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/tytso/ext4.git dev
-patch link:    https://lore.kernel.org/r/68dbf53f.a00a0220.102ee.004a.GAE%40google.com
-patch subject: Forwarded: [PATCH] ext4: fix use-after-free in ext4_ext_insert_extent()
-config: arc-randconfig-r073-20251001 (https://download.01.org/0day-ci/archive/20251002/202510020639.uRHSs90S-lkp@intel.com/config)
-compiler: arc-linux-gcc (GCC) 13.4.0
+> @@ -518,17 +562,24 @@ static struct folio *kvm_gmem_get_folio(struct inode *inode, pgoff_t index)
+>  	if (!IS_ERR(folio))
+>  		return folio;
+>  
+> -	gfp = mapping_gfp_mask(inode->i_mapping);
+> +	if (kvm_gmem_has_custom_allocator(inode)) {
+> +		void *p = kvm_gmem_allocator_private(inode);
+>  
+> -	/* TODO: Support huge pages. */
+> -	folio = filemap_alloc_folio(gfp, 0);
+> -	if (!folio)
+> -		return ERR_PTR(-ENOMEM);
+> +		folio = kvm_gmem_allocator_ops(inode)->alloc_folio(p);
+> +		if (IS_ERR(folio))
+> +			return folio;
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510020639.uRHSs90S-lkp@intel.com/
+One issue with current guestmem_hugetlb implementation of ->alloc_folio()
+is that if you have 2 vCPUs faulting in the same GPA range, they might both
+attempt to reserve the allocation, and if they happen to be fighting
+over the last folio available in the subpool, then 1 of them might return
+ENOMEM and the guest will crash (this is much more likely if using 1GB
+pages).
 
-New smatch warnings:
-fs/ext4/extents.c:2089 ext4_ext_insert_extent() warn: inconsistent indenting
+It seems like we need to allow the allocator to return EAGAIN to signal
+that it's still worth retrying, but at the same time I'm not sure
+guestmem_hugetlb will be able to distinguish between *actually* being
+out of memory vs. a temporary situation like this. We can make
+guestmem_hugetlb smarter so that it could do this but it would need to
+track stuff like whether 2 allocations are in-flight for the same GPA
+range, and that's sounding a lot more like something guest_memfd proper
+should be doing.
 
-Old smatch warnings:
-arch/arc/include/asm/thread_info.h:62 current_thread_info() error: uninitialized symbol 'sp'.
-fs/ext4/extents.c:4456 ext4_ext_map_blocks() error: uninitialized symbol 'ex'.
-fs/ext4/extents.c:4456 ext4_ext_map_blocks() error: uninitialized symbol 'depth'.
+There's also another potential/related issue below that I haven't run
+into but seems possible...
 
-vim +2089 fs/ext4/extents.c
+> +	} else {
+> +		gfp_t gfp = mapping_gfp_mask(inode->i_mapping);
+>  
+> -	ret = mem_cgroup_charge(folio, NULL, gfp);
+> -	if (ret) {
+> -		folio_put(folio);
+> -		return ERR_PTR(ret);
+> +		folio = filemap_alloc_folio(gfp, 0);
+> +		if (!folio)
+> +			return ERR_PTR(-ENOMEM);
+> +
+> +		ret = mem_cgroup_charge(folio, NULL, gfp);
+> +		if (ret) {
+> +			folio_put(folio);
+> +			return ERR_PTR(ret);
+> +		}
+>  	}
+>  
+>  	ret = kvm_gmem_filemap_add_folio(inode->i_mapping, folio, index);
 
-  1969	
-  1970	/*
-  1971	 * ext4_ext_insert_extent:
-  1972	 * tries to merge requested extent into the existing extent or
-  1973	 * inserts requested extent as new one into the tree,
-  1974	 * creating new leaf in the no-space case.
-  1975	 */
-  1976	struct ext4_ext_path *
-  1977	ext4_ext_insert_extent(handle_t *handle, struct inode *inode,
-  1978			       struct ext4_ext_path *path,
-  1979			       struct ext4_extent *newext, int gb_flags)
-  1980	{
-  1981		struct ext4_extent_header *eh;
-  1982		struct ext4_extent *ex, *fex;
-  1983		struct ext4_extent *nearex; /* nearest extent */
-  1984		int depth, len, err = 0;
-  1985		ext4_lblk_t next;
-  1986		int mb_flags = 0, unwritten;
-  1987	
-  1988		if (gb_flags & EXT4_GET_BLOCKS_DELALLOC_RESERVE)
-  1989			mb_flags |= EXT4_MB_DELALLOC_RESERVED;
-  1990		if (unlikely(ext4_ext_get_actual_len(newext) == 0)) {
-  1991			EXT4_ERROR_INODE(inode, "ext4_ext_get_actual_len(newext) == 0");
-  1992			err = -EFSCORRUPTED;
-  1993			goto errout;
-  1994		}
-  1995		depth = ext_depth(inode);
-  1996		ex = path[depth].p_ext;
-  1997		eh = path[depth].p_hdr;
-  1998		if (unlikely(path[depth].p_hdr == NULL)) {
-  1999			EXT4_ERROR_INODE(inode, "path[%d].p_hdr == NULL", depth);
-  2000			err = -EFSCORRUPTED;
-  2001			goto errout;
-  2002		}
-  2003	
-  2004		/* try to insert block into found extent and return */
-  2005		if (ex && !(gb_flags & EXT4_GET_BLOCKS_PRE_IO)) {
-  2006	
-  2007			/*
-  2008			 * Try to see whether we should rather test the extent on
-  2009			 * right from ex, or from the left of ex. This is because
-  2010			 * ext4_find_extent() can return either extent on the
-  2011			 * left, or on the right from the searched position. This
-  2012			 * will make merging more effective.
-  2013			 */
-  2014			if (ex < EXT_LAST_EXTENT(eh) &&
-  2015			    (le32_to_cpu(ex->ee_block) +
-  2016			    ext4_ext_get_actual_len(ex) <
-  2017			    le32_to_cpu(newext->ee_block))) {
-  2018				ex += 1;
-  2019				goto prepend;
-  2020			} else if ((ex > EXT_FIRST_EXTENT(eh)) &&
-  2021				   (le32_to_cpu(newext->ee_block) +
-  2022				   ext4_ext_get_actual_len(newext) <
-  2023				   le32_to_cpu(ex->ee_block)))
-  2024				ex -= 1;
-  2025	
-  2026			/* Try to append newex to the ex */
-  2027			if (ext4_can_extents_be_merged(inode, ex, newext)) {
-  2028				ext_debug(inode, "append [%d]%d block to %u:[%d]%d"
-  2029					  "(from %llu)\n",
-  2030					  ext4_ext_is_unwritten(newext),
-  2031					  ext4_ext_get_actual_len(newext),
-  2032					  le32_to_cpu(ex->ee_block),
-  2033					  ext4_ext_is_unwritten(ex),
-  2034					  ext4_ext_get_actual_len(ex),
-  2035					  ext4_ext_pblock(ex));
-  2036				err = ext4_ext_get_access(handle, inode,
-  2037							  path + depth);
-  2038				if (err)
-  2039					goto errout;
-  2040				unwritten = ext4_ext_is_unwritten(ex);
-  2041				ex->ee_len = cpu_to_le16(ext4_ext_get_actual_len(ex)
-  2042						+ ext4_ext_get_actual_len(newext));
-  2043				if (unwritten)
-  2044					ext4_ext_mark_unwritten(ex);
-  2045				nearex = ex;
-  2046				goto merge;
-  2047			}
-  2048	
-  2049	prepend:
-  2050			/* Try to prepend newex to the ex */
-  2051			if (ext4_can_extents_be_merged(inode, newext, ex)) {
-  2052				ext_debug(inode, "prepend %u[%d]%d block to %u:[%d]%d"
-  2053					  "(from %llu)\n",
-  2054					  le32_to_cpu(newext->ee_block),
-  2055					  ext4_ext_is_unwritten(newext),
-  2056					  ext4_ext_get_actual_len(newext),
-  2057					  le32_to_cpu(ex->ee_block),
-  2058					  ext4_ext_is_unwritten(ex),
-  2059					  ext4_ext_get_actual_len(ex),
-  2060					  ext4_ext_pblock(ex));
-  2061				err = ext4_ext_get_access(handle, inode,
-  2062							  path + depth);
-  2063				if (err)
-  2064					goto errout;
-  2065	
-  2066				unwritten = ext4_ext_is_unwritten(ex);
-  2067				ex->ee_block = newext->ee_block;
-  2068				ext4_ext_store_pblock(ex, ext4_ext_pblock(newext));
-  2069				ex->ee_len = cpu_to_le16(ext4_ext_get_actual_len(ex)
-  2070						+ ext4_ext_get_actual_len(newext));
-  2071				if (unwritten)
-  2072					ext4_ext_mark_unwritten(ex);
-  2073				nearex = ex;
-  2074				goto merge;
-  2075			}
-  2076		}
-  2077	
-  2078		depth = ext_depth(inode);
-  2079		eh = path[depth].p_hdr;
-  2080		if (le16_to_cpu(eh->eh_entries) < le16_to_cpu(eh->eh_max))
-  2081			goto has_space;
-  2082	
-  2083		/* probably next leaf has space for us? */
-  2084		fex = EXT_LAST_EXTENT(eh);
-  2085		next = EXT_MAX_BLOCKS;
-  2086		if (le16_to_cpu(eh->eh_magic) != EXT4_EXT_MAGIC ||
-  2087		   le16_to_cpu(eh->eh_entries) == 0) {
-  2088			EXT4_ERROR_INODE(inode, "corrupted extent header");
-> 2089			 err = -EFSCORRUPTED;
-  2090			goto errout;
-  2091		}
-  2092		if (le32_to_cpu(newext->ee_block) > le32_to_cpu(fex->ee_block))
-  2093			next = ext4_ext_next_leaf_block(path);
-  2094		if (next != EXT_MAX_BLOCKS) {
-  2095			struct ext4_ext_path *npath;
-  2096	
-  2097			ext_debug(inode, "next leaf block - %u\n", next);
-  2098			npath = ext4_find_extent(inode, next, NULL, gb_flags);
-  2099			if (IS_ERR(npath)) {
-  2100				err = PTR_ERR(npath);
-  2101				goto errout;
-  2102			}
-  2103			BUG_ON(npath->p_depth != path->p_depth);
-  2104			eh = npath[depth].p_hdr;
-  2105			if (le16_to_cpu(eh->eh_entries) < le16_to_cpu(eh->eh_max)) {
-  2106				ext_debug(inode, "next leaf isn't full(%d)\n",
-  2107					  le16_to_cpu(eh->eh_entries));
-  2108				ext4_free_ext_path(path);
-  2109				path = npath;
-  2110				goto has_space;
-  2111			}
-  2112			ext_debug(inode, "next leaf has no free space(%d,%d)\n",
-  2113				  le16_to_cpu(eh->eh_entries), le16_to_cpu(eh->eh_max));
-  2114			ext4_free_ext_path(npath);
-  2115		}
-  2116	
-  2117		/*
-  2118		 * There is no free space in the found leaf.
-  2119		 * We're gonna add a new leaf in the tree.
-  2120		 */
-  2121		if (gb_flags & EXT4_GET_BLOCKS_METADATA_NOFAIL)
-  2122			mb_flags |= EXT4_MB_USE_RESERVED;
-  2123		path = ext4_ext_create_new_leaf(handle, inode, mb_flags, gb_flags,
-  2124						path, newext);
-  2125		if (IS_ERR(path))
-  2126			return path;
-  2127		depth = ext_depth(inode);
-  2128		eh = path[depth].p_hdr;
-  2129	
-  2130	has_space:
-  2131		nearex = path[depth].p_ext;
-  2132	
-  2133		err = ext4_ext_get_access(handle, inode, path + depth);
-  2134		if (err)
-  2135			goto errout;
-  2136	
-  2137		if (!nearex) {
-  2138			/* there is no extent in this leaf, create first one */
-  2139			ext_debug(inode, "first extent in the leaf: %u:%llu:[%d]%d\n",
-  2140					le32_to_cpu(newext->ee_block),
-  2141					ext4_ext_pblock(newext),
-  2142					ext4_ext_is_unwritten(newext),
-  2143					ext4_ext_get_actual_len(newext));
-  2144			nearex = EXT_FIRST_EXTENT(eh);
-  2145		} else {
-  2146			if (le32_to_cpu(newext->ee_block)
-  2147				   > le32_to_cpu(nearex->ee_block)) {
-  2148				/* Insert after */
-  2149				ext_debug(inode, "insert %u:%llu:[%d]%d before: "
-  2150						"nearest %p\n",
-  2151						le32_to_cpu(newext->ee_block),
-  2152						ext4_ext_pblock(newext),
-  2153						ext4_ext_is_unwritten(newext),
-  2154						ext4_ext_get_actual_len(newext),
-  2155						nearex);
-  2156				nearex++;
-  2157			} else {
-  2158				/* Insert before */
-  2159				BUG_ON(newext->ee_block == nearex->ee_block);
-  2160				ext_debug(inode, "insert %u:%llu:[%d]%d after: "
-  2161						"nearest %p\n",
-  2162						le32_to_cpu(newext->ee_block),
-  2163						ext4_ext_pblock(newext),
-  2164						ext4_ext_is_unwritten(newext),
-  2165						ext4_ext_get_actual_len(newext),
-  2166						nearex);
-  2167			}
-  2168			len = EXT_LAST_EXTENT(eh) - nearex + 1;
-  2169			if (len > 0) {
-  2170				ext_debug(inode, "insert %u:%llu:[%d]%d: "
-  2171						"move %d extents from 0x%p to 0x%p\n",
-  2172						le32_to_cpu(newext->ee_block),
-  2173						ext4_ext_pblock(newext),
-  2174						ext4_ext_is_unwritten(newext),
-  2175						ext4_ext_get_actual_len(newext),
-  2176						len, nearex, nearex + 1);
-  2177				memmove(nearex + 1, nearex,
-  2178					len * sizeof(struct ext4_extent));
-  2179			}
-  2180		}
-  2181	
-  2182		le16_add_cpu(&eh->eh_entries, 1);
-  2183		path[depth].p_ext = nearex;
-  2184		nearex->ee_block = newext->ee_block;
-  2185		ext4_ext_store_pblock(nearex, ext4_ext_pblock(newext));
-  2186		nearex->ee_len = newext->ee_len;
-  2187	
-  2188	merge:
-  2189		/* try to merge extents */
-  2190		if (!(gb_flags & EXT4_GET_BLOCKS_PRE_IO))
-  2191			ext4_ext_try_to_merge(handle, inode, path, nearex);
-  2192	
-  2193		/* time to correct all indexes above */
-  2194		err = ext4_ext_correct_indexes(handle, inode, path);
-  2195		if (err)
-  2196			goto errout;
-  2197	
-  2198		err = ext4_ext_dirty(handle, inode, path + path->p_depth);
-  2199		if (err)
-  2200			goto errout;
-  2201	
-  2202		return path;
-  2203	
-  2204	errout:
-  2205		ext4_free_ext_path(path);
-  2206		return ERR_PTR(err);
-  2207	}
-  2208	
+I think the relevant bits are in another patch, but it's closely related
+to the above scenario so I'll just paste it here for context:
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+    ret = kvm_gmem_filemap_add_folio(inode->i_mapping, folio, index_floor);
+    if (ret) {
+            folio_put(folio);
+
+            /*
+             * There was a race, two threads tried to get a folio indexing
+             * to the same location in the filemap. The losing thread should
+             * free the allocated folio, then lock the folio added to the
+             * filemap by the winning thread.
+             */
+            if (ret == -EEXIST)
+                    goto repeat;
+
+            WARN_ON_ONCE(ret);
+            return ERR_PTR(ret);
+    }
+
+    /* Leave just filemap's refcounts on folio. */
+    folio_put(folio);
+
+    ret = kvm_gmem_try_split_folio_in_filemap(inode, folio);
+    if (ret)
+            goto err;
+
+    spin_lock(&inode->i_lock);
+    inode->i_blocks += allocated_size / 512;
+    spin_unlock(&inode->i_lock);
+
+    /*
+     * folio is the one that is allocated, this gets the folio at the
+     * requested index.
+     */
+    folio = filemap_lock_folio(inode->i_mapping, index); 
+
+Here you check for a similar race like the above (except the reservation
+doesn't fail so you get 2+ vCPUs with allocated folios they are trying to
+map), and the losing vCPUs are expected to free their un-filemapped folios
+and retry to get the winning/mapped one. However, later in this function you
+might end up splitting the winning page, which involves unmapping it
+beforehand, so with really bad timing it seems like a "losing" vCPU can still
+insert its folio in the filemap and trip up the splitting path, which I'm not
+sure is handled gracefully.
+
+This is another case where I wish we had something like a range lock so we
+can still parallelize allocations with having vCPUs interleaving
+allocation/splitting work for a particular range. Lacking that, maybe some
+other locking scheme will work, but with allocation/splitting/HVO in the mix
+it would be pretty easy to kill performance if we're not careful.
+
+-Mike
+
+> @@ -611,6 +662,80 @@ static void kvm_gmem_invalidate_end(struct kvm_gmem *gmem, pgoff_t start,
+>  	}
+>  }
+>  
+> +/**
+> + * kvm_gmem_truncate_indices() - Truncates all folios beginning @index for
+> + * @nr_pages.
+> + *
+> + * @mapping: filemap to truncate pages from.
+> + * @index: the index in the filemap to begin truncation.
+> + * @nr_pages: number of PAGE_SIZE pages to truncate.
+> + *
+> + * Return: the number of PAGE_SIZE pages that were actually truncated.
+> + */
+> +static long kvm_gmem_truncate_indices(struct address_space *mapping,
+> +				      pgoff_t index, size_t nr_pages)
+> +{
+> +	struct folio_batch fbatch;
+> +	long truncated;
+> +	pgoff_t last;
+> +
+> +	last = index + nr_pages - 1;
+> +
+> +	truncated = 0;
+> +	folio_batch_init(&fbatch);
+> +	while (filemap_get_folios(mapping, &index, last, &fbatch)) {
+> +		unsigned int i;
+> +
+> +		for (i = 0; i < folio_batch_count(&fbatch); ++i) {
+> +			struct folio *f = fbatch.folios[i];
+> +
+> +			truncated += folio_nr_pages(f);
+> +			folio_lock(f);
+> +			truncate_inode_folio(f->mapping, f);
+> +			folio_unlock(f);
+> +		}
+> +
+> +		folio_batch_release(&fbatch);
+> +		cond_resched();
+> +	}
+> +
+> +	return truncated;
+> +}
+> +
+> +/**
+> + * kvm_gmem_truncate_inode_aligned_pages() - Removes entire folios from filemap
+> + * in @inode.
+> + *
+> + * @inode: inode to remove folios from.
+> + * @index: start of range to be truncated. Must be hugepage aligned.
+> + * @nr_pages: number of PAGE_SIZE pages to be iterated over.
+> + *
+> + * Removes folios beginning @index for @nr_pages from filemap in @inode, updates
+> + * inode metadata.
+> + */
+> +static void kvm_gmem_truncate_inode_aligned_pages(struct inode *inode,
+> +						  pgoff_t index,
+> +						  size_t nr_pages)
+> +{
+> +	size_t nr_per_huge_page;
+> +	long num_freed;
+> +	pgoff_t idx;
+> +	void *priv;
+> +
+> +	priv = kvm_gmem_allocator_private(inode);
+> +	nr_per_huge_page = kvm_gmem_allocator_ops(inode)->nr_pages_in_folio(priv);
+> +
+> +	num_freed = 0;
+> +	for (idx = index; idx < index + nr_pages; idx += nr_per_huge_page) {
+> +		num_freed += kvm_gmem_truncate_indices(
+> +			inode->i_mapping, idx, nr_per_huge_page);
+> +	}
+> +
+> +	spin_lock(&inode->i_lock);
+> +	inode->i_blocks -= (num_freed << PAGE_SHIFT) / 512;
+> +	spin_unlock(&inode->i_lock);
+> +}
+> +
+>  static long kvm_gmem_punch_hole(struct inode *inode, loff_t offset, loff_t len)
+>  {
+>  	struct list_head *gmem_list = &inode->i_mapping->i_private_list;
+> @@ -940,6 +1065,13 @@ static void kvm_gmem_free_inode(struct inode *inode)
+>  {
+>  	struct kvm_gmem_inode_private *private = kvm_gmem_private(inode);
+>  
+> +	/* private may be NULL if inode creation process had an error. */
+> +	if (private && kvm_gmem_has_custom_allocator(inode)) {
+> +		void *p = kvm_gmem_allocator_private(inode);
+> +
+> +		kvm_gmem_allocator_ops(inode)->inode_teardown(p, inode->i_size);
+> +	}
+> +
+>  	kfree(private);
+>  
+>  	free_inode_nonrcu(inode);
+> @@ -959,8 +1091,24 @@ static void kvm_gmem_destroy_inode(struct inode *inode)
+>  #endif
+>  }
+>  
+> +static void kvm_gmem_evict_inode(struct inode *inode)
+> +{
+> +	truncate_inode_pages_final_prepare(inode->i_mapping);
+> +
+> +	if (kvm_gmem_has_custom_allocator(inode)) {
+> +		size_t nr_pages = inode->i_size >> PAGE_SHIFT;
+> +
+> +		kvm_gmem_truncate_inode_aligned_pages(inode, 0, nr_pages);
+> +	} else {
+> +		truncate_inode_pages(inode->i_mapping, 0);
+> +	}
+> +
+> +	clear_inode(inode);
+> +}
+> +
+>  static const struct super_operations kvm_gmem_super_operations = {
+>  	.statfs		= simple_statfs,
+> +	.evict_inode	= kvm_gmem_evict_inode,
+>  	.destroy_inode	= kvm_gmem_destroy_inode,
+>  	.free_inode	= kvm_gmem_free_inode,
+>  };
+> @@ -1062,6 +1210,12 @@ static void kvm_gmem_free_folio(struct folio *folio)
+>  {
+>  	folio_clear_unevictable(folio);
+>  
+> +	/*
+> +	 * No-op for 4K page since the PG_uptodate is cleared as part of
+> +	 * freeing, but may be required for other allocators to reset page.
+> +	 */
+> +	folio_clear_uptodate(folio);
+> +
+>  	kvm_gmem_invalidate(folio);
+>  }
+>  
+> @@ -1115,6 +1269,25 @@ static struct inode *kvm_gmem_inode_make_secure_inode(const char *name,
+>  	if (err)
+>  		goto out;
+>  
+> +#ifdef CONFIG_KVM_GMEM_HUGETLB
+> +	if (flags & GUEST_MEMFD_FLAG_HUGETLB) {
+> +		void *allocator_priv;
+> +		size_t nr_pages;
+> +
+> +		allocator_priv = guestmem_hugetlb_ops.inode_setup(size, flags);
+> +		if (IS_ERR(allocator_priv)) {
+> +			err = PTR_ERR(allocator_priv);
+> +			goto out;
+> +		}
+> +
+> +		private->allocator_ops = &guestmem_hugetlb_ops;
+> +		private->allocator_private = allocator_priv;
+> +
+> +		nr_pages = guestmem_hugetlb_ops.nr_pages_in_folio(allocator_priv);
+> +		inode->i_blkbits = ilog2(nr_pages << PAGE_SHIFT);
+> +	}
+> +#endif
+> +
+>  	inode->i_private = (void *)(unsigned long)flags;
+>  	inode->i_op = &kvm_gmem_iops;
+>  	inode->i_mapping->a_ops = &kvm_gmem_aops;
+> @@ -1210,6 +1383,10 @@ static int __kvm_gmem_create(struct kvm *kvm, loff_t size, u64 flags)
+>  	return err;
+>  }
+>  
+> +/* Mask of bits belonging to allocators and are opaque to guest_memfd. */
+> +#define SUPPORTED_CUSTOM_ALLOCATOR_MASK \
+> +	(GUESTMEM_HUGETLB_FLAG_MASK << GUESTMEM_HUGETLB_FLAG_SHIFT)
+> +
+>  int kvm_gmem_create(struct kvm *kvm, struct kvm_create_guest_memfd *args)
+>  {
+>  	loff_t size = args->size;
+> @@ -1222,6 +1399,12 @@ int kvm_gmem_create(struct kvm *kvm, struct kvm_create_guest_memfd *args)
+>  	if (flags & GUEST_MEMFD_FLAG_SUPPORT_SHARED)
+>  		valid_flags |= GUEST_MEMFD_FLAG_INIT_PRIVATE;
+>  
+> +	if (IS_ENABLED(CONFIG_KVM_GMEM_HUGETLB) &&
+> +	    flags & GUEST_MEMFD_FLAG_HUGETLB) {
+> +		valid_flags |= GUEST_MEMFD_FLAG_HUGETLB |
+> +			       SUPPORTED_CUSTOM_ALLOCATOR_MASK;
+> +	}
+> +
+>  	if (flags & ~valid_flags)
+>  		return -EINVAL;
+>  
+> -- 
+> 2.49.0.1045.g170613ef41-goog
+> 
+> 
 
