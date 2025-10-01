@@ -1,182 +1,122 @@
-Return-Path: <linux-kernel+bounces-838518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55C89BAF5FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 09:19:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DA37BAF5FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 09:20:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA8881C30BD
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 07:19:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5795A3B1974
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 07:20:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21AFD211499;
-	Wed,  1 Oct 2025 07:19:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BFDE1F0E32;
+	Wed,  1 Oct 2025 07:20:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="sFJLSkGI"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="WDkaFP96"
+Received: from r3-24.sinamail.sina.com.cn (r3-24.sinamail.sina.com.cn [202.108.3.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 234DA3770B;
-	Wed,  1 Oct 2025 07:19:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA9783770B
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 07:20:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759303187; cv=none; b=K2FqvytSUscsJPZHVfjTnKnI3lkfR5IxgUnnshHEqlAiCvs3nFzGTcLMNbanWer8RCqBK+VWRuEeo9b3jLc7I5skfciBR/3YCgzV6BAbSO2QN5AcdmavqJ3Wyccvkeqv1odfveUiScBw563p8iYB3wRtqEBSxvcUTWiwVnYD5lY=
+	t=1759303237; cv=none; b=aLdmAPf9PrKFWtTMzb4+7JfCUTGBl/ithtCEAPjwif6fANZTTb4y6Hjtvr8Zab7sElHIVCC9FSQ/3PYhHlNbHOi/HNoTU7FMjCTyNO8t6RxRU0edukGk6m/GVtUVbGXBlUzogI4tBmVjJUR1AKASnuQn3CviKe/wvskTGtJN3TE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759303187; c=relaxed/simple;
-	bh=m3GyrvFZTp0xnocM0iyhLUYbvWE/o5O0Ruc2sJ8qxg4=;
+	s=arc-20240116; t=1759303237; c=relaxed/simple;
+	bh=GGaGyEQVZnmWuUvgUbii8TiIZIFZx74E1l1xBnLN4qQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=B2eoD+NVpKQ7Aq0DjPLo2eCDiJ5mLQrxM0T8M3NyElm2kIy+kBrgxPrP9g5O58nLRPdr0+SayVDWx55LKxg3sut6AagCSwZ3UNGvvt16qtp2FjlU9ySkskbw7eWZphCWL1xOL1GEKBvI+BIP6STFMjskx6u7jAXDegfvRjzmago=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=sFJLSkGI; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 376754E40DF5;
-	Wed,  1 Oct 2025 07:19:43 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 0B36E606BF;
-	Wed,  1 Oct 2025 07:19:43 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 24145102F1854;
-	Wed,  1 Oct 2025 09:19:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1759303182; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=bLWzwrSTti2UytVkyEvnDMwkovA44fR84c3zWkiEaN0=;
-	b=sFJLSkGIuA4ckN4RYae9fVmbOjBs2QufWjdQyYpi74aKyuS2zbNoWPiXuD8E95nzBqdPFe
-	UNiykmAd93lF1yoY7hBbgNootC+5RintzuENkY5Z1Lt7mlKd+qkOFsKGzqPX5TXd1foG+O
-	D2y5hf4eF5uP0a4FlfVKOk5WJkDiZPo3wGda7yHocb6qmpNp1Id8yP13DQQd7sXeaIvsS3
-	TumYgVYpgFLwkm3IHnuT4mTaNX1UxySY2gflLJymE0a5aKUW/AQ2M1lHreM3jnD/X6wa+Z
-	X0YNNpYRU1Ag7E9Gs0gDixKzL13LhzAh55ZRTWVKsCGK/x6zHdx0DLZjLz3BOQ==
-From: Romain Gantois <romain.gantois@bootlin.com>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
- Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, David Lechner <dlechner@baylibre.com>
-Cc: Hans de Goede <hansg@kernel.org>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-iio@vger.kernel.org
-Subject: Re: [PATCH v2 2/5] iio: add processed write API
-Date: Wed, 01 Oct 2025 09:19:37 +0200
-Message-ID: <5015441.GXAFRqVoOG@fw-rgant>
-In-Reply-To: <2a503edb-fe9f-4d61-92c0-c1083a028e19@baylibre.com>
-References:
- <20250925-ltm8054-driver-v2-0-bb61a401a0dc@bootlin.com>
- <20250925-ltm8054-driver-v2-2-bb61a401a0dc@bootlin.com>
- <2a503edb-fe9f-4d61-92c0-c1083a028e19@baylibre.com>
+	 MIME-Version; b=TX9yUV3tsBF+vP6sV3eqeEVZDzzfF5zUifcL6oRVNO3IjN6EmCOOxKT/GqahAP8+tFFsfPQs4e0Cxhj+y1GRG1coozvXnmKk902F2t9bOYhLYhPmVK2zttnB76hn2nsjAfLoUZap42T0VkTMIwBIV2xGujcc6Yjg2RmjGzsUqRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=WDkaFP96; arc=none smtp.client-ip=202.108.3.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1759303232;
+	bh=k8MghiB8yRP6MpFBY5WeMtnLtbGm0C/Pb70Rx2gihz8=;
+	h=From:Subject:Date:Message-ID;
+	b=WDkaFP96Wwvn2q/axH0BEeDvLqzUroRlRlIHHJXzSQx/kK3X1id8mHLGX1q58ypQl
+	 6deIN00jp1B5VmnhK7uhSJHXgRJOXgkOerUNhE7c9GaxOU4/be9iFdH/bShgQBGBXw
+	 UhuF50YCspuzZVL8BzQqz0g+rqyw12mQTHEgUTnY=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.31) with ESMTP
+	id 68DCD63900005E6A; Wed, 1 Oct 2025 15:20:28 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 2432766816205
+X-SMAIL-UIID: 2C8EC1E767034964B8C0B7ED2896E0B2-20251001-152028-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+7d23dc5cd4fa132fb9f3@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [fs?] WARNING in free_mnt_ns
+Date: Wed,  1 Oct 2025 15:20:15 +0800
+Message-ID: <20251001072016.7814-1-hdanton@sina.com>
+In-Reply-To: <68dc3ade.a70a0220.10c4b.015c.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart1934360.tdWV9SEqCh";
- micalg="pgp-sha512"; protocol="application/pgp-signature"
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
 
---nextPart1934360.tdWV9SEqCh
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
-From: Romain Gantois <romain.gantois@bootlin.com>
-Subject: Re: [PATCH v2 2/5] iio: add processed write API
-Date: Wed, 01 Oct 2025 09:19:37 +0200
-Message-ID: <5015441.GXAFRqVoOG@fw-rgant>
-In-Reply-To: <2a503edb-fe9f-4d61-92c0-c1083a028e19@baylibre.com>
-MIME-Version: 1.0
-
-Hello David,
-
-On Thursday, 25 September 2025 23:10:14 CEST David Lechner wrote:
-> On 9/25/25 7:37 AM, Romain Gantois wrote:
-> > Add a function to allow IIO consumers to write a processed value to a
-...
-> > +static int iio_convert_processed_to_raw_unlocked(struct iio_channel
-> > *chan,
-> > +						 int processed, int *raw,
-> > +						 unsigned int scale)
-> > +{
-> > +	int scale_type, scale_val, scale_val2;
-> > +	int offset_type, offset_val, offset_val2;
-> > +	int ret;
-> > +
-> > +	scale_type = iio_channel_read(chan, &scale_val, &scale_val2,
-> > +				      IIO_CHAN_INFO_SCALE);
-> > +	if (scale_type >= 0) {
-> > +		ret = iio_divide_by_value(raw, processed, scale_type, 
-scale_val,
-> > scale_val2); +		if (ret < 0)
-> > +			return ret;
-> > +	} else {
-> > +		*raw = processed;
-> > +	}
-> > +
-> > +	if (!scale)
-> > +		return -ERANGE;
-> > +
-> > +	*raw = div_s64(*raw, scale);
-> > +
-> > +	offset_type = iio_channel_read(chan, &offset_val, &offset_val2,
-> > +				       IIO_CHAN_INFO_OFFSET);
-> > +	if (offset_type >= 0) {
-> > +		switch (offset_type) {
-> > +		case IIO_VAL_INT:
-> > +		case IIO_VAL_INT_PLUS_MICRO:
-> > +		case IIO_VAL_INT_PLUS_NANO:
-> > +			break;
-> > +		case IIO_VAL_FRACTIONAL:
-> > +			offset_val /= offset_val2;
-> > +			break;
-> > +		case IIO_VAL_FRACTIONAL_LOG2:
-> > +			offset_val >>= offset_val2;
-> > +			break;
-> > +		default:
-> > +			return -EINVAL;
-> > +		}
-> > +
-> > +		*raw -= offset_val;
-> > +	}
+> Date: Tue, 30 Sep 2025 13:17:34 -0700	[thread overview]
+> Hello,
 > 
-> There are some rounding biases in this function, but I'm not sure if
-> it is worth trying to make a perfectly fair function.
+> syzbot found the following issue on:
+> 
+> HEAD commit:    449c2b302c8e Merge tag 'vfs-6.18-rc1.async' of git://git.k..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=15b43858580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=595e5938a1dd5b4e
+> dashboard link: https://syzkaller.appspot.com/bug?extid=7d23dc5cd4fa132fb9f3
+> compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11c9ad04580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=160bf27c580000
 
-I'm unfamiliar with the notion of rounding bias, does it mean that nested 
-calls of this function would tend to amplify rounding errors? In this case, 
-would rounding to the nearest integer instead of whatever is being done by the 
-integer division here be a good solution?
+#syz test
 
-Maybe I'm misunderstanding what you mean, in that case please let me know.
-
-Thanks,
-
--- 
-Romain Gantois, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---nextPart1934360.tdWV9SEqCh
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEIcCsAScRrtr7W0x0KCYAIARzeA4FAmjc1gkACgkQKCYAIARz
-eA6MYg//Viifao41HU18GYkLlUZn/8j/K0FDeJHL+7QGILawnj1ZTgtN37o6sZIy
-cKL3SHGYGaNwGuuSrP8Phl+f0d5TylhtlKk5lABeUu1pVJtQl2xVAo0NhnPmXt34
-gT2r+Dx+3CCYytsF2/LlWQJZXawlgRWfXyu1RI4GZ2THCks3VZXhg14WvLVJTN97
-ovCQFEgQ6DIcz9kkZvtzPtB521NZvYAeMYxgfVIFAcBcmZOX0ZLGk5JKTMpCcgwX
-29ujH5CWeAlB0ivBUcBxQXk/wIjcmQwmIow9buazeKqWt0Dg4//RnMQzcXMv9mWa
-H+ADj/V6mxi5jjZsMihOyeHUqqJCsMMbwpObEizOdot7eVbW/LZsa8PTJ/gcF71T
-YFXmGW6/sF4eRSc6bmjLnTIfaN0h7ABZ5RrI7znAgG9oz93xy9D39nHjMgpA09p5
-9dIBwMPaMngCP90VojFMeU3krzCp/1Hk82KdpvJ6gqn3Ob/47QBsDYmIjUQ6V6Sl
-7grx9/zVV2uZ6lHmrNIvFRt10o90ogJ6z4FBMjz8eWMkUKNdYtxUFbTEpCcbIOhs
-3nvvYBAKCF/UfRinVRs8ytHUGuk1r6pZfQ7Bd6Qtg3nBK7QA2gBKRst43ce7EiRU
-rG8JRM107pBXniYRUaewQ6JW3GZfuchBmRHfC3P7r79ndCM2Lk4=
-=tqTu
------END PGP SIGNATURE-----
-
---nextPart1934360.tdWV9SEqCh--
-
-
-
+--- l/include/linux/ns_common.h
++++ n/include/linux/ns_common.h
+@@ -38,7 +38,7 @@ extern const struct proc_ns_operations t
+ extern const struct proc_ns_operations timens_for_children_operations;
+ 
+ struct ns_common {
+-	u32 ns_type;
++	u32 ns_type, gi;
+ 	struct dentry *stashed;
+ 	const struct proc_ns_operations *ops;
+ 	unsigned int inum;
+--- l/kernel/nscommon.c
++++ n/kernel/nscommon.c
+@@ -57,6 +57,7 @@ int __ns_common_init(struct ns_common *n
+ 	ns->ops = ops;
+ 	ns->ns_id = 0;
+ 	ns->ns_type = ns_type;
++	ns->gi = 0;
+ 	RB_CLEAR_NODE(&ns->ns_tree_node);
+ 	INIT_LIST_HEAD(&ns->ns_list_node);
+ 
+@@ -66,6 +67,7 @@ int __ns_common_init(struct ns_common *n
+ 
+ 	if (inum) {
+ 		ns->inum = inum;
++		ns->gi++;
+ 		return 0;
+ 	}
+ 	return proc_alloc_inum(&ns->inum);
+@@ -73,5 +75,7 @@ int __ns_common_init(struct ns_common *n
+ 
+ void __ns_common_free(struct ns_common *ns)
+ {
++	if (ns->gi)
++		return;
+ 	proc_free_inum(ns->inum);
+ }
+--
 
