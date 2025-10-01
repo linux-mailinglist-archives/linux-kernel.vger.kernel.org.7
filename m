@@ -1,126 +1,203 @@
-Return-Path: <linux-kernel+bounces-838613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48F9BBAFBE0
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 10:54:35 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D32FBAFBE3
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 10:54:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E14AD19402FD
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 08:54:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 245F34E254A
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 08:54:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71F2A27F16A;
-	Wed,  1 Oct 2025 08:54:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFBD12D8DA3;
+	Wed,  1 Oct 2025 08:54:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QBRY0eU8"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LTB1GgTx"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 865323594A
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 08:54:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51E432D73A2
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 08:54:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759308867; cv=none; b=lWRn2CilbUQiBAq1IfZYH0Y8l8UTOXT3RXDm8no39fB1RxViF8Awv8H7qnGw3pJZRo/tRWOt7nfvk/jA5WnO9bmMV5Gphb8WESbQ7WrQdy6eRF4/WzHXJ2yjvrp/5QmvZiCqN116bPSCeSN+zaTxMAV8ptXqru4KW4tGy2vTBLE=
+	t=1759308870; cv=none; b=WPWH1BxnklXdFI1IgmhdesTyTz6qyGGmaFt/XGKCDD53SK2UKQrf88/MWhbK/SIoczTA1/2NHx0/PD2fyYGf34m437Aw3J9jaHxs9XWR7MQR+3sYI6fvosyoSvRuOIdInv5adK67FiULGEp92QbFy2WGef3aeNcXbylMgECHmAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759308867; c=relaxed/simple;
-	bh=sLy1r4an6UfTJPaHkyT9U6fPTve0eRlEi9oZ3JIBjEQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LgcYnVOUzUtYs6ymraYY5oCULaBoUWkmL1luXV6qxLPvoSPkYL96oXPhKuEZ7mnJ7CE1L8iO9spW0F9FSBtWzu91k7pGqLUMmVywddUMWP6gojSdbdn6cNzvXtOkwmeaq8zc/JUEuBRFMZ+KZskPGYau91kyhjYsPB4k1OtT2VA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QBRY0eU8; arc=none smtp.client-ip=209.85.216.46
+	s=arc-20240116; t=1759308870; c=relaxed/simple;
+	bh=dyMe49zFA170p47KCI/KSAWPXyxFOWx7NrxWJCfANO0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZSVlg9QZlUz3AlXwsTy1S88Tm1ey2/Da1yNU03r9H8d1XTPAnhuaaFs3w75Ci8q1fE/e7HC3dkjeLKufprwpMwMM1RwrOsKJ+J87mNLzxLBL5IR5eB5Sfd71s+05K2xwIHFCkxukxT62YgvTEm4wVznkZvkZLGHWT9a/+M2gcAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LTB1GgTx; arc=none smtp.client-ip=209.85.208.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-3304dd2f119so5375865a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 01:54:26 -0700 (PDT)
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-6364eb32535so5217969a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 01:54:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20230601; t=1759308866; x=1759913666; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=sLy1r4an6UfTJPaHkyT9U6fPTve0eRlEi9oZ3JIBjEQ=;
-        b=QBRY0eU8r1XfWAXMKmj0Fx3Q1MYTQYPluYFWuwrfrLBjECvHfP6SpxosiN85WViT4H
-         KNVtdzge5K4q/are8hSQFQt+FAVbhSovreAYW8J5sTGBqqGvy93Y8lNWJQ1uDJR9abv+
-         6peMX4A9tkUFripY27Fehg8wB4iRDjj515UO3c+PmhrOK6GnrI5+BPsfnQJKbD+VuV1K
-         IxEOtS2eQygaAkuTEUCFEhZVxe+EfZhRcbV+KxqamuR07JYM7FuKdAAaib1GRIJQo+yw
-         y8k3+ZF3DjsdnfKg3m18KaZ0F58B6Ja/SwYcjFCOlrVgzlX2ou2XtZtGboiHgGUwMOwI
-         OUmQ==
+        bh=4jq+NwjNX43C8IcFtydh0hsU++MGHu2pSQ+/Nx3+Uws=;
+        b=LTB1GgTxuAVT5B3Ut3Vcdzi7f4l1Gadx+Gu5TSMgOVh856Wv7MCU+YT44Jhb+qljpw
+         /2wxXltpCoO9AF5ofaywLE9BIqWdvUCmKTDXDMvQFyKz6aG93IcMrMlOdgsQ3HivxqWh
+         WV0TFkazxtV5gh77t9QeIHcuoU88pKrH+ejkDWZUS0rQgQLNL1Wpi+L9Gj41S+8YA0MM
+         zXLuYogiP0vcJcia5gjsnxypuUpIX57wsdIEAUGgNybahtcU3oNJd/9Lsmn3KbraR3HJ
+         VtnsmcNKxnTZu663omVh7fcoWtQeYR3K2AEXw73szlRcTxerzxjLY92FG4+w+uVK7sHh
+         tNkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1759308866; x=1759913666;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sLy1r4an6UfTJPaHkyT9U6fPTve0eRlEi9oZ3JIBjEQ=;
-        b=fRlB4gBg/lLvtOk6138848pZGN904nsfcxBn2hpzvV8a7bez2O4MYIGhUXGaYAgB1M
-         kZ0R2NVeMBXEAuyAvskni5boViwRsDuzC9C7wumoCbZI8pqa46nK4L+UT/ZE2en8x1W2
-         /FBaVltBc05kLnISSB78CgrPrVCMYx3kM5KjAMERj5HUXgf4ldRZ9LOdatk5v2by71vm
-         gsquVBSaxEmSM1na9zcqiJlXIMyObCsWiHb5q5vA2XkwnSAZ8kCUm/mwJbYHaZ+2b+YZ
-         I+B5Kr+104JSBkLx5iJvsglbOyEO2MC2/z6zrUf6M8KcRHrHz/yC+2uDXCULuwTThYcF
-         Empg==
-X-Forwarded-Encrypted: i=1; AJvYcCU0PzHqc5hecV9GkaAnOBAqXDn4/BnDg1ITloEMGnMqdmwYyQyqHlYf0TFNgSROEE9jeQD4OA+pUYk9hiY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykNy34wNXjznlS7wBUF1tSBfmgXCLMocJzjw1qyyBAoiNXAl/d
-	YIZiikF+FGYgWDdvVewpKrIhwV7cUlG/OgCP8v2jt1gEelBHH0QHm2RWENQnf+RgpV/wEPrTkaB
-	frwy0MqYG53FIu5WzrXi3eDs9oOPbSPg=
-X-Gm-Gg: ASbGncsswPXd0J26nCeEt0Pk92mmL8Li79NFeRbOmvQTBoi5dYadYFCzvRSorrKvi1D
-	YLpu9mlyVI26979LV6BpaT64HXst6pjoEDe+PGs/toWqe32gkCtZtUz/hYDYFpgyn6WhqJDP3gp
-	Mnjz0p1a1Ehe9eIsgd1putMLYNQvfdXBd2qGtFRjkah+GE5O3q52Usi40iNW/OrddUxAgsZUOQa
-	C6FP2Y1vHu1zVUh8BdOZkrNSm9tt7DnnsO2AR2WPCup5FY8sSEbn4tYXCyJA84a3A==
-X-Google-Smtp-Source: AGHT+IFkHVvzIlBnrVeHVBtBctgazh/MCfsQv0mLNCnxfXKJW1PT7QAVMcEH+xX6FJvFAD4mRgwQJtqqKlzNOAz6QnA=
-X-Received: by 2002:a17:90b:4d0a:b0:330:84dc:d11b with SMTP id
- 98e67ed59e1d1-339a6f36367mr2940411a91.18.1759308865859; Wed, 01 Oct 2025
- 01:54:25 -0700 (PDT)
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=4jq+NwjNX43C8IcFtydh0hsU++MGHu2pSQ+/Nx3+Uws=;
+        b=ECg2I/uREv+1zHpFfq2ToYQskU4uGDslSA+VxyEID18IPwr9Hvqqbuo9fsZWEtYGQj
+         LIKE7RqhL+f28VEK8d/C01gNyWQf8Nz5pQnhotrisXZnjHz7rLOBZv3xNm1XE15y9IQJ
+         NGz5MrTLlUeyONYQt3ubgXuxun9yP2tduH6QaK4matNx+188HMAppLrrYYaej5iv9TJR
+         P8JgWOTgM7YZ2N5u+Tm+7KP6k0HAqL63raJ5apQgsGZUmx51AxN4pRHuep4LA5Zyjuw0
+         Abs0tW5fqIQMp9PpfEq7gm0Thza2U1KQsmddFVN2TsBhXKgpaSC9QDaD/ci5VZsaOwv8
+         S2sA==
+X-Forwarded-Encrypted: i=1; AJvYcCXuukhpEaOW2IKCGl0G+R1DqDBdcDbiHbYfxLa0nXJMnNADKKLOvWBvMQ09ukZS+PTt70LoSqI+ut1g+Wo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznQIMo+enYDz/TDnUnjvEpMgHyGyN4WtWtOi/WBrt/CBeWPQVN
+	J1ggBbv7Bx5fVMGNTWA/LXm1XmSof0tIuClKv8SJX+kqjPbW+F+zymnZ
+X-Gm-Gg: ASbGncvMd4cCaIAwnORnoI3KTLGulskEdcX7o/MZkNKp44q84sXLq/w928fC4VHRBIM
+	SgaiA3wkLKEaynlnvohXN6kMwfdqB8+x7lEeSNV5vB/WteRvbt03NMpMErOesZaKJ21C+EeS+3M
+	fxY8LkGMOSGBAtLd7N1+KARepvUf3/W+Q2l4ZdTRrDkv8jX0jYO3mcpZUJ0O0VvJhoJXa4x43pl
+	ddZzz/xPI/8vHVRmhnzuqed55wr+k6H7AHxAv6ifzYcrn6AdeoqBryEtWcE7E0JUZW9Y3pZCJuu
+	0Ptocoj2bMXogPYuD2RU1SoT4y7ZWfXNvowMW6rLDwrdEuF4QFgjdiqUwsTK7gBUWCBMPAIWSWE
+	Yuz2XDHCVb2TdgeVe0XHmQZNoOSs2sCHyTefOXmEjKkaS+/qHpQ==
+X-Google-Smtp-Source: AGHT+IEXQ1igMBNuJPp8r1+b1vCKJaIsvxsCFMXTwEOKWVqNJRrL3GS3CWPQfw5QrY0+nNdCEPtJXQ==
+X-Received: by 2002:a17:907:9449:b0:b3b:5fe6:577a with SMTP id a640c23a62f3a-b46e24366cfmr319920566b.8.1759308866250;
+        Wed, 01 Oct 2025 01:54:26 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b40f9d0a652sm457947366b.33.2025.10.01.01.54.25
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 01 Oct 2025 01:54:25 -0700 (PDT)
+Date: Wed, 1 Oct 2025 08:54:25 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: Lance Yang <lance.yang@linux.dev>
+Cc: akpm@linux-foundation.org, david@redhat.com, lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com, baohua@kernel.org,
+	baolin.wang@linux.alibaba.com, dev.jain@arm.com, hughd@google.com,
+	ioworker0@gmail.com, kirill@shutemov.name,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	mpenttil@redhat.com, npache@redhat.com, ryan.roberts@arm.com,
+	ziy@nvidia.com, richard.weiyang@gmail.com
+Subject: Re: [PATCH mm-new v2 1/1] mm/khugepaged: abort collapse scan on
+ non-swap entries
+Message-ID: <20251001085425.5iq2mgfom6sqkbbx@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20251001032251.85888-1-lance.yang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250917074812.4042797-1-kevin.tung.openbmc@gmail.com>
- <9bb9929a-8130-48da-983e-2901a7c3da36@lunn.ch> <CABh9gBew1=hbJvg1Mhg5dE7Lr_Z442_kbBX6zTs_6_C2NRyLbw@mail.gmail.com>
- <7e6f568da28d7a63738b6ed22b33db3df4c478c9.camel@codeconstruct.com.au>
- <CABh9gBcoWbXurPo0f9U9+gz8k6gttUvj=NMMDVfgjo5dgaTLSA@mail.gmail.com>
- <CAL_Jsq+zBK1CBJX0XcaqaYeOPUhoRE-nMeYvkTNwQovJ+dakGg@mail.gmail.com> <090d0e196fd0f814b5385f2c6e47e5196f0be649.camel@codeconstruct.com.au>
-In-Reply-To: <090d0e196fd0f814b5385f2c6e47e5196f0be649.camel@codeconstruct.com.au>
-From: Kevin Tung <kevin.tung.openbmc@gmail.com>
-Date: Wed, 1 Oct 2025 16:54:14 +0800
-X-Gm-Features: AS18NWDyzaFR3D4tmBrIV6Dx9lyGm72vUyiAB7CZStN-eawEDelhMt9miv_jN1k
-Message-ID: <CABh9gBcaUbwR9ScT_xSYo3q6FHZaMyXYewByPQoReUp1pktcEQ@mail.gmail.com>
-Subject: Re: [PATCH v1 0/2] Add Meta (Facebook) Yosemite5 BMC (AST2600)
-To: Andrew Jeffery <andrew@codeconstruct.com.au>
-Cc: Rob Herring <robh@kernel.org>, Andrew Lunn <andrew@lunn.ch>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251001032251.85888-1-lance.yang@linux.dev>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-On Thu, Sep 25, 2025 at 8:16=E2=80=AFAM Andrew Jeffery
-<andrew@codeconstruct.com.au> wrote:
+On Wed, Oct 01, 2025 at 11:22:51AM +0800, Lance Yang wrote:
+>From: Lance Yang <lance.yang@linux.dev>
 >
-> Hi Kevin,
+>Currently, special non-swap entries (like migration, hwpoison, or PTE
+>markers) are not caught early in hpage_collapse_scan_pmd(), leading to
+>failures deep in the swap-in logic.
 >
-> On Wed, 2025-09-24 at 08:34 -0500, Rob Herring wrote:
-> > On Wed, Sep 24, 2025 at 8:05=E2=80=AFAM Kevin Tung <kevin.tung.openbmc@=
-gmail.com> wrote:
-> > > I also checked the work with `make CHECK_DTBS=3Dy
-> > > aspeed/aspeed-bmc-facebook- yosemite5.dtb`,
-> > > and the warnings that appear are not related to these patches.
-> >
-> > Um, they are related because they are warnings for *your* platform.
-> > You don't care that there are warnings for your platform?
+>hpage_collapse_scan_pmd()
+> `- collapse_huge_page()
+>     `- __collapse_huge_page_swapin() -> fails!
 >
-> Which is to say, by contributing a DTS that relies on the ASPEED DTSIs
-> you're now part of the community of people interested in maintaining
-> support for ASPEED SoCs in the kernel, and it will be appreciated if
-> you could help improve what we have.
+>As David suggested[1], this patch skips any such non-swap entries
+>early. If any one is found, the scan is aborted immediately with the
+>SCAN_PTE_NON_PRESENT result, as Lorenzo suggested[2], avoiding wasted
+>work.
 >
-> If you could pick a warning or two from the DTSIs and contribute
-> changes to address them that'd be great, as this improves the situation
-> for everyone.
+>[1] https://lore.kernel.org/linux-mm/7840f68e-7580-42cb-a7c8-1ba64fd6df69@redhat.com
+>[2] https://lore.kernel.org/linux-mm/7df49fe7-c6b7-426a-8680-dcd55219c8bd@lucifer.local
 >
-> Andrew
+>Suggested-by: David Hildenbrand <david@redhat.com>
+>Suggested-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+>Signed-off-by: Lance Yang <lance.yang@linux.dev>
+>---
+>v1 -> v2:
+> - Skip all non-present entries except swap entries (per David) thanks!
+> - https://lore.kernel.org/linux-mm/20250924100207.28332-1-lance.yang@linux.dev/
+>
+> mm/khugepaged.c | 32 ++++++++++++++++++--------------
+> 1 file changed, 18 insertions(+), 14 deletions(-)
+>
+>diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+>index 7ab2d1a42df3..d0957648db19 100644
+>--- a/mm/khugepaged.c
+>+++ b/mm/khugepaged.c
+>@@ -1284,7 +1284,23 @@ static int hpage_collapse_scan_pmd(struct mm_struct *mm,
+> 	for (addr = start_addr, _pte = pte; _pte < pte + HPAGE_PMD_NR;
+> 	     _pte++, addr += PAGE_SIZE) {
+> 		pte_t pteval = ptep_get(_pte);
+>-		if (is_swap_pte(pteval)) {
 
-Sure, I will look into contributing a patch to address some ASPEED
-DTSI warnings and improve the overall situation.
+It looks is_swap_pte() is mis-leading?
+
+>+		if (pte_none(pteval) || is_zero_pfn(pte_pfn(pteval))) {
+>+			++none_or_zero;
+>+			if (!userfaultfd_armed(vma) &&
+>+			    (!cc->is_khugepaged ||
+>+			     none_or_zero <= khugepaged_max_ptes_none)) {
+>+				continue;
+>+			} else {
+>+				result = SCAN_EXCEED_NONE_PTE;
+>+				count_vm_event(THP_SCAN_EXCEED_NONE_PTE);
+>+				goto out_unmap;
+>+			}
+>+		} else if (!pte_present(pteval)) {
+>+			if (non_swap_entry(pte_to_swp_entry(pteval))) {
+>+				result = SCAN_PTE_NON_PRESENT;
+>+				goto out_unmap;
+>+			}
+>+
+> 			++unmapped;
+> 			if (!cc->is_khugepaged ||
+> 			    unmapped <= khugepaged_max_ptes_swap) {
+>@@ -1293,7 +1309,7 @@ static int hpage_collapse_scan_pmd(struct mm_struct *mm,
+> 				 * enabled swap entries.  Please see
+> 				 * comment below for pte_uffd_wp().
+> 				 */
+>-				if (pte_swp_uffd_wp_any(pteval)) {
+>+				if (pte_swp_uffd_wp(pteval)) {
+
+I am not sure why we want to change this. There is no description in the
+change log.
+
+Would you mind giving some hint on this?
+
+> 					result = SCAN_PTE_UFFD_WP;
+> 					goto out_unmap;
+> 				}
+>@@ -1304,18 +1320,6 @@ static int hpage_collapse_scan_pmd(struct mm_struct *mm,
+> 				goto out_unmap;
+> 			}
+> 		}
+>-		if (pte_none(pteval) || is_zero_pfn(pte_pfn(pteval))) {
+>-			++none_or_zero;
+>-			if (!userfaultfd_armed(vma) &&
+>-			    (!cc->is_khugepaged ||
+>-			     none_or_zero <= khugepaged_max_ptes_none)) {
+>-				continue;
+>-			} else {
+>-				result = SCAN_EXCEED_NONE_PTE;
+>-				count_vm_event(THP_SCAN_EXCEED_NONE_PTE);
+>-				goto out_unmap;
+>-			}
+>-		}
+> 		if (pte_uffd_wp(pteval)) {
+> 			/*
+> 			 * Don't collapse the page if any of the small
+>-- 
+>2.49.0
+
+-- 
+Wei Yang
+Help you, Help me
 
