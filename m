@@ -1,179 +1,227 @@
-Return-Path: <linux-kernel+bounces-839440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 457F7BB19EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 21:35:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 24428BB19F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 21:35:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 063EA16EF38
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 19:34:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC82716A613
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 19:35:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15B64266B52;
-	Wed,  1 Oct 2025 19:34:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A46E22D46A1;
+	Wed,  1 Oct 2025 19:35:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GA5zcfGZ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="rXrnIcRj"
+Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011010.outbound.protection.outlook.com [52.101.52.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B426335C7
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 19:34:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759347295; cv=none; b=A+NgsHTpdLS8XjjBTixoFlngTJxhZ3z6pYkrErRaWWjK0gfWHw+JUwuDzwDYJ6M9wr0hAvuIignFSZFSVjBAzmd4VFw9yDuKyo0r/s1iKliqKTPu3KC9mnVxUyYbL0LRZeoOmcMo85G5C2dFjmZY+Vva3X6GHn+rpLzLW6ZQFEQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759347295; c=relaxed/simple;
-	bh=h6GNrChgMTR7gyFqAMhCc0PD7j1Ta7qW85x6703GMWM=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=fhCAseZRSdpFMMuSLN/sCkUJgmG8q6FJTO6RrSne51fLpav5L7cNbH1YqlxIZaWHzaJZHHLGZotjvZeArNi+nnMbFXiSPcyyqOk0Xl/AXJqc18y/YQ3EUECSO80ldzffM1RVhG/RJ2XiXHB5pnrga6sftmTJPo0mBvV3Y02dHL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GA5zcfGZ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759347292;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Y+8FgvXBnLoEeKHRLgt+wllaRxRl7E+rnlsq3VoP2Ng=;
-	b=GA5zcfGZMQoQHXKmth05AcWjaAz1OkL6T4Te6/TEWIlTOD6d7nZ94uKBh2v6cxv2ZsiJHn
-	1jzsD35kUdCFKq8wC6GkjghCIYXLh9m0CH9rXQCMnHB5P3g/RIJLsmbcJXEI0j7g4t1r2I
-	uKA5hMXy3GP5jT1Za/gNW1B7x4r3a4I=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-168-_Iv_vFw9PSGEdcIpYiM6jA-1; Wed, 01 Oct 2025 15:34:51 -0400
-X-MC-Unique: _Iv_vFw9PSGEdcIpYiM6jA-1
-X-Mimecast-MFC-AGG-ID: _Iv_vFw9PSGEdcIpYiM6jA_1759347291
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-79538b281cdso3629166d6.0
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 12:34:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759347291; x=1759952091;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y+8FgvXBnLoEeKHRLgt+wllaRxRl7E+rnlsq3VoP2Ng=;
-        b=oSOihTzdxbVzavSasHeye1qVNHI+tZiArdVoTX14pv/CerD6v4rTYMg/uXXZZaM5Pj
-         8dPKFEmt9XJwkJCOrxIDGyMMWNlYVFISG2wkdLY8odi1HjCIijM8MXCfDn1XnXP7IpM0
-         XzoewvPv3OnhrVOnOOx7UT+VSn5JfURWwl4J74cTloz+5e9GOpH6aBLLK+/jynE2XQdG
-         KZuQT4q2M7PVi9vDuOJElwn9OMsz7uO0EGJmeU+ixekiHdaMBMTUSxsBYmZvEiIKA/IZ
-         9HivGxBRKPn+VrJKFdvQxZfHdvTcX7BL84rxcMZDhe+8h9RPAL7IPCBqdZSYawiQbU/n
-         MjJg==
-X-Forwarded-Encrypted: i=1; AJvYcCX6hUMWIuoYnmYXGatFSXzoccKIEw9cq963skaANyNUYiqU6d0J0OSXPNQoh75CIq4sz61eTDMrGSM+XjE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzS7u/aqGc/sGv8TXqckpJWPRDhnIKql7EhAtLtmjAAo7qmUREY
-	bBuXNEBKpjUqMmXr5+/vJZHRhi08rZqxJPVoLF+hT+njKTmMN2rib899LQJ7lCF1NHODzVR6ZLn
-	Y/P9bHpD8spJkpjKpLQddGlLtsenJ+a2IwH2sXaWDYslFY11oVk/K/6boEKE/ISACUQ==
-X-Gm-Gg: ASbGnctD1XCZ3su4RcggUoIK/QnySEzpcHHheAOCzoCrPf6mh79SyO5+RZt9GDen9Jg
-	R4RUP8BaQSzab9/N/lLz+LfP80HOrN/wTosAEeAdLrleiqlFVRniWXgn9VqFRCdKgTvjP2ZRiqY
-	FoyPL7C6rjZ6i29fAX7sLCXBYs3OpQyvl9xKLXohDkUOn9yNLDfDFH0tj5sUh48lsZseHqGltLt
-	uJX6BIE9lV9zS4L5Q0F/llXxVlnjcg6KJO+YW9Wa/UJc5b5fUiMUOHJsjeFaxYDWKnSYvb7nT4u
-	J+C5GjiULmqG4g9mplb+nOO6xjMxizKzftjq5jHpTHme3dRn2ArwZF0t8FXRcQvjuoWMJry+Evw
-	QaSeUbGO5lNc1wLPz
-X-Received: by 2002:a05:6214:f68:b0:753:c0ea:b052 with SMTP id 6a1803df08f44-878bb72f458mr15352446d6.32.1759347290839;
-        Wed, 01 Oct 2025 12:34:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFEjAw1wkF+BQ1tjnR3dvHgepF7S04JY0vqjMEFmKJr+MSZqbKHECq4ivelkqU0wCAxTMR8UA==
-X-Received: by 2002:a05:6214:f68:b0:753:c0ea:b052 with SMTP id 6a1803df08f44-878bb72f458mr15352066d6.32.1759347290354;
-        Wed, 01 Oct 2025 12:34:50 -0700 (PDT)
-Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-878bb4469bcsm4944776d6.16.2025.10.01.12.34.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 01 Oct 2025 12:34:49 -0700 (PDT)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <94086b14-37c9-40a7-a474-52887bf17138@redhat.com>
-Date: Wed, 1 Oct 2025 15:34:49 -0400
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1739F17A305;
+	Wed,  1 Oct 2025 19:35:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759347344; cv=fail; b=a3UWfSeq98X8KSQJm+mzDPSJXiGR6AyFQo0el9JVZPdoDnPCGNDohNwbY1jjRIkZ20pCf5oeh+42duI7rVOdjZq4cukI1pBdDMy7zjHqvbvB4Ma8w2TCSR13sFFpj0kc7joczXMiakPt1i7OXeihoown+nGuy157NDw5mqQu06A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759347344; c=relaxed/simple;
+	bh=zzHsguRGGgWB/OM6dCl18fEWJiRdSehaoz2iObVWmHU=;
+	h=Date:From:To:Cc:Subject:Message-ID:Content-Type:
+	 Content-Disposition:MIME-Version; b=Ven0LsRuFOxvg64HOJ5c9VZrza+4Snia8S9ggJXWbzhry/lcv62BKwfHM+oV2xDS1ok1g8urNbGT/QH4zOhNw1AHflL0B7xiqVryyRL1tEaYlMe3fw+L+wQfscDVm8lbW2ZDzYBFfr1EWT+x6zpMUpBxOH9SQ0epX4VflnNmCJg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=rXrnIcRj; arc=fail smtp.client-ip=52.101.52.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VPTQRVVy76ib8fI3AsRcFEHpv6ymb/pgwzb2IIPfAatihiMFHWLFYVB9mhEfC+ZscT0O24/deBGwtzdBIg+yHKlP93puz+jLo6Z0y4p6fKnzK74NiDPutJ81vFLNdMC5yzNZHDDAIenWBtxBWGh1EELL/YN/hyGRDOBhr9Y1FAaQpJuLU2gjbpoAlUpijqkgz/UMTX3v1VyYVS7oaVPQfdJKD53bE53AGUypYCz/YoKM9BxSKn3mG86zSKMmm/54AbEbXUvYhNnkwfu44mXqgEd18D8qBYlL2CHWqCmA7KZsFJqth1muiOJmUvZ3leYwtCnKOJxmSbO4SsavgDABBQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=honiNsCgK8EWXgMa0xrBhPgfkLH+0qz/x2DdgpkXoC8=;
+ b=yxTvpc0Y+GOkFIAg3DQM7/zxM5TdmQytNvrRV3Xw67qn88PXEiFURAhhQSllXBbnGGQxJxl2+bCwS5ykPWPpeuWjZbtMHNkPyKsNsGk30kf64TYlG3chjQEBX4CU375t7ZxTHceJ05OTS6gLnsaHT1v67Jm4E8P8kAXQPggRMOoEiQH7ZTku+REdQdr2sAEDf4tbgYtS4cGqiwHrQujtF1fnJnLCS6fGFoE/OksyyGd1n7lJxNDbmWjX8gBBz9tRtR28VNjOXkeM34RDl8Ac020DDkEZ1F6AM4OzpY4347TDfkEmJd0F4us5oNkBCvoC1TZfJSGcHShTgMKO7OVgDw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=honiNsCgK8EWXgMa0xrBhPgfkLH+0qz/x2DdgpkXoC8=;
+ b=rXrnIcRjd+/OCNgKNp7Wcc9x7n3KzuSZ3enHpolElUOe9hvam3QuJAlPyH2NGewhZdNbXX+Eh+L68/sOouu1WPvQjwgLSkUkaIGFXJkYwqWjQapZOO+vIhfpOoT9uwg6Lgp1DImaIDDWO/DiXQdxD9e2nzPcH8B8YxR0RXeejvFitMBWJO+kQWPJn4GZsfAH/o34QZlb6bOcRYYI0i3HLcdrAjMQuq/O1AHb8Cxa83A1VCzdcSxs/KMiVDBxU/4cRPZUusIZs+6KfYp4gjYl8cpVlX3lPxaAi1JMSPUMcnvitrR86hm3vJQtYIU3RwhNFemsFKfdIKtUoVaPXh4zmw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from PH7PR12MB5757.namprd12.prod.outlook.com (2603:10b6:510:1d0::13)
+ by PH0PR12MB5645.namprd12.prod.outlook.com (2603:10b6:510:140::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.17; Wed, 1 Oct
+ 2025 19:35:36 +0000
+Received: from PH7PR12MB5757.namprd12.prod.outlook.com
+ ([fe80::f012:300c:6bf4:7632]) by PH7PR12MB5757.namprd12.prod.outlook.com
+ ([fe80::f012:300c:6bf4:7632%2]) with mapi id 15.20.9160.015; Wed, 1 Oct 2025
+ 19:35:36 +0000
+Date: Wed, 1 Oct 2025 16:35:34 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-rdma@vger.kernel.org, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Dave Jiang <dave.jiang@intel.com>,
+	Saeed Mahameed <saeedm@nvidia.com>
+Subject: [GIT PULL] Please pull FWCTL subsystem changes
+Message-ID: <20251001193534.GA3227444@nvidia.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="vlZd6WAu1ApJJAhr"
+Content-Disposition: inline
+X-ClientProxiedBy: BY1P220CA0002.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:a03:59d::6) To PH7PR12MB5757.namprd12.prod.outlook.com
+ (2603:10b6:510:1d0::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] documentation: seqlock: fix the wrong documentation
- of read_seqbegin_or_lock/need_seqretry
-To: Waiman Long <llong@redhat.com>, Oleg Nesterov <oleg@redhat.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>, David Howells <dhowells@redhat.com>,
- Ingo Molnar <mingo@redhat.com>, Li RongQing <lirongqing@baidu.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Peter Zijlstra <peterz@infradead.org>, Will Deacon <will@kernel.org>,
- linux-kernel@vger.kernel.org
-References: <20250928161953.GA3112@redhat.com>
- <20250928162029.GA3121@redhat.com>
- <b83e9c1d-2623-4abf-8c63-1110a0b92d2e@redhat.com>
- <20251001190625.GA32506@redhat.com>
- <339a4e0b-f323-4d48-8a1a-b7459aec53a2@redhat.com>
-Content-Language: en-US
-In-Reply-To: <339a4e0b-f323-4d48-8a1a-b7459aec53a2@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5757:EE_|PH0PR12MB5645:EE_
+X-MS-Office365-Filtering-Correlation-Id: c0a2b775-5221-4af1-4bb8-08de0121b1ec
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?SCkN7L/JajO7dHUAAPMjKrUc+V5yUF2JBvTgg25TlG7D7DRB1004FTY4LxXg?=
+ =?us-ascii?Q?/qUItxBaDW6PrYFOT8scEsDmQ1Oue1k6HgIMotFEz4a1bBXQo/Om8TwhX/0H?=
+ =?us-ascii?Q?69c2lfHp9CkOzfPqeDqV1cnmzCuYx/OCa6SLjCX8f5EOxsatFe8swdBoboUC?=
+ =?us-ascii?Q?5ENmhWe6FHTxC22YNXDd9FhTSOxCCyAZ+cCGorMY/dV6G2kG/jgyVQfMXBEB?=
+ =?us-ascii?Q?++HpQOT0OdFSYw95fYNtKUiNsZ84yxFXCGYXytLSjV6d0xzNtMjoEfrPUvvG?=
+ =?us-ascii?Q?9rfxg6yrMbbq2WDyN/dCayTsyA1UqOVlAa0/Gnb/v18eVBpEyYGKRCf2lc+2?=
+ =?us-ascii?Q?C+fEVetcI43cL/2S94ARIMS0Y7u6o7TL/bHdNNlQne1zs2JtKMucRQCMNGdh?=
+ =?us-ascii?Q?qrFN9lWTfIr0FXtK0CcNKGPRVrGnzPmctesCPteNENs2UXp6Nv7KLYvduQFg?=
+ =?us-ascii?Q?6E6Y8XoYX852fGR9h6y/Nx32gb0JBdNO02GjfksLmZMg9gpdMleVMt2JQGrg?=
+ =?us-ascii?Q?px8cmOz8yIXhnSkiYAOWDzKQNyMLDjOC8CBQ2ov45lq3Js6nht9gyEhYGLsp?=
+ =?us-ascii?Q?b6nJwy6bJAJEB62/gqO6us1myxsxXaPXwfjH4VE8dzLe/J/ZwuYGdrpT8fZe?=
+ =?us-ascii?Q?uJWHjgiO8q+4jztmQiGc/2ntMsLoZ4rmGc2hYZTNBvI/+n6j/PfmeTqt30hS?=
+ =?us-ascii?Q?FVDEvWEq/lpPXVnfe+rcRvzpf3/+awfQoanLaic5tkf9HHcozxNFcDUxpjhU?=
+ =?us-ascii?Q?su8QoXscCrekPwuP2GOpOTAZmWUlxvohPVQHQTnb9QhpoKN62vDC8NsvxHMU?=
+ =?us-ascii?Q?zn83k4KhEOTmogwyt8kd7wlnMrRzCXjnkwjNwemrI6bxa8yuj9pCqUpimtJk?=
+ =?us-ascii?Q?P3t1ysyWRmQQ8IB9iDcxkJa+T6UYjBB09MqloVzvPSLvNgx+yIbHDwmAdbbA?=
+ =?us-ascii?Q?/oaYe3CgyH2BH2dCr4HqK/FA8JlfmS0iQLeAfWJBVc5aFVEM0ef10FwKJOlz?=
+ =?us-ascii?Q?SBwludqMlE9fSZjIXIT2I5rQRR0uLFmNKnRLtmaBmTW0eyIe3j8zXQ6GqNrP?=
+ =?us-ascii?Q?5KQXJNPfnfIdWsIFwRpc8Psfr761YxZwP9hFbi6yxobR3aBcMKkC3rtadbyj?=
+ =?us-ascii?Q?FnYAoiSSEg1OwI4A1UGFqDp2FQph2akI3FaCExPMweyWcLnP21ViJLvBXa1C?=
+ =?us-ascii?Q?+g2k5rqd3Het9djfe1lUpycbtqkT+XrBoAtjRalEkGusfPPrCdWcR967LYG2?=
+ =?us-ascii?Q?MWBlYfyPtMOFplforw7Uc17WHuHtQXcVKi78sGFfZT6QWyYemJwdiH+i820e?=
+ =?us-ascii?Q?WNmhJtm9K1h9o6UHqiEY4pHY4F6SXeBMTooVBS6vQDvXxgqv6mlK0ERTX7xE?=
+ =?us-ascii?Q?8GkIoIAxOv59ZPAfFFysTrL9Aez2Ab49d+XAm/kwe1vMmdE10F66R0e7+cSy?=
+ =?us-ascii?Q?/VIscQ5nlW4q2LJQaxYhmBDfZrMEKaUI?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5757.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?keqp3h04bqOcZE7E0ZMQOM7YUBSFRN4n1aI/q536tf9mN5xDXHhntTi4oXBa?=
+ =?us-ascii?Q?vlKvdSqw11unEIGm/MEIqG/f5IYea87/vFMlYT1VMi7xI9d5oesNVQW1070x?=
+ =?us-ascii?Q?N2fLuHRzz2TVL3HIEeWchGI4wTLVt2oe4c+lAhIRb0T5kOKPsmDV9f3AB1D/?=
+ =?us-ascii?Q?B0av7/xeRzCvAOmkPJw+PSzjJ4rmxsykTVFIMdsLfF0s/mXVviVk3XuTWIVg?=
+ =?us-ascii?Q?/sQ/MhIb4knn786d5NvpBB0o/l8QsqfnDG4fWld0s4tc4b+s5sw/aWnihFCx?=
+ =?us-ascii?Q?Bi17iYSNyGXDV12POa/QWhLE9fFkIafMCmHFnSTS1L2n47Xf3A1Cwuj6ciZq?=
+ =?us-ascii?Q?u5YLUZrKz1WeXrbsp8GpuiRLy0igGputZeloXuCGxR6qBpuxM6Gw0gzA6uqO?=
+ =?us-ascii?Q?iSrr8+GzmTRTuJcIFBpg0BGqgD1C9bBTmI7WSJvx3LSI3vDvnccPGPX4s7Fo?=
+ =?us-ascii?Q?+c0kzK+xiNbzudlebtAKRMahPfEE8jHBe4quZsMmSM0EY1e2yhTCJG3ebJVC?=
+ =?us-ascii?Q?2dOsX7AtZ/QOZvZ1daZJ/mzMKFzpmL6vFc1s8qZHn2Mm/M11QgFGoHjR6Muj?=
+ =?us-ascii?Q?VYkT3x6BfjMh5Pr2nOctm/LlEEuC6Qh/MPnej/9j4IZpgkXGsLpeWMsoMAFG?=
+ =?us-ascii?Q?o5kk7e1msoj2qycVpu2oQ+tjpU9EQfbnhTuavf2QC6oJF0AS0OtUhZ0Jp2Yr?=
+ =?us-ascii?Q?wrg/Ac+LWRbp2kOXpfkzIISU9XU9F7DWLY0bmlR7cMqhLlaZ5w8ZZTXlZDnZ?=
+ =?us-ascii?Q?T0bxaz4E7Wtf+yYfeOpJTiLU2ZL4J+CKLgadsKF6+MfXsAm7Hb6e1MbkGRV7?=
+ =?us-ascii?Q?mumz14ZEnrraPzFteQllgIBJtxNHe8oHWcHXbLDRZ/juKWNs7bQM6vCvUcn7?=
+ =?us-ascii?Q?dND8PylMP/zClIg6vy1fRxN1+rrEsqpvmLvigsvsanLMIkleJ1D9O44sA7BZ?=
+ =?us-ascii?Q?KzhBjT9D+gZ+Tq0So9h7y7J2go0IZPJ+gyutPuVeslG06U6q5X2mKAOcu1d0?=
+ =?us-ascii?Q?e4/qvQxhCjTcQaMBXQU96jDri3IEODtQ0kX3MwY6fS6FuNwofJ/dwPUm33I0?=
+ =?us-ascii?Q?EuyCM8EHyFe/Dlxz1V+PGbDpLykfHjYfma/OeCRmaoLEwpZw/b1F0dVCR8Ka?=
+ =?us-ascii?Q?/vBy7o7nKL8KnGwfpluDIj9Owoq/G9Oa3Z+OSFQakOY3huT64NXpzafnUk7J?=
+ =?us-ascii?Q?fHY1qlqz53s3f5prDU/rSdG+kXhdisf1ok4IxOdgJZ8ROz7QA2/0Q6jO42NE?=
+ =?us-ascii?Q?HZ7e5ixYmLvKSSV+6rsM0IXtrGazN/N9PehsSbeSUcU9xa0ln1K6HoBW85r9?=
+ =?us-ascii?Q?ELcvsE1eVhoqPr5uknm9t1w04jUB2ge3HpXT7IIXmc5o1wgbKhz1LcH2vkK+?=
+ =?us-ascii?Q?KGBMYtWaZrSVHRu24fYj2BLTbgPO6ZC/sN3r5QiRRWNknBMYpol7+gijUmZM?=
+ =?us-ascii?Q?Sd3dH2qunNz9eJywuQVK9w7H21fIF3OZpJXjVy4NnkPG5h4FMfL4gsetU0Wr?=
+ =?us-ascii?Q?3MTbn9btxABwwm1qn5pl9Fq08PiEl02Uluxh/LGZpl2NJT4mza3kZ3XwhQ6w?=
+ =?us-ascii?Q?y2VO+ENYqEmocAWMim8iuJKycy1SJwnqNfPEetAw?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c0a2b775-5221-4af1-4bb8-08de0121b1ec
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5757.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2025 19:35:36.5687
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: dyc7SKObkihj7ML2nJ6DbyNBZ+eGfuVBEXqINXE3CDNeBU1FAVy9F1H0tLOx7NLG
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB5645
 
-On 10/1/25 3:24 PM, Waiman Long wrote:
-> On 10/1/25 3:06 PM, Oleg Nesterov wrote:
->> On 10/01, Waiman Long wrote:
->>> On 9/28/25 12:20 PM, Oleg Nesterov wrote:
->>>> --- a/Documentation/locking/seqlock.rst
->>>> +++ b/Documentation/locking/seqlock.rst
->>>> @@ -218,13 +218,14 @@ Read path, three categories:
->>>>      according to a passed marker. This is used to avoid lockless 
->>>> readers
->>>>      starvation (too much retry loops) in case of a sharp spike in 
->>>> write
->>>>      activity. First, a lockless read is tried (even marker 
->>>> passed). If
->>>> -   that trial fails (odd sequence counter is returned, which is 
->>>> used as
->>>> -   the next iteration marker), the lockless read is transformed to a
->>>> -   full locking read and no retry loop is necessary::
->>>> +   that trial fails (sequence counter doesn't match), make the marker
->>>> +   odd for the next iteration, the lockless read is transformed to a
->>>> +   full locking read and no retry loop is necessary, for example::
->>>>       /* marker; even initialization */
->>>> -    int seq = 0;
->>>> +    int seq = 1;
->>>>       do {
->>>> +        seq++; /* 2 on the 1st/lockless path, otherwise odd */
->>>>           read_seqbegin_or_lock(&foo_seqlock, &seq);
->>>>           /* ... [[read-side critical section]] ... */
->>> It is kind of odd to initialize the sequence to 1 and add an sequence
->>> increment inside the loop.
->> Sure. But a) in this patch my only point is that the current 
->> documentation is
->> wrong, and b) the pseudo-code after this change becomes correct and 
->> the new
->> pattern already have the users. For example, do_io_accounting() and 
->> more.
-> Thank for letting me know, but I believe my suggested change will work 
-> with this modified loop iteration.
->>
->>> Perhaps we can do something like:
->> Perhaps. But could you please read the "RFC 2/1" thread? To me it is 
->> kind of
->> odd that the simple loops like this example have to even touch the 
->> sequence
->> counter inside the loop.
->>
->>> +static inline int need_seqretry_once(seqlock_t *lock, int *seq)
->>> +{
->>> +       int ret = !(*seq & 1) && read_seqretry(lock, *seq);
->>> +
->>> +       if (ret)
->>> +               *seq = 1;       /* Enforce locking in next iteration */
->>> +       return ret;
->>> +}
->> And this is exactly what I tried to propose in "RFC 2/1". Plus more...
->
-> I had read that. You used _xxx() suffix which I think a good choice 
-> will be to use _once() to indicate that we only want one retry.
+--vlZd6WAu1ApJJAhr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Note that with my suggested reading of the sequence count within 
-read_seqbegin_or_lock(), we may not really need this extra helper. 
-However, there is still a very slight chance that reader and writer are 
-perfectly synchronized in such a way that an even sequence number is 
-always read even though it is still increasing after each iteration. So 
-this new helper is for users that is paranoid about this rare case.
+Hi Linus,
 
-Cheers,
-Longman
+Small update for fwctl.
 
+There is a driver for broadcom ethernet on the list now that will
+likely come in the next cycle.
+
+Thanks,
+Jason
+
+The following changes since commit c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9:
+
+  Linux 6.17-rc2 (2025-08-17 15:22:10 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/fwctl/fwctl.git tags/for-linus-fwctl
+
+for you to fetch changes up to 479bec4cb39a1bfb2e5d3e3959d660f61399cad4:
+
+  pds_fwctl: Replace kzalloc + copy_from_user with memdup_user in pdsfc_fw_rpc (2025-09-22 10:33:10 -0300)
+
+----------------------------------------------------------------
+fwctl 6.17 merge window rc pull request
+
+- Fix mismtached kvalloc() kfree() on error paths
+
+- Remove NOP dev_err_probe(), shouldn't print on error paths anyhow
+
+- For mlx5 permit:
+    MLX5_CMD_OP_MODIFY_CONG_STATUS
+    MLX5_CMD_OP_QUERY_ADJACENT_FUNCTIONS_ID
+    MLX5_CMD_OP_DELEGATE_VHCA_MANAGEMENT
+    MLX5_CMD_OP_QUERY_DELEGATED_VHCA
+
+- Use memdup_user in pds
+
+----------------------------------------------------------------
+Akhilesh Patil (1):
+      fwctl/mlx5: Fix memory alloc/free in mlx5ctl_fw_rpc()
+
+Avihai Horon (1):
+      fwctl/mlx5: Allow MODIFY_CONG_STATUS command
+
+Liao Yuanhong (1):
+      pds_fwctl: Remove the use of dev_err_probe()
+
+Saeed Mahameed (1):
+      fwctl/mlx5: Add Adjacent function query commands and their scope
+
+Thorsten Blum (1):
+      pds_fwctl: Replace kzalloc + copy_from_user with memdup_user in pdsfc_fw_rpc
+
+ drivers/fwctl/mlx5/main.c |  9 ++++++++-
+ drivers/fwctl/pds/main.c  | 18 +++++-------------
+ 2 files changed, 13 insertions(+), 14 deletions(-)
+
+--vlZd6WAu1ApJJAhr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRRRCHOFoQz/8F5bUaFwuHvBreFYQUCaN2ChQAKCRCFwuHvBreF
+YcnWAP4305Gwco7bSC8AjPMzbIa0/R3pTSVsuCX4PEP40GCvvQD+OODvs35VCBRy
+3qGWAu1jMKPCsMKZlpbSUopXdAjdFA4=
+=xVlh
+-----END PGP SIGNATURE-----
+
+--vlZd6WAu1ApJJAhr--
 
