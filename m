@@ -1,165 +1,161 @@
-Return-Path: <linux-kernel+bounces-838717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 537CEBAFFFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 12:26:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CCCEBB000D
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 12:26:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C4483B7C45
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 10:26:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4570189D945
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 10:27:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E373829B8C2;
-	Wed,  1 Oct 2025 10:26:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A08582BE7D5;
+	Wed,  1 Oct 2025 10:26:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="z8JGxV7R"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="dFYnG04l"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D83B4275111
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 10:26:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ABD429D289
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 10:26:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759314379; cv=none; b=aTv0kXL85nWDFX4p8Zm3S5uzBW8VsXTGJxvCvoX0yRV90yy7NSHlSPS2eOhnw0FfDiKmg0A0vsQFExY6+GfCujjFNsK1ZFRUuGOH2F1jCXrzAh445SDg9cMWwKjTZPFMveCu0cwOOq2+WfxnIUCI+PE+u2NRVp+XO8GACELIcVw=
+	t=1759314400; cv=none; b=ByhfdKqI6N4tqfg1foD1kI1PzIgRazRWWM9ivLcFk1YdNt0uH7dv1lsZc22V7iK//LrBDOVQt1p7l7/O/RJ5Pu4AjwCBmskm/EYkgsPl9vj/ZWSvc2ZA2qEGtFIyRD7SfCJKdGZCzgivttejd/72X8AvvbCLXSqfaZcUDCR1NPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759314379; c=relaxed/simple;
-	bh=8yD0KyHjri3QH9RK4HyNaJiWhDXUozznQkpMAzjO4ug=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=p7+EZiVzIOVZe4n9VeqfzHe+bpEwRpveJzqDKn6OiuM6AU1588PNfB0ua8kSm9bJ6gvYu42PHLef5AyarqEfMYfwx4GnDddlMFO5xffcH1zXbhnBepiVRdgjW/hlGieehtho1zLxrseHGTTvdWPsAqa2iZYjihWVinnA/k74E6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=z8JGxV7R; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-272ed8c106eso46231785ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 03:26:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759314377; x=1759919177; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RSeamtURp7luZ5+zPShFxKdfm9ffQoU6mLL1dQ5PHbg=;
-        b=z8JGxV7ROEj53f+XZfywA/QOxcSWh8pF1moLMI99MnD/BvI3x3oVTZ1UQyGlDqz19L
-         uFn7P+5VAjB8A0xe6sX4dRuHyiYFXzQ4GGpq6Nozbren5oxTjS9aDMxfoZbUSMItES4W
-         vnJxvgh2IbPJ8QsVrQXona0CJqIumwkx13Xd09mMlEztVDuf+wrO9oL3d+ySvpE2rPmg
-         DbGzUBNmsPWF31jCXfrhfbyICou8eF1H0PZC27Mfj82TzVfaUdP7W9SAcWs0p5YWhlrH
-         vjQD5CMWtpM+JjGXpAlWI+XApg1QexDeeiEnXW+o0w9bgCYMF3+uYPvgLKiYouHhlTU5
-         8mlw==
+	s=arc-20240116; t=1759314400; c=relaxed/simple;
+	bh=P9Fi1ljGmUThr+8jSoJFfTtVJvJR05niVpmpkyA/Ack=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tF8M+/MZzOA5L6VLxSueuK8n9ahU5dkxKD1WaJWwXzw4wPRpVIgV95MQ+F0QFRfUKrTwe5fAyywomTTfven2svWL5a2CbtFBejrLwCFTdtro+TaFVDz2ila4czONDXOYVEbYSDCsmFYKOAMaAyyTb8cT1+wax1etbLW/co+7CyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=dFYnG04l; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5919FKr5018092
+	for <linux-kernel@vger.kernel.org>; Wed, 1 Oct 2025 10:26:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	DoYbUoPn5h4PTq/YMlb34TeBwVEHQG0ctNULUvqXlU4=; b=dFYnG04lUAn1n3pJ
+	kr8Lw2MzF2HEuD3idQKToqoMGycgOC0qh/5s8xl8OtIEISCDnkGm5VF++zLZ9hCq
+	TmOTmb9jZOg2qg9DVoxZG+CDxF9EnH/ZET9FKO3TMFUP6xYq7a/3TarviUNU+oaw
+	DnPWz432ZOZ4haFZnglikO17pBSZIuGh3x7UHckGZ5jLjbJUc95au523eiaRJZFM
+	/zelny9foSERCefZ98ZWPJjLqiLuS1j6Zv43G4QfA8uFZSmefmn5K7aD1Gsz+f8p
+	KhgTiIEnvKCQD2D1BHyHEgPeDb+3ErQqinndDsPyAgFw0+n0FGzk3iag+k4HYXYE
+	DVPc6w==
+Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e93hkvtn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 10:26:38 +0000 (GMT)
+Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-78106e63bc9so6299056b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 03:26:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759314377; x=1759919177;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RSeamtURp7luZ5+zPShFxKdfm9ffQoU6mLL1dQ5PHbg=;
-        b=GWXI/G15GXcz7HpBWNhgPg3O4cFTOZBuRzQJmKQKdJUAZLzaE9zDL1ePh2dq6YnCDH
-         CjA/PIUuaIh4W5G2deZ49EoI+5kdrHD73lcA/dwl21oIOrvRCl0I90wc6TRS+k7jwa9B
-         kNN+INUxXNNN3917CdalpoEzTmlyjfPTvUGW/CLv6iGlSGuEOTEnEr17vberZ4/AOprr
-         i+qBZFCgVI6tJ7vMAimg1zbENK8CtTp3XM5Mej85qQbE4GGYmeNHEcw8wjX7UgGJyAJz
-         jry+bdjBREtOskvca0SvxEmxbEAYJqi6UtKaBPupnpSGXcQ6Zs5lxRr0KobCA8jv73pY
-         Qmzg==
-X-Forwarded-Encrypted: i=1; AJvYcCW3XvXHUrpX5ztkyDZCGBVxLwQn6ZF+eRduP6DT1obOUGB3PcOONyvEKJfXWqPQXrB2phQVh3AQtTuZdjA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsmxdWk9+9hkg0QpRZBuSzlJGcRgE+7sOLSpnoHFRSuGCtzTqp
-	NgGjU00WtBHGdqVn/wXT0w4Up2WkEBKF83Sr9sZXxM/YT2FUeu5axdtmmx8TRWZLbnhF4he4vnQ
-	5bhegRUPgxJX7dncoxRFrET5h6w==
-X-Google-Smtp-Source: AGHT+IE7DzZayHrClR+Aot7d4WgnPUURYPZhOmhZOVrGWNSHGmEgGCqiK4VXVX+wYtoX7OwswOw3ykMm9CqdFzYwnA==
-X-Received: from pjzp24.prod.google.com ([2002:a17:90b:118:b0:32e:3830:65f2])
- (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:903:244c:b0:25a:24f2:af00 with SMTP id d9443c01a7336-28e7f276e28mr43250165ad.12.1759314377137;
- Wed, 01 Oct 2025 03:26:17 -0700 (PDT)
-Date: Wed, 01 Oct 2025 10:26:16 +0000
-In-Reply-To: <aNvwB2fr2p45hhC0@google.com>
+        d=1e100.net; s=20230601; t=1759314397; x=1759919197;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DoYbUoPn5h4PTq/YMlb34TeBwVEHQG0ctNULUvqXlU4=;
+        b=O0DSyIgb3sBwVtEBa9tw415BVhrT5SGAQtgSnBu6CxKURY7lEBovBLMdFzcBr8c1/+
+         DoL9WH6HjMx+9kUfPcGvM4spq76J37zist+kn1CET13YDIME/5rIamG09N9XUxUIisKl
+         V/b3g/Fm72pMpsXSgLecUuPYT/DG7mwSEO/giRZhy9PfTaV6WvwHxa3prSiraYNr8xBM
+         FXQ8+6jzQxIC7PwYVilBvjejNsvSzuLAmSBxU9N19NvWPUgTOE9dB74eGyZTsFmzY56u
+         YzhUGeJQ6gGOn1fmRxnQ/jO7QsCgsmj+/lZTZu0ajr50H38NtOn4vm47Q/tmdaAjfMpa
+         dmLw==
+X-Forwarded-Encrypted: i=1; AJvYcCV3A2JXy3mQZWW9GUDBruY9bz6OR35bSYHKLC/+aynsj3uHyKUmrzHfNBA0C2+RdBaoP0CRwMKo8G0f6qQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1S1G/uUEvBaS+xGnlGXBFIRp3z6TfPswu1KY76Yh3lh6DXYsp
+	Krt/hYAipHpNppwcxJuCrsdecVfI6qg50XBCrT2zpZh8+rAU9ZPgaQapEqz8DuZjoeuBLDcLm6X
+	2gkIQvPpnXL/Lz3KbcAc5AkeDGsuPszOECOex1cteSdVF0fLD4csjr6a3r5+J/vaKj60=
+X-Gm-Gg: ASbGncvnIxaQPD8pN2X7/Qq452GqVY9rQHm4UQBLic0P79gIfj8QH7Dw575htOhmOSG
+	VQu4VGinTAq++m6GkbPDOc01fjkH7Zw95R+cJtToJV1HuoPM0YDvOUEu/J64hCsJjb52RuCcqzL
+	WzPPPyQiI4wjLIAVpUoWuGWp0/7O81okY0dtNRM0orDXXJKk4h24ydQ0cdWPRS8Gx6OGbpYl9nU
+	OF6lvNHLllTgTNKjTkImcaGDO1X2sJEE76I0xj24+E0hXQm19Wys0/ujf/pR3AkoxoKKr5RItME
+	+IVZSsPw4l2B324iypOt7rUn5io8g9KkRFCVfdv4Yebk6FppR9GxFJ4xREeJmrkff6faP5T248o
+	zDot3
+X-Received: by 2002:a05:6a20:3946:b0:319:fc6f:8afd with SMTP id adf61e73a8af0-321d8b06ce0mr4302622637.6.1759314397533;
+        Wed, 01 Oct 2025 03:26:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF2JF9jYAQs7P21pVRc4kQw9xYk9dAr+RziIcU6cRwEF5tEhV4BHPHR4FxDdHvAHzFGnPlBNQ==
+X-Received: by 2002:a05:6a20:3946:b0:319:fc6f:8afd with SMTP id adf61e73a8af0-321d8b06ce0mr4302582637.6.1759314397056;
+        Wed, 01 Oct 2025 03:26:37 -0700 (PDT)
+Received: from [10.217.219.207] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78102c057ecsm15876881b3a.80.2025.10.01.03.26.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 01 Oct 2025 03:26:36 -0700 (PDT)
+Message-ID: <671c517f-c04c-4f07-aa65-a93e1e1dbce3@oss.qualcomm.com>
+Date: Wed, 1 Oct 2025 15:56:31 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250926163114.2626257-1-seanjc@google.com> <20250926163114.2626257-7-seanjc@google.com>
- <diqzldlx1fyk.fsf@google.com> <aNrLpkrbnwVSaQGX@google.com>
- <diqza52c1im6.fsf@google.com> <aNvwB2fr2p45hhC0@google.com>
-Message-ID: <diqz4isiuddj.fsf@google.com>
-Subject: Re: [PATCH 6/6] KVM: selftests: Verify that faulting in private
- guest_memfd memory fails
-From: Ackerley Tng <ackerleytng@google.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, David Hildenbrand <david@redhat.com>, 
-	Fuad Tabba <tabba@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 2/2] i2c: i2c-qcom-geni: Add Block event interrupt
+ support
+To: Jyothi Kumar Seerapu <jyothi.seerapu@oss.qualcomm.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Viken Dadhaniya <quic_vdadhani@quicinc.com>,
+        Andi Shyti <andi.shyti@kernel.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Cc: linux-arm-msm@vger.kernel.org, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linaro-mm-sig@lists.linaro.org, quic_vtanuku@quicinc.com
+References: <20250925120035.2844283-1-jyothi.seerapu@oss.qualcomm.com>
+ <20250925120035.2844283-3-jyothi.seerapu@oss.qualcomm.com>
+Content-Language: en-US
+From: Mukesh Savaliya <mukesh.savaliya@oss.qualcomm.com>
+In-Reply-To: <20250925120035.2844283-3-jyothi.seerapu@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDA0MSBTYWx0ZWRfX40Xjvb8s80n4
+ CbvvyhzcwRw7L+SD0trvSBt/8orG1ZLsPL/hrSmXjxeNkZ31S1sAiQaaA7f2brrpzCmi/yYIK6R
+ P+dtkTdqVohawxd37Y6woWFUGXjPWbm+7po5M8oWgP2+shVRJTwFoeT/pwM+ChSr4x7TWUq5Ubr
+ MGTTwNbrpWEX93AoS+1HbIZwqj0g6zb0A2kv3XPZ8EoVx+mgzH6Yo32vQCLs0ImvxezlVNV5Fbk
+ FI1hg6kegEUznjIu+VXPcxXSBLSNYoHcY2NZZBGwOWDUR/wqcj9iiiG4Q2jwFPxaZigoktfoki1
+ byk/XMIPtGus2UVbYZc/POJqJL6XYLosxSsemPxt7KzUc74UDcpQgBuUI10bEUtgmONiQsHPKBn
+ G4cS+q+E4K8R+u2j8432j+pCZlBMnw==
+X-Proofpoint-GUID: Wp5NAogHQXi130xX1FYu0lBwJYT3TJlF
+X-Proofpoint-ORIG-GUID: Wp5NAogHQXi130xX1FYu0lBwJYT3TJlF
+X-Authority-Analysis: v=2.4 cv=Rfydyltv c=1 sm=1 tr=0 ts=68dd01de cx=c_pps
+ a=rEQLjTOiSrHUhVqRoksmgQ==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
+ a=fvgdV2PV7z-sFcuOFeoA:9 a=QEXdDO2ut3YA:10 a=2VI0MkxyNR6bbpdq8BZq:22
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-01_03,2025-09-29_04,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 priorityscore=1501 bulkscore=0 adultscore=0 lowpriorityscore=0
+ impostorscore=0 clxscore=1015 malwarescore=0 spamscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270041
 
-Sean Christopherson <seanjc@google.com> writes:
 
-> On Tue, Sep 30, 2025, Ackerley Tng wrote:
->> Sean Christopherson <seanjc@google.com> writes:
->> 
->> [...snip...]
->> 
->> 
->> At some point, sigaction, sigsetjmp, etc could perhaps even be further
->> wrapped. For testing memory_failure() for guest_memfd we will want to
->> check for SIGBUS on memory failure injection instead of on host fault.
->> 
->> Would be nice if it looked like this (maybe not in this patch series):
->> 
->> + TEST_ASSERT_WILL_SIGBUS(READ_ONCE(mem[i]))
->> + TEST_ASSERT_WILL_SIGBUS(WRITE_ONCE(mem[i]))
->> + TEST_ASSERT_WILL_SIGBUS(madvise(MADV_HWPOISON))
->
-> Ooh, me likey.  Definitely can do it now.  Using a macro means we can print out
-> the actual action that didn't generate a SIGUBS, e.g. hacking the test to read
-> byte 0 generates:
->
-> 	'(void)READ_ONCE(mem[0])' should have triggered SIGBUS
->
-> Hmm, how about TEST_EXPECT_SIGBUS?  TEST_ASSERT_xxx() typically asserts on a
-> value, i.e. on the result of a previous action.  And s/WILL/EXPECT to make it
-> clear that the action is expected to SIGBUS _now_.
->
-> And if we use a descriptive global variable, we can extract the macro to e.g.
-> test_util.h or kvm_util.h (not sure we want to do that right away; probably best
-> left to the future).
->
-> static sigjmp_buf expect_sigbus_jmpbuf;
-> void fault_sigbus_handler(int signum)
-> {
-> 	siglongjmp(expect_sigbus_jmpbuf, 1);
-> }
->
-> #define TEST_EXPECT_SIGBUS(action)						\
-> do {										\
-> 	struct sigaction sa_old, sa_new = {					\
-> 		.sa_handler = fault_sigbus_handler,				\
-> 	};									\
-> 										\
-> 	sigaction(SIGBUS, &sa_new, &sa_old);					\
-> 	if (sigsetjmp(expect_sigbus_jmpbuf, 1) == 0) {				\
-> 		action;								\
-> 		TEST_FAIL("'%s' should have triggered SIGBUS", #action);	\
-> 	}									\
-> 	sigaction(SIGBUS, &sa_old, NULL);					\
-> } while (0)
->
-> static void test_fault_sigbus(int fd, size_t accessible_size, size_t map_size)
-> {
-> 	const char val = 0xaa;
-> 	char *mem;
-> 	size_t i;
->
-> 	mem = kvm_mmap(map_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd);
->
-> 	TEST_EXPECT_SIGBUS(memset(mem, val, map_size));
-> 	TEST_EXPECT_SIGBUS((void)READ_ONCE(mem[accessible_size]));
->
-> 	for (i = 0; i < accessible_size; i++)
-> 		TEST_ASSERT_EQ(READ_ONCE(mem[i]), val);
->
-> 	kvm_munmap(mem, map_size);
-> }
->
+On 9/25/2025 5:30 PM, Jyothi Kumar Seerapu wrote:
+> From: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
+> 
+> The I2C driver gets an interrupt upon transfer completion.
+> When handling multiple messages in a single transfer, this
+> results in N interrupts for N messages, leading to significant
+> software interrupt latency.
+> 
+> To mitigate this latency, utilize Block Event Interrupt (BEI)
+> mechanism. Enabling BEI instructs the hardware to prevent interrupt
+> generation and BEI is disabled when an interrupt is necessary.
+> 
+> Large I2C transfer can be divided into chunks of messages internally.
+> Interrupts are not expected for the messages for which BEI bit set,
+> only the last message triggers an interrupt, indicating the completion of
+> N messages. This BEI mechanism enhances overall transfer efficiency.
+> 
+> BEI optimizations are currently implemented for I2C write transfers only,
+> as there is no use case for multiple I2C read messages in a single transfer
+> at this time.
+> 
+> Signed-off-by: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
+> ---
+> 
+Reviewed-by: Mukesh Savaliya <mukesh.savaliya@oss.qualcomm.com>
 
-Awesome! Thanks!
-
-And thanks for the explanations on the other suggestions.
-
->> 
->> [...snip...]
->> 
 
