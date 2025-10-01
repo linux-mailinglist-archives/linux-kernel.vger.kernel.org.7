@@ -1,153 +1,178 @@
-Return-Path: <linux-kernel+bounces-838277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15F2CBAEDA0
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 02:09:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1A2BBAEDA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 02:10:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3F8819208A0
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 00:09:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93C9C17C01E
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 00:10:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD4519463;
-	Wed,  1 Oct 2025 00:09:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FlVzb5Ie"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F5814C83;
+	Wed,  1 Oct 2025 00:10:28 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CDA43C0C
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 00:09:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 941253C17
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 00:10:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759277354; cv=none; b=dNudR7JYEGD3l0GzQTi26dcWiuFhTt3Xv2PssqM/G/CVHD1WO8ywgXuAwdMOChkimE/fqWj+xflTeq7vcIgsR3WjTO29yZ0AH8JmivF6LTlaQO0ppo3J4asqqLhUKcGHukNi68zmkykzWrKG8zh7RywIv+YggYgJ+MJC7QKOEjI=
+	t=1759277428; cv=none; b=MMFx+ACn9FMLo7OMhG33r+LAaDFLVr3I15XPvkzgaOlCUx7rFpnvp2qKq67wW5GoHH5aWX+e+fTxabFD/XmHpeKHZeZAMvqGfMKb6UiZYGId+PLNAoJkzIkhsM/J2XlKIvZL1Vwxet/dinvWiMMiHq6KHLyvRnNW2mFHhlRCDbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759277354; c=relaxed/simple;
-	bh=0Iw9iuAwT2IPLSBMbT2SNcSiFIe4t8mpFaOBM+D3eFs=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ezcI45LRjM9Lu3P2jmbrpp0lPCcoAgcVp2cFABLaIYngOyL/9Hq4x9ledQNEXYkyFdGAZbpYfGEDMr5Mse0+LQD6PK9HzAqUlwPIPB/UIhrwENeechqxdOtbMKPnuGZ63wZpjGd21AIYv+FL7dMEBmOE6YyniYZujzJgbERQFZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FlVzb5Ie; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2699ed6d43dso66567155ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 17:09:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759277352; x=1759882152; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NZaBe0K2iz4Ve4SNmKGp+0aX5t53tPftezY7VMX/ZW0=;
-        b=FlVzb5IeLF9uVfG6NnRQK8PHyVvPTgMM/C7RhUa1RhyJo08Idb/Co9yXa3/RguBLBo
-         OVvPlb2P6niRU/5JwyLN0z2h33pnNsLZlKOu3eMyKKgWObCEWmje7MUGsQhdbe/WTaaD
-         5uFYuTJxobZD6cW0wXeF64bUXBZwlatw9YPhMwPS0tNfMuUNwhqU8wjcxwqzRWkXHnlm
-         Lpg3x6Ywi6AKT52oeeuJYllEDE75NM++l3q/tUMQwQB/c7b5dR3iROzVd+pshYyyiSXS
-         S4k430mwcWKjWs6sDdLDTzu4vPpXPJKtnzip6W1wyROWPX9X5jQQSECbObgHfsFtAA5v
-         4qBQ==
+	s=arc-20240116; t=1759277428; c=relaxed/simple;
+	bh=TGTKyLufNOQ3H3ooF+m6a2mb4Vu5MXgrcwIQlGfTCWY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=tIhPe+uX0ZfkeRf5oMeaYx5PAi3QnAFgf1TSs9XP13I0ndox/Haj04r9CD3KFlWv069VTll9ETIeTkXk+aVL7rlbkV5yX//bmX26en7IOcEoljdU8/ATax7MPJ/yFT54af51avI+iQ57HQ6w16taps6mNxhgIeWCESNljGw4DPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-4297610aacaso49260535ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 17:10:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759277352; x=1759882152;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NZaBe0K2iz4Ve4SNmKGp+0aX5t53tPftezY7VMX/ZW0=;
-        b=LBQTZDYuNf9ceU2N4Rd2kLcmuVet6s+rmUqATEj36YQ58CJ5qEmXTg+QXkVt09CBpD
-         WoKmt20719h1kjnenvFUhRguRTPmOQ9ASzdYw1qwoYOs694kjq7atQYYTAwwTkeSELq4
-         PA8VWkwmz55xebf/HPUsAw3Jv+R53v7Q8bnQUzdEFmy2veI2U7MtA2OZBarcLJzhpLZO
-         3tcWD09dXjaxLGzAmwi7aXMgO6LKvkAfkTiu4b4f+V/cTlfwOtCX7Nt4LJd+qxGxfkMj
-         UAhder3QsGOnI0gubNIBbQS7HB3dub2kpuLSE6c2RS8Hy7MrQNsotT/UAwi+bHWaGI79
-         FllA==
-X-Forwarded-Encrypted: i=1; AJvYcCVyjhQkAsWcOPVB40YvEVBs1qPg/0q0Jkom2wVEfGyp8R2W+wNNC9aVon69dhOBZaXvx01/B6QwPnbHqe8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2eoGfCEX9vKxwBtviqE4USpa5xrX+Kk/7rF5+zko+Scwm6xFp
-	2o/0sgNjTaKqe+aHVRDV28vG5/jCeEQNNGu3bvCnlQgSRQ2TW2CQ1ZpwEihNJx/M57pusuigvLH
-	d+uSFTg==
-X-Google-Smtp-Source: AGHT+IEQr7X8zhrCcE7yur6wxLh3lSN3M1C/+U8kGIxy4Ja/7HgbLk0MlkSEQOAK7i11sdbL4d1PXCPOAb4=
-X-Received: from plbml6.prod.google.com ([2002:a17:903:34c6:b0:269:99ad:5abe])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ebd2:b0:250:1c22:e78
- with SMTP id d9443c01a7336-28e7f26f2fdmr18119465ad.1.1759277351793; Tue, 30
- Sep 2025 17:09:11 -0700 (PDT)
-Date: Wed, 1 Oct 2025 00:09:10 +0000
-In-Reply-To: <aNxwzc0a_xtTW7Ih@google.com>
+        d=1e100.net; s=20230601; t=1759277426; x=1759882226;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EH7mdCMD3QzQ+wDIVk8XqrGvENnZL/IOytWntk+pKGo=;
+        b=JXXGWo5SXBVMRf6zopgCAlJJcu6mIUqbKeNoaOvCha4W3pRc69Jy6CjpsisuyoMjjL
+         zh8q1PgM2RT/kdgD6zaQ6ADVzJbCfJEs+0+JC+JiJ+CgXD7AFwdYuULNksV9LU3JwXnv
+         I5rNjrFNR44l+W8wH5r+PrO4aXtcSzhMcECOu/0X4pbzGXKAUF/AQfE6Bg2LrbTbmbMF
+         OGbPvUTrRw8ux75VTdz99/HGchvVkbsfmdXDYvPEFSZkDDiarhvLf//PE1RpZAx2ugP5
+         +nB1cD6Kp76Xr/qf3alRPdQQuqhsbYVJfOHg/83aZTQeDqswI48PSZIFb8rvwyILbFEX
+         7f4w==
+X-Gm-Message-State: AOJu0YzjVXG/SGZGBwc7bMxnUZJF6BhCphxV3G6yPdQccVAYrTsd/bja
+	QASCT/IuIiX7iIVWPh9BcvB9pxUJ90Eiu4QO5TDscBkz6XSlafBfXhvn1Ma5azVDpmoqgeNHXHJ
+	jIRFrMVfU3eaimCdlsmMCVjHp97zzMePfKdggkK7plK0qiY5vSA52yBmCpR8=
+X-Google-Smtp-Source: AGHT+IE4IYmN5tJ/GqE46Z6vhm8KZFi897z5wSjD0U++NSALc4QvYX5b/RvB3/KFvQ4Pws8xl32+gIo+4p4gADo10Mzl7HK3CgPq
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <diqzecwjnk95.fsf@ackerleytng-ctop.c.googlers.com>
- <CA+EHjTyY5C1QgkoAqvJ0kHM4nUvKc1e1nQ0Uq+BANtVEnZH90w@mail.gmail.com>
- <CAGtprH-fE=G923ctBAcq5zFna+2WULhmHDSbXUsZKUrin29b4g@mail.gmail.com>
- <CA+EHjTxvufYVA8LQWRKEX7zA0gWLQUHVO2LvwKc5JXVu-XAEEA@mail.gmail.com>
- <CAGtprH_TfKT3oRPCLbh-ojLGXSfOQ2XA39pVhr47gb3ikPtUkw@mail.gmail.com>
- <CA+EHjTxJZ_pb7+chRoZxvkxuib2YjbiHg=_+f4bpRt2xDFNCzQ@mail.gmail.com>
- <aC86OsU2HSFZkJP6@google.com> <CA+EHjTxjt-mb_WbtVymaBvCb1EdJAVMV_uGb4xDs_ewg4k0C4g@mail.gmail.com>
- <aC9QPoEUw_nLHhV4@google.com> <aNxwzc0a_xtTW7Ih@google.com>
-Message-ID: <aNxxJodpbHceb3rF@google.com>
-Subject: Re: [RFC PATCH v2 04/51] KVM: guest_memfd: Introduce
- KVM_GMEM_CONVERT_SHARED/PRIVATE ioctls
-From: Sean Christopherson <seanjc@google.com>
-To: Fuad Tabba <tabba@google.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Yan Zhao <yan.y.zhao@intel.com>, Fuad Tabba <tabba@google.com>, 
-	Binbin Wu <binbin.wu@linux.intel.com>, Michael Roth <michael.roth@amd.com>, 
-	Ira Weiny <ira.weiny@intel.com>, Rick P Edgecombe <rick.p.edgecombe@intel.com>, 
-	Vishal Annapurve <vannapurve@google.com>, David Hildenbrand <david@redhat.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:2492:b0:42d:8253:bdb8 with SMTP id
+ e9e14a558f8ab-42d8253bf60mr13984295ab.13.1759277425603; Tue, 30 Sep 2025
+ 17:10:25 -0700 (PDT)
+Date: Tue, 30 Sep 2025 17:10:25 -0700
+In-Reply-To: <68335d8e.a70a0220.253bc2.008b.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68dc7171.050a0220.25d7ab.076c.GAE@google.com>
+Subject: Forwarded: [PATCH] ext4: add validation checks for corrupted extent headers
+From: syzbot <syzbot+9db318d6167044609878@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Sep 30, 2025, Sean Christopherson wrote:
-> Trimmed Cc again.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-And of course I forgot to actually Cc folks...
+***
 
-> On Thu, May 22, 2025, Sean Christopherson wrote:
-> > On Thu, May 22, 2025, Fuad Tabba wrote:
-> > > From a conceptual point of view, I understand that the in-place conversion is
-> > > a property of guest_memfd. But that doesn't necessarily mean that the
-> > > interface between kvm <-> guest_memfd is a userspace IOCTL.
-> 
-> ...
-> 
-> > A decent comparison is vCPUs.  KVM _could_ route all ioctls through the VM, but
-> > that's unpleasant for all parties, as it'd be cumbersome for userspace, and
-> > unnecessarily complex and messy for KVM.  Similarly, routing guest_memfd state
-> > changes through KVM_SET_MEMORY_ATTRIBUTES is awkward from both design and mechanical
-> > perspectives.
-> > 
-> > Even if we disagree on how ugly/pretty routing conversions through kvm would be,
-> > which I'll allow is subjective, the bigger problem is that bouncing through
-> > KVM_SET_MEMORY_ATTRIBUTES would create an unholy mess of an ABI.
-> > 
-> > Today, KVM_SET_MEMORY_ATTRIBUTES is handled entirely within kvm, and any changes
-> > take effect irrespective of any memslot bindings.  And that didn't happen by
-> > chance; preserving and enforcing attribute changes independently of memslots was
-> > a key design requirement, precisely because memslots are ephemeral to a certain
-> > extent.
-> > 
-> > Adding support for in-place guest_memfd conversion will require new ABI, and so
-> > will be a "breaking" change for KVM_SET_MEMORY_ATTRIBUTES no matter what.  E.g.
-> > KVM will need to reject KVM_MEMORY_ATTRIBUTE_PRIVATE for VMs that elect to use
-> > in-place guest_memfd conversions.  But very critically, KVM can cripsly enumerate
-> > the lack of KVM_MEMORY_ATTRIBUTE_PRIVATE via KVM_CAP_MEMORY_ATTRIBUTES, the
-> > behavior will be very straightforward to document (e.g. CAP X is mutually excusive
-> > with KVM_MEMORY_ATTRIBUTE_PRIVATE), and it will be opt-in, i.e. won't truly be a
-> > breaking change.
-> > 
-> > If/when we move shareability to guest_memfd, routing state changes through
-> > KVM_SET_MEMORY_ATTRIBUTES will gain a subtle dependency on userspace having to
-> > create memslots in order for state changes to take effect.  That wrinkle would be
-> > weird and annoying to document, e.g. "if CAP X is enabled, the ioctl ordering is
-> > A => B => C, otherwise the ordering doesn't matter", and would create many more
-> > conundrums:
-> > 
-> >   - If a memslot needs to exist in order for KVM_SET_MEMORY_ATTRIBUTES to take effect,
-> >     what should happen if that memslot is deleted?
-> >   - If a memslot isn't found, should KVM_SET_MEMORY_ATTRIBUTES fail and report
-> >     an error, or silently do nothing?
-> >   - If KVM_SET_MEMORY_ATTRIBUTES affects multiple memslots that are bound to
-> >     multiple guest_memfd, how does KVM guarantee atomicity?  What happens if one
-> >     guest_memfd conversion succeeds, but a later fails?
-> 
-> Note, my above objections were purely about routing updates through a VM, e.g. due
-> to having to resolve memslots and whatnot.  I.e. I swear I'm not contradicting
-> myself by suggesting we reuse KVM_SET_MEMORY_ATTRIBUTES itself on the gmem file
-> descriptor.  I'm pretty sure past me didn't think at all about the actual uAPI,
-> only the roles and responsibilities.
+Subject: [PATCH] ext4: add validation checks for corrupted extent headers
+Author: kartikey406@gmail.com
+
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+
+
+syzbot reported use-after-free bugs in extent tree operations, particularly
+in ext4_ext_binsearch_idx() and ext4_ext_binsearch() called from
+ext4_find_extent(), as well as crashes in ext4_ext_correct_indexes() and
+ext4_ext_map_blocks().
+
+The crashes occur when extent headers contain invalid data (wrong magic
+number or freed memory). This can happen during concurrent operations on
+the same inode where extent tree modifications lead to stale pointers.
+
+Add validation checks at key points:
+1. In ext4_find_extent(): validate extent headers before calling
+   ext4_ext_binsearch_idx() and ext4_ext_binsearch()
+2. In ext4_ext_correct_indexes(): validate path and depth before
+   dereferencing path[depth]
+3. In ext4_ext_map_blocks(): validate extent header after getting
+   the path from ext4_find_extent()
+
+These defensive checks prevent crashes from invalid extent headers,
+though the root cause of the corruption needs further investigation.
+The checks ensure the code fails gracefully with -EFSCORRUPTED rather
+than crashing on invalid memory access.
+
+Reported-by: syzbot+9db318d6167044609878@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=9db318d6167044609878
+Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
+---
+ fs/ext4/extents.c | 24 ++++++++++++++++++++----
+ 1 file changed, 20 insertions(+), 4 deletions(-)
+
+diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+index ca5499e9412b..fef9db80d65c 100644
+--- a/fs/ext4/extents.c
++++ b/fs/ext4/extents.c
+@@ -930,7 +930,11 @@ ext4_find_extent(struct inode *inode, ext4_lblk_t block,
+ 	while (i) {
+ 		ext_debug(inode, "depth %d: num %d, max %d\n",
+ 			  ppos, le16_to_cpu(eh->eh_entries), le16_to_cpu(eh->eh_max));
+-
++		if (!eh || le16_to_cpu(eh->eh_magic) != EXT4_EXT_MAGIC || le16_to_cpu(eh->eh_entries) > le16_to_cpu(eh->eh_max)) {
++			EXT4_ERROR_INODE(inode, "invalid extent header before binsearch_idx");
++			ret = -EFSCORRUPTED;
++			goto err;
++		}
+ 		ext4_ext_binsearch_idx(inode, path + ppos, block);
+ 		path[ppos].p_block = ext4_idx_pblock(path[ppos].p_idx);
+ 		path[ppos].p_depth = i;
+@@ -952,12 +956,17 @@ ext4_find_extent(struct inode *inode, ext4_lblk_t block,
+ 	path[ppos].p_ext = NULL;
+ 	path[ppos].p_idx = NULL;
+ 
++	if (!eh || le16_to_cpu(eh->eh_magic) != EXT4_EXT_MAGIC || le16_to_cpu(eh->eh_entries) > le16_to_cpu(eh->eh_max)) {
++		EXT4_ERROR_INODE(inode, "invalid extent header before binsearch");
++		ret = -EFSCORRUPTED;
++		goto err;
++	}
+ 	/* find extent */
+ 	ext4_ext_binsearch(inode, path + ppos, block);
+ 	/* if not an empty leaf */
+ 	if (path[ppos].p_ext)
+ 		path[ppos].p_block = ext4_ext_pblock(path[ppos].p_ext);
+-
++
+ 	ext4_ext_show_path(inode, path);
+ 
+ 	return path;
+@@ -1708,7 +1717,8 @@ static int ext4_ext_correct_indexes(handle_t *handle, struct inode *inode,
+ 	struct ext4_extent *ex;
+ 	__le32 border;
+ 	int k, err = 0;
+-
++	if (!path || depth < 0 || depth > EXT4_MAX_EXTENT_DEPTH)
++		return -EFSCORRUPTED;
+ 	eh = path[depth].p_hdr;
+ 	ex = path[depth].p_ext;
+ 
+@@ -4200,6 +4210,7 @@ int ext4_ext_map_blocks(handle_t *handle, struct inode *inode,
+ 	unsigned int allocated_clusters = 0;
+ 	struct ext4_allocation_request ar;
+ 	ext4_lblk_t cluster_offset;
++	struct ext4_extent_header *eh;
+ 
+ 	ext_debug(inode, "blocks %u/%u requested\n", map->m_lblk, map->m_len);
+ 	trace_ext4_ext_map_blocks_enter(inode, map->m_lblk, map->m_len, flags);
+@@ -4212,7 +4223,12 @@ int ext4_ext_map_blocks(handle_t *handle, struct inode *inode,
+ 	}
+ 
+ 	depth = ext_depth(inode);
+-
++	eh = path[depth].p_hdr;
++	if (!eh || le16_to_cpu(eh->eh_magic) != EXT4_EXT_MAGIC || le16_to_cpu(eh->eh_entries) > le16_to_cpu(eh->eh_max)) {
++		EXT4_ERROR_INODE(inode, "invalid extent header at depth %d", depth);
++		err = -EFSCORRUPTED;
++		goto out;
++	}
+ 	/*
+ 	 * consistent leaf must not be empty;
+ 	 * this situation is possible, though, _during_ tree modification;
+-- 
+2.43.0
+
 
