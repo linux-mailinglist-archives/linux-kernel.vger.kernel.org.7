@@ -1,216 +1,225 @@
-Return-Path: <linux-kernel+bounces-838693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BED58BAFF2A
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 12:02:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88937BAFF36
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 12:05:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6825F2A01BA
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 10:02:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED3CC1924FAC
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 10:05:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CA1F29A31C;
-	Wed,  1 Oct 2025 10:02:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90B4729BDBD;
+	Wed,  1 Oct 2025 10:05:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="B9FzD2Cm";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rE7Fvyhn";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="1Q34JIqo";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="MoEEEght"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D9qFXftc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37CBB274FF9
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 10:02:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C93BB46B5;
+	Wed,  1 Oct 2025 10:05:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759312937; cv=none; b=nGTvPo2swfhp7TtsQYKma0xqjnButxxjC1nGtQvempsQFSfvuGFKN/hkS7mPFKPW4UYvVuC6eCt1P3uy4R4iJd84IKzJNWew0UYssmXaazstZF1oXVUs4FdMpHT5JWaYtrLl5YM+D40xKcg+1xu9JzfHClIEsumqNEQaUHk779Q=
+	t=1759313105; cv=none; b=rfZ1Z2UlVM7ITQXUCdLZL+9Dkohg1jK8IcrKYagD1oOmNzevBTCNAvcll6lo4gMvnVQTC9oyFBatnMI02vHphMU3MqIsMfA5BDzIbJ7scwu5Ninu9An+o/k63tGqxZ73/NFCfANBGj3mLST7q6b1iHc5LCrY3vChP/AyFd5VQo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759312937; c=relaxed/simple;
-	bh=N2u3ve/1Lf+ttycZJO2sIPHhofQDe7Vrp8ijoawtE7Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fEuPewoz0ixctON6AF5DFeLCqxXQAfk4hQGt1tzkQf1BpyjLZpi8zu6lgx3bU/ssf2FRLKMdlJDzj99vF8N3y81TIT6ep+hWVr70YjAsNampSxyNgc9IrA18Nr8nkgBxiWOh6OOfZVyDmzUvQ+0b9oB5tE2HaEkgYYujsylAZD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=B9FzD2Cm; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rE7Fvyhn; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=1Q34JIqo; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=MoEEEght; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 73D05337A4;
-	Wed,  1 Oct 2025 10:02:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759312927; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TeD8soTHHIxNG6f1XpozFfG0T75bKxyP4oAiQvd6izY=;
-	b=B9FzD2CmxCKFVebzqdQFEmlFPt22S5EjbPIZsp5yuBxLvpL2KhgiMsO3t/8Vmqt6K1UNZT
-	49/iHf+B2diTqIB7UsT74yjk/ZCBv0ScegguvGT/1yls0y5ZoCs6zYctvXUbmNXskGi5JR
-	xBdFGx79WsPyL+7Y5KjxhnTJ059SYdk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759312927;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TeD8soTHHIxNG6f1XpozFfG0T75bKxyP4oAiQvd6izY=;
-	b=rE7Fvyhn6OtfaFyfpp7h8JxLtJ8put0GTFpJcbtzTgPtwUTzJoOAEruZQ4AJ2JHU610MGn
-	yryK6oe4i9gtjyCQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759312922; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TeD8soTHHIxNG6f1XpozFfG0T75bKxyP4oAiQvd6izY=;
-	b=1Q34JIqoIlXithAOEHLzWztElhn0iwwC96rDV8SdaTwxGABhyDCYq0uAV83MN0P8ZucKDs
-	l/iVkqQEMJkjsTKhEn+KKP/Pw5mo0K+R4l05nHz6X8/O++069/pdI8niE5plSB2kocUShZ
-	GdbvO75HMwJgqdVLP4CP3/pIzRDVdNM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759312922;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TeD8soTHHIxNG6f1XpozFfG0T75bKxyP4oAiQvd6izY=;
-	b=MoEEEght4a9SSGw6MaP8wY4NdyUJBcKUM41d2/gKPD11aN9SydwUf+/RU3WfNcMLBOzQVQ
-	AyqDU9CCA+2KtXAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6185313A42;
-	Wed,  1 Oct 2025 10:02:02 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id eeKCFxr83GhJTwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 01 Oct 2025 10:02:02 +0000
-Message-ID: <689e36d4-d828-42c5-9e57-ba663adc9ea9@suse.cz>
-Date: Wed, 1 Oct 2025 12:04:50 +0200
+	s=arc-20240116; t=1759313105; c=relaxed/simple;
+	bh=GkDZ6NXoxTMf23WDTs15nu962/34sSuHxOTDvtqezTE=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VI+qzy7/uhAv7WLb+NK91cHFHz8vi4HRqBdI+V7mdcJONl88nW8syUNMevRLgZKoKBiySiL4OJ48k+Pk0WA0+Zp5/7HVI1XWK5lu+7jl1XlTWpY7L18S0udwFwmuo9jfXWnCw9JKIi8rs9e01NVeB2Mv5So89DIKqCGjlKrQUoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D9qFXftc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42433C116C6;
+	Wed,  1 Oct 2025 10:05:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759313104;
+	bh=GkDZ6NXoxTMf23WDTs15nu962/34sSuHxOTDvtqezTE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=D9qFXftckYU8UZNcyAyVFAjSHt6W8vXaQM46Df3/j2uJZmSW8m84coZ/j1zjfUidE
+	 n7SNHslwRuxinAykPqkM/8Jn4JIMk7PHcDyVBvkgCsq7P8l9Ep+pwXAB5WHplsnAyH
+	 EDuZT6LJzdg0YRo874RJOeIR2w59HlGEMGs5GPPJkQhwLAJB+iXJTpsPIY5//ku6iP
+	 F6/jlw2yhtO3fXYMdGHMZ4oe03jkFLy80nAk3CiOtY03JyBtgZ/4CvavoQsrxe8HPC
+	 LqwAx0MtS8JVQBQxo84mLov2DbVYEUPIKPpRd2HG4wzsWNa6KRKFz2DH5T3nDCisXL
+	 ZFSFmu0ICqfNQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1v3thl-0000000AlcY-0RZd;
+	Wed, 01 Oct 2025 10:05:01 +0000
+Date: Wed, 01 Oct 2025 11:05:00 +0100
+Message-ID: <86o6qrym2b.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Steven Price <steven.price@arm.com>
+Cc: kvm@vger.kernel.org,
+	kvmarm@lists.linux.dev,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Joey Gouly <joey.gouly@arm.com>,
+	Alexandru Elisei <alexandru.elisei@arm.com>,
+	Christoffer Dall <christoffer.dall@arm.com>,
+	Fuad Tabba <tabba@google.com>,
+	linux-coco@lists.linux.dev,
+	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+	Gavin Shan <gshan@redhat.com>,
+	Shanker Donthineni <sdonthineni@nvidia.com>,
+	Alper Gun <alpergun@google.com>,
+	"Aneesh Kumar K . V" <aneesh.kumar@kernel.org>,
+	Emi Kisanuki <fj0570is@fujitsu.com>,
+	Vishal Annapurve <vannapurve@google.com>
+Subject: Re: [PATCH v10 03/43] arm64: RME: Add SMC definitions for calling the RMM
+In-Reply-To: <20250820145606.180644-4-steven.price@arm.com>
+References: <20250820145606.180644-1-steven.price@arm.com>
+	<20250820145606.180644-4-steven.price@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/4] mm/page_alloc: Batch page freeing in
- free_frozen_page_commit
-To: Joshua Hahn <joshua.hahnjy@gmail.com>,
- kernel test robot <oliver.sang@intel.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com, Chris Mason <clm@fb.com>,
- Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org,
- Andrew Morton <akpm@linux-foundation.org>,
- Kiryl Shutsemau <kirill@shutemov.name>, Brendan Jackman
- <jackmanb@google.com>, Michal Hocko <mhocko@suse.com>,
- Suren Baghdasaryan <surenb@google.com>, Zi Yan <ziy@nvidia.com>,
- linux-kernel@vger.kernel.org, kernel-team@meta.com
-References: <20250929151744.2922386-1-joshua.hahnjy@gmail.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Content-Language: en-US
-In-Reply-To: <20250929151744.2922386-1-joshua.hahnjy@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	SEM_URIBL_UNKNOWN_FAIL(0.00)[intel.com:query timed out];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	TAGGED_RCPT(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com,intel.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:mid]
-X-Spam-Flag: NO
-X-Spam-Score: -2.80
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: steven.price@arm.com, kvm@vger.kernel.org, kvmarm@lists.linux.dev, catalin.marinas@arm.com, will@kernel.org, james.morse@arm.com, oliver.upton@linux.dev, suzuki.poulose@arm.com, yuzenghui@huawei.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, joey.gouly@arm.com, alexandru.elisei@arm.com, christoffer.dall@arm.com, tabba@google.com, linux-coco@lists.linux.dev, gankulkarni@os.amperecomputing.com, gshan@redhat.com, sdonthineni@nvidia.com, alpergun@google.com, aneesh.kumar@kernel.org, fj0570is@fujitsu.com, vannapurve@google.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On 9/29/25 5:17 PM, Joshua Hahn wrote:
-> On Sun, 28 Sep 2025 13:17:37 +0800 kernel test robot <oliver.sang@intel.com> wrote:
+On Wed, 20 Aug 2025 15:55:23 +0100,
+Steven Price <steven.price@arm.com> wrote:
 > 
-> Hello Kernel Test Robot,
+> The RMM (Realm Management Monitor) provides functionality that can be
+> accessed by SMC calls from the host.
 > 
->> Hello,
->>
->> kernel test robot noticed "WARNING:bad_unlock_balance_detected" on:
->>
->> commit: 7e86100bfb0d65a17f3228a9af4c2a49ac38f057 ("[PATCH v2 4/4] mm/page_alloc: Batch page freeing in free_frozen_page_commit")
->> url: https://github.com/intel-lab-lkp/linux/commits/Joshua-Hahn/mm-page_alloc-vmstat-Simplify-refresh_cpu_vm_stats-change-detection/20250925-044532
->> patch link: https://lore.kernel.org/all/20250924204409.1706524-5-joshua.hahnjy@gmail.com/
->> patch subject: [PATCH v2 4/4] mm/page_alloc: Batch page freeing in free_frozen_page_commit
->>
->> in testcase: trinity
->> version: 
->> with following parameters:
->>
->> 	runtime: 300s
->> 	group: group-03
->> 	nr_groups: 5
->>
->> config: x86_64-randconfig-161-20250927
->> compiler: gcc-14
->> test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
->>
->> (please refer to attached dmesg/kmsg for entire log/backtrace)
->>
->> If you fix the issue in a separate patch/commit (i.e. not just a new version of
->> the same patch/commit), kindly add following tags
->> | Reported-by: kernel test robot <oliver.sang@intel.com>
->> | Closes: https://lore.kernel.org/oe-lkp/202509281204.3086f707-lkp@intel.com
->>
->>
->> [  414.880298][ T7549] WARNING: bad unlock balance detected!
->> [  414.881071][ T7549] 6.17.0-rc6-00147-g7e86100bfb0d #1 Not tainted
->> [  414.881924][ T7549] -------------------------------------
->> [  414.882695][ T7549] date/7549 is trying to release lock (&pcp->lock) at:
->> [ 414.883649][ T7549] free_frozen_page_commit+0x425/0x9d0 
->> [  414.884764][ T7549] but there are no more locks to release!
->> [  414.885539][ T7549]
->> [  414.885539][ T7549] other info that might help us debug this:
->> [  414.886704][ T7549] 2 locks held by date/7549:
->> [ 414.887353][ T7549] #0: ffff888104f29940 (&mm->mmap_lock){++++}-{4:4}, at: exit_mmap (include/linux/seqlock.h:431 include/linux/mmap_lock.h:88 include/linux/mmap_lock.h:398 mm/mmap.c:1288) 
->> [ 414.888591][ T7549] #1: ffff8883ae40e858 (&pcp->lock){+.+.}-{3:3}, at: free_frozen_page_commit+0x46a/0x9d0 
+> The SMC definitions are based on DEN0137[1] version 1.0-rel0
 > 
-> So based on this, it seems like I must have overlooked a pretty important
-> consideration here. When I unlock the pcp, it allows both the zone and pcp
-> lock to be picked up by another task (pcp lock less likely), but it also
-> means that this process can be migrated to a different CPU, where it will
-> be trying to unlock & acquire a completely different pcp.
-
-Yes.
-
-> For me the most simple solution looks to be migrate_disable() and
-> migrate_enable() in the function to ensure that this task is bound to the
-> CPU it originally started runing on.
+> [1] https://developer.arm.com/documentation/den0137/1-0rel0/
 > 
-> I'm not sure how this will affect performance, but I think in terms of
+> Reviewed-by: Gavin Shan <gshan@redhat.com>
+> Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Signed-off-by: Steven Price <steven.price@arm.com>
+> ---
+> Changes since v9:
+>  * Corrected size of 'ripas_value' in struct rec_exit. The spec states
+>    this is an 8-bit type with padding afterwards (rather than a u64).
+> Changes since v8:
+>  * Added RMI_PERMITTED_GICV3_HCR_BITS to define which bits the RMM
+>    permits to be modified.
+> Changes since v6:
+>  * Renamed REC_ENTER_xxx defines to include 'FLAG' to make it obvious
+>    these are flag values.
+> Changes since v5:
+>  * Sorted the SMC #defines by value.
+>  * Renamed SMI_RxI_CALL to SMI_RMI_CALL since the macro is only used for
+>    RMI calls.
+>  * Renamed REC_GIC_NUM_LRS to REC_MAX_GIC_NUM_LRS since the actual
+>    number of available list registers could be lower.
+>  * Provided a define for the reserved fields of FeatureRegister0.
+>  * Fix inconsistent names for padding fields.
+> Changes since v4:
+>  * Update to point to final released RMM spec.
+>  * Minor rearrangements.
+> Changes since v3:
+>  * Update to match RMM spec v1.0-rel0-rc1.
+> Changes since v2:
+>  * Fix specification link.
+>  * Rename rec_entry->rec_enter to match spec.
+>  * Fix size of pmu_ovf_status to match spec.
+> ---
+>  arch/arm64/include/asm/rmi_smc.h | 269 +++++++++++++++++++++++++++++++
+>  1 file changed, 269 insertions(+)
+>  create mode 100644 arch/arm64/include/asm/rmi_smc.h
+> 
+> diff --git a/arch/arm64/include/asm/rmi_smc.h b/arch/arm64/include/asm/rmi_smc.h
+> new file mode 100644
+> index 000000000000..1000368f1bca
+> --- /dev/null
+> +++ b/arch/arm64/include/asm/rmi_smc.h
 
-It is somewhat expensive, I'd rather avoid if possible.
+[...]
 
-> desired behavior it does seem like this is the correct way to do it.
+> +#define RMI_PERMITTED_GICV3_HCR_BITS	(ICH_HCR_EL2_UIE |		\
+> +					 ICH_HCR_EL2_LRENPIE |		\
+> +					 ICH_HCR_EL2_NPIE |		\
+> +					 ICH_HCR_EL2_VGrp0EIE |		\
+> +					 ICH_HCR_EL2_VGrp0DIE |		\
+> +					 ICH_HCR_EL2_VGrp1EIE |		\
+> +					 ICH_HCR_EL2_VGrp1DIE |		\
+> +					 ICH_HCR_EL2_TDIR)
 
-I'd rather detect this happened (new pcp doesn't match old pcp after a
-relock) and either give up (should be rare enough hopefully so won't
-cause much imbalance) or recalculate how much to free on the other cpu
-and continue there (probably subtract how much we already did so we
-don't end up unlucky flushing all kinds of cpus "forever").
+Why should KVM care about what bits the RMM wants to use? Also, why
+should KVM be forbidden to use the TALL0, TALL1 and TC bits? If
+interrupt delivery is the host's business, then the RMM has no
+business interfering with the GIC programming.
 
-> Joshua
+> +
+> +struct rec_enter {
+> +	union { /* 0x000 */
+> +		u64 flags;
+> +		u8 padding0[0x200];
+> +	};
+> +	union { /* 0x200 */
+> +		u64 gprs[REC_RUN_GPRS];
+> +		u8 padding1[0x100];
+> +	};
+> +	union { /* 0x300 */
+> +		struct {
+> +			u64 gicv3_hcr;
+> +			u64 gicv3_lrs[REC_MAX_GIC_NUM_LRS];
+> +		};
+> +		u8 padding2[0x100];
+> +	};
+> +	u8 padding3[0x400];
+> +};
+> +
+> +#define RMI_EXIT_SYNC			0x00
+> +#define RMI_EXIT_IRQ			0x01
+> +#define RMI_EXIT_FIQ			0x02
+> +#define RMI_EXIT_PSCI			0x03
+> +#define RMI_EXIT_RIPAS_CHANGE		0x04
+> +#define RMI_EXIT_HOST_CALL		0x05
+> +#define RMI_EXIT_SERROR			0x06
+> +
+> +struct rec_exit {
+> +	union { /* 0x000 */
+> +		u8 exit_reason;
+> +		u8 padding0[0x100];
+> +	};
+> +	union { /* 0x100 */
+> +		struct {
+> +			u64 esr;
+> +			u64 far;
+> +			u64 hpfar;
+> +		};
+> +		u8 padding1[0x100];
+> +	};
+> +	union { /* 0x200 */
+> +		u64 gprs[REC_RUN_GPRS];
+> +		u8 padding2[0x100];
+> +	};
+> +	union { /* 0x300 */
+> +		struct {
+> +			u64 gicv3_hcr;
+> +			u64 gicv3_lrs[REC_MAX_GIC_NUM_LRS];
+> +			u64 gicv3_misr;
 
+Why do we care about ICH_MISR_EL2? Surely we get everything in the
+registers themselves, right? I think this goes back to my question
+above: why is the RMM getting in the way of ICH_*_EL2 accesses?
+
+> +			u64 gicv3_vmcr;
+> +		};
+
+Thanks,
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
