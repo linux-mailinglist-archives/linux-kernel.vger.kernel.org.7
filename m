@@ -1,92 +1,110 @@
-Return-Path: <linux-kernel+bounces-839324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DE38BB15F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 19:34:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9F5BBB15FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 19:37:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A4641920A66
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 17:35:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6116D3B81B2
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 17:37:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86FAE2C08C8;
-	Wed,  1 Oct 2025 17:34:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C3832D0C9F;
+	Wed,  1 Oct 2025 17:37:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KwlXQfzK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="oeFDfJlp"
+Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE040254AE4;
-	Wed,  1 Oct 2025 17:34:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF017288DB;
+	Wed,  1 Oct 2025 17:37:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759340074; cv=none; b=c+raqcVtytW2C7ZKLYl4GEdYzlZ86i5PlMjLCT9DNeOzx/Zlkx/tVaQLapnYEJrslcYsQIfmS+nqhFDLhHVQIK0yzdzcZZSsMZ6bcOAV6EAyTSprQustAxCydG2udaUW5QHLOFMPUFn/jV0vuqwTI1wUX+Rlf+kUGwhwYxEdOTo=
+	t=1759340252; cv=none; b=MJOpkz3iCAutOSTbD9iycQxRS0tlf8UvX+mKIpfhjcCB72SnppRdbpByH9RQFGaP/3H053cqcEPb8Ijq4puk+peOJf+79JTjLJFG0IYY5Ft3Uthj4DzRDIzQBrwE2dkKiX0A0dCfRWDT0404pq0w4Fo6wDWF1uM4PVhyc8NQTJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759340074; c=relaxed/simple;
-	bh=RcC007vheekuBms74xJJDKBu49gcwxLUFbD4TD8pQiw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qa3CsRSQhgSxChf7lnxBjGToROrwRk7BjsDdO2DmWNBujtIx5OK+lpX5A48xFMYZc6NcI2DAO0VSZZ/k0axc1KPMyvodmwP7vn4nQ46/BevXiMzCiHbPJkowIbBZR603Y8pcRGfFRt62MJQBxcV9PjPuDopO1mZxwjKo9neNkuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KwlXQfzK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B35EEC4CEF1;
-	Wed,  1 Oct 2025 17:34:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759340073;
-	bh=RcC007vheekuBms74xJJDKBu49gcwxLUFbD4TD8pQiw=;
-	h=From:To:Cc:Subject:Date:From;
-	b=KwlXQfzKiLNV7NmYr1mkEoYSz40D8jpSdwPy4/7+8Zx1grmK2/ruJfHl0827kh4x4
-	 CfO5vUYnRvuwfQ5xFNSeh22R0PnJ8FlpIOdYXV1KBF3qV6z2xkCDFOfmSmUaLoQzDN
-	 99EXwygT3deejBz6u2PFOXyCqNK39I1VmQTi7+1D3dPcmBgVLRi/yhT+iIU0tkZTQh
-	 pcyaxMSqbyZQdgfXCmloXuGwRqsyPGQbPQdNjM7AmHjQl6bPyyuwSS9Ib5QG5JIo2h
-	 LzYO6G+aNIYP208EdRdPCquEWk4nWrql13yzjh5mf+MCdfVZM/0yPcKIk2x+t9pga2
-	 ap0/2r1yif09Q==
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- Takashi Iwai <tiwai@suse.de>, Jonathan Cameron <jonathan.cameron@huawei.com>,
- Dhruva Gole <d-gole@ti.com>
-Subject: [PATCH v1] PM: runtime: Introduce one more usage counter guard
-Date: Wed, 01 Oct 2025 19:34:29 +0200
-Message-ID: <12752072.O9o76ZdvQC@rafael.j.wysocki>
-Organization: Linux Kernel Development
+	s=arc-20240116; t=1759340252; c=relaxed/simple;
+	bh=/x8jnFlp+pZikJIsr0XFxgtMvU+vygC3iiTNoADfSU8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LKJFxwMydE+oJm2+Ml5MwWyCHUL3wQzrmNmfzSTk/28CM03RPRRQbSZUOwRX26i5+8zWYltdbrMGridMN9fGdjnGxgI8OnLR6UfZiFhnskngrLAyvm9rjTCDoIyBbJZ8spEIV16V40v+a0BP3e2A7j4D22dIlm1YGYW0B2oWOIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=oeFDfJlp; arc=none smtp.client-ip=95.215.58.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 1 Oct 2025 17:37:24 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1759340247;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ClGwCAWgmd6Y9XhcXrM4mIg0PMmoGJSBh00dpa+3S9I=;
+	b=oeFDfJlpcIuYigHDZAqOeHCTn0pnMtlMZPjNPQDu/I9hZyqVpnD0GcKawWD4cH7AIQ+mgn
+	rPoeWdo/Ik2hYIqpdbij2ROwmx43oBWf6oZVIqjyxc4nC0ZqdrwUJqLlzWgdZKp2aAWcFh
+	rshRkbNvLdtmQgfKx9+v8qLgwc+/T3Q=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/12] Extend test coverage for nested SVM
+Message-ID: <7o6d5jxr4t6t5p4x3dhnwcllcnzf3radjblqaqd54sc3liilvf@frz74eu2ubb7>
+References: <20251001145816.1414855-1-yosry.ahmed@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251001145816.1414855-1-yosry.ahmed@linux.dev>
+X-Migadu-Flow: FLOW_OUT
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Wed, Oct 01, 2025 at 02:58:04PM +0000, Yosry Ahmed wrote:
+> There are multiple selftests exercising nested VMX that are not specific
+> to VMX (at least not anymore). Extend their coverage to nested SVM.
+> 
+> Yosry Ahmed (12):
+>   KVM: selftests: Minor improvements to asserts in
+>     test_vmx_nested_state()
+>   KVM: selftests: Extend vmx_set_nested_state_test to cover SVM
+>   KVM: selftests: Extend vmx_close_while_nested_test to cover SVM
+>   KVM: selftests: Extend vmx_nested_tsc_scaling_test to cover SVM
+>   KVM: selftests: Remove invalid CR3 test from vmx_tsc_adjust_test
+>   KVM: selftests: Extend vmx_tsc_adjust_test to cover SVM
+>   KVM: selftests: Pass the root HVA directly to nested mapping functions
+>   KVM: selftests: Use 'leaf' instead of hugepage to describe EPT entries
+>   KVM: selftests: Move all PTE accesses into nested_create_pte()
+>   KVM: selftests: Move EPT-specific init outside nested_create_pte()
+>   KVM: selftests: Refactor generic nested mapping outside VMX code
+>   KVM: selftests: Extend vmx_dirty_log_test to cover SVM
 
-Follow previous commit 9a0abc39450a ("PM: runtime: Add auto-cleanup
-macros for "resume and get" operations") and define a runtime PM
-usage counter guard in which pm_runtime_get_noresume() and
-pm_runtime_put_noidle() will be used for incrementing and
-decrementing it, respectively.
+Ugh, wrong From email on all the patches due to some unorthodox
+cherry-picking :)
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
-
-Commit 9a0abc39450a is there in my linux-next branch.
-
----
- include/linux/pm_runtime.h |    3 +++
- 1 file changed, 3 insertions(+)
-
---- a/include/linux/pm_runtime.h
-+++ b/include/linux/pm_runtime.h
-@@ -610,6 +610,9 @@ static inline int pm_runtime_put_autosus
- 	return __pm_runtime_put_autosuspend(dev);
- }
- 
-+DEFINE_GUARD(pm_runtime_noresume, struct device *,
-+	     pm_runtime_get_noresume(_T), pm_runtime_put_noidle(_T));
-+
- DEFINE_GUARD(pm_runtime_active, struct device *,
- 	     pm_runtime_get_sync(_T), pm_runtime_put(_T));
- DEFINE_GUARD(pm_runtime_active_auto, struct device *,
-
-
-
+> 
+>  tools/testing/selftests/kvm/Makefile.kvm      |  11 +-
+>  .../selftests/kvm/include/x86/nested_map.h    |  20 ++
+>  .../selftests/kvm/include/x86/svm_util.h      |  13 ++
+>  tools/testing/selftests/kvm/include/x86/vmx.h |  13 +-
+>  .../testing/selftests/kvm/lib/x86/memstress.c |   5 +-
+>  .../selftests/kvm/lib/x86/nested_map.c        | 150 +++++++++++++++
+>  tools/testing/selftests/kvm/lib/x86/svm.c     |  70 +++++++
+>  tools/testing/selftests/kvm/lib/x86/vmx.c     | 180 +++---------------
+>  ...ested_test.c => close_while_nested_test.c} |  42 +++-
+>  ...rty_log_test.c => nested_dirty_log_test.c} |  95 ++++++---
+>  ...adjust_test.c => nested_tsc_adjust_test.c} |  79 ++++----
+>  ...aling_test.c => nested_tsc_scaling_test.c} |  48 ++++-
+>  ...d_state_test.c => set_nested_state_test.c} | 132 +++++++++++--
+>  13 files changed, 609 insertions(+), 249 deletions(-)
+>  create mode 100644 tools/testing/selftests/kvm/include/x86/nested_map.h
+>  create mode 100644 tools/testing/selftests/kvm/lib/x86/nested_map.c
+>  rename tools/testing/selftests/kvm/x86/{vmx_close_while_nested_test.c => close_while_nested_test.c} (64%)
+>  rename tools/testing/selftests/kvm/x86/{vmx_dirty_log_test.c => nested_dirty_log_test.c} (62%)
+>  rename tools/testing/selftests/kvm/x86/{vmx_tsc_adjust_test.c => nested_tsc_adjust_test.c} (61%)
+>  rename tools/testing/selftests/kvm/x86/{vmx_nested_tsc_scaling_test.c => nested_tsc_scaling_test.c} (83%)
+>  rename tools/testing/selftests/kvm/x86/{vmx_set_nested_state_test.c => set_nested_state_test.c} (67%)
+> 
+> -- 
+> 2.51.0.618.g983fd99d29-goog
+> 
 
