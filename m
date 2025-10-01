@@ -1,146 +1,149 @@
-Return-Path: <linux-kernel+bounces-838601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41BB8BAFB77
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 10:46:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14ABDBAFB83
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 10:48:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C35794A4E7F
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 08:46:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0BD14A553E
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 08:48:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00399278754;
-	Wed,  1 Oct 2025 08:46:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 858512848B5;
+	Wed,  1 Oct 2025 08:48:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="DUkVxDJM"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W0yINqV/"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F0F827470
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 08:46:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84D8E26A0B9
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 08:48:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759308399; cv=none; b=T+ch5kwgC6UMwKQFJL7uE2HtHvfRiQFSm/u7ZlCcQf/VRJAgsEZihVn1Q63S7f8gxDZY/EFNzym9RWIJVhsN+3CVeghhPiNfVpFlSy33nDllTPlQ9QSprLkJTHZccvlA/olkzXCsj2pePg8nNWZ7xu2Jb63IG35xljEbwc8AnFw=
+	t=1759308484; cv=none; b=hztvHPJZ+A1b8QKdCXNx+FS3iQ3CA6H2uqeFd4uKLXt+LuHzWLc4cr3VG97b5UYQIdQtGtczg53U3Nb8tmx5RbN5yQkkh5pXIKfXKZti9H4V7EqCzAR7G3jvjvtB/+AWWfRmPQmrBvCy0m6kCill1u45PmdNvo2qecLwnLa2qZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759308399; c=relaxed/simple;
-	bh=8D0lPsjedL+kyXW7Dr+b8bXHNiYNOO4VOFO0oJ6yKL8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kJseDoqu6aqrPrq5LRhBMm1tDM4azilNL+1+6pNtWY49Wr9tvpJIUuhfsBwfBwTZ2oo48/qi2VDF3q0GHSWJt/JAZ459zzg2xniUUa+owvO2yHWHxkY0nbvdlWc9LLhX3mBMDMuY4MNLQF0+BcB8OMGS6X+37UAfo/D/D9+w5wE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=DUkVxDJM; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-57a59124323so7134191e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 01:46:37 -0700 (PDT)
+	s=arc-20240116; t=1759308484; c=relaxed/simple;
+	bh=QvD/ud6DrodRNKqUA2m4nL+/50pX/gxXw21okP8DcUg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=e6HlnsA4RQkYZ9sOZcZMb5EbjfzCSBG+hiN5NTBJS7HRlwQwZNcqDKHjf+imT4UX0UXaziuqV8gWU3x7EOi8kGuySFgHFNtBeniJ4Nek2WQDBe0tE0IhuYgwPt7+tRdKxIw+oKMhqbT+PC1M2RYBVTKUHC3C8gA7yvoHPeyptJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W0yINqV/; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-33255011eafso7031631a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 01:48:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1759308396; x=1759913196; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8D0lPsjedL+kyXW7Dr+b8bXHNiYNOO4VOFO0oJ6yKL8=;
-        b=DUkVxDJMjtSd7JQTplxvjXnLL5GY+6orOou1AZZ0x9DtcMzEXZlDDUO5+eaD501CUS
-         mWP3Q6Meo0Uj6Tm0E1RFkDgOph56cUABDKiKZp5Puu4pYuNRnEA6VhMZSPzA5BtD6xcu
-         gRaulkg2Et3G9SRp+cvL3yvghxsJG2pzn60aqXgtyBLGv5sUvqvrGCicylQZzXRbDn8Q
-         2UNv76kAcKAGkcDPbK3+CaMGeEfi6M70Ghen8FHS9PX8q3wyzSfrrzz2tOGSpIhATlQM
-         2wVFLE+1pXs7exuilmjKhe6wQ68O4uZs8ShdL162BqVZ9AYXdCfKVxaI/NAtogJ9skVY
-         qtpA==
+        d=gmail.com; s=20230601; t=1759308483; x=1759913283; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XMfpQioL9qF93r02i/m3R/Lc2dj1xsmt2jY1yN46fE8=;
+        b=W0yINqV/RRy+v0Z59VIdukLDb7SpqZ3WwXLqb5/ndWmZKUj1jaZ0bQFdS56EhAsPVc
+         qWWA6j1fJsG5tKY83+DgLQDApU/XKgf2Km/1xsLKp4HB1geG5UP7Q2rgwcS3zcQNPk5p
+         By2/igLAR0PQ/idOSMIBDCsi5C/1+cjovLzIzwUWQ0enD/V7YfYVjTaIQU/H2r4FELA3
+         u8/dEklXfE6iRvIRsJ1jPduYNGwjwKMvdIH+ToLoci+LOY/dDYN/l7G3nt71yHXIRKt+
+         XTKAG5EXBr/vkBXqYxqLB3xNzm2nXMgd8ZRgR6/sI6VUcB1Xq6NHCl9yPHcsRtmQEkt4
+         2mxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759308396; x=1759913196;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8D0lPsjedL+kyXW7Dr+b8bXHNiYNOO4VOFO0oJ6yKL8=;
-        b=rtiN+rw8b6wrNlwSrmNmN1cpiUCXIt+w9RGVgw9P6OUJLk0fPrU80GF6NIUNEBXIhu
-         ugrnjXBMX0azQo2uxPPd5g6bnlKfHQrC686UUMRCpfY7R8gp+UIfp6n+xur4aCcCrujj
-         wWvRc96vFRKQN4CATmp8XcVH3ImNiFwtQLUsRaHWlrls4P/caCPMwGN1P7KZ1srTg5wS
-         WiOU3e+sER1xuMQHnYu1gm0TbxKt1C/7U/tEUA5rYNp1cCwUOvT6jkN2Lql9dr3GXSKd
-         hXWQYfO5AmWM1KXwCH+6ve24C9t26NjCcoBMTRAvdsK6QMiPIFaU3/ry1XNDTNDeXVKa
-         JZyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX5fQ397hanN4ymrVXk2pISRyJOEbzEoQlWiKKN6ULrRoJ2zH0jxem6S2BbkKa3gKbqWW52JsX1A7qGkec=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyC9v8EaXesHmR/4ZEm1+BKNH84NYBlsvU7kCOHXfnpZ7H/LGzt
-	H0noT9WRITJo403WFEGbp6toWxEX9+1XKIrUEj+RjU7O4xFjC2t4XxI/dEY2z4oBAFdXoLS91UG
-	669YU5t347RxWLB/utcnDrQVqZ4Agag6gm13ZnEgYjA==
-X-Gm-Gg: ASbGnctoNSBnCoEdZnztLfrA+ihjpaSSndRuX/ZxtB6l8++YmBbF33xtmaPylXGoSsu
-	d9ty4Pl9QMz5bhDyQsEo0GBqcichXHKr2WzVAYgj3nXBrrWgPeefv/vEW2gPLghkyuXf9mzx3EV
-	5UqkluRBdgAhL5OPb+Qq71uEaXogVTYNGExb4fB+60XbpxiCgfFDc0Yq6dGDYrCEO5IoCsiBizL
-	7e7/SVe59VuXQxgqG45Exn92WicXQshRVPw4En/nABkomHFFzcpwivyhKRRFeY=
-X-Google-Smtp-Source: AGHT+IFOdBqQ3obnIdTm7ru0JPzklPYFIUGqCI693FKE/9RlmuM5kKhUigWL4UNHwLKwqtrOVDs8F+QH4ORLFYFhoak=
-X-Received: by 2002:a05:6512:ea7:b0:57a:6d7d:dd7b with SMTP id
- 2adb3069b0e04-58af9eadd86mr760851e87.8.1759308395621; Wed, 01 Oct 2025
- 01:46:35 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759308483; x=1759913283;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XMfpQioL9qF93r02i/m3R/Lc2dj1xsmt2jY1yN46fE8=;
+        b=jNQCqKnYtSqJn4sZQe6UazcVrHNBc6MBCoM0SONROe822rwHP8IbWWliqzZoTmH//g
+         8lTm1a8E1/HKnNSwAaizmqath1AVZ5nHEwdc4GAglVGeZCi3K6FYy3+p2fY168LwZigc
+         QffHUhYwMrytXR0H1wuQpSyDhzpdGPPm6sU0F04OUB99iLCxQFn7ib7DKNTAkNXgams4
+         bAmDDRa6t5ltNfAQZ5htfG56qEFgYI8tesdDLfTxcWGcooVIikrYusujBEkZJNFVzqFW
+         Gko5L8juwa4EtD8FxggbALHT0NBMFneol2xsngHbRdf5gWQD4yDI11P78UGtwDtLoPHT
+         2o9w==
+X-Forwarded-Encrypted: i=1; AJvYcCXEB81paoiKnTKlwbwlc2IQekH0KbASPhejQPmD//Lxt5j9bM0i4FlFLuVLJKtICLYk9ufzzVsU8GWVU5I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUt7h0RSKO4SWQihRHY8u49iKaUpLOXhh+e2kp5uP6Zcvg69A8
+	tbc3+QbmduGt9W8PAhniwTEvd0MOxxCD1XMPQ+RnRBz3fDK//9W4RN7y
+X-Gm-Gg: ASbGncv8ljpzcMruSTQDUADBoV0oehbG8E/Z7eRaHiVWvVvsY1VDt9PDBtsonRnvhfP
+	PRBEVj9rym4LIAR9AbkBsr4p7k6XZiD88HWzT6GTD0czIW8VF3TJDxudZCqFZ1qYr/qe4/JKTwi
+	E18DH3cGRs+BgpRLNU0njfv6jt8rz+QaD9Ms5NECXxYKvTxyqEANF+we6lHx2IXcNxLKL7mWoJY
+	nQwFTm8nVDo36dJWoams54xgxwuxTMU3gVXzA6VoQdthjbUgG23cemWFMlbCLNpbDUTxaHCDzm4
+	cp3ZYcxllPz5rp9WaAF2ilKhp25XCjv9WcBZvDt76ihwT2fGPwKjH30lrDoe/x+qxKMNKfaKVIC
+	KAuWgwSSVK7qEByyNwThFfSZsVMVC7Cy3Jne/8yVC2Db/bdT08s6qRrlSFL1YRD8ztt24JINAYD
+	KxjVk3fQIsyQpr+QEbd9buvk/gHfC95vNx/+8teDUDxFhqQy2R3y6qFuvybyGM8a/PoLIuJ378/
+	kquzm7dWeF1kXs1YexxOfzwNb2Ga//3+qNZfZ6txMG75jo=
+X-Google-Smtp-Source: AGHT+IFnWYeRu9k4Oaa4bTAUDYxWIdWeHxGT4Bg1jpuCkukhqqyjsyyOYdJn3LPL9nXEE8BZUqnazw==
+X-Received: by 2002:a17:90b:1e10:b0:32e:59ef:f403 with SMTP id 98e67ed59e1d1-339a6f2e80fmr3239453a91.17.1759308482433;
+        Wed, 01 Oct 2025 01:48:02 -0700 (PDT)
+Received: from 2001-b400-e387-f8be-46e6-cc88-b318-45e6.emome-ip6.hinet.net (2001-b400-e387-f8be-46e6-cc88-b318-45e6.emome-ip6.hinet.net. [2001:b400:e387:f8be:46e6:cc88:b318:45e6])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-339a6e9d22bsm1789250a91.3.2025.10.01.01.47.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Oct 2025 01:48:02 -0700 (PDT)
+From: Kevin Tung <kevin.tung.openbmc@gmail.com>
+Subject: [PATCH v3 0/2] Add Meta (Facebook) Yosemite5 BMC (AST2600)
+Date: Wed, 01 Oct 2025 16:47:49 +0800
+Message-Id: <20251001-yv5_add_dts-v3-0-54190fbc0785@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250910-make-compound-literals-normal-again-v1-0-076ee7738a0b@linaro.org>
- <20250910-make-compound-literals-normal-again-v1-2-076ee7738a0b@linaro.org>
- <CAMuHMdWoEXLTPyQL4kt1OPVbrDDcBdBigqUM7EbNZjZUsSmRHQ@mail.gmail.com>
- <CAMRc=Mej9fQk-1zYKhPK6aWdptXKvjq28TywRyP+iZExRuX9og@mail.gmail.com> <CACRpkdbo88o1g_VCp0+C9hfi1VQkP99x2Mnkw_DTctBEtVAa_g@mail.gmail.com>
-In-Reply-To: <CACRpkdbo88o1g_VCp0+C9hfi1VQkP99x2Mnkw_DTctBEtVAa_g@mail.gmail.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 1 Oct 2025 10:46:22 +0200
-X-Gm-Features: AS18NWC0XlksXBppS2yCvWpBaDAShYUzQK0jJOB31RgrqudBkZ0MvZktkc5Xz8w
-Message-ID: <CAMRc=Mf4kv03+cfB7up==PUJyxHH6U3hHF3q6iKYZWVOZamSTg@mail.gmail.com>
-Subject: Re: [PATCH 2/3] pinctrl: use more common syntax for compound literals
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Lee Jones <lee@kernel.org>, 
-	Andy Shevchenko <andriy.shevchenko@intel.com>, Liviu Dudau <liviu.dudau@arm.com>, 
-	Sudeep Holla <sudeep.holla@arm.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Avi Fishman <avifishman70@gmail.com>, Tomer Maimon <tmaimon77@gmail.com>, 
-	Tali Perry <tali.perry1@gmail.com>, Patrick Venture <venture@google.com>, 
-	Nancy Yuen <yuenn@google.com>, Benjamin Fair <benjaminfair@google.com>, 
-	=?UTF-8?Q?Jonathan_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>, 
-	=?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <legoffic.clement@gmail.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	James Cowgill <james.cowgill@blaize.com>, Matt Redfearn <matt.redfearn@blaize.com>, 
-	Neil Jones <neil.jones@blaize.com>, 
-	Nikolaos Pasaloukos <nikolaos.pasaloukos@blaize.com>, Hoan Tran <hoan@os.amperecomputing.com>, 
-	Yang Shen <shenyang39@huawei.com>, Imre Kaloz <kaloz@openwrt.org>, 
-	Yinbo Zhu <zhuyinbo@loongson.cn>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Manivannan Sadhasivam <mani@kernel.org>, 
-	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	openbmc@lists.ozlabs.org, linux-gpio@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, imx@lists.linux.dev, 
-	linux-unisoc@lists.infradead.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALXq3GgC/23MQQqDMBCF4avIrJuSTqKYrnqPIhKSUQeqlkRCR
+ XL3pq67/B+874BIgSnCvTogUOLI61JCXSpwk11GEuxLA0qspUEt9lT31vveb1EYbFrrbtoPTkJ
+ 5vAMN/Dm1Z1d64ritYT/xhL/1v5NQSKGM1bYl5Qw1j3G2/Lq6dYYu5/wFm+YtzKYAAAA=
+X-Change-ID: 20250924-yv5_add_dts-9268ac14dfc0
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
+ Andrew Jeffery <andrew@codeconstruct.com.au>, 
+ Geert Uytterhoeven <geert+renesas@glider.be>, 
+ Magnus Damm <magnus.damm@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
+ linux-renesas-soc@vger.kernel.org, Amithash Prasasd <amithash@meta.com>, 
+ Kevin Tung <Kevin.Tung@quantatw.com>, Ken Chen <Ken.Chen@quantatw.com>, 
+ Leo Yang <Leo-Yang@quantatw.com>, Kevin Tung <kevin.tung.openbmc@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1759308478; l=1447;
+ i=kevin.tung.openbmc@gmail.com; s=20250924; h=from:subject:message-id;
+ bh=QvD/ud6DrodRNKqUA2m4nL+/50pX/gxXw21okP8DcUg=;
+ b=csBBxtxldogEQ8rY3FiSkJeHOhzuac4zcoGG5wphIcMFi6EvJcjhMsjESJ6SxzR6pTZfm9a2t
+ NfCmbeaOchxD43dDjoBaxFLMKIIuBCb4bv9jKCT5u50KF6oapTWBuXE
+X-Developer-Key: i=kevin.tung.openbmc@gmail.com; a=ed25519;
+ pk=PjAss0agA0hiuLfIBlA9j/qBmJaPCDP+jmQIUB6SE7g=
 
-On Wed, Oct 1, 2025 at 10:36=E2=80=AFAM Linus Walleij <linus.walleij@linaro=
-.org> wrote:
->
-> On Thu, Sep 25, 2025 at 9:52=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.p=
-l> wrote:
->
-> > This is a link to the discussion with Andy as per Linus Torvalds'
-> > recent request to use the Link: tag to point to actually useful
-> > information rather than just the patch's origin. Linus Walleij doesn't
-> > use b4 so the origin link you'd normally expect to be added
-> > automatically is not there at all. That's probably what caused the
-> > confusion.
->
-> What? I use b4 for everything, I don't know what gave you
-> that impression....
->
+Summary:
+Add device tree for the Meta (Facebook) Yosemite5 compute node,
+based on the AST2600 BMC.
 
-Ah, sorry for this. I assumed the lack of Link is due to no b4. Should
-have looked at git log first.
+The Yosemite5 platform provides monitoring of voltages, power,
+temperatures, and other critical parameters across the motherboard,
+CXL board, E1.S expansion board, and NIC components. The BMC also
+logs relevant events and performs appropriate system actions in
+response to abnormal conditions.
 
-> I have however removed the automated Link: tags generated from magic
-> gitconfig hooks as requested by Torvalds in v6.17-rc5:
-> https://lwn.net/Articles/1037069/
->
-> This is also mentioned in my pin control pull request from yesterday.
->
+Signed-off-by: Kevin Tung <kevin.tung.openbmc@gmail.com>
+---
+Changes in v3:
+- add missing dtb target in arch/arm/boot/dts/aspeed/Makefile
+- remove unevaluated property `ncsi-package`
+- Link to v2: https://lore.kernel.org/r/20250924-yv5_add_dts-v2-0-39a4a8e3c9e6@gmail.com
 
-So it is a policy after all and not a "please"? Let me remove the hooks the=
-n...
+Changes in v2:
+- send v2 of the series so that it's properly threaded.
+- add idle disconnect to i2c mux.
+- Link to v1: https://lore.kernel.org/all/20250917074812.4042797-1-kevin.tung.openbmc@gmail.com
 
-Bart
+---
+Kevin Tung (2):
+      dt-bindings: arm: aspeed: add Meta Yosemite5 board
+      ARM: dts: aspeed: yosemite5: Add Meta Yosemite5 BMC
+
+ .../devicetree/bindings/arm/aspeed/aspeed.yaml     |    1 +
+ arch/arm/boot/dts/aspeed/Makefile                  |    1 +
+ .../dts/aspeed/aspeed-bmc-facebook-yosemite5.dts   | 1067 ++++++++++++++++++++
+ 3 files changed, 1069 insertions(+)
+---
+base-commit: 30d4efb2f5a515a60fe6b0ca85362cbebea21e2f
+change-id: 20250924-yv5_add_dts-9268ac14dfc0
+
+Best regards,
+-- 
+Kevin Tung <kevin.tung.openbmc@gmail.com>
+
 
