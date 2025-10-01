@@ -1,222 +1,153 @@
-Return-Path: <linux-kernel+bounces-838780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB166BB01F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 13:21:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 161BBBB020E
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 13:24:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C787177596
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 11:21:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1A622A1043
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 11:24:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B68932C3250;
-	Wed,  1 Oct 2025 11:21:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF5C12C3263;
+	Wed,  1 Oct 2025 11:24:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="27x6QSsL";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="gIzBnHXK";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="27x6QSsL";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="gIzBnHXK"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="R+EHTCxk"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 986D72C3265
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 11:21:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5110B2C178D
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 11:24:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759317668; cv=none; b=oH2nIJPLW9bKEl5lDL2x5weaz951Lpk4A6eNmqKqaFOpqToMBqO1ZJXmwtxhV4gytDAx9nXW8gcRcNLS34fczVcx0v7T45L3SYN/Q+2WkjWGflhyOeoOWTMMGest4xuREYZM0huM6K2Si4YAcjo1gmgFmv+SNM9LQm2jhQIcXow=
+	t=1759317877; cv=none; b=RjYHpvONIbUFsCI843RuOwcU6OGpc2Ugi/mw5WQ1kyHi3d0MaD8wGfHze1Q0lBY3AgNBgLMrhEbhY5Msnc/C2erwvqDLvZD0OuBsLCAtDnAX8hfR5a4XgOZLYqNWBOODa6nzzXQkw9ZLgMsKVsylFm2y245JBOHCByNvAugCrdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759317668; c=relaxed/simple;
-	bh=hmF/lI8pMoVG47HFC2l+uHYvXKY+xODQGwkcduME3/w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rDCOnL5tXpuDDP0Wx22jNGhhlHUVn27BovJMnggHNzkkpj3OQV4IC2SpDKw5ZotlR/rMLDcnm535O+PvdPt42u2VDHBSA+xyBnVPOwgnWTxOJ7kT4l6DsW9ezSdr1xSHMzlPpC4LWiNvjyhkwX6P+XUR7SaSVxdfzCGoiKHEuiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=27x6QSsL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=gIzBnHXK; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=27x6QSsL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=gIzBnHXK; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 30F041FB6C;
-	Wed,  1 Oct 2025 11:21:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759317663; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PF0wBi19hCMZbudds09SMu1E6+Thus+lwXfrPMqv/OQ=;
-	b=27x6QSsLnXfDgXY7pdEYSiZXKKor/atJajs4IHb9CiYvXbS8LZJh6jeOaQbyhHf70Z9x/U
-	zjgMZjaizsIsEe9ybGSqit0kpkCYa+AR0LWJVR3rD51nn+pRT9YXH7CFV6QuoYDicAYhl8
-	fvUeahFf8QDGGEgBVG3JSRYAvzxrg58=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759317663;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PF0wBi19hCMZbudds09SMu1E6+Thus+lwXfrPMqv/OQ=;
-	b=gIzBnHXKDLn2i76VXzzgf1C9Z5lCSTfOVvUxwyauayG+U5gMiznPQijHtafE1CiYcSX5tG
-	WsnNmvjEr6y6TpBA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759317663; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PF0wBi19hCMZbudds09SMu1E6+Thus+lwXfrPMqv/OQ=;
-	b=27x6QSsLnXfDgXY7pdEYSiZXKKor/atJajs4IHb9CiYvXbS8LZJh6jeOaQbyhHf70Z9x/U
-	zjgMZjaizsIsEe9ybGSqit0kpkCYa+AR0LWJVR3rD51nn+pRT9YXH7CFV6QuoYDicAYhl8
-	fvUeahFf8QDGGEgBVG3JSRYAvzxrg58=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759317663;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PF0wBi19hCMZbudds09SMu1E6+Thus+lwXfrPMqv/OQ=;
-	b=gIzBnHXKDLn2i76VXzzgf1C9Z5lCSTfOVvUxwyauayG+U5gMiznPQijHtafE1CiYcSX5tG
-	WsnNmvjEr6y6TpBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 218DF13A3F;
-	Wed,  1 Oct 2025 11:21:03 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id CarzB58O3WjSZwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 01 Oct 2025 11:21:03 +0000
-Message-ID: <138f3057-8aab-4bfb-a541-dbf1a51a32bb@suse.cz>
-Date: Wed, 1 Oct 2025 13:23:47 +0200
+	s=arc-20240116; t=1759317877; c=relaxed/simple;
+	bh=5e/F6QKv/vvIaNOCn+i1T0+gkBtuWnI86XhAnampRNk=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=mZtBT9myOS/Sz8YwmkVK44Kqim9lvp9EV3kucrnpdpnP8CrFU40v6BBS8gXpQmaKwOhBTr9BnbwsYKaUi3eaOIM30gWWAcfM7eHnIhvxY9UZwR8uaAui0Q0T+jqQqn7AiTbfRJhWEjkNcAHC0Sf5gtAVrqxWLzCA90kZeCrXurE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=R+EHTCxk; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-46e317bc647so45882735e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 04:24:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1759317874; x=1759922674; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=loyJAwQrLX68E+xJ/zLjfhEY3jyjUwwo2QQ6EsgIrWo=;
+        b=R+EHTCxkowXKiJqW2azLB159NiOyF0KfrXw9Ppus2Ucpt3SVD+O6U0bsereAf58/jC
+         HFv8fsj1wTct/joVo5XrVdhjNh1cVY/zb7zRC7mY1cwrhdp5Kk5hwKl5gQ2GCaBR5cIZ
+         Z5UkdaxDve6kQwWAG8EHfb5t92KNzo4pg0FvRhE2+1hL1UP+37U9ukRNoeTiZSa7bSCh
+         t4ZDkEBREiHuf9CAo6/jImUbPVvfDBYK6L3pli5QudwDrq/WpfmQX6JSW3mnxsU6vr5c
+         O6uwNtZQUArSepUYSwumeSoJZRFTvo6E1Tla41efs46WtgAflmFVCJbyllRoSHJodFwN
+         S9+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759317874; x=1759922674;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=loyJAwQrLX68E+xJ/zLjfhEY3jyjUwwo2QQ6EsgIrWo=;
+        b=WHD3dR4xCkeWwmV/yDVm4CU1ugSrSA8O/D9woN7jHqEm4ifgrFngJiKb/Qvb3t6zRx
+         UY9ZtHeOUs/dUxkawsxgtDuZU+QVODcME4M7y9TAyhQxbHjsql8ZG6brEv0dmXIi2wVP
+         8bEIWBG3j2ulypWL8T1qGrK2L+0eUlZytN2RrRLxAnGV3Y8m2Ak2I4L3xl/VipPS6tFG
+         J+y+1tfxlYMD9mcXuToQeWy6qbAA3GFjHt+5RVDgN5OlBwnQ2CVYiA+sNhWfHsG4Z2KW
+         xLbfttfDYCpmd1M/Lrh0YOhzIlXyCXRq9+OfSvM3HvRupDGwDLiASosllZzvtVJDZctY
+         R/8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXS+0zVRUK+rvMwhhrIQ7BOzgawJL02+ptqDUVJd9Sj4+PCUIosSMgl8F2yj3l0K8sVALXCyLG+F9RAVV4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywvt5rCABRnbJ130gqzjlxaKOtcZVaCnVQRj/Ukc2jCt8giYyTU
+	IUCCl/WNbDxuI0HaXt8y5WPFToATSmmRfePhiN/l0GeMua2Y7QkoEVavlxwFvLbn/4s=
+X-Gm-Gg: ASbGnctIqUUvz7S1vdUxSEQNAbPBXvkGhERg4YBwd1tPJcUsz09Ps1Cc6r70idgj4Gd
+	SYpwx3Ub+4BXhG3sws3g9wqktxzCeveZZf2QXcvkNR6tik84NZ7A10w89ttZ0Nf1U0+Eex7U/IH
+	IE4BZ6z174seS/D596pkzpZCGPfzMcwsNISyJGGqRuDP3tOzuVnswKknK13TbF1dj8TyuJdRJhn
+	oMdBEp1qTuMpsIvDQJcBWJsaGLroBbxUaJ5w7SxLOh/YFi8gUS/C2worcaBZQtyPGD7p7flX8iP
+	6nRqaH6E4pK8t/gvmrBjBFy01PvYiXxYJQmXOTp36o8v24urTOhRXl/x1y9wyLIRUHmnJLFy0og
+	h/6V5RswEQQ3UtgM/pNH3O0NGJfQrMmrM00RhW+pyamQnQ1XXKEhNaPPb1bwF2zW1kqa4BWBqpA
+	==
+X-Google-Smtp-Source: AGHT+IFtAgywWrsfSYERzPm6WM2utiuL00aNpUAhUx1d7BqDM282ZQ7LYiOHorp1TnI/lQjZh6x/0w==
+X-Received: by 2002:a05:600c:8b65:b0:46e:42fa:ffce with SMTP id 5b1f17b1804b1-46e6125d025mr23588735e9.2.1759317873648;
+        Wed, 01 Oct 2025 04:24:33 -0700 (PDT)
+Received: from localhost ([2a00:2381:fd67:101:6c39:59e6:b76d:825])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e5b577c87sm35652375e9.0.2025.10.01.04.24.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 01 Oct 2025 04:24:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] mm/page_alloc: Perform appropriate batching in
- drain_pages_zone
-To: "Christoph Lameter (Ampere)" <cl@gentwo.org>,
- Joshua Hahn <joshua.hahnjy@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Johannes Weiner <hannes@cmpxchg.org>, Chris Mason <clm@fb.com>,
- Kiryl Shutsemau <kirill@shutemov.name>, Brendan Jackman
- <jackmanb@google.com>, Michal Hocko <mhocko@suse.com>,
- Suren Baghdasaryan <surenb@google.com>, Zi Yan <ziy@nvidia.com>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, kernel-team@meta.com,
- Mel Gorman <mgorman@techsingularity.net>
-References: <20250925184446.200563-1-joshua.hahnjy@gmail.com>
- <567be36f-d4ef-e5bc-e11c-3718272d3dfe@gentwo.org>
-Content-Language: en-US
-From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <567be36f-d4ef-e5bc-e11c-3718272d3dfe@gentwo.org>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_TO(0.00)[gentwo.org,gmail.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -2.80
+Date: Wed, 01 Oct 2025 12:24:32 +0100
+Message-Id: <DD6Y4WZD1ZMK.3E0AUSVO0W79P@linaro.org>
+From: "Alexey Klimov" <alexey.klimov@linaro.org>
+To: "TangBin" <tangbin@cmss.chinamobile.com>
+Cc: <srini@kernel.org>, <lgirdwood@gmail.com>, <broonie@kernel.org>,
+ <perex@perex.cz>, <tiwai@suse.com>, <linux-sound@vger.kernel.org>,
+ <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ASoC: codecs: Fix the error of excessive semicolons
+X-Mailer: aerc 0.20.1
+References: <20250930094103.2038-1-tangbin@cmss.chinamobile.com>
+In-Reply-To: <20250930094103.2038-1-tangbin@cmss.chinamobile.com>
 
-On 9/26/25 6:21 PM, Christoph Lameter (Ampere) wrote:
-> On Thu, 25 Sep 2025, Joshua Hahn wrote:
-> 
->>> So we need an explanation as to why there is such high contention on the
->>> lock first before changing the logic here.
->>>
->>> The current logic seems to be designed to prevent the lock contention you
->>> are seeing.
->>
->> This is true, but my concern was mostly with the value that is being used
->> for the batching (2048 seems too high). But as I explain below, it seems
->> like the min(2048, count) operation is a no-op anyways, since it is never
->> called with count > 1000 (at least from the benchmarks that I was running,
->> on my machine).
-> 
-> 
-> The problem is that you likely increase zone lock contention with a
-> reduced batch size.
-> 
-> Actually that there is a lock in the pcp structure is weird and causes
-> cacheline bouncing on such hot paths. Access should be only from the cpu
+On Tue Sep 30, 2025 at 10:41 AM BST, TangBin wrote:
+> From: Tang Bin <tangbin@cmss.chinamobile.com>
+>
+> Remove unnecessary semicolons in the function
+> pm4125_codec_enable_adc and pm4125_micbias_control.
+>
+> Signed-off-by: Tang Bin <tangbin@cmss.chinamobile.com>
 
-The hot paths only access the lock local to them so should not cause
-bouncing.
+Please use better email/commit subject or title.
+I'd say that something like "ASoC: codecs: pm4125: ... " would be better
+to reflect which codec this change relates to.
 
-> that owns this structure. Remote cleaning (if needed) can be triggered via
-> IPIs.
 
-It used to be that way but Mel changed it to the current implementation
-few years ago. IIRC one motivation was to avoid disabling irqs (that
-provide exclusion with IPI handlers), hence the spin_trylock() approach
-locally and spin_lock() for remote flushing.
+> ---
+>  sound/soc/codecs/pm4125.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/sound/soc/codecs/pm4125.c b/sound/soc/codecs/pm4125.c
+> index 706fc668f..aa8319c4a 100644
+> --- a/sound/soc/codecs/pm4125.c
+> +++ b/sound/soc/codecs/pm4125.c
+> @@ -691,7 +691,7 @@ static int pm4125_codec_enable_adc(struct snd_soc_dap=
+m_widget *w,
+>  						      0x00);
+>  		pm4125_global_mbias_disable(component);
+>  		break;
+> -	};
+> +	}
+> =20
+>  	return 0;
+>  }
+> @@ -756,7 +756,7 @@ static int pm4125_micbias_control(struct snd_soc_comp=
+onent *component, int micb_
+>  		dev_err(component->dev, "%s: Invalid micbias number: %d\n",
+>  			__func__, micb_num);
+>  		return -EINVAL;
+> -	};
+> +	}
+> =20
+>  	switch (req) {
+>  	case MICB_PULLUP_ENABLE:
+> @@ -799,7 +799,7 @@ static int pm4125_micbias_control(struct snd_soc_comp=
+onent *component, int micb_
+>  			pm4125_global_mbias_disable(component);
+>  		}
+>  		break;
+> -	};
+> +	}
 
-Today we could use local_trylock() instead of spin_trylock()
-theoretically. The benefit is being inline, unlike spin_trylock() (on
-x86). But an IPI handler (that must succeed and can't give up if the
-lock is already taken by the operation it interrupted) wouldn't work
-with that - it can't give up nor "spin". So the remote flushes would
-need to use queue/flush work instead and then the preempt disable +
-local_trylock() would be enough (work handler can't interrupt a preempt
-disabled section). I don't know if that would make the remote flushes
-too expensive though or whether they only happen in such slowpaths to be
-acceptable.
+Thanks for noticing this.
 
-> This is the way it used to be and the way it was tested for high core
-> counts years ago.
-> 
-> You seem to run 176 cores here so its similar to what we tested way back
-> when. If all cores are accessing the pcp structure then you have
-> significant cacheline bouncing. Removing the lock and going back to the
-> IPI solution would likely remove the problem.
+Looks like checkpatch.pl --strict generates a bit of more warnings for this=
+ file.
 
-I doubt the problem here is about cacheline bouncing of pcp. AFAIK it's
-free_frozen_page_commit() will be called under preempt_disable()
-(pcpu_spin_trylock does that) and do a potentially long
-free_pcppages_bulk() operation under spin_lock_irqsave(&zone->lock). So
-multiple cpus with similarly long free_pcppages_bulk() will spin on the
-zone lock with irqs disabled.
-Breaking down the time zone lock is held to smaller batches will help
-that and reduce the irqs disabled time. But there might be still long
-preemption disabled times for the pcp, and that's IIRC enough to cause
-rcu_sched stalls? So patch 4/4 also relinquishes the pcp lock itself
-(i.e. enables preemption), which we already saw from the lkp report
-isn't trivial to do. But none of this is about pcp cacheline bouncing,
-AFAICS.
-
-> The cachelines of the allocator per cpu structures are usually very hot
-> and should only be touched in rare circumstances from other cpus.
-
-It should be rare enough to not be an issue.
-
-> Having a loop over all processors accessing all the hot percpus structurs
-> is likely causing significant performance issues and therefore the issues
-> that you are seeing here.
-> 
-> 
-> 
+Best regards,
+Alexey
 
 
