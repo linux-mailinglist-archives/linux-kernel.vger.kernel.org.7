@@ -1,67 +1,55 @@
-Return-Path: <linux-kernel+bounces-838900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8F79BB0632
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 14:53:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EA9CBB063E
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 14:55:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98EC12A3FF9
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 12:53:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 049CC1945C61
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 12:55:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EF752EC0A3;
-	Wed,  1 Oct 2025 12:53:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4583B2EC0A8;
+	Wed,  1 Oct 2025 12:55:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bz5ng6Bo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZKiDXyTZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A00A9278158;
-	Wed,  1 Oct 2025 12:53:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 990E22522BE;
+	Wed,  1 Oct 2025 12:55:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759323182; cv=none; b=uY9NmWzgxb1VuJz9dHsphHlz8v79f/14L4QagiLmjyEFaVZ3Yp//zcl8CvMO9BD1SX9T74KRCdVNJukdeHXcv60ZTZSznWyNZPo8DsPVWLuEEAg0Srk6gt4lu0YXqxRBFBlYnLd/Iy5aFnZu+jTQ2J2sLvovGAlnLFcvHe7mGQU=
+	t=1759323313; cv=none; b=iXXRe/yqeIeibXCsmIxtyXD1Hb7uwnx40vddeeMcXo+Vc7OcO6IPoSPxneRA/cm0K2k/09kbpB7jszbGwSfnizB5pdl0e0vMuei9HKt2YCYr/9nI29/qrGcbLqbtiITobvJVvMmZGhCabfG5KJNgPM3FTwm1nP1KX9v5R8df0QQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759323182; c=relaxed/simple;
-	bh=s9cMI0NQ6Ghw1OeMLa07wrwdZ05xUb732GXBSIqGFvM=;
+	s=arc-20240116; t=1759323313; c=relaxed/simple;
+	bh=LRPAIU7oUMh2EMMgZZBYLQFZsIlE0AA8tKcdEBDoFCE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gbh3q4cgqbD/idxfjKJN4mTDk3/HAM4RWRTIoYzcG+cTacRXxP3QGwUvFHfKJfyrj8x2yDDxggWcxYRKg1C7hMwK3AVNQjorzScta6tmDhmZo34Rs575zHKVYQ0C8CLhbHiyyShIG6CShV57wf1ku4kMMA5tduL+Hc1ZsA+ke7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bz5ng6Bo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3192C4CEF4;
-	Wed,  1 Oct 2025 12:52:59 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=RX/4bUwFx+ZOQxQhujKZtrrj6w8QUAZjRvCTXSzCyfRpoA5bj/htPKkFwQFVzWQSSzQsJAvYWA5x+XEVF9eBR7tAcKNZSTmEsy7cLcvfXpCtP5V8kIXM3virgt4V601D+Wkng4hp8ojz8wm4cd3HnIcP4ECwUBNepwcgtOsCqKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZKiDXyTZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 798B9C4CEF4;
+	Wed,  1 Oct 2025 12:55:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759323180;
-	bh=s9cMI0NQ6Ghw1OeMLa07wrwdZ05xUb732GXBSIqGFvM=;
+	s=k20201202; t=1759323313;
+	bh=LRPAIU7oUMh2EMMgZZBYLQFZsIlE0AA8tKcdEBDoFCE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bz5ng6BoKKY/o+/webLqSD6ZbY7l3wci5aQg/hJ7lEWnI6zOgk2hjk/dto+6YbfzZ
-	 XIakcR0EwE4jtediRa59Nx7yQj+RGQ2P4UIqtb1H3ttxHpZsaYSIlbN3t9d+GWHkIL
-	 23J20PczNvwSOet5Oj05LxclVItO4W6K9ubwqD9Xy2D7yA4MFjHQVPGPP9rhBHGMda
-	 zAu6bPfhbqP9T3llsXqm0nsoF7kFrIQY2XIUAybkdZNIcT3CWT0eySkcDkOWXhDUgZ
-	 U25ULVyLtx9fRi0oEFLo0OaigyxWaWXXT1GDJiqg6xSrLivbSQbPxPWEyB1h3cB3MX
-	 DUXNkk5QTYxPg==
-Date: Wed, 1 Oct 2025 15:52:56 +0300
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: Jonathan McDowell <noodles@earth.li>, linux-integrity@vger.kernel.org,
-	dpsmith@apertussolutions.com, ross.philipson@oracle.com,
-	Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:KEYS/KEYRINGS" <keyrings@vger.kernel.org>,
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
-Subject: Re: [PATCH v3 01/10] tpm: Cap the number of PCR banks
-Message-ID: <aN0kKHvc0DRWJPbo@kernel.org>
-References: <20250929194832.2913286-1-jarkko@kernel.org>
- <20250929194832.2913286-2-jarkko@kernel.org>
- <aNu6W0GagfCliWTx@earth.li>
- <aNvO0ZsZz_jkmpoi@kernel.org>
- <cf3fb265dd70a23d598fc3d68562b4be5355e7ae.camel@HansenPartnership.com>
- <aN0NcIlyrUsejMXW@kernel.org>
+	b=ZKiDXyTZkU1mJCAZsavBe4swvM2lZoX/FlntfD5DsO0H12GtnACGXA+6hrP/2523g
+	 EBuJHohENuaN2IGd0NGDCkUiRncgQpdLXAp97yVusHX0qW3V0ag12uHzSG/yUOy1CJ
+	 yQCLnIcWO9MPEBvb3BGBd4t64NMMqH5Q5xmyAqo+eGijsRsP82uZhh62UtsCliPJrz
+	 WrsD3guUrnNbaYOawmMlXsKbaKt4ewyW0vG03gGKBUYoXIaVjMHCx41Hw2eYYajVEt
+	 RJZdJUcNf/ccG2O75khqcerZKVdDDnzdHGVV3FWlt7d4shMzCKn1ZPUFqUCXRJqD9T
+	 xw/tBcCZKf5lg==
+Date: Wed, 1 Oct 2025 07:55:10 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Akiyoshi Kurita <weibu@redadmin.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org,
+	linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH] dt-bindings: mmc: Correct typo "upto" to "up to"
+Message-ID: <175932328886.1147501.11874097725207297926.robh@kernel.org>
+References: <20250930134547.1096686-1-weibu@redadmin.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,44 +58,19 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aN0NcIlyrUsejMXW@kernel.org>
+In-Reply-To: <20250930134547.1096686-1-weibu@redadmin.org>
 
-On Wed, Oct 01, 2025 at 02:16:04PM +0300, Jarkko Sakkinen wrote:
-> On Tue, Sep 30, 2025 at 10:17:22AM -0400, James Bottomley wrote:
-> > On Tue, 2025-09-30 at 15:36 +0300, Jarkko Sakkinen wrote:
-> > > On Tue, Sep 30, 2025 at 12:09:15PM +0100, Jonathan McDowell wrote:
-> > > > On Mon, Sep 29, 2025 at 10:48:23PM +0300, Jarkko Sakkinen wrote:
-> > [...]
-> > > > > +#define TPM2_MAX_DIGEST_SIZE	SHA512_DIGEST_SIZE
-> > > > > +#define TPM2_MAX_BANKS		4
-> > > > 
-> > > > Where does this max come from? It matches what I see with swtpm by 
-> > > > default (SHA1, SHA2-256, SHA2-384, SHA-512), so I haven't seen
-> > > > anything that exceeds it myself.
-> > > 
-> > > I've never seen hardware TPM that would have more than one or two
-> > > banks. We can double it to leave some room. This was tested with
-> > > swtpm defaults.
-> > 
-> > I've got a hardware TPM that comes with 3 banks by default (it's a
-> > chinese one which has sha1 sha256 and sm2).  swtpm isn't a good
-> > indicator because it's default allocation is rather pejorative (it
-> > disables sha1 whereas most field TPMs don't).
-> > 
-> > However, if you look at how the reference implementation works, the
-> > user is allowed to define any number of banks they want, up to the
-> > number of supported hashes.  The only limitation being there can't be
-> > >1 bank for the same hash.  Field TPM implementations are allowed to
-> > constrain this, but most don't.   The question you should be asking
-> > here is not how many banks does a particular implementation allow by
-> > default, but what's the maximum number a user could configure.
+
+On Tue, 30 Sep 2025 22:45:47 +0900, Akiyoshi Kurita wrote:
+> The word "upto" is a typo for "up to". Correct this typo in the
+> mmc-controller-common binding documentation.
 > 
-> It needs some compilation time cap as the value comes from external
-> device. If someone hits to that value, then it needs to be increased
-> but as unconstrained it's a bug.
+> Signed-off-by: Akiyoshi Kurita <weibu@redadmin.org>
+> ---
+>  .../devicetree/bindings/mmc/mmc-controller-common.yaml          | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
 
-Maximum eight banks should be spacy enough for the time being (and for
-the foreseeable future).
+Applied, thanks!
 
-BR, Jarkko
 
