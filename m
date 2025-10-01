@@ -1,140 +1,319 @@
-Return-Path: <linux-kernel+bounces-839392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBF59BB1898
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 20:54:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AE72BB18A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 20:57:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 976E53A5370
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 18:54:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87C5619C07F3
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 18:57:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DC6C2D77EA;
-	Wed,  1 Oct 2025 18:54:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ADCA2D7803;
+	Wed,  1 Oct 2025 18:57:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ngJSxP5+"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X+aoQUWr"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43D0226059B
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 18:54:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A43712BDC33
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 18:57:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759344845; cv=none; b=EnhCvjP18W5ZlJ3LyIWKHk/fTBJ5yFeFnhYIm50l1drA/mDDCJO+MvKxq4jOqgmfZIqaCHpzWnLhcH1koi1vcqNdc+tFGvp35UbnObYSsjARI13NIrYjbNJESe1t/ZL4Mc2x+e9NMU5pxoaYUlXCqB3b8++HUxE481/xiWoFXLo=
+	t=1759345044; cv=none; b=fR29GfuBtrlnRX856hfHHO2E12nK/kjYzILonu2r93NhzKw9YWgzlKKoW1UXs3g/vsxYawXnIRyy7o6qa/5NsHeN23C0Jm0MENPZVzE5kUb6BTJUIme7v+LnRMEOdENLH66CMnIC1cKS3rKRhvRTDueOVh6S8Ao4E2ezcC/G634=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759344845; c=relaxed/simple;
-	bh=XNg9xjJ3/UwspigWAaGjhYXO4J9lKANanZxaLbJm7u8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=m5HmJez2uf0AHfwKuwLqX2N0H38htXlei1F9EVkPhFkaBjwwa/eJK0MOz9u0uzSjBePQmFQ4y8jLdPPHkT+5ICLBvu6lhWLY93mvseaDR187msKp7YZMMz4G0tWTb/02NhyItd6cEqoTF/hB1Cak/KbtQ4lXHhxclPaZsnLZA9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ngJSxP5+; arc=none smtp.client-ip=209.85.214.177
+	s=arc-20240116; t=1759345044; c=relaxed/simple;
+	bh=MMybpxGWCbBgve52l5mPOu9P+yIWJ6nBBYL5Mb2Kwmk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gMMUldl5jT4eFW8e+9F5cWH/r+Z/bzMwS9nOyy2eDIXX8od5Xw52aYHz6oKkKnnJU5OAGPlN8JTmjmcrYIRdKwrJ01e6qPHnk4rHCFzUsKbxy2Aq3km2esiOF58V0e+b/6EPuC7y8JPDlTmvnn8wKqu4I/vHZ+PI7Rv1/7nbcqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X+aoQUWr; arc=none smtp.client-ip=209.85.208.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-269639879c3so1033015ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 11:54:04 -0700 (PDT)
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-61a8c134533so414094a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 11:57:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759344843; x=1759949643; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=eX/firA/xiO7qDk1Fjec32UpAU9zzdAdtIubnbzrcJE=;
-        b=ngJSxP5+Y5/DFrIKb5aGINL54Y1krIxKtf6MRv4AjLiAaal25GYSahevmfRd2NvMpk
-         csWz1VWWyaoF7Hv2q9443U1Oy29IUutcFk5CvpE1o239qZrp2WaZ8GmeamY8XIJV9Tv0
-         wMVh3XglOJLvL5zp7bFhRvqSpKrbRw6SBXZ6oa7RwcGCv+E3an934dBofZReuVcIZ0Tz
-         naLgTTWp5sW5Xk43roZZV3fnAalKc3dj6dutmHSZJHKOtO65drFIewdSHlYX16R2ibfI
-         6A8OQWPZyr06CJUOO4u4hDHTvUEreuSoD+OY8mPDY2x/d9oG6Hpgx2E796x1d7kUwimi
-         63Sg==
+        d=gmail.com; s=20230601; t=1759345041; x=1759949841; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XoX3igMAB21gentWFZhiiyfl1G4d2d3BMnfktxV5lXY=;
+        b=X+aoQUWrZMl73IohcuAFyaIFbS/MKhryFCpPBrHQdjKNcM8iLKP5A3glGnujVRNA5O
+         Byxed9hvDLigB8MAyIhytIg28tqkCK1SPcZjYtWE4//T6ZYnox9cmdMquNjAgMaXZW4J
+         5SNfBZoduX/sivbHW0bcV+hDoFD5CFGwfvk0E12WGnw2xxakyMHtFvroCmsSGH5tEAwN
+         kt+5nDIYLFXZq16IBBGe2Z3jzJlmKVPH6hEA6dmWJHbrJi8PAAtPwrBDM0MzUAn2heRv
+         mqFTrRH72xdwyZpTRaKnAa0JuJF2D6uU1SLaIzWSqLjuttG27kvLrftObiuCW8nuGmeS
+         PDDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759344843; x=1759949643;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=eX/firA/xiO7qDk1Fjec32UpAU9zzdAdtIubnbzrcJE=;
-        b=VaWach3gwNOluOmxirIrZm1P0Pht65MIokz4iGJeWsGfPsygecrvekApaBGOpxY3JR
-         5DEtaKLHo523MFgQCAfa+dpKJ/JKIX4z9P5VtqyRnB++M/z7QoEigp0ILPoFjlzkUeYg
-         t6V1cOgXQNkp876sgSMul/UG8cK+PkN0SWGkZibXWoUMIeEXGvvgOV/xrX08GqEWBsE8
-         UpPQc1fE3D0UFgCUo/S0zaiUiErneByuuDlVRTwJnrbSmcyhyAQ9aeYexegDct32o3fe
-         bKUOSyI+ll28QZyuWyBtFnJTirQVC/If5vo1t4bHY3wvtFztmNP2hS85FDNooF5xbM0J
-         /TKw==
-X-Forwarded-Encrypted: i=1; AJvYcCWXVWXOGU+qru8P7F77OOjH4X8mEjl7DCP+MHXWbEae0YxVnyThqmX8NvHra5ROkq6QWOUnwawU30uVEZg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzafS7lq2+T/z04qa2J6WiAjk0Fx0BsmvurJiBStfVdKs1ROKR
-	1xx/hi0j5JAQfoBOEWJ8zbNXGCFCDhmb/uwrJBBfuXz3EidW4z7+DMbU
-X-Gm-Gg: ASbGncuWnWtDyoxab55+t018L5UOloGp7V6g9mN9DQxNbbubJaEHKh8/6mzXF9jeoIs
-	szmK2JZcbM0Cp4K20T8tXyJRguyWbu2lryabT3lAN0Pp1djminHugTezJvlBhDrOvOmluZqgylK
-	caHe62uDl9p6hZX8gcQakY4lg4b3jOGgO9AnsW2YDj/ZjSifbC2GAsiswf2sgCP/9Vix3wAghuf
-	N8//Ww4EjnPC+xRUSwrMuJjTvBhvDoH9JGOeM0EXxrxZMiNFahQSDMMyNM6aYcb/i8RF2MF3Nmr
-	rKSgX+/zGK/NBFgroUX73Bgzo5lqyANjkDZWqJTVDTmEhgiDTukD/20YfgeQEfShRZlYE4tJLEM
-	LPVnzASjg1GTlIgicUZ1d2lHUhurY+BX5shOlXrpEYuMNHGL0LUQo0kfhoD+o9vyOE7bcbFE=
-X-Google-Smtp-Source: AGHT+IGjwr/BLVhgI6N3+8rc531F3qJG+8YZmu6vKODZ0amBPkqinY8F2D3nh175ChO7UG9UWBoSlQ==
-X-Received: by 2002:a17:902:e94e:b0:24c:e6fa:2a38 with SMTP id d9443c01a7336-28e7f298119mr60479185ad.25.1759344843577;
-        Wed, 01 Oct 2025 11:54:03 -0700 (PDT)
-Received: from ?IPv6:2a03:83e0:115c:1:1ed4:e17:bedc:abbb? ([2620:10d:c090:500::6:420a])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d1d582asm3048445ad.113.2025.10.01.11.54.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Oct 2025 11:54:03 -0700 (PDT)
-Message-ID: <3b9a4aae9265fd8cc9a7c9576b8b1c54cd2933d1.camel@gmail.com>
-Subject: Re: [PATCH v3 1/2] bpf: Skip scalar adjustment for BPF_NEG if dst
- is a pointer
-From: Eduard Zingerman <eddyz87@gmail.com>
-To: Brahmajit Das <listout@listout.xyz>
-Cc: syzbot+d36d5ae81e1b0a53ef58@syzkaller.appspotmail.com,
- andrii@kernel.org, 	ast@kernel.org, bpf@vger.kernel.org,
- daniel@iogearbox.net, haoluo@google.com, 	john.fastabend@gmail.com,
- jolsa@kernel.org, kpsingh@kernel.org, 	linux-kernel@vger.kernel.org,
- martin.lau@linux.dev, sdf@fomichev.me, 	song@kernel.org,
- syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev, 
-	kafai.wan@linux.dev
-Date: Wed, 01 Oct 2025 11:54:01 -0700
-In-Reply-To: <zq2pmlsmmduelzniwez7hnwygx5vl2byrvtvjfabpjtvrwjcxl@eej2larvujkk>
-References: <68d26227.a70a0220.1b52b.02a4.GAE@google.com>
-	 <20251001095613.267475-1-listout@listout.xyz>
-	 <20251001095613.267475-2-listout@listout.xyz>
-	 <0a2232a7faa9077ba7a837e066bd99bab812e4a6.camel@gmail.com>
-	 <zq2pmlsmmduelzniwez7hnwygx5vl2byrvtvjfabpjtvrwjcxl@eej2larvujkk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+        d=1e100.net; s=20230601; t=1759345041; x=1759949841;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XoX3igMAB21gentWFZhiiyfl1G4d2d3BMnfktxV5lXY=;
+        b=oE+wyk2Rr7wnqs90pkbTSc8LYUqUMaxwjCCo5PshjWBBjUbsMZNGps+Vb1RQQ6Th5L
+         2TnQMcI3bl3dRczEfcglKtv5wpXVLrsDTLlPxLTc+/Ojm5pqlNLBEmFgSkXzGBJn8UcX
+         8jI9KHNme8HQf3/Hj2L+ijdOlhFB02qPJ7i/QnPTr4zZ88AGDZ69nBLy2KqzvUY7z03l
+         hHtddQcl0xSIR/AtorhIGJAzUTN1vb70jJVTaIYEvdtwj9HP0+NpECSB3EqWZGF1bLsZ
+         PrqmvrHDGdhwg06pVIhQ0FPtumeadlAzNKX0Vs+9/DTNPeKvgndxK95PB2DaDHhqC0zY
+         cIYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVac7LqMIFZeqjR9avGkPGVEAS4GkVluJHuMuTIlE7meF8VqT+ViT4JlejVnYx2vDv7OvzFEt7fsM/k2m4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZrat2IKeMR2/ELCXdU1IgzwVndtho7YUw5rdKrJyRdr+fgmX5
+	rwhSrCPdqOTgIZiRoKJDI5eMkMD/OlAEEfcUaB/LIx2gMCEtheUytZ5QHvGasYqD8PiuvDzxhoK
+	Eftclb96m3iiLV+9Fs5rQT26muyxb7o0=
+X-Gm-Gg: ASbGncvuspgXUMOItWcfts/GgQXC2Q7ZX2Jrdffsi9lxAo/t/d0KZWS7LiDHO/gbZFU
+	8cN8quPvZ7wnpDkZJpjhP80/PSUKXNz17IMEQhb4+oOLgonOTdl6xV0J83TtIWe9RdVbf3UfZuJ
+	O2UYzfkW14XriAqiZvVYDyYIJ3YPKzzepFyjhBwOcAT78daHWTH7mdtVQ33jGJhthss8A8GMwsy
+	AOlzDjVh6ld7PhZMB+KUcs9Jg6jLK4WkblOPe19
+X-Google-Smtp-Source: AGHT+IGjZ/28ZD/9gb9yV5xN5I9eaIlMrP2dqIQmyLTpOWcXkwMpZirOBMDTOcsveRN3Fu86Dh/yn07ZPVnpzj22vHw=
+X-Received: by 2002:a05:6402:2106:b0:636:6489:4db3 with SMTP id
+ 4fb4d7f45d1cf-63678c0e08emr5185166a12.1.1759345040725; Wed, 01 Oct 2025
+ 11:57:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250926072905.126737-1-linux.amoon@gmail.com>
+ <20250926072905.126737-2-linux.amoon@gmail.com> <CAL_JsqJr+h7pTvbRR=7eB4ognK70D1pgNXEORGXo=ndND=pMjw@mail.gmail.com>
+ <CANAwSgT3jo35xBvkH4GmQcZuZH=D+SRKJ6e9fSBRz45zwuCmYw@mail.gmail.com>
+ <CAL_JsqLsEDFv4T1ZMmjaoFfs7WNAjVvOk9o1eTXL2EeGF8uuDA@mail.gmail.com>
+ <CANAwSgTuX3t2-SNPe4OAzGuDpL5RotxX8t+Zx+gcwFKdj3ZEng@mail.gmail.com>
+ <CAL_JsqKBhzPwxYguy+N=eddG2nwB54dzw307A6KT5NJpRSh-Mg@mail.gmail.com>
+ <CANAwSgTKFSf-EUGSpErdS1Y93AwunFOK7omH4T+gE_z2XttVtw@mail.gmail.com> <CAL_JsqLCPThkVhdTLPA_POn72LS16-e-TaRTiEYf+USYTFyNPQ@mail.gmail.com>
+In-Reply-To: <CAL_JsqLCPThkVhdTLPA_POn72LS16-e-TaRTiEYf+USYTFyNPQ@mail.gmail.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Thu, 2 Oct 2025 00:27:04 +0530
+X-Gm-Features: AS18NWDE6lCO0n2IZ5w2RYV16F7fO6b4TX6QJWqMWLEqNsqSCGU_rf7Tga7xbxk
+Message-ID: <CANAwSgTP+gK_nwADx8PpJt8-T4ZtViKorq1fuPmDnA3fLkaSFA@mail.gmail.com>
+Subject: Re: [PATCH v1 1/5] dt-bindings: PCI: Convert the existing
+ nvidia,tegra-pcie.txt bindings documentation into a YAML schema
+To: Rob Herring <robh@kernel.org>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, 
+	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2025-10-02 at 00:19 +0530, Brahmajit Das wrote:
-> On 01.10.2025 11:29, Eduard Zingerman wrote:
-> > On Wed, 2025-10-01 at 15:26 +0530, Brahmajit Das wrote:
-> > > In check_alu_op(), the verifier currently calls check_reg_arg() and
-> > > adjust_scalar_min_max_vals() unconditionally for BPF_NEG operations.
-> > > However, if the destination register holds a pointer, these scalar
-> > > adjustments are unnecessary and potentially incorrect.
-> > >=20
-> > > This patch adds a check to skip the adjustment logic when the destina=
-tion
-> > > register contains a pointer.
-> > >=20
-> > > Reported-by: syzbot+d36d5ae81e1b0a53ef58@syzkaller.appspotmail.com
-> > > Closes: https://syzkaller.appspot.com/bug?extid=3Dd36d5ae81e1b0a53ef5=
-8
-> > > Fixes: aced132599b3 ("bpf: Add range tracking for BPF_NEG")
-> > > Suggested-by: KaFai Wan <kafai.wan@linux.dev>
-> > > Signed-off-by: Brahmajit Das <listout@listout.xyz>
-> > > ---
-> >=20
-> > Acked-by: Eduard Zingerman <eddyz87@gmail.com>
-> >=20
-> Thanks
-> >=20
-> > Nit: I'd made this a bit simpler: `regs[insn->dst_reg].type =3D=3D SCAL=
-AR_VALUE`,
-> >      instead of __is_pointer_value() call.
-> >=20
-> > >  			err =3D check_reg_arg(env, insn->dst_reg, DST_OP_NO_MARK);
-> > >  			err =3D err ?: adjust_scalar_min_max_vals(env, insn,
-> > >  							 &regs[insn->dst_reg],
-> Do I need to send a v4?
+Hi Rob,
 
-As you see fit.
-If you agree with my suggestion, please send v4,
-leaving it as-is also fine by me.
+On Wed, 1 Oct 2025 at 21:04, Rob Herring <robh@kernel.org> wrote:
+>
+> On Tue, Sep 30, 2025 at 11:32=E2=80=AFAM Anand Moon <linux.amoon@gmail.co=
+m> wrote:
+> >
+> > Hi Rob
+> >
+> > On Tue, 30 Sept 2025 at 20:07, Rob Herring <robh@kernel.org> wrote:
+> > >
+> > > On Mon, Sep 29, 2025 at 10:25=E2=80=AFAM Anand Moon <linux.amoon@gmai=
+l.com> wrote:
+> > > >
+> > > > Hi Rob
+> > > >
+> > > > On Mon, 29 Sept 2025 at 19:19, Rob Herring <robh@kernel.org> wrote:
+> > > > >
+> > > > > On Mon, Sep 29, 2025 at 2:40=E2=80=AFAM Anand Moon <linux.amoon@g=
+mail.com> wrote:
+> > > > > >
+> > > > > > Hi Rob,
+> > > > > >
+> > > > > > Thanks for your review comments
+> > > > > >
+> > > > > > On Fri, 26 Sept 2025 at 19:26, Rob Herring <robh@kernel.org> wr=
+ote:
+> > > > > > >
+> > > > > > > On Fri, Sep 26, 2025 at 2:29=E2=80=AFAM Anand Moon <linux.amo=
+on@gmail.com> wrote:
+> > > > > > > >
+> > > > > > > > Convert the legacy text-based binding documentation for
+> > > > > > > > nvidia,tegra-pcie into a nvidia,tegra-pcie.yaml YAML schema=
+, following
+> > > > > > >
+> > > > > > > s/YAML/DT/
+> > > > > > >
+> > > > > > Ok,
+> > > > > > > > the Devicetree Schema format. This improves validation cove=
+rage and enables
+> > > > > > > > dtbs_check compliance for Tegra PCIe nodes.
+> > > > > > >
+> > > > > > > Your subject needs some work too. 'existing' and 'bindings
+> > > > > > > documentation' are redundant.
+> > > > > > >
+> > > > > > Here is the simplified version
+> > > > > >
+> > > > > > dt-bindings: PCI: Convert the nvidia,tegra-pcie bindings docume=
+ntation
+> > > > > > into a YAML schema
+> > > > >
+> > > > > Still doesn't fit on one line and you say bindings twice:
+> > > > >
+> > > > > dt-bindings: PCI: Convert nvidia,tegra-pcie to DT schema
+> > > > >
+> > > > Ok
+> > > > > >
+> > > > > > Convert the existing text-based DT bindings documentation for t=
+he
+> > > > > > NVIDIA Tegra PCIe host controller to a YAML schema format.
+> > > > >
+> > > > > s/YAML/DT/
+> > > > >
+> > > > > Lots of things are YAML. Only one thing is DT schema.
+> > > > Ok, understood.
+> > > > >
+> > > > > >
+> > > > > > > >
+> > > > > > > > Cc: Jon Hunter <jonathanh@nvidia.com>
+> > > > > > > > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> > > > > > > > ---
+> > > > > > > > v1: new patch in this series.
+> > > > > > > > ---
+> > > > > > > >  .../bindings/pci/nvidia,tegra-pcie.yaml       | 651 ++++++=
++++++++++++
+> > > > > > > >  .../bindings/pci/nvidia,tegra20-pcie.txt      | 670 ------=
+------------
+> > > > > > > >  2 files changed, 651 insertions(+), 670 deletions(-)
+> > > > > > > >  create mode 100644 Documentation/devicetree/bindings/pci/n=
+vidia,tegra-pcie.yaml
+> > > > > > > >  delete mode 100644 Documentation/devicetree/bindings/pci/n=
+vidia,tegra20-pcie.txt
+> > > > > > > >
+> > > > > > > > diff --git a/Documentation/devicetree/bindings/pci/nvidia,t=
+egra-pcie.yaml b/Documentation/devicetree/bindings/pci/nvidia,tegra-pcie.ya=
+ml
+> > > > > > > > new file mode 100644
+> > > > > > > > index 000000000000..dd8cba125b53
+> > > > > > > > --- /dev/null
+> > > > > > > > +++ b/Documentation/devicetree/bindings/pci/nvidia,tegra-pc=
+ie.yaml
+> > > > > > > > @@ -0,0 +1,651 @@
+> > > > > > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > > > > > > +%YAML 1.2
+> > > > > > > > +---
+> > > > > > > > +$id: http://devicetree.org/schemas/pci/nvidia,tegra-pcie.y=
+aml#
+> > > > > > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > > > > > > +
+> > > > > > > > +title: NVIDIA Tegra PCIe Controller
+> > > > > > > > +
+> > > > > > > > +maintainers:
+> > > > > > > > +  - Thierry Reding <thierry.reding@gmail.com>
+> > > > > > > > +  - Jon Hunter <jonathanh@nvidia.com>
+> > > > > > > > +
+> > > > > > > > +description: |
+> > > > > > >
+> > > > > > > Don't need '|'.
+> > > > > > >
+> > > > > > Ok
+> > > > > > > > +  PCIe controller found on NVIDIA Tegra SoCs including Tgr=
+a20, Tegra30,
+> > > > > > > > +  Tegra124, Tegra210, and Tegra186. Supports multiple root=
+ ports and
+> > > > > > > > +  platform-specific clock, reset, and power supply configu=
+rations.
+> > > > > > >
+> > > > > > > I would suggest not listing every SoC here unless the list is=
+ not going to grow.
+> > > > > > >
+> > > > > > Here is the short format.
+> > > > > >   PCIe controller found on NVIDIA Tegra SoCs which supports mul=
+tiple
+> > > > > >   root ports and platform-specific clock, reset, and power supp=
+ly
+> > > > > >   configurations.
+> > > > > > Ok
+> > > > > > > > +
+> > > > > > > > +properties:
+> > > > > > > > +  compatible:
+> > > > > > > > +    oneOf:
+> > > > > > >
+> > > > > > > Only 1 entry here, don't need 'oneOf'.
+> > > > > >
+> > > > > > I am observing the following warning if I remove this.
+> > > > > >
+> > > > > >  make ARCH=3Darm64 -j$(nproc) dt_binding_check
+> > > > > > DT_SCHEMA_FILES=3DDocumentation/devicetree/bindings/pci/nvidia,=
+tegra-pcie.yaml
+> > > > > >   CHKDT   ./Documentation/devicetree/bindings
+> > > > > > /media/nvme0/mainline/linux-tegra-6.y-devel/Documentation/devic=
+etree/bindings/pci/nvidia,tegra-pcie.yaml:
+> > > > > > properties:compatible: [{'items': [{'enum': ['nvidia,tegra20-pc=
+ie',
+> > > > > > 'nvidia,tegra30-pcie', 'nvidia,tegra124-pcie', 'nvidia,tegra210=
+-pcie',
+> > > > > > 'nvidia,tegra186-pcie']}]}] is not of type 'object', 'boolean'
+> > > > >
+> > > > > Because you made 'compatible' a list rather than a schema/map/dic=
+t.
+> > > > > IOW, You need to remove the '-' as well.
+> > > > >
+> > > > Ok fixed.
+> > > > >
+> > > > > > > > +  nvidia,num-lanes:
+> > > > > > > > +    description: Number of PCIe lanes used
+> > > > > > > > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > > > > > >
+> > > > > > > The examples show this in child nodes.
+> > > > > > yes it patternProperties example I missed this.
+> > > > > >
+> > > > > > patternProperties:
+> > > > > >   "^pci@[0-9a-f]+$":
+> > > > > >     type: object
+> > > > > >
+> > > > > >     properties:
+> > > > > >       reg:
+> > > > > >         maxItems: 1
+> > > > > >
+> > > > > >       nvidia,num-lanes:
+> > > > > >         description: Number of PCIe lanes used
+> > > > > >         $ref: /schemas/types.yaml#/definitions/uint32
+> > > > > >         minimum: 1
+> > > > > >
+> > > > > >     unevaluatedProperties: false
+> > > > >
+> > > > > What about all the other properties in the child nodes? You need =
+a
+> > > > > $ref to pci-pci-bridge.yaml as well.
+> > > > Thanks for the input.
+> > > >
+> > > > patternProperties:
+> > > >   "^pci@[0-9a-f]+$":
+> > > >     type: object
+> > > >     allOf:
+> > > >       - $ref: /schemas/pci/pci-host-bridge.yaml#
+> > >
+> > > That's not the one you need. Read my reply again.
+> > >
+> > I'm sorry, I missed pci-pci-bridge.yaml
+> > > >       - properties:
+> > >
+> > > properties doesn't need to go under allOf. Actually, don't need allOf
+> > > here at all.
+> > >
+> > > >           reg:
+> > > >             maxItems: 1
+> > >
+> > > >           "#address-cells":
+> > > >             const: 3
+> > > >           "#size-cells":
+> > > >             const: 2
+> > >
+> > > These 2 are already defined in the referenced schema.
+> > Earlier, I had tried to search for these reference schemas,
+> > but I could not find them.
+>
+> They are part of dtschema, so they are on your system wherever it is
+> installed. Most common schemas are in dtschema.
+>
+Thanks, it's preset in the .local dir.
+
+$ .local/lib/python3.13/site-packages/dtschema/schemas/
+
+> Rob
+Thanks
+-Anand
 
