@@ -1,158 +1,173 @@
-Return-Path: <linux-kernel+bounces-838428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91C05BAF2B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 08:04:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 017D2BAF2B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 08:04:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CB173A60BC
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 06:04:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFBEF3AACFC
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 06:04:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 341E227B334;
-	Wed,  1 Oct 2025 06:04:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D308257AC2;
+	Wed,  1 Oct 2025 06:04:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="Lno9QIue";
-	dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b="x+r31yfq"
-Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b="cN/94/8G"
+Received: from sender4-pp-o94.zoho.com (sender4-pp-o94.zoho.com [136.143.188.94])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41FC917A305;
-	Wed,  1 Oct 2025 06:04:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.185.170.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB97C23C8AA;
+	Wed,  1 Oct 2025 06:04:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.94
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759298642; cv=pass; b=GcsKGmmRYJKdiGsIXHMulY0Sdvi6lN2RYE1cxa0mlyt1vo/PoRSliJTcQ7W6C6gwxr5z7nJY9SQSov+DOFobySU0NroZRutp8HZJgcW7NcgHGtR0NDJzp0s8iRAGgRaQ/SQnVq1yL8dVn3evW2HG6ZI+DkV8Z5xp7tPNuF4J3Dc=
+	t=1759298660; cv=pass; b=bKebeOuCM2KgL4zoVo7HIy0yzLwEXTNfahQC1xwh39Y3mIWHYPgVdS3m3sytZF3KQmm4YCMDSfizGyjkx8qK93JPpVWHajjHKS/PWUv8zK7sTnJE24zvr2YGCS42aK/tWpxbfw4PA9uEgNohDh0inF+kY//LAUuxcThNCRotmcA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759298642; c=relaxed/simple;
-	bh=JxLk5jGqbQblNsSB0zOJAtfYJHn9g4zpvampSMxj2X8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fSjxl40HCgo6tz4ZWe6htgBs+/MD4wbKhHLUS3pPL//zK+wc0ENf+vMYXQAH+bJnSGPGBfywfkmwdIMp5eMpfJj5lnUNws7moxuRMk++bcPVWVCWczdXv02VgeEGAoYvAQvRAqJw2MTnATeOCZ8xyGeHh2RGZO8vMauu/SPmwfU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=Lno9QIue; dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b=x+r31yfq; arc=pass smtp.client-ip=185.185.170.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
-Received: from meesny.iki.fi (meesny.iki.fi [IPv6:2001:67c:2b0:1c1::201])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
-	(No client certificate requested)
-	by lahtoruutu.iki.fi (Postfix) with ESMTPS id 4cc49w0MXjz49QFl;
-	Wed,  1 Oct 2025 09:03:48 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
-	t=1759298628;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jW4Im9F8xFHKXmTGaRIQznWZloQR5WOD3R5kATp41j8=;
-	b=Lno9QIue84M636bcXXO9sdLCVvQ7FC+G1khmwoeuAwlbdRwriZSFeUfEY6tvZMoZhQevNi
-	vKYn1Oq5D9+R5DRIx13mxqqylCfgxd6kglF5BeGwKACZuBpawy4D5DJdjKNQMaTuzrVlVV
-	M86AmCTDicPBMPYbNMI+FL2n2wvSlN3h5bvDnHgUDXEKXsri53Dg8DX/Bw+rAw9SC81hB6
-	Y+1Srd+1OIfuWWesxD36TiFLCkXWSes++EQQzkHkTeTO8xhUo+ZCe+fgXf0qk68lyM/BZj
-	nMkQoDOBdvFUjwjUR2Qbi57mZot89iobrJqlZ04i5FItRUyA3iJyLQwDzHNvIQ==
-Received: from hillosipuli.retiisi.eu (91-158-51-183.elisa-laajakaista.fi [91.158.51.183])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sailus)
-	by meesny.iki.fi (Postfix) with ESMTPSA id 4cc49k3M0lzyQK;
-	Wed,  1 Oct 2025 09:03:38 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
-	t=1759298619;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jW4Im9F8xFHKXmTGaRIQznWZloQR5WOD3R5kATp41j8=;
-	b=x+r31yfqnJTgNafbe8gt6eKvZX7qcTGa4yOnOMwjsNO7EYc5R74vQuUnrrbUTBOpmux/kA
-	RcpwjWANvgJx6fjo6F2m4ib88lWE4EpREYTgmtSFVISGSv69NuWQaL+K1gsVzr9yZ5ZF76
-	fCTLa63YR0VvoGN7y8lFyx90eG3TN/U=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
-	s=meesny; t=1759298619;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jW4Im9F8xFHKXmTGaRIQznWZloQR5WOD3R5kATp41j8=;
-	b=SzY6Mfc9JD0IvyQIp1lVcAcJdp1I17s1YixMSPlsK7Uhb0xCWQbmpmu3Ghgr5HHC972GuR
-	S8KOYSWq7tj7H3vAcnpDGK9UkwveqYesdAc5Az7a568228gHAImI6ayc29SnF14fnqRQfo
-	AnY3LsgrA/kSjMGhqvv55HZCsH8fuHE=
-ARC-Seal: i=1; s=meesny; d=iki.fi; t=1759298619; a=rsa-sha256; cv=none;
-	b=zLEkjZDrMCxfrPwCiI0WLd70dYmxEumaWlIPdgBBWSaVju1DL34mFlpLthoZs7NOzMvt89
-	vy7IL66EnwrR7NuYAMbf2szByc9zPDL5Ott2ydWCwXi9oyKTPux+ug8HGIt3eM77FaovkB
-	uncP/0UaLEiBEAoDuQC7dWbT5sS8zsg=
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
-Received: from valkosipuli.retiisi.eu (valkosipuli.local [192.168.4.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by hillosipuli.retiisi.eu (Postfix) with ESMTPS id 95477634C93;
-	Wed,  1 Oct 2025 09:03:37 +0300 (EEST)
-Date: Wed, 1 Oct 2025 09:03:37 +0300
-From: Sakari Ailus <sakari.ailus@iki.fi>
-To: Hans Verkuil <hverkuil+cisco@kernel.org>
-Cc: Jason Gunthorpe <jgg@nvidia.com>, iommu@lists.linux.dev,
-	Linux Kernel <linux-kernel@vger.kernel.org>,
-	Linux Media Mailing List <linux-media@vger.kernel.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Robin Murphy <robin.murphy@arm.com>
-Subject: Re: [PATCH] iommu: __iommu_attach_group: check for non-NULL
- blocking_domain
-Message-ID: <aNzEOeCi8Zjn9S3N@valkosipuli.retiisi.eu>
-References: <9a3ebe9b-518e-49ef-b87d-925d951a446f@kernel.org>
- <20250929120734.GG2617119@nvidia.com>
- <58aabb55-0030-49df-81ed-d4a68174b57e@kernel.org>
- <20250929130214.GK2617119@nvidia.com>
- <4037d353-0ec4-4f68-a09c-564b93ba313b@kernel.org>
+	s=arc-20240116; t=1759298660; c=relaxed/simple;
+	bh=SGJ7F7f+BSgPcdMjTeUtiZj9dNe/Bu7K1pwrqKqmi5M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=t8XZSK8I5n4UIubyVqBuVBKbiMAkZMNnmLMxZgZu2ybPqpbt4fr2THXV/ASfvzKcna0PmrlEFSGk+kcW3LWBESd5v0IvcmDSfXT2DJifAnLmu5Bb3PK4RQnq5kRlvyDqGEHZSV2BsBUNFqsgw/nJzV1+lp5LphSkTBomz5g7vDs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=ming.li@zohomail.com header.b=cN/94/8G; arc=pass smtp.client-ip=136.143.188.94
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1759298641; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=EDFEQhRp5WHix1Smy2ciXXj8vM9O7D4/SdXkhSzlxmZaQ8b6zoQf4SILsCtxvJeRacdAqUSdzhImMQ5Q+S/OsZlUg+Q8/SwBYiu/CGu2DHf2sFjE18e8j3hbSXr4lB4NAmB8MjYtxjWu8kdgxsD8WV+ps3622W61u6BQJQi53/Q=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1759298641; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=QB/yhut3QVT8pqvoLVYMTyBpZhMcos5NCHWzyAFrkQE=; 
+	b=n3xDCMuPG4HI5hsaCy8Y7N9PFWTbsk8NqNCvzjFo2A4u5tfEkRMl+tjH+To/8+UTMed32uMjrp6eX2eXwBAUiJToYdfpIWFP3agY2DveOqXa6yKsXqAgQswzXiJRgxJMdS/qB2FZMvsGNm8KwW95CQrgp7YZtA8UAaCFStmpOk4=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=ming.li@zohomail.com;
+	dmarc=pass header.from=<ming.li@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1759298641;
+	s=zm2022; d=zohomail.com; i=ming.li@zohomail.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Transfer-Encoding:Feedback-ID:Reply-To;
+	bh=QB/yhut3QVT8pqvoLVYMTyBpZhMcos5NCHWzyAFrkQE=;
+	b=cN/94/8G6TKQegYodm8YymZKzFaeVHU71Np1kxylsyn2BqGG4zXB4qtq/ad1xvn6
+	z1ESr7kNsxRR56uAvd2oDQfbudGU/PcEhw5/JyinVCrKiOu35DPfCqhv9/f1glAAf1a
+	I87AkFBqiEIoGbDOQLYVJWdFSfPRcrP6kIhwByX4=
+Received: by mx.zohomail.com with SMTPS id 1759298640059998.7891591675034;
+	Tue, 30 Sep 2025 23:04:00 -0700 (PDT)
+From: Li Ming <ming.li@zohomail.com>
+To: dave@stgolabs.net,
+	jonathan.cameron@huawei.com,
+	dave.jiang@intel.com,
+	alison.schofield@intel.com,
+	vishal.l.verma@intel.com,
+	ira.weiny@intel.com,
+	dan.j.williams@intel.com,
+	shiju.jose@huawei.com
+Cc: linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Li Ming <ming.li@zohomail.com>
+Subject: [PATCH v3 1/1] cxl/port: Avoid missing port component registers setup
+Date: Wed,  1 Oct 2025 14:03:37 +0800
+Message-Id: <20251001060337.431639-1-ming.li@zohomail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4037d353-0ec4-4f68-a09c-564b93ba313b@kernel.org>
+Content-Transfer-Encoding: 8bit
+Feedback-ID: rr080112270f03e9fa526107d7f29c96340000121ea283752c0e86ac80962e2a5e455b3b9209b024ed4c16a1:zu0801122716c4fdacd7ca08e715a4fa1800006ac98176b65f2107132009134120a9ccec6988953a28e9ba50:rf0801122dba65126e536d26798d6b6a7e00009a1a09397bb8d296d201aa06820ed2985fc34c254c83d75f09a337454096d1:ZohoMail
+X-ZohoMailClient: External
 
-Hi Hans, Jason,
+port->nr_dports is used to represent how many dports added to the cxl
+port, it will increase in add_dport() when a new dport is being added to
+the cxl port, but it will not be reduced when a dport is removed from
+the cxl port.
 
-On Mon, Sep 29, 2025 at 03:30:22PM +0200, Hans Verkuil wrote:
-> On 29/09/2025 15:02, Jason Gunthorpe wrote:
-> > On Mon, Sep 29, 2025 at 02:18:50PM +0200, Hans Verkuil wrote:
-> >> On 29/09/2025 14:07, Jason Gunthorpe wrote:
-> >>> On Mon, Sep 29, 2025 at 10:23:47AM +0200, Hans Verkuil wrote:
-> >>>
-> >>>> Since I am unfamiliar with the iommu core code, I am uncertain whether I am
-> >>>> just papering over a bug elsewhere, or whether this is really the correct solution.
-> >>>
-> >>> It is papering over something, group->domain is not supposed to be
-> >>> NULL at this point.. That probably means the iommu driver has not been
-> >>
-> >> It's group->blocking_domain that's NULL, not group->domain.
-> > 
-> > Er, I thought you were hitting a false positive on this:
-> > 
-> >   group->domain != group->blocking_domain
-> > 
-> > ie NULL != NULL
-> > 
-> > But I suppose the whole expression is checking for group->domain
-> > already.
-> > 
-> > All your patch does is entirely disable the safetly logic :\
-> > 
-> > What is isp_attach_iommu() trying to accomplish? It does
-> > arm_iommu_detach_device() and then arm_iommu_attach_device() ?
-> > 
-> > Why?
-> > 
-> > Is this trying to force a non-identity translation for ISP?
+Currently, when the first dport is added to a cxl port, it will trigger
+component registers setup on the cxl port, the implementation is using
+port->nr_dports to confirm if the dport is the first dport.
 
-The omap3isp driver expects to use its own virtual address space for the
-ISP: the video buffers are mapped there as virtually contiguous (physically
-they can be whatever).
+A corner case here is that adding dport could fail after port->nr_dports
+updating and before checking port->nr_dports for component registers
+setup. If the failure happens during the first dport attaching, it will
+cause that CXL subsystem has not chance to execute component registers
+setup for the cxl port. the failure flow like below:
 
+port->nr_dports = 0
+dport 1 adding to the port:
+	add_dport()	# port->nr_dports: 1
+	failed on devm_add_action_or_reset() or sysfs_create_link()
+	return error	# port->nr_dports: 1
+dport 2 adding to the port:
+	add_dport()	# port->nr_dports: 2
+	no failure
+	skip component registers setup because of port->nr_dports is 2
+
+The solution here is that moving component registers setup closer to
+add_dport(), so if add_dport() is executed correctly for the first
+dport, component registers setup on the port will be executed
+immediately after that.
+
+Fixes: f6ee24913de2 ("cxl: Move port register setup to when first dport appear")
+Signed-off-by: Li Ming <ming.li@zohomail.com>
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
+---
+v3:
+- add fix tag
+- add review tags
+
+v2:
+- remove dport from port->dports in case of component registers setup
+  failed.
+
+base-commit: 46037455cbb748c5e85071c95f2244e81986eb58 cxl/next
+---
+ drivers/cxl/core/port.c | 26 ++++++++++++++------------
+ 1 file changed, 14 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/cxl/core/port.c b/drivers/cxl/core/port.c
+index d5f71eb1ade8..8128fd2b5b31 100644
+--- a/drivers/cxl/core/port.c
++++ b/drivers/cxl/core/port.c
+@@ -1182,6 +1182,20 @@ __devm_cxl_add_dport(struct cxl_port *port, struct device *dport_dev,
+ 	if (rc)
+ 		return ERR_PTR(rc);
+ 
++	/*
++	 * Setup port register if this is the first dport showed up. Having
++	 * a dport also means that there is at least 1 active link.
++	 */
++	if (port->nr_dports == 1 &&
++	    port->component_reg_phys != CXL_RESOURCE_NONE) {
++		rc = cxl_port_setup_regs(port, port->component_reg_phys);
++		if (rc) {
++			xa_erase(&port->dports, (unsigned long)dport->dport_dev);
++			return ERR_PTR(rc);
++		}
++		port->component_reg_phys = CXL_RESOURCE_NONE;
++	}
++
+ 	get_device(dport_dev);
+ 	rc = devm_add_action_or_reset(host, cxl_dport_remove, dport);
+ 	if (rc)
+@@ -1200,18 +1214,6 @@ __devm_cxl_add_dport(struct cxl_port *port, struct device *dport_dev,
+ 
+ 	cxl_debugfs_create_dport_dir(dport);
+ 
+-	/*
+-	 * Setup port register if this is the first dport showed up. Having
+-	 * a dport also means that there is at least 1 active link.
+-	 */
+-	if (port->nr_dports == 1 &&
+-	    port->component_reg_phys != CXL_RESOURCE_NONE) {
+-		rc = cxl_port_setup_regs(port, port->component_reg_phys);
+-		if (rc)
+-			return ERR_PTR(rc);
+-		port->component_reg_phys = CXL_RESOURCE_NONE;
+-	}
+-
+ 	return dport;
+ }
+ 
 -- 
-Kind regards,
+2.34.1
 
-Sakari Ailus
 
