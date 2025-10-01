@@ -1,98 +1,100 @@
-Return-Path: <linux-kernel+bounces-839031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 258DBBB0AB4
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 16:15:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F3A6BB0ACA
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 16:19:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4F3517BD9F
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 14:15:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F4131890035
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 14:20:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C33AE2580EC;
-	Wed,  1 Oct 2025 14:15:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1150F2580EC;
+	Wed,  1 Oct 2025 14:19:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OZxkeUKF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AILS6Cd7"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B481D9663;
-	Wed,  1 Oct 2025 14:15:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59B9023E32D
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 14:19:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759328137; cv=none; b=shN9o9ux08Zdf/45uxVdUpFElPLssieCVpLyD+QOAI1bbXw+ct/ePeHsotG+L0zMMQtWrlIyCUIUKTtghGNEyBAdp08Q3drbo2H4Gwon/q6+5A2BPH/uStK+4gz0zB2TsgRBExKRcwf4HQHy8DK8QCq/mrsK+CX+2b7LMMXSlHU=
+	t=1759328383; cv=none; b=KMOxmdQZiEsY4PGy4z/+d2Ijsb2rNVH7W0qSzK8Ggd+hk43fa8PmkPr+fN5q12vFl7o/lGMaPWflkZGO3mnb96nART+2fUaTGffzTU4VCp0eH4Hsm/YgECpdXPgoOKbP0rUPixY/BpWmyZV6iMgPBKZfs985FCvADd/QLyqC8Dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759328137; c=relaxed/simple;
-	bh=poQHc0zUbKi61U3MBi9zrVxyTLo30MnCelCecnP23IY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LR/QVMi7buEnRZzHKDzurUxDs4ImKSpzDIbDAXnhQmsgiu9dAeTyrs1rGSl9elaldZTNJjW91FSy1k9JvuIkYcWDZWxz+XEykhJxOyOA3uJ+Ec7GvdnpwG0vMlu+Y05HgR2anbn87W2wRWpkinH+45ShxwDhL0RoAnt6KvhtEqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OZxkeUKF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CF55C4CEFB;
-	Wed,  1 Oct 2025 14:15:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759328136;
-	bh=poQHc0zUbKi61U3MBi9zrVxyTLo30MnCelCecnP23IY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=OZxkeUKF0TF/wLILhFVfszckjTsin7PEfSFK3zlB87zXTGDiQnxGWC1Kgiw8hMesN
-	 KHQgMCX0Bnd4W1Bpowyuc8Uw3aOPmr8lVDa78RE4M56JGxgMUdfqsrNLRuRauGTdXc
-	 +GcnMPJF67agz47HebhpwIv38mHEtpB8lIg0m7yJkU387SRWlxY5NL2E5ySr3AZseZ
-	 TRWqLIazV2h7XSCLP3VirfpzKK3AJj61Dw6R1XH+2sovQwcOzN7x2WMdIG7+ketvxJ
-	 QCDFNXPE5SluVAiZZRLcy5DEslDY18UBe+jxroxHkdwN4mtT7xsjFfEhi5naKwfLte
-	 W5p3vyHUMmrVg==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
-	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1v3xcE-0000000BJ9V-3Log;
-	Wed, 01 Oct 2025 16:15:34 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: "Jonathan Corbet" <corbet@lwn.net>,
-	Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	"Mauro Carvalho Chehab" <mchehab@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/3] docs: Makefile: use PYTHONPYCACHEPREFIX
-Date: Wed,  1 Oct 2025 16:15:26 +0200
-Message-ID: <8c37576342994ea0e3466eec2602a8d989d9a5f0.1759328070.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <cover.1759328070.git.mchehab+huawei@kernel.org>
-References: <cover.1759328070.git.mchehab+huawei@kernel.org>
+	s=arc-20240116; t=1759328383; c=relaxed/simple;
+	bh=G/jjU2TfIOrHy8eHO94iP3qPgO2EprU2mJD/htT6HG8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Alrf7l29oF7yuLKpXwBe3B8AOJcpabf6q20lm4OIcCgi2OwTTlj3gKmE1BzG14DwLcbXszA3VjLxERjYMEK4ANOIuGlvO9JyTKvOzGFIfT3oReutGDcPZ8z9o2u7tIz2enWZHwjNsmSQAuMIStB4GCueBQO0+Svyn6oV8W+8MI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AILS6Cd7; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759328380;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=th22CVHHRF16+pDNVIT1p3bZ2phIhHgtEHYs26Cgu1M=;
+	b=AILS6Cd7ooh3tvH+swrOCLvzkBa3Az8Cf38LfGCQARxjf6oLL9AcJLNR4IrDuRgutP5wIQ
+	tlWLSjGwP5FWVimkCo7wq6q5DE858qHg/Jl7h3Wj5rwBFkitLaxXsWY2R8sP/PdgKSC29G
+	w6fNzr39MsjhGvMtfuoJg+LX5QH5aec=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-546-Sfqu8UdUMKSobrlY-eucpg-1; Wed,
+ 01 Oct 2025 10:19:38 -0400
+X-MC-Unique: Sfqu8UdUMKSobrlY-eucpg-1
+X-Mimecast-MFC-AGG-ID: Sfqu8UdUMKSobrlY-eucpg_1759328377
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 90A26180057A;
+	Wed,  1 Oct 2025 14:19:37 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.40])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 3474919560B4;
+	Wed,  1 Oct 2025 14:19:34 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Wed,  1 Oct 2025 16:18:15 +0200 (CEST)
+Date: Wed, 1 Oct 2025 16:18:12 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: Re: [GIT PULL 05/12 for v6.18] pidfs
+Message-ID: <20251001141812.GA31331@redhat.com>
+References: <20250926-vfs-618-e880cf3b910f@brauner>
+ <20250926-vfs-pidfs-3e8a52b6f08b@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250926-vfs-pidfs-3e8a52b6f08b@brauner>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Previous cleanup patches ended dropping it when sphinx-build-wrapper
-were added. Also, sphinx-pre-install can also generate caches.
+On 09/26, Christian Brauner wrote:
+>
+> Oleg Nesterov (3):
+>       pid: make __task_pid_nr_ns(ns => NULL) safe for zombie callers
+...
+> gaoxiang17 (1):
+>       pid: Add a judgment for ns null in pid_nr_ns
 
-So, re-add it for both.
+Oh... I already tried to complain twice
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
----
- Documentation/Makefile | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+	https://lore.kernel.org/all/20250819142557.GA11345@redhat.com/
+	https://lore.kernel.org/all/20250901153054.GA5587@redhat.com/
 
-diff --git a/Documentation/Makefile b/Documentation/Makefile
-index f764604fa1ac..65d184eab739 100644
---- a/Documentation/Makefile
-+++ b/Documentation/Makefile
-@@ -60,8 +60,10 @@ else # HAVE_SPHINX
- 
- # Common documentation targets
- htmldocs mandocs infodocs texinfodocs latexdocs epubdocs xmldocs pdfdocs linkcheckdocs:
--	$(Q)@$(srctree)/tools/docs/sphinx-pre-install --version-check
--	+$(Q)$(PYTHON3) $(BUILD_WRAPPER) $@ \
-+	$(Q)PYTHONPYCACHEPREFIX="$(PYTHONPYCACHEPREFIX)" \
-+		$(srctree)/tools/docs/sphinx-pre-install --version-check
-+	+$(Q)PYTHONPYCACHEPREFIX="$(PYTHONPYCACHEPREFIX)" \
-+		$(PYTHON3) $(BUILD_WRAPPER) $@ \
- 		--sphinxdirs="$(SPHINXDIRS)" $(RUSTDOC) \
- 		--builddir="$(BUILDDIR)" --deny-vf=$(FONTS_CONF_DENY_VF) \
- 		--theme=$(DOCS_THEME) --css=$(DOCS_CSS) --paper=$(PAPER)
--- 
-2.51.0
+One of these patches should be reverted. It doesn't really hurt, but it makes
+no sense to check ns != NULL twice.
+
+Oleg.
 
 
