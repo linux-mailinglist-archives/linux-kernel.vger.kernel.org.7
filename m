@@ -1,374 +1,117 @@
-Return-Path: <linux-kernel+bounces-838391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04C49BAF12A
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 06:03:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62E81BAF130
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 06:04:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 067633C6C9A
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 04:02:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BE413C6CA0
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 04:04:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51A062D73B8;
-	Wed,  1 Oct 2025 04:02:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 468102D662D;
+	Wed,  1 Oct 2025 04:03:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="AeEjUMD/"
-Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011064.outbound.protection.outlook.com [40.107.208.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wel6HjMr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 469A2134AC;
-	Wed,  1 Oct 2025 04:02:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.64
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759291353; cv=fail; b=Vm5Th8IlO7rF2hkXfgxixAt+59gF1Mpdz/nshj53U1U74dolAmju1ILTspHWYkv5iou/g+pLDcC9bGbdLHHWwAcO+QVd0N1VKyZIU6VhFa0o2lUuxeluMXFLjSUxPLTMAYZ9S0bmMKdzqCMzNvYqbavwcTBjpkiIs+XJECTp5HM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759291353; c=relaxed/simple;
-	bh=8XODM+Ri0lDvw26DbScRU+UyrdC41phZhJyz7sdN80s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=X9uBaQBPwalGsZ9TQ1RFwmOqDPQkQ31Y5Y6D+1yo520RlDF8LkPli00jPNk5DugLX88Fn2EfQ3G0BP54pGiNijzSwc9Isy9KK+gfU/XCKrRZYfJHet1vufM3OHls5mzKFX7bHaVcjWcvLo+kgtPzSZJiI1rw3C4bhWYPoQN444E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=AeEjUMD/; arc=fail smtp.client-ip=40.107.208.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GPYnUWhLgv7FhpqiwcFLflBnSYLCZKZ1NF7B1nJATLvF38ioAeSfK31cibMfKoHpxcbsVBNPMbBRbWXLyQU9VfFwzC5LtsdeVtxnr0cXUe1MZaBD7lZyOnx5URCRw7MkPu20c3+b3vSeMeJLMxvGuQDoMJrzfL1OkLmyTxvkk4JrxmOi1mtF36GCnizhJU38iH2lpkv6ZQdRvWWM/IjSZ2mlC/3ULzT9CrYCzGWDcXz337kvTl0m46LnJ7HESxg8PGn4Oz8WNA1QR/5ZtfdHqruDOFEEr39jYB7b/yLwwUPj7QqVtMt6XR325w5evfofeFqBfdfy0reLbxNAdCDKRA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cntziZMePRwJ8wPs7L1Jh86gj5flVlQYpYfgf4snZy4=;
- b=D4x8WkA2XMvXHGQxJALKneYk6XwW8wzLEUuAfnGe0/ghO9Moxw81s+RCIXOuwXTk495J1zJh6O7Hh9G4SyoYhTZt2aOKQtV6JCGBCurBZVL8I/0jD+wf+fwyCKh9zcZgHxRLm2zpT6Nm9zYEHXvCuCfDviwyeYAfS5n9qPrwlC9Ev1VxK/MQeKfy6iRDhYhdxaF1T5SP7gNFnN+ykdfMEo/6SzVsBrUwOn52L3qitYKgdn7rX+ugb7hMvjcR1dDkFz9a/B+9Eia+GqvNBbYHYegX8/s7/zSKXgPPtOc+R6nxJ/z7mEPG2p/LDLS6/WCRLZQKhJIl6ZA1uHtrp99eDg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cntziZMePRwJ8wPs7L1Jh86gj5flVlQYpYfgf4snZy4=;
- b=AeEjUMD/+fA1sTtfG0TjV8UvJGnXTARS04IkqQ+Vmi61QPlZ+VLLk5CC32HVzYV5D4CvLSt0vVhbNS94OaVU2iZ1vmy/XLmTZaaJdPHWl0C461ZocXD/uMYr80CrgDlvkSqjnYs8vqNXoAQEfhDhVsUrIfAohAFFl1vByRgn/1HoEtoxWdpEbYQxBohievRZD5o+h77124V08sh4Xx4GW5fQwmHeZITBi78UIodb9Fhi9zp5M3kZA6zzqGoT35jQYHhOZVF8O5V9Vt6760Q4M65unJOKFizRyUtHui+weVYh9yqTP8hk8wU25hU9TUexjtViErBQHt4sxKp6K3saPQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM4PR12MB6494.namprd12.prod.outlook.com (2603:10b6:8:ba::19) by
- PH7PR12MB6000.namprd12.prod.outlook.com (2603:10b6:510:1dc::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.17; Wed, 1 Oct
- 2025 04:02:26 +0000
-Received: from DM4PR12MB6494.namprd12.prod.outlook.com
- ([fe80::346b:2daf:d648:2e11]) by DM4PR12MB6494.namprd12.prod.outlook.com
- ([fe80::346b:2daf:d648:2e11%6]) with mapi id 15.20.9160.015; Wed, 1 Oct 2025
- 04:02:26 +0000
-From: Mikko Perttunen <mperttunen@nvidia.com>
-To: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Sowjanya Komatineni <skomatineni@nvidia.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Prashant Gaikwad <pgaikwad@nvidia.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Svyatoslav Ryhel <clamor95@gmail.com>,
- Jonas =?UTF-8?B?U2Nod8O2YmVs?= <jonasschwoebel@yahoo.de>,
- Dmitry Osipenko <digetx@gmail.com>,
- Charan Pedumuru <charan.pedumuru@gmail.com>,
- Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>,
- Aaron Kling <webgeek1234@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
- Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-staging@lists.linux.dev
-Subject:
- Re: [PATCH v3 01/22] clk: tegra: set CSUS as vi_sensor's gate for Tegra20,
- Tegra30 and Tegra114
-Date: Wed, 01 Oct 2025 13:02:21 +0900
-Message-ID: <6093672.29KlJPOoH8@senjougahara>
-In-Reply-To: <20250925151648.79510-2-clamor95@gmail.com>
-References:
- <20250925151648.79510-1-clamor95@gmail.com>
- <20250925151648.79510-2-clamor95@gmail.com>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-ClientProxiedBy: TYCP286CA0021.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:263::11) To DM4PR12MB6494.namprd12.prod.outlook.com
- (2603:10b6:8:ba::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 827E0267AF2;
+	Wed,  1 Oct 2025 04:03:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759291437; cv=none; b=iMQ7bGT3sef25jnzaQMeLKZCccuPyZn5CqSOGKn9UECjj1tmP5iCl7BKZ2ejV5x4DOU8P/xcXkbDC2TIJG6UMA98otmwbls1/C7ORQcsTd8Ccv9binw50uZc+zS98druHOTqZkph9jvhcCEVhfqRZgKsNWlO6PFXjY4wT6XK2II=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759291437; c=relaxed/simple;
+	bh=ESlTFPkgB0EPTMgq9Aq54wNBh5oiQSb+LzLFed1dL0Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KLjUJZhE+sp/zW43kfYwI5IdVDSO0YthN3T/kPPBtsyHkAZNBIxhi3hoPdTzCTP574xEE3EwsgWYBfC/OtfwmxBu7GlF7EqyawUrMQm5M+7XPXxs+bMaIAVJWkQ2SJBQ8yhdj7Z4fx+0+CP8shMcIk7rMiDOeMfoqYFslLLjmvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wel6HjMr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05F63C4CEF4;
+	Wed,  1 Oct 2025 04:03:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759291437;
+	bh=ESlTFPkgB0EPTMgq9Aq54wNBh5oiQSb+LzLFed1dL0Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Wel6HjMrAbZVoTb1+N/gwvGgV7SKI/vCw6vSgyY7O5MwR5bhprTS+Jb5K7TIacsGN
+	 +L+E1Usf2SHL+LtVp9Numa7Hzcy3APUh1Kd5uJoCtcPkDdzNWx4dtjdnQmoNd3KB1c
+	 20kvB4KrCTtzisB6WnBceMkJ0YJwZxYuDwQISswLnw7OtcKP6pDKa/7+MXaQ21q6rJ
+	 ODSaz7tBDB+z/broViFXGa2kxIc82GYzRqPhMnI52nJh4TerjV/F2/o3GkPih5VRv9
+	 M5PjYFostUCEywcrpfZIvW3WvJyXONWx+FEr6If9QbYjboos53faFCYGPjh7TKDPBK
+	 FGuwb3AVBYR0A==
+Date: Wed, 1 Oct 2025 04:03:55 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+	decui@microsoft.com, linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/4] Introduce movable pages for Hyper-V guests
+Message-ID: <aNyoK8xfgy2zpKCf@liuwe-devbox-ubuntu-v2.lamzopl0uupeniq2etz1fddiyg.xx.internal.cloudapp.net>
+References: <175916156212.55038.16727147489322393965.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB6494:EE_|PH7PR12MB6000:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7fb17e50-344a-4dda-9790-08de009f5525
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|1800799024|10070799003|376014|366016|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RDZvOXVLK29PKzJJc091U2tOVjVzUmtVVHluSlZDcFovdUJJN1AzNExnRC9x?=
- =?utf-8?B?S2hXRW5mSkhoY2dzdmtpOFZER2dOS3ZPZEJycUp4WXlpSE8xNTVCaWgwYU1Y?=
- =?utf-8?B?NXdDeWljR3NXR3h0V0VwYXJSL2V5MDVPaTJqZm5zYlNyU1pNVXpPVUhNYjZH?=
- =?utf-8?B?TytDSVB6S096ZjFNMDB1SGpGRmF2cE5TRnRpYUtDTkxCN3dOb3RUcGc3clQw?=
- =?utf-8?B?ZmQvT1NxKy9RZ3RoSU1BK1psZUh2amxkN3ZiM3gvcCtBd3JKWlFVcjBmaHFI?=
- =?utf-8?B?S09mVkNDeStLYVNqWmwzNDhPeEtnMUIvS1ZsSG5CM0NFQnVLeVRyRE1YaHMy?=
- =?utf-8?B?UVkyVzhTZzdaeko4VVpEUnBoN2RaWUFxN2JreWduR2JSSTV6d3EvcEJFRkMw?=
- =?utf-8?B?TUxoTVJxaG1SYyttRWt1YkgxQW52bmpGQXRzaFVnSGNCN2libzRwUFplS1Bm?=
- =?utf-8?B?WERwL3p5aXFBb1FNWXZhb01JOUJZR1RFd0pFZ2MreGZrK0hZakVaUldFc1No?=
- =?utf-8?B?cmVMVHVxWFpqWWt5aVJKVjVvd0RqSWl6djRNbFRTRGdGVEF0azZPOXpMNkg3?=
- =?utf-8?B?ZVova3NjMG9uVFhybUtERTM3ZUJOQzludFBlK0VmaVpSQ09zckEyK3p3eU41?=
- =?utf-8?B?YUF1MWphbmNHVEpVNmdPT1pVV3BWbE5PTHpETUhtQmR6NTRGWE9qZkYrcHp3?=
- =?utf-8?B?ZGozdnJ5RkR6WUFGNnlYZ0hnbStPTmxFdzA5OGFCL1ZKeTRibGxvRXBNUnR6?=
- =?utf-8?B?TmMxbzcyQWgxdDdER2YwSDdpcmQ1MEEwOGYyY0RhdE5oTms4eHJCL1lVbUlz?=
- =?utf-8?B?dWlMRzh6c045VFpDc0NKVkVzYWNNZG9HazBIY2RoekhWVmY1ZXdlQUxYRm9G?=
- =?utf-8?B?QnpuQVV3UENDWlNLcHd6U3UrN25qNGZWY2M4Nnhrdk9EY0trMDE1TEdPb3Bx?=
- =?utf-8?B?Wkl4eW5nR3lBZ25vaEhybVlkWWh3elJpQXE0RFZjNVVTNW1OaEdVTlJOMUpT?=
- =?utf-8?B?S1R1RW5SaUNudndkRm91NUFXNDJrNzJ3WEV4NCtGWm1CSFBFNzZLVFhNdnJu?=
- =?utf-8?B?TnRDbzdVVkdIZFZMZjFsVnlIRTQrV0huYnZMVWluWnljalp3Sk5MRy9rVHNL?=
- =?utf-8?B?cUVwVklaNGMrbThNd0NGcDc3SzBGaVpZak56YjRxbERHcm5nVmE4REp6SEZT?=
- =?utf-8?B?SzFVZi8yVjZOeC9vUm5tenFNVXMxNlF0U2RyRTNaZ0tCS2dGWUVEc0orVlNZ?=
- =?utf-8?B?OEczZnp3bGFXUFRMTjJ3eXJBZEFwZmhTMThpUkRGZDZzNzFaVXhDU2FQUy9i?=
- =?utf-8?B?bU9MT3dmeTk5eXZVYWhiSjJFdXk4MFcxZ1ZLWVc0NzBHWWV6WXpIS1ZmckIw?=
- =?utf-8?B?bTl0a2ozanl2byttZC8wKzFVRDNrWnRUQ1ViZmtuMmtJS2NLbVZOWGFTTWZ6?=
- =?utf-8?B?V2JlbjJYYTdIQWVQSDdsSEJkdS9jMy8zSlNqRzBscTZVb3lUZWNhaGt3V1pC?=
- =?utf-8?B?UmFkZkFRbmxTV1ZnRi9mQzJiYU1Obm9oOVpsNkY0cHdjakNqSXhUdDFaRXB5?=
- =?utf-8?B?aHVpZjRBK1UrOUx6VHFybElHVFpLQnZHVjNoN1BPYnNpckw2eUtWK2RTRGZG?=
- =?utf-8?B?QnhrUU5LaExyN3VmTFl2WEJLeStTY3VwKy81QlBFV3kvZndRQ1EzcGZCcU9Q?=
- =?utf-8?B?TDZJaXJuUVBJMzMyZG5jMWxBR1lHTk5EY253Vkg1eWNsclhneHpVd25oZUdJ?=
- =?utf-8?B?NDJGejAvZzAxNEhrYlZtSmRYVHRvemJpdnZLbDV6MzUzOXNnQ0xBc2sxU1dZ?=
- =?utf-8?B?Vy9TU01PUUluaUVrZmVqYU5ZNDdlbUl4UzF2MituaGViUW9ZMnN0T3pBTlJ6?=
- =?utf-8?B?QitzZ0prOHhhdjA4eXNzeVBYZXArZzBHbTQ1a0lCTXEwSG9COHB6enZtMHBT?=
- =?utf-8?B?ckxhanhHVlREWW9yQmNFV0JwVmdrWDNKRzN1SXVBNTMveDFEVlpzcktQUkJM?=
- =?utf-8?Q?YaaioGPaljJO9QfiRrJR6ukDOzbtzU=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6494.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(10070799003)(376014)(366016)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?akhmTThjSHBQRFRKc0VrNG1CeTk0TVBCQ2N5YkdmMUF3WjQ3RFZOL1dIakFm?=
- =?utf-8?B?V1NuWnBQY1B4azlkaHVCNE44dllRL3d0SWd1YVU0UHRKdUR0dWVHaVVsM2t0?=
- =?utf-8?B?ckhYeEErTU13REMzWmdsWnZCQ29FSWwvWDdsUG9La2xxaVNHS25SZHMwczdp?=
- =?utf-8?B?ejlrclZObTRMSzZKcEZTSHZoVElJOHZtWDhMZnR1TXdUaldQYmVFVTNwbVl2?=
- =?utf-8?B?Q25qZkY5ZXlSZHI2TDM4WjNjRVZ0aFVEcDNZcUxDNHY4UUZjNjFtcjRldkRX?=
- =?utf-8?B?WUNFaDBDWlZYQzVXZWgvL2FCLzJEQUhZaHJ0dE1pL3hKdlM4MGx4TDJycW1M?=
- =?utf-8?B?Zkdyb1B3ZGZDeXM3MnFhaDZJQmlqV0QxcjV2UC9hejNPc1JSTys2ZjVyT3Jj?=
- =?utf-8?B?b09JVUg4SGRzdW81V0tqazd3Z1NjZk0waTdGUjFpakJ1RGlBT3NqRHJQM2h4?=
- =?utf-8?B?MDB1ZkZDZzloZk1BK3lyZ2ZlYVdPb0w2Uzd1MStvU21NZk4zTVZXNUhIUWlw?=
- =?utf-8?B?VHFhUksrWFA1QWREU1VWb2Zab2VrV3NyemdkWlErT1pxcGlTZ3pFNGJZblFN?=
- =?utf-8?B?bCsxZnAxa1kxR2NVdmQyaDVnbTlRTmUzNkdvOTdiUUVQVlhSck91a1FlVlNT?=
- =?utf-8?B?dG4rUzl1L1FWTXN0RjJreitZeHNGQjdWamRKZDgvSmcrRDREam9xelgvdmZj?=
- =?utf-8?B?RUxsVkg5eFZwdTk0OTNNTklTMkZNR1BTeHRBVmlXMm5EVXhhVmJwRk0rOURq?=
- =?utf-8?B?cHQyZmR5Nm5DWHo1N25oYlM1UFZBNEwvRXhYc2Jqc3VxZTkwd2d6bmU2TGpS?=
- =?utf-8?B?b1phUmprU1VKZWRtR3VGZFUyVGpsRUZSZGR0WnhSSlNXVDdwYmt0ZmFjM2JY?=
- =?utf-8?B?bU00SUcwNGJjUDU2QjhJUmNkcUZJampUTVk0Y1NoQ2pydzlrQXVZampmdk40?=
- =?utf-8?B?bkFOcjViNk8rYlhQaDhiVlh0Ynk1YUttaGwxMkY4U1NXakkwV3Uvb1JINDla?=
- =?utf-8?B?NGdhNFlkUm9CZEtNdmdkUTlHNGRiVDEwYm1CM1FzUk9kRFBiMlBXMFhqU09n?=
- =?utf-8?B?dWNITS9qS1ZPRk5HWUIyUzFIV0JLYmpFeE80c1ZoK0ZMc09ZcnNIbnZaTWtw?=
- =?utf-8?B?SzArcGs1dWQzNEtsSnZQTzc0WEUyaHFia0ZxR1gwcEp5ekZSSDRJQTNzajBN?=
- =?utf-8?B?VDBNaXIya2hDazB2TXlSWUxwL1M4RWxzeWVyNHM0cEJFU2hJQ0R2QlJZM1hW?=
- =?utf-8?B?T2EzYTJRSnErbVlQNnBYMzlWS1A4Q3gxVGluaVlveFQ0K1RaS2djYlc1OTJj?=
- =?utf-8?B?d0JvK2JoMURZaXRSNnRoOUIvbE1VNzJXVkFTQjRVWmZBNHh0V25hQ2JkR1ph?=
- =?utf-8?B?ZnNGd0Z5ZzQ5TEtHeVZlYkkxeTZoL2NYdGsyK1JYQnpjZ3JwaHo4KzB6Q1I2?=
- =?utf-8?B?WkFpOTFZQ2QzY2pBUU9HU2xtU2l1MzZrSGFsRjVscUhxNGUyVVhydytQRVlS?=
- =?utf-8?B?RW9zV3pWU3hpMlluM0daVkszMDhQZzJHOXMvTlowY1NXS3pPajhoek5PNmRB?=
- =?utf-8?B?NXExMGpOWTlKR25YRTkxbkhEc0VFRGtQL0xVZDgvNG1Jcjk0YUE2YUh0ZGU0?=
- =?utf-8?B?NW5sd1M4RUd5Rm1iQnJrVlphRzVTYVNhdXgxNmYyQlYzRmJMSGlQWVhjOGlP?=
- =?utf-8?B?RFJaSVRIeUlzcE9sSGtXbm5mTy9Ua2pjRjVVRkZXRzlPZ0JUMWtwTG9Sa0N4?=
- =?utf-8?B?S0ZnRTBTZEZGbVhGOHd1RzRTcTlacGwycjdZQmRGQURZd0p4TnFZY2t6YU9i?=
- =?utf-8?B?RlREQ2hCV3FSeDRUZmVjdlRoUHdpUTRMVldBdE9zOFVjaThDR0M3NW03bzZT?=
- =?utf-8?B?YzFJUERMcUx5YmJyUU1yYTc4dldjWkQ3U1ZDUUdUa3ExVWFpYmJoZzZjWE5B?=
- =?utf-8?B?RUIrS01BemdxV0hmMkc1a3libjRzT3Z5RmtmVjBVbkF2Y0U0R1EwZzBSeEF1?=
- =?utf-8?B?RFNONXZmdXBpejNjd0hjVUFaenZBWXNOdnV0Wm1CM2Vibk9CNnM5UWY2WVFQ?=
- =?utf-8?B?a0hPVHQ0TUFnK2htc1hTaFhZUUV6Y0lheXd0aXUybDVtZzRqYTB1OTdIMXlP?=
- =?utf-8?B?R2s4NFYyZC9IR0tWcy9JNlJkVG51di9KRVhOWUczbEE1Z1dWd244Tk1HRWMz?=
- =?utf-8?B?bFNHd2VRaE54Z3lnZ1A1c2ZCZ01RZFdyR1YxWFVoTnlsYTA0cHhRRXROVXQ2?=
- =?utf-8?B?dWZyYXFhS0dyQ3l4RWNFWmRBaXR3PT0=?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7fb17e50-344a-4dda-9790-08de009f5525
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6494.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2025 04:02:26.4434
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Alr7V8iScCUaXRlGs2Z2K8ECoU1pmvlLyqXXd3TekfRFAlh2xvq58LpepA5wzalCXvFrGsIVRV9i6ep7XIQ8ow==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6000
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <175916156212.55038.16727147489322393965.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
 
-On Friday, September 26, 2025 12:16=E2=80=AFAM Svyatoslav Ryhel wrote:
-> The CSUS clock is a clock gate for the output clock signal primarily
-> sourced from the VI_SENSOR clock. This clock signal is used as an input
-> MCLK clock for cameras.
->=20
-> Unlike later Tegra SoCs, the Tegra 20 can change its CSUS parent, which i=
-s
-> why csus_mux is added in a similar way to how CDEV1 and CDEV2 are handled=
-.
->=20
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+On Mon, Sep 29, 2025 at 04:02:59PM +0000, Stanislav Kinsburskii wrote:
+> From the start, the root-partition driver allocates, pins, and maps all
+> guest memory into the hypervisor at guest creation. This is simple: Linux
+> cannot move the pages, so the guest’s view in Linux and in Microsoft
+> Hypervisor never diverges.
+> 
+> However, this approach has major drawbacks:
+> - NUMA: affinity can’t be changed at runtime, so you can’t migrate guest memory closer to the CPUs running it → performance hit.
+> - Memory management: unused guest memory can’t be swapped out, compacted, or merged.
+> - Provisioning time: upfront allocation/pinning slows guest create/destroy.
+> - Overcommit: no memory overcommit on hosts with pinned-guest memory.
+> 
+> This series adds movable memory pages for Hyper-V child partitions. Guest
+> pages are no longer allocated upfront; they’re allocated and mapped into
+> the hypervisor on demand (i.e., when the guest touches a GFN that isn’t yet
+> backed by a host PFN).
+> When a page is moved, Linux no longer holds it and it is unmapped from the hypervisor.
+> As a result, Hyper-V guests behave like regular Linux processes, enabling standard Linux memory features to apply to guests.
+> 
+> Exceptions (still pinned):
+>   1. Encrypted guests (explicit).
+>   2 Guests with passthrough devices (implicitly pinned by the VFIO framework).
+> 
+> v2:
+> - Split unmap batching into a separate patch.
+> - Fixed commit messages from v1 review.
+> - Renamed a few functions for clarity.
+> 
 > ---
->  drivers/clk/tegra/clk-tegra114.c        |  7 ++++++-
->  drivers/clk/tegra/clk-tegra20.c         | 20 +++++++++++++-------
->  drivers/clk/tegra/clk-tegra30.c         |  7 ++++++-
->  drivers/pinctrl/tegra/pinctrl-tegra20.c |  7 +++++++
->  4 files changed, 32 insertions(+), 9 deletions(-)
->=20
-> diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-teg=
-ra114.c
-> index 186b0b81c1ec..00282b0d3763 100644
-> --- a/drivers/clk/tegra/clk-tegra114.c
-> +++ b/drivers/clk/tegra/clk-tegra114.c
-> @@ -691,7 +691,6 @@ static struct tegra_clk tegra114_clks[tegra_clk_max] =
-__initdata =3D {
->  	[tegra_clk_tsec] =3D { .dt_id =3D TEGRA114_CLK_TSEC, .present =3D true =
-},
->  	[tegra_clk_xusb_host] =3D { .dt_id =3D TEGRA114_CLK_XUSB_HOST, .present=
- =3D true },
->  	[tegra_clk_msenc] =3D { .dt_id =3D TEGRA114_CLK_MSENC, .present =3D tru=
-e },
-> -	[tegra_clk_csus] =3D { .dt_id =3D TEGRA114_CLK_CSUS, .present =3D true =
-},
->  	[tegra_clk_mselect] =3D { .dt_id =3D TEGRA114_CLK_MSELECT, .present =3D=
- true },
->  	[tegra_clk_tsensor] =3D { .dt_id =3D TEGRA114_CLK_TSENSOR, .present =3D=
- true },
->  	[tegra_clk_i2s3] =3D { .dt_id =3D TEGRA114_CLK_I2S3, .present =3D true =
-},
-> @@ -1047,6 +1046,12 @@ static __init void tegra114_periph_clk_init(void _=
-_iomem *clk_base,
->  					     0, 82, periph_clk_enb_refcnt);
->  	clks[TEGRA114_CLK_DSIB] =3D clk;
-> =20
-> +	/* csus */
-> +	clk =3D tegra_clk_register_periph_gate("csus", "vi_sensor", 0,
-> +					     clk_base, 0, TEGRA114_CLK_CSUS,
-> +					     periph_clk_enb_refcnt);
-> +	clks[TEGRA114_CLK_CSUS] =3D clk;
-> +
->  	/* emc mux */
->  	clk =3D clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
->  			       ARRAY_SIZE(mux_pllmcp_clkm),
-> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegr=
-a20.c
-> index 2c58ce25af75..d8d5afeb6f9b 100644
-> --- a/drivers/clk/tegra/clk-tegra20.c
-> +++ b/drivers/clk/tegra/clk-tegra20.c
-> @@ -530,7 +530,6 @@ static struct tegra_clk tegra20_clks[tegra_clk_max] _=
-_initdata =3D {
->  	[tegra_clk_rtc] =3D { .dt_id =3D TEGRA20_CLK_RTC, .present =3D true },
->  	[tegra_clk_timer] =3D { .dt_id =3D TEGRA20_CLK_TIMER, .present =3D true=
- },
->  	[tegra_clk_kbc] =3D { .dt_id =3D TEGRA20_CLK_KBC, .present =3D true },
-> -	[tegra_clk_csus] =3D { .dt_id =3D TEGRA20_CLK_CSUS, .present =3D true }=
-,
->  	[tegra_clk_vcp] =3D { .dt_id =3D TEGRA20_CLK_VCP, .present =3D true },
->  	[tegra_clk_bsea] =3D { .dt_id =3D TEGRA20_CLK_BSEA, .present =3D true }=
-,
->  	[tegra_clk_bsev] =3D { .dt_id =3D TEGRA20_CLK_BSEV, .present =3D true }=
-,
-> @@ -834,6 +833,12 @@ static void __init tegra20_periph_clk_init(void)
->  				    clk_base, 0, 93, periph_clk_enb_refcnt);
->  	clks[TEGRA20_CLK_CDEV2] =3D clk;
-> =20
-> +	/* csus */
-> +	clk =3D tegra_clk_register_periph_gate("csus", "csus_mux", 0,
-> +					     clk_base, 0, TEGRA20_CLK_CSUS,
-> +					     periph_clk_enb_refcnt);
-> +	clks[TEGRA20_CLK_CSUS] =3D clk;
-> +
->  	for (i =3D 0; i < ARRAY_SIZE(tegra_periph_clk_list); i++) {
->  		data =3D &tegra_periph_clk_list[i];
->  		clk =3D tegra_clk_register_periph_data(clk_base, data);
-> @@ -1093,14 +1098,15 @@ static struct clk *tegra20_clk_src_onecell_get(st=
-ruct of_phandle_args *clkspec,
->  	hw =3D __clk_get_hw(clk);
-> =20
->  	/*
-> -	 * Tegra20 CDEV1 and CDEV2 clocks are a bit special case, their parent
-> -	 * clock is created by the pinctrl driver. It is possible for clk user
-> -	 * to request these clocks before pinctrl driver got probed and hence
-> -	 * user will get an orphaned clock. That might be undesirable because
-> -	 * user may expect parent clock to be enabled by the child.
-> +	 * Tegra20 CDEV1, CDEV2 and CSUS clocks are a bit special case, their
-> +	 * parent clock is created by the pinctrl driver. It is possible for
-> +	 * clk user to request these clocks before pinctrl driver got probed
-> +	 * and hence user will get an orphaned clock. That might be undesirable
-> +	 * because user may expect parent clock to be enabled by the child.
->  	 */
->  	if (clkspec->args[0] =3D=3D TEGRA20_CLK_CDEV1 ||
-> -	    clkspec->args[0] =3D=3D TEGRA20_CLK_CDEV2) {
-> +	    clkspec->args[0] =3D=3D TEGRA20_CLK_CDEV2 ||
-> +	    clkspec->args[0] =3D=3D TEGRA20_CLK_CSUS) {
->  		parent_hw =3D clk_hw_get_parent(hw);
->  		if (!parent_hw)
->  			return ERR_PTR(-EPROBE_DEFER);
-> diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegr=
-a30.c
-> index 82a8cb9545eb..ca367184e185 100644
-> --- a/drivers/clk/tegra/clk-tegra30.c
-> +++ b/drivers/clk/tegra/clk-tegra30.c
-> @@ -779,7 +779,6 @@ static struct tegra_clk tegra30_clks[tegra_clk_max] _=
-_initdata =3D {
->  	[tegra_clk_rtc] =3D { .dt_id =3D TEGRA30_CLK_RTC, .present =3D true },
->  	[tegra_clk_timer] =3D { .dt_id =3D TEGRA30_CLK_TIMER, .present =3D true=
- },
->  	[tegra_clk_kbc] =3D { .dt_id =3D TEGRA30_CLK_KBC, .present =3D true },
-> -	[tegra_clk_csus] =3D { .dt_id =3D TEGRA30_CLK_CSUS, .present =3D true }=
-,
->  	[tegra_clk_vcp] =3D { .dt_id =3D TEGRA30_CLK_VCP, .present =3D true },
->  	[tegra_clk_bsea] =3D { .dt_id =3D TEGRA30_CLK_BSEA, .present =3D true }=
-,
->  	[tegra_clk_bsev] =3D { .dt_id =3D TEGRA30_CLK_BSEV, .present =3D true }=
-,
-> @@ -1008,6 +1007,12 @@ static void __init tegra30_periph_clk_init(void)
->  				    0, 48, periph_clk_enb_refcnt);
->  	clks[TEGRA30_CLK_DSIA] =3D clk;
-> =20
-> +	/* csus */
-> +	clk =3D tegra_clk_register_periph_gate("csus", "vi_sensor", 0,
-> +					     clk_base, 0, TEGRA30_CLK_CSUS,
-> +					     periph_clk_enb_refcnt);
-> +	clks[TEGRA30_CLK_CSUS] =3D clk;
-> +
->  	/* pcie */
->  	clk =3D tegra_clk_register_periph_gate("pcie", "clk_m", 0, clk_base, 0,
->  				    70, periph_clk_enb_refcnt);
-> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra20.c b/drivers/pinctrl/te=
-gra/pinctrl-tegra20.c
-> index 737fc2000f66..437e0ac091cc 100644
-> --- a/drivers/pinctrl/tegra/pinctrl-tegra20.c
-> +++ b/drivers/pinctrl/tegra/pinctrl-tegra20.c
-> @@ -2230,6 +2230,10 @@ static const char *cdev2_parents[] =3D {
->  	"dev2_osc_div", "hclk", "pclk", "pll_p_out4",
->  };
-> =20
-> +static const char *csus_parents[] =3D {
-> +	"pll_c_out1", "pll_p_out2", "pll_p_out3", "vi_sensor",
-> +};
-> +
->  static void tegra20_pinctrl_register_clock_muxes(struct platform_device =
-*pdev)
->  {
->  	struct tegra_pmx *pmx =3D platform_get_drvdata(pdev);
-> @@ -2239,6 +2243,9 @@ static void tegra20_pinctrl_register_clock_muxes(st=
-ruct platform_device *pdev)
-> =20
->  	clk_register_mux(NULL, "cdev2_mux", cdev2_parents, 4, 0,
->  			 pmx->regs[1] + 0x8, 4, 2, CLK_MUX_READ_ONLY, NULL);
-> +
-> +	clk_register_mux(NULL, "csus_mux", csus_parents, 4, 0,
-> +			 pmx->regs[1] + 0x8, 6, 2, CLK_MUX_READ_ONLY, NULL);
->  }
-> =20
->  static int tegra20_pinctrl_probe(struct platform_device *pdev)
->=20
+> 
+> Stanislav Kinsburskii (4):
+>       Drivers: hv: Refactor and rename memory region handling functions
+>       Drivers: hv: Centralize guest memory region destruction
+>       Drivers: hv: Batch GPA unmap operations to improve large region performance
+>       Drivers: hv: Add support for movable memory regions
+> 
 
-Please move the pinctrl changes to a separate patch. Otherwise, LGTM.
+Our internal test discovered an issue which caused a kernel panic. Has
+that been fixed in this series?
 
-Mikko
+Without fixing that bug or ruling out problems in the code I don't think
+I can merge this. Once this feature goes into other people's systems it
+will be extremely difficult to debug.
+
+Wei
 
 
+> 
+>  drivers/hv/Kconfig             |    1 
+>  drivers/hv/mshv_root.h         |   10 +
+>  drivers/hv/mshv_root_hv_call.c |    2 
+>  drivers/hv/mshv_root_main.c    |  472 +++++++++++++++++++++++++++++++++-------
+>  4 files changed, 403 insertions(+), 82 deletions(-)
+> 
 
