@@ -1,111 +1,130 @@
-Return-Path: <linux-kernel+bounces-838959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABD31BB0810
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 15:28:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87FA6BB081C
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 15:29:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67C09163EF7
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 13:28:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A8DD1C28D9
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 13:29:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76DAF2ED866;
-	Wed,  1 Oct 2025 13:28:21 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D21592BD03;
-	Wed,  1 Oct 2025 13:28:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 671CD2ED85D;
+	Wed,  1 Oct 2025 13:29:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="pyhUXrGr"
+Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0041D299A81;
+	Wed,  1 Oct 2025 13:29:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759325301; cv=none; b=fqI0gZP4TlMIPIQaaNWh6RdSITc1i2CC7A0bi+rn+EgrHnSy6ijnBwFAAqa5MbBgNfH8V2LM5OBWtJBC6s8YKWURhFN5PC/J289w6ZV5VxowkZR81yXazNxfVuNj9z8dgN8taChQQhzlz7ieRAT/wOJbbB1agO5fckJOv0qpsHg=
+	t=1759325372; cv=none; b=eOMoYk3iEb1ZP2ROYZgkQ8nCsHIs8FYCFHnuOZgLMPjK2dAAiLV0WS0uDUX319HtOzp27z74Io4iaDpPjN15YpOwzGzQgv6r0hVxlFWAxWTO/ZiBrVCpXhFKT1jVycP8/y+tIQZhd8nJkyfOrDIsMtu4IRe3UT+s5adH9v0LmL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759325301; c=relaxed/simple;
-	bh=TLVkysF/GBhoRIO7bnkXwy1hLk+VVGzi7IiFgnKT0RQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sP3w4DiDcPCE+zOEDhc8MO+QkiEaljvK9SoKyrTflhLyYPVGsjypnOZgTyhikgToL4zK07Js5yjArymI3JW62Q1m9e4rlkGgRv0ojHWQnHsCTK1kCVlq8fQsXkkQPMyueU54ywUSOvY1q7QXhuMpEvcfTkBlK+Ik2m0BHvAKLlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 155C116F2;
-	Wed,  1 Oct 2025 06:28:10 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B49483F59E;
-	Wed,  1 Oct 2025 06:28:17 -0700 (PDT)
-Date: Wed, 1 Oct 2025 14:28:15 +0100
-From: Leo Yan <leo.yan@arm.com>
-To: James Clark <james.clark@linaro.org>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>, coresight@lists.linaro.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v2 5/6] coresight: Add format attribute for setting the
- timestamp interval
-Message-ID: <20251001132815.GN7985@e132581.arm.com>
-References: <20250814-james-cs-syncfreq-v2-0-c76fcb87696d@linaro.org>
- <20250814-james-cs-syncfreq-v2-5-c76fcb87696d@linaro.org>
- <20250930151414.GK7985@e132581.arm.com>
- <3a731a9e-0621-42b6-b7fc-4b0fd9b7da6e@linaro.org>
+	s=arc-20240116; t=1759325372; c=relaxed/simple;
+	bh=OZC0tt3exZ8mrMSmgLzrE/u/RYsfs/kNrj2o8ax8fOA=;
+	h=Date:From:To:Cc:Message-Id:In-Reply-To:References:Mime-Version:
+	 Content-Type:Subject; b=gL8hIax2Y9d2b8F3g0plKymig4Y0CdA660H2fSiadb54xHC7YLB7/fjGDx5Z/EcRHUP5LkQ3sgztMMxBgLH+k+4InX8yqrL+DfUd1AqPCmpBV5DN33pF4mbiZ+KxNqJuDnYqF6N1UyhIgC25l7D5bV/9VNSl/Z8TvrQyhBZKKoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=pyhUXrGr; arc=none smtp.client-ip=162.243.120.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
+	; s=x; h=Subject:Content-Transfer-Encoding:Mime-Version:Message-Id:Cc:To:From
+	:Date:subject:date:message-id:reply-to;
+	bh=/2kuQRr7Hq1T+cMeHaxihzxf/gDDuGxrcXHk1gQvul0=; b=pyhUXrGrpmcPd/+/gO3+Q39F/C
+	6poPPEuq5TcMFNqfAvhtWpE5+huArnZAXLNA+6A7XKpH3mOGo9kpobzuhp4ym/PhMv7SM25Sfg6BJ
+	Ti1hJxGwbkmYFqUWxgxhHjaN7uDbbRG284KyWpdyDWGd/Gs9Ptf0P87kYvl7sQvkbZBQ=;
+Received: from modemcable168.174-80-70.mc.videotron.ca ([70.80.174.168]:41924 helo=pettiford)
+	by mail.hugovil.com with esmtpa (Exim 4.92)
+	(envelope-from <hugo@hugovil.com>)
+	id 1v3wtW-0003Gk-EN; Wed, 01 Oct 2025 09:29:23 -0400
+Date: Wed, 1 Oct 2025 09:29:20 -0400
+From: Hugo Villeneuve <hugo@hugovil.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jirislaby@kernel.org>, fvallee@eukrea.fr,
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, Hugo Villeneuve
+ <hvilleneuve@dimonoff.com>
+Message-Id: <20251001092920.e6d5ffa046937fc850f1ab6a@hugovil.com>
+In-Reply-To: <2025100132-usage-sandstone-8a9f@gregkh>
+References: <20250924153740.806444-1-hugo@hugovil.com>
+	<20250924153740.806444-13-hugo@hugovil.com>
+	<a6bb8046-1e71-4766-afa8-e9d303ba57b8@kernel.org>
+	<20250930160828.546867810b4a17c36a5030c6@hugovil.com>
+	<2025100132-usage-sandstone-8a9f@gregkh>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3a731a9e-0621-42b6-b7fc-4b0fd9b7da6e@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 70.80.174.168
+X-SA-Exim-Mail-From: hugo@hugovil.com
+X-Spam-Level: 
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	* -3.0 NICE_REPLY_A Looks like a legit reply (A)
+Subject: Re: [PATCH 12/15] serial: sc16is7xx: add missing space between
+ macro args (checkpatch)
+X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
+X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
 
-On Wed, Oct 01, 2025 at 01:40:37PM +0100, James Clark wrote:
+Hi Greg,
 
-[...]
+On Wed, 1 Oct 2025 07:16:06 +0200
+Greg KH <gregkh@linuxfoundation.org> wrote:
 
-> > > @@ -103,6 +111,9 @@ static struct attribute *etm_config_formats_attr[] = {
-> > >   	&format_attr_configid.attr,
-> > >   	&format_attr_branch_broadcast.attr,
-> > >   	&format_attr_cc_threshold.attr,
-> > > +#if IS_ENABLED(CONFIG_CORESIGHT_SOURCE_ETM4X)
-> > > +	&format_attr_ts_level.attr,
-> > > +#endif
+> On Tue, Sep 30, 2025 at 04:08:28PM -0400, Hugo Villeneuve wrote:
+> > Hi Jiri,
 > > 
-> > By using .visible() callback for attrs, we can improve a bit code
-> > without spreading "#ifdef IS_ENABLED()" in this file. E.g.,
+> > On Mon, 29 Sep 2025 08:15:56 +0200
+> > Jiri Slaby <jirislaby@kernel.org> wrote:
 > > 
-> >     static umode_t format_attr_is_visible(struct kobject *kobj,
-> >                                     struct attribute *attr, int n)
-> >     {
-> >          struct device *dev = kobj_to_dev(kobj);
+> > > On 24. 09. 25, 17:37, Hugo Villeneuve wrote:
+> > > > From: Hugo Villeneuve <hvilleneuve@dimonoff.com>
+> > > > 
+> > > > Fix the following checkpatch error:
+> > > > 
+> > > >      ERROR: space required after that ',' (ctx:VxV)
+> > > >      +#define to_sc16is7xx_one(p,e)...
+> > > > 
+> > > > Signed-off-by: Hugo Villeneuve <hvilleneuve@dimonoff.com>
+> > > > ---
+> > > >   drivers/tty/serial/sc16is7xx.c | 2 +-
+> > > >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/drivers/tty/serial/sc16is7xx.c b/drivers/tty/serial/sc16is7xx.c
+> > > > index a05be92f7e776..9d04d665ec9ab 100644
+> > > > --- a/drivers/tty/serial/sc16is7xx.c
+> > > > +++ b/drivers/tty/serial/sc16is7xx.c
+> > > > @@ -365,7 +365,7 @@ static struct uart_driver sc16is7xx_uart = {
+> > > >   	.nr		= SC16IS7XX_MAX_DEVS,
+> > > >   };
+> > > >   
+> > > > -#define to_sc16is7xx_one(p,e)	((container_of((p), struct sc16is7xx_one, e)))
+> > > > +#define to_sc16is7xx_one(p, e)	((container_of((p), struct sc16is7xx_one, e)))
+> > > 
+> > > Or perhaps make it type-safe and more obvious by switching it to an inline?
 > > 
-> >          if (attr == &format_attr_ts_level.attr &&
-> > 	    !IS_ENABLED(CONFIG_CORESIGHT_SOURCE_ETM4X))
-> >                  return 0;
-> > 
-> >          return attr->mode;
-> >     }
-> > 
-> > Otherwise, LGTM:
-> > 
-> > Reviewed-by: Leo Yan <leo.yan@arm.com>
-> > 
+> > Not easy to do, because this macro is also used with the second
+> > argument "e" not always being used with the same member name. At the
+> > same time, this is what makes this macro more complex than it should
+> > be. I will convert it to an inline and simplify it by removing the
+> > second argument (and of course adapt the code where the new, simpler,
+> > inline function no longer works).
 > 
-> Unfortunately that won't work because you'd have to always include
-> coresight-etm4x.h. This file is compiled for both arm32 and arm64 so it
-> would break the arm32 build.
-> 
-> I could define the TTR_CFG_FLD_ts_level_* stuff somewhere else but then it
-> becomes messier than just doing the #ifdefs here.
+> Please don't use an inline fuction for container_of() as you will just
+> need to change it later in the future when you really want to use
+> container_of_const() instead :)
 
-ATTR_CFG_FLD_ts_level_* is only used in coresight-etm4x-core.c, it is not
-used in coresight-etm-perf.c. Thus, we don't need to include
-coresight-etm4x.h in coresight-etm-perf.c. Do I miss anything?
+Noted. I will simplify the macro and leave it as a macro then.
 
-A similiar case is the attr 'cc_threshold' is only used by ETMv4, it is
-exported always. It is not bad for me to always expose these attrs but
-in the are ignored in the ETMv3 driver - so we even don't need to
-bother adding .visible() callback.
+Would you suggest to also convert container_of to
+container_of_const in this patch series?
 
-Thanks,
-Leo
+Hugo.
 
