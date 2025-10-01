@@ -1,107 +1,134 @@
-Return-Path: <linux-kernel+bounces-838988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F6F2BB0942
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 15:53:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 810A6BB0949
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 15:55:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9078C7AD019
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 13:51:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2521A3B61C5
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 13:55:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9601D2FC875;
-	Wed,  1 Oct 2025 13:53:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="HUfgTKlY"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E272FC871
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 13:53:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 134792FCBF1;
+	Wed,  1 Oct 2025 13:55:52 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E572ED141;
+	Wed,  1 Oct 2025 13:55:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759326801; cv=none; b=teWfYoGEMv5HWi6drcBOCvUeF4S6X9CdNeyPh0FTMD8AF1DU+RD6i63tWncD6Vqg6EgqQ0xsHZcBRCoCFqSBYh1bqHwFw38agJ1sgZCoILPTB4DubVMnEo1g7CZXEXrN5CWmd9gfnp1TL5Otnf2KuHahvK5FDAzOIN1Y5bEUtx0=
+	t=1759326951; cv=none; b=NPRatIyzFVgS+e2waTtvj/uUHWWmB2ZkY+k1gtg75WNKesgHuAHjo49VlF9KHzrEzb1fWYbUrQLIJ6T16u2wO9T6SrYz8nlLDTeZq02D15ba/IZLh1T81eueWAh1owbKBZhkzMiT5rUYRQvdmpstBdJJi7nuF9o7kpdFpSNeVRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759326801; c=relaxed/simple;
-	bh=HKbSceL0DqvzVkSf6+zthbI4p8KdIl+ZOzq+TUc17ps=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PukM7YVYBP7iUjezd9zC42Fbs9f2qnRd9xhPR2D/d+sNE8uPz6kr2rCYxPIImzKStEycO+r2RLpUn7MdKcFl6e5mdURYlEq1r+ZmmA4LyzDt+FBJwKXjS1AMp/bxHfHmVyfOgWmOmd5wksrNFgJPhnIR/ZsrF+vEACOS55Sgnww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=HUfgTKlY; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-3637d6e9923so70924341fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 06:53:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1759326797; x=1759931597; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iKvM2O7Z2RHzNxkLRoLXZKV8FObDukkA/ffySi/dWJQ=;
-        b=HUfgTKlYyVnJ7X1ZPU4BQieTHwWZxcpgiOjQWpJyk28jeRbcttMC8NHUtrBLFEHrGz
-         E5PVoqB56vzqIPnOXJr1ZQHz4ElFcUenbNAEzz7b8dVbxoGEYE8JmBCfmj2x4DweV3jg
-         BuK1k6EFp6q0M8bLBuPwGmaySRBukzqSB6MD2N4k+sKp92Ifcmo9A1mvqtzkRgPN4ZVk
-         fpwHo9+3bw00uZG8WtvvTjpJiqrHfIuISeG5S6+7K87SHz7L9H06bLuS4hVSCuPH5cE3
-         atKETBgXOxL1UDJ3AUwHIJarIGecYy7SoBTHXjnLw8s5VfkZ5KGnwvtC58H6nCXE971P
-         GsGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759326797; x=1759931597;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iKvM2O7Z2RHzNxkLRoLXZKV8FObDukkA/ffySi/dWJQ=;
-        b=ep0hnk948MIhVA8uQcWHasOQ5hCWdBBBuq9fS2BOzKq3mtsAo2O3DXyX68WqK+C+cb
-         oXjqlvMAlydn9+FonGX/ZPf6FyVA7yDY8kDtdDIQct6ojkETcGLC/M62OAY3Pprg1a/D
-         Dy8VGfs3nR0qT/pBzEYkvOBJf4gOdTORjuB+UyaqJuG3mS09nXAqlVYalvb5rkORSS3L
-         /2yniFmUyK4Sje/8Y8Ghy9YzUZjXfTWGp62rx538efDtONaK1XgpdDZrqW2Xy9UXmREx
-         4F0CZWKOW1hOUNtX6QRWjEjEOhStuPRr609B8m3xTM3Hf9IX3jcL06/s6qc7cXoFgjX0
-         RMsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUkwna8pSvM0/e56f6ZV1fy3R8JSLskP0jHbse/lPPbdkpGAVUgj81gXugnRuV0P8ckREUf8qGmeZHxkYQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNlBe54aAadSbzAw9vWfrlE/Ng4NCqsWA5kIJoc1BzIYb0oVy3
-	eGtJeUdU8BoTWMBmfGIfHOqIre71fbiWpaCOXfl+nBhIVMdxYo25O/ZGe0CxTqCs9s8N4WVU3eH
-	EdGqy8lWXPTm9uNVwRbKgRGgSGWYfWM02vHymhUOXBg==
-X-Gm-Gg: ASbGncsEjKB+zUtPkvUyXF8pMANo+Pe1JUF4crN+EL1QUN642BkOOzGyGnCEyDkvt+z
-	NhMiCFOTYQeOwcAzxOzkqyImKOnmFeR6jzB+c20vZmJwRHspeIWvzlktzSL7VJz4NyniwPOxzqm
-	1dqXpZM9lXDVGWGTde1hHGStAYKTejDwGDFkH2e3zvMHWOATBJNQIPX0M7lvlqnsgDKtlq/9bhL
-	gO2eKTY2FyoaN2tQUv7WnQlbFRsr5pNjprGsAI8ABcxtCpR0u5U1Jii4mFmvdc=
-X-Google-Smtp-Source: AGHT+IEawILhQN5Tlcl9p5Mjqx/+g8BzI0MIHHSa+12Xe6GG4A6vAQ2TFwAqsdfR65LWs2suCvY9l7MTmjpZSBMVUHs=
-X-Received: by 2002:a2e:bc0b:0:b0:372:9bf0:aec9 with SMTP id
- 38308e7fff4ca-373a70e9ceemr10229771fa.8.1759326797528; Wed, 01 Oct 2025
- 06:53:17 -0700 (PDT)
+	s=arc-20240116; t=1759326951; c=relaxed/simple;
+	bh=DBLdPLwAPYxwY8YrL6peFCZsoq23oqhi/xsqOQI7luo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X/EaQNMowLjtYcQryt5UUlibu3mfTZXTRTvAxiSxYeLdE4Q1DUQ81wOey1JoX73hsQLXec5Z3b2LYjEUlVVBbccxPgPnxJGQQYQ46IHg7t6Jh30g2AA55cJLvLVHeyBsR2q9ahglgwMSq/skLXFXM/exNKugLHYHTwC4ljAjblM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A795A16F2;
+	Wed,  1 Oct 2025 06:55:40 -0700 (PDT)
+Received: from localhost (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 52C6A3F66E;
+	Wed,  1 Oct 2025 06:55:48 -0700 (PDT)
+Date: Wed, 1 Oct 2025 14:55:46 +0100
+From: Leo Yan <leo.yan@arm.com>
+To: James Clark <james.clark@linaro.org>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jonathan Corbet <corbet@lwn.net>, coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH v2 5/6] coresight: Add format attribute for setting the
+ timestamp interval
+Message-ID: <20251001135546.GP7985@e132581.arm.com>
+References: <20250814-james-cs-syncfreq-v2-0-c76fcb87696d@linaro.org>
+ <20250814-james-cs-syncfreq-v2-5-c76fcb87696d@linaro.org>
+ <20250930151414.GK7985@e132581.arm.com>
+ <3a731a9e-0621-42b6-b7fc-4b0fd9b7da6e@linaro.org>
+ <20251001132815.GN7985@e132581.arm.com>
+ <708a5bbd-2bad-4f94-8fd1-6bd10825ba71@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251001091006.4003841-1-viken.dadhaniya@oss.qualcomm.com> <20251001091006.4003841-6-viken.dadhaniya@oss.qualcomm.com>
-In-Reply-To: <20251001091006.4003841-6-viken.dadhaniya@oss.qualcomm.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 1 Oct 2025 15:52:56 +0200
-X-Gm-Features: AS18NWAmCgokIXZ1UkEVryOtNua26Mh7SEmTh-56Mvq0WRalU4tAqLsD_FATkks
-Message-ID: <CAMRc=MfMO-+SSrTY-XQLtsDnxpj_E3TdTJ43ZxCUi-iDrvnc2w@mail.gmail.com>
-Subject: Re: [PATCH v6 5/6] can: mcp251xfd: add gpio functionality
-To: Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>
-Cc: mkl@pengutronix.de, mani@kernel.org, thomas.kopp@microchip.com, 
-	mailhol.vincent@wanadoo.fr, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, linus.walleij@linaro.org, linux-can@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	mukesh.savaliya@oss.qualcomm.com, anup.kulkarni@oss.qualcomm.com, 
-	Gregor Herburger <gregor.herburger@ew.tq-group.com>, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <708a5bbd-2bad-4f94-8fd1-6bd10825ba71@linaro.org>
 
-On Wed, Oct 1, 2025 at 11:10=E2=80=AFAM Viken Dadhaniya
-<viken.dadhaniya@oss.qualcomm.com> wrote:
-> +
-> +       if (!device_property_present(&priv->spi->dev, "gpio-controller"))
-> +               return 0;
-> +
+On Wed, Oct 01, 2025 at 02:44:06PM +0100, James Clark wrote:
 
-Hi! I didn't notice this before you're returning 0 here, meaning the
-device will be attached to the driver even though it doesn't do
-anything. It would make more sense to return -ENODEV.
+[...]
 
-Bart
+> > ATTR_CFG_FLD_ts_level_* is only used in coresight-etm4x-core.c, it is not
+> > used in coresight-etm-perf.c. Thus, we don't need to include
+> > coresight-etm4x.h in coresight-etm-perf.c. Do I miss anything?
+> 
+> Yes, GEN_PMU_FORMAT_ATTR() uses them but it makes it hard to see.
+
+I did a quick test, it is feasible to move ATTR_CFG_* macros in
+coresight-etm-perf.h. This is a more suitable ?
+
+diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.h b/drivers/hwtracing/coresight/coresight-etm-perf.h
+index 5febbcdb8696..2679d5b2dd9a 100644
+--- a/drivers/hwtracing/coresight/coresight-etm-perf.h
++++ b/drivers/hwtracing/coresight/coresight-etm-perf.h
+@@ -8,6 +8,7 @@
+ #define _CORESIGHT_ETM_PERF_H
+ 
+ #include <linux/percpu-defs.h>
++#include <linux/perf/arm_pmu.h>
+ #include "coresight-priv.h"
+ 
+ struct coresight_device;
+@@ -20,6 +21,12 @@ struct cscfg_config_desc;
+  */
+ #define ETM_ADDR_CMP_MAX       8
+ 
++#define ATTR_CFG_FLD_ts_level_CFG      config3
++#define ATTR_CFG_FLD_ts_level_LO       12
++#define ATTR_CFG_FLD_ts_level_HI       15
++#define ATTR_CFG_FLD_ts_level_MASK     GENMASK(ATTR_CFG_FLD_ts_level_HI, \
++                                               ATTR_CFG_FLD_ts_level_LO)
++
+
+> > A similiar case is the attr 'cc_threshold' is only used by ETMv4, it is
+> > exported always. It is not bad for me to always expose these attrs but
+> > in the are ignored in the ETMv3 driver - so we even don't need to
+> > bother adding .visible() callback.
+> > 
+> 
+> I disagree with always showing them. I think they should be hidden if
+> they're not used, or at least return an error to avoid confusing users. It
+> also wastes config bits if they're allocated but never used.
+
+It is fine for not exposing ETMv4 only attrs for ETMv3.
+
+> Either way, this was done because of the header mechanics which can only be
+> avoided by adding more changes than just the #ifdefs. There are also already
+> ETM4 #ifdefs in the file.
+
+Yeah, actually we can remove ETM4 #ifdefs, something like:
+
+ /*
+  * contextid always traces the "PID".  The PID is in CONTEXTIDR_EL1
+@@ -90,9 +83,9 @@ static ssize_t format_attr_contextid_show(struct device *dev,
+ {
+        int pid_fmt = ETM_OPT_CTXTID;
+ 
+-#if IS_ENABLED(CONFIG_CORESIGHT_SOURCE_ETM4X)
+-       pid_fmt = is_kernel_in_hyp_mode() ? ETM_OPT_CTXTID2 : ETM_OPT_CTXTID;
+-#endif
++       if (IS_ENABLED(CONFIG_CORESIGHT_SOURCE_ETM4X))
++               pid_fmt = is_kernel_in_hyp_mode() ? ETM_OPT_CTXTID2 : ;
++
+        return sprintf(page, "config:%d\n", pid_fmt);
+ }
+
+Thanks,
+Leo
 
