@@ -1,88 +1,111 @@
-Return-Path: <linux-kernel+bounces-838544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51662BAF74A
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 09:42:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CF85BAF76B
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 09:43:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C6E12A0751
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 07:42:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04F174A14D5
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 07:43:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E6A227467F;
-	Wed,  1 Oct 2025 07:42:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KLtDwVyf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85A58274650;
+	Wed,  1 Oct 2025 07:43:22 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9E5117B506;
-	Wed,  1 Oct 2025 07:42:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B081273D66
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 07:43:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759304521; cv=none; b=eNg3vuHS8ad7+iuYNeGtI5jZYATXmMiCpxvtcrcU5sxFtEe1CYkBJl3bgDRSuGRe5U28OL8BjjoemmoxSiAUlk6G2rI+yp/vlGw9uSLlwnDIWHxKABVo4D0ruThpe6MKrI6BJmbHzjpcDCgdDrI/2xXj48lhnW3aiWbBo9VPVyI=
+	t=1759304602; cv=none; b=tLHD7FeAWD1daEaqthEZOUp84QzWdCKfduaFCVmcfIKLOjdBH63oQX8Ll1j3ItPsWr9bwBuoyScwNFsrHRdC837e92bD9/A1VwBgnde7x+CJs6xJQCrT3oWTb6nNhSA+RiBfwYXai4MkvBFheRXOs+rKyUSVaJJuDDtwiBZSxiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759304521; c=relaxed/simple;
-	bh=SYDSKRKZnqGTnhIPZnlUtf0WBgSetRvC9aAqfYjzmwM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gc3rromZnZ3tsUJUDYw1459B+5XOzhNIWLw+OiYAJg7Pb5evdW9olCH3yXP4CgZ1evE587pUOvNNeJvtHzUym1ziW06lBiSu4lorIyFih0/khHa3LuxcQRt/zZhOWAG3jjTwfLXUcAhPWsuaoaosFqVb+n/TF/Pmh/kSHFRw/RI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KLtDwVyf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25293C4CEF4;
-	Wed,  1 Oct 2025 07:41:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759304521;
-	bh=SYDSKRKZnqGTnhIPZnlUtf0WBgSetRvC9aAqfYjzmwM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KLtDwVyfJGTQ2D038WVA/hz0GdLaxyjVOLnMD/Uny8eQrz7BE9dWNdmrXx6Ak/Yz1
-	 DJaQTxxoXz0gbaBH7pSc1n1t1xRsBO+gwVeZIokUOZpW2lnVmQv/SeWWXAvHMDehaC
-	 PpkECmfYAS/zHLX7twjIB51zYVtPC3kZRfAIlnOlzKVanGp+iXAYA5jPWxYcyauieY
-	 cb/OEddfqIWTumLVIpSkz8viMkRVpqghsucGxw8AeV9vekZs32srFLSoQiofhYnKKr
-	 PX2rd7WKmy+uMN5DuDwcK3doAhoWERF52QCPdRdzttI4Xd0P2amhYxkmQzGTxejcGq
-	 x2bPLob/uYVwg==
-Message-ID: <8a367090-a15b-4b4d-a0f5-525e04a5f27d@kernel.org>
-Date: Wed, 1 Oct 2025 16:41:50 +0900
+	s=arc-20240116; t=1759304602; c=relaxed/simple;
+	bh=gwQUi+de6VXVjLGqT/JXgA7Hht52xsPf+ID99icPCbM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YCJJ9sfga2Hd+P4u1LY7DDYoKOLAhEYb7l0wdTo5G/0g3Kx0HGf3jnCQHVX5jjYmCryLe5wQgCbEpVjl87l62xRJ+s2brPr6UUA7t71wIBZOYndntR7EVC6TAH9H8/hU+vNkbsfg+eUeq1Ns9bVRfRSYneK6mxbQGmwDTtSbvT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1v3rUK-00074Z-FU; Wed, 01 Oct 2025 09:43:00 +0200
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1v3rUJ-001NRj-0M;
+	Wed, 01 Oct 2025 09:42:59 +0200
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1v3rUJ-006RWI-01;
+	Wed, 01 Oct 2025 09:42:59 +0200
+Date: Wed, 1 Oct 2025 09:42:58 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, Thangaraj.S@microchip.com,
+	Rengarajan.S@microchip.com, UNGLinuxDriver@microchip.com,
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	syzbot+62ec8226f01cb4ca19d9@syzkaller.appspotmail.com
+Subject: Re: [PATCH] net: usb: lan78xx: Fix lost EEPROM read timeout
+ error(-ETIMEDOUT) in lan78xx_read_raw_eeprom
+Message-ID: <aNzbgjlz_J_GwQSt@pengutronix.de>
+References: <20250930084902.19062-1-bhanuseshukumar@gmail.com>
+ <20250930173950.5d7636e2@kernel.org>
+ <5f936182-6a69-4d9a-9cec-96ec93aab82a@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH blktrace v2 01/22] blktrace: fix comment for struct
- blk_trace_setup:
-To: Johannes Thumshirn <johannes.thumshirn@wdc.com>,
- Jens Axboe <axboe@kernel.dk>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
- Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-btrace@vger.kernel.org,
- John Garry <john.g.garry@oracle.com>, Hannes Reinecke <hare@suse.de>,
- Christoph Hellwig <hch@lst.de>, Naohiro Aota <naohiro.aota@wdc.com>,
- Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
- Chaitanya Kulkarni <chaitanyak@nvidia.com>,
- "Martin K . Petersen" <martin.petersen@oracle.com>,
- Chaitanya Kulkarni <kch@nvidia.com>
-References: <20250925150427.67394-1-johannes.thumshirn@wdc.com>
- <20250925150427.67394-2-johannes.thumshirn@wdc.com>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20250925150427.67394-2-johannes.thumshirn@wdc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <5f936182-6a69-4d9a-9cec-96ec93aab82a@gmail.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 9/26/25 00:04, Johannes Thumshirn wrote:
-> Fix a comment misnaming the ioctl(2) passing struct blk_trace_setup.
+Hi,
+
+On Wed, Oct 01, 2025 at 10:07:21AM +0530, Bhanu Seshu Kumar Valluri wrote:
+> On 01/10/25 06:09, Jakub Kicinski wrote:
+> > On Tue, 30 Sep 2025 14:19:02 +0530 Bhanu Seshu Kumar Valluri wrote:
+> >> +	if (dev->chipid == ID_REV_CHIP_ID_7800_) {
+> >> +		int rc = lan78xx_write_reg(dev, HW_CFG, saved);
+> >> +		/* If USB fails, there is nothing to do */
+> >> +		if (rc < 0)
+> >> +			return rc;
+> >> +	}
+> >> +	return ret;
+> > 
+> > I don't think you need to add and handle rc here separately?
+> > rc can only be <= so save the answer to ret and "fall thru"?
 > 
-> Reviewed-by: Chaitanya Kulkarni <kch@nvidia.com>
-> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+> The fall thru path might have been reached with ret holding EEPROM read timeout
+> error status. So if ret is used instead of rc it might over write the ret with 0 when 
+> lan78xx_write_reg returns success and timeout error status would be lost.
 
-Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+Ack, I see. It may happen if communication with EEPROM will fail. The same
+would happen on write path too. Is it happened with real HW or it is
+some USB emulation test? For me it is interesting why EEPROM is timed
+out.
 
-
+Best Regards,
+Oleksij
 -- 
-Damien Le Moal
-Western Digital Research
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
