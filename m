@@ -1,78 +1,242 @@
-Return-Path: <linux-kernel+bounces-838275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B5CCBAED97
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 02:04:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B69A7BAED9D
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 02:04:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8201194527A
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 00:04:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D13F17B6D0
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 00:04:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9836C2253EB;
-	Wed,  1 Oct 2025 00:02:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16D359463;
+	Wed,  1 Oct 2025 00:04:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iLX8Yorn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ROsUHBg0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04154221710
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 00:02:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 422A429A1;
+	Wed,  1 Oct 2025 00:04:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759276967; cv=none; b=CdfCFGI/lvdDl3HOQZ6n4mF8tRMhF/h+frmJ3D+H5HDH3ukLUFReUPflPPqXZ0OwjU+8amEjW1HHBK60/50cnA0HrrA9CPZ2xk3K/mOnKS4+W+wI52Mne35wNPmfYT/jnQeh9ozW3rnVuzwX/5D5bqTw8WPmfArMxejkZsc/SCY=
+	t=1759277053; cv=none; b=uAilne5cWE7MfMGBGVDT4fm8Hw8lWDE9H1cQhjUUXSwLhyBJpWbJ/xIXaAnECbt1K+DtPVBwvz/0gy3miMfivcRSPG0IxnXobDemzGFSsCrK6zn/BsMATVwSkCiGPo8rQvCBDVVCa0uG/YHhoYzwF9mnk7+/CuwHSucneE/c4Bo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759276967; c=relaxed/simple;
-	bh=6a3v/9NAUv+elnem2TOJoS+tuOLJfk7sPznVJmkh6uU=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=LwbOo4UL/FE/3e1htsvtUL1/zhrpKIHCioKoURaaOQXBZ/2GPxP/pcF16rQ/F2qY0RhgHRL+dx8tckfFhLtLeSpYURJ7H0MCp/cQMjqByNF3H0FFhh53wTBMYzdAnqb68l/zmTMEb1kKjxQKj58YrHSwKGzd4wEctiVNAayznH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iLX8Yorn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AAE1C113D0;
-	Wed,  1 Oct 2025 00:02:46 +0000 (UTC)
+	s=arc-20240116; t=1759277053; c=relaxed/simple;
+	bh=6RstGi6qtLLB+zlmpNOCdc79aMmLjFORnqa57CQlV7c=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=jcZ9VHqJSLltFTIN57CkPrn4xXf6OuN+lJwHgSZcaLOaCsSzDKqoob67ZV4PCuWGBkzIp8pOQ936JSUWm9hYFRqxGLuJXfodLWYA99hsNuOGO8AEAzaovdbFiAafqOwAhRBTOZOIRkAp8qOuiuhLZoXNpfN1Jn0cYgIiJdH6kbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ROsUHBg0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3AACC4CEF0;
+	Wed,  1 Oct 2025 00:04:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759276966;
-	bh=6a3v/9NAUv+elnem2TOJoS+tuOLJfk7sPznVJmkh6uU=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=iLX8YornC2xnRePiAldT2EPYXBvK5QtJ5wqxTDM2esSmTNjMygUemdjXZAvwOgP70
-	 LMLnVaQYsD6N/saWYa/idOHVwiXJvcoV9V26T0bclq+xyavgNsGs0Bt17CBuYbRzF5
-	 EAU8HfXIEl+pHETKNKDrVe/OLjfJwQ9td2PWcOX2luw4+lFB1q35hBam+H03Ucck/V
-	 Es7fxZX1hWiANCV+CxPR1WHDMPMcSEgSpzC1qWI9B8cY6n5/PqoA1LKJY27kr2lX8x
-	 +0+7Kj/+eV1YKIY6TIXgdqN1X7xel1L10u6JWNpwdNitUr7wMmDkR5FXFKQXuFk56F
-	 7vNJe5+vMJtPw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADC4639D0C1A;
-	Wed,  1 Oct 2025 00:02:40 +0000 (UTC)
-Subject: Re: [GIT pull] timers/clocksource for v6.18-rc1
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <175913808666.495041.8647163849236838852.tglx@xen13>
-References: <175913807599.495041.10251515322736195577.tglx@xen13> <175913808666.495041.8647163849236838852.tglx@xen13>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <175913808666.495041.8647163849236838852.tglx@xen13>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers-clocksource-2025-09-29
-X-PR-Tracked-Commit-Id: 749b61c2d6a91c81732860f22925ae9884de95fe
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 70de5572a82b3d510df31d2c572c15cd53a00870
-Message-Id: <175927695941.2242674.17156018105263098099.pr-tracker-bot@kernel.org>
-Date: Wed, 01 Oct 2025 00:02:39 +0000
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, x86@kernel.org
+	s=k20201202; t=1759277053;
+	bh=6RstGi6qtLLB+zlmpNOCdc79aMmLjFORnqa57CQlV7c=;
+	h=Date:From:To:Cc:Subject:From;
+	b=ROsUHBg0x6WFi/QNqnyjAb3gE8pq+DBnSUU2O//DmSlEwejYYg/+hG6qdBku8laiW
+	 8VlgywwWgc5kl2x8HnMu+87+5+kqyWnJH1qPzFc2V7ahdAbKcDAD9X29P58ZQJuy9K
+	 8NwNBEBZXE5Gu+jiO1dp00sMDDq9AnB1L2F6UIzuA3avcO+et8gE9+hdITB845nkVP
+	 CcxZq1Gj7/JjVwy+EnF8aySPiqoO9NahxAL8SlCIWOv4/oz0mifi7XlipAyXmY6L2Z
+	 jIAcjCRVSfCGRlDJLDJcfK03utMqtihcqVi4fVptb+q2DnFvO9xngSGg/n6VFU0HX0
+	 oShBXKRDAo1ag==
+Received: by venus (Postfix, from userid 1000)
+	id B43F2180734; Wed, 01 Oct 2025 02:04:08 +0200 (CEST)
+Date: Wed, 1 Oct 2025 02:04:08 +0200
+From: Sebastian Reichel <sre@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: [GIT PULL] power-supply changes for 6.18
+Message-ID: <vflh2stqeaa6rnwipi77v2k6cb3jynzja7qf2iznttqz26zbfg@7snfbz5gjdlz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="kjeqn6ue7kfqaix6"
+Content-Disposition: inline
 
-The pull request you sent on Mon, 29 Sep 2025 11:29:06 +0200 (CEST):
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers-clocksource-2025-09-29
+--kjeqn6ue7kfqaix6
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: [GIT PULL] power-supply changes for 6.18
+MIME-Version: 1.0
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/70de5572a82b3d510df31d2c572c15cd53a00870
+Hi Linus,
 
-Thank you!
+The following changes since commit 1b237f190eb3d36f52dffe07a40b5eb210280e00:
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+  Linux 6.17-rc3 (2025-08-24 12:04:12 -0400)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.gi=
+t tags/for-v6.18
+
+for you to fetch changes up to 41307ec7df057239aae3d0f089cc35a0d735cdf8:
+
+  power: supply: qcom_battmgr: handle charging state change notifications (=
+2025-09-19 12:35:57 +0200)
+
+----------------------------------------------------------------
+power supply and reset changes for the 6.18 series
+
+ * power-supply core
+  - introduce adc-battery-helper for capacity estimation based on
+    simple ADC readings of battery voltage and current
+  - add new property for battery internal resistance
+  - add new property for battery state of health
+ * power-supply drivers
+  - ug3105_battery: convert to adc-battery-helper
+  - intel_dc_ti_battery: New driver for Intel Dollar Cove TI batteries
+  - rt9467-charger: add voltage and current ADC support
+  - sbs-charger: support multiple instances
+  - qcom_battmgr: add charge control support
+  - qcom_battmgr: add support for state of health and internal resistance
+  - max77705_charger: big driver cleanup
+  - max77705_charger: add support for setting charge current
+  - misc. minor fixes and cleanups
+
+----------------------------------------------------------------
+Andy Yan (1):
+      power: supply: cw2015: Fix a alignment coding style issue
+
+ChiYuan Huang (1):
+      power: supply: rt9467: Add properties for VBUS and IBUS reading
+
+Christophe JAILLET (1):
+      power: supply: Use devm_mutex_init()
+
+Christopher Ruehl (1):
+      power: supply: qcom_battmgr: add OOI chemistry
+
+Colin Ian King (1):
+      power: supply: 88pm860x: make fsm_state array static const, simplify =
+usage
+
+Darshan R. (1):
+      power: supply: gpio-charger: Clean up spacing for better readability
+
+Dzmitry Sankouski (8):
+      power: supply: max77976_charger: fix constant current reporting
+      mfd: max77705: max77705_charger: move active discharge setting to mfd=
+ parent
+      power: supply: max77705_charger: refactoring: rename charger to chg
+      power: supply: max77705_charger: use regfields for config registers
+      power: supply: max77705_charger: return error when config fails
+      power: supply: max77705_charger: add writable properties
+      power: supply: max77705_charger: rework interrupts
+      power: supply: max77705_charger: use REGMAP_IRQ_REG_LINE macro
+
+Fabien Proriol (1):
+      power: supply: sbs-charger: Support multiple devices
+
+Fenglin Wu (8):
+      power: supply: core: Add resistance power supply property
+      power: supply: core: Add state_of_health power supply property
+      power: supply: qcom_battmgr: Add resistance power supply property
+      power: supply: qcom_battmgr: Add state_of_health property
+      power: supply: qcom_battmgr: update compats for SM8550 and X1E80100
+      dt-bindings: soc: qcom,pmic-glink: Add charge limit nvmem properties
+      power: supply: qcom_battmgr: Add charge control support
+      power: supply: qcom_battmgr: handle charging state change notificatio=
+ns
+
+Hans de Goede (6):
+      power: supply: Add adc-battery-helper
+      power: supply: ug3105_battery: Switch to adc-battery-helper
+      power: supply: ug3105_battery: Put FG in standby on remove and shutdo=
+wn
+      power: supply: adc-battery-helper: Add support for optional charge_fi=
+nished GPIO
+      power: supply: Add new Intel Dollar Cove TI battery driver
+      power: supply: intel_dc_ti_battery: Drop no longer relevant comment
+
+Marco Crivellari (2):
+      power: supply: replace use of system_wq with system_percpu_wq
+      power: supply: WQ_PERCPU added to alloc_workqueue users
+
+Miguel Garc=EDa (1):
+      power: supply: bq2415x: replace deprecated strcpy() with strscpy()
+
+Qianfeng Rong (1):
+      power: supply: use max() to improve code
+
+Sebastian Reichel (1):
+      Merge tag 'ib-max77705-for-v6.17-signed'
+
+Svyatoslav Ryhel (2):
+      dt-bindings: power: supply: bq27xxx: document optional interrupt
+      dt-bindings: power: supply: bq24190: document charge enable pin
+
+Waqar Hameed (1):
+      power: supply: Remove error prints for devm_add_action_or_reset()
+
+Xichao Zhao (2):
+      power: supply: Remove the use of dev_err_probe()
+      power: supply: rx51: remove redundant condition checks
+
+ Documentation/ABI/testing/sysfs-class-power        |  37 ++
+ .../devicetree/bindings/power/supply/bq24190.yaml  |   6 +
+ .../devicetree/bindings/power/supply/bq27xxx.yaml  |  37 +-
+ .../bindings/soc/qcom/qcom,pmic-glink.yaml         |  14 +
+ drivers/mfd/max77705.c                             |   3 +
+ drivers/power/supply/88pm860x_charger.c            |   8 +-
+ drivers/power/supply/Kconfig                       |  16 +
+ drivers/power/supply/Makefile                      |   2 +
+ drivers/power/supply/ab8500_btemp.c                |   3 +-
+ drivers/power/supply/adc-battery-helper.c          | 327 +++++++++++++++++
+ drivers/power/supply/adc-battery-helper.h          |  62 ++++
+ drivers/power/supply/bq2415x_charger.c             |   4 +-
+ drivers/power/supply/bq24190_charger.c             |   2 +-
+ drivers/power/supply/bq27xxx_battery.c             |  17 +-
+ drivers/power/supply/cw2015_battery.c              |   8 +-
+ drivers/power/supply/gpio-charger.c                |   7 +-
+ drivers/power/supply/intel_dc_ti_battery.c         | 389 +++++++++++++++++=
+++++
+ drivers/power/supply/ipaq_micro_battery.c          |   3 +-
+ drivers/power/supply/max77705_charger.c            | 330 ++++++++++-------
+ drivers/power/supply/max77976_charger.c            |  12 +-
+ drivers/power/supply/mt6370-charger.c              |  18 +-
+ drivers/power/supply/power_supply_sysfs.c          |   2 +
+ drivers/power/supply/qcom_battmgr.c                | 324 ++++++++++++++++-
+ drivers/power/supply/rk817_charger.c               |   6 +-
+ drivers/power/supply/rt9467-charger.c              |  47 +--
+ drivers/power/supply/rx51_battery.c                |   2 +-
+ drivers/power/supply/sbs-charger.c                 |  16 +-
+ drivers/power/supply/sbs-manager.c                 |   2 +-
+ drivers/power/supply/ucs1002_power.c               |   2 +-
+ drivers/power/supply/ug3105_battery.c              | 346 ++++--------------
+ include/linux/power/max77705_charger.h             | 144 ++++----
+ include/linux/power_supply.h                       |   2 +
+ 32 files changed, 1609 insertions(+), 589 deletions(-)
+ create mode 100644 drivers/power/supply/adc-battery-helper.c
+ create mode 100644 drivers/power/supply/adc-battery-helper.h
+ create mode 100644 drivers/power/supply/intel_dc_ti_battery.c
+
+--kjeqn6ue7kfqaix6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmjcb/gACgkQ2O7X88g7
++prZYg/8Cqb4tclZj+XL/VGtGrGbgo1a93hRTHqBqarGB66bkJYPXzCxKg4kSMAg
+NSGM+MTMZOlaQ9AENNgfIPNuTOPFiC0U6up2yGpqNK+6w6kF4f8PBCnhbLhUnjdo
+Cjn8qNXCZoM1ZqFq+FuLuEmprW9u12co67wYNDM/min3+pypz7zqwKMTQX+AI37R
+nD+/A4Y8O6fk4p/e24fPB51ggUZFv4LdRLQ6GyY5imVoI1a9hU6JmW157i8ZCJGe
+k2VNykyDf0zhXQHrvLO7zfPBSJJJsvI7S3+s/OpthxnQfOeuLlNv478P/RV/9K47
+5pT1jHNPdagCXqT1zfpGEnzSuXGYAf5gHn+qT7NXgDtJiB+Jl4DyLCaBSkkCpXI0
+aTEsEiTGwaa1zzQwQpPO2YG287FsbGuZTZe5sWmp/tn1WvGN7IK3uLLEq8/OPnq+
++EvB4gvEr/UakYMhsCBiyVWFzcPPID21ELZMutTfKTfyz/poI9nzouIqYOnNe8bv
+AxdKpJowpm7Aw293QE9ensG5soTF/m8qU7fVLUva99xt9kg01GYFqhHkrhOEX/I0
+fR62kh1yz7SUT9n1w1S+AGu75Y1MMiElazKnHM3ghY4ehi1vja60FtPAxkr5uqLK
+o5VQ1+TkK0AQ/Mo6xNf0bIoyOkcWX1Faca+Za/JL5wjiR/O2SSY=
+=pFJs
+-----END PGP SIGNATURE-----
+
+--kjeqn6ue7kfqaix6--
 
