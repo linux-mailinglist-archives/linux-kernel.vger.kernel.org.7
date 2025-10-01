@@ -1,201 +1,250 @@
-Return-Path: <linux-kernel+bounces-838882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E945BB059C
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 14:26:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31DC6BB05A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 14:29:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAB8319452F3
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 12:27:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA83E4A1FED
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 12:28:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A10982EB853;
-	Wed,  1 Oct 2025 12:26:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B16092EB848;
+	Wed,  1 Oct 2025 12:28:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qc0wqb4q";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="o47yNtek";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qc0wqb4q";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="o47yNtek"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pMl7mM9Y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57F272EACF8
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 12:26:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB74D2EAD09;
+	Wed,  1 Oct 2025 12:28:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759321595; cv=none; b=SP3z4IQVf0OMw3kbNmS4bTmwO+nglqVKzmsX+YKfIFOww6EKVc0UXadgit5bmyNXx/VuKDG66ZTDWCkSMhSeZklGshKkQdgcz5Ok8Ldm1N7Yz5MjmXrQbhkkEBDow4pFVVg7rRgtxGnv8ckPlGmuxzT4T6mCtsHDwkyAXop65kw=
+	t=1759321730; cv=none; b=LvVSrWSUgwBY7lI9YZ7Q9UR2tvZA8nvp30WSYi9pddQaXVG38VMwbmD37LnMr83s8kTmhgpzTQkydTi3gPsh7HYbwLiDeIYcoq2TaNk+TM+SdrcAHjLB2Th5UwZwG8daYi7NN5hN/KfykI5JARZMrQM+6M1DCvzX+bc0jvxWe1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759321595; c=relaxed/simple;
-	bh=Y2lOccTT6DHYE1YxsduTzoZeS06ygXIVnQ/arTuWchQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b6rTWjgjOJE3j288/iAnx2QLuaY6XyDHPjBkl+YWImkyiRPjhTSxDQrj0yiCEa/5FUngB/yrfKR/W2sKvHBPvgYLIEEhdxRIqbOq1ktwy4p/yVwQvd7hIIc080MHaUtpgMKx3h7EDS0NmX+r90VW7gf2O/MF0MqRmVqCSYg0g2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qc0wqb4q; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=o47yNtek; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qc0wqb4q; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=o47yNtek; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 292741F80F;
-	Wed,  1 Oct 2025 12:26:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759321591; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=k4ZI2Tw0qp+ZL8CdEKa6XhK0mA/qTvAEXVyDVeiKM34=;
-	b=qc0wqb4qK6ljg8zCjrP842ipgPTACcGTVPh+L7fZIvgVzS9Q9iOnvs3+xErscazP9ursxe
-	8gNewe6lRSix4OcmR+34eAIe0b9J8RyYyjnewQxg/Rx0DPpxPFBm3Q0PJ4w4I1BPK5J3wU
-	n9t6CtScxiKd6YNlaVAvIZvwxn+2M8c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759321591;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=k4ZI2Tw0qp+ZL8CdEKa6XhK0mA/qTvAEXVyDVeiKM34=;
-	b=o47yNtekbfbORhcvHglmybgkxa1cGObNuz3nbil4DoWLkLXq9uYKMNDd5BZKI9chulxyla
-	Q12uaaZZay5x41AQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759321591; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=k4ZI2Tw0qp+ZL8CdEKa6XhK0mA/qTvAEXVyDVeiKM34=;
-	b=qc0wqb4qK6ljg8zCjrP842ipgPTACcGTVPh+L7fZIvgVzS9Q9iOnvs3+xErscazP9ursxe
-	8gNewe6lRSix4OcmR+34eAIe0b9J8RyYyjnewQxg/Rx0DPpxPFBm3Q0PJ4w4I1BPK5J3wU
-	n9t6CtScxiKd6YNlaVAvIZvwxn+2M8c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759321591;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=k4ZI2Tw0qp+ZL8CdEKa6XhK0mA/qTvAEXVyDVeiKM34=;
-	b=o47yNtekbfbORhcvHglmybgkxa1cGObNuz3nbil4DoWLkLXq9uYKMNDd5BZKI9chulxyla
-	Q12uaaZZay5x41AQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1AAB013A42;
-	Wed,  1 Oct 2025 12:26:31 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id wLF6Bvcd3WjZfQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 01 Oct 2025 12:26:31 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id A5D45A0A2D; Wed,  1 Oct 2025 14:26:30 +0200 (CEST)
-Date: Wed, 1 Oct 2025 14:26:30 +0200
-From: Jan Kara <jack@suse.cz>
-To: Deepanshu Kartikey <kartikey406@gmail.com>
-Cc: jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzbot+1d79ebe5383fc016cf07@syzkaller.appspotmail.com
-Subject: Re: [PATCH] isofs: fix inode leak caused by disconnected dentries
- from exportfs
-Message-ID: <okjvr65bw4u3ird44qfzuby2dptgn7bs74wsijq2jpj73ydlus@clx3fwq63nrt>
-References: <20251001094310.1672933-1-kartikey406@gmail.com>
+	s=arc-20240116; t=1759321730; c=relaxed/simple;
+	bh=qKn+fAbzogVE3WSFyoWrdGdlZst0c1BmRiTf+la+zNM=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VvvRcTCZlmUq5mAbnRlsn6AZ/Ad6BTA6t0VWEeV0g9QO6+4pDgitXTqlT/VbFRJdWtwQLD/CrmqvoHKjV0TarvS3UDKCi+5t6TICrk/wb9XQT/TMB9HWJDOf7XiezoAdATIVAPFVKozj+i/BGix+jFIQY+7KDqGQiICnkY0nSiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pMl7mM9Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40E7EC4CEF4;
+	Wed,  1 Oct 2025 12:28:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759321730;
+	bh=qKn+fAbzogVE3WSFyoWrdGdlZst0c1BmRiTf+la+zNM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=pMl7mM9YEEF37W3mMep75kyO5Fx0kg3eKW0ABdWDvwNIyo3A4iGQkE4NXC+zDwiJc
+	 ABv+66cmawpkgiJgkxmQkLAN0w005pIZJCOi+bw/sn219/gub9GMx4HEMBg2WPpzB0
+	 A+YnPuEujyYd4RYiSp5rKByJyVP4XPTS8aoswYWtLv8PtTehmYCQvsSb4UUplN1LuD
+	 Wb3l7C2kPNVmolXVVbpPd1s0TGThxY7SpzCL0jNpga/PP17sPvz71mi5n7zf6Xkpls
+	 d3xA1CPBjq9RYmGj9XbIcLNpFGfTFWSqX7VtgISInLkjmvVjJbqVy3BsRLFupJlUhu
+	 4QsfSMWaJIl1A==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1v3vwu-0000000AndA-0XY3;
+	Wed, 01 Oct 2025 12:28:48 +0000
+Date: Wed, 01 Oct 2025 13:28:47 +0100
+Message-ID: <86jz1eztz4.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Steven Price <steven.price@arm.com>
+Cc: kvm@vger.kernel.org,
+	kvmarm@lists.linux.dev,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Joey Gouly <joey.gouly@arm.com>,
+	Alexandru Elisei <alexandru.elisei@arm.com>,
+	Christoffer Dall <christoffer.dall@arm.com>,
+	Fuad Tabba <tabba@google.com>,
+	linux-coco@lists.linux.dev,
+	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+	Gavin Shan <gshan@redhat.com>,
+	Shanker Donthineni <sdonthineni@nvidia.com>,
+	Alper Gun <alpergun@google.com>,
+	"Aneesh Kumar K . V" <aneesh.kumar@kernel.org>,
+	Emi Kisanuki <fj0570is@fujitsu.com>,
+	Vishal Annapurve <vannapurve@google.com>
+Subject: Re: [PATCH v10 06/43] arm64: RME: Define the user ABI
+In-Reply-To: <20250820145606.180644-7-steven.price@arm.com>
+References: <20250820145606.180644-1-steven.price@arm.com>
+	<20250820145606.180644-7-steven.price@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251001094310.1672933-1-kartikey406@gmail.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MISSING_XM_UA(0.00)[];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	URIBL_BLOCKED(0.00)[appspotmail.com:email,suse.com:email,imap1.dmz-prg2.suse.org:helo];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TAGGED_RCPT(0.00)[1d79ebe5383fc016cf07];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -2.30
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: steven.price@arm.com, kvm@vger.kernel.org, kvmarm@lists.linux.dev, catalin.marinas@arm.com, will@kernel.org, james.morse@arm.com, oliver.upton@linux.dev, suzuki.poulose@arm.com, yuzenghui@huawei.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, joey.gouly@arm.com, alexandru.elisei@arm.com, christoffer.dall@arm.com, tabba@google.com, linux-coco@lists.linux.dev, gankulkarni@os.amperecomputing.com, gshan@redhat.com, sdonthineni@nvidia.com, alpergun@google.com, aneesh.kumar@kernel.org, fj0570is@fujitsu.com, vannapurve@google.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Wed 01-10-25 15:13:10, Deepanshu Kartikey wrote:
-> When open_by_handle_at() is used with iso9660 filesystems, exportfs
-> creates disconnected dentries during file handle resolution. If the
-> operation fails (e.g., with -ESTALE during reconnect_path()), these
-> dentries remain cached with their associated inodes.
+On Wed, 20 Aug 2025 15:55:26 +0100,
+Steven Price <steven.price@arm.com> wrote:
 > 
-> During unmount, shrink_dcache_for_umount() does not fully evict these
-> disconnected dentries, leaving their inodes with non-zero reference
-> counts. This triggers the "VFS: Busy inodes after unmount" warning
-> and causes inode leaks that accumulate across mount/unmount cycles.
+> There is one (multiplexed) CAP which can be used to create, populate and
+> then activate the realm.
 > 
-> The issue occurs because:
-> 1. open_by_handle_at() calls exportfs_decode_fh_raw() to resolve
->    file handles
-> 2. For iso9660 with Joliet extensions, this creates disconnected
->    dentries for both primary (iso9660) and secondary (Joliet) root
->    inodes
-> 3. When path reconnection fails with -ESTALE, the dentries are left
->    in DCACHE_DISCONNECTED state
-
-True, but when reconnection fails, exportfs_decode_fh_raw() calls dput() on
-the created dentry and dput() immediately destroys DCACHE_DISCONNECTED
-dentries. So I'm not following how these dentries could still survive until
-umount(). Can you please explain?
-
-> 4. shrink_dcache_for_umount() in generic_shutdown_super() does not
->    aggressively evict these disconnected dentries
-> 5. The associated inodes (typically root inodes 1792 and 1807)
->    remain with i_count=1, triggering the busy inode check
-> 
-> Add explicit shrink_dcache_sb() call in isofs_put_super() to ensure
-> all cached dentries, including disconnected ones created by exportfs
-> operations, are released before the superblock is destroyed.
-
-This is almost certainly a wrong way of fixing the problem. First we need
-to better understand why DCACHE_DISCONNECTED aren't getting properly
-evicted...
-
-								Honza
-
-> 
-> Reported-by: syzbot+1d79ebe5383fc016cf07@syzkaller.appspotmail.com
-> Tested-by: syzbot+1d79ebe5383fc016cf07@syzkaller.appspotmail.com
-> Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
+> Co-developed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Signed-off-by: Steven Price <steven.price@arm.com>
+> Reviewed-by: Gavin Shan <gshan@redhat.com>
 > ---
->  fs/isofs/inode.c | 1 +
->  1 file changed, 1 insertion(+)
+> Changes since v9:
+>  * Improvements to documentation.
+>  * Bump the magic number for KVM_CAP_ARM_RME to avoid conflicts.
+> Changes since v8:
+>  * Minor improvements to documentation following review.
+>  * Bump the magic numbers to avoid conflicts.
+> Changes since v7:
+>  * Add documentation of new ioctls
+>  * Bump the magic numbers to avoid conflicts
+> Changes since v6:
+>  * Rename some of the symbols to make their usage clearer and avoid
+>    repetition.
+> Changes from v5:
+>  * Actually expose the new VCPU capability (KVM_ARM_VCPU_REC) by bumping
+>    KVM_VCPU_MAX_FEATURES - note this also exposes KVM_ARM_VCPU_HAS_EL2!
+> ---
+>  Documentation/virt/kvm/api.rst    | 71 +++++++++++++++++++++++++++++++
+>  arch/arm64/include/uapi/asm/kvm.h | 49 +++++++++++++++++++++
+>  include/uapi/linux/kvm.h          | 10 +++++
+>  3 files changed, 130 insertions(+)
 > 
-> diff --git a/fs/isofs/inode.c b/fs/isofs/inode.c
-> index 6f0e6b19383c..bee410705442 100644
-> --- a/fs/isofs/inode.c
-> +++ b/fs/isofs/inode.c
-> @@ -52,6 +52,7 @@ static int isofs_dentry_cmp_ms(const struct dentry *dentry,
->  static void isofs_put_super(struct super_block *sb)
->  {
->  	struct isofs_sb_info *sbi = ISOFS_SB(sb);
-> +	shrink_dcache_sb(sb);
+> diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
+> index 6aa40ee05a4a..69c0a9eba6c5 100644
+> --- a/Documentation/virt/kvm/api.rst
+> +++ b/Documentation/virt/kvm/api.rst
+> @@ -3549,6 +3549,11 @@ Possible features:
+>  	  Depends on KVM_CAP_ARM_EL2_E2H0.
+>  	  KVM_ARM_VCPU_HAS_EL2 must also be set.
 >  
->  #ifdef CONFIG_JOLIET
->  	unload_nls(sbi->s_nls_iocharset);
-> -- 
-> 2.43.0
-> 
+> +	- KVM_ARM_VCPU_REC: Allocate a REC (Realm Execution Context) for this
+> +	  VCPU. This must be specified on all VCPUs created in a Realm VM.
+> +	  Depends on KVM_CAP_ARM_RME.
+> +	  Requires KVM_ARM_VCPU_FINALIZE(KVM_ARM_VCPU_REC).
+> +
+>  4.83 KVM_ARM_PREFERRED_TARGET
+>  -----------------------------
+>  
+> @@ -5122,6 +5127,7 @@ Recognised values for feature:
+>  
+>    =====      ===========================================
+>    arm64      KVM_ARM_VCPU_SVE (requires KVM_CAP_ARM_SVE)
+> +  arm64      KVM_ARM_VCPU_REC (requires KVM_CAP_ARM_RME)
+>    =====      ===========================================
+>  
+>  Finalizes the configuration of the specified vcpu feature.
+> @@ -6476,6 +6482,30 @@ the capability to be present.
+>  
+>  `flags` must currently be zero.
+>  
+> +4.144 KVM_ARM_VCPU_RMM_PSCI_COMPLETE
+> +------------------------------------
+> +
+> +:Capability: KVM_CAP_ARM_RME
+> +:Architectures: arm64
+> +:Type: vcpu ioctl
+> +:Parameters: struct kvm_arm_rmm_psci_complete (in)
+> +:Returns: 0 if successful, < 0 on error
+> +
+> +::
+> +
+> +  struct kvm_arm_rmm_psci_complete {
+> +	__u64 target_mpidr;
+> +	__u32 psci_status;
+> +	__u32 padding[3];
+> +  };
+> +
+> +Where PSCI functions are handled by user space, the RMM needs to be informed of
+> +the target of the operation using `target_mpidr`, along with the status
+> +(`psci_status`). The RMM v1.0 specification defines two functions that require
+> +this call: PSCI_CPU_ON and PSCI_AFFINITY_INFO.
+> +
+> +If the kernel is handling PSCI then this is done automatically and the VMM
+> +doesn't need to call this ioctl.
+
+Why should userspace involved in this? Why can't this be a
+notification that the host delivers to the RMM when the vcpu is about
+to run?
+
+>  
+>  .. _kvm_run:
+>  
+> @@ -8662,6 +8692,47 @@ This capability indicate to the userspace whether a PFNMAP memory region
+>  can be safely mapped as cacheable. This relies on the presence of
+>  force write back (FWB) feature support on the hardware.
+>  
+> +7.44 KVM_CAP_ARM_RME
+> +--------------------
+> +
+> +:Architectures: arm64
+> +:Target: VM
+> +:Parameters: args[0] provides an action, args[1] points to a structure in
+> +             memory for the action.
+> +:Returns: 0 on success, negative value on error
+> +
+> +Used to configure and set up the memory for a Realm. The available actions are:
+> +
+> +================================= =============================================
+> + KVM_CAP_ARM_RME_CONFIG_REALM     Takes struct arm_rme_config as args[1] and
+> +                                  configures realm parameters prior to it being
+> +                                  created.
+> +
+> +                                  Options are ARM_RME_CONFIG_RPV to set the
+> +                                  "Realm Personalization Value" and
+> +                                  ARM_RME_CONFIG_HASH_ALGO to set the hash
+> +                                  algorithm.
+> +
+> + KVM_CAP_ARM_RME_CREATE_REALM     Request the RMM to create the realm. The
+> +                                  realm's configuration parameters must be set
+> +                                  first.
+> +
+> + KVM_CAP_ARM_RME_INIT_RIPAS_REALM Takes struct arm_rme_init_ripas as args[1]
+> +                                  and sets the RIPAS (Realm IPA State) to
+> +                                  RIPAS_RAM of a specified area of the realm's
+> +                                  IPA.
+> +
+> + KVM_CAP_ARM_RME_POPULATE_REALM   Takes struct arm_rme_populate_realm as
+> +                                  args[1] and populates a region of protected
+> +                                  address space by copying the data from the
+> +                                  shared alias.
+> +
+> + KVM_CAP_ARM_RME_ACTIVATE_REALM   Request the RMM to activate the realm. No
+> +                                  changes can be made to the Realm's populated
+> +                                  memory, IPA state, configuration parameters
+> +                                  or vCPU additions after this step.
+> +================================= =============================================
+> +
+
+These are not capabilities, they are actions that the VMM may perform
+on a VM. You don't configure a VM using capabilities. You use it to
+buy into some behaviours, but that's all.
+
+And then there is the semantic of this stuff. Why do I need something
+like KVM_CAP_ARM_RME_CREATE_REALM when I can just pass this as part of
+the VM type? Why do I need a new way to describe memory region when we
+already have memslots for that exact purpose?
+
+Overall, you are leaking the RMM interface into userspace, and that's
+an absolute show-stopper. We have an API, it is not pretty, but it
+exists. We don't need another one that will be just as broken. If the
+RMM needs some impedance matching, that's the kernel's job.
+
+	M.
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Without deviation from the norm, progress is not possible.
 
