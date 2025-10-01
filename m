@@ -1,304 +1,316 @@
-Return-Path: <linux-kernel+bounces-838890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1143BB05D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 14:34:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9100BB05DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 14:35:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E762D1927203
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 12:35:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CCED16D833
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 12:35:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70A4E2EB862;
-	Wed,  1 Oct 2025 12:34:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D87492E92D0;
+	Wed,  1 Oct 2025 12:35:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=phytec.de header.i=@phytec.de header.b="APzUPUAH"
-Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11023130.outbound.protection.outlook.com [40.107.159.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YqPgKp8L"
+Received: from mail-yw1-f193.google.com (mail-yw1-f193.google.com [209.85.128.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DDFB26280A;
-	Wed,  1 Oct 2025 12:34:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.130
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759322057; cv=fail; b=oHjt6UaeVYsbg2WlcIQF4kBDpKUXsV2KhZ//XJ8xeq8tEOuy4K3dGGEHEazk2z+VzSUlmtFGTMJQLCC1S/2zeLqZW145TEgRCkZDGIaEG4JuLWitXAOeH9flnd9EluYEWdmu9IHj7fNHr0sfZdq+fugoZc5mZpn2aIU+0lpxn90=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759322057; c=relaxed/simple;
-	bh=E2qrqZHUQ4Ygs+r/lhCdrCTyQpjjp7YBwJ440TscYFI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=EBu7HlL9zEguPrLkviGpnSiNBGK8JmW4nzJtb6GF+V+PdYZx7PcZk/DdXq595Ro7Bvz1E55Sg3YREjNNXVZprLwTLRUC0QCKgrfaMOBEMGTPbwls9orzlgYXs9Do7Mc2OJQjxy3jN+2u9yXPjMaJVgZXsKzL74xpzCEcz2forHg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (2048-bit key) header.d=phytec.de header.i=@phytec.de header.b=APzUPUAH; arc=fail smtp.client-ip=40.107.159.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=phytec.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ipGm35pYPfkVEOK+kArq6825Th66NPeIBPr+17KTH2wf5CKbEZ8NjHpMGpKbtMtqcunsTZ8+zOO4gqu3ZFoJUeWWZ9GrSxllZyosxxAAh8UKZAyxo5DcHUt6ZnUrOKde+I/1CDwEDbb/cYVWNemIzp46Kc9pdIbWsORw8tGaUNQfiTMucHB+A6iqGDTU/t9G9/fkB1CHEPKC/XYghLftk/cBsxMRq7KejQ7+tEBey9OcJaDYqe+xuiwFG06RKkwep4CgEld60YZkkaUaqZpF7SR92bQsDmX1pLzXvpFKOpRPiyM7fR92SLzI9ZwGtp3pqzwOXdUzUBaT3/WDFwm0WA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Qb4fiDmivPN+lhrMNBf3LZoOLQ/mlggGBIbi1HNOft0=;
- b=eYDeQInRlaE/f56v0R/drwf2Dpur/rAVWciycoFGKTT1fraBPg8DManEfN3ycHKqSEomwMhUijVXEORepZoYGiEnSziv+P4VTC0D+M6g0oHPlPIwLb9E9CaSWBBoVszzYW6xsSyqGmnj5haEQjTa/LS6idF01ftb5AEhBoCSEsRkkLNb45hiujSbafhD8secbJJtUka82WRF0CC4ANc9mgGC2CZSB9SR0Fd1Qdyw/21vHqvPzhAq/BM685TKs8HkY8MQd0NK9N9YnOWWLo8th9VboC+QnKqtOUE/im6PIB8nQ7rxKCMxMgZtZEdlq6HRnvT71S7SNfZhhSOSslmQVQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=softfail (sender ip
- is 91.26.50.189) smtp.rcpttodomain=lists.linux.dev smtp.mailfrom=phytec.de;
- dmarc=fail (p=quarantine sp=quarantine pct=100) action=quarantine
- header.from=phytec.de; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=phytec.de;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Qb4fiDmivPN+lhrMNBf3LZoOLQ/mlggGBIbi1HNOft0=;
- b=APzUPUAHItmfJ/y7xMPO9in9rgXgZKfVbwcwJ/l38+hsypYiykC8u0aNk1D0gYusPNHjgrBRCqSzjqZ2EC+eIhWumo6+SEEuxGj4hyj6ZI6h+S79f2rj89VL6y9DHYbEOkPKt+EsIzjOI+TWGRjE5FlMRFmwHp3wD2ehhUqm41UwI+PQRUomVRTbhloDllsFWYKGpZZj8RPpAAgVZx0jsg5lsBBMATaPFjU0b0oDns0LQY+K0fc1t7aqCHKmqAvqqpo6HooObNHVOHXLQJoMGW8cVEADljnUbdesua6y/A8mcXPdrYkoAPfrrpa0zJgShwhLISP4DgQ3GlIDLNx/dA==
-Received: from AM0PR03CA0029.eurprd03.prod.outlook.com (2603:10a6:208:14::42)
- by DB4P195MB2693.EURP195.PROD.OUTLOOK.COM (2603:10a6:10:5e3::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.18; Wed, 1 Oct
- 2025 12:34:08 +0000
-Received: from AM3PEPF00009BA1.eurprd04.prod.outlook.com
- (2603:10a6:208:14:cafe::f) by AM0PR03CA0029.outlook.office365.com
- (2603:10a6:208:14::42) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9182.14 via Frontend Transport; Wed,
- 1 Oct 2025 12:34:09 +0000
-X-MS-Exchange-Authentication-Results: spf=softfail (sender IP is 91.26.50.189)
- smtp.mailfrom=phytec.de; dkim=none (message not signed)
- header.d=none;dmarc=fail action=quarantine header.from=phytec.de;
-Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
- phytec.de discourages use of 91.26.50.189 as permitted sender)
-Received: from Postix.phytec.de (91.26.50.189) by
- AM3PEPF00009BA1.mail.protection.outlook.com (10.167.16.26) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9182.15 via Frontend Transport; Wed, 1 Oct 2025 12:34:08 +0000
-Received: from llp-moog.phytec.de (172.25.32.44) by Postix.phytec.de
- (172.25.0.11) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Wed, 1 Oct
- 2025 14:34:07 +0200
-From: Yannic Moog <y.moog@phytec.de>
-Date: Wed, 1 Oct 2025 14:33:54 +0200
-Subject: [PATCH v3 4/4] arm64: dts: imx8mp pollux: add displays for
- expansion board
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E41451C84DC
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 12:35:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.193
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759322136; cv=none; b=kxa3JtFpDZ+3g5IfHNr5y5km6GKfMGl/T0SjI3gRzsxJ61ry27UkYcGnuj0/WhuLaD29TccT0cVqzQdrHHaCS72N1Kki2nwz/qob3zod6nJvs7fuaF5by2ijKeS5bt36im8oNtW8zAFtS6cmYm5QWlY9zJy3nuLwUtVfVuCIfbU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759322136; c=relaxed/simple;
+	bh=FZoE4/uzj7IoteEjS8xaFMH3OLzn5CI66U1IU6JpBZA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZOWB/zprBk8+9TpLkrD5aVLUxiJJTlSKZpoGP7tb9lBWl8Gl5sTKadGg+vqppmvUQ1gt529b5wMo/XZ7nm3uUx1LzYdtHKSp7ow3RtbcA98x7/aVRY37krjO+8Y5/+NfQ5FvCEpIRiRNCvA4bPO/8M+8L6UZrP4hFWfIkxqKN7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YqPgKp8L; arc=none smtp.client-ip=209.85.128.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f193.google.com with SMTP id 00721157ae682-77636fb28f6so36172387b3.1
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 05:35:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759322134; x=1759926934; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+OJTyCbCWaylu3zzN8/+lDYrlD8PE/4kgfS91leMv2U=;
+        b=YqPgKp8Ls5lsd90jVlUS5KdU7utmMW3y71dfCHIbggjuoDY/lBcKR1GadGD+f6h+ww
+         zFxXjnHjVcLmx+3qGPD9eekhQ3O0ZTc4r1WmWEMPqVr4VgYcmmGuCHbaBDwh6vS4rAWH
+         2txa+FFAePXlikU0YNU5XILK0K4AMT6GoYnOvitIQJVmKxQaTyRbWrLlSxKoRCR1tcPx
+         VVnQ/U0lwvcVRrROwjNqsZdG88j/iqhR9bsN0HD0+DBHZkBqMZ1N9CVhjOzqAiG/BRdu
+         pCqi27cPD+trGb0rL8zlZuFqDpV7oRt2xK4clMmfrr90I8yvAhmumcjrjS0wLECtAsya
+         PdZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759322134; x=1759926934;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+OJTyCbCWaylu3zzN8/+lDYrlD8PE/4kgfS91leMv2U=;
+        b=EJ40l7j0rAjnB2eazjKMngp/1UcyVZa8rOK9lnLxco/sbXE164OddLGMbicc+JYuEb
+         9U1XRDClw4kO4dnTpbBgG1fm+fWcgb20kZVehG+aUvkwp73I0EENPpRvBoYz1Xyf60Kp
+         egIEx91ZrcBmTThO2TaONGoktwuhTDBX38vG3jgj1mZpN+lDw/Vv+KR6P69c+uvHQNnk
+         DkyRDlHY6dxJTNrQE1QgeGwY/MYr3Hw5KNpj97dfg2CrgIz/m5jDgTZpAfQ6rvtQzJi8
+         YFHJHfCWIllm7msszXjZqu9dR0AHEh2WljLsE428EYofpDYRdS5XGJlEhwLmB6NpRJ2v
+         7a4w==
+X-Forwarded-Encrypted: i=1; AJvYcCVzoU9q5Kp7nnOahLSHURV3LMBAYP7aHr6sqdQdKz/jIk27nFxS2g/fqT8ret258TCJd56ycJShqUW1pQU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLmWhrcZ8XVc0kwYvBq6HTsa6W9EOeoLcPxDTkpwA2Ux7h/QK1
+	Bk7cg3Tp4zZVFMJFOmbj65LHIAd5y3W8i4O6ytkLO7p9CjyuqB0QmgrrpfZQM9RMgc7gCcvF/jp
+	S4e3zXTIEGRrYev33GkfIir7b01z6C7p1JuZIBS4RW1II
+X-Gm-Gg: ASbGncujAQhySyfONSZ7T2Fyx4E8fBhnW41VqZbS23vQDvlSR8/vcM/F16BY+Tv04Oi
+	oEDSL9LKkU9dVgviH720Dl2JaQv0ycXQS+b6azAnM95gzbC4slZshQgr6DZ3L6uyzRR7z7Hz2bF
+	LA0RUznNJH5J4DEX8rCj67F6ZHnajA7jh4JK5k1YfdWwkyVGEeYPUcSZ+lIJhmbi60ECHz8cXlc
+	7vy/4UWaa1OLhWFWQxbIHNnOoj47hMpIISUJajOtw==
+X-Google-Smtp-Source: AGHT+IE6KamGztv2Xt5PHPnx0a0LZ3CZ2ZAyoAvX37IXeRJtUhxUMLuzk9Nd8AK4sT5Ig4L63y3kLhz5qrkwlQUBRqY=
+X-Received: by 2002:a53:d016:0:b0:631:ffe7:5925 with SMTP id
+ 956f58d0204a3-63b6ff7e767mr4511024d50.32.1759322133690; Wed, 01 Oct 2025
+ 05:35:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20251001-imx8mp-pollux-display-overlays-v3-4-87f843f6bed6@phytec.de>
-References: <20251001-imx8mp-pollux-display-overlays-v3-0-87f843f6bed6@phytec.de>
-In-Reply-To: <20251001-imx8mp-pollux-display-overlays-v3-0-87f843f6bed6@phytec.de>
-To: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam
-	<festevam@gmail.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-CC: <imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<upstream@lists.phytec.de>, Yannic Moog <y.moog@phytec.de>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1759322046; l=5278;
- i=y.moog@phytec.de; s=20250509; h=from:subject:message-id;
- bh=E2qrqZHUQ4Ygs+r/lhCdrCTyQpjjp7YBwJ440TscYFI=;
- b=F4BH2ogCp5tiUm/DzdrPsV/DghEIQzjyEfxrD7GZSpDZuB7KmTSWHpj7nnaAduntXknw0zVIe
- SLJScNht/WFDl5vN2kQXZEoyWG1hEf3xBqA6y+4Moowqh8MfBGQLfR5
-X-Developer-Key: i=y.moog@phytec.de; a=ed25519;
- pk=rpKoEJ4E7nD9qsrU/rfKVwMTWNWYaTBylZuJUXUiFr8=
-X-ClientProxiedBy: Postix.phytec.de (172.25.0.11) To Postix.phytec.de
- (172.25.0.11)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM3PEPF00009BA1:EE_|DB4P195MB2693:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4217c634-9c17-48fd-c923-08de00e6d171
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|376014|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NlJZRG51bW5oNFIvNm5JUys4UDN1bkJhOVBiT1RkS1FGNTFDdk45MnlJUEdG?=
- =?utf-8?B?RTBENGtML1llclQrYk91TEZVd0xwdjlwNlNDNlBpdFlGd0VlQmg0cTBJbU1O?=
- =?utf-8?B?a0owWi9EL2xZOEp2ck5wTTFqRlN2MmQ5R2o5VVRDMEJWeGVGb1RIOXZkVzNo?=
- =?utf-8?B?clp1Z1MyR1ZLbFJweDVKYUtiNUp2ZTB3ek40S213Uk1jQ0hFUWRpamVDVGZ2?=
- =?utf-8?B?WnZVa3I0cDdpazFGNGcrV3ZJcnJsMXFtenFkaFlyWWh2czhQbHZBbU0zdHk4?=
- =?utf-8?B?TTdaTjNDL1RjdTdhU3Bud2YybHFUdmlsblJQV0pLMEVINHA5ZXBVb09oYTFm?=
- =?utf-8?B?eU5qa1A5MTFWT2oycnhvdGdnK2dxNGpuSkw0MklDRnFrM1d4SytQcnN1dDln?=
- =?utf-8?B?NzRrVDkxbmdtcklzQ2FNaTByQXd4QzhxYVJWejBYaXc1WGh6NjhxM2ZLVmh4?=
- =?utf-8?B?eDhtM1VodEE4STJJcEJ6YW0xOVFnV3FYbE8rbjMwLzkwUVV3QmExQ2VNY3lr?=
- =?utf-8?B?bGxmcE13TDF2cVJ0UGk3Y1I2cTg3R3BYeG96eVVRYldHeFhBSWFPVzZDVWRy?=
- =?utf-8?B?RG1GV3B3WE84T1ZERlUzN1pDSkk2MUNPOHVuNlo3alJmWEloaTVrNWNYend6?=
- =?utf-8?B?UGcrTE9MVmt2US8zUTdkVFlFWEhqRFVRaURickxVaDV2bGJpZFZTVlN2OFZD?=
- =?utf-8?B?N0o1M2pJU3BUTERUeHFuQnArd0dPemdzVTZwRExGb1BQMGZNSTdKNmM5QjFl?=
- =?utf-8?B?MGpsQUxwcGFLOWpBYi9Ed2pnRlZBd3kzaEpNVWN2SWhZRkhmWE8rZVk5cGVO?=
- =?utf-8?B?aXNBSHAvb1IxWGVGMFk0NGlFckFSa0JYeldoUFFhRUNBM0Vta0NwdFBhbGVx?=
- =?utf-8?B?UWJ6bHNkNmtHQXMxcm5PL0VaVEZZaVpxT0U5Y0s1SnE4NWpjZlRGSk9DTi8z?=
- =?utf-8?B?Q0R2NUJ1NmtxMFRta2tQU1pOS2RSN21kY3BaY1FmWGVCMWxTcHNUbWR3bWZl?=
- =?utf-8?B?OStnblJOcmFFOTBzQWtnMHZmY3hVbCtLYktRaXZMRjZPUUg3TUZmY0VoclNK?=
- =?utf-8?B?dU1TNm5XVXpwbmJFdTJYb2YrZ1kyYmpnZGpCZjBCTkkycTNJRXVITGR1cnEy?=
- =?utf-8?B?WVg1UXZpYk5KSFBPSTgzM1BnR3BFQ0tMQ0NVOEdRUkRmQjRLKzlJSlhROXFR?=
- =?utf-8?B?R0YyeENhOVBCSkVYaVhoMGdIN3pzNFBiV0x4K0ZBZDRuYkFRNEI3SXM4aUE4?=
- =?utf-8?B?MlJVeWR4S2hYMzk3SFBVZ3IycCtKWUFHZlJUcFFYTDZzN0gvVkdhWGN5K0pW?=
- =?utf-8?B?N2F5TlAxRUs3NmdibHYzNHh5NmJBa3loTE1zTHZPRHJ2RFk3TUdENGF2QXQ4?=
- =?utf-8?B?M3o4bGZKZ3lDOUJOcnhHSjAwWVhnZDBnWVpBZGdPRUYrSGpBK1BETVJPYVVS?=
- =?utf-8?B?Ukh1ZzMzaUdKb3hVdk5XNW9UbWtmUGhXcGlrRE0va3piaWZMLzFhR1RvNzZJ?=
- =?utf-8?B?OWkxTzdDZlZZakM4bjR3SFU3Ly9QcFV5MVluTGp4WjhhUnoycU9qQlBjRGJU?=
- =?utf-8?B?aXExZEZPc0g4VnpwRXJnZ3F1K2ZwMkFMSnByYm5YcTlMbEpzdEk0NExJSkJk?=
- =?utf-8?B?WkhIYzdOclpWb3NRd3VzTkY5bWd1UUxBQk5LTlpNN29xZzVsbGVucE5SaGFO?=
- =?utf-8?B?ZWQ3RVhNaDdNdnVkejFFQ0JnZGpVcVQ0WnBwMXFBVy9ZZTdWdUxXR0xobUMr?=
- =?utf-8?B?OVh2b1QrU0cxbmI1VXFBQlpiVTdOK2UxU2xueE5qcmNNbXh2bCtneGMreWpT?=
- =?utf-8?B?MmpJc1dQa2dUZncxQVovZWR0U2FPVFVsWjJ0bXdUWHQxQnZKYm9lZzFpNmtD?=
- =?utf-8?B?S2pDczdlY21RcGZ1bEVVcVFkL2tIdlB4akdRUGExRDluQTRCWUlxd0t2VGJG?=
- =?utf-8?B?MHp6TFNPYUYyNVNHQ1Q3dyt1N3NWbWVWRVZWWUh2MlVGSU9NbFd6WmoyaSts?=
- =?utf-8?B?bGZ1bWhURHNHQ2YyaUdZVXZ0RmN0YU1wa3Y1Mm9DVlgwczlvbTN3TEcwM1Jp?=
- =?utf-8?B?ai96Y3Z4dm1lQThoTnBQRS9DUHNtL1lBL2RpeFB5NVFhQktoa2ljQ2JJVkda?=
- =?utf-8?Q?+3Pc=3D?=
-X-Forefront-Antispam-Report:
-	CIP:91.26.50.189;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:Postix.phytec.de;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(376014)(7416014)(1800799024);DIR:OUT;SFP:1102;
-X-OriginatorOrg: phytec.de
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2025 12:34:08.9107
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4217c634-9c17-48fd-c923-08de00e6d171
-X-MS-Exchange-CrossTenant-Id: e609157c-80e2-446d-9be3-9c99c2399d29
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e609157c-80e2-446d-9be3-9c99c2399d29;Ip=[91.26.50.189];Helo=[Postix.phytec.de]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AM3PEPF00009BA1.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB4P195MB2693
+References: <202509301440.be4b3631-lkp@intel.com>
+In-Reply-To: <202509301440.be4b3631-lkp@intel.com>
+From: Menglong Dong <menglong8.dong@gmail.com>
+Date: Wed, 1 Oct 2025 20:35:22 +0800
+X-Gm-Features: AS18NWAaFB7VypLe-kOC6DuizTI5uWWChH9dUxfLG7LSWUsfk4lFDSPotkYett8
+Message-ID: <CADxym3YTYTf186M6VSnzAdikKvFt_iyfAXA=ysKLGyZsD=9ynA@mail.gmail.com>
+Subject: Re: [linux-next:master] [tracing] e5a4cc28a0: BUG:spinlock_bad_magic_on_CPU
+To: kernel test robot <oliver.sang@intel.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Menglong Dong <dongml2@chinatelecom.cn>, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The same displays that can be connected directly to the
-imx8mp-phyboard-pollux can also be connected to the expansion board
-PEB-AV-10. For displays connected to the expansion board, a second LVDS
-channel of the i.MX 8M Plus SoC is used and only a single display
-connected to the SoC LVDS display bridge at a given time is supported.
+On Tue, Sep 30, 2025 at 2:48=E2=80=AFPM kernel test robot <oliver.sang@inte=
+l.com> wrote:
+>
+>
+>
+> Hello,
+>
+> kernel test robot noticed "BUG:spinlock_bad_magic_on_CPU" on:
+>
+> commit: e5a4cc28a052369b6e56b0a9ac05d9b9d5607b06 ("tracing: fprobe: use r=
+hltable for fprobe_ip_table")
+> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
+>
+> in testcase: boot
+>
+> config: x86_64-randconfig-072-20250929
+> compiler: gcc-14
+> test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 1=
+6G
+>
+> (please refer to attached dmesg/kmsg for entire log/backtrace)
+>
+>
+>
+> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
+ion of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <oliver.sang@intel.com>
+> | Closes: https://lore.kernel.org/oe-lkp/202509301440.be4b3631-lkp@intel.=
+com
+>
+>
+> [   30.894986][   T66] BUG: spinlock bad magic on CPU#0, modprobe/66
+> [ 30.896030][ T66] lock: fprobe_ip_table+0x110/0x180, .magic: 00000000, .=
+owner: <none>/-1, .owner_cpu: 0
+> [   30.898263][   T66] CPU: 0 UID: 0 PID: 66 Comm: modprobe Not tainted 6=
+.17.0-rc6-00004-ge5a4cc28a052 #1 NONE  5e106928d64815a8c70ffa200d16301537e1=
+528f
+> [   30.898799][   T66] Hardware name: QEMU Standard PC (i440FX + PIIX, 19=
+96), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+> [   30.898799][   T66] Call Trace:
+> [   30.898799][   T66]  <TASK>
+> [ 30.898799][ T66] show_stack (arch/x86/kernel/dumpstack.c:319)
+> [ 30.898799][ T66] dump_stack_lvl (lib/dump_stack.c:122)
+> [ 30.898799][ T66] dump_stack (lib/dump_stack.c:130)
+> [ 30.898799][ T66] spin_dump (kernel/locking/spinlock_debug.c:71)
+> [ 30.898799][ T66] do_raw_spin_lock.cold (kernel/locking/spinlock_debug.c=
+:78 kernel/locking/spinlock_debug.c:86 kernel/locking/spinlock_debug.c:115)
+> [ 30.898799][ T66] _raw_spin_lock (kernel/locking/spinlock.c:155)
+> [ 30.898799][ T66] ? rhashtable_walk_enter (lib/rhashtable.c:687)
+> [ 30.898799][ T66] rhashtable_walk_enter (lib/rhashtable.c:687)
 
-Signed-off-by: Yannic Moog <y.moog@phytec.de>
----
- arch/arm64/boot/dts/freescale/Makefile             |  6 +++
- ...mp-phyboard-pollux-peb-av-10-etml1010g3dra.dtso | 45 ++++++++++++++++++++++
- ...8mp-phyboard-pollux-peb-av-10-ph128800t006.dtso | 45 ++++++++++++++++++++++
- 3 files changed, 96 insertions(+)
+Hmm, it's weird. I'm on vacation now, and I'll focus on this
+warning after I come back.
 
-diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-index 9c121041128972d2239e2cc74df98b0bf7de1ac2..e4b097446440f41785dd1a0e5d354796e800ee76 100644
---- a/arch/arm64/boot/dts/freescale/Makefile
-+++ b/arch/arm64/boot/dts/freescale/Makefile
-@@ -222,11 +222,17 @@ imx8mp-phyboard-pollux-etml1010g3dra-dtbs += imx8mp-phyboard-pollux-rdk.dtb \
- 	imx8mp-phyboard-pollux-etml1010g3dra.dtbo
- imx8mp-phyboard-pollux-peb-av-10-dtbs += imx8mp-phyboard-pollux-rdk.dtb \
- 	imx8mp-phyboard-pollux-peb-av-10.dtbo
-+imx8mp-phyboard-pollux-peb-av-10-etml1010g3dra-dtbs += imx8mp-phyboard-pollux-rdk.dtb \
-+	imx8mp-phyboard-pollux-peb-av-10-etml1010g3dra.dtbo
-+imx8mp-phyboard-pollux-peb-av-10-ph128800t006-dtbs += imx8mp-phyboard-pollux-rdk.dtb \
-+	imx8mp-phyboard-pollux-peb-av-10-ph128800t006.dtbo
- imx8mp-phyboard-pollux-ph128800t006-dtbs += imx8mp-phyboard-pollux-rdk.dtb \
- 	imx8mp-phyboard-pollux-ph128800t006.dtbo
- imx8mp-phyboard-pollux-rdk-no-eth-dtbs += imx8mp-phyboard-pollux-rdk.dtb imx8mp-phycore-no-eth.dtbo
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-phyboard-pollux-etml1010g3dra.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-phyboard-pollux-peb-av-10.dtb
-+dtb-$(CONFIG_ARCH_MXC) += imx8mp-phyboard-pollux-peb-av-10-etml1010g3dra.dtb
-+dtb-$(CONFIG_ARCH_MXC) += imx8mp-phyboard-pollux-peb-av-10-ph128800t006.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-phyboard-pollux-ph128800t006.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-phyboard-pollux-rdk-no-eth.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mp-skov-basic.dtb
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-peb-av-10-etml1010g3dra.dtso b/arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-peb-av-10-etml1010g3dra.dtso
-new file mode 100644
-index 0000000000000000000000000000000000000000..aceb5b6056ef1298ad9e105e673c7ab403411ab0
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-peb-av-10-etml1010g3dra.dtso
-@@ -0,0 +1,45 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
-+/*
-+ * Copyright (C) 2025 PHYTEC Messtechnik GmbH
-+ */
-+
-+/dts-v1/;
-+/plugin/;
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/clock/imx8mp-clock.h>
-+#include "imx8mp-phyboard-pollux-peb-av-10.dtsi"
-+
-+&backlight_lvds0 {
-+	brightness-levels = <0 8 16 32 64 128 255>;
-+	default-brightness-level = <8>;
-+	enable-gpios = <&gpio5 1 GPIO_ACTIVE_HIGH>;
-+	num-interpolated-steps = <2>;
-+	pwms = <&pwm4 0 50000 0>;
-+	status = "okay";
-+};
-+
-+&lcdif2 {
-+	status = "okay";
-+};
-+
-+&lvds_bridge {
-+	assigned-clocks = <&clk IMX8MP_CLK_MEDIA_LDB>, <&clk IMX8MP_VIDEO_PLL1>;
-+	assigned-clock-parents = <&clk IMX8MP_VIDEO_PLL1_OUT>;
-+	/*
-+	 * The LVDS panel uses 72.4 MHz pixel clock, set IMX8MP_VIDEO_PLL1 to
-+	 * 72.4 * 7 = 506.8 MHz so the LDB serializer and LCDIFv3 scanout
-+	 * engine can reach accurate pixel clock of exactly 72.4 MHz.
-+	 */
-+	assigned-clock-rates = <0>, <506800000>;
-+	status = "okay";
-+};
-+
-+&panel_lvds0 {
-+	compatible = "edt,etml1010g3dra";
-+	status = "okay";
-+};
-+
-+&pwm4 {
-+	status = "okay";
-+};
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-peb-av-10-ph128800t006.dtso b/arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-peb-av-10-ph128800t006.dtso
-new file mode 100644
-index 0000000000000000000000000000000000000000..559286f384be452f1c953689e03249fbea24fac5
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-peb-av-10-ph128800t006.dtso
-@@ -0,0 +1,45 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
-+/*
-+ * Copyright (C) 2025 PHYTEC Messtechnik GmbH
-+ */
-+
-+/dts-v1/;
-+/plugin/;
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/clock/imx8mp-clock.h>
-+#include "imx8mp-phyboard-pollux-peb-av-10.dtsi"
-+
-+&backlight_lvds0 {
-+	brightness-levels = <0 8 16 32 64 128 255>;
-+	default-brightness-level = <8>;
-+	enable-gpios = <&gpio5 1 GPIO_ACTIVE_HIGH>;
-+	num-interpolated-steps = <2>;
-+	pwms = <&pwm4 0 66667 0>;
-+	status = "okay";
-+};
-+
-+&lcdif2 {
-+	status = "okay";
-+};
-+
-+&lvds_bridge {
-+	assigned-clocks = <&clk IMX8MP_CLK_MEDIA_LDB>, <&clk IMX8MP_VIDEO_PLL1>;
-+	assigned-clock-parents = <&clk IMX8MP_VIDEO_PLL1_OUT>;
-+	/*
-+	 * The LVDS panel uses 66.5 MHz pixel clock, set IMX8MP_VIDEO_PLL1 to
-+	 * 66.5 * 7 = 465.5 MHz so the LDB serializer and LCDIFv3 scanout
-+	 * engine can reach accurate pixel clock of exactly 66.5 MHz.
-+	 */
-+	assigned-clock-rates = <0>, <465500000>;
-+	status = "okay";
-+};
-+
-+&panel_lvds0 {
-+	compatible = "powertip,ph128800t006-zhc01";
-+	status = "okay";
-+};
-+
-+&pwm4 {
-+	status = "okay";
-+};
+Thanks!
+Menglong Dong
 
--- 
-2.43.0
-
+> [ 30.898799][ T66] fprobe_module_callback (kernel/trace/fprobe.c:478)
+> [ 30.898799][ T66] ? _mutex_trylock_nest_lock (kernel/locking/mutex.c:916=
+)
+> [ 30.898799][ T66] ? fprobe_addr_list_add+0x4a0/0x4a0
+> [ 30.898799][ T66] ? mutex_unlock (kernel/locking/mutex.c:537)
+> [ 30.898799][ T66] notifier_call_chain (kernel/notifier.c:85)
+> [ 30.898799][ T66] blocking_notifier_call_chain (kernel/notifier.c:381 ke=
+rnel/notifier.c:368)
+> [ 30.898799][ T66] do_init_module (kernel/module/main.c:3134)
+> [ 30.898799][ T66] ? free_module (kernel/module/main.c:3011)
+> [ 30.898799][ T66] load_module (kernel/module/main.c:3509)
+> [ 30.898799][ T66] init_module_from_file (kernel/module/main.c:3701)
+> [ 30.898799][ T66] ? __ia32_sys_init_module (kernel/module/main.c:3677)
+> [ 30.898799][ T66] ? ftrace_likely_update (arch/x86/include/asm/smap.h:53=
+ kernel/trace/trace_branch.c:223)
+> [ 30.898799][ T66] ? do_raw_spin_unlock (kernel/locking/spinlock_debug.c:=
+103 (discriminator 4) kernel/locking/spinlock_debug.c:141 (discriminator 4)=
+)
+> [ 30.898799][ T66] idempotent_init_module (kernel/module/main.c:3636 kern=
+el/module/main.c:3714)
+> [ 30.898799][ T66] ? tracer_hardirqs_on (kernel/trace/trace_irqsoff.c:643=
+)
+> [ 30.898799][ T66] ? init_module_from_file (kernel/module/main.c:3705)
+> [ 30.898799][ T66] ? ftrace_likely_update (arch/x86/include/asm/smap.h:53=
+ kernel/trace/trace_branch.c:223)
+> [ 30.898799][ T66] __x64_sys_finit_module (include/linux/file.h:62 (discr=
+iminator 3) include/linux/file.h:83 (discriminator 3) kernel/module/main.c:=
+3736 (discriminator 3) kernel/module/main.c:3723 (discriminator 3) kernel/m=
+odule/main.c:3723 (discriminator 3))
+> [ 30.898799][ T66] x64_sys_call (arch/x86/entry/syscall_64.c:41)
+> [ 30.898799][ T66] do_syscall_64 (arch/x86/entry/syscall_64.c:63 (discrim=
+inator 1) arch/x86/entry/syscall_64.c:94 (discriminator 1))
+> [ 30.898799][ T66] ? ksys_read (fs/read_write.c:705)
+> [ 30.898799][ T66] ? vfs_write (fs/read_write.c:705)
+> [ 30.898799][ T66] ? build_open_flags (fs/open.c:1420)
+> [ 30.898799][ T66] ? ftrace_likely_update (arch/x86/include/asm/smap.h:53=
+ kernel/trace/trace_branch.c:223)
+> [ 30.898799][ T66] ? tracer_hardirqs_on (kernel/trace/trace_irqsoff.c:643=
+)
+> [ 30.898799][ T66] ? lockdep_hardirqs_on_prepare (kernel/locking/lockdep.=
+c:4678)
+> [ 30.898799][ T66] ? do_syscall_64 (arch/x86/entry/syscall_64.c:113)
+> [ 30.898799][ T66] ? __x64_sys_openat (fs/open.c:1461)
+> [ 30.898799][ T66] ? __x64_sys_open (fs/open.c:1461)
+> [ 30.898799][ T66] ? ftrace_likely_update (arch/x86/include/asm/smap.h:53=
+ kernel/trace/trace_branch.c:223)
+> [ 30.898799][ T66] ? tracer_hardirqs_on (kernel/trace/trace_irqsoff.c:643=
+)
+> [ 30.898799][ T66] ? lockdep_hardirqs_on_prepare (kernel/locking/lockdep.=
+c:4678)
+> [ 30.898799][ T66] ? do_syscall_64 (arch/x86/entry/syscall_64.c:113)
+> [ 30.898799][ T66] ? tracer_hardirqs_on (kernel/trace/trace_irqsoff.c:643=
+)
+> [ 30.898799][ T66] ? lockdep_hardirqs_on_prepare (kernel/locking/lockdep.=
+c:4678)
+> [ 30.898799][ T66] ? do_syscall_64 (arch/x86/entry/syscall_64.c:113)
+> [ 30.898799][ T66] ? irqentry_exit (kernel/entry/common.c:210)
+> [ 30.898799][ T66] ? exc_page_fault (arch/x86/mm/fault.c:1536)
+> [ 30.898799][ T66] entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_6=
+4.S:130)
+> [   30.898799][   T66] RIP: 0033:0x7f46bce10719
+> [ 30.898799][ T66] Code: 08 89 e8 5b 5d c3 66 2e 0f 1f 84 00 00 00 00 00 =
+90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f =
+05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d b7 06 0d 00 f7 d8 64 89 01 48
+> All code
+> =3D=3D=3D=3D=3D=3D=3D=3D
+>    0:   08 89 e8 5b 5d c3       or     %cl,-0x3ca2a418(%rcx)
+>    6:   66 2e 0f 1f 84 00 00    cs nopw 0x0(%rax,%rax,1)
+>    d:   00 00 00
+>   10:   90                      nop
+>   11:   48 89 f8                mov    %rdi,%rax
+>   14:   48 89 f7                mov    %rsi,%rdi
+>   17:   48 89 d6                mov    %rdx,%rsi
+>   1a:   48 89 ca                mov    %rcx,%rdx
+>   1d:   4d 89 c2                mov    %r8,%r10
+>   20:   4d 89 c8                mov    %r9,%r8
+>   23:   4c 8b 4c 24 08          mov    0x8(%rsp),%r9
+>   28:   0f 05                   syscall
+>   2a:*  48 3d 01 f0 ff ff       cmp    $0xfffffffffffff001,%rax         <=
+-- trapping instruction
+>   30:   73 01                   jae    0x33
+>   32:   c3                      ret
+>   33:   48 8b 0d b7 06 0d 00    mov    0xd06b7(%rip),%rcx        # 0xd06f=
+1
+>   3a:   f7 d8                   neg    %eax
+>   3c:   64 89 01                mov    %eax,%fs:(%rcx)
+>   3f:   48                      rex.W
+>
+> Code starting with the faulting instruction
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>    0:   48 3d 01 f0 ff ff       cmp    $0xfffffffffffff001,%rax
+>    6:   73 01                   jae    0x9
+>    8:   c3                      ret
+>    9:   48 8b 0d b7 06 0d 00    mov    0xd06b7(%rip),%rcx        # 0xd06c=
+7
+>   10:   f7 d8                   neg    %eax
+>   12:   64 89 01                mov    %eax,%fs:(%rcx)
+>   15:   48                      rex.W
+> [   30.898799][   T66] RSP: 002b:00007ffc679745b8 EFLAGS: 00000246 ORIG_R=
+AX: 0000000000000139
+> [   30.898799][   T66] RAX: ffffffffffffffda RBX: 00005640c34b9160 RCX: 0=
+0007f46bce10719
+> [   30.898799][   T66] RDX: 0000000000000000 RSI: 00005640aa9b74a0 RDI: 0=
+000000000000004
+> [   30.898799][   T66] RBP: 00005640aa9b74a0 R08: 0000000000000000 R09: 0=
+0005640c34ba430
+> [   30.898799][   T66] R10: 0000000000000004 R11: 0000000000000246 R12: 0=
+000000000040000
+> [   30.898799][   T66] R13: 0000000000000000 R14: 00005640c34b83a0 R15: 0=
+000000000000000
+> [   30.898799][   T66]  </TASK>
+> [   30.963748][   T66] Oops: general protection fault, probably for non-c=
+anonical address 0xdffffc0000000002: 0000 [#1] KASAN
+> [   30.964694][   T66] KASAN: null-ptr-deref in range [0x0000000000000010=
+-0x0000000000000017]
+> [   30.964694][   T66] CPU: 0 UID: 0 PID: 66 Comm: modprobe Not tainted 6=
+.17.0-rc6-00004-ge5a4cc28a052 #1 NONE  5e106928d64815a8c70ffa200d16301537e1=
+528f
+> [   30.964694][   T66] Hardware name: QEMU Standard PC (i440FX + PIIX, 19=
+96), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+> [ 30.964694][ T66] RIP: 0010:rhashtable_walk_enter (include/linux/list.h:=
+169 lib/rhashtable.c:688)
+> [ 30.964694][ T66] Code: c1 ea 03 80 3c 02 00 0f 85 2b 02 00 00 4d 89 77 =
+28 4d 8d 6e 10 48 b8 00 00 00 00 00 fc ff df 4d 8d 67 18 4c 89 ea 48 c1 ea =
+03 <80> 3c 02 00 0f 85 f7 01 00 00 49 8b 5e 10 48 8d 43 08 48 89 c2 48
+> All code
+> =3D=3D=3D=3D=3D=3D=3D=3D
+>    0:   c1 ea 03                shr    $0x3,%edx
+>    3:   80 3c 02 00             cmpb   $0x0,(%rdx,%rax,1)
+>    7:   0f 85 2b 02 00 00       jne    0x238
+>    d:   4d 89 77 28             mov    %r14,0x28(%r15)
+>   11:   4d 8d 6e 10             lea    0x10(%r14),%r13
+>   15:   48 b8 00 00 00 00 00    movabs $0xdffffc0000000000,%rax
+>   1c:   fc ff df
+>   1f:   4d 8d 67 18             lea    0x18(%r15),%r12
+>   23:   4c 89 ea                mov    %r13,%rdx
+>   26:   48 c1 ea 03             shr    $0x3,%rdx
+>   2a:*  80 3c 02 00             cmpb   $0x0,(%rdx,%rax,1)               <=
+-- trapping instruction
+>   2e:   0f 85 f7 01 00 00       jne    0x22b
+>   34:   49 8b 5e 10             mov    0x10(%r14),%rbx
+>   38:   48 8d 43 08             lea    0x8(%rbx),%rax
+>   3c:   48 89 c2                mov    %rax,%rdx
+>   3f:   48                      rex.W
+>
+> Code starting with the faulting instruction
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>    0:   80 3c 02 00             cmpb   $0x0,(%rdx,%rax,1)
+>    4:   0f 85 f7 01 00 00       jne    0x201
+>    a:   49 8b 5e 10             mov    0x10(%r14),%rbx
+>    e:   48 8d 43 08             lea    0x8(%rbx),%rax
+>   12:   48 89 c2                mov    %rax,%rdx
+>   15:   48                      rex.W
+>
+>
+> The kernel config and materials to reproduce are available at:
+> https://download.01.org/0day-ci/archive/20250930/202509301440.be4b3631-lk=
+p@intel.com
+>
+>
+>
+> --
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
+>
 
