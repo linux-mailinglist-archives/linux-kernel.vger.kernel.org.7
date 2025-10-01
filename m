@@ -1,199 +1,488 @@
-Return-Path: <linux-kernel+bounces-839093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9894BB0CE0
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 16:48:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FE64BB0CF5
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 16:49:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A67B2A5B46
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 14:48:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADCD1194374A
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 14:49:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DD672749CF;
-	Wed,  1 Oct 2025 14:48:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1ED6302176;
+	Wed,  1 Oct 2025 14:48:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="EG7uD/Jj"
-Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010037.outbound.protection.outlook.com [52.101.201.37])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TH7/EZiU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5F25748F;
-	Wed,  1 Oct 2025 14:48:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.37
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759330102; cv=fail; b=TP2MRwsif7OVX+8vuFbifdD4LwrWNXRCHDKRwqAf+JYrkqVlpWnH9rZHoz9c4pio3vsYAwOXxf2OSxsI/5G6raGWvhk2ZmJxk4juzXQwyj+rUZ/ZiZvOZsVBBIQfFPzWAUxPD+ugMB7vOThA8Jwf0+uiVE/WSzb5Esw5A20dMf4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759330102; c=relaxed/simple;
-	bh=rLVefKaZLmLIoJy+uK9b5gGHkdoS8//nsYinamY4k2k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=hqSyzjtYEUQLh6mKG1k1fsVZ42KKYyTefXQi1VROsmJEf6vtRXbD0szlgyEjVf8QcNhCfH9Ot54nWv6eKFVagEhPbf+R4/KUWBOr53Z5GM35FTKCoWG3JY+G+/ugc0SErM4qmtSfW2VXLYJQh+lCcHgykuzDjWMVpMhGHRvrc1k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=EG7uD/Jj; arc=fail smtp.client-ip=52.101.201.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=u6QFmatbePzj81uIPfavsemztWfmweJdrlUvH2edF/4TTCSXbh2NeTmFv+JLJOg8AkI9TzJ8dW1YaNvR9BSjqfBIpzD4495u9f8AoN3iclal/2OOIqjRHrAGQa23SaKVlsF+oh/ebPiODsybX3htKRQnOWaa9GRE7nu6jSkDKmWSCziiHEq4ZfXGJn3kgCOyC7vqfrbyQghTyU1fbdSa/00O19BlXtzTVX6C9lmYlXbhEoyZhzY23iI8IBSORjNF1UseQxxCMvKi8zph6tgBIGQM22HGIhI8z/8C0ZyBh42X4mIDrEexzr8w9ka7QPnbNoPOHyhB04Tr7cvHKQpRXw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=g4aSx2dKce7p4VQH1vt85ladi8zS6+pg4VdyU67/Dzo=;
- b=k07YG3KcH3o++oYaZ7sMVVKSRsyLjnMgJ+T8jAtivTeMNH9GnXPsz9L2Z2XnIkM7pQjmkfXsapdJRxZK1yKMRRefNzhp0pI/f7t4EarvLRYl4X8FjuyZJYUl+KM0x4vw8jwJOg6IEuThS16Qh56SCtccKgrpxuiAdVsPItyzjI2VWlaD4uNvaun+zvTIBEyQ3M0lw7DE9bVjxRVgedUhLgKxXcdqDQLR95J2Z45jyw2bP70LBlCYYoKYNSm+9B3GWASmcLH/22Xyl4v6x5UC+tAKs4Uofuo1mxzVRnkaSOQjayJ4VHOgyEzcnyTOSjuWLhziij9l6ZIF5mCAXG/wcA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=g4aSx2dKce7p4VQH1vt85ladi8zS6+pg4VdyU67/Dzo=;
- b=EG7uD/JjmYdujRf1vnz+3mOOth6AqjT2d1/KWzDeObg0bjsDtKkntwtHD5iH877fZ3fCzEqIWQ1i0LwlkiQF4kKhVdg7OQVPZAiofb0lpc+KD3k4NDg15bpGPXGnxLBiLx0f5wRa8nYHSj4aIWBjZtf8KaYW9WrGZyPt8rtFAFzFHt6TckFTVo32Fdm7lRnriTblzPpt9InFLrjWUPb49qZ30BT8GWQ6g5tQ61cAgAGApoEBi9+sOyxXF4Q/Flns/3ZRj77EcYtvTID6CaV1upCf8K3MfZKrwn36oLS2/mAhLBhs31f0wjjiSJZqtep0vevPHKYBcyPc2M30l+8WbQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from PH7PR12MB5757.namprd12.prod.outlook.com (2603:10b6:510:1d0::13)
- by DM4PR12MB5842.namprd12.prod.outlook.com (2603:10b6:8:65::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.18; Wed, 1 Oct
- 2025 14:48:16 +0000
-Received: from PH7PR12MB5757.namprd12.prod.outlook.com
- ([fe80::f012:300c:6bf4:7632]) by PH7PR12MB5757.namprd12.prod.outlook.com
- ([fe80::f012:300c:6bf4:7632%2]) with mapi id 15.20.9160.015; Wed, 1 Oct 2025
- 14:48:16 +0000
-Date: Wed, 1 Oct 2025 11:48:14 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Zhi Wang <zhiw@nvidia.com>
-Cc: John Hubbard <jhubbard@nvidia.com>,
-	Alexandre Courbot <acourbot@nvidia.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Timur Tabi <ttabi@nvidia.com>, Alistair Popple <apopple@nvidia.com>,
-	Surath Mitra <smitra@nvidia.com>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	"nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
-	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-	"rust-for-linux@vger.kernel.org" <rust-for-linux@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Alex Williamson <alex.williamson@redhat.com>
-Subject: Re: [PATCH 0/2] rust: pci: expose is_virtfn() and reject VFs in
- nova-core
-Message-ID: <20251001144814.GB3024065@nvidia.com>
-References: <20250930220759.288528-1-jhubbard@nvidia.com>
- <DD6K5GQ143FZ.KGWUVMLB3Z26@nvidia.com>
- <fb5c2be5-b104-4314-a1f5-728317d0ca53@nvidia.com>
- <DD6LORTLMF02.6M7ZD36XOLJP@nvidia.com>
- <12076511-7113-4c53-83e8-92c5ea0eb125@nvidia.com>
- <5da095e6-040d-4531-91f9-cd3cf4f4c80d@nvidia.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5da095e6-040d-4531-91f9-cd3cf4f4c80d@nvidia.com>
-X-ClientProxiedBy: SA1PR02CA0002.namprd02.prod.outlook.com
- (2603:10b6:806:2cf::6) To PH7PR12MB5757.namprd12.prod.outlook.com
- (2603:10b6:510:1d0::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D550259CBD;
+	Wed,  1 Oct 2025 14:48:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759330117; cv=none; b=PQQxZxHjbTQZP3FSpM3En4ZByQt2CaNMUXZeOxED65V8ZR88595tI4vZnsEEJ13SJzAOkdHVN8h0U0epkJhBa94hsw+qbk5+CDQXh+050LcfANubYck9dzbQjVzpGX4uXgpJRE5bVxTjcL/4IErOwWY2ukbs7b0MvWnB7N67RG8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759330117; c=relaxed/simple;
+	bh=zC2jQuHnhQLXYOXbzbMX2xSQ36GfWdKCHr/v1rDApwM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=B9sKqTcuNiodANezFGUiYMIfLXyK9rbVkZejrKryP9+7CG8nFgDpKmaY/PNCZXcUXQ1MUQ0/s+x38C+UUp0WOnIUMDeWNFwH3mec4yqyTuQUCqaKNFgJ2kxZt/Ji03rUi9IRiqAgNYXk+B/LlYpBfOoXi+0fGVlwf4zgz8ddSCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TH7/EZiU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1A44C4CEFA;
+	Wed,  1 Oct 2025 14:48:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759330117;
+	bh=zC2jQuHnhQLXYOXbzbMX2xSQ36GfWdKCHr/v1rDApwM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=TH7/EZiUdVbE5CBtyeS+f4EKfAkK0pUNGXWMcvD1G1p8P3LEZ4flJKc+p6iWyEx+7
+	 FVNdfk976UWT6x4qfJz9MgAtYPYJ6WXRCOda2tuMjwujEgl0PsXa1XjTg88MWvAHaY
+	 klJTWfgasuGSC0KDWtXdk8MS9GJW2QlABeDAfgvfUKowNJFoYxCqZv+NWLcPsE/F0I
+	 5JcgpZUOoyPqAgt5EzHu4uMJYBa2G2V8Up3JTbXaKOflrRD6BaLzPSqxYyAThBPl4d
+	 4bLfeJEznF17ai5yscID5KIgnw+Njy5H5EOMABq7PA56zuczbKXPLt90tY8L0UbbCE
+	 AbYk/pJTJyMNw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 6A57CCE1109; Wed,  1 Oct 2025 07:48:34 -0700 (PDT)
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: rcu@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	kernel-team@meta.com,
+	rostedt@goodmis.org,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	bpf@vger.kernel.org
+Subject: [PATCH v2 04/21] rcu: Clean up after the SRCU-fastification of RCU Tasks Trace
+Date: Wed,  1 Oct 2025 07:48:15 -0700
+Message-Id: <20251001144832.631770-4-paulmck@kernel.org>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <7fa58961-2dce-4e08-8174-1d1cc592210f@paulmck-laptop>
+References: <7fa58961-2dce-4e08-8174-1d1cc592210f@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5757:EE_|DM4PR12MB5842:EE_
-X-MS-Office365-Filtering-Correlation-Id: 43b1d229-96a1-49e6-4719-08de00f98da9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?PCazTHd7MffI6PbMsdzZchbb0RecIrQwuP+zkZiepN/tELr+Iebm4JJWKX5w?=
- =?us-ascii?Q?Dc6FGWg9LfCWehaHI7WJsT//jWsdwB7b0ZP+r+JyDHYiXKnA/D+hgCFGGKOE?=
- =?us-ascii?Q?4KgqefpqWA2PzdSyCGKgJJ8XQaZVfVVpDG8z2dvk1TVuNGVk0gHIq1BtN8XN?=
- =?us-ascii?Q?Zgy9H8QaUFDYhBUnYRWjnQAcqRe/N41SRhKZurwOlMBgh5iiwjiWMKKBW6OX?=
- =?us-ascii?Q?Zgi63EQ4D+Iaj+YJzQFP2I1im3umVYoQOf+vDAQj+FPp8ZU3DtRnUh/01cdg?=
- =?us-ascii?Q?Tk5g/TQbYDXb8EToc35K2DkNKLs1rfBYvn/uhafAhwmFSYpmFoYLziNoIdgo?=
- =?us-ascii?Q?cvD/LHfkVPavsEWYZqYqZjPChS9E/f4SaDWZ5BtkYNCU2gSkltCI7pZJqDZY?=
- =?us-ascii?Q?2lRqE3VIf2yD6GVkSrWqO1TK4Zipn1JcS/6iHfLKOsh0nidCjoBkCaE3U3Ac?=
- =?us-ascii?Q?6luD5KCF02leAyTZ0JPYdKsuZSW73EAOquMjcaXzhNL7KSXBnGjUdRtsJHI/?=
- =?us-ascii?Q?pElhujVPJ+HcopJJ4/Hv9wl9EaffnYDNDovy7bdbsqyD4dM0hygQKctzpEip?=
- =?us-ascii?Q?LVWZM9zEiRyJcYZ536vO2JcFrDE8MAqRruoqybClUv/njQvDaopT5xm2nhYz?=
- =?us-ascii?Q?1d3M8wv/L2QFoER30D4APU4VHdxk4zQriFT+RynBhL4YUr+M5ZQADGQdq6/D?=
- =?us-ascii?Q?uKZDYnJvL29T+tpdkD+jq+VAjwwdU60+rPKS6P2PtI3GZqI1QvSdY+8K8Yfy?=
- =?us-ascii?Q?mLqo5qJ6PvBFEznb9/19AbkmeQ2LYR/pGH5dm7YSy4WlYsQ0CmwATXdfD/Iz?=
- =?us-ascii?Q?VeXvL4rzqRufwwlHT4m79JFhP9McGyjalDi1AXOUPHrmkziXy39LcwCTg/qJ?=
- =?us-ascii?Q?HxyxupH5z79e5b89QNEkD2yNKYcNDtejiI9ipA5bH1wa0+0KY055r5kzTs2K?=
- =?us-ascii?Q?xHLjNI2uIA6tWQDhH6Y1+InK4k5RWaiHU38cNKFAuyMj3VfJWoYeAxReTnyU?=
- =?us-ascii?Q?uollGwlnY6cV2hYTvnjovWBcxgOX9EfguyhtXFnE3jAA2nJk273D4pLYxLPV?=
- =?us-ascii?Q?NkshSP01GyfDhtO3hpd9TUCY/fBFUeZzh9vo+WtP8S3jeklGMyF3H0H+fsWy?=
- =?us-ascii?Q?lQ88qBx8yvvlqhNW3nNMnvGOavpWbrVJ3pSTgKqyOVyQd3QnuyKphhbte5c+?=
- =?us-ascii?Q?lnQHCjPtmcwdPnGJnPEa3KzPc24K8HfIS9qgp3QRYV4Ymy/Zp9U+CM3b91Db?=
- =?us-ascii?Q?IRWIs8p7IxppVBhFgM1l1ti39eaGpeME+uO/d2bDMd+H7FtvwdlcVDUY7LuR?=
- =?us-ascii?Q?7YvQHA0xnvGFz3EDCzNlrTV/myQJAZH9WbccWICAU76/jCnJPFtTP8H5P8z0?=
- =?us-ascii?Q?dUVOvEiUnAkoqitb7iBKfUit+X1H2mgQHzRZF8cDIc4+xUhlS/I/hhj5VGPo?=
- =?us-ascii?Q?N61WeVTbK6d5DTCwoN7PJUrEpJsdrJg/?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5757.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?+QspEI3bJbZHjglVHeXUObAmG0fyBHUoqGGttKrFt7InLUzDbi0X7UT/NLLT?=
- =?us-ascii?Q?x6GhuaKKandraV9j7xZz1KVGxyu6gEAsQs2z4wUumJQdpwwnse2Dv8v8Fqow?=
- =?us-ascii?Q?ZfO6rwstis2DqAPIiSw4f7D+YayXsPdAHrBxWgR2fFYwekvew2q22BZJKWN3?=
- =?us-ascii?Q?gGHy3jG21QRiqmYfu44fmzgvno/P01o+zcb6LcXzjVtSZs7BrjBRLitZieVR?=
- =?us-ascii?Q?w3CtIpQbgIyWo1bYcmrRiYMNuS4q/KneS1AvB9Dakh0pMLvHDv6Hh8HbqUIe?=
- =?us-ascii?Q?uY9lqf7HOMBkvYAAh/NFjKMErmmfH7Gp5x+tk1lnoeWRhdf3fgm5UsAWp49D?=
- =?us-ascii?Q?M/326BoVdbo0RqX2SFKO/GNs5N5kjZD1Y9+pGJYdprZkZ/ufAX6S2x0ZrXWw?=
- =?us-ascii?Q?CbLqHiKAlFefjEjKYqf1g0Uqo6UrYYSgUl4CygyAj7XKtxsk8qmk9TvDqWLq?=
- =?us-ascii?Q?dqjH90vdm7XSb7uG5wAUS2JBSdAXhvLJOCahnOb33U2lSr+RW4hA/fJFV766?=
- =?us-ascii?Q?g4KHGTLsAg0TwLkE6QHcKMC/r7F3NkH7JnyArpZoC0xA526MoChEXpwfJ1Uh?=
- =?us-ascii?Q?PP55IFthZSaRVCdqKxkeYeIGpLoYtbic/5YiXRaLLn/NTbMYcjO/8R72wPGW?=
- =?us-ascii?Q?Tz6UthEXh1h3S7XC/AxCKglkE24A0zPLLrTm6h/Gydr3x0BZuss8ftVkn6fh?=
- =?us-ascii?Q?Q2MmWecq88vDJo+v+K9MmaXuVHS3B8QLGKps0QtGkIs5FuAlgWpwEl1e+ArU?=
- =?us-ascii?Q?wXC1DCihwUStMh3mj5rQ6gD+QQyHrNA5uydfCe/BSvHCz173eKkONiedGEZ6?=
- =?us-ascii?Q?10TZBq9YSj48/NevBHn62HbrKyShXwAYQSNCxJyF7k+ayl0pv8HHUcyUcFr/?=
- =?us-ascii?Q?24/ov8cAcW7Tjrzi/YpZ5BDhP3cLn4V3I+I2lLNQ0u77lSDILjIcv4m9mQvD?=
- =?us-ascii?Q?fSdG9VK+c57PcTzlK6xMxDGaWMUuAZ9MJ2pkjzc7cMyBghsOtNQFbcD9IDf0?=
- =?us-ascii?Q?D9LBHQmNnwub/6PvfvIpjBGPzap7v/x6DJ3z8YQgKXFDAauF/lUYimmTz5oE?=
- =?us-ascii?Q?wJZi3LK7ZKWhjwvQNwStn/oQsx49uQv5j2911xMpENkdqcKyl1xOwZMWKWM0?=
- =?us-ascii?Q?Pdf7ryWf/UMFZVcKXJk0HJjhtF/laAnkAdtJzjmPxYh77KQ82etWJ4n7STdz?=
- =?us-ascii?Q?auHkgSeDF4R0lPuU59yjL02RFgQDq5eozYZ5f1XnJYoYLrX3Ob0xvtx6gw7D?=
- =?us-ascii?Q?xQwt5Ga7SO7dKGr9fAgkanQosFVJ8DlTsLjVDR04h64naOYIGDg8CoLjDZLG?=
- =?us-ascii?Q?vgCHjjlgAb1aR4phC2/AxAE5PXQGbctaDS7iktFm+swLFqtU+Z71fJK6aM/a?=
- =?us-ascii?Q?J9FmO8azM8ahokGVmhevTfXKAhc0ovs6iq1ls5VRCPpaN0NdK7Ei0fFkqXiX?=
- =?us-ascii?Q?oEgRF7OxjqIWBU0s1SHQNrphjVTF97rFE/TQ/oxgWr9SE33W2xfVP1abXCNs?=
- =?us-ascii?Q?rhiLAswlk7EMiNHxV/Cv5JX6RGtt5mSynvbCilZuRbEAdzmNbV3gJkqv93zr?=
- =?us-ascii?Q?lY3vAwzt25G6z1uSMsMDTCSK3n9ArU0VxbKFdD5m?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 43b1d229-96a1-49e6-4719-08de00f98da9
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5757.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Oct 2025 14:48:15.8838
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 9qxaEAmCkmIw0o+YBMsPysdiB1oagdh4JhXdbBEEkTHOn1D79faTw9Ic/egQQfbb
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5842
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 01, 2025 at 08:09:37AM +0000, Zhi Wang wrote:
-> >> But if the guest sees the passed-through VF as a PF, won't it try to
-> >> do things it is not supposed to do like loading the GSP firmware (which
-> >> is managed by the host)?
-> >
-> 
-> The guest driver will read PMC_BOOT_1 and check PMC_BOOT_1_VGPU_VF flag 
-> to tell if it is running on a VF or a PF.
+Now that RCU Tasks Trace has been re-implemented in terms of SRCU-fast,
+the ->trc_ipi_to_cpu, ->trc_blkd_cpu, ->trc_blkd_node, ->trc_holdout_list,
+and ->trc_reader_special task_struct fields are no longer used.
 
-Yes exactly, and then novacore should modify its behavior and operate
-the device in the different mode.
+In addition, the rcu_tasks_trace_qs(), rcu_tasks_trace_qs_blkd(),
+exit_tasks_rcu_finish_trace(), and rcu_spawn_tasks_trace_kthread(),
+show_rcu_tasks_trace_gp_kthread(), rcu_tasks_trace_get_gp_data(),
+rcu_tasks_trace_torture_stats_print(), and get_rcu_tasks_trace_gp_kthread()
+functions and all the other functions that they invoke are no longer used.
 
-It doesn't matter if a VM is involved or not, a VF driver running side
-by side wit the PF driver should still work.
+Also, the TRC_NEED_QS and TRC_NEED_QS_CHECKED CPP macros are no longer used.
+Neither are the rcu_tasks_trace_lazy_ms and rcu_task_ipi_delay rcupdate
+module parameters and the TASKS_TRACE_RCU_READ_MB Kconfig option.
 
-There are use cases where people do this, eg they can stick the VF
-into a linux container and use the SRIOV mechanism as a QOS control.
-'This container only gets 1/4 of a GPU'
+This commit therefore removes all of them.
 
-Jason
+[ paulmck: Apply Alexei Starovoitov feedback. ]
+
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+Cc: Andrii Nakryiko <andrii@kernel.org>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: <bpf@vger.kernel.org>
+---
+ .../admin-guide/kernel-parameters.txt         | 15 ----
+ include/linux/rcupdate.h                      | 31 +-------
+ include/linux/rcupdate_trace.h                |  2 -
+ include/linux/sched.h                         |  5 --
+ init/init_task.c                              |  3 -
+ kernel/fork.c                                 |  3 -
+ kernel/rcu/Kconfig                            | 18 -----
+ kernel/rcu/rcu.h                              |  9 ---
+ kernel/rcu/rcuscale.c                         |  7 --
+ kernel/rcu/rcutorture.c                       |  2 -
+ kernel/rcu/tasks.h                            | 79 +------------------
+ .../selftests/rcutorture/configs/rcu/TRACE01  |  1 -
+ .../selftests/rcutorture/configs/rcu/TRACE02  |  1 -
+ 13 files changed, 2 insertions(+), 174 deletions(-)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 747a55abf4946b..40fc198bed4db9 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -6078,13 +6078,6 @@
+ 			dynamically) adjusted.	This parameter is intended
+ 			for use in testing.
+ 
+-	rcupdate.rcu_task_ipi_delay= [KNL]
+-			Set time in jiffies during which RCU tasks will
+-			avoid sending IPIs, starting with the beginning
+-			of a given grace period.  Setting a large
+-			number avoids disturbing real-time workloads,
+-			but lengthens grace periods.
+-
+ 	rcupdate.rcu_task_lazy_lim= [KNL]
+ 			Number of callbacks on a given CPU that will
+ 			cancel laziness on that CPU.  Use -1 to disable
+@@ -6128,14 +6121,6 @@
+ 			of zero will disable batching.	Batching is
+ 			always disabled for synchronize_rcu_tasks().
+ 
+-	rcupdate.rcu_tasks_trace_lazy_ms= [KNL]
+-			Set timeout in milliseconds RCU Tasks
+-			Trace asynchronous callback batching for
+-			call_rcu_tasks_trace().  A negative value
+-			will take the default.	A value of zero will
+-			disable batching.  Batching is always disabled
+-			for synchronize_rcu_tasks_trace().
+-
+ 	rcupdate.rcu_self_test= [KNL]
+ 			Run the RCU early boot self tests
+ 
+diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
+index 120536f4c6eb1d..2237c56d32417b 100644
+--- a/include/linux/rcupdate.h
++++ b/include/linux/rcupdate.h
+@@ -175,36 +175,7 @@ void rcu_tasks_torture_stats_print(char *tt, char *tf);
+ # define synchronize_rcu_tasks synchronize_rcu
+ # endif
+ 
+-# ifdef CONFIG_TASKS_TRACE_RCU
+-// Bits for ->trc_reader_special.b.need_qs field.
+-#define TRC_NEED_QS		0x1  // Task needs a quiescent state.
+-#define TRC_NEED_QS_CHECKED	0x2  // Task has been checked for needing quiescent state.
+-
+-u8 rcu_trc_cmpxchg_need_qs(struct task_struct *t, u8 old, u8 new);
+-void rcu_tasks_trace_qs_blkd(struct task_struct *t);
+-
+-# define rcu_tasks_trace_qs(t)							\
+-	do {									\
+-		int ___rttq_nesting = READ_ONCE((t)->trc_reader_nesting);	\
+-										\
+-		if (unlikely(READ_ONCE((t)->trc_reader_special.b.need_qs) == TRC_NEED_QS) &&	\
+-		    likely(!___rttq_nesting)) {					\
+-			rcu_trc_cmpxchg_need_qs((t), TRC_NEED_QS, TRC_NEED_QS_CHECKED);	\
+-		} else if (___rttq_nesting && ___rttq_nesting != INT_MIN &&	\
+-			   !READ_ONCE((t)->trc_reader_special.b.blocked)) {	\
+-			rcu_tasks_trace_qs_blkd(t);				\
+-		}								\
+-	} while (0)
+-void rcu_tasks_trace_torture_stats_print(char *tt, char *tf);
+-# else
+-# define rcu_tasks_trace_qs(t) do { } while (0)
+-# endif
+-
+-#define rcu_tasks_qs(t, preempt)					\
+-do {									\
+-	rcu_tasks_classic_qs((t), (preempt));				\
+-	rcu_tasks_trace_qs(t);						\
+-} while (0)
++#define rcu_tasks_qs(t, preempt) rcu_tasks_classic_qs((t), (preempt))
+ 
+ # ifdef CONFIG_TASKS_RUDE_RCU
+ void synchronize_rcu_tasks_rude(void);
+diff --git a/include/linux/rcupdate_trace.h b/include/linux/rcupdate_trace.h
+index 3f46cbe6700038..0bd47f12ecd17b 100644
+--- a/include/linux/rcupdate_trace.h
++++ b/include/linux/rcupdate_trace.h
+@@ -136,9 +136,7 @@ static inline void rcu_barrier_tasks_trace(void)
+ }
+ 
+ // Placeholders to enable stepwise transition.
+-void rcu_tasks_trace_get_gp_data(int *flags, unsigned long *gp_seq);
+ void __init rcu_tasks_trace_suppress_unused(void);
+-struct task_struct *get_rcu_tasks_trace_gp_kthread(void);
+ 
+ #else
+ /*
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 89d3646155525f..577fafd22a0e6f 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -940,11 +940,6 @@ struct task_struct {
+ #ifdef CONFIG_TASKS_TRACE_RCU
+ 	int				trc_reader_nesting;
+ 	struct srcu_ctr __percpu	*trc_reader_scp;
+-	int				trc_ipi_to_cpu;
+-	union rcu_special		trc_reader_special;
+-	struct list_head		trc_holdout_list;
+-	struct list_head		trc_blkd_node;
+-	int				trc_blkd_cpu;
+ #endif /* #ifdef CONFIG_TASKS_TRACE_RCU */
+ 
+ 	struct sched_info		sched_info;
+diff --git a/init/init_task.c b/init/init_task.c
+index e557f622bd9061..0c075f3cc8fc5a 100644
+--- a/init/init_task.c
++++ b/init/init_task.c
+@@ -165,9 +165,6 @@ struct task_struct init_task __aligned(L1_CACHE_BYTES) = {
+ #endif
+ #ifdef CONFIG_TASKS_TRACE_RCU
+ 	.trc_reader_nesting = 0,
+-	.trc_reader_special.s = 0,
+-	.trc_holdout_list = LIST_HEAD_INIT(init_task.trc_holdout_list),
+-	.trc_blkd_node = LIST_HEAD_INIT(init_task.trc_blkd_node),
+ #endif
+ #ifdef CONFIG_CPUSETS
+ 	.mems_allowed_seq = SEQCNT_SPINLOCK_ZERO(init_task.mems_allowed_seq,
+diff --git a/kernel/fork.c b/kernel/fork.c
+index af673856499dca..5686d50b62cfaf 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -1780,9 +1780,6 @@ static inline void rcu_copy_process(struct task_struct *p)
+ #endif /* #ifdef CONFIG_TASKS_RCU */
+ #ifdef CONFIG_TASKS_TRACE_RCU
+ 	p->trc_reader_nesting = 0;
+-	p->trc_reader_special.s = 0;
+-	INIT_LIST_HEAD(&p->trc_holdout_list);
+-	INIT_LIST_HEAD(&p->trc_blkd_node);
+ #endif /* #ifdef CONFIG_TASKS_TRACE_RCU */
+ }
+ 
+diff --git a/kernel/rcu/Kconfig b/kernel/rcu/Kconfig
+index ceaf6594f634cd..54b4c4aa553a4a 100644
+--- a/kernel/rcu/Kconfig
++++ b/kernel/rcu/Kconfig
+@@ -313,24 +313,6 @@ config RCU_NOCB_CPU_CB_BOOST
+ 	  Say Y here if you want to set RT priority for offloading kthreads.
+ 	  Say N here if you are building a !PREEMPT_RT kernel and are unsure.
+ 
+-config TASKS_TRACE_RCU_READ_MB
+-	bool "Tasks Trace RCU readers use memory barriers in user and idle"
+-	depends on RCU_EXPERT && TASKS_TRACE_RCU
+-	default PREEMPT_RT || NR_CPUS < 8
+-	help
+-	  Use this option to further reduce the number of IPIs sent
+-	  to CPUs executing in userspace or idle during tasks trace
+-	  RCU grace periods.  Given that a reasonable setting of
+-	  the rcupdate.rcu_task_ipi_delay kernel boot parameter
+-	  eliminates such IPIs for many workloads, proper setting
+-	  of this Kconfig option is important mostly for aggressive
+-	  real-time installations and for battery-powered devices,
+-	  hence the default chosen above.
+-
+-	  Say Y here if you hate IPIs.
+-	  Say N here if you hate read-side memory barriers.
+-	  Take the default if you are unsure.
+-
+ config RCU_LAZY
+ 	bool "RCU callback lazy invocation functionality"
+ 	depends on RCU_NOCB_CPU
+diff --git a/kernel/rcu/rcu.h b/kernel/rcu/rcu.h
+index 9cf01832a6c3d1..dc5d614b372c1e 100644
+--- a/kernel/rcu/rcu.h
++++ b/kernel/rcu/rcu.h
+@@ -544,10 +544,6 @@ struct task_struct *get_rcu_tasks_rude_gp_kthread(void);
+ void rcu_tasks_rude_get_gp_data(int *flags, unsigned long *gp_seq);
+ #endif // # ifdef CONFIG_TASKS_RUDE_RCU
+ 
+-#ifdef CONFIG_TASKS_TRACE_RCU
+-void rcu_tasks_trace_get_gp_data(int *flags, unsigned long *gp_seq);
+-#endif
+-
+ #ifdef CONFIG_TASKS_RCU_GENERIC
+ void tasks_cblist_init_generic(void);
+ #else /* #ifdef CONFIG_TASKS_RCU_GENERIC */
+@@ -673,11 +669,6 @@ void show_rcu_tasks_rude_gp_kthread(void);
+ #else
+ static inline void show_rcu_tasks_rude_gp_kthread(void) {}
+ #endif
+-#if !defined(CONFIG_TINY_RCU) && defined(CONFIG_TASKS_TRACE_RCU)
+-void show_rcu_tasks_trace_gp_kthread(void);
+-#else
+-static inline void show_rcu_tasks_trace_gp_kthread(void) {}
+-#endif
+ 
+ #ifdef CONFIG_TINY_RCU
+ static inline bool rcu_cpu_beenfullyonline(int cpu) { return true; }
+diff --git a/kernel/rcu/rcuscale.c b/kernel/rcu/rcuscale.c
+index b521d04559927a..17d038e26b65de 100644
+--- a/kernel/rcu/rcuscale.c
++++ b/kernel/rcu/rcuscale.c
+@@ -400,11 +400,6 @@ static void tasks_trace_scale_read_unlock(int idx)
+ 	rcu_read_unlock_trace();
+ }
+ 
+-static void rcu_tasks_trace_scale_stats(void)
+-{
+-	rcu_tasks_trace_torture_stats_print(scale_type, SCALE_FLAG);
+-}
+-
+ static struct rcu_scale_ops tasks_tracing_ops = {
+ 	.ptype		= RCU_TASKS_FLAVOR,
+ 	.init		= rcu_sync_scale_init,
+@@ -416,8 +411,6 @@ static struct rcu_scale_ops tasks_tracing_ops = {
+ 	.gp_barrier	= rcu_barrier_tasks_trace,
+ 	.sync		= synchronize_rcu_tasks_trace,
+ 	.exp_sync	= synchronize_rcu_tasks_trace,
+-	.rso_gp_kthread	= get_rcu_tasks_trace_gp_kthread,
+-	.stats		= IS_ENABLED(CONFIG_TINY_RCU) ? NULL : rcu_tasks_trace_scale_stats,
+ 	.name		= "tasks-tracing"
+ };
+ 
+diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
+index 72619e5e8549dc..485fa822b6a753 100644
+--- a/kernel/rcu/rcutorture.c
++++ b/kernel/rcu/rcutorture.c
+@@ -1130,8 +1130,6 @@ static struct rcu_torture_ops tasks_tracing_ops = {
+ 	.exp_sync	= synchronize_rcu_tasks_trace,
+ 	.call		= call_rcu_tasks_trace,
+ 	.cb_barrier	= rcu_barrier_tasks_trace,
+-	.gp_kthread_dbg	= show_rcu_tasks_trace_gp_kthread,
+-	.get_gp_data    = rcu_tasks_trace_get_gp_data,
+ 	.cbflood_max	= 50000,
+ 	.irq_capable	= 1,
+ 	.slow_gps	= 1,
+diff --git a/kernel/rcu/tasks.h b/kernel/rcu/tasks.h
+index 418fa242cf0288..fd1fe80ddde484 100644
+--- a/kernel/rcu/tasks.h
++++ b/kernel/rcu/tasks.h
+@@ -161,11 +161,6 @@ static void tasks_rcu_exit_srcu_stall(struct timer_list *unused);
+ static DEFINE_TIMER(tasks_rcu_exit_srcu_stall_timer, tasks_rcu_exit_srcu_stall);
+ #endif
+ 
+-/* Avoid IPIing CPUs early in the grace period. */
+-#define RCU_TASK_IPI_DELAY (IS_ENABLED(CONFIG_TASKS_TRACE_RCU_READ_MB) ? HZ / 2 : 0)
+-static int rcu_task_ipi_delay __read_mostly = RCU_TASK_IPI_DELAY;
+-module_param(rcu_task_ipi_delay, int, 0644);
+-
+ /* Control stall timeouts.  Disable with <= 0, otherwise jiffies till stall. */
+ #define RCU_TASK_BOOT_STALL_TIMEOUT (HZ * 30)
+ #define RCU_TASK_STALL_TIMEOUT (HZ * 60 * 10)
+@@ -800,8 +795,6 @@ static void rcu_tasks_torture_stats_print_generic(struct rcu_tasks *rtp, char *t
+ 
+ #endif // #ifndef CONFIG_TINY_RCU
+ 
+-static void exit_tasks_rcu_finish_trace(struct task_struct *t);
+-
+ #if defined(CONFIG_TASKS_RCU)
+ 
+ ////////////////////////////////////////////////////////////////////////
+@@ -1321,13 +1314,11 @@ void exit_tasks_rcu_finish(void)
+ 	raw_spin_lock_irqsave_rcu_node(rtpcp, flags);
+ 	list_del_init(&t->rcu_tasks_exit_list);
+ 	raw_spin_unlock_irqrestore_rcu_node(rtpcp, flags);
+-
+-	exit_tasks_rcu_finish_trace(t);
+ }
+ 
+ #else /* #ifdef CONFIG_TASKS_RCU */
+ void exit_tasks_rcu_start(void) { }
+-void exit_tasks_rcu_finish(void) { exit_tasks_rcu_finish_trace(current); }
++void exit_tasks_rcu_finish(void) { }
+ #endif /* #else #ifdef CONFIG_TASKS_RCU */
+ 
+ #ifdef CONFIG_TASKS_RUDE_RCU
+@@ -1471,69 +1462,6 @@ void __init rcu_tasks_trace_suppress_unused(void)
+ 	rcu_tasks_torture_stats_print_generic(NULL, NULL, NULL, NULL);
+ }
+ 
+-/*
+- * Do a cmpxchg() on ->trc_reader_special.b.need_qs, allowing for
+- * the four-byte operand-size restriction of some platforms.
+- *
+- * Returns the old value, which is often ignored.
+- */
+-u8 rcu_trc_cmpxchg_need_qs(struct task_struct *t, u8 old, u8 new)
+-{
+-	return cmpxchg(&t->trc_reader_special.b.need_qs, old, new);
+-}
+-EXPORT_SYMBOL_GPL(rcu_trc_cmpxchg_need_qs);
+-
+-/* Add a newly blocked reader task to its CPU's list. */
+-void rcu_tasks_trace_qs_blkd(struct task_struct *t)
+-{
+-}
+-EXPORT_SYMBOL_GPL(rcu_tasks_trace_qs_blkd);
+-
+-/* Communicate task state back to the RCU tasks trace stall warning request. */
+-struct trc_stall_chk_rdr {
+-	int nesting;
+-	int ipi_to_cpu;
+-	u8 needqs;
+-};
+-
+-/* Report any needed quiescent state for this exiting task. */
+-static void exit_tasks_rcu_finish_trace(struct task_struct *t)
+-{
+-}
+-
+-int rcu_tasks_trace_lazy_ms = -1;
+-module_param(rcu_tasks_trace_lazy_ms, int, 0444);
+-
+-static int __init rcu_spawn_tasks_trace_kthread(void)
+-{
+-	return 0;
+-}
+-
+-#if !defined(CONFIG_TINY_RCU)
+-void show_rcu_tasks_trace_gp_kthread(void)
+-{
+-}
+-EXPORT_SYMBOL_GPL(show_rcu_tasks_trace_gp_kthread);
+-
+-void rcu_tasks_trace_torture_stats_print(char *tt, char *tf)
+-{
+-}
+-EXPORT_SYMBOL_GPL(rcu_tasks_trace_torture_stats_print);
+-#endif // !defined(CONFIG_TINY_RCU)
+-
+-struct task_struct *get_rcu_tasks_trace_gp_kthread(void)
+-{
+-	return NULL;
+-}
+-EXPORT_SYMBOL_GPL(get_rcu_tasks_trace_gp_kthread);
+-
+-void rcu_tasks_trace_get_gp_data(int *flags, unsigned long *gp_seq)
+-{
+-}
+-EXPORT_SYMBOL_GPL(rcu_tasks_trace_get_gp_data);
+-
+-#else /* #ifdef CONFIG_TASKS_TRACE_RCU */
+-static void exit_tasks_rcu_finish_trace(struct task_struct *t) { }
+ #endif /* #else #ifdef CONFIG_TASKS_TRACE_RCU */
+ 
+ #ifndef CONFIG_TINY_RCU
+@@ -1541,7 +1469,6 @@ void show_rcu_tasks_gp_kthreads(void)
+ {
+ 	show_rcu_tasks_classic_gp_kthread();
+ 	show_rcu_tasks_rude_gp_kthread();
+-	show_rcu_tasks_trace_gp_kthread();
+ }
+ #endif /* #ifndef CONFIG_TINY_RCU */
+ 
+@@ -1680,10 +1607,6 @@ static int __init rcu_init_tasks_generic(void)
+ 	rcu_spawn_tasks_rude_kthread();
+ #endif
+ 
+-#ifdef CONFIG_TASKS_TRACE_RCU
+-	rcu_spawn_tasks_trace_kthread();
+-#endif
+-
+ 	// Run the self-tests.
+ 	rcu_tasks_initiate_self_tests();
+ 
+diff --git a/tools/testing/selftests/rcutorture/configs/rcu/TRACE01 b/tools/testing/selftests/rcutorture/configs/rcu/TRACE01
+index 85b407467454a2..18efab346381a4 100644
+--- a/tools/testing/selftests/rcutorture/configs/rcu/TRACE01
++++ b/tools/testing/selftests/rcutorture/configs/rcu/TRACE01
+@@ -10,5 +10,4 @@ CONFIG_PROVE_LOCKING=n
+ #CHECK#CONFIG_PROVE_RCU=n
+ CONFIG_FORCE_TASKS_TRACE_RCU=y
+ #CHECK#CONFIG_TASKS_TRACE_RCU=y
+-CONFIG_TASKS_TRACE_RCU_READ_MB=y
+ CONFIG_RCU_EXPERT=y
+diff --git a/tools/testing/selftests/rcutorture/configs/rcu/TRACE02 b/tools/testing/selftests/rcutorture/configs/rcu/TRACE02
+index 9003c56cd76484..8da390e8282977 100644
+--- a/tools/testing/selftests/rcutorture/configs/rcu/TRACE02
++++ b/tools/testing/selftests/rcutorture/configs/rcu/TRACE02
+@@ -9,6 +9,5 @@ CONFIG_PROVE_LOCKING=y
+ #CHECK#CONFIG_PROVE_RCU=y
+ CONFIG_FORCE_TASKS_TRACE_RCU=y
+ #CHECK#CONFIG_TASKS_TRACE_RCU=y
+-CONFIG_TASKS_TRACE_RCU_READ_MB=n
+ CONFIG_RCU_EXPERT=y
+ CONFIG_DEBUG_OBJECTS=y
+-- 
+2.40.1
+
 
