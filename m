@@ -1,311 +1,174 @@
-Return-Path: <linux-kernel+bounces-838630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ADB4BAFC82
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 11:06:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F661BAFC70
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 11:06:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B26731880289
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 09:06:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20A04172A25
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 09:06:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 528B82DF12F;
-	Wed,  1 Oct 2025 09:04:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B5362DE715;
+	Wed,  1 Oct 2025 09:04:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b="rKJ0zo80"
-Received: from mail-24418.protonmail.ch (mail-24418.protonmail.ch [109.224.244.18])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="fsGcKY/n"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C90E2D8788
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 09:04:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCE112D949E
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 09:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759309482; cv=none; b=sF/SBLM0F7Pw2efgmvb79mrYee11vnTP0iYaKYxZioxTIQS05NOYQGyk0nmK61cCxGxWOvjCLGElJpyMEI+kbwbWp2tCcPhhfWq9/2dCJw+qHi2YQmEluwP/MJvFsvy14b+KEdZ5rlK2GMYy4fKuAwug1R0KrzsFPzgdoD4ocdY=
+	t=1759309481; cv=none; b=V21hTV0gpJJC9N19hKlkkGVMvo99nY1aKCiAT/UEXjXOa5xn8wSoAwVwRDVy/5vK9ZCgA+V4YBiukhIm5AChcjrnZZ0D6PIysv+bdjFTKUSxl0anO4yep++K02Fn14oO1rfuI2JfpeXF+4fXvHsVQnHnP2bDoNoO69AadrMXeDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759309482; c=relaxed/simple;
-	bh=wGzu/YJLmjjXeXLIWypdaKjxbslobXvvvheND7JZWhY=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bQH/xCbnsBNDbYU8iuD44L8tZkuYWQv1C4JJqpijUxgpftCYtiw5uvDqsEUn/v3gvfCYw6fW7qIS9iE1uJpilSSZNpcnmJ8WBLxnIEoKYJ0zVjTIeu2UoDrPDbIiwE548s5lj1NetMsYWQkSGV7rvsYIUzgpSv3g9bl9jAMP8DQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=rKJ0zo80; arc=none smtp.client-ip=109.224.244.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
-	s=protonmail3; t=1759309474; x=1759568674;
-	bh=yp/Ky9qZB+Lu2rfaJfq2n9npeG17/rIKND2/1FJbPUU=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=rKJ0zo808K9+5xv+W+fbxwG7qVsIwuWt2mbyuJGFLiXXCoVZoeZVu3SLq6+wnhkS6
-	 9zijPkbcHDElLMm9/Bee795eT9ukcv732jQW0DzyAcKr2VRZ1+2dtJnGpOLuFZrPqN
-	 aPNucRfz0HQpb322WmUDY63i/Vgx6HMh7ngXDaU0QPiQuiwBDxzSCL6yPIZAFw1GeA
-	 nDhkHM9HYJpYUij3nie0NTuQ1iweAHh3D6/dswrnS/XIriKSAwKVWOynLjJPuGuqOd
-	 x3yAkCadMoBGsr2QK3jsBXIvGOJqiwutO+rPE/LLNa83zA4uTWVa6Oy2Ri/h1QqHs3
-	 QzBkgjOw5SMzw==
-Date: Wed, 01 Oct 2025 09:04:27 +0000
-To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Benno Lossin <lossin@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, Leon Romanovsky <leon@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, Viresh Kumar
-	<vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, =?utf-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Asahi Lina <lina+kernel@asahilina.net>
-From: Oliver Mangold <oliver.mangold@pm.me>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-pm@vger.kernel.org, linux-pci@vger.kernel.org, Oliver Mangold <oliver.mangold@pm.me>
-Subject: [PATCH v12 4/4] rust: Add `OwnableRefCounted`
-Message-ID: <20251001-unique-ref-v12-4-fa5c31f0c0c4@pm.me>
-In-Reply-To: <20251001-unique-ref-v12-0-fa5c31f0c0c4@pm.me>
-References: <20251001-unique-ref-v12-0-fa5c31f0c0c4@pm.me>
-Feedback-ID: 31808448:user:proton
-X-Pm-Message-ID: 273bbd2e0c664caf1e93c782e9d3dde288208540
+	s=arc-20240116; t=1759309481; c=relaxed/simple;
+	bh=4S0VnWznaWtdgnfy+s9AoFLLT+aZCxWxxJMZ5f4FHhA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XRE7rYqvQllQQlj4ykBxYUMRy9E9RDrWk1wdFc/G3+PuAaLubFRk8Yl6xtsFqj9eyBeHwck0nCUYGmJBHEFOa45YkILopQt5xSxJlqxlp6uy7MIqg4wJvgokkBO7g1Qjyc5T5ViwFpapu5LZ2z/UCLCbqKrFa9r80e1kZXEV+sU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fsGcKY/n; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5918Wj4G009452
+	for <linux-kernel@vger.kernel.org>; Wed, 1 Oct 2025 09:04:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	CfNVsHbqOEK6Djc44jlTWFITLsi2qwa8KQYpesfCqo4=; b=fsGcKY/n9ChfDxYE
+	sW1NGuwvVgOdEZFxAmIuOIZKXUTjsG3Z2u7lQ/U1fPiotbaUtfEtJl9UmvDCWW+A
+	tIk2pcXpnZSgjNTvZP6xl2ozx0H97IVeOug6GXxQCppNhK/StYAxLAj+hQpgiMy+
+	44dnQ9koBf+QL4xHVJGKLEadmqQlg8PsZwH6LiUPEjk+nrrze/lusU5rKh98dB+E
+	YYD6deXp6JNygXQiucgUfNL2Om9gvADO+yr1P9lV0O10GFz/JDKFJLxKm5XHQDwJ
+	0GDxhf+0i9k4MJUWgQCI+xIhuqxdcGIdyCPRawXtMrx04pVUOfrJRWiFyCSMCR4D
+	BMY9xg==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e977urr2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 09:04:39 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-85bb4e88394so4179785a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 02:04:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759309478; x=1759914278;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CfNVsHbqOEK6Djc44jlTWFITLsi2qwa8KQYpesfCqo4=;
+        b=aTRtkWKtRT8c/h7qQEbEMZU2okKrLvCHgERCdxZPQkoYp/abAq9FuPCQeXXcNn3I18
+         at5jaBX9biNmuk2Z462wLbzXvjyKUUmSLgccBYv/KBHq2vyEIDZYChfJpcH+VsiZrzFU
+         O9Zdx8nyDlhusKk6TxHRZQlD3Jx5I3zOhrB6fKgiYaLk8lgpg5XeAX5LvJoYp4VGcyQS
+         IGkJHMvsT9VDRmGyxk8YQwcFIUW15WwCjuxPTQJF7fRVT48OdBi4yjvR4/ltHnIcGNQx
+         asv/aMSf1/vXNYKLveIET264SnmIh+dz+1kSYt7ll3QaInQ3uNczO59QDoEHT+/k35LI
+         8YlA==
+X-Forwarded-Encrypted: i=1; AJvYcCXa6bm8qPtOQ7gtGdVgZw/2qw/hlfVz1Zl/+7j7NlZAtGppDg7tdnN0mVO2sLEODFL7rS5Qlwx7jQF9g3g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTeEwjhfn7W7+XIdxtiz0I2+ELlqQSZ/WAM+WzhpDkCUxWafQ7
+	TU5eA02AD9Po+991Fw5S+ywn1Vw9LHX9k6e6hq841OtpS86Qib56ZNOpQNxbMTAoJ/V/3EqnjJx
+	nD5AWXULEKg+MDkNHOAW7elR6Khe/W1okAeUL7bOkcFHbH0wg7NEWU5tdokc9QVk3+0g=
+X-Gm-Gg: ASbGncsM6DAPelB9EQvbN0Oh+97WPRdezaSxpoVQV+oA/88gyCcVWpNE+uQ/HO2601g
+	xJ0MxCYG8R5/x92dl9dh1V5jfBaVFQQBe9k8MKFMiMeQODdRLUS8mJmvkyJXTocjbe8LQNSmNsL
+	P4riBXRIvYRh8xbPjAbRKXQAV1vzbCqHCeFX2HoyLrzUH5mq3Atym/kjN6RZxSqM+3h54W/Ar6C
+	BDMK2JkalCubBRnTB3vc0Z/lq6g+3Ja6UsWgovbHNWSiaMEjg2oWMOSNt20hbHh52EG9dwjgpkj
+	vrud7Acqym9QvXaekRG2jS03eryBvdHJnsSOghuHKXqcol2/l6ro1aOS4hzWwz6tMeUmtxxRIKQ
+	xdTZl7yAU7Afdg6bwXhp59aPYh+E=
+X-Received: by 2002:a05:620a:1a9e:b0:864:1d18:499b with SMTP id af79cd13be357-8737116c812mr242353485a.5.1759309477683;
+        Wed, 01 Oct 2025 02:04:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGvUheZabbjOtgcpxEsJAvrgUPd6M+/fvvGGBhC3LzERbkqgTcCF2xkTYlVk3r+qDVu6l8ZEw==
+X-Received: by 2002:a05:620a:1a9e:b0:864:1d18:499b with SMTP id af79cd13be357-8737116c812mr242350785a.5.1759309477158;
+        Wed, 01 Oct 2025 02:04:37 -0700 (PDT)
+Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b3dc2cf61dbsm666298366b.29.2025.10.01.02.04.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 01 Oct 2025 02:04:36 -0700 (PDT)
+Message-ID: <42463474-7fba-4df3-9dbb-24140581690f@oss.qualcomm.com>
+Date: Wed, 1 Oct 2025 11:04:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 09/11] arm64: dts: qcom: sdm845-lg-common: Add camera
+ flash
+To: Paul Sajna <sajattack@postmarketos.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, David Heidelberg <david@ixit.cz>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org,
+        Amir Dahan <system64fumo@protonmail.com>,
+        Christopher Brown <crispybrown@gmail.com>
+References: <20250928-judyln-dts-v3-0-b14cf9e9a928@postmarketos.org>
+ <20250928-judyln-dts-v3-9-b14cf9e9a928@postmarketos.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250928-judyln-dts-v3-9-b14cf9e9a928@postmarketos.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: 0j09sJS22vChgd0dNtoXE-mAzUXOgz2n
+X-Proofpoint-ORIG-GUID: 0j09sJS22vChgd0dNtoXE-mAzUXOgz2n
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDA0MyBTYWx0ZWRfX98xemJUfg6l1
+ EerlFq/GdWmwc49a0oBHyoW0fBrZZcll/d8mCE9fUwvTUeBIQqy2j6QS79X4tKYxgKWKw+YzB6I
+ KzXYja/5U0LOtz0fHrzONCP27h9NITbZZ7MIQygHsvsyyvGM+mfaG+f8PCUKVqNfL5uxmj96bAn
+ bqINGXfQWaLtkDqqlJXQMrtP+rPKwkt4H6Achget8bGPTpzlixZzE85rZ8ZS95Q42quLQV3pFYU
+ wrlTQ5+KQY8DYspArYmv6uFWzygg+wdnAn0IHUjgLhHstdxnfLAUkzpv2KJKGS1jF4lqRLbYklG
+ ZlOxr7dqocEm6Z624YpSJKYApdm9BGGFahOyk/KErxPtL9DeejwysZ6t3978lQSE9iVhfD36Ia4
+ kXPLJLuhhZGxhaEdtDv1/q8ulAWvAQ==
+X-Authority-Analysis: v=2.4 cv=Sf36t/Ru c=1 sm=1 tr=0 ts=68dceea7 cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=Gbw9aFdXAAAA:8 a=INp5xvtxXxILuIktMPQA:9
+ a=QEXdDO2ut3YA:10 a=PEH46H7Ffwr30OY-TuGO:22 a=9vIz8raoGPyDa4jBFAYH:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-01_02,2025-09-29_04,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 bulkscore=0 suspectscore=0 adultscore=0 spamscore=0
+ priorityscore=1501 malwarescore=0 lowpriorityscore=0 phishscore=0
+ impostorscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2509150000
+ definitions=main-2509270043
 
-Types implementing one of these traits can safely convert between an
-`ARef<T>` and an `Owned<T>`.
+On 9/29/25 7:05 AM, Paul Sajna wrote:
+> So it can be used as a flashlight
+> 
+> Signed-off-by: Paul Sajna <sajattack@postmarketos.org>
+> ---
+>  arch/arm64/boot/dts/qcom/sdm845-lg-common.dtsi | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sdm845-lg-common.dtsi b/arch/arm64/boot/dts/qcom/sdm845-lg-common.dtsi
+> index a8c8706f2057d36d5ef4130f11d9ad417f93d575..f309e6ebc075a691c7a522238b4a93ba9e63f3c0 100644
+> --- a/arch/arm64/boot/dts/qcom/sdm845-lg-common.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sdm845-lg-common.dtsi
+> @@ -509,6 +509,19 @@ &pm8998_resin {
+>  	status = "okay";
+>  };
+>  
+> +&pmi8998_flash {
+> +	status = "okay";
+> +
+> +	led-0 {
+> +		function = LED_FUNCTION_FLASH;
+> +		color = <LED_COLOR_ID_WHITE>;
+> +		led-sources = <1>;
+> +		led-max-microamp = <850000>;
+> +		flash-max-microamp = <850000>;
 
-This is useful for types which generally are accessed through an `ARef`
-but have methods which can only safely be called when the reference is
-unique, like e.g. `block::mq::Request::end_ok()`.
+Allowing the same current for flash (brief on/off for night photos)
+and LED (flashlight which you normally toggle through quick settings)
+sounds no less than suspicious
 
-Signed-off-by: Oliver Mangold <oliver.mangold@pm.me>
-Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
----
- rust/kernel/owned.rs     | 125 +++++++++++++++++++++++++++++++++++++++++++=
-+++-
- rust/kernel/sync/aref.rs |  11 ++++-
- rust/kernel/types.rs     |   2 +-
- 3 files changed, 135 insertions(+), 3 deletions(-)
+Konrad
 
-diff --git a/rust/kernel/owned.rs b/rust/kernel/owned.rs
-index 466b7ecda6d9f4f54852ca0b59b36ac882ab3f47..ad38a4d378fa8fcf934f1c41cd9=
-02d79a2c8baa5 100644
---- a/rust/kernel/owned.rs
-+++ b/rust/kernel/owned.rs
-@@ -3,6 +3,7 @@
- //! Unique reference types for objects with custom destructors. They shoul=
-d be used for C-allocated
- //! objects which by API-contract are owned by Rust, but need to be freed =
-through the C API.
-=20
-+use crate::sync::aref::{ARef, RefCounted};
- use core::{
-     marker::PhantomData,
-     mem::ManuallyDrop,
-@@ -19,7 +20,8 @@
- ///
- /// Note: The underlying object is not required to provide internal refere=
-nce counting, because it
- /// represents a unique, owned reference. If reference counting (on the Ru=
-st side) is required,
--/// [`RefCounted`](crate::types::RefCounted) should be implemented.
-+/// [`RefCounted`] should be implemented. [`OwnableRefCounted`] should be =
-implemented if conversion
-+/// between unique and shared (reference counted) ownership is needed.
- ///
- /// # Safety
- ///
-@@ -193,3 +195,124 @@ fn drop(&mut self) {
-         unsafe { T::release(self.ptr) };
-     }
- }
-+
-+/// A trait for objects that can be wrapped in either one of the reference=
- types [`Owned`] and
-+/// [`ARef`].
-+///
-+/// # Examples
-+///
-+/// A minimal example implementation of [`OwnableRefCounted`], [`Ownable`]=
- and its usage with
-+/// [`ARef`] and [`Owned`] looks like this:
-+///
-+/// ```
-+/// # #![expect(clippy::disallowed_names)]
-+/// use core::cell::Cell;
-+/// use core::ptr::NonNull;
-+/// use kernel::alloc::{flags, kbox::KBox, AllocError};
-+/// use kernel::sync::aref::{ARef, RefCounted};
-+/// use kernel::types::{Owned, Ownable, OwnableRefCounted};
-+///
-+/// // Example internally refcounted struct.
-+/// //
-+/// // # Invariants
-+/// //
-+/// // - `refcount` is always non-zero for a valid object.
-+/// // - `refcount` is >1 if there are more then 1 Rust references to it.
-+/// //
-+/// struct Foo {
-+///     refcount: Cell<usize>,
-+/// }
-+///
-+/// impl Foo {
-+///     fn new() -> Result<Owned<Self>, AllocError> {
-+///         // We are just using a `KBox` here to handle the actual alloca=
-tion, as our `Foo` is
-+///         // not actually a C-allocated object.
-+///         let result =3D KBox::new(
-+///             Foo {
-+///                 refcount: Cell::new(1),
-+///             },
-+///             flags::GFP_KERNEL,
-+///         )?;
-+///         let result =3D NonNull::new(KBox::into_raw(result))
-+///             .expect("Raw pointer to newly allocation KBox is null, thi=
-s should never happen.");
-+///         // SAFETY: We just allocated the `Self`, thus it is valid and =
-there cannot be any other
-+///         // Rust references. Calling `into_raw()` makes us responsible =
-for ownership and
-+///         // we won't use the raw pointer anymore, thus we can transfer =
-ownership to the `Owned`.
-+///         Ok(unsafe { Owned::from_raw(result) })
-+///     }
-+/// }
-+///
-+/// // SAFETY: We increment and decrement each time the respective functio=
-n is called and only free
-+/// // the `Foo` when the refcount reaches zero.
-+/// unsafe impl RefCounted for Foo {
-+///     fn inc_ref(&self) {
-+///         self.refcount.replace(self.refcount.get() + 1);
-+///     }
-+///
-+///     unsafe fn dec_ref(this: NonNull<Self>) {
-+///         // SAFETY: By requirement on calling this function, the refcou=
-nt is non-zero,
-+///         // implying the underlying object is valid.
-+///         let refcount =3D unsafe { &this.as_ref().refcount };
-+///         let new_refcount =3D refcount.get() - 1;
-+///         if new_refcount =3D=3D 0 {
-+///             // The `Foo` will be dropped when `KBox` goes out of scope=
-.
-+///             // SAFETY: The [`KBox<Foo>`] is still alive as the old ref=
-count is 1. We can pass
-+///             // ownership to the [`KBox`] as by requirement on calling =
-this function,
-+///             // the `Self` will no longer be used by the caller.
-+///             unsafe { KBox::from_raw(this.as_ptr()) };
-+///         } else {
-+///             refcount.replace(new_refcount);
-+///         }
-+///     }
-+/// }
-+///
-+/// impl OwnableRefCounted for Foo {
-+///     fn try_from_shared(this: ARef<Self>) -> Result<Owned<Self>, ARef<S=
-elf>> {
-+///         if this.refcount.get() =3D=3D 1 {
-+///             // SAFETY: The `Foo` is still alive and has no other Rust =
-references as the refcount
-+///             // is 1.
-+///             Ok(unsafe { Owned::from_raw(ARef::into_raw(this)) })
-+///         } else {
-+///             Err(this)
-+///         }
-+///     }
-+/// }
-+///
-+/// // SAFETY: What out `release()` function does is safe of any valid `Se=
-lf`.
-+/// unsafe impl Ownable for Foo {
-+///     unsafe fn release(this: NonNull<Self>) {
-+///         // SAFETY: Using `dec_ref()` from [`RefCounted`] to release is=
- okay, as the refcount is
-+///         // always 1 for an [`Owned<Foo>`].
-+///         unsafe{ Foo::dec_ref(this) };
-+///     }
-+/// }
-+///
-+/// let foo =3D Foo::new().expect("Failed to allocate a Foo. This shouldn'=
-t happen");
-+/// let mut foo =3D ARef::from(foo);
-+/// {
-+///     let bar =3D foo.clone();
-+///     assert!(Owned::try_from(bar).is_err());
-+/// }
-+/// assert!(Owned::try_from(foo).is_ok());
-+/// ```
-+pub trait OwnableRefCounted: RefCounted + Ownable + Sized {
-+    /// Checks if the [`ARef`] is unique and convert it to an [`Owned`] it=
- that is that case.
-+    /// Otherwise it returns again an [`ARef`] to the same underlying obje=
-ct.
-+    fn try_from_shared(this: ARef<Self>) -> Result<Owned<Self>, ARef<Self>=
->;
-+
-+    /// Converts the [`Owned`] into an [`ARef`].
-+    fn into_shared(this: Owned<Self>) -> ARef<Self> {
-+        // SAFETY: Safe by the requirements on implementing the trait.
-+        unsafe { ARef::from_raw(Owned::into_raw(this)) }
-+    }
-+}
-+
-+impl<T: OwnableRefCounted> TryFrom<ARef<T>> for Owned<T> {
-+    type Error =3D ARef<T>;
-+    /// Tries to convert the [`ARef`] to an [`Owned`] by calling
-+    /// [`try_from_shared()`](OwnableRefCounted::try_from_shared). In case=
- the [`ARef`] is not
-+    /// unique, it returns again an [`ARef`] to the same underlying object=
-.
-+    fn try_from(b: ARef<T>) -> Result<Owned<T>, Self::Error> {
-+        T::try_from_shared(b)
-+    }
-+}
-diff --git a/rust/kernel/sync/aref.rs b/rust/kernel/sync/aref.rs
-index 97cfddd9ec2ad788a4a659f404a9b6790da08e29..605c56b3d634e048cdfe1524881=
-ab1e2e76ae3a4 100644
---- a/rust/kernel/sync/aref.rs
-+++ b/rust/kernel/sync/aref.rs
-@@ -15,7 +15,10 @@
- /// Note: Implementing this trait allows types to be wrapped in an [`ARef<=
-Self>`]. It requires an
- /// internal reference count and provides only shared references. If uniqu=
-e references are required
- /// [`Ownable`](crate::types::Ownable) should be implemented which allows =
-types to be wrapped in an
--/// [`Owned<Self>`](crate::types::Owned).
-+/// [`Owned<Self>`](crate::types::Owned). Implementing the trait
-+/// [`OwnableRefCounted`](crate::types::OwnableRefCounted) allows to conve=
-rt between unique and
-+/// shared references (i.e. [`Owned<Self>`](crate::types::Owned) and
-+/// [`ARef<Self>`](crate::types::Owned)).
- ///
- /// # Safety
- ///
-@@ -165,6 +168,12 @@ fn from(b: &T) -> Self {
-     }
- }
-=20
-+impl<T: crate::types::OwnableRefCounted> From<crate::types::Owned<T>> for =
-ARef<T> {
-+    fn from(b: crate::types::Owned<T>) -> Self {
-+        T::into_shared(b)
-+    }
-+}
-+
- impl<T: RefCounted> Drop for ARef<T> {
-     fn drop(&mut self) {
-         // SAFETY: The type invariants guarantee that the `ARef` owns the =
-reference we're about to
-diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
-index 8ef01393352bb2510524bf070ad4141147ed945f..a9b72709d0d3c7fc58444a19fae=
-896aed7506128 100644
---- a/rust/kernel/types.rs
-+++ b/rust/kernel/types.rs
-@@ -11,7 +11,7 @@
- };
- use pin_init::{PinInit, Wrapper, Zeroable};
-=20
--pub use crate::owned::{Ownable, Owned};
-+pub use crate::owned::{Ownable, OwnableRefCounted, Owned};
-=20
- pub use crate::sync::aref::{ARef, AlwaysRefCounted, RefCounted};
-=20
-
---=20
-2.51.0
-
-
+> +		flash-max-timeout-us = <500000>;
+> +	};
+> +};
+> +
+>  &pmi8998_lpg {
+>  	status = "okay";
+>  
+> 
 
