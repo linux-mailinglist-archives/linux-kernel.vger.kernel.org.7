@@ -1,120 +1,129 @@
-Return-Path: <linux-kernel+bounces-838357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41B72BAF05F
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 04:44:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AF28BBAF062
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 04:45:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D045719410E5
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 02:44:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5674619411AE
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 02:46:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25F5A27A93D;
-	Wed,  1 Oct 2025 02:44:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C997149E17;
+	Wed,  1 Oct 2025 02:45:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ttRgAU+r"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="OZ6Raoxg"
+Received: from omta34.uswest2.a.cloudfilter.net (omta34.uswest2.a.cloudfilter.net [35.89.44.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CA6C28E3F
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 02:44:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 647501C28E
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 02:45:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759286662; cv=none; b=Ca0HgIarvZgu1yLF6KJfwXQYcYDY83LUNPZe5D4bq22HCnLwzK/udkAHcah8WJHEBT7Ep40wYCDv2gPzOLQroiS4gRuQ2iJ7eTxHqfCy98p4KYrQriKQo9GwDua1ap2BDUUSjbFLCtv3s4Mn0fO5d6Ph8R1vHJkGn5TzXxFCFIg=
+	t=1759286737; cv=none; b=MvyyzAjRx/u3c+ob+j0yNhO2Ex1Ijdv1IxmkIJyc8XmLrHG7K2ILpplc3gEukgpVbe7eH42cZ036URcMTPcsj1Fqv0YoOOO0AjFbYRLxLApEkHWpfly3LL9HqoWLqK7Ym0nt0m+dtlNC05PczVAE0lKWP861nzzpVfM2092KxGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759286662; c=relaxed/simple;
-	bh=k91NTUDhUssUji9MJhdmtkiC7VaqJjlsTCOYLX42i1g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gQ0n6Je6BHUvOj51FM1dAqTM8XEx4gPFgjk2z3IJQyxWQ31pxtui6geGPhjnXGbCkbE+hDSLLhgnkrzUlLyO+DRnGWI43+5S5zOEs7sS7Qgw9BiNRjrg6Yoq6uCZMrhqiO4U7iVIcGiFT407e/Od7gxKVCwEkP7ffx3BLrX5g3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ttRgAU+r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23813C116D0
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 02:44:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759286662;
-	bh=k91NTUDhUssUji9MJhdmtkiC7VaqJjlsTCOYLX42i1g=;
-	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
-	b=ttRgAU+re1QfOgTUsJYEGBkaY5sJkurfUuoKPafm22hee4mBvUsfCz8+lnPzgv8d4
-	 ZOdgnV8fba3mPfHIywenzEHUDYZIP6vODhYrMcHJhSLdDPE2HjSFGBcgL9m1yi7LmE
-	 W7n+1yOtllzOEImsPbhBak+kD93G4zlgR7UkMNidvOgQcMplPmuKroueK3CHorgKyn
-	 CtjDLwmqqEmAxVu1+9/A4A9BrY1j+7n9xbmw+OyXSKiMcP4Dv6vu7kN9MibVjJsSje
-	 TSyEQyAq1nHm7QtDoRmOMwnpTAefVibRt4KoP7xFveey6CHlXTPwpNO4u0bMThDA1S
-	 sTMaZgwlFjwDA==
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-36d77de259bso61377201fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 19:44:22 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXnFGMT0RN803oN7LZP5QJ0hRkpuk6frQkbjU07lnyIpnBhs8YSs8jcEyDkFv/vAujXX+C+Jw77EwN9R1Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywcx/AVE4+nt6p1GfRdxXnll79zPIV82uk1H5Wr0fOnNWrAT6Wg
-	vrdzW0izp07JOrPHDxpfYTwiAEpzBN+/qmGYewcT8GzTCntz+4eqCcfb4MqU6q86zm89+Jxpbm6
-	YDq03W3zq5GiaXBzieAmbbAVawEwRpYU=
-X-Google-Smtp-Source: AGHT+IFQFAiOMKqVsvDwjwivvtKNdu8wmiPuFmG09MeyicmCKH2vmN2UpLtpz/sWXcpxHK2OBBrDx4wW/jvYc7IHYT4=
-X-Received: by 2002:a2e:b8c6:0:b0:364:45a:5159 with SMTP id
- 38308e7fff4ca-373a745e30fmr5133711fa.30.1759286660527; Tue, 30 Sep 2025
- 19:44:20 -0700 (PDT)
+	s=arc-20240116; t=1759286737; c=relaxed/simple;
+	bh=uCHXO5w65OPBubrXNoQ/bmxMID/0e0jWMi0sr6HcfK4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GV7YiJmOKG7rqUyfSpEJ2jr9QBtkC8pUYaRXKQl7BuwCXkVjZByeTouDoW67g4BCMFY012XV2l0CjIkWtxl5uQkqJt4a7LgqKvZF4gn/zWsnsm5Gkr9UG+WJjfgUToHaD4BaYeE9TGyhK8L+VqVSED/8DCm2VMsLpi8XDZRsho8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=OZ6Raoxg; arc=none smtp.client-ip=35.89.44.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-5001b.ext.cloudfilter.net ([10.0.29.181])
+	by cmsmtp with ESMTPS
+	id 3dErvYVWdZx2i3mqOvnxWq; Wed, 01 Oct 2025 02:45:28 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id 3mqNvkc6rmCqv3mqNvYDn2; Wed, 01 Oct 2025 02:45:28 +0000
+X-Authority-Analysis: v=2.4 cv=W8Y4VQWk c=1 sm=1 tr=0 ts=68dc95c8
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=Cyuvsrd2OJRF7bCfhtsA:9 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=EpRzvDfGiAFLCYHkBfEtWWthXUdWuLqIcn4910K3kFQ=; b=OZ6Raoxg5S0Qh1S0R4enNZFk0l
+	QnHC3XijhBssvLv7e/14ZV76TrGqIZELC4Rdjs75JX+bxc2XVtZtemUTsTUrrsWIpgMboRtzxlMJW
+	bYFz+hmipwy/F4Ov1DXPdSTjZ0UiYi9CmF84LFyF3RKNiblpiitcIOXOEWi9mcWvOxxTIRwGlQQGu
+	MMqQCkgiFKt+lyP+6kji67ZaEDl1/QbdLWDTcfYQF/C9TEwgbAQyDzAVMjAZUGpwa5JTOmOh5qAnR
+	wLsPlFGnU6W54y77tdvqHFuzt5y5RiVDSYZWFXGURiX/4ZBgVTdrFbHIkJntB3azKSbWMQKDg3ZOR
+	bM6HlhKQ==;
+Received: from c-73-92-56-26.hsd1.ca.comcast.net ([73.92.56.26]:36254 helo=[10.0.1.116])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <re@w6rz.net>)
+	id 1v3mqM-00000000V51-2BjB;
+	Tue, 30 Sep 2025 20:45:26 -0600
+Message-ID: <adff8883-25dd-402e-8f3c-a369c2cc8d45@w6rz.net>
+Date: Tue, 30 Sep 2025 19:45:24 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250925191600.3306595-1-wens@kernel.org> <20250925191600.3306595-3-wens@kernel.org>
- <20250929180804.3bd18dd9@kernel.org> <20250930172022.3a6dd03e@kernel.org>
-In-Reply-To: <20250930172022.3a6dd03e@kernel.org>
-Reply-To: wens@kernel.org
-From: Chen-Yu Tsai <wens@kernel.org>
-Date: Wed, 1 Oct 2025 10:44:08 +0800
-X-Gmail-Original-Message-ID: <CAGb2v66AKNyV0YegdnZPOV+bh6dNU9ecmtKRqw4HnBO+ZCrBDA@mail.gmail.com>
-X-Gm-Features: AS18NWA7fKCmJOgwyIEYi5Cp05qNoNNJdcUopK8PxdgcLYDSihGbZiKbNoeO0vw
-Message-ID: <CAGb2v66AKNyV0YegdnZPOV+bh6dNU9ecmtKRqw4HnBO+ZCrBDA@mail.gmail.com>
-Subject: Re: [PATCH net-next v8 2/2] net: stmmac: Add support for Allwinner
- A523 GMAC200
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jernej Skrabec <jernej@kernel.org>, Samuel Holland <samuel@sholland.org>, netdev@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	Andre Przywara <andre.przywara@arm.com>, Jernej Skrabec <jernej.skrabec@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.16 000/143] 6.16.10-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
+References: <20250930143831.236060637@linuxfoundation.org>
+Content-Language: en-US
+From: Ron Economos <re@w6rz.net>
+In-Reply-To: <20250930143831.236060637@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.92.56.26
+X-Source-L: No
+X-Exim-ID: 1v3mqM-00000000V51-2BjB
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-92-56-26.hsd1.ca.comcast.net ([10.0.1.116]) [73.92.56.26]:36254
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 16
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfM8yx7xVRX0z83OAQQvIs7KudFgQo35RXWX3Tt4MLdIJyNCH9Fwu1mpCkK/EMTbASAS8iAi/05AOTZLapivfHhMEh3CrngDjLG6YokdJ38xh6ErnWHmC
+ pA0DDUpsrBrib7Q9YyTbAf+aO4fD21M56zJvz2Hl3J3ZKPphHFCFlv+wMLAt2H8EP6Y15XD7a2d4vskYw9GPhDPAVpobImiQq0w=
 
-On Wed, Oct 1, 2025 at 8:20=E2=80=AFAM Jakub Kicinski <kuba@kernel.org> wro=
-te:
+On 9/30/25 07:45, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.16.10 release.
+> There are 143 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 >
-> On Mon, 29 Sep 2025 18:08:04 -0700 Jakub Kicinski wrote:
-> > On Fri, 26 Sep 2025 03:15:59 +0800 Chen-Yu Tsai wrote:
-> > > The Allwinner A523 SoC family has a second Ethernet controller, calle=
-d
-> > > the GMAC200 in the BSP and T527 datasheet, and referred to as GMAC1 f=
-or
-> > > numbering. This controller, according to BSP sources, is fully
-> > > compatible with a slightly newer version of the Synopsys DWMAC core.
-> > > The glue layer around the controller is the same as found around olde=
-r
-> > > DWMAC cores on Allwinner SoCs. The only slight difference is that sin=
-ce
-> > > this is the second controller on the SoC, the register for the clock
-> > > delay controls is at a different offset. Last, the integration includ=
-es
-> > > a dedicated clock gate for the memory bus and the whole thing is put =
-in
-> > > a separately controllable power domain.
-> >
-> > Hi Andrew, does this look good ?
-> >
-> > thread: https://lore.kernel.org/20250925191600.3306595-3-wens@kernel.or=
-g
+> Responses should be made by Thu, 02 Oct 2025 14:37:59 +0000.
+> Anything received after that time might be too late.
 >
-> Adding Heiner and Russell, in case Andrew is AFK.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.16.10-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.16.y
+> and the diffstat can be found below.
 >
-> We need an ack from PHY maintainers, the patch seems to be setting
-> delays regardless of the exact RMII mode. I don't know these things..
+> thanks,
+>
+> greg k-h
 
-AFAIK the delays only apply to the RGMII signal path, i.e. they are no-op
-for RMII. Also, the delays are unrelated to the 2ns delay required by RGMII=
-.
-These delays are more for tweaking minute signal length differences.
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-ChenYu
+Tested-by: Ron Economos <re@w6rz.net>
+
 
