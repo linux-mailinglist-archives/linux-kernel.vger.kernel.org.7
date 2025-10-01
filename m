@@ -1,134 +1,144 @@
-Return-Path: <linux-kernel+bounces-838456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DE72BAF365
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 08:16:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A608BAF36D
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 08:17:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE47117C436
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 06:16:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D95183A2B82
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 06:17:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D30E2D7DD8;
-	Wed,  1 Oct 2025 06:16:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GC5bF4Wg"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEB1326CE02;
+	Wed,  1 Oct 2025 06:17:45 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 411CC24DD17
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 06:16:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0464F13C8E8;
+	Wed,  1 Oct 2025 06:17:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759299380; cv=none; b=OuKCw7lzMgESZWCzl6edC8lZpJjYDXYMXefOv8IiVXMW2XTxZQW5AqFOuLVJZfxPo21yWjB0Ha+cROmywSFcH+pQOjucPUsBxHAH5lwXMh8HTWiyXmIoAJvGPLGJpl/j5q7xlzImAX8rxaAs/OVZyNmdENTeK4IvNHXosG4tUyY=
+	t=1759299465; cv=none; b=qbIVz43lHdINOlZNH4Z3Yatw3j2D1Ll4J+5F6cX8dh/Ry85Dda2r7L7Ugbpa0uOxmpf/xI1mFDQH+7qdwNXCZ37r49GnUAwIiHesxoEt+CNxAWApuAQhjZ8IOq5DFXewIPpymxzqwp1iOV7igi3/DtnOEwu9UllUeeai2bLzjlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759299380; c=relaxed/simple;
-	bh=zTZvQvz7JG+APZWziums5mPjsnmOIULh8ulG7LVPhkI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AdED+qR2npMQPJERbglgcqdqhGA3NMoia1swkKkluxmcl3DsljQxskWoXt7cGl8O7xJyi44ZEFy3Xuz6EvE38q6mB0mGtMH9L/+p3VvdjPlGFdbBihtC2ogTzAUgfDd5mZo5207ESEr/adKE7sQGfvfs/CJyuGRhgpIK2M+tKd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GC5bF4Wg; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759299378;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=8gaStWL+ntZFUm4T3e327BEdVCx4LxQqNCCOu6JDj8s=;
-	b=GC5bF4Wg17KMnlRvr/oDL+vS5/6HyGJBZnmAf9APvuhtxDUFvtBoHQcsZ0uVc6jiJvgOqe
-	vZMbPt8koOP8yIbvdhMwIVHiLS1kxR23i72a8G1vSs4giXXs+FbquAYfEGeD7a3Egg1jm4
-	OV48IoFIqZAaliNfERRZ1XOKlsjibUc=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-281-JHrLyQX-PV2yD0VaTMRRmw-1; Wed, 01 Oct 2025 02:16:14 -0400
-X-MC-Unique: JHrLyQX-PV2yD0VaTMRRmw-1
-X-Mimecast-MFC-AGG-ID: JHrLyQX-PV2yD0VaTMRRmw_1759299374
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-42558f501adso106637f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 23:16:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759299373; x=1759904173;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8gaStWL+ntZFUm4T3e327BEdVCx4LxQqNCCOu6JDj8s=;
-        b=VV/wKzbd0o9XwklGzwdPOcR5p7rYFozP7cHMELpvN/T2F52m/Z3okEjhHoFPPEghVB
-         NDXFjo+tVBwC9aKdIetVeVcn2CV87LXs52pOyVVHP5mgKduIPGx7LNEwmGfP7POOvIO3
-         E6aPk+z8c2q3A8L1FqqLUb+wqtU+UXUh/G9vaJRwtPGAfobd6miqHeo+q9dR3eD+AZOa
-         pNq5NYr1Qtvlim4+kWjqarCj3QmUoMTM3QVWUYC3vmDDpMHnQ5IuegihjUrR6DX+eabH
-         EtDSjnaToTF9jwxWbk0ni889tpc9dKc/fvQXRT/90k5vymRYnGiK0eynoNBWhMxrbip3
-         gFZg==
-X-Forwarded-Encrypted: i=1; AJvYcCXqVBG40lm/CISCNrKgYBOKYYKrGxJbLUMSX8VPkQOFyipIOAxhujR7Pjx6F2qe23c/KQ/SAFgOTlBpX/c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOy4o7cQ0z2D0v133XnPZLMxbd5Kh3p9FifSOZOwaPvEkTMa5E
-	nQ+PlaMvlvvl+Q/s8VsmN6rRqMpTvsTbTUzLkxfS6T+AfDLIiNB1DfvnUM4ipd2CzRFbUkd0dpI
-	JoGIQS2kg5S8w27e71gbSXrg/A+dZK+Y4uRRa/sAMeNgvZvKwYP42l4WtL/Fbwr64CQ==
-X-Gm-Gg: ASbGncuEdIoGVR27RWPIx+J242vuZpRculNT9IwgZRY24a+F/iXesg1tv7CsPz1GNrR
-	IehOZ+1t4aJyoQBCgBnlCGefy2I3BPsn28DPMNR5GouNCxQDpMTGMBplZ8k28ItVAn68V5zWraZ
-	LP4j8rfhCGb0nNLZfRZ+/e8t9Eg0bhNvwgyVCQo322CHV35yurxnVC1UY8/cRf0co+RmEWO7btt
-	pjiL+WnO76uEdjq/G5bLtF9J5I3z11RbOJO1+yXiLYpmUJTxupw9EKWxOf+J45lW6c/ZscomN7e
-	OIkgRHDBQN/ESzfGp/XlaHmdl72Dd1oKJbzuEADqRAUbLHv8kZ6NErs2MYhRBGtMtAsS1oabfnN
-	TL8LmwXknl2m/Ofu8q88=
-X-Received: by 2002:a05:6000:2381:b0:3f8:e016:41c0 with SMTP id ffacd0b85a97d-425577ee9a5mr1625963f8f.10.1759299373643;
-        Tue, 30 Sep 2025 23:16:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEqt0cbQ3yhlC9NUmKLr9TrwlDXftJyJ8jaxrushSt7Z7NutbNA/tFFVZiy52RJ3xcD/4g9ZA==
-X-Received: by 2002:a05:6000:2381:b0:3f8:e016:41c0 with SMTP id ffacd0b85a97d-425577ee9a5mr1625948f8f.10.1759299373270;
-        Tue, 30 Sep 2025 23:16:13 -0700 (PDT)
-Received: from lbulwahn-thinkpadx1carbongen12.rmtde.csb ([2a02:810d:7e01:ef00:ff56:9b88:c93b:ed43])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-41f0c467ecasm12794524f8f.38.2025.09.30.23.16.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Sep 2025 23:16:12 -0700 (PDT)
-From: Lukas Bulwahn <lbulwahn@redhat.com>
-X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-To: Frank Li <Frank.Li@nxp.com>,
-	Rob Herring <robh@kernel.org>,
-	devicetree@vger.kernel.org
-Cc: Peter Senna Tschudin <peter.senna@gmail.com>,
-	Ian Ray <ian.ray@ge.com>,
-	Martyn Welch <martyn.welch@collabora.co.uk>,
-	kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: [PATCH] MAINTAINERS: adjust file entry in MEGACHIPS BRIDGES
-Date: Wed,  1 Oct 2025 08:16:09 +0200
-Message-ID: <20251001061609.513432-1-lukas.bulwahn@redhat.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1759299465; c=relaxed/simple;
+	bh=hxRvqUOFSmtT+K2+YA99pKt6+80fagkdz+VHNZ+rY8E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ci5yqp/FyktKhSyDMJ2hSGxFC1GyDNhOTuVZP50Qw+JxmR/6hY+ydl/rKmXkS+zxrGtzzNpSA1zGeEcmj8JyHYbMBK/Yht/0RwcVD6IeEjBFgBTBimEm8Yf9JTGOQENRKTTuKumlbejbnfkZbnox151XORaDZ8t7Jlbtxgrlq0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.2.212] (p57bd9782.dip0.t-ipconnect.de [87.189.151.130])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id EB7A26028F357;
+	Wed, 01 Oct 2025 08:17:03 +0200 (CEST)
+Message-ID: <632b054e-2c67-4d6d-9e61-435d1566fc4d@molgen.mpg.de>
+Date: Wed, 1 Oct 2025 08:17:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/2] Bluetooth: btusb: Add new VID/PID 0489/e135 for
+ MT7920
+To: Chris Lu <chris.lu@mediatek.com>
+Cc: Marcel Holtmann <marcel@holtmann.org>,
+ Johan Hedberg <johan.hedberg@gmail.com>,
+ Luiz Von Dentz <luiz.dentz@gmail.com>, Sean Wang <sean.wang@mediatek.com>,
+ Will Lee <will-cy.Lee@mediatek.com>, SS Wu <ss.wu@mediatek.com>,
+ Steve Lee <steve.lee@mediatek.com>, linux-bluetooth@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
+References: <20251001060437.2298529-1-chris.lu@mediatek.com>
+ <20251001060437.2298529-2-chris.lu@mediatek.com>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20251001060437.2298529-2-chris.lu@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Dear Chris,
 
-Commit 74459b0dacce ("dt-bindings: display: bridge: convert
-megachips-stdpxxxx-ge-b850v3-fw.txt to yaml") renames
-megachips-stdpxxxx-ge-b850v3-fw.txt to megachips,stdp2690-ge-b850v3-fw.yaml
-as part of this dt-binding conversion, but misses to adjust the file entry
-in MEGACHIPS STDPXXXX-GE-B850V3-FW LVDS/DP++ BRIDGES.
 
-Adjust the file entry after the conversion.
+Thank you for your patch. In the summary *new* could be left out in the 
+future. Maybe also put MT7920 in the front:
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Bluetooth: btusb: MT7920: Add VID:PID 0489:e135
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 343948543711..250e90f6f0ba 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -15957,7 +15957,7 @@ M:	Peter Senna Tschudin <peter.senna@gmail.com>
- M:	Ian Ray <ian.ray@ge.com>
- M:	Martyn Welch <martyn.welch@collabora.co.uk>
- S:	Maintained
--F:	Documentation/devicetree/bindings/display/bridge/megachips-stdpxxxx-ge-b850v3-fw.txt
-+F:	Documentation/devicetree/bindings/display/bridge/megachips,stdp2690-ge-b850v3-fw.yaml
- F:	drivers/gpu/drm/bridge/megachips-stdpxxxx-ge-b850v3-fw.c
- 
- MEGARAID SCSI/SAS DRIVERS
--- 
-2.51.0
 
+Am 01.10.25 um 08:04 schrieb Chris Lu:
+> Add VID 0489 & PID e135 for MediaTek MT7920 USB Bluetooth chip.
+> 
+> The information in /sys/kernel/debug/usb/devices about the Bluetooth
+> device is listed as the below.
+> 
+> T:  Bus=06 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  2 Spd=480  MxCh= 0
+> D:  Ver= 2.10 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
+> P:  Vendor=0489 ProdID=e135 Rev= 1.00
+> S:  Manufacturer=MediaTek Inc.
+> S:  Product=Wireless_Device
+> S:  SerialNumber=000000000
+> C:* #Ifs= 3 Cfg#= 1 Atr=e0 MxPwr=100mA
+> A:  FirstIf#= 0 IfCount= 3 Cls=e0(wlcon) Sub=01 Prot=01
+> I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=125us
+> E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+> E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+> I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+> I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+> I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+> I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+> I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+> I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+> I:  If#= 1 Alt= 6 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+> E:  Ad=83(I) Atr=01(Isoc) MxPS=  63 Ivl=1ms
+> E:  Ad=03(O) Atr=01(Isoc) MxPS=  63 Ivl=1ms
+> I:* If#= 2 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=(none)
+> E:  Ad=8a(I) Atr=03(Int.) MxPS=  64 Ivl=125us
+> E:  Ad=0a(O) Atr=03(Int.) MxPS=  64 Ivl=125us
+> I:  If#= 2 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=(none)
+> E:  Ad=8a(I) Atr=03(Int.) MxPS=  64 Ivl=125us
+> E:  Ad=0a(O) Atr=03(Int.) MxPS=  64 Ivl=125us
+> 
+> Signed-off-by: Chris Lu <chris.lu@mediatek.com>
+> ---
+>   drivers/bluetooth/btusb.c | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+> index 4be34c556db8..a2cde2284163 100644
+> --- a/drivers/bluetooth/btusb.c
+> +++ b/drivers/bluetooth/btusb.c
+> @@ -621,6 +621,8 @@ static const struct usb_device_id quirks_table[] = {
+>   	/* Additional MediaTek MT7920 Bluetooth devices */
+>   	{ USB_DEVICE(0x0489, 0xe134), .driver_info = BTUSB_MEDIATEK |
+>   						     BTUSB_WIDEBAND_SPEECH },
+> +	{ USB_DEVICE(0x0489, 0xe135), .driver_info = BTUSB_MEDIATEK |
+> +						     BTUSB_WIDEBAND_SPEECH },
+>   	{ USB_DEVICE(0x13d3, 0x3620), .driver_info = BTUSB_MEDIATEK |
+>   						     BTUSB_WIDEBAND_SPEECH },
+>   	{ USB_DEVICE(0x13d3, 0x3621), .driver_info = BTUSB_MEDIATEK |
+
+Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
+
+
+Kind regards,
+
+Paul
 
