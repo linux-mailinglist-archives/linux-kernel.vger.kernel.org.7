@@ -1,138 +1,122 @@
-Return-Path: <linux-kernel+bounces-838963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CC73BB083D
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 15:35:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 502AFBB08BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 15:43:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32A953BAABE
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 13:35:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBDD41926453
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 13:43:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D92722EE5F5;
-	Wed,  1 Oct 2025 13:35:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D3As7FdG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 127F62EE5F5;
+	Wed,  1 Oct 2025 13:43:10 +0000 (UTC)
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 323BD12C544;
-	Wed,  1 Oct 2025 13:35:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51CFF2ED853
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 13:43:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759325744; cv=none; b=DwTO+QeumRjdL/0MYxffKX3izcW8P5XovttF+ZybvrDGgy13Z6eTF6PWA3PTAz/xUecSIdHeIvITXLlQMO05oe4wXqSTqOzaso3n9NehAI4fUc6w/Nj64xg67atPHSbdNEniyrs0joeOPaaspze+AycfnExXAS2kUjN39HhfYtw=
+	t=1759326189; cv=none; b=fCXBqwxq/WmX6Bd6OWAg+Pp8u03n6c1qPYTpwV/2dXpTL6TBx6z+GXV7hHKlKikigfDIm2xLxHjYN2s3WFnIfqqla8TOUfvcs40idPUdQWKemmIIh6sbQR7rnqS4kYi4KmqxehgDl8kFPWpL4J/H9lU7n5YuGsU9cyqg0+JeOb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759325744; c=relaxed/simple;
-	bh=ugtWNem9sZvjDOpwvATrh1Z6YMwTTTLfOSaGjIGvpxs=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kI5VjFkDaaXKbaK0anU7wyNfqtaXfBWKqxtniyv7+gad2uXSDzJhO97UaGwzd5psbY75vXeiTwXKevDiK5mdLeOd8yiZys78xfL17y8jKArP4PkrlU1J3uJrCvMz3vFaCGOJpJzipRupFHsTBsKgjzwd6YhDXZ/xrOH4BzXcf38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D3As7FdG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90054C116C6;
-	Wed,  1 Oct 2025 13:35:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759325743;
-	bh=ugtWNem9sZvjDOpwvATrh1Z6YMwTTTLfOSaGjIGvpxs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=D3As7FdG5Gpq5dtc9npozl8E6d97ZMYzco37uZEjzNGntqU6zgnw+2CZ3IKVZTk13
-	 B2I5ZbkCeots+VvFa0csToU7XjkzziyjqE+4C5FhVzteSyRnVmbkiSf2zpRanjlZUM
-	 G1LtUZo8U420nbEnwhSc6aDdGBqlVosJ4rK56NfiIPcr4fZaKqm/0btNJoLqy/5OAX
-	 AsBgX1/MgarQ7PEShhqseDdBJSKiqfamh69WvaVnF0JKh+haqWMadjjQka5AQFunDS
-	 kRQ3+/OAQyNbU3Lo29sxIYbcTkkUwnapcEufEQ4a9ya3gv62VHJe/xkYwSOCZ4kAKt
-	 0wbf2boQ1rLZg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1v3wzd-0000000Aod6-0paf;
-	Wed, 01 Oct 2025 13:35:41 +0000
-Date: Wed, 01 Oct 2025 14:35:40 +0100
-Message-ID: <86h5wizqvn.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Steven Price <steven.price@arm.com>
-Cc: kvm@vger.kernel.org,
-	kvmarm@lists.linux.dev,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu
- <yuzenghui@huawei.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Joey Gouly <joey.gouly@arm.com>,
-	Alexandru Elisei <alexandru.elisei@arm.com>,
-	Christoffer Dall <christoffer.dall@arm.com>,
-	Fuad Tabba <tabba@google.com>,
-	linux-coco@lists.linux.dev,
-	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
-	Gavin Shan <gshan@redhat.com>,
-	Shanker Donthineni <sdonthineni@nvidia.com>,
-	Alper Gun <alpergun@google.com>,
-	"Aneesh Kumar K . V"
- <aneesh.kumar@kernel.org>,
-	Emi Kisanuki <fj0570is@fujitsu.com>,
-	Vishal Annapurve <vannapurve@google.com>
-Subject: Re: [PATCH v10 05/43] arm64: RME: Check for RME support at KVM init
-In-Reply-To: <2226e62f-76ca-4467-a8ae-460fd463df0a@arm.com>
-References: <20250820145606.180644-1-steven.price@arm.com>
-	<20250820145606.180644-6-steven.price@arm.com>
-	<86ms6azxt5.wl-maz@kernel.org>
-	<2226e62f-76ca-4467-a8ae-460fd463df0a@arm.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1759326189; c=relaxed/simple;
+	bh=cCOspOg10LPIcpADaHReTKiZQPz1A+QQStO+5J4q0Lg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=giBiPkr2E2JlH66gtbgGTHZYRdsSPolq16AWTh0+LZgY+szfeni/lVXzQ2vqMZIeDclo7BydvloPdJ715yCgZdRnJkSfGEOByJj+otlQ6zZmbuCwR+YyCinamVlGC8+b0uF36UBwa/Hl72mss0S3sfn8Iqr4Xr2I2i6f/IcjBQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.166.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-8ca2e53c37bso654990439f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 06:43:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759326187; x=1759930987;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RTnvOCbceGyglohEUcee1/fNsyqLgTdEhUXaZIqhQic=;
+        b=Kx357nUQlt/10NpKPBrTp48qNdivBHngjexk44yqDE3Wu1SdIC0RSWacLHohfAdrRj
+         jcREIad/AUOX0a8i74zFmSYje54ThO3P81q4MOkO/tnm3t7kXD8DLF0YNBd+i3ZeX7sk
+         BVeQ2JLh7bTMvPZ8qhlAa3YrHg9li/0ar22lWSS5eG6IF3ktjpvn54aVnUAtuKRWTBtG
+         4RGsvm6dYpJBWEIf8yVgMILEFI3R0KdFz1vF1hMBzlovKtsakIzFDvSWx1YQCCVH3E3t
+         7MVq/BZWQ54CJI1JlX6s+Ef5bOclWDtJfDRBQecHHKiu4w7ElvPN4IYP/tSxe9xjwPgG
+         5COA==
+X-Forwarded-Encrypted: i=1; AJvYcCU1FM//C1Sb/GPeFkpXJ9PhfRn/id5Stx68H9gisih7O2K1LoCp7YQ7x3CWWA8yQsexrpdSa7WJ4+eCsMI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/OxnS6iCJQcMK3n9Q6XZxCptKy3wIocso+3DiBj2bbBTfSSy6
+	uq4a2N1pPmFW68K6DWK6q00famz0w+FKCaAzSTk+Kd1S+ine5RziZHcNtOdxSZgx
+X-Gm-Gg: ASbGncsW6fDjJHO+N5SvriUbRwCA2bgzAZL0n7v/yJweMJexkBiYbNh3DXrFVdzVA2/
+	Y7gbX66dVdW6t+JRiPcIHvRURm5wdbpBWqFWRsG/BvATLA+m+vqAquynE1j+1sE5K4YR2nFRBjq
+	/JCEWhdNBx+UbUOOxjvewftqq5G8Ammpb+FNfETBArdM4LFqGyLXFU0KJt5BYAEla2rb97t3Ed2
+	Lhyf8+RmCBDgPBzfGsC6qFfkZatyZmuEqn9xrc54zsKQyxzYNwwTMynZ2xxC5iloJjazJAUp1/f
+	Ri1pvtOQa7e4/LXPHekeF5QfqNSNnX6pCptqBXNIYDYy3iwHJxzNlc19GEzCdLIxFx0cdXQi+8V
+	UrmgxqzRm+kopPGkibBPovNZduteH3G48Mj9piBgNL1TygKC16xN8HMESihAl01MdeoUE7SCnhP
+	vVQ5LsDGE4xGsN4Qlq0h8=
+X-Google-Smtp-Source: AGHT+IGNFmgEw4szVqH3H40lNVoxm/4PpK+mV0Gm2uYBZTGhUJ6n6d3Z8WbhTZcidb7fekCIhd3/Vw==
+X-Received: by 2002:a05:6e02:190a:b0:42d:7e74:2fac with SMTP id e9e14a558f8ab-42d814daae4mr46395275ab.0.1759326186936;
+        Wed, 01 Oct 2025 06:43:06 -0700 (PDT)
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com. [209.85.166.54])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-575a6f73703sm2473256173.21.2025.10.01.06.43.06
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 01 Oct 2025 06:43:06 -0700 (PDT)
+Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-917be46c59bso487097839f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 06:43:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWImXmdmBEwszK32lWRwKhkmx4uNx1NargurbnWnrNXe37jmvec91ll6k2KT8fOX85x7mvRfbCKCBIJcos=@vger.kernel.org
+X-Received: by 2002:a05:6102:d86:b0:522:255d:4d19 with SMTP id
+ ada2fe7eead31-5d3fe747011mr1261198137.23.1759325764988; Wed, 01 Oct 2025
+ 06:36:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: steven.price@arm.com, kvm@vger.kernel.org, kvmarm@lists.linux.dev, catalin.marinas@arm.com, will@kernel.org, james.morse@arm.com, oliver.upton@linux.dev, suzuki.poulose@arm.com, yuzenghui@huawei.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, joey.gouly@arm.com, alexandru.elisei@arm.com, christoffer.dall@arm.com, tabba@google.com, linux-coco@lists.linux.dev, gankulkarni@os.amperecomputing.com, gshan@redhat.com, sdonthineni@nvidia.com, alpergun@google.com, aneesh.kumar@kernel.org, fj0570is@fujitsu.com, vannapurve@google.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+References: <20251001122326.4024391-1-cosmin-gabriel.tanislav.xa@renesas.com> <20251001122326.4024391-2-cosmin-gabriel.tanislav.xa@renesas.com>
+In-Reply-To: <20251001122326.4024391-2-cosmin-gabriel.tanislav.xa@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 1 Oct 2025 15:35:54 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUA5r519G=OQM66wSig9r2dDP4y1NTH8zOZCTLb5m2Tew@mail.gmail.com>
+X-Gm-Features: AS18NWDLqgedMT7ALXpq29QgD05-Zz5HL5W7UgCB9wanWY8rYAtz-4hGklmKwbI
+Message-ID: <CAMuHMdUA5r519G=OQM66wSig9r2dDP4y1NTH8zOZCTLb5m2Tew@mail.gmail.com>
+Subject: Re: [PATCH v3 1/7] clk: renesas: r9a09g077: Add ADC modules clock
+To: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
+	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 01 Oct 2025 14:20:13 +0100,
-Steven Price <steven.price@arm.com> wrote:
-> 
-> >> +static int rmi_check_version(void)
-> >> +{
-> >> +	struct arm_smccc_res res;
-> >> +	unsigned short version_major, version_minor;
-> >> +	unsigned long host_version = RMI_ABI_VERSION(RMI_ABI_MAJOR_VERSION,
-> >> +						     RMI_ABI_MINOR_VERSION);
-> >> +
-> >> +	arm_smccc_1_1_invoke(SMC_RMI_VERSION, host_version, &res);
-> > 
-> > Shouldn't you first check that RME is actually available, by looking
-> > at ID_AA64PFR0_EL1.RME?
-> 
-> Well, you made a good point above that this isn't RME, it's CCA. And I
-> guess there's a possible world where the CCA interface could be
-> supported with something other than FEAT_RME (FEAT_RME2 maybe?) so I'm
-> not sure it necessarily a good idea to pin this on a CPU feature
-> bit.
+Hi Cosmin,
 
-But you cannot have CCA without RME. You cannot have CCA with
-GICv3. And my point was more that RME could be used by something other
-than CCA  - I certainly don't anticipate someone else adopting the CCA
-interface for anything...
+On Wed, 1 Oct 2025 at 14:24, Cosmin Tanislav
+<cosmin-gabriel.tanislav.xa@renesas.com> wrote:
+> Renesas RZ/T2H (R9A09G077) and RZ/N2H (R9A09G087) SoCs have three 12bit
+> ADC peripherals, each with its own peripheral clock.
+>
+> For conversion, they use the PCLKL clock.
+>
+> Add their clocks to the list of module clocks.
+>
+> Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> Ultimately what we want to know is whether the firmware thinks it can
-> supply us with the CCA interface and we don't really care how it
-> achieves it.
+Thanks for your patch!
 
-I disagree. You rely on specific feature sets to be available (hell,
-everything is baked around GICv3... GICv5 anyone?).
+As I have already queued v1 in renesas-clk-for-v6.19, there is no
+need to resend it.
 
-For this sort of stuff, you absolutely need to know what you are
-running on, not what some broken firmware tries to pretend it is.
+Gr{oetje,eeting}s,
 
-	M.
+                        Geert
 
 -- 
-Without deviation from the norm, progress is not possible.
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
