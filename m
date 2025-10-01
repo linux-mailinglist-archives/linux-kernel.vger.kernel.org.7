@@ -1,79 +1,87 @@
-Return-Path: <linux-kernel+bounces-838652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 420C2BAFD45
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 11:14:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02ACFBAFD4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 11:14:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8996174E76
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 09:14:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA91A4C0370
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 09:14:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7757A2D9488;
-	Wed,  1 Oct 2025 09:13:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ED1E2D9EC7;
+	Wed,  1 Oct 2025 09:14:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="YWk1LNaP"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Q3Bk/+Rj"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 073302494FF
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 09:13:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0061C1AB6F1
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 09:14:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759310006; cv=none; b=cu5XRWRgpeiRNoL5nXe8gtDMgAmZQXgH+Yr3cpkknHb8fiSE7ygNv+EOrg+FyRnijZe5TomPhR4XCVQ/mIz0xSst0NVwiPMVrbph1ACo0Tlvnp8rM0vlLC+IJZirJjAUmxCuXJE+5Bt05HIVmUtouZVPptjpgdarWpXY7z7+Qm0=
+	t=1759310052; cv=none; b=VUcI8FNr1J7BVZ+EZ6yDLmGbbgJQgbiV8kKztq5ggPhQp1yk8qUJHZb+VLGWnyVWuClQX6pBY4OtPQOHq56hO1GiQ1wYkG1fBbihOTyh+xynjv+8kEzKcVIS4NiZcXVqPBfzBQy1ONBXnJQWa4KmMKb+bKChAUMU8GYYQMCKKlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759310006; c=relaxed/simple;
-	bh=akruguUlMk4PCTOgTyjiWg/kpbuAfV7wGO7BxGg3Y7U=;
+	s=arc-20240116; t=1759310052; c=relaxed/simple;
+	bh=DiKOiuOUrDOlbJnzJU/h1DMix21rOvJ9MIGTIzcCuLw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BZ21PgSGtc0+zFuAxBjq1DNsW0rGujjcTawCCyHnxadNxHW61hrOqSaJ5kFLJhJTzLVc9eKfnXf0UHqdCCQylg0+hr4jDwvpaPNu1sZGoJ2AQ0x+xNcmVV3Hf5UVgw6oXkJ5YI4hG10jkndRQG7n4A7ShjQqTltdO4U4bsrQtaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=YWk1LNaP; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-46e37d10f3eso54435855e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 02:13:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1759310001; x=1759914801; darn=vger.kernel.org;
-        h=in-reply-to:autocrypt:from:content-language:references:cc:to
-         :subject:user-agent:mime-version:date:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=akruguUlMk4PCTOgTyjiWg/kpbuAfV7wGO7BxGg3Y7U=;
-        b=YWk1LNaPgz3Ckqy0AM1JJW2h6v+DVimsjcc/GBxzrTctzQ/hqv0aJoMfVglTn9iZMq
-         EM+EA3857bSISvm6Jz9zIBsfDaQ6+zg5gziMprIH36qGs7rormcRkbpX4jkcuw34XWNg
-         GD0If2BP/tdmoaGUO3eBAmGT6oY1yvbOI/+ByqW4TqXjndLzeZxg41St7dPI4sFAmW5K
-         lpmmD6rurx2kjR/p+wC2s69pdEtIO71Jv6r9Rk5akQdcnUiAuGa0RWFkyrTTtCw4OjbN
-         IYralWf3qyMYvp29hWEGC0i8b1JQnyPIE728rxVkif9L1gTGF3uJP6NwRmsNvS8nrH5k
-         jceg==
+	 In-Reply-To:Content-Type; b=GFOo/2W/avyF5UeTCqScm+Ebu+nwPuay9VJeK5qt+HL18a3bUNIemIvmd0ppJ65lLdCszCCa9t1YCM0+Cl5T1bp6kQlBxG3SkDTdMJIZguGp2yponTwwhPTWWsNEBpd1lENJ8+NA10iUGGybgtRghb3h+Ic2UIsQtin9yhZdG1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Q3Bk/+Rj; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5918QjNl009314
+	for <linux-kernel@vger.kernel.org>; Wed, 1 Oct 2025 09:14:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Rn3/KCzj9e9RYjWV5CHIU+LrVXqFk2tQ42l7zJWamMo=; b=Q3Bk/+RjjREsrk/n
+	MEw4NpcMDm9AtkNhRFcdtGRhaNPoiW58Y2CsOIXdZwQgBPcElLBOZKWBfetz5lGS
+	EFeWgPAVpkNkGheylbMm3NJ37nOgapyxnbVoM4iM3B6YGizuaiH5wiIAP1KEAie1
+	f3WvUvy7rJrs16gNLGzhemDPY1GfrdW3bOBn5Ga6ubhlhiFznrMATfA++Vo0ybek
+	D8SpCQ8V92Xm0VW4w7gnvx95X3MI/csR+Dos/VpkfGq1zruU3LDp8Gdyc7Kz1Slc
+	n8aiQVxKFQKVjhn4q0MHWA/6FmqshUo56vKXlNykmGBfBPFNuwx7/doFYif2JYqe
+	tJJvow==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e977usf6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 09:14:10 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-85d43cd080eso213451485a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 02:14:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759310001; x=1759914801;
-        h=in-reply-to:autocrypt:from:content-language:references:cc:to
-         :subject:user-agent:mime-version:date:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=akruguUlMk4PCTOgTyjiWg/kpbuAfV7wGO7BxGg3Y7U=;
-        b=DnGyEoHIfpQR796dHbBkxfP9gmepThiPknafa/bOFqShrO33+GyuO6R3EuZIVppQZY
-         PkKcB3ZZNspWG4+HlUJcevBQTkUbYt4cMuduizSjhRXvThu6JzyQqhhVM2SKVUHgsmiq
-         UO5MjHNPJjJ4Q7A/VlEkTOkKtqVWVbljnWvC5nDx2G3HggjBdXsrZBih5FylBGMFlRB7
-         5cSwOFQ/SKWm3JWVN9UI8EFsgoyyFw27HPNg2ioTNIL+8F4t7QxdDgI3QSr0fkQKM/zF
-         LNT4kZKQc59ijTPwFomelr5m0c/b/4GeCLZ0QHneZFH4bA2vzekp6rMhFIcHGijm49Oe
-         wf7g==
-X-Gm-Message-State: AOJu0Yxr8pfVn0XottjVzu/3YBkmIMl+oikeNz4NU2Gl0UMOr7puFynP
-	bynllhZ+8iiFi4a0swCx7rfp3VSPL8H61sFqLlolFGBr6yina5+Vtz8HlIf+AhYj+hA=
-X-Gm-Gg: ASbGnct2sBZcEvmIV4sSF9tbs9hzh05WFBGPxho5wCMqHBhDDR3jDdvG3Zld69QKr7L
-	ZB0qowW97p8011UazKNQJyFfsiAB4aGcNZl+DERn/xiAXeL3xLZyf50vrFUklylVTM8jf7d8blG
-	34SiVSVnJkmvqfx01XpzOkT02FbHDjM6uOV8aNkHIvSwZAHgR22h/RU8M9MckRbSZ7xQr56Jvb9
-	kjPq+HpPBgrorMbG2/mfKjtQE6TuwPHfN0sM+94fvHybI9QLrs6qNYXtRHfGpN3SAyerHQ5600J
-	VYClddY5w/I5R6vYOCVKu8jqliNv7wK6UsQJ8UXliZv7Z7Uw0hY+lV5i/H4f90OdzPqeltZaqak
-	koR8at9LHLAXthl2u/iS2sSKm5Vzj+cMv4Mng981jJOwlaAdQZgrR/dyD2zkwhaONRy/BeIhkHj
-	Dc2xYvWMa07gT4giYxCS2KUnB7v1bVq8a2j4E3Sje61W97VqC0HDOYu2+7hdJi9fxibHRi
-X-Google-Smtp-Source: AGHT+IFmWtHmtuJTY/pPssZKgyeRTwhhcwi0O9A8a4YoPc9vbgb8+dTjBI7NWy3cHtO7HmMUVCFPpA==
-X-Received: by 2002:a05:600c:3150:b0:46e:4246:c90d with SMTP id 5b1f17b1804b1-46e61219faamr22578695e9.11.1759310001142;
-        Wed, 01 Oct 2025 02:13:21 -0700 (PDT)
-Received: from ?IPV6:2003:e5:873f:400:7b4f:e512:a417:5a86? (p200300e5873f04007b4fe512a4175a86.dip0.t-ipconnect.de. [2003:e5:873f:400:7b4f:e512:a417:5a86])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e619c3b75sm29623905e9.7.2025.10.01.02.13.20
+        d=1e100.net; s=20230601; t=1759310049; x=1759914849;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Rn3/KCzj9e9RYjWV5CHIU+LrVXqFk2tQ42l7zJWamMo=;
+        b=XSR+6ZlNtuJmZQ3CSJJP8jA50yLTvJ10b2JexpSIYe2MluX41m2tDjO8xP1vhwXh99
+         OGmIpdbr33GfFnLcn1MZ8IB5pSmMzaFQekGtyo8risGcL4dQCTMwm5Ku4SXj1X0xMQAM
+         iT7vR+9RIvgu0Als9maHu6itsCZ1raezopjFfCbRdceqXk7Imu5i6gFITcwoakHGRAre
+         jPP5wmdkPbmKww5Jv9lU3BboZap4gFxAQTrmC3eYEcM7GU8ucwSARmjZ4KuHcVVEaVEx
+         h7QbINwFjTSSPI2UD55bw+AKrLlAO0XBIB/wgp1KHwG15p5MVtcEre+yhU2eMj3pXAU2
+         TXDw==
+X-Forwarded-Encrypted: i=1; AJvYcCX/+c3opCl3zxgcqY/hlG0iRW4XQbRd3te6Yo0vgvaW3logheSOYC0WNRaQVg63jwCNxLtlh0s6PKfzgMY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMdM0HjVhI3y/c54XPOcZELNt61tgM3j+8eiE1DnSupSln8W0b
+	ZYvxBCegpxEKGv5B6aC8YR4phsgSa/3/exvFivq52UUzyQ671QwqgTu2A2ssKCVaVcB5+INKUci
+	kcshUaL7lmKt+SzBQmpuHS/oyJ/mtWcZ3zx38jBMC7fTFMLMQjnP8LddvdpQ+Qtt6pbY=
+X-Gm-Gg: ASbGncsMWbzHV4wyBlUcPdPIINr4jsWl8pWdGzpKG8wpZ1sHG2VI4M3vxhAb4ddiAyF
+	bDlwfJxwWWPaaamHHqJkUmKdinxxCG1nlaXReUvDn6wCzb8b+wHgo+j7zeTJAhreFUss4xP7lfN
+	NYyB0ISKmxjorAQP2oSJ/t591xXjEdUPpxjas4dCWpGogxYaka/n87XX8oBSY5jc0runIqeT5lH
+	4woUsGko2iLEBzFUF59gQT9uo2IZM8IMo2AV+1bkL21Eb4UH27rqO8Ofr3eFr2qrH6S1lyxS4KC
+	ixlE5RikoJWuLIML5M6VUa+2/dnxevv4rbjzrPuhhMsQrnBb6emi/8hb+18G5x73Nhxb1CTNrVI
+	/djfKz2i7tqEvf2iR+HZIV+tTqtE=
+X-Received: by 2002:a05:620a:4095:b0:827:52b2:42be with SMTP id af79cd13be357-873705f0553mr259062485a.1.1759310048850;
+        Wed, 01 Oct 2025 02:14:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGENrGs3rsybFlp3G03YUI5//8oZwz0h6YnC6O0icQirUqBpC1fptftVFehVajvDELL7EbvWA==
+X-Received: by 2002:a05:620a:4095:b0:827:52b2:42be with SMTP id af79cd13be357-873705f0553mr259059185a.1.1759310048211;
+        Wed, 01 Oct 2025 02:14:08 -0700 (PDT)
+Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b3cedacd973sm725041066b.49.2025.10.01.02.14.06
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 01 Oct 2025 02:13:20 -0700 (PDT)
-Message-ID: <fd98944e-52e4-4521-ae15-07f167b5dfbf@suse.com>
-Date: Wed, 1 Oct 2025 11:13:19 +0200
+        Wed, 01 Oct 2025 02:14:07 -0700 (PDT)
+Message-ID: <f58493a9-6def-4610-9c3e-d6a877dc23d3@oss.qualcomm.com>
+Date: Wed, 1 Oct 2025 11:14:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,191 +89,78 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 09/12] x86/msr: Use the alternatives mechanism for
- WRMSR
-To: Sean Christopherson <seanjc@google.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, llvm@lists.linux.dev,
- xin@zytor.com, "H. Peter Anvin" <hpa@zytor.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
-References: <20250930070356.30695-1-jgross@suse.com>
- <20250930070356.30695-10-jgross@suse.com> <aNv-kJbDXYJpievg@google.com>
+Subject: Re: [PATCH v3 07/11] arm64: dts: qcom: sdm845-lg-{common, judyln}:
+ Add wifi node
+To: Paul Sajna <sajattack@postmarketos.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, David Heidelberg <david@ixit.cz>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org,
+        Amir Dahan <system64fumo@protonmail.com>,
+        Christopher Brown <crispybrown@gmail.com>
+References: <20250928-judyln-dts-v3-0-b14cf9e9a928@postmarketos.org>
+ <20250928-judyln-dts-v3-7-b14cf9e9a928@postmarketos.org>
 Content-Language: en-US
-From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-Autocrypt: addr=jgross@suse.com; keydata=
- xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
- ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
- dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
- NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
- XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
- AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
- CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
- mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
- G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
- kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
- Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
- RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
- vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
- sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
- aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
- w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
- auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
- 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
- fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
- HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
- QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
- ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
-In-Reply-To: <aNv-kJbDXYJpievg@google.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------4NdA3Y0ivVEa007mP1hrOaWH"
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250928-judyln-dts-v3-7-b14cf9e9a928@postmarketos.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: ia6e-B8Oxix_5WKNx87gO_pMag7oc6A_
+X-Proofpoint-ORIG-GUID: ia6e-B8Oxix_5WKNx87gO_pMag7oc6A_
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDA0MyBTYWx0ZWRfXwoUoM/un/SqC
+ k8HT4tnnT+b3A3XVXu81yxPr0WMSgDF1ukEsrT3JqYrtfM2s5rYQAthZYoqnQdxyVYRodq0CA7/
+ w2ugkXlRxQJ+AHVo/0h6dNM+JxtMGkKUwtTRn30QGtcaryda3W/ioLJGO8zPau0i0Fe+gEPpfml
+ HMWsX7p5F+fkMx7k8LrcQChfaEkXSy3sqDgVAHZ5QDPTJBbGs4pMWulUYWi2urpJixII9/knpEn
+ Z5cZGXkhLYsR+emsKbmg1ooPF3PECPTU3kR/yfvwZnlEjLEy/T+VWyXzhPR2prJsqyWEFULb/8X
+ ui+XofVAmb13wQW+jHUGk3Hnjj/zeVk+uUMmEIVRmsGFaBlvwZNVhjq8vcAEj9gzo3jWBbOWjBD
+ LG05iSrog9SxyDuCkEwrq6hVV7HP7w==
+X-Authority-Analysis: v=2.4 cv=Sf36t/Ru c=1 sm=1 tr=0 ts=68dcf0e2 cx=c_pps
+ a=HLyN3IcIa5EE8TELMZ618Q==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=IqCYnrxLgLuRO9zwK-sA:9
+ a=QEXdDO2ut3YA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-01_02,2025-09-29_04,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 bulkscore=0 suspectscore=0 adultscore=0 spamscore=0
+ priorityscore=1501 malwarescore=0 lowpriorityscore=0 phishscore=0
+ impostorscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2509150000
+ definitions=main-2509270043
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------4NdA3Y0ivVEa007mP1hrOaWH
-Content-Type: multipart/mixed; boundary="------------0KBQjINNJXNkhZ3AwbKqEaDf";
- protected-headers="v1"
-From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, llvm@lists.linux.dev,
- xin@zytor.com, "H. Peter Anvin" <hpa@zytor.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
-Message-ID: <fd98944e-52e4-4521-ae15-07f167b5dfbf@suse.com>
-Subject: Re: [PATCH v2 09/12] x86/msr: Use the alternatives mechanism for
- WRMSR
-References: <20250930070356.30695-1-jgross@suse.com>
- <20250930070356.30695-10-jgross@suse.com> <aNv-kJbDXYJpievg@google.com>
-In-Reply-To: <aNv-kJbDXYJpievg@google.com>
+On 9/29/25 7:05 AM, Paul Sajna wrote:
+> Wi-Fi now works with this patch and relevant firmware
+> 
+> [   21.488274] ath10k_snoc 18800000.wifi: qmi chip_id 0x30214 chip_family 0x4001 board_id 0xff soc_id 0x40030001
+> [   21.498477] ath10k_snoc 18800000.wifi: qmi fw_version 0x20060285 fw_build_timestamp 2020-10-12 23:35 fw_build_id QC_IMAGE_VERSION_STRING=WLAN.HL.2.0.c4-00645-QCAHLSWMTPLZ-1.336037.2
+> [   22.973165] ath10k_snoc 18800000.wifi: wcn3990 hw1.0 target 0x00000008 chip_id 0x00000000 sub 0000:0000
+> [   22.983265] ath10k_snoc 18800000.wifi: kconfig debug 1 debugfs 1 tracing 0 dfs 0 testmode 0
+> [   22.992048] ath10k_snoc 18800000.wifi: firmware ver  api 5 features wowlan,mgmt-tx-by-reference,non-bmi crc32 b3d4b790
+> [   23.045368] ath10k_snoc 18800000.wifi: htt-ver 3.83 wmi-op 4 htt-op 3 cal file max-sta 32 raw 0 hwcrypto 1
+> [   23.130581] ath10k_snoc 18800000.wifi: invalid MAC address; choosing random
 
---------------0KBQjINNJXNkhZ3AwbKqEaDf
-Content-Type: multipart/mixed; boundary="------------UW5EcluXxZS9wHFRe79bLUV0"
+I was only interested in this hunk ^
 
---------------UW5EcluXxZS9wHFRe79bLUV0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+please trim the timestamps, too
 
-T24gMzAuMDkuMjUgMTg6MDAsIFNlYW4gQ2hyaXN0b3BoZXJzb24gd3JvdGU6DQo+IE9uIFR1
-ZSwgU2VwIDMwLCAyMDI1LCBKdWVyZ2VuIEdyb3NzIHdyb3RlOg0KPj4gV2hlbiBhdmFpbGFi
-bGUgdXNlIG9uZSBvZiB0aGUgbm9uLXNlcmlhbGl6aW5nIFdSTVNSIHZhcmlhbnRzIChXUk1T
-Uk5TDQo+PiB3aXRoIG9yIHdpdGhvdXQgYW4gaW1tZWRpYXRlIG9wZXJhbmQgc3BlY2lmeWlu
-ZyB0aGUgTVNSIHJlZ2lzdGVyKSBpbg0KPj4gX193cm1zcnEoKS4NCj4+DQo+PiBGb3IgdGhl
-IHNhZmUvdW5zYWZlIHZhcmlhbnRzIG1ha2UgX193cm1zcnEoKSB0byBiZSBhIGNvbW1vbiBi
-YXNlDQo+PiBmdW5jdGlvbiBpbnN0ZWFkIG9mIGR1cGxpY2F0aW5nIHRoZSBBTFRFUk5BVElW
-RSooKSBtYWNyb3MuIFRoaXMNCj4+IHJlcXVpcmVzIHRvIGxldCBuYXRpdmVfd3Jtc3IoKSB1
-c2UgbmF0aXZlX3dybXNycSgpIGluc3RlYWQgb2YNCj4+IF9fd3Jtc3JxKCkuIFdoaWxlIGNo
-YW5naW5nIHRoaXMsIGNvbnZlcnQgbmF0aXZlX3dybXNyKCkgaW50byBhbiBpbmxpbmUNCj4+
-IGZ1bmN0aW9uLg0KPj4NCj4+IFJlcGxhY2UgdGhlIG9ubHkgY2FsbCBvZiB3c3Jtc3Jucygp
-IHdpdGggdGhlIG5vdyBlcXVpdmFsZW50IGNhbGwgdG8NCj4+IG5hdGl2ZV93cm1zcnEoKSBh
-bmQgcmVtb3ZlIHdzcm1zcm5zKCkuDQo+Pg0KPj4gVGhlIHBhcmF2aXJ0IGNhc2Ugd2lsbCBi
-ZSBoYW5kbGVkIGxhdGVyLg0KPiANCj4gLi4uDQo+IA0KPj4gQEAgLTI2OCwyMSArMzU3LDYg
-QEAgc3RhdGljIGlubGluZSBpbnQgd3Jtc3JxX3NhZmUodTMyIG1zciwgdTY0IHZhbCkNCj4+
-ICAgCXJldHVybiBlcnI7DQo+PiAgIH0NCj4+ICAgDQo+PiAtLyogSW5zdHJ1Y3Rpb24gb3Bj
-b2RlIGZvciBXUk1TUk5TIHN1cHBvcnRlZCBpbiBiaW51dGlscyA+PSAyLjQwICovDQo+PiAt
-I2RlZmluZSBBU01fV1JNU1JOUyBfQVNNX0JZVEVTKDB4MGYsMHgwMSwweGM2KQ0KPj4gLQ0K
-Pj4gLS8qIE5vbi1zZXJpYWxpemluZyBXUk1TUiwgd2hlbiBhdmFpbGFibGUuICBGYWxscyBi
-YWNrIHRvIGEgc2VyaWFsaXppbmcgV1JNU1IuICovDQo+PiAtc3RhdGljIF9fYWx3YXlzX2lu
-bGluZSB2b2lkIHdybXNybnModTMyIG1zciwgdTY0IHZhbCkNCj4gDQo+IEZZSSwgYSB1c2Ug
-b2Ygd3Jtc3JucygpIGlzIGxpa2VseSBjb21pbmcgaW4gdGhyb3VnaCB0aGUgS1ZNICh4ODYp
-IHRyZWUsIGNvbW1pdA0KPiA2NTM5MWZlYjA0MmIgKCJLVk06IFZNWDogQWRkIGhvc3QgTVNS
-IHJlYWQvd3JpdGUgaGVscGVycyB0byBjb25zb2xpZGF0ZSBwcmVlbXB0aW9uDQo+IGhhbmRs
-aW5nIikuDQoNClRoYW5rcyBmb3IgdGhlIGhlYWRzIHVwIQ0KDQo+IA0KPiBQcm9iYWJseSBt
-YWtlcyBzZW5zZSB0byBzcGluIHYzIGFmdGVyIHRoZSBtZXJnZSB3aW5kb3c/ICBPciBvbiBs
-aW51eC1uZXh0PyAoSQ0KPiBjYW4ndCB0ZWxsIHdoYXQgd2FzIHVzZWQgYXMgdGhlIGJhc2Us
-IGFuZCBJIGRvdWJsZS1jaGVja2VkIHRoYXQgdGhlIGFib3ZlIGNvbW1pdA0KPiBpcyBpbiBs
-aW51eC1uZXh0KS4NCg0KSSdsbCBmaW5kIGEgcHJvcGVyIHNvbHV0aW9uLiA6LSkNCg0KDQpK
-dWVyZ2VuDQo=
---------------UW5EcluXxZS9wHFRe79bLUV0
-Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
+[...]
 
------BEGIN PGP PUBLIC KEY BLOCK-----
+> +&wifi {
+> +	vdd-0.8-cx-mx-supply = <&vreg_l5a_0p8>;
+> +	vdd-1.8-xo-supply = <&vreg_l7a_1p8>;
+> +	vdd-1.3-rfa-supply = <&vreg_l17a_1p3>;
+> +	vdd-3.3-ch0-supply = <&vreg_l25a_3p3>;
+> +	vdd-3.3-ch1-supply = <&vreg_l23a_3p3>;
+> +
+> +	qcom,snoc-host-cap-skip-quirk;
 
-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
-kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
-=3DeeAB
------END PGP PUBLIC KEY BLOCK-----
+As the dt-checker points out, there is no such property
 
---------------UW5EcluXxZS9wHFRe79bLUV0--
+If your wi-fi works regardless of that, you probably don't need
+to set the one you intended to
 
---------------0KBQjINNJXNkhZ3AwbKqEaDf--
-
---------------4NdA3Y0ivVEa007mP1hrOaWH
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmjc8K8FAwAAAAAACgkQsN6d1ii/Ey+W
-oQf/Tlcx+hnflBEo7Nn5o7np17qk0I0N8Xr0pexu7UEQ/D0qTFOPwE93Gh85TYaljbv85+BWMWKn
-dPrY/8w+EDFUMUwl1tmP1xbt0gJ+t8iyco8uWI8FYychx+Wto7SyYYRauM+B0Oh3qYCz3dw+3xJB
-tOUr5YzP/IaXtnBdD6uYTdtUxvMxO9qvdRUDpsYqEspy3drDiyEcyLw07WF+V+IzSo+vDtjW6J1p
-Q9vrbpgWHg6rI2CY+HL0GNIrrmjDcGL4S2EMXaY3oNz1Vvbt48aCQ8z1/Ix2LT/kYWy3WOK9dFQg
-yL4QPZz18hvl7/pJ432L0lcoB8y8xow2vlLc4LkuEA==
-=PUL6
------END PGP SIGNATURE-----
-
---------------4NdA3Y0ivVEa007mP1hrOaWH--
+Konrad
 
