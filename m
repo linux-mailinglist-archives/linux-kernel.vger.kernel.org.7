@@ -1,82 +1,160 @@
-Return-Path: <linux-kernel+bounces-839274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27A67BB139E
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 18:15:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F916BB13A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 18:15:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E54D4A6BC8
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 16:15:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AEE63B83A1
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 16:15:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AAC32857E6;
-	Wed,  1 Oct 2025 16:15:08 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A12328725E;
+	Wed,  1 Oct 2025 16:15:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SR82psbl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 767ED2848AC;
-	Wed,  1 Oct 2025 16:15:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6441F27703D;
+	Wed,  1 Oct 2025 16:15:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759335307; cv=none; b=V3WMHx2snhIxO8EHAHa8EiN9PiE1jefC1nirJSXrXiiTqhH01bbVezjj1bY5PcHcWNCx96EnSl3Klxi4jffw9SggRZpVsksmO3OZ8RLJyRLAanpzO1Rm689fwJARYDQAX3uujlQAeHXfKZ1xWwkd6hh7EfgJSf/Qze0Z6l+Q5dI=
+	t=1759335311; cv=none; b=B8wdCbS2yhfnrdavCrAd93lPJ1WPaeNcLgp8olqAeHCfmhr8/a1JIBRJ1ctPb9f/AGEZqeLy+5L0D0ORB2BcPmlLsc8L2YSHxZAuja09Lz5N98j9EunAd3jbwF1VM2sFPnmgIv1etUsUmh6BLVNQtnnP3oSBxBZ2l2/uynLK898=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759335307; c=relaxed/simple;
-	bh=TmakBAuo8m6Hb521/eAt+DT1EHw04OwKhSdg4MlGVMA=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=W3QcHoZOFH1DtUobUOPB5xnISEkYLYVasHw6Lra4xK4MeO3/7ZDx67urncheDHtfixNwsjcA6uQNn517Lbuk0SBhQlJAVJRdZdHyn716PW1xajDaAOUZheple4rqvtWM5lyh3Nh//8lgb467eP97e/rRMuHURzZ+lIqn+EM1fAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ccKgY3Q02z6M4NC;
-	Thu,  2 Oct 2025 00:11:53 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0DBC2140142;
-	Thu,  2 Oct 2025 00:15:02 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 1 Oct
- 2025 17:15:00 +0100
-Date: Wed, 1 Oct 2025 17:14:59 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Terry Bowman <terry.bowman@amd.com>
-CC: <dave@stgolabs.net>, <dave.jiang@intel.com>, <alison.schofield@intel.com>,
-	<dan.j.williams@intel.com>, <bhelgaas@google.com>, <shiju.jose@huawei.com>,
-	<ming.li@zohomail.com>, <Smita.KoralahalliChannabasappa@amd.com>,
-	<rrichter@amd.com>, <dan.carpenter@linaro.org>,
-	<PradeepVineshReddy.Kodamati@amd.com>, <lukas@wunner.de>,
-	<Benjamin.Cheatham@amd.com>, <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	<linux-cxl@vger.kernel.org>, <alucerop@amd.com>, <ira.weiny@intel.com>,
-	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>
-Subject: Re: [PATCH v12 16/25] CXL/PCI: Introduce PCI_ERS_RESULT_PANIC
-Message-ID: <20251001171459.00002118@huawei.com>
-In-Reply-To: <20250925223440.3539069-17-terry.bowman@amd.com>
-References: <20250925223440.3539069-1-terry.bowman@amd.com>
-	<20250925223440.3539069-17-terry.bowman@amd.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1759335311; c=relaxed/simple;
+	bh=aZalLaE3pNBBVcnztrNI7/t8Lx2PoXLwzoQuDrkVXBc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MlEotJxf7A3Avl1NILE57YO2rADBjy3vqGDihLGR3G/6PcoYO/Moulpqh3TQtPoYDGBWQGsxpQl9eDjpaZcmxplCwK7a24/sJML65Gpa3r4/ir0hRkQlnPc2d0xr797um8t5u1mo1LpBUlcZwdnEXRW9PHkJmtsI08AreQLNHqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SR82psbl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71DEFC4CEF5;
+	Wed,  1 Oct 2025 16:15:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759335310;
+	bh=aZalLaE3pNBBVcnztrNI7/t8Lx2PoXLwzoQuDrkVXBc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SR82psblZghYJnKH9dYti8Pt287Wmrk5yFFcGqQhITmBuiBujqt8a1+E2BBOmc1D6
+	 siOrzJd+qNS/0L3jOqVuoAy7rjkXvI34Gl4r3GXW4wh76PsuJz4t4rWi8NQpW2EcS2
+	 Nw2Ix4hGaJYkEr/KeUbEr1VzQN+v9xE9YctRGMshRFRD0yNq5HnKtSA645gFE5pEnz
+	 P9QXYC1Qvs7gnHswhuIoAEqstBz4P6z9oXU/pzLn6hgc13Kp1clcYlQCo6MW5zxxFF
+	 OdCimEvENUb3RktIAvvZWd/WHYvWGp+olOmzzItVXk1ImOK0XXtXlDEony0dtU6SBS
+	 e4E+jalp3Mflg==
+Date: Wed, 1 Oct 2025 17:15:07 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Conor Dooley <conor.dooley@microchip.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [RFC 0/5] microchip mpfs/pic64gx pinctrl questions
+Message-ID: <20251001-unfreeze-ludicrous-9d744548bf65@spud>
+References: <20250926-manpower-glacial-e9756c82b427@spud>
+ <CACRpkdYXh2MCs=vAif7BpxfYVRuDTkYYNwpV2t=J_ZRW+N4Vyg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100010.china.huawei.com (7.191.174.197) To
- dubpeml100005.china.huawei.com (7.214.146.113)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="rtp5gPCiSpcL6Uyu"
+Content-Disposition: inline
+In-Reply-To: <CACRpkdYXh2MCs=vAif7BpxfYVRuDTkYYNwpV2t=J_ZRW+N4Vyg@mail.gmail.com>
 
-On Thu, 25 Sep 2025 17:34:31 -0500
-Terry Bowman <terry.bowman@amd.com> wrote:
 
-> The CXL driver's error handling for uncorrectable errors (UCE) will be
-> updated in the future. A required change is for the error handlers to
-> to force a system panic when a UCE is detected.
-> 
-> Introduce PCI_ERS_RESULT_PANIC as a 'enum pci_ers_result' type. This will
-> be used by CXL UCE fatal and non-fatal recovery in future patches. Update
-> PCIe recovery documentation with details of PCI_ERS_RESULT_PANIC.
-> 
-> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
-Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+--rtp5gPCiSpcL6Uyu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Oct 01, 2025 at 01:29:01PM +0200, Linus Walleij wrote:
+> Hi Conor,
+>=20
+> thanks for your patches!
+>=20
+> looking at the drivers it appears to be trying extensively to make use
+> of the pinmux =3D <>; property to mux entire groups of pins.
+>=20
+> pinmux =3D <nn>; is supposed to mux *one* pin per group, not entire
+> groups of pins from one property. See
+> Documentation/devicetree/bindings/pinctrl/pinmux-node.yaml:
+>=20
+>   The pinmux property accepts an array of pinmux groups, each of them des=
+cribing
+>   a single pin multiplexing configuration.
+>=20
+>   pincontroller {
+>     state_0_node_a {
+>       pinmux =3D <PINMUX_GROUP>, <PINMUX_GROUP>, ...;
+>     };
+>   };
+>=20
+> So e.g. when you do this:
+>=20
+>        spi0_mssio: spi0-mssio-pins {
+>          pinmux =3D <MPFS_PINFUNC(0, 0)>;
+>        };
+>=20
+> We all know SPI uses more than one pin so this is clearly abusing
+> the pinmux property.
+>=20
+> It is unfortunate that so many drivers now use this "mux one pin
+> individually" concept that we cannot see the diversity of pin
+> controllers.
+>=20
+> I cannot recommend using the pinmux property for this SoC.
+>=20
+> What you need to do is to define the actual pins and groups
+> that you have.
+>=20
+> Look for example at
+> Documentation/devicetree/bindings/pinctrl/cortina,gemini-pinctrl.txt
+> drivers/pinctrl/pinctrl-gemini.c
+> arch/arm/boot/dts/gemini/gemini.dtsi
+>=20
+> This is another SoC that muxes pins in groups, not in single per-pin
+> settings.
+
+This looks like something that the "gpio2" stuff could definitely go to,
+since it covers multiple functions trying to access the same pin. Do you
+have an "approved" example for a more demultiplexer case, where the
+contention is about which of multiple possible pins (or pin analogues)
+an IO from a particular block must be routed to?
+
+> Notice that the driver in this case enumerates and registers all 323
+> pins on the package! This is done because some of the groups
+> are mutually exclusive and this way the pin control framework
+> will do its job to detect collisions between pin groups and disallow
+> this, and that is what pin control is supposed to be doing.
+
+In that case, the mutual exclusion would be that a function can only be
+routed to one "pin", but there's no concern about multiple functions
+being routed to any given "pin".
+
+>=20
+> I.e. do not orient your design around which registers and settings
+> you have, and do not model your driver around that, instead
+> model the driver around which actual pins exist on the physical
+> component, how these are sorted into groups, how the groups
+> are related to function (such as the group of SPI pins being
+> related to the spi function) and define these pins, groups
+> and functions in your driver.
+>=20
+> Yours,
+> Linus Walleij
+
+--rtp5gPCiSpcL6Uyu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaN1TiwAKCRB4tDGHoIJi
+0rsuAP9Awy/VSOHk5xSFlfRSaEp18oj5GA6Djy6JGFkuNArVsAEAwa5jihPfC/Yu
+0qmRMUxN0jIs68SwD1bY6bIp76HZHg0=
+=Eoh8
+-----END PGP SIGNATURE-----
+
+--rtp5gPCiSpcL6Uyu--
 
