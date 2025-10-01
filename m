@@ -1,113 +1,120 @@
-Return-Path: <linux-kernel+bounces-838466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B6FBBAF3B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 08:24:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1466BAF3BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 08:25:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B37E27A4E0D
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 06:22:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D73319412E3
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 06:26:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A8662C2368;
-	Wed,  1 Oct 2025 06:24:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A9552D7DF5;
+	Wed,  1 Oct 2025 06:25:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WBmH2+ws"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F7D44XTS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAAEA2D6E5E
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 06:24:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 687AC1547CC;
+	Wed,  1 Oct 2025 06:25:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759299866; cv=none; b=rsJbtyYttJHR2ujQZNI4AQjpBl6wVyAEhkWGgpFqvoTkherTsHemL+iXErFsNDinXuhZaAKaZsJ5d3bg1AThD6N5jCZsDasuTRcIVoBnOlqxBZ8yK3OQ5TGojSKdBi1yww2P9yWFcliv2zRtJ6wWL/BwbuK1dT5USx5/d6uMyo0=
+	t=1759299930; cv=none; b=UjDS3TCqUz+WuAcQHmJ0/FRJxOPqyairMMeA7n63sO+UQ60AtZVQEMzE8+vGPMd1A+1PjeTICDvniPLZHPELfDYPdOuCfoTcWx1IrBuSQqp9c3wDgVrrdAQ0w9qX2duDcn01oxfBz78X7P+bbgxd/3HTZIoNbKk94lmAu8qMy8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759299866; c=relaxed/simple;
-	bh=CRAgifSudG0wZpugBPM8hbg3tAFsd9BARcUmc0q8uy0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FfiYtiBgqneUyIFnL5sOUPvgP8QetkCbjT20FIrE2Cwwz/qbTlaIUQqK0eHNFp58SBZvtmWk3/90wFkqfes3GAoeqCkq0f6KtKa2eQuF7+i3YW9m7viTfl0O3i3SmwFSamtnq7P+Zz59uXv3uCcHwj9SB83v9mC3/pIJe3sSt10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WBmH2+ws; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-57f1b88354eso7282179e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Sep 2025 23:24:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759299862; x=1759904662; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CRAgifSudG0wZpugBPM8hbg3tAFsd9BARcUmc0q8uy0=;
-        b=WBmH2+ws8/DDuBObE2cAr8KZ/24nrJYEIYCwS+M7mxGUmUwpdH3/oskZ2UqtynHEun
-         RbP2kdtvDP7liHTY7D0oF7RdORfI+HqIrEG8bC1bkBIFgoD2/Yl/x8OXTx4msfQV7+Uk
-         aDP0J/wwS1CbmxhR7grMGDhEqp5BmBP1Bp4mWug7YdxhUubT9IVlFfeuJTQY80jmRdrA
-         5YHHFLH0shOZ380FYVXwdhKOUcs1cNa1/kiNTVBNP6rLHKXWICR2pWsScOd4Xr5LFCib
-         l4CChbXU9ykn0RNwTi0ulhcAfrCw0uyxFXw/ntewc9zmIng2QDGIPBrCMdzMJa4HBkBB
-         16sQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759299862; x=1759904662;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CRAgifSudG0wZpugBPM8hbg3tAFsd9BARcUmc0q8uy0=;
-        b=Bjmbb/77zYxfIPv6kgSndzIJDGFozBptai2z7fQ4YPsYcqlIJo47CaDjKq7KAsRZo7
-         aSctsTdvqzxm6OctHVnN6835T7+mmM9ZxfrklYNSDI7/+0AIfugFGFUGOFPNavKhYCGE
-         TxOabNxJW6Rc7Gs/MBFZbnj6VSlRyLYjAfFzgPuSVlrWFZ31gfnjekc6hD2xnRVNmZ/i
-         /9TyTpCP14m4j0t9iytr4BUmYXUF5+cfFsByKd8ydK261ntNFsOO/jTYANHuFalWG7hh
-         1hA4r0RTm09F3wwUdk2c20C6JrlUhCt8mzdiwJbub4QpE5z8Cn8WkSQYyZjHiDrfw/MJ
-         pjBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW1/X/qGVsTaByIhNKFpN2dc0UmIwYIn6tbFjyurKGiaHGev5P3bODoeXTN6ZvJgGkFnRwDh2ytD+eyPoI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCU2PSoCDHL0yVQATncLU8GDLhaT99Nt7SyeX4UlklZqM+EY4Q
-	b2G4PPUqTnOwVs4J1m3/lHl69VI4BckfIHVY/bnfiQty0d6GwuuzSE/ad38hnRPGIArKinNw6SZ
-	nHRXS9w7OrX+CRizFEsdIBhY0+sznnnXpUjIK/Ymu3g==
-X-Gm-Gg: ASbGncufkABNbNlMw+limQtod/j4GdPJYRdjqoEGv1aP64qmhcLYWRKHGDBPX+LeH6A
-	4Pb3yatgXXbEEFtNoD9WixhxVJq+P+UpGGw+yXgt8rF5/xlEwo6plMrogNjEwtgWNdYtdfoUaLI
-	tKbRqp8awrp2K1d37ZSlU5HK+bYiHDVkM8QWtUNRVeRM1GsWAaZg/l5a3fXJRhF2mJy/51MuPy3
-	U2LY4kkIOe6B7/I7ZEIuVz5wKyLQUE=
-X-Google-Smtp-Source: AGHT+IFozN4lyb6vOpauqxIZ3ZLWPP665BWKXXa2eLUpNSUCsqO967pjOJIApkPryd/vgSxP+dQ4iOCA8lbPex5gtHE=
-X-Received: by 2002:a05:6512:6c9:b0:57a:1818:480f with SMTP id
- 2adb3069b0e04-58af9f6e9famr596020e87.46.1759299861855; Tue, 30 Sep 2025
- 23:24:21 -0700 (PDT)
+	s=arc-20240116; t=1759299930; c=relaxed/simple;
+	bh=/J/2bX7aEzcIPmPq+XxSl2EF1EXZeFlQ1d6ME70Ff4c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QQpyjAQny5TEYr76lqUgoqQ4wOV9SMCze5wJWJuu/O/AWNoOK+8PV8MEMmbq7SR039gBY8xKbzVhLrd8yIyliFxz6OHDuY+mUvx3Qe7loZfLnZyKW+aI/jANHZCFoI7duYZ2GWeUvbIalqrYnnAVRIGSZ0DKuhwMXMfP3nl3k1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F7D44XTS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3240C4CEF4;
+	Wed,  1 Oct 2025 06:25:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759299929;
+	bh=/J/2bX7aEzcIPmPq+XxSl2EF1EXZeFlQ1d6ME70Ff4c=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=F7D44XTSOEZZgbF+pNfhKskgouj8f+vvXtQJRJPIMnymnnyKDWqP1oPMjAp/iAvgA
+	 gvl3ioZtbNJr9mpn+PsdUE+Pe3fLTnc5tihS3uT1AeBFbIR4s+B+PVxEeR034JW3T5
+	 8kfThQOXRU6OBIaWBH0n6Cg2s+Bh5U974diLqMNqUw7cRpA2F1UkAaJgM/WeHRGThi
+	 nevUK4Laon3OogpJj8Cs4Yde7w1i+l8VsZe+1Y01O+7I5HB+XKFj2Hp4X/xaz8JHSc
+	 ON2MR/5ET085jfHMMjGNPfjKGC+Be0ZeEZ9TgyJyO3MT1g3qcaq9vjf1gFIqeyNpVQ
+	 KJGKuFtwVHwMQ==
+Message-ID: <4085c078-20a5-4ba0-9017-85051c91bf3b@kernel.org>
+Date: Wed, 1 Oct 2025 15:25:22 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250917-rda8810pl-drivers-v1-0-74866def1fe3@mainlining.org> <20250917-rda8810pl-drivers-v1-3-74866def1fe3@mainlining.org>
-In-Reply-To: <20250917-rda8810pl-drivers-v1-3-74866def1fe3@mainlining.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 1 Oct 2025 08:24:10 +0200
-X-Gm-Features: AS18NWB7xcfQD0XZT5zZ03zQzwmaWFrlIYwfqVvy-IagezTBvTp7mSD81HURh8c
-Message-ID: <CACRpkdbhTWtu1tvGQ-nY3phUeD8+0D2TmEQQUwDXhXS5thHn1g@mail.gmail.com>
-Subject: Re: [PATCH 03/25] dt-bindings: gpio: rda: Make interrupts optional
-To: Dang Huynh <dang.huynh@mainlining.org>
-Cc: Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Sebastian Reichel <sre@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
-	Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-unisoc@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-rtc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-pm@vger.kernel.org, dmaengine@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, linux-mmc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 06/15] blktrace: split do_blk_trace_setup into two
+ functions
+To: Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+ Jens Axboe <axboe@kernel.dk>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-btrace@vger.kernel.org,
+ John Garry <john.g.garry@oracle.com>, Hannes Reinecke <hare@suse.de>,
+ Christoph Hellwig <hch@lst.de>, Naohiro Aota <naohiro.aota@wdc.com>,
+ Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
+ Chaitanya Kulkarni <chaitanyak@nvidia.com>,
+ "Martin K . Petersen" <martin.petersen@oracle.com>
+References: <20250925150231.67342-1-johannes.thumshirn@wdc.com>
+ <20250925150231.67342-7-johannes.thumshirn@wdc.com>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <20250925150231.67342-7-johannes.thumshirn@wdc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 16, 2025 at 10:09=E2=80=AFPM Dang Huynh <dang.huynh@mainlining.=
-org> wrote:
+On 9/26/25 00:02, Johannes Thumshirn wrote:
+> Split do_blk_trace_setup into two functions, this is done to prepare for
+> an incoming new BLKTRACESETUP2 ioctl(2) which can receive extended
+> parameters form user-space.
 
-> The GPIO controller from the modem does not have an interrupt.
->
-> Signed-off-by: Dang Huynh <dang.huynh@mainlining.org>
+s/form/from
 
-Can you split out the GPIO patches (like the 3? of them?)
-into it's own series and send them separately? They seem
-to be possible to review and apply separately.
+> 
+> Also move the size verification logic to the callers.
+> 
+> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 
-Yours,
-Linus Walleij
+
+> @@ -593,17 +581,39 @@ static int do_blk_trace_setup(struct request_queue *q, char *name, dev_t dev,
+>  	debugfs_create_file("dropped", 0444, dir, bt, &blk_dropped_fops);
+>  	debugfs_create_file("msg", 0222, dir, bt, &blk_msg_fops);
+>  
+> -	bt->rchan = relay_open("trace", dir, buts->buf_size,
+> -				buts->buf_nr, &blk_relay_callbacks, bt);
+> +	bt->rchan = relay_open("trace", dir, buf_size, buf_nr,
+> +			       &blk_relay_callbacks, bt);
+>  	if (!bt->rchan)
+>  		goto err;
+>  
+> +	blk_trace_setup_lba(bt, bdev);
+> +
+> +	return bt;
+> +
+> +err:
+> +	if (ret)
+> +		blk_trace_free(q, bt);
+
+I do not think that the "if (ret)" is needed here.
+
+> +
+> +	return ERR_PTR(ret);
+> +}
+
+With that fixed,
+
+Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+
+-- 
+Damien Le Moal
+Western Digital Research
 
