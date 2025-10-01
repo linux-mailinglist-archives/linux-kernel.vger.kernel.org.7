@@ -1,61 +1,71 @@
-Return-Path: <linux-kernel+bounces-838744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-838745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFFE6BB00EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 12:50:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50F90BB00F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 12:51:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DD8A192478F
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 10:50:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D71783A758F
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 10:51:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29E3D2C08AD;
-	Wed,  1 Oct 2025 10:50:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 771BF2C0264;
+	Wed,  1 Oct 2025 10:51:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="y7byy0Ki"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UBJUsa6Q"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 477D9256C6C;
-	Wed,  1 Oct 2025 10:50:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1122F2882D0;
+	Wed,  1 Oct 2025 10:51:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759315817; cv=none; b=eaeEUNATZhhgGQSscVOMxNfDJSVMew0kIj8Zggy2x+QnNMC17lyfJSalh7W3E+wzFQEiTXZEkhXVOsLyzLuJqPsdp+Fv4fueVh6FoTOkrEEHsx7y4hK4RFIkw/u/bWzaVF1JkJrr+GgG8CqDtOM1s9K3YVqT9jg1/RJah4bL1s4=
+	t=1759315868; cv=none; b=HUWavTw1TACmM5MDan+/MAdVhLXYRvzomPuLSfwvt6tMQCrc4FNIUonLReXuCfpET0ark+ahyblfUhX5SDa+UMnRQ0+QB+X0U6Ftw0ZJDXzW6bSvrSq/WSzZudsXJtGiLTQmbpjG9BdVsk/w4fO3wN4HK+t/k4D2V33swKxXgjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759315817; c=relaxed/simple;
-	bh=hhvNi4BXC/oxjZ8wjfR0Blg8dvrF7jVgQ/eOAP7QG7M=;
+	s=arc-20240116; t=1759315868; c=relaxed/simple;
+	bh=7d1TeNea7S49qLQyujGBn5BCTJqyxTNSV5DhIggSMt8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kZmeiOv8Xt9gGDcq3Q5IswJmdt1xEAIba/EmD+wn2XKvwlCNah5TKwsglTO8BNI7TqTGiJ73dGo+SzN2gPgnm1XXdhUfwRteo+ZOj5CBivBg7GdkN3Ns29Ecjn2xvB5JxKiofHKJ1IX/YmU+eHWlWdEWX2PwcV/po/9+vluufPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=y7byy0Ki; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42568C4CEF4;
-	Wed,  1 Oct 2025 10:50:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1759315816;
-	bh=hhvNi4BXC/oxjZ8wjfR0Blg8dvrF7jVgQ/eOAP7QG7M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=y7byy0KiICFZvNXvebaDQaziQSJyHfBz2cSXui2H9SfN/RMOHb6jawoqmbmlZ8dMw
-	 Xg6iLhKalepk7RnqKQSdEzAY6hb4h5eU7yQrpYpn+5ovyWukumSH583MqIaTsXoAcp
-	 5gOTHzepVRolMSXymvlLTqasRtb4pvPcW5XKi3SY=
-Date: Wed, 1 Oct 2025 12:50:13 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, rwarsow@gmx.de, conor@kernel.org,
-	hargar@microsoft.com, broonie@kernel.org, achill@achill.org,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Arnd Bergmann <arnd@arndb.de>, linux-fsdevel@vger.kernel.org,
-	linux-block <linux-block@vger.kernel.org>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Ben Copeland <benjamin.copeland@linaro.org>
-Subject: Re: [PATCH 5.10 000/122] 5.10.245-rc1 review
-Message-ID: <2025100105-strewn-waving-35de@gregkh>
-References: <20250930143822.939301999@linuxfoundation.org>
- <CA+G9fYvhoeNWOsYMvWRh+BA5dKDkoSRRGBuw5aeFTRzR_ofCvg@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PkLEJD7cg/LspYEZtemfdS/bE6lpUiXpS1+B6XzDLey7R1lCkbDAI1m8imEzQYNycbiAes9oydcjE10ZRbB7GY5m1o8rGXAp6nhl1JC8bSyWP870E7XSctYIdKZP9o28ca6BqN+DuuyZums+zQt1anb2u6jOzfd0OqxbTzbjCgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=UBJUsa6Q; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=7d1TeNea7S49qLQyujGBn5BCTJqyxTNSV5DhIggSMt8=; b=UBJUsa6QCfYotDZmcOY5GbdOEi
+	ZwsBD0brmBo8bH5T88CyeKJC0fRjs0ym6f75uCWKWjN5UrinRG959Mds4ZJEWJQHVB5wdgOI8NXWr
+	rFK/O/ZQfkjseOHJQrgN/oCixepYXX1/GgwncG+3M/hY4u5Fy5/5NbLtJNuBtZu1KPXirCsvHJL9y
+	GQaherlvkyQVq6sQuGmrE3j94n73MaG3vW5JwsEbbf8TwugbbhIvGnjN8oMAYihx7ktU2EYxPlMBZ
+	Bh+KMVz1Rf9UsSnYg97C7royMdX8Bl89N/BF+uGjJcSPx4E4c4Lhpxbwb4vzh2bCnFzluD4i1B9Im
+	PmTecqFg==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v3uQE-0000000FJaJ-1lBV;
+	Wed, 01 Oct 2025 10:50:59 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 9D810300328; Wed, 01 Oct 2025 12:50:58 +0200 (CEST)
+Date: Wed, 1 Oct 2025 12:50:58 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Juergen Gross <jgross@suse.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, llvm@lists.linux.dev,
+	xin@zytor.com, "H. Peter Anvin" <hpa@zytor.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>
+Subject: Re: [PATCH v2 09/12] x86/msr: Use the alternatives mechanism for
+ WRMSR
+Message-ID: <20251001105058.GP3419281@noisy.programming.kicks-ass.net>
+References: <20250930070356.30695-1-jgross@suse.com>
+ <20250930070356.30695-10-jgross@suse.com>
+ <20250930083137.GH3245006@noisy.programming.kicks-ass.net>
+ <2df26cc0-53bc-499c-8c78-bc24fd8bf882@suse.com>
+ <b2e07601-80d9-4a6e-a60a-6667d679494c@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,73 +74,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CA+G9fYvhoeNWOsYMvWRh+BA5dKDkoSRRGBuw5aeFTRzR_ofCvg@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <b2e07601-80d9-4a6e-a60a-6667d679494c@suse.com>
 
-On Wed, Oct 01, 2025 at 12:57:27AM +0530, Naresh Kamboju wrote:
-> On Tue, 30 Sept 2025 at 20:24, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > This is the start of the stable review cycle for the 5.10.245 release.
-> > There are 122 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> >
-> > Responses should be made by Thu, 02 Oct 2025 14:37:59 +0000.
-> > Anything received after that time might be too late.
-> >
-> > The whole patch series can be found in one patch at:
-> >         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.245-rc1.gz
-> > or in the git tree and branch at:
-> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
-> > and the diffstat can be found below.
-> >
-> > thanks,
-> >
-> > greg k-h
-> 
-> The following LTP syscalls failed on stable-rc 5.10.
-> Noticed on both 5.10.243-rc1 and 5.10.245-rc1
-> 
-> First seen on 5.10.243-rc1.
-> 
->  ltp-syscalls
->   - fanotify13
->   - fanotify14
->   - fanotify15
->   - fanotify16
->   - fanotify21
->   - landlock04
->   - ioctl_ficlone02
-> 
-> Test regression: LTP syscalls fanotify13/14/15/16/21 TBROK: mkfs.vfat
-> failed with exit code 1
-> 
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> 
-> We are investigating and running bisections.
-> 
-> ### Test log
-> tst_test.c:1888: TINFO: === Testing on vfat ===
-> tst_test.c:1217: TINFO: Formatting /dev/loop0 with vfat opts='' extra opts=''
-> mkfs.vfat: Partitions or virtual mappings on device '/dev/loop0', not
-> making filesystem (use -I to override)
-> tst_test.c:1217: TBROK: mkfs.vfat failed with exit code 1
-> HINT: You _MAY_ be missing kernel fixes:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=c285a2f01d69
+On Wed, Oct 01, 2025 at 10:49:31AM +0200, Juergen Gross wrote:
 
-You are not missing this "fix".
+> Thinking more about that I believe there are additional problems:
+>=20
+> Having overlapping alternatives not starting at the same address will res=
+ult
+> in problems with length padding of the outer alternative in case the inner
+> one starting later is extending past the end of the outer one. This might=
+ be
+> possible to handle, but it will be tedious.
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=bc2473c90fca
+Yes, this must not happen.
 
-You are missing that one, but why is a overlayfs commit being cared
-about for vfat?
+> Using your idea with pv_ops could result in the inner alternative not bei=
+ng
+> at the start of the outer alternative AND being not the initial code. This
+> would result in patching in the .altinstructions area instead of the norm=
+al
+> .text site, resulting in possible loss of a patching action if the patched
+> area would have been used as a replacement before.
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=c45beebfde34a
+Not quite, the nested alternative was in the orig_insn part. So it would
+result in patching the orig text twice, once from the inner (which comes
+first in the patch list) and then once again from the outer (which comes
+later).
 
-Another overlayfs patch that is not backported that far.  Again, why is
-this a hint for vfat?
+> So in my opinion allowing alternatives to nest without all inner levels
+> starting at the same location as the outermost level would be a receipt f=
+or
+> failure.
 
-thanks,
+Certainly tricky, no argument there.
 
-greg k-h
+> I think I'll write another patch to BUG() in case such a situation is bei=
+ng
+> detected.
+
+Fair enough; we should not currently have any such cases. And going by
+my attempt to make it work, its going to be really tricky in any case.
+
+But please put on a comment on why, which explains the constraints.
 
