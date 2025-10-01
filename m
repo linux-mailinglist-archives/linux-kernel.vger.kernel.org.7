@@ -1,95 +1,86 @@
-Return-Path: <linux-kernel+bounces-839210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18D8FBB111B
-	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 17:28:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B24D7BB111E
+	for <lists+linux-kernel@lfdr.de>; Wed, 01 Oct 2025 17:29:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85ED71890BA7
-	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 15:29:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65B037A6C48
+	for <lists+linux-kernel@lfdr.de>; Wed,  1 Oct 2025 15:27:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 050B92773D9;
-	Wed,  1 Oct 2025 15:28:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A606D277813;
+	Wed,  1 Oct 2025 15:29:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="gVWZAUQi"
-Received: from mail-qk1-f228.google.com (mail-qk1-f228.google.com [209.85.222.228])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XmQoSMEh"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3090267AF1
-	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 15:28:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.228
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 366B92773D9
+	for <linux-kernel@vger.kernel.org>; Wed,  1 Oct 2025 15:28:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759332517; cv=none; b=VujMluLO83BCq+fp9kYIJE3lxsJYNazl1TdR7MnwnAP2W1QnEB7BdDcnbiMFS3PBCswgwHVpscd9YxoK0pb3qJSKjdnTJc6IBYrydE40McCDv3K1fGOmA18OC+6Se3d/irrmUy7OGBSgZXWYLySvLzNqogPLHGPZe1PoYcEtzRc=
+	t=1759332540; cv=none; b=m5wc5eOLT7/J908lq4d7YzGHffSm53UtwawgDvj+uAhwalarTEeDa/2MPgr/bLD0q4bQ0uUOPrBsnwFOOpEsLM1vfbCEl/CBv6roKR/hV0Nj3P9NaIb5rCMqJ1xBzI0tdpAiGKdaefnTJ+x/ZmxcycATw9UK3KTAHBROC2gJAMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759332517; c=relaxed/simple;
-	bh=xhSeHCLhPIXnD0/zncoEoit4c9dMohXzhwKkUT+AHec=;
+	s=arc-20240116; t=1759332540; c=relaxed/simple;
+	bh=pM2tJQto+FBXrWHQP6YpikRxnpK4wtkLL4Epta9htLY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cePo5ehcaREIUkLODxc/vUahGZndhNWtrPza8xiE8mjyl6rAatZrpysnqp958xJmetFccIrazjkePYHyPwU9JWugr0jB03TDZi0+0Y8Oect86owlbY/VpdhotLrWNkKuezAL34rFOx7ZbJWdrRTXu7+HnFNkoTggb8bakRdbUG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=gVWZAUQi; arc=none smtp.client-ip=209.85.222.228
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-qk1-f228.google.com with SMTP id af79cd13be357-859b2ec0556so729902885a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 08:28:35 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=silGEtg6YvU34ekAsuKwvQyhYdjdQKNR0KHf3ykYZy6YuAOOJmNqZoZUWD+3Jv9pVznBsfojX8MM31YqHQlOf1edpQ1imHPv9Hk9Fqvpch4yRuowcTT5On9zH7NqephnWqRbdURJxzlnK/HC0qI2IcdYtd1m1wH/dmkYKIlj4N8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XmQoSMEh; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759332538;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=e+slWpPA54aYcVOS9FeUlchlk4c0XDL9e2Lcv8RaMd4=;
+	b=XmQoSMEhCa/LhcH7eGMLGcbIj1DL/qLTV3M1c1wpzC4MH6tbAtgpy0EsWA7ZIrk+m+DnWb
+	yRAXkOXgHTvFxAJp7AzALzkFwNOnbhexB/Ev9FvPcJrPI3wNjQFzCraq19sAkZ0W9IZXtL
+	ON9RS86lIBIfLG0OY4AWfonO5R/PJ2A=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-491-ySLSgPdqO86j_qija1sOIQ-1; Wed, 01 Oct 2025 11:28:53 -0400
+X-MC-Unique: ySLSgPdqO86j_qija1sOIQ-1
+X-Mimecast-MFC-AGG-ID: ySLSgPdqO86j_qija1sOIQ_1759332532
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3ee1317b132so5765045f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 08:28:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759332515; x=1759937315;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:dkim-signature:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=REY5MPBUvyw7JEoBE4wqPx+Ebw8YSmQnOCr3RtTwLVM=;
-        b=MbF73EClYDc/js7QXF+3I6BfDv7aKtsUbZ015uh+yswDgIBDrI84EoB1DEYc6VNAwQ
-         1yM8dLIIlOkNEqTJH7JYtFZfXYcKrqmXn32VRuJrMBdfnhzFm1P1PZlb3HecuWsPJEkQ
-         MUG5eASRgE23HV6YrBRGJ8KCzcvN8CvpF3DGJ5QbM5re9HwjgVFDpr2/Vm2iRD2YE8rb
-         KT0yIBYXCPAr4f1Xigt6vCCG9VqYmfWDYUs8quWSilmS5K2NNB0rJGlq9GyZSnpowXLf
-         qOXsmBCMxPv8m6A1yC2aq9/36EfLUUw/OM+9NzeTjxr3X4XfImExauh/FmaeKANcmvN3
-         uQDg==
-X-Forwarded-Encrypted: i=1; AJvYcCXRg6wWHXzGZRUPcWlQLnkpMHezEOXWzQUUyEcP+4I4EwiKJ1B5ncYa+/7Jz9d2uPxr/eGMfkO7CHCfFHo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQoYevpsLFuvrmDrBgMU+8xeSAl5ASQmYTjUJiYMNUBTx8s6ZG
-	np4mf6/mfkCeB1BU3eadoQq0Wb6g5Qa7i31we+hbRr6M7nvB2XJ+l7wmLoYnOy/GkEW72XFon2m
-	AJYz4nTgMExr4/7Dmy0F8R3mGbQZlCEAxHFzglxdToea9Q3E+PZSgyNtETQyVq38AQ5+O23dyB5
-	vCIummL8p4AxKc8MYBBtnDqYen+8qIcj3uu1jpIeOzCkd19ZAngqx/vheAkU/1FYWKXlomVtCzo
-	HkLSVScrxJN3smQXXDxrZtD
-X-Gm-Gg: ASbGnct/0ojZON1DmZ5flJnnKraC7WEKYLqdMUFsuPur6Y7KyaimJDLy0Iai9x9izHn
-	vS3tXvK0MGRhUhnLy0g3fQwF9FY/OGX0X+yYqdRnhDxUA/B8PNGWWaq11T0RoEDBsABPC/gpt99
-	4qvmAg9WmgokP6/P+7JnlWHMFh08tfK7/4l4M1Ziz7I/VHVQLkFEhIoBKrKffDvO0drofBN/pod
-	FgX9jH9/i83oZ6hijKrw5aL25vlron4nms7TkIHIKO3CMciuMO3LvJmzgLmp8R5pkFFyhChFFPB
-	OjaW1ZWG13CjOao9cVhKPUK8kr+BUSfdIaQERIFBIfd1x/o8+dBz2TuMc55HS/A5Y4wb59HhPUo
-	48SH7irY0E0suuKhSOd2dX+VLo4YcxR2xTjY+cWXEQmV5NsV3J7f1pNJ9qyJ7mGmD9Xwd9MsFtb
-	B68hrCrAs=
-X-Google-Smtp-Source: AGHT+IH4DSW+APkyBxsv1/KkfvvRTtX1lUDDRatbt2YjHh/Dw1DpzxUB66KDYO2DPp3fNXojGcUwyJLM/4UT
-X-Received: by 2002:a05:620a:6cc2:b0:864:f5f5:1f36 with SMTP id af79cd13be357-87377242049mr496115585a.67.1759332514541;
-        Wed, 01 Oct 2025 08:28:34 -0700 (PDT)
-Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-0.dlp.protect.broadcom.com. [144.49.247.0])
-        by smtp-relay.gmail.com with ESMTPS id d75a77b69052e-4e55cfd224esm21401cf.14.2025.10.01.08.28.34
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 01 Oct 2025 08:28:34 -0700 (PDT)
-X-Relaying-Domain: broadcom.com
-X-CFilter-Loop: Reflected
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-780fb254938so41862b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 08:28:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1759332513; x=1759937313; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=REY5MPBUvyw7JEoBE4wqPx+Ebw8YSmQnOCr3RtTwLVM=;
-        b=gVWZAUQiuXLlfA0LQBWUEVxT0Lo4a2ExkAO3egGGX6hteAHojqstiCp5sALMsIe+r3
-         y/n0t4/VWnboYpPT7AMSM/OKgBKEN0CdSz1cSC5QXICaBYp358qGbdJPe/i0cVS3Dt3j
-         9wt1hzloE6P5lqjZC6WNrMEb6Z/Jd3eQGOT2M=
-X-Forwarded-Encrypted: i=1; AJvYcCVPiYcx+iJ32/6C9wNPtc6mk+McL6KdYKw0FJcL4yJWrBq7tl3VMcfSgGb5ymBuT/8tagQ8c+P0yp0aCWM=@vger.kernel.org
-X-Received: by 2002:a05:6a00:190c:b0:77f:449f:66b0 with SMTP id d2e1a72fcca58-78af4261855mr4611403b3a.32.1759332513155;
-        Wed, 01 Oct 2025 08:28:33 -0700 (PDT)
-X-Received: by 2002:a05:6a00:190c:b0:77f:449f:66b0 with SMTP id d2e1a72fcca58-78af4261855mr4611365b3a.32.1759332512669;
-        Wed, 01 Oct 2025 08:28:32 -0700 (PDT)
-Received: from [192.168.1.3] (ip68-4-215-93.oc.oc.cox.net. [68.4.215.93])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78b01fb1902sm53209b3a.31.2025.10.01.08.28.29
+        d=1e100.net; s=20230601; t=1759332532; x=1759937332;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=e+slWpPA54aYcVOS9FeUlchlk4c0XDL9e2Lcv8RaMd4=;
+        b=TGvbLMuQe9xkdtFf6lPkN8dFmSbUrEWka/y1/FW0Swki+UpvDxKynfzfvZr5+HEGc8
+         gXytO9STENhX9kR6IsjGDvDeFn9S5BnlyDPAJ2zmH2AUk8nTXGdoAQIGfpYI2DGHtdyz
+         vAXPMo0zsqWSMyo/T0irPQRdyBcJtKpT5pl1OkeKmuOG2+P1yy3Q7ghL4BpRZvHZw7lz
+         aaC67eMPgVyZ4UzOobzZaQnsxMZ6mKuN47p7IfwLg4I0XPQnASBecAtwgbT6wqwZCLqx
+         8qSnK6w+OKs4IHMZ9WBFbK1nJfkbApg4KxmBsLAu5efvam415wU3B269rFm8noXXS5UI
+         6Jlg==
+X-Gm-Message-State: AOJu0YyvUMIvEvXHh2eftcjDFZbQxLMg2siU2LUPNot8RsTxqDAkJaXa
+	ou4WRnAMIDv8C5z2IqwYGewmz5rSXbGF0kxHQVAgEMbTadR3T2SjqSzrm76Mge5ow7bnoKa/2Ma
+	BTdE3XVWVmJTMUl536/Y50pa4VGMIB31dQ/oAZ3uWI18meeSXtzecFNEQJurN5rZoAw==
+X-Gm-Gg: ASbGncuzIocqLEqwlyL8fwppW9/g2rU2TgaEYHMWNjGONHoKcYo+7AL+426dH9bhS6k
+	Emb0JuPE6/XmpCOKH6ltarbrYCa4JOVUBARKIzNFNajwuwmOLZXh7JTQmOaTlHvjQLvvz39MHzj
+	TOdp+LyKI/e3o217El4lqsa4UxZdIxiWukF7ThXqQa9Mwf0YPNu6f2HXCyRg/Vb1p68PsgS2OE9
+	PfawBnJOR65NrCmNsHc5XCl6zubORgzrWhVsj3NipsAFvs9k3spULWkwZFDj+a7x2j6eXiFSCc5
+	wulxyf+HcRBPzLfye2RZ8jviCE3vVESlLuQ2RqybnFOHpbg4VPWDc1TZVRcts/z1Pv0pYV3I5dF
+	tAgRPqSDU
+X-Received: by 2002:a05:6000:2388:b0:3ea:bccc:2a2c with SMTP id ffacd0b85a97d-425577ed5d2mr3451651f8f.11.1759332532353;
+        Wed, 01 Oct 2025 08:28:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGdwITK7uCSqv/A/igDjSEGaWLXOD/8b6fdy6NcMUtXataIInxRPW2Ouk591De4Glwn2mQ9Sg==
+X-Received: by 2002:a05:6000:2388:b0:3ea:bccc:2a2c with SMTP id ffacd0b85a97d-425577ed5d2mr3451604f8f.11.1759332531757;
+        Wed, 01 Oct 2025 08:28:51 -0700 (PDT)
+Received: from ?IPV6:2a01:599:901:4a65:f2e2:845:f3d2:404d? ([2a01:599:901:4a65:f2e2:845:f3d2:404d])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-40fc5603381sm29816097f8f.31.2025.10.01.08.28.48
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 01 Oct 2025 08:28:31 -0700 (PDT)
-Message-ID: <68e10834-0c1a-4cbe-be0b-76e17f8341e0@broadcom.com>
-Date: Wed, 1 Oct 2025 08:28:33 -0700
+        Wed, 01 Oct 2025 08:28:51 -0700 (PDT)
+Message-ID: <48ed62b1-cceb-4bce-923c-25c11dbccc37@redhat.com>
+Date: Wed, 1 Oct 2025 17:28:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,86 +88,137 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: hwlock: Adding brcmstb-hwspinlock
- support
-To: Peng Fan <peng.fan@oss.nxp.com>, Kamal Dasu <kamal.dasu@broadcom.com>
-Cc: bcm-kernel-feedback-list@broadcom.com, andersson@kernel.org,
- baolin.wang@linux.alibaba.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, linux-remoteproc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250929200628.3699525-1-kamal.dasu@broadcom.com>
- <20250929200628.3699525-2-kamal.dasu@broadcom.com>
- <20251001025817.GB23170@nxa18884-linux.ap.freescale.net>
+Subject: Re: [RFC PATCH v5 13/18] mm: Map page tables with privileged pkey
+To: Kevin Brodsky <kevin.brodsky@arm.com>, linux-hardening@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+ Andy Lutomirski <luto@kernel.org>, Catalin Marinas
+ <catalin.marinas@arm.com>, Dave Hansen <dave.hansen@linux.intel.com>,
+ Ira Weiny <ira.weiny@intel.com>, Jann Horn <jannh@google.com>,
+ Jeff Xu <jeffxu@chromium.org>, Joey Gouly <joey.gouly@arm.com>,
+ Kees Cook <kees@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Marc Zyngier <maz@kernel.org>,
+ Mark Brown <broonie@kernel.org>, Matthew Wilcox <willy@infradead.org>,
+ Maxwell Bland <mbland@motorola.com>, "Mike Rapoport (IBM)"
+ <rppt@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Pierre Langlois <pierre.langlois@arm.com>,
+ Quentin Perret <qperret@google.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org, x86@kernel.org
+References: <20250815085512.2182322-1-kevin.brodsky@arm.com>
+ <20250815085512.2182322-14-kevin.brodsky@arm.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20251001025817.GB23170@nxa18884-linux.ap.freescale.net>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <20250815085512.2182322-14-kevin.brodsky@arm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 
+On 15.08.25 10:55, Kevin Brodsky wrote:
 
+Just wondering, should the patch subject be:
 
-On 9/30/2025 7:58 PM, Peng Fan wrote:
-> On Mon, Sep 29, 2025 at 04:06:24PM -0400, Kamal Dasu wrote:
->> Adding brcmstb-hwspinlock bindings.
->>
->> Signed-off-by: Kamal Dasu <kamal.dasu@broadcom.com>
->> ---
->> .../hwlock/brcm,brcmstb-hwspinlock.yaml       | 36 +++++++++++++++++++
->> 1 file changed, 36 insertions(+)
->> create mode 100644 Documentation/devicetree/bindings/hwlock/brcm,brcmstb-hwspinlock.yaml
->>
->> +  - |
->> +    hwlock@8404038 {
->> +        compatible = "brcm,brcmstb-hwspinlock";
->> +        reg = <0x8404038 0x40>;
+"mm: protect page tables with privileged pkey" ?
+
+At least patch #2 tells me that set_memory_pkey() will set the 
+protection key, and the function is called "kpkeys_protect_pgtable_memory"?
+
+Just trying to connect the dots here :)
+
+> If CONFIG_KPKEYS_HARDENED_PGTABLES is enabled, map allocated page
+> table pages using a privileged pkey (KPKEYS_PKEY_PGTABLES), so that
+> page tables can only be written under guard(kpkeys_hardened_pgtables).
 > 
-> Just have a question:
-> the base is not 64KB aligned, so just want to know is this module part of
-> the other ip block?
+> This patch is a no-op if CONFIG_KPKEYS_HARDENED_PGTABLES is disabled
+> (default).
+> 
+> Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
+> ---
+>   include/linux/mm.h | 4 ++++
+>   1 file changed, 4 insertions(+)
+> 
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index d9371d992033..4880cb7a4cb9 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -34,6 +34,7 @@
+>   #include <linux/slab.h>
+>   #include <linux/cacheinfo.h>
+>   #include <linux/rcuwait.h>
+> +#include <linux/kpkeys.h>
+>   
+>   struct mempolicy;
+>   struct anon_vma;
+> @@ -2979,6 +2980,8 @@ static inline bool __pagetable_ctor(struct ptdesc *ptdesc)
+>   
+>   	__folio_set_pgtable(folio);
+>   	lruvec_stat_add_folio(folio, NR_PAGETABLE);
+> +	if (kpkeys_protect_pgtable_memory(folio))
+> +		return false;
+>   	return true;
+>   }
+>   
+> @@ -2989,6 +2992,7 @@ static inline void pagetable_dtor(struct ptdesc *ptdesc)
+>   	ptlock_free(ptdesc);
+>   	__folio_clear_pgtable(folio);
+>   	lruvec_stat_sub_folio(folio, NR_PAGETABLE);
+> +	kpkeys_unprotect_pgtable_memory(folio);
 
-The alignment is relevant to determine whether this is part of a larger 
-IP block or not, though I am not sure why you use 64KB as a criteria. 
-Our HW rules are to match the highest OS available page size for the 
-systems, for us it used to be 4KB and is now 16KB alignment.
+This is all rather nasty. Not your fault.
 
-The block is part of a "sundry" IP which has lots of controls that did 
-not belong anywhere else, for better or for worse (pin/mux controls, SoC 
-identification, drive strength, reset controls, and other misc bits).
+In the near future page tables will not be folios, and the whole 
+ptdesc_folio() conversion will not make any sense.
+
+Likely you should make kpkeys_protect_pgtable_memory() etc. consume an 
+address range, or a page range right from the start.
+
 -- 
-Florian
+Cheers
+
+David / dhildenb
 
 
