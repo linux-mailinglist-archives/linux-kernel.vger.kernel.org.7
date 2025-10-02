@@ -1,110 +1,111 @@
-Return-Path: <linux-kernel+bounces-840223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77197BB3DD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 14:18:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DAA0BB3DE2
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 14:18:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 449B02A21B2
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 12:18:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B5F07A1A7B
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 12:17:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A362930FF1E;
-	Thu,  2 Oct 2025 12:18:06 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCB6C1F582B
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 12:18:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D34E73101B5;
+	Thu,  2 Oct 2025 12:18:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Itkbsf7K"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EBBC2472BD;
+	Thu,  2 Oct 2025 12:18:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759407486; cv=none; b=ZdOamfjofSQsfDTHkFNyS1VicqWTEw+UAcee9aJ01YGsuAbsxb0XGURXWEU7FhR2eQ6L7QxLM9uAarA0Y0JlHr2ZczW+D6vp+6xge+dswmyDtB1jgx+f7Vj1zxyxDR2dbTFpzhXHgNm0rmziSgXlMcSk7V4kW356i1+z1TEh2bU=
+	t=1759407523; cv=none; b=pfENAwTRnoGuW9Nm196QVQPd+GKMLfc7re8fMqyAs6uNiydlYJTQo4YHVJWdZCxdPr8LcxlUFO+NPqULMjO6OGGSW1Q3ZNZE+MNmSvhlrbDnOUCOfvaLf+FGpMFerZhjIb/9H6v/T44VUGxx3vh1boMds3LO6ZWCyn4Xn9K81zI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759407486; c=relaxed/simple;
-	bh=v2cxIy568LY1SrjI/6Dd0izYESQMei35okjPMN6TjcY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u6Z01Ksk7TzCGNRcdahT7KY+OlfI6eQC/lEcZqrgbQrjztlm9oIYhpDlWww1NZUPHYS6aDo7DshWHqi2h6leKdIwsyOrgAVsz5pQAIGF4+D/pkM6pmO43Pb6LfX/AHX2JTBplxVubHzh/ZfCiRIqEiRzwl8YHCJNZ8i/RjzACfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 44880168F;
-	Thu,  2 Oct 2025 05:17:55 -0700 (PDT)
-Received: from [10.57.2.183] (unknown [10.57.2.183])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 044383F66E;
-	Thu,  2 Oct 2025 05:17:59 -0700 (PDT)
-Message-ID: <338e1456-533b-4b59-a660-00d0ca51aada@arm.com>
-Date: Thu, 2 Oct 2025 13:17:57 +0100
+	s=arc-20240116; t=1759407523; c=relaxed/simple;
+	bh=XJh2rU3g6FXXRr4HSBSk9BT1NPgHOKWJMap6jFw2cfg=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=MKDv0YsW00JpzTGhWyr5czbwYZOjpNbRjt2XDTIk+aSAr+nWnJ0xB4wk01Yo/offXWWJu4aYLNfD4lsFWNzSU3AGLuGlEnIQP/6KjjIBewr3WEelrNuWMEKpieOpMZXTPRQrwjrUKP2XCV3QpgtcVeLwLKJqmtycXekxB5lGRsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Itkbsf7K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9B33C4CEF4;
+	Thu,  2 Oct 2025 12:18:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759407522;
+	bh=XJh2rU3g6FXXRr4HSBSk9BT1NPgHOKWJMap6jFw2cfg=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=Itkbsf7K6rt0J5zJFgF2UWghEIS0HfpbGyuQ1ojxLJcd8r+glln6f3tNWRgQNH9Iu
+	 Fb0f2Uy8sXoj6ke0Pi52KQsLjnpRlVcFcAeGMfiP2TqxuDvK8rq/243Csf5o/c9A7I
+	 Xd99xQIkKU1pN24b/Awhcjpjpdg/rXg9j6pdv1y+5evbPfL+U07Sas6zMq5HfOFpE8
+	 PRDexDCSSFaW980uSnl5JKkjuBV1DDd4/j2BefmELCFAr/1xIrZkmkQOxpNHH93dYS
+	 KVIm9J47v/2XiWmweZPaNtcIH9DfZuks4kFpN+EzPXElqJYsohsCakGqqqXkYtNtBq
+	 gXPjP5WhMTT7w==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/14] iommu: fix device leaks
-To: Johan Hovold <johan@kernel.org>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>
-Cc: Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>,
- Rob Clark <robin.clark@oss.qualcomm.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>, Yong Wu <yong.wu@mediatek.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Chen-Yu Tsai <wens@csie.org>, Thierry Reding <thierry.reding@gmail.com>,
- Krishna Reddy <vdumpa@nvidia.com>, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20250925122756.10910-1-johan@kernel.org>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20250925122756.10910-1-johan@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 02 Oct 2025 14:18:36 +0200
+Message-Id: <DD7TWUPD83M9.5IO0VX7PP1UK@kernel.org>
+Subject: Re: [PATCH v2 1/2] rust: pci: skip probing VFs if driver doesn't
+ support VFs
+Cc: "John Hubbard" <jhubbard@nvidia.com>, "Alexandre Courbot"
+ <acourbot@nvidia.com>, "Joel Fernandes" <joelagnelf@nvidia.com>, "Timur
+ Tabi" <ttabi@nvidia.com>, "Alistair Popple" <apopple@nvidia.com>, "Zhi
+ Wang" <zhiw@nvidia.com>, "Surath Mitra" <smitra@nvidia.com>, "David Airlie"
+ <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Alex Williamson"
+ <alex.williamson@redhat.com>, "Bjorn Helgaas" <bhelgaas@google.com>,
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, "Miguel
+ Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun
+ Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
+ Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ <nouveau@lists.freedesktop.org>, <linux-pci@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>, "LKML" <linux-kernel@vger.kernel.org>
+To: "Jason Gunthorpe" <jgg@nvidia.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20251002020010.315944-1-jhubbard@nvidia.com>
+ <20251002020010.315944-2-jhubbard@nvidia.com>
+ <20251002121110.GE3195801@nvidia.com>
+In-Reply-To: <20251002121110.GE3195801@nvidia.com>
 
-On 2025-09-25 1:27 pm, Johan Hovold wrote:
-> This series fixes device leaks in the iommu drivers, which pretty
-> consistently failed to drop the reference taken by
-> of_find_device_by_node() when looking up iommu platform devices.
-> 
-> Included are also a couple of related cleanups.
-Modulo the nitpick for OMAP,
+On Thu Oct 2, 2025 at 2:11 PM CEST, Jason Gunthorpe wrote:
+> On Wed, Oct 01, 2025 at 07:00:09PM -0700, John Hubbard wrote:
+>> Add a "supports_vf" flag to struct pci_driver to let drivers declare
+>> Virtual Function (VF) support. If a driver does not support VFs, then
+>> the PCI driver core will not probe() any VFs for that driver's devices.
+>>=20
+>> On the Rust side, add a const "SUPPORTS_VF" Driver trait, defaulting to
+>> false: drivers must explicitly opt into VF support.
+>
+> As I said in the other thread - please no.
+>
+> Linux drivers are expected to run on their VFs.
 
-Acked-by: Robin Murphy <robin.murphy@arm.com>
+The consequence would be that drivers for HW that can export VFs would need=
+ to
+be rejected upstream if they only support the PF, but no VFs. IMHO, that's =
+an
+unreasonable requirement.
 
-We could in fact also clean up nearly all the NULL checks in these areas 
-that are now entirely redundant since per-instance ops lookup, but that 
-might just le;ad to more patches from the static checker brigade trying 
-to put them back... :/
+Don't get me wrong, I agree that it'd be great if all drivers would (be abl=
+e to)
+support the corresponding VFs.
 
-Thanks,
-Robin.
+But in practice that's not always the case, so I'd rather have a common way=
+ to
+let drivers assert what they support over going back to the "old model" of
+probing drivers, where we just rely on probe() to fail.
 
-> Johan
-> 
-> 
-> Johan Hovold (14):
->    iommu/apple-dart: fix device leak on of_xlate()
->    iommu/qcom: fix device leak on of_xlate()
->    iommu/exynos: fix device leak on of_xlate()
->    iommu/ipmmu-vmsa: fix device leak on of_xlate()
->    iommu/mediatek: fix device leak on of_xlate()
->    iommu/mediatek: fix device leaks on probe()
->    iommu/mediatek: simplify dt parsing error handling
->    iommu/mediatek-v1: fix device leak on probe_device()
->    iommu/mediatek-v1: fix device leaks on probe()
->    iommu/mediatek-v1: add missing larb count sanity check
->    iommu/omap: fix device leaks on probe_device()
->    iommu/omap: simplify probe_device() error handling
->    iommu/sun50i: fix device leak on of_xlate()
->    iommu/tegra: fix device leak on probe_device()
-> 
->   drivers/iommu/apple-dart.c              |  2 ++
->   drivers/iommu/arm/arm-smmu/qcom_iommu.c | 10 +++-----
->   drivers/iommu/exynos-iommu.c            |  9 +++----
->   drivers/iommu/ipmmu-vmsa.c              |  2 ++
->   drivers/iommu/mtk_iommu.c               | 33 +++++++++++++++++--------
->   drivers/iommu/mtk_iommu_v1.c            | 28 +++++++++++++++++----
->   drivers/iommu/omap-iommu.c              | 32 +++++++++++++++---------
->   drivers/iommu/sun50i-iommu.c            |  2 ++
->   drivers/iommu/tegra-smmu.c              |  5 ++--
->   9 files changed, 81 insertions(+), 42 deletions(-)
-> 
+> This temporary
+> weirdness of novacore should not be elevated to a core behavior that
+> people will misuse.
+
+It's not just nova-core, please see [1].
+
+[1] https://lore.kernel.org/lkml/DD7TP31FEE92.2E0AKAHUOHVVF@kernel.org/
 
