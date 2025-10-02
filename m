@@ -1,150 +1,139 @@
-Return-Path: <linux-kernel+bounces-840584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0958EBB4B90
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 19:43:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C27BBB4B8A
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 19:43:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A444219E46E2
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 17:44:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC3317B4DE7
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 17:41:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 032A2274B59;
-	Thu,  2 Oct 2025 17:43:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3B8C272811;
+	Thu,  2 Oct 2025 17:43:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="H3I0W44v"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G7/QUlD5"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D264D2749E0;
-	Thu,  2 Oct 2025 17:43:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CC37236A70
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 17:43:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759427006; cv=none; b=p0gNxS6AKiaIvWdpEEhcQcNCc0O2c0DZr5W+UMJ9EPpQQ4oj7jLbbV+eFa1jBgTV3Rlu3NSRTws3DbXnhsYzvm9HZFCEpMxpHMeq1xrKjI9wuUW09yIfS2b9r2f301672V4aRxpoFa9O1TOVxEjfdPpFG4mxB/tAhHRFm+dZv/8=
+	t=1759427002; cv=none; b=cP3NZng4Ercgo7BdogdKxXxNfGj6vVWlYXHS3wOZqmCJycWKeGTxYZPb5QHVBbZ7vPr2zv4Ga2aehWWgXESLYgJv869EG5o3A0yoonx2zovnrC3F+vgOuaLu/oEsZZMrU//Ee+QyCuSnAYE6qKCXetPSbJAjgSznh48H92Nlb/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759427006; c=relaxed/simple;
-	bh=NIT5wDqV8woLQiSPOPYTXbuCcenXuPaJCJos0Up77UU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YHhdhuQO8j0rPI2LAVCKJU8cb/Zf5dE/WaZxH3GB1nW0SzNQnNwU7C2nWGLtveTOw8K85Ue0dRTmzcghIB2OogxnEMBW8RlkF6yYIKh5jTMNrWXTEorJcmIhzX9vkaNzuKAnJ9guTE6YHUZOsJLX0wnE4o33lBxK5pvC/u8K+Mw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=H3I0W44v; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 592AHxAN011590;
-	Thu, 2 Oct 2025 17:43:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=nssoqpINitCeMvSG/7exWcv5JhvRmA
-	H+O1b4zrZmRUU=; b=H3I0W44vgQOoBQAVnr5v114A2rYnOfg58Lfo2uJ8WjbGP6
-	CPwu0Foewlx7hghKLzxlRb4oh1j4fsnQ8PhAzHPhESiHo4whV0BitX3z4k6AcKXx
-	MmeWQwd6yz+Rj9X80ZGsMtMjyRa4sgsnGmh//fqBKIsSjeHXT2rynJxht+1XXo7n
-	mfy2A+UclMMIcf1FTpIZEpgRuWsHPB0LdRcosVHCG9rduvYOLuiweyFrvqDptqkn
-	fLD471JijfzhIjUndoGRuXWHkqX3eRno+2MJkPod7iRSjYnzouatG3//bcKfFC/J
-	nMxscuuTCGzTsirDczSNg2WArRpRSB4dMGoHc34Q==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49e7jwwn7x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 02 Oct 2025 17:43:01 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 592HgKYj021924;
-	Thu, 2 Oct 2025 17:43:01 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49e7jwwn7t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 02 Oct 2025 17:43:01 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 592GG7EW020064;
-	Thu, 2 Oct 2025 17:43:00 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 49et8sf9xf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 02 Oct 2025 17:43:00 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 592Hgw8I52560326
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 2 Oct 2025 17:42:59 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DB25B20043;
-	Thu,  2 Oct 2025 17:42:58 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 202C320040;
-	Thu,  2 Oct 2025 17:42:57 +0000 (GMT)
-Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.39.17.59])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu,  2 Oct 2025 17:42:56 +0000 (GMT)
-Date: Thu, 2 Oct 2025 23:12:54 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: "Theodore Ts'o" <tytso@mit.edu>
-Cc: linux-ext4@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>,
-        Zhang Yi <yi.zhang@huawei.com>, linux-kernel@vger.kernel.org,
-        "Darrick J . Wong" <djwong@kernel.org>
-Subject: Re: [PATCH 2/2] fsmap: use blocksize units instead of cluster units
-Message-ID: <aN65nsxrpMoK33h5@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-References: <cover.1757058211.git.ojaswin@linux.ibm.com>
- <d332ed2f90a0c8533139741d25e7fc1935773e14.1757058211.git.ojaswin@linux.ibm.com>
- <20250926123536.GA12175@mit.edu>
+	s=arc-20240116; t=1759427002; c=relaxed/simple;
+	bh=3g5RnIt5W4eNBXa5w8Ni3T1iTz9L0NQHfkbzpVupV4Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FNii6pK/nT/zKqWoFYBVqijP2SnetQopxcHb8R5xDh3STiAJB9pbVtkoRmbbaIgFMO6OTLggRaVNtjOzi8yhtYWoRbf3pGcQ5PVE7cMmFOyugnlPZ5AYr02mCHuzGYuifVc2uZY0b15/XMHpptD2ARLfS1w3kIL4qhdqC1AjA/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G7/QUlD5; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-336b9473529so2047295a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 10:43:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759427000; x=1760031800; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DzzDJ2yDPtgGQPfiYSBYD855yiSdjlPSb0GWkIT9A14=;
+        b=G7/QUlD51c2qDpHkB/NBUBR9IgMlfwkiE0NjJlGTUqYqfQR28Yw3TK8ZefZ5dk1IkL
+         0xmbrHBKRDDBHTE9TWvMz2MskRHPKpXoXrhlJjm+ETBDnSWiXuQvFQBjshCFDlYsBDw2
+         H5+YBztqEP1GNGNflScGrOQBbXbTBD4PSYNxiO6kR+KwKB5sE8C2zKPRo/Q16DcaiQmO
+         nfUlQV5dHMqSoQi1BhNQ4u5YiGZveDSJSNXsNvYDPWYenqhg3KnUedZwzmqBCWhmOvZ/
+         rUlA4oRHPjRg/efAXCsZeZhpCgv3jVUic/Fm8kqjhT0WKDJfrxyLRyfyEy+jNf51ovKj
+         ACGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759427000; x=1760031800;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DzzDJ2yDPtgGQPfiYSBYD855yiSdjlPSb0GWkIT9A14=;
+        b=JNvnlVJk5TPaR8CO5EzloHNkICHahpP62Fqy13aT6Ts5EM4KDtCG8gxMvw4D6Gp5lw
+         2soD2Uezn/eY07i6smsUOM07mCkVx4rcZ28GmxRRryy0mYswv4xf6uhMcLtuUidDl1xR
+         ftOYb82YoFdoQB4izQVDYxpYA8eU62NPXI5Zr+qCcGZJpEBkcbBHVilS7zqxpruhcZCZ
+         bRsZec3Ow/9xIdHFJdFQS0+odE/vDmhedXAenE06Y6MSrgQGwY9VgHVFdQ1bU5eP9Znt
+         TEgW6d9tNdpdLUBnDkGryo7OONE9vr5H2yoVh5adB+rl0cLoZMoxJTe1Eu95GvCBnDTi
+         dnxw==
+X-Forwarded-Encrypted: i=1; AJvYcCW/auYN6c/8Ft6LxQ1Ujqg8N9TzwUlr263xb39nja1SbCj1XVD5p+RI4pvi+uDTtDcrVXPk0Jv/h4dDASY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAg5vU8EQkh1BS6+C6qik/M4utn+/bWu3D7WTCT5XDCIGLdolI
+	Q8ZVPKluDNkyLUVSUgCnJLroci+6E7mE1U/CsrTO9Ic9AxhzoWmLTtif
+X-Gm-Gg: ASbGncth3Mq4/xUZ3Df+U0Px3gSIyjwSQPPjxdKyl8aVanLayl2+o4G2Oa77iSR+cu1
+	ykCC2Ay+6s01R+HQLaOEv1fu1/w5l0qhkLP5GpAHBiycc72Y9cnrzScd3J353672+jWHp9j9FLt
+	ZBrNnfz9Pnh7tXY07itZNxfRrz+vbeBi/f9fbPeutCPgAAH1h4ybMY5ktXGXZooZIjxpTTVBr/w
+	JMFDrBR+dgVkBuW8UhxAnNPLqpcX5rUHgPa5MTQ1WmHmO1GFDr8AqIzxp/h02jT6UE8lSholU0S
+	65AI4VQGBjzDdu9+lwMkgqiCtD/Xy1bVnsYbsuGFNIjROA69enDTYYwtBbwgr2wxh8O0K1KNdek
+	GY+qsRqkVgvrCAT89jt8mox1sZaEKKQgaByPRS7lheR3AHKm3sEN1asUWjpxGur8=
+X-Google-Smtp-Source: AGHT+IFIt4g5ozSJK8ZpqGGH00OsotOlIKbLyZg8UjetvQsF9VjKEqMlw2viq8FiAeogaNuA2C3SeQ==
+X-Received: by 2002:a17:90b:3149:b0:32d:e309:8d76 with SMTP id 98e67ed59e1d1-339c22147a0mr311510a91.10.1759426999797;
+        Thu, 02 Oct 2025 10:43:19 -0700 (PDT)
+Received: from gmail.com ([157.45.255.179])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-339a701c457sm5487828a91.23.2025.10.02.10.43.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Oct 2025 10:43:19 -0700 (PDT)
+From: hariconscious@gmail.com
+To: perex@perex.cz,
+	tiwai@suse.com
+Cc: khalid@kernel.org,
+	shuah@kernel.org,
+	david.hunter.linux@gmail.com,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	HariKrishna Sagala <hariconscious@gmail.com>
+Subject: [PATCH] sound/core/seq: Initialize structure pointer to NULL to prevent undefined behavior
+Date: Thu,  2 Oct 2025 23:13:00 +0530
+Message-ID: <20251002174301.15512-1-hariconscious@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250926123536.GA12175@mit.edu>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAyNSBTYWx0ZWRfXxy4BW5fwSuZF
- PUJhOvA3WZTPQ8C5WHk4p7OWuowoC7BnaIhXVd795czHMNJG4lcmzbWXQr5gJszQ+86yACfa+ci
- yz66vVWzQEuDNrmDnjstQjz6n5pyEL1N7R85YaGGfUAXD2U6pdaMa6fE3y0WLCbIWtPIuwrHUoH
- uRkaiisXBHP+MKWJLUMtKIka0gOpCdfXRsqcX1o3bQ7K1yEod/Wt2dy0smd8VrNvfSQcn1tBgXM
- tCwrAsbv1tC+kxVCGqsaMQlkxOXeK4+doszMTac/qAOCgrpNsdsTGn8xxblaVVpyPTju09X7Q4I
- c7FiXTySZ8jzE1aFMffJ3BxXfRLXa1EqycpTYOu44X6S5ssHAc5ezbZl/u8YhUF6Q0PS4D4Pt8H
- BFGMV49bXNlHXWjl9A/2pA+/cW3eVQ==
-X-Proofpoint-ORIG-GUID: qc5L8To2Q2bZg9qHRNojDkm6SopP61Oz
-X-Proofpoint-GUID: AVllfxe1H5COGzXBlri5ltQf5xbdQrU4
-X-Authority-Analysis: v=2.4 cv=GdUaXAXL c=1 sm=1 tr=0 ts=68deb9a5 cx=c_pps
- a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
- a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=eOGLbINAkHJCJ0LyVhEA:9
- a=CjuIK1q_8ugA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-02_06,2025-10-02_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 clxscore=1015 phishscore=0 adultscore=0 priorityscore=1501
- malwarescore=0 spamscore=0 bulkscore=0 impostorscore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270025
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 26, 2025 at 08:35:36AM -0400, Theodore Ts'o wrote:
-> On Fri, Sep 05, 2025 at 01:44:47PM +0530, Ojaswin Mujoo wrote:
-> > Currently, ext4's implementation of fsmap converts the ranges to cluster
-> > units if bigalloc is enabled and then converts to block units whenever
-> > needed. However, this back and forth conversion has known to cause
-> > several edge case issues since even with bigalloc the metadata is still
-> > in block size unit....
-> 
-> This commit causes ext4/028 to fail with a 1k blocksize.  The failure
-> happens after just under 45 minutes; before this commit, ext4/028
-> would complete after a second.
-> 
-> Do you have a preference regarding whether I just drop this commit, or
-> drop the whole series?  The previous patch looks fine to me and fixes
-> a real problem, so my plan is to keep the 1/2 commit and drop this
-> one.
+From: HariKrishna Sagala <hariconscious@gmail.com>
 
-Hey Ted,
+This change ensures the structure pointer is explicitly initialized to
+NULL,preventing potential access to uninitialized memory. It improves
+code safety and avoids undefined behavior during pointer dereferencing.
 
-Thanks for pointing this out, I'll look into the failure. Sorry for the
-late reply I've been on vacation this week. 
+Signed-off-by: HariKrishna Sagala <hariconscious@gmail.com>
+---
 
-I'll get to it as soon as possible.
+Note:
+Turned on the settings needed for sequencer MIDI and built a kernel
+image with those settings. The system booted up fine with no errors.
+However, couldn’t get the sequencer emulation to start.
 
-Regards,
-ojaswin
+ sound/core/seq/seq_midi_emul.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> 
-> Cheers,
-> 
-> 						- Ted
+diff --git a/sound/core/seq/seq_midi_emul.c b/sound/core/seq/seq_midi_emul.c
+index 81d2ef5e5811..f24c5a475c41 100644
+--- a/sound/core/seq/seq_midi_emul.c
++++ b/sound/core/seq/seq_midi_emul.c
+@@ -647,7 +647,7 @@ static void snd_midi_channel_init(struct snd_midi_channel *p, int n)
+  */
+ static struct snd_midi_channel *snd_midi_channel_init_set(int n)
+ {
+-	struct snd_midi_channel *chan;
++	struct snd_midi_channel *chan = NULL;
+ 	int  i;
+ 
+ 	chan = kmalloc_array(n, sizeof(struct snd_midi_channel), GFP_KERNEL);
+@@ -686,7 +686,7 @@ reset_all_channels(struct snd_midi_channel_set *chset)
+  */
+ struct snd_midi_channel_set *snd_midi_channel_alloc_set(int n)
+ {
+-	struct snd_midi_channel_set *chset;
++	struct snd_midi_channel_set *chset = NULL;
+ 
+ 	chset = kmalloc(sizeof(*chset), GFP_KERNEL);
+ 	if (chset) {
+
+base-commit: 50c19e20ed2ef359cf155a39c8462b0a6351b9fa
+-- 
+2.43.0
+
 
