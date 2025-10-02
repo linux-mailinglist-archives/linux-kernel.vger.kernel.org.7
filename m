@@ -1,230 +1,408 @@
-Return-Path: <linux-kernel+bounces-839789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1512BB2692
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 05:03:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 533E4BB2698
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 05:03:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 692D9380263
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 03:03:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 025B5380211
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 03:03:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F76B23DEB6;
-	Thu,  2 Oct 2025 03:03:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2243288C24;
+	Thu,  2 Oct 2025 03:03:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="LnpyTI6o"
-Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012062.outbound.protection.outlook.com [40.107.209.62])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="caTPnGOS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14865208CA;
-	Thu,  2 Oct 2025 03:03:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.62
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759374206; cv=fail; b=OaBOCZ8ZnyyFwKb7T10u3MmO8AKBOGk8Yg3kH4Auf8VvET0i4nD203plDS01KwT5JRsY+BApF9lCQPilKmGtS+jeE1382/BOIztt3GwIJGMSQg2zdiT+RyQHRLfqmaO9MZn5GeYKT47sv8k2RBx37EG44OHu8MvlJrcHyCw+rHY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759374206; c=relaxed/simple;
-	bh=GrG9R++GEZJ0grZOUDPo5GrNHLuX2GkVXv8655UNuN0=;
-	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
-	 In-Reply-To:MIME-Version; b=WUD7NVelqEIHRMferspOysxZ0Y+JIhoQcU89Ndhq4XtaU0NcuJemDImP0fYkx6A3KnYuZkFhPCZshPVx+ZIJC6yJaml3T68VEZ0RJebd5VG3EX4AituwrfdZrdlxOO21bsJpCmCB3Z5WyuWlWYFgpFu2Ia9es8xyJQqXj3PGShE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=LnpyTI6o; arc=fail smtp.client-ip=40.107.209.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QtJMjTZYmGjUgLeDi0TuV4jyS1WWmSq8ypS17wMH1iCtqIKDAEC+Axp7DtZBqrU/zBk+kPS9lXhdd3woT0QU6yHoQjm4cDa1SKZOk7D/XNzK95WdU9y7z2EWM6G+1QWckbeYqStGQJMpz6FGnJqx3jjgGxHMKEWNuC5yI0TNHGs1o+lpL39kDN06GdLqLe9Fhf8k55ntKocIUdgzoNx2yo+LWDojiw4MYljVvlIb9JTSbeIqGnOtqwljwtZpWoavLKFaTpqS1dauZ//aQhhEM6UnNmYfGsNj2EBe9gAaIk/TbCr1SsAKKTvHHyPrHUj9pmXVBXEFD0p+ldK682TEhA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rpqxcn89z9R6A8aBEiIC3830SRlw1jH2WbA9rbQcnNk=;
- b=nB1I5fQU9ewlSUEYa3lNq+HAOMmc/YGjEqnqS0GOXT0Ta6+DPWPCBxdmtfsvFddYjnBT4y80q9Rb7vFhvDkfBLsCoVKmAePE7JdYEHZMJsnC6jm+IRipgdzC2cBtXOsusaGi9xYsElyZfcm8p0QnnIzQIR4ntURhxSLcwyri+4C1KYfGpbCw9B1348A0Gd9T9Ry3Ui9stVTOVjBzH7WTC1dGGBoYYTtzE9uL7Jo9H+gRelxyAIxegFTO4Gqu5h/xOj/BQBLSwivfkoKda5HSgwHIXi5tmsW9KZlUmhYm/LlcDBNjMEpjGCJ1hueDeEs4EYVftnpj8nb+wEWJAFTLMA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rpqxcn89z9R6A8aBEiIC3830SRlw1jH2WbA9rbQcnNk=;
- b=LnpyTI6oyQNU+fzZ9RfM03qi7EH9zQf/kbU49SKw9/picwwYfPFFPEqLcMkG5Yx1aVOnbHU4DOa9Ip+xYRt43Ddj8eRUZurUdn+nBuXIXpXmoGIi48VsaeeFzsceZ3k9qqr3R9pGHlMS6ww1fHd8YhDPzZVKGFpmxlmDTjk6G/JlkxeB/1mKhkyDKvY1zKuS0n1QCZzgOjTsF6mldxpF4Bg5rO3KPcrcIL5NGtt6Rl/q8FfGjc6YsrronsZjnOyk/VXCQQz7A7o2YuDz5Ob47QUXWGyWXeLg9GJibTiUV4WkV7o/4LHdx8Wvfhx+4tPjsbmljKovqBYfqJnRtCHDJg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by PH8PR12MB8605.namprd12.prod.outlook.com (2603:10b6:510:1cc::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.18; Thu, 2 Oct
- 2025 03:03:19 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9160.017; Thu, 2 Oct 2025
- 03:03:19 +0000
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 02 Oct 2025 12:03:15 +0900
-Message-Id: <DD7I3NGT6DHI.114KADERSQ8VG@nvidia.com>
-Cc: <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 0/2] rust: bounded integer types and use in register
- macro
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-To: "Joel Fernandes" <joelagnelf@nvidia.com>, "Alexandre Courbot"
- <acourbot@nvidia.com>, "Yury Norov" <yury.norov@gmail.com>, "Danilo
- Krummrich" <dakr@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20251002-bounded_ints-v1-0-dd60f5804ea4@nvidia.com>
- <6d4b5659-7c0e-4720-8305-5b0053807443@nvidia.com>
-In-Reply-To: <6d4b5659-7c0e-4720-8305-5b0053807443@nvidia.com>
-X-ClientProxiedBy: OSTP286CA0073.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:604:226::6) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F06E4208CA;
+	Thu,  2 Oct 2025 03:03:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759374213; cv=none; b=gX2CR8XKVWuk9nhxtAm41sokYgLcwlRZI7pY2VWssMOKDVWKLHcB6nKRn/+FUGiBKxihHM0iUUe6uZ1mrnR/oXqoyfM11uoGcibq/MOlTK+R6didpQKuDNal2At8qEKiz8Paje/ePU/RVEMiMRZ55p4oxLKwxN2rum77WxA1RkY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759374213; c=relaxed/simple;
+	bh=WvyBzuDaQ3blWA584dKJhZFO1Jq9yacx6hg9HYvyumU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NXihnEVK+JjBlQMaRSWtAZaM/8Ot+E8P8w+NdfLDSxvYLR1pLmeDtcQbyAXKHjDPEig5GQRKADdjUomye6R+soczV7qv2pszbRXauAmimR9kLKb/f2+JfadzXhjFAz6a7LwdYy6vbti0UrTf3z6hzYkvIW7MAIv9WAn8EuUZ9ak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=caTPnGOS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AE6FC4CEF1;
+	Thu,  2 Oct 2025 03:03:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759374211;
+	bh=WvyBzuDaQ3blWA584dKJhZFO1Jq9yacx6hg9HYvyumU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=caTPnGOS+3sOts5DOMdVl+rCnhoiB0MlbofT5EwdNb2BXp2hzCek3hhT18JybYd+N
+	 EJy2GlrLW48LivFXMfkpVhd0K7THzQ8/Vfkem/51bJ58rb81zYlm6a6EU6TYjGov3u
+	 bs5gYfrrjLwa4F48Tp+m6HqOSWRV4Hqa6D/+ExHYaIkw1WHvusEebrZ8SnvmBt9HXe
+	 qZ4gFTx2jrJjBCJU/PmPVRCZyPtKBsJiNXfh8TafFpEcDGOYSEPUQ+hd70BMe8aeJN
+	 3zCc4gV6hGx1Cnbfwlj5l4J6zqj0AqnyxSFlUrbc9yPv5kpMh5D3cIVq+2IL5Col1D
+	 U7X7lYNmX465g==
+Date: Wed, 1 Oct 2025 22:03:30 -0500
+From: Rob Herring <robh@kernel.org>
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: Josua Mayer <josua@solid-run.com>,
+	Ioana Ciornei <ioana.ciornei@nxp.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	linux-phy@lists.infradead.org
+Subject: Re: [PATCH v3 phy 12/17] dt-bindings: phy: lynx-28g: add compatible
+ strings per SerDes and instantiation
+Message-ID: <20251002030330.GA2964719-robh@kernel.org>
+References: <20250926180505.760089-1-vladimir.oltean@nxp.com>
+ <20250926180505.760089-13-vladimir.oltean@nxp.com>
+ <20250930140735.mvo3jii7wgmzh2bs@skbuf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|PH8PR12MB8605:EE_
-X-MS-Office365-Filtering-Correlation-Id: 200c7ddc-3c66-4792-51ec-08de01603d21
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|10070799003|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?K2tzZFN5eC9HUVJWR21ISGg4TWZEVVRUTkRaRkMzaGpzMU1LbGQzSlRKRVQ4?=
- =?utf-8?B?U2s4eHRlMDdWVGRmZ2RZZGs3RkR2ZnYzaDFWS0NQSlhES09hTk4yNDhidTd4?=
- =?utf-8?B?V3RZUHU3RzVhRFdtZFZHQW1raENlWXhkOVBTS3lJYmlkMmtYL2dISzhweHEw?=
- =?utf-8?B?RkMxMHF6QWRrSkJXYStuMHh6N3dpSkZjblNTQXNvd0NFWU5QMi9TcmQ1aFAw?=
- =?utf-8?B?bWFtQWdKU0VrWGhBQUsrdU0wdTJ0RGZMNGVHVy9XMTBVVDM0QXV5VnJtMUVG?=
- =?utf-8?B?NFI3UlYyeFhUTFo4SEYwSUZPZW5XLzJrSWZld3diS1FDbC8rRVB2ano0RU1s?=
- =?utf-8?B?MmZWVFp2Q0prTWk4NVZoQUtVa2lMQjlJd1pVUFB5UE5nSVBuR1puRGx6UTNx?=
- =?utf-8?B?YndkenV4T0R5NmNYcVlhZU44Yk5lYkR4SUZaOVdsOXphNVRYWW5NSkQ0aUxu?=
- =?utf-8?B?TzNmaFZjVExkVm04M0NIeWY3bFV3dWhpaEJzT0JtaGoyeXZRZzk5RmFEZ0ta?=
- =?utf-8?B?Vm5DSXgwRnZ5M0o1YVErczE5VW5zYkF3QUZmNmtIdWdrM1FjY25JTHVVcXJx?=
- =?utf-8?B?Q1E5S1lZL0ZCSldEWFRqKzJlQ2N0UTNQcUJrNlFCcW5mZEVUbm9VY3o0MHNp?=
- =?utf-8?B?TTF5bWVuSWVmcE1FRTdjeFhDaUpnc3RnSkovVGJUbnZjdzMzRDB5RmF6R08v?=
- =?utf-8?B?M1ZpZnVwaUUzak16eWZGQmNqVSthSjVmaWNHQVFRbW5hY2hKNWk1MklSb05S?=
- =?utf-8?B?ejJCeWJNMk9iZEViUHV5K2RpSTl2M05hdG5ZY2JKTUtGQ0tyTTMzVTlaeXcw?=
- =?utf-8?B?cTNZM1l2NGJPWlZENlpVcDJtL1QyN0JmbGtlRzI1cmJvRkJDTmZ5eXBBdEpW?=
- =?utf-8?B?cnFPTUhzbGNCcllGNFJiSEs2dVdnb2JOamRRbDBsN2t0RHJRL3YvZE1WTzhr?=
- =?utf-8?B?NWdhUFFxZmxGc1oyMzduS1cvb1RNVFV3VkdCRHRYayt3MXlRTkRRRVVCaFM2?=
- =?utf-8?B?Q0JmNlhraG9aUDBWbjZzVVZISXhmQ2VKRjkybkdHSVlxSUplMnQxVUVUWGt5?=
- =?utf-8?B?VkNjTjI4aWVGQmIrbjErdnQwQ1E0L1lLbkF4c0d6NUhxVytJaW9ZcVJiUkdI?=
- =?utf-8?B?cVVkQXU0U094dW9EcUNPL3NDekVYdGFRR2VldDY0NFdWQmhaU2JyTHRCMUtP?=
- =?utf-8?B?RkRyUnJWZlJVdVRKWmI4VkdOdUpBQVdRNFNVRnBadzNkRWh4Vk1DSFJRSlNw?=
- =?utf-8?B?cTRLY3ljZ1lDTldKdnZJdENIS0x0N1NXU05BSEcxMjhHck1zREMvWjBrY2ky?=
- =?utf-8?B?dm5CWDlzWk43TklxU2EzZkY3RDJWZ2VaL0ZzMEc0aHpuYmc3VmdBY0dPQ0Vr?=
- =?utf-8?B?MUZxZmJlVmNhUURJakF0YjRaV3FWUy84bmZEdkxaRGdOejJ0TzdReWdBajBv?=
- =?utf-8?B?anFEdEM2QkZDWk9JbEtFVk1yZCtNWTBUUGQvK0FjMXJwK04wZjRHRWltQUlW?=
- =?utf-8?B?Qi9ETCtKTGZ4OWppOG5LRnJ6RlFHY2pGVDMyZGhtM3hVTHgvV3JUSmRGN2xR?=
- =?utf-8?B?S2lWMFROTmYvSEFqL3h6cm0rSzNINU5VZlk3cng2dktSNjh2MCtVZDdZN1lV?=
- =?utf-8?B?bEk5aWZSNXVlVXBpMkhuRXpNTHJ1VDU5MkRENlUwc3c4SklwS1FEdk4wWHdq?=
- =?utf-8?B?WEtaM3g1am5NcUJ0NXpkVG8wK3gxWWNMUmUrakZoKzJ5T0Q1WUE2bW5jRVJx?=
- =?utf-8?B?VEQzaVF4OFp2TVM5dHpud3RpOU9BMmdCVVVjckVla2NZK1plVlNjVEVsNVlu?=
- =?utf-8?B?Ry95Ri9ZaFQ0eW5SbmlJT2RQd2xkRUpsWnR6WXg5MVNZNUsydHNCcG1RakxI?=
- =?utf-8?B?S2RrM3d1bVZERDRVeFp4ekJHWkJWUWVFNVhwWGlvOHNZUVY4UHBxdTBVN1hG?=
- =?utf-8?Q?mouniFn4SmlLd+SxvYaoEicFj48+hc8C?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?OU5rbnVPbGpjd1JKaVJ5RWRVb0k2Ym11ajZPUStIVkhvWXNJbkJDVEorRnVh?=
- =?utf-8?B?ckplMU5LUHpoclFFanFhR093ZDVBOHBja0xSUXFtQUpuOENBa0RKTHNMejdT?=
- =?utf-8?B?di9YZkxmODNocVM5cWo5YXRqNS9WY0xHQzBLSWszVE53SUw4ZzVLZjFWOVVO?=
- =?utf-8?B?UVQ1bXpZYUdYaGs2OFd0ODdIbGoxS0cvWHZXYWxvVXN1NDhOZ3pPdTVPMXU5?=
- =?utf-8?B?UzJiSXhrQmU0Y3lwald2RCtpZHJabU93RVVocXNyMnRpTUFmRXRJeUxHMHlR?=
- =?utf-8?B?S1N4NHlaVUdZUFpkbUMyT05sdERoRUx3NWVPM0l6eE45Tk9adzVtdmE1UFJW?=
- =?utf-8?B?THZtTm40U2d4d3BFamRxRUxpelROM3phQUVtY3Iyd3ZQbjhrRE5TN1JrRFM4?=
- =?utf-8?B?aDE0S05SNE1TRXJoSlRPNjBmem5QWWkxVFA0aDg5U1kvLzdhTHhkcVhuNzZh?=
- =?utf-8?B?S3FqY3VBbVRYNGdYS2J1SnVNUjUwQkMyaGpLTG5XanFFVHZzWEJrTGlmZGhX?=
- =?utf-8?B?NXF1a2wyL2JiUE42aFpvNVlIeFFBVHNxYk9FMlBXK2Z0UFZKdEtkNUkvWm5G?=
- =?utf-8?B?bUNGbHh0YTRhdE5tdzg4NjBNbHVGUkNnenVtdXlUckgvOVNlWTh1cjJwSWpo?=
- =?utf-8?B?enQ3TTVxSlRqdDVTMGRpNkFKRkRlcjZFcmxjQzdNdUNEMHhjUWZKSEc1Q1Zs?=
- =?utf-8?B?MHVTV3FVT3JQbkwrTS9TUXFaditkclNTV3lBL0FQUEhncHM1ZU0vVGh2ay80?=
- =?utf-8?B?ZEJYS1lyVGxmOFNYQ3Q0KzFlbTNreWVYNzNSSGZjVjgzcFBLdkR0NVVQcnBQ?=
- =?utf-8?B?aWpDYVRDSEdYdzlrbE12MVBwVzdudSs4VXk0RDNCRkdQS0ZGWk5oN2NubzF2?=
- =?utf-8?B?Vk41dWVUbFd5Z2trZURYRkVHZC9VVjNhMHRsSWtycXBqTVNvUzFDL0hyQ2Rm?=
- =?utf-8?B?bEd5VnZac2dkcWRacXJENnFrUWFQS0tOakVoOVdZeUtLL0tFRURBbHVha2Zw?=
- =?utf-8?B?dWZVY2F3aFBzOUlwdnFOZHNvbk1yRTVHV0gxTU9WbnA0d1N0aVlhbW13Rysz?=
- =?utf-8?B?U1RjMGpHSW94ZkNOYUJEV0o5bGtpOVdDNHdxQnNXY2c2aktMSmNNTnpZYkxi?=
- =?utf-8?B?MFovRFI3VURmTFpIT3diVUxObGlsV2QwZS9ELzc3K2V3SjB6NngrZVVmMXBx?=
- =?utf-8?B?UW9xbjVQUFd0aGVmeFh1VU5ET0xUNTRxSWR6L2s0MlZiNU9MN3pjbEcvQUtx?=
- =?utf-8?B?MStqeFJGOGdxU29FaGpCRWc1VXBFZWdSeXZuMWIyS2l1SGo2R0ZjdlpIUVZL?=
- =?utf-8?B?aCs4Z0NqK0lOZkQ1MUJLUjN6dy93Uy9UVUY0TkQvSFhUSEt0VXBqYmNiVVgw?=
- =?utf-8?B?QXVoREp1ekVqK2RGN0doUkFSZXRqQ3E0UkZUVzdMQ2l0eDF3aUtqOXJTRkZs?=
- =?utf-8?B?LzkrQ0h2aTl5WVRFajVhN1BuNEFDWlZpOEk5OHEwc21SejdqZEhBVTdVeUF4?=
- =?utf-8?B?ckNnNzBNSU9BNzkyREdUQlQ1N1pLZzhmY1VmTndQeERtb0lCZXExdmp2b1BY?=
- =?utf-8?B?T1ZOVHVRUmU0anRVaEJlNWErd0RINDdUOXJYK0Q4V3NiNXlBZDh6WTM1TUg2?=
- =?utf-8?B?cU84RFlCa3Q5b1BPeExRd3hvbEV6Nzg3U3pOL1VFdUFVTUQyTU8yUWx0YXht?=
- =?utf-8?B?QVVMTWJSR3l1bFA0U2pMM2ViV2g3SEg3YTRBSy84dlVWS3g1bGptWDFGWGho?=
- =?utf-8?B?SE50TGZWem9HbGpMNDVvT0JMODhkNHgxT1E1Z25RMm5jVnc4dWJmME9UZjdM?=
- =?utf-8?B?anVaeGFWTFRZdGlwZERsdTVtSFZ5SDhLcUtFWjF6OXpmMkpNUFkvSjJySlhI?=
- =?utf-8?B?SVdyejdUVXJtOWt2TkRrR2ovT2JIU0FObUlXeGdjRVN6UVhWdlFLTTFYQzM4?=
- =?utf-8?B?OWxxZk4vemxqNThYWG9SL1dIZUpQZ1NaYnRqazhoQzNJSFNuUmdvWm1nN0w2?=
- =?utf-8?B?UkxwYnRpVjdSMEllZmZPUjBrNEZnMEo0NkhqZVRRQm9SU2l2Vk93eFZpTmdu?=
- =?utf-8?B?eS83U25iKzZHa2oyaWVSSXRWcUZldkMzM29SOGxBa1oxNXYzTStLcVlBbVFP?=
- =?utf-8?B?b3lnUi9NNGlJM0JqdHNuYlZFYVNZOTFFUkJzZWZFbmV1ZG03WkVpTlNZYlh6?=
- =?utf-8?Q?yExhVqP+LboXU+fPMrQ/UwvFDJ1PwQrcpqOC3qaFJtPI?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 200c7ddc-3c66-4792-51ec-08de01603d21
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Oct 2025 03:03:19.0000
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: OlF1hCxWSR53o6962N/WKeNCFAbs6XlGJPMMsSrxBYBGUenz+v8tfUe2ZS4dNN8gCSSATmy1c+KXx1lCzBE7uQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB8605
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250930140735.mvo3jii7wgmzh2bs@skbuf>
 
-On Thu Oct 2, 2025 at 7:07 AM JST, Joel Fernandes wrote:
-> Hi Alex,
->
-> Nice!
->
-> On 10/1/2025 11:03 AM, Alexandre Courbot wrote:
->> For convenience, this PoC is based on drm-rust-next. If we decide to
->> proceed with it, we would do it after the patchset extracting and moving
->> the bitfield logic [3] lands, as the two would conflict heavily.
->
-> I would strongly prefer this as well, to avoid conflicts. On initial look=
-, this
-> seems to be in the right direction and solves the pain points we were see=
-ing.
->
-> -            .set_sec(if sec { 1 } else { 0 });
-> +            .set_sec_bounded(BoundedInt::new(if sec { 1 } else { 0 }));
->
-> Here, I would prefer if we did not add _bounded, since the idea is to sol=
-ve the
-> problems in the macro's setters itself (make it infallible, not panicking=
- etc).
-> So we can just modify those?
+On Tue, Sep 30, 2025 at 05:07:35PM +0300, Vladimir Oltean wrote:
+> On Fri, Sep 26, 2025 at 09:05:00PM +0300, Vladimir Oltean wrote:
+> > Going by the generic "fsl,lynx-28g" compatible string and expecting all
+> > SerDes instantiations on all SoCs to use it was a mistake.
+> > 
+> > They all share the same register map, sure, but the number of protocol
+> > converters and lanes which are instantiated differs in a way that isn't
+> > detectable by the programming interface.
+> > 
+> > Using a separate compatible string per SerDes instantiation is
+> > sufficient for any device driver to distinguish these features and/or
+> > any instance-specific quirk. It also reflects how the SoC reference
+> > manual provides different tables with protocol combinations for each
+> > SerDes. NXP clearly documents these as not identical, and refers to them
+> > as such (SerDes 1, 2, etc).
+> > 
+> > The other sufficient approach for Lynx 28G would be to list in the
+> > device tree all protocols supported by each lane. That would be
+> > insufficient for the very similar Lynx 10G SerDes however, for which
+> > there exists a higher degree of variability in the PCCR register values
+> > that need to be written per protocol. This attempt can be seen in this
+> > unmerged patch set for Lynx 10G:
+> > https://lore.kernel.org/linux-phy/20230413160607.4128315-3-sean.anderson@seco.com/
+> > 
+> > but that approach is more drawn-out and more prone to errors, whereas
+> > this one is more succinct and obviously correct.
+> > 
+> > One aspect which is different with the per-SoC compatible strings is
+> > that they have one PHY provider for each lane (and #phy-cells = <0> in
+> > lane sub-nodes), rather than "fsl,lynx-28g" which has a single PHY
+> > provider for all lanes (and #phy-cells = <1> in the top-level node).
+> > 
+> > This is done to fulfill Josua Mayer's request:
+> > https://lore.kernel.org/lkml/02270f62-9334-400c-b7b9-7e6a44dbbfc9@solid-run.com/
+> > to have OF nodes for each lane, so that we can further apply schemas
+> > such as Documentation/devicetree/bindings/phy/transmit-amplitude.yaml
+> > individually.
+> > 
+> > This is the easiest and most intuitive way to describe that. The above
+> > is not the only electrical tuning that needs to be done, but rather the
+> > only one currently standardized in a schema. TX equalization parameters
+> > are TBD, but we need to not limit ourselves to just what currently exists.
+> > 
+> > Luckily, we can overlap the modern binding format over the legacy one
+> > and they can coexist without interfering. Old kernels use compatible =
+> > "fsl,lynx-28g" and the top-level PHY provider, whereas new kernels probe
+> > on e.g. compatible = "fsl,lx2160a-serdes1" and use the per-lane PHY
+> > providers.
+> > 
+> > Overlaying modern on top of legacy is only necessary for SerDes 1 and 2.
+> > LX2160A SerDes #3 (a non-networking SerDes) is not yet present in any
+> > device trees in circulation, and will only have the device-specific
+> > compatible (even though it shares the Lynx 28G programming model,
+> > specifying the "fsl,lynx-28g" compatible string for it provides no
+> > benefit that I can see).
+> > 
+> > Change the expected name of the top-level node to "serdes", and update
+> > the example too.
+> > 
+> > Cc: Rob Herring <robh@kernel.org>
+> > Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> > Cc: Conor Dooley <conor+dt@kernel.org>
+> > Cc: devicetree@vger.kernel.org
+> > Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+> > ---
+> > v2->v3:
+> > - re-add "fsl,lynx-28g" as fallback compatible, and #phy-cells = <1> in
+> >   top-level "serdes" node
+> > - drop useless description texts
+> > - fix text formatting
+> > - schema is more lax to allow overlaying old and new required properties
+> > v1->v2:
+> > - drop the usage of "fsl,lynx-28g" as a fallback compatible
+> > - mark "fsl,lynx-28g" as deprecated
+> > - implement Josua's request for per-lane OF nodes for the new compatible
+> >   strings
+> > 
+> >  .../devicetree/bindings/phy/fsl,lynx-28g.yaml | 159 +++++++++++++++++-
+> >  1 file changed, 152 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/phy/fsl,lynx-28g.yaml b/Documentation/devicetree/bindings/phy/fsl,lynx-28g.yaml
+> > index ff9f9ca0f19c..e8b3a48b9515 100644
+> > --- a/Documentation/devicetree/bindings/phy/fsl,lynx-28g.yaml
+> > +++ b/Documentation/devicetree/bindings/phy/fsl,lynx-28g.yaml
+> > @@ -9,21 +9,123 @@ title: Freescale Lynx 28G SerDes PHY
+> >  maintainers:
+> >    - Ioana Ciornei <ioana.ciornei@nxp.com>
+> >  
+> > +description:
+> > +  The Lynx 28G is a multi-lane, multi-protocol SerDes (PCIe, SATA, Ethernet)
+> > +  present in multiple instances on NXP LX2160A and LX2162A SoCs. All instances
+> > +  share a common register map and programming model, however they differ in
+> > +  supported protocols per lane in a way that is not detectable by said
+> > +  programming model without prior knowledge. The distinction is made through
+> > +  the compatible string.
+> > +
+> >  properties:
+> >    compatible:
+> > -    enum:
+> > -      - fsl,lynx-28g
+> > +    oneOf:
+> > +      - const: fsl,lynx-28g
+> > +        deprecated: true
+> > +        description:
+> > +          Legacy compatibility string for Lynx 28G SerDes. Any assumption
+> > +          regarding whether a certain lane supports a certain protocol may
+> > +          be incorrect. Deprecated except when used as a fallback. Use
+> > +          device-specific strings instead.
+> > +      - items:
+> > +          - const: fsl,lx2160a-serdes1
+> > +          - const: fsl,lynx-28g
+> > +      - items:
+> > +          - const: fsl,lx2160a-serdes2
+> > +          - const: fsl,lynx-28g
+> > +      - items:
+> > +          - const: fsl,lx2162a-serdes1
+> > +          - const: fsl,lynx-28g
+> > +      - items:
+> > +          - const: fsl,lx2162a-serdes2
+> > +          - const: fsl,lynx-28g
+> > +      - const: fsl,lx2160a-serdes3
+> >  
+> >    reg:
+> >      maxItems: 1
+> >  
+> > -  "#phy-cells":
+> > -    const: 1
+> > +  "#address-cells": true
+> > +
+> > +  "#size-cells": true
+> > +
+> > +  "#phy-cells": true
+> > +
+> > +patternProperties:
+> > +  "^phy@[0-9a-f]+$":
+> > +    type: object
+> > +    description: Individual SerDes lane acting as PHY provider
+> > +
+> > +    properties:
+> > +      reg:
+> > +        description: Lane index as seen in register map
+> > +        maxItems: 1
+> > +
+> > +      "#phy-cells":
+> > +        const: 0
+> > +
+> > +    required:
+> > +      - reg
+> > +      - "#phy-cells"
+> > +
+> > +    additionalProperties: false
+> >  
+> >  required:
+> >    - compatible
+> >    - reg
+> > -  - "#phy-cells"
+> > +
+> > +allOf:
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            const: fsl,lynx-28g
+> > +    then:
+> > +      # Legacy case: parent is the PHY provider, cell encodes lane index
+> > +      properties:
+> > +        "#phy-cells":
+> > +          const: 1
+> > +      required:
+> > +        - "#phy-cells"
+> > +
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            enum:
+> > +              - fsl,lx2160a-serdes1
+> > +              - fsl,lx2160a-serdes2
+> > +              - fsl,lx2160a-serdes3
+> > +              - fsl,lx2162a-serdes1
+> > +              - fsl,lx2162a-serdes2
+> > +    then:
+> > +      # Modern binding: lanes must have their own nodes
+> > +      properties:
+> > +        "#address-cells":
+> > +          const: 1
+> > +        "#size-cells":
+> > +          const: 0
+> > +      required:
+> > +        - "#address-cells"
+> > +        - "#size-cells"
+> > +
+> > +  # LX2162A SerDes 1 has fewer lanes than the others
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            const: fsl,lx2162a-serdes1
+> > +    then:
+> > +      patternProperties:
+> > +        "^phy@[0-9a-f]+$":
+> > +          properties:
+> > +            reg:
+> > +              enum: [4, 5, 6, 7]
+> > +    else:
+> > +      patternProperties:
+> > +        "^phy@[0-9a-f]+$":
+> > +          properties:
+> > +            reg:
+> > +              enum: [0, 1, 2, 3, 4, 5, 6, 7]
+> >  
+> >  additionalProperties: false
+> >  
+> > @@ -32,9 +134,52 @@ examples:
+> >      soc {
+> >        #address-cells = <2>;
+> >        #size-cells = <2>;
+> > -      serdes_1: phy@1ea0000 {
+> > -        compatible = "fsl,lynx-28g";
+> > +
+> > +      serdes_1: serdes@1ea0000 {
+> > +        compatible = "fsl,lx2160a-serdes1", "fsl,lynx-28g";
+> >          reg = <0x0 0x1ea0000 0x0 0x1e30>;
+> > +        #address-cells = <1>;
+> > +        #size-cells = <0>;
+> >          #phy-cells = <1>;
+> > +
+> > +        phy@0 {
+> > +          reg = <0>;
+> > +          #phy-cells = <0>;
+> > +        };
+> > +
+> > +        phy@1 {
+> > +          reg = <1>;
+> > +          #phy-cells = <0>;
+> > +        };
+> > +
+> > +        phy@2 {
+> > +          reg = <2>;
+> > +          #phy-cells = <0>;
+> > +        };
+> > +
+> > +        phy@3 {
+> > +          reg = <3>;
+> > +          #phy-cells = <0>;
+> > +        };
+> > +
+> > +        phy@4 {
+> > +          reg = <4>;
+> > +          #phy-cells = <0>;
+> > +        };
+> > +
+> > +        phy@5 {
+> > +          reg = <5>;
+> > +          #phy-cells = <0>;
+> > +        };
+> > +
+> > +        phy@6 {
+> > +          reg = <6>;
+> > +          #phy-cells = <0>;
+> > +        };
+> > +
+> > +        phy@7 {
+> > +          reg = <7>;
+> > +          #phy-cells = <0>;
+> > +        };
+> >        };
+> >      };
+> > -- 
+> > 2.34.1
+> >
+> 
+> I should have realized sooner when Rob/Josua requested the changes for
+> backwards schema compatibility in v2:
+> https://lore.kernel.org/lkml/20250925080317.2ocgybitliwddhcf@skbuf/
+> that despite our attempts to preserve compatibility with old kernels,
+> we actually fail to do that. Actually I should have documented my
+> earlier thought process better, where I already came to that conclusion,
+> but which I had forgotten when told that this could work...
+> 
+> The SerDes schema itself is technically backwards-compatible, but the
+> problem is with consumers, which aren't. In old device trees, they have:
+> 
+> 	phys = <&serdes_1 0>;
+> 
+> and in new ones, they have:
+> 
+> 	phys = <&serdes_1_lane_a>;
+> 
+> Because the consumer has a single "phys" phandle to the PHY provider, it
+> either has to point to one, or to the other. But on old kernels, we do
+> not register PHY providers per lane, so "phys = <&serdes_1_lane_a>"
+> results in a broken reference.
+> 
+> There are 2 directions to go from here:
+> 1. Have optional per-lane "phy" OF node children, which exist solely for
+>    tuning electrical parameters. We need to keep the top-level SerDes as
+>    the only PHY provider, with #phy-cells = <1> denoting the lane.
+> 
+> 2. Accept that keeping "fsl,lynx-28g" and overlaid properties has
+>    absolutely no practical benefit, and drop them (effectively returning
+>    to Conor's suggestion, as implemented in v2)
+> 
+> 3. Extend the schema and the driver support for it as a backportable bug
+>    fix, to allow registering PHY providers for lanes with OF nodes in
+>    stable kernels. This avoids regressing when the device trees are
+>    updated, assuming the stable kernel is also updated.
+> 
+> It's not that I particularly like #2, but going with #1 would imply that
+> lane OF nodes exist, but the "phys" phandles do not point to them.
+> 
+> Combine that with the fact that anything we do with the 28G Lynx
+> bindings will have to be replicated, for uniformity's sake, with the
+> upcoming 10G Lynx SerDes binding (very similar hardware IP), and #1 is
+> suddenly not looking so pretty at all. I.e. introducing the 10G Lynx
+> bindings like the 28G Lynx ones would mean deviating from the widely
+> established norm, and introducing them like the widely established norm
+> would mean deviating from the 28G Lynx. I can easily see how someone
+> might look at them one day and think "hmm, can't we make them more
+> uniform?"
+> 
+> OTOH, the fact that device tree updates require kernel updates (as
+> implied by #2) is acceptably by everyone in this thread who expressed an
+> opinion on this topic.
+> 
+> As for option #3, while IMO it would be a justified "new feature as
+> bug fix", it sounds a bit counterintuitive and I'm afraid I won't manage
+> to convince all maintainers along the way that this is the way forward.
+> 
+> I'll wait for the merge window to close before reposting anything, but
+> I'd like an explicit ack from Rob and Josua in the meantime, whose
+> change request I'd be effectively reverting, to make sure that this
+> topic is closed.
 
-Oh absolutely, the and goal is to replace the existing accessors. For
-this RFC I went the lazy way and added new ones, otherwise I would have
-had to update more call sites in nova-core.
+If #2 is not going to upset anyone (that their device stopped working), 
+then that route is fine.
 
->
-> Also, BoundedInt sounds like a good name to me IMO.
->
-> Also, since TryFrom trait is implemented in the first patch, then in nova=
- we can
-> just do the following?
->   .set_foo(value.try_into()?);
-
-Yes! That does work indeed and is more concise. And we can also make
-things less verbose on the caller side by adding a new generic setter in
-the form of:
-
-    fn try_set_field<T: TryInto<BoundedInt<..>>(self, value:T) -> Result
-
-This setter could try to perform the conversion itself and return an
-error as needed, and the caller would just need to call e.g.
-
-    .try_set_foo(value)?;
-
-instead of building the BoundedInt themselves.
-
-There are also many other improvements that can be done, like having
-fields with a round number of bits be represented by the relevant
-primitive directly instead of a BoundedInt, but that will requires some
-more macro magic.
-
+Rob
 
