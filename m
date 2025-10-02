@@ -1,105 +1,99 @@
-Return-Path: <linux-kernel+bounces-840321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD67EBB41B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 15:57:13 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AF38BB41C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 15:58:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4E6D16B0E8
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 13:57:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B8C054E2BC2
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 13:58:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 409C33126A5;
-	Thu,  2 Oct 2025 13:57:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F2D5311C16;
+	Thu,  2 Oct 2025 13:57:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="WC+GgCRM"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sdoIxESf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D13122FDC57;
-	Thu,  2 Oct 2025 13:57:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759413427; cv=pass; b=iTDLAIab4b7yJB11SBBbFYO5DhHJWT/qcFpC0Vvg5a72trveNvDOaCEhPLq0yevcz6+jC2oliVhuN54KsYWybceL6T8x/CpQh7hbOB9bhsu/6JRtn+oVmaMGfuSc0qKi0Slqz1zyzaUGcrsjFtvRnJHolBAPRNM7SK8T71+bcj4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759413427; c=relaxed/simple;
-	bh=Ok5pSYkCP+/FhekfWSWWtu2WHxUnBvpGJxRbXYg+Yv0=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Ifk4XCCtHLUogTsG4pRUT6+c9D1xITF5p5j63+JWdA6PKlyWAxDQuuOJBe4Gcy5XVyks6Xg7ezfqhOpljBsGuL7vRYtyPrVSFc/BKoRoDw3KwqCeNBSXH9mYhytxoOqyQcOdUYvLbIDCWSE18m0nByrQx/LwQqM6CCweA0b+1JY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=WC+GgCRM; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1759413397; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=HvKELj6L309KmxqweKIZPDtJYgI2Rmd9dAkfzWFIAydZrAc4ixyXGrG7o9CMbefRCnVtlMaEwnJwRAPNMgdkl6TNRZTdpL07/MHt7gKIVvMPAnUPDWQSIHDKpZIlZNg74DJ0JllNz0yvGx/IPdxrBlpuUlmuNAnGeAnvowhEJUI=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1759413397; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=+RokhR3NYc9QVJTPoxwDFl0IYtcx2jvPruZ0+Di9ZLM=; 
-	b=lDy6DLQHdTPs6vd8oOyjHLMUvxiUn333gnJj1oVtKMPTbg06EQDQvOpbqydC36q13aKUNkMhglySy5JtLaQ9xgdEPVWnVTa97/PdIRva+4UahyRzm6C9ky/jr+72vt02xVy388k3hM6aLVrRlnuCSJbKGIyhc4jRaHCCz3vnobY=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
-	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1759413397;
-	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:From:From:To:To:Cc:Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=+RokhR3NYc9QVJTPoxwDFl0IYtcx2jvPruZ0+Di9ZLM=;
-	b=WC+GgCRMRaOLDhTp55x40MoTelBoXsit3/byUnSdz2z+CqBkOaR5dhJmAvmQo52F
-	AerHXtZLzRl0MIIjXDIzOREhaPUc/VqF/BANPjI2umbbXpw3XsG2EmxRghT3me6vh14
-	ZCt4wBjgIkM8gNMwqY2y5JXJvyScmZnDldDrQZF4=
-Received: by mx.zohomail.com with SMTPS id 1759413396392655.4400354007636;
-	Thu, 2 Oct 2025 06:56:36 -0700 (PDT)
-Message-ID: <90043066-055d-43a1-97c9-dee118b8a101@collabora.com>
-Date: Thu, 2 Oct 2025 16:56:31 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 897AF2D5928
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 13:57:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759413476; cv=none; b=HQ3mqJ6xn9JPr8CgpxAB3peCHFUmu2nFOfsexSEfnMtZNIHqj/8ZRxt00i6daG5SRYVvLtC4UjjRek+Iagt1WAECMyOR8ujxiRarPATAx55E172pg8tNf8Hc5Ri9r76hHM//ltjiOyrLT67N+9LZTHT/HbhRUgCZMHN0TbcH/0Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759413476; c=relaxed/simple;
+	bh=6DM/v7zBqHZDejrXhT4fhDydMxHb7EGAC17MErEzbYA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=T9rX6kldG//6PA9gFWsQH46NdrzCybeKw0Hp73kQ7CZg3OBtgsYVl+ik1mfoNG8eO/rCLm2RTikphTmmaiM8hwjvLa38W41JQbjMa3aEcFbvwasxaH9ENOe4KGaN/wIfsmFrGajXZmUVcpl6OwWJHUYRTmMsyjxPnGeV19g1RjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sdoIxESf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41DD0C4CEF4
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 13:57:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759413476;
+	bh=6DM/v7zBqHZDejrXhT4fhDydMxHb7EGAC17MErEzbYA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=sdoIxESftpzFX82DkY3Q5L94hB+RvZXL9tFrq4l4yum5ZdbKQJmqksAab+t/jz8Km
+	 qM0f8z5wUBRGgeFMSO+IC9K/PtuCeuVU/vHMtclmwGB0AokTXHI+YSrJhrd6tcVHR1
+	 MTaXa90XWY0xHOVUvYtP+HTHs3HhVVuKX/YjlzODZXcY8eFQDWbxVXR9NOhxsGzPiA
+	 DTU3DXou++lxxh/q8UfhAoIR3lCPB2xxvkAHdfUpqqxF8SECX0HR9Y9TPPiWqFqjtS
+	 pqmkpP/1ZefAbEF3aLKeyJCe9c+t01qoljOyGBNMjfLz9Pum3pTmACoVZxxBL2p0Fx
+	 9sMjUOEmZa17Q==
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b463f986f80so239818666b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 06:57:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWOTFkKj+sm31JO2YLgYJriVztSIYAYBX4q9vc+CjHPRJ1qYk+fyhAQxBzcbdCSzuhAxODJZ2kRwhfwSgU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyh3pb2ZFP/LT4Z2+mHgB5U29885Jfo/TuHoK1fxGJFS3K1hL5n
+	5y5fUtV/4+05hQOUyaiuSSoAXY+MYypcMbsqfMxnjiRP1KxD0PtdZDEV4s3/lBvDyb8emLSgymE
+	j8Fp8RjBq4x1A7fNDCpQnJQ1n+yj90UM=
+X-Google-Smtp-Source: AGHT+IFpPcu+8WPIowVSm0xtREio4oymHriCWMeEoT2/Lo1HL26FJFAcmDaESWnI90VwixvGK2ddfdFd83JZVmckog0=
+X-Received: by 2002:a17:907:c0d:b0:b3a:a16e:3db8 with SMTP id
+ a640c23a62f3a-b46e30ebaf3mr1023741166b.20.1759413474862; Thu, 02 Oct 2025
+ 06:57:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] media: synopsys: hdmirx: Detect broken interrupt
-From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-To: Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
- Hans Verkuil <hverkuil@xs4all.nl>, jose.abreu@synopsys.com,
- nelson.costa@synopsys.com, shawn.wen@rock-chips.com,
- nicolas.dufresne@collabora.com, kernel@collabora.com,
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org
-References: <20251001175044.502393-1-dmitry.osipenko@collabora.com>
- <do3p4ncc6issxwqam3oeo54xtoi6jvw7maeprdbfkdn3b3aabr@ilwktxqyf4ap>
- <bb66bc81-2b20-48bb-87bd-6c34b35f4cd8@collabora.com>
-Content-Language: en-US
-In-Reply-To: <bb66bc81-2b20-48bb-87bd-6c34b35f4cd8@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+References: <7f956b3b-853b-4150-b2e0-ccd430adf9ac@web.de> <a9518620-29cf-4994-a9f4-a6f862d8c214@samba.org>
+In-Reply-To: <a9518620-29cf-4994-a9f4-a6f862d8c214@samba.org>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Thu, 2 Oct 2025 22:57:43 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd__1cYsi9m9J-4jbpk33Ha4xrY-amS-==SXdsOmtZ6GsQ@mail.gmail.com>
+X-Gm-Features: AS18NWAGHd_o3xBMWyt0Jto5x8E-wKle9CokrbAOY8OokdFpaTquzWzjqJILkQU
+Message-ID: <CAKYAXd__1cYsi9m9J-4jbpk33Ha4xrY-amS-==SXdsOmtZ6GsQ@mail.gmail.com>
+Subject: Re: [PATCH] smb: server: Use common error handling code in smb_direct_rdma_xmit()
+To: Stefan Metzmacher <metze@samba.org>
+Cc: Markus Elfring <Markus.Elfring@web.de>, linux-cifs@vger.kernel.org, 
+	Hyunchul Lee <hyc.lee@gmail.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Steve French <smfrench@gmail.com>, Tom Talpey <tom@talpey.com>, LKML <linux-kernel@vger.kernel.org>, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/2/25 16:36, Dmitry Osipenko wrote:
-> Hi,
-> 
-> On 10/2/25 16:18, Sebastian Reichel wrote:
->>> +	*val = status & PHYCREG_CR_PARA_RD_DATA_MASK;
->>> +
->>> +	return 0;
->>> +}
->> Do you expect this to be used in other places in the driver? In that
->> case there should probably be some locking, since the hardware interface
->> obviously cannot handle concurrency. Otherwise maybe add a comment,
->> that the function may not be called if concurrency is possible?
-> 
-> Don't expect this function to be used in other places and haven't added
-> locking on purpose to keep the code cleaner. Will add the comment.
-> 
-> Thanks for all suggestions.
-> 
+On Thu, Oct 2, 2025 at 9:31=E2=80=AFPM Stefan Metzmacher <metze@samba.org> =
+wrote:
+>
+> Hi Markus,
+>
+> > Add two jump targets so that a bit of exception handling can be better
+> > reused at the end of this function implementation.
+> >
+> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+>
+> Reviewed-by: Stefan Metzmacher <metze@samba.org>
+>
+> I'll add this to my for-6.19/fs-smb branch and rebase on top
+> of it as this function will move to another file there.
+>
+> Namjae, Steve: this can also be pushed to 6.18 if you want.
+Acked-by: Namjae Jeon <linkinjeon@kernel.org>
 
-On a second thought, this would be a case where the guard() thingy would
-be useful and help keeping code clean, will use it in v2.
-
--- 
-Best regards,
-Dmitry
+Steve, Please add this patch to #ksmbd-for-next.
+Thanks.
+>
+> Thanks!
+> metze
+>
 
