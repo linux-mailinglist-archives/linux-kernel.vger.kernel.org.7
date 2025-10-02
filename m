@@ -1,239 +1,239 @@
-Return-Path: <linux-kernel+bounces-840678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5387BB4F49
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 21:01:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CA35BB4F61
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 21:03:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F3BA7B2CD6
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 18:59:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB56119E33CA
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 19:03:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DB2127B33E;
-	Thu,  2 Oct 2025 19:00:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D85B826D4C2;
+	Thu,  2 Oct 2025 19:03:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nd8jOs9L"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="L2oTfu2A"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 819B0148830
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 19:00:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAE0C227BA4
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 19:03:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759431654; cv=none; b=GNYxqcSslbDuG5c5cMLqfmm/sHitK3+SmomOReoi+IGxzxIqSmB4957H0oUS5Myl8l7hU5e6Ri2darQuk9Tr10sQzhNm2SGn9F9g/hs7V3VyVtM9tOd3eyqcWtQ+yGbKapVoIahlVruhleFc4t+rl7qhNFhXCjmycK+6kuCUoRg=
+	t=1759431797; cv=none; b=pW63yx+qrJC/Wv8sssPIDysPpD074r8ei6AGanvxJPhi8simVnhoJVetLAteSodhVThcSek9p2TyafIbNZXr51vBYFuICMc83ezwN4CdlEGNDTVixUIObS7+JvpVL9cmtk0q9L7y1dTOGse/U9D4GzliwsUuMN05ggpJI2Msy/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759431654; c=relaxed/simple;
-	bh=HdRM6QtSEu6oISwiLRqfnMz+LiKeMqQ1/pBIxbMP6TM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lpxjgB/ooPjgztkNHOgB2ZqxxhEJyqw+ngBre9UxHq7VFmwC7odACXGSG4+sjAENAFscKuKdujGCGsYz8TPbrm8Pd4keypKUecclD6MiCr8gPvkggAjXvIOl1hzUxhPx+SsQsk6sqhyLuv3y7Snr8qwp8KU/fpsZaL5KlbtZE/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nd8jOs9L; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-46e542196c7so14643105e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 12:00:52 -0700 (PDT)
+	s=arc-20240116; t=1759431797; c=relaxed/simple;
+	bh=EE/w+nM9TX+f815zTbZ29qQ5HEP9TfxwlIbMNgyCm/s=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=MadIMbM/OmGlMFHGIfAF1wDNaqN+Cd/VQOWm0BmOwokPJO/4cLakyPuQnspbZe8ZtKFJvo0kJhqEh2yxE0TV4mc1v7WdS7EBwEukB6xo32Pbz/PrEpwriUS+6fRchOi6rBsoctIHNSOvmBhcdhghvrB8+b1Kp3Q4jHYiasjbL8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=L2oTfu2A; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-46b303f755aso10942155e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 12:03:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759431651; x=1760036451; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u6fOaFPX2oAXf2qf/MzKaSamzMn6vecX7vKZ+f0WXRk=;
-        b=Nd8jOs9LmfZos29FOCxMlZejNqkZstiaNoGsS2kxj5kRpcHOM9+HMVvBxTapHaZyQ4
-         01E1MSfcixlF7b/bVw4Bfhz9g4kV7eC5oE6vHs0EK0+9By2NdPXkSi1q7n3WCpMcgHPI
-         B4+iMVq3bVOocKFxp/4UGdwFVFffpWMuvVhKMOo+iLBwMWAaSnYLOQNeRq+k5jjBHCn7
-         iGalhbV4UVfcGkpgc1g7dixm+w/V2PZwnrYZHlESiFge1X8bo/RF6LCOgTToYh/5NKHY
-         KJJaxh+VJPDdFFmVtIUriBz8TqCbemTUJjhdjtQtDCmtGCM0amGJKo3xPJrVPTYSaWeb
-         ClEQ==
+        d=suse.com; s=google; t=1759431793; x=1760036593; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=YIVrjP/nUbVnLbj4b2B2xIHpbU/vqFTy9Ia/ulW6MzM=;
+        b=L2oTfu2AgV3iiec6PgeABkoLoA1dEW6j4aEoBTrVQ+nCW78iwugKBj0chanD0JTtM2
+         qkh+YtgFGCriPBT6qVr3RypfXmrzffqyhyXNaQccURIjzvu+EK80rhdYbtHWLWOp4SOX
+         Tc9rf9x2KgTgdJPKPRMPQEbMSD+tBhKfWvlLWx2x7nRIM6udqHta7P08RAI5M5i5+F6J
+         W+ape93uBB9Pb2JCWrbUVXV5kPEbOR1/7yxGYPaFfzkGQVQa/JFZ/ybyl+gjN1tuPFdp
+         oI3teq4+I+whrafqckZuYrnYzt5jV/EM50ByJBW9vQy61vukoIEgJ8+D7PFGXA6FsDMt
+         uxbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759431651; x=1760036451;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=u6fOaFPX2oAXf2qf/MzKaSamzMn6vecX7vKZ+f0WXRk=;
-        b=IemL3BVu3sD4FvDI+oPTiwsgOY2sLxOvswvsPPWA15TRCqNMJZ163D/M3ROAwC0oZU
-         xuI19jO4bm/aukddGKzn182nvRvbJLND0AvwPWL9M0AeNMi4VF26fIvr97CjlZR35voD
-         SDODkE6lLlBbetvuy/wOOPPLo/yOoO92f74uogKAKM6DbO4c0z/pA5Yi836FV5tvFH9/
-         07UPOKiasNeJtc92/5I8tP0DD2dHhMb1W9k2QXzRElv6gUz+FMjT2nCKIJF9qrVvlkLu
-         mmhD3ZvSbbtihtUpj504iw98d/NZcKPcTzEG6q2Q5BNNpI9feFo0eRZoJiBK6qH1Em3+
-         v5pw==
-X-Forwarded-Encrypted: i=1; AJvYcCXFFYpNHDcb2w09EUH1xLlT4NO0IW75gJ97AFw8s3xYHbijO1kZfOz0uPJkIzXf1YEKW1WCS/r7fXYeSb4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpKWRfXjziDNJoQMAfh59HabUJoU0F6RADHoOtNQuOQUUzoOIy
-	lSmFtZWvkrwXD1xRW2MuEBkdci0WRYK0exHSZ/uFIfNWb+WPXy/EjvIL
-X-Gm-Gg: ASbGncvYKDWOUdYcKn8/50SDiQCwEYnbJzZYqG4E+emeQ7e8zCBbQ4+gN+GUJB1m/++
-	4nz6neezWD3dc9yMH/lpZIXAYquiANHGwsXnFkBHIicQ5+o+8AbCvlWnd056oYLAl+sLWUnXPlJ
-	yPYtQPmNg6JB6ixad7iIxVHWD065lE4SE4iV1pp1kB33uVQ7A9c7KT8DdlRIliI0t+7SUF2gEP4
-	Ix2qSw8h4pvj4n6PNEemUecCU5xrBccaSHx2mG9wQSs4ka1lbyhLT6SR9qILztn4CGOK5TwgdS7
-	Rg6cRSIo50eLTqwLYQXy/28NbFFs5KDRQHSwZ9I7cZTuLPw64Gp6N+TMt+g+WJxtVGPLZRO9wNI
-	ioMlyQU3cLYoO9mkHI/WmIOk8gGhHKkbW1+riQjPdqVrHwhj1E8DO5twtX8HNie5TiUfhuQD4es
-	tca4q8smZ1TYPH
-X-Google-Smtp-Source: AGHT+IGaoHiZFJpX7P4fpJ5gN/YctPtIRaA4HuaLp2YmDRoVlK6rbZNidGIsWnYJjI0Td812wrRW+w==
-X-Received: by 2002:a05:600c:83ca:b0:45d:5c71:769d with SMTP id 5b1f17b1804b1-46e70c5cef4mr4217145e9.8.1759431650257;
-        Thu, 02 Oct 2025 12:00:50 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e6918bb06sm51107905e9.8.2025.10.02.12.00.49
+        d=1e100.net; s=20230601; t=1759431793; x=1760036593;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YIVrjP/nUbVnLbj4b2B2xIHpbU/vqFTy9Ia/ulW6MzM=;
+        b=aWZcFEihJ3RYE1rxkE+qqMGDiZhSVubSDpKaYz3/ngNmbKh1xnN44WW5JtiiFVjsg0
+         xPaRUd3iS8Iwpqus2owRnqUCl0rkXFURZcl9BBtez+boRsQPcmQQRoDaKUhQxftWAlIq
+         eHn247Oq5wqTk4ej0KViPqApmJtciseCG7ZeRD/bnIHzmrIEISPanW6t0JVZDppGhF+V
+         DVS5SF2TMW0PjBfuK+tP1oupmjl1i3e5RG2FYCeCmzaFOTmvyHprGlGc0E+yI54JZXGO
+         Ik0e6K6sqDwLI0CGGPVIFd2dzCltM2yv6xzOR4jXpd3juy5c6OYiG0idvFOqKVX9IcE7
+         PSdw==
+X-Gm-Message-State: AOJu0YzmK9l6Ue2yQcJhGoLpP0PXKZ/Ke7c08sO0xKxWZ/v2ABVZwhs6
+	cDyFniEFMlJglKRzNrfKAn7W6DuZjOHcT6Fx9XJksLwEActl9IetKFoCPWmr3BYKspw=
+X-Gm-Gg: ASbGnctcHNn7RsYeNOleYYf8/fvcxgRfa7lsmxbl/0rbH2QtUa1lXfWUKnJOUxuxf+1
+	lcq9XxwxDS/BEews+tIuL0x1BwdaYxx3yJtOx4UL+2tSD9Cub1QBMiRfGOXOSt4+o92+ceNuhSS
+	c/rJnm4ygau87L0PPVQBRAi6dtkEmPZLScaQdf2kM4oT+ap3lfWy1JrFkuCJjy01nLOG9Gi1yKL
+	ZhE/Z31x3RaadeWPb0zKslmpkJ9hxY9ZPjqXxXKmTQx9KBnphHxj2oKBisFSJ6IamN6zVMCCbyA
+	C4eKZl+c9PctNxWF1/2SnINiswFB5amPgfhgERj/n+pqR2uu5jS5fpiHqcXoKI+lGCTmN0hsxKW
+	DO+1wCXV0F85xZw03Lwl9m/eCUEqMFJNmKp/KSwAQKWJ9rDYHZBBZWAejtHS9CdNtonWq7D4vh3
+	kA
+X-Google-Smtp-Source: AGHT+IFeNZMa5ymbKcTg3HLNCoD2w+74va+v5QV5HKxkMDePSN4VXEUUq3DIkkQPuSB71LbMDM+unw==
+X-Received: by 2002:a05:6000:43cc:20b0:3fc:195e:e180 with SMTP id ffacd0b85a97d-4256713ee7cmr167163f8f.9.1759431792849;
+        Thu, 02 Oct 2025 12:03:12 -0700 (PDT)
+Received: from [192.168.3.33] (120.39.160.45.gramnet.com.br. [45.160.39.120])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8e980dsm5106026f8f.36.2025.10.02.12.03.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 12:00:49 -0700 (PDT)
-Date: Thu, 2 Oct 2025 20:00:47 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
-Cc: andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org,
- daniel@iogearbox.net, martin.lau@linux.dev, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, shuah@kernel.org,
- matttbe@kernel.org, martineau@kernel.org, geliang@kernel.org,
- davem@davemloft.net, kuba@kernel.org, hawk@kernel.org,
- linux@jordanrome.com, ameryhung@gmail.com, toke@redhat.com,
- houtao1@huawei.com, emil@etsalapatis.com, yatsenko@meta.com,
- isolodrai@meta.com, a.s.protopopov@gmail.com, dxu@dxuuu.xyz,
- memxor@gmail.com, vmalik@redhat.com, bigeasy@linutronix.de, tj@kernel.org,
- gregkh@linuxfoundation.org, paul@paul-moore.com,
- bboscaccy@linux.microsoft.com, James.Bottomley@HansenPartnership.com,
- mrpre@163.com, jakub@cloudflare.com, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- netdev@vger.kernel.org, mptcp@lists.linux.dev,
- linux-kernel-mentees@lists.linuxfoundation.org, skhan@linuxfoundation.org,
- david.hunter.linux@gmail.com
-Subject: Re: [PATCH] selftests/bpf: Add -Wsign-compare C compilation flag
-Message-ID: <20251002200047.2b9f9ef9@pumpkin>
-In-Reply-To: <e3a0d8ff-d03d-4854-bf04-8ff8265b0257@gmail.com>
-References: <20250924162408.815137-1-mehdi.benhadjkhelifa@gmail.com>
-	<20250926124555.009bfcd6@pumpkin>
-	<e3a0d8ff-d03d-4854-bf04-8ff8265b0257@gmail.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        Thu, 02 Oct 2025 12:03:12 -0700 (PDT)
+Message-ID: <68f9b7d000ec433adef02294552280902590f762.camel@suse.com>
+Subject: Re: [PATCH v5 2/5] printk: nbcon: Introduce KDB helpers
+From: Marcos Paulo de Souza <mpdesouza@suse.com>
+To: John Ogness <john.ogness@linutronix.de>, Greg Kroah-Hartman	
+ <gregkh@linuxfoundation.org>, Petr Mladek <pmladek@suse.com>, Steven
+ Rostedt	 <rostedt@goodmis.org>, Sergey Senozhatsky
+ <senozhatsky@chromium.org>, Jason Wessel <jason.wessel@windriver.com>,
+ Daniel Thompson <danielt@kernel.org>, Douglas Anderson	
+ <dianders@chromium.org>
+Cc: linux-kernel@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net
+Date: Thu, 02 Oct 2025 16:03:07 -0300
+In-Reply-To: <84h5wihdqu.fsf@jogness.linutronix.de>
+References: <20250930-nbcon-kgdboc-v5-0-8125893cfb4f@suse.com>
+	 <20250930-nbcon-kgdboc-v5-2-8125893cfb4f@suse.com>
+	 <84h5wihdqu.fsf@jogness.linutronix.de>
+Autocrypt: addr=mpdesouza@suse.com; prefer-encrypt=mutual;
+ keydata=mDMEZ/0YqhYJKwYBBAHaRw8BAQdA4JZz0FED+JD5eKlhkNyjDrp6lAGmgR3LPTduPYGPT
+ Km0Kk1hcmNvcyBQYXVsbyBkZSBTb3V6YSA8bXBkZXNvdXphQHN1c2UuY29tPoiTBBMWCgA7FiEE2g
+ gC66iLbhUsCBoBemssEuRpLLUFAmf9GKoCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
+ QemssEuRpLLWGxwD/S1I0bjp462FlKb81DikrOfWbeJ0FOJP44eRzmn20HmEBALBZIMrfIH2dJ5eM
+ GO8seNG8sYiP6JfRjl7Hyqca6YsE
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.0 (flatpak git) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-On Mon, 29 Sep 2025 17:03:29 +0100
-Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com> wrote:
-
-> On 9/26/25 12:45 PM, David Laight wrote:
-> > On Wed, 24 Sep 2025 17:23:49 +0100
-> > Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com> wrote:
-> >   
-> >> -Change all the source files and the corresponding headers
-> >> to having matching sign comparisons.  
-> 
-> Hi david,
-> sorry for the late reply.
-> 
-> > 'Fixing' -Wsign-compare by adding loads of casts doesn't seem right.
-> > The only real way is to change all the types to unsigned ones.  
-> The last v3 did only do that with no casting as it was suggested by 
-> David too.
-> 
-> > Consider the following:
-> > 	int x = read(fd, buf, len);
-> > 	if (x < 0)
-> > 		return -1;
-> > 	if (x > sizeof (struct fubar))
-> > 		return -1;
-> > That will generate a 'sign-compare' error, but min(x, sizeof (struct fubar))
-> > doesn't generate an error because the compiler knows 'x' isn't negative.  
-> 
->   Yes,-Wsign-compare does add errors with -Werror enabled in that case 
-> and many other cases where the code is perfectly fine which is one of 
-> it's drawbacks.
-> Also I though that because of GCC/Clang heuristics 
-> sometimes min() suppress the warning not because that the compiler knows 
-> that x isn't negative.I'm probably wrong here.
-
-That sentence doesn't make sense.
-The statically_true() test in min() uses the 'value' tracking done by modern
-versions of gcc and clang.
-This means it can let signed types be promoted to unsigned ones because the
-compiler knows the value isn't negative.
-OTOH -Wsign-compare is a much older warning and is only based on the types.
-
-> > A well known compiler also rejects:
-> > 	unsigned char a;
-> > 	unsigned int b;
-> > 	if (b > a)
-> > 		return;
-> > because 'a' is promoted to 'signed int' before it does the check.  
-> 
-> In my knowledge,compilers don't necessarily reject the above code by 
-> default. Since -Wall in GCC includes -Wsign-compare but -Wall in clang 
-> doesn't, doing -Wall -Werror for clang compiler won't trigger an error 
-> in the case above not even a warning.My changes are to make those 
-> comparisons produce an error since the -Werror flag is already enabled 
-> in the Makefile.
-
-This isn't about whether -Wsign-compare is enabled or not (or even what
-the option is called).
-It is about whether the compiler's 'sign-compare' warning triggers for that code.
-The one that detects the warning/error isn't gcc or clang but is probably
-used far more than clang.
-
-> 
-> > So until the compilers start looking at the known domain of the value
-> > (not just the type) I enabling -Wsign-compare' is pretty pointless.  
-> 
-> I agree that enabling -Wsign-compare is pretty noisy. But it does have 
-> some usefulness. Take for example this code:
-> 	int n = -5;
-> 	for (unsigned i = 0; i < n; i++) {
->      	// ...
-> 	}
-> Since this is valid code by the compiler, it will allow it but n here is 
-> promoted to an unsigned which converts -5 to being 4294967291 thus 
-> making the loop run more than what was desired.of course,here the 
-> example is much easy to follow and variables are very well set but the 
-> point is that these could cause issues when hidden inside a lot of macro 
+On Wed, 2025-10-01 at 17:02 +0206, John Ogness wrote:
+> On 2025-09-30, Marcos Paulo de Souza <mpdesouza@suse.com> wrote:
+> > diff --git a/kernel/printk/nbcon.c b/kernel/printk/nbcon.c
+> > index
+> > 558ef31779760340ce42608294d91d5401239f1d..c23abed5933527cb7c6bcc420
+> > 57fadbb44a43446 100644
+> > --- a/kernel/printk/nbcon.c
+> > +++ b/kernel/printk/nbcon.c
+> > @@ -1855,3 +1855,69 @@ void nbcon_device_release(struct console
+> > *con)
+> > =C2=A0	console_srcu_read_unlock(cookie);
+> > =C2=A0}
+> > =C2=A0EXPORT_SYMBOL_GPL(nbcon_device_release);
+> > +
+> > +/**
+> > + * nbcon_kdb_try_acquire - Try to acquire nbcon console, enter
+> > unsafe
+> > + *				section, and initialized nbcon
+> > write context
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 initialize ---^^^^^^^^^^^
+>=20
+> And technically it is not initializing the write context, just the
+> console ownership context. I'm not sure it is really necessary to
+> mention that.
+>=20
+> > + * @con:	The nbcon console to acquire
+> > + * @wctxt:	The nbcon write context to be used on success
+> > + *
+> > + * Context:	Under console_srcu_read_lock() for emiting a
+> > single kdb message
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 emitting ---^^^^^^^
+>=20
+> "./scripts/checkpatch.pl --codespell" is your friend. ;-)
+>=20
+> > + *		using the given con->write_atomic() callback. Can
+> > be called
+> > + *		only when the console is usable at the moment.
+> > + *
+> > + * Return:	True if the console was acquired. False otherwise.
+> > + *
+> > + * kdb emits messages on consoles registered for printk() without
+> > + * storing them into the ring buffer. It has to acquire the
+> > console
+> > + * ownerhip so that it could call con->write_atomic() callback a
+> > safe way.
+> > + *
+> > + * This function acquires the nbcon console using priority
+> > NBCON_PRIO_EMERGENCY
+> > + * and marks it unsafe for handover/takeover.
+> > + */
+> > +bool nbcon_kdb_try_acquire(struct console *con,
+> > +			=C2=A0=C2=A0 struct nbcon_write_context *wctxt)
+> > +{
+> > +	struct nbcon_context *ctxt =3D &ACCESS_PRIVATE(wctxt, ctxt);
+> > +
+> > +	memset(ctxt, 0, sizeof(*ctxt));
+> > +	ctxt->console =3D con;
+> > +	ctxt->prio=C2=A0=C2=A0=C2=A0 =3D NBCON_PRIO_EMERGENCY;
+> > +
+> > +	if (!nbcon_context_try_acquire(ctxt, false))
+> > +		return false;
+> > +
+> > +	if (!nbcon_context_enter_unsafe(ctxt))
+> > +		return false;
+> > +
+> > +	return true;
+> > +}
+> > +
+> > +/**
+> > + * nbcon_kdb_release - Exit unsafe section and release the nbcon
+> > console
+> > + *
+> > + * @wctxt:	The nbcon write context initialized by a
+> > successful
+> > + *		nbcon_kdb_try_acquire()
+> > + *
+> > + * Context:	Under console_srcu_read_lock() for emiting a
+> > single kdb message
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 emitting ---^^^^^^^
+>=20
+> > + *		using the given con->write_atomic() callback. Can
+> > be called
+> > + *		only when the console is usable at the moment.
+>=20
+> I do not think the "Context" is relevant. It must be called if
+> a previous call to nbcon_kdb_try_acquire() was successful.
+>=20
+> > + */
+> > +void nbcon_kdb_release(struct nbcon_write_context *wctxt)
+> > +{
+> > +	struct nbcon_context *ctxt =3D &ACCESS_PRIVATE(wctxt, ctxt);
+> > +
+> > +	if (!nbcon_context_exit_unsafe(ctxt))
+> > +		return;
+> > +
+> > +	nbcon_context_release(ctxt);
+> > +
+> > +	/*
+> > +	 * Flush any new printk() messages added when the console
+> > was blocked.
+> > +	 * Only the console used by the given write context
+> > was	blocked.
+> > +	 * The console was locked only when the write_atomic()
+> > callback
+> > +	 * was usable.
+> > +	 */
+> > +	__nbcon_atomic_flush_pending_con(ctxt->console,
+> > +				=09
+> > prb_next_reserve_seq(prb), false);
+>=20
+> This can all be one line. 100 characters is the official limit for
 > code.
 
-There is plenty of broken code out there.
-It isn't hard to find places where explicit casts make things worse.
-The problem is that, even for the above example, the -5 could come from
-way earlier up the code.
-If you 'fix' the warning by changing it to 'i < (unsigned)n' the code is
-still just as likely to be buggy.
+I fixed all your suggestions and published my branch here[1]. The only
+change that I didn't fixed was about the "Context:" change that you
+suggested, since I'll let Petr to thing about it, since he usually has
+comments about it.
 
-> 
-> > As a matter of interest did you actually find any bugs?  
->
-> No,I have not found any bug related to the current state of code in bpf 
-> selftests but It works as a prevention mechanism for future bugs.Rather 
-> than wait until something breaks in future code.
+[1]: https://github.com/marcosps/linux/tree/nbcon-kgdboc-v5
 
-That's what I expected...
-
-> > 	David
-> >   
-> 
-> Thank you for your time David.I would appreciate if you suggest on how I 
-> can have a useful patch on this or if I should drop this.
-> Best Regards,
-> Mehdi
-> >   
-> >>
-> >> Signed-off-by: Mehdi Ben Hadj Khelifa <mehdi.benhadjkhelifa@gmail.com>
-> >> ---
-> >> As suggested by the TODO, -Wsign-compare was added to the C compilation
-> >> flags for the selftests/bpf/Makefile and all corresponding files in
-> >> selftests and a single file under tools/lib/bpf/usdt.bpf.h have been
-> >> carefully changed to account for correct sign comparisons either by
-> >> explicit casting or changing the variable type.Only local variables
-> >> and variables which are in limited scope have been changed in cases
-> >> where it doesn't break the code.Other struct variables or global ones
-> >> have left untouched to avoid other conflicts and opted to explicit
-> >> casting in this case.This change will help avoid implicit type
-> >> conversions and have predictable behavior.
-> >>
-> >> I have already compiled all bpf tests with no errors as well as the
-> >> kernel and have ran all the selftests with no obvious side effects.
-> >> I would like to know if it's more convinient to have all changes as
-> >> a single patch like here or if it needs to be divided in some way
-> >> and sent as a patch series.
-> >>
-> >> Best Regards,
-> >> Mehdi Ben Hadj Khelifa  
-> > ...  
-> 
-
+>=20
+> > +}
 
