@@ -1,117 +1,87 @@
-Return-Path: <linux-kernel+bounces-839836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89DFEBB2879
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 07:25:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E07DBB287F
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 07:26:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8BF9C7AD288
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 05:24:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5EB019210CD
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 05:26:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDDFA283FF1;
-	Thu,  2 Oct 2025 05:25:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ED76280CFC;
+	Thu,  2 Oct 2025 05:26:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="n6NJZ9eu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=postmarketos.org header.i=@postmarketos.org header.b="MWwjhX42"
+Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AABA23185E;
-	Thu,  2 Oct 2025 05:25:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB8F323185E
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 05:26:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759382743; cv=none; b=ICVTnJ/l5XtDbPkvnu8GO/41e/1B8N5F+nwWPI7ZIbZNyfjMt+sRBvA7vJoYwqs7aYcwCBVq7VJGU6yiVItBazsAzfFHOHh22kjblQWOfADQVDZWJdNSLtf9CdritbGF72xPMzhqUdFS7mOvmGIqC3wd3ryxNFX4Bh/M2YrkvAc=
+	t=1759382775; cv=none; b=GwNsVJSf9ZHEUdUz+SyaHB+tcyI53bPfGpaBdyCmVYfytXtcochkVQEM3XwqY5+w0cSb/eW7IAazByo2G4ZImu4Rqc0y91VDt7Z0gyfSiyJuRYnt0htCT0yXAfOlJBzMwL3GePgaThfhnxq8BufTPkyhJXRqA3dncZyN2g9u9tI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759382743; c=relaxed/simple;
-	bh=py7zf3DJFpF3arsBTXISGOJbdTRppb2z3gvxL02j5Ik=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mwYXtNdbNHXHVlM3vZv0MXKs7whquxSVbs6jsUa457DbNPQkAtUf9WjJEDgtO7JGBDE9RtltJgWR5lmyzJNbmPF0AHfV7ci8S3k1XGe8j17brt9tWHWRxkrNrV8P4O1dfGCpVqfBEbOJDMENCB75NLnTRwn/gn3f1UxwHdmyZO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=n6NJZ9eu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 230C2C4CEF4;
-	Thu,  2 Oct 2025 05:25:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1759382742;
-	bh=py7zf3DJFpF3arsBTXISGOJbdTRppb2z3gvxL02j5Ik=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=n6NJZ9eukZwQvk4UG2Xt7xTvdbGXU/oS9RNFtwzRfa4vZacin5Cn9ln2I6pi3Jxfa
-	 wd5IpqUkDosyqCk0KM5jLSSCpwo1NjEt2x/4RIBiqMtQsdX6K39yBtO7unXab0mSwK
-	 t1TMyOOUkxdr8gf9crjpxoBd2F0GGWMXawx0dQqo=
-Date: Thu, 2 Oct 2025 07:25:37 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Florian Eckert <fe@dev.tdt.de>
-Cc: Jiri Slaby <jirislaby@kernel.org>, kumaravel.thiagarajan@microchip.com,
-	andriy.shevchenko@linux.intel.com, pnewman@connecttech.com,
-	angelogioacchino.delregno@collabora.com, peterz@infradead.org,
-	yujiaoliang@vivo.com, arnd@kernel.org, cang1@live.co.uk,
-	macro@orcam.me.uk, schnelle@linux.ibm.com,
-	Eckert.Florian@googlemail.com, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org
-Subject: Re: [PATCH v2] serial: 8250_pcilib: Replace deprecated PCI functions
-Message-ID: <2025100248-chunk-diaper-91e2@gregkh>
-References: <20250930072743.791580-1-fe@dev.tdt.de>
- <f6fe95e5-0dd3-4ce0-b741-06cacf283e4c@kernel.org>
- <e19fa21955115f4621b47b170c3a2193@dev.tdt.de>
+	s=arc-20240116; t=1759382775; c=relaxed/simple;
+	bh=hcLhwxJJZOWXUPZwdoFe2zGZFEXuIaSy2t/7jL7qUvs=;
+	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
+	 In-Reply-To:References; b=V/HjZsk7zA7txpzdIzi5a+HcxB0qtdmtLTPbFvTmmz2Wipjn4wIeP6skTxxZE7IDZ36xwIAZ1OLCrJZLNmcTDK5FJHUPZUqHOdN1Gja01yppE9t72r+qCUx298Vg9Th2ltUvGC6dH/pb5OtPsVyNpJOsXOoqLcQEp0RYsmflpjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=postmarketos.org; spf=pass smtp.mailfrom=postmarketos.org; dkim=pass (2048-bit key) header.d=postmarketos.org header.i=@postmarketos.org header.b=MWwjhX42; arc=none smtp.client-ip=91.218.175.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=postmarketos.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=postmarketos.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e19fa21955115f4621b47b170c3a2193@dev.tdt.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=postmarketos.org;
+	s=key1; t=1759382761;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hcLhwxJJZOWXUPZwdoFe2zGZFEXuIaSy2t/7jL7qUvs=;
+	b=MWwjhX420uIJPcauIu1sA+1f/mzHf90s3Sljby/+IE8ixTt9J+Rp6VJIjBL4zYD5RRtZrs
+	dUODL9VhVSqwrScVKLpwnlHROR0EFVzpmHpyDPRl/JXxwZI0kF3mQMIabiL+5QkU/6tpZ8
+	4fbvD8Shw+JuwJwZUFH05cDUidjpuCsQO8cjVskCNz5BG0hcl4717hEmfoeEzjq10GacPH
+	8P0RpC07K4mIemEGS5hG2yAzwCL3SBKoOWQch0qIhQb0hwn5pDeI3MXKyghBA/K0gbA0WZ
+	FCu7DvvM3SPxn3I2Q1FE3vXXRbumMT5HmMRIuaSfYyopntRhHgIdQzKBsBgjEQ==
+Date: Thu, 02 Oct 2025 05:25:59 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Paul Sajna" <sajattack@postmarketos.org>
+Message-ID: <b8817a128ca13b8bcc3a90fa114d916292183729@postmarketos.org>
+TLS-Required: No
+Subject: Re: [PATCH v3 00/11] arm64: dts: qcom: sdm845-lg-{common, judyln}:
+ Improve HW support in dts
+To: "Bjorn Andersson" <andersson@kernel.org>, "Konrad Dybcio"
+ <konradybcio@kernel.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ "David Heidelberg" <david@ixit.cz>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org, "Amir Dahan"
+ <system64fumo@protonmail.com>, "Christopher Brown"
+ <crispybrown@gmail.com>
+In-Reply-To: <20250928-judyln-dts-v3-0-b14cf9e9a928@postmarketos.org>
+References: <20250928-judyln-dts-v3-0-b14cf9e9a928@postmarketos.org>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Oct 01, 2025 at 04:45:44PM +0200, Florian Eckert wrote:
-> 
-> 
-> On 2025-09-30 09:34, Jiri Slaby wrote:
-> > On 30. 09. 25, 9:27, Florian Eckert wrote:
-> > > When the '8250_exar' module is loaded into the kernel, a kernel trace
-> > > with 'WARN_ON(legacy_iomap_table[bar])' is dumped to the console,
-> > > because the old pci table mapping is still used in '8250_pcilib'.
-> > > 
-> > > The old function have been deprecated in commit e354bb84a4c1 ("PCI:
-> > > Deprecate pcim_iomap_table(), pcim_iomap_regions_request_all()").
-> > > 
-> > > The remapping already takes or must take place in the driver that
-> > > calls
-> > > the function 'serial8250_pci_setup_port()'. The remapping should
-> > > only be
-> > > called once via 'pcim_iomap()'. Therefore the remapping moved to the
-> > > caller of 'serial8250_pci_setup_port()'.
-> > > 
-> > > To replace the outdated/legacy iomap_table processing in
-> > > '8250_pcilib' the
-> > > function signature of 'serial8250_pci_setup_port()' has been
-> > > extended with
-> > > an already iomapped address value. So this can be used directly
-> > > without
-> > > io mapping again.
-> > > 
-> > > Signed-off-by: Florian Eckert <fe@dev.tdt.de>
-> > > ---
-> > > 
-> > > v2:
-> > > * The function 'pcim_iomap()' returns a NULL pointer in the event of
-> > > an
-> > >    error, so error handling has been adjusted.
-> > 
-> > LGTM now.
-> > 
-> > Reviewed-by: Jiri Slaby <jirislaby@kernel.org>
-> 
-> Thanks for the review tag. Will this be included in linux next?
-> Or do I need to do something? I also think that this should be backportet
-> to the latest LTS kernel “6.12.*”. This is where I noticed the problem.
+September 29, 2025 at 5:05 AM, "Paul Sajna" <sajattack@postmarketos.org m=
+ailto:sajattack@postmarketos.org?to=3D%22Paul%20Sajna%22%20%3Csajattack%4=
+0postmarketos.org%3E > wrote:
 
-The merge window is currently happening, I can't add any changes to my
-tree until after that closes in 1 1/2 weeks.  And if you need/want it
-backported to stable kernels, can you provide a "Fixes:" tag and a cc:
-stable tag as well?
+> Changes in v3:
+> - remove msm ids
 
-thanks,
+I'm noticing now that this breaks wifi because the msm ids are used to id=
+entify the firmware
 
-greg k-h
+> ath10k_snoc 18800000.wifi: failed to fetch board data for bus=3Dsnoc,qm=
+i-board-id=3D0,qmi-chip-id=3D0,variant=3Dlg_judyln from ath10k/WCN3990/hw=
+1.0/board-2.bin
+
+What are your thoughts on this?
 
