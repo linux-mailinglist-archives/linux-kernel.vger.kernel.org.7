@@ -1,184 +1,126 @@
-Return-Path: <linux-kernel+bounces-840393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76947BB447F
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 17:13:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8856DBB4479
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 17:13:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8D131892269
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 15:13:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A777E7A6508
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 15:11:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35884188A0C;
-	Thu,  2 Oct 2025 15:13:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C9E01865FA;
+	Thu,  2 Oct 2025 15:13:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="iDtNfyCe"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="URld4TF5"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A298886342;
-	Thu,  2 Oct 2025 15:13:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09E0386342
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 15:13:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759418005; cv=none; b=e20M82TzEbRc3NXrH9dmVAtf5AMetQKd+f7SepJc8jZS+1KEV5lSm+rgdxOuA2ksCC9wLNtNLO55S57M3AMzs5aWG+9GHVgfsz9N/qL2HQsi+N6p1PuuXsrQfUDy5/AAlVyuNW8gsO17KNKlPemJl2UDS1CQuSN1U2MN5/qpaZg=
+	t=1759417992; cv=none; b=K7apBUL/r6XbTqpK/gG6jYHGTiO1xqf8QFstf+/M7WZSWi9BNPbDM1tT4EnhpZ7z18Yr0KDiQogHUeXAvcVQ1zN4EuijLrlLYFsfsABUzMPu22jY37XamCotNBUoWaBRfG5T51pdITnk+13UZzvhFLkOr3Xh9F01OGTd+NgzI20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759418005; c=relaxed/simple;
-	bh=LpPXaMSA/v5S3oPaSSJpUykYM4xuxN7MEFYn5zR9OR4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qu7vtdLqEA/5llQqkp76IHV6tiIST+szhrtWyUb8eH+MJps3FqplXmUJldIAjAedqIbMWhCzdcwepz7hXeodp2qTvZaJDYmwLzIifRyZp/k4MsglFJoEBU/f1Gt92apyM73qt+NjVHQ136chojAWEtgnF9sZHxW3/64a6T+Du7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=iDtNfyCe; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5928ZBYe000332;
-	Thu, 2 Oct 2025 15:12:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=ICrFZW
-	tzEcc/DYZsF+/Ku/klFBfHQUS5dvQIjsTnYv8=; b=iDtNfyCegBmmHFKb69GDFU
-	hxEzdyefVhOkLYcn6nACNT3/H1AR1Dc6zTbKSL/KcORA0LYW/gCIyCD6931sVxLa
-	n9nQ1jShFh3pvTBK3ixl7JjMi9kTP8BiHuz4anXbXLI/bapp8JDDphQ3h7OokOL0
-	m4ZP64jS7GM9vflb9s/38pFoW9aJb5ej8q5GaUls4sZxDW1pYKvd175+dsogFsYU
-	e+N8N7zTqXk0vyOFmAwGkUYjPPoUeF/1YLVyJpwI5oioSAowiEtqxiKRvDiHGNtQ
-	SZ2FS95l/YnS0qegbsGrvkd+C00WEosanuD02L414rIlva4pqHNu/P+l1lpJxXAA
-	==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49e6bhw807-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 02 Oct 2025 15:12:56 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 592DmBlI026752;
-	Thu, 2 Oct 2025 15:12:55 GMT
-Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49eu8n6gse-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 02 Oct 2025 15:12:55 +0000
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 592FCtcH34472414
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 2 Oct 2025 15:12:55 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id F1E2758043;
-	Thu,  2 Oct 2025 15:12:54 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8D10558059;
-	Thu,  2 Oct 2025 15:12:50 +0000 (GMT)
-Received: from [9.43.27.61] (unknown [9.43.27.61])
-	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Thu,  2 Oct 2025 15:12:50 +0000 (GMT)
-Message-ID: <cbdb4a5a-a8ca-436b-a2ed-59f650a3dce7@linux.ibm.com>
-Date: Thu, 2 Oct 2025 20:42:48 +0530
+	s=arc-20240116; t=1759417992; c=relaxed/simple;
+	bh=XJdd5gCENWxVBNzk0LITi7rBVPLt55cKg02vaft5zSo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WKVTDOSpkaN+wxSmutMj29d2+SCiCUkAKa5k/94xbJvk6ZXRJig3bY71r6gv6R8T4xh/i9iAI+a0nEJILUvbwnO81cQHo9KLwF/izbgbaiJaIGyzCptBFCgPCm0pbh/BEmyq+W0r67hQFsrNSMTZLth4UVmu3Fbwxmgs9A0aJLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=URld4TF5; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-85d5cd6fe9fso107994485a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 08:13:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1759417990; x=1760022790; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XJdd5gCENWxVBNzk0LITi7rBVPLt55cKg02vaft5zSo=;
+        b=URld4TF5AoXDK3xhofx2PFCGOEZK5MU7Pmx99bY6Q2YPvzW1zjGFGGVfvlq4EwrqZU
+         pcIG7uiGY5vEj33TZW/oiKjYeSuTk0wse+Xj8sbEEYkp6uNel/xvw+ohpNRDZHTisZcn
+         dBCn+Wgnq58/AJiFi5LT/o3PS8rRD9B755OS6A1PPzM0upmU6YpjmyaAP8YykyFgNLsc
+         t2GkK3T71/3eC1pBYE+FMhTS6FrawcluPVwD3iRnlkz0fgbihvyiQjw8mDJLSxjJFAjd
+         pmxrTdDKMIyQaLd3+l7xSP6vEGh6AZvs+6YK6SI5GZNyIdC7zF0BSbPGZ/HNxsJkLK9l
+         omZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759417990; x=1760022790;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XJdd5gCENWxVBNzk0LITi7rBVPLt55cKg02vaft5zSo=;
+        b=U/FK0EDaQZHS4/N/1l4JNiXpK2iGa3gIisYbKNu7orV7yLyxFqha0jvdrR6q5HYOgi
+         MSj9TyhLJQYCSauFpmRXN+ckuJ0Vw+KLICVFdaf/13OlpXJ1lTyfYG85rE0Ak4yZfwTc
+         9QHXteIKjpuQVvuVJN5CodowTXE2epP8n+CLAaWIXf15nuJ0gNplJsyTM9V4LVu+6pJN
+         vuDIdEMHk2jBEbj7+H4VM+cn1xudjVoM/QWIJrPbbebVAPjZh+aK/a8/ogGrEJeIMLSE
+         m+FlK3GXXBZYHDHGIoaGu4Pqvv65GPkW1i4OIW6EufNwc6K2ajPhk4A+650RVWua6gPp
+         Gugg==
+X-Forwarded-Encrypted: i=1; AJvYcCXEG6Gqf5MtgODPryDgCyq2exwqa3URb/wx9T8sbA+PzmaFUWAHHSIEDb7Zicec1HC0/Q1TatYVs3r1Wg0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8cKF+wjfXmuU9kTJGjXIsXmxRfodt/WbvnUfRfRddgRPtK6iu
+	lT+8dDe3+Se3pWPbKNk1uJ+M/Gfw+9wXTO2vgiGwBf6PbhHUgHRUMNxg5NFBRINrWwxW7pdbxeF
+	MegWA6DI=
+X-Gm-Gg: ASbGnctZ5EtNKl9JQp6FwBlPsVJepIkd5noObxeNINcfRoQ4MGkugI9XG3hkvKaVQPl
+	nZsiN/+wD+7Yqjh8U9Ud61fwl+BibI0DwMtb+i0pJd7a8BJzY33+IFrojOQneTLwBk+0fuPRUzo
+	Khn3fZI1jU8mPBnuHno3MKtO4Eay31dUhSdY+W7O3k1bjMbccNqZnvCRBrEa5XB/GRrUz/UzgnG
+	Yv+Sn4roQGwh4hREn318HCRTN4w08Z03lPwZ2eBQIChsgRgCZ2sojXr5vgnpscfJ9qHiR1z2HgF
+	La/FthkJHBgDbqnPqVWb2OHlUMeWxs/4HqjkEHpNvjj3S5p+m7iWUuMqNeIaz7N15PR/A36AAD4
+	zAJnA9LwQ8tQ2e1h/LrzHB/OockOkTFkunPR5p1UIivRAZM5WjiQqWuroKOYmXQsXhc/Hj4/tEt
+	1vGFBpLm3e+Bgg8VLH
+X-Google-Smtp-Source: AGHT+IG0oPe5CNlBpr3wJjmSULJ8S5uq9PiyYd4xVRPRgnIUY7cEyRWUA/GTHx85PtOoXdDh+uje/A==
+X-Received: by 2002:a05:620a:1a0c:b0:85e:5022:33b7 with SMTP id af79cd13be357-8737780ae60mr1108818085a.72.1759417989421;
+        Thu, 02 Oct 2025 08:13:09 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8777aabeac7sm224623585a.64.2025.10.02.08.13.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Oct 2025 08:13:08 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1v4KzU-0000000DqDS-0i6h;
+	Thu, 02 Oct 2025 12:13:08 -0300
+Date: Thu, 2 Oct 2025 12:13:08 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Mostafa Saleh <smostafa@google.com>
+Cc: Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	iommu@lists.linux.dev, maz@kernel.org, oliver.upton@linux.dev,
+	joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
+	catalin.marinas@arm.com, robin.murphy@arm.com,
+	jean-philippe@linaro.org, qperret@google.com, tabba@google.com,
+	mark.rutland@arm.com, praan@google.com
+Subject: Re: [PATCH v4 15/28] iommu/arm-smmu-v3: Load the driver later in KVM
+ mode
+Message-ID: <20251002151308.GG3195829@ziepe.ca>
+References: <20250819215156.2494305-1-smostafa@google.com>
+ <20250819215156.2494305-16-smostafa@google.com>
+ <aMQmA9cLaeYWG5_C@willie-the-truck>
+ <aNKwROPzDCWgJBGQ@google.com>
+ <20250923173806.GF2547959@ziepe.ca>
+ <aNppE9A3PDiDg_1W@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/7] blk-mq: add documentation for new queue attribute
- async_dpeth
-To: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk, bvanassche@acm.org,
-        ming.lei@redhat.com
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com,
-        johnny.chenyi@huawei.com
-References: <20250930071111.1218494-1-yukuai1@huaweicloud.com>
- <20250930071111.1218494-8-yukuai1@huaweicloud.com>
-Content-Language: en-US
-From: Nilay Shroff <nilay@linux.ibm.com>
-In-Reply-To: <20250930071111.1218494-8-yukuai1@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=Se/6t/Ru c=1 sm=1 tr=0 ts=68de9678 cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=i0EeH86SAAAA:8 a=VwQbUJbxAAAA:8
- a=8rCECXInrZZGTntQbewA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAxMCBTYWx0ZWRfXw5hcvswR/o/t
- lpqK8UEbc5Z+/Au/RPbQhCTi+cLSrSub6h5kyVgE9+Qcdc7gqZH9XNOSe3KAkKLfhirKBNEbOc1
- LPKPy6souPvo5kZ2qVFffYl3ki6ObaqSLxhdDZkFpqGx/HuzRvowOIxiSQwFesqQkdQENlN2Lv9
- H18Vd/ytZw/ewyyNpK0qfm4gV0+oZvi1YJlyBQMgyqt5/MM6Xg+OZNQBlkq2keMb3je10m2NtZD
- yW6j3BBJoo/cM6lfYZJjeBzxBwwXejhMbtB67T4CnUA8KvjCUIE/S2vMkILG4bZMZN6XYgSmhDJ
- zQ2UntWP2zzqdelp9aAdSzMzbSMBYasxAPDkRR+KyhDEP1SHHLVjBRXZW+frWly8FOP4yCwFY3n
- 3GXRnWahnLLHd+4nedQjR8102Ollzg==
-X-Proofpoint-GUID: pprgsBV7M6uICuP4qURKZFqmJ4qAYKn_
-X-Proofpoint-ORIG-GUID: pprgsBV7M6uICuP4qURKZFqmJ4qAYKn_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-02_05,2025-10-02_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 malwarescore=0 suspectscore=0 bulkscore=0 lowpriorityscore=0
- clxscore=1015 phishscore=0 priorityscore=1501 adultscore=0 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270010
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aNppE9A3PDiDg_1W@google.com>
 
+On Mon, Sep 29, 2025 at 11:10:11AM +0000, Mostafa Saleh wrote:
+> Another possible solution, to keep a device bound to the KVM driver,
+> is to probe the SMMUs from the KVM driver, then to create child devices;
+> possibly use something as device_set_of_node_from_dev to bind those to
+> the main SMMUv3 or find another way to probe the main SMMUv3 without
+> changes.
 
+I do prefer something more like this one, I think it is nice that the
+kvm specific driver will remain bound and visible so there is some
+breadcrumbs about what happened to the system for debugging/etc.
 
-On 9/30/25 12:41 PM, Yu Kuai wrote:
-> From: Yu Kuai <yukuai3@huawei.com>
-> 
-> Explain the attribute and the default value in different case.
-> 
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-> ---
->  Documentation/ABI/stable/sysfs-block | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/Documentation/ABI/stable/sysfs-block b/Documentation/ABI/stable/sysfs-block
-> index 0ed10aeff86b..09b9b3db9a1f 100644
-> --- a/Documentation/ABI/stable/sysfs-block
-> +++ b/Documentation/ABI/stable/sysfs-block
-> @@ -609,6 +609,16 @@ Description:
->  		enabled, and whether tags are shared.
->  
->  
-> +What:		/sys/block/<disk>/queue/async_depth
-> +Date:		August 2025
-> +Contact:	linux-block@vger.kernel.org
-> +Description:
-> +		[RW] This controls how many async requests may be allocated in the
-> +		block layer. If elevator is none, then this value is nr_requests.
-> +		By default, this value is 75% of nr_requests for bfq and kyber,
-> +		abd nr_requests for mq-deadline.
-> +
-Hmm, it seems we need to further elaborate above documentation, seeing the
-way this new sysfs interface is playing out now for different I/O schedulers. 
-I'd suggest rewriting this as follow (you may further modify/simplify it based
-on your taste, if needed):
+Not sure how to do it, but I think it should be achievable..
 
-Description:
-[RW] Controls how many asynchronous requests may be allocated in the
-block layer. The value is always capped at nr_requests.
+Maybe even a simple faux/aux device and just pick up the of_node from
+the parent..
 
-  When no elevator is active (none):
-  - async_depth is always equal to nr_requests.
-
-  For bfq scheduler:
-  - By default, async_depth is set to 75% of nr_requests. 
-    Internal limits are then derived from this value:
-    * Sync writes: limited to async_depth (≈75% of nr_requests).
-    * Async I/O: limited to ~2/3 of async_depth (≈50% of nr_requests).
-
-    If a bfq_queue is weight-raised:
-    * Sync writes: limited to ~1/2 of async_depth (≈37% of nr_requests).
-    * Async I/O: limited to ~1/4 of async_depth (≈18% of nr_requests).
-
-  - If the user writes a custom value to async_depth, BFQ will recompute
-    these limits proportionally based on the new value.
-
-  For Kyber:
-  - By default async_depth is set to 75% of nr_requests.
-  - If the user writes a custom value to async_depth, then it override the
-    default and directly control the limit for writes and async I/O.
-
-  For mq-deadline:
-  - By default async_depth is set to nr_requests.
-  - If the user writes a custom value to async_depth, then it override the
-    default and directly control the limit for writes and async I/O.
-
-Thanks,
---Nilay
-
+Jason
 
