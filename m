@@ -1,124 +1,95 @@
-Return-Path: <linux-kernel+bounces-839888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09DADBB2A86
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 09:06:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01797BB2AB0
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 09:14:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DE831881162
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 07:06:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF2B63A9FE0
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 07:14:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5C191B85FD;
-	Thu,  2 Oct 2025 07:05:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 965A228F935;
+	Thu,  2 Oct 2025 07:14:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k2U0BMBK"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=permerror (0-bit key) header.d=hardfalcon.net header.i=@hardfalcon.net header.b="Q02HJgOb"
+Received: from 0.smtp.remotehost.it (0.smtp.remotehost.it [213.190.28.75])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 736B5A59
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 07:05:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D16ED239E81;
+	Thu,  2 Oct 2025 07:14:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.190.28.75
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759388752; cv=none; b=kLcLsr1RxkbRzpgdGmVtJT+a0C5TNOhPkWLUX+mMIQoGC5DjV7FRaNLyY53lu2kUtzqCa058y1uOHrUcR/sBDCq+k/Bfhgh0fIaZQlIAObFbpXekIkIzfzrIUPdRQt8JO4ZzimdSECQYkWsp+BfSzMwyhrzZKhXr/MH8MrynFiw=
+	t=1759389274; cv=none; b=FqX06cAQlQa5V89BfrwsXKpEY7BNx6JDRjVsEf0jLPCvxc5ew5B99S0dAyWvQ52M1b0YhMIj6e0OSF8n23IfiZ7dHbMljcTHdzhDMxFzGKNdiSJYqgXUBlKCwXGNjOSkTzCotpziiAc5bgpL5wMKuU3fFGKyjK/tK3yE4s55Ra0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759388752; c=relaxed/simple;
-	bh=kqajBcfhnyiH952GdDDW4wkPaZlv3VtMaJHXRfk7Dpo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MqZ1022qOzpK2+lCXLYzjZMKWmF/LzKF6bYytT3rDSh5S/3LJUx9VXnXUIGXXhJvIoPuwXBdhvU4lAWND90foh1cN+MNYV6CzT+bjJVOgovyey6w1j6TxL6FwcvATGG3Kz3wUqUmKJAcmiGOtr9Hhm9LHzhI158LBB81V7Wwaa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k2U0BMBK; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b3e44f22f15so96813866b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 00:05:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759388749; x=1759993549; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rZWe9sJjzXFJrzJbfI4do9XirvOVhX8rsNXWi20/gUM=;
-        b=k2U0BMBKM2bp8J2X6coDT2V/tcS3OHHyRSAjC2t49vRjqBRlW2AnwQNRjGbMrvbyv9
-         tRstQ7APNV8wnoiFeiwCsTVzevzrb+CVLkE7BbVWh2Ql5GhIzAte0L0KG95fhlga8RkM
-         I4JqmOqVOuCac50s38RmYrlWzgEwRSGIv2BVklQYVGSSmxtf2CVPlrcpdh8K9y6emagl
-         WDOFUVzoPyK68ZJM8QJD4Hi5zQarnRLQa2opSqO/4wNlYz+M0qml+8lcbuQtDml1DuFl
-         y/MMYMB//H45FQOlNKRF2xd0k+q8oMGU9V5pOrVtmFP/6uCbRs4Iv0uIb4HHergbVCRD
-         z0zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759388749; x=1759993549;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rZWe9sJjzXFJrzJbfI4do9XirvOVhX8rsNXWi20/gUM=;
-        b=EZZNileQGC5/snT80GtVAIs6hHAm1xjZN2+bcwgUchopW4AQWRd/FciP1H71DuXIIL
-         kOWJ6D+kLEkgIZ2yyDmOUHVEFKIrjTCeiINypwEP8d43sMRL8CmWNinkB8+kDbWtkU1F
-         CfdJ6R5LfmsbEUjizWnwiybKluHKFNGkAknn3ScNfZ5H9/cesS7ErJB+DWfdl/5UfYBC
-         9IfREijGdXipBmEFBlhSIBeKLU7p0lAbxdGUWT/EXHJtFIPmhNcw2TqNetwgQvGcqVWZ
-         24MbJBrBeYvteS4J3uTuy00bDUSmKAtgcQg1xT4s7bnWiuZZCId1bjq9Eaf2T3zWMtda
-         WZSA==
-X-Forwarded-Encrypted: i=1; AJvYcCUQlMxVJu51dKgcMa2bjcHO+K6hLaAbH+5ex5qgAFm9DVShrcJhyRTTWjdWcOd4osGx6NPsknzGHIIZ67w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3c94kY2MFek7I56VPGM8v4u39P0BzKn9Sv3icWJ+PrUkXUezd
-	urOKWFqgRM5hJeNuj/NS28CC6zctSiHf7sZMYOfV+wH0kMk14/ZoNZ3HubrFsm7gx2BxOkY7K2B
-	njAeQr+nSaAXt3rQzrjeJYkllYnxKyFE=
-X-Gm-Gg: ASbGncuiXvVHz7jpmPWmSTL+LqziH3dM8MCc1zqRlKO/WmjzMtnqgyNQcfkb6rVmcNN
-	HiDZBU3lMagJftulw8UYHgQaAIk2lQ7PyFT0OBWMjrH/2irfM8K4icrzh8to+OfbSfVBD/sI3Gn
-	gwVsK0hVKsVyqn1khB6O7NrWWelgi0huiCv4cFfOg6006D1SnArXEn1QDl8b/bnbSf1Rx22mVxf
-	Dg53z5qznwkD47K6bAIQ3Dsnj5d79sNoA==
-X-Google-Smtp-Source: AGHT+IF6z6xvP8EKQnjBWNNUYUXM4tLIvPP2DGadjVE5IQ6sdKrCnvE2y+ttQ27ur9HBknRAgOcWbfanrNPkOyv7YmE=
-X-Received: by 2002:a17:907:94d3:b0:b41:660:13b8 with SMTP id
- a640c23a62f3a-b46e6033460mr843740366b.31.1759388748447; Thu, 02 Oct 2025
- 00:05:48 -0700 (PDT)
+	s=arc-20240116; t=1759389274; c=relaxed/simple;
+	bh=0WAJODxkaYC78/NXZIaEHtRUIomp/HSODLWOq7855uc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y2lsu1hiJNWlSMOPVpeP9F1CpVp30fJDMApHvl27OvjJlnhS6tFf2Fy9jI89FGvdeiY6mcYQFdIHMdNEfioYNficnzFhl3OhIk43rzz55AIpVERmmj43xdYo6adWsYdM0i6Dj3M7b22riRjRY9dD29u5hC6y6nGJLnzacQphq9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hardfalcon.net; spf=pass smtp.mailfrom=hardfalcon.net; dkim=permerror (0-bit key) header.d=hardfalcon.net header.i=@hardfalcon.net header.b=Q02HJgOb; arc=none smtp.client-ip=213.190.28.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hardfalcon.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hardfalcon.net
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=hardfalcon.net;
+	s=dkim_2024-02-03; t=1759388799;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SFSIsK6zuip8p2LTNK/t+i/Ri0Px578CxGOu8ko/byY=;
+	b=Q02HJgObtFq4zjausj5FHmyhqaMaGbzHEexGa4ngJEgaEDsD78AWiCWKGGC3Z2mE5HdOMV
+	4v8XRVe77keAQSBw==
+Message-ID: <304181ca-daa5-4866-bf80-28653a064958@hardfalcon.net>
+Date: Thu, 2 Oct 2025 09:06:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <961e5351afa408e69541b60ec75852fbbd1ddd24.1759121938.git.marilene.agarcia@gmail.com>
- <476b75cff0c3e5ff23ba7c642924511f3ba09a3f.1759121938.git.marilene.agarcia@gmail.com>
- <CAMknhBHt9JVkaf1Kq76BKFM-Ff38-7ws6gaq+5fwy=pAih-fww@mail.gmail.com>
-In-Reply-To: <CAMknhBHt9JVkaf1Kq76BKFM-Ff38-7ws6gaq+5fwy=pAih-fww@mail.gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 2 Oct 2025 10:05:11 +0300
-X-Gm-Features: AS18NWChg2Gs11byKnDJ3HgKZr9JaYy6y8zdlFJt8XDvo3BCRfuqYggwXNDKvtw
-Message-ID: <CAHp75VeXXBjc_o1ktqNnL-wH8CnjbsCHu8Rs_kpfYqCbbz6PrA@mail.gmail.com>
-Subject: Re: [PATCH v12 2/3] iio: adc: max14001: New driver
-To: David Lechner <dlechner@baylibre.com>
-Cc: Marilene Andrade Garcia <marilene.agarcia@gmail.com>, linux-iio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	Kim Seer Paller <kimseer.paller@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, 
-	Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
-	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Marcelo Schmitt <marcelo.schmitt1@gmail.com>, Marcelo Schmitt <Marcelo.Schmitt@analog.com>, 
-	Ceclan Dumitru <dumitru.ceclan@analog.com>, Jonathan Santos <Jonathan.Santos@analog.com>, 
-	Dragos Bogdan <dragos.bogdan@analog.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 6.12 00/89] 6.12.50-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, achill@achill.org
+References: <20250930143821.852512002@linuxfoundation.org>
+Content-Language: en-US, de-DE, en-US-large
+From: Pascal Ernster <git@hardfalcon.net>
+In-Reply-To: <20250930143821.852512002@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 1, 2025 at 5:03=E2=80=AFPM David Lechner <dlechner@baylibre.com=
-> wrote:
-> On Mon, Sep 29, 2025 at 7:59=E2=80=AFAM Marilene Andrade Garcia
-> <marilene.agarcia@gmail.com> wrote:
+[2025-09-30 16:47] Greg Kroah-Hartman:
+> This is the start of the stable review cycle for the 6.12.50 release.
+> There are 89 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 02 Oct 2025 14:37:59 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.50-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
+> and the diffstat can be found below.
 
-...
 
-> > +       /* Enable writing to the SPI register */
->
-> Always nice to put `.` at the end of the sentence in comments.
+Hi Greg,
 
-FWIW, for one-line comments we allow different styles, the main
-requirement is to be consistent with chosen style across the driver in
-question.
 
-1) "bla bla bla"
-2) "Foo bar baz"
-3) "Happy comment."
+I've applied all patches from the current version of stable-queue/queue-6.12 (commit id b249cb4d7eedc179382f657819c5ff4c55230b44) applied on top of kernel 6.12.49, compiled the result with GCC 15.2.0 and binutils 2.44 as part of OpenWRT images for various platforms, and booted and tested those images on the following platforms without noticing any issues:
 
-Each of all three is okay.
+- x86_64: Intel Haswell VM
+- MIPS 4KEc V7.0: Netgear GS108T v3 (SoC: Realtek RTL8380M)
+- MIPS 74Kc V5.0: TP-Link Archer C7 v4 (SoC: Qualcomm QCA956X)
 
---=20
-With Best Regards,
-Andy Shevchenko
+Tested-by: Pascal Ernster <git@hardfalcon.net>
+
+
+Regards
+Pascal
 
