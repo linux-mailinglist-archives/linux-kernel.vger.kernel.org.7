@@ -1,99 +1,132 @@
-Return-Path: <linux-kernel+bounces-840322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AF38BB41C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 15:58:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B98D1BB41D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 15:59:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B8C054E2BC2
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 13:58:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F6E91758BC
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 13:59:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F2D5311C16;
-	Thu,  2 Oct 2025 13:57:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B81AE3115B5;
+	Thu,  2 Oct 2025 13:59:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sdoIxESf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="CqO5bBiE"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 897AF2D5928
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 13:57:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76D232D5928
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 13:59:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759413476; cv=none; b=HQ3mqJ6xn9JPr8CgpxAB3peCHFUmu2nFOfsexSEfnMtZNIHqj/8ZRxt00i6daG5SRYVvLtC4UjjRek+Iagt1WAECMyOR8ujxiRarPATAx55E172pg8tNf8Hc5Ri9r76hHM//ltjiOyrLT67N+9LZTHT/HbhRUgCZMHN0TbcH/0Q=
+	t=1759413557; cv=none; b=qFYdRiYBk1I+yfcZFl3T/JxJ0OJK6+a4V8hUxIYv7Y4SVfsx4rtwUsKqbQGEV7UGedDFdPLCs47CdH75+8IwVSBquqQkO9cfrTTyp4VmacjwC0VSY6c1zYof+64ejyaKX1MPxvokSb+wv5r/hTcgCl5YzQkeTnMM0PAfhg8fUuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759413476; c=relaxed/simple;
-	bh=6DM/v7zBqHZDejrXhT4fhDydMxHb7EGAC17MErEzbYA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=T9rX6kldG//6PA9gFWsQH46NdrzCybeKw0Hp73kQ7CZg3OBtgsYVl+ik1mfoNG8eO/rCLm2RTikphTmmaiM8hwjvLa38W41JQbjMa3aEcFbvwasxaH9ENOe4KGaN/wIfsmFrGajXZmUVcpl6OwWJHUYRTmMsyjxPnGeV19g1RjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sdoIxESf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41DD0C4CEF4
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 13:57:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759413476;
-	bh=6DM/v7zBqHZDejrXhT4fhDydMxHb7EGAC17MErEzbYA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=sdoIxESftpzFX82DkY3Q5L94hB+RvZXL9tFrq4l4yum5ZdbKQJmqksAab+t/jz8Km
-	 qM0f8z5wUBRGgeFMSO+IC9K/PtuCeuVU/vHMtclmwGB0AokTXHI+YSrJhrd6tcVHR1
-	 MTaXa90XWY0xHOVUvYtP+HTHs3HhVVuKX/YjlzODZXcY8eFQDWbxVXR9NOhxsGzPiA
-	 DTU3DXou++lxxh/q8UfhAoIR3lCPB2xxvkAHdfUpqqxF8SECX0HR9Y9TPPiWqFqjtS
-	 pqmkpP/1ZefAbEF3aLKeyJCe9c+t01qoljOyGBNMjfLz9Pum3pTmACoVZxxBL2p0Fx
-	 9sMjUOEmZa17Q==
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b463f986f80so239818666b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 06:57:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWOTFkKj+sm31JO2YLgYJriVztSIYAYBX4q9vc+CjHPRJ1qYk+fyhAQxBzcbdCSzuhAxODJZ2kRwhfwSgU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyh3pb2ZFP/LT4Z2+mHgB5U29885Jfo/TuHoK1fxGJFS3K1hL5n
-	5y5fUtV/4+05hQOUyaiuSSoAXY+MYypcMbsqfMxnjiRP1KxD0PtdZDEV4s3/lBvDyb8emLSgymE
-	j8Fp8RjBq4x1A7fNDCpQnJQ1n+yj90UM=
-X-Google-Smtp-Source: AGHT+IFpPcu+8WPIowVSm0xtREio4oymHriCWMeEoT2/Lo1HL26FJFAcmDaESWnI90VwixvGK2ddfdFd83JZVmckog0=
-X-Received: by 2002:a17:907:c0d:b0:b3a:a16e:3db8 with SMTP id
- a640c23a62f3a-b46e30ebaf3mr1023741166b.20.1759413474862; Thu, 02 Oct 2025
- 06:57:54 -0700 (PDT)
+	s=arc-20240116; t=1759413557; c=relaxed/simple;
+	bh=k5xtrHej6iQBf40JjE8Ern58Z/LL3iBX9ALSoI8ap0c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b5VJ206mwLpKprpxXjfmgmloEhz6mN9E4xNDDk0rTyVCm2AQc+ADymrtU84OZrxJERs7YmkKZjSMp/PQhQjT9E9MylyoP7ezyhz5OSfydURsDAsSYlrqOWHAHLmTlN9I72tXaj3clIlbeNdc59hw0k6HZkV+iERrFVdFZdMXZyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=CqO5bBiE; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-78af3fe5b17so1000665b3a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 06:59:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1759413555; x=1760018355; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=AejVj1pzVa5tMHUAvlwjfMQqAVzkVnwGk/N4H8InPvw=;
+        b=CqO5bBiEv5oq36jkXOLephgZU6sY80BxJFsTla0kq8f5B7w1zbC1VnKlxByLjWqpbJ
+         hd4LhS2RAut0l8zgei+d1vc6FqtGRiNH1uV4/ZIglFSe6+nqCXZPAwukMq7PDuBIvNmG
+         zC1wGiq30LnQJ+EfyHRulmsNVtk02CMQSyvyG0V5BI3+kE21quGOjmy46reKteHHJecL
+         0MSWis+58gTzgI6R00GyZPg7QwX93b6kUwQ9buK+OP1BIZ4uE3fSE0V2OvlgWPzZ4qCG
+         gvk4w1IssbUsAlPjY0js7wPlX+g2v/xyd7Ps0B3Brs3I/PLitxp2ftK76h5CBT0f1nNw
+         ZdSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759413555; x=1760018355;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AejVj1pzVa5tMHUAvlwjfMQqAVzkVnwGk/N4H8InPvw=;
+        b=V6GhC+PqFsZRbCV7wLl/ZqqYsL8xFWczqDitdocM9ZJyfwKSMgUf1G+ntxSJK0iNKU
+         JsDnXgsYjNr8U109nsSHH/hDRRNVd0tG8QwycU4GKqMkdDcZvHRCVLlk31lKAy3L6GuA
+         X6lE2U/kXMSJd2PrtSK19XmlT0oLySbXNGeOYyEIJ7zBEYBNAzTWY9sI8mX/tIrKQwgh
+         reuKjM07mHH+vD79yrbUfr/AuCQmTMCnUzYNmkouP9l+AZvROmBMrIp48WbQ8DGu0gUN
+         J/0cHiBEgkvPFAwtamTD157ZuqPBSyojS6G1oRBY8QQ55z6a9u0jobAq5ajLbboRmtIH
+         RHsA==
+X-Forwarded-Encrypted: i=1; AJvYcCULVyasaObfPbSBt7G/ZSW9heKy8D3JAovniPuay7NYowxfTW7szZC8DNA9uUKUQN5vkQqWkr7RtBYYs8M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyE7UoMWJsifiGT+kIrDd0a1maonOqhFV5zlPI3l03GmxW3rqN
+	CVTxXrspJTnmpsKkAojVhuX5ecKzggFArB39P8ks9/94zUpfyJmoyjfLQUgz4wyNENE=
+X-Gm-Gg: ASbGncvYjkLujpucszIFyvMXKEQkAEGy1hQFQdR1P9ZMSDvs8vFJDrnOpja/blx6F4t
+	RDqzHV8iRUlv++I1MtSOA+mtjhTiKlRfpKBmScoo5efKtg3ooo/XKz+EmahTEAOSezBSdPLvtnV
+	3Db6Cp2Etw4KqvjIw+Au/muTvCdCULPbmyI4GggvKyXa3Mg3w5DvjPTXIuMzijFKmpBzE/FfMai
+	xV+0sT4EmxMMvhUzzxWTllddulz3lw8gUw03cr5VntZAiJZpTSDFFh/d9qFWu5Hnelr/tIKcHlC
+	GWILEeoI5WU73cSZczyNtIUmPrmv0fJCr7n2i69xzmyXhuxFz65Q7p3vhtFy0WljmQYbcwtymqr
+	8z89c6s4zvs892ce8MwOo
+X-Google-Smtp-Source: AGHT+IFjGtBLlrkcnGT3IwhvYU0siZeeKF1GDGUMbBleUNQJiex5zPfFC6dd5HdcsemvvP6EVFcU7w==
+X-Received: by 2002:a05:6a00:17a6:b0:781:17ee:602 with SMTP id d2e1a72fcca58-78af422946amr8738022b3a.28.1759413554667;
+        Thu, 02 Oct 2025 06:59:14 -0700 (PDT)
+Received: from ziepe.ca ([130.41.10.202])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78b0208eb5asm2300221b3a.82.2025.10.02.06.59.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Oct 2025 06:59:14 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1v4Jps-0000000DiKt-0OJJ;
+	Thu, 02 Oct 2025 10:59:08 -0300
+Date: Thu, 2 Oct 2025 10:59:08 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Shigeru Yoshida <syoshida@redhat.com>
+Cc: glider@google.com, elver@google.com, dvyukov@google.com,
+	akpm@linux-foundation.org, leon@kernel.org,
+	m.szyprowski@samsung.com, kasan-dev@googlegroups.com,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kmsan: fix kmsan_handle_dma() to avoid false positives
+Message-ID: <20251002135908.GE3195829@ziepe.ca>
+References: <20251002051024.3096061-1-syoshida@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <7f956b3b-853b-4150-b2e0-ccd430adf9ac@web.de> <a9518620-29cf-4994-a9f4-a6f862d8c214@samba.org>
-In-Reply-To: <a9518620-29cf-4994-a9f4-a6f862d8c214@samba.org>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Thu, 2 Oct 2025 22:57:43 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd__1cYsi9m9J-4jbpk33Ha4xrY-amS-==SXdsOmtZ6GsQ@mail.gmail.com>
-X-Gm-Features: AS18NWAGHd_o3xBMWyt0Jto5x8E-wKle9CokrbAOY8OokdFpaTquzWzjqJILkQU
-Message-ID: <CAKYAXd__1cYsi9m9J-4jbpk33Ha4xrY-amS-==SXdsOmtZ6GsQ@mail.gmail.com>
-Subject: Re: [PATCH] smb: server: Use common error handling code in smb_direct_rdma_xmit()
-To: Stefan Metzmacher <metze@samba.org>
-Cc: Markus Elfring <Markus.Elfring@web.de>, linux-cifs@vger.kernel.org, 
-	Hyunchul Lee <hyc.lee@gmail.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Steve French <smfrench@gmail.com>, Tom Talpey <tom@talpey.com>, LKML <linux-kernel@vger.kernel.org>, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251002051024.3096061-1-syoshida@redhat.com>
 
-On Thu, Oct 2, 2025 at 9:31=E2=80=AFPM Stefan Metzmacher <metze@samba.org> =
-wrote:
->
-> Hi Markus,
->
-> > Add two jump targets so that a bit of exception handling can be better
-> > reused at the end of this function implementation.
-> >
-> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
->
-> Reviewed-by: Stefan Metzmacher <metze@samba.org>
->
-> I'll add this to my for-6.19/fs-smb branch and rebase on top
-> of it as this function will move to another file there.
->
-> Namjae, Steve: this can also be pushed to 6.18 if you want.
-Acked-by: Namjae Jeon <linkinjeon@kernel.org>
+On Thu, Oct 02, 2025 at 02:10:24PM +0900, Shigeru Yoshida wrote:
+> KMSAN reports an uninitialized value issue in dma_map_phys()[1].  This
+> is a false positive caused by the way the virtual address is handled
+> in kmsan_handle_dma().  Fix it by translating the physical address to
+> a virtual address using phys_to_virt().
 
-Steve, Please add this patch to #ksmbd-for-next.
-Thanks.
->
-> Thanks!
-> metze
->
+This is the same sort of thinko as was found on the alpha patch, it is
+tricky!
+
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+
+> @@ -339,13 +339,12 @@ static void kmsan_handle_dma_page(const void *addr, size_t size,
+>  void kmsan_handle_dma(phys_addr_t phys, size_t size,
+>  		      enum dma_data_direction dir)
+>  {
+> -	struct page *page = phys_to_page(phys);
+
+This throws away the page_offset encoded in phys
+
+>  	u64 page_offset, to_go;
+>  	void *addr;
+>  
+>  	if (PhysHighMem(phys))
+>  		return;
+> -	addr = page_to_virt(page);
+
+And this gives an addr that is now 0 page_offset, which is not right.
+
+> +	addr = phys_to_virt(phys);
+
+Make more sense anyhow when combined with PhysHighMem() and gives the
+right page_offset.
+
+Jason
 
