@@ -1,218 +1,136 @@
-Return-Path: <linux-kernel+bounces-840733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A8AEBB51BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 22:12:42 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDB33BB51AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 22:11:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D36E480397
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 20:10:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BDEAD4E4FF7
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 20:11:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 373F92C1581;
-	Thu,  2 Oct 2025 20:09:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9D16295DB8;
+	Thu,  2 Oct 2025 20:10:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="AgPgHb0U"
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="mqrvZs0/"
+Received: from smtp.smtpout.orange.fr (smtp-65.smtpout.orange.fr [80.12.242.65])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CE312BEFE0;
-	Thu,  2 Oct 2025 20:09:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E099288C89;
+	Thu,  2 Oct 2025 20:10:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759435771; cv=none; b=A0g8wVCjOEPQrUKulCoqxVdbrKO32ldyOrPd4/8hIpEFpKURg2XCa7XVYV1TqAzUQcljFf/TiOCTD5TZf6AiQwqcF0sAtXRDbU+Awgv6i+XhWjHx6cbUmEgGZ/e/17FSRWC27/UjsQAhwhJcIR/uosKxWaipoSaQ71vbC3Zn3Sc=
+	t=1759435830; cv=none; b=XQMxEFl7MPdXuQP5uGdsOW5WxIr4Tt9seo4qnqwTMU+X673uN+xqpF+H3JtUGwUCo9cf3PVpbrQCKTMstl65Nd+VXaZkAvfR4LzmMHugYJHcTsZxFsAxDZKvw4MDErqnIYkqFGFelm4e38rwoe15AnUN0UMyzZGvxAtbM/O5r8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759435771; c=relaxed/simple;
-	bh=zzy3YGA6JSETk46ayqJijO6l1OBTt5J05a9v8SGYuUE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KopW7MleOuLHWLzW5MMo3R7AhidM6VRCWdhl9L0dZmSsCNib5fud+xgfnP+hDOml8j9E/HQm6k3gPIuYnspD+oNc0YSxzZYMk8EmD4UFv/9/ZZaJyJWgbIbHJip0NHX6+1/MyaIZLqLx0ZZ0YPvHB8/duLJ3dAoYx2+Lx8yiPns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=AgPgHb0U; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
-Received: from debian.intra.ispras.ru (unknown [10.10.165.9])
-	by mail.ispras.ru (Postfix) with ESMTPSA id 2F16140762F3;
-	Thu,  2 Oct 2025 20:09:21 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 2F16140762F3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1759435761;
-	bh=AF+SxHLJuBbFvJ9oJ18FGvvRlh7+5OYP8692tG6RXCw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=AgPgHb0UnPFowAtZ86DJF99p0REeGTNhm7xwhKH0c1QFCT5wx8TJ7MAU+c1YV5G5x
-	 J7C4auUeNs26At3utdDDU4vXKm8bR2piFORf6c8n5S01p47muTZYTHhwuPTpvVEGKl
-	 ++GqUiKPfyaQeXdlQikQnPmjL8xBb+fiwGAf5cbc=
-From: Fedor Pchelkin <pchelkin@ispras.ru>
-To: Ping-Ke Shih <pkshih@realtek.com>,
-	Bitterblue Smith <rtl8821cerfe2@gmail.com>
-Cc: Fedor Pchelkin <pchelkin@ispras.ru>,
-	Zong-Zhe Yang <kevin_yang@realtek.com>,
-	Po-Hao Huang <phhuang@realtek.com>,
-	linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org
-Subject: [PATCH rtw-next v2 7/7] wifi: rtw89: process TX wait skbs for USB via C2H handler
-Date: Thu,  2 Oct 2025 23:08:52 +0300
-Message-ID: <20251002200857.657747-8-pchelkin@ispras.ru>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251002200857.657747-1-pchelkin@ispras.ru>
-References: <20251002200857.657747-1-pchelkin@ispras.ru>
+	s=arc-20240116; t=1759435830; c=relaxed/simple;
+	bh=/CHUa9Xd4pwC9zO/0R+e2oG/3o8T8zscmEl6eoWn9w4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q1bRKfdqyCXrmvzw74WWYlY5YrtRcVxpp0I2uNy/WwZlzs3HgJAv3615mx6+4x6qvItrEnY+wzcwK1eXq2i6pmUoMawUEuca7Ijvp3mOjqgtV48Es1CQpBjmpHDq05SfrEN7eYg5LJEFNYaS3gSqqY7JcxRTEc/F2xYt5tbh8ec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=mqrvZs0/; arc=none smtp.client-ip=80.12.242.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+ ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id 4Pd2vGIoXKUOX4Pd2vw55W; Thu, 02 Oct 2025 22:10:19 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1759435819;
+	bh=p541rxmb4NTJ3zK+jdMrAbP4PuUbxpsXgirt6z/FgyM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=mqrvZs0/GJVIsSsTT/xyhVFH3DlBOMHg5jMuGqM9Scd1cH6BTFiiLML4IvdKrK3E0
+	 SN1z+dwKwmcuFyZG4qSK7OSjnZ7cT0Fl5277HXnNWX1ZUlCmEex+DbUHCr6kCUTIsk
+	 H5K9XBY3m1oH7encXKlcjaZ3S2h+5IKMzKzV49Rj7tb5TcZm+WRkQ0bhCBw59QDlEc
+	 AlD3vIxa1Sqtgy1Q9MNatcaywkMx7qcelGsEI27Ivs80d+9BFqhsBE3978/d2y+k6i
+	 QbYi2y20FCZtrQYkHs89q8tfmD4NpvNNEKUZpdh+LkiOjEhflLlfaDs2t15zSE/byL
+	 h7hUO7BbrWxDg==
+X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Thu, 02 Oct 2025 22:10:19 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+Message-ID: <3c07c2f0-d069-46d1-b2a6-e2c071198cb6@wanadoo.fr>
+Date: Thu, 2 Oct 2025 22:10:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] i2c: lpi2c: Use cleanup helper for
+ dma_async_tx_descriptor error handling
+To: Frank Li <Frank.Li@nxp.com>, Vinod Koul <vkoul@kernel.org>,
+ Dong Aisheng <aisheng.dong@nxp.com>, Andi Shyti <andi.shyti@kernel.org>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>
+Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-i2c@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, carlos.song@nxp.com
+References: <20251002-dma_chan_free-v1-0-4dbf116c2b19@nxp.com>
+ <20251002-dma_chan_free-v1-2-4dbf116c2b19@nxp.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Content-Language: en-US, fr-FR
+In-Reply-To: <20251002-dma_chan_free-v1-2-4dbf116c2b19@nxp.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-TX wait skbs need to be completed when they are done.  PCIe part does this
-inside rtw89_pci_tx_status() during RPP processing.  Other HCIs use a
-mechanism based on C2H firmware messages.
+Le 02/10/2025 à 21:49, Frank Li a écrit :
+> Use the cleanup helper to simplify dma_async_tx_descriptor error handling.
+> 
+> No functional change.
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>   drivers/i2c/busses/i2c-imx-lpi2c.c | 11 +++--------
+>   1 file changed, 3 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-imx-lpi2c.c b/drivers/i2c/busses/i2c-imx-lpi2c.c
+> index 03b5a7e8c361abe1d75fb4d31f9614bbc6387d93..b1d035ca8002e9648b67bfe4d674578373394710 100644
+> --- a/drivers/i2c/busses/i2c-imx-lpi2c.c
+> +++ b/drivers/i2c/busses/i2c-imx-lpi2c.c
+> @@ -722,7 +722,7 @@ static void lpi2c_dma_callback(void *data)
+>   
+>   static int lpi2c_dma_rx_cmd_submit(struct lpi2c_imx_struct *lpi2c_imx)
+>   {
+> -	struct dma_async_tx_descriptor *rx_cmd_desc;
+> +	struct dma_async_tx_descriptor *rx_cmd_desc __free(dma_async_tx_descriptor) = NULL;
+>   	struct lpi2c_imx_dma *dma = lpi2c_imx->dma;
+>   	struct dma_chan *txchan = dma->chan_tx;
+>   	dma_cookie_t cookie;
+> @@ -746,10 +746,11 @@ static int lpi2c_dma_rx_cmd_submit(struct lpi2c_imx_struct *lpi2c_imx)
+>   	cookie = dmaengine_submit(rx_cmd_desc);
+>   	if (dma_submit_error(cookie)) {
+>   		dev_err(&lpi2c_imx->adapter.dev, "submitting DMA failed, use pio\n");
+> -		goto submit_err_exit;
+> +		return dma_submit_error(cookie);
 
-Store TX wait skbs inside TX report queue so that it'll be possible to
-identify completed items inside C2H handler via private driver data of
-skb.
+I don't know if it matters or not, but this may change the returned 
+value in this error handling path.
 
-Found by Linux Verification Center (linuxtesting.org).
+>   	}
+>   
+>   	dma_async_issue_pending(txchan);
+> +	retain_and_null_ptr(rx_cmd_desc);
+>   
+>   	return 0;
+>   
+> @@ -757,12 +758,6 @@ static int lpi2c_dma_rx_cmd_submit(struct lpi2c_imx_struct *lpi2c_imx)
+>   	dma_unmap_single(txchan->device->dev, dma->dma_tx_addr,
+>   			 dma->rx_cmd_buf_len, DMA_TO_DEVICE);
+>   	return -EINVAL;
+> -
+> -submit_err_exit:
+> -	dma_unmap_single(txchan->device->dev, dma->dma_tx_addr,
+> -			 dma->rx_cmd_buf_len, DMA_TO_DEVICE);
 
-Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
----
+dma_unmap_single() is not needed anymore?
 
-v2: store TX wait skbs in tx_rpt_queue (Ping-Ke)
-
- drivers/net/wireless/realtek/rtw89/core.c |  6 ++++--
- drivers/net/wireless/realtek/rtw89/core.h | 15 +++++++++++++++
- drivers/net/wireless/realtek/rtw89/mac.c  |  3 ++-
- drivers/net/wireless/realtek/rtw89/mac.h  | 15 +++++++++++++--
- drivers/net/wireless/realtek/rtw89/usb.c  |  3 ++-
- 5 files changed, 36 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/net/wireless/realtek/rtw89/core.c b/drivers/net/wireless/realtek/rtw89/core.c
-index 214924f8bee0..1457a5fe7320 100644
---- a/drivers/net/wireless/realtek/rtw89/core.c
-+++ b/drivers/net/wireless/realtek/rtw89/core.c
-@@ -1108,7 +1108,7 @@ rtw89_core_tx_update_desc_info(struct rtw89_dev *rtwdev,
- 		if (addr_cam->valid && desc_info->mlo)
- 			upd_wlan_hdr = true;
- 
--		if (info->flags & IEEE80211_TX_CTL_REQ_TX_STATUS)
-+		if (tx_req->wait || (info->flags & IEEE80211_TX_CTL_REQ_TX_STATUS))
- 			rtw89_tx_rpt_enable(rtwdev, tx_req);
- 	}
- 	is_bmc = (is_broadcast_ether_addr(hdr->addr1) ||
-@@ -1173,7 +1173,8 @@ int rtw89_core_tx_kick_off_and_wait(struct rtw89_dev *rtwdev, struct sk_buff *sk
- 
- 	if (time_left == 0) {
- 		ret = -ETIMEDOUT;
--		list_add_tail(&wait->list, &rtwdev->tx_waits);
-+		if (!rtwdev->hci.tx_rpt_enable)
-+			list_add_tail(&wait->list, &rtwdev->tx_waits);
- 		wiphy_delayed_work_queue(rtwdev->hw->wiphy, &rtwdev->tx_wait_work,
- 					 RTW89_TX_WAIT_WORK_TIMEOUT);
- 	} else {
-@@ -1242,6 +1243,7 @@ static int rtw89_core_tx_write_link(struct rtw89_dev *rtwdev,
- 	tx_req.skb = skb;
- 	tx_req.vif = vif;
- 	tx_req.sta = sta;
-+	tx_req.wait = wait;
- 	tx_req.rtwvif_link = rtwvif_link;
- 	tx_req.rtwsta_link = rtwsta_link;
- 	tx_req.desc_info.sw_mld = sw_mld;
-diff --git a/drivers/net/wireless/realtek/rtw89/core.h b/drivers/net/wireless/realtek/rtw89/core.h
-index 3940e54353d3..c13465e2730a 100644
---- a/drivers/net/wireless/realtek/rtw89/core.h
-+++ b/drivers/net/wireless/realtek/rtw89/core.h
-@@ -1201,6 +1201,7 @@ struct rtw89_core_tx_request {
- 	struct sk_buff *skb;
- 	struct ieee80211_vif *vif;
- 	struct ieee80211_sta *sta;
-+	struct rtw89_tx_wait_info *wait;
- 	struct rtw89_vif_link *rtwvif_link;
- 	struct rtw89_sta_link *rtwsta_link;
- 	struct rtw89_tx_desc_info desc_info;
-@@ -7387,6 +7388,20 @@ static inline struct sk_buff *rtw89_alloc_skb_for_rx(struct rtw89_dev *rtwdev,
- 	return dev_alloc_skb(length);
- }
- 
-+static inline bool rtw89_core_is_tx_wait(struct rtw89_dev *rtwdev,
-+					 struct rtw89_tx_skb_data *skb_data)
-+{
-+	struct rtw89_tx_wait_info *wait;
-+
-+	guard(rcu)();
-+
-+	wait = rcu_dereference(skb_data->wait);
-+	if (!wait)
-+		return false;
-+
-+	return true;
-+}
-+
- static inline bool rtw89_core_tx_wait_complete(struct rtw89_dev *rtwdev,
- 					       struct rtw89_tx_skb_data *skb_data,
- 					       u8 tx_status)
-diff --git a/drivers/net/wireless/realtek/rtw89/mac.c b/drivers/net/wireless/realtek/rtw89/mac.c
-index 75d9efac452b..3406c8b01eb8 100644
---- a/drivers/net/wireless/realtek/rtw89/mac.c
-+++ b/drivers/net/wireless/realtek/rtw89/mac.c
-@@ -5484,7 +5484,8 @@ rtw89_mac_c2h_tx_rpt(struct rtw89_dev *rtwdev, struct sk_buff *c2h, u32 len)
- 			continue;
- 
- 		__skb_unlink(cur, &rtwdev->tx_rpt_queue);
--		rtw89_tx_rpt_tx_status(rtwdev, cur, tx_status);
-+		if (!rtw89_core_tx_wait_complete(rtwdev, skb_data, tx_status))
-+			rtw89_tx_rpt_tx_status(rtwdev, cur, tx_status);
- 		break;
- 	}
- 	spin_unlock_irqrestore(&rtwdev->tx_rpt_queue.lock, flags);
-diff --git a/drivers/net/wireless/realtek/rtw89/mac.h b/drivers/net/wireless/realtek/rtw89/mac.h
-index 1f7d3734d15f..2d647d3b0852 100644
---- a/drivers/net/wireless/realtek/rtw89/mac.h
-+++ b/drivers/net/wireless/realtek/rtw89/mac.h
-@@ -1647,16 +1647,27 @@ void rtw89_tx_rpt_tx_status(struct rtw89_dev *rtwdev, struct sk_buff *skb, u8 tx
- static inline
- void rtw89_tx_rpt_queue_purge(struct rtw89_dev *rtwdev)
- {
-+	struct rtw89_tx_skb_data *skb_data;
-+	struct rtw89_tx_wait_info *wait;
- 	struct sk_buff_head q;
- 	struct sk_buff *skb;
- 	unsigned long flags;
- 
-+	lockdep_assert_wiphy(rtwdev->hw->wiphy);
-+
- 	__skb_queue_head_init(&q);
- 	spin_lock_irqsave(&rtwdev->tx_rpt_queue.lock, flags);
- 	skb_queue_splice_init(&rtwdev->tx_rpt_queue, &q);
- 	spin_unlock_irqrestore(&rtwdev->tx_rpt_queue.lock, flags);
- 
--	while ((skb = __skb_dequeue(&q)))
--		rtw89_tx_rpt_tx_status(rtwdev, skb, RTW89_TX_MACID_DROP);
-+	while ((skb = __skb_dequeue(&q))) {
-+		skb_data = RTW89_TX_SKB_CB(skb);
-+		wait = wiphy_dereference(rtwdev->hw->wiphy, skb_data->wait);
-+
-+		if (wait)
-+			rtw89_tx_wait_release(wait);
-+		else
-+			rtw89_tx_rpt_tx_status(rtwdev, skb, RTW89_TX_MACID_DROP);
-+	}
- }
- #endif
-diff --git a/drivers/net/wireless/realtek/rtw89/usb.c b/drivers/net/wireless/realtek/rtw89/usb.c
-index f53ab676e9a8..adbadb2783f0 100644
---- a/drivers/net/wireless/realtek/rtw89/usb.c
-+++ b/drivers/net/wireless/realtek/rtw89/usb.c
-@@ -216,7 +216,8 @@ static void rtw89_usb_write_port_complete(struct urb *urb)
- 		skb_pull(skb, txdesc_size);
- 
- 		info = IEEE80211_SKB_CB(skb);
--		if (info->flags & IEEE80211_TX_CTL_REQ_TX_STATUS) {
-+		if (rtw89_core_is_tx_wait(rtwdev, RTW89_TX_SKB_CB(skb)) ||
-+		    (info->flags & IEEE80211_TX_CTL_REQ_TX_STATUS)) {
- 			/* sn is passed to rtw89_mac_c2h_tx_rpt() via driver data */
- 			skb_queue_tail(&rtwdev->tx_rpt_queue, skb);
- 			wiphy_delayed_work_queue(rtwdev->hw->wiphy,
--- 
-2.51.0
+> -	dmaengine_desc_free(rx_cmd_desc);
+> -	return -EINVAL;
+>   }
+>   
+>   static int lpi2c_dma_submit(struct lpi2c_imx_struct *lpi2c_imx)
+> 
 
 
