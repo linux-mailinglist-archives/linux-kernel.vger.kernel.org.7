@@ -1,85 +1,87 @@
-Return-Path: <linux-kernel+bounces-840854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42484BB5955
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 01:07:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 381DBBB5958
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 01:07:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4268E4E48A3
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 23:07:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 122F7426969
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 23:07:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F76323B623;
-	Thu,  2 Oct 2025 23:06:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="bHPSYCMi"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72A393207;
-	Thu,  2 Oct 2025 23:06:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C3E9238D42;
+	Thu,  2 Oct 2025 23:07:05 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49892188580
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 23:07:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759446415; cv=none; b=lVdF97qJQmTRM/LwEhXJbAwiwrQr1/r8VbBEM+gQKTekD9IZ7bKhOOLJ9gZ2YlG6A5kuv4pp6qV5ynoa7pQJkdRvvmb64vufsoMAjtvMJ3bsT0bTzH7wbiGJSM5bZn8WyYg8RWMRtBV3eQudyCEr4zKxNuyaYvSLwN7kQXouAJY=
+	t=1759446424; cv=none; b=hRKx5aXU7EhaWaLa5eXMSh4AK2a3IRzqbmOQbDg+ZR9TJN1+6TrF33SaSTA4+s2AgS7WsYH2ky2NZDTW4F5QPsKZ6GcaLVBiC89B0ywF9v+ZD5iPhqxbzIsWqn20YJn6d5YMVCM7vMoSvD2mMKInc5Krjofkqc9EKBpwNRKKjtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759446415; c=relaxed/simple;
-	bh=StOXWqQIDIc3EfxAJO76K/F/sK2oVwNJB7HYiYqpcWU=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=QeeIdcuw5Ao9CW++7/116MqY6KQ7KQVeJi5bB5EbuLVDdKrrQzLHir0tTp75rimPuDs8S8dJ1LoIOtQwICoJ0QL1OzRLK+1BRybg2ckhriYml4RvhMhbqdBvjN2PMWASsR1G7g4VC9rrg2wewT9ksK7cdlJFUxkC42ylPEBTGJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=bHPSYCMi; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [100.64.160.245] (unknown [20.191.74.188])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 3C4B6211B7D2;
-	Thu,  2 Oct 2025 16:06:53 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3C4B6211B7D2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1759446413;
-	bh=G9ZIN578Xhmj29vW8aNiP5byoPPk/Bbt9VMvdrQm3p8=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=bHPSYCMisY0yknp9sPOulSUBz7mR6TN1Vktk8VqkfJysVjBtIzd5plJ2E/emJJkh2
-	 c1iNv+dkSAAf3VPIE3G/mK2egjxlhQwkKivQ1HaqDflEI8mmi3tOj7CyCVbV7YaUR5
-	 2DbjgH2CfMyxPWwARr9OWlYTrJT/h174TPswCgK0=
-Message-ID: <37f0002a-a107-458b-933d-55f2cf96f5f1@linux.microsoft.com>
-Date: Thu, 2 Oct 2025 16:06:51 -0700
+	s=arc-20240116; t=1759446424; c=relaxed/simple;
+	bh=Z9kkvCO3Fo9CR5hdv/6ab0/Y6/u9Ze9zcu5nUu8ZCP8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=dz6b1Rpy2BXnAcsJrRTb1DELfhLlWR5qDeljRPQcfXFqZux8jy8D6RdOSkxmDj45HjNBQ8K0WY2KN/g53y5OLpcJ2D48GFfAeH9avAHsSgWToLLmUrYXw797QXhNKlr2e6OCYMZpgEtS2+tBFNx+5JlW863ctOl+KoOVfkbtFKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-42d8a33a27aso39904555ab.2
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 16:07:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759446422; x=1760051222;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rwtASbyQEVAWzxL/IcFrhfAs7DM9Iuum6y1AqgrBKOM=;
+        b=dq/TNb5QvM/Tx2N0C3bZ5wF5Fz7ZfBQ6gKF1/B9VyfQCNV7hJNxLjgjrkISErfyBc8
+         yFedpqsSG+loTnAcFY6Zs3q3+iRQ4Fpv58aoiO0wjnprdNjHa0m5nK8V5z/fYCXzcvHo
+         oh55gdF9yt/siT8UmKm27MdQ7RScI41aWJf95u0fygbBxItfxjGFvdHaDS21DpZbQSjh
+         63EsTh4e9JyZ08nAZqsL9Y/bLetrzmDivH7h60OtQr7F2RwER1Mwk4I3f4RW2NpMJavQ
+         HudtgRDuz8PszA5cvn44gKBgVm6/ujE0HAa86KvYvKD+07uKQCcxDGkY+ZlntxBqRUVV
+         aBNA==
+X-Gm-Message-State: AOJu0Yy5bNWWfvjVooLYQao1cNlV4XtdXFqaGqoibb471ij3NBVgLB0c
+	l+PkcqoIZjOBudRQOcSViZ0Hxdp8niVOMu4W6+FCURXYS++zrVv7xfikuJ4ar5S3jv1IXIDQsaC
+	PHqxtZaQl9knEmDz7Pj6kJbsnASzG4rIeM44MZKrJpsEvdVZl6YJOn6ArQCc=
+X-Google-Smtp-Source: AGHT+IGQNbStNhr1enXUfRRjd4xmmeiAhRHJ4K/CBulIX8SRELNfp7pIoIxK5Hh8bu4vFAhVO9w7moyNUHunWEM/gxeSX7ghTMow
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: easwar.hariharan@linux.microsoft.com, "K. Y. Srinivasan"
- <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>,
- Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
- Nuno Das Neves <nunodasneves@linux.microsoft.com>,
- "open list:Hyper-V/Azure CORE AND DRIVERS" <linux-hyperv@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] Drivers: hv: Use -ETIMEDOUT for HV_STATUS_TIME_OUT
- instead of -EIO
-To: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
-References: <20251002221347.402320-1-easwar.hariharan@linux.microsoft.com>
- <aN7-ryUqFNpgsIzI@skinsburskii.localdomain>
-From: Easwar Hariharan <easwar.hariharan@linux.microsoft.com>
-Content-Language: en-US
-In-Reply-To: <aN7-ryUqFNpgsIzI@skinsburskii.localdomain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a92:c247:0:b0:428:7f76:4ec4 with SMTP id
+ e9e14a558f8ab-42e7ad6ff73mr11351275ab.16.1759446422353; Thu, 02 Oct 2025
+ 16:07:02 -0700 (PDT)
+Date: Thu, 02 Oct 2025 16:07:02 -0700
+In-Reply-To: <CAHjv_atb1zciSTdLViGkwMsEeFTEBSmhYN_0yZn3YZtOUhFzeA@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68df0596.050a0220.2c17c1.0005.GAE@google.com>
+Subject: Re: [syzbot] [f2fs?] WARNING in f2fs_delete_entry (2)
+From: syzbot <syzbot+c07d47c7bc68f47b9083@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	zlatistiv@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 10/2/2025 3:37 PM, Stanislav Kinsburskii wrote:
-> On Thu, Oct 02, 2025 at 10:13:46PM +0000, Easwar Hariharan wrote:
->> Use the -ETIMEDOUT errno value as the correct 1:1 match for the
->> hypervisor timeout status
->>
-> 
-> The commit message should answer the question why this change is being
-> made.
-> Is there a practical reason for this or is it only for consistensy?
-> 
-<snip>
+Hello,
 
-It's for consistency and because it's a better match. See my sibling response
-for other error codes that I can also fix in a v2.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Thanks,
-Easwar (he/him)
+Reported-by: syzbot+c07d47c7bc68f47b9083@syzkaller.appspotmail.com
+Tested-by: syzbot+c07d47c7bc68f47b9083@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         2213e57a Merge branch 'for-next/core' into for-kernelci
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=10fffd04580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=714d45b6135c308e
+dashboard link: https://syzkaller.appspot.com/bug?extid=c07d47c7bc68f47b9083
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+userspace arch: arm64
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=14c51214580000
+
+Note: testing is done by a robot and is best-effort only.
 
