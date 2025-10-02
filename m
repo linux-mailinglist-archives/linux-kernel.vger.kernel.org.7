@@ -1,137 +1,121 @@
-Return-Path: <linux-kernel+bounces-840475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76A18BB4826
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 18:21:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3248BB476E
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 18:15:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D43D42455E
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 16:21:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C5623A0574
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 16:15:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19E18257AC2;
-	Thu,  2 Oct 2025 16:20:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2463524679E;
+	Thu,  2 Oct 2025 16:15:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="g3geQkDK"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bM+LeLbC"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AD4F24A06D
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 16:20:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C4DD2459C9
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 16:15:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759422010; cv=none; b=CGO1TW/Vjg5MGzfkJR57Koe5AiApA9qI5l3i+5zqCGbLZLtYblNDxtynXlCLgWy0dSAqlBc6k3BTrydOcEQebQZ0bVv3dfFodrmwUugPEBVxRDOEIchY9/VLK5K+W+lmAEAyKK0ZD0ywshzabIIZ1b5w66+gkJFK9uwoXn9mCeU=
+	t=1759421712; cv=none; b=SnfR1QjaQ77PSCc5oRnPN8AdzyGyNk/AnW8HU3L77TKbtyHBcJnSvRyIFiw7Gx51Ce+2BYALlBcBJ6A0KQxTIaCHmjppnyJIOAFD5DX/vD96smnIA7z0VikKkTtkIJgC5cReuyG5McKZDGPf5IJ507kYtCWqGGtpOAHXNymD5+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759422010; c=relaxed/simple;
-	bh=YtoztTZpT493VJvYTsBfHF9fGrezdnnI53lqfPOVe3E=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=BU2kwamKQ/f35q61WmLaXboLg+zIQBs4o2j0P1KLcZanR3gDcfxGg4JMQ5lkG7D2Q7DOA04Keh5GDH837s5xpqm2e43aAg4q0vVjxg+IW14MVu5uMfVRG+uaNYWQ6kJfgEwmkHLdjY+2dB2rP9Mc8DL7NBdXP4AfR8n0A/ichks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=g3geQkDK; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-42557c5cedcso728466f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 09:20:07 -0700 (PDT)
+	s=arc-20240116; t=1759421712; c=relaxed/simple;
+	bh=l5OAi7HzDsDRfIL/UoL9RRK/6kinPrW4yzeqvaZDp5g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RmKZrctEkMCgyZ+Ujue2t9964tO00tHKvvESMBu2njf3rt5vaiB7HinwsJMg9d/gZaebif14Q/kHwUIPqLqi0zsshK15v2xprhZD7POj7loFfgcqVnq00+/33mMNFSkvfA42VlJzEnlsltY4b/UPJ6U/rh3vqOSZIE8uTNrr/4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bM+LeLbC; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-330b0bb4507so1235650a91.3
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 09:15:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1759422006; x=1760026806; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=YtoztTZpT493VJvYTsBfHF9fGrezdnnI53lqfPOVe3E=;
-        b=g3geQkDKf4/4TkHGcXPSEnrc7fNCGJ9z+/yGoGNw01iHs2K2C0MWfbGJvZhYp9p2X1
-         1lIjegCsVZGRgVUMGtvH1lKDMUA57j73BMqLeFDAl+1SSTZjq3J/JogwSKrtF+DFvcE1
-         gNloWvlrj0TvZcsSu9Q6D2P3OS+/LLoo10TXqpQtPBJxN2n2Yt40cA6LBS3t2CFbMCZr
-         fZIRsOa9Iiav7OLXdEWZqD4vN/6BRuZUj9xJVjnmxcsNL95AKeBzmyqr7v8CtTtoS+/k
-         8B/Im6NhhU6Pqjo2lKtx7V8dBREte90K8cNGYHlar0LhzffSGJo5VcAeH2CBSmlE5KLD
-         8Qqg==
+        d=gmail.com; s=20230601; t=1759421710; x=1760026510; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qbCJESHJ8jqO/tcwMWV6sW/NG3xdKaEr0isON+x8Jhs=;
+        b=bM+LeLbCFBvZJuWdwS82NQ85eyhROqbgwavD/nx2IQ/E6ZP/s9zhKcfKFotyvSQVR8
+         Y+IvgkQVodYtLJ2g+uJHNokxI4eKZOCp73m/7dqvb5Nr7ksOZuUix4D7CmtTZfoOaucj
+         dYJ3+i85k3sTcxkrTT+BjWi+qCDrEQmCYRCdlvoH1mO3m0hEhsZcD8oW7nbbLnw8ZP4w
+         DI3qcue8a80vSlhDMiudweRt0ftUHWWXBqYrIUvuujY0Swhv5XtQ/swW3KeEA/VZ4MVe
+         E5MtPGewTghQIqZoJv/ex47GZtKc+mg6k7pOxBni5CnEiiZHg0YyFuq5Dgx9jzKwPQr2
+         S6Ew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759422006; x=1760026806;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YtoztTZpT493VJvYTsBfHF9fGrezdnnI53lqfPOVe3E=;
-        b=kRVv9jILGlyI0ZI7OMClDDUyn+zgXpJdHBGyVotZmbwMw20dlrpVHV6wPoTJemHkHL
-         v3LXBJUQ5I7HW55a4ga5Q/IXuCmi4uOj/S9rojY4hyd7mCpqUc2ayOzRpIWnMdXYRERg
-         bWKxUGly4SZLkj19g+zTuXAW2+dZjOBD3S9LGPnivtNwQNNLWXnQX5jispRa9Irr6ZQE
-         8HkClc+t54iY6yH/Y80hdfxmSdN8rJpgps68UhMYanqZ70+Wc1Oep2lCZuENeJKWu/6x
-         cEKoaQz8KXGVytm9x6G+NEbUNejl4XStB+cwjWFJlb0cNlBaN/Ue9lSfJbA2DFllxHff
-         ItQw==
-X-Forwarded-Encrypted: i=1; AJvYcCVOWbcW13tkazZ2IUeDa2oi7/EK1eQJjTbhLcOLIfaC3IKI2kPMyB43YLkBQsMKxCZ7Wq8nTqSDXrIvwgc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJ9ZfRMPTUFH6uTje/bMOpNzxqm9KjoZvE9/vhklJcnZ0gmk61
-	zJYjgrj8l5ZEpI+FcZKoOKgsuMZYsFNU6v5zGsTrd+2py6nwFPDKR6DIU59b2nAqLIY=
-X-Gm-Gg: ASbGncvlKh4sFSfmkMKNRRS8wS77q38EmVrVLw8rkrhYluFtlhK39ZnLKANqUZ8Sg5i
-	cHv3IUvXGnrbSgR0d0VNQi/Zn5+WgT3Zc0BmtRgKSN7eJwaH2+yFPh8C5h+Rbg9+OscSVeFFs3+
-	gcA8k2c2Ju6BRKzLQAy3B3W711UBzS3S8RBkn28apebQobC7KbgyZXf9y+zF3k1FgdIvnUN7bi4
-	sOLMem6tF2SKCaurN1aeGW2wKPVU8IrDNQrlo/JzYh2rBlle/vUZCljQ6vUXf3lGo+batpm9mHc
-	NK/3kl2A0PAyl23CNGDcbQprI0g4iCWvGl1Q2MMteshzPw2hYnJbHgwjMfgWcMz3yvVW1hxbueO
-	tt+7fm7ZNBsNTU1wWJlvID8I7bKGjYkKc39TrdWqiZpv7FOw0m3EccJY1zYyOuXh6Hh5D1NpmOT
-	alxtbaeb6g+T8=
-X-Google-Smtp-Source: AGHT+IG/8V3uS0ueReEH3p+UtImtOhcwzPx59UfdYShjuz0ncxYW8UPmgBPsCDoK0iwlEoHgFVf89w==
-X-Received: by 2002:a05:6000:220c:b0:3f1:ee44:8bf6 with SMTP id ffacd0b85a97d-4255781c242mr6304140f8f.51.1759422006324;
-        Thu, 02 Oct 2025 09:20:06 -0700 (PDT)
-Received: from [192.168.3.33] (120.39.160.45.gramnet.com.br. [45.160.39.120])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8abf38sm4167330f8f.20.2025.10.02.09.20.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 09:20:05 -0700 (PDT)
-Message-ID: <4b1eb94db3c0e43f935930fccae5726dc381ff9e.camel@suse.com>
-Subject: Re: [PATCH v5 0/5] Handle NBCON consoles on KDB
-From: Marcos Paulo de Souza <mpdesouza@suse.com>
-To: Daniel Thompson <daniel@riscstar.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Petr Mladek	
- <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, John Ogness	
- <john.ogness@linutronix.de>, Sergey Senozhatsky <senozhatsky@chromium.org>,
-  Jason Wessel <jason.wessel@windriver.com>, Daniel Thompson
- <danielt@kernel.org>, Douglas Anderson	 <dianders@chromium.org>,
- linux-kernel@vger.kernel.org, 	kgdb-bugreport@lists.sourceforge.net
-Date: Thu, 02 Oct 2025 13:20:00 -0300
-In-Reply-To: <aN6FvQGj2w70Ejrz@aspen.lan>
-References: <20250930-nbcon-kgdboc-v5-0-8125893cfb4f@suse.com>
-	 <aN6FvQGj2w70Ejrz@aspen.lan>
-Autocrypt: addr=mpdesouza@suse.com; prefer-encrypt=mutual;
- keydata=mDMEZ/0YqhYJKwYBBAHaRw8BAQdA4JZz0FED+JD5eKlhkNyjDrp6lAGmgR3LPTduPYGPT
- Km0Kk1hcmNvcyBQYXVsbyBkZSBTb3V6YSA8bXBkZXNvdXphQHN1c2UuY29tPoiTBBMWCgA7FiEE2g
- gC66iLbhUsCBoBemssEuRpLLUFAmf9GKoCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
- QemssEuRpLLWGxwD/S1I0bjp462FlKb81DikrOfWbeJ0FOJP44eRzmn20HmEBALBZIMrfIH2dJ5eM
- GO8seNG8sYiP6JfRjl7Hyqca6YsE
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.0 (flatpak git) 
+        d=1e100.net; s=20230601; t=1759421710; x=1760026510;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qbCJESHJ8jqO/tcwMWV6sW/NG3xdKaEr0isON+x8Jhs=;
+        b=vBLZCi7WKPkHKhlOUpPdLKumXAioRwosfliCJTUKE5x8EGYx7Tmx3LgZQpMo2iqDpA
+         1PuM9FxIhuCmm1mQGgABNh4vfrdM1raSUiFICLJCbsEzgDRO47tEp99DpQP23sGPtK9B
+         oD8lEAounOD5QAWwySpY8goWjE6ELvlQe2ukhZTnQ9h9zRmc+N3/yBTISAl0TglZRvDz
+         qMK35OoxHul8IZqIoDRDr4S0iYnatURUpnev8SvH0PiI4JBHyqPVOHm7AxkIVAuV2GFL
+         y9TN5zJqKU02Yx7xf11h1Aylo0+JNg2CrXT78aJIHOdX4Xwyd1XbprwzfO/BV40An4pt
+         EH+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUi3gHSem1Sx1CfhEIRw4XapQqe5eXM1iRdPXEm/LN+eSGdTqrCgcXBrmhVj/XeGm+FexlSqGAg7yBIIuQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMdzofyx5dAgvH9zSF7Wi47xE+kJt5EZCtfHiXFuTGULFvSXIU
+	chp3XZw01twlTXe2/Zf0f3PxtrLGrVqJUZKzy4/CJug9HB8XMVdTwkXH9+QpeZ23xmyf73M7QKn
+	42TBGDWcgr8ZXG5gOZCjLK4LrTOv7okQ=
+X-Gm-Gg: ASbGncsKU1eCOKag5D+KtMSQIveDjbyljczU0M7A5tSNEA9bIvXN57EVCMloqnz/8Ov
+	kHlVgwx6k9hb8RYLf3I0RexwsJhcvM24Co6HE5PBQZSyvofxWswo/sgoOolIaJwHz9/HFcFjssi
+	g5yTaAGhP4O6ZMVPm2LMtv3yA+woVQsxgwbdAQhBJ4QFNdRlrlL0XF7bXao7vUzO/s5QcVPpkkL
+	bAhZVDYv5Py0QlSrfGbjU4l8aMydQQ=
+X-Google-Smtp-Source: AGHT+IEf/mVaOwfwTajphWCRjS6OZaY41dyU0wDwW//TvmvlN1jWg/44MGVLKIueiWV72E2HWtd5YlRbRRes8q78y1U=
+X-Received: by 2002:a17:90b:3ec3:b0:327:f216:4360 with SMTP id
+ 98e67ed59e1d1-339a6e749ebmr9175147a91.8.1759421710377; Thu, 02 Oct 2025
+ 09:15:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250821083150.46554-2-krzysztof.kozlowski@linaro.org>
+ <175589097127.178922.52729764188594464.robh@kernel.org> <20250825115939.4c1ed3b7@jic23-huawei>
+In-Reply-To: <20250825115939.4c1ed3b7@jic23-huawei>
+From: ChaosEsque Team <chaosesqueteam@gmail.com>
+Date: Thu, 2 Oct 2025 12:20:07 -0400
+X-Gm-Features: AS18NWBZEPufzTSyN91BU_EyEGNa6W6EgE6V8aWkwSThLDVcbiogsfNGWk9PRA4
+Message-ID: <CALC8CXfG1XrK4-HMP=8pRYhEHNY=A+J-s5rKr29cDXNNAUMkJQ@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: iio: adi,ltc2664: Minor whitespace cleanup
+ in example
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: "Rob Herring (Arm)" <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	Kim Seer Paller <kimseer.paller@analog.com>, Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Hennerich <michael.hennerich@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, linux-kernel@vger.kernel.org, 
+	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	David Lechner <dlechner@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-githubOn Thu, 2025-10-02 at 15:01 +0100, Daniel Thompson wrote:
-> On Tue, Sep 30, 2025 at 02:21:06PM -0300, Marcos Paulo de Souza
-> wrote:
-> > In v5 only patch three was changed, changing the check for KDB CPU,
-> > as suggested
-> > by Petr Mladek. Also, it was based on the recent panic API [2],
-> > which now sits on
-> > -mm tree.
->=20
-> Do you keep this work in a git tree anywhere? I wanted to point the
-> kgdb
-> test suite at it but the patches don't apply cleanly (even after I
-> grabbed the patches mentioned in [2].
+Russkie, you are a raycist
 
-Yep... my mistake! I had rebased my patches on top on -mm tree just top
-get those patches that I mentioned in [2], but then I rebased back to
-master, which had some conflicts...
-
-So, now I just pushed my changes on top on [2], which you can access
-here[3]. I also included the revert of the code that converted 8250 to
-NBCON, which is easier to test it using qemu, as I presented on the
-cover-leter.
-
-Thanks a lot for reviewing and testing the patchset!
-
-
-[3]: https://github.com/marcosps/linux/tree/nbcon-kgdboc-v5
-
->=20
->=20
-> Daniel.
+On Mon, Aug 25, 2025 at 7:01=E2=80=AFAM Jonathan Cameron <jic23@kernel.org>=
+ wrote:
+>
+> On Fri, 22 Aug 2025 14:29:31 -0500
+> "Rob Herring (Arm)" <robh@kernel.org> wrote:
+>
+> > On Thu, 21 Aug 2025 10:31:51 +0200, Krzysztof Kozlowski wrote:
+> > > The DTS code coding style expects exactly one space around '=3D'
+> > > character.
+> > >
+> > > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> > > ---
+> > >  Documentation/devicetree/bindings/iio/dac/adi,ltc2664.yaml | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> >
+> > Acked-by: Rob Herring (Arm) <robh@kernel.org>
+> >
+> >
+>
+> Applied. thanks
+>
 
