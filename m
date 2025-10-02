@@ -1,133 +1,136 @@
-Return-Path: <linux-kernel+bounces-840519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E1D7BB4988
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 18:52:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BFA21BB49A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 18:58:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08C203BF170
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 16:52:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EA6C3C11C4
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 16:58:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 195D3186284;
-	Thu,  2 Oct 2025 16:52:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C1F1265CBE;
+	Thu,  2 Oct 2025 16:58:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jP3BgZuP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="KlNUOCHl"
+Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B2A238176
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 16:52:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87F1315853B
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 16:58:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.252
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759423927; cv=none; b=tasO6lz1VEbClZXcO2vBPsjIqPxVycWZbH6h9NpNQmY7HIbfhOBuJuGLG9x8wQBR4RyfiqsRd9dOxgruDpnMmBOrr0q9A+Z4+GbsTDNN9gTHrMWGu9YMMnPtFVqzHBQAbbE/Fj94C/6KaddSnkd4bmV2Rb8YBTfuCwI3n3qAzR4=
+	t=1759424290; cv=none; b=ilvGckMdYiIu+N71gxaa6rq12MKonLtgFcOcwJxuivbu/7KGPg7OcntKDVWrnPz+DnjbYeK6g7wJfPtkkrSZ4Jy8QZVIyKGvs873nqXUxXWGgkqoirZq436KR3EHpHykJca7Qfu4wPNylZEm8W3u/e4u/alKjrC7A7kHcsSvcp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759423927; c=relaxed/simple;
-	bh=RYUS76VlN/7kvtmsPptlWYP5PD2siFaw/m/pPf6KKBg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=POe1STBAJelYLWasHjfAgn2Dx0wJ8jyn5YLGwReWoJ1V9oc1nj/xBQ3qpLvBilNDgV/QGpNYuJ9MRdWgwXFQxQ91oqVUv1/fGmSvaCTFx3f+zG6tB9JSbQyYDyFM6JaoywAG9VNo2yyuXut0GQB6e8s0B7B0w3wvnydkRhlYL/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jP3BgZuP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2E86C113D0
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 16:52:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759423927;
-	bh=RYUS76VlN/7kvtmsPptlWYP5PD2siFaw/m/pPf6KKBg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=jP3BgZuPIcSMnUcMZX+zGGOZ4bci9SkVBh6qAlossuJFuETqNIvy2fQkb/E6AOjG2
-	 B6X4EyyQqk6tyj+k35Jl5fvMbbeCucLL89tO8oZ2nIrcjDkj/4zRObaeLd2GKId8xB
-	 3ewdNfSDZCzpowgdhOEaCx1ig9j/TtysCtg4woD+tw4U9BGyP+TOG1OkdKGVQ3N794
-	 EoyrG6R5WJJicuHK4twz7z1orRs2uDZ3OZwHENgdVlQIzOA1wzpQjMeQgvzwWG5f2K
-	 4v8cRFImwrUPk9xDWzwl7bFaFCffNvkrBfUt5ffZWunvD0alfmOwrOJGC6HebPP6tf
-	 dUEYVhdnABQTA==
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-3717780ea70so13392171fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 09:52:06 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUbIrUdyILfQizwgJ/ncIC9SbihRTGyBJoJcVYf0tl8UQHq4RHVZWLdZDfrPJfChWcRWcVGgRWuVpoPSOo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRp7jelazOpaPG7a1ky9z/FcNuPoWFteZ9r8KIx3aajKKv4Jj9
-	rEVj0dJ9KY7meLrIhW7N9oBQKncHKGMUKC+Dm8sqdRqCcAc20KHU/rE1ZLEj8GAkVdMFmH7Y02u
-	WgrPmVTdC0xg0u9AAVo7WX5ikIsfa/8Y=
-X-Google-Smtp-Source: AGHT+IFwsRonoEO2SfC5D66SL4gG4kGhHTi4f1/UhGxnb1sNM7Q1481/usK34L0kehPsH9mUQeXsHIp2ebOr5kpnvaA=
-X-Received: by 2002:a2e:a90e:0:b0:36c:47c8:b618 with SMTP id
- 38308e7fff4ca-373a7126ca6mr26591461fa.18.1759423925284; Thu, 02 Oct 2025
- 09:52:05 -0700 (PDT)
+	s=arc-20240116; t=1759424290; c=relaxed/simple;
+	bh=DWjHOxomjkRfeDYzYnh8WXVeqpwtYa01c6QSgT2bshE=;
+	h=Message-ID:Content-Type:Mime-Version:Subject:From:In-Reply-To:
+	 Date:Cc:References:To; b=ly9ouR8NukRT4e9YKH6N4qsq9735nMnqNdjtHbsIFzkMiPG6av5U9ZwoUCz0kpw3M0lAwftTHJYtAM9t0ecjhHpqOBBMSsgNiJ1SIQJfChHu2rknDywRhd/yFYCL1JBcJTJUpPdL4M5P/IMxUnk2dBbpRoqIKDjHKn9hBwtHxD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=KlNUOCHl; arc=none smtp.client-ip=162.62.57.252
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1759423969; bh=DWjHOxomjkRfeDYzYnh8WXVeqpwtYa01c6QSgT2bshE=;
+	h=Subject:From:In-Reply-To:Date:Cc:References:To;
+	b=KlNUOCHleB8n4ptUhBF5nTw/mta9Dl9vSMBPnX/ZZcHvUrvxya1qecqsjC9U3F6Gz
+	 vK2QYdDXfuwUDiuD7ncN8HkhWlavrn7TxgkZ7KDgyza3FGNvPfJ/gmAM4iiCXMG5S6
+	 RUeAL8Kb8c5vnSneWOiJOpr0i7+qJrjPuL4ifPx0=
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+X-QQ-XMAILINFO: NaU0Z4p7r7ol0COpNLy7a5OaU4GYJn3OsjzcIqj5LBSL+p7qfrU/MTIFXTnMhM
+	 4HoxUw/H7q7+g8X/MbCQFD3pO+gr5gfie3S7RVLXQK7R8OgPKoxmyB0T4QvE/wyeKNT3fDSj4rvBU
+	 UT/76zz6GsRnGImu4hWeF4Oe8ltH8lEVXZIyMOXKBJYK4705ejppM2M591gXunv2SrknYS8H0GjDz
+	 NQkQfTY+rqW4Dqe/Co6ZKVAL+MQbQ0fuvRLkf6wQ6qi4jVHToFmbq9+sj4yYhaqS9Q1Tj96XJid8M
+	 iUr4DT6cVxwE+WXrnYHFL2EgSC0luiTis+4sNmhSlehvYDmRDOpGXyWp/RZ5TgjVJsInZl8Kjo9oV
+	 eNLXkdAhXJBqBkUaE4BkMsiGj5p9cNQTAI4XuMJWMNSaTFhhRt9ijqbY1ry0U+ATq52HEBeFp/Ia2
+	 fomnRIWgmCZcAdIqsD0ayj8Xw81UgpW/wIzlX8HHf0976DrANVs54M09OZGM3FaVCLimePBjZPhMd
+	 pZ5R9PCBhsS7xrsHm6utlf+j8cp4ei8X7wMaOIfl8r+L51esdb4aNjQFME0pY884bTf9Tg+b3nkao
+	 +DoW2UsWuFxVxz88wOnMgovJ1b/VmCROhADO472fWD31bfdYzdLK3egdRMdpwf/mGLu/oCT5/1JTq
+	 85OS+T9fNDuUILVsUB8YKAX+eZc0nd0pVYaKT1ugVv8rezBtVD4F5IqA2o6p3za88CRR/+E+5BrPZ
+	 Je3wWMcjnn9mOJfVOP8oHj17jsZwYi2+pkMVmNauRmvDG17kT87+IZknvMo+YCQhgDYvEB93l1+Wh
+	 BnWmBWtA5VUnQdF5kk198lgqdAEY8xxYyIVSH4eu/UeFMBOPzcWbT9EzGZOHk0tp9OEw/aOufuvpV
+	 m0if+gROC4EicI8t3UTaL/GjRGiP8tFXX+FQk9/2AFQsaETY/IwKDZkHnTEbQMtkgruWQMtuTRzus
+	 gxy5EeA8BFLpdnnZo5kGsEoAGUC2/nxscPhem/a3X8BdQu0e9f2CdUKJiSvgrR6xza3BucOQMqjRL
+	 Dx4oSVyDhH2qVoAk2Rwpwzxj/2CTW0FxvYeJekLCBleEdHuFwBAyLLXm33tg0vgEL4Il3b1Cf6BY1
+	 Y40iULQd2tsE1g==
+Received: from smtpclient.apple ([113.102.238.209])
+	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
+	id D2D18C4C; Fri, 03 Oct 2025 00:52:45 +0800
+X-QQ-mid: xmsmtpt1759423965tovxuwfdv
+Message-ID: <tencent_6D46195D9B796BFA443B81B519A9DFE5A306@qq.com>
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20251001210201.838686-22-ardb+git@google.com> <20251001210201.838686-42-ardb+git@google.com>
- <202510020920.2FE08A4F90@keescook>
-In-Reply-To: <202510020920.2FE08A4F90@keescook>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 2 Oct 2025 18:51:54 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXFN0Q8Rba7gdh9AF2SAyyZcNjX89L-GtQs5kbfZtneQzA@mail.gmail.com>
-X-Gm-Features: AS18NWCS21HK8p5zowe1aZSwsKe2CzfUTcnx8DtpF0yJN4O90o1GiG6ggpAwDNk
-Message-ID: <CAMj1kXFN0Q8Rba7gdh9AF2SAyyZcNjX89L-GtQs5kbfZtneQzA@mail.gmail.com>
-Subject: Re: [PATCH v2 20/20] arm64/fpsimd: Allocate kernel mode FP/SIMD
- buffers on the stack
-To: Kees Cook <kees@kernel.org>
-Cc: Ard Biesheuvel <ardb+git@google.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	herbert@gondor.apana.org.au, linux@armlinux.org.uk, 
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Mark Brown <broonie@kernel.org>, 
-	Eric Biggers <ebiggers@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3864.100.1.1.5\))
+Subject: Re: [PATCH] rust: bindings: add `rust_helper_wait_for_completion`
+ helper function
+From: Guangbo Cui <2407018371@qq.com>
+In-Reply-To: <CANiq72ngvZSL72GQ+CwFoaE4ZfakZSPcZk1zrXqyaKEZLWDf-g@mail.gmail.com>
+Date: Fri, 3 Oct 2025 00:52:34 +0800
+Cc: byungchul@sk.com,
+ Liam.Howlett@oracle.com,
+ amir73il@gmail.com,
+ andi.shyti@kernel.org,
+ andrii@kernel.org,
+ "boqun.feng" <boqun.feng@gmail.com>,
+ bsegall@google.com,
+ gregkh <gregkh@linuxfoundation.org>,
+ linaro-mm-sig@lists.linaro.org,
+ link@vivo.com,
+ linux-kernel <linux-kernel@vger.kernel.org>,
+ mark.rutland@arm.com,
+ masahiroy@kernel.org,
+ mathieu.desnoyers@efficios.com,
+ matthew.brost@intel.com,
+ max.byungchul.park@gmail.com,
+ mcgrof@kernel.org,
+ melissa.srw@gmail.com,
+ mgorman@suse.de,
+ mhocko@kernel.org,
+ minchan@kernel.org,
+ oleg@redhat.com,
+ paulmck@kernel.org,
+ penberg@kernel.org,
+ peterz <peterz@infradead.org>,
+ petr.pavlu@suse.com,
+ torvalds@linux-foundation.org,
+ vincent.guittot@linaro.org,
+ will <will@kernel.org>,
+ yeoreum.yun@arm.com,
+ ysk@kzalloc.com,
+ rust-for-linux <rust-for-linux@vger.kernel.org>,
+ ojeda <ojeda@kernel.org>,
+ gary <gary@garyguo.net>,
+ lossin@kernel.org,
+ "a.hindborg" <a.hindborg@kernel.org>,
+ aliceryhl <aliceryhl@google.com>,
+ dakr@kernel.org,
+ "alex.gaynor" <alex.gaynor@gmail.com>,
+ bjorn3_gh <bjorn3_gh@protonmail.com>
+Content-Transfer-Encoding: 7bit
+X-OQ-MSGID: <C77927A0-0A1C-4492-97F2-FF6502AAC8B9@qq.com>
+References: <20251002081247.51255-37-byungchul@sk.com>
+ <tencent_13F1EDE0D6B7A44697F31AE274C8E664E908@qq.com>
+ <CANiq72ngvZSL72GQ+CwFoaE4ZfakZSPcZk1zrXqyaKEZLWDf-g@mail.gmail.com>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+X-Mailer: Apple Mail (2.3864.100.1.1.5)
 
-On Thu, 2 Oct 2025 at 18:22, Kees Cook <kees@kernel.org> wrote:
->
-> On Wed, Oct 01, 2025 at 11:02:22PM +0200, Ard Biesheuvel wrote:
-> > [...]
-> > diff --git a/arch/arm64/include/asm/simd.h b/arch/arm64/include/asm/simd.h
-> > index d9f83c478736..7ddb25df5c98 100644
-> > --- a/arch/arm64/include/asm/simd.h
-> > +++ b/arch/arm64/include/asm/simd.h
-> > @@ -43,8 +43,11 @@ static __must_check inline bool may_use_simd(void) {
-> >
-> >  #endif /* ! CONFIG_KERNEL_MODE_NEON */
-> >
-> > -DEFINE_LOCK_GUARD_0(ksimd, kernel_neon_begin(), kernel_neon_end())
-> > +DEFINE_LOCK_GUARD_1(ksimd,
-> > +                 struct user_fpsimd_state,
-> > +                 kernel_neon_begin(_T->lock),
-> > +                 kernel_neon_end(_T->lock))
-> >
-> > -#define scoped_ksimd()       scoped_guard(ksimd)
-> > +#define scoped_ksimd()       scoped_guard(ksimd, &(struct user_fpsimd_state){})
->
-> I love it!
->
-> > [...]
-> > -void kernel_neon_end(void)
-> > +void kernel_neon_end(struct user_fpsimd_state *s)
-> >  {
-> >       if (!system_supports_fpsimd())
-> >               return;
-> > @@ -1899,8 +1910,9 @@ void kernel_neon_end(void)
-> >       if (!IS_ENABLED(CONFIG_PREEMPT_RT) && in_serving_softirq() &&
-> >           test_thread_flag(TIF_KERNEL_FPSTATE))
-> >               fpsimd_load_kernel_state(current);
-> > -     else
-> > -             clear_thread_flag(TIF_KERNEL_FPSTATE);
-> > +     else if (test_and_clear_thread_flag(TIF_KERNEL_FPSTATE))
-> > +             if (cmpxchg(&current->thread.kernel_fpsimd_state, s, NULL) != s)
-> > +                     BUG();
->
-> I always question BUG() uses -- is there a recoverable way to deal with
-> a mismatch here? I assume not and that this is the best we can do, but I
-> thought I'd just explicitly ask. :)
->
+On Thu, Oct 02, 2025 at 12:39:44PM +0200, Miguel Ojeda wrote:
+> issue if any -- I don't see it in linux-next, so I imagine it is not
+> applied, but "changed" sounds like it was? If it was actually applied,
+> please also provide a Fixes: tag.
 
-So this fires when kernel_neon_end() passes a different buffer than
-the preceding kernel_neon_begin(), but the only purpose of passing it
-twice is this particular check.
+Yeah, it's not applied yet, this should be squashed into [1].
 
-So perhaps this one can be demoted to a WARN() instead. The preceding
-one will fire if kernel_neon_begin() is called and the recorded buffer
-pointer is still set from a previous NEON block. Perhaps the same
-applies there too: the warning is about something that already
-happened, and we can actually proceed as usual.
+Sorry, I forgot to check the commit message.
 
-TL;DR yes let's WARN() instead in both cases.
+Thanks,
+Guangbo
+
+[1] https://lore.kernel.org/all/20251002081247.51255-37-byungchul@sk.com/
+
 
