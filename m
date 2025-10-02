@@ -1,100 +1,92 @@
-Return-Path: <linux-kernel+bounces-840324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE57EBB41DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 16:01:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E2645BB41E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 16:01:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E83B17BE49
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 14:01:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65A1117C603
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 14:01:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66B4C13B5AE;
-	Thu,  2 Oct 2025 14:01:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B3DD312803;
+	Thu,  2 Oct 2025 14:01:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="I/kCvx3e"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="kqSpm3Qx"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED96E139E
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 14:01:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9734325A2A7
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 14:01:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759413698; cv=none; b=DWo1BxxNI44e/WRbzJ06ZrY8m4wPH0yWhO1ZhTSRFDRhp7ZgCVaKo1ZTx211BhNjUY5qmFGUon5p6dfuwnc95890ue8qiIrvKJohSZi/6PmR6cFP6jKYvDp8URoY24WAu6lG8N08x/djyh6GlsC3fGIgdjERkot9MjTYEvR5Xu0=
+	t=1759413701; cv=none; b=PzEumIWho40KdPm69pGj38nnJsE2vzYXRxrg0wMzW73zPs/H8bZjs4pIV0eGFfVClaQLUJPC4KNUw8HQYKTl4BSStcTu0zMM0nrsVY21WEqLDKmV9bXyZMsHIfdrlbCe+I6il8O22smWje+9xMH/B3Le8aaa/pcDIMImKoTYDLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759413698; c=relaxed/simple;
-	bh=qvGG5Sp/wls0uIdw2iHlnWQPg9UFRvDF57gXXnxB8bM=;
+	s=arc-20240116; t=1759413701; c=relaxed/simple;
+	bh=618BSYEmgS36ili2g+UNYEY8LCBfl6PF30CT4JuRol4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BHl9rj+8vdS/BX90mJOSOsuh8C1SUHiTLAp5NvsdCmx1VuEgubzlmYDVbNJal5F4UI5y31Lyc/1+TsKUvMWsZJYMbYxDGEp0v5rYDw8HL+VOY4XiXe7NTkutjK2y34GS78BfQAbGBL4aqTfT/sPbnUItm8USrZWZd2IAtgvhDz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=I/kCvx3e; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759413696;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BkWeVgZk8kUqiPYnzR3sGa1HOxeTHYc8DALzvEtqa9s=;
-	b=I/kCvx3egx86UNT42J0d4MH2bt+R3AEUjF6VDOG6QCwwwnCu8PuyaxMZIydJXh2wbPPBhz
-	CgNkYn9FgfmX0bv4gwyZsAZ8Xxx4RNYjkn0pmOo+EAWBVqBznuSXlwGaidETMK7BHGtkDW
-	Gv7jSHCGIZPQopluHZVz11VoXyMwCPE=
-Received: from mail-ot1-f70.google.com (mail-ot1-f70.google.com
- [209.85.210.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-601-PGIcKr1fPeG8r_vMOJbPoA-1; Thu, 02 Oct 2025 10:01:34 -0400
-X-MC-Unique: PGIcKr1fPeG8r_vMOJbPoA-1
-X-Mimecast-MFC-AGG-ID: PGIcKr1fPeG8r_vMOJbPoA_1759413694
-Received: by mail-ot1-f70.google.com with SMTP id 46e09a7af769-74381f4c715so1684147a34.1
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 07:01:34 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=eGxA3eNyVN0F9H7Zen1CkzYF/pcOSEdO5pjw/ry5c6MKmic9mb5v0WMiC/yRPq7hAs8RfgCU4OxZVakoan+MebYIhrFDTwWMLohiUewtlrni1t/jXZ1IbxGuwvE7xkGHC/9cdu6u7+acYTfi79ACh/imOFlb14/0tEK/mec1IHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=kqSpm3Qx; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-46e61ebddd6so9999745e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 07:01:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1759413698; x=1760018498; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=618BSYEmgS36ili2g+UNYEY8LCBfl6PF30CT4JuRol4=;
+        b=kqSpm3QxD08j9LR0hRoezFn+7KvX9qBqxGpysY8VvhK5OKmxIJ3tyaNfVj5gD4Soxx
+         isItIpXOf1ZGLRbhxgqCkVcElFfnxVOU2wp2Wt67ch6H2l21Fy+a+jKcFTBfNhDrlWeP
+         8ykyG1+rp0DB4kLbNsKLmcvkzNxi6w7Sllw86EKAqaUwY6jkOfJUeJdTHYTiZ7VeWwLE
+         V2pBOusYz8x78FmeT40BlOevzSk5ekkcARO/qnxbhtTG+xQvPe5TZfbJ8pba/f8mz/bR
+         Wp3/R+4A+q3dbsqQhEOYHWWHJ4ocb1/dJDAw/lG7AprQm8tHjrMs/n1CcxM6A+ur+Jdt
+         AUCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759413694; x=1760018494;
+        d=1e100.net; s=20230601; t=1759413698; x=1760018498;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=BkWeVgZk8kUqiPYnzR3sGa1HOxeTHYc8DALzvEtqa9s=;
-        b=bG5oo2H0STCmtV1mzcmTmmxf3MtsLYOjJ+VX4NK3zi0RBZLLyPBT+lDtrHDHe9SUev
-         sVWqIsTKBFNFMkJOlRhfCrRPtS6/qeOtSYGwcfJVgyAEHNxF/WEmh4P6a8nBNtvhKLds
-         om25IMI8DmgGR2Sd0dbCr3iZl24ZuF2J2lm8BUiJN0Tw9iV+g+i4Jb5UAWdAQxWljfa+
-         pElXWAGPeVWgMszkZmnN3bIWm44DMadcRoBJpTyum8T4/7y7EAhBRSQzdw1sVo1BMNc+
-         q7/juGlWyV0l+7dX+jG7h1AByjHVmahrMD8dB0/42lnB7VR6SH+uwM1YtVsdzRUaxg5x
-         g9Dg==
-X-Forwarded-Encrypted: i=1; AJvYcCXJ+Oyq0caQPdpcmUHlt/Gxb3BC9Fiqvx/DjZvWuvjl1ACE55x55raLxSycPvG2XOLUTUQlPhmJkE6ntU0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySDG61kEI8QZId3HA9TPpom5BZnJeRCs1shwhEzRZvWAlG1jgG
-	1qidUUYYBIVeD3iNb/cp5rUGJNODqu4keRl0B7CedEiAREBAszkOMUvN96iXgT4ZXSqPYHEcsUh
-	OzPkyClDLa9PJHzDUfyOC1JHq4BDQSr3vVj1e4DIrzg5BHj4BpvAuD84eaTvdvm2jMw==
-X-Gm-Gg: ASbGncsG8rC+wPjb3jl/DV3R2OOEuYNUaui3NfzO7NohVB8qS4RdVbI7kRwatWnovjA
-	txOvyCEqphs49/PgaM7oN4DgRJxpDdI7DGcEKPai31KlyZTXmi++Iw2HmB+Ky+izr9bN/q4OVtV
-	2vWsH8+UmVh59R2cMBLZ7j6UE645R5vxAuhqERP4PsE9t8TkhiqP2Fh0Kq/b82/OnStiXfZLxsZ
-	Uvig4TjL0nL7THhLBX0gqalq4Mhf6f3iSigMIJlNtpHjI9TJJ0N9mDGUUTM1O3RHu7d/utpo6f5
-	GRXs2+0DmfTTobdBAOsnnslfBbGrX7RJnRKuQPbbkHfzCbt+47Uldj+lH/Kmog+yNHQVbVyKfRO
-	8JOWZVlqK7uXC4qaecJW2EZ4b
-X-Received: by 2002:a05:6830:6388:b0:799:bdea:3470 with SMTP id 46e09a7af769-7bddb3180e7mr6320228a34.18.1759413693819;
-        Thu, 02 Oct 2025 07:01:33 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFifkv3G0JYpxDmZZsqPFwY4V7Lyatv9jR3a1EVRoOQC8n0sy+M4wfNVLE6WgPIWF6BKQZlig==
-X-Received: by 2002:a05:6830:6388:b0:799:bdea:3470 with SMTP id 46e09a7af769-7bddb3180e7mr6320049a34.18.1759413692979;
-        Thu, 02 Oct 2025 07:01:32 -0700 (PDT)
-Received: from jlelli-thinkpadt14gen4.remote.csb (host-80-47-6-60.as13285.net. [80.47.6.60])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8777892eadasm211882885a.39.2025.10.02.07.01.28
+        bh=618BSYEmgS36ili2g+UNYEY8LCBfl6PF30CT4JuRol4=;
+        b=nIQdGYHRUo5WF9O9gO3vACJBhYoC4ClluxWdvPm+f9mFJLzr1UYuYtau4VjnOOK3B/
+         B8NrCe4wXoH1QePN3oYWpEJGD2o7vdgmtdIl6x6Jo1omPimqpMP8dXZm2gbIvdIhUSaR
+         FTZapl+TY0GltRoLzcJsfRFlcT1Wqk5UB285A0sOW0hSSaO0thwl1shpqlw52cXcuGlP
+         PULWdbLozxUx99FDIdPExxX8O6cf49i1YfoUCYmfMGUtnqc/btEv0vmnrP/u1E1lFN3y
+         GjW7m8ArI7aEezKro5VJfs3AgAvcEcWWmf46WNylHFk9k7siR9OtqByIn/6yxfISPUc2
+         /T4g==
+X-Forwarded-Encrypted: i=1; AJvYcCU4+OzWWjXwCk2Jwn6+76oY8nHjIZ/49Wd/KyX5E4BY5jApJ+YGDPKrILiXdnGXD01qmVrbAIoujJQVU9U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfwND1q1h8dQJ67qV+Z/fZNrwzn9ms+HThIyz8MaqCnMNOrVNH
+	9Bms5cJ5+pRF7lohIVVm0wq6v5BkqX8kTM9ymqqZVonxIHjxGvpQUEydtBti2ylRmwQ=
+X-Gm-Gg: ASbGncvJ7mUW1Oxv8Be+QHpe22iIKa3MZEmZabJLFp+Zol4dC1+D63X/cEPtc32Fkno
+	8Ts2Tt7kdMgeezKXTPVFmNyH8HOzqsfN4DHUL9EqOTNlBKX/J+/LUIiqRl9Ak9vMl6ezFhEGZ/b
+	7mRnrfc50otyIHJ92YhrNvuon2wvZVXQanMkRq7vSgjKLLRNIDJdNp057Jgjvn2xzjEdU/Xr30n
+	fU1ZiOdqMwzytTjVelbdLDNvv9yexVNJJaBIpPZwnOzIF/9yC42Vvzxh6J2Gdzcr65Bl4NFhuJO
+	fEsE4mIo9UBZ6Ne2WHzmNbewwR6ThR6oCsCGmp1SPwbzxVcmmCtcuWr2LTUWAT+fRlyWY5ImxQI
+	M3SDqLG0Y7Zp0L80UixpGMjzVn7WVxKKydzB9srEic70zTAmwINsjQkhSbBOilME9EqQJrUyk9e
+	4rtyrsJvJ7YlUchqUIDvfx/7c9hqv9WXn9g0q/qKIG
+X-Google-Smtp-Source: AGHT+IG5EPzxsZqj3ktM8dBJGC4KrYqeEY07Pvs0vWo4hOFgdW8tS/BF6CeIhvLzJ6wrhzsLtCCTXg==
+X-Received: by 2002:a05:600c:4586:b0:450:cabd:b4a9 with SMTP id 5b1f17b1804b1-46e6f7ff199mr8275435e9.29.1759413697016;
+        Thu, 02 Oct 2025 07:01:37 -0700 (PDT)
+Received: from aspen.lan (aztw-34-b2-v4wan-166919-cust780.vm26.cable.virginm.net. [82.37.195.13])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e693bcc2csm36373715e9.12.2025.10.02.07.01.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 07:01:30 -0700 (PDT)
-Date: Thu, 2 Oct 2025 15:01:25 +0100
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Yuri Andriaccio <yurand2000@gmail.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Thu, 02 Oct 2025 07:01:36 -0700 (PDT)
+Date: Thu, 2 Oct 2025 15:01:33 +0100
+From: Daniel Thompson <daniel@riscstar.com>
+To: Marcos Paulo de Souza <mpdesouza@suse.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Petr Mladek <pmladek@suse.com>,
 	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	Luca Abeni <luca.abeni@santannapisa.it>,
-	Yuri Andriaccio <yuri.andriaccio@santannapisa.it>
-Subject: Re: [RFC PATCH v3 03/24] sched/rt: Pass an rt_rq instead of an rq
- where needed
-Message-ID: <aN6FtY-J3WXlGaNv@jlelli-thinkpadt14gen4.remote.csb>
-References: <20250929092221.10947-1-yurand2000@gmail.com>
- <20250929092221.10947-4-yurand2000@gmail.com>
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jason Wessel <jason.wessel@windriver.com>,
+	Daniel Thompson <danielt@kernel.org>,
+	Douglas Anderson <dianders@chromium.org>,
+	linux-kernel@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net
+Subject: Re: [PATCH v5 0/5] Handle NBCON consoles on KDB
+Message-ID: <aN6FvQGj2w70Ejrz@aspen.lan>
+References: <20250930-nbcon-kgdboc-v5-0-8125893cfb4f@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,76 +95,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250929092221.10947-4-yurand2000@gmail.com>
+In-Reply-To: <20250930-nbcon-kgdboc-v5-0-8125893cfb4f@suse.com>
 
-Hello,
+On Tue, Sep 30, 2025 at 02:21:06PM -0300, Marcos Paulo de Souza wrote:
+> In v5 only patch three was changed, changing the check for KDB CPU, as suggested
+> by Petr Mladek. Also, it was based on the recent panic API [2], which now sits on
+> -mm tree.
 
-On 29/09/25 11:22, Yuri Andriaccio wrote:
-> From: luca abeni <luca.abeni@santannapisa.it>
-> 
-> Make rt.c code access the runqueue through the rt_rq data structure rather than
-> passing an rq pointer directly. This allows future patches to define rt_rq data
-> structures which do not refer only to the global runqueue, but also to local
-> cgroup runqueues (rt_rq is not always equal to &rq->rt).
-> 
-> Signed-off-by: luca abeni <luca.abeni@santannapisa.it>
-> Signed-off-by: Yuri Andriaccio <yurand2000@gmail.com>
-> ---
->  kernel/sched/rt.c | 99 ++++++++++++++++++++++++++---------------------
->  1 file changed, 54 insertions(+), 45 deletions(-)
-> 
-> diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-> index 7936d433373..a7d063d2303 100644
-> --- a/kernel/sched/rt.c
-> +++ b/kernel/sched/rt.c
-> @@ -370,9 +370,9 @@ static inline void rt_clear_overload(struct rq *rq)
->  	cpumask_clear_cpu(rq->cpu, rq->rd->rto_mask);
->  }
->  
-> -static inline int has_pushable_tasks(struct rq *rq)
-> +static inline int has_pushable_tasks(struct rt_rq *rt_rq)
->  {
-> -	return !plist_head_empty(&rq->rt.pushable_tasks);
-> +	return !plist_head_empty(&rt_rq->pushable_tasks);
->  }
->  
->  static DEFINE_PER_CPU(struct balance_callback, rt_push_head);
-> @@ -381,50 +381,54 @@ static DEFINE_PER_CPU(struct balance_callback, rt_pull_head);
->  static void push_rt_tasks(struct rq *);
->  static void pull_rt_task(struct rq *);
->  
-> -static inline void rt_queue_push_tasks(struct rq *rq)
-> +static inline void rt_queue_push_tasks(struct rt_rq * rt_rq)
+Do you keep this work in a git tree anywhere? I wanted to point the kgdb
+test suite at it but the patches don't apply cleanly (even after I
+grabbed the patches mentioned in [2].
 
-Nit, remove space                                     ^^^
 
->  {
-> -	if (!has_pushable_tasks(rq))
-> +	struct rq *rq = container_of(rt_rq, struct rq, rt);
-> +
-> +	if (!has_pushable_tasks(rt_rq))
->  		return;
->  
->  	queue_balance_callback(rq, &per_cpu(rt_push_head, rq->cpu), push_rt_tasks);
->  }
->  
-> -static inline void rt_queue_pull_task(struct rq *rq)
-> +static inline void rt_queue_pull_task(struct rt_rq * rt_rq)
-
-Nit, remove space                                     ^^^
-
->  {
-> +	struct rq *rq = container_of(rt_rq, struct rq, rt);
-
-Still need to check with the full series (and it's OK up until here),
-but I guess this needs special attention with tasks inside groups to
-make sure we don't queue callbacks in rqs representing groups?
-
-> +
->  	queue_balance_callback(rq, &per_cpu(rt_pull_head, rq->cpu), pull_rt_task);
->  }
-
-Thanks,
-Juri
-
+Daniel.
 
