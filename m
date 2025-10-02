@@ -1,128 +1,145 @@
-Return-Path: <linux-kernel+bounces-840661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1768DBB4EAC
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 20:43:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 76813BB4EB0
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 20:43:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D289B321657
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 18:43:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 299B83217E7
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 18:43:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A154527A919;
-	Thu,  2 Oct 2025 18:43:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 785DE27A929;
+	Thu,  2 Oct 2025 18:43:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZZxiVwJQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qqO99X8y"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECBB5279354;
-	Thu,  2 Oct 2025 18:43:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B3E72798F0
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 18:43:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759430586; cv=none; b=MrH4OBM8b9IxS6fs3hpUdvdpUgjOb1ygmX2lrDOnN9csMFkzfGuXVIJtRMTus9vq9bWnUzvIlCcOrs3cJ6qrwkQ10/QDwUi5VoOBzxhOfBexZeEw43hpQaVAD26fQRQ1kctXmoSmxi68dfMJ9DRblr36yvLa92Dy4Q9/16+lr+8=
+	t=1759430600; cv=none; b=utWwe2YOEQttAtHSrFmVqb/uhStiA5kGvEHE3emkgrYWaW1cQhEpl/jePXwqDt31i6L2fJD6IbYRF/MMMg1beIjll9oH7FzirBHtLcv2P8sBVKvfOH9KTrW17Y2NV4LkGAticc/cM7hH6ioGDwBMeb/qIBM4NwQDaEurT0xeMFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759430586; c=relaxed/simple;
-	bh=QBNmt5nQdlSHz9BzuBtd1eA2i421wdZw4slxcTsU9mI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tQaofDYOLs9ZZs3HrkPyEWQV0g0SD/2y6yQLFZBqluHYd0a3KZYiFdREXLCm4k2EZl55v/EpyinnBOJEGz1UsZLmMXuiZjQCQj7BJzjzT9uKfioB+jAIbWOUMIaRmUhDeJY5AJEZ8M6oJg8WdUsHlmhZw/A+0gIkrm5/TQa28zk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZZxiVwJQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9A5BC4CEF4;
-	Thu,  2 Oct 2025 18:43:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759430585;
-	bh=QBNmt5nQdlSHz9BzuBtd1eA2i421wdZw4slxcTsU9mI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZZxiVwJQ3Gdddbl8tlI81HLrcH+SF1gBXj73zyK1t/LCdnFStHGm2vLioyscg8PWL
-	 rxGjFhzTnlkA5myQXJMtParIPOuheo+6qYqwVPYkWsIjOcgtkoEYsRORCvggv1agiK
-	 mzItaIqY/mlrzFmBB/PC3SGNGW6IZjECH29l070K29qRC16WcnNE88NTJGlR493y6S
-	 pZLYKk1tchd103m2436bNFmX1y4cE5QCeIgBjTBWCFVnxeUe+xwEFxoIjYqzGmuEwN
-	 Bo4K/61gEWrtqNQ3w54P4A6H83COawIobBmOF4gXr8S2r6RVne6x5Yt5lJ9gdHJHVK
-	 jQ7AUhjza0BVA==
-Message-ID: <56daf2fe-5554-4d52-94b3-feec4834c5be@kernel.org>
-Date: Thu, 2 Oct 2025 20:42:58 +0200
+	s=arc-20240116; t=1759430600; c=relaxed/simple;
+	bh=7XyovT+QBcLHy4MPeRdMb9YVKvCLLkVo5ozVSgotKL4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=KJB3LI6UNeeYtug671XaWmi8B3TnXSmpOzTPhKaAomFD1SKNWnlafKzOISyU2zKjOS8yO5nuISzV7FtKU0XhAXxM4t0Ey073oSE0P7hYIcoJult4gHcbbyl/demyoj8dyH5KvNmhTdDFCmzVaY45OOXGLGRFH1xFIzhwag5PisM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qqO99X8y; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-3352a336ee1so2648625a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 11:43:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759430599; x=1760035399; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BF36+HuAPUu3G3takel+0xxVXkuZOozonOLvpYNbbPY=;
+        b=qqO99X8y6qg49Wscwnp9bCnBcPS9Be231Uxq6bMjkgNvQax9ftGS9ia1cQQCGbJKeg
+         tFqyVDiRO9FoJjQZ5AJ1yjGhnv2dIxazp+Haa0hUVq2908nOTCGf+ZtBJlt9QFH2VEcr
+         ur5dx0wEL/Usa1H4oNWx8JvNFSld+o56OwEpZiqCJxJGPqYoctIgN0cSgrXVhG+oPpBd
+         qwRJss/REAsITUNIfnHt+r1qlp3lohMxhS4NvIqnZvwi1s95O/5D6ga2zDmuLyjwrZST
+         SBq/tQu3CmjcIswZpP0Qkzjgnr6oEfs4/f0C+bKFDnix5chgE25x7vg+DAaj4a9GFa2j
+         OLSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759430599; x=1760035399;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BF36+HuAPUu3G3takel+0xxVXkuZOozonOLvpYNbbPY=;
+        b=TmHETinayd1/Hot0rnWhR241zFrgcdP0jY+ht7WTYGEJad9AImZNlP32G9f7SCvVFy
+         n9VSsCrhlfEHjXGztotzeyUErR8kEdi2CXAE90qCQmxYuVwhjDIDdBP59ZTV80iHsCjS
+         NeUVfpE0JbdrqURSrwrICA3PN/7msAj9+MxDeh4TW9A4K8hoqyOo7bnKyRXt2wzazfas
+         zgq5W3o8Q37Uvf6iwm1BeHCiub4+1yB4jq4TbMWzXu2d1fBkyY2Ow2hRu8IkpfCAVwlH
+         OhwV9ZnIo9R2S84geoh0R9dWyMTTuIGBW2HfkkQA26trrjmjy/wHX5kTS4rYNjS2VyX7
+         zSPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV7J+VfiIqCv0N5Yc4bL24PNmpfnMuMR1gunaQSeeikbV9rIwhJt6tQ1RLEYULhGQFUagMt72wnjrhg/uc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYq87805XPJmia1RPejje1sBvsFLXed70W47xU+bzOBZ13HMPK
+	hpbVFohoqGIkFT4kgCl+5Al3a8QJU7L63uyze3QK2OYl8tRGeY+TmrlJ2Se84mYgCZ0emCD3orE
+	Eb8pozw==
+X-Google-Smtp-Source: AGHT+IHzKP+mkTV9r2F6im0ZZKYHqqWZ0dx4/6eJaCqR+H+7NxXGm68uyuJOAHQ9Qymj9O+tm0fETNVF/Vk=
+X-Received: from pjre16.prod.google.com ([2002:a17:90a:b390:b0:330:a006:a384])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4a8c:b0:32b:cb05:849a
+ with SMTP id 98e67ed59e1d1-339c27bc475mr438569a91.29.1759430598389; Thu, 02
+ Oct 2025 11:43:18 -0700 (PDT)
+Date: Thu, 2 Oct 2025 11:43:16 -0700
+In-Reply-To: <09e75529c3f844b1bb4dd5a096ed4160905fca7f.1747264138.git.ackerleytng@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] rust: pci: skip probing VFs if driver doesn't
- support VFs
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: John Hubbard <jhubbard@nvidia.com>,
- Alexandre Courbot <acourbot@nvidia.com>,
- Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
- Alistair Popple <apopple@nvidia.com>, Zhi Wang <zhiw@nvidia.com>,
- Surath Mitra <smitra@nvidia.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Alex Williamson
- <alex.williamson@redhat.com>, Bjorn Helgaas <bhelgaas@google.com>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
- nouveau@lists.freedesktop.org, linux-pci@vger.kernel.org,
- rust-for-linux@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-References: <20251002135600.GB3266220@nvidia.com>
- <DD7XKV6T2PS7.35C66VPOP6B3C@kernel.org> <20251002152346.GA3298749@nvidia.com>
- <DD7YQK3PQIA1.15L4J6TTR9JFZ@kernel.org> <20251002170506.GA3299207@nvidia.com>
- <DD80P7SKMLI2.1FNMP21LJZFCI@kernel.org>
- <DD80R10HBCHR.1BZNEAAQI36LE@kernel.org>
- <af4b7ce4-eb13-4f8d-a208-3a527476d470@nvidia.com>
- <20251002180525.GC3299207@nvidia.com>
- <3ab338fb-3336-4294-bd21-abd26bc18392@kernel.org>
- <20251002183114.GD3299207@nvidia.com>
-From: Danilo Krummrich <dakr@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20251002183114.GD3299207@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <cover.1747264138.git.ackerleytng@google.com> <09e75529c3f844b1bb4dd5a096ed4160905fca7f.1747264138.git.ackerleytng@google.com>
+Message-ID: <aN7HxBgFwm2B7Cv3@google.com>
+Subject: Re: [RFC PATCH v2 11/51] KVM: selftests: Allow cleanup of ucall_pool
+ from host
+From: Sean Christopherson <seanjc@google.com>
+To: Ackerley Tng <ackerleytng@google.com>
+Cc: kvm@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	x86@kernel.org, linux-fsdevel@vger.kernel.org, aik@amd.com, 
+	ajones@ventanamicro.com, akpm@linux-foundation.org, amoorthy@google.com, 
+	anthony.yznaga@oracle.com, anup@brainfault.org, aou@eecs.berkeley.edu, 
+	bfoster@redhat.com, binbin.wu@linux.intel.com, brauner@kernel.org, 
+	catalin.marinas@arm.com, chao.p.peng@intel.com, chenhuacai@kernel.org, 
+	dave.hansen@intel.com, david@redhat.com, dmatlack@google.com, 
+	dwmw@amazon.co.uk, erdemaktas@google.com, fan.du@intel.com, fvdl@google.com, 
+	graf@amazon.com, haibo1.xu@intel.com, hch@infradead.org, hughd@google.com, 
+	ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz, 
+	james.morse@arm.com, jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, 
+	jhubbard@nvidia.com, jroedel@suse.de, jthoughton@google.com, 
+	jun.miao@intel.com, kai.huang@intel.com, keirf@google.com, 
+	kent.overstreet@linux.dev, kirill.shutemov@intel.com, liam.merwick@oracle.com, 
+	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, maz@kernel.org, 
+	mic@digikod.net, michael.roth@amd.com, mpe@ellerman.id.au, 
+	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es, 
+	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com, 
+	paul.walmsley@sifive.com, pbonzini@redhat.com, pdurrant@amazon.co.uk, 
+	peterx@redhat.com, pgonda@google.com, pvorel@suse.cz, qperret@google.com, 
+	quic_cvanscha@quicinc.com, quic_eberman@quicinc.com, 
+	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com, quic_pheragu@quicinc.com, 
+	quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com, richard.weiyang@gmail.com, 
+	rick.p.edgecombe@intel.com, rientjes@google.com, roypat@amazon.co.uk, 
+	rppt@kernel.org, shuah@kernel.org, steven.price@arm.com, 
+	steven.sistare@oracle.com, suzuki.poulose@arm.com, tabba@google.com, 
+	thomas.lendacky@amd.com, usama.arif@bytedance.com, vannapurve@google.com, 
+	vbabka@suse.cz, viro@zeniv.linux.org.uk, vkuznets@redhat.com, 
+	wei.w.wang@intel.com, will@kernel.org, willy@infradead.org, 
+	xiaoyao.li@intel.com, yan.y.zhao@intel.com, yilun.xu@intel.com, 
+	yuzenghui@huawei.com, zhiquan1.li@intel.com
+Content-Type: text/plain; charset="us-ascii"
 
-On 10/2/25 8:31 PM, Jason Gunthorpe wrote:
-> This exactly how this function is used.
+On Wed, May 14, 2025, Ackerley Tng wrote:
+> Many selftests use GUEST_DONE() to signal the end of guest code, which
+> is handled in userspace. In most tests, the test exits and there is no
+> need to clean up the ucall_pool->in_use bitmap.
 > 
-> The core PF driver provides an API:
+> If there are many guest code functions using GUEST_DONE(), or of guest
+> code functions are run many times, the ucall_pool->in_use bitmap will
+> fill up, causing later runs of the same guest code function to fail.
 > 
-> struct mlx5_core_dev *mlx5_vf_get_core_dev(struct pci_dev *pdev)
-> 
-> Which takes in the VF as pdev and internally it invokes:
-> 
-> 	mdev = pci_iov_get_pf_drvdata(pdev, &mlx5_core_driver);
+> This patch allows ucall_free() to be called from userspace on uc.hva,
+> which will unset and free the correct struct ucall in the pool,
+> allowing ucalls to continue being used.
 
-Oh, I see, that makes sense then. Thanks for clarifying. I think I already had
-in mind how this would look like in the Rust abstraction, and there we don't
-need pci_iov_get_pf_drvdata() to achieve the same thing.
+NAK.
 
-> /**
->  * pci_iov_get_pf_drvdata - Return the drvdata of a PF
->  * @dev: VF pci_dev
->  * @pf_driver: Device driver required to own the PF
->  *
->  * This must be called from a context that ensures that a VF driver is attached.
->  * The value returned is invalid once the VF driver completes its remove()
->  * callback.
->  *
->  * Locking is achieved by the driver core. A VF driver cannot be probed until
->  * pci_enable_sriov() is called and pci_disable_sriov() does not return until
->  * all VF drivers have completed their remove().
->  *
->  * The PF driver must call pci_disable_sriov() before it begins to destroy the
->  * drvdata.
->  */
-> 
-> Meaning nova-core has to guarentee to call pci_disable_sriov() before
-> remove completes or before a failing probe returns as part of
-> implementing SRIOV support.
+The ucall thing isn't an issue with GUEST_DONE(), it's a general issue with not
+completing a ucall.  The simple answer here is to not abuse GUEST_xxx().
 
-Yes, I already thought about this. In the context of adding support for SR-IOV
-in the Rust abstractions I'm planning on sending an RFC to let the subsystem
-provide this guarantee instead (at least under certain conditions).
+I tried doing the same thing (jumping back to a guest's entry point) in what is
+now the mmu_stress_test, and it didn't end well.  Restoring just registers mostly
+works on x86, but it's not foolproof even there.  And on other architectures, the
+approach is even less viable (IIRC).  E.g. if the guest code touches *anything*
+that's not saved/restore, the test is hosed.
 
-This will allow us to assert the device to be bound by the type system in the
-Rust PCI abstraction, rather than having the driver to provide a guarantee to
-call pci_disable_sriov() manually. :)
+In short, while clever, the approach just doesn't work. Which is why I don't want
+ucall_free() to exist: it's only useful for a pattern that is deeply flawed.
+
+The easiest alternative is to use GUEST_SYNC(), have the guest code loop, and
+use global variables to pass data.  It's ugly, but it works and is much less likely
+to have arch specific quirks.   The worst of the ugliness can be mitigated by
+using a struct to pass info, e.g. so that you only have to do one "sync global"
+call.
 
