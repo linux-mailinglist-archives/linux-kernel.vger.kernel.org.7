@@ -1,99 +1,138 @@
-Return-Path: <linux-kernel+bounces-839745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9D9DBB24F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 03:58:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 668A4BB24F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 03:58:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84A3E189005C
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 01:58:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 305C73B1E31
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 01:58:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0AFC14D2B7;
-	Thu,  2 Oct 2025 01:58:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07EE01482F2;
+	Thu,  2 Oct 2025 01:58:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mXH0mmx7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="EBMo7NOK"
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47E153C33;
-	Thu,  2 Oct 2025 01:58:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F168EA59
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 01:58:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759370286; cv=none; b=WQU5RLXVvUKR5YTDQiuxOXo5C6sp3x9XCPQi3pfya6cPJQr+4+IMdbiwGYlAkKW0AHSnwDX/DJrIk8HYVHOUOatOSAZgbPrduw8wXh/7maROs5irD2fbGvgm++QyCWsn1YEblPT4+vrCQpRPlAfJLCBazlTadCzcWpKnKRNoz5o=
+	t=1759370328; cv=none; b=C6IVhF+VpuTzsMLrswvhotlDaF0K+XtWaEJjM+6C9mQrMZY4cIIvF4GzvBHTLZ+KaNJRiYKTgW0bHN23QeGzgUkZVi3ZJvlpEhLQWlXn86MMYScKQbXMOuhaVMQUCNdXZO66i18WNcXJPj2424Hv7sCpvnhe5EcuAcc1HRshSxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759370286; c=relaxed/simple;
-	bh=orYqUHOQq/dpMoz7wQGqiTQeBrJ2oIsx48bUQSmWSBw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=To0Qr6BQHIhR5prPthaZzLLOsTIT0f5X06MCrxJe9CBKfMghcd9beeI7wC4galP+UdXFRg0RXdX9Be5237WfEVaQ4X6RLGzXu3YC7olEATyxqUYZJ0Q+uvcEE5QZc7/kLpAFe255BDyxMEqhmcIbiLYdSgD9s7D1bSZQNSa9/AQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mXH0mmx7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCC9AC4CEF1;
-	Thu,  2 Oct 2025 01:58:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759370286;
-	bh=orYqUHOQq/dpMoz7wQGqiTQeBrJ2oIsx48bUQSmWSBw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mXH0mmx7e8nHvxI/qVehiqeM+sCtXqeCHqV5z0GIs+Af6FI72ETpHjVvNt8/0ox4p
-	 txWYoxq+DoTQck5Wk0DW1V23FA3Qxk+cJKMAd+ukRrcuym3MaxGdWkPDo37iVTcOhZ
-	 jRFlgLzNj/rnfJmF19APgCuYW6wizBTTf1aJyfD/WFgo8LCBgkM5w7F7l1HnsH/i4L
-	 fOwicxTy9LKANRsxR03TIaeNzfJC/Xz+JcJhlRAscsA3tp0ef/bqQg5s2FzDrNREzd
-	 hd5HjR8wUmUC/eb5+tsTKVh0oMojmYMc9F8SeeDF4D4XtvNSIfmyQj4VJeBP4XDLF2
-	 ELHqVxDSR+H2w==
-Date: Wed, 1 Oct 2025 20:58:04 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Rohit Agarwal <quic_rohiagar@quicinc.com>,
-	linux-arm-msm@vger.kernel.org,
-	Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Lakshmi Sowjanya D <quic_laksd@quicinc.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Georgi Djakov <djakov@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [PATCH v2 2/2] dt-bindings: interconnect: qcom: Drop QPIC_CORE
- IDs
-Message-ID: <175937028401.2886916.12818454708377622301.robh@kernel.org>
-References: <20250926-sdx75-icc-v2-0-20d6820e455c@oss.qualcomm.com>
- <20250926-sdx75-icc-v2-2-20d6820e455c@oss.qualcomm.com>
+	s=arc-20240116; t=1759370328; c=relaxed/simple;
+	bh=YufCdfcenG1M8YhjLUdYtSD9vMRXMicvB/f8kXJEIQo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UF8imlya1RjaKVt5lDz+Vemw8buSypuFIL7fMcw0NyAcugsXuqims5Y0VVLKLLg/LuCyuNDeBgNMTZan0xXIP3Zk9t/Ivhh/rpDWgYKB0fNM9QNr1eDnJONC9NLcZCw/aj4wD6ofyTXcjdEplB51VHrHwWAhtnMlCwVeRLpAC5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=EBMo7NOK; arc=none smtp.client-ip=91.218.175.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <a647617f-add7-499c-81c9-a5ed628e34f7@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1759370322;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CGJj77OJTJPdfBOSmZlqr5kypF1L3WfLsVzSKBfYABs=;
+	b=EBMo7NOKA303LIr+j3Uw8EFdp5qc6UaffZTX1Y1PftVy86HHaW+EYWawkURYOvRx+EvFsR
+	uPHbv9w2XK2x6YoxacfI6ZjLgklN2baW8h+sVETQXeDZ4gQMNyQvuGAWfkA5uTjLilIyR4
+	5YjGTQ06U2PzWD0/O8mHZxrDdkzA3+c=
+Date: Thu, 2 Oct 2025 09:58:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250926-sdx75-icc-v2-2-20d6820e455c@oss.qualcomm.com>
+Subject: Re: [PATCH 1/2] mm/page_owner: Rename proc-prefixed variables for
+ clarity
+To: Hu Song <husong@kylinos.cn>, Andrew Morton <akpm@linux-foundation.org>,
+ Vlastimil Babka <vbabka@suse.cz>
+Cc: Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Brendan Jackman <jackmanb@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
+ Zi Yan <ziy@nvidia.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20250930092153.843109-1-husong@kylinos.cn>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Ye Liu <ye.liu@linux.dev>
+In-Reply-To: <20250930092153.843109-1-husong@kylinos.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
 
-On Fri, 26 Sep 2025 12:12:10 +0530, Manivannan Sadhasivam wrote:
-> From: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
-> 
-> As like other SDX targets, SDX75 QPIC BCM resource is also modeled as a
-> RPMh clock in clk-rpmh driver. However, for SDX75, this resource was also
-> described as an interconnect node mistakenly.
-> 
-> Hence, drop the QPIC interconnect IDs and let the clients use clk-rpmh
-> driver to vote for this resource.
-> 
-> Even though this change is an ABI break, it is necessary to avoid
-> describing the same resource provider in two different drivers, as it may
-> lead to votes from clients overriding each other.
-> 
-> Fixes: 956329ec7c5e ("dt-bindings: interconnect: Add compatibles for SDX75")
-> Signed-off-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
-> [mani: kept the QUP defines value unchanged]
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+在 2025/9/30 17:21, Hu Song 写道:
+> From: Song Hu <husong@kylinos.cn>
+>
+> The `proc_page_owner_operations` and related variables were renamed to
+> `page_owner_fops` to better reflect their association with `debugfs` rather
+> than `/proc`. This improves code clarity and aligns with kernel naming
+> conventions.
+>
+> Signed-off-by: Song Hu <husong@kylinos.cn>
+
+
+Reviewed-by: Ye Liu <liuye@kylinos.cn>
+
 > ---
->  include/dt-bindings/interconnect/qcom,sdx75.h | 2 --
->  1 file changed, 2 deletions(-)
-> 
+>  mm/page_owner.c | 13 ++++++-------
+>  1 file changed, 6 insertions(+), 7 deletions(-)
+>
+> diff --git a/mm/page_owner.c b/mm/page_owner.c
+> index c3ca21132c2c..bb88b72b6062 100644
+> --- a/mm/page_owner.c
+> +++ b/mm/page_owner.c
+> @@ -848,7 +848,7 @@ static void init_early_allocated_pages(void)
+>  		init_zones_in_node(pgdat);
+>  }
+>  
+> -static const struct file_operations proc_page_owner_operations = {
+> +static const struct file_operations page_owner_fops = {
+>  	.read		= read_page_owner,
+>  	.llseek		= lseek_page_owner,
+>  };
+> @@ -929,7 +929,7 @@ static int page_owner_stack_open(struct inode *inode, struct file *file)
+>  	return seq_open_private(file, &page_owner_stack_op, 0);
+>  }
+>  
+> -static const struct file_operations page_owner_stack_operations = {
+> +static const struct file_operations page_owner_stack_fops = {
+>  	.open		= page_owner_stack_open,
+>  	.read		= seq_read,
+>  	.llseek		= seq_lseek,
+> @@ -948,7 +948,7 @@ static int page_owner_threshold_set(void *data, u64 val)
+>  	return 0;
+>  }
+>  
+> -DEFINE_SIMPLE_ATTRIBUTE(proc_page_owner_threshold, &page_owner_threshold_get,
+> +DEFINE_SIMPLE_ATTRIBUTE(page_owner_threshold_fops, &page_owner_threshold_get,
+>  			&page_owner_threshold_set, "%llu");
+>  
+>  
+> @@ -961,13 +961,12 @@ static int __init pageowner_init(void)
+>  		return 0;
+>  	}
+>  
+> -	debugfs_create_file("page_owner", 0400, NULL, NULL,
+> -			    &proc_page_owner_operations);
+> +	debugfs_create_file("page_owner", 0400, NULL, NULL, &page_owner_fops);
+>  	dir = debugfs_create_dir("page_owner_stacks", NULL);
+>  	debugfs_create_file("show_stacks", 0400, dir, NULL,
+> -			    &page_owner_stack_operations);
+> +			     &page_owner_stack_fops);
+>  	debugfs_create_file("count_threshold", 0600, dir, NULL,
+> -			    &proc_page_owner_threshold);
+> +			    &page_owner_threshold_fops);
+>  
+>  	return 0;
+>  }
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+-- 
+Thanks,
+Ye Liu
 
 
