@@ -1,154 +1,169 @@
-Return-Path: <linux-kernel+bounces-840389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFC0FBB4464
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 17:10:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2EBDBB449D
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 17:16:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01E3E7AB994
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 15:08:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7670A422A28
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 15:16:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAF1318DB26;
-	Thu,  2 Oct 2025 15:10:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D320A19D880;
+	Thu,  2 Oct 2025 15:16:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="O7OQi6VK"
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="VshEI48W"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88FB517A2EA
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 15:10:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A904F21348;
+	Thu,  2 Oct 2025 15:16:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759417818; cv=none; b=eTtWC92JbrDoLqJjTkBpcFLT9yYDWO1J9AHzlWn4EUMzATZZ0g4eBbDPbaB0xi82UbhKXQaHPA73fhtzfzMfgpzsAuuRo6VaRqNymw7p+yKiuvi1dma0hII8w8PMBL/Ax6bGcCMOkyJBhEXF87EZ7TSo98pd6R6rDsC8EMdGSng=
+	t=1759418193; cv=none; b=X+HrincA/c2aTZNrO0hqiwhCaazj5BVUEzjyA34YaR37XwOn8ve7YlMPbJxvz6ROjoF2EM3h/jOtkGq0CnbhYIBa5E8Y0pMXHKPrkNsmeJisdSrF1Pil6GKbyfqjtMapkUxrD0Pj3wzLp2OctV1PMKrB6GTa1U9ovlAQPNwBrlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759417818; c=relaxed/simple;
-	bh=b3b0GgTGV6Hmr+OJGvLRHfofff0kuMaSa1ZnGyJX+WU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=teAquhle38NFFXKDy9YwPEtOeBgnz++N5u/vFMGUsncxblpjjSJJx0DCUhSOtMyBwB3bZHsudLSZ6RsQdBviU6Y69AqZKWWrNvr+e68SfKOBACuDoUaKRmxIE22oe0J3AF+9KlA82n9ozq87isMGcyslktGeC5aMqLYecCFZLL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=O7OQi6VK; arc=none smtp.client-ip=209.85.219.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-87745ca6cc5so16574906d6.0
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 08:10:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1759417814; x=1760022614; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZwVQnMIQJRoqf6cZxOx8gI2Zws34ldaT5+3ZuE4JgCY=;
-        b=O7OQi6VKSMx209JQtJVfmK/4fHwkcDFYS3dZbXrpQt9mreS9WH2TRWG41sZRf53qv6
-         fdcSGKA7Az3Y42ajnK0kMYUMC7xis5QgwnIE5wXCcubBoUzzUlGxXAa4mAEvvSYjs81i
-         xLciD+7fj+9G4/2whCAe1Id5I4IAL+7LJAjhslEEMXRE//kgVgZAUlBazctQc0ydR9TH
-         jETi97Ot917pdAcdWUmD8RobXFWQ9ubIDZmCKnpKprCvRjPiVVmlk2xcg9ZT87CVP0jd
-         h4G7qf9dtZohiNnVRelNvpWPkPGgtJc9OCROkP0pnO7Bz46BdtCKEAfQZVCKOC6egXlT
-         qZ2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759417814; x=1760022614;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZwVQnMIQJRoqf6cZxOx8gI2Zws34ldaT5+3ZuE4JgCY=;
-        b=XCClfbLWG0DARPEpSo/pND4zy6DIm4xKr7mkMz//2DtWjv6gxKnSCnfOqcLppblCCr
-         19K3PkMbByWoVNwvT8rRG2awhmyKiYQzo5bSf4s5mCFackpgUigTS3Fm2SJlTk9c5Sei
-         nBAsrYtYwmILfu+jASsFETF6B43Ujdli6HEGb0YOamE70DrBtraYA6svcZfDlTucbI98
-         9y63rn3jJ/memZmQLK1QbHHgAqaFnjr7ExcCiGEs+846FqnFhZPFvOyaNlV8OyY8dFi0
-         fG+91HO4VLQ8nPPPgLfPMnB5Ugz1GDwGodDwV5gN8Ly7MAINt9NA7WMim9pHTnRr5CQ9
-         EOfw==
-X-Forwarded-Encrypted: i=1; AJvYcCX6+bRXT/s0ghnXR1n0win7jZMLMHft8arGpC0MUcBEyS2f3tk/4ys+qZbicjvSTiwRHpqgB4mm6fcREwE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxyd2DYOqCam4dWTMj8/Q+kfcgLcAmNgJvFkZcaLU97/poTJjEU
-	6DnYqSZXG4bmVPWnW61pO771OIlZ9e+jaRx2HyYBWCACLEw8sbi8Xnk/HATxdIhzMqU=
-X-Gm-Gg: ASbGncuck/PuNI7fn4uIXYt79srnzwwf8tupAaE+GpWI5SqigVcq5/ri29/x0fQFGDZ
-	yPlNzsNGEphJ6m/jNqH8FGCsOFelg8WbmWpyUuf91Zw3cznMNZuL+bP6XAM9pqcxPiclWPZMnoV
-	EACwDH5CnQsy9rSAMVimERX5ToEkBLTOtvtGJLD9mkkJRginn3VKLl+F6AhRZDUGE0WCJk/X7bk
-	dzMr+eX+MLmUm/4UUW5GrKtgIIsebHO5/950f+3T6d3K4EvA1jjZGj5I0H3W3lD8tA8kHuh3mdR
-	2cp5wF4cjLbNMQU6qlWYaQVf2OBP/RZ8ovcFR6tyF07CH0rA1AewOSEKHMejnEFXtp4hw5WXypJ
-	y5hjeQXGdjTjS0nVr8wLRAOSvnMkkXa4jGqku9KvILcOwY6MxI1GnZkyU70WXGJDKqoaJGs/NzQ
-	LzLl6wuN7VXNUOGvJy
-X-Google-Smtp-Source: AGHT+IF4uLyOJyU+FQkG7ZTwurw1/BBZxzwtU1q+E5QaCkyyuySCOBbJTUQR1yA4rk8aOhvuD+eTdA==
-X-Received: by 2002:ad4:5946:0:b0:70d:cef4:ea42 with SMTP id 6a1803df08f44-878b94ffb45mr54873466d6.1.1759417814221;
-        Thu, 02 Oct 2025 08:10:14 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-878bd87b40esm20126476d6.32.2025.10.02.08.10.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 08:10:13 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1v4Kwe-0000000DqC9-2iPI;
-	Thu, 02 Oct 2025 12:10:12 -0300
-Date: Thu, 2 Oct 2025 12:10:12 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: Samiullah Khawaja <skhawaja@google.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, iommu@lists.linux.dev,
-	YiFei Zhu <zhuyifei@google.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Pratyush Yadav <pratyush@kernel.org>,
-	Kevin Tian <kevin.tian@intel.com>, linux-kernel@vger.kernel.org,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Adithya Jayachandran <ajayachandra@nvidia.com>,
-	Parav Pandit <parav@nvidia.com>,
-	Leon Romanovsky <leonro@nvidia.com>, William Tu <witu@nvidia.com>,
-	Vipin Sharma <vipinsh@google.com>, dmatlack@google.com,
-	Chris Li <chrisl@kernel.org>, praan@google.com
-Subject: Re: [RFC PATCH 13/15] iommufd: Persist iommu domains for live update
-Message-ID: <20251002151012.GF3195829@ziepe.ca>
-References: <20250929160034.GG2695987@ziepe.ca>
- <CA+CK2bDqDz3k0gXamJEbKUL7RPBLVjaA5=Jum=CF84wR+50izA@mail.gmail.com>
- <20250930135916.GN2695987@ziepe.ca>
- <CAAywjhRGrGjZK3jQptieVWmdzvjfNtTYrp2ChTZJSmFyrBaRqw@mail.gmail.com>
- <20250930210504.GU2695987@ziepe.ca>
- <CAAywjhRQONuHsxTGQZ5R=EJbOHUD+xOF_CYjkNRbUyCQkORwig@mail.gmail.com>
- <20251001114742.GV2695987@ziepe.ca>
- <CA+CK2bAvnTTz+vPg7v38_1dajRZQHyPQ8iDmziiW8GFUqy6=Ag@mail.gmail.com>
- <20251002115712.GA3195829@ziepe.ca>
- <CA+CK2bAudSHq2t5NZPBKDC2wfzsF6SSxTF7aZ2kxueOTzWYcfg@mail.gmail.com>
+	s=arc-20240116; t=1759418193; c=relaxed/simple;
+	bh=3CGm9PG5ILZCt0c51xHvV24Bg5BobjK0p8VqNOem5CU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UHTlM5TSIC6M2v9u63v06Q/WR4U1dhVvTZzQzFkrBr20SBFCjvw71ZatIvJkUbNy5UbInOur3FO7CtSrYW76ZjWG6bVUQukZWSHOjKpC5Q1tdC88a0bflc6EDjI71qpVwC6dVmmpIM3UQF6P/GmvuKiK/6AqBGX/Mvz9u1KBzJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=VshEI48W; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 592Bv1eO001767;
+	Thu, 2 Oct 2025 15:10:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=WORjK6
+	Ee+NiyPAdI1QmO+wB6QuQBHYftZ5ozMkZgNHs=; b=VshEI48WzurDRQtbzl/5kc
+	YIKqbtl5wE/WoRjcoHfa0mFn2Lkehli2I9I6/ImW7neAPT5l0vA9M4/m53FynyBf
+	oOuzhq6mHt5VDzmcxA8JXHPGffVgA6cos9Ka0iJSQxSyFmfwm0bpEg6fMULLi0/M
+	DLnU0ToxPFaYGTxbmR0TILMVyCnKWBg2SPEyZzi2s8CbC5LGOQlf9qPMKcDnKpv5
+	n5+H3CHN6+z5Lgh851A1jWA4NfSMAj7WWhb3yusygwu/2034ooeZ7OP2rm+dNjpR
+	Hn42iQVnsBhP0UkKUbzszGa0IFQTMC10itY8iq6LEPJgQGR8riU9rzYrUdD64VZw
+	==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49e7n864jq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 02 Oct 2025 15:10:54 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 592ERlNg001667;
+	Thu, 2 Oct 2025 15:10:53 GMT
+Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 49evfje7tm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 02 Oct 2025 15:10:53 +0000
+Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
+	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 592FAq9I36503898
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 2 Oct 2025 15:10:52 GMT
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 40A1058076;
+	Thu,  2 Oct 2025 15:10:52 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1D0B758043;
+	Thu,  2 Oct 2025 15:10:48 +0000 (GMT)
+Received: from [9.43.27.61] (unknown [9.43.27.61])
+	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  2 Oct 2025 15:10:47 +0000 (GMT)
+Message-ID: <91799590-15cd-437d-900f-8bc372f7298b@linux.ibm.com>
+Date: Thu, 2 Oct 2025 20:40:46 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+CK2bAudSHq2t5NZPBKDC2wfzsF6SSxTF7aZ2kxueOTzWYcfg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/7] blk-mq: add a new queue sysfs attribute async_depth
+To: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk, bvanassche@acm.org,
+        ming.lei@redhat.com
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com,
+        johnny.chenyi@huawei.com
+References: <20250930071111.1218494-1-yukuai1@huaweicloud.com>
+ <20250930071111.1218494-4-yukuai1@huaweicloud.com>
+Content-Language: en-US
+From: Nilay Shroff <nilay@linux.ibm.com>
+In-Reply-To: <20250930071111.1218494-4-yukuai1@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: B6DLcoY_t4OV2Y00M3_0VQihzZZ8x4F4
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAyNSBTYWx0ZWRfX7nLnj+JDoTia
+ axM/UoW8RmhpANa7SBqPID/3qw2Wq+CyrN90TZHLAo2hfeonAv24chWMz8tCYGEYS54Agh3aeOq
+ fXDkEWLPZTgW1dIDkSKxUupH58xCi3cMnBhQbtbrtXn49W04xIdIHzsjxLC68/ubLBSzZkCaoU5
+ UnYmjZib3pAFkodz0Q2HSaDST11GcEkjX8+NwS69WZpgM8GUmUK8EATblb/+0bA9SomnrewQB9v
+ knnGolqFP6ohKlxpZa017lFGVzEeJr3wqS6dcmc01puCwLviIRZZtZBgiDGhhh2Wmbji41Vcl47
+ 7cRJkoVIDN9obhXF1wdCBA6oc4O2VQT4LkZIb1F2maqNMEp9v2E5RCk05G5ssUEaixgwmXFhBNa
+ smQFVKCTJ1eJpnckpfx0hC2NUt0DgA==
+X-Proofpoint-GUID: B6DLcoY_t4OV2Y00M3_0VQihzZZ8x4F4
+X-Authority-Analysis: v=2.4 cv=T7qBjvKQ c=1 sm=1 tr=0 ts=68de95fe cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=i0EeH86SAAAA:8 a=WOpRoUcL_F6Ol7fEhz4A:9
+ a=QEXdDO2ut3YA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-02_05,2025-10-02_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 impostorscore=0 lowpriorityscore=0 malwarescore=0 spamscore=0
+ clxscore=1015 suspectscore=0 bulkscore=0 phishscore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270025
 
-On Thu, Oct 02, 2025 at 10:43:45AM -0400, Pasha Tatashin wrote:
-> > Finish on resume shouldn't indicate anything specific beyond the luo
-> > should be empty and everything should have been restored. It isn't
-> > like finish on pre-kexec.
-> >
-> > Userspace decides how it sequences things and what steps it takes
-> > before ending blackout and resuming the VM.
+
+
+On 9/30/25 12:41 PM, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
 > 
-> This is a fair statement: userspace knows when vCPUs are resumed and
-> can decide when to do the HWPT swap. Following that logic, what if we
-> provide a specific ioctl() to perform the swap?
+> Add a new field async_depth to request_queue and related APIs, this is
+> currently not used, following patches will convert elevators to use
+> this instead of internal async_depth.
+> 
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> ---
+>  block/blk-core.c       |  1 +
+>  block/blk-mq.c         |  4 ++++
+>  block/blk-sysfs.c      | 47 ++++++++++++++++++++++++++++++++++++++++++
+>  block/elevator.c       |  1 +
+>  include/linux/blkdev.h |  1 +
+>  5 files changed, 54 insertions(+)
+> 
+> diff --git a/block/blk-core.c b/block/blk-core.c
+> index dd39ff651095..76df70cfc103 100644
+> --- a/block/blk-core.c
+> +++ b/block/blk-core.c
+> @@ -463,6 +463,7 @@ struct request_queue *blk_alloc_queue(struct queue_limits *lim, int node_id)
+>  	fs_reclaim_release(GFP_KERNEL);
+>  
+>  	q->nr_requests = BLKDEV_DEFAULT_RQ;
+> +	q->async_depth = BLKDEV_DEFAULT_RQ;
+>  
+>  	return q;
+>  
+> diff --git a/block/blk-mq.c b/block/blk-mq.c
+> index 09f579414161..260e54fa48f0 100644
+> --- a/block/blk-mq.c
+> +++ b/block/blk-mq.c
+> @@ -529,6 +529,8 @@ static struct request *__blk_mq_alloc_requests(struct blk_mq_alloc_data *data)
+>  			data->rq_flags |= RQF_USE_SCHED;
+>  			if (ops->limit_depth)
+>  				ops->limit_depth(data->cmd_flags, data);
+> +			else if (!blk_mq_sched_sync_request(data->cmd_flags))
+> +				data->shallow_depth = q->async_depth;
+>  		}
 
-Yeah, that is what I've been talking about. The ioctl already exists
-in iommufd..
+In the subsequent patches, I saw that ->limit_depth is still used for the
+BFQ scheduler. Given that, it seems more consistent to also retain ->limit_depth
+for the mq-deadline and Kyber schedulers, and set data->shallow_depth within their
+respective ->limit_depth methods. If we take this approach, the additional 
+blk_mq_sched_sync_request() check above becomes unnecessary.
 
-> What do we do if the user reclaimed iommufd but did not swap HWPT or
-> did not perform some other ioctl() before finish(), simply print a
-> kernel warnings and let it be, or force swapping during finish before
-> going into normal mode?
+So IMO:
+- Keep ->limit_depth for all schedulers (bfq, mq-deadline, kyber).
+- Remove the extra blk_mq_sched_sync_request() check from the core code.
 
-The problem we haven't discussed how to solve is the linkage between
-the iommu_domain and the memfd.
-
-Since the preserved iommu_domain is referring to memory owned by the
-memfd and the pins don't get restored until the iommufd starts and
-generates new pins. Thus we need to keep the memfd in a frozen state.
-
-Maybe that is the real use case for finish - things like memfd remain
-frozen until finish concludes.
-
-However, keeping with the keep it simple theme, finish can just not
-succeed if there are stray objects that userspace has not cleaned up
-floating around. Eg a simple refcount and iommu_domain decrs it when
-it is destroyed.
-
-Jason
+Thanks,
+--Nilay
 
