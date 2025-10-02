@@ -1,142 +1,173 @@
-Return-Path: <linux-kernel+bounces-840490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC227BB4892
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 18:28:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60DF4BB4858
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 18:24:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D83D19E3B60
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 16:29:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ACB367B6027
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 16:21:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D25125A34B;
-	Thu,  2 Oct 2025 16:28:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9E602580ED;
+	Thu,  2 Oct 2025 16:22:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nUbOvZYz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TN1HQ9WG"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B63AA17A586;
-	Thu,  2 Oct 2025 16:28:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D131C253B58
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 16:22:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759422508; cv=none; b=K0dpxB/dC8N2S0JT3ryJu7C7woPkpxJkbGezJA/AUDG/OOHswqKUTD05jj3r13rgXlE9Erqrqv0s9gbvzNeaK6VHvst1UcKC5l9SL+RPLfZJOXRZ/X89wUqCrmOS16URpbsdlM0k2a4fODD3OywV9J6tf7Jv5IH6CuEK4rYVFZM=
+	t=1759422160; cv=none; b=rB5cyTZhOvL3WydSWQhMAe4MglOGs2qXgf27HgRZqj8i7+Z4MYRoFrhz8jjfLiuSgTS4HxkfyciskIwSLrVDrqj0aGgqTIimyVG4EcXyTPEB++46lc1Js7Ii9V6mYxwe7s0rKL5ukeRdjEr+15WRtK6vPxR/PtWgi3Tq/gY6d2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759422508; c=relaxed/simple;
-	bh=S9bOtCwZhxV5bHAKlwTwXZBpoxyAsQjgOk5wu3tLpiA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QsXzC7yd/HewxJqDIO2l3tVHpWK4X970ZnL3gz3QKti+LYZwonaewSc6Vzf8haVmJKMY8yT4d+auGH9QV3Np/gcFQbHpJHzXh+4ILkgY0CPP8PKbFgtCMbDY1jhp2z5uqdCU09u8bRN+jF1dgdIvS5o9gdFK8USoqlPBV/R7Ae0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nUbOvZYz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07F07C4CEF4;
-	Thu,  2 Oct 2025 16:28:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759422508;
-	bh=S9bOtCwZhxV5bHAKlwTwXZBpoxyAsQjgOk5wu3tLpiA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nUbOvZYz/QG6XCHUJ7ZmT6C8NVBYhrnYsoxCx+p8xsn+/q3u/qNt6LCpk3U16IvR2
-	 RdkU1VN/DPBNUb11cWostG00rcieThuuUaXjF6ClvI0CdMFZhNdhWo9Ez7eYsgUiDL
-	 IntRXCtLNC1Fij4uLAHyam9q3jYt5J15ateIU3VtiRDs3w5O3+pfdnErUhgY58uImt
-	 9pbKwAV7BffGfe18pVhQIC8CMXOnHCaF+pxADtEFJQ6Q/MBd/ezXx1YOeyNcCwl7ZD
-	 2FH+h3LN/bWPgLiCHhnGKsjO/ySx46NyuVg6zwVdPWBmHF05Li+7xs8wAHKqhLue22
-	 GYbduYN1monIQ==
-Date: Thu, 2 Oct 2025 09:27:05 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: "Jason A . Donenfeld" <Jason@zx2c4.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Stephan Mueller <smueller@chronox.de>, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/8] crypto, lib/crypto: Add SHAKE128/256 support and
- move SHA3 to lib/crypto
-Message-ID: <20251002162705.GB1697@sol>
-References: <20251001152826.GB1592@sol>
- <20250926141959.1272455-1-dhowells@redhat.com>
- <20250926195958.GA2163@sol>
- <2636609.1759410884@warthog.procyon.org.uk>
+	s=arc-20240116; t=1759422160; c=relaxed/simple;
+	bh=HpaP3TCDX68OcDypYmYu4LEO9PSfR4XHL0EswYJIQCs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TY17fSP7HxARDhjIUYE6WAzwOelcTU6axeyGzqR3yXVZn1NsGvY0HfVJ+rPzwvJH3STYdQGvl+fR9yLJozCdwadFw4yQbBlgHhMABWU0Pr0Mp+iQYJr/brJ9SrzPE6eIeXfT4c/0nyErmjVMUMYk6hlpjDH5s4Qcl+IhSBlIaBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TN1HQ9WG; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-28832ad6f64so13652975ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 09:22:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759422158; x=1760026958; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2LbxYgnEojJ93c8rsOWf/bBt3bhhAFbsmGgZt+eHULs=;
+        b=TN1HQ9WGMrGO3AHKrIR0l3y9dqtkLGHJAaAb/OCkHE0Hfr3R/+O7/61RDZ3IyTDAld
+         wiLxmk0rfbnFURWvgtq6Asu5PvGOp0Fsu06QWEyxHcmi3HdekEQgPv70G8VbVmRBb3FO
+         xYboqRQUhUfJO69ymOJrRFgEwF2aU0tstcSePsaOz3Mpu4PAMSfwZFiXPFfSC+OMbT5q
+         ZiYthBj35GaOGL6C5vSLLE9TPPY8GXQT2NOgNGg8QJk/VHES84zeKbZDiK4sKv5i20aB
+         +2h8dq7SZDJMqPZR5RqedY3u+93HOInx90EyWJC0/ArKkVjluFcpS+mVOK91jm9m6npL
+         P6zA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759422158; x=1760026958;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2LbxYgnEojJ93c8rsOWf/bBt3bhhAFbsmGgZt+eHULs=;
+        b=as/QcuOc6rj14tqllWEAuq0SNj5twD7Oj16QLG+Q2VpvdU2tDj0uoC0cAT18EsXxkD
+         9Uxz/BHFw7g+FBeWcyHN96OCdLAGIyrysE4oZm/2v3QeLKCnvdocBqpBYHjpVjddrxXr
+         e/wYwFkTMR0c8CjusCAFBNHy/OYd/3Zrl1i4OAZuGozmXTp90zXEwmZoKV1KGd7bS72h
+         DiqqfYa4J3tqFl6BHgh5xLoTjjh3RzUplLrqGQWpM6b8r3OyqgWuKS2X/29hQraaBlmV
+         oCdASP8cX1iAgu9dPWUDPDE0nC6LCeb1YKDqd9w7Ja1a47y7LJhFQbv6x5FNHQR47YVB
+         4R8g==
+X-Forwarded-Encrypted: i=1; AJvYcCVH8GQ2QU2fVIoL38IFBOmZ5mqTQynLJjdD2a6oo/IXGW9g/LpI9oX9+j1Nz6NpcgJsjeUmkRdkadsKEeE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0qV4psAsZsfc+qb9RXYTRGknAXnjKbahIdpDDYyUes0r0rzSB
+	Mj7KHPSOP1k7v7HYJgAi+xQpinPzDRyWggRKkdKSr9/sT4UlTnyho+XsZSfei4zaJLzeljmNYI7
+	94z2Z5ftlsm6eGC7JdoA5hYqLK+ZcNVg=
+X-Gm-Gg: ASbGncsIfOS1vWbiYqZUrgJ3T8EbNmAmG+TqpCxe86bIls5lwH6c5L20SCttIlcOK2E
+	X/tErzy1J3V5MQcs1SJdmtnkL3WbIzG1VC9t2Ij8m0dh8qmFTk2hllUbLa+CzDCJg6/U8e4U44c
+	fLNbKqNzxz60s2cza8YoO81rgPnJd6Mi2Bm7rDCC6LUlZklLR2FhK1oD5J/XoXDCeWWzC11qFpT
+	ClUBT9uqdKmNg4MWY7Ic7f+tgxmAno=
+X-Google-Smtp-Source: AGHT+IGRvLPIfPId+ThviLGcDguWvaiXYJhGL7lLP2ZYkgJ5H9fCJdaZmo7Lu2lqeUHQNIJJrKq42s7JgSMOk7shsiY=
+X-Received: by 2002:a17:903:2ece:b0:275:81ca:2c5 with SMTP id
+ d9443c01a7336-28e7f47a3f2mr86332225ad.59.1759422158111; Thu, 02 Oct 2025
+ 09:22:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2636609.1759410884@warthog.procyon.org.uk>
+References: <20250819131752.86948-2-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20250819131752.86948-2-krzysztof.kozlowski@linaro.org>
+From: ChaosEsque Team <chaosesqueteam@gmail.com>
+Date: Thu, 2 Oct 2025 12:27:35 -0400
+X-Gm-Features: AS18NWDLQ6hD1LnWbuZES13_YjRj4m-0ztzOfBvznDKgHuJ8g5udlLpfwGDslIY
+Message-ID: <CALC8CXf+FJDcYLr4NwZMesa0kaPABw4j5Jy1bOU3XX7UJ1VcqA@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: allwinner: Minor whitespace cleanup
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 02, 2025 at 02:14:44PM +0100, David Howells wrote:
-> Eric Biggers <ebiggers@kernel.org> wrote:
-> 
-> > Have you had a chance to read this reply?
-> 
-> I have.
-> 
-> You held up your implementation of sha256 and sha224 as an example of how it
-> perhaps should be implemented:
-> 
-> 	It would be worth considering separating the APIs for the different
-> 	algorithms that are part of SHA-3, similar to what I did with SHA-224
-> 	and SHA-256.
-> 
-> so I have followed that.  That defines a type for each, so I'll leave it at
-> that.
+KRZYSZTOF KOZLOWSKI... So... Kyrgastani Polish guy?
+Doesn't sound Russkie. Bet the ethnic Russians (Rysskiy) oppress your
+ancestors. Who had to just TAKE IT. How does that make you feel?
 
-In v3, you were pretty clear that you don't like the six-types solution:
-
-    I have done what Eric required and made a separate wrapper struct
-    and set of wrapper functions for each algorithm, though I think this
-    is excessively bureaucratic as this multiplies the API load by 7
-    (and maybe 9 in the future[*]).
-
-    [*] The Kyber algorithm also uses CSHAKE variants in the SHA3 family - and
-        NIST mentions some other variants too.
-
-    This does, however, cause a problem for what I need to do as the
-    ML-DSA prehash is dynamically selectable by certificate OID, so I
-    have to add SHAKE128/256 support to the crypto shash API too -
-    though hopefully it will only require an output of 16 or 32 bytes
-    respectively for the prehash case and won't require multiple
-    squeezing.
-
-So, I listened.  And I realized that we can address my concern about the
-digest vs. XOF confusion using just two types.
-
-And I explained I didn't intend to require that we fully split the API
-into all six variants, and apologized for not being clear.
-
-Remember, we haven't done a SHA-3 library API before.  We're both
-learning as we go...
-
-If you've now changed your mind and strongly prefer six types, I can
-tolerate that too.  But I want to make sure you actually want that, and
-aren't choosing it just to try to prove a point or something.
-
-> > All I'm really requesting is that we don't create footguns, like the
-> > following that the API in the v2 patch permitted:
-> 
-> The way you did a separate type for each removed one more footgun - and
-> arguably a more important one - as the *type* enforces[1] the output buffer
-> size and the sha3_*_final() function has the same sized-array as the
-> convenience wrappers.
-> 
-> It also eliminates the need to store the digest size as this is only needed at
-> the final step for the digest variant algorithms.
-> 
-> David
-> 
-> [1] Inasmuch as this is effective in C.
-
-Well, that "Inasmuch as this is effective in C" disclaimer is really
-important, because it means it doesn't actually work properly.
-
-Effectively, array bounds in function parameters are for humans, not the
-compiler.
-
-Which is still useful, but probably not to the extent that we should
-have all those extra functions and types, vs. just documenting that
-sha3_final() produces output of length matching the init function that
-was called.  (As I mentioned, the BLAKE2s API does something similar.)
-
-- Eric
+On Tue, Aug 19, 2025 at 9:25=E2=80=AFAM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> The DTS code coding style expects exactly one space around '=3D' or '{'
+> characters.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  arch/arm/boot/dts/allwinner/sun4i-a10-olinuxino-lime.dts  | 2 +-
+>  arch/arm/boot/dts/allwinner/sun8i-q8-common.dtsi          | 2 +-
+>  arch/arm/boot/dts/allwinner/sun8i-r40.dtsi                | 2 +-
+>  arch/arm/boot/dts/allwinner/sun8i-v3s-netcube-kumquat.dts | 2 +-
+>  4 files changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/arch/arm/boot/dts/allwinner/sun4i-a10-olinuxino-lime.dts b/a=
+rch/arm/boot/dts/allwinner/sun4i-a10-olinuxino-lime.dts
+> index 83d283cf6633..d425d9ee83db 100644
+> --- a/arch/arm/boot/dts/allwinner/sun4i-a10-olinuxino-lime.dts
+> +++ b/arch/arm/boot/dts/allwinner/sun4i-a10-olinuxino-lime.dts
+> @@ -218,7 +218,7 @@ &usb_otg {
+>  &usbphy {
+>         usb0_id_det-gpios =3D <&pio 7 4 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)=
+>; /* PH4 */
+>         usb0_vbus_det-gpios =3D <&pio 7 5 (GPIO_ACTIVE_HIGH | GPIO_PULL_U=
+P)>; /* PH5 */
+> -       usb0_vbus-supply   =3D <&reg_usb0_vbus>;
+> +       usb0_vbus-supply =3D <&reg_usb0_vbus>;
+>         usb1_vbus-supply =3D <&reg_usb1_vbus>;
+>         usb2_vbus-supply =3D <&reg_usb2_vbus>;
+>         status =3D "okay";
+> diff --git a/arch/arm/boot/dts/allwinner/sun8i-q8-common.dtsi b/arch/arm/=
+boot/dts/allwinner/sun8i-q8-common.dtsi
+> index 272584881bb2..a0f787581dd9 100644
+> --- a/arch/arm/boot/dts/allwinner/sun8i-q8-common.dtsi
+> +++ b/arch/arm/boot/dts/allwinner/sun8i-q8-common.dtsi
+> @@ -82,7 +82,7 @@ &de {
+>  };
+>
+>  &ehci0 {
+> -       status  =3D "okay";
+> +       status =3D "okay";
+>  };
+>
+>  &mmc1 {
+> diff --git a/arch/arm/boot/dts/allwinner/sun8i-r40.dtsi b/arch/arm/boot/d=
+ts/allwinner/sun8i-r40.dtsi
+> index fa162f7fa9f0..f0ed802a9d08 100644
+> --- a/arch/arm/boot/dts/allwinner/sun8i-r40.dtsi
+> +++ b/arch/arm/boot/dts/allwinner/sun8i-r40.dtsi
+> @@ -705,7 +705,7 @@ uart2_pi_pins: uart2-pi-pins {
+>                         };
+>
+>                         /omit-if-no-ref/
+> -                       uart2_rts_cts_pi_pins: uart2-rts-cts-pi-pins{
+> +                       uart2_rts_cts_pi_pins: uart2-rts-cts-pi-pins {
+>                                 pins =3D "PI16", "PI17";
+>                                 function =3D "uart2";
+>                         };
+> diff --git a/arch/arm/boot/dts/allwinner/sun8i-v3s-netcube-kumquat.dts b/=
+arch/arm/boot/dts/allwinner/sun8i-v3s-netcube-kumquat.dts
+> index 5143cb4e7b78..cb6292319f39 100644
+> --- a/arch/arm/boot/dts/allwinner/sun8i-v3s-netcube-kumquat.dts
+> +++ b/arch/arm/boot/dts/allwinner/sun8i-v3s-netcube-kumquat.dts
+> @@ -29,7 +29,7 @@ chosen {
+>         clk_can0: clock-can0 {
+>                 compatible =3D "fixed-clock";
+>                 #clock-cells =3D <0>;
+> -               clock-frequency  =3D <40000000>;
+> +               clock-frequency =3D <40000000>;
+>         };
+>
+>         gpio-keys {
+> --
+> 2.48.1
+>
+>
 
