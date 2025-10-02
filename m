@@ -1,133 +1,130 @@
-Return-Path: <linux-kernel+bounces-839879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7091BB2A20
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 08:39:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B63FBB2A2C
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 08:40:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BAD916C95B
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 06:39:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED7CF7A79D5
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 06:38:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E3E928F935;
-	Thu,  2 Oct 2025 06:39:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 144BE29992A;
+	Thu,  2 Oct 2025 06:40:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="I+tBT8yQ"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mzDn4AtC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E329127FD4A
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 06:39:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 678E628B7CC
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 06:40:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759387179; cv=none; b=tOyfzPX0g/GZHQqZC4OtGAYjgcKHWwn4MQewLcPlJUuWFwvgB9q20U1o+95m+J7x0Ge7+ZXW4X/M2w9tq8aAgWQszCvum/ARUsXFfyceqAWkAb1/qU33DhLzU609jztzVCSGcmGymu03fIDog8/V/1vkgDfBSU5ARBdlp38sLbE=
+	t=1759387210; cv=none; b=pRaLQTb0dJFm46fBhDzfzJt9zT60NdGBly5h9VOU/suTTVqoza3f8x+QAUyw5txPLQQHBBjFPb5d5XcUg2aEW7e6pwIazA1sZpYDcRDH08Z3rG4OO3ACKBDSuQT5YqJttwrD2k6mCstqXU8LzWIaAhhL2aFArSNftg/EPe4TS54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759387179; c=relaxed/simple;
-	bh=h07yeJrXp0KKWyT5NM4k8j6HoCCNDDRyu8u/h//9b78=;
+	s=arc-20240116; t=1759387210; c=relaxed/simple;
+	bh=oWqwEWx8zwWItcJwZ8fd27r7w2elRRbG49uTkJHmkqc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eThCkCubW++7Ka06PQMlrhj9i4owzJ8A1zXpjFDSFjuYSVaU3Y27Ua6IKUfsiRbclAjBq1J4jzRu0pbzWNPKAnATnqhAtCMlxFefIaGCA/zdjS28SUjCiZ9DMlzy09yXcUm1OuY4S8Bk2TVs937JDpJBV7yJW1eK6kHCRep/mws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=I+tBT8yQ; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b3f5e0e2bf7so126807566b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 23:39:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1759387176; x=1759991976; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ap0trZKBpNWQl5/rOaHJpgxg2gWd6IXjcEn0D7NKp8s=;
-        b=I+tBT8yQXpb07ICKiaQPfBkQ6Fi3uj3/SAZ4UIpAVqGP0kYC3p8OkUxy11Hjmytg4q
-         S1TqHE3JdTY06ATjQl1Ewsq+uvcRAa9dfEegB8p85rOTzxhkpb1AHPVqoNNx+YTiFL9l
-         XxuLuHMXTX9nHMy7+NqxfCrVs0OBZdc9DEy+s3HlaX6ZQJRKCJAxU3rM3wWKuOBP+JOe
-         jUxpTzNIYEEyitZ0PMslZ2fWFUUc4FJEyYMGdojbkuHQX/czrFv2BiZnxUM8+urp8WeE
-         mcsQ4EZgRd3ZDQs6z89OSandVfzNspFghnVLn6xI8P44x1jVe2Shd3XSDN1wANPMdSz/
-         gIYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759387176; x=1759991976;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ap0trZKBpNWQl5/rOaHJpgxg2gWd6IXjcEn0D7NKp8s=;
-        b=MXGeu0GdQvhjA7btgR3XHgYB7tlW3HFWR5v9jCZ9QZ4j/JmcvS9pUQM3m90CPkTecu
-         0rkI9mGNT0/IQ03eYlOzqPizeuv0wglxea0Ru1m6En2+CdAI10Asreh53utHmgVb+psq
-         n26iQp4C0s8RJKYKARz7S56qhCeMOr+Hk/gyKEVTIIX1zqUak2u/C04wuU32VSg8GrDv
-         42znwvj9sX5rAGm0VJczulWWcXzFgC6q66uDzkT0tmoEszy6GiZStwZ6L8qP828Li+fl
-         +bSP7D9vPtc2y4vtkFJhAx7pYNjk2HFWT1h2wBBwLi0EhkrUNqQZU4ZtlvGO7XQ4jRfx
-         vxbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUHq0KVZ/BLEKU4ZDIFgVZzHfRcYaVz2YPvtr98Lh7vJYXgqwDFHhvOITrNpsc76o8flvSR25oApcNwTbg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOvNQ/EEusJrenEp5h4YmTZYByS77YC5Sk2squ+9NdCZRLgX+Q
-	SddbRI+f1aPNJHuTume8xUJjhIpQEnPzzy/ulJT9N8LVxHjM6aAPuUsG0pyjgza8OS7r59g+vfd
-	b36Inu7OZZZKHMsqQzee4atcZ5zJFuqmJ1CPeRnzgtg==
-X-Gm-Gg: ASbGncselzzwuqAmHLo/ldSc3uxkTfSwVvApihaFpZ/gVlzahoMtpQUofeo4hRke2xE
-	+uON1iHeGb+TSjX7FKPU6jILUoJPEeie8p6Av81YLOZ/GQTkvENjBCDI46QtrzrvQMcg66jyhff
-	zx3RjN58x6nRVPGHtO8zFHnMngvZUy2tJH9b1nMlyU0RqQXM+GPThjBQbWKoI9fRqVHEosYwQ8W
-	YrI+xYepD+AVjJntlKv2mXAan+ibok9
-X-Google-Smtp-Source: AGHT+IGUnzkdj2lcswlCqZDgs5Ku4aNkdI+TCKF6++VOCgMZT/hqD8+gC7knGTQNNiNEvjduQzqESNvMwlxPh6pZTY4=
-X-Received: by 2002:a17:907:3cca:b0:b3c:7df0:f4a3 with SMTP id
- a640c23a62f3a-b46e4d7dbcdmr752400266b.17.1759387176253; Wed, 01 Oct 2025
- 23:39:36 -0700 (PDT)
+	 To:Cc:Content-Type; b=V8YeKu/NziIUBKRAiJkkPlj+zRgC00zHe8QPxEorm8CvrTeDuOCqWSJ8wLE95xeSeXPhLi8/zXXaCAyVmH1RTPCicUDzv06HCcs4zJZGUG4SzrMWhYWYJ5ebsM2fsZtnh4XmY8Tr9ZU+Q/M2Q4/7FlL0Tp0Yclt98C8VcoILYNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mzDn4AtC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5881C113D0
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 06:40:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759387209;
+	bh=oWqwEWx8zwWItcJwZ8fd27r7w2elRRbG49uTkJHmkqc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=mzDn4AtC2Ak0PN7B6O8MxMKFWwSz9A02wgLegDa7b1MQ3AVaECRJwrPQWl1RTB62k
+	 NgCt+eINqYMBcnmSZxoab7OPdNxEOh/+5yoZiVZV0Q4UdbQomBhHkVCjsIzIIY2oSe
+	 Ja6uIYNCbksgVmHPR/fGMSdCtmAP/PsFwYhZKjRT6+yKEcq+NTPSKJEPg5Pk4OwhS2
+	 wVc1KyTi4Hm76BJWviu0tPBabg6DjgCj1eGjY43Cj1k7leLo6zk8IDPGB0vLBsWJdl
+	 50lRsmFB0eKyqjbdZ/p93SyfWH/+0u+KxaLhosocZSKeNgmTXbXlNAhzLaMJnAbrjh
+	 VVFztVjIA+5BA==
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b5507d3ccd8so513777a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 23:40:09 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWdTiMMhoAZjROdGiabjvM2U10RV302cNXtN33Fg0RbU+ctTXHazolV8DIQQ/IF7DRoosWI88oHmzDP4rU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLyThjIxpBwVmSGDjC/ric0eqj9Io1w3XoHkMZUV1jU+M3Bwxd
+	T4jr8xMAzsUtNvS2myyTaqGe60KKzwrJ9Q8Ve2IAkshi52fbK+flvLV/QdWhguKeguZudx7oU6W
+	Wp/PhGzBCxBMizm9vCp6YCoe8a+2n1+M=
+X-Google-Smtp-Source: AGHT+IGdtzOpvUYdPLtelHaB8zJ6rwGT1VrlFmtzCJU8l7UzsZsbFUnbb5aDI8NKj4eZKGgGJDmSr+LU1AO2yz3t6r0=
+X-Received: by 2002:a17:903:32c9:b0:270:ea84:324a with SMTP id
+ d9443c01a7336-28e7f328b47mr76608265ad.38.1759387209439; Wed, 01 Oct 2025
+ 23:40:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251002060732.100213-1-apatel@ventanamicro.com> <2025100208-challenge-protrude-d6c3@gregkh>
-In-Reply-To: <2025100208-challenge-protrude-d6c3@gregkh>
-From: Anup Patel <apatel@ventanamicro.com>
-Date: Thu, 2 Oct 2025 12:09:23 +0530
-X-Gm-Features: AS18NWDhJNRsJZTZD3Q1-o5Xm6vaJUsnLrA5WXVNJsHWXEPoxcIqYp1hBGzENNI
-Message-ID: <CAK9=C2U9FV6crTL1G2X6tUM=RyRnPBm1dPeFc29n3vmrFTcfHw@mail.gmail.com>
-Subject: Re: [PATCH 00/11] Linux RISC-V trace framework and drivers
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Ian Rogers <irogers@google.com>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Liang Kan <kan.liang@linux.intel.com>, 
-	Mayuresh Chitale <mchitale@gmail.com>, Anup Patel <anup@brainfault.org>, 
-	Atish Patra <atish.patra@linux.dev>, Andrew Jones <ajones@ventanamicro.com>, 
-	Sunil V L <sunilvl@ventanamicro.com>, linux-riscv@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <CGME20250901054234epcas5p1e4b34b6ccb304b0306b1fe616edda9e2@epcas5p1.samsung.com>
+ <20250901051926.59970-1-ravi.patel@samsung.com>
+In-Reply-To: <20250901051926.59970-1-ravi.patel@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Thu, 2 Oct 2025 15:39:57 +0900
+X-Gmail-Original-Message-ID: <CAJKOXPe7Hn0qwg8jDMg4KoF-n4kziLQnvAx9vbNKEcS_KjzEdw@mail.gmail.com>
+X-Gm-Features: AS18NWDO2eUChAY4_CCzuKLny2cYJfsAdkZKqOgM2dKZNuIdZKWV3kyYmcxtbLo
+Message-ID: <CAJKOXPe7Hn0qwg8jDMg4KoF-n4kziLQnvAx9vbNKEcS_KjzEdw@mail.gmail.com>
+Subject: Re: [PATCH v4 0/6] Add support for the Axis ARTPEC-8 SoC
+To: Ravi Patel <ravi.patel@samsung.com>
+Cc: jesper.nilsson@axis.com, mturquette@baylibre.com, sboyd@kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	s.nawrocki@samsung.com, cw00.choi@samsung.com, alim.akhtar@samsung.com, 
+	linus.walleij@linaro.org, tomasz.figa@gmail.com, catalin.marinas@arm.com, 
+	will@kernel.org, arnd@arndb.de, ksk4725@coasia.com, kenkim@coasia.com, 
+	pjsin865@coasia.com, gwk1013@coasia.com, hgkim05@coasia.com, 
+	mingyoungbo@coasia.com, smn1196@coasia.com, shradha.t@samsung.com, 
+	inbaraj.e@samsung.com, swathi.ks@samsung.com, hrishikesh.d@samsung.com, 
+	dj76.yang@samsung.com, hypmean.kim@samsung.com, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-arm-kernel@axis.com, devicetree@vger.kernel.org, 
+	linux-gpio@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 2, 2025 at 11:56=E2=80=AFAM Greg KH <gregkh@linuxfoundation.org=
-> wrote:
+On Mon, 1 Sept 2025 at 14:42, Ravi Patel <ravi.patel@samsung.com> wrote:
 >
-> On Thu, Oct 02, 2025 at 11:37:21AM +0530, Anup Patel wrote:
-> > This series adds initial support for RISC-V trace framework and drivers=
-.
-> > The RISC-V trace v1.0 specification is already ratified and can be foun=
-d at:
-> > https://github.com/riscv-non-isa/e-trace-encap/releases/tag/v1.0.0-rati=
-fied
-> > https://github.com/riscv-non-isa/tg-nexus-trace/releases/tag/1.0_Ratifi=
-ed
-> >
-> > The RISC-V trace framework and drivers are designed to be agnostic to t=
-he
-> > underlying trace protocol hence both RISC-V E-trace and RISC-V N-trace =
-should
-> > work fine. The discovery of trace protocl parameters are left to user-s=
-pace
-> > trace decoder.
-> >
-> > In ther future, there will be subsequent series adding:
-> > 1) Sysfs support
+> Add basic support for the Axis ARTPEC-8 SoC which contains
+> quad-core Cortex-A53 CPU and other several IPs. This SoC is an
+> Axis-designed chipset used in surveillance camera products such as
+> the AXIS Q1656-LE and AXIS Q3538-LVE.
 >
-> why does "trace" need sysfs support?  No other cpu platform uses that
-> today, so why is a new user/kernel api needed?
+> This ARTPEC-8 SoC has a variety of Samsung-specific IP blocks and
+> Axis-specific IP blocks and SoC is manufactured by Samsung Foundry.
+>
+> List of Samsung-provided IPs:
+> - UART
+> - Ethernet (Vendor: Synopsys)
+> - SDIO
+> - SPI
+> - HSI2C
+> - I2S
+> - CMU (Clock Management Unit)
+> - Pinctrl (GPIO)
+> - PCIe (Vendor: Synopsys)
+> - USB (Vendor: Synopsys)
+>
+> List of Axis-provided IPs:
+> - VIP (Image Sensor Processing IP)
+> - VPP (Video Post Processing)
+> - GPU
+> - CDC (Video Encoder)
+>
+> This patch series includes below changes:
+> - CMU (Clock Management Unit) driver and its bindings
+> - GPIO pinctrl configuration and its bindings
+> - Basic Device Tree for ARTPEC-8 SoC and boards
+>
 
-We saw trace support for other architectures (e.g. ARM coresight) allowing
-trace start/stop through sysfs. If this is an obsolete or not preferred app=
-roach
-then we will deprioritize and possibly never add it.
+Pretty useless cover letter since it doesn't say the damn most
+important thing : dependency!
 
-Regards,
-Anup
+So this went unnoticed and now mainline (Linus tree) is affected. See
+Linus rant on soc pull request
+
+I'm very disappointed, actually mostly on me that I picked this up.
+Your future patches, need to improve quality and probably you need to
+go back to how Git works and how maintainer trees are organized. Read
+carefully, really carefully please maintainer profile .
+
+I'll be putting artpec 9 on hold, till you confirm what was wrong here
+and how are you going to fix it in the future.
 
