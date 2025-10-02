@@ -1,122 +1,129 @@
-Return-Path: <linux-kernel+bounces-840395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 204ADBB4495
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 17:15:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 475CFBB44A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 17:19:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC6813A45BC
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 15:14:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D5504227C2
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 15:19:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DB8E18DF80;
-	Thu,  2 Oct 2025 15:14:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A67AC19CD1D;
+	Thu,  2 Oct 2025 15:19:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X6O3BzEL"
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VE/ls8AK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE8A418A6A5
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 15:14:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A69D2CCC0;
+	Thu,  2 Oct 2025 15:19:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759418093; cv=none; b=PHitaBJtFJE2jUJ4DHaBQlMD6Ik0omAY4Oyzn/TnpAurIqTzZifMN9amCwxyu17TfHNGUh/0SjxKM9xUPpLGBd7SKsXhgp/E1H1Ynhi/9zsyDY1j+sq5Oy+DAUucd8ius+YMDiuNAjoCsThhD/3az7lDNOtNuvc81Lvwq086ivU=
+	t=1759418355; cv=none; b=FmJXGKzHCJzmTUjHZfSaa+Qjnjlv1ii8Nnu4n6VyYRruFf9uVFP+eVnwYZDzOJMG3Oc4qAJdC8HnsM3laZb9iu7ahpGJGkZ8E3o4wwcOBGXqdUqTCHRwTdb8D/g7hLAA/uY3u3wDcn3vvE4NiGij7HnDOCo50+AdjCeolz0JpTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759418093; c=relaxed/simple;
-	bh=PduUZoikr8LnqAZaTzWf0aljgdXphuwsyDaOnjpUC5o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E4xpFeBZTRT4mdjVH+Z7UkV+ry5UTCtsffsudIu9tbJc6BljGSGl+yBvLFYqfZrTz7ZNwOCFP2A+/un2tpbD/zhjGgZHMRjs8h/ocsLC8V3tBJGZK6MM8JHB6C2CqeMVNvMv2jDj6AFyrgFXsGulPEYdkGk6RiD+hrpAy9Dgpxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X6O3BzEL; arc=none smtp.client-ip=209.85.219.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-78f75b0a058so12171906d6.0
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 08:14:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759418090; x=1760022890; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PduUZoikr8LnqAZaTzWf0aljgdXphuwsyDaOnjpUC5o=;
-        b=X6O3BzEL7gA/laF1um/c7axpZUmmp+wVsQtWPa5nsLsmmCwh1m4ALhXJmbA8+cblby
-         4888/pG1pDgUXY6e1NDvYWhRNUTqpfnL6To5Z26rQA6eFoTCWig83HXDoEEDDkTui+/z
-         LAiQOwG03S2ABLV2rCOtpa88UKRCEWjt1Q4ul2crynEhj04Jde3PSiOp2CNt8gsgEzin
-         gLI3Wumy0R/qEo04RYJkl8D3jNWhZZQXQubCv0L9U9oZyZaf4EDH+2JH+ah/Bk9GKM2A
-         Xw7HZVJbyoIktiuZVKII2Hjrn0EiTDj8d50jKWdfMIQ85LY8aj52PNPHYpVpExMPrl0V
-         TXQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759418090; x=1760022890;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PduUZoikr8LnqAZaTzWf0aljgdXphuwsyDaOnjpUC5o=;
-        b=XAi5VHTLpcg4EixKm40J5bIVhjd1rOlqwsVBGxyxotQq3HM2uWKpZwIVt8ZF7obeyx
-         dp7bZLBmK08zrSy+AnTiEyRwQm6PtUqdGlW97SQBlawxMlezluFZeSkVUUKY33Bh3grD
-         X628Qcb9Zs4S2MWLSeXbbB7bJoGXPSKPL7CdF8n1KK/DRJYu5mZ1ckftjTd+3OEmRuRK
-         1XFEya2lVmXt60G1EpIEkuWXdaR+hkVuA/u+TbHsLmRoV0r+3d41D5L0a5BoZQu00QgV
-         /L3XC4CH8yC9rFimnqpfdDxj7n6GsNOqY6D/PdjjVrVGI7AYKlt+yMyKQ0/aYN0I3j6g
-         oU7A==
-X-Forwarded-Encrypted: i=1; AJvYcCUTqZ17pw4BXJ2cNUhV/zwQ5VZzYd6hW6DedA5ObopqvHUM5D6Fa1bhFabYYelcHO6hTQSgCSLu8HkusNE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbCKJ2R4x/sg+H1vDvA07T5pMS8XQklwg46qJxwmpVVQYuQrjL
-	zICUjcppLBHGi5MSHGWJ9V6ZlwKTXzoAUzVicKWJD/cAFj84X9G6a5aKAaOg5SYNl8O3Bmwq+P3
-	UcBbuPLuMf/94LRDaxFi05YAkmUF7FfQ=
-X-Gm-Gg: ASbGnctPzpNtlMEEWFu+4VXXbFF9WARczN/M3qe7SorDzk6B5lZt61saNksFAf0WFkB
-	YX45dGiDgdVdwZshbAIekKBALrSZpgnMPwBLxO4Dy1jgy2Bde0Vv74kOI4zhF4mVbOIQpfC/Exm
-	4SeCn/ccUzTgH7Sai7YDLpUs+WAgsauDQxpIWg8xqa7vXQXv2tM54mD00+wXESnkGbHxZsbcwdJ
-	4y2GXhaD+3+D3IN6rHQrIsqraeObEnAFIiU4o9QTyedaZ21bgEWxQxAq2hc6RT7W0C/Xw8EX3lo
-	JIIymBEmZfUFrh6c5FZSvr4bVv/X6LoiOeg/bIgratIrRzYxIx9Xe1cB4zmKxtlEeMJgJ/UxeB5
-	qaeEqBXU1Tw==
-X-Google-Smtp-Source: AGHT+IGyfzn10GjCw6AbrHIRNFIF7sVwOU2PmWXcEbIdO80lNgoAtt7bNshbrMBB5VQ0QLFvb0YDQlUlMexok3l/HTg=
-X-Received: by 2002:a0c:f088:0:20b0:786:d65c:1c3e with SMTP id
- 6a1803df08f44-873a06edb4dmr97474656d6.30.1759418089626; Thu, 02 Oct 2025
- 08:14:49 -0700 (PDT)
+	s=arc-20240116; t=1759418355; c=relaxed/simple;
+	bh=52z6Vi0V9bS76ga+Gq4jeAA16tCIeXDKH633DY7nwVU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=t1LaHhhO8lPz8u2yealxBy1IBcLlXYp52rHC4GPa6OU+s2Kk9/DocmWJKGGESVRwLC7J3IYYJwgbB7rwjgVML/QksSpCv9/uT1mRCjR+B2HRFXM5w2U+y9cY8OXWuN4BZiAohLs78URpQJNjCMGNiAu5XTzVpsg5FgLpfg0D6Ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VE/ls8AK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19B29C4CEF4;
+	Thu,  2 Oct 2025 15:19:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759418354;
+	bh=52z6Vi0V9bS76ga+Gq4jeAA16tCIeXDKH633DY7nwVU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=VE/ls8AKImGUN6yFCV40ziwMhE2nc9AJQsb7Ceq/kY3WZMkUCbQy2uE0lvIrtk1pb
+	 3oQ2Nm1SPYQEPMK+CbOfj84b3m+ZEFCgKlnPtR4XM93x0cUVIPLE8QBsQJOn8i9KEh
+	 u6/h1dCI8N5Pj1NukdDKuNv+95XhXbIFKVocmNuRCReCMnp1rs6B86qfrkmaxQEFnD
+	 BN90ceFY/Jd7VJnFcD4UXvvQ+OqR0gVTN2G3qdQqnbGr7ZqEMVaU8C35mdp1bN0Ga2
+	 LvNmVeMU3RsbeFRoIf1+eHNU9jqFk5oos50P9qRq0JGnGe9iDNijtU0XQ1cC/N6gQg
+	 hisHGcdBX9uQg==
+Date: Thu, 2 Oct 2025 16:19:10 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Crystal Wood <crwood@redhat.com>,
+	Ivan Pravdin <ipravdin.official@gmail.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the ftrace tree with the origin tree
+Message-ID: <aN6X7mvUjNw0DCn9@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <7f956b3b-853b-4150-b2e0-ccd430adf9ac@web.de> <a9518620-29cf-4994-a9f4-a6f862d8c214@samba.org>
-In-Reply-To: <a9518620-29cf-4994-a9f4-a6f862d8c214@samba.org>
-From: Steve French <smfrench@gmail.com>
-Date: Thu, 2 Oct 2025 10:14:37 -0500
-X-Gm-Features: AS18NWDp3jCCqFOTgwnnq5szZSBZZh9XBeoSBG6yvmFg9Zc70t7XgYEAJdiinjo
-Message-ID: <CAH2r5muh7GCAdNmiF4YjJrP5p9wVeU+OLC_41um2_Yr9G8mhnQ@mail.gmail.com>
-Subject: Re: [PATCH] smb: server: Use common error handling code in smb_direct_rdma_xmit()
-To: Stefan Metzmacher <metze@samba.org>
-Cc: Markus Elfring <Markus.Elfring@web.de>, linux-cifs@vger.kernel.org, 
-	Hyunchul Lee <hyc.lee@gmail.com>, Namjae Jeon <linkinjeon@kernel.org>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>, Tom Talpey <tom@talpey.com>, 
-	LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="5lrJ10G9x1tJJWav"
+Content-Disposition: inline
+
+
+--5lrJ10G9x1tJJWav
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Added to ksmbd-for-next
+Hi all,
 
-On Thu, Oct 2, 2025 at 7:31=E2=80=AFAM Stefan Metzmacher <metze@samba.org> =
-wrote:
->
-> Hi Markus,
->
-> > Add two jump targets so that a bit of exception handling can be better
-> > reused at the end of this function implementation.
-> >
-> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
->
-> Reviewed-by: Stefan Metzmacher <metze@samba.org>
->
-> I'll add this to my for-6.19/fs-smb branch and rebase on top
-> of it as this function will move to another file there.
->
-> Namjae, Steve: this can also be pushed to 6.18 if you want.
->
-> Thanks!
-> metze
->
+Today's linux-next merge of the ftrace tree got a conflict in:
 
+  tools/tracing/rtla/src/actions.c
 
---=20
-Thanks,
+between commit:
 
-Steve
+  b1e0ff7209e95 ("rtla: Fix buffer overflow in actions_parse")
+
+=66rom the origin tree and commit:
+
+  05b7e10687c69 ("tools/rtla: Add remaining support for osnoise actions")
+
+=66rom the ftrace tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc tools/tracing/rtla/src/actions.c
+index 13ff1934d47c9,991139f9069f1..0000000000000
+--- a/tools/tracing/rtla/src/actions.c
++++ b/tools/tracing/rtla/src/actions.c
+@@@ -127,11 -127,11 +127,11 @@@ actions_add_continue(struct actions *se
+   * actions_parse - add an action based on text specification
+   */
+  int
+- actions_parse(struct actions *self, const char *trigger)
++ actions_parse(struct actions *self, const char *trigger, const char *trac=
+efn)
+  {
+  	enum action_type type =3D ACTION_NONE;
+- 	char *token;
++ 	const char *token;
+ -	char trigger_c[strlen(trigger)];
+ +	char trigger_c[strlen(trigger) + 1];
+ =20
+  	/* For ACTION_SIGNAL */
+  	int signal =3D 0, pid =3D 0;
+
+--5lrJ10G9x1tJJWav
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjel+0ACgkQJNaLcl1U
+h9AUAwf/XOqi/rsABt1ZUQhVk6eXqIOShFxSu7xGSanoxgXUVTsCMjUjI6BrRAGn
+obVUxteEmVdRYcq+xFMtX/dI/4/thtn1uh+TwUW6zl04fHnlISsBV9wFv6pslUlp
+10jFjGWs5Sm+tjgc3tQMztcd91MvasqI0QcwAaH8LTogG7OozZlVeWllyGMdgbis
+cA3FRFJwP1CVJkcZBuGYtQeaYnrh2bVIH3760mMgUarG1SV+L+vnP5e+fYrrMkmO
+1PHyOpU6WtlB4GppFKuDJ1192Kp7GZ3lgKsF8vk7CXl2CUgBi4IDQFyyr9hLqOrr
+mRh9rBKLB5pYutjOQjYDC4P3ks+ukQ==
+=dqBR
+-----END PGP SIGNATURE-----
+
+--5lrJ10G9x1tJJWav--
 
