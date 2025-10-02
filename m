@@ -1,94 +1,117 @@
-Return-Path: <linux-kernel+bounces-839872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FAAFBB29E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 08:26:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18AE5BB29E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 08:27:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 466A2422FEE
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 06:26:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B77DF189680A
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 06:27:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3777C28724E;
-	Thu,  2 Oct 2025 06:26:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3760E28724E;
+	Thu,  2 Oct 2025 06:27:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="c/AUu82Y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MFeV6LPB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C8B429A2;
-	Thu,  2 Oct 2025 06:26:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D09429A2
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 06:27:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759386405; cv=none; b=u+Xck5HSyBvcshjUxg9cu/9nty0zk5vVjdHzYJPhmTo7CM4rJuyo1lBwZHNxZKsojB3MvPL3n5y4FO5+rHs0qyh3BEmMj2db9kkkqexKCf7nhn850I0Lsb/CI8kcnc1R7AnKRoblcNBN8XMCc2p0BWHyPsZTKlrhEEYQeGWe1GM=
+	t=1759386428; cv=none; b=EpidmNDb/pAH3Iji1AN7D1TINF8q2zb5VxwTGagkkl+Iqfo1QOzg1qaZf10rDNHGQDOWVSiXYLCYz9v8uHDSq5GHlbsPIUQBRbViQrKBLZIIPVmxCxJdDmCNbDh5VZlntdwpK9I4cFzvFdWtrSX7TEyPFD7LXAF48lnEmAnu+5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759386405; c=relaxed/simple;
-	bh=IN5Xoo6ynmRa7LHQ4OoMu5qgHy4kkgfiKHhscIHLLGA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hURuQ0MzSuoJmiz6LlDXP17Y32jE/iV0GZEZmpV18S2z4pIVPaM/XCXaG9Lb1W/BPwsy6JrqqgVTRnyv/fW6baa6FGVdy9TYaueAe6AAatKPvolR2i2EH6hyJuhlirLrU6qP5uZLiKyYRIsa0JawES4SgQAlziT8K30QVGiNuCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=c/AUu82Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61DD5C4CEF4;
-	Thu,  2 Oct 2025 06:26:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1759386404;
-	bh=IN5Xoo6ynmRa7LHQ4OoMu5qgHy4kkgfiKHhscIHLLGA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=c/AUu82YtjB+tKa0eWLCJZ23oK0HvGv4tnzg6Etc05laTDdawViQrxEzaLmmEuZXS
-	 xnl4e+rU9HzXQUaOvMV3muddBxo8wbHY36pm8skkpm1H69s+8iS3SRgS0RFa4kM6aM
-	 umt1+XXCVDs0R8Uv3740jkOnL1+37ACDfGdpKa0U=
-Date: Thu, 2 Oct 2025 08:26:42 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Anup Patel <apatel@ventanamicro.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Ian Rogers <irogers@google.com>, Alexandre Ghiti <alex@ghiti.fr>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Liang Kan <kan.liang@linux.intel.com>,
-	Mayuresh Chitale <mchitale@gmail.com>,
-	Anup Patel <anup@brainfault.org>,
-	Atish Patra <atish.patra@linux.dev>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Sunil V L <sunilvl@ventanamicro.com>,
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/11] Linux RISC-V trace framework and drivers
-Message-ID: <2025100208-challenge-protrude-d6c3@gregkh>
-References: <20251002060732.100213-1-apatel@ventanamicro.com>
+	s=arc-20240116; t=1759386428; c=relaxed/simple;
+	bh=1DhX8G4AmQCOmJ1vB9My4LM0gaN6w+0SUeKJUVPDlBI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=HFUT3pWY59Fvwz6dN7ggnOs62oxQudYJUZY381MiJ/zAsrkPozwZx/Mz7Bl4edtXI6DEazmHFPf4P6JeARoHSJeTpve+XRRtUXPY8EFXl+UKwaO2Zn7vNS5I8NaoRjUypmB7zKhAUcyv0i1T0S0QmVFbWVzIpJ9Mjhf7jpbnOMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MFeV6LPB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3025C4CEFC
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 06:27:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759386427;
+	bh=1DhX8G4AmQCOmJ1vB9My4LM0gaN6w+0SUeKJUVPDlBI=;
+	h=References:In-Reply-To:From:Date:Subject:To:From;
+	b=MFeV6LPB7S6quC+osEFMIz0yFRZ/gPYadWDyGeegSIBhqa/mcJJSI1sh8lnLrMWh4
+	 uZi9WwqTqeDPQ2dJSyaMO43bul85r3waBDp/scEcHIVwCHy1a+fUFUwE0DUjOlbA7J
+	 71NfBh8duSA1duLGG6AaWPLArcZz1TdK1ESKL60i59hNVZzygShCM75J/6uhiJy+qt
+	 a/l/8HVo9sBHodLeS77/LLMxTa5cww4k2BB7BerGIPeLVTjOenZ7ggQvgybzdOQDRk
+	 +oArasp3JtUxEMthqLhenn7YnApOsS0XNiU7XJcywL01Mtei8FWeys4cVBFrhAAOzk
+	 zFbd/3heYZ8GQ==
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b553412a19bso488396a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 23:27:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW6DlZ4jxdg4VOXMe+Ljp34Ao7QmVt9jjNfG4obwCUVwJWBW6dhVY+lwjCkoS2f8RrAMw9jdE0XkJGRfLU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLJrn8pq3uf+oSLJQCxvmrlaWKOQ5QV/UT00O/GmkEh7Pex7sb
+	dOCxwJmCIO31cdnoNj153qPX+16E0dkt1Vb2f4e/bNGJ3e/JIiBimPRNJw7y7SkG0d6+/77Sb4i
+	3uJ8E6znGlC7ARqlTEnHvjN2ousR2BiQ=
+X-Google-Smtp-Source: AGHT+IEBLYk86/uoWVqVDFVxsuuHAaYCqIcSDwfTNMYhCdYZvniopfSVQCUKi57uRCuIhyPS1zqvLHtO1RgzJgA/suw=
+X-Received: by 2002:a17:903:46ce:b0:266:2e6b:f592 with SMTP id
+ d9443c01a7336-28e7f2a3c2cmr78644685ad.25.1759386426550; Wed, 01 Oct 2025
+ 23:27:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251002060732.100213-1-apatel@ventanamicro.com>
+References: <54b49f7b-9232-44d7-9ae3-ecc1826f17d7@app.fastmail.com>
+ <d482931b-1779-4b49-9fa2-1c101bdf0929@app.fastmail.com> <CAHk-=wjsMPACg__N37EL8Sh=z1wkCpj+FQKpoVPXzyiVpm1i_w@mail.gmail.com>
+ <CAGE=qrpygJ4XgtzdnGACj-6KRiD8r57F4ogNYaA3LLMusBV9fg@mail.gmail.com>
+In-Reply-To: <CAGE=qrpygJ4XgtzdnGACj-6KRiD8r57F4ogNYaA3LLMusBV9fg@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Date: Thu, 2 Oct 2025 15:26:54 +0900
+X-Gmail-Original-Message-ID: <CAJKOXPcRw3teqahDc6RBCz8XvqLt2sHqxrOUxpA84RszcsnGFQ@mail.gmail.com>
+X-Gm-Features: AS18NWCWo6vnwjd-C2QP8ttuauCGBObIKlzBdGNND_qylV7g0Yxxc3FjzsZeoAs
+Message-ID: <CAJKOXPcRw3teqahDc6RBCz8XvqLt2sHqxrOUxpA84RszcsnGFQ@mail.gmail.com>
+Subject: Re: [GIT PULL 2/5] soc: dt changes for 6.18
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, 
+	linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org, 
+	soc@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Oct 02, 2025 at 11:37:21AM +0530, Anup Patel wrote:
-> This series adds initial support for RISC-V trace framework and drivers.
-> The RISC-V trace v1.0 specification is already ratified and can be found at:
-> https://github.com/riscv-non-isa/e-trace-encap/releases/tag/v1.0.0-ratified
-> https://github.com/riscv-non-isa/tg-nexus-trace/releases/tag/1.0_Ratified
-> 
-> The RISC-V trace framework and drivers are designed to be agnostic to the
-> underlying trace protocol hence both RISC-V E-trace and RISC-V N-trace should
-> work fine. The discovery of trace protocl parameters are left to user-space
-> trace decoder.
-> 
-> In ther future, there will be subsequent series adding:
-> 1) Sysfs support
+On Thu, 2 Oct 2025 at 15:04, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+>
+> ---------- Forwarded message ---------
+> From: Linus Torvalds <torvalds@linux-foundation.org>
+> Date: Thu, 2 Oct 2025, 13:44
+> Subject: Re: [GIT PULL 2/5] soc: dt changes for 6.18
+> To: Arnd Bergmann <arnd@arndb.de>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Cc: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>, <linux-riscv@lists.infradead.org>, <soc@lists.linux.dev>
+>
+>
+> On Wed, 1 Oct 2025 at 15:27, Arnd Bergmann <arnd@arndb.de> wrote:
+> >
+> >   https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/soc-dt-6.18
+>
+> Bah. I've merged this, but this causes build failures on arm64.
+>
+> I only noticed after already having pushed it out.
+>
+> > SeonGu Kang (1):
+> >       arm64: dts: axis: Add ARTPEC-8 Grizzly dts support
 
-why does "trace" need sysfs support?  No other cpu platform uses that
-today, so why is a new user/kernel api needed?
 
-thanks,
+I'm sorry, I should not have trusted contributors from Samsung that
+they know what they are doing and I think my CI misses allyesconfig on
+particular branches, because for-next branch did enable this symbol
+and it was tested by my CI. Also LKP tests each of my branches and
+didn't report this, I think.
 
-greg k-h
+Issue will be fixed with commit coming via clk tree - Stephen Boyd:
+https://lore.kernel.org/linux-samsung-soc/20250825114436.46882-2-ravi.patel@samsung.com/
+And git pull:
+https://lore.kernel.org/all/20250909183504.104261-2-krzysztof.kozlowski@linaro.org/
+
+I understand this won't fix bisectability.
+
+Arnd,
+Eventually you can just mark arch-artpec as broken just to fix your branches.
+
+Sorry for the mess, I'll extend my CI to check this in future.
 
