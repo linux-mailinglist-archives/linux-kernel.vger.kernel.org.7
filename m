@@ -1,169 +1,132 @@
-Return-Path: <linux-kernel+bounces-840396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2EBDBB449D
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 17:16:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7432CBB446D
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 17:11:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7670A422A28
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 15:16:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DDF618943F7
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 15:11:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D320A19D880;
-	Thu,  2 Oct 2025 15:16:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25EEE1891A9;
+	Thu,  2 Oct 2025 15:11:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="VshEI48W"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b7LAEI6A"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A904F21348;
-	Thu,  2 Oct 2025 15:16:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68A7186342;
+	Thu,  2 Oct 2025 15:11:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759418193; cv=none; b=X+HrincA/c2aTZNrO0hqiwhCaazj5BVUEzjyA34YaR37XwOn8ve7YlMPbJxvz6ROjoF2EM3h/jOtkGq0CnbhYIBa5E8Y0pMXHKPrkNsmeJisdSrF1Pil6GKbyfqjtMapkUxrD0Pj3wzLp2OctV1PMKrB6GTa1U9ovlAQPNwBrlg=
+	t=1759417868; cv=none; b=eP8aUtuOG8BCRSgNdmlmHLa4truSAuPSnM/MyH/RKZt+9B3n1WJ9D+cq+hngxHJDRbJfEqqNFvrMjAZydjn8b8GvRyOkYV234hdbhJHVrGsu9nD4+9EWErPJMrYZJdNY+AzU6TV2pazOk4sCv2PhgOa+qjCQzpl9MRt8/4ggrik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759418193; c=relaxed/simple;
-	bh=3CGm9PG5ILZCt0c51xHvV24Bg5BobjK0p8VqNOem5CU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UHTlM5TSIC6M2v9u63v06Q/WR4U1dhVvTZzQzFkrBr20SBFCjvw71ZatIvJkUbNy5UbInOur3FO7CtSrYW76ZjWG6bVUQukZWSHOjKpC5Q1tdC88a0bflc6EDjI71qpVwC6dVmmpIM3UQF6P/GmvuKiK/6AqBGX/Mvz9u1KBzJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=VshEI48W; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 592Bv1eO001767;
-	Thu, 2 Oct 2025 15:10:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=WORjK6
-	Ee+NiyPAdI1QmO+wB6QuQBHYftZ5ozMkZgNHs=; b=VshEI48WzurDRQtbzl/5kc
-	YIKqbtl5wE/WoRjcoHfa0mFn2Lkehli2I9I6/ImW7neAPT5l0vA9M4/m53FynyBf
-	oOuzhq6mHt5VDzmcxA8JXHPGffVgA6cos9Ka0iJSQxSyFmfwm0bpEg6fMULLi0/M
-	DLnU0ToxPFaYGTxbmR0TILMVyCnKWBg2SPEyZzi2s8CbC5LGOQlf9qPMKcDnKpv5
-	n5+H3CHN6+z5Lgh851A1jWA4NfSMAj7WWhb3yusygwu/2034ooeZ7OP2rm+dNjpR
-	Hn42iQVnsBhP0UkKUbzszGa0IFQTMC10itY8iq6LEPJgQGR8riU9rzYrUdD64VZw
-	==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49e7n864jq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 02 Oct 2025 15:10:54 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 592ERlNg001667;
-	Thu, 2 Oct 2025 15:10:53 GMT
-Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 49evfje7tm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 02 Oct 2025 15:10:53 +0000
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 592FAq9I36503898
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 2 Oct 2025 15:10:52 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 40A1058076;
-	Thu,  2 Oct 2025 15:10:52 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1D0B758043;
-	Thu,  2 Oct 2025 15:10:48 +0000 (GMT)
-Received: from [9.43.27.61] (unknown [9.43.27.61])
-	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Thu,  2 Oct 2025 15:10:47 +0000 (GMT)
-Message-ID: <91799590-15cd-437d-900f-8bc372f7298b@linux.ibm.com>
-Date: Thu, 2 Oct 2025 20:40:46 +0530
+	s=arc-20240116; t=1759417868; c=relaxed/simple;
+	bh=FNclR2C69WQjyAgJd3PWTF23QQxMqsFUS9Q5YQBoudQ=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=fWwXIKIVDaQwaR92ZuWrcCAlnPjIxPIA3kJkGGsCWoPOZT6CjNMRcAK2QeTZ7VavCMD+Rrb48fMwaHq3kL1/7jnK5b0WBgzt4sl3X1WGFboK5T52G5nWuuepFxT956tyTVH4OdlDRZFJWJFvEZ/6gPt5khvRv63/D0WWkMSBlaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b7LAEI6A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A8D0C4CEF4;
+	Thu,  2 Oct 2025 15:11:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759417867;
+	bh=FNclR2C69WQjyAgJd3PWTF23QQxMqsFUS9Q5YQBoudQ=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=b7LAEI6A6X546xyoF4Ubb8NI3YdGNvaf/frUPbRe5r73qhmkrRjcLnf/9Lbbl05x1
+	 bceaUsBFQNzE+rDRu+V+2H/e/ibmjucWQvWLj1U5YnwDZmfg2fOroR+TpcUwqsFbGK
+	 AUNsL/ekG3Ksyie+AtPSMbscI1/ffKm24o2Q6lhfdJoMo/JDZO3PJKoAn7BpOcpO47
+	 gYjqSYKmpIDbQ6iKO0owh/TeE4cZF3BWlJQ4TZc3gB2EnzP6jVkO/Qz7jTlloYYn+p
+	 2n8nv942OpFmUZbjSSVNs2qwMEyzQYidZcNpQuSHHFGwGY9xI52RlmA5jOyMyRavCG
+	 +Py3BykTxtXAQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/7] blk-mq: add a new queue sysfs attribute async_depth
-To: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk, bvanassche@acm.org,
-        ming.lei@redhat.com
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com,
-        johnny.chenyi@huawei.com
-References: <20250930071111.1218494-1-yukuai1@huaweicloud.com>
- <20250930071111.1218494-4-yukuai1@huaweicloud.com>
-Content-Language: en-US
-From: Nilay Shroff <nilay@linux.ibm.com>
-In-Reply-To: <20250930071111.1218494-4-yukuai1@huaweicloud.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: B6DLcoY_t4OV2Y00M3_0VQihzZZ8x4F4
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAyNSBTYWx0ZWRfX7nLnj+JDoTia
- axM/UoW8RmhpANa7SBqPID/3qw2Wq+CyrN90TZHLAo2hfeonAv24chWMz8tCYGEYS54Agh3aeOq
- fXDkEWLPZTgW1dIDkSKxUupH58xCi3cMnBhQbtbrtXn49W04xIdIHzsjxLC68/ubLBSzZkCaoU5
- UnYmjZib3pAFkodz0Q2HSaDST11GcEkjX8+NwS69WZpgM8GUmUK8EATblb/+0bA9SomnrewQB9v
- knnGolqFP6ohKlxpZa017lFGVzEeJr3wqS6dcmc01puCwLviIRZZtZBgiDGhhh2Wmbji41Vcl47
- 7cRJkoVIDN9obhXF1wdCBA6oc4O2VQT4LkZIb1F2maqNMEp9v2E5RCk05G5ssUEaixgwmXFhBNa
- smQFVKCTJ1eJpnckpfx0hC2NUt0DgA==
-X-Proofpoint-GUID: B6DLcoY_t4OV2Y00M3_0VQihzZZ8x4F4
-X-Authority-Analysis: v=2.4 cv=T7qBjvKQ c=1 sm=1 tr=0 ts=68de95fe cx=c_pps
- a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=i0EeH86SAAAA:8 a=WOpRoUcL_F6Ol7fEhz4A:9
- a=QEXdDO2ut3YA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-02_05,2025-10-02_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 impostorscore=0 lowpriorityscore=0 malwarescore=0 spamscore=0
- clxscore=1015 suspectscore=0 bulkscore=0 phishscore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270025
+Date: Thu, 02 Oct 2025 17:11:01 +0200
+Message-Id: <DD7XKV6T2PS7.35C66VPOP6B3C@kernel.org>
+Subject: Re: [PATCH v2 1/2] rust: pci: skip probing VFs if driver doesn't
+ support VFs
+Cc: "John Hubbard" <jhubbard@nvidia.com>, "Alexandre Courbot"
+ <acourbot@nvidia.com>, "Joel Fernandes" <joelagnelf@nvidia.com>, "Timur
+ Tabi" <ttabi@nvidia.com>, "Alistair Popple" <apopple@nvidia.com>, "Zhi
+ Wang" <zhiw@nvidia.com>, "Surath Mitra" <smitra@nvidia.com>, "David Airlie"
+ <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Alex Williamson"
+ <alex.williamson@redhat.com>, "Bjorn Helgaas" <bhelgaas@google.com>,
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, "Miguel
+ Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun
+ Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
+ Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ <nouveau@lists.freedesktop.org>, <linux-pci@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>, "LKML" <linux-kernel@vger.kernel.org>
+To: "Jason Gunthorpe" <jgg@nvidia.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20251002020010.315944-1-jhubbard@nvidia.com>
+ <20251002020010.315944-2-jhubbard@nvidia.com>
+ <20251002121110.GE3195801@nvidia.com>
+ <DD7TWUPD83M9.5IO0VX7PP1UK@kernel.org>
+ <20251002123921.GG3195801@nvidia.com>
+ <DD7UVCEVB21H.SQ00WZLLPINP@kernel.org>
+ <20251002135600.GB3266220@nvidia.com>
+In-Reply-To: <20251002135600.GB3266220@nvidia.com>
 
+On Thu Oct 2, 2025 at 3:56 PM CEST, Jason Gunthorpe wrote:
+> On Thu, Oct 02, 2025 at 03:03:38PM +0200, Danilo Krummrich wrote:
+>
+>> I think it's not unreasonable to have a driver for the PF and a separate=
+ driver
+>> for the VFs if they are different enough; the drivers can still share co=
+mmon
+>> code of course.
+>
+> This isn't feasible without different PCI IDs.
 
+At least on the host you can obviously differentiate them.
 
-On 9/30/25 12:41 PM, Yu Kuai wrote:
-> From: Yu Kuai <yukuai3@huawei.com>
-> 
-> Add a new field async_depth to request_queue and related APIs, this is
-> currently not used, following patches will convert elevators to use
-> this instead of internal async_depth.
-> 
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-> ---
->  block/blk-core.c       |  1 +
->  block/blk-mq.c         |  4 ++++
->  block/blk-sysfs.c      | 47 ++++++++++++++++++++++++++++++++++++++++++
->  block/elevator.c       |  1 +
->  include/linux/blkdev.h |  1 +
->  5 files changed, 54 insertions(+)
-> 
-> diff --git a/block/blk-core.c b/block/blk-core.c
-> index dd39ff651095..76df70cfc103 100644
-> --- a/block/blk-core.c
-> +++ b/block/blk-core.c
-> @@ -463,6 +463,7 @@ struct request_queue *blk_alloc_queue(struct queue_limits *lim, int node_id)
->  	fs_reclaim_release(GFP_KERNEL);
->  
->  	q->nr_requests = BLKDEV_DEFAULT_RQ;
-> +	q->async_depth = BLKDEV_DEFAULT_RQ;
->  
->  	return q;
->  
-> diff --git a/block/blk-mq.c b/block/blk-mq.c
-> index 09f579414161..260e54fa48f0 100644
-> --- a/block/blk-mq.c
-> +++ b/block/blk-mq.c
-> @@ -529,6 +529,8 @@ static struct request *__blk_mq_alloc_requests(struct blk_mq_alloc_data *data)
->  			data->rq_flags |= RQF_USE_SCHED;
->  			if (ops->limit_depth)
->  				ops->limit_depth(data->cmd_flags, data);
-> +			else if (!blk_mq_sched_sync_request(data->cmd_flags))
-> +				data->shallow_depth = q->async_depth;
->  		}
+>> Surely, you can argue that if they have different enough requirements th=
+ey
+>> should have different device IDs, but "different enough requirements" is=
+ pretty
+>> vague and it's not under our control either.
+>
+> If you want two drivers in Linux you need two PCI IDs.
+>
+> We can't reliably select different drivers based on VFness because
+> VFness is wiped out during virtualization.
 
-In the subsequent patches, I saw that ->limit_depth is still used for the
-BFQ scheduler. Given that, it seems more consistent to also retain ->limit_depth
-for the mq-deadline and Kyber schedulers, and set data->shallow_depth within their
-respective ->limit_depth methods. If we take this approach, the additional 
-blk_mq_sched_sync_request() check above becomes unnecessary.
+Sure, but I thought the whole point is that some VFs are not given directly=
+ to
+the VM, but have some kind of intermediate layer, such as vGPU. I.e. some k=
+ind
+of hybrid approach between full pass-through and mediated devices?
 
-So IMO:
-- Keep ->limit_depth for all schedulers (bfq, mq-deadline, kyber).
-- Remove the extra blk_mq_sched_sync_request() check from the core code.
+>> But, if there is another solution for VFs already, e.g. in the case of n=
+ova-core
+>> vGPU, why restrict drivers from opt-out of VFs. (In a previous reply I m=
+entioned
+>> I prefer opt-in, but you convinced me that it should rather be
+>> opt-out.)
+>
+> I think nova-core has a temporary (OOT even!) issue that should be
+> resolved - that doesn't justify adding core kernel infrastructure that
+> will encourage more drivers to go away from our kernel design goals of
+> drivers working equally in host and VM.
 
-Thanks,
---Nilay
+My understanding is that vGPU will ensure that the device exposed to the VM=
+ will
+be set up to be (at least mostly) compatible with nova-core's PF code paths=
+?
+
+So, there is a semantical difference between vGPU and nova-core that makes =
+a
+differentiation between VF and PF meaningful and justified.
+
+But maybe this understanding is not correct. If so, please educate me.
 
