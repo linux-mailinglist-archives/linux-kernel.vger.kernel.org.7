@@ -1,203 +1,195 @@
-Return-Path: <linux-kernel+bounces-839905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE4C8BB2B23
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 09:31:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07F2DBB2B11
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 09:29:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71C563B9136
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 07:30:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9855432375F
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 07:29:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAED72D2490;
-	Thu,  2 Oct 2025 07:30:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 169F72C08DC;
+	Thu,  2 Oct 2025 07:29:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="dydpOR+K"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Bzde3X2c"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F5D72C026D;
-	Thu,  2 Oct 2025 07:30:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87B0B33F6
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 07:29:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759390234; cv=none; b=r7FRjYXUX7QUrZpqdhaXTYe89cvG62ihRAxrG/r+0CHqKzT3gVfYgsEMoklwPh5VIuPdOq9Bxf59p7CRFo8kqLy5Nuy2JbjBlJOATt0NNZNx+ju03AAx4EQtYlIDTClli0UtB8gN5brDKLYN5ZnArKh/DMGvkTMLO2hlNt+Xp8o=
+	t=1759390186; cv=none; b=gAbRfwcxSySWov9SIBJkRfNVvrF6YpcPUsnuI/rePuBxsCu74baZfgL1BMnAtUa2QeyWelloLVTV8Go5i09qgvxZyY0pUE2UgDhCnsORNGDcMo/ar+Bn3rUfLFkBxkLIEQsOdSJOpzrhdlv6LwIzl+zWW7/StkK1QtDMr9YbHJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759390234; c=relaxed/simple;
-	bh=jDUQ/UaqP3nn6L4P+8Y0miY/+y99XoN5WWGCGdWBQtU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HUNwu+ycVs+qaHZFfFFCI5zJhvZSdSx+uwP2haOt+p0cyxlh/xqLMFIMIvf7drGtofOmAFBMaH8J0syd/1MwAbhEJ+65Co3D5hvrAzDEtUyh+hvpeqATpNH/FrDCsvRpMZnZ8JgqU2RqpdYz1946kytS6q72UIdpEYbASsLwIwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=dydpOR+K; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5927U9CG2838778;
-	Thu, 2 Oct 2025 02:30:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1759390209;
-	bh=71sqONH4BXGPz4VfkWdc8RIfaxiFUOFoWFT9vpabLbY=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=dydpOR+K4/xM4y9182ZTavGpXMCnfraWH5z2dtM2aQ93llm5QEpWxu9p/bfXg3fk9
-	 zRJ8V5eRzRKeZh/j9j9B8hbJKp3/Ffga+rDI+JDGa5bwwlUGgcC9P/64KEOHS1kPfL
-	 miyg4r5PQFWKEFzHTn+HMxpXFwr9fMQ8ih5rZ2qE=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5927U9LE3442626
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Thu, 2 Oct 2025 02:30:09 -0500
-Received: from DLEE204.ent.ti.com (157.170.170.84) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 2
- Oct 2025 02:30:08 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE204.ent.ti.com
- (157.170.170.84) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Thu, 2 Oct 2025 02:30:08 -0500
-Received: from lelvem-mr05.itg.ti.com ([10.250.165.138])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5927TkgQ1776146;
-	Thu, 2 Oct 2025 02:29:58 -0500
-From: Baojun Xu <baojun.xu@ti.com>
-To: <broonie@kernel.org>, <tiwai@suse.de>
-CC: <andriy.shevchenko@linux.intel.com>, <13916275206@139.com>,
-        <alsa-devel@alsa-project.org>, <shenghao-ding@ti.com>,
-        <baojun.xu@ti.com>, <linux-sound@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <lgirdwood@gmail.com>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <devicetree@vger.kernel.org>, <k-yi@ti.com>, <henry.lo@ti.com>,
-        <robinchen@ti.com>, <jesse-ji@ti.com>, <will-wang@ti.com>,
-        <jim.shil@goertek.com>, <toastcheng@google.com>,
-        <chinkaiting@google.com>
-Subject: [PATCH v4 2/2] ASoC: tas2781: Update ti,tas2781.yaml for adding tas58xx
-Date: Thu, 2 Oct 2025 15:29:25 +0800
-Message-ID: <20251002072925.26242-2-baojun.xu@ti.com>
-X-Mailer: git-send-email 2.43.0.windows.1
-In-Reply-To: <20251002072925.26242-1-baojun.xu@ti.com>
-References: <20251002072925.26242-1-baojun.xu@ti.com>
+	s=arc-20240116; t=1759390186; c=relaxed/simple;
+	bh=I0YxMAN3GBIQJQXHdtFLoeNuETwlyn6WQTQnc4sgZ88=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=b2PltUdV3Dfk6bYvwpuLM+4XlwSYXbA+sKGc8vYjeINzG3uUT4ENbt6be9DQL1U2yD9fPcNIZIlGZhmT33PyWF8zlE4ibCzyvCIu9ZzWBJq62npjkTOAF4KCQdlnvke6qTAjdaJjaHCyNnLc+6iRQgV4gsSJhhs901yeiIskCbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Bzde3X2c; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759390183;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=0CSDnRn6hYSzmKVQfh+M23X97GCdHbW5ItsaS7LSYJU=;
+	b=Bzde3X2cSpw+E4R5ZiP32RrbikHKioPRFPsM0b2Ekr+W33D4pGjmrZUgDXz9+YaSYqfRgZ
+	wyPu6Iu+fgB7+m9zfnq7vHiygcS8md26evAaU6WvZQOLsp/S3FGoCQ1j6Ln7fnod0mq4la
+	lsYdeutIJkm4X9CC5r2NhcbHgHuhw0o=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-351-94XqiBayPwCu2zGTDMd3QQ-1; Thu, 02 Oct 2025 03:29:41 -0400
+X-MC-Unique: 94XqiBayPwCu2zGTDMd3QQ-1
+X-Mimecast-MFC-AGG-ID: 94XqiBayPwCu2zGTDMd3QQ_1759390181
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-46e2c11b94cso2810735e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 00:29:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759390180; x=1759994980;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0CSDnRn6hYSzmKVQfh+M23X97GCdHbW5ItsaS7LSYJU=;
+        b=WVzXoVUtiI7RuKHdUxyORWXbxoAOgga7GNCLVcovUUMeetV5yQ3VlgsFC/JXL3xc98
+         ykpPPULPBfJDepTpDvnC49GdGP0ffAFLFDTiyyT2HcaCndiJkc91hO5mrjDFB2RQD720
+         Od7J7RykTabm1iTJcQz0+sVZjx+qvAIbMB7tMGuyxKsJUPd35dLmA+iyMKI7aURcliy3
+         FADoCjiLY+DEKOTZtQjJrRhkIuHzHykXyseT1XEPScaD5ccPThnurZ88EniAQprxYYxg
+         WK6Du8Ia3nr6ydaXIyWdO2snXXTS23Img75Lkc5nktfGDGzA6eeQ9k7GUck2XklAqvGM
+         VZ8A==
+X-Forwarded-Encrypted: i=1; AJvYcCU5KIl1EZHDf6bDE2I/tuWmkxd6d3rTZUVZEG2ZK+o4lZPUDWQqgDKopOwTDPgp5GL0334FMHwTbpZBPl0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnfxPXaCQz54Gkqnv+GnlNbzqFdyA7BPbckTmA6dhhgJcaeB7b
+	FOX+i5G+J+ZNlybFr/1S0IytnC+UJF5Sfyd/sRMHOrDjif6UmS7lOZqJ0x8Ov15/RGAPpQw4Fpu
+	N0Lv6LDvAaJQwX+gAm5EYisihW0XUxtj8Bbxr6WXJuvq1Hxk3yAmTDCHNM6lcGqvHFw==
+X-Gm-Gg: ASbGnculy3XdovGTMa5Sn27I5OQF87RC9WSTnRvHXiSh+JHHeEbBz3KEZVgPaH7RCo1
+	L8Xzem/iEIhY+p2KsPCGlY/RDlnjxooWX0iY5XVDoCRKnYutzKiDSrgNukgsaT/rBcfgBCd6uds
+	hnIwMyIvwKRPUBAqYDWI6B/f/pORFdRrPc2LF7PBCApgncwfXsrb4FD4lt/P/98a+XYcsAK9V7r
+	6bO2bfGL+CIHaHXfLS++/nf9IllMGkt1/2bQcG+Fs0qIRHZXhuKUCZDd7/Fcz0yRp80D/IqT+yF
+	6Ra4Q5ZVwUYSncjMkydpzzCOYTTeJzIQEY8VodDqG0JBJFs1dhPnnSUVHv5aMQVvTKYwF6ZgxOm
+	CU6zOPePR
+X-Received: by 2002:a05:6000:2302:b0:3ec:e276:f3d5 with SMTP id ffacd0b85a97d-4255781a637mr4368079f8f.42.1759390180567;
+        Thu, 02 Oct 2025 00:29:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH6WQwGgDH0BtLI/Rc2UQozJzaeNJMjTwQlnd7GumY5IaNv36BcVqxzwSGHNhnqsScbI2ZF5g==
+X-Received: by 2002:a05:6000:2302:b0:3ec:e276:f3d5 with SMTP id ffacd0b85a97d-4255781a637mr4368052f8f.42.1759390180165;
+        Thu, 02 Oct 2025 00:29:40 -0700 (PDT)
+Received: from [192.168.3.141] (tmo-080-144.customers.d1-online.com. [80.187.80.144])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e6b23d4c5sm14487845e9.17.2025.10.02.00.29.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 02 Oct 2025 00:29:39 -0700 (PDT)
+Message-ID: <fc539c61-7a28-42ee-a28a-fef987967958@redhat.com>
+Date: Thu, 2 Oct 2025 09:29:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] mm: redefine VM_* flag constants with BIT()
+To: SeongJae Park <sj@kernel.org>, Jakub Acs <acsjakub@amazon.de>
+Cc: linux-mm@kvack.org, akpm@linux-foundation.org, xu.xin16@zte.com.cn,
+ chengming.zhou@linux.dev, peterx@redhat.com, axelrasmussen@google.com,
+ linux-kernel@vger.kernel.org
+References: <20251001165121.54258-1-sj@kernel.org>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <20251001165121.54258-1-sj@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Update ti,tas2781.yaml for adding TAS5802/TAS5815/TAS5828.
+On 01.10.25 18:51, SeongJae Park wrote:
+> On Wed, 1 Oct 2025 09:03:53 +0000 Jakub Acs <acsjakub@amazon.de> wrote:
+> 
+>> Make VM_* flag constant definitions consistent - unify all to use BIT()
+>> macro.
+>>
+>> This is a separete follow-up fix after we changed VM_MERGEABLE
+>> separately to isolate bugfix for easier backporting. As suggested by
+>> David in [1].
+>>
+>> [1]: https://lore.kernel.org/all/85f852f9-8577-4230-adc7-c52e7f479454@redhat.com/
+>>
+>> Signed-off-by: Jakub Acs <acsjakub@amazon.de>
+>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>> Cc: David Hildenbrand <david@redhat.com>
+>> Cc: Xu Xin <xu.xin16@zte.com.cn>
+>> Cc: Chengming Zhou <chengming.zhou@linux.dev>
+>> Cc: Peter Xu <peterx@redhat.com>
+>> Cc: Axel Rasmussen <axelrasmussen@google.com>
+>> Cc: linux-mm@kvack.org
+>> Cc: linux-kernel@vger.kernel.org
+>> ---
+>>   include/linux/mm.h | 66 +++++++++++++++++++++++-----------------------
+>>   1 file changed, 33 insertions(+), 33 deletions(-)
+>>
+>> diff --git a/include/linux/mm.h b/include/linux/mm.h
+>> index c6794d0e24eb..88cab3d7eea2 100644
+>> --- a/include/linux/mm.h
+>> +++ b/include/linux/mm.h
+>> @@ -246,56 +246,56 @@ extern unsigned int kobjsize(const void *objp);
+>>    * vm_flags in vm_area_struct, see mm_types.h.
+>>    * When changing, update also include/trace/events/mmflags.h
+>>    */
+>> -#define VM_NONE		0x00000000
+>> +#define VM_NONE		0
+> 
+> I'm wondering if it could be more consistent to use 0UL instead.
 
-Signed-off-by: Baojun Xu <baojun.xu@ti.com>
+Not really required, and if we're switching to BIT already there is not 
+a lot of consistency to be had. Would be different if we were avoid 
+BIT() is in patch v2.
 
----
-v4:
- - Change the patch title
- - Add TAS5802 support in yaml file
- - Change description for missed TAS5815
- - Change format to keep all lines within 80 bytes in length
-v3:
- - Rewrite the patch title
- - Add TAS5815 support in yaml file
-v2:
- - Update description for TAS5828
- - Change commit tree to .../tiwai/sound.git
----
- .../devicetree/bindings/sound/ti,tas2781.yaml | 43 ++++++++++++++++---
- 1 file changed, 37 insertions(+), 6 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/sound/ti,tas2781.yaml b/Documentation/devicetree/bindings/sound/ti,tas2781.yaml
-index bd00afa47..7f84f5060 100644
---- a/Documentation/devicetree/bindings/sound/ti,tas2781.yaml
-+++ b/Documentation/devicetree/bindings/sound/ti,tas2781.yaml
-@@ -24,10 +24,10 @@ description: |
-   Instruments Smart Amp speaker protection algorithm. The
-   integrated speaker voltage and current sense provides for real time
-   monitoring of loudspeaker behavior.
--  The TAS5825/TAS5827 is a stereo, digital input Class-D audio
--  amplifier optimized for efficiently driving high peak power into
--  small loudspeakers. An integrated on-chip DSP supports Texas
--  Instruments Smart Amp speaker protection algorithm.
-+  The TAS5802/TAS5815/TAS5825/TAS5827/TAS5828 is a stereo, digital input
-+  Class-D audio amplifier optimized for efficiently driving high peak
-+  power into small loudspeakers. An integrated on-chip DSP supports
-+  Texas Instruments Smart Amp speaker protection algorithm.
- 
-   Specifications about the audio amplifier can be found at:
-     https://www.ti.com/lit/gpn/tas2120
-@@ -35,8 +35,10 @@ description: |
-     https://www.ti.com/lit/gpn/tas2563
-     https://www.ti.com/lit/gpn/tas2572
-     https://www.ti.com/lit/gpn/tas2781
-+    https://www.ti.com/lit/gpn/tas5815
-     https://www.ti.com/lit/gpn/tas5825m
-     https://www.ti.com/lit/gpn/tas5827
-+    https://www.ti.com/lit/gpn/tas5828m
- 
- properties:
-   compatible:
-@@ -65,11 +67,21 @@ properties:
-       Protection and Audio Processing, 16/20/24/32bit stereo I2S or
-       multichannel TDM.
- 
-+      ti,tas5802: 22-W, Inductor-Less, Digital Input, Closed-Loop Class-D
-+      Audio Amplifier with 96-Khz Extended Processing and Low Idle Power
-+      Dissipation.
-+
-+      ti,tas5815: 30-W, Digital Input, Stereo, Closed-loop Class-D Audio
-+      Amplifier with 96 kHz Enhanced Processing
-+
-       ti,tas5825: 38-W Stereo, Inductor-Less, Digital Input, Closed-Loop 4.5V
-       to 26.4V Class-D Audio Amplifier with 192-kHz Extended Audio Processing.
- 
--      ti,tas5827: 47-W Stereo, Digital Input, High Efficiency Closed-Loop Class-D
--      Amplifier with Class-H Algorithm
-+      ti,tas5827: 47-W Stereo, Digital Input, High Efficiency Closed-Loop
-+      Class-D Amplifier with Class-H Algorithm
-+
-+      ti,tas5828: 50-W Stereo, Digital Input, High Efficiency Closed-Loop
-+      Class-D Amplifier with Hybrid-Pro Algorithm
-     oneOf:
-       - items:
-           - enum:
-@@ -80,8 +92,11 @@ properties:
-               - ti,tas2563
-               - ti,tas2570
-               - ti,tas2572
-+              - ti,tas5802
-+              - ti,tas5815
-               - ti,tas5825
-               - ti,tas5827
-+              - ti,tas5828
-           - const: ti,tas2781
-       - enum:
-           - ti,tas2781
-@@ -177,12 +192,28 @@ allOf:
-             minimum: 0x38
-             maximum: 0x3f
- 
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - ti,tas5802
-+              - ti,tas5815
-+    then:
-+      properties:
-+        reg:
-+          maxItems: 4
-+          items:
-+            minimum: 0x54
-+            maximum: 0x57
-+
-   - if:
-       properties:
-         compatible:
-           contains:
-             enum:
-               - ti,tas5827
-+              - ti,tas5828
-     then:
-       properties:
-         reg:
 -- 
-2.25.1
+Cheers
+
+David / dhildenb
 
 
