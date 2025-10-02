@@ -1,113 +1,133 @@
-Return-Path: <linux-kernel+bounces-840518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE35CBB497F
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 18:49:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E1D7BB4988
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 18:52:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90D8E16663E
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 16:49:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08C203BF170
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 16:52:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0B41264F9F;
-	Thu,  2 Oct 2025 16:49:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 195D3186284;
+	Thu,  2 Oct 2025 16:52:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="gUhrz9Ub"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jP3BgZuP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F02B186284
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 16:49:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B2A238176
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 16:52:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759423780; cv=none; b=gMF//oIDvIQaA5ngzFa+6s4eV4C3hsnlolTBM1j0XmJjqFCPNVR5GIzz8bMBwq1HPjq0ETaxTj3VdoKH7+6VPY6IKhZzscos8rqD8vJPW4+e0mKb6gYayewm1RPJi9JOROhgU0T4pwfShHXT8EznNmZrTGg/uGo3zRlXsTm92AQ=
+	t=1759423927; cv=none; b=tasO6lz1VEbClZXcO2vBPsjIqPxVycWZbH6h9NpNQmY7HIbfhOBuJuGLG9x8wQBR4RyfiqsRd9dOxgruDpnMmBOrr0q9A+Z4+GbsTDNN9gTHrMWGu9YMMnPtFVqzHBQAbbE/Fj94C/6KaddSnkd4bmV2Rb8YBTfuCwI3n3qAzR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759423780; c=relaxed/simple;
-	bh=GPNKqk2IjCezt+iOiIGHZBvYwRYM9eI/at8SyT0aJvg=;
+	s=arc-20240116; t=1759423927; c=relaxed/simple;
+	bh=RYUS76VlN/7kvtmsPptlWYP5PD2siFaw/m/pPf6KKBg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dhv2SKs4HyGzo+oEFUHNXUsR+vUG8XzbC1R+GybU88owL9R3zUNCMNNumjA6SEcwYKmyq//3us+wP+/B87zF2MKuv6UhHyJYJ2BYRhyZtZWoQO17yH/w8SNls7sHg6yMwivz2KUJRNf21V8Q/e126ASAPuzDkujaDSzZA/FoC4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=gUhrz9Ub; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b256c8ca246so312354366b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 09:49:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1759423776; x=1760028576; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ri4QyfvFryudbRTr4zjJak2/cwqBuXGVPepccBH1HNc=;
-        b=gUhrz9UbfOdDJBrCyPUJRPx3zM+SAT9D9jE3dSCVTyDEIYB9tZXsih8O+cyEc5sYgc
-         jgpoIoviizQHxyH5NsX1UJ/NSPFTlx6mkMb3ecJKBYL2cWz1egAfZfbGm0KJyQ+JNQLS
-         umkEo4+Z8Urgdew7nbyf3I4qhSkqPWeFuYN6M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759423776; x=1760028576;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ri4QyfvFryudbRTr4zjJak2/cwqBuXGVPepccBH1HNc=;
-        b=p0rgVOxUEYIX9V6P6+45DJK6cxFKw5bEuCGGJ6/xqZlNnQoX+vUSm8KgG0qBliRJX4
-         jLirI+wjWcLr1anF8CT6eTNXLFUh7n+ULdlS7o+bNnebjw3H7Ol6rGMktR0BMD6Mm4ph
-         TqOrW92CdXr6iwzzxYwG4p+2BBNgY5zMPELr3Yhm1k4jCyt6+JvRYDinLu1Fy9Iz2GA+
-         gOhzMW0ZyGrPfRBmyQaf7fQvksorzfi/sf8mEE8WMS+bShz0p4OSl+d5/VIFVpwudGYr
-         KGV4AXuj88DMu3ZaEJ/c3RRVIHwZhE3+cZgAFO3nIgVkzIlVuwlrKNdYs5K6YC6vn5Ur
-         E56g==
-X-Forwarded-Encrypted: i=1; AJvYcCUM54cxwR0XmzFlB+dGw3VVCpW3OdcqDKN27gNhVe001r5NGruoq59fTiV8ynWOUAY6lW861mU0hQmbknE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWm77Za9GfP9zT5ndZTXcUJQQFamONV4aslunOB+Tkow0aXBr+
-	kW1gPd/YAfyPB2ZCCRVRRtC8qE7PIDqIpcIjUy2itVczvIcENlMm3eOiTC1Vb5SDVmul/TmLfCS
-	/rlCWEkg=
-X-Gm-Gg: ASbGncuZS0ESFV9FCabN4u1SLnJw+rz595vZKpOXJFPq3DktiLHBDFHZ46NaSqq2rtj
-	aA4yPXKMANe46nnjr/RJYnEJjYqWJgXt8kMJm2FGly5QS6uLCf4If+R3C3hB5CgH7gKueiyBffp
-	0+iqesOmDgqc2ZQ+k01PAQbA7jOlNnIDdjZLX9BLJaYbR3nDGt8dk9SusJLbVkS+4jeV2UKpbo4
-	eEgKlVTY1SS5yBM2lhTzydAjbTOdCwvYgsd5/jfrvNu53lbddHPIF9hBKMx+AgC9ckQBFUqnu2C
-	3Gf8Y5yhzlLTB/e1TPHIJL6CeEMRsyw2X361TCj8kFM35vLsyuSxZyAI6V7AvEDsPIjwszGIX55
-	wsKR8nQrsCB55HDVCmbye2GFwpCnvzUI3dmemMqyBodlps21AxcyfxKhwtojWTOOydU+wUAhnYd
-	WfsbmKTKGna8qcVAeW37QQ
-X-Google-Smtp-Source: AGHT+IHDtuobgJ1DndCTpwl6wzhNvovgM0hRECmQu116kPqpTP7hNszEBfsOa9L6ExRTHaEq6Oq6+g==
-X-Received: by 2002:a17:907:6d0d:b0:b43:b7ec:b89a with SMTP id a640c23a62f3a-b49c214bb24mr12886866b.26.1759423776330;
-        Thu, 02 Oct 2025 09:49:36 -0700 (PDT)
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com. [209.85.218.43])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b486970b37bsm245189966b.53.2025.10.02.09.49.34
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Oct 2025 09:49:35 -0700 (PDT)
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b256c8ca246so312343266b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 09:49:34 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVbPtVQAFcyALAW2HcrDFTODDU835ZFfD2iLFxTFV1WxkNjS6vzJc1DRDDb+hnGyPgjTnQonIo7Xqe/YF4=@vger.kernel.org
-X-Received: by 2002:a17:906:6a25:b0:b3e:c7d5:4cc2 with SMTP id
- a640c23a62f3a-b49c39360f6mr14187866b.38.1759423774528; Thu, 02 Oct 2025
- 09:49:34 -0700 (PDT)
+	 To:Cc:Content-Type; b=POe1STBAJelYLWasHjfAgn2Dx0wJ8jyn5YLGwReWoJ1V9oc1nj/xBQ3qpLvBilNDgV/QGpNYuJ9MRdWgwXFQxQ91oqVUv1/fGmSvaCTFx3f+zG6tB9JSbQyYDyFM6JaoywAG9VNo2yyuXut0GQB6e8s0B7B0w3wvnydkRhlYL/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jP3BgZuP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2E86C113D0
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 16:52:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759423927;
+	bh=RYUS76VlN/7kvtmsPptlWYP5PD2siFaw/m/pPf6KKBg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=jP3BgZuPIcSMnUcMZX+zGGOZ4bci9SkVBh6qAlossuJFuETqNIvy2fQkb/E6AOjG2
+	 B6X4EyyQqk6tyj+k35Jl5fvMbbeCucLL89tO8oZ2nIrcjDkj/4zRObaeLd2GKId8xB
+	 3ewdNfSDZCzpowgdhOEaCx1ig9j/TtysCtg4woD+tw4U9BGyP+TOG1OkdKGVQ3N794
+	 EoyrG6R5WJJicuHK4twz7z1orRs2uDZ3OZwHENgdVlQIzOA1wzpQjMeQgvzwWG5f2K
+	 4v8cRFImwrUPk9xDWzwl7bFaFCffNvkrBfUt5ffZWunvD0alfmOwrOJGC6HebPP6tf
+	 dUEYVhdnABQTA==
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-3717780ea70so13392171fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 09:52:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUbIrUdyILfQizwgJ/ncIC9SbihRTGyBJoJcVYf0tl8UQHq4RHVZWLdZDfrPJfChWcRWcVGgRWuVpoPSOo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRp7jelazOpaPG7a1ky9z/FcNuPoWFteZ9r8KIx3aajKKv4Jj9
+	rEVj0dJ9KY7meLrIhW7N9oBQKncHKGMUKC+Dm8sqdRqCcAc20KHU/rE1ZLEj8GAkVdMFmH7Y02u
+	WgrPmVTdC0xg0u9AAVo7WX5ikIsfa/8Y=
+X-Google-Smtp-Source: AGHT+IFwsRonoEO2SfC5D66SL4gG4kGhHTi4f1/UhGxnb1sNM7Q1481/usK34L0kehPsH9mUQeXsHIp2ebOr5kpnvaA=
+X-Received: by 2002:a2e:a90e:0:b0:36c:47c8:b618 with SMTP id
+ 38308e7fff4ca-373a7126ca6mr26591461fa.18.1759423925284; Thu, 02 Oct 2025
+ 09:52:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250730074614.2537382-1-nilay@linux.ibm.com> <20250730074614.2537382-3-nilay@linux.ibm.com>
- <25a87311-70fd-4248-86e4-dd5fecf6cc99@gmail.com> <bfba2ef9-ecb7-4917-a7db-01b252d7be04@gmail.com>
- <05b105b8-1382-4ef3-aaaa-51b7b1927036@linux.ibm.com> <1b952f48-2808-4da8-ada2-84a62ae1b124@kernel.dk>
-In-Reply-To: <1b952f48-2808-4da8-ada2-84a62ae1b124@kernel.dk>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 2 Oct 2025 09:49:17 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjf1HX1WwREHPs7V_1Hg_54sqOVSr9rNObudEpT9VgQDw@mail.gmail.com>
-X-Gm-Features: AS18NWAX_XbsCSn1cSvTBt8Jd93mNINtxqs7sE9J-usQvnLgAAKgdff6fAuW3Hk
-Message-ID: <CAHk-=wjf1HX1WwREHPs7V_1Hg_54sqOVSr9rNObudEpT9VgQDw@mail.gmail.com>
-Subject: Re: [6.16.9 / 6.17.0 PANIC REGRESSION] block: fix lockdep warning
- caused by lock dependency in elv_iosched_store
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Nilay Shroff <nilay@linux.ibm.com>, Kyle Sanderson <kyle.leet@gmail.com>, 
-	linux-block@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, hch@lst.de, 
-	ming.lei@redhat.com, hare@suse.de, sth@linux.ibm.com, gjoyce@ibm.com, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251001210201.838686-22-ardb+git@google.com> <20251001210201.838686-42-ardb+git@google.com>
+ <202510020920.2FE08A4F90@keescook>
+In-Reply-To: <202510020920.2FE08A4F90@keescook>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Thu, 2 Oct 2025 18:51:54 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXFN0Q8Rba7gdh9AF2SAyyZcNjX89L-GtQs5kbfZtneQzA@mail.gmail.com>
+X-Gm-Features: AS18NWCS21HK8p5zowe1aZSwsKe2CzfUTcnx8DtpF0yJN4O90o1GiG6ggpAwDNk
+Message-ID: <CAMj1kXFN0Q8Rba7gdh9AF2SAyyZcNjX89L-GtQs5kbfZtneQzA@mail.gmail.com>
+Subject: Re: [PATCH v2 20/20] arm64/fpsimd: Allocate kernel mode FP/SIMD
+ buffers on the stack
+To: Kees Cook <kees@kernel.org>
+Cc: Ard Biesheuvel <ardb+git@google.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	herbert@gondor.apana.org.au, linux@armlinux.org.uk, 
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Mark Brown <broonie@kernel.org>, 
+	Eric Biggers <ebiggers@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 2 Oct 2025 at 08:58, Jens Axboe <axboe@kernel.dk> wrote:
+On Thu, 2 Oct 2025 at 18:22, Kees Cook <kees@kernel.org> wrote:
 >
-> Sorry missed thit - yes that should be enough, and agree we should get
-> it into stable. Still waiting on Linus to actually pull my trees though,
-> so we'll have to wait for that to happen first.
+> On Wed, Oct 01, 2025 at 11:02:22PM +0200, Ard Biesheuvel wrote:
+> > [...]
+> > diff --git a/arch/arm64/include/asm/simd.h b/arch/arm64/include/asm/simd.h
+> > index d9f83c478736..7ddb25df5c98 100644
+> > --- a/arch/arm64/include/asm/simd.h
+> > +++ b/arch/arm64/include/asm/simd.h
+> > @@ -43,8 +43,11 @@ static __must_check inline bool may_use_simd(void) {
+> >
+> >  #endif /* ! CONFIG_KERNEL_MODE_NEON */
+> >
+> > -DEFINE_LOCK_GUARD_0(ksimd, kernel_neon_begin(), kernel_neon_end())
+> > +DEFINE_LOCK_GUARD_1(ksimd,
+> > +                 struct user_fpsimd_state,
+> > +                 kernel_neon_begin(_T->lock),
+> > +                 kernel_neon_end(_T->lock))
+> >
+> > -#define scoped_ksimd()       scoped_guard(ksimd)
+> > +#define scoped_ksimd()       scoped_guard(ksimd, &(struct user_fpsimd_state){})
+>
+> I love it!
+>
+> > [...]
+> > -void kernel_neon_end(void)
+> > +void kernel_neon_end(struct user_fpsimd_state *s)
+> >  {
+> >       if (!system_supports_fpsimd())
+> >               return;
+> > @@ -1899,8 +1910,9 @@ void kernel_neon_end(void)
+> >       if (!IS_ENABLED(CONFIG_PREEMPT_RT) && in_serving_softirq() &&
+> >           test_thread_flag(TIF_KERNEL_FPSTATE))
+> >               fpsimd_load_kernel_state(current);
+> > -     else
+> > -             clear_thread_flag(TIF_KERNEL_FPSTATE);
+> > +     else if (test_and_clear_thread_flag(TIF_KERNEL_FPSTATE))
+> > +             if (cmpxchg(&current->thread.kernel_fpsimd_state, s, NULL) != s)
+> > +                     BUG();
+>
+> I always question BUG() uses -- is there a recoverable way to deal with
+> a mismatch here? I assume not and that this is the best we can do, but I
+> thought I'd just explicitly ask. :)
+>
 
-Literally next in my queue, so that will happen in minutes..
+So this fires when kernel_neon_end() passes a different buffer than
+the preceding kernel_neon_begin(), but the only purpose of passing it
+twice is this particular check.
 
-           Linus
+So perhaps this one can be demoted to a WARN() instead. The preceding
+one will fire if kernel_neon_begin() is called and the recorded buffer
+pointer is still set from a previous NEON block. Perhaps the same
+applies there too: the warning is about something that already
+happened, and we can actually proceed as usual.
+
+TL;DR yes let's WARN() instead in both cases.
 
