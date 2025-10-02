@@ -1,157 +1,308 @@
-Return-Path: <linux-kernel+bounces-839844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FDC3BB2907
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 07:52:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EE175BB290A
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 07:53:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E128719241FC
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 05:52:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72F61192412A
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 05:53:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E3CC25DCF0;
-	Thu,  2 Oct 2025 05:52:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78898258EF0;
+	Thu,  2 Oct 2025 05:53:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="WIwqQBCo"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CMQ+hEf/"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 647871482F2
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 05:52:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDAFD23C8C7
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 05:53:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759384330; cv=none; b=hokLVLZQWML8zCOYOZcCngmtiEp4jBxZfPFu6A6PfX5Irp3sQKszHqUwCeG4pxmInyyUfUCQyLm9ZXaWdFJq/7oy+OOFSvy8FjT0XZKonOaVgFxWf58VHHIGyv9YXryvlYyYY6jTMxl/AiRlsCearWlc6hIp5RGYs4ttniAA/R8=
+	t=1759384408; cv=none; b=uO/J5TUe9+91fpf8SdQTCxLYveQWi48vH5rnmKkU8PHwKWakRI4Tn/eoEE2X38ZrY9+A1L95JBfT8Ra1DDidlzYWR3Qp3NCLdql+zIdLMSDNEA4Ov8qyOVNS1WaznHIDkEuZC/xqlsoxxA1OrpLY22gpNBVBLQTxb2Q3AOgMZZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759384330; c=relaxed/simple;
-	bh=Agg+E4DIFeHcuBl0hIxPmI2qeA1bZ20Km7tQRUz5yMM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bS9du2UziI9zNpMDaQFi7T1CFXxkgjFh5WPP0BDcj/C/VHIBsNSu5xeJs5ubN+dhapf8fBIhzjotBmFOI94A28QOokt5XEucl8gHLhB2FRdCkXLMV+HB99/kMXZlqEQrrDZtoupac9/5W38IU1QWEo+kBH3SJoglEEau+IlmtTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=WIwqQBCo; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 591IbwKb017638
-	for <linux-kernel@vger.kernel.org>; Thu, 2 Oct 2025 05:52:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=WdABpfF7OkNfgDykEBK+TNid
-	8dXX225sHpffd9eNLq8=; b=WIwqQBCokKCgNxQ3pI5lNTJaNOkRiWOC0T7idosG
-	3A8ZMrvk6RGRfkgz9a7z/v4r+H5jnsw8rcvfQH12372nqpQ6xiIWJjUhA7vi0Cfn
-	h9vWM8jyIbUJYLuUlpUnMtXWW0ebSXuCeawqSBqNaES8gCIPb/t4sqZgWDS2POYl
-	gRLnD04bkekDvgGv/ZbU8W0yDfYg22BJoga+CZ0f8AA8iiAvGAijgbKtPP+UjzEw
-	MiMUGWWsH4fNPIvjYwQcyrD+ZAjAam8ZpdAcYOgYbbwbsmWhRy0UHSFbMCuzw8aB
-	HbK6H//2ubOI2fS1z7EobRVKS/PoJ9ol/j5Omai3Uhd+Iw==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49fyrf8cqj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 05:52:06 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4de801c1446so16613381cf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 22:52:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759384326; x=1759989126;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1759384408; c=relaxed/simple;
+	bh=bDK0BKszzkg08kpRulnBhwtMG4WgCeKIHAxehuORN/o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o7ZTNIPsJHYKmQcheWpVlskH4DwGxcYUo9VaLoLs0Q6YOESrqaqQsjnMcIeEu4Hl30IamRVPIDvuG+NnZEc8rw3L6BjOU9yKKRAeftna8++wlOjkCWiG41sVcfmn/MclgK725Ti0gJtejjlbSODTIiKjtiTZPnuC4CMDa38cDW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CMQ+hEf/; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-636de696e18so1364110a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 22:53:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759384405; x=1759989205; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WdABpfF7OkNfgDykEBK+TNid8dXX225sHpffd9eNLq8=;
-        b=vWvZ7XUCsXC7vwbp54mlZvZj/t8xoFRCpTC/zVTJrhkDxuOSZpONS1U0KwpLLD3J26
-         djJVvKgVHTCvutK2Jp7HO1bZr0VGOzHB/ho2JCY8XsqoYi1mjJqEfx+j8XPdcvYZt5ZU
-         +SUqxOujVNsqPy5Z3uHqaF5UH9co9BedejMPkM1vkT4vl50dVrZkZtd8RWluZ/ZzVy9V
-         61gIom1PooExoAjoWOyH1Ks/k9/UyPlVPlvc7+pvoxA1IXp+2337qWa0hL9LzxEWAU0R
-         ytwglAbQngkdkup8Aa1O2hHdUlDwu8k4LS6LgGdKOQSCXnK+YXPVptGvcmCmXk+M50zC
-         ZBCg==
-X-Forwarded-Encrypted: i=1; AJvYcCX8rjJdQbgQtORZ3UmavurjjumSRmTvqGpqgLw9YNMtaMGqPCHDOEXnE3mq7ZN6uyzO1cZiJwz7XRIkfSM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw68djsltYxHOInkei5X/upbwNHraNJBxFmVuMfHasQ4qJfgF6c
-	CNknya7xfzARgEZ4VduedsPX7VAreUyBz4uv2CwkoAYXgN2nCPnC4f9o1kQct0sJGLWejQu71qC
-	DkKty7dGUmtTwIwFUA1lBz2MC/nTcDpVp4yDUT2a2plRDamrOilVGLnN0/zrqgq1nayk=
-X-Gm-Gg: ASbGncs1ohcQApwEiCkH8UnUsdG3Lcvdu/vv9v1+5+8b5HAlMd+PYumwSIa3owspLA9
-	i+F05PuLVlwaBUL/3QuuJczm7pjX49dlapMUyOBQvBswEoV7VcfYektTWZuqPl6k3tuoqRYU4TX
-	W8Ur4OEY9+Qb2towArPgHhQyKIv5m9syMXAorAv94M9GEmR+Oa42BnvKSd47s4DBt3XKdlFSMpO
-	L5gnTlBe2xltynO8q9UsNW7qUQQy//sbzjhky8qerTCPYFAgAzVO9J2LbJw/HAZfwaRuGuglfyc
-	ijS8GXe+Fyi2J3+4n9QxDXtLgStwADMi1VO/ItlqGFCid2ZqhDaP2Rpf1r2BofM0cJaFDrR94PK
-	FqVv1QB7+pH3t8VArOWnpRYFxlOJfyi64I1iTofUhC7z91x8UUz3nfOwc2Q==
-X-Received: by 2002:ac8:4750:0:b0:4d8:afdb:1266 with SMTP id d75a77b69052e-4e41e15df2dmr63014301cf.45.1759384325976;
-        Wed, 01 Oct 2025 22:52:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG7M3wajxRbMA9ybuJM3HAEueisvDG+vjhfv/Zrn+Q6Om5w1ydX1jy3VPsPX7ig1Lr6pViCDQ==
-X-Received: by 2002:ac8:4750:0:b0:4d8:afdb:1266 with SMTP id d75a77b69052e-4e41e15df2dmr63014071cf.45.1759384325457;
-        Wed, 01 Oct 2025 22:52:05 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58b01194e59sm523439e87.75.2025.10.01.22.52.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Oct 2025 22:52:04 -0700 (PDT)
-Date: Thu, 2 Oct 2025 08:52:02 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Vishal Sagar <vishal.sagar@amd.com>,
-        Anatoliy Klymenko <anatoliy.klymenko@amd.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Michal Simek <michal.simek@amd.com>, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Pekka Paalanen <ppaalanen@gmail.com>
-Subject: Re: [PATCH v6 01/11] drm/fourcc: Add warning for bad bpp
-Message-ID: <vj3budjobsehi3hl2mcmondt2f4giups6cxeiraeo2ensgw3du@smxivopyzfez>
-References: <20251001-xilinx-formats-v6-0-014b076b542a@ideasonboard.com>
- <20251001-xilinx-formats-v6-1-014b076b542a@ideasonboard.com>
+        bh=bnIr4GHzTI6LNn4Jxf6A7mZnpuljV+oGxw67DQVrxLU=;
+        b=CMQ+hEf/j5opjUIZDiUy0ux1G/OM0RKBUHQE09xPQdWgYQSPDDodeCfZWyDgU5l30G
+         ByEFRNMJYHl9oTrDLKWwbk0ZUvNRon+Ww2yal8fBHlMh4cQDR0LpsBeEUz8jDb8wFjkA
+         vsPSVyY0OXR7RRQFsJqGSPgVGuli1r4crpgM5L3alvEiKeNJvJkm0lc5xPqOQP3J7EBk
+         hOL4QlJzqPMyvXMntSeOg25Ah9qTTnyjeKU8xAyksR0X5k2lAQpTENwD8vzSNIADQPN9
+         LTTgI4zJiv99eqSDzt/e1Qjx6khFvEnai62N+hjBsvRbJ5NlEcYHNBdM4NU54GEqla4r
+         3mXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759384405; x=1759989205;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bnIr4GHzTI6LNn4Jxf6A7mZnpuljV+oGxw67DQVrxLU=;
+        b=SeEhBHlu3UU0HEZFa0gGx5X9BJsGGh3M/jp0gIKbqTymKP24I4Oip+WLO2WIuYqWor
+         4Bdb960e1iaAUi+Wi9ypp18MXfHnXLZ+RgsYPYfQePS/ASTXOxXt9Kkkz1YYu2quoWVe
+         hMYWwd3mo2M+EMD7mJDF3Ltp0HTT6pk3/cjQht5/FAVnRi5qDz5AP1EgOdesfrAmNmfl
+         n9yowU6CFE3z5RPTUixuXq1DIVQKgVcU72jlMfTBBL+z+y/AsnIF2ibwjYwarrgPAEwp
+         8Mq0YLlcNzFRq1Pz0HIPLSnoXkqswcb2OUmMLOZ5eO/rznCRStQuQDt0g7QqxjJxkcUr
+         vAxg==
+X-Gm-Message-State: AOJu0Yyhk3DqA+r7/3NcA34dRzSu3JWQPoH3wPUTbVkd+6H5AdH9rT36
+	ilf+Ey7uyR3dZ1j9Oz+9IX1GTb9RHrsTckzrwkpm/kGSmDxQgo1yyE5ik/8TGYhuxwqiiTnMEqK
+	c53EVZ/dSvWguFUNbKfOffOBh4hvPyS0=
+X-Gm-Gg: ASbGnctZKj3BqUumAHlnXHrwRATPgKj4+ynkCXGOqOuM84+dx+mhL5CK8uvVzTIhS+K
+	HQDcbtr0kGbqpPvqldx08gqUJIk3tB3l3Dkth8vphJ/P1eWK+FJL/1Mpk5qNscLrCbEF7eHT956
+	mIvLsp6O8KgitajV0jBoYilsO1rlDr6nppb/acurmXBlPdn6ee0xO0Lju2Qx9Dutucbbzhv6e7a
+	wkFFQEZc2WVxybhGNEDkN0yvXVSwu46cS6A/fY=
+X-Google-Smtp-Source: AGHT+IFkZKlYi47ykcRbgLwThh1IjKucMbfY/9FgRLta22wdRQ9Vr9Z1efF1b92CRz4T2aG4ce8yQwmW9h+2mYBJ4AI=
+X-Received: by 2002:a17:907:d18:b0:b40:9dbe:5b57 with SMTP id
+ a640c23a62f3a-b46e839bfe9mr818832666b.62.1759384404702; Wed, 01 Oct 2025
+ 22:53:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251001-xilinx-formats-v6-1-014b076b542a@ideasonboard.com>
-X-Proofpoint-ORIG-GUID: glFdSm85Q9uKsiEKi6uZ99yQKLmOzE7Q
-X-Proofpoint-GUID: glFdSm85Q9uKsiEKi6uZ99yQKLmOzE7Q
-X-Authority-Analysis: v=2.4 cv=etzSD4pX c=1 sm=1 tr=0 ts=68de1306 cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=P1BnusSwAAAA:8 a=EUspDBNiAAAA:8 a=iDPJBouE--3TGtnIlUQA:9
- a=CjuIK1q_8ugA:10 a=a_PwQJl-kcHnX1M80qC6:22 a=D0XLA9XvdZm18NrgonBM:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI5MDE3NSBTYWx0ZWRfXwbRgHQsfyT9r
- XMUQNP5/bm5eV9ZPqZpmryH4zdtTKg2RoqPNw9JPXBeELRULgPGcseg5XMKHOIO8vLWJ/XpESXN
- 4lpc6kfl7sykW6Rtqhy1y0UTv9gDK9Oj4SQUbyCJaQ2vGajaJNkpCxTzfamMXEC5fD25xMgfr3j
- NBa9ZZbv98kOlzZQzfj2cSe6ms/Nlp9EybWmx2oE5XYyjNiik1JsAkleflzPPSJ/FPXrECBGcOs
- BRU5XutekNPpmOyNOd7LoSJIEEU5U6mxw2gj8SGq3P8AFEViqkk2XT24Rf0AMAD5dz8fA4H87E9
- qtRZ5n7FYL5LTgcQW8PGZfkH31p/UrVzSH+KlKmgVLWKXBYYUc4DERQ+jqfCHMBuqmLg+RWUBvC
- 3Law5zGRw7lgAgqlt85cHap145AF1g==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-02_02,2025-09-29_04,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 lowpriorityscore=0 clxscore=1015 suspectscore=0 malwarescore=0
- priorityscore=1501 spamscore=0 impostorscore=0 adultscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509290175
+References: <20251001111451.299163-1-yongxuan.wang@sifive.com> <20251001111451.299163-3-yongxuan.wang@sifive.com>
+In-Reply-To: <20251001111451.299163-3-yongxuan.wang@sifive.com>
+From: Andy Chiu <andybnac@gmail.com>
+Date: Thu, 2 Oct 2025 00:53:13 -0500
+X-Gm-Features: AS18NWAZQYng18g_g5Us12uur8Cnt5qYB0T36pxKkKIeySPGBry4GZZ7mTfz4Gw
+Message-ID: <CAFTtA3MB0Oxe5Wy_Bq-uhijz2h6o0ZWezvoJPiXdjEmcGd6S4A@mail.gmail.com>
+Subject: Re: [PATCH v 2/2] selftests: riscv: Add test for the Vector ptrace interface
+To: Yong-Xuan Wang <yongxuan.wang@sifive.com>
+Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	greentime.hu@sifive.com, vincent.chen@sifive.com, 
+	Shuah Khan <shuah@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Alexandre Ghiti <alex@ghiti.fr>, Charlie Jenkins <charlie@rivosinc.com>, linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 01, 2025 at 04:22:13PM +0300, Tomi Valkeinen wrote:
-> drm_format_info_bpp() cannot be used for formats which do not have an
-> integer bits-per-pixel in a pixel block.
-> 
-> E.g. DRM_FORMAT_XV15's (not yet in upstream) plane 0 has three 10-bit
-> pixels (Y components), and two padding bits, in a 4 byte block. That is
-> 10.666... bits per pixel when considering the whole 4 byte block, which
-> is what drm_format_info_bpp() does. Thus a driver that supports such
-> formats cannot use drm_format_info_bpp(),
-> 
-> It is a driver bug if this happens, but so handle wrong calls by
-> printing a warning and returning 0.
-> 
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Hi Yong-Xuan,
+
+I found some issues which deserve a re-roll:
+
+On Wed, Oct 1, 2025 at 6:15=E2=80=AFAM Yong-Xuan Wang <yongxuan.wang@sifive=
+.com> wrote:
+>
+> Add a test case that does some basic verification of the Vector ptrace
+> interface. This forks a child process then using ptrace to inspect and
+> manipulate the v31 register of the child.
+>
+> Signed-off-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
 > ---
->  drivers/gpu/drm/drm_fourcc.c | 14 +++++++++++---
->  1 file changed, 11 insertions(+), 3 deletions(-)
-> 
+>  tools/testing/selftests/riscv/vector/Makefile |   5 +-
+>  .../selftests/riscv/vector/vstate_ptrace.c    | 132 ++++++++++++++++++
+>  2 files changed, 136 insertions(+), 1 deletion(-)
+>  create mode 100644 tools/testing/selftests/riscv/vector/vstate_ptrace.c
+>
+> diff --git a/tools/testing/selftests/riscv/vector/Makefile b/tools/testin=
+g/selftests/riscv/vector/Makefile
+> index 6f7497f4e7b3..45f25e9dd264 100644
+> --- a/tools/testing/selftests/riscv/vector/Makefile
+> +++ b/tools/testing/selftests/riscv/vector/Makefile
+> @@ -2,7 +2,7 @@
+>  # Copyright (C) 2021 ARM Limited
+>  # Originally tools/testing/arm64/abi/Makefile
+>
+> -TEST_GEN_PROGS :=3D v_initval vstate_prctl
+> +TEST_GEN_PROGS :=3D v_initval vstate_prctl vsate_ptrace
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Please s/vsate_ptrace/vstate_ptrace
 
+Otherwise we will not get the program compiled
 
--- 
-With best wishes
-Dmitry
+>  TEST_GEN_PROGS_EXTENDED :=3D vstate_exec_nolibc v_exec_initval_nolibc
+>
+>  include ../../lib.mk
+> @@ -26,3 +26,6 @@ $(OUTPUT)/v_initval: v_initval.c $(OUTPUT)/sys_hwprobe.=
+o $(OUTPUT)/v_helpers.o
+>  $(OUTPUT)/v_exec_initval_nolibc: v_exec_initval_nolibc.c
+>         $(CC) -nostdlib -static -include ../../../../include/nolibc/nolib=
+c.h \
+>                 -Wall $(CFLAGS) $(LDFLAGS) $^ -o $@ -lgcc
+> +
+> +$(OUTPUT)/vstate_ptrace: vstate_ptrace.c $(OUTPUT)/sys_hwprobe.o $(OUTPU=
+T)/v_helpers.o
+> +       $(CC) -static -o$@ $(CFLAGS) $(LDFLAGS) $^
+> diff --git a/tools/testing/selftests/riscv/vector/vstate_ptrace.c b/tools=
+/testing/selftests/riscv/vector/vstate_ptrace.c
+> new file mode 100644
+> index 000000000000..8a7bcf318e59
+> --- /dev/null
+> +++ b/tools/testing/selftests/riscv/vector/vstate_ptrace.c
+> @@ -0,0 +1,132 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +#include <stdio.h>
+> +#include <stdlib.h>
+> +#include <asm/ptrace.h>
+> +#include <linux/elf.h>
+> +#include <sys/ptrace.h>
+> +#include <sys/uio.h>
+> +#include <sys/wait.h>
+> +#include "../../kselftest.h"
+> +#include "v_helpers.h"
+> +
+> +int parent_set_val, child_set_val;
+> +
+> +static long do_ptrace(enum __ptrace_request op, pid_t pid, long type, si=
+ze_t size, void *data)
+> +{
+> +       struct iovec v_iovec =3D {
+> +               .iov_len =3D size,
+> +               .iov_base =3D data
+> +       };
+> +
+> +       return ptrace(op, pid, type, &v_iovec);
+> +}
+> +
+> +static int do_child(void)
+> +{
+> +       int out;
+> +
+> +       if (ptrace(PTRACE_TRACEME, -1, NULL, NULL)) {
+> +               ksft_perror("PTRACE_TRACEME failed\n");
+> +               return EXIT_FAILURE;
+> +       }
+> +
+> +       asm volatile (".option push\n\t"
+> +               ".option        arch, +v\n\t"
+
+As mentioned before, please use ".option arch, +v,-c\n\t" or ".option
+norvc\n\t" and +=3D4 when advancing the pc
+
+> +               "vsetivli       x0, 1, e32, m1, ta, ma\n\t"
+> +               "vmv.s.x        v31, %[in]\n\t"
+> +               "ebreak\n\t"
+> +               "vmv.x.s        %[out], v31\n\t"
+> +               ".option pop\n\t"
+> +               : [out] "=3Dr" (out)
+> +               : [in] "r" (child_set_val));
+> +
+> +       if (out !=3D parent_set_val)
+> +               return EXIT_FAILURE;
+> +
+> +       return EXIT_SUCCESS;
+> +}
+> +
+> +static void do_parent(pid_t child)
+> +{
+> +       int status;
+> +       void *data =3D NULL;
+> +
+> +       /* Attach to the child */
+> +       while (waitpid(child, &status, 0)) {
+> +               if (WIFEXITED(status)) {
+> +                       ksft_test_result(WEXITSTATUS(status) =3D=3D 0, "S=
+ETREGSET vector\n");
+> +                       goto out;
+> +               } else if (WIFSTOPPED(status) && (WSTOPSIG(status) =3D=3D=
+ SIGTRAP)) {
+> +                       size_t size, t;
+
+unused variable t
+
+> +                       void *data, *v31;
+> +                       struct __riscv_v_regset_state *v_regset_hdr;
+> +                       struct user_regs_struct *gpreg;
+> +
+> +                       size =3D sizeof(*v_regset_hdr);
+> +                       data =3D malloc(size);
+> +                       if (!data)
+> +                               goto out;
+> +                       v_regset_hdr =3D (struct __riscv_v_regset_state *=
+)data;
+> +
+> +                       if (do_ptrace(PTRACE_GETREGSET, child, NT_RISCV_V=
+ECTOR, size, data))
+> +                               goto out;
+> +
+> +                       ksft_print_msg("vlenb %ld\n", v_regset_hdr->vlenb=
+);
+> +                       data =3D realloc(data, size + v_regset_hdr->vlenb=
+ * 32);
+
+realloc may give a new pointer so v_regset_hdr has to be updated here
+before the next use
+
+> +                       if (!data)
+> +                               goto out;
+> +                       v31 =3D (void *)(data + size + v_regset_hdr->vlen=
+b * 31);
+> +                       size +=3D v_regset_hdr->vlenb * 32;
+> +
+> +                       if (do_ptrace(PTRACE_GETREGSET, child, NT_RISCV_V=
+ECTOR, size, data))
+> +                               goto out;
+> +
+> +                       ksft_test_result(*(int *)v31 =3D=3D child_set_val=
+, "GETREGSET vector\n");
+> +
+> +                       *(int *)v31 =3D parent_set_val;
+> +                       if (do_ptrace(PTRACE_SETREGSET, child, NT_RISCV_V=
+ECTOR, size, data))
+> +                               goto out;
+> +
+> +                       /* move the pc forward */
+> +                       size =3D sizeof(*gpreg);
+> +                       data =3D realloc(data, size);
+> +                       gpreg =3D (struct user_regs_struct *)data;
+> +
+> +                       if (do_ptrace(PTRACE_GETREGSET, child, NT_PRSTATU=
+S, size, data))
+> +                               goto out;
+> +
+> +                       gpreg->pc +=3D 2;
+> +                       if (do_ptrace(PTRACE_SETREGSET, child, NT_PRSTATU=
+S, size, data))
+> +                               goto out;
+> +               }
+> +
+> +               ptrace(PTRACE_CONT, child, NULL, NULL);
+> +       }
+> +
+> +out:
+> +       free(data);
+> +}
+> +
+> +int main(void)
+> +{
+> +       pid_t child;
+> +
+> +       ksft_set_plan(2);
+> +       if (!is_vector_supported() && !is_xtheadvector_supported())
+> +               ksft_exit_skip("Vector not supported\n");
+> +
+> +       srandom(getpid());
+> +       parent_set_val =3D rand();
+> +       child_set_val =3D rand();
+> +
+> +       child =3D fork();
+> +       if (child < 0)
+> +               ksft_exit_fail_msg("Fork failed %d\n", child);
+> +
+> +       if (!child)
+> +               return do_child();
+> +
+> +       do_parent(child);
+> +
+> +       ksft_finished();
+> +}
+> --
+> 2.43.0
+>
+
+Thanks,
+Andy
 
