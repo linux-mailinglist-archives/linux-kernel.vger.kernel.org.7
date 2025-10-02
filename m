@@ -1,174 +1,138 @@
-Return-Path: <linux-kernel+bounces-839809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04333BB278D
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 06:17:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4C81BB2796
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 06:24:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D8761C4DA3
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 04:17:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 883A4422920
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 04:24:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C477E1C5D59;
-	Thu,  2 Oct 2025 04:17:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F969155CB3;
+	Thu,  2 Oct 2025 04:24:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KzHaU6Iu"
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZDg9C2M9"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73CE379CF
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 04:17:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 824753FB31
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 04:23:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759378638; cv=none; b=MB7L40xTbw3YXOSRLPl4HHNdct8+0hcVJAuMAdpmSZYbQPFSyxJmpGLElGeytbs+ChXYnvfOCEBXrD1ZCvCNt0RdW1kIAPtJUCEBrM2/SaR0Av9RrXUKOBVOB+nR0m0AfgozTJiyPORjfn0KjyWHOmYj7oeMBure8w90Ygn9DcY=
+	t=1759379041; cv=none; b=MeVK80Wdf/VBbvz7PFM1xyiWyatcCnXQisdo0m2as+rqkhW3j44ch5y2Jp4EDHlvGnyeUhNVnS7HDQaknC4/LH4WLPphjRof+z2UWLcMeNQGB6LXtYsYdgobq2IROtDWk3Ld0L9wcHPeKiK18sJarrJy56nl7yP6cL5llfKNpSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759378638; c=relaxed/simple;
-	bh=ctQddUgZm+88vHmtPzUekOskf2BJsO+AnrtcChvOlmA=;
+	s=arc-20240116; t=1759379041; c=relaxed/simple;
+	bh=ehu8376cUl/DJNnvCX5i0mJoP3uDOVuPTyuu4WOuiDI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jWQLmUTpT3jGhFhas1GBDV8W23cRyRg1RDSCWOlBrbdqJDOkj3gNDs5KaLSmt8zRXOLQdvmhL5BZs8xR30cGzDukQ138cZCd+THId7o5w+CnBfdfc+kM+OlvAGSVZ7jEdcPVOVrx8pcinmqtKiANNMFHu9y9hpYz7oKaP88T8GA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KzHaU6Iu; arc=none smtp.client-ip=209.85.217.54
+	 To:Cc:Content-Type; b=juKJw57eqWhUzz0jWFBbfKXpzWdGzz8P7WJovLO0Nlk0dc5YBEZ6058NQpxsbLIZ9yMPEl551niDjBHHGPmUUnx0NTpKGq35LFPrzNn4nAfaUl9G9K2ztBfX0DSJIgNwcyEujXMBuRJM6zE6Dtk30r+qIyspMxwO2ULEp30JptQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZDg9C2M9; arc=none smtp.client-ip=209.85.214.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-58de3ab1831so623643137.3
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 21:17:15 -0700 (PDT)
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-28832ad6f64so6327905ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 21:23:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759378634; x=1759983434; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1759379039; x=1759983839; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ctQddUgZm+88vHmtPzUekOskf2BJsO+AnrtcChvOlmA=;
-        b=KzHaU6Iu6X0WFjEHN18TskRGBspqJmZIxR0MBT3G4JQjRuNGbYq+M1mgM7jHIdKaF3
-         hmjqYOycGR4LUuXD7mT9T7phwELr58pFHs1FwAHf3ZeS3wUcjjPukmlhh3C/DCwT15jZ
-         Uh86fBVfokWg3HSuYTnKtFbNUsylN6zXKGAyb0YOe4HZuHAG3wFXxEpJTIz89bW3iCIl
-         3XyA3BOxm8sm4qcfz9Y+fQ/yHDRAvJqZjSHOoIKZa4d7UyWDfmCTahz/F/5mxPDfoVTf
-         mB+xQ9N8s/gQku6SsqaizJUbwGk+d2tMT7kCjzrXXDgYgaEXNJaLY8qEHIRaa4HqoKef
-         fuag==
+        bh=y2QRGst729/DWiP4I9nqZ3Qxmv8ECUfQin2YGfwodis=;
+        b=ZDg9C2M9Uf+/XEzOaIAIqAKsFjYHGWSFsWmW/t7xD2L7GGT3WSCcguAQsCyJ5vYzYd
+         Tm7B3LvbT7ZwwxwJzWG+Q2AAWXY2y8DlY0TxhFj4Ha/TEWJHUL6FMjnVG0cHZ7DW/p7Z
+         te+kgOR3JiTBiz5F6VkmXZJFfE+ZLOs3rnp7daTICR4XkeUPu/4VLncQGHgL2Us7PwQ6
+         pgW4quJsmCuApTWyP9L7qI95vG4rYFP1qXIUyErOBpoakJDOdNYXGqFyvWc5S3itljxV
+         YZtUpaeoOEUgfGkffQAiiRBcVbIyxengJZOdYAq4qQCixGGXehL9+xYmGeOhb8cfDYY9
+         6XRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759378634; x=1759983434;
+        d=1e100.net; s=20230601; t=1759379039; x=1759983839;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ctQddUgZm+88vHmtPzUekOskf2BJsO+AnrtcChvOlmA=;
-        b=joyRs7hk53to8XkXBcIJAZVMh0JA+ZpCyeYUN6O+Cd91aNg88u/RgkMxkiJxKgK67J
-         5EFybWfatU5Me5Iqkju1nP8nfEX1m7uSNQ0Qhxlw4JNu/FJF4a9N/xCSKMHyyRg9ZAYc
-         ItBZzsT57usemOzTnfQjnB0kZExd6CAfPke21psoLRC6gzO+z2XENCS/7lztF962VfWU
-         RZGMuPZ1WuTAOHiYHsL23uoLhHHf+whIac2IoXrZiH8K8bVTTa3xQS7kL7xyn9Jc1fgm
-         uNOahSrsUKtJASoMzXFXxFgeV+G4yub4FCVtdQwEDDGffyPZnYjArxAWlmi9X2sYJ3pf
-         56DQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXKbg4GS/SRc9VYGuKfNBY7U+xWpxP0AxqqYOntiVeEKiKI1LtiYS3r2h62Fst12VYpmp/erB4WuKRwx8M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSdPTOGFuMdeBvIUJY6Ym0n0aDYaMfrLwLSB5QR2FWX1bDhGNS
-	f6Yi7sikS3PfJ3sLcpzQcNZKUiWRKOPpPq08MOmKEImjlTZZJTpzqeWd+qpGLMi4uzHjpqWyMjV
-	ktx22HbGe4J+nsUvDuqWtlJEfervLIpQ=
-X-Gm-Gg: ASbGnctdVtpiQPzieEBpdlvrnJyVQr29Pl3pOMNSDOVGLJvTprL+vSy7mTP7KbhHDik
-	4By2OC+JcomV1ZBpO76hJSsEVYIVLz4zTCTpdQQl6V/mkLQOulr3B32v3QUHkCuPYYcWY5gFB4M
-	ytH/InZNKNwiCd25JBh+Dasi83+x2ztvBbPZE1tUjXfXw0HOYT70aitj6wkkBPnmShY+fkPG+0v
-	p/nMDMCF3Rm52/k3rkQjE53zDx6bruvi2Z51eSrIgnGRCL9WSNMYd5rOMmd1Q7RTtNRCpy6GvQ=
-X-Google-Smtp-Source: AGHT+IHtvWQt8jonztmIlXZVLrosCzlBFZCwfKRU9/rXACxnEYGw3JcofNOIt435bpI1Zm7zqg5PCoJh2gMscknY7Rc=
-X-Received: by 2002:a05:6102:41a1:b0:59d:b0f7:664c with SMTP id
- ada2fe7eead31-5d3fe7043d6mr3036274137.35.1759378634290; Wed, 01 Oct 2025
- 21:17:14 -0700 (PDT)
+        bh=y2QRGst729/DWiP4I9nqZ3Qxmv8ECUfQin2YGfwodis=;
+        b=PuAx9VZxqIkaxOy+d395I8uxZHbTq1uOQ7ovJza3ghAfV39/tyRubtpre0msVievNi
+         xMrC3kIrm03VsrOqLjtuSwbwXPHVu31T8XxspnY2/jM5Z90sAgeUOTtLLo+T8ihES++J
+         yqO7TQZLB97TNhfQQZnZIp83Rc6hDHjJSfmuEebGpP401mScETQGQa175y0z5lwhGywH
+         gw1D/zp8SVAr/QLxXLeQUAsNK4ZyJVEMjOJXiBFc/uWPL4M6oIg06w7oHPtusrQtfS2M
+         QMRut4QFiPYtH5WSFh8D7ljnCrp6zOxGS3kkOF3B/nCiadeXlQSjLU9yT/Lmugl6vMA0
+         +Q/A==
+X-Forwarded-Encrypted: i=1; AJvYcCUJ9xvqvJpnWwlxZfKIrHay8Y9N1KtPsmwuvB2kKY/OJjS/9eW0LqFiAZLEX10T9WAaLbjUQLPdTX8/idw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzA6NO7Sp81HwcqlYVayQWSybYpTR2KWPc9lAEs5xR8yV5gxS9x
+	murs/zXEKITu95iHNjCP8fPzHCTra7qCTtGQJSEQltwJWddfNfpNH9O8PNAVVzFzB2Vdq+muZlv
+	0R3A6WsW3/pU7GwO1AxSOCbcCtwjpca8=
+X-Gm-Gg: ASbGncvL+IJSjLqHO8lXMcX4nndU2m5PvYB+7oRy7I6Sek+/ONif64IS+eT/Q4P6Y3q
+	SQ9fB2ShJf7QiPzr8RFR4S5FR1meaUDK0mvkmPWmq83tQU+Ggi9cCVCHdvdssS5c8AfnUbxZsIj
+	Xaw8/JkuRy6BH71b52oKRepGUVeRSzThDrM58v3A9RrKtSfafAHkhgVNk2NEGFkQkVVw7eeLlt8
+	+Q51NQmd7YEkO8Fg/0TPawpzEvANTFJ
+X-Google-Smtp-Source: AGHT+IHgkuju9CUwpPT0WwGqt9+xSzAjEsWxHRza/bmAnljDvo45aLWn/1dVAmMuO1OQzeCs6YLRY6uoy1Dxbms4f2k=
+X-Received: by 2002:a17:903:3c2d:b0:269:8072:5bda with SMTP id
+ d9443c01a7336-28e7f45aa2cmr81883465ad.54.1759379038825; Wed, 01 Oct 2025
+ 21:23:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250919212650.GA275426@fedora> <CAM_iQpXnHr7WC6VN3WB-+=CZGF5pyfo9y9D4MCc_Wwgp29hBrw@mail.gmail.com>
- <20250922142831.GA351870@fedora> <CAM_iQpWO71vSV_0qXiUYeKYZMYF0xWNz8MrUVRkqKwDEtQvKqA@mail.gmail.com>
- <20250923170545.GA509965@fedora> <3b1a1b17-9a93-47c6-99a1-43639cd05cbf@redhat.com>
- <20250924125101.GA562097@fedora> <CAM_iQpWRZ-vihMEa=k-j9EYN9itUeZLhZ14AoCvZ9mturFxAyw@mail.gmail.com>
- <20250924190316.GA8709@fedora> <CAM_iQpXnvyZWrv4W45SBTDV-tCXU4Fz1=S8z_0s5en+U29vSZQ@mail.gmail.com>
- <20250929151149.GB81824@fedora>
-In-Reply-To: <20250929151149.GB81824@fedora>
-From: Cong Wang <xiyou.wangcong@gmail.com>
-Date: Wed, 1 Oct 2025 21:17:02 -0700
-X-Gm-Features: AS18NWBSFERQychThKDKhC7xP4aDfnWKA8U5c5GLpDIk74WF-1WcxMsDvgDcjOU
-Message-ID: <CAM_iQpVRruWNnMtP2BKfQJrHnA_B+ea84GbO_C2rF6cuJcj5_Q@mail.gmail.com>
-Subject: Re: [RFC Patch 0/7] kernel: Introduce multikernel architecture support
-To: Stefan Hajnoczi <stefanha@redhat.com>
-Cc: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org, 
-	pasha.tatashin@soleen.com, Cong Wang <cwang@multikernel.io>, 
-	Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>, 
-	Alexander Graf <graf@amazon.com>, Mike Rapoport <rppt@kernel.org>, Changyuan Lyu <changyuanl@google.com>, 
-	kexec@lists.infradead.org, linux-mm@kvack.org, multikernel@lists.linux.dev, 
-	jasowang@redhat.com
+References: <20251001-yv5_add_dts-v3-0-54190fbc0785@gmail.com>
+ <20251001-yv5_add_dts-v3-1-54190fbc0785@gmail.com> <20251001-bonding-surging-af8cd0d09e07@spud>
+In-Reply-To: <20251001-bonding-surging-af8cd0d09e07@spud>
+From: Kevin Tung <kevin.tung.openbmc@gmail.com>
+Date: Thu, 2 Oct 2025 12:23:47 +0800
+X-Gm-Features: AS18NWCewZBOJ3_bvPqMIiAefrcZiLRdaKPOQ3p104CWc2zI58_oYaZj_KaxEko
+Message-ID: <CABh9gBcKt1zqvMQ=390HESPR5KrA42jaMFj9Ca4qmeS0d0ToAw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] dt-bindings: arm: aspeed: add Meta Yosemite5 board
+To: Conor Dooley <conor@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
+	Andrew Jeffery <andrew@codeconstruct.com.au>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Magnus Damm <magnus.damm@gmail.com>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Amithash Prasasd <amithash@meta.com>, Kevin Tung <Kevin.Tung@quantatw.com>, 
+	Ken Chen <Ken.Chen@quantatw.com>, Leo Yang <Leo-Yang@quantatw.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 29, 2025 at 8:12=E2=80=AFAM Stefan Hajnoczi <stefanha@redhat.co=
-m> wrote:
+On Thu, Oct 2, 2025 at 2:33=E2=80=AFAM Conor Dooley <conor@kernel.org> wrot=
+e:
 >
-> On Sat, Sep 27, 2025 at 12:42:23PM -0700, Cong Wang wrote:
-> > On Wed, Sep 24, 2025 at 12:03=E2=80=AFPM Stefan Hajnoczi <stefanha@redh=
-at.com> wrote:
-> > >
-> > > Thanks, that gives a nice overview!
-> > >
-> > > I/O Resource Allocation part will be interesting. Restructuring exist=
-ing
-> > > device drivers to allow spawned kernels to use specific hardware queu=
-es
-> > > could be a lot of work and very device-specific. I guess a small set =
-of
-> > > devices can be supported initially and then it can grow over time.
+> On Wed, Oct 01, 2025 at 04:47:50PM +0800, Kevin Tung wrote:
+> > Document the new compatibles used on Meta Yosemite5.
 > >
-> > My idea is to leverage existing technologies like XDP, which
-> > offers huge benefits here:
-> >
-> > 1) It is based on shared memory (although it is virtual)
-> >
-> > 2) Its API's are user-space API's, which is even stronger for
-> > kernel-to-kernel sharing, this possibly avoids re-inventing
-> > another protocol.
-> >
-> > 3) It provides eBPF.
-> >
-> > 4) The spawned kernel does not require any hardware knowledge,
-> > just pure XDP-ringbuffer-based software logic.
-> >
-> > But it also has limitations:
-> >
-> > 1) xdp_md is too specific for networking, extending it to storage
-> > could be very challenging. But we could introduce a SDP for
-> > storage to just mimic XDP.
-> >
-> > 2) Regardless, we need a doorbell anyway. IPI is handy, but
-> > I hope we could have an even lighter one. Or more ideally,
-> > redirecting the hardware queue IRQ into each target CPU.
+> > Signed-off-by: Kevin Tung <kevin.tung.openbmc@gmail.com>
 >
-> I see. I was thinking that spawned kernels would talk directly to the
-> hardware. Your idea of using a software interface is less invasive but
-> has an overhead similar to paravirtualized devices.
-
-When we have sufficient hardware resources or prefer to use
-SR IOV, the multikernel could indeed access hardware directly.
-Queues are an alternative choice for elasticity.
-
+> You've repeatedly ignored my ack, so I assume you don't want it.
+> Maybe you want a nak instead?
 >
-> A software approach that supports a wider range of devices is
-> virtio_vdpa (drivers/vdpa/). The current virtio_vdpa implementation
-> assumes that the device is located in the same kernel. A
-> kernel-to-kernel bridge would be needed so that the spawned kernel
-> forwards the vDPA operations to the other kernel. The other kernel
-> provides the virtio-net, virtio-blk, etc device functionality by passing
-> requests to a netdev, blkdev, etc.
 
-I think that is the major blocker. VDPA looks more complex than
-queue-based solutions (including Soft Functions provided by mlx),
-from my naive understanding, but I will take a deep look at VDPA.
+Apologies for ignoring your ack repeatedly, that was not intentional.
+I truly value your review and will make sure to include it. Would you
+suggest that I send a v4 to pick it up, or is it fine to carry it
+forward in the next revision?
+Thank you again for taking the time to review my patches.
 
->
-> There are in-kernel simulator devices for virtio-net and virtio-blk in
-> drivers/vdpa/vdpa_sim/ which can be used as a starting point. These
-> devices are just for testing and would need to be fleshed out to become
-> useful for real workloads.
->
-> I have CCed Jason Wang, who maintains vDPA, in case you want to discuss
-> it more.
-
-Appreciate it.
-
-Regards,
-Cong Wang
+Kevin
+> > ---
+> >  Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml b=
+/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+> > index 456dbf7b5ec8f4442be815284e1ad085287dc443..6f2b12f96bd6ce31b4175e1=
+09a78d931dffdfe28 100644
+> > --- a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+> > +++ b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+> > @@ -89,6 +89,7 @@ properties:
+> >                - facebook,minerva-cmc
+> >                - facebook,santabarbara-bmc
+> >                - facebook,yosemite4-bmc
+> > +              - facebook,yosemite5-bmc
+> >                - ibm,blueridge-bmc
+> >                - ibm,everest-bmc
+> >                - ibm,fuji-bmc
+> >
+> > --
+> > 2.51.0
+> >
 
