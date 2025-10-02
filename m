@@ -1,91 +1,84 @@
-Return-Path: <linux-kernel+bounces-839764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DC7FBB25C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 04:26:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9935BBB25D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 04:27:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D76174A4B54
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 02:26:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 594AE1C6AB2
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 02:27:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 419CB23D7DB;
-	Thu,  2 Oct 2025 02:26:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AF7D23D7DF;
+	Thu,  2 Oct 2025 02:27:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jyYWipnU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Oh4I297j"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D6B723A989;
-	Thu,  2 Oct 2025 02:26:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED1A023C4F2;
+	Thu,  2 Oct 2025 02:27:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759372000; cv=none; b=UttDYrDOCsmSnH9lmSQXO40PM9QTePScnoT+qz5Gz9DNni9XNFJyzqOe/s37unhMVAmEldzDDkzsCU70H/X2Ax+i2qSEMfioRkmfuEjP/o3/QrS9VSdjCevB43J0nYXUBUgra+i+lsFlHJhOdzEwZVwcRNaDsQbsO52uTJBqxto=
+	t=1759372022; cv=none; b=jPW0PGEUnAxrtzbcJdXFuloFayT9AluChgs45Vi8hvWB/sgI4G70kIH3+4cbrZzLFTZLF1s05jN9pzXMrsna34Bk71dAepzEY51n2+KbWa7VUtdVRfVbV5H07ggwAFav0gECsEkGbR9xVeak2BUO7+NDWNExoD0Ga2BSf/dAwhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759372000; c=relaxed/simple;
-	bh=jio3I8WcuBf/06ND5WbRbHDa0i4qR4KjQPln7l7gD8o=;
+	s=arc-20240116; t=1759372022; c=relaxed/simple;
+	bh=hiXfnUBe9kv9pqZRhSXkc2LZ2ZlocUVknt8LsSLmaZc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qoVIDI3nW4tsBA+t2UkO7DyNtEIio654guyflEpZ10NfXszLXmyuhV6U1Zwhs3C4voosOCG7JZBRUkd9Y6LkTGL4lJKEmWgmCh4WZg9S75PYsEzAIKxyuUQhMIpzKwDl16ekFd1tPRw9TCl1B0NMvToWyeojB2GTz1CRhtzFMYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jyYWipnU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A90EBC4CEF1;
-	Thu,  2 Oct 2025 02:26:39 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ByubbfCFpoJ49haagl+dHHKfkt3e5zJGa//zU1T3BLXkgiOk9DgtqpfT3tGXtnvTJE5LUwZrU9teMg+SwfSiVXJxm8o3yYywsqkSj8hrwIX2wLJrO53o25CVcz6yW5nQvyO2CgLKXoCg0/kxvGfkVzj9ZeXh8zWVFPKTs3s0iLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Oh4I297j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 000D8C4CEF1;
+	Thu,  2 Oct 2025 02:26:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759372000;
-	bh=jio3I8WcuBf/06ND5WbRbHDa0i4qR4KjQPln7l7gD8o=;
+	s=k20201202; t=1759372020;
+	bh=hiXfnUBe9kv9pqZRhSXkc2LZ2ZlocUVknt8LsSLmaZc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jyYWipnULAxoK8P9AWK8DM6ZRCqnqr/vx1syy3oFJLkC018RaFcPakMHS4ohiYZug
-	 bSQj9Ari3mb+94+6Q/GdLy2itnE+iAsmcFOmK5OBln+6QLDF/b4Mz5KhlAgEytcjQL
-	 r2uE1ZarqjwNssrZ1DhXIYj5J9xu4qRfK8PTWcXNM1rtl8JRXKUjDdsNWq+xWyogc1
-	 ztdHEs7tuemI6reMDFG2uikJPLarwcoqpnoh8ei5mLSXpo0HO6XzTwyu7a5UkF0ny+
-	 5Ie76TS/R1KH4dwZgxvjja2gCgsO/4c6TP/WFqBSc1d3YnjZV4rIeE45DlCjNWUEiB
-	 v2QZARaNL+jGg==
-Date: Wed, 1 Oct 2025 21:26:38 -0500
+	b=Oh4I297jKSN+u/ckhEuBAB19+sTnVL7nKRJYoXIgN/s01lUPvmKjJP1wxQhV1PlxG
+	 uCcMxztxdMczbTGoH8c9uOE17ontcBqMXIf3ZJ+W4hXGRWmd6oymgWJ4y/6qhXDfQ6
+	 Y7WZf731Ft7ChwhWy+/EIgfHfecm1dpe2MZMYtF0klKQQwqaYCGMIsC0V1u50beivY
+	 Ztm+AHo+W1GFf3AosNlKXBQ4/W1YoxMoyNwnv1eGZF/Z8AIkrYBgqH+CL84szVQIbI
+	 oC73Yqdp6k2gUwD/KJGNFM2+hIfo2kgG9Skl+kb7kekvDmIgqpeEGd/ZXhkK+ZGJxr
+	 N9ylS15BFIOXQ==
+Date: Wed, 1 Oct 2025 21:26:57 -0500
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Konrad Dybcio <konradybcio@kernel.org>
-Cc: Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+To: =?iso-8859-1?Q?Jean-Fran=E7ois?= Lessard <jefflessard3@gmail.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Wesley Cheng <wesley.cheng@oss.qualcomm.com>,
-	Sibi Sankar <quic_sibis@quicinc.com>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Abel Vesa <abel.vesa@linaro.org>
-Subject: Re: [PATCH 1/3] dt-bindings: clock: qcom,x1e80100-gcc: Add missing
- USB4 clocks/resets
-Message-ID: <175937199767.2925546.4280245351480159227.robh@kernel.org>
-References: <20250926-topic-hamoa_gcc_usb4-v1-0-25cad1700829@oss.qualcomm.com>
- <20250926-topic-hamoa_gcc_usb4-v1-1-25cad1700829@oss.qualcomm.com>
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org, Andy Shevchenko <andy@kernel.org>,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 2/7] dt-bindings: leds: add default-brightness
+ property to common.yaml
+Message-ID: <175937201703.2926074.2653012255418871854.robh@kernel.org>
+References: <20250926141913.25919-1-jefflessard3@gmail.com>
+ <20250926141913.25919-3-jefflessard3@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250926-topic-hamoa_gcc_usb4-v1-1-25cad1700829@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250926141913.25919-3-jefflessard3@gmail.com>
 
 
-On Fri, 26 Sep 2025 14:03:45 +0200, Konrad Dybcio wrote:
-> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+On Fri, 26 Sep 2025 10:19:03 -0400, Jean-François Lessard wrote:
+> Add default-brightness property to leds/common.yaml to establish a single
+> canonical definition for LED brightness initialization.
 > 
-> Some of the USB4 muxes, RCGs and resets were not initially described.
+> The property is currently defined locally in leds/leds-pwm.yaml and is
+> needed by auxdisplay/titanmec,tm16xx.yaml. Properties should be defined
+> in only one location to avoid type inconsistencies across bindings.
 > 
-> Add indices for them to allow extending the driver.
-> 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Signed-off-by: Jean-François Lessard <jefflessard3@gmail.com>
 > ---
->  .../bindings/clock/qcom,x1e80100-gcc.yaml          | 62 ++++++++++++++++++++--
->  include/dt-bindings/clock/qcom,x1e80100-gcc.h      | 61 +++++++++++++++++++++
->  2 files changed, 119 insertions(+), 4 deletions(-)
+>  Documentation/devicetree/bindings/leds/common.yaml | 6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
 
