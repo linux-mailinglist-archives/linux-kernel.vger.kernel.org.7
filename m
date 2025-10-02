@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-840877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06233BB5A36
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 01:51:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A2F9BB5A3F
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 01:52:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B13C04A1261
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 23:51:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A0D74A1B0F
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 23:51:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E90EA29D270;
-	Thu,  2 Oct 2025 23:51:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3616B2C21D8;
+	Thu,  2 Oct 2025 23:51:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pr1iDt8N"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HhuPB5dM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C5732C11E9
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 23:51:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87C992C08D1;
+	Thu,  2 Oct 2025 23:51:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759449093; cv=none; b=VeCn4yiGMXcFJpcl9zL2sjfVskoKFqTp7oIvjM67vtmsFQZk6/rNXEfUKDy1bwfFbx4bXgkarIdBnAI4DS30SqQcsjCJBAIFxv8XIiS0/igwNh9b6fOO767bBjdxel68TS4GKutD+TN5K9pLt7enllE8HyaF0Tx8ikDYAQ+XBQE=
+	t=1759449098; cv=none; b=MCSySroZDGTEokk+yxnEP7f0rEw8Ach08vBkupmJjKGG2765NLZG6bmT8Q6fdeElAxZq2YOQNMmRCXt/ITFZfq/KbQK6lI4gSjTk5ShMq2YLoTtJnfEYuuZQySa96+R35nqTnbrikMv1I9EBVO68HVaWpD43fhJY8+b1mgFDcRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759449093; c=relaxed/simple;
-	bh=PV4pc4zNAcoB0ElMSzAin8+W0hA4jIwDrxV+2XGbDng=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=EOpcrhtUwAPQhMdKs4XCwduDB6KThJz9qpbO/DcZWkUBNunRJ1lsDwQaHuoq6VGDrJxwLg4SZP7xHQzV6HOx8aSk1scUP1uXYhD4FSdz/g5+6XR2pYeXYux5NxUqn7wen+izMyWeoyUPS/CyfILteOVNdOLMoE5NwPmYDEkAxrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pr1iDt8N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A78AC4CEF4;
-	Thu,  2 Oct 2025 23:51:33 +0000 (UTC)
+	s=arc-20240116; t=1759449098; c=relaxed/simple;
+	bh=agbz1y5G9uuwFk/Z2DZ7stvM+ukx0jV0WZbYDrD8RDk=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=dK9GWt2DVKjw8Idz0a4ZqZBEXMM5OHNjL/YIvAZzSk++RUZsWIuw/nujW94hYoeHj5JIBCBnYOGCdYhLbGeeQ0HZBh9ZFTC9tYKOzHuD4C33MKm80sI4IsH1Sj1THhIGWB5+T58o48FZTW/JmsLVTJwtoyIQp7RIlQnLsxczkO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HhuPB5dM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67F3DC4CEFA;
+	Thu,  2 Oct 2025 23:51:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759449093;
-	bh=PV4pc4zNAcoB0ElMSzAin8+W0hA4jIwDrxV+2XGbDng=;
+	s=k20201202; t=1759449098;
+	bh=agbz1y5G9uuwFk/Z2DZ7stvM+ukx0jV0WZbYDrD8RDk=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=pr1iDt8NloCfAuM2YDMSDtYEtDN44OUw6iJuKpvmxhh44mgBWRzY6Us/7asFpIMdZ
-	 ZFesPh//U5x51Boel+ohUzm+ovGaa6dyKng3t10Opn//epTIaPzB+S9YHb6oPHPN1O
-	 m7hzNxrlvYy5Ay1mp7sKm4Q8wGsl96RZLQ2gi/RhlsiXGoXz9PZMU83E1KMuM9Oz5d
-	 zbFAX1C1rdBLugg5ZtTA9HMEh/HpveZJswYoLKBr93mIFli52H86C0ERgGKrXwLFEJ
-	 vzvy+jb72HBODWHZaxSZ4pqe7EyykoyuWfnAA0YOY0D8zz7K17VPJRldf0biqVbWNx
-	 nvopX30KagZag==
+	b=HhuPB5dMSWOtFNMv+Ef8ZcqU66crEL/rbf6wgE4cC9HbQB7Sel1pEW45ovugJT7+I
+	 V7y7S/vKhIA/eznuZ50OhNGvxBbEiPwukkVJ19oKsCiQ2oYCT8Yj5vKs5JbSsS0aWR
+	 /do8FZXG4n5h9M8akS+4kx4/qr69XP6+FJpy+vXjAD6bWQ1SAhpEuFisoKXZ1zCEHg
+	 z2fl6JUL4nmME0Pf96TJ7Z068i2QHI2TqNU1pr3mErKXFJCjY6Dhifdbek62FDBGcl
+	 A93LbLn9rsOHDGagIUQtItZihWG3gVHUXyfXnnYnAium/l0aAlCaLD+pTLk4eCISUn
+	 BrGA6OONSDmCQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 3414F39D0C1A;
-	Thu,  2 Oct 2025 23:51:26 +0000 (UTC)
-Subject: Re: [GIT PULL] slab updates for 6.18
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 71FF139D0C1A;
+	Thu,  2 Oct 2025 23:51:31 +0000 (UTC)
+Subject: Re: [GIT PULL] Networking for v6.18
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <5dc1b53d-29fb-42f6-9fff-d6b42da17a7f@suse.cz>
-References: <5dc1b53d-29fb-42f6-9fff-d6b42da17a7f@suse.cz>
+In-Reply-To: <20251001131156.27805-1-pabeni@redhat.com>
+References: <20251001131156.27805-1-pabeni@redhat.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <5dc1b53d-29fb-42f6-9fff-d6b42da17a7f@suse.cz>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/vbabka/slab.git tags/slab-for-6.18
-X-PR-Tracked-Commit-Id: ca74b8cadaad4b179f77f1f4dc3d288be9a580f1
+X-PR-Tracked-Message-Id: <20251001131156.27805-1-pabeni@redhat.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git tags/net-next-6.18
+X-PR-Tracked-Commit-Id: f1455695d2d99894b65db233877acac9a0e120b9
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 24d9e8b3c9c8a6f72c8b4c196a703e144928d919
-Message-Id: <175944908504.3515818.10469899338669816557.pr-tracker-bot@kernel.org>
-Date: Thu, 02 Oct 2025 23:51:25 +0000
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>, Harry Yoo <harry.yoo@oracle.com>, David Rientjes <rientjes@google.com>, Christoph Lameter <cl@gentwo.org>, Roman Gushchin <roman.gushchin@linux.dev>, "linux-mm@kvack.org" <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>, Matthew Wilcox <willy@infradead.org>, Pedro Falcato <pfalcato@suse.de>, Alexei Starovoitov <ast@kernel.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, Suren Baghdasaryan <surenb@google.com>
+X-PR-Merge-Commit-Id: 07fdad3a93756b872da7b53647715c48d0f4a2d0
+Message-Id: <175944909005.3515818.5407831437099985687.pr-tracker-bot@kernel.org>
+Date: Thu, 02 Oct 2025 23:51:30 +0000
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: torvalds@linux-foundation.org, kuba@kernel.org, davem@davemloft.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Tue, 30 Sep 2025 08:29:38 +0200:
+The pull request you sent on Wed,  1 Oct 2025 15:11:56 +0200:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/vbabka/slab.git tags/slab-for-6.18
+> git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git tags/net-next-6.18
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/24d9e8b3c9c8a6f72c8b4c196a703e144928d919
+https://git.kernel.org/torvalds/c/07fdad3a93756b872da7b53647715c48d0f4a2d0
 
 Thank you!
 
