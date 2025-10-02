@@ -1,344 +1,158 @@
-Return-Path: <linux-kernel+bounces-840288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09D17BB4086
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 15:30:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3F18BB40AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 15:31:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B619E2A2354
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 13:30:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57A693B11EB
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 13:31:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8A183126A3;
-	Thu,  2 Oct 2025 13:30:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5F7E313280;
+	Thu,  2 Oct 2025 13:30:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="blUHXhNJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TOBaFvcz"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF3CB31196B;
-	Thu,  2 Oct 2025 13:30:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28F913128D5
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 13:30:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759411806; cv=none; b=f3E9G2yqxDGgCbGCYx2NN4KEOgYmUGm4y1CWEWu0kFY7jRvNREcQkSvIJAEjaNKYQsLeDVS29295yZEp/meliVygcZp540cO7hb6fRT8/+FVjxh5N4OZvd7iYEXhox9QMyo8r3j4wt3hgUIOs4QLB6rJR+na0u382GRkAfDaBK0=
+	t=1759411838; cv=none; b=UurXgHSxfQFZQx94S7E/IGFrLIS3DbKvkGDo6qCBQ8Wd4/nZVLULbqFSb5sGvy3DGmJluUK8Sw5HgLyuAMuEAxcYALlfrYdV1BysLbuH0Y6Qy1wkZZ/ku3Xb0VAQ8W4UnjgyxLXQVMUS4pAvlg8p0uHlmbvU0zdGoIj19ho5Lio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759411806; c=relaxed/simple;
-	bh=u0VxSUVq+CMPUr8mJVPNuYFKVfArmA87UM1+r4+/vqc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FGIaHXnhn+4EySX8kcRKXGjv3SiCttKpNyolNjO+7SqjLdtsMLVqaZxpFjYW6/5TIXSdBOrGHgEuJn0g4EId4d5P9aeRugOc9Fyye755Fxu0wzIl3SO0CB/IKeXlP2x+V15yG1Z37raXzswuaKGamS8DWXrQH6ZKoAhhiIYIQng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=blUHXhNJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C43E6C4CEF4;
-	Thu,  2 Oct 2025 13:30:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1759411803;
-	bh=u0VxSUVq+CMPUr8mJVPNuYFKVfArmA87UM1+r4+/vqc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=blUHXhNJ9uHK8fVJAjSfqBTjVb31H7g7nByDKG9kwgZhJqzTn1XiWxrjDx65UAgiF
-	 +9p39s/lSw87Cyx0lIzZDqN7D1gBbhNoLE4f+1SVYgO9Kd1+H67EdhgcvNFG3/PVNq
-	 xYmKJO6xcJvrq/UM8PbfwVziVaVuQfrza2eTkEPM=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org,
-	torvalds@linux-foundation.org,
-	stable@vger.kernel.org
-Cc: lwn@lwn.net,
-	jslaby@suse.cz,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Linux 5.4.300
-Date: Thu,  2 Oct 2025 15:29:57 +0200
-Message-ID: <2025100258-chaste-acre-069a@gregkh>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1759411838; c=relaxed/simple;
+	bh=OylijEb90SOQ6UrbwkSQ7aXtXmPX3tnvxpOk6Uy1ypE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Jw7gtj3sCPWBspMtcmhuuzv8tku57WblQmjj54tpvOUkJ+oraTuxooUMYS1ar4Qk7CSAc7ikQ3FmqL+ghWmmpCrKUjC6F4FmZdgP/6jZzlRAe+VPt/82onJ5mstSx8eSNgYvWTxu0ANMIvGY/qMbGyykuNyWM+YnLrh93Mg7/nU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TOBaFvcz; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b457d93c155so196630366b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 06:30:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759411834; x=1760016634; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OylijEb90SOQ6UrbwkSQ7aXtXmPX3tnvxpOk6Uy1ypE=;
+        b=TOBaFvcztECaowMTyYQcE+8R3Wgf88HY8/7q1eyV4EGNSHGomhBJx1rY4bloDl/8Oz
+         GdBjzTjnidv+cp4DwZ5VuPos9rlZUnAwF9zaoaRWnA7P0NwD0ZGPD22U3M+qKS0l8h6p
+         N10QpTcSFGKTPtFyRfPQyHqM70AmISk71BLGK+NLCHmr17TKWq1fdORD9M0AodwMcFKQ
+         1nh5QqmrzrTl6Tyl1vdkvopBOBeWqvsI+8c8b1zbu3tjtvszkw1E1tqdkdbonVaqpHuN
+         TZt8tc3YuzgiQrpQwpPZ1AeYYTgFiXi5WannffwsEYXVS/7J86CT3+eHR/n/+yhFRUAi
+         z/Yw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759411834; x=1760016634;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OylijEb90SOQ6UrbwkSQ7aXtXmPX3tnvxpOk6Uy1ypE=;
+        b=wlia9kJJd8aHbY8PT9nrPmIFk0Uq9ZbfFoFBQtjzJDUIHwioR/uXZDbJ/IZSUDMHYo
+         FXm1HnPPNuy8zv4s2gGE1SkQp1VTWoIzoeVuLeO4mHGIAOUOui7SnQjQ+KwK65qRHskL
+         GuNRTZ+PKYui/anh9yzrk3k96jK395tBNPibcLJj/8oKLgjPekJNuhIEqs7AtQX2DTDI
+         Px0iKT+AL+MXYqt6vUec+Cbiv2QHWdlTWhTMNegz0ZIwlkcsZEmDDCIkl1kBS9ZhcrXl
+         H9yyxfxKIFBQKLb3TeqTzwXy4cOyehRnSfat0C9FjfkQ1js0Fqs3kgwpUSPsbjvnmOyu
+         1R4A==
+X-Forwarded-Encrypted: i=1; AJvYcCXeacZ07hvQTa5PfOPd7DjSlxdPwth8/i5xIoD+P8Aq93NPasbcGzlc6C0zrWPk8VNp4Qnw6WG4lnKiqSc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywos9Ej0JNtmxNN0Tg9nfK72sqgAacmmerlp6x7qcK06w5H8QPn
+	GB1+/5r4vRHjYYlgjCN/LLc1fPwVmFebpC62mzV+LSeDfwAorLnM7EYVttDK5QN4bwsu6n6YI+j
+	SzoASM4UKy1FwXyTDhj32NzV4Xl7HO04=
+X-Gm-Gg: ASbGncusg5NA38hf1BMC2A+06Y2YuDedVuP751Kna4eKDgSCgEbganqVF+DEaXHOQWF
+	R/tJavvmyxzWKRSGdEwQnxZEa4+bUDLc80wCOoKEe8ueNAcTIByU3nPGSdzU2fOz5mldcQHVfJq
+	v7THWVGFyJDKUk0+V7u6BSRCxNLUoWnNW5S4GuDsdOwoxHEeez02/zeaY2e5t/Er68wNOZrtE6d
+	xETFxyaFONl+5TwW+cX8V8VisAEkvE=
+X-Google-Smtp-Source: AGHT+IFgJFQIf8LemrW92kXP651kHHmCUgfOqMCjSP+iK1iAH8rm+dPRjQvoRpFjxzju8IDVoxl1tPPM/cd+9tbuDko=
+X-Received: by 2002:a17:907:7e88:b0:b2d:830a:8c01 with SMTP id
+ a640c23a62f3a-b46e7db5121mr812057566b.61.1759411834160; Thu, 02 Oct 2025
+ 06:30:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-I'm announcing the release of the 5.4.300 kernel.
-
-All users of the 5.4 kernel series must upgrade.
-
-The updated 5.4.y git tree can be found at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linux-5.4.y
-and can be browsed at the normal kernel.org git web browser:
-	https://git.kernel.org/?p=linux/kernel/git/stable/linux-stable.git;a=summary
-
-thanks,
-
-greg k-h
-
-------------
-
- Makefile                                               |    2 
- arch/x86/kvm/svm.c                                     |    3 
- drivers/dma/qcom/bam_dma.c                             |    8 
- drivers/dma/ti/edma.c                                  |    4 
- drivers/edac/altera_edac.c                             |    1 
- drivers/gpu/drm/gma500/oaktrail_hdmi.c                 |    2 
- drivers/infiniband/hw/mlx5/devx.c                      |    1 
- drivers/mmc/host/mvsdio.c                              |    2 
- drivers/mtd/nand/raw/atmel/nand-controller.c           |   18 -
- drivers/mtd/nand/raw/stm32_fmc2_nand.c                 |   45 +-
- drivers/net/can/rcar/rcar_can.c                        |    8 
- drivers/net/can/spi/hi311x.c                           |    1 
- drivers/net/can/sun4i_can.c                            |    1 
- drivers/net/can/usb/mcba_usb.c                         |    1 
- drivers/net/can/usb/peak_usb/pcan_usb_core.c           |    2 
- drivers/net/ethernet/broadcom/cnic.c                   |    3 
- drivers/net/ethernet/cavium/liquidio/request_manager.c |    2 
- drivers/net/ethernet/freescale/fec_main.c              |    3 
- drivers/net/ethernet/intel/i40e/i40e.h                 |    1 
- drivers/net/ethernet/intel/i40e/i40e_ethtool.c         |   25 +
- drivers/net/ethernet/intel/i40e/i40e_main.c            |   10 
- drivers/net/ethernet/intel/i40e/i40e_txrx.c            |    3 
- drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c     |   46 ++
- drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.h     |    3 
- drivers/net/ethernet/intel/igb/igb_ethtool.c           |    5 
- drivers/net/ethernet/mellanox/mlx5/core/en_main.c      |    2 
- drivers/net/ethernet/natsemi/ns83820.c                 |   13 
- drivers/pcmcia/omap_cf.c                               |    8 
- drivers/phy/ti/phy-ti-pipe3.c                          |   13 
- drivers/power/supply/bq27xxx_battery.c                 |    4 
- drivers/soc/qcom/mdt_loader.c                          |   12 
- drivers/tty/hvc/hvc_console.c                          |    6 
- drivers/tty/serial/sc16is7xx.c                         |   13 
- drivers/usb/core/hub.c                                 |   21 -
- drivers/usb/core/hub.h                                 |    1 
- drivers/usb/core/quirks.c                              |    2 
- drivers/usb/gadget/udc/dummy_hcd.c                     |   25 -
- drivers/usb/serial/option.c                            |   17 +
- drivers/video/fbdev/core/fbcon.c                       |   13 
- fs/fuse/file.c                                         |    5 
- fs/hugetlbfs/inode.c                                   |   14 
- fs/nfs/nfs4proc.c                                      |    1 
- fs/nilfs2/sysfs.c                                      |    4 
- fs/nilfs2/sysfs.h                                      |    8 
- fs/ocfs2/extent_map.c                                  |   10 
- include/linux/interrupt.h                              |   72 +++-
- include/net/sock.h                                     |   40 ++
- kernel/cgroup/cgroup.c                                 |   43 ++
- kernel/irq/manage.c                                    |  111 ++++++
- mm/khugepaged.c                                        |    2 
- mm/memory-failure.c                                    |    7 
- mm/migrate.c                                           |   12 
- net/can/j1939/bus.c                                    |    5 
- net/can/j1939/socket.c                                 |    3 
- net/core/sock.c                                        |    5 
- net/ipv4/tcp.c                                         |    5 
- net/ipv4/tcp_bpf.c                                     |    5 
- net/mac80211/driver-ops.h                              |    2 
- net/rds/ib_frmr.c                                      |   20 -
- net/rfkill/rfkill-gpio.c                               |   22 +
- sound/firewire/motu/motu-hwdep.c                       |    2 
- sound/soc/codecs/wm8940.c                              |    2 
- sound/soc/codecs/wm8974.c                              |    8 
- sound/soc/sof/intel/hda-stream.c                       |    2 
- sound/usb/mixer_quirks.c                               |  279 ++++++++++++++++-
- 65 files changed, 816 insertions(+), 223 deletions(-)
-
-Alan Stern (1):
-      USB: gadget: dummy-hcd: Fix locking bug in RT-enabled kernels
-
-Alexander Dahl (1):
-      mtd: nand: raw: atmel: Fix comment in timings preparation
-
-Alexander Sverdlin (1):
-      mtd: nand: raw: atmel: Respect tAR, tCLR in read setup timing
-
-Alexey Nepomnyashih (1):
-      net: liquidio: fix overflow in octeon_init_instr_queue()
-
-Anders Roxell (1):
-      dmaengine: ti: edma: Fix memory allocation size for queue_priority_map
-
-Bjorn Andersson (1):
-      soc: qcom: mdt_loader: Deal with zero e_shentsize
-
-Charles Keepax (2):
-      ASoC: wm8940: Correct typo in control name
-      ASoC: wm8974: Correct PLL rate rounding
-
-Chen Ni (1):
-      ALSA: usb-audio: Convert comma to semicolon
-
-Chen Ridong (1):
-      cgroup: split cgroup_destroy_wq into 3 workqueues
-
-Christophe Kerello (2):
-      mtd: rawnand: stm32_fmc2: fix ECC overwrite
-      mtd: rawnand: stm32_fmc2: avoid overlapping mappings on ECC buffer
-
-Colin Ian King (1):
-      ASoC: SOF: Intel: hda-stream: Fix incorrect variable used in error message
-
-Cristian Ciocaltea (5):
-      ALSA: usb-audio: Fix block comments in mixer_quirks
-      ALSA: usb-audio: Avoid multiple assignments in mixer_quirks
-      ALSA: usb-audio: Simplify NULL comparison in mixer_quirks
-      ALSA: usb-audio: Remove unneeded wmb() in mixer_quirks
-      ALSA: usb-audio: Add mixer quirk for Sony DualSense PS5
-
-David Hildenbrand (1):
-      mm/migrate_device: don't add folio to be freed to LRU in migrate_device_finalize()
-
-Duoming Zhou (1):
-      cnic: Fix use-after-free bugs in cnic_delete_task
-
-Fabian Vogt (1):
-      tty: hvc_console: Call hvc_kick in hvc_write unconditionally
-
-Fabio Porcedda (2):
-      USB: serial: option: add Telit Cinterion FN990A w/audio compositions
-      USB: serial: option: add Telit Cinterion LE910C4-WWX new compositions
-
-Geert Uytterhoeven (2):
-      pcmcia: omap_cf: Mark driver struct with __refdata to prevent section mismatch
-      can: rcar_can: rcar_can_resume(): fix s2ram with PSCI
-
-Greg Kroah-Hartman (1):
-      Linux 5.4.300
-
-H. Nikolaus Schaller (2):
-      power: supply: bq27xxx: fix error return in case of no bq27000 hdq battery
-      power: supply: bq27xxx: restrict no-battery detection to bq27000
-
-Hans de Goede (1):
-      net: rfkill: gpio: Fix crash due to dereferencering uninitialized pointer
-
-Hugo Villeneuve (1):
-      serial: sc16is7xx: fix bug in flow control levels init
-
-Håkon Bugge (1):
-      rds: ib: Increment i_fastreg_wrs before bailing out
-
-Jakob Koschel (1):
-      usb: gadget: dummy_hcd: remove usage of list iterator past the loop body
-
-Jiayi Li (1):
-      usb: core: Add 0x prefix to quirks debug output
-
-Jinjiang Tu (1):
-      mm/hugetlb: fix folio is still mapped when deleted
-
-Johan Hovold (1):
-      phy: ti-pipe3: fix device leak at unbind
-
-John Garry (1):
-      genirq/affinity: Add irq_update_affinity_desc()
-
-Justin Bronder (1):
-      i40e: increase max descriptors for XL710
-
-Kohei Enju (1):
-      igb: fix link test skipping when interface is admin down
-
-Kuniyuki Iwashima (3):
-      net: Fix null-ptr-deref by sock_lock_init_class_and_name() and rmmod.
-      tcp_bpf: Call sk_msg_free() when tcp_bpf_send_verdict() fails to allocate psock->cork.
-      tcp: Clear tcp_sk(sk)->fastopen_rsk in tcp_disconnect().
-
-Liao Yuanhong (1):
-      wifi: mac80211: fix incorrect type for ret
-
-Lukasz Czapnik (7):
-      i40e: fix idx validation in i40e_validate_queue_map
-      i40e: fix input validation logic for action_meta
-      i40e: add max boundary check for VF filters
-      i40e: add validation for ring_len param
-      i40e: fix idx validation in config queues msg
-      i40e: fix validation of VF state in get resources
-      i40e: add mask to apply valid bits for itr_idx
-
-Maciej Fijalkowski (1):
-      i40e: remove redundant memory barrier when cleaning Tx descs
-
-Maciej S. Szmigiero (1):
-      KVM: SVM: Sync TPR from LAPIC into VMCB::V_TPR even if AVIC is active
-
-Mark Tinguely (1):
-      ocfs2: fix recursive semaphore deadlock in fiemap call
-
-Mathias Nyman (1):
-      usb: hub: Fix flushing of delayed work used for post resume purposes
-
-Miaohe Lin (1):
-      mm/memory-failure: fix VM_BUG_ON_PAGE(PagePoisoned(page)) when unpoison memory
-
-Michal Schmidt (1):
-      i40e: fix IRQ freeing in i40e_vsi_request_irq_msix error path
-
-Miklos Szeredi (2):
-      fuse: check if copy_file_range() returns larger than requested size
-      fuse: prevent overflow in copy_file_range return value
-
-Nathan Chancellor (1):
-      nilfs2: fix CFI failure when accessing /sys/fs/nilfs2/features/*
-
-Nitesh Narayan Lal (1):
-      i40e: Use irq_update_affinity_hint()
-
-Or Har-Toov (1):
-      IB/mlx5: Fix obj_type mismatch for SRQ event subscriptions
-
-Philipp Zabel (1):
-      net: rfkill: gpio: add DT support
-
-Salah Triki (1):
-      EDAC/altera: Delete an inappropriate dma_free_coherent() call
-
-Samasth Norway Ananda (1):
-      fbcon: fix integer overflow in fbcon_do_set_font
-
-Stefan Wahren (1):
-      net: fec: Fix possible NPD in fec_enet_phy_reset_after_clk_enable()
-
-Stephan Gerhold (1):
-      dmaengine: qcom: bam_dma: Fix DT error handling for num-channels/ees
-
-Stéphane Grosjean (1):
-      can: peak_usb: fix shift-out-of-bounds issue
-
-Takashi Iwai (1):
-      ALSA: usb-audio: Fix build with CONFIG_INPUT=n
-
-Takashi Sakamoto (1):
-      ALSA: firewire-motu: drop EPOLLOUT from poll return values as write is not supported
-
-Tariq Toukan (1):
-      Revert "net/mlx5e: Update and set Xon/Xoff upon port speed set"
-
-Tetsuo Handa (2):
-      can: j1939: j1939_sk_bind(): call j1939_priv_put() immediately when j1939_local_ecu_get() failed
-      can: j1939: j1939_local_ecu_get(): undo increment when j1939_local_ecu_get() fails
-
-Thomas Fourier (1):
-      mmc: mvsdio: Fix dma_unmap_sg() nents value
-
-Thomas Gleixner (2):
-      genirq: Export affinity setter for modules
-      genirq: Provide new interfaces for affinity hints
-
-Thomas Zimmermann (1):
-      fbcon: Fix OOB access in font allocation
-
-Trond Myklebust (1):
-      NFSv4: Don't clear capabilities that won't be reset
-
-Vincent Mailhol (3):
-      can: hi311x: populate ndo_change_mtu() to prevent buffer overflow
-      can: sun4i_can: populate ndo_change_mtu() to prevent buffer overflow
-      can: mcba_usb: populate ndo_change_mtu() to prevent buffer overflow
-
-Wei Yang (1):
-      mm/khugepaged: fix the address passed to notifier on testing young
-
-Yeounsu Moon (1):
-      net: natsemi: fix `rx_dropped` double accounting on `netif_rx()` failure
-
-Zabelin Nikita (1):
-      drm/gma500: Fix null dereference in hdmi teardown
-
+References: <20250924235114.209967-1-benx.guo@gmail.com> <82c7e76c-326f-45c9-bff7-1f27bf0c689c@linux.dev>
+In-Reply-To: <82c7e76c-326f-45c9-bff7-1f27bf0c689c@linux.dev>
+From: Alex Shi <seakeel@gmail.com>
+Date: Thu, 2 Oct 2025 21:29:57 +0800
+X-Gm-Features: AS18NWDnm0zMPaqPWOaHAI27cFxCOfRCMG7AYaFK8tTwOMCuQUgCDwpX7O0f2rM
+Message-ID: <CAJy-Am=eGRK4-az_L32jFt1K+zRcJSvX5-qG1brG3wQ5dRPXpA@mail.gmail.com>
+Subject: Re: [PATCH] docs/zh_CN: Update Rust index translation and add
+ reference label
+To: Yanteng Si <si.yanteng@linux.dev>
+Cc: Ben Guo <benx.guo@gmail.com>, alexs@kernel.org, dzm91@hust.edu.cn, corbet@lwn.net, 
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
+	gary@garyguo.net, bjorn3_gh@protonmail.com, lossin@kernel.org, 
+	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu, 
+	dakr@kernel.org, hust-os-kernel-patches@googlegroups.com, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+
+QXBwaWxlZCBUaGFua3MNCg0KWWFudGVuZyBTaSA8c2kueWFudGVuZ0BsaW51eC5kZXY+IOS6jjIw
+MjXlubQ55pyIMjXml6Xlkajlm5sgMDk6NTHlhpnpgZPvvJoNCj4NCj4NCj4g5ZyoIDkvMjUvMjUg
+Nzo1MSBBTSwgQmVuIEd1byDlhpnpgZM6DQo+ID4gVXBkYXRlIHRoZSB0cmFuc2xhdGVkIHJ1c3Qv
+aW5kZXgucnN0IHdpdGggbmV3IGNvbnRlbnRzLA0KPiA+IGFuZCBhZGQgYSByZWZlcmVuY2UgbGFi
+ZWwgaW4gcnVzdC9nZW5lcmFsLWluZm9ybWF0aW9uLnJzdCBzbw0KPiA+IHRoYXQgaW5kZXgucnN0
+IGNhbiBsaW5rIHRvIGl0IHByb3Blcmx5Lg0KPiA+DQo+ID4gRml4ZXMgaW4gcnVzdC9pbmRleC5y
+c3Q6DQo+ID4gLSBGaXhlZCBicm9rZW4gcXVpY2stc3RhcnQucnN0IGNyb3NzLXJlZmVyZW5jZQ0K
+PiA+DQo+ID4gVXBkYXRlIHRoZSB0cmFuc2xhdGlvbiB0aHJvdWdoIGNvbW1pdCBkMGIzNDM2MDVm
+MWINCj4gPiAoImtlcm5lbC1kb2NzOiBBZGQgbmV3IHNlY3Rpb24gZm9yIFJ1c3QgbGVhcm5pbmcg
+bWF0ZXJpYWxzIikNCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IEJlbiBHdW8gPGJlbnguZ3VvQGdt
+YWlsLmNvbT4NCj4NCj4gUmV2aWV3ZWQtYnk6IFlhbnRlbmcgU2kgPHNpLnlhbnRlbmdAbGludXgu
+ZGV2Pg0KPg0KPg0KPiBUaGFua3MsDQo+DQo+IFlhbnRlbmcNCj4NCj4gPiAtLS0NCj4gPiAgIC4u
+Li96aF9DTi9ydXN0L2dlbmVyYWwtaW5mb3JtYXRpb24ucnN0ICAgICAgICB8ICAxICsNCj4gPiAg
+IC4uLi90cmFuc2xhdGlvbnMvemhfQ04vcnVzdC9pbmRleC5yc3QgICAgICAgICB8IDMyICsrKysr
+KysrKysrKysrKysrKy0NCj4gPiAgIDIgZmlsZXMgY2hhbmdlZCwgMzIgaW5zZXJ0aW9ucygrKSwg
+MSBkZWxldGlvbigtKQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vdHJhbnNs
+YXRpb25zL3poX0NOL3J1c3QvZ2VuZXJhbC1pbmZvcm1hdGlvbi5yc3QgYi9Eb2N1bWVudGF0aW9u
+L3RyYW5zbGF0aW9ucy96aF9DTi9ydXN0L2dlbmVyYWwtaW5mb3JtYXRpb24ucnN0DQo+ID4gaW5k
+ZXggMjUxZjZlZTJiYjQ0Li45YjVlMzdlMTNmMzggMTAwNjQ0DQo+ID4gLS0tIGEvRG9jdW1lbnRh
+dGlvbi90cmFuc2xhdGlvbnMvemhfQ04vcnVzdC9nZW5lcmFsLWluZm9ybWF0aW9uLnJzdA0KPiA+
+ICsrKyBiL0RvY3VtZW50YXRpb24vdHJhbnNsYXRpb25zL3poX0NOL3J1c3QvZ2VuZXJhbC1pbmZv
+cm1hdGlvbi5yc3QNCj4gPiBAQCAtMTMsNiArMTMsNyBAQA0KPiA+DQo+ID4gICDmnKzmlofmoaPl
+jIXlkKvkuoblnKjlhoXmoLjkuK3kvb/nlKhSdXN05pSv5oyB5pe26ZyA6KaB5LqG6Kej55qE5pyJ
+55So5L+h5oGv44CCDQo+ID4NCj4gPiArLi4gX3J1c3RfY29kZV9kb2N1bWVudGF0aW9uX3poX2Nu
+Og0KPiA+DQo+ID4gICDku6PnoIHmlofmoaMNCj4gPiAgIC0tLS0tLS0tDQo+ID4gZGlmZiAtLWdp
+dCBhL0RvY3VtZW50YXRpb24vdHJhbnNsYXRpb25zL3poX0NOL3J1c3QvaW5kZXgucnN0IGIvRG9j
+dW1lbnRhdGlvbi90cmFuc2xhdGlvbnMvemhfQ04vcnVzdC9pbmRleC5yc3QNCj4gPiBpbmRleCBi
+MDFmODg3ZTcxNjcuLjEwNDEzYjBjMTdjMCAxMDA2NDQNCj4gPiAtLS0gYS9Eb2N1bWVudGF0aW9u
+L3RyYW5zbGF0aW9ucy96aF9DTi9ydXN0L2luZGV4LnJzdA0KPiA+ICsrKyBiL0RvY3VtZW50YXRp
+b24vdHJhbnNsYXRpb25zL3poX0NOL3J1c3QvaW5kZXgucnN0DQo+ID4gQEAgLTEwLDcgKzEwLDM1
+IEBADQo+ID4gICBSdXN0DQo+ID4gICA9PT09DQo+ID4NCj4gPiAt5LiO5YaF5qC45Lit55qEUnVz
+dOacieWFs+eahOaWh+aho+OAguiLpeimgeW8gOWni+WcqOWGheaguOS4reS9v+eUqFJ1c3TvvIzo
+r7fpmIXor7txdWljay1zdGFydC5yc3TmjIfljZfjgIINCj4gPiAr5LiO5YaF5qC45Lit55qEUnVz
+dOacieWFs+eahOaWh+aho+OAguiLpeimgeW8gOWni+WcqOWGheaguOS4reS9v+eUqFJ1c3TvvIzo
+r7fpmIXor7sgcXVpY2stc3RhcnQucnN0IOaMh+WNl+OAgg0KPiA+ICsNCj4gPiArUnVzdCDlrp7p
+qowNCj4gPiArLS0tLS0tLS0tDQo+ID4gK1J1c3Qg5pSv5oyB5ZyoIHY2LjEg54mI5pys5Lit5ZCI
+5bm25Yiw5Li757q/77yM5Lul5biu5Yqp56Gu5a6aIFJ1c3Qg5L2c5Li65LiA56eN6K+t6KiA5piv
+5ZCm6YCC5ZCI5YaF5qC477yMDQo+ID4gK+WNs+aYr+WQpuWAvOW+l+i/m+ihjOadg+ihoeOAgg0K
+PiA+ICsNCj4gPiAr55uu5YmN77yMUnVzdCDmlK/mjIHkuLvopoHpnaLlkJHlr7kgUnVzdCDmlK/m
+jIHmhJ/lhbTotqPnmoTlhoXmoLjlvIDlj5HkurrlkZjlkoznu7TmiqTogIXvvIwNCj4gPiAr5Lul
+5L6/5LuW5Lus5Y+v5Lul5byA5aeL5aSE55CG5oq96LGh5ZKM6amx5Yqo56iL5bqP77yM5bm25biu
+5Yqp5byA5Y+R5Z+656GA6K6+5pa95ZKM5bel5YW344CCDQo+ID4gKw0KPiA+ICvlpoLmnpzmgqjm
+mK/nu4jnq6/nlKjmiLfvvIzor7fms6jmhI/vvIznm67liY3msqHmnInpgILlkIjmiJbml6jlnKjn
+lJ/kuqfkvb/nlKjnmoTlhoXnva7pqbHliqjnqIvluo/miJbmqKHlnZfvvIwNCj4gPiAr5bm25LiU
+IFJ1c3Qg5pSv5oyB5LuN5aSE5LqO5byA5Y+RL+WunumqjOmYtuaute+8jOWwpOWFtuaYr+WvueS6
+jueJueWumuWGheaguOmFjee9ruOAgg0KPiA+ICsNCj4gPiAr5Luj56CB5paH5qGjDQo+ID4gKy0t
+LS0tLS0tDQo+ID4gKw0KPiA+ICvnu5nlrprkuIDkuKrlhoXmoLjphY3nva7vvIzlhoXmoLjlj6/o
+g73kvJrnlJ/miJAgUnVzdCDku6PnoIHmlofmoaPvvIzljbPnlLEgYGBydXN0ZG9jYGAg5bel5YW3
+5ZGI546w55qEIEhUTUzjgIINCj4gPiArDQo+ID4gKy4uIG9ubHk6OiBydXN0ZG9jIGFuZCBodG1s
+DQo+ID4gKw0KPiA+ICsgICDor6XlhoXmoLjmlofmoaPkvb/nlKggYFJ1c3Qg5Luj56CB5paH5qGj
+IDxydXN0ZG9jL2tlcm5lbC9pbmRleC5odG1sPmBfIOaehOW7uuOAgg0KPiA+ICsNCj4gPiArLi4g
+b25seTo6IG5vdCBydXN0ZG9jIGFuZCBodG1sDQo+ID4gKw0KPiA+ICsgICDor6XlhoXmoLjmlofm
+oaPkuI3kvb/nlKggUnVzdCDku6PnoIHmlofmoaPmnoTlu7rjgIINCj4gPiArDQo+ID4gK+mihOeU
+n+aIkOeJiOacrOaPkOS+m+WcqO+8mmh0dHBzOi8vcnVzdC5kb2NzLmtlcm5lbC5vcmfjgIINCj4g
+PiArDQo+ID4gK+ivt+WPgumYhSA6cmVmOmDku6PnoIHmlofmoaMgPHJ1c3RfY29kZV9kb2N1bWVu
+dGF0aW9uX3poX2NuPmAg6YOo5YiG5Lul6I635Y+W5pu05aSa6K+m57uG5L+h5oGv44CCDQo+ID4N
+Cj4gPiAgIC4uIHRvY3RyZWU6Og0KPiA+ICAgICAgIDptYXhkZXB0aDogMQ0KPiA+IEBAIC0yMCw2
+ICs0OCw4IEBAIFJ1c3QNCj4gPiAgICAgICBjb2RpbmctZ3VpZGVsaW5lcw0KPiA+ICAgICAgIGFy
+Y2gtc3VwcG9ydA0KPiA+DQo+ID4gK+S9oOi/mOWPr+S7peWcqCA6ZG9jOmAuLi8uLi8uLi9wcm9j
+ZXNzL2tlcm5lbC1kb2NzYCDkuK3mib7liLAgUnVzdCDnmoTlrabkuaDmnZDmlpnjgIINCj4gPiAr
+DQo+ID4gICAuLiBvbmx5OjogIHN1YnByb2plY3QgYW5kIGh0bWwNCj4gPg0KPiA+ICAgICAgSW5k
+aWNlcw0K
 
