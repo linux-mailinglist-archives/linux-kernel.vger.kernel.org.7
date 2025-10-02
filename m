@@ -1,140 +1,124 @@
-Return-Path: <linux-kernel+bounces-840650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39155BB4E49
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 20:35:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6C88BB4E5B
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 20:39:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 401F32A4896
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 18:35:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D95F19E2E59
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 18:39:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76E222798EB;
-	Thu,  2 Oct 2025 18:35:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29AB4279DA1;
+	Thu,  2 Oct 2025 18:39:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t08FxlBe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BiEIH/OB"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAF53276027;
-	Thu,  2 Oct 2025 18:35:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22B332571DE
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 18:39:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759430126; cv=none; b=TXpvVOnOnz5IOnjkvFRU7rDTDqSX/GeIfJD/9QkKF/IsTl2L4rIEwLC1vmbP8XmDXoZjXfSyplypWioxIfANeQ6frN7aD1/1iS43KMRqMC9Knr/l0Ex3iWqolf/ocQP0CrGFgnqmNPrQo1p0AiLtROoHcBktH4BhGj5VeXmAFAc=
+	t=1759430348; cv=none; b=Zi2C0MMQqXAfXyTKXY9X2hkcRZm4zVSNpHtRUNiXmN8DIb3Ce+VfrWrQq68lnKqH71mLxdiXZKQMjZoPmaXw0F/IUYl9ien2X0q1EqMQIYSRa3zPfsRlQIPNosmMbFZPvZJBFDXdTwQ45OowH/0/CdtfNfbNgMqXloA4ZyDiyc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759430126; c=relaxed/simple;
-	bh=zHJ1GL2dHHNTvje7wfAsF9YbHWtTxN7jX71+3I/wsHQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LyuBZlQVZLI8hr366H2ilZcKgv3pb1HHBFCuvd2OYVF/Nes95iev4ailaWGpWUuaIJ/MYfqLg9+5qD5CoVLWHuWIoXe72Myv73D3j54cm0tlLbdnqPLNXgnfTHdMSO1OTd+h48YivEt7SFva8eDrE35lemcxp6pnoCliQu3rWXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t08FxlBe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B44C8C4CEF4;
-	Thu,  2 Oct 2025 18:35:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759430125;
-	bh=zHJ1GL2dHHNTvje7wfAsF9YbHWtTxN7jX71+3I/wsHQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=t08FxlBeAOkMnjhbkf8zCIx5OpnQBktugZTsxCd4Tgd6msXMaoGiYZNwwoXi/1m08
-	 EycjQh3GLFu5QzD1tlYBZKlY2QpP0xmjwRFgherDKSmdu2nq1v0ymqW5GIxx8CU6Xx
-	 x8qgVnGh4GZJumMlTZJtQuDdSjFYpFMwGS+BthR4QsoNAiJmXTq3SlHllrB8yGtxDP
-	 tnSKBW9gQsyPA+HIpWpGtAcY+1qWOUZcmsVztryCEIYrwYkHyqRn9zCLUW6xDhTHkE
-	 AmReNgMl4mIkh6TfSolIRy4+aKZ/hKgNGHuNKnaRegTr6pXt1FqUxe0SAwXoyimlKf
-	 dHfaDyEh4Q/fQ==
-Date: Thu, 2 Oct 2025 19:35:20 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Kevin Tung <kevin.tung.openbmc@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Amithash Prasasd <amithash@meta.com>,
-	Kevin Tung <Kevin.Tung@quantatw.com>,
-	Ken Chen <Ken.Chen@quantatw.com>, Leo Yang <Leo-Yang@quantatw.com>
-Subject: Re: [PATCH v3 1/2] dt-bindings: arm: aspeed: add Meta Yosemite5 board
-Message-ID: <20251002-outmost-epic-9cb3bab4d352@spud>
-References: <20251001-yv5_add_dts-v3-0-54190fbc0785@gmail.com>
- <20251001-yv5_add_dts-v3-1-54190fbc0785@gmail.com>
- <20251001-bonding-surging-af8cd0d09e07@spud>
- <CABh9gBcKt1zqvMQ=390HESPR5KrA42jaMFj9Ca4qmeS0d0ToAw@mail.gmail.com>
+	s=arc-20240116; t=1759430348; c=relaxed/simple;
+	bh=G09Kpo4xTPUVEiyG22AAm1ZAbiJJ+0YFliGitufaR1g=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=lVMl5947NVXOdk8Jc7s/oJADoHWxmhhoVwvDLHBLZn0cn3w0byDFa7pAkI6/jMqFNF9pljelq/Qj3B7kfWwXPfzVByuAUO37BS9+tXgmi0tIDUTwf1xFh7BOTEVYy2/bjPcMzX60ar4c+470Jh5Jo81KmhaxRUteTZJqpDLMgsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BiEIH/OB; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-336b646768eso2045270a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 11:39:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759430346; x=1760035146; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=duEE5S2daxBtDzrQtu0r5VIf4FyGlLEemzqCmyOwWzI=;
+        b=BiEIH/OBSrVZYDvsKyOSgTxnTSgN8HZTuT5R6BMusTMVgJkQICuztelM0x1mgaTt4A
+         /tfRkr8W/HA9Imf0ThUw7fELjzpyxyLdYaRAy6n1IUCBgmEhkw/Ge1q/FvmN/HOLLzhL
+         T+liuJl8ZlnCCaI7rFQ6OwtsacD+Uz9VR1rIjTHoeMAI9n4v+79ZA4cUz0Z0KiBgkrlK
+         K801K2RjdXYAl4mifr0OnaJ/h+IkzHfWTy7rQ3uUZYLWj82XHUywOh7KRfEB3TTL+oeT
+         nitF7UIWLXo+0v73y9UV9ecol+MAqUqNJaW9uuBuS1j0bwiqM7ilQv36k9JlIKqf8DgK
+         1gGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759430346; x=1760035146;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=duEE5S2daxBtDzrQtu0r5VIf4FyGlLEemzqCmyOwWzI=;
+        b=mrzs+YnJMxw0cVAndzA/pCe9HYn+JDSwBHEo6NUJ8abwm1fczFKbbPkwajfIP6TXCG
+         VK+qwdyu7r7JnhrtYr/LT9+/gmiI+wT2MLQ41AT4ye0I+5dzjU1M9JNNI6QQIz0i0tpB
+         8uC5iU/j3eaqYB0sQBGsTGFYSKLKmGqoLMSd91LNbkdNu5MbwQUGDhJ++1Q52FTExN5w
+         iVHCwcFr8XLFeTbuKcjwT+E74zlqLjyabbdB9AXfjdaxUv6NkTjgP63h3MeAd/Hw1c7y
+         xN160ytXpf8T9msHJ8IhPkJ2EEvA2b/o6GDGmTYDC3SasayTHyLweRwtl9vyP2iYwIun
+         cGWA==
+X-Forwarded-Encrypted: i=1; AJvYcCXTCv4RyGt/2Wb3rlEDA3DL/Wd9190I4hzPCHaNIhNV3K4gejxqyXHAnmqJqnjC3yxOwKw8U2iJ/i6htkw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzdne47wE3d0Cl/+kJAXoLymEozkY1n7FGTn7abLzVWh6ai8Xe1
+	UZOzreGVINarnIQw08mSJ48nwZCO2XYLC1MVGlmwMJXa/r1H2uagWNPON8jpQEKG1L1ryF8UznK
+	/t8p4/A==
+X-Google-Smtp-Source: AGHT+IEFL9bqgbP8tD63/vZT6rn/5qVLAEV3U7x2zSmWmIO2mCnwPRYoP1fhIFqrQuodI6f+gnNPUZpWXpc=
+X-Received: from pjbgb10.prod.google.com ([2002:a17:90b:60a:b0:325:220a:dd41])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1642:b0:32d:601d:f718
+ with SMTP id 98e67ed59e1d1-339c27d3eacmr345300a91.31.1759430346442; Thu, 02
+ Oct 2025 11:39:06 -0700 (PDT)
+Date: Thu, 2 Oct 2025 11:39:05 -0700
+In-Reply-To: <aN6hwNUa3Kh08yog@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="y+7trX4Eurr9Vg9P"
-Content-Disposition: inline
-In-Reply-To: <CABh9gBcKt1zqvMQ=390HESPR5KrA42jaMFj9Ca4qmeS0d0ToAw@mail.gmail.com>
+Mime-Version: 1.0
+References: <aN6hwNUa3Kh08yog@sirena.org.uk>
+Message-ID: <aN7GyQU6q8fKsJ7J@google.com>
+Subject: Re: linux-next: manual merge of the kvm tree with the origin tree
+From: Sean Christopherson <seanjc@google.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, KVM <kvm@vger.kernel.org>, 
+	Babu Moger <babu.moger@amd.com>, Borislav Petkov <bp@alien8.de>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>, Xin Li <xin@zytor.com>
+Content-Type: text/plain; charset="us-ascii"
 
+On Thu, Oct 02, 2025, Mark Brown wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the kvm tree got a conflict in:
+> 
+>   arch/x86/include/asm/cpufeatures.h
+> 
+> between commit:
+> 
+>   e19c06219985f ("x86/cpufeatures: Add support for Assignable Bandwidth Monitoring Counters (ABMC)")
+> 
+> from the origin tree and commit:
+> 
+>   3c7cb84145336 ("x86/cpufeatures: Add a CPU feature bit for MSR immediate form instructions")
+> 
+> from the kvm tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+> diff --cc arch/x86/include/asm/cpufeatures.h
+> index b2a562217d3ff,f1a9f40622cdc..0000000000000
+> --- a/arch/x86/include/asm/cpufeatures.h
+> +++ b/arch/x86/include/asm/cpufeatures.h
+> @@@ -496,7 -497,7 +497,8 @@@
+>   #define X86_FEATURE_TSA_L1_NO		(21*32+12) /* AMD CPU not vulnerable to TSA-L1 */
+>   #define X86_FEATURE_CLEAR_CPU_BUF_VM	(21*32+13) /* Clear CPU buffers using VERW before VMRUN */
+>   #define X86_FEATURE_IBPB_EXIT_TO_USER	(21*32+14) /* Use IBPB on exit-to-userspace, see VMSCAPE bug */
+>  -#define X86_FEATURE_MSR_IMM		(21*32+15) /* MSR immediate form instructions */
+>  +#define X86_FEATURE_ABMC		(21*32+15) /* Assignable Bandwidth Monitoring Counters */
+> ++#define X86_FEATURE_MSR_IMM		(21*32+16) /* MSR immediate form instructions */
 
---y+7trX4Eurr9Vg9P
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Oct 02, 2025 at 12:23:47PM +0800, Kevin Tung wrote:
-> On Thu, Oct 2, 2025 at 2:33=E2=80=AFAM Conor Dooley <conor@kernel.org> wr=
-ote:
-> >
-> > On Wed, Oct 01, 2025 at 04:47:50PM +0800, Kevin Tung wrote:
-> > > Document the new compatibles used on Meta Yosemite5.
-> > >
-> > > Signed-off-by: Kevin Tung <kevin.tung.openbmc@gmail.com>
-> >
-> > You've repeatedly ignored my ack, so I assume you don't want it.
-> > Maybe you want a nak instead?
-> >
->=20
-> Apologies for ignoring your ack repeatedly, that was not intentional.
-> I truly value your review and will make sure to include it. Would you
-> suggest that I send a v4 to pick it up, or is it fine to carry it
-> forward in the next revision?
-> Thank you again for taking the time to review my patches.
-
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-
-The maintainer will add it when they apply, there's no need to make
-another version for this alone.
-
->=20
-> Kevin
-> > > ---
-> > >  Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml | 1 +
-> > >  1 file changed, 1 insertion(+)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml=
- b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
-> > > index 456dbf7b5ec8f4442be815284e1ad085287dc443..6f2b12f96bd6ce31b4175=
-e109a78d931dffdfe28 100644
-> > > --- a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
-> > > +++ b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
-> > > @@ -89,6 +89,7 @@ properties:
-> > >                - facebook,minerva-cmc
-> > >                - facebook,santabarbara-bmc
-> > >                - facebook,yosemite4-bmc
-> > > +              - facebook,yosemite5-bmc
-> > >                - ibm,blueridge-bmc
-> > >                - ibm,everest-bmc
-> > >                - ibm,fuji-bmc
-> > >
-> > > --
-> > > 2.51.0
-> > >
-
---y+7trX4Eurr9Vg9P
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaN7F6AAKCRB4tDGHoIJi
-0sRwAQCwFXlCkLmxyD0w0Te9XN21MKFsXX3OKi+6iraKLaemqgEA9P77/sCLgfDi
-ArNrGiKmZ7zFrzI9JsZPFV6Lu0VuBwE=
-=wXDY
------END PGP SIGNATURE-----
-
---y+7trX4Eurr9Vg9P--
+Just in case anyone else is starled by the change in bit number, these are
+synthetic (or scattered) flags, i.e. the the bit number is arbitrary and not
+tied to hardware.
 
