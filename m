@@ -1,85 +1,106 @@
-Return-Path: <linux-kernel+bounces-840132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 944E3BB3A4F
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 12:34:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C91D2BB3A55
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 12:35:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF0121752C0
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 10:34:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B463169662
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 10:35:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7461030AAC2;
-	Thu,  2 Oct 2025 10:34:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8750309EE9;
+	Thu,  2 Oct 2025 10:35:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="FEqpewgy"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Fyib+f7f"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FA902F0C5D;
-	Thu,  2 Oct 2025 10:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A3C13002CB
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 10:35:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759401248; cv=none; b=AQDc++UsnAxJPewvK2C4phtreWlP4dk4PK0otf0c2hDyaLe9bNfJckeK14t0EfJOZtEJR5JMXm8uLnFKsn4MKTBzRu/h+hw/xrl3I33iWYb4X08Nk+ZH25425jLiFffjPKA7eZanAHHcw2SJcHwyhaCUvMopXBbtS3hcUIVJgvA=
+	t=1759401354; cv=none; b=nw5zkuRwT6gD7e04kdI29ygfAw3Iudk1L9MgYt2NFEwEO2+79tr/L1IzFUSfLHPCBo3SZRB6umf7n4FZheYEhpo2GfCzsiukIiAwwtIJqM0r00tYEPs8co7Rd5zIcEJAY4EX//HKQamxnRtMaLx5G5fnVwolVfJuHN2Hjz0Ko2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759401248; c=relaxed/simple;
-	bh=yCHwgWNVGCTxuuG33TUZ1dUtpx+S65GKZJdMcIKh/u4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZmKnSGlto4Rp1NO4LTwwgH8VYkHVz9uBMHfP6Kcz2S1dr0OAt6B2eh5FYhEDY32VoHBBay4Czib+ktcFuvMJMBTfA1HrcXbXGWHlQ6glNstiZw7jgCtVFNxQsvjoAxzBReBVoSp/fBY7WhEzPJJXUDkeBsqvk+Gj1GEVFPC//xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=FEqpewgy; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1759401243;
-	bh=yCHwgWNVGCTxuuG33TUZ1dUtpx+S65GKZJdMcIKh/u4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FEqpewgygAdLWN4GejD4G3au5APVkAWwxzYwAhqQsX2cH/YoAk3f9fY4fY3gNKWq5
-	 OVvREIT4CCMYz/9wa9KCofWUZPRRK+brp6ezfunnU6T7wPHotA8CkgpAiTSSVSw/jq
-	 qvK+7tE73h/XLy2gaKlozS55gI4oU6ecw2ugERVwWAyXATBFrDomxfL5myXbZQWjYt
-	 2acwSwCEtPjjA2SUqtXq31uNWhSukDtRhzmy+ed45eUe1PzL+uxWFgxwxqg57LqSMN
-	 QLgxCy3BghLFGm7kaDyXI7uqPkJnHo7QlpANJ+3eu7qUcFDryOg82GTlTQFqYFdzQb
-	 5K0eO1mkRU8SQ==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	s=arc-20240116; t=1759401354; c=relaxed/simple;
+	bh=R3kcVoNm8AxvW6p+I+oQs0JRBi7GG8nm9/kcEGO0Dik=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eSKmjhK88K3zUkXAgFFTYiEPDyGcs2Gq1/0zEKMMReM8ixKm52IhBhcDlNbpmzfUK5H4Xs3eizAXyAnHKyiEOhKiPQKpZq8Q7uBdNpLpDTppmpNEcEbEzr+L+xId58DUf5XoqugSrdCSRYRUgmDXZRb22J2UatOH7ql07SRvBOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Fyib+f7f; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759401351;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=UKUts6XcuzPI8ux1sN1ppRT2CxL0Ox4R/rL5JBmAnyI=;
+	b=Fyib+f7fb+75yhW0zIkG690c5Ci7UZbKLfn/vsSKf6poA+xVY78FJ1ZOl/cjOFNH0TSkzl
+	82fbKtErtALYdRvwUkoLWs76ysUt6OmfbE2yovnfnAlPiRTzor+C0e+esh8DBejbmF343k
+	c7385QkJOB1gpx7S5IGfk4S1BcP2N3I=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-306-o4AnDlCfPiye51Arzr9FGg-1; Thu,
+ 02 Oct 2025 06:35:48 -0400
+X-MC-Unique: o4AnDlCfPiye51Arzr9FGg-1
+X-Mimecast-MFC-AGG-ID: o4AnDlCfPiye51Arzr9FGg_1759401347
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id C0FED17E02B0;
-	Thu,  2 Oct 2025 12:34:02 +0200 (CEST)
-Message-ID: <e584b589-e9f0-48cf-9e75-a6ed64d9f7a3@collabora.com>
-Date: Thu, 2 Oct 2025 12:34:02 +0200
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8245F195605B;
+	Thu,  2 Oct 2025 10:35:46 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.44.32.208])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 664CC300018D;
+	Thu,  2 Oct 2025 10:35:40 +0000 (UTC)
+From: =?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>
+To: mst@redhat.com
+Cc: Laurent Vivier <lvivier@redhat.com>,
+	Stefano Garzarella <sgarzare@redhat.com>,
+	Dragos Tatulea DE <dtatulea@nvidia.com>,
+	Cindy Lu <lulu@redhat.com>,
+	Maxime Coquelin <mcoqueli@redhat.com>,
+	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
+	Yongji Xie <xieyongji@bytedance.com>,
+	jasowang@redhat.com,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	linux-kernel@vger.kernel.org,
+	Jonah Palmer <jonah.palmer@oracle.com>,
+	Si-Wei Liu <si-wei.liu@oracle.com>,
+	virtualization@lists.linux.dev,
+	=?UTF-8?q?Be=C3=B1at=20Gartzia=20Arruabarrena?= <bgartzia@redhat.com>
+Subject: [RFC 0/2] support vduse feature provisioning in vdpa netlink command
+Date: Thu,  2 Oct 2025 12:35:35 +0200
+Message-ID: <20251002103537.308717-1-eperezma@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 2/2] mailbox: mediatek: Add mtk-vcp-mailbox driver
-To: Jjian Zhou <jjian.zhou@mediatek.com>,
- Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Chen-Yu Tsai <wenst@chromium.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- Project_Global_Chrome_Upstream_Group@mediatek.com
-References: <20251002084204.15898-1-jjian.zhou@mediatek.com>
- <20251002084204.15898-3-jjian.zhou@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20251002084204.15898-3-jjian.zhou@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Il 02/10/25 10:41, Jjian Zhou ha scritto:
-> Add mtk-vcp-mailbox driver to support the communication with
-> VCP remote microprocessor.
-> 
-> Signed-off-by: Jjian Zhou <jjian.zhou@mediatek.com>
+This series implements features provisioning for vduse devices.  This allows
+the device provisioner to clear the features exposed by the userland device, so
+the driver never see them.  The intended use case is to provision more than one
+different device with the same feature set, allowing live migration between
+them.
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+The device addition validates the provisioned features to be a subset of the
+parent features, as the rest of the backends.
 
+Eugenio Pérez (2):
+  vduse: support feature provisioning
+  vduse: allow to specify device-specific features if it's multiclass
+
+ drivers/vdpa/vdpa.c                |  9 ---------
+ drivers/vdpa/vdpa_user/vduse_dev.c | 17 ++++++++++++++---
+ 2 files changed, 14 insertions(+), 12 deletions(-)
+
+-- 
+2.51.0
 
 
