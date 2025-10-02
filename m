@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-840377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6BC3BB43D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 16:59:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2ECD1BB43EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 17:00:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60AA74225E5
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 14:59:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82F35171999
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 14:59:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90BF91C8FBA;
-	Thu,  2 Oct 2025 14:57:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9F281E0083;
+	Thu,  2 Oct 2025 14:57:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="C/V1Y4qq"
+	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="Jp3EqdH6"
 Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2FD019006B;
-	Thu,  2 Oct 2025 14:57:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F9EB1A76BB;
+	Thu,  2 Oct 2025 14:57:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759417077; cv=none; b=FKsj4e2qWSpXB7kvyP863rPtkAxqujt98UAOqwHxkWWRvoZSsCV2UjevIgYgQqDHqCgf+6EC/ygoEyyf47GqhnKAHc6rXIuZ53fYaL7P6zCSyKRoGVAq0PwpjJvZu4OqYGNLmqBfVM5v1NDgVAy4eE/a/c3vlbnDcvz3s02Qyx8=
+	t=1759417079; cv=none; b=XaoccXuqjKE4iywwNndfgf5DODqPKs4uxVeWLHO/39hbVW1HGeKwFjQQww45iDxVfZm+PctTt26yqNJ77i4Om6KeL+SJNl/F6I2hZeN6NA4776aJSv/MGtfM5trqHTksLkwsMoZ+yjgKrrEYlusUdh+JPHT1uXfNazMPHXyQqZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759417077; c=relaxed/simple;
-	bh=/59pzaIpo3hxjYrwoqRQB9pU18sg+2ce7TE+GucMtQ4=;
+	s=arc-20240116; t=1759417079; c=relaxed/simple;
+	bh=6qedSYzS0ayeal9JrjXFgWkdWxh9ci9BhA4SlDvt4D8=;
 	h=From:To:Cc:Date:Message-Id:In-Reply-To:References:MIME-Version:
-	 Subject; b=ZOI+meTYYoDX3jv8tgTgJ7/Gr3w7RACdqGP070KCm8bP4vFaYkwbyPYnYv2uA+shwacpc27AM61pEONozXJo/Y84x4ZuzHYNOTOq6UNjEmKwuGoOtio6BL1kQ/Ex44ZqosxR/goZwENO/Y4T5uCE6LPEIP5EJVy9DFk/9VXMDeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=C/V1Y4qq; arc=none smtp.client-ip=162.243.120.170
+	 Subject; b=iNCiBCHNrrv3qtjET7pwvzazEYB6csx+gIDm/8RnBcc+rGoYJ0wbGNGdJeoVp/+ZD7HowVJxaOSC4NBNNWVz7bBuFitHvwIIdn07MpNWE2b2/7fumf/YRTvFlSsTNb3NyUtZt2sIUuE1atws7BYTkR8K1GvkoDw1lotDHHMyEdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=Jp3EqdH6; arc=none smtp.client-ip=162.243.120.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
 	; s=x; h=Subject:Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Cc:To
 	:From:subject:date:message-id:reply-to;
-	bh=N0EipVfeJiCRsPTWh7G7K2zw8aa4aDpHL9PXk/Hc5Xg=; b=C/V1Y4qqd0TMBxDoiFEK+bQqhk
-	ywEGouaWNA3uGjVq/KAnLnLniQrsK5hSnCp8m9vM43XAbH5bcbC886nQ4lZTVTHkang22L/U2vLT5
-	mXPTAfirDlPGYbTY3wqAXBnmcbZjbYfubEzo8MAvTO9dsUZga/oC9iOMDoAh3zTOUM54=;
+	bh=YuOC1vkYGHrM8fWmHS/yqyaGf9bwUcOKFIgyl6OUEhI=; b=Jp3EqdH6PM0dhQN9PBN7eTfZWo
+	cpKEOeNBqcZF2ocSr256IUMRFZCb4eADQoKD9jJuSNOcvaA6XrjHGNgud6ZT3D7QiFvzNnGaha8gN
+	NVs5YKyyqTsCGpUGK2XhgmFC36dvYeKeATBctCgjSqbSWxqVH0lx/C7kCdNgOUgMXszs=;
 Received: from modemcable168.174-80-70.mc.videotron.ca ([70.80.174.168]:59004 helo=pettiford.lan)
 	by mail.hugovil.com with esmtpa (Exim 4.92)
 	(envelope-from <hugo@hugovil.com>)
-	id 1v4Kkj-0005hy-F5; Thu, 02 Oct 2025 10:57:54 -0400
+	id 1v4Kkk-0005hy-SN; Thu, 02 Oct 2025 10:57:55 -0400
 From: Hugo Villeneuve <hugo@hugovil.com>
 To: gregkh@linuxfoundation.org,
 	jirislaby@kernel.org,
@@ -47,10 +47,9 @@ To: gregkh@linuxfoundation.org,
 Cc: linux-kernel@vger.kernel.org,
 	linux-serial@vger.kernel.org,
 	hugo@hugovil.com,
-	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu,  2 Oct 2025 10:57:34 -0400
-Message-Id: <20251002145738.3250272-12-hugo@hugovil.com>
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>
+Date: Thu,  2 Oct 2025 10:57:35 -0400
+Message-Id: <20251002145738.3250272-13-hugo@hugovil.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20251002145738.3250272-1-hugo@hugovil.com>
 References: <20251002145738.3250272-1-hugo@hugovil.com>
@@ -66,34 +65,94 @@ X-SA-Exim-Mail-From: hugo@hugovil.com
 X-Spam-Level: 
 X-Spam-Report: 
 	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-Subject: [PATCH v2 11/15] serial: sc16is7xx: Kconfig: allow building with COMPILE_TEST
+Subject: [PATCH v2 12/15] serial: sc16is7xx: use KBUILD_MODNAME
 X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
 X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
 
 From: Hugo Villeneuve <hvilleneuve@dimonoff.com>
 
-Add COMPILE_TEST as an option to allow test building the driver.
+There is no need to redefine the driver name. Use KBUILD_MODNAME and get
+rid of DRV_NAME altogether.
 
-Suggested-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Link: https://lore.kernel.org/all/20240604083159.d984dd08741396ea4ca46418@hugovil.com/raw
 Signed-off-by: Hugo Villeneuve <hvilleneuve@dimonoff.com>
 ---
- drivers/tty/serial/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/tty/serial/sc16is7xx.c     | 4 ++--
+ drivers/tty/serial/sc16is7xx.h     | 1 -
+ drivers/tty/serial/sc16is7xx_i2c.c | 4 ++--
+ drivers/tty/serial/sc16is7xx_spi.c | 4 ++--
+ 4 files changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
-index 8523ccfb364dd..9a90654dccd78 100644
---- a/drivers/tty/serial/Kconfig
-+++ b/drivers/tty/serial/Kconfig
-@@ -1044,7 +1044,7 @@ config SERIAL_SCCNXP_CONSOLE
+diff --git a/drivers/tty/serial/sc16is7xx.c b/drivers/tty/serial/sc16is7xx.c
+index c6d4ad8d84d16..644f4e9233dbc 100644
+--- a/drivers/tty/serial/sc16is7xx.c
++++ b/drivers/tty/serial/sc16is7xx.c
+@@ -361,7 +361,7 @@ static DEFINE_IDA(sc16is7xx_lines);
  
- config SERIAL_SC16IS7XX
- 	tristate "NXP SC16IS7xx UART support"
--	depends on SPI_MASTER || I2C
-+	depends on SPI_MASTER || I2C || COMPILE_TEST
- 	select SERIAL_CORE
- 	select SERIAL_SC16IS7XX_SPI if SPI_MASTER
- 	select SERIAL_SC16IS7XX_I2C if I2C
+ static struct uart_driver sc16is7xx_uart = {
+ 	.owner		= THIS_MODULE,
+-	.driver_name    = SC16IS7XX_NAME,
++	.driver_name    = KBUILD_MODNAME,
+ 	.dev_name	= "ttySC",
+ 	.nr		= SC16IS7XX_MAX_DEVS,
+ };
+@@ -1808,4 +1808,4 @@ module_exit(sc16is7xx_exit);
+ 
+ MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("Jon Ringle <jringle@gridpoint.com>");
+-MODULE_DESCRIPTION("SC16IS7xx tty serial core driver");
++MODULE_DESCRIPTION(KBUILD_MODNAME " tty serial core driver");
+diff --git a/drivers/tty/serial/sc16is7xx.h b/drivers/tty/serial/sc16is7xx.h
+index afb784eaee45b..9c584d6d35932 100644
+--- a/drivers/tty/serial/sc16is7xx.h
++++ b/drivers/tty/serial/sc16is7xx.h
+@@ -8,7 +8,6 @@
+ #include <linux/regmap.h>
+ #include <linux/types.h>
+ 
+-#define SC16IS7XX_NAME		"sc16is7xx"
+ #define SC16IS7XX_MAX_PORTS	2 /* Maximum number of UART ports per IC. */
+ 
+ struct device;
+diff --git a/drivers/tty/serial/sc16is7xx_i2c.c b/drivers/tty/serial/sc16is7xx_i2c.c
+index cd7de9e057b85..699376c3b3a54 100644
+--- a/drivers/tty/serial/sc16is7xx_i2c.c
++++ b/drivers/tty/serial/sc16is7xx_i2c.c
+@@ -52,7 +52,7 @@ MODULE_DEVICE_TABLE(i2c, sc16is7xx_i2c_id_table);
+ 
+ static struct i2c_driver sc16is7xx_i2c_driver = {
+ 	.driver = {
+-		.name		= SC16IS7XX_NAME,
++		.name		= KBUILD_MODNAME,
+ 		.of_match_table	= sc16is7xx_dt_ids,
+ 	},
+ 	.probe		= sc16is7xx_i2c_probe,
+@@ -63,5 +63,5 @@ static struct i2c_driver sc16is7xx_i2c_driver = {
+ module_i2c_driver(sc16is7xx_i2c_driver);
+ 
+ MODULE_LICENSE("GPL");
+-MODULE_DESCRIPTION("SC16IS7xx I2C interface driver");
++MODULE_DESCRIPTION(KBUILD_MODNAME " interface driver");
+ MODULE_IMPORT_NS("SERIAL_NXP_SC16IS7XX");
+diff --git a/drivers/tty/serial/sc16is7xx_spi.c b/drivers/tty/serial/sc16is7xx_spi.c
+index 20d736b657b17..7e76d0e38da7d 100644
+--- a/drivers/tty/serial/sc16is7xx_spi.c
++++ b/drivers/tty/serial/sc16is7xx_spi.c
+@@ -75,7 +75,7 @@ MODULE_DEVICE_TABLE(spi, sc16is7xx_spi_id_table);
+ 
+ static struct spi_driver sc16is7xx_spi_driver = {
+ 	.driver = {
+-		.name		= SC16IS7XX_NAME,
++		.name		= KBUILD_MODNAME,
+ 		.of_match_table	= sc16is7xx_dt_ids,
+ 	},
+ 	.probe		= sc16is7xx_spi_probe,
+@@ -86,5 +86,5 @@ static struct spi_driver sc16is7xx_spi_driver = {
+ module_spi_driver(sc16is7xx_spi_driver);
+ 
+ MODULE_LICENSE("GPL");
+-MODULE_DESCRIPTION("SC16IS7xx SPI interface driver");
++MODULE_DESCRIPTION(KBUILD_MODNAME " interface driver");
+ MODULE_IMPORT_NS("SERIAL_NXP_SC16IS7XX");
 -- 
 2.39.5
 
