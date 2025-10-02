@@ -1,177 +1,212 @@
-Return-Path: <linux-kernel+bounces-840326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3715BB41E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 16:02:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39D0ABB41F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 16:03:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01DC63B82EE
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 14:02:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D403D32184A
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 14:03:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 356E02C027F;
-	Thu,  2 Oct 2025 14:02:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4708F30CDA4;
+	Thu,  2 Oct 2025 14:03:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d8EASvGD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GIlpTnbC"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4C0139E;
-	Thu,  2 Oct 2025 14:02:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C99AF139E
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 14:03:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759413745; cv=none; b=tmN2fRDLzttqxAX4tQKLZKiCpw0z4foTe2q4HbG3KH4Mw+uFSMMUI+YUY1BzpnBo4wpol+hA1/YuD8oXrWEDk7jUWZGanzQ39rBeqVttu74PGX0kYnfipwfFUAp06J0WRqwtdGYBDTw9UWpD86aVwrabGbxsCl3zW3Cla4qDzxw=
+	t=1759413816; cv=none; b=BgVEKxbDBW5sS/f/7QZ6ZzRv6T7rDXX+z+gf5ejNgo8kpD91YABDo9IE4Ng296s3pgMacUKcadkQVN8aelrSFyG/eKjivNGwY6rMkbi27N71hQ7tus8hGot1gwBwET6qKyGujP0o7o9+FPaY5Jo/Mron+xvqGR5lbguxQ3q2bCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759413745; c=relaxed/simple;
-	bh=Knz7TaS2NpECls0C9xbmF0c5aMf2bwguD/z7iQ6D85g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lnLiYkNMiXUBwB/edXpWo88eZfJqRby+M3+rOSqttXzwRNJf1x5QdM8ANTK3TlWb0MsccngxxTHVRi2UpO4IHmOoiMGo7kCEu/tW8f1Zf6NMViLet54kuEbcrJCX43rAoxyb3CtPyZnQrQ7fN4+vDgwuPP3m1FTgnfvvrg4swc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d8EASvGD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09F9CC4CEF4;
-	Thu,  2 Oct 2025 14:02:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759413745;
-	bh=Knz7TaS2NpECls0C9xbmF0c5aMf2bwguD/z7iQ6D85g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=d8EASvGDfVg8/2sxIiZrH/ZYOSHsK1lmUfLbGgqHK3xHWUGWS5F1DNsFrizgI2tKk
-	 x21UGOA5WfKz8trtRBT2LYZc+oE7OxmE09qurRVlNmPHJVFVlYPp/aBluid5fl+oTN
-	 DVWxpBqtzKiVl18pvn6wzUibzr4Gxxs6MI4xx2FFsLoRQeRY8zwvjG7mP6Rl2MqEz0
-	 Ry6Ol2kkBuoQNA2OrNQF+sLsrpWwQZt8C3Z5KB8fNcl787qiIXjuSkkZ4VbLexwhjg
-	 lN28TtP1m9cfDhRAf6AIVfBCp5VjsyTsLtTXfFotkJxjfY3mCpka40nrU6Fu2DsM+s
-	 7HSZu95ReHPWQ==
-Date: Thu, 2 Oct 2025 22:02:21 +0800
-From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: Mary Strodl <mstrodl@csh.rit.edu>
-Cc: linux-kernel@vger.kernel.org, linus.walleij@linaro.org, brgl@bgdev.pl,
-	linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] gpio: mpsse: use rcu to ensure worker is torn down
-Message-ID: <aN6F7Qw7wZAYpHCB@tzungbi-laptop>
-References: <20250923133304.273529-1-mstrodl@csh.rit.edu>
- <20250923133304.273529-2-mstrodl@csh.rit.edu>
+	s=arc-20240116; t=1759413816; c=relaxed/simple;
+	bh=DSbgudIchH9DAt30RTp4fiNJ8PDEmcx8oxGKlwDPGfs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eVjwbxQiaM0tXUFucv40UM7iGwwqT7Bk5MeZMlIt9cPRDX2gn3bvoqLYt82Flvxg0cjx6PCpbiy52LaR1gnjJn5W/z5YeX9pzEWd7kFzwI+mdVoCvcRyT6rCUsI2S4/rOWb3nekuEY0MJiCiPjXrh8WsS7dsLY35TXQkjme1M28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GIlpTnbC; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759413813;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=NP8ldv0CyO1BcEgFjrm3XpdWSlmAVGwUojKxT2KIJbk=;
+	b=GIlpTnbCOFLxyun9WTcNs6SsPzKekx6JJzsxLSzVDct5my/rkIeWFklPMcEZkWxAVToRk3
+	2fFBjQfLEtG88PMhhV1mT+uGhbJRupMmuuFXCXDqC6YQi/JTPxnX8UKGIt5yc6u5G3kHA9
+	S8LOvjpWgTY5ollmP+J0UFvtLYhnaU4=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-215-1J_vkfy0Nmuiqp8IOMK2qQ-1; Thu,
+ 02 Oct 2025 10:03:29 -0400
+X-MC-Unique: 1J_vkfy0Nmuiqp8IOMK2qQ-1
+X-Mimecast-MFC-AGG-ID: 1J_vkfy0Nmuiqp8IOMK2qQ_1759413807
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 10E9619560AE;
+	Thu,  2 Oct 2025 14:03:27 +0000 (UTC)
+Received: from warthog.procyon.org.com (unknown [10.42.28.24])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 62A021953945;
+	Thu,  2 Oct 2025 14:03:24 +0000 (UTC)
+From: David Howells <dhowells@redhat.com>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: David Howells <dhowells@redhat.com>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Stephan Mueller <smueller@chronox.de>,
+	linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5 0/5] lib/crypto: Add SHAKE128/256 support and move SHA3 to lib/crypto
+Date: Thu,  2 Oct 2025 15:03:14 +0100
+Message-ID: <20251002140321.2639064-1-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250923133304.273529-2-mstrodl@csh.rit.edu>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Tue, Sep 23, 2025 at 09:33:02AM -0400, Mary Strodl wrote:
-> @@ -261,9 +273,8 @@ static int gpio_mpsse_direction_input(struct gpio_chip *chip,
->  
->  	guard(mutex)(&priv->io_mutex);
->  	priv->gpio_dir[bank] &= ~BIT(bank_offset);
-> -	gpio_mpsse_set_bank(priv, bank);
->  
-> -	return 0;
-> +	return gpio_mpsse_set_bank(priv, bank);
+Hi Eric, Herbert,
 
-The change looks irrelevant to the patch.
+Here's a set of patches does the following:
 
-> +static void gpio_mpsse_poll(struct work_struct *my_work)
->  {
-[...]
-> +	/*
-> +	 * We only want one worker. Workers race to acquire irq_race and tear
-> +	 * down all other workers. This is a cond guard so that we don't deadlock
-> +	 * trying to cancel a worker.
-> +	 */
-> +	scoped_cond_guard(mutex_try, ;, &priv->irq_race) {
-> +		scoped_guard(rcu) {
-> +			list_for_each_entry_rcu(worker, &priv->workers, list) {
+ (1) Renames s390 and arm64 sha3_* functions to avoid name collisions.
 
-I'm not sure: doesn't it need to use list_for_each_entry_safe() (or variants)
-as elements may be removed in the loop?
+ (2) Copies the core of SHA3 support from crypto/ to lib/crypto/.
 
-> +				/* Don't stop ourselves */
-> +				if (worker == my_worker)
-> +					continue;
-> +
-> +				scoped_guard(raw_spinlock_irqsave, &priv->irq_spin)
-> +					list_del_rcu(&worker->list);
+ (3) Simplifies the internal code to maintain the buffer in little endian
+     form, thereby simplifying the update and extraction code which don't
+     then need to worry about this.  Instead, the state buffer is
+     byteswapped before and after.
 
-If RCU is using, does it still need to acquire the spinlock?  Alternatively,
-could it use the spinlock to protect the list so that it doesn't need RCU at
-all?
+ (4) Moves the Iota transform into the function with the rest of the
+     transforms.
 
->  static void gpio_mpsse_irq_disable(struct irq_data *irqd)
->  {
-> +	struct mpsse_worker *worker;
->  	struct mpsse_priv *priv = irq_data_get_irq_chip_data(irqd);
->  
->  	atomic_and(~BIT(irqd->hwirq), &priv->irq_enabled);
->  	gpiochip_disable_irq(&priv->gpio, irqd->hwirq);
-> +
-> +	/* Can't actually do teardown in IRQ context (blocks...) */
-> +	scoped_guard(rcu)
-> +		list_for_each_entry_rcu(worker, &priv->workers, list)
-> +			atomic_set(&worker->cancelled, 1);
->  }
->  
->  static void gpio_mpsse_irq_enable(struct irq_data *irqd)
->  {
-> +	struct mpsse_worker *worker;
->  	struct mpsse_priv *priv = irq_data_get_irq_chip_data(irqd);
->  
->  	gpiochip_enable_irq(&priv->gpio, irqd->hwirq);
->  	/* If no-one else was using the IRQ, enable it */
->  	if (!atomic_fetch_or(BIT(irqd->hwirq), &priv->irq_enabled)) {
-> -		INIT_WORK(&priv->irq_work, gpio_mpsse_poll);
-> -		schedule_work(&priv->irq_work);
-> +		/*
-> +		 * Can't be devm because it uses a non-raw spinlock (illegal in
-> +		 * this context, where a raw spinlock is held by our caller)
-> +		 */
-> +		worker = kzalloc(sizeof(*worker), GFP_KERNEL);
+ (5) Adds SHAKE128 and SHAKE256 support (needed for ML-DSA).
 
-I'm not sure: however it seems this function may be in IRQ context too (as
-gpio_mpsse_irq_disable() does).  GFP_KERNEL can sleep.
+ (6) Adds a kunit test for SHA3 in lib/crypto/tests/.
 
-> +		if (!worker)
-> +			return;
-> +
-> +		worker->priv = priv;
-> +		INIT_LIST_HEAD(&worker->list);
-> +		INIT_WORK(&worker->work, gpio_mpsse_poll);
-> +		schedule_work(&worker->work);
-> +
-> +		scoped_guard(raw_spinlock_irqsave, &priv->irq_spin)
-> +			list_add_rcu(&worker->list, &priv->workers);
+ (7) Adds proper API documentation for SHA3.
 
-Doesn't it need a synchronize_rcu()?
+Note that only the generic code is moved across; the asm-optimised stuff is
+not touched as I'm not familiar with that.
 
->  static void gpio_mpsse_disconnect(struct usb_interface *intf)
->  {
-> +	struct mpsse_worker *worker;
->  	struct mpsse_priv *priv = usb_get_intfdata(intf);
-> +	struct list_head destructors = LIST_HEAD_INIT(destructors);
-> +
-> +	/*
-> +	 * Lock prevents double-free of worker from here and the teardown
-> +	 * step at the beginning of gpio_mpsse_poll
-> +	 */
-> +	scoped_guard(mutex, &priv->irq_race) {
-> +		scoped_guard(rcu) {
-> +			list_for_each_entry_rcu(worker, &priv->workers, list) {
-> +				scoped_guard(raw_spinlock_irqsave, &priv->irq_spin)
-> +					list_del_rcu(&worker->list);
-> +
-> +				/* Give worker a chance to terminate itself */
-> +				atomic_set(&worker->cancelled, 1);
-> +				/* Keep track of stuff to cancel */
-> +				INIT_LIST_HEAD(&worker->destroy);
-> +				list_add(&worker->destroy, &destructors);
-> +			}
-> +		}
-> +		/* Make sure list consumers are finished before we tear down */
-> +		synchronize_rcu();
-> +		list_for_each_entry(worker, &destructors, destroy)
-> +			gpio_mpsse_stop(worker);
-> +	}
+This is based on Eric's libcrypto-next branch.
 
-The code block is very similar to block in gpio_mpsse_poll() above.  Could
-consider to use a function to prevent duplicate code.
+The patches can also be found here:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=keys-pqc
+
+David
+
+Changes
+=======
+ver #5)
+ - Fix gen-hash-testvecs.py to correctly handle algo names that contain a
+   dash.
+ - Fix gen-hash-testvecs.py to not generate HMAC for SHA3-* or SHAKE* as
+   these don't currently have HMAC variants implemented.
+ - Fix algo names to be correct.
+ - Fix kunit module description as it now tests all SHA3 variants.
+
+ver #4)
+ - Fix a couple of arm64 build problems.
+ - Doc fixes:
+   - Fix the description of the algorithm to be closer to the NIST spec's
+     terminology.
+   - Don't talk of finialising the context for XOFs.
+   - Don't say "Return: None".
+   - Declare the "Context" to be "Any context" and make no mention of the
+     fact that it might use the FPU.
+   - Change "initialise" to "initialize".
+   - Don't warn that the context is relatively large for stack use.
+ - Use size_t for size parameters/variables.
+ - Make the module_exit unconditional.
+ - Dropped the crypto/ dir-affecting patches for the moment.
+
+ver #3)
+ - Renamed conflicting arm64 functions.
+ - Made a separate wrapper API for each algorithm in the family.
+ - Removed sha3_init(), sha3_reinit() and sha3_final().
+ - Removed sha3_ctx::digest_size.
+ - Renamed sha3_ctx::partial to sha3_ctx::absorb_offset.
+ - Refer to the output of SHAKE* as "output" not "digest".
+ - Moved the Iota transform into the one-round function.
+ - Made sha3_update() warn if called after sha3_squeeze().
+ - Simplified the module-load test to not do update after squeeze.
+ - Added Return: and Context: kdoc statements and expanded the kdoc
+   headers.
+ - Added an API description document.
+ - Overhauled the kunit tests.
+   - Only have one kunit test.
+   - Only call the general hash tester on one algo.
+   - Add separate simple cursory checks for the other algos.
+   - Add resqueezing tests.
+   - Add some NIST example tests.
+ - Changed crypto/sha3_generic to use this
+ - Added SHAKE128/256 to crypto/sha3_generic and crypto/testmgr
+ - Folded struct sha3_state into struct sha3_ctx.
+
+ver #2)
+  - Simplify the endianness handling.
+  - Rename sha3_final() to sha3_squeeze() and don't clear the context at the
+    end as it's permitted to continue calling sha3_final() to extract
+    continuations of the digest (needed by ML-DSA).
+  - Don't reapply the end marker to the hash state in continuation
+    sha3_squeeze() unless sha3_update() gets called again (needed by
+    ML-DSA).
+  - Give sha3_squeeze() the amount of digest to produce as a parameter
+    rather than using ctx->digest_size and don't return the amount digested.
+  - Reimplement sha3_final() as a wrapper around sha3_squeeze() that
+    extracts ctx->digest_size amount of digest and then zeroes out the
+    context.  The latter is necessary to avoid upsetting
+    hash-test-template.h.
+  - Provide a sha3_reinit() function to clear the state, but to leave the
+    parameters that indicate the hash properties unaffected, allowing for
+    reuse.
+  - Provide a sha3_set_digestsize() function to change the size of the
+    digest to be extracted by sha3_final().  sha3_squeeze() takes a
+    parameter for this instead.
+  - Don't pass the digest size as a parameter to shake128/256_init() but
+    rather default to 128/256 bits as per the function name.
+  - Provide a sha3_clear() function to zero out the context.
+
+David Howells (5):
+  s390/sha3: Rename conflicting functions
+  arm64/sha3: Rename conflicting functions
+  lib/crypto: Add SHA3-224, SHA3-256, SHA3-384, SHA3-512, SHAKE128,
+    SHAKE256
+  lib/crypto: Move the SHA3 Iota transform into the single round
+    function
+  lib/crypto: Add SHA3 kunit tests
+
+ Documentation/crypto/index.rst      |   1 +
+ Documentation/crypto/sha3.rst       | 241 +++++++++++++
+ arch/arm64/crypto/sha3-ce-glue.c    |  22 +-
+ arch/s390/crypto/sha3_256_s390.c    |  26 +-
+ arch/s390/crypto/sha3_512_s390.c    |  26 +-
+ include/crypto/sha3.h               | 433 ++++++++++++++++++++++-
+ lib/crypto/Kconfig                  |   7 +
+ lib/crypto/Makefile                 |   6 +
+ lib/crypto/sha3.c                   | 512 ++++++++++++++++++++++++++++
+ lib/crypto/tests/Kconfig            |  11 +
+ lib/crypto/tests/Makefile           |   1 +
+ lib/crypto/tests/sha3_kunit.c       | 342 +++++++++++++++++++
+ lib/crypto/tests/sha3_testvecs.h    | 231 +++++++++++++
+ scripts/crypto/gen-hash-testvecs.py |  10 +-
+ 14 files changed, 1829 insertions(+), 40 deletions(-)
+ create mode 100644 Documentation/crypto/sha3.rst
+ create mode 100644 lib/crypto/sha3.c
+ create mode 100644 lib/crypto/tests/sha3_kunit.c
+ create mode 100644 lib/crypto/tests/sha3_testvecs.h
+
 
