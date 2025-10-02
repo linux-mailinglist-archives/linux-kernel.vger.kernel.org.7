@@ -1,98 +1,133 @@
-Return-Path: <linux-kernel+bounces-840368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B687BB438F
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 16:56:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E0E2BB43D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 16:59:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32E37175E42
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 14:56:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBE6342260D
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 14:59:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8888E145355;
-	Thu,  2 Oct 2025 14:56:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 947861CBEB9;
+	Thu,  2 Oct 2025 14:57:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Ie3YCFrw";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vuO9LZZe"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="ZG2ovfqI"
+Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B429B8634F;
-	Thu,  2 Oct 2025 14:56:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 905C018A6D4;
+	Thu,  2 Oct 2025 14:57:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759416979; cv=none; b=T6IZVZunErBetFIAg74u7sdOSWOVfkmn0rm3dGAu5KWYgsrk5uWq4vj9rRbMgdfHEZ5wWB2g2QUdAxrJZY4kdDgXevi4CLcZ28oeNqcgBbs4GnXtG+iRp7eIlW65QT7MvsmsYG8XNBJPtXZ3GVccYvZBtfT80c3bCXNWKv9Rr8I=
+	t=1759417077; cv=none; b=loxGSzquYKgvbRmmKZBSOWMKTfSQg5YmJVP/3KbCld0G3KkmoR4gNS1C0qlimrobrw8SVACM2lOWUl+3L3EtEnPXToFy/NcvuHA3MQkeA+RHbNTukunQ24LWqdDXNzsO0EHJqIcZ/Qn9kBS+a/ZYWhPUSA/l2/if7OWJUgv1Zco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759416979; c=relaxed/simple;
-	bh=JVBa0Hdha2soHLO1LtZQ3Bhv0Tp/23q2HRVgvFMM4eU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=rX+E29SJ9Y76vcGuMHQP/GekeEyGhMPlfTFBpewxot3+9LuOYy/FNwMB8Ph0RAiqIvA4LIPiOEs3Wh/WZLp1g1uCNs9jdp/1ryvPHPbtBhziHNefM8kUQ4glozotlLP18JiPTJlbkHtSQie1a+/6Ct1BCJVA0Xp6u9zM3KLvgjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Ie3YCFrw; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vuO9LZZe; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Nam Cao <namcao@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1759416970;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JVBa0Hdha2soHLO1LtZQ3Bhv0Tp/23q2HRVgvFMM4eU=;
-	b=Ie3YCFrwZmmncUHhOgPYLIK5UHH1f00sNRzJI+ntG58L12sqQVIw859uRViaGAkVBauKQJ
-	Jb0lYBEcmAZ4aBTRxQfuOlLG7r0MoaEZIcOvnsx1PC2r4W8JkV11UpztSJxYq11kG/Ta72
-	Dl3WHz3eDylCu5QgAz7YpmD+twlsQgm/XUYJoPwsDC699zk128iJ2ePel6VWo0FPPeSktK
-	Y2qGctzbri+GzNVWkGxttya4USO8M3aZQ1QBUg8YLDj4pCdbCj6y+MANrzBiQwHtbzhx4l
-	/UYGrLlBcZX9U1WFFafFY10gPfMAnDblwLl0PSHq/P1pHQ4/BDrrC3kJtnLo1g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1759416970;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JVBa0Hdha2soHLO1LtZQ3Bhv0Tp/23q2HRVgvFMM4eU=;
-	b=vuO9LZZeHclUp1uBDUiPj56XJOSWIPxlbhU14QYS+sI6HNA0EPqAw2PLAdC/A+odJkbTxH
-	cpggEDjxCMU/6PBA==
-To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
- Gabriele Monaco
- <gmonaco@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Steven
- Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: Re: [PATCH] rv: Add signal reactor
-In-Reply-To: <6a5fde33-b3e3-44e2-8ea5-5f4cf350cf35@linutronix.de>
-References: <20250919-rv-reactor-signal-v1-1-fb0012034158@linutronix.de>
- <d0aaaf1f47f0d948b60b0575e179564e3c024188.camel@redhat.com>
- <20250922162900.eNwI7CS0@linutronix.de>
- <ced1cdde298d105ba2d789e4e4704caac8dec518.camel@redhat.com>
- <6a5fde33-b3e3-44e2-8ea5-5f4cf350cf35@linutronix.de>
-Date: Thu, 02 Oct 2025 16:56:09 +0200
-Message-ID: <87ikgxqrna.fsf@yellow.woof>
+	s=arc-20240116; t=1759417077; c=relaxed/simple;
+	bh=Osl3lK+5GNxpDMlWvdjfwsvcGaI1ktVUOuV66qZLqCc=;
+	h=From:To:Cc:Date:Message-Id:MIME-Version:Subject; b=Ub1/xyv2OOic4LkxyiuMu1Vj2HTgG5kG2q7oDZLcrTEUpWsKlqdBIiF0GvpTNW67XghqYWd42tnWLqOxEzzx5kNKayRVrSPHuynGlCCK0linj396XLxSGilpZ5BPYWqJFcNS8u3cz2joRj+fMDpw/9dhkqYo8ds+TVW/hkMLNAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=ZG2ovfqI; arc=none smtp.client-ip=162.243.120.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
+	; s=x; h=Subject:Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Cc:To
+	:From:subject:date:message-id:reply-to;
+	bh=C9Rys4W+wB/rglzOsk7PUg+JPAxU5qbHWAO6MUD+azI=; b=ZG2ovfqIirwpM6loZkvJ3c3Vky
+	S1RVy/6G39KZYCHeaalfzy2/O0zXGrhS3DY7SZiBCZJNNa/gQVKctgYSv5/qsuTdbV8M3GgvlvPyB
+	XV92ZXIOT8AsUOggklfo6ByfsKcKcWJTp3fZ9KcgEsB14zeTcJdH28nQBVP5+19S/yyM=;
+Received: from modemcable168.174-80-70.mc.videotron.ca ([70.80.174.168]:59004 helo=pettiford.lan)
+	by mail.hugovil.com with esmtpa (Exim 4.92)
+	(envelope-from <hugo@hugovil.com>)
+	id 1v4KkZ-0005hy-JI; Thu, 02 Oct 2025 10:57:44 -0400
+From: Hugo Villeneuve <hugo@hugovil.com>
+To: gregkh@linuxfoundation.org,
+	jirislaby@kernel.org,
+	fvallee@eukrea.fr
+Cc: linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	hugo@hugovil.com,
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>
+Date: Thu,  2 Oct 2025 10:57:23 -0400
+Message-Id: <20251002145738.3250272-1-hugo@hugovil.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 70.80.174.168
+X-SA-Exim-Mail-From: hugo@hugovil.com
+X-Spam-Level: 
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+Subject: [PATCH v2 00/15] serial: sc16is7xx: register access fixes and improvements
+X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
+X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
 
-Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de> writes:
-> I am wondering if it would make sense to add a new tracepoint that
-> fires in addition of the reactors. That would allow multiple
-> simultaneous consumers and also bespoke handlers in userspace.
+From: Hugo Villeneuve <hvilleneuve@dimonoff.com>
 
-We do have tracepoints for each monitor in: kernel/trace/rv/rv_trace.h
+Hello,
+this patch series brings some fixes and improvements to the register
+accesses for the sc16is7xx driver.
 
-And yeah, I think it is a nice idea for all the consumers to use these
-tracepoints intead (that includes rtapp testing, and also the existing
-reactors). It would simplify things, as the monitors do not have to
-worry about the reactors, they only need to invoke tracepoints.
+It also adds some minor improvements, and cleanups to uniformize code
+style accross the driver.
 
-But this also makes me think about the necessity of the existing
-reactors. What do they offer that tracepoints do not? Myself I almost
-never use the reactors, so I'm thinking about removing them. But maybe
-@Gabriele has objections?
+I have tested the changes on a custom board with two SC16IS752 DUART over
+a SPI interface using a Variscite IMX8MN NANO SOM. The four UARTs are
+configured in RS-485 mode.
 
-Nam
+I did not test the change on a SC16is7xx using I2C interface, as my custom
+board is only using SPI.
+
+Thank you.
+
+Link: [v1] https://lore.kernel.org/linux-serial/20250924153740.806444-1-hugo@hugovil.com/raw
+
+Changes for V2:
+- Patch "change incorrect indentation": move to same line and reword (suggested
+  by Maarten Brock)
+- remove superfluous rc variable (suggested by Jiri Slaby)
+- replace guard with scoped_guard() in sc16is7xx_ms_proc()
+  (suggested by Jiri Slaby)
+- Patch "use dev_err_probe() instead of dev_err()": remove original dev_err()
+  line and reword (suggested by Jiri Slaby)
+- Patch "remove empty line": remove useless cast and reorder variables
+  for reverse xmas tree (suggested by Jiri Slaby)
+- Simplify to_sc16is7xx_one() macro
+- Reformat some multi-line comments up to 100 columns (suggested by Jiri Slaby)
+- Remove typo cleanup from patch "add/improve comments" and move to patch
+  "reformat comments to improve readability"
+
+Hugo Villeneuve (15):
+  serial: sc16is7xx: remove useless enable of enhanced features
+  serial: sc16is7xx: rename LCR macros to better reflect usage
+  serial: sc16is7xx: rename EFR mutex with generic name
+  serial: sc16is7xx: define common register access function
+  serial: sc16is7xx: remove unnecessary pointer cast
+  serial: sc16is7xx: use guards for simple mutex locks
+  serial: sc16is7xx: drop -ENOMEM error message
+  serial: sc16is7xx: declare SPR/TLR/XOFF2 register as volatile
+  serial: sc16is7xx: move port/channel init to separate function
+  serial: sc16is7xx: simplify to_sc16is7xx_one() with a single parameter
+  serial: sc16is7xx: Kconfig: allow building with COMPILE_TEST
+  serial: sc16is7xx: use KBUILD_MODNAME
+  serial: sc16is7xx: change conditional operator indentation
+  serial: sc16is7xx: reformat comments to improve readability
+  serial: sc16is7xx: add comments for lock requirements
+
+ drivers/tty/serial/Kconfig         |   2 +-
+ drivers/tty/serial/sc16is7xx.c     | 420 +++++++++++++----------------
+ drivers/tty/serial/sc16is7xx.h     |   1 -
+ drivers/tty/serial/sc16is7xx_i2c.c |   4 +-
+ drivers/tty/serial/sc16is7xx_spi.c |   4 +-
+ 5 files changed, 187 insertions(+), 244 deletions(-)
+
+
+base-commit: f4abab350840d58d69814c6993736f03ac27df83
+-- 
+2.39.5
+
 
