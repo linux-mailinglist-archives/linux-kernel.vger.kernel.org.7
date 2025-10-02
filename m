@@ -1,180 +1,121 @@
-Return-Path: <linux-kernel+bounces-840056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30C70BB36EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 11:20:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46D57BB36F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 11:20:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D879C165E6A
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 09:20:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E42DE19C0539
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 09:20:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D88523002DC;
-	Thu,  2 Oct 2025 09:20:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68BA930147D;
+	Thu,  2 Oct 2025 09:20:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="RGEzM7sy"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QADZ54w+"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1586D2DAFAE
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 09:20:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E741301004
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 09:20:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759396804; cv=none; b=jKSZ54Y+9ScIGxi0dKZe9521/GlASn53KJWX7o5VtzBHrVXz2/g6oKRikDaInm2cZ/cwFQTN3kWdUwy5wQecDG6NLAos0/PdT7ZitEUg6o6mWTr3/Q+FSV+X1wxeoOzOBgJ/cjzgF4ZsV002uf/Fw2ALOVe5TznoUAm0ZHsWqxg=
+	t=1759396807; cv=none; b=DjvH8+gJPKxSdFlQxJ3fMquLy1rGn3AV5YZptJegoR4+i/FAEVr16MVxq4xcxA9n/yUK4TD8NFZ75ciuTLSwOZrLtqSYJAUtA3ICQFV/3RFy5js5T/y0eIz+B4uUMV1fCV7BSbEBHirvgcURjfJADu9jWVBOTAtECTMBPv7oHJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759396804; c=relaxed/simple;
-	bh=gKG3RZCMM0/9td5XhwRRVDuctRczr0EQX9XI+rQNrpw=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=rR8kg33CzNJOQlqasDdXeYfyd+afuZFfWeMqz6hCHZc6IdtoRXZiRFM/t5aUDADFIdnt3HwhbZfU0SNvNwpBIERSZ3I+xTW/x8GVx53ajMdIIwxYIox8ytWZju+W8aAUfHo+aZdBSBFH03DR0VwqHO1v22J7Ht3Hq2HdvIL6dm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=RGEzM7sy; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-46e33b260b9so7731505e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 02:20:01 -0700 (PDT)
+	s=arc-20240116; t=1759396807; c=relaxed/simple;
+	bh=vRt0dtCsdz8vwlJe3xmSExt4YZA46Y5SdTypQbnPYRo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eSxCkWnR+Ku9xUcDbQz6+DEMeGR3uNNZmoF7R5B96jK4h1dHAVRHmisPmzAoXTTCPHd9Q+HOI3DGiUtXJOlO6jYhtXCLwq3FSD6pGIrucF56/NPBzsQWaDpQp10i/ZoOQgiX/3sfBL0ajPfTfY7RLOLlO4JfIKmzZdq6FHeTvSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QADZ54w+; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-579d7104c37so1066644e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 02:20:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1759396800; x=1760001600; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=s2BhPJFUA5rMfvZ1uL3WhmuxW8QfF3Kklsw/mp/nZyk=;
-        b=RGEzM7syri9lkpHb4rl5HskJax0bAj8nFPAYH+LAoMVXCDnB5pqpMSD8mM1vYZtKwi
-         9eQDL7mrP7zBC3L2QoN7AX2UqCuPfhp3kHMmMpFL64R+9dmc3eHQfm6p3LrXTgJ8INzv
-         0yQytrmzb1uNCSaRVWvrqGlaL7kzwLI48mzU+mkYZrZ48J5hKGvzd/dISgo8OfwHyf9K
-         eadQGMWV2KIltk0aN4dXTK+XqShCcY69PbLF8MJO9JmFnDztvdI1brF9VjjMRvp2JYva
-         o/3EJdmNgPYJU4LSLXn6F5kFP1pyK6yO4lvDvwnVE328TbxPWcYkvMDOyd4OutAkzXZp
-         SaOA==
+        d=gmail.com; s=20230601; t=1759396804; x=1760001604; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KNpNdQn+Mvusm2MT0LBZ46u1KJvuulNytepH41XAksw=;
+        b=QADZ54w+r1e5wGmE2Gt5uFJV0UgWLb/7FxX4NkNUDteSEpwyI06gRhwClpCaX8Ry26
+         v8l2dl8NSjMnjLn+Wse4BAdrOBPSKgZJY94coTJ0YvKtarWm5YF3Kbdp9QHgm8wCBUpz
+         j3dpKYkkc9GTD64rBh8qliKMhGFiaelSzQBipvmW69kwp/L5x29JaYqeoVzj8HfZ49OC
+         CABT3bAOfSkyrZrnsDS5DHaDvmGsA8v029I5pQuEW4bzKs8K25kxzq8zwKJjHkF7Zxku
+         NotUP7Qq69eIdRfKchOPfKBVM/vFtX4ptp9tw5ZI8IzjY6SPxyuuctF4rISnrxQ0Z5hz
+         vYlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759396800; x=1760001600;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1759396804; x=1760001604;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=s2BhPJFUA5rMfvZ1uL3WhmuxW8QfF3Kklsw/mp/nZyk=;
-        b=vkg4U0lP2GJyklb1D2h05O9qp/EOXyqQ0VmlztH0/Ngl9xbgo+ytndbvfxHL65tOUh
-         Sn5UunCz+IuwBag3Lc37/z2+O51jKS3TdCj6H65EW+PDDECVyQiRXGNy1RBZXnQ2qMJ6
-         GcnmN4GvYq33HODxpJnHpGjRqF4rweshh3+uphLZC0mg65I9sdD2sn159QOhibwYKOja
-         2cY5wrRQehOk+7dbjWvHttWcgCIK7FXyb6Ovqu/0SwmbMGKmqiHd8mcq4j5bYulAUMTe
-         0YkJo6Q5jJPedOowExZXdjK4glFeacEb0l8ond6e+Yz3DPJb9aXRlUxyZWe2qWVcHMEO
-         N31Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV221N9VS5vlZ0meu1u/BcmXQrw1oF11wm6vDFiHLlnLXYts7KrLIvlw6TvX0pludelnLyQnRR/1vAgVv4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1sxwAHxb0+huRre71XDKa0+SY4iQov2k6zPMtEtlfc33MdPZ5
-	QsbOJlr2gD+dPY2mJprFkyxlN2lVmtsSuhLJ5N43ZTHMNE48BLc+JG34A0rmW+qwh4E=
-X-Gm-Gg: ASbGncuHACXdTG/Wp1+44os93jk+7Kwb7G4BHGs/YfUbTjAiPKYQG9HD7/6yJDrd4qV
-	TWMwPtCWbJI/LuAqBKjdgqbVJm4BN662nVKEoglD1LdzTMqrbeIK95rreBSD7204s+W73d+/Iwg
-	fE6Z5HTzxbcJ1XWaqcNG1RMaNs5+b8MxUfisEJmlLZcNCgXNSWzC3YDcrM70zHI0lwTn+s+dIak
-	hGFCWka+Do0499yFJIZQ6n0RJWyV8aHEPBYoLl66dVIIpVcRVcgoxFAac4K7INa+NpEyMEyPKrY
-	uQ85p4+6jCi5W4WAe8bfDv3p3dAbXCZXFVBaIoUtZetO+NnKJgRemB6RyX+/0rdNREgpNstpL6f
-	sH+wihKE73echigDkldbx4bi0E0piYTK14F5ZnBJKTf5ujOeamSeyCNH3uosTFVIhSFiVSQ==
-X-Google-Smtp-Source: AGHT+IHIFpkDmi1VU2+9VZXNZGV+SNIcJwRSxeDcMpiAWAFfIEuaOQqtErYVn3aR0Xr7bMMB0aIPHQ==
-X-Received: by 2002:a05:600c:1382:b0:45d:f83b:96aa with SMTP id 5b1f17b1804b1-46e6863e130mr20968605e9.7.1759396800370;
-        Thu, 02 Oct 2025 02:20:00 -0700 (PDT)
-Received: from localhost (88-127-129-70.subs.proxad.net. [88.127.129.70])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-46e61a029a0sm72705605e9.13.2025.10.02.02.19.59
+        bh=KNpNdQn+Mvusm2MT0LBZ46u1KJvuulNytepH41XAksw=;
+        b=d3YJlG/UikKS2uV5lc/m8qDpbNh7XOxoASMCE1Oqg4IUHQDTpwSQjcKgLlFZuicftJ
+         t1gmtrQmYPNwm81pJU7EKXDatoP9RbLMB4sE9dmUsHHoGWqBLJ0URuHkqVOcJwKTjMNb
+         TA8Bawf9ke+hdNBfDvK9TEONmw+93KeqpsTA1LN24o4ZhpU6LZiwPvUDnlv1cx+hLCPx
+         hZGSgXaH/zFK/i7Zka14BCQVppQMEM4LwdIKWMnf+APsFk0JbJHfbLI2bsG9YX2XLWlR
+         luf2KulZCnOUt64NCSgp1rmMF5g0+LETOdtjak1NnH72/etSFC8bqAzehYc1FK9imgO6
+         3mDA==
+X-Forwarded-Encrypted: i=1; AJvYcCV8PXmTvbHHa5NxV5XzCI68cHmle8Fee/zzoPEP0YAfS0reHrMZfRr4AkuSKAxau9pB8wL/W73Xt2Qd+uU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBnsg9FMPPzn2/2IDS8zxIEXrdhAj1xWxFKjpbd99Qc496pv1a
+	mKcwSQFCGJi1K6fX/dADWmu5qCTSV4wbGVhWv7YJQSj/49eVJ2huGvDMAwIkfL2WYSA=
+X-Gm-Gg: ASbGnctX1MbIHvBEtObLwoX/tH5m4KKc3Jwug0XCJhCxpTGREpgesIdXV+SmHb6RFwM
+	Bx2cf4bm/12AMxIKcZX9MPC2A6kGHaDtFCp3nNNDGPP2j6DwBJe6THOOBFTSolWZePEw65z/6CP
+	TU6qmQssw3bua3qZjk7vSXVQR5OBi4rgu16vZud6Aq9U6Ayv0WLTJ5Dmi/BJP5dqsZ0u9gA+AtB
+	fIhUqWwARr72sPCr+SLUjY0GLcHK6pV6niHsO3d0XNuGUCq2pauxp/l1JmLs7kyYUYky+NUI5es
+	uTpWx8yFGyBF+eLJkVnMoTt1aVxRFlbq1olhAa5cYKHTfmxjN+B2fx0qlZKN9hzNcV/RuTWoxx1
+	RnDI8xhkD+s71t3QEF9jiWQiH8YBM//YdD0HbXkWK2hcaK5SLPpR1GfX+RVz6TuUjDndmrIKMlF
+	RyNxYAWScJKWO0chIJroBTYYC9akTkIp6OXDPZ8lOI
+X-Google-Smtp-Source: AGHT+IFUIDciA5xZKbT9troHSKjJ/3ia1HG2h024hlGxFpBUK6g1cjjH2CDCxiHjTRESwliPBFXExw==
+X-Received: by 2002:a05:6512:691:b0:57f:492:3263 with SMTP id 2adb3069b0e04-58af9efda86mr1777775e87.1.1759396804139;
+        Thu, 02 Oct 2025 02:20:04 -0700 (PDT)
+Received: from localhost.localdomain (broadband-109-173-93-221.ip.moscow.rt.ru. [109.173.93.221])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58b01136e83sm668382e87.41.2025.10.02.02.20.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 02:19:59 -0700 (PDT)
+        Thu, 02 Oct 2025 02:20:03 -0700 (PDT)
+From: Alexandr Sapozhnkiov <alsp705@gmail.com>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	linux-rtc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Alexandr Sapozhnikov <alsp705@gmail.com>,
+	lvc-project@linuxtesting.org
+Subject: [PATCH] rtc: fix error return in pm80x_rtc_set_time()
+Date: Thu,  2 Oct 2025 12:19:59 +0300
+Message-ID: <20251002092001.20-1-alsp705@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed;
- boundary=55e5f674b6f0c4498d17272902032cc52f7b00d4661fa093516501d66420;
- micalg=pgp-sha512; protocol="application/pgp-signature"
-Date: Thu, 02 Oct 2025 11:19:38 +0200
-Message-Id: <DD7Q3TRDJQMG.3OXQED3HRBIL8@baylibre.com>
-Cc: "Tero Kristo" <kristo@kernel.org>, "Santosh Shilimkar"
- <ssantosh@kernel.org>, "Vishal Mahaveer" <vishalm@ti.com>, "Kevin Hilman"
- <khilman@baylibre.com>, "Dhruva Gole" <d-gole@ti.com>, "Sebin Francis"
- <sebin.francis@ti.com>, "Kendall Willis" <k-willis@ti.com>, "Akashdeep
- Kaur" <a-kaur@ti.com>, <linux-arm-kernel@lists.infradead.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v8 0/3] firmware: ti_sci: Partial-IO support
-From: "Markus Schneider-Pargmann" <msp@baylibre.com>
-To: "Nishanth Menon" <nm@ti.com>, "Markus Schneider-Pargmann (TI.com)"
- <msp@baylibre.com>
-X-Mailer: aerc 0.21.0
-References: <20251001-topic-am62-partialio-v6-12-b4-v8-0-76a742605110@baylibre.com> <20251001170036.favd5zaieknywcch@amendable>
-In-Reply-To: <20251001170036.favd5zaieknywcch@amendable>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
---55e5f674b6f0c4498d17272902032cc52f7b00d4661fa093516501d66420
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+From: Alexandr Sapozhnikov <alsp705@gmail.com>
 
-Hi Nishanth,
+The regmap_raw_write() function may return an error.
 
-On Wed Oct 1, 2025 at 7:00 PM CEST, Nishanth Menon wrote:
-> On 16:37-20251001, Markus Schneider-Pargmann (TI.com) wrote:
->> Hi,
->>=20
->> This series adds support for Partial-IO to the ti-sci driver,
->> implementing the firmware interface necessary to enter this low power
->> state. It processes the wakeup-source properties from the devicetree and
->> communicates with the system firmware to enter Partial-IO mode when
->> appropriate wakeup sources are enabled.
->>=20
->> Partial-IO Overview
->> ------------------
->> Partial-IO is a low power system state in which nearly everything is
->> turned off except the pins of the CANUART group (mcu_mcan0, mcu_mcan1,
->> wkup_uart0 and mcu_uart0). These devices can trigger a wakeup of the
->> system on pin activity. Note that this does not resume the system as the
->> DDR is off as well. So this state can be considered a power-off state
->> with wakeup capabilities.
->>=20
->> A documentation can also be found in section 6.2.4 in the TRM:
->>   https://www.ti.com/lit/pdf/spruiv7
->>=20
->> Implementation Details
->> ----------------------
->> The complete Partial-IO feature requires three coordinated series, each
->> handling a different aspect of the implementation:
->>=20
->> 1. m_can driver series: Implements device-specific wakeup functionality
->>    for m_can devices, allowing them to be set as wakeup sources.
->>    https://gitlab.baylibre.com/msp8/linux/-/tree/topic/mcan-wakeup-sourc=
-e/v6.17?ref_type=3Dheads
->>    https://lore.kernel.org/r/20250812-topic-mcan-wakeup-source-v6-12-v8-=
-0-6972a810d63b@baylibre.com
->>=20
->> 2. Devicetree series: Defines system states and wakeup sources in the
->>    devicetree for am62, am62a and am62p.
->>    https://gitlab.baylibre.com/msp8/linux/-/tree/topic/am62-dt-partialio=
-/v6.17?ref_type=3Dheads
->>    https://lore.kernel.org/r/20250812-topic-am62-dt-partialio-v6-15-v2-0=
--25352364a0ac@baylibre.com
->>=20
->> 3. This series (TI-SCI firmware): Implements the firmware interface to
->>    enter Partial-IO mode when appropriate wakeup sources are enabled.
->
-> If this is the order of dependencies, I guess the series has to wait
-> till CAN driver changes are merged? did I get that right?
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-Yes, the series has to wait for the m_can series as it containts the
-dt-binding required for this series to work.
+Signed-off-by: Alexandr Sapozhnikov <alsp705@gmail.com>
+---
+ drivers/rtc/rtc-88pm80x.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
->
-> Also surprised that the DT series is second in the dependency.. usually
-> dts changes occur the last. but anyways..
+diff --git a/drivers/rtc/rtc-88pm80x.c b/drivers/rtc/rtc-88pm80x.c
+index f40cc06b0979..71d4cc7e595c 100644
+--- a/drivers/rtc/rtc-88pm80x.c
++++ b/drivers/rtc/rtc-88pm80x.c
+@@ -136,9 +136,7 @@ static int pm80x_rtc_set_time(struct device *dev, struct rtc_time *tm)
+ 	buf[1] = (base >> 8) & 0xFF;
+ 	buf[2] = (base >> 16) & 0xFF;
+ 	buf[3] = (base >> 24) & 0xFF;
+-	regmap_raw_write(info->map, PM800_RTC_EXPIRE2_1, buf, 4);
+-
+-	return 0;
++	return regmap_raw_write(info->map, PM800_RTC_EXPIRE2_1, buf, 4);
+ }
+ 
+ static int pm80x_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
+-- 
+2.43.0
 
-Yes, true, they could be switched as well. The driver changes of course
-won't work as long as the DT series is not merged, but they could be
-merged in parallel as well. Neither the DT series nor this series modify
-any bindings. Only the mcan series does.
-
-Best
-Markus
-
---55e5f674b6f0c4498d17272902032cc52f7b00d4661fa093516501d66420
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iKMEABYKAEsWIQSJYVVm/x+5xmOiprOFwVZpkBVKUwUCaN5DqhsUgAAAAAAEAA5t
-YW51MiwyLjUrMS4xMSwyLDIRHG1zcEBiYXlsaWJyZS5jb20ACgkQhcFWaZAVSlPM
-7AD9FZ7TKtdj9gutIa9BZ1ZQBz0wJHycBDoOSqrFQAbQ8UwA/RMHayb7a4PbZ8iy
-j6khLzQ18Wvas902AD5rQ9z70soC
-=sMun
------END PGP SIGNATURE-----
-
---55e5f674b6f0c4498d17272902032cc52f7b00d4661fa093516501d66420--
 
