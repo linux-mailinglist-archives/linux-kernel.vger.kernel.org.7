@@ -1,172 +1,128 @@
-Return-Path: <linux-kernel+bounces-840394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D481BB448E
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 17:14:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CEBEBB44AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 17:19:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCE021C76E7
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 15:14:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E6EF19E2145
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 15:20:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD1B018D636;
-	Thu,  2 Oct 2025 15:14:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 319C019D8AC;
+	Thu,  2 Oct 2025 15:19:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eGldDdYu"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="UQDOk+69"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93711175D53;
-	Thu,  2 Oct 2025 15:14:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C89319B5B1;
+	Thu,  2 Oct 2025 15:19:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759418065; cv=none; b=aF/n2ki5hN0KyRsiqJpzjqK5fY+TDn4L3b3y+GAkxP3uWLQFXsVyz+WhLk69QbnUx2Xk/XWO/3n4jlpFza22yXi7DtosxkDJzpKcsxobmyKESW1xdsisdEr0swOn7B34XOekm1AsOTr78Bmmu8YYrPdMQhdXh4Isutw3xJj6hiE=
+	t=1759418375; cv=none; b=E0IulTeDyP4bKUzMqB2QoN0YsBaVxTavn3YBatxuepv79kD5D9CzEUqbAfwbbyV6c0ACgpcgI9nrBf4GTYkPDv3sLt64j7UsjXxl5aajxbbcCiXw693viExA38DVQ/dnG6+pIGr0NN9u1Ju2KCljx/rEZjA+pX/nJyYfik5Sc1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759418065; c=relaxed/simple;
-	bh=sjIOPYdX4qJbJxV2DmMmA4rLEpf5cDAztd85PV9jfpo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qu1jdunihrxX1T6TYUKKtFbk0ufo8S7G3hsAeGKIeAHbh+Od8+WFfTw9vIS6Tg95+mzO85cmxAG88kC5HKzKNnSqJN7uc1h/Ih5aYefeejUmV2l5ZVGHdUdIpX6rwg14o2EaGskf4yszHEiRdbD4/ARg2JVu7/EYTecJqTgncrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eGldDdYu; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759418063; x=1790954063;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=sjIOPYdX4qJbJxV2DmMmA4rLEpf5cDAztd85PV9jfpo=;
-  b=eGldDdYuZZXOG5MryYl21AiRX0PgbfmLRsUW+8DbFCokqIgeAKnejAZp
-   aX7PsVbEmPMChHjpHJlg/0xr7vrsXVHH6qtlGykeCceB8FcdkbLAPACQG
-   u5Po02OnTLfjOAyyDMu58t7iIMb9AJ7dEgaJ/4ghbuMLeP/R2mAUwi1L6
-   /p3RlIm9ho1ym0RGYLaWe4Na1Rjo88IRbTBA37BmWPqMz72ILcWcXFq1z
-   T2va8shKKXTbwNlCkNejpwzV9i5FCHd8SpPkzXzhzrQMwvZjYzEkzIDLX
-   SHqegAfJVymBxeVGXe0J9G8VNbK8PoN4QPccutpoCJF377JePg8kPrjSs
-   g==;
-X-CSE-ConnectionGUID: HtyZZzlPQ9yvWccXBMYvWw==
-X-CSE-MsgGUID: rBL2pvBOQwWcJ8dYiBYgOw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11570"; a="60743551"
-X-IronPort-AV: E=Sophos;i="6.18,309,1751266800"; 
-   d="scan'208";a="60743551"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2025 08:14:23 -0700
-X-CSE-ConnectionGUID: 5BV9pExnSuuVrrJk0cMXww==
-X-CSE-MsgGUID: V0+SX+9NTgi6DfL+S4+8uQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,309,1751266800"; 
-   d="scan'208";a="178339629"
-Received: from lkp-server01.sh.intel.com (HELO 2f2a1232a4e4) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 02 Oct 2025 08:14:18 -0700
-Received: from kbuild by 2f2a1232a4e4 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v4L0Z-0003tF-1P;
-	Thu, 02 Oct 2025 15:14:15 +0000
-Date: Thu, 2 Oct 2025 23:13:38 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ram Prakash Gupta <quic_rampraka@quicinc.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-mmc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, dmitry.baryshkov@oss.qualcomm.com,
-	quic_rampraka@quicinc.com, quic_pragalla@quicinc.com,
-	quic_sayalil@quicinc.com, quic_nitirawa@quicinc.com,
-	quic_bhaskarv@quicinc.com, kernel@oss.qualcomm.com,
-	Sachin Gupta <quic_sachgupt@quicinc.com>
-Subject: Re: [PATCH v4 4/4] mmc: sdhci-msm: Rectify DLL programming sequence
- for SDCC
-Message-ID: <202510022258.5n14WOx5-lkp@intel.com>
-References: <20250929113515.26752-5-quic_rampraka@quicinc.com>
+	s=arc-20240116; t=1759418375; c=relaxed/simple;
+	bh=86+d7oYVxiPsIbwcUXFZlId1FsXspGbKwpLlmHcsIpY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LlfnIWpWZz0rEx4qOyfU08KUym9oHaO+uWnBXFdi+0yA99sc2OXyPH7MSqs1xSjS2FVWf2yWS2EWd1t9nnQPEDY7dHXs81xwSDVjoFqNkXRT+NI7WwWwCfwu+f0YbiV4XSIccSX0J4nIkX0hnf8lSamdf1GKgqy1Ji79Dgf+s6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=UQDOk+69; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5925Ks2p010350;
+	Thu, 2 Oct 2025 15:13:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=NFblGk
+	WMOBOr1bkSJnmF9Js+Y9j/s50bmu5NM2ZqmaY=; b=UQDOk+69XPhmcXkLOIlnz0
+	VPKIWlz46FxXgkTqIuQakhI/rXTInv57Ofq7aWJJgjfYITw/X4AVjAnZXNnpxJ4i
+	1aarg8Qra23AAolIqIk8H/+kYdrQfgb2WMH9TH11MFEEF8vdDvuhmwPYzrAvLqdS
+	x6vrhKQAJsNEq/DbjM4fdWCsy3FncY/eKjJ+FCgtoMbTG2VbsyvaJQDPpXj7qa3T
+	3eLCyroomg71DU0sO3NLtzgyrIJ2D8Wrc+i97hXfw8C8jdt0lWht2uYhR9WvJ7Ir
+	QEFtyC+0FpRPIDoimYwhxx8QLs+1e06+WLv8nRGj/i1n90Rtz5ne3Qn1/6OCqhSg
+	==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49e6bhw83a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 02 Oct 2025 15:13:51 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 592EPoXn001585;
+	Thu, 2 Oct 2025 15:13:50 GMT
+Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 49evfje831-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 02 Oct 2025 15:13:50 +0000
+Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
+	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 592FDn0W24314414
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 2 Oct 2025 15:13:49 GMT
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B432258063;
+	Thu,  2 Oct 2025 15:13:49 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7751B58043;
+	Thu,  2 Oct 2025 15:13:45 +0000 (GMT)
+Received: from [9.43.27.61] (unknown [9.43.27.61])
+	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  2 Oct 2025 15:13:45 +0000 (GMT)
+Message-ID: <ff7287cd-7818-4601-a799-f3782a8b5f28@linux.ibm.com>
+Date: Thu, 2 Oct 2025 20:43:43 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250929113515.26752-5-quic_rampraka@quicinc.com>
-
-Hi Ram,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on robh/for-next]
-[also build test WARNING on krzk-dt/for-next linus/master ulf-hansson-mmc-mirror/next v6.17 next-20250929]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Ram-Prakash-Gupta/dt-bindings-mmc-Add-dll-hsr-list-for-HS400-and-HS200-modes/20250929-193817
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20250929113515.26752-5-quic_rampraka%40quicinc.com
-patch subject: [PATCH v4 4/4] mmc: sdhci-msm: Rectify DLL programming sequence for SDCC
-config: s390-allyesconfig (https://download.01.org/0day-ci/archive/20251002/202510022258.5n14WOx5-lkp@intel.com/config)
-compiler: s390-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251002/202510022258.5n14WOx5-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510022258.5n14WOx5-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from include/asm-generic/bug.h:22,
-                    from arch/s390/include/asm/bug.h:69,
-                    from include/linux/bug.h:5,
-                    from include/linux/mmdebug.h:5,
-                    from arch/s390/include/asm/cmpxchg.h:11,
-                    from arch/s390/include/asm/atomic.h:16,
-                    from include/linux/atomic.h:7,
-                    from include/asm-generic/bitops/atomic.h:5,
-                    from arch/s390/include/asm/bitops.h:75,
-                    from include/linux/bitops.h:67,
-                    from arch/s390/include/asm/machine.h:25,
-                    from arch/s390/include/asm/lowcore.h:13,
-                    from arch/s390/include/asm/current.h:13,
-                    from arch/s390/include/asm/preempt.h:5,
-                    from include/linux/preempt.h:79,
-                    from arch/s390/include/asm/timex.h:13,
-                    from include/linux/timex.h:67,
-                    from include/linux/time32.h:13,
-                    from include/linux/time.h:60,
-                    from include/linux/stat.h:19,
-                    from include/linux/module.h:13,
-                    from drivers/mmc/host/sdhci-msm.c:8:
-   drivers/mmc/host/sdhci-msm.c: In function 'sdhci_msm_configure_dll':
->> include/linux/kern_levels.h:5:25: warning: format '%u' expects argument of type 'unsigned int', but argument 4 has type 'long unsigned int' [-Wformat=]
-       5 | #define KERN_SOH        "\001"          /* ASCII Start Of Header */
-         |                         ^~~~~~
-   include/linux/printk.h:486:25: note: in definition of macro 'printk_index_wrap'
-     486 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
-         |                         ^~~~
-   include/linux/printk.h:557:9: note: in expansion of macro 'printk'
-     557 |         printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
-         |         ^~~~~~
-   include/linux/kern_levels.h:11:25: note: in expansion of macro 'KERN_SOH'
-      11 | #define KERN_ERR        KERN_SOH "3"    /* error conditions */
-         |                         ^~~~~~~~
-   include/linux/printk.h:557:16: note: in expansion of macro 'KERN_ERR'
-     557 |         printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
-         |                ^~~~~~~~
-   drivers/mmc/host/sdhci-msm.c:927:33: note: in expansion of macro 'pr_err'
-     927 |                                 pr_err("%s: %s: Non standard clk freq =%u\n",
-         |                                 ^~~~~~
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/7] block: convert nr_requests to unsigned int
+To: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk, bvanassche@acm.org,
+        ming.lei@redhat.com
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        yukuai3@huawei.com, yi.zhang@huawei.com, yangerkun@huawei.com,
+        johnny.chenyi@huawei.com
+References: <20250930071111.1218494-1-yukuai1@huaweicloud.com>
+ <20250930071111.1218494-2-yukuai1@huaweicloud.com>
+Content-Language: en-US
+From: Nilay Shroff <nilay@linux.ibm.com>
+In-Reply-To: <20250930071111.1218494-2-yukuai1@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=Se/6t/Ru c=1 sm=1 tr=0 ts=68de96af cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=i0EeH86SAAAA:8 a=VnNF1IyMAAAA:8
+ a=boErDzzRFBrX35Pm4HcA:9 a=QEXdDO2ut3YA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAxMCBTYWx0ZWRfX4C+mOmVChIFM
+ gBcMlfoM3lrtHbjTCODlbgt3Z1qoryQe83pRAYNFjbCC5xW51mdficM+GNJw6sKQR9eWP5kJYrV
+ cOhKiOX0lCIWYKJCbj9N+Gn5o72n8Xw1LGj6DI6DRPO97c/XL2U88exCNyatQen1zwm6vxCCJnt
+ asFfWJMgY2+aeM3kxeVT9Zr3qYCtrzy1/+i71ubu4dFjc3EGUy73nZuC0lp+oP6lyUqHGtkEnga
+ fqbvF9oUWd3SMBIZ66g85jfp/iUzYtL+h0twWsTh6p5ubHtLkz/kAZnKu3T6tbEOsctWWYbRPrS
+ fj5WnszZS0/NWJVAez5E58V8q13sYs8XE+O5IeUmbFBHKR9JCky2YEmJw/stZ1/SlUXl7bT07Cu
+ Gf52ZKZyA2KwTwvqnCfEKHQ0/8O6Qg==
+X-Proofpoint-GUID: WXdyrJRZ37O8IHt2RZqWq337cARLrjcf
+X-Proofpoint-ORIG-GUID: WXdyrJRZ37O8IHt2RZqWq337cARLrjcf
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-02_05,2025-10-02_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 malwarescore=0 suspectscore=0 bulkscore=0 lowpriorityscore=0
+ clxscore=1015 phishscore=0 priorityscore=1501 adultscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270010
 
 
-vim +5 include/linux/kern_levels.h
 
-314ba3520e513a Joe Perches 2012-07-30  4  
-04d2c8c83d0e3a Joe Perches 2012-07-30 @5  #define KERN_SOH	"\001"		/* ASCII Start Of Header */
-04d2c8c83d0e3a Joe Perches 2012-07-30  6  #define KERN_SOH_ASCII	'\001'
-04d2c8c83d0e3a Joe Perches 2012-07-30  7  
+On 9/30/25 12:41 PM, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
+> 
+> This value represents the number of requests for elevator tags, or drivers
+> tags if elevator is none. The max value for elevator tags is 2048, and
+> in drivers at most 16 bits is used for tag.
+> 
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Looks good to me:
+Reviewed-by: Nilay Shroff <nilay@linux.ibm.com>
 
