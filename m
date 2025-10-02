@@ -1,80 +1,81 @@
-Return-Path: <linux-kernel+bounces-840059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8370BB370A
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 11:20:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2EB8BB370D
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 11:20:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C80A19C0665
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 09:21:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDBE97A8B3F
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 09:19:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CDED30216B;
-	Thu,  2 Oct 2025 09:20:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB5B83019B5;
+	Thu,  2 Oct 2025 09:20:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b="lC5Qa7jW"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b="HL3zqh1G"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A5B3009FA
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 09:20:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 460BF2DAFAE
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 09:20:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759396826; cv=none; b=Lq90y7bh+oHhWT1yrGQnJhgUfbkVOgiSo145U2j+q6ihlKhlr8MAuQrYPtyHHkAK0inLpEijEMdXUXe48hHKPGewaJHlsXO1+8KIEP1z/ostgx8f/bkJh/0FRqECz3gIfEaX9gPuanHWH+pP1SsPAQ5Ql3xgv5GjocmMSpLp1DY=
+	t=1759396828; cv=none; b=auWje16XOR/D1VeFt5ESZ0ONmoIPsT9gLbIQNSeEAH8oJQizulR3UbvurOPSRIKYQFlGcDNJBDRtKy5af45Ju2e2R4RyuS/HgAYwslsBa0TdYB/Pxm3cI7gidAaLofhxAI2vRAatZrZKYxfIAWtkEtpZ2cXaxkkPwOyB29zEgP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759396826; c=relaxed/simple;
-	bh=zdYza0w0NbYnhttHNMWIrEPUCu8Dh2V70JULL8fdAHA=;
+	s=arc-20240116; t=1759396828; c=relaxed/simple;
+	bh=p/CzlvHEnIHNvjR2z9r9G+Y/GwV0LJ8ph30ZwmlnMSY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=E3L1I0QVWdNx1aH8YSk0MkPB1JIQIuDPAcd54IRZIKbsFKHfY73RPk68+Ewfy3JM9R+YZgzXjvKxa6eShvlDDjZLfRvrLKKp4tfhkTn8GbABVOk8Iz1wx7yFjSPk1ayKFFODSHPb4rjGHBVXUhudj4R2LJCcWN3ecSlJKOao9AY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk; spf=pass smtp.mailfrom=thegoodpenguin.co.uk; dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b=lC5Qa7jW; arc=none smtp.client-ip=209.85.128.49
+	 In-Reply-To:To:Cc; b=rd3frlJf2yp28g8LjujRt/8T0cM+BJzTq+gHa2+FEw5Xc+7IjvGuzQeVAAa0yGEdFrD8HsP1SqkLTYAFlx4kpO5FhIbcRjCbhQi+a8QurfTNJeeE6KgwRdVrW0WylCcW49fhYuIhOjG9wuOhuVlVkgzxwxPbzkiK76GqF3p1xJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk; spf=pass smtp.mailfrom=thegoodpenguin.co.uk; dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b=HL3zqh1G; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thegoodpenguin.co.uk
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-46e34bd8eb2so8073525e9.3
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-46e42fa08e4so6591835e9.3
         for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 02:20:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=thegoodpenguin-co-uk.20230601.gappssmtp.com; s=20230601; t=1759396822; x=1760001622; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=AYvj10bBcQwgR3ChOZCI93prvPHDIHBC9fD1r5qEQLU=;
-        b=lC5Qa7jWlILg6ffqzL/pHiGgSiucduAbGMUzsfRN25/FcKt5tmgwtUYe+rTNJBAkI8
-         3OFDsthBadnST5/u/rrrs3wouSiZsjrUOwIMN/feQOh/lXpstmmnSr+ZEbpQIf7cACm2
-         lkDjMXDqNh4yUCYQ+Y5pxJ4BDFA4lrFHJpVwNBTwacoxlBDgRU91V9e8M9Mbnrwq7Tmk
-         YO+ipXj4Cv/zs3AsCZuAogd/3+9GqK5J3cf4QETI0+OUsLYjqwNgHygBVYPovBnhR2ap
-         SAAf2KISan2vJ7W6O8bM9xhDJquqz4wyAH9GwUr1whOzfePBRGdOEsin/+0rzryPir61
-         loLQ==
+        bh=6Zhldjp2yNaFyJXBTXpmr+HFpUJDsMOIwtutBNnd19s=;
+        b=HL3zqh1Gp6PYLlMx7UegozuhMXecrDuAvYeABpkMpPw822uQyq69UCdbV/MYsa0fE1
+         QUST/COOTTCj5LJEzwtz7S/wG1aNunJgjqwAVYyolDsvCVLsZn7Rjvw8I9lcydFrakW3
+         +oRDcGWN3DdoKPVBPHQQccoqpFH52Mz3hT/Bt4BeVOhUg9Ktl12cyxCFEyJRuOYyddiB
+         nZq2Amc5ApzVhHXAmmNl9+49T+Gt+YQ438RgV/eXQrEZNhVBGDHDkXYawY9qZNexGMu5
+         dp8gr+4Ow2jdPYDzjmJAy/3gwOgvJARAfcfcl31XT04z352FQLhJ61IU1vYqqs3gqWvM
+         e9nw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1759396822; x=1760001622;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=AYvj10bBcQwgR3ChOZCI93prvPHDIHBC9fD1r5qEQLU=;
-        b=IeRXWfFUX+YVpUlk5cF/70Gq3mAtSWLkl6S5LC9O0LYGjmb7+kU5cXVXDXcBDlXVyQ
-         nRqUy7bIupd9hUsScY5O6sdMJAYuequ4GUSRNQ64ShAYgM/A8y5i1BtlpaCrHy9WS+Uc
-         6qcVqDKmPl/eI6YMCtV9S1/Yq4Fy01jelCUxa7ASog2Ox5WwExML1E8Cm8DiY0eFCs4O
-         2kxKWbweT9dC9AW+eC6dXS4VUitTtl9UEz0BpCci0O7c54kkRHJtW4xyEfp36IRaSgGk
-         tuOb0m3F7QT6UOPK11I3QmxQuNCfcTCFJO+yFhz5YQqYU505kd6ca6DDglMkzrz7iZrO
-         svnw==
-X-Forwarded-Encrypted: i=1; AJvYcCXHZ+ycrARiA87vB+uJY1bjOWTRH+MhbBF0POyvB1bFHlhorT2SzMDPklkh/Q3rH7t6Pzi2YsT0OIDOOYI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3Ufuppf02i1iM7xOLpX8tJKeLbCvgMVTDkKvsndjjNMv/C7hz
-	+60rxBee7zKdId3yPnwQdpQzkwPNRlrzo5sNqeISJrQ7ZBbWq4P4otGuFViXqHFxPQo=
-X-Gm-Gg: ASbGncvLbq28GKztAEfCT3jGpOPBlLhKHLF1JfwPmuZt5DsfOxy2OXW+QE5tQDTgR5U
-	szyasmkDIBhTem92njYWHbReMH3fskR1tp4N4Safd1OF+erMQt7zGPWafd2kJ2vi0xRtCREOJBz
-	aMiUXVuHDL9avG5db2lCbNPlIiOPGqiEYgDMgb8b4I3CWGN+IwJFJe4sLZdOF/QmU34Ak3QwtmV
-	KEyiioj+2IDZRMThSiq1JcvLgEi+j7vbFTmZnmuDbi2aBau9Xl8CJdn7c6YRK0+7TYS8MTVkKGJ
-	U0vRTlTcc249HzyGK1i4f+SEVBXb7BlY1eePsg8lfM1nIyVFJCYackp/UVG443s9sCONm3XB2w4
-	efPdvJ/TyCql+dKv/FT8P/V/HpnJJkzWJgzaQM61KowZW6K4Dn474TyfNaZcI
-X-Google-Smtp-Source: AGHT+IGDxgfxGLV3DDzH7kduQOh+SYIp6rjqG1ukGoP/Pjjnq2/QzbqJnZFIfjGRp/sVaEzEGMolTg==
-X-Received: by 2002:a05:600c:468f:b0:46e:1abc:1811 with SMTP id 5b1f17b1804b1-46e612daf33mr47322265e9.27.1759396821662;
-        Thu, 02 Oct 2025 02:20:21 -0700 (PDT)
+        bh=6Zhldjp2yNaFyJXBTXpmr+HFpUJDsMOIwtutBNnd19s=;
+        b=mDYNlhde61+uP8MXjvf4sAVwpPnvgmsRKKaSUGKGKchONq7g0kP0U0yKdcVpWy6Dis
+         bIG1Et2TRSgQ4Nr0Dy+A7CfY5GcJ7XIZ0Pv/2PXurnvSNipIK6tzl0w22JuWVyLxPYsF
+         kIlLsWgEBSzGTpZEotAxJElX1wBjBkRhAMYJ+xCHJE2YMhs1aAeLvnQLJpPztUgKHdCk
+         CgBfJPytBRorTFoROXlbIiGlz51EdQpZCLkBjlYYn3wh+X83WlvgW6sJBoPHvQxFRWhe
+         pOC/F+XSnxn2xthPTlQ0/y325WERMUGcuwzJz1Nlm+v6ixL4qs0vCnP0esHSOxa8Vzm2
+         58hA==
+X-Forwarded-Encrypted: i=1; AJvYcCUVkUdKXVLS0h2XphgG/MQAJPXnbzniygB8kygGCypsUx5h8KX9prNxu1zjBiOAW0azPGJ2OBH6xV1avq4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznKl9mVZSW0dfgO2HZwcKEM+i+A29Tga3ZBFpCti6WacA6Lj98
+	+UXKCUTZJHaVjq5OM5iAvsqARvnScbw1MYv9MG6t94PSrAAZS/VLpuGXuRf+GxgZc3xZDN8Ih06
+	pQeSmBZA=
+X-Gm-Gg: ASbGncsBU/8DgjX7eBaTGsMLwf4aQBVF2xTn8ciyDXN4YqbLbvGd+s2irICa8qKktLw
+	682qoexDNCCBkrap9TFO9Ykp/IBykEk6qnYleeX2q/slXI0UzATRL7iBu2ZFL7+uwt9N8xC7TAO
+	k6kIx1QAlBo+V2w5cdfDh1rDcIHjyPMt3w7W6WacV9KPIlK+/3JRnfu/BXxLvE+a67gTiGfplho
+	7sRbe9LIenyeADmW81QB5Hsmm9648FY+FwkYSrDqAiobSFjQgTdMx5dwLDDkdzly57cvjLv1hpP
+	YL//6RkDKcv1XQePK5kCryriJB1TpC+nrJvxyPa2yko7AW/Yydv3UnuON8GCWl2+PNlVVnTb2DM
+	nlkyZP8K2ZLFo4TWycIaVRX/GixlXvyUkC+/9HIF5IcfyGJRmv02rHSvx7F+w9Z3cAVLRH34=
+X-Google-Smtp-Source: AGHT+IF7CiZPQ+vX93IBD2awk1WVujnNswss6fVkdYSSXuPXelTmsVOTvm4mBoHvvqmd1eud2oD5Tw==
+X-Received: by 2002:a05:600c:c162:b0:46e:2562:e7b8 with SMTP id 5b1f17b1804b1-46e612be8b7mr41206015e9.21.1759396822249;
+        Thu, 02 Oct 2025 02:20:22 -0700 (PDT)
 Received: from [127.0.1.1] ([2a02:c7c:8a3e:8c00:3430:5fdd:d596:adae])
         by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e6918bdebsm28958795e9.9.2025.10.02.02.20.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 02:20:21 -0700 (PDT)
+        Thu, 02 Oct 2025 02:20:22 -0700 (PDT)
 From: Harrison Carter <hcarter@thegoodpenguin.co.uk>
-Date: Thu, 02 Oct 2025 10:20:15 +0100
-Subject: [PATCH 1/2] dt-bindings: leds: ti,lm3532: Convert to DT Schema
+Date: Thu, 02 Oct 2025 10:20:16 +0100
+Subject: [PATCH 2/2] dt-bindings: leds: ti,lm3601x: Convert to DT Schema
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,7 +84,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251002-ti-leds-to-dt-v1-1-1604ae333479@thegoodpenguin.co.uk>
+Message-Id: <20251002-ti-leds-to-dt-v1-2-1604ae333479@thegoodpenguin.co.uk>
 References: <20251002-ti-leds-to-dt-v1-0-1604ae333479@thegoodpenguin.co.uk>
 In-Reply-To: <20251002-ti-leds-to-dt-v1-0-1604ae333479@thegoodpenguin.co.uk>
 To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
@@ -93,173 +94,109 @@ Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, 
  Harrison Carter <hcarter@thegoodpenguin.co.uk>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1759396820; l=9817;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1759396820; l=4722;
  i=hcarter@thegoodpenguin.co.uk; s=20250904; h=from:subject:message-id;
- bh=zdYza0w0NbYnhttHNMWIrEPUCu8Dh2V70JULL8fdAHA=;
- b=X6ngZTOOjHd+TCx5b0jPw307eXglfMo2dEYL3vFiVeqmtsl4cKbr23+FeXX3QLqm4UnKrjrpf
- E6AqRlVmhDADlKZbWZaJjpFvIdYmBLJP6rfftz0zl6GP6I6bBDSvB57
+ bh=p/CzlvHEnIHNvjR2z9r9G+Y/GwV0LJ8ph30ZwmlnMSY=;
+ b=wsaWlczGN2Oo1pP32CuKIimm+jmjpTFON+MfTe4/22Mi2YdFJA/9D+PuBnZo1+rWMoeXSWIc6
+ mNScIWa/KXcDrGp0ZjHXW394A4WaD8+hKJgP5s+gUDvuOmFezQcltLG
 X-Developer-Key: i=hcarter@thegoodpenguin.co.uk; a=ed25519;
  pk=xn5ghTMMWQniDtZih4xwKCTAaBHDozflTmqNKtaKo6s=
 
-Converts the ti,lm3532 to DT Schema format
+Converts the ti,lm36010 and ti,lm36011 txt to dt schema
 
 Signed-off-by: Harrison Carter <hcarter@thegoodpenguin.co.uk>
 ---
- .../devicetree/bindings/leds/leds-lm3532.txt       | 105 -------------
- .../devicetree/bindings/leds/ti,lm3532.yaml        | 172 +++++++++++++++++++++
- 2 files changed, 172 insertions(+), 105 deletions(-)
+ .../devicetree/bindings/leds/leds-lm3601x.txt      |  51 -----------
+ .../devicetree/bindings/leds/ti,lm3601x.yaml       | 100 +++++++++++++++++++++
+ 2 files changed, 100 insertions(+), 51 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-lm3532.txt b/Documentation/devicetree/bindings/leds/leds-lm3532.txt
+diff --git a/Documentation/devicetree/bindings/leds/leds-lm3601x.txt b/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
 deleted file mode 100644
-index 097490a5ff91206ce8c8f0fe0a093a043f089416..0000000000000000000000000000000000000000
---- a/Documentation/devicetree/bindings/leds/leds-lm3532.txt
+index 17e940025dc26213314f5cfd54aa8e5bb09f86b7..0000000000000000000000000000000000000000
+--- a/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
 +++ /dev/null
-@@ -1,105 +0,0 @@
--* Texas Instruments - lm3532 White LED driver with ambient light sensing
--capability.
+@@ -1,51 +0,0 @@
+-* Texas Instruments - lm3601x Single-LED Flash Driver
 -
--The LM3532 provides the 3 high-voltage, low-side current sinks. The device is
--programmable over an I2C-compatible interface and has independent
--current control for all three channels. The adaptive current regulation
--method allows for different LED currents in each current sink thus allowing
--for a wide variety of backlight and keypad applications.
--
--The main features of the LM3532 include dual ambient light sensor inputs
--each with 32 internal voltage setting resistors, 8-bit logarithmic and linear
--brightness control, dual external PWM brightness control inputs, and up to
--1000:1 dimming ratio with programmable fade in and fade out settings.
+-The LM3601X are ultra-small LED flash drivers that
+-provide a high level of adjustability.
 -
 -Required properties:
--	- compatible : "ti,lm3532"
+-	- compatible : Can be one of the following
+-		"ti,lm36010"
+-		"ti,lm36011"
 -	- reg : I2C slave address
 -	- #address-cells : 1
 -	- #size-cells : 0
 -
--Optional properties:
--	- enable-gpios : gpio pin to enable (active high)/disable the device.
--	- ramp-up-us - The Run time ramp rates/step are from one current
--		       set-point to another after the device has reached its
--		       initial target set point from turn-on
--	- ramp-down-us - The Run time ramp rates/step are from one current
--			 set-point to another after the device has reached its
--			 initial target set point from turn-on
--	Range for ramp settings: 8us - 65536us
--
--Optional properties if ALS mode is used:
--	- ti,als-vmin - Minimum ALS voltage defined in Volts
--	- ti,als-vmax - Maximum ALS voltage defined in Volts
--	Per the data sheet the max ALS voltage is 2V and the min is 0V
--
--	- ti,als1-imp-sel - ALS1 impedance resistor selection in Ohms
--	- ti,als2-imp-sel - ALS2 impedance resistor selection in Ohms
--	Range for impedance select: 37000 Ohms - 1190 Ohms
--	Values above 37kohms will be set to the "High Impedance" setting
--
--	- ti,als-avrg-time-us - Determines the length of time the device needs to
--			  average the two ALS inputs.  This is only used if
--			  the input mode is LM3532_ALS_INPUT_AVRG.
--			     Range: 17920us - 2293760us
--	- ti,als-input-mode - Determines how the device uses the attached ALS
--			   devices.
--			   0x00 - ALS1 and ALS2 input average
--			   0x01 - ALS1 Input
--			   0x02 - ALS2 Input
--			   0x03 - Max of ALS1 and ALS2
--
 -Required child properties:
--	- reg : Indicates control bank the LED string is controlled by
--	- led-sources : see Documentation/devicetree/bindings/leds/common.txt
--	- ti,led-mode : Defines if the LED strings are manually controlled or
--			if the LED strings are controlled by the ALS.
--			0x00 - LED strings are I2C controlled via full scale
--			       brightness control register
--			0x01 - LED strings are ALS controlled
+-	- reg : 0 - Indicates a IR mode
+-		1 - Indicates a Torch (white LED) mode
 -
--Optional LED child properties:
--	- label : see Documentation/devicetree/bindings/leds/common.txt
--	- linux,default-trigger :
--	   see Documentation/devicetree/bindings/leds/common.txt
--	- led-max-microamp : Defines the full scale current value for each control
--			  bank.  The range is from 5000uA-29800uA in increments
--			  of 800uA.
+-Required properties for flash LED child nodes:
+-	See Documentation/devicetree/bindings/leds/common.txt
+-	- flash-max-microamp : Range from 11mA - 1.5A
+-	- flash-max-timeout-us : Range from 40ms - 1600ms
+-	- led-max-microamp : Range from 2.4mA - 376mA
+-
+-Optional child properties:
+-	- function : see Documentation/devicetree/bindings/leds/common.txt
+-	- color : see Documentation/devicetree/bindings/leds/common.txt
+-	- label : see Documentation/devicetree/bindings/leds/common.txt (deprecated)
 -
 -Example:
--led-controller@38 {
--	compatible = "ti,lm3532";
+-
+-#include <dt-bindings/leds/common.h>
+-
+-led-controller@64 {
+-	compatible = "ti,lm36010";
 -	#address-cells = <1>;
 -	#size-cells = <0>;
--	reg = <0x38>;
--
--	enable-gpios = <&gpio6 12 GPIO_ACTIVE_HIGH>;
--	ramp-up-us = <1024>;
--	ramp-down-us = <65536>;
--
--	ti,als-vmin = <0>;
--	ti,als-vmax = <2000>;
--	ti,als1-imp-sel = <4110>;
--	ti,als2-imp-sel = <2180>;
--	ti,als-avrg-time-us = <17920>;
--	ti,als-input-mode = <0x00>;
+-	reg = <0x64>;
 -
 -	led@0 {
--		reg = <0>;
--		led-sources = <2>;
--		ti,led-mode = <1>;
--		led-max-microamp = <21800>;
--		label = ":backlight";
--		linux,default-trigger = "backlight";
--	};
--
--	led@1 {
 -		reg = <1>;
--		led-sources = <1>;
--		ti,led-mode = <0>;
--		label = ":kbd_backlight";
+-		function = LED_FUNCTION_TORCH;
+-		color = <LED_COLOR_ID_WHITE>;
+-		led-max-microamp = <376000>;
+-		flash-max-microamp = <1500000>;
+-		flash-max-timeout-us = <1600000>;
 -	};
--};
+-}
 -
 -For more product information please see the links below:
--https://www.ti.com/product/LM3532
-diff --git a/Documentation/devicetree/bindings/leds/ti,lm3532.yaml b/Documentation/devicetree/bindings/leds/ti,lm3532.yaml
+-https://www.ti.com/product/LM36010
+-https://www.ti.com/product/LM36011
+diff --git a/Documentation/devicetree/bindings/leds/ti,lm3601x.yaml b/Documentation/devicetree/bindings/leds/ti,lm3601x.yaml
 new file mode 100644
-index 0000000000000000000000000000000000000000..425277e519bd6de9822822685e9f101d0b3ef40a
+index 0000000000000000000000000000000000000000..d7d8ee44d6fe37d13ee84888c5811df3e15a5d02
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/ti,lm3532.yaml
-@@ -0,0 +1,172 @@
++++ b/Documentation/devicetree/bindings/leds/ti,lm3601x.yaml
+@@ -0,0 +1,100 @@
 +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/leds/ti,lm3532.yaml#
++$id: http://devicetree.org/schemas/leds/ti,lm3601x.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Texas Instruments - lm3532 White LED driver with
-+  ambient light sensing capability.
++title: Texas Instruments - lm3601x Single-LED Flash Driver
 +
 +description: |
-+  The LM3532 provides the 3 high-voltage,
-+  low-side current sinks. The device is programmable over an
-+  I2C-compatible interface and has independent current
-+  control for all three channels. The adaptive current
-+  regulation method allows for different LED currents in
-+  each current sink thus allowing for a wide variety of
-+  backlight and keypad applications.
++  The LM3601X are ultra-small LED flash drivers
++  that provide a high level of adjustability.
 +
-+  The main features of the LM3532 include dual ambient light
-+  sensor inputs each with 32 internal voltage setting
-+  resistors, 8-bit logarithmic and linear brightness
-+  control, dual external PWM brightness control inputs,
-+  and up to 1000:1 dimming ratio with programmable fade in
-+  and fade out settings.
-+
-+  For more product information please see the link below:
-+  https://www.ti.com/product/LM3532
++  For more product information please see the links below:
++  https://www.ti.com/product/LM36010
++  https://www.ti.com/product/LM36011
 +
 +maintainers:
 +  - Dan Murphy <dmurphy@ti.com>
 +
 +properties:
 +  compatible:
-+    const: ti,lm3532
++    enum:
++      - "ti,lm36010"
++      - "ti,lm36011"
 +
 +  reg:
 +    maxItems: 1
@@ -270,79 +207,35 @@ index 0000000000000000000000000000000000000000..425277e519bd6de9822822685e9f101d
 +  '#size-cells':
 +    const: 0
 +
-+  enable-gpios:
-+    description: GPIO pin to enable (active high)/disable
-+      the device.
-+    maxItems: 1
-+
-+  ti,als-avrg-time-us:
-+    description: Determines the length of time the device
-+      needs to average the two ALS inputs.  This is only
-+      used if the input mode is LM3532_ALS_INPUT_AVRG.
-+    minimum: 17920
-+    maximum: 2293760
-+
-+  ti,als-input-mode:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description: Determines how the device uses the attached
-+      ALS devices.
-+      0x00 - ALS1 and ALS2 input average
-+      0x01 - ALS1 Input
-+      0x02 - ALS2 Input
-+      0x03 - Max of ALS1 and ALS2
-+    minimum: 0
-+    maximum: 3
-+
 +patternProperties:
-+  "^ramp-(up|down)-us$":
-+    description: The Run time ramp rates/step are from one
-+      current set-point to another after the device has
-+      reached its initial target set point from turn-on
-+    minimum: 8
-+    maximum: 65536
-+
-+  "^ti,als-v(min|max)$":
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description: Min/max ALS voltage in Volts.
-+    minimum: 0
-+    maximum: 2
-+
-+  "^ti,als(1|2)-imp-sel$":
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description: ALS impedance resistor selection in Ohms.
-+      Values above 37kohms will be set to the "High
-+      Impedance" setting
-+    minimum: 1190
-+    maximum: 37000
-+
 +  "^led@[0,1]?([0-9]|[a-z])$":
-+    $ref: common.yaml#
 +    type: object
++    $ref: common.yaml#
 +    properties:
 +      reg:
-+        description: Indicates control bank the LED string
-+          is controlled by
-+
-+      ti,led-mode:
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        description: Defines if the LED strings are manually
-+            controlled or if the LED strings are controlled
-+            by the ALS.
-+            0x00 - LED strings are I2C controlled via full
-+                  scale brightness control register
-+            0x01 - LED strings are ALS controlled
++        description: |
++          0 - Indicates IR mode
++          1 - Indicates Torch (white LED) mode
 +        minimum: 0
 +        maximum: 1
 +
++      flash-max-microamp:
++        minimum: 11
++        maximum: 1500000
++
++      flash-max-timeout-us:
++        minimum: 40
++        maximum: 1600000
++
 +      led-max-microamp:
-+        minimum: 5000
-+        maximum: 29800
-+        multipleOf: 800
++        minimum: 24
++        maximum: 376000
 +
 +    required:
 +      - reg
-+      - led-sources
-+      - ti,led-mode
++      - flash-max-microamp
++      - flash-max-timeout-us
++      - led-max-microamp
 +
 +    unevaluatedProperties: true
 +
@@ -356,48 +249,30 @@ index 0000000000000000000000000000000000000000..425277e519bd6de9822822685e9f101d
 +
 +examples:
 +  - |
-+    #include <dt-bindings/gpio/gpio.h>
 +    #include <dt-bindings/leds/common.h>
 +
 +    i2c {
 +        #address-cells = <1>;
 +        #size-cells = <0>;
 +
-+        led-controller@38 {
-+            compatible = "ti,lm3532";
++        led-controller@64 {
++            compatible = "ti,lm36010";
 +            #address-cells = <1>;
 +            #size-cells = <0>;
-+            reg = <0x38>;
-+
-+            enable-gpios = <&gpio6 12 GPIO_ACTIVE_HIGH>;
-+            ramp-up-us = <1024>;
-+            ramp-down-us = <65536>;
-+
-+            ti,als-vmin = <0>;
-+            ti,als-vmax = <2>;
-+            ti,als1-imp-sel = <4110>;
-+            ti,als2-imp-sel = <2180>;
-+            ti,als-avrg-time-us = <17920>;
-+            ti,als-input-mode = <0x00>;
-+
-+            led@0 {
-+                reg = <0>;
-+                led-sources = <2>;
-+                ti,led-mode = <1>;
-+                led-max-microamp = <21600>;
-+                label = ":backlight";
-+                linux,default-trigger = "backlight";
-+            };
++            reg = <0x64>;
 +
 +            led@1 {
 +                reg = <1>;
-+                led-sources = <1>;
-+                ti,led-mode = <0>;
-+                label = ":kbd_backlight";
++                function = LED_FUNCTION_TORCH;
++                color = <LED_COLOR_ID_WHITE>;
++                led-max-microamp = <376000>;
++                flash-max-microamp = <1500000>;
++                flash-max-timeout-us = <1600000>;
 +            };
 +        };
 +    };
 +...
++
 
 -- 
 2.51.0
