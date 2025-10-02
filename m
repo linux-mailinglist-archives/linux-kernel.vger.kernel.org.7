@@ -1,132 +1,133 @@
-Return-Path: <linux-kernel+bounces-840066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45BB6BB3731
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 11:25:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88C4EBB3740
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 11:26:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C033188C356
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 09:25:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E72903B0661
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 09:25:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FA1D301015;
-	Thu,  2 Oct 2025 09:25:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14EEB303A10;
+	Thu,  2 Oct 2025 09:25:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YG180d8e"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aY0CG/87"
+Received: from mail-ed1-f74.google.com (mail-ed1-f74.google.com [209.85.208.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E37082F3614
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 09:25:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9827F3019A3
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 09:25:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759397102; cv=none; b=WopfkIzg/J6M0sI6owZHVew0d/GFbiR4aq/8BKgRqLZo1DddjlUgQpKcbT82+stEl6if9YISLM38AvjKg8l0vFqgkMpd2tNduqcB57ebvfMaSUMluoHLZFBEVafgaUnsU7wkHQv8ZXGcBpZqUKH/pZ3cxwCqw/5lZXJah3E8CD8=
+	t=1759397143; cv=none; b=WGHcXa+RXLQCeiR5drjlkVlp4Kp8MRr6rNc7YQpGVcxcUUCn3bxi3G1V/6e7JJnKypoxHYhY5lsWRJXtbAB/LxU0lgid3fCcRORNca4n+eUJGr5EPpVCDVifq6+H2oux6T9qa2sLLiumNkw5GhYBYwVk67XOnid9b4xhFf2ivcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759397102; c=relaxed/simple;
-	bh=wyk+LiOY+/2xhWdko/Utglt2dKK24fcOQB0e8E/SMOc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Lr2+PDGwNbLF376E/zNNA3kc7HPFqaS+6tmU1uYS+H1S19DV9ibQ/wKukNk8Fn197J5ckQ6ufChAL9wrn9Pj2O2AR3O30HOqeQr0BPFNObG89aJHcAxW8oweQ6G5jAMPU+JQhOauph9Oyqop46MfFSvicY32lDtmYLvzHxApiKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YG180d8e; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-579d7104c37so1073084e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 02:25:00 -0700 (PDT)
+	s=arc-20240116; t=1759397143; c=relaxed/simple;
+	bh=Y/sByYoKKU8P6VEhlGTI2CFrOrUl7lTYvCLhcfpmKbU=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Jm8eX3JCaUXuKoNQaboznk7sd0oxVTClSq6/gG8fmw1Tuyk4BXYPsHtQC1++SvxZBFEjZCpAa+Dn/o0MNzGRZgO4SlO6KHEtmgJOPW3R1Rm6zbC7kgnPQUNnYAUVThTSQ1H42WMXwmI4G2g3MBOSQpSQ/8F4v4CI50jkRnkHuMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aY0CG/87; arc=none smtp.client-ip=209.85.208.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-ed1-f74.google.com with SMTP id 4fb4d7f45d1cf-634c01ca90fso1004329a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 02:25:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759397099; x=1760001899; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Cnd1oe+gCOsUbP0Y8B7hIjrdA1ewGBuYtns+fASNVw4=;
-        b=YG180d8ehU31W6azkkDPH5yYiB0ZZEXFH5Juq9/HKcxD2oT9WWG7D4KW3v3pzgTonZ
-         SJjQ+ZrHyTlCTJHH+10nfa8WVGnBvymYuy7S45mosOrnyQXuvWRsvIw3gcRK5Q5wue1q
-         FdPoxP/scviegUFWPCln8dgvbmj4wYtvxlXu85iE9QEF22ADI+vgENis8gx0ZkG6c0N6
-         NTks407YwrhdU/d0GciMJABzi+vWKTXI3a555958jJdh1XLZXHukyxZUaXPZrs0kEMc/
-         iaO9jzUGc10CUG4P5mN7yvKyWfF3qLcyVMY156/FLS7Hz/aGTFihccOGqPeIvUeuOvqP
-         zaew==
+        d=google.com; s=20230601; t=1759397140; x=1760001940; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=+PlKBjPp5FZQsrsuboWKkHJmwPHYSdKJmwQAuUGMsyo=;
+        b=aY0CG/87xB8DzxIDpx6e9BVeQ9Xv+Jm15LXtHyIbELbK2wE1dZhkmx5c8SGxpZeLex
+         P1MIBrGqatUWqQ5w06c5UepdTQGQ/lxQwDm2X0IYw2em2tmYUOEIn9qjYjYvNQz9hX32
+         LEiq+IuH2LUhD0Fld2NVuWuk1nWhccsWZviEI12L6Fk7dpwvuiuWJI67LQ7aukSTOX90
+         tmj2K58Qfxjc5XJQGQFQDNxTOpGgWxjzg958l0GLsM/2U6O6Iq4SU1nXF5G7V6if2JfJ
+         1lrz2tXAtvuN5kKRi/jfUffaEkk9NWgEfeNguTxZA6p8s+xbtYTNfusGDODdHd+3MHTR
+         FQKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759397099; x=1760001899;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Cnd1oe+gCOsUbP0Y8B7hIjrdA1ewGBuYtns+fASNVw4=;
-        b=VUtsT02bfBTpr7fOIRoq+aU0LhxXZ2i8DGtchmPJJmSX3Z0yihecvDnJh6Gk6jqUeK
-         JE2EuLpAMvM4dQATDO1gHRhy6HXIMeR4Gk7JaiccLNtRE9gZ5LNbGvmjkW8q1wFji88i
-         1NanQIxkMK0Ksc7nBJzqwVbB3q4KU195saUIwxXg1siLtATRlzpktZMM5u1oH5WT4dko
-         eekqdLzaOR3RLVREw88TfUeOUlL7BFy/IwARuwy4R3/ulZF7qWiskJaZ4VQ6NPLgYNCu
-         RTxrgM6StWAsWuQOTmHpYThxMNNYkXESnma8+NtG4TdHyEfhJHbqqk/1nJqmESLjvf4K
-         R7TA==
-X-Forwarded-Encrypted: i=1; AJvYcCUTU3P03P+X86zob8McttPvJtirBs+YuUHH/mGYehhLXscRHyrtFe2BZjJjy+fYQFjVRxbZaGAbs6Uze88=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzhd4wgqU6i+z5QxZcKQmHDCxJpusjqFS0pwjisrkUj0pYWi3aL
-	qzbmVOPJelQwyvPmPZG8AnapadUPcVxjgHZrFQEotEc8LL6Lhn5I4V9M
-X-Gm-Gg: ASbGncsTrd2DT4X2qvy77ctBXQCgJsTKp4ZIE/QkBj//sj6KWk3d/MVBQLydebVU9Mz
-	smCjr7yvc2fu7+m2rOchcBRrD0LOjg07HVHFtcFaQzq7tOCwZBbJ6GWS8N4HTt51JvsvaEq9MLx
-	yjVuU7/IZSwvFuMdaFUTZBzm5pX3w4y4uwcH+XX0KhpOhqYo7qu/6eRYeQSNC7A/FHyeiUSm3q2
-	FyzEypdcumH+r+gXhkBSUK5nANUj1NrBYMb4lefz/tHW2hZC9PnBpzYo0eJnLqYZR4kRgT9yqdr
-	1KSBT75xGmvhuU4ZtW9Miz4J7oyMJjNW48k490RiSBTmkSSn+lQtN1owim4+TBkYDAkcPdpLWl7
-	9MLlLATI/s+SwBpMQKNMDOp3Uou/Sx9mJeQoOjtJrVaHm/ZFGj2HjktU1IuqviC7Y0ADz61POJS
-	VB0g3bUTkiLqKdPhk07iEoNjVWOHCgJSh1qBjUmxWa
-X-Google-Smtp-Source: AGHT+IESR5YgtJIt0LMDa26rTnIZwd70OvmJPXrkYGT8voRp7WuzaTPAueJHEK1uF9O71i7anaaZGg==
-X-Received: by 2002:a2e:bea4:0:b0:36b:9ecc:cb36 with SMTP id 38308e7fff4ca-373a74829bdmr19011161fa.23.1759397098830;
-        Thu, 02 Oct 2025 02:24:58 -0700 (PDT)
-Received: from localhost.localdomain (broadband-109-173-93-221.ip.moscow.rt.ru. [109.173.93.221])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-373ba2e1f37sm5575651fa.19.2025.10.02.02.24.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 02:24:58 -0700 (PDT)
-From: Alexandr Sapozhnkiov <alsp705@gmail.com>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Alexandr Sapozhnikov <alsp705@gmail.com>,
-	linux-rtc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org
-Subject: [PATCH] rtc: fix error checking in wdt_disable()
-Date: Thu,  2 Oct 2025 12:24:52 +0300
-Message-ID: <20251002092456.11-1-alsp705@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1759397140; x=1760001940;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+PlKBjPp5FZQsrsuboWKkHJmwPHYSdKJmwQAuUGMsyo=;
+        b=KFXpVi1KKp+zKMlceiijuRtujNWW3SnEr3M5Bw15O/PK1rdc2pPVV7x2EK7DeNXGB1
+         0Zx8ny1kiT+ylNsfn6kCWrQ5qVe6zXwLsfBil7qxJn2GM05tKZdz6mOYZ9+L37z/u3Ua
+         eciOlfHxdgxdO/ZTKfSiQ+5u1cBhpgPIPCgRV2JAIlCpUY3DcWfg12DyVWZ1GHszrWns
+         fIU1hK0idQxSMD1EoOOHvsWAIEO09enCsKDu1PS3G8Oua+2rraE7rWk5UPtmeMTb6Wgg
+         6V3O8f8SifLx/d8rsN0q1XYjwa47E21aN+Upc3QbtY1R7GszG0pT+0Wlz9CjTTgA3nZl
+         cTdA==
+X-Forwarded-Encrypted: i=1; AJvYcCWXPeKXBnzyQyNLsLD0pLMbNGRVNJgPu0DAbp7fD1utkUlGzl+m9jAwirHUkmhlmliz6Xedo/fH+MhYq4E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyN0b2jdoSVWB3jNDJB6TrhWBtkEAaJ/PFHy2vTLaoGNeX5/F6D
+	UoVI8b5VHlWXpbuf5gv7XoAruCoeEHM+SvyaTzWhA9oc54Vc7pkjVPngl2lJxmHzFb1SUIFexY9
+	Z4c8K6GWfVEymFQ4jLA==
+X-Google-Smtp-Source: AGHT+IFiGvtpNZSrwRO1oSUnyWe726xnw67IN+IMEOYdKIx5jbLC4BCDdiTrVhfoJOfm48YNxn4U5EvL1e5e8Og=
+X-Received: from edvh25.prod.google.com ([2002:aa7:de19:0:b0:634:a35b:1d11])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6402:3550:b0:636:23c2:e62a with SMTP id 4fb4d7f45d1cf-63678bbadb7mr7786985a12.8.1759397139975;
+ Thu, 02 Oct 2025 02:25:39 -0700 (PDT)
+Date: Thu, 02 Oct 2025 09:25:29 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAAhF3mgC/x2MQQqAIBAAvxJ7TlAppL4SHdLdai8qK0Qg/j3pO
+ AwzFQoJU4F1qCD0cOEUO5hxgHAf8SLF2BmstrPR2irPEUlUkty1QuPD5AMuzjnoTRY6+f1/297 aB5h7vwNfAAAA
+X-Change-Id: 20251002-binder-orphan-d1bc4bcd9777
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1256; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=Y/sByYoKKU8P6VEhlGTI2CFrOrUl7lTYvCLhcfpmKbU=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBo3kUOSfHZdu3RAzK3I4whCF46XkLRZdNE1E4zZ
+ QPtpUVdan+JAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaN5FDgAKCRAEWL7uWMY5
+ RlBREACqkYCmD4YESGpf5vez0GLEW1YzAzFEkMkxKRtdI6u5RCnsJTrbbV8qe30vPjl7OdOVuzA
+ Kie4gt4LRHFL1uDdgmMF2BvKzt2SFnh2lV/StYzIz4Wmv2GkJcwmlaTegzPyO8GW5ZE76MePx79
+ 2E8SDD6c7zXo1JycdoCcY+IkiB7bq9/fi2GAbM+e7esMKEjC8IYIWlw3jxihpRQ6xQtnXtdRL3g
+ sxSs9TbGF4WGQKbG6JBLwuzp/cRnmcMSlDP0JwwxVj4Y/XL3iMZCkZEdBgsWvlfI1qnUjBznuZS
+ ATUTQVoeL4dzztcpJjUF0EEvsfNG3/wKSPM3X8xHORwTm77y8/Bn13x3uQLRtZXwBpgws0LiMJt
+ rTODhfGire8OF1tJk5++2ooPTGv6xN5008gwju1BLQCktH5tJJhBwqCzZje4LbRWrk/1si7ioUo
+ tWp9x3u2rBugnnLkk3NURHQKMN6fE80uTuH7ztXXZ96pyxznZ0UbZN9zYnEotEIsqVLEj/t/mH4
+ fVecemOuVFz2i7HXY4EHlhoUvrE/S8IDr2sRebwUC0iYnrg+QbRgIW5k93VhSSoYkFJcKP2PNb5
+ iDZ2+f1xzCjMxcLzT0gqOuurge0nzZekW5xynTFOjNSSqWTNaiu6ABsrS/Wbc0KybmOK6IkKdnQ YOSmA3QFf23oYWg==
+X-Mailer: b4 0.14.2
+Message-ID: <20251002-binder-orphan-v1-1-cdc4cffff992@google.com>
+Subject: [PATCH] rust_binder: remove warning about orphan mappings
+From: Alice Ryhl <aliceryhl@google.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "=?utf-8?q?Arve_Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, 
+	Martijn Coenen <maco@android.com>, Joel Fernandes <joelagnelf@nvidia.com>, 
+	Christian Brauner <brauner@kernel.org>, Carlos Llamas <cmllamas@google.com>, 
+	Suren Baghdasaryan <surenb@google.com>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-From: Alexandr Sapozhnikov <alsp705@gmail.com>
+This condition occurs if a thread dies while processing a transaction.
+We should not print anything in this scenario.
 
-The i2c_transfer() function may return an error.
-Ignoring errors returned by functions is bad practice.
-Especially when these functions perform core functionality.
-What's the point of continuing to call the same function 
-after an error is returned?
-If the second function call succeeds, data corruption will occur.
-
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
-
-Signed-off-by: Alexandr Sapozhnikov <alsp705@gmail.com>
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 ---
- drivers/rtc/rtc-m41t80.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/android/binder/process.rs | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/rtc/rtc-m41t80.c b/drivers/rtc/rtc-m41t80.c
-index 0013bff0447d..b24d09c57816 100644
---- a/drivers/rtc/rtc-m41t80.c
-+++ b/drivers/rtc/rtc-m41t80.c
-@@ -677,11 +677,11 @@ static void wdt_disable(void)
- 	};
- 
- 	i2c_data[0] = 0x09;
--	i2c_transfer(save_client->adapter, msgs0, 2);
--
--	i2c_data[0] = 0x09;
--	i2c_data[1] = 0x00;
--	i2c_transfer(save_client->adapter, msgs1, 1);
-+	if (!i2c_transfer(save_client->adapter, msgs0, 2)) {
-+		i2c_data[0] = 0x09;
-+		i2c_data[1] = 0x00;
-+		i2c_transfer(save_client->adapter, msgs1, 1);
-+	}
- }
- 
- /**
+diff --git a/drivers/android/binder/process.rs b/drivers/android/binder/process.rs
+index f13a747e784c84a0fb09cbf47442712106eba07c..d8c3c1ae740e0eb3bcc8aa5e7faf4291f1cb69c9 100644
+--- a/drivers/android/binder/process.rs
++++ b/drivers/android/binder/process.rs
+@@ -1346,10 +1346,6 @@ fn deferred_release(self: Arc<Self>) {
+                 .alloc
+                 .take_for_each(|offset, size, debug_id, odata| {
+                     let ptr = offset + address;
+-                    pr_warn!(
+-                        "{}: removing orphan mapping {offset}:{size}\n",
+-                        self.pid_in_current_ns()
+-                    );
+                     let mut alloc =
+                         Allocation::new(self.clone(), debug_id, offset, size, ptr, false);
+                     if let Some(data) = odata {
+
+---
+base-commit: eafedbc7c050c44744fbdf80bdf3315e860b7513
+change-id: 20251002-binder-orphan-d1bc4bcd9777
+
+Best regards,
 -- 
-2.43.0
+Alice Ryhl <aliceryhl@google.com>
 
 
