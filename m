@@ -1,103 +1,90 @@
-Return-Path: <linux-kernel+bounces-839721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 813B2BB23CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 03:15:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D88FBBB23D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 03:16:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C209D19E01D8
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 01:16:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD9887B41AD
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 01:14:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6838B7262A;
-	Thu,  2 Oct 2025 01:15:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF1A812CDBE;
+	Thu,  2 Oct 2025 01:16:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ojSiId7B"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CVHLQJt6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A10D5224F6;
-	Thu,  2 Oct 2025 01:15:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 218932746A;
+	Thu,  2 Oct 2025 01:16:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759367738; cv=none; b=A6XdMEdUl7YY5TOJ/z8ZK29t5LVleDjQsdOYnP7WirRjfwQyRWz8OK5zUoTYTcy/ZXwqBWlOzsjsmEQjK+wcEqwJ+YsICOeGxWnKPWPPetekX9ZE0mUMfK4DC2516CGk1luGxy/U8R7yQ4rj1FvoWTVg2jPb1DMPK6zkSrNBzBI=
+	t=1759367762; cv=none; b=fEPvpYwwQQXKYE0F5WNuxuHVdL9O1InOz0MpLe/OdNHq+vIhQvcGzYoDtA4Nm/C+AzGSmQy4rYjgpHVqpI3PEMEZ9kPrAItdY5iynnjoukpGVFWD3LvNi4FJl9R6VGeCYoGYvEbf4hgXBG6gf6IJQqMAtQ125847dic2bIaibZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759367738; c=relaxed/simple;
-	bh=ybWFhd4Bl669wN6zdk9DEt87ykdf3WJUYTYkdhjzDkI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jf8cjtpGr7dBQXRfXDF3XMyut4s8qLe+tgr7oEAnNaGK59eYfjIjGOqkokCmS0oXX6JYxdMGDqCDLsE0BQDBmKzf5n9OXmblqlRUXtwPeMAAYCba+aGKYk50ep+x5fghFB7tKHiH60G7CH6IXjuKTY9wgloLlXPPNoIhozW5WD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ojSiId7B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2B43C4CEF1;
-	Thu,  2 Oct 2025 01:15:37 +0000 (UTC)
+	s=arc-20240116; t=1759367762; c=relaxed/simple;
+	bh=N+IBo+cFLuUB2dPL/xezIvU81xhMiJVOYHb+D0G1mBo=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=h8vn+ISXRexb3DjjRKzpiHLnWOQvhc8uMTQqMDgIrQTSzQQh4S1Gdpq/22w3fWLCZL7qXvoz81l5e/WoyAP54jVQ9Nb9lDlxjLHiFaOGPFj1LN3PhtwTPDZrzrSbwxG1muGJeqt1/9cIee4afI2O1sQsLVEFHubshxsWXgPXpVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CVHLQJt6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C730BC4CEF1;
+	Thu,  2 Oct 2025 01:16:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759367738;
-	bh=ybWFhd4Bl669wN6zdk9DEt87ykdf3WJUYTYkdhjzDkI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ojSiId7BoaS8UNz6oiQJrQVUImuzaY/mzCOniA7rvODFJU4GAwUFv3dAgCJ9KmWI9
-	 1rb7vwOLVXCWEKDPZVA/QFcQ8hNXvZwihE9EUDqzN0i0LGKz3mZuFkIl+BeojgiBCU
-	 6foF4q0z6vt1vPHkePosD2qlYpq2eRtrg4Yc8uAvb+RdqD/+Kaq6mAQj3hAwsvJkjt
-	 3azSV6vbvVsz+lvu0jLtVusygK4HGehccP5CclvEsKavXAfPgmSPpGgH6h/OOEfeBH
-	 Uz3jG6rmCjTj3suHzJb09+WYEWjJH3rEfjUL2aKnnt+rELnYhKCKu0hL7aghTc4jW8
-	 qhgxpAinpzLCQ==
-Date: Wed, 1 Oct 2025 20:15:36 -0500
-From: Rob Herring <robh@kernel.org>
-To: Luo Jie <quic_luoj@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Varadarajan Narayanan <quic_varada@quicinc.com>,
-	Georgi Djakov <djakov@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Anusha Rao <quic_anusha@quicinc.com>,
-	Manikanta Mylavarapu <quic_mmanikan@quicinc.com>,
-	Devi Priya <quic_devipriy@quicinc.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	quic_kkumarcs@quicinc.com, quic_linchen@quicinc.com,
-	quic_leiwei@quicinc.com, quic_pavir@quicinc.com,
-	quic_suruchia@quicinc.com
-Subject: Re: [PATCH v6 02/10] dt-bindings: clock: Add "interconnect-cells"
- property in IPQ9574 example
-Message-ID: <20251002011536.GA2828951-robh@kernel.org>
-References: <20250925-qcom_ipq5424_nsscc-v6-0-7fad69b14358@quicinc.com>
- <20250925-qcom_ipq5424_nsscc-v6-2-7fad69b14358@quicinc.com>
+	s=k20201202; t=1759367761;
+	bh=N+IBo+cFLuUB2dPL/xezIvU81xhMiJVOYHb+D0G1mBo=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=CVHLQJt6/U8JVWBmh/0TqGImN2GEOkvWc3wmV6zZHdNnG5hJhRHZN1Iy9Pb6CpUuy
+	 fcvQSFWM7XIi3+nbl3B+C+UPrCBw2mnJNzLdv78a31essSprgiAKwx/zwzh+bbyBGL
+	 BfcSOuKeZyp7fkWQyyi/kp1WFSjGqik/1n6AYcOIU40n+qN18rjvq+rClZ1dZSHBV2
+	 vWqk1ieXvlaLS2mt+xkKEh4Cb9X+IdQkyiezlMXKIukQesTo7zzRw2TjwRGGhE+CAb
+	 z9tNmwjsCWzJ+o5OqAcnhL4r7pehD1hbjIynLpZDdRIzg+rHmdSsETbf4UVnolxBEH
+	 XzIijTzu+n2AQ==
+Date: Wed, 1 Oct 2025 19:15:56 -0600 (MDT)
+From: Paul Walmsley <pjw@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+cc: Michael Turquette <mturquette@baylibre.com>, 
+    Stephen Boyd <sboyd@kernel.org>, Rahul Pathak <rpathak@ventanamicro.com>, 
+    Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+    Anup Patel <apatel@ventanamicro.com>, Paul Walmsley <pjw@kernel.org>, 
+    linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: COMMON_CLK_RPMI should depend on RISCV
+In-Reply-To: <ed37635b59b0765ed3dbed6ea33c562a40b9e287.1759243789.git.geert+renesas@glider.be>
+Message-ID: <6555b47f-919b-b56c-4a76-352c904343c2@kernel.org>
+References: <ed37635b59b0765ed3dbed6ea33c562a40b9e287.1759243789.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250925-qcom_ipq5424_nsscc-v6-2-7fad69b14358@quicinc.com>
+Content-Type: text/plain; charset=US-ASCII
 
-On Thu, Sep 25, 2025 at 10:05:36PM +0800, Luo Jie wrote:
-> The Networking Subsystem (NSS) clock controller acts as both a clock
-> provider and an interconnect provider. The #interconnect-cells property
-> is needed in the Device Tree Source (DTS) to ensure that client drivers
-> such as the PPE driver can correctly acquire ICC clocks from the NSS ICC
-> provider.
+On Tue, 30 Sep 2025, Geert Uytterhoeven wrote:
+
+> The RISC-V platform management interface (RPMI) is only available on
+> RISC-V platforms.  Hence add a dependency on RISCV, to prevent asking
+> the user about this driver when configuring a kernel for a different
+> architecture.
 > 
-> Add the #interconnect-cells property to the IPQ9574 Device Tree binding
-> example to complete it.
+> Fixes: 5ba9f520f41a33c9 ("clk: Add clock driver for the RISC-V RPMI clock service group")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-The subject is wrong as it #interconnect-cells, not interconnect-cells.
+Thanks Geert for catching this.
 
-> 
-> Fixes: 28300ecedce4 ("dt-bindings: clock: Add ipq9574 NSSCC clock and reset definitions")
-> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
-> ---
->  Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml | 1 +
->  1 file changed, 1 insertion(+)
+This patch is against unmerged patches in -next.  So I'll plan to add this 
+to the PR that I plan to send to Linus tomorrow -- unless any of the 
+drivers/clk maintainers would prefer that I not.
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+> And perhaps the "default RISCV" should be dropped, too?
+
+Probably.  I guess we should just add this to the arch/riscv defconfig 
+instead.  Let's wait on this one for a few days to see if anyone has any 
+comments, and consider that change for v6.18-rc fixes.
+
+
+thanks again,
+
+- Paul
 
