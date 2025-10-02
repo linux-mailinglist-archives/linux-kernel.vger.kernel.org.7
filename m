@@ -1,202 +1,127 @@
-Return-Path: <linux-kernel+bounces-840516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BC45BB4964
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 18:46:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66DE1BB4979
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 18:48:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 47C824E1866
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 16:46:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 189D0189C240
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 16:49:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6363723E342;
-	Thu,  2 Oct 2025 16:46:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7529025A65A;
+	Thu,  2 Oct 2025 16:48:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="a7AVwFKp"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j0Y94/Tq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BDDB236A70
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 16:46:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D10C5186284
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 16:48:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759423583; cv=none; b=bVtNo296IvIs+HuVIrd7GQL09nVLXTLe5t3+VJq+4GoM4RfEURNOxRd0yYciPJ8MePgejXm0yS9lGYnLRL8yKr/UWnuR38cTyH/3qAj02rs2/nFCLTrMRtLgp4XUT3wp50Oyga16dH/GQMvD8nQKRvw6+XbbnZkjgiJbBH9dUes=
+	t=1759423729; cv=none; b=s9wlpSS8wAtio16K10coLcS6rnbEHh/IXQmTT0DxXRfwAv34nZFD7PLiUxixvBhJFqSNtddxp0G29/JzLsrV/+swCQ58V4Lc+npLMnLRjyn2jtr921Z4t4/0Ef69IvvykqR7fc9ZCkRIsA80S5ILhJNvwbY7To7GsjaRnwPJ8js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759423583; c=relaxed/simple;
-	bh=QLyV/yM++26FneUT3uH4L6P1odlqjQgGMfZW6jkOWbc=;
+	s=arc-20240116; t=1759423729; c=relaxed/simple;
+	bh=UXUa16DxRQlc+YoczpHucO1ugFqhBs0jsvbBdOCdJO8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uGJUl7wSn2ZUlDJiWz++5rsOp4AWwDv6Sov39WbuXRy/yVYuV2FAodTRWCPbgCizxcBdBz7cD3asBzZgSIVs4pUbyuiiYX8zVm4h+aPd2xxAWXfAX/YpGqWcf3knZBQvzkoJ8n4hnn4XLhToLXyV4DfpKAgVEXC5FCnyJgYQHKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=a7AVwFKp; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-afcb78ead12so245778666b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 09:46:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1759423579; x=1760028379; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=9vzsEhVXUVbwA+f8Wq3Hi/pcxlbcP2wMVdzZNvAfvdM=;
-        b=a7AVwFKpqR7KkJwKZkk68xiuJaWXdTFYlFcTgogE9RPQcaQdmuK2HGzUFejVWyzRKC
-         0VbbmwweiMOyqOHvDR/sWiOrd+SoJHEtPOk8QMOe3TT/J/6JUcZvhAQh+Zwzoy1bPLsF
-         ahBgnmJsrZ2KRJVi8RuWjDpQ5t3KvQh+kszqk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759423579; x=1760028379;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9vzsEhVXUVbwA+f8Wq3Hi/pcxlbcP2wMVdzZNvAfvdM=;
-        b=m7pJP/S9xYnwNkBk4KjUo5KCqLTRckuKhTqE4s4Icotuoc2RwS2CNPgiB3HY9qUDZf
-         WXu+TtkNdIvaGp7ZB7nFZB4eWK4bo9x/1HbHUir4p52qDaBvwwP+wGrxsyBF0x458Ndo
-         h+fTWczFzoNKJnAHbKhJW3JVaaL+QPPXBbd5OfWp+Im7H69L1jh/cRBWkn9zO7l1XkSD
-         JYkduSxDelfs2SSH/VNezO9kBwWOs4juQCzv+T4KyndNS1rITY45OUYdNjOXHmlqIy0c
-         Qx4B9WCQzXMF/TEYxonJBr/4ldFbIUpIuY0WWn7l5d/gXa30HXXpfy5mp/HDGVgWigf8
-         MYWQ==
-X-Gm-Message-State: AOJu0YzKxXBmJEchoeX1DgtLh3YAIb22X+ifAwTGlcVn2m4xvpYs53jX
-	aQk+qcRSTPAR1uGZbWymHoxzL54a7ERncF83EzX4AIaTEeGCO0f+SctEQ263BWInhxEP88m7zVL
-	eXsNY2lc=
-X-Gm-Gg: ASbGncsUpA6dfYDl35a50w9mMAYEggliYtN5ypoU5vAttNrjBu904DeYgfzi2zU5Y1Z
-	oKQzRZva7az56rYvS6IoxOy37fu72LSRDNpF/mkhxKcI4QK/2Quilc18EUD+9HXpA6GaSgm1jCL
-	CO4PU6l+J9duzhkK//gix7ANMHr2KpUz6dqco9LpZqNBeI558qmwJwS8JQ56+FW4NPSIbarYhNY
-	4AtqJRlwIHvDnzl8uLeeFAjs+aheE/CmFdxYptVsXRvyYQ3xytK9kRHcITeZa/mmcEdkwJ58p5d
-	7JqIs/b9093SksLGelfeyG9r2qeqZg/0/RvHlV/wlUViDDkE6c5ffN0Barv1PnWTFNmz67JY87V
-	c7Lh0d3tR1LoICZDGP97ZWEttXXUaodEm6jhXNo11kH+fvkR6OdVWOAj3TxvYu9E7bGS2oBPwUH
-	ChkOqTFLFqW1kUfADSTVFyCt6rE8Ecqrc=
-X-Google-Smtp-Source: AGHT+IE6BOvu8qWRRgRzeEXx3IAEDPc9NYOl+xiSZOx3+jBZdtiGbP+yxGxdTZ//HMzEV4NUYR/5Eg==
-X-Received: by 2002:a17:906:eecd:b0:b3f:f6d:1dae with SMTP id a640c23a62f3a-b49c1d6150emr13943066b.12.1759423579229;
-        Thu, 02 Oct 2025 09:46:19 -0700 (PDT)
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com. [209.85.218.54])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b48652aa637sm236970666b.12.2025.10.02.09.46.18
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Oct 2025 09:46:18 -0700 (PDT)
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-afcb7ae6ed0so213996266b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 09:46:18 -0700 (PDT)
-X-Received: by 2002:a17:907:1c1b:b0:b42:9840:eac1 with SMTP id
- a640c23a62f3a-b49c4393389mr10071766b.49.1759423577719; Thu, 02 Oct 2025
- 09:46:17 -0700 (PDT)
+	 To:Cc:Content-Type; b=eo8q73wL+KLtK0060tFazfeVUdFVDIdZSMDfFY0ePa22OWhhHM0/3rUM9YQkgkOrLP4IKYty0X1Pk259A+umgaszdJfTMuMyWJg5UFvgN4BpfQ8B5CS8RdYXKaGA9gvq4vgMhyWNiZ+dvfismVXzbjg50zgAEqufRgqnC89am5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j0Y94/Tq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6266DC4CEFB
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 16:48:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759423728;
+	bh=UXUa16DxRQlc+YoczpHucO1ugFqhBs0jsvbBdOCdJO8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=j0Y94/TqYpj+kjQCWs9eFlHW/1YN9UkIeBZQD85d5KgIk/tOkOxey0WUrpgbqn7/m
+	 2TysR5EYWNUT1E4JsgFLLed3pNhBxyUKFVkDzbzJ0jJpiR8aQ7vZNH9D3tZCWZwFzj
+	 Fnk24RzRsdAEwYRumnbEHYz+DuvVePn8RWRsSlsZnit+sJphLjYr8NjaOI1LYsG89Q
+	 rFZHWlJ/T8nrt/iRHRm8w8oDCxS1krM8vsJCXLCWA4r2B8DoBjwhwWsvI5HD44gVvn
+	 nVWIid8AXpqNG3TPSu2OzyteNP/gSgAvXvzJXvvPYvxdbWW3J80vKrkUUDu4DLYo3g
+	 sVODSxeCsewyA==
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-57e8e67aa3eso3242747e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 09:48:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXwwvxALctalWdjEqGnBIBTkGVN0VMv7j4Esq6COwieiDzAFxwgZMRsVHE+pEcEgW9gPNQOxpnUfuiUv94=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4RLI+C4el5yDbhJwIYaQF5FNAiJrxvrxIa3O2LPkvibuc6Ze5
+	S9rTX6Ryz4Z6SVIDTc1mRWKeKbR/aAo7i838v6JUku/cS7v8/QlERJe+2NdtQfMzyfSm2iTHbXF
+	8wn+hku7a93RaaBTzs5SP4ioZtzU56sA=
+X-Google-Smtp-Source: AGHT+IEqXM/Be3cRNs05VWOlXbMCnMSG6Mba0tmbOYQBA/5ovj738cWnL+OCbs5vXp6LcKhFkY87M5wOVli92mntFKw=
+X-Received: by 2002:a05:6512:2397:b0:581:bdb8:6df9 with SMTP id
+ 2adb3069b0e04-58b00b5eb3emr1343410e87.10.1759423726612; Thu, 02 Oct 2025
+ 09:48:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aNrm_14uJmGE7MYC@yury>
-In-Reply-To: <aNrm_14uJmGE7MYC@yury>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 2 Oct 2025 09:46:01 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whoOUsqPKb7OQwhQf9H_3=5sXGPJrDbfQfwLB3Bi13tcQ@mail.gmail.com>
-X-Gm-Features: AS18NWDTSnffJM68wOZw79kbKNNh0jg-232_U3V11UlxV_WYxRiq56cGPnOaxk0
-Message-ID: <CAHk-=whoOUsqPKb7OQwhQf9H_3=5sXGPJrDbfQfwLB3Bi13tcQ@mail.gmail.com>
-Subject: Re: [GIT PULL] bitmap for 6.18
-To: Yury Norov <yury.norov@gmail.com>
-Cc: linux-kernel@vger.kernel.org, NVIDIA <YuryNorovyury.norov@gmail.com>, 
-	Alice Ryhl <aliceryhl@google.com>, Burak Emir <bqe@google.com>, 
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, 
-	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>
+References: <20251001210201.838686-22-ardb+git@google.com> <20251001210201.838686-26-ardb+git@google.com>
+ <202510020918.7E358227@keescook>
+In-Reply-To: <202510020918.7E358227@keescook>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Thu, 2 Oct 2025 18:48:35 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXEK+ggQXC6pruZs2jkg6fmA7+Uv45DY4B_XqTRsRbTf2Q@mail.gmail.com>
+X-Gm-Features: AS18NWAZ8uFcVmA6EvK7W0-OFglLBSKI4YbLO-lps_DOpY0PjMY5dUoH7ZngWew
+Message-ID: <CAMj1kXEK+ggQXC6pruZs2jkg6fmA7+Uv45DY4B_XqTRsRbTf2Q@mail.gmail.com>
+Subject: Re: [PATCH v2 04/20] crypto: aegis128-neon - Move to more abstract
+ 'ksimd' guard API
+To: Kees Cook <kees@kernel.org>
+Cc: Ard Biesheuvel <ardb+git@google.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	herbert@gondor.apana.org.au, linux@armlinux.org.uk, 
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Mark Brown <broonie@kernel.org>, 
+	Eric Biggers <ebiggers@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 29 Sept 2025 at 13:07, Yury Norov <yury.norov@gmail.com> wrote:
+On Thu, 2 Oct 2025 at 18:20, Kees Cook <kees@kernel.org> wrote:
 >
->  - almost complete consolidation for HIWORD_UPDATE()-like macros from Nicolas;
+> On Wed, Oct 01, 2025 at 11:02:06PM +0200, Ard Biesheuvel wrote:
+> > From: Ard Biesheuvel <ardb@kernel.org>
+> >
+> > Move away from calling kernel_neon_begin() and kernel_neon_end()
+> > directly, and instead, use the newly introduced scoped_ksimd() API. This
+> > permits arm64 to modify the kernel mode NEON API without affecting code
+> > that is shared between ARM and arm64.
+> >
+> > Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+> > ---
+> >  crypto/aegis128-neon.c | 33 +++++++-------------
+> >  1 file changed, 12 insertions(+), 21 deletions(-)
+> >
+> > diff --git a/crypto/aegis128-neon.c b/crypto/aegis128-neon.c
+> > index 9ee50549e823..b41807e63bd3 100644
+> > --- a/crypto/aegis128-neon.c
+> > +++ b/crypto/aegis128-neon.c
+> > @@ -4,7 +4,7 @@
+> >   */
+> >
+> >  #include <asm/cpufeature.h>
+> > -#include <asm/neon.h>
+> > +#include <asm/simd.h>
+> >
+> >  #include "aegis.h"
+> >  #include "aegis-neon.h"
+> > @@ -24,32 +24,28 @@ void crypto_aegis128_init_simd(struct aegis_state *state,
+> >                              const union aegis_block *key,
+> >                              const u8 *iv)
+> >  {
+> > -     kernel_neon_begin();
+> > -     crypto_aegis128_init_neon(state, key, iv);
+> > -     kernel_neon_end();
+> > +     scoped_ksimd()
+> > +             crypto_aegis128_init_neon(state, key, iv);
+> >  }
+>
+> For these cases (to avoid the indentation change), do you want to use
+> just "guard" instead of "scope_guard", or do you want to explicitly
+> require explicit scope context even when the scope ends at the function
+> return?
+>
 
-Argh. I don't love this, but I've pulled it.
-
-That new interface is a bit odd, and I had to wrap my head around it a
-bit, but it actually looks fine when it's a single bit or it already
-has a mask defined for it, and the end result is something like
-
-        FIELD_PREP_WM16(BIT(1), val)
-
-Yes, this is often longer than what it replaces, but quite readable,
-and I think it's a good thing.
-
-But then we have GENMASK.
-
-The macro from hell, that was a mistake from day 0, but then took over
-despite always being illogical.
-
-It was so illogical that it had to have lots of error checking,
-because it always had the wrong interface and as a result lots of
-people got it wrong.
-
-So now it has compile-time checking of the bits to make sure people
-get notified when they invariably get things wrong.
-
-The only saving grace of that thing is that checking. I feel that
-often the *only* reason to use GENMASK() over any other alternative is
-literally that it checks the arguments so much because the interface
-is so horrific.
-
-It does "high, low", which is often very unintuitive, and in fact the
-very commit that introduced this thing from hell had to convert the
-sane "low,high" cases to the other way around.
-
-See commit 10ef6b0dffe4 ("bitops: Introduce a more generic BITMASK
-macro"), and notice how ALMOST ALL use cases were switched around to
-the illogical "high,low" format by that introductory phase.
-
-And yes, I understand why that person did it: many datasheets show
-bits in a register graphically, and then you see that "high .. low"
-thing in a rectangle that describes the register, and that ordering
-them makes 100% sense IN THAT CONTEXT.
-
-But it damn well does not make sense in most other contexts.
-
-In fact, even in the context of generating mask #defines, it actually
-reads oddly, because you end up having things like
-
-  /* Status register (SR) */
-  #define I2C_SR_OP               GENMASK(1, 0)   /* Operation */
-  #define I2C_SR_STATUS           GENMASK(3, 2)   /* controller status */
-  #define I2C_SR_CAUSE            GENMASK(6, 4)   /* Abort cause */
-  #define I2C_SR_TYPE             GENMASK(8, 7)   /* Receive type */
-  #define I2C_SR_LENGTH           GENMASK(19, 9)  /* Transfer length */
-
-(Yes, that's a real example from the kernel), and notice how *oddly*
-the numbers flow in that series: instead of being a logical
-progression of 0 .. 1 .. 2 .. 3 etc, you have 1 .. 0 .. 3 .. 2 .. 6 ..
-4 etc)
-
-I really have an almost irrational hatred of GENMASK (note "almost". I
-think it's rational). I hate it so much that this almost made me not
-pull the end result just because a few conversions were just
-horrendous.
-
-The very first conversion in that series does this:
-
--               mci_writel(host, TIMING_CON1, HIWORD_UPDATE(raw_value,
-0x07ff, 1));
-+               mci_writel(host, TIMING_CON1,
-+                          FIELD_PREP_WM16(GENMASK(11, 1), raw_value));
-
-and no, that new version is *NOT* more readable than the old code. I
-had to really read it several times just to understand what was going
-on, admittedly because the old HIWORD_UPDATE() macro was also odd.
-
-But at least that old HIWORD_UPDATE() was odd in a "natural" way.
-
-And it's all because GENMASK() is a horrible horrible interface, and
-should only be used for generating other #defines for actual masks
-when you read the datasheet.
-
-Anyway. I just wanted to state how much I hate GENMASK(). It's almost
-fine for when it is appropriate, but this is an example of where it's
-very much not appropriate.
-
-I wish we had a saner form for generating bitmasks with a better
-interface. The "high,low" thing is horrendous when what you want is "I
-want X bits starting at X":
-
-Maybe we could introduce a new macro to go with BIT(x), and call it
-"BITS(low,high)". Yes, we'd have to replace a few existing driver uses
-of BITS(), but not very many.
-
-Am I the only person who would find "BITS(1,11)" to be much easier to
-understand than "GENMASK(11,1)"?
-
-Random "Linus rants" email over.
-
-             Linus
+I'm on the fence tbh. I think for future maintainability, being forced
+to define the scope is perhaps better but in this case, the whole
+function contains only a single line so there is little room for
+confusion.
 
