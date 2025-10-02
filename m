@@ -1,123 +1,89 @@
-Return-Path: <linux-kernel+bounces-840092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96B44BB3824
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 11:45:53 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C2D4BB382A
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 11:48:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7761A4E07EE
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 09:45:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 058B44E13B8
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 09:48:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E395304BD7;
-	Thu,  2 Oct 2025 09:45:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gondor.apana.org.au header.i=@gondor.apana.org.au header.b="E0GS3y7W"
-Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9361E305048;
+	Thu,  2 Oct 2025 09:48:04 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE38C2FF170;
-	Thu,  2 Oct 2025 09:45:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6FDB2F1FCF
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 09:48:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759398346; cv=none; b=SmwrH1Qdvmm0ASkNm7QYvHCMxPArOYnbdZ3u2ADURevtA0ClzlPmgt6fGL1TTnthuW8jecYjZQwute1xJT3w9smM6rYFA9hl4D4eOtiz63TLbn6KxW+Pabvy9wDkk2E4SE77jsr0vOcD3wnurWxe8Coi7W4NVWgxFa4ubw9t03g=
+	t=1759398484; cv=none; b=e1S3sQyz6eFdaNZJtVQ+o2XUnP03r+lFttJeIg8IfjtPRBU5RF00WZ8b9Znw0P5tnV3c/llTHZdA6IhjbuUqa+ZBGewseWNT5Ck5uoRe8+8PsYzboL3E8WpTLvJOFIkIfd1sZUYFhOTTp+T07GeHA/zXZiLwTIbShBekPwgI7Hw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759398346; c=relaxed/simple;
-	bh=7jUmaaufXtarhLrR+/Hd8NlSQdOWErxotzH6yX85L0k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gK8YWR507PPOvKqkdkkZFRFKyzE/y+GkZe8cR05/LrwpHu3tyoF02XDM6aDFx+ZupVBXuw0SowO40vaioxzGVCiGQzQyHGFbzaUUwGSSfihiYvaqoRwqxBQWMg823EeiXIqctTxNKVGgVrtY1tSVZxcANVmX76YyOOSNcfpRDiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=gondor.apana.org.au header.i=@gondor.apana.org.au header.b=E0GS3y7W; arc=none smtp.client-ip=180.181.231.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=gondor.apana.org.au; s=h01; h=In-Reply-To:MIME-Version:References:
-	Message-ID:Subject:Cc:To:From:Date:cc:to:subject:message-id:date:from:
-	reply-to; bh=4jtXLdMURoMb2915FzMhIunTyPKQ2o/QHygtZYlc+E0=; b=E0GS3y7WLzrYLMWQ
-	IkXyEbUPu+PQDuXnClfNFUamC2/zNiHjIC4IPKLTtTIu9/+JZKUJeIEaQQSsCVUPSHVqs4rbeNYJ0
-	GlJE2KNgHhARM1JM4ncfOvUHurCZ34B18aNecdfkg8waUFxtdK/oXMOOcEkJkkb9fWAUc1WLx4Qly
-	ZJSLjgtLWWkaJnnH8ZUWlerDU7MLyEZWOq0wFRCbN5i3gHYGL+EuOipMECAazKGqttotD/gBh1VOo
-	AMwDZXIFT0j/rty3NTc4fNFDvo1FeffsWWdvkYx9D63hZlTt5X7/kzzPLzl2YG6/3UmEMcKvN8XAm
-	M0HwLOaiRCSyTIchhQ==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1v4FsZ-009zIE-1R;
-	Thu, 02 Oct 2025 17:45:40 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Thu, 02 Oct 2025 17:45:39 +0800
-Date: Thu, 2 Oct 2025 17:45:39 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Dave Sun <sunyiqixm@gmail.com>
-Cc: davem@davemloft.net, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Elena Petrova <lenaptr@google.com>,
-	Stephan =?iso-8859-1?Q?M=FCller?= <smueller@chronox.de>,
-	Eric Biggers <ebiggers@google.com>
-Subject: [PATCH] crypto: rng - Ensure set_ent is always present
-Message-ID: <aN5JwxZFeAnZXA8n@gondor.apana.org.au>
-References: <20250930032824.690214-1-sunyiqixm@gmail.com>
+	s=arc-20240116; t=1759398484; c=relaxed/simple;
+	bh=1cbIbiqAVClpA8TrMP7DYoQ3puZfri+8yBEyuaaorjc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=kq9UH7/1LRzQGd7F/Kk8ztl4lYYb9b1CSotjS1l0ez9et9+uBtKY8xPHl8//JFo35jbTlFGuoj+hLmOahuhFGD3ywevBN/Ck7ihQmlQ4V16EeeTCUa3umnXlgz25pzrne9EvYGjgD+hSJ+TJKCxWJoEgCUQ6IEj6IfO5cDmE+Nc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-91e1d4d0976so191895939f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 02:48:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759398482; x=1760003282;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xhjzZcahkPy/0vjAu3K17rt/nub1ZoKaTIni5sV7Mvo=;
+        b=hT9bgw5ZrOyVcT3728YbwzEQxBYQDYSFCUo5rpsAVrDozNT5CRZ8GZ+pzGAKnOOY86
+         Tc7H67CI6o859lReF0elOaCitQ7oBNz/bneM38qtnanGEmXwQ/1yYt4gNdYos9SQx3UP
+         qnKGSL5pIwsPFUE7WyTh+kNkQPzjEG3Boa+9Pk2D6e1UHwbiqoZ5N57MJZ9r5DAT3WPG
+         mdZ+dtqee3Tu84C5lz73JUOsdrFLMQ0GAYrJ/ARmwwJhvFRN4a4ukJU5Mkc2G156zqTV
+         ZftLb44mstFSa2QfTCIHPoG0m/328Ng0BUa3GaoQwQzmFrKjUzNT0yLAyND+w9oBw1At
+         wk1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW65PeojtxMzm67Wp2ZXdCoXNf0mZyxLGRTwhuSgoqzwhDJ28QtA/PVB3ry4xvRYmPDb/ydXLFozMTlpFQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGJumVdeTv3MlQ9TfuUk+yyPSfNdRZHURXHB4EdKQGinE2o0Eh
+	SY4yVU+xBnZocAmeYnfQuH5E+bsmLpVd+mlflLKFW1sXYgs3qMkT1WlqixPm2w/T2jHNx7keD8X
+	pVW1Nt15fe+oFtlfHanrDB3RdCXlGArlQqgtg3YImk2qpUK5TGsnYZL0DOxo=
+X-Google-Smtp-Source: AGHT+IGpjTvQ418bAH/miQpEmycK6RHiseZxGhkUsljiaZXRRuCSEJ1MwXFvPQMx/58pE+Lp8pzxlEOq/XxvzwosdHTNbvZ4ah1+
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250930032824.690214-1-sunyiqixm@gmail.com>
+X-Received: by 2002:a05:6602:6b81:b0:8d3:6ac1:4dd3 with SMTP id
+ ca18e2360f4ac-937a87f9d2amr850839539f.6.1759398482012; Thu, 02 Oct 2025
+ 02:48:02 -0700 (PDT)
+Date: Thu, 02 Oct 2025 02:48:02 -0700
+In-Reply-To: <20251002093807.2387597-1-kartikey406@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68de4a52.050a0220.1696c6.0030.GAE@google.com>
+Subject: Re: [syzbot] [ext4?] KASAN: slab-out-of-bounds Read in ext4_search_dir
+From: syzbot <syzbot+3ee481e21fd75e14c397@syzkaller.appspotmail.com>
+To: kartikey406@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Sep 30, 2025 at 11:28:24AM +0800, Dave Sun wrote:
-> When CONFIG_CRYPTO_USER_API_RNG_CAVP is enable,
-> algif_type_rng->setentropy = rng_setentropy.
-> If we setsockopt on a af_alg socket binding a rng
-> algorithm with ALG_SET_DRBG_ENTROPY opt, kernel will
-> run to ->set_ent in rng_setentropy.
-> 
-> Since struct rng_alg like jent_alg dose not set set_ent
-> which default value is 0, null-ptr-dereference will happen.
-> 
-> Check ->set_ent before call it.
-> 
-> Signed-off-by: Yiqi Sun <sunyiqixm@gmail.com>
-> ---
->  crypto/algif_rng.c | 3 +++
->  1 file changed, 3 insertions(+)
+Hello,
 
-Thanks for the report.  I'd prefer to make set_ent always present:
+syzbot tried to test the proposed patch but the build/boot failed:
 
----8<---
-Ensure that set_ent is always set since only drbg provides it.
+failed to apply patch:
+checking file fs/ext4/xattr.c
+Hunk #2 FAILED at 251.
+1 out of 2 hunks FAILED
 
-Fixes: 77ebdabe8de7 ("crypto: af_alg - add extra parameters for DRBG interface")
-Reported-by: Yiqi Sun <sunyiqixm@gmail.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 
-diff --git a/crypto/rng.c b/crypto/rng.c
-index b8ae6ebc091d..ee1768c5a400 100644
---- a/crypto/rng.c
-+++ b/crypto/rng.c
-@@ -168,6 +168,11 @@ int crypto_del_default_rng(void)
- EXPORT_SYMBOL_GPL(crypto_del_default_rng);
- #endif
- 
-+static void rng_default_set_ent(struct crypto_rng *tfm, const u8 *data,
-+				unsigned int len)
-+{
-+}
-+
- int crypto_register_rng(struct rng_alg *alg)
- {
- 	struct crypto_alg *base = &alg->base;
-@@ -179,6 +184,9 @@ int crypto_register_rng(struct rng_alg *alg)
- 	base->cra_flags &= ~CRYPTO_ALG_TYPE_MASK;
- 	base->cra_flags |= CRYPTO_ALG_TYPE_RNG;
- 
-+	if (!alg->set_ent)
-+		alg->set_ent = rng_default_set_ent;
-+
- 	return crypto_register_alg(base);
- }
- EXPORT_SYMBOL_GPL(crypto_register_rng);
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+
+Tested on:
+
+commit:         7f707257 Merge tag 'kbuild-6.18-1' of git://git.kernel..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ee1d7eda39c03d2c
+dashboard link: https://syzkaller.appspot.com/bug?extid=3ee481e21fd75e14c397
+compiler:       
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1676fd04580000
+
 
