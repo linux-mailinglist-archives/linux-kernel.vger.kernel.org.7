@@ -1,225 +1,230 @@
-Return-Path: <linux-kernel+bounces-840567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D98E4BB4B1B
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 19:28:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73462BB4B1E
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 19:28:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 954707B2C0F
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 17:26:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DF113A88BF
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 17:28:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1DB1275AF1;
-	Thu,  2 Oct 2025 17:26:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA43926F46E;
+	Thu,  2 Oct 2025 17:27:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ajv4vE7M"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UFKkt5dR"
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3747A275B16
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 17:26:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 339E8262FD9
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 17:27:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759425963; cv=none; b=jBZ5yhHugBDKeYp1sg5uBfc+Ls2Gw7+f0+zXYswiVzpG1vrbABo0oAYQDielXqIKnk8h6hZ4LUo7s2/gMSUJkSPLXhQ+JzRHbxWg9QijF2yJeAbD5fqLrJG/7slLoKy3t8O+Z4z38+icg8P1KB8znMXV/Fgzx+5SpZLJWDZbA3M=
+	t=1759426078; cv=none; b=j6ZMON8hD1ZiTWweqOwnurTG2athnsxeEK9dPKFCxu6iFxbw7/2SZllsUc/OOFeVZkxTRYtfrvaUSfRgP3U9fXv0mKhaFj4dkX8DxmxHidUnNv7vMs12+yNIFLO2bhNC8oz8sdG+3S9bHqsR7+kDA/tja/+9dyFQpWPwPwqnQT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759425963; c=relaxed/simple;
-	bh=KpJUhLHlhpfLyU7v5hWLmJqH5SP+8qByBBw5bJBqoe4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Ail0mlYBLEN8aCJ5apZUxkKfRrDBHjkzPA9G2xzfdfZN/Xcyn7/P4bprtgq4o0HCI3pDXagngl1neFNbPca0nFYU8KwuTNOa6VeWMom4GwXm1UhB2smBSjVFtoBm0xrSz8CgddlrGDnXZZSKTDQV5LvAIiA1H8PeQVcHV8KIIg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ajv4vE7M; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 592994pS000841
-	for <linux-kernel@vger.kernel.org>; Thu, 2 Oct 2025 17:26:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=dZF5G3OllrQ
-	VIzCtQTPcNpCQm6618iDRuW3sNgs9wT8=; b=ajv4vE7MXKnJVmnN2oMeYShjOvR
-	qg64a8b+edOYUATr7JgEOmRGlVfCzVfUwq/QF02DTudgF47jOHkOGLFcyhNFOeFY
-	WuRtva8uH7W/ZQqOvh5fLgbKLmqy2O/tmLJ23nm4tYsrVz0sXBvcSlWCzMyNhP4y
-	34yNycPYDlAfGRmkyGCdX8sPeufnd9oA8kVdxeRvW8kkGm0277aq9OT+x31wt/jR
-	WCDF1pQTX82j06mw9Rd2ywz+u77tFZ+iTKS17A1y2xUDXl1gzlqZqkL/HA+a7ZQZ
-	1hQqcrTcbsT8RQBY3E4gJ9Ip9aEKbWYVtyd14A41oAaJxujuK6J/HXoun6g==
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e6x60n9p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 17:26:01 +0000 (GMT)
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-76e2e60221fso2087723b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 10:26:00 -0700 (PDT)
+	s=arc-20240116; t=1759426078; c=relaxed/simple;
+	bh=cWzC3kpiFoS7bFlguX/uWdST2iyXc6tjOoVur7QElWQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HA1EOOaXc8oGRdMZ05H9R4rn5jiDuverN+ukMUOxTiXst3pG44bT0AGR9o9ebgEbikBaILn7UAAvtK+LGpvQvgo6rderzNVrBI6Ewin4hXEmSo6Ywbw28XxhNsgCD/FLhtJaw/KeM0gNbiVudGn+FPZUJPnsx/FgsbJQCPUsPjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UFKkt5dR; arc=none smtp.client-ip=209.85.222.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-8572d7b2457so150973485a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 10:27:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759426075; x=1760030875; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qTM0UQL/8j7dglCka3v9L9QTEMlq52c4L0JAQ1Z24Bs=;
+        b=UFKkt5dRE2vSV2G87hBC3WxGnPx1MawlU9NxW/NYyxeZxLV2V5jKPR/prEJFTnSpWk
+         Vd5ct8UmGbOtF74RyXlUV9IT9RSHsRWk8SshJBiZyBUfdBqPkQ5lzIvcNSnJWH1UIaFV
+         sYysib3MTvCcqQw+NqHJliCKRdUwl4lspbJ3qG+qycWohIRD2OlydF5tRDANlmEcfdWs
+         gRiYW646/gq/9mME0+1RPkaTW5zhVPxvpasxMHYnO4auCf3niRLg81pluLDlO7oUuUjK
+         7i44MVZYtsxZ4oezNgJzzDwM1izWv1x9bHbcr6nvom17tdi8Yhr3afgulEk56D6AwY29
+         hqXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759425960; x=1760030760;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1759426075; x=1760030875;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=dZF5G3OllrQVIzCtQTPcNpCQm6618iDRuW3sNgs9wT8=;
-        b=fWa5KMa0A0B9s7fE6AvBAtmFmXCw4EjN7JoTvjFX6JUr42W9BReHdMBStUXqfPNjYT
-         cY9PnEXYdcblQvmYJggJnnVJVGsYAVp1qqKi1drGQjxskqXnkTPfFdB30wZcU7xAVfu3
-         X30aRAgvcQy9pdvQx59PNj4m2RcAJTgJxEOCtqaLFU9mmrk1BkhuOwssRNWsKSfeqyDu
-         THKxR66QphL3g0Gnocrw5DKAYpg6M75P8Se/4NjK4tglya6SfkHT9JKXjietJk4jCHJg
-         iHHAen/vn6P8p6PqneweoQ9oOVly7V3NNsG9vEDxqE1HDYXaNa00A6zU6JT4jS0qfrG7
-         hrQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUFK5ttlVNK00BLUHKH8+tr6mwHx0rE83LPfdJAUvroKQSC7kxD+Nmf9ErF9ZnGQENO3JJJBn/YIoSAWLA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYjBDKoQgqtDbh/AQGBgk+L72mCaxo2s2GQQvlxA4gMJI6UIFd
-	LpCOuaLBfwAmqiU6JEuG7+AazpwAwWss5HVSBwvwkxTiLhW6+bsI+j+PB8TSHVoOK4DhAhia26A
-	nDh0pNEUU/HuHCRCTJw/LgtpAS+Z/PKQB6lGQfKfnZIk3JusCWv97njCL+uHLZ7guZLY=
-X-Gm-Gg: ASbGncuIF+IaKsrS+xaPQBoXUejs7YbHrx+UOGC2pNZLoj8uSXyOJvWdW7gGh5iYI59
-	FSPoGxTGrufK5yBS+gtkEmIgDquC0FzIGlV/SRtt/8swP+VaAZWlZcitKyw2F8SoFT8Bjvyrvz1
-	YLJsWsxnqu8MWmwMVriGAekHYkG+PxCvXGKZyzSxaWax0nEXHk/LePjoMvrF6ayFN2h1X25YQil
-	lL5of/iNS+zcW0koqUA03B2ey6ZgeHRQXCdoCq7vLXQ1AjXiWvKEG+yVNTb/PpjBUmYpiVhxf+L
-	euVI13ceWEqUHUmo4hPSgUUgZ3I7nILEpOAIqqcdWJWwbSZbo5vFxH6CGPwiuKu86tzOCnn120P
-	L+B+bDcg=
-X-Received: by 2002:a05:6a21:6d9b:b0:2f6:cabe:a7ac with SMTP id adf61e73a8af0-32b620946bfmr267572637.34.1759425959774;
-        Thu, 02 Oct 2025 10:25:59 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFBdBouPUdDeim0CeupGCCbGHi5OzKKAktzwICCdkbUIZj19Y9+1mzW+TAuT6J/3p4skOgJZQ==
-X-Received: by 2002:a05:6a21:6d9b:b0:2f6:cabe:a7ac with SMTP id adf61e73a8af0-32b620946bfmr267540637.34.1759425959285;
-        Thu, 02 Oct 2025 10:25:59 -0700 (PDT)
-Received: from hu-kriskura-hyd.qualcomm.com ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6099f5b6e9sm2387423a12.40.2025.10.02.10.25.55
+        bh=qTM0UQL/8j7dglCka3v9L9QTEMlq52c4L0JAQ1Z24Bs=;
+        b=PG+cUNgy/qCnc364YXAi2H3FLnkTzAamxIY8cqI57uiB0vA7lukqZoMRtxLUxhCQSo
+         YvUd/Kv/enw7N4JEMBMg96hU4JmNgXxkirRllkpOjS2UP6QMX8ROQdEdNYobX+9DOY2E
+         pUIu+qqycryG+E0tZkGY5zd1o6gwZ9t4zaIHBpetMHBbgJNnenecFgqI2XpTOrExfWe9
+         L9hrMfplZj4b9hut8+0NK/XybBIiUg9bx/VbUi5xWkg2XjUzS9Sm+TxZU6EqKJYNlNHh
+         2WKe6am2kVUhFnNvM6RQlSz/GMar7KlS7hvSNZZaPD5Qe9hrp9vJiRm+hVwZlExXg9t7
+         mElw==
+X-Forwarded-Encrypted: i=1; AJvYcCXCX/R2f2D37k3TbxSGfmuZmuf8/DsKnocDKh50GRqLMTzuWKymyEvbU9mCjkRT05ywy1A1Z/IBFmS+wNs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyijNuKymCO89E/aGtPss6DEF3bvyW1Aor/8zakYkjKc8dJU5Ef
+	6+XSmyq1z/IqA/jejbRc/JnVVl4Vca6XlTPiZBHx2OKeraN/essUZlpl
+X-Gm-Gg: ASbGncu+FmK3esCAxThjOwlf29wBBO1YQckgI4iQvTktO0uRPCwtrZASvXBuj5xPI32
+	/TmqHK/GunEa8pY/vvbF9h70ohn0AojCo/9sZYzwz/L2U2CRy7VRmXqGGSwaLhiil9FHDjrHKx1
+	4eU2cRnO5NnlGrhxP1E/tf8+XINk+L7jerHNM3Ln8MhTarbm3VR1TVOMT9qyuI6yVYjxkIFkJ8P
+	g/0Z2XeSwtSdkZ6cSx3Gy7OlVfzrgRziGljytcdeSj5sL7cb5vlpEpg3jJG17G2sl9LbBLHMlc1
+	bwUaCUEMNaf0MtRjIX7mJ9JINVgi+tVod7T4oudpjaIxUMtme+kFjwB93QYtAUw5ifTHE9akpPi
+	mRlsoN8YfQsx/j/Zrv1s0xwCL062f+GkgACU2DSSgFVGIptJv0pBKGOJYXlC0JL80A7acg6s2PX
+	P/PT/2C/KEQ5i9zas6i6LfP8e+ERonB1hm6NdAojaBgbkTJXQ=
+X-Google-Smtp-Source: AGHT+IEccWf95m9em/uI+dQlqBiU53wpoCpSc5+xQyyCCz3DNyftc7RYyrlZ2VQKH150B9/39RYCLg==
+X-Received: by 2002:a05:620a:4542:b0:80b:bb34:371c with SMTP id af79cd13be357-87765c0283amr556367685a.4.1759426074903;
+        Thu, 02 Oct 2025 10:27:54 -0700 (PDT)
+Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-87771129f10sm250580785a.9.2025.10.02.10.27.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 10:25:58 -0700 (PDT)
-From: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Biju Das <biju.das.jz@bp.renesas.com>
-Cc: linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-Subject: [PATCH 2/2] usb: typec: hd3ss3220: Enable VBUS based on ID pin state
-Date: Thu,  2 Oct 2025 22:55:39 +0530
-Message-Id: <20251002172539.586538-3-krishna.kurapati@oss.qualcomm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251002172539.586538-1-krishna.kurapati@oss.qualcomm.com>
-References: <20251002172539.586538-1-krishna.kurapati@oss.qualcomm.com>
+        Thu, 02 Oct 2025 10:27:54 -0700 (PDT)
+Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 64F31F40069;
+	Thu,  2 Oct 2025 13:27:53 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-11.internal (MEProxy); Thu, 02 Oct 2025 13:27:53 -0400
+X-ME-Sender: <xms:GbbeaA47QkWtwwPWv6vtzqHqLGFsZJYXwawRT5GZ7ove-YTVfKveog>
+    <xme:GbbeaLRKare3YFvYQ8IM-3q6zMpvcmvJN3fBupwOyYuvxHTzciEIpTEH6HTjCtMJz
+    Ui03Aoj6wC_x9XxdjVLoZXrwD3h3lyNY_1pwER6F99ybfMZqbhZ>
+X-ME-Received: <xmr:GbbeaIkFcpyNXJiJ2YkRCL5cDJkQz13nP_ZUKR3iXf7c09R20thn7hUns-BrtUcx7vb5zVggjK5D7CpuHdVyLFtfmFh1oXW9>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdekieeiudcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecunecujfgurhepfffhvfevuffkfhggtggujgesthdtredttd
+    dtvdenucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgr
+    ihhlrdgtohhmqeenucggtffrrghtthgvrhhnpeehudfgudffffetuedtvdehueevledvhf
+    elleeivedtgeeuhfegueevieduffeivdenucevlhhushhtvghrufhiiigvpedtnecurfgr
+    rhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonh
+    grlhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghnghep
+    pehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepgedupd
+    hmohguvgepshhmthhpohhuthdprhgtphhtthhopedvgedtjedtudekfeejudesqhhqrdgt
+    ohhmpdhrtghpthhtohepsgihuhhnghgthhhulhesshhkrdgtohhmpdhrtghpthhtoheplh
+    hirghmrdhhohiflhgvthhtsehorhgrtghlvgdrtghomhdprhgtphhtthhopegrmhhirhej
+    fehilhesghhmrghilhdrtghomhdprhgtphhtthhopegrnhguihdrshhhhihtiheskhgvrh
+    hnvghlrdhorhhgpdhrtghpthhtoheprghnughrihhisehkvghrnhgvlhdrohhrghdprhgt
+    phhtthhopegsshgvghgrlhhlsehgohhoghhlvgdrtghomhdprhgtphhtthhopehgrhgvgh
+    hkhheslhhinhhugihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehlihhnrghr
+    ohdqmhhmqdhsihhgsehlihhsthhsrdhlihhnrghrohdrohhrgh
+X-ME-Proxy: <xmx:GbbeaIKfrjD-eqlOsaEu8oupAwCNL5B3v_jSdUHcY24JYHPWjN5_tQ>
+    <xmx:GbbeaOSZC2NlhdVwmqKBdbD4NIwKEaTDKckNg4nutrEqyq1jJ65JtQ>
+    <xmx:GbbeaPMPlfhxRayyy1Im8WpdH8DW6D_tTVsqfNIfnjn98KI1eVpWSA>
+    <xmx:GbbeaPaxaAKzS_UqYZsc_slWPxKZim7zmb4NsaNtun6TSMRkIYCuOw>
+    <xmx:GbbeaDDpRUzAmACJHoEs-WQm9-qedNFlV-mfcoTZk1unrpqOZiNLvsDC>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 2 Oct 2025 13:27:52 -0400 (EDT)
+Date: Thu, 2 Oct 2025 10:27:51 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Guangbo Cui <2407018371@qq.com>
+Cc: byungchul@sk.com, Liam.Howlett@oracle.com, amir73il@gmail.com,
+	andi.shyti@kernel.org, andrii@kernel.org, bsegall@google.com,
+	gregkh@linuxfoundation.org, linaro-mm-sig@lists.linaro.org,
+	link@vivo.com, linux-kernel@vger.kernel.org, mark.rutland@arm.com,
+	masahiroy@kernel.org, mathieu.desnoyers@efficios.com,
+	matthew.brost@intel.com, max.byungchul.park@gmail.com,
+	mcgrof@kernel.org, melissa.srw@gmail.com, mgorman@suse.de,
+	mhocko@kernel.org, minchan@kernel.org, oleg@redhat.com,
+	paulmck@kernel.org, penberg@kernel.org, peterz@infradead.org,
+	petr.pavlu@suse.com, torvalds@linux-foundation.org,
+	vincent.guittot@linaro.org, will@kernel.org, yeoreum.yun@arm.com,
+	ysk@kzalloc.com, rust-for-linux@vger.kernel.org, ojeda@kernel.org,
+	gary@garyguo.net, lossin@kernel.org, a.hindborg@kernel.org,
+	aliceryhl@google.com, dakr@kernel.org, alex.gaynor@gmail.com,
+	bjorn3_gh@protonmail.com
+Subject: Re: [PATCH] rust: bindings: add `rust_helper_wait_for_completion`
+ helper function
+Message-ID: <aN62F8t493R7UmCT@tardis.local>
+References: <20251002081247.51255-37-byungchul@sk.com>
+ <tencent_13F1EDE0D6B7A44697F31AE274C8E664E908@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: 7vn2yqInVysNsppVIdFIg0WP8VdF0tS9
-X-Proofpoint-ORIG-GUID: 7vn2yqInVysNsppVIdFIg0WP8VdF0tS9
-X-Authority-Analysis: v=2.4 cv=ZtPg6t7G c=1 sm=1 tr=0 ts=68deb5a9 cx=c_pps
- a=rEQLjTOiSrHUhVqRoksmgQ==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=UqlIXWcyfNZJISXVOQ4A:9
- a=2VI0MkxyNR6bbpdq8BZq:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAxOCBTYWx0ZWRfX/b5YwrMk9h7+
- nvBx+lf9whhVE/gEWBOM0SAsm4LCpMvMcersYw78EjXyTnFQZIJcuqdZsdGd2D0wezVnVrw98vo
- ktuny2PmucbQGZJCu5n3wFqIpV23GiPgksQbLRwfA0+YxD2UvMCRbmI6TC2uU4hhyR/lF+O+RDv
- e4DAEQJq1cvdUVmrA3hVXp+LXW9XrfVVywfZOBcMtDERPEAp1JITbxwYnyf1kAOA/vVXNIFm6gy
- F4ryi3pwUhhligJUxi1+d8bT6RnjaS77Q7bdVdu3vBBYCzE5DOxotxMh2xJJq2bu6+dCYg2tikO
- s6goBpX1iWb33beOiZmVPVijmSt5Hx4CLxFk5B874R4QyHrW3eufvIliXNXmu67B4yc4kEemWFR
- 9Z2Z6zLiBZaf+p8Ti/KWXftdNQHkxw==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-02_06,2025-10-02_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 spamscore=0 priorityscore=1501 malwarescore=0 bulkscore=0
- suspectscore=0 clxscore=1015 lowpriorityscore=0 adultscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270018
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <tencent_13F1EDE0D6B7A44697F31AE274C8E664E908@qq.com>
 
-Enable VBUS on HD3SS3220 when the ID pin is low, as required by the Type-C
-specification. The ID pin stays high when VBUS is not at VSafe0V, and goes
-low when VBUS is at VSafe0V.
+On Thu, Oct 02, 2025 at 10:06:17AM +0000, Guangbo Cui wrote:
+> > -extern void wait_for_completion(struct completion *);
+> > -extern void wait_for_completion_io(struct completion *);
+> > -extern int wait_for_completion_interruptible(struct completion *x);
+> > -extern int wait_for_completion_killable(struct completion *x);
+> > -extern int wait_for_completion_state(struct completion *x, unsigned int state);
+> > -extern unsigned long wait_for_completion_timeout(struct completion *x,
+> > +extern void __wait_for_completion(struct completion *);
+> > +extern void __wait_for_completion_io(struct completion *);
+> > +extern int __wait_for_completion_interruptible(struct completion *x);
+> > +extern int __wait_for_completion_killable(struct completion *x);
+> > +extern int __wait_for_completion_state(struct completion *x, unsigned int state);
+> > +extern unsigned long __wait_for_completion_timeout(struct completion *x,
+> >  						   unsigned long timeout);
+> > -extern unsigned long wait_for_completion_io_timeout(struct completion *x,
+> > +extern unsigned long __wait_for_completion_io_timeout(struct completion *x,
+> >  						    unsigned long timeout);
+> > -extern long wait_for_completion_interruptible_timeout(
+> > +extern long __wait_for_completion_interruptible_timeout(
+> >  	struct completion *x, unsigned long timeout);
+> > -extern long wait_for_completion_killable_timeout(
+> > +extern long __wait_for_completion_killable_timeout(
+> >  	struct completion *x, unsigned long timeout);
+> >  extern bool try_wait_for_completion(struct completion *x);
+> >  extern bool completion_done(struct completion *x);
+> > @@ -139,4 +134,79 @@ extern void complete(struct completion *);
+> >  extern void complete_on_current_cpu(struct completion *x);
+> >  extern void complete_all(struct completion *);
+> >  
+> > +#define wait_for_completion(x)						\
+> > +({									\
+> > +	sdt_might_sleep_start_timeout(NULL, -1L);			\
+> > +	__wait_for_completion(x);					\
+> > +	sdt_might_sleep_end();						\
+> > +})
+> 
+> The DEPT patch series changed `wait_for_completion` into a macro.
+> Because bindgen cannot handle function-like macros, this caused
+> Rust build errors. Add a helper function to fix it.
+> 
+> ```
+> error[E0425]: cannot find function `wait_for_completion` in crate `bindings`
+>      --> rust/kernel/sync/completion.rs:110:28
+>       |
+>   110 |         unsafe { bindings::wait_for_completion(self.as_raw()) };
+>       |                            ^^^^^^^^^^^^^^^^^^^ help: a function with a similar name exists: `__wait_for_completion`
+>       |
+>      ::: /root/linux/rust/bindings/bindings_generated.rs:33440:5
+>       |
+> 33440 |     pub fn __wait_for_completion(arg1: *mut completion);
+>       |     ---------------------------------------------------- similarly named function `__wait_for_completion` defined here
+> 
+> error: aborting due to 1 previous error
+> 
+> For more information about this error, try `rustc --explain E0425`.
+> ```
+> 
 
-Add support to read the ID pin state and enable VBUS accordingly.
+I think Danilo already made it clear, please fold this the existing
+patch. Moreover, since this patchset doesn't adjust init_completion()
+from the Rust side, the result is Rust code will also use the same dept
+key for completion, which has to be fixed if dept wants to be in-tree.
 
-Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
----
- drivers/usb/typec/hd3ss3220.c | 58 +++++++++++++++++++++++++++++++++++
- 1 file changed, 58 insertions(+)
+Regards,
+Boqun
 
-diff --git a/drivers/usb/typec/hd3ss3220.c b/drivers/usb/typec/hd3ss3220.c
-index 3ecc688dda82..44ee0be27644 100644
---- a/drivers/usb/typec/hd3ss3220.c
-+++ b/drivers/usb/typec/hd3ss3220.c
-@@ -54,6 +54,11 @@ struct hd3ss3220 {
- 	struct delayed_work output_poll_work;
- 	enum usb_role role_state;
- 	bool poll;
-+
-+	struct gpio_desc *id_gpiod;
-+	int id_irq;
-+
-+	struct regulator *vbus;
- };
- 
- static int hd3ss3220_set_power_opmode(struct hd3ss3220 *hd3ss3220, int power_opmode)
-@@ -319,6 +324,28 @@ static const struct regmap_config config = {
- 	.max_register = 0x0A,
- };
- 
-+static irqreturn_t hd3ss3220_id_isr(int irq, void *dev_id)
-+{
-+	struct hd3ss3220 *hd3ss3220 = dev_id;
-+	int ret;
-+	int id;
-+
-+	if (IS_ERR_OR_NULL(hd3ss3220->vbus))
-+		return IRQ_HANDLED;
-+
-+	id = hd3ss3220->id_gpiod ? gpiod_get_value_cansleep(hd3ss3220->id_gpiod) : 1;
-+
-+	if (!id) {
-+		ret = regulator_enable(hd3ss3220->vbus);
-+		if (ret)
-+			dev_err(hd3ss3220->dev, "enable vbus regulator failed\n");
-+	} else {
-+		regulator_disable(hd3ss3220->vbus);
-+	}
-+
-+	return IRQ_HANDLED;
-+}
-+
- static int hd3ss3220_probe(struct i2c_client *client)
- {
- 	struct typec_capability typec_cap = { };
-@@ -354,6 +381,37 @@ static int hd3ss3220_probe(struct i2c_client *client)
- 		hd3ss3220->role_sw = usb_role_switch_get(hd3ss3220->dev);
- 	}
- 
-+	hd3ss3220->id_gpiod = devm_gpiod_get_optional(hd3ss3220->dev, "id", GPIOD_IN);
-+	if (IS_ERR(hd3ss3220->id_gpiod))
-+		return PTR_ERR(hd3ss3220->id_gpiod);
-+
-+	if (hd3ss3220->id_gpiod) {
-+		hd3ss3220->id_irq = gpiod_to_irq(hd3ss3220->id_gpiod);
-+		if (hd3ss3220->id_irq < 0) {
-+			dev_err(hd3ss3220->dev, "failed to get ID IRQ\n");
-+			return hd3ss3220->id_irq;
-+		}
-+
-+		ret = devm_request_threaded_irq(hd3ss3220->dev,
-+						hd3ss3220->id_irq, NULL,
-+						hd3ss3220_id_isr,
-+						IRQF_TRIGGER_RISING |
-+						IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
-+						dev_name(hd3ss3220->dev), hd3ss3220);
-+		if (ret < 0) {
-+			dev_err(hd3ss3220->dev, "failed to get id irq\n");
-+			return ret;
-+		}
-+	}
-+
-+	hd3ss3220->vbus = devm_regulator_get_optional(hd3ss3220->dev, "vbus");
-+	if (PTR_ERR(hd3ss3220->vbus) == -ENODEV)
-+		hd3ss3220->vbus = NULL;
-+
-+	if (IS_ERR(hd3ss3220->vbus))
-+		return dev_err_probe(hd3ss3220->dev,
-+				     PTR_ERR(hd3ss3220->vbus), "failed to get vbus\n");
-+
- 	if (IS_ERR(hd3ss3220->role_sw)) {
- 		ret = PTR_ERR(hd3ss3220->role_sw);
- 		goto err_put_fwnode;
--- 
-2.34.1
-
+> Signed-off-by: Guangbo Cui <2407018371@qq.com>
+> ---
+>  rust/helpers/completion.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/rust/helpers/completion.c b/rust/helpers/completion.c
+> index b2443262a2ae..5bae5e749def 100644
+> --- a/rust/helpers/completion.c
+> +++ b/rust/helpers/completion.c
+> @@ -6,3 +6,8 @@ void rust_helper_init_completion(struct completion *x)
+>  {
+>  	init_completion(x);
+>  }
+> +
+> +void rust_helper_wait_for_completion(struct completion *x)
+> +{
+> +	wait_for_completion(x);
+> +}
+> -- 
+> 2.43.0
+> 
 
