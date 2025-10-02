@@ -1,132 +1,257 @@
-Return-Path: <linux-kernel+bounces-839996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A41AEBB344F
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 10:45:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F268BBB34CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 10:47:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EAB546361C
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 08:41:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D27984C79B4
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 08:41:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10E5F2FD1D0;
-	Thu,  2 Oct 2025 08:24:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A1C22FE041;
+	Thu,  2 Oct 2025 08:25:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="i5+HKGpb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lnI/760H"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC45E2D46DA;
-	Thu,  2 Oct 2025 08:24:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEC132FDC36
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 08:25:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759393492; cv=none; b=FG1uUYWxwWOE7JW2qXI15uYPFlyk5sJSGrH/xeRv2OHpGlMr7pP2QvAJDDyzNGqY201GlFTYT5qadDXvWWY9b6tGE+E+LBX0reL5Nej40d+pC35prINKj8SClq2ert5OG1/3EAg1wkWkithQdrTyGhPh5es0vjmF1gBc5k7SwwQ=
+	t=1759393503; cv=none; b=swnqSt1vXKoT6ulXl9It61Jwsfjik91G3uN07K1hdJRd9shZe/cfRnPB5g24aAFwrywrMGO4N2OqPG1Cp0QFYb5So74vd3i3gQTVkSCMW5Ex/gsOV3QtpuIKoaA9zAqXbOCqBD+iAV3Jy00fIMsxJ7KFij+oDyDkpVdIbMznuT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759393492; c=relaxed/simple;
-	bh=EGta/OBizNM09PGf6rEuH2ZEVwPb5dGKC+KMXznpC2w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qkgpazbu6iD0LhzA4OXGZZtmgo2tseuTqBGzg5oTt1DpZH1n91jz8DTZcQqc4Wro+jXKxQogwoVReuBrz1gHMkzhqOsj+gnMHzJwHu0k8BsfkQvvEtJUHNl7kirmz1rpMm+9va4RiM2wdcrw29UlOlBTfurF4r81lk+lAjj6THE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=i5+HKGpb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60A32C4CEF4;
-	Thu,  2 Oct 2025 08:24:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1759393491;
-	bh=EGta/OBizNM09PGf6rEuH2ZEVwPb5dGKC+KMXznpC2w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=i5+HKGpbYKH37uF6UEmHuZtFQv6O5ZG1HxMQr8kvde7omSAD+zel/Z4+s6JwdJrZv
-	 Ur3S6DldaheLi+GEdKKHX1ZJ+iRyil+oU4pwd+w36q87VybbM/v+qrAgAFV69+RNbv
-	 WsN8AOHH246elLsfI0Z+lVr0mIU6QpnW71c2yL1s=
-Date: Thu, 2 Oct 2025 10:24:41 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Byungchul Park <byungchul@sk.com>
-Cc: linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
-	torvalds@linux-foundation.org, damien.lemoal@opensource.wdc.com,
-	linux-ide@vger.kernel.org, adilger.kernel@dilger.ca,
-	linux-ext4@vger.kernel.org, mingo@redhat.com, peterz@infradead.org,
-	will@kernel.org, tglx@linutronix.de, rostedt@goodmis.org,
-	joel@joelfernandes.org, sashal@kernel.org, daniel.vetter@ffwll.ch,
-	duyuyang@gmail.com, johannes.berg@intel.com, tj@kernel.org,
-	tytso@mit.edu, willy@infradead.org, david@fromorbit.com,
-	amir73il@gmail.com, kernel-team@lge.com, linux-mm@kvack.org,
-	akpm@linux-foundation.org, mhocko@kernel.org, minchan@kernel.org,
-	hannes@cmpxchg.org, vdavydov.dev@gmail.com, sj@kernel.org,
-	jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
-	penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
-	ngupta@vflare.org, linux-block@vger.kernel.org,
-	josef@toxicpanda.com, linux-fsdevel@vger.kernel.org, jack@suse.cz,
-	jlayton@kernel.org, dan.j.williams@intel.com, hch@infradead.org,
-	djwong@kernel.org, dri-devel@lists.freedesktop.org,
-	rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
-	hamohammed.sa@gmail.com, harry.yoo@oracle.com,
-	chris.p.wilson@intel.com, gwan-gyeong.mun@intel.com,
-	max.byungchul.park@gmail.com, boqun.feng@gmail.com,
-	longman@redhat.com, yunseong.kim@ericsson.com, ysk@kzalloc.com,
-	yeoreum.yun@arm.com, netdev@vger.kernel.org,
-	matthew.brost@intel.com, her0gyugyu@gmail.com, corbet@lwn.net,
-	catalin.marinas@arm.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	x86@kernel.org, hpa@zytor.com, luto@kernel.org,
-	sumit.semwal@linaro.org, gustavo@padovan.org,
-	christian.koenig@amd.com, andi.shyti@kernel.org, arnd@arndb.de,
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
-	rppt@kernel.org, surenb@google.com, mcgrof@kernel.org,
-	petr.pavlu@suse.com, da.gomez@kernel.org, samitolvanen@google.com,
-	paulmck@kernel.org, frederic@kernel.org, neeraj.upadhyay@kernel.org,
-	joelagnelf@nvidia.com, josh@joshtriplett.org, urezki@gmail.com,
-	mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
-	qiang.zhang@linux.dev, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com,
-	chuck.lever@oracle.com, neil@brown.name, okorniev@redhat.com,
-	Dai.Ngo@oracle.com, tom@talpey.com, trondmy@kernel.org,
-	anna@kernel.org, kees@kernel.org, bigeasy@linutronix.de,
-	clrkwllms@kernel.org, mark.rutland@arm.com, ada.coupriediaz@arm.com,
-	kristina.martsenko@arm.com, wangkefeng.wang@huawei.com,
-	broonie@kernel.org, kevin.brodsky@arm.com, dwmw@amazon.co.uk,
-	shakeel.butt@linux.dev, ast@kernel.org, ziy@nvidia.com,
-	yuzhao@google.com, baolin.wang@linux.alibaba.com,
-	usamaarif642@gmail.com, joel.granados@kernel.org,
-	richard.weiyang@gmail.com, geert+renesas@glider.be,
-	tim.c.chen@linux.intel.com, linux@treblig.org,
-	alexander.shishkin@linux.intel.com, lillian@star-ark.net,
-	chenhuacai@kernel.org, francesco@valla.it,
-	guoweikang.kernel@gmail.com, link@vivo.com, jpoimboe@kernel.org,
-	masahiroy@kernel.org, brauner@kernel.org,
-	thomas.weissschuh@linutronix.de, oleg@redhat.com, mjguzik@gmail.com,
-	andrii@kernel.org, wangfushuai@baidu.com, linux-doc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-	linaro-mm-sig@lists.linaro.org, linux-i2c@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-modules@vger.kernel.org,
-	rcu@vger.kernel.org, linux-nfs@vger.kernel.org,
-	linux-rt-devel@lists.linux.dev
-Subject: Re: [PATCH v17 01/47] llist: move llist_{head,node} definition to
- types.h
-Message-ID: <2025100230-grafted-alias-22a2@gregkh>
-References: <20251002081247.51255-1-byungchul@sk.com>
- <20251002081247.51255-2-byungchul@sk.com>
+	s=arc-20240116; t=1759393503; c=relaxed/simple;
+	bh=S/kwA28Lk+ulDWGp/uZec8y56Ccih6PIxf5yluym6gQ=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=tQ0SyhsIZ5zpHJdBX0NkEWUjReOri2kC+XLil3GOzyUuAOExG7JN5CZ2jaY7W49vu03qcj8uvNVxDmnFrnhYJpF/MdYVcxk7K06snbMOlER+sNUzLclpknDsemfksiw9NUyVb55tRsHOEuk0JbhZuCFax6rXVz+sG6eH7mpaLp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lnI/760H; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-277f0ea6fc6so16174715ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 01:25:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759393500; x=1759998300; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+K3cnMgnzCi3Evq8zFItEAGdg31DclXki1g4pqp6jmg=;
+        b=lnI/760HB92kTbBLhxNV/Vpzpo0G27MmIVC8QEUPTjwSW8qRIvCTJlOqnHIX+Ho3yO
+         IRuUFYLuffNVm4x2rno+LQljd6ucY6MGPBoS9glMlloMsIVt0EbbOYSVRyNEgiyZj35d
+         V3foL7ZPq8OgBsYbS+vlBG18/qaE0cYx3ajfyFmDBVFLDreeoXN4POzqNwcjckaqbMxS
+         D4xN7UP73YXkpaSbvE6o53DYZaGYIKTmF2Kv8R/xuR7hJ8Iv7ylWHdGoxrR0H9sAOEso
+         7eDJtv00rItGFDr1qEiv2Ds5HyHDjfDVgdoLvx4RDoMryt7zhUkIh0tInPsT21A893MD
+         tcng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759393500; x=1759998300;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+K3cnMgnzCi3Evq8zFItEAGdg31DclXki1g4pqp6jmg=;
+        b=gLIKxWjBOUb4Um09oVdUSgPGMGB7Bv7+xoSSGQ3RMnDGqfbj1ab8Sye2ZpRl/ESfJB
+         N1BPunckVl3pZe9YQ8zB0wf5y1GJchSzxvCrnwIGHbha6PX4vMgwsXqYQ+Zrqughg7JB
+         XNjnnoO6GtVkz/Qx/F/Mj8SNUS3jVaMmzRUG2YRad34bi8GtnlYiD1u2U5NnLuyKi21R
+         ROry6vSN5WDXqv2FXuWD/dDWW0RDL+Pre167nSjlMBpysPsXPp34Ylbsb12CosIMaf+F
+         Dvl9Wx3vM7AvcrQHB3SCO94tlm+MVLYlOYr4Z4afiuMaAwTFv40eTeqJ2LXGnR1yu3MW
+         2rKg==
+X-Forwarded-Encrypted: i=1; AJvYcCVF4R5JTwFT60zxw2gZ+lcSe2/ugD+81fvzOkQEUoohXlBxyYessq8VNeDCfX3YVe63AeZ/QPjkBa4d2MQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVQ3F/h3DyZ1ZvU9BwPyF4DRYVkuErA64EFzCUhoYilX/QrOUf
+	IcX5bvXj015Y1QPiEN32pV4Qt/k2jYxBEVHWkZd/MyBp/OTXmD1lvv+DPFEIYF7oGwTtxhPk1zy
+	NTzjfh6+gqSVy+nCumvqNBE8i1A==
+X-Google-Smtp-Source: AGHT+IF9LU6KTVZBG9fl3G8lqDjWmT+w1gbjiBmN1hetqklTAi8pEFMawdu7ASaowOIRLhKPdwA6wfjuGhq4lCYpQA==
+X-Received: from plbma13.prod.google.com ([2002:a17:903:94d:b0:268:1af:fcff])
+ (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:903:124a:b0:25c:38be:748f with SMTP id d9443c01a7336-28e7f162cc9mr78771205ad.9.1759393500197;
+ Thu, 02 Oct 2025 01:25:00 -0700 (PDT)
+Date: Thu, 02 Oct 2025 08:24:59 +0000
+In-Reply-To: <68ddb87b16415_28f5c229470@iweiny-mobl.notmuch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251002081247.51255-2-byungchul@sk.com>
+Mime-Version: 1.0
+References: <cover.1747264138.git.ackerleytng@google.com> <b784326e9ccae6a08388f1bf39db70a2204bdc51.1747264138.git.ackerleytng@google.com>
+ <aNxqYMqtBKll-TgV@google.com> <diqzbjmrt000.fsf@google.com> <68ddb87b16415_28f5c229470@iweiny-mobl.notmuch>
+Message-ID: <diqzv7kxsobo.fsf@google.com>
+Subject: Re: [RFC PATCH v2 02/51] KVM: guest_memfd: Introduce and use
+ shareability to guard faulting
+From: Ackerley Tng <ackerleytng@google.com>
+To: Ira Weiny <ira.weiny@intel.com>, Sean Christopherson <seanjc@google.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Yan Zhao <yan.y.zhao@intel.com>, Fuad Tabba <tabba@google.com>, 
+	Binbin Wu <binbin.wu@linux.intel.com>, Michael Roth <michael.roth@amd.com>, 
+	Ira Weiny <ira.weiny@intel.com>, Rick P Edgecombe <rick.p.edgecombe@intel.com>, 
+	Vishal Annapurve <vannapurve@google.com>, David Hildenbrand <david@redhat.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Oct 02, 2025 at 05:12:01PM +0900, Byungchul Park wrote:
-> llist_head and llist_node can be used by some other header files.  For
-> example, dept for tracking dependencies uses llist in its header.  To
-> avoid header dependency, move them to types.h.
+Ira Weiny <ira.weiny@intel.com> writes:
 
-If you need llist in your code, then include llist.h.  Don't force all
-types.h users to do so as there is not a dependency in types.h for
-llist.h.
+> Ackerley Tng wrote:
+>> Sean Christopherson <seanjc@google.com> writes:
+>> 
+>
+> [snip]
+>
+>> 
+>> > Internally, that let's us do some fun things in KVM.  E.g. if we make the "disable
+>> > legacy per-VM memory attributes" a read-only module param, then we can wire up a
+>> > static_call() for kvm_get_memory_attributes() and then kvm_mem_is_private() will
+>> > Just Work.
+>> >
+>> >   static inline unsigned long kvm_get_memory_attributes(struct kvm *kvm, gfn_t gfn)
+>> >   {
+>> > 	return static_call(__kvm_get_memory_attributes)(kvm, gfn);
+>> >   }
+>> >
+>> >   static inline bool kvm_mem_is_private(struct kvm *kvm, gfn_t gfn)
+>> >   {
+>> > 	return kvm_get_memory_attributes(kvm, gfn) & KVM_MEMORY_ATTRIBUTE_PRIVATE;
+>> >   }
+>> >
+>> > That might trigger some additional surgery if/when we want to support RWX
+>> > protections on a per-VM basis _and_ a per-gmem basic, but I suspect such churn
+>> > would pale in comparison to the overall support needed for RWX protections.
+>> >
+>> 
+>> RWX protections are more of a VM-level property, if I understood the use
+>> case correctly that some gfn ranges are to be marked non-executable by
+>> userspace. Setting RWX within guest_memfd would be kind of awkward since
+>> userspace must first translate GFN to offset, then set it using the
+>> offset within guest_memfd. Hence I think it's okay to have RWX stuff go
+>> through the regular KVM_SET_MEMORY_ATTRIBUTES *VM* ioctl and have it
+>> tracked in mem_attr_array.
+>> 
+>> I'd prefer not to have the module param choose between the use of
+>> mem_attr_array and guest_memfd conversion in case we need both
+>> mem_attr_array to support other stuff in future while supporting
+>> conversions.
+>
+> I'm getting pretty confused on how userspace is going to know which ioctl
+> to use VM vs gmem.
+>
 
-This patch shouldn't be needed as you are hiding "header dependency" for
-other files.
+It is confusing, yes!
 
-thanks,
+> I was starting to question if going through the VM ioctl should actually
+> change the guest_memfd flags (shareability).
+>
 
-greg k-h
+At one of the guest_memfd biweeklies, we came to the conclusion that we
+should have a per-VM KVM_CAP_DISABLE_LEGACY_PRIVATE_TRACKING, which will
+disable the use of just KVM_MEMORY_ATTRIBUTE_PRIVATE for the
+KVM_SET_MEMORY_ATTRIBUTES ioctl, and
+KVM_CAP_DISABLE_LEGACY_PRIVATE_TRACKING is the only way to enable
+conversions for a guest_memfd with mmap() support.
+
+IOW, KVM_CAP_DISABLE_LEGACY_PRIVATE_TRACKING makes userspace choose
+either
+
++ Using guest_memfd for private memory and some other memory
+  (e.g. anonymous memory) for shared memory (aka legacy dual backing)
+    + And using KVM_SET_MEMORY_ATTRIBUTES VM ioctl for conversions
+    + And using mem_attr_array to track shared/private status
+
++ Using guest_memfd for both private and shared memory (aka single backing)
+    + And using the guest_memfd ioctl for conversions
+    + And using guest_memfd shareability to track shared/private status
+    
+Since userspace has to choose one of the above, there's no point in the
+VM ioctl affecting shareability.
+
+Sean's suggestion of a module param moves this choice from VM-level to
+KVM/host-level.
+
+> In a prototype I'm playing with shareability has become a bit field which
+> I think aligns with the idea of expanding the memory attributes.
+
+I guess this is tangentially related and could do with some profiling,
+but we should be careful about adding too many states in the maple tree.
+
+Conversion iterates over offset ranges in the maple tree, and iteration
+is faster if there are fewer nodes in the maple tree.
+
+If we just have two states (shared/private) in the maple tree, each node
+is either all private or all shared.
+
+If we have more states, private ranges might get fragmented based on the
+orthogonal bits, e.g. RWX, which could then impact conversion
+performance.
+
+> But I've
+> had some issues with the TDX tests in trying to decipher when to call
+> vm_set_memory_attributes() vs guest_memfd_convert_private().
+>
+
+Hope the above explanation helps!
+
++ Legacy dual backing: vm_set_memory_attributes()
++ Single backing: guest_memfd_convert_private()
+
+I don't think this will change much even with the module param, since
+userspace will still need to know whether to pass in a vm fd or a
+guest_memfd fd.
+
+Or maybe vm_set_memory_attributes() can take a vm fd, then query module
+params and then figure out if it should pass vm or guest_mefd fds?
+
+>> 
+>> [...snip...]
+>> 
+>> >>  static int __kvm_gmem_prepare_folio(struct kvm *kvm, struct kvm_memory_slot *slot,
+>> >>  				    pgoff_t index, struct folio *folio)
+>> >>  {
+>> >> @@ -333,7 +404,7 @@ static vm_fault_t kvm_gmem_fault_shared(struct vm_fault *vmf)
+>> >>  
+>> >>  	filemap_invalidate_lock_shared(inode->i_mapping);
+>> >>  
+>> >> -	folio = kvm_gmem_get_folio(inode, vmf->pgoff);
+>> >> +	folio = kvm_gmem_get_shared_folio(inode, vmf->pgoff);
+>> >
+>> > I am fairly certain there's a TOCTOU bug here.  AFAICT, nothing prevents the
+>> > underlying memory from being converted from shared=>private after checking that
+>> > the page is SHARED.
+>> >
+>> 
+>> Conversions take the filemap_invalidate_lock() too, along with
+>> allocations, truncations.
+>> 
+>> Because the filemap_invalidate_lock() might be reused for other
+>> fs-specific operations, I didn't do the mt_set_external_lock() thing to
+>> lock at a low level to avoid nested locking or special maple tree code
+>> to avoid taking the lock on other paths.
+>
+> I don't think using the filemap_invalidate_lock() is going to work well
+> here.  I've had some hangs on it in my testing and experiments.  I think
+> it is better to specifically lock the state tracking itself.  I believe
+> Michael mentioned this as well in a previous thread.
+
+Definitely took the big hammer lock for a start and might be optimizable.
+
+Considerations so far: when a conversion is happening, these have to be
+locked out:
+
++ Conversions from competing threads
++ Allocations in kvm_gmem_fault_user_mapping(), because whether an
+  offset can be faulted depends on the outcome of conversion
++ Allocations (fallocate() or kvm_gmem_get_pfn()) and truncations,
+  because conversions (for now) involves removing a folio from the
+  filemap, restructuring, then restoring to the filemap, and
+    + Allocations should reuse a folio that was already in the filemap
+    + Truncations remove a folio, and should not skip removal of a folio
+      because it was taken out just for conversion
++ memory failure handling, where we don't remove folios from the
+  filemap, but we might restructure, to split huge folios to just unmap
+  pages with failed memory
+
+I think essentially because conversion involves restructuring, and
+restructuring involves filemap operations and other filemap operations
+have to wait, conversion also takes the filemap_invalidate_lock() that
+filemap operations use.
+
+>
+> Ira
+>
+> [snip]
 
