@@ -1,167 +1,112 @@
-Return-Path: <linux-kernel+bounces-840813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91975BB579F
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 23:33:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 47519BB57A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 23:34:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4F44F4E75F7
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 21:32:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 237E64E743C
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 21:34:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FD3426D4C7;
-	Thu,  2 Oct 2025 21:32:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9D5E1B4153;
+	Thu,  2 Oct 2025 21:34:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FT5tGjTv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lfcQQzeR"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 784433BB44;
-	Thu,  2 Oct 2025 21:32:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE66B29A1
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 21:34:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759440772; cv=none; b=FCUtGzxpGKLRFCLwcrgUYO5K5pmnbEtFRLZpF1o6dbW6YdDBvSoLnVD1E7jJ+NgJsH4sIkIGSALuWva3gNhk2MxAM/TW+cSMzUC1fX+2DNKzHyGCh+GrCnL9BZTcuSL9XW+vuuG4+resRzPGhoqEeX758e013zvClNFMVByMKqk=
+	t=1759440857; cv=none; b=Lhi6GT1fHWVKvEh/MXrxUMVMn2afvc9cxDYUrnQHqH7/wtIsHIkT2eFU8yhhoTQWEpsUYVKVIwZCMkDUSlLGSgqQDsA8RSvhpP0J9bvI0zCHrYDgmUQmmS1NSkeJ0znZ4mt2k76M+60OwZcj0zu4hHLS0jeiWLEdSP2aApKM9xo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759440772; c=relaxed/simple;
-	bh=L6sLUDYC2mIpeZa6zlf8RaB7dU8gXnHoIwa5yefwsIA=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
-	 References:In-Reply-To; b=K/2AsPUhZoUyuCeEUrVJRIvjffQFkIFNKJkIPJdX78VCDKhmCXhRYmpjtqDfQpa4Lso+2atF6rdl68NXBFgkhbGONT5t6xgpYWpHYzC+74V0J39m7wgiJyAvGipyKzsflvl0ilkcMysRPFsQ9np7wxoYsRpnKrckF2HXYQWqZpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FT5tGjTv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 080D4C4CEF4;
-	Thu,  2 Oct 2025 21:32:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759440771;
-	bh=L6sLUDYC2mIpeZa6zlf8RaB7dU8gXnHoIwa5yefwsIA=;
-	h=Date:From:Subject:Cc:To:References:In-Reply-To:From;
-	b=FT5tGjTvx9anXGJJZpqlUnzmhZVCLjbzfE1uMbfa+yvW3vpSEUISyuS3xg1dIv2zB
-	 Ug/A9nye/60ZJHaC8Uur30OfmfTXXctJ/1NcI44k4R4hvj/AJXhAaiSuorhoDFRSzg
-	 K9Th1cKcBjuyTQq7fO6ceOe+M2R2LClT7qdM5r5J8uQX+PCI/JnexJVt70S2IEbqdg
-	 qNhAsrYT2DTFuZKHGKRhGPLXESxvX0EGGlpmzE7dRWFotM7v8pyO9vjQe8HliEYrRr
-	 DjrXdwtBp408hV864FHu2X+RvVsJeccvNzVqD+zpe/JQrNnZc4cRLBfKF/Sc6zUfZy
-	 fjviCRYDin/ZQ==
+	s=arc-20240116; t=1759440857; c=relaxed/simple;
+	bh=7iSxhUwFdayMNkBWqhX/46UeqkWg3MxAUcCsOEZ/TwI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q1eUGDg0rgRkNi+vHL665rfaogC50qpEL/r/J0gLp3dAq+9TNuHHjMo6ieI3zsFFmozVZxkCpWNlsF9iXUMsRSTrapxgpc2ero0JLcBXJGE+RltIPqtL7U0XPXFCffzqpctJ4XKCmS0We3JW1955uJtaT1f6xS6vaQXZZjuLGHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lfcQQzeR; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-781206cce18so1367509b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 14:34:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759440855; x=1760045655; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Z1PrJRpi1vH5GxKwZlWbhM3YXHmClyIGjsFkroyXTL4=;
+        b=lfcQQzeRu9CjFTaBbxpvB2eeRykW50cBni0HeRqgq+J8HSKgDX03wzcv4IsarnycsE
+         whmNkCvsEVA317ilzRdgwvOXrq0YhLzxV0joclNiQY707arzlnA11ilIJZKt9/4p3v/K
+         VrHLWT26LpVTKC9j132SSYYacvpQqNN7Cukx7M3dG/LchHdcEJo/OtZneRbQJPDBS3E1
+         2KCOJnU3Jg1HkwpWb835Ort4Qx9v/jFSmMwylEBEeIW9TnX7Yb4Kz7PY6pLGho6mnP1m
+         YXdisIX7KARxsVHSUnSSLRlfvOCqGRgPK2VKJOS0cIyMOUVPEtzA1NrDJVSgT7DJYWTL
+         OHDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759440855; x=1760045655;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Z1PrJRpi1vH5GxKwZlWbhM3YXHmClyIGjsFkroyXTL4=;
+        b=TrS384XLuA7m2FDhAhbpB2g12RIUdkRkLry7jLnoUULwIY8fvVNla5hEqthLH4mATQ
+         VIr1lbmW3hf1qiJfe5qFEO23qPA23gfF1ooeX/T7YIRBOsONoJg5jVi0/eId4s7URrYD
+         UMg1D2Ah6fsNpVWvOImswBXvxkQH6KQ+47VZsHNNudNBQf8wP56da5svSD0DQ4uZeyDr
+         zGy5UVYGkGFwYK+52zp1k9YrtASf11LpSQoTd2Qc0N0XBFtuY9l4ZmXSfrX1KjXZw6Es
+         UORzaShoMPlq6+FCgbdlRZHf8ip089+cNWqofG7xqtIzIAlXYgigQSiIu+nhT/dwtMrc
+         0DIw==
+X-Forwarded-Encrypted: i=1; AJvYcCVnSP7MEyZdthLSZg+2bkVdjcGNF47+Yj9J3merciR3IJ6OYtgdNxY9DgN1iWila9y1Yk2FzNZkx0yPVLk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnLTbIZctGBhshyAs/W56QHn/kEhdtbzvzsPmp3hfp1D+Zp02e
+	LxflU4+oDkvMyheZcRYqpM7O9HShl39sumRbsK+waqXlsikzRiFPjy5+
+X-Gm-Gg: ASbGnct7aZ33Fb3XUWb+ybs6GYLyD+Q98EKKHAPna49sG8AT3C7UyheDjJd4qDs6AqE
+	W8DVsqvzBtY35FFnl/48M9P8xa628MdnvLyc1QrYlvBKWbZE7x8axRS123cZVt8yPD8wFjttXiN
+	t5S4AzotfVArrYuf/UHyD82Qj5SdGvRRMF455d2iBVKpYYHeI+luFdTv0Hdb67af7x63jI2zZtg
+	Wyu1IU2AfgSkUotMaRUoAXvHAG6CfldxPyA02elbngtWhAXUAnb9d5D2z+hoFo9qvYOEkv/vD0j
+	XUj1AkiTyIJlzl5svq47AsNyrbX3Ea4VSxjDCvqdFoUEGOZJVcLfqv3ff2nJatQp9jhhOVEoKJ1
+	a155lKi07KMzT5oeBvvtM1VSNv29BTA/mV7hk6aSsHekKTIURf2z5YIoDCW0=
+X-Google-Smtp-Source: AGHT+IEeOUf9stYiH4A1VxaI8NkZFOnx8BChpkifOeNgOd1G+kYcSz65i3l+MHbiV/bwjRo4Ir5TvA==
+X-Received: by 2002:a05:6a20:72a6:b0:327:957:f915 with SMTP id adf61e73a8af0-32b61d9daa6mr932098637.24.1759440854923;
+        Thu, 02 Oct 2025 14:34:14 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78b01f9daffsm2947915b3a.17.2025.10.02.14.34.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Oct 2025 14:34:14 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Thu, 2 Oct 2025 14:34:08 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Jean Delvare <jdelvare@suse.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/2] dt-bindings: hwmon: ntc-thermistor: Add Murata
+ ncp18wm474 NTC
+Message-ID: <f33219df-2b2c-4edb-bcb6-bad189c25348@roeck-us.net>
+References: <20251001-ntc-thermistor-ncp18wm474-v1-0-2c64b9b509ff@pengutronix.de>
+ <20251001-ntc-thermistor-ncp18wm474-v1-2-2c64b9b509ff@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 02 Oct 2025 23:32:44 +0200
-Message-Id: <DD85P4NV5B5Y.367RGWFHBR0RF@kernel.org>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH v2 1/2] rust: pci: skip probing VFs if driver doesn't
- support VFs
-Cc: "John Hubbard" <jhubbard@nvidia.com>, "Alexandre Courbot"
- <acourbot@nvidia.com>, "Joel Fernandes" <joelagnelf@nvidia.com>, "Timur
- Tabi" <ttabi@nvidia.com>, "Alistair Popple" <apopple@nvidia.com>, "Zhi
- Wang" <zhiw@nvidia.com>, "Surath Mitra" <smitra@nvidia.com>, "David Airlie"
- <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Alex Williamson"
- <alex.williamson@redhat.com>, "Bjorn Helgaas" <bhelgaas@google.com>,
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, "Miguel
- Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun
- Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
- <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
- Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- <nouveau@lists.freedesktop.org>, <linux-pci@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>, "LKML" <linux-kernel@vger.kernel.org>
-To: "Jason Gunthorpe" <jgg@nvidia.com>
-References: <20251002170506.GA3299207@nvidia.com>
- <DD80P7SKMLI2.1FNMP21LJZFCI@kernel.org>
- <DD80R10HBCHR.1BZNEAAQI36LE@kernel.org>
- <af4b7ce4-eb13-4f8d-a208-3a527476d470@nvidia.com>
- <20251002180525.GC3299207@nvidia.com>
- <3ab338fb-3336-4294-bd21-abd26bc18392@kernel.org>
- <20251002183114.GD3299207@nvidia.com>
- <56daf2fe-5554-4d52-94b3-feec4834c5be@kernel.org>
- <20251002185616.GG3299207@nvidia.com>
- <DD837Z9VQY0H.1NGRRI2ZRLG4F@kernel.org>
- <20251002210433.GH3299207@nvidia.com>
- <bba17237-2401-4e9b-912b-29d31af748e1@kernel.org>
-In-Reply-To: <bba17237-2401-4e9b-912b-29d31af748e1@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251001-ntc-thermistor-ncp18wm474-v1-2-2c64b9b509ff@pengutronix.de>
 
-On Thu Oct 2, 2025 at 11:14 PM CEST, Danilo Krummrich wrote:
-> On 10/2/25 11:04 PM, Jason Gunthorpe wrote:
->> On Thu, Oct 02, 2025 at 09:36:17PM +0200, Danilo Krummrich wrote:
->>> If we want to obtain the driver's private data from a device outside th=
-e scope
->>> of bus callbacks, we always need to ensure that the device is guarantee=
-d to be
->>> bound and we also need to prove the type of the private data, since a d=
-evice
->>> structure can't be generic over its bound driver.
->>=20
->> pci_iov_get_pf_drvdata() does both of these things - this is what it
->> is for. Please don't open code it :(
->
-> It makes no sense to use it, both of those things will be ensured in a mo=
-re
-> generic way in the base device implementation already (which is what I me=
-ant
-> with layering).
->
-> Both requirements are not specific to PCI, or the specific VF -> PF use-c=
-ase.
->
-> In order to guarantee soundness both of those things have to be guarantee=
-d for
-> any access to the driver's private data.
+On Wed, Oct 01, 2025 at 01:45:28PM +0200, Sascha Hauer wrote:
+> Add Murata ncp18wm474 [1] NTC to the ntc-thermistor binding.
+> 
+> [1] https://www.murata.com/en-eu/api/pdfdownloadapi?cate=&partno=NCP18WM474E03RB
+> 
+> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-Actually, let me elaborate a bit more on this:
+Applied to hwmon-next.
 
-In C when a driver calls dev_get_drvdata() it asserts two things:
-
-  (1) The device is bound to the driver calling this function.
-  (2) It casts the returned void * to the correct type.
-
-Obviously, relying on this in Rust would be fundamentally unsafe.
-
-Hence, the idea is to implement Device::drvdata_borrow::<T>(), which takes =
-a
-&Device<Bound> as argument, which proves that the device must be bound.
-
-The T must be the driver specific driver type, i.e. the type that implement=
-s
-e.g. the pci::Driver trait.
-
-With that, Device::drvdata_borrow() can internally check whether the assert=
-ed
-type T matches the unique type ID that we store in the device in probe().
-
-This way we can prove that the device is actually bound and that we cast to=
- the
-correct type.
-
-Furthermore, the returned reference to the driver's private data can't out-=
-live
-the lifetime of the given &Device<Bound>, so we're also guaranteed that the
-device won't be unbound while we still have a reference to the driver's pri=
-vate
-data.
-
-So, when we call pdev.physfn().drvdata_borrow::<NovaCore>() the checks are
-included already.
-
-> I will send some patches soon, I think this will make it obvious. :)
->>>> Certain conditions may be workable, some drivers seem to have
->>>> preferences not to call disable, though I think that is wrong :\
->>>
->>> I fully agree! I was told that this is because apparently some PF drive=
-rs are
->>> only loaded to enable SR-IOV and then removed to shrink the potential a=
-ttack
->>> surface. Personally, I think that's slightly paranoid, if the driver wo=
-uld not
->>> do anything else than enable / disable SR-IOV, but I think we can work =
-around
->>> this use-case if people really want it.
->>=20
->> I've heard worse reasons than that. If that is the interest I'd
->> suggest they should just use VFIO and leave a userspace stub
->> process..
->
-> I'm not sure I follow your proposal, can you elaborate?
-
+Thanks,
+Guenter
 
