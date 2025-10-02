@@ -1,274 +1,160 @@
-Return-Path: <linux-kernel+bounces-840340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3D3CBB4249
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 16:08:57 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C89ADBB4264
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 16:12:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3506161E6D
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 14:08:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7CDB24E22FC
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 14:12:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EE1A3126A9;
-	Thu,  2 Oct 2025 14:08:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43FD5311956;
+	Thu,  2 Oct 2025 14:12:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="U3AuxsGm"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gAvrC8Jn"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF9D5464D;
-	Thu,  2 Oct 2025 14:08:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759414125; cv=pass; b=T/PDh2Lk6CTnvI91FcY65+/ZHdf8KqqLYLuPt4bhE2z9SaNqpdaiyfoozyx70ofO41hIiP68JUds9GKQJ6FdoKcmSBU3j0MhpxWh53Y1JIFp+HixedqtCaacffmVT2l+svJgMB9qZbNR+cyUWa00GgvQtuXu9KKyeeOy6S4Y3HE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759414125; c=relaxed/simple;
-	bh=K/oRkYewwRtRjFBycT7oIwzfMLulMs0/BzKhhCOARMY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kFE/QGhwxtSkh6K8CPUWEaklScJfKJ28j7Bo/BDgMXLO8b60BjRmJvMiUHkUKMIZrUIcKLyuVuuEQUCKl3YsqMb9o45FEEEQWEECphF4pUVbLhnkxf8FZfhEZaAUyrTSV5XGeTitm6aNrJFS5l4Zh43RwH/30Auucgiyoqxc4ms=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=U3AuxsGm; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1759414092; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=SpD3FJ8HF4/zxPOakpZNTSHpvUCOyb3dwr3O91N2hx4avMTzaPAjfXQWAx9w0QXxS15IcLy3VAPXgxtwaFl5MpV62ZerYSwN61Cy1fjn11TgvBt3AeI1FDnANubR2/3FfHttmZxsKIq1q+Rmk2FZcdlRJZnuRmx6ass50FiwfDk=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1759414092; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=f5I790eui7ncJTuc1CPuTi7VGxSk+Va5i2GeX/jAyaA=; 
-	b=TKwDayOa+oX9Xv2hBkrFtcQBMOTogOC1y4//Mmw/5BsKG0hxdvS32CTih2/RyMuuPvY0nBUWL7peODQ60qe+UtcuC30xFnUyz2hsNWauAorDgVu8a7lV4nBhlmTiQ2JYBFDX7pcO8Knl4zL6ecVegdwazQUcgBe5Ny2jolGPPFQ=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
-	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1759414092;
-	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=f5I790eui7ncJTuc1CPuTi7VGxSk+Va5i2GeX/jAyaA=;
-	b=U3AuxsGmqgBjIQRb0bkzyMkJK0gkIeCfNLIuLsMNy8PaO9w4viS2IyY9WvNAi4gh
-	grgDYroNs4GcZ/PcopqdMva4jbwhJQZoj9RpzbT1c1IBcQkj0V1NUr2Bu9H4Heu9tRE
-	ZixfG8R5I9SqgpAt1IbtdEVPkRytnP9PYLyPS+JU=
-Received: by mx.zohomail.com with SMTPS id 1759414089197871.3644749751696;
-	Thu, 2 Oct 2025 07:08:09 -0700 (PDT)
-From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	jose.abreu@synopsys.com,
-	nelson.costa@synopsys.com,
-	shawn.wen@rock-chips.com,
-	nicolas.dufresne@collabora.com,
-	Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: kernel@collabora.com,
-	linux-media@vger.kernel.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13B961957FC
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 14:12:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759414352; cv=none; b=BWB6UUPAZSefFfU5r/da+RPlVLQY4n+PaqGtmOAcGPVRy1PZ6FAj/hod8Kd9isJbTQ+41xUMLRs/XqdxjtStYDIlRM1xmokKNm2h5eAHSdkoEtAUK/wf0moTsnAmb6u8yjFk/IwlPU01quOfTcS25HnRZZDc6/DDV9hznp/G7mk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759414352; c=relaxed/simple;
+	bh=wQ14PHbXnmpznc9zmi/+CrYVN4TgoFHRNjEt9lhheyM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PrmuiW2ZveHxle6fdUnsydW9UegrA7WfjIwyOOB2e6XbWY1Dsy9UIv8CEQpXAfsTP/MlyRs+esuQUKrLUBEDeXiYNJmLL6Dn71AKpm7xR8VmfCWE8GXcT00XkMUlgA/YKRzP3AdID+mUEdVd/JJ0nEm+W/6h5zltmWfTKa9tYew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gAvrC8Jn; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759414350;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pK7RryGiFNI3dqfCiJ0uOiLkWQ2Jcw/ErZ/tIXr5pSc=;
+	b=gAvrC8JndpUUe6WRX+OvcHKIgvJFfKxRZA68PSO7REvYDb81Rd6rZJO9kNB+3ElU4HyHRI
+	htVKt/SeRH4sptalCSqyUVcuxdvfyFYe8hAoaOk5xGCG1JhFmwxUb3RrbYYIkqH0E8TNRm
+	9HkDG5SJua3wl1NLCQWSfKPBrgibtho=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-488-eZiNxOSuNcitLeV5eeIMjA-1; Thu, 02 Oct 2025 10:12:29 -0400
+X-MC-Unique: eZiNxOSuNcitLeV5eeIMjA-1
+X-Mimecast-MFC-AGG-ID: eZiNxOSuNcitLeV5eeIMjA_1759414348
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-827061b4ca9so193490885a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 07:12:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759414348; x=1760019148;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pK7RryGiFNI3dqfCiJ0uOiLkWQ2Jcw/ErZ/tIXr5pSc=;
+        b=Ym9iWjTKBOI8gWLoXB+4PADj0K+1kgBe6Y17UBprs6YEzrHd+hNDS3HSkyXyGWJDbL
+         K8bK29+P2m/hZ1IBHcCBkdJPkR34WPnPX+GNjMlnDUF0zjk3A2qYlmEj76ulGociILjV
+         H22jOKSciRGBY2RR3TVb1ckBxpGKkO8WStDjUkdAH/ZE4znvIid85jo9gmp01zZ5uEwD
+         dxXOCwGxJ48vKGPhzaoul6E5Y9N+3S3w4tTXrc2KEAUw7Kc4LXooH6lBZogUiSDz2rWh
+         8BqU2/iHSZ2hmasChvJwHo1B5WRWsPQLcsO09OoJDiG2tBBMsbYPPnPOeq8KGLmN3Eqp
+         kS5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVhf9O3NN+hgMlZt37Hdr9styQF1y2CZ3D/bb/KnM1pQVjkFDP3muAcOv2EDRa0D47zm+iPo08vDTHPxvQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRsN93ja71+I5G/5NBKDNLyx7DiIBuUGQWWJxJIs0nplsb1j2F
+	v4bJt6Fn+lMGwM8ekKbjh49KIWKqxtE0tSxiIXiafQAZJWnMBP75n+43PA90oFw/GXWUcPNpkTj
+	lz3hBVugSSadkjCkJEvC3H4PAeI/IvtHUuouDDOSJ+TGoCNkBWxN+aDuisn7YIDBTPg==
+X-Gm-Gg: ASbGncvB1Hh4RYYEfOJyAE1znaxk2zVNFik1P3mzrPTnc8DhTl/Xj0G0pO0I1gDGE+U
+	xpa6ANDLl1MlH6pxEf3J+L807UINLjX1PQaU2M6m7Vx1lEl/jEJ5/S030+M/GKbGmPd/XeT84dr
+	kE/3KninUi2OOSTij7VlTWgpQOhYawJnVQdf6CZc7TFjcLjGApjMxzsx7/7Ef44Zh4qAEEAkg9m
+	y6UaFsfcM6KWzDFPXrq10addO3HYg+3KPF0boNti+1AUhQ53ASHlq1jdS5huXH4qKvRJDHv85IA
+	yYWMlcxlU7CAYs5+b7gKwUl0ADLcQHu7+T4Xsd8Heif4+gjmCpI0spJ5+AIXxJxr3RegNMXqGtJ
+	5Bzxv+X3/fbck/NkZngShvxE6
+X-Received: by 2002:a05:620a:4411:b0:84d:26f0:613 with SMTP id af79cd13be357-87371450e6amr1081007685a.33.1759414348241;
+        Thu, 02 Oct 2025 07:12:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE7NBLnYmHFbnJ/ct5tFBmWuu/9JdpFXW2TqHE7fEMVoC8T3UoiMpOPkGlATLH95I/kPu3FSQ==
+X-Received: by 2002:a05:620a:4411:b0:84d:26f0:613 with SMTP id af79cd13be357-87371450e6amr1081000385a.33.1759414347696;
+        Thu, 02 Oct 2025 07:12:27 -0700 (PDT)
+Received: from jlelli-thinkpadt14gen4.remote.csb (host-80-47-6-60.as13285.net. [80.47.6.60])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-87771129fcdsm214321585a.13.2025.10.02.07.12.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Oct 2025 07:12:27 -0700 (PDT)
+Date: Thu, 2 Oct 2025 15:12:23 +0100
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Yuri Andriaccio <yurand2000@gmail.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
 	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org
-Subject: [PATCH v2] media: synopsys: hdmirx: Detect broken interrupt
-Date: Thu,  2 Oct 2025 17:07:50 +0300
-Message-ID: <20251002140750.579059-1-dmitry.osipenko@collabora.com>
-X-Mailer: git-send-email 2.51.0
+	Luca Abeni <luca.abeni@santannapisa.it>,
+	Yuri Andriaccio <yuri.andriaccio@santannapisa.it>
+Subject: Re: [RFC PATCH v3 04/24] sched/rt: Move some functions from rt.c to
+ sched.h
+Message-ID: <aN6IR811AtfIUsWS@jlelli-thinkpadt14gen4.remote.csb>
+References: <20250929092221.10947-1-yurand2000@gmail.com>
+ <20250929092221.10947-5-yurand2000@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250929092221.10947-5-yurand2000@gmail.com>
 
-Downstream version of RK3588 U-Boot uses customized TF-A that remaps
-HDMIRX hardware interrupt, routing it via firmware that isn't supported
-by upstream driver.
+Hello,
 
-Detect broken interrupt and print a clarifying error message about a need
-to use open-source TF-A with this driver.
+On 29/09/25 11:22, Yuri Andriaccio wrote:
+> From: luca abeni <luca.abeni@santannapisa.it>
+> 
+> Make the following functions be non-static and move them in sched.h, so that
+> they can be used also in other source files:
+> - rt_task_of()
+> - rq_of_rt_rq()
+> - rt_rq_of_se()
+> - rq_of_rt_se()
+> 
+> There are no functional changes. This is needed by future patches.
+> 
+> Signed-off-by: luca abeni <luca.abeni@santannapisa.it>
+> Signed-off-by: Yuri Andriaccio <yurand2000@gmail.com>
+> ---
+>  kernel/sched/rt.c    | 52 ------------------------------------------
+>  kernel/sched/sched.h | 54 ++++++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 54 insertions(+), 52 deletions(-)
+> 
+> diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+> index a7d063d2303..a599f63bf7f 100644
+> --- a/kernel/sched/rt.c
+> +++ b/kernel/sched/rt.c
+> @@ -168,34 +168,6 @@ static void destroy_rt_bandwidth(struct rt_bandwidth *rt_b)
+>  
+>  #define rt_entity_is_task(rt_se) (!(rt_se)->my_q)
 
-Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
----
+Do we want to move this macro as well, so that rt_task_of() doesn't need
+to change?
 
-Changelog:
+> -static inline struct task_struct *rt_task_of(struct sched_rt_entity *rt_se)
+> -{
+> -	WARN_ON_ONCE(!rt_entity_is_task(rt_se));
+> -
+> -	return container_of(rt_se, struct task_struct, rt);
+> -}
 
-v2: - Added PHY r/w lock and moved the clarifying error message as
-      was suggested by Sebastian Reichel.
+...
 
- .../platform/synopsys/hdmirx/snps_hdmirx.c    | 90 ++++++++++++++++++-
- .../platform/synopsys/hdmirx/snps_hdmirx.h    |  2 +
- 2 files changed, 90 insertions(+), 2 deletions(-)
+> +#ifdef CONFIG_RT_GROUP_SCHED
+> +static inline struct task_struct *rt_task_of(struct sched_rt_entity *rt_se)
+> +{
+> +	WARN_ON_ONCE(rt_se->my_q);
+> +
+> +	return container_of(rt_se, struct task_struct, rt);
+> +}
 
-diff --git a/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c b/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
-index b7d278b3889f..e6456352dfa5 100644
---- a/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
-+++ b/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
-@@ -132,12 +132,14 @@ struct snps_hdmirx_dev {
- 	struct delayed_work delayed_work_hotplug;
- 	struct delayed_work delayed_work_res_change;
- 	struct hdmirx_cec *cec;
-+	struct mutex phy_rw_lock; /* to protect phy r/w configuration */
- 	struct mutex stream_lock; /* to lock video stream capture */
- 	struct mutex work_lock; /* to lock the critical section of hotplug event */
- 	struct reset_control_bulk_data resets[HDMIRX_NUM_RST];
- 	struct clk_bulk_data *clks;
- 	struct regmap *grf;
- 	struct regmap *vo1_grf;
-+	struct completion cr_read_done;
- 	struct completion cr_write_done;
- 	struct completion timer_base_lock;
- 	struct completion avi_pkt_rcv;
-@@ -796,11 +798,50 @@ static int wait_reg_bit_status(struct snps_hdmirx_dev *hdmirx_dev, u32 reg,
- 	return 0;
- }
- 
-+static int hdmirx_phy_register_read(struct snps_hdmirx_dev *hdmirx_dev,
-+				    u32 phy_reg, u32 *val)
-+{
-+	struct device *dev = hdmirx_dev->dev;
-+	u32 status;
-+
-+	guard(mutex)(&hdmirx_dev->phy_rw_lock);
-+
-+	reinit_completion(&hdmirx_dev->cr_read_done);
-+	/* clear irq status */
-+	hdmirx_clear_interrupt(hdmirx_dev, MAINUNIT_2_INT_CLEAR, 0xffffffff);
-+	/* en irq */
-+	hdmirx_update_bits(hdmirx_dev, MAINUNIT_2_INT_MASK_N,
-+			   PHYCREG_CR_READ_DONE, PHYCREG_CR_READ_DONE);
-+	/* write phy reg addr */
-+	hdmirx_writel(hdmirx_dev, PHYCREG_CONFIG1, phy_reg);
-+	/* config read enable */
-+	hdmirx_writel(hdmirx_dev, PHYCREG_CONTROL, PHYCREG_CR_PARA_READ_P);
-+
-+	if (!wait_for_completion_timeout(&hdmirx_dev->cr_read_done,
-+					 msecs_to_jiffies(20))) {
-+		dev_err(dev, "%s wait cr read done failed\n", __func__);
-+		return -ETIMEDOUT;
-+	}
-+
-+	/* read phy reg value */
-+	status = hdmirx_readl(hdmirx_dev, PHYCREG_STATUS);
-+	if (!(status & PHYCREG_CR_PARA_DATAVALID)) {
-+		dev_err(dev, "%s cr read failed\n", __func__);
-+		return -EINVAL;
-+	}
-+
-+	*val = status & PHYCREG_CR_PARA_RD_DATA_MASK;
-+
-+	return 0;
-+}
-+
- static int hdmirx_phy_register_write(struct snps_hdmirx_dev *hdmirx_dev,
- 				     u32 phy_reg, u32 val)
- {
- 	struct device *dev = hdmirx_dev->dev;
- 
-+	guard(mutex)(&hdmirx_dev->phy_rw_lock);
-+
- 	reinit_completion(&hdmirx_dev->cr_write_done);
- 	/* clear irq status */
- 	hdmirx_clear_interrupt(hdmirx_dev, MAINUNIT_2_INT_CLEAR, 0xffffffff);
-@@ -1814,6 +1855,13 @@ static void mainunit_2_int_handler(struct snps_hdmirx_dev *hdmirx_dev,
- 		*handled = true;
- 	}
- 
-+	if (status & PHYCREG_CR_READ_DONE) {
-+		hdmirx_update_bits(hdmirx_dev, MAINUNIT_2_INT_MASK_N,
-+				   PHYCREG_CR_READ_DONE, 0);
-+		complete(&hdmirx_dev->cr_read_done);
-+		*handled = true;
-+	}
-+
- 	if (status & TMDSVALID_STABLE_CHG) {
- 		process_signal_change(hdmirx_dev);
- 		v4l2_dbg(2, debug, v4l2_dev, "%s: TMDSVALID_STABLE_CHG\n", __func__);
-@@ -2313,18 +2361,51 @@ static void hdmirx_disable_all_interrupts(struct snps_hdmirx_dev *hdmirx_dev)
- 	hdmirx_clear_interrupt(hdmirx_dev, CEC_INT_CLEAR, 0xffffffff);
- }
- 
--static void hdmirx_init(struct snps_hdmirx_dev *hdmirx_dev)
-+static int hdmirx_detect_broken_interrupt(struct snps_hdmirx_dev *hdmirx_dev)
- {
-+	int ret;
-+	u32 val;
-+
-+	enable_irq(hdmirx_dev->hdmi_irq);
-+
-+	hdmirx_writel(hdmirx_dev, PHYCREG_CONFIG0, 0x3);
-+
-+	ret = hdmirx_phy_register_read(hdmirx_dev,
-+				       HDMIPCS_DIG_CTRL_PATH_MAIN_FSM_FSM_CONFIG,
-+				       &val);
-+
-+	disable_irq(hdmirx_dev->hdmi_irq);
-+
-+	return ret;
-+}
-+
-+static int hdmirx_init(struct snps_hdmirx_dev *hdmirx_dev)
-+{
-+	int ret;
-+
- 	hdmirx_update_bits(hdmirx_dev, PHY_CONFIG, PHY_RESET | PHY_PDDQ, 0);
- 
- 	regmap_write(hdmirx_dev->vo1_grf, VO1_GRF_VO1_CON2,
- 		     (HDMIRX_SDAIN_MSK | HDMIRX_SCLIN_MSK) |
- 		     ((HDMIRX_SDAIN_MSK | HDMIRX_SCLIN_MSK) << 16));
-+
-+	/*
-+	 * RK3588 downstream version of TF-A remaps HDMIRX interrupt and
-+	 * requires use of a vendor-specific FW API that we don't support
-+	 * in this driver.
-+	 */
-+	ret = hdmirx_detect_broken_interrupt(hdmirx_dev);
-+	if (ret)
-+		dev_err_probe(hdmirx_dev->dev, ret,
-+			      "interrupt not functioning, open-source TF-A is required by this driver\n");
-+
- 	/*
- 	 * Some interrupts are enabled by default, so we disable
- 	 * all interrupts and clear interrupts status first.
- 	 */
- 	hdmirx_disable_all_interrupts(hdmirx_dev);
-+
-+	return ret;
- }
- 
- /* hdmi-4k-300mhz EDID produced by v4l2-ctl tool */
-@@ -2606,10 +2687,12 @@ static int hdmirx_probe(struct platform_device *pdev)
- 		return dev_err_probe(dev, PTR_ERR(hdmirx_dev->regs),
- 				     "failed to remap regs resource\n");
- 
-+	mutex_init(&hdmirx_dev->phy_rw_lock);
- 	mutex_init(&hdmirx_dev->stream_lock);
- 	mutex_init(&hdmirx_dev->work_lock);
- 	spin_lock_init(&hdmirx_dev->rst_lock);
- 
-+	init_completion(&hdmirx_dev->cr_read_done);
- 	init_completion(&hdmirx_dev->cr_write_done);
- 	init_completion(&hdmirx_dev->timer_base_lock);
- 	init_completion(&hdmirx_dev->avi_pkt_rcv);
-@@ -2623,7 +2706,10 @@ static int hdmirx_probe(struct platform_device *pdev)
- 	hdmirx_dev->timings = cea640x480;
- 
- 	hdmirx_enable(dev);
--	hdmirx_init(hdmirx_dev);
-+
-+	ret = hdmirx_init(hdmirx_dev);
-+	if (ret)
-+		goto err_pm;
- 
- 	v4l2_dev = &hdmirx_dev->v4l2_dev;
- 	strscpy(v4l2_dev->name, dev_name(dev), sizeof(v4l2_dev->name));
-diff --git a/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.h b/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.h
-index 220ab99ca611..a719439d3ca0 100644
---- a/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.h
-+++ b/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.h
-@@ -114,6 +114,8 @@
- #define PHYCREG_CR_PARA_WRITE_P			BIT(1)
- #define PHYCREG_CR_PARA_READ_P			BIT(0)
- #define PHYCREG_STATUS				0x00f4
-+#define PHYCREG_CR_PARA_DATAVALID		BIT(24)
-+#define PHYCREG_CR_PARA_RD_DATA_MASK		GENMASK(15, 0)
- 
- #define MAINUNIT_STATUS				0x0150
- #define TMDSVALID_STABLE_ST			BIT(1)
--- 
-2.51.0
+Thanks,
+Juri
 
 
