@@ -1,224 +1,102 @@
-Return-Path: <linux-kernel+bounces-840612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01C35BB4CED
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 20:04:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3DFABB4C6E
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 20:02:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EDA819E61C7
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 18:04:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3D9A1895F61
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 18:02:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 869D027B343;
-	Thu,  2 Oct 2025 18:03:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="qWLt81tS"
-Received: from fra-out-015.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-015.esa.eu-central-1.outbound.mail-perimeter.amazon.com [18.158.153.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E392B27A47C;
+	Thu,  2 Oct 2025 18:01:20 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD6592773D9;
-	Thu,  2 Oct 2025 18:03:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.158.153.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E85082798EC;
+	Thu,  2 Oct 2025 18:01:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759428190; cv=none; b=TxIYifwLr33eBYp6dPFz/YfbfjWxiW7VHq3Oi16yCLbJf2Wx51XQ4m6zLyVmNbOer/IqcW8xfng2vwyswXYs/3Q59TIMDKRSU7pXvmFV+KiCacY+6iHgRB/zp9cfYpTTW7PiimHnRfCAzU3HfL94ZTMzGpyNBlBFhwtfdoFAPHM=
+	t=1759428080; cv=none; b=T7DLCJNSNePtOdcCI3DKr44GYrF+Hrq7GpoBCSDDEPc0+cXkVAfroaSvSXPC/NK/fGDBuvg4Lemu1HNSHHefwIhItS0AdxkQZ0+CMFC64u0mFGq6hkYmcHXH5bd+khnx5Yn6Rtve1LehfSn53OPyHaYd2VwSynFpoIRD9GcCZxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759428190; c=relaxed/simple;
-	bh=7o6n/7afD73I8KmTywLVAVDBtvL4BDHX8Eeq0ODATQ8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fu0kW8Q0Zjk0a/129g/eSqf3wKkf4Cyv4XAqhdEgQvrRp8JHZXeI2c33R5uA2VdJZttEImp0LSxSvjlOHD0XiPtNJ+NQKqv7KRXc2bavV+SccHadIN2hmYQm73zf8HM7RwaFVhi2LW282eyZlZMh6pt0mIxicesKjV+BQTIcL4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=qWLt81tS; arc=none smtp.client-ip=18.158.153.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1759428188; x=1790964188;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=0AzpApDbX8CFEbC2P7WHNPH2gra+XDIh1eSQ6GUhJZw=;
-  b=qWLt81tSJ/hCfbUJj5bjbkIShdAgml+Z58xT47oAkMVMY7oOyHk6WELt
-   L/TKB8mE1KbrNtedx7fJbEPT6qslX+LBKjyOla9sNVzK6vI5rTBFWn3iq
-   3uKV5ITzKuaGtIntb2AUeiA2HrI0ydapo3KOQTsqh4+zEmwG8Se1ItLpp
-   xwsP12duibgBLfIm10OKWYtq3Ce1mtvFxBShStqzuSzynBFUOGkdjLDKn
-   26W4KLqvRUmChBmL4nNyjUMDxolsUXPRbKmZws7FkiqcKxnUw54L0Kmgw
-   JTNAWy0meXkKf16BDyXpR+d8E9Kt+G18rdIKKNaV6dPx5qy5Ts1GX4zbk
-   Q==;
-X-CSE-ConnectionGUID: wTIx4gDWROm7QuB8QQNE6Q==
-X-CSE-MsgGUID: ENmshZPSQgSwLDR37yUFwg==
-X-IronPort-AV: E=Sophos;i="6.18,310,1751241600"; 
-   d="scan'208";a="2908732"
-Received: from ip-10-6-3-216.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.3.216])
-  by internal-fra-out-015.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2025 18:03:06 +0000
-Received: from EX19MTAEUC001.ant.amazon.com [54.240.197.225:10241]
- by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.19.222:2525] with esmtp (Farcaster)
- id 474f6c3f-f81f-4963-8d2a-7c13e30e987b; Thu, 2 Oct 2025 18:03:06 +0000 (UTC)
-X-Farcaster-Flow-ID: 474f6c3f-f81f-4963-8d2a-7c13e30e987b
-Received: from EX19D018EUA004.ant.amazon.com (10.252.50.85) by
- EX19MTAEUC001.ant.amazon.com (10.252.51.193) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Thu, 2 Oct 2025 18:03:05 +0000
-Received: from dev-dsk-farbere-1a-46ecabed.eu-west-1.amazon.com
- (172.19.116.181) by EX19D018EUA004.ant.amazon.com (10.252.50.85) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20; Thu, 2 Oct 2025
- 18:02:53 +0000
-From: Eliav Farber <farbere@amazon.com>
-To: <gregkh@linuxfoundation.org>, <kenneth.feng@amd.com>,
-	<alexander.deucher@amd.com>, <christian.koenig@amd.com>, <airlied@gmail.com>,
-	<simona@ffwll.ch>, <linus.walleij@linaro.org>, <dmitry.torokhov@gmail.com>,
-	<tglx@linutronix.de>, <wens@csie.org>, <jernej.skrabec@gmail.com>,
-	<samuel@sholland.org>, <agk@redhat.com>, <snitzer@kernel.org>,
-	<mpatocka@redhat.com>, <clm@fb.com>, <dsterba@suse.com>,
-	<luc.vanoostenryck@gmail.com>, <pmladek@suse.com>, <rostedt@goodmis.org>,
-	<andriy.shevchenko@linux.intel.com>, <linux@rasmusvillemoes.dk>,
-	<senozhatsky@chromium.org>, <akpm@linux-foundation.org>,
-	<lijo.lazar@amd.com>, <asad.kamal@amd.com>, <kevinyang.wang@amd.com>,
-	<David.Laight@ACULAB.COM>, <amd-gfx@lists.freedesktop.org>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-	<linux-input@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-sunxi@lists.linux.dev>, <dm-devel@lists.linux.dev>,
-	<linux-btrfs@vger.kernel.org>, <linux-sparse@vger.kernel.org>,
-	<stable@vger.kernel.org>, <farbere@amazon.com>
-CC: Arnd Bergmann <arnd@kernel.org>, Christoph Hellwig <hch@infradead.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>, "Jason A. Donenfeld"
-	<Jason@zx2c4.com>, Jens Axboe <axboe@kernel.dk>, Lorenzo Stoakes
-	<lorenzo.stoakes@oracle.com>, Mateusz Guzik <mjguzik@gmail.com>, "Matthew
- Wilcox" <willy@infradead.org>, Pedro Falcato <pedro.falcato@gmail.com>
-Subject: [PATCH v3 06/11 6.1.y] minmax.h: update some comments
-Date: Thu, 2 Oct 2025 18:00:24 +0000
-Message-ID: <20251002180036.33738-7-farbere@amazon.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251002180036.33738-1-farbere@amazon.com>
-References: <20251002180036.33738-1-farbere@amazon.com>
+	s=arc-20240116; t=1759428080; c=relaxed/simple;
+	bh=3Okw5ifb9rLUlWRI5FmlFu9g7uRHkmz5MKZJThzoFO8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=MMLGFqNl2WfpDD75ZfqD8cqq7vvixsLetZRvZ01yC38f1V/r7z/gs1SANOe1RjuSk3SMOhiGKW3mSAUlkj4V/DLzPQYa27AcF8ZWVqBwFQg9ZhiNoeVwyuShadweLBFh6tF2VIxaO/QweroqecV2dvuU+IiXP5L9JcVV6hzul70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from mop.sam.mop (2.8.3.0.0.0.0.0.0.0.0.0.0.0.0.0.a.5.c.d.c.d.9.1.0.b.8.0.1.0.0.2.ip6.arpa [IPv6:2001:8b0:19dc:dc5a::382])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sam)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id AE3A2340DE1;
+	Thu, 02 Oct 2025 18:01:15 +0000 (UTC)
+From: Sam James <sam@gentoo.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Andrew Pinski <apinski@quicinc.com>,  Yonghong Song
+ <yonghong.song@linux.dev>,  "Andrew Pinski (QUIC)"
+ <quic_apinski@quicinc.com>,  Namhyung Kim <namhyung@kernel.org>,  Peter
+ Zijlstra <peterz@infradead.org>,  Ingo Molnar <mingo@redhat.com>,  Mark
+ Rutland <mark.rutland@arm.com>,  Alexander Shishkin
+ <alexander.shishkin@linux.intel.com>,  Jiri Olsa <jolsa@kernel.org>,  Ian
+ Rogers <irogers@google.com>,  Adrian Hunter <adrian.hunter@intel.com>,
+  "Liang, Kan" <kan.liang@linux.intel.com>,
+  "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
+  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+  "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+  "Andrew.pinski@oss.qualcomm.com" <Andrew.pinski@oss.qualcomm.com>
+Subject: Re: [PATCH] perf: use __builtin_preserve_field_info for GCC
+ compatibility
+In-Reply-To: <aN69RSQQ8agXOBDH@x1>
+Organization: Gentoo
+References: <fea380fb0934d039d19821bba88130e632bbfe8d.1754438581.git.sam@gentoo.org>
+	<aJPmX8xc5x0W_r0y@google.com>
+	<CO1PR02MB8460C81562C4608B036F36A5B82DA@CO1PR02MB8460.namprd02.prod.outlook.com>
+	<043721e8-a38e-419d-b9b9-2dad33e267a0@linux.dev> <aN629m1MlMXYh1te@x1>
+	<CO1PR02MB84601693B2ECBB323297B4ECB8E7A@CO1PR02MB8460.namprd02.prod.outlook.com>
+	<aN69RSQQ8agXOBDH@x1>
+User-Agent: mu4e 1.12.12; emacs 31.0.50
+Date: Thu, 02 Oct 2025 19:01:13 +0100
+Message-ID: <87wm5dtc7q.fsf@gentoo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: EX19D035UWA003.ant.amazon.com (10.13.139.86) To
- EX19D018EUA004.ant.amazon.com (10.252.50.85)
 
-From: David Laight <David.Laight@ACULAB.COM>
+Arnaldo Carvalho de Melo <acme@kernel.org> writes:
 
-[ Upstream commit 10666e99204818ef45c702469488353b5bb09ec7 ]
+> On Thu, Oct 02, 2025 at 05:35:09PM +0000, Andrew Pinski wrote:
+>> > From: Arnaldo Carvalho de Melo <acme@kernel.org>
+>> > So I'm taking the patch as-is, ok?
+>
+>> > But first we need the Signed-off-by tag from Andrew Pinski as
+>> > he is listed in a Co-authored-by, that I replaced with Co-
+>> > developed-by as its the term used for this purpose in:
+>
+>> > Yonghong, can I add an Acked-by: you since you participated in
+>> > this discussion agreeing with the original patch (If I'm not
+>> > mistaken)?
+>
+>> Signed-off-by: Andrew Pinski <andrew.pinski@oss.qualcomm.com>
+>  
+>> Note my email address for doing Linux and GCC development is
+>> Andrew.pinski@oss.qualcomm.com . It was apinski_quic@quicinc.com but
+>> that changed last month.
+>
+> This is what I have in the patch now:
+>
+> Co-developed-by: Andrew Pinski <andrew.pinski@oss.qualcomm.com>
+> Signed-off-by: Andrew Pinski <andrew.pinski@oss.qualcomm.com>
 
-- Change three to several.
-- Remove the comment about retaining constant expressions, no longer true.
-- Realign to nearer 80 columns and break on major punctiation.
-- Add a leading comment to the block before __signed_type() and __is_nonneg()
-  Otherwise the block explaining the cast is a bit 'floating'.
-  Reword the rest of that comment to improve readability.
+Looks good if Andrew is happy. Thanks!
 
-Link: https://lkml.kernel.org/r/85b050c81c1d4076aeb91a6cded45fee@AcuMS.aculab.com
-Signed-off-by: David Laight <david.laight@aculab.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Arnd Bergmann <arnd@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Jason A. Donenfeld <Jason@zx2c4.com>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Pedro Falcato <pedro.falcato@gmail.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Eliav Farber <farbere@amazon.com>
----
- include/linux/minmax.h | 53 +++++++++++++++++++-----------------------
- 1 file changed, 24 insertions(+), 29 deletions(-)
-
-diff --git a/include/linux/minmax.h b/include/linux/minmax.h
-index 51b0d988e322..24e4b372649a 100644
---- a/include/linux/minmax.h
-+++ b/include/linux/minmax.h
-@@ -8,13 +8,10 @@
- #include <linux/types.h>
- 
- /*
-- * min()/max()/clamp() macros must accomplish three things:
-+ * min()/max()/clamp() macros must accomplish several things:
-  *
-  * - Avoid multiple evaluations of the arguments (so side-effects like
-  *   "x++" happen only once) when non-constant.
-- * - Retain result as a constant expressions when called with only
-- *   constant expressions (to avoid tripping VLA warnings in stack
-- *   allocation usage).
-  * - Perform signed v unsigned type-checking (to generate compile
-  *   errors instead of nasty runtime surprises).
-  * - Unsigned char/short are always promoted to signed int and can be
-@@ -31,25 +28,23 @@
-  *   bit #0 set if ok for unsigned comparisons
-  *   bit #1 set if ok for signed comparisons
-  *
-- * In particular, statically non-negative signed integer
-- * expressions are ok for both.
-+ * In particular, statically non-negative signed integer expressions
-+ * are ok for both.
-  *
-- * NOTE! Unsigned types smaller than 'int' are implicitly
-- * converted to 'int' in expressions, and are accepted for
-- * signed conversions for now. This is debatable.
-+ * NOTE! Unsigned types smaller than 'int' are implicitly converted to 'int'
-+ * in expressions, and are accepted for signed conversions for now.
-+ * This is debatable.
-  *
-- * Note that 'x' is the original expression, and 'ux' is
-- * the unique variable that contains the value.
-+ * Note that 'x' is the original expression, and 'ux' is the unique variable
-+ * that contains the value.
-  *
-- * We use 'ux' for pure type checking, and 'x' for when
-- * we need to look at the value (but without evaluating
-- * it for side effects! Careful to only ever evaluate it
-- * with sizeof() or __builtin_constant_p() etc).
-+ * We use 'ux' for pure type checking, and 'x' for when we need to look at the
-+ * value (but without evaluating it for side effects!
-+ * Careful to only ever evaluate it with sizeof() or __builtin_constant_p() etc).
-  *
-- * Pointers end up being checked by the normal C type
-- * rules at the actual comparison, and these expressions
-- * only need to be careful to not cause warnings for
-- * pointer use.
-+ * Pointers end up being checked by the normal C type rules at the actual
-+ * comparison, and these expressions only need to be careful to not cause
-+ * warnings for pointer use.
-  */
- #define __signed_type_use(x, ux) (2 + __is_nonneg(x, ux))
- #define __unsigned_type_use(x, ux) (1 + 2 * (sizeof(ux) < 4))
-@@ -57,19 +52,19 @@
- 	__signed_type_use(x, ux) : __unsigned_type_use(x, ux))
- 
- /*
-- * To avoid warnings about casting pointers to integers
-- * of different sizes, we need that special sign type.
-+ * Check whether a signed value is always non-negative.
-  *
-- * On 64-bit we can just always use 'long', since any
-- * integer or pointer type can just be cast to that.
-+ * A cast is needed to avoid any warnings from values that aren't signed
-+ * integer types (in which case the result doesn't matter).
-  *
-- * This does not work for 128-bit signed integers since
-- * the cast would truncate them, but we do not use s128
-- * types in the kernel (we do use 'u128', but they will
-- * be handled by the !is_signed_type() case).
-+ * On 64-bit any integer or pointer type can safely be cast to 'long'.
-+ * But on 32-bit we need to avoid warnings about casting pointers to integers
-+ * of different sizes without truncating 64-bit values so 'long' or 'long long'
-+ * must be used depending on the size of the value.
-  *
-- * NOTE! The cast is there only to avoid any warnings
-- * from when values that aren't signed integer types.
-+ * This does not work for 128-bit signed integers since the cast would truncate
-+ * them, but we do not use s128 types in the kernel (we do use 'u128',
-+ * but they are handled by the !is_signed_type() case).
-  */
- #ifdef CONFIG_64BIT
-   #define __signed_type(ux) long
--- 
-2.47.3
-
+>
+> - Arnaldo
 
