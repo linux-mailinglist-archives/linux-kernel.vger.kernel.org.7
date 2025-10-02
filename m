@@ -1,182 +1,263 @@
-Return-Path: <linux-kernel+bounces-840834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5F15BB5873
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 00:07:56 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76677BB587C
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 00:10:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B53D81AE126E
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 22:08:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4E67D4E648A
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 22:10:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 524D4284894;
-	Thu,  2 Oct 2025 22:07:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C06627A127;
+	Thu,  2 Oct 2025 22:10:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="AqOHoEGj"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4001026FA67;
-	Thu,  2 Oct 2025 22:07:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="h7Ccc6C9"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B06A9235C01
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 22:10:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759442857; cv=none; b=KUu3DolVt49+U57rrDX6gBzz6Kue6IqxkM5AOF+bvlRZBJC3X/UVWtA5T/XKagZKGziFB214WUFZohU2/uhVPUBgoxmR5quXFiQcVPv7l1chAAJcgbU5t5ceA13PG7OkaL59k9BcUWvUB7kxvMnJ1bR4oZotQl0p+7U9wSYFuAQ=
+	t=1759443046; cv=none; b=X9OfU7hfV2incwVxgifmd4TWbF38sX7PFX8UO4QL/fGxE24QhH98Bhc0bPn/YxMkXLkRlqcjj+Gu94vUP7dlJCLwS3Mihzr8aPvgttrmJvHK3QJb5ycLQhYcdkh516G7Y2RFy79rNl2VHI6MjdlAVHWYbvQonu6ew0VWwwO6ANY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759442857; c=relaxed/simple;
-	bh=l9PRSkbOjbx0wvtEpYGBAC3hbhyKfaeWce4pvuSbQx0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f/ieUXT5szYhpfcTTCQusQsU1NvZEAUzN9W8oIHBmAcNerCN0GcY0gdwNqrwbLRaahQlFQGlEyda7LVR8EPt541K1XBc0mvCAXNSIlRPjaVfue8fVZOq0T7/7dxMrVuP9z3ZSoHIBKb//jshy2FgCU2kvSj67SqGyjGSekoFkEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=AqOHoEGj; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [192.168.0.88] (192-184-212-33.fiber.dynamic.sonic.net [192.184.212.33])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 57DAA211B7CF;
-	Thu,  2 Oct 2025 15:07:29 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 57DAA211B7CF
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1759442849;
-	bh=xao0TbEt05A1Jnsh0i7O5sFYiMY/ojUq1im/BfgOwWs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=AqOHoEGjS9LxyxRg0pHXUeETMaK7Ee5xZr/jWadxdFPSF+OK1t9+2iowHEHKP5Ovh
-	 2d1opguXm/jHio3AKfpruIlXIlE+dAFxXS4vin7q/s6EE6Jc6qC00BDDElsHVc/BEc
-	 HIF3Q0s/+53BSY/1vgf+IKi+rSht/duDqRWsrMd4=
-Message-ID: <f6835c8e-70de-7bd0-f116-0a4eae0ef29c@linux.microsoft.com>
-Date: Thu, 2 Oct 2025 15:07:28 -0700
+	s=arc-20240116; t=1759443046; c=relaxed/simple;
+	bh=GWw8IAiEAcMR7AL+JCvqAXtD85hNwLZ6n9Dh+9ioVSI=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=hw6+LKT633spAcl9e1O+TX0mXW5ESpl3zBjy+3VNJXpmI4V2fPJUKC4IdqaPK5JBSTvunfPPeQySIkK/WsbPRbxGro2lux74W9c9V+vokdLTPwPGJ0lEUb7qqgbtT579I/qeamAAiKu7SPsgOTByGRuL+LeYY8PlLfgZUP6AvM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=h7Ccc6C9; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-78106e63bc9so1726751b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 15:10:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759443044; x=1760047844; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xi8/GlubGIEdZ+duqPrIqBmO1DB/k+E0Kj0HX5P5EcY=;
+        b=h7Ccc6C9e8f9ZlUklPjNNa4+SXs4Zm0/SChX9uoZLOd6h8L07Wtl3IGjDwahvwDuSe
+         kSML8pYnnytbrAY2OPvDydNtoXyC7p63X/jW0a10/gKZB/mtCiFCZ+9J2ZyGvgrHjzgM
+         wfmTd9+qBE/Hmk3JMjHKUHz9ccVOdf3UBF4M08FfIq4rosFq0ETMwkjmFQ4W33as2BgY
+         8W7yxuSyvGgj/fYOl1UVCll10tCHfH+8ld0+89YRJf4zZRQb1BwR9eu5Wnxxj+5PKy5u
+         ymdvPoDgcw0sLiTFnjpcKVetNxKzUJDyWyvWnofkd7cvs3TsQ2qzOfhS3Zlerhh/oWLa
+         ssRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759443044; x=1760047844;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xi8/GlubGIEdZ+duqPrIqBmO1DB/k+E0Kj0HX5P5EcY=;
+        b=WnyqtBmjRdYqDGdOiZmx5tftGK4ymDeFrAy4KWOkyNhOrr40ZfZ9/FsInhVqNU4jR1
+         SDINIp0kooqQhZG8KDHHD2gmvFJw/b5dIk222GPTzwlMZzf0GgiJytNR1BpgcX5efWbN
+         Q8J+tBBN6dOqbsFuicyU6sDiTQZsAP8JKSvGYXC5udLbFlsmSvVGxi8UwwDllxqL9Kbr
+         vqBD/l08wpy+dQhAvNCT7VjazveYWu8iQZsllS2mYsMx2nPOi8NemihDzBfEkLK4XwtU
+         oXgkdzzIe1C0BmyzjeF3L7EB37lgvxCMUCkZZbkXZRru4oa/aP3lPUiRYv8WO8v3DwCR
+         dsPg==
+X-Forwarded-Encrypted: i=1; AJvYcCVjx2ixD4NykO8H7VLs1GSTHK6q0CwgUnfkOuu6ZCIFIAVihFM/OecS0fsws5qTT4raYeG6KSWah1z9v+E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKIBoclgS5BG9yOgd8WN6iJXbI8C4dBPLWUQ9PqyOIVXoh9TYb
+	myB62KD3pHxWny3waCifXpfLj1/ER1fF4GxdtnyAUdGiVN2tJQW4gV5yeLnA8W7C2BNCqmia0WA
+	1fb9neA==
+X-Google-Smtp-Source: AGHT+IFY2COPi/SI+2tZew45JFEEDJ5/bh8axBRWt3QhZcBrGQw8oD/D+HMrLzc+u2Hnjo1OVXWBB8HiVDo=
+X-Received: from pfbgm5.prod.google.com ([2002:a05:6a00:6405:b0:78a:f444:b123])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:84a:b0:781:d21e:136f
+ with SMTP id d2e1a72fcca58-78c98deac4cmr1265878b3a.26.1759443043713; Thu, 02
+ Oct 2025 15:10:43 -0700 (PDT)
+Date: Thu, 2 Oct 2025 15:10:42 -0700
+In-Reply-To: <9a9db594cc0e9d059dd30d2415d0346e09065bb6.1747264138.git.ackerleytng@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.1
-Subject: Re: [PATCH v2 5/6] x86/hyperv: Implement hypervisor RAM collection
- into vmcore
-Content-Language: en-US
-To: Wei Liu <wei.liu@kernel.org>
-Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arch@vger.kernel.org, kys@microsoft.com, haiyangz@microsoft.com,
- decui@microsoft.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, arnd@arndb.de
-References: <20250923214609.4101554-1-mrathor@linux.microsoft.com>
- <20250923214609.4101554-6-mrathor@linux.microsoft.com>
- <20251002214236.GC925245@liuwe-devbox-debian-v2.local>
-From: Mukesh R <mrathor@linux.microsoft.com>
-In-Reply-To: <20251002214236.GC925245@liuwe-devbox-debian-v2.local>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <cover.1747264138.git.ackerleytng@google.com> <9a9db594cc0e9d059dd30d2415d0346e09065bb6.1747264138.git.ackerleytng@google.com>
+Message-ID: <aN74Yt0XvOkRPnFh@google.com>
+Subject: Re: [RFC PATCH v2 10/51] KVM: selftests: Refactor vm_mem_add to be
+ more flexible
+From: Sean Christopherson <seanjc@google.com>
+To: Ackerley Tng <ackerleytng@google.com>
+Cc: kvm@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	x86@kernel.org, linux-fsdevel@vger.kernel.org, aik@amd.com, 
+	ajones@ventanamicro.com, akpm@linux-foundation.org, amoorthy@google.com, 
+	anthony.yznaga@oracle.com, anup@brainfault.org, aou@eecs.berkeley.edu, 
+	bfoster@redhat.com, binbin.wu@linux.intel.com, brauner@kernel.org, 
+	catalin.marinas@arm.com, chao.p.peng@intel.com, chenhuacai@kernel.org, 
+	dave.hansen@intel.com, david@redhat.com, dmatlack@google.com, 
+	dwmw@amazon.co.uk, erdemaktas@google.com, fan.du@intel.com, fvdl@google.com, 
+	graf@amazon.com, haibo1.xu@intel.com, hch@infradead.org, hughd@google.com, 
+	ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz, 
+	james.morse@arm.com, jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, 
+	jhubbard@nvidia.com, jroedel@suse.de, jthoughton@google.com, 
+	jun.miao@intel.com, kai.huang@intel.com, keirf@google.com, 
+	kent.overstreet@linux.dev, kirill.shutemov@intel.com, liam.merwick@oracle.com, 
+	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, maz@kernel.org, 
+	mic@digikod.net, michael.roth@amd.com, mpe@ellerman.id.au, 
+	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es, 
+	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com, 
+	paul.walmsley@sifive.com, pbonzini@redhat.com, pdurrant@amazon.co.uk, 
+	peterx@redhat.com, pgonda@google.com, pvorel@suse.cz, qperret@google.com, 
+	quic_cvanscha@quicinc.com, quic_eberman@quicinc.com, 
+	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com, quic_pheragu@quicinc.com, 
+	quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com, richard.weiyang@gmail.com, 
+	rick.p.edgecombe@intel.com, rientjes@google.com, roypat@amazon.co.uk, 
+	rppt@kernel.org, shuah@kernel.org, steven.price@arm.com, 
+	steven.sistare@oracle.com, suzuki.poulose@arm.com, tabba@google.com, 
+	thomas.lendacky@amd.com, usama.arif@bytedance.com, vannapurve@google.com, 
+	vbabka@suse.cz, viro@zeniv.linux.org.uk, vkuznets@redhat.com, 
+	wei.w.wang@intel.com, will@kernel.org, willy@infradead.org, 
+	xiaoyao.li@intel.com, yan.y.zhao@intel.com, yilun.xu@intel.com, 
+	yuzenghui@huawei.com, zhiquan1.li@intel.com
+Content-Type: text/plain; charset="us-ascii"
 
-On 10/2/25 14:42, Wei Liu wrote:
-> On Tue, Sep 23, 2025 at 02:46:08PM -0700, Mukesh Rathor wrote:
-> [...]
->> +
->> +/*
->> + * This is the C entry point from the asm glue code after the devirt hypercall.
-> 
-> devirt -> devirtualization
-> 
->> + * We enter here in IA32-e long mode, ie, full 64bit mode running on kernel
->> + * page tables with our below 4G page identity mapped, but using a temporary
->> + * GDT. ds/fs/gs/es are null. ss is not usable. bp is null. stack is not
->> + * available. We restore kernel GDT, and rest of the context, and continue
->> + * to kexec.
->> + */
-> [...]
->> +
->> +static noinline __noclone void crash_nmi_callback(struct pt_regs *regs)
->> +{
->> +	struct hv_input_disable_hyp_ex *input;
->> +	u64 status;
->> +	int msecs = 1000, ccpu = smp_processor_id();
->> +
->> +	if (ccpu == 0) {
->> +		/* crash_save_cpu() will be done in the kexec path */
->> +		cpu_emergency_stop_pt();	/* disable performance trace */
->> +		atomic_inc(&crash_cpus_wait);
->> +	} else {
->> +		crash_save_cpu(regs, ccpu);
->> +		cpu_emergency_stop_pt();	/* disable performance trace */
->> +		atomic_inc(&crash_cpus_wait);
->> +		for (;;)
->> +			cpu_relax();
->> +	}
->> +
->> +	while (atomic_read(&crash_cpus_wait) < num_online_cpus() && msecs--)
->> +		mdelay(1);
->> +
->> +	stop_nmi();
->> +	if (!hv_has_crashed)
->> +		hv_notify_prepare_hyp();
->> +
->> +	if (crashing_cpu == -1)
->> +		crashing_cpu = ccpu;		/* crash cmd uses this */
->> +
->> +	hv_hvcrash_ctxt_save();
->> +	hv_mark_tss_not_busy();
->> +	hv_crash_fixup_kernpt();
->> +
->> +	input = *this_cpu_ptr(hyperv_pcpu_input_arg);
->> +	memset(input, 0, sizeof(*input));
->> +	input->rip = trampoline_pa;
->> +	input->arg = devirt_arg;
->> +
->> +	status = hv_do_hypercall(HVCALL_DISABLE_HYP_EX, input, NULL);
->> +
-> 
-> If I understand this correctly, after this call, upon return from the
-> hypervisor, Linux will start executing the trampoline code.
+On Wed, May 14, 2025, Ackerley Tng wrote:
+> enum vm_mem_backing_src_type is encoding too many different
+> possibilities on different axes of (1) whether to mmap from an fd, (2)
+> granularity of mapping for THP, (3) size of hugetlb mapping, and has
+> yet to be extended to support guest_memfd.
 
-correct.
+I don't disagree (I added the FIXME after all), but IMO what you've done here
+doesn't improve the situation, it just punts the mess to tests, i.e. lets the
+guest_memfd_conversions test do its thing, but doesn't actually improve anything.
 
+A test has no business dealing with details about "installing" memory or even
+mapping the memslot.  The whole point of the core library is to deal with those
+details so they don't need to be copy+pasted.  Adding a gmem-backed memslot
+shouldn't require this much effort:
 
->> +	hv_panic_timeout_reboot();
-> 
-> Why is this needed? Is it to catch the case when the hypercall fails?
-  
-correct.
+	region = vm_mem_region_alloc(vm);
+
+	guest_memfd = vm_mem_region_install_guest_memfd(region, guest_memfd);
+	mem = vm_mem_region_mmap(region, memslot_size, MAP_SHARED, guest_memfd, 0);
+	vm_mem_region_install_memory(region, memslot_size, PAGE_SIZE);
+
+	region->region.slot = GUEST_MEMFD_SHARING_TEST_SLOT;
+	region->region.flags = KVM_MEM_GUEST_MEMFD;
+	region->region.guest_phys_addr = GUEST_MEMFD_SHARING_TEST_GPA;
+	region->region.guest_memfd_offset = 0;
+
+	vm_mem_region_add(vm, region);
+
+Again, I agree vm_mem_add() is a mess.  But overall, this is a big step backwards.
+
+> ---
+>  .../testing/selftests/kvm/include/kvm_util.h  |  29 +-
+>  .../testing/selftests/kvm/include/test_util.h |   2 +
+>  tools/testing/selftests/kvm/lib/kvm_util.c    | 429 +++++++++++-------
+>  tools/testing/selftests/kvm/lib/test_util.c   |  25 +
+>  4 files changed, 328 insertions(+), 157 deletions(-)
+
+It's also not reviewable.  There is far, far too much going on here.  This is
+quite obviously not one logical change.  The changelog is appropriate for the
+cover letter of a decently large series, not for a patch that touches core code
+of the selftests.
+
+The massive refactoring is also unnecessary, at least for conversions.  With some
+prep renames to shorten line lengths, all that is needed at this time is to dup()
+the gmem_fd into region->fd when the gmem_fd can be mmap()'d.  It's not just a
+clever hack, it's also how we want gmem to be used going forward; and for non-CoCo
+VMs, it's the _only_ sane way to use gmem.
+
+The only scenario where a test would want to shove a different userspace address
+into the memslot is a test that deliberately tests that exact scenario.  And that
+sort of thing belongs in a test; core code should only concern itself with the
+scenario that 99 of usage will want.
+
+With this, the test can do:
+
+	vm_mem_add(vm, VM_MEM_SRC_SHMEM, gpa, slot, nr_pages,
+		   KVM_MEM_GUEST_MEMFD, -1, 0, gmem_flags);
+
+	t->gmem_fd = kvm_slot_to_fd(vm, slot);
+	t->mem = addr_gpa2hva(vm, gpa);
+	virt_map(vm, GUEST_MEMFD_SHARING_TEST_GVA, gpa, nr_pages);
+
+---
+ tools/testing/selftests/kvm/include/kvm_util.h           | 7 ++++++-
+ tools/testing/selftests/kvm/lib/kvm_util.c               | 9 +++++----
+ .../selftests/kvm/x86/private_mem_conversions_test.c     | 2 +-
+ 3 files changed, 12 insertions(+), 6 deletions(-)
+
+diff --git a/tools/testing/selftests/kvm/include/kvm_util.h b/tools/testing/selftests/kvm/include/kvm_util.h
+index 45159638d5dd..de8ae9be1906 100644
+--- a/tools/testing/selftests/kvm/include/kvm_util.h
++++ b/tools/testing/selftests/kvm/include/kvm_util.h
+@@ -678,7 +678,7 @@ void vm_userspace_mem_region_add(struct kvm_vm *vm,
+ 				 uint32_t flags);
+ void vm_mem_add(struct kvm_vm *vm, enum vm_mem_backing_src_type src_type,
+ 		uint64_t gpa, uint32_t slot, uint64_t npages, uint32_t flags,
+-		int guest_memfd_fd, uint64_t guest_memfd_offset);
++		int gmem_fd, uint64_t gmem_offset, uint64_t gmem_flags);
  
+ #ifndef vm_arch_has_protected_memory
+ static inline bool vm_arch_has_protected_memory(struct kvm_vm *vm)
+@@ -711,6 +711,11 @@ void *addr_gva2hva(struct kvm_vm *vm, vm_vaddr_t gva);
+ vm_paddr_t addr_hva2gpa(struct kvm_vm *vm, void *hva);
+ void *addr_gpa2alias(struct kvm_vm *vm, vm_paddr_t gpa);
+ 
++static inline int kvm_slot_to_fd(struct kvm_vm *vm, uint32_t slot)
++{
++	return memslot2region(vm, slot)->fd;
++}
++
+ #ifndef vcpu_arch_put_guest
+ #define vcpu_arch_put_guest(mem, val) do { (mem) = (val); } while (0)
+ #endif
+diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
+index 885a0dd58626..196af025e833 100644
+--- a/tools/testing/selftests/kvm/lib/kvm_util.c
++++ b/tools/testing/selftests/kvm/lib/kvm_util.c
+@@ -944,7 +944,7 @@ void vm_set_user_memory_region2(struct kvm_vm *vm, uint32_t slot, uint32_t flags
+ /* FIXME: This thing needs to be ripped apart and rewritten. */
+ void vm_mem_add(struct kvm_vm *vm, enum vm_mem_backing_src_type src_type,
+ 		uint64_t gpa, uint32_t slot, uint64_t npages, uint32_t flags,
+-		int gmem_fd, uint64_t gmem_offset)
++		int gmem_fd, uint64_t gmem_offset, uint64_t gmem_flags)
+ {
+ 	int ret;
+ 	struct userspace_mem_region *region;
+@@ -1028,7 +1028,6 @@ void vm_mem_add(struct kvm_vm *vm, enum vm_mem_backing_src_type src_type,
+ 
+ 	if (flags & KVM_MEM_GUEST_MEMFD) {
+ 		if (gmem_fd < 0) {
+-			uint32_t gmem_flags = 0;
+ 			TEST_ASSERT(!gmem_offset,
+ 				    "Offset must be zero when creating new guest_memfd");
+ 			gmem_fd = vm_create_guest_memfd(vm, mem_size, gmem_flags);
+@@ -1049,7 +1048,9 @@ void vm_mem_add(struct kvm_vm *vm, enum vm_mem_backing_src_type src_type,
+ 	}
+ 
+ 	region->fd = -1;
+-	if (backing_src_is_shared(src_type))
++	if (flags & KVM_MEM_GUEST_MEMFD && gmem_flags & GUEST_MEMFD_FLAG_MMAP)
++		region->fd = kvm_dup(gmem_fd);
++	else if (backing_src_is_shared(src_type))
+ 		region->fd = kvm_memfd_alloc(region->mmap_size,
+ 					     src_type == VM_MEM_SRC_SHARED_HUGETLB);
+ 
+@@ -1116,7 +1117,7 @@ void vm_userspace_mem_region_add(struct kvm_vm *vm,
+ 				 uint64_t gpa, uint32_t slot, uint64_t npages,
+ 				 uint32_t flags)
+ {
+-	vm_mem_add(vm, src_type, gpa, slot, npages, flags, -1, 0);
++	vm_mem_add(vm, src_type, gpa, slot, npages, flags, -1, 0, 0);
+ }
+ 
+ /*
+diff --git a/tools/testing/selftests/kvm/x86/private_mem_conversions_test.c b/tools/testing/selftests/kvm/x86/private_mem_conversions_test.c
+index 1969f4ab9b28..41f6b38f0407 100644
+--- a/tools/testing/selftests/kvm/x86/private_mem_conversions_test.c
++++ b/tools/testing/selftests/kvm/x86/private_mem_conversions_test.c
+@@ -399,7 +399,7 @@ static void test_mem_conversions(enum vm_mem_backing_src_type src_type, uint32_t
+ 	for (i = 0; i < nr_memslots; i++)
+ 		vm_mem_add(vm, src_type, BASE_DATA_GPA + slot_size * i,
+ 			   BASE_DATA_SLOT + i, slot_size / vm->page_size,
+-			   KVM_MEM_GUEST_MEMFD, memfd, slot_size * i);
++			   KVM_MEM_GUEST_MEMFD, memfd, slot_size * i, 0);
+ 
+ 	for (i = 0; i < nr_vcpus; i++) {
+ 		uint64_t gpa =  BASE_DATA_GPA + i * per_cpu_size;
 
-> [...]
->> +static void __noclone hv_crash_stop_other_cpus(void)
->> +{
->> +	static bool crash_stop_done;
->> +	struct pt_regs lregs;
->> +	int ccpu = smp_processor_id();
->> +
->> +	if (hv_has_crashed)
->> +		return;		/* all cpus already in NMI handler path */
->> +
->> +	if (!kexec_crash_loaded()) {
->> +		hv_notify_prepare_hyp();
->> +		hv_panic_timeout_reboot();	/* no return */
->> +	}
->> +
->> +	/* If hyp crashes also, we could come here again before cpus_stopped is
-> 
-> hypervisor or hv (given the same term is used in the function)
-> 
->> +	 * set in crash_smp_send_stop(). So use our own check.
->> +	 */
->> +	if (crash_stop_done)
->> +		return;
->> +	crash_stop_done = true;
->> +
->> +	/* Linux has crashed: hv is healthy, we can ipi safely */
-> 
-> IPI.
-> 
->> +
->> +err_out:
->> +	unregister_nmi_handler(NMI_LOCAL, "hv_crash_nmi");
->> +	pr_err("Hyper-V: only linux (but not hyp) kdump support enabled\n");
-> 
-> hypervisor not hyp. This is a message for the user so we should be as
-> clear as possible.
-
-> Wei
-> 
->> +}
->> -- 
->> 2.36.1.vfs.0.0
->>
-
+base-commit: 3572aeafd53394f4bf0a61d79c5c1b8cfccc3860
+--
 
