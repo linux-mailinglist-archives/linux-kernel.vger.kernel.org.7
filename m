@@ -1,147 +1,365 @@
-Return-Path: <linux-kernel+bounces-839736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC201BB2484
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 03:37:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D983BB2493
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 03:41:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 989861C64E2
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 01:37:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAE731C3CC8
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 01:41:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 125CD135A53;
-	Thu,  2 Oct 2025 01:37:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F26A1386B4;
+	Thu,  2 Oct 2025 01:41:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VuBLd/tD"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="HIuA2QYd"
+Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013058.outbound.protection.outlook.com [40.93.201.58])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B13F5A59
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 01:37:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759369068; cv=none; b=kg2Sbss8I9wgQWy5s7VvkAopDRlBhBGCNRUKwqLBzyE2vLUdpmK6SPJXbizSpCndovsyg5J4OswDllux7P0AIRndPX2jpd4avqDpWQWGpifF9HBhUXP9yDnRdOKCbzh/vI5LlEQ73SI5qMVr+LSoqAsAn3e70zrhTxeXIukmP28=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759369068; c=relaxed/simple;
-	bh=LMkdtzViwyUWMomnf2k71aZvoLTDVva+cK4Gpdmjgsc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WrIa7ZwbmpFXpI1cRoFpJAs+kOEhJfYpfzW6/46Y1CqFp6H7fL+OVLPJKwm+1NYuMYlWg4cDTFxClu7T5eSEX6GFYMp6LdrllJ5vRoaqV0huLqQYOUNb5dADtt1sazpwQesmgR9HnR23KbEXFA1We08Qn2aL0TDz/+imoSaPLyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VuBLd/tD; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3ee64bc6b85so365728f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 18:37:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759369065; x=1759973865; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rUsweFKMStD+GhCJN1r57gPem6qJDj51RqfNuzsKQug=;
-        b=VuBLd/tDYORyI7Bt8BAx0cGUYieMhOqDJ4Ao7sdwMxlb5dgiqRplbDtIP/9YogEYuA
-         569tfsf0vrnU3sDLFgk/8HPcWqhqqaeNLadfhy0Q7KWaJrOGQcdRuGCs6cQMdqe+hUGO
-         e3WdCY0hVk9xrPi6L+ukrg9oIN376fWjIaHmf3mrQ/cxZN/iEKkhlIuwOYJPE+S6OC8t
-         2J5XMQ5HFb0+pfwiM9rDjClSMHN58m6edChYSPOfo9NjFpSqXIKi2KmOOiHLTAluqBBt
-         eWaWibRmOggOLHEXoYZBpu8hqidinmJIEIQM+cXQSm4s8zAQXHy9Pr6X2mbgjWxfMilD
-         pPPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759369065; x=1759973865;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rUsweFKMStD+GhCJN1r57gPem6qJDj51RqfNuzsKQug=;
-        b=WpPm5Jg+FHdUGAVvNEWZAmuSYgW9TxfNNWpFi/+hiG25dlVvI7f0roHmC2tby+TGuS
-         so7R7RCMbYrXaLyMtHcH2DZT4R6yO8cA2mKua9qJH9ZQENLN7vvjNrnF/kMVmTamhQD4
-         kefR4iDlQ+BDYdH1eaq+E+upveLWLQZ9Ui4Sb3pptN+8qiGPUjhPTVUEfV7JOsMPNxAo
-         xIyskGe+5w+zPWQaJXGZjrGDjEt1VHkAWnuLefrtwXOrGZMjQAgKVsJEvcoZAQBqloG6
-         bqJEszSk4Y5fNoh/0YPtH+ezzfrkxNDzgb5XrfrHyyQkrIHCzpfyT9yWEWfzP/QyHnIx
-         Qvfw==
-X-Forwarded-Encrypted: i=1; AJvYcCWY3XcSjRVHd0MAOYfMTY8ZB4Jd5QPHPmACM+qp/FlW8obU9CJ2xmUdtTqWM4Rku0B5GH5hAs1iZAuV+og=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAeZJt2GCcYMfvqNVbqTIEXVcL3yvveiQxq2klWFZAcWxbIp/V
-	PY7+vY8//EJP0lMudqJt1mNclSEFPNhTQkPHggr0ub0EQHH0Mwa9V4IQjxni+jHNQNSht38NE4a
-	CTGhVRiYuPy75uo6t0Wk5UDges/Bx9p8=
-X-Gm-Gg: ASbGnct6Fiv16p0PB5VT+cpYwjH5lfbbmYpHmmVq7RCZba41wK5fjJQvqGspCx5JUk4
-	QXH8gVD6ehjcxoek1cVC1mWh9VmD7SpWZLwlvqsJRwqrGB/1P/XwNUL4oFFJpvGvD3qTxOCTMeL
-	4z+IsQbM2NhDdZK8nUCGMpmnCUQCltk1JrPgWDtbIn6tYO+PVok8kHpUQ/lY6YiTsDzJ33Nlrz2
-	5qg3AX7FkbnTrcaGJ/rcfG2g4ESjdOkhmetkO0iyboUsE7sjguCqjBohCnC
-X-Google-Smtp-Source: AGHT+IG/dN6zvZqsW0OdR7QDCo1V90vHvvKNaxbAtuxb51eq9XzcaiuivECud599UAl62Cb3osddY+RXONgelTJz0k4=
-X-Received: by 2002:a05:6000:401f:b0:3ea:fb3d:c4cb with SMTP id
- ffacd0b85a97d-4255781ec0cmr4273967f8f.56.1759369064909; Wed, 01 Oct 2025
- 18:37:44 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 843DC28E5;
+	Thu,  2 Oct 2025 01:41:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.58
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759369295; cv=fail; b=N5XGMBVRD7fGpH8xbrvFoP/DQPtcYnt4+rxk5wFQe/IINfH2gG3rLFaHxryT1nXsvaHZDsPCMAyWhGmUmKFykDcssGnoR2CL2jYcjjxxm+KxIQdSawEbvt+IMqZXFAg8HQz7xwyT+qX0TyoC1kOnegnj1ZMM6xSVVJ3F1FAAc0k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759369295; c=relaxed/simple;
+	bh=69kkjfWUCAOCYCQvUjQPCgGCrTaDe27H3+C7DKDGyGE=;
+	h=Content-Type:Date:Message-Id:To:Cc:Subject:From:References:
+	 In-Reply-To:MIME-Version; b=NpJDC5Rl9mcrDFoRwLY9bBJOvUr00gNqlhszc4Bm654vSUlBgD05gbFxa2RpgpR/o4jgsllLDHVEnsKtMskTH+yF5BOQaQpvAGLihKvN1k5DYpTz0lDbB4+PlXB7aqFG4P4bU61JzrDT/4ivAR+trWqUQqxaEyFSlLwduH8j60g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=HIuA2QYd; arc=fail smtp.client-ip=40.93.201.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=eyWEJ1z6c8o1F0dRUN9argPsb/9HmzKOKcQB5e+FoyFdwTvSmwrXvEjiXf5DhbbyASY+HZx2Nd2kkVQ4tHUFbQ2K1OTJBrc9XZ4K0BQdaqpy1kkXS9tbSS5jLTEu0F6AnrujSKUbLXeayr5bv1syN32q5J+RKfdUjUtqJkie2DbS6tb5WCvgyqeGkNGTO10fKqHKiUZp/WaskSQWcPd9wwN3pXyTNmrP98i1+W/eEPijkGHbGhSabqQmI2f/bpzIhoF7hYxMp7AUYpEdwkfSog+8DTRLkNcPxGu01747q+2jJ7RkleNgVGKw76qrGhIMA58D4q9FC4ChG0LsUh8e8g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=EO3bYMWbRLO1Jm0CCLOmGU1akGc5jXSDjAgXH+qEUAY=;
+ b=lp+YXqS+qRBe0Ci+Gfe2HW85mus2SPSGOFopi8BE6DJszcw7D/P9IcDoBoAMSmEKtTA4hgcV9uKkJ/3nr/N3emrzXZ+xXsd/rodsRtlFndBGR8k+yOPZV7wVmZCbAXMgc9bgHhmUgfRyxj2vyzN4tv1X/5osdp5+N8U4Wv6oGI+siKIlUUzcUYYQP4yRWnptFmZrkDnyyJMwSEFL/131xQoGuDhwV+HMfGhgLyW/gEXIcRqvzzJdHEsXPRhv8pT7LU2KPvzRfECl+6l88UmsBd2rjDrIwymBFmxZ6vpMwlss0VI+ssKwSO0KsffvKb/AL5/Xfbd0X+IpX/gXEOO3bw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EO3bYMWbRLO1Jm0CCLOmGU1akGc5jXSDjAgXH+qEUAY=;
+ b=HIuA2QYd8+CHneOFFt21mUV0kolUCHOrQq6WuF9GUv4hn0fItpxzAIDdtICAIjSQHv0FaeFy5gl1V01l3HyK2/2iu8SHoDmJp0TeM9KesEKzR11CtNeB/WWBmShLQIOVj64rLDIk1x2pfxkCqkxhKaJ/VSqtB/hoXW++QyJfw35zwnmQ8OM3W8aYEH0gtMcmLl8wirnC2MFAejbRByThpkCIJnti9YM9HXllyl1aSM1n5FX94yo53Uyr5/O4h0AaoYc14+fGjtGujjDA6mw/gI7ulzheWFUCZEYVqik2vmrNe2NCRzmHjd2l5857wMozRYKQ+iDZB/wFU/3u/OiGSg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by SN7PR12MB7953.namprd12.prod.outlook.com (2603:10b6:806:345::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.18; Thu, 2 Oct
+ 2025 01:41:25 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9160.017; Thu, 2 Oct 2025
+ 01:41:25 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 02 Oct 2025 10:41:22 +0900
+Message-Id: <DD7GCYCZU3P3.1KK174S7MQ5BW@nvidia.com>
+To: "Joel Fernandes" <joelagnelf@nvidia.com>,
+ <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <dri-devel@lists.freedesktop.org>, <dakr@kernel.org>, <acourbot@nvidia.com>
+Cc: "Alistair Popple" <apopple@nvidia.com>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "David Airlie" <airlied@gmail.com>,
+ "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
+ <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>, "John Hubbard"
+ <jhubbard@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
+ <joel@joelfernandes.org>, "Elle Rhumsaa" <elle@weathered-steel.dev>, "Yury
+ Norov" <yury.norov@gmail.com>, "Daniel Almeida"
+ <daniel.almeida@collabora.com>, "Andrea Righi" <arighi@nvidia.com>,
+ <nouveau@lists.freedesktop.org>
+Subject: Re: [PATCH v5 6/9] rust: bitfield: Add KUNIT tests for bitfield
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20250930144537.3559207-1-joelagnelf@nvidia.com>
+ <20250930144537.3559207-7-joelagnelf@nvidia.com>
+In-Reply-To: <20250930144537.3559207-7-joelagnelf@nvidia.com>
+X-ClientProxiedBy: TYCP301CA0015.JPNP301.PROD.OUTLOOK.COM
+ (2603:1096:400:386::17) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <7fa58961-2dce-4e08-8174-1d1cc592210f@paulmck-laptop> <20251001144832.631770-8-paulmck@kernel.org>
-In-Reply-To: <20251001144832.631770-8-paulmck@kernel.org>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Wed, 1 Oct 2025 18:37:33 -0700
-X-Gm-Features: AS18NWBgVlCvZ9l0ZgunWqeXdx6ozQ63phiSdeymw8QQUjFb87BpmWz9Dq8KGY4
-Message-ID: <CAADnVQLozKuSPMe4qUDxCV6pCSQ=rQNKy524K7R=uM5yTpLV0Q@mail.gmail.com>
-Subject: Re: [PATCH v2 08/21] rcu: Add noinstr-fast rcu_read_{,un}lock_tasks_trace()
- APIs
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: rcu@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-	Kernel Team <kernel-team@meta.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, bpf <bpf@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|SN7PR12MB7953:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4cb3c525-a1b7-46ec-f3c0-08de0154cc77
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|10070799003|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?M0VNRmsvMzVLcStFelZrZ08zL2t2dmd4M2RWTlliUGl5d0k0eUFqaXFhdk54?=
+ =?utf-8?B?YUdncXpVTkozMHRZRVcvb1l6a3ZENHZZVHJOQ2QrTit2YXRZaW9hbVdFY1ZB?=
+ =?utf-8?B?TGtXV2EzTXgzUmRsYUFQdEF6Z0dxYTd0QlJZRlNTaDN5UElyNWR2bVFCSkdv?=
+ =?utf-8?B?bFhNSEI0RFptY0IxMHBUZUVPOENEVFU0RzJmZmVIOTRralpYeUowQ1Q1ZURK?=
+ =?utf-8?B?eWVvbThSNEdPZE13VkFRT295SXR6ak1sbDk1L2VLTnMxNmszYmdVQW0xM0lP?=
+ =?utf-8?B?b0hFL2pmOUp4djhLWU12UXI1UGs1OHNZd1BsM1YvZ3NxWERsNWovVkU2T3Fm?=
+ =?utf-8?B?UGVXT2dRUDZYWXFZMEhvSERGNm5YbXVLM3lkNGkrN01PUE9kWk9SdHhqMER6?=
+ =?utf-8?B?dGtvcXBNTGprdDFjZHhDN2FmRXk5aS85WE8zSFc1V0c1OEpITUVGNlFyOWZF?=
+ =?utf-8?B?R0ZEZlBLUzMza1Z5ejVRMFFRWkVLeTRaSEJlcDU1VU5ZdkhOVU1MSUcvYmVv?=
+ =?utf-8?B?WUV1ckhaTm5zWDF4cnJTRXFqaXNPbTcyZkMrSDJDRnAvMjNDVXR5NnM3TVhp?=
+ =?utf-8?B?QUZpbS9VK2kxUThReXZ4TGFuZXR5S0FRL2FHVFBneFBwVGRBZVZnUzBheHY1?=
+ =?utf-8?B?RHBCSnhITTVWemx5VElMTzZSR1c0c05hWUFtVHlRYk4xQjF0ekNhczRCTStQ?=
+ =?utf-8?B?Y1BsYUg3bjJSNE1LbW1WbjRyRkFwVlZ4T2txeHBzUlliSXV6K3VPNU0yQTZa?=
+ =?utf-8?B?QWh4OUtIa1RjZ2Q1YWNUSFlRcW9ZWG9WMjhEbHh0VjI3RmdWZ3RtMVJiMkdx?=
+ =?utf-8?B?b3MyS0Q4d1k1U3NBN010TlE4a1dqNXMwOXJYeG1PdFVBS1A5VjJ2L3VyMEE5?=
+ =?utf-8?B?eDREMUViNWNpSVVwYlk5TUFXa3NHVXFoWmZuU2picjJCTUd4N0JaTEovT0FM?=
+ =?utf-8?B?aVhkdHBvdzRKSTZJaUhGRHlvSThsZUZwbmx3NTFCemw4dUV3T2JNRjhuYVA3?=
+ =?utf-8?B?bXlhUHBEZU1tRlRtNkwrYVhubmR3MVRtNGhCY25VbGlJYXRNSGdjK1pJRGVu?=
+ =?utf-8?B?TUtpRGZhRWtGSms4S3VNdnR5Yy93L3NZUHFENU00UmdSOUxqRld3NFdGT0V2?=
+ =?utf-8?B?T3lVZXUweGc4M0F6UHl1S2RESHpjY2plYU5ZQW8yMlJUbVA3QWZtZHgxaUZv?=
+ =?utf-8?B?YVZWQUtPemtIWFNMWHJGb0M2ZE5ReWt1dzQ5SzlQcjlwUDNxRnBRUWtUUkRU?=
+ =?utf-8?B?M3ZQRXZQMlR4YlprS1ZWL05VWTRwWXFidStNSjVoanZoc05uSDhNWHg4R25U?=
+ =?utf-8?B?YUloS1MwQTRZS05MR1VWWUdJTXVpYlFoL3lVc213QjJQNGpMSkcyNVJHL1By?=
+ =?utf-8?B?ZjVsYjNEVXpVTFVyc2NQNU5GL3NMN0lBTFNudUdPdVVaN29UL2ZsZnBNTDU5?=
+ =?utf-8?B?UTA2ZkpwRTlGMXEzS1dZVnZTMU0rZE9PVWhlUDgyNVExVEN2ckhicTQ3d2hQ?=
+ =?utf-8?B?aHZzZFFKbW90NTJCOWhsMFgyTHA3YlJtVXV0YUFZc3IyNFdackkwWC8yYjdZ?=
+ =?utf-8?B?Witxd0pDVVd3aTlBWFVGQk1RUDlwMXR6RlJ2djcxZS9sU2pDNlltWkJkdkw1?=
+ =?utf-8?B?MTFvOUdDT0hubFJLbHRiRWdkVzFscUtOKzFKS3E2UUVaVi9iZVFzRzZVUXMv?=
+ =?utf-8?B?UG96MW5xTXZobzFCeFV6UmJMY3ZVS204NlVVb1ZrM2FMQ25xaWwzUFdhS0g3?=
+ =?utf-8?B?VForL1V5VVpnSFRPb0JVenlRTm0vSGY0WGwvQ2NTM3U2bk5tcURheHA5TmlG?=
+ =?utf-8?B?cFFsWndmamNQOEdtSHVHbXZKSmEvQXpkU3IyNmpSMGdHdWpmMkcrZldpMnVW?=
+ =?utf-8?B?NTA3UWVQS3JsSWFVT3U5ejJtMjNva1hyU29GSTliVFNHZFF3QXJ2QktiREhC?=
+ =?utf-8?Q?lx5wKjrDubaSRKB8kakC0kYvOV3cZ92l?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(10070799003)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WDlmTDk0WWhYaGRITlNSY1NjRnZRQllRZXlCdzdTZUcrV3ZFdDJuRnNUcmkx?=
+ =?utf-8?B?Z0pTeG96cU9FVnZhUm5wWjdYQkpHYVBiOC9yNXY3YktsWXNiaFp2Nnd6NEtM?=
+ =?utf-8?B?eWc4N0IvVVpDVDA5MHAvem9RTkY5SkZXeVF5OFhaMGdVbFlXZWdoNmw3bDI3?=
+ =?utf-8?B?TXJWb3hzc3FrSWlHZ3EyYndaMEswKzQxVGZVeWt2cHAzYmpmRGpVbmpkNVVG?=
+ =?utf-8?B?U1NOdFRTZWZtUnVUWXN4NDlxbWNmL2V6aTl3WkNUdWVicTIxc1loT0hVNXJL?=
+ =?utf-8?B?eHp2ZWdMcDM2TjVKWVgrQnpIalRTaGl3eWh2NG0zU3hMQ1JkM2pBY09YelpM?=
+ =?utf-8?B?Z1VISkZ3UTJkdDJDTEdRSFp6d2Nhb2cxYlJHLytkYjJsSyt5YlFCREJnM0E4?=
+ =?utf-8?B?QzlIL0ttZUh5ZVVpTyttNXN4UDRpWmMzbElIbzZacEZXSTBqU0xuOWowMlFr?=
+ =?utf-8?B?aExCdjd3NmJVVWZZdmMrVTlzNGRETnNFZnRKVXREam1LbEV4M1NzVDNwdlRT?=
+ =?utf-8?B?elhoYllmWGcrVml1bXJoYnZBaklZbGtxSERkS2RRbkVyRytCTzN4bWl3a1RQ?=
+ =?utf-8?B?V0FtRnVxQmZaVWZWTWcxTVg0VkhGWWE5d2d3N05sYy8zTVN3czQ2V3JqbzlB?=
+ =?utf-8?B?cjV5ZnRnaHgrVkJPWmRLTXA5QjAvYU5TMnFOMC83SGdhSzVZUkVSYTNTbFFh?=
+ =?utf-8?B?a0tFYTIwQ3g2cFVOUDhhVlM0MlJiU0FQeUwvQ2ZITE1MbmZGWk5Tam5lVWVH?=
+ =?utf-8?B?QUlaVzFrQjBYVW1FbUlhOWVDMll2OS9zc1lZSWVJUnM4V3R4SGJMK1hjdWtY?=
+ =?utf-8?B?bEV2cFlKVEFuYXVudStjUDJtOWFINk9FdldEQ3Y1dEIwd3ppZjNQQzV5d0VP?=
+ =?utf-8?B?OXltVWlWUG8wTVZqVDUxMXZ5cHVnWGcwUWMydVd6SjdmSmtBeXVFUkhZb1B4?=
+ =?utf-8?B?L3NiQzBNMlBZYThoMktyTExiTVY3WjJjMUNZVUIwMkUxNlVFVEcrTTdWOXFD?=
+ =?utf-8?B?SEEvQWdTajBJTFR1Y2FUVTBpZnRmcmNTQUpFVWwrTUI3NDZobHYvRmdaSVkr?=
+ =?utf-8?B?d3pXRkZhUUNTSGgwbEdQUGRZR1Jtc2oyVmIycDZVdFpYUmFEVnc0RXlOQ3Ey?=
+ =?utf-8?B?Ly9vbU1Db1FLL1Rrck5MVkhmakZJdHZtNmV4elN0OTE0czV1Z0d0UjhYZEtu?=
+ =?utf-8?B?NzNGTnBMcnlTU3ZBVFhVZEM2ejgwb0hnU2I5WTN6cmhFL0dJV1Y4TGJhc1pi?=
+ =?utf-8?B?KzJhd1dkUGZrM29UNElacW4rMXpnV0NoTUd1Nnc4ay8wOUhQS0xTVjBVM1d5?=
+ =?utf-8?B?bmdZekF5RlVhazUwZHZCUWJVb00rS1NQSVNvRVp4c1dZSWFFOHlNQytLa3JY?=
+ =?utf-8?B?VnZWcG40VnJ4T3cwMTRybXZtdW9DbHFKQ3ExWFA5UE4ya0pITFlESTRaYy9t?=
+ =?utf-8?B?SnNQQUZERFNSeFIyUDNyblZkczk2Zjc3RnBBbU5NZEhNTG9zdHo4SlpKQVJO?=
+ =?utf-8?B?Wkd0bi9QR3BTYW02UC94aFR4aVEySVB3Q1FkVHJ1b3hIYWw3RVYzQ0VJbC9l?=
+ =?utf-8?B?c1ViNFIzK0tETWV6ZXJYOGtpSVVtRWtjVmxVb21OU1VwOVJyVVBMdTlYNkND?=
+ =?utf-8?B?bk92dEMwN2VmbHFQalQyT3hZbHRFSXRnTSs4WERUQ0t5VFZkWE9VV0k5WHBP?=
+ =?utf-8?B?WmRycHdtUVRtdjFzZjhUdmxoMU95U2ZRUlYwazJCNHVDYnRURS84SWR6TmF2?=
+ =?utf-8?B?R2dnL1RDbytJbkVnbHhGQVcwYnZCcUVzSmVHUWJqMnVrTHRVT0kzTUVieXNj?=
+ =?utf-8?B?Skh6K0hjcFg2ZUdka0F2ck5Fdmw0bC9YVk9mWDl3TEY0L3UrbWxadFZ0Smpt?=
+ =?utf-8?B?ZzBqT1Z6c0QySTdUTTZDd05lOGRYZ1VEenArZUdCbEF2cWQxc0RvQmR1M3FX?=
+ =?utf-8?B?MVRpZXgvaGZVTTBiSXBGRWxhRTNiNGttMmp6eUI5UUs5SnNmeXJJVDNsaUtw?=
+ =?utf-8?B?NnB1emRIbEhtSnJZdEJCeEprVVlJZXZDQUcxWE1kdHZmNTRyZEhJeVREenB6?=
+ =?utf-8?B?bzRtb0NybjFHeDhRM0FWdStNODkwbUp4ekJUMS9CQWVSQWtxR3dmdEpyOXEw?=
+ =?utf-8?B?Y3F2amVlVTdlOXBRN0VuYVZ0bGNzYU5KUEZkM29KMmNxdDJKYWpTQnhxQWRW?=
+ =?utf-8?Q?8pidY7oWs9ecBBYPI4zbDUmv615gC80erE3kBjWON2hY?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4cb3c525-a1b7-46ec-f3c0-08de0154cc77
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Oct 2025 01:41:25.5102
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ZIGqh5BLgg9VthwpEQfavwpf58VLTBTfA9A6MSrvZ1LEJ7TmReqRCz6Arrsv6YA3AsTOhz3W3srn47rpmsRJ/g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7953
 
-On Wed, Oct 1, 2025 at 7:48=E2=80=AFAM Paul E. McKenney <paulmck@kernel.org=
-> wrote:
+On Tue Sep 30, 2025 at 11:45 PM JST, Joel Fernandes wrote:
+> Add KUNIT tests to make sure the macro is working correctly.
 >
-> +static inline struct srcu_ctr __percpu *rcu_read_lock_tasks_trace(void)
-> +{
-> +       struct srcu_ctr __percpu *ret =3D __srcu_read_lock_fast(&rcu_task=
-s_trace_srcu_struct);
-> +
-> +       rcu_try_lock_acquire(&rcu_tasks_trace_srcu_struct.dep_map);
-> +       if (!IS_ENABLED(CONFIG_TASKS_TRACE_RCU_NO_MB))
-> +               smp_mb(); // Provide ordering on noinstr-incomplete archi=
-tectures.
-> +       return ret;
-> +}
-
-...
-
-> @@ -50,14 +97,15 @@ static inline void rcu_read_lock_trace(void)
->  {
->         struct task_struct *t =3D current;
+> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
+> ---
+>  rust/kernel/bitfield.rs | 321 ++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 321 insertions(+)
 >
-> +       rcu_try_lock_acquire(&rcu_tasks_trace_srcu_struct.dep_map);
->         if (t->trc_reader_nesting++) {
->                 // In case we interrupted a Tasks Trace RCU reader.
-> -               rcu_try_lock_acquire(&rcu_tasks_trace_srcu_struct.dep_map=
-);
->                 return;
->         }
->         barrier();  // nesting before scp to protect against interrupt ha=
-ndler.
-> -       t->trc_reader_scp =3D srcu_read_lock_fast(&rcu_tasks_trace_srcu_s=
-truct);
-> -       smp_mb(); // Placeholder for more selective ordering
-> +       t->trc_reader_scp =3D __srcu_read_lock_fast(&rcu_tasks_trace_srcu=
-_struct);
-> +       if (!IS_ENABLED(CONFIG_TASKS_TRACE_RCU_NO_MB))
-> +               smp_mb(); // Placeholder for more selective ordering
+> diff --git a/rust/kernel/bitfield.rs b/rust/kernel/bitfield.rs
+> index fed19918c3b9..9a20bcd2eb60 100644
+> --- a/rust/kernel/bitfield.rs
+> +++ b/rust/kernel/bitfield.rs
+> @@ -402,3 +402,324 @@ fn default() -> Self {
+>          }
+>      };
 >  }
+> +
+> +#[::kernel::macros::kunit_tests(kernel_bitfield)]
+> +mod tests {
+> +    use core::convert::TryFrom;
+> +
+> +    // Enum types for testing =3D> and ?=3D> conversions
+> +    #[derive(Debug, Clone, Copy, PartialEq)]
+> +    enum MemoryType {
+> +        Unmapped =3D 0,
+> +        Normal =3D 1,
+> +        Device =3D 2,
+> +        Reserved =3D 3,
+> +    }
+> +
+> +    impl Default for MemoryType {
+> +        fn default() -> Self {
+> +            MemoryType::Unmapped
+> +        }
+> +    }
 
-Since srcu_fast() __percpu pointers must be incremented/decremented
-within the same task, should we expose "raw" rcu_read_lock_tasks_trace()
-at all?
-rcu_read_lock_trace() stashes that pointer within a task,
-so implementation guarantees that unlock will happen within the same task,
-while _tasks_trace() requires the user not to do stupid things.
+Tip: you can add `Default` to the `#[derive]` marker of `MemoryType` and
+mark the variant you want as default with `#[default]` instead of
+providing a full impl block:
 
-I guess it's fine to have both versions and the amount of copy paste
-seems justified, but I keep wondering.
-Especially since _tasks_trace() needs more work on bpf trampoline
-side to pass this pointer around from lock to unlock.
-We can add extra 8 bytes to struct bpf_tramp_run_ctx and save it there,
-but set/reset run_ctx operates on current anyway, so it's not clear
-which version will be faster. I suspect _trace() will be good enough.
-Especially since trc_reader_nesting is kinda an optimization.
+    #[derive(Debug, Default, Clone, Copy, PartialEq)]
+    enum MemoryType {
+        #[default]
+        Unmapped =3D 0,
+        Normal =3D 1,
+        Device =3D 2,
+        Reserved =3D 3,
+    }
+
+> +
+> +    impl TryFrom<u8> for MemoryType {
+> +        type Error =3D u8;
+> +        fn try_from(value: u8) -> Result<Self, Self::Error> {
+> +            match value {
+> +                0 =3D> Ok(MemoryType::Unmapped),
+> +                1 =3D> Ok(MemoryType::Normal),
+> +                2 =3D> Ok(MemoryType::Device),
+> +                3 =3D> Ok(MemoryType::Reserved),
+> +                _ =3D> Err(value),
+> +            }
+> +        }
+> +    }
+> +
+> +    impl From<MemoryType> for u64 {
+> +        fn from(mt: MemoryType) -> u64 {
+> +            mt as u64
+> +        }
+> +    }
+> +
+> +    #[derive(Debug, Clone, Copy, PartialEq)]
+> +    enum Priority {
+> +        Low =3D 0,
+> +        Medium =3D 1,
+> +        High =3D 2,
+> +        Critical =3D 3,
+> +    }
+> +
+> +    impl Default for Priority {
+> +        fn default() -> Self {
+> +            Priority::Low
+> +        }
+> +    }
+> +
+> +    impl From<u8> for Priority {
+> +        fn from(value: u8) -> Self {
+> +            match value & 0x3 {
+> +                0 =3D> Priority::Low,
+> +                1 =3D> Priority::Medium,
+> +                2 =3D> Priority::High,
+> +                _ =3D> Priority::Critical,
+> +            }
+> +        }
+> +    }
+> +
+> +    impl From<Priority> for u16 {
+> +        fn from(p: Priority) -> u16 {
+> +            p as u16
+> +        }
+> +    }
+> +
+> +    bitfield! {
+> +        struct TestPageTableEntry(u64) {
+> +            0:0       present     as bool;
+> +            1:1       writable    as bool;
+> +            11:9      available   as u8;
+> +            13:12     mem_type    as u8 ?=3D> MemoryType;
+> +            17:14     extended_type as u8 ?=3D> MemoryType;  // For test=
+ing failures
+> +            51:12     pfn         as u64;
+> +            51:12     pfn_overlap as u64;
+> +            61:52     available2  as u16;
+> +        }
+> +    }
+> +
+> +    bitfield! {
+> +        struct TestControlRegister(u16) {
+> +            0:0       enable      as bool;
+> +            3:1       mode        as u8;
+> +            5:4       priority    as u8 =3D> Priority;
+> +            7:4       priority_nibble as u8;
+> +            15:8      channel     as u8;
+> +        }
+> +    }
+> +
+> +    bitfield! {
+> +        struct TestStatusRegister(u8) {
+> +            0:0       ready       as bool;
+> +            1:1       error       as bool;
+> +            3:2       state       as u8;
+> +            7:4       reserved    as u8;
+> +            7:0       full_byte   as u8;  // For entire register
+> +        }
+> +    }
+> +
+> +    #[test]
+> +    fn test_single_bits() {
+> +        let mut pte =3D TestPageTableEntry::default();
+> +
+> +        assert!(!pte.present());
+> +        assert!(!pte.writable());
+> +
+> +        pte =3D pte.set_present(true);
+> +        assert!(pte.present());
+> +
+> +        pte =3D pte.set_writable(true);
+> +        assert!(pte.writable());
+> +
+> +        pte =3D pte.set_writable(false);
+> +        assert!(!pte.writable());
+> +
+> +        assert_eq!(pte.available(), 0);
+> +        pte =3D pte.set_available(0x5);
+> +        assert_eq!(pte.available(), 0x5);
+
+I'd suggest testing the actual raw value of the register on top of
+invoking the getter. That way you also test that:
+
+- The right field is actually written (i.e. if the offset is off by one,
+  the getter will return the expected result even though the bitfield
+  has the wrong value),
+- No other field has been affected.
+
+So something like:
+
+    pte =3D pte.set_present(true);
+    assert!(pte.present());
+    assert(pte.into(), 0x1u64);
+
+    pte =3D pte.set_writable(true);
+    assert!(pte.writable());
+    assert(pte.into(), 0x3u64);
+
+It might look a bit gross, but it is ok since these are not doctests
+that users are going to take as a reference, so we case improve test
+coverage at the detriment of readability.
+
 
