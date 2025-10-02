@@ -1,166 +1,150 @@
-Return-Path: <linux-kernel+bounces-840582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2757BB4B84
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 19:40:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0958EBB4B90
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 19:43:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 842D7167EE0
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 17:40:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A444219E46E2
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 17:44:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E15A12737F4;
-	Thu,  2 Oct 2025 17:40:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 032A2274B59;
+	Thu,  2 Oct 2025 17:43:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tMs+zvMv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="H3I0W44v"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38DA84501A;
-	Thu,  2 Oct 2025 17:40:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D264D2749E0;
+	Thu,  2 Oct 2025 17:43:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759426814; cv=none; b=DVb3hHnCiMCECCtcHeh5f6JQ8OsxB87oCiVA4cy71z+nkryVT1Ii9GSbI/TYkoxg/jayV4Xoa7FcBY0RlDd7URIeebw/ofc6wuBlFvU7t5zzwiTUEWK0fY/cQ3bAe6U34XavjpRtAEY5+EYo9jQUnVSvNFJLCLcOStMgUHFNaCo=
+	t=1759427006; cv=none; b=p0gNxS6AKiaIvWdpEEhcQcNCc0O2c0DZr5W+UMJ9EPpQQ4oj7jLbbV+eFa1jBgTV3Rlu3NSRTws3DbXnhsYzvm9HZFCEpMxpHMeq1xrKjI9wuUW09yIfS2b9r2f301672V4aRxpoFa9O1TOVxEjfdPpFG4mxB/tAhHRFm+dZv/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759426814; c=relaxed/simple;
-	bh=oYrJIA6vkpZceZ0M4mLdsW2GlBt5dZV94uJaeXi0tbw=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
-	 References:In-Reply-To; b=HmOemIFfLugswg3v+5sXGgVmzvKxHLjFUXXmVVnLgpp0h2AP53Kk2Qsz+xEb9hhKv3QhNPLIL7RzVySHcGtS247bb2JaLXky9Et/Loi/NOEl1orRDi3StJxG49EDLbnUz0dbXo28Z4aNDa47cDdZmxubEgeW5drJ/TlWqrPSEYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tMs+zvMv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48285C4CEF4;
-	Thu,  2 Oct 2025 17:40:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759426814;
-	bh=oYrJIA6vkpZceZ0M4mLdsW2GlBt5dZV94uJaeXi0tbw=;
-	h=Date:From:Subject:Cc:To:References:In-Reply-To:From;
-	b=tMs+zvMve/ExgwSR4GhJRVFojCHnCjw6KsVJvq7zKVIqlvrLizd4h4L7T+SuaEFn/
-	 uWJ4QHe7cbigKndSLyAa5/1m/W7nucbm2fkjaJ+nr/D/qCByUap9cW5IluD1SZsawQ
-	 0mNiDqDSJOgShiOTsX6VynxmTpHlmnMCMeVEiLTSdLXWTaEhHbmyyEHYTD27i05ElT
-	 gCEoAgmYoyNOwkaJbz/ao3M4CbG+nM2a7CQR+QyNB5Pi+QHPWkP/3ST7Ie0AnnN8Wd
-	 rMJb2zVXKIK8TstdDYQ4NqWpLjp9L5YOZ7Ms2QyrSNstEqZxuDu8zvSIn/4Su1B3AP
-	 R1O74Jlt8l4kQ==
+	s=arc-20240116; t=1759427006; c=relaxed/simple;
+	bh=NIT5wDqV8woLQiSPOPYTXbuCcenXuPaJCJos0Up77UU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YHhdhuQO8j0rPI2LAVCKJU8cb/Zf5dE/WaZxH3GB1nW0SzNQnNwU7C2nWGLtveTOw8K85Ue0dRTmzcghIB2OogxnEMBW8RlkF6yYIKh5jTMNrWXTEorJcmIhzX9vkaNzuKAnJ9guTE6YHUZOsJLX0wnE4o33lBxK5pvC/u8K+Mw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=H3I0W44v; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 592AHxAN011590;
+	Thu, 2 Oct 2025 17:43:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=nssoqpINitCeMvSG/7exWcv5JhvRmA
+	H+O1b4zrZmRUU=; b=H3I0W44vgQOoBQAVnr5v114A2rYnOfg58Lfo2uJ8WjbGP6
+	CPwu0Foewlx7hghKLzxlRb4oh1j4fsnQ8PhAzHPhESiHo4whV0BitX3z4k6AcKXx
+	MmeWQwd6yz+Rj9X80ZGsMtMjyRa4sgsnGmh//fqBKIsSjeHXT2rynJxht+1XXo7n
+	mfy2A+UclMMIcf1FTpIZEpgRuWsHPB0LdRcosVHCG9rduvYOLuiweyFrvqDptqkn
+	fLD471JijfzhIjUndoGRuXWHkqX3eRno+2MJkPod7iRSjYnzouatG3//bcKfFC/J
+	nMxscuuTCGzTsirDczSNg2WArRpRSB4dMGoHc34Q==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49e7jwwn7x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 02 Oct 2025 17:43:01 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 592HgKYj021924;
+	Thu, 2 Oct 2025 17:43:01 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49e7jwwn7t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 02 Oct 2025 17:43:01 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 592GG7EW020064;
+	Thu, 2 Oct 2025 17:43:00 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 49et8sf9xf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 02 Oct 2025 17:43:00 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 592Hgw8I52560326
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 2 Oct 2025 17:42:59 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DB25B20043;
+	Thu,  2 Oct 2025 17:42:58 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 202C320040;
+	Thu,  2 Oct 2025 17:42:57 +0000 (GMT)
+Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.39.17.59])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu,  2 Oct 2025 17:42:56 +0000 (GMT)
+Date: Thu, 2 Oct 2025 23:12:54 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: "Theodore Ts'o" <tytso@mit.edu>
+Cc: linux-ext4@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>,
+        Zhang Yi <yi.zhang@huawei.com>, linux-kernel@vger.kernel.org,
+        "Darrick J . Wong" <djwong@kernel.org>
+Subject: Re: [PATCH 2/2] fsmap: use blocksize units instead of cluster units
+Message-ID: <aN65nsxrpMoK33h5@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+References: <cover.1757058211.git.ojaswin@linux.ibm.com>
+ <d332ed2f90a0c8533139741d25e7fc1935773e14.1757058211.git.ojaswin@linux.ibm.com>
+ <20250926123536.GA12175@mit.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 02 Oct 2025 19:40:07 +0200
-Message-Id: <DD80R10HBCHR.1BZNEAAQI36LE@kernel.org>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH v2 1/2] rust: pci: skip probing VFs if driver doesn't
- support VFs
-Cc: "John Hubbard" <jhubbard@nvidia.com>, "Alexandre Courbot"
- <acourbot@nvidia.com>, "Joel Fernandes" <joelagnelf@nvidia.com>, "Timur
- Tabi" <ttabi@nvidia.com>, "Alistair Popple" <apopple@nvidia.com>, "Zhi
- Wang" <zhiw@nvidia.com>, "Surath Mitra" <smitra@nvidia.com>, "David Airlie"
- <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Alex Williamson"
- <alex.williamson@redhat.com>, "Bjorn Helgaas" <bhelgaas@google.com>,
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, "Miguel
- Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun
- Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
- <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
- Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- <nouveau@lists.freedesktop.org>, <linux-pci@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>, "LKML" <linux-kernel@vger.kernel.org>
-To: "Jason Gunthorpe" <jgg@nvidia.com>
-References: <20251002020010.315944-1-jhubbard@nvidia.com>
- <20251002020010.315944-2-jhubbard@nvidia.com>
- <20251002121110.GE3195801@nvidia.com>
- <DD7TWUPD83M9.5IO0VX7PP1UK@kernel.org>
- <20251002123921.GG3195801@nvidia.com>
- <DD7UVCEVB21H.SQ00WZLLPINP@kernel.org>
- <20251002135600.GB3266220@nvidia.com>
- <DD7XKV6T2PS7.35C66VPOP6B3C@kernel.org>
- <20251002152346.GA3298749@nvidia.com>
- <DD7YQK3PQIA1.15L4J6TTR9JFZ@kernel.org>
- <20251002170506.GA3299207@nvidia.com>
- <DD80P7SKMLI2.1FNMP21LJZFCI@kernel.org>
-In-Reply-To: <DD80P7SKMLI2.1FNMP21LJZFCI@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250926123536.GA12175@mit.edu>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAyNSBTYWx0ZWRfXxy4BW5fwSuZF
+ PUJhOvA3WZTPQ8C5WHk4p7OWuowoC7BnaIhXVd795czHMNJG4lcmzbWXQr5gJszQ+86yACfa+ci
+ yz66vVWzQEuDNrmDnjstQjz6n5pyEL1N7R85YaGGfUAXD2U6pdaMa6fE3y0WLCbIWtPIuwrHUoH
+ uRkaiisXBHP+MKWJLUMtKIka0gOpCdfXRsqcX1o3bQ7K1yEod/Wt2dy0smd8VrNvfSQcn1tBgXM
+ tCwrAsbv1tC+kxVCGqsaMQlkxOXeK4+doszMTac/qAOCgrpNsdsTGn8xxblaVVpyPTju09X7Q4I
+ c7FiXTySZ8jzE1aFMffJ3BxXfRLXa1EqycpTYOu44X6S5ssHAc5ezbZl/u8YhUF6Q0PS4D4Pt8H
+ BFGMV49bXNlHXWjl9A/2pA+/cW3eVQ==
+X-Proofpoint-ORIG-GUID: qc5L8To2Q2bZg9qHRNojDkm6SopP61Oz
+X-Proofpoint-GUID: AVllfxe1H5COGzXBlri5ltQf5xbdQrU4
+X-Authority-Analysis: v=2.4 cv=GdUaXAXL c=1 sm=1 tr=0 ts=68deb9a5 cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
+ a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=eOGLbINAkHJCJ0LyVhEA:9
+ a=CjuIK1q_8ugA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-02_06,2025-10-02_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 clxscore=1015 phishscore=0 adultscore=0 priorityscore=1501
+ malwarescore=0 spamscore=0 bulkscore=0 impostorscore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270025
 
-On Thu Oct 2, 2025 at 7:37 PM CEST, Danilo Krummrich wrote:
-> On Thu Oct 2, 2025 at 7:05 PM CEST, Jason Gunthorpe wrote:
->> On Thu, Oct 02, 2025 at 06:05:28PM +0200, Danilo Krummrich wrote:
->>> On Thu Oct 2, 2025 at 5:23 PM CEST, Jason Gunthorpe wrote:
->>> > This is not what I've been told, the VF driver has significant
->>> > programming model differences in the NVIDIA model, and supports
->>> > different commands.
->>>=20
->>> Ok, that means there are some more fundamental differences between the =
-host PF
->>> and the "VM PF" code that we have to deal with.
->>
->> That was my understanding.
->> =20
->>> But that doesn't necessarily require that the VF parts of the host have=
- to be in
->>> nova-core as well, i.e. with the information we have we can differentia=
-te
->>> between PF, VF and PF in the VM (indicated by a device register).
->>
->> I'm not entirely sure what you mean by this..
->>
->> The driver to operate the function in "vGPU" mode as indicated by the
->> register has to be in nova-core, since there is only one device ID.
->
-> Yes, the PF driver on the host and the PF (from VM perspective) driver in=
- the VM
-> have to be that same. But the VF driver on the host can still be a seapar=
-ate
+On Fri, Sep 26, 2025 at 08:35:36AM -0400, Theodore Ts'o wrote:
+> On Fri, Sep 05, 2025 at 01:44:47PM +0530, Ojaswin Mujoo wrote:
+> > Currently, ext4's implementation of fsmap converts the ranges to cluster
+> > units if bigalloc is enabled and then converts to block units whenever
+> > needed. However, this back and forth conversion has known to cause
+> > several edge case issues since even with bigalloc the metadata is still
+> > in block size unit....
+> 
+> This commit causes ext4/028 to fail with a 1k blocksize.  The failure
+> happens after just under 45 minutes; before this commit, ext4/028
+> would complete after a second.
+> 
+> Do you have a preference regarding whether I just drop this commit, or
+> drop the whole series?  The previous patch looks fine to me and fixes
+> a real problem, so my plan is to keep the 1/2 commit and drop this
 > one.
->
->>> > If you look at the VFIO driver RFC it basically does no mediation, it
->>> > isn't intercepting MMIO - the guest sees the BARs directly. Most of
->>> > the code is "profiling" from what I can tell. Some config space
->>> > meddling.
->>>=20
->>> Sure, there is no mediation in that sense, but it needs quite some setu=
-p
->>> regardless, no?
->>>
->>> I thought there is a significant amount of semantics that is different =
-between
->>> booting the PF and the VF on the host.
->>
->> I think it would be good to have Zhi clarify more of this, but from
->> what I understand are at least three activites comingled all together:
->>
->>  1) Boot the PF in "vGPU" mode so it can enable SRIOV
->
-> Ok, this might be where the confusion above comes from. When I talk about
-> nova-core in vGPU mode I mean nova-core running in the VM on the (from VM
-> perspective) PF.
->
-> But you seem to mean nova-core running on the host PF with vGPU on top? T=
-hat of
-> course has to be in nova-core.
->
->>  2) Enable SRIOV and profile VFs to allocate HW resources to them
->
-> I think that's partially in nova-core and partially in vGPU; nova-core pr=
-oviding
-> the abstraction of the corresponding firmware / hardware interfaces and v=
-GPU
-> controlling the semantics of the resource handling?
->
-> This is what I thought vGPU has a secondary part for where it binds to no=
-va-core
-> through the auxiliary bus, i.e. vGPU consisting out of two drivers actual=
-ly; the
-> VFIO parts and a "per VF resource controller".
 
-Forgot to add: But I think Zhi explained that this is not necessary and can=
- be
-controlled by the VFIO driver, i.e. the PCI driver that binds to the VF its=
-elf.
+Hey Ted,
 
->>  3) VFIO variant driver to convert the VF into a "VM PF" with whatever
->>     mediation and enhancement needed
->
-> That should be vGPU only land.
+Thanks for pointing this out, I'll look into the failure. Sorry for the
+late reply I've been on vacation this week. 
 
+I'll get to it as soon as possible.
+
+Regards,
+ojaswin
+
+> 
+> Cheers,
+> 
+> 						- Ted
 
