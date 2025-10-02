@@ -1,119 +1,145 @@
-Return-Path: <linux-kernel+bounces-840350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01D35BB42C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 16:34:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64E98BB42CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 16:35:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABB133C647D
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 14:34:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25D1F326F65
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 14:35:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EEEE311C37;
-	Thu,  2 Oct 2025 14:34:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBA34312803;
+	Thu,  2 Oct 2025 14:34:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qVuuoU/u"
-Received: from mail-ej1-f73.google.com (mail-ej1-f73.google.com [209.85.218.73])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="cyR0cNSw"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00D5E1957FC
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 14:34:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83395311C16
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 14:34:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759415677; cv=none; b=HuWVE86qvw+ca5g/oRhWbmfmLHLhQkgFrQhOaoKKmmwwFeuVeJUTbyNE9vpELnmlMHgOw5ey0rr/3a3PZpDSEBl3gQKfuct8J/Aw3J9oT1n1+uUs69+4jDeiS90pSm9YPDedbTwZ0dAM3lXO+od7OWEXb7qWZiiVt50sQF8CeAI=
+	t=1759415698; cv=none; b=a9GPXUGe+qUTM2JoAVUiAfBHcaX9H/ILpQ/NM+tVV8qcZLce4Nmv3AKt2TGDz9pKFonrwJ80Gl+vYQxqyt8qZBvAnTeBITZLbG9+P4nwpf+5eb7df0yZLohtniuI/czq8rAToZqzSGYAgHOM9bK/ZZtK7AnL5dqavyvli18yfgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759415677; c=relaxed/simple;
-	bh=v29BTQVafWnVZr/eWe5e8dNUo9xboyHnzAK3KYBxvfA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=WOo5gaDn2cuic4U98pm41hLSfJcQmMrJ8yk6AoVK6bVBsH6QW3VI1S5XM38gwQ4wMgUa0pm2iPRYh0PdrrlYSTFaYj4ltHah5wOg5WPfF5r/Mnf+DXM2fJ/2moic2Vj0O8Oonbnsiz45OWXtbnZKZOagTHK9CWiYMtCXPbDmUW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qVuuoU/u; arc=none smtp.client-ip=209.85.218.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-ej1-f73.google.com with SMTP id a640c23a62f3a-b04a8ae1409so135813866b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 07:34:35 -0700 (PDT)
+	s=arc-20240116; t=1759415698; c=relaxed/simple;
+	bh=a/A8oXHhPqzKUZBU/1bNk3QBCdhWHAye0YSYfmvBVPo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lgHl/fhBdUIcIjgEQ5lDW+qEnYbp1nQsmnmrhL3bF414913C3DS8dlaT5TjL7tNr82ezbgUoVFKP33jTln7X8V1Q6TvJ69CgRNwImQfnkANNCzQXauUOjXL34LLRzCaRgeOoH40812rNqTNFggnvwnGvf05foFQU/vH1iI2jScE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=cyR0cNSw; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-368348d30e0so10424041fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 07:34:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759415674; x=1760020474; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ccAYPxe52zBmW+CF4aFxuUujdoprfZQhiZMBpUVmHbM=;
-        b=qVuuoU/uXkFC74/1Tyc2epMIZ8Lfw91dqXRzghGLqlKZTSw7F9mXLSQqtyWTsTt2PM
-         I5VHc+wubwVLN5LN78E3Dc7ogbN9nK7uM0TOB4LPK/6vnGfDV/4R6Ns9WnEqALgqpENi
-         elEXRZXADjCXNINtKY36qPaYAaAntRl9C01mm6EXUNpXYpI4vqgvOgYlKvIhDqRoPI8L
-         s6LccjU5by+3WIn5AALB8/Gsq7nc/+SgxudnZKef5Nu2O5HUY+P/YhLf4C0SxUTQNk6d
-         vOUEVje531ageJ4rYSpThmkp6OwGw9moLZQ6o4RDCmpHkOxjvUbhGnJrmvDK7ahPzrQU
-         65eQ==
+        d=ventanamicro.com; s=google; t=1759415695; x=1760020495; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fNmlYeXHhash5zxgH9DhIdlE2KIwH0wWzhgZasITOwI=;
+        b=cyR0cNSws7qOYDO7ipx3+224M/CaFFnkTpOnJpL/d2PT6gnvqA10xYIg9QW7bblxjz
+         SUkgMB0UPCBxpTMqS8qrD+PLDr0y9MNf+GnmGvoJdMiwu7ItMgogGJUx4vjdxgxZfRm8
+         b1kxMZZSpp7ipOlohZi6G+mckATUAchF86lQsOCtO/UPrDhPrVOfUA4AX2rhbJXNAzQC
+         FC8kMTerM+F9XBcnuvAhYt8eaoWNdHMknALzPo10FOd4JdNc8N/RKxh/0vLRF/qhnnWF
+         pXrPQeEkOgc3KUwU5lE94MsI2SfmWym592N5hxQ2cB7tVNnvZ9OI5G+CiMsJ5biXhu9P
+         ZHkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759415674; x=1760020474;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ccAYPxe52zBmW+CF4aFxuUujdoprfZQhiZMBpUVmHbM=;
-        b=lzC9eq5LQKfJTPfhLCXFmizALJVZ964mhUmC1OyTkM5eipkUSUsmSq+8eL6gTguF+z
-         olBgWwQ9P5iFhiBLQiuSf58rhTO32X5/kIk6eZSWsU1PKxJnSSK6ZZYo3iKCFrcKnzGL
-         ldeJDez1jB1sBvaSYQ/1hyfYAu6JXr9PH9GDkWAyPG4cHnouMN/611lHBGbnUlvAQkmA
-         E6JB4lIDZIvMbsi2povy7luRFDIHh/+G9RtqGrrJ5Yn/CmQZ5o4AcQJZE0/kVRpufJQR
-         eu8kzO4nuBvTRb6lHleiwRhpChbqJeVhCChO7jeTDJfQH06csjR9ns+EPF+AY6Cbtqkl
-         9Rng==
-X-Forwarded-Encrypted: i=1; AJvYcCXXFWRwNRCjXESIWAe7ukN7Xqu9dSU8jVU/M0yxqE72d7YrgfY4tUeRYGtsCi1FaPnxY0FtB3fTcs0w4wQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXvrRs2+hL140Hkr5qo68Qb1YixSWuS/67R2cLDTefp//kqzK/
-	b32uDt7vcWjMFgTKlVmzBci+Kv+AbpavfJaYRMIJRCOxuWSbBNGKjxB6hhEFKc/ZBmcgYjt//hW
-	gS+4Ybjj5dUsjTw==
-X-Google-Smtp-Source: AGHT+IFdG6GPcaMbq+nXyD4vqbM1JFF0Ehtb9l8N4ZAbsP4Fg7J26kq4QoNXh1x8rjPxUFgXCopP4kBq7GBFoA==
-X-Received: from ejbbn6.prod.google.com ([2002:a17:906:c0c6:b0:b41:568b:f49d])
- (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:906:c14d:b0:b46:dbe3:e732 with SMTP id a640c23a62f3a-b46e8c7fe49mr988799866b.48.1759415673921;
- Thu, 02 Oct 2025 07:34:33 -0700 (PDT)
-Date: Thu, 02 Oct 2025 14:34:33 +0000
-In-Reply-To: <fb450443-07c3-438c-888f-30540935da15@intel.com>
+        d=1e100.net; s=20230601; t=1759415695; x=1760020495;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fNmlYeXHhash5zxgH9DhIdlE2KIwH0wWzhgZasITOwI=;
+        b=uu9zX2uHVZCB5LevfP/sHQdLYtDm7YbZ1PjpEp+6gVoJz2VtogjFuCRpRSFlafaDG2
+         PArup578pEnyuL0ooc12m/W6sA53NDkMx3AAfX67sFTzwAEri98HRdjDbQ5HoDtT64Xh
+         5gWGDasrxJ/7huKmYGGDK1QWn5qvxSwspV1DfqUPGh5/nOUscOxl1+Fp9fpb2YoqCS00
+         hOxoQpIRvUVzFL4jk8RHEvwZkW866dkEjBCEvo5xdmIZH6CWO5AP1bTvWaW+LFA1srhk
+         /Tj3zhUvD624uM6Kcx//BCa0LrFTGdm8o1A1rPw2sMHiSYczIGjzWjxazsFNAtyp20pe
+         UvFw==
+X-Forwarded-Encrypted: i=1; AJvYcCVu3Ps407kzdG9R60O6T6JmZNJEOS1Z0bajScBzzolfOsUpEKTRMPpoYAKAN3F/ofCpmQkFlAeaUL+hDVU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzh+Ydnp5Ag9VNrqBymaK0McHy/Z6VNJR9LoDX7kSstXMCEyNSe
+	VD4lRmNoj7w+Y5TUtQE2gNkabigYeOxIB92q8SdTPlZ6dclBcrEAmT6lvLe3zLa93ToqgPNR1PE
+	h3BPAwBBedHbs6iy6j9z5yynmIG1siN5FpTVBAuGveQ==
+X-Gm-Gg: ASbGnctPUYcq0TB8c1L9llYSZ0zScql+CBAgswhL+96Csymj5A1PcJtmvKYOPaweLgB
+	Xd1d1SaIOal0mg3nCO40jin2IL+H7GsdXBxds/9wIy7uUeOZNCPlGkis0pQXm2kgIftwC5NnA5z
+	43Gsh0bhjPNqOO3APELo3j6MXc0ZErmm148ZAAx92Jxmd5ccTNfnumSjBZW0ZfFetgB/FD5pZI7
+	/QEA7StnlCfQs0fO5kHyOvWol23d5a8
+X-Google-Smtp-Source: AGHT+IFt+HGidyg8l78Emkvj1EGjWohAlX0+/ZRuiXiq0rypVlyjBUdN+69ueNvffFtVc0XtC12AKJQj+2BYsW5GjDM=
+X-Received: by 2002:a2e:9a0a:0:b0:364:806d:85a6 with SMTP id
+ 38308e7fff4ca-373a7461b1cmr28467441fa.33.1759415694471; Thu, 02 Oct 2025
+ 07:34:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250924-b4-asi-page-alloc-v1-0-2d861768041f@google.com>
- <20250924-b4-asi-page-alloc-v1-6-2d861768041f@google.com> <fb450443-07c3-438c-888f-30540935da15@intel.com>
-X-Mailer: aerc 0.21.0
-Message-ID: <DD7WSY2PPABG.UK6GJ98WZS79@google.com>
-Subject: Re: [PATCH 06/21] mm/page_alloc: add __GFP_SENSITIVE and always set it
-From: Brendan Jackman <jackmanb@google.com>
-To: Dave Hansen <dave.hansen@intel.com>, Brendan Jackman <jackmanb@google.com>, 
-	Andy Lutomirski <luto@kernel.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Suren Baghdasaryan <surenb@google.com>, 
-	Michal Hocko <mhocko@suse.com>, Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>, 
-	Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>, 
-	Roman Gushchin <roman.gushchin@linux.dev>
-Cc: <peterz@infradead.org>, <bp@alien8.de>, <dave.hansen@linux.intel.com>, 
-	<mingo@redhat.com>, <tglx@linutronix.de>, <akpm@linux-foundation.org>, 
-	<david@redhat.com>, <derkling@google.com>, <junaids@google.com>, 
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>, <reijiw@google.com>, 
-	<rientjes@google.com>, <rppt@kernel.org>, <vbabka@suse.cz>, <x86@kernel.org>, 
-	<yosry.ahmed@linux.dev>
+MIME-Version: 1.0
+References: <ed37635b59b0765ed3dbed6ea33c562a40b9e287.1759243789.git.geert+renesas@glider.be>
+ <6555b47f-919b-b56c-4a76-352c904343c2@kernel.org> <20251002-rubbing-nucleus-b353e09be786@spud>
+In-Reply-To: <20251002-rubbing-nucleus-b353e09be786@spud>
+From: Anup Patel <apatel@ventanamicro.com>
+Date: Thu, 2 Oct 2025 20:04:39 +0530
+X-Gm-Features: AS18NWCbya2v7nRYZXyrCc0tzPa3O3zZxhM0w6rmVq8q6ADee_VcxRzs9PCiAGY
+Message-ID: <CAK9=C2VC2OHzNFXgxZ4eDCUv8MGsjK1OdrD0FR4WUSrOsyFemA@mail.gmail.com>
+Subject: Re: [PATCH] clk: COMMON_CLK_RPMI should depend on RISCV
+To: Conor Dooley <conor@kernel.org>
+Cc: Paul Walmsley <pjw@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rahul Pathak <rpathak@ventanamicro.com>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-clk@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed Oct 1, 2025 at 9:18 PM UTC, Dave Hansen wrote:
-> On 9/24/25 07:59, Brendan Jackman wrote:
->> +#ifdef CONFIG_MITIGATION_ADDRESS_SPACE_ISOLATION
->> +#define ___GFP_SENSITIVE	BIT(___GFP_SENSITIVE_BIT)
->> +#else
->> +#define ___GFP_SENSITIVE 0
->> +#endif
+On Thu, Oct 2, 2025 at 3:06=E2=80=AFPM Conor Dooley <conor@kernel.org> wrot=
+e:
 >
-> This is clearly one of the inflection points of the series.
+> On Wed, Oct 01, 2025 at 07:15:56PM -0600, Paul Walmsley wrote:
+> > On Tue, 30 Sep 2025, Geert Uytterhoeven wrote:
+> >
+> > > The RISC-V platform management interface (RPMI) is only available on
+> > > RISC-V platforms.  Hence add a dependency on RISCV, to prevent asking
+> > > the user about this driver when configuring a kernel for a different
+> > > architecture.
+> > >
+> > > Fixes: 5ba9f520f41a33c9 ("clk: Add clock driver for the RISC-V RPMI c=
+lock service group")
+> > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >
+> > Thanks Geert for catching this.
+> >
+> > This patch is against unmerged patches in -next.  So I'll plan to add t=
+his
+> > to the PR that I plan to send to Linus tomorrow -- unless any of the
+> > drivers/clk maintainers would prefer that I not.
+> >
+> > > And perhaps the "default RISCV" should be dropped, too?
+> >
+> > Probably.  I guess we should just add this to the arch/riscv defconfig
+> > instead.  Let's wait on this one for a few days to see if anyone has an=
+y
+> > comments, and consider that change for v6.18-rc fixes.
 >
-> To go any farther with this approach, I think it's critical to get a few
-> acks on this hunk specifically. Well, maybe not formal acked-by's, but
-> at least _clear_ agreement from at least one of:
+> There's little point having "default RISCV" if it's only available on
+> RISCV in the first place, may as well just be "default y" and be
+> simpler.
 >
-> 	MEMORY MANAGEMENT - PAGE ALLOCATOR
-> 	M:      Andrew Morton <akpm@linux-foundation.org>
-> 	M:      Vlastimil Babka <vbabka@suse.cz>
->
-> ... or this approach is dead in the water.
+> My 2c is that putting it in defconfig is barely worth doing, unless there
+> are actual platforms that use it.
+> Does QEMU provide a useful test for it that exercises the various code
+> paths, that would make it worthwhile to have in defconfig Anup?
 
-Yep, I agree. This is where the chicken-and-egg thing I mentioned in [0]
-comes into play though...
+Yes, QEMU RPMI support is in the pipeline. The OpenSBI
+upstreaming was completed few months back and Linux patches
+are going in this merge window (Linux-6.18)
 
-[0] https://lore.kernel.org/all/DD7SCRK2OJI9.1EJ9GSEH9FHW2@google.com/
+We (Ventana) have already made the QEMU RPMI implementation
+public which can be tried until QEMU RPMI upstreaming is completed.
+(Refer, dev-upstream branch of https://github.com/ventanamicro/qemu.git)
 
+NOTE: these details are mentioned in cover-letter as well.
+(Refer, https://www.spinics.net/lists/linux-clk/msg118229.html)
+
+Regards,
+Anup
 
