@@ -1,140 +1,90 @@
-Return-Path: <linux-kernel+bounces-840248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21B86BB3EF9
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 14:49:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5311CBB40F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 15:34:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B99FE189C72C
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 12:49:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8864173506
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 13:34:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8F9130FC3E;
-	Thu,  2 Oct 2025 12:49:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16720313541;
+	Thu,  2 Oct 2025 13:32:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b="jD3VPsxA"
-Received: from imap5.colo.codethink.co.uk (imap5.colo.codethink.co.uk [78.40.148.171])
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="UckBt4DN"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D5A91A9FA0
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 12:49:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.40.148.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D3031354E;
+	Thu,  2 Oct 2025 13:32:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759409357; cv=none; b=pfJ7d6kqbbMT5/gq+C5StVAC2BmY5ekU1rf9RNVs4FrEenaTU6gOzil+uiWvwN3ajtLtVGuEJMZ113iUfG31rIQGqejHyTYDK1EdokGC6SsaPVrpvxzlPMZA5KksRuLzuxZsHwOBOSHwnJWzC7EHA80dxo9xSRz03MxGdA4tcVc=
+	t=1759411945; cv=none; b=U+a6xz7FmQuyW1Oc+vBLiTgGbR0X04jfF7rRUuPjJHCho5V51Il/YZQxdtW/jXKl+JmZhmKMkI+gS6vYI+HYhoT7Q1BaYqvCvL4K+cayRd3SkVv9zVdDgdaPduGEaBKoDdKli2bKXr/AEVozEWzUvsll78/MO4lHbeClkC9mUUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759409357; c=relaxed/simple;
-	bh=dF+HMDCtAaCtk7/K/A86shLDHMc2i0cgn0sSLJEHgcI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IyFsdIbkKEKkqWZGSTrpMZgVFHCJHsS6ywZ2RRIXopEOf3FUq6XxFILknFvvqstP8D3PaLFHZlwXVzOIazl7wBqODNDoQ6lchob4T8oXeEY3B1W30i8BQTRNln0ES/xPjg9XEuZnhDrP+S/ZCbmTkbtlLuobXCwAjVfkpzSn/yc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk; spf=pass smtp.mailfrom=codethink.co.uk; dkim=pass (2048-bit key) header.d=codethink.co.uk header.i=@codethink.co.uk header.b=jD3VPsxA; arc=none smtp.client-ip=78.40.148.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=codethink.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codethink.co.uk
+	s=arc-20240116; t=1759411945; c=relaxed/simple;
+	bh=fLvK+gR231rwxLjn83oakAMnbSxSqHnABsPzdTdYSP4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Cl1Q2RIcSzuG5mtnWglN/sQ7AfJQVqIdFjv0gmGMtVkokp9bDjVgU1VT/uAtSehiK33j6YIMHCCezNm5OaXEULGcrBoHGzKCgM8Js3vY9OcEI6bdcxgpRIs4dopUTHTcYk64w0g0nUkWy8upmqjd5Y9fOzJ6wm2ol55vCle0qiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=UckBt4DN; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=codethink.co.uk; s=imap5-20230908; h=Sender:Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=QEH3pN+BQ/qdHz36ORaSzBuUuVBfDvWQjuII3QxZO2s=; b=jD3VPsxAhoILjRxyk1I37RqhtR
-	R/s4pTQdrO7vo+CUwjbnI7PGg0CnT3w2cyK2u5ob6nKPtc2xlFQpJJ7j907/tTJywfXMw9FUdBNy1
-	1Vbpwnzqmc9k5Z4qZhmHTeyT1LD3Ph2YuNp/BfkSmNyBT3N4/F/w8od20iypIOGeMnEABe4uSGgfX
-	NAWxXJHji4svOIO5dmtxguFhLShA0mn706+QFYh0WRAIJEpoDykTC+ruT8c/MzMDR/D1hmubB5OlA
-	yu5gVVsU6R86hJNkjakosszA823ps/vw+3HNR2nS4sflHxSnAc3CS7cUqEafYCy3thuxRc3pTRZI6
-	UhZXdrmg==;
-Received: from [167.98.27.226] (helo=[10.35.6.194])
-	by imap5.colo.codethink.co.uk with esmtpsa  (Exim 4.94.2 #2 (Debian))
-	id 1v4Ijn-00AxWJ-IX; Thu, 02 Oct 2025 13:48:47 +0100
-Message-ID: <3c9d9f92-aaf8-4d4d-a2d9-8d6a410edc30@codethink.co.uk>
-Date: Thu, 2 Oct 2025 13:48:47 +0100
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=JT0Wgd6gBRo4kRQgUxc7iJvWH4BOaF4WzmrNeCf/WNI=; b=UckBt4DNydk83TxpIsFZQo7BHS
+	4Bio1l1grmf1Ju2AQH5rwT5+r7nyw/L58jGkzdJT9cch5jy9R2m92xOoSWk9/oalu4Hoe3eN15ktH
+	lNqmPrdyb5PbDvHIN2oMF6GuejBVXex04DPBEPOhMVq+DnK7XIQrY86/suih/N0ZtKra6Stt1QQZx
+	kMXVJfP9+NQ9Ds27DUWwc2Lb80GQMm8KwbLadZt7Sul5O9aOD6p/3f4gbJA8qcxfhyIgGuwtUXgse
+	xEnl9Gda/uvsnjZ5Rit4Jl+pHTjKk3SgY9N+v1rutcU2W5rKfnLx0eqlqhaWXs6Rm14Vfj7Bl/1RN
+	bCoflzSg==;
+Date: Thu, 2 Oct 2025 14:51:00 +0200
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Matti Vaittinen <mazziesaccount@gmail.com>, Lee Jones <lee@kernel.org>,
+ Sebastian Reichel <sre@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, Krzysztof
+ Kozlowski <krzk@kernel.org>, Sebastian Reichel
+ <sebastian.reichel@collabora.com>
+Subject: Re: [PATCH v5 2/3] power: supply: Add bd718(15/28/78) charger
+ driver
+Message-ID: <20251002145100.2741f5dd@kemnade.info>
+In-Reply-To: <20250918-bd71828-charger-v5-2-851164839c28@kemnade.info>
+References: <20250918-bd71828-charger-v5-0-851164839c28@kemnade.info>
+	<20250918-bd71828-charger-v5-2-851164839c28@kemnade.info>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; aarch64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] RISC-V updates for v6.18-rc1
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Paul Walmsley <pjw@kernel.org>, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <2c804359-3d43-0fba-7173-a87f9aec4bd2@kernel.org>
- <066d70c7-b0a7-45e5-9337-17901bc95664@codethink.co.uk>
- <CAHk-=wgfpswvq0TypePyjv3dofO5YaUC_fSd_MjzY7jogCUnCg@mail.gmail.com>
-Content-Language: en-GB
-From: Ben Dooks <ben.dooks@codethink.co.uk>
-Organization: Codethink Limited.
-In-Reply-To: <CAHk-=wgfpswvq0TypePyjv3dofO5YaUC_fSd_MjzY7jogCUnCg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Sender: ben.dooks@codethink.co.uk
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 30/09/2025 17:04, Linus Torvalds wrote:
-> On Tue, 30 Sept 2025 at 00:25, Ben Dooks <ben.dooks@codethink.co.uk> wrote:
->>
->> Is there any chance some of the big-endian work we did is getting in
->> for this round?
+On Thu, 18 Sep 2025 09:45:10 +0200
+Andreas Kemnade <andreas@kemnade.info> wrote:
+
+> Add charger driver for ROHM BD718(15/28/78) PMIC charger block.
+> It is a stripped down version of the driver here:
+> https://lore.kernel.org/lkml/dbd97c1b0d715aa35a8b4d79741e433d97c562aa.1637061794.git.matti.vaittinen@fi.rohmeurope.com/
 > 
-> Oh Christ. Is somebody seriously working on BE support in 2025?
+> For the ease of review and to do a step-by-step approach remove all the
+> coloumb counter related stuff and do not sneak in BD71827 support. That
+> also avoids non-trivial rebasing of the above series.
 > 
-> WHY?
+> Changes besides that:
+> Replace the custom property by a standard one and do not use megaohms
+> for the current sense resistor.
 > 
-> Seriously, that sounds like just *stupid*. Is there some actual real
-> reason for this, or is it more of the "RISC-V is used in academic
-> design classes and so people just want to do endianness for academic
-> reasons"?
-> 
-> Because I'd be more than happy to just draw a line in the sand and say
-> "New endianness problems are somebody ELSES problem", and tell people
-> to stop being silly.
-> 
-> Let's not complicate things for no good reason. And there is *NO*
-> reason to add new endianness.
+> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> Acked-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> ---
+to not add more confusion: Sebastian: I think you take this for 6.19 into
+your branch. The mfd part needed is on the way into 6.18-rc1.
 
-We first tackled big-endian support on ARM32 nearly 15 years ago, and 
-drawing on that experience, we saw value in doing the same work on 
-RISC-V as a way for newer engineers to gain hands-on experience 
-contributing in the open.
-
-Now we’re starting to see commercial cores on the horizon that will have 
-the ability to be endian configured at run-time. For example, MIPS (the 
-company not the ISA) has announced they will be producing cores with 
-configurable endian (https://mips.com/products/hardware/i8500/).
-
-Note some of the patches we are proposing also make the code better, 
-such as swapping .word for .insn.
-
-> RISC-V is enough of a mess with the millions of silly configuration
-> issues already. Don't make it even worse.
-
-This feels like the price you pay for making a flexible and free 
-ecosystem to build cores. There is no single authority making you use 
-every feature that might be specified (although Ubuntu's choice to move 
-forward with RVA32 for future is a current pain for anyone who already 
-has purchased hardware).
-
-See initial reply for comment on MIPS. We also don't think this a huge 
-change and given most projects we worked through had few (if any) issues 
-with building big endian, we thought it was worth having an attempt at this.
-
-> Tell people to just talk to their therapists instead.  That's *much*
-> more productive.
-
-
-Thanks, but that isn't helpful and is just making the kernel look more 
-toxic. I am however going to wear the "I got ranted at by Linus and 
-survived" tag with pride.
-
-
-> Really.
-> 
->               Linus
-> 
-
-
--- 
-Ben Dooks				http://www.codethink.co.uk/
-Senior Engineer				Codethink - Providing Genius
-
-https://www.codethink.co.uk/privacy.html
+Regards,
+Andreas
 
