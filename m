@@ -1,101 +1,86 @@
-Return-Path: <linux-kernel+bounces-840392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8856DBB4479
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 17:13:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D481BB448E
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 17:14:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A777E7A6508
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 15:11:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCE021C76E7
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 15:14:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C9E01865FA;
-	Thu,  2 Oct 2025 15:13:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD1B018D636;
+	Thu,  2 Oct 2025 15:14:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="URld4TF5"
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eGldDdYu"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09E0386342
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 15:13:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93711175D53;
+	Thu,  2 Oct 2025 15:14:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759417992; cv=none; b=K7apBUL/r6XbTqpK/gG6jYHGTiO1xqf8QFstf+/M7WZSWi9BNPbDM1tT4EnhpZ7z18Yr0KDiQogHUeXAvcVQ1zN4EuijLrlLYFsfsABUzMPu22jY37XamCotNBUoWaBRfG5T51pdITnk+13UZzvhFLkOr3Xh9F01OGTd+NgzI20=
+	t=1759418065; cv=none; b=aF/n2ki5hN0KyRsiqJpzjqK5fY+TDn4L3b3y+GAkxP3uWLQFXsVyz+WhLk69QbnUx2Xk/XWO/3n4jlpFza22yXi7DtosxkDJzpKcsxobmyKESW1xdsisdEr0swOn7B34XOekm1AsOTr78Bmmu8YYrPdMQhdXh4Isutw3xJj6hiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759417992; c=relaxed/simple;
-	bh=XJdd5gCENWxVBNzk0LITi7rBVPLt55cKg02vaft5zSo=;
+	s=arc-20240116; t=1759418065; c=relaxed/simple;
+	bh=sjIOPYdX4qJbJxV2DmMmA4rLEpf5cDAztd85PV9jfpo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WKVTDOSpkaN+wxSmutMj29d2+SCiCUkAKa5k/94xbJvk6ZXRJig3bY71r6gv6R8T4xh/i9iAI+a0nEJILUvbwnO81cQHo9KLwF/izbgbaiJaIGyzCptBFCgPCm0pbh/BEmyq+W0r67hQFsrNSMTZLth4UVmu3Fbwxmgs9A0aJLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=URld4TF5; arc=none smtp.client-ip=209.85.222.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-85d5cd6fe9fso107994485a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 08:13:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1759417990; x=1760022790; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XJdd5gCENWxVBNzk0LITi7rBVPLt55cKg02vaft5zSo=;
-        b=URld4TF5AoXDK3xhofx2PFCGOEZK5MU7Pmx99bY6Q2YPvzW1zjGFGGVfvlq4EwrqZU
-         pcIG7uiGY5vEj33TZW/oiKjYeSuTk0wse+Xj8sbEEYkp6uNel/xvw+ohpNRDZHTisZcn
-         dBCn+Wgnq58/AJiFi5LT/o3PS8rRD9B755OS6A1PPzM0upmU6YpjmyaAP8YykyFgNLsc
-         t2GkK3T71/3eC1pBYE+FMhTS6FrawcluPVwD3iRnlkz0fgbihvyiQjw8mDJLSxjJFAjd
-         pmxrTdDKMIyQaLd3+l7xSP6vEGh6AZvs+6YK6SI5GZNyIdC7zF0BSbPGZ/HNxsJkLK9l
-         omZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759417990; x=1760022790;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XJdd5gCENWxVBNzk0LITi7rBVPLt55cKg02vaft5zSo=;
-        b=U/FK0EDaQZHS4/N/1l4JNiXpK2iGa3gIisYbKNu7orV7yLyxFqha0jvdrR6q5HYOgi
-         MSj9TyhLJQYCSauFpmRXN+ckuJ0Vw+KLICVFdaf/13OlpXJ1lTyfYG85rE0Ak4yZfwTc
-         9QHXteIKjpuQVvuVJN5CodowTXE2epP8n+CLAaWIXf15nuJ0gNplJsyTM9V4LVu+6pJN
-         vuDIdEMHk2jBEbj7+H4VM+cn1xudjVoM/QWIJrPbbebVAPjZh+aK/a8/ogGrEJeIMLSE
-         m+FlK3GXXBZYHDHGIoaGu4Pqvv65GPkW1i4OIW6EufNwc6K2ajPhk4A+650RVWua6gPp
-         Gugg==
-X-Forwarded-Encrypted: i=1; AJvYcCXEG6Gqf5MtgODPryDgCyq2exwqa3URb/wx9T8sbA+PzmaFUWAHHSIEDb7Zicec1HC0/Q1TatYVs3r1Wg0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8cKF+wjfXmuU9kTJGjXIsXmxRfodt/WbvnUfRfRddgRPtK6iu
-	lT+8dDe3+Se3pWPbKNk1uJ+M/Gfw+9wXTO2vgiGwBf6PbhHUgHRUMNxg5NFBRINrWwxW7pdbxeF
-	MegWA6DI=
-X-Gm-Gg: ASbGnctZ5EtNKl9JQp6FwBlPsVJepIkd5noObxeNINcfRoQ4MGkugI9XG3hkvKaVQPl
-	nZsiN/+wD+7Yqjh8U9Ud61fwl+BibI0DwMtb+i0pJd7a8BJzY33+IFrojOQneTLwBk+0fuPRUzo
-	Khn3fZI1jU8mPBnuHno3MKtO4Eay31dUhSdY+W7O3k1bjMbccNqZnvCRBrEa5XB/GRrUz/UzgnG
-	Yv+Sn4roQGwh4hREn318HCRTN4w08Z03lPwZ2eBQIChsgRgCZ2sojXr5vgnpscfJ9qHiR1z2HgF
-	La/FthkJHBgDbqnPqVWb2OHlUMeWxs/4HqjkEHpNvjj3S5p+m7iWUuMqNeIaz7N15PR/A36AAD4
-	zAJnA9LwQ8tQ2e1h/LrzHB/OockOkTFkunPR5p1UIivRAZM5WjiQqWuroKOYmXQsXhc/Hj4/tEt
-	1vGFBpLm3e+Bgg8VLH
-X-Google-Smtp-Source: AGHT+IG0oPe5CNlBpr3wJjmSULJ8S5uq9PiyYd4xVRPRgnIUY7cEyRWUA/GTHx85PtOoXdDh+uje/A==
-X-Received: by 2002:a05:620a:1a0c:b0:85e:5022:33b7 with SMTP id af79cd13be357-8737780ae60mr1108818085a.72.1759417989421;
-        Thu, 02 Oct 2025 08:13:09 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8777aabeac7sm224623585a.64.2025.10.02.08.13.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 08:13:08 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1v4KzU-0000000DqDS-0i6h;
-	Thu, 02 Oct 2025 12:13:08 -0300
-Date: Thu, 2 Oct 2025 12:13:08 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Mostafa Saleh <smostafa@google.com>
-Cc: Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	iommu@lists.linux.dev, maz@kernel.org, oliver.upton@linux.dev,
-	joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
-	catalin.marinas@arm.com, robin.murphy@arm.com,
-	jean-philippe@linaro.org, qperret@google.com, tabba@google.com,
-	mark.rutland@arm.com, praan@google.com
-Subject: Re: [PATCH v4 15/28] iommu/arm-smmu-v3: Load the driver later in KVM
- mode
-Message-ID: <20251002151308.GG3195829@ziepe.ca>
-References: <20250819215156.2494305-1-smostafa@google.com>
- <20250819215156.2494305-16-smostafa@google.com>
- <aMQmA9cLaeYWG5_C@willie-the-truck>
- <aNKwROPzDCWgJBGQ@google.com>
- <20250923173806.GF2547959@ziepe.ca>
- <aNppE9A3PDiDg_1W@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qu1jdunihrxX1T6TYUKKtFbk0ufo8S7G3hsAeGKIeAHbh+Od8+WFfTw9vIS6Tg95+mzO85cmxAG88kC5HKzKNnSqJN7uc1h/Ih5aYefeejUmV2l5ZVGHdUdIpX6rwg14o2EaGskf4yszHEiRdbD4/ARg2JVu7/EYTecJqTgncrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eGldDdYu; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759418063; x=1790954063;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=sjIOPYdX4qJbJxV2DmMmA4rLEpf5cDAztd85PV9jfpo=;
+  b=eGldDdYuZZXOG5MryYl21AiRX0PgbfmLRsUW+8DbFCokqIgeAKnejAZp
+   aX7PsVbEmPMChHjpHJlg/0xr7vrsXVHH6qtlGykeCceB8FcdkbLAPACQG
+   u5Po02OnTLfjOAyyDMu58t7iIMb9AJ7dEgaJ/4ghbuMLeP/R2mAUwi1L6
+   /p3RlIm9ho1ym0RGYLaWe4Na1Rjo88IRbTBA37BmWPqMz72ILcWcXFq1z
+   T2va8shKKXTbwNlCkNejpwzV9i5FCHd8SpPkzXzhzrQMwvZjYzEkzIDLX
+   SHqegAfJVymBxeVGXe0J9G8VNbK8PoN4QPccutpoCJF377JePg8kPrjSs
+   g==;
+X-CSE-ConnectionGUID: HtyZZzlPQ9yvWccXBMYvWw==
+X-CSE-MsgGUID: rBL2pvBOQwWcJ8dYiBYgOw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11570"; a="60743551"
+X-IronPort-AV: E=Sophos;i="6.18,309,1751266800"; 
+   d="scan'208";a="60743551"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2025 08:14:23 -0700
+X-CSE-ConnectionGUID: 5BV9pExnSuuVrrJk0cMXww==
+X-CSE-MsgGUID: V0+SX+9NTgi6DfL+S4+8uQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,309,1751266800"; 
+   d="scan'208";a="178339629"
+Received: from lkp-server01.sh.intel.com (HELO 2f2a1232a4e4) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 02 Oct 2025 08:14:18 -0700
+Received: from kbuild by 2f2a1232a4e4 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v4L0Z-0003tF-1P;
+	Thu, 02 Oct 2025 15:14:15 +0000
+Date: Thu, 2 Oct 2025 23:13:38 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ram Prakash Gupta <quic_rampraka@quicinc.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, dmitry.baryshkov@oss.qualcomm.com,
+	quic_rampraka@quicinc.com, quic_pragalla@quicinc.com,
+	quic_sayalil@quicinc.com, quic_nitirawa@quicinc.com,
+	quic_bhaskarv@quicinc.com, kernel@oss.qualcomm.com,
+	Sachin Gupta <quic_sachgupt@quicinc.com>
+Subject: Re: [PATCH v4 4/4] mmc: sdhci-msm: Rectify DLL programming sequence
+ for SDCC
+Message-ID: <202510022258.5n14WOx5-lkp@intel.com>
+References: <20250929113515.26752-5-quic_rampraka@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -104,23 +89,84 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aNppE9A3PDiDg_1W@google.com>
+In-Reply-To: <20250929113515.26752-5-quic_rampraka@quicinc.com>
 
-On Mon, Sep 29, 2025 at 11:10:11AM +0000, Mostafa Saleh wrote:
-> Another possible solution, to keep a device bound to the KVM driver,
-> is to probe the SMMUs from the KVM driver, then to create child devices;
-> possibly use something as device_set_of_node_from_dev to bind those to
-> the main SMMUv3 or find another way to probe the main SMMUv3 without
-> changes.
+Hi Ram,
 
-I do prefer something more like this one, I think it is nice that the
-kvm specific driver will remain bound and visible so there is some
-breadcrumbs about what happened to the system for debugging/etc.
+kernel test robot noticed the following build warnings:
 
-Not sure how to do it, but I think it should be achievable..
+[auto build test WARNING on robh/for-next]
+[also build test WARNING on krzk-dt/for-next linus/master ulf-hansson-mmc-mirror/next v6.17 next-20250929]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Maybe even a simple faux/aux device and just pick up the of_node from
-the parent..
+url:    https://github.com/intel-lab-lkp/linux/commits/Ram-Prakash-Gupta/dt-bindings-mmc-Add-dll-hsr-list-for-HS400-and-HS200-modes/20250929-193817
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+patch link:    https://lore.kernel.org/r/20250929113515.26752-5-quic_rampraka%40quicinc.com
+patch subject: [PATCH v4 4/4] mmc: sdhci-msm: Rectify DLL programming sequence for SDCC
+config: s390-allyesconfig (https://download.01.org/0day-ci/archive/20251002/202510022258.5n14WOx5-lkp@intel.com/config)
+compiler: s390-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251002/202510022258.5n14WOx5-lkp@intel.com/reproduce)
 
-Jason
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510022258.5n14WOx5-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from include/asm-generic/bug.h:22,
+                    from arch/s390/include/asm/bug.h:69,
+                    from include/linux/bug.h:5,
+                    from include/linux/mmdebug.h:5,
+                    from arch/s390/include/asm/cmpxchg.h:11,
+                    from arch/s390/include/asm/atomic.h:16,
+                    from include/linux/atomic.h:7,
+                    from include/asm-generic/bitops/atomic.h:5,
+                    from arch/s390/include/asm/bitops.h:75,
+                    from include/linux/bitops.h:67,
+                    from arch/s390/include/asm/machine.h:25,
+                    from arch/s390/include/asm/lowcore.h:13,
+                    from arch/s390/include/asm/current.h:13,
+                    from arch/s390/include/asm/preempt.h:5,
+                    from include/linux/preempt.h:79,
+                    from arch/s390/include/asm/timex.h:13,
+                    from include/linux/timex.h:67,
+                    from include/linux/time32.h:13,
+                    from include/linux/time.h:60,
+                    from include/linux/stat.h:19,
+                    from include/linux/module.h:13,
+                    from drivers/mmc/host/sdhci-msm.c:8:
+   drivers/mmc/host/sdhci-msm.c: In function 'sdhci_msm_configure_dll':
+>> include/linux/kern_levels.h:5:25: warning: format '%u' expects argument of type 'unsigned int', but argument 4 has type 'long unsigned int' [-Wformat=]
+       5 | #define KERN_SOH        "\001"          /* ASCII Start Of Header */
+         |                         ^~~~~~
+   include/linux/printk.h:486:25: note: in definition of macro 'printk_index_wrap'
+     486 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
+         |                         ^~~~
+   include/linux/printk.h:557:9: note: in expansion of macro 'printk'
+     557 |         printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
+         |         ^~~~~~
+   include/linux/kern_levels.h:11:25: note: in expansion of macro 'KERN_SOH'
+      11 | #define KERN_ERR        KERN_SOH "3"    /* error conditions */
+         |                         ^~~~~~~~
+   include/linux/printk.h:557:16: note: in expansion of macro 'KERN_ERR'
+     557 |         printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
+         |                ^~~~~~~~
+   drivers/mmc/host/sdhci-msm.c:927:33: note: in expansion of macro 'pr_err'
+     927 |                                 pr_err("%s: %s: Non standard clk freq =%u\n",
+         |                                 ^~~~~~
+
+
+vim +5 include/linux/kern_levels.h
+
+314ba3520e513a Joe Perches 2012-07-30  4  
+04d2c8c83d0e3a Joe Perches 2012-07-30 @5  #define KERN_SOH	"\001"		/* ASCII Start Of Header */
+04d2c8c83d0e3a Joe Perches 2012-07-30  6  #define KERN_SOH_ASCII	'\001'
+04d2c8c83d0e3a Joe Perches 2012-07-30  7  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
