@@ -1,183 +1,277 @@
-Return-Path: <linux-kernel+bounces-840495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8F85BB48B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 18:31:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 968FABB48BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 18:32:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20EF142449D
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 16:31:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 171E219E4643
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 16:33:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55B42264602;
-	Thu,  2 Oct 2025 16:31:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDC4215853B;
+	Thu,  2 Oct 2025 16:32:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FYlJG3L/"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XJR7j5Zp"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47E4C1E3DCF
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 16:31:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E36C1F4C87
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 16:32:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759422686; cv=none; b=ghgDE5pv8yTDrRm5bVzKf49RSGCK6oBFAdpkFag9uZSfAkcePlgJfXUi2MM4ujw57wTgnFqzgb9fYH8GQKn5DcoSO4MB57SHyIp1nWeMT669sQAFKsuDJHn9ULy8DMdoMbpEP7YRcdRIt2B12UZSJgvbGhWXioPK8pEU/x3qRms=
+	t=1759422752; cv=none; b=Dd0QzFIaJrXLgoPBPaVsMTG6Nv7xGtKFk3mQLTf351FgvEdT3s3GAYlCCvPxT4aNT6z72ZmRre18uJSGwU8filjO9tRvvtKtHkX4Lu41fa+Y51bjBqVa3sn8Va3UmA+0mpSMZuAdVHP02zNH9Uilzuk0A1ysUrTagS4krP2jADM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759422686; c=relaxed/simple;
-	bh=8vOEb57v4DeDgKuQVBnG41w5FOouthhDLWBteN3W0uw=;
+	s=arc-20240116; t=1759422752; c=relaxed/simple;
+	bh=NVfPzjoWTU07D45BcSJs5wOYo8i0CB5QK35kQXrChSQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u6ko7S/RGEmxzRh6BURPrRX16SsZJPJtDDtcAAsxg8whAigOrUutgHVf9U2RbnHAuWRuU4Tt6DowCuf7I70+WWuC6gGiZa/um7U3NW7ATlogV2VEOwhfo5m5h11+FCdjol3lVxeB6/zrk6Ms6sSEgp6y200P77cBE/2zKsNmDwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FYlJG3L/; arc=none smtp.client-ip=209.85.215.174
+	 To:Cc:Content-Type; b=ix0XRsOv4WqTzp+9CWdzYczTf7DnXOAEmafqUXMHsVHaf/zsSNrH89N94TQK7o0AyTh3Varx8gN1lmAQvTZBxRlV43mT+TLSC3Rc/Y2m/HbvuR4moYze6zkkMPxrtSBrnb80ftB4qpSeR+5F36QYbKz8MreD3ri3TxJ4vvMOU8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XJR7j5Zp; arc=none smtp.client-ip=209.85.216.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b5a631b9c82so791948a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 09:31:25 -0700 (PDT)
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-3306b83ebdaso1269548a91.3
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 09:32:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759422684; x=1760027484; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1759422750; x=1760027550; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wNacPF8Btbu5WhlG5yDeVxMJj9MDP6Ps9hs4rcuLvfU=;
-        b=FYlJG3L/F6HFKKDMR6FFsyPWlPlKvC9ndFSLCHiZrneCSrMnSwiyTxMsKsnT0KrCbT
-         ZQ03xrUiHgK7qPK+6Fmq+b2+tS/KiD08A+T78qBJrQJIHbyfkLoTy4S9cFz2lJM5ARh8
-         4u+M1ZvXUmNDsZDM7bG40ulf7dFQj0LnotOoBEgZuMCWB/8/ypgBrSOkT98A+41r4nGu
-         21jRfoskZQ7gKxzauvggO8xlmzSaI49bWQ5aKIFM9fo22EpapVx7OOYpCRvoqLjCuA4C
-         c5Unc0TKZnKlZJ60B2Wcp6agsBeZtqvRjcSoheBJ7MowWf96HCvr/HyCkyhNjVXUdNqx
-         KGJw==
+        bh=J82hEbppU5PpCA3ET4b2HIdeaLxw8NSSqjpat9l2Btg=;
+        b=XJR7j5Zp7x8SLw5kI8IBGmgQwdwnEi2iOLAepbb3H4MXHfSn6TxXzTliVKutGgyz3+
+         DMoo/UBnmBRhXnmUUVCcrSqJGs0NL4n2J1Ci8bzsS7ZecEyUK3joQzM4pmRTtoj1qoh0
+         6IfwpZdUfBxqX+jRXdLuK/tuwRcOv+0NHzFiki+cZyKZ6KdDZS+sXJQcnCoC0phTPFc8
+         X4l5SsmRkor5rtjep2jvLL1mt7M09HWgTOk+akl1Ir0VdXdWQg0+sCl0fSB79IXoK7IZ
+         ezbllLNDE9TkuGRIhb5P5+k4oAYmKfnofdeCum+2lV3a18cvIxlsNzEQgO+SNbmGIL2Z
+         Gjkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759422684; x=1760027484;
+        d=1e100.net; s=20230601; t=1759422750; x=1760027550;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wNacPF8Btbu5WhlG5yDeVxMJj9MDP6Ps9hs4rcuLvfU=;
-        b=Xuk4qkA4d+W0q+z/ixnvOFfESb1Un82GO+niHQwIt4yktwqfd5xRF6cXgE1Ky6djl/
-         17unUTiE1Zl5sX2uibw6aGoMOK7czHQ9gdkB0iIATO+EzladSp8TUTc5YB5D0b0NAEIc
-         7SWmyqnv+rYxxQEMhBuL6u9uAALGuTxR3kyS16K4crke4iyoeXX/yRvTWnkI33BGMJKT
-         j4Tl9kamr+yRZsx5ofBnPZY17Vi4nTnv0XkGFxXHfIlbGX5L3Ik+lSGztU6/gIEJhnk6
-         1VOszPsdV0cMVE++hsyHqVDRg0TJK6r7qd1oIOpSG46nM6fPbMAi3zLO8RptJEQiSDq2
-         m91Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWkR+4nxUwGP17RquCisEF5/GONi5iU2L7KTwwnHHZ85OVZ07+0mom0IhbePUD3GYKoK850ja/A07TiGXc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNkWemw792EEw8LHMsJ3ExmsT3KpKpWP4Cq2oDcOsVMOx8S+7o
-	976GdIh7I/+PxS0ABRbvuOHTFZU7B9ZdJfhfkGTJ2OLmtGviKR86AkhsjbbPGhTZ4OaD5BTcY1s
-	py89QUZc14XMQRILU7AYNL2zcVc6m7D0=
-X-Gm-Gg: ASbGncvZFj6ZT3/iwwRWcrm+p26OPJDaWRyiApXyYWrHauoJaff5s7hkGgzrqfuXv4D
-	3vjUeqCR1W6QZWpJq/rp0CmWtyukvLB5dALcNbvIBIADa3MZKV49xG6o8ONFPVzmVeXQ7cDLxFM
-	4jNqn4CDu/YgpePeHwD0Hc1aXhP4mu1BCgaqeyc+mBavNqoPOs5kmvhIXAFuZhHbGCrzHz2R1c5
-	OYSZqSnNMJMAdZILM7uhA0Owal9ywg=
-X-Google-Smtp-Source: AGHT+IFnwnujcKRfK6SHtM+CXGmRj6y07MeK5a3YjdSerJUGN6mjdRxCw90XvSKFtGaY+E6xs5ra+2dbd8UIevjGgJ4=
-X-Received: by 2002:a17:90b:4d06:b0:30a:4874:5397 with SMTP id
- 98e67ed59e1d1-339a6ea3208mr9156539a91.9.1759422684485; Thu, 02 Oct 2025
- 09:31:24 -0700 (PDT)
+        bh=J82hEbppU5PpCA3ET4b2HIdeaLxw8NSSqjpat9l2Btg=;
+        b=KqO1HMvBoVuMClmN7WNWrbBY8DUt+B9Vp+7J4Fr5f5azMGxRUKGui42+6Jo+PmchiF
+         nw8zvCpz8JmsJ+cKoeWcBu4Jedklu42ubfDeySTHDZwZwThQ3Mjfi52y+VQ8DmZmONnD
+         IxFH8wLUEbYqS+gmNtWJ0laRFyVVIGftyqDDai4gnvLpi48bcaXRx+s24XJ7vLRM+RS/
+         pWLdyNDOP5d1wEkhKIlyFAEVQ5AYMSAeLdL6MIyYa+aGKRJSKHeorOamBzoTdHGJ7e07
+         MMe50Q6RLAEhN1y9YdAZEb9neO8KEo3G0W1daopcWkk0fXCe7wRlQiq880dqswA44ZMz
+         he/g==
+X-Forwarded-Encrypted: i=1; AJvYcCVSlUT5hc2i5BoJ7KJjMiCyhHT92NAr0ElUWiV8lTU4DJnER29VF8Hm4DZ71oUgH7N8EqWfQskyvcjmHYk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4jhtrut7jfQlulxUrOWqId+gs3PoS0wKU6SfbDtUAs4G9HS3z
+	9iwsg3PhyA3MqK3Oj1bQSeGPURZpFodRDugvAqNc08/MX8A/wjw+3oGo9U7DRofGMpySyZ2PLDr
+	9kYgRVZ41gBEcxFTaVoa4XNrSowu/RHo=
+X-Gm-Gg: ASbGncsMknc3WsbbZ46cJM+AgztOAtXn+werOTtFmaYDiougDqs6QSgb+pWZkSaYRIf
+	Di9X4rAyJTIF/0n3a7Tc1bxo0NitUbg1QJj3BqWYtT1XWKspzVn3l5/ETtllmFA2+2R7Nk46YrJ
+	X0S2FfnNrL9klKTGOsV4J23213wXAQndeOnL9qEPZZ8rAlTN0ic3Gyl3PyM+YGOJkeQw9+ph+Fe
+	jrx95lAWKPS65yQtFiFOcA/QR8QUqs=
+X-Google-Smtp-Source: AGHT+IH1kqYprFVu+gRwT9ksEvkx2IZae2hfvbLLg7njU+1lezqfM8necgEFjx5pebciFSKMYMvp+Z1vh9PYQgWKCRA=
+X-Received: by 2002:a17:90b:1b49:b0:335:228c:6f24 with SMTP id
+ 98e67ed59e1d1-339a6f314bamr9388726a91.25.1759422749743; Thu, 02 Oct 2025
+ 09:32:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250817044724.3528968-1-fujita.tomonori@gmail.com> <20250817044724.3528968-2-fujita.tomonori@gmail.com>
-In-Reply-To: <20250817044724.3528968-2-fujita.tomonori@gmail.com>
+References: <20250818170136.209169-1-roman.gushchin@linux.dev> <20250818170136.209169-8-roman.gushchin@linux.dev>
+In-Reply-To: <20250818170136.209169-8-roman.gushchin@linux.dev>
 From: ChaosEsque Team <chaosesqueteam@gmail.com>
-Date: Thu, 2 Oct 2025 12:36:21 -0400
-X-Gm-Features: AS18NWCOZJHPj9tkWYtN2k_ZmTorz1-zLbhHclnL_v_aOBMm4r-sY983njbIS20
-Message-ID: <CALC8CXdU4PkSK3yy_tGi-ygRhFQG9UT2jLTmbv6q-RtESUPVjg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] rust: Add cpu_relax() helper
-To: FUJITA Tomonori <fujita.tomonori@gmail.com>
-Cc: a.hindborg@kernel.org, alex.gaynor@gmail.com, ojeda@kernel.org, 
-	aliceryhl@google.com, anna-maria@linutronix.de, bjorn3_gh@protonmail.com, 
-	boqun.feng@gmail.com, dakr@kernel.org, frederic@kernel.org, gary@garyguo.net, 
-	jstultz@google.com, linux-kernel@vger.kernel.org, lossin@kernel.org, 
-	lyude@redhat.com, rust-for-linux@vger.kernel.org, sboyd@kernel.org, 
-	tglx@linutronix.de, tmgross@umich.edu, acourbot@nvidia.com, 
-	daniel.almeida@collabora.com
+Date: Thu, 2 Oct 2025 12:37:25 -0400
+X-Gm-Features: AS18NWDbe-kMSZ7SJAYFEu7SK7fkTQUsM14-iqOYEo7iaeFy2DxQ3izBL6FI7Mg
+Message-ID: <CALC8CXfcJjoHyZAiHm1meGtKf9CAbgnmhy4fxMqaa5Gb_ZHvwQ@mail.gmail.com>
+Subject: Re: [PATCH v1 07/14] mm: allow specifying custom oom constraint for
+ bpf triggers
+To: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: linux-mm@kvack.org, bpf@vger.kernel.org, 
+	Suren Baghdasaryan <surenb@google.com>, Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@suse.com>, 
+	David Rientjes <rientjes@google.com>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Song Liu <song@kernel.org>, Kumar Kartikeya Dwivedi <memxor@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-PaX/Grsecurity did everything you are attempting to do, 20 years ago,
-and applied to all running programs on the system, and the kernel.
-Ofcourse it went proprietary and you cowards didn't even sue.
-(And yes you could have, and could still do it)
-Pieces of fucking shit.
+Roman Gushchin...
+RUSSKIEEEEEE
 
-On Sun, Aug 17, 2025 at 12:49=E2=80=AFAM FUJITA Tomonori
-<fujita.tomonori@gmail.com> wrote:
+On Mon, Aug 18, 2025 at 1:05=E2=80=AFPM Roman Gushchin <roman.gushchin@linu=
+x.dev> wrote:
 >
-> Add cpu_relax() helper in preparation for supporting
-> read_poll_timeout().
+> Currently there is a hard-coded list of possible oom constraints:
+> NONE, CPUSET, MEMORY_POLICY & MEMCG. Add a new one: CONSTRAINT_BPF.
+> Also, add an ability to specify a custom constraint name
+> when calling bpf_out_of_memory(). If an empty string is passed
+> as an argument, CONSTRAINT_BPF is displayed.
 >
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-> Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
-> Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
+> The resulting output in dmesg will look like this:
+>
+> [  315.224875] kworker/u17:0 invoked oom-killer: gfp_mask=3D0x0(), order=
+=3D0, oom_score_adj=3D0
+>                oom_policy=3Ddefault
+> [  315.226532] CPU: 1 UID: 0 PID: 74 Comm: kworker/u17:0 Not tainted 6.16=
+.0-00015-gf09eb0d6badc #102 PREEMPT(full)
+> [  315.226534] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIO=
+S 1.17.0-5.fc42 04/01/2014
+> [  315.226536] Workqueue: bpf_psi_wq bpf_psi_handle_event_fn
+> [  315.226542] Call Trace:
+> [  315.226545]  <TASK>
+> [  315.226548]  dump_stack_lvl+0x4d/0x70
+> [  315.226555]  dump_header+0x59/0x1c6
+> [  315.226561]  oom_kill_process.cold+0x8/0xef
+> [  315.226565]  out_of_memory+0x111/0x5c0
+> [  315.226577]  bpf_out_of_memory+0x6f/0xd0
+> [  315.226580]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [  315.226589]  bpf_prog_3018b0cf55d2c6bb_handle_psi_event+0x5d/0x76
+> [  315.226594]  bpf__bpf_psi_ops_handle_psi_event+0x47/0xa7
+> [  315.226599]  bpf_psi_handle_event_fn+0x63/0xb0
+> [  315.226604]  process_one_work+0x1fc/0x580
+> [  315.226616]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [  315.226624]  worker_thread+0x1d9/0x3b0
+> [  315.226629]  ? __pfx_worker_thread+0x10/0x10
+> [  315.226632]  kthread+0x128/0x270
+> [  315.226637]  ? lock_release+0xd4/0x2d0
+> [  315.226645]  ? __pfx_kthread+0x10/0x10
+> [  315.226649]  ret_from_fork+0x81/0xd0
+> [  315.226652]  ? __pfx_kthread+0x10/0x10
+> [  315.226655]  ret_from_fork_asm+0x1a/0x30
+> [  315.226667]  </TASK>
+> [  315.239745] memory: usage 42240kB, limit 9007199254740988kB, failcnt 0
+> [  315.240231] swap: usage 0kB, limit 0kB, failcnt 0
+> [  315.240585] Memory cgroup stats for /cgroup-test-work-dir673/oom_test/=
+cg2:
+> [  315.240603] anon 42897408
+> [  315.241317] file 0
+> [  315.241493] kernel 98304
+> ...
+> [  315.255946] Tasks state (memory values in pages):
+> [  315.256292] [  pid  ]   uid  tgid total_vm      rss rss_anon rss_file =
+rss_shmem pgtables_bytes swapents oom_score_adj name
+> [  315.257107] [    675]     0   675   162013    10969    10712      257 =
+        0   155648        0             0 test_progs
+> [  315.257927] oom-kill:constraint=3DCONSTRAINT_BPF_PSI_MEM,nodemask=3D(n=
+ull),cpuset=3D/,mems_allowed=3D0,oom_memcg=3D/cgroup-test-work-dir673/oom_t=
+est/cg2,task_memcg=3D/cgroup-test-work-dir673/oom_test/cg2,task=3Dtest_prog=
+s,pid=3D675,uid=3D0
+> [  315.259371] Memory cgroup out of memory: Killed process 675 (test_prog=
+s) total-vm:648052kB, anon-rss:42848kB, file-rss:1028kB, shmem-rss:0kB, UID=
+:0 pgtables:152kB oom_score_adj:0
+>
+> Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
 > ---
->  rust/helpers/helpers.c   |  1 +
->  rust/helpers/processor.c |  8 ++++++++
->  rust/kernel/lib.rs       |  1 +
->  rust/kernel/processor.rs | 14 ++++++++++++++
->  4 files changed, 24 insertions(+)
->  create mode 100644 rust/helpers/processor.c
->  create mode 100644 rust/kernel/processor.rs
+>  include/linux/oom.h |  4 ++++
+>  mm/oom_kill.c       | 38 +++++++++++++++++++++++++++++---------
+>  2 files changed, 33 insertions(+), 9 deletions(-)
 >
-> diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
-> index 7cf7fe95e41d..04598665e7c8 100644
-> --- a/rust/helpers/helpers.c
-> +++ b/rust/helpers/helpers.c
-> @@ -34,6 +34,7 @@
->  #include "pid_namespace.c"
->  #include "platform.c"
->  #include "poll.c"
-> +#include "processor.c"
->  #include "property.c"
->  #include "rbtree.c"
->  #include "rcu.c"
-> diff --git a/rust/helpers/processor.c b/rust/helpers/processor.c
-> new file mode 100644
-> index 000000000000..d41355e14d6e
-> --- /dev/null
-> +++ b/rust/helpers/processor.c
-> @@ -0,0 +1,8 @@
-> +// SPDX-License-Identifier: GPL-2.0
+> diff --git a/include/linux/oom.h b/include/linux/oom.h
+> index ef453309b7ea..4b04944b42de 100644
+> --- a/include/linux/oom.h
+> +++ b/include/linux/oom.h
+> @@ -19,6 +19,7 @@ enum oom_constraint {
+>         CONSTRAINT_CPUSET,
+>         CONSTRAINT_MEMORY_POLICY,
+>         CONSTRAINT_MEMCG,
+> +       CONSTRAINT_BPF,
+>  };
+>
+>  /*
+> @@ -58,6 +59,9 @@ struct oom_control {
+>
+>         /* Policy name */
+>         const char *bpf_policy_name;
 > +
-> +#include <linux/processor.h>
-> +
-> +void rust_helper_cpu_relax(void)
+> +       /* BPF-specific constraint name */
+> +       const char *bpf_constraint;
+>  #endif
+>  };
+>
+> diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+> index df409f0fac45..67afcd43a5f7 100644
+> --- a/mm/oom_kill.c
+> +++ b/mm/oom_kill.c
+> @@ -240,13 +240,6 @@ long oom_badness(struct task_struct *p, unsigned lon=
+g totalpages)
+>         return points;
+>  }
+>
+> -static const char * const oom_constraint_text[] =3D {
+> -       [CONSTRAINT_NONE] =3D "CONSTRAINT_NONE",
+> -       [CONSTRAINT_CPUSET] =3D "CONSTRAINT_CPUSET",
+> -       [CONSTRAINT_MEMORY_POLICY] =3D "CONSTRAINT_MEMORY_POLICY",
+> -       [CONSTRAINT_MEMCG] =3D "CONSTRAINT_MEMCG",
+> -};
+> -
+>  static const char *oom_policy_name(struct oom_control *oc)
+>  {
+>  #ifdef CONFIG_BPF_SYSCALL
+> @@ -256,6 +249,27 @@ static const char *oom_policy_name(struct oom_contro=
+l *oc)
+>         return "default";
+>  }
+>
+> +static const char *oom_constraint_text(struct oom_control *oc)
 > +{
-> +       cpu_relax();
+> +       switch (oc->constraint) {
+> +       case CONSTRAINT_NONE:
+> +               return "CONSTRAINT_NONE";
+> +       case CONSTRAINT_CPUSET:
+> +               return "CONSTRAINT_CPUSET";
+> +       case CONSTRAINT_MEMORY_POLICY:
+> +               return "CONSTRAINT_MEMORY_POLICY";
+> +       case CONSTRAINT_MEMCG:
+> +               return "CONSTRAINT_MEMCG";
+> +#ifdef CONFIG_BPF_SYSCALL
+> +       case CONSTRAINT_BPF:
+> +               return oc->bpf_constraint ? : "CONSTRAINT_BPF";
+> +#endif
+> +       default:
+> +               WARN_ON_ONCE(1);
+> +               return "";
+> +       }
 > +}
-> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-> index ed53169e795c..c098c47c1817 100644
-> --- a/rust/kernel/lib.rs
-> +++ b/rust/kernel/lib.rs
-> @@ -110,6 +110,7 @@
->  pub mod platform;
->  pub mod prelude;
->  pub mod print;
-> +pub mod processor;
->  pub mod rbtree;
->  pub mod regulator;
->  pub mod revocable;
-> diff --git a/rust/kernel/processor.rs b/rust/kernel/processor.rs
-> new file mode 100644
-> index 000000000000..85b49b3614dd
-> --- /dev/null
-> +++ b/rust/kernel/processor.rs
-> @@ -0,0 +1,14 @@
-> +// SPDX-License-Identifier: GPL-2.0
 > +
-> +//! Processor related primitives.
-> +//!
-> +//! C header: [`include/linux/processor.h`](srctree/include/linux/proces=
-sor.h)
+>  /*
+>   * Determine the type of allocation constraint.
+>   */
+> @@ -267,6 +281,9 @@ static enum oom_constraint constrained_alloc(struct o=
+om_control *oc)
+>         bool cpuset_limited =3D false;
+>         int nid;
+>
+> +       if (oc->constraint =3D=3D CONSTRAINT_BPF)
+> +               return CONSTRAINT_BPF;
 > +
-> +/// Lower CPU power consumption or yield to a hyperthreaded twin process=
-or.
-> +///
-> +/// It also happens to serve as a compiler barrier.
-> +#[inline]
-> +pub fn cpu_relax() {
-> +    // SAFETY: Always safe to call.
-> +    unsafe { bindings::cpu_relax() }
-> +}
+>         if (is_memcg_oom(oc)) {
+>                 oc->totalpages =3D mem_cgroup_get_max(oc->memcg) ?: 1;
+>                 return CONSTRAINT_MEMCG;
+> @@ -458,7 +475,7 @@ static void dump_oom_victim(struct oom_control *oc, s=
+truct task_struct *victim)
+>  {
+>         /* one line summary of the oom killer context. */
+>         pr_info("oom-kill:constraint=3D%s,nodemask=3D%*pbl",
+> -                       oom_constraint_text[oc->constraint],
+> +                       oom_constraint_text(oc),
+>                         nodemask_pr_args(oc->nodemask));
+>         cpuset_print_current_mems_allowed();
+>         mem_cgroup_print_oom_context(oc->memcg, victim);
+> @@ -1344,11 +1361,14 @@ __bpf_kfunc int bpf_oom_kill_process(struct oom_c=
+ontrol *oc,
+>   * Returns a negative value if an error has been occurred.
+>   */
+>  __bpf_kfunc int bpf_out_of_memory(struct mem_cgroup *memcg__nullable,
+> -                                 int order, bool wait_on_oom_lock)
+> +                                 int order, bool wait_on_oom_lock,
+> +                                 const char *constraint_text__nullable)
+>  {
+>         struct oom_control oc =3D {
+>                 .memcg =3D memcg__nullable,
+>                 .order =3D order,
+> +               .constraint =3D CONSTRAINT_BPF,
+> +               .bpf_constraint =3D constraint_text__nullable,
+>         };
+>         int ret;
+>
 > --
-> 2.43.0
+> 2.50.1
 >
 >
 
