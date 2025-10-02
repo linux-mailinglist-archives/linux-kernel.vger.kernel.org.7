@@ -1,129 +1,163 @@
-Return-Path: <linux-kernel+bounces-840846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F100BB58CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 00:38:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4857BB58D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 00:41:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A6A014E37C7
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 22:38:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B89519E14F2
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 22:41:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B1E427A92E;
-	Thu,  2 Oct 2025 22:38:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2F8827B35D;
+	Thu,  2 Oct 2025 22:41:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gimpelevich-san-francisco-ca-us.20230601.gappssmtp.com header.i=@gimpelevich-san-francisco-ca-us.20230601.gappssmtp.com header.b="qyJkP3IA"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="rR2II8h5";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="DHQCYoqV"
+Received: from fhigh-b6-smtp.messagingengine.com (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C81CF266B6F
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 22:38:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D70249E5
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 22:41:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759444697; cv=none; b=BmIQrW1QpAkSsIuHRVJVdNnKxIUXzwSpfKWqx7DuA+oa6Tfth/UqzbuqSPW8hC4jCAdG9UreFsq2vy67oYWNHZgrhbmGDaT5/BRSL927Te0Q7SwemMnwn+Q8ijpfCzfz71D+kCFUgi4i1dpWRd4jxFL2x+NVDBOAjQiJjCEKGCs=
+	t=1759444878; cv=none; b=L8hMMFn71AUNLRv8X+2I8DfdYxFyIxgvrfeJR9qsyLbs5He9ZT5uODGyyiryA/k8I8Qc+06UzGLtEAkwS9mp0JvT0ojaW4BzW61dqf3tAZ7ComL7Ljqf8SxTfzuYDkr4O71najvrbK9kPatStDFgmyXHCrEIrdNG26rbN5AOi4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759444697; c=relaxed/simple;
-	bh=XC0sO2N0d+uo0Arvt22e4w8FJtUrLDpvY+BPCwyRgx4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:Mime-Version; b=TXBOPRk2E7HwHSD3/XvFIt8sBNVQuNoXjzoWvDUgwh9Nu1BYQNoWvYvrgcRaS3C0DtbnSPqO4h7zigk3kxHFLXzRa1TVZx8I6rmlx2Tdw9Unfis64Gh0xWqPgU2RynLQmBEu3ttsf8hbr1l0ZUlzm2Y9paD0BUhAnutjJ1xrJ/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gimpelevich.san-francisco.ca.us; spf=pass smtp.mailfrom=gimpelevich.san-francisco.ca.us; dkim=pass (2048-bit key) header.d=gimpelevich-san-francisco-ca-us.20230601.gappssmtp.com header.i=@gimpelevich-san-francisco-ca-us.20230601.gappssmtp.com header.b=qyJkP3IA; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gimpelevich.san-francisco.ca.us
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gimpelevich.san-francisco.ca.us
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2698384978dso11346425ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 15:38:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gimpelevich-san-francisco-ca-us.20230601.gappssmtp.com; s=20230601; t=1759444695; x=1760049495; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:disposition-notification-to
-         :references:in-reply-to:date:cc:to:from:subject:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=XC0sO2N0d+uo0Arvt22e4w8FJtUrLDpvY+BPCwyRgx4=;
-        b=qyJkP3IAIdi07QDtg0tHsZsArTI/JwcKVM8w9wcSgyDyFQNsZowbLaFY0Otz4lAwTN
-         t5H607DUYqcqYdumiEygDEPIi9kAN7FHMN8kE/pGwkOe2lY9zBLnUoMn/+yuRc7JG1ZW
-         Ldfag4oEOHJUR9AG1CZ9l+oMWjCvlih9vzaRU+Btq7zv2iiWC9A65VXeEYrNCZtCmWD7
-         EtKpuC9Q6ISh/JJdNouATmKY01hJxZsoycWgb/oX68hqYNwCq1xqMmxCNcTSvPoHAf22
-         I870jlaS07On4DR9s0i23PXDWtRzpyfwijlESzjf4N0F2SljNHO1LtlpV59DMTLil2QO
-         3/ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759444695; x=1760049495;
-        h=content-transfer-encoding:mime-version:disposition-notification-to
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XC0sO2N0d+uo0Arvt22e4w8FJtUrLDpvY+BPCwyRgx4=;
-        b=BtbFllT2jr1mwbErMs+Er9A11Ek40tPRZ0oxC8dBcNLsT+cEAM00+U6VEDbNrdhjlp
-         Cj9ij9BYCW/5rbhyh6q7VxdXFxa6M2edUgFK7nYCN39gCMS+b31Rcd7c/BdYA//iQ9CI
-         RBORmokSsC4XZQL2ag+ZB5uueY0tbx3gU6yBWTOfT1MK250iTWlYIhS3g9qpMb8x/qmG
-         ExgaM+EtyM2idcghYFprYWLxo05niAw0ObPcMicPX45BzHwF/DYU0sZgNI5GAA9gQ762
-         2WbLRBDnH46kqPaUr3ksng5lwfxYWPp7jeamed9NCXWnXENxawleGEJ8I92sSikZ94C/
-         Xw5g==
-X-Forwarded-Encrypted: i=1; AJvYcCVz170e+AvfHUckM9rsi63rAuoKqyILGbZVjoDpZzoxkNAgPjzP+yu4yvq6mNZET6hlMBA9PXw7QwPdqL4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDwcj1kemm7esR276zUG9Cgm+9d+wafwGze5LZIKagsD1xJ1yq
-	z2kpeNaJESwdENsRRjbcuJBtuxhUDRudpr6RySHUpDHglWKBiA+YeBE8OFv2p/3KhQ==
-X-Gm-Gg: ASbGncvuDkd5AH/u8VzKkqtG6a5g032eZapaImGTtVXPMiArTFxJpCh5ojhVTp9PNpu
-	2eBWHqKE2FicOrxZg5gzZrXLqlnfo6RDcl0Nmn+0sb9z38QR51pjYS1EzojrOVmRs4EW2asW6f8
-	JZawIHdAlOAe0w0PRwlRRuKXsjgSDU20Go8id5VVfFmX5zluQkvRXQGG6qHnQg+lieLs35jM65C
-	YrzxG8nOmMmotVWa7P02Jz5CSgubRcekVuFWRx8xtCpB/z35vIzFBZ/Xs/xwF/Gq1Oe/Q9KguN8
-	MGJ/pW+W35tOp7+FNJO7C/nfAN2BpbgYqsPrD/77B+5cUckaQysqL12RQFovQPBghqtyyFtxG47
-	Phbbu4KGYiENfdi9LIlhvtaigy5v7fQ+8RV3By+MeOgyJlU0AoL6fyzY/D6HwvXd0Che/eNDgX+
-	QniI+niGtKjZXFrvCIEB9N74TRjMeiB6XmoaxxQztRnxU=
-X-Google-Smtp-Source: AGHT+IGEWpLAS0bs92zaBuI97EwGsBxqAWGzNiljhk82StCYnXBLZ6FnmN8hBjn83V3/i2Ef8tUENg==
-X-Received: by 2002:a17:902:d544:b0:25c:d4b6:f111 with SMTP id d9443c01a7336-28e9a65258fmr10877855ad.47.1759444694910;
-        Thu, 02 Oct 2025 15:38:14 -0700 (PDT)
-Received: from ?IPv6:2001:5a8:429d:2100:4825:53c7:1977:212e? ([2001:5a8:429d:2100:4825:53c7:1977:212e])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d1b9e5asm31046705ad.74.2025.10.02.15.38.13
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 02 Oct 2025 15:38:14 -0700 (PDT)
-Message-ID: <1759444692.24579.8.camel@chimera>
-Subject: Re: [PATCH 6/8] CMDLINE: x86: convert to generic builtin command
- line
-From: Daniel Gimpelevich <daniel@gimpelevich.san-francisco.ca.us>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: "Daniel Walker (danielwa)" <danielwa@cisco.com>, Will Deacon
- <will@kernel.org>, Christophe Leroy <christophe.leroy@csgroup.eu>, Rob
- Herring <robh@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
- Pratyush Brahma <quic_pbrahma@quicinc.com>, Tomas Mudrunka
- <tomas.mudrunka@gmail.com>, Sean Anderson <sean.anderson@seco.com>,
- "x86@kernel.org" <x86@kernel.org>, "linux-mips@vger.kernel.org"
- <linux-mips@vger.kernel.org>, "linuxppc-dev@lists.ozlabs.org"
- <linuxppc-dev@lists.ozlabs.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo
- Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
- "xe-linux-external(mailer list)" <xe-linux-external@cisco.com>, Ruslan
- Ruslichenko <rruslich@cisco.com>,  Ruslan Bilovol
- <ruslan.bilovol@gmail.com>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>
-Date: Thu, 02 Oct 2025 15:38:12 -0700
-In-Reply-To: <a2be781f-96b5-47d1-81fa-b20395ca293a@intel.com>
-References: <20231110013817.2378507-1-danielwa@cisco.com>
-	 <20231110013817.2378507-7-danielwa@cisco.com>
-	 <00c11f75-7400-4b2a-9a5d-10fc62363835@intel.com> <aN7n_5oiPjk-dCyJ@goliath>
-	 <c8b65db3-a6cf-479d-9a83-23cbc62db1ef@intel.com> <aN7vKgcUeQgCFglQ@goliath>
-	 <a2be781f-96b5-47d1-81fa-b20395ca293a@intel.com>
-Disposition-Notification-To: daniel@gimpelevich.san-francisco.ca.us
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+	s=arc-20240116; t=1759444878; c=relaxed/simple;
+	bh=bMk+6aTQqC3sfhRRa1TBUgfbAJE7XrqWg8LBpHf3yWs=;
+	h=MIME-Version:Date:From:To:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=dJ9R6SIQAclk5bNE3e+GwPZT46/eYX4wJAbnCbL7Cilb1G6QzPezelXUkIA2xXM7Pv6QeixaZCU2NSgDF0pdEqJ/0gZyw8KLex+VluyOfuR44GUY2xti9k6ouH4BJvCmEc7dx7ocJwkzc+eoSEd8334kt2HCtt+SfoYEIigVVpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=rR2II8h5; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=DHQCYoqV; arc=none smtp.client-ip=202.12.124.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 994D07A007E;
+	Thu,  2 Oct 2025 18:41:14 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Thu, 02 Oct 2025 18:41:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:content-transfer-encoding:content-type:content-type:date:date
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1759444874;
+	 x=1759531274; bh=4hGlKaEF3owGaJz4O+b4FB/WpfLoASBvaTMeTYOloZc=; b=
+	rR2II8h5qGEQ+N3qrO28io3mSYbEZDNSzni4M3uFzc+SC3OxBkJMCLbsISCw8gRo
+	aW7K/HA7nJ62jDjk+OjEtSuVCoseyfkV2PlL1VM7U92QmC30zEB0so6jgtGVq5FU
+	UkwkTYZrV6Mk7OwFtasY/kz7eO49Z4wjCiSqUOSWg7YLxJyXvj9OYDKzK1gcTRBP
+	YFuQLK84PpiDOEJh0ruq9q5J6yTty1qcPCyPYmZ/5UBH23ZuoDh7tKMeg8qlfmqn
+	nQNMSAFSUzlwuwo/GHd39tdRF+tJOd2mIf8CstxtksHlrne5DNSDesTrQSOIIka6
+	cyyV/MLozU/JOG7vD11G7g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:content-transfer-encoding:content-type
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
+	:x-me-sender:x-sasl-enc; s=fm2; t=1759444874; x=1759531274; bh=4
+	hGlKaEF3owGaJz4O+b4FB/WpfLoASBvaTMeTYOloZc=; b=DHQCYoqVFUx85gU6v
+	slFj/IXlslxekzNbzX2t7cUTqGO6QdU8WtPxzXoF2czC3Egzb5qv938SuoB2+G3o
+	s3bE3Ftpp2KWlTljOf2cPRSNewo8R2JHWJoZwO8QFaMsiq1FVQOA+SIkYQ8m4VmE
+	YlRprSecGGmLx+QIBg/+CnwxqT5kL0QPnPRTgH6vsOIClrIQQyiTWJlLKiKMbRgl
+	pq6zjyheL/EI2oTfTLghrESZoZ1Shu5+pMHwrMwAB+Nr65/b/+2zD0ja+aStDU8S
+	dt+hn4YZhV23dBtKL/PMPboqncgL1r0PxCuxrPmRIhbcm19iAWl+9VQk6BgyXT0U
+	cE2+Q==
+X-ME-Sender: <xms:iv_eaORAfmyx-VrNY1qjojo2ry6eNu_jd6HzWbWeTYEjU_xDIhppBg>
+    <xme:iv_eaOlMzQUBukbXXyBPZaKmAtXPYb1i7cbcNBfyWplkCDXIrZliEB6nxxb7AaJY5
+    V44DQlJnaZH7DI3F_bTauG_PKU3CYtrNB1YEFh0e7pCG5y3rixDDX8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdekjedvgecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhguuceu
+    vghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvghrnh
+    epkeetgfeufefhkefhjeegffefteffveeuhfdvieejtdefvdetheeftdejudffvdehnecu
+    ffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurf
+    grrhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphht
+    thhopeejpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehkrhiikheskhgvrhhnvg
+    hlrdhorhhgpdhrtghpthhtohepkhhriiihshiithhofhdrkhhoiihlohifshhkiheslhhi
+    nhgrrhhordhorhhgpdhrtghpthhtohepthhorhhvrghlughssehlihhnuhigqdhfohhunh
+    gurghtihhonhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhkvghrnhgvlhes
+    lhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhnuhigqdhrih
+    hstghvsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepshhotges
+    lhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlh
+    esvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:iv_eaN1i_9MEdLYEaN5LmPLsLN4VdWQ5gzqyXtm4S2hdB3FI6ojE8Q>
+    <xmx:iv_eaJQ0iqhekBJG_ZNv4N7eyiZd6qivnqLNQ9d2MVElQqs6DFJQcQ>
+    <xmx:iv_eaOxYPZ981NcrRqq5DjAYYDp97i96adR2uvubuViawKp-w_Y7Tw>
+    <xmx:iv_eaBA1Vg93SANUa7SRpW7_2SDp8UR21x4gNm6WJd3zRTuGfCDkxw>
+    <xmx:iv_eaFi4-HVvRUCQzDfSfHm0IxXHeK_HBVcSXLPGriYfhV1o9UV624s2>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 1C7B6700065; Thu,  2 Oct 2025 18:41:14 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+X-ThreadId: AXqMPTuZh4v7
+Date: Fri, 03 Oct 2025 00:40:53 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Krzysztof Kozlowski" <krzk@kernel.org>,
+ "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "Linus Torvalds" <torvalds@linux-foundation.org>,
+ linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org,
+ soc@lists.linux.dev
+Message-Id: <a7fa4971-85a3-4435-8728-493acb68ed0d@app.fastmail.com>
+In-Reply-To: 
+ <CAJKOXPcRw3teqahDc6RBCz8XvqLt2sHqxrOUxpA84RszcsnGFQ@mail.gmail.com>
+References: <54b49f7b-9232-44d7-9ae3-ecc1826f17d7@app.fastmail.com>
+ <d482931b-1779-4b49-9fa2-1c101bdf0929@app.fastmail.com>
+ <CAHk-=wjsMPACg__N37EL8Sh=z1wkCpj+FQKpoVPXzyiVpm1i_w@mail.gmail.com>
+ <CAGE=qrpygJ4XgtzdnGACj-6KRiD8r57F4ogNYaA3LLMusBV9fg@mail.gmail.com>
+ <CAJKOXPcRw3teqahDc6RBCz8XvqLt2sHqxrOUxpA84RszcsnGFQ@mail.gmail.com>
+Subject: Re: [GIT PULL 2/5] soc: dt changes for 6.18
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Thu, 2025-10-02 at 14:55 -0700, Dave Hansen wrote:
-> That's not a bad idea. Or, even if you can pick two amenable
-> architectures to start with it will make it really obvious that this is
-> useful. Two architectures means a *lot*, IMNHO. Two is a billion times
-> better than one.
+On Thu, Oct 2, 2025, at 08:26, Krzysztof Kozlowski wrote:
+> On Thu, 2 Oct 2025 at 15:04, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
+>> On Wed, 1 Oct 2025 at 15:27, Arnd Bergmann <arnd@arndb.de> wrote:
+>> >
+>> >   https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git tags/soc-dt-6.18
+>>
+>> Bah. I've merged this, but this causes build failures on arm64.
+>>
+>> I only noticed after already having pushed it out.
+>>
+>> > SeonGu Kang (1):
+>> >       arm64: dts: axis: Add ARTPEC-8 Grizzly dts support
+>
+>
+> I'm sorry, I should not have trusted contributors from Samsung that
+> they know what they are doing and I think my CI misses allyesconfig on
+> particular branches, because for-next branch did enable this symbol
+> and it was tested by my CI. Also LKP tests each of my branches and
+> didn't report this, I think.
 
-I think it's a bad idea, if I understand it correctly. The patchset
-conceptually patches a mechanism of the kernel as a whole, but one which
-just so happens to need to be implemented separately for each arch.
-Breaking it down like you suggest creates an embarrassingly high
-likelihood of different architectures' implementations of it going out
-of sync, a previous situation that this patchset was partly intended to
-address. I say keep it atomic. If it breaks on an arch or two but not
-others and nobody notices right away, that would be better addressed
-with a new patch when someone eventually does notice. Just my 2¢…
+This one is on me really, I had the right tooling available and
+I had used it in the past, but I never ran it after I did the
+bulk of the merges in the past few weeks. There is always someone
+who misses a dependency in the DT updates and I rely on that
+check anyway to detect some types of incompatible binding updates
+and I have no excuse for not noticing it myself.
 
+We'll have to refine the process anyway when we start taking turns
+with the soc tree merges.
+
+> Issue will be fixed with commit coming via clk tree - Stephen Boyd:
+> https://lore.kernel.org/linux-samsung-soc/20250825114436.46882-2-ravi.patel@samsung.com/
+> And git pull:
+> https://lore.kernel.org/all/20250909183504.104261-2-krzysztof.kozlowski@linaro.org/
+>
+> I understand this won't fix bisectability.
+>
+> Arnd,
+> Eventually you can just mark arch-artpec as broken just to fix your branches.
+
+The missing commit is at the bottom of your branch, so I'm sending
+just that commit as a build fix, that seems easier than marking it
+as broken now and then later reverting that change.
+
+      Arnd
 
