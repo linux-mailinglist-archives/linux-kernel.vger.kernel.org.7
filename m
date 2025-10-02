@@ -1,80 +1,98 @@
-Return-Path: <linux-kernel+bounces-840469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B916ABB47FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 18:19:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B68FBB4829
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 18:21:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75A9319E39F0
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 16:20:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0017D7B55FF
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 16:18:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CD20258CF9;
-	Thu,  2 Oct 2025 16:18:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30011261574;
+	Thu,  2 Oct 2025 16:18:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mBmlw+YW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="fYhbQHa5"
+Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75EF524467E;
-	Thu,  2 Oct 2025 16:18:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB8CE254B18;
+	Thu,  2 Oct 2025 16:18:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759421895; cv=none; b=ODHCs6I3exg1sQxf5l/xvUUqNRhi+vcsWzgARByoRnn+dyifFnP9rTlJnEEftUbJKA6hqZv7ZnxPZByJGgYiu2Bj27qGX4DeM58l8Y3TvBj3p/ZHM/AnJx4ejhF7GiMMZDWC29v91/U7sdL6fe6q1vEdW+hDkFMBjuhFBLND8X0=
+	t=1759421928; cv=none; b=iYcauDFfFcxnGXxKg35pPetCWo/2ipQO0Jx4Ugf5ipINBTf/1AKVk1M9NoMhjlVyd0Jkcb3HrAngzLLyiZSTCwuAzyujBheIjARzMlVh0YtvXH370EZc1djvC/2FqZb/H4to5GGlaqOPLiPkxR/4P9RIIEU4W45hVFmVFZwkkAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759421895; c=relaxed/simple;
-	bh=haU7UA3i4VxOH2x3gB+UMfWD8mNozTHeaUCvV8ZhUxQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i+y/Du2wWnwyZn4pqXKkboq9W1GH1ASqWo046ncOinbaGIxYQl525pYmQVumoGfjUIb91NZJI1dji1kE8RMQqT7d7fT4xEYXz/48MSacX12PEhjH4auB3CJ/ItRMsAJBS95xVKQuCMcsCVNzp+B8em+9eVs4shR2kNSwpoB1eA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mBmlw+YW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDDC0C4CEF4;
-	Thu,  2 Oct 2025 16:18:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759421895;
-	bh=haU7UA3i4VxOH2x3gB+UMfWD8mNozTHeaUCvV8ZhUxQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mBmlw+YWycUFfd6+awCdzyisCKm2spoUtagB+p9j/yRzbVr/hhvDwBU/QAPohipeV
-	 msMFYutoNwZkH2eh/72ISHoSdFbauACTHfh0ZI+kSuPCseSVrpTWw3EPBLOSdswDon
-	 E9oo9Uc2zygnGmelyniEKiDwLM/UccJGeuLmpwBW+Uzgcr16ToY7ptR0r8JxGGb1ih
-	 +iUUdzgAWCUmBY/F892FlqueGw+hCN6CnIEUrYpzKId3//HeLkbWfwvyKYHYdXo9as
-	 +PT6HHOjsGtuTmyQRmG8rCnye6L5V1XBCSN6dvssFqFbC4P3sLle3yRgAdjVVkTqLz
-	 fx5KB23rMjLog==
-Date: Thu, 2 Oct 2025 09:18:14 -0700
-From: Kees Cook <kees@kernel.org>
-To: Ard Biesheuvel <ardb+git@google.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org, herbert@gondor.apana.org.au,
-	linux@armlinux.org.uk, Ard Biesheuvel <ardb@kernel.org>,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Mark Brown <broonie@kernel.org>, Eric Biggers <ebiggers@kernel.org>
-Subject: Re: [PATCH v2 03/20] ARM/simd: Add scoped guard API for kernel mode
- SIMD
-Message-ID: <202510020918.AEFA1A195@keescook>
-References: <20251001210201.838686-22-ardb+git@google.com>
- <20251001210201.838686-25-ardb+git@google.com>
+	s=arc-20240116; t=1759421928; c=relaxed/simple;
+	bh=Xpb0UrjdBAyJ3z38h4AY6vd6b5j/oH3Du6AYnBhX4Gk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=qIgxhjK1PnU8l90w4w2hhHWxO1qm6s8YLbNGRofqUZYw4IIJZGcWEdbS2CzOIWlGQLvVf/e5o3U8gZ0ybDo353As6LscUhqX8oGV88DRfx+whD613jSvPZXNSxHka49I/u/3fU1W1dNyRvA00DwCZjWzHN7M/yDj4xmg7e4jPdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=fYhbQHa5; arc=none smtp.client-ip=199.89.3.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 004.mia.mailroute.net (Postfix) with ESMTP id 4ccxn16Pzpzm16kp;
+	Thu,  2 Oct 2025 16:18:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1759421924; x=1762013925; bh=7bhvhhJ4JLF206lcr1wauf4d
+	j7rGe65pQmQJK6fM2+w=; b=fYhbQHa5xMCdyTKQc5fqLHry5o/Xr+W5VJucRfcX
+	DuEQdNS3vA2O8tdFIrwxU79HFSrr53KOIpIqdiwibtKTlQn+M+8kdiaGpd7b3xuw
+	jPGV5l3XPXp+FQ70B3oU2/e+taKlwozuYKnF4cKXYJw4upS3oN6LoyLReF9i1zkR
+	iwthy6deQrdsyTABIu80q0NX+c4wl6yAENM8OZTPKSwTZqCaXly6eYzMSGj2lCWM
+	cWuW35MBFACWUMHJGSq/iuPzzuLxvDbIJPcN2tOs82QakeiXotjbQEtEmRW7+ppI
+	G8LpjuCRk8sse9UhOeECNceP6/FgB4yiAovETl3aD2AwhQ==
+X-Virus-Scanned: by MailRoute
+Received: from 004.mia.mailroute.net ([127.0.0.1])
+ by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id 6LkNq16KtErJ; Thu,  2 Oct 2025 16:18:44 +0000 (UTC)
+Received: from [100.119.48.131] (unknown [104.135.180.219])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4ccxmw2bDTzm16lN;
+	Thu,  2 Oct 2025 16:18:38 +0000 (UTC)
+Message-ID: <900c7e79-2cc9-407f-92cb-c6544cbc86c1@acm.org>
+Date: Thu, 2 Oct 2025 09:18:38 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251001210201.838686-25-ardb+git@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ufs: core: Initialize a variable mode for PA_PWRMODE
+To: Wonkon Kim <wkon.kim@samsung.com>, James.Bottomley@HansenPartnership.com,
+ martin.petersen@oracle.com, peter.wang@mediatek.com,
+ linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <CGME20251002070057epcas1p49ac487359f24f6813ba8f9f44bcf0924@epcas1p4.samsung.com>
+ <20251002070027.228638-1-wkon.kim@samsung.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20251002070027.228638-1-wkon.kim@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 01, 2025 at 11:02:05PM +0200, Ard Biesheuvel wrote:
-> From: Ard Biesheuvel <ardb@kernel.org>
-> 
-> Implement the ksimd scoped guard API so that it can be used by code that
-> supports both ARM and arm64.
-> 
-> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+On 10/2/25 12:00 AM, Wonkon Kim wrote:
+>   static bool ufshcd_is_pwr_mode_restore_needed(struct ufs_hba *hba)
+>   {
+>   	struct ufs_pa_layer_attr *pwr_info = &hba->pwr_info;
+> -	u32 mode;
+> +	u32 mode = 0;
+>   
+>   	ufshcd_dme_get(hba, UIC_ARG_MIB(PA_PWRMODE), &mode);
 
-Reviewed-by: Kees Cook <kees@kernel.org>
+Wouldn't it be better to check the ufshcd_dme_get() return value rather
+than to zero-initialize 'mode'? I think that would make 
+ufshcd_is_pwr_mode_restore_needed() easier to read compared to applying
+the above patch.
 
--- 
-Kees Cook
+Thanks,
+
+Bart.
+
+
 
