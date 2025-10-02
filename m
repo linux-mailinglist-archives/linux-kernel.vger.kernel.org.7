@@ -1,168 +1,151 @@
-Return-Path: <linux-kernel+bounces-840801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 615F4BB573B
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 23:11:03 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7563DBB574D
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 23:12:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D8E7234292D
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 21:11:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 462C74E72A6
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 21:12:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D6F42BE620;
-	Thu,  2 Oct 2025 21:10:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7A751DC994;
+	Thu,  2 Oct 2025 21:12:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TOlGaPij"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="XmxLMUhZ"
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E5028726B;
-	Thu,  2 Oct 2025 21:10:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D9A812CD8B
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 21:12:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759439418; cv=none; b=Ct3eNvWHXW1GShqP48X8CxhLAwaw9RlY5zLS4bTnliAptis8cPuAsr29U23RQNuF+jm/am1n0anfON/1PyAmOFrFkSKAPKOYQH9IdAqfNEqiTeZYHdMT9RCSZuvQ0oHAhq6bnyIWxISB4VNaSS+Jl3hJz/MN8uzjfXa+ide8L+U=
+	t=1759439542; cv=none; b=gV2MCk2BnqT4zVI3wi5Op4vvVvMBHPSsvXOm80c1LqyshE/Wkn58IYUkDgilgGydW/kA9SdsRaq+n1Bqi7efGazt68otJJCpUB3leNdcAJ4Yn/RGkQYM2eZwoFRBGr9VfwTO89EONV/8Jh54RtJjMyx7mOrkUBkob02t4h+H2+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759439418; c=relaxed/simple;
-	bh=MUDtqzGl4cmSnmpG45UUkxW2KzBakH/ig353OR5nRiQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HNR9LpG7npRx6LXKOecvKzMI8vxznM2DhUDf+vjLj6J5IyZR9fj3nhhdYiO3jSFioG56Y3oiqIpew8fq6Clkx8VbPZ5b239u4BxeqLn/2UJP1W9ZxAYujWELhE2uA9HVGXsjWXO2zclRVUWuMstc38gJ3kVIZeHCrxrObGpQy/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TOlGaPij; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759439417; x=1790975417;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=MUDtqzGl4cmSnmpG45UUkxW2KzBakH/ig353OR5nRiQ=;
-  b=TOlGaPijGYw3r6EqjkcZ/bSVC1igLTHxhY/b1e3FGvRxQ1eZGa2JmgUs
-   6oZOzPSRHb48xsKjaECEeWVF5JudYBDT9otQx4zaG/P1fOxTaB+KSv0N/
-   bCpAowic7enN6W2PAlgvdhCS3kLS5TTd5/h4Ql/vB5TDTTlDpq8rumkPd
-   nHlE5UOeQwIFokHqHf1uAA0iaVhkRpwfNE6V1/VzahTPGnvhZI52swq7/
-   Cy2ufkD+b3An4zPX1RpIVYuazBg2uh4/2vG7vARUic8mn+2afNeQojYsm
-   IEP7tH4S3hllX90DCbdTDc8JqfXPx2pwFIFW/ANjKuXmb6X4M8twtTsuv
-   w==;
-X-CSE-ConnectionGUID: 7kjuoNRqTM2AoRf/MAPeTQ==
-X-CSE-MsgGUID: SJjkX8ypSKypoOIkrJb6ew==
-X-IronPort-AV: E=McAfee;i="6800,10657,11570"; a="60940641"
-X-IronPort-AV: E=Sophos;i="6.18,310,1751266800"; 
-   d="scan'208";a="60940641"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2025 14:10:15 -0700
-X-CSE-ConnectionGUID: 0pRqo5tvQcOoIL3z3VGUsg==
-X-CSE-MsgGUID: 52DMt+JbTkiwJBch9+mfXg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,310,1751266800"; 
-   d="scan'208";a="210109204"
-Received: from aschofie-mobl2.amr.corp.intel.com (HELO [10.125.109.249]) ([10.125.109.249])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2025 14:10:14 -0700
-Message-ID: <c8b65db3-a6cf-479d-9a83-23cbc62db1ef@intel.com>
-Date: Thu, 2 Oct 2025 14:10:13 -0700
+	s=arc-20240116; t=1759439542; c=relaxed/simple;
+	bh=iT7/AYK4t8uxayoTReNhK3pljGDwN3pTd3WBJnHuGT4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GMCIHRARQte0HJe6RTTdkdLEJ+5BtTcurWJCjQMV75NeqqqPk5bFiXdEUEUQ5MP135O7jsRu8KGuvkxPH3347DhLlDMl/ArZTcRVeKYTtetWcfVGz/v9QMFnRgLH+b8Ro4UKURYlnJ6GJ6/Wa1yBKI2xat4sQAaPnekvqPO8i6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=XmxLMUhZ; arc=none smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-79390b83c7dso12831116d6.1
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 14:12:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1759439539; x=1760044339; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=iT7/AYK4t8uxayoTReNhK3pljGDwN3pTd3WBJnHuGT4=;
+        b=XmxLMUhZ4TdFJ31fK8AM0RYMEFtIFyWuBpOH+w4unD807oMi3BqvWorXXgk1OSElbm
+         UFu0wsbdUkjVcmiUCFGRcL437Sa9GFewvGktQ3rAWy6hrDYHL77GsSTvdx7cD2y+GcQQ
+         W+nr0L/mdxN5akOf9GK8P+bQOaL6O8+2OhPQIKxcGFBGtXv6MaO4yUf1qtcK37YOkDxh
+         fuhUO3uHDz/XqlbAfHyXZQ4DwYWwqJen8XFkEP77Oqi8M2wQPOmeTVcfFJVBNarh0AT6
+         hbZ0mxZgMH96xEM2cRsyrM+O1zTZ1SRExOg6MJVuQwvMkdgSlwv5KYQp9J0cuaJ4lkv5
+         uDYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759439539; x=1760044339;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iT7/AYK4t8uxayoTReNhK3pljGDwN3pTd3WBJnHuGT4=;
+        b=DVQ+Hmwpdo83t45JTJl+PJw++rYXZZKjt1u+dvDrcsjMnQWS5bNJJVmu61EtZSsJXe
+         2k/D/8kq5nThNZ1cyBzFQOj2uIG/0C6J8XZ0pnMlm5X3WcnaQO4vChvYqbm2YyYNFgCc
+         HrWe2VBrkvw4MLFxpCLFeK3Fvq+ZBq0HdQkCtgxzcz/YAitNr/0VlZeuiQOpHe8ndEYu
+         FOqu6qL40+PPJ96WP16sUgxoThb8ymG1sNfEtKsa4COtxTQoQjeNEO2AJprMnpubQO58
+         3b0bulf5ZUGW0/tLWMoGPBcEUbOoBQ4YSIH+3DmmlkVwAX7uz89vY3+sVK3NK0D6pGio
+         cOFg==
+X-Forwarded-Encrypted: i=1; AJvYcCWgDs5ZeR8/YYYWVtAJi9DQz8zVBW8t0AF0fPp8cvVVYfdS/3YoKSRsfxr+tCp8QP+SeZYn0n9bvcSzWJU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2/YBeYUDZfCRBND2XeHr+do2Knxqby6YsY6CiA03rUR/Zyqdg
+	euzz1hGikb2KDkuexm8C6Mulh6cIUA+rSKcA7ZgthJh3ZfppQWQV+ubOW6tEO144M6M=
+X-Gm-Gg: ASbGncti/b5SOw/6l+8XxuwTXHiRZzjj7ggo4G+MJMK1XtBH1Or84pE6iKKCQRIJaCI
+	4N8d8TU9I8kXwT6Ueo44Y5M6SBmH/9AfL2a1M6H7ySDGImHwRft3HPqyJILQTeqjsxE5immKVGG
+	e1TB57Gdvb2PGOvmYwjUwS0+3of2LYXKSMmOCKgcwDiougVQ4OKOgdYyjI3Abd0UIwtDGojbjOq
+	Qyl/gK0RDqcFKtCrSvi4FF1HpYU3PFWsYuNM4bfan5TT0y515dxOgyB8mCxY8sweLukURu6pdKf
+	CT0QaYq7rmmWzKl9xDGIruB1BeD2Al5eqAlccetq2tHc5kvucwRnWwS7v8czAXH+ODXKq7reJSF
+	IaToH5D+sJr59Zd6pRlqXr+DbXDmHNj+Ia6wjvlrwNQ52T/2+ut5j1OGdocDotyN+ATf2v30ilg
+	EV66lvF/GEkce67FYR
+X-Google-Smtp-Source: AGHT+IHHvVsAZOqVxWndcmJwbJMSlKmjI2WMP+ieJr8pz5dnwNzMlZwNBTV8WRdGNWtSpYM4WRBOcw==
+X-Received: by 2002:a05:6214:e87:b0:78f:2a6c:11 with SMTP id 6a1803df08f44-879dc86a53bmr11662886d6.62.1759439539193;
+        Thu, 02 Oct 2025 14:12:19 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-878bdf53343sm24655486d6.54.2025.10.02.14.12.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Oct 2025 14:12:18 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1v4Qb3-0000000E0oN-3d66;
+	Thu, 02 Oct 2025 18:12:17 -0300
+Date: Thu, 2 Oct 2025 18:12:17 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Samiullah Khawaja <skhawaja@google.com>
+Cc: Pasha Tatashin <pasha.tatashin@soleen.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, iommu@lists.linux.dev,
+	YiFei Zhu <zhuyifei@google.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Pratyush Yadav <pratyush@kernel.org>,
+	Kevin Tian <kevin.tian@intel.com>, linux-kernel@vger.kernel.org,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Adithya Jayachandran <ajayachandra@nvidia.com>,
+	Parav Pandit <parav@nvidia.com>,
+	Leon Romanovsky <leonro@nvidia.com>, William Tu <witu@nvidia.com>,
+	Vipin Sharma <vipinsh@google.com>, dmatlack@google.com,
+	Chris Li <chrisl@kernel.org>, praan@google.com
+Subject: Re: [RFC PATCH 13/15] iommufd: Persist iommu domains for live update
+Message-ID: <20251002211217.GI3195829@ziepe.ca>
+References: <20250930135916.GN2695987@ziepe.ca>
+ <CAAywjhRGrGjZK3jQptieVWmdzvjfNtTYrp2ChTZJSmFyrBaRqw@mail.gmail.com>
+ <20250930210504.GU2695987@ziepe.ca>
+ <CAAywjhRQONuHsxTGQZ5R=EJbOHUD+xOF_CYjkNRbUyCQkORwig@mail.gmail.com>
+ <20251001114742.GV2695987@ziepe.ca>
+ <CA+CK2bAvnTTz+vPg7v38_1dajRZQHyPQ8iDmziiW8GFUqy6=Ag@mail.gmail.com>
+ <20251002115712.GA3195829@ziepe.ca>
+ <CA+CK2bAudSHq2t5NZPBKDC2wfzsF6SSxTF7aZ2kxueOTzWYcfg@mail.gmail.com>
+ <20251002151012.GF3195829@ziepe.ca>
+ <CAAywjhQGQx2_2X8r0rf3AgMDbJj-9C=9_1a3xgiLwuzKLAvXCQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/8] CMDLINE: x86: convert to generic builtin command line
-To: "Daniel Walker (danielwa)" <danielwa@cisco.com>
-Cc: Will Deacon <will@kernel.org>,
- Christophe Leroy <christophe.leroy@csgroup.eu>, Rob Herring
- <robh@kernel.org>,
- Daniel Gimpelevich <daniel@gimpelevich.san-francisco.ca.us>,
- Andrew Morton <akpm@linux-foundation.org>,
- Pratyush Brahma <quic_pbrahma@quicinc.com>,
- Tomas Mudrunka <tomas.mudrunka@gmail.com>,
- Sean Anderson <sean.anderson@seco.com>, "x86@kernel.org" <x86@kernel.org>,
- "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
- "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>,
- "xe-linux-external(mailer list)" <xe-linux-external@cisco.com>,
- Ruslan Ruslichenko <rruslich@cisco.com>,
- Ruslan Bilovol <ruslan.bilovol@gmail.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20231110013817.2378507-1-danielwa@cisco.com>
- <20231110013817.2378507-7-danielwa@cisco.com>
- <00c11f75-7400-4b2a-9a5d-10fc62363835@intel.com> <aN7n_5oiPjk-dCyJ@goliath>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
- oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
- 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
- ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
- VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
- iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
- c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
- pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
- ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
- QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzUVEYXZpZCBDaHJp
- c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
- LmNvbT7CwXgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
- lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
- MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
- IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
- aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
- I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
- E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
- F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
- CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
- P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
- 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lczsFNBFRjzmoBEACyAxbvUEhd
- GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
- MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
- Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
- lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
- 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
- qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
- BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
- 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
- vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
- FCRl0Bvyj1YZUql+ZkptgGjikQARAQABwsFfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
- l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
- yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
- +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
- asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
- WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
- sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
- KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
- MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
- hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
- vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
-In-Reply-To: <aN7n_5oiPjk-dCyJ@goliath>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAAywjhQGQx2_2X8r0rf3AgMDbJj-9C=9_1a3xgiLwuzKLAvXCQ@mail.gmail.com>
 
-On 10/2/25 14:00, Daniel Walker (danielwa) wrote:
->> The way I'd suggest going about getting this merged is to solicit
->> reviews and testing from folks and then get those annotations into the
->> patches. As it stands, this series has zero tags in addition to the SoB
->> tags which I assume were its authors.
-> How does one go about soliciting reviews from your perspective ? Typically I
-> just submit it in this fashion and whoever is interested reviews it.
+On Thu, Oct 02, 2025 at 12:29:25PM -0700, Samiullah Khawaja wrote:
+> I had a quick discussion with Pasha to see how LUO can help with FD
+> dependencies and FINISH order. Perhaps we need a new LUO API that
+> iommufd can call before live update, explicitly telling LUO that it
+> depends on an FD that is going to be preserved.
 
-First, figure out who should ideally review it. Find the maintainers,
-find who's been sending patches and reviewing in the area lately. Use
-get_maintainer.pl.
+Keeping track of a dependency graph is possible.
 
-Then, ask nicely. :)
+But I wonder if it is really needed to be fine grained.
 
-	"Hey x86 maintainers, I've got this series with a pretty nice 	
-	diffstat in arch/x86. Any chance you could take a look and give
-	an ack if you like what you see?"
+If a memfd remains frozen until finish, and finish can't happen until
+all luo objects that are internally refering to outside memory
+indicate they are done, don't we get the same outcome?
 
-You can do that in private mails, or in a separate thread, or in a reply
-to the original series. Or, go hunt folks down on IRC.
+Is there a reason a specific memfd should be unfrozen before finish?
 
-Just tossing the series over the wall and giving it thoughts and prayers
-usually isn't the most effective route.
+Maybe finish is too broad grained? What if each session had a finish?
+All the objects in the session are cleaned up, invoke the session
+finish and the memfd's in the session unfreeze?
 
-BTW, your series looks like a *really* good idea. Please don't let it
-die. But you might want to trim it down a bit. I'd probably remove the
-tests and the 'insert-sys-cert' changes to make it more approachable to
-folks.
+Otherwise to build a dependency graph we'd need things like
+iommu_domain to record all the memfds/etc stored within it and
+preserve that and so on. This information has to come from the IOAS in
+iommfd so it is quite a bit more weirdness to inject.
+
+Whereas if we have the preserving iommufd do a sequence where it
+pushes all the ioas pages (memfd/etc) to luo, and only then permits
+the hwpt to be preserved to the same session, we get the same basic
+tracking without needing to store a graph.
+
+Donno...
+
+Jason
 
