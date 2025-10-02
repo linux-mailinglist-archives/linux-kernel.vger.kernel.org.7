@@ -1,156 +1,154 @@
-Return-Path: <linux-kernel+bounces-840706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB59FBB507D
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 21:42:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADA54BB5086
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 21:43:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81059420651
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 19:42:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6787216C023
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 19:43:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6AD4288C34;
-	Thu,  2 Oct 2025 19:42:30 +0000 (UTC)
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CF5428643C;
+	Thu,  2 Oct 2025 19:43:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="EtJOEWJX"
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D2DB2877E2
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 19:42:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAA5F285CA2
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 19:43:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759434150; cv=none; b=SDNpI8GUNTr5Y/ecKExt5DVUFCFhP3u4dG+mCr4FUftgiVWcuxOBZeHbw5SzYhTlxl+Fq0bWlS8HcD7tvXbIfat2mABE7qroxG5pnkxF/n9xgs/mcPN3znryQi8MLJ3mzwh6TjsDI4ijzj2H5QjKZx51kEw5tcj3mS6nPZqh2bg=
+	t=1759434191; cv=none; b=DW+PN/pPe+s082QHHQx8x18kdSokWBxqzFLSs8eXH2t4/GWycalvuxslC2mFO/Xale38TLOmzJVKbPlaV78aWwfpatN6T8dyB+s16bnmd0FLql4TMIMT4wNR0ttVhl7DDI8b+PV/hCiJXhe/27w+4H26FK8Jo+x9vf/aPDtF4YU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759434150; c=relaxed/simple;
-	bh=3Dp6vEI+NZmOP+OmAZzPl19dhORww3b+5ZehyD+d1y0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=eTscShU5oeuGicfTa047F1c43/LRDZEYq+/GA2kmYKnq8/o/jkl3G8mjZbkCoWf7NplmeQ7iuEZ/zpgv7vg+ZP3nGFjoeF2bWi6xvJnhv0uU56EtIP5iaIHj+jAsc1F41fsiO/VMiQ4Pk6vJb2JKxMANKJajek5hjWMvex893Wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-90e388db4bdso345876739f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 12:42:28 -0700 (PDT)
+	s=arc-20240116; t=1759434191; c=relaxed/simple;
+	bh=A7KqEddsKAVljMmXY3IRxI+7rX4YiRQA/2iN8f0iHrQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=jlC6A++0/orIMHd2Iy9sziP9j/RMBI8dycob7GxURGGZscFvoxa2je2P5iK4y7/OgzeaKFKHc0oZvNuVU40NM9WqLyiPwp+52KGP8ehlN2crVvXWXwZUKGTBIsdrNmqNAegVt7vFJDY2SBplxx/JGNQpELGarXA91pfYWWlPHuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca; spf=pass smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=EtJOEWJX; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ndufresne.ca
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4e4f8122660so14260451cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 12:43:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1759434188; x=1760038988; darn=vger.kernel.org;
+        h=mime-version:user-agent:references:in-reply-to:date:cc:to:from
+         :subject:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=GLbu0A99oMaa9nLYhV9YO0gV0kE8G3JYKTRJhNNwLwY=;
+        b=EtJOEWJXpDfN+ANYDijWwJ+xUDgkh7lzTZxp/CeCJj6+ZvXFPYajSJts2V/sfODe2g
+         AjLrLC8G+TIEce6LvfGcUY/+eRFeZYbV6YquQAGqwOJwbVCZIjFWFmwrJb4CwAUs6ThR
+         1tv8P63JnGQf210KD9+gbfv822HTT3gJDoJp9dG22+AfJCgGaVsPQNfxcZSPetJVdwuV
+         YPGz4EL3w2UHmDCHjrJm41H33IHWBrLV7JD7RKO1vkM3NuSfMp5Dt6fZf0WkzBfv8atj
+         DVcxcK0c6480SmdqQrpADd4hDwV/dGFqGAugySIydAEHgVILDprR4SdfpQX3Hn3Tgl3W
+         It4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759434147; x=1760038947;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IHWoufPOT2ZPXNRc5DoYz+FwJd3fX1cS0hwyHgiBJhE=;
-        b=GkaG20roeXgX22EKzIX6fbWtsgcm887fyCiYthPhSLxJjgdDHHrFQpgBECckH/I6Q2
-         JF/nRqND9T+eqyxeyMJvaNm7nKresrNu+WtupGRf7TBLtehGt2y+owdVAF8CF9WnbvLX
-         U6+XLsDbzLb0tSabF2Qw13ocO5pG2An5clHE2RCNqvvt2hT8RtpwpISrMzQ58MY/6c9H
-         3gincuUeeHGAgdIpYENtTPS2zEI5a58+jkTvKRoQQHFRavjzwdXqjE+j1oKKdS56Ygek
-         gisF7R+tPWbOlZRNTTeLN3yxTYID/TUh4JxmfzF7ZABaT24NMqj9n7+LOBfK/0KU6/53
-         wbsA==
-X-Forwarded-Encrypted: i=1; AJvYcCU2hFrRepFlwsS6TnopJgEj2J5qJX0RxVaXA5yuJvZl+3vgDorF7n+zlfGg3aQdhSVq5tuSO8/ZhMhiSj4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz225y12CPQE+/vhb3NeicqJp0DtgvXTvaW9PgitGwYCbkR2b5s
-	/7THSw67PEdwKRRmLqnjVMkoUHFkY1+NrCmTabK9SzQl9BLVPZVlCzVjTqwTencvolB3+WbmQnH
-	1A/6BonEG9wU4ZfOcjBWjsVDqgkTM9w1dRO67SxlOO3n4vJSHWdFojbQSmvg=
-X-Google-Smtp-Source: AGHT+IEU/OOOMA49KmfXt1XRj8L46i3dX/8quLElMh47ODydo8OUZNrWsPpf6M7lZE1c/RoGQ7sTiG8ceohhIa5t+PXrLgW2CxEE
+        d=1e100.net; s=20230601; t=1759434188; x=1760038988;
+        h=mime-version:user-agent:references:in-reply-to:date:cc:to:from
+         :subject:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GLbu0A99oMaa9nLYhV9YO0gV0kE8G3JYKTRJhNNwLwY=;
+        b=APdQiyxCr17HzQNn6ij4czMuZk9mXrwztZgXp80GNQfor7YXKduOifiD7pB4kD7Ef/
+         skoSXobx3G9Mo7E9YXKZySzYosq7jngbNmf9MhPRY5hIwzfmkjTgdlciwA8nWQO7oKPi
+         HK+8pjbuMmHCadVezJx4ipiTk+JLQvxXU+RBD6caHSZJC2lJ/FOKqJL/lj3dNAM1IUAU
+         fA+x+Srac/pTolz+wsjc3uLF9FBN3YIdX5+BouFWRkEK7bUtzkB+r0oUKR7tkLYXKidk
+         MJ3/s5HhZM9cuDI7zrS9yEbOPcPB502usyOgHmREYGCTAJf/FdsJu5ggvTVUoplbnWxX
+         PIvw==
+X-Forwarded-Encrypted: i=1; AJvYcCXSwkmmNrGdA0d+MYSIjAHPrea2xFABvQC/wjXpjO/QjLU8yMcDun5RgHFHub0ctUY4GA9l7zuohxrqYL0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0JS0SEfFjx6S6cD51EFL+/s2lC3ucjdG2QudQ+yoXVNYeW+Mf
+	AaH00QZsyeOYe9KUaSy5LB63NQez8UAHT039vN8uWU4PISuRqOk35kiDIRovpRo+ntU=
+X-Gm-Gg: ASbGncuQDAVFGWGZelZf4JI4JaRqR1MvxDdzpYEzEJo1cs9Rh4+04gP6RyzwHJiHznX
+	GcZ+wPuMo0IlfWc9uJurcWkn4HdVBUFrm7n34TO7PcyERdbJx/SsD3XILsN6HbC1AczoRyvYCu5
+	T4lEQEbOp71piWogHijWWCavUjs1R8cry1LmuWzzzlqMNoT60H/rREYaRhsaHIn3wMw05lu3Uwj
+	fUGUkdeNEf0vLeGItsn3X5+k0aW0MPur8CVB8vVv7w1zT7ndWCds8uMUl4kG1mgcFLttt/n50ZG
+	+6qq1raFB3VXUtdMVVVuC5XHGpgbLfyavWBOsiyQiiydl3X0Q6UbpuducFmLi/ZY633EAhKEks9
+	BbH4T/VaIonz/fIsYQS39r3Sp+M3njIJ0/himbPlt7O+NFTXhQAHN
+X-Google-Smtp-Source: AGHT+IEzPBiXGBpKFF7vB5ii+FVt1qb6kGCEKl1cm73B6uxuSdAlpsQkRsPwqoLcv3e98vv8MU6XCg==
+X-Received: by 2002:a05:622a:1f9a:b0:4b3:4457:feca with SMTP id d75a77b69052e-4e576a452ffmr7677081cf.6.1759434187582;
+        Thu, 02 Oct 2025 12:43:07 -0700 (PDT)
+Received: from ?IPv6:2606:6d00:17:ebd3::5ac? ([2606:6d00:17:ebd3::5ac])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4e55cadc7f0sm26557711cf.26.2025.10.02.12.43.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Oct 2025 12:43:06 -0700 (PDT)
+Message-ID: <544147436308901fba85d6de48380c0c1eea7c67.camel@ndufresne.ca>
+Subject: Re: [PATCH 2/5] media: v4l2: Add description for V4L2_PIX_FMT_AV1
+ in v4l_fill_fmtdesc()
+From: Nicolas Dufresne <nicolas@ndufresne.ca>
+To: Deepa Guthyappa Madivalara <deepa.madivalara@oss.qualcomm.com>, Mauro
+ Carvalho Chehab <mchehab@kernel.org>, Vikash Garodia
+ <vikash.garodia@oss.qualcomm.com>, Dikshita Agarwal	
+ <dikshita.agarwal@oss.qualcomm.com>, Abhinav Kumar
+ <abhinav.kumar@linux.dev>,  Bryan O'Donoghue	 <bod@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org
+Date: Thu, 02 Oct 2025 15:43:05 -0400
+In-Reply-To: <20251001-av1_irisdecoder-v1-2-9fb08f3b96a0@oss.qualcomm.com>
+References: <20251001-av1_irisdecoder-v1-0-9fb08f3b96a0@oss.qualcomm.com>
+	 <20251001-av1_irisdecoder-v1-2-9fb08f3b96a0@oss.qualcomm.com>
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-yf81LbpFpHXIOu8Kt4WA"
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b41:b0:42d:7dea:1e09 with SMTP id
- e9e14a558f8ab-42e7ad6ea2fmr6404525ab.21.1759434147612; Thu, 02 Oct 2025
- 12:42:27 -0700 (PDT)
-Date: Thu, 02 Oct 2025 12:42:27 -0700
-In-Reply-To: <68c6c3b1.050a0220.2ff435.0382.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68ded5a3.050a0220.1696c6.0036.GAE@google.com>
-Subject: Re: [syzbot] [fs?] kernel BUG in qlist_free_all (2)
-From: syzbot <syzbot+8715dd783e9b0bef43b1@syzkaller.appspotmail.com>
-To: bp@alien8.de, brauner@kernel.org, dave.hansen@linux.intel.com, 
-	hpa@zytor.com, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, luto@kernel.org, mingo@redhat.com, 
-	peterz@infradead.org, syzkaller-bugs@googlegroups.com, tglx@linutronix.de, 
-	viro@zeniv.linux.org.uk, x86@kernel.org
+
+
+--=-yf81LbpFpHXIOu8Kt4WA
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-syzbot has found a reproducer for the following issue on:
+Le mercredi 01 octobre 2025 =C3=A0 12:00 -0700, Deepa Guthyappa Madivalara =
+a =C3=A9crit=C2=A0:
+> Add a descriptive string for the AV1 pixel format to v4l_fill_fmtdesc(),
+> enabling proper reporting of AV1 support via VIDIOC_ENUM_FMT.
+>=20
+> Signed-off-by: Deepa Guthyappa Madivalara <deepa.madivalara@oss.qualcomm.=
+com>
+> ---
+> =C2=A0drivers/media/v4l2-core/v4l2-ioctl.c | 1 +
+> =C2=A01 file changed, 1 insertion(+)
+>=20
+> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-
+> core/v4l2-ioctl.c
+> index
+> 01cf52c3ea33e1a01e1b306036ba4e57ef5c95d0..d3ee7736b74b0f277d3208782e3ac32=
+82eca
+> 1e6b 100644
+> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
+> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+> @@ -1542,6 +1542,7 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *f=
+mt)
+> =C2=A0		case V4L2_PIX_FMT_QC10C:	descr =3D "QCOM Compressed 10-
+> bit Format"; break;
+> =C2=A0		case V4L2_PIX_FMT_AJPG:		descr =3D "Aspeed
+> JPEG"; break;
+> =C2=A0		case V4L2_PIX_FMT_AV1_FRAME:	descr =3D "AV1 Frame"; break;
+> +		case V4L2_PIX_FMT_AV1:		descr =3D "AV1"; break;
 
-HEAD commit:    7f7072574127 Merge tag 'kbuild-6.18-1' of git://git.kernel..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1234b092580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b78ebc06b51acd7e
-dashboard link: https://syzkaller.appspot.com/bug?extid=8715dd783e9b0bef43b1
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11bc1092580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=176bfd04580000
+Perhaps "AV1 OBU stream", so its clear its no Annex B ?
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/70468cf24114/disk-7f707257.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/8126ac85fc8f/vmlinux-7f707257.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/0b72e383dd9d/bzImage-7f707257.xz
+> =C2=A0		case V4L2_PIX_FMT_MT2110T:	descr =3D "Mediatek 10bit Tile
+> Mode"; break;
+> =C2=A0		case V4L2_PIX_FMT_MT2110R:	descr =3D "Mediatek 10bit
+> Raster Mode"; break;
+> =C2=A0		case V4L2_PIX_FMT_HEXTILE:	descr =3D "Hextile Compressed
+> Format"; break;
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+8715dd783e9b0bef43b1@syzkaller.appspotmail.com
+--=-yf81LbpFpHXIOu8Kt4WA
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
 
-------------[ cut here ]------------
-kernel BUG at arch/x86/mm/physaddr.c:28!
-Oops: invalid opcode: 0000 [#1] SMP KASAN PTI
-CPU: 1 UID: 0 PID: 5927 Comm: syz-executor Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
-RIP: 0010:__phys_addr+0x173/0x180 arch/x86/mm/physaddr.c:28
-Code: e8 72 22 49 00 48 c7 c7 90 ce 21 8d 48 89 de 4c 89 f2 e8 b0 03 39 03 e9 4d ff ff ff e8 56 22 49 00 90 0f 0b e8 4e 22 49 00 90 <0f> 0b e8 46 22 49 00 90 0f 0b 0f 1f 00 90 90 90 90 90 90 90 90 90
-RSP: 0018:ffffc90003fbfcd8 EFLAGS: 00010293
-RAX: ffffffff81740d22 RBX: 0000607fffd49468 RCX: ffff8880256c1e00
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffe8ffffd49468 R08: 0000000000000000 R09: 0000000000000000
-R10: dffffc0000000000 R11: fffffbfff1d6b7e7 R12: ffffea0000000000
-R13: 0000000000000000 R14: 000000000000002e R15: 0000000000000001
-FS:  000055558ba17500(0000) GS:ffff888127122000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffc7f61af40 CR3: 00000000350ca000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- virt_to_folio include/linux/mm.h:1180 [inline]
- virt_to_slab mm/slab.h:187 [inline]
- qlink_to_cache mm/kasan/quarantine.c:131 [inline]
- qlist_free_all+0x39/0x140 mm/kasan/quarantine.c:176
- kasan_quarantine_reduce+0x148/0x160 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x22/0x80 mm/kasan/common.c:340
- kasan_slab_alloc include/linux/kasan.h:250 [inline]
- slab_post_alloc_hook mm/slub.c:4191 [inline]
- slab_alloc_node mm/slub.c:4240 [inline]
- kmem_cache_alloc_noprof+0x114/0x2d0 mm/slub.c:4247
- getname_flags+0xb8/0x540 fs/namei.c:146
- user_path_at+0x24/0x60 fs/namei.c:3214
- ksys_umount fs/namespace.c:2055 [inline]
- __do_sys_umount fs/namespace.c:2063 [inline]
- __se_sys_umount fs/namespace.c:2061 [inline]
- __x64_sys_umount+0xee/0x160 fs/namespace.c:2061
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f62cb4c01f7
-Code: a8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 0f 1f 44 00 00 31 f6 e9 09 00 00 00 66 0f 1f 84 00 00 00 00 00 b8 a6 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 01 c3 48 c7 c2 a8 ff ff ff f7 d8 64 89 02 b8
-RSP: 002b:00007ffc7f61a098 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
-RAX: ffffffffffffffda RBX: 00007f62cb541d7d RCX: 00007f62cb4c01f7
-RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007ffc7f61b1e0
-RBP: 00007ffc7f61b1cc R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffc7f61b1e0
-R13: 00007f62cb541d7d R14: 0000000000022677 R15: 00007ffc7f61b220
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:__phys_addr+0x173/0x180 arch/x86/mm/physaddr.c:28
-Code: e8 72 22 49 00 48 c7 c7 90 ce 21 8d 48 89 de 4c 89 f2 e8 b0 03 39 03 e9 4d ff ff ff e8 56 22 49 00 90 0f 0b e8 4e 22 49 00 90 <0f> 0b e8 46 22 49 00 90 0f 0b 0f 1f 00 90 90 90 90 90 90 90 90 90
-RSP: 0018:ffffc90003fbfcd8 EFLAGS: 00010293
-RAX: ffffffff81740d22 RBX: 0000607fffd49468 RCX: ffff8880256c1e00
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffe8ffffd49468 R08: 0000000000000000 R09: 0000000000000000
-R10: dffffc0000000000 R11: fffffbfff1d6b7e7 R12: ffffea0000000000
-R13: 0000000000000000 R14: 000000000000002e R15: 0000000000000001
-FS:  000055558ba17500(0000) GS:ffff888127122000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffc7f61af40 CR3: 00000000350ca000 CR4: 00000000003526f0
+-----BEGIN PGP SIGNATURE-----
 
+iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaN7VyQAKCRDZQZRRKWBy
+9Fw5AQCbUcP66ePDvEJ9FsZlgVB+kvABFUtQrZBWY828sY4anAEAggr+vAjgEgPw
+4iyEwI0mxlc1FCpEjJab+uQB4XZw2A4=
+=hE1j
+-----END PGP SIGNATURE-----
 
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+--=-yf81LbpFpHXIOu8Kt4WA--
 
