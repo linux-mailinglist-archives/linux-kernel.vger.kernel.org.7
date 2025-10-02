@@ -1,90 +1,100 @@
-Return-Path: <linux-kernel+bounces-840323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B98D1BB41D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 15:59:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BE57EBB41DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 16:01:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F6E91758BC
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 13:59:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E83B17BE49
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 14:01:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B81AE3115B5;
-	Thu,  2 Oct 2025 13:59:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66B4C13B5AE;
+	Thu,  2 Oct 2025 14:01:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="CqO5bBiE"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="I/kCvx3e"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76D232D5928
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 13:59:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED96E139E
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 14:01:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759413557; cv=none; b=qFYdRiYBk1I+yfcZFl3T/JxJ0OJK6+a4V8hUxIYv7Y4SVfsx4rtwUsKqbQGEV7UGedDFdPLCs47CdH75+8IwVSBquqQkO9cfrTTyp4VmacjwC0VSY6c1zYof+64ejyaKX1MPxvokSb+wv5r/hTcgCl5YzQkeTnMM0PAfhg8fUuM=
+	t=1759413698; cv=none; b=DWo1BxxNI44e/WRbzJ06ZrY8m4wPH0yWhO1ZhTSRFDRhp7ZgCVaKo1ZTx211BhNjUY5qmFGUon5p6dfuwnc95890ue8qiIrvKJohSZi/6PmR6cFP6jKYvDp8URoY24WAu6lG8N08x/djyh6GlsC3fGIgdjERkot9MjTYEvR5Xu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759413557; c=relaxed/simple;
-	bh=k5xtrHej6iQBf40JjE8Ern58Z/LL3iBX9ALSoI8ap0c=;
+	s=arc-20240116; t=1759413698; c=relaxed/simple;
+	bh=qvGG5Sp/wls0uIdw2iHlnWQPg9UFRvDF57gXXnxB8bM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b5VJ206mwLpKprpxXjfmgmloEhz6mN9E4xNDDk0rTyVCm2AQc+ADymrtU84OZrxJERs7YmkKZjSMp/PQhQjT9E9MylyoP7ezyhz5OSfydURsDAsSYlrqOWHAHLmTlN9I72tXaj3clIlbeNdc59hw0k6HZkV+iERrFVdFZdMXZyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=CqO5bBiE; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-78af3fe5b17so1000665b3a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 06:59:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1759413555; x=1760018355; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=AejVj1pzVa5tMHUAvlwjfMQqAVzkVnwGk/N4H8InPvw=;
-        b=CqO5bBiEv5oq36jkXOLephgZU6sY80BxJFsTla0kq8f5B7w1zbC1VnKlxByLjWqpbJ
-         hd4LhS2RAut0l8zgei+d1vc6FqtGRiNH1uV4/ZIglFSe6+nqCXZPAwukMq7PDuBIvNmG
-         zC1wGiq30LnQJ+EfyHRulmsNVtk02CMQSyvyG0V5BI3+kE21quGOjmy46reKteHHJecL
-         0MSWis+58gTzgI6R00GyZPg7QwX93b6kUwQ9buK+OP1BIZ4uE3fSE0V2OvlgWPzZ4qCG
-         gvk4w1IssbUsAlPjY0js7wPlX+g2v/xyd7Ps0B3Brs3I/PLitxp2ftK76h5CBT0f1nNw
-         ZdSA==
+	 Content-Type:Content-Disposition:In-Reply-To; b=BHl9rj+8vdS/BX90mJOSOsuh8C1SUHiTLAp5NvsdCmx1VuEgubzlmYDVbNJal5F4UI5y31Lyc/1+TsKUvMWsZJYMbYxDGEp0v5rYDw8HL+VOY4XiXe7NTkutjK2y34GS78BfQAbGBL4aqTfT/sPbnUItm8USrZWZd2IAtgvhDz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=I/kCvx3e; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759413696;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BkWeVgZk8kUqiPYnzR3sGa1HOxeTHYc8DALzvEtqa9s=;
+	b=I/kCvx3egx86UNT42J0d4MH2bt+R3AEUjF6VDOG6QCwwwnCu8PuyaxMZIydJXh2wbPPBhz
+	CgNkYn9FgfmX0bv4gwyZsAZ8Xxx4RNYjkn0pmOo+EAWBVqBznuSXlwGaidETMK7BHGtkDW
+	Gv7jSHCGIZPQopluHZVz11VoXyMwCPE=
+Received: from mail-ot1-f70.google.com (mail-ot1-f70.google.com
+ [209.85.210.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-601-PGIcKr1fPeG8r_vMOJbPoA-1; Thu, 02 Oct 2025 10:01:34 -0400
+X-MC-Unique: PGIcKr1fPeG8r_vMOJbPoA-1
+X-Mimecast-MFC-AGG-ID: PGIcKr1fPeG8r_vMOJbPoA_1759413694
+Received: by mail-ot1-f70.google.com with SMTP id 46e09a7af769-74381f4c715so1684147a34.1
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 07:01:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759413555; x=1760018355;
+        d=1e100.net; s=20230601; t=1759413694; x=1760018494;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=AejVj1pzVa5tMHUAvlwjfMQqAVzkVnwGk/N4H8InPvw=;
-        b=V6GhC+PqFsZRbCV7wLl/ZqqYsL8xFWczqDitdocM9ZJyfwKSMgUf1G+ntxSJK0iNKU
-         JsDnXgsYjNr8U109nsSHH/hDRRNVd0tG8QwycU4GKqMkdDcZvHRCVLlk31lKAy3L6GuA
-         X6lE2U/kXMSJd2PrtSK19XmlT0oLySbXNGeOYyEIJ7zBEYBNAzTWY9sI8mX/tIrKQwgh
-         reuKjM07mHH+vD79yrbUfr/AuCQmTMCnUzYNmkouP9l+AZvROmBMrIp48WbQ8DGu0gUN
-         J/0cHiBEgkvPFAwtamTD157ZuqPBSyojS6G1oRBY8QQ55z6a9u0jobAq5ajLbboRmtIH
-         RHsA==
-X-Forwarded-Encrypted: i=1; AJvYcCULVyasaObfPbSBt7G/ZSW9heKy8D3JAovniPuay7NYowxfTW7szZC8DNA9uUKUQN5vkQqWkr7RtBYYs8M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyE7UoMWJsifiGT+kIrDd0a1maonOqhFV5zlPI3l03GmxW3rqN
-	CVTxXrspJTnmpsKkAojVhuX5ecKzggFArB39P8ks9/94zUpfyJmoyjfLQUgz4wyNENE=
-X-Gm-Gg: ASbGncvYjkLujpucszIFyvMXKEQkAEGy1hQFQdR1P9ZMSDvs8vFJDrnOpja/blx6F4t
-	RDqzHV8iRUlv++I1MtSOA+mtjhTiKlRfpKBmScoo5efKtg3ooo/XKz+EmahTEAOSezBSdPLvtnV
-	3Db6Cp2Etw4KqvjIw+Au/muTvCdCULPbmyI4GggvKyXa3Mg3w5DvjPTXIuMzijFKmpBzE/FfMai
-	xV+0sT4EmxMMvhUzzxWTllddulz3lw8gUw03cr5VntZAiJZpTSDFFh/d9qFWu5Hnelr/tIKcHlC
-	GWILEeoI5WU73cSZczyNtIUmPrmv0fJCr7n2i69xzmyXhuxFz65Q7p3vhtFy0WljmQYbcwtymqr
-	8z89c6s4zvs892ce8MwOo
-X-Google-Smtp-Source: AGHT+IFjGtBLlrkcnGT3IwhvYU0siZeeKF1GDGUMbBleUNQJiex5zPfFC6dd5HdcsemvvP6EVFcU7w==
-X-Received: by 2002:a05:6a00:17a6:b0:781:17ee:602 with SMTP id d2e1a72fcca58-78af422946amr8738022b3a.28.1759413554667;
-        Thu, 02 Oct 2025 06:59:14 -0700 (PDT)
-Received: from ziepe.ca ([130.41.10.202])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78b0208eb5asm2300221b3a.82.2025.10.02.06.59.14
+        bh=BkWeVgZk8kUqiPYnzR3sGa1HOxeTHYc8DALzvEtqa9s=;
+        b=bG5oo2H0STCmtV1mzcmTmmxf3MtsLYOjJ+VX4NK3zi0RBZLLyPBT+lDtrHDHe9SUev
+         sVWqIsTKBFNFMkJOlRhfCrRPtS6/qeOtSYGwcfJVgyAEHNxF/WEmh4P6a8nBNtvhKLds
+         om25IMI8DmgGR2Sd0dbCr3iZl24ZuF2J2lm8BUiJN0Tw9iV+g+i4Jb5UAWdAQxWljfa+
+         pElXWAGPeVWgMszkZmnN3bIWm44DMadcRoBJpTyum8T4/7y7EAhBRSQzdw1sVo1BMNc+
+         q7/juGlWyV0l+7dX+jG7h1AByjHVmahrMD8dB0/42lnB7VR6SH+uwM1YtVsdzRUaxg5x
+         g9Dg==
+X-Forwarded-Encrypted: i=1; AJvYcCXJ+Oyq0caQPdpcmUHlt/Gxb3BC9Fiqvx/DjZvWuvjl1ACE55x55raLxSycPvG2XOLUTUQlPhmJkE6ntU0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySDG61kEI8QZId3HA9TPpom5BZnJeRCs1shwhEzRZvWAlG1jgG
+	1qidUUYYBIVeD3iNb/cp5rUGJNODqu4keRl0B7CedEiAREBAszkOMUvN96iXgT4ZXSqPYHEcsUh
+	OzPkyClDLa9PJHzDUfyOC1JHq4BDQSr3vVj1e4DIrzg5BHj4BpvAuD84eaTvdvm2jMw==
+X-Gm-Gg: ASbGncsG8rC+wPjb3jl/DV3R2OOEuYNUaui3NfzO7NohVB8qS4RdVbI7kRwatWnovjA
+	txOvyCEqphs49/PgaM7oN4DgRJxpDdI7DGcEKPai31KlyZTXmi++Iw2HmB+Ky+izr9bN/q4OVtV
+	2vWsH8+UmVh59R2cMBLZ7j6UE645R5vxAuhqERP4PsE9t8TkhiqP2Fh0Kq/b82/OnStiXfZLxsZ
+	Uvig4TjL0nL7THhLBX0gqalq4Mhf6f3iSigMIJlNtpHjI9TJJ0N9mDGUUTM1O3RHu7d/utpo6f5
+	GRXs2+0DmfTTobdBAOsnnslfBbGrX7RJnRKuQPbbkHfzCbt+47Uldj+lH/Kmog+yNHQVbVyKfRO
+	8JOWZVlqK7uXC4qaecJW2EZ4b
+X-Received: by 2002:a05:6830:6388:b0:799:bdea:3470 with SMTP id 46e09a7af769-7bddb3180e7mr6320228a34.18.1759413693819;
+        Thu, 02 Oct 2025 07:01:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFifkv3G0JYpxDmZZsqPFwY4V7Lyatv9jR3a1EVRoOQC8n0sy+M4wfNVLE6WgPIWF6BKQZlig==
+X-Received: by 2002:a05:6830:6388:b0:799:bdea:3470 with SMTP id 46e09a7af769-7bddb3180e7mr6320049a34.18.1759413692979;
+        Thu, 02 Oct 2025 07:01:32 -0700 (PDT)
+Received: from jlelli-thinkpadt14gen4.remote.csb (host-80-47-6-60.as13285.net. [80.47.6.60])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8777892eadasm211882885a.39.2025.10.02.07.01.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 06:59:14 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1v4Jps-0000000DiKt-0OJJ;
-	Thu, 02 Oct 2025 10:59:08 -0300
-Date: Thu, 2 Oct 2025 10:59:08 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Shigeru Yoshida <syoshida@redhat.com>
-Cc: glider@google.com, elver@google.com, dvyukov@google.com,
-	akpm@linux-foundation.org, leon@kernel.org,
-	m.szyprowski@samsung.com, kasan-dev@googlegroups.com,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kmsan: fix kmsan_handle_dma() to avoid false positives
-Message-ID: <20251002135908.GE3195829@ziepe.ca>
-References: <20251002051024.3096061-1-syoshida@redhat.com>
+        Thu, 02 Oct 2025 07:01:30 -0700 (PDT)
+Date: Thu, 2 Oct 2025 15:01:25 +0100
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Yuri Andriaccio <yurand2000@gmail.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	Luca Abeni <luca.abeni@santannapisa.it>,
+	Yuri Andriaccio <yuri.andriaccio@santannapisa.it>
+Subject: Re: [RFC PATCH v3 03/24] sched/rt: Pass an rt_rq instead of an rq
+ where needed
+Message-ID: <aN6FtY-J3WXlGaNv@jlelli-thinkpadt14gen4.remote.csb>
+References: <20250929092221.10947-1-yurand2000@gmail.com>
+ <20250929092221.10947-4-yurand2000@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,40 +103,76 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251002051024.3096061-1-syoshida@redhat.com>
+In-Reply-To: <20250929092221.10947-4-yurand2000@gmail.com>
 
-On Thu, Oct 02, 2025 at 02:10:24PM +0900, Shigeru Yoshida wrote:
-> KMSAN reports an uninitialized value issue in dma_map_phys()[1].  This
-> is a false positive caused by the way the virtual address is handled
-> in kmsan_handle_dma().  Fix it by translating the physical address to
-> a virtual address using phys_to_virt().
+Hello,
 
-This is the same sort of thinko as was found on the alpha patch, it is
-tricky!
-
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-
-> @@ -339,13 +339,12 @@ static void kmsan_handle_dma_page(const void *addr, size_t size,
->  void kmsan_handle_dma(phys_addr_t phys, size_t size,
->  		      enum dma_data_direction dir)
->  {
-> -	struct page *page = phys_to_page(phys);
-
-This throws away the page_offset encoded in phys
-
->  	u64 page_offset, to_go;
->  	void *addr;
+On 29/09/25 11:22, Yuri Andriaccio wrote:
+> From: luca abeni <luca.abeni@santannapisa.it>
+> 
+> Make rt.c code access the runqueue through the rt_rq data structure rather than
+> passing an rq pointer directly. This allows future patches to define rt_rq data
+> structures which do not refer only to the global runqueue, but also to local
+> cgroup runqueues (rt_rq is not always equal to &rq->rt).
+> 
+> Signed-off-by: luca abeni <luca.abeni@santannapisa.it>
+> Signed-off-by: Yuri Andriaccio <yurand2000@gmail.com>
+> ---
+>  kernel/sched/rt.c | 99 ++++++++++++++++++++++++++---------------------
+>  1 file changed, 54 insertions(+), 45 deletions(-)
+> 
+> diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+> index 7936d433373..a7d063d2303 100644
+> --- a/kernel/sched/rt.c
+> +++ b/kernel/sched/rt.c
+> @@ -370,9 +370,9 @@ static inline void rt_clear_overload(struct rq *rq)
+>  	cpumask_clear_cpu(rq->cpu, rq->rd->rto_mask);
+>  }
 >  
->  	if (PhysHighMem(phys))
+> -static inline int has_pushable_tasks(struct rq *rq)
+> +static inline int has_pushable_tasks(struct rt_rq *rt_rq)
+>  {
+> -	return !plist_head_empty(&rq->rt.pushable_tasks);
+> +	return !plist_head_empty(&rt_rq->pushable_tasks);
+>  }
+>  
+>  static DEFINE_PER_CPU(struct balance_callback, rt_push_head);
+> @@ -381,50 +381,54 @@ static DEFINE_PER_CPU(struct balance_callback, rt_pull_head);
+>  static void push_rt_tasks(struct rq *);
+>  static void pull_rt_task(struct rq *);
+>  
+> -static inline void rt_queue_push_tasks(struct rq *rq)
+> +static inline void rt_queue_push_tasks(struct rt_rq * rt_rq)
+
+Nit, remove space                                     ^^^
+
+>  {
+> -	if (!has_pushable_tasks(rq))
+> +	struct rq *rq = container_of(rt_rq, struct rq, rt);
+> +
+> +	if (!has_pushable_tasks(rt_rq))
 >  		return;
-> -	addr = page_to_virt(page);
+>  
+>  	queue_balance_callback(rq, &per_cpu(rt_push_head, rq->cpu), push_rt_tasks);
+>  }
+>  
+> -static inline void rt_queue_pull_task(struct rq *rq)
+> +static inline void rt_queue_pull_task(struct rt_rq * rt_rq)
 
-And this gives an addr that is now 0 page_offset, which is not right.
+Nit, remove space                                     ^^^
 
-> +	addr = phys_to_virt(phys);
+>  {
+> +	struct rq *rq = container_of(rt_rq, struct rq, rt);
 
-Make more sense anyhow when combined with PhysHighMem() and gives the
-right page_offset.
+Still need to check with the full series (and it's OK up until here),
+but I guess this needs special attention with tasks inside groups to
+make sure we don't queue callbacks in rqs representing groups?
 
-Jason
+> +
+>  	queue_balance_callback(rq, &per_cpu(rt_pull_head, rq->cpu), pull_rt_task);
+>  }
+
+Thanks,
+Juri
+
 
