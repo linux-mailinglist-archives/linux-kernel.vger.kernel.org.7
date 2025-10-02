@@ -1,156 +1,151 @@
-Return-Path: <linux-kernel+bounces-840190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C6E1BB3CB0
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 13:40:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 720F9BB3CBB
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 13:40:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F28EB19E0208
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 11:40:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38B0E7AF85F
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 11:38:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A908B3101BF;
-	Thu,  2 Oct 2025 11:40:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AC8230FC26;
+	Thu,  2 Oct 2025 11:40:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TW1/86Ro"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cG/7F70V"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A95921F582B;
-	Thu,  2 Oct 2025 11:39:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2DE13093BF
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 11:40:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759405199; cv=none; b=VBFcsD4jIuOusMdbL1d7J1dx1d411HMDRxChvH8jotp5wpZzGGU7iQiJ4xrapz+yv2pqmSkH7GG5faO4cc7FdP6lfrIm+ZJDxlkxaJNrhkwzYYJtRZr7dqotIm5EjIkXuO/2Dx9TArKTJqcMTDXuMnC96OQGXIHFhKF48QNS+DI=
+	t=1759405213; cv=none; b=WLjnu3MVK9thCU/77gA/mxMjzCEm7LOnp18le/18W89tb8AC9fZ/lCugqd7pmcphKdtPp+U8p7PtD3lwGdHm8KKhducbwx21Yb4RTeAjqB0/NN5gOqfWlPkwaG+vMflhpXNOovSr5AYl44e3CuEpYVMYsJ2kHQ3O49CGYV9aMrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759405199; c=relaxed/simple;
-	bh=AqM4M+MGYM63wBzkJdjM+deX6L3r76MLEIOrwOOOwJs=;
+	s=arc-20240116; t=1759405213; c=relaxed/simple;
+	bh=vWzodoQgqiLu0pXyZfRnw5dcWNrHKmXYDfqUz9i4RoU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I5xXjLHQECGHfFW7wtUoGDHJLYZjJdthnESF+9CC29YB5TQsPRe5booLuXRpPU+TmFNw7hiYt3CpIqkd5KqXA8N0pwaCpJRuy2UHrDvsLJahNrpHZrU4iAMoutz4SVvEC235Di78niwzs9fVzo5AH9UAkKOC7ZlyLpxBVBFd50U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TW1/86Ro; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB65CC4CEF4;
-	Thu,  2 Oct 2025 11:39:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759405199;
-	bh=AqM4M+MGYM63wBzkJdjM+deX6L3r76MLEIOrwOOOwJs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TW1/86RoVUn8qaQrgHMvsQvcXg86d9INUtwu3WmMM1sNr7Nnhsdu5LGDe4wj5Nmcd
-	 h3ahbC+1P18XctdTn5Su30qTYLkv7UarZVkeP70mkiGhbyiaB4Tf6m6FHeWhLlYVJv
-	 LhShOrKMSXkpVSMXLKYov1x2dryfuR3xlR/mL6dZWVfYhX3Zictu/5mKj4LvKtKxkm
-	 Ma7bsVvTVvu3F16nnUTBVa3mDEJ/xjXtgVjwBY+8URYSBCdEXXcChHc80acWuzep8i
-	 mXGvMQLTMLWWC7+zGhRkCVamXaRa0GZJHQuGz3SNFpxw4WC4iKaqKbkQ2SmMMevhe3
-	 M2PF47W5eCD9A==
-Date: Thu, 2 Oct 2025 12:39:31 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Byungchul Park <byungchul@sk.com>
-Cc: linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
-	torvalds@linux-foundation.org, damien.lemoal@opensource.wdc.com,
-	linux-ide@vger.kernel.org, adilger.kernel@dilger.ca,
-	linux-ext4@vger.kernel.org, mingo@redhat.com, peterz@infradead.org,
-	will@kernel.org, tglx@linutronix.de, rostedt@goodmis.org,
-	joel@joelfernandes.org, sashal@kernel.org, daniel.vetter@ffwll.ch,
-	duyuyang@gmail.com, johannes.berg@intel.com, tj@kernel.org,
-	tytso@mit.edu, willy@infradead.org, david@fromorbit.com,
-	amir73il@gmail.com, gregkh@linuxfoundation.org, kernel-team@lge.com,
-	linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@kernel.org,
-	minchan@kernel.org, hannes@cmpxchg.org, vdavydov.dev@gmail.com,
-	sj@kernel.org, jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
-	penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
-	ngupta@vflare.org, linux-block@vger.kernel.org,
-	josef@toxicpanda.com, linux-fsdevel@vger.kernel.org, jack@suse.cz,
-	jlayton@kernel.org, dan.j.williams@intel.com, hch@infradead.org,
-	djwong@kernel.org, dri-devel@lists.freedesktop.org,
-	rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
-	hamohammed.sa@gmail.com, harry.yoo@oracle.com,
-	chris.p.wilson@intel.com, gwan-gyeong.mun@intel.com,
-	max.byungchul.park@gmail.com, boqun.feng@gmail.com,
-	longman@redhat.com, yunseong.kim@ericsson.com, ysk@kzalloc.com,
-	yeoreum.yun@arm.com, netdev@vger.kernel.org,
-	matthew.brost@intel.com, her0gyugyu@gmail.com, corbet@lwn.net,
-	catalin.marinas@arm.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	x86@kernel.org, hpa@zytor.com, luto@kernel.org,
-	sumit.semwal@linaro.org, gustavo@padovan.org,
-	christian.koenig@amd.com, andi.shyti@kernel.org, arnd@arndb.de,
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
-	rppt@kernel.org, surenb@google.com, mcgrof@kernel.org,
-	petr.pavlu@suse.com, da.gomez@kernel.org, samitolvanen@google.com,
-	paulmck@kernel.org, frederic@kernel.org, neeraj.upadhyay@kernel.org,
-	joelagnelf@nvidia.com, josh@joshtriplett.org, urezki@gmail.com,
-	mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
-	qiang.zhang@linux.dev, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com,
-	chuck.lever@oracle.com, neil@brown.name, okorniev@redhat.com,
-	Dai.Ngo@oracle.com, tom@talpey.com, trondmy@kernel.org,
-	anna@kernel.org, kees@kernel.org, bigeasy@linutronix.de,
-	clrkwllms@kernel.org, mark.rutland@arm.com, ada.coupriediaz@arm.com,
-	kristina.martsenko@arm.com, wangkefeng.wang@huawei.com,
-	kevin.brodsky@arm.com, dwmw@amazon.co.uk, shakeel.butt@linux.dev,
-	ast@kernel.org, ziy@nvidia.com, yuzhao@google.com,
-	baolin.wang@linux.alibaba.com, usamaarif642@gmail.com,
-	joel.granados@kernel.org, richard.weiyang@gmail.com,
-	geert+renesas@glider.be, tim.c.chen@linux.intel.com,
-	linux@treblig.org, alexander.shishkin@linux.intel.com,
-	lillian@star-ark.net, chenhuacai@kernel.org, francesco@valla.it,
-	guoweikang.kernel@gmail.com, link@vivo.com, jpoimboe@kernel.org,
-	masahiroy@kernel.org, brauner@kernel.org,
-	thomas.weissschuh@linutronix.de, oleg@redhat.com, mjguzik@gmail.com,
-	andrii@kernel.org, wangfushuai@baidu.com, linux-doc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-	linaro-mm-sig@lists.linaro.org, linux-i2c@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-modules@vger.kernel.org,
-	rcu@vger.kernel.org, linux-nfs@vger.kernel.org,
-	linux-rt-devel@lists.linux.dev
-Subject: Re: [PATCH v17 09/47] arm64, dept: add support
- CONFIG_ARCH_HAS_DEPT_SUPPORT to arm64
-Message-ID: <a7f41101-d80a-4cee-ada5-9c591321b1d7@sirena.org.uk>
-References: <20251002081247.51255-1-byungchul@sk.com>
- <20251002081247.51255-10-byungchul@sk.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fi9P2myNgUmcg6HZu4sFeakP7u07eIkdtLVykzuR5JrCl5NCGpn/nEUWcnNQJICGE8qYb2TKzltDdx/37BMhoN8xMqIlhhbT//S9NL4xcml9PTpJlbR92hvV3HkYNLmLqgOtQrpKUxlxCk9LfeBkjG9zNaWYX1C5c2Oge3WLoyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cG/7F70V; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759405212; x=1790941212;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=vWzodoQgqiLu0pXyZfRnw5dcWNrHKmXYDfqUz9i4RoU=;
+  b=cG/7F70VZCEvAA1lkFPdCxYIX4hHF/LpXHbyaAQ+yyiFlBWw+9qbeCzS
+   6MvnQ3/iVHs3pseRhl5EMCfGP6hvEuPMHjNSF+lrChp1iC5Zf1cxZpoFK
+   NpmqntC7I717CWCXzI6lqnqReVL66aQRlx+5xCVMVWgVhW/gLD29cy8Z5
+   9svG0OY91RbTStolgWfGkkSliOmWWV9TprBrKT/PHS8OTtgA8RDZP6Km0
+   58zQaUjyr1+Wvn6Zuo6DWLaX5N6morC0sKbwxH+qh0gaKthdUghYBS3Gu
+   CUJJU99YgyfbbY+Xt1vbBa3hDUBswlZ9DStk7MDOZIRbjerkLwrJkKGs2
+   A==;
+X-CSE-ConnectionGUID: /QHSXoD3QLe0SXK4tMiTfg==
+X-CSE-MsgGUID: 1etkicwFRPuWdqndMIaCnQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11569"; a="79337986"
+X-IronPort-AV: E=Sophos;i="6.18,309,1751266800"; 
+   d="scan'208";a="79337986"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2025 04:40:11 -0700
+X-CSE-ConnectionGUID: vyYSF09PRJaTpofzcJnjDg==
+X-CSE-MsgGUID: O9GCZXuXTjWwkrgSjbrZVg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,309,1751266800"; 
+   d="scan'208";a="183321130"
+Received: from fpallare-mobl4.ger.corp.intel.com (HELO localhost) ([10.245.245.228])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2025 04:40:08 -0700
+Date: Thu, 2 Oct 2025 14:40:05 +0300
+From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To: Chintan Patel <chintanlike@gmail.com>
+Cc: maarten.lankhorst@linux.intel.com, maxime.ripard@kernel.org,
+	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	syzbot+147ba789658184f0ce04@syzkaller.appspotmail.com
+Subject: Re: [PATCH v2] drm/vblank: downgrade vblank wait timeout from WARN
+ to debug
+Message-ID: <aN5klZdl2MZdPSpU@intel.com>
+References: <20251002025723.9430-1-chintanlike@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="KmVT2ZbmJlsEn2vS"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20251002081247.51255-10-byungchul@sk.com>
-X-Cookie: idleness, n.:
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251002025723.9430-1-chintanlike@gmail.com>
+X-Patchwork-Hint: comment
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
+On Wed, Oct 01, 2025 at 07:57:23PM -0700, Chintan Patel wrote:
+> When wait_event_timeout() in drm_wait_one_vblank() times out, the
+> current WARN can cause unnecessary kernel panics in environments
+> with panic_on_warn set (e.g. CI, fuzzing). These timeouts can happen
+> under scheduler pressure or from invalid userspace calls, so they are
+> not always a kernel bug.
 
---KmVT2ZbmJlsEn2vS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+"invalid userspace calls" should never reach this far.
+That would be a kernel bug.
 
-On Thu, Oct 02, 2025 at 05:12:09PM +0900, Byungchul Park wrote:
-> dept needs to notice every entrance from user to kernel mode to treat
-> every kernel context independently when tracking wait-event dependencies.
-> Roughly, system call and user oriented fault are the cases.
->=20
-> Make dept aware of the entrances of arm64 and add support
-> CONFIG_ARCH_HAS_DEPT_SUPPORT to arm64.
+> 
+> Replace the WARN with drm_dbg_kms() messages that provide useful
+> context (last and current vblank counters) without crashing the
+> system. Developers can still enable drm.debug to diagnose genuine
+> problems.
+> 
+> Reported-by: syzbot+147ba789658184f0ce04@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=147ba789658184f0ce04
+> Tested-by: syzbot+147ba789658184f0ce04@syzkaller.appspotmail.com
+> 
+> Signed-off-by: Chintan Patel <chintanlike@gmail.com>
+> 
+> v2:
+>  - Drop unnecessary in-code comment (suggested by Thomas Zimmermann)
+>  - Remove else branch, only log timeout case
+> ---
+>  drivers/gpu/drm/drm_vblank.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_vblank.c b/drivers/gpu/drm/drm_vblank.c
+> index 46f59883183d..a94570668cba 100644
+> --- a/drivers/gpu/drm/drm_vblank.c
+> +++ b/drivers/gpu/drm/drm_vblank.c
+> @@ -1289,7 +1289,7 @@ void drm_wait_one_vblank(struct drm_device *dev, unsigned int pipe)
+>  {
+>  	struct drm_vblank_crtc *vblank = drm_vblank_crtc(dev, pipe);
+>  	int ret;
+> -	u64 last;
+> +	u64 last, curr;
+>  
+>  	if (drm_WARN_ON(dev, pipe >= dev->num_crtcs))
+>  		return;
+> @@ -1305,7 +1305,12 @@ void drm_wait_one_vblank(struct drm_device *dev, unsigned int pipe)
+>  				 last != drm_vblank_count(dev, pipe),
+>  				 msecs_to_jiffies(100));
+>  
+> -	drm_WARN(dev, ret == 0, "vblank wait timed out on crtc %i\n", pipe);
+> +	curr = drm_vblank_count(dev, pipe);
+> +
+> +	if (ret == 0) {
+> +		drm_dbg_kms(dev, "WAIT_VBLANK: timeout crtc=%d, last=%llu, curr=%llu\n",
+> +			pipe, last, curr);
 
-The description of what needs to be tracked probably needs some
-tightening up here, it's not clear to me for example why exceptions for
-mops or the vector extensions aren't included here, or what the
-distinction is with error faults like BTI or GCS not being tracked?
+It should at the very least be a drm_err(). Though the backtrace can
+be useful in figuring out where the problem is coming from, so not
+too happy about this change.
 
---KmVT2ZbmJlsEn2vS
-Content-Type: application/pgp-signature; name="signature.asc"
+> +	}
+>  
+>  	drm_vblank_put(dev, pipe);
+>  }
+> -- 
+> 2.43.0
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjeZHIACgkQJNaLcl1U
-h9C/NQf6AxgZ6UzPOMzfmL9NSrLltWX75xfq7wx8SUKs1A6RFEWCR/s8jeaJZeCx
-834KNHe3AuR4JVKLLGCZS/c26uVb8ee5itMM53Hv9CN8sQFUNuw/xdO1WCQVmZOI
-pHaKeDBxXVnmeBO3uxS+3ITFDSNIPz6DOUAhqdFLhC6EhioGurq1dr8EtQu0aL3A
-CqG9/M48cKPZRG7a1vLkqKbg8o15SYytfgXtl1kBey51IR89HXUZA4xdNc1CP0Sf
-t2jQUg9ne/qxFnWt0CZEL+07IEC/enVs8gcO+mSpVX1r8yRDs496wZ29z7TjDaXB
-8wuHMVCoKqwssyLsusjOjgef5XgKoQ==
-=Ipx4
------END PGP SIGNATURE-----
-
---KmVT2ZbmJlsEn2vS--
+-- 
+Ville Syrjälä
+Intel
 
