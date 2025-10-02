@@ -1,97 +1,92 @@
-Return-Path: <linux-kernel+bounces-840069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A04DBB3746
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 11:27:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AA00BB374F
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 11:31:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D97227A2226
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 09:25:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48026189B529
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 09:31:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 939182E8B78;
-	Thu,  2 Oct 2025 09:27:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BDB62D8764;
+	Thu,  2 Oct 2025 09:31:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eRDft1Cx";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4wA2Q6GO"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=gondor.apana.org.au header.i=@gondor.apana.org.au header.b="javH87rq"
+Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77A6B1C4A10;
-	Thu,  2 Oct 2025 09:27:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50EF32C2377;
+	Thu,  2 Oct 2025 09:30:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759397222; cv=none; b=Gx2QmamtkJlOPwhfDoUAGjevR4FYFZ+GlHSyOfkBsZbhJNZmQV9+xLyavxjSY0iFumnhBkkVNvM1NN6Ig3iMZkVsGLm9Th6Yl1vkkgmPu+0+/tZlq9l9HA3hG80DLqWBCVAmgS6kfBO3YoGVAhwUb81kc51UsijVfpQQm1xY7qk=
+	t=1759397462; cv=none; b=BWDcau//Y+w17z46MLhuiNzPiEBDOr2tUqfDlFz8grIqWWAXgZbBcNGJMTyU+GcCzvy6fO7HNf87MvkL/+NzTfPxlIodzqdPP4d2UkhtrDnQcgNFaXrweP64r5dsgXRJckgHwC6IAKYPC0POuA9lPigF/PIDqeGlQvxqoiIXGiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759397222; c=relaxed/simple;
-	bh=eycOjQiaXvlmQf5V8uRpGAlL8tXZqurGMiJ6dFHSTUw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=XSieDlfeMU86J3P1ZZD/TxC1qzGrGtgsy3XlzG7WSy3VTyBtoG4NdeAJI6+PJSZMobob7FAdQ4GkqGEbufDuC5xut6RuY0O4Q0e1rmoby0TLPlstsIKp52+J+T2z7EYBARsinmnkAYtmYMg/GsvO3Er0zzWYSZHNb38tUpgbGew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eRDft1Cx; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4wA2Q6GO; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Nam Cao <namcao@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1759397218;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pKZlguMJEYVUCG/7mFX+YaYIDG8DEuTUnMv/mBDZ3TM=;
-	b=eRDft1Cx0obot9b/VNKkPoADcZq0eRVUmssnuGCnnImyQPkB4xfX3R8UsN+e9Jip97r6Zi
-	e6QpoOWO8GKy8LZLGNL3Sj07tNcleMqUlyWfmFGqkphaSf3m4ECvOu++JZdsehVx6m0LZm
-	YYm9kyFsZsxfDF05pTJ8r+8d6hFk2nphUxuGVLBVYdIhKp45Rebamp7NYBQqwaPR8C6Jia
-	6bTdi0fJge+yBHNFo3a9YHujp/sTyY4KajRbSMmrCqUwtIXLKcsJtqcz+mQpMPTXOt2Rfn
-	DGneyaDAwtWOsAmjAEwgmrXpdRV1esBswly5rmO9OokNvzKXbtZLt4dR0j5Ofg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1759397218;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pKZlguMJEYVUCG/7mFX+YaYIDG8DEuTUnMv/mBDZ3TM=;
-	b=4wA2Q6GOy9FOpk4+LqjXQnp9DzDUb1bGvkcSKh6+iV7ktztrAy38YtrjO951Koj9l7PRiw
-	0lE95ciLsjo/kfBw==
-To: Gabriele Monaco <gmonaco@redhat.com>, linux-kernel@vger.kernel.org,
- Steven Rostedt <rostedt@goodmis.org>, Jonathan Corbet <corbet@lwn.net>,
- linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Cc: Gabriele Monaco <gmonaco@redhat.com>, Tomas Glozar <tglozar@redhat.com>,
- Juri Lelli <jlelli@redhat.com>, Clark Williams <williams@redhat.com>, John
- Kacur <jkacur@redhat.com>
-Subject: Re: [PATCH v2 04/20] Documentation/rv: Adapt documentation after
- da_monitor refactoring
-In-Reply-To: <20250919140954.104920-5-gmonaco@redhat.com>
-References: <20250919140954.104920-1-gmonaco@redhat.com>
- <20250919140954.104920-5-gmonaco@redhat.com>
-Date: Thu, 02 Oct 2025 11:26:57 +0200
-Message-ID: <877bxd7ixq.fsf@yellow.woof>
+	s=arc-20240116; t=1759397462; c=relaxed/simple;
+	bh=7/lNIphM1u4rJbHDT3TaAUnqlB5GXQ8JuGLtR8eq58I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QZAyk0SQDU16ajvuQlfQL7oSLKDcBuiWP1wPxYn/oXNtl7vuTRNVzB0Xx7cDF1RHmIhqyq3XPIOQUw6gqSsMCG7/D3bPw5BUsxNNyx+M05gG0FeSfLmWE6yM2dgA6gV4KuBOhvqMmyGdlX0Gbj2YnkFIyiw5rsS/tm1C84Rw8QI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=gondor.apana.org.au header.i=@gondor.apana.org.au header.b=javH87rq; arc=none smtp.client-ip=180.181.231.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=gondor.apana.org.au; s=h01; h=In-Reply-To:MIME-Version:References:
+	Message-ID:Subject:Cc:To:From:Date:cc:to:subject:message-id:date:from:
+	reply-to; bh=Xnb7npDOrQlWbYFZ2duc3KM7NvyZ4FCzogrr0RiwCIc=; b=javH87rqnxD9zfIm
+	IdmjMS/487qUVIyh/iqXXgX/N89NkGYBKTqTwPl9POx1w5+tv/ef4ajVYrbVENAAJDc9dZK1SLf2x
+	YDS1h9W9Ehrjvmx5nGLOu8a9VCqUvpx36a98pYOwD9hIj/34rX6CrGAfgcRJ2DWvdQzUhotbsaLr9
+	7lGuvE/1N+rmpUmeWmvHgvyJJMHPLKNiMHcaOL3dtS7lVh9nW6C16jN+m9fTuY6097vNsuuAJo8pl
+	57mr9bfPVjpPXbf3g+3mb3+H4qKHGx+i36X0CwqeE6bmiomW3Bc82UFQG2U2I0KvwBXK3eSblOQtp
+	yN9H41o6fe1Bsanbdw==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1v4Fdz-009z9b-1s;
+	Thu, 02 Oct 2025 17:30:36 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Thu, 02 Oct 2025 17:30:35 +0800
+Date: Thu, 2 Oct 2025 17:30:35 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Jiri Slaby <jirislaby@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+	Vegard Nossum <vegard.nossum@oracle.com>, netdev@vger.kernel.org
+Subject: Re: [GIT PULL] Crypto Update for 6.17
+Message-ID: <aN5GO1YLO_yXbMNH@gondor.apana.org.au>
+References: <aIirh_7k4SWzE-bF@gondor.apana.org.au>
+ <05b7ef65-37bb-4391-9ec9-c382d51bae4d@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <05b7ef65-37bb-4391-9ec9-c382d51bae4d@kernel.org>
 
-Gabriele Monaco <gmonaco@redhat.com> writes:
+On Thu, Oct 02, 2025 at 10:10:41AM +0200, Jiri Slaby wrote:
+> On 29. 07. 25, 13:07, Herbert Xu wrote:
+> > Vegard Nossum (1):
+> >        crypto: testmgr - desupport SHA-1 for FIPS 140
+> 
+> Booting 6.17 with fips=1 crashes with this commit -- see below.
+> 
+> The crash is different being on 6.17 (below) and on the commit --
+> 9d50a25eeb05c45fef46120f4527885a14c84fb2.
+> 
+> 6.17 minus that one makes it work again.
+> 
+> Any ideas?
 
-> Previous changes refactored the da_monitor header file to avoid using
-> macros. This implies a few changes in how to import and use da_monitor
-> helpers:
->
->  DECLARE_DA_MON_<TYPE>(name, type) is substituted by
->  #define RV_MON_TYPE RV_MON_<TYPE>
->
->  da_handle_event_<name>() is substituted by
->  da_handle_event()
->
-> Update the documentation to reflect the changes.
->
-> Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
+The purpose of the above commit is to remove the SHA1 algorithm
+if you boot with fips=1.  As net/ipv6/seg6_hmac.c depends on the
+sha1 algorithm, it will obviously fail if SHA1 isn't there.
 
-This is probably best reviewed by someone without much RV background. As
-I already know these information, I'm not sure whether the doc is
-confusing to outsiders.
-
-But from my point of view:
-Reviewed-by: Nam Cao <namcao@linutronix.de>
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
