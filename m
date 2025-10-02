@@ -1,114 +1,130 @@
-Return-Path: <linux-kernel+bounces-840809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D3E4BB5781
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 23:30:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EE1E1BB5787
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 23:31:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0E3B3A5FD1
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 21:30:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F4E03A7F15
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 21:31:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B6E12882BE;
-	Thu,  2 Oct 2025 21:30:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CA0F1B043C;
+	Thu,  2 Oct 2025 21:31:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="MbsRzaJc"
-Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="GD+vG+Ha"
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6CD126F467
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 21:30:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 778453BB44
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 21:31:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759440609; cv=none; b=c6KfKyBWJT7dzvTnnVAdYR4FsTAGsZxiFCGIVxQCxBuInA2ZaS1te8zgBSSsuE0VDWXpvQJOYbQlmUyu83ycCfRS+Iyu8Ufnn/Y0igTULf/Wy90FKqr7KoETiocxPz+8CRob1fd5I2yofyrPy+47sDKlNfkp8R9Dmfj2WRYC7/4=
+	t=1759440694; cv=none; b=kp6phKUIku0Ql1taXVIvCfRUydRqUCJVpQqs1XpyU63f5L3vGm3NXkV0zg+WznPIr/0Oy9h9Kqnxe/Pa9uD00PjfU3bKDFHaUfPKVE3ijJMW0R+/Jrnrm2o+orhazL+0zAXWATUuvzUKw3dV5eZKqap78Z9gzeTyJkuI0vcAwQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759440609; c=relaxed/simple;
-	bh=3cXiHd2YBbbDhzLcMAyDC46g4zuUrDFj69nkTlySJ7M=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=esl9YuGNtiaUebb4+UWn1WNTYeBCECqk6ywJIcJz4MJqL89LOMPLhzKZ1NWqjhEIkzkboK/+rYYWb067dql6H7+zbstfcO8lVJ+MZNuNAdDsK6xCRz7d2BGyvYct0RSnuB3hF7ZeMSnknxHA/Tkf8ENOnWS88hisMpgXptEUxjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=MbsRzaJc; arc=none smtp.client-ip=209.85.166.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-8ca2e53c37bso138088439f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 14:30:06 -0700 (PDT)
+	s=arc-20240116; t=1759440694; c=relaxed/simple;
+	bh=ADVKA72uibgUp8chHhCTUoKhB8iWg6QqufDfTX9xhfg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pglxhhU2zlFUtkZctPB8qmQ2bOp/5mJqE7PzfQBxVM48s71MRnkUJefxpcMgbBVnXKkgkV1cYTgZuHtW7yV2jTOttOd9TuQuBkHoN9Mh7llWzeaoeDkKk7a0rd3TBiFkispWJs0y0bZ7mWcskSr6xZAn1kbZGiZa3heSdh/gEJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=GD+vG+Ha; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4dffec0f15aso19755261cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 14:31:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1759440606; x=1760045406; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8dT84NsQ5L7cCw3pr4Gco4EgRoaU06NgeVgWoDKDnXE=;
-        b=MbsRzaJcZiCcgdFx8OMvnwmTABmZV3lxyFI+R680rnerY66hGBry94F7dxEajbw+DX
-         vkGuIgaG6z5W7Ux3rHpanx1HFqig/rOrS3GzJEU+rI6hIpt4y+rT6pCDYPamFNeffcac
-         QKweq7vyVsoeDehvqccXv8xDGZalj1EYY08aUeSkIGjWO3hJfm/kz/KXxjuYL8wnHO8o
-         ZxBzWnfjuG4afpzHeC4aIBDIKNonBJOt2gwgGJtFv/aj0nRtEVQ8SAC6Yk02DBmTHhH9
-         IYSBuEGtZ+8gaEjMpCu5KmugDmCizAPCKdrVec3PVRMnZRz2JKHP3XOS9HO2XdyqbhUu
-         AVyg==
+        d=soleen.com; s=google; t=1759440691; x=1760045491; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ADVKA72uibgUp8chHhCTUoKhB8iWg6QqufDfTX9xhfg=;
+        b=GD+vG+Ha6KxHEJVqXSK/nIlHxQ9rZcgH9Sjc1sllNINvuHKE16dAagBajcbEIP0k2k
+         SJ+LB6EMPgOEc9s79KYQyl4w84hfTPo/AVimunYRBt5aMmI/YVHBz5xoXvFP/D/djvk6
+         LLaMqzFlfFj8THa8ncAGncaNqrEu1CHuwcFPQ5hKJ0FwM4oY8IV9TLHTUmQvKU1TfVjb
+         WJjdLe1I/B/pLaZR60KHmlnW1PGtkvXAl4eQANtnttYLug9mUzAci8EcS+JYj3n8uTBP
+         HgO3clz06Of1Mewt0biBFzlh3elbJQ/ov7gCeMTuRP8J8Hb1Rzmpi9EmndvV2EbrJdfB
+         wKzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759440606; x=1760045406;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8dT84NsQ5L7cCw3pr4Gco4EgRoaU06NgeVgWoDKDnXE=;
-        b=TL4U09N3UzezA1ZzMJj8po/kOvtjP6loRA0YPq0BYx+I3YhCvZ90em4e5h8zDbEiv+
-         yeapsFLtu+daXEmz3ZisFbkBoRUQXm0Tb27PNnW/kBTUo3SfD/Vsi2EyvsLEH0UpTp+5
-         AL23ZAA3GgrU3GjW688r4PWxUgeI8YGAz+OVdJJQSXUL3HTwv0KsTg+kavmT4E0bjB3D
-         2P6bpRITEH4Nz7UBmrQO0OAGLoZOwboDPYMdOB6YHyWTN0ivWbgu3tgWeKLXfw36fd4z
-         s0msQgFH+0UK8h+DCYCtskNCKwI+Ie97hVH0AXgtlS5iHsPOAEf1DEMEN3r8DZEARXLH
-         Bzcg==
-X-Gm-Message-State: AOJu0YyQk//V+5Ns3QUjhOYK03Ql0otq6/M0Le/8qaBEzHbQZEWR7RIZ
-	/ZmKoQ/1p3hWQDDYqwzmVmY2CuMjDx19cKXXSZgguIOSB3spKAeK8tIKhkn91d45bmI=
-X-Gm-Gg: ASbGncsu0w4lTvfIDQAhSL8O4oBaYslVd6gNzEOmOQRNJG+P1dUYTy/+GChAZl5qLFj
-	DfCRwolRkxM858hsAAIeybaaD2w58sGOxAJ9B4gVsVYkPO1cZO/rya8bO5hcsL74Ct/z/8e3S4F
-	I9+K/ytOUw3Nj+Z21az2umplBjcZzDzPtGA2Lp/zpRpy29P6sjxb9V+LEaYGhh6eTODPkNyjp80
-	WXW2Ai/BjhZMkIz1IKAEX1CAwdLBcfrP73vwzT3MUpzda+JYXz3VA3qvEW6U6R0k40jh2/iu6lE
-	XZcYawgKDs+oDujzAuRAG/MlQj2bwIqFrBMHI9X37Q8h6XzHtPOy2oOF6n78uyiyrHGLqGDteuZ
-	LjMtaG8avGQr0ZO5Io6hSlBIzWCr+irJ2YTfkWao=
-X-Google-Smtp-Source: AGHT+IG+SpEIbL5sC/8GSI6uW3/+xZz3Xd5NWiqbSP19k8VI1Cx5/MkHbZloWeiPJ7UWNIbczxvmvA==
-X-Received: by 2002:a05:6602:1582:b0:893:65c1:a018 with SMTP id ca18e2360f4ac-93b96930cf1mr108216839f.3.1759440605682;
-        Thu, 02 Oct 2025 14:30:05 -0700 (PDT)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-93a7d81bf16sm119168039f.4.2025.10.02.14.30.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 14:30:05 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: tj@kernel.org, hch@lst.de, Tang Yizhou <yizhou.tang@shopee.com>
-Cc: linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
-In-Reply-To: <20250923112136.114359-1-yizhou.tang@shopee.com>
-References: <20250923112136.114359-1-yizhou.tang@shopee.com>
-Subject: Re: [PATCH] block: Update a comment of disk statistics
-Message-Id: <175944060434.1563810.14517631402501395981.b4-ty@kernel.dk>
-Date: Thu, 02 Oct 2025 15:30:04 -0600
+        d=1e100.net; s=20230601; t=1759440691; x=1760045491;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ADVKA72uibgUp8chHhCTUoKhB8iWg6QqufDfTX9xhfg=;
+        b=D1VqLH8P3UcZ/nHkiEw9UzN9SPm7HnweCQ0oW2hANrFO5WS2AFd84bV9oOfFExzAje
+         FgFo4Hh30vTpFOXcZ8wbKhxeznXCxsSulcC/t4Rd3yIM2KrmA4m2EWSG+GUPP3cOpCP9
+         cyOWlDLVIx+aP2p1brVp+UUybvArso+A97e44sTnykZA+bvhlvWomwDQ3KPaMj2/sef0
+         o+yZ26xgpPgULx1VrLPjM0qAw1SBQR0a1VAS7DyLaXG6EAiUE59H6aviqEx5mCc0bIgR
+         ia9uu4RxidJm5nhT6lxwnRO1voOwDRRFXtzhVEouQ+0S1fnNmuE+umYPogUrpii7DuHo
+         TyOg==
+X-Forwarded-Encrypted: i=1; AJvYcCVrs5GJ7v8J6INSslTypsEEPUL5QXr37XlbUrN9qdy1W71eE4oZl/nYhMVNP0ScX1C0oHtYZlF1kis05qo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRpsSwwdE/64DFyPM+B/51+wVl+yZtTx1ImSllA1ext7CHe5hQ
+	i680clf3tYSfBUMz0Kudm802Ura37vYJpjiRcduZRM+SEl3Gtkyf7zWQiQWh5UwxcDDd5YAiHxx
+	BGFJ7GRW98Qf59U1fTkGzHblSyCQ/JvTHFYoqLoCR2w==
+X-Gm-Gg: ASbGncvvYY/Yl56RXj8Z9nQs/ancMmpdIlVP7gyd0Bad9Hs9faxhrZfT1cmu7IHyfCR
+	JhaHDR6a+gpoKvf/ROqj5I9PghvqRECxxCsUisOYJu5zLY4b5N+dHjolWE9wW/IghBMHvNU2/L/
+	ZvRiAuj28MA0F0+GrepttuC4sYV0jpC/hmVlo2xly309NtWx8oFXcm7Ftii5wsweYRQDy0LJZsn
+	Ekq1nOEfI2sVoKSFrib9fW/nODa
+X-Google-Smtp-Source: AGHT+IH/16s1by7ClONo0CJZp6FuEYc35ekFOWh9F2qUqnyBNSe6GVvhTvy0I7DJrBfu1/4oG5whYxgQGdE0sVEdVNU=
+X-Received: by 2002:a05:622a:4c84:b0:4da:c4cb:c824 with SMTP id
+ d75a77b69052e-4e576aaab42mr13472301cf.48.1759440690935; Thu, 02 Oct 2025
+ 14:31:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3
+References: <20250930135916.GN2695987@ziepe.ca> <CAAywjhRGrGjZK3jQptieVWmdzvjfNtTYrp2ChTZJSmFyrBaRqw@mail.gmail.com>
+ <20250930210504.GU2695987@ziepe.ca> <CAAywjhRQONuHsxTGQZ5R=EJbOHUD+xOF_CYjkNRbUyCQkORwig@mail.gmail.com>
+ <20251001114742.GV2695987@ziepe.ca> <CA+CK2bAvnTTz+vPg7v38_1dajRZQHyPQ8iDmziiW8GFUqy6=Ag@mail.gmail.com>
+ <20251002115712.GA3195829@ziepe.ca> <CA+CK2bAudSHq2t5NZPBKDC2wfzsF6SSxTF7aZ2kxueOTzWYcfg@mail.gmail.com>
+ <20251002151012.GF3195829@ziepe.ca> <CAAywjhQGQx2_2X8r0rf3AgMDbJj-9C=9_1a3xgiLwuzKLAvXCQ@mail.gmail.com>
+ <20251002211217.GI3195829@ziepe.ca>
+In-Reply-To: <20251002211217.GI3195829@ziepe.ca>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Thu, 2 Oct 2025 17:30:53 -0400
+X-Gm-Features: AS18NWAU1FKYkrHqSIxGFn313yno9EcdIcVYoO9fXd9wYXzV-AO6SzBS_A-_2S0
+Message-ID: <CA+CK2bBJ_RoRuCxiHuraDH4Gya-ZON3S6PE9PgPfsxObvBRY4w@mail.gmail.com>
+Subject: Re: [RFC PATCH 13/15] iommufd: Persist iommu domains for live update
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Samiullah Khawaja <skhawaja@google.com>, David Woodhouse <dwmw2@infradead.org>, 
+	Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>, 
+	Will Deacon <will@kernel.org>, iommu@lists.linux.dev, YiFei Zhu <zhuyifei@google.com>, 
+	Robin Murphy <robin.murphy@arm.com>, Pratyush Yadav <pratyush@kernel.org>, 
+	Kevin Tian <kevin.tian@intel.com>, linux-kernel@vger.kernel.org, 
+	Saeed Mahameed <saeedm@nvidia.com>, Adithya Jayachandran <ajayachandra@nvidia.com>, 
+	Parav Pandit <parav@nvidia.com>, Leon Romanovsky <leonro@nvidia.com>, William Tu <witu@nvidia.com>, 
+	Vipin Sharma <vipinsh@google.com>, dmatlack@google.com, Chris Li <chrisl@kernel.org>, 
+	praan@google.com
+Content-Type: text/plain; charset="UTF-8"
 
+> Maybe finish is too broad grained? What if each session had a finish?
+> All the objects in the session are cleaned up, invoke the session
+> finish and the memfd's in the session unfreeze?
 
-On Tue, 23 Sep 2025 19:21:36 +0800, Tang Yizhou wrote:
-> >From commit 074a7aca7afa ("block: move stats from disk to part0"),
-> we know that:
-> 
-> * {disk|all}_stat_*() are gone.
-> 
-> * disk_stat_lock/unlock() are renamed to part_stat_lock/unlock().
-> 
-> [...]
+All sessions have their own finish:
+https://lore.kernel.org/all/20250929010321.3462457-15-pasha.tatashin@soleen.com
+LIVEUPDATE_SESSION_SET_EVENT
 
-Applied, thanks!
+Each session can go into a "finished" state independently. However, I
+am still thinking about whether a dependency graph is needed. I feel
+that if we require FDs to be added to a session in a specific order
+(i.e., dependencies must be added first), and every subsequent FD
+checks that all prerequisites are already in the session via the
+existing can_preserve() callback, we should be okay, as long as we
+finish() them in reverse order.
 
-[1/1] block: Update a comment of disk statistics
-      commit: 510d76646a6a7beaa49fc0da7282e285a3dfce97
+There are two issues:
+1. What do we do with LIVEUPDATE_SESSION_UNPRESERVE_FD ?
+We can simply remove this IOCTL all together. Stuff can be unpreserved
+by simply closing session FD.
 
-Best regards,
--- 
-Jens Axboe
+2. Remembering this order on the way back, and since we are using the
+token as an iterator, that is not going to work, unless the graph is
+also preserved. However, now that we have sessions and the token
+values are independent for each session, I am thinking we can go back
+to the model where the kernel issues tokens when FDs are preserved, as
+each session will always start from token=0. This way FD preservation
+order and token order will always match.
 
-
-
+Pasha
 
