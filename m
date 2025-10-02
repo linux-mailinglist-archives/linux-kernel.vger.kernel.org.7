@@ -1,175 +1,193 @@
-Return-Path: <linux-kernel+bounces-839763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB925BB25B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 04:23:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3393BB25D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 04:27:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EA37325ADF
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 02:23:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8ADC77B3464
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 02:25:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D11DF231C91;
-	Thu,  2 Oct 2025 02:23:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D8123D7E4;
+	Thu,  2 Oct 2025 02:27:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BCUqfbVf"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hJflNZFn"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0F6C1F936
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 02:23:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B18BC23C51D;
+	Thu,  2 Oct 2025 02:27:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759371786; cv=none; b=WlJS9Ls9g0QJX7NuYzxTk37aVI84uX5Ld+Su2orRk9b5AvNHc93joYHui3CGr2fCY98Jk09+umwAYxIVrPIT2oa3gql7C3X9BBdQI/eScyhjl4kXPsQpOc2BhYvqAtqEAjNAXtZpq+LIt4Q5kZ6+wCVFmnn3Kt8apxOOiYie7fI=
+	t=1759372037; cv=none; b=upKc9EPU2TEjCGnT/d4nS4gSCbm4hENkNicAHauyBSTJo00kOx8l0e02SrhJQAokA3JZRjU3skffkxfQ9tA0LyEG+90aq0TvnNO1aDO+jWy4O4IMODBsrM+TeLyZuZZ5MtPINNsx4n8EACIalMdYS6B23w8DmZhcSrDqHExsosw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759371786; c=relaxed/simple;
-	bh=noOVzFBtrlmWjjXtT8Z8WawlBMEgNebeu2HlTJ7LS1U=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=D2R68IzubsfhQC2OYGrq/3FPvPcu+Sq8ZqLnxCvtyScagWK1z/7BzR/YYxoXKVB8JTlvDOqlOxv4iIspSAxYSa6brT3+aTJV9tNlJdekyfjkCkn63IGsrPOjLa5yqwJwN9WliRsyLllk22zLU+5vsIan4SQy8x7sp09V1QXcN68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BCUqfbVf; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-78127433a32so468226b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 19:23:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759371783; x=1759976583; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=mF3LfHpef/3mN9CeEleeS0pHSg8cp/5+RdXD9b+jUXQ=;
-        b=BCUqfbVfhfpyLzF+2ZtQbeRgjXBe6JpN41s8rLVK9uxPN/9LzrGfQBGQCBURuNcjXC
-         tbnVqAteINRJ3EwzQuYVtLGvYILgF58LCabneRao0Rnp8zWMwmxd2R0OFeA/nMRkSwNx
-         VfQegP9jpYZfcULjXmJ88nY8eppQEbik83dkm/5i5qlSd6SExsmc6x0RTDgUZivS1rsy
-         T14AQYGYzIVahidJPC2J4hrd35VX1MBRNaTbinUHKEJ4lHDpvYNB78wCIK5lDxDmqYNr
-         Ap5skn+HqOhCkGUEg/UiWZ8A8BBhKb/rT0lAeumYMtOf29Nve9lqqE6ERkeUygw9eD8W
-         hUfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759371783; x=1759976583;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mF3LfHpef/3mN9CeEleeS0pHSg8cp/5+RdXD9b+jUXQ=;
-        b=Muek+pqBILP3b2VdBxawZFbrIp1E2S+mmH0EFATJGcyAoYzwcVqWgfngZeCLGk7/GF
-         ebu740fg3oq1ER/5myeJK5LdbFFaNQWlwoMSIHK+OC5JjVvoRoAHeMMWSY6GmujyQtgZ
-         NFHQ4oI7iNeizeCRl5EtCcdkbl2rAiDMZJRRnaH5EJDhwCAwxB/rIHYF7StoxmfWk+DS
-         zipcBtXD4wPm6eX0H4XxgeD2gW9u3KUr/VZtoualXm2bA+nLEBaQisq96EnkYu4lZhAk
-         8IsALuueppSlDVsZpCP88PT8ssrUTIDK7cytMComlP940H5U2mbQzgeYfdAMrkJDPURW
-         n1dg==
-X-Forwarded-Encrypted: i=1; AJvYcCVzcjKtmv8VJx0hSxKoQ3O4Q3Zc+ltBc8sqvixWQXxkPDkTf3UrycPhPWRJmSszkC0jXc2kyCMtSmg2qnQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKxuxahg+MJl6cnW4Z6eUiaZvbIfGFIcTkqIBxmB5EX7oeohvk
-	1sLba9vX8XSGDDB6otz4yC2okSNq+xTkCKIRbNnhmMuwkrNmaOE0gy+k
-X-Gm-Gg: ASbGncuWKTfkNz6/dPFJtH+pyhjyz7jypxpaPPa0eoxtb9YpnNOFj0HKPABAlAkA8sF
-	Gp+8TKSZxAeZPqdtCCVoIl6iqqTpmxrA2xXtckDGSs9pbargdT++9fWEuFwV1S579w1Y73rtHV8
-	pjRoIjKUhEE0ktdks1/O33zP1tz8w/iz9kiuNfMuDGL6IL+JMvFaj8JIQb9Xc/05jERPf8wV1Kh
-	qbJ1BL8DDZw6fE3kuO19NLcXzhmz/T8lmfQIfrrTEWvgYBjVqjX/NG1KXMXH5NKie9Yu2zLG5hd
-	i1A/nv0pxsdwEpjg3fbS/cSSvDgR+ujlXDmKD2sxOzk0N4Mc/SMLYQpKQS9FQ3YYtfFlrtYbxWt
-	ZwBckV1fGdIglq7cBRh9jykmHEy43zNGb01vjdIT9C9HvgFTsHwXw52Z9Xojico5/bbxEGuaVnB
-	706bIzX66oTg==
-X-Google-Smtp-Source: AGHT+IHxLShFCm76xin7rHm8qNL6ADQW6sxwH14YEVEejbEnDXp8CfZFyeDbyzek8/KKOZq8n0qs+g==
-X-Received: by 2002:a05:6a00:17a6:b0:781:556:f33 with SMTP id d2e1a72fcca58-78af3fe8bcbmr6233829b3a.5.1759371782828;
-        Wed, 01 Oct 2025 19:23:02 -0700 (PDT)
-Received: from ti-am64x-sdk.. ([157.50.91.136])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78b01f99acesm1046229b3a.5.2025.10.01.19.22.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Oct 2025 19:23:02 -0700 (PDT)
-From: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
-To: Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Harry Wentland <harry.wentland@amd.com>,
-	Leo Li <sunpeng.li@amd.com>,
-	Rodrigo Siqueira <siqueira@igalia.com>,
-	Tao Zhou <tao.zhou1@amd.com>,
-	Hawking Zhang <Hawking.Zhang@amd.com>,
-	ganglxie <ganglxie@amd.com>,
-	Lijo Lazar <lijo.lazar@amd.com>,
-	Candice Li <candice.li@amd.com>,
-	Victor Skvortsov <victor.skvortsov@amd.com>,
-	Roman Li <roman.li@amd.com>,
-	Alvin Lee <Alvin.Lee2@amd.com>,
-	Karthi Kandasamy <karthi.kandasamy@amd.com>,
-	David Rosca <david.rosca@amd.com>,
-	=?UTF-8?q?Marek=20Ol=C5=A1=C3=A1k?= <marek.olsak@amd.com>,
-	Jocelyn Falempe <jfalempe@redhat.com>,
-	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
-	Mario Limonciello <mario.limonciello@amd.com>
-Cc: amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
+	s=arc-20240116; t=1759372037; c=relaxed/simple;
+	bh=L87MXufzqFw8MSNO6RQS5qDzIaT068tEwknrRqEGM9s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pjqu1jviOjni+LbYGYeCD8xXhDFRne/hLcToYv5A+kFzMuacFVs+BNL4TqIIynb0rWZGVJOEJ595J9fvmzIBDT7ZJeKViS605yDUzmJz+kMl5jv0mIKJU3eaThtuHoOWJjXqm6UMwpDEtgXBSGLNz9KrHJaO7RwIbttapTwyfes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hJflNZFn; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759372036; x=1790908036;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=L87MXufzqFw8MSNO6RQS5qDzIaT068tEwknrRqEGM9s=;
+  b=hJflNZFndNZEnLIgyXEQAn9GQ4ujNfMmd8lz6V3gi2yWpDoGEOzNMlyJ
+   541s+2WmlEIcwgzEGeAF01ZTqZHWlucnSVTtGS31VXjj6DPzWViBYC9gC
+   lrLQspr/WZTI5qNRMI/4goCcqyLRVGheIw6Rcfx5UInQifFzzE4UM6DSo
+   poPGPm+QjE/743dSifVx159bDmoGrHcSjjexVpiH+EwZGcOTlnimGftvC
+   JkcY9ii+iROhB3BR/iKgBuvi5grwf6gB1HJuM3n6/4ELpvsKhGVDu0Mfo
+   0JBHSJThpdbNEzGOJu7Vo3Cnv4YuY6DQzFXte6017okT9RPn/0Dh7NOcS
+   Q==;
+X-CSE-ConnectionGUID: Sh/PHFe5RE64hfiKuhtT9g==
+X-CSE-MsgGUID: gkOHJKdOR4KxJb6Smv9hpA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11569"; a="72328053"
+X-IronPort-AV: E=Sophos;i="6.18,308,1751266800"; 
+   d="scan'208";a="72328053"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2025 19:27:15 -0700
+X-CSE-ConnectionGUID: y2OAQW+wSQyj3/+LYb2zJQ==
+X-CSE-MsgGUID: ujx4n8BWR3yYqO5gnu0oyg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,308,1751266800"; 
+   d="scan'208";a="202665588"
+Received: from lkp-server01.sh.intel.com (HELO 2f2a1232a4e4) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 01 Oct 2025 19:27:12 -0700
+Received: from kbuild by 2f2a1232a4e4 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v492D-0003W9-2t;
+	Thu, 02 Oct 2025 02:27:09 +0000
+Date: Thu, 2 Oct 2025 10:26:34 +0800
+From: kernel test robot <lkp@intel.com>
+To: Vladimir Moravcevic <vmoravcevic@axiado.com>,
+	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Harshit Shah <hshah@axiado.com>,
+	Tzu-Hao Wei <twei@axiado.com>,
+	Axiado Reviewers <linux-maintainer@axiado.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-spi@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	khalid@kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	skhan@linuxfoundation.org,
-	david.hunter.linux@gmail.com,
-	bhanuseshukumar@gmail.com
-Subject: [PATCH] drm: amd:  Use kmalloc_array to prevent overflow of dynamic size calculation
-Date: Thu,  2 Oct 2025 07:52:41 +0530
-Message-Id: <20251002022241.77823-1-bhanuseshukumar@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	Vladimir Moravcevic <vmoravcevic@axiado.com>,
+	Prasad Bolisetty <pbolisetty@axiado.com>
+Subject: Re: [PATCH v2 2/3] spi: axiado: Add driver for Axiado SPI DB
+ controller
+Message-ID: <202510021040.CnRgMGPA-lkp@intel.com>
+References: <20250929-axiado-ax3000-soc-spi-db-controller-driver-v2-2-b0c089c3ba81@axiado.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250929-axiado-ax3000-soc-spi-db-controller-driver-v2-2-b0c089c3ba81@axiado.com>
 
-Use kmalloc_array to avoid potential overflow during dynamic size calculation
-inside kmalloc.
+Hi Vladimir,
 
-Signed-off-by: Bhanu Seshu Kumar Valluri <bhanuseshukumar@gmail.com>
----
- Note:
- Patch is verified for compilation.
- 
- drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c                 | 4 ++--
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+kernel test robot noticed the following build warnings:
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c
-index 540817e296da..642addf70466 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c
-@@ -2566,7 +2566,7 @@ static int amdgpu_ras_badpages_read(struct amdgpu_device *adev,
- 		goto out;
- 	}
- 
--	*bps = kmalloc(sizeof(struct ras_badpage) * data->count, GFP_KERNEL);
-+	*bps = kmalloc_array(sizeof(struct ras_badpage), data->count, GFP_KERNEL);
- 	if (!*bps) {
- 		ret = -ENOMEM;
- 		goto out;
-@@ -2722,7 +2722,7 @@ static int amdgpu_ras_realloc_eh_data_space(struct amdgpu_device *adev,
- 	unsigned int old_space = data->count + data->space_left;
- 	unsigned int new_space = old_space + pages;
- 	unsigned int align_space = ALIGN(new_space, 512);
--	void *bps = kmalloc(align_space * sizeof(*data->bps), GFP_KERNEL);
-+	void *bps = kmalloc_array(align_space, sizeof(*data->bps), GFP_KERNEL);
- 
- 	if (!bps) {
- 		return -ENOMEM;
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
-index 3d2f8eedeef2..e027798ece03 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
-@@ -146,7 +146,7 @@ static void amdgpu_dm_plane_add_modifier(uint64_t **mods, uint64_t *size, uint64
- 
- 	if (*cap - *size < 1) {
- 		uint64_t new_cap = *cap * 2;
--		uint64_t *new_mods = kmalloc(new_cap * sizeof(uint64_t), GFP_KERNEL);
-+		uint64_t *new_mods = kmalloc_array(new_cap, sizeof(uint64_t), GFP_KERNEL);
- 
- 		if (!new_mods) {
- 			kfree(*mods);
-@@ -732,7 +732,7 @@ static int amdgpu_dm_plane_get_plane_modifiers(struct amdgpu_device *adev, unsig
- 	if (adev->family < AMDGPU_FAMILY_AI)
- 		return 0;
- 
--	*mods = kmalloc(capacity * sizeof(uint64_t), GFP_KERNEL);
-+	*mods = kmalloc_array(capacity, sizeof(uint64_t), GFP_KERNEL);
- 
- 	if (plane_type == DRM_PLANE_TYPE_CURSOR) {
- 		amdgpu_dm_plane_add_modifier(mods, &size, &capacity, DRM_FORMAT_MOD_LINEAR);
+[auto build test WARNING on e6b9dce0aeeb91dfc0974ab87f02454e24566182]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Vladimir-Moravcevic/dt-bindings-spi-axiado-ax3000-spi-Add-binding-for-Axiado-SPI-DB-controller/20250929-170017
+base:   e6b9dce0aeeb91dfc0974ab87f02454e24566182
+patch link:    https://lore.kernel.org/r/20250929-axiado-ax3000-soc-spi-db-controller-driver-v2-2-b0c089c3ba81%40axiado.com
+patch subject: [PATCH v2 2/3] spi: axiado: Add driver for Axiado SPI DB controller
+config: alpha-allyesconfig (https://download.01.org/0day-ci/archive/20251002/202510021040.CnRgMGPA-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251002/202510021040.CnRgMGPA-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510021040.CnRgMGPA-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   drivers/spi/spi-axiado.c: In function 'ax_spi_irq':
+>> drivers/spi/spi-axiado.c:348:21: warning: variable 'status' set but not used [-Wunused-but-set-variable]
+     348 |         irqreturn_t status;
+         |                     ^~~~~~
+
+
+vim +/status +348 drivers/spi/spi-axiado.c
+
+   330	
+   331	/**
+   332	 * ax_spi_irq - Interrupt service routine of the SPI controller
+   333	 * @irq:	IRQ number
+   334	 * @dev_id:	Pointer to the xspi structure
+   335	 *
+   336	 * This function handles RX FIFO almost full and Host Transfer Completed interrupts only.
+   337	 * On RX FIFO amlost full interrupt this function reads the received data from RX FIFO and
+   338	 * fills the TX FIFO if there is any data remaining to be transferred.
+   339	 * On Host Transfer Completed interrupt this function indicates that transfer is completed,
+   340	 * the SPI subsystem will clear MTC bit.
+   341	 *
+   342	 * Return:	IRQ_HANDLED when handled; IRQ_NONE otherwise.
+   343	 */
+   344	static irqreturn_t ax_spi_irq(int irq, void *dev_id)
+   345	{
+   346		struct spi_controller *ctlr = dev_id;
+   347		struct ax_spi *xspi = spi_controller_get_devdata(ctlr);
+ > 348		irqreturn_t status;
+   349		u32 intr_status;
+   350	
+   351		status = IRQ_NONE;
+   352		intr_status = ax_spi_read(xspi, AX_SPI_IVR);
+   353		if (!intr_status)
+   354			return IRQ_NONE;
+   355	
+   356		/*
+   357		 * Handle "Message Transfer Complete" interrupt.
+   358		 * This means all bytes have been shifted out of the TX FIFO.
+   359		 * It's time to harvest the final incoming bytes from the RX FIFO.
+   360		 */
+   361		if (intr_status & AX_SPI_IVR_MTCV) {
+   362			// Clear the MTC interrupt flag immediately.
+   363			ax_spi_write(xspi, AX_SPI_ISR, AX_SPI_ISR_MTC);
+   364	
+   365			// For a TX-only transfer, rx_buf would be NULL.
+   366			// In the spi-core, rx_copy_remaining would be 0.
+   367			// So we can finalize immediately.
+   368			if (!xspi->rx_buf) {
+   369				ax_spi_write(xspi, AX_SPI_IMR, 0x00);
+   370				spi_finalize_current_transfer(ctlr);
+   371				return IRQ_HANDLED;
+   372			}
+   373	
+   374			// For a full-duplex transfer, process any remaining RX data.
+   375			// The helper function will handle finalization if everything is received.
+   376			ax_spi_process_rx_and_finalize(ctlr);
+   377			return IRQ_HANDLED;
+   378		}
+   379	
+   380		/*
+   381		 * Handle "RX FIFO Full / Threshold Met" interrupt.
+   382		 * This means we need to make space in the RX FIFO by reading from it.
+   383		 */
+   384		if (intr_status & AX_SPI_IVR_RFFV) {
+   385			if (ax_spi_process_rx_and_finalize(ctlr)) {
+   386				// Transfer was finalized inside the helper, we are done.
+   387			} else {
+   388				// RX is not yet complete. If there are still TX bytes to send
+   389				// (for very long transfers), we can fill the TX FIFO again.
+   390				if (xspi->tx_bytes)
+   391					ax_spi_fill_tx_fifo(xspi);
+   392			}
+   393			return IRQ_HANDLED;
+   394		}
+   395	
+   396		return IRQ_NONE;
+   397	}
+   398	
+
 -- 
-2.34.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
