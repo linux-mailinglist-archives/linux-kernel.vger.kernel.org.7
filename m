@@ -1,88 +1,165 @@
-Return-Path: <linux-kernel+bounces-839677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F07C7BB222C
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 02:20:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9FA8BB2235
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 02:21:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 970BD42252A
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 00:20:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27C8A19C5348
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 00:21:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99ACA35977;
-	Thu,  2 Oct 2025 00:20:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21ECB3A1B5;
+	Thu,  2 Oct 2025 00:21:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IBxfyob7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tSc8Azhb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC2C25227;
-	Thu,  2 Oct 2025 00:20:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74DB4B640;
+	Thu,  2 Oct 2025 00:21:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759364442; cv=none; b=inJJV7JNlbQaoGEPUnlty5kf0EvtH5bdXF9EAZhzvoiPccaon703jTK3Su7akgcsqkXmhTc7VXTg9olDrWDK2HP7cVguizAEiuVM06T+KQBaPWCFkYvJcTI/m7bdSTqN5Vpn4AmQOZ6kDZcPVHVCUxJUTZ9l+cxVbz8s5xS/lTE=
+	t=1759364486; cv=none; b=CH2BGAE4QbYBN8vI1JOG+GnDxpXEOUF58Kgv98/Ei7TwUf9rButgh1HV0DkobAkzHYI21I3lVsIiU7vX1FFSfXZRhRRQ4TG+HCyhPXhrvpYb7YwEc2zxd3v+ezX7zdiinVON1vKCWq6r/gGIypc+Dpem7m++EnadmwCAFQ3YGgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759364442; c=relaxed/simple;
-	bh=Z5VycwaRGCTZh6B0+RfFBfHEf7Kh1kkGLViY785TdZ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rRPnx+yKNXMmhTHJwRlSFRL7U4WfmMLsWkSz3fOmwmITJv1Pnl/+OREtXdapiVkD6oPh86feBuN5UnpL353OMSCvMkWVA2v+Vzp+6ObduOrwoVES9LEjW5Ejo4kWVNYe/ayo940L46pBj8TmVSRfZr7dJ3uBWbohVNHXMid/egk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IBxfyob7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7395DC4CEF1;
-	Thu,  2 Oct 2025 00:20:41 +0000 (UTC)
+	s=arc-20240116; t=1759364486; c=relaxed/simple;
+	bh=OMIm9how+q2jo4ss9EDXYOpWHxSgLfFY96eMmTzUu20=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IirRbwsHmojDB13v2HFKWtLnxlUG0L3l5lP9eA2jRDZQ6aMI+f3uE/2czG5KDY+yu974tDCJQlyLCUeyowD9m6C2YUdY5jSD89XkU0/+tiLGRhNy8ppqhR7sAyCMWt0BgGUG1+vZPtVSDC+TBWTg1tlpRWNqTUlVF3+j5BngMSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tSc8Azhb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E199C4CEF1;
+	Thu,  2 Oct 2025 00:21:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759364441;
-	bh=Z5VycwaRGCTZh6B0+RfFBfHEf7Kh1kkGLViY785TdZ8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IBxfyob737auB/QcF4F3g6r4Kc+F+nDjefh76CK3QaXDH2wX/4RrVopLminyOy+Yt
-	 yBKeUbEZdPjS8nkPJ2y6ABhCR0iQWZFX3Vfnl07r2WSpNfY2PRyOtHOF4UIxKKYN72
-	 OhqpKdj3F4Q9mKHw0iWbb3gV3msoegcF7YB9llsOqwDPTpO2S8EF4DaW9hXKao3ayG
-	 D5ZUfPM1/bdBtx15W3EV3u3vZE32fBWg15xBsPX5z+iHXHPrzLKpM7XkIRL0gWtJ9g
-	 mduSCiMtwkcrZjaHDbM3d9afva2YpizvZMPz9VYO/xBjyKiqyr70IylztsVnf/9Was
-	 Tlg6E7Z+sKVHQ==
-Date: Wed, 1 Oct 2025 19:20:40 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
-Cc: linux-arm-kernel@lists.infradead.org, Stephen Boyd <sboyd@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Felix Fietkau <nbd@nbd.name>, Andreas Gnau <andreas.gnau@iopsys.eu>,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>
-Subject: Re: [PATCH v3 1/3] dt-bindings: clock: airoha: Add reset support to
- EN7523 clock binding
-Message-ID: <175936443940.2629153.2958124902767152491.robh@kernel.org>
-References: <20250924094112.1918444-1-mikhail.kshevetskiy@iopsys.eu>
- <20250924104850.1930254-1-mikhail.kshevetskiy@iopsys.eu>
- <20250924104850.1930254-2-mikhail.kshevetskiy@iopsys.eu>
+	s=k20201202; t=1759364486;
+	bh=OMIm9how+q2jo4ss9EDXYOpWHxSgLfFY96eMmTzUu20=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=tSc8Azhb4S/MDddmG+uFJ3/jb0BA9RECLCSFsazaowt/CzjaZsRB8FiTLMxzVk1Dn
+	 8+7y4eI9gmyJyb3ARiZWbBZPde4Mnd0rki30n2czeNojbhwbifCfvcnAN96PhscF++
+	 iZX5+dcMOERQKyaFRB9ahPPZMg3ZZbInH9T3Raha4YjaE4lurwkQPod3bh9+FjPaIJ
+	 Aqpg7bLY/N8M+kKGaFP/Ko7rPw9qvLo9kedWvEjoZN3YKHeCTPeE8v0bHx8GLl2Ir6
+	 m1U4Tz0tyqdww/iy+4BoPi3FDAJD2Q6AcIHjF9M7KTnUEi81cLHgoxo1m4hJ7FmdQR
+	 xEoTP5nmnR3bw==
+Message-ID: <22a6cebc-bd09-48f5-a11e-ab925011bd8f@kernel.org>
+Date: Thu, 2 Oct 2025 01:21:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250924104850.1930254-2-mikhail.kshevetskiy@iopsys.eu>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] soc: qcom: ice: enable ICE clock scaling API
+To: Abhinaba Rakshit <abhinaba.rakshit@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Manivannan Sadhasivam <mani@kernel.org>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-scsi@vger.kernel.org
+References: <20251001-enable-ufs-ice-clock-scaling-v1-0-ec956160b696@oss.qualcomm.com>
+ <6PNEPfyjHahJ_pLSaxMINWXDHyO3NKVQD8Bo6XXlA7yI8Qcgim3MDd4gFC8LIMYAIFoAIHnttsDVc6LFEdBWCg==@protonmail.internalid>
+ <20251001-enable-ufs-ice-clock-scaling-v1-1-ec956160b696@oss.qualcomm.com>
+From: Bryan O'Donoghue <bod@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20251001-enable-ufs-ice-clock-scaling-v1-1-ec956160b696@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-
-On Wed, 24 Sep 2025 13:48:48 +0300, Mikhail Kshevetskiy wrote:
-> Introduce reset capability to EN7523 device-tree clock binding
-> documentation.
+On 01/10/2025 12:38, Abhinaba Rakshit wrote:
+> Add ICE clock scaling API based on the parsed clk supported
+> frequencies from dt entry.
 > 
-> Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+> Signed-off-by: Abhinaba Rakshit <abhinaba.rakshit@oss.qualcomm.com>
 > ---
->  .../bindings/clock/airoha,en7523-scu.yaml     |  3 +-
->  .../dt-bindings/reset/airoha,en7523-reset.h   | 61 +++++++++++++++++++
->  2 files changed, 62 insertions(+), 2 deletions(-)
->  create mode 100644 include/dt-bindings/reset/airoha,en7523-reset.h
+>   drivers/soc/qcom/ice.c | 25 +++++++++++++++++++++++++
+>   include/soc/qcom/ice.h |  1 +
+>   2 files changed, 26 insertions(+)
 > 
+> diff --git a/drivers/soc/qcom/ice.c b/drivers/soc/qcom/ice.c
+> index c467b55b41744ebec0680f5112cc4bb1ba00c513..ec8d6bb9f426deee1038616282176bfc8e5b9ec1 100644
+> --- a/drivers/soc/qcom/ice.c
+> +++ b/drivers/soc/qcom/ice.c
+> @@ -97,6 +97,8 @@ struct qcom_ice {
+>   	struct clk *core_clk;
+>   	bool use_hwkm;
+>   	bool hwkm_init_complete;
+> +	u32 max_freq;
+> +	u32 min_freq;
+>   };
+> 
+>   static bool qcom_ice_check_supported(struct qcom_ice *ice)
+> @@ -514,10 +516,25 @@ int qcom_ice_import_key(struct qcom_ice *ice,
+>   }
+>   EXPORT_SYMBOL_GPL(qcom_ice_import_key);
+> 
+> +int qcom_ice_scale_clk(struct qcom_ice *ice, bool scale_up)
+> +{
+> +	int ret = 0;
+> +
+> +	if (scale_up && ice->max_freq)
+> +		ret = clk_set_rate(ice->core_clk, ice->max_freq);
+> +	else if (!scale_up && ice->min_freq)
+> +		ret = clk_set_rate(ice->core_clk, ice->min_freq);
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(qcom_ice_scale_clk);
+> +
+>   static struct qcom_ice *qcom_ice_create(struct device *dev,
+>   					void __iomem *base)
+>   {
+>   	struct qcom_ice *engine;
+> +	const __be32 *prop;
+> +	int len;
+> 
+>   	if (!qcom_scm_is_available())
+>   		return ERR_PTR(-EPROBE_DEFER);
+> @@ -549,6 +566,14 @@ static struct qcom_ice *qcom_ice_create(struct device *dev,
+>   	if (IS_ERR(engine->core_clk))
+>   		return ERR_CAST(engine->core_clk);
+> 
+> +	prop = of_get_property(dev->of_node, "freq-table-hz", &len);
+> +	if (!prop || len < 2 * sizeof(uint32_t)) {
+> +		dev_err(dev, "Freq-hz property not found or invalid length\n");
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+If this error really happened you should pus the result code up the call 
+stack also since either case can be an error you can inform the user of 
+which error happened in your output string.
+
+> +	} else {
+> +		engine->min_freq = be32_to_cpu(prop[0]);
+> +		engine->max_freq = be32_to_cpu(prop[1]);
+
+You check for zero later on in the code but, is zero a valid value to be 
+returned here ?
+
+e.g. is it valid to specify "freq-table-hz" in your DT but then set max 
+to zero ? min to zero ?
+
+If not you may as well reject zero and dispense with the checks later on.
+
+> +	}
+> +
+>   	if (!qcom_ice_check_supported(engine))
+>   		return ERR_PTR(-EOPNOTSUPP);
+> 
+> diff --git a/include/soc/qcom/ice.h b/include/soc/qcom/ice.h
+> index 4bee553f0a59d86ec6ce20f7c7b4bce28a706415..b701ec9e062f70152f6dea8bf6c4637ab6ef20f1 100644
+> --- a/include/soc/qcom/ice.h
+> +++ b/include/soc/qcom/ice.h
+> @@ -30,5 +30,6 @@ int qcom_ice_import_key(struct qcom_ice *ice,
+>   			const u8 *raw_key, size_t raw_key_size,
+>   			u8 lt_key[BLK_CRYPTO_MAX_HW_WRAPPED_KEY_SIZE]);
+>   struct qcom_ice *devm_of_qcom_ice_get(struct device *dev);
+> +int qcom_ice_scale_clk(struct qcom_ice *ice, bool scale_up);
+> 
+>   #endif /* __QCOM_ICE_H__ */
+> 
+> --
+> 2.34.1
+> 
+> 
 
 
