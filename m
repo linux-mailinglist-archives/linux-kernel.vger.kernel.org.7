@@ -1,280 +1,244 @@
-Return-Path: <linux-kernel+bounces-840060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2EB8BB370D
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 11:20:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66C00BB3710
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 11:21:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDBE97A8B3F
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 09:19:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84EB916A92D
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 09:21:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB5B83019B5;
-	Thu,  2 Oct 2025 09:20:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEB033009E1;
+	Thu,  2 Oct 2025 09:20:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b="HL3zqh1G"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fsoX9i4q"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 460BF2DAFAE
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 09:20:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 801802FA0C4
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 09:20:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759396828; cv=none; b=auWje16XOR/D1VeFt5ESZ0ONmoIPsT9gLbIQNSeEAH8oJQizulR3UbvurOPSRIKYQFlGcDNJBDRtKy5af45Ju2e2R4RyuS/HgAYwslsBa0TdYB/Pxm3cI7gidAaLofhxAI2vRAatZrZKYxfIAWtkEtpZ2cXaxkkPwOyB29zEgP4=
+	t=1759396846; cv=none; b=iLR0h1kLNR4/ppE1poh3eWlZRcK3H7Rfz2tG71+mXV6wIlo1rukil0OHH4qL8DMppRZgvgTLXw2CCE8vc+yt9OjZvzqF57FKK0c6ylQirFgiJjJDP4ann+AmS30XXqVMUn6cPZdDh3bnqOUDWs9e/TcZzsmpvK7+Ta6BzSwoO1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759396828; c=relaxed/simple;
-	bh=p/CzlvHEnIHNvjR2z9r9G+Y/GwV0LJ8ph30ZwmlnMSY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=rd3frlJf2yp28g8LjujRt/8T0cM+BJzTq+gHa2+FEw5Xc+7IjvGuzQeVAAa0yGEdFrD8HsP1SqkLTYAFlx4kpO5FhIbcRjCbhQi+a8QurfTNJeeE6KgwRdVrW0WylCcW49fhYuIhOjG9wuOhuVlVkgzxwxPbzkiK76GqF3p1xJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk; spf=pass smtp.mailfrom=thegoodpenguin.co.uk; dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b=HL3zqh1G; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thegoodpenguin.co.uk
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-46e42fa08e4so6591835e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 02:20:23 -0700 (PDT)
+	s=arc-20240116; t=1759396846; c=relaxed/simple;
+	bh=kZw9F7Lh2RYicqW8c/0dnsDClsMKLP+FvXBKFUUeXFQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qaS92nfBUnP3vNYZNOcGjZ2C86N8uAEd11R/xOU5drD/PAedBT89Fyek3OMfJlkwJoRnCgj3QqSiKtY5U3iwYsimH6YNZvsuad8g87UaLm6o0CtS/xfKWAZZG/fciDhveZzX4FF49oQ4TmiR3kQySaOGG+R+r3xyP2mRJq6SQxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=fsoX9i4q; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-781001e3846so816844b3a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 02:20:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=thegoodpenguin-co-uk.20230601.gappssmtp.com; s=20230601; t=1759396822; x=1760001622; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6Zhldjp2yNaFyJXBTXpmr+HFpUJDsMOIwtutBNnd19s=;
-        b=HL3zqh1Gp6PYLlMx7UegozuhMXecrDuAvYeABpkMpPw822uQyq69UCdbV/MYsa0fE1
-         QUST/COOTTCj5LJEzwtz7S/wG1aNunJgjqwAVYyolDsvCVLsZn7Rjvw8I9lcydFrakW3
-         +oRDcGWN3DdoKPVBPHQQccoqpFH52Mz3hT/Bt4BeVOhUg9Ktl12cyxCFEyJRuOYyddiB
-         nZq2Amc5ApzVhHXAmmNl9+49T+Gt+YQ438RgV/eXQrEZNhVBGDHDkXYawY9qZNexGMu5
-         dp8gr+4Ow2jdPYDzjmJAy/3gwOgvJARAfcfcl31XT04z352FQLhJ61IU1vYqqs3gqWvM
-         e9nw==
+        d=chromium.org; s=google; t=1759396844; x=1760001644; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WQDxw8Hfh8Y8mQlGaDxHtor3fvvIJuG60cJHSTBd1Q4=;
+        b=fsoX9i4qxJW1EmjWp1T6HIX9J6fIdXahAMFj8ullF/E8wTrvb9HWBvyDaFczErZT0d
+         twW8QWPRIsgsUDGiqgseJOhfSLBVAItMuESHB1D/lkqqWyTthGSrOjzYNHHF9MUqza3L
+         zGGwdLmpcmLVN/Wxj4COtYFkb4kd3eqC9AvWE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759396822; x=1760001622;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6Zhldjp2yNaFyJXBTXpmr+HFpUJDsMOIwtutBNnd19s=;
-        b=mDYNlhde61+uP8MXjvf4sAVwpPnvgmsRKKaSUGKGKchONq7g0kP0U0yKdcVpWy6Dis
-         bIG1Et2TRSgQ4Nr0Dy+A7CfY5GcJ7XIZ0Pv/2PXurnvSNipIK6tzl0w22JuWVyLxPYsF
-         kIlLsWgEBSzGTpZEotAxJElX1wBjBkRhAMYJ+xCHJE2YMhs1aAeLvnQLJpPztUgKHdCk
-         CgBfJPytBRorTFoROXlbIiGlz51EdQpZCLkBjlYYn3wh+X83WlvgW6sJBoPHvQxFRWhe
-         pOC/F+XSnxn2xthPTlQ0/y325WERMUGcuwzJz1Nlm+v6ixL4qs0vCnP0esHSOxa8Vzm2
-         58hA==
-X-Forwarded-Encrypted: i=1; AJvYcCUVkUdKXVLS0h2XphgG/MQAJPXnbzniygB8kygGCypsUx5h8KX9prNxu1zjBiOAW0azPGJ2OBH6xV1avq4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznKl9mVZSW0dfgO2HZwcKEM+i+A29Tga3ZBFpCti6WacA6Lj98
-	+UXKCUTZJHaVjq5OM5iAvsqARvnScbw1MYv9MG6t94PSrAAZS/VLpuGXuRf+GxgZc3xZDN8Ih06
-	pQeSmBZA=
-X-Gm-Gg: ASbGncsBU/8DgjX7eBaTGsMLwf4aQBVF2xTn8ciyDXN4YqbLbvGd+s2irICa8qKktLw
-	682qoexDNCCBkrap9TFO9Ykp/IBykEk6qnYleeX2q/slXI0UzATRL7iBu2ZFL7+uwt9N8xC7TAO
-	k6kIx1QAlBo+V2w5cdfDh1rDcIHjyPMt3w7W6WacV9KPIlK+/3JRnfu/BXxLvE+a67gTiGfplho
-	7sRbe9LIenyeADmW81QB5Hsmm9648FY+FwkYSrDqAiobSFjQgTdMx5dwLDDkdzly57cvjLv1hpP
-	YL//6RkDKcv1XQePK5kCryriJB1TpC+nrJvxyPa2yko7AW/Yydv3UnuON8GCWl2+PNlVVnTb2DM
-	nlkyZP8K2ZLFo4TWycIaVRX/GixlXvyUkC+/9HIF5IcfyGJRmv02rHSvx7F+w9Z3cAVLRH34=
-X-Google-Smtp-Source: AGHT+IF7CiZPQ+vX93IBD2awk1WVujnNswss6fVkdYSSXuPXelTmsVOTvm4mBoHvvqmd1eud2oD5Tw==
-X-Received: by 2002:a05:600c:c162:b0:46e:2562:e7b8 with SMTP id 5b1f17b1804b1-46e612be8b7mr41206015e9.21.1759396822249;
-        Thu, 02 Oct 2025 02:20:22 -0700 (PDT)
-Received: from [127.0.1.1] ([2a02:c7c:8a3e:8c00:3430:5fdd:d596:adae])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e6918bdebsm28958795e9.9.2025.10.02.02.20.21
+        d=1e100.net; s=20230601; t=1759396844; x=1760001644;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WQDxw8Hfh8Y8mQlGaDxHtor3fvvIJuG60cJHSTBd1Q4=;
+        b=JDANzK2/LBxOEHejFZlJG6LgtQwiZ+mYuOfRrNGxjy5x94Kv1XiRHifwZIO2b5XhWP
+         x6Z4r9HN0WF27f39+ObbWDu4YqRoUvzktB7wgRferWxpyplrGCJlOg3EwYJBUls5FW2/
+         8Ydm8rfLRgcCXHkp/e2kgSsz+9vpDRvwnJLOIpKzoALTXT7T6PsiA64EjArCZ1NpjQQG
+         LKgRxGdTDT6J2sWsJGlST2+wImmwDJwbr9DpULodquBnvBhRiLCbuwf9f4ApnGV4nS24
+         8kfNUAsgr8Lkh1/7nHv/SVJQS065nwK3XLJm4cy8eNezRYaXizn5K4CurNX9c16Zictf
+         GnrA==
+X-Forwarded-Encrypted: i=1; AJvYcCWV8LdZePKyuovp85e4DGz3NunqRp0yHC2iod5z3bqnxVql3bFH6zYmEHgmt03gqWISb4N7aLW6Bcom3Eo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywe5An+f+4EzcjANngkmvMhTzP3WbvnJvo44RMUjE3v1dBG/vdr
+	xHX6jqruPDmDiXuyriX7H/EhHBKIixoolVXSK3JEaPCl5zcGCKga+yURLPmicLhEqkPgbD7gcpN
+	emJQ=
+X-Gm-Gg: ASbGnctK9dOktzcJ4psgqC/762Mi9nERNcEBIRFYgMBRtg0x0WuIsBuA+0FCKqnByNV
+	K9SrI1hLsKrGyYr8VoG12tZRpU6nNh4ak2Ne07QbaE35/SIWUQQpjMSTqMO24avTFefjNTC7ty3
+	BLtInhUwxiPc/noqm5GACILGwYmVsC9EJiR6k+gJw/TIB6BZSDCIjjdma948bECSbYxUASSDDR5
+	pzSY4m2oqe30HTAtNdHuAfXv6F5I/AGNm4ZNJ91BUEdwA/DXq5n5frPvkOv30E8RSZ14JMZu3YP
+	GsjkHOn7ruTKziqabOc2KIgRA+jEg5CdjVblSUQLJajsNXUOwSKsbVcM3OfWE6+RIto3z3dpAhe
+	XcgB6Q7yJusQVe/I89YowHYFunF6RpJ8azrSnE5eh5981HJbnK/OrIATooLcNd/QQ1AvD8FH6BZ
+	BXkLSQz8JvMi/h13LHbZ9nQv77v4jUjEHQRn0ogg==
+X-Google-Smtp-Source: AGHT+IHMtN6ZJkMHIj5HdMYlnYyAczHcoKg+g+PecKKLereDk3zQkSokXvTzEx9YpyqnCmsVnxbEug==
+X-Received: by 2002:a17:903:f84:b0:28e:9427:68f7 with SMTP id d9443c01a7336-28e94276a97mr5653845ad.6.1759396843616;
+        Thu, 02 Oct 2025 02:20:43 -0700 (PDT)
+Received: from wenstp920.tpe.corp.google.com ([2a00:79e0:201d:8:3299:ab9e:3686:a840])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d1f2dbesm17531825ad.135.2025.10.02.02.20.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 02:20:22 -0700 (PDT)
-From: Harrison Carter <hcarter@thegoodpenguin.co.uk>
-Date: Thu, 02 Oct 2025 10:20:16 +0100
-Subject: [PATCH 2/2] dt-bindings: leds: ti,lm3601x: Convert to DT Schema
+        Thu, 02 Oct 2025 02:20:43 -0700 (PDT)
+From: Chen-Yu Tsai <wenst@chromium.org>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Chen-Yu Tsai <wenst@chromium.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: tests: Add tests for clk lookup by name
+Date: Thu,  2 Oct 2025 17:20:35 +0800
+Message-ID: <20251002092036.2504858-1-wenst@chromium.org>
+X-Mailer: git-send-email 2.51.0.618.g983fd99d29-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251002-ti-leds-to-dt-v1-2-1604ae333479@thegoodpenguin.co.uk>
-References: <20251002-ti-leds-to-dt-v1-0-1604ae333479@thegoodpenguin.co.uk>
-In-Reply-To: <20251002-ti-leds-to-dt-v1-0-1604ae333479@thegoodpenguin.co.uk>
-To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Dan Murphy <dmurphy@ti.com>
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Harrison Carter <hcarter@thegoodpenguin.co.uk>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1759396820; l=4722;
- i=hcarter@thegoodpenguin.co.uk; s=20250904; h=from:subject:message-id;
- bh=p/CzlvHEnIHNvjR2z9r9G+Y/GwV0LJ8ph30ZwmlnMSY=;
- b=wsaWlczGN2Oo1pP32CuKIimm+jmjpTFON+MfTe4/22Mi2YdFJA/9D+PuBnZo1+rWMoeXSWIc6
- mNScIWa/KXcDrGp0ZjHXW394A4WaD8+hKJgP5s+gUDvuOmFezQcltLG
-X-Developer-Key: i=hcarter@thegoodpenguin.co.uk; a=ed25519;
- pk=xn5ghTMMWQniDtZih4xwKCTAaBHDozflTmqNKtaKo6s=
+Content-Transfer-Encoding: 8bit
 
-Converts the ti,lm36010 and ti,lm36011 txt to dt schema
+Clk lookup (by name) recently gained some performance improvements at
+the expense of more complexity within the lookup code.
 
-Signed-off-by: Harrison Carter <hcarter@thegoodpenguin.co.uk>
+To make sure that this works as intended and doesn't break, add some
+basic tests for this part of the CCF.
+
+A new "clk_hw_lookup()" function is added purely for running kunit
+tests.
+
+Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 ---
- .../devicetree/bindings/leds/leds-lm3601x.txt      |  51 -----------
- .../devicetree/bindings/leds/ti,lm3601x.yaml       | 100 +++++++++++++++++++++
- 2 files changed, 100 insertions(+), 51 deletions(-)
+ drivers/clk/clk.c      | 11 +++++++
+ drivers/clk/clk.h      |  4 +++
+ drivers/clk/clk_test.c | 66 +++++++++++++++++++++++++++++++++++++++++-
+ 3 files changed, 80 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-lm3601x.txt b/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
-deleted file mode 100644
-index 17e940025dc26213314f5cfd54aa8e5bb09f86b7..0000000000000000000000000000000000000000
---- a/Documentation/devicetree/bindings/leds/leds-lm3601x.txt
-+++ /dev/null
-@@ -1,51 +0,0 @@
--* Texas Instruments - lm3601x Single-LED Flash Driver
--
--The LM3601X are ultra-small LED flash drivers that
--provide a high level of adjustability.
--
--Required properties:
--	- compatible : Can be one of the following
--		"ti,lm36010"
--		"ti,lm36011"
--	- reg : I2C slave address
--	- #address-cells : 1
--	- #size-cells : 0
--
--Required child properties:
--	- reg : 0 - Indicates a IR mode
--		1 - Indicates a Torch (white LED) mode
--
--Required properties for flash LED child nodes:
--	See Documentation/devicetree/bindings/leds/common.txt
--	- flash-max-microamp : Range from 11mA - 1.5A
--	- flash-max-timeout-us : Range from 40ms - 1600ms
--	- led-max-microamp : Range from 2.4mA - 376mA
--
--Optional child properties:
--	- function : see Documentation/devicetree/bindings/leds/common.txt
--	- color : see Documentation/devicetree/bindings/leds/common.txt
--	- label : see Documentation/devicetree/bindings/leds/common.txt (deprecated)
--
--Example:
--
--#include <dt-bindings/leds/common.h>
--
--led-controller@64 {
--	compatible = "ti,lm36010";
--	#address-cells = <1>;
--	#size-cells = <0>;
--	reg = <0x64>;
--
--	led@0 {
--		reg = <1>;
--		function = LED_FUNCTION_TORCH;
--		color = <LED_COLOR_ID_WHITE>;
--		led-max-microamp = <376000>;
--		flash-max-microamp = <1500000>;
--		flash-max-timeout-us = <1600000>;
--	};
--}
--
--For more product information please see the links below:
--https://www.ti.com/product/LM36010
--https://www.ti.com/product/LM36011
-diff --git a/Documentation/devicetree/bindings/leds/ti,lm3601x.yaml b/Documentation/devicetree/bindings/leds/ti,lm3601x.yaml
-new file mode 100644
-index 0000000000000000000000000000000000000000..d7d8ee44d6fe37d13ee84888c5811df3e15a5d02
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/ti,lm3601x.yaml
-@@ -0,0 +1,100 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/leds/ti,lm3601x.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 85d2f2481acf..a17d0070d11f 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -778,6 +778,17 @@ struct clk *__clk_lookup(const char *name)
+ 	return !core ? NULL : core->hw->clk;
+ }
+ 
++#if IS_ENABLED(CONFIG_CLK_KUNIT_TEST)
++/* This is only provided for kunit tests to test the core lookup functions. */
++struct clk_hw *clk_hw_lookup(const char *name)
++{
++	struct clk_core *core = clk_core_lookup(name);
 +
-+title: Texas Instruments - lm3601x Single-LED Flash Driver
++	return !core ? NULL : core->hw;
++}
++EXPORT_SYMBOL_GPL(clk_hw_lookup);
++#endif
 +
-+description: |
-+  The LM3601X are ultra-small LED flash drivers
-+  that provide a high level of adjustability.
+ static void clk_core_get_boundaries(struct clk_core *core,
+ 				    unsigned long *min_rate,
+ 				    unsigned long *max_rate)
+diff --git a/drivers/clk/clk.h b/drivers/clk/clk.h
+index 2d801900cad5..a8ed54f5b572 100644
+--- a/drivers/clk/clk.h
++++ b/drivers/clk/clk.h
+@@ -8,6 +8,10 @@ struct clk_hw;
+ struct device;
+ struct of_phandle_args;
+ 
++#if IS_ENABLED(CONFIG_CLK_KUNIT_TEST)
++struct clk_hw *clk_hw_lookup(const char *name);
++#endif
 +
-+  For more product information please see the links below:
-+  https://www.ti.com/product/LM36010
-+  https://www.ti.com/product/LM36011
+ #if defined(CONFIG_OF) && defined(CONFIG_COMMON_CLK)
+ struct clk_hw *of_clk_get_hw(struct device_node *np,
+ 				    int index, const char *con_id);
+diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
+index a268d7b5d4cb..b3b5ce0ad897 100644
+--- a/drivers/clk/clk_test.c
++++ b/drivers/clk/clk_test.c
+@@ -175,6 +175,8 @@ static const struct clk_ops clk_multiple_parents_no_reparent_mux_ops = {
+ 	.set_parent = clk_multiple_parents_mux_set_parent,
+ };
+ 
++#define DUMMY_CLK_NAME	"test_dummy_rate"
 +
-+maintainers:
-+  - Dan Murphy <dmurphy@ti.com>
+ static int clk_test_init_with_ops(struct kunit *test, const struct clk_ops *ops)
+ {
+ 	struct clk_dummy_context *ctx;
+@@ -187,7 +189,7 @@ static int clk_test_init_with_ops(struct kunit *test, const struct clk_ops *ops)
+ 	ctx->rate = DUMMY_CLOCK_INIT_RATE;
+ 	test->priv = ctx;
+ 
+-	init.name = "test_dummy_rate";
++	init.name = DUMMY_CLK_NAME;
+ 	init.ops = ops;
+ 	ctx->hw.init = &init;
+ 
+@@ -3541,6 +3543,67 @@ static struct kunit_suite clk_hw_get_dev_of_node_test_suite = {
+ 	.test_cases = clk_hw_get_dev_of_node_test_cases,
+ };
+ 
++/*
++ * Test that clk lookup with a name that is not registered returns NULL.
++ */
++static void clk_lookup_not_registered_clk_returns_NULL(struct kunit *test)
++{
++	KUNIT_EXPECT_PTR_EQ(test, NULL, clk_hw_lookup(DUMMY_CLK_NAME));
++}
 +
-+properties:
-+  compatible:
-+    enum:
-+      - "ti,lm36010"
-+      - "ti,lm36011"
++/*
++ * Test that clk lookup with a name that is registered returns the clk.
++ */
++static void clk_lookup_registered_clk_returns_clk(struct kunit *test)
++{
++	struct clk_hw *hw;
++	struct clk_init_data init = {
++		.name = DUMMY_CLK_NAME,
++		.ops = &empty_clk_ops,
++	};
 +
-+  reg:
-+    maxItems: 1
++	hw = kunit_kzalloc(test, sizeof(*hw), GFP_KERNEL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, hw);
 +
-+  '#address-cells':
-+    const: 1
++	hw->init = &init;
++	KUNIT_ASSERT_EQ(test, 0, clk_hw_register_kunit(test, NULL, hw));
 +
-+  '#size-cells':
-+    const: 0
++	KUNIT_EXPECT_PTR_EQ(test, hw, clk_hw_lookup(DUMMY_CLK_NAME));
++}
 +
-+patternProperties:
-+  "^led@[0,1]?([0-9]|[a-z])$":
-+    type: object
-+    $ref: common.yaml#
-+    properties:
-+      reg:
-+        description: |
-+          0 - Indicates IR mode
-+          1 - Indicates Torch (white LED) mode
-+        minimum: 0
-+        maximum: 1
++/*
++ * Test that clk lookup with a name that was unregistered returns NULL.
++ */
++static void clk_lookup_unregistered_clk_returns_NULL(struct kunit *test)
++{
++	struct clk_hw *hw;
++	struct clk_init_data init = {
++		.name = DUMMY_CLK_NAME,
++		.ops = &empty_clk_ops,
++	};
 +
-+      flash-max-microamp:
-+        minimum: 11
-+        maximum: 1500000
++	hw = kunit_kzalloc(test, sizeof(*hw), GFP_KERNEL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, hw);
 +
-+      flash-max-timeout-us:
-+        minimum: 40
-+        maximum: 1600000
++	hw->init = &init;
++	KUNIT_ASSERT_FALSE(test, clk_hw_register(NULL, hw));
 +
-+      led-max-microamp:
-+        minimum: 24
-+        maximum: 376000
++	clk_hw_unregister(hw);
 +
-+    required:
-+      - reg
-+      - flash-max-microamp
-+      - flash-max-timeout-us
-+      - led-max-microamp
++	KUNIT_EXPECT_PTR_EQ(test, NULL, clk_hw_lookup(DUMMY_CLK_NAME));
++}
 +
-+    unevaluatedProperties: true
++static struct kunit_case clk_lookup_test_cases[] = {
++	KUNIT_CASE(clk_lookup_not_registered_clk_returns_NULL),
++	KUNIT_CASE(clk_lookup_registered_clk_returns_clk),
++	KUNIT_CASE(clk_lookup_unregistered_clk_returns_NULL),
++	{}
++};
 +
-+required:
-+  - compatible
-+  - reg
-+  - '#address-cells'
-+  - '#size-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/leds/common.h>
-+
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        led-controller@64 {
-+            compatible = "ti,lm36010";
-+            #address-cells = <1>;
-+            #size-cells = <0>;
-+            reg = <0x64>;
-+
-+            led@1 {
-+                reg = <1>;
-+                function = LED_FUNCTION_TORCH;
-+                color = <LED_COLOR_ID_WHITE>;
-+                led-max-microamp = <376000>;
-+                flash-max-microamp = <1500000>;
-+                flash-max-timeout-us = <1600000>;
-+            };
-+        };
-+    };
-+...
-+
-
++static struct kunit_suite clk_lookup_test_suite = {
++	.name = "clk-lookup",
++	.test_cases = clk_lookup_test_cases,
++};
+ 
+ kunit_test_suites(
+ 	&clk_assigned_rates_suite,
+@@ -3560,6 +3623,7 @@ kunit_test_suites(
+ 	&clk_register_clk_parent_data_device_suite,
+ 	&clk_single_parent_mux_test_suite,
+ 	&clk_uncached_test_suite,
++	&clk_lookup_test_suite,
+ );
+ MODULE_DESCRIPTION("Kunit tests for clk framework");
+ MODULE_LICENSE("GPL v2");
 -- 
-2.51.0
+2.51.0.618.g983fd99d29-goog
 
 
