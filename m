@@ -1,169 +1,154 @@
-Return-Path: <linux-kernel+bounces-840281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B33F8BB4056
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 15:23:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45A8FBB4050
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 15:23:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7980F42165A
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 13:23:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F230119C6E0C
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 13:23:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89ED6311977;
-	Thu,  2 Oct 2025 13:23:25 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37DA73115B1;
+	Thu,  2 Oct 2025 13:23:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="XZY67Qp3"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D8E63126AB
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 13:23:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12EBE30E84F
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 13:23:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759411405; cv=none; b=tKh2rH8L5TJi0C6uzPrQskDic+7bTUee3qg5CTnRpTbo+mWdRv82VLVG5fR1Ev/nBeJ69LQqMitJ4box0dLjNmHq2OI077x2qHrWJh73xAV2agAtt54d4tz1N3tmlm2evURk3rXUpadt8JKGaqivVDt2k1xQOeEEZGBW4iwA/+s=
+	t=1759411400; cv=none; b=lckC5a/7DK2TZoyizdCJ8JkiL00xq+uwPzCv6aJv5S9eS9J+td0UYkff6nY1w9t/Z0Gdnpt3AtR+qfEPOD8+AfCBQyIFwX4nwdGAuQGgPrTC4GDDX2DYd15uXShDufJh5GlsLnhhV+iqRcrLeiFQlPgkC3gxVEP6vXaujfLrMkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759411405; c=relaxed/simple;
-	bh=yIoDS1rE5QwCZkmYO797Qyo84zn+h0EMvmzJyUyTs7E=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=r/g1BNWijSYbBOvP8KsmzC8wSJS5X109PmxfgTw/XbdAGr0NeX7dmKi6OHDjjPL6a/hFoUFtKdHso98dpcQqei9hS6W/kTvduTDSCVjvMFPZEJ+F8rlHfHVOcMbYk9a7ueYKpF59iFpRepVFzdqbvyE3uHov6yUHU3WaTg1YZfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ccsqz2cMyz6L4t4;
-	Thu,  2 Oct 2025 21:21:03 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5D8661402EB;
-	Thu,  2 Oct 2025 21:23:19 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 2 Oct
- 2025 14:23:17 +0100
-Date: Thu, 2 Oct 2025 14:23:15 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Raghavendra K T <raghavendra.kt@amd.com>
-CC: <AneeshKumar.KizhakeVeetil@arm.com>, <Michael.Day@amd.com>,
-	<akpm@linux-foundation.org>, <bharata@amd.com>, <dave.hansen@intel.com>,
-	<david@redhat.com>, <dongjoo.linux.dev@gmail.com>, <feng.tang@intel.com>,
-	<gourry@gourry.net>, <hannes@cmpxchg.org>, <honggyu.kim@sk.com>,
-	<hughd@google.com>, <jhubbard@nvidia.com>, <jon.grimm@amd.com>,
-	<k.shutemov@gmail.com>, <kbusch@meta.com>, <kmanaouil.dev@gmail.com>,
-	<leesuyeon0506@gmail.com>, <leillc@google.com>, <liam.howlett@oracle.com>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<mgorman@techsingularity.net>, <mingo@redhat.com>, <nadav.amit@gmail.com>,
-	<nphamcs@gmail.com>, <peterz@infradead.org>, <riel@surriel.com>,
-	<rientjes@google.com>, <rppt@kernel.org>, <santosh.shukla@amd.com>,
-	<shivankg@amd.com>, <shy828301@gmail.com>, <sj@kernel.org>, <vbabka@suse.cz>,
-	<weixugc@google.com>, <willy@infradead.org>, <ying.huang@linux.alibaba.com>,
-	<ziy@nvidia.com>, <dave@stgolabs.net>, <yuanchu@google.com>,
-	<kinseyho@google.com>, <hdanton@sina.com>, <harry.yoo@oracle.com>
-Subject: Re: [RFC PATCH V3 02/17] mm: Maintain mm_struct list in the system
-Message-ID: <20251002142315.000072f2@huawei.com>
-In-Reply-To: <20250814153307.1553061-3-raghavendra.kt@amd.com>
-References: <20250814153307.1553061-1-raghavendra.kt@amd.com>
-	<20250814153307.1553061-3-raghavendra.kt@amd.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1759411400; c=relaxed/simple;
+	bh=HETRcCbMmNgVH/z/E5wCLlvsrFvBjVnNgE7L6BCZIUc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=egPx85aBQneRV2Q8uUdN0gnjS5mtxf2wYNyOOl/cTjGUqTEN9wixJSr5T5OoQwwvPFYJYN28yy8RpF1lOHEgG8DJSnulHzs6huSksbDCJuLQfhCUBIABbaio6utIeq956GZXHzvirbI/qBgC8hu+9NgriweJflWtgq0xZDdxrRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=XZY67Qp3; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4b109c6b9fcso10918901cf.3
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 06:23:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1759411397; x=1760016197; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DRZ9nDiiIaS8xNUTdtdvnajCW2L7i3IBIHHPxUnqqqI=;
+        b=XZY67Qp3qLsbSvGasfVOIi/zLA2I1JNofnsy65ZBKRMtPKf/0jlkhE6JZn7gADN5vH
+         sxh1vOdG6AXW1OyMI0BGUQUGLrd85olubeFU91l/qJCW+lSu/iI1ZeBUovm2vhZEqSec
+         FlvLMwjKcshmQGYQKN5vwhj0JZdLtH2mcAek+3BPPPJsFoOE9xjQneuyTKtItcJP7C+a
+         8+zq8chSmNGeJqBCPTNhEVUVUl5S18ESXf5eNMtvzt+QjvkoeS3m+d2eFc4PzE0PkvI9
+         EBm5nwCk4LEvnqMHDHsuCJIjIVW46SQ/RFvCDDeQJzRgJnVllf3Q3u4OvqLzpvhRBP76
+         RsfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759411397; x=1760016197;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DRZ9nDiiIaS8xNUTdtdvnajCW2L7i3IBIHHPxUnqqqI=;
+        b=ShKmXV6Dau6tCr93IkapLYYOdcq7C7u/oPBbztRdZarjip5bjt9iiyX4UDMTSEmwUE
+         +dVnmOjajrZ632y/sxCOuMjadfym9u9zqfzWYXN26Tg2jfsRUZNB29rk1qML2unYpQi7
+         KJvETzK0zWGCbYZL2Vs67uPIRSq0wyTpL5qKQqnjR//lS9OJoPPoEr85AT4DxEqVbTrA
+         ZsYEV3P78SI2EORJRyXxocZXUSmIfXaRPoERaihewXEXiRPwPtBiUq+U3TIetqWdfl5I
+         HT6KdfeLUwdXMZs52Jm4buCA+zTgGMJaYlAatpyar92+Cj3Z7D+Dx+GoBoE6FvLlCU2B
+         2AdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWKx5te+C5dCbAbedfayQUFQ2bHIj4/BexXgIWjyDeBES7/GrIUQEjpAHv4v73l1IPTOKFHdnKjwcasa2o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgnQNLOm+oDToK/0kRjN+Y1vEPHld+iWWnfvDuUR3pgHHEOuSG
+	2FMhUWxiCRoAotEWt1Zt0yqUpG5dtdIJvC9OnQjSFCvRxp/WnHOFIQG/ZCJDAZxyNsY=
+X-Gm-Gg: ASbGnctf6J+Jut6pgKcuCrKYWjxzDoymWm2JCyiz/0o5qxKNwsiuSkMi3Nepk4fG0Uk
+	9Ud3BxyycuOLeKKe5WnjY14SqMBCgQsERyE2+UWvplbMywnUJiByymtgg+WY8PRWKHRos2U0jsl
+	vYdguwHqSGPl9ut++fNw+m4htg2eEhX1s/VO9/JY/u0BLG9TCNk3QAtOZVd4mjIvbgTR+5mEF8n
+	WMPo0hA7VEcZYIzyw4fEovobGc5UpRDTmT+K5worrHt9omlhVBdBzp9ectIetCVFDO1QaTjRDz3
+	stL414ff37J3Vqo6KdjKi2pKA+EdDxozCNy1WJOWk2LAnZsUQ1RYXt9NoGr97waKkYHLvbB/ixt
+	td1tkCKvc8sIju5oNAcCj
+X-Google-Smtp-Source: AGHT+IH2rObuT1XqtiQfOTMeENIHe7Dgk6JaeeB2+vpuv7lVOnL0btICGqEnALLQMUXWxv2WByPvfg==
+X-Received: by 2002:a05:6214:19ee:b0:7a9:32e8:56f4 with SMTP id 6a1803df08f44-873a5d1e6a6mr93793016d6.44.1759411396820;
+        Thu, 02 Oct 2025 06:23:16 -0700 (PDT)
+Received: from ziepe.ca ([130.41.10.202])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-878bb4465cesm18648026d6.17.2025.10.02.06.23.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Oct 2025 06:23:16 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1v4JH9-0000000Di2M-1I6m;
+	Thu, 02 Oct 2025 10:23:15 -0300
+Date: Thu, 2 Oct 2025 10:23:15 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Pasha Tatashin <pasha.tatashin@soleen.com>,
+	Chris Li <chrisl@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, Len Brown <lenb@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-acpi@vger.kernel.org, David Matlack <dmatlack@google.com>,
+	Pasha Tatashin <tatashin@google.com>,
+	Jason Miu <jasonmiu@google.com>, Vipin Sharma <vipinsh@google.com>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Adithya Jayachandran <ajayachandra@nvidia.com>,
+	Parav Pandit <parav@nvidia.com>, William Tu <witu@nvidia.com>,
+	Mike Rapoport <rppt@kernel.org>, Leon Romanovsky <leon@kernel.org>
+Subject: Re: [PATCH v2 06/10] PCI/LUO: Save and restore driver name
+Message-ID: <20251002132315.GC3195829@ziepe.ca>
+References: <20250929175704.GK2695987@ziepe.ca>
+ <CAF8kJuNfCG08FU=BmLtoh6+Z4V5vPHOMew9NMyCWQxJ=2MLfxg@mail.gmail.com>
+ <CA+CK2bBFZn7EGOJakvQs3SX3i-b_YiTLf5_RhW_B4pLjm2WBuw@mail.gmail.com>
+ <2025093030-shrewdly-defiant-1f3e@gregkh>
+ <CA+CK2bDH=7H58kbwDM1zQ37uN_k61H_Fu8np1TjuG_uEVfT1oA@mail.gmail.com>
+ <2025093052-resupply-unmixable-e9bb@gregkh>
+ <CA+CK2bCBFZDsaEywbfCzDJrH3oXyMmSffV-x7bOs8qC7NT7nAg@mail.gmail.com>
+ <2025100147-scrubbed-untold-fc55@gregkh>
+ <CA+CK2bA0acjg-CEKufERu_ov4up3E4XTkJ6kbEDCny0iASrFVQ@mail.gmail.com>
+ <2025100225-abridge-shifty-3d50@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100010.china.huawei.com (7.191.174.197) To
- dubpeml100005.china.huawei.com (7.214.146.113)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2025100225-abridge-shifty-3d50@gregkh>
 
-On Thu, 14 Aug 2025 15:32:52 +0000
-Raghavendra K T <raghavendra.kt@amd.com> wrote:
-
-> The list is used to iterate over all the mm and do PTE A bit scanning.
-> mm_slot infrastructure is reused to aid insert and lookup of mm_struct.
+On Thu, Oct 02, 2025 at 08:09:11AM +0200, Greg Kroah-Hartman wrote:
+> > However, it is my hope that we will
+> > eventually stabilize this process and only allow breakages between,
+> > for example, versions 6.n and 6.n+2, and eventually from one stable
+> > release to stable+2. This would create a well-defined window for
+> > safely removing deprecated data formats and the code that handles them
+> > from the kernel.
 > 
-> CC: linux-fsdevel@vger.kernel.org
+> How are you going to define this?  We can not break old users when they
+> upgrade, and so you are going to have to support this "upgrade path" for
+> forever.
 
-This is part of the tags block.  Some tools moan if you have blank lines
-in that.  Alternatively push it below the --- and it won't end up in
-the git commit but tooling will still add the +CC.
+I think the realistic proposal for LUO/kexec version compatability is
+more like eBPF. Expressly saying it is not ABI, not stable, but here
+are a bunch of tools and it is still useful.
 
-> 
-> Suggested-by: Bharata B Rao <bharata@amd.com>
-> Signed-off-by: Raghavendra K T <raghavendra.kt@amd.com>
+> Just keeping a device "alive" while rebooting into the same exact kernel
+> image seems odd to me given that this is almost never what people
+> actually do.
 
-A few minor comments on formatting.
+This feature has a lot of development to go. Right now the baseline
+for upstream is no ABI promise. You can live update between any two
+kernel versions that don't change the LUO kexec ABI. In practice that
+will be a lot of version pairs.
 
-> diff --git a/mm/kscand.c b/mm/kscand.c
-> index f7bbbc70c86a..d5b0d3041b0f 100644
-> --- a/mm/kscand.c
-> +++ b/mm/kscand.c
+The downstreams are going to take this raw capability and choose
+specific downstream version pairs, patch in support for certain ABI
+versions that they need, and test.
 
-> +void __kscand_enter(struct mm_struct *mm)
-> +{
-> +	struct kscand_mm_slot *kscand_slot;
-> +	struct mm_slot *slot;
-> +	int wakeup;
-> +
-> +	/* __kscand_exit() must not run from under us */
-> +	VM_BUG_ON_MM(kscand_test_exit(mm), mm);
-> +
-> +	kscand_slot = mm_slot_alloc(kscand_slot_cache);
-> +
-Similar to below. I'd keep call and error check more closely coupled
-visually by dropping this blank line.
+When things mature and the project is more complete then the kernel
+community may have a discussion about what upstream version pairs
+should be supported by the community.
 
-> +	if (!kscand_slot)
-> +		return;
-> +
-> +	slot = &kscand_slot->slot;
-> +
-> +	spin_lock(&kscand_mm_lock);
-> +	mm_slot_insert(kscand_slots_hash, mm, slot);
-> +
-> +	wakeup = list_empty(&kscand_scan.mm_head);
+I don't think this would be as broad as every combination of linux
+versions ever, but ideas like sequential pairs of stable
+releases, sequential pairs of main release and so on are worth
+exploring.
 
-Looks familiar.
-
-wakeup = kscand_has_work()
-
-Or maybe just get rid of that helper and check it explicitly like this.
-
-
-> +	list_add_tail(&slot->mm_node, &kscand_scan.mm_head);
-> +	spin_unlock(&kscand_mm_lock);
-> +
-> +	mmgrab(mm);
-> +	if (wakeup)
-> +		wake_up_interruptible(&kscand_wait);
-> +}
-
-> +
->  static int start_kscand(void)
->  {
->  	struct task_struct *kthread;
-> @@ -149,6 +228,12 @@ static int __init kscand_init(void)
->  {
->  	int err;
->  
-> +	kscand_slot_cache = KMEM_CACHE(kscand_mm_slot, 0);
-> +
-
-I'd drop this blank line. Keep the call and the error check tightly coupled
-in one block of code.
-
-> +	if (!kscand_slot_cache) {
-> +		pr_err("kscand: kmem_cache error");
-> +		return -ENOMEM;
-> +	}
->  	err = start_kscand();
->  	if (err)
->  		goto err_kscand;
-> @@ -157,6 +242,7 @@ static int __init kscand_init(void)
->  
->  err_kscand:
->  	stop_kscand();
-> +	kscand_destroy();
->  
->  	return err;
->  }
-
-
+Jason
 
