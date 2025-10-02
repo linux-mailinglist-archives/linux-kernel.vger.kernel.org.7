@@ -1,137 +1,170 @@
-Return-Path: <linux-kernel+bounces-840153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC10BBB3B4F
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 12:54:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27660BB3B5B
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 12:57:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 711D43B0915
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 10:54:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1411E7B10F9
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 10:55:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6E3130DECB;
-	Thu,  2 Oct 2025 10:54:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F31630E82E;
+	Thu,  2 Oct 2025 10:57:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="LDljzedV"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RO6SeJ0o"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC624149C7B
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 10:54:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6024E149C7B;
+	Thu,  2 Oct 2025 10:57:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759402444; cv=none; b=i3xKi0d9Og47Je7i1iP39KYpHFeLpkejrpREVdXJtT/VJ6qF7ujrKRW2RAz/6zsZMNP8CPgeCtidxtvHh2ephXkNBimmSd00KbD5nqGwMFao2YlYrPn9SwMJpZAY7g4Ove0dwYEM5ZqqlkfiUmxw9lBgLHAD7yvo32X+/NpVLOo=
+	t=1759402635; cv=none; b=lc8N/Xp15vsKOGaGgQWLLq9cXNgKumIJhFYR7vbJTbAPtsQdlRWMbpGJYVc/36qGfOgnd6X2EABwdREBSttABDBWruF6MFv4UKWw15wDqkMfh6/HY+pbf3VvSqA6j4bZQu2Tx660O/OVWmCWnJ4CHxz71yob+uumFQGwWV1uDcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759402444; c=relaxed/simple;
-	bh=EFck3o1xCNgBLqNJlIjuFYEf0il2tIbNXe1Zggh4tpQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=nEHE4apfzxrHlwAQBemCPOFmpknGx9TRPW+qonudWktK2JTNwPbvgHVQdykoBwIrak+xGyscTOslLUxYlyYbolh5H8psjlgjTajB4fCaYk4OYtwj+xCinqInf/QDu9XGdYFpmz+vrZho3lxnHmorxiti3qhsKlyYZfkaXSPKjr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=LDljzedV; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-61feb87fe26so1336288a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 03:54:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1759402440; x=1760007240; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HA32bUeNOiRyndxLIyDPAfp2EzZpRsh1qJqivzlVI5o=;
-        b=LDljzedVf9nBy1v/hTlL4gFW22rRGH3s2L/BhQLzzKPYmLQ6J/IgUnvqVYvtbxQPnc
-         91TMIek89KB0ENS9jDepWvfyKc1Ml2TYG/jK0RqzMfmsp5VNR8yVNuG+ouSrTxRhKuR7
-         j9nNhmhP3tP4R/gjE6AYYOfg8l45Nc4bm35n9PMEaP9kgqp93l4RXu/XYCMg2oI5Zqah
-         gk8sqAvYR7wQd3Kkcwb+TKSzegTUcI/iD7IU+6+yeFtE1Lxmi4RKXXGFAUyj3ycqJsDj
-         Ruwbc5FWwTDfVvAVMV9ny4A3/Nk5E6F0dkKuzsTbaRp51UkUi9Foe5/JiTy/oMsrR6O1
-         TzWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759402440; x=1760007240;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HA32bUeNOiRyndxLIyDPAfp2EzZpRsh1qJqivzlVI5o=;
-        b=Au3Qm2rkPc6EuGcd6uB+sj3tNOLEUJ0EITA4Scw7BXUYsJFF9DLOrFbF+dRYkkMG7M
-         wkcrbnWvX1cyb3lJt0xI92ttP1bWQlRJxiKh5KrsEDYlEJ3jaJcMTSr0R9pu2egLR8rw
-         LLsXN16YzhiDM8wqXfHfbelBX5/CzmVM3EcXFIPWvuypGgAQFa2h7QFMN+LMSDuMqDWX
-         TX5RQppx2xRMLQsk3pbG+IwRvad3Mf9aWgUQU1NNaFWg3pHMOd6Sl9TTQIvOJxZZhgNE
-         OvA7CGLahjDAAgQniNs2uarDApbyB0n/K9PMYlneBhqowxZzYidj84XDHoWik7npVSK2
-         yAqg==
-X-Forwarded-Encrypted: i=1; AJvYcCW5oEt1ONzfsZ1n9xBYlsYgUgbvh39E+50saNOSjN/SeqhzhDL6Oxagq5tW5ThYpVneW0sVE5w2W2iiJPs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxcjBXRrwHCjpCHW2yMguG2WstPp8LezDNA9vqtAFmGjBwnLt5
-	2168vWNH6hH1NJRYwlLuTOFMS216VhdcMcutZ+s+lvhfw7C7G+osftY6iIKw1ScfsCQ=
-X-Gm-Gg: ASbGncsReznzSiQOP9c32iSJaWD2W8LgQtfiVjIzrdlWec5PeV12SLxS7dSdr73ODM/
-	eSrI6ki7zkH1FBcIctpnD6NYuX72XzcwKdbtebE7fbLGDOvKfiNVqQCxnWEg6zBfv9NGa7llxNF
-	uedkw84LQPfxkl8rJPGshWUeMhLydB8WzehsB9kSEbFstO7iIuq6g1rm4UeHiyHsxA2hxec5XO9
-	K1xUrIa2PPuvFt3ao8PgPm9j2QaoncUaS0rb5SCDuwLXhytaYKPCr0LG2Ou7Xi2/Y8RMtWGy/Ot
-	1m0uXZGbJT71G5y/fUZNaUBkzhPfpNTNtbEWW4ls+HBG1kYJc0wKKdEcdAcM0+fSTH1Bewn338+
-	QCD2Rqv9SAzLbW03f4d8nEG3lP30rcNRW7jn3oNMRd+t9QyjD8g==
-X-Google-Smtp-Source: AGHT+IFJNPRCGhC7AUdTnuBPi1vd4+LzD8SWu9VIcx4ULGaM8y9ZM+mmg2jlpGSdVPuU4OMiPm8pmg==
-X-Received: by 2002:a05:6402:d08:b0:61c:8efa:9c24 with SMTP id 4fb4d7f45d1cf-63678c9f53cmr7090551a12.37.1759402440230;
-        Thu, 02 Oct 2025 03:54:00 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6375eb397fbsm1600921a12.0.2025.10.02.03.53.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 03:53:59 -0700 (PDT)
-Date: Thu, 2 Oct 2025 12:53:57 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Petr Mladek <pmladek@suse.com>, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] printk for 6.18
-Message-ID: <aN5ZxYK9vUfxXyEv@pathway.suse.cz>
+	s=arc-20240116; t=1759402635; c=relaxed/simple;
+	bh=vb4CJXKjIP8Ior4EgVx6Qi8NH8Wh5PpPMwKXojQW4/U=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=uO1p1uSwoB52lSBcM8grV8ZDcHcC3AGhWvW1pb8zCtD9UVF+ZSPTP7dbk/x6XCCKE0GTZQETta9In3kJqSjb9kN/Iiyo+5PDjjOVM3tDHHssiWShPmAlZbIcjPrHmPEMALCJcNhzF+XKBLminvDBDx2AQ9IljuqT/v6QyUZjKGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RO6SeJ0o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20C8EC4CEF4;
+	Thu,  2 Oct 2025 10:57:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759402635;
+	bh=vb4CJXKjIP8Ior4EgVx6Qi8NH8Wh5PpPMwKXojQW4/U=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=RO6SeJ0oDKP/joEVdAhI9Kz2e9Ehx5wQ9Qu+ObcPKA7gNobEfB0qzbPFZcEBiumGA
+	 YSd3A+tnNNrHY+Kq9iwm8VA7F8Lj8PGWx0LdhzMzjYn7TsrXo4F9/v7ukIhFLWdQAf
+	 bjKbhMBda9XNIZSEfSozSymndNk7239ZTu0klIwPxAZQBQ66LZuheLsBnNG9sKCit8
+	 Z1a45lHwT8tPdonddNJXOZrvwn0dvFWbCgTVhASU/6Nn+hftydyOyxe2b1sfB8wzQF
+	 eTzQN2v+DGSa9MmK8gH1wUYOsEVdMKg+4tb6E36GF6TXHK7DKV5IumFKKSe7LNT/eD
+	 vkt7NY2z7L9uA==
+Message-ID: <1a71398e-637f-4aa5-b4c6-0d3502a62a0c@kernel.org>
+Date: Thu, 2 Oct 2025 12:57:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: 6.17 crashes in ipv6 code when booted fips=1 [was: [GIT PULL] Crypto
+ Update for 6.17]
+From: Jiri Slaby <jirislaby@kernel.org>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ "David S. Miller" <davem@davemloft.net>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+ Vegard Nossum <vegard.nossum@oracle.com>, netdev@vger.kernel.org,
+ Eric Biggers <ebiggers@kernel.org>, Jakub Kicinski <kuba@kernel.org>
+References: <aIirh_7k4SWzE-bF@gondor.apana.org.au>
+ <05b7ef65-37bb-4391-9ec9-c382d51bae4d@kernel.org>
+ <aN5GO1YLO_yXbMNH@gondor.apana.org.au>
+ <562363e8-ea90-4458-9f97-1b1cb433c863@kernel.org>
+ <8bb5a196-7d55-4bdb-b890-709f918abad0@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <8bb5a196-7d55-4bdb-b890-709f918abad0@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Hi Linus,
+On 02. 10. 25, 12:13, Jiri Slaby wrote:
+> On 02. 10. 25, 12:05, Jiri Slaby wrote:
+>> On 02. 10. 25, 11:30, Herbert Xu wrote:
+>>> On Thu, Oct 02, 2025 at 10:10:41AM +0200, Jiri Slaby wrote:
+>>>> On 29. 07. 25, 13:07, Herbert Xu wrote:
+>>>>> Vegard Nossum (1):
+>>>>>         crypto: testmgr - desupport SHA-1 for FIPS 140
+>>>>
+>>>> Booting 6.17 with fips=1 crashes with this commit -- see below.
+>>>>
+>>>> The crash is different being on 6.17 (below) and on the commit --
+>>>> 9d50a25eeb05c45fef46120f4527885a14c84fb2.
+>>>>
+>>>> 6.17 minus that one makes it work again.
+>>>>
+>>>> Any ideas?
+>>>
+>>> The purpose of the above commit is to remove the SHA1 algorithm
+>>> if you boot with fips=1.  As net/ipv6/seg6_hmac.c depends on the
+>>> sha1 algorithm, it will obviously fail if SHA1 isn't there.
+>>
+>> Ok, but I don't immediately see what is one supposed to do to boot 
+>> 6.17 distro (openSUSE) kernel with fips=1 then?
+> 
+> Now I do, in the context you write, I see inet6_init()'s fail path is 
+> broken. The two backtraces show:
+> [    2.381371][    T1]  ip6_mr_cleanup+0x43/0x50
+> [    2.382321][    T1]  inet6_init+0x365/0x3d0
+> 
+> and
+> 
+> [    2.420857][    T1]  proto_unregister+0x93/0x100
+> [    2.420857][    T1]  inet6_init+0x3a2/0x3d0
+> 
+> I am looking what exactly, but this is rather for netdev@
 
-please pull the latest printk changes from
+More functions from the fail path are not ready to unroll and resurrect 
+from the failure.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/printk/linux.git tags/printk-for-6.18
+Anyway, cherry-picking this -next commit onto 6.17 works as well (the 
+code uses now crypto_lib's sha1, not crypto's):
+commit 095928e7d80186c524013a5b5d54889fa2ec1eaa
+Author: Eric Biggers <ebiggers@kernel.org>
+Date:   Sat Aug 23 21:36:43 2025 -0400
 
-=======================================
+     ipv6: sr: Use HMAC-SHA1 and HMAC-SHA256 library functions
 
-- Add KUnit test for the printk ring buffer.
 
-- Fix the check of the maximal record size which is allowed to be stored
-  into the printk ring buffer. It prevents corruptions of the ring buffer.
+I don't know what to do next -- should it be put into 6.17 stable later 
+and we are done?
 
-  Note that printk() is on the safe side. The messages are limited by 1kB
-  buffer and are always small enough for the minimal log buffer size 4kB,
-  see CONFIG_LOG_BUF_SHIFT definition.
+thanks,
+-- 
+js
+suse labs
 
-----------------------------------------------------------------
-Arnd Bergmann (1):
-      printk: kunit: support offstack cpumask
-
-John Ogness (1):
-      printk: ringbuffer: Fix data block max size check
-
-Petr Mladek (3):
-      printk: ringbuffer: Explain why the KUnit test ignores failed writes
-      printk: kunit: Fix __counted_by() in struct prbtest_rbdata
-      Merge branch 'rework/ringbuffer-kunit-test' into for-linus
-
-Thomas Wei�schuh (1):
-      printk: ringbuffer: Add KUnit test
-
- init/Kconfig                                 |  12 +
- kernel/printk/.kunitconfig                   |   3 +
- kernel/printk/Makefile                       |   2 +
- kernel/printk/printk_ringbuffer.c            |  48 ++--
- kernel/printk/printk_ringbuffer_kunit_test.c | 327 +++++++++++++++++++++++++++
- 5 files changed, 378 insertions(+), 14 deletions(-)
- create mode 100644 kernel/printk/.kunitconfig
- create mode 100644 kernel/printk/printk_ringbuffer_kunit_test.c
 
