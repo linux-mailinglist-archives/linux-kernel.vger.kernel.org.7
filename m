@@ -1,141 +1,181 @@
-Return-Path: <linux-kernel+bounces-840159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62A5BBB3B73
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 13:05:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 88417BB3B79
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 13:05:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11F9B19C6C46
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 11:05:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1558919C6E8C
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 11:06:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F9D230DECF;
-	Thu,  2 Oct 2025 11:05:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0574A30E842;
+	Thu,  2 Oct 2025 11:05:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RPj20AYm"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="OHgRwMc3"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E77830CB42
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 11:05:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5F1A30E0C6;
+	Thu,  2 Oct 2025 11:05:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759403124; cv=none; b=U6JTBXEbZcCL/6yWaOTS/xBdrpZxOYBzjwmQV4nPCz6zBQ1hvgU4vJzQB0ORDgAu7SekJcJlLvW/XrG0METdWv7fWZiavhw7/nlTaNLChOQAue7bL9ObPDf/bB7wo4kFynU0EHQudhstxqW1ZkbNZ+UE0Wy8DA9qMA9904ohBcM=
+	t=1759403137; cv=none; b=r3SjLSow3hKwxbxk7cjUtG9gDGJjejsB2Va2waoS3w9/i3gFAZex0eHUZzJEVBKScNGid0Js2pptNSFUjdlM0GcjCwBQ6WRiRB0tWJiHvhRjPYl+y836eyInJp8aiSC83ISK82+tuCS2JTBK3b8kTKBB6gPq0vjLnJGEkIQ53IM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759403124; c=relaxed/simple;
-	bh=IL2uchrrlVJI0To0OGIK6OnERKr5SS8vcf+vwilHx8o=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=hOIaqSO2nXjF/PQk+Vj6C/ILfX7pl+fzN4pr/0YmK7iTTVek7CQ2RII9bEQx9Q9Gh6XC+THf4lTFAIfSGrk/E4eAPsRxaqp5YXv3whPWDgM0WCFjSQdq5piQ1Ouk9ncLRY4isKAkrSR2Ri4p2GWlyfz71iHm31Snkz6sQCw+hNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RPj20AYm; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-46e2c11b94cso4286295e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 04:05:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759403121; x=1760007921; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IL2uchrrlVJI0To0OGIK6OnERKr5SS8vcf+vwilHx8o=;
-        b=RPj20AYmkt9aN7XqJjYOFVutp6haifi+WjPgL9zxI0xShZZMwJla2xgv0iWK7mmEcX
-         eionQ4viuKc6Fa9Jgu222Nsgo1ZnmOhVsF/XCmX62cjBbIztiYbawz3I4wpsCLNcJCYC
-         NhqOeo7WTLP8kbyHhBQt72lmSckm+9P74kyBia3S+IiQa9dRXBGtHVnXuuSwzh4H24vT
-         wXlA5HViyAMbwxUqD4Y0y53bVWAquSU0h+4DYEFccAgV3GE7zEBwv9ElhsKUvvWO2jpk
-         FWkYIh+EdQEd+XViAh5UKzXFX7ggGpTajIOvVlGtnLuOT2tS+0IAkzQkzfDB3dv+AUB8
-         wfuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759403121; x=1760007921;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IL2uchrrlVJI0To0OGIK6OnERKr5SS8vcf+vwilHx8o=;
-        b=bl5fiZmKMuRJvQ6lMGTJFm+q5L/91N67FpqsGRiLn+8iW5550cWbhn8p+YbJ30h379
-         pD4C6/jOtra3N0H+2ck5TkGJa/9h3NTvzkF/wSmSg++jcsEZW6ptZn9oR+RLHhYcTuXx
-         Y4hXwCg273/CDiXzZmS1dRUjuwcXr8+l6tn/iz0VXX8Imc8NLz/2b9pWI0Hnkif51e91
-         Rc9q8l7XxWstLbFKryuUQUGkzfXg1TbAscDzF90CqRE87nkioyBSqkGFdIytfasmdtmg
-         MtjygBlU8GpDq1HlU5PNcEnIaPD8TweykC5b0cQmqcjNWAXoYGr/VBKW6x+qMpcf9VrQ
-         Pe+w==
-X-Forwarded-Encrypted: i=1; AJvYcCXz8n6LWocKWoX7+hvYwsh+9MFiTBPosQ3H0r+bg5M5MWBHlDcYa20aB3TgIyHboEfswXDHqcxVLc5BMfY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbMatRz9ssMQcmeLkO/Rpcshp7tPFu3ktE54MnFtgVGIBoVWm6
-	VN2+WgZzeaJgl6Sr+87IPlugZ1WjgkG+t+Ev+eifznIqEGCtBpfLaw2Cr5SjjYW+NKyqu2kDX6D
-	lV6uBMVnvT4C/aQ==
-X-Google-Smtp-Source: AGHT+IGw6rncY8Zxg7i+a3sTyj/cTgYVjAJmgkG70hNLSfNqxn0MIvjZU+YGtE0bN/lyYtFOJUyzYiuJGMMOBg==
-X-Received: from wmhf25.prod.google.com ([2002:a7b:cc19:0:b0:46d:ab31:6ece])
- (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:1c95:b0:46e:6af4:ed83 with SMTP id 5b1f17b1804b1-46e6af4efffmr14013925e9.23.1759403121371;
- Thu, 02 Oct 2025 04:05:21 -0700 (PDT)
-Date: Thu, 02 Oct 2025 11:05:20 +0000
-In-Reply-To: <7dd29a1e-cea8-4889-bff1-462ad00e25fb@intel.com>
+	s=arc-20240116; t=1759403137; c=relaxed/simple;
+	bh=Gbms4G+50NJ83q+xm8/NzAd6fbZ4vf+huSYnRnfSNhI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dgXPcDGuF4Uf+p+sa+WgGvommQF1EliOfjhRz5EzppgkSbDWFUeSN6h+zdOeihf41THQmy020egu0BkWiPNRxP6aauoe0ReJAhSq1WJsUcWZPSJW+ujRNQbWB58h+dk1J37P1F26gnP191rxg4dJnfWqTcXHuUjGkT8mWD5ZEP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=OHgRwMc3; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5920lH9V023884;
+	Thu, 2 Oct 2025 11:05:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=hRD3zu
+	0oLCOgYfE9guMupoc6bczXi8SWhb/uOhXW9d4=; b=OHgRwMc3ougy6uUCwuHj1H
+	mq3nrFihwEbPIveM9WP4cpMhyzChxeLYRU8SwOy8vQ2mftSpKRo3jQkB13F+Bm3o
+	Jlwq3bA2QZqabOMemMuvij9Zygdz6AK8kYymSpYNzItuixfiiBj4/4X3cFtb0IK6
+	rMjb3jxXFxUYp6CNn7Cs9wW/eFG2MINqp/qoDjJGZj0ra/OsFrcwoWzg9AmEweUr
+	XQ+T38ESZ6GBu4GHmjDNO+DEPIo9OgzkKwxkIw40XWBNIi5OH+Oqh9VUau2vNgGo
+	QjO6JEJNJnl+6RldSDB2dwM6EnecPpk2+BbPPL6vFEiJHlKRdVmU/+YBQzz/Xs/A
+	==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49e7n84y7g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 02 Oct 2025 11:05:33 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5927u9Vv020064;
+	Thu, 2 Oct 2025 11:05:32 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 49et8sdscf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 02 Oct 2025 11:05:32 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 592B5TiN52887906
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 2 Oct 2025 11:05:29 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 409C320043;
+	Thu,  2 Oct 2025 11:05:29 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0CC1920040;
+	Thu,  2 Oct 2025 11:05:29 +0000 (GMT)
+Received: from osiris (unknown [9.155.211.25])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu,  2 Oct 2025 11:05:28 +0000 (GMT)
+Date: Thu, 2 Oct 2025 13:05:26 +0200
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+        Ilya Leoshkevich <iii@linux.ibm.com>
+Cc: Alexander Gordeev <agordeev@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] s390 fixes for 6.17-rc3
+Message-ID: <20251002110526.7570C1c-hca@linux.ibm.com>
+References: <20250822123608.142112A72-agordeev@linux.ibm.com>
+ <ab3131a2-c42a-47ff-bf03-e9f68ac053c0@t-8ch.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250924-b4-asi-page-alloc-v1-0-2d861768041f@google.com>
- <726d6a45-d732-4c23-a7b7-766d6a62122e@intel.com> <eajnyirurulezkgpqaonfqmh5ydi7ujzztgok2ab3fsumcmtwi@34ios2bpwxk5>
- <7dd29a1e-cea8-4889-bff1-462ad00e25fb@intel.com>
-X-Mailer: aerc 0.21.0
-Message-ID: <DD7SCRK2OJI9.1EJ9GSEH9FHW2@google.com>
-Subject: Re: [PATCH 00/21] mm: ASI direct map management
-From: Brendan Jackman <jackmanb@google.com>
-To: Dave Hansen <dave.hansen@intel.com>, Yosry Ahmed <yosry.ahmed@linux.dev>
-Cc: Brendan Jackman <jackmanb@google.com>, Andy Lutomirski <luto@kernel.org>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>, 
-	Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, <peterz@infradead.org>, <bp@alien8.de>, 
-	<dave.hansen@linux.intel.com>, <mingo@redhat.com>, <tglx@linutronix.de>, 
-	<akpm@linux-foundation.org>, <david@redhat.com>, <derkling@google.com>, 
-	<junaids@google.com>, <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>, 
-	<reijiw@google.com>, <rientjes@google.com>, <rppt@kernel.org>, 
-	<vbabka@suse.cz>, <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ab3131a2-c42a-47ff-bf03-e9f68ac053c0@t-8ch.de>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: Dq8cAoC4UxGiBYd4j48VMLB2p7PbjA8w
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAyNSBTYWx0ZWRfX8tPaQDF9S2VL
+ jjugdQNNiob+j3oDZ1XsC6qpCj/8PnpqOclpbvncsV1irEiSqfpAKZ8v5vsvM+jPqj16yY3OTbl
+ zWJi0MSrJxCSFJgCqEOifdD3VV/vRfGcXIEmgYSRFz5DbQpIBlgQr/qjSwS58x7xxEkP9mmkGVh
+ 75wlc6mzcS046LNDZHDPvACTLrqfRofyXNvjBKJB1QUv0RJAMq896kIbA7fpTKikBLH2SAT3U2C
+ Cm4Kk+1Y/N9A/fjhBUW79EiV0PcS2U9neEpgYGWn/ozufrdmr+ITGTyIrklODj+AvVxtE9IKmPF
+ xd3mqTuoYje7h+rFn47qtPILNjTFtk9SULQPuC6gdctvYPBlwnzkhl2vo/X2h3pkon7Sh+DA7uy
+ YgRLxj5vG/pry9Ugp2wa4getQBNz1Q==
+X-Proofpoint-GUID: Dq8cAoC4UxGiBYd4j48VMLB2p7PbjA8w
+X-Authority-Analysis: v=2.4 cv=T7qBjvKQ c=1 sm=1 tr=0 ts=68de5c7d cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
+ a=8nJEP1OIZ-IA:10 a=x6icFKpwvdMA:10 a=7XOAULQ-JK2wxBLJYocA:9
+ a=3ZKOabzyN94A:10 a=wPNLvfGTeEIA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-02_04,2025-10-02_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 impostorscore=0 lowpriorityscore=0 malwarescore=0 spamscore=0
+ clxscore=1015 suspectscore=0 bulkscore=0 phishscore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270025
 
-On Wed Oct 1, 2025 at 8:30 PM UTC, Dave Hansen wrote:
-> On 10/1/25 13:22, Yosry Ahmed wrote:
->> On Wed, Oct 01, 2025 at 12:54:42PM -0700, Dave Hansen wrote:
->>> On 9/24/25 07:59, Brendan Jackman wrote:
->>>> As per [0] I think ASI is ready to start merging. This is the first
->>>> step. The scope of this series is: everything needed to set up the
->>>> direct map in the restricted address spaces.
->>> Brendan!
->>>
->>> Generally, we ask that patches get review tags before we consider them
->>> for being merged. Is there a reason this series doesn't need reviews
->>> before it gets merged?
->> I think Brendan just meant that this is not an RFC aimed at prompting
->> discussion anymore, these are fully functional patches aimed at being
->> merged after they are reviewed and iterated on accordingly.
->
-> Just setting expectations ... I think Brendan has probably rewritten
-> this two or three times. I suggest he's about halfway done; only two or
-> three rewrites left. ;)
+On Thu, Oct 02, 2025 at 12:44:41AM +0200, Thomas Weißschuh wrote:
+> Hi Alexander, Vasily and Heiko,
+> 
+> On 2025-08-22 14:36:08+0200, Alexander Gordeev wrote:
+> > please pull s390 fixes for 6.17-rc3.
+> 
+> (...)
+> 
+> >       s390/configs: Set HZ=1000
+> 
+> With this commit the nolibc testsuite for 32bit on QEMU 10.1.0 starts to
+> reliably crash. 64bit is fine. Actually I encountered the same problem
+> before this change, but it happened much less frequently.
+> Output below for a testrun that never got to print anything to stdout,
+> but the crashes can also happen later or sometimes not at all.
+> 
+> [    2.118473] Run /init as init process
+> [    2.142148] User process fault: interruption code 0006 ilc:0
+> [    2.142626] CPU: 0 UID: 0 PID: 1 Comm: init Not tainted 6.17.0-rc2-00002-gfcc43a7e294f #24 NONE
+> [    2.142739] Hardware name: QEMU 8561 QEMU (KVM/Linux)
+> [    2.142822] User PSW : 0705200080000000 00000000804087b2
+> [    2.142911]            R:0 T:1 IO:1 EX:1 Key:0 M:1 W:0 P:1 AS:0 CC:2 PM:0 RI:0 EA:1
+> [    2.142979] User GPRS: 0000000000000000 000000000040c060 ffffffffffffffff 0000000000000002
+> [    2.143022]            0000000000000800 00000000000007ff 0000000000000000 0000000000000000
+> [    2.143061]            0000000000000000 000003ff00000001 000000000040c000 000000007ff720ac
+> [    2.143106]            000000007ff720a4 0000000000409540 00000000804087b2 000000007ff71ec0
+> [    2.143406] User Code: Bad PSW.
+> [    2.143454] Last Breaking-Event-Address:
+> [    2.143483]  [<0000000000000001>]
+> [    2.144705] Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000004
+> [    2.144875] CPU: 0 UID: 0 PID: 1 Comm: init Not tainted 6.17.0-rc2-00002-gfcc43a7e294f #24 NONE
+> [    2.144922] Hardware name: QEMU 8561 QEMU (KVM/Linux)
+> [    2.144989] Call Trace:
+> [    2.145292]  [<000003fffe657cf4>] vpanic+0x1dc/0x2f0
+> [    2.145535]  [<000003fffe657e4e>] panic+0x46/0x48
+> [    2.145586]  [<000003fffe65e4e2>] do_exit+0x3da/0x520
+> [    2.145634]  [<000003fffe65e820>] do_group_exit+0x40/0xb8
+> [    2.145683]  [<000003fffe66fc98>] copy_siginfo_to_user+0x0/0x60
+> [    2.145735]  [<000003fffe60614e>] arch_do_signal_or_restart+0x66/0x2b0
+> [    2.145787]  [<000003ffff42e2bc>] irqentry_exit_to_user_mode+0x174/0x1f8
+> [    2.145902]  [<000003ffff439d5c>] pgm_check_handler+0x114/0x160
+> 
+> You can run the testuite for yourself:
+> (run-tests.sh will download a cross toolchain)
+> 
+> $ cd tools/testing/selftests/nolibc
+> $ ./run-tests.sh -p s390
+> (Expected output, lower numbers mean failures)
+> s390:          228 test(s): 227 passed,   1 skipped,   0 failed => status: warning
+> 
+> The full test output will be in run.out.
+> 
+> This doesn't feel like an issue in nolibc to me.
+> Any ideas?
 
-Yeah, I'd love to say "... and we have become exceedingly efficient at
-it" [0], but no, debugging my idiotic freelist and pagetable corruptions
-was just as hard this time as the first and second times...
+Hm, this looks like a qemu bug to me.
 
-[0] https://www.youtube.com/watch?v=r51EomcIqA0
+Ilya, could you have a look at this please?
 
-> But, seriously, this _is_ a big deal. It's not going to be something
-> that gets a few tags slapped on it and gets merged. At least that's not
-> how I expect it to go.
+The above report is a specification exception with an instruction length
+code of zero, while the PSW points to a 31 bit user space address. As far
+as I understand the architecture this is only possible for an early PSW
+specification exception (aka invalid PSW); however the PSW looks good to
+me.
 
-Yeah, sorry if this was poorly worded, I'm DEFINITELY not asking anyone
-to merge this without the requisite acks - "ready for merge" just means
-"please review this as real grown-up code, I no longer consider this a
-PoC". And I'm not expecting this to get merged in v2 either :)
-
-Maybe worth noting here: there are two broad parties of important
-reviewers - mm folks and x86 folks. I think we're at risk of a
-chicken-and-egg problem where party A is thinking "no point in reviewing
-this too carefully, it's not yet clear that party B is ever gonna accept
-ASI even in theory". Meanwhile party B says "yeah ASI seems desirable,
-but I'll keep my nose out until party A has ironed out the details on
-their side".
-
-So, if you can do anything to help develop a consensus on whether we
-actually want this thing, that would help a lot. Maybe the best way to
-do that is just to dig into the details anyway, I'm not sure.
+So something seems to be odd here.
 
