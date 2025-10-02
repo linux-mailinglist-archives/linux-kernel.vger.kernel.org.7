@@ -1,94 +1,88 @@
-Return-Path: <linux-kernel+bounces-840002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AC7EBB3515
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 10:49:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 921CDBB3530
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 10:50:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0974A540CC4
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 08:43:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B8C4544439
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 08:43:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26A9D2FFF8E;
-	Thu,  2 Oct 2025 08:39:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D69DD2F1FC2;
+	Thu,  2 Oct 2025 08:40:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PfaEfQu0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=bitology.eu header.i=@bitology.eu header.b="nV31FnIG"
+Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FC3F2F261D;
-	Thu,  2 Oct 2025 08:39:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF4E02DCF44
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 08:40:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759394351; cv=none; b=g0SC0c9mLE3L3OCfpabc5M7HeEGKpqkzROtoOCr+L+TB5aqlVntoqmB6/D0ctHtkEa2Gfg1yLrN9WtxF8nVkH7qjkMl6qe6uBR1XVIf0T2lLtZB7Z/14rT9VU4WPIB8jlMyBkYX7B9n8sZCbn4lTzPXXC6062u3rJCs7RFDaTlg=
+	t=1759394412; cv=none; b=TjJqx7XuuGq3GWqB2GKS3DPsyNsm4x11jcWIpMLoYEkpRd3rDEifQhUCYvsBlNk4J4N06yiV53KbhAsl38pN1dC1tHD3qbiezG47LvtVSlczkbrDlCpixAhGkz8GIbxFTOv926b5HByO6PHz3xebHmDY01uznjNrvDKov7sPIgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759394351; c=relaxed/simple;
-	bh=3Qpsm4nFL3tgcFKEF1NONo4gOR6GP4LHeXjUsz+FLlM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NYBOS1AJsBQpSRwESMeKV6OgSDlk7hE7O06wY6A82Ahv1mbwZipTPolCGqjKfkkYWCVMPuYyq7dpXHZ2veePeZ8pVlc1DOEgHNjJ6ImTJEDb/rZxNdcLZV0FqdYA/LqBm3Qpyx0jN1NcwtTS6uqoh/w2I5B8OuTCU7Bk1keC5zs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PfaEfQu0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A2EDC4CEF4;
-	Thu,  2 Oct 2025 08:39:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759394350;
-	bh=3Qpsm4nFL3tgcFKEF1NONo4gOR6GP4LHeXjUsz+FLlM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=PfaEfQu0ZbAbM/shf4t1xes4Gk2vUBdWTp/DgaqE3OiDZqzry9t2Toz1meYeTYVjh
-	 W1Pu8j8XGG4byXnNVgIFlHkO9JS+hzExYzZddJG++F6ts6CxkbIBU1r4EVha8oyu3i
-	 jzlW7vkfk2ZQ7FctLHHoh7rmwHkJSJu8SgLUMVYlIknkI8DuDDbJTGFEIV0qbhxbfE
-	 l1Dr2s/mR38JitRsQ8ydlAL/iKev7YllDCAjd9+xPbRUsgcxB9CHHFiOSUsURAtKOh
-	 Wuzg1R7h9TbmDXF08HR+MhDTsoA+csOqkNSj2h8VFzWT5UwkZWlKiSUk8aO/kOgLUJ
-	 EwXRp4uLKatMg==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Menglong Dong <menglong8.dong@gmail.com>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Menglong Dong <dongml2@chinatelecom.cn>,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	oliver.sang@intel.com
-Subject: [PATCH] tracing: fprobe: Fix to init fprobe_ip_table earlier
-Date: Thu,  2 Oct 2025 17:39:04 +0900
-Message-ID:  <175939434403.3665022.13030530757238556332.stgit@mhiramat.tok.corp.google.com>
-X-Mailer: git-send-email 2.51.0.618.g983fd99d29-goog
-User-Agent: StGit/0.19
+	s=arc-20240116; t=1759394412; c=relaxed/simple;
+	bh=uyYgWZVmV6T7lH9eIYagfPzPK5bUoUvVmkhsGkxK9yM=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Content-Type; b=jH9clQ5M9s+OY1y2iH1TRik3/3I+uUWmPmWh/yRncvjHhbk5n2Sclf75Rtyc62Q2QUAdVIcoi7z9wbjU7b0Olbnbt4U9hgVLyQFQqTTHkpKwoSQzGu5f52zzZ635pV3kqjkK68WRoB40ZDOVKq0VS+/Mq0csQLV74nsNf+e9XMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bitology.eu; spf=pass smtp.mailfrom=bitology.eu; dkim=pass (2048-bit key) header.d=bitology.eu header.i=@bitology.eu header.b=nV31FnIG; arc=none smtp.client-ip=194.63.252.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bitology.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bitology.eu
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=bitology.eu
+	; s=ds202506; h=Content-Transfer-Encoding:Content-Type:To:Subject:From:
+	MIME-Version:Date:Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:
+	Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=KAkH9OW9mT+2h3q3Ar5lpI50/xrPRarNCXgPCemKYo8=; b=nV31FnIGLSm/j8TLTsKovsby7O
+	M8Jskf8DjgDb7mFkYFrQrkWQUvHvIOGo0W65DkTWkf7zvpFPR/1h2pkYHS6yzSvXiGIOGea21GPVl
+	cMeJ8+4IQQN2gBUHwGpYllM1fdEbUZ1jUJbF1TjUHgBSdaFpB7M8N/dCgWrIlHTE7yhGQmeuv2Rv9
+	I2HcDQgAtG/AgRGANU/YPRZjjlKcORdOzBYM8a/s4reKIsLpa+1cKKJFk5oWmEHYhBa1heZp+9n5Y
+	EkiLp/qFRVjYVUrNXOkRRXORT4nu6G+Q4K2RtnNsSKD1cwD5pSvKmOPmqgYpXQPW8gSo4GNwFYTNQ
+	JavaSVMQ==;
+Received: from smtp
+	by smtp.domeneshop.no with esmtpsa (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	id 1v4Er6-00AKkj-UR
+	for linux-kernel@vger.kernel.org;
+	Thu, 02 Oct 2025 10:40:07 +0200
+Message-ID: <88726a13-8ad8-43ab-9155-5fe4a715aa2f@bitology.eu>
+Date: Thu, 2 Oct 2025 10:40:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+From: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <budi@bitology.eu>
+Subject: Updated webpage: Methodist Philosophy (was Fair Pay Philosophy,
+ Unification in Bitstream System, Low JItter)
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+mSLIM really translates to Methodist, so I have updated my webpage.
 
-Since the fprobe_ip_table is used from module unloading in
-the failure path of load_module(), it must be initialized in
-the earlier timing than late_initcall(). Unless that, the
-fprobe_module_callback() will use an uninitialized spinlock of
-fprobe_ip_table.
+Unification in Bitstream System should happen. These are the Bit 
+Hackers, that are against Bug. Corrodation symbols in the kernel such as 
+Rust and Germs really count as this. So we want to separate from this.
 
-Initialize fprobe_ip_table in core_initcall which is the same
-timing as ftrace.
+With a good Low Jitter system, which good computing really is about.
 
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Closes: https://lore.kernel.org/oe-lkp/202509301440.be4b3631-lkp@intel.com
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
----
- kernel/trace/fprobe.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Suggesting Bit programmming language, phasing out BCPL/C, that can run 
+natively on a Bit CPU. (1/3 Bus Use)
 
-diff --git a/kernel/trace/fprobe.c b/kernel/trace/fprobe.c
-index 95e43814b85b..99d83c08b9e2 100644
---- a/kernel/trace/fprobe.c
-+++ b/kernel/trace/fprobe.c
-@@ -847,4 +847,4 @@ static int __init fprobe_initcall(void)
- 	rhltable_init(&fprobe_ip_table, &fprobe_rht_params);
- 	return 0;
- }
--late_initcall(fprobe_initcall);
-+core_initcall(fprobe_initcall);
+The only Budi approved system.
+
+Hail Eln, The Real.
+
+Light,
+Ywe Cærlyn.
+Budi.
+https://bitology.eu/
+
 
 
