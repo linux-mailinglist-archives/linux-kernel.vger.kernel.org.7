@@ -1,110 +1,109 @@
-Return-Path: <linux-kernel+bounces-840695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A765BB500A
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 21:27:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 938D1BB5013
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 21:28:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D627E3AEA61
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 19:27:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 834D77B56E3
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 19:26:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F8A728507C;
-	Thu,  2 Oct 2025 19:27:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hQLrq3wk"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EE682853F2;
+	Thu,  2 Oct 2025 19:27:52 +0000 (UTC)
+Received: from irl.hu (irl.hu [95.85.9.111])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AFA527B34F
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 19:27:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21F22283FDB;
+	Thu,  2 Oct 2025 19:27:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.85.9.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759433258; cv=none; b=beDttfSTKfggD1u5cnj7EZ/QbB39LCw106heoOkEmAlSTaNN/I4FTUyBSDUNKUUAihqPEKQlhoJBJNXCk2cNKXoCnQPkeQpgh+WSkxX0yVk4NlmLSHpBVrZvsdTzbvf2AB4vLkKBS3CDUMS228RoZO+XtfJNqfcbkPRPJBo+ZPI=
+	t=1759433272; cv=none; b=hlGwkwsZ8ub94d2rkpNfszYsRdJktAWBgMGBhfSPn7Al4IFDTUp9lfXgYsP5VJNeR51T4Hm8d94ABH7JS2cy7YzHaSInl5YHbH/rtzRtQEFHLJzQ8s150LECvU1W2y4B4WGwarFgknh1UQzwUZtQGu2NRlXPhE8xEDd/mfMaQcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759433258; c=relaxed/simple;
-	bh=7gdu7OvnE/BdPY8a6TV/kIJlWQ8H1vqfFXLxfYXgYTE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mjYWV45QszMMkJBzpjDsfhCn5JjPt34yvfwuTnP0BLNKp/ZSwzyt834yovCUPFOWPJccNki2V99T3I9EyMGwLpLGJ+EqEJJ9domF/czxC7Bt+oSKoK5RDeXYQWTIHUlslxWBPP49+gI2g6+AkYYwTG03t7npSbBAalvSzfYLtTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hQLrq3wk; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7811a5ec5b6so2068009b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 12:27:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759433256; x=1760038056; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7gdu7OvnE/BdPY8a6TV/kIJlWQ8H1vqfFXLxfYXgYTE=;
-        b=hQLrq3wkS1w2Rst7kyCipFyYLo9UtOaIW63nK8eF3rG4SaClFLaBp3htRxxZv0yZ2S
-         VcIL/gNs1k4mZ6hTsaLwKjBmuAu1QATVGzeUWM4r29vITo//dGXzY5KK9JPIaqUyxy3v
-         lAcmdSQQswBG24pwyRqB4I8kqEv87jMBsdJ/FXks/Ic50py0BVx+b3RJGOH+qK6OFPox
-         UW/AjWbCjJuyBQZAQ4KqwEGJE9JDGEvzgeZxL9i91YwSvucnYmepnll0zgCHei07BUj/
-         zPoxWGtb/3FYrsC6j+NKmOMwgRg8T2ctNkNlFtvVieuaYvckp3j5zwgFOnYR0LpYCqIF
-         F/6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759433256; x=1760038056;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7gdu7OvnE/BdPY8a6TV/kIJlWQ8H1vqfFXLxfYXgYTE=;
-        b=VRdQcsTyMBdcapu/ImzxxEso2JF++alv/LC8AdGWQDI2XRU1fyIaSks5PFon2NLaPl
-         vpiiB8zokW37NvJ/tIiLPesPEMoiX245eCmLfmHbxxWC7UB9IgXpr0G/pLS1llqT1hQ/
-         8Pt7EvAUk4c3vEfN7A1vVVWFg1D5YOQuyujOQVQ/nFH9V3khuuv/ATon2mWOld3SzF/1
-         HYPLMuo1Dq19lG0a6b/RZl8tuOiUjrD0wxjeMXk+Q85ZFtDLLwJaRa1JgVtYn7W6iXkN
-         CdlPWimBiJfEfN6LFF3M3U9rUUFCZmxDZBJ3UdfGl8UfS7Q7NW1F+zAJ0csE339x4GjX
-         pBlA==
-X-Forwarded-Encrypted: i=1; AJvYcCVClB7BBPbAvgNs4NfQl7beRgITdVCX1xzGMrNx7dR4KvwG6AyYN2STXgQnTf6nTzCsNJq8lkI4sazzyfI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuhFo33mh3AJ3VV7JUfVEF+6IC7oUYPZkcV4UkGUHG1YSwp2mr
-	O1fXkJthXcR2jwALzgkE6ODronjpFPGR9fzXkJ3h+FyE6ZtTMSL8FIuQIYhusvxO4PoA0TBq6cl
-	yZbqSKVgBPjtn00E2bJogUm6UcuzQR/Q=
-X-Gm-Gg: ASbGncs4/3truoxffbx3Zv8ZiXT1mncje2VpPsJUxYnY0FrR3t+H+Qz2Zxrxcka0OYU
-	dpmJJkdWi+4LIllwkh6DuzeazlxcHe1Hf/xAeiMYHyU1kFW+rvmgYtRZ249H/qIzT6fkaTeMmV8
-	cMTv3Gp17JZ0TY7bgCmBYK0nvUtluIxPOrjk0qF6HMK7MD+7t4Yf1wcqFNS+5zftzn4pFsfD8mE
-	2y8pmqce1H2Wl0+Hl/YaIAs4oZAZ4tYfBZycOrYYQADMe90wlI9f1CuPWID2ULzew==
-X-Google-Smtp-Source: AGHT+IFHSMffOMVezAKpxf4xflxQPXHC/9PQfQy6n4Qt8MWkSRyYgaxLIW31hWZlX2OEAHUKUARWDCpbLDiVfKNbRN0=
-X-Received: by 2002:a05:6a20:9389:b0:243:b62c:8a7d with SMTP id
- adf61e73a8af0-32b6175aafbmr953767637.0.1759433256415; Thu, 02 Oct 2025
- 12:27:36 -0700 (PDT)
+	s=arc-20240116; t=1759433272; c=relaxed/simple;
+	bh=dfPXwzFbTIqiyP8bAZUg9aObi+hSzB7w4wGCsb1cv1w=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=K40vwaj916gGGaVc3x5bz49iKVHgjexAEKc+1CCDGdjxVg1AtgEFj9Hn4cyqC4TEVrp7yreX5sctC7q8oMgnviWLq8qZwgJD5Mvh/cIDy0R1KRmQn06g5HIbyRWaujsYe1kH8ALW9dhVwtT3j44H0ewqvZyGL5+L3AAzkAvQl6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=irl.hu; spf=pass smtp.mailfrom=irl.hu; arc=none smtp.client-ip=95.85.9.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=irl.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=irl.hu
+Received: from [10.42.0.76] ([::ffff:94.44.132.12])
+  (AUTH: CRAM-MD5 soyer@irl.hu, )
+  by irl.hu with ESMTPSA
+  id 0000000000088DEE.0000000068DED233.002B4646; Thu, 02 Oct 2025 21:27:46 +0200
+Message-ID: <9a684e939409ed298c69782581fda7f838d61545.camel@irl.hu>
+Subject: Re: [PATCH v1] ALSA: hda/tas2781: Fix a potential race condition
+ that causes a NULL pointer in case no efi.get_variable exsits
+From: Gergo Koteles <soyer@irl.hu>
+To: Shenghao Ding <shenghao-ding@ti.com>, tiwai@suse.de
+Cc: broonie@kernel.org, andriy.shevchenko@linux.intel.com,
+  13564923607@139.com, 13916275206@139.com,
+  alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+  baojun.xu@ti.com, Baojun.Xu@fpt.com, stable@vger.kernel.org
+Date: Thu, 02 Oct 2025 21:27:46 +0200
+In-Reply-To: <20250911071131.1886-1-shenghao-ding@ti.com>
+References: <20250911071131.1886-1-shenghao-ding@ti.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251002091448.11-1-alsp705@gmail.com>
-In-Reply-To: <20251002091448.11-1-alsp705@gmail.com>
-From: Xin Long <lucien.xin@gmail.com>
-Date: Thu, 2 Oct 2025 15:27:25 -0400
-X-Gm-Features: AS18NWBJ2McJoGNd_MZw_c2oTY1FRFEzCn1b6DwesYnkNNElFy-oHlpyddLBacw
-Message-ID: <CADvbK_frvOEC4-UbuYixCu2RbQuAOQLmTsi5-sGnO8_+ZSpT8A@mail.gmail.com>
-Subject: Re: [PATCH] net/sctp: fix a null dereference in sctp_disposition sctp_sf_do_5_1D_ce()
-To: Alexandr Sapozhnkiov <alsp705@gmail.com>
-Cc: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	linux-sctp@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 2, 2025 at 5:14=E2=80=AFAM Alexandr Sapozhnkiov <alsp705@gmail.=
-com> wrote:
->
-> From: Alexandr Sapozhnikov <alsp705@gmail.com>
->
-> If new_asoc->peer.adaptation_ind=3D0 and sctp_ulpevent_make_authkey=3D0
-> and sctp_ulpevent_make_authkey() returns 0, then the variable
-> ai_ev remains zero and the zero will be dereferenced
-> in the sctp_ulpevent_free() function.
->
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
->
-> Signed-off-by: Alexandr Sapozhnikov <alsp705@gmail.com>
+Cc: <stable@vger.kernel.org>
 
-Fixes: 30f6ebf65bc4 ("sctp: add SCTP_AUTH_NO_AUTH type for
-AUTHENTICATION_EVENT")
-
-Acked-by: Xin Long <lucien.xin@gmail.com>
+On Thu, 2025-09-11 at 15:11 +0800, Shenghao Ding wrote:
+> A a potential race condition reported by one of my customers that leads t=
+o
+> a NULL pointer dereference, where the call to efi.get_variable should be
+> guarded with efi_rt_services_supported() to ensure that function exists.
+>=20
+> Fixes: 4fe238513407 ("ALSA: hda/tas2781: Move and unified the calibrated-=
+data getting function for SPI and I2C into the tas2781_hda lib")
+> Signed-off-by: Shenghao Ding <shenghao-ding@ti.com>
+> ---
+>  sound/hda/codecs/side-codecs/tas2781_hda.c     | 5 +++++
+>  sound/hda/codecs/side-codecs/tas2781_hda_i2c.c | 5 +++++
+>  2 files changed, 10 insertions(+)
+>=20
+> diff --git a/sound/hda/codecs/side-codecs/tas2781_hda.c b/sound/hda/codec=
+s/side-codecs/tas2781_hda.c
+> index 536940c78f00..96e6d82dc69e 100644
+> --- a/sound/hda/codecs/side-codecs/tas2781_hda.c
+> +++ b/sound/hda/codecs/side-codecs/tas2781_hda.c
+> @@ -193,6 +193,11 @@ int tas2781_save_calibration(struct tas2781_hda *hda=
+)
+>  	efi_status_t status;
+>  	int i;
+> =20
+> +	if (!efi_rt_services_supported(EFI_RT_SUPPORTED_GET_VARIABLE)) {
+> +		dev_err(p->dev, "%s: NO EFI FOUND!\n", __func__);
+> +		return -EINVAL;
+> +	}
+> +
+>  	if (hda->catlog_id < LENOVO)
+>  		efi_guid =3D tasdev_fct_efi_guid[hda->catlog_id];
+> =20
+> diff --git a/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c b/sound/hda/c=
+odecs/side-codecs/tas2781_hda_i2c.c
+> index 008dbe1490a7..4dea442d8c30 100644
+> --- a/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c
+> +++ b/sound/hda/codecs/side-codecs/tas2781_hda_i2c.c
+> @@ -317,6 +317,11 @@ static int tas2563_save_calibration(struct tas2781_h=
+da *h)
+>  	unsigned int attr;
+>  	int ret, i, j, k;
+> =20
+> +	if (!efi_rt_services_supported(EFI_RT_SUPPORTED_GET_VARIABLE)) {
+> +		dev_err(p->dev, "%s: NO EFI FOUND!\n", __func__);
+> +		return -EINVAL;
+> +	}
+> +
+>  	cd->cali_dat_sz_per_dev =3D TAS2563_CAL_DATA_SIZE * TASDEV_CALIB_N;
+> =20
+>  	/* extra byte for each device is the device number */
 
