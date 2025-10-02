@@ -1,163 +1,153 @@
-Return-Path: <linux-kernel+bounces-840263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99F35BB3F83
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 15:01:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DF150BB3FA4
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 15:03:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DC053BAB04
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 13:01:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D7503B5EFF
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 13:03:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD8113112A5;
-	Thu,  2 Oct 2025 13:01:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6493311594;
+	Thu,  2 Oct 2025 13:03:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="T2lXyy4m"
-Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tK7L357z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74C0C3081B7
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 13:01:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D4D2EC08E;
+	Thu,  2 Oct 2025 13:03:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759410083; cv=none; b=Pi9+Gc/Pimb9Gog/XK4hPo5Fd5O8PfsSmgDmUgUuclyXobDLPZ0i9iNXGyzcQlJxoSDTYVy2T1oZb/Oc5KJiSsUp7SyHjt6SgpNvVy00P/CjFTkeJrLYCD3aln/eZDGUvl5NL0tZhUbakAjfTqSiS6Iiop1UUSLboZVje4+wI3A=
+	t=1759410226; cv=none; b=BjGdS+zxpQvtXSh6Gwy4t3s9ZkoYv7GmAOGyVH7x6TJmhlES3wAC9m0fX34WppLVBwppe2yHHvYVLD1jS7lwisrBzlFWU0QBtYkqiskfepqHJL4FsDjEWzwEohBRQYeqvJMtLQqQIIheFeczM5nNC7hN+DUNaw7fY6606Xxm96Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759410083; c=relaxed/simple;
-	bh=HeyU0X1Cd7WV8d7kBuIX1FDpgYGRaAtOSZh6Uw8ZlE4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fYhDLvnWd3Ya/0F1I/5eHIlKl+2YJ4XvL06ev2+eqLiX7m8VUauno/YBpY8nJ4Upw4nExZifTr0GvczOY6suNzVRfHLGfBqgbBIKPnGbIK8ZxO1lvlhuvVu7Bk6FKZ1eZnG0ybl1DqLEnMb2UBPTiB0NnoTAFRrh2heVpfTyJNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=T2lXyy4m; arc=none smtp.client-ip=209.85.210.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-7afbcf24c83so286156a34.3
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 06:01:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1759410080; x=1760014880; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=sUsMdpmRM7X879n8mCS3/9BWR9IxrODIsWMUJBwywLc=;
-        b=T2lXyy4mrWjRe5ikjF9Wq9x8wwvbbDJjGHMskEDp9A19dQOR0KBDSkbqyJylX4mdgb
-         OTGn/O9PhYJywko4v65vE29HoQ7qlkv4q7HF3m5hXLyXUXVDMWc81nF3OkVreY+6jDwL
-         FMqGIJdXYHsvmHUjmRUJP5adfsk8oUYS6gHaXZ/9uuEkKd6hxtiw8UVb3g5T5n03uCvz
-         mcF6ef0RERLSQSTlhAxFVULELU7DC+XFjygiFAHo5ldEfgaeHZS+ELySLvI2Q13xbvOr
-         BACzoCJPRukIHDBDMzzYEamyXpn7e+2X+wUN1BDIpj/5JZ6t30O96C/w9GWimzW9KlwY
-         PE9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759410080; x=1760014880;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sUsMdpmRM7X879n8mCS3/9BWR9IxrODIsWMUJBwywLc=;
-        b=G3u0cYlH47+YFOU+0+Cf48dmo80OxuQo4Qaus1hGeIyqHIhaSIzUUoj9IaaHQFie5r
-         drI7rg4aT+n8UUb2RUCdmoFekKak6KcIREAox6Y/la/08FIwmcTRGevVKX12DYacZaSa
-         35NTjgWxpwL+xqf+GwrOVSHkj4A3QTfxI0D7vu7h0FcvG1AEv5Uj8WCjqM/UPIKnJ7eO
-         isP0vIMDNFCWolXjJKa/ApXrzfVB7xLVS/z4nZsUTDDkdKAJwueXgXlt3ufOu3ZBx1E/
-         RvUTi9mLnSG1c8D/jYHF/X7qdSwrXRL0LpHbKfA+j+0E/Z0ZV8Dy1/6S25oe1S/AYk7d
-         AtyA==
-X-Forwarded-Encrypted: i=1; AJvYcCUUAY2p6gGGnWbyAZqUoD1moOMoBFgzS7lO55TNdV/XteKvKO+5Rf4ZmLPEblMO0irhxHABT47e5cDB14o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4YxKYLJ0GynSBRqz2V/A8zjpXX5t6YTijqt+zCY9b3H4rYzW1
-	lTAPhZ8aqz3vE/W70EVb82FTO9eZT+ndIu08qpfZwiHPjIudx6nQmj9yiVaAAcTRBWQ=
-X-Gm-Gg: ASbGncvnju1lcjEZvIDN6P3ve1hCeRfABtkOIPQFiUB30mL5KnTBSPi4YqTDlIN0Isv
-	YuLyt5BG+RsQ/ErAGepabjk9wq/W3/QZi+1vPQBjWxG4EFSPMPy6bGpYv+gyy57IInb7WeZGUAU
-	O4YWsG87x9mEijfSmn7inMYMlADuGt1gzMgkIUFm2p4JlTN0FZNBZ/4RXg/luOoKE2eSmQhRFaf
-	AlSdegKu5GipwwH6GFFeELhMpIvdSG7D+7vjx686/wRl3f2eBfTi35xj6lpNPOx19R0N8KOQRk2
-	wc8btRzBCCLLyBmlmc9X3vgpQRiQLdjyHXfhWEKFU6m8obHxr6wphS3QLYJr7CoY1n4RQ+xQKUt
-	kfXOxK+T3/+vEdh3oA3rM
-X-Google-Smtp-Source: AGHT+IGFzneyhPIwEYTxTRu+3x9cUEyBSh7N480rnZah8RtVK6QFov2ZqKcqlL3gifb/fKYD/MCqYw==
-X-Received: by 2002:a05:6830:6001:b0:7ba:e3fb:f2b0 with SMTP id 46e09a7af769-7bddb7ed06cmr6745878a34.31.1759410080285;
-        Thu, 02 Oct 2025 06:01:20 -0700 (PDT)
-Received: from ziepe.ca ([130.41.10.202])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7bf439d2ccdsm613003a34.35.2025.10.02.06.01.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 06:01:19 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1v4Ivt-0000000DhmS-03Ch;
-	Thu, 02 Oct 2025 10:01:17 -0300
-Date: Thu, 2 Oct 2025 10:01:17 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: Johan Hovold <johan@kernel.org>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Sven Peter <sven@kernel.org>,
-	Janne Grunau <j@jannau.net>,
-	Rob Clark <robin.clark@oss.qualcomm.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Yong Wu <yong.wu@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Krishna Reddy <vdumpa@nvidia.com>, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/14] iommu: fix device leaks
-Message-ID: <20251002130116.GB3195829@ziepe.ca>
-References: <20250925122756.10910-1-johan@kernel.org>
- <20250930182158.GS2695987@ziepe.ca>
- <0d5d4d02-eb78-43dc-8784-83c0760099f7@arm.com>
- <20251001155851.GW2695987@ziepe.ca>
- <2d94b52c-cffc-40af-930a-20f0130a23ea@arm.com>
+	s=arc-20240116; t=1759410226; c=relaxed/simple;
+	bh=IqmZ2qn3/cwmHXiV+sDN9KZgmACU1tPIoXsK0UdOIVg=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=cLSgjTFc5GXzWuc9Txcdm4Wy++L5S7r4nwa0z6lKw4oTMMoNBMF2NSAcOrBVadWwLso39jgvWxD5uxv1uEpsPsMzZiiwzE4UeBLtgHxnc0fZML+rCdeZV7o6lM6nbRLwB1ayRSfeQtnMEaieEQ444dP0xhGNzanyUA7NVGRa/ZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tK7L357z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F94CC4CEF4;
+	Thu,  2 Oct 2025 13:03:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759410225;
+	bh=IqmZ2qn3/cwmHXiV+sDN9KZgmACU1tPIoXsK0UdOIVg=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=tK7L357zNRoAygiOUdtULi+T8umVIFJxKaXPxAvPO/y5yIv7YNhM7mm/9ecDNViJb
+	 U5c24LtvIkzzXU+wyIYZgyR/Knb1Xc4rQwmfSTb/wFwN1Ajm0X+7zIrvoVscLgOvwI
+	 R+qaC+Azn3dYLZPyQ3Tt1bb/psBFOV7wzGXRwSLEf07icqaRWz6NEh1KEEjh+WLYYa
+	 As1LaqL6oWluc9DUTl41JaWPxewctI23uLEHtcXblAPrJLxovJU+LP6w8jlxDKRsaR
+	 0BHN0wN9fMYudk6kEeNyDQnTDi7/CbM75I63QgKiyWR9/FZXYd5kV+ePZkxuGHqGQB
+	 iL9XYmmt+fE4g==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2d94b52c-cffc-40af-930a-20f0130a23ea@arm.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 02 Oct 2025 15:03:38 +0200
+Message-Id: <DD7UVCEVB21H.SQ00WZLLPINP@kernel.org>
+Subject: Re: [PATCH v2 1/2] rust: pci: skip probing VFs if driver doesn't
+ support VFs
+Cc: "John Hubbard" <jhubbard@nvidia.com>, "Alexandre Courbot"
+ <acourbot@nvidia.com>, "Joel Fernandes" <joelagnelf@nvidia.com>, "Timur
+ Tabi" <ttabi@nvidia.com>, "Alistair Popple" <apopple@nvidia.com>, "Zhi
+ Wang" <zhiw@nvidia.com>, "Surath Mitra" <smitra@nvidia.com>, "David Airlie"
+ <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Alex Williamson"
+ <alex.williamson@redhat.com>, "Bjorn Helgaas" <bhelgaas@google.com>,
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, "Miguel
+ Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun
+ Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
+ Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ <nouveau@lists.freedesktop.org>, <linux-pci@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>, "LKML" <linux-kernel@vger.kernel.org>
+To: "Jason Gunthorpe" <jgg@nvidia.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20251002020010.315944-1-jhubbard@nvidia.com>
+ <20251002020010.315944-2-jhubbard@nvidia.com>
+ <20251002121110.GE3195801@nvidia.com>
+ <DD7TWUPD83M9.5IO0VX7PP1UK@kernel.org>
+ <20251002123921.GG3195801@nvidia.com>
+In-Reply-To: <20251002123921.GG3195801@nvidia.com>
 
-On Thu, Oct 02, 2025 at 12:48:35PM +0100, Robin Murphy wrote:
-> > However the SMMU drivers are doing this under the
-> > iommu_probe_device_lock and not stashing the pointer into a drvdata
-> > where there is no locking protecting it.
-> 
-> Huh? Every .of_xlate call is under probe_device_lock just as much as
-> .probe_device calls are; they *have* to be, since they too are in the
-> position of working with dev->iommu before dev->iommu_group is set to
-> guarantee its stability.
+On Thu Oct 2, 2025 at 2:39 PM CEST, Jason Gunthorpe wrote:
+> On Thu, Oct 02, 2025 at 02:18:36PM +0200, Danilo Krummrich wrote:
+>> On Thu Oct 2, 2025 at 2:11 PM CEST, Jason Gunthorpe wrote:
+>> > On Wed, Oct 01, 2025 at 07:00:09PM -0700, John Hubbard wrote:
+>> >> Add a "supports_vf" flag to struct pci_driver to let drivers declare
+>> >> Virtual Function (VF) support. If a driver does not support VFs, then
+>> >> the PCI driver core will not probe() any VFs for that driver's device=
+s.
+>> >>=20
+>> >> On the Rust side, add a const "SUPPORTS_VF" Driver trait, defaulting =
+to
+>> >> false: drivers must explicitly opt into VF support.
+>> >
+>> > As I said in the other thread - please no.
+>> >
+>> > Linux drivers are expected to run on their VFs.
+>>=20
+>> The consequence would be that drivers for HW that can export VFs would n=
+eed to
+>> be rejected upstream if they only support the PF, but no VFs. IMHO, that=
+'s an
+>> unreasonable requirement.
+>
+> Not rejected, they just need to open code a simple isvf check and fail
+> during probe if they really have a (hopefully temporary) problem.
 
-Yes, of_xlate is under the lock, but IIRC there are still cases where
-probe gets deferred, the probe_device_lock is unlocked, and the
-drvdata continues to exist.
+The question is whether it is due to a (temporary) problem, or if it is by
+design.
 
-> indeed the driver cannot be removed, because we hold a module reference
-> around the call
+I think it's not unreasonable to have a driver for the PF and a separate dr=
+iver
+for the VFs if they are different enough; the drivers can still share commo=
+n
+code of course.
 
-That's not how module reference counts work. Drivers can be unbound
-through sysfs at any time.
+Surely, you can argue that if they have different enough requirements they
+should have different device IDs, but "different enough requirements" is pr=
+etty
+vague and it's not under our control either.
 
-> > Anyhow, I drafted a nice fix for all of this. After all the rework it
-> > is trivial for the core code to pass in the struct iommu_device * to
-> > probe and then most of the drivers just drop this ugly code
-> > completely.
-> >
-> > https://github.com/jgunthorpe/linux/commits/iommu-fwspec/
-> 
-> Eww, that is neither nice nor a "fix". Once again it's just piling on a load
-> of extra complexity to have multiple confusingly-overlapping-but-different
-> ways of doing the same thing, one of which is still the exact same one
-> you've decided to object to because you've failed to understand it (as
-> demonstrated by the commit message below, the obvious bug in the hideous
-> mess below that, and at a glance the other patches actively *breaking* at
-> least one driver.)
+> This not really a realistic case. Linux running in the VM *should*
+> have drivers that operate the VF, and those existing drivers *should*
+> work in the PF context.
+>
+> Drivers that work in VM but not in a host should not be encouraged!!
 
-It is hard to take you seriously with such vauge objections
-Robin. Please try to be constructive. If you are specific I'll go fix
-the things and maybe other people besides you can understand this
-stuff.
+I agree, we should indeed encourage HW manufacturers to design the HW in a =
+way
+that a single driver works in both cases, i.e. less less code to maintain, =
+less
+surface for bugs, etc., if that is what you mean.
 
-I'm shocked you disagree with the core code helping the drivers find
-their iommu_driver. This seems like very basic obvious good stuff. We
-don't need all sorts of different open coded ugly ways for drivers to
-do this. It removes 200 lines of junk for drivers :\
+But, if there is another solution for VFs already, e.g. in the case of nova=
+-core
+vGPU, why restrict drivers from opt-out of VFs. (In a previous reply I ment=
+ioned
+I prefer opt-in, but you convinced me that it should rather be opt-out.)
 
-> > +			iommu = fwspec_iommu->ops->probe_device(dev);
-> > +			if (IS_ERR(iommu))
-> > +				return PTR_ERR(iommu);
-> > +			if (WARN_ON(iommu != fwspec_iommu)) {
+> AFAICT this is even true for novacore, the driver should "work" but
+> the VF won't be provisioned today so it should fail startup in some
+> way. eg "no vram" or something like that.
+>
+>> > This temporary
+>> > weirdness of novacore should not be elevated to a core behavior that
+>> > people will misuse.
+>>=20
+>> It's not just nova-core, please see [1].
+>>=20
+>> [1] https://lore.kernel.org/lkml/DD7TP31FEE92.2E0AKAHUOHVVF@kernel.org/
+>
+> I responded there, I don't think the reasons those were added to ICE
+> and then cargo-culted are very good, not good enough to justify adding
+> it to the core code.
 
-This is at least one typo.
-
-Jason
+Indeed, the justification of ICE is clearly wrong.
 
