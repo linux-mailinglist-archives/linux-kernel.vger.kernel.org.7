@@ -1,122 +1,170 @@
-Return-Path: <linux-kernel+bounces-840842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2B38BB58B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 00:30:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C7BC5BB58B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 00:33:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F2E71927335
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 22:31:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4004D19C749F
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 22:33:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA151277003;
-	Thu,  2 Oct 2025 22:30:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14A20272E6E;
+	Thu,  2 Oct 2025 22:33:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZcNcVw2b"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="g6GN9X5E"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34D871DED77
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 22:30:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D670C1DED77
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 22:32:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759444236; cv=none; b=gu9qyWGB22JijijULLlQgghTNZxC89heSFPfUDJuXZOOtKGA9ujZW2SzmaXpAa/PdaECEuTBlWcrFwY43mZnQxRwc4UG2mB5j6MoL87Z36IqgYZ/rb6S+GVK+QrxZZciC5kmdQI4P1I+mkXY63hy3FZtVC320hKXTU3TcYmmsyM=
+	t=1759444379; cv=none; b=kbfFQgAFmIFynE/fzZALtpKh5kVoB9G/Z6HN45P1fVJEhbOYwhRH+rUgy0il7gOtTFgJJDHOPSWZI/wceGKae/5mlIjUiHAUXHHLSLQ17N38WfYPJn3l0wM9OlR1Pjm7EKABgY5XKTgt2CMpJCbck/Vs540YGPoT+o6Ox00dTPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759444236; c=relaxed/simple;
-	bh=mclwb4BLPmCejXVZg2cR82rxkFBq0yH1/DlDBXyjY74=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gtFb9jh+7kcS2bQ8y7qRARJtt+tJJNhnwIeVy2qBeo1XPj3d/jvlrFkXs3mfPjfRUixw2UDgZO0wnjUSC9XVZaGrHvDO7ClQWO/Loj93Fh7K99drJAPNomH3osRTudLEKOTE8gexjHx+SYuw9xdVhK7JI4JIpBtVNDq8jO2/M7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZcNcVw2b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCCA5C4CEFA
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 22:30:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759444235;
-	bh=mclwb4BLPmCejXVZg2cR82rxkFBq0yH1/DlDBXyjY74=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ZcNcVw2bBfizYT3syecFR74oq8jg0ZM0QoFIkNJhekVil48dSD9CJOrHTQe+UXGZS
-	 XyukVruIMo55D3gW2VGpMca6347oLdOIOjpmN3RQA1CLvzAsQr0+k7fC2pWFFrYPEq
-	 UuCZMqIzlhEQQ0xJKxIRb169HgxbNTyyQL3Pfh9A9Yt3qnrl+Gx7K9jJBM8qV41RDN
-	 gwGPbRa6KOAZkTxnk8APDEz2mGcnQPLs9PrBzjkUi76E847gXDUr+GbHfZ7Bpwy9IC
-	 PkcHdQRyg6bMRVadQFk4/LxaRJmADo0csj8EdYKzT1R3jlLyQ7yBh5ErbDM6qvphxF
-	 Xo1ypXm6IGgaw==
-Received: by mail-yx1-f52.google.com with SMTP id 956f58d0204a3-6353f2937f3so1704442d50.3
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 15:30:35 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXLCd0Wb3TTYmrSkyzKsQMyIglg4W4HtmHlpVuVo6Nsi6qSjJcuusIrp8f65h6IkQmXd8yP9xPK+OVcqqY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfSoxnHxp70tasf+d2fn+35Tgc76VQBCt4ed4IieWCyKhBSI4F
-	EwjMn2sjO25UoJKGJcIbCnsqY1IakFkK0Oa1CfMMwfLEi8pJuLx801iChAXepjbzIe5LDe20Szd
-	QKAZ9oPLYHeVSoa7jfbTDCJADsEuCaWQNVk6/WwRe3g==
-X-Google-Smtp-Source: AGHT+IER8jPAUzVQN0o6Ky1MS7KVMc0a4lSY1AA2ChRrKcHMDDcDaZNsOD3pjWILpiKV4YkdhpOWKKWWlyCIVXeH7GA=
-X-Received: by 2002:a05:690e:2513:20b0:5f4:55cb:80d4 with SMTP id
- 956f58d0204a3-63b9a074d1emr857849d50.17.1759444235020; Thu, 02 Oct 2025
- 15:30:35 -0700 (PDT)
+	s=arc-20240116; t=1759444379; c=relaxed/simple;
+	bh=qGBvGVUOR2k1VrExAC7p734oLxaKwcZqmNkNFkXFeTw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KvvXmWAeZTVrRbxPycFLubG5+pzIIy96hQbxu/NjIyukZl9sgZjX67XasHwzbkoKgnfEy8MRbJsAWRJAQVh0n5oFuv+wC6HPqKJGYrqc/eoZxFao7IKw4kZNFsFkmoW8Z59icHfkpKH/c3y7KN+GNYv1Z+38gEjJsiB0EM224lE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=g6GN9X5E; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5929NYCx006633
+	for <linux-kernel@vger.kernel.org>; Thu, 2 Oct 2025 22:32:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	FpwK6wbpl1nHk+Rk54AADbhqSQ/2kNSwRaAd3k0SSc4=; b=g6GN9X5E+IsJIiUT
+	c3GcgC/AxotYGLwrKIZYP/4wdgzr2atBF4oD5A9TTnRqNSiKdjVC003noX/XXP7I
+	W2mOfIAxHn25XRRLM00aNyYC+EswzahZVc1nMDn2xmVO00SgGvnDb9H6a+5Gh3cl
+	UIAznHf0Bib0xFuiy37rsWZ/jSVXz6PB5u6C7vz2fR1POplJ3qB2UQFzdXMXCDqx
+	PHECk2c17/tWPTZFi2iqy5LrA7eI58kF5ZBEHDfBG29tSlJTVwTxQWTov7edkvIj
+	XkxDuNQ7nvNs7Bni1SQu4Gtklb6ymKoHuzm1sbGmf+N8KrOyjc6CTob2vxCK+A+O
+	lmvoDw==
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e851s6em-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 22:32:57 +0000 (GMT)
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-32ed9dbba55so465135a91.2
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 15:32:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759444376; x=1760049176;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FpwK6wbpl1nHk+Rk54AADbhqSQ/2kNSwRaAd3k0SSc4=;
+        b=EwvQIQAtDbtTmlAzz/3zAp0/7n1HFsX6ruS3vp4JJ6hyfAHfQO0y/hFGDHOy9vtaqi
+         QjUqLuzpi83J4A7RTa30C0CUjScD4fbmcjJuz3cFZ9FF8KcJ7ju3GD4Xu37Bu9qj31Hh
+         kDzY385nJGred4EykgB2yhAX8c8aIu817Sdr+o3z5wkzIIVsJxzbCFL282B48Uu3BybL
+         Z0dhfeobRZk/rHrFKAEWxe45SUeogKe5TH+JtCD3Hq1qHEVze1Y+I1SCvqW+KqzuXOmx
+         snw8+MUa9zZZ0dCsn5LEGqS5SfN6KnNYM1ug4BYhM+OnPt3BWbQHlRHBEKH75xrZ5y7D
+         GJfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUqw0niJkj09McRkX0XbNFOPBpdiKPTp1nT0JtJQccQXuMlZkQmqfeHU8idrimM6dwOrO/l3NNMzQ5xnCU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWUcU/xd4IWtbbPzgwWyEkdIowAcvSzrU/Wqat2/9vci+BAF3k
+	2f4ZDlYYy02SDTgitNBER6tH5o4xuqY+bUfwW0IFNi9hUrPFSY63kOlbr95eU/a/bhr4biCHBQI
+	mluiTaflIHgvU5MysbWllEdtbw2dIibKYV+J3+C/auY1xAQmKE9L1sx/fH82zR8zjRkU=
+X-Gm-Gg: ASbGncv1UOpeDu/4tsyP+qzneVezOQpDMBVskLGR283l1JDR1UtVyVmDao6pYNuNjn2
+	4G7WHpsShZ0SE+M9Pa1y4FC+2B0fwSqS3XYabWlAIdV9i7hdHWRPkd+xnLshtAM6Qh6yYzNR4Y1
+	twn+cNjf42JCtpHqkI8hLazvkLHoPrgP0YCzJk3TiCLMAjv7dcD5ZHRx8q10gmoernoFQBcBI62
+	DK3QSjkn0mfWc1HJuXqU9vDoFiQ8V/9RgbmPhb8LSSjYiNzsNH8nEnCDXjHiHDKNxZ9l8BdNRlL
+	nneurhOoNK54MgYL8h29FyhsKBbr7HI5OcEKYoAngdAf5shfa5S/MoOa7HoCTcStPdcb9dskcPC
+	hnACLT/ZuQozNkMXB37VgyJdQrdBQv9KM
+X-Received: by 2002:a17:90b:1b07:b0:335:2eee:19d7 with SMTP id 98e67ed59e1d1-339c27f147cmr548597a91.5.1759444376149;
+        Thu, 02 Oct 2025 15:32:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHv7Ezyd2UUjO1KmLcKNimDDT7YbIHUc7nq44OqeXFnjgQivLtCpsrlpOrl4tDqUhXI5zl9oQ==
+X-Received: by 2002:a17:90b:1b07:b0:335:2eee:19d7 with SMTP id 98e67ed59e1d1-339c27f147cmr548575a91.5.1759444375693;
+        Thu, 02 Oct 2025 15:32:55 -0700 (PDT)
+Received: from [10.71.110.242] (i-global254.qualcomm.com. [199.106.103.254])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3399cdef492sm4222624a91.4.2025.10.02.15.32.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 02 Oct 2025 15:32:55 -0700 (PDT)
+Message-ID: <ad9c79bd-b3ea-4dac-96c5-f264eaf91dcc@oss.qualcomm.com>
+Date: Thu, 2 Oct 2025 15:32:54 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250916-luo-pci-v2-6-c494053c3c08@kernel.org>
- <20250929175704.GK2695987@ziepe.ca> <CAF8kJuNfCG08FU=BmLtoh6+Z4V5vPHOMew9NMyCWQxJ=2MLfxg@mail.gmail.com>
- <CA+CK2bBFZn7EGOJakvQs3SX3i-b_YiTLf5_RhW_B4pLjm2WBuw@mail.gmail.com>
- <2025093030-shrewdly-defiant-1f3e@gregkh> <CA+CK2bDH=7H58kbwDM1zQ37uN_k61H_Fu8np1TjuG_uEVfT1oA@mail.gmail.com>
- <2025093052-resupply-unmixable-e9bb@gregkh> <CA+CK2bCBFZDsaEywbfCzDJrH3oXyMmSffV-x7bOs8qC7NT7nAg@mail.gmail.com>
- <2025100147-scrubbed-untold-fc55@gregkh> <CA+CK2bA0acjg-CEKufERu_ov4up3E4XTkJ6kbEDCny0iASrFVQ@mail.gmail.com>
- <2025100225-abridge-shifty-3d50@gregkh>
-In-Reply-To: <2025100225-abridge-shifty-3d50@gregkh>
-From: Chris Li <chrisl@kernel.org>
-Date: Thu, 2 Oct 2025 15:30:24 -0700
-X-Gmail-Original-Message-ID: <CACePvbWw9G=y_cycWFMXxRbmuAE8yFCM0Z3y=Ojw30ENDkDL-g@mail.gmail.com>
-X-Gm-Features: AS18NWBKklIiW19M0HLe-eu5UU3jj0bpgI_sv1S6en5UzgvXxCD0FefovaS2CF8
-Message-ID: <CACePvbWw9G=y_cycWFMXxRbmuAE8yFCM0Z3y=Ojw30ENDkDL-g@mail.gmail.com>
-Subject: Re: [PATCH v2 06/10] PCI/LUO: Save and restore driver name
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Pasha Tatashin <pasha.tatashin@soleen.com>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	Bjorn Helgaas <bhelgaas@google.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Len Brown <lenb@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	David Matlack <dmatlack@google.com>, Pasha Tatashin <tatashin@google.com>, 
-	Jason Miu <jasonmiu@google.com>, Vipin Sharma <vipinsh@google.com>, 
-	Saeed Mahameed <saeedm@nvidia.com>, Adithya Jayachandran <ajayachandra@nvidia.com>, 
-	Parav Pandit <parav@nvidia.com>, William Tu <witu@nvidia.com>, Mike Rapoport <rppt@kernel.org>, 
-	Leon Romanovsky <leon@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/5] media: v4l2: Add description for V4L2_PIX_FMT_AV1 in
+ v4l_fill_fmtdesc()
+To: Nicolas Dufresne <nicolas@ndufresne.ca>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
+        Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Bryan O'Donoghue <bod@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+References: <20251001-av1_irisdecoder-v1-0-9fb08f3b96a0@oss.qualcomm.com>
+ <20251001-av1_irisdecoder-v1-2-9fb08f3b96a0@oss.qualcomm.com>
+ <544147436308901fba85d6de48380c0c1eea7c67.camel@ndufresne.ca>
+Content-Language: en-US
+From: Deepa Guthyappa Madivalara <deepa.madivalara@oss.qualcomm.com>
+In-Reply-To: <544147436308901fba85d6de48380c0c1eea7c67.camel@ndufresne.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=OJoqHCaB c=1 sm=1 tr=0 ts=68defd99 cx=c_pps
+ a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=fpfRSM_o4ZOcEIIQWIgA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=uKXjsCUrEbL0IQVhDsJ9:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAzMiBTYWx0ZWRfX4X5QheBHAeg8
+ 0TN84ScF9t81jYBkIaaR4ZCpreQOEe1IdIlw7ZcDACX7hcZ/+03GFiry+kG9RTCIYn/GufJ0D6M
+ f7pqNSjdc9IexDMXAa5zym/AXIcxQZM8LUDq0F56IHiAwwD7S646qIJRU8IXVeyEOJWihfv7a+v
+ LlyLkQvOU2GbuUcjzhmVam5ig7+sLqwsxPfYZWLkW/uLngG1Oiyy1G5fXK6xrmLObw+v71dHtl1
+ cfhH4yQBNfrJUIq7SXOGmPywqiuL/YDpa/Sud0hKqVCx+BmJI3rAnIwHY+SX2PLd5GMonIPFjT4
+ ad3NMpzULkwnpmbKJ68P3OjkmlQk/77sWppZdYmWZNbMsLBhEntdOQh3mh94RIuP/WhpgkRv2fU
+ wvx0Y/BpFQlqs0rCXEXrltg9Pl+E4Q==
+X-Proofpoint-ORIG-GUID: H0nplsU8_5W-wDxmUY1Oiotpquz7xOSg
+X-Proofpoint-GUID: H0nplsU8_5W-wDxmUY1Oiotpquz7xOSg
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-02_08,2025-10-02_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 adultscore=0 priorityscore=1501 bulkscore=0 impostorscore=0
+ suspectscore=0 lowpriorityscore=0 phishscore=0 malwarescore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270032
 
-On Wed, Oct 1, 2025 at 11:09=E2=80=AFPM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
-> Just keeping a device "alive" while rebooting into the same exact kernel
-> image seems odd to me given that this is almost never what people
-> actually do.  They update their kernel with the weekly stable release to
-> get the new bugfixes (remember we fix 13 CVEs a day), and away you go.
-> You are saying that this workload would not actually be supported, so
-> why do you want live update at all?  Who needs this?
 
-I saw Pasha reply to a lot of your questions. I can take a stab on who
-needs it. Others feel free to add/correct me. The major cloud vendor
-(you know who is the usual suspect) providing GPU to the VM will want
-it. The usage case is that the VM is controlled by the customer. The
-cloud provider has a contract on how many maintenance downtimes to the
-VM. Let's say X second maintenance downtime per year. When upgrading
-the host kernel, typically the VM can be migrated to another host
-without much interruption, so it does not take much from the down time
-budget. However when you have a GPU attached to the VM, the GPU is
-running some ML jobs, there is no good way to migrate that GPU context
-to another machine. Instead, we can do a liveupdate from the host
-kernel. During the liveupdate, the old kernel saves the liveupdate
-state. VM is paused to memory while the GPU as a PCI device is kept on
-running.  ML jobs are still up.  The kernel liveupdate kexec to the
-new kernel version. Restore and reconstruct the software side of the
-device state. VM re-attached to the file descriptor to get the
-previous context. In the end the VM can resume running with the new
-kernel while the GPU keeps running the ML job. From the VM point of
-view, there are Y seconds the VM does not respond during the kexec.
-The GPU did not lose the context and VM did not reboot. The benefit is
-that Y second is much smaller than the time to reboot the VM  and
-restart the GPU ML jobs. So that Y can fit into the X second
-maintenance downtime per year in the service contract.
+On 10/2/2025 12:43 PM, Nicolas Dufresne wrote:
+> Le mercredi 01 octobre 2025 à 12:00 -0700, Deepa Guthyappa Madivalara a écrit :
+>> Add a descriptive string for the AV1 pixel format to v4l_fill_fmtdesc(),
+>> enabling proper reporting of AV1 support via VIDIOC_ENUM_FMT.
+>>
+>> Signed-off-by: Deepa Guthyappa Madivalara <deepa.madivalara@oss.qualcomm.com>
+>> ---
+>>   drivers/media/v4l2-core/v4l2-ioctl.c | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-
+>> core/v4l2-ioctl.c
+>> index
+>> 01cf52c3ea33e1a01e1b306036ba4e57ef5c95d0..d3ee7736b74b0f277d3208782e3ac3282eca
+>> 1e6b 100644
+>> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
+>> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+>> @@ -1542,6 +1542,7 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
+>>   		case V4L2_PIX_FMT_QC10C:	descr = "QCOM Compressed 10-
+>> bit Format"; break;
+>>   		case V4L2_PIX_FMT_AJPG:		descr = "Aspeed
+>> JPEG"; break;
+>>   		case V4L2_PIX_FMT_AV1_FRAME:	descr = "AV1 Frame"; break;
+>> +		case V4L2_PIX_FMT_AV1:		descr = "AV1"; break;
+> Perhaps "AV1 OBU stream", so its clear its no Annex B ?
 
-Hope that explanation makes sense to you.
+Sure, makes it more clear. I will update this as well in the next patch.
 
-Chris
+Regards,
+deepa
+
+>>   		case V4L2_PIX_FMT_MT2110T:	descr = "Mediatek 10bit Tile
+>> Mode"; break;
+>>   		case V4L2_PIX_FMT_MT2110R:	descr = "Mediatek 10bit
+>> Raster Mode"; break;
+>>   		case V4L2_PIX_FMT_HEXTILE:	descr = "Hextile Compressed
+>> Format"; break;
 
