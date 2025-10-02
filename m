@@ -1,265 +1,145 @@
-Return-Path: <linux-kernel+bounces-839918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 517C0BB2BC2
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 09:47:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98475BB2BD2
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 09:48:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00FC3424645
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 07:47:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F51F3A9116
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 07:48:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 687C52D0C75;
-	Thu,  2 Oct 2025 07:47:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 902812D0275;
+	Thu,  2 Oct 2025 07:48:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Fc5bfpOI"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="F5hgp6qR"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A74F81DD9AD;
-	Thu,  2 Oct 2025 07:47:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DCDA7263B;
+	Thu,  2 Oct 2025 07:48:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759391266; cv=none; b=gBVG59G9zsArRvC9ZtpYmt49qswMJ3uHPWFrMVXW263e2wd0qGZ8/bdYEhIP9s9RM9bB3RIxBbpAMBBPzxNSvPEQN+5b2vSKDBy9fMt19zFjdb2InG+F0IU0lSQ30Jly3nkkqvKWenTXjvYtjKYB6YKZ67sNWSPr+KC2ZxJ/SMY=
+	t=1759391315; cv=none; b=TKi6bw/RKAvKTt+BnpMs+OnB61CsVx0HG5Z4RoH0HkIKwIOZ6Sr3rfboNE/XbSD4g8civT07ABK/z/RUxkai3bed3/JbfvliEuIs7N+2L3fgeXc/C8bP303+QLf1icH7aFQoqZBW4h1EjXhcwU6kjQGFDbxuBw4Mrzh6GzsCcSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759391266; c=relaxed/simple;
-	bh=dI0wrkAckMH7G1m4ya3Dj7swPNyC71r0eGahUHaJytU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iAOGV7yPOpORmpLjbqG5Hyk9JPlQTC1e9hvKT0XIqr6hKaaxiRJzv+BE7+7NUooRLd7mXGAwBdjsQX2PGPTk9f0ALmV8cqEKhwcBcy5EiaN2bcnZR9H2JIP5pNtRBYvTjcoBzkA344LclbMTZOx4Kpsc7NmS5pnpVJnpGbuHczA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Fc5bfpOI; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1759391262;
-	bh=dI0wrkAckMH7G1m4ya3Dj7swPNyC71r0eGahUHaJytU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Fc5bfpOIErakjiawbB16GBvXBuIlkWOx6lN+lhFFd2c2EYdM3RMGjx2N67KBbKkpN
-	 7PkU3vq1K8q9COKVq2uAXa1j5uyXD2eGedNVXUKGmLGUHYpAfB7wTnnJJoQJoQmGTk
-	 Y6S3qS+xhO5/at0687V8duOoCnGKnvI9krkjVN7g7cuRHKh7UMRyGxzBS2XncgBzoz
-	 PywfQNyp3y4GBa7mDDAYnxXj8lDAIUBetdeUNt5WEyn2B80LOA/K/3lu6eqOfR4Qyb
-	 C24m2gWXQV8n/Cetp0eecCloTXmxVouVe+ERYiQvXBIztkFsDT8B7X3FvaUwukC5j9
-	 tvZ7jYtqHpuMw==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3D22817E0AC3;
-	Thu,  2 Oct 2025 09:47:42 +0200 (CEST)
-Message-ID: <6d5553da-4c0e-4957-8d74-314a9ef23301@collabora.com>
-Date: Thu, 2 Oct 2025 09:47:41 +0200
+	s=arc-20240116; t=1759391315; c=relaxed/simple;
+	bh=PFOi0aMezM8lp/suG5ZJoNsGMyvv2Uy0VRaH4b1W9cY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o/Lzt6V9u7wWPAI5XMxYlT0SX8QB1/JV1iTocV6l9mbfz99pJxo6JzMNR0lXWfvUbTCGcze7xKx7RT9qHOYZxFvvQ5SYjDbq0iBOIJuKxXpokm26UC/8/bTfwkFv1O9S1BEOAipnra/N/zrbJXDrphBpaEHn88yprqdFfBw+DSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=F5hgp6qR; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5925F3S4024216;
+	Thu, 2 Oct 2025 07:48:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=7zOP9DnHMuM+Tf27AvcsBmCepxoI7z
+	Kka/0qM6um6Bc=; b=F5hgp6qRBanHR3Kwa9gZkTAWVYuRg9oamCdxobwMTsM4XX
+	t7qyaNcQu9EsvSlyBmN/HQ39RBtqtR4gjoBfZeDe52ChkIcgSll+Cxst8zrNemjD
+	m62TwsjkOFe+gJPk2CpLWetcXgFnzSuDJIO/TP4GXpLr3fAALe/TsQXAJBDnbVam
+	+0Wt/fBds4sXiC9ZrVWg8h0IbmiN6q/ezxyuOEw0NgtzYiT+pUVX/kmhZKYHCop+
+	Zyy+JFNJCkHNeGTlnFBUYg+T4PL0DWdBD4khL+f2HiX8FwD2HqBZhbm/pp7bENwX
+	VHM9ccPkOPJnzo6RVLurK7XlXPmeiMxvda58kz0Q==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49e7jwu0gf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 02 Oct 2025 07:48:29 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59240PdG007285;
+	Thu, 2 Oct 2025 07:48:28 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49eurk4x7p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 02 Oct 2025 07:48:28 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5927mOa333620706
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 2 Oct 2025 07:48:24 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3CCCA2004B;
+	Thu,  2 Oct 2025 07:48:24 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id F1C3F20043;
+	Thu,  2 Oct 2025 07:48:23 +0000 (GMT)
+Received: from osiris (unknown [9.155.211.25])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu,  2 Oct 2025 07:48:23 +0000 (GMT)
+Date: Thu, 2 Oct 2025 09:48:21 +0200
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Josephine Pfeiffer <hi@josie.lol>
+Cc: Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Kees Cook <kees@kernel.org>
+Subject: Re: [PATCH] s390/sysinfo: Replace sprintf with snprintf for buffer
+ safety
+Message-ID: <20251002074821.7570A92-hca@linux.ibm.com>
+References: <20251001174104.192486-1-hi@josie.lol>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 5/9] dt-bindings: regulator: Document MediaTek MT6373
- PMIC Regulators
-To: Rob Herring <robh@kernel.org>
-Cc: linux-mediatek@lists.infradead.org, lee@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, matthias.bgg@gmail.com, lgirdwood@gmail.com,
- broonie@kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- kernel@collabora.com, wenst@chromium.org,
- igor.belwon@mentallysanemainliners.org
-References: <20251001111316.31828-1-angelogioacchino.delregno@collabora.com>
- <20251001111316.31828-6-angelogioacchino.delregno@collabora.com>
- <20251001155300.GC1833526-robh@kernel.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20251001155300.GC1833526-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251001174104.192486-1-hi@josie.lol>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAyNSBTYWx0ZWRfX/9qsu1i0DatH
+ mTOD4yVHxRSvuLJ+MXGcMVC+QYE4wtt2jqfyUuoWXE23tAXwPYG2SKbm/3SjxNqHVzaiwK8iwe6
+ 2KDqL4mRDjP0zJrMnnSXIB1rCfj6AEfPfSFXRvNBjGPZzIOAm5+WIiWxKpklGoUhJr6/Qy25X0E
+ mw3S0ACt9Hz2I6gbS6F1xzZ0SHFUUGWYrg8k9vci7HZCDtTUs25HdLziG/ZjuonM/lZp+Z14XsB
+ 48a1twBgYzsdu1CMIP2iVQYKujYsqzLMHHtPRf/aMAXxCtK4tQTl6mICYWs9qFVvfKw1tNyz5oQ
+ uBDQ46ebXedHZmUSh7sBz9oWmxENUACk15Q4DoRT7IwySH811o0aV69EtCMbaBv5emgbSWddXkd
+ AS9A/XtGLktlo0ZPLodhT4RtaNgKnw==
+X-Proofpoint-ORIG-GUID: A4GCNJ5DWt8ZKUHCCLP9u55bjjMdbzoC
+X-Proofpoint-GUID: A4GCNJ5DWt8ZKUHCCLP9u55bjjMdbzoC
+X-Authority-Analysis: v=2.4 cv=GdUaXAXL c=1 sm=1 tr=0 ts=68de2e4d cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=k3TDWKG8rbEpaGFVyfsA:9
+ a=CjuIK1q_8ugA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-02_03,2025-09-29_04,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 clxscore=1011 phishscore=0 adultscore=0 priorityscore=1501
+ malwarescore=0 spamscore=0 bulkscore=0 impostorscore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270025
 
-Il 01/10/25 17:53, Rob Herring ha scritto:
-> On Wed, Oct 01, 2025 at 01:13:12PM +0200, AngeloGioacchino Del Regno wrote:
->> Add bindings for the regulators found in the MediaTek MT6363 PMIC,
->> usually found in board designs using the MT6991 Dimensity 9400 and
->> on MT8196 Kompanio SoC for Chromebooks, along with the MT6316 and
->> MT6363 PMICs.
->>
->> Link: https://lore.kernel.org/r/20250715140224.206329-6-angelogioacchino.delregno@collabora.com
->> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->> ---
->>   .../regulator/mediatek,mt6373-regulator.yaml  | 137 ++++++++++++++++++
->>   1 file changed, 137 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/regulator/mediatek,mt6373-regulator.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/regulator/mediatek,mt6373-regulator.yaml b/Documentation/devicetree/bindings/regulator/mediatek,mt6373-regulator.yaml
->> new file mode 100644
->> index 000000000000..cb721d81b77c
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/regulator/mediatek,mt6373-regulator.yaml
->> @@ -0,0 +1,137 @@
->> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/regulator/mediatek,mt6373-regulator.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: MediaTek MT6373 PMIC Regulators
->> +
->> +maintainers:
->> +  - AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->> +
->> +description:
->> +  The MT6373 SPMI PMIC provides 10 BUCK and 23 LDO (Low DropOut) regulators
->> +  and can optionally provide overcurrent warnings with one ocp interrupt
->> +  for each voltage regulator.
->> +
->> +properties:
->> +  compatible:
->> +    const: mediatek,mt6373-regulator
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  vsys-vbuck0-supply:
->> +    description: Input supply for vbuck0
->> +
->> +  vsys-vbuck1-supply:
->> +    description: Input supply for vbuck1
->> +
->> +  vsys-vbuck2-supply:
->> +    description: Input supply for vbuck2
->> +
->> +  vsys-vbuck3-supply:
->> +    description: Input supply for vbuck3
->> +
->> +  vsys-vbuck4-supply:
->> +    description: Input supply for vbuck4
->> +
->> +  vsys-vbuck5-supply:
->> +    description: Input supply for vbuck5
->> +
->> +  vsys-vbuck6-supply:
->> +    description: Input supply for vbuck6
->> +
->> +  vsys-vbuck7-supply:
->> +    description: Input supply for vbuck7
->> +
->> +  vsys-vbuck8-supply:
->> +    description: Input supply for vbuck8
->> +
->> +  vsys-vbuck9-supply:
->> +    description: Input supply for vbuck9
->> +
->> +  vs1-ldo1-supply:
->> +    description: Input supply for vant18, vaud18, vcn18io
->> +
->> +  vs2-ldo1-supply:
->> +    description: Input supply for vrf12-aif, vrf13-aif
->> +
->> +  vs3-ldo1-supply:
->> +    description: Input supply for vrf09-aif, vsram-digrf-aif
->> +
->> +  vsys-ldo1-supply:
->> +    description: Input supply for vcn33-1, vcn33-2, vmc
->> +
->> +  vsys-ldo2-supply:
->> +    description:
->> +      Input supply for vaux18, vcn33-3, vefuse, vfp, vibr, vio28, vtp, vusb
->> +
->> +  vsys-ldo3-supply:
->> +    description: Input supply for vmch, vmch-eint-high/low
->> +
->> +patternProperties:
->> +  "^v(ant|aud|aux)18$":
->> +    $ref: "#/$defs/mediatek-mt6373-ldo-common"
->> +
->> +  "^vbuck([0-9])$":
+On Wed, Oct 01, 2025 at 07:41:04PM +0200, Josephine Pfeiffer wrote:
+> Replace sprintf() with snprintf() when formatting symlink target name
+> to prevent potential buffer overflow. The link_to buffer is only 10
+> bytes, and using snprintf() ensures proper bounds checking if the
+> topology nesting limit value is unexpectedly large.
 > 
-> Don't need ().
+> Signed-off-by: Josephine Pfeiffer <hi@josie.lol>
+> ---
+>  arch/s390/kernel/sysinfo.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
->> +    type: object
->> +    $ref: regulator.yaml#
->> +    properties:
->> +      regulator-allowed-modes:
->> +        description: |
->> +          Allowed Buck regulator operating modes allowed. Valid values below.
->> +            0 - Normal mode with automatic power saving, reducing the switching
->> +                frequency when light load conditions are detected
->> +            1 - Forced Continuous Conduction mode (FCCM) for improved voltage
->> +                regulation accuracy with constant switching frequency but lower
->> +                regulator efficiency
->> +            2 - Forced Low Power mode for improved regulator efficiency, used
->> +                when no heavy load is expected, does not limit the maximum out
->> +                current but unless only a light load is applied, there will be
->> +                regulation accuracy and efficiency losses.
->> +            3 - Forced Ultra Low Power mode for ultra low load, this greatly
->> +                reduces the maximum output power, makes the regulator to be
->> +                efficient only for ultra light load, and greatly reduces the
->> +                quiescent current (Iq) of the buck.
->> +        maxItems: 3
->> +        items:
->> +          enum: [ 0, 1, 2, 3 ]
->> +    unevaluatedProperties: false
->> +
->> +  "^v(cn18io|cn33-[123]|efuse|fp|tp|ibr|io28|sram-digrf-aif|usb)":
-> 
-> Missing '$' anchor.
-> 
->> +    $ref: "#/$defs/mediatek-mt6373-ldo-common"
->> +
->> +  "^vmc(h)?$":
-> 
-> Don't need ().
-> 
->> +    $ref: "#/$defs/mediatek-mt6373-ldo-common"
->> +
->> +  "^vmch-eint-(low|high)?$":
-> 
-> vmch-eint- is a valid name?
-> 
+> diff --git a/arch/s390/kernel/sysinfo.c b/arch/s390/kernel/sysinfo.c
+> index 1ea84e942bd4..33ca3e47a0e6 100644
+> --- a/arch/s390/kernel/sysinfo.c
+> +++ b/arch/s390/kernel/sysinfo.c
+> @@ -526,7 +526,7 @@ static __init int stsi_init_debugfs(void)
+>  	if (IS_ENABLED(CONFIG_SCHED_TOPOLOGY) && cpu_has_topology()) {
+>  		char link_to[10];
+>  
+> -		sprintf(link_to, "15_1_%d", topology_mnest_limit());
+> +		snprintf(link_to, sizeof(link_to), "15_1_%d", topology_mnest_limit());
 
-Whoops. No, that was supposed to allow vmch-eint-low, vmch-eint-high.
+[Adding Kees]
 
->> +    $ref: "#/$defs/mediatek-mt6373-ldo-common"
->> +
->> +  "^vrf(09|12|13|18|io18)-aif$":
->> +    $ref: "#/$defs/mediatek-mt6373-ldo-common"
->> +
->> +$defs:
->> +  mediatek-mt6373-ldo-common:
-> 
-> The name is local to the schema, so 'ldo-common' would be sufficient.
-> 
+I don't think that patches like this will make the world a better
+place. But you could try some macro magic and try to figure out if the
+first parameter of sprintf() is an array, and if so change the call from
+sprintf() to snprintf() transparently for all users. Some similar magic
+that has been added to strscpy() with the optional third parameter.
 
-Okay, I was trying to avoid pollution - but effectively being this local it's not
-necessary to make this name that long.
-
-Will come up with a v7 sooner than later.
-
-Thanks!
-Angelo
-
->> +    type: object
->> +    $ref: regulator.yaml#
->> +    unevaluatedProperties: false
->> +    properties:
->> +      regulator-allowed-modes:
->> +        description: |
->> +          Allowed LDO regulator operating modes allowed. Valid values below.
->> +            0 - Normal mode with automatic power saving, reducing the switching
->> +                frequency when light load conditions are detected
->> +            2 - Forced Low Power mode for improved regulator efficiency, used
->> +                when no heavy load is expected, does not limit the maximum out
->> +                current but unless only a light load is applied, there will be
->> +                regulation accuracy and efficiency losses.
->> +        maxItems: 2
->> +        items:
->> +          enum: [ 0, 2 ]
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +
->> +additionalProperties: false
->> -- 
->> 2.51.0
->>
-
+No idea if that is possible at all, or if that would introduce some
+breakage.
 
