@@ -1,156 +1,163 @@
-Return-Path: <linux-kernel+bounces-840534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3732BB4A03
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 19:12:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB2C7BB4A06
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 19:12:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B048A19E4477
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 17:12:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0532421EE3
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 17:12:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 906E9269CE6;
-	Thu,  2 Oct 2025 17:12:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 683BE26A0C6;
+	Thu,  2 Oct 2025 17:12:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="dXM5k7f9"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="USrEGhiP"
+Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010029.outbound.protection.outlook.com [52.101.46.29])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A1EA22758F
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 17:12:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41B5D22758F
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 17:12:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.29
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759425136; cv=pass; b=GHFLda29NYK0/F3Q6i/EWgKC4ui9ZZXxvKvmT+Ww82dbLTjIigWkmjn7DBn+6xhvBXeE5GhnpNwTwXe/4pCkvMUmcrpR0QtmqZrMk7zMax2BSaAuMmW9nygAvwpONOjMRnz5ub+WTvQSu688f0Xy1fImUH/pcdfv5HX64GRcnIA=
+	t=1759425143; cv=fail; b=MGct/TXgUfavxj5wV9U7QffpEvcZr53QWi2wGOQxz6mk5u+/C7McySF7bGAZkViGe47KuevSB7SL9/dyb892/i4wISSQ1sgKtCtpk1AM2qZE7BxlsMrSSsXyTtKtU5HCgmL5cOwccp7VxY7AmychXfED6Wd4u+G8rgrI65uo5UI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759425136; c=relaxed/simple;
-	bh=LLKstXLmH508qUEsX1l704tztcvzRHAjC9Otl6C5hc8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eUjLKsnc+Na66GN7j3+Gb3fMqGLywSyiPa1/2QMbIj88OP/+DJL2XT6KxVx9fKb47OhwtZuW6kFw0+DqnTmvCQD+D4KJZgAChFyGxQu70dXkXh8OWFuzYJzBkaJP7R9EocdaDk7zfqsWa1rjgeoRGa1Giaxg62qIjhIU4T8Aysg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=dXM5k7f9; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1759425116; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Fc79Y2nHiSHcnNulRhDiEi6r+XSlJxyAwpYYmFqHvpOuDYsbis1PkT0DvEXCJ/iHGXGZnQsCePkWK2pzqvILrFfVuMeyl4xRgQffV1hkHhK9zKehIUqcSxXKI8jN9+rI7sex6Ze3F+tRv+Bv9QG+JsypPCfJm1mYC6hEmk/MBUo=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1759425116; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=vEJPPTFhogSa3KCUS+TOyXr0VwMc+58qyo+RyNDimAY=; 
-	b=j0Vky8bJtrghhR5ZIXbF199viv3DtUVNN9rm+Qbm6F+vUxRzD2bgIcBfxO7+Mqd9NDSDTBTG4DtsMQGHDPn/L6hLliQgJAmwiVawDBmedwZMA9DNnaMuWEDCj+do4DCB3PMAgP8vJd7KE6aJAkHVOX8QXXJvbyS0tNbRbH4ZHZI=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
-	dmarc=pass header.from=<adrian.larumbe@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1759425116;
-	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=vEJPPTFhogSa3KCUS+TOyXr0VwMc+58qyo+RyNDimAY=;
-	b=dXM5k7f9BQv/uineiDLvQog1NZvQXT8W0FwppT26kVvicr46FA18YK0dSXwkO1i7
-	zISGeilTvtu0gDqGLHefwtCwIE1h2D1iGd6TKFIOjJ5vicKtgUQE1jU3QY8OifvZm/l
-	WodPJUv+1Vl2RCkkaUVdEZUNbWxfbI6b7t0GvCuc=
-Received: by mx.zohomail.com with SMTPS id 1759425114428924.5561370853379;
-	Thu, 2 Oct 2025 10:11:54 -0700 (PDT)
-From: =?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>
-To: linux-kernel@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org,
-	Steven Price <steven.price@arm.com>,
-	Boris Brezillon <boris.brezillon@collabora.com>,
-	kernel@collabora.com,
-	=?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>,
-	Rob Herring <robh@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Subject: [PATCH] drm/panfrost: Name scheduler queues after their job slots
-Date: Thu,  2 Oct 2025 18:11:37 +0100
-Message-ID: <20251002171139.2067139-1-adrian.larumbe@collabora.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1759425143; c=relaxed/simple;
+	bh=Fx7mPM30sqxUM46NVOPDf6g1DhOlVVL10gqEcQ/ousQ=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DspnqLlsxdcoBCLr3CW2aCfdYnL5LUD9lZd1otf6fsLB2Q0Py4Au5ev3of5YmCfdI5nsYwamuUIrrUNUXcWL1ukIRvwS7nzWPwwsbaGsHYk2rUA7TqMSwSv8lZZs55ZsFOoQy9kUFntDxbFj/UmxYcmS3Ylx1U/kM6WkzSnM1Gg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=USrEGhiP; arc=fail smtp.client-ip=52.101.46.29
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FZBoqJyl1RBwB0sdMjgsM+bNe23r1+AEvTGlZlXypKN9pcNYtnBefRCOJlBcz++9OC4VqBqmmfhWa9f8v25nSh0bi3EvjiEwJ07ivlZcgQ+thyGQekGQR6m0hVpA2MqGy8zqVfI5/sie/NjHxrX3aBlb9pQmhf4y1JSOt8ExlW05fBJdn3xNcOV4DeiuiLmfatCQRURUCxZos3XPVH63gtslXj3dKaymGPGp6l7UTMJZsumwUHZX/UMwBCoz1soUvauVWJxFPmxiac9JPxNGqrCoVXibcjkvn8/PVlNpgyBSB5UX0JgjCjZMPHfDDkD4ctCkhMlBfYsMHDEd+6gFKw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7x+qwToD60xRTXWP+7+8bjc3DVBF7/MbSCPB8TjLDsU=;
+ b=hqLIkNuPwmsivAkzUN18E6ea0QZJh3Q2P7mxzNzlgSKxSbMCABTEOu4+evIfAnIGrAsH+YRj6k9BS/s0Dx7j3MhONa0OIFJcV8BjIgfPUp2hJINYA4FMQOnDca1arbdukoZA9Uz84KLPYCGJkxi5wrJbRniKcS0oHst2fX7geWdwaS7jfZr8Xc+eI+Ga70mY5xyS+e3l5FTgIglkea+KZuJr5Yg+ykNuB9Fq90QI4L5w2Xbba9SaA00XRbnFwWXKkcgnBpoUE10HAbhWS0opBjqMr1p4xKaroj+FDmoWmObSFdJPmzCHqaOGVMacNipdM5Y56BwzBBJV9nICup32iQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=amd.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7x+qwToD60xRTXWP+7+8bjc3DVBF7/MbSCPB8TjLDsU=;
+ b=USrEGhiPER+M/Rpyof9UYA8qKsgjLttVuKn6dy6My4R0xSJFCelmYma8h1JcFYcjDz7Tdpxo/r/l/G28d05wXyn4w5qFxr7fB1lETDKBCnZyjUFWJgwIb0iB63UuKupavDxUeTbVSNhdLzL/VRmPBx4jP6GmkrZDBnoufwu+VIMkRSfcNc4S2CHEruzh7MaGkWI5BWu0IorZGeXfru9k3KeFNQAjMCTDrP0lAvmV9nOorWKceiOyN0zYIJpx2GCGATKpt/SaPFdW0gzpnQrA2UvCOUNmd2P7cC66Z1wIOdtMmidFbPUiRdh7nCZgzGT9xnBv36eC0Px4/C0hl+h3iQ==
+Received: from BY3PR04CA0027.namprd04.prod.outlook.com (2603:10b6:a03:217::32)
+ by MW4PR12MB6875.namprd12.prod.outlook.com (2603:10b6:303:209::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.18; Thu, 2 Oct
+ 2025 17:12:18 +0000
+Received: from BY1PEPF0001AE1A.namprd04.prod.outlook.com
+ (2603:10b6:a03:217:cafe::44) by BY3PR04CA0027.outlook.office365.com
+ (2603:10b6:a03:217::32) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9182.14 via Frontend Transport; Thu,
+ 2 Oct 2025 17:12:18 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ BY1PEPF0001AE1A.mail.protection.outlook.com (10.167.242.102) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9182.15 via Frontend Transport; Thu, 2 Oct 2025 17:12:18 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.34; Thu, 2 Oct
+ 2025 10:12:06 -0700
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 2 Oct
+ 2025 10:12:06 -0700
+Received: from Asurada-Nvidia (10.127.8.9) by mail.nvidia.com (10.129.68.7)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Thu, 2 Oct 2025 10:12:04 -0700
+Date: Thu, 2 Oct 2025 10:12:03 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+CC: <jgg@nvidia.com>, <linux-kernel@vger.kernel.org>, <robin.murphy@arm.com>,
+	<will@kernel.org>, <joro@8bytes.org>, <kevin.tian@intel.com>,
+	<jsnitsel@redhat.com>, <vasant.hegde@amd.com>, <iommu@lists.linux.dev>,
+	<santosh.shukla@amd.com>, <sairaj.arunkodilkar@amd.com>, <jon.grimm@amd.com>,
+	<prashanthpra@google.com>, <wvw@google.com>, <wnliu@google.com>,
+	<gptran@google.com>, <kpsingh@google.com>, <joao.m.martins@oracle.com>,
+	<alejandro.j.jimenez@oracle.com>
+Subject: Re: [PATCH v2 01/12] iommu/amd: Rename DEV_DOMID_MASK to
+ DTE_DOMID_MASK
+Message-ID: <aN6yY6ISLqQD+uu+@Asurada-Nvidia>
+References: <20251001060954.5030-1-suravee.suthikulpanit@amd.com>
+ <20251001060954.5030-2-suravee.suthikulpanit@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20251001060954.5030-2-suravee.suthikulpanit@amd.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BY1PEPF0001AE1A:EE_|MW4PR12MB6875:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6cc1c16a-5243-4e67-affe-08de01d6d77a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|7416014|376014|82310400026|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Snlow4J3xWcnBGIUrLjR72etL3helWbGHza3vVFl869HJtWW0X/dwvmBC8Ee?=
+ =?us-ascii?Q?7ryi7LLS9OhyMesZKIJX7qTOswSbYyE8boOh/14ROqeLpY2951cmS2ETEFyY?=
+ =?us-ascii?Q?Uwxhu7nDcCGT7TrlR3IXcEwGA4CJk7682qN/F/p9ph+Ql3yEcDoE5W6jKFpc?=
+ =?us-ascii?Q?NKyrZKtXyOraprUapapIbPttJuZRlt+Fi6Bu3GFZEGx+/kfkhzA2g7I/KeNx?=
+ =?us-ascii?Q?7jFMxd/ubSdvT6UtZKx8sVdJoKLRxfSUSER0+6vpK4cs0QxuaRGPHLRRgau3?=
+ =?us-ascii?Q?fO9BhcUMjnbIgiYYCiXXTuBrRpfoqlPMkqN80XqxkZPf291XE/MHLVnooHM/?=
+ =?us-ascii?Q?oXXHV68uc9uCOuF57QkfUEdnGENYaVs8Ed5FhiR9g4mQ3ho94DMNGksxtGiK?=
+ =?us-ascii?Q?W0muv0KYXo0pktHBBd6FNXnCowzKw2HPvqXy2x/kavM6ra0Nud22MhHdJeto?=
+ =?us-ascii?Q?SyFY3664HHtb52OdniFDna4ieCGE6yW7NDgbGoRmVOhZew8oYTvporvQyiN2?=
+ =?us-ascii?Q?vTobbEeT+VR7qvxrmyA6jLm19z7XHGEHZSBxlmRXEL/PVocrdtUbYrtahkN3?=
+ =?us-ascii?Q?Q615K07lH6cINxqTHa5Q8VrX2820R1qtWdltO8nzOSKi+Nr1yYdIHjb/dLel?=
+ =?us-ascii?Q?scDuB4T/1ssIJqWinkBBfXSXPU0laMNu+kKqKniQhyn98e5I+okG8J9N/7Gn?=
+ =?us-ascii?Q?z9YvzYDBtrjk1bZaBFWIVjSPyjTy5WZuwRM40A9A2IfeSDZ/uXqKSnx2fdVa?=
+ =?us-ascii?Q?1mMuJGqQnT1aBcs5Itz/CbDGI5xN10m+N8Y1TM1xOwWWEuoeVhOoIGnKGJvA?=
+ =?us-ascii?Q?jDbc+P3pVbtxNMPYjw58akSd5rlkjIHhTNI81eLEK9zSGxhkMx/moA8omPIU?=
+ =?us-ascii?Q?bD9HiK83xZarIEQHGRjwnMo9+Y+80yRKUSQI7HO9r8tVysZCgKKIHn+TY0B5?=
+ =?us-ascii?Q?BUTlBjbFYOssurGo2/V1CbueYlWwa0XsDeMa3wJ7n5Tab3ImwiFufxKrJHWw?=
+ =?us-ascii?Q?RZdcECfH5YEihkuda8vrGoak4XH83UePJAAHALbOmCgjAKYxM3ib0DcnaFVh?=
+ =?us-ascii?Q?WKnBrjj9A2X+ph32NngIf5T4NybsU0UPAYxOjPip50JdVaf1/C4QS2h0K/xy?=
+ =?us-ascii?Q?806uCHJpt4sKqxx6MWO6ydEZEzVscrQ+m/f6j/HnKh5K+fRReDkhsr6h6lIh?=
+ =?us-ascii?Q?RJPkCXf1iZSo3lf5j+EDMZDKQtKaRHtBAHvtEpZSkg7mVK/4kzshZTqMio8z?=
+ =?us-ascii?Q?QO0n7+nH6UlKxZRyiS/jIRQVe5aIuyuH5HUQL1bc47L6t29itCuImodg9Hro?=
+ =?us-ascii?Q?uLwjJY+AatoCvhUEWnvgkOrgAujDdfOQabLN0RJjxKD5n9BNg0dl2SKKpOJE?=
+ =?us-ascii?Q?VfOGP6jJNF0bnTi3hEd0REljgj6h2fugyXsCJStxNVapH8zPTzcvqf4L6n2o?=
+ =?us-ascii?Q?RnGXtnBNE0vMlTeS3IwhO9gAccsNhfr7Pv/4loIcj2wk5n7yGd9TKm1GGqDy?=
+ =?us-ascii?Q?+PLdWHRVCGGBhXlngxvQBZD+ndXDk21WsxmoB2iLgtIqrsS62zjautmWOF0h?=
+ =?us-ascii?Q?uoX4Wt4k9HTAk95CSZw=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(7416014)(376014)(82310400026)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Oct 2025 17:12:18.2203
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6cc1c16a-5243-4e67-affe-08de01d6d77a
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BY1PEPF0001AE1A.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6875
 
-Drawing from commit d2624d90a0b7 ("drm/panthor: assign unique names to
-queues"), give scheduler queues proper names that reflect the function
-of their JM slot, so that this will be shown when gathering DRM
-scheduler tracepoints.
-
-Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
----
- drivers/gpu/drm/panfrost/panfrost_drv.c | 6 ------
- drivers/gpu/drm/panfrost/panfrost_job.c | 6 +++++-
- drivers/gpu/drm/panfrost/panfrost_job.h | 2 ++
- 3 files changed, 7 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
-index 22350ce8a08f..d08c87bc63a2 100644
---- a/drivers/gpu/drm/panfrost/panfrost_drv.c
-+++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
-@@ -668,12 +668,6 @@ static void panfrost_gpu_show_fdinfo(struct panfrost_device *pfdev,
- 	 *   job spent on the GPU.
- 	 */
+On Wed, Oct 01, 2025 at 06:09:43AM +0000, Suravee Suthikulpanit wrote:
+> Also change the define to use GENMASK_ULL instead.
+> There is no functional change.
+> 
+> Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
  
--	static const char * const engine_names[] = {
--		"fragment", "vertex-tiler", "compute-only"
--	};
--
--	BUILD_BUG_ON(ARRAY_SIZE(engine_names) != NUM_JOB_SLOTS);
--
- 	for (i = 0; i < NUM_JOB_SLOTS - 1; i++) {
- 		if (pfdev->profile_mode) {
- 			drm_printf(p, "drm-engine-%s:\t%llu ns\n",
-diff --git a/drivers/gpu/drm/panfrost/panfrost_job.c b/drivers/gpu/drm/panfrost/panfrost_job.c
-index c47d14eabbae..0f0340ffee19 100644
---- a/drivers/gpu/drm/panfrost/panfrost_job.c
-+++ b/drivers/gpu/drm/panfrost/panfrost_job.c
-@@ -28,6 +28,10 @@
- #define job_write(dev, reg, data) writel(data, dev->iomem + (reg))
- #define job_read(dev, reg) readl(dev->iomem + (reg))
- 
-+const char * const engine_names[] = {
-+	"fragment", "vertex-tiler-compute", "compute-only"
-+};
-+
- struct panfrost_queue_state {
- 	struct drm_gpu_scheduler sched;
- 	u64 fence_context;
-@@ -846,7 +850,6 @@ int panfrost_job_init(struct panfrost_device *pfdev)
- 		.num_rqs = DRM_SCHED_PRIORITY_COUNT,
- 		.credit_limit = 2,
- 		.timeout = msecs_to_jiffies(JOB_TIMEOUT_MS),
--		.name = "pan_js",
- 		.dev = pfdev->dev,
- 	};
- 	struct panfrost_job_slot *js;
-@@ -887,6 +890,7 @@ int panfrost_job_init(struct panfrost_device *pfdev)
- 
- 	for (j = 0; j < NUM_JOB_SLOTS; j++) {
- 		js->queue[j].fence_context = dma_fence_context_alloc(1);
-+		args.name = engine_names[j];
- 
- 		ret = drm_sched_init(&js->queue[j].sched, &args);
- 		if (ret) {
-diff --git a/drivers/gpu/drm/panfrost/panfrost_job.h b/drivers/gpu/drm/panfrost/panfrost_job.h
-index 5a30ff1503c6..52ff10b8d3d0 100644
---- a/drivers/gpu/drm/panfrost/panfrost_job.h
-+++ b/drivers/gpu/drm/panfrost/panfrost_job.h
-@@ -53,6 +53,8 @@ struct panfrost_jm_ctx {
- 	struct drm_sched_entity slot_entity[NUM_JOB_SLOTS];
- };
- 
-+extern const char * const engine_names[];
-+
- int panfrost_jm_ctx_create(struct drm_file *file,
- 			   struct drm_panfrost_jm_ctx_create *args);
- int panfrost_jm_ctx_destroy(struct drm_file *file, u32 handle);
-
-base-commit: 30531e9ca7cd4f8c5740babd35cdb465edf73a2d
--- 
-2.51.0
-
+Reviewed-by: Nicolin Chen <nicolinc@nvidia.com>
 
