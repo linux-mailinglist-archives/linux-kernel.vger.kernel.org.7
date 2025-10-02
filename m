@@ -1,76 +1,81 @@
-Return-Path: <linux-kernel+bounces-840528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06726BB49DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 19:04:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6D16BB49E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 19:04:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA68F19E4183
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 17:05:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0B1F1C4871
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 17:04:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51DF2258ED9;
-	Thu,  2 Oct 2025 17:04:34 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AF6826773C;
+	Thu,  2 Oct 2025 17:04:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UpbaYCjC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 870C82F872
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 17:04:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C318D19992C;
+	Thu,  2 Oct 2025 17:04:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759424673; cv=none; b=JP/1E70+7DBa5wUtkCh2dVvt+WM6HUMzg6sKTTJLofjrglAqoORJOjHPCQeDxniTNnWHOSacDqZxZYwKvSIkoPQrZ8Q62Bi3GyzO7cSTHMB70G7MIvE7ydBgFU2HnSc+852gWCUjhVDvDM32lvRlZWEsZs/5ChmQ1IrM80bhGBE=
+	t=1759424680; cv=none; b=Osf9Teo+NR3+PZC6Ju2edLKttO5m0ajUg0WDnTZnMZWKuraIA5sRwKjzNtRpJVkqUq6nw7diFTbIAcJKofXTkO5lPLh9JWjHB2GcT4IM432J4y1idbZGK18/rnvV1o26MaB9Vh+aEluTLuoY9CatS5VERijI0NFhWK7TfinzlGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759424673; c=relaxed/simple;
-	bh=u7zoK+yqJFcEIMZfIosfM/V9RANxn1tlApxJHhoJv98=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=eAD3ogrdE6gC4XrPV0X9M746Xezp/9ggEXgyWJJ9lwz31TyibOGU7+QNjA6Z7DjgxqrVHWQPym3VevO59Wp7h2qETfDQD+KltlzY4+cWDEfJRm/iVT0LVbwmnaN36pJi20xjaMDkYfk0ihwZmyptbfiepNChEAVevbMWFQfS2+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-92677af9082so335215839f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 10:04:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759424671; x=1760029471;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=u7zoK+yqJFcEIMZfIosfM/V9RANxn1tlApxJHhoJv98=;
-        b=vny/hWrNOO+bDWFHxd9wxllUXqAt1vD1nzwIoMxLCVVL7bjoaoSY/VD3TmMMKxdlUs
-         tDMPc/NrYhBiGWKHRdghqfFFUVX+foJsWN42sotxsZ/9XyfVVA9ASrmPd1/6jQE47T//
-         HVoVWKedclLnTNlFUKvU0Nlb2NPBEn8FpoHuzgI3iZjc4Loq7dh1SHCepy5TQKyVl2xX
-         KgbEXjD2CMH+0f/alqQltZcEfqIi6332VxGV43/Q1oTnrM+8j8ib8NvJ1SbinIYlrl3E
-         50+fYzdhpzyrSUVqC/KWqg3+ty00H3dF2LMF3hpTQA2MuOwEX0ClT7B5ThSg5wSDPHPs
-         hRuw==
-X-Gm-Message-State: AOJu0YzUN2ZoC7sBTPl0/+73Eyt3gs4FpU0zf7GQF1ocnA4qo4npa7nQ
-	4s8Ectx/CQAN20cJd/+PdJgn/tQImnKAZbAAbvNXT7BW/gOWTdwjvSYGGdNZdNJz+JKGpTey03q
-	cHWZUT77S9ttjrwkR7AFQYpvj+asEQ7TM62tz9pqjh4yC7/Im9N5IqbX7XxU=
-X-Google-Smtp-Source: AGHT+IFpKDe1oPFYfaJQ8s5CCfGxZLPRIsnic7fmUEKaxH2GSaL9U2NguP44O1xPA5UccVYF83PWKwXkylJ470BSIKX2DF3V28lq
+	s=arc-20240116; t=1759424680; c=relaxed/simple;
+	bh=QLmeNNZrDdeQMsIKV4+FKvXjKd2aPGz9wzMUZd8nvuk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J+o1jnpfSrLJbuPxi+/vlOF6o9JAqg9I8gH9ByydVZUeMzcpPok25UoAnfoBF1KLhvPWziXLf+Ozaew8tjlyub+0/tp91LdohWr6kbhX8BsT99wKPiQ+8cvjP0lvLC4XgPMhv9nIsU9lYs2dEbcxCchieSkWXU+wG0UbyFjG8cY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UpbaYCjC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25972C4CEF9;
+	Thu,  2 Oct 2025 17:04:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759424680;
+	bh=QLmeNNZrDdeQMsIKV4+FKvXjKd2aPGz9wzMUZd8nvuk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UpbaYCjC9hfQZmiQwOkhP+4TX7ANk8R9wdgcqV17N9WrC3lw/obrGY5PfhYXQ6pT4
+	 JHglqqQj+qVFK93ZJg4GcWPfII/7WBB5eg7HihfXcYr3t5w5xLZZxUDIGJidjZOtqC
+	 okSdWJV1+2WjjwcfyM19NNGPo05VGsmyDSjf6LAKKenQlDdASXhj+RJty/vhxOqQDw
+	 u+PRzFLJjN4msJ9k8wvW9JgQ3amYO1Hph4ciZuX8/s1amn/uiyfgLm3+VNdYHTBe5g
+	 yFoQYrN78tB9VL3SMLnTO+Nj+DBGxcybOC99Z70+NORd9Dfifzof2z9C2KzHDQMHrT
+	 38utv+9dqZ/hA==
+Date: Thu, 2 Oct 2025 07:04:39 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Kuniyuki Iwashima <kuniyu@google.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Tiffany Yang <tiange@google.com>, cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cgroup: Disable preemption for cgrp->freezer.freeze_seq
+ when CONFIG_PREEMPT_RT=y.
+Message-ID: <aN6wp15Jh0UKgujf@slm.duckdns.org>
+References: <20251002052215.1433055-1-kuniyu@google.com>
+ <58de560994011557adefca6b24ebe4e8@kernel.org>
+ <20251002165549.m2wc3Dt6@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:180e:b0:42d:8a1a:2681 with SMTP id
- e9e14a558f8ab-42e7ad6e886mr2971335ab.19.1759424671685; Thu, 02 Oct 2025
- 10:04:31 -0700 (PDT)
-Date: Thu, 02 Oct 2025 10:04:31 -0700
-In-Reply-To: <67389a73.050a0220.bb738.000a.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68deb09f.050a0220.1696c6.0032.GAE@google.com>
-Subject: Forwarded: KMSAN: uninit-value in hci_cmd_complete_evt
-From: syzbot <syzbot+a9a4bedfca6aa9d7fa24@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251002165549.m2wc3Dt6@linutronix.de>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Thu, Oct 02, 2025 at 06:55:49PM +0200, Sebastian Andrzej Siewior wrote:
+> On 2025-10-02 06:45:01 [-1000], Tejun Heo wrote:
+> > Applied to cgroup/for-6.18-fixes.
+> 
+> 10 minutes too slow then.
 
-***
+Oh, I can easily revert. Just let me know what you want to happen.
 
-Subject: KMSAN: uninit-value in hci_cmd_complete_evt
-Author: chelsyratnawat2001@gmail.com
+Thanks.
 
-#syz test
+-- 
+tejun
 
