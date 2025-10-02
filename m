@@ -1,457 +1,179 @@
-Return-Path: <linux-kernel+bounces-840652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FE06BB4E6A
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 20:39:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 448C1BB4E73
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 20:40:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9DC619E2F2D
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 18:40:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E081619E2E1C
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 18:41:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3711279DAF;
-	Thu,  2 Oct 2025 18:39:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40113279DA1;
+	Thu,  2 Oct 2025 18:40:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="qixTgRDS"
-Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010009.outbound.protection.outlook.com [52.101.85.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ff7hpOaY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F142A17A2E1;
-	Thu,  2 Oct 2025 18:39:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.9
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759430383; cv=fail; b=jqe7HkkB9BYBpP9XOYfZ0YF7+WgFZkqaBxGVdWZ4uM6/mlloSZlJzBnCO7x6xEKQ/Rx51KEoDP2kVmEskPwnzbDlyuTBTrIvVFvSjIVVZ7AzEe+2FhXOVj8ckrg7d03VA14rrxXlS9SIas8s+83q2rMEshusv715a3lpwoiMuos=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759430383; c=relaxed/simple;
-	bh=qoP1vlKv46Lxpvp7YRqMsWToN3ghFPqDUAPBSV5pOZk=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=jvqavQI8ukEUeMFzMZBCA6Z+OkIkLqvFFP9LMJbQanYMuO8I4Isz8JPzlMJ3KLNZkoN8RehHQ0LBwgZi616bh9PlykBW7pYdjJIL9Hr1cBwPWY6v5LDILZ7S9g0Z9qLY2ZZJR39YV+L64Wu/5AkH/kd5NRLpUgoeHHpScXmwYUs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=qixTgRDS; arc=fail smtp.client-ip=52.101.85.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HAVSnVjRlzNdEy833nrR/WpWE5kRXjAO4oKQ8wgHxHY+S/yUq0FPXGDbSIrStAtXe04IX6gz6cXHaUMwIL3plwt0fq3fb1IUonpkpPioZNrZlAZ/GEk8ozSvWfoMNcJhOz7i+ABPVXotb4odtXLiTgActbJsB2emNtx7nOKdSg/cDa7wjCLxrq+D/OfKs6Ic6lEAvIkpP0pPEhsKQT5WGPVwAm9mvAqsvMxYXVPVjje41SxAhRZttjcX4ctubvc2wuDFqLJDpmsdbbAGgi715uU3IJeDKzkB2WytrSz5A4wa3NdeTfmktgS4P8rT34JsaeOEsBj4oAqYNEB/ps5NpA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kklKnTVz/rS+78gfHIPB/CTw3jB06c3vvIJfJC4Z0Q4=;
- b=Ri/+blWqLOceEx8Ra2ZhJGu0C1KSWYQDLpf7KZT1oDhR1kRNeMiFJnCx6C/Y+eYw3D/9r4UBCi2lhydRgM8VeZ3pvwnN0ySIu/ySrnqI+Yg11AYTVaVLuMqZ28el1TR4TMEfLXPN1ilslry3ipcvrrRgGzFufUWmTvEPiwlV1eOlN3P5hwBoEvaYGKKJKBLeJWbC6yHDdeZlOn44k7XD8YWyhrPHz7CphtTyMChlPaobPD67wmj49OJ8kPgMT/p9zJqfygadvXPUSznRiD2pUMXowCDDlGCThAvkOB0uzJXISJi3+d3GJsdXevsXjdRdJkO+1664xQnOaGxOcos9yQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kklKnTVz/rS+78gfHIPB/CTw3jB06c3vvIJfJC4Z0Q4=;
- b=qixTgRDS2A0UQG+11+EMJCaeiYmlPkP0uypxAwgA9ny6v9ObWZ5kCAa1DvHQFTn/tg+9yMbu7rm6yUqsFcsYV3B/NeGiBQm1/h9YKfNBh/BXXlXEA3nIHtgDNxcE+7+zjBiBdpa9cYMWqmO7C5AsKWznH2BFuOAQVpAH5lI29VYpVsCNLg69xJRSU/2C1adgpclqt44TntOqz7GRoDEjH3bEqzWvg/UBeTHMTmUITIs26cWgiHCSB64AAoRhSDfIlxc+hn51gzeXllqDKcRljKWXjYWwalyFPecYaLvakDM2SpCyKp7YvzZ4AMdEwM2HB6DeSiC1uM3rIOIEhTvvrg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
- by SA1PR12MB7344.namprd12.prod.outlook.com (2603:10b6:806:2b7::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.18; Thu, 2 Oct
- 2025 18:39:34 +0000
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91%2]) with mapi id 15.20.9160.017; Thu, 2 Oct 2025
- 18:39:34 +0000
-From: Joel Fernandes <joelagnelf@nvidia.com>
-To: linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	nouveau@lists.freedesktop.org,
-	rust-for-linux@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	dakr@kernel.org
-Cc: acourbot@nvidia.com,
-	Alistair Popple <apopple@nvidia.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Timur Tabi <ttabi@nvidia.com>,
-	joel@joelfernandes.org,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>
-Subject: [PATCH v2] rust: pci: Allocate and manage PCI interrupt vectors
-Date: Thu,  2 Oct 2025 14:39:12 -0400
-Message-Id: <20251002183912.1096508-1-joelagnelf@nvidia.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: MN0P220CA0030.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:208:52e::24) To SN7PR12MB8059.namprd12.prod.outlook.com
- (2603:10b6:806:32b::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 925A92571DE;
+	Thu,  2 Oct 2025 18:40:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759430439; cv=none; b=BXH2iW9GEgQzLB76e/S3TNf4QUJweh2Tw0Lcbk8AtDztcxcCVp2CGx6Sv2k6K6OhSPVoQNvfpF69Z+Z1/U+c2PhQ8xmqfZtw3B1p03hVnaeJFB15w1M71/sj8+nT0aaOmVkhCh9r77AWTQzM13R3CdEVbrwNRBSWplFb3GHgcp8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759430439; c=relaxed/simple;
+	bh=fwTtsUPYJVOlpkA66j2uVR8ENFsOOHxB+ZW/L8G0yRw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NcLjrcg2quQrsRFMYwwB11Wg4VWICHNpf2zMKxiyO3Vh9PLYq5kAwwVCs9ffj7CeXR6syVahb2NvxMr15dBP9YxYIiUV2dfZcGMkP60g/VyTtZtAAFwNE2wvsrTk6/HooBpGb0VW/RPHcFZmuLCTXDddb8SL0v0sDRzv6oaMefA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ff7hpOaY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F456C4CEF4;
+	Thu,  2 Oct 2025 18:40:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759430439;
+	bh=fwTtsUPYJVOlpkA66j2uVR8ENFsOOHxB+ZW/L8G0yRw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ff7hpOaY/xSbPkdVhYs7ci2gDfydT6OFQbngmQHeemRllNX/yfvoN3IH+0++gLtfD
+	 PbxtphI1lWdk16+QswHR9jnG+Vef3mrWHasSsAlcvpYbDOx27Y+z/vYrD8p0//2wMT
+	 ePv3+lFl2NmIRQ2AsiZN7zldp7aj+Qldfva7WCvz+Mux6Tajk089slqgMStgT0kByk
+	 4NiNI/Ej9hM7A6l+M0BOCgeZxlh8Oepw9FQ3hGQAzTkI7LyzMzJmmfdM5l4gqo1sgY
+	 /phzLKxRuCLqvfjkYBjTNbZ1UPLvIpnMxax0lhPVxwtl3H87+sNUQ3EDgjXn6BVXEQ
+	 xa73bZcOJBb2w==
+Date: Thu, 2 Oct 2025 19:40:35 +0100
+From: Conor Dooley <conor@kernel.org>
+To: CL Wang <cl634@andestech.com>
+Cc: vkoul@kernel.org, dmaengine@vger.kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, tim609@andestech.com
+Subject: Re: [PATCH V1 1/2] dt-bindings: dmaengine: Add support for
+ ATCDMAC300 DMA engine
+Message-ID: <20251002-absolute-spinning-f899e75b2c4a@spud>
+References: <20251002131659.973955-1-cl634@andestech.com>
+ <20251002131659.973955-2-cl634@andestech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|SA1PR12MB7344:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4815df2c-4aa5-4767-a04e-08de01e307fe
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?S+j9S/ShscR9HmZz0eH3zsWtrc0srqpOw9iFezNpv/LsZVF+4rQu7dJlpA2v?=
- =?us-ascii?Q?wqQf1uuLZUd0tXz+PcmBMkh4DFXJdGe4Z4NFjn+im4mrBRKqMrdKWlCWofLe?=
- =?us-ascii?Q?b5lnXI2I75TMfY7Zqtk/0IVwXdHJS2+VkeyX6gBFd21TLF8NNh5Yzhj5S6AW?=
- =?us-ascii?Q?2hxtyW4D/Q+kUIrgZMfnedi/7vwciA1XB5uRh/5pyfAwIIMUNDzXBEmJRTqy?=
- =?us-ascii?Q?fkIesWqVX+Cmx8xxW7f4w84WJMPlkkszBs7cHtKRG2XsiMnDWDz91YCgYL9f?=
- =?us-ascii?Q?2YZ6r7YAqSw/mF7UtYAoK4YP67t5xZtYda8MGYRUHTMV0XNzPL7NbeNXhiZ2?=
- =?us-ascii?Q?RBmfeW5E4vdx1Hi7AaymCXlAIUPW/4u9F0WDJ+GRPa4X7R9EV0UCYSxRqiqd?=
- =?us-ascii?Q?qpQLnivSa+cSCLJ+Fy4AM/vradb5U168l2/uKkuIcR9kJyU72JZppfF9pheV?=
- =?us-ascii?Q?tNba9x+pL7+YdsR3G14wM83gDpy3qVpzpxmEJ1RL1pyVwNT12X1U5oph1uEi?=
- =?us-ascii?Q?5ByXNLe7giccOAtSAuuowmCvzvBHByVjl+WXhDDokezzfFofKDgbH/tQORJ0?=
- =?us-ascii?Q?uWS85CW702mkbMVpbZQ/0uY0NPYhro6NbV4F4XnCTS6MUnkAvsgmxFlC0ADK?=
- =?us-ascii?Q?oh+B7Rz/q8eWyNW8QvTgFYz3xCn4cPY5cfKSTnon1y6PsmlZljRLR7WB0vF8?=
- =?us-ascii?Q?hCskSyq8AwiNADK3u0BUwMSvCFv3+Hzy+d7nmO/ar+grug5Gp+dPuD29o2SN?=
- =?us-ascii?Q?ytXj7f+INIrSpw4pn+YDt0ladwjfoKH5IFh3VOLGErw99LX/ZpBUiu22Tesb?=
- =?us-ascii?Q?lmjXLi4Plbs2v20UJKrsJQJVlkL0V/292yJ1XQRNwYvhFe4pcTBwODVvpbFa?=
- =?us-ascii?Q?DiECDPZhtqlWYm6wakBTQCP2egArL2oaAj6eIOfKxjIPh/gqcAtYyenPYZKo?=
- =?us-ascii?Q?nuhtudqlfuDLZ572S2AsS1C1KKBnAQvwXYMGkRAd1OF7vQVe00LXqwhj6w/u?=
- =?us-ascii?Q?3lSMzC20A15XdUwUYJWrsoClqrDlphrwDSireuGRkItOzgkDDaoVJYgwlEOe?=
- =?us-ascii?Q?k0HTpFa3EylVKHWJm08Mq8MPrU65ef48LFm4+siSw4IGaTJivAgVfN7uBh9U?=
- =?us-ascii?Q?YC3tJC1Q5TWis1Eeh3vGR12nxLBP/JiDbi4V7pgbD4wiS+iErjqhamM+xVqQ?=
- =?us-ascii?Q?2hb7FPo2F4xZjOJ6/fXIFmqsTgSzvWXV/7sZvHa/AuCWMum6U5pjXPiys6VL?=
- =?us-ascii?Q?14nvIJzqKL8lEi8IM4gxgvYpiyDAfyZaMZGCnf2IYi1Rac39CtcZyprMvl2q?=
- =?us-ascii?Q?c4Nbpxsd+ALMJ6JmNMnT9WX1jDhC6aQsyYz8QWDShCZOKf3rbxhM1mzkp9ZG?=
- =?us-ascii?Q?YDjeCsgFK4AwRpdSYEHZ+FTPkw5djOHdv4nztvND2acso33j0gC2rFEH8zGF?=
- =?us-ascii?Q?ghIim3PlePDLqyQQxf6w6rgO8HNf8LKUxd606qy9xcDq1a4r5YJEGA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?EqqNSqNR3fabiZhfVMsUt56V7XAMyQZ75lnQjxQZL195nx+yb1g+hWXsYNqX?=
- =?us-ascii?Q?c99SkcFmrDL1w67yKCDIsfU5FqxkoXWbKauEzhAzbwE/pt3ecnJxMMInVTxp?=
- =?us-ascii?Q?XjORRS0RxMKYfEnd4iw7rseEACIfYDpQyDTUk6yR77YkWAT7cCeYgOWE11A8?=
- =?us-ascii?Q?dRLeXWRpplbPXYgjMvcUcG2NY6Kv/rp9j5wOSLHIVqJb262tklwNbObE8xCy?=
- =?us-ascii?Q?dMWoNNPJpKbn9pvbz7oe4x2/C7eVp26i1dz4nAO2cmLaWltoQSXR8j3zBe3J?=
- =?us-ascii?Q?xCD/opu/Si31bQvboOnxuJb0g2svTDovLkOv26LS7JI/RDbr44oZw47iavfQ?=
- =?us-ascii?Q?av84p7Wh6TuG/hoaMUp0LgEwPQGHtTKN/hODf5XkM6IpST2xjjEKZVfNYlo+?=
- =?us-ascii?Q?4+mPyPs67pYFZpilk8PCRVk0o9+bqn03TYHlO2MfaRpp6rc6jsnRlVcz1sKZ?=
- =?us-ascii?Q?IV1seyPdpwg8GSEZok1pBolTomyWSXAfKZpvGs8MnG5o0q9E1RjVxDXCqH+P?=
- =?us-ascii?Q?2Jko6M/Ny5UIE7uVfRHeEE8OmRYl2VsJIZxSEGO/ouRjmlp5LBiqrcatI78j?=
- =?us-ascii?Q?TA3H6bDgl6ozze7wI5Vh8Nr1yqs9Sda6a5cktuQJob/Nj8Fc6nwY6KH+Su39?=
- =?us-ascii?Q?qFWQ4Q1fKbF6QSDE+mh+140ehbGMGjdT5EgxZ0OnYxTgE/WtvK1xC/tUJ80e?=
- =?us-ascii?Q?g39H5Glgvyz24Ud4pIOM08xgC+C6U/sMIvAMOHwReoe11yRTTVG8lhtmO4yW?=
- =?us-ascii?Q?IGHYouAlU5IYXgnK/ItH5xkTdmAcVZdiSYsQUfRZm12yInSlfxGlO1BLyyDi?=
- =?us-ascii?Q?60UD1yw59Wqwz98p9kCF5fdiMlrE6VJVIKXZ8Lg4lbxbDwLMvgS1uZ/EJKpv?=
- =?us-ascii?Q?H12PTV7jDYuclv+FIkOxdqEFfSoie9v2PPv5HPU6l4heCl6viphlumiJ1oxB?=
- =?us-ascii?Q?3g0ynJrUCRY6BxqjgRIjXKuwtc0tvWm/Jma44MzuBtZQt6CUnW2dwM2GCVto?=
- =?us-ascii?Q?1LL0Lf477CKWzyqKv83ZQAy99ICmaiGx7bd2Jl98losrMMMytxgncj7e0hQu?=
- =?us-ascii?Q?zDKRu6wlMhL1j9VbOSd9KFQc9loV2MY+3YXHWv0E/Bp4UROy26I/QaO27Yyf?=
- =?us-ascii?Q?MzEzdWhGTQHhD0f6uzlFQkHesuOokd3oExVQyGIDmzrosK1nQFoRFgaduDi9?=
- =?us-ascii?Q?u2BtxdtQomXLbox4JDCHzGT698yOh7HDhxZC0VLyzjUIYC5RzzKA5FFJ5TJH?=
- =?us-ascii?Q?+9AYbADgLKAkx23bGhyI80kuRGfPpQjS4xUCd5D7nIjaMWuwQi+yzMbHRzFv?=
- =?us-ascii?Q?+zNxVJ0rG79CuxVhnY2MZMWkCR5nZ+gUG+jOWTz1wloAxOEGu+LkXmhxU0F2?=
- =?us-ascii?Q?z8YwQubjdwcJmxOphHX4dnJXlscrizid3iIeVWkUk54wkhbu21olp0MDUJ2m?=
- =?us-ascii?Q?0NQHL6XTh11NahXObhpBpU+DnFwBY2KJzSa2bfudgCjVdC7Z4S2KYuLRCp4v?=
- =?us-ascii?Q?hdmEbMZMy0GNoK+Qhiy0yDh8moejQz78nNqSoO1WsU/NerdFi7oxy4s98y6S?=
- =?us-ascii?Q?1ZGOpZx47bZYePV/KCYf8DAuWzFg2iF5DM9Y7/7K?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4815df2c-4aa5-4767-a04e-08de01e307fe
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Oct 2025 18:39:33.9284
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BS7cXztn19tMr/PybXhDuX1EdYW4d7HtLAgRodaFfJUVIGMrFZZyhr+Li1DddFxUtdm7cEQrVk3Ia0BGowGyHw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7344
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="0bZRS7GJG8pMLpnu"
+Content-Disposition: inline
+In-Reply-To: <20251002131659.973955-2-cl634@andestech.com>
 
-Add support to PCI rust module to allocate, free and manage IRQ vectors.
-Integrate with devres for managing the allocated resources.
 
-Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
----
-Previous patch was here:
-https://lore.kernel.org/all/20250910035415.381753-1-joelagnelf@nvidia.com/
+--0bZRS7GJG8pMLpnu
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- rust/kernel/pci.rs | 199 ++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 186 insertions(+), 13 deletions(-)
+On Thu, Oct 02, 2025 at 09:16:58PM +0800, CL Wang wrote:
+> Document devicetree bindings for Andes ATCDMAC300 DMA engine
+>=20
+> Signed-off-by: CL Wang <cl634@andestech.com>
+> ---
+>  .../bindings/dma/andestech,atcdmac300.yaml    | 51 +++++++++++++++++++
+>  MAINTAINERS                                   |  6 +++
+>  2 files changed, 57 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/dma/andestech,atcdm=
+ac300.yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/dma/andestech,atcdmac300.y=
+aml b/Documentation/devicetree/bindings/dma/andestech,atcdmac300.yaml
+> new file mode 100644
+> index 000000000000..769694616517
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/dma/andestech,atcdmac300.yaml
+> @@ -0,0 +1,51 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/dma/andestech,atcdmac300.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Andes ATCDMAC300 DMA Controller
+> +
+> +maintainers:
+> +  - CL Wang <cl634@andestech.com>
+> +
+> +allOf:
+> +  - $ref: dma-controller.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: andestech,atcdmac300
 
-diff --git a/rust/kernel/pci.rs b/rust/kernel/pci.rs
-index 78271bf88cea..f97a6a36cf5e 100644
---- a/rust/kernel/pci.rs
-+++ b/rust/kernel/pci.rs
-@@ -6,8 +6,9 @@
- 
- use crate::{
-     bindings, container_of, device,
-+    device::Bound,
-     device_id::{RawDeviceId, RawDeviceIdIndex},
--    devres::Devres,
-+    devres::{self, Devres},
-     driver,
-     error::{from_result, to_result, Result},
-     io::{Io, IoRaw},
-@@ -19,7 +20,7 @@
- };
- use core::{
-     marker::PhantomData,
--    ops::Deref,
-+    ops::{Deref, RangeInclusive},
-     ptr::{addr_of_mut, NonNull},
- };
- use kernel::prelude::*;
-@@ -28,6 +29,59 @@
- 
- pub use self::id::{Class, ClassMask, Vendor};
- 
-+/// IRQ type flags for PCI interrupt allocation.
-+#[derive(Debug, Clone, Copy)]
-+pub enum IrqType {
-+    /// Legacy INTx interrupts
-+    Legacy,
-+    /// Message Signaled Interrupts (MSI)
-+    Msi,
-+    /// Extended Message Signaled Interrupts (MSI-X)
-+    MsiX,
-+}
-+
-+impl IrqType {
-+    /// Convert to the corresponding kernel flags
-+    const fn as_raw(self) -> u32 {
-+        match self {
-+            IrqType::Legacy => bindings::PCI_IRQ_INTX,
-+            IrqType::Msi => bindings::PCI_IRQ_MSI,
-+            IrqType::MsiX => bindings::PCI_IRQ_MSIX,
-+        }
-+    }
-+}
-+
-+/// Set of IRQ types that can be used for PCI interrupt allocation.
-+#[derive(Debug, Clone, Copy, Default)]
-+pub struct IrqTypes(u32);
-+
-+impl IrqTypes {
-+    /// Create a set containing all IRQ types (MSI-X, MSI, and Legacy)
-+    pub const fn all() -> Self {
-+        Self(bindings::PCI_IRQ_ALL_TYPES)
-+    }
-+
-+    /// Build a set of IRQ types
-+    ///
-+    /// # Examples
-+    ///
-+    /// ```ignore
-+    /// // Create a set with only MSI and MSI-X (no legacy interrupts)
-+    /// let msi_only = IrqTypes::default()
-+    ///     .with(IrqType::Msi)
-+    ///     .with(IrqType::MsiX);
-+    /// ```
-+    pub const fn with(mut self, irq_type: IrqType) -> Self {
-+        self.0 |= irq_type.as_raw();
-+        self
-+    }
-+
-+    /// Get the raw flags value
-+    const fn as_raw(self) -> u32 {
-+        self.0
-+    }
-+}
-+
- /// An adapter for the registration of PCI drivers.
- pub struct Adapter<T: Driver>(T);
- 
-@@ -516,6 +570,76 @@ pub fn pci_class(&self) -> Class {
-     }
- }
- 
-+/// Represents an allocated IRQ vector for a specific PCI device.
-+///
-+/// This type ties an IRQ vector to the device it was allocated for,
-+/// ensuring the vector is only used with the correct device.
-+#[derive(Clone, Copy)]
-+pub struct IrqVector<'a> {
-+    dev: &'a Device<Bound>,
-+    index: u32,
-+}
-+
-+impl<'a> IrqVector<'a> {
-+    /// Creates a new `IrqVector` for the given device and index.
-+    ///
-+    /// # Safety
-+    ///
-+    /// - `index` must be a valid IRQ vector index for `dev`.
-+    unsafe fn new(dev: &'a Device<Bound>, index: u32) -> Self {
-+        Self { dev, index }
-+    }
-+
-+    /// Returns the raw vector index.
-+    fn index(&self) -> u32 {
-+        self.index
-+    }
-+}
-+
-+/// Represents an IRQ vector allocation for a PCI device.
-+///
-+/// This type ensures that IRQ vectors are properly allocated and freed by
-+/// tying the allocation to the lifetime of this registration object.
-+struct IrqVectorRegistration {
-+    dev: ARef<Device>,
-+}
-+
-+impl IrqVectorRegistration {
-+    /// Allocate IRQ vectors for the given PCI device.
-+    ///
-+    /// Returns the registration object and a range of valid IRQ vectors.
-+    fn new<'a>(
-+        dev: &'a Device<Bound>,
-+        min_vecs: u32,
-+        max_vecs: u32,
-+        irq_types: IrqTypes,
-+    ) -> Result<(Self, RangeInclusive<IrqVector<'a>>)> {
-+        // SAFETY: `dev.as_raw()` is guaranteed to be a valid pointer to a `struct pci_dev`
-+        // by the type invariant of `Device`.
-+        // `pci_alloc_irq_vectors` internally validates all parameters and returns error codes.
-+        let ret = unsafe {
-+            bindings::pci_alloc_irq_vectors(dev.as_raw(), min_vecs, max_vecs, irq_types.as_raw())
-+        };
-+
-+        to_result(ret)?;
-+        let count = ret as u32;
-+
-+        // SAFETY: Vectors are 0-based, so valid indices are [0, count-1].
-+        // pci_alloc_irq_vectors guarantees count >= min_vecs > 0, so count - 1 is valid.
-+        let range = unsafe { IrqVector::new(dev, 0)..=IrqVector::new(dev, count - 1) };
-+
-+        Ok((Self { dev: dev.into() }, range))
-+    }
-+}
-+
-+impl Drop for IrqVectorRegistration {
-+    fn drop(&mut self) {
-+        // SAFETY: `self.dev` is a valid ARef to a `struct pci_dev` that has successfully
-+        // allocated IRQ vectors.
-+        unsafe { bindings::pci_free_irq_vectors(self.dev.as_raw()) };
-+    }
-+}
-+
- impl Device<device::Bound> {
-     /// Mapps an entire PCI-BAR after performing a region-request on it. I/O operation bound checks
-     /// can be performed on compile time for offsets (plus the requested type size) < SIZE.
-@@ -536,10 +660,15 @@ pub fn iomap_region<'a>(
-         self.iomap_region_sized::<0>(bar, name)
-     }
- 
--    /// Returns an [`IrqRequest`] for the IRQ vector at the given index, if any.
--    pub fn irq_vector(&self, index: u32) -> Result<IrqRequest<'_>> {
-+    /// Returns an [`IrqRequest`] for the given IRQ vector.
-+    pub fn irq_vector(&self, vector: IrqVector<'_>) -> Result<IrqRequest<'_>> {
-+        // Verify that the vector belongs to this device
-+        if !core::ptr::eq(vector.dev.as_raw(), self.as_raw()) {
-+            return Err(EINVAL);
-+        }
-+
-         // SAFETY: `self.as_raw` returns a valid pointer to a `struct pci_dev`.
--        let irq = unsafe { crate::bindings::pci_irq_vector(self.as_raw(), index) };
-+        let irq = unsafe { crate::bindings::pci_irq_vector(self.as_raw(), vector.index()) };
-         if irq < 0 {
-             return Err(crate::error::Error::from_errno(irq));
-         }
-@@ -547,35 +676,79 @@ pub fn irq_vector(&self, index: u32) -> Result<IrqRequest<'_>> {
-         Ok(unsafe { IrqRequest::new(self.as_ref(), irq as u32) })
-     }
- 
--    /// Returns a [`kernel::irq::Registration`] for the IRQ vector at the given
--    /// index.
-+    /// Returns a [`kernel::irq::Registration`] for the given IRQ vector.
-     pub fn request_irq<'a, T: crate::irq::Handler + 'static>(
-         &'a self,
--        index: u32,
-+        vector: IrqVector<'_>,
-         flags: irq::Flags,
-         name: &'static CStr,
-         handler: impl PinInit<T, Error> + 'a,
-     ) -> Result<impl PinInit<irq::Registration<T>, Error> + 'a> {
--        let request = self.irq_vector(index)?;
-+        let request = self.irq_vector(vector)?;
- 
-         Ok(irq::Registration::<T>::new(request, flags, name, handler))
-     }
- 
--    /// Returns a [`kernel::irq::ThreadedRegistration`] for the IRQ vector at
--    /// the given index.
-+    /// Returns a [`kernel::irq::ThreadedRegistration`] for the given IRQ vector.
-     pub fn request_threaded_irq<'a, T: crate::irq::ThreadedHandler + 'static>(
-         &'a self,
--        index: u32,
-+        vector: IrqVector<'_>,
-         flags: irq::Flags,
-         name: &'static CStr,
-         handler: impl PinInit<T, Error> + 'a,
-     ) -> Result<impl PinInit<irq::ThreadedRegistration<T>, Error> + 'a> {
--        let request = self.irq_vector(index)?;
-+        let request = self.irq_vector(vector)?;
- 
-         Ok(irq::ThreadedRegistration::<T>::new(
-             request, flags, name, handler,
-         ))
-     }
-+
-+    /// Allocate IRQ vectors for this PCI device with automatic cleanup.
-+    ///
-+    /// Allocates between `min_vecs` and `max_vecs` interrupt vectors for the device.
-+    /// The allocation will use MSI-X, MSI, or legacy interrupts based on the `irq_types`
-+    /// parameter and hardware capabilities. When multiple types are specified, the kernel
-+    /// will try them in order of preference: MSI-X first, then MSI, then legacy interrupts.
-+    ///
-+    /// The allocated vectors are automatically freed when the device is unbound, using the
-+    /// devres (device resource management) system.
-+    ///
-+    /// # Arguments
-+    ///
-+    /// * `min_vecs` - Minimum number of vectors required
-+    /// * `max_vecs` - Maximum number of vectors to allocate
-+    /// * `irq_types` - Types of interrupts that can be used
-+    ///
-+    /// # Returns
-+    ///
-+    /// Returns a range of IRQ vectors that were successfully allocated, or an error if the
-+    /// allocation fails or cannot meet the minimum requirement.
-+    ///
-+    /// # Examples
-+    ///
-+    /// ```ignore
-+    /// // Allocate using any available interrupt type in the order mentioned above.
-+    /// let vectors = dev.alloc_irq_vectors(1, 32, IrqTypes::all())?;
-+    ///
-+    /// // Allocate MSI or MSI-X only (no legacy interrupts)
-+    /// let msi_only = IrqTypes::default()
-+    ///     .with(IrqType::Msi)
-+    ///     .with(IrqType::MsiX);
-+    /// let vectors = dev.alloc_irq_vectors(4, 16, msi_only)?;
-+    /// ```
-+    pub fn alloc_irq_vectors(
-+        &self,
-+        min_vecs: u32,
-+        max_vecs: u32,
-+        irq_types: IrqTypes,
-+    ) -> Result<RangeInclusive<IrqVector<'_>>> {
-+        let (irq_vecs, range) = IrqVectorRegistration::new(self, min_vecs, max_vecs, irq_types)?;
-+
-+        devres::register(self.as_ref(), irq_vecs, GFP_KERNEL)?;
-+
-+        Ok(range)
-+    }
- }
- 
- impl Device<device::Core> {
--- 
-2.34.1
+"atcdmac300" sounds like the name of an IP block. What platforms are
+actually using this? They should have platform-specific compatibles, for
+example, "andestech,qilai-dma" if that's the platform where this is
+supported.
 
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  "#dma-cells":
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - "#dma-cells"
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    soc {
+> +        #address-cells =3D <2>;
+> +        #size-cells =3D <2>;
+> +
+> +        dma-controller@f0c00000 {
+> +            compatible =3D "andestech,atcdmac300";
+> +            reg =3D <0x0 0xf0c00000 0x0 0x1000>;
+> +            interrupts =3D <10 IRQ_TYPE_LEVEL_HIGH>;
+> +            #dma-cells =3D <1>;
+> +        };
+> +    };
+> +...
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index fe168477caa4..dd3272cdadd6 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -1778,6 +1778,12 @@ S:	Supported
+>  F:	drivers/clk/analogbits/*
+>  F:	include/linux/clk/analogbits*
+> =20
+> +ANDES DMA DRIVER
+> +M:	CL Wang <cl634@andestech.com>
+> +S:	Supported
+> +F:	Documentation/devicetree/bindings/dma/andestech,atcdmac300.yaml
+> +F:	drivers/dma/atcdmac300*
+> +
+>  ANDROID DRIVERS
+>  M:	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>  M:	Arve Hj=F8nnev=E5g <arve@android.com>
+> --=20
+> 2.34.1
+>=20
+
+--0bZRS7GJG8pMLpnu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaN7HIwAKCRB4tDGHoIJi
+0mrkAQDijHe7ck5E0SlBl4zVXZHPxERs696Pe/13Zeoebt64gQD/XPqfv0lxc/Az
+rQrWzkaGCDyg6sZHyyw4qJDvlAmxEwk=
+=z0RT
+-----END PGP SIGNATURE-----
+
+--0bZRS7GJG8pMLpnu--
 
