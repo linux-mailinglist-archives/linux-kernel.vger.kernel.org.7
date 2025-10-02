@@ -1,158 +1,163 @@
-Return-Path: <linux-kernel+bounces-839754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D62ECBB2535
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 04:04:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AA21BB2547
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 04:04:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97EA016EF3E
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 02:04:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AE401C1E15
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 02:04:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C9931465B4;
-	Thu,  2 Oct 2025 02:04:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53C3E78F2B;
+	Thu,  2 Oct 2025 02:04:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wr2wBhLC"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="cmFWv5sR"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACED54501A
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 02:03:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 068CF4501A
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 02:04:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759370641; cv=none; b=gxAnx9r66URkdfBIOF+F8pSF+PApMJnwIk+cEXRlovLhuU49H+k0+BThMc99Jzwgqytb0lOGV0TS7f6gaoWeYzNVMPBCN7i8UFmfXFG53gjkUZSHHAGmifsKrBtPHWFgIjLZcVRoyTw9EYz2ETsIIyNRBvFetKSBN8Ppa/oJZXo=
+	t=1759370657; cv=none; b=e11kpkcSIZ+YSFJz22Qtb8s1kmpb+4rSdMt1Igzih/peqPxTK9IFDR/GQ7P9CaPqDHrj/UQj3tK8bT5VKNX3peAIwGXHu135SZfutomtwPLTwR8w/l83tub4SIyDqVOVbmeHGo/BR0l+K7Rk3uBus+wwz7wyEshSjGS6z1LXot0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759370641; c=relaxed/simple;
-	bh=qfkFykX9oT8Wwuwz9nMEAGfjVD2TjbyMyEw20I8aMuE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PP4XN15MerT1PowljN6b2xbqeVmS8LKedPRtfK5r/3WOIF7iVc6hGTHQZeFg0JNiXj82TcJ91rQ9q2ld3QmBA0NbOuXfS5wFwLFUiL7io3O3NHH04lspJ4Cp2FsTu6BedONLj4qQdjX3V5pIWliTWzYCbStFm31oMZGR/RizZuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wr2wBhLC; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-421851bcb25so229546f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 19:03:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759370638; x=1759975438; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VRu4pkeN/m6CBPtrxw2JgG5G5rjbyuAY3nSK+8JNtOA=;
-        b=Wr2wBhLCb9KAcstbRD8WZVPcHVVRupu/I/grut1lBo2efdmkJ739z0NKviX9nwmjV0
-         mbqELmlQjTk3PNOjAbLgRF0+HcDnDwF3dmoSnHr6KFTcdgcYpOPH2/cjCLO2aR3MEFGy
-         ZysFRmLeVPWVK+DndDOnV0k5WM4Xi/O1MJgVD9f7KWfArOElOnX1nK1cmfXaZSVwH5ui
-         7Tt1Xg1edChuxygWdQGAbR9i5yS34GGlBWJSCTo+ZhCbEBfwa1Ti5B8YXQ4n9XR5bcjP
-         ylwOmarkrCGJjYtB91erLKyvSU/B4nJNHNq26X+DJnobRJ1w/uLXg2e5RMHcRxPL7RTf
-         vj5g==
+	s=arc-20240116; t=1759370657; c=relaxed/simple;
+	bh=qs9k2FXOjrriQ2OPU3xgtE9M/BAAl684zxtsJSzBmIQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qVSWqqrlRrAO5ztgvFIwsr8WV4E2vTlsOlQhkHhKv3L8+NVtB+Ayt86sxciMcKYibExvTiXCcx/t8tYtezql3sTH0S/XeqLh5pzs1uN3hASH2X1RgRr0LdIl3TvmPKeBFlzF7xxQGsHQgRy2MukAY/rgtiGxhQcnUSeBLRQYDYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=cmFWv5sR; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 591IcdZN001185
+	for <linux-kernel@vger.kernel.org>; Thu, 2 Oct 2025 02:04:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=Fl/AGlCNPzgp60GeVcsnYx9M
+	fic5Mf7tmPNGf37B3YU=; b=cmFWv5sRCfA9bu+l1CGegC0oVwCyRF1WSfXTqw7/
+	c3ii2lErKalhkzrw+3kpKdGmsDL1zaD+YnGtRpvLDuKVuycB5lU87XdgCpAhqJiE
+	+TnIhfq4N0cvS1XL1jIVpPkC3bJXTD8BmRez6WePl7cV7PInxkiwqdSZklVUDkJn
+	btYMeJYjYB4NFud6RPq3OY8KGALvEZpojZLaN5ZsCyAJWDGWDRCMk1kGjuqZyAJZ
+	7M102ffyh34kwET1EU2NFiHjgzvg4JfSsMNtj1L0tbkIYDg1eQWa9FUxpNQ4RKeG
+	PlGv0De0+0Lm76jeFzC9LDflaZ0+oOo+2eT8WtcuG2TRoA==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e6x5xhve-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 02:04:14 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4e0e7caf22eso13243161cf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 19:04:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759370638; x=1759975438;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VRu4pkeN/m6CBPtrxw2JgG5G5rjbyuAY3nSK+8JNtOA=;
-        b=X93gQ7qdNwLsZPk9XHShveJUeMGnU80b8uTgNlaqX/LPKe26AcED3nWX9szr977g2q
-         AyQb1Af2fHIQN7zo9TUxkF3ImHy66O70k2IN8Wr8bQpuqL/L2yWMnPPTNy64OKsGY275
-         nI7ioiSzY00KUcjNAuwEr/+WZLJVdhrWn7iMSwo+X1MyCU0aM9OF08bGGnQmTR9HX+lo
-         hbSyUC0ZXk4qDlLHvXY3HBR9CZfAzqu/N16q5d3ZvztbTPryMCcA6lRiMQbJcNiQGFbX
-         i6d4xRiiZN65lsj/5qJJSwB3ath4RFT4OaCg4/N4s6prQeqM24AQ2vjtCt1sKwzkvT6W
-         C79w==
-X-Forwarded-Encrypted: i=1; AJvYcCVf46c9Tv7yFjKlTwx5ATZHy9NzJiRwiqfjL0l2MPmZJmQcpLas03t35uBu6bz3BkabjoIOWHxMqMuKys0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywzy+7kcncor4ztNWpucL64GbqBqdmTtOv3rmV5pDHWxlvOW2Db
-	ZCNMYEBQXiwdHQL9aCnkDWGyzwFa834t1x5rHFwohJ8mJH4v5lZRDemNOrXGIJJMULJm0DcGfYc
-	KwjUmdVc9sPYPOiK47bIw6sKrA2U21swizg==
-X-Gm-Gg: ASbGncsHUX1jYtXdJCldwQR+9e2T+SRidobZXlwHIv96kvWX3Ifuug9DvFTjKSeKTgd
-	/4Mcvtl45TkFlM6msqfSclvOBMH3KbWnsP33aSv/RWaNtL5HmIw+WA0ecGKKVMTQKP6OtiEmeWw
-	4zBl6wVsovfitctZmPcfiorzsxcQli9eVYUtBF8xTRZewBLyI+f0pd1jLfia3tcDA+7KwXPtt98
-	eqfz+99yZhrS2HtUN3V9jmsI+FoEb5451kfQ0YBfNm64cuJjVduXT/daRQN
-X-Google-Smtp-Source: AGHT+IEOsHDrAriPQ5ccIWk1a9ocxN8KZjRUxjEFjc8SwZX/NB0bSLRxrd32X+av/aKdyuNLHStG3LqxQMA5k6kn1yI=
-X-Received: by 2002:a05:6000:4013:b0:3ec:b384:322b with SMTP id
- ffacd0b85a97d-42557a149f4mr3761821f8f.46.1759370637917; Wed, 01 Oct 2025
- 19:03:57 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759370654; x=1759975454;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Fl/AGlCNPzgp60GeVcsnYx9Mfic5Mf7tmPNGf37B3YU=;
+        b=NkCyrfdNONvqOfBnoJmRm7QRPPDaVmJtiBweDgJA10Lst50QMOMcBCEfSL2c6pfjwy
+         Y7OXuc/90/T5Vqzo2eQMxXUt1mYOWCr8x2w8KsxnkzYTbGf96YV1pm+BFi5+MQ+FWDCR
+         yZhd14pCsAu5d9ftLIzN+OvUaqr79kUF39vuxFtBTe6CvpZ9HMKW4CfgZk5xZoxJKOwt
+         nRvSUf2gy3a28ySzUkTDzh8v25WaYq+j0fmRrcywFnWT7rDQoATtlGhyplD8qWd7Ikla
+         uaGDG1heTlk84m8XywQ9Y7qk6+jLuqyKGA5lkpI3vhkQBQmE8sfSRFbJGNcibdR43PBI
+         ZTWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVwZ76kdgAi6CAiZs5tBvujJy4tT/z76R7OEakaZLP1UIoo8Sc31CwWDdF6tZe3F3ms58vk852yxKYoUd8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxD99/JbRhfg8kdmFVl1D573xDeicOBU7OBVr/J/uNQfEKuLzop
+	KfLwEma7w+3KRVo4Z7utPycggx8oICLpClHnHvzKnS7Y8NYIni9xPxSTmicG0zQa4+bmbI9avCv
+	b8X1omXQ6cRsggpi+B76YzYZVisnLOSpP7nhImiz/Ag5VMzZch0vQ2OCla/2SE7hcBw4=
+X-Gm-Gg: ASbGncuLie2M9DEqnlapdXZJJA22ctQLIC2q7KKbs2i3p44Y+d/WZx70nsHQCy1QiD7
+	hF8lz4hgWT0DrfzhuaaDYzyRIv6Fw11WK03RLdZjb393y3uq7EYsBfIYlS35P3eg0EFY1hFIcv8
+	uvxDW6ml3YQIaqyQTWbr1VfV8hkRiCwTOLX5dG7vM0PsWPZKdlaftGkskxAPtbZPKbss/B7ggwI
+	+lWK6Kuc8mbUpo5K+0Ikg2Ui/U9CpQRt07h1ST2uVjnu4VBb0k693Mu/ZdjOCBDzcOjspBQIN9P
+	+jiK3qiPyVw9xrqkba5fsZfFATQP9ngiW2GW5QSawXCvw2fUpeky16VrMPt1bUFU4UHz+Aep7y+
+	bVhRFTjigt4QV2/DTeQe5Rxa1jBIwD3HEgBzkIYhTK/700lxeKXVIwYKubA==
+X-Received: by 2002:a05:622a:1f85:b0:4e5:6eef:cf5d with SMTP id d75a77b69052e-4e56eefd0e5mr3437581cf.82.1759370653942;
+        Wed, 01 Oct 2025 19:04:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEMNoV8VxZzwB9ISG0Qcqu86I8IUKjtKfBRp5TKNTJODnfTge4BFASA8/Hk84j8esTc0pEIqQ==
+X-Received: by 2002:a05:622a:1f85:b0:4e5:6eef:cf5d with SMTP id d75a77b69052e-4e56eefd0e5mr3437251cf.82.1759370653504;
+        Wed, 01 Oct 2025 19:04:13 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58b0109afbdsm390835e87.0.2025.10.01.19.04.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Oct 2025 19:04:09 -0700 (PDT)
+Date: Thu, 2 Oct 2025 05:03:59 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Junjie Cao <caojunjie650@gmail.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Rob Clark <robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>, Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Antonino Maniscalco <antomani103@gmail.com>,
+        Jonathan Marek <jonathan@marek.ca>, Eugene Lepshy <fekz115@gmail.com>,
+        Jun Nie <jun.nie@linaro.org>, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org
+Subject: Re: [PATCH 2/3] drm/msm/dsi: support DSC configurations with
+ slice_per_pkt > 1
+Message-ID: <cwgn24f6tnmytd4omr2tul4e5jjin3ijji3ff3qkumqm2xe3t3@ntayu3m5kai3>
+References: <20251001135914.13754-1-caojunjie650@gmail.com>
+ <20251001135914.13754-3-caojunjie650@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250927061210.194502-1-menglong.dong@linux.dev> <20250927061210.194502-2-menglong.dong@linux.dev>
-In-Reply-To: <20250927061210.194502-2-menglong.dong@linux.dev>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Wed, 1 Oct 2025 19:03:46 -0700
-X-Gm-Features: AS18NWAHYLA9oCGA8Iamn1bDZUfApRX46uDAtbLK0AvoaC3mAs81FWBgd1QEVe4
-Message-ID: <CAADnVQJAdAxEOWT6avzwq6ZrXhEdovhx3yibgA6T8wnMEnnAjg@mail.gmail.com>
-Subject: Re: [PATCH RFC bpf-next 1/3] bpf: report probe fault to BPF stderr
-To: Menglong Dong <menglong8.dong@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, jiang.biao@linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251001135914.13754-3-caojunjie650@gmail.com>
+X-Proofpoint-GUID: 3hR-D7UMVKIk9lfa6EBRHJLpcvN3TEfB
+X-Proofpoint-ORIG-GUID: 3hR-D7UMVKIk9lfa6EBRHJLpcvN3TEfB
+X-Authority-Analysis: v=2.4 cv=ZtPg6t7G c=1 sm=1 tr=0 ts=68dddd9e cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=x6icFKpwvdMA:10 a=KKAkSRfTAAAA:8 a=RAbU-raeAAAA:8 a=pGLkceISAAAA:8
+ a=chGVdZ9yfDdcOS25WoAA:9 a=CjuIK1q_8ugA:10 a=uxP6HrT_eTzRwkO_Te1X:22
+ a=cvBusfyB2V15izCimMoJ:22 a=JiizpSU_mAIq9zsZDqn2:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAxOCBTYWx0ZWRfX/XPzmSv0hqug
+ Aq7H75PNzibCGQ2RYhZZnlujxFYYFenm/91kRbOfj9W4G3nDCWsvJxx8kO79r7TYLXwnWxT+pjE
+ yuChgIkZF29yfsrRJdYfujwRLE5mdR5t6isMDUdooD6zUosT7qsxv1qW+RoCddSU4jVKJ0OLiPV
+ AFdX5r/APTin7qtATMUXWP+5ffyCIe5gZ230o/JkNQVY9XAUZGOsoQ3XgORIR7H68v9AznD0DMe
+ +/6BzWPVGKISTSP9xkidm2SH4Rl4cxLznSVepjrdRSDwqniOSpOeEgmeRhV+jyvfqpMI7j/WcoX
+ qKRaZXB7u7+4U39q/x0ixAqDaar0fMf6lNn90pyzXLdSebva3R9jL7mIFffxaxm2Gpqmkr3LqTH
+ WQvL4mHX+X2JCqVbOVinKnKLlnRguA==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-02_01,2025-09-29_04,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 spamscore=0 priorityscore=1501 malwarescore=0 bulkscore=0
+ suspectscore=0 clxscore=1015 lowpriorityscore=0 adultscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270018
 
-On Fri, Sep 26, 2025 at 11:12=E2=80=AFPM Menglong Dong <menglong8.dong@gmai=
-l.com> wrote:
->
-> Introduce the function bpf_prog_report_probe_violation(), which is used
-> to report the memory probe fault to the user by the BPF stderr.
->
-> Signed-off-by: Menglong Dong <menglong.dong@linux.dev>
+On Wed, Oct 01, 2025 at 09:59:13PM +0800, Junjie Cao wrote:
+> From: Jun Nie <jun.nie@linaro.org>
+> 
+> Some panels support multiple slice to be sent in a single DSC packet. And
+> this feature is a must for specific panels, such as JDI LPM026M648C. Add a
+> dsc_slice_per_pkt member into struct mipi_dsi_device and support the
+> feature in msm mdss driver.
+> 
+> Co-developed-by: Jonathan Marek <jonathan@marek.ca>
+> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+> Signed-off-by: Jun Nie <jun.nie@linaro.org>
+> Signed-off-by: Junjie Cao <caojunjie650@gmail.com>
 > ---
->  include/linux/bpf.h      |  1 +
->  kernel/trace/bpf_trace.c | 18 ++++++++++++++++++
->  2 files changed, 19 insertions(+)
->
-> diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-> index 6338e54a9b1f..a31c5ce56c32 100644
-> --- a/include/linux/bpf.h
-> +++ b/include/linux/bpf.h
-> @@ -2902,6 +2902,7 @@ void bpf_dynptr_init(struct bpf_dynptr_kern *ptr, v=
-oid *data,
->  void bpf_dynptr_set_null(struct bpf_dynptr_kern *ptr);
->  void bpf_dynptr_set_rdonly(struct bpf_dynptr_kern *ptr);
->  void bpf_prog_report_arena_violation(bool write, unsigned long addr, uns=
-igned long fault_ip);
-> +void bpf_prog_report_probe_violation(bool write, unsigned long fault_ip)=
-;
->
->  #else /* !CONFIG_BPF_SYSCALL */
->  static inline struct bpf_prog *bpf_prog_get(u32 ufd)
-> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-> index 8f23f5273bab..9bd03a9f53db 100644
-> --- a/kernel/trace/bpf_trace.c
-> +++ b/kernel/trace/bpf_trace.c
-> @@ -2055,6 +2055,24 @@ void bpf_put_raw_tracepoint(struct bpf_raw_event_m=
-ap *btp)
->         module_put(mod);
->  }
->
-> +void bpf_prog_report_probe_violation(bool write, unsigned long fault_ip)
-> +{
-> +       struct bpf_stream_stage ss;
-> +       struct bpf_prog *prog;
-> +
-> +       rcu_read_lock();
-> +       prog =3D bpf_prog_ksym_find(fault_ip);
-> +       rcu_read_unlock();
-> +       if (!prog)
-> +               return;
-> +
-> +       bpf_stream_stage(ss, prog, BPF_STDERR, ({
-> +               bpf_stream_printk(ss, "ERROR: Probe %s access faule, insn=
-=3D0x%lx\n",
-> +                                 write ? "WRITE" : "READ", fault_ip);
-> +               bpf_stream_dump_stack(ss);
-> +       }));
+>  drivers/gpu/drm/msm/dsi/dsi_host.c | 25 ++++++++++---------------
+>  include/drm/drm_mipi_dsi.h         |  2 ++
+>  2 files changed, 12 insertions(+), 15 deletions(-)
 
-Interesting idea, but the above message is not helpful.
-Users cannot decipher a fault_ip within a bpf prog.
-It's just a random number.
+Please extract the generic part, so that it can be merged through a
+generic tree.
 
-But stepping back... just faults are common in tracing.
-If we start printing them we will just fill the stream to the max,
-but users won't know that the message is there, since no one
-expects it. arena and lock errors are rare and arena faults
-were specifically requested by folks who develop progs that use arena.
-This one is different. These faults have been around for a long time
-and I don't recall people asking for more verbosity.
-We can add them with an extra flag specified at prog load time,
-but even then. Doesn't feel that useful.
+-- 
+With best wishes
+Dmitry
 
