@@ -1,144 +1,197 @@
-Return-Path: <linux-kernel+bounces-839665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 413CBBB21CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 02:13:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4A58BB21D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 02:14:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0BB257A127B
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 00:12:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F67517FCE6
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 00:14:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBB53469D;
-	Thu,  2 Oct 2025 00:13:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D95B9460;
+	Thu,  2 Oct 2025 00:14:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="brzMsb8H"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eKVf8hHR"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6940163
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 00:13:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFC1234BA2B;
+	Thu,  2 Oct 2025 00:14:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759364020; cv=none; b=DSINzdgE8BopABRDw6dYd8bgNEOEyKreBCYQQksS58qhFUC1zB4XsmPBvLvAMijRr4T+gxCVdimhDamWBw/mAJXhRed7FS1fDLTQQ2dRKDW3lkDkZSqPfzwDg/6iZr59/RE0K9/d0kE8vKtmxMC+lmitl4G7j48m2BRgcAakdTU=
+	t=1759364048; cv=none; b=ZcUrQVuQAXcIyjMlk4spNLpsRiqujBUN2hHzGfXn423d5/OyI0Y7jRZNNjiGcsm3Prx7Ub7jNazUOI7TdS+1QdKOOW2LzzBl5v18li74q5BTEDQC65e0rWx3ciXzl/XZSBrOW428jmBZGqY0p94yEc8cweVIVhuYNIP28tQJCuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759364020; c=relaxed/simple;
-	bh=cWFPEdHmzdzcSs9dK9deju4pTl1udmgN1EGSEKm75Ak=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Jo/9ImazR1WgspyWKGe/h8crN03ThiZDmsOGcrVvIS7ThqVJG39sc8baDlkE2hwk9rCTzDv1iGhlOPaT+RGaXVJLl4PJGA+vEHH+Bv2lI7eJ4SJjT2S2oHOsD+yiygw2ZDr8LUPyGNWCN+MAoNLoAY/O+AQ4nvzWZK/I7UHJS08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=brzMsb8H; arc=none smtp.client-ip=192.198.163.13
+	s=arc-20240116; t=1759364048; c=relaxed/simple;
+	bh=vgWIWdCzpsu1OacLiuXWyM5m8s3gHqWeC+dd/lMOdy0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X0MTzfi5i3g08bXmhMPAt+zbRvM2EycJoQv0IFrdXBk1CNUVbsgfmSa4wP04j4kDmJ7ftalakLha0nbIaa2+lxbe4N8IJe0+DRoLMLm8j4KMZQ+QDu61hGAi/+TEweS84G2QibZDvAmzsiHb13LhzNpv9x/dEYTpYkJaSnm/r38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eKVf8hHR; arc=none smtp.client-ip=192.198.163.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759364019; x=1790900019;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=cWFPEdHmzdzcSs9dK9deju4pTl1udmgN1EGSEKm75Ak=;
-  b=brzMsb8Hnyn7+3lUSDitWfnQ7l6Zv6jSe/iDoWaitTNMbSapHILxGc+r
-   5HiYTMDeWuJcU55bNA99r8HZ+jt2+YkNttpmWdVdMrhIURI9IcgSl3CBq
-   gY+1ud33DWArby/yEIgw5XWnkBMx5MPJvW9q0ly7N8h4wJPCq6WNBB+Bq
-   np137dL0214Q2cW5rOuZN3Uue+z0qZ5gsUPu38HaHxkHDymMlW4hrZ9ll
-   TcRlt2avrkCefN3FZkzf3anOcZ4CzDuclScOJwGTcbTNleG1vwAYEMckb
-   VK22QCp7l3Ncmu6uz8Cqszh7E86mnM2JoesuOLa3GsC/U5HK25oNxTYFK
-   g==;
-X-CSE-ConnectionGUID: DHKb6J94RZmDD9uO0d/5OA==
-X-CSE-MsgGUID: f8E/Cu5PSAu4luFhFz4m9g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11569"; a="64266969"
+  t=1759364046; x=1790900046;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=vgWIWdCzpsu1OacLiuXWyM5m8s3gHqWeC+dd/lMOdy0=;
+  b=eKVf8hHRYbQbl2zCElGSncRCfO83PMMg9b9TiFWIzj/zSTJADz6JDIXp
+   ZTZ3qyB4JywU7y5iUv5OzLwIp5esFiUcQl5oiGNExuUkKom8uhGWHLtWR
+   hKE99bFHDZAznAEndbXUBkARe9waGTob2fsP9ro7yuAlCfzxIY9HFN1b1
+   RqBlkXYvsMl39nqnM+5/cy4xCsbOS7GnmiKsfPluhv1NjYFwqzoapVB+M
+   ksZoHoKqaC/DizE8p0DMo8bXh12bmpIu5P1GSpKw1ETUNCtG/Li98jhhC
+   L3JYf+GBcpjDjNFfTETMMJ/aCetxmemDV9sdqR6nOQJEDgAJXpCV06J/e
+   A==;
+X-CSE-ConnectionGUID: o7HeK5v3QYqt41TBuWE+EQ==
+X-CSE-MsgGUID: XPYR+QHdSU+XRYyb7/17KQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11569"; a="60863845"
 X-IronPort-AV: E=Sophos;i="6.18,308,1751266800"; 
-   d="scan'208";a="64266969"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2025 17:13:38 -0700
-X-CSE-ConnectionGUID: +Hz9l+LiT8WRZniFA7ABgA==
-X-CSE-MsgGUID: IL1CSssuT0+/Ire4YAYuQg==
+   d="scan'208";a="60863845"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2025 17:14:06 -0700
+X-CSE-ConnectionGUID: 43wHW9ffRLWI24eD0r22Zg==
+X-CSE-MsgGUID: N40iFHvQQp+sfTGZ1Njipw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.18,308,1751266800"; 
-   d="scan'208";a="182951559"
-Received: from gabaabhi-mobl2.amr.corp.intel.com (HELO [10.125.109.221]) ([10.125.109.221])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2025 17:13:37 -0700
-Message-ID: <f2ed7b6a-46f5-4ef2-a0d8-703595a5ffee@intel.com>
-Date: Wed, 1 Oct 2025 17:13:37 -0700
+   d="scan'208";a="178867208"
+Received: from lkp-server01.sh.intel.com (HELO 2f2a1232a4e4) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 01 Oct 2025 17:14:03 -0700
+Received: from kbuild by 2f2a1232a4e4 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v46xM-0003TT-2L;
+	Thu, 02 Oct 2025 00:14:00 +0000
+Date: Thu, 2 Oct 2025 08:13:40 +0800
+From: kernel test robot <lkp@intel.com>
+To: victor.duicu@microchip.com, jic23@kernel.org, dlechner@baylibre.com,
+	nuno.sa@analog.com, andy@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, marius.cristea@microchip.com,
+	victor.duicu@microchip.com, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v6 2/2] iio: temperature: add support for MCP998X
+Message-ID: <202510020803.3pQv1jeZ-lkp@intel.com>
+References: <20250930133131.13797-3-victor.duicu@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND] x86/boot: Add option to append to the cmdline
-To: Brian Mak <makb@juniper.net>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
- Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251001230408.13137-1-makb@juniper.net>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20251001230408.13137-1-makb@juniper.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250930133131.13797-3-victor.duicu@microchip.com>
 
-On 10/1/25 16:04, Brian Mak wrote:
-> To solve this limitation, we add CONFIG_CMDLINE_EXTEND, which is already
-> available on several other architectures, to make the built-in command
-> line append to the bootloader-provided command line.
+Hi,
 
-I'd really rather not have another copy-and-paste of another
-architecture's Kconfig bits into x86.
+kernel test robot noticed the following build errors:
 
-At the _very_ least, we'd get a boolean ARCH_HAS_CMDLIND_EXTEND which
-would then expose an arch-independent CMDLINE_EXTEND option. Literally
-duplicating Kconfig options just isn't scalable.
+[auto build test ERROR on 561285d048053fec8a3d6d1e3ddc60df11c393a0]
 
-I also cringe every time I see code like this get added to arch/x86 that
-really doesn't have anything to do with x86 and really only gets dumped
-in to arch/ because there's never been a proper refactoring of all the
-copy-and-pasted code.
+url:    https://github.com/intel-lab-lkp/linux/commits/victor-duicu-microchip-com/dt-bindings-iio-temperature-add-support-for-MCP998X/20250930-213443
+base:   561285d048053fec8a3d6d1e3ddc60df11c393a0
+patch link:    https://lore.kernel.org/r/20250930133131.13797-3-victor.duicu%40microchip.com
+patch subject: [PATCH v6 2/2] iio: temperature: add support for MCP998X
+config: i386-randconfig-013-20251002 (https://download.01.org/0day-ci/archive/20251002/202510020803.3pQv1jeZ-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.4.0-5) 12.4.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251002/202510020803.3pQv1jeZ-lkp@intel.com/reproduce)
 
-In the end, refactoring Kconfig is dirt simple. Refactoring
-builtin_cmdline[] into arch-independent code would be a lot harder.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510020803.3pQv1jeZ-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/iio/temperature/mcp9982.c: In function 'mcp9982_read_raw':
+>> drivers/iio/temperature/mcp9982.c:467:24: error: implicit declaration of function 'get_unaligned_be16' [-Werror=implicit-function-declaration]
+     467 |                 *val = get_unaligned_be16(bulk_read + 1);
+         |                        ^~~~~~~~~~~~~~~~~~
+   cc1: some warnings being treated as errors
+
+
+vim +/get_unaligned_be16 +467 drivers/iio/temperature/mcp9982.c
+
+   416	
+   417	static int mcp9982_read_raw(struct iio_dev *indio_dev,
+   418				    struct iio_chan_spec const *chan, int *val,
+   419				    int *val2, long mask)
+   420	{
+   421		unsigned int tmp_reg, reg_status;
+   422		struct mcp9982_priv *priv = iio_priv(indio_dev);
+   423		unsigned long *src;
+   424		int ret;
+   425		u8 bulk_read[3];
+   426	
+   427		if (priv->run_state) {
+   428			/*
+   429			 * When working in Run mode, after modifying a parameter (like sampling
+   430			 * frequency) we have to wait a delay before reading the new values.
+   431			 * We can't determine when the conversion is done based on the BUSY bit.
+   432			 */
+   433			if (priv->wait_before_read) {
+   434				if (!time_after(jiffies, priv->time_limit))
+   435					mdelay(jiffies_to_msecs(priv->time_limit - jiffies));
+   436				priv->wait_before_read = false;
+   437			}
+   438		} else {
+   439			ret = regmap_write(priv->regmap, MCP9982_ONE_SHOT_ADDR, 1);
+   440			if (ret)
+   441				return ret;
+   442			/*
+   443			 * In Standby state after writing in OneShot register wait for
+   444			 * the start of conversion and then poll the BUSY bit.
+   445			 */
+   446			mdelay(125);
+   447			ret = regmap_read_poll_timeout(priv->regmap, MCP9982_STATUS_ADDR,
+   448						       reg_status, !(reg_status & MCP9982_STATUS_BUSY),
+   449						       mcp9982_delay_ms[priv->sampl_idx] * USEC_PER_MSEC,
+   450						       0);
+   451			if (ret)
+   452				return ret;
+   453		}
+   454		guard(mutex)(&priv->lock);
+   455	
+   456		switch (mask) {
+   457		case IIO_CHAN_INFO_RAW:
+   458			/*
+   459			 * The Block Read Protocol first returns the number of user readable
+   460			 * bytes, held in bulk_read[0], followed by the data.
+   461			 */
+   462			ret = regmap_bulk_read(priv->regmap, MCP9982_TEMP_MEM_BLOCK_ADDR(chan->channel),
+   463					       &bulk_read, sizeof(bulk_read));
+   464			if (ret)
+   465				return ret;
+   466	
+ > 467			*val = get_unaligned_be16(bulk_read + 1);
+   468	
+   469			return IIO_VAL_INT;
+   470		case IIO_CHAN_INFO_SCALE:
+   471			*val = 0;
+   472			*val2 = MCP9982_SCALE;
+   473			return IIO_VAL_INT_PLUS_NANO;
+   474		case IIO_CHAN_INFO_SAMP_FREQ:
+   475			*val = mcp9982_conv_rate[priv->sampl_idx][0];
+   476			*val2 = mcp9982_conv_rate[priv->sampl_idx][1];
+   477			return IIO_VAL_INT_PLUS_MICRO;
+   478		case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
+   479			ret = regmap_read(priv->regmap, MCP9982_RUNNING_AVG_ADDR, &tmp_reg);
+   480			if (ret)
+   481				return ret;
+   482			*src = tmp_reg;
+   483			*val = mcp9982_3db_values_map_tbl[priv->sampl_idx][bitmap_weight(src, 2)][0];
+   484			*val2 = mcp9982_3db_values_map_tbl[priv->sampl_idx][bitmap_weight(src, 2)][1];
+   485			return IIO_VAL_INT_PLUS_MICRO;
+   486		case IIO_CHAN_INFO_OFFSET:
+   487			*val = MCP9982_OFFSET;
+   488			return IIO_VAL_INT;
+   489		default:
+   490			return -EINVAL;
+   491		}
+   492	}
+   493	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
