@@ -1,104 +1,117 @@
-Return-Path: <linux-kernel+bounces-840336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BBE8BB421D
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 16:05:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CC9FEBB4225
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 16:05:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B537019E1D1C
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 14:05:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6712A19E1EFD
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 14:06:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 673A1310651;
-	Thu,  2 Oct 2025 14:05:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08A15312830;
+	Thu,  2 Oct 2025 14:05:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X0B9VjXQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="CMBo4wuA"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9A2A54758;
-	Thu,  2 Oct 2025 14:05:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53FCE2EB84A
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 14:05:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759413926; cv=none; b=rP2j49N5TpgxL8QI8F9KyL4dni0nlM1XVc9qW6OCAbIfc2kqLHKHicE1OGLIyWaA4AQsEZniNMYojWHbPoIQ6vP3S73iC4fFt08JJ8ENNaqZOZmAGVhV6hdt3BdIkCSrNHtf8fR7wu2dWgm1tDNc8cTHlZHAv6bPfszsGqzpKcg=
+	t=1759413942; cv=none; b=WYMS/BEPqlPFYzeU6IRYtVebBjXLN28abL0G8nfurD8Hmig6Vi8YFqSZshwKYzXzy27eSrP5swl+FD1ponW6Q4RatRZIacMJhT+6fQ+e/Cp1vXkh3iUVebPevPuQCBJmaOb4xDOeSTI6AwSY6j+h1rf+7odUoMNoExhrZ9FgmGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759413926; c=relaxed/simple;
-	bh=fwUU75tE/L/SaSj6jeuDJTLxUm8dKRC/V2H9lhFfP5w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dS77Iwedbe9qOuiE8i2b3ByThRqWxB9v+yIdpvIfVR/jqbO7xStFELPM3o/qu5OyGxHugptNylJRiq8fNKIR7et4A2+1M5vP4Vt6i8/8m/mUPgeKOLQBBMi82J/ergWFytYxYMa6g2SeSq5HndYK881y3OPRltsKumpNI5x9H5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X0B9VjXQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5720C4CEF4;
-	Thu,  2 Oct 2025 14:05:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759413926;
-	bh=fwUU75tE/L/SaSj6jeuDJTLxUm8dKRC/V2H9lhFfP5w=;
-	h=From:To:Cc:Subject:Date:From;
-	b=X0B9VjXQ3AbAg1xZw/dUv4ctIVICFUOEYxtzvdgPoELB4yNdweSPl2lmyWyJm8Qy3
-	 MuwZ27SXcIgzoisVQQMG6Wxg2NlvwxUIX3PVoMnmQLVOXiudG8DnyZZXU2m6Gt9I7x
-	 ZmgwZ5BWf5jN1nAPe5Y6NmKnQxlyhXAzrDSvYQP3q0K00z2LveSV0ixlwTZ02NSr1c
-	 S85fwj2MAJ044ean+EAdaTBX/6JpkuCagAfzLHpiH1XrNRwR1mYIRZUYjoiSbBde+B
-	 PLu7BCnpllVxbPI67jYAGBYi8+f+4Qe6azHv56KneDFzWk49NVLyCq0qyFeaRNwPLW
-	 ntSHDZfNBqf/A==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andrew Davis <afd@ti.com>,
-	=?UTF-8?q?Barnab=C3=A1s=20Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	Thorsten Blum <thorsten.blum@linux.dev>
-Subject: [GIT PULL] rpmsg updates for v6.18
-Date: Thu,  2 Oct 2025 09:05:21 -0500
-Message-ID: <20251002140524.64158-1-andersson@kernel.org>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1759413942; c=relaxed/simple;
+	bh=LYm9D5vlhSiUy616cHQLJ5BvEm6YIL752SKqypsFb5w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fnwo0/w4F+fxIm7GY6QgEp7Pw2NnYJyj0Ecmko5fxwDKGXyqsKWE5oEIRnWFvzx955D9XyyGAxdwj0OSLzUCgo6KeHQ8QA8H0TNSntnl7F/3iCFFB397OP0mL95pW0YS1c5e+yZIiVgdtSKvu2EAPNfxuieKNFeUvyUpMHXyWhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=CMBo4wuA; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=LYm9
+	D5vlhSiUy616cHQLJ5BvEm6YIL752SKqypsFb5w=; b=CMBo4wuAPtjTjtjdpLmm
+	qn8XDWdQSJRTAPrvIx1iDiclurdwEuFzB3C08f9exHfxyBopLh/0e1hp0TV+WTJy
+	dqpycYiHLylx89u9xJQQ7Pr7tdMH3gSqWtgTlflVHxwkWh7MMWYLz8NdB+ejvSQN
+	Ck0HXEuFewJGt09bxpI7+kFeMIryT65lq068YL6794IQQ0uQ4NFPjk89YiuDdA5F
+	hzyHONjOVLzh9c2/rT8TbOVqHBja7VToYNh1mXwIqJnKBxJ0g5StwVmwZ4XS8Jsf
+	ZpwNsSCW4b0tWQChSWq3MSzFjafkkH/E/VqqF5HuNFlPIfAntcCHneiXmIrErcZ6
+	eg==
+Received: (qmail 295296 invoked from network); 2 Oct 2025 16:05:36 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 2 Oct 2025 16:05:36 +0200
+X-UD-Smtp-Session: l3s3148p1@2PCrei1AIOIgAwDPXwQHAL/S9V79e5yL
+Date: Thu, 2 Oct 2025 16:05:35 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Luca Weiss <luca.weiss@fairphone.com>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Griffin Kroah-Hartman <griffin.kroah@fairphone.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	Daniel Scally <djrscally@gmail.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	=?utf-8?B?QW5kcsOp?= Apitzsch <git@apitzsch.eu>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Wolfram Sang <wsa@kernel.org>, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 3/4] arm64: dts: qcom: qcm6490-fairphone-fp5: Enable CCI
+ pull-up
+Message-ID: <aN6Gr5FcfYpKgAFM@shikoro>
+References: <20251002-dw9800-driver-v1-0-c305328e44f0@fairphone.com>
+ <20251002-dw9800-driver-v1-3-c305328e44f0@fairphone.com>
+ <1be80052-3ba5-46de-804a-de995f8db5d4@oss.qualcomm.com>
+ <DD7V3G4RLB2I.QYT4BWT1LA5U@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="iN8q4H5XPZs0qq2D"
+Content-Disposition: inline
+In-Reply-To: <DD7V3G4RLB2I.QYT4BWT1LA5U@fairphone.com>
 
 
-The following changes since commit c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9:
+--iN8q4H5XPZs0qq2D
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-  Linux 6.17-rc2 (2025-08-17 15:22:10 -0700)
 
-are available in the Git repository at:
+> Unfortunately though this effort has stalled some years ago. There is
+> "struct regulator *bus_regulator;" in "struct i2c_adapter" already and
+> vbus-supply is documented in i2c-mt65xx but afaik this not functional
+> because some code was ripped out ago because of some AMDGPU regressions.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rpmsg-v6.18
+Thanks for mentioning this. It all sounded familiar to me but I couldn't
+put my finger exactly.
 
-for you to fetch changes up to 09390ed9af37ed612dd0967ff2b0d639872b8776:
 
-  rpmsg: qcom_smd: Fix fallback to qcom,ipc parse (2025-09-20 21:29:48 -0500)
+--iN8q4H5XPZs0qq2D
+Content-Type: application/pgp-signature; name="signature.asc"
 
-----------------------------------------------------------------
-rpmsg updates for v6.18
+-----BEGIN PGP SIGNATURE-----
 
-Clean up the dev_pm_domain integration in rpmsg core. Correct module
-aliases for the rpmsg char driver.
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjehqsACgkQFA3kzBSg
+KbbIAQ//QfAX8m49uUj1J5d915zmYl1ga2ibjh9XM98MLwfWVTrbBKLi8aoYwru5
+3n32muazTU8syFw9hftxJjKs7beuNJ7vBytCP+mvs/d3y976Ff6xM+kFnKUWiIb5
+v2wP3ECPOTeHO+OXG2pDIuLDpfjLlFVaO0nGbg1dnTmSvqnHbvOklmPAjqgehY78
+C4pCYZkaIsMPrRrp/lutY+W39Ua8v9B4BRaqYjepzq5u86+zaU/S3hglhrNt+MzX
+bONZqbB4HQKfYuZrcWtXIlATp1SAc7LnbAbJ6CU/gHheEUaQA8Fdw3Yn7CR3MGPn
+eVmkSv/U+8UIbFs1DY5UAv8oOnq+jqIVKrlcI36V9ftmmbsWkN4AE7mL6gpWuZZv
+C9olQqGYid0OJXe5qcU8gHOFvdj4Vspr7rbD4oQC20SF/6A0w/d1QEQPGt/fN1BY
+ppCM/MDH2R8Hw2Heibr1NDM62n7n5090UmTSPjZau4ksQuxJyga8sKvM9OAKMyk+
+8qAwilsIUxYcZYTT9DRrVJEyWGQxJp0LwO8N9FkN+eDiaY/BmPqFl33C79EU4WC9
+4705Uq5xK7f+v/Yts9ZqtIDILbSA2q0QRHcSeH2EK3PpJEvClgu7xVCPTz73Hkvb
+v9poLEjcB0lxNihio4NoTRHkWDtOS1Opds2CqwzTRDkcSvUk1tQ=
+=dsTU
+-----END PGP SIGNATURE-----
 
-Transition Qualcomm SMD and GLINK drivers to strscpy() and fix the
-regression in legacy code for acquiring outgoing interrupts using the
-non-mailbox based mechanism.
-
-----------------------------------------------------------------
-Andrew Davis (1):
-      rpmsg: char: Export alias for RPMSG ID rpmsg-raw from table
-
-Barnabás Czémán (1):
-      rpmsg: qcom_smd: Fix fallback to qcom,ipc parse
-
-Claudiu Beznea (1):
-      rpmsg: core: Drop dev_pm_domain_detach() call
-
-Thorsten Blum (1):
-      rpmsg: Use strscpy() instead of strscpy_pad()
-
- drivers/rpmsg/qcom_glink_native.c | 2 +-
- drivers/rpmsg/qcom_smd.c          | 4 ++--
- drivers/rpmsg/rpmsg_char.c        | 3 ++-
- drivers/rpmsg/rpmsg_core.c        | 5 ++---
- 4 files changed, 7 insertions(+), 7 deletions(-)
+--iN8q4H5XPZs0qq2D--
 
