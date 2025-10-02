@@ -1,186 +1,166 @@
-Return-Path: <linux-kernel+bounces-840857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8ABBBB5969
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 01:11:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E650BB5963
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 01:10:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6284A18979B7
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 23:11:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28FCE3BE15D
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 23:10:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC430274FCE;
-	Thu,  2 Oct 2025 23:11:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6E84269AEE;
+	Thu,  2 Oct 2025 23:10:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j8Hffaai"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XiaS20Vy"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9880539FD9
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 23:11:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA6234BA4E;
+	Thu,  2 Oct 2025 23:10:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759446664; cv=none; b=nN4bLOhSIEjCfx3UAQDLZVny89rlds7nDr2w/XiRJllqzBzWR6FCpayj7SuznYDvuNsDrVXBcQKA400sOJvrtWMwS+PL+YDXsLmZviPx/z84RF9jcZ+XRSozp4Z0nUOavb5+reGE+Gi/PZJDbcibHhk3vboNKs6ARtEqZfA+QQs=
+	t=1759446648; cv=none; b=ksV5esuDYRjG9i2xlUq8TQgsCs48MYKLvOyMPWvqRVGOgZqJdzyMkUSzekemt9Dl72g4WgcxlOvGhoBZPddKKoE/TsajjTE6Het9kkBl4nHWDlEfC3KLOskW2nPoF+cu5/fglO8YPc4slAFWxGHanOnvQ4q4zPtnczk2RJ4p6Ag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759446664; c=relaxed/simple;
-	bh=05QBzRd86DhaBHC/HzFaLKts1U4K0ZRH0JC89nOeuak=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WPKmd+zfeHZb8jzKAXCyKJRqXfRXoA83oMHr35hG0cloSMfVGk5okQJrdxFd+/vFCum4HVk7AjiQXZId+E+ToE2brF7kWJPEgDtDJIlbq6QNOnrZ7Ybd+gomplgdU1zenwwqdBE8TWPHCZEmWNy7K/+a/TI6RhrFIrlHQEcR7cc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j8Hffaai; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b54dd647edcso1285486a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 16:11:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759446662; x=1760051462; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yFC69a6NBsLOPw5S/NgD9GIK97Ncfay1Ur+maFKsDH0=;
-        b=j8Hffaai8x/QwsCo4UmjJtkbzT63gkStG3uzsDmggN1+B6GSoKyCISQ2dyJd1p41Rs
-         7O+08/+jI0HBKPs3fy604HSKnTwNL4cFTwNyUnOhv2dl9nbwBu5F4MIoU8iVvjsXN/AG
-         6itafzNpYIV6L6evpxRHBbLGBWs0UlRwhW/YMJg4vspwF9JuC8orGetUL5BcbVqojO2d
-         HLGzzfaHG+8rbnoT+D71QCks3Lq564i258QYmD5rCLxGDPqb27syrc5bHYq51Hzdl5En
-         mZoNw/Nu3zj4kMC3FEomhpC6PsODocQ2MtJp2BCPDFp2MgBiUjrINzTbiO4MlULdyFgv
-         iDCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759446662; x=1760051462;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yFC69a6NBsLOPw5S/NgD9GIK97Ncfay1Ur+maFKsDH0=;
-        b=IZlNysZWU9jUyHLt/mp+z59BOHkAET0DnJ2KyzxFljY/s01EwRFibLRNpd9Kh0UH5E
-         IgivhlomXehRvpGHYYVV5+99xl7GMeCj2x1Os8g4pV/NXA7i9nkhPggcJtSzhHDpwrzc
-         3dyOEXVQ/9x8/92LJzqXAnQ+mvNNfnwXjI3DMK87Y/fM9kPj02IgPhF7Cr6BFoiX0C0o
-         kcMm39LB0emEC5+QMLheSONvqdVlafFH1TI94jr9XZA0jMSH6nb50J6hTUOAG4D2h+7V
-         R+pocx1Tk/vewqndDhx79PjYo3kylT1VmRxUN6ul/eQ2QRNhTbsWaypVDeUDOpTcX5wP
-         Shfg==
-X-Forwarded-Encrypted: i=1; AJvYcCXe+S20rvRjnTnxg2TWntg/bm4aiESowf9cnh+VkLAammC74fV/bYYsoUlaSl5+mMwEKupIObC/m7CddRk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSSsaP9sf1ykTJJcmwpRXgeHIePga10iAMNMMv2uIcXrWBZARK
-	PuxByRqsNp67O6CJXWLhrVQ2h0Oi23a8I5UNU4XjJmKqVc83YE6SWR49
-X-Gm-Gg: ASbGncttgjt9cDcZKeappb0oGcSEBpmkOo+q1X0jjR52rxS3Ql22EuL5c6qFz8l9ASM
-	iswF0vBg2Xrw3zjwRWgp6d7sU0p8BW5KvSZDaka3hdmWCnHsRQJBgADS8i4FrjpclT4lgwpt5DA
-	g2bQCW8dZIVM+/cvwQgfyXlCkK8m/EQzOO0m2LEIOiwlb0Md7msIaoeGSw7aOtlxybguyR4yqUi
-	IrqiCQ4qtqWBoplA4sHg4Fs7/4vRICz7HGwWSay7wlmq22K9X2MJyt6jU/9uRYeIA2Q+hO8kMhb
-	rZu81mClDdhlskdcC77jDcc+6zzaQoKlQP1wWZz1wRyqZx+HJ4qjKWUQAU+Cje5aknoyj8Syyyj
-	JNOL/BLHshuL+rLMhRPwahnD5x4+8w5teqlRD9HCEs18ONZ9O3qx1
-X-Google-Smtp-Source: AGHT+IGUOdKa1AKW2FKiv+nG8uiNpD1FAXt7j4+A8CLzObKcsOtjM7P0Sez7FihNRKz72nbVUzDMxQ==
-X-Received: by 2002:a17:902:dad0:b0:24c:c8e7:60b5 with SMTP id d9443c01a7336-28e9a58b550mr11718715ad.16.1759446661851;
-        Thu, 02 Oct 2025 16:11:01 -0700 (PDT)
-Received: from fedora ([119.161.98.68])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d111905sm31334655ad.24.2025.10.02.16.10.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 16:11:01 -0700 (PDT)
-From: Nirbhay Sharma <nirbhay.lkd@gmail.com>
-To: kent.overstreet@linux.dev
-Cc: linux-bcachefs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzbot+7f176adb30b21606c5fc@syzkaller.appspotmail.com,
-	skhan@linuxfoundation.org,
-	david.hunter.linux@gmail.com,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	Nirbhay Sharma <nirbhay.lkd@gmail.com>
-Subject: [PATCH] bcachefs: fix use-after-free in bch2_dirent_to_text()
-Date: Fri,  3 Oct 2025 04:40:33 +0530
-Message-ID: <20251002231033.23810-1-nirbhay.lkd@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1759446648; c=relaxed/simple;
+	bh=9aUhMF1jF4+bwEw0BmfYOCRd81wS/BFmfKZXPfLVeCw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VyRK6yx9ccdQ9LsF1InARabTy67syx+56ltATguIHwyKddBwr3nMoRZWZITCDshFoGLpuFFKdxoDmfJlQ7i36CTb852TPG8xoRbW9mY0URSqSTfjlnA58/2pTSxUeMjupDYLwNa4w22/Mf1cDKwVdfVkC+gxcPnNtZKoaETrTkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XiaS20Vy; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759446647; x=1790982647;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=9aUhMF1jF4+bwEw0BmfYOCRd81wS/BFmfKZXPfLVeCw=;
+  b=XiaS20Vy9fFqgyoPpFdrYVoYW3QgbtjKpLEVpHRglvLGcGj8sP34rNNa
+   Kpe6kE1c6sk6YeQzv4LWeFJ55AJoEzVLL0Tfww9XYhlqmSQmfEO8Lvdg9
+   dc5oXvAPujlOmW27Yu/B+SIfPOa461qn9q/l2+zdyX1Zn7qiDHfNpQMJc
+   SrNEl4cpwawLSZ4uQJAyA5ZYhF42W8QAuUsTPh8CoZy8XtYbLiASCR46m
+   ZygA2hTJ9BA2BhrmiT3Ar3ltpfHrXI46fnpyYUXuh7JpHG7VNENNKN/Uz
+   kn4IKqeuFCYFUnEdqWrS4eYAk6QQBh5dN2Zv02EuViJeHcdfjNnselqZa
+   w==;
+X-CSE-ConnectionGUID: +YaNBSMlT2qkuz97CWyQuw==
+X-CSE-MsgGUID: t8pGFfgkSZGz59Qx++wqqg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11570"; a="61774708"
+X-IronPort-AV: E=Sophos;i="6.18,310,1751266800"; 
+   d="scan'208";a="61774708"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2025 16:10:46 -0700
+X-CSE-ConnectionGUID: XpoW4dhpT1OOYopVMjggcg==
+X-CSE-MsgGUID: IKYQRcZfTgWwKhvjgxm5NQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,310,1751266800"; 
+   d="scan'208";a="179102182"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO [10.125.109.249]) ([10.125.109.249])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2025 16:10:45 -0700
+Message-ID: <dde17d82-3e56-4b9f-8b6d-dae3d523d44e@intel.com>
+Date: Thu, 2 Oct 2025 16:10:44 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/8] CMDLINE: x86: convert to generic builtin command line
+To: Daniel Gimpelevich <daniel@gimpelevich.san-francisco.ca.us>
+Cc: "Daniel Walker (danielwa)" <danielwa@cisco.com>,
+ Will Deacon <will@kernel.org>, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Rob Herring <robh@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Pratyush Brahma <quic_pbrahma@quicinc.com>,
+ Tomas Mudrunka <tomas.mudrunka@gmail.com>,
+ Sean Anderson <sean.anderson@seco.com>, "x86@kernel.org" <x86@kernel.org>,
+ "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+ "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>,
+ "xe-linux-external(mailer list)" <xe-linux-external@cisco.com>,
+ Ruslan Ruslichenko <rruslich@cisco.com>,
+ Ruslan Bilovol <ruslan.bilovol@gmail.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20231110013817.2378507-1-danielwa@cisco.com>
+ <20231110013817.2378507-7-danielwa@cisco.com>
+ <00c11f75-7400-4b2a-9a5d-10fc62363835@intel.com> <aN7n_5oiPjk-dCyJ@goliath>
+ <c8b65db3-a6cf-479d-9a83-23cbc62db1ef@intel.com> <aN7vKgcUeQgCFglQ@goliath>
+ <a2be781f-96b5-47d1-81fa-b20395ca293a@intel.com>
+ <1759444692.24579.8.camel@chimera>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <1759444692.24579.8.camel@chimera>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Add bounds checking before calculating pointer offsets in dirent name
-accessor functions to prevent out-of-bounds memory access when
-processing corrupted filesytem metadata.
+On 10/2/25 15:38, Daniel Gimpelevich wrote:
+> On Thu, 2025-10-02 at 14:55 -0700, Dave Hansen wrote:
+>> That's not a bad idea. Or, even if you can pick two amenable
+>> architectures to start with it will make it really obvious that this is
+>> useful. Two architectures means a *lot*, IMNHO. Two is a billion times
+>> better than one.
+> I think it's a bad idea, if I understand it correctly. The patchset
+> conceptually patches a mechanism of the kernel as a whole, but one which
+> just so happens to need to be implemented separately for each arch.
+> Breaking it down like you suggest creates an embarrassingly high
+> likelihood of different architectures' implementations of it going out
+> of sync, a previous situation that this patchset was partly intended to
+> address. I say keep it atomic. If it breaks on an arch or two but not
+> others and nobody notices right away, that would be better addressed
+> with a new patch when someone eventually does notice. Just my 2¢…
 
-When d_name_len contains a corrupted value, the pointer calculation
-&d.v->d_cf_name_block.d_names[name_len] results in an offset far
-outside the dirent structure, triggering KASAN use-after-free erors.
+How is the approach to "keep it atomic" working out so far? ;)
 
-While bch2_dirent_validate() detects such corruption,
-bch2_dirent_to_text() may still be called for debug output, so the
-accessor functions must handle invalid data gracefully.
+The kernel isn't exactly developed in secret. It's also not hard at all
+to, say, once a week to peek at linux-next and do a lore search (or use
+lei) if anyone is desperately worried about the ~50 lines per
+architecture going out of sync.
 
-Fixes: c21f41f6905be4fc5059a10a5bba94105ba87269 ("bcachefs: bch2_dirent_to_text() shows casefolded dirents")
-Reported-by: syzbot+7f176adb30b21606c5fc@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=7f176adb30b21606c5fc
-Signed-off-by: Nirbhay Sharma <nirbhay.lkd@gmail.com>
----
- fs/bcachefs/dirent.c | 39 ++++++++++++++++++++++++++++++---------
- 1 file changed, 30 insertions(+), 9 deletions(-)
-
-diff --git a/fs/bcachefs/dirent.c b/fs/bcachefs/dirent.c
-index d198001838f3..8be31b41c32b 100644
---- a/fs/bcachefs/dirent.c
-+++ b/fs/bcachefs/dirent.c
-@@ -58,8 +58,16 @@ static unsigned bch2_dirent_name_bytes(struct bkey_s_c_dirent d)
- 
- struct qstr bch2_dirent_get_name(struct bkey_s_c_dirent d)
- {
-+	unsigned int name_len, max_len;
-+
- 	if (d.v->d_casefold) {
--		unsigned name_len = le16_to_cpu(d.v->d_cf_name_block.d_name_len);
-+		name_len = le16_to_cpu(d.v->d_cf_name_block.d_name_len);
-+		max_len = bkey_val_bytes(d.k) -
-+			offsetof(struct bch_dirent, d_cf_name_block.d_names);
-+
-+		if (name_len > max_len)
-+			return (struct qstr) QSTR_INIT(NULL, 0);
-+
- 		return (struct qstr) QSTR_INIT(&d.v->d_cf_name_block.d_names[0], name_len);
- 	} else {
- 		return (struct qstr) QSTR_INIT(d.v->d_name, bch2_dirent_name_bytes(d));
-@@ -68,13 +76,19 @@ struct qstr bch2_dirent_get_name(struct bkey_s_c_dirent d)
- 
- static struct qstr bch2_dirent_get_casefold_name(struct bkey_s_c_dirent d)
- {
--	if (d.v->d_casefold) {
--		unsigned name_len = le16_to_cpu(d.v->d_cf_name_block.d_name_len);
--		unsigned cf_name_len = le16_to_cpu(d.v->d_cf_name_block.d_cf_name_len);
--		return (struct qstr) QSTR_INIT(&d.v->d_cf_name_block.d_names[name_len], cf_name_len);
--	} else {
-+	unsigned int name_len, cf_name_len, max_len;
-+
-+	if (!d.v->d_casefold)
- 		return (struct qstr) QSTR_INIT(NULL, 0);
--	}
-+
-+	name_len = le16_to_cpu(d.v->d_cf_name_block.d_name_len);
-+	cf_name_len = le16_to_cpu(d.v->d_cf_name_block.d_cf_name_len);
-+	max_len = bkey_val_bytes(d.k) - offsetof(struct bch_dirent, d_cf_name_block.d_names);
-+
-+	if (name_len > max_len || cf_name_len > max_len || name_len + cf_name_len > max_len)
-+		return (struct qstr) QSTR_INIT(NULL, 0);
-+
-+	return (struct qstr) QSTR_INIT(&d.v->d_cf_name_block.d_names[name_len], cf_name_len);
- }
- 
- static inline struct qstr bch2_dirent_get_lookup_name(struct bkey_s_c_dirent d)
-@@ -212,11 +226,18 @@ void bch2_dirent_to_text(struct printbuf *out, struct bch_fs *c, struct bkey_s_c
- 	struct bkey_s_c_dirent d = bkey_s_c_to_dirent(k);
- 	struct qstr d_name = bch2_dirent_get_name(d);
- 
-+	if (!d_name.name || !d_name.len) {
-+		prt_str(out, "(invalid)");
-+		return;
-+	}
-+
- 	prt_printf(out, "%.*s", d_name.len, d_name.name);
- 
- 	if (d.v->d_casefold) {
--		struct qstr d_name = bch2_dirent_get_lookup_name(d);
--		prt_printf(out, " (casefold %.*s)", d_name.len, d_name.name);
-+		struct qstr d_cf_name = bch2_dirent_get_lookup_name(d);
-+
-+		if (d_cf_name.name && d_cf_name.len)
-+			prt_printf(out, " (casefold %.*s)", d_name.len, d_name.name);
- 	}
- 
- 	prt_str(out, " ->");
--- 
-2.51.0
 
 
