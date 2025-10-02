@@ -1,103 +1,78 @@
-Return-Path: <linux-kernel+bounces-840698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5F41BB5022
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 21:31:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCD77BB5034
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 21:36:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D1D917EDFE
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 19:31:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 946B21C56A6
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 19:36:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98430285CAF;
-	Thu,  2 Oct 2025 19:30:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2641F286421;
+	Thu,  2 Oct 2025 19:35:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PIW0rJ4d"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iwx+QwM/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64CCDA93D
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 19:30:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DA5F126BF1;
+	Thu,  2 Oct 2025 19:35:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759433454; cv=none; b=lrljx/3Y3vXmxFmndaXTZ3On68ztajyOG/SKrzsL0udmLY7noiyQzIkAMc3uUmbBP4vXrpSt+0SnLEgOQy+xwYaC79HAr6GVkDecbU3waW9hsyl6sDxpj/0FnQVVCZIjEyq26hi7/Uh9Y32jy0rkANYiGB4IYjzDeaq4l5ZlMgI=
+	t=1759433755; cv=none; b=egmmwNwoqJ+IMY6ZrPpUo2UtU1cyJgOuz3bAUN3wW8pbIiknYQVSeG87DhbPbbI3vgkGrPzka4FrjnLonA8UqG93W6kXNvn7uFEshounSvOMCAfX5hReXeraCEIKEyr+Tx5PFrxJV0sPR/bohTkRcTX/5Tq6aXyoEnprYsk2WZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759433454; c=relaxed/simple;
-	bh=RavlUV38xKbCURMIaXHAVGr9bhvD+BobklBpey5pr9E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XpLNsqqivKgSNj4SbmkjxS8Za/eJ2w+zpGSWNbaQJSFKoKcTbDdJcIW2pvVUELyAiP6xWPn+3LenhL5JekuL4Wagn5niEKZns+c3lSJXnIyJywOcNeMiLJEiRfbzdrg6h4UZVyPWnM70vSK+AMj90m2Nmh6P9GMo2RZB4b3edzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PIW0rJ4d; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-46e3ea0445fso7757585e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 12:30:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759433451; x=1760038251; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=RavlUV38xKbCURMIaXHAVGr9bhvD+BobklBpey5pr9E=;
-        b=PIW0rJ4dnNSaUBViyoFYRhUEwf7G8KdbnKjXHMjIfJZJO+7IYBIV3Knuvf1SWK2xJA
-         ZpNrO66udeQXmoHf/vNZKSTjzihsWhONq1yZSsMEx8r2y4if500ZLB6U0Ax3fWmHg7Pk
-         Pi9jc2G1w51MiKyty2yjaLjt/w822i+ZqzzHWGZguSi3wpOdEKJapZRZOfXkPO+W4y5O
-         wk1sA5JM7SxoJaWc64mgNWANw9eKgTWTeWoT+nHVKs1iGGQ4Jp0cCuDEEN5Z8QgBNX67
-         LALgfZ6dnOyqcjnlRgAfXsE8yNUFV19thFux22+vX3XqszlshbGRrxN9xcwq/RpMssw9
-         A3LQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759433451; x=1760038251;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RavlUV38xKbCURMIaXHAVGr9bhvD+BobklBpey5pr9E=;
-        b=HVHCOIg7zeZd0R+lLk+5gB1x/SjBQ1zz6bxduBP0VZHCuXqs4PdhwcPSkM+HzK1aNS
-         1BD5F+lQtZvoasbtN35OczT5009Ox3ExrwRl/NsICVTTtqAdzJ+ZSdREmSpRMjVw9rT9
-         v+YnD2OUMWpeeImadxE7yYounmOmCF3NsOg0jw9PvHLxYLBcrMHiDw1eD37G32TLSErZ
-         6SeJIscl7xmbV7+nIjRdv90lw1qTwhOFQg/dgnDxbCnfrmsgV17FQpqBlqhkHGxP25Da
-         ojwM7cRDNvCemfweVTTw+jA7PT7IZeZNeYFiVlEFWE3CRO2IhRnpAiwtR5aYSM1YB2vd
-         82XA==
-X-Forwarded-Encrypted: i=1; AJvYcCVkz9auR+0ignlVoyJp8UasPQ/OVy8Purjz30sXWWsNC32/PfmQMkW+AcpLgRcAmIQX3gF2d1t1wqDA6M4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDWJrl625vQq0q/WxzsrOWUMqWI8c42rRsvgAAmZcHLAyKJRBB
-	svOh9ubcEnOETEkgx4NJ4jtGhT97r7CyzWAbfiqn4znzA7QMxGA2JBmqKfHE/5yQ3OkcjqPrHf4
-	8EGP12+VvGM6F8B72d42STCSLQMZx8QKKMdNgqPtn
-X-Gm-Gg: ASbGnct4HFICS8BwFYe0IL4fpYZGLubuujYjkoDR4aTvCC51ynF19ApqA2X/Oelkqkj
-	/V8jrHTtACDi0KnRMKelnMuhLDoqYaz1klGuHhDtttU8BRrFwz+GhJxHkaWdaCT2kpqkAXTDrvq
-	Gc/RVarkRgIYO+a55tXqXgrCEoXWQLAAVZr4rvDfdTBngsST6ZGTL8sy4JzMUFWmQd5JM66A/YI
-	+XWl2fcnbfudTfhmZtBGFYvD3RTczjSQsrc/oJDAdSwMo3z+NdeayanB+KufYdYZZsgbT+XrCZ3
-	j1c=
-X-Google-Smtp-Source: AGHT+IFCU6uBe4gWMYCNHz3kAgXiO/K7bY0HyJGwPrChQwZ9JM6yW0mxGVSnRHqeL/KB4jYDo6HP8b5r3lGA+u45RuI=
-X-Received: by 2002:a05:6000:4024:b0:3ee:1368:a8e9 with SMTP id
- ffacd0b85a97d-42567135148mr286275f8f.17.1759433450604; Thu, 02 Oct 2025
- 12:30:50 -0700 (PDT)
+	s=arc-20240116; t=1759433755; c=relaxed/simple;
+	bh=q7p/tifjFczA1gMFf63QPDiVETBbGwwp+q0TwAU9zOI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Luyoh2rMuBa0jozwpjRxEoqV5FkJJ5fmffguHu/1/51Fu/bHb/oq/ou7No9UZey2P4mneuQ2+yIuBMn5GK57e9Km4UtdFv3ytkGwp9qs+jBjJEQaRXmvnyJsXg1H1RQ3TDzosos5FbHQslcdmPONW+J8SYMA0jEvPdhFUgscM7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Iwx+QwM/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67C0AC4CEF4;
+	Thu,  2 Oct 2025 19:35:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759433755;
+	bh=q7p/tifjFczA1gMFf63QPDiVETBbGwwp+q0TwAU9zOI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Iwx+QwM/xkq5+1HT51UhAzy5/6hdAFX3ByPmHMmWIceCH1xe7YIMh8w4hI17gfpxS
+	 JJO8WLoM66Te3uTuCS37pZuA6dNym9z/Z4AhfJ0g10pPLHLb29mg0YiokBOC0j+vl7
+	 JNLwS7fT5oSiPCW3bV7d6yqPXrE3VKwTpBULH6zz6rBdJM6Zk6ZbMr1H6hBjIcRw/D
+	 4cfYLftMg9ibP5fjtvKytcXfZGJb9y46rvHIl4aT1GDXYmmypbQMeTkNhnKDUEWd6t
+	 3K8HrG0tXQw65U7kp5Ye8C010pp5PYgDycijqrvILcQiP8wmgwYz6dCFQQH3prw9wW
+	 ifgUyJ4YopTCg==
+Date: Thu, 2 Oct 2025 16:35:51 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Thomas Falcon <thomas.falcon@intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, Andi Kleen <ak@linux.intel.com>
+Subject: Re: [RESEND][PATCH v2 0/2] perf record: ratio-to-prev event term for
+ auto counter reload
+Message-ID: <aN7UF0MwmQnzk72W@x1>
+References: <20250902164047.64261-1-thomas.falcon@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250926-topic-tbt_header_bit_fix-v1-1-122238af5c82@oss.qualcomm.com>
- <aN5fpicXs-JwKvQo@tzungbi-laptop>
-In-Reply-To: <aN5fpicXs-JwKvQo@tzungbi-laptop>
-From: Jameson Thies <jthies@google.com>
-Date: Thu, 2 Oct 2025 12:30:39 -0700
-X-Gm-Features: AS18NWCP5sKgHNdu12Azk2AdvFWe9eB4GL8mTduwvhesRx7j7Vpkw8n9TtAOPbs
-Message-ID: <CAMFSARdM6CmUwfntnbG3THsOFC33KyZnR1RVLXmYwFJum+5K=A@mail.gmail.com>
-Subject: Re: [PATCH RFC] usb: typec: thunderbolt: Fix Thunderbolt adapter type
- bitfield values
-To: Tzung-Bi Shih <tzungbi@kernel.org>
-Cc: Konrad Dybcio <konradybcio@kernel.org>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Benson Leung <bleung@chromium.org>, 
-	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>, Andrei Kuchynski <akuchynski@chromium.org>, 
-	Guenter Roeck <groeck@chromium.org>, linux-usb@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev, 
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250902164047.64261-1-thomas.falcon@intel.com>
 
-Hi Konrad,
-thanks for raising this. Yes, it looks like this works around the
-current faulty definitions in typec_tbt.h. Where
-pd_ctrl->control_flags is assigned in our EC firmware, the
-USB_PD_CTRL_TBT_LEGACY_ADAPTER correctly gets set to 1 for TBT2 legacy
-adapters. So the data.device_mode assignment you are updating here is
-currently correct even though the macro is incorrect. Your patch LGTM.
+On Tue, Sep 02, 2025 at 11:40:44AM -0500, Thomas Falcon wrote:
+> The Auto Counter Reload (ACR)[1] feature is used to track the
+> relative rates of two or more perf events, only sampling
+> when a given threshold is exceeded. This helps reduce overhead
+> and unnecessary samples. However, enabling this feature
+> currently requires setting two parameters:
+
+Can you please try to rebase to what is in tmp.perf-tools-next now?
+
+- Arnaldo
 
