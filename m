@@ -1,359 +1,152 @@
-Return-Path: <linux-kernel+bounces-840343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33F7EBB428B
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 16:26:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14E12BB429D
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 16:29:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F7F619C2D40
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 14:26:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A1AE3246A7
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 14:29:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63416311977;
-	Thu,  2 Oct 2025 14:26:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A63E311C35;
+	Thu,  2 Oct 2025 14:29:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C0kCrbU1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=csh.rit.edu header.i=@csh.rit.edu header.b="fG3l6Q+V"
+Received: from greygoose-centos7.csh.rit.edu (greygoose-centos7.csh.rit.edu [129.21.49.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 814D738DF9
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 14:26:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEC3A5464D;
+	Thu,  2 Oct 2025 14:28:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.21.49.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759415188; cv=none; b=ps/F84JgN7PkrObr3aSN5eMI+SULkNNSi9c6ZJD8xjAuBeDhuuuar4OwaysW4LlkWyBq9jY9x17WwJRVFcL11DjsGUMx8cjxtOpv1nXoHIZXYWvu7N1Ymux7SI19wDmtalTXiJgNF0vT11sM5km2UHFsPf9qkn7BL4zIEYKmk5g=
+	t=1759415341; cv=none; b=sWqDRlhEgyUdqpU94SpZAxrZxvR/DoZb+Oaa0H/8LDcty5P+lXdG4Lz00cAEF9sAPyeRRYg8uxaM5aI96qLzemlaqMwIJljAnYdqkmVdvOsEPFP5G+qjWNj/stbD0jLxqdejW/YgX043sRvqdkdlXU/lDjIjfOMdEJUdNkbYDR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759415188; c=relaxed/simple;
-	bh=tdnS9lgQYlwrtsEK+qr6t6EPQjUdb0vyVSQ+6x9NeZY=;
-	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=cKxVgfy4zShT6H89+yeS9N0RLCxJtiDWskd9vxWuoGZyz7uT4BW0SHYU/HCxJeRRMnz0ij4RzweNJH73FAfVNO91BdKTkuHAD6vHEUy2ESWy5JCfBYlDH2KyxKWfxuKU14Mhce09iA9gN6WFIRB1W1P524G1at5T9PiJpZompPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C0kCrbU1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE9EDC4CEF4;
-	Thu,  2 Oct 2025 14:26:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759415188;
-	bh=tdnS9lgQYlwrtsEK+qr6t6EPQjUdb0vyVSQ+6x9NeZY=;
-	h=Date:From:To:Cc:Subject:From;
-	b=C0kCrbU1yfBiuGeFVBFqhmfUCktQUzzl1THX0YLEolOBhINtgbJCCfkliQX7Sl6Jk
-	 RSbukC3/ir+NnE4LUV+dK//g0ZdZyL1AiXKIX2jGB6e/vuE4PEaN290Nw+s62HlSSk
-	 kJBT9KOpLh6MZ2gCZcb3NRT1SGVpYpl3M8BreUyOpI55m1nd3OOW27aTflF5fGY1+A
-	 8PpYiGzXHdoC1gZKtSwPNrywE+FHeHodJjZ8u/EJ21pKozunNhzEoRnwn396bDQIVr
-	 WZ7DlwjaOEaMsNp6p3O1Q5g+4rEezA8y8tvtCot1517lli9IXug68EIbc51gjbsaUN
-	 PWcjCMEWys4yw==
-Date: Thu, 2 Oct 2025 23:26:24 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Yuan Chen <chenyuan@kylinos.cn>, Steven Rostedt <rostedt@goodmis.org>,
- Masami Hiramatsu <mhiramat@kernel.org>, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] probes: Fixes for v6.17
-Message-Id: <20251002232624.0cab764496b996a63a4cea4c@kernel.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1759415341; c=relaxed/simple;
+	bh=+YBZQEkAW+nv8DgMUCfzH7Di3KVglmnoPApd9uuPUqY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JtDsSVPb/FGUDCNns9ByKyNHXcxqNiloRT67jVUkFD7k0KS399cGilpX9+IuTLSJXv4JSlF2lOBGzre3Txo0oS2Aw4E5rNlvgEJ8bt/vdpUXGcScf56oI+NV+mgrqGjsbLOb3SmmkeV3C6J3w2duWruh7bwbXkZBLYqPhZUdzBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=csh.rit.edu; spf=pass smtp.mailfrom=csh.rit.edu; dkim=pass (1024-bit key) header.d=csh.rit.edu header.i=@csh.rit.edu header.b=fG3l6Q+V; arc=none smtp.client-ip=129.21.49.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=csh.rit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csh.rit.edu
+Received: from localhost (localhost [127.0.0.1])
+	by greygoose-centos7.csh.rit.edu (Postfix) with ESMTP id 38FAB40EA0BF;
+	Thu,  2 Oct 2025 10:28:57 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=csh.rit.edu; h=
+	in-reply-to:content-disposition:content-type:content-type
+	:mime-version:references:message-id:subject:subject:from:from
+	:date:date:received:received; s=mail; t=1759415330; x=
+	1761229731; bh=+YBZQEkAW+nv8DgMUCfzH7Di3KVglmnoPApd9uuPUqY=; b=f
+	G3l6Q+VQhm8v9I/2keLIKneA649gW2c8Ktp94wB71pTpE5IOK1TioLxwnermUUDt
+	VTq9Iah+gF6wNDkYboRHpNP/pWeyDy0dEjZX7gv84l9X320SEqFCbw4U9+/sDRS0
+	kcyxSZq9RaZnkmjhyl4eUCCvcwsyzvIPhHiJRWGVLI=
+X-Virus-Scanned: amavisd-new at csh.rit.edu
+Received: from greygoose-centos7.csh.rit.edu ([127.0.0.1])
+ by localhost (mail.csh.rit.edu [127.0.0.1]) (amavisd-new, port 10026)
+ with ESMTP id l-_14F8ab49j; Thu,  2 Oct 2025 10:28:50 -0400 (EDT)
+Received: from ada.csh.rit.edu (ada.csh.rit.edu [129.21.49.156])
+	by greygoose-centos7.csh.rit.edu (Postfix) with ESMTPS id BAB9445735E9;
+	Thu,  2 Oct 2025 10:28:50 -0400 (EDT)
+Date: Thu, 2 Oct 2025 10:28:49 -0400
+From: Mary Strodl <mstrodl@csh.rit.edu>
+To: Tzung-Bi Shih <tzungbi@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linus.walleij@linaro.org, brgl@bgdev.pl,
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] gpio: mpsse: use rcu to ensure worker is torn down
+Message-ID: <aN6MIX54e49yALeO@ada.csh.rit.edu>
+References: <20250923133304.273529-1-mstrodl@csh.rit.edu>
+ <20250923133304.273529-2-mstrodl@csh.rit.edu>
+ <aN6F7Qw7wZAYpHCB@tzungbi-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aN6F7Qw7wZAYpHCB@tzungbi-laptop>
 
-Hi Linus,
+Hello!
 
-Probes fixes for v6.17
+On Thu, Oct 02, 2025 at 10:02:21PM +0800, Tzung-Bi Shih wrote:
+> The change looks irrelevant to the patch.
+I can put this in another patch in the series. I wasn't sure.
 
-- tracing: Fix race condition in kprobe initialization causing NULL
-  pointer dereference. This happens on weak memory model, which
-  does not correctly manage the flags access with appropriate
-  memory barriers. Use RELEASE-ACQUIRE to fix it.
+> I'm not sure: doesn't it need to use list_for_each_entry_safe() (or variants)
+> as elements may be removed in the loop?
+Absolutely! I noticed this too. Fix coming next revision :)
 
+> 
+> > +				/* Don't stop ourselves */
+> > +				if (worker == my_worker)
+> > +					continue;
+> > +
+> > +				scoped_guard(raw_spinlock_irqsave, &priv->irq_spin)
+> > +					list_del_rcu(&worker->list);
+> 
+> If RCU is using, does it still need to acquire the spinlock?
+I believe so, yes. My understanding is RCU lists are safe against unprotected
+reads, but you still need to protect list ops like add/remove:
+https://www.kernel.org/doc/html/latest/RCU/listRCU.html#example-1-read-mostly-list-deferred-destruction
 
-Please pull the latest probes-fixes-v6.17 tree, which can be found at:
+> Alternatively, could it use the spinlock to protect the list so that it doesn't
+> need RCU at all?
+Yes! That's what my next version will do.
 
+> I'm not sure: however it seems this function may be in IRQ context too (as
+> gpio_mpsse_irq_disable() does).  GFP_KERNEL can sleep.
+I worried about the same, but didn't actually follow up on it because I never
+ran into it. My bad. I will make this GFP_NOWAIT in the next revision.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
-probes-fixes-v6.17
+> > +		scoped_guard(raw_spinlock_irqsave, &priv->irq_spin)
+> > +			list_add_rcu(&worker->list, &priv->workers);
+> 
+> Doesn't it need a synchronize_rcu()?
+My understanding was that synchronize_rcu was a grace period delay, so you
+could be certain any readers after this point would get the new data.
+In this case, we don't care what the readers get. Now that I'm thinking
+about it though, maybe the irq loop should call synchronize_rcu first?
 
-Tag SHA1: 2149c55ea9e9bfeb93079f4ce53cb34afbf4d59a
-Head SHA1: 9cf9aa7b0acfde7545c1a1d912576e9bab28dc6f
+In any case though, this will be going away in my next version.
 
+> >  static void gpio_mpsse_disconnect(struct usb_interface *intf)
+> >  {
+> > +	struct mpsse_worker *worker;
+> >  	struct mpsse_priv *priv = usb_get_intfdata(intf);
+> > +	struct list_head destructors = LIST_HEAD_INIT(destructors);
+> > +
+> > +	/*
+> > +	 * Lock prevents double-free of worker from here and the teardown
+> > +	 * step at the beginning of gpio_mpsse_poll
+> > +	 */
+> > +	scoped_guard(mutex, &priv->irq_race) {
+> > +		scoped_guard(rcu) {
+> > +			list_for_each_entry_rcu(worker, &priv->workers, list) {
+> > +				scoped_guard(raw_spinlock_irqsave, &priv->irq_spin)
+> > +					list_del_rcu(&worker->list);
+> > +
+> > +				/* Give worker a chance to terminate itself */
+> > +				atomic_set(&worker->cancelled, 1);
+> > +				/* Keep track of stuff to cancel */
+> > +				INIT_LIST_HEAD(&worker->destroy);
+> > +				list_add(&worker->destroy, &destructors);
+> > +			}
+> > +		}
+> > +		/* Make sure list consumers are finished before we tear down */
+> > +		synchronize_rcu();
+> > +		list_for_each_entry(worker, &destructors, destroy)
+> > +			gpio_mpsse_stop(worker);
+> > +	}
+> 
+> The code block is very similar to block in gpio_mpsse_poll() above.  Could
+> consider to use a function to prevent duplicate code.
+Yeah I agree. I didn't really see a satisfying way to do it with the difference
+in scoped_guard vs scoped_cond_guard, though. Now that I'm thinking about it
+again though, I could just take everything inside the mutex guard and put
+that into a function.
 
-Yuan Chen (1):
-      tracing: Fix race condition in kprobe initialization causing NULL pointer dereference
-
-----
- kernel/trace/trace_fprobe.c | 10 ++++++----
- kernel/trace/trace_kprobe.c | 11 +++++++----
- kernel/trace/trace_probe.h  |  9 +++++++--
- kernel/trace/trace_uprobe.c | 12 ++++++++----
- 4 files changed, 28 insertions(+), 14 deletions(-)
----------------------------
-commit 9cf9aa7b0acfde7545c1a1d912576e9bab28dc6f
-Author: Yuan Chen <chenyuan@kylinos.cn>
-Date:   Wed Oct 1 03:20:25 2025 +0100
-
-    tracing: Fix race condition in kprobe initialization causing NULL pointer dereference
-    
-    There is a critical race condition in kprobe initialization that can lead to
-    NULL pointer dereference and kernel crash.
-    
-    [1135630.084782] Unable to handle kernel paging request at virtual address 0000710a04630000
-    ...
-    [1135630.260314] pstate: 404003c9 (nZcv DAIF +PAN -UAO)
-    [1135630.269239] pc : kprobe_perf_func+0x30/0x260
-    [1135630.277643] lr : kprobe_dispatcher+0x44/0x60
-    [1135630.286041] sp : ffffaeff4977fa40
-    [1135630.293441] x29: ffffaeff4977fa40 x28: ffffaf015340e400
-    [1135630.302837] x27: 0000000000000000 x26: 0000000000000000
-    [1135630.312257] x25: ffffaf029ed108a8 x24: ffffaf015340e528
-    [1135630.321705] x23: ffffaeff4977fc50 x22: ffffaeff4977fc50
-    [1135630.331154] x21: 0000000000000000 x20: ffffaeff4977fc50
-    [1135630.340586] x19: ffffaf015340e400 x18: 0000000000000000
-    [1135630.349985] x17: 0000000000000000 x16: 0000000000000000
-    [1135630.359285] x15: 0000000000000000 x14: 0000000000000000
-    [1135630.368445] x13: 0000000000000000 x12: 0000000000000000
-    [1135630.377473] x11: 0000000000000000 x10: 0000000000000000
-    [1135630.386411] x9 : 0000000000000000 x8 : 0000000000000000
-    [1135630.395252] x7 : 0000000000000000 x6 : 0000000000000000
-    [1135630.403963] x5 : 0000000000000000 x4 : 0000000000000000
-    [1135630.412545] x3 : 0000710a04630000 x2 : 0000000000000006
-    [1135630.421021] x1 : ffffaeff4977fc50 x0 : 0000710a04630000
-    [1135630.429410] Call trace:
-    [1135630.434828]  kprobe_perf_func+0x30/0x260
-    [1135630.441661]  kprobe_dispatcher+0x44/0x60
-    [1135630.448396]  aggr_pre_handler+0x70/0xc8
-    [1135630.454959]  kprobe_breakpoint_handler+0x140/0x1e0
-    [1135630.462435]  brk_handler+0xbc/0xd8
-    [1135630.468437]  do_debug_exception+0x84/0x138
-    [1135630.475074]  el1_dbg+0x18/0x8c
-    [1135630.480582]  security_file_permission+0x0/0xd0
-    [1135630.487426]  vfs_write+0x70/0x1c0
-    [1135630.493059]  ksys_write+0x5c/0xc8
-    [1135630.498638]  __arm64_sys_write+0x24/0x30
-    [1135630.504821]  el0_svc_common+0x78/0x130
-    [1135630.510838]  el0_svc_handler+0x38/0x78
-    [1135630.516834]  el0_svc+0x8/0x1b0
-    
-    kernel/trace/trace_kprobe.c: 1308
-    0xffff3df8995039ec <kprobe_perf_func+0x2c>:     ldr     x21, [x24,#120]
-    include/linux/compiler.h: 294
-    0xffff3df8995039f0 <kprobe_perf_func+0x30>:     ldr     x1, [x21,x0]
-    
-    kernel/trace/trace_kprobe.c
-    1308: head = this_cpu_ptr(call->perf_events);
-    1309: if (hlist_empty(head))
-    1310:   return 0;
-    
-    crash> struct trace_event_call -o
-    struct trace_event_call {
-      ...
-      [120] struct hlist_head *perf_events;  //(call->perf_event)
-      ...
-    }
-    
-    crash> struct trace_event_call ffffaf015340e528
-    struct trace_event_call {
-      ...
-      perf_events = 0xffff0ad5fa89f088, //this value is correct, but x21 = 0
-      ...
-    }
-    
-    Race Condition Analysis:
-    
-    The race occurs between kprobe activation and perf_events initialization:
-    
-      CPU0                                    CPU1
-      ====                                    ====
-      perf_kprobe_init
-        perf_trace_event_init
-          tp_event->perf_events = list;(1)
-          tp_event->class->reg (2)← KPROBE ACTIVE
-                                              Debug exception triggers
-                                              ...
-                                              kprobe_dispatcher
-                                                kprobe_perf_func (tk->tp.flags & TP_FLAG_PROFILE)
-                                                  head = this_cpu_ptr(call->perf_events)(3)
-                                                  (perf_events is still NULL)
-    
-    Problem:
-    1. CPU0 executes (1) assigning tp_event->perf_events = list
-    2. CPU0 executes (2) enabling kprobe functionality via class->reg()
-    3. CPU1 triggers and reaches kprobe_dispatcher
-    4. CPU1 checks TP_FLAG_PROFILE - condition passes (step 2 completed)
-    5. CPU1 calls kprobe_perf_func() and crashes at (3) because
-       call->perf_events is still NULL
-    
-    CPU1 sees that kprobe functionality is enabled but does not see that
-    perf_events has been assigned.
-    
-    Add pairing read and write memory barriers to guarantee that if CPU1
-    sees that kprobe functionality is enabled, it must also see that
-    perf_events has been assigned.
-    
-    Link: https://lore.kernel.org/all/20251001022025.44626-1-chenyuan_fl@163.com/
-    
-    Fixes: 50d780560785 ("tracing/kprobes: Add probe handler dispatcher to support perf and ftrace concurrent use")
-    Cc: stable@vger.kernel.org
-    Signed-off-by: Yuan Chen <chenyuan@kylinos.cn>
-    Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-
-diff --git a/kernel/trace/trace_fprobe.c b/kernel/trace/trace_fprobe.c
-index b36ade43d4b3..ad9d6347b5fa 100644
---- a/kernel/trace/trace_fprobe.c
-+++ b/kernel/trace/trace_fprobe.c
-@@ -522,13 +522,14 @@ static int fentry_dispatcher(struct fprobe *fp, unsigned long entry_ip,
- 			     void *entry_data)
- {
- 	struct trace_fprobe *tf = container_of(fp, struct trace_fprobe, fp);
-+	unsigned int flags = trace_probe_load_flag(&tf->tp);
- 	int ret = 0;
- 
--	if (trace_probe_test_flag(&tf->tp, TP_FLAG_TRACE))
-+	if (flags & TP_FLAG_TRACE)
- 		fentry_trace_func(tf, entry_ip, fregs);
- 
- #ifdef CONFIG_PERF_EVENTS
--	if (trace_probe_test_flag(&tf->tp, TP_FLAG_PROFILE))
-+	if (flags & TP_FLAG_PROFILE)
- 		ret = fentry_perf_func(tf, entry_ip, fregs);
- #endif
- 	return ret;
-@@ -540,11 +541,12 @@ static void fexit_dispatcher(struct fprobe *fp, unsigned long entry_ip,
- 			     void *entry_data)
- {
- 	struct trace_fprobe *tf = container_of(fp, struct trace_fprobe, fp);
-+	unsigned int flags = trace_probe_load_flag(&tf->tp);
- 
--	if (trace_probe_test_flag(&tf->tp, TP_FLAG_TRACE))
-+	if (flags & TP_FLAG_TRACE)
- 		fexit_trace_func(tf, entry_ip, ret_ip, fregs, entry_data);
- #ifdef CONFIG_PERF_EVENTS
--	if (trace_probe_test_flag(&tf->tp, TP_FLAG_PROFILE))
-+	if (flags & TP_FLAG_PROFILE)
- 		fexit_perf_func(tf, entry_ip, ret_ip, fregs, entry_data);
- #endif
- }
-diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
-index fa60362a3f31..ee8171b19bee 100644
---- a/kernel/trace/trace_kprobe.c
-+++ b/kernel/trace/trace_kprobe.c
-@@ -1815,14 +1815,15 @@ static int kprobe_register(struct trace_event_call *event,
- static int kprobe_dispatcher(struct kprobe *kp, struct pt_regs *regs)
- {
- 	struct trace_kprobe *tk = container_of(kp, struct trace_kprobe, rp.kp);
-+	unsigned int flags = trace_probe_load_flag(&tk->tp);
- 	int ret = 0;
- 
- 	raw_cpu_inc(*tk->nhit);
- 
--	if (trace_probe_test_flag(&tk->tp, TP_FLAG_TRACE))
-+	if (flags & TP_FLAG_TRACE)
- 		kprobe_trace_func(tk, regs);
- #ifdef CONFIG_PERF_EVENTS
--	if (trace_probe_test_flag(&tk->tp, TP_FLAG_PROFILE))
-+	if (flags & TP_FLAG_PROFILE)
- 		ret = kprobe_perf_func(tk, regs);
- #endif
- 	return ret;
-@@ -1834,6 +1835,7 @@ kretprobe_dispatcher(struct kretprobe_instance *ri, struct pt_regs *regs)
- {
- 	struct kretprobe *rp = get_kretprobe(ri);
- 	struct trace_kprobe *tk;
-+	unsigned int flags;
- 
- 	/*
- 	 * There is a small chance that get_kretprobe(ri) returns NULL when
-@@ -1846,10 +1848,11 @@ kretprobe_dispatcher(struct kretprobe_instance *ri, struct pt_regs *regs)
- 	tk = container_of(rp, struct trace_kprobe, rp);
- 	raw_cpu_inc(*tk->nhit);
- 
--	if (trace_probe_test_flag(&tk->tp, TP_FLAG_TRACE))
-+	flags = trace_probe_load_flag(&tk->tp);
-+	if (flags & TP_FLAG_TRACE)
- 		kretprobe_trace_func(tk, ri, regs);
- #ifdef CONFIG_PERF_EVENTS
--	if (trace_probe_test_flag(&tk->tp, TP_FLAG_PROFILE))
-+	if (flags & TP_FLAG_PROFILE)
- 		kretprobe_perf_func(tk, ri, regs);
- #endif
- 	return 0;	/* We don't tweak kernel, so just return 0 */
-diff --git a/kernel/trace/trace_probe.h b/kernel/trace/trace_probe.h
-index 842383fbc03b..08b5bda24da2 100644
---- a/kernel/trace/trace_probe.h
-+++ b/kernel/trace/trace_probe.h
-@@ -271,16 +271,21 @@ struct event_file_link {
- 	struct list_head		list;
- };
- 
-+static inline unsigned int trace_probe_load_flag(struct trace_probe *tp)
-+{
-+	return smp_load_acquire(&tp->event->flags);
-+}
-+
- static inline bool trace_probe_test_flag(struct trace_probe *tp,
- 					 unsigned int flag)
- {
--	return !!(tp->event->flags & flag);
-+	return !!(trace_probe_load_flag(tp) & flag);
- }
- 
- static inline void trace_probe_set_flag(struct trace_probe *tp,
- 					unsigned int flag)
- {
--	tp->event->flags |= flag;
-+	smp_store_release(&tp->event->flags, tp->event->flags | flag);
- }
- 
- static inline void trace_probe_clear_flag(struct trace_probe *tp,
-diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
-index 8b0bcc0d8f41..430d09c49462 100644
---- a/kernel/trace/trace_uprobe.c
-+++ b/kernel/trace/trace_uprobe.c
-@@ -1547,6 +1547,7 @@ static int uprobe_dispatcher(struct uprobe_consumer *con, struct pt_regs *regs,
- 	struct trace_uprobe *tu;
- 	struct uprobe_dispatch_data udd;
- 	struct uprobe_cpu_buffer *ucb = NULL;
-+	unsigned int flags;
- 	int ret = 0;
- 
- 	tu = container_of(con, struct trace_uprobe, consumer);
-@@ -1561,11 +1562,12 @@ static int uprobe_dispatcher(struct uprobe_consumer *con, struct pt_regs *regs,
- 	if (WARN_ON_ONCE(!uprobe_cpu_buffer))
- 		return 0;
- 
--	if (trace_probe_test_flag(&tu->tp, TP_FLAG_TRACE))
-+	flags = trace_probe_load_flag(&tu->tp);
-+	if (flags & TP_FLAG_TRACE)
- 		ret |= uprobe_trace_func(tu, regs, &ucb);
- 
- #ifdef CONFIG_PERF_EVENTS
--	if (trace_probe_test_flag(&tu->tp, TP_FLAG_PROFILE))
-+	if (flags & TP_FLAG_PROFILE)
- 		ret |= uprobe_perf_func(tu, regs, &ucb);
- #endif
- 	uprobe_buffer_put(ucb);
-@@ -1579,6 +1581,7 @@ static int uretprobe_dispatcher(struct uprobe_consumer *con,
- 	struct trace_uprobe *tu;
- 	struct uprobe_dispatch_data udd;
- 	struct uprobe_cpu_buffer *ucb = NULL;
-+	unsigned int flags;
- 
- 	tu = container_of(con, struct trace_uprobe, consumer);
- 
-@@ -1590,11 +1593,12 @@ static int uretprobe_dispatcher(struct uprobe_consumer *con,
- 	if (WARN_ON_ONCE(!uprobe_cpu_buffer))
- 		return 0;
- 
--	if (trace_probe_test_flag(&tu->tp, TP_FLAG_TRACE))
-+	flags = trace_probe_load_flag(&tu->tp);
-+	if (flags & TP_FLAG_TRACE)
- 		uretprobe_trace_func(tu, func, regs, &ucb);
- 
- #ifdef CONFIG_PERF_EVENTS
--	if (trace_probe_test_flag(&tu->tp, TP_FLAG_PROFILE))
-+	if (flags & TP_FLAG_PROFILE)
- 		uretprobe_perf_func(tu, func, regs, &ucb);
- #endif
- 	uprobe_buffer_put(ucb);
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Thanks a lot for taking a look! It's hard doing a critical reading of your own
+code, especially for concurrency/memory safety things :)
 
