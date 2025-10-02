@@ -1,90 +1,130 @@
-Return-Path: <linux-kernel+bounces-840440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2499CBB46EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 18:01:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 88E22BB46DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 18:01:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31F4516FD34
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 16:01:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 997F5168B20
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 16:01:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB84F23D287;
-	Thu,  2 Oct 2025 16:01:13 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D722D221FC7;
+	Thu,  2 Oct 2025 16:01:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="INDhLYg8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCE2819A288
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 16:01:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3408E19F127;
+	Thu,  2 Oct 2025 16:01:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759420873; cv=none; b=rBhWsMTYHl9UOXcAMlxw+2k1VkkZEXMHN3EqXf9Q/yIGZHP9/XMqInL+uF+RtmV1dZhBXKFxoRleWslfp2IlifG9zPA1xqbJD+sVtB/mJygxd3Tt62k4HcVXvh0tP/t+ltEAvhnzHEIlA9nt2OUZt2VPNALblXSv2VYYwr8tYW0=
+	t=1759420871; cv=none; b=HUYPV1FdGso+TIx+v1g9SZyl+vSSw4+Z2o+OY1NrnklHpBzghLchAmQ/2aD/z3BLAMoBqJc25JKLfDr5DXx6lknu5qQRMeGw3Wp6X1Bc3dSqLjiCrD4m6Xyd9r5VRw6182XAZZEb1ncOaoUBYlO2PCthN24SWbrEq9w9Zqb+vxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759420873; c=relaxed/simple;
-	bh=pwpIunB/Gn9W9822XlldlPaiFf3lZqrZtGB30QFjh3Y=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=f3f0H5SkmTvWQY6/zNbbFmacVtOmzV5tR1QpKS6DFLUBKeN+c8Y6wx4hGfGNla3Tp9K2EzbIramBZRcuxyyoL5ia/AaKPrwis4d9pV0PKl2pu1mqSTM9bfE5agVWoFdaAXpRZf/WWLNZ5SRJFMhVKZK/0KcEQQeiHTyieiqxmZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ccxN94xDqz67ww1;
-	Fri,  3 Oct 2025 00:00:41 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7E50E1400DB;
-	Fri,  3 Oct 2025 00:01:02 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 2 Oct
- 2025 17:01:00 +0100
-Date: Thu, 2 Oct 2025 17:00:59 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Raghavendra K T <raghavendra.kt@amd.com>
-CC: <AneeshKumar.KizhakeVeetil@arm.com>, <Michael.Day@amd.com>,
-	<akpm@linux-foundation.org>, <bharata@amd.com>, <dave.hansen@intel.com>,
-	<david@redhat.com>, <dongjoo.linux.dev@gmail.com>, <feng.tang@intel.com>,
-	<gourry@gourry.net>, <hannes@cmpxchg.org>, <honggyu.kim@sk.com>,
-	<hughd@google.com>, <jhubbard@nvidia.com>, <jon.grimm@amd.com>,
-	<k.shutemov@gmail.com>, <kbusch@meta.com>, <kmanaouil.dev@gmail.com>,
-	<leesuyeon0506@gmail.com>, <leillc@google.com>, <liam.howlett@oracle.com>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<mgorman@techsingularity.net>, <mingo@redhat.com>, <nadav.amit@gmail.com>,
-	<nphamcs@gmail.com>, <peterz@infradead.org>, <riel@surriel.com>,
-	<rientjes@google.com>, <rppt@kernel.org>, <santosh.shukla@amd.com>,
-	<shivankg@amd.com>, <shy828301@gmail.com>, <sj@kernel.org>, <vbabka@suse.cz>,
-	<weixugc@google.com>, <willy@infradead.org>, <ying.huang@linux.alibaba.com>,
-	<ziy@nvidia.com>, <dave@stgolabs.net>, <yuanchu@google.com>,
-	<kinseyho@google.com>, <hdanton@sina.com>, <harry.yoo@oracle.com>
-Subject: Re: [RFC PATCH V3 04/17] mm/kscand: Add only hot pages to migration
- list
-Message-ID: <20251002170059.00002045@huawei.com>
-In-Reply-To: <20250814153307.1553061-5-raghavendra.kt@amd.com>
-References: <20250814153307.1553061-1-raghavendra.kt@amd.com>
-	<20250814153307.1553061-5-raghavendra.kt@amd.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1759420871; c=relaxed/simple;
+	bh=AZPSBFYCIjS5xV6SLPct7R9cTCi/OTV+8qDbbOzqpIw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=VrWgjNEn/nBCwK8DHtpjPGaR2xeIs2aXWebWG4q8qxWnOpMHvENbZ8S+J3FDq3VuL6wBOLLZoT07pmZNyvUKX6vXC3OKo6cSGln/9CYre4MhhjxXPjC80ZiVtJdCnAlzDZzl1dj3eDMNMJSWIY3H7qIIUH95oHscIue+pjat+CU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=INDhLYg8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33AA4C4CEF4;
+	Thu,  2 Oct 2025 16:01:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759420869;
+	bh=AZPSBFYCIjS5xV6SLPct7R9cTCi/OTV+8qDbbOzqpIw=;
+	h=Date:From:To:Cc:Subject:From;
+	b=INDhLYg8Q0+sSmM5DC38E/vcwVrlswanWcgPKExgdQ+BQ1Bt8BvhsonbiQSADJojB
+	 W6VQ3kY8VhlIn5WcoG8gzIY6i6AhkmKobm4ilP1TwCBmglI/cMDRzVGrlk7byYr0oR
+	 sqbdTewbPlQ/gQ6BiUdiNxCiRpEvohNtCXHOraFbmFaiBJZJXjyw4xvqHuecMhjFlz
+	 f0zy3IFQuCZ3BvjFB6OnzuI3QcGQdEG46y9LXjHD89mh4w20RFHqG/G/Jhrnsb0/hq
+	 FIwqrMZSX/4EJWkB22EzuvmdOeiPhdOg1WkTgkM7eWaPtu7zKK0G/x3rJeuwmfb792
+	 r2urE3nXf2yug==
+Date: Thu, 2 Oct 2025 17:01:04 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Paolo Bonzini <pbonzini@redhat.com>, KVM <kvm@vger.kernel.org>
+Cc: Babu Moger <babu.moger@amd.com>, Borislav Petkov <bp@alien8.de>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Sean Christopherson <seanjc@google.com>, Xin Li <xin@zytor.com>
+Subject: linux-next: manual merge of the kvm tree with the origin tree
+Message-ID: <aN6hwNUa3Kh08yog@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100009.china.huawei.com (7.191.174.83) To
- dubpeml100005.china.huawei.com (7.214.146.113)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="dMCEnt+bT9Zc3PZR"
+Content-Disposition: inline
 
-On Thu, 14 Aug 2025 15:32:54 +0000
-Raghavendra K T <raghavendra.kt@amd.com> wrote:
 
->  Previously all pages, accessed once are added.
-> Improve it by adding those that are accessed second time.
-> 
-> This logic is closer to current NUMAB implementation
-> of spotting hot pages.
+--dMCEnt+bT9Zc3PZR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Trivial but wrap patch description longer.  75 chars it typical.
+Hi all,
 
-> 
-> Signed-off-by: Raghavendra K T <raghavendra.kt@amd.com>
+Today's linux-next merge of the kvm tree got a conflict in:
+
+  arch/x86/include/asm/cpufeatures.h
+
+between commit:
+
+  e19c06219985f ("x86/cpufeatures: Add support for Assignable Bandwidth Mon=
+itoring Counters (ABMC)")
+
+=66rom the origin tree and commit:
+
+  3c7cb84145336 ("x86/cpufeatures: Add a CPU feature bit for MSR immediate =
+form instructions")
+
+=66rom the kvm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc arch/x86/include/asm/cpufeatures.h
+index b2a562217d3ff,f1a9f40622cdc..0000000000000
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@@ -496,7 -497,7 +497,8 @@@
+  #define X86_FEATURE_TSA_L1_NO		(21*32+12) /* AMD CPU not vulnerable to TS=
+A-L1 */
+  #define X86_FEATURE_CLEAR_CPU_BUF_VM	(21*32+13) /* Clear CPU buffers usin=
+g VERW before VMRUN */
+  #define X86_FEATURE_IBPB_EXIT_TO_USER	(21*32+14) /* Use IBPB on exit-to-u=
+serspace, see VMSCAPE bug */
+ -#define X86_FEATURE_MSR_IMM		(21*32+15) /* MSR immediate form instruction=
+s */
+ +#define X86_FEATURE_ABMC		(21*32+15) /* Assignable Bandwidth Monitoring C=
+ounters */
+++#define X86_FEATURE_MSR_IMM		(21*32+16) /* MSR immediate form instruction=
+s */
+ =20
+  /*
+   * BUG word(s)
+
+--dMCEnt+bT9Zc3PZR
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjeob8ACgkQJNaLcl1U
+h9BB9wf+ORnhBeVabhjjATUrOjlox0RBiVs7xg381xsH/sMNw79c9YxMKyFVhzlI
+4vz4+KahOaXqfKPKWHYyHcb6RTd1knf/V9uBSP8A/7sz4kBhL8Q6cRBFyWemRPqD
+mRqfX8bTrmixW468VS08Mtx5/hGOKRxjdrnSba0JddD8ORWiv90uv+PoNkqUpDb1
+VDCwv2UUjW5+9EZYWQE/fdEhJzYw+JaHxhvwOCZLZ+Td7dZQcg2eQhid6ujT4lGP
+558YFCX9+ztvB5QHjV8csNfR8H5pIRds4Yp0HV2m5Ew/eoUnGTfvUWo1oG0Khn4n
+Rg4VU6XLG7HfayNw96wnzUwBEZbhWw==
+=tfMq
+-----END PGP SIGNATURE-----
+
+--dMCEnt+bT9Zc3PZR--
 
