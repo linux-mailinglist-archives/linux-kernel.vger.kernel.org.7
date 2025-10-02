@@ -1,88 +1,64 @@
-Return-Path: <linux-kernel+bounces-840827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89054BB5827
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 23:52:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 21019BB5832
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 23:55:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5DF394E5F99
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 21:52:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E49CB4E5FDF
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 21:55:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDDE32641E7;
-	Thu,  2 Oct 2025 21:52:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 430EA2550A3;
+	Thu,  2 Oct 2025 21:55:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="chc9yJ/K"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c8Z/qd+t"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85F311DB122
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 21:52:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02D3AC148;
+	Thu,  2 Oct 2025 21:55:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759441945; cv=none; b=QC9URM1AuJStS1Gz3uhqTfTQxB3egh84owqdPPPrIJQNkoqI2uOmnrgPl/I5XqQWkWPX8cjP3bNrAkRYWUpu5NeAnXABERcYy0NTrx5yg0LWw9a8pgy3XlLJG3qWwDdkUsCYnoguoRGFiFrO3NpRF3NczCkyN5vV/egKkhF40bA=
+	t=1759442114; cv=none; b=J216YQ8VpxM684AfKrVDiXY7GDuI3izf9Hr7Kxbshzy+ofFzMAdMuP8Rrvw4Z/nqr9/g/KHRDX9PHxIPedwPVAIRr9FJ9qtRxNwPTNZOBrpL3J4XCUbfBTv/yIdXJPcCi63uwCSm2xNXU/+Kr0CXNiQ6KuZ3PGzUappfzsCKC28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759441945; c=relaxed/simple;
-	bh=NIz7qPlfFJG/HN+nuGY6ykVtXvMslI+s24hTeB2sKsU=;
+	s=arc-20240116; t=1759442114; c=relaxed/simple;
+	bh=JDcRs6+zRQiNrOxwCHsp7I1LN2ceT5/4riCi9udQYGY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OdHJvtUz0dWzFWwfK6qvhg3uxGG35xHw+Ao7olnhxwN8CFguuce1jhcCDbhmXGTMSVfVVxhHS/XCdAs7h8Y6uzaqFVMffxLlaDg73JfAz35JaXyyXXokZerN9tZ7RLv2i3KjTaCCxYGjCulJM9/FG15k2wKBClH1kpCGuRw9co0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=chc9yJ/K; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59298mbB023424
-	for <linux-kernel@vger.kernel.org>; Thu, 2 Oct 2025 21:52:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	4jqMHq5TfRmj3TbrSeyiMOMkIWH6OS1IpBWFPEro1KI=; b=chc9yJ/KgXIArOvy
-	TnPszPDn5q4GGOCo4s5IIg8OwAR4IgmNYT9C9U3IgoAAOEiWBKWII9ahx+a9l+yE
-	i3/sywBuGh2b0HASnRdgdBqYo4N+qZPjnv+6eEL+HXOyP8SWfMgnEbqiBn9zyiRh
-	Gg9t1vQKmRZNMmnOftNxPNHpr6SmrgIpK+dlHlZjk5XHMIW0erzNnWyBhE1n461a
-	U4yyHIgGvntxlPMLXgjnK2shwmqGCaAzrRjoPsiMDIVp1LMsOKp880RFSoJx5V8p
-	TXVvkwDAR7z6h1FDhN7mT6pNXa/WH664xeP0NZquXIipFXOJOQE8DO1U55ZBYi3s
-	GDte6A==
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e9780wry-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 21:52:22 +0000 (GMT)
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-3309eab05d3so396904a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 14:52:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759441942; x=1760046742;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4jqMHq5TfRmj3TbrSeyiMOMkIWH6OS1IpBWFPEro1KI=;
-        b=grTl+Ri1CGOhisOyHRcaoLv8qcy5GYZtUVOzWOCHyerC1p84vV3j305O9oPLkvk42O
-         SAM8k/g2I0CvHfXj2R9522m4NVCoJu38M+ok0OpvwwR0xPuy5vzl/1rRERYw7174tnHo
-         Njfi4IGlWkIMJdiDGD3Cv06wbNYA3LD30ADAvaA0LF3RhDXDMLlAfAOrO3s1un31oHjj
-         fw24i5VEA4PqaGjfhFV29u4gRe2cm86Gj5W376GCDTqpIwIFZeSOKRzqa9U4lSSoxKMS
-         vm7rAs/rfjrUv+6n5APflJAVVwuI0Sn0JEWxItknHiGJ63gsCWILFpZQc+ndcqHpSHWk
-         qgpg==
-X-Forwarded-Encrypted: i=1; AJvYcCWVsXx1yG6U31jurlu9qezZk2QFamg/dmJHOffHB8WcBRC70YCpDgqvb5huMYnqtRYxYt5y1HvTKN2kx3I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxpk2aIljm5LLX9rgciwDCL+BiwImZWV/Nb0BBgC3SEapko+7Dr
-	TyNsb7XEHVNECqp+UwFoHRcDb8lSeR0TNCS8r5xygwRtCUOsu0drYhZePqW21ScpanEsfmE/ryN
-	DLTv2+7YwseX6cf3Ofyv2xWJJt+KPiiqui3BHo5sVb8MBLdYIw6zqzytxsWYFX69UF2EVdGKAyF
-	U=
-X-Gm-Gg: ASbGncvF7Toq8T4JiePx+Y3x3OR9Jf2h9+m6H4KHgpv7ryNlHM77iBAJg4Rv8+gRYIr
-	VIc6kFd2HQuuzwhfRjG9L0IRfzT9Oh/aacJIJFQjQ2NoqPaNnWv8c1MimWgoRdmUJeDHmcRoGfj
-	RMZvC1jBk8LABZ3fTU6LChVA19TVCGyL7jl4W1i7aewpw5bpoQiIwT1u4isDWQ1tS0ux6GCb5dV
-	8KCjPaYKnoa2c10EoZ4F3DqHE2aM0nE5jZ1DK6Vlw5BzkSrDENSI2Hz6lQZujiX6kfDVosvsoCD
-	xgmnZxwtUEEkpykkrkCP4MHMKeJy/vvpRGorcqKcsA72Gg18z610PPv1sFjT8RVBGSQoT3woEJ1
-	OqqqEYFsev7YPK0rN7U/eMd12wn3T4SAk
-X-Received: by 2002:a17:90b:3ec2:b0:330:68e3:ce7e with SMTP id 98e67ed59e1d1-339c276da6amr451945a91.2.1759441941683;
-        Thu, 02 Oct 2025 14:52:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFT8xRXZ+4q0hThcIHkyNTAl5biizcaSooNRPVF8MFksLOncOW7VixIeqV7oJFecz027FfPsg==
-X-Received: by 2002:a17:90b:3ec2:b0:330:68e3:ce7e with SMTP id 98e67ed59e1d1-339c276da6amr451936a91.2.1759441941234;
-        Thu, 02 Oct 2025 14:52:21 -0700 (PDT)
-Received: from [10.71.110.242] (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-339a701bf79sm5849439a91.20.2025.10.02.14.52.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Oct 2025 14:52:20 -0700 (PDT)
-Message-ID: <bebe83bf-bfd7-437f-9820-c907a12d5624@oss.qualcomm.com>
-Date: Thu, 2 Oct 2025 14:52:19 -0700
+	 In-Reply-To:Content-Type; b=Khk3sK9Gd81FKlI1cefKEg7XjE2nDnsGIUBITm1toYnzVVQWo/4m2TxRTYXdancSFl9bugZ9adsafJ/9Ai8hymWeo0ZUaSOwbTfxhLef8AxnNiLNe0ld/XKhJ46VgTOAkIfg3VmqNHk0Om5C+52eTYytsgF/ydfhQXgWVMEdD8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c8Z/qd+t; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759442113; x=1790978113;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=JDcRs6+zRQiNrOxwCHsp7I1LN2ceT5/4riCi9udQYGY=;
+  b=c8Z/qd+tVB8n9HLCjk9T3qKSB7p9caruucdQ/RofRHdX/V3wYJ/F9Gka
+   a5U4+DTxQDgs2lOvHU9k8DFxWQxBDOOJoyQV9G/5fPOGcEFS2kUr5z19D
+   iR+01KAZGBaN9ia5wHetUhHjVLhEP4rvvUq4kOiXaIvXgjynf3Z25QguM
+   VM6Ds+TtC+yScwFMA7O2khFL2fbqeBiKQhYtaBrjAQrY3na1/REJWssTp
+   9tTbPQwsebptsGNcbUEjWtxQAZsVdlNHNkcpMg5HMGa/3ZwDojmaTmEgN
+   bf13CP+oazGpPYjVuve3GoRvADLD1xU0cU5PBDLWCbX9Y0gXgQa/7hNH7
+   g==;
+X-CSE-ConnectionGUID: wjenKAWuRnOPqhfhmTItbA==
+X-CSE-MsgGUID: 40YSu5PiTK24/gptvxJZGg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11570"; a="61835595"
+X-IronPort-AV: E=Sophos;i="6.18,310,1751266800"; 
+   d="scan'208";a="61835595"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2025 14:55:08 -0700
+X-CSE-ConnectionGUID: oTa4cDHKSSux9ZIhphlFgg==
+X-CSE-MsgGUID: rGMAOhdQS4+8ii9/PYoYzQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,310,1751266800"; 
+   d="scan'208";a="184341681"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO [10.125.109.249]) ([10.125.109.249])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2025 14:55:08 -0700
+Message-ID: <a2be781f-96b5-47d1-81fa-b20395ca293a@intel.com>
+Date: Thu, 2 Oct 2025 14:55:07 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,125 +66,116 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] media: uapi: videodev2: Add support for AV1 stateful
- decoder
-To: Nicolas Dufresne <nicolas@ndufresne.ca>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
-        Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Bryan O'Donoghue <bod@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-References: <20251001-av1_irisdecoder-v1-0-9fb08f3b96a0@oss.qualcomm.com>
- <20251001-av1_irisdecoder-v1-1-9fb08f3b96a0@oss.qualcomm.com>
- <dfe8bdbbf12ec54c7a27888f911082ab63d6030f.camel@ndufresne.ca>
+Subject: Re: [PATCH 6/8] CMDLINE: x86: convert to generic builtin command line
+To: "Daniel Walker (danielwa)" <danielwa@cisco.com>
+Cc: Will Deacon <will@kernel.org>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>, Rob Herring
+ <robh@kernel.org>,
+ Daniel Gimpelevich <daniel@gimpelevich.san-francisco.ca.us>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Pratyush Brahma <quic_pbrahma@quicinc.com>,
+ Tomas Mudrunka <tomas.mudrunka@gmail.com>,
+ Sean Anderson <sean.anderson@seco.com>, "x86@kernel.org" <x86@kernel.org>,
+ "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+ "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>,
+ "xe-linux-external(mailer list)" <xe-linux-external@cisco.com>,
+ Ruslan Ruslichenko <rruslich@cisco.com>,
+ Ruslan Bilovol <ruslan.bilovol@gmail.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20231110013817.2378507-1-danielwa@cisco.com>
+ <20231110013817.2378507-7-danielwa@cisco.com>
+ <00c11f75-7400-4b2a-9a5d-10fc62363835@intel.com> <aN7n_5oiPjk-dCyJ@goliath>
+ <c8b65db3-a6cf-479d-9a83-23cbc62db1ef@intel.com> <aN7vKgcUeQgCFglQ@goliath>
+From: Dave Hansen <dave.hansen@intel.com>
 Content-Language: en-US
-From: Deepa Guthyappa Madivalara <deepa.madivalara@oss.qualcomm.com>
-In-Reply-To: <dfe8bdbbf12ec54c7a27888f911082ab63d6030f.camel@ndufresne.ca>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: cNogX9yYay62hg10lBLu4UUJz1d8EpiI
-X-Proofpoint-ORIG-GUID: cNogX9yYay62hg10lBLu4UUJz1d8EpiI
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDA0MyBTYWx0ZWRfX5v17eb1y/uVS
- wN2zDuqh283kkJK2vp2mRFXw4hN+6pWEolsBZr/DKFcctQZogvylY8jXyhekUiG5d46GcSb8kx8
- 7fkse4zOm7uKRoFwH5ShZf0V4rCKLagkxk+iRDHL/7rxXtLmDJedNM9a1UkNySoYdztp2Sinvwx
- S0SaEtbM2QEs0448DmMMNVyGb+y3Bp/7JytjCdHi6+u1laVv7Oyee/WNW7OkjaprSbuGLY0cZQB
- RWX/b4Ab6B4JFKvMUfUfU0WCnU2G1XK88Jc/r73VY32rkHfZHR2X7m+tx3B0TqGUog4LlDahyL2
- QobMbWn0frYLVrzlssmL/Uicmtxy/P8VV9UTlOzN1mrwFcNfoaF7kAlek0XlDOgXfQbHyVu3v6G
- B/BCwEHOY9lPN8cFQR7nEGo21d1hUA==
-X-Authority-Analysis: v=2.4 cv=Sf36t/Ru c=1 sm=1 tr=0 ts=68def416 cx=c_pps
- a=RP+M6JBNLl+fLTcSJhASfg==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=KIgxDb2ibSJr1G8uLA8A:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=iS9zxrgQBfv6-_F4QbHw:22
- a=HhbK4dLum7pmb74im6QT:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-02_08,2025-10-02_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 bulkscore=0 suspectscore=0 adultscore=0 spamscore=0
- priorityscore=1501 malwarescore=0 lowpriorityscore=0 phishscore=0
- impostorscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2509150000
- definitions=main-2509270043
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <aN7vKgcUeQgCFglQ@goliath>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 10/2/25 14:31, Daniel Walker (danielwa) wrote:
+...
+>> BTW, your series looks like a *really* good idea. Please don't let it
+>> die. But you might want to trim it down a bit. I'd probably remove the
+>> tests and the 'insert-sys-cert' changes to make it more approachable to
+>> folks.
+> 
+> Since x86 is asking for it I think it would trim it down to just
+> what is needed for x86. If I don't trim down the architectures it
+> ropes in too many people anyway.
 
-On 10/2/2025 12:42 PM, Nicolas Dufresne wrote:
-> Hi,
->
-> Le mercredi 01 octobre 2025 à 12:00 -0700, Deepa Guthyappa Madivalara a écrit :
->> Introduce a new pixel format, V4L2_PIX_FMT_AV1, to the
->> Video4Linux2(V4L2) API. This format is intended for AV1
->> bitstreams in stateful decoding/encoding workflows.
->> The fourcc code 'AV10' is used to distinguish
->> this format from the existing V4L2_PIX_FMT_AV1_FRAME,
->> which is used for stateless AV1 decoder implementation.
->>
->> Signed-off-by: Deepa Guthyappa Madivalara <deepa.madivalara@oss.qualcomm.com>
->> ---
->>   Documentation/userspace-api/media/v4l/pixfmt-compressed.rst | 8 ++++++++
->>   include/uapi/linux/videodev2.h                              | 1 +
->>   2 files changed, 9 insertions(+)
->>
->> diff --git a/Documentation/userspace-api/media/v4l/pixfmt-compressed.rst
->> b/Documentation/userspace-api/media/v4l/pixfmt-compressed.rst
->> index
->> 806ed73ac474ce0e6df00f902850db9fd0db240e..043ec57d7d48a36005f2a0121a5bc7b733d0
->> 6590 100644
->> --- a/Documentation/userspace-api/media/v4l/pixfmt-compressed.rst
->> +++ b/Documentation/userspace-api/media/v4l/pixfmt-compressed.rst
->> @@ -274,6 +274,14 @@ Compressed Formats
->>           of macroblocks to decode a full corresponding frame to the matching
->>           capture buffer.
->>   
->> +    * .. _V4L2-PIX-FMT-AV1:
->> +
->> +      - ``V4L2_PIX_FMT_AV1``
->> +      - 'AV10'
->> +      - AV1 compressed video frame. This format is adapted for implementing
->> AV1
->> +        pipeline as stateful video decoder. The decoder expects one Temporal
-> I would do a small edit here. Instead of stating that this is for decoders, I
-> would rather document the intended behaviour for video codec. This way the spec
-> remains open for CAPTURE driver to produce AV1 in the future, or OUTPUT driver
-> consuming it in the future.
->
->> +        Unit per buffer from OBU-stream or AnnexB.
->> +        The encoder generates one Temporal Unit per buffer.
-> Otherwise I'm fine with the proposal of using TU aligned. Similar to other
-> codecs, we can always allow adapting the behaviour using controls, keeping this
-> as the mandatory default so it just works regardless of the HW we run on.
->
-> regards,
-> Nicolas
+That's not a bad idea. Or, even if you can pick two amenable
+architectures to start with it will make it really obvious that this is
+useful. Two architectures means a *lot*, IMNHO. Two is a billion times
+better than one.
 
-Agreed. Thank you. I will update it in the next patch.
+> The biggest issue is that libstub would need to be modified, but
+> I've never had any luck getting the libstub maintainer to review
+> anything. I suspect he would ignore private email too, particularly
+> from people he's doesn't know.
 
-Regards,
-Deepa
+Are you talking about Ard?
 
->>   .. raw:: latex
->>   
->>       \normalsize
->> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
->> index
->> becd08fdbddb857f8f2bf205d2164dc6e20e80b2..4c07ad6afd45d6a56d19d65fd25f091d8172
->> 5823 100644
->> --- a/include/uapi/linux/videodev2.h
->> +++ b/include/uapi/linux/videodev2.h
->> @@ -775,6 +775,7 @@ struct v4l2_pix_format {
->>   #define V4L2_PIX_FMT_H264_SLICE v4l2_fourcc('S', '2', '6', '4') /* H264
->> parsed slices */
->>   #define V4L2_PIX_FMT_HEVC_SLICE v4l2_fourcc('S', '2', '6', '5') /* HEVC
->> parsed slices */
->>   #define V4L2_PIX_FMT_AV1_FRAME v4l2_fourcc('A', 'V', '1', 'F') /* AV1 parsed
->> frame */
->> +#define V4L2_PIX_FMT_AV1      v4l2_fourcc('A', 'V', '1', '0') /* AV1
->> (stateful) */
->>   #define V4L2_PIX_FMT_SPK      v4l2_fourcc('S', 'P', 'K', '0') /* Sorenson
->> Spark */
->>   #define V4L2_PIX_FMT_RV30     v4l2_fourcc('R', 'V', '3', '0') /* RealVideo 8
->> */
->>   #define V4L2_PIX_FMT_RV40     v4l2_fourcc('R', 'V', '4', '0') /* RealVideo 9
->> & 10 */
+	EXTENSIBLE FIRMWARE INTERFACE (EFI)
+	M:      Ard Biesheuvel <ardb@kernel.org>
+	L:      linux-efi@vger.kernel.org
+	S:      Maintained
+	...
+	F:      drivers/firmware/efi/
+	F:      include/linux/efi*.h
+
+He's a pretty nice guy and has been active in this thread, so I'm kinda
+surprised to hear you're having a hard time there. I'd just try asking
+nicely. I'm pretty sure he's "ardb" on the usual IRC networks. IRC is a
+great alternative when you're having problems getting your emails seen
+in the normal email flood.
+
+BTW, reading the changelog for libstub, it wasn't clear to me that
+changes there were _required_ for the series to go forward. For
+instance, is the x86 patch useful without libstub changes?
 
