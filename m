@@ -1,130 +1,184 @@
-Return-Path: <linux-kernel+bounces-840492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D11CCBB48A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 18:29:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81078BB4877
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 18:26:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C2DB3B45D4
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 16:29:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 467C07B6916
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 16:23:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B31325A642;
-	Thu,  2 Oct 2025 16:29:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21DFF25F994;
+	Thu,  2 Oct 2025 16:25:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T6XkexEv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KrtQrtZo"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E52DE258CFF;
-	Thu,  2 Oct 2025 16:29:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01DF92580E2
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 16:25:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759422565; cv=none; b=C+utCPC3foB8nOWshwMqbmaZ+7YdYu2wUpLZTMP9h+g8FwpXNKgwnj0W5FVZMTtTF1NYsZO+G0LShhuhSDZ5f8ARvTnc/aCF4n99zoZVjBVLlErDnUJ02UPMFGF5fi6r7poVzY1zMLy6ixBYRufEYNSN4gFZ8OvUUhKEVwtNfUk=
+	t=1759422317; cv=none; b=s3VdxDQ+dUH/j2TnR/M6qpCBUNFsLErAyN4ksUF3CODyvnnTlDXrGnvU2ZQSdAKfCOBLhZ3ZXjRwlLp0pWC7P5eCTQDu8dQj1TCTh3e/5kQE2gcB4xQURuxAkkAJIfxiLQdhNDOZUkBIyqm08UcBsxBLL95qlokHEnXQZ8z1cVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759422565; c=relaxed/simple;
-	bh=ZdjGzAzswD18S4BdgOHHvvyUqBw7n9vpfh3cd3YKYvs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FHSF+XzaOv7d8QaANDlDpIpTHSlo3Ko8CXv7LSk4ZtWTzjfMKUhHaw63Dt6J0amWQzZQ1kv7lQFchV/0rajSPmXf3iMJN8fJextoFRF5/iQkz82/jp48TPyoNb2QUXrVYq4L199ZkkYJ0m26lfrH5UnVWyPFBgdJUXM4sTEdy24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T6XkexEv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2EA6C4CEFC;
-	Thu,  2 Oct 2025 16:29:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759422564;
-	bh=ZdjGzAzswD18S4BdgOHHvvyUqBw7n9vpfh3cd3YKYvs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=T6XkexEv43I/dUlxhbUjMlqGhiJ8YjzlcX2+eKh0oUV/6g+/pX9ViiWZ6gJWxQm66
-	 Qa4ulO0Q3ADKuWOu9hzE/TGq+Tw+HG20P9kblRIsRACM7TRI/Yihz1ukZIkj+SOT40
-	 jLaVFrbmWCVd/9RBRkBgeP3HWe4VIAgRphmodnhonuzpl9WItmzffCT24dHr8hg5ix
-	 KyrayACY5D3kT5cXWemgcB4PB6aGsT8BYiuYKRxj9FIGSRvACMFNAOEkaM8k2Xssu6
-	 WHFtIVbkYYvKXIWqlaTYIca637YDaPsTmZRZrOwcwJsgmqhr9JxkUQbi1MDR9e/6iS
-	 vnOjKDMqWsr8w==
-Date: Thu, 2 Oct 2025 17:29:19 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org,
-	biju.das.jz@bp.renesas.com,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Liam Girdwood <lgirdwood@gmail.com>, linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 07/18] regulator: devres: Disable exclusive regulator
- before releasing
-Message-ID: <ae2701a5-8662-47d3-81fa-30e832600423@sirena.org.uk>
-References: <20251001212709.579080-1-tommaso.merciai.xr@bp.renesas.com>
- <20251001212709.579080-8-tommaso.merciai.xr@bp.renesas.com>
+	s=arc-20240116; t=1759422317; c=relaxed/simple;
+	bh=Dye5xG6ZBlkFS8UnTaxhmHjl4qw3h7OPv8XQMDNn3/M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=abEjTLOwBLMCUy3WaIPGIUOYjj9sBVgrLOCsVyiENGfF1ZlDPKrDMF6+J+S9A6a+MLjcdwPAfR9rAbhHX6DE3LBQcw395l2JdtAh3SxCppxnaIj1amdMQTzA9gnSNbwvJyqPgkWsQJvml17oGfhEq35xuOWXxCqUbQRy80Q1igg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KrtQrtZo; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7841da939deso1233429b3a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 09:25:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759422315; x=1760027115; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3b4jK+m/8RWobuO0NphPEVc1dDtXHYNNnhWnKlc2Ffk=;
+        b=KrtQrtZopp5TgSs97FnKYffUrlLK6trfIlDj0zUSiMIJPEZsCWGvMQ8OW+DrWurZvs
+         tZi+BNnHABWOH6hDccKKsu12U2aOGhLKfb3Dbnmu0X1A5TNxUvbLBpVisK6XyQHra5ol
+         uQq55jk3YMhADvoQBmj6FfYyHWGfkXyisOgwn+1NVw1PCQ7y2X7QMHJ8mB3CcQSd8Gc6
+         6SZ/B+JIcoWemc/N31qDc43UR7Vz9gDOkzCSBkwww0vTyG3D/1IyF/URvKplNMUOBVVm
+         LDoH0BkfomkaxSf2CGti5uE6/Kvof4diFiDPz2F8arWZNqXjUp00sEW0fWPQpbPDJJfR
+         8Jhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759422315; x=1760027115;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3b4jK+m/8RWobuO0NphPEVc1dDtXHYNNnhWnKlc2Ffk=;
+        b=IyW7QVUO0tfN7ggciq2ns4KyPWlU1A02FvVdumvsln/zZHUze5iPFAGme22YaMH6Df
+         S4aDs2B5AHo6VtK+lK272Efo7TxujYryTjpZUoQz3YDAsZS3SeFf3HWm5aD8k/UU9bm+
+         WrVam1g+pFLVISGGRDnZecpaVhe9yNqlxfRTulv/O0UyHwroUu1a/gIqQD7mOQ5PLZF5
+         ZCjeqWnRQMUYlxRsu2a2vj5TCCgLIBhdweA/33yjgoSgcirHd7mg4Hn4POwNTRlWd3yI
+         Ku8PY/hOlLTqRBGJm0WJ1TWW9oQBr8Eyq6xZOFdxQ4ETQW8gzcY4Ny6fI6VNc90pUydz
+         lRpw==
+X-Forwarded-Encrypted: i=1; AJvYcCX8ELYUUtAww+h8w1GyqJu9SFqrwoM6FpuXFdge33fsMU9pY/JrNW1cE49Wr6U83N2e0eOkr6B7WaKqqFU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdMVKBofM7oB+Ms4NHo9XLXSyLwCl9vVDF/70NJyZ8uZpS7iHG
+	rz8zJwKKsXywr0yuZxz/3yoLdG88ZBhFKFt6PsML/I/HurgRBAyTJjjzEnlCqulXQTUUryftmGv
+	fUtX7V6LHn3jx42P2dBN6PL9RmRz0syI=
+X-Gm-Gg: ASbGncvgBmDVV6H3a4V/WDE5ly6uYNiplodjDsOHpYMFhlrFMEfDlO4oghV2tRH0xyY
+	aFmUdnkQgsxei0DF5mPlu/Kor+ak3/+Wll3wwIMrzyrXLzbhgVauFN0dj+Lpb0f4AhvsHTT8UQr
+	0lJU6YQreO46LBeXZP2c9AAhWYPoW7F9X+aIARLpVf4uA0HR3jQ+w6uuLNRo5VKNSj8lubi2Kd0
+	5n4HgWWUj/nPYX1b8jZyxjUKMH1tPw=
+X-Google-Smtp-Source: AGHT+IHE/zk/UTkg8cQuQgjzmknU1P4NQ77O2Frb3S1sd6aKc/XPDhOrrz+zfZ4f19CBYGkA2+apVfUO9bhD8Hpgsxo=
+X-Received: by 2002:a17:90b:4d08:b0:335:2b86:f319 with SMTP id
+ 98e67ed59e1d1-339a6f76fdcmr9571286a91.35.1759422315195; Thu, 02 Oct 2025
+ 09:25:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="i0yfqqcy8kkWDcUy"
-Content-Disposition: inline
-In-Reply-To: <20251001212709.579080-8-tommaso.merciai.xr@bp.renesas.com>
-X-Cookie: idleness, n.:
+References: <20250818-imx8_isi-v1-1-e9cfe994c435@gocontroll.com>
+ <20250820140154.GB6190@pendragon.ideasonboard.com> <a9283349-c58d-47e6-ac33-77b5a6b893fe@gocontroll.com>
+ <20250820141439.GA10547@pendragon.ideasonboard.com>
+In-Reply-To: <20250820141439.GA10547@pendragon.ideasonboard.com>
+From: ChaosEsque Team <chaosesqueteam@gmail.com>
+Date: Thu, 2 Oct 2025 12:30:12 -0400
+X-Gm-Features: AS18NWDGHOBDrSguIYms66P-zFEY8uoL7wGfB2jgVSBuHpouvKYa_JLzhedGeUA
+Message-ID: <CALC8CXf2RTYz2YjbFHsbdjDSSAt3Jdv1NBbBQs4jRPmwkuUuXA@mail.gmail.com>
+Subject: Re: [PATCH] media: nxp: imx8-isi: Check whether pad is non-NULL
+ before access
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Maud Spierings <maudspierings@gocontroll.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Stefan Riedmueller <s.riedmueller@phytec.de>, 
+	Jacopo Mondi <jacopo@jmondi.org>, Christian Hemp <c.hemp@phytec.de>, Guoniu Zhou <guoniu.zhou@nxp.com>, 
+	Dong Aisheng <aisheng.dong@nxp.com>, linux-media@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Maud... Laurent
+Yea you a Mad Lad.
 
---i0yfqqcy8kkWDcUy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Wed, Oct 01, 2025 at 11:26:51PM +0200, Tommaso Merciai wrote:
-
-You've not copied me on the rest of the series so I don't know what's
-going on with dependencies.  When sending a patch series it is important
-to ensure that all the various maintainers understand what the
-relationship between the patches as the expecation is that there will be
-interdependencies.  Either copy everyone on the whole series or at least
-copy them on the cover letter and explain what's going on.  If there are
-no strong interdependencies then it's generally simplest to just send
-the patches separately to avoid any possible confusion.
-
-> Ensure that exclusive regulators are properly disabled when their reference
-> count drops to one before they are released. This prevents possible issues
-> where exclusive regulators may remain enabled unintentionally after being
-> put.
-
-The reason we don't normally drop references that devices hold is that
-we're allowing the driver to control if the suppy should be disabled on
-exit, powering off something that's critical for the system just because
-we're not managing it in software won't go well.  Consider reloading a
-module during development for example.
-
->  static void devm_regulator_release(struct device *dev, void *res)
->  {
-> -	regulator_put(*(struct regulator **)res);
-> +	struct regulator *regulator = *(struct regulator **)res;
-> +	struct regulator_dev *rdev = regulator->rdev;
-> +
-> +	if (rdev->exclusive && regulator->enable_count == 1)
-> +		regulator_disable(regulator);
-> +
-> +	regulator_put(regulator);
->  }
-
-There's no reason that exclusive consumers don't use the refcounting
-support...
-
---i0yfqqcy8kkWDcUy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjeqF4ACgkQJNaLcl1U
-h9AMAAf/a7/Dl+mOSWjlNwJXNN3O9dRt53M6R2nyZ1lFI1ywA3IBNahOsbu9H52m
-IC6X22AbKWOS3PBZxA3SJzkNlA9x08/X1AKn+vasCb5Z33B/Ec5I8PvloSIYJrdu
-HwJAhuAMOMa1nIvHSXdK7snlDRgwxMOsyEEOkNYFFFkGaLsmGiiTDe6p5mI05e6w
-3rm6ml9GEaw4yt0OGhCCBDZd8u+e79hNi51Vpw4lC8pwMJi3YrpkXb6mXdXD0Y3e
-6fwmNZasbMIC6CYxxJD34jT17tZ9edOo2lg29Q/BzUFm0wEBW0XVWdM/e4RsfM/1
-H75apJLagMYuTi325sMN0jpzEyQ79g==
-=zosJ
------END PGP SIGNATURE-----
-
---i0yfqqcy8kkWDcUy--
+On Wed, Aug 20, 2025 at 10:19=E2=80=AFAM Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+>
+> On Wed, Aug 20, 2025 at 04:07:55PM +0200, Maud Spierings wrote:
+> > On 8/20/25 16:01, Laurent Pinchart wrote:
+> > > On Mon, Aug 18, 2025 at 02:31:43PM +0200, Maud Spierings via B4 Relay=
+ wrote:
+> > >> From: Maud Spierings <maudspierings@gocontroll.com>
+> > >>
+> > >> media_pad_remote_pad_first() can return NULL if no valid link is fou=
+nd.
+> > >> Check for this possibility before dereferencing it in the next line.
+> > >>
+> > >> Reported/investigated in [1]:
+> > >>
+> > >> Link: https://lore.kernel.org/all/1536a61b-b405-4762-9fb4-7e257f95e4=
+9e@gocontroll.com/ [1]
+> > >> Fixes: cf21f328fcaf ("media: nxp: Add i.MX8 ISI driver")
+> > >> Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
+> > >> ---
+> > >> I'm not sure if this should be a dev_dbg(), just following the patte=
+rn
+> > >> around it for now, also not sure if EPIPE is the correct error.
+> > >
+> > > I've submitted
+> > > https://lore.kernel.org/linux-media/20250820140021.8026-1-laurent.pin=
+chart@ideasonboard.com,
+> > > which should fix this issue in a more generic way.
+> >
+> > Saw it, but I think my patch technically is still correct as the
+> > function documentation states it can potentially return NULL right? [1]
+>
+> The function documentation states
+>
+> "returns a pointer to the pad at the remote end of the first found
+> enabled link, or NULL if no enabled link has been found."
+>
+> The MUST_CONNECT flag ensures that there is an enabled link, so the
+> function can't return NULL.
+>
+> > Link:
+> > https://www.kernel.org/doc/html/latest/driver-api/media/mc-core.html [1=
+]
+> >
+> > I will test you patches tomorrow.
+> >
+> > >> ---
+> > >>   drivers/media/platform/nxp/imx8-isi/imx8-isi-crossbar.c | 7 ++++++=
++
+> > >>   1 file changed, 7 insertions(+)
+> > >>
+> > >> diff --git a/drivers/media/platform/nxp/imx8-isi/imx8-isi-crossbar.c=
+ b/drivers/media/platform/nxp/imx8-isi/imx8-isi-crossbar.c
+> > >> index ede6cc74c0234049fa225ad82aaddaad64aa53d7..1ed8b031178b7d934b04=
+a8752747f556bd1fc5a9 100644
+> > >> --- a/drivers/media/platform/nxp/imx8-isi/imx8-isi-crossbar.c
+> > >> +++ b/drivers/media/platform/nxp/imx8-isi/imx8-isi-crossbar.c
+> > >> @@ -160,6 +160,13 @@ mxc_isi_crossbar_xlate_streams(struct mxc_isi_c=
+rossbar *xbar,
+> > >>    }
+> > >>
+> > >>    pad =3D media_pad_remote_pad_first(&xbar->pads[sink_pad]);
+> > >> +
+> > >> +  if (pad =3D=3D NULL) {
+> > >> +          dev_dbg(xbar->isi->dev, "no valid link found to pad %u\n"=
+,
+> > >> +                  sink_pad);
+> > >> +          return ERR_PTR(-EPIPE);
+> > >> +  }
+> > >> +
+> > >>    sd =3D media_entity_to_v4l2_subdev(pad->entity);
+> > >>    if (!sd) {
+> > >>            dev_dbg(xbar->isi->dev,
+> > >>
+> > >> ---
+> > >> base-commit: 3ac864c2d9bb8608ee236e89bf561811613abfce
+> > >> change-id: 20250818-imx8_isi-954898628bb6
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
+>
 
