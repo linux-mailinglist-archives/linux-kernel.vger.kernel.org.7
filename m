@@ -1,169 +1,187 @@
-Return-Path: <linux-kernel+bounces-839831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA177BB2855
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 07:18:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A500BB2864
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 07:22:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6909319C3F52
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 05:18:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2026917A539
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 05:22:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4877824C06A;
-	Thu,  2 Oct 2025 05:18:28 +0000 (UTC)
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44AF927FD4A;
+	Thu,  2 Oct 2025 05:22:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WKGxZJVE"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 040913E47B
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 05:18:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C088D26B748
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 05:22:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759382307; cv=none; b=a8oHl1dRPK6vk0J6ZMbPUsFjQoeCb//GXfaG8SRqu+wJ3Brz0zZqfF1zmNiBVGSZ8LolHKZCKHWEjF0NI4RquAsJ8to6l2bzCItDviWMbCLWHytLd4GyIMa2fjR7MYSiuyxRXbCbneutphWt8jULgebQwu6n7SIac6qCrdm0SF8=
+	t=1759382562; cv=none; b=SHBK6CwZA6F46JcqTTE2bTStu4QOXpvDpD0EkM69gZxGFSK1owzlUuJMxsRL8W2W5gMYpEOYaOdSWAppiL/beCBD6N9pq7Sov2OeQvOm9p0lqT16xVqdQrBjOz7gZPPViPI8eZwks25S16d1INq5fCrJ7g2UN9ledtVBbqfJfFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759382307; c=relaxed/simple;
-	bh=+gv1NPtxVyBvjhO4poNs692kcgzTCPR39tA2vbSRsyE=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=M8/jHp7htu84KJhPqZ9nlNjdI2crztZXMz1YG4qFcfXRQf/lMVzPf0Jx9qRIR0ZOJfgjdaV/O61cnNZjKkfsv7QLfp6sv+kLtkqaEz7uZU3LvqCZ6yT773JHUcV9pzk8J8U3LVKv2h0mxTK6yayo3jAJ+7RhBIDWgn/TqYguWUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-90efeb58159so79642339f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 22:18:25 -0700 (PDT)
+	s=arc-20240116; t=1759382562; c=relaxed/simple;
+	bh=+UEvtO4ohS3SCkCNVu2PUUuKQQlaqciarVlUS651gmA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nO8O4xgA6k31ueB9v0QGWtFMrs+YKCd4DxSOfYkT69iBwbScBx3BWHg1KoBbOZGpvFkhFfwAS2SdMfMjrSAvN7c4JvMjY1MPreNZclYW0s1fAi1iPo9dydBzCToaDVVda1dw+/V2oZEDE2yFlVQy3BP9Mpe0luXijhl7+fsxqPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WKGxZJVE; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3f44000626bso274687f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 22:22:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759382559; x=1759987359; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kIoTAVA9sjHnC7mbYGlDJX9XNa4jYRX+mhTFjapnGcE=;
+        b=WKGxZJVE9bc9SdJlNJbo6f51KykHP+8ayxVAoueB945lem4+eUB16Iscu5i2SEmc69
+         AetrqMXauSPz/IixB1UKxkh5VDFNZdYRXXZj+bzrw2MsWo18aD7PQcgREI+iYYDAr5vZ
+         KPEFpPs2JQ3T1P8+86RYn7R/Rtp5/zFvq+LUCXtObyYhdzkjToAS0ulqjpnikjOPs1UO
+         q2kMkeSiR7uPHwtLWPhjsH1DA6IXnzPVGoA9V8gRfHiIU5NxB1pBDeG6YBAKSYH0FNnC
+         HSjNLCKDdp6GHMzheLmA6vvv2tmWWYCIq7kCTlZ9iL4ll3s63IPYAg77//QIVB8VWX2P
+         JRyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759382305; x=1759987105;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uswKdbmbFdorjou4cYVY+CuInKwkUZTHRb1ChJq4MHM=;
-        b=wwq7LLJ2g2L2v1LP1xzmI15S32yDhL7Zbx2t0NaCDmJRfYxp9oHuTgbSWywemeYD0L
-         79D/zWde5vGb8pKLsHFR7Ctu+NZwWryOBZh2fDXdROBaKgxVUUB+LeSxZlPtxfn9FHsk
-         JQCMzYWqndzDjvTvRt9W1XjGnOKrfVzC23UqXPXNn8ScJ2GBtf/53F86nZEaU1gEWNZy
-         84fLM0rf9reTAoEl8OUy8BWHjQ1+nXNtnaRdDoJhTEv6ftdW4PwERkg5keqf6zEXGK8y
-         BMs4eyVcvm170Yl0zpgIf3zMAsk5AIiQnKQoXUZ6PLjro99Y9txuhHWP4hFH1pLXUixx
-         g5Aw==
-X-Forwarded-Encrypted: i=1; AJvYcCW1/O+eDSzD/8UIICOmjLFm4RrNWrpbrpoltZHs2ZpuHFK3MG94AwokrTqzx57Cfn5wp42oUDaUVYxAtfE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/w6f1AM4RxbAerF5fGSIxdZQsrHvKOZD+Ao+mnmgyCTo1pePc
-	Qeo6io4E2EsH5zM+2G0T/7gmqUojBSjvcgZqDVePe4ad82DwzO5j2RLkCxbUPdaK2/uoe6IAQzm
-	0SBGoYbvQ2eGFiGM038pvxrUDO1zTd7qKhzsj62PkfJxYuNOb9cQYr9WxkVo=
-X-Google-Smtp-Source: AGHT+IHyrdlk2I1QlbI0wSYbvczysDkAsI4dSX9iWmCyD06Om9SRHKXunKhmzQ+juNoCADMlnUXy58ziTz15dLl6v3Q3kH9i9J5F
+        d=1e100.net; s=20230601; t=1759382559; x=1759987359;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kIoTAVA9sjHnC7mbYGlDJX9XNa4jYRX+mhTFjapnGcE=;
+        b=G7oasKM4B44BLn62QjECyfrC3xYhkESaHxeXorRO8rmbWeoO0UW+WNKl4XVZgSzn0r
+         a0Um24WfpQW+Fd2jpyh6kxuSomEukpzm8v8MI4TGLm9TdHTJ8x/oebp+MEa7N5nZlX5+
+         64NHgxs5rtGq+x2uuJglH3BFVQdGSrnExronzyw2vOYsRQeSY93AbehAb9KUN44ndT65
+         6qGfm5RXSVxyhqZGseJ8dd3MZT3ECXWseuwyfm4AuM/GsiT/knStm2mFW0zkeYL6Bq9O
+         Tn23juTXMvJ+d0/tXTvKzG8Owmov+7UE/NPIwnqZTdWPRT9gBqjSOiE3JZ5ymgjTQWrQ
+         TGWA==
+X-Forwarded-Encrypted: i=1; AJvYcCVO3GPl8EUi9dDm0lTcAXZ9N0SMqTwGoVgMbjRI+vQdaPDLIWyEYJUaKu4mDFBHEtekPQQp/VKqbickNbU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQFJxBfZMnIAjgVvgJsnvzhcr8PWMjcbiZUqvnDQPsGWbXG6AZ
+	Nd/JIZ5NzOEqTTe7sGsAg8j+K2afR7q52bM67+SdEBelooGfxKEordFVHt46V23EmXY+hfBhW6h
+	6oWB/WPssRr2dQk5456mM7qGjvGUz/KH36F4I
+X-Gm-Gg: ASbGncvPUQFEfoiSim8wVSeXEDpaf5VYhX/KO0Ohty3WJ9pNaIQBL2KG6Yab4AEWvKh
+	Co4KXR3/+ZgEEOMsXOcJh8ZGtVZVnk9/cz6HPl6J9i0krvfHjsJ+/TJvlhpi333yhUvCYlHrPzm
+	eNCwBMgWkrUk3rU9qmZ4qNKffbLSAYwyZOo393BLZaTbY9kgDzc+7UiX9RviuxknCPlBRfQgSen
+	1A1oWL/ziSksYq/KqdJbrcjRsvfkydM
+X-Google-Smtp-Source: AGHT+IG0e+DFVcA7EGV4f6gb3cVHuiVS4JYjGsGK6v4oRblkAeW4rQLj6q0R0ldwH/G+/sN3B7OHJYVi23raS5THltw=
+X-Received: by 2002:a5d:5f52:0:b0:3ff:d5c5:6b03 with SMTP id
+ ffacd0b85a97d-4255781466fmr4232925f8f.35.1759382558942; Wed, 01 Oct 2025
+ 22:22:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:1482:b0:92e:772:9323 with SMTP id
- ca18e2360f4ac-937ade42cf6mr999929439f.16.1759382305117; Wed, 01 Oct 2025
- 22:18:25 -0700 (PDT)
-Date: Wed, 01 Oct 2025 22:18:25 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68de0b21.050a0220.25d7ab.077d.GAE@google.com>
-Subject: [syzbot] [cgroups?] WARNING in cgroup_freeze
-From: syzbot <syzbot+27a2519eb4dad86d0156@syzkaller.appspotmail.com>
-To: cgroups@vger.kernel.org, corbet@lwn.net, hannes@cmpxchg.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, mkoutny@suse.com, 
-	syzkaller-bugs@googlegroups.com, tj@kernel.org, ynaffit@google.com
+References: <20250925152806.80386-1-clamor95@gmail.com> <20250925152806.80386-2-clamor95@gmail.com>
+ <20251002015554.GA2880078-robh@kernel.org>
+In-Reply-To: <20251002015554.GA2880078-robh@kernel.org>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Thu, 2 Oct 2025 08:22:27 +0300
+X-Gm-Features: AS18NWCy4o_ayBLITcbOWaJzzbRVpQSybS31RCoaoa8CEb7E1WnQEhadEGX4bl0
+Message-ID: <CAPVz0n150FGUvgmxM8tLyQanWjhsmi4j=DaSa-JW2JSjCM4=tw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: media: i2c: document Sony IMX111 CMOS sensor
+To: Rob Herring <robh@kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Hans Verkuil <hverkuil@xs4all.nl>, Hans de Goede <hansg@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Dongcheng Yan <dongcheng.yan@intel.com>, =?UTF-8?Q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>, 
+	Sylvain Petinot <sylvain.petinot@foss.st.com>, 
+	Benjamin Mugnier <benjamin.mugnier@foss.st.com>, 
+	Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>, Jingjing Xiong <jingjing.xiong@intel.com>, 
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+=D1=87=D1=82, 2 =D0=B6=D0=BE=D0=B2=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 04:55=
+ Rob Herring <robh@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On Thu, Sep 25, 2025 at 06:28:05PM +0300, Svyatoslav Ryhel wrote:
+> > Add bindings for Sony IMX111 CMOS Digital Image Sensor found in LG
+> > Optimus 4X (P880) and Optimus Vu (P895) smartphones.
+> >
+> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > ---
+> >  .../bindings/media/i2c/sony,imx111.yaml       | 112 ++++++++++++++++++
+> >  1 file changed, 112 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/media/i2c/sony,im=
+x111.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/media/i2c/sony,imx111.ya=
+ml b/Documentation/devicetree/bindings/media/i2c/sony,imx111.yaml
+> > new file mode 100644
+> > index 000000000000..a70017588891
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/media/i2c/sony,imx111.yaml
+> > @@ -0,0 +1,112 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/media/i2c/sony,imx111.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Sony IMX111 8MP CMOS Digital Image Sensor
+> > +
+> > +maintainers:
+> > +  - Svyatoslav Ryhel <clamor95@gmail.com>
+> > +
+> > +description:
+> > +  IMX111 sensor is a Sony CMOS active pixel digital image sensor with =
+an active
+> > +  array size of 2464H x 3280V. It is programmable through I2C interfac=
+e. Image
+> > +  data is sent through MIPI CSI-2, through 1 or 2 lanes.
+> > +
+> > +allOf:
+> > +  - $ref: /schemas/media/video-interface-devices.yaml#
+> > +  - $ref: /schemas/nvmem/nvmem-consumer.yaml#
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: sony,imx111
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  clocks:
+> > +    description: EXTCLK with possible frequency from 6 to 54 MHz
+> > +    maxItems: 1
+> > +
+> > +  reset-gpios:
+> > +    maxItems: 1
+> > +
+> > +  iovdd-supply:
+> > +    description: Digital IO power supply (1.8V)
+> > +
+> > +  dvdd-supply:
+> > +    description: Digital power supply (1.2V)
+> > +
+> > +  avdd-supply:
+> > +    description: Analog power supply (2.7V)
+> > +
+> > +  port:
+> > +    additionalProperties: false
+> > +    $ref: /schemas/graph.yaml#/$defs/port-base
+> > +
+> > +    properties:
+> > +      endpoint:
+> > +        $ref: /schemas/media/video-interfaces.yaml#
+> > +        unevaluatedProperties: false
+> > +
+> > +        properties:
+> > +          data-lanes: true
+> > +          bus-type: true
+>
+> I assume not *bus* types are supported, so this should constrain it to
+> valid ones. If it is only 1 type, you shouldn't really need the type in
+> DT.
+>
 
-syzbot found the following issue on:
+Better, properties can be dropped and only required left with
+data-lanes and link-frequencies. Thank you for a hint
 
-HEAD commit:    50c19e20ed2e Merge tag 'nolibc-20250928-for-6.18-1' of git..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=137446e2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=cfc4e6ee70d55834
-dashboard link: https://syzkaller.appspot.com/bug?extid=27a2519eb4dad86d0156
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11eba42c580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15de5d04580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/10a80b79b188/disk-50c19e20.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/e782595cfe10/vmlinux-50c19e20.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/9166ef44f6be/bzImage-50c19e20.xz
-
-The issue was bisected to:
-
-commit afa3701c0e45ecb9e4d160048ca4e353c7489948
-Author: Tiffany Yang <ynaffit@google.com>
-Date:   Fri Aug 22 01:37:52 2025 +0000
-
-    cgroup: cgroup.stat.local time accounting
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12c22092580000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=11c22092580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=16c22092580000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+27a2519eb4dad86d0156@syzkaller.appspotmail.com
-Fixes: afa3701c0e45 ("cgroup: cgroup.stat.local time accounting")
-
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 6062 at ./include/linux/seqlock.h:221 __seqprop_assert include/linux/seqlock.h:221 [inline]
-WARNING: CPU: 0 PID: 6062 at ./include/linux/seqlock.h:221 cgroup_do_freeze kernel/cgroup/freezer.c:182 [inline]
-WARNING: CPU: 0 PID: 6062 at ./include/linux/seqlock.h:221 cgroup_freeze+0x80a/0xf90 kernel/cgroup/freezer.c:309
-Modules linked in:
-CPU: 0 UID: 0 PID: 6062 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
-RIP: 0010:__seqprop_assert include/linux/seqlock.h:221 [inline]
-RIP: 0010:cgroup_do_freeze kernel/cgroup/freezer.c:182 [inline]
-RIP: 0010:cgroup_freeze+0x80a/0xf90 kernel/cgroup/freezer.c:309
-Code: 90 e9 9e fb ff ff 44 89 f1 80 e1 07 80 c1 03 38 c1 0f 8c e7 f9 ff ff 4c 89 f7 e8 e1 43 67 00 e9 da f9 ff ff e8 17 68 06 00 90 <0f> 0b 90 e9 10 fc ff ff 44 89 f9 80 e1 07 38 c1 48 8b 0c 24 0f 8c
-RSP: 0018:ffffc90003e7f8e0 EFLAGS: 00010293
-RAX: ffffffff81b6c6a9 RBX: 0000000000000000 RCX: ffff88802ff60000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc90003e7fa70 R08: 0000000000000000 R09: 0000000000000000
-R10: dffffc0000000000 R11: fffffbfff1d6d2a7 R12: dffffc0000000000
-R13: 0000000000000000 R14: 0000000000000001 R15: ffff888031790791
-FS:  0000555589dcd500(0000) GS:ffff888127017000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b2f163fff CR3: 000000002f824000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- cgroup_freeze_write+0x156/0x1c0 kernel/cgroup/cgroup.c:4174
- cgroup_file_write+0x39b/0x740 kernel/cgroup/cgroup.c:4312
- kernfs_fop_write_iter+0x3b0/0x540 fs/kernfs/file.c:352
- new_sync_write fs/read_write.c:593 [inline]
- vfs_write+0x5d5/0xb40 fs/read_write.c:686
- ksys_write+0x14b/0x260 fs/read_write.c:738
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f717e32eec9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffe6a7c7c58 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00007f717e585fa0 RCX: 00007f717e32eec9
-RDX: 0000000000000012 RSI: 0000200000000200 RDI: 0000000000000004
-RBP: 00007f717e3b1f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f717e585fa0 R14: 00007f717e585fa0 R15: 0000000000000003
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> Rob
+>
 
