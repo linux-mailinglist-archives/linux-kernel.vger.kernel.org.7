@@ -1,83 +1,66 @@
-Return-Path: <linux-kernel+bounces-839766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3393BB25D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 04:27:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DC7FBB25C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 04:26:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8ADC77B3464
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 02:25:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D76174A4B54
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 02:26:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D8123D7E4;
-	Thu,  2 Oct 2025 02:27:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 419CB23D7DB;
+	Thu,  2 Oct 2025 02:26:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hJflNZFn"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jyYWipnU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B18BC23C51D;
-	Thu,  2 Oct 2025 02:27:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D6B723A989;
+	Thu,  2 Oct 2025 02:26:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759372037; cv=none; b=upKc9EPU2TEjCGnT/d4nS4gSCbm4hENkNicAHauyBSTJo00kOx8l0e02SrhJQAokA3JZRjU3skffkxfQ9tA0LyEG+90aq0TvnNO1aDO+jWy4O4IMODBsrM+TeLyZuZZ5MtPINNsx4n8EACIalMdYS6B23w8DmZhcSrDqHExsosw=
+	t=1759372000; cv=none; b=UttDYrDOCsmSnH9lmSQXO40PM9QTePScnoT+qz5Gz9DNni9XNFJyzqOe/s37unhMVAmEldzDDkzsCU70H/X2Ax+i2qSEMfioRkmfuEjP/o3/QrS9VSdjCevB43J0nYXUBUgra+i+lsFlHJhOdzEwZVwcRNaDsQbsO52uTJBqxto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759372037; c=relaxed/simple;
-	bh=L87MXufzqFw8MSNO6RQS5qDzIaT068tEwknrRqEGM9s=;
+	s=arc-20240116; t=1759372000; c=relaxed/simple;
+	bh=jio3I8WcuBf/06ND5WbRbHDa0i4qR4KjQPln7l7gD8o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pjqu1jviOjni+LbYGYeCD8xXhDFRne/hLcToYv5A+kFzMuacFVs+BNL4TqIIynb0rWZGVJOEJ595J9fvmzIBDT7ZJeKViS605yDUzmJz+kMl5jv0mIKJU3eaThtuHoOWJjXqm6UMwpDEtgXBSGLNz9KrHJaO7RwIbttapTwyfes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hJflNZFn; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759372036; x=1790908036;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=L87MXufzqFw8MSNO6RQS5qDzIaT068tEwknrRqEGM9s=;
-  b=hJflNZFndNZEnLIgyXEQAn9GQ4ujNfMmd8lz6V3gi2yWpDoGEOzNMlyJ
-   541s+2WmlEIcwgzEGeAF01ZTqZHWlucnSVTtGS31VXjj6DPzWViBYC9gC
-   lrLQspr/WZTI5qNRMI/4goCcqyLRVGheIw6Rcfx5UInQifFzzE4UM6DSo
-   poPGPm+QjE/743dSifVx159bDmoGrHcSjjexVpiH+EwZGcOTlnimGftvC
-   JkcY9ii+iROhB3BR/iKgBuvi5grwf6gB1HJuM3n6/4ELpvsKhGVDu0Mfo
-   0JBHSJThpdbNEzGOJu7Vo3Cnv4YuY6DQzFXte6017okT9RPn/0Dh7NOcS
-   Q==;
-X-CSE-ConnectionGUID: Sh/PHFe5RE64hfiKuhtT9g==
-X-CSE-MsgGUID: gkOHJKdOR4KxJb6Smv9hpA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11569"; a="72328053"
-X-IronPort-AV: E=Sophos;i="6.18,308,1751266800"; 
-   d="scan'208";a="72328053"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2025 19:27:15 -0700
-X-CSE-ConnectionGUID: y2OAQW+wSQyj3/+LYb2zJQ==
-X-CSE-MsgGUID: ujx4n8BWR3yYqO5gnu0oyg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,308,1751266800"; 
-   d="scan'208";a="202665588"
-Received: from lkp-server01.sh.intel.com (HELO 2f2a1232a4e4) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 01 Oct 2025 19:27:12 -0700
-Received: from kbuild by 2f2a1232a4e4 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1v492D-0003W9-2t;
-	Thu, 02 Oct 2025 02:27:09 +0000
-Date: Thu, 2 Oct 2025 10:26:34 +0800
-From: kernel test robot <lkp@intel.com>
-To: Vladimir Moravcevic <vmoravcevic@axiado.com>,
-	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Harshit Shah <hshah@axiado.com>,
-	Tzu-Hao Wei <twei@axiado.com>,
-	Axiado Reviewers <linux-maintainer@axiado.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Vladimir Moravcevic <vmoravcevic@axiado.com>,
-	Prasad Bolisetty <pbolisetty@axiado.com>
-Subject: Re: [PATCH v2 2/3] spi: axiado: Add driver for Axiado SPI DB
- controller
-Message-ID: <202510021040.CnRgMGPA-lkp@intel.com>
-References: <20250929-axiado-ax3000-soc-spi-db-controller-driver-v2-2-b0c089c3ba81@axiado.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qoVIDI3nW4tsBA+t2UkO7DyNtEIio654guyflEpZ10NfXszLXmyuhV6U1Zwhs3C4voosOCG7JZBRUkd9Y6LkTGL4lJKEmWgmCh4WZg9S75PYsEzAIKxyuUQhMIpzKwDl16ekFd1tPRw9TCl1B0NMvToWyeojB2GTz1CRhtzFMYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jyYWipnU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A90EBC4CEF1;
+	Thu,  2 Oct 2025 02:26:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759372000;
+	bh=jio3I8WcuBf/06ND5WbRbHDa0i4qR4KjQPln7l7gD8o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jyYWipnULAxoK8P9AWK8DM6ZRCqnqr/vx1syy3oFJLkC018RaFcPakMHS4ohiYZug
+	 bSQj9Ari3mb+94+6Q/GdLy2itnE+iAsmcFOmK5OBln+6QLDF/b4Mz5KhlAgEytcjQL
+	 r2uE1ZarqjwNssrZ1DhXIYj5J9xu4qRfK8PTWcXNM1rtl8JRXKUjDdsNWq+xWyogc1
+	 ztdHEs7tuemI6reMDFG2uikJPLarwcoqpnoh8ei5mLSXpo0HO6XzTwyu7a5UkF0ny+
+	 5Ie76TS/R1KH4dwZgxvjja2gCgsO/4c6TP/WFqBSc1d3YnjZV4rIeE45DlCjNWUEiB
+	 v2QZARaNL+jGg==
+Date: Wed, 1 Oct 2025 21:26:38 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Wesley Cheng <wesley.cheng@oss.qualcomm.com>,
+	Sibi Sankar <quic_sibis@quicinc.com>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Rajendra Nayak <quic_rjendra@quicinc.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Abel Vesa <abel.vesa@linaro.org>
+Subject: Re: [PATCH 1/3] dt-bindings: clock: qcom,x1e80100-gcc: Add missing
+ USB4 clocks/resets
+Message-ID: <175937199767.2925546.4280245351480159227.robh@kernel.org>
+References: <20250926-topic-hamoa_gcc_usb4-v1-0-25cad1700829@oss.qualcomm.com>
+ <20250926-topic-hamoa_gcc_usb4-v1-1-25cad1700829@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,108 +69,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250929-axiado-ax3000-soc-spi-db-controller-driver-v2-2-b0c089c3ba81@axiado.com>
-
-Hi Vladimir,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on e6b9dce0aeeb91dfc0974ab87f02454e24566182]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Vladimir-Moravcevic/dt-bindings-spi-axiado-ax3000-spi-Add-binding-for-Axiado-SPI-DB-controller/20250929-170017
-base:   e6b9dce0aeeb91dfc0974ab87f02454e24566182
-patch link:    https://lore.kernel.org/r/20250929-axiado-ax3000-soc-spi-db-controller-driver-v2-2-b0c089c3ba81%40axiado.com
-patch subject: [PATCH v2 2/3] spi: axiado: Add driver for Axiado SPI DB controller
-config: alpha-allyesconfig (https://download.01.org/0day-ci/archive/20251002/202510021040.CnRgMGPA-lkp@intel.com/config)
-compiler: alpha-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251002/202510021040.CnRgMGPA-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510021040.CnRgMGPA-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   drivers/spi/spi-axiado.c: In function 'ax_spi_irq':
->> drivers/spi/spi-axiado.c:348:21: warning: variable 'status' set but not used [-Wunused-but-set-variable]
-     348 |         irqreturn_t status;
-         |                     ^~~~~~
+In-Reply-To: <20250926-topic-hamoa_gcc_usb4-v1-1-25cad1700829@oss.qualcomm.com>
 
 
-vim +/status +348 drivers/spi/spi-axiado.c
+On Fri, 26 Sep 2025 14:03:45 +0200, Konrad Dybcio wrote:
+> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> 
+> Some of the USB4 muxes, RCGs and resets were not initially described.
+> 
+> Add indices for them to allow extending the driver.
+> 
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> ---
+>  .../bindings/clock/qcom,x1e80100-gcc.yaml          | 62 ++++++++++++++++++++--
+>  include/dt-bindings/clock/qcom,x1e80100-gcc.h      | 61 +++++++++++++++++++++
+>  2 files changed, 119 insertions(+), 4 deletions(-)
+> 
 
-   330	
-   331	/**
-   332	 * ax_spi_irq - Interrupt service routine of the SPI controller
-   333	 * @irq:	IRQ number
-   334	 * @dev_id:	Pointer to the xspi structure
-   335	 *
-   336	 * This function handles RX FIFO almost full and Host Transfer Completed interrupts only.
-   337	 * On RX FIFO amlost full interrupt this function reads the received data from RX FIFO and
-   338	 * fills the TX FIFO if there is any data remaining to be transferred.
-   339	 * On Host Transfer Completed interrupt this function indicates that transfer is completed,
-   340	 * the SPI subsystem will clear MTC bit.
-   341	 *
-   342	 * Return:	IRQ_HANDLED when handled; IRQ_NONE otherwise.
-   343	 */
-   344	static irqreturn_t ax_spi_irq(int irq, void *dev_id)
-   345	{
-   346		struct spi_controller *ctlr = dev_id;
-   347		struct ax_spi *xspi = spi_controller_get_devdata(ctlr);
- > 348		irqreturn_t status;
-   349		u32 intr_status;
-   350	
-   351		status = IRQ_NONE;
-   352		intr_status = ax_spi_read(xspi, AX_SPI_IVR);
-   353		if (!intr_status)
-   354			return IRQ_NONE;
-   355	
-   356		/*
-   357		 * Handle "Message Transfer Complete" interrupt.
-   358		 * This means all bytes have been shifted out of the TX FIFO.
-   359		 * It's time to harvest the final incoming bytes from the RX FIFO.
-   360		 */
-   361		if (intr_status & AX_SPI_IVR_MTCV) {
-   362			// Clear the MTC interrupt flag immediately.
-   363			ax_spi_write(xspi, AX_SPI_ISR, AX_SPI_ISR_MTC);
-   364	
-   365			// For a TX-only transfer, rx_buf would be NULL.
-   366			// In the spi-core, rx_copy_remaining would be 0.
-   367			// So we can finalize immediately.
-   368			if (!xspi->rx_buf) {
-   369				ax_spi_write(xspi, AX_SPI_IMR, 0x00);
-   370				spi_finalize_current_transfer(ctlr);
-   371				return IRQ_HANDLED;
-   372			}
-   373	
-   374			// For a full-duplex transfer, process any remaining RX data.
-   375			// The helper function will handle finalization if everything is received.
-   376			ax_spi_process_rx_and_finalize(ctlr);
-   377			return IRQ_HANDLED;
-   378		}
-   379	
-   380		/*
-   381		 * Handle "RX FIFO Full / Threshold Met" interrupt.
-   382		 * This means we need to make space in the RX FIFO by reading from it.
-   383		 */
-   384		if (intr_status & AX_SPI_IVR_RFFV) {
-   385			if (ax_spi_process_rx_and_finalize(ctlr)) {
-   386				// Transfer was finalized inside the helper, we are done.
-   387			} else {
-   388				// RX is not yet complete. If there are still TX bytes to send
-   389				// (for very long transfers), we can fill the TX FIFO again.
-   390				if (xspi->tx_bytes)
-   391					ax_spi_fill_tx_fifo(xspi);
-   392			}
-   393			return IRQ_HANDLED;
-   394		}
-   395	
-   396		return IRQ_NONE;
-   397	}
-   398	
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
