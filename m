@@ -1,255 +1,340 @@
-Return-Path: <linux-kernel+bounces-840097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF270BB3851
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 11:53:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFA2DBB3860
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 11:54:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF3487AD953
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 09:51:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A6DE1C0342
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 09:54:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0C8430597C;
-	Thu,  2 Oct 2025 09:53:28 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DFA7305E14;
+	Thu,  2 Oct 2025 09:54:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ktvY1Ef/"
+Received: from mail-yx1-f65.google.com (mail-yx1-f65.google.com [74.125.224.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 510882E2DF4;
-	Thu,  2 Oct 2025 09:53:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B35302CBE
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 09:54:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759398808; cv=none; b=RSXynEWBvjh1593tf4Zg4Io0bInKANoOpwJdPG1B6k35X9NGaT8l9FfqfKlNoCSC/IRQ/Y7uBbIDheqTQcQ7igki+oqaFWJZjR2Hjgdi5HD2Sro0cAkcL6zLBuIEsAU7doTwPXaxT2VBo3nCprzOBE9hjDKqlQhhIpiWrYgTQ4M=
+	t=1759398886; cv=none; b=JZA4Y+d6v2Bs5RyBDCNBydCudv3Ldc0UGJjZ23j0njYZIxcQF0n6q8zm4iAIhMWtxbK8bx5slqIVagiup8WniDngJa9aTlsRR94Tamk2Igrkzw4IOAzSOVRqh4w7LCLFXPWjfEcE5L/bFVdRHbl1376U9DWd9OKkaDF/uF43EU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759398808; c=relaxed/simple;
-	bh=4kfuvC13t63S84C7ovIfJYDka4R+IiFQly82xuAWVE4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oCAO6tBc+WgYHppA/1n0BbdVwLK6s+2Y06qyEC5Prd1xaz59Ldbq5FNETHoGkoqCvhktdaASYU5mO6xlwPkc8BpqeO5j6aJDf3YcaEy/5jXVb4Gxb/6RaLpuxn/OvT0bOo1gIFcvB8HTERRxtDu2L5KJPRKK4iEG4YTRLj6HGwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06357C4CEF4;
-	Thu,  2 Oct 2025 09:53:25 +0000 (UTC)
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Tony Lindgren <tony@atomide.com>,
-	Bruno Thomsen <bruno.thomsen@gmail.com>,
-	Judith Mendez <jm@ti.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: linux-omap@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] ARM: dts: am33xx: Add missing serial console speed
-Date: Thu,  2 Oct 2025 11:53:05 +0200
-Message-ID: <63cef5c3643d359e8ec13366ca79377f12dd73b1.1759398641.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1759398886; c=relaxed/simple;
+	bh=ZiGd17BD0jk48QLs8gOUdH7sbUs8jC5f8SddZMaW5tk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=d58r/DWJlBUQDFiZWsHOgyG7a6uqunSYzs/Mu0aThhDWxcOm0hvpuvsDukXkDZ0g6GZKWdOuFzQN0T3l6VZAMeUCW4rT4IKqYklXj9BpA42VcpDAUCGY7nogAg0UCEAC7FMWlVW0XxJJ3BIb8kZFynlBSpYTq5hT//uv0J0+2uQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ktvY1Ef/; arc=none smtp.client-ip=74.125.224.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yx1-f65.google.com with SMTP id 956f58d0204a3-63b710f276fso954001d50.1
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 02:54:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759398883; x=1760003683; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=U5+3tj28FwU3R5WxCj5Lw0eQ4h17MiwRJxY9Z1MV/KE=;
+        b=ktvY1Ef/u+3QZoCoXL6/n2Mud39lXtL1zt95VSHzPhacjLpP3bSq1OhAh6wPg+4I5R
+         beFoklTQLMUId3swu6Sp4fPqjZyacSytJCkxRIhArjQN2YI9pxUlXCGfM87bpBPeOPKh
+         LNq/YTu7/evkCSUauUk9PfT9OFgJEPmjMGHqmrmsG2lRNGmZJlW1Rs6WJoP4+IlQAz8/
+         gtqR42AvQtvW8JNt5MtQc3gQXbQKrwYN6Ztt0w8OQs3PQE+dTQypwidjfhl9VuDLdMkq
+         VBOACdvREUPMdjZuQ0nL5qwuQgtEwbRgxbD3zN2Xtwbkrh7EBPGR3RoGtYtNBr6sXiPr
+         G+tQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759398883; x=1760003683;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=U5+3tj28FwU3R5WxCj5Lw0eQ4h17MiwRJxY9Z1MV/KE=;
+        b=SMLaQR8Uw2UdjTbFM9LHP0owdqAAb+H9kYT/mPgY2Z5nHDsoP5R5QVKNBBTujvs/O5
+         o7O0uFjRBFOKwX+AeVNFFtQsh9b6qAttmuGd3uOBZiWbqLfD6Rh5qSbsC+JPUqXK+5zC
+         vqLW4wTtB6OicmEDAGkpfopxT3YZwhH89TdfJILxvuOECdTtrJv4FUSU3UYebTNhDG+5
+         u1tmGThjxni/d9gAX298YblyFN9bTEF6sqexBcK6cZ2mHvw/lDJ84E8ValJFJrarrgsF
+         sWKnHLZWnID5wRhnqsp0SBLXLvDrju8NsBSBLBxkGogbSMnj4r9Uw9Kc7fByG6CA48gi
+         mY2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVTjQaPnH1TP8ThzPHbcGMUJBzscvIsjJ+bTlox+sYwXP9a45uE3GOc6s6wWp4Ay47Hty7oQF0+AfngTb0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfHeMCxyPVnEjXI/HlI50kso8jAB5gJXKe7CSshbUHUg8d7yTN
+	LI7Q6bp7nSvJSlmEr6EmPf8DuHup0p1MKlpaQjy03QtWbuwgpChgVQchwxxbBgV00gIjL8tWueC
+	rEeEEgwsvsOCmUNp9IodJFxltzpye5MU=
+X-Gm-Gg: ASbGncuH+wdU0MXj+VSaMO3rDRXCD9vexE1EqYzB93hxnX1ViEsxbubuyAMSw4SBWrK
+	KLLJDahRMsOmRtYtjX7guV9Gx/PPPF6jubQ+JncxPDtZ1BuTcCtz8HPo6HwwkY0VGor0RvTnZCe
+	cpymkuafgRQMnUM3EimcJdBKEI4sPPKxKNri3fL/z2Xt4x3F9OP8TvAI7scHSWI5+80dhN1SbiM
+	ly8nWOv9PLCicr+y2bb5NeRd2kx8Lk=
+X-Google-Smtp-Source: AGHT+IGxPk7Kjn3zT1jeK6l7hZl3tkjORlMwec0yDuqOyrWI6C75psHQQcgtmE4rtAq+Hg1ktr8W03ZRk1QG7nfAigw=
+X-Received: by 2002:a53:b5c8:0:b0:635:4ed0:5712 with SMTP id
+ 956f58d0204a3-63b6ff64655mr7099003d50.44.1759398882441; Thu, 02 Oct 2025
+ 02:54:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <202509301440.be4b3631-lkp@intel.com> <20251002142515.ebfcc03ba5490d0d63bec05e@kernel.org>
+In-Reply-To: <20251002142515.ebfcc03ba5490d0d63bec05e@kernel.org>
+From: Menglong Dong <menglong8.dong@gmail.com>
+Date: Thu, 2 Oct 2025 17:54:31 +0800
+X-Gm-Features: AS18NWCuTeAyEUstA_xt0kSn6CtQapPcvVZKf5tPow7Cnd0U2AWgXWZWfv_e8V0
+Message-ID: <CADxym3by66hU1eQFsk75aAxNghimCc-NP0iZNJJ1b_FUtLu5Dg@mail.gmail.com>
+Subject: Re: [linux-next:master] [tracing] e5a4cc28a0: BUG:spinlock_bad_magic_on_CPU
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev, lkp@intel.com, 
+	Menglong Dong <dongml2@chinatelecom.cn>, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Without a serial console speed specified in chosen/stdout-path in the
-DTB, the serial console uses the default speed of the serial driver,
-unless explicitly overridden in a legacy console= kernel command-line
-parameter.
+On Thu, Oct 2, 2025 at 1:25=E2=80=AFPM Masami Hiramatsu <mhiramat@kernel.or=
+g> wrote:
+>
+> On Tue, 30 Sep 2025 14:48:27 +0800
+> kernel test robot <oliver.sang@intel.com> wrote:
+>
+> >
+> >
+> > Hello,
+> >
+> > kernel test robot noticed "BUG:spinlock_bad_magic_on_CPU" on:
+> >
+> > commit: e5a4cc28a052369b6e56b0a9ac05d9b9d5607b06 ("tracing: fprobe: use=
+ rhltable for fprobe_ip_table")
+> > https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
+> >
+> > in testcase: boot
+> >
+> > config: x86_64-randconfig-072-20250929
+> > compiler: gcc-14
+> > test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m=
+ 16G
+> >
+> > (please refer to attached dmesg/kmsg for entire log/backtrace)
+> >
+> >
+> >
+> > If you fix the issue in a separate patch/commit (i.e. not just a new ve=
+rsion of
+> > the same patch/commit), kindly add following tags
+> > | Reported-by: kernel test robot <oliver.sang@intel.com>
+> > | Closes: https://lore.kernel.org/oe-lkp/202509301440.be4b3631-lkp@inte=
+l.com
+> >
+> >
+> > [   30.894986][   T66] BUG: spinlock bad magic on CPU#0, modprobe/66
+> > [ 30.896030][ T66] lock: fprobe_ip_table+0x110/0x180, .magic: 00000000,=
+ .owner: <none>/-1, .owner_cpu: 0
+> > [   30.898263][   T66] CPU: 0 UID: 0 PID: 66 Comm: modprobe Not tainted=
+ 6.17.0-rc6-00004-ge5a4cc28a052 #1 NONE  5e106928d64815a8c70ffa200d16301537=
+e1528f
+> > [   30.898799][   T66] Hardware name: QEMU Standard PC (i440FX + PIIX, =
+1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+> > [   30.898799][   T66] Call Trace:
+> > [   30.898799][   T66]  <TASK>
+> > [ 30.898799][ T66] show_stack (arch/x86/kernel/dumpstack.c:319)
+> > [ 30.898799][ T66] dump_stack_lvl (lib/dump_stack.c:122)
+> > [ 30.898799][ T66] dump_stack (lib/dump_stack.c:130)
+> > [ 30.898799][ T66] spin_dump (kernel/locking/spinlock_debug.c:71)
+> > [ 30.898799][ T66] do_raw_spin_lock.cold (kernel/locking/spinlock_debug=
+.c:78 kernel/locking/spinlock_debug.c:86 kernel/locking/spinlock_debug.c:11=
+5)
+> > [ 30.898799][ T66] _raw_spin_lock (kernel/locking/spinlock.c:155)
+> > [ 30.898799][ T66] ? rhashtable_walk_enter (lib/rhashtable.c:687)
+> > [ 30.898799][ T66] rhashtable_walk_enter (lib/rhashtable.c:687)
+> > [ 30.898799][ T66] fprobe_module_callback (kernel/trace/fprobe.c:478)
+>
+> It seems that fprobe_module_callback() is called before
+> initializing spinlock (in rhltable?). It should be
+> initialized earlier.
+>
+> Maybe this free_module() is called before late_initcall()?
+>
+> static int __init fprobe_initcall(void)
+> {
+>         rhltable_init(&fprobe_ip_table, &fprobe_rht_params);
+>         return 0;
+> }
+> late_initcall(fprobe_initcall);
 
-After dropping "ti,omap3-uart" from the list of compatible values in DT,
-AM33xx serial ports can no longer be used with the legacy OMAP serial
-driver, but only with the OMAP-flavored 8250 serial driver (which is
-mutually-exclusive with the former).  However, replacing
-CONFIG_SERIAL_OMAP=y by CONFIG_SERIAL_8250_OMAP=y (with/without enabling
-CONFIG_SERIAL_8250_OMAP_TTYO_FIXUP) may not be sufficient to restore
-serial console functionality: the legacy OMAP serial driver defaults to
-115200 bps, while the 8250 serial driver defaults to 9600 bps, causing
-no visible output on the serial console when no appropriate console=
-kernel command-line parameter is specified.
+Nice shot! I think this should be the reason.
 
-Fix this for all AM33xx boards by adding ":115200n8" to
-chosen/stdout-path.  This requires replacing the "&uartN" reference by
-the corresponding "serialN" DT alias.
+Thanks!
+Menglong Dong
 
-Fixes: ca8be8fc2c306efb ("ARM: dts: am33xx-l4: fix UART compatible")
-Fixes: 077e1cde78c3f904 ("ARM: omap2plus_defconfig: Enable 8250_OMAP")
-Closes: https://lore.kernel.org/CAMuHMdUb7Jb2=GqK3=Rn+Gv5G9KogcQieqDvjDCkJA4zyX4VcA@mail.gmail.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Tested on BeagleBone Black.
-I only updated DTS files affected by commit ca8be8fc2c306efb.
-Probably more DTS files for other SoCs should be updated, too.
----
- arch/arm/boot/dts/ti/omap/am335x-bone-common.dtsi   | 2 +-
- arch/arm/boot/dts/ti/omap/am335x-boneblue.dts       | 2 +-
- arch/arm/boot/dts/ti/omap/am335x-chiliboard.dts     | 2 +-
- arch/arm/boot/dts/ti/omap/am335x-evm.dts            | 2 +-
- arch/arm/boot/dts/ti/omap/am335x-evmsk.dts          | 2 +-
- arch/arm/boot/dts/ti/omap/am335x-guardian.dts       | 2 +-
- arch/arm/boot/dts/ti/omap/am335x-icev2.dts          | 2 +-
- arch/arm/boot/dts/ti/omap/am335x-myirtech-myd.dts   | 2 +-
- arch/arm/boot/dts/ti/omap/am335x-osd3358-sm-red.dts | 2 +-
- arch/arm/boot/dts/ti/omap/am335x-pdu001.dts         | 2 +-
- arch/arm/boot/dts/ti/omap/am335x-pocketbeagle.dts   | 2 +-
- arch/arm/boot/dts/ti/omap/am335x-sl50.dts           | 2 +-
- 12 files changed, 12 insertions(+), 12 deletions(-)
-
-diff --git a/arch/arm/boot/dts/ti/omap/am335x-bone-common.dtsi b/arch/arm/boot/dts/ti/omap/am335x-bone-common.dtsi
-index ad1e60a9b6fde8f9..b75dabfa56ae7605 100644
---- a/arch/arm/boot/dts/ti/omap/am335x-bone-common.dtsi
-+++ b/arch/arm/boot/dts/ti/omap/am335x-bone-common.dtsi
-@@ -16,7 +16,7 @@ memory@80000000 {
- 	};
- 
- 	chosen {
--		stdout-path = &uart0;
-+		stdout-path = "serial0:115200n8";
- 	};
- 
- 	leds {
-diff --git a/arch/arm/boot/dts/ti/omap/am335x-boneblue.dts b/arch/arm/boot/dts/ti/omap/am335x-boneblue.dts
-index f579df4c2c540dd7..d430f0bef1653782 100644
---- a/arch/arm/boot/dts/ti/omap/am335x-boneblue.dts
-+++ b/arch/arm/boot/dts/ti/omap/am335x-boneblue.dts
-@@ -13,7 +13,7 @@ / {
- 	compatible = "ti,am335x-bone-blue", "ti,am33xx";
- 
- 	chosen {
--		stdout-path = &uart0;
-+		stdout-path = "serial0:115200n8";
- 	};
- 
- 	leds {
-diff --git a/arch/arm/boot/dts/ti/omap/am335x-chiliboard.dts b/arch/arm/boot/dts/ti/omap/am335x-chiliboard.dts
-index 648e97fe1dfd5e5b..ae5bc589849722f5 100644
---- a/arch/arm/boot/dts/ti/omap/am335x-chiliboard.dts
-+++ b/arch/arm/boot/dts/ti/omap/am335x-chiliboard.dts
-@@ -12,7 +12,7 @@ / {
- 		     "ti,am33xx";
- 
- 	chosen {
--		stdout-path = &uart0;
-+		stdout-path = "serial0:115200n8";
- 	};
- 
- 	leds {
-diff --git a/arch/arm/boot/dts/ti/omap/am335x-evm.dts b/arch/arm/boot/dts/ti/omap/am335x-evm.dts
-index 20222f82f21bfd9d..856fa1191ed24ea3 100644
---- a/arch/arm/boot/dts/ti/omap/am335x-evm.dts
-+++ b/arch/arm/boot/dts/ti/omap/am335x-evm.dts
-@@ -23,7 +23,7 @@ memory@80000000 {
- 	};
- 
- 	chosen {
--		stdout-path = &uart0;
-+		stdout-path = "serial0:115200n8";
- 	};
- 
- 	vbat: fixedregulator0 {
-diff --git a/arch/arm/boot/dts/ti/omap/am335x-evmsk.dts b/arch/arm/boot/dts/ti/omap/am335x-evmsk.dts
-index eba888dcd60e7fa2..d8baccdf8bc46302 100644
---- a/arch/arm/boot/dts/ti/omap/am335x-evmsk.dts
-+++ b/arch/arm/boot/dts/ti/omap/am335x-evmsk.dts
-@@ -30,7 +30,7 @@ memory@80000000 {
- 	};
- 
- 	chosen {
--		stdout-path = &uart0;
-+		stdout-path = "serial0:115200n8";
- 	};
- 
- 	vbat: fixedregulator0 {
-diff --git a/arch/arm/boot/dts/ti/omap/am335x-guardian.dts b/arch/arm/boot/dts/ti/omap/am335x-guardian.dts
-index 4b070e634b28100b..6ce3a2d029eedc8c 100644
---- a/arch/arm/boot/dts/ti/omap/am335x-guardian.dts
-+++ b/arch/arm/boot/dts/ti/omap/am335x-guardian.dts
-@@ -14,7 +14,7 @@ / {
- 	compatible = "bosch,am335x-guardian", "ti,am33xx";
- 
- 	chosen {
--		stdout-path = &uart0;
-+		stdout-path = "serial0:115200n8";
- 		tick-timer = &timer2;
- 	};
- 
-diff --git a/arch/arm/boot/dts/ti/omap/am335x-icev2.dts b/arch/arm/boot/dts/ti/omap/am335x-icev2.dts
-index 6f0f4fba043b96e9..ba488bba6925dec3 100644
---- a/arch/arm/boot/dts/ti/omap/am335x-icev2.dts
-+++ b/arch/arm/boot/dts/ti/omap/am335x-icev2.dts
-@@ -22,7 +22,7 @@ memory@80000000 {
- 	};
- 
- 	chosen {
--		stdout-path = &uart3;
-+		stdout-path = "serial3:115200n8";
- 	};
- 
- 	vbat: fixedregulator0 {
-diff --git a/arch/arm/boot/dts/ti/omap/am335x-myirtech-myd.dts b/arch/arm/boot/dts/ti/omap/am335x-myirtech-myd.dts
-index 06a352f98b220bc4..476a6bdaf43f38e4 100644
---- a/arch/arm/boot/dts/ti/omap/am335x-myirtech-myd.dts
-+++ b/arch/arm/boot/dts/ti/omap/am335x-myirtech-myd.dts
-@@ -15,7 +15,7 @@ / {
- 	compatible = "myir,myd-am335x", "myir,myc-am335x", "ti,am33xx";
- 
- 	chosen {
--		stdout-path = &uart0;
-+		stdout-path = "serial0:115200n8";
- 	};
- 
- 	clk12m: clk12m {
-diff --git a/arch/arm/boot/dts/ti/omap/am335x-osd3358-sm-red.dts b/arch/arm/boot/dts/ti/omap/am335x-osd3358-sm-red.dts
-index d28d397288476504..23caaaabf35134a6 100644
---- a/arch/arm/boot/dts/ti/omap/am335x-osd3358-sm-red.dts
-+++ b/arch/arm/boot/dts/ti/omap/am335x-osd3358-sm-red.dts
-@@ -147,7 +147,7 @@ simple-audio-card,codec {
- 	};
- 
- 	chosen {
--		stdout-path = &uart0;
-+		stdout-path = "serial0:115200n8";
- 	};
- 
- 	leds {
-diff --git a/arch/arm/boot/dts/ti/omap/am335x-pdu001.dts b/arch/arm/boot/dts/ti/omap/am335x-pdu001.dts
-index c9ccb9de21ad7b10..9f611debc209072c 100644
---- a/arch/arm/boot/dts/ti/omap/am335x-pdu001.dts
-+++ b/arch/arm/boot/dts/ti/omap/am335x-pdu001.dts
-@@ -21,7 +21,7 @@ / {
- 	compatible = "ti,am33xx";
- 
- 	chosen {
--		stdout-path = &uart3;
-+		stdout-path = "serial3:115200n8";
- 	};
- 
- 	cpus {
-diff --git a/arch/arm/boot/dts/ti/omap/am335x-pocketbeagle.dts b/arch/arm/boot/dts/ti/omap/am335x-pocketbeagle.dts
-index 78ce860e59b3de4f..24d9f90fad01f768 100644
---- a/arch/arm/boot/dts/ti/omap/am335x-pocketbeagle.dts
-+++ b/arch/arm/boot/dts/ti/omap/am335x-pocketbeagle.dts
-@@ -15,7 +15,7 @@ / {
- 	compatible = "ti,am335x-pocketbeagle", "ti,am335x-bone", "ti,am33xx";
- 
- 	chosen {
--		stdout-path = &uart0;
-+		stdout-path = "serial0:115200n8";
- 	};
- 
- 	leds {
-diff --git a/arch/arm/boot/dts/ti/omap/am335x-sl50.dts b/arch/arm/boot/dts/ti/omap/am335x-sl50.dts
-index f3524e5ee43e276d..1dc4e344efd63e4e 100644
---- a/arch/arm/boot/dts/ti/omap/am335x-sl50.dts
-+++ b/arch/arm/boot/dts/ti/omap/am335x-sl50.dts
-@@ -25,7 +25,7 @@ memory@80000000 {
- 	};
- 
- 	chosen {
--		stdout-path = &uart0;
-+		stdout-path = "serial0:115200n8";
- 	};
- 
- 	leds {
--- 
-2.43.0
-
+>
+>
+> Thank you,
+>
+> > [ 30.898799][ T66] ? _mutex_trylock_nest_lock (kernel/locking/mutex.c:9=
+16)
+> > [ 30.898799][ T66] ? fprobe_addr_list_add+0x4a0/0x4a0
+> > [ 30.898799][ T66] ? mutex_unlock (kernel/locking/mutex.c:537)
+> > [ 30.898799][ T66] notifier_call_chain (kernel/notifier.c:85)
+> > [ 30.898799][ T66] blocking_notifier_call_chain (kernel/notifier.c:381 =
+kernel/notifier.c:368)
+> > [ 30.898799][ T66] do_init_module (kernel/module/main.c:3134)
+> > [ 30.898799][ T66] ? free_module (kernel/module/main.c:3011)
+> > [ 30.898799][ T66] load_module (kernel/module/main.c:3509)
+> > [ 30.898799][ T66] init_module_from_file (kernel/module/main.c:3701)
+> > [ 30.898799][ T66] ? __ia32_sys_init_module (kernel/module/main.c:3677)
+> > [ 30.898799][ T66] ? ftrace_likely_update (arch/x86/include/asm/smap.h:=
+53 kernel/trace/trace_branch.c:223)
+> > [ 30.898799][ T66] ? do_raw_spin_unlock (kernel/locking/spinlock_debug.=
+c:103 (discriminator 4) kernel/locking/spinlock_debug.c:141 (discriminator =
+4))
+> > [ 30.898799][ T66] idempotent_init_module (kernel/module/main.c:3636 ke=
+rnel/module/main.c:3714)
+> > [ 30.898799][ T66] ? tracer_hardirqs_on (kernel/trace/trace_irqsoff.c:6=
+43)
+> > [ 30.898799][ T66] ? init_module_from_file (kernel/module/main.c:3705)
+> > [ 30.898799][ T66] ? ftrace_likely_update (arch/x86/include/asm/smap.h:=
+53 kernel/trace/trace_branch.c:223)
+> > [ 30.898799][ T66] __x64_sys_finit_module (include/linux/file.h:62 (dis=
+criminator 3) include/linux/file.h:83 (discriminator 3) kernel/module/main.=
+c:3736 (discriminator 3) kernel/module/main.c:3723 (discriminator 3) kernel=
+/module/main.c:3723 (discriminator 3))
+> > [ 30.898799][ T66] x64_sys_call (arch/x86/entry/syscall_64.c:41)
+> > [ 30.898799][ T66] do_syscall_64 (arch/x86/entry/syscall_64.c:63 (discr=
+iminator 1) arch/x86/entry/syscall_64.c:94 (discriminator 1))
+> > [ 30.898799][ T66] ? ksys_read (fs/read_write.c:705)
+> > [ 30.898799][ T66] ? vfs_write (fs/read_write.c:705)
+> > [ 30.898799][ T66] ? build_open_flags (fs/open.c:1420)
+> > [ 30.898799][ T66] ? ftrace_likely_update (arch/x86/include/asm/smap.h:=
+53 kernel/trace/trace_branch.c:223)
+> > [ 30.898799][ T66] ? tracer_hardirqs_on (kernel/trace/trace_irqsoff.c:6=
+43)
+> > [ 30.898799][ T66] ? lockdep_hardirqs_on_prepare (kernel/locking/lockde=
+p.c:4678)
+> > [ 30.898799][ T66] ? do_syscall_64 (arch/x86/entry/syscall_64.c:113)
+> > [ 30.898799][ T66] ? __x64_sys_openat (fs/open.c:1461)
+> > [ 30.898799][ T66] ? __x64_sys_open (fs/open.c:1461)
+> > [ 30.898799][ T66] ? ftrace_likely_update (arch/x86/include/asm/smap.h:=
+53 kernel/trace/trace_branch.c:223)
+> > [ 30.898799][ T66] ? tracer_hardirqs_on (kernel/trace/trace_irqsoff.c:6=
+43)
+> > [ 30.898799][ T66] ? lockdep_hardirqs_on_prepare (kernel/locking/lockde=
+p.c:4678)
+> > [ 30.898799][ T66] ? do_syscall_64 (arch/x86/entry/syscall_64.c:113)
+> > [ 30.898799][ T66] ? tracer_hardirqs_on (kernel/trace/trace_irqsoff.c:6=
+43)
+> > [ 30.898799][ T66] ? lockdep_hardirqs_on_prepare (kernel/locking/lockde=
+p.c:4678)
+> > [ 30.898799][ T66] ? do_syscall_64 (arch/x86/entry/syscall_64.c:113)
+> > [ 30.898799][ T66] ? irqentry_exit (kernel/entry/common.c:210)
+> > [ 30.898799][ T66] ? exc_page_fault (arch/x86/mm/fault.c:1536)
+> > [ 30.898799][ T66] entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry=
+_64.S:130)
+> > [   30.898799][   T66] RIP: 0033:0x7f46bce10719
+> > [ 30.898799][ T66] Code: 08 89 e8 5b 5d c3 66 2e 0f 1f 84 00 00 00 00 0=
+0 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0=
+f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d b7 06 0d 00 f7 d8 64 89 01 48
+> > All code
+> > =3D=3D=3D=3D=3D=3D=3D=3D
+> >    0: 08 89 e8 5b 5d c3       or     %cl,-0x3ca2a418(%rcx)
+> >    6: 66 2e 0f 1f 84 00 00    cs nopw 0x0(%rax,%rax,1)
+> >    d: 00 00 00
+> >   10: 90                      nop
+> >   11: 48 89 f8                mov    %rdi,%rax
+> >   14: 48 89 f7                mov    %rsi,%rdi
+> >   17: 48 89 d6                mov    %rdx,%rsi
+> >   1a: 48 89 ca                mov    %rcx,%rdx
+> >   1d: 4d 89 c2                mov    %r8,%r10
+> >   20: 4d 89 c8                mov    %r9,%r8
+> >   23: 4c 8b 4c 24 08          mov    0x8(%rsp),%r9
+> >   28: 0f 05                   syscall
+> >   2a:*        48 3d 01 f0 ff ff       cmp    $0xfffffffffffff001,%rax  =
+       <-- trapping instruction
+> >   30: 73 01                   jae    0x33
+> >   32: c3                      ret
+> >   33: 48 8b 0d b7 06 0d 00    mov    0xd06b7(%rip),%rcx        # 0xd06f=
+1
+> >   3a: f7 d8                   neg    %eax
+> >   3c: 64 89 01                mov    %eax,%fs:(%rcx)
+> >   3f: 48                      rex.W
+> >
+> > Code starting with the faulting instruction
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >    0: 48 3d 01 f0 ff ff       cmp    $0xfffffffffffff001,%rax
+> >    6: 73 01                   jae    0x9
+> >    8: c3                      ret
+> >    9: 48 8b 0d b7 06 0d 00    mov    0xd06b7(%rip),%rcx        # 0xd06c=
+7
+> >   10: f7 d8                   neg    %eax
+> >   12: 64 89 01                mov    %eax,%fs:(%rcx)
+> >   15: 48                      rex.W
+> > [   30.898799][   T66] RSP: 002b:00007ffc679745b8 EFLAGS: 00000246 ORIG=
+_RAX: 0000000000000139
+> > [   30.898799][   T66] RAX: ffffffffffffffda RBX: 00005640c34b9160 RCX:=
+ 00007f46bce10719
+> > [   30.898799][   T66] RDX: 0000000000000000 RSI: 00005640aa9b74a0 RDI:=
+ 0000000000000004
+> > [   30.898799][   T66] RBP: 00005640aa9b74a0 R08: 0000000000000000 R09:=
+ 00005640c34ba430
+> > [   30.898799][   T66] R10: 0000000000000004 R11: 0000000000000246 R12:=
+ 0000000000040000
+> > [   30.898799][   T66] R13: 0000000000000000 R14: 00005640c34b83a0 R15:=
+ 0000000000000000
+> > [   30.898799][   T66]  </TASK>
+> > [   30.963748][   T66] Oops: general protection fault, probably for non=
+-canonical address 0xdffffc0000000002: 0000 [#1] KASAN
+> > [   30.964694][   T66] KASAN: null-ptr-deref in range [0x00000000000000=
+10-0x0000000000000017]
+> > [   30.964694][   T66] CPU: 0 UID: 0 PID: 66 Comm: modprobe Not tainted=
+ 6.17.0-rc6-00004-ge5a4cc28a052 #1 NONE  5e106928d64815a8c70ffa200d16301537=
+e1528f
+> > [   30.964694][   T66] Hardware name: QEMU Standard PC (i440FX + PIIX, =
+1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+> > [ 30.964694][ T66] RIP: 0010:rhashtable_walk_enter (include/linux/list.=
+h:169 lib/rhashtable.c:688)
+> > [ 30.964694][ T66] Code: c1 ea 03 80 3c 02 00 0f 85 2b 02 00 00 4d 89 7=
+7 28 4d 8d 6e 10 48 b8 00 00 00 00 00 fc ff df 4d 8d 67 18 4c 89 ea 48 c1 e=
+a 03 <80> 3c 02 00 0f 85 f7 01 00 00 49 8b 5e 10 48 8d 43 08 48 89 c2 48
+> > All code
+> > =3D=3D=3D=3D=3D=3D=3D=3D
+> >    0: c1 ea 03                shr    $0x3,%edx
+> >    3: 80 3c 02 00             cmpb   $0x0,(%rdx,%rax,1)
+> >    7: 0f 85 2b 02 00 00       jne    0x238
+> >    d: 4d 89 77 28             mov    %r14,0x28(%r15)
+> >   11: 4d 8d 6e 10             lea    0x10(%r14),%r13
+> >   15: 48 b8 00 00 00 00 00    movabs $0xdffffc0000000000,%rax
+> >   1c: fc ff df
+> >   1f: 4d 8d 67 18             lea    0x18(%r15),%r12
+> >   23: 4c 89 ea                mov    %r13,%rdx
+> >   26: 48 c1 ea 03             shr    $0x3,%rdx
+> >   2a:*        80 3c 02 00             cmpb   $0x0,(%rdx,%rax,1)        =
+       <-- trapping instruction
+> >   2e: 0f 85 f7 01 00 00       jne    0x22b
+> >   34: 49 8b 5e 10             mov    0x10(%r14),%rbx
+> >   38: 48 8d 43 08             lea    0x8(%rbx),%rax
+> >   3c: 48 89 c2                mov    %rax,%rdx
+> >   3f: 48                      rex.W
+> >
+> > Code starting with the faulting instruction
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >    0: 80 3c 02 00             cmpb   $0x0,(%rdx,%rax,1)
+> >    4: 0f 85 f7 01 00 00       jne    0x201
+> >    a: 49 8b 5e 10             mov    0x10(%r14),%rbx
+> >    e: 48 8d 43 08             lea    0x8(%rbx),%rax
+> >   12: 48 89 c2                mov    %rax,%rdx
+> >   15: 48                      rex.W
+> >
+> >
+> > The kernel config and materials to reproduce are available at:
+> > https://download.01.org/0day-ci/archive/20250930/202509301440.be4b3631-=
+lkp@intel.com
+> >
+> >
+> >
+> > --
+> > 0-DAY CI Kernel Test Service
+> > https://github.com/intel/lkp-tests/wiki
+> >
+>
+>
+> --
+> Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
