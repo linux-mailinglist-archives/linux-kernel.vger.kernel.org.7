@@ -1,234 +1,188 @@
-Return-Path: <linux-kernel+bounces-839703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7656EBB2322
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 03:01:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07A2FBB2331
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 03:02:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B1EF3AC70D
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 01:01:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE1D9322123
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 01:02:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A535521348;
-	Thu,  2 Oct 2025 01:01:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3DEBDF59;
+	Thu,  2 Oct 2025 01:01:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bjOPQguq"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="pzJAo28G"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F26F34BA57
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 01:01:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F5D34BA57
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 01:01:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759366873; cv=none; b=rOuphnnpiJCHlMjQzVMm1+gyL2JqPBlbwdPNZt/E8+WIWKvvqna3sBXYtkbJ0miipYz8vIdlPrbCEpJDAx6Cxwo5hti40CNormHAIlfxR41IyxPsexGt6Ztlp4sjChvgmm8UiQa/KyvPsfJk0eKfMvQeNw5RazV7KBHmYUTxNvw=
+	t=1759366911; cv=none; b=NOYTpwv2TN89Zwh6Fk8JvrXicVZcYaCvUab/OX3zq3qOa8zbJw5hyIrL3oe4imk+RKd/dpFOEGeaE9URo1KSyDyeiB+Hl44YFA9Pxr1gNYnHw5W+57yIH8pmqBRZbsGwyknbmmMG5xA1vCggorX07VUjpYKx9xdqlgWtmyk7EQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759366873; c=relaxed/simple;
-	bh=TIu7h1xeIgBHKKl2I6wLR7XEqYt0J6cvSYGxq+2z8nQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jGsBch4k8iC93KENKEs3oB3MjbXYHVMMhRA8txZ7rV1y8rvHzw0qcQ+Rk5c7g4+yoK2ZDksL8qXJMOMUzKoDOhvsZpgwKXFp4SDLrr0nD0BG+C2IqswVX0S/waJq9lAGaYIi5e28GAZMWKCIumPmzpja7dhdZ29CXGWdja+WfmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bjOPQguq; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4dcc9cebfdfso63691cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 18:01:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759366871; x=1759971671; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TIu7h1xeIgBHKKl2I6wLR7XEqYt0J6cvSYGxq+2z8nQ=;
-        b=bjOPQguq/xibf7HyG8ZTPZ+fZUPOKFvSigHrHM27EdoE23stImpN9yB+2pL5G0A8Zi
-         KtfEgnAPoD4fQPfofFNlPwlgws/cJC1j33Dx+Cd7mryNOCpsy5pLNXrcW+3yKBjIKYdp
-         PUplLQgIeR1l55XWOhz/Ovz80FjMZp6utTYn4n9KLPDdOEqT8muv/xJfAIx+sjFWa62r
-         D2wx/Tj9gupDy0TgYbtELr91mJ3pZxc0/7eTdDOGOXMZ8eW6SbAd1eNTuh3HwN69FMyL
-         6lKqLV9tFON9S1tviJ5kzd57d5gqihZ72/Wv9tGu4qtlvt0tLoEAYU6OtoPGru6oRxHU
-         RQ+g==
+	s=arc-20240116; t=1759366911; c=relaxed/simple;
+	bh=HCZdNAoMBnXI97RBUrQ9js+GcawBirknDeCnyIBfdF8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X/CtLmbveILxyavG12nklOW9molGyHSfgaGC3DUJfXhylmGagNdGccY5B55ylExizfUXXGkXv2mM2Cki8e60IA5RxGoVuBitII4UQgIm1rFd1sFMP+Ei2/hr+bNuzcCFTTRd1fEXCRCAJGNQVcun2Wav9OmT49naBDv4igEBeQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=pzJAo28G; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 591IcF6x010221
+	for <linux-kernel@vger.kernel.org>; Thu, 2 Oct 2025 01:01:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=+uuV+cAEUShNKUExukS8Sgyd
+	D6777ETGVMv3jAdKCJQ=; b=pzJAo28GyVqZx1sMk+eBu2npT920kGL71Izeb9ie
+	5Sv1dzeXKseKZQpR6MRLHAUdZTQhn9lZI1VA2Tr1CG/guG4ptPbv/EqNjdbZ3lBI
+	YS2+vGtRN/g1FHQ8A4vvoHJVpYXOo6BWE5NE3Cpq/joefc9THzWLWwERRU4TzW+O
+	aU3+Qqn1/Ww3pk6dJoz1LNFZ/b+SrxJEhks3p3a/vxYFJqGXT/5ARVCMZBk+WTeP
+	Hmt2YUjhWVZDtdpfjHfbcwsEvCQyHDsUncpSkhBSRjpcee/3ZFTVM4QGPyksrPOI
+	9RUUmlmKcRQakxMFYTFiIG9oNgZG035AY3j1TEyNGLCeYg==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e93hp1mx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 01:01:49 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4dfe8dafd18so21065231cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 18:01:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759366871; x=1759971671;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TIu7h1xeIgBHKKl2I6wLR7XEqYt0J6cvSYGxq+2z8nQ=;
-        b=B0O12IWDro7d02hvoj9MnnRXSfC08aKjQ1vOUHzQwyDuYQMZxX+gM7nSdyT3mibexp
-         lTTUbXcdnnv5IDMHecTwozTLpiORkgiSmtkzkqmis4XdP6XNcM6/faQ/kw+VAEEEP1hz
-         4O9M/+8VxSfayUc5HfZef7idTvS3JvnCi9CtM5ATp+XEzCXiMdRyT/yqyUPN+WYi94Nj
-         orpDzifOOHZ9MmbER1nynEGGeRMT1uAoC250QCMpWQeJmnnafx41eBDA4oiXrtKZFrBp
-         3VdMDXG/eX+cmKYLhOJDXiq7XIQYf6T0Ij+7kb6//UZIlxUw3Fqw5RoBOgRKbV7KGQAW
-         bC9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWycTrsrYoN7IgKzXTpL7Wb3tpHK2t99lOqH4XkBDMctCHTJXTj42BSsOSFsFUnA3/sV4QpfO/HpOpJgdY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1Zuyj1c58eq8whOZzJT0Ys8gARkIqMBFPzdNh3bXJcSBG/StA
-	qY6sgTRsxkMc11cjFW/q+CqbA8JqaS4NU2xwzhnqmU5WFW0u6LnKXmY+eXkX0JpmWJP2vjr+VmJ
-	Y20dx3B645AWiwlL2lZuEJtn67iDL8C1u9oIZY/DQ
-X-Gm-Gg: ASbGncujYIhFTtFgPRNkgybEGYEYiP6h0N+phUfZXh0kwcaIGsqTFlZ8E77nWtW3PgS
-	T9OtHDX0tczVCk7SttsyZe/rL0reiLQpbngfw+terYwDp3gbx3v1xyD4UEQtgz8+4Zb6ac0HdP9
-	0AwLd/0EMlMIVCoi9fiFlNGO7R682E1t8wzmC3GiswNATGAV4eOev+JO3GdPZKParXmouUAuizw
-	aKhCsktfp7C4EtLfQI55bBwMnnRGBCWXAH0vJxiy3Qnfv/8uRMO98GgnUcQeUO6qKRDiY8=
-X-Google-Smtp-Source: AGHT+IEv1WzjEquiM1NfLv5QPI43hNJpK4KVIQfGAHhJ/qmStxnbo/qPo29TIZNVNN+eisyz+YCW0ZgCCimLjJZMX94=
-X-Received: by 2002:a05:622a:1817:b0:4e0:ba0b:6f2a with SMTP id
- d75a77b69052e-4e56b1c363dmr2533731cf.14.1759366870490; Wed, 01 Oct 2025
- 18:01:10 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759366908; x=1759971708;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+uuV+cAEUShNKUExukS8SgydD6777ETGVMv3jAdKCJQ=;
+        b=lvwsFxfNXy459bMOQyCN2GQEejdrZUMFLvWuslttVWNEblSicNus8PHdVKEubQEOiB
+         IFWgRei8R2RhRxNxENfSr1T4eBMxxev7HjQZdEMCXmSYWVcPJg+aBAfG6SeihujFnlKR
+         ppBuuqy/lHNkvWMqiU2M7TaHGCYYC6UiqkdNmLyskpMXYcK/9EVybD7I99A3Bi7xmpef
+         LDU2YO2fdkFpb7KibDtRnRW2wLeh2BOaVA2dJ7Jtl8kvn5ZCge2BLLT0Fp48hFi4EHR7
+         hvMIUBZsmu97ZGCSj0AHlVwLkHlFAw7t4YOJhCage56A7XbIT2DfveHP4m6E3MF0wtPN
+         JGrg==
+X-Forwarded-Encrypted: i=1; AJvYcCXGQbazVdFcmg0DWNb/hAx6Lz/BKPx+ZA9hPj30yPi2yQmhRKqiYlncTKMJmDXr0Aw1B9kWc+mPuQJhYA4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKT40oCIW3MkybV2o/zoKkyLvR1uPk2DvHZzvf+EfIcn4reHx0
+	Wn9UNr12rbiCWR4m/lfo+YTxZHFDYOgSy+LdqEkqk4LQUNCr6v4PA6myP5e+hZrsn/PjWMOPMP+
+	BqoQzDw6LdUv/jY20Ulb3pRo+7IW4aMcT2mRCvfpxpUbbDD0pGGUOvhJYU3FY4Qd8BEw=
+X-Gm-Gg: ASbGncvQQwjeLStACeDm6eED3U/qqtxpYIOG/6Gm+3PneJboEE3Wr2gVLMJvUDwUBlK
+	hnrDVJJ6ejBE7QuBQRbj/ENUcaf4SEVXR/qysbaNcX9u2RfkM7sOTNY/g7Y/BsldhCbM4gQJ8Hy
+	fWKMTHgFbcD9jvm/R14oirqrKbTPIUHB8HXY/2qaXzT9IuiGIDKNhDK4LfA0Pd/TFHo5ksyNQWQ
+	mkWdd8Nk8fpNubAIG6O3JyRkXtOby41c3wSDY88OR4e+9Xv04btxlSi9GcSMDv8lVWLyysjDOkx
+	LtlSflCD/bFZINusBVtAq7t9o9YUOIj5mv/gq3qFd6ukX17pas3jqpk48wxm6rW2I9mwOiCwCSD
+	zDbNFSw1td0R6xOntjc5m8HaZslxZag5Rz0gesz3BWCPz5MsiMpICYIipyg==
+X-Received: by 2002:a05:622a:7c0d:b0:4e5:c50:54c9 with SMTP id d75a77b69052e-4e50c505d71mr35071891cf.14.1759366908196;
+        Wed, 01 Oct 2025 18:01:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFn+cgowdIyCiT+tSd84oPTNAKVxBzdxq8x33fvDr8hPGJVsiMB7AsHFEUbdO1IdCvcYvE2oQ==
+X-Received: by 2002:a05:622a:7c0d:b0:4e5:c50:54c9 with SMTP id d75a77b69052e-4e50c505d71mr35071211cf.14.1759366907553;
+        Wed, 01 Oct 2025 18:01:47 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58b0113f3ddsm344791e87.52.2025.10.01.18.01.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Oct 2025 18:01:45 -0700 (PDT)
+Date: Thu, 2 Oct 2025 04:01:43 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Sean Paul <sean@poorly.run>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Jonathan Marek <jonathan@marek.ca>,
+        Jordan Crouse <jordan@cosmicpenguin.net>,
+        Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <joro@8bytes.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux.dev, devicetree@vger.kernel.org
+Subject: Re: [PATCH 06/17] drm/msm/adreno: Move adreno_gpu_func to catalogue
+Message-ID: <edfc7ke5ktoah7ftjbwk7dzihsgh2mq7tatfy6a5oxbn6yt7d6@yf6nz7b7jrmx>
+References: <20250930-kaana-gpu-support-v1-0-73530b0700ed@oss.qualcomm.com>
+ <20250930-kaana-gpu-support-v1-6-73530b0700ed@oss.qualcomm.com>
+ <cp7djnezyp4whhfqcnsfpes5kxfbyvqvc2ceimdrnrl7s7agyk@z7ozx6oihezd>
+ <82cd8782-b2ee-46ce-9964-e564ab6a0199@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250928190624.3735830-1-skhawaja@google.com> <20250928190624.3735830-14-skhawaja@google.com>
- <20250929160034.GG2695987@ziepe.ca> <CA+CK2bDqDz3k0gXamJEbKUL7RPBLVjaA5=Jum=CF84wR+50izA@mail.gmail.com>
- <20250930135916.GN2695987@ziepe.ca> <CAAywjhRGrGjZK3jQptieVWmdzvjfNtTYrp2ChTZJSmFyrBaRqw@mail.gmail.com>
- <20250930210504.GU2695987@ziepe.ca> <CAAywjhRQONuHsxTGQZ5R=EJbOHUD+xOF_CYjkNRbUyCQkORwig@mail.gmail.com>
- <20251001114742.GV2695987@ziepe.ca>
-In-Reply-To: <20251001114742.GV2695987@ziepe.ca>
-From: Samiullah Khawaja <skhawaja@google.com>
-Date: Wed, 1 Oct 2025 18:00:58 -0700
-X-Gm-Features: AS18NWClc2AUSNQhBbZ9vE_PU_Z8tSuRXnmyJUXgj81sp5NS2cvTVsg3RJFphCw
-Message-ID: <CAAywjhRKvZBShj7KAXew2v_uGjn3HhvO=sFrZ=bVfMJ8ye-Vyw@mail.gmail.com>
-Subject: Re: [RFC PATCH 13/15] iommufd: Persist iommu domains for live update
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Pasha Tatashin <pasha.tatashin@soleen.com>, David Woodhouse <dwmw2@infradead.org>, 
-	Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>, 
-	Will Deacon <will@kernel.org>, iommu@lists.linux.dev, YiFei Zhu <zhuyifei@google.com>, 
-	Robin Murphy <robin.murphy@arm.com>, Pratyush Yadav <pratyush@kernel.org>, 
-	Kevin Tian <kevin.tian@intel.com>, linux-kernel@vger.kernel.org, 
-	Saeed Mahameed <saeedm@nvidia.com>, Adithya Jayachandran <ajayachandra@nvidia.com>, 
-	Parav Pandit <parav@nvidia.com>, Leon Romanovsky <leonro@nvidia.com>, William Tu <witu@nvidia.com>, 
-	Vipin Sharma <vipinsh@google.com>, dmatlack@google.com, Chris Li <chrisl@kernel.org>, 
-	praan@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <82cd8782-b2ee-46ce-9964-e564ab6a0199@oss.qualcomm.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDA0MSBTYWx0ZWRfXxr8qEC04z1ck
+ ADb4wVeT8Ulg5WGWPF7r+Tt5w896orbU0ZHylKavGmafaMCh/0zS6fpMvXMeMSfhn+066qt1R/L
+ tgDBvVUDoO4f8aGe1Mudyu34V2u9krUCxcFr5xdyCm5YCdlCqDejIn6DdptllFC+AxNqGwaiXTY
+ 7uKzumrbOulqlhalGN6SJbWdyKMC7t3h/qTj16K3MWmQXjjlnYjHXJRBnw7Sh8JcC6B2QrOUQ0S
+ qK7z1dX8mdORdyuOZT111Dk8g4Dh0B8YsSfT0Giijxvx+KHmkVBEbZkSfgQwuN1FUTy9MXoSEFE
+ t4Ue9c4xUJHr8Zqe2uRhHLj7ewtkOax+WvQPHpFOPvjRsNcrKF0YaF8+Yemufq3o8eS80aGip+2
+ WH5YivMQ/OMljLev5on/fvWt4Jpq1A==
+X-Proofpoint-GUID: -buHx_BYNF6As4LOgPurRakZyIKLbSzr
+X-Proofpoint-ORIG-GUID: -buHx_BYNF6As4LOgPurRakZyIKLbSzr
+X-Authority-Analysis: v=2.4 cv=Rfydyltv c=1 sm=1 tr=0 ts=68ddcefd cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=RvmDfw1ThOOzoc4muVMA:9 a=CjuIK1q_8ugA:10
+ a=dawVfQjAaf238kedN5IG:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-01_07,2025-09-29_04,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 priorityscore=1501 bulkscore=0 adultscore=0 lowpriorityscore=0
+ impostorscore=0 clxscore=1015 malwarescore=0 spamscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270041
 
-On Wed, Oct 1, 2025 at 4:47=E2=80=AFAM Jason Gunthorpe <jgg@ziepe.ca> wrote=
-:
->
-> On Tue, Sep 30, 2025 at 04:15:43PM -0700, Samiullah Khawaja wrote:
->
-> > > The iommu core code should be restoring the iommu_domain as soon as
-> > > the attached device is plugged in and attaching the preserved domain
-> > > instead of something else during the device probe sequence
-> > >
-> > > This logic should not be in drivers.
-> > >
-> > > From there you either put the hwpt back into iommufd and have it free
-> > > the iommu_domain when it destroys the hwpt
-> > >
-> > > Or you have the iommu core code free the iommu_domain at some point
-> > > after iommufd has replaced the attachment with a new iommu_domain?
-> >
-> > But we cannot do the replacement during domain attachment because
-> > userspace might not have fully prepared the new domain with all the
-> > required DMA mappings. Replace during LUO finish?
->
-> The idea is the kernel will restore the iommu_domain during early boot
-> in the iommu_core and then attach it. This should "rewrite" the IOMMU
-> HW context for that device with identical content. Drivers must be
-> enhanced to support this hitless rewrite (AMD and ARM are already
-> done).
->
-> At this point the kernel is operating normally with a normal domain
-> and a normal driver, no special luo stuff.
->
-> Later iommufd will come along and establish a HWPT that has an
-> identical translation. Then we replace the luo domain with the new
-> HWPT and free the luo domain.
->
-> > 1. During boot, the IOMMU core sets up a default domain but doesn't
-> > program the context entries for the preserved device. The hardware
-> > keeps on using the old preserved tables.
->
-> When the iommu driver first starts up it can take over the context
-> memory from the predecessor kernel. But it has to go through it and
-> clear out most of the context entries.
->
-> Only context entries belonging to devices marked for preservation
-> should be kept unchanged.
+On Thu, Oct 02, 2025 at 01:24:36AM +0530, Akhil P Oommen wrote:
+> On 9/30/2025 12:39 PM, Dmitry Baryshkov wrote:
+> > On Tue, Sep 30, 2025 at 11:18:11AM +0530, Akhil P Oommen wrote:
+> >> In A6x family (which is a pretty big one), there are separate
+> >> adreno_func definitions for each sub-generations. To streamline the
+> >> identification of the correct struct for a gpu, move it to the
+> >> catalogue and move the gpu_init routine to struct adreno_gpu_funcs.
+> >>
+> >> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+> >> ---
+> >>  drivers/gpu/drm/msm/adreno/a2xx_catalog.c  |   8 +-
+> >>  drivers/gpu/drm/msm/adreno/a2xx_gpu.c      |  50 +++----
+> >>  drivers/gpu/drm/msm/adreno/a3xx_catalog.c  |  14 +-
+> >>  drivers/gpu/drm/msm/adreno/a3xx_gpu.c      |  52 +++----
+> >>  drivers/gpu/drm/msm/adreno/a4xx_catalog.c  |   8 +-
+> >>  drivers/gpu/drm/msm/adreno/a4xx_gpu.c      |  54 ++++----
+> >>  drivers/gpu/drm/msm/adreno/a5xx_catalog.c  |  18 +--
+> >>  drivers/gpu/drm/msm/adreno/a5xx_gpu.c      |  61 ++++-----
+> >>  drivers/gpu/drm/msm/adreno/a6xx_catalog.c  |  50 +++----
+> >>  drivers/gpu/drm/msm/adreno/a6xx_gpu.c      | 209 ++++++++++++++---------------
+> >>  drivers/gpu/drm/msm/adreno/adreno_device.c |   2 +-
+> >>  drivers/gpu/drm/msm/adreno/adreno_gpu.h    |  11 +-
+> >>  12 files changed, 275 insertions(+), 262 deletions(-)
+> >>
+> >> diff --git a/drivers/gpu/drm/msm/adreno/a2xx_catalog.c b/drivers/gpu/drm/msm/adreno/a2xx_catalog.c
+> >> index 5ddd015f930d9a7dd04e2d2035daa0b2f5ff3f27..af3e4cceadd11d4e0ec4ba75f75e405af276cb7e 100644
+> >> --- a/drivers/gpu/drm/msm/adreno/a2xx_catalog.c
+> >> +++ b/drivers/gpu/drm/msm/adreno/a2xx_catalog.c
+> >> @@ -8,6 +8,8 @@
+> >>  
+> >>  #include "adreno_gpu.h"
+> >>  
+> >> +extern const struct adreno_gpu_funcs a2xx_gpu_funcs;
+> > 
+> > Please move these definitions to aNxx_gpu.h (a2xx_gpu.h, etc). LGTM
+> > otherwise.
+> 
+> This is a special case. These symbols needs to be visible only here.
 
-Agreed. We have to sanitize these and remove unused entries. I think
-the same goes for any PASID tables.
->
-> Later we probe the struct device to the iommu and do as I said above
-> to restore consistency.
->
-> > 2. Userspace restores the iommufd, creates a new HWPT/domain and
-> > populates mappings.
->
-> Yes
->
-> > 3. On FINISH, the IOMMU core updates the context entries of preserved
-> > devices to point to the new domain.
->
-> No, finish should never do anything on the restore path, IMHO. User
-> should directly attach the newly created HWPT when it is ready.
+Why? They also need to be visible at the point of the actual definition.
+As such, I think they should be a part of the common gen-specific
+header.
 
-Makes sense. But if the user never replaces the restored iommu_domain
-with a new HWPT, we will have to discard the old (restored) domain on
-finish since it doesn't have any associated HWPT. I see you already
-hinted at this below. This needs to be handled carefully considering
-the vfio cdev FD state also. Discussed further below.
->
-> > I understand the desire to have the preserved iommu domain be restored
-> > during boot so the device has a default domain and there is an owner
-> > of the attached restored domain, but that would prevent the iommfud
-> > from cooking a clean new domain.
->
-> The "default domain" is the "DMA API domain" and it has to be created
-> and setup always. The change here is instead of attaching the default
-> domain we attach the luo restored domain at early boot.
-
-Oh... I meant the group->domain instead of group->default_domain.
-Should have written active domain instead of default domain.
->
-> This sets the device into an "owned" mode but vfio can still attach
-> and nothing prevents iommufd from building a new hwpt and attaching
-> it.
-
-This is the part that I was concerned about since I was looking into
-the auto_domain. Users that attach to ioas directly and use
-auto_domain would not be able to restore the mappings before attaching
-to the device. But users that use HWPT directly should be able to
-prepare a new domain and hotswap when ready. But I think a new
-interface can be built to support IOAS only use cases also. We can
-revisit this later.
->
-> > Maybe we can refine the "Hotswap" model I had in mind. Basically on
-> > boot the core restores the preserved iommu domain, but core lets
-> > iommufd attach a new domain with preserved devices without replacing
-> > the underlying context entries?
->
-> Replace the context entries. If everything is working properly the
-> preserved domain should compute an identical context entry, so no
-> reason to not just "replace" it which should be a NOP.
->
-> > > Also there is an interesting behavior to note that if the iommu drive=
-r
-> > > restores a domain then it will also prevent a non-vfio driver from
-> > > binding to that device.
-> >
-> > Agreed. I think in the "Hotswap" approach I discussed above, if we
-> > don't restore the domain, the core can just commit the context entries
-> > of the new default domain if a non-vfio driver is bound to the device.
->
-> As I said, the owned nature of the device will prevent attaching a
-> non-vfio driver in the first place.
->
-> So the only path forward for userspace is to attach vfio, and then
-> iommufd should take over that luo restored iommu_domain and eventually
-> free it.
->
-> You might consider that finish should de-own the device if vfio didn't
-> claim it. But that is a bit tricky since it needs a FLR before the
-> domains can be switched around.
-
-That's a good point. But it might be tricky since the ownership of the
-device is with the vfio cdev FD. So if vfio cdev FD is never
-restored/reclaimed the device can be FLR'd. iommufd will follow along
-and discard the domain.
-
-The more interesting case might be where cdev is restored and bound to
-iommufd but the user never recreates and hotswaps a new HWPT. In this
-case we can discard the restored iommu_domain and replace it with the
-blocking domain as it should have been if the device was not
-preserved.
->
-> Jason
+-- 
+With best wishes
+Dmitry
 
