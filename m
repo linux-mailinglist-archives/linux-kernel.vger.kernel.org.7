@@ -1,47 +1,52 @@
-Return-Path: <linux-kernel+bounces-840231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CCC8BB3E4A
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 14:30:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C33F1BB3F20
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 14:55:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B03AB19C79C5
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 12:30:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FCDD1C162C
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 12:55:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90FBD30FC25;
-	Thu,  2 Oct 2025 12:30:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8B413115A7;
+	Thu,  2 Oct 2025 12:55:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DBgcxDzp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b="MMzYqUHn"
+Received: from hr2.samba.org (hr2.samba.org [144.76.82.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2FF5366;
-	Thu,  2 Oct 2025 12:30:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F3D62F7ABE;
+	Thu,  2 Oct 2025 12:55:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.82.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759408216; cv=none; b=KlXq2PUXb9t5tQ3oH8pO+PFIB0LkPLsYsVOg1G8hyWH1Jrifc8BfMJZze3ygSkAHK/sla5v+iTpxFeq2r60QvCwgOZRhL+r1GJ3NIx3prSnmsLjN+Ps3+lFA2ervMt1czSjuZCOnOejoxzdDL5HXBjkY4Y5pwagC94dMQzNlafk=
+	t=1759409724; cv=none; b=N99aE+3Ip5M7H6aNMF3E8WB9lsO1H96ebG0sWLR817UI6r9fCUlaNAtoFWshjPLzD0TwPyqs1Qb7kBRAJKdV/+HC2VGudGp74EorYvbolt1iTM2UboqV6fd6Yu04SQ412/ZVmcx2JzVGNCNjnDEbTEuDvakTJ186uR2lxBA6Sc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759408216; c=relaxed/simple;
-	bh=HIVEUIFu/QO+ILTSmG0vpZJp2DtvKkSaZu/TUFYKn24=;
+	s=arc-20240116; t=1759409724; c=relaxed/simple;
+	bh=6wAvihgQzK8AvKH2fNKhvYOxdIHr7FvnG7G1jOQoXe4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dTAKVhbvjfIVrBvySTaa80zYVMFfSNtGGauTM718P888/TxSiTII+4AXE8HIs/2RgA/fQG+vwD8k6jdQQG8ZacQpq6+VatBAijjh4ufadtSh73LPeuapwzWIj0f+x292HrzsKqKrl4dL+MmmvvkmbbzfIQhqtUxosAeXIRGdaZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DBgcxDzp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C385EC4CEFA;
-	Thu,  2 Oct 2025 12:30:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759408216;
-	bh=HIVEUIFu/QO+ILTSmG0vpZJp2DtvKkSaZu/TUFYKn24=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DBgcxDzpH/Ih1vVjUZpk0yhp+5M5aUMKazEAZqKEsc0sKXBca6nZyHiyHo+zNuE96
-	 p8ZYP/WBYmbixV71O/AwE8EDDu/brabuhdzvLGFJgnUM26JFi1rQpqo8ryURs7S3Cc
-	 VzDAXa44f11CejqpAIJMmtHJl75qBZXnjlpS9mUNOvdkG3CAHLyFaZWdV4gQSb5B+d
-	 R+yUMk4v9JRITucUrtGUMvsvCUL5LcJCqHuumiImms6qdJXsKaPbHG+fcpn+NCmWhm
-	 0gJ4LPxLOl+Z6RCGL1yeOjXR4RkNF5AOpvjDAL53TacPuorFSEUTTCGKUOx122SSqL
-	 YUn1uPR+dzz/w==
-Message-ID: <e2eeec46-cc0e-46e8-8069-085fbd06afe3@kernel.org>
-Date: Thu, 2 Oct 2025 14:30:13 +0200
+	 In-Reply-To:Content-Type; b=cJFOS9KPLsNtf3gREJwXkvHraICDrXcL4DtlaXY81PWM/R3JcmiO6AYQBQFL2vrCeZLg/DDgoShMTgGJ8CSAPKVa+xPaeOS2DjfFi+Eon3KP/tIdn245YArO+UnbKwcxAtUjjIQuhGwR1ixtJF9wf7PWXKSmohXEmDp7EdhqDCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org; spf=pass smtp.mailfrom=samba.org; dkim=pass (3072-bit key) header.d=samba.org header.i=@samba.org header.b=MMzYqUHn; arc=none smtp.client-ip=144.76.82.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=samba.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samba.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
+	s=42; h=From:Cc:To:Date:Message-ID;
+	bh=QA2yKqxJ285XmLeLwA+tuY7Ii7jG+QwPztSsYxsi86Q=; b=MMzYqUHnhFRK+I/aQP/zyu80GC
+	gy4SB97HP4CcmOu6Na7XVUpdc6ucDM0WelyQ5Q8ObzSqfKaWPlJS3YM0sNYuZ0u5ftmZrXs5pbXVN
+	LPTjppyQnVTQJyjyGaSQ/eWjoPFLVPrqcUIqsKeAczMSn/zW5i+wwLX6/QOZ4WcgrqOCNylI06xMg
+	Ry1E9l5dbN1XhD6Ro6HpC6u2QxsS1gRMKQXQxO9Oh4eonO1rXcXA+MSrAeAaGqngwwswDmLpYGdnh
+	mqoKNwFKVE0S5Cbfyl2vryALTyw6NdqvZ68yTu0pS6HKIEnKDTrqhF+SWe9z/sr+oPpLJLoyMI7kA
+	gzX4yXooW/DZ+2IfGmuXddn/0B1ATMotHSKrooBT5WkD6kVUTXaGSRVTXRg1CK1CKLGUtxW9/o7JT
+	/KdRSoJYPCoDK91KH4InGpOWJ64JOprEeGSWZcZzJw6K04vFJvcCbCnOdZNy/PJ3tbbFBKpFnYhs2
+	7xm6oeBVekSQK2utzJibBf/l;
+Received: from [127.0.0.2] (localhost [127.0.0.1])
+	by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
+	(Exim)
+	id 1v4ISa-0073ec-2u;
+	Thu, 02 Oct 2025 12:31:01 +0000
+Message-ID: <a9518620-29cf-4994-a9f4-a6f862d8c214@samba.org>
+Date: Thu, 2 Oct 2025 14:30:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,29 +54,35 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: manual merge of the drm tree with the origin tree
-To: Mark Brown <broonie@kernel.org>
-Cc: Dave Airlie <airlied@redhat.com>, DRI <dri-devel@lists.freedesktop.org>,
- Alice Ryhl <aliceryhl@google.com>, Andrew Morton
- <akpm@linux-foundation.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>,
- Vitaly Wool <vitaly.wool@konsulko.se>
-References: <aN5qmhC9tUOCNjed@sirena.org.uk>
-From: Danilo Krummrich <dakr@kernel.org>
+Subject: Re: [PATCH] smb: server: Use common error handling code in
+ smb_direct_rdma_xmit()
+To: Markus Elfring <Markus.Elfring@web.de>, linux-cifs@vger.kernel.org,
+ Hyunchul Lee <hyc.lee@gmail.com>, Namjae Jeon <linkinjeon@kernel.org>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Steve French <smfrench@gmail.com>, Tom Talpey <tom@talpey.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <7f956b3b-853b-4150-b2e0-ccd430adf9ac@web.de>
 Content-Language: en-US
-In-Reply-To: <aN5qmhC9tUOCNjed@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8
+From: Stefan Metzmacher <metze@samba.org>
+In-Reply-To: <7f956b3b-853b-4150-b2e0-ccd430adf9ac@web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 10/2/25 2:05 PM, Mark Brown wrote:
-> Hi all,
+Hi Markus,
+
+> Add two jump targets so that a bit of exception handling can be better
+> reused at the end of this function implementation.
 > 
-> Today's linux-next merge of the drm tree got a conflict in:
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 
-(I think this was a conflict between the DRM tree and the MM tree already before.)
+Reviewed-by: Stefan Metzmacher <metze@samba.org>
 
-The resolution looks good to me, thanks!
+I'll add this to my for-6.19/fs-smb branch and rebase on top
+of it as this function will move to another file there.
 
-- Danilo
+Namjae, Steve: this can also be pushed to 6.18 if you want.
+
+Thanks!
+metze
+
 
