@@ -1,138 +1,122 @@
-Return-Path: <linux-kernel+bounces-839810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4C81BB2796
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 06:24:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98D85BB27A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 06:29:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 883A4422920
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 04:24:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40050423990
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 04:29:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F969155CB3;
-	Thu,  2 Oct 2025 04:24:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83FD0274B2B;
+	Thu,  2 Oct 2025 04:29:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZDg9C2M9"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f9PdWfBF"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 824753FB31
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 04:23:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32075219A89
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 04:29:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759379041; cv=none; b=MeVK80Wdf/VBbvz7PFM1xyiWyatcCnXQisdo0m2as+rqkhW3j44ch5y2Jp4EDHlvGnyeUhNVnS7HDQaknC4/LH4WLPphjRof+z2UWLcMeNQGB6LXtYsYdgobq2IROtDWk3Ld0L9wcHPeKiK18sJarrJy56nl7yP6cL5llfKNpSw=
+	t=1759379366; cv=none; b=D6IIyKOXvkxF0ssXWF3qpEckcHCdtFiLbtkVKHxQnGoqce2NssGb2IcRuplae5lQLhC6hx+4DOeG0tgroi1WolVidHILVSuRpZQQjrTFofV21I7ioy46I00sFDyEER7kltGvVt7fYPDhMRa7pOyjqG4GhwMD3e6hyoqU9IU0uy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759379041; c=relaxed/simple;
-	bh=ehu8376cUl/DJNnvCX5i0mJoP3uDOVuPTyuu4WOuiDI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=juKJw57eqWhUzz0jWFBbfKXpzWdGzz8P7WJovLO0Nlk0dc5YBEZ6058NQpxsbLIZ9yMPEl551niDjBHHGPmUUnx0NTpKGq35LFPrzNn4nAfaUl9G9K2ztBfX0DSJIgNwcyEujXMBuRJM6zE6Dtk30r+qIyspMxwO2ULEp30JptQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZDg9C2M9; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-28832ad6f64so6327905ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 21:23:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759379039; x=1759983839; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y2QRGst729/DWiP4I9nqZ3Qxmv8ECUfQin2YGfwodis=;
-        b=ZDg9C2M9Uf+/XEzOaIAIqAKsFjYHGWSFsWmW/t7xD2L7GGT3WSCcguAQsCyJ5vYzYd
-         Tm7B3LvbT7ZwwxwJzWG+Q2AAWXY2y8DlY0TxhFj4Ha/TEWJHUL6FMjnVG0cHZ7DW/p7Z
-         te+kgOR3JiTBiz5F6VkmXZJFfE+ZLOs3rnp7daTICR4XkeUPu/4VLncQGHgL2Us7PwQ6
-         pgW4quJsmCuApTWyP9L7qI95vG4rYFP1qXIUyErOBpoakJDOdNYXGqFyvWc5S3itljxV
-         YZtUpaeoOEUgfGkffQAiiRBcVbIyxengJZOdYAq4qQCixGGXehL9+xYmGeOhb8cfDYY9
-         6XRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759379039; x=1759983839;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=y2QRGst729/DWiP4I9nqZ3Qxmv8ECUfQin2YGfwodis=;
-        b=PuAx9VZxqIkaxOy+d395I8uxZHbTq1uOQ7ovJza3ghAfV39/tyRubtpre0msVievNi
-         xMrC3kIrm03VsrOqLjtuSwbwXPHVu31T8XxspnY2/jM5Z90sAgeUOTtLLo+T8ihES++J
-         yqO7TQZLB97TNhfQQZnZIp83Rc6hDHjJSfmuEebGpP401mScETQGQa175y0z5lwhGywH
-         gw1D/zp8SVAr/QLxXLeQUAsNK4ZyJVEMjOJXiBFc/uWPL4M6oIg06w7oHPtusrQtfS2M
-         QMRut4QFiPYtH5WSFh8D7ljnCrp6zOxGS3kkOF3B/nCiadeXlQSjLU9yT/Lmugl6vMA0
-         +Q/A==
-X-Forwarded-Encrypted: i=1; AJvYcCUJ9xvqvJpnWwlxZfKIrHay8Y9N1KtPsmwuvB2kKY/OJjS/9eW0LqFiAZLEX10T9WAaLbjUQLPdTX8/idw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzA6NO7Sp81HwcqlYVayQWSybYpTR2KWPc9lAEs5xR8yV5gxS9x
-	murs/zXEKITu95iHNjCP8fPzHCTra7qCTtGQJSEQltwJWddfNfpNH9O8PNAVVzFzB2Vdq+muZlv
-	0R3A6WsW3/pU7GwO1AxSOCbcCtwjpca8=
-X-Gm-Gg: ASbGncvL+IJSjLqHO8lXMcX4nndU2m5PvYB+7oRy7I6Sek+/ONif64IS+eT/Q4P6Y3q
-	SQ9fB2ShJf7QiPzr8RFR4S5FR1meaUDK0mvkmPWmq83tQU+Ggi9cCVCHdvdssS5c8AfnUbxZsIj
-	Xaw8/JkuRy6BH71b52oKRepGUVeRSzThDrM58v3A9RrKtSfafAHkhgVNk2NEGFkQkVVw7eeLlt8
-	+Q51NQmd7YEkO8Fg/0TPawpzEvANTFJ
-X-Google-Smtp-Source: AGHT+IHgkuju9CUwpPT0WwGqt9+xSzAjEsWxHRza/bmAnljDvo45aLWn/1dVAmMuO1OQzeCs6YLRY6uoy1Dxbms4f2k=
-X-Received: by 2002:a17:903:3c2d:b0:269:8072:5bda with SMTP id
- d9443c01a7336-28e7f45aa2cmr81883465ad.54.1759379038825; Wed, 01 Oct 2025
- 21:23:58 -0700 (PDT)
+	s=arc-20240116; t=1759379366; c=relaxed/simple;
+	bh=9f+HXNcD7IOFZER/ertfy9YqZjvmxhL5wyEiNgnR4kw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p86BmyDJPP+b6x97GqI3vA2huvfxSzxvsiVN6u/fjsAYDudck0rUpWWim4mEd31cB79HaprsAT+poqRi5dXLVJxQ3q4M2GsYCNSa52lP+luFkv9lqM4pmZSCi26U03Cm+z+EyzWNEUpBX3ACEtmDL+F4MsEEx2naDteuzKFzTJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f9PdWfBF; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759379365; x=1790915365;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=9f+HXNcD7IOFZER/ertfy9YqZjvmxhL5wyEiNgnR4kw=;
+  b=f9PdWfBFqfh+2tPk0+T31gJzm2lnG500w44WT4vhNIrOWLfT0OnF3rux
+   fpiVR9pICUapeBO1Gp0sY+L5pJWsL6sR8FszEZI/Li5umsRkT6LlvDPbf
+   iwwbkHKjs/Gl0l5cpdqPFHyGYW4m8O2uvSUSeZhy4aSS/Xx2k1F77UWvF
+   2y70x6wKFsyiIlJdfESrvX3c6IVYPONRcajGt9rAWLNcyQ4/xwYrIrW5p
+   0QdC5JxFMSHdwMTanyBc+VT86tC3chYdTgfdBb71ScM3qeIiIHx3js0TE
+   v3G2IHvVlUth0RCSjsbrwchCr4QVPtRUawCk+iF6FD+seYxV2a0kW+hlm
+   g==;
+X-CSE-ConnectionGUID: oHVMZ2MAQaG0YwoZgUNh8A==
+X-CSE-MsgGUID: OBYyqS4+RIe1z5p0Vzb0Qw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11569"; a="73016732"
+X-IronPort-AV: E=Sophos;i="6.18,308,1751266800"; 
+   d="scan'208";a="73016732"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Oct 2025 21:29:24 -0700
+X-CSE-ConnectionGUID: LZEq29e4Tqu8t5/Q3RYwFw==
+X-CSE-MsgGUID: wbDqmC1RT0KGjEqOh3Vncg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,308,1751266800"; 
+   d="scan'208";a="179734321"
+Received: from lkp-server01.sh.intel.com (HELO 2f2a1232a4e4) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 01 Oct 2025 21:29:21 -0700
+Received: from kbuild by 2f2a1232a4e4 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v4AwR-0003Z5-0K;
+	Thu, 02 Oct 2025 04:29:19 +0000
+Date: Thu, 2 Oct 2025 12:29:15 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jason Miu <jasonmiu@google.com>, Alexander Graf <graf@amazon.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Baoquan He <bhe@redhat.com>, Changyuan Lyu <changyuanl@google.com>,
+	David Matlack <dmatlack@google.com>,
+	David Rientjes <rientjes@google.com>,
+	Jason Gunthorpe <jgg@nvidia.com>, Mike Rapoport <rppt@kernel.org>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	Pratyush Yadav <pratyush@kernel.org>, kexec@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>
+Subject: Re: [PATCH v1 1/3] kho: Adopt KHO radix tree data structures
+Message-ID: <202510021229.mKL5i2Vt-lkp@intel.com>
+References: <20251001011941.1513050-2-jasonmiu@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251001-yv5_add_dts-v3-0-54190fbc0785@gmail.com>
- <20251001-yv5_add_dts-v3-1-54190fbc0785@gmail.com> <20251001-bonding-surging-af8cd0d09e07@spud>
-In-Reply-To: <20251001-bonding-surging-af8cd0d09e07@spud>
-From: Kevin Tung <kevin.tung.openbmc@gmail.com>
-Date: Thu, 2 Oct 2025 12:23:47 +0800
-X-Gm-Features: AS18NWCewZBOJ3_bvPqMIiAefrcZiLRdaKPOQ3p104CWc2zI58_oYaZj_KaxEko
-Message-ID: <CABh9gBcKt1zqvMQ=390HESPR5KrA42jaMFj9Ca4qmeS0d0ToAw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] dt-bindings: arm: aspeed: add Meta Yosemite5 board
-To: Conor Dooley <conor@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
-	Andrew Jeffery <andrew@codeconstruct.com.au>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Magnus Damm <magnus.damm@gmail.com>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Amithash Prasasd <amithash@meta.com>, Kevin Tung <Kevin.Tung@quantatw.com>, 
-	Ken Chen <Ken.Chen@quantatw.com>, Leo Yang <Leo-Yang@quantatw.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251001011941.1513050-2-jasonmiu@google.com>
 
-On Thu, Oct 2, 2025 at 2:33=E2=80=AFAM Conor Dooley <conor@kernel.org> wrot=
-e:
->
-> On Wed, Oct 01, 2025 at 04:47:50PM +0800, Kevin Tung wrote:
-> > Document the new compatibles used on Meta Yosemite5.
-> >
-> > Signed-off-by: Kevin Tung <kevin.tung.openbmc@gmail.com>
->
-> You've repeatedly ignored my ack, so I assume you don't want it.
-> Maybe you want a nak instead?
->
+Hi Jason,
 
-Apologies for ignoring your ack repeatedly, that was not intentional.
-I truly value your review and will make sure to include it. Would you
-suggest that I send a v4 to pick it up, or is it fine to carry it
-forward in the next revision?
-Thank you again for taking the time to review my patches.
+kernel test robot noticed the following build warnings:
 
-Kevin
-> > ---
-> >  Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml b=
-/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
-> > index 456dbf7b5ec8f4442be815284e1ad085287dc443..6f2b12f96bd6ce31b4175e1=
-09a78d931dffdfe28 100644
-> > --- a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
-> > +++ b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
-> > @@ -89,6 +89,7 @@ properties:
-> >                - facebook,minerva-cmc
-> >                - facebook,santabarbara-bmc
-> >                - facebook,yosemite4-bmc
-> > +              - facebook,yosemite5-bmc
-> >                - ibm,blueridge-bmc
-> >                - ibm,everest-bmc
-> >                - ibm,fuji-bmc
-> >
-> > --
-> > 2.51.0
-> >
+[auto build test WARNING on rppt-memblock/for-next]
+[also build test WARNING on linus/master v6.17]
+[cannot apply to rppt-memblock/fixes akpm-mm/mm-everything next-20250929]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Jason-Miu/kho-Adopt-KHO-radix-tree-data-structures/20251001-092230
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/rppt/memblock.git for-next
+patch link:    https://lore.kernel.org/r/20251001011941.1513050-2-jasonmiu%40google.com
+patch subject: [PATCH v1 1/3] kho: Adopt KHO radix tree data structures
+config: x86_64-randconfig-005-20251001 (https://download.01.org/0day-ci/archive/20251002/202510021229.mKL5i2Vt-lkp@intel.com/config)
+compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251002/202510021229.mKL5i2Vt-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510021229.mKL5i2Vt-lkp@intel.com/
+
+All warnings (new ones prefixed by >>, old ones prefixed by <<):
+
+>> WARNING: modpost: vmlinux: section mismatch in reference: kho_radix_walk_trees_callback+0x83 (section: .text) -> __memblock_reserve (section: .init.text)
+>> WARNING: modpost: vmlinux: section mismatch in reference: kho_radix_walk_trees_callback+0x91 (section: .text) -> memblock_reserved_mark_noinit (section: .init.text)
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
