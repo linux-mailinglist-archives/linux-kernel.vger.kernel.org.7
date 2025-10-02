@@ -1,326 +1,218 @@
-Return-Path: <linux-kernel+bounces-839921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70B03BB2BDA
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 09:49:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DF1E7BB2BDD
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 09:49:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE49A19C3C99
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 07:49:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 591EB19C3CA4
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 07:50:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F97C2D1936;
-	Thu,  2 Oct 2025 07:49:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BA762D0C73;
+	Thu,  2 Oct 2025 07:49:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="x3xZkaje"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gehealthcare.com header.i=@gehealthcare.com header.b="cNLrS0WP"
+Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012011.outbound.protection.outlook.com [52.101.43.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A10377263B
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 07:49:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759391346; cv=none; b=qBOwXR7XJ+dkBAM+WCoLL5zFvIajjIGOckMTfzCX5cR9IqR18IO2WlOj8Mno4Y5ouWaTzcXiqYmEZ4IR+089NDF8Ro3yOzTfvon8oUKWxgBYzY07psedPwInczS2q32kcEwY7VCQw+HdCAckqhS/ZcQKfhvc4nh4RoPKuxCrUOo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759391346; c=relaxed/simple;
-	bh=Y3/dmaL8PlTUGmtZQc6HGcv0c1HgbBDs64Fw+IreoUw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=O8q3CJnSKY6NpiTxjNBjAPqIp1UTDT1NT5LYqehCM3G8N5SrRZutmac+5VYTiXZhB84dbBFTZx+Fmk5QbRpEk5UrQ6haI1n/rOiZH6fxs8ujq9Ep8eN4zNXTQKDU+vKbQdHuUNSagYYJx5nS61W/Ryj5tQhX1gJxZbqxPI+NyR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=x3xZkaje; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-32ecab3865dso1069574a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 00:49:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759391344; x=1759996144; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=go+hWBT9ITOWDP8uH4s0K8lsbawxN4U22H6W6XNbqbU=;
-        b=x3xZkajejI5LCEoBanAAx4FuQdvI2xs7F2T+HnyUCtqxbJZuQU14i6VI2MEmJYGdqR
-         IE2VlC35GRRWhcQBJn38vE8fil1ck44QqocWp/5AOg6OvuT2q2RDqOe7Qlj0Kr6GZ+PS
-         fusd25XgF9X3wz7GJNLOmYH2nQTxH31Qbogst//uvgHrzeeHuQpV2e8bOUYtjQMZD4lH
-         Pu5nme0Xi7d9VUc1mxoF9QGva0QFo1xY6HeiYBQ3+R53GzIkbrDSizIdxGATyPvF/D53
-         PCRI9P/2VbL2CeKP04NV76hhEg0xQUopzFvEtmNjfDNmziVlm37143BaZU+k7B8O9qal
-         5mSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759391344; x=1759996144;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=go+hWBT9ITOWDP8uH4s0K8lsbawxN4U22H6W6XNbqbU=;
-        b=n1fKAIYWn2BMl+1g6gxfg4WSNf9grZ4cXmerw72Iev0WcOxV2ts8djY9xy4zH1Y7jw
-         hNxikiuygRzenmrTxLkEZfDKyrQHHv7TLpqMZoRz0QTNHjq3NeW81Le63B0j1IAmp5mf
-         VJ1lraBD5scVekEJ7zUcFiV7dWwHVVAkiHXVsLAft9lpN0OjkQM/31v/2aTJ2zVqgQk0
-         DafG3rTXa1bMxArIySWbjis5t1XmbSz1fxN8p13jcgnhAl0zs7HeLlrCkrAzNEgCGJXV
-         GF7Tb6qeLnbrL50e5MkYOe8INot1ZufIj2V/NFnAK/Vs83nMHPyrpMpe/tY+wBUX4P4C
-         B5+A==
-X-Forwarded-Encrypted: i=1; AJvYcCXZzlnHXe2tmow+n6Et0071rrTeCJSLNmOggppM75Djldp0XC7Yde8f+ojyBdw1gGLsJmXv5qI7pMbsEe4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxt2dEW+axyg6uYqIKZcgE93Z/xJ76QoYhZqJNjjMx+sztcL8ex
-	wyXJJbBhO32e7hcrM/c1Z38U/EqCqsM3RK3vDKcoHYQusDp07p34StKPjROBV3iFcg2luegCIez
-	icF+uAo30edSwAS6gsA4dgqApJQ==
-X-Google-Smtp-Source: AGHT+IFbOguSE7ziCxSGMFAgR4r0H/koNUOPNzdkm5U8rQvN7qKaB1KuYgNKpVTHPLhsI92ZrDZL9/VIY8yAAC8xLg==
-X-Received: from pjuu7.prod.google.com ([2002:a17:90b:5867:b0:32e:c154:c2f6])
- (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:4d06:b0:32d:17ce:49d5 with SMTP id 98e67ed59e1d1-339a6f06af6mr7405966a91.23.1759391343848;
- Thu, 02 Oct 2025 00:49:03 -0700 (PDT)
-Date: Thu, 02 Oct 2025 07:49:02 +0000
-In-Reply-To: <aN3KfrWERpXsj3ld@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4CD91DD9AD
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 07:49:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759391379; cv=fail; b=AgDbSS96kPYkBq52VDqcvywAla8Mi9ObJYz49ETALKOATw2/5P5XPa/VhNE9HMsGDMARrtxQDdIgS0Ph2cSRpXAKDvI9IYhj1GNOBPgqoTZtDeeJQxhkwKdMp/sGshG7vADn+TXTWFlUTvDfoftAJa39kScb65gHC64waAtIZOg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759391379; c=relaxed/simple;
+	bh=EPkRvSd5tSa+DnBNsumbTbg8yZBJph59ETTMqx8d90M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ju8GeteZhzCM/Ab5t57ypC+FX3+uD02mPytxB4zS3i0nK/Dw/HV1o0kAE/9LEi/FLx+MhMzZXA6B/fJEWEUsz458NaUUJLO/BAMD4aPFqEAkArHdIzll4u0rabMvagk99RvIyOb96r28y69U2O+OBaQJAKDc4sc18L1OQ376NlI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gehealthcare.com; spf=pass smtp.mailfrom=gehealthcare.com; dkim=pass (2048-bit key) header.d=gehealthcare.com header.i=@gehealthcare.com header.b=cNLrS0WP; arc=fail smtp.client-ip=52.101.43.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gehealthcare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gehealthcare.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vlist7ChYA/U9VeEUIq/h7H1ma+vwKsMm3cKvlGH0OoYRCX0zwBYeHi6uPyU5MAisDsKU+lqwzLcLK0CsqxzLlAhUTG3VkTZXBKDeXOdrUSgNogcFhw38TsqgnXaJPEAzF77quz5X95wG+vtwALc4hoqr2JJA8woy8XZH3ecW/2RDi7kQnXP5jjey40wQ1XA+5NHEXNqrESUbBpalEcr199eIrdrdncfFptCSa5oovLB60dGh70OUKNQjCbUMVIFBAMW+nd+XkXInyF7JDFmpr8Nw6FceHEXZDhBHS6lIB3Acw28s6ZCxhhWHRoTRJsWDCMGxFaOKhGgsjfVTpNvJg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zd3S2pGM7tli/9elqsY/9eyb8Kg99cwZpZFjog4Imig=;
+ b=mX2mqOK/d1zzKgb85z6YZsD6WmeF3zC9w0JyMlahALc97KB094X/E37PYEuuHEBRDzIK4OfLPM2JOIDpjVReo5R7lVwAcbVIV7jqGq3UeguDEOooFH+jT38B3pR3u8ntSUQtzVACiZLFxIosyX/+xolHpDXqcm8Ca5eng9vu9mH+TECMWcQeYTW6jmkTHqtzSYJT7jM891dfD+ss6kjEaN2UGDKmrVqx30BOuZeRTU+rVZUujKOwijSdePCEj9EBhgbbjHiKIcvYdZvEQjS6om3lkRPzxjjFWn/zUzqo0SuWphSboIu8yZaFSLS9JY0pY3kfFwpsLuNUz5kTr+K8xg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
+ 165.85.157.49) smtp.rcpttodomain=vger.kernel.org
+ smtp.mailfrom=gehealthcare.com; dmarc=fail (p=quarantine sp=quarantine
+ pct=100) action=quarantine header.from=gehealthcare.com; dkim=none (message
+ not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gehealthcare.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zd3S2pGM7tli/9elqsY/9eyb8Kg99cwZpZFjog4Imig=;
+ b=cNLrS0WPeqAOPdWe+XwXkz2CBELVDOAoF3fjPhAR37/EJmIKeiPKy6zuOP4/oUJI66Zfo0wdwkkfjrfBH53oFo+AR1Jz82+KG4Du4KWlPGKHx0wzam4HXtS7e5Z0qnJr3lBfYaehtOH6r8WlI9hbXu4telTAtQ8gxHF76lSGL6J06EmL051sfMEsRRJPlTztXD2gHexuVWRgwMdKs/fSii72RaOj6RmiTRdFR0sz/KdtEGVN6b6/YAE2fbatpd6Y6+ozZxkETHszFPHDzKPRRvLA8yewJprQkI5pzYcXv4TnMa9ydAkEiEDkLVNNvPVPFjw0BN7ynq2vYQajRH13Dw==
+Received: from DM5PR08CA0031.namprd08.prod.outlook.com (2603:10b6:4:60::20) by
+ CYYPR22MB4264.namprd22.prod.outlook.com (2603:10b6:930:c3::15) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9160.18; Thu, 2 Oct 2025 07:49:35 +0000
+Received: from DS1PEPF0001709A.namprd05.prod.outlook.com
+ (2603:10b6:4:60:cafe::ed) by DM5PR08CA0031.outlook.office365.com
+ (2603:10b6:4:60::20) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9160.18 via Frontend Transport; Thu,
+ 2 Oct 2025 07:49:35 +0000
+X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 165.85.157.49)
+ smtp.mailfrom=gehealthcare.com; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=quarantine header.from=gehealthcare.com;
+Received-SPF: Fail (protection.outlook.com: domain of gehealthcare.com does
+ not designate 165.85.157.49 as permitted sender)
+ receiver=protection.outlook.com; client-ip=165.85.157.49;
+ helo=atlrelay1.compute.ge-healthcare.net;
+Received: from atlrelay1.compute.ge-healthcare.net (165.85.157.49) by
+ DS1PEPF0001709A.mail.protection.outlook.com (10.167.18.104) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9182.15 via Frontend Transport; Thu, 2 Oct 2025 07:49:35 +0000
+Received: from zeus (zoo13.fihel.lab.ge-healthcare.net [10.168.174.111])
+	by builder1.fihel.lab.ge-healthcare.net (Postfix) with SMTP id 2F7D4D04D5;
+	Thu,  2 Oct 2025 10:49:33 +0300 (EEST)
+Date: Thu, 2 Oct 2025 10:49:32 +0300
+From: Ian Ray <ian.ray@gehealthcare.com>
+To: Marcus Folkesson <marcus.folkesson@gmail.com>
+Cc: Support Opensource <support.opensource@diasemi.com>,
+	Lee Jones <lee@kernel.org>, Axel Lin <axel.lin@ingics.com>,
+	Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] mfd: da9052-spi: change read-mask to write-mask
+Message-ID: <aN4ujFg_uRufUXn-@zeus>
+References: <20240925-da9052-v2-1-f243e4505b07@gmail.com>
+ <aN0mqU75onKEYSDg@zeus>
+ <aN4oad5e7YUNaR8w@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1747264138.git.ackerleytng@google.com> <b784326e9ccae6a08388f1bf39db70a2204bdc51.1747264138.git.ackerleytng@google.com>
- <aNxqYMqtBKll-TgV@google.com> <diqzbjmrt000.fsf@google.com>
- <aN1bXOg3x0ZdTI1D@google.com> <diqz1pnmtg4h.fsf@google.com> <aN3KfrWERpXsj3ld@google.com>
-Message-ID: <diqzy0ptspzl.fsf@google.com>
-Subject: Re: [RFC PATCH v2 02/51] KVM: guest_memfd: Introduce and use
- shareability to guard faulting
-From: Ackerley Tng <ackerleytng@google.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Yan Zhao <yan.y.zhao@intel.com>, Fuad Tabba <tabba@google.com>, 
-	Binbin Wu <binbin.wu@linux.intel.com>, Michael Roth <michael.roth@amd.com>, 
-	Ira Weiny <ira.weiny@intel.com>, Rick P Edgecombe <rick.p.edgecombe@intel.com>, 
-	Vishal Annapurve <vannapurve@google.com>, David Hildenbrand <david@redhat.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aN4oad5e7YUNaR8w@gmail.com>
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS1PEPF0001709A:EE_|CYYPR22MB4264:EE_
+X-MS-Office365-Filtering-Correlation-Id: 25a4bd71-bca0-4b69-60c1-08de01883b44
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|30052699003|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?aKsZSFfCBg/lY0aeP+JAHvdpxHSi2cwn9tz4IOF1rFU5dV4kUxU+gD7CpkMP?=
+ =?us-ascii?Q?lrbW4Sbof+n01UMCD4j/ufJRhIhwBtZFB3qhYPUJerM0brudtdnxc4ZDckM4?=
+ =?us-ascii?Q?9VtDtwQovJZER7c49TZrKmcXJx4032+mgpokaZ94oVFKiaC8O0PSCihQ2kzQ?=
+ =?us-ascii?Q?HAhlKsNZUZD8pS6AGsV6erykp4x0azLPwBjTU8kE+0QDTWCsKA8CfeIIbs5w?=
+ =?us-ascii?Q?ImvnLPK4SsngMvgbpwvpH9QBefniHr0AOWYjAXfADC7YhyWnUY/qgBPH5FXV?=
+ =?us-ascii?Q?4/JvAxa7t6TbjC1M/Ct3FPk39MlLE72oSwJULb0jOM0QgMV3TGkqqKVbJXxi?=
+ =?us-ascii?Q?mEKena8TL3w0pa4Y5XFQsMaZjziKC6BAg7kmnc3fzJUJZUNVssc7y8SroxyC?=
+ =?us-ascii?Q?q4EzB1H+Aj4oERRPE3/TncXiq99e8Bj8p/oXMtAO4OFx4dgLCK6oFD65DUY6?=
+ =?us-ascii?Q?eLqEnPZSpQ1h2LUyUKjKc0zO+uqacNgSNBuetRoY3akli8IAxZNMlCMx3YpX?=
+ =?us-ascii?Q?fMCEVHBCy8XLcLjjVm168Vwxj8tL+O1vCV6IGyAUOpG5nhaPm+83Kkdb6myI?=
+ =?us-ascii?Q?BRt0XkqohnJd59AazuxJzwDEpGNJmLRFaTFdJyYtrhbKh38Dacm5OkoN2tLM?=
+ =?us-ascii?Q?3lXhJt2TRgMRaFrGSuXb6WLmxjRLrL5cR8Hc7xgEhrX3NmszPD2CRBCqi6Jh?=
+ =?us-ascii?Q?igL0xfT0kHmlT2Hmfs1/j7Hc2L4Mr8FEmZOFTC4NmEV7xK8g8n+1oZe5gLOD?=
+ =?us-ascii?Q?OYnKdUKZqhrtT9unnLV6V4fPxjkGNDIf8USgKZDk2XYaEfUoazTVgkge/1+K?=
+ =?us-ascii?Q?rH/nk8ia8MDsZSEy0KaeSoF4diMgnAiJAjVs4OrLBUKfRQvrtw4V8Cd9zesv?=
+ =?us-ascii?Q?JXHnImbZcp2PYKAG8+wwXcqoI81NWLtXpdu+ieJEelBtOiIsa21Kk/Q8FGaR?=
+ =?us-ascii?Q?9wYM8D4PZ3tYT7sFLC+yo3WvlgcNRWtsGKfenlWRLcBfzIgm5k5HEhwtDKwj?=
+ =?us-ascii?Q?ldjBAmH/VH9NdIGmnnTE/S8voFX8Efy+UrmRtsy5jpIkrWW+eaRARJS34W3f?=
+ =?us-ascii?Q?xXtQOt8CV61mRltMsCyCATAiSIhEKCl1UG6RPQzPa4xIih4lBlKrS/yQRQlT?=
+ =?us-ascii?Q?McN3fVmsiBBlvUXXsMBcUvV9KQC9b1RiyrUa0UFh8kFf7je0tamtr+R7CbOA?=
+ =?us-ascii?Q?m05a5PmLaO/FGqsWeZX/2Sw1sZF9eac88ghiTRiTEXzgN7Nse5dCuOrl9o6r?=
+ =?us-ascii?Q?rzmoewf4qVxeLA+xljut6ipZmyh9zgpCdj7VS249rzd/rx8Ezp/LG9CRL3in?=
+ =?us-ascii?Q?9VaoiGDb9QZBkB/LH1GDmlcinShEiEoCVW/LtoSzLAl7BprMdtwLa962fmX5?=
+ =?us-ascii?Q?RLbNIig5DcOMcdQqUMnVi25QVij8yi3EaLQV22npP1zUVxDb6Pj68g63P23x?=
+ =?us-ascii?Q?WT4i422BzAjYaapv+SJPlTQasIS9tr6dsJwFK3kWx34AWp71fSArPxHvIL1k?=
+ =?us-ascii?Q?SmySFMb4ZVlLXRUHG/zyd+uy+l4acogudVP4XeyfRCXczt5qjrrfjtNLtAkt?=
+ =?us-ascii?Q?HfzbGdmCyNhW65PhIwA=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.85.157.49;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:atlrelay1.compute.ge-healthcare.net;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(30052699003)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: gehealthcare.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Oct 2025 07:49:35.2830
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 25a4bd71-bca0-4b69-60c1-08de01883b44
+X-MS-Exchange-CrossTenant-Id: 9a309606-d6ec-4188-a28a-298812b4bbbf
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=9a309606-d6ec-4188-a28a-298812b4bbbf;Ip=[165.85.157.49];Helo=[atlrelay1.compute.ge-healthcare.net]
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TreatMessagesAsInternal-DS1PEPF0001709A.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR22MB4264
 
-Sean Christopherson <seanjc@google.com> writes:
+On Thu, Oct 02, 2025 at 09:23:21AM +0200, Marcus Folkesson wrote:
+> Hello Ian,
+> 
+> On Wed, Oct 01, 2025 at 04:03:37PM +0300, Ian Ray wrote:
+> > Hello Marcus,
+> > 
+> > On Wed, Sep 25, 2024 at 12:19:53PM +0200, Marcus Folkesson wrote:
+> > > Driver has mixed up the R/W bit.
+> > > The LSB bit is set on write rather than read.
+> > > Change it to avoid nasty things to happen.
+> > > 
+> > > Fixes: e9e9d3973594 ("mfd: da9052: Avoid setting read_flag_mask for da9052-i2c driver")
+> > > Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+> > 
+> > Your patch breaks DA9053 SPI communication (for me, at least) on the
+> > 6.1.y branch (I have not tested on master).
+> > 
+> > The datasheets [1] and [2] both refer to R/Wn in the SPI signalling.
+> > 
+> > What led to the assertion that "The LSB bit is set on write rather
+> > than read."?
+> > 
+> > In the original code "config.read_flag_mask = 1;", is OR'd into the
+> > buffer in regmap_set_work_buf_flag_mask.  This sets the "R" bit as
+> > expected.
+> 
+> Hrm.
+> 
+> I follow you and agree with what you say.
+> Could you please read out R19 INTERFACE register?
+> Bit 3, R/W POL, deviates from the default value (1) in my setup, which
+> is probably the reason why it doesn't work for me without the patch.
 
-> On Wed, Oct 01, 2025, Ackerley Tng wrote:
->> Sean Christopherson <seanjc@google.com> writes:
->> >> I'd prefer not to have the module param choose between the use of
->> >> mem_attr_array and guest_memfd conversion in case we need both
->> >> mem_attr_array to support other stuff in future while supporting
->> >> conversions.
->> >
->> > Luckily, we don't actually need to make a decision on this, because PRIVATE is
->> > the only attribute that exists.  Which is partly why I want to go with a module
->> > param.  We can make the behavior very definitive without significant risk of
->> > causing ABI hell.
->> >
->> 
->> Then maybe I'm misunderstanding the static_call() thing you were
->> describing. Is it like, at KVM module initialization time,
->> 
->>     if module_param == disable_tracking:
->>         .__kvm_get_memory_attributes = read_attributes_from_guest_memfd
->>     else
->>         .__kvm_get_memory_attributes = read_attributes_from_mem_attr_array
->> 
->> With that, I can't have both CoCo private/shared state tracked in
->> guest_memfd and RWX (as an example, could be any future attribute)
->> tracked in mem_attr_array on the same VM.
->
-> More or less.
->
+-- >8 -- 
+# cat /sys/kernel/debug/regmap/spi2.0/registers |grep "^13:"
+13: 88
+-- >8 -- 
 
-Hm okay. So introducing the module param will only allow the use of one
-of the following?
+> 
+> Your datasheet revision is later than mine, could you plese verify that
+> the default value is still 1 for DA9052 in your revision?
 
-+ KVM_SET_MEMORY_ATTRIBUTES (vm ioctl)
-+ KVM_SET_MEMORY_ATTRIBUTES2 (guest_memfd ioctl)
+Yes it is still 1 (the complete set of defaults for R19 is 10011000).
 
-Then I guess using a module param which is a weaker userspace contract
-allows us to later enable both vm and guest_memfd ioctl if the need
-arises?
+> 
+> If that is the case, either the datasheet is wrong or my chips must
+> somehow been preloaded with some values.
 
->> > It's entirely possible I'm completely wrong and we'll end up with per-VM RWX
->> > protections and no other per-gmem memory attributes, but as above, unwinding or
->> > adjusting the module param will be a drop in the bucket compared to the effort
->> > needed to add whatever support comes along.
->> >
->> 
->> Is a module param a weaker userspace contract such that the definition
->> for module params can be more flexibly adjusted?
->
-> Yes, much weaker.
->
+Yes, in my understanding these PMICs are highly configurable via OTP.
+(Almost every register can be customized.)
 
-I have a new tool in my toolbox now :)
+> 
+> As nobody else has reported any issue I guess it is safer to revert
+> this patch.
 
->> >> > The kvm_memory_attributes structure is compatible, all that's needed AFAICT is a
->> >> > union to clarify it's a pgoff instead of an address when used for guest_memfd.
->> >> >
->> >> > diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
->> >> > index 52f6000ab020..e0d8255ac8d2 100644
->> >> > --- a/include/uapi/linux/kvm.h
->> >> > +++ b/include/uapi/linux/kvm.h
->> >> > @@ -1590,7 +1590,10 @@ struct kvm_stats_desc {
->> >> >  #define KVM_SET_MEMORY_ATTRIBUTES              _IOW(KVMIO,  0xd2, struct kvm_memory_attributes)
->> >> >  
->> >> >  struct kvm_memory_attributes {
->> >> > -       __u64 address;
->> >> > +       union {
->> >> > +               __u64 address;
->> >> > +               __u64 offset;
->> >> > +       };
->> >> >         __u64 size;
->> >> >         __u64 attributes;
->> >> >         __u64 flags;
->> >> >
->> >> 
->> >> struct kvm_memory_attributes doesn't have room for reporting the offset
->> >> at which conversion failed (error_offset in the new struct). How do we
->> >> handle this? Do we reuse the flags field, or do we not report
->> >> error_offset?
->> >
->> > Write back at address/offset
->> 
->> I think it might be surprising to the userspace program, when it wants
->> to check the offset that it had requested and found that it changed due
->> to an error, or upon decoding the error, be unable to find the original
->> offset it had requested.
->
-> It's a somewhat common pattern in the kernel.  Updating the offset+size is most
-> often used with -EAGAIN to say "got this far, try the syscall again from this
-> point".
->
+Agree -- following the datasheet default is probably the right thing to
+do here.
 
-TIL, thanks!
+For the future, we could consider an optional device tree property to
+describe this read/write bit polarity.
 
->> Like,
->> 
->>     printf("Error during conversion from offset=%lx with size=%lx, at
->>            error_offset=%lx", attr.offset, attr.size, attr.error_offset)
->> 
->> would be nicer than 
->> 
->>     original_offset = attr.offset
->>     printf("Error during conversion from offset=%lx with size=%lx, at
->>            error_offset=%lx", original_offset, attr.size, attr.error_offset)
->>            
->> > (and update size too, which I probably forgot to do).
->> 
->> Why does size need to be updated? I think u64 for size is great, and
->> size is better than nr_pages since nr_pages differs on different
->> platforms based on PAGE_SIZE and also nr_pages introduces the question
->> of "was it hugetlb, or a native page size?".
->
-> I meant update the number of bytes remaining when updating the offset so that
-> userspace can redo the ioctl without having to update parameters.
->
->> > Ugh, but it's defined _IOW.  I forget if that matters in practice (IIRC, it's not
->> > enforced anywhere, i.e. purely informational for userspace).
->> >
->> 
->> I didn't notice this IOW vs IORW part, but if it starts getting
->> enforced/specified [1] or auto-documented we'd be in trouble.
->
-> IOW vs IORW is alread specified in the ioctl.  More below.
->
->> At this point, maybe it's better to just have a different ioctl number
->> and struct definition. I feel that it would be easier for a user to
->> associate/separate
->
-> Amusingly, we'd only need a different name along with the IORW thing.  A full
-> ioctl number is comproised of the "directory" (KVM), the number, the size of the
-> payload, and how the payload is accessed.
->
-> #define _IOC(dir,type,nr,size) \
-> 	(((dir)  << _IOC_DIRSHIFT) | \
-> 	 ((type) << _IOC_TYPESHIFT) | \
-> 	 ((nr)   << _IOC_NRSHIFT) | \
-> 	 ((size) << _IOC_SIZESHIFT))
->
-> So this:
->
->   #define KVM_SET_MEMORY_ATTRIBUTES	_IOW(KVMIO,  0xd2, struct kvm_memory_attributes)
->   #define KVM_SET_MEMORY_ATTRIBUTES2	_IOWR(KVMIO, 0xd2, struct kvm_memory_attributes2)
->
-> actually generates two different values, and so is two different ioctls from a
-> code perspective.
->
-> The "size" of the payload is nice to have as it allows userspace to assert that
-> it's passing the right structure, e.g. this static assert from KVM selftests:
->
-> #define kvm_do_ioctl(fd, cmd, arg)						\
-> ({										\
-> 	kvm_static_assert(!_IOC_SIZE(cmd) || sizeof(*arg) == _IOC_SIZE(cmd));	\
-> 	ioctl(fd, cmd, arg);							\
-> })
->
->> + KVM_SET_MEMORY_ATTRIBUTES
->>     + Is VM ioctl
->>     + Is a write-only ioctl
->>     + Is for setting memory attributes at a VM level
->>     + Use struct kvm_memory_attributes for this
->> + KVM_GUEST_MEMFD_SET_MEMORY_ATTRIBUTES (name TBD)
->>     + Is guest_memfd ioctl
->>     + Is a read/write ioctl
->>     + Is for setting memory attributes only for this guest_memfd
->>     + Use struct guest_memfd_memory_attributes for this
->>     + Also decode errors from this struct
->
->       + Has extra padding for future expansion (because why not)
->
-> If we really truly need a new ioctl, I'd probably prefer KVM_SET_MEMORY_ATTRIBUTES2.
-> Yeah, it's silly, but I don't think baking GUEST_MEMFD into the names buys us
-> anything.  Then we can use KVM_SET_MEMORY_ATTRIBUTES2 on a VM if the need ever
-> arises.
->
+Thanks,
+Ian
 
-I'm for having a new ioctl number and new struct, which are you leaning
-towards?
-
-As for the naming, I think it's confusing to have something similar, and
-Ira mentioned it being confusing in the other email too. At the same
-time, I accept that it's useful if the same struct were to be used for a
-new iteration of the KVM_SET_MEMORY_ATTRIBUTES VM ioctl in future. No
-strong preference either way on naming.
-
-
-Trying to understand the difference between unwind on failure vs
-all-or-nothing:
-
-> Alternative #1 is to try and unwind on failure, but that gets complex, and it
-> simply can't be done for some CoCo VMs.  E.g. a private=>shared conversion for
-> TDX is descrutive.
->
-
-Unwind on failure is:
-
-1. Store current state
-2. Convert
-3. Restore current state on conversion failure
-
-> Alternative #2 is to make the updates atomic and all-or-nothing, which is what
-> we did for per-VM attributes.  That's doable, but it'd either be much more
-> complex than telling userspace to retry, or we'd have to lose the maple tree
-> optimizations (which is effectively what we did for per-VM attributes).
->
-
-All-or-nothing:
-
-1. Do everything to make sure conversion doesn't fail, bail early if it
-   fails
-2. Convert (always successful)
-
-Is that it?
-
-
-Zapping private pages from the stage 2 page tables for TDX can't be
-recovered without help from the guest (I think that's what you're
-talking about too), although technically I think this zapping step could
-be delayed right till the end.
-
-Maple tree allocations for conversion could fail, and allocations are a
-bit more complicated since we try to compact ranges with the same
-shared/private status into one same maple tree node. Still technically
-possible, maybe by updating a copy of the maple tree first, then
-swapping the current maple tree out atomically.
-
-With HugeTLB, undoing HVO needs pages to be allocated, will need more
-digging into the details to determine if preallocation could work.
-
-I'd still prefer having the option to return an error so that we don't
-paint ourselves into a corner.
-
->> [1] https://lore.kernel.org/all/20250825181434.3340805-1-sashal@kernel.org/
->> 
->> 
->> [...snip...]
->> 
+> 
+> > 
+> > [1] DA9052 CFR0011-120-00 Rev 5, Revision 2.5, 13-Feb-2017, page 67.
+> > [2] DA9053 DA9053-00-IDS2n_131017, page 54.
+> > 
+> > Blue skies,
+> > Ian
+> 
+> 
+> Best regards,
+> Marcus Folkesson
 
