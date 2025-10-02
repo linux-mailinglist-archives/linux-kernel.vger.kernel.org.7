@@ -1,162 +1,151 @@
-Return-Path: <linux-kernel+bounces-840539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 264B3BB4A21
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 19:16:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC023BB4A46
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 19:17:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CABAB17F6FF
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 17:16:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B417C2A20D4
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 17:17:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9A637D07D;
-	Thu,  2 Oct 2025 17:16:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE61826F2A0;
+	Thu,  2 Oct 2025 17:16:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="TdwQgSyt"
-Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazon11010014.outbound.protection.outlook.com [40.93.198.14])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AZK8k7e7"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828CC8F40
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 17:16:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759425374; cv=fail; b=IKSSNBNNoae2P/tpTqLd4pFbkqyrGPE1/mBVHbYybjLZKjATTiUzUVdr2UORUi3bPB+i+Xl91JHw1VMLLlX5hNWMlJcBjh3DWA2UlxmBq1VnROx93USA5sMtqLlBG/8L5/GwGUvIWqR/9NnMZlp9jn9KKHyGvP8vEECdiUTnTa8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759425374; c=relaxed/simple;
-	bh=BgBHpl44PtEs9VZ9rH/uNUifvaArnZDVlAxyojz8bHM=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iByXO8Jl05uCOfYQZhqD8sd2axekm0UR3LSHymlDEZF2kX6zYfvI40dYGHiJGoQoVaIFVjwleMa1OmLC60JwynsAiViwpWiJ8DcpglYotiIz3Z+TUmQA4aatSd8EWyvkfSSrJXMF6hhXWuUZl2KVGfqhIhyPmfHyenbWQv5mSkI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=TdwQgSyt; arc=fail smtp.client-ip=40.93.198.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yiutlzse7qb/2vnNfxNzDZnFm3yq5K7r7z2BIVwuRiHQ4INyu334FvvP3c9mJF9IS1emdfTC9BfMBZgERPB7N9fFV+kEoMwtQ7lxTOub9GGQm8nVzV4IQNUVFR9H+lG3J+udCrMI5Iv/kHdfaZu96N0j93EiGIut9fNpAq7FdQyoZIym1pXrK12YauriA0y1TWzM611r3JHwwZO8Daqdqh12BqmUuPRKwX7RSLPBTPG8f6uu6ZHs/yjLhJY3WqSj5t/RhN1Cazp7jF/0z9e9jc1bV9QZFZ7/oWZOtsxcazro2uhYe+JysXnr4jbh4jG6CMB7Yg7pvg4kG0qhH1CdmQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wKJfxuBcAjKaIxWDQ7XOO7dMEvjkDuMFfffKP8qVSy4=;
- b=NGMfOgIv/tD+WsC/CzoEtZo+SBYtfp05Zu3adWQ+zV5+l3u6RUcPZpHGLs1ElpR7JaWg2RJ89o4F00xtIsvopr9owBRMyH9Mfee5NXmgXiKBC8TrNww2piMzuP0o/55YrOwrRzC0yqH83azMYUNFsODJ5ugB4Vq4Oozgs7pPoIpJ0SRQibDgiZF7VFyPu57XtBXnIuNKCJ6mg1p8dfL14Cl6dL5tITJhABj2jxRk/RabRmW8B9mLKCRB8YwOo2MMydWOTo4Lm3Di2YkkqcGfkrLrVaCJpv2RLqIoUzEKIsE3Zldz9Qv9w7DbnEDEHgqZYAlgbAc1Fnc9tWzFnrKkpA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=amd.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wKJfxuBcAjKaIxWDQ7XOO7dMEvjkDuMFfffKP8qVSy4=;
- b=TdwQgSytgvBiuM3vIx86uI1UNv3SfFVEqCVf/cVGVA6JqQUKDu7Zibahf7b3tBPprM9YFDY0UiFST2j9BpwI60rvwo7gnR0QTuP4u8iEPUJfQNevpWLQnIYqzpVuACTONXttCzlExnFxHqk/+VTEyvoK+QERZyFlRA40OVNuP7nt2+fFxEJKa32k42nR3+1YMUeVAlUe6FVaEXD7ITM68AP7ilH0hYw9EOsvzUSc1uvQlhBFteSQv3xFvnJk3Ss7MKqrObofTneCKMjwwWTEFlMTPg7qMpmWIqWdhaqknRPcBE/yQFX5fth6olEErrReTwajBmSbkL/Gie5yEyKs+g==
-Received: from SA9PR13CA0075.namprd13.prod.outlook.com (2603:10b6:806:23::20)
- by LV2PR12MB5797.namprd12.prod.outlook.com (2603:10b6:408:17b::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.14; Thu, 2 Oct
- 2025 17:16:08 +0000
-Received: from SA2PEPF00003F62.namprd04.prod.outlook.com
- (2603:10b6:806:23:cafe::d) by SA9PR13CA0075.outlook.office365.com
- (2603:10b6:806:23::20) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9203.7 via Frontend Transport; Thu, 2
- Oct 2025 17:16:04 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- SA2PEPF00003F62.mail.protection.outlook.com (10.167.248.37) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9182.15 via Frontend Transport; Thu, 2 Oct 2025 17:16:04 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Thu, 2 Oct
- 2025 10:15:53 -0700
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 2 Oct
- 2025 10:15:52 -0700
-Received: from Asurada-Nvidia (10.127.8.9) by mail.nvidia.com (10.129.68.7)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Thu, 2 Oct 2025 10:15:51 -0700
-Date: Thu, 2 Oct 2025 10:15:49 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-CC: <jgg@nvidia.com>, <linux-kernel@vger.kernel.org>, <robin.murphy@arm.com>,
-	<will@kernel.org>, <joro@8bytes.org>, <kevin.tian@intel.com>,
-	<jsnitsel@redhat.com>, <vasant.hegde@amd.com>, <iommu@lists.linux.dev>,
-	<santosh.shukla@amd.com>, <sairaj.arunkodilkar@amd.com>, <jon.grimm@amd.com>,
-	<prashanthpra@google.com>, <wvw@google.com>, <wnliu@google.com>,
-	<gptran@google.com>, <kpsingh@google.com>, <joao.m.martins@oracle.com>,
-	<alejandro.j.jimenez@oracle.com>
-Subject: Re: [PATCH v2 05/12] iommu/amd: Make amd_iommu_update_dte256()
- non-static
-Message-ID: <aN6zRQbrIu8quWtB@Asurada-Nvidia>
-References: <20251001060954.5030-1-suravee.suthikulpanit@amd.com>
- <20251001060954.5030-6-suravee.suthikulpanit@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BEEE8F40;
+	Thu,  2 Oct 2025 17:16:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759425413; cv=none; b=cTdB3IPN7NV9Qyj8xXGko7Hq3uRF8BwDd3jf/lTTq+boyfV5/AwMqhRkYL1PBVcNDH8C4u2w2fLB8hE6wlzI8Y2HKvdQG3pl4pm++2o4MzH/67y6YIzxTlW0sHRQm1FDwb3NjPwYzq1xKt8c8kzBFOjGw+TF2D9CxRtMOS9W/CE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759425413; c=relaxed/simple;
+	bh=aZhPS9fU3PhP1m0ZhYKaDD4HdmmwcbPttec4pw/X+Zc=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=URXzjkLumTTYS6sq9PPaa6c/zeedYwimfp3CsJlCmLRcX7xdxQCUU0PfPJEVu8npyEyoPjaDSTLjpkBD836ushwK3UEAEIQWDVyPUP+UNfDS3WoIL/JU5n0xXRfEPh/I1zWq8BzeQOK6keFf/bERkP3lu6Ps7bg2MUIR+LE3bvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AZK8k7e7; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759425411; x=1790961411;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=aZhPS9fU3PhP1m0ZhYKaDD4HdmmwcbPttec4pw/X+Zc=;
+  b=AZK8k7e7ZXWX7Rd1oBrELXjtXvE9IWZA51vpn+JCQX4UoUanKe+UHJIW
+   E1SPiq3DIkBl0GaUvj5TAcVx034lhi8xEL9iaJIGaiv4RLQdimODoqUob
+   iMgZoJmUGbN/Ldcqbuy0UuWPGRhLsIYVzgLeuC+dxJ72b0vqXR3zDCJkE
+   QeZff5Tx1GDpZ7Rq3esNt87WidaScTYKXg914zZLfUKdjCaBJV3Fk+Yc6
+   Kiz79TVW8C493Iad4c+qtgHe+PU5OaSg0K2VZzDwHruO3eRM7ApzRtlde
+   3Kis0F2rTcsX2xZy0I1D+R/4PBC30+uv8j76i3HAeDutpr9zgsSG298up
+   g==;
+X-CSE-ConnectionGUID: ZkCDfFtHTfCsjOvwTXcWgA==
+X-CSE-MsgGUID: oF2R9SE1SwqZ8ZmrZM5FGQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11570"; a="61877846"
+X-IronPort-AV: E=Sophos;i="6.18,310,1751266800"; 
+   d="scan'208";a="61877846"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2025 10:16:50 -0700
+X-CSE-ConnectionGUID: uVTS2FXCRKK5MiK3D+54Kg==
+X-CSE-MsgGUID: gXSfJDlKTC6JqmZHNoaI2Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,310,1751266800"; 
+   d="scan'208";a="183113418"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.246])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2025 10:16:45 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Thu, 2 Oct 2025 20:16:42 +0300 (EEST)
+To: Bjorn Helgaas <helgaas@kernel.org>, 
+    Geert Uytterhoeven <geert@linux-m68k.org>
+cc: Niklas Schnelle <schnelle@linux.ibm.com>, alex.williamson@redhat.com, 
+    clg@redhat.com, mjrosato@linux.ibm.com, Farhan Ali <alifm@linux.ibm.com>, 
+    linux-s390@vger.kernel.org, kvm@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>, linux-pci <linux-pci@vger.kernel.org>
+Subject: Re: [PATCH v4 04/10] s390/pci: Add architecture specific resource/bus
+ address translation
+In-Reply-To: <20251002170013.GA278722@bhelgaas>
+Message-ID: <62669f67-d53e-2b56-af8c-e02cdff480a8@linux.intel.com>
+References: <20251002170013.GA278722@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20251001060954.5030-6-suravee.suthikulpanit@amd.com>
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF00003F62:EE_|LV2PR12MB5797:EE_
-X-MS-Office365-Filtering-Correlation-Id: 25a1584a-9b31-4055-d3ec-08de01d75e50
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|36860700013|1800799024|82310400026|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?MmsLM1lrNoJPnLh3p6dYd19qS8PIu8HCWsidSccubOZjsrojtKubBz3kG1Ml?=
- =?us-ascii?Q?j9QU5DqB5mkoQlsywKjmW+DIZP2tUGOPI6rHYolrAfs7MIBDgDeUEcgajczB?=
- =?us-ascii?Q?SEiYfmHBe95IZABg5J9tWGdEbiiUeKA5F8Ej7mPMmgUuDd3VMa7swEw96YKg?=
- =?us-ascii?Q?EntZRBX0FnzgxE2RfMRgjVKWQXjznn3u8OzrZC5Nyemg4mglFdeocFrZarRq?=
- =?us-ascii?Q?8ISdNjtr57pCA4iohR2dO/u3RECZpqthth3lqW/IqIZsEqyjS3GKMNWkGoos?=
- =?us-ascii?Q?zX1kygb+4Iw8dpqjmJPPUKsBeW0zG2lisFYZ900hukpVMzW1kOC00/J8Ee3Y?=
- =?us-ascii?Q?UJpUByuCNSBBHGAVxKuE1cGce3Wy21J0eug3BzmYHEjYZR1YUIYxqLtiuOWn?=
- =?us-ascii?Q?bc6qL6mn8l9TaavxmMMTD+Y6sK+Z+kZ2f5u814Zs6IBVjRCw6uQ/x06Rf5M4?=
- =?us-ascii?Q?AD75D1aRE0S8LDeuGs9sYNMt+h+q9V0unjNkFu5OnOsYuyaU83PUCwKFx8vX?=
- =?us-ascii?Q?kmihK9nBGuK/CUaBfgdgIKkAJlWHaKWKyC3wlaHqy7kyeGM+2Qfl7V+KLgdx?=
- =?us-ascii?Q?BvdmW9JDoWDkIXA3NSpcMxVZAZhzQU47/21suuVuAWE+s2bVQq+GmAUnORys?=
- =?us-ascii?Q?hpZF+pC7iqj+Rnmx3vDSCLtKe7QRFCZJp4dpWdWmjGvHcN3igS+UIPBkSN4J?=
- =?us-ascii?Q?hYPJC8o1XGUjw4zUGqeOgmoGaICyC/SO+AKR8tI7rYAFrZ4MNJgodzxXsio6?=
- =?us-ascii?Q?zv8PnsloqaI+JjoSof6CRsrAGees7LBiKtexO3aSpgtet8AgTKrCcNSpOpmw?=
- =?us-ascii?Q?GWGtLfyXNOvR2pEG5xWWf8pXbrz4iCzHJ5BC7j8mdU9TogHDpVaKSZNZpZnP?=
- =?us-ascii?Q?6uQDHPSoSjna31eX/nxtaadzU5Q699nN3EFj5Hgg/OdPvIDSuWKfKxrz0k6V?=
- =?us-ascii?Q?uT/5u/Hg0UG1YClNLpPLwOx/dFihmWqBRePR4PGzWo37dvPdLTii3z9rm+gN?=
- =?us-ascii?Q?QObEB7MIMtuEMQUQ5MCorflSYC8pMVlmiI/dGs/ZV0zPNutStk4ItlJvKQ5B?=
- =?us-ascii?Q?uAwkcN6X3r/U+VQJ56R/g3bGsBxpawX1jRkuIDtRosBbq+xMfOsvKCUkwKf4?=
- =?us-ascii?Q?RRZ2sYXtb7H3jGzQlEzDlmnYHW/eoswQszNv4PO+aY80bHM9cktZKO2zJpOO?=
- =?us-ascii?Q?ABqejlOFefkH4L9aFtekHZZaPb+XkTCnTa2fQKZ3J2vhuVLKFBhDHADqfwAo?=
- =?us-ascii?Q?pz5EJL2u1LiKCkEzdsXRlagQeNmxSX7lEdv/tfzsk1XHw2/sg+CGu4/Yopbk?=
- =?us-ascii?Q?+455CbgKYcS2a81uQpMnNyPswJRbTU5dVOxbTepEzP/RlnY+hdr9L63htSuW?=
- =?us-ascii?Q?4FKQLUcjzNgJhnKamIE2rQstXM/rbmIm3ra/urg3DMKSkgWRS4hbSUe/+7RY?=
- =?us-ascii?Q?8Tio7jF4XjTKB3+7qHzPsS5RpAACoP+gqTbJpfqF7KSG/z5n5Tzpr07tj7HV?=
- =?us-ascii?Q?G/flijZhHhExFn/ojvwyW4x97THx6L/kgY8+o2PYq75eZt0yEp99nPaLlcjy?=
- =?us-ascii?Q?zhHYY4j0YT+1tD3yEb0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(36860700013)(1800799024)(82310400026)(7053199007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Oct 2025 17:16:04.4074
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 25a1584a-9b31-4055-d3ec-08de01d75e50
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF00003F62.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5797
+Content-Type: text/plain; charset=US-ASCII
 
-On Wed, Oct 01, 2025 at 06:09:47AM +0000, Suravee Suthikulpanit wrote:
-> To allow reuse in other files in subsequent patches.
+On Thu, 2 Oct 2025, Bjorn Helgaas wrote:
+
+> On Thu, Oct 02, 2025 at 02:58:45PM +0200, Niklas Schnelle wrote:
+> > On Wed, 2025-09-24 at 10:16 -0700, Farhan Ali wrote:
+> > > On s390 today we overwrite the PCI BAR resource address to either an
+> > > artificial cookie address or MIO address. However this address is different
+> > > from the bus address of the BARs programmed by firmware. The artificial
+> > > cookie address was created to index into an array of function handles
+> > > (zpci_iomap_start). The MIO (mapped I/O) addresses are provided by firmware
+> > > but maybe different from the bus address. This creates an issue when trying
+> > > to convert the BAR resource address to bus address using the generic
+> > > pcibios_resource_to_bus().
+> > > 
+> > > Implement an architecture specific pcibios_resource_to_bus() function to
+> > > correctly translate PCI BAR resource addresses to bus addresses for s390.
+> > > Similarly add architecture specific pcibios_bus_to_resource function to do
+> > > the reverse translation.
+> > > 
+> > > Signed-off-by: Farhan Ali <alifm@linux.ibm.com>
+> > > ---
+> > >  arch/s390/pci/pci.c       | 74 +++++++++++++++++++++++++++++++++++++++
+> > >  drivers/pci/host-bridge.c |  4 +--
+> > >  2 files changed, 76 insertions(+), 2 deletions(-)
+> > > 
+> > 
+> > @Bjorn, interesting new development. This actually fixes a current
+> > linux-next breakage for us. In linux-next commit 06b77d5647a4 ("PCI:
+> > Mark resources IORESOURCE_UNSET when outside bridge windows") from Ilpo
+> > (added) breaks PCI on s390 because the check he added in
+> > __pci_read_base() doesn't find the resource because the BAR address
+> > does not match our MIO / address cookie addresses. With this patch
+> > added however the pcibios_bus_to_resource() in __pci_read_base()
+> > converts  the region correctly and then Ilpo's check works. I was
+> > looking at this code quite intensely today wondering about Benjamin's
+> > comment if we do need to check for containment rather than exact match.
+> > I concluded that I think it is fine as is and was about to give my R-b
+> > before Gerd had tracked down the linux-next issue and I found that this
+> > fixes it.
+> > 
+> > So now I wonder if we might want to pick this one already to fix the
+> > linux-next regression? Either way I'd like to add my:
+> > 
+> > Reviewed-by: Niklas Schnelle <schnelle@linux.ibm.com>
 > 
-> Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
- 
-Reviewed-by: Nicolin Chen <nicolinc@nvidia.com>
+> Hmmm, thanks for the report.  I'm about ready to send the pull
+> request, and I hate to include something that is known to break s390
+> and would require a fix before v6.18.  At the same time, I hate to add
+> non-trivial code, including more weak functions, this late in the
+> window.
+> 
+> 06b77d5647a4 ("PCI: Mark resources IORESOURCE_UNSET when outside
+> bridge windows") fixes some bogus messages, but I'm not sure that it's
+> actually a functional change.  So maybe the simplest at this point
+> would be to defer that commit until we can do it and the s390 change
+> together.
+
+Hi,
+
+I didn't notice any issues because of the conflict messages, but then, I 
+didn't look very deeply into what those pnp things were as it seemed bug 
+in PCI core we want to fix anyway.
+
+Deferring the commit 06b77d5647a4 would be prudent as there seems to be 
+another problem in Geert's case discussed in the other thread. Even this 
+short time in next has already served us well by exposing things that need 
+fixing so better to wait until we've known things resolved.
+
+-- 
+ i.
+
 
