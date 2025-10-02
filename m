@@ -1,145 +1,88 @@
-Return-Path: <linux-kernel+bounces-840351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64E98BB42CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 16:35:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09262BB42D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 16:36:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25D1F326F65
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 14:35:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A493C7B28DB
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 14:34:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBA34312803;
-	Thu,  2 Oct 2025 14:34:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="cyR0cNSw"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61CDA312805;
+	Thu,  2 Oct 2025 14:36:06 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83395311C16
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 14:34:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 893531957FC
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 14:36:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759415698; cv=none; b=a9GPXUGe+qUTM2JoAVUiAfBHcaX9H/ILpQ/NM+tVV8qcZLce4Nmv3AKt2TGDz9pKFonrwJ80Gl+vYQxqyt8qZBvAnTeBITZLbG9+P4nwpf+5eb7df0yZLohtniuI/czq8rAToZqzSGYAgHOM9bK/ZZtK7AnL5dqavyvli18yfgo=
+	t=1759415766; cv=none; b=OQzULPT56oeEOVGqzQgQUqUaSCHFE0He84sGhyDagJ2OZY1QQCHsTqtdU8IVnIQZ1eBP9EyBYFUzDPwdPgOL+W/DqYIzd5A7sx43Nfy5YPLDa3H82DCD/zngKOeGhkdgAHyNyGtUToCCmkiraGclLkcfTVV9yjUWl5ZPRzUhp+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759415698; c=relaxed/simple;
-	bh=a/A8oXHhPqzKUZBU/1bNk3QBCdhWHAye0YSYfmvBVPo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lgHl/fhBdUIcIjgEQ5lDW+qEnYbp1nQsmnmrhL3bF414913C3DS8dlaT5TjL7tNr82ezbgUoVFKP33jTln7X8V1Q6TvJ69CgRNwImQfnkANNCzQXauUOjXL34LLRzCaRgeOoH40812rNqTNFggnvwnGvf05foFQU/vH1iI2jScE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=cyR0cNSw; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-368348d30e0so10424041fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 07:34:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1759415695; x=1760020495; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fNmlYeXHhash5zxgH9DhIdlE2KIwH0wWzhgZasITOwI=;
-        b=cyR0cNSws7qOYDO7ipx3+224M/CaFFnkTpOnJpL/d2PT6gnvqA10xYIg9QW7bblxjz
-         SUkgMB0UPCBxpTMqS8qrD+PLDr0y9MNf+GnmGvoJdMiwu7ItMgogGJUx4vjdxgxZfRm8
-         b1kxMZZSpp7ipOlohZi6G+mckATUAchF86lQsOCtO/UPrDhPrVOfUA4AX2rhbJXNAzQC
-         FC8kMTerM+F9XBcnuvAhYt8eaoWNdHMknALzPo10FOd4JdNc8N/RKxh/0vLRF/qhnnWF
-         pXrPQeEkOgc3KUwU5lE94MsI2SfmWym592N5hxQ2cB7tVNnvZ9OI5G+CiMsJ5biXhu9P
-         ZHkA==
+	s=arc-20240116; t=1759415766; c=relaxed/simple;
+	bh=8liGFBphLsGR/Ovvzu/WzdltXAKa3S0oH7Lj+OOJeIA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ICaOXTTS3CmhM3EwP8D+VTzZ/WkWajvwj98GNvaNNKJ7klEbrdwEv2XPm2yHbzS0/Hp/S38ZfAr7/5Dq47gqmQgF99hZNqlzfnKfFBnpLuIXbO7aDsmPQVx5pjfIjXEC12s63QYEe19gH1cDR7xdz/g8WuBqBvCNC9tJyy4YRTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-90efeb58159so128066039f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 07:36:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759415695; x=1760020495;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fNmlYeXHhash5zxgH9DhIdlE2KIwH0wWzhgZasITOwI=;
-        b=uu9zX2uHVZCB5LevfP/sHQdLYtDm7YbZ1PjpEp+6gVoJz2VtogjFuCRpRSFlafaDG2
-         PArup578pEnyuL0ooc12m/W6sA53NDkMx3AAfX67sFTzwAEri98HRdjDbQ5HoDtT64Xh
-         5gWGDasrxJ/7huKmYGGDK1QWn5qvxSwspV1DfqUPGh5/nOUscOxl1+Fp9fpb2YoqCS00
-         hOxoQpIRvUVzFL4jk8RHEvwZkW866dkEjBCEvo5xdmIZH6CWO5AP1bTvWaW+LFA1srhk
-         /Tj3zhUvD624uM6Kcx//BCa0LrFTGdm8o1A1rPw2sMHiSYczIGjzWjxazsFNAtyp20pe
-         UvFw==
-X-Forwarded-Encrypted: i=1; AJvYcCVu3Ps407kzdG9R60O6T6JmZNJEOS1Z0bajScBzzolfOsUpEKTRMPpoYAKAN3F/ofCpmQkFlAeaUL+hDVU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzh+Ydnp5Ag9VNrqBymaK0McHy/Z6VNJR9LoDX7kSstXMCEyNSe
-	VD4lRmNoj7w+Y5TUtQE2gNkabigYeOxIB92q8SdTPlZ6dclBcrEAmT6lvLe3zLa93ToqgPNR1PE
-	h3BPAwBBedHbs6iy6j9z5yynmIG1siN5FpTVBAuGveQ==
-X-Gm-Gg: ASbGnctPUYcq0TB8c1L9llYSZ0zScql+CBAgswhL+96Csymj5A1PcJtmvKYOPaweLgB
-	Xd1d1SaIOal0mg3nCO40jin2IL+H7GsdXBxds/9wIy7uUeOZNCPlGkis0pQXm2kgIftwC5NnA5z
-	43Gsh0bhjPNqOO3APELo3j6MXc0ZErmm148ZAAx92Jxmd5ccTNfnumSjBZW0ZfFetgB/FD5pZI7
-	/QEA7StnlCfQs0fO5kHyOvWol23d5a8
-X-Google-Smtp-Source: AGHT+IFt+HGidyg8l78Emkvj1EGjWohAlX0+/ZRuiXiq0rypVlyjBUdN+69ueNvffFtVc0XtC12AKJQj+2BYsW5GjDM=
-X-Received: by 2002:a2e:9a0a:0:b0:364:806d:85a6 with SMTP id
- 38308e7fff4ca-373a7461b1cmr28467441fa.33.1759415694471; Thu, 02 Oct 2025
- 07:34:54 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759415763; x=1760020563;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Jk/4xwGcZFhgMycSW8GRKnHdm9qwb9tDahIkrgnD+yY=;
+        b=gBTKyj593iPNNJeNcI9IqLk57XEXmJkWoOBKsPGIs3rX4Qp23HvlsDOzb6nIQcBwcn
+         gPOfJ6o+J6RWKTEo0gdUc3J9ZNuAzPjCCim3x/cCYpcPPcMIcfjQbBDrZ8IXxFuujA8Y
+         xNJCTsXDX6J25Skf1RDpyQOOTXXgWbiegs3cNtD5Ui+A6BnjP4Qn3Rm2Ab965wz8xyJw
+         cSURKZxuGFbj0TwxIZCq8bEs48oi6v/PKypO27f+iwZpfb6P4R9oBkwNT2EO5DFghxKh
+         +ERVhxiKfhW+z3VeL1SjsNiQzTNtZs4J/sUUZzhTPP1VFf8LTcQErIS7WPOy0SwdyIsj
+         AgcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWxbaRKJpfAYryYxFyXcnURiaZ5nJEDDR6JV6pajlLzoInMw+JcCOxXBe9ozKrwFd0Mmhsuzzw23G5QaY4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyxc1KzdTcPHCBYG+Ri6yLit4vojeQXZWqy4Dfa0psnUtzg0cgk
+	1lZmUU9MH6hoY8qT+uBny7GH8KkHf7aPY2gABybiivy80DOClJgp5m+UXE52F2yy8B2CnnHvvuR
+	XyU87pwuJgRz27h184gHT6X+5Us/wUKBuBvDFmxMGskSL9byRu/uXh6TUX0A=
+X-Google-Smtp-Source: AGHT+IEFCDUy+L2HapUMoQIqVeNFf1+i8LU/i67UR6vqPzmRvVBOVGQdoDjMHnGwpE8/z19KuYRoEdSiXryjuqvRF5DnWBXy3WRH
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ed37635b59b0765ed3dbed6ea33c562a40b9e287.1759243789.git.geert+renesas@glider.be>
- <6555b47f-919b-b56c-4a76-352c904343c2@kernel.org> <20251002-rubbing-nucleus-b353e09be786@spud>
-In-Reply-To: <20251002-rubbing-nucleus-b353e09be786@spud>
-From: Anup Patel <apatel@ventanamicro.com>
-Date: Thu, 2 Oct 2025 20:04:39 +0530
-X-Gm-Features: AS18NWCbya2v7nRYZXyrCc0tzPa3O3zZxhM0w6rmVq8q6ADee_VcxRzs9PCiAGY
-Message-ID: <CAK9=C2VC2OHzNFXgxZ4eDCUv8MGsjK1OdrD0FR4WUSrOsyFemA@mail.gmail.com>
-Subject: Re: [PATCH] clk: COMMON_CLK_RPMI should depend on RISCV
-To: Conor Dooley <conor@kernel.org>
-Cc: Paul Walmsley <pjw@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rahul Pathak <rpathak@ventanamicro.com>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-clk@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+X-Received: by 2002:a05:6602:2c14:b0:90c:99f6:4cec with SMTP id
+ ca18e2360f4ac-937a70f0f73mr1022782839f.3.1759415763631; Thu, 02 Oct 2025
+ 07:36:03 -0700 (PDT)
+Date: Thu, 02 Oct 2025 07:36:03 -0700
+In-Reply-To: <n45v4ckrwdb6z2zhqo554lt7qvgzmpbpd3z4uluun6vyotacmk@coodvjeanw3d>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68de8dd3.050a0220.25d7ab.07b2.GAE@google.com>
+Subject: Re: [syzbot] [fs?] WARNING in copy_mnt_ns
+From: syzbot <syzbot+e0f8855a87443d6a2413@syzkaller.appspotmail.com>
+To: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 2, 2025 at 3:06=E2=80=AFPM Conor Dooley <conor@kernel.org> wrot=
-e:
->
-> On Wed, Oct 01, 2025 at 07:15:56PM -0600, Paul Walmsley wrote:
-> > On Tue, 30 Sep 2025, Geert Uytterhoeven wrote:
-> >
-> > > The RISC-V platform management interface (RPMI) is only available on
-> > > RISC-V platforms.  Hence add a dependency on RISCV, to prevent asking
-> > > the user about this driver when configuring a kernel for a different
-> > > architecture.
-> > >
-> > > Fixes: 5ba9f520f41a33c9 ("clk: Add clock driver for the RISC-V RPMI c=
-lock service group")
-> > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> >
-> > Thanks Geert for catching this.
-> >
-> > This patch is against unmerged patches in -next.  So I'll plan to add t=
-his
-> > to the PR that I plan to send to Linus tomorrow -- unless any of the
-> > drivers/clk maintainers would prefer that I not.
-> >
-> > > And perhaps the "default RISCV" should be dropped, too?
-> >
-> > Probably.  I guess we should just add this to the arch/riscv defconfig
-> > instead.  Let's wait on this one for a few days to see if anyone has an=
-y
-> > comments, and consider that change for v6.18-rc fixes.
->
-> There's little point having "default RISCV" if it's only available on
-> RISCV in the first place, may as well just be "default y" and be
-> simpler.
->
-> My 2c is that putting it in defconfig is barely worth doing, unless there
-> are actual platforms that use it.
-> Does QEMU provide a useful test for it that exercises the various code
-> paths, that would make it worthwhile to have in defconfig Anup?
+Hello,
 
-Yes, QEMU RPMI support is in the pipeline. The OpenSBI
-upstreaming was completed few months back and Linux patches
-are going in this merge window (Linux-6.18)
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-We (Ventana) have already made the QEMU RPMI implementation
-public which can be tried until QEMU RPMI upstreaming is completed.
-(Refer, dev-upstream branch of https://github.com/ventanamicro/qemu.git)
+Reported-by: syzbot+e0f8855a87443d6a2413@syzkaller.appspotmail.com
+Tested-by: syzbot+e0f8855a87443d6a2413@syzkaller.appspotmail.com
 
-NOTE: these details are mentioned in cover-letter as well.
-(Refer, https://www.spinics.net/lists/linux-clk/msg118229.html)
+Tested on:
 
-Regards,
-Anup
+commit:         7f707257 Merge tag 'kbuild-6.18-1' of git://git.kernel..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1190c92f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f9d13d0fd373120a
+dashboard link: https://syzkaller.appspot.com/bug?extid=e0f8855a87443d6a2413
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1137e092580000
+
+Note: testing is done by a robot and is best-effort only.
 
