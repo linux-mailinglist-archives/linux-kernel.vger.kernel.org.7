@@ -1,56 +1,53 @@
-Return-Path: <linux-kernel+bounces-839792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D130CBB26AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 05:07:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB8E1BB26B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 05:14:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F46238007B
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 03:07:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 720B816E7F7
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 03:14:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA466260583;
-	Thu,  2 Oct 2025 03:07:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B928260583;
+	Thu,  2 Oct 2025 03:13:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ramtwr9p"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lOlGvqys"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21F4B12CD88;
-	Thu,  2 Oct 2025 03:07:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70F3512CD88;
+	Thu,  2 Oct 2025 03:13:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759374441; cv=none; b=WdFgNGhrt/cO1pFExEFgrhWz0YM8wO8gA5Y11JIS0N1xLSYfUo6Sx2/TLGASZ2XVO3rVqb+317Q9Mb3AnRu/6kxAnxIL+yQl18lQj45qXr2tXnBIAIaXoDI2gDmH1U9cuBQ7uhHag9+zxYxHT6G/4gu/2e+1KeR4fdaY1cdAlx4=
+	t=1759374838; cv=none; b=m3FPxp0mPeeDJSxTfXjqMYLpS1rQQ1EoPE3luToY40wrlGWHFUXOiKN193+ZhkRyBLUZn0sVsti+18BZbXTn5DC706O1g57PZAOhP42lpU2IwglDBefada6EqPJVEPOrLAQNSklptjUs3autwkwFAQMAAPZJBWsow6sgJrn3LKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759374441; c=relaxed/simple;
-	bh=JeT5tvlOvWYmnrAEdaIVrSzdL7W5TUhJqFYD/DOx+bE=;
+	s=arc-20240116; t=1759374838; c=relaxed/simple;
+	bh=l6DKU3jOvwkc7QxfzHHokqyxey5/Ta2kSsnhWRBArHo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EN5llqYmaFXPDhk7Zqf3nKA1J7uDiu0ZRXnTeuSt8E2R1JOcDKFolODYN1mpTBC393FnCKSBiTAv0xQQR8UL0JaFG2B3C22xnBNPcxXWv9v16pKn908ADbpnHHbELu4rJnKDC7+LxbGjTJSNeuS5ETukd9aryk5l7/r69pi59wQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ramtwr9p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FDABC4CEF1;
-	Thu,  2 Oct 2025 03:07:19 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=AmKtoh0Vvb7ZZUh5wzAOzBl7CW1Ke8a3aerKqUYUb+2CrqP87GlC43Pwg5gyJpsvazgibcRueTixwW7kZIqnKP9SkbiukB0v3wBgzOgFvmZ96h7WG7753OmOICxrTDAT6humgteRiHOhQ0LcRywNa3BmqvDG27BHjijtpxHLdKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lOlGvqys; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E16A1C4CEF9;
+	Thu,  2 Oct 2025 03:13:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759374439;
-	bh=JeT5tvlOvWYmnrAEdaIVrSzdL7W5TUhJqFYD/DOx+bE=;
+	s=k20201202; t=1759374838;
+	bh=l6DKU3jOvwkc7QxfzHHokqyxey5/Ta2kSsnhWRBArHo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ramtwr9p7wXlIqewvySxczmyEsembhIEkPclUP89G1yfJgHVH41XbNiOVHAZyXMGB
-	 nTafqSWkC0VSvzKSOu/Z74ycX//+zsPgSQw/v/Lbh+urORDbTnwmfbkkv8DE6O9j4g
-	 WLYFa58vrYpwe86HRRqgvGGV4O4AOcDKPhjEip8b/s7yOPnu5u5gQu9D8MWscXqcE0
-	 l9VaX5XHuV59j1+3wsy/vuNVOmGyrjx3Iq+VF7sd3JssFDDfhdbfa8IuuLuhLuxBLv
-	 xt1CeOSJgfT8DX+j3ybD94dRCC2/uJzidokLKrGpZAUDdhAh4+SHh32g/8iHQsL4I6
-	 LNrpqBjkjKuUA==
-Date: Wed, 1 Oct 2025 22:07:18 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-input@vger.kernel.org,
-	imx@lists.linux.dev, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>
-Subject: Re: [PATCH v2 1/2] dt-bindings: touchscreen: rename
- maxim,max11801.yaml to trivial-touch.yaml
-Message-ID: <175937443731.2982292.3723741722041625819.robh@kernel.org>
-References: <20250926184720.391335-1-Frank.Li@nxp.com>
+	b=lOlGvqys8z4meU7BNOtxcyxLhCaDyM6ykdSbFYjaixlrArbFEfuoQUqhnemn3mfpF
+	 ryr3vFucB1BC/0tfQ/tdoY0WwH7c/CQNFtmCRta4PL2EjHmRojGmnJO11W1EG5s8XK
+	 XB8mlM2XkCeNS0Ze0Sh9vPWyW1z58AjQ7sZ0UJ9Cz8itXSiMEshlw9wMVwqJEfXBZ+
+	 oubYLEE+64ABF95Fd6Tp/ODx2YwtYLnhcKWxy9DEuXyCnIkA3g/gB43feVY/9KG0lk
+	 Vple+kh0lErWwY9CTCuiRDT0wEM07Nr1+7NYj2k9k+RF2t/OYmDH9q9VS2yPILW8lA
+	 0bxTaBLu/QvPw==
+Date: Wed, 1 Oct 2025 22:13:56 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Abhinaba Rakshit <abhinaba.rakshit@oss.qualcomm.com>
+Cc: Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] soc: qcom: ice: Set ICE clk to turbo on probe
+Message-ID: <ep5x4ehq4gcyk67s7fwzcothgqyso4ltt2dd6fi6qdyvodz5mx@gvwmkkslvsw7>
+References: <20251001-set-ice-clock-to-turbo-v1-1-7b802cf61dda@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,26 +56,81 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250926184720.391335-1-Frank.Li@nxp.com>
+In-Reply-To: <20251001-set-ice-clock-to-turbo-v1-1-7b802cf61dda@oss.qualcomm.com>
 
-
-On Fri, 26 Sep 2025 14:47:11 -0400, Frank Li wrote:
-> Rename maxim,max11801.yaml to trivial-touch.yaml for simple i2c touch
-> controller with one interrupt and common touch properties.
+On Wed, Oct 01, 2025 at 05:44:32PM +0530, Abhinaba Rakshit wrote:
+> Set ICE core clock to turbo (max freq) provided by dt
+> entry at ice device probe.
 > 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> Signed-off-by: Abhinaba Rakshit <abhinaba.rakshit@oss.qualcomm.com>
 > ---
-> change in v2
-> new patch
+> MMC controller lacks a clock scaling mechanism, unlike the UFS
+> controller. By default, the MMC controller is set to TURBO mode
+> during probe, but the ICE clock remains at XO frequency,
+> leading to read/write performance degradation on eMMC.
 > 
-> previous discussion
-> https://lore.kernel.org/imx/20250925-swimming-overspend-ddf7ab4a252c@spud/T/#t
+> To address this, set the ICE clock to TURBO during probe to
+> align it with the controller clock. This ensures consistent
+> performance and avoids mismatches between the controller
+> and ICE clock frequencies.
+
+I think this (the snippet between the "---" lines) looks like a quite
+good commit message; but it's below the first "---" and as such not
+actually part of the commit message and will be ignored by the tools.
+
+At the same time, the actual commit message ("Set ICE core...") isn't
+very good at all, it completely lacks the problem description you
+provide here.
+
+Please use this for your commit message instead.
+
 > ---
->  .../{maxim,max11801.yaml => trivial-touch.yaml}           | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
->  rename Documentation/devicetree/bindings/input/touchscreen/{maxim,max11801.yaml => trivial-touch.yaml} (74%)
+>  drivers/soc/qcom/ice.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 > 
+> diff --git a/drivers/soc/qcom/ice.c b/drivers/soc/qcom/ice.c
+> index ec8d6bb9f426deee1038616282176bfc8e5b9ec1..eee06c499dc36a6bf380361f27e938331f1fcb10 100644
+> --- a/drivers/soc/qcom/ice.c
+> +++ b/drivers/soc/qcom/ice.c
+> @@ -535,6 +535,7 @@ static struct qcom_ice *qcom_ice_create(struct device *dev,
+>  	struct qcom_ice *engine;
+>  	const __be32 *prop;
+>  	int len;
+> +	int err;
+>  
+>  	if (!qcom_scm_is_available())
+>  		return ERR_PTR(-EPROBE_DEFER);
+> @@ -577,6 +578,13 @@ static struct qcom_ice *qcom_ice_create(struct device *dev,
+>  	if (!qcom_ice_check_supported(engine))
+>  		return ERR_PTR(-EOPNOTSUPP);
+>  
+> +	/* Set the ICE clk rate to TURBO */
+> +	if (engine->core_clk && engine->max_freq) {
+> +		err = clk_set_rate(engine->core_clk, engine->max_freq);
+> +		if (err)
+> +			dev_err(dev, "Failed setting the clk to TURBO\n");
+> +	}
+> +
+>  	dev_dbg(dev, "Registered Qualcomm Inline Crypto Engine\n");
+>  
+>  	return engine;
+> 
+> ---
+> base-commit: 3b9b1f8df454caa453c7fb07689064edb2eda90a
+> change-id: 20251001-set-ice-clock-to-turbo-ecab9ea46a89
+> prerequisite-change-id: 20251001-enable-ufs-ice-clock-scaling-9c55598295f6:v1
+> prerequisite-patch-id: d66f521e5e625b295a1c408cdfce9bd9524ae3ba
+> prerequisite-patch-id: 23934f3fee5aabe4a2324130ed02909352b5cf61
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+We do have plenty of platforms that run the upstream kernel without any
+changes, so please test your patch on a clean upstream kernel tree.
 
+Thanks,
+Bjorn
+
+> 
+> Best regards,
+> -- 
+> Abhinaba Rakshit <abhinaba.rakshit@oss.qualcomm.com>
+> 
 
