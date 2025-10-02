@@ -1,392 +1,218 @@
-Return-Path: <linux-kernel+bounces-840237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C37B0BB3E84
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 14:38:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9205CBB3E93
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 14:39:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7403A7A1FE0
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 12:36:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF8857A49AB
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 12:37:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90F5331064E;
-	Thu,  2 Oct 2025 12:38:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4385310652;
+	Thu,  2 Oct 2025 12:39:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="czOtJEs5"
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="KhUNjStY"
+Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010066.outbound.protection.outlook.com [52.101.201.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B81FF12B94
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 12:38:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759408686; cv=none; b=nwLR2j8FHMfnpmcI6xFU3qKTgxLSKJosd9j78EfJ4U+qci0/3fXaB3jpDhbTy0mvvWZSIq2MehsoFU3HWZJ24wH8A/uJXx8sGYFGytCFTf+Vq3FHJDvXnKjZsynIE4jiyYDQ7Nuq3EStAfYCQvX5XoRQOj9hBfZSBFnoWjWQKeA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759408686; c=relaxed/simple;
-	bh=0d4GnoqxtkOwWQrPiHjtNf6Gn71YfqDC+uHjCJZ31cw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=RLuzTNT/tscv2ClhqAg9o5/YLzbRwlDMq668tGtILEwi5gXlmd2brrsadBu2AfYYFiYlEYncECupsrF4lrzvKWJfUlXOD/BczdH0Q1LGJP5bJK5GbzweznLZHXHpLzKGbdvDG1jE+bP5op2NHXRtllXabg48M2Fn0Q7clnOzPnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca; spf=pass smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=czOtJEs5; arc=none smtp.client-ip=209.85.219.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ndufresne.ca
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-87745ca6cc5so15097076d6.0
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 05:38:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1759408682; x=1760013482; darn=vger.kernel.org;
-        h=mime-version:user-agent:references:in-reply-to:date:cc:to:from
-         :subject:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=NHfRQ+iuxKkzwVBnfyZ6vWnoqN5WJp/4cKj2bT9r2oU=;
-        b=czOtJEs5xzHUnZDTRsJw6agtIa7Fv9iNVKysxJb5DAxbjJ68HE+SeWnK1j/YqKFzFe
-         2CpXFQzPYO6gUQIwpx2P/S8iZFldAY/W//w/w2zxshStQ+wxDSH9kqZzxJp9k2rGBi7W
-         dWdJgBQ0xJbYxZyXN3TwgecsZgnY8WxYzBm1djQYKFVZQlNV0yYrPPeT2S1xTnuFjUC/
-         5ixnmgzRKta0WEY7KpTOxIvl1Z1FVqsp0bA4MzlnkOqyVtOwbwZznyDv5fSet630hZmu
-         hMLkEB+UQ10wUI0GaHrlrYVvZWzugYyG5vHH1f3fKwQPo/6l1t4G7VrrjNlAtuPAfxJ2
-         9Llw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759408682; x=1760013482;
-        h=mime-version:user-agent:references:in-reply-to:date:cc:to:from
-         :subject:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NHfRQ+iuxKkzwVBnfyZ6vWnoqN5WJp/4cKj2bT9r2oU=;
-        b=P8p2I16pAyc4KUQW4Iq6D986VnZO+M/owM6foh9nvzDC+tkcioqhNVeWVD4xHN0jxo
-         PZ4ctAC8di5KGKTy6f/K/wGefJtkAGPqCloxOamjEYgMNYPXyq375vk1Ifz5yM7iQjfi
-         DuTUcZJ6Wk69HZRBTKMmQxnM95TudpTOIr23UEHEoqao4IPOR+qhBi5nfG/zvDplCu0F
-         2m/egCocay2E24ZN94RIrwy3umosQRtOUGBi0Y8mKZd/Jdoykgxb6Y5hoHTX1Y0mxfBf
-         zjyGepqWaMEKUYVTGC7xrQE12ntRE/fwHR41W/V2jbfbblG9RqbPvb136aVhV9YraHO/
-         Osmw==
-X-Forwarded-Encrypted: i=1; AJvYcCX3AsHqJW8J6GTPzfSPaUQAlJzNiVxIj5L9ZX5kw9K7O9oIrK8ne4rKfPrstg/FJ2iPG9PeNiQB+14lneg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yycni1b15QHqKM1inRConGq4QzZ0XTiJZq/g1gtRkvdHvhBuRLO
-	wJU7gPN9M9G23qxo67eNAEtuaJFYKMAWl3N24DLZZ6bPNggpkAMjLVIJSQmLEJBgJQ4=
-X-Gm-Gg: ASbGncvo24f2601rEHqpt4r+Ya152rGXBe4Ts8G5WFySYpw9x9y0Cp4TtqUdxZtSuiS
-	gfOFNRnaLffTvpFbsGjHRMA3r0iRFfmPEEVQGFZ8aW+sSwfJQeEnp0X0yBuInzJC3fB9EsMoEb0
-	ZxN/h8VmjmDtdEsnIxZ8YiO8v820YGFNX2rPt+MAb8o3zmDT/pPahzccR54M4rethqmEqZ9KH8m
-	iXmU5irjkOxryhRRH6XlMrl/JPth6CSVFbbcK0ZGSdIcMTp4yKAMZTGwJIocxb90xxk68X2fIg7
-	JGET19SQfnbUwjlFsnejWGKKH2Sw/btLaXazvUN8GRJCF3omXuAATpwzlLq4rC/6aNTv9OuT5oP
-	FsmD09gYJbC/dumGrrmwrfqMNkpsuZZVB7U0sgExyEBfvkT8Wg7/1
-X-Google-Smtp-Source: AGHT+IECtCSMYodlKeFTIOb8HiB8SZxVCHzIO6URism5fJlGRY+TVm9sBlQVd3VRXMwFRSiYAn8NFg==
-X-Received: by 2002:ad4:5c45:0:b0:84d:5b71:8a99 with SMTP id 6a1803df08f44-878b96f1074mr37155496d6.3.1759408682453;
-        Thu, 02 Oct 2025 05:38:02 -0700 (PDT)
-Received: from ?IPv6:2606:6d00:17:ebd3::5ac? ([2606:6d00:17:ebd3::5ac])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-878bd783b3esm18801766d6.36.2025.10.02.05.38.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 05:38:01 -0700 (PDT)
-Message-ID: <ec3e93e72e326db4e61fed33ade0547935ab6dca.camel@ndufresne.ca>
-Subject: Re: [PATCH 5/5] media: iris: Add internal buffer calculation for
- AV1 decoder
-From: Nicolas Dufresne <nicolas@ndufresne.ca>
-To: Bryan O'Donoghue <bod@kernel.org>, Deepa Guthyappa Madivalara	
- <deepa.madivalara@oss.qualcomm.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>,  Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
- Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,  Abhinav Kumar
- <abhinav.kumar@linux.dev>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org
-Date: Thu, 02 Oct 2025 08:38:00 -0400
-In-Reply-To: <e273f195-fb5e-4b4f-bf97-63ea51ed875f@kernel.org>
-References: <20251001-av1_irisdecoder-v1-0-9fb08f3b96a0@oss.qualcomm.com>
-	 <mbltuHnjNkwD91EqWND77oi8XN26tEarsTmT_fLVkZQYkc7-V_RpAVWo8KC8AnzeyV74zXurscVRHHfAL35xFw==@protonmail.internalid>
-	 <20251001-av1_irisdecoder-v1-5-9fb08f3b96a0@oss.qualcomm.com>
-	 <e273f195-fb5e-4b4f-bf97-63ea51ed875f@kernel.org>
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-cPfiuid/iXTdUGeROojX"
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CE4922EE5;
+	Thu,  2 Oct 2025 12:39:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759408767; cv=fail; b=LrMlwR4sl5o/HZnkbZBECnQ5TR1EJ6iqYtbt0WEYk//XWuAvdMc7zHPZwc0zsPWXDCbckREA39viJmC7uSZ1wjiBD13I6p5tKeGl9XRVV4NHxRCvoMSj/b479fRr7Hftz2KYhGb9fGegnKXJa28cxHK3RY8SikYQl6rUfv5j34k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759408767; c=relaxed/simple;
+	bh=/8PgicbM19+A3w8tftQJwRRmY4xXqHUdlrqvXCRVd+s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=QdFIoxovDniOvGKEO7o2s8+Wms01UVnUa3UBgmpo3jwUq6goG21W82OuYdqYLeNlx5JTVJ3tJZZ81yTzrB8eHe/L/T13otkHiYCTzD5/lXWl838eLHg13QwLsh9VNT1jH+ktUOhhsAXGlDxAoCvKmiiDrIE/76g/Lxm3WbBiKtk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=KhUNjStY; arc=fail smtp.client-ip=52.101.201.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=GItE1XbIetdSxp+q7tZH6IsxT8JRwulN38CqilNXf2nDgt7+Uj23Zh79zzrlm/bEcYdlpkjUNeCwFz8h+9iWiPdtcZ7QcEayRlMpyUUBli2Pw17wQKD/C/VA4ihQDBY8ux5tOr1cJ9d2KEHGJr5tnGFoGdSnabj+CNjHCF5UiERNN/N14pB7kr5dll/wg37LkaflnCAwJf7rSWGG5yJfUMVXMagy+AeX7qHzhyZOVCYIahlehoG9XTNU1QxRXyEhbU07jnmLsvn2WjvBJ4O+rn7ztkUWuH43SwOYqyXon18Rp2ZgEqI/fP4oSO/O8eOTyO9TlsIOF4XzRc54wajzsw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qmhAiPykpOC1iB3OA5Tt76h5byoVdFgIJ0eWGSl0xeg=;
+ b=E5sUEKtaeIiqyuDa/4QxTaPfgd65Vq7ExGe2Eucgdf6TWJ67+yGQvGv4AJ0ZC0a5qEDu/GmRb/5AihYTWHdJMn0EG2/47mAY/VefRjFn9E69c/VNMIk0QdBt41KQNkhdlYDggi/NFxbxcu1skWzOFv7m8FKoHWUXYDM07G2TEDkQ5SP37Xr6PbKnUe1xs5Ex73OcCmJuiwyjXahIP5eMngYARYe/x2+Szm+n0S85u4VF0i3/OkqywhsoOHgGPJz/r2oIb0JXDrVXblwhKCv0eeyvTyEkn39CSECAzWDF6rcv5xj2Lg+EokwbOnWDD7O4hOC12oCB9BigQeFu2HgUYw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qmhAiPykpOC1iB3OA5Tt76h5byoVdFgIJ0eWGSl0xeg=;
+ b=KhUNjStYAnr/A62oMk85XStQG/KEkaL4R7DTK5IMEQIlGK8ZQQAKiP8yA+0zxiCRtBNizzVgZmHBpRyRhIOYDeYTH3hha/QT5QfBRB4+RmKpl5BAAYN35W2tJmvxOrptJEOYVLyp/U8VDO+D+JFkQryyUPdq+wOBJUZ4SzDKnf4iAWPUczc3yPBvqHDKCAvssCZ8100AYUkNM0jIFNbfSGrfoy/T8QhhHhg/00aokYLjXtoxRhEjhIvjO1mJbOjp9aEUH0Vg+T0OTULgN9bhT5B85BFAtLKY3A/sGuRUq599pQXBno003/fV5p8u6U3EbWa/CfYwZHjM7TqbMXzwIA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from PH7PR12MB5757.namprd12.prod.outlook.com (2603:10b6:510:1d0::13)
+ by DS0PR12MB9726.namprd12.prod.outlook.com (2603:10b6:8:226::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.10; Thu, 2 Oct
+ 2025 12:39:23 +0000
+Received: from PH7PR12MB5757.namprd12.prod.outlook.com
+ ([fe80::f012:300c:6bf4:7632]) by PH7PR12MB5757.namprd12.prod.outlook.com
+ ([fe80::f012:300c:6bf4:7632%2]) with mapi id 15.20.9160.015; Thu, 2 Oct 2025
+ 12:39:23 +0000
+Date: Thu, 2 Oct 2025 09:39:21 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: John Hubbard <jhubbard@nvidia.com>,
+	Alexandre Courbot <acourbot@nvidia.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Timur Tabi <ttabi@nvidia.com>, Alistair Popple <apopple@nvidia.com>,
+	Zhi Wang <zhiw@nvidia.com>, Surath Mitra <smitra@nvidia.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	nouveau@lists.freedesktop.org, linux-pci@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/2] rust: pci: skip probing VFs if driver doesn't
+ support VFs
+Message-ID: <20251002123921.GG3195801@nvidia.com>
+References: <20251002020010.315944-1-jhubbard@nvidia.com>
+ <20251002020010.315944-2-jhubbard@nvidia.com>
+ <20251002121110.GE3195801@nvidia.com>
+ <DD7TWUPD83M9.5IO0VX7PP1UK@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DD7TWUPD83M9.5IO0VX7PP1UK@kernel.org>
+X-ClientProxiedBy: DS7PR03CA0150.namprd03.prod.outlook.com
+ (2603:10b6:5:3b4::35) To PH7PR12MB5757.namprd12.prod.outlook.com
+ (2603:10b6:510:1d0::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5757:EE_|DS0PR12MB9726:EE_
+X-MS-Office365-Filtering-Correlation-Id: b8bbc03d-f427-41ab-6d6e-08de01b0b72b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?A4NhRPDH42/1ygq5P2kPNn1+5jmqfrTSE0azYnObt/J+EEDyAh7FFITAav5W?=
+ =?us-ascii?Q?2zzhDNXVDJBC29RxuliMKsQHNVCbL/azKOU1HU9a1XSckkaQIfhIiBy3HBZY?=
+ =?us-ascii?Q?t544qaJzXX1bwk1t6RLRZq7lW23qBOqs6/3HEMY2ZkQkYkVk3VDzYcAWSWz+?=
+ =?us-ascii?Q?X/IEDEfWieyYLQKxY/HYvymQTnWtcB9TwalFflPOBu57rbMt2NFjw94rhR7G?=
+ =?us-ascii?Q?niA+Muyac6R9wqgf+98Oyqj19owtOMIphGXyVrfj8NGtbIZ5Xvwbr0/Iv0dn?=
+ =?us-ascii?Q?ZiLEXxn4/K82T+W/l81+2wzr1yLMz/VwaTImSEQqH5z6wZqsn0Ub3sK8nahR?=
+ =?us-ascii?Q?rbDnVdFQx2YJw7GRkA3ZiGhsVrsv0qRKdB5IpcX24haySbvdWNfJ96LqsLhb?=
+ =?us-ascii?Q?YMOjjq2WK1uBDDshn01vTJV+jFmqKDRaKZRVVx257kQRtO8Hvk4vDfqKKFyl?=
+ =?us-ascii?Q?GwT9pPhucQG+f3tDpJl1bjFuTwT0jnf12vw3p1D/D3tfFm7JJvf9N/yiw7bt?=
+ =?us-ascii?Q?PMW4eHQhs+LdK18VJsSfchjv2wD1JpoC23gqdCGXDkhhpm3fG79h4ixsrMBs?=
+ =?us-ascii?Q?4/6kO96n2VsmouJQj4I6JIIE2RTHxdr6lix4E+Kbht06q1xfTqntPqM6MaDL?=
+ =?us-ascii?Q?fhBQ72JGkvh9bfgp2KR/OhBCj1yRmpMIQtGVB4LIGvKckpPV+V6H7uN0qP3f?=
+ =?us-ascii?Q?cjuqlkRIH5LC79yd09854MiLB+/lwLxfHi/IvcO2qXhYAmFASBD1tMjAjV5F?=
+ =?us-ascii?Q?nUupxfeWmG7nYNFlk3cU+OsCyHufrVH9xA9TviYiwWxIoziG2xVScnKVv560?=
+ =?us-ascii?Q?hdOqnZbq3ohecCM3NVAMqlCZdgIaNcqZ46cv1xv7/9PdhZccC8C8v6cjRCrl?=
+ =?us-ascii?Q?OnV+g12JtQfIIehgOxd3ab2kDZ8IHmsjZ48Mva+v3WtN/7SSWHWa5ygjee9O?=
+ =?us-ascii?Q?XzoQTocqL5Q2bvqfMejQ7DGFDieMFtQpBSWcw7be4KFvdydwM+h95lQLJS1E?=
+ =?us-ascii?Q?/cZKr5q7T6tG6AxaxFchbNAUbAsUfxcuvLDblBh3L7WZAY5NXO+wgBgZKIR1?=
+ =?us-ascii?Q?IkXF/8v24NQZzCE/4eld/cDsTr+MI6XjrZSMMHd7pLopy85GwBhyk+LWVZbq?=
+ =?us-ascii?Q?AdjVGUPjbtEeZdaMd5rB8W0xLUijtjxHT6iH6ULFkFWTKQSu/CA6hZbz1APa?=
+ =?us-ascii?Q?scztF8ZT7NZxnbpS0Ifvsg8PqOe4wBQNYVB0Ul8W9Yc1N4pz4wt2j/ry5nKr?=
+ =?us-ascii?Q?PH1+7hV00kFf4OwmAl/XgZ1lqjW9h0Pz+FFFSPf8LOtoUlhNC5ehnvsJkQBD?=
+ =?us-ascii?Q?O6F8B3A+dgsURR9bVOqrVCuastANFsGd1oxSBO9K7o68CqGhzHFllj0qys6P?=
+ =?us-ascii?Q?2g0CU+EYFU6WuXHr1izv2OzgN4mBuD/UxDeiNsRuJnPnhm0gfA9lQnJQsaOe?=
+ =?us-ascii?Q?0lZt1+avUqtqh5pF7tiCyYZweeEX3two1SKUPovxbhDz5FTsmdKVGg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5757.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?O9FUKqSyPTwH7jPXSXLpYrR8MTNU2F5kvTZJukRy3LA3ShVCJTUQJgl821nX?=
+ =?us-ascii?Q?7gWy3FA8nm8b3YhunCvxzN6Z3P3nyG0P53kAL0WphDLqPvnTA9AoClJUXoNC?=
+ =?us-ascii?Q?5K5mICPS6BvRqF9rRpSgAllQ3Z6Qu1P5PaWiyoe+3C5cMLus3dOPthXEZQQN?=
+ =?us-ascii?Q?STcDculZqM1q7kfB8zwgruT3tOOh7Bw0tts/x8UdisPIf/i+oYBN6CMSLpJd?=
+ =?us-ascii?Q?YdvMmgxc1dL7VjCFIvSX0TTL46PFW8JP0GqIyci5J6GoUJ4UXXh8/BzIUFeb?=
+ =?us-ascii?Q?8W89yrwut0O9AyYSk6zN1Md/uyToX8QfAEB9u5mUZayiybMm/eYf1juJ0Qxk?=
+ =?us-ascii?Q?qHPHcyOGZjMDsHcaUyvpMHab971klwE1g/zNkFP6On1uC2cnwjNB7QzRpsJ7?=
+ =?us-ascii?Q?A4jxH9AGGd48LDmJY02R1M4ct7/i737ndavENlG4PFObNXnYAe/2qYrQWc1K?=
+ =?us-ascii?Q?ceL7AvezP7kmZYt7hlPbr67TMXNTY8FYJ2dpyMryDMz289rabrVS3c1N7hhC?=
+ =?us-ascii?Q?rz2Vngd1SkE3eRre4ypSmpw2YUy6BWC8qWCf43UZwHAIvyNCyUYqEoZuoSgq?=
+ =?us-ascii?Q?Grp2aZgizhgfWzlOQVDkK8Igephyh2X+3Cs/5A/ekCWkvw5mxvtkeDRYFK41?=
+ =?us-ascii?Q?RbS41KZM+AT2u2O3AVYwBZfsASF7kBB3S8AbO6VoGhfQbwINnJl//QAqqECb?=
+ =?us-ascii?Q?CZs2KBNnePxvWWumYaWVXCw+aYq545U6fbYjQpnUcd7yW1znu5u24k3svxTr?=
+ =?us-ascii?Q?KKudnCyAmalcrzJhUYqNZikyztRLYbGhLzWSsLtEsbW4SG+GXrQ/SOLGno7D?=
+ =?us-ascii?Q?jn2UgOZYloDlTyDn3qld8+yai7n/K5GJ7paxYlE+IlDJbjcbifvJz/HIJ4y1?=
+ =?us-ascii?Q?0sMAYzLFzWi7K+GCtJb2o1rvgEVwdbVpDs6D/KncuPuPr+E9FjeVQoA1r2px?=
+ =?us-ascii?Q?uEQdz2yIOXCsy6yn//Lg1+9LK36pH9yLnpqd83kVs/xr1SpzsHv67+s6cxL9?=
+ =?us-ascii?Q?n0id73mDzxMYw0Whcv3V3KmfGVaTKdqndTSY92y+60idzTR4BrQZ8ygCf31E?=
+ =?us-ascii?Q?61kvo7YB8puGgrTjT4Xrq9jFp02dWL4g3JEyDp4TIv8SPh0UiCTvo+e+D1S2?=
+ =?us-ascii?Q?c7/2uYhrLaIP0GZ5xozAw0Gq9TcSX5oo7lhTp+SPvrxsSp8L27FNYXgxgJeR?=
+ =?us-ascii?Q?XoTpsQ95AZ5QxAPy/mKL1/nuc8snm8pPsA7nU5EijDr3PIMECaVEIBHhkezB?=
+ =?us-ascii?Q?sYZfSgowiUorKFytVzJ1LmUqi2R7zlKuP9yYgwm43sQ4wdGt5DMEtfzteEOS?=
+ =?us-ascii?Q?q8PipKDCZu8n+V31xz99TQZ9/OFtbXLOWQzAFhaqvBf7jSTjXHAJkiygxPWk?=
+ =?us-ascii?Q?6AxagXWw/PmcKqlKu6bW72MWZ7T9x4KUoO9Thmztg7NVijRbF/o2AuWAx/f/?=
+ =?us-ascii?Q?LmJjw9ltOEki+d7nCJ0eHzMqBhIcwoKJeuHCkZeqggTpckNxUhdB1K/vStN3?=
+ =?us-ascii?Q?Bs8WKEwxT8HRL0/Dvaa/kpg6sPbxTcZomTsDgtuquaN57KFei4UGeHPhkZhF?=
+ =?us-ascii?Q?sCmyJQOGYFXif06URU+QqGkbt4MYtxvi5hmVTLq9?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b8bbc03d-f427-41ab-6d6e-08de01b0b72b
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5757.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Oct 2025 12:39:23.3870
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: fFr0jFQI3qQmkT04ISZu/V3lokrd8wJjXVBr+11rnbLyQozPRp3FuQY8bzzdZUFl
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB9726
 
+On Thu, Oct 02, 2025 at 02:18:36PM +0200, Danilo Krummrich wrote:
+> On Thu Oct 2, 2025 at 2:11 PM CEST, Jason Gunthorpe wrote:
+> > On Wed, Oct 01, 2025 at 07:00:09PM -0700, John Hubbard wrote:
+> >> Add a "supports_vf" flag to struct pci_driver to let drivers declare
+> >> Virtual Function (VF) support. If a driver does not support VFs, then
+> >> the PCI driver core will not probe() any VFs for that driver's devices.
+> >> 
+> >> On the Rust side, add a const "SUPPORTS_VF" Driver trait, defaulting to
+> >> false: drivers must explicitly opt into VF support.
+> >
+> > As I said in the other thread - please no.
+> >
+> > Linux drivers are expected to run on their VFs.
+> 
+> The consequence would be that drivers for HW that can export VFs would need to
+> be rejected upstream if they only support the PF, but no VFs. IMHO, that's an
+> unreasonable requirement.
 
---=-cPfiuid/iXTdUGeROojX
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Not rejected, they just need to open code a simple isvf check and fail
+during probe if they really have a (hopefully temporary) problem.
 
-Hi,
+This not really a realistic case. Linux running in the VM *should*
+have drivers that operate the VF, and those existing drivers *should*
+work in the PF context.
 
-Le jeudi 02 octobre 2025 =C3=A0 00:30 +0100, Bryan O'Donoghue a =C3=A9crit=
-=C2=A0:
-> On 01/10/2025 20:00, Deepa Guthyappa Madivalara wrote:
-> > Implement internal buffer count and size calculations for AV1 decoder.
-> >=20
-> > Signed-off-by: Deepa Guthyappa Madivalara <deepa.madivalara@oss.qualcom=
-m.com>
-> > ---
-> > =C2=A0 drivers/media/platform/qcom/iris/iris_buffer.h=C2=A0=C2=A0=C2=A0=
-=C2=A0 |=C2=A0=C2=A0 1 +
-> > =C2=A0 .../platform/qcom/iris/iris_hfi_gen2_command.c=C2=A0=C2=A0=C2=A0=
-=C2=A0 |=C2=A0=C2=A0 1 -
-> > =C2=A0 drivers/media/platform/qcom/iris/iris_vpu_buffer.c | 255 +++++++=
-+++++++++++++-
-> > =C2=A0 drivers/media/platform/qcom/iris/iris_vpu_buffer.h | 105 +++++++=
-++
-> > =C2=A0 4 files changed, 357 insertions(+), 5 deletions(-)
-> >=20
-> > diff --git a/drivers/media/platform/qcom/iris/iris_buffer.h b/drivers/m=
-edia/platform/qcom/iris/iris_buffer.h
-> > index 5ef365d9236c7cbdee24a4614789b3191881968b..75bb767761824c4c02e0df9=
-b765896cc093be333 100644
-> > --- a/drivers/media/platform/qcom/iris/iris_buffer.h
-> > +++ b/drivers/media/platform/qcom/iris/iris_buffer.h
-> > @@ -27,6 +27,7 @@ struct iris_inst;
-> > =C2=A0=C2=A0 * @BUF_SCRATCH_1: buffer to store decoding/encoding contex=
-t data for HW
-> > =C2=A0=C2=A0 * @BUF_SCRATCH_2: buffer to store encoding context data fo=
-r HW
-> > =C2=A0=C2=A0 * @BUF_VPSS: buffer to store VPSS context data for HW
-> > + * @BUF_PARTIAL: buffer for AV1 IBC data
-> > =C2=A0=C2=A0 * @BUF_TYPE_MAX: max buffer types
-> > =C2=A0=C2=A0 */
-> > =C2=A0 enum iris_buffer_type {
-> > diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c b=
-/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
-> > index e3a8b031b3f191a6d18e1084db34804a8172439c..000bf75ba74ace5e1058591=
-0cda02975b0c34304 100644
-> > --- a/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
-> > +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
-> > @@ -488,7 +488,6 @@ static int iris_hfi_gen2_set_linear_stride_scanline=
-(struct iris_inst *inst, u32
-> >=20
-> > =C2=A0 static int iris_hfi_gen2_set_tier(struct iris_inst *inst, u32 pl=
-ane)
-> > =C2=A0 {
-> > -	struct iris_inst_hfi_gen2 *inst_hfi_gen2 =3D to_iris_inst_hfi_gen2(in=
-st);
-> > =C2=A0=C2=A0	u32 port =3D iris_hfi_gen2_get_port(inst, V4L2_BUF_TYPE_VI=
-DEO_OUTPUT_MPLANE);
-> > =C2=A0=C2=A0	u32 tier =3D inst->fw_caps[TIER].value;
-> >=20
-> > diff --git a/drivers/media/platform/qcom/iris/iris_vpu_buffer.c b/drive=
-rs/media/platform/qcom/iris/iris_vpu_buffer.c
-> > index 4463be05ce165adef6b152eb0c155d2e6a7b3c36..17d3a7ae79e994257d59690=
-6cb4c17250a11a0cb 100644
-> > --- a/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
-> > +++ b/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
-> > @@ -9,6 +9,14 @@
-> > =C2=A0 #include "iris_hfi_gen2_defines.h"
-> >=20
-> > =C2=A0 #define HFI_MAX_COL_FRAME 6
-> > +#define HFI_COLOR_FORMAT_YUV420_NV12_UBWC_Y_TILE_HEIGHT (8)
-> > +#define HFI_COLOR_FORMAT_YUV420_NV12_UBWC_Y_TILE_WIDTH (32)
-> > +#define HFI_COLOR_FORMAT_YUV420_NV12_UBWC_UV_TILE_HEIGHT (8)
-> > +#define HFI_COLOR_FORMAT_YUV420_NV12_UBWC_UV_TILE_WIDTH (16)
-> > +#define HFI_COLOR_FORMAT_YUV420_TP10_UBWC_Y_TILE_HEIGHT (4)
-> > +#define HFI_COLOR_FORMAT_YUV420_TP10_UBWC_Y_TILE_WIDTH (48)
-> > +#define HFI_COLOR_FORMAT_YUV420_TP10_UBWC_UV_TILE_HEIGHT (4)
-> > +#define HFI_COLOR_FORMAT_YUV420_TP10_UBWC_UV_TILE_WIDTH (24)
-> >=20
-> > =C2=A0 #ifndef SYSTEM_LAL_TILE10
-> > =C2=A0 #define SYSTEM_LAL_TILE10 192
-> > @@ -39,6 +47,31 @@ static u32 hfi_buffer_bin_h264d(u32 frame_width, u32=
- frame_height, u32 num_vpp_p
-> > =C2=A0=C2=A0	return size_h264d_hw_bin_buffer(n_aligned_w, n_aligned_h, =
-num_vpp_pipes);
-> > =C2=A0 }
-> >=20
-> > +static u32 size_av1d_hw_bin_buffer(u32 frame_width, u32 frame_height, =
-u32 num_vpp_pipes)
-> > +{
-> > +	u32 size_yuv, size_bin_hdr, size_bin_res;
-> > +
-> > +	size_yuv =3D ((frame_width * frame_height) <=3D BIN_BUFFER_THRESHOLD)=
- ?
-> > +		((BIN_BUFFER_THRESHOLD * 3) >> 1) :
-> > +		((frame_width * frame_height * 3) >> 1);
-> > +	size_bin_hdr =3D size_yuv * AV1_CABAC_HDR_RATIO_HD_TOT;
-> > +	size_bin_res =3D size_yuv * AV1_CABAC_RES_RATIO_HD_TOT;
-> > +	size_bin_hdr =3D ALIGN(size_bin_hdr / num_vpp_pipes,
-> > +			=C2=A0=C2=A0=C2=A0=C2=A0 DMA_ALIGNMENT) * num_vpp_pipes;
-> > +	size_bin_res =3D ALIGN(size_bin_res / num_vpp_pipes,
-> > +			=C2=A0=C2=A0=C2=A0=C2=A0 DMA_ALIGNMENT) * num_vpp_pipes;
-> > +
-> > +	return size_bin_hdr + size_bin_res;
-> > +}
-> > +
-> > +static u32 hfi_buffer_bin_av1d(u32 frame_width, u32 frame_height, u32 =
-num_vpp_pipes)
-> > +{
-> > +	u32 n_aligned_h =3D ALIGN(frame_height, 16);
-> > +	u32 n_aligned_w =3D ALIGN(frame_width, 16);
-> > +
-> > +	return size_av1d_hw_bin_buffer(n_aligned_w, n_aligned_h, num_vpp_pipe=
-s);
-> > +}
-> > +
-> > =C2=A0 static u32 size_h265d_hw_bin_buffer(u32 frame_width, u32 frame_h=
-eight, u32 num_vpp_pipes)
-> > =C2=A0 {
-> > =C2=A0=C2=A0	u32 product =3D frame_width * frame_height;
-> > @@ -110,6 +143,20 @@ static u32 hfi_buffer_comv_h265d(u32 frame_width, =
-u32 frame_height, u32 _comv_bu
-> > =C2=A0=C2=A0	return (_size * (_comv_bufcount)) + 512;
-> > =C2=A0 }
->=20
-> What's this alignment stuffed onto the end about ?
->=20
-> Please guys give these magic numbers meaningful names.
+Drivers that work in VM but not in a host should not be encouraged!!
 
-That would be nice, then I'll be able to document that for Hantro AV1 decod=
-er
-too. It was assumed when we picked the driver that the table was hardware
-specific, but if its not, a drivers/media/v4l2-core/v4l2-av1.c is welcome.
+AFAICT this is even true for novacore, the driver should "work" but
+the VF won't be provisioned today so it should fail startup in some
+way. eg "no vram" or something like that.
 
->> drivers/media/platform/verisilicon/hantro_hw.h:555=20
-static inline size_t
-hantro_av1_mv_size(unsigned int width, unsigned int height)
-{
-	size_t num_sbs =3D hantro_av1_num_sbs(width) * hantro_av1_num_sbs(height);
+> > This temporary
+> > weirdness of novacore should not be elevated to a core behavior that
+> > people will misuse.
+> 
+> It's not just nova-core, please see [1].
+> 
+> [1] https://lore.kernel.org/lkml/DD7TP31FEE92.2E0AKAHUOHVVF@kernel.org/
 
-	return ALIGN(num_sbs * 384, 16) * 2 + 512;
-}
+I responded there, I don't think the reasons those were added to ICE
+and then cargo-culted are very good, not good enough to justify adding
+it to the core code.
 
->=20
-> > +static u32 hfi_buffer_comv_av1d(u32 frame_width, u32 frame_height, u32=
- comv_bufcount)
-> > +{
-> > +	u32 size;
-> > +
-> > +	size =3D=C2=A0 2 * ALIGN(MAX(((frame_width + 63) / 64) *
-> > +		((frame_height + 63) / 64) * 512,
-
-This looks like div_round_up()  ?
-
-> > +		((frame_width + 127) / 128) *
-> > +		((frame_height + 127) / 128) * 2816),
-> > +		DMA_ALIGNMENT);
-> > +	size *=3D comv_bufcount;
->=20
->=20
-> I'm sure this calculation is right and produces the correct value in all=
-=20
-> instances - probably anyway but also does it ?
->=20
-> It is not obvious looking at this code that it is obviously correct.
->=20
-> I have a similar comment for alot of these Iris patches - we end up with=
-=20
-> highly complex calculations using magic numbers which my guess would be=
-=20
-> even people immersed in the firmware/driver/silicon development have a=
-=20
-> hard time looking at and "just knowing" the code is correct.
->=20
-> Please reduce these calculations down to some kind of define that - for=
-=20
-> example an intelligent programmer - an oxymoron of a term I accept -=20
-> could read the code and actually understand what is going on.
->=20
-> That programmer might even be yourself. You should be able to come along=
-=20
-> in two, five, eight years time, look at a code snippet and pretty much=
-=20
-> understand what it is doing and why without having to have a deep=20
-> epiphany when doing it.
->=20
-> These complex clauses stuffed with magic numbers and sometimes bitshfts=
-=20
-> with a few alignments thrown in for good measure are inscrutable.
-
-I agree with this, when the driver is not from the hardware maker, this can=
- be
-justified, but since you have full access to the documentation and probably=
- can
-ask the designers, it would be nicer to replace 64, 128, 512 and 2816 by na=
-med
-macro or const. Its not a blame, many drivers are like this already.
-
-Nicolas
-
->=20
-> > +	return size;
-> > +}
-> > +
-> > =C2=A0 static u32 size_h264d_bse_cmd_buf(u32 frame_height)
-> > =C2=A0 {
-> > =C2=A0=C2=A0	u32 height =3D ALIGN(frame_height, 32);
-> > @@ -174,6 +221,20 @@ static u32 hfi_buffer_persist_h264d(void)
-> > =C2=A0=C2=A0		=C2=A0=C2=A0=C2=A0 DMA_ALIGNMENT);
-> > =C2=A0 }
-> >=20
-> > +static u32 hfi_buffer_persist_av1d(u32 max_width, u32 max_height, u32 =
-total_ref_count)
-> > +{
-> > +	u32 comv_size, size;
-> > +
-> > +	comv_size =3D=C2=A0 hfi_buffer_comv_av1d(max_width, max_height, total=
-_ref_count);
-> > +	size =3D ALIGN((SIZE_AV1D_SEQUENCE_HEADER * 2 + SIZE_AV1D_METADATA +
-> > +	AV1D_NUM_HW_PIC_BUF * (SIZE_AV1D_TILE_OFFSET + SIZE_AV1D_QM) +
-> > +	AV1D_NUM_FRAME_HEADERS * (SIZE_AV1D_FRAME_HEADER +
-> > +	2 * SIZE_AV1D_PROB_TABLE) + comv_size + HDR10_HIST_EXTRADATA_SIZE +
-> > +	SIZE_AV1D_METADATA * AV1D_NUM_HW_PIC_BUF), DMA_ALIGNMENT);
-> > +
-> > +	return ALIGN(size, DMA_ALIGNMENT);
-> > +}
-> > +
-> > =C2=A0 static u32 hfi_buffer_non_comv_h264d(u32 frame_width, u32 frame_=
-height, u32 num_vpp_pipes)
-> > =C2=A0 {
-> > =C2=A0=C2=A0	u32 size_bse =3D size_h264d_bse_cmd_buf(frame_height);
-> > @@ -459,6 +520,148 @@ static u32 hfi_buffer_line_h264d(u32 frame_width,=
- u32 frame_height,
-> > =C2=A0=C2=A0	return ALIGN((size + vpss_lb_size), DMA_ALIGNMENT);
-> > =C2=A0 }
-> >=20
-> > +static u32 size_av1d_lb_opb_wr1_nv12_ubwc(u32 frame_width, u32 frame_h=
-eight)
-> > +{
-> > +	u32 y_width, y_width_a =3D 128;
-> > +
-> > +	y_width =3D ALIGN(frame_width, y_width_a);
-> > +
-> > +	return (256 * ((y_width + 31) / 32 + (AV1D_MAX_TILE_COLS - 1)));
-> > +}
-> > +
-> > +static u32 size_av1d_lb_opb_wr1_tp10_ubwc(u32 frame_width, u32 frame_h=
-eight)
-> > +{
-> > +	u32 y_width, y_width_a =3D 256;
-> > +
-> > +	y_width =3D ALIGN(frame_width, 192);
-> > +	y_width =3D ALIGN(y_width * 4 / 3, y_width_a);
-> > +
-> > +	return (256 * ((y_width + 47) / 48 + (AV1D_MAX_TILE_COLS - 1)));
->=20
-> y_width is a thing times 4 divided by 3 aligned to 192.
->=20
-> OK
->=20
-> Then we return 256 * ((y_width + 47?) / 48 + (A_DEFINE_NICE - 1)));
->=20
-> 47 ? The magic number in the routine above is 31.
->=20
-> I don't think I'd be comfortable giving an RB for this. You guys need to=
-=20
-> take steps to make your code more digestable - zapping the complex=20
-> bit-shifts and magic numbers.
->=20
-> I don't see how a reviewer can really be expected to fit this into their=
-=20
-> head and say "yep LGTM" needs to be decoded both for the sake of the=20
-> reviewer and for future coders, perhaps even future you trying to figure=
-=20
-> out where the bug is..
->=20
-> ---
-> bod
-
---=-cPfiuid/iXTdUGeROojX
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaN5yKAAKCRDZQZRRKWBy
-9GM5AP9PQ+96ubSTSmSoYKcEFZCqxdJf2kQ0fNvVju9/TUwmZwD/V7e+K4h1x6zM
-cjQ68tEKISQ5BcqGwLuPHsxOmUHKaQI=
-=5wKo
------END PGP SIGNATURE-----
-
---=-cPfiuid/iXTdUGeROojX--
+Jason
 
