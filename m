@@ -1,100 +1,123 @@
-Return-Path: <linux-kernel+bounces-840091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77C5BBB381E
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 11:45:08 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96B44BB3824
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 11:45:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17C2F19C5940
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 09:45:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7761A4E07EE
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 09:45:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B12A301702;
-	Thu,  2 Oct 2025 09:45:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E395304BD7;
+	Thu,  2 Oct 2025 09:45:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NqUEdovp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=gondor.apana.org.au header.i=@gondor.apana.org.au header.b="E0GS3y7W"
+Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A132EAB94;
-	Thu,  2 Oct 2025 09:45:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE38C2FF170;
+	Thu,  2 Oct 2025 09:45:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759398300; cv=none; b=kjLSIG3M0y6hNvA/AivuPN/G34gfukYLq5LQvD3Tp/hKKwouWRmn7TDihNLkYUWPg9X1v1u6JmmGhXQjhq+/tvwGCmBZdFJGRjIFLHrtTdKFIV2+wKo00RvKZgrUO9qsfK9Qw+aUQ5u+rnHq7FKM3wlA6FzvO5ry3HJ9+mynExM=
+	t=1759398346; cv=none; b=SmwrH1Qdvmm0ASkNm7QYvHCMxPArOYnbdZ3u2ADURevtA0ClzlPmgt6fGL1TTnthuW8jecYjZQwute1xJT3w9smM6rYFA9hl4D4eOtiz63TLbn6KxW+Pabvy9wDkk2E4SE77jsr0vOcD3wnurWxe8Coi7W4NVWgxFa4ubw9t03g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759398300; c=relaxed/simple;
-	bh=t93drVVKAotBUg+WKPJcU7hqKum1hFKWPlrIcqVBjdE=;
+	s=arc-20240116; t=1759398346; c=relaxed/simple;
+	bh=7jUmaaufXtarhLrR+/Hd8NlSQdOWErxotzH6yX85L0k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h0tfT2JXzoZgf7V3oYeVYMcc19uy7UtJipRofo6tzyryEJU27Q35S2Z/wftNRUTE094QGc12/w3ojmFlpG3G4HpEtsWUJSzGZntG0BBa7bfJ8UMSQ++qpGXZ/opgLzMj5Zy10i+7dBsh6olus+ZZLfi1zHi68KnOFb3q4AmU6wM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NqUEdovp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 126F5C4CEF4;
-	Thu,  2 Oct 2025 09:44:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759398300;
-	bh=t93drVVKAotBUg+WKPJcU7hqKum1hFKWPlrIcqVBjdE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NqUEdovp75uhgWzmgp6wTuN9Y9mvnhMNN2WaUeaQjNCPeMcB6XM6Ma9Gdx0azwuIE
-	 xlqI6HZ3NeHVMtnGYQzwu1p0PAJ5RxbyEjHv+bXpHzgZ346/7LcMbVOEk4i/w3byg8
-	 W1hCo3mx4xnarWqVkEYjx/RHsohU80NUUgE7/WPzNl38FKTah4ALnaRSpKywcPCblu
-	 ivU8th9oludVPFDsuwqaVBJJhi8qLzRi8ca9L/00kEw2XoVaxAHCBUbur1YluydiP5
-	 ngtgV2dya5fPZulwn97nOHYIu7usNTZyVmzE3/qTLE7GWkkvSay5xllmE7AUt4sGyk
-	 krEKmorLDs0Iw==
-Date: Thu, 2 Oct 2025 10:44:55 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Michal Simek <michal.simek@amd.com>
-Cc: linux-spi@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>,
-	Jun Guo <Jun.Guo@cixtech.com>, Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v1 2/2] arm64: dts: xilinx: add soc-specific spi
- compatibles for zynqmp/versal-net
-Message-ID: <20251002-unloving-unrobed-b35543f729f2@spud>
-References: <20251001-basics-grafting-a1a214ef65ac@spud>
- <20251001-cheesy-shucking-c55431bbcae3@spud>
- <101a83ba-cd2b-4080-aaa3-630652c33786@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gK8YWR507PPOvKqkdkkZFRFKyzE/y+GkZe8cR05/LrwpHu3tyoF02XDM6aDFx+ZupVBXuw0SowO40vaioxzGVCiGQzQyHGFbzaUUwGSSfihiYvaqoRwqxBQWMg823EeiXIqctTxNKVGgVrtY1tSVZxcANVmX76YyOOSNcfpRDiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=gondor.apana.org.au header.i=@gondor.apana.org.au header.b=E0GS3y7W; arc=none smtp.client-ip=180.181.231.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=gondor.apana.org.au; s=h01; h=In-Reply-To:MIME-Version:References:
+	Message-ID:Subject:Cc:To:From:Date:cc:to:subject:message-id:date:from:
+	reply-to; bh=4jtXLdMURoMb2915FzMhIunTyPKQ2o/QHygtZYlc+E0=; b=E0GS3y7WLzrYLMWQ
+	IkXyEbUPu+PQDuXnClfNFUamC2/zNiHjIC4IPKLTtTIu9/+JZKUJeIEaQQSsCVUPSHVqs4rbeNYJ0
+	GlJE2KNgHhARM1JM4ncfOvUHurCZ34B18aNecdfkg8waUFxtdK/oXMOOcEkJkkb9fWAUc1WLx4Qly
+	ZJSLjgtLWWkaJnnH8ZUWlerDU7MLyEZWOq0wFRCbN5i3gHYGL+EuOipMECAazKGqttotD/gBh1VOo
+	AMwDZXIFT0j/rty3NTc4fNFDvo1FeffsWWdvkYx9D63hZlTt5X7/kzzPLzl2YG6/3UmEMcKvN8XAm
+	M0HwLOaiRCSyTIchhQ==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1v4FsZ-009zIE-1R;
+	Thu, 02 Oct 2025 17:45:40 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Thu, 02 Oct 2025 17:45:39 +0800
+Date: Thu, 2 Oct 2025 17:45:39 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Dave Sun <sunyiqixm@gmail.com>
+Cc: davem@davemloft.net, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Elena Petrova <lenaptr@google.com>,
+	Stephan =?iso-8859-1?Q?M=FCller?= <smueller@chronox.de>,
+	Eric Biggers <ebiggers@google.com>
+Subject: [PATCH] crypto: rng - Ensure set_ent is always present
+Message-ID: <aN5JwxZFeAnZXA8n@gondor.apana.org.au>
+References: <20250930032824.690214-1-sunyiqixm@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="5l2glOle2OF9pEWG"
-Content-Disposition: inline
-In-Reply-To: <101a83ba-cd2b-4080-aaa3-630652c33786@amd.com>
-
-
---5l2glOle2OF9pEWG
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250930032824.690214-1-sunyiqixm@gmail.com>
 
-On Thu, Oct 02, 2025 at 08:06:47AM +0200, Michal Simek wrote:
-> On 10/1/25 20:31, Conor Dooley wrote:
-> >   arch/arm64/boot/dts/xilinx/versal-net.dtsi | 4 ++--
-> >   arch/arm64/boot/dts/xilinx/zynqmp.dtsi     | 4 ++--
->=20
-> Acked-by: Michal Simek <michal.simek@amd.com>
->=20
-> Do you expect to go via SPI tree or via SOC tree?
+On Tue, Sep 30, 2025 at 11:28:24AM +0800, Dave Sun wrote:
+> When CONFIG_CRYPTO_USER_API_RNG_CAVP is enable,
+> algif_type_rng->setentropy = rng_setentropy.
+> If we setsockopt on a af_alg socket binding a rng
+> algorithm with ALG_SET_DRBG_ENTROPY opt, kernel will
+> run to ->set_ent in rng_setentropy.
+> 
+> Since struct rng_alg like jent_alg dose not set set_ent
+> which default value is 0, null-ptr-dereference will happen.
+> 
+> Check ->set_ent before call it.
+> 
+> Signed-off-by: Yiqi Sun <sunyiqixm@gmail.com>
+> ---
+>  crypto/algif_rng.c | 3 +++
+>  1 file changed, 3 insertions(+)
 
-Via SOC would be preferred, there's no functional change and I don't
-think the dtbs_check warnings are worth doing something abnormal, as
-long as what's in linux-next is clean.
+Thanks for the report.  I'd prefer to make set_ent always present:
 
---5l2glOle2OF9pEWG
-Content-Type: application/pgp-signature; name="signature.asc"
+---8<---
+Ensure that set_ent is always set since only drbg provides it.
 
------BEGIN PGP SIGNATURE-----
+Fixes: 77ebdabe8de7 ("crypto: af_alg - add extra parameters for DRBG interface")
+Reported-by: Yiqi Sun <sunyiqixm@gmail.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaN5JlwAKCRB4tDGHoIJi
-0h4RAP96k4tDLO0xTAF/l6ozGWzNdANIQavjstn7ipfFMnBx/AEA5qgye2Cic4lt
-7ym3em2EmaVuzRaYJRWXVvj0m3vuPQU=
-=KW56
------END PGP SIGNATURE-----
-
---5l2glOle2OF9pEWG--
+diff --git a/crypto/rng.c b/crypto/rng.c
+index b8ae6ebc091d..ee1768c5a400 100644
+--- a/crypto/rng.c
++++ b/crypto/rng.c
+@@ -168,6 +168,11 @@ int crypto_del_default_rng(void)
+ EXPORT_SYMBOL_GPL(crypto_del_default_rng);
+ #endif
+ 
++static void rng_default_set_ent(struct crypto_rng *tfm, const u8 *data,
++				unsigned int len)
++{
++}
++
+ int crypto_register_rng(struct rng_alg *alg)
+ {
+ 	struct crypto_alg *base = &alg->base;
+@@ -179,6 +184,9 @@ int crypto_register_rng(struct rng_alg *alg)
+ 	base->cra_flags &= ~CRYPTO_ALG_TYPE_MASK;
+ 	base->cra_flags |= CRYPTO_ALG_TYPE_RNG;
+ 
++	if (!alg->set_ent)
++		alg->set_ent = rng_default_set_ent;
++
+ 	return crypto_register_alg(base);
+ }
+ EXPORT_SYMBOL_GPL(crypto_register_rng);
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
