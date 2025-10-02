@@ -1,261 +1,406 @@
-Return-Path: <linux-kernel+bounces-840597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3EFFBB4C1F
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 19:56:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EF47BB4C2B
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 19:57:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D4964248F2
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 17:56:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB9727A795A
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 17:55:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EBD4274B26;
-	Thu,  2 Oct 2025 17:56:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AA3A274B39;
+	Thu,  2 Oct 2025 17:57:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ubtY8WE3"
-Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011063.outbound.protection.outlook.com [52.101.62.63])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Ddl5i3KV"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AED59270557;
-	Thu,  2 Oct 2025 17:56:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.63
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759427774; cv=fail; b=ovGyM+ab1TL3PVWSATHoIjkhqU7N7pBEtaCfXryv47CV6EfvqNWQHFacopIh/AGTqlzCDlawR/wD+O/x6T9ZVdItYrKxG+j+kiv8bfnLKj1CqMizTBwLLt/Khcb4KjhrEryBm8LmCFnjkf/oWyTrxfN91YVZi9WU3LF63hUXgsg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759427774; c=relaxed/simple;
-	bh=nCvrfc5AtPfTVLB24s64NgHh8wLngp+4/Sk3P70SGKI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=vF75M/lF9l9cAae7MGU3EL/N0X6XcynT4kCACjN7NaPoocZEGyKYFFy1bsUg3LwQOzrR2YWMFrYmWl7KB6Wbof5EFrApmbQCYwm1Vfe/U6G0TOO6A0oM5mx6dve1DfNYV7rfY7iz12ar84rdQcDkaNq3vGVlL/e3Fj7R3OzMc2U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ubtY8WE3; arc=fail smtp.client-ip=52.101.62.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SptiOfTUamoWd8O3aCJ/uI684X/mMKF59JOU9HPOP7cH64n7m7xMXZ1+CFgRKtjcRsRKCv4oKKTs6yFadFRm5m9yHZ9UsMUJHbxyseRFz/2DD0B+7TQ4rMAh8eonM2/TT+kOYunrdqHj50yIpmqZuKa3q0ravWR81qVqt0tvrBO0THDUefiIh68EaU7+2N0LRbrz2eIkB5v2jO8K9axIrnCgdSOAsHTqap+UMRa+FBml1VrR2+UXz/rEQbR1/W8Fy3W7GqvBqXW0YRFnF/ZDMslx8MuAn1Rp6jaopGDFStEbYNExDdI0B+V2Wr0gTvkauHLEDFUAfdu6mYGhkLSYHQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pJJ7C5XciyyQ3n/8TmYtI/5XSlyVhuFXMaZpi7RYaMU=;
- b=izi0gcsJu2IsSiuDK3PLZ1KaYz6dxZKXiJ9IUf2NIdl1jrqFIWHLiDcxvx3fJMsLjfM/R9zzuuvQfk0nwtHnwEX0jzqEDN1Ey0EbGSC6PcO+5STrfRkSSYh7sdEOmOAToAmPq/Q4dLG9xBjcDs3BHuAML9BNh6iPm3v7oduljRpXkmRSQs7VR8dx2nErKf+JOFsMlN0pCAxs7YkZEXrpKvANncD5Ob6V4CF/rNInPIZQKu189XB32XSgAUbo2cO8BfNWMlRvMdiA4PZTHtFWbG0dTj1R6+C7wIuklLeU/zMjVYLeEbEzKSSIPyZfFWZyiDhPA8hSoYjqnwIaX7V/Kw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pJJ7C5XciyyQ3n/8TmYtI/5XSlyVhuFXMaZpi7RYaMU=;
- b=ubtY8WE3l6LAanZkheaWurNxA5f39mAR3n0DdUEezTfLf8SepD4xbPsOLAUe6/fTRuK3wOy1ZxTtMeL3fgmmaHVbQ3cj+mM6ynuMYxlaxczxKwucsbQVil/fk5FaxGrMMl0jrkS8N+e7bgILDIMcuRUYtEsxWu0RORt4oxkvzGtVY8KIgQ0EKOG3rcJ0mL9Mcfxohy3/42HZjmqW46g1l69kZEUHYJLLOYzEJjKtMLLRj3Jh5iMNZfQw/3XCU2YqLhoCQMahTCV71gqlBRtbidFeehiMEBwBQkhY1XpSXPitxni0Ww0AJmdOE1lvEpTvq/bYUU+Lu1gOf57rNMIvLA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from PH7PR12MB5757.namprd12.prod.outlook.com (2603:10b6:510:1d0::13)
- by BL1PR12MB5804.namprd12.prod.outlook.com (2603:10b6:208:394::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.18; Thu, 2 Oct
- 2025 17:56:05 +0000
-Received: from PH7PR12MB5757.namprd12.prod.outlook.com
- ([fe80::f012:300c:6bf4:7632]) by PH7PR12MB5757.namprd12.prod.outlook.com
- ([fe80::f012:300c:6bf4:7632%2]) with mapi id 15.20.9160.015; Thu, 2 Oct 2025
- 17:56:05 +0000
-Date: Thu, 2 Oct 2025 14:56:03 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: John Hubbard <jhubbard@nvidia.com>,
-	Alexandre Courbot <acourbot@nvidia.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Timur Tabi <ttabi@nvidia.com>, Alistair Popple <apopple@nvidia.com>,
-	Zhi Wang <zhiw@nvidia.com>, Surath Mitra <smitra@nvidia.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	nouveau@lists.freedesktop.org, linux-pci@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/2] rust: pci: skip probing VFs if driver doesn't
- support VFs
-Message-ID: <20251002175603.GB3299207@nvidia.com>
-References: <20251002121110.GE3195801@nvidia.com>
- <DD7TWUPD83M9.5IO0VX7PP1UK@kernel.org>
- <20251002123921.GG3195801@nvidia.com>
- <DD7UVCEVB21H.SQ00WZLLPINP@kernel.org>
- <20251002135600.GB3266220@nvidia.com>
- <DD7XKV6T2PS7.35C66VPOP6B3C@kernel.org>
- <20251002152346.GA3298749@nvidia.com>
- <DD7YQK3PQIA1.15L4J6TTR9JFZ@kernel.org>
- <20251002170506.GA3299207@nvidia.com>
- <DD80P7SKMLI2.1FNMP21LJZFCI@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DD80P7SKMLI2.1FNMP21LJZFCI@kernel.org>
-X-ClientProxiedBy: BN8PR04CA0025.namprd04.prod.outlook.com
- (2603:10b6:408:70::38) To PH7PR12MB5757.namprd12.prod.outlook.com
- (2603:10b6:510:1d0::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB01F26E71F;
+	Thu,  2 Oct 2025 17:57:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759427822; cv=none; b=qZ2H1F1hmdZrlsFLFwyvM2iq6ILDCQ4ylDr5Gia8SOQNe54GyM7Nj614a4VVMMU3wBKqrlq6mSGPVB/mYLQvGJRG5WbaZYKz0SJvJYHmTB1JrUlfFDcX48hZhGCPru10GRqjnnooJK4bAtf2UG49yzR463fcOJXPa4gRe7QPLc0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759427822; c=relaxed/simple;
+	bh=zQ4mVeDqGV4zDhKms9X4gPs29Ehtpz2h9/Gvpae+6cM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uPnMT9PKGuyJvr53x25TbAvwP2YBmzTHmYsJZM2pxw9Vzk5K1W0NHIY8c5vpU76khZSO06mYSMO7B3H08LSdfNuDWUjBGEKll9ZvnOgdf4k01MJ4x5vdz9KX0UE8wu/AbPGoN+MXcP+UzgAlbV8rOEbRWkvGK32wORc3EY4cVP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Ddl5i3KV; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 592C0JKl021005;
+	Thu, 2 Oct 2025 17:56:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=Kd5wFBfJiU+XGyk4HfneW7G/osjZ0X
+	dU33ypCNYRyQw=; b=Ddl5i3KVGF7ATeGzLmU1nmvwEM61CxM6qAwlFkoqfO0AFC
+	AMQMd7zSSulUgAIDSfYdjHIShM8uBfE1MCpcLA1RNiLxf2HUrDw06MsYGdm0Czuz
+	fPbrJD2yJtkioAYiugTvus3hhIawuH2ubsDIi8+5ydtEBk5uDQIxmE4/vt8U0Viy
+	SGXB1peLo1eAMiumxh945/aF0FIn21NIJXnPzgnBwaR5+uC0Od8bR22WATYIOQK1
+	bxJtaRYeSsHvZgVTyJPLcK9iHzWtl0IsA6CEpzHwHt/QMttYbpBpmth98VD5PLbX
+	zHnpOOY07Nqm/cJQf11e8/XPN3Zr5T2e30HpTLng==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49e7jwwqed-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 02 Oct 2025 17:56:53 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 592HuqIP019980;
+	Thu, 2 Oct 2025 17:56:53 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49e7jwwqe9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 02 Oct 2025 17:56:52 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 592H8OGF007313;
+	Thu, 2 Oct 2025 17:56:52 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49eurk74tb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 02 Oct 2025 17:56:52 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 592HuoEn20906308
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 2 Oct 2025 17:56:50 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3DC3820043;
+	Thu,  2 Oct 2025 17:56:50 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C701F20040;
+	Thu,  2 Oct 2025 17:56:47 +0000 (GMT)
+Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.39.17.59])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu,  2 Oct 2025 17:56:47 +0000 (GMT)
+Date: Thu, 2 Oct 2025 23:26:45 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: Zorro Lang <zlang@redhat.com>
+Cc: fstests@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>,
+        djwong@kernel.org, john.g.garry@oracle.com, tytso@mit.edu,
+        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v7 04/12] ltp/fsx.c: Add atomic writes support to fsx
+Message-ID: <aN683ZHUzA5qPVaJ@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+References: <cover.1758264169.git.ojaswin@linux.ibm.com>
+ <c3a040b249485b02b569b9269b649d02d721d995.1758264169.git.ojaswin@linux.ibm.com>
+ <20250928131924.b472fjxwir7vphsr@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5757:EE_|BL1PR12MB5804:EE_
-X-MS-Office365-Filtering-Correlation-Id: 654bbaff-a88c-4b80-b7b8-08de01dcf52c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?f/fPDS24dr5ZwfkOTZ95YnCnG4a6PkSVOkHejlcGlQi4353YvBp309zV2YqQ?=
- =?us-ascii?Q?d8oFbVT0a6fe9CUqKCRqNgHd4AE8MWkqZg6D8StfdQjONsJ3/mgepKgrQ63Y?=
- =?us-ascii?Q?1AoaufvGyN28tBKRo0Eib8JSiPow0YeCSX++Cn+YJno/bpQbpDw5fqiXbVFj?=
- =?us-ascii?Q?zU66/nWDeEKANZWFMPRhbLlZn/84SESYyNCA1T3lB4VsvyJ3Dg6+PGeaPDWb?=
- =?us-ascii?Q?gQCFzWwH/ipLWHvSXeoYRjcXwp/2Myhl2cxQK+ovmCUIEIivfUgY0VfU8fo0?=
- =?us-ascii?Q?KY/Iv3+lbhmvEhF7+eSCLCvJPWZ5wVVd6QwIzHKP9F4FNPlITEeGU9HLUsm4?=
- =?us-ascii?Q?JbqjkQuIWW1iqERA6I1hBxveoUTj/wiHh80vDwti9vRcldXgNwvVbUsfVOFf?=
- =?us-ascii?Q?fOgPnPFCd5R93mC8CADKiNRkdRS3+D/GXtCT8/dQTtpDBWZrC6FvUYb0uaSP?=
- =?us-ascii?Q?nNyHqB1lrDbCmBC32foEs70sahGDj2L14Gq9SOTQ5DMQ1qsg0G5V2SD4MBif?=
- =?us-ascii?Q?UPypfPLw4uf2FESQDeKzI/1yJC8b+6vC/nWkWLPChyul/qSTRR2N9Goe1bWR?=
- =?us-ascii?Q?rgOghyRUQ2aOv5PXZR18sbBajJVitwXeDf5ehG7DkvL73wAxGFC4ABeOq24X?=
- =?us-ascii?Q?ES/HuUVntilfxvUVI1IMLzcYMx1ATVL04UAQN9wzLwVNsZz/8V3z6c/3Hc21?=
- =?us-ascii?Q?Fd3CeCZ0MA8DkPmzWWVcjbISrmR51RaCr0BeWSFcMoymuYkGCDxGQx8iqTVk?=
- =?us-ascii?Q?/S5q5x3UqW4Muei3nM9+VVEDvWjHC/z+np0d+u+TWgmrGwKKBk4Gvl59LD/p?=
- =?us-ascii?Q?ey+N9g3TNVqdYGI11RSEnQq98hIrm5LvUcVzkcafUrsHw0NTTiQ00RO9l/bO?=
- =?us-ascii?Q?tf9kM+VXNGfbpKtFYU9nV8QkKgJPI4porlj/XHxEMmeCCVip5lnOjm01F9rT?=
- =?us-ascii?Q?Ko0Zx5dXsngIXgCOtzWVi/ughFPLQHrZisfUlnvOvnY7qL/HqWQjbAoNLgQW?=
- =?us-ascii?Q?F7lOL/U2nY5UJvGD+X6HJhmTg9NbdDFS6OsdblWZT7mcmaicV507KPPNgsK7?=
- =?us-ascii?Q?uBYwYoZHET73qjrEf/jOIX45gI7Rna9kzBPKiARBXmh7ZUry4yqm3VXEQFI+?=
- =?us-ascii?Q?xqlj1I98wvS6KMV+q1K0akf3wFmw5xWfGpq6KapuaTanz2CPyBzLG4KjKPDb?=
- =?us-ascii?Q?4z3pdaamUGijIBGzjo27+Q/26zE7FhmoVVCWQ91niiA+ALgIy0EYXOYifaqV?=
- =?us-ascii?Q?lSy4NcURqCpGJqIVRZY+YTZSijUzDkNqCtFib2OHJiCrUmnTjCSi3rfUw1rJ?=
- =?us-ascii?Q?ww6lIyUvPjT2L7SBVzUrhsC2lLhL2U0TA2NZdSlejc7vgyYhQ1GdQl1RcCXr?=
- =?us-ascii?Q?Xd8TsL/Y0N7V8n1VStzIwNFKnMTJMGUP32/jj8I8oj98DPDPGM1Muhft/NAW?=
- =?us-ascii?Q?1SWUG5MfXhPKh/CQOOHT5SKNJ9LdbfKh?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5757.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?81thpMexwZGfV1p1ZhNujGXuxawqa54hlDLYFybKJOTu2VFgiGC63T0EI21R?=
- =?us-ascii?Q?AeROpEWhLhiaoAGnjvSUls14fb0DK61lj90476tVsMt5+eBLrS6ArJYDuRx7?=
- =?us-ascii?Q?rRLvfCpIDuMgATC7+sUyTCGewQMEdDdWNPI1UqZZTSWngAO/jvn3ZGkp1OKz?=
- =?us-ascii?Q?mmgsvOSR/lkOFsMUtg0yHCBnpf7ajHAG8uPJ/aZuUC79D89jRalBWgSWbQ5q?=
- =?us-ascii?Q?7C41vA9IkDchO+mpB4tOolIbStOUz8vzVgHBnuS36zE21n1H/PSWu5cLJPdf?=
- =?us-ascii?Q?ErVJ5yCjbUTYbDwm/BAevTuR9c95/EX7hSlO4rbyMOkdU5dwdkkQ/zm9hva9?=
- =?us-ascii?Q?OHvRqE68dEU2uBGyR0BLEISlTmJ+fOOLv7YrRPZIBReNEFR0xyftKQr+NCe4?=
- =?us-ascii?Q?PLeCmFp5Jsl/JodgsHJ3t8mLM4RFNVXjtXoXGfYlzybtDamHahGo1nL8z83l?=
- =?us-ascii?Q?jq9VN0tZNIh08NuiVelQSH1HvRltVmMvcbLJTAcmdXG0II4pDV77D3CjwG5/?=
- =?us-ascii?Q?On2cSI5VJQYHkfk5X/l8tRwip2ixyiI6Aw40Wpax0Cm0F7Gs4XIfy0o77H8V?=
- =?us-ascii?Q?/JtUIm3HGftE5R8nIc1NylUyCDhDDIK4JIuY41fjZOfidtVCgvkIR46/fHQe?=
- =?us-ascii?Q?WpMrdHA58QdbeM682GwVFpLOGPyP82rtKNKu+b8+Zr0/EcNtsqKlH0qJPdOS?=
- =?us-ascii?Q?IeM95e3YCeoXQ6U93XpbNOy0lJB6WG8Qvfp0ATy+ZwJnftmXHoviOjDOStTp?=
- =?us-ascii?Q?jq3sHBfVzHrgEx/tCRYvgBjNn6JRS7s+uTUNGvPGysJh53Azb+/yEuLMyyfU?=
- =?us-ascii?Q?o4GXd1AhKVObbzaOR+HCPXJV/qU8thf6nL9GtYTIm7ul6Hw3KC3Pw43OZL1N?=
- =?us-ascii?Q?orK6Tpbo6SNmyK68RNUB8GcY6X8BgHJbPQPOX9qma1uWQ+1/J/9lxQY4Mjmq?=
- =?us-ascii?Q?gJQR9nV5mpFUu4PpXwJMVwHCirhP+Hj8CNBVRPOSLRmpS3FGxQ6bY01paEAr?=
- =?us-ascii?Q?JJl5hDxXqmGaAcT27MA1tdSXTb0buuwyY+43BHckn7BPkwhtyG+VG7EdJSeI?=
- =?us-ascii?Q?7DkBZAv1fGu2s7OB5oA74A8OIIudEv57spmEwM9xqG6tCOHWqpX4JrlZYKE3?=
- =?us-ascii?Q?p7QA9tylm2GNarjvHBiUYEMpmZLT0tH5qywdz4oJqqQfa2ucIV0Z4B27rNRN?=
- =?us-ascii?Q?03Z/Xex9gjLSkN2gBdzHLL31MGlcxPv94hWNsCxqbVfBiHUx3H+/bTVTtK6Z?=
- =?us-ascii?Q?wU9xNDMepkfkcYyBqjJ2RnjxTR8LWhLbcuPgskykbh8k3BxUA0lkfGYQv1OU?=
- =?us-ascii?Q?IcEIW67O64FbSyA2nM7MTUerrrujGX5AmhF09MGboRCKbh1e1ZJAWZZ7z1Rb?=
- =?us-ascii?Q?SAOpoMug+zFhqpskx9EFJ/ku6n6Pv9IlCSV6cCLRzL9cL3Fjlm3H3okrfpaZ?=
- =?us-ascii?Q?CcxJ1IBC7TXAYaLiqlylfhyqa2jSWXHVMYBuglGeuPq5pQZ556nNe6tZN3Di?=
- =?us-ascii?Q?htCqup5Ssv3zUKoTHgPHC/BDF/WTZfMkMSLF18bMiN6Ttx4KGBFV8KsM1Qdc?=
- =?us-ascii?Q?ZoXdldXj8/cRumYbUOI=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 654bbaff-a88c-4b80-b7b8-08de01dcf52c
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5757.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Oct 2025 17:56:05.2732
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6boIMJ1xnDAxos6N3Vv93w1IYtbqUPh1qHyIikl7fM4bV0VXLfYbH9oaAFZJVHcr
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5804
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250928131924.b472fjxwir7vphsr@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAyNSBTYWx0ZWRfXx+ZEHbBKfsKv
+ tBTC9CIL1pBm0wTJ9lGpKR9eOh/t8gdWj+FIfvuTpXpu5gIGq0WPPK5mexK5h3ZgzYS4NXGlLZs
+ 3KH3YrPps1to6uDRtqx/5ReYQoCwHUrE82909FAXGWr/jpV2nJflbWfDD+d+A9QqX+JojiqaUyy
+ 7d9LIRGL0OdrFRP+YSU7UEUuzLEJYAtEKsOZUr9MwTdaPzBRoAaqwOdEDfmkky+d4lGyDI/4+XR
+ KN0G0dgNRWryb75mCEPrU35hm5a46SLcUWjeYDbzmG37Bm4rNiJ/rfqJ9GwaLbEaeB7H1zSsG8e
+ zt/q+KNY9NntJDM2ISBWr/ikMyBrB3zk6880DnSFjm1updQSufpaNpMFhhs/TadOlgDkKi2taXV
+ oRu0loFA14k8XC+wcesKi7OCfkJvoQ==
+X-Proofpoint-ORIG-GUID: w79IYFFsLf3HKFkgqbgF_xEYSOIoJlP_
+X-Proofpoint-GUID: ooOTpfcHyLwupaL7g2xq1EmAWoRmNdsn
+X-Authority-Analysis: v=2.4 cv=GdUaXAXL c=1 sm=1 tr=0 ts=68debce5 cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=pGLkceISAAAA:8 a=VwQbUJbxAAAA:8
+ a=yPCof4ZbAAAA:8 a=VnNF1IyMAAAA:8 a=WeWFw57fSx3zdQzyt3YA:9 a=CjuIK1q_8ugA:10
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-02_06,2025-10-02_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 clxscore=1015 phishscore=0 adultscore=0 priorityscore=1501
+ malwarescore=0 spamscore=0 bulkscore=0 impostorscore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270025
 
-On Thu, Oct 02, 2025 at 07:37:45PM +0200, Danilo Krummrich wrote:
-> > The driver to operate the function in "vGPU" mode as indicated by the
-> > register has to be in nova-core, since there is only one device ID.
+On Sun, Sep 28, 2025 at 09:19:24PM +0800, Zorro Lang wrote:
+> On Fri, Sep 19, 2025 at 12:17:57PM +0530, Ojaswin Mujoo wrote:
+> > Implement atomic write support to help fuzz atomic writes
+> > with fsx.
+> > 
+> > Suggested-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+> > Reviewed-by: John Garry <john.g.garry@oracle.com>
+> > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> > ---
 > 
-> Yes, the PF driver on the host and the PF (from VM perspective) driver in the VM
-> have to be that same. But the VF driver on the host can still be a seaparate
-> one.
+> Hmm... this patch causes more regular fsx test cases fail on old kernel,
+> (e.g. g/760, g/617, g/263 ...) except set "FSX_AVOID=-a". Is there a way
+> to disable "atomic write" automatically if it's not supported by current
+> system?
 
-In most cases it is going to be bound to a vfio driver..
+Hi Zorro, 
+Sorry for being late, I've been on vacation this week.
 
-However, if you actually want a DRM subsystem device on the VF without
-a VM I don't know why you'd use a different driver than the one used
-by the VM on the very same VF, with the very same register programming
-model..
+Yes so by design we should be automatically disabling atomic writes when
+they are not supported by the stack but seems like the issue is that
+when we do disable it we print some extra messages to stdout/err which
+show up in the xfstests output causing failure.
 
-> > I think it would be good to have Zhi clarify more of this, but from
-> > what I understand are at least three activites comingled all together:
-> >
-> >  1) Boot the PF in "vGPU" mode so it can enable SRIOV
+I can think of 2 ways around this:
+
+1. Don't print anything and just silently drop atomic writes if stack
+doesn't support them.
+
+2. Make atomic writes as a default off instead of default on feature but
+his loses a bit of coverage as existing tests wont get atomic write
+testing free of cost any more.
+
+Regards,
+ojaswin
+
+> Thanks,
+> Zorro
 > 
-> Ok, this might be where the confusion above comes from. When I talk about
-> nova-core in vGPU mode I mean nova-core running in the VM on the (from VM
-> perspective) PF.
-
-I would call this nova-core running on a VF (assigned to a VM)
-
-Not sure "vgpu" is a helpful word here, lets try to talk about what
-.ko's and struct device_drivers's the various codes should live in..
-
-> But you seem to mean nova-core running on the host PF with vGPU on top? That of
-> course has to be in nova-core.
-
-Yes, #1 would be implemented as part of nova-core.ko and it's
-pci_driver. As I understand it around firmware loading nova-core has
-to tell the FW if it wants to enable "vGPU" mode or not.
-
-If it doesn't then the sriov_configure op should be inhibited and #2
-disabled. If it does then sriov_configure should work, #2 is enabled,
-and DRM on the PF is disabled.
-
-> >  2) Enable SRIOV and profile VFs to allocate HW resources to them
+> >  ltp/fsx.c | 115 +++++++++++++++++++++++++++++++++++++++++++++++++++---
+> >  1 file changed, 110 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/ltp/fsx.c b/ltp/fsx.c
+> > index 163b9453..bdb87ca9 100644
+> > --- a/ltp/fsx.c
+> > +++ b/ltp/fsx.c
+> > @@ -40,6 +40,7 @@
+> >  #include <liburing.h>
+> >  #endif
+> >  #include <sys/syscall.h>
+> > +#include "statx.h"
+> >  
+> >  #ifndef MAP_FILE
+> >  # define MAP_FILE 0
+> > @@ -49,6 +50,10 @@
+> >  #define RWF_DONTCACHE	0x80
+> >  #endif
+> >  
+> > +#ifndef RWF_ATOMIC
+> > +#define RWF_ATOMIC	0x40
+> > +#endif
+> > +
+> >  #define NUMPRINTCOLUMNS 32	/* # columns of data to print on each line */
+> >  
+> >  /* Operation flags (bitmask) */
+> > @@ -110,6 +115,7 @@ enum {
+> >  	OP_READ_DONTCACHE,
+> >  	OP_WRITE,
+> >  	OP_WRITE_DONTCACHE,
+> > +	OP_WRITE_ATOMIC,
+> >  	OP_MAPREAD,
+> >  	OP_MAPWRITE,
+> >  	OP_MAX_LITE,
+> > @@ -200,6 +206,11 @@ int	uring = 0;
+> >  int	mark_nr = 0;
+> >  int	dontcache_io = 1;
+> >  int	hugepages = 0;                  /* -h flag */
+> > +int	do_atomic_writes = 1;		/* -a flag disables */
+> > +
+> > +/* User for atomic writes */
+> > +int awu_min = 0;
+> > +int awu_max = 0;
+> >  
+> >  /* Stores info needed to periodically collapse hugepages */
+> >  struct hugepages_collapse_info {
+> > @@ -288,6 +299,7 @@ static const char *op_names[] = {
+> >  	[OP_READ_DONTCACHE] = "read_dontcache",
+> >  	[OP_WRITE] = "write",
+> >  	[OP_WRITE_DONTCACHE] = "write_dontcache",
+> > +	[OP_WRITE_ATOMIC] = "write_atomic",
+> >  	[OP_MAPREAD] = "mapread",
+> >  	[OP_MAPWRITE] = "mapwrite",
+> >  	[OP_TRUNCATE] = "truncate",
+> > @@ -422,6 +434,7 @@ logdump(void)
+> >  				prt("\t***RRRR***");
+> >  			break;
+> >  		case OP_WRITE_DONTCACHE:
+> > +		case OP_WRITE_ATOMIC:
+> >  		case OP_WRITE:
+> >  			prt("WRITE    0x%x thru 0x%x\t(0x%x bytes)",
+> >  			    lp->args[0], lp->args[0] + lp->args[1] - 1,
+> > @@ -1073,6 +1086,25 @@ update_file_size(unsigned offset, unsigned size)
+> >  	file_size = offset + size;
+> >  }
+> >  
+> > +static int is_power_of_2(unsigned n) {
+> > +	return ((n & (n - 1)) == 0);
+> > +}
+> > +
+> > +/*
+> > + * Round down n to nearest power of 2.
+> > + * If n is already a power of 2, return n;
+> > + */
+> > +static int rounddown_pow_of_2(int n) {
+> > +	int i = 0;
+> > +
+> > +	if (is_power_of_2(n))
+> > +		return n;
+> > +
+> > +	for (; (1 << i) < n; i++);
+> > +
+> > +	return 1 << (i - 1);
+> > +}
+> > +
+> >  void
+> >  dowrite(unsigned offset, unsigned size, int flags)
+> >  {
+> > @@ -1081,6 +1113,27 @@ dowrite(unsigned offset, unsigned size, int flags)
+> >  	offset -= offset % writebdy;
+> >  	if (o_direct)
+> >  		size -= size % writebdy;
+> > +	if (flags & RWF_ATOMIC) {
+> > +		/* atomic write len must be between awu_min and awu_max */
+> > +		if (size < awu_min)
+> > +			size = awu_min;
+> > +		if (size > awu_max)
+> > +			size = awu_max;
+> > +
+> > +		/* atomic writes need power-of-2 sizes */
+> > +		size = rounddown_pow_of_2(size);
+> > +
+> > +		/* atomic writes need naturally aligned offsets */
+> > +		offset -= offset % size;
+> > +
+> > +		/* Skip the write if we are crossing max filesize */
+> > +		if ((offset + size) > maxfilelen) {
+> > +			if (!quiet && testcalls > simulatedopcount)
+> > +				prt("skipping atomic write past maxfilelen\n");
+> > +			log4(OP_WRITE_ATOMIC, offset, size, FL_SKIPPED);
+> > +			return;
+> > +		}
+> > +	}
+> >  	if (size == 0) {
+> >  		if (!quiet && testcalls > simulatedopcount && !o_direct)
+> >  			prt("skipping zero size write\n");
+> > @@ -1088,7 +1141,10 @@ dowrite(unsigned offset, unsigned size, int flags)
+> >  		return;
+> >  	}
+> >  
+> > -	log4(OP_WRITE, offset, size, FL_NONE);
+> > +	if (flags & RWF_ATOMIC)
+> > +		log4(OP_WRITE_ATOMIC, offset, size, FL_NONE);
+> > +	else
+> > +		log4(OP_WRITE, offset, size, FL_NONE);
+> >  
+> >  	gendata(original_buf, good_buf, offset, size);
+> >  	if (offset + size > file_size) {
+> > @@ -1108,8 +1164,9 @@ dowrite(unsigned offset, unsigned size, int flags)
+> >  		       (monitorstart == -1 ||
+> >  			(offset + size > monitorstart &&
+> >  			(monitorend == -1 || offset <= monitorend))))))
+> > -		prt("%lld write\t0x%x thru\t0x%x\t(0x%x bytes)\tdontcache=%d\n", testcalls,
+> > -		    offset, offset + size - 1, size, (flags & RWF_DONTCACHE) != 0);
+> > +		prt("%lld write\t0x%x thru\t0x%x\t(0x%x bytes)\tdontcache=%d atomic_wr=%d\n", testcalls,
+> > +		    offset, offset + size - 1, size, (flags & RWF_DONTCACHE) != 0,
+> > +		    (flags & RWF_ATOMIC) != 0);
+> >  	iret = fsxwrite(fd, good_buf + offset, size, offset, flags);
+> >  	if (iret != size) {
+> >  		if (iret == -1)
+> > @@ -1785,6 +1842,36 @@ do_dedupe_range(unsigned offset, unsigned length, unsigned dest)
+> >  }
+> >  #endif
+> >  
+> > +int test_atomic_writes(void) {
+> > +	int ret;
+> > +	struct statx stx;
+> > +
+> > +	if (o_direct != O_DIRECT) {
+> > +		fprintf(stderr, "main: atomic writes need O_DIRECT (-Z), "
+> > +				"disabling!\n");
+> > +		return 0;
+> > +	}
+> > +
+> > +	ret = xfstests_statx(AT_FDCWD, fname, 0, STATX_WRITE_ATOMIC, &stx);
+> > +	if (ret < 0) {
+> > +		fprintf(stderr, "main: Statx failed with %d."
+> > +			" Failed to determine atomic write limits, "
+> > +			" disabling!\n", ret);
+> > +		return 0;
+> > +	}
+> > +
+> > +	if (stx.stx_attributes & STATX_ATTR_WRITE_ATOMIC &&
+> > +	    stx.stx_atomic_write_unit_min > 0) {
+> > +		awu_min = stx.stx_atomic_write_unit_min;
+> > +		awu_max = stx.stx_atomic_write_unit_max;
+> > +		return 1;
+> > +	}
+> > +
+> > +	fprintf(stderr, "main: IO Stack does not support "
+> > +			"atomic writes, disabling!\n");
+> > +	return 0;
+> > +}
+> > +
+> >  #ifdef HAVE_COPY_FILE_RANGE
+> >  int
+> >  test_copy_range(void)
+> > @@ -2356,6 +2443,12 @@ have_op:
+> >  			goto out;
+> >  		}
+> >  		break;
+> > +	case OP_WRITE_ATOMIC:
+> > +		if (!do_atomic_writes) {
+> > +			log4(OP_WRITE_ATOMIC, offset, size, FL_SKIPPED);
+> > +			goto out;
+> > +		}
+> > +		break;
+> >  	}
+> >  
+> >  	switch (op) {
+> > @@ -2385,6 +2478,11 @@ have_op:
+> >  			dowrite(offset, size, 0);
+> >  		break;
+> >  
+> > +	case OP_WRITE_ATOMIC:
+> > +		TRIM_OFF_LEN(offset, size, maxfilelen);
+> > +		dowrite(offset, size, RWF_ATOMIC);
+> > +		break;
+> > +
+> >  	case OP_MAPREAD:
+> >  		TRIM_OFF_LEN(offset, size, file_size);
+> >  		domapread(offset, size);
+> > @@ -2511,13 +2609,14 @@ void
+> >  usage(void)
+> >  {
+> >  	fprintf(stdout, "usage: %s",
+> > -		"fsx [-dfhknqxyzBEFHIJKLORWXZ0]\n\
+> > +		"fsx [-adfhknqxyzBEFHIJKLORWXZ0]\n\
+> >  	   [-b opnum] [-c Prob] [-g filldata] [-i logdev] [-j logid]\n\
+> >  	   [-l flen] [-m start:end] [-o oplen] [-p progressinterval]\n\
+> >  	   [-r readbdy] [-s style] [-t truncbdy] [-w writebdy]\n\
+> >  	   [-A|-U] [-D startingop] [-N numops] [-P dirpath] [-S seed]\n\
+> >  	   [--replay-ops=opsfile] [--record-ops[=opsfile]] [--duration=seconds]\n\
+> >  	   ... fname\n\
+> > +	-a: disable atomic writes\n\
+> >  	-b opnum: beginning operation number (default 1)\n\
+> >  	-c P: 1 in P chance of file close+open at each op (default infinity)\n\
+> >  	-d: debug output for all operations\n\
+> > @@ -3059,9 +3158,13 @@ main(int argc, char **argv)
+> >  	setvbuf(stdout, (char *)0, _IOLBF, 0); /* line buffered stdout */
+> >  
+> >  	while ((ch = getopt_long(argc, argv,
+> > -				 "0b:c:de:fg:hi:j:kl:m:no:p:qr:s:t:uw:xyABD:EFJKHzCILN:OP:RS:UWXZ",
+> > +				 "0ab:c:de:fg:hi:j:kl:m:no:p:qr:s:t:uw:xyABD:EFJKHzCILN:OP:RS:UWXZ",
+> >  				 longopts, NULL)) != EOF)
+> >  		switch (ch) {
+> > +		case 'a':
+> > +			prt("main(): Atomic writes disabled\n");
+> > +			do_atomic_writes = 0;
+> > +			break;
+> >  		case 'b':
+> >  			simulatedopcount = getnum(optarg, &endp);
+> >  			if (!quiet)
+> > @@ -3475,6 +3578,8 @@ main(int argc, char **argv)
+> >  		exchange_range_calls = test_exchange_range();
+> >  	if (dontcache_io)
+> >  		dontcache_io = test_dontcache_io();
+> > +	if (do_atomic_writes)
+> > +		do_atomic_writes = test_atomic_writes();
+> >  
+> >  	while (keep_running())
+> >  		if (!test())
+> > -- 
+> > 2.49.0
+> > 
 > 
-> I think that's partially in nova-core and partially in vGPU; nova-core providing
-> the abstraction of the corresponding firmware / hardware interfaces and vGPU
-> controlling the semantics of the resource handling?
-
-> This is what I thought vGPU has a secondary part for where it binds to nova-core
-> through the auxiliary bus, i.e. vGPU consisting out of two drivers actually; the
-> VFIO parts and a "per VF resource controller".
-
-This is certainly one option, you can put #2 in an aux driver of the
-PF in a nova-sriov.ko module that is fully divorced from VFIO. It
-might go along with a nova-fwctl.ko module too.
-
-You could also just embed it in nova-core.ko and have it activate when
-the PF is booted in "vGPU" mode.
-
-Broadly I would suggest the latter. aux devices make most sense to
-cross subsystems. Micro splitting a single driver with aux devices
-will make more of a mess than required. Though a good motivating
-reason would be if nova-srvio.ko is large.
-
-> >  3) VFIO variant driver to convert the VF into a "VM PF" with whatever
-> >     mediation and enhancement needed
-> 
-> That should be vGPU only land.
-
-I think it is clear this part should be in a vfio-pci-nova.ko
-
-Then you have two more:
-
-4) A PCI driver in a VM that creates a DRM subsystem device
-
-This is nova-core.ko + nova-drm.ko
-
-5) A VF driver that creates a DRM subsystem device without a VM
-
-Zhi says the device can't do this, but lets assume it could, then I
-would expect this to be nova-core.ko + nova-drm.ko, same as #4.
-
-Jason
 
