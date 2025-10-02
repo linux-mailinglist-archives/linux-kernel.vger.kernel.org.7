@@ -1,115 +1,144 @@
-Return-Path: <linux-kernel+bounces-840271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74652BB3FEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 15:14:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B3D4BB4010
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 15:16:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21ADA19C5480
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 13:15:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 410222A3ECF
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 13:16:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A43E3311592;
-	Thu,  2 Oct 2025 13:14:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00C9B311945;
+	Thu,  2 Oct 2025 13:16:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Wp31Bu0H"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="jixoqxze"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80C1A279DD3
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 13:14:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FFCD3101BC
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 13:16:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759410894; cv=none; b=n1yS1afwNjRlGfL9/EKgGXW1UW2lQpkPv7sXaYfpOpWiqpexEV3nasdUdCcUHtSmqTi1fviuEGbDyOvfDF5c9jWhZhJqyASvkoZ4kPS5Vddq3dz/lCrkP7gqZwg+fKBJ0f9iQU24pzKzw+JlHF4dMaGRSXHsb/sXZEmFo4dKyG8=
+	t=1759411000; cv=none; b=LzKZav/lGJ8bKHRrcJvc52IR8RzdbrJcmtfnlwBcBWJFTxc1foXf08NHwjylkmrund6kMy1P7RwwQKX/UZfN+m6v7SEePWM/7Pc53SyH/ehFzUzbF0QyjDapFnOewLRghR/dzcXBiKv/Vu4HA+iMA/K0qilydTwfqFY4Z15WpJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759410894; c=relaxed/simple;
-	bh=EYGrnECQVOAY1pTpJfgX0z0ezPv4u4M6g0Lzj7HWenM=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=ILq4SPDP8Hwnq0IzAnq+Lko+pTGmrPHJweGaRrL5tuJY9sBHjthlBY3Au9YqdlDTlGI/eYvOHjwvw5Mv4iiffngRPS1qY0E7Pp8duOKpfwxecXvL4Olq9iOoU75W6HNdXlFU136e/S74wd4AtStkj91VwzH0FLwOKxrT1HkKNYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Wp31Bu0H; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759410891;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RxjtVoQA20xl51bQEMGbGBi8UuGbKSHmlD5xA73reLM=;
-	b=Wp31Bu0HDhqacBvgyG0AaRmqIXO19W24cF3nN/EOw4a3e8gP5tZLtZd7Sa9A1du1xSgx+c
-	XbCY4ej+LskNltqkkwI4i+B4MfIWM4jJgoeYESy+XaQ+HdHFjDVvKWx6tIFBAG8ad3/rWo
-	T3DrTEXZsQW2ILed+LVWoFxp4yhlmKA=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-217-xdCrNtf4MZGnF8CaJ7mifg-1; Thu,
- 02 Oct 2025 09:14:50 -0400
-X-MC-Unique: xdCrNtf4MZGnF8CaJ7mifg-1
-X-Mimecast-MFC-AGG-ID: xdCrNtf4MZGnF8CaJ7mifg_1759410888
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 84999180034A;
-	Thu,  2 Oct 2025 13:14:48 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.24])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 32C2C19560BC;
-	Thu,  2 Oct 2025 13:14:45 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20251001152826.GB1592@sol>
-References: <20251001152826.GB1592@sol> <20250926141959.1272455-1-dhowells@redhat.com> <20250926195958.GA2163@sol>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: dhowells@redhat.com, "Jason A . Donenfeld" <Jason@zx2c4.com>,
-    Ard Biesheuvel <ardb@kernel.org>,
-    Herbert Xu <herbert@gondor.apana.org.au>,
-    Stephan Mueller <smueller@chronox.de>, linux-crypto@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/8] crypto, lib/crypto: Add SHAKE128/256 support and move SHA3 to lib/crypto
+	s=arc-20240116; t=1759411000; c=relaxed/simple;
+	bh=PDoZBktX5qGB4t+SzeuqklzlS14l06mZuJb7Ixusx2I=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=qgkGBVNJpaij9Af91oEmKMiCDGaalt7uhob4mRlmY/+lDfquWRJCexaiJN8ql7EG54EYv4rPeJmRYWHwt+h0yKaEE7oT+NAMxIUPfW959jruZJKHH7ii106XqcJ0lmaV50oZylYKnUEQCx8rswaiAn3EAQE8BJKvyTT+137Z3tg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=jixoqxze; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-636255b92c9so1664640a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 06:16:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1759410996; x=1760015796; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/ObT0eeBgwnHgQInGw6TZJgua4+bYG6hTqKqFI/jXoI=;
+        b=jixoqxze+3feZDKcG2qX4LuOp4QIshUACyKzq72LeaCdCM3T1KecpawdlToeOqF0gm
+         My106wS0SK8uAM8bSF2l5bChZnYDKGSRskSUrUS+G/3BnWfSLUlBVSuVw45KQ8vn4nU6
+         2WrMCjAT+NrEbdZxa71imCAQB7zRjHVgUn+lY7w1H+SPoy8hYpbSetsEcYo/eARfqPJu
+         Cfxcic7zLZnutWuwicxMDkhigFyARmoDeqOOpCzluD4ATfs6wMqFk6xa83kc3N88nXx1
+         hI3PW7yRX1H3O1Po7ef8QOwDOiLMYJnWpqsNO6TdVZZj1daQl1NBohCaSlKf9FErX6UX
+         FVrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759410996; x=1760015796;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=/ObT0eeBgwnHgQInGw6TZJgua4+bYG6hTqKqFI/jXoI=;
+        b=Dh4qw0t3G1fyUN3yTiXYFZz/vOQV+llHZvdYM79QC9Zb0RCU4nRmsNXkASBl1NHEsq
+         +Ex6aVR1hRHoDIqrVJKwWDZC43DS4nTqbsctEL27tR7BGyloyBK+QWuW4fM/TcbQroyB
+         x88UljIbfWGyFQH9Sww27lkg9z/7JcuYuNc+awEZ27iF3XiZcCUw0raLqcpb+JcYN5R/
+         PscD+4+w+M972M8AhKtUW/UomNXHUF3x7RBGltpZUL4F7ml5e5S6QA6/8tkvrw/oyRUp
+         nFC+XvIVCxNS0GLdVhBhTq3VsXwOLJfrjbLjGgor7FP9f8MO9RYeI78XJJNOkpjEXYSR
+         rBQA==
+X-Forwarded-Encrypted: i=1; AJvYcCWXiBHNczroK/M1zfrvjqUl00JfI1VlObdTKMwHsSoVaiz7j9JEFi9wyGIDj/VWfzfNEpiPZ8E5IMD3h98=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyizaTx+e8S0AR5hq4luVdq4kzem75/BCnnHJ/d8RX2wtpp9FuZ
+	HoBf3sDYVt9sudnQQDmQBxEdEDCMtd0JIzaMprEe6XBQgg82tcvx70Te0SxI+oTnn3s=
+X-Gm-Gg: ASbGncvZnFZAAiYmUrynXdhqgST1/rduUL1+3HyQNgLT9PrGYw6siM0O3npKls/foWq
+	cCX3dYheWecPUKcvCpmDJ6/lr0xi1gbGQkfwCrYBYCBhlFOpJYUaWkJFFqvfSP1WhZacx4esZ7N
+	mZSHxj0O5B/nAPeTeA3m1xI+v9dPEA8OR+yNc4Z91zKaEWxZSgYlPwE5+u7tCFw/ISECx5wyYe6
+	giR0N+FqVe2+wlvLUYFLoSuk/6l0zOLyphyTRfT+M6/clcBxDee2RNeLvgAfsW74b+7DlmQH2Sx
+	gW+bRiBgZVuywaqU10BntEPlmXyxGbCsLogGCy6MU2eC/ymQxu0VxeoEtqgFMt4gpMHT/4qcMBq
+	D22pdiTItSF5vO4YSx6C2zlJdsWfiSpiYhELFGXkgVFf1Y80eEVNKCeClMp0JjJUknc1w0ksrYr
+	At78pa+V/7z+Hr2g02/WLvDcyORxg=
+X-Google-Smtp-Source: AGHT+IElAtV6AUMzxrPGPFH26HOMvAC/VCzDX87OsUzxYphcjqlRmrNm1j8deD2AOnXomH8ZKHZV4w==
+X-Received: by 2002:a17:907:968c:b0:b40:33ec:51de with SMTP id a640c23a62f3a-b46e42b57dbmr835675766b.8.1759410995859;
+        Thu, 02 Oct 2025 06:16:35 -0700 (PDT)
+Received: from localhost (144-178-202-138.static.ef-service.nl. [144.178.202.138])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b486970b2desm202563766b.48.2025.10.02.06.16.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 02 Oct 2025 06:16:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2636608.1759410884.1@warthog.procyon.org.uk>
-Date: Thu, 02 Oct 2025 14:14:44 +0100
-Message-ID: <2636609.1759410884@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 02 Oct 2025 15:16:35 +0200
+Message-Id: <DD7V58XLAVQ4.23R46R62TU37E@fairphone.com>
+Cc: <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-arm-msm@vger.kernel.org>
+Subject: Re: [PATCH 4/4] arm64: dts: qcom: qcm6490-fairphone-fp5: Add UW cam
+ actuator
+From: "Luca Weiss" <luca.weiss@fairphone.com>
+To: "Griffin Kroah-Hartman" <griffin.kroah@fairphone.com>, "Mauro Carvalho
+ Chehab" <mchehab@kernel.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ <devicetree@vger.kernel.org>, "Daniel Scally" <djrscally@gmail.com>,
+ "Sakari Ailus" <sakari.ailus@linux.intel.com>, "Bjorn Andersson"
+ <andersson@kernel.org>, "Konrad Dybcio" <konradybcio@kernel.org>,
+ =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20251002-dw9800-driver-v1-0-c305328e44f0@fairphone.com>
+ <20251002-dw9800-driver-v1-4-c305328e44f0@fairphone.com>
+In-Reply-To: <20251002-dw9800-driver-v1-4-c305328e44f0@fairphone.com>
 
-Eric Biggers <ebiggers@kernel.org> wrote:
+On Thu Oct 2, 2025 at 12:15 PM CEST, Griffin Kroah-Hartman wrote:
+> Add a node for the Dongwoon DW9800K actuator, used for focus of the
+> ultra-wide camera sensor.
+>
 
-> Have you had a chance to read this reply?
+Tested on a tree that also has the imx858 functional + linking them
+through lens-focus =3D <&camera_imx858_dw9800k>;
 
-I have.
+Tested-by: Luca Weiss <luca.weiss@fairphone.com>
 
-You held up your implementation of sha256 and sha224 as an example of how it
-perhaps should be implemented:
+Regards
+Luca
 
-	It would be worth considering separating the APIs for the different
-	algorithms that are part of SHA-3, similar to what I did with SHA-224
-	and SHA-256.
-
-so I have followed that.  That defines a type for each, so I'll leave it at
-that.
-
-> All I'm really requesting is that we don't create footguns, like the
-> following that the API in the v2 patch permitted:
-
-The way you did a separate type for each removed one more footgun - and
-arguably a more important one - as the *type* enforces[1] the output buffer
-size and the sha3_*_final() function has the same sized-array as the
-convenience wrappers.
-
-It also eliminates the need to store the digest size as this is only needed at
-the final step for the digest variant algorithms.
-
-David
-
-[1] Inasmuch as this is effective in C.
+> Signed-off-by: Griffin Kroah-Hartman <griffin.kroah@fairphone.com>
+> ---
+>  arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts b/arch/ar=
+m64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
+> index 2dd2c452592aa6b0ac826f19eb9cb1a8b90cee47..0e86cd5ff527925c7dba15c4e=
+0ee5fc409fe4ce6 100644
+> --- a/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
+> +++ b/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
+> @@ -627,6 +627,15 @@ eeprom@50 {
+>  };
+> =20
+>  &cci0_i2c1 {
+> +	camera_imx858_dw9800k: actuator@e {
+> +		compatible =3D "dongwoon,dw9800k";
+> +		reg =3D <0x0e>;
+> +		vdd-supply =3D <&vreg_afvdd_2p8>;
+> +
+> +		dongwoon,sac-mode =3D <1>;
+> +		dongwoon,vcm-prescale =3D <16>;
+> +	};
+> +
+>  	/* IMX858 @ 29 */
+> =20
+>  	eeprom@54 {
 
 
