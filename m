@@ -1,211 +1,166 @@
-Return-Path: <linux-kernel+bounces-840026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C3ECBB35E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 10:57:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FFB2BB35EA
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 10:58:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB6FB7A6CCE
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 08:55:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E0E27ADEB4
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 08:56:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 696102FE56C;
-	Thu,  2 Oct 2025 08:57:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBCA32FE585;
+	Thu,  2 Oct 2025 08:57:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="1GTFCcFG";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="1qPEq6rM";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="1GTFCcFG";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="1qPEq6rM"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g4PZyLJP"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D05617C77
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 08:57:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 388F92DC339;
+	Thu,  2 Oct 2025 08:57:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759395429; cv=none; b=LMHMpIXXYH70K846bHY/T0uzxTsgukDPQ9G8pa0Xsibtmgs0zC2o1A8dH23Yvgllrl7JwjoJTobrbzNIwWnGuQBS7Wd07j+wld+7Zuya4wFUGqgyFmk6FpT/L4rbM4XrXHdhUCcvRigroY2fbPm7qpCla2FBtooeUAsK7KLKV2Q=
+	t=1759395470; cv=none; b=eMXebll6BbZ70Shjk/H/QKpKiv9RXKzwc0YFvjUovCyo/JUiwIDpEWnt8BL1jzvTI1aoQGxiZMM3EUZmu8FstoA7FyMkOM0d4SI0w6eCOJabkmyyZ1Ja/XDfF3dUYnPPRehslS+kYXaREAHu4GJM1J2GuhztiLPtzT5YwMoKmJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759395429; c=relaxed/simple;
-	bh=Q5/6cFy16Lkowie5tQOXWCE2v6F9NOs59+So1iwb/7s=;
+	s=arc-20240116; t=1759395470; c=relaxed/simple;
+	bh=LegO47tSfad1vBLbX6WbNYDpIZl2X+4QkLFnoPuYMl8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cPLmuARIPeheO6c/kufsv7+2mKX8QCU69o7rU/6IT67nHUeF9iW9jGUiSclbvCOAolxLg1zhrxq0FZUC5dkCXOJB+rNAf3zVE+mF/Qwhaumzt6eVf4T2GWQH+WeaM/lgEO8bmgwwZmakiCQYAI/kSNTXIMn5f6HXB1I2vL1v2+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=1GTFCcFG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=1qPEq6rM; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=1GTFCcFG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=1qPEq6rM; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 2CF2C1F82A;
-	Thu,  2 Oct 2025 08:57:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759395426; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=njc3/rn+0CHwLzGQbBEbbgM+Lh3Uuzl2Kyh+JzbeOgY=;
-	b=1GTFCcFGl4juy3GptQcQGqQrx1d8LlUjyIA2A7abYr0Fm/8JtLyAWjc8RMoaf56i4bsDXj
-	DwLa5faeZpUT0txk/czQeBUMlf8DDxjy2zBSX3iDneQaZxpBvVPbpYIBGiO5RVsPo+TlBE
-	cmUVak3f9ECFcaDawwBKtVU1HPZNkk0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759395426;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=njc3/rn+0CHwLzGQbBEbbgM+Lh3Uuzl2Kyh+JzbeOgY=;
-	b=1qPEq6rM8HlvMrbn78FpbirNZ1oa168DR1RVGj1NePZXDQ7Px1NuEkNhBkAr0vFIk+zaF2
-	EJTKL9fxq9OAuPBg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759395426; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=njc3/rn+0CHwLzGQbBEbbgM+Lh3Uuzl2Kyh+JzbeOgY=;
-	b=1GTFCcFGl4juy3GptQcQGqQrx1d8LlUjyIA2A7abYr0Fm/8JtLyAWjc8RMoaf56i4bsDXj
-	DwLa5faeZpUT0txk/czQeBUMlf8DDxjy2zBSX3iDneQaZxpBvVPbpYIBGiO5RVsPo+TlBE
-	cmUVak3f9ECFcaDawwBKtVU1HPZNkk0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759395426;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=njc3/rn+0CHwLzGQbBEbbgM+Lh3Uuzl2Kyh+JzbeOgY=;
-	b=1qPEq6rM8HlvMrbn78FpbirNZ1oa168DR1RVGj1NePZXDQ7Px1NuEkNhBkAr0vFIk+zaF2
-	EJTKL9fxq9OAuPBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 22A5713AA1;
-	Thu,  2 Oct 2025 08:57:06 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 3edvCGI+3mjcYAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 02 Oct 2025 08:57:06 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id D05CDA0A56; Thu,  2 Oct 2025 10:57:05 +0200 (CEST)
-Date: Thu, 2 Oct 2025 10:57:05 +0200
-From: Jan Kara <jack@suse.cz>
-To: syzbot <syzbot+e0f8855a87443d6a2413@syzkaller.appspotmail.com>
-Cc: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Subject: Re: [syzbot] [fs?] WARNING in copy_mnt_ns
-Message-ID: <n45v4ckrwdb6z2zhqo554lt7qvgzmpbpd3z4uluun6vyotacmk@coodvjeanw3d>
-References: <68dd8c99.a00a0220.102ee.0061.GAE@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mtcmn8rv79tUlXeK6aH42agsdibIpgXSy9CkSWGuYGo8X7Vpr3mwOzGzjAIx3DBP1nlQAi8O0/tS3hjJRsXeKirfqpeXTvakLZNG82bOFgtom+WEOYZQm9yA1Gd/CKSP4dilwWsEihi0auYxaO3ivNE99nzhkvu+ZRLrR+uvEu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g4PZyLJP; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759395468; x=1790931468;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=LegO47tSfad1vBLbX6WbNYDpIZl2X+4QkLFnoPuYMl8=;
+  b=g4PZyLJPHYqxFoaMVZG905VY1qhg+APhzNPriWQI4CSY653LVH9CB4Pu
+   Q3rinF0uIQ48HDB1e7bKuZbsuj8j1ZeaAibV7twBaNvKrqmMDH4yJazZb
+   NOERv6jcoj7lnSUC25DoMIX3bbT6Pk99MllRn8M6nbXEre23SNFnujxYd
+   E+0wNF2YvpK1pvbkxBuPsvLlShEhnbL+tFxRUnP80VVofpdCh8n/mPXo9
+   qh+5gdM4LpQLJcza767wT638wltK4mkXHjuOkKCYStZYgJ9yuz4u4bToj
+   SXVQgkjJ7z5/VCHweJBNZYnOWZiI9QRaJW8zEj9+6DoTRVJoSC0urUpNw
+   A==;
+X-CSE-ConnectionGUID: NubWKHxATU+AU6pheklKBQ==
+X-CSE-MsgGUID: R5SA43MERv6FmAsKE4K3ww==
+X-IronPort-AV: E=McAfee;i="6800,10657,11569"; a="84294939"
+X-IronPort-AV: E=Sophos;i="6.18,309,1751266800"; 
+   d="scan'208";a="84294939"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2025 01:57:47 -0700
+X-CSE-ConnectionGUID: Nzz4uHEQQHqZmeXuClZ4uA==
+X-CSE-MsgGUID: M9+AZGiDSHyaawOzQefN3g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,309,1751266800"; 
+   d="scan'208";a="183024479"
+Received: from lkp-server01.sh.intel.com (HELO 2f2a1232a4e4) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 02 Oct 2025 01:57:46 -0700
+Received: from kbuild by 2f2a1232a4e4 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1v4F89-0003gF-2g;
+	Thu, 02 Oct 2025 08:57:41 +0000
+Date: Thu, 2 Oct 2025 16:57:33 +0800
+From: kernel test robot <lkp@intel.com>
+To: Deepa Guthyappa Madivalara <deepa.madivalara@oss.qualcomm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
+	Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
+	Abhinav Kumar <abhinav.kumar@linux.dev>,
+	Bryan O'Donoghue <bod@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	Deepa Guthyappa Madivalara <deepa.madivalara@oss.qualcomm.com>
+Subject: Re: [PATCH 3/5] media: iris: Add support for AV1 format in iris
+ decoder
+Message-ID: <202510021620.4BVCZwgf-lkp@intel.com>
+References: <20251001-av1_irisdecoder-v1-3-9fb08f3b96a0@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="lh445iujugxz4y2p"
-Content-Disposition: inline
-In-Reply-To: <68dd8c99.a00a0220.102ee.0061.GAE@google.com>
-X-Spamd-Result: default: False [-1.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=8f1ac8502efee0ee];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[multipart/mixed,text/plain,text/x-patch];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	TAGGED_RCPT(0.00)[e0f8855a87443d6a2413];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+,1:+,2:+];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	SUBJECT_HAS_QUESTION(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,storage.googleapis.com:url,imap1.dmz-prg2.suse.org:helo,suse.cz:email];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	HAS_ATTACHMENT(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -1.30
-
-
---lh445iujugxz4y2p
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20251001-av1_irisdecoder-v1-3-9fb08f3b96a0@oss.qualcomm.com>
 
-On Wed 01-10-25 13:18:33, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    50c19e20ed2e Merge tag 'nolibc-20250928-for-6.18-1' of git..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=126f605b980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=8f1ac8502efee0ee
-> dashboard link: https://syzkaller.appspot.com/bug?extid=e0f8855a87443d6a2413
-> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1374b858580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15602092580000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/5fb1f87b20e9/disk-50c19e20.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/aebfd0341e80/vmlinux-50c19e20.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/11452a5eed6c/bzImage-50c19e20.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+e0f8855a87443d6a2413@syzkaller.appspotmail.com
-> 
-> ------------[ cut here ]------------
-> ida_free called for id=1019 which is not allocated.
+Hi Deepa,
 
-Let's try second time: Please try attached patch:
+kernel test robot noticed the following build errors:
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+[auto build test ERROR on afb100a5ea7a13d7e6937dcd3b36b19dc6cc9328]
 
-								Honza
+url:    https://github.com/intel-lab-lkp/linux/commits/Deepa-Guthyappa-Madivalara/media-uapi-videodev2-Add-support-for-AV1-stateful-decoder/20251002-030314
+base:   afb100a5ea7a13d7e6937dcd3b36b19dc6cc9328
+patch link:    https://lore.kernel.org/r/20251001-av1_irisdecoder-v1-3-9fb08f3b96a0%40oss.qualcomm.com
+patch subject: [PATCH 3/5] media: iris: Add support for AV1 format in iris decoder
+config: s390-randconfig-001-20251002 (https://download.01.org/0day-ci/archive/20251002/202510021620.4BVCZwgf-lkp@intel.com/config)
+compiler: s390-linux-gcc (GCC) 14.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251002/202510021620.4BVCZwgf-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510021620.4BVCZwgf-lkp@intel.com/
+
+All error/warnings (new ones prefixed by >>):
+
+>> drivers/media/platform/qcom/iris/iris_platform_sm8250.c:20:24: error: array type has incomplete element type 'struct iris_fmt'
+      20 | static struct iris_fmt platform_fmts_sm8250_dec[] = {
+         |                        ^~~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/media/platform/qcom/iris/iris_platform_sm8250.c:21:10: error: 'IRIS_FMT_H264' undeclared here (not in a function)
+      21 |         [IRIS_FMT_H264] = {
+         |          ^~~~~~~~~~~~~
+>> drivers/media/platform/qcom/iris/iris_platform_sm8250.c:25:10: error: 'IRIS_FMT_HEVC' undeclared here (not in a function)
+      25 |         [IRIS_FMT_HEVC] = {
+         |          ^~~~~~~~~~~~~
+>> drivers/media/platform/qcom/iris/iris_platform_sm8250.c:29:10: error: 'IRIS_FMT_VP9' undeclared here (not in a function)
+      29 |         [IRIS_FMT_VP9] = {
+         |          ^~~~~~~~~~~~
+   In file included from include/linux/dev_printk.h:14,
+                    from include/linux/device.h:15,
+                    from include/linux/pm_domain.h:11,
+                    from drivers/media/platform/qcom/iris/iris_core.h:10,
+                    from drivers/media/platform/qcom/iris/iris_platform_sm8250.c:6:
+   include/linux/compiler.h:197:82: error: expression in static assertion is not an integer
+     197 | #define __BUILD_BUG_ON_ZERO_MSG(e, msg, ...) ((int)sizeof(struct {_Static_assert(!(e), msg);}))
+         |                                                                                  ^
+   include/linux/compiler.h:202:33: note: in expansion of macro '__BUILD_BUG_ON_ZERO_MSG'
+     202 | #define __must_be_array(a)      __BUILD_BUG_ON_ZERO_MSG(!__is_array(a), \
+         |                                 ^~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/array_size.h:11:59: note: in expansion of macro '__must_be_array'
+      11 | #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(arr))
+         |                                                           ^~~~~~~~~~~~~~~
+   drivers/media/platform/qcom/iris/iris_platform_sm8250.c:356:32: note: in expansion of macro 'ARRAY_SIZE'
+     356 |         .inst_iris_fmts_size = ARRAY_SIZE(platform_fmts_sm8250_dec),
+         |                                ^~~~~~~~~~
+>> drivers/media/platform/qcom/iris/iris_platform_sm8250.c:20:24: warning: 'platform_fmts_sm8250_dec' defined but not used [-Wunused-variable]
+      20 | static struct iris_fmt platform_fmts_sm8250_dec[] = {
+         |                        ^~~~~~~~~~~~~~~~~~~~~~~~
+
+
+vim +20 drivers/media/platform/qcom/iris/iris_platform_sm8250.c
+
+    19	
+  > 20	static struct iris_fmt platform_fmts_sm8250_dec[] = {
+  > 21		[IRIS_FMT_H264] = {
+    22			.pixfmt = V4L2_PIX_FMT_H264,
+    23			.type = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE,
+    24		},
+  > 25		[IRIS_FMT_HEVC] = {
+    26			.pixfmt = V4L2_PIX_FMT_HEVC,
+    27			.type = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE,
+    28		},
+  > 29		[IRIS_FMT_VP9] = {
+    30			.pixfmt = V4L2_PIX_FMT_VP9,
+    31			.type = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE,
+    32		}
+    33	};
+    34	
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
-
---lh445iujugxz4y2p
-Content-Type: text/x-patch; charset=us-ascii
-Content-Disposition: attachment;
-	filename="0001-ns-Fix-mnt-ns-ida-handling-in-copy_mnt_ns.patch"
-
-From 5cbdc1dd457f85fdbaa8f5840feeffee41f9aaae Mon Sep 17 00:00:00 2001
-From: Jan Kara <jack@suse.cz>
-Date: Thu, 2 Oct 2025 10:15:06 +0200
-Subject: [PATCH] ns: Fix mnt ns ida handling in copy_mnt_ns()
-
-Commit be5f21d3985f ("ns: add ns_common_free()") modified error cleanup
-and started to free wrong inode number from the ida. Fix it.
-
-Reported-by: syzbot+e0f8855a87443d6a2413@syzkaller.appspotmail.com
-Fixes: be5f21d3985f ("ns: add ns_common_free()")
-Signed-off-by: Jan Kara <jack@suse.cz>
----
- fs/namespace.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/namespace.c b/fs/namespace.c
-index dc01b14c58cd..1ba97d745019 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -4165,7 +4165,7 @@ struct mnt_namespace *copy_mnt_ns(u64 flags, struct mnt_namespace *ns,
- 	new = copy_tree(old, old->mnt.mnt_root, copy_flags);
- 	if (IS_ERR(new)) {
- 		namespace_unlock();
--		ns_common_free(ns);
-+		ns_common_free(new_ns);
- 		dec_mnt_namespaces(new_ns->ucounts);
- 		mnt_ns_release(new_ns);
- 		return ERR_CAST(new);
--- 
-2.51.0
-
-
---lh445iujugxz4y2p--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
