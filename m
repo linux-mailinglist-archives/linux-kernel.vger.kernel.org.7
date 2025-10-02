@@ -1,233 +1,136 @@
-Return-Path: <linux-kernel+bounces-840692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3ACABB4FCE
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 21:25:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37A99BB502E
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 21:31:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E018424CC0
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 19:25:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F216E32581F
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 19:31:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06F7228505A;
-	Thu,  2 Oct 2025 19:25:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HyIW06Ss"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18F232853EA;
+	Thu,  2 Oct 2025 19:31:22 +0000 (UTC)
+Received: from irl.hu (irl.hu [95.85.9.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BEDF2367B5;
-	Thu,  2 Oct 2025 19:25:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13EF9A93D;
+	Thu,  2 Oct 2025 19:31:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.85.9.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759433108; cv=none; b=sUWKtGB0lpfKuOAjTjHua/zFOmEfiypEcRK9Bni8xz3SbZg22fhSDKFwesL/IY+uOLGvPc8M0jij14hO6ymxSkQWaOSkUMfN3KkblbIfIrTScEcpyFypDWJp0pq01oL3SDXFdbCHsOYCiJ8h6u2nCsqGv42wcZDpzhR/pKkpadM=
+	t=1759433481; cv=none; b=WLXU45/z+eNkaXMuo321kffhMkBWvGcSAKyLwxcdk2SCRu4gkrmBX6RewSW887YPJQ21TsDOiddlStnG0k4HX7pxGeHO5DE/TdTU4EkyUQbjmZOCbjkY8x7wR42SlaQtU8gyqhh76Emn6Nt1N3uBTq7WQ2X42/svkVRU+y5X6oU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759433108; c=relaxed/simple;
-	bh=nip5+pOwI51SpkdT3VI8Pei0Qu8xBZA8qy5/5279btk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ngzz5XnOH+qiBPy+ZQjZJT2FqoE/Sc4036pxDImRTMK2+RJzLEXlsgUHotS//E4xrOvoEmQpx0hl4uAM4XI8CFyn4VW+fM0aW6DiT9cojf6PrpcVraAXVcSjBqvlfSlHe/Yv1bzwpNUk86WWFbUFC9/Nj2mtSdPzBTcrrns9z2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HyIW06Ss; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8195BC4CEF4;
-	Thu,  2 Oct 2025 19:25:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759433107;
-	bh=nip5+pOwI51SpkdT3VI8Pei0Qu8xBZA8qy5/5279btk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HyIW06SsYzTvVCBSOdJfh8xJdGlFve2FJQHquD1zuZcRfEz/9sDRnJTZCIGkFjEoO
-	 rjLfIlYBQcACPxCYeJ3ITZE31JSDX3dQbAEwcs+F7Ly/KiD0JkI2gVYxykfa/zmo9B
-	 +l0nLRtNJxsJTJp31KXkFIYX+gjDWhmGos4XT3SEliP6xF1kGPPu2mq99NDRAxqaFs
-	 fcIWj4yNLiNz3MVhJmoUwSNy+BktXaNtsS/zs1svks3uDTYMCMeni9/KuhPXbUs0+V
-	 +4+z0KVkeqi9vO4TQkZ7F5UoBdUTy/aC9qQjGfhBcFIEKCtjRhdF1KOBcStZ6Lcb3I
-	 axQNn2DywNC/g==
-Date: Thu, 2 Oct 2025 14:25:06 -0500
-From: Rob Herring <robh@kernel.org>
-To: Anup Patel <apatel@ventanamicro.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Ian Rogers <irogers@google.com>, Alexandre Ghiti <alex@ghiti.fr>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>, Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Liang Kan <kan.liang@linux.intel.com>,
-	Mayuresh Chitale <mchitale@gmail.com>,
-	Anup Patel <anup@brainfault.org>,
-	Atish Patra <atish.patra@linux.dev>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Sunil V L <sunilvl@ventanamicro.com>,
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/11] dt-bindings: Add RISC-V trace component bindings
-Message-ID: <20251002192506.GA236729-robh@kernel.org>
-References: <20251002060732.100213-1-apatel@ventanamicro.com>
- <20251002060732.100213-2-apatel@ventanamicro.com>
+	s=arc-20240116; t=1759433481; c=relaxed/simple;
+	bh=uJ6VvsarBYT3wlZHSIo5DU3IhfD35toP8v+Z77bcdyQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=uPN5YyhnbSiQxxpprpqzCje86lMdbFtADWTSGtvYyJEP/m8UA6lZLDlgFTZ0UO1SCV1tRObsGJsvawIBK/z08bgRxlv0T/hZar0smVPPQBmdEM2nuIbc5HGz8u5j4yQDIpwDy3I+Hwf7M12JtI8PVZkrLA7cQoNekXeDzfJ3/Bo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=irl.hu; spf=pass smtp.mailfrom=irl.hu; arc=none smtp.client-ip=95.85.9.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=irl.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=irl.hu
+Received: from [10.42.0.76] ([::ffff:94.44.132.12])
+  (AUTH: CRAM-MD5 soyer@irl.hu, )
+  by irl.hu with ESMTPSA
+  id 0000000000088DE7.0000000068DED1D0.002B460A; Thu, 02 Oct 2025 21:26:07 +0200
+Message-ID: <d11c8b06ec79871df74f893da41e81c2f1bcaee2.camel@irl.hu>
+Subject: Re: [PATCH v4] ALSA: hda/tas2781: Fix the order of TAS2781
+ calibrated-data
+From: Gergo Koteles <soyer@irl.hu>
+To: Shenghao Ding <shenghao-ding@ti.com>, tiwai@suse.de
+Cc: broonie@kernel.org, andriy.shevchenko@linux.intel.com,
+  13564923607@139.com, 13916275206@139.com,
+  alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+  baojun.xu@ti.com, Baojun.Xu@fpt.com, stable@vger.kernel.org
+Date: Thu, 02 Oct 2025 21:26:06 +0200
+In-Reply-To: <20250907222728.988-1-shenghao-ding@ti.com>
+References: <20250907222728.988-1-shenghao-ding@ti.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251002060732.100213-2-apatel@ventanamicro.com>
 
-On Thu, Oct 02, 2025 at 11:37:22AM +0530, Anup Patel wrote:
-> Add device tree bindings for the memory mapped RISC-V trace components
-> which support both the RISC-V efficient trace (E-trace) protocol and
-> the RISC-V Nexus-based trace (N-trace) protocol.
-> 
-> The RISC-V trace components are defined by the RISC-V trace control
-> interface specification.
-> 
-> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+Cc: <stable@vger.kernel.org>
+
+On Mon, 2025-09-08 at 06:27 +0800, Shenghao Ding wrote:
+> A bug reported by one of my customers that the order of TAS2781
+> calibrated-data is incorrect, the correct way is to move R0_Low
+> and insert it between R0 and InvR0.
+>=20
+> Fixes: 4fe238513407 ("ALSA: hda/tas2781: Move and unified the calibrated-=
+data getting function for SPI and I2C into the tas2781_hda lib")
+> Signed-off-by: Shenghao Ding <shenghao-ding@ti.com>
+>=20
 > ---
->  .../bindings/riscv/riscv,trace-component.yaml | 110 ++++++++++++++++++
->  1 file changed, 110 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/riscv/riscv,trace-component.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/riscv/riscv,trace-component.yaml b/Documentation/devicetree/bindings/riscv/riscv,trace-component.yaml
-> new file mode 100644
-> index 000000000000..78a70fe04dfe
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/riscv/riscv,trace-component.yaml
-> @@ -0,0 +1,110 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/riscv/riscv,trace-component.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> v4:
+>  - Add missing base into cali_cnv().
+> v3:
+>  - Take Tiwai's advice on cali_cnv() to make it more simpler.
+> v2:
+>  - Submit to the sound branch maintained by Tiwai instead of linux-next
+>    branch
+>  - Drop other fix
+> ---
+>  sound/hda/codecs/side-codecs/tas2781_hda.c | 25 +++++++++++++++++-----
+>  1 file changed, 20 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/sound/hda/codecs/side-codecs/tas2781_hda.c b/sound/hda/codec=
+s/side-codecs/tas2781_hda.c
+> index f46d2e06c64f..536940c78f00 100644
+> --- a/sound/hda/codecs/side-codecs/tas2781_hda.c
+> +++ b/sound/hda/codecs/side-codecs/tas2781_hda.c
+> @@ -33,6 +33,23 @@ const efi_guid_t tasdev_fct_efi_guid[] =3D {
+>  };
+>  EXPORT_SYMBOL_NS_GPL(tasdev_fct_efi_guid, "SND_HDA_SCODEC_TAS2781");
+> =20
+> +/*
+> + * The order of calibrated-data writing function is a bit different from=
+ the
+> + * order in UEFI. Here is the conversion to match the order of calibrate=
+d-data
+> + * writing function.
+> + */
+> +static void cali_cnv(unsigned char *data, unsigned int base, int offset)
+> +{
+> +	struct cali_reg reg_data;
 > +
-> +title: RISC-V Trace Component
+> +	memcpy(&reg_data, &data[base], sizeof(reg_data));
+> +	/* the data order has to be swapped between r0_low_reg and inv0_reg */
+> +	swap(reg_data.r0_low_reg, reg_data.invr0_reg);
 > +
-> +maintainers:
-> +  - Anup Patel <anup@brainfault.org>
+> +	cpu_to_be32_array((__force __be32 *)(data + offset + 1),
+> +		(u32 *)&reg_data, TASDEV_CALIB_N);
+> +}
 > +
-> +description:
-> +  The RISC-V trace control interface specification standard memory mapped
-> +  components (or devices) which support both the RISC-V efficient trace
-> +  (E-trace) protocol and the RISC-V Nexus-based trace (N-trace) protocol.
-> +  The RISC-V trace components have implementation specific directed acyclic
-> +  graph style interdependency where output of one component serves as input
-> +  to another component and certain components (such as funnel) can take inputs
-> +  from multiple components.
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +          - qemu,trace-component
-> +      - const: riscv,trace-component
-
-Given the generic-ness of these names, I'm assuming the exact type of 
-component is discoverable. I don't like to assume things in bindings, so 
-spell that out.
-
-Is the implementer discoverable? If so, you could omit the 1st 
-compatible.
-
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  cpu:
-
-'cpus' is the more standard property.
-
-> +    description:
-> +      phandle to the cpu to which the RISC-V trace component is bound.
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-
-which already has a type. So just 'maxItems: 1' here.
-
-> +
-> +  in-ports:
-> +    $ref: /schemas/graph.yaml#/properties/ports
-> +    patternProperties:
-> +      '^port(@[0-7])?$':
-> +        description: Input connections from RISC-V trace component
-> +        $ref: /schemas/graph.yaml#/properties/port
-
-If the N ports are N of the same data (like a mux), then fine. If each 
-port is different, then you need to define what each port is.
-
-> +
-> +  out-ports:
-> +    $ref: /schemas/graph.yaml#/properties/ports
-> +    patternProperties:
-> +      '^port(@[0-7])?$':
-> +        description: Output connections from RISC-V trace component
-> +        $ref: /schemas/graph.yaml#/properties/port
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    // Example 1 (Per-hart encoder and ramsink components):
-> +
-> +    encoder@c000000 {
-
-Perhaps it is time to standardize the node names here. Perhaps 'trace'.
-
-> +      compatible = "qemu,trace-component", "riscv,trace-component";
-> +      reg = <0xc000000 0x1000>;
-> +      cpu = <&CPU0>;
-> +      out-ports {
-> +        port {
-> +          CPU0_ENCODER_OUTPUT: endpoint {
-> +            remote-endpoint = <&CPU0_RAMSINK_INPUT>;
-> +          };
-> +        };
-> +      };
-> +    };
-> +
-> +    ramsink@c001000 {
-> +      compatible = "qemu,trace-component", "riscv,trace-component";
-> +      reg = <0xc001000 0x1000>;
-> +      cpu = <&CPU0>;
-> +      in-ports {
-> +        port {
-> +          CPU0_RAMSINK_INPUT: endpoint {
-> +          };
-> +        };
-> +      };
-> +    };
-> +
-> +    encoder@c002000 {
-> +      compatible = "qemu,trace-component", "riscv,trace-component";
-> +      reg = <0xc002000 0x1000>;
-> +      cpu = <&CPU1>;
-> +      out-ports {
-> +        port {
-> +          CPU1_ENCODER_OUTPUT: endpoint {
-> +            remote-endpoint = <&CPU1_RAMSINK_INPUT>;
-> +          };
-> +        };
-> +      };
-> +    };
-> +
-> +    ramsink@c003000 {
-> +      compatible = "qemu,trace-component", "riscv,trace-component";
-> +      reg = <0xc003000 0x1000>;
-> +      cpu = <&CPU1>;
-> +      in-ports {
-> +        port {
-> +          CPU1_RAMSINK_INPUT: endpoint {
-> +          };
-> +        };
-> +      };
-> +    };
-> +
-> +...
-> -- 
-> 2.43.0
-> 
+>  static void tas2781_apply_calib(struct tasdevice_priv *p)
+>  {
+>  	struct calidata *cali_data =3D &p->cali_data;
+> @@ -103,8 +120,7 @@ static void tas2781_apply_calib(struct tasdevice_priv=
+ *p)
+> =20
+>  				data[l] =3D k;
+>  				oft++;
+> -				for (i =3D 0; i < TASDEV_CALIB_N * 4; i++)
+> -					data[l + i + 1] =3D data[4 * oft + i];
+> +				cali_cnv(data, 4 * oft, l);
+>  				k++;
+>  			}
+>  		}
+> @@ -130,9 +146,8 @@ static void tas2781_apply_calib(struct tasdevice_priv=
+ *p)
+> =20
+>  		for (j =3D p->ndev - 1; j >=3D 0; j--) {
+>  			l =3D j * (cali_data->cali_dat_sz_per_dev + 1);
+> -			for (i =3D TASDEV_CALIB_N * 4; i > 0 ; i--)
+> -				data[l + i] =3D data[p->index * 5 + i];
+> -			data[l+i] =3D j;
+> +			cali_cnv(data, cali_data->cali_dat_sz_per_dev * j, l);
+> +			data[l] =3D j;
+>  		}
+>  	}
+> =20
 
