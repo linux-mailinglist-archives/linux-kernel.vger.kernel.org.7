@@ -1,109 +1,106 @@
-Return-Path: <linux-kernel+bounces-840423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08636BB4627
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 17:44:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88EECBB4630
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 17:44:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9B9374E1510
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 15:44:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48CE73BDD75
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 15:44:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24EE12264C7;
-	Thu,  2 Oct 2025 15:43:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85EEE2264CF;
+	Thu,  2 Oct 2025 15:44:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="jyR6lfly"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Itwu3wci"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5239A21348;
-	Thu,  2 Oct 2025 15:43:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D85472253EC;
+	Thu,  2 Oct 2025 15:44:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759419836; cv=none; b=eli+OvuHBNlrVjJNAIc8QAHL3eJ7JLmWWQSlIF9h/VS56bYHixlyqTGY/P91k4sheTOKU0UmdaLEjWqIq+pvxZHKUWB5g7fjFSivGTJ+3pPDNYQaiBVKcGZv3B9ANExn6K3+0cUTUcUqj9ZP2WVlPBvylKkHmEtZTOZNYg/UM0k=
+	t=1759419866; cv=none; b=tyO6iEzvgoiowGJ/A1bsEtNw5cXzPIatW7MKVJ1t/ndRfkEXvVTWOIJTOTgdHzphryNMm4zErByP7JhUwj4IL2uYau8zcl7UQA3zirgFYyN23lR0G3biaY29v6uaNSzfb4qDC6T/dvF0Yx6K26+pweUU+c5DCCj4p9gZW+hakdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759419836; c=relaxed/simple;
-	bh=Ygig/gwXFfTw25IMNCToOkgFqzdwvG3H+SO9QZbFmBc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XKl9DQaW51WaCxyatVIvCtwYpnnQl/l8V8wXzOp0SW8tScCk752ctO+j58e9qpX5OCMrG7S/Hp08BKwSQgcIPcfu60gYQ9yqqgED9jrA5rpAbS9pCkQCs53ZbtCW209TlHp9c9ApAf+k6r89HvHFbM9mmmEmKgooObwNYfVOMF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=jyR6lfly; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60DEAC4CEF4;
-	Thu,  2 Oct 2025 15:43:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1759419835;
-	bh=Ygig/gwXFfTw25IMNCToOkgFqzdwvG3H+SO9QZbFmBc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jyR6lflyFXF85n+nvxEyp/s4vpX8Ud1Qwm/CtGn2KmGAcj3vSDvLpW8HJOwJcxAGy
-	 tJN7KoCYFDacc7Ub/8m+Qs1bWEvF7HKdKIbTb6Y5aZat2BKQfnUPP1k1GjVJMq49kN
-	 yRUdezcYvHpNbhlbR9wMxXIgaZbnsExUFzVo04nw=
-Date: Thu, 2 Oct 2025 17:43:52 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Hugo Villeneuve <hugo@hugovil.com>
-Cc: jirislaby@kernel.org, fvallee@eukrea.fr, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	Hugo Villeneuve <hvilleneuve@dimonoff.com>, stable@vger.kernel.org
-Subject: Re: [PATCH v2 01/15] serial: sc16is7xx: remove useless enable of
- enhanced features
-Message-ID: <2025100219-neon-litter-24c0@gregkh>
-References: <20251002145738.3250272-1-hugo@hugovil.com>
- <20251002145738.3250272-2-hugo@hugovil.com>
+	s=arc-20240116; t=1759419866; c=relaxed/simple;
+	bh=gwC5BhJBwYKgsnNt4fN26IJ79zFAZbre4VusA+f9pes=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=pP9Xc5uP2pfUtpUllowr6SvUEJsjHB0mRCtZgcDtoHi+Lb4Zi2IWQ7L4thjRmGJCSn56r0KHahqdhPVk5iz9VhzXIHw6lmg2i0xAFFWfWcwYpeDWIyH8v83XJJp6IXc+SfRNKMH1EaDsYJYxrN3vXgqf/cvqLXkPDz75xR0OVm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Itwu3wci; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BEDDC4CEF4;
+	Thu,  2 Oct 2025 15:44:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759419865;
+	bh=gwC5BhJBwYKgsnNt4fN26IJ79zFAZbre4VusA+f9pes=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=Itwu3wciA297/eNzH7IsKflMpXmHgbzbByzzUeWY++7lJqzQG0//z8vEeua0uNuGi
+	 wCUHifUd3ejiiE5D7rPb6mJcNvPXe6wgeslW0kVP31U0pjh94O4jfPJwY2kBFlefhM
+	 SAtSZT0/ONJmBewr0/tjHlkQ8zgP/8MaH7XK/B80jSDT5t8e/dHc8kZeLSNH6sD3ct
+	 /iSGvoBU1ikZfyhYnUdrpl3jhqgBTX14a42i1DQ3hk/vuReiwRdLhfx4PP3eJSCdBD
+	 Deas6xrGBPbyqDSAEAIOWixKRAtXdRtZoEdXzfRhE84fZPMmIsWgDRN4dXPPy0Cx/Z
+	 4LwZX6SXCtr9w==
+From: Mark Brown <broonie@kernel.org>
+To: linux-spi@vger.kernel.org, Conor Dooley <conor@kernel.org>
+Cc: Conor Dooley <conor.dooley@microchip.com>, 
+ Jun Guo <Jun.Guo@cixtech.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Michal Simek <michal.simek@amd.com>, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org
+In-Reply-To: <20251001-basics-grafting-a1a214ef65ac@spud>
+References: <20251001-basics-grafting-a1a214ef65ac@spud>
+Subject: Re: (subset) [PATCH v1 1/2] spi: dt-bindings: cadence: add
+ soc-specific compatible strings for zynqmp and versal-net
+Message-Id: <175941986332.90691.14872518520812537985.b4-ty@kernel.org>
+Date: Thu, 02 Oct 2025 16:44:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251002145738.3250272-2-hugo@hugovil.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-56183
 
-On Thu, Oct 02, 2025 at 10:57:24AM -0400, Hugo Villeneuve wrote:
-> From: Hugo Villeneuve <hvilleneuve@dimonoff.com>
+On Wed, 01 Oct 2025 19:31:12 +0100, Conor Dooley wrote:
+> When the binding for the Cadence spi controller was written, a dedicated
+> compatible was added for the zynq device. Later when zynqmp and
+> versal-net, which also use this spi controller IP, were added they did
+> not receive soc-specific compatibles. Add them now, with a fallback to
+> the existing compatible for the r1p6 version of the IP so that there
+> will be no functional change. Retain the r1p6 in the string, to match
+> what was done for zynq.
 > 
-> Commit 43c51bb573aa ("sc16is7xx: make sure device is in suspend once
-> probed") permanently enabled access to the enhanced features in
-> sc16is7xx_probe(), and it is never disabled after that.
-> 
-> Therefore, remove useless re-enable of enhanced features in
-> sc16is7xx_set_baud().
-> 
-> Fixes: 43c51bb573aa ("sc16is7xx: make sure device is in suspend once probed")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Hugo Villeneuve <hvilleneuve@dimonoff.com>
-> ---
->  drivers/tty/serial/sc16is7xx.c | 7 -------
->  1 file changed, 7 deletions(-)
-> 
-> diff --git a/drivers/tty/serial/sc16is7xx.c b/drivers/tty/serial/sc16is7xx.c
-> index 1a2c4c14f6aac..c7435595dce13 100644
-> --- a/drivers/tty/serial/sc16is7xx.c
-> +++ b/drivers/tty/serial/sc16is7xx.c
-> @@ -588,13 +588,6 @@ static int sc16is7xx_set_baud(struct uart_port *port, int baud)
->  		div /= prescaler;
->  	}
->  
-> -	/* Enable enhanced features */
-> -	sc16is7xx_efr_lock(port);
-> -	sc16is7xx_port_update(port, SC16IS7XX_EFR_REG,
-> -			      SC16IS7XX_EFR_ENABLE_BIT,
-> -			      SC16IS7XX_EFR_ENABLE_BIT);
-> -	sc16is7xx_efr_unlock(port);
-> -
->  	/* If bit MCR_CLKSEL is set, the divide by 4 prescaler is activated. */
->  	sc16is7xx_port_update(port, SC16IS7XX_MCR_REG,
->  			      SC16IS7XX_MCR_CLKSEL_BIT,
-> -- 
-> 2.39.5
-> 
-> 
+> [...]
 
-Why is this needed for stable kernels?  It's useless, what is it
-harming?
+Applied to
 
-If so, please send it separately, not as a part of a larger series.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
-thanks,
+Thanks!
 
-greg k-h
+[1/2] spi: dt-bindings: cadence: add soc-specific compatible strings for zynqmp and versal-net
+      commit: 4092fc5f35cecb01d59b2cdf7740b203eac6948a
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
