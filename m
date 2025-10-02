@@ -1,135 +1,194 @@
-Return-Path: <linux-kernel+bounces-840103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A095BB38AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 12:05:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CD68BB3923
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 12:12:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 434743B8ED1
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 10:05:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A033D420341
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 10:12:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11A19307AFC;
-	Thu,  2 Oct 2025 10:05:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B32D52DC33F;
+	Thu,  2 Oct 2025 10:11:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="swMslxe1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="h/jMcbZ9"
+Received: from out203-205-221-173.mail.qq.com (out203-205-221-173.mail.qq.com [203.205.221.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 596872F9DAA;
-	Thu,  2 Oct 2025 10:05:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 923452E8E04
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 10:11:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759399507; cv=none; b=iR0g6Kr/nkvciCvRU2HvuMi9gF+onGcldzo7l8ntZevjKMUQBCj/dX0DkuvF6EVx5vXSxaQFd3js40l5Yw9uM/FLeOi+2nZfL9P5vM4Oec/xCqB09azijVeguq0nWFP8pbSQGSf229YaPD9rt4udcfrsUr/1GKp76ltPDxBBsxY=
+	t=1759399917; cv=none; b=HDKoScjRjWPYbYDvN8h5SxEGYJzjxnPrviOHjUsZmeBh1FObfyJMwPrFgWn4lWhFEGZ+1FizftW7roWrboVEWEi4dBd+2YiYsD8OQPL1XhfI+HwPrSuc1TtZxTwD4GCACX8oujjDU5BElwHk95nLBb3npJJg0I6WoMgEpnC3OS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759399507; c=relaxed/simple;
-	bh=43VmTyo3I9yDcdG/XrenUu3ZccT9um6SIJwmcsXdESo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hAIW8Zfevg4KhdgA9zih+C1KGvEs9SFJg8L53mI5lBF2xdSECs2ZLW7m9Rnex/p7pxtl5RyKTkgIX1Mzjj8j8x/CxOvyjvHVOKADewpI5IRCMSqrf0IwWRaSwiG4eKgRGAbs1nO5yiHYNgUVJGEDI0DwaT6oxWsLufe38O2nPiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=swMslxe1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E1A8C4CEF4;
-	Thu,  2 Oct 2025 10:05:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759399506;
-	bh=43VmTyo3I9yDcdG/XrenUu3ZccT9um6SIJwmcsXdESo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=swMslxe1w7iK0gX0EtpkANRU2R9c92tgYs/ke/aJ6+KZlpp+MIRtyiVoZUyGNOD87
-	 NCHsUy2QDqNBHXmuuip385IW44fNeE0x5bZIKPeeDxk2LwfjrOgWvg+P9wf6oKe4nH
-	 xptn2PoqXQdFJ1UYVIXqx4Xg8g3BOFqSQDOdxTR6yN548uCUAo8KnhE7Oq4toUgzXN
-	 GaGaA4JQQaxcOFYmlPbzQc0rq6t76Ezp/l6treQeQ9ICSJDN1PYLHOsyrnPASDrtUb
-	 NWcWSA0k4e0QN1nJy7DXgVcwuAoZP0k2wnRUL4RG2Ckd1ToLIyKBbMjkaN7qzV1K+A
-	 b4KapyI4GckqA==
-Message-ID: <562363e8-ea90-4458-9f97-1b1cb433c863@kernel.org>
-Date: Thu, 2 Oct 2025 12:05:03 +0200
+	s=arc-20240116; t=1759399917; c=relaxed/simple;
+	bh=3DZGPUVfINzn9M18pJFNdHGKgILIpIG43AKZLu4U4hk=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=rO96pK9v+RNnWaOJIIZsXUNzLcMHw2yKtccZ5kl4wYvqHDJrs5V0ex5bBu0oK4Ji8FtU1M7vtiJtYTlReb8z2AQGeDAU3M2lW92k347/CykilLiWihkEa68FztkWEdncKLnBriBAPHSPFfKk10Jz6U540c+4i8SApvCOdWpQ1Uo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=h/jMcbZ9; arc=none smtp.client-ip=203.205.221.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1759399604; bh=e2cGqQZioL2jBdVD9CKHeGOlxseyAb6Dt+AG4bgrTAA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=h/jMcbZ9UbDo8f630e0O7YcuFyrebhk5PKff7FvzKHbC7Vpp4TosaWg8RLSGL3RGm
+	 OW7ItamRYy0aibceYDhiXUMJiFLoeAhWjCxKJu6uC52GxGKrehnXuRXhTd14W4nSOX
+	 tf/26G4aabQ2tumeWjW9iL8sjGw9v0Av6yPTNn8k=
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+X-QQ-XMAILINFO: N8i9SvusUD3bxrxtkjX67Qk9yJUQYqygSzIxXmxnYAjJE8avjA3XVeVUWSEZYF
+	 jQKBHpkFUZYIOoTXObb+CDi6wF4K9JFy7lJ84ZyCeGkGuNMGkiOPlJHHlSLNJUNkhJoLgiC5yCHay
+	 nkuXMs69ZMObiNpogf4sJniHUoPiyNjrfr6zX0u7qQcdBksTMVpSfKD3PuqaO4JxJudwcIPbvjnXi
+	 TGlIlj9qzMozFsN8MNzqEphesEOYaNG2NzPt1YVa+k4v1bUQ2qCt13ssKaSa0IS4ZjXqqamZdvx0A
+	 PWDTWabBuX1c+3n0vAigklHyNJiZq14EqxplxJG4B3U0uD6BlNgTEeokiC8WbhHZ/UooK2eO4oe1A
+	 9b334la8ubst8tuxK9vXv4/mWlO4xHauEWg7EV242nQtoNpp63ihZFBquRWqi4122iPUd3TdmTy4K
+	 MjoAcqkuGdiZsyb/cnkcZ/AIn3Z6KGzRQIQre8y9q716zY+H9CfakLW+RL6X3a9V+itP6WMmW07tC
+	 6iNgWlKYwpEs1YXYoXv+G1zM2lxaXMyFfEQ3rKWsCKD8V+10PfE5qHfZP6slRfA+A7ZmkOloAHhPw
+	 9geeCCfWew0At+J2VCb/QrHlf2aWMnatHerPH0RmuD3nNjC9YcJSgHK8lXdDJTx7mncGSlVITFPW5
+	 enx+9Uokvgzx9DRCVex7zo30hHAGn7KmSv0LWtNIMKG7oG06ZVy1+4FDZz+qwlx72Zv8Kfq6/vmq1
+	 DHAVcSnxhfCry65TuKWgYFNcSKCHfrfoTpBUW7gihsaWRHHCuaMfArb6W8Oz0nlqn4N0ZytueMw3f
+	 IcHIOO3l/SVr2jPxdQCNvEQxzTnSinns5XJ5kPx5yR2jBmHRLH4s4mWfeN80zE2nQwJImYx7dCaqJ
+	 ly+tS5h/kspyk2b90lr9A6sVgAA//VunGRAuFnU1uww0OrklZGXvHkd9l+qhpAy6lpe2ZwxiIfuRK
+	 EU+Fk6S11qEN5yCp88Nt65snWqt+5x6gOOzfrjFfvHO0/Gxptwdb+3y9ECiEPzXWlkLDQ4Rmrzug4
+	 A2kg9jRMvbcpv/cxosDsArZ/61fANdakP0iDxcT/voLJeXwktJDwzR4QH24LX/J7w6YZoXkSKJ62d
+	 nz4=
+Received: from localhost.localdomain ([113.102.238.209])
+	by newxmesmtplogicsvrszb42-0.qq.com (NewEsmtp) with SMTP
+	id 1A7B5A8C; Thu, 02 Oct 2025 18:06:39 +0800
+X-QQ-mid: xmsmtpt1759399599twl7bi503
+Message-ID: <tencent_13F1EDE0D6B7A44697F31AE274C8E664E908@qq.com>
+From: Guangbo Cui <2407018371@qq.com>
+To: byungchul@sk.com
+Cc: Liam.Howlett@oracle.com,
+	amir73il@gmail.com,
+	andi.shyti@kernel.org,
+	andrii@kernel.org,
+	boqun.feng@gmail.com,
+	bsegall@google.com,
+	gregkh@linuxfoundation.org,
+	linaro-mm-sig@lists.linaro.org,
+	link@vivo.com,
+	linux-kernel@vger.kernel.org,
+	mark.rutland@arm.com,
+	masahiroy@kernel.org,
+	mathieu.desnoyers@efficios.com,
+	matthew.brost@intel.com,
+	max.byungchul.park@gmail.com,
+	mcgrof@kernel.org,
+	melissa.srw@gmail.com,
+	mgorman@suse.de,
+	mhocko@kernel.org,
+	minchan@kernel.org,
+	oleg@redhat.com,
+	paulmck@kernel.org,
+	penberg@kernel.org,
+	peterz@infradead.org,
+	petr.pavlu@suse.com,
+	torvalds@linux-foundation.org,
+	vincent.guittot@linaro.org,
+	will@kernel.org,
+	yeoreum.yun@arm.com,
+	ysk@kzalloc.com,
+	rust-for-linux@vger.kernel.org,
+	ojeda@kernel.org,
+	gary@garyguo.net,
+	lossin@kernel.org,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	dakr@kernel.org,
+	alex.gaynor@gmail.com,
+	bjorn3_gh@protonmail.com,
+	Guangbo Cui <2407018371@qq.com>
+Subject: [PATCH] rust: bindings: add `rust_helper_wait_for_completion` helper function
+Date: Thu,  2 Oct 2025 10:06:17 +0000
+X-OQ-MSGID: <20251002100616.19216-2-2407018371@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251002081247.51255-37-byungchul@sk.com>
+References: <20251002081247.51255-37-byungchul@sk.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] Crypto Update for 6.17
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- "David S. Miller" <davem@davemloft.net>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
- Vegard Nossum <vegard.nossum@oracle.com>, netdev@vger.kernel.org
-References: <aIirh_7k4SWzE-bF@gondor.apana.org.au>
- <05b7ef65-37bb-4391-9ec9-c382d51bae4d@kernel.org>
- <aN5GO1YLO_yXbMNH@gondor.apana.org.au>
-Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <aN5GO1YLO_yXbMNH@gondor.apana.org.au>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 02. 10. 25, 11:30, Herbert Xu wrote:
-> On Thu, Oct 02, 2025 at 10:10:41AM +0200, Jiri Slaby wrote:
->> On 29. 07. 25, 13:07, Herbert Xu wrote:
->>> Vegard Nossum (1):
->>>         crypto: testmgr - desupport SHA-1 for FIPS 140
->>
->> Booting 6.17 with fips=1 crashes with this commit -- see below.
->>
->> The crash is different being on 6.17 (below) and on the commit --
->> 9d50a25eeb05c45fef46120f4527885a14c84fb2.
->>
->> 6.17 minus that one makes it work again.
->>
->> Any ideas?
-> 
-> The purpose of the above commit is to remove the SHA1 algorithm
-> if you boot with fips=1.  As net/ipv6/seg6_hmac.c depends on the
-> sha1 algorithm, it will obviously fail if SHA1 isn't there.
+> -extern void wait_for_completion(struct completion *);
+> -extern void wait_for_completion_io(struct completion *);
+> -extern int wait_for_completion_interruptible(struct completion *x);
+> -extern int wait_for_completion_killable(struct completion *x);
+> -extern int wait_for_completion_state(struct completion *x, unsigned int state);
+> -extern unsigned long wait_for_completion_timeout(struct completion *x,
+> +extern void __wait_for_completion(struct completion *);
+> +extern void __wait_for_completion_io(struct completion *);
+> +extern int __wait_for_completion_interruptible(struct completion *x);
+> +extern int __wait_for_completion_killable(struct completion *x);
+> +extern int __wait_for_completion_state(struct completion *x, unsigned int state);
+> +extern unsigned long __wait_for_completion_timeout(struct completion *x,
+>  						   unsigned long timeout);
+> -extern unsigned long wait_for_completion_io_timeout(struct completion *x,
+> +extern unsigned long __wait_for_completion_io_timeout(struct completion *x,
+>  						    unsigned long timeout);
+> -extern long wait_for_completion_interruptible_timeout(
+> +extern long __wait_for_completion_interruptible_timeout(
+>  	struct completion *x, unsigned long timeout);
+> -extern long wait_for_completion_killable_timeout(
+> +extern long __wait_for_completion_killable_timeout(
+>  	struct completion *x, unsigned long timeout);
+>  extern bool try_wait_for_completion(struct completion *x);
+>  extern bool completion_done(struct completion *x);
+> @@ -139,4 +134,79 @@ extern void complete(struct completion *);
+>  extern void complete_on_current_cpu(struct completion *x);
+>  extern void complete_all(struct completion *);
+>  
+> +#define wait_for_completion(x)						\
+> +({									\
+> +	sdt_might_sleep_start_timeout(NULL, -1L);			\
+> +	__wait_for_completion(x);					\
+> +	sdt_might_sleep_end();						\
+> +})
 
-Ok, but I don't immediately see what is one supposed to do to boot 6.17 
-distro (openSUSE) kernel with fips=1 then?
+The DEPT patch series changed `wait_for_completion` into a macro.
+Because bindgen cannot handle function-like macros, this caused
+Rust build errors. Add a helper function to fix it.
 
+```
+error[E0425]: cannot find function `wait_for_completion` in crate `bindings`
+     --> rust/kernel/sync/completion.rs:110:28
+      |
+  110 |         unsafe { bindings::wait_for_completion(self.as_raw()) };
+      |                            ^^^^^^^^^^^^^^^^^^^ help: a function with a similar name exists: `__wait_for_completion`
+      |
+     ::: /root/linux/rust/bindings/bindings_generated.rs:33440:5
+      |
+33440 |     pub fn __wait_for_completion(arg1: *mut completion);
+      |     ---------------------------------------------------- similarly named function `__wait_for_completion` defined here
+
+error: aborting due to 1 previous error
+
+For more information about this error, try `rustc --explain E0425`.
+```
+
+Signed-off-by: Guangbo Cui <2407018371@qq.com>
+---
+ rust/helpers/completion.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/rust/helpers/completion.c b/rust/helpers/completion.c
+index b2443262a2ae..5bae5e749def 100644
+--- a/rust/helpers/completion.c
++++ b/rust/helpers/completion.c
+@@ -6,3 +6,8 @@ void rust_helper_init_completion(struct completion *x)
+ {
+ 	init_completion(x);
+ }
++
++void rust_helper_wait_for_completion(struct completion *x)
++{
++	wait_for_completion(x);
++}
 -- 
-js
-suse labs
+2.43.0
+
 
