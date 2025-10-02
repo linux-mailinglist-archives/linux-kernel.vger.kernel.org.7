@@ -1,99 +1,145 @@
-Return-Path: <linux-kernel+bounces-840142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02480BB3ACD
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 12:42:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98F94BB3AD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 12:42:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6593326E94
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 10:42:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50A8E19C1F4A
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 10:42:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7590A30C611;
-	Thu,  2 Oct 2025 10:41:47 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A64BE30C0FC
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 10:41:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B60530BF58;
+	Thu,  2 Oct 2025 10:42:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Is5IduLX"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA7530AD09
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 10:42:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759401707; cv=none; b=dAOqDF6Fm7e2v0iccpg191v+MFdX0DaAMpR6CRZLDaApNqhOIYfZCrXtUpeT3kADMX/sUL/FiJ9VxmHKBOwAYZpaKpF6V/wIchDQA0a51phLWuhEY7KS4GOMFfCVal7X4tPQvqZttjehfj8zG0ZfF6X21oKbMPCEI+QBSUGJztY=
+	t=1759401723; cv=none; b=OzlhbzVu1+WeeJ1BRA8ZKNGNzfN2w5twllnt1HyI8udwZYrEwMq4KaB9wLAJiYc97ldL40d207f+2BPLJggur1aI8VvrDD9ye1ru0ZXFHs9sV7dOwU4c30RYrNO0xBadx120YWko48GASHAQ7eYTHq+ImgJBVtH+DFex16mUZp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759401707; c=relaxed/simple;
-	bh=Tc2tlrvnzN8WD+XBjsOC5s/ZOeCjDjtgz4a7rGm1tck=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=X7qwiuNiry497qryMbW447r5YBDQ3UyQ4caydD1wkTpBcQ6ByTOpivUx9OmsqdvqcLWEQUepy2kyME8EW9wed8RFLA7ZP7EBEVTivFG4V17OXDIGdonzTrvdY42HYJ8TAFPHDS/O7LwZaRG57c+1L4UyCwdqnWq5iNusE1Hn7D8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 04AAA1692;
-	Thu,  2 Oct 2025 03:41:37 -0700 (PDT)
-Received: from [10.57.2.240] (unknown [10.57.2.240])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2493F3F66E;
-	Thu,  2 Oct 2025 03:41:42 -0700 (PDT)
-Message-ID: <74e2f1a8-0410-4a5e-bbf3-29d5d5d55308@arm.com>
-Date: Thu, 2 Oct 2025 11:41:38 +0100
+	s=arc-20240116; t=1759401723; c=relaxed/simple;
+	bh=r1Iv5PxlSFXBdk6FkJyAuWVSJJAJTI855hgQ2son99M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FBHRG106UeaXzjFZ16s2vVrRfXpsxgksoNzw+9B+5fVMSZbOqie0BesN75rsVTzsqgInGYsBaWxSJgZs48EuADlif00jdX2N4Wehua76gWxZ+UL7mkAy/OfZ+yc+iWo9v05lG3CX3d0FMYTsa9fUek7L4R7axmF6UXRcpnQxkIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Is5IduLX; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-3324fdfd54cso1086065a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 03:42:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759401721; x=1760006521; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=m0rfQXn18l2tTAMnF1By1OoocjO9lOTD4YqEsuU82z4=;
+        b=Is5IduLXHH6wirBNF6cvQdOZNCPMAzvI8cfI5U3ereQyB2EIcl0dZvHjkctm7Z3pv/
+         Let+aZYcCbVDTVm/n3ujca76ejKbVeUAcij2/dj4kGVArQcho6FyDX4FB4jZk2vWPQ9O
+         Mks2Eq3FytnEXW/+XqV5AvANrNUR7k/LeshItd+QYvZzfmuNQZb+ziNmkxC1HerLLhw1
+         9BMIXYbo8FHBIfb5Wlp4Vu7TnnNojqA57fQ7Mjt6rKBzrK+RN1dtxICPpsYH99miNG95
+         q1tzbyO+8Wqd8r+cxcdH1nXeuX5rhgvPYFc87ippM7tWFQcxXGJosxFIbrnZOmOlhW1V
+         jNlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759401721; x=1760006521;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=m0rfQXn18l2tTAMnF1By1OoocjO9lOTD4YqEsuU82z4=;
+        b=goBP6SuZYHJL4HPlpaZUAKJn+G7OpFvF+ugrydOhCPAmqITK9Y30kcVYccxWN0eZic
+         2YqF+kZEfRAT8jCk9dEseDj701jRP0rqfT20KTHQoy14LeT7ZAcHcqIZ/vT1chfptRlO
+         caKbdbfZ+N58ny2V9F4gedHIs6yrLEa/HJuG4JyOG4O4y8GYQJr6VE2GPb3zJPyUyIpA
+         nrbTS44Y5uykDM0uy7g1Wt4MgULsatHV/7DsSbPlfTWEfjiUVHRlRpwH1Q85ZR6cla+0
+         TqLUwqqJM0uhwZtEdi/Z6pJrFqagc1LHIx+PMLLumQCm8G5DNRdwhxdXfcv39RYOLWs9
+         OKkw==
+X-Forwarded-Encrypted: i=1; AJvYcCXBTnK529mUsBdnuYB3ulI77EnoK77HVTBbW7e69hLR1Ba03zFTw5+EY4GJ+Rbdzbm7TPGKi7+ClzXovL8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzU7YBXYeTj6R/bxrEo09cFUpiWJmRWzNdr5Ytx+K1mKpOibJYz
+	VgR986z79hB/LxZirkzel87sKHtzYKJ12EQWZnv8ZAqHIbpdM5lkc8hu
+X-Gm-Gg: ASbGnctaaEfN3cNqtclYfFXw9t3NaKSx9/wQaA9eR5Vo0P/I30z3ZmzeEO+QmJDyW/G
+	ohji6MYvCxsuQhJg5HVjsgtaWdyySN0QwelXgYR8wI2tyeQfEcL0ceuyitLJZf6A7K1dPRatuj9
+	2aVL9bnz+4KOSP2WM/paIfVk+UvmITWXaIVp7dwHWvvPSFMrXdd6FDOcSbL/0mundpliNmheX7w
+	/+a33TXQviniQlgBlQKAYLN0TJgeyPb5Y1jrD5d1BduAfq8NGfHMPr+VLNY+9ls21MlX8K55+ki
+	op6cUNkGzrhQwm+aPaEpGgvVkUdSUvRi2D2HRMkq1W6U5RzzaZE5f8D6ApaIljbLek8neBUIGgA
+	qOuF22pT5xNPJ86SFzHyDHZLrB8rPG3yMTi8uUiS8jMJ3J4JxNsW+SLEgg14pF1RhZcqZHiWibW
+	97G0mVoGXwVcpfuoc9CT1Oef5Ih9ck1DgJQu60VA==
+X-Google-Smtp-Source: AGHT+IGQ2AWzZDPz/YAhggZ0WM3ScwDOuQ20HhIL/1AKelC3gwa3qTa+zyPA6jKSa0nR6Ejrp3NNDQ==
+X-Received: by 2002:a17:90b:4d0a:b0:330:6f16:c4e0 with SMTP id 98e67ed59e1d1-339a6e94003mr9490535a91.12.1759401721223;
+        Thu, 02 Oct 2025 03:42:01 -0700 (PDT)
+Received: from deepanshu-kernel-hacker.. ([2405:201:682f:389d:5615:a275:dd45:da86])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6099af3cf6sm1714004a12.13.2025.10.02.03.41.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Oct 2025 03:42:00 -0700 (PDT)
+From: Deepanshu Kartikey <kartikey406@gmail.com>
+To: tytso@mit.edu,
+	adilger.kernel@dilger.ca
+Cc: linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Deepanshu Kartikey <kartikey406@gmail.com>,
+	syzbot+3ee481e21fd75e14c397@syzkaller.appspotmail.com
+Subject: [PATCH] ext4: reject inline data flag when i_extra_isize is zero
+Date: Thu,  2 Oct 2025 16:11:51 +0530
+Message-ID: <20251002104151.2392385-1-kartikey406@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 07/10] drm/panthor: remove unnecessary mmu_hw_wait_ready
- calls
-To: Chia-I Wu <olvaffe@gmail.com>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Grant Likely <grant.likely@linaro.org>, Heiko Stuebner <heiko@sntech.de>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250916210823.4033529-1-olvaffe@gmail.com>
- <20250916210823.4033529-8-olvaffe@gmail.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20250916210823.4033529-8-olvaffe@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 16/09/2025 22:08, Chia-I Wu wrote:
-> No need to call mmu_hw_wait_ready after panthor_gpu_flush_caches or
-> before returning from mmu_hw_flush_caches.
+Prevent use-after-free in ext4_search_dir by rejecting inodes that
+claim to have inline data but have no extra inode space allocated.
 
-Why is there no need? If we attempt to send a command when the hardware
-is busy then the command will be dropped (so the cache flush won't
-happen), and if we don't wait for the unlock command to complete then
-then we don't know that the flush is complete.
+ext4 inline data is stored in the extra inode space beyond the
+standard 128-byte inode structure. This requires i_extra_isize to be
+non-zero to provide space for the system.data xattr that stores the
+inline directory entries or file data.
 
-Thanks,
-Steve
+However, a corrupted filesystem can craft an inode with both:
+- i_extra_isize == 0 (no extra space)
+- EXT4_INODE_INLINE_DATA flag set (claims to use extra space)
 
-> Signed-off-by: Chia-I Wu <olvaffe@gmail.com>
-> ---
->  drivers/gpu/drm/panthor/panthor_mmu.c | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
-> index 373871aeea9f4..c223e3fadf92e 100644
-> --- a/drivers/gpu/drm/panthor/panthor_mmu.c
-> +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
-> @@ -669,12 +669,9 @@ static int mmu_hw_flush_caches(struct panthor_device *ptdev, int as_nr, u64 iova
->  	 * at the end of the GPU_CONTROL cache flush command, unlike
->  	 * AS_COMMAND_FLUSH_MEM or AS_COMMAND_FLUSH_PT.
->  	 */
-> -	ret = mmu_hw_wait_ready(ptdev, as_nr);
-> -	if (!ret)
-> -		mmu_hw_cmd_unlock(ptdev, as_nr);
-> +	mmu_hw_cmd_unlock(ptdev, as_nr);
->  
-> -	/* Wait for the unlock command to complete */
-> -	return mmu_hw_wait_ready(ptdev, as_nr);
-> +	return 0;
->  }
->  
->  static int mmu_hw_do_operation(struct panthor_vm *vm,
+This creates a fundamental inconsistency. When i_extra_isize is zero,
+ext4_iget() skips calling ext4_iget_extra_inode(), which means the
+inline xattr validation in check_xattrs() never runs. Later, when
+ext4_find_inline_entry() attempts to access the inline data, it reads
+unvalidated and potentially corrupt xattr structures, leading to
+out-of-bounds memory access and use-after-free.
+
+Fix this by validating in ext4_iget() that if an inode has the
+EXT4_INODE_INLINE_DATA flag set, i_extra_isize must be non-zero.
+This catches the corruption at inode load time before any inline
+data operations are attempted.
+
+Reported-by: syzbot+3ee481e21fd75e14c397@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=3ee481e21fd75e14c397
+Tested-by: syzbot+3ee481e21fd75e14c397@syzkaller.appspotmail.com
+Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
+---
+ fs/ext4/inode.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 5b7a15db4953..d082fff675ac 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -5417,6 +5417,12 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
+ 
+ 	if (EXT4_INODE_SIZE(inode->i_sb) > EXT4_GOOD_OLD_INODE_SIZE) {
+ 		if (ei->i_extra_isize == 0) {
++			if (ext4_has_inline_data(inode)) {
++				ext4_error_inode(inode, function, line, 0,
++						 "inline data flag set but i_extra_isize is zero");
++				ret = -EFSCORRUPTED;
++				goto bad_inode;
++			}
+ 			/* The extra space is currently unused. Use it. */
+ 			BUILD_BUG_ON(sizeof(struct ext4_inode) & 3);
+ 			ei->i_extra_isize = sizeof(struct ext4_inode) -
+-- 
+2.43.0
 
 
