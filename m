@@ -1,92 +1,54 @@
-Return-Path: <linux-kernel+bounces-840325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2645BB41E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 16:01:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3715BB41E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 16:02:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65A1117C603
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 14:01:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01DC63B82EE
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 14:02:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B3DD312803;
-	Thu,  2 Oct 2025 14:01:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 356E02C027F;
+	Thu,  2 Oct 2025 14:02:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="kqSpm3Qx"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d8EASvGD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9734325A2A7
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 14:01:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4C0139E;
+	Thu,  2 Oct 2025 14:02:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759413701; cv=none; b=PzEumIWho40KdPm69pGj38nnJsE2vzYXRxrg0wMzW73zPs/H8bZjs4pIV0eGFfVClaQLUJPC4KNUw8HQYKTl4BSStcTu0zMM0nrsVY21WEqLDKmV9bXyZMsHIfdrlbCe+I6il8O22smWje+9xMH/B3Le8aaa/pcDIMImKoTYDLk=
+	t=1759413745; cv=none; b=tmN2fRDLzttqxAX4tQKLZKiCpw0z4foTe2q4HbG3KH4Mw+uFSMMUI+YUY1BzpnBo4wpol+hA1/YuD8oXrWEDk7jUWZGanzQ39rBeqVttu74PGX0kYnfipwfFUAp06J0WRqwtdGYBDTw9UWpD86aVwrabGbxsCl3zW3Cla4qDzxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759413701; c=relaxed/simple;
-	bh=618BSYEmgS36ili2g+UNYEY8LCBfl6PF30CT4JuRol4=;
+	s=arc-20240116; t=1759413745; c=relaxed/simple;
+	bh=Knz7TaS2NpECls0C9xbmF0c5aMf2bwguD/z7iQ6D85g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eGxA3eNyVN0F9H7Zen1CkzYF/pcOSEdO5pjw/ry5c6MKmic9mb5v0WMiC/yRPq7hAs8RfgCU4OxZVakoan+MebYIhrFDTwWMLohiUewtlrni1t/jXZ1IbxGuwvE7xkGHC/9cdu6u7+acYTfi79ACh/imOFlb14/0tEK/mec1IHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=kqSpm3Qx; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-46e61ebddd6so9999745e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 07:01:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1759413698; x=1760018498; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=618BSYEmgS36ili2g+UNYEY8LCBfl6PF30CT4JuRol4=;
-        b=kqSpm3QxD08j9LR0hRoezFn+7KvX9qBqxGpysY8VvhK5OKmxIJ3tyaNfVj5gD4Soxx
-         isItIpXOf1ZGLRbhxgqCkVcElFfnxVOU2wp2Wt67ch6H2l21Fy+a+jKcFTBfNhDrlWeP
-         8ykyG1+rp0DB4kLbNsKLmcvkzNxi6w7Sllw86EKAqaUwY6jkOfJUeJdTHYTiZ7VeWwLE
-         V2pBOusYz8x78FmeT40BlOevzSk5ekkcARO/qnxbhtTG+xQvPe5TZfbJ8pba/f8mz/bR
-         Wp3/R+4A+q3dbsqQhEOYHWWHJ4ocb1/dJDAw/lG7AprQm8tHjrMs/n1CcxM6A+ur+Jdt
-         AUCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759413698; x=1760018498;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=618BSYEmgS36ili2g+UNYEY8LCBfl6PF30CT4JuRol4=;
-        b=nIQdGYHRUo5WF9O9gO3vACJBhYoC4ClluxWdvPm+f9mFJLzr1UYuYtau4VjnOOK3B/
-         B8NrCe4wXoH1QePN3oYWpEJGD2o7vdgmtdIl6x6Jo1omPimqpMP8dXZm2gbIvdIhUSaR
-         FTZapl+TY0GltRoLzcJsfRFlcT1Wqk5UB285A0sOW0hSSaO0thwl1shpqlw52cXcuGlP
-         PULWdbLozxUx99FDIdPExxX8O6cf49i1YfoUCYmfMGUtnqc/btEv0vmnrP/u1E1lFN3y
-         GjW7m8ArI7aEezKro5VJfs3AgAvcEcWWmf46WNylHFk9k7siR9OtqByIn/6yxfISPUc2
-         /T4g==
-X-Forwarded-Encrypted: i=1; AJvYcCU4+OzWWjXwCk2Jwn6+76oY8nHjIZ/49Wd/KyX5E4BY5jApJ+YGDPKrILiXdnGXD01qmVrbAIoujJQVU9U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfwND1q1h8dQJ67qV+Z/fZNrwzn9ms+HThIyz8MaqCnMNOrVNH
-	9Bms5cJ5+pRF7lohIVVm0wq6v5BkqX8kTM9ymqqZVonxIHjxGvpQUEydtBti2ylRmwQ=
-X-Gm-Gg: ASbGncvJ7mUW1Oxv8Be+QHpe22iIKa3MZEmZabJLFp+Zol4dC1+D63X/cEPtc32Fkno
-	8Ts2Tt7kdMgeezKXTPVFmNyH8HOzqsfN4DHUL9EqOTNlBKX/J+/LUIiqRl9Ak9vMl6ezFhEGZ/b
-	7mRnrfc50otyIHJ92YhrNvuon2wvZVXQanMkRq7vSgjKLLRNIDJdNp057Jgjvn2xzjEdU/Xr30n
-	fU1ZiOdqMwzytTjVelbdLDNvv9yexVNJJaBIpPZwnOzIF/9yC42Vvzxh6J2Gdzcr65Bl4NFhuJO
-	fEsE4mIo9UBZ6Ne2WHzmNbewwR6ThR6oCsCGmp1SPwbzxVcmmCtcuWr2LTUWAT+fRlyWY5ImxQI
-	M3SDqLG0Y7Zp0L80UixpGMjzVn7WVxKKydzB9srEic70zTAmwINsjQkhSbBOilME9EqQJrUyk9e
-	4rtyrsJvJ7YlUchqUIDvfx/7c9hqv9WXn9g0q/qKIG
-X-Google-Smtp-Source: AGHT+IG5EPzxsZqj3ktM8dBJGC4KrYqeEY07Pvs0vWo4hOFgdW8tS/BF6CeIhvLzJ6wrhzsLtCCTXg==
-X-Received: by 2002:a05:600c:4586:b0:450:cabd:b4a9 with SMTP id 5b1f17b1804b1-46e6f7ff199mr8275435e9.29.1759413697016;
-        Thu, 02 Oct 2025 07:01:37 -0700 (PDT)
-Received: from aspen.lan (aztw-34-b2-v4wan-166919-cust780.vm26.cable.virginm.net. [82.37.195.13])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e693bcc2csm36373715e9.12.2025.10.02.07.01.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 07:01:36 -0700 (PDT)
-Date: Thu, 2 Oct 2025 15:01:33 +0100
-From: Daniel Thompson <daniel@riscstar.com>
-To: Marcos Paulo de Souza <mpdesouza@suse.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Petr Mladek <pmladek@suse.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Jason Wessel <jason.wessel@windriver.com>,
-	Daniel Thompson <danielt@kernel.org>,
-	Douglas Anderson <dianders@chromium.org>,
-	linux-kernel@vger.kernel.org, kgdb-bugreport@lists.sourceforge.net
-Subject: Re: [PATCH v5 0/5] Handle NBCON consoles on KDB
-Message-ID: <aN6FvQGj2w70Ejrz@aspen.lan>
-References: <20250930-nbcon-kgdboc-v5-0-8125893cfb4f@suse.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lnLiYkNMiXUBwB/edXpWo88eZfJqRby+M3+rOSqttXzwRNJf1x5QdM8ANTK3TlWb0MsccngxxTHVRi2UpO4IHmOoiMGo7kCEu/tW8f1Zf6NMViLet54kuEbcrJCX43rAoxyb3CtPyZnQrQ7fN4+vDgwuPP3m1FTgnfvvrg4swc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d8EASvGD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09F9CC4CEF4;
+	Thu,  2 Oct 2025 14:02:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759413745;
+	bh=Knz7TaS2NpECls0C9xbmF0c5aMf2bwguD/z7iQ6D85g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=d8EASvGDfVg8/2sxIiZrH/ZYOSHsK1lmUfLbGgqHK3xHWUGWS5F1DNsFrizgI2tKk
+	 x21UGOA5WfKz8trtRBT2LYZc+oE7OxmE09qurRVlNmPHJVFVlYPp/aBluid5fl+oTN
+	 DVWxpBqtzKiVl18pvn6wzUibzr4Gxxs6MI4xx2FFsLoRQeRY8zwvjG7mP6Rl2MqEz0
+	 Ry6Ol2kkBuoQNA2OrNQF+sLsrpWwQZt8C3Z5KB8fNcl787qiIXjuSkkZ4VbLexwhjg
+	 lN28TtP1m9cfDhRAf6AIVfBCp5VjsyTsLtTXfFotkJxjfY3mCpka40nrU6Fu2DsM+s
+	 7HSZu95ReHPWQ==
+Date: Thu, 2 Oct 2025 22:02:21 +0800
+From: Tzung-Bi Shih <tzungbi@kernel.org>
+To: Mary Strodl <mstrodl@csh.rit.edu>
+Cc: linux-kernel@vger.kernel.org, linus.walleij@linaro.org, brgl@bgdev.pl,
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] gpio: mpsse: use rcu to ensure worker is torn down
+Message-ID: <aN6F7Qw7wZAYpHCB@tzungbi-laptop>
+References: <20250923133304.273529-1-mstrodl@csh.rit.edu>
+ <20250923133304.273529-2-mstrodl@csh.rit.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,17 +57,121 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250930-nbcon-kgdboc-v5-0-8125893cfb4f@suse.com>
+In-Reply-To: <20250923133304.273529-2-mstrodl@csh.rit.edu>
 
-On Tue, Sep 30, 2025 at 02:21:06PM -0300, Marcos Paulo de Souza wrote:
-> In v5 only patch three was changed, changing the check for KDB CPU, as suggested
-> by Petr Mladek. Also, it was based on the recent panic API [2], which now sits on
-> -mm tree.
+On Tue, Sep 23, 2025 at 09:33:02AM -0400, Mary Strodl wrote:
+> @@ -261,9 +273,8 @@ static int gpio_mpsse_direction_input(struct gpio_chip *chip,
+>  
+>  	guard(mutex)(&priv->io_mutex);
+>  	priv->gpio_dir[bank] &= ~BIT(bank_offset);
+> -	gpio_mpsse_set_bank(priv, bank);
+>  
+> -	return 0;
+> +	return gpio_mpsse_set_bank(priv, bank);
 
-Do you keep this work in a git tree anywhere? I wanted to point the kgdb
-test suite at it but the patches don't apply cleanly (even after I
-grabbed the patches mentioned in [2].
+The change looks irrelevant to the patch.
 
+> +static void gpio_mpsse_poll(struct work_struct *my_work)
+>  {
+[...]
+> +	/*
+> +	 * We only want one worker. Workers race to acquire irq_race and tear
+> +	 * down all other workers. This is a cond guard so that we don't deadlock
+> +	 * trying to cancel a worker.
+> +	 */
+> +	scoped_cond_guard(mutex_try, ;, &priv->irq_race) {
+> +		scoped_guard(rcu) {
+> +			list_for_each_entry_rcu(worker, &priv->workers, list) {
 
-Daniel.
+I'm not sure: doesn't it need to use list_for_each_entry_safe() (or variants)
+as elements may be removed in the loop?
+
+> +				/* Don't stop ourselves */
+> +				if (worker == my_worker)
+> +					continue;
+> +
+> +				scoped_guard(raw_spinlock_irqsave, &priv->irq_spin)
+> +					list_del_rcu(&worker->list);
+
+If RCU is using, does it still need to acquire the spinlock?  Alternatively,
+could it use the spinlock to protect the list so that it doesn't need RCU at
+all?
+
+>  static void gpio_mpsse_irq_disable(struct irq_data *irqd)
+>  {
+> +	struct mpsse_worker *worker;
+>  	struct mpsse_priv *priv = irq_data_get_irq_chip_data(irqd);
+>  
+>  	atomic_and(~BIT(irqd->hwirq), &priv->irq_enabled);
+>  	gpiochip_disable_irq(&priv->gpio, irqd->hwirq);
+> +
+> +	/* Can't actually do teardown in IRQ context (blocks...) */
+> +	scoped_guard(rcu)
+> +		list_for_each_entry_rcu(worker, &priv->workers, list)
+> +			atomic_set(&worker->cancelled, 1);
+>  }
+>  
+>  static void gpio_mpsse_irq_enable(struct irq_data *irqd)
+>  {
+> +	struct mpsse_worker *worker;
+>  	struct mpsse_priv *priv = irq_data_get_irq_chip_data(irqd);
+>  
+>  	gpiochip_enable_irq(&priv->gpio, irqd->hwirq);
+>  	/* If no-one else was using the IRQ, enable it */
+>  	if (!atomic_fetch_or(BIT(irqd->hwirq), &priv->irq_enabled)) {
+> -		INIT_WORK(&priv->irq_work, gpio_mpsse_poll);
+> -		schedule_work(&priv->irq_work);
+> +		/*
+> +		 * Can't be devm because it uses a non-raw spinlock (illegal in
+> +		 * this context, where a raw spinlock is held by our caller)
+> +		 */
+> +		worker = kzalloc(sizeof(*worker), GFP_KERNEL);
+
+I'm not sure: however it seems this function may be in IRQ context too (as
+gpio_mpsse_irq_disable() does).  GFP_KERNEL can sleep.
+
+> +		if (!worker)
+> +			return;
+> +
+> +		worker->priv = priv;
+> +		INIT_LIST_HEAD(&worker->list);
+> +		INIT_WORK(&worker->work, gpio_mpsse_poll);
+> +		schedule_work(&worker->work);
+> +
+> +		scoped_guard(raw_spinlock_irqsave, &priv->irq_spin)
+> +			list_add_rcu(&worker->list, &priv->workers);
+
+Doesn't it need a synchronize_rcu()?
+
+>  static void gpio_mpsse_disconnect(struct usb_interface *intf)
+>  {
+> +	struct mpsse_worker *worker;
+>  	struct mpsse_priv *priv = usb_get_intfdata(intf);
+> +	struct list_head destructors = LIST_HEAD_INIT(destructors);
+> +
+> +	/*
+> +	 * Lock prevents double-free of worker from here and the teardown
+> +	 * step at the beginning of gpio_mpsse_poll
+> +	 */
+> +	scoped_guard(mutex, &priv->irq_race) {
+> +		scoped_guard(rcu) {
+> +			list_for_each_entry_rcu(worker, &priv->workers, list) {
+> +				scoped_guard(raw_spinlock_irqsave, &priv->irq_spin)
+> +					list_del_rcu(&worker->list);
+> +
+> +				/* Give worker a chance to terminate itself */
+> +				atomic_set(&worker->cancelled, 1);
+> +				/* Keep track of stuff to cancel */
+> +				INIT_LIST_HEAD(&worker->destroy);
+> +				list_add(&worker->destroy, &destructors);
+> +			}
+> +		}
+> +		/* Make sure list consumers are finished before we tear down */
+> +		synchronize_rcu();
+> +		list_for_each_entry(worker, &destructors, destroy)
+> +			gpio_mpsse_stop(worker);
+> +	}
+
+The code block is very similar to block in gpio_mpsse_poll() above.  Could
+consider to use a function to prevent duplicate code.
 
