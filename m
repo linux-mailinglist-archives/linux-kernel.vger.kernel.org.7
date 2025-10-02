@@ -1,78 +1,143 @@
-Return-Path: <linux-kernel+bounces-840700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCD77BB5034
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 21:36:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52663BB503D
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 21:36:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 946B21C56A6
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 19:36:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E67F1891353
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 19:36:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2641F286421;
-	Thu,  2 Oct 2025 19:35:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91FAE287257;
+	Thu,  2 Oct 2025 19:36:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iwx+QwM/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tdjtIipV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DA5F126BF1;
-	Thu,  2 Oct 2025 19:35:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD15027B325;
+	Thu,  2 Oct 2025 19:36:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759433755; cv=none; b=egmmwNwoqJ+IMY6ZrPpUo2UtU1cyJgOuz3bAUN3wW8pbIiknYQVSeG87DhbPbbI3vgkGrPzka4FrjnLonA8UqG93W6kXNvn7uFEshounSvOMCAfX5hReXeraCEIKEyr+Tx5PFrxJV0sPR/bohTkRcTX/5Tq6aXyoEnprYsk2WZY=
+	t=1759433785; cv=none; b=tcxUl0JDFL3llmI0pZc4PaZFRb159K+EVRegsx2CthbbkXgbPfzQzsaK0p1bL0LdZYA0DFf2Ot6V1ZPbbWvkPkAWJqf6mWlDnfxy3FvYxNwP8bquFDvlYIKUSS7KFVeodV3JO0d0biJZtzX1nc4Y0a1K/xiqn5HT9PN74nZi3bI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759433755; c=relaxed/simple;
-	bh=q7p/tifjFczA1gMFf63QPDiVETBbGwwp+q0TwAU9zOI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Luyoh2rMuBa0jozwpjRxEoqV5FkJJ5fmffguHu/1/51Fu/bHb/oq/ou7No9UZey2P4mneuQ2+yIuBMn5GK57e9Km4UtdFv3ytkGwp9qs+jBjJEQaRXmvnyJsXg1H1RQ3TDzosos5FbHQslcdmPONW+J8SYMA0jEvPdhFUgscM7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Iwx+QwM/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67C0AC4CEF4;
-	Thu,  2 Oct 2025 19:35:54 +0000 (UTC)
+	s=arc-20240116; t=1759433785; c=relaxed/simple;
+	bh=2KEOHJzy9FGeh4KvBIePLQ1m8QALxmsTaAdrHMcDGwg=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=AUw1NFzfckqRobbbcJsLvM1qf/qLiwaKjZZHMHt8tRI0IGy66ZLvrtYjxjAZCOUz1cVfI5utajX7kOxYhjjmp45maWccv6MhNKvtMIpH33XIZ7I3ZBAYopu4brMVOu0Il2lkiUwLaXFivxQpkvqC6xpoSLYNgF4pJLb4g+QR9fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tdjtIipV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1257C4CEF4;
+	Thu,  2 Oct 2025 19:36:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759433755;
-	bh=q7p/tifjFczA1gMFf63QPDiVETBbGwwp+q0TwAU9zOI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Iwx+QwM/xkq5+1HT51UhAzy5/6hdAFX3ByPmHMmWIceCH1xe7YIMh8w4hI17gfpxS
-	 JJO8WLoM66Te3uTuCS37pZuA6dNym9z/Z4AhfJ0g10pPLHLb29mg0YiokBOC0j+vl7
-	 JNLwS7fT5oSiPCW3bV7d6yqPXrE3VKwTpBULH6zz6rBdJM6Zk6ZbMr1H6hBjIcRw/D
-	 4cfYLftMg9ibP5fjtvKytcXfZGJb9y46rvHIl4aT1GDXYmmypbQMeTkNhnKDUEWd6t
-	 3K8HrG0tXQw65U7kp5Ye8C010pp5PYgDycijqrvILcQiP8wmgwYz6dCFQQH3prw9wW
-	 ifgUyJ4YopTCg==
-Date: Thu, 2 Oct 2025 16:35:51 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Thomas Falcon <thomas.falcon@intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, Andi Kleen <ak@linux.intel.com>
-Subject: Re: [RESEND][PATCH v2 0/2] perf record: ratio-to-prev event term for
- auto counter reload
-Message-ID: <aN7UF0MwmQnzk72W@x1>
-References: <20250902164047.64261-1-thomas.falcon@intel.com>
+	s=k20201202; t=1759433784;
+	bh=2KEOHJzy9FGeh4KvBIePLQ1m8QALxmsTaAdrHMcDGwg=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=tdjtIipVZc4EbvIJCjCG3dVwyx7VM/6ZabxllImlXmi5u8K/CZuc+4ril0c9q4Ivn
+	 Kd64F+qIaAvxplzsvSp/0p0HSF233hyKfaTujIYidnd5PIKm0WbspFfRo39ujzNnHb
+	 /e/dqFA1c6TVOlgt7IhhIkRp9ZAF57GmMYzpQpWCkeefO2Kpd9VV7QQ+n4SqVT0NVx
+	 kZ7tw8VAKPV7no3ryezBjRCXCrspcAN43eT07CCPvS7P+PDQq6W1zlCbKhjmmVNwoq
+	 wkjl7EqLC5zW/+zA+gsoG3zd2REGEtaj+RmHA/pFW9pTc83zKjRXVEm1udfUnJNKE/
+	 YxcqYdPG1ZaLw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250902164047.64261-1-thomas.falcon@intel.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 02 Oct 2025 21:36:17 +0200
+Message-Id: <DD837Z9VQY0H.1NGRRI2ZRLG4F@kernel.org>
+Subject: Re: [PATCH v2 1/2] rust: pci: skip probing VFs if driver doesn't
+ support VFs
+Cc: "John Hubbard" <jhubbard@nvidia.com>, "Alexandre Courbot"
+ <acourbot@nvidia.com>, "Joel Fernandes" <joelagnelf@nvidia.com>, "Timur
+ Tabi" <ttabi@nvidia.com>, "Alistair Popple" <apopple@nvidia.com>, "Zhi
+ Wang" <zhiw@nvidia.com>, "Surath Mitra" <smitra@nvidia.com>, "David Airlie"
+ <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Alex Williamson"
+ <alex.williamson@redhat.com>, "Bjorn Helgaas" <bhelgaas@google.com>,
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, "Miguel
+ Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun
+ Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
+ Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ <nouveau@lists.freedesktop.org>, <linux-pci@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>, "LKML" <linux-kernel@vger.kernel.org>
+To: "Jason Gunthorpe" <jgg@nvidia.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20251002152346.GA3298749@nvidia.com>
+ <DD7YQK3PQIA1.15L4J6TTR9JFZ@kernel.org>
+ <20251002170506.GA3299207@nvidia.com>
+ <DD80P7SKMLI2.1FNMP21LJZFCI@kernel.org>
+ <DD80R10HBCHR.1BZNEAAQI36LE@kernel.org>
+ <af4b7ce4-eb13-4f8d-a208-3a527476d470@nvidia.com>
+ <20251002180525.GC3299207@nvidia.com>
+ <3ab338fb-3336-4294-bd21-abd26bc18392@kernel.org>
+ <20251002183114.GD3299207@nvidia.com>
+ <56daf2fe-5554-4d52-94b3-feec4834c5be@kernel.org>
+ <20251002185616.GG3299207@nvidia.com>
+In-Reply-To: <20251002185616.GG3299207@nvidia.com>
 
-On Tue, Sep 02, 2025 at 11:40:44AM -0500, Thomas Falcon wrote:
-> The Auto Counter Reload (ACR)[1] feature is used to track the
-> relative rates of two or more perf events, only sampling
-> when a given threshold is exceeded. This helps reduce overhead
-> and unnecessary samples. However, enabling this feature
-> currently requires setting two parameters:
+On Thu Oct 2, 2025 at 8:56 PM CEST, Jason Gunthorpe wrote:
+> On Thu, Oct 02, 2025 at 08:42:58PM +0200, Danilo Krummrich wrote:
+>> On 10/2/25 8:31 PM, Jason Gunthorpe wrote:
+>> > This exactly how this function is used.
+>> >=20
+>> > The core PF driver provides an API:
+>> >=20
+>> > struct mlx5_core_dev *mlx5_vf_get_core_dev(struct pci_dev *pdev)
+>> >=20
+>> > Which takes in the VF as pdev and internally it invokes:
+>> >=20
+>> > 	mdev =3D pci_iov_get_pf_drvdata(pdev, &mlx5_core_driver);
+>>=20
+>> Oh, I see, that makes sense then. Thanks for clarifying. I think I alrea=
+dy had
+>> in mind how this would look like in the Rust abstraction, and there we d=
+on't
+>> need pci_iov_get_pf_drvdata() to achieve the same thing.
+>
+> I'm skeptical, there is nothing about rust that should avoid having to
+> us pci_iov_get_pf_drvdata().. It does a number of safety checks
+> related to the linux driver model that are not optional.
 
-Can you please try to rebase to what is in tmp.perf-tools-next now?
+The checks will be the same, but using pci_iov_get_pf_drvdata() directly is=
+ not
+workable because of how the abstractions are layered.
 
-- Arnaldo
+If we want to obtain the driver's private data from a device outside the sc=
+ope
+of bus callbacks, we always need to ensure that the device is guaranteed to=
+ be
+bound and we also need to prove the type of the private data, since a devic=
+e
+structure can't be generic over its bound driver.
+
+Usually that's not an issue because other entry points into the driver, e.g=
+.
+subsystem callbacks have their own private data through the class device, I=
+RQs
+have their own private data in the IRQ registration, etc.
+
+>> Yes, I already thought about this. In the context of adding support for =
+SR-IOV
+>> in the Rust abstractions I'm planning on sending an RFC to let the subsy=
+stem
+>> provide this guarantee instead (at least under certain conditions).
+>
+> Certain conditions may be workable, some drivers seem to have
+> preferences not to call disable, though I think that is wrong :\
+
+I fully agree! I was told that this is because apparently some PF drivers a=
+re
+only loaded to enable SR-IOV and then removed to shrink the potential attac=
+k
+surface. Personally, I think that's slightly paranoid, if the driver would =
+not
+do anything else than enable / disable SR-IOV, but I think we can work arou=
+nd
+this use-case if people really want it.
 
