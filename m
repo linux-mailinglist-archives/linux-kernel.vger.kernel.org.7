@@ -1,127 +1,113 @@
-Return-Path: <linux-kernel+bounces-840517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66DE1BB4979
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 18:48:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE35CBB497F
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 18:49:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 189D0189C240
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 16:49:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90D8E16663E
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 16:49:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7529025A65A;
-	Thu,  2 Oct 2025 16:48:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0B41264F9F;
+	Thu,  2 Oct 2025 16:49:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j0Y94/Tq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="gUhrz9Ub"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D10C5186284
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 16:48:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F02B186284
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 16:49:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759423729; cv=none; b=s9wlpSS8wAtio16K10coLcS6rnbEHh/IXQmTT0DxXRfwAv34nZFD7PLiUxixvBhJFqSNtddxp0G29/JzLsrV/+swCQ58V4Lc+npLMnLRjyn2jtr921Z4t4/0Ef69IvvykqR7fc9ZCkRIsA80S5ILhJNvwbY7To7GsjaRnwPJ8js=
+	t=1759423780; cv=none; b=gMF//oIDvIQaA5ngzFa+6s4eV4C3hsnlolTBM1j0XmJjqFCPNVR5GIzz8bMBwq1HPjq0ETaxTj3VdoKH7+6VPY6IKhZzscos8rqD8vJPW4+e0mKb6gYayewm1RPJi9JOROhgU0T4pwfShHXT8EznNmZrTGg/uGo3zRlXsTm92AQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759423729; c=relaxed/simple;
-	bh=UXUa16DxRQlc+YoczpHucO1ugFqhBs0jsvbBdOCdJO8=;
+	s=arc-20240116; t=1759423780; c=relaxed/simple;
+	bh=GPNKqk2IjCezt+iOiIGHZBvYwRYM9eI/at8SyT0aJvg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eo8q73wL+KLtK0060tFazfeVUdFVDIdZSMDfFY0ePa22OWhhHM0/3rUM9YQkgkOrLP4IKYty0X1Pk259A+umgaszdJfTMuMyWJg5UFvgN4BpfQ8B5CS8RdYXKaGA9gvq4vgMhyWNiZ+dvfismVXzbjg50zgAEqufRgqnC89am5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j0Y94/Tq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6266DC4CEFB
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 16:48:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759423728;
-	bh=UXUa16DxRQlc+YoczpHucO1ugFqhBs0jsvbBdOCdJO8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=j0Y94/TqYpj+kjQCWs9eFlHW/1YN9UkIeBZQD85d5KgIk/tOkOxey0WUrpgbqn7/m
-	 2TysR5EYWNUT1E4JsgFLLed3pNhBxyUKFVkDzbzJ0jJpiR8aQ7vZNH9D3tZCWZwFzj
-	 Fnk24RzRsdAEwYRumnbEHYz+DuvVePn8RWRsSlsZnit+sJphLjYr8NjaOI1LYsG89Q
-	 rFZHWlJ/T8nrt/iRHRm8w8oDCxS1krM8vsJCXLCWA4r2B8DoBjwhwWsvI5HD44gVvn
-	 nVWIid8AXpqNG3TPSu2OzyteNP/gSgAvXvzJXvvPYvxdbWW3J80vKrkUUDu4DLYo3g
-	 sVODSxeCsewyA==
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-57e8e67aa3eso3242747e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 09:48:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXwwvxALctalWdjEqGnBIBTkGVN0VMv7j4Esq6COwieiDzAFxwgZMRsVHE+pEcEgW9gPNQOxpnUfuiUv94=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4RLI+C4el5yDbhJwIYaQF5FNAiJrxvrxIa3O2LPkvibuc6Ze5
-	S9rTX6Ryz4Z6SVIDTc1mRWKeKbR/aAo7i838v6JUku/cS7v8/QlERJe+2NdtQfMzyfSm2iTHbXF
-	8wn+hku7a93RaaBTzs5SP4ioZtzU56sA=
-X-Google-Smtp-Source: AGHT+IEqXM/Be3cRNs05VWOlXbMCnMSG6Mba0tmbOYQBA/5ovj738cWnL+OCbs5vXp6LcKhFkY87M5wOVli92mntFKw=
-X-Received: by 2002:a05:6512:2397:b0:581:bdb8:6df9 with SMTP id
- 2adb3069b0e04-58b00b5eb3emr1343410e87.10.1759423726612; Thu, 02 Oct 2025
- 09:48:46 -0700 (PDT)
+	 To:Cc:Content-Type; b=dhv2SKs4HyGzo+oEFUHNXUsR+vUG8XzbC1R+GybU88owL9R3zUNCMNNumjA6SEcwYKmyq//3us+wP+/B87zF2MKuv6UhHyJYJ2BYRhyZtZWoQO17yH/w8SNls7sHg6yMwivz2KUJRNf21V8Q/e126ASAPuzDkujaDSzZA/FoC4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=gUhrz9Ub; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b256c8ca246so312354366b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 09:49:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1759423776; x=1760028576; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ri4QyfvFryudbRTr4zjJak2/cwqBuXGVPepccBH1HNc=;
+        b=gUhrz9UbfOdDJBrCyPUJRPx3zM+SAT9D9jE3dSCVTyDEIYB9tZXsih8O+cyEc5sYgc
+         jgpoIoviizQHxyH5NsX1UJ/NSPFTlx6mkMb3ecJKBYL2cWz1egAfZfbGm0KJyQ+JNQLS
+         umkEo4+Z8Urgdew7nbyf3I4qhSkqPWeFuYN6M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759423776; x=1760028576;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ri4QyfvFryudbRTr4zjJak2/cwqBuXGVPepccBH1HNc=;
+        b=p0rgVOxUEYIX9V6P6+45DJK6cxFKw5bEuCGGJ6/xqZlNnQoX+vUSm8KgG0qBliRJX4
+         jLirI+wjWcLr1anF8CT6eTNXLFUh7n+ULdlS7o+bNnebjw3H7Ol6rGMktR0BMD6Mm4ph
+         TqOrW92CdXr6iwzzxYwG4p+2BBNgY5zMPELr3Yhm1k4jCyt6+JvRYDinLu1Fy9Iz2GA+
+         gOhzMW0ZyGrPfRBmyQaf7fQvksorzfi/sf8mEE8WMS+bShz0p4OSl+d5/VIFVpwudGYr
+         KGV4AXuj88DMu3ZaEJ/c3RRVIHwZhE3+cZgAFO3nIgVkzIlVuwlrKNdYs5K6YC6vn5Ur
+         E56g==
+X-Forwarded-Encrypted: i=1; AJvYcCUM54cxwR0XmzFlB+dGw3VVCpW3OdcqDKN27gNhVe001r5NGruoq59fTiV8ynWOUAY6lW861mU0hQmbknE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWm77Za9GfP9zT5ndZTXcUJQQFamONV4aslunOB+Tkow0aXBr+
+	kW1gPd/YAfyPB2ZCCRVRRtC8qE7PIDqIpcIjUy2itVczvIcENlMm3eOiTC1Vb5SDVmul/TmLfCS
+	/rlCWEkg=
+X-Gm-Gg: ASbGncuZS0ESFV9FCabN4u1SLnJw+rz595vZKpOXJFPq3DktiLHBDFHZ46NaSqq2rtj
+	aA4yPXKMANe46nnjr/RJYnEJjYqWJgXt8kMJm2FGly5QS6uLCf4If+R3C3hB5CgH7gKueiyBffp
+	0+iqesOmDgqc2ZQ+k01PAQbA7jOlNnIDdjZLX9BLJaYbR3nDGt8dk9SusJLbVkS+4jeV2UKpbo4
+	eEgKlVTY1SS5yBM2lhTzydAjbTOdCwvYgsd5/jfrvNu53lbddHPIF9hBKMx+AgC9ckQBFUqnu2C
+	3Gf8Y5yhzlLTB/e1TPHIJL6CeEMRsyw2X361TCj8kFM35vLsyuSxZyAI6V7AvEDsPIjwszGIX55
+	wsKR8nQrsCB55HDVCmbye2GFwpCnvzUI3dmemMqyBodlps21AxcyfxKhwtojWTOOydU+wUAhnYd
+	WfsbmKTKGna8qcVAeW37QQ
+X-Google-Smtp-Source: AGHT+IHDtuobgJ1DndCTpwl6wzhNvovgM0hRECmQu116kPqpTP7hNszEBfsOa9L6ExRTHaEq6Oq6+g==
+X-Received: by 2002:a17:907:6d0d:b0:b43:b7ec:b89a with SMTP id a640c23a62f3a-b49c214bb24mr12886866b.26.1759423776330;
+        Thu, 02 Oct 2025 09:49:36 -0700 (PDT)
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com. [209.85.218.43])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b486970b37bsm245189966b.53.2025.10.02.09.49.34
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 02 Oct 2025 09:49:35 -0700 (PDT)
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b256c8ca246so312343266b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 09:49:34 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVbPtVQAFcyALAW2HcrDFTODDU835ZFfD2iLFxTFV1WxkNjS6vzJc1DRDDb+hnGyPgjTnQonIo7Xqe/YF4=@vger.kernel.org
+X-Received: by 2002:a17:906:6a25:b0:b3e:c7d5:4cc2 with SMTP id
+ a640c23a62f3a-b49c39360f6mr14187866b.38.1759423774528; Thu, 02 Oct 2025
+ 09:49:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251001210201.838686-22-ardb+git@google.com> <20251001210201.838686-26-ardb+git@google.com>
- <202510020918.7E358227@keescook>
-In-Reply-To: <202510020918.7E358227@keescook>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 2 Oct 2025 18:48:35 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXEK+ggQXC6pruZs2jkg6fmA7+Uv45DY4B_XqTRsRbTf2Q@mail.gmail.com>
-X-Gm-Features: AS18NWAZ8uFcVmA6EvK7W0-OFglLBSKI4YbLO-lps_DOpY0PjMY5dUoH7ZngWew
-Message-ID: <CAMj1kXEK+ggQXC6pruZs2jkg6fmA7+Uv45DY4B_XqTRsRbTf2Q@mail.gmail.com>
-Subject: Re: [PATCH v2 04/20] crypto: aegis128-neon - Move to more abstract
- 'ksimd' guard API
-To: Kees Cook <kees@kernel.org>
-Cc: Ard Biesheuvel <ardb+git@google.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	herbert@gondor.apana.org.au, linux@armlinux.org.uk, 
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Mark Brown <broonie@kernel.org>, 
-	Eric Biggers <ebiggers@kernel.org>
+References: <20250730074614.2537382-1-nilay@linux.ibm.com> <20250730074614.2537382-3-nilay@linux.ibm.com>
+ <25a87311-70fd-4248-86e4-dd5fecf6cc99@gmail.com> <bfba2ef9-ecb7-4917-a7db-01b252d7be04@gmail.com>
+ <05b105b8-1382-4ef3-aaaa-51b7b1927036@linux.ibm.com> <1b952f48-2808-4da8-ada2-84a62ae1b124@kernel.dk>
+In-Reply-To: <1b952f48-2808-4da8-ada2-84a62ae1b124@kernel.dk>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 2 Oct 2025 09:49:17 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjf1HX1WwREHPs7V_1Hg_54sqOVSr9rNObudEpT9VgQDw@mail.gmail.com>
+X-Gm-Features: AS18NWAX_XbsCSn1cSvTBt8Jd93mNINtxqs7sE9J-usQvnLgAAKgdff6fAuW3Hk
+Message-ID: <CAHk-=wjf1HX1WwREHPs7V_1Hg_54sqOVSr9rNObudEpT9VgQDw@mail.gmail.com>
+Subject: Re: [6.16.9 / 6.17.0 PANIC REGRESSION] block: fix lockdep warning
+ caused by lock dependency in elv_iosched_store
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Nilay Shroff <nilay@linux.ibm.com>, Kyle Sanderson <kyle.leet@gmail.com>, 
+	linux-block@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, hch@lst.de, 
+	ming.lei@redhat.com, hare@suse.de, sth@linux.ibm.com, gjoyce@ibm.com, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 2 Oct 2025 at 18:20, Kees Cook <kees@kernel.org> wrote:
+On Thu, 2 Oct 2025 at 08:58, Jens Axboe <axboe@kernel.dk> wrote:
 >
-> On Wed, Oct 01, 2025 at 11:02:06PM +0200, Ard Biesheuvel wrote:
-> > From: Ard Biesheuvel <ardb@kernel.org>
-> >
-> > Move away from calling kernel_neon_begin() and kernel_neon_end()
-> > directly, and instead, use the newly introduced scoped_ksimd() API. This
-> > permits arm64 to modify the kernel mode NEON API without affecting code
-> > that is shared between ARM and arm64.
-> >
-> > Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-> > ---
-> >  crypto/aegis128-neon.c | 33 +++++++-------------
-> >  1 file changed, 12 insertions(+), 21 deletions(-)
-> >
-> > diff --git a/crypto/aegis128-neon.c b/crypto/aegis128-neon.c
-> > index 9ee50549e823..b41807e63bd3 100644
-> > --- a/crypto/aegis128-neon.c
-> > +++ b/crypto/aegis128-neon.c
-> > @@ -4,7 +4,7 @@
-> >   */
-> >
-> >  #include <asm/cpufeature.h>
-> > -#include <asm/neon.h>
-> > +#include <asm/simd.h>
-> >
-> >  #include "aegis.h"
-> >  #include "aegis-neon.h"
-> > @@ -24,32 +24,28 @@ void crypto_aegis128_init_simd(struct aegis_state *state,
-> >                              const union aegis_block *key,
-> >                              const u8 *iv)
-> >  {
-> > -     kernel_neon_begin();
-> > -     crypto_aegis128_init_neon(state, key, iv);
-> > -     kernel_neon_end();
-> > +     scoped_ksimd()
-> > +             crypto_aegis128_init_neon(state, key, iv);
-> >  }
->
-> For these cases (to avoid the indentation change), do you want to use
-> just "guard" instead of "scope_guard", or do you want to explicitly
-> require explicit scope context even when the scope ends at the function
-> return?
->
+> Sorry missed thit - yes that should be enough, and agree we should get
+> it into stable. Still waiting on Linus to actually pull my trees though,
+> so we'll have to wait for that to happen first.
 
-I'm on the fence tbh. I think for future maintainability, being forced
-to define the scope is perhaps better but in this case, the whole
-function contains only a single line so there is little room for
-confusion.
+Literally next in my queue, so that will happen in minutes..
+
+           Linus
 
