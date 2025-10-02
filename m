@@ -1,162 +1,139 @@
-Return-Path: <linux-kernel+bounces-840628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BA20BB4D8C
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 20:10:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 003BEBB4DA3
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 20:12:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA619422B72
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 18:10:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B666E1C784A
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 18:12:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DBEF276059;
-	Thu,  2 Oct 2025 18:10:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A918276059;
+	Thu,  2 Oct 2025 18:12:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Rb2pF6j+"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (1024-bit key) header.d=csh.rit.edu header.i=@csh.rit.edu header.b="Ed9is0um"
+Received: from greygoose-centos7.csh.rit.edu (greygoose-centos7.csh.rit.edu [129.21.49.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0057919D092;
-	Thu,  2 Oct 2025 18:10:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DCBD26E709;
+	Thu,  2 Oct 2025 18:12:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.21.49.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759428638; cv=none; b=d/ALX/EWjjEvIOTHfXKjkaVX4b/rhZ4ncuFAYjuLJyvsG2A0crc8G4vnCJC0JN3EtCHRS8GognHlmFzQvi29R63Kh0DkX5Kc9z5/9Cl5jwlFD1GukM2N/1ROrGNQ2TrhBVbMh14EwfI9G6f420Gfus7n2orOzLPv4HiBunJ10Is=
+	t=1759428727; cv=none; b=N12G0tQirOcHSxya78V1G72WEjVTD7n8rPGjVWD+5Ur8fnhbpGVlxXk3TkJJ5hRAFNhuIaWV3wd+NAIdTwPPhEqz0DR/dhrypHnAe0Yu+aS+7ZvTb3tmBALGGj9f6xzfE2BR4b7emjLhSUSRDTArqO6AJS6S4GzIxVYLU8G5o3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759428638; c=relaxed/simple;
-	bh=O5wkUwnKgBzNkysEWRRXmGZptZAllZh7UoEkd0clsMk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NKtPiSgUj8zcQOvExRNQoqU3vSdniIVPni5ZjkRechslremAUClQ+LsPfSjbt5nnCFsYv6VxndP1KjuxptJPN0fKz5l3XK7h1tRR1IzgxuRSSKoUYOF5UtEPaipyOuT9Qx5EfCKUJx2wieIXWH2U6LcmOuMtw6euKRyJ9ktt5iU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Rb2pF6j+; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759428637; x=1790964637;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=O5wkUwnKgBzNkysEWRRXmGZptZAllZh7UoEkd0clsMk=;
-  b=Rb2pF6j+o3I1wRWbRBubBFinjLabGqjdC1Cfl2jjIdRrwz1tAZQi56o0
-   +t4GZ8y+yT358i4/D/L27tDzQreKGZWNZG57RBgHhMr4TlZXjdqjbG4zk
-   BW6AyDBDeDmdGwTzk6enxtlCjMdv/jAcA83i+kvv9xsgBHetOhs1ZyX8v
-   zygBqRRD2Nz+UFaCSXzqs3DR5GffwQqJYNSmwFQJcDNWVSwdPP6430CrH
-   BmukVjc1qxv0Ueqe4kyXe7YivIyMZoiOnAYm3QyVbEhJBIKivkldZYbgK
-   0tylx/DdYFI8vjLUAHU4Wf811XPJdIWJh12Zti57KtM4YrHDXjj4AMMx4
-   A==;
-X-CSE-ConnectionGUID: fwjC+wUmQ1GFaK7PZWlgSQ==
-X-CSE-MsgGUID: EO0FG/QqRv2vk3smmdJbXQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11570"; a="84339496"
-X-IronPort-AV: E=Sophos;i="6.18,310,1751266800"; 
-   d="scan'208";a="84339496"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2025 11:10:36 -0700
-X-CSE-ConnectionGUID: A7onqpwtRD2arq6ootLb8w==
-X-CSE-MsgGUID: IW16ttgjTUiSWopAP8kd/A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,310,1751266800"; 
-   d="scan'208";a="184394495"
-Received: from skuppusw-desk2.jf.intel.com (HELO [10.165.154.101]) ([10.165.154.101])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2025 11:10:34 -0700
-Message-ID: <9c4e25e4-c6c7-4c56-ba0a-006b40e64d78@linux.intel.com>
-Date: Thu, 2 Oct 2025 11:10:34 -0700
+	s=arc-20240116; t=1759428727; c=relaxed/simple;
+	bh=OHKQGPzrgFJG67aVXNe1LPQLjin3sT2XAVeH9mttQUc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WQsNrAeFG5WaOUFZs/R5rn2G+nKrmZAYB2xZrmOQrGLIPhexHyQ9+b89pmNM4h2Iy7p+t8j18e2VwI0mZFYiJqu7yx9ZF/8Y3skayqyu86Sjb6jB2NYXVmk2CD8/wSXOGrprO9B5QwEuTQnTqnsYzGW59zc+nNZTk9LHT0Rdxj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=csh.rit.edu; spf=pass smtp.mailfrom=csh.rit.edu; dkim=pass (1024-bit key) header.d=csh.rit.edu header.i=@csh.rit.edu header.b=Ed9is0um; arc=none smtp.client-ip=129.21.49.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=csh.rit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csh.rit.edu
+Received: from localhost (localhost [127.0.0.1])
+	by greygoose-centos7.csh.rit.edu (Postfix) with ESMTP id B4283413383C;
+	Thu,  2 Oct 2025 14:11:58 -0400 (EDT)
+Authentication-Results: mail.csh.rit.edu (amavisd-new);
+ dkim=pass (1024-bit key) reason="pass (just generated, assumed good)"
+ header.d=csh.rit.edu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=csh.rit.edu; h=
+	content-transfer-encoding:mime-version:x-mailer:message-id:date
+	:date:subject:subject:from:from:received:received; s=mail; t=
+	1759428712; x=1761243113; bh=OHKQGPzrgFJG67aVXNe1LPQLjin3sT2XAVe
+	H9mttQUc=; b=Ed9is0umbJjgQJ4br3p6guyoSlfttRcD0loxM436p8ucAzjp6Ji
+	n+TLEPJuczxVdHdbBqJGNx2vFCQ/BcwN9IdxaBRm7JnLoiKPzfBC6OLAawdcbF+I
+	860b/ukb7/PMiBp04zL7VHkVeg3Gox3mrgq36b/Fa7G22BnlsIV9JYQg=
+X-Virus-Scanned: amavisd-new at csh.rit.edu
+Received: from greygoose-centos7.csh.rit.edu ([127.0.0.1])
+ by localhost (mail.csh.rit.edu [127.0.0.1]) (amavisd-new, port 10026)
+ with ESMTP id 9ozz9tVIncF3; Thu,  2 Oct 2025 14:11:52 -0400 (EDT)
+Received: from ada.csh.rit.edu (ada.csh.rit.edu [129.21.49.156])
+	by greygoose-centos7.csh.rit.edu (Postfix) with ESMTP id 44BBB401CF12;
+	Thu,  2 Oct 2025 14:11:52 -0400 (EDT)
+From: Mary Strodl <mstrodl@csh.rit.edu>
+To: linux-kernel@vger.kernel.org
+Cc: tzungbi@kernel.org,
+	dan.carpenter@linaro.org,
+	linus.walleij@linaro.org,
+	brgl@bgdev.pl,
+	linux-gpio@vger.kernel.org,
+	Mary Strodl <mstrodl@csh.rit.edu>
+Subject: [PATCH v3 0/4] gpio: mpsse: add support for bryx brik
+Date: Thu,  2 Oct 2025 14:11:32 -0400
+Message-ID: <20251002181136.3546798-1-mstrodl@csh.rit.edu>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND] PCI/AER: Check for NULL aer_info before
- ratelimiting in pci_print_aer()
-To: Christophe Leroy <christophe.leroy@csgroup.eu>,
- Breno Leitao <leitao@debian.org>, Mahesh J Salgaonkar
- <mahesh@linux.ibm.com>, Oliver O'Halloran <oohall@gmail.com>,
- Bjorn Helgaas <bhelgaas@google.com>, Jon Pan-Doh <pandoh@google.com>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-team@meta.com, stable@vger.kernel.org
-References: <20250929-aer_crash_2-v1-1-68ec4f81c356@debian.org>
- <7b5c1235-df92-4f18-936c-3d7c0d3a6cb3@linux.intel.com>
- <a63012d4-0c98-4022-8183-5a3488ca66e9@csgroup.eu>
-Content-Language: en-US
-From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-In-Reply-To: <a63012d4-0c98-4022-8183-5a3488ca66e9@csgroup.eu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 
+Hey all,
 
-On 10/2/25 03:06, Christophe Leroy wrote:
->
->
-> Le 29/09/2025 à 17:10, Sathyanarayanan Kuppuswamy a écrit :
->>
->> On 9/29/25 2:15 AM, Breno Leitao wrote:
->>> Similarly to pci_dev_aer_stats_incr(), pci_print_aer() may be called
->>> when dev->aer_info is NULL. Add a NULL check before proceeding to avoid
->>> calling aer_ratelimit() with a NULL aer_info pointer, returning 1, which
->>> does not rate limit, given this is fatal.
->>>
->>> This prevents a kernel crash triggered by dereferencing a NULL pointer
->>> in aer_ratelimit(), ensuring safer handling of PCI devices that lack
->>> AER info. This change aligns pci_print_aer() with pci_dev_aer_stats_incr()
->>> which already performs this NULL check.
->>>
->>> Cc: stable@vger.kernel.org
->>> Fixes: a57f2bfb4a5863 ("PCI/AER: Ratelimit correctable and non-fatal error logging")
->>> Signed-off-by: Breno Leitao <leitao@debian.org>
->>> ---
->>> - This problem is still happening in upstream, and unfortunately no action
->>>    was done in the previous discussion.
->>> - Link to previous post:
->>>    https://eur01.safelinks.protection.outlook.com/? url=https%3A%2F%2Flore.kernel.org%2Fr%2F20250804-aer_crash_2-v1-1- fd06562c18a4%40debian.org&data=05%7C02%7Cchristophe.leroy2%40cs- soprasteria.com%7Cfd3d2f1b4e8448a8e67608ddff6a4e70%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638947554250805439%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=6yTN1%2Fq%2Fy0VKX%2BXpE%2BiKxBrn19AkY4IPj01N2ZdxEkg%3D&reserved=0
->>> ---
->>
->> Although we haven't identified the path that triggers this issue, adding this check is harmless.
->
-> Is it really harmless ?
->
-> The purpose of the function is to ratelimit logs. Here by returning 1 when dev->aer_info is NULL it says: don't ratelimit. Isn't it an opened door to Denial of Service by overloading with logs ?
+This series adds support for the Bryx Radio Interface Kit to the gpio-mps=
+se
+driver
 
-We only skip rate limiting when dev->aer_info is NULL, which happens for
-devices without AER capability. In that case, I think the trade-off is reasonable:
-generating more logs is better than triggering a NULL pointer exception.
+Here are some of the major differences compared to the sealevel device th=
+is
+driver currently supports:
+* Uses an FT232HL chip instead of FT2232HL (this is easy, just populates =
+as
+  only one interface rather than two)
+* There are only two exposed GPIO lines, and each is hardware restricted =
+to
+  a particular direction.
+* This is an external device, therefore hotpluggable. This caused me to
+  discover the race condition in the polling worker teradown, which
+  accounts for the bulk of the changes.
 
-Also, this approach is consistent with other functions (for example, the stat
-collection helpers) that already perform similar checks before accessing
-aer_info. So extending the same safeguard here seems acceptable to me.
+The locking changes probably should be backported even though the actual
+device isn't hotpluggable. If this isn't the right avenue for introducing
+those fixes and it should be sent as a separate patch first, let me know
+and it can be structured that way instead.
 
->
-> Christophe
->
->>
->> Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
->>
->>
->>
->>>   drivers/pci/pcie/aer.c | 3 +++
->>>   1 file changed, 3 insertions(+)
->>>
->>> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
->>> index e286c197d7167..55abc5e17b8b1 100644
->>> --- a/drivers/pci/pcie/aer.c
->>> +++ b/drivers/pci/pcie/aer.c
->>> @@ -786,6 +786,9 @@ static void pci_rootport_aer_stats_incr(struct pci_dev *pdev,
->>>   static int aer_ratelimit(struct pci_dev *dev, unsigned int severity)
->>>   {
->>> +    if (!dev->aer_info)
->>> +        return 1;
->>> +
->>>       switch (severity) {
->>>       case AER_NONFATAL:
->>>           return __ratelimit(&dev->aer_info->nonfatal_ratelimit);
->>>
->>> ---
->>> base-commit: e5f0a698b34ed76002dc5cff3804a61c80233a7a
->>> change-id: 20250801-aer_crash_2-b21cc2ef0d00
->>>
->>> Best regards,
->>> -- 
->>> Breno Leitao <leitao@debian.org>
->>>
->
->
+Other than the locking changes, this series also adds a generic "quirk"
+system like I have seen in similar drivers for providing device-specific
+line labels and direction restrictions. This should enable easier
+integration of new devices in the future.
+
+Lastly, I changed the device label format to expose useful device
+information like the device serial number, vid, and pid to userspace. If
+there is a better way to get this information (perhaps through udev?), I'=
+m
+all ears.
+
+I also noticed a little bug where gpio_mpsse_direction_input wasn't
+actually propagating errors, so I have a quick fix for that too.
+
+Changes since v2:
+* No more RCU, just use a spinlock to protect the stuff that matters
+* Now using _safe variants of list iteration helpers where appropriate
+* Use GFP_NOWAIT kmalloc flag
+* Move repeated code into new gpio_mpsse_stop_all_except method
+* Move little bugfix for direction_input error propagation into its own
+  patch
+
+Changes since v1:
+* Break out into separate patches
+* Fix RCU/concurrency soundness mistakes I noticed (list add/del were not
+  protected by a lock, so now there is a separate spin lock, which we can
+  use in irq context)
+* Use guards for rcu read locks
+
+Let me know what you think!
+
+Mary Strodl (4):
+  gpio: mpsse: propagate error from direction_input
+  gpio: mpsse: ensure worker is torn down
+  gpio: mpsse: add quirk support
+  gpio: mpsse: support bryx radio interface kit
+
+ drivers/gpio/gpio-mpsse.c | 229 ++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 217 insertions(+), 12 deletions(-)
+
+--=20
+2.47.0
+
 
