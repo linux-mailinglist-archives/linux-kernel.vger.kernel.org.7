@@ -1,240 +1,140 @@
-Return-Path: <linux-kernel+bounces-840285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C40C3BB4077
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 15:28:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F1CBBB4080
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 15:29:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74BCC4220A3
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 13:28:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDFA019E0BBF
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 13:30:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98FDA31196B;
-	Thu,  2 Oct 2025 13:28:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C60363115B1;
+	Thu,  2 Oct 2025 13:29:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="MeyBMHX5"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Un3XRnPO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 532AE2EBDC2;
-	Thu,  2 Oct 2025 13:28:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B2E22D1936
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 13:29:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759411716; cv=none; b=afItJJjmACfaHbwtFOpwpJafaoBdKdeDnV0XnPyH7gDlMeAYvl1QfMcv1yN9nL3b7QUJ1Js+chN9qciZ2/TpMjSu9G56VEPQiYWfWX/4x/PmWAYpRx4jHDoaIQoEsa9ZS9CJm7j5T1Tq7GkT0ROUxPgcQ14N2JZnsxggo/S0lAQ=
+	t=1759411788; cv=none; b=S1tC7pIqIu7OrpxnombexXDft1s16vEHK2OvvQIN8+GD5QavfVlgd9H8ryQbaF+mBMWp30ZYjzw/CmZ1bWrnTwjPajZOF4DRRmoO+QKM1F5/jq1pmeKY2quNWVTkJQSG/L7qkIrUADbMzfSHrFA1xA69BoJ29i2j0Viai1QwPoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759411716; c=relaxed/simple;
-	bh=Krim6KfdUDcOot+dYFmX1ucaTo3qrXvukfN3FFVRIJI=;
+	s=arc-20240116; t=1759411788; c=relaxed/simple;
+	bh=rc26i++7Pe4Y9VMQrl1bV7VtbMfaf8x+SZyX2riM5uM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pEvNt+zp1BhAb/h/qz6W2rrDXQRV24NIHBU/+7cgjqgbSRzGg5BRLmb6dQY7LbqjkMjdJDQ7jO+gUJYosZA4WxZDQv5AmjyZSzwZayQfhzaIvDASiGQH+ymkXMqOyUAFAnk1bvPT9X1uhDux7GPfm+g3XUJpxYfiXIZL99fyMrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=MeyBMHX5; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from ideasonboard.com (93-61-96-190.ip145.fastwebnet.it [93.61.96.190])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 59503929;
-	Thu,  2 Oct 2025 15:27:00 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1759411620;
-	bh=Krim6KfdUDcOot+dYFmX1ucaTo3qrXvukfN3FFVRIJI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MeyBMHX5vIMs0CfW5p5FT2QnAe5FBNutcB7oNBjZNYPH4rT2t35DSRTrDzNS1mvSa
-	 XzGKa1KfvwpOBLvQbFKeY+Q5eV1y8MQLjbx9a/tPXXM+1ZDP1uMGT1Xs49fXGA/C2b
-	 ofchMtbQAnGOG5SKtg62Ub/BELy51m+7FAyfEuPU=
-Date: Thu, 2 Oct 2025 15:28:27 +0200
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: Anthony McGivern <anthony.mcgivern@arm.com>
-Cc: Nicolas Dufresne <nicolas.dufresne@collabora.com>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
-	"bcm-kernel-feedback-list@broadcom.com" <bcm-kernel-feedback-list@broadcom.com>, "florian.fainelli@broadcom.com" <florian.fainelli@broadcom.com>, 
-	"hverkuil@kernel.org" <hverkuil@kernel.org>, "kernel-list@raspberrypi.com" <kernel-list@raspberrypi.com>, 
-	"Kieran Bingham (kieran.bingham@ideasonboard.com)" <kieran.bingham@ideasonboard.com>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, 
-	"linux-rpi-kernel@lists.infradead.org" <linux-rpi-kernel@lists.infradead.org>, "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>, 
-	"mchehab@kernel.org" <mchehab@kernel.org>, "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>, 
-	"tfiga@chromium.org" <tfiga@chromium.org>, 
-	"tomi.valkeinen@ideasonboard.com" <tomi.valkeinen@ideasonboard.com>
-Subject: Re: [PATCH v2 12/27] media: v4l2-subdev: Introduce v4l2 subdev
- context
-Message-ID: <ybsoposvudskkmzua5u33cq2jcstm7pzoklzutwazn2bvqobvo@pwsdlwtohcw3>
-References: <DU0PR08MB8836559555E586FCD5AE1CBA811FA@DU0PR08MB8836.eurprd08.prod.outlook.com>
- <pdxsi4fskze6mvgro5foa3jvmrvl3ihmksnzukonoihkb5xum5@kph26jtiayda>
- <20250930101626.GE25784@pendragon.ideasonboard.com>
- <2efcfe19bafd1276e9fc71b72e251443f313d693.camel@collabora.com>
- <413937a1-bf4c-4926-945f-7df39869f215@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eZR3ySa1uKlbOvTnpsx8F5wfKHFKZ+lYDrQxNwTgyQYPR2y/gLC4GRZM8cmyLAhGQWu4ejVSjb9Uc0wsC87mr6D1eenp7Wq+SzkS6eJfjSCsGt6g9hjqnsF8go2uQdh3S9FWs5Z1D8HdYCql2Q+n88mgz+DeYrGMDJvdF8+IRkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Un3XRnPO; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759411785;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Qi9+7Ix/o9+0OE7Ro2QqAP5ZD23WvzNBFZaksF/or5w=;
+	b=Un3XRnPOXBgfbeYbqA8uQISUByem4yljgwfI3xgytz/9zcIaqZ8mDrcIecDiCY43YZSLdi
+	Xhxqdou5J6dR/oefpwBDcXW3KzsdVtu8TCC1lMjXGs0csSkwVp5Kl+C73ZmYJCGpaKYm25
+	ZVYL6Geuqw9M7wnwC1ie1cGQoqVtryA=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-592-TUIVsiixPwaNHjRgs6rsKg-1; Thu, 02 Oct 2025 09:29:44 -0400
+X-MC-Unique: TUIVsiixPwaNHjRgs6rsKg-1
+X-Mimecast-MFC-AGG-ID: TUIVsiixPwaNHjRgs6rsKg_1759411784
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4de2c597a6eso38190091cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 06:29:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759411783; x=1760016583;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Qi9+7Ix/o9+0OE7Ro2QqAP5ZD23WvzNBFZaksF/or5w=;
+        b=s+BhQflZaW+aR4ImHWM01PpXh+3xepKKjKF4U7E83+XbLmXnkS6nvmXnzMyiRhdFND
+         lJqOg9sG52dg9tK6vVRVyzzm1JDDfX+0IkFhzeZpUDSzMQXe75oF0iZx1psWZW/J3F/C
+         dOJAxKCyY/9aDqMhLLbdl7tP5z42ORwiWjes/WkFVnqk2jfCWfCfgyljfUJaQiRcAi0I
+         6RV9l9Dc5wYoEfg9vQ+Fg3s2yKGt/obPkDDBtypAyS/kkeS2n90FDq7cVBn4ANOhFWHm
+         TnzfDGyPOqQ0SD6MiJk5xBTaaTVDBag9oO8/aLJ0C8kI9zImXFeUeUA/0dDbtPzGttLz
+         VpoA==
+X-Forwarded-Encrypted: i=1; AJvYcCVh4dQgfk2GCFiL6qg0AOvyBFCDDMmtrWRjcL7yiPY5jVlVXqfq8kkbHOCmMxYHfzMU5nnewBqn97uNkdM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXW/aJoQ4BzlrLoSUSgjchFRoayGnQn5ncY+wT8IK32XytqaPq
+	k8giV637kZ95ZI4cCBTt6JE3IbEIUI0J1AMRuonVBQt5/rKCiVPSAVliT7cGxh0bPiHeGz/YQFa
+	YU3nbuoOmbxnBtBBGtGCqV6uenUUp1dsFo/g18qZXP8PlUrp86FV8jAZd72BhEoJX4w==
+X-Gm-Gg: ASbGncuL8zLF+I2XLtlbV5inz4cVK1bTILkldNryXN324me6JKZaRfZz0F1Nw2Dbr03
+	R+5dXLqfaUrcD2ksnv0kGS/xK+ZqK/dsLEqA3scpFp61HZHDgaqCroi5FeUGFXlF/S7e0uSs/LW
+	S8rPCEIoAgOqvIMRrEhPK1ACMFBIMA4TGJDcDCFH034aQHvpdrYI00P4FJ703LV6BjSfe3GJP5p
+	axC1JIjVB+DgBlGm9GUwwGOzRXM0V5hkGpjxZ79oAGIy+fSOZ/nulEIfl7me0vwDBLXQjG4TJ+W
+	3DtsX5JPN3/ft4vjB5H87RV5j8hdZBYx9gGgP7yPKIRjmbcMITLvOG+l17GDQvCKdxJQOwL2UPa
+	gCjh58c9TkDCqLDBrW5JV05QA
+X-Received: by 2002:a05:622a:83:b0:4c7:9b85:f6d4 with SMTP id d75a77b69052e-4e41c352a55mr95354091cf.22.1759411783689;
+        Thu, 02 Oct 2025 06:29:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEsbkMJcPahXE1fYKWHrYbKS/hIo5rcFpkc8qWfGQ51JqrZdpR70GGnHy1u2Nz8fuNUNUZm5g==
+X-Received: by 2002:a05:622a:83:b0:4c7:9b85:f6d4 with SMTP id d75a77b69052e-4e41c352a55mr95353771cf.22.1759411783202;
+        Thu, 02 Oct 2025 06:29:43 -0700 (PDT)
+Received: from jlelli-thinkpadt14gen4.remote.csb (host-80-47-6-60.as13285.net. [80.47.6.60])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-877725550e5sm210853085a.22.2025.10.02.06.29.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Oct 2025 06:29:42 -0700 (PDT)
+Date: Thu, 2 Oct 2025 14:29:38 +0100
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Yuri Andriaccio <yurand2000@gmail.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	Luca Abeni <luca.abeni@santannapisa.it>,
+	Yuri Andriaccio <yuri.andriaccio@santannapisa.it>
+Subject: Re: [RFC PATCH v3 02/24] sched/deadline: Distinct between dl_rq and
+ my_q
+Message-ID: <aN5-QmILMDZgnU4s@jlelli-thinkpadt14gen4.remote.csb>
+References: <20250929092221.10947-1-yurand2000@gmail.com>
+ <20250929092221.10947-3-yurand2000@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <413937a1-bf4c-4926-945f-7df39869f215@arm.com>
+In-Reply-To: <20250929092221.10947-3-yurand2000@gmail.com>
 
-Hi Anthony
-   thanks for the details
+Hello,
 
-On Thu, Oct 02, 2025 at 08:42:56AM +0100, Anthony McGivern wrote:
->
-> Hi all,
->
-> On 30/09/2025 13:58, Nicolas Dufresne wrote:
-> > Hi Laurent,
-> >
-> > Le mardi 30 septembre 2025 à 13:16 +0300, Laurent Pinchart a écrit :
-> >> On Tue, Sep 30, 2025 at 11:53:39AM +0200, Jacopo Mondi wrote:
-> >>> On Thu, Sep 25, 2025 at 09:26:56AM +0000, Anthony McGivern wrote:
-> >>>> On Thu, Jul 24, 2025 at 16:10:19 +0200, Jacopo Mondi write:
-> >>>>> Introduce a new type in v4l2 subdev that represents a v4l2 subdevice
-> >>>>> contex. It extends 'struct media_entity_context' and is intended to be
-> >>>>> extended by drivers that can store driver-specific information
-> >>>>> in their derived types.
-> >>>>>
-> >>>>> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-> >>>>
-> >>>> I am interested in how the sub-device context will handle the
-> >>>> Streams API? Looking at the commits the
-> >>>> v4l2_subdev_enable/disable_streams functions still appear to operate
-> >>>> on the main sub-device only. I take it we would have additional
-> >>>> context-aware functions here that can fetch the subdev state from
-> >>>> the sub-device context, though I imagine some fields will have to be
-> >>>> moved into the context such as s_stream_enabled, or even
-> >>>> enabled_pads for non stream-aware drivers?
-> >>>
-> >>> mmm good question, I admit I might have not considered that part yet.
-> >>>
-> >>> Streams API should go in a soon as Sakari's long awaited series hits
-> >>> mainline, and I will certainly need to rebase soon, so I'll probably
-> >>> get back to this.
-> >>>
-> >>> Have you any idea about how this should be designed ?
->
-> Hmm, while I haven't thought of a full implementation I did some testing
-> where I added a v4l2_subdev_context_enable_streams and it's respective
-> disable_streams. These would provide the v4l2_subdev_context so that
-> when the subdev state was fetched it would retrieve it from the context.
-> I think this would work with the streams API, however for drivers that don't
-> support this it will not since the fields such as enabled_pads are located
-> in the v4l2_subdev struct itself. Assuming these fields are only used in the
-> V4L2 core (haven't checked this fully) potentially they could be moved into
-> subdev state?
->
-> There were some other areas that I found when trying to implement this
-> in the driver we are working on, for example media_pad_remote_pad_unique()
-> only uses the media_pad struct, meaning multi-context would not work here,
-> atleast in the way I expected. Perhaps this is where we have some differing
-> thoughts on how it would be used. See some details below about the driver we
-> are working on.
->
-> >>
-> >> Multi-context is designed for memory to memory pipelines, as inline
-> >> pipelines can't be time-multiplexed (at least not without very specific
-> >> hardware designs that I haven't encountered in SoCs so far). In a
-> >
-> > I probably don't understand what you mean here, since I know you are well aware
-> > of the ISP design on RK3588. It has two cores, which allow handling up to 2
-> > sensors inline, but once you need more stream, you should have a way to
-> > reconfigure the pipeline and use one or both cores in a m2m (multi-context)
-> > fashion to extend its capability (balancing the resolutions and rate as usual).
-> >
-> > Perhaps you mean this specific case is already covered by the stream API
-> > combined with other floating proposal ? I think most of us our missing the big
-> > picture and just see organic proposals toward goals documented as un-related,
-> > but that actually looks related.
-> >
-> > Nicolas
-> >
-> >> memory-to-memory pipeline I expect the .enable/disable_streams()
-> >> operation to not do much, as the entities in the pipeline operate based
-> >> on buffers being queued on the input and output video devices. We may
-> >> still need to support this in the multi-context framework, depending on
-> >> the needs of drivers.
-> >>
-> >> Anthony, could you perhaps share some information about the pipeline
-> >> you're envisioning and the type of subdev that you think would cause
-> >> concerns ?
->
-> I am currently working on a driver for the Mali-C720 ISP. See the link
-> below for the developer page relating to this for some details:
->
-> https://developer.arm.com/Processors/Mali-C720AE
->
-> To summarize, it is capable of supporting up to 16 sensors, either through
-> streaming inputs or memory-to-memory modesn and uses a hardware context manager
+On 29/09/25 11:21, Yuri Andriaccio wrote:
+> From: luca abeni <luca.abeni@santannapisa.it>
+> 
+> Create two fields for runqueues in sched_dl_entity to make a distinction between
+> the global runqueue and the runqueue which the dl_server serves.
+> 
+> Signed-off-by: luca abeni <luca.abeni@santannapisa.it>
+> Signed-off-by: Yuri Andriaccio <yurand2000@gmail.com>
 
-Could you help me better grasp this part ? Can the device work in m2m and inline
-mode at the same time ? IOW can you assign some of the input ports to
-the streaming part and reserve other input ports for m2m ? I'm
-interested in understanding which parts of the system is capable of
-reading from memory and which part is instead fed from the CSI-2
-receiver pipeline
+The change looks good to me. Maybe we only want to be a little more verbose in
+the changelog, e.g. the following?
 
-> to schedule each context to be processed. There are four video inputs, each
-> supporting four virtual channels. On the processing side, there are two parallel
+  Split the single rq pointer in sched_dl_entity into two separate
+  pointers, following the existing pattern used by sched_rt_entity:
 
-Similar in spirit to the previous question: "each input supports 4 virtual
-channels": does the 4 streams get demuxed to memory ? Or do they get
-demuxed to internal bus connected to the processing pipes ?
+  - dl_rq: Points to the deadline runqueue where this entity is queued
+  - my_q:  Points to the runqueue that this entity serves (for servers)
 
-> processing pipelines, one optimized for human vision and the other for computer
-> vision. These feed into numerous output pipelines, including four crop+scaler
-> pipes who can each independently select whether to use the HV or CV pipe as
-> its input.
->
-> As such, our driver has a multi-layer topology to facilitate this configurability.
+  This distinction is currently redundant for the fair_server (both
+  point to the same CPU's structures), but is essential for future
+  RT cgroup support where deadline servers will be queued on the
+  global dl_rq while serving tasks from cgroup-specific runqueues.
 
-What do you mean by multi-layer ? :)
+  Update rq_of_dl_se() to use container_of() to recover the rq from
+  dl_rq, and update fair.c to explicitly use my_q when accessing the
+  served runqueue.
 
-> With some small changes to Libcamera I have all of the output pipelines implemented
-> and the media graph is correctly configured, but we would like to update the driver
-> to support multi-context.
+Thanks,
+Juri
 
-Care to share a .dot representation of the media graph ?
-
->
-> My understanding intially was each context could have it's own topology configured
-> while using the same sub-devices. For example, context 0 may link our crop+scaler
-> pipes to human vision, whereas context 1 uses computer vision. Similarly, our input
-> sub-device uses internal routing to route from the desired sensor to it's context.
-> It would by my thoughts that the input sub-device here would be shared across every
-> context but could route the sensor data to the necessary contexts. With the current
-> implementation, we make large use of the streams API and have many links to configure
-> based on the usecase so in our case any multi-context integration would also need
-> to support this.
->
-
-Media link state and routing I think make sense in the perspective of
-contexts. I still feel like for ISP pipelines we could do with just
-media links, but routing can be used as well (and in facts we already
-do in the C55 iirc). At this time there is no support in this series
-for this simply because it's not a feature I need.
-
-As Laurent said, the stream API are mostly designed to represent data
-streams multiplexed on the same physical bus, with CSI-2 being the
-main use case for now, and I admit I'm still not sure if and how they
-have to be considered when operated with contexts.
-
-My general rule of thumb to decide if a point in the pipeline should
-be context aware or not is: "can its configuration change on a
-per-frame bases ?". If yes, then it means it is designed to be
-time-multiplex between different contexts. If not, maybe I'm
-oversimplifying here, then there is no need to alternate its usage on
-a per-context base and a properly designed link/routing setup should
-do.
-
-I've discussed yesterday with Micheal if contexts could also be used
-for partitioning a graph (making sure two non-overlapping partitions
-of the pipeline can be used at the same time by two different
-applications). I guess you could, but that's not the primary target,
-as if the pipeline is properly designed you should be able to properly
-partition it using media links and routing.
-
-Happy to discuss your use case in more detail though to make sure
-that, even not all the required features are there in this first
-version, we're not designing something that makes it impossible to
-support them in future.
-
-> Anthony
 
