@@ -1,440 +1,222 @@
-Return-Path: <linux-kernel+bounces-840459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 550B2BB4787
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 18:17:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D02DBB479C
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 18:17:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDA7C4242EE
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 16:17:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21B1D3A8DBD
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 16:17:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23D22248F6A;
-	Thu,  2 Oct 2025 16:17:16 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BB592571AA;
+	Thu,  2 Oct 2025 16:17:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Id0QxmAV"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D90323F431
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 16:17:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7CF5248F5A
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 16:17:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759421835; cv=none; b=ZIEzYxWPqSU2FtIPFaG+4xWOeTjM5HS8fzz9w7yOVYMtrg93aAxadXLUhx7lKY0W/bkFc+XE0EBAtyfWdGOTAvHc2LvVz081OWIF/a4nX0NmUzBVUkssrQxmNKnCkGLgUplw0fWfbSw9/ejtW815BqzVhhAUUDBAVsuwwrjXZWM=
+	t=1759421863; cv=none; b=U7nC3UbI4CO8EqVYUI3uFJ7jOWOGXQjn5vVWB7lsArenijwHwrWoofw8HQ8oUkfg/ssUPU2Y3SNv++x/oQ1Le6VWEOQ5YbUeAVG8DRDI9A7Yr1P9EFcFRkFy5LQLjQVtr66fkOTTsUx3TIjE0FHMso1d7hDYHz5W0dVZmMkAptQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759421835; c=relaxed/simple;
-	bh=LuklbeG+sKIlTKV+I5ZPCaCYaX8HPYNi1BiJfkwBW8s=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=c1q85eUlYMnWapEBf6TJng2f+BqClJs2O7EIqv3Afx3j8Ew17cb4FogVU6FAdBBydDwd2cILV/YsDnqvqFcOWpGkhv9s1CrMkS0HYyThnN7uIFrQZMTyqcMHiOmUsq5a+Y7Ctc37s5hnC0aoKQGbrmvH2CP9Pa79mtZeDOorVVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ccxgV6Hykz6M4d6;
-	Fri,  3 Oct 2025 00:13:58 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id E933A1400D9;
-	Fri,  3 Oct 2025 00:17:08 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 2 Oct
- 2025 17:17:06 +0100
-Date: Thu, 2 Oct 2025 17:17:05 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Raghavendra K T <raghavendra.kt@amd.com>
-CC: <AneeshKumar.KizhakeVeetil@arm.com>, <Michael.Day@amd.com>,
-	<akpm@linux-foundation.org>, <bharata@amd.com>, <dave.hansen@intel.com>,
-	<david@redhat.com>, <dongjoo.linux.dev@gmail.com>, <feng.tang@intel.com>,
-	<gourry@gourry.net>, <hannes@cmpxchg.org>, <honggyu.kim@sk.com>,
-	<hughd@google.com>, <jhubbard@nvidia.com>, <jon.grimm@amd.com>,
-	<k.shutemov@gmail.com>, <kbusch@meta.com>, <kmanaouil.dev@gmail.com>,
-	<leesuyeon0506@gmail.com>, <leillc@google.com>, <liam.howlett@oracle.com>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<mgorman@techsingularity.net>, <mingo@redhat.com>, <nadav.amit@gmail.com>,
-	<nphamcs@gmail.com>, <peterz@infradead.org>, <riel@surriel.com>,
-	<rientjes@google.com>, <rppt@kernel.org>, <santosh.shukla@amd.com>,
-	<shivankg@amd.com>, <shy828301@gmail.com>, <sj@kernel.org>, <vbabka@suse.cz>,
-	<weixugc@google.com>, <willy@infradead.org>, <ying.huang@linux.alibaba.com>,
-	<ziy@nvidia.com>, <dave@stgolabs.net>, <yuanchu@google.com>,
-	<kinseyho@google.com>, <hdanton@sina.com>, <harry.yoo@oracle.com>
-Subject: Re: [RFC PATCH V3 06/17] mm/migration: migrate accessed folios to
- toptier node
-Message-ID: <20251002171705.00007740@huawei.com>
-In-Reply-To: <20250814153307.1553061-7-raghavendra.kt@amd.com>
-References: <20250814153307.1553061-1-raghavendra.kt@amd.com>
-	<20250814153307.1553061-7-raghavendra.kt@amd.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1759421863; c=relaxed/simple;
+	bh=xxvRe2lk5v6z4GHvi4gvhCLEPq/UdCzzDR2ZBmyfCzs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oIy02pGP7F4//CSQqJG2aj/JH26bIvfbSzFV/Ft2l52eAhrxgPzUlUFyPwSzL/ahNtqTa90vsT0rxCWwr4q8Hfu+HtXN4YXYNeVY7dwhJzRd9TQt2YN872+tE2EKvPNHH7lKnlWoFbFFLq7IQUbfSwzq7ezMx7BOwewErzBZvUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Id0QxmAV; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-46e4f2696bdso15210465e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 09:17:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759421860; x=1760026660; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Otx1/PA4HHwSEHLDk3fPYI5aqAtZZe0cB6f3c8gmrpc=;
+        b=Id0QxmAVsJFm19U5DZ6k2PRkpsjY4QagUIM3S9go0kE5ab5rL0WG/3dwLqQ6fa/I+f
+         og3Wunt1Y7Ha1s4tRIZ16pl5e+Uc/t4V0gevhJjOrg8IqORj2rwvbC/vf41xFU0a+bg0
+         scg96Tbr9IYJ0pEpsSmZrCbXlNULtpkr7fzrX0aney7kTlRgo7BsDZ/ef5Ttj8abfToM
+         a64d+nXE4Avy//4864VlseoicNMiwAzfnD3oTKBYoG5idO3XWqX9AdykgwEdTd+sydAq
+         jPPTi9unaiK4GAGqw1TPO5QI8eL+BmJIdhZzXe0pdbwNcVVTb9dxel9RRyymy6vxsg9u
+         UEqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759421860; x=1760026660;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Otx1/PA4HHwSEHLDk3fPYI5aqAtZZe0cB6f3c8gmrpc=;
+        b=OtwclXvSCq/zH235CM6j4ykyrLkhlo2+uhxSAM15sR+Vj1MEGjDzjiuEV8IFYs2yPF
+         rY8Y9PDY9KF2W5zjmyrU/8nPrID4erznEFgrU9bnC7OHkGM/yGZJOlezIy4aV8UyQQVv
+         zM8nyq2QWGDbvKadSeiBMTUMEM4SB+s2T+yYGUUmnPmihzpBkeluyjmhxpBX1c5I/Zky
+         OE+WYomFHuYWTz608H0mjCtmCZlpkddtCAskBNM+JSyP6GKMYw9mKT4WmA4vjaVwpdJZ
+         aXfRcC+0Wl2UOzWsC/qp8uguvw6aK2vWXP/DUSeQRY/Bl2HvRLCCShUuIevWNIil2EJJ
+         y67g==
+X-Forwarded-Encrypted: i=1; AJvYcCVXTCAXf6fOFakoXq0P5ik3rQOM4UdtXaXQTazNHddKyGSKI1BqrOGednNXhHp4cN1l3pk1kEfEZW3K394=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySDtPuvVOk6PTc4I+tNQL4hqJVw8WicCHfFikWU1IDVzg9wq5X
+	8JRbIQZ4Ws6/WTKErmMdQxIOku5Hy4wgAnRMF4XwxdTzGO4psuGN9P2I
+X-Gm-Gg: ASbGncvXXbIzy45+aAGfZXKrwPr3fczutnfkbliNrOGxabG0y4pOA2S4zX39WXMYopd
+	jmWwhlOgUgLyF7xgaRyDUCt4oEW/b6raIMoPkZwkumsZh7w2osg1LeJ07/1PZjfU1zg7zC4gjMb
+	CVmaRtI1Dv0wTJGFUAk6LI+UX7ejCF+FSt52Sw1FfFBu383w1SeB7JZc+lymB/zkqiITiMBDX+3
+	6RCf9ne1kRZCAqA6j45+xcgfHB/4Wg7rRI0Cr8ncauw37qtEHaADXcpnY8tNs3T3s9ixUXAExbp
+	3zVrbxX9x/Kscn9Ezzqx02T4ID28n4rScfXtRtHNjZsXr4sVmxvLYSY3Wk/h4ww+TgrRKv2RK2z
+	7YIkJzthkpCHYIMe96nf1+v9M7iA9mV2aKv2CRQxgI3ITxLhk8sjFyPgekHnOmMHGaehhSkoJqk
+	TgLo9W
+X-Google-Smtp-Source: AGHT+IHrchvEXsxFJrlTLE8YJHQSNf/sirg2DAFD48uIiyWWeicecXuXT0nMUm5JOEVAQSa7EBcWwg==
+X-Received: by 2002:a05:600c:828d:b0:46e:19f8:88d8 with SMTP id 5b1f17b1804b1-46e61293bcamr60986875e9.34.1759421859733;
+        Thu, 02 Oct 2025 09:17:39 -0700 (PDT)
+Received: from iku.example.org ([2a06:5906:61b:2d00:607d:d8e6:591c:c858])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e5b5e4922sm58605515e9.1.2025.10.02.09.17.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Oct 2025 09:17:39 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v9 0/6] Add support for DU/DSI clocks and DSI driver support for the Renesas RZ/V2H(P) SoC
+Date: Thu,  2 Oct 2025 17:17:22 +0100
+Message-ID: <20251002161728.186024-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100010.china.huawei.com (7.191.174.197) To
- dubpeml100005.china.huawei.com (7.214.146.113)
+Content-Transfer-Encoding: 8bit
 
-On Thu, 14 Aug 2025 15:32:56 +0000
-On Thu, 14 Aug 2025 15:32:56 +0000
-Raghavendra K T <raghavendra.kt@amd.com> wrote:
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-> A per mm migration list is added and a kernel thread iterates over
-> each of them.
-> 
-> For each recently accessed slowtier folio in the migration list:
->  - Isolate LRU pages
->  - Migrate to a regular node.
-> 
-> The rationale behind whole migration is to speedup the access to
-> recently accessed pages.
-> 
-> Currently, PTE A bit scanning approach lacks the information about
-> exact destination node to migrate to.
-> 
-> Reason:
->  PROT_NONE hint fault based scanning is done in a process context. Here
-> when the fault occurs, source CPU of the fault associated the task is
-> known. Time of page access is also accurate.
-> With the lack of above information, migration is done to node 0 by default.
-> 
-> Signed-off-by: Raghavendra K T <raghavendra.kt@amd.com>
+Hi All,
 
-Some superficial stuff inline.  I'm still getting my head around the overall
-approach.
+This patch series adds DU/DSI clocks and provides support for the
+MIPI DSI interface on the RZ/V2H(P) SoC. It was originally part of
+series [0], but has now been split into 6 patches due to dependencies
+on the clock driver, making it easier to review and merge.
 
-> diff --git a/mm/kscand.c b/mm/kscand.c
-> index 55efd0a6e5ba..5cd2764114df 100644
-> --- a/mm/kscand.c
-> +++ b/mm/kscand.c
+[0] https://lore.kernel.org/all/20250430204112.342123-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
 
->  static inline bool is_valid_folio(struct folio *folio)
->  {
->  	if (!folio || !folio_mapped(folio) || !folio_raw_mapping(folio))
-> @@ -145,18 +272,113 @@ static inline bool is_valid_folio(struct folio *folio)
->  	return true;
->  }
->  
-> -static inline void kmigrated_wait_work(void)
-> +enum kscand_migration_err {
-> +	KSCAND_NULL_MM = 1,
-> +	KSCAND_EXITING_MM,
-> +	KSCAND_INVALID_FOLIO,
-> +	KSCAND_NONLRU_FOLIO,
-> +	KSCAND_INELIGIBLE_SRC_NODE,
-> +	KSCAND_SAME_SRC_DEST_NODE,
-> +	KSCAND_PTE_NOT_PRESENT,
-> +	KSCAND_PMD_NOT_PRESENT,
-> +	KSCAND_NO_PTE_OFFSET_MAP_LOCK,
-> +	KSCAND_NOT_HOT_PAGE,
-> +	KSCAND_LRU_ISOLATION_ERR,
-> +};
-> +
-> +
+v8->v9:
+- Dropped `renesas-rzv2h-cpg-pll.h` header and merged into `renesas.h`
+- Exported the symbols for PLL calculation apis
+- Updated commit message for patch 2
+- Dropped reviewed-by tags for patch 2
+- Updated to use renesas.h
+- Updated Kconfig to select CLK_RZV2H
+- Added reviewed-by tag from Tomi for patch 5 and 6
 
-One line probably appropriate here.
+v7->v8:
+- Added reviewed-by tags from Tomi, Geert and Biju
+- Dropped rzv2h_get_pll_dsi_info() helper and opencoded instead.
+- Dropped is_plldsi parameter from rzv2h_cpg_pll_clk_register()
+- Updated commit message for patch 5/6 and 6/6
+- Switched to use devm_clk_get() instead of devm_clk_get_optional()
+  as lpclk clock is available on all SoCs.
+- Simplified check in rzv2h_mipi_dsi_dphy_init() for PLL parameters
+- Renamed start_index member to base_value in struct rzv2h_mipi_dsi_timings
+- Added comments in the code for DSI arrays and their usage
+- Added comments in the code for sleeps
+- Rebased the changes on next-20250902
 
-> +static bool is_hot_page(struct folio *folio)
->  {
-> -	const unsigned long migrate_sleep_jiffies =
-> -		msecs_to_jiffies(kmigrate_sleep_ms);
-> +	bool ret = false;
->  
-> -	if (!migrate_sleep_jiffies)
-> -		return;
-> +	if (!folio_test_idle(folio))
-> +		ret = folio_test_referenced(folio) || folio_test_young(folio);
->  
-> -	kmigrated_sleep_expire = jiffies + migrate_sleep_jiffies;
-> -	wait_event_timeout(kmigrated_wait,
-> -			true,
-> -			migrate_sleep_jiffies);
-> +	return ret;
-> +}
-> +
-> +static int kmigrated_promote_folio(struct kscand_migrate_info *info,
-> +					struct mm_struct *mm,
-> +					int destnid)
-> +{
-> +	unsigned long pfn;
-> +	unsigned long address;
-> +	struct page *page;
-> +	struct folio *folio = NULL;
-> +	int ret;
-> +	pmd_t *pmd;
-> +	pte_t *pte;
-> +	spinlock_t *ptl;
-> +	pmd_t pmde;
-> +	int srcnid;
-> +
-> +	if (mm == NULL)
-> +		return KSCAND_NULL_MM;
-> +
-> +	if (mm == READ_ONCE(kmigrated_cur_mm) &&
-> +		READ_ONCE(kmigrated_clean_list)) {
-> +		WARN_ON_ONCE(mm);
-> +		return KSCAND_EXITING_MM;
-> +	}
-> +
-> +	pfn = info->pfn;
-> +	address = info->address;
-> +	page = pfn_to_online_page(pfn);
-> +
-> +	if (page)
-> +		folio = page_folio(page);
-> +
-> +	if (!page || PageTail(page) || !is_valid_folio(folio))
-> +		return KSCAND_INVALID_FOLIO;
-> +
-> +	if (!folio_test_lru(folio))
-> +		return KSCAND_NONLRU_FOLIO;
-> +
-> +	if (!is_hot_page(folio))
-> +		return KSCAND_NOT_HOT_PAGE;
-> +
-> +	folio_get(folio);
-> +
-> +	srcnid = folio_nid(folio);
-> +
-> +	/* Do not try to promote pages from regular nodes */
-> +	if (!kscand_eligible_srcnid(srcnid)) {
-> +		folio_put(folio);
-> +		return KSCAND_INELIGIBLE_SRC_NODE;
-> +	}
-> +
-> +	/* Also happen when it is already migrated */
-> +	if (srcnid == destnid) {
-> +		folio_put(folio);
-> +		return KSCAND_SAME_SRC_DEST_NODE;
-> +	}
-> +
-> +	address = info->address;
-> +	pmd = pmd_off(mm, address);
-> +	pmde = pmdp_get(pmd);
-> +
-> +	if (!pmd_present(pmde)) {
-> +		folio_put(folio);
-> +		return KSCAND_PMD_NOT_PRESENT;
-> +	}
-> +
-> +	pte = pte_offset_map_lock(mm, pmd, address, &ptl);
-> +	if (!pte) {
-> +		folio_put(folio);
-> +		WARN_ON_ONCE(!pte);
-> +		return KSCAND_NO_PTE_OFFSET_MAP_LOCK;
-> +	}
-> +
-> +	ret = kscand_migrate_misplaced_folio_prepare(folio, NULL, destnid);
-> +
-> +	folio_put(folio);
-> +	pte_unmap_unlock(pte, ptl);
-> +
-> +	if (ret)
-> +		return KSCAND_LRU_ISOLATION_ERR;
-> +
-One line enough.
+v6->v7:
+- Renamed pllclk to pllrefclk in DT binding
+- Added a new patch to add instance field to struct pll
+- Renamed rzv2h_pll_div_limits to rzv2h_pll_limits
+- Included fout_min and fout_max in the rzv2h_pll_limits structure
+- Renamed rzv2h_plldsi_parameters to rzv2h_pll_div_pars and re-structured
+  for readability
+- Dropped rzv2h_dsi_get_pll_parameters_values() instead added modular apis
+  to calculate the PLL parameters ie rzv2h_get_pll_pars/rzv2h_get_pll_div_pars/
+  rzv2h_get_pll_dtable_pars
+- Dropped plldsi_limits from rzv2h_cpg_info structure
+- Updated the DSI driver to use the new PLL APIs
+- Included the LPCLK patch
+- Rebased the changes on next-20250728
 
-> +
-> +	return  migrate_misplaced_folio(folio, destnid);
-extra space after return.
->  }
->  
->  static bool folio_idle_clear_pte_refs_one(struct folio *folio,
-> @@ -302,6 +524,115 @@ static inline int kscand_test_exit(struct mm_struct *mm)
->  	return atomic_read(&mm->mm_users) == 0;
->  }
->  
-> +struct destroy_list_work {
-> +	struct list_head migrate_head;
-> +	struct work_struct dwork;
-> +};
-> +
-> +static void kmigrated_destroy_list_fn(struct work_struct *work)
-> +{
-> +	struct destroy_list_work *dlw;
-> +	struct kscand_migrate_info *info, *tmp;
-> +
-> +	dlw = container_of(work, struct destroy_list_work, dwork);
-> +
-> +	if (!list_empty(&dlw->migrate_head)) {
+v5-> v6:
+- Renamed CPG_PLL_STBY_SSCGEN_WEN to CPG_PLL_STBY_SSC_EN_WEN
+- Updated CPG_PLL_CLK1_DIV_K, CPG_PLL_CLK1_DIV_M, and
+  CPG_PLL_CLK1_DIV_P macros to use GENMASK
+- Updated req->rate in rzv2h_cpg_plldsi_div_determine_rate()
+- Dropped the cast in rzv2h_cpg_plldsi_div_set_rate()
+- Dropped rzv2h_cpg_plldsi_round_rate() and implemented
+  rzv2h_cpg_plldsi_determine_rate() instead
+- Made use of FIELD_PREP()
+- Moved CPG_CSDIV1 macro in patch 2/4
+- Dropped two_pow_s in rzv2h_dsi_get_pll_parameters_values()
+- Used mul_u32_u32() while calculating output_m and output_k_range
+- Used div_s64() instead of div64_s64() while calculating
+  pll_k
+- Used mul_u32_u32() while calculating fvco and fvco checks
+- Rounded the final output using DIV_U64_ROUND_CLOSEST()
+- Renamed CLK_DIV_PLLETH_LPCLK to CLK_CDIV4_PLLETH_LPCLK
+- Renamed CLK_CSDIV_PLLETH_LPCLK to CLK_PLLETH_LPCLK_GEAR
+- Renamed CLK_PLLDSI_SDIV2 to CLK_PLLDSI_GEAR
+- Renamed plldsi_sdiv2 to plldsi_gear
+- Preserved the sort order (by part number).
+- Added reviewed tag from Geert.
+- Made use of GENMASK() macro for PLLCLKSET0R_PLL_*,
+  PHYTCLKSETR_* and PHYTHSSETR_* macros.
+- Replaced 10000000UL with 10 * MEGA
+- Renamed mode_freq_hz to mode_freq_khz in rzv2h_dsi_mode_calc
+- Replaced `i -= 1;` with `i--;`
+- Renamed RZV2H_MIPI_DPHY_FOUT_MIN_IN_MEGA to
+  RZV2H_MIPI_DPHY_FOUT_MIN_IN_MHZ and
+  RZV2H_MIPI_DPHY_FOUT_MAX_IN_MEGA to
+  RZV2H_MIPI_DPHY_FOUT_MAX_IN_MHZ.
 
-Similar to below.  I'm not sure this check is worth having unless something else ends
-up under it later.
+Cheers,
+Prabhakar
 
-> +		list_for_each_entry_safe(info, tmp, &dlw->migrate_head,	migrate_node) {
-> +			list_del(&info->migrate_node);
-> +			kfree(info);
-> +		}
-> +	}
-> +
-> +	kfree(dlw);
-> +}
-> +
-> +static void kmigrated_destroy_list(struct list_head *list_head)
-> +{
-> +	struct destroy_list_work *destroy_list_work;
-> +
+Lad Prabhakar (6):
+  clk: renesas: rzv2h-cpg: Add instance field to struct pll
+  clk: renesas: rzv2h-cpg: Add support for DSI clocks
+  clk: renesas: r9a09g057: Add clock and reset entries for DSI and LCDC
+  dt-bindings: display: bridge: renesas,dsi: Document RZ/V2H(P) and
+    RZ/V2N
+  drm: renesas: rz-du: mipi_dsi: Add LPCLK clock support
+  drm: renesas: rz-du: mipi_dsi: Add support for RZ/V2H(P) SoC
 
-One blank line
+ .../bindings/display/bridge/renesas,dsi.yaml  | 120 +++-
+ drivers/clk/renesas/r9a09g057-cpg.c           |  62 ++
+ drivers/clk/renesas/rzv2h-cpg.c               | 560 +++++++++++++++++-
+ drivers/clk/renesas/rzv2h-cpg.h               |  29 +-
+ drivers/gpu/drm/renesas/rz-du/Kconfig         |   1 +
+ .../gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c    | 453 ++++++++++++++
+ .../drm/renesas/rz-du/rzg2l_mipi_dsi_regs.h   |  34 ++
+ include/linux/clk/renesas.h                   | 136 +++++
+ 8 files changed, 1355 insertions(+), 40 deletions(-)
 
-> +
-> +	destroy_list_work = kmalloc(sizeof(*destroy_list_work), GFP_KERNEL);
-> +	if (!destroy_list_work)
-> +		return;
-> +
-> +	INIT_LIST_HEAD(&destroy_list_work->migrate_head);
-> +	list_splice_tail_init(list_head, &destroy_list_work->migrate_head);
-> +	INIT_WORK(&destroy_list_work->dwork, kmigrated_destroy_list_fn);
-> +	schedule_work(&destroy_list_work->dwork);
-> +}
+-- 
+2.51.0
 
-> +
-> +static void kscand_cleanup_migration_list(struct mm_struct *mm)
-> +{
-> +	struct kmigrated_mm_slot *mm_slot;
-> +	struct mm_slot *slot;
-> +
-> +	mm_slot = kmigrated_get_mm_slot(mm, false);
-> +
-> +	slot = &mm_slot->mm_slot;
-Maybe combine these with declrations.
-
-	struct kmigrated_mm_slot *mm_slot = kmigrated_get_mm_slot(mm, false);
-	struct mm_slot *slot = &mm_slot->mm_slot;
-
-seems clear enough (assuming nothing else is added later).
-
-> +
-> +	if (mm_slot && slot && slot->mm == mm) {
-> +		spin_lock(&mm_slot->migrate_lock);
-> +
-> +		if (!list_empty(&mm_slot->migrate_head)) {
-> +			if (mm == READ_ONCE(kmigrated_cur_mm)) {
-> +				/* A folio in this mm is being migrated. wait */
-> +				WRITE_ONCE(kmigrated_clean_list, true);
-> +			}
-> +
-> +			kmigrated_destroy_list(&mm_slot->migrate_head);
-> +			spin_unlock(&mm_slot->migrate_lock);
-> +retry:
-> +			if (!spin_trylock(&mm_slot->migrate_lock)) {
-> +				cpu_relax();
-> +				goto retry;
-> +			}
-> +
-> +			if (mm == READ_ONCE(kmigrated_cur_mm)) {
-> +				spin_unlock(&mm_slot->migrate_lock);
-> +				goto retry;
-> +			}
-> +		}
-> +		/* Reset migrated mm_slot if it was pointing to us */
-> +		if (kmigrated_daemon.mm_slot == mm_slot)
-> +			kmigrated_daemon.mm_slot = NULL;
-> +
-> +		hash_del(&slot->hash);
-> +		list_del(&slot->mm_node);
-> +		mm_slot_free(kmigrated_slot_cache, mm_slot);
-> +
-> +		WRITE_ONCE(kmigrated_clean_list, false);
-> +
-> +		spin_unlock(&mm_slot->migrate_lock);
-> +		}
-
-Something odd with indent here.
-
-> +}
-> +
->  static void kscand_collect_mm_slot(struct kscand_mm_slot *mm_slot)
->  {
->  	struct mm_slot *slot = &mm_slot->slot;
-> @@ -313,11 +644,77 @@ static void kscand_collect_mm_slot(struct kscand_mm_slot *mm_slot)
->  		hash_del(&slot->hash);
->  		list_del(&slot->mm_node);
->  
-> +		kscand_cleanup_migration_list(mm);
-> +
->  		mm_slot_free(kscand_slot_cache, mm_slot);
->  		mmdrop(mm);
->  	}
->  }
->  
-> +static void kmigrated_migrate_mm(struct kmigrated_mm_slot *mm_slot)
-> +{
-> +	int ret = 0, dest = -1;
-> +	struct mm_slot *slot;
-> +	struct mm_struct *mm;
-> +	struct kscand_migrate_info *info, *tmp;
-> +
-> +	spin_lock(&mm_slot->migrate_lock);
-> +
-> +	slot = &mm_slot->mm_slot;
-> +	mm = slot->mm;
-> +
-> +	if (!list_empty(&mm_slot->migrate_head)) {
-
-If it's empty the iterating the list will do nothing. So is this check
-useful?  Maybe other code comes under this check later though.
-
-
-> +		list_for_each_entry_safe(info, tmp, &mm_slot->migrate_head,
-> +				migrate_node) {
-> +			if (READ_ONCE(kmigrated_clean_list))
-> +				goto clean_list_handled;
-
-Currently same a break. I assume this will change later in patch, if so
-ignore this comment.
-
-> +
-> +			list_del(&info->migrate_node);
-> +
-> +			spin_unlock(&mm_slot->migrate_lock);
-> +
-> +			dest = kscand_get_target_node(NULL);
-> +			ret = kmigrated_promote_folio(info, mm, dest);
-> +
-> +			kfree(info);
-> +
-> +			cond_resched();
-> +			spin_lock(&mm_slot->migrate_lock);
-> +		}
-> +	}
-> +clean_list_handled:
-> +	/* Reset  mm  of folio entry we are migrating */
-> +	WRITE_ONCE(kmigrated_cur_mm, NULL);
-> +	spin_unlock(&mm_slot->migrate_lock);
-> +}
-
-
-> @@ -621,6 +1040,13 @@ static int __init kscand_init(void)
->  		return -ENOMEM;
->  	}
->  
-> +	kmigrated_slot_cache = KMEM_CACHE(kmigrated_mm_slot, 0);
-> +
-
-Drop this blank line to keep call + error check closely associated.
-
-> +	if (!kmigrated_slot_cache) {
-> +		pr_err("kmigrated: kmem_cache error");
-> +		return -ENOMEM;
-> +	}
-> +
->  	init_list();
->  	err = start_kscand();
->  	if (err)
-> diff --git a/mm/migrate.c b/mm/migrate.c
-> index 2c88f3b33833..1f74dd5e6776 100644
-> --- a/mm/migrate.c
-> +++ b/mm/migrate.c
-> @@ -2541,7 +2541,7 @@ SYSCALL_DEFINE6(move_pages, pid_t, pid, unsigned long, nr_pages,
->   * Returns true if this is a safe migration target node for misplaced NUMA
->   * pages. Currently it only checks the watermarks which is crude.
->   */
-> -static bool migrate_balanced_pgdat(struct pglist_data *pgdat,
-> +bool migrate_balanced_pgdat(struct pglist_data *pgdat,
->  				   unsigned long nr_migrate_pages)
-
-Update parameter alignment as well.
-
->  {
->  	int z;
 
