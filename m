@@ -1,88 +1,140 @@
-Return-Path: <linux-kernel+bounces-840352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09262BB42D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 16:36:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 611E6BB42DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 16:36:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A493C7B28DB
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 14:34:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBD193C7DAA
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 14:36:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61CDA312805;
-	Thu,  2 Oct 2025 14:36:06 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71CD8312821;
+	Thu,  2 Oct 2025 14:36:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZxYLLKgp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 893531957FC
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 14:36:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4F3F3126A2;
+	Thu,  2 Oct 2025 14:36:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759415766; cv=none; b=OQzULPT56oeEOVGqzQgQUqUaSCHFE0He84sGhyDagJ2OZY1QQCHsTqtdU8IVnIQZ1eBP9EyBYFUzDPwdPgOL+W/DqYIzd5A7sx43Nfy5YPLDa3H82DCD/zngKOeGhkdgAHyNyGtUToCCmkiraGclLkcfTVV9yjUWl5ZPRzUhp+4=
+	t=1759415790; cv=none; b=ATZP7cXj/+LmMYTAXjz1N4wyNv3GywK27RvXwgGo5bialVobbPG3PcvwfkAaLUKrIV03Xg15+WYSOuZu6MXZY+33336N1bo+1bLVGUosZD6uW+J4IT/zHRloT2uYpi8csfIXUTfD5e75BoyxRwsn4xR+o6kkbZ3/J1kxx5RT1dE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759415766; c=relaxed/simple;
-	bh=8liGFBphLsGR/Ovvzu/WzdltXAKa3S0oH7Lj+OOJeIA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=ICaOXTTS3CmhM3EwP8D+VTzZ/WkWajvwj98GNvaNNKJ7klEbrdwEv2XPm2yHbzS0/Hp/S38ZfAr7/5Dq47gqmQgF99hZNqlzfnKfFBnpLuIXbO7aDsmPQVx5pjfIjXEC12s63QYEe19gH1cDR7xdz/g8WuBqBvCNC9tJyy4YRTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-90efeb58159so128066039f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 07:36:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759415763; x=1760020563;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jk/4xwGcZFhgMycSW8GRKnHdm9qwb9tDahIkrgnD+yY=;
-        b=gBTKyj593iPNNJeNcI9IqLk57XEXmJkWoOBKsPGIs3rX4Qp23HvlsDOzb6nIQcBwcn
-         gPOfJ6o+J6RWKTEo0gdUc3J9ZNuAzPjCCim3x/cCYpcPPcMIcfjQbBDrZ8IXxFuujA8Y
-         xNJCTsXDX6J25Skf1RDpyQOOTXXgWbiegs3cNtD5Ui+A6BnjP4Qn3Rm2Ab965wz8xyJw
-         cSURKZxuGFbj0TwxIZCq8bEs48oi6v/PKypO27f+iwZpfb6P4R9oBkwNT2EO5DFghxKh
-         +ERVhxiKfhW+z3VeL1SjsNiQzTNtZs4J/sUUZzhTPP1VFf8LTcQErIS7WPOy0SwdyIsj
-         AgcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWxbaRKJpfAYryYxFyXcnURiaZ5nJEDDR6JV6pajlLzoInMw+JcCOxXBe9ozKrwFd0Mmhsuzzw23G5QaY4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyxc1KzdTcPHCBYG+Ri6yLit4vojeQXZWqy4Dfa0psnUtzg0cgk
-	1lZmUU9MH6hoY8qT+uBny7GH8KkHf7aPY2gABybiivy80DOClJgp5m+UXE52F2yy8B2CnnHvvuR
-	XyU87pwuJgRz27h184gHT6X+5Us/wUKBuBvDFmxMGskSL9byRu/uXh6TUX0A=
-X-Google-Smtp-Source: AGHT+IEFCDUy+L2HapUMoQIqVeNFf1+i8LU/i67UR6vqPzmRvVBOVGQdoDjMHnGwpE8/z19KuYRoEdSiXryjuqvRF5DnWBXy3WRH
+	s=arc-20240116; t=1759415790; c=relaxed/simple;
+	bh=B3aUqt3yFL4cHWEvV1ArHNkFI5dahy1JTP0dauqet8k=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=KFEdqClkfVn0SO7ip1jA2sIrYcq5XnOxRP+/Pxw7d8aM+6aZ9lrFv5yg+/lLw8lA20PoqjH4okCp6SMoCoZiQSfAhIRRdvsmYZR6E4KuHFgL8jk9w6QX1B4Da2DUZ/yKtj688m7JR3C1aGv0c/JtRyxazzONcv1HVwc9k1WJgIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZxYLLKgp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA1FEC4CEF4;
+	Thu,  2 Oct 2025 14:36:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759415790;
+	bh=B3aUqt3yFL4cHWEvV1ArHNkFI5dahy1JTP0dauqet8k=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=ZxYLLKgpgek07MIpQs+oWR3QIZ/0+t6zS5HO7VL5SSUaky6Wqsoy6MYs0UJlG0qd/
+	 KfSfck/b9VZhYxoHARfeiJ+XfMQTaYHgb74w/SjBgKEONHvWDJyXoG/HlaU8ztW1HT
+	 OpAeKa+4TFTNbgdoI7bOuqRySqL281bRPtXbJEtTbgFrdsclVZPv2Li0I0xuBdvGiR
+	 uE4AETG1j+75R7mXo0YFDE86MIpMhnAXETIE4NNkBbWPq7rvl0kKT/LCvYq/v7GEb9
+	 7UrFoYgh4imcXqLY94kp07jKJoHvOzRQhqlc9CKvqEDfrRys5UxJtBN0TEppGL8WqJ
+	 GyHfKVXCLxj2A==
+Date: Thu, 2 Oct 2025 09:36:27 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Siddharth Vadapalli <s-vadapalli@ti.com>
+Cc: lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org,
+	robh@kernel.org, bhelgaas@google.com, cassel@kernel.org,
+	kishon@kernel.org, sergio.paracuellos@gmail.com,
+	18255117159@163.com, jirislaby@kernel.org, m-karicheri2@ti.com,
+	santosh.shilimkar@ti.com, stable@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, srk@ti.com
+Subject: Re: [PATCH 2/2] PCI: keystone: Remove the __init macro for the
+ ks_pcie_host_init() callback
+Message-ID: <20251002143627.GA267439@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:2c14:b0:90c:99f6:4cec with SMTP id
- ca18e2360f4ac-937a70f0f73mr1022782839f.3.1759415763631; Thu, 02 Oct 2025
- 07:36:03 -0700 (PDT)
-Date: Thu, 02 Oct 2025 07:36:03 -0700
-In-Reply-To: <n45v4ckrwdb6z2zhqo554lt7qvgzmpbpd3z4uluun6vyotacmk@coodvjeanw3d>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68de8dd3.050a0220.25d7ab.07b2.GAE@google.com>
-Subject: Re: [syzbot] [fs?] WARNING in copy_mnt_ns
-From: syzbot <syzbot+e0f8855a87443d6a2413@syzkaller.appspotmail.com>
-To: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250912100802.3136121-3-s-vadapalli@ti.com>
 
-Hello,
+On Fri, Sep 12, 2025 at 03:37:59PM +0530, Siddharth Vadapalli wrote:
+> The ks_pcie_host_init() callback registered by the driver is invoked by
+> dw_pcie_host_init(). Since the driver probe is not guaranteed to finish
+> before the kernel initialization phase, the memory associated with
+> ks_pcie_host_init() may already be freed by free_initmem().
+> 
+> It is observed in practice that the print associated with free_initmem()
+> which is:
+> 	"Freeing unused kernel memory: ..."
+> is displayed before the driver is probed, following which an exception is
+> triggered when ks_pcie_host_init() is invoked which looks like:
+> 
+> 	Unable to handle kernel paging request at virtual address ...
+> 	Mem abort info:
+> 	...
+> 	pc : ks_pcie_host_init+0x0/0x540
+> 	lr : dw_pcie_host_init+0x170/0x498
+> 	...
+> 	ks_pcie_host_init+0x0/0x540 (P)
+> 	ks_pcie_probe+0x728/0x84c
+> 	platform_probe+0x5c/0x98
+> 	really_probe+0xbc/0x29c
+> 	__driver_probe_device+0x78/0x12c
+> 	driver_probe_device+0xd8/0x15c
+> 	...
+> 
+> Fix this by removing the "__init" macro associated with the
+> ks_pcie_host_init() callback and the ks_pcie_init_id() function that it
+> internally invokes.
+> 
+> Fixes: 0c4ffcfe1fbc ("PCI: keystone: Add TI Keystone PCIe driver")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+I dropped this from pci/controller/keystone because of the resulting
+section mismatch:
 
-Reported-by: syzbot+e0f8855a87443d6a2413@syzkaller.appspotmail.com
-Tested-by: syzbot+e0f8855a87443d6a2413@syzkaller.appspotmail.com
+  https://lore.kernel.org/r/202510010726.GPljD7FR-lkp@intel.com
 
-Tested on:
+ks_pcie_host_init() calls hook_fault_code(), which is __init, so we
+can't make ks_pcie_host_init() non-__init.
 
-commit:         7f707257 Merge tag 'kbuild-6.18-1' of git://git.kernel..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1190c92f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f9d13d0fd373120a
-dashboard link: https://syzkaller.appspot.com/bug?extid=e0f8855a87443d6a2413
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1137e092580000
+Both are bad problems, but there's no point in just swapping one
+problem for a different one.
 
-Note: testing is done by a robot and is best-effort only.
+> ---
+>  drivers/pci/controller/dwc/pci-keystone.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
+> index 21808a9e5158..c6e082dcb3bc 100644
+> --- a/drivers/pci/controller/dwc/pci-keystone.c
+> +++ b/drivers/pci/controller/dwc/pci-keystone.c
+> @@ -799,7 +799,7 @@ static int ks_pcie_fault(unsigned long addr, unsigned int fsr,
+>  }
+>  #endif
+>  
+> -static int __init ks_pcie_init_id(struct keystone_pcie *ks_pcie)
+> +static int ks_pcie_init_id(struct keystone_pcie *ks_pcie)
+>  {
+>  	int ret;
+>  	unsigned int id;
+> @@ -831,7 +831,7 @@ static int __init ks_pcie_init_id(struct keystone_pcie *ks_pcie)
+>  	return 0;
+>  }
+>  
+> -static int __init ks_pcie_host_init(struct dw_pcie_rp *pp)
+> +static int ks_pcie_host_init(struct dw_pcie_rp *pp)
+>  {
+>  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+>  	struct keystone_pcie *ks_pcie = to_keystone_pcie(pci);
+> -- 
+> 2.43.0
+> 
 
