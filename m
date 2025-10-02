@@ -1,266 +1,230 @@
-Return-Path: <linux-kernel+bounces-839788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72B5ABB268C
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 04:58:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1512BB2692
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 05:03:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA531164E3D
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 02:58:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 692D9380263
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 03:03:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A4DF1A9FAB;
-	Thu,  2 Oct 2025 02:58:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F76B23DEB6;
+	Thu,  2 Oct 2025 03:03:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UtM7qcJc"
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="LnpyTI6o"
+Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012062.outbound.protection.outlook.com [40.107.209.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2522A1A5B92
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 02:58:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759373927; cv=none; b=LLr3NImlv1mW/M1lgcR5ydLQd99NqA6M/q+YUXdZkqGL/wcyppcKnUjv78QNihEdq+o2c0pIk/3QhpjMxGDhBm5tFMfF7G9pETHDkvFx3vFrfKf8xygpquboigSdMPh7CJ0MDXAUdrtxkH2AKL/ZrC3Hbqv73bEmK0ZQsDGSo4U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759373927; c=relaxed/simple;
-	bh=AFQ0+vnRlDOTQJXWhOhRj0G+nQ+Zs0XRhRjq4A56fVg=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=h9bAICoRJB6oN/6QiL19Q1RFK1dYqtJEcPTLgTZuhgzR0r8IlF7oGNXGxEl8uhQvBb9VMYbZXSl1JALDpYazpJPEOawzJOxIgEkj1+dL6b84SbuoGAJ3CIcfwrhZpJSprtjBe4HqWO0Zx2I9lXBrLWUkQmGDbHABWkhyKdWTrqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UtM7qcJc; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4e56cd8502aso3300021cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 19:58:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759373925; x=1759978725; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=SPDWoBVHdObjAFgVvHKYm/ngzKxCIMKXS+1jqg6D8Pk=;
-        b=UtM7qcJckR/kwomrVl6fdY71A+VWx4SbogP+yE746VzeR5Yvw47Q5K9FVSpS3dF4Xt
-         vSVaX20GrdIoD6CAN28Q9Fg9sWMMh/UqslKeKa9J11Nq/4srVLsiskyaCsw8Q5pt48b5
-         yug9aGZ4jrGA+Ej2Gtq8WW+ACYs/Vni3HxnKu1QPmiKO2FDG2sKjh4VI58usiZ98H+8o
-         5y1T8qlD7cgv2bWaoQh24XTyICGkeV7RFfsMASVf93lqYidg3VOY77SvA18/t99Fshke
-         5LW7ti2lkumoY8pdfqZqdSdjFeAT4ylJuK4nGc7cXxYorn66IlFAtvJpUbreGtKL43Vs
-         dUPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759373925; x=1759978725;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SPDWoBVHdObjAFgVvHKYm/ngzKxCIMKXS+1jqg6D8Pk=;
-        b=aQXPNPUSDd3ssfDLrn9nykL3F0rwOQSkyvNjt6uRGnLddwlnQlWSj/He7P6WF1JqGF
-         yMRfp4VB7OovPDBM3OAJmxGEgRijTl2VxWQNC0zriCz6Vh+T3AnqsqbPPbixqmeV32Jf
-         Lxe+minKMpOzWx8wVaOhmABEUO8ZTPHn4c8NHMtVe1Qz4EKKhNq2ZW0hJ8TzplxbFLfq
-         abfH6RugckEI8C0sJNdKaVL2lrXg/3zuA0sxrD4dPTtl/0O6/1VtdkcYHCQAoZYQ9M8T
-         1F/G56EH6pTND6hqAUDCS4HocTZQwaJNKNEihU8263y9Qx/WKUiaaM35WLBn8aEXJDag
-         Xw7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVKscVYfegAD6BFhEcZ4NLodsftWkV4Dyn9y/l1tAmoTTN6RrDcwJkbzg9lkqsPZgQPL1lpIn2DLX3FHrE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQX3Z2MuXe5ZhEExn7TBBxyVC2Qj87dy4b1xta2bRxE/VBehnv
-	w2N3hTw3QBlhvb91NtN2DE7eQCiUYseX7BlvOz8iSmIvbXhox+/nQvVx
-X-Gm-Gg: ASbGncuybDhaz+YkDXW/vyECX+i0c5L9oNzp/Dg+IjuD13qZsayjCNAqpBGkTTvmi3T
-	xXnFqGYhTYQCz4sXaTd54+ci+PqBXwXiph0zRF/Cw25IVnlWg9pUMFb47C1q9btPZnOfSeIEUkm
-	NskufI7ZFPL0tAZws6uVHsIBMoA8godkqkb8eG88sypM3oFg9pE+Bb/aSX9YgwqPykoVol7xVo8
-	blbMyVegE15Qq0dsi4EX8EUktpCqVQ4r350HBrXUb7zIaVA4JMqpFBpRSlFpHYGXBzPxhhj4Ac7
-	FAv9pt55cva01kGNTNK032/82tn1tk60VrafWQPSsy/u5dDB4RAgHuwdArRZ+A0ZLA98WwaoJeN
-	RVGXRFxvukwSLNUEznkWVGe3RJgR1PgDDEKIawprZdpmo1UEq3B5HZKx0UvvrROfy0TDtxz6FLU
-	LP9APWbb1S2PXnH3vGU0k6iZzL9WNTYQ==
-X-Google-Smtp-Source: AGHT+IHEiTChiNkm3rqtjGx8pAiTWZdt9TSl9GKNVJqXH4NffSUcy5+ncXc/xlWZubwQRixrbAWhyQ==
-X-Received: by 2002:ac8:5fcd:0:b0:4db:db96:15d3 with SMTP id d75a77b69052e-4e41cc0ce72mr76524281cf.31.1759373924633;
-        Wed, 01 Oct 2025 19:58:44 -0700 (PDT)
-Received: from ehlo.thunderbird.net (modemcable197.17-162-184.mc.videotron.ca. [184.162.17.197])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4e55c9e77bcsm12172451cf.24.2025.10.01.19.58.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 01 Oct 2025 19:58:43 -0700 (PDT)
-Date: Wed, 01 Oct 2025 22:58:38 -0400
-From: =?ISO-8859-1?Q?Jean-Fran=E7ois_Lessard?= <jefflessard3@gmail.com>
-To: Rob Herring <robh@kernel.org>
-CC: Andy Shevchenko <andy@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
- devicetree@vger.kernel.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v5_3/7=5D_dt-bindings=3A_auxdisp?=
- =?US-ASCII?Q?lay=3A_add_Titan_Micro_Electronics_TM16xx?=
-User-Agent: Thunderbird for Android
-In-Reply-To: <20251002024431.GA2926696-robh@kernel.org>
-References: <20250926141913.25919-1-jefflessard3@gmail.com> <20250926141913.25919-4-jefflessard3@gmail.com> <20251002024431.GA2926696-robh@kernel.org>
-Message-ID: <A137AD5E-2D4E-4C1E-8A71-EF90E60D8F14@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14865208CA;
+	Thu,  2 Oct 2025 03:03:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.62
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759374206; cv=fail; b=OaBOCZ8ZnyyFwKb7T10u3MmO8AKBOGk8Yg3kH4Auf8VvET0i4nD203plDS01KwT5JRsY+BApF9lCQPilKmGtS+jeE1382/BOIztt3GwIJGMSQg2zdiT+RyQHRLfqmaO9MZn5GeYKT47sv8k2RBx37EG44OHu8MvlJrcHyCw+rHY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759374206; c=relaxed/simple;
+	bh=GrG9R++GEZJ0grZOUDPo5GrNHLuX2GkVXv8655UNuN0=;
+	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
+	 In-Reply-To:MIME-Version; b=WUD7NVelqEIHRMferspOysxZ0Y+JIhoQcU89Ndhq4XtaU0NcuJemDImP0fYkx6A3KnYuZkFhPCZshPVx+ZIJC6yJaml3T68VEZ0RJebd5VG3EX4AituwrfdZrdlxOO21bsJpCmCB3Z5WyuWlWYFgpFu2Ia9es8xyJQqXj3PGShE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=LnpyTI6o; arc=fail smtp.client-ip=40.107.209.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QtJMjTZYmGjUgLeDi0TuV4jyS1WWmSq8ypS17wMH1iCtqIKDAEC+Axp7DtZBqrU/zBk+kPS9lXhdd3woT0QU6yHoQjm4cDa1SKZOk7D/XNzK95WdU9y7z2EWM6G+1QWckbeYqStGQJMpz6FGnJqx3jjgGxHMKEWNuC5yI0TNHGs1o+lpL39kDN06GdLqLe9Fhf8k55ntKocIUdgzoNx2yo+LWDojiw4MYljVvlIb9JTSbeIqGnOtqwljwtZpWoavLKFaTpqS1dauZ//aQhhEM6UnNmYfGsNj2EBe9gAaIk/TbCr1SsAKKTvHHyPrHUj9pmXVBXEFD0p+ldK682TEhA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rpqxcn89z9R6A8aBEiIC3830SRlw1jH2WbA9rbQcnNk=;
+ b=nB1I5fQU9ewlSUEYa3lNq+HAOMmc/YGjEqnqS0GOXT0Ta6+DPWPCBxdmtfsvFddYjnBT4y80q9Rb7vFhvDkfBLsCoVKmAePE7JdYEHZMJsnC6jm+IRipgdzC2cBtXOsusaGi9xYsElyZfcm8p0QnnIzQIR4ntURhxSLcwyri+4C1KYfGpbCw9B1348A0Gd9T9Ry3Ui9stVTOVjBzH7WTC1dGGBoYYTtzE9uL7Jo9H+gRelxyAIxegFTO4Gqu5h/xOj/BQBLSwivfkoKda5HSgwHIXi5tmsW9KZlUmhYm/LlcDBNjMEpjGCJ1hueDeEs4EYVftnpj8nb+wEWJAFTLMA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rpqxcn89z9R6A8aBEiIC3830SRlw1jH2WbA9rbQcnNk=;
+ b=LnpyTI6oyQNU+fzZ9RfM03qi7EH9zQf/kbU49SKw9/picwwYfPFFPEqLcMkG5Yx1aVOnbHU4DOa9Ip+xYRt43Ddj8eRUZurUdn+nBuXIXpXmoGIi48VsaeeFzsceZ3k9qqr3R9pGHlMS6ww1fHd8YhDPzZVKGFpmxlmDTjk6G/JlkxeB/1mKhkyDKvY1zKuS0n1QCZzgOjTsF6mldxpF4Bg5rO3KPcrcIL5NGtt6Rl/q8FfGjc6YsrronsZjnOyk/VXCQQz7A7o2YuDz5Ob47QUXWGyWXeLg9GJibTiUV4WkV7o/4LHdx8Wvfhx+4tPjsbmljKovqBYfqJnRtCHDJg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by PH8PR12MB8605.namprd12.prod.outlook.com (2603:10b6:510:1cc::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.18; Thu, 2 Oct
+ 2025 03:03:19 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9160.017; Thu, 2 Oct 2025
+ 03:03:19 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 02 Oct 2025 12:03:15 +0900
+Message-Id: <DD7I3NGT6DHI.114KADERSQ8VG@nvidia.com>
+Cc: <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 0/2] rust: bounded integer types and use in register
+ macro
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+To: "Joel Fernandes" <joelagnelf@nvidia.com>, "Alexandre Courbot"
+ <acourbot@nvidia.com>, "Yury Norov" <yury.norov@gmail.com>, "Danilo
+ Krummrich" <dakr@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20251002-bounded_ints-v1-0-dd60f5804ea4@nvidia.com>
+ <6d4b5659-7c0e-4720-8305-5b0053807443@nvidia.com>
+In-Reply-To: <6d4b5659-7c0e-4720-8305-5b0053807443@nvidia.com>
+X-ClientProxiedBy: OSTP286CA0073.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:604:226::6) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|PH8PR12MB8605:EE_
+X-MS-Office365-Filtering-Correlation-Id: 200c7ddc-3c66-4792-51ec-08de01603d21
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|10070799003|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?K2tzZFN5eC9HUVJWR21ISGg4TWZEVVRUTkRaRkMzaGpzMU1LbGQzSlRKRVQ4?=
+ =?utf-8?B?U2s4eHRlMDdWVGRmZ2RZZGs3RkR2ZnYzaDFWS0NQSlhES09hTk4yNDhidTd4?=
+ =?utf-8?B?V3RZUHU3RzVhRFdtZFZHQW1raENlWXhkOVBTS3lJYmlkMmtYL2dISzhweHEw?=
+ =?utf-8?B?RkMxMHF6QWRrSkJXYStuMHh6N3dpSkZjblNTQXNvd0NFWU5QMi9TcmQ1aFAw?=
+ =?utf-8?B?bWFtQWdKU0VrWGhBQUsrdU0wdTJ0RGZMNGVHVy9XMTBVVDM0QXV5VnJtMUVG?=
+ =?utf-8?B?NFI3UlYyeFhUTFo4SEYwSUZPZW5XLzJrSWZld3diS1FDbC8rRVB2ano0RU1s?=
+ =?utf-8?B?MmZWVFp2Q0prTWk4NVZoQUtVa2lMQjlJd1pVUFB5UE5nSVBuR1puRGx6UTNx?=
+ =?utf-8?B?YndkenV4T0R5NmNYcVlhZU44Yk5lYkR4SUZaOVdsOXphNVRYWW5NSkQ0aUxu?=
+ =?utf-8?B?TzNmaFZjVExkVm04M0NIeWY3bFV3dWhpaEJzT0JtaGoyeXZRZzk5RmFEZ0ta?=
+ =?utf-8?B?Vm5DSXgwRnZ5M0o1YVErczE5VW5zYkF3QUZmNmtIdWdrM1FjY25JTHVVcXJx?=
+ =?utf-8?B?Q1E5S1lZL0ZCSldEWFRqKzJlQ2N0UTNQcUJrNlFCcW5mZEVUbm9VY3o0MHNp?=
+ =?utf-8?B?TTF5bWVuSWVmcE1FRTdjeFhDaUpnc3RnSkovVGJUbnZjdzMzRDB5RmF6R08v?=
+ =?utf-8?B?M1ZpZnVwaUUzak16eWZGQmNqVSthSjVmaWNHQVFRbW5hY2hKNWk1MklSb05S?=
+ =?utf-8?B?ejJCeWJNMk9iZEViUHV5K2RpSTl2M05hdG5ZY2JKTUtGQ0tyTTMzVTlaeXcw?=
+ =?utf-8?B?cTNZM1l2NGJPWlZENlpVcDJtL1QyN0JmbGtlRzI1cmJvRkJDTmZ5eXBBdEpW?=
+ =?utf-8?B?cnFPTUhzbGNCcllGNFJiSEs2dVdnb2JOamRRbDBsN2t0RHJRL3YvZE1WTzhr?=
+ =?utf-8?B?NWdhUFFxZmxGc1oyMzduS1cvb1RNVFV3VkdCRHRYayt3MXlRTkRRRVVCaFM2?=
+ =?utf-8?B?Q0JmNlhraG9aUDBWbjZzVVZISXhmQ2VKRjkybkdHSVlxSUplMnQxVUVUWGt5?=
+ =?utf-8?B?VkNjTjI4aWVGQmIrbjErdnQwQ1E0L1lLbkF4c0d6NUhxVytJaW9ZcVJiUkdI?=
+ =?utf-8?B?cVVkQXU0U094dW9EcUNPL3NDekVYdGFRR2VldDY0NFdWQmhaU2JyTHRCMUtP?=
+ =?utf-8?B?RkRyUnJWZlJVdVRKWmI4VkdOdUpBQVdRNFNVRnBadzNkRWh4Vk1DSFJRSlNw?=
+ =?utf-8?B?cTRLY3ljZ1lDTldKdnZJdENIS0x0N1NXU05BSEcxMjhHck1zREMvWjBrY2ky?=
+ =?utf-8?B?dm5CWDlzWk43TklxU2EzZkY3RDJWZ2VaL0ZzMEc0aHpuYmc3VmdBY0dPQ0Vr?=
+ =?utf-8?B?MUZxZmJlVmNhUURJakF0YjRaV3FWUy84bmZEdkxaRGdOejJ0TzdReWdBajBv?=
+ =?utf-8?B?anFEdEM2QkZDWk9JbEtFVk1yZCtNWTBUUGQvK0FjMXJwK04wZjRHRWltQUlW?=
+ =?utf-8?B?Qi9ETCtKTGZ4OWppOG5LRnJ6RlFHY2pGVDMyZGhtM3hVTHgvV3JUSmRGN2xR?=
+ =?utf-8?B?S2lWMFROTmYvSEFqL3h6cm0rSzNINU5VZlk3cng2dktSNjh2MCtVZDdZN1lV?=
+ =?utf-8?B?bEk5aWZSNXVlVXBpMkhuRXpNTHJ1VDU5MkRENlUwc3c4SklwS1FEdk4wWHdq?=
+ =?utf-8?B?WEtaM3g1am5NcUJ0NXpkVG8wK3gxWWNMUmUrakZoKzJ5T0Q1WUE2bW5jRVJx?=
+ =?utf-8?B?VEQzaVF4OFp2TVM5dHpud3RpOU9BMmdCVVVjckVla2NZK1plVlNjVEVsNVlu?=
+ =?utf-8?B?Ry95Ri9ZaFQ0eW5SbmlJT2RQd2xkRUpsWnR6WXg5MVNZNUsydHNCcG1RakxI?=
+ =?utf-8?B?S2RrM3d1bVZERDRVeFp4ekJHWkJWUWVFNVhwWGlvOHNZUVY4UHBxdTBVN1hG?=
+ =?utf-8?Q?mouniFn4SmlLd+SxvYaoEicFj48+hc8C?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?OU5rbnVPbGpjd1JKaVJ5RWRVb0k2Ym11ajZPUStIVkhvWXNJbkJDVEorRnVh?=
+ =?utf-8?B?ckplMU5LUHpoclFFanFhR093ZDVBOHBja0xSUXFtQUpuOENBa0RKTHNMejdT?=
+ =?utf-8?B?di9YZkxmODNocVM5cWo5YXRqNS9WY0xHQzBLSWszVE53SUw4ZzVLZjFWOVVO?=
+ =?utf-8?B?UVQ1bXpZYUdYaGs2OFd0ODdIbGoxS0cvWHZXYWxvVXN1NDhOZ3pPdTVPMXU5?=
+ =?utf-8?B?UzJiSXhrQmU0Y3lwald2RCtpZHJabU93RVVocXNyMnRpTUFmRXRJeUxHMHlR?=
+ =?utf-8?B?S1N4NHlaVUdZUFpkbUMyT05sdERoRUx3NWVPM0l6eE45Tk9adzVtdmE1UFJW?=
+ =?utf-8?B?THZtTm40U2d4d3BFamRxRUxpelROM3phQUVtY3Iyd3ZQbjhrRE5TN1JrRFM4?=
+ =?utf-8?B?aDE0S05SNE1TRXJoSlRPNjBmem5QWWkxVFA0aDg5U1kvLzdhTHhkcVhuNzZh?=
+ =?utf-8?B?S3FqY3VBbVRYNGdYS2J1SnVNUjUwQkMyaGpLTG5XanFFVHZzWEJrTGlmZGhX?=
+ =?utf-8?B?NXF1a2wyL2JiUE42aFpvNVlIeFFBVHNxYk9FMlBXK2Z0UFZKdEtkNUkvWm5G?=
+ =?utf-8?B?bUNGbHh0YTRhdE5tdzg4NjBNbHVGUkNnenVtdXlUckgvOVNlWTh1cjJwSWpo?=
+ =?utf-8?B?enQ3TTVxSlRqdDVTMGRpNkFKRkRlcjZFcmxjQzdNdUNEMHhjUWZKSEc1Q1Zs?=
+ =?utf-8?B?MHVTV3FVT3JQbkwrTS9TUXFaditkclNTV3lBL0FQUEhncHM1ZU0vVGh2ay80?=
+ =?utf-8?B?ZEJYS1lyVGxmOFNYQ3Q0KzFlbTNreWVYNzNSSGZjVjgzcFBLdkR0NVVQcnBQ?=
+ =?utf-8?B?aWpDYVRDSEdYdzlrbE12MVBwVzdudSs4VXk0RDNCRkdQS0ZGWk5oN2NubzF2?=
+ =?utf-8?B?Vk41dWVUbFd5Z2trZURYRkVHZC9VVjNhMHRsSWtycXBqTVNvUzFDL0hyQ2Rm?=
+ =?utf-8?B?bEd5VnZac2dkcWRacXJENnFrUWFQS0tOakVoOVdZeUtLL0tFRURBbHVha2Zw?=
+ =?utf-8?B?dWZVY2F3aFBzOUlwdnFOZHNvbk1yRTVHV0gxTU9WbnA0d1N0aVlhbW13Rysz?=
+ =?utf-8?B?U1RjMGpHSW94ZkNOYUJEV0o5bGtpOVdDNHdxQnNXY2c2aktMSmNNTnpZYkxi?=
+ =?utf-8?B?MFovRFI3VURmTFpIT3diVUxObGlsV2QwZS9ELzc3K2V3SjB6NngrZVVmMXBx?=
+ =?utf-8?B?UW9xbjVQUFd0aGVmeFh1VU5ET0xUNTRxSWR6L2s0MlZiNU9MN3pjbEcvQUtx?=
+ =?utf-8?B?MStqeFJGOGdxU29FaGpCRWc1VXBFZWdSeXZuMWIyS2l1SGo2R0ZjdlpIUVZL?=
+ =?utf-8?B?aCs4Z0NqK0lOZkQ1MUJLUjN6dy93Uy9UVUY0TkQvSFhUSEt0VXBqYmNiVVgw?=
+ =?utf-8?B?QXVoREp1ekVqK2RGN0doUkFSZXRqQ3E0UkZUVzdMQ2l0eDF3aUtqOXJTRkZs?=
+ =?utf-8?B?LzkrQ0h2aTl5WVRFajVhN1BuNEFDWlZpOEk5OHEwc21SejdqZEhBVTdVeUF4?=
+ =?utf-8?B?ckNnNzBNSU9BNzkyREdUQlQ1N1pLZzhmY1VmTndQeERtb0lCZXExdmp2b1BY?=
+ =?utf-8?B?T1ZOVHVRUmU0anRVaEJlNWErd0RINDdUOXJYK0Q4V3NiNXlBZDh6WTM1TUg2?=
+ =?utf-8?B?cU84RFlCa3Q5b1BPeExRd3hvbEV6Nzg3U3pOL1VFdUFVTUQyTU8yUWx0YXht?=
+ =?utf-8?B?QVVMTWJSR3l1bFA0U2pMM2ViV2g3SEg3YTRBSy84dlVWS3g1bGptWDFGWGho?=
+ =?utf-8?B?SE50TGZWem9HbGpMNDVvT0JMODhkNHgxT1E1Z25RMm5jVnc4dWJmME9UZjdM?=
+ =?utf-8?B?anVaeGFWTFRZdGlwZERsdTVtSFZ5SDhLcUtFWjF6OXpmMkpNUFkvSjJySlhI?=
+ =?utf-8?B?SVdyejdUVXJtOWt2TkRrR2ovT2JIU0FObUlXeGdjRVN6UVhWdlFLTTFYQzM4?=
+ =?utf-8?B?OWxxZk4vemxqNThYWG9SL1dIZUpQZ1NaYnRqazhoQzNJSFNuUmdvWm1nN0w2?=
+ =?utf-8?B?UkxwYnRpVjdSMEllZmZPUjBrNEZnMEo0NkhqZVRRQm9SU2l2Vk93eFZpTmdu?=
+ =?utf-8?B?eS83U25iKzZHa2oyaWVSSXRWcUZldkMzM29SOGxBa1oxNXYzTStLcVlBbVFP?=
+ =?utf-8?B?b3lnUi9NNGlJM0JqdHNuYlZFYVNZOTFFUkJzZWZFbmV1ZG03WkVpTlNZYlh6?=
+ =?utf-8?Q?yExhVqP+LboXU+fPMrQ/UwvFDJ1PwQrcpqOC3qaFJtPI?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 200c7ddc-3c66-4792-51ec-08de01603d21
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Oct 2025 03:03:19.0000
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: OlF1hCxWSR53o6962N/WKeNCFAbs6XlGJPMMsSrxBYBGUenz+v8tfUe2ZS4dNN8gCSSATmy1c+KXx1lCzBE7uQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB8605
 
-Le 1 octobre 2025 22 h 44 min 31 s HAE, Rob Herring <robh@kernel=2Eorg> a =
-=C3=A9crit=C2=A0:
->On Fri, Sep 26, 2025 at 10:19:04AM -0400, Jean-Fran=C3=A7ois Lessard wrot=
-e:
->> Add documentation for TM16xx-compatible 7-segment LED display controlle=
-rs
->> with keyscan=2E
->>=20
-=2E=2E=2E
->> +
->> +  digits:
->> +    type: object
->> +    description: Container for 7-segment digit group definitions
->> +    additionalProperties: false
->> +
->> +    properties:
->> +      "#address-cells":
->> +        const: 1
->> +      "#size-cells":
->> +        const: 0
->> +
->> +    patternProperties:
->> +      "^digit@[0-9]+$":
+On Thu Oct 2, 2025 at 7:07 AM JST, Joel Fernandes wrote:
+> Hi Alex,
 >
->Unit addresses are typically hex, so: [0-9a-f]+
+> Nice!
 >
-
-Acknowledged=2E Will change to hex pattern=2E
-
->> +        type: object
->> +        unevaluatedProperties: false
->> +
->> +        properties:
->> +          reg:
->> +            description:
->> +              Digit position identifier numbered sequentially left-to-=
-right,
->> +              with reg=3D0 representing the leftmost digit position as=
- displayed
->> +              to the user=2E
->> +            maxItems: 1
->> +
->> +          segments:
->> +            $ref: /schemas/types=2Eyaml#/definitions/uint32-matrix
->> +            description: |
->> +              Array of grid/segment coordinate pairs for each 7-segmen=
-t position=2E
->> +              Each entry is <grid segment> mapping to standard 7-segme=
-nt positions
->> +              in order: a, b, c, d, e, f, g
->> +
->> +              Standard 7-segment layout:
->> +                 aaa
->> +                f   b
->> +                f   b
->> +                 ggg
->> +                e   c
->> +                e   c
->> +                 ddd
->> +            items:
->> +              items:
->> +                - description: Grid index
->> +                - description: Segment index
->> +            minItems: 7
->> +            maxItems: 7
->> +
->> +        required:
->> +          - reg
->> +          - segments
->> +
->> +  leds:
->> +    type: object
->> +    description: Container for individual LED icon definitions
->> +    additionalProperties: false
->> +
->> +    properties:
->> +      "#address-cells":
->> +        const: 2
->> +      "#size-cells":
->> +        const: 0
->> +
->> +    patternProperties:
->> +      "^led@[0-9]+,[0-9]+$":
+> On 10/1/2025 11:03 AM, Alexandre Courbot wrote:
+>> For convenience, this PoC is based on drm-rust-next. If we decide to
+>> proceed with it, we would do it after the patchset extracting and moving
+>> the bitfield logic [3] lands, as the two would conflict heavily.
 >
->Again, hex please=2E
+> I would strongly prefer this as well, to avoid conflicts. On initial look=
+, this
+> seems to be in the right direction and solves the pain points we were see=
+ing.
 >
-
-Acknowledged=2E Will change to hex pattern=2E
-
->I assume this is <grid>,<segment>? Please add a description for the=20
->node and say that=2E
+> -            .set_sec(if sec { 1 } else { 0 });
+> +            .set_sec_bounded(BoundedInt::new(if sec { 1 } else { 0 }));
 >
+> Here, I would prefer if we did not add _bounded, since the idea is to sol=
+ve the
+> problems in the macro's setters itself (make it infallible, not panicking=
+ etc).
+> So we can just modify those?
 
-Yes this is <grid>,<segment>=2E Will add description=2E
+Oh absolutely, the and goal is to replace the existing accessors. For
+this RFC I went the lazy way and added new ones, otherwise I would have
+had to update more call sites in nova-core.
 
->> +        type: object
->> +        $ref: /schemas/leds/common=2Eyaml#
->> +        unevaluatedProperties: false
->> +
->> +        properties:
->> +          reg:
->> +            description:
->> +              Grid and segment indices as <grid segment> of this indiv=
-idual LED icon
->> +
->> +        required:
->> +          - reg
->> +
->> +dependencies:
->> +  poll-interval:
->> +    - linux,keymap
->> +  linux,keymap:
->> +    - poll-interval
->> +  autorepeat:
->> +    - linux,keymap
->> +    - poll-interval
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +
->> +allOf:
->> +  - $ref: /schemas/leds/common=2Eyaml#
->> +    properties:
->> +      color: false
->> +      function: false
->> +      function-enumerator: false
->> +  - $ref: /schemas/input/input=2Eyaml#
->> +  - $ref: /schemas/input/matrix-keymap=2Eyaml#
->> +  # SPI controllers require 3-wire (combined MISO/MOSI line)
->> +  - if:
->> +      properties:
->> +        compatible:
->> +          contains:
->> +            enum:
->> +              - fdhisi,fd620
->> +              - fdhisi,fd628
->> +              - princeton,pt6964
->> +              - titanmec,tm1618
->> +              - titanmec,tm1620
->> +              - titanmec,tm1628
->> +              - titanmec,tm1638
->> +              - wxicore,aip1618
->> +              - wxicore,aip1628
->> +    then:
->> +      $ref: /schemas/spi/spi-peripheral-props=2Eyaml#
->> +      properties:
->> +        spi-3wire: true
 >
->You can drop properties=2E
+> Also, BoundedInt sounds like a good name to me IMO.
 >
+> Also, since TryFrom trait is implemented in the first patch, then in nova=
+ we can
+> just do the following?
+>   .set_foo(value.try_into()?);
 
-The issue is spi-3wire is defined in the child node of spi/spi-controller=
-=2Eyaml,
-not in spi-peripheral-props=2Eyaml=2E
+Yes! That does work indeed and is more concise. And we can also make
+things less verbose on the caller side by adding a new generic setter in
+the form of:
 
-Removing properties did not pass dt validation=2E Am I missing something?
+    fn try_set_field<T: TryInto<BoundedInt<..>>(self, value:T) -> Result
 
->> +      required:
->> +        - spi-3wire
->
->With those nits fixed,
->
->Reviewed-by: Rob Herring (Arm) <robh@kernel=2Eorg>
->
+This setter could try to perform the conversion itself and return an
+error as needed, and the caller would just need to call e.g.
 
-Thank you!
+    .try_set_foo(value)?;
+
+instead of building the BoundedInt themselves.
+
+There are also many other improvements that can be done, like having
+fields with a round number of bits be represented by the relevant
+primitive directly instead of a BoundedInt, but that will requires some
+more macro magic.
+
 
