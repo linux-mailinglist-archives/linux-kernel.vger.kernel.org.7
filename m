@@ -1,87 +1,56 @@
-Return-Path: <linux-kernel+bounces-840143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98F94BB3AD3
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 12:42:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46DBEBB3AE0
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 12:46:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50A8E19C1F4A
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 10:42:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDD1B19C3695
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 10:46:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B60530BF58;
-	Thu,  2 Oct 2025 10:42:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Is5IduLX"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B17712EAD09;
+	Thu,  2 Oct 2025 10:46:20 +0000 (UTC)
+Received: from Atcsqr.andestech.com (60-248-80-70.hinet-ip.hinet.net [60.248.80.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA7530AD09
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 10:42:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 686B328030E
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 10:46:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.248.80.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759401723; cv=none; b=OzlhbzVu1+WeeJ1BRA8ZKNGNzfN2w5twllnt1HyI8udwZYrEwMq4KaB9wLAJiYc97ldL40d207f+2BPLJggur1aI8VvrDD9ye1ru0ZXFHs9sV7dOwU4c30RYrNO0xBadx120YWko48GASHAQ7eYTHq+ImgJBVtH+DFex16mUZp0=
+	t=1759401980; cv=none; b=UN4b8NgQQR9aweHurtAAR+TcVWoPFP1uaTeMHVHpua95l6Aju0BQIXrxJtUHhj+rLfavmC4X9buK80C40JKZU5sGSTych9XZzrDI2jpq61D3r9Tqv3VlCpzjkDldWksM/35uZTjEmgOXRLopxXBftxHNpj+VKrSTGw0D+kiLNds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759401723; c=relaxed/simple;
-	bh=r1Iv5PxlSFXBdk6FkJyAuWVSJJAJTI855hgQ2son99M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FBHRG106UeaXzjFZ16s2vVrRfXpsxgksoNzw+9B+5fVMSZbOqie0BesN75rsVTzsqgInGYsBaWxSJgZs48EuADlif00jdX2N4Wehua76gWxZ+UL7mkAy/OfZ+yc+iWo9v05lG3CX3d0FMYTsa9fUek7L4R7axmF6UXRcpnQxkIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Is5IduLX; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-3324fdfd54cso1086065a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 03:42:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759401721; x=1760006521; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=m0rfQXn18l2tTAMnF1By1OoocjO9lOTD4YqEsuU82z4=;
-        b=Is5IduLXHH6wirBNF6cvQdOZNCPMAzvI8cfI5U3ereQyB2EIcl0dZvHjkctm7Z3pv/
-         Let+aZYcCbVDTVm/n3ujca76ejKbVeUAcij2/dj4kGVArQcho6FyDX4FB4jZk2vWPQ9O
-         Mks2Eq3FytnEXW/+XqV5AvANrNUR7k/LeshItd+QYvZzfmuNQZb+ziNmkxC1HerLLhw1
-         9BMIXYbo8FHBIfb5Wlp4Vu7TnnNojqA57fQ7Mjt6rKBzrK+RN1dtxICPpsYH99miNG95
-         q1tzbyO+8Wqd8r+cxcdH1nXeuX5rhgvPYFc87ippM7tWFQcxXGJosxFIbrnZOmOlhW1V
-         jNlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759401721; x=1760006521;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=m0rfQXn18l2tTAMnF1By1OoocjO9lOTD4YqEsuU82z4=;
-        b=goBP6SuZYHJL4HPlpaZUAKJn+G7OpFvF+ugrydOhCPAmqITK9Y30kcVYccxWN0eZic
-         2YqF+kZEfRAT8jCk9dEseDj701jRP0rqfT20KTHQoy14LeT7ZAcHcqIZ/vT1chfptRlO
-         caKbdbfZ+N58ny2V9F4gedHIs6yrLEa/HJuG4JyOG4O4y8GYQJr6VE2GPb3zJPyUyIpA
-         nrbTS44Y5uykDM0uy7g1Wt4MgULsatHV/7DsSbPlfTWEfjiUVHRlRpwH1Q85ZR6cla+0
-         TqLUwqqJM0uhwZtEdi/Z6pJrFqagc1LHIx+PMLLumQCm8G5DNRdwhxdXfcv39RYOLWs9
-         OKkw==
-X-Forwarded-Encrypted: i=1; AJvYcCXBTnK529mUsBdnuYB3ulI77EnoK77HVTBbW7e69hLR1Ba03zFTw5+EY4GJ+Rbdzbm7TPGKi7+ClzXovL8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzU7YBXYeTj6R/bxrEo09cFUpiWJmRWzNdr5Ytx+K1mKpOibJYz
-	VgR986z79hB/LxZirkzel87sKHtzYKJ12EQWZnv8ZAqHIbpdM5lkc8hu
-X-Gm-Gg: ASbGnctaaEfN3cNqtclYfFXw9t3NaKSx9/wQaA9eR5Vo0P/I30z3ZmzeEO+QmJDyW/G
-	ohji6MYvCxsuQhJg5HVjsgtaWdyySN0QwelXgYR8wI2tyeQfEcL0ceuyitLJZf6A7K1dPRatuj9
-	2aVL9bnz+4KOSP2WM/paIfVk+UvmITWXaIVp7dwHWvvPSFMrXdd6FDOcSbL/0mundpliNmheX7w
-	/+a33TXQviniQlgBlQKAYLN0TJgeyPb5Y1jrD5d1BduAfq8NGfHMPr+VLNY+9ls21MlX8K55+ki
-	op6cUNkGzrhQwm+aPaEpGgvVkUdSUvRi2D2HRMkq1W6U5RzzaZE5f8D6ApaIljbLek8neBUIGgA
-	qOuF22pT5xNPJ86SFzHyDHZLrB8rPG3yMTi8uUiS8jMJ3J4JxNsW+SLEgg14pF1RhZcqZHiWibW
-	97G0mVoGXwVcpfuoc9CT1Oef5Ih9ck1DgJQu60VA==
-X-Google-Smtp-Source: AGHT+IGQ2AWzZDPz/YAhggZ0WM3ScwDOuQ20HhIL/1AKelC3gwa3qTa+zyPA6jKSa0nR6Ejrp3NNDQ==
-X-Received: by 2002:a17:90b:4d0a:b0:330:6f16:c4e0 with SMTP id 98e67ed59e1d1-339a6e94003mr9490535a91.12.1759401721223;
-        Thu, 02 Oct 2025 03:42:01 -0700 (PDT)
-Received: from deepanshu-kernel-hacker.. ([2405:201:682f:389d:5615:a275:dd45:da86])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6099af3cf6sm1714004a12.13.2025.10.02.03.41.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 03:42:00 -0700 (PDT)
-From: Deepanshu Kartikey <kartikey406@gmail.com>
-To: tytso@mit.edu,
-	adilger.kernel@dilger.ca
-Cc: linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Deepanshu Kartikey <kartikey406@gmail.com>,
-	syzbot+3ee481e21fd75e14c397@syzkaller.appspotmail.com
-Subject: [PATCH] ext4: reject inline data flag when i_extra_isize is zero
-Date: Thu,  2 Oct 2025 16:11:51 +0530
-Message-ID: <20251002104151.2392385-1-kartikey406@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1759401980; c=relaxed/simple;
+	bh=csUIQuReDTDBN+CK9c2wrTCx7C6gd+2od27eRvAh6io=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Bohs0pmf6F1Gn+Yxdps7p9RJgTKI6LFSlTQQDBJCLzlJ7G1JYWMMS9E2n4Elw0nSh0UsaWPrLCbDoDsuhorjMMSgZgkE1KHT5Xhe1JV0eWdU63+q92bjHgF3tahBN0szGP2Fiu0vhjdgE8UgiMIShSS2ZtASAtJ3TwwugtpNLYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com; spf=pass smtp.mailfrom=andestech.com; arc=none smtp.client-ip=60.248.80.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
+Received: from mail.andestech.com (ATCPCS31.andestech.com [10.0.1.89])
+	by Atcsqr.andestech.com with ESMTPS id 592Ak6kS068536
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 2 Oct 2025 18:46:06 +0800 (+08)
+	(envelope-from randolph@andestech.com)
+Received: from atctrx.andestech.com (10.0.15.173) by ATCPCS31.andestech.com
+ (10.0.1.89) with Microsoft SMTP Server id 14.3.498.0; Thu, 2 Oct 2025
+ 18:46:06 +0800
+From: Randolph Lin <randolph@andestech.com>
+To: <linux-kernel@vger.kernel.org>
+CC: <linux-pci@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <jingoohan1@gmail.com>,
+        <mani@kernel.org>, <lpieralisi@kernel.org>, <kwilczynski@kernel.org>,
+        <robh@kernel.org>, <bhelgaas@google.com>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <alex@ghiti.fr>, <aou@eecs.berkeley.edu>,
+        <palmer@dabbelt.com>, <paul.walmsley@sifive.com>,
+        <ben717@andestech.com>, <inochiama@gmail.com>,
+        <thippeswamy.havalige@amd.com>, <namcao@linutronix.de>,
+        <shradha.t@samsung.com>, <pjw@kernel.org>, <randolph.sklin@gmail.com>,
+        <tim609@andestech.com>, Randolph Lin <randolph@andestech.com>
+Subject: [PATCH v5 0/5] Add support for Andes Qilai SoC PCIe controller
+Date: Thu, 2 Oct 2025 18:45:53 +0800
+Message-ID: <20251002104558.4068668-1-randolph@andestech.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,57 +58,68 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-DKIM-Results: atcpcs31.andestech.com; dkim=none;
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:Atcsqr.andestech.com 592Ak6kS068536
 
-Prevent use-after-free in ext4_search_dir by rejecting inodes that
-claim to have inline data but have no extra inode space allocated.
+Add support for Andes Qilai SoC PCIe controller
 
-ext4 inline data is stored in the extra inode space beyond the
-standard 128-byte inode structure. This requires i_extra_isize to be
-non-zero to provide space for the system.data xattr that stores the
-inline directory entries or file data.
+These patches introduce driver support for the PCIe controller on the
+Andes Qilai SoC.
 
-However, a corrupted filesystem can craft an inode with both:
-- i_extra_isize == 0 (no extra space)
-- EXT4_INODE_INLINE_DATA flag set (claims to use extra space)
+Signed-off-by: Randolph Lin <randolph@andestech.com>
 
-This creates a fundamental inconsistency. When i_extra_isize is zero,
-ext4_iget() skips calling ext4_iget_extra_inode(), which means the
-inline xattr validation in check_xattrs() never runs. Later, when
-ext4_find_inline_entry() attempts to access the inline data, it reads
-unvalidated and potentially corrupt xattr structures, leading to
-out-of-bounds memory access and use-after-free.
-
-Fix this by validating in ext4_iget() that if an inode has the
-EXT4_INODE_INLINE_DATA flag set, i_extra_isize must be non-zero.
-This catches the corruption at inode load time before any inline
-data operations are attempted.
-
-Reported-by: syzbot+3ee481e21fd75e14c397@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=3ee481e21fd75e14c397
-Tested-by: syzbot+3ee481e21fd75e14c397@syzkaller.appspotmail.com
-Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
 ---
- fs/ext4/inode.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+Changes in v5:
+- Add support to adjust the number of OB/IB windows in the glue driver.
+- Fix the number of OB windows in the Qilai PCIe driver.
+- Remove meaningless properties from the device tree.
+- Made minor adjustments based on the reviewer's suggestions.
 
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 5b7a15db4953..d082fff675ac 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -5417,6 +5417,12 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
- 
- 	if (EXT4_INODE_SIZE(inode->i_sb) > EXT4_GOOD_OLD_INODE_SIZE) {
- 		if (ei->i_extra_isize == 0) {
-+			if (ext4_has_inline_data(inode)) {
-+				ext4_error_inode(inode, function, line, 0,
-+						 "inline data flag set but i_extra_isize is zero");
-+				ret = -EFSCORRUPTED;
-+				goto bad_inode;
-+			}
- 			/* The extra space is currently unused. Use it. */
- 			BUILD_BUG_ON(sizeof(struct ext4_inode) & 3);
- 			ei->i_extra_isize = sizeof(struct ext4_inode) -
+---
+Changes in v4:
+- Add .post_init callback for enabling IOCP cache.  
+- Sort by vender name in Kconfig 
+- Using PROBE_PREFER_ASYNCHRONOUS as default probe type.
+- Made minor adjustments based on the reviewer's suggestions.
+
+---
+Changes in v3:
+- Remove outbound ATU address range validation callback and logic.
+- Add logic to skip failed outbound iATU configuration and continue.
+- Using PROBE_PREFER_ASYNCHRONOUS as default probe type.
+- Made minor adjustments based on the reviewer's suggestions.
+
+---
+Changes in v2:
+- Remove the patch that adds the dma-ranges property to the SoC node.
+- Add dma-ranges to the PCIe parent node bus node.
+- Refactor and rename outbound ATU address range validation callback and logic.
+- Use parent_bus_offset instead of cpu_addr_fixup().
+- Using PROBE_DEFAULT_STRATEGY as default probe type.
+- Made minor adjustments based on the reviewer's suggestions.
+
+Randolph Lin (5):
+  PCI: dwc: Allow adjusting the number of ob/ib windows in glue driver
+  dt-bindings: PCI: Add Andes QiLai PCIe support
+  riscv: dts: andes: Add PCIe node into the QiLai SoC
+  PCI: andes: Add Andes QiLai SoC PCIe host driver support
+  MAINTAINERS: Add maintainers for Andes QiLai PCIe driver
+
+ .../bindings/pci/andestech,qilai-pcie.yaml    |  97 +++++++
+ MAINTAINERS                                   |   7 +
+ arch/riscv/boot/dts/andes/qilai.dtsi          | 106 ++++++++
+ drivers/pci/controller/dwc/Kconfig            |  13 +
+ drivers/pci/controller/dwc/Makefile           |   1 +
+ drivers/pci/controller/dwc/pcie-andes-qilai.c | 240 ++++++++++++++++++
+ drivers/pci/controller/dwc/pcie-designware.c  |  12 +-
+ 7 files changed, 474 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pci/andestech,qilai-pcie.yaml
+ create mode 100644 drivers/pci/controller/dwc/pcie-andes-qilai.c
+
 -- 
-2.43.0
+2.34.1
 
 
