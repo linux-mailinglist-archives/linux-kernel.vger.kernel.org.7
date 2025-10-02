@@ -1,158 +1,154 @@
-Return-Path: <linux-kernel+bounces-840474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2012CBB4835
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 18:22:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 93542BB486A
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 18:25:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61E797A5334
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 16:19:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE7C17B1E74
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 16:23:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 379CA1DF994;
-	Thu,  2 Oct 2025 16:19:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 246AF259C94;
+	Thu,  2 Oct 2025 16:25:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J53OGMWk"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="lwT0ThyQ"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1159624A06D
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 16:19:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6393B2580F2;
+	Thu,  2 Oct 2025 16:25:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759421995; cv=none; b=OZ+At1UneNTXip6hRlhOhSzTbuune2K1vjyru0Jqnl1jpGiGMvWf0q3KXDBDAfUCHibMHqcxUvQ8BNX/w7sArpnG2afLogn7uWMNe65M+MNo95UjfHsitc2QoAgDel9cChtfDg2Q+6PdF+16m69evhvuSrE58f78oQJ/x/YEkMA=
+	t=1759422309; cv=none; b=Ag3ylDzffF9M6ZlM54TbI6buAMyPpe3vc9rYViAjbefvsSkt2vhqzFL8bvMU2o5b+BISOMG4fvv2bMDjcFVySaraPOsMEhuSpPT32u65KVRUD+D9UP410e30rArefIVrBT8g+Rvn+NwDiRzp6tZfrRFA9wH8H0T0fImwDKkLxL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759421995; c=relaxed/simple;
-	bh=Lr0irlvhfvHdwzVt5sqkWNyNfM8w5CssLQBlywqWjhg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HVgcm7Kg0Oa1xlxOa+PVCimLauhNYxx1BWc759rJvd/DxjlsQXO6w2OiZmo9a2U/9Zma0PXjPyQhRmmrtHsaP5IFHGA3H/8u6gpVIzaTtzviItJNdmfJRKelz8PpONquVEMDtTrNyxt5Qa4phwpI6Jayxsi6/m8GbFxC8+MK28Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J53OGMWk; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-32eb45ab7a0so1401285a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 09:19:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759421993; x=1760026793; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LZZ5d24XDIxkk+JwavCHmACQ+MmvpDMF7i8UGLWVc1U=;
-        b=J53OGMWktO4WrOY4qas/5obLCi3RSlyddNPze7pi971NqYdkqDNi4PDwV7ZncxI248
-         vjHmk/2no52jeBSiIx8+vflVEdketiz57qB7W6GQqZkCInAth/v6A7hX+yIYE9S7AfNF
-         bZ+zWXLwmW0iHfxMVrvwHTm+6K59VrcLKkk7kfgO2So1Gcm5MJXfHKa4D3FhyO5OB7TB
-         0vuxWtd1655w9USfJiSj3+cS8bEReEiBBfHhfKj9Lo4YCSKvD9wmfG7fAbG9X++A+FzD
-         qCFeXbaKSCYEUQYDdiNqngpYdvES1VjO99AN0j3ngeHteGjiex4HpxOM3Rq9pqDWH4nS
-         Y/Cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759421993; x=1760026793;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LZZ5d24XDIxkk+JwavCHmACQ+MmvpDMF7i8UGLWVc1U=;
-        b=C/Lx86As0hJNonwk0+XfLHxdUYBD4XWBzC3Ldv3saWep6jG1mrvi0jG8vRe2x6lJhY
-         CbEx9BAf3xafae2BzLEBG2FRwFBgLaeC10+90KTIMuC+LSPrpNS+305FTLj8/HdkzO4e
-         dO5nPKPhfc6ScroAvNaok7ZLqzoW5vpHfAHWfBwkDTtUGUOjUQO3s6qo+MAsaiwaFYB1
-         P9K1cAxaZcj6C9Gs7zMIgiOBNQP1dk59fA8hbS4j2Lhx2scLtwsWESy1DpM3WRqxciSs
-         hmM2yTSUypOtbZE9EEkvTXkcgCL5pGR1E8JCLGjBRuVAiFpA/eCaPeemAgr5cCDoUEZD
-         xbog==
-X-Forwarded-Encrypted: i=1; AJvYcCU2h/oKixssk86l2ypENu2AmpMfCq4ajBWJ4Ub+gIMLVqWTXeBLBL/kCXkF6f+wyqqOLuVrVOVM09OqKsg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpS1Mu3EVs42BSSeEX5QRhmxe4smSX1wUQAWfuauKMifSDhemi
-	FiLYnxUpzafajdgBaOOVOBxaezbG3e2ZRPaWbjpd8d5DVAq7GZ2zRaIWR6gpKLD3kF3WeP20PoI
-	BIRC+i3KPG4Dbo9BQ/g3MLiDTEkkaz/A=
-X-Gm-Gg: ASbGncvgxer01n/j0h1em7SimXmj0X9cJ2Slh/MYC+a6GJ1ank4Yociy/LdVo335vbq
-	XvvehbUXI8qF9ywfFkSOc+H32YD61TOVj1DanwGfD66zqHiKA3cSn+RTwE7Niz5jyEXuZDl8Mpw
-	0y4UJgnI/FrB521il+ur0vflv5CIxWn0xV8eJUa+xNLq3sLgFQ5BsNS2T+m/XMkrFWNiP25HVAz
-	kdhxxM/dnx6pW/2V7BOxwAi6GudeoQ=
-X-Google-Smtp-Source: AGHT+IGDpezXRZoKRUAmvsGEGRKGV3Cca8QMZMZ4Xe0LAt5a7sDWIZ6cqn+OuFMFCBuqxZGgIpVxUstpBqxpNK7ovio=
-X-Received: by 2002:a17:90b:3145:b0:32b:ca6f:1245 with SMTP id
- 98e67ed59e1d1-339a6e6329fmr8873915a91.5.1759421993437; Thu, 02 Oct 2025
- 09:19:53 -0700 (PDT)
+	s=arc-20240116; t=1759422309; c=relaxed/simple;
+	bh=9nwGKuyNtHubpdbOJNjuRGLZdiDBAvEzAaHiSSBbL98=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=u/OlMuuz7KtqBk0SZa6vS2OxOrlDjqlacMiN8gbIBAfkGUB8MkjmHQQE/or+spDCtpH7Or9RxJSkDBe8yS8AxRLbvxo9elSiXG29M8NheXfSvoABtTwWw8d54LjNuy4sW1vCOR8TojAUT2KkqSXWc7zwY+esqfhX6RCiOsngHbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=lwT0ThyQ; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 592DH7iY000711;
+	Thu, 2 Oct 2025 16:25:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=Bo/dND
+	lTJhGwVL7sPqtlWS6mqbDbIA35vEa1y8XEvUU=; b=lwT0ThyQDfkXLTTvnkPMQe
+	N9ocbfa59EfUfOGf/WSR0ZtxmXiofOGFwucpQPrgB3bmaBgFJsrIZmIebir+hQzL
+	EuojpYNNfYl8uMuon74Hr5LXA40WrST2MzZqx5Rnw7UrO6yoZRPyiPIliXbiIfEV
+	yJ0rnlb6+gjUjBuVXoBA8aNjSStpvvMtnDodlD0WYqsLR3j6AbpaBtDInuY+HSVy
+	pTfFBgZMW+qJ0xzFH2Ym6BT5KXFWwnvwo0YX+7j3QXRBA/kPm5gTGpqDNAqwUdC+
+	AmnCips92sXCfkwjirTzCqweQP776WheXZ2aEjWP08CShUtHuf6p5jww+nF71GVA
+	==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49e7jww8vf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 02 Oct 2025 16:25:05 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 592F00KD024198;
+	Thu, 2 Oct 2025 16:25:04 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 49evy1efm6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 02 Oct 2025 16:25:04 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 592GP0Hr57409802
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 2 Oct 2025 16:25:00 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A75E520043;
+	Thu,  2 Oct 2025 16:25:00 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7190020040;
+	Thu,  2 Oct 2025 16:24:59 +0000 (GMT)
+Received: from p-imbrenda (unknown [9.87.143.163])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with SMTP;
+	Thu,  2 Oct 2025 16:24:59 +0000 (GMT)
+Date: Thu, 2 Oct 2025 18:24:56 +0200
+From: Claudio Imbrenda <imbrenda@linux.ibm.com>
+To: Thomas Huth <thuth@redhat.com>
+Cc: freude@linux.ibm.com, Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        David Hildenbrand
+ <david@redhat.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Sven Schnelle
+ <svens@linux.ibm.com>, kvm@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] s390/uv: Fix the comment of the uv_find_secret()
+ function
+Message-ID: <20251002182456.273e7205@p-imbrenda>
+In-Reply-To: <20251002155423.466142-1-thuth@redhat.com>
+References: <20251002155423.466142-1-thuth@redhat.com>
+Organization: IBM
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250822-enomam_logs-v1-0-db87f2974552@gmail.com> <20250822-enomam_logs-v1-9-db87f2974552@gmail.com>
-In-Reply-To: <20250822-enomam_logs-v1-9-db87f2974552@gmail.com>
-From: ChaosEsque Team <chaosesqueteam@gmail.com>
-Date: Thu, 2 Oct 2025 12:24:49 -0400
-X-Gm-Features: AS18NWAkW_WGgw7RLjcHXntiCLOoMqdr7Jd-sVtGc97imtAcuufyjRqKmj5BmR0
-Message-ID: <CALC8CXdUzp=sKeOaPnwJ3GWg8=qrXrZKNsKg6XeXxvutty-U-w@mail.gmail.com>
-Subject: Re: [PATCH 09/10] iio: proximity: Drop unnecessary -ENOMEM messages
-To: Dixit Parmar <dixitparmar19@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
-	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, 
-	Michael Hennerich <Michael.Hennerich@analog.com>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
-	Support Opensource <support.opensource@diasemi.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Haibo Chen <haibo.chen@nxp.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Cai Huoqing <cai.huoqing@linux.dev>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Andreas Klinger <ak@it-klinger.de>, 
-	Crt Mori <cmo@melexis.com>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	imx@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAyNSBTYWx0ZWRfX95qDt8n9sHRM
+ hYX/pJpQ0HtZskshN06KciEQ0Njx6qM18rkyHTR1YCiE8HHTiVC0BkGQNAuw9P5HuHr0PyzmTMN
+ nIaTnesDvK8Gz9baWuE/ati1hu/T6I/Xkuh/7iMoX97T43StPoqlw9GR7oFfCKaFSddJXQDU6kv
+ x5bo0JUqynzqxojYvKPwyWnTdETMOhHBrKHEOMR61k5QrUBTV91Ip6JI/+ZX3vs2xyNmM+D/vvp
+ Q1mJNhwhMqcrigm4fEaUF4Z8/qVFMDmGn8sq3ej8cV0mOVgsgmBmB6Y0wzWeO5RJMTvZQuQUwTZ
+ nvsp4Fk80WNcsy54Krf1JkxOBpDLjQFqhVsAUIdxqj05qOeGyaVrgUCochnXfRYauU2MH/0t8Pv
+ DJYJURbmZAQDWFhHhG54Rl9Hd/2rDw==
+X-Proofpoint-ORIG-GUID: ao7fTf_wYv-gZxhxOovAh12vkug2TpYJ
+X-Proofpoint-GUID: ao7fTf_wYv-gZxhxOovAh12vkug2TpYJ
+X-Authority-Analysis: v=2.4 cv=GdUaXAXL c=1 sm=1 tr=0 ts=68dea761 cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=20KFwNOVAAAA:8 a=VnNF1IyMAAAA:8
+ a=IxN_qdxVzOrQSJR8OegA:9 a=CjuIK1q_8ugA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-02_06,2025-10-02_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 clxscore=1015 phishscore=0 adultscore=0 priorityscore=1501
+ malwarescore=0 spamscore=0 bulkscore=0 impostorscore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270025
 
-yeah, dicks it.
+On Thu,  2 Oct 2025 17:54:23 +0200
+Thomas Huth <thuth@redhat.com> wrote:
 
-On Thu, Aug 21, 2025 at 11:53=E2=80=AFPM Dixit Parmar <dixitparmar19@gmail.=
-com> wrote:
->
-> The drivers do not require their own error messages for error
-> -ENOMEM, memory allocation failures. So remove the dev_err
-> messages from the probe().
->
-> Signed-off-by: Dixit Parmar <dixitparmar19@gmail.com>
+> From: Thomas Huth <thuth@redhat.com>
+> 
+> The uv_get_secret_metadata() function has been removed some
+> months ago, so we should not mention it in the comment anymore.
+> 
+> Fixes: a42831f0b74dc ("s390/uv: Remove uv_get_secret_metadata function")
+> Signed-off-by: Thomas Huth <thuth@redhat.com>
+
+Acked-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
+
 > ---
->  drivers/iio/proximity/ping.c  | 4 +---
->  drivers/iio/proximity/srf04.c | 4 +---
->  2 files changed, 2 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/iio/proximity/ping.c b/drivers/iio/proximity/ping.c
-> index c5b4e1378b7d..e3487094d7be 100644
-> --- a/drivers/iio/proximity/ping.c
-> +++ b/drivers/iio/proximity/ping.c
-> @@ -280,10 +280,8 @@ static int ping_probe(struct platform_device *pdev)
->         struct iio_dev *indio_dev;
->
->         indio_dev =3D devm_iio_device_alloc(dev, sizeof(struct ping_data)=
-);
-> -       if (!indio_dev) {
-> -               dev_err(dev, "failed to allocate IIO device\n");
-> +       if (!indio_dev)
->                 return -ENOMEM;
-> -       }
->
->         data =3D iio_priv(indio_dev);
->         data->dev =3D dev;
-> diff --git a/drivers/iio/proximity/srf04.c b/drivers/iio/proximity/srf04.=
-c
-> index b059bac1078b..f9d32f9aba1f 100644
-> --- a/drivers/iio/proximity/srf04.c
-> +++ b/drivers/iio/proximity/srf04.c
-> @@ -253,10 +253,8 @@ static int srf04_probe(struct platform_device *pdev)
->         int ret;
->
->         indio_dev =3D devm_iio_device_alloc(dev, sizeof(struct srf04_data=
-));
-> -       if (!indio_dev) {
-> -               dev_err(dev, "failed to allocate IIO device\n");
-> +       if (!indio_dev)
->                 return -ENOMEM;
-> -       }
->
->         data =3D iio_priv(indio_dev);
->         data->dev =3D dev;
->
-> --
-> 2.43.0
->
->
+>  arch/s390/kernel/uv.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/s390/kernel/uv.c b/arch/s390/kernel/uv.c
+> index 47f574cd1728a..324cd549807a5 100644
+> --- a/arch/s390/kernel/uv.c
+> +++ b/arch/s390/kernel/uv.c
+> @@ -866,8 +866,8 @@ static int find_secret_in_page(const u8 secret_id[UV_SECRET_ID_LEN],
+>  	return -ENOENT;
+>  }
+>  
+> -/*
+> - * Do the actual search for `uv_get_secret_metadata`.
+> +/**
+> + * uv_find_secret() - search secret metadata for a given secret id.
+>   * @secret_id: search pattern.
+>   * @list: ephemeral buffer space
+>   * @secret: output data, containing the secret's metadata.
+
 
