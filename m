@@ -1,149 +1,170 @@
-Return-Path: <linux-kernel+bounces-840169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC839BB3BB6
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 13:23:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E805FBB3BC5
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 13:26:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E63A17624D
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 11:23:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FD3E192171A
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 11:27:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41F2B2609FD;
-	Thu,  2 Oct 2025 11:23:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rlvoqjo/"
-Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48C5C30FC07;
+	Thu,  2 Oct 2025 11:26:34 +0000 (UTC)
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D669E2FE577
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 11:23:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 009B82F25F8
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 11:26:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759404208; cv=none; b=p7C5Grl6QDUau+ciGKYUaTrzWBYjsdJkr3A9MV4RjNfXNGa7FokHiZrRn96JTcS+kMQXjND8CCWLsqU+T6EkUF7E9iKesqcp3/3PHihhi7bOzKNNxvNX9oi8QTwiKE9ZPb+acPxg9pF7j2hA+aIbyZHaNZhHsX8UyYJe1OF0Tlg=
+	t=1759404393; cv=none; b=XHCVn1TC2h88/Ip5g9u6LGohIL/SQ74Do2S33UDThaXo24GZU+Cn6OPJYsy3oTVWy/KEpsaSnVeja3HTfRk6ANLkQ8OHKTTMQs2N2QxITq9GyqHVUoWFsQxShLpFLH86W9JA1tsIIq/kwrAVFNkN3cXIUUfcLUIIBDmMqhfZ4Ns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759404208; c=relaxed/simple;
-	bh=JZRh8rtz5ZcixnzvbW/Ri1qluW3WtKEts7xB2OFkdys=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=IVJr10eAOOp+6E9M1APNd7fLICZV+QPkpClFl6G59+vFNzFopgIJQx6SV/mAQGv0AKsD0qVl8xb7hhU4SnOPrTPGP5tcmOpYQn6M/x6AgkZHbUAiBoI62VJe1Qk0W/AOhMpHj3QHl0g2aRwC0pVkEOvX92GQX+54CbcOi874r/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rlvoqjo/; arc=none smtp.client-ip=209.85.221.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3efa77de998so711977f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 04:23:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759404205; x=1760009005; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=StwXEML9DUJ/mYJQmtqU+M+tGtJwCRVezsEJIIsHWHo=;
-        b=rlvoqjo/RriQfPa3mCkaBu3cBEU02el9076pmFYZojxGj7qIg9Tp9465Lupepx6Sa9
-         UJqLUXyYQqEGr9NzrZ/2EANbylBPNhWWoEueQRhhr7+Oc9sAsfBxGuUKq1sf/zwPd3O0
-         U/OPF+E3vVG+i1hUAb8EMwrLv1DT0jFoLr7JgP392+YzpNHq7ejUqwCbIttHKXG4fhpo
-         vkCMJNQOm79N3BuuBgdXN1FiuY/mBXZQZHhufGKYrOpBKG+1dwJaYeKL3TeyghcrpsLt
-         7FbD8k0f2O4qtFALjol0czNVn3qwBDGyNwUqmjwb5rZFAG6hiByGvn0XOj4HhJ+u8YU5
-         94ig==
+	s=arc-20240116; t=1759404393; c=relaxed/simple;
+	bh=L2gyy5R2PGRsyNpSJCw6YF43D0THBoN3Fpu7eFNWOsQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=aNdJ2d3Z2IWiamQPE3MS4uFxEkipUx0rDoBQVLIUCPHlsMN0C9S+3yG5ZJjX0veWmoOnvqOF7Z5TJnz1lMx0IJyBPmjy0wnb2DMQ0uFjKj9kUclIx3SjH5A91PaUnRoApwj0CgVxpkzJR0WcPaWBJ18wP1Pe3LVR7waXwdtE3VQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-636688550c0so1802434a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 04:26:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759404205; x=1760009005;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=StwXEML9DUJ/mYJQmtqU+M+tGtJwCRVezsEJIIsHWHo=;
-        b=UmaYv//dmaPLpc6QESGqoLGzishvEifpYEgH552Bg3r1EURkEj17FyyXjJZtQQ6QbG
-         oADJ+5e2za7bwFTG3XLGvnFgP/AuBVybrVwHTagWDtkwPTDYEmCWxEv6RX6Ha/egDo2C
-         nvXEGZAQoMmOeh5IUoNZ0CVdBx9vqaIpZ3w3E3yUQImHKhC/u3bUuYdBGTTyJGwridv9
-         EgLnsV9IBgrJ1A1yGlys82uS0H2J0EoKZUNOyi6d9XtCjWYclEslUcDgtUKEStI+x9h9
-         PpNOclsKpVdPuGXrNHDcB2IViUX2gUMRqjLFMkITW+D5BwBEzgTRCZ0/ZWzp/UYLZ+zY
-         x+zA==
-X-Forwarded-Encrypted: i=1; AJvYcCVu9pSsaXx6Tw5oiwzL6jyuDOfyDl6x5cBRNj3I63HtLrnKXA2Xz3CrW9RNGrt0SQtn1KGYFKnhvJh3gt4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxbEhTj6KU2dONB9B9KEpLQOrWGtONP0XiVmoLvdMicQDB9POX
-	XuMYxrAjWCO0cPT1PMrsutxV3uMW7kj+HMP2MpPCe51G0tKweWaTGcc11ZlBsnbgAC+YBxHJT6s
-	we66/OwPqAWr8Bg==
-X-Google-Smtp-Source: AGHT+IGWDUkaG6p5pIygtGCDP/CQv3zB4el8v6qelCaY1TuvOduqSN++5HdFowlfxZPTYWDWDdFsU0TbBAaraA==
-X-Received: from wrnk2.prod.google.com ([2002:adf:e8c2:0:b0:3ee:fb15:5340])
- (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
- 2002:a5d:5f55:0:b0:424:2275:63c2 with SMTP id ffacd0b85a97d-42557816e2fmr4729772f8f.33.1759404205042;
- Thu, 02 Oct 2025 04:23:25 -0700 (PDT)
-Date: Thu, 02 Oct 2025 11:23:24 +0000
-In-Reply-To: <00e7ff5e-fe6c-4edc-9bf8-2352321f74dc@intel.com>
+        d=1e100.net; s=20230601; t=1759404390; x=1760009190;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=b0nIdEO3nCxjYmoEiKbLvMDM6O2oTNOpG3jz3yT7Mfc=;
+        b=MVRFiRVTj8GeSX7tLlyEO+VQ2zq/UoseF9fwTf/mVuFjJp91MMmm2vQrXhtxmrNLgK
+         ZBTQE6sfbIS6mzkO67R1nDmAtnRCchusMl/mYEoA46QW6bHDJrw2gzLbs6zlaOBBKGtr
+         oG3M+yBQA1XU8DHmc3DYi/U/fI3F+A53X3fv+iFXaHilGzhlnZdA5dOhv6aU6+JVRXwk
+         xUjVW7jKcdtHEQlZtS1AbaRMmIQOy+/557IIn/qq9OnOWJ2UTSKvCLmGhFTnswY4EMN9
+         OdMccs65by+3HjCjvOAjmwaD+GSRalXxRl6l2j1DuOtACnsGm5RFzZNV72R1uzFPWd2L
+         LJiA==
+X-Forwarded-Encrypted: i=1; AJvYcCULEWRNo+6m/1e7uMCSGsXZkwXfuz96nUX7MgTfIDXHPWHhp6nlmh4FaSHC9RFudX45NKblu/skEXv8Q0M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzeuw4iHSaf9Pumxw6SFgFHoMWHzIRilxaehD+V/nhEKfwf115z
+	upAOQkAWZM3Xi/qEOPkn6meLcYYpCFgfoqOA1diljrz9/AkxfsoGmagz
+X-Gm-Gg: ASbGncuw5qa3RpIhp+iR2lH1GixhQN9eOoFGV4mPDfwL8Vgv93UbYuht+T/K059hNOQ
+	8bx4k/WiLW1C7BpR8y+FQTUqAig45VgxcMtqHONp1HIbXeR90T6xpbxaJTz4KRMJoB8uSubRyJW
+	Ap+JYKoYCe8wyjWIldurh+D5ikCkayf0ePHLRcQZlfMP4Tp9o/jVx65rzMDim4grmn+RNl3fr6Y
+	5Xj3rAwkQlk+RM5tgzxZrviLUFu8hqUgz1vzMevSuter9jL5bzhY7z2J7kx38ZgHqLQOKZQEd0V
+	fUX3jmp4ynzXE1IqlOgw6BgLR/3G254d2QdMwZI9W5XBCRiWZbUy4ZvHsOe59YzHpTzOZ5XQ7Lb
+	RiZFdhfyyCKrQzA9osA0+V+wdnMRgHplrPE8F
+X-Google-Smtp-Source: AGHT+IG9HhGolfHHMg6Ad2wpoa5xY0rqQothguiF1qQAIawwu0gA0HdvZrHHIiYXFOGXFbUci2Ul9w==
+X-Received: by 2002:a05:6402:1ec9:b0:634:5fb4:10e6 with SMTP id 4fb4d7f45d1cf-63678c4d06amr8314834a12.23.1759404390054;
+        Thu, 02 Oct 2025 04:26:30 -0700 (PDT)
+Received: from localhost ([2a03:2880:30ff:8::])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6375eb397fbsm1647457a12.0.2025.10.02.04.26.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Oct 2025 04:26:29 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+Date: Thu, 02 Oct 2025 04:26:20 -0700
+Subject: [PATCH v2] stable: crypto: sha256 - fix crash at kexec
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250924-b4-asi-page-alloc-v1-0-2d861768041f@google.com> <00e7ff5e-fe6c-4edc-9bf8-2352321f74dc@intel.com>
-X-Mailer: aerc 0.21.0
-Message-ID: <DD7SQLDVNSRL.XJ8PUCH6GYR1@google.com>
-Subject: Re: [PATCH 00/21] mm: ASI direct map management
-From: Brendan Jackman <jackmanb@google.com>
-To: Dave Hansen <dave.hansen@intel.com>, Brendan Jackman <jackmanb@google.com>, 
-	Andy Lutomirski <luto@kernel.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Suren Baghdasaryan <surenb@google.com>, 
-	Michal Hocko <mhocko@suse.com>, Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>, 
-	Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>, 
-	Roman Gushchin <roman.gushchin@linux.dev>
-Cc: <peterz@infradead.org>, <bp@alien8.de>, <dave.hansen@linux.intel.com>, 
-	<mingo@redhat.com>, <tglx@linutronix.de>, <akpm@linux-foundation.org>, 
-	<david@redhat.com>, <derkling@google.com>, <junaids@google.com>, 
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>, <reijiw@google.com>, 
-	<rientjes@google.com>, <rppt@kernel.org>, <vbabka@suse.cz>, <x86@kernel.org>, 
-	Yosry Ahmed <yosry.ahmed@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251002-stable_crash-v2-1-836adf233521@debian.org>
+X-B4-Tracking: v=1; b=H4sIAFth3mgC/3XMQQrDIBAAwK/InmNxTSXUU/8RQtFkjQtFiwZpC
+ fl7ae69zmF2qFSYKlixQ6HGlXMCK3QnYI4urSR5AStAK21QKZR1c/5Jj7m4GmXQaNC7oK69h07
+ Aq1Dg99mNUycgct1y+Zx7w5/+iRpKlL0acFZ+GW6G7gt5dumSywrTcRxfUTnH3KkAAAA=
+X-Change-ID: 20251001-stable_crash-f2151baf043b
+To: gregkh@linuxfoundation.org, sashal@kernel.org
+Cc: stable@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>, 
+ "David S. Miller" <davem@davemloft.net>, Ard Biesheuvel <ardb@kernel.org>, 
+ linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel-team@meta.com, Breno Leitao <leitao@debian.org>, 
+ Michael van der Westhuizen <rmikey@meta.com>, 
+ Tobias Fleig <tfleig@meta.com>
+X-Mailer: b4 0.15-dev-dd21f
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2616; i=leitao@debian.org;
+ h=from:subject:message-id; bh=L2gyy5R2PGRsyNpSJCw6YF43D0THBoN3Fpu7eFNWOsQ=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBo3mFk4r6DYmopianNWZQlWi3FjU3x2aPyn4g6Z
+ GPHyjdKO4mJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaN5hZAAKCRA1o5Of/Hh3
+ ba7wD/0bKMhDOdDE3/MMo0aZ/Scql4DlORNBiC9qjeNJFyFeSO6OBfIUAzIoUbtrm0f03PdRJdn
+ bv36lxyUK0N12VhVzFx1xXwaUjgY10Wz4nlMwNFF6is8p0nvKpZ7S79Tzmms9SizXhhyVSu4uwi
+ s+HOPjFgXlotiUhiuFF9MrU8dnLlwOBAvrDcWjgS0qod9A7iFBgfkywjEpYU3pFSvd7kuEhW3TI
+ 4Dlq+eyXukilJj7KDqzBG0x/5dwlAPzQMDaEq2Ovm2D2cQMDDlKry05sq6hWDC6rinUK2ckzgTT
+ 4u3BA9KQsVh+sKmXSaxJEcsi0vQB58b1xtx1nxgA5wp0tEx2emQQskXF5OpmkrJSmN0kQYyYteh
+ FLxsAyuLaii0vMg1wka4Ij4jzSAGIgiTlr4GmB4F00DKMFNXwmjF80atG9vCzZTp20iyWGuNn96
+ 7zqm/wQMDPh2yVDC+qLAmQNPDRMjV3pcGYF7g7uQk/CqOX7b7vA+u+MvJT8FCR2PnkEtZCJPXDx
+ gzSLxhlFIWdwFw0ispSGOaxTYbHnM/IAlO3a6t71OVYpwjGW4mrb0UzgkcN3KtnK31KlJOTKxl3
+ D+Qdq1BY3M/N4DTCY+EzcEwmS1e+BVT0ryCQ09HINk0zxDjHoH10Zn0LQzsD8ATubhmGcX3Sbvg
+ dTf48fpB3rSL5Ag==
+X-Developer-Key: i=leitao@debian.org; a=openpgp;
+ fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
-On Wed Oct 1, 2025 at 8:59 PM UTC, Dave Hansen wrote:
-> On 9/24/25 07:59, Brendan Jackman wrote:
->> Why is this the scope of the first series? The objective here is to
->> reach a MVP of ASI that people can actually run, as soon as possible.
->
-> I had to ask ChatGPT what you meant by MVP. Minimum Viable Product?
+Loading a large (~2.1G) files with kexec crashes the host with when
+running:
 
-Yeah exactly, sorry I am leaking corporate jargon.
+  # kexec --load kernel --initrd initrd_with_2G_or_more
 
-> So this series just creates a new address space and then ensures that
-> sensitive data is not mapped there? To me, that's a proof-of-concept,
-> not a bit of valuable functionality that can be merged upstream.
->
-> I'm curious how far the first bit of functionality that would be useful
-> to end users is from the end of this series.
+  UBSAN: signed-integer-overflow in ./include/crypto/sha256_base.h:64:19
+  34152083 * 64 cannot be represented in type 'int'
+  ...
+  BUG: unable to handle page fault for address: ff9fffff83b624c0
+  sha256_update (lib/crypto/sha256.c:137)
+  crypto_sha256_update (crypto/sha256_generic.c:40)
+  kexec_calculate_store_digests (kernel/kexec_file.c:769)
+  __se_sys_kexec_file_load (kernel/kexec_file.c:397 kernel/kexec_file.c:332)
+  ...
 
-I think this series is about half way there. With 2 main series:
+(Line numbers based on commit da274362a7bd9 ("Linux 6.12.49")
 
-1. The bit to get the pagetables set up (this series)
+This started happening after commit f4da7afe07523f
+("kexec_file: increase maximum file size to 4G") that landed in v6.0,
+which increased the file size for kexec.
 
-2. The bit to switch in and out of the address space
+This is not happening upstream (v6.16+), given that `block` type was
+upgraded from "int" to "size_t" in commit 74a43a2cf5e8 ("crypto:
+lib/sha256 - Move partial block handling out")
 
-We already have something that delivers security value. It would only
-perform well for a certain set of usecases, but there are users for whom
-its still a win - it's already strictly cheaper than IBPB-on-VMExit.
+Upgrade the block type similar to the commit above, avoiding hitting the
+overflow.
 
-[Well, I'm assuming there that we include the actual security flushes in
-series 2, maybe that would be more like "2b"...]
+This patch is only suitable for the stable tree, and before 6.16, which
+got commit 74a43a2cf5e8 ("crypto: lib/sha256 - Move partial block
+handling out"). This is not required before f4da7afe07523f ("kexec_file:
+increase maximum file size to 4G"). In other words, this fix is required
+between versions v6.0 and v6.16.
 
-To get to the more interesting cases where it's faster than the current
-default, I think is not that far away for KVM usecases. I think the
-branch I posted in my [Discuss] thread[0] gets competitive with existing
-KVM usecases well before it devolves into the really hacky prototype
-stuff.
+Signed-off-by: Breno Leitao <leitao@debian.org>
+Fixes: f4da7afe07523f ("kexec_file: increase maximum file size to 4G") # Before v6.16
+Reported-by: Michael van der Westhuizen <rmikey@meta.com>
+Reported-by: Tobias Fleig <tfleig@meta.com>
+---
+Changes in v2:
+- s/size_t/unsigned int/ as suggested by Eric
+- Tag the commit that introduce the problem as Fixes, making backport easier.
+- Link to v1: https://lore.kernel.org/r/20251001-stable_crash-v1-1-3071c0bd795e@debian.org
+---
+ include/crypto/sha256_base.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-To get to the actual goal, where ASI can become the global default (i.e.
-it's still fast when you sandbox native tasks as well as KVM guests), is
-further since we need to figure out the details on something like what I
-called the "ephmap" in [0].
+diff --git a/include/crypto/sha256_base.h b/include/crypto/sha256_base.h
+index e0418818d63c8..e3e610cfe8d30 100644
+--- a/include/crypto/sha256_base.h
++++ b/include/crypto/sha256_base.h
+@@ -44,7 +44,7 @@ static inline int lib_sha256_base_do_update(struct sha256_state *sctx,
+ 	sctx->count += len;
+ 
+ 	if (unlikely((partial + len) >= SHA256_BLOCK_SIZE)) {
+-		int blocks;
++		unsigned int blocks;
+ 
+ 		if (partial) {
+ 			int p = SHA256_BLOCK_SIZE - partial;
 
-There are competing tensions here - we would prefer not to merge code
-that "doesn't do anything", but on the other hand I don't think anyone
-wants to find themselves receiving [PATCH v34 19/40] next July... so
-I've tried to strike a balance here. Something like:
+---
+base-commit: da274362a7bd9ab3a6e46d15945029145ebce672
+change-id: 20251001-stable_crash-f2151baf043b
 
-1. Develop a consensus that "we probably want ASI and it's worth trying"
+Best regards,
+--  
+Breno Leitao <leitao@debian.org>
 
-2. Start working towards it in-tree, by breaking it down into smaller
-   chunks.
-
-Do you think it would help if I started also maintaining an asi-next
-branch with the next few things all queued up and benchmarked, so we can
-get a look at the "goal state" while also keeping an eye on the here and
-now? Or do you have other suggestions for the strategy here?
-
-[0] https://lore.kernel.org/all/20250812173109.295750-1-jackmanb@google.com/
 
