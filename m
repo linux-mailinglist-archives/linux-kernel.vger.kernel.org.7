@@ -1,192 +1,176 @@
-Return-Path: <linux-kernel+bounces-840386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61E7BBB443D
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 17:06:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FD6DBB4440
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 17:06:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D522322EFB
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 15:06:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D30D420F27
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 15:06:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B02A3175D53;
-	Thu,  2 Oct 2025 15:06:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1DE718D65C;
+	Thu,  2 Oct 2025 15:06:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20230601.gappssmtp.com header.i=@lixom-net.20230601.gappssmtp.com header.b="tmk2aVWN"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DKcomCnB"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEFF91B808
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 15:06:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7A6417332C;
+	Thu,  2 Oct 2025 15:06:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759417595; cv=none; b=odvrw0sd4yBP6Wl4H383Dl3bJHnFbHTEDIasMhYiCVm3cWuOH/Yqz3qJaMdSsOdkNd3vU/6r8DrSz6wb+DKCEHXigZCcQNk4LMmvS3K2EsN0kAcjEimPRR9vJYwwDOVTfFq1GO3e2c2qT8dlV65KwKl2t8kg0qFwjQ6fauMhDuo=
+	t=1759417598; cv=none; b=A/DPEldC6gOgCcqhM4cPaWdd0WuUHWuJITzEK3+PhSpT0iA0i/nOrMyL5M7lf8MuJCVFPKQ2B6PbbsxuUZBKJwtfD67ypINd0GxZ5dVQn4a+wx1kQyArU43Lrh6qCss/ircF5qaOHQbdPAdSmvyTztWMn12QHHjoTnD5ke12dtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759417595; c=relaxed/simple;
-	bh=e/lVBj+Rn5jjglDGRfuLTcoRITz9REiEiexxiWLRkHw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I5IzE5zqgiU/cq9GZtmVNP1V7C5sRGbQHxwP+Wo9uj2WkyR2yRCZDF6de9EvDNvRjLlROHbGH9dNrqtFMFMN1EoXKibdYpS/GJJrJGdMkgLVAc/ok4bc5S4cyTLHmxE4dtwnYw35J6XRKsgF046MsZX3JjRAvN2YbbhxRIetifw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net; spf=none smtp.mailfrom=lixom.net; dkim=pass (2048-bit key) header.d=lixom-net.20230601.gappssmtp.com header.i=@lixom-net.20230601.gappssmtp.com header.b=tmk2aVWN; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=lixom.net
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-3306b83ebdaso1173490a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 08:06:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20230601.gappssmtp.com; s=20230601; t=1759417593; x=1760022393; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=rfAOtpJmmnifg9QC2JHL+/9O8LHKXkTHllNF53zqwqc=;
-        b=tmk2aVWN+vTm5K85OPqYXHT6iLqCDZLbMHa8410jvdc6i796AGB1Lfxn36ocVpoklF
-         d+awJySZl/EUMAntGjssNGvv326fWzemrfhMG44+CjfHeVDGwfVrgb/yAI3IBHDueEpc
-         1GwNEz9xb2XG5LXSglxAz544KhAP2nFW9opjaoHPahUPXyBWkg4220kwwo2cBTnilsI1
-         2xWwjJUtJMOtXiFxoXAV9U+9ovdlvr/FWGIkibjMeq1cjNIIsrYoVwqoeeXdnzhJhE1u
-         g0G7F+M5gHr5y8Yt2IGNZcf5XYasENWoKC2sJ6K8fwIvpMI+G8r+M46XCD+OhKbRlO2G
-         bH+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759417593; x=1760022393;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rfAOtpJmmnifg9QC2JHL+/9O8LHKXkTHllNF53zqwqc=;
-        b=M4XmVdv72h0363kF8njJ+l292syQVO+AEj3tFV9NkvL6K9h07v9pVDwEH3SXmqoUA6
-         yc9OozXSdmmuWrTAfCXJW3CRoV0pqY1U2s8lwt04O0Bx6d/YCY5YZesBZ/rcd+iztR64
-         5rltocFDVg0G8cYGft7ncIElRujgnjWhHxz2c2MGMs15Y9KHlj7KzO9eYJLgJD6lLp6/
-         Mq7uqHyTP5vXfaiWlrzrBWhxQ7cEVoKNb0jcZHHfVcJ7WDP4bwvQCan03NRCZusCsPqf
-         CI9PEbiJ8Okt51NKP8tPQCvLCIwOne/OfXO4s7HWn6HbWxtujOmB45GNkGvL8UwEWtNH
-         /4eg==
-X-Forwarded-Encrypted: i=1; AJvYcCWJ2cIueYrSm2qjNGqZjoxNuEpQu1Jz5bkl6uOdW6m6BIRhWfNSm2Dzgp0XJIjWBFUC4IYKiYtlAhAbeQI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyChMaP7zhKIgdJAaQ03eGyW4Fjk/eiSZ86MqfIp1uHLZ191JUA
-	eZQs7EnawIt2xBhX7YmjkHweMlVdawEhJJ+GXewF4ufl6PMhTbjM+1VqQElcmpmgGVM=
-X-Gm-Gg: ASbGnctWtZZy5nau4hQHKy3B8tgu4qb1V67jwxt+PAHBtZfC0heRT3fPkhOWEiVEGb9
-	RC0MpF+lkAkWKfr8SdknjZgk6SiNjyZC9v0EcZyvdxirdZOEaHRRfqIqy3HfVrV3b9TvMEOMyPj
-	wV6azNt6FwjFDsXscWjBRYxzFQu40tgnVChgBNhdNNY4QsSk2orNELeyqwq4o0dCW4W6fYdHcn6
-	bymLKJ/mX4k7RPFi76NB+nMwV7yPQkT4fJjeVfoBSSOrKQoW//4vjVk/Vdqgs23fFB2DXvzEZxp
-	/u4OcmQejQn3ndnvzxNvTKoeFsTppE+Xnuh5WJdRKOyja3lf57Hx4HBrxERor6f7j3hk4g3cwhy
-	ISi96qqnYAahsFPfeJelEVGsi06nPBOua6viOYLqyV/GRQfoManK4DSJEQ5pFBlyMEGTBKhkQyX
-	qlOFkjuBhFG3M=
-X-Google-Smtp-Source: AGHT+IEC8lXy2avFMbURoC9r6NpLlroK3bziveWA5z9xbUH2JRf4uvGmg66hv7DNQQupbjk/KOSGDw==
-X-Received: by 2002:a17:90b:1d12:b0:332:6356:86b6 with SMTP id 98e67ed59e1d1-339a6e74980mr8858627a91.9.1759417592931;
-        Thu, 02 Oct 2025 08:06:32 -0700 (PDT)
-Received: from localhost (99-152-116-91.lightspeed.sntcca.sbcglobal.net. [99.152.116.91])
-        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-b6099f7ab4fsm2165562a12.44.2025.10.02.08.06.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 08:06:32 -0700 (PDT)
-Date: Thu, 2 Oct 2025 08:06:24 -0700
-From: Olof Johansson <olof@lixom.net>
-To: Ben Dooks <ben.dooks@codethink.co.uk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Paul Walmsley <pjw@kernel.org>, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] RISC-V updates for v6.18-rc1
-Message-ID: <aN6U8NtIfqd-fowQ@chonkvm.lixom.net>
-References: <2c804359-3d43-0fba-7173-a87f9aec4bd2@kernel.org>
- <066d70c7-b0a7-45e5-9337-17901bc95664@codethink.co.uk>
- <CAHk-=wgfpswvq0TypePyjv3dofO5YaUC_fSd_MjzY7jogCUnCg@mail.gmail.com>
- <3c9d9f92-aaf8-4d4d-a2d9-8d6a410edc30@codethink.co.uk>
+	s=arc-20240116; t=1759417598; c=relaxed/simple;
+	bh=AanjrwyOf79q9GS+JNtnW+l9zhIn4LFCzWGXuGJAdNk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aP00pLQdA+trlm0MFZ6G0RwEBG72BeQPhvAQ3wFTap/xXvYBsMh9LqRPzBkjdIwVCcbKwk5pAG8mq4goNNw/zX36/Sv8SHwxLd+AB7N+MPcRjzGyBaDHrZNIAtOPgwCKjJWH6tIVLTtTU6J5qWqt38lhnuAnOxk5/hMm83jhHcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DKcomCnB; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759417597; x=1790953597;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=AanjrwyOf79q9GS+JNtnW+l9zhIn4LFCzWGXuGJAdNk=;
+  b=DKcomCnB3aoFFeq3vdlKdolO0Ivbt6YzaJ9Lm+cWn2DwkglRD0z4riB4
+   N30jVrz1Y1A2qZlgH3SEp3WuzIAH1W+fG1O4E0kBJKWJCnRcc1YLyX3CU
+   lXvG7g1GZcYQXRZq328ca+XFIiESUV4kjJuceC01B0PaPOUrg3BhFFcpr
+   YD/ZaO8GHQeQlBH4ngn7dudQRM2UxL382TLmyWECTNW32Pf2hzGJD/cxp
+   QMcYpZjjWLk1tjaQE9oJpt71uUDiLkSs2v/FBOEFgwmzk02XNiDCThLWh
+   Z4e8nRB2OQ+Dn6HSkI9OFBYwDFpVmd3c93o7aSAuGFKHVIEWNRto0T9tZ
+   Q==;
+X-CSE-ConnectionGUID: 0RiFn97nT2Gnfm9bfKvoRw==
+X-CSE-MsgGUID: 2nEhGrouT+uSY/nVUUU6dQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11570"; a="79126028"
+X-IronPort-AV: E=Sophos;i="6.18,309,1751266800"; 
+   d="scan'208";a="79126028"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2025 08:06:36 -0700
+X-CSE-ConnectionGUID: 4n5oVak/RbGFmYoCteEdfg==
+X-CSE-MsgGUID: XOciIWCoQx6Tca03ndXwoA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,309,1751266800"; 
+   d="scan'208";a="202804971"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO [10.125.109.249]) ([10.125.109.249])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2025 08:06:34 -0700
+Message-ID: <5b007887-d475-4970-b01d-008631621192@intel.com>
+Date: Thu, 2 Oct 2025 08:06:33 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3c9d9f92-aaf8-4d4d-a2d9-8d6a410edc30@codethink.co.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/7] x86/kexec: Disable kexec/kdump on platforms with TDX
+ partial write erratum
+To: Juergen Gross <jgross@suse.com>,
+ "Reshetova, Elena" <elena.reshetova@intel.com>,
+ "Annapurve, Vishal" <vannapurve@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "bp@alien8.de" <bp@alien8.de>,
+ "tglx@linutronix.de" <tglx@linutronix.de>,
+ "peterz@infradead.org" <peterz@infradead.org>,
+ "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
+ "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>,
+ "x86@kernel.org" <x86@kernel.org>, "kas@kernel.org" <kas@kernel.org>,
+ "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
+ "dwmw@amazon.co.uk" <dwmw@amazon.co.uk>, "Huang, Kai" <kai.huang@intel.com>,
+ "seanjc@google.com" <seanjc@google.com>,
+ "Chatre, Reinette" <reinette.chatre@intel.com>,
+ "Yamahata, Isaku" <isaku.yamahata@intel.com>,
+ "Williams, Dan J" <dan.j.williams@intel.com>,
+ "ashish.kalra@amd.com" <ashish.kalra@amd.com>,
+ "nik.borisov@suse.com" <nik.borisov@suse.com>, "Gao, Chao"
+ <chao.gao@intel.com>, "sagis@google.com" <sagis@google.com>,
+ "Chen, Farrah" <farrah.chen@intel.com>, Binbin Wu <binbin.wu@linux.intel.com>
+References: <20250901160930.1785244-1-pbonzini@redhat.com>
+ <20250901160930.1785244-5-pbonzini@redhat.com>
+ <CAGtprH__G96uUmiDkK0iYM2miXb31vYje9aN+J=stJQqLUUXEg@mail.gmail.com>
+ <74a390a1-42a7-4e6b-a76a-f88f49323c93@intel.com>
+ <CAGtprH-mb0Cw+OzBj-gSWenA9kSJyu-xgXhsTjjzyY6Qi4E=aw@mail.gmail.com>
+ <a2042a7b-2e12-4893-ac8d-50c0f77f26e9@intel.com>
+ <CAGtprH_nTBdX-VtMQJM4-y8KcB_F4CnafqpDX7ktASwhO0sxAg@mail.gmail.com>
+ <DM8PR11MB575071F87791817215355DD8E7E7A@DM8PR11MB5750.namprd11.prod.outlook.com>
+ <27d19ea5-d078-405b-a963-91d19b4229c8@suse.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <27d19ea5-d078-405b-a963-91d19b4229c8@suse.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 02, 2025 at 01:48:47PM +0100, Ben Dooks wrote:
-> On 30/09/2025 17:04, Linus Torvalds wrote:
-> > On Tue, 30 Sept 2025 at 00:25, Ben Dooks <ben.dooks@codethink.co.uk> wrote:
-> > > 
-> > > Is there any chance some of the big-endian work we did is getting in
-> > > for this round?
-> > 
-> > Oh Christ. Is somebody seriously working on BE support in 2025?
-> > 
-> > WHY?
-> > 
-> > Seriously, that sounds like just *stupid*. Is there some actual real
-> > reason for this, or is it more of the "RISC-V is used in academic
-> > design classes and so people just want to do endianness for academic
-> > reasons"?
-> > 
-> > Because I'd be more than happy to just draw a line in the sand and say
-> > "New endianness problems are somebody ELSES problem", and tell people
-> > to stop being silly.
-> > 
-> > Let's not complicate things for no good reason. And there is *NO*
-> > reason to add new endianness.
+On 10/2/25 00:46, Juergen Gross wrote:
+> So lets compare the 2 cases with kdump enabled and disabled in your 
+> scenario (crash of the host OS):
 > 
-> We first tackled big-endian support on ARM32 nearly 15 years ago, and
-> drawing on that experience, we saw value in doing the same work on RISC-V as
-> a way for newer engineers to gain hands-on experience contributing in the
-> open.
-
-Getting new people going is great, but if you were around for that
-one you also know just how little usage it saw over time -- the ARMv8
-big endian enablment has been on (minimal) life support with just some
-downstream usage in vendor kernels. Adding the burden for everybody to
-maintain this work forever is the flip side of the coin here.
-
-> Now we’re starting to see commercial cores on the horizon that will have the
-> ability to be endian configured at run-time. For example, MIPS (the company
-> not the ISA) has announced they will be producing cores with configurable
-> endian (https://mips.com/products/hardware/i8500/).
-
-MIPS has been doing some not so awesome things to the RISC-V architecture
-in the last year or so. They've published patchsets that make it seem
-like that they seem to have taken some old MIPS designs and done the
-bare minimal conversion over to RISC-V, since they need their own weird
-system peripherals and hooks. Again, with the burden for everybody to
-maintain because their hardware engineers couldn't bother to develop a
-full proper RISC-V core.
-
-While I'm not happy with the lack of upstreaming from the (mostly
-Chinese) SoC vendors, and we should be encouraging more of them to
-contribute directly, MIPS seems to be making choices that might have
-long term burden for all of us. So far the slope is slippery on the
-system side, but needing to worry about BE support seems to be stepping
-over the line for me without some obvious clear use cases that make sense.
-
-> Note some of the patches we are proposing also make the code better, such as
-> swapping .word for .insn.
+> kdump enabled: No dump can be produced due to the #MC and system is
+> rebooted.
 > 
-> > RISC-V is enough of a mess with the millions of silly configuration
-> > issues already. Don't make it even worse.
-> 
-> This feels like the price you pay for making a flexible and free ecosystem
-> to build cores. There is no single authority making you use every feature
-> that might be specified (although Ubuntu's choice to move forward with RVA32
-> for future is a current pain for anyone who already has purchased hardware).
+> kdump disabled: No dump is produced and system is rebooted after crash.
+> > What is the main concern with kdump enabled? I don't see any
+> disadvantage with enabling it, just the advantage that in many cases
+> a dump will be written.
+The disadvantage is that a kernel bug from long ago results in a machine
+check. Machine checks are generally indicative of bad hardware. So the
+disadvantage is that someone mistakes the long ago kernel bug for bad
+hardware.
 
-Just because the ecosystem is flexible, doesn't mean you need to encourage
-and support everything that gets built.
+There are two ways of looking at this:
 
-> See initial reply for comment on MIPS. We also don't think this a huge
-> change and given most projects we worked through had few (if any) issues
-> with building big endian, we thought it was worth having an attempt at this.
+1. A theoretically fragile kdump is better than no kdump at all. All of
+   the stars would have to align for kdump to _fail_ and we don't think
+   that's going to happen often enough to matter.
+2. kdump happens after kernel bugs. The machine checks happen because of
+   kernel bugs. It's not a big stretch to think that, at scale, kdump is
+   going to run in to these #MCs on a regular basis.
 
-To me, it's not about the initial effort but about the (forever) work of
-keeping it going without regressions. Now everybody will need BE CI, etc.
-
-> > Tell people to just talk to their therapists instead.  That's *much*
-> > more productive.
-> 
-> 
-> Thanks, but that isn't helpful and is just making the kernel look more
-> toxic. I am however going to wear the "I got ranted at by Linus and
-> survived" tag with pride.
-
-Hey Ben -- you posted a *RFC* of the patches in December 2024. I replied
-to those. So did Palmer. With exactly these concerns. Did we get a
-response from you? Nope.
-
-So, seems like Linus has better success being impolite. That's a bummer.
-
-For the RFC thread, see https://lore.kernel.org/all/Z2XLS2HX2KqBJW6U@chonkvm.lixom.net/
-
-
--Olof
+Does that capture the two perspectives fairly?
 
