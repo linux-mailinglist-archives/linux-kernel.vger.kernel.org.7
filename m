@@ -1,192 +1,177 @@
-Return-Path: <linux-kernel+bounces-840441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD343BB46F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 18:01:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 946A3BB46F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 18:03:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F91C170750
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 16:01:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C7833B6D81
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 16:03:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 653361F2C45;
-	Thu,  2 Oct 2025 16:01:31 +0000 (UTC)
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 567A122759C;
+	Thu,  2 Oct 2025 16:03:49 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2793A8F7D
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 16:01:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F534221269
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 16:03:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759420890; cv=none; b=IUYGzkQ4zVz/qijvcyb72kVFrBsqq8MmYHBX9lSu8E6Q6+wah5/oIAEiKZoXRd1HsvHot2N4tOK7iGop+y2aBJUnKEjV64xJJEDRLJueePPHH5623qmCdEocjZnxnO7rxidUuQotto8BVcpxQjSy9wNNFN0DLh1dwQXcTKA80YA=
+	t=1759421029; cv=none; b=iEN71nNEXKXRpuE+8Jx+ZvzY0eaXv5qviQ8418PYIVMgiY/tjqE5jD86jBQxiLE+xYZznJ6nje+TbX/xJHJWybKvuTfzJTgIgWWTuQvngdM8p2uHnsBxQnmD5JWK/xNTbhl/JMGE6pZOIJjPlj1Py/bV15h8UdPL2zRm1LEPh1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759420890; c=relaxed/simple;
-	bh=w2Y2QF2llxGF8shdV8sbkQl9VQBi962VNSCw5q7OYcs=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=S2ZOXi34hx3VsQBE+tAZogqxUQdG2Qu52hcdeRNpsUxv3LhLIOa0B6dm+fc5EMzH7zdoeBJ0t2ZwepnNTMtTacRfZD4TRluzi9ueF+MaTUHMA36fkIeLm07IaFK8+IScLBmDDL/eN3/Tx/vjl1fdOh9v6AP8twMuyTJ2rk245lQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-9374627bb7eso295763639f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 09:01:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759420888; x=1760025688;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6Jz1T9sSuQKTB6Iy2gijMr4H81ISh/9XX5h9fzwPqRg=;
-        b=e5Vgr9Wx8g4MA1sVs3vaK7oh9/CWc+6MP9xhsWmIfY3tpyXXKZfbwZEOgdf3MCTDZi
-         eUm+KmgJtFvu+/w2CIaZrOibw1mt4uHop9bxLOZOdvLVS7mQ2TpvKJT//Y13lBvW1wNR
-         ZCbZhSX5vLY53QtDY6nkyyhFYv+EmRb1mD4Z3XwUkNXNhRSzVoJmBsR0apuOIhxhrI/2
-         HbSxoH/GIHFF311i6OHK7YXQ64jwFZLfhy3hxPG/b+5kSAiq3OuGodUBM6zQyg0IeALx
-         YXXfS/Q0JFftR4dSuCp757BxafKgK534VMX3o9QHs4IlVOLCt7Nc6MSF0jCF500bGyzV
-         G13g==
-X-Forwarded-Encrypted: i=1; AJvYcCXGBQmCXD5haKwokg/jzp8d7xl7Sa5MQTjACPMNWV0EoMhhqT7saoif22J5li83glH+nhN3OANtxcJvFKI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw471Ce4yfAEsstsKpUOUu8T+d7TIzV4jBmWqgFTGzfrvIcfR3q
-	ps3Tz5Lon+eog0PQlTwUFOq4QinbT8F2asp48qya2nXRjqDM44AH9cR16v0ImZdcQbMnZ+RHJUu
-	UwTGW+WVkncsjVp73aThKenPDU4WjpVRama2qjo/es240esUfj4VpBmUBWas=
-X-Google-Smtp-Source: AGHT+IHffKavk02Gbend6tu0ZvbYDE2ugTDl2b4vE30bJvYlN+ntr9RClO6SL6k1O2AbMbbG9hI2WRr4z1uSBD9hUQYev1uKiqnu
+	s=arc-20240116; t=1759421029; c=relaxed/simple;
+	bh=TSPJuYW9Rxla+eUTZ8lxJM5w7towuX1oN/I2xQrgZyQ=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CuhM5yv+/Rpc0x1OqtDVYraw2h3FSSkPjO5/JGbYhqk08sNJnsXJofju43+ElsWznN9Je+Gl4S4md4uQvCFB96n6tWgwAgDECzqb4MbcF82Y39zkB979mCFuy5aWUsz1lPqE/CE7hum9L8jp5MoiNnZ6/Yq6iyDPgEqRoCcwWuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ccxRG3rQDz67ww1;
+	Fri,  3 Oct 2025 00:03:22 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id 59FAD1400D7;
+	Fri,  3 Oct 2025 00:03:43 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 2 Oct
+ 2025 17:03:41 +0100
+Date: Thu, 2 Oct 2025 17:03:40 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Raghavendra K T <raghavendra.kt@amd.com>
+CC: <AneeshKumar.KizhakeVeetil@arm.com>, <Michael.Day@amd.com>,
+	<akpm@linux-foundation.org>, <bharata@amd.com>, <dave.hansen@intel.com>,
+	<david@redhat.com>, <dongjoo.linux.dev@gmail.com>, <feng.tang@intel.com>,
+	<gourry@gourry.net>, <hannes@cmpxchg.org>, <honggyu.kim@sk.com>,
+	<hughd@google.com>, <jhubbard@nvidia.com>, <jon.grimm@amd.com>,
+	<k.shutemov@gmail.com>, <kbusch@meta.com>, <kmanaouil.dev@gmail.com>,
+	<leesuyeon0506@gmail.com>, <leillc@google.com>, <liam.howlett@oracle.com>,
+	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<mgorman@techsingularity.net>, <mingo@redhat.com>, <nadav.amit@gmail.com>,
+	<nphamcs@gmail.com>, <peterz@infradead.org>, <riel@surriel.com>,
+	<rientjes@google.com>, <rppt@kernel.org>, <santosh.shukla@amd.com>,
+	<shivankg@amd.com>, <shy828301@gmail.com>, <sj@kernel.org>, <vbabka@suse.cz>,
+	<weixugc@google.com>, <willy@infradead.org>, <ying.huang@linux.alibaba.com>,
+	<ziy@nvidia.com>, <dave@stgolabs.net>, <yuanchu@google.com>,
+	<kinseyho@google.com>, <hdanton@sina.com>, <harry.yoo@oracle.com>
+Subject: Re: [RFC PATCH V3 05/17] mm: Create a separate kthread for
+ migration
+Message-ID: <20251002170340.00005ccc@huawei.com>
+In-Reply-To: <20250814153307.1553061-6-raghavendra.kt@amd.com>
+References: <20250814153307.1553061-1-raghavendra.kt@amd.com>
+	<20250814153307.1553061-6-raghavendra.kt@amd.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c265:0:b0:428:cd3c:6a3c with SMTP id
- e9e14a558f8ab-42d8b192b01mr35614035ab.1.1759420887768; Thu, 02 Oct 2025
- 09:01:27 -0700 (PDT)
-Date: Thu, 02 Oct 2025 09:01:27 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68dea1d7.050a0220.25d7ab.07bc.GAE@google.com>
-Subject: [syzbot] [ntfs3?] [usb?] general protection fault in rtlock_slowlock_locked
-From: syzbot <syzbot+08df3e4c9b304b37cb04@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, ntfs3@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100009.china.huawei.com (7.191.174.83) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-Hello,
+On Thu, 14 Aug 2025 15:32:55 +0000
+Raghavendra K T <raghavendra.kt@amd.com> wrote:
 
-syzbot found the following issue on:
+> Having independent thread helps in:
+>  - Alleviating the need for multiple scanning threads
+>  - Aids to control batch migration (TBD)
+>  - Migration throttling (TBD)
+> 
+> Signed-off-by: Raghavendra K T <raghavendra.kt@amd.com>
+A few superficial things inline.
 
-HEAD commit:    99bade344cfa Merge tag 'rust-fixes-6.17' of git://git.kern..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15f513a2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=98e114f4eb77e551
-dashboard link: https://syzkaller.appspot.com/bug?extid=08df3e4c9b304b37cb04
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/309f13a7cc12/disk-99bade34.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/0d782186486b/vmlinux-99bade34.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/174f592d16e2/bzImage-99bade34.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+08df3e4c9b304b37cb04@syzkaller.appspotmail.com
-
-loop7: detected capacity change from 0 to 4096
-Oops: general protection fault, probably for non-canonical address 0xffdffc0000000148: 0000 [#1] SMP KASAN PTI
-KASAN: maybe wild-memory-access in range [0xff00000000000a40-0xff00000000000a47]
-CPU: 0 UID: 0 PID: 11227 Comm: syz.7.607 Tainted: G        W           6.17.0-rc1-syzkaller-00214-g99bade344cfa #0 PREEMPT_{RT,(full)} 
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-RIP: 0010:debug_spin_lock_before kernel/locking/spinlock_debug.c:86 [inline]
-RIP: 0010:do_raw_spin_lock+0x78/0x290 kernel/locking/spinlock_debug.c:115
-Code: aa 9c 81 48 8d 4c 24 20 48 c1 e9 03 48 b8 f1 f1 f1 f1 04 f3 f3 f3 48 89 4c 24 18 4a 89 04 39 4c 8d 77 04 4c 89 f0 48 c1 e8 03 <42> 0f b6 04 38 84 c0 0f 85 9f 01 00 00 41 8b 06 3d ad 4e ad de 0f
-RSP: 0018:ffffc900049ff4c0 EFLAGS: 00010807
-RAX: 1fe0000000000148 RBX: ff00000000000a40 RCX: 1ffff9200093fe9c
-RDX: 0000000000000000 RSI: ffffffff8b620b60 RDI: ff00000000000a40
-RBP: ffffc900049ff570 R08: 0000000000000001 R09: 0000000000000000
-R10: dffffc0000000000 R11: ffffed10053788b9 R12: ffff88808316a1b0
-R13: ff00000000000000 R14: ff00000000000a44 R15: dffffc0000000000
-FS:  00007f7f773fe6c0(0000) GS:ffff8881268c5000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f7f79182020 CR3: 000000005aace000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- task_blocks_on_rt_mutex kernel/locking/rtmutex.c:1265 [inline]
- rtlock_slowlock_locked+0x8ef/0x4010 kernel/locking/rtmutex.c:1851
- rtlock_slowlock kernel/locking/rtmutex.c:1895 [inline]
- rtlock_lock kernel/locking/spinlock_rt.c:43 [inline]
- __rt_spin_lock kernel/locking/spinlock_rt.c:49 [inline]
- rt_spin_lock+0x152/0x2c0 kernel/locking/spinlock_rt.c:57
- spin_lock include/linux/spinlock_rt.h:44 [inline]
- iput_final fs/inode.c:1886 [inline]
- iput+0x5c1/0x9d0 fs/inode.c:1923
- ntfs_fill_super+0x38fa/0x40b0 fs/ntfs3/super.c:1514
- get_tree_bdev_flags+0x40e/0x4d0 fs/super.c:1692
- vfs_get_tree+0x8f/0x2b0 fs/super.c:1815
- do_new_mount+0x2a2/0x9e0 fs/namespace.c:3805
- do_mount fs/namespace.c:4133 [inline]
- __do_sys_mount fs/namespace.c:4344 [inline]
- __se_sys_mount+0x317/0x410 fs/namespace.c:4321
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f7f791a038a
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f7f773fde68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007f7f773fdef0 RCX: 00007f7f791a038a
-RDX: 0000200000000080 RSI: 0000200000000000 RDI: 00007f7f773fdeb0
-RBP: 0000200000000080 R08: 00007f7f773fdef0 R09: 0000000002010c10
-R10: 0000000002010c10 R11: 0000000000000246 R12: 0000200000000000
-R13: 00007f7f773fdeb0 R14: 000000000001f743 R15: 0000200000000380
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:debug_spin_lock_before kernel/locking/spinlock_debug.c:86 [inline]
-RIP: 0010:do_raw_spin_lock+0x78/0x290 kernel/locking/spinlock_debug.c:115
-Code: aa 9c 81 48 8d 4c 24 20 48 c1 e9 03 48 b8 f1 f1 f1 f1 04 f3 f3 f3 48 89 4c 24 18 4a 89 04 39 4c 8d 77 04 4c 89 f0 48 c1 e8 03 <42> 0f b6 04 38 84 c0 0f 85 9f 01 00 00 41 8b 06 3d ad 4e ad de 0f
-RSP: 0018:ffffc900049ff4c0 EFLAGS: 00010807
-RAX: 1fe0000000000148 RBX: ff00000000000a40 RCX: 1ffff9200093fe9c
-RDX: 0000000000000000 RSI: ffffffff8b620b60 RDI: ff00000000000a40
-RBP: ffffc900049ff570 R08: 0000000000000001 R09: 0000000000000000
-R10: dffffc0000000000 R11: ffffed10053788b9 R12: ffff88808316a1b0
-R13: ff00000000000000 R14: ff00000000000a44 R15: dffffc0000000000
-FS:  00007f7f773fe6c0(0000) GS:ffff8881268c5000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f7f79182020 CR3: 000000005aace000 CR4: 00000000003526f0
-----------------
-Code disassembly (best guess):
-   0:	aa                   	stos   %al,%es:(%rdi)
-   1:	9c                   	pushf
-   2:	81 48 8d 4c 24 20 48 	orl    $0x4820244c,-0x73(%rax)
-   9:	c1 e9 03             	shr    $0x3,%ecx
-   c:	48 b8 f1 f1 f1 f1 04 	movabs $0xf3f3f304f1f1f1f1,%rax
-  13:	f3 f3 f3
-  16:	48 89 4c 24 18       	mov    %rcx,0x18(%rsp)
-  1b:	4a 89 04 39          	mov    %rax,(%rcx,%r15,1)
-  1f:	4c 8d 77 04          	lea    0x4(%rdi),%r14
-  23:	4c 89 f0             	mov    %r14,%rax
-  26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	42 0f b6 04 38       	movzbl (%rax,%r15,1),%eax <-- trapping instruction
-  2f:	84 c0                	test   %al,%al
-  31:	0f 85 9f 01 00 00    	jne    0x1d6
-  37:	41 8b 06             	mov    (%r14),%eax
-  3a:	3d ad 4e ad de       	cmp    $0xdead4ead,%eax
-  3f:	0f                   	.byte 0xf
+> ---
+>  mm/kscand.c | 74 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 74 insertions(+)
+> 
+> diff --git a/mm/kscand.c b/mm/kscand.c
+> index 7552ce32beea..55efd0a6e5ba 100644
+> --- a/mm/kscand.c
+> +++ b/mm/kscand.c
+> @@ -4,6 +4,7 @@
+>  #include <linux/sched.h>
+>  #include <linux/sched/mm.h>
+>  #include <linux/mmu_notifier.h>
+> +#include <linux/migrate.h>
+>  #include <linux/rmap.h>
+>  #include <linux/pagewalk.h>
+>  #include <linux/page_ext.h>
+> @@ -41,6 +42,15 @@ static unsigned long kscand_mms_to_scan __read_mostly = KSCAND_MMS_TO_SCAN;
+>  
+>  bool kscand_scan_enabled = true;
+>  static bool need_wakeup;
+> +static bool migrated_need_wakeup;
+> +
+> +/* How long to pause between two migration cycles */
+> +static unsigned int kmigrate_sleep_ms __read_mostly = 20;
+> +
+> +static struct task_struct *kmigrated_thread __read_mostly;
+> +static DEFINE_MUTEX(kmigrated_mutex);
+> +static DECLARE_WAIT_QUEUE_HEAD(kmigrated_wait);
+> +static unsigned long kmigrated_sleep_expire;
+>  
+>  static unsigned long kscand_sleep_expire;
+>  
+> @@ -79,6 +89,7 @@ struct kscand_scanctrl {
+>  };
+>  
+>  struct kscand_scanctrl kscand_scanctrl;
+> +
+Unrelated change. If you want it make sure to push back to earlier patch.
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+>  /* Per folio information used for migration */
+>  struct kscand_migrate_info {
+>  	struct list_head migrate_node;
+> @@ -134,6 +145,19 @@ static inline bool is_valid_folio(struct folio *folio)
+>  	return true;
+>  }
+>  
+> +static inline void kmigrated_wait_work(void)
+> +{
+> +	const unsigned long migrate_sleep_jiffies =
+> +		msecs_to_jiffies(kmigrate_sleep_ms);
+> +
+> +	if (!migrate_sleep_jiffies)
+> +		return;
+> +
+> +	kmigrated_sleep_expire = jiffies + migrate_sleep_jiffies;
+> +	wait_event_timeout(kmigrated_wait,
+> +			true,
+> +			migrate_sleep_jiffies);
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Unusual line wrapping.  I'd go nearer to 80 chars and put at least
+some paramters on same line.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+> +}
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+>  static inline void init_list(void)
+>  {
+>  	INIT_LIST_HEAD(&kscand_scanctrl.scan_list);
+> @@ -559,8 +626,15 @@ static int __init kscand_init(void)
+>  	if (err)
+>  		goto err_kscand;
+>  
+> +	err = start_kmigrated();
+> +	if (err)
+> +		goto err_kmigrated;
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+Similar comment to earlier on not expecting side effects of a thread to stop
+if the start failed.
 
-If you want to undo deduplication, reply with:
-#syz undup
+> +
+>  	return 0;
+>  
+> +err_kmigrated:
+> +	stop_kmigrated();
+> +
+>  err_kscand:
+>  	stop_kscand();
+>  	kscand_destroy();
+
 
