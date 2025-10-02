@@ -1,169 +1,392 @@
-Return-Path: <linux-kernel+bounces-840236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8149BBB3E7B
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 14:36:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C37B0BB3E84
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 14:38:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A0B43C30C6
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 12:36:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7403A7A1FE0
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 12:36:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C31B205E26;
-	Thu,  2 Oct 2025 12:36:24 +0000 (UTC)
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90F5331064E;
+	Thu,  2 Oct 2025 12:38:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="czOtJEs5"
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8550528641F
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 12:36:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B81FF12B94
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 12:38:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759408584; cv=none; b=g93C2wmDR5DMe30om+f/Abadi36dYqnCF30KeLcbQq2p6+JjfgOV00dauEmTGoIS1CdDes7c3sBzFTXfbfCvAk/FCPHpIoFD1PuZtnR7qTjHTKjwmaPODWsjvp+QiTgDxRUvm5kumbgFY3Yxs83vGyF7OUGk55jRxjn1EXHTEkM=
+	t=1759408686; cv=none; b=nwLR2j8FHMfnpmcI6xFU3qKTgxLSKJosd9j78EfJ4U+qci0/3fXaB3jpDhbTy0mvvWZSIq2MehsoFU3HWZJ24wH8A/uJXx8sGYFGytCFTf+Vq3FHJDvXnKjZsynIE4jiyYDQ7Nuq3EStAfYCQvX5XoRQOj9hBfZSBFnoWjWQKeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759408584; c=relaxed/simple;
-	bh=K1ZN9t3MdWMg4kJzpTOCTOC/yGyvTS4NMdf0NiQkp9U=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MVuq5xFyb8nekuUpDF28xb9E8gfhlfpRvQoVlJUaLGWxmnKAZtom1tDE9GeUim4l7vLf2wWy5T1rZFT07p/JwbvxnkKMoYGWg/ZCBcCd9TNVipwZT8QcbO7OQro7wOxHMHmHbNVVvojPMnHWX5MTXKAqE54F9KYYNohvTxDi4rA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-46e2e363118so8759275e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 05:36:20 -0700 (PDT)
+	s=arc-20240116; t=1759408686; c=relaxed/simple;
+	bh=0d4GnoqxtkOwWQrPiHjtNf6Gn71YfqDC+uHjCJZ31cw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=RLuzTNT/tscv2ClhqAg9o5/YLzbRwlDMq668tGtILEwi5gXlmd2brrsadBu2AfYYFiYlEYncECupsrF4lrzvKWJfUlXOD/BczdH0Q1LGJP5bJK5GbzweznLZHXHpLzKGbdvDG1jE+bP5op2NHXRtllXabg48M2Fn0Q7clnOzPnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca; spf=pass smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=czOtJEs5; arc=none smtp.client-ip=209.85.219.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ndufresne.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ndufresne.ca
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-87745ca6cc5so15097076d6.0
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 05:38:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1759408682; x=1760013482; darn=vger.kernel.org;
+        h=mime-version:user-agent:references:in-reply-to:date:cc:to:from
+         :subject:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=NHfRQ+iuxKkzwVBnfyZ6vWnoqN5WJp/4cKj2bT9r2oU=;
+        b=czOtJEs5xzHUnZDTRsJw6agtIa7Fv9iNVKysxJb5DAxbjJ68HE+SeWnK1j/YqKFzFe
+         2CpXFQzPYO6gUQIwpx2P/S8iZFldAY/W//w/w2zxshStQ+wxDSH9kqZzxJp9k2rGBi7W
+         dWdJgBQ0xJbYxZyXN3TwgecsZgnY8WxYzBm1djQYKFVZQlNV0yYrPPeT2S1xTnuFjUC/
+         5ixnmgzRKta0WEY7KpTOxIvl1Z1FVqsp0bA4MzlnkOqyVtOwbwZznyDv5fSet630hZmu
+         hMLkEB+UQ10wUI0GaHrlrYVvZWzugYyG5vHH1f3fKwQPo/6l1t4G7VrrjNlAtuPAfxJ2
+         9Llw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759408579; x=1760013379;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LBlodwS+anVQZ01YfkUn1gudQWI1rvI4IORZ7L6X7l0=;
-        b=XrO5zcDDCxsJCeU1ml7lR+QXaDt8+vD5NoxswB41WcLd9MdmcVpOssdRLNA1BVMbad
-         +7qkTATDpJkBlyP48CKAsmGSIEJs1JyaUdW4hMhE057hKFUekVfaCIF48x9PJrydQ6J6
-         yiCwtsL+ewxPsQ1VeqKR75qtfaLtDJLC7Qg7kJfd3MuW+0Vs37Fvldoql1CDySbf/yzz
-         aeTgrO9FCC1cE46PlVLlsSVRAEUa2a//xnojK2eQf+ySwoLGcKuyL6Kk6nBRk6uBnuTC
-         7NTnmxitd62xnHxDN+z1Z4q/4VjmXIXwd190o9BxvS+oF7a3C75tITGqWwMriHIgYA/9
-         nNGw==
-X-Forwarded-Encrypted: i=1; AJvYcCXsoUfaQ7rM9jj5J4XtTzugpP/Ef2EpmrLNZOESI8CQZDxxFeFESHQBxiTw9+DRy9M+v/HVYomE8U++b+0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxK0eouoBfjKnkL34ZvenGfpGhKOK5WvxHWC7izF7xMvSdb/tE3
-	N7fxsMlMqxLtdPv6OfMB699axBvjV7dIeB8Rxh2aNykpPNm4zyIGuB7I
-X-Gm-Gg: ASbGncuKF9wBZRPoW437ADakeD5K23+bWaiDe74qsrDhH4nqQ211eaTbLHtM1mavgLh
-	nM/qkh3yToB8kEaHgOA6T6OfPf2Vt+q1TDt9sL/w2T45b1duQtH7Kzehe8OlZ63uLddwNsmNNwE
-	kO13XLuqSPqUIDs9IXJjjRQC+hZYmeEX3+GBQ2RjjO3bKUbIuoTymnaCwKTWObRaC8vpTqKFMWI
-	xf+v7PRWrOLr/7bq7XJHwsxrWEsvukfUII+I94zyu3FkXquQvhZU47Y1GzCCWmvEmtOL+X7owbZ
-	ZiRpJ0U4Wkrkh3z40KLubA/eOAS2ykY802gty1spELQfmUtOPDsEOmEdoILDHkC04sdaREt/Ehg
-	HGNX1NGZD3S+kuoAJb86wO50sy95B+/uxPe2++Poyietxo3fn2VARfhBexn1KBsyU
-X-Google-Smtp-Source: AGHT+IGVheM6RSlx3YE6NvwcvVuLtj6nTKyzR3btS5SvDL3E/dJ2MMO9/HKo8LarFebhRVCcSrUQng==
-X-Received: by 2002:a05:600c:c4a4:b0:46d:996b:826f with SMTP id 5b1f17b1804b1-46e612dcfd0mr58976855e9.25.1759408578482;
-        Thu, 02 Oct 2025 05:36:18 -0700 (PDT)
-Received: from costa-tp.redhat.com ([2a00:a041:e2eb:5500:8728:d68a:a687:c89b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e693c33adsm32449075e9.18.2025.10.02.05.36.17
+        d=1e100.net; s=20230601; t=1759408682; x=1760013482;
+        h=mime-version:user-agent:references:in-reply-to:date:cc:to:from
+         :subject:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NHfRQ+iuxKkzwVBnfyZ6vWnoqN5WJp/4cKj2bT9r2oU=;
+        b=P8p2I16pAyc4KUQW4Iq6D986VnZO+M/owM6foh9nvzDC+tkcioqhNVeWVD4xHN0jxo
+         PZ4ctAC8di5KGKTy6f/K/wGefJtkAGPqCloxOamjEYgMNYPXyq375vk1Ifz5yM7iQjfi
+         DuTUcZJ6Wk69HZRBTKMmQxnM95TudpTOIr23UEHEoqao4IPOR+qhBi5nfG/zvDplCu0F
+         2m/egCocay2E24ZN94RIrwy3umosQRtOUGBi0Y8mKZd/Jdoykgxb6Y5hoHTX1Y0mxfBf
+         zjyGepqWaMEKUYVTGC7xrQE12ntRE/fwHR41W/V2jbfbblG9RqbPvb136aVhV9YraHO/
+         Osmw==
+X-Forwarded-Encrypted: i=1; AJvYcCX3AsHqJW8J6GTPzfSPaUQAlJzNiVxIj5L9ZX5kw9K7O9oIrK8ne4rKfPrstg/FJ2iPG9PeNiQB+14lneg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yycni1b15QHqKM1inRConGq4QzZ0XTiJZq/g1gtRkvdHvhBuRLO
+	wJU7gPN9M9G23qxo67eNAEtuaJFYKMAWl3N24DLZZ6bPNggpkAMjLVIJSQmLEJBgJQ4=
+X-Gm-Gg: ASbGncvo24f2601rEHqpt4r+Ya152rGXBe4Ts8G5WFySYpw9x9y0Cp4TtqUdxZtSuiS
+	gfOFNRnaLffTvpFbsGjHRMA3r0iRFfmPEEVQGFZ8aW+sSwfJQeEnp0X0yBuInzJC3fB9EsMoEb0
+	ZxN/h8VmjmDtdEsnIxZ8YiO8v820YGFNX2rPt+MAb8o3zmDT/pPahzccR54M4rethqmEqZ9KH8m
+	iXmU5irjkOxryhRRH6XlMrl/JPth6CSVFbbcK0ZGSdIcMTp4yKAMZTGwJIocxb90xxk68X2fIg7
+	JGET19SQfnbUwjlFsnejWGKKH2Sw/btLaXazvUN8GRJCF3omXuAATpwzlLq4rC/6aNTv9OuT5oP
+	FsmD09gYJbC/dumGrrmwrfqMNkpsuZZVB7U0sgExyEBfvkT8Wg7/1
+X-Google-Smtp-Source: AGHT+IECtCSMYodlKeFTIOb8HiB8SZxVCHzIO6URism5fJlGRY+TVm9sBlQVd3VRXMwFRSiYAn8NFg==
+X-Received: by 2002:ad4:5c45:0:b0:84d:5b71:8a99 with SMTP id 6a1803df08f44-878b96f1074mr37155496d6.3.1759408682453;
+        Thu, 02 Oct 2025 05:38:02 -0700 (PDT)
+Received: from ?IPv6:2606:6d00:17:ebd3::5ac? ([2606:6d00:17:ebd3::5ac])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-878bd783b3esm18801766d6.36.2025.10.02.05.38.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 05:36:18 -0700 (PDT)
-From: Costa Shulyupin <costa.shul@redhat.com>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Tomas Glozar <tglozar@redhat.com>,
-	Costa Shulyupin <costa.shul@redhat.com>,
-	Crystal Wood <crwood@redhat.com>,
-	John Kacur <jkacur@redhat.com>,
-	Eder Zulian <ezulian@redhat.com>,
-	linux-trace-kernel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1 2/2] tools/rtla: Remove unused optional option_index
-Date: Thu,  2 Oct 2025 15:35:39 +0300
-Message-ID: <20251002123553.389467-2-costa.shul@redhat.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251002123553.389467-1-costa.shul@redhat.com>
-References: <20251002123553.389467-1-costa.shul@redhat.com>
+        Thu, 02 Oct 2025 05:38:01 -0700 (PDT)
+Message-ID: <ec3e93e72e326db4e61fed33ade0547935ab6dca.camel@ndufresne.ca>
+Subject: Re: [PATCH 5/5] media: iris: Add internal buffer calculation for
+ AV1 decoder
+From: Nicolas Dufresne <nicolas@ndufresne.ca>
+To: Bryan O'Donoghue <bod@kernel.org>, Deepa Guthyappa Madivalara	
+ <deepa.madivalara@oss.qualcomm.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>,  Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
+ Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,  Abhinav Kumar
+ <abhinav.kumar@linux.dev>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org
+Date: Thu, 02 Oct 2025 08:38:00 -0400
+In-Reply-To: <e273f195-fb5e-4b4f-bf97-63ea51ed875f@kernel.org>
+References: <20251001-av1_irisdecoder-v1-0-9fb08f3b96a0@oss.qualcomm.com>
+	 <mbltuHnjNkwD91EqWND77oi8XN26tEarsTmT_fLVkZQYkc7-V_RpAVWo8KC8AnzeyV74zXurscVRHHfAL35xFw==@protonmail.internalid>
+	 <20251001-av1_irisdecoder-v1-5-9fb08f3b96a0@oss.qualcomm.com>
+	 <e273f195-fb5e-4b4f-bf97-63ea51ed875f@kernel.org>
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-cPfiuid/iXTdUGeROojX"
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-The longindex argument of getopt_long() is optional
-and tied to the unused local variable option_index.
 
-Remove it to shorten the four longest functions
-and make the code neater.
+--=-cPfiuid/iXTdUGeROojX
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Costa Shulyupin <costa.shul@redhat.com>
----
- tools/tracing/rtla/src/osnoise_hist.c  | 5 +----
- tools/tracing/rtla/src/osnoise_top.c   | 5 +----
- tools/tracing/rtla/src/timerlat_hist.c | 5 +----
- tools/tracing/rtla/src/timerlat_top.c  | 5 +----
- 4 files changed, 4 insertions(+), 16 deletions(-)
+Hi,
 
-diff --git a/tools/tracing/rtla/src/osnoise_hist.c b/tools/tracing/rtla/src/osnoise_hist.c
-index 844f0468953c..df0657b78980 100644
---- a/tools/tracing/rtla/src/osnoise_hist.c
-+++ b/tools/tracing/rtla/src/osnoise_hist.c
-@@ -524,11 +524,8 @@ static struct common_params
- 			{0, 0, 0, 0}
- 		};
- 
--		/* getopt_long stores the option index here. */
--		int option_index = 0;
--
- 		c = getopt_long(argc, argv, "a:c:C::b:d:e:E:DhH:p:P:r:s:S:t::T:01234:5:6:7:",
--				 long_options, &option_index);
-+				 long_options, NULL);
- 
- 		/* detect the end of the options. */
- 		if (c == -1)
-diff --git a/tools/tracing/rtla/src/osnoise_top.c b/tools/tracing/rtla/src/osnoise_top.c
-index defa1eb63bee..1b5181e66b17 100644
---- a/tools/tracing/rtla/src/osnoise_top.c
-+++ b/tools/tracing/rtla/src/osnoise_top.c
-@@ -376,11 +376,8 @@ struct common_params *osnoise_top_parse_args(int argc, char **argv)
- 			{0, 0, 0, 0}
- 		};
- 
--		/* getopt_long stores the option index here. */
--		int option_index = 0;
--
- 		c = getopt_long(argc, argv, "a:c:C::d:De:hH:p:P:qr:s:S:t::T:0:1:2:3:",
--				 long_options, &option_index);
-+				 long_options, NULL);
- 
- 		/* Detect the end of the options. */
- 		if (c == -1)
-diff --git a/tools/tracing/rtla/src/timerlat_hist.c b/tools/tracing/rtla/src/timerlat_hist.c
-index 02d3ffd2cf4b..c432ef5f59e7 100644
---- a/tools/tracing/rtla/src/timerlat_hist.c
-+++ b/tools/tracing/rtla/src/timerlat_hist.c
-@@ -840,11 +840,8 @@ static struct common_params
- 			{0, 0, 0, 0}
- 		};
- 
--		/* getopt_long stores the option index here. */
--		int option_index = 0;
--
- 		c = getopt_long(argc, argv, "a:c:C::b:d:e:E:DhH:i:knp:P:s:t::T:uU0123456:7:8:9\1\2:\3:",
--				 long_options, &option_index);
-+				 long_options, NULL);
- 
- 		/* detect the end of the options. */
- 		if (c == -1)
-diff --git a/tools/tracing/rtla/src/timerlat_top.c b/tools/tracing/rtla/src/timerlat_top.c
-index 607b57f2f231..82e227d27af7 100644
---- a/tools/tracing/rtla/src/timerlat_top.c
-+++ b/tools/tracing/rtla/src/timerlat_top.c
-@@ -604,11 +604,8 @@ static struct common_params
- 			{0, 0, 0, 0}
- 		};
- 
--		/* getopt_long stores the option index here. */
--		int option_index = 0;
--
- 		c = getopt_long(argc, argv, "a:c:C::d:De:hH:i:knp:P:qs:t::T:uU0:1:2:345:6:7:",
--				 long_options, &option_index);
-+				 long_options, NULL);
- 
- 		/* detect the end of the options. */
- 		if (c == -1)
--- 
-2.51.0
+Le jeudi 02 octobre 2025 =C3=A0 00:30 +0100, Bryan O'Donoghue a =C3=A9crit=
+=C2=A0:
+> On 01/10/2025 20:00, Deepa Guthyappa Madivalara wrote:
+> > Implement internal buffer count and size calculations for AV1 decoder.
+> >=20
+> > Signed-off-by: Deepa Guthyappa Madivalara <deepa.madivalara@oss.qualcom=
+m.com>
+> > ---
+> > =C2=A0 drivers/media/platform/qcom/iris/iris_buffer.h=C2=A0=C2=A0=C2=A0=
+=C2=A0 |=C2=A0=C2=A0 1 +
+> > =C2=A0 .../platform/qcom/iris/iris_hfi_gen2_command.c=C2=A0=C2=A0=C2=A0=
+=C2=A0 |=C2=A0=C2=A0 1 -
+> > =C2=A0 drivers/media/platform/qcom/iris/iris_vpu_buffer.c | 255 +++++++=
++++++++++++++-
+> > =C2=A0 drivers/media/platform/qcom/iris/iris_vpu_buffer.h | 105 +++++++=
+++
+> > =C2=A0 4 files changed, 357 insertions(+), 5 deletions(-)
+> >=20
+> > diff --git a/drivers/media/platform/qcom/iris/iris_buffer.h b/drivers/m=
+edia/platform/qcom/iris/iris_buffer.h
+> > index 5ef365d9236c7cbdee24a4614789b3191881968b..75bb767761824c4c02e0df9=
+b765896cc093be333 100644
+> > --- a/drivers/media/platform/qcom/iris/iris_buffer.h
+> > +++ b/drivers/media/platform/qcom/iris/iris_buffer.h
+> > @@ -27,6 +27,7 @@ struct iris_inst;
+> > =C2=A0=C2=A0 * @BUF_SCRATCH_1: buffer to store decoding/encoding contex=
+t data for HW
+> > =C2=A0=C2=A0 * @BUF_SCRATCH_2: buffer to store encoding context data fo=
+r HW
+> > =C2=A0=C2=A0 * @BUF_VPSS: buffer to store VPSS context data for HW
+> > + * @BUF_PARTIAL: buffer for AV1 IBC data
+> > =C2=A0=C2=A0 * @BUF_TYPE_MAX: max buffer types
+> > =C2=A0=C2=A0 */
+> > =C2=A0 enum iris_buffer_type {
+> > diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c b=
+/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
+> > index e3a8b031b3f191a6d18e1084db34804a8172439c..000bf75ba74ace5e1058591=
+0cda02975b0c34304 100644
+> > --- a/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
+> > +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
+> > @@ -488,7 +488,6 @@ static int iris_hfi_gen2_set_linear_stride_scanline=
+(struct iris_inst *inst, u32
+> >=20
+> > =C2=A0 static int iris_hfi_gen2_set_tier(struct iris_inst *inst, u32 pl=
+ane)
+> > =C2=A0 {
+> > -	struct iris_inst_hfi_gen2 *inst_hfi_gen2 =3D to_iris_inst_hfi_gen2(in=
+st);
+> > =C2=A0=C2=A0	u32 port =3D iris_hfi_gen2_get_port(inst, V4L2_BUF_TYPE_VI=
+DEO_OUTPUT_MPLANE);
+> > =C2=A0=C2=A0	u32 tier =3D inst->fw_caps[TIER].value;
+> >=20
+> > diff --git a/drivers/media/platform/qcom/iris/iris_vpu_buffer.c b/drive=
+rs/media/platform/qcom/iris/iris_vpu_buffer.c
+> > index 4463be05ce165adef6b152eb0c155d2e6a7b3c36..17d3a7ae79e994257d59690=
+6cb4c17250a11a0cb 100644
+> > --- a/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
+> > +++ b/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
+> > @@ -9,6 +9,14 @@
+> > =C2=A0 #include "iris_hfi_gen2_defines.h"
+> >=20
+> > =C2=A0 #define HFI_MAX_COL_FRAME 6
+> > +#define HFI_COLOR_FORMAT_YUV420_NV12_UBWC_Y_TILE_HEIGHT (8)
+> > +#define HFI_COLOR_FORMAT_YUV420_NV12_UBWC_Y_TILE_WIDTH (32)
+> > +#define HFI_COLOR_FORMAT_YUV420_NV12_UBWC_UV_TILE_HEIGHT (8)
+> > +#define HFI_COLOR_FORMAT_YUV420_NV12_UBWC_UV_TILE_WIDTH (16)
+> > +#define HFI_COLOR_FORMAT_YUV420_TP10_UBWC_Y_TILE_HEIGHT (4)
+> > +#define HFI_COLOR_FORMAT_YUV420_TP10_UBWC_Y_TILE_WIDTH (48)
+> > +#define HFI_COLOR_FORMAT_YUV420_TP10_UBWC_UV_TILE_HEIGHT (4)
+> > +#define HFI_COLOR_FORMAT_YUV420_TP10_UBWC_UV_TILE_WIDTH (24)
+> >=20
+> > =C2=A0 #ifndef SYSTEM_LAL_TILE10
+> > =C2=A0 #define SYSTEM_LAL_TILE10 192
+> > @@ -39,6 +47,31 @@ static u32 hfi_buffer_bin_h264d(u32 frame_width, u32=
+ frame_height, u32 num_vpp_p
+> > =C2=A0=C2=A0	return size_h264d_hw_bin_buffer(n_aligned_w, n_aligned_h, =
+num_vpp_pipes);
+> > =C2=A0 }
+> >=20
+> > +static u32 size_av1d_hw_bin_buffer(u32 frame_width, u32 frame_height, =
+u32 num_vpp_pipes)
+> > +{
+> > +	u32 size_yuv, size_bin_hdr, size_bin_res;
+> > +
+> > +	size_yuv =3D ((frame_width * frame_height) <=3D BIN_BUFFER_THRESHOLD)=
+ ?
+> > +		((BIN_BUFFER_THRESHOLD * 3) >> 1) :
+> > +		((frame_width * frame_height * 3) >> 1);
+> > +	size_bin_hdr =3D size_yuv * AV1_CABAC_HDR_RATIO_HD_TOT;
+> > +	size_bin_res =3D size_yuv * AV1_CABAC_RES_RATIO_HD_TOT;
+> > +	size_bin_hdr =3D ALIGN(size_bin_hdr / num_vpp_pipes,
+> > +			=C2=A0=C2=A0=C2=A0=C2=A0 DMA_ALIGNMENT) * num_vpp_pipes;
+> > +	size_bin_res =3D ALIGN(size_bin_res / num_vpp_pipes,
+> > +			=C2=A0=C2=A0=C2=A0=C2=A0 DMA_ALIGNMENT) * num_vpp_pipes;
+> > +
+> > +	return size_bin_hdr + size_bin_res;
+> > +}
+> > +
+> > +static u32 hfi_buffer_bin_av1d(u32 frame_width, u32 frame_height, u32 =
+num_vpp_pipes)
+> > +{
+> > +	u32 n_aligned_h =3D ALIGN(frame_height, 16);
+> > +	u32 n_aligned_w =3D ALIGN(frame_width, 16);
+> > +
+> > +	return size_av1d_hw_bin_buffer(n_aligned_w, n_aligned_h, num_vpp_pipe=
+s);
+> > +}
+> > +
+> > =C2=A0 static u32 size_h265d_hw_bin_buffer(u32 frame_width, u32 frame_h=
+eight, u32 num_vpp_pipes)
+> > =C2=A0 {
+> > =C2=A0=C2=A0	u32 product =3D frame_width * frame_height;
+> > @@ -110,6 +143,20 @@ static u32 hfi_buffer_comv_h265d(u32 frame_width, =
+u32 frame_height, u32 _comv_bu
+> > =C2=A0=C2=A0	return (_size * (_comv_bufcount)) + 512;
+> > =C2=A0 }
+>=20
+> What's this alignment stuffed onto the end about ?
+>=20
+> Please guys give these magic numbers meaningful names.
 
+That would be nice, then I'll be able to document that for Hantro AV1 decod=
+er
+too. It was assumed when we picked the driver that the table was hardware
+specific, but if its not, a drivers/media/v4l2-core/v4l2-av1.c is welcome.
+
+>> drivers/media/platform/verisilicon/hantro_hw.h:555=20
+static inline size_t
+hantro_av1_mv_size(unsigned int width, unsigned int height)
+{
+	size_t num_sbs =3D hantro_av1_num_sbs(width) * hantro_av1_num_sbs(height);
+
+	return ALIGN(num_sbs * 384, 16) * 2 + 512;
+}
+
+>=20
+> > +static u32 hfi_buffer_comv_av1d(u32 frame_width, u32 frame_height, u32=
+ comv_bufcount)
+> > +{
+> > +	u32 size;
+> > +
+> > +	size =3D=C2=A0 2 * ALIGN(MAX(((frame_width + 63) / 64) *
+> > +		((frame_height + 63) / 64) * 512,
+
+This looks like div_round_up()  ?
+
+> > +		((frame_width + 127) / 128) *
+> > +		((frame_height + 127) / 128) * 2816),
+> > +		DMA_ALIGNMENT);
+> > +	size *=3D comv_bufcount;
+>=20
+>=20
+> I'm sure this calculation is right and produces the correct value in all=
+=20
+> instances - probably anyway but also does it ?
+>=20
+> It is not obvious looking at this code that it is obviously correct.
+>=20
+> I have a similar comment for alot of these Iris patches - we end up with=
+=20
+> highly complex calculations using magic numbers which my guess would be=
+=20
+> even people immersed in the firmware/driver/silicon development have a=
+=20
+> hard time looking at and "just knowing" the code is correct.
+>=20
+> Please reduce these calculations down to some kind of define that - for=
+=20
+> example an intelligent programmer - an oxymoron of a term I accept -=20
+> could read the code and actually understand what is going on.
+>=20
+> That programmer might even be yourself. You should be able to come along=
+=20
+> in two, five, eight years time, look at a code snippet and pretty much=
+=20
+> understand what it is doing and why without having to have a deep=20
+> epiphany when doing it.
+>=20
+> These complex clauses stuffed with magic numbers and sometimes bitshfts=
+=20
+> with a few alignments thrown in for good measure are inscrutable.
+
+I agree with this, when the driver is not from the hardware maker, this can=
+ be
+justified, but since you have full access to the documentation and probably=
+ can
+ask the designers, it would be nicer to replace 64, 128, 512 and 2816 by na=
+med
+macro or const. Its not a blame, many drivers are like this already.
+
+Nicolas
+
+>=20
+> > +	return size;
+> > +}
+> > +
+> > =C2=A0 static u32 size_h264d_bse_cmd_buf(u32 frame_height)
+> > =C2=A0 {
+> > =C2=A0=C2=A0	u32 height =3D ALIGN(frame_height, 32);
+> > @@ -174,6 +221,20 @@ static u32 hfi_buffer_persist_h264d(void)
+> > =C2=A0=C2=A0		=C2=A0=C2=A0=C2=A0 DMA_ALIGNMENT);
+> > =C2=A0 }
+> >=20
+> > +static u32 hfi_buffer_persist_av1d(u32 max_width, u32 max_height, u32 =
+total_ref_count)
+> > +{
+> > +	u32 comv_size, size;
+> > +
+> > +	comv_size =3D=C2=A0 hfi_buffer_comv_av1d(max_width, max_height, total=
+_ref_count);
+> > +	size =3D ALIGN((SIZE_AV1D_SEQUENCE_HEADER * 2 + SIZE_AV1D_METADATA +
+> > +	AV1D_NUM_HW_PIC_BUF * (SIZE_AV1D_TILE_OFFSET + SIZE_AV1D_QM) +
+> > +	AV1D_NUM_FRAME_HEADERS * (SIZE_AV1D_FRAME_HEADER +
+> > +	2 * SIZE_AV1D_PROB_TABLE) + comv_size + HDR10_HIST_EXTRADATA_SIZE +
+> > +	SIZE_AV1D_METADATA * AV1D_NUM_HW_PIC_BUF), DMA_ALIGNMENT);
+> > +
+> > +	return ALIGN(size, DMA_ALIGNMENT);
+> > +}
+> > +
+> > =C2=A0 static u32 hfi_buffer_non_comv_h264d(u32 frame_width, u32 frame_=
+height, u32 num_vpp_pipes)
+> > =C2=A0 {
+> > =C2=A0=C2=A0	u32 size_bse =3D size_h264d_bse_cmd_buf(frame_height);
+> > @@ -459,6 +520,148 @@ static u32 hfi_buffer_line_h264d(u32 frame_width,=
+ u32 frame_height,
+> > =C2=A0=C2=A0	return ALIGN((size + vpss_lb_size), DMA_ALIGNMENT);
+> > =C2=A0 }
+> >=20
+> > +static u32 size_av1d_lb_opb_wr1_nv12_ubwc(u32 frame_width, u32 frame_h=
+eight)
+> > +{
+> > +	u32 y_width, y_width_a =3D 128;
+> > +
+> > +	y_width =3D ALIGN(frame_width, y_width_a);
+> > +
+> > +	return (256 * ((y_width + 31) / 32 + (AV1D_MAX_TILE_COLS - 1)));
+> > +}
+> > +
+> > +static u32 size_av1d_lb_opb_wr1_tp10_ubwc(u32 frame_width, u32 frame_h=
+eight)
+> > +{
+> > +	u32 y_width, y_width_a =3D 256;
+> > +
+> > +	y_width =3D ALIGN(frame_width, 192);
+> > +	y_width =3D ALIGN(y_width * 4 / 3, y_width_a);
+> > +
+> > +	return (256 * ((y_width + 47) / 48 + (AV1D_MAX_TILE_COLS - 1)));
+>=20
+> y_width is a thing times 4 divided by 3 aligned to 192.
+>=20
+> OK
+>=20
+> Then we return 256 * ((y_width + 47?) / 48 + (A_DEFINE_NICE - 1)));
+>=20
+> 47 ? The magic number in the routine above is 31.
+>=20
+> I don't think I'd be comfortable giving an RB for this. You guys need to=
+=20
+> take steps to make your code more digestable - zapping the complex=20
+> bit-shifts and magic numbers.
+>=20
+> I don't see how a reviewer can really be expected to fit this into their=
+=20
+> head and say "yep LGTM" needs to be decoded both for the sake of the=20
+> reviewer and for future coders, perhaps even future you trying to figure=
+=20
+> out where the bug is..
+>=20
+> ---
+> bod
+
+--=-cPfiuid/iXTdUGeROojX
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaN5yKAAKCRDZQZRRKWBy
+9GM5AP9PQ+96ubSTSmSoYKcEFZCqxdJf2kQ0fNvVju9/TUwmZwD/V7e+K4h1x6zM
+cjQ68tEKISQ5BcqGwLuPHsxOmUHKaQI=
+=5wKo
+-----END PGP SIGNATURE-----
+
+--=-cPfiuid/iXTdUGeROojX--
 
