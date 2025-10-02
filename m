@@ -1,76 +1,59 @@
-Return-Path: <linux-kernel+bounces-840445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F39FBB471B
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 18:07:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E938BB4727
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 18:09:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2424319C689A
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 16:08:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FF7E19E0414
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 16:09:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E45AE242D87;
-	Thu,  2 Oct 2025 16:07:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16FFC242D63;
+	Thu,  2 Oct 2025 16:09:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RaW0TUJG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UN64/055"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AE58233722;
-	Thu,  2 Oct 2025 16:07:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65ACD17A586;
+	Thu,  2 Oct 2025 16:09:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759421265; cv=none; b=TgoRKxXRwLHEIlU1o3n85t/IDQRgtzmMn1IihOwPgfRPKjVrk/1M2H1z/dlr2449qtXMI+1nuLPysrsaVooMEkgN7Qby8qsa0yi6HK6NzkvA4O59h1eSXYvh2gXbwpxzdPZhNneZWOpakXKMwAzwyd4UuSkiAY2ZY6Qa1cT58tE=
+	t=1759421355; cv=none; b=gAQTtg3ImwEEVOrb6LkkbzNv74ZiDfxLPmsWbT6V11f83oPvC2YDJZFgnBaPIRqX+M1zEUQ8VMtgRhFPvxm0rfKTtrKBDuoWPFzqabmGMQjyNBB63yFeG0ruWuB1MeVZHN4f5TxFDrspdCkhfRkIYvzW02n9qY73jEK54cgr0rE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759421265; c=relaxed/simple;
-	bh=7HS3xDv56hiDsg1+8hgJy4KB2sJ7ucY4QIiLu0ewozc=;
+	s=arc-20240116; t=1759421355; c=relaxed/simple;
+	bh=xrpQZHO3iI+KPMeFcf7bviH6GVHikFXA0GPqGdBZ8ks=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XV8xF4I+u1+3+bWxbIH8O0NMpS86rf9+Wz4PtzHoG7fSS7E2JhMccu3OD2crnv95MoK/JLUMQydQA/D/Rv7vOhllsl33WVthyZE/jfXjXOLv3dPykrkNjdBLwogic5qUIvFtHvFLHhFx4zHxJRPN3EzXZefaTk2Ry3eBpeCjHsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RaW0TUJG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F105BC4CEF4;
-	Thu,  2 Oct 2025 16:07:44 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=X8b545zqq0zP4ayxpTLbJ9hL9cO6ojqp1hUMV9+gZOYc6XE7GucySO5OunxnZIJBTjmfE3jKCVtQFx/+9oojC9t1x+99prqKb7PrzlDqcOnLN567L08Tt9l2y7X04bwo8lXC0RRKD9p5ZeK7vHWOjUXCIIlrwlFKaExXE5imhb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UN64/055; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7765C4CEF4;
+	Thu,  2 Oct 2025 16:09:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759421265;
-	bh=7HS3xDv56hiDsg1+8hgJy4KB2sJ7ucY4QIiLu0ewozc=;
+	s=k20201202; t=1759421354;
+	bh=xrpQZHO3iI+KPMeFcf7bviH6GVHikFXA0GPqGdBZ8ks=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RaW0TUJGjtHO6268lGs5FWYM8bDaIXCSLtQU3OQTBfqWK+Bu/YI965Qk/RH77hHhC
-	 BZsET7tPw7jl0bEU18wN/up2OTJtKc8M2jv+0DQ32MJVxsx7TbDp8cojcNESMwRea2
-	 wcWcGGd3edXKE63RYLTUcZgyToeCQMB8m7VYypsofwxaE4Qrf7lsUc7Pe1U09/7/1U
-	 XuNwJi/gtguk59RGBUE+pGb1v41/s8SByzuXvUWx5BxBrwPAqn5CsKfwIcqlqAY3UA
-	 GmlBRjcaxB4L2oV1HxeXgJ8n5mEa2dXUcaLqVEH4cFz1dCJlF9FNiFYiLeCwr49tWe
-	 +f1IhhhmHeFWQ==
-Date: Thu, 2 Oct 2025 09:07:44 -0700
-From: Kees Cook <kees@kernel.org>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Sebastian Reichel <sre@kernel.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Benson Leung <bleung@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Tony Luck <tony.luck@intel.com>,
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	linux-pm@vger.kernel.org,
-	=?iso-8859-1?Q?S=F8ren?= Andersen <san@skov.dk>,
-	Guenter Roeck <groeck@chromium.org>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Ahmad Fatoum <a.fatoum@pengutronix.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: RFC: Selecting an NVMEM cell for Power State Change Reason
- (PSCR) recording
-Message-ID: <202510020904.1E48B7EB@keescook>
-References: <20250618120255.3141862-1-o.rempel@pengutronix.de>
- <aN5pSWBFRZlNRv3U@pengutronix.de>
+	b=UN64/055mJnSv3/yUQ+UES7WSqhgevBRTzm6cbDLq2+hPBHNjdPW8BlnYw1joqaEM
+	 Rmkj08FwmJPeF51eSSN4t8ImTVQOCUudH54sBc+u+pt9ChCvkLtSEGInWDrYXIG0da
+	 gNaiVh5wGpYdXyMXLAZ7JRQ7bBMJPLbLo8m0v16edtHhZ+fYidkbW21lrcit5V2ixJ
+	 uj+gkrOwpLisRptFEvFPhwc4xYWNxDcPpUhLzlqq9GyIzl21Y/g4EtiI+mEiLoqmZO
+	 cW4fh9gP1Rfs36x44OBIHfmDAHvmAbPkVMr0zN4ezxetS6xZl/a0q6npu+Xo8bTxGk
+	 AohSlfrYnfkWQ==
+Date: Thu, 2 Oct 2025 09:07:51 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: "Jason A . Donenfeld" <Jason@zx2c4.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Stephan Mueller <smueller@chronox.de>, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 5/8] lib/crypto: Add SHA3 kunit tests
+Message-ID: <20251002160751.GA1697@sol>
+References: <20251001160435.GC1592@sol>
+ <20250926141959.1272455-1-dhowells@redhat.com>
+ <20250926141959.1272455-6-dhowells@redhat.com>
+ <2636465.1759410347@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,27 +62,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aN5pSWBFRZlNRv3U@pengutronix.de>
+In-Reply-To: <2636465.1759410347@warthog.procyon.org.uk>
 
-On Thu, Oct 02, 2025 at 02:00:09PM +0200, Oleksij Rempel wrote:
-> I'm seeking consensus on a minimal, upstream-acceptable way to identify the
-> single NVMEM cell used to persist a Power State Change Reason (PSCR). Typical
-> targets are battery-backed RTC scratchpads or small EEPROM. The aim is to have
-> a tiny breadcrumb available before userspace, across full power cuts, and
-> shared by bootloader/kernel/userspace.
-> [...]
-> * pstore integration (not tried): a backend that uses a nominated NVMEM cell if
->   such a nomination is acceptable.
+On Thu, Oct 02, 2025 at 02:05:47PM +0100, David Howells wrote:
+> Eric Biggers <ebiggers@kernel.org> wrote:
+> 
+> > SHA3-386 => SHA3-384
+> 
+> Hah.  Possibly I'm too practised at writing "386".
+> 
+> > If these expected outputs are from an external source, then that source
+> > needs to be documented.  If they aren't, then the way in which they were
+> > generated needs to be easily reproducible and documented, e.g. by adding
+> > support for generating them to gen-hash-testvecs.py.
+> 
+> I generated them with openssl.  I'll add a note in the code.
+> 
+> > If that's the case, then running "./scripts/crypto/gen-hash-testvecs.py
+> > sha3-256 > lib/crypto/tests/sha3_testvecs.h" should reproduce this file
+> > exactly.  But it doesn't, so you must have manually edited this file.
+> > 
+> > It should match exactly.  That can be done by tweaking
+> > gen-hash-testvecs.py to use the correct *_DIGEST_SIZE constant and
+> > skipping the HMAC test if sha3-256 is requested.
+> 
+> gen-hash-testvecs.py doesn't know how to handle dashes in the algo name and
+> they end up coming in the output as "SHA3-256_DIGEST_SIZE".
+> 
+> It also generated an HMAC thing despite sha3-256 not having HMAC support, so I
+> just trimmed that off.
+> 
+> Anyway, I can modify the gen script to deal with both of those.
 
-Several years ago I wanted to have tighter integration between pstore
-and nvdimm code. The thread is here, for reference:
-https://lore.kernel.org/lkml/CAGXu5jLtmb3qinZnX3rScUJLUFdf+pRDVPjy=CS4KUtW9tLHtw@mail.gmail.com/
+Yes, that's what I'm asking for.
 
-I'm not sure it it'll be a useful as background, but I thought I'd
-mention it. :)
+> > >  def hash_final(ctx):
+> > > +    if ctx.name == "shake_128":
+> > > +        return ctx.digest(16)
+> > > +    if ctx.name == "shake_256":
+> > > +        return ctx.digest(32)
+> > 
+> > This addition is unnecessary.
+> 
+> Well, you can't generate SHAKE128 or SHAKE256 without it as the digest()
+> method has a mandatory parameter for XOF algorithms.  This fixes that.
 
--Kees
+I know, but the script is never actually used with SHAKE128 or SHAKE256.
 
--- 
-Kees Cook
+- Eric
 
