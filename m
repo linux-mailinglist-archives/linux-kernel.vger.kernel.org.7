@@ -1,100 +1,89 @@
-Return-Path: <linux-kernel+bounces-840585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7184BB4B99
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 19:43:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6516DBB4BAB
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 19:44:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AB2EA4E2C22
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 17:43:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59C9C4248B8
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 17:44:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75A3F274646;
-	Thu,  2 Oct 2025 17:43:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7462274658;
+	Thu,  2 Oct 2025 17:43:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o7X/wTr3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s3wLJxkG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C250027146D;
-	Thu,  2 Oct 2025 17:43:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1880A433A6;
+	Thu,  2 Oct 2025 17:43:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759427017; cv=none; b=ZwzJoPHwQedv2HVWdXJ169ePfdjWAZN7ng8JtNYnIG699H5hN4aq0iZHRdnadtgmL8fIZ9cny9HKy3Ch3utz9HZSWSqdhRlTpLenYxvEgPHuPHtDlf3MWQFSKcvZz5D/aiJj/TSaDYWnOiUaHFzjTBkmAoV9DV7BPHGAbtymnys=
+	t=1759427029; cv=none; b=iFIbY5xBBYnfR03HM/tBEeDGquAEDpuZV2So+isYVL5lpRUbZHIus7Gq68kQ2hjliY41la8Ykfe1OpO8dib+Jl8Fq84sts6Todd/rEdOXpvaX0WXiXZWP6catvWfM9Fuv6CsaHnbGg2wKx36U7bF+XCmE4ffs5tQR7Ma4SCJRWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759427017; c=relaxed/simple;
-	bh=Xqz5o+ZdJCPEwJsSHbsVWkehdw3RptKsEo6BDFHxa9I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hURTQb75B0LcocN3wuHEHsbrYy6gBdt4IIMlMX6uDYavAvqwM4EjHHNNnFyplLPoycbMJeI/969OUwIeMIquGVP/CTcmqrYnc8+64pXFQmwZHNTPYEft0Pw/+cu3CSTnGqhRZrHSu4psDmjcNB4jomN5CdA9adBc30wodCsLZQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o7X/wTr3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2DBDC4CEF4;
-	Thu,  2 Oct 2025 17:43:36 +0000 (UTC)
+	s=arc-20240116; t=1759427029; c=relaxed/simple;
+	bh=ZZ8PWqi6cNje4lj3U2qSrTAVGZuCb8id8xvf5O0tM38=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=dOkv9+Qv+7XwzoNYIZbe353aYZ1tmRtxrV2cVFV3H7g7wlNqU7spVxoAzqrUVsmYGvkDchY0J/CTbTA+N8g5tHQDga1SeYLceqzsY9LCAEsZpSBJmN0cvyyXNLfk4QQ5HqykS3f2Xs0Xn8SQT1m3C4xobffVJOwRaMgWx7CZ+eE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s3wLJxkG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69FFAC4CEF5;
+	Thu,  2 Oct 2025 17:43:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759427017;
-	bh=Xqz5o+ZdJCPEwJsSHbsVWkehdw3RptKsEo6BDFHxa9I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=o7X/wTr3NYgfOivRzqINdn9eHbE+mYwqJontKFsokLincUPL0yhN32HWvivnLf69a
-	 Qct+ql80DOtSXdLhH3IjgXJvbIErrsUiNvsobaacXze4smzyn/fArVuh102PL2iCwB
-	 hb4NBzlmnn67H8gFSFbMq0YgVrzA44LwIX/Kbs2GrG23CE8ayfg33SNCYBE4UHCmDr
-	 Y4rbFost6z3pLR7qngNPD1DBt82H4mEt2b+6jc5taiAF/XeiMYZnWN6vUK0q5jRlNy
-	 g/bXLGjLJI67SsP+0LapA//jcImbcqzPgzBGiRjxeY3/5g/GNgrPGbyxVHRaq1CWMy
-	 t9ubP3mp4DwYw==
-Date: Thu, 2 Oct 2025 14:43:34 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Leo Yan <leo.yan@arm.com>
-Cc: Namhyung Kim <namhyung@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	James Clark <james.clark@linaro.org>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, llvm@lists.linux.dev,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 0/8] perf build: Support building with Clang
-Message-ID: <aN65xrFGqwue6jCx@x1>
-References: <20250930-perf_build_android_ndk-v2-0-2ea440b7ef01@arm.com>
- <aN044EY-Ds9-E6iz@x1>
- <20251001152217.GQ7985@e132581.arm.com>
- <aN1yNKxXLnMtQczW@x1>
- <20251001183256.GS7985@e132581.arm.com>
- <20251001202050.GT7985@e132581.arm.com>
+	s=k20201202; t=1759427028;
+	bh=ZZ8PWqi6cNje4lj3U2qSrTAVGZuCb8id8xvf5O0tM38=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=s3wLJxkGI6ANEihThS37BGeLsyUU7xCe+x0PnrtQJywurVoGVOqnvhPDXg5wpmtf3
+	 sN1brSBoA3jHnSHeX1JmyTeu/gx/4b9rs78oMI979cGBVYaxigUlVZRJJ1Uc5jwDNu
+	 tUmU3Gj5RyUc1niSe8x2RaZ+c9Q0b92rBT1WxQa5LxNXP2eQlUSIBGV+Nc9f/CRlzQ
+	 8Nz+4CUEdP+6WhgxKGNZpO3WRLV4FNM9fIt2SDMfz7Ixorbjalpvs7eJbQs1t30Hau
+	 hBR2C5oQLTSr7rKDbut9IC3RaE3eTg56ua4NN5+NWLU7Mm4Vhr27WRFfcwdKrFT+0K
+	 uBNYki/jmbFBA==
+From: SeongJae Park <sj@kernel.org>
+To: Jakub Acs <acsjakub@amazon.de>
+Cc: SeongJae Park <sj@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"David Hildenbrand" <david@redhat.com>,
+	Xu Xin <xu.xin16@zte.com.cn>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Peter Xu <peterx@redhat.com>,
+	Axel Rasmussen <axelrasmussen@google.com>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] mm: redefine VM_* flag constants with BIT()
+Date: Thu,  2 Oct 2025 10:43:44 -0700
+Message-Id: <20251002174345.58777-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20251002075202.11306-1-acsjakub@amazon.de>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251001202050.GT7985@e132581.arm.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 01, 2025 at 09:20:50PM +0100, Leo Yan wrote:
-> On Wed, Oct 01, 2025 at 07:32:56PM +0100, Leo Yan wrote:
-> 
-> [...]
-> 
-> > > + make 'ARCH=' 'CROSS_COMPILE=' 'EXTRA_CFLAGS=' -C tools/perf 'O=/tmp/build/perf' 'CC=clang'
-> > > make: Entering directory '/git/perf-6.17.0-rc6/tools/perf'
-> > >   BUILD:   Doing 'make -j28' parallel build
-> > > Makefile.config:494: *** No gnu/libc-version.h found, please install glibc-dev[el].  Stop.
-> 
-> It does not set correctly --target as x86_64-alpine-linux-musl if
-> distros are using musl libc.
-> 
-> Now running the container build for updated code.  Once pass test,
-> I will send new series.
+On Thu, 2 Oct 2025 07:52:02 +0000 Jakub Acs <acsjakub@amazon.de> wrote:
 
-Thanks for spotting the problem after taking the trouble of starting a
-container! Hopefully that will save time for other people trying to
-cross-build perf.
+> Make VM_* flag constant definitions consistent - unify all to use BIT()
+> macro.
+> 
+> We have previously changed VM_MERGEABLE in a separate bugfix. This is a
+> follow-up to make all the VM_* flag constant definitions consistent, as
+> suggested by David in [1].
+> 
+> [1]: https://lore.kernel.org/all/85f852f9-8577-4230-adc7-c52e7f479454@redhat.com/
+> 
+> Signed-off-by: Jakub Acs <acsjakub@amazon.de>
 
-Cheers,
+Acked-by: SeongJae Park <sj@kernel.org>
 
-- Arnaldo
+
+Thanks,
+SJ
+
+[...]
 
