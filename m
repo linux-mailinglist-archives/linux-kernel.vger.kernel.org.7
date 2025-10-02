@@ -1,129 +1,242 @@
-Return-Path: <linux-kernel+bounces-840049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 354ACBB36A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 11:15:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5999BB36BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 11:16:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5993188EA80
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 09:15:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C32F1769DB
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 09:16:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C5422FFF86;
-	Thu,  2 Oct 2025 09:14:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 503862FE588;
+	Thu,  2 Oct 2025 09:16:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fsUIbsoN"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="GAQhLXtu"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC4672FDC5A
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 09:14:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED3FB2F28E5;
+	Thu,  2 Oct 2025 09:16:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759396495; cv=none; b=AownbFNl7xXzUdP6l9Yyz5rNYwlSTRcfjxY5tjYR3CGjSeBR6DQ/4ay//NrnJsZRiM+hEonTjt7IBZQrk2pkQiK0ErBgaJwtuTL2Xs6UKGeyhqOi9jgod+MI0k2lf7AY0TYoo+SAr7aFDHmb1Hwv+Aj+PxvgbHN9V4VWWqqBTNs=
+	t=1759396584; cv=none; b=BGCFkSVvyEFMjG7wf0Zh9/4fSy7Y7gy7B6WLuls0VjBEWewkwbz8z923P/xI4rkmHYX4g75RhxzL52DvAFNGYQfeuBz4wwcupzvfJ7L+dk8S4ED5Exrnmnr0UIEumm3UUxxxS+x1lstP3x4J0xHpDE755CO7MXIfZSjbcTGKycM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759396495; c=relaxed/simple;
-	bh=siG1bgYonAEUTQ2s8Ux8Lu0beD0iJQSpmvEU3NcNK3Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AxGn1EadEHqDDsfG4UkGyraWRI/O4PtUSwmtc/3t9/+Cfvx6bADERMoECmTk/bOE+U8Gpn/Qrk1wkv3gnelfe9RTQQVst0RJInwn8SqBjygECzRs8cAjG0RR/dpbVZO+iiy4JhFQQj4D4ATduzBdKBHksH9368ray8bOdNfVb/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fsUIbsoN; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-57992ba129eso1037428e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 02:14:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759396492; x=1760001292; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=sSM6CM5P15ezEZnt0ve39/mjKYvov3ryn3t/1wlMyQk=;
-        b=fsUIbsoNTfjlJbuyLjKLE8zfqVBn7HLAH2HxmR8m2ZYR62jezqgXFgm7EXvQL6h8GG
-         Q0SiyOnqGP86GBDy+LjUimDYiul6PtHaA+m0vrHXxJJ44R5ugVcaw+mDQwFCUcgdXOUf
-         NjZzQXzdAHT98PNP2mG3avIWxGExCasOoJwCXboycJ+ZgUmUPfw9KdOlvAzVw0Qv3mQV
-         Cwx/a4/h05AFU1+UUVe4zylZDfu6Ptw0liLtnE3uOKejOGsihp7581jRqMHH2/Ov6gkM
-         safgfZ0aLGwB1HnciSnw0+ItWQas3vP4uqThMdLGhlpLFmFcX04dgIhjDj5AP5JF2RpJ
-         9HRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759396492; x=1760001292;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sSM6CM5P15ezEZnt0ve39/mjKYvov3ryn3t/1wlMyQk=;
-        b=Q1VaC0N6K56rOzn3FCY7newvqFTWaFb8QY/eEsdAsVW5nvbXROeW2xM89/vIs4gfZw
-         APv591QeFE8pX9hVrZ9VJzn4VLH1myOPnyIBu/dlgXPt8iJwxVLYR+3e9Kl1YFbI6t1r
-         yfK1AmOI3jHnlcQcXEfKAm3DS+LV/M20rwHSfHowzyFOBulMO4VOCpPBdKIQxdBFL0LO
-         eEnkdUYXf2X4iVgmxJBUm+akF4ZpbjE2SVGh0YqtAEfeekauM3b1aowF6EI0Znnnqzna
-         1wtd3rIKoXUsMS2D+rdp2DDete/pbbZ7hsUYOTWrBkR4ESVzwr4LLj3jHPxxsCQQGPtW
-         w2Pg==
-X-Forwarded-Encrypted: i=1; AJvYcCUUVcDw6CX+c61gCdTveRjNnvCPngQ0kv+CmBiZvhzS3EotLVcMROdQaMiGcDegH4UN3C+WmyKoAnkd9GQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwogjsuIGKiy9aTTmYB84L/jv3KlTQmhB7pR8Q96tBCai3uR2jc
-	tRYh6mjc5Xw5fGMgGeLE9eG0FrfGynXgIS4ahKFxM08YNQQ117VrcZbv
-X-Gm-Gg: ASbGncu/NngVhCSF7lnN6LqsReQfrABfl+mV05kF8UFlLAY1ReesiK2E1D/+mjYRzOk
-	C3iK3gRPjt/LHWxQOC9dtLUJG9L2GwW9qRGc1tX2iaY1IzTAhyJ6lunKrMy44p8RRlkHDLKJibk
-	dwTC66LlxjQ/OeaSGIJ3cJJ0QIdyMzLiFStvPV/A4BHTUe3CinUiK26A+DdpOacVb/0cmndHHWD
-	ufOe6lKQtcwYCbHGG6JGut+3XctaQJSeqyRklMDvyCCVkkydVAAxRmfgMIz690srUCGrHh1yiTr
-	wA+ctL1hUW+Y0pbojwl7rHI6Gm4lIdSP/lQy9DOl7ul9lI5GRhR2C7EFRpejgmWqYkgEIIKxwNK
-	rkgh/A/gNdGyvMynHEkiCyELDdbjFAnmse6ecCPw4A/ERLbuxibYwc0rdTR9SRMzukeLjt/3vLJ
-	EVstj2ERgkbcnS1FwFy9jsr1JnC9Vyi3dyvIBv78Aayd/gwoDsk0U=
-X-Google-Smtp-Source: AGHT+IGWYt7Zzu4cL1+wVfYqBSH7iBbYGrSdD+ADAvQhIvYKCsdF8o+ver4QC9QADVpDHqDv4CErAA==
-X-Received: by 2002:a05:6512:3d9e:b0:55f:71d2:e5be with SMTP id 2adb3069b0e04-58af9f4ea35mr2108491e87.52.1759396491883;
-        Thu, 02 Oct 2025 02:14:51 -0700 (PDT)
-Received: from localhost.localdomain (broadband-109-173-93-221.ip.moscow.rt.ru. [109.173.93.221])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58b0119e4a5sm650494e87.93.2025.10.02.02.14.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 02:14:51 -0700 (PDT)
-From: Alexandr Sapozhnkiov <alsp705@gmail.com>
-To: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-	Xin Long <lucien.xin@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	linux-sctp@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Alexandr Sapozhnikov <alsp705@gmail.com>,
-	lvc-project@linuxtesting.org
-Subject: [PATCH] net/sctp: fix a null dereference in sctp_disposition sctp_sf_do_5_1D_ce()
-Date: Thu,  2 Oct 2025 12:14:47 +0300
-Message-ID: <20251002091448.11-1-alsp705@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1759396584; c=relaxed/simple;
+	bh=6Dqu7GkU07vTPH97+sZbR9B+tfqS7526oW8QJaf6uQY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P5CKJ+BqlxaO8Nq1/EsA5pL2u5SfR5O9CVOOBdYzOrTFaesbH0dfWvOMuzO2ydwqVE7++VRNFPi0m0eFyLwsUZjgyk5q0awnK3iMwDUUSn3csTN1VBxcnV/b/IJExy6D/Dy7UtI4zsR0RJI4eb1NSsqKf6NoM/+/Ft2ZI+my7OI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=GAQhLXtu; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5923ECVg023759;
+	Thu, 2 Oct 2025 09:16:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:sender:subject:to; s=pp1;
+	 bh=XItbSJ6u+BslKjA8QdV32lIftmJziyQwztI01eNhG74=; b=GAQhLXtuhNVl
+	A/54zTv4ccUg6NRAqwz+cpLJGAKEARi3nYATz72QIZopMbmF74eRT+T8YjyT9tQd
+	D8skREgpB0X1S+IBHFAAwjz+OKOf3Qjcd5y6Ge1t+RVTXCi9ue8z0OSzzlEV7bb5
+	unJ/PM9dnyxb0aUgRtrS4gU+1Ldf905dq1iI3zoH7vyFvGddNy5rxjO+gwFRlsiR
+	NlsW6TKROP6nxEK5LgaaKpis84Bdr1KHNMEIdX/dBIAWD0WQY2JgTlPbzRKhBNYa
+	MEZQNICmsI6IQODKAwzVNTtryQOLrCkQtMI/klPXTHxuQmtc5GUDIUKcvqU12GpB
+	+LYwZ/+9vw==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49e7n84gdn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 02 Oct 2025 09:16:18 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5924lHQD001554;
+	Thu, 2 Oct 2025 09:16:17 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 49evfjd0ug-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 02 Oct 2025 09:16:17 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5929GD3E44695920
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 2 Oct 2025 09:16:13 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id CD0682004D;
+	Thu,  2 Oct 2025 09:16:13 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id BC1E52004B;
+	Thu,  2 Oct 2025 09:16:13 +0000 (GMT)
+Received: from p1gen4-pw042f0m (unknown [9.152.212.63])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu,  2 Oct 2025 09:16:13 +0000 (GMT)
+Received: from bblock by p1gen4-pw042f0m with local (Exim 4.98.2)
+	(envelope-from <bblock@linux.ibm.com>)
+	id 1v4FQ5-000000026Gu-2DY1;
+	Thu, 02 Oct 2025 11:16:13 +0200
+Date: Thu, 2 Oct 2025 11:16:13 +0200
+From: Benjamin Block <bblock@linux.ibm.com>
+To: Farhan Ali <alifm@linux.ibm.com>
+Cc: linux-s390@vger.kernel.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        alex.williamson@redhat.com, helgaas@kernel.org, clg@redhat.com,
+        schnelle@linux.ibm.com, mjrosato@linux.ibm.com
+Subject: Re: [PATCH v4 01/10] PCI: Avoid saving error values for config space
+Message-ID: <20251002091613.GD408411@p1gen4-pw042f0m>
+References: <20250924171628.826-1-alifm@linux.ibm.com>
+ <20250924171628.826-2-alifm@linux.ibm.com>
+ <20251001151543.GB408411@p1gen4-pw042f0m>
+ <ae5b191d-ffc6-4d40-a44b-d08e04cac6be@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <ae5b191d-ffc6-4d40-a44b-d08e04cac6be@linux.ibm.com>
+Sender: Benjamin Block <bblock@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: kAbQJP4S4NwLneDspLkjhKzd0tXO9o_e
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAyNSBTYWx0ZWRfX1VFY2bcCYi8Q
+ qSfDB5+DR0Xnale9h74820lb+xprmK9H97upJCPrsIEe4tKt7/t3OIY3L0fD98JDEn7tz86kPVq
+ VPUtyE4J3YZNVXTpU5g73hef0jwDonTwmhpBkkC7f/pLmYABZxOZdwET38dy4mBtyhilniSNuP7
+ iF1CqEIkQVUJ5fZvOm1XMbnglZfTFGah65E4ISfC4KGknEDVv/wCh/DUQRjvzSgoXl7hE8zjpgw
+ aGy9MLGtzS2rBjq8q4dI0JxEqY89Zqq2NfDKYU9vmZIxuu099pnMktH3W41WxjfhE9gUyBY8M2P
+ Lk7fonNXWLhykPVmEgXu5aQBvlqdDu4D5TdwpzI4O+gIjMSP+gHJMedT1MlCjQPb5oqNf204LXI
+ TH2Ey5JGeuJ5Lhz1MRtYQ+IAX61ncg==
+X-Proofpoint-GUID: kAbQJP4S4NwLneDspLkjhKzd0tXO9o_e
+X-Authority-Analysis: v=2.4 cv=T7qBjvKQ c=1 sm=1 tr=0 ts=68de42e2 cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=8nJEP1OIZ-IA:10 a=x6icFKpwvdMA:10 a=VnNF1IyMAAAA:8 a=em1G25Uw2J8WQFataU8A:9
+ a=3ZKOabzyN94A:10 a=wPNLvfGTeEIA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-02_03,2025-10-02_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 impostorscore=0 lowpriorityscore=0 malwarescore=0 spamscore=0
+ clxscore=1015 suspectscore=0 bulkscore=0 phishscore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270025
 
-From: Alexandr Sapozhnikov <alsp705@gmail.com>
+On Wed, Oct 01, 2025 at 10:12:03AM -0700, Farhan Ali wrote:
+> 
+> On 10/1/2025 8:15 AM, Benjamin Block wrote:
+> > On Wed, Sep 24, 2025 at 10:16:19AM -0700, Farhan Ali wrote:
+> >> @@ -1792,6 +1798,14 @@ static void pci_restore_pcix_state(struct pci_dev *dev)
+> >>   int pci_save_state(struct pci_dev *dev)
+> >>   {
+> >>   	int i;
+> >> +	u32 val;
+> >> +
+> >> +	pci_read_config_dword(dev, PCI_COMMAND, &val);
+> >> +	if (PCI_POSSIBLE_ERROR(val)) {
+> >> +		pci_warn(dev, "Device config space inaccessible, will only be partially restored\n");
+> >> +		return -EIO;
+> >
+> > Should it set `dev->state_saved` to `false`, to be on the save side?
+> > Not sure whether we run a risk of restoring an old, outdated state otherwise.
+> 
+> AFAIU if the state_saved flag was set to true then any state that we 
+> have saved should be valid and should be okay to be restored from. We 
+> just want to avoid saving any invalid data.
 
-If new_asoc->peer.adaptation_ind=0 and sctp_ulpevent_make_authkey=0 
-and sctp_ulpevent_make_authkey() returns 0, then the variable 
-ai_ev remains zero and the zero will be dereferenced 
-in the sctp_ulpevent_free() function.
+Hmm, so I dug a bit more, and I see
+void pci_restore_state(struct pci_dev *dev) {}
+has `dev->state_saved = false` at the end, so I guess if a device is put into
+suspend, and then later woken again, the flag gets reset every time.
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+And then there is also code like this:
 
-Signed-off-by: Alexandr Sapozhnikov <alsp705@gmail.com>
----
- net/sctp/sm_statefuns.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+	static pci_ers_result_t e1000_io_slot_reset(struct pci_dev *pdev)
+	{
+		...
+		err = pci_enable_device_mem(pdev);
+		if (err) {
+			...
+		} else {
+			pdev->state_saved = true;
+			pci_restore_state(pdev);
 
-diff --git a/net/sctp/sm_statefuns.c b/net/sctp/sm_statefuns.c
-index 5adf0c0a6c1a..056544e1ca15 100644
---- a/net/sctp/sm_statefuns.c
-+++ b/net/sctp/sm_statefuns.c
-@@ -885,7 +885,8 @@ enum sctp_disposition sctp_sf_do_5_1D_ce(struct net *net,
- 	return SCTP_DISPOSITION_CONSUME;
- 
- nomem_authev:
--	sctp_ulpevent_free(ai_ev);
-+	if (ai_ev)
-+		sctp_ulpevent_free(ai_ev);
- nomem_aiev:
- 	sctp_ulpevent_free(ev);
- nomem_ev:
+I don't know..
+
+But I see Alex suggested this before.
+
+> >> +	}
+> >> +
+> >>   	/* XXX: 100% dword access ok here? */
+> >>   	for (i = 0; i < 16; i++) {
+> >>   		pci_read_config_dword(dev, i * 4, &dev->saved_config_space[i]);
+> >> @@ -1854,6 +1868,14 @@ static void pci_restore_config_space_range(struct pci_dev *pdev,
+> >>   
+> >>   static void pci_restore_config_space(struct pci_dev *pdev)
+> >>   {
+> >> +	if (!pdev->state_saved) {
+> >> +		pci_warn(pdev, "No saved config space, restoring BARs\n");
+> >> +		pci_restore_bars(pdev);
+> >> +		pci_write_config_word(pdev, PCI_COMMAND,
+> >> +				PCI_COMMAND_MEMORY | PCI_COMMAND_IO);
+> >
+> > Is this really something that ought to be universally enabled? I thought this
+> > depends on whether attached resources are IO and/or MEM?
+> >
+> > 	int pci_enable_resources(struct pci_dev *dev, int mask)
+> > 	{
+> > 		...
+> > 		pci_dev_for_each_resource(dev, r, i) {
+> > 			...
+> > 			if (r->flags & IORESOURCE_IO)
+> > 				cmd |= PCI_COMMAND_IO;
+> > 			if (r->flags & IORESOURCE_MEM)
+> > 				cmd |= PCI_COMMAND_MEMORY;
+> > 		}
+> > 		...
+> > 	}
+> >
+> > Also IIRC, especially on s390, we never have IO resources?
+> >
+> > 	int zpci_setup_bus_resources(struct zpci_dev *zdev)
+> > 	{
+> > 		...
+> > 		for (i = 0; i < PCI_STD_NUM_BARS; i++) {
+> > 			...
+> > 			/* only MMIO is supported */
+> > 			flags = IORESOURCE_MEM;
+> > 			if (zdev->bars[i].val & 8)
+> > 				flags |= IORESOURCE_PREFETCH;
+> > 			if (zdev->bars[i].val & 4)
+> > 				flags |= IORESOURCE_MEM_64;
+> > 			...
+> > 		}
+> > 		...
+> > 	}
+> >
+> > So I guess this would have to have some form of the same logic as in
+> > `pci_enable_resources()`, after restoring the BARs.
+> >
+> > Or am I missing something?
+> 
+> As per my understanding of the spec, setting both I/O Space and Memory 
+> Space should be safe. The spec also mentions if a function doesn't 
+> support IO/Memory space access it could hardwire the bit to zero. We 
+> could add the logic to iterate through all the resources and set the 
+> bits accordingly, but in this case trying a best effort restoration it 
+> should be fine?
+> 
+> Also I didn't see any issues testing on s390x with the NVMe, RoCE and 
+> NETD devices, but I could have missed something.
+
+Well, just taking a coarse look at how some other PCI device drivers use the
+Command register (this being non-s390 specific after all); some of them base
+decisions on whether either/or these flags are set in config space. Now that
+this sets both flags, this might have surprising side-effects.
+    On the other hand, iterating over the resources might not even be enough
+with some device-drivers, since they base their decision on whether to enable
+either/or on other knowledge.
+    So I don't know. Enabling both just in case might be a good compromise.
+
 -- 
-2.43.0
-
+Best Regards, Benjamin Block        /        Linux on IBM Z Kernel Development
+IBM Deutschland Research & Development GmbH    /   https://www.ibm.com/privacy
+Vors. Aufs.-R.: Wolfgang Wendt         /        Geschäftsführung: David Faller
+Sitz der Ges.: Böblingen     /    Registergericht: AmtsG Stuttgart, HRB 243294
 
