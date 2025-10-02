@@ -1,211 +1,235 @@
-Return-Path: <linux-kernel+bounces-840417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29DF2BB45FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 17:34:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 11987BB4600
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 17:35:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC77F19E3ED6
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 15:34:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92B4C19C3829
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 15:35:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4112D21E0BA;
-	Thu,  2 Oct 2025 15:34:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 748E4220F2D;
+	Thu,  2 Oct 2025 15:35:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="dWbIO7wB"
-Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazolkn19011038.outbound.protection.outlook.com [52.103.39.38])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="buUsuc28"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 810FE217733
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 15:34:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.39.38
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759419269; cv=fail; b=uXMNPE1OjS0HQ82bMPtA3WDPkN8J8RMKuSuFiQGD9p4qbF06mrY2GlYHLgxbjWunBGt8AWy/F2YhJ/DdHSFcLSlGudZFvbVze1cdXEQSUd0z18m1CFO4elPhaD0FnXc9luHJ0JEPqmL3Mto0/OMTuw9Kpe7subYBpzyrsWRE0/U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759419269; c=relaxed/simple;
-	bh=OkrpMcszq4AZWH56cnLuUd+0JXNu6m8Q0srflqYf+Dw=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=QZ6wrtq2PkS+bESzjyiVd6RO8rID1a3j6tdqiGJK4CWhgdC/AgL+UH+LUfsHf86hK1E2VdRAe39UtNPX9Pn2E+sEXudQ9s8z6To2Lz8eoVh71PkOtJybGhZARfoa7rILIYxbw8fgh9Z4RjUlqkLpirVbbSxDnS2myWXxKZjPf6Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=dWbIO7wB; arc=fail smtp.client-ip=52.103.39.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=o2dG34pKGuslTg1CTjfYOcmmGPH9dtV0sZta6gWL+W7nd7t+hH9JLPAQ9Hv659Tmp179fFBGmEzhCaPLoPDLG049dlEtlhFQ5lQip/aT5XOsRsMJOwoqSkXQ+TjSBa9zG0MAuMZDpMqslpja/q87mZuv40OauTBJhURbwVHDY72PmbIinEVFPbdzlRgzLNFJ/btFL1Bl4fM1pKVoCjrECbsFX+KcJ+3Fr4OTr1ygrhB2LtwHpQBTk69xrCIixhE7QMaeHNP8Rtv8OQhz/8UDesqyGFo6S+0XiJ2HFbYiOL+XF+r/C0LTbjHr7OpSOxoQE+Zx4oujiVqjwn3SYOVbVA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MjxtNWquKKBxX03g1n1FxFir+OBAakhZwWJBCUhf93I=;
- b=gF+3q7brYDXqSvp4MmYyXoiSTSoPJHlYbjQy1wp6L3jxfRIvqzt8Xa2LvFzyK4iNQRoUK2KQ40K2pvsZ67sM9wqEjgYKh9oTURNcjEhJqRwuzJrhn+ugL2CxBCRa6Qn1NAQK4WvPKuQYmtKe5CbCTYGsIiHb1II+JEzsjRcg2ksLvCFvOZMvBjKaTBsQOg4Wl13C93a2UGGxuX7pO89bU1m0AEoPLUSdO67WRT5plCJAJ2URraU/ipHyAIA8QN6TfSjLD/WIrVU81G3moFf/gQzaD2Pu0ns8reXcRTGQZlf7MX9CB3OR9jzXtLBzqhHAnBP7lcjYyAjwWbFMja/uIA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MjxtNWquKKBxX03g1n1FxFir+OBAakhZwWJBCUhf93I=;
- b=dWbIO7wB8icZbh7cC722vHwAxNsrn5Kg3CYUFEITvUk2xb2ugb+jOd0eIGbwM9I+Ly0yWAt5/MMwOEShu/toklf7C991B9iDC9sCVosPszsXorbE1KBg3PuoEydB+cgOMl1OGtyMW3ZcQsOcuoM1Af7nwmBvmHgkKuVa5gDq6wbmoq1GbBKUcfxBVjuR2pirOJdBHEQ6nK+YZBUXVUIRnt/+UtvHGn+10GBRw3UTa3C5khWWdnwLaO4xwqDriHigEJrwJCTqivwdQGLoJS8d75RXl+2ZKVeKHhwJ1jjopRFdYEHTQNL1rhqmmw0iFkHbIUSj5fYvSgdc3s8bL52+4A==
-Received: from VI0P195MB2739.EURP195.PROD.OUTLOOK.COM (2603:10a6:800:2c4::5)
- by AM9P195MB0920.EURP195.PROD.OUTLOOK.COM (2603:10a6:20b:1fb::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.19; Thu, 2 Oct
- 2025 15:34:25 +0000
-Received: from VI0P195MB2739.EURP195.PROD.OUTLOOK.COM
- ([fe80::350:3f3c:7e09:a9cc]) by VI0P195MB2739.EURP195.PROD.OUTLOOK.COM
- ([fe80::350:3f3c:7e09:a9cc%3]) with mapi id 15.20.9160.015; Thu, 2 Oct 2025
- 15:34:24 +0000
-Message-ID:
- <VI0P195MB273999EC8797270AE732D8BAEDE7A@VI0P195MB2739.EURP195.PROD.OUTLOOK.COM>
-Date: Thu, 2 Oct 2025 18:34:53 +0300
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ARM: Make sure CPU_ARM940T kernel can be built.
-To: Arnd Bergmann <arnd@arndb.de>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Russell King <linux@armlinux.org.uk>, Ard Biesheuvel <ardb@kernel.org>,
- Russell King <rmk+kernel@armlinux.org.uk>, Eric Biggers
- <ebiggers@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
- Steven Rostedt <rostedt@goodmis.org>, Kees Cook <kees@kernel.org>,
- Dave Vasilevsky <dave@vasilevsky.ca>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, trivial@kernel.org
-References: <VI0P195MB2739D000BD1BF18B3B718F93ED1FA@VI0P195MB2739.EURP195.PROD.OUTLOOK.COM>
- <CACRpkdZbwuf2Fgtq+jyqzqspb37-P6X4O9xqkG-mSb+afSjh3g@mail.gmail.com>
- <VI0P195MB273993B2928F985EAC763375EDE6A@VI0P195MB2739.EURP195.PROD.OUTLOOK.COM>
- <6d9bb65c-d693-4d99-8183-b605cabf9380@app.fastmail.com>
-Content-Language: en-US
-From: Franz-Josef Haider <fj.haider@outlook.com>
-In-Reply-To: <6d9bb65c-d693-4d99-8183-b605cabf9380@app.fastmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: HE1PR0102CA0027.eurprd01.prod.exchangelabs.com
- (2603:10a6:7:14::40) To VI0P195MB2739.EURP195.PROD.OUTLOOK.COM
- (2603:10a6:800:2c4::5)
-X-Microsoft-Original-Message-ID:
- <c1afd1c8-2247-4db6-bc73-22b51d1558b0@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 188F74D8CE
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 15:35:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759419324; cv=none; b=jXv1gXyK0uEYYB1DTviYtGG22BGYtEoqfRT89Jl5jQ3XRWWwRMbC0Yff0Yz5K6lhUrswSeODvjRKQmNqk5Y3D/1GkK3gefdsBPWNfGGgU8rZHPZ3+OWWKILM1czwS9EWgm3lZ/IJN6/sot6p9fkJNrEEfuVNGnJeRusNN2xiej8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759419324; c=relaxed/simple;
+	bh=+3jL1+xUcK0SoNtKm4nYz4ToCDNc/EbaCjmDuxxVpgI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U7ucJNa8zX4oaxvxpq/ogoUKBWLqA+FNbA3WM9XbzNt1JvftzsfPczAwiryRBQkVDb+jS8Dm94iTfFT+bqsOLktx39TM/SsJewOVyvuJwBmaAaeRh45HKAbL/kEaikKZccgUfdwU2VKp7p/wvvbRDhDeyZhGErJQne/zHIgC+Bs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=buUsuc28; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759419321;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=71yhr/e/+ZR0GLF/YCRkr0XQX/2f8HTKs9EYu7pd65o=;
+	b=buUsuc28RZYwzf6n3QLFm7VFJQEArnO7TjdKEkunjYEIf3LQLahMCe2MOxppKg7CNZqh/Z
+	BI3xt6gB+AAXhnCx7vMGClCoeygfnWa1+3a+z+aTh+hpkI6av0YXKAJ6No0hHvPxZKW74e
+	3i/PLSLk7SviygJogdhjvG1Qk5NW2sQ=
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
+ [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-607-d1oDNqW6N5esCpvy3F3XyQ-1; Thu, 02 Oct 2025 11:35:20 -0400
+X-MC-Unique: d1oDNqW6N5esCpvy3F3XyQ-1
+X-Mimecast-MFC-AGG-ID: d1oDNqW6N5esCpvy3F3XyQ_1759419319
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-8635d475527so305279785a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 08:35:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759419319; x=1760024119;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=71yhr/e/+ZR0GLF/YCRkr0XQX/2f8HTKs9EYu7pd65o=;
+        b=TPJE6soWYhtx31sbzjTO8QDALRZLf8JrGEUhsJLmxQcWBx1cz4v+HssQbTSCgB8qG8
+         2tzxOffXCAy0PAtIhzgnoiblcbZyArx23C90LnwKPD+tRV+0Wu4CwsTKnZJwTd7UObOH
+         7FVCntcFb9mgRvMa9u/ifLxbsLfUxIdL6z2iK+neetB05UqpGviKHrG4kCve9yGZlcx/
+         YfiCtFiL4UI0Enuc4csaD1uQh3SVgPPZ445XoZbHdMBm6mGfTOnlEqIpAmrVCG3LwweD
+         ZYwyiN+mDHeK3Sw4XOxudOFc+pXHK/y84Fm5CT0woKNE9LOObu03Viblaohs0P39goMf
+         dnRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUc4AoX6K795EiAxuZa3laIc1x5SH7bPlGP+FvLPOH4C6amSn/o8pJZju1BrxncBL+o0z4opmRGphUSJDw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxThQemlgVtY7fWlaXvYDMiByjPO9AHP3nVK6kZitJ6x/mVlZTJ
+	W1llc4536PusocPFMECXcR/jVKJR/5TtsUR9NzYXav0N/1NCFUkAbnCpMwgLTzrPCCSVVas9GPW
+	LIm1w0yIVPxtwMeWDfGf5rZfLCuXaUC4Q1jOrp0rce8U4r16ZIjeZKXJuKmY+FwoWGg==
+X-Gm-Gg: ASbGncvnfX+DuZpZoJz3Rmj4Gr3Vzxnw7hHCWdqRN452n1ab0blU2N/XV1VCl0RboQM
+	EKyWxTrKfvC7sfS1XfFZQT0+zfuzsqptnvkOpqBCIqrmRR59tBbjyagLSdmx5Q9yCLDqRnNIDQk
+	f0IVxmJqik924Z9+X1SXu3AFZbBn2hSe1xpTJAg89XhY2MyiWOS1yoZ+S+yuwLnb/7ee3L/tyZA
+	ZbBgZXYoT0D49LAU4C8EXA1JDQtmk++WFOv1ErCqVsTDandJYTmmW+VOYwu9fp1CCZjF8yDtkBU
+	O9gosLFy6UMQlHfQzplIeiRFeaT1qgvKyzSjCgtV3h3IFrxvogcCe6gOJii7hlWRIn6ITRfqFqB
+	CywLrrICthwF7DeasRCuB+g3J
+X-Received: by 2002:a05:620a:2806:b0:814:54ee:f322 with SMTP id af79cd13be357-8737415ea91mr1072359985a.18.1759419319323;
+        Thu, 02 Oct 2025 08:35:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH8j/tytlKFFVYyHcTo2LZaPnt+q1mCmEmzQMWH36vAXFUMzLckmD7sscIUh7XA6OYBuvVeuw==
+X-Received: by 2002:a05:620a:2806:b0:814:54ee:f322 with SMTP id af79cd13be357-8737415ea91mr1072353185a.18.1759419318699;
+        Thu, 02 Oct 2025 08:35:18 -0700 (PDT)
+Received: from jlelli-thinkpadt14gen4.remote.csb (host-80-47-6-60.as13285.net. [80.47.6.60])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-87773789aadsm222049985a.29.2025.10.02.08.35.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Oct 2025 08:35:17 -0700 (PDT)
+Date: Thu, 2 Oct 2025 16:35:13 +0100
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Yuri Andriaccio <yurand2000@gmail.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	Luca Abeni <luca.abeni@santannapisa.it>,
+	Yuri Andriaccio <yuri.andriaccio@santannapisa.it>
+Subject: Re: [RFC PATCH v3 05/24] sched/rt: Disable RT_GROUP_SCHED
+Message-ID: <aN6bsSW1zSjuDV3q@jlelli-thinkpadt14gen4.remote.csb>
+References: <20250929092221.10947-1-yurand2000@gmail.com>
+ <20250929092221.10947-6-yurand2000@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: VI0P195MB2739:EE_|AM9P195MB0920:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3029ae89-9a45-4465-23b3-08de01c92a88
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|23021999003|6090799003|5072599009|461199028|19110799012|15080799012|8060799015|1602099012|440099028|40105399003|3412199025|4302099013|10035399007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SnZTVnBFSUN1Y2cyNEc5QzQvQ3Z6NUlzYnEza2w1UFAvM09UTzJnNW5NaXg3?=
- =?utf-8?B?dmZhTDI1MzAwQWFpVmtXT2JxUFI0QS9obnJIZ0NFSTFOT3RJQ1FDdmFjcVli?=
- =?utf-8?B?c3NDU0toNVI2NDRvTlcvYVR5TjVnSG5acGlmRndxTUhHT05qZTh4SEF6TjNW?=
- =?utf-8?B?ZkNJZmRHOGNDKzhnbi9oMzRlT1Q2SXRSR1BIU1FNKzZSMDNPM0VhUkd5NGZt?=
- =?utf-8?B?R3NZVTdmSHdLWmxleEptcHVWRitINi9lelZGcmtxczFIbjNTYkIybEs2eFNJ?=
- =?utf-8?B?TGtDQm5DaEdhVHBSbFFWK0VsSTNLdmxub3IxUysxYXl4NDFMaTBEUWdDMmY2?=
- =?utf-8?B?VURRMDRQdGtjYXVsM2M1a3hsUDNidzdMVGx6aTJ0N2Vic1B6aHA4c3dyQVBY?=
- =?utf-8?B?ZHJmMGVsMmVnODFrSXU4ZEw5Rmk4YnBTRTZwbHlzcFpsTlZ5Z2pLM0grZndQ?=
- =?utf-8?B?SXZKYkhSd1NEakZWOWN5SjdTdVUvSlNrYmdBV3ZEZjdEeE5UcjhoZFBQZ3hy?=
- =?utf-8?B?YmpYd1U1ZHV0ckJxY2pWQXNYNk85aGZ1VEpYNzVOTWlZWlNyNG0wWGVsWmx0?=
- =?utf-8?B?dzBYY280NCtscHY4OTdVTkVlS21JRW9weWxVV0pOcnRxeWdNc1pOcG9sUk9D?=
- =?utf-8?B?eStMUzZvOW9hblN4ZUUxZmU3dFg2YWJ3QmhFZFFmOUNRbmVWQldYT2UwaUky?=
- =?utf-8?B?NVI1WkdycXFNUVVBaUsrbHl3Rnp2am4vc0JGbGo3WE9mKy9iVGZxdjQwRWxE?=
- =?utf-8?B?eHlvTHFOanF6Z3d2dTlVaW1sRStFNUhQNUN5YjhuSEJSSFdyUEhVYXBMOEE0?=
- =?utf-8?B?bUlrVGF3RTduektjOTFUNHFaUEp0WlU0b1p5ZmlHU3JUVFAxY0JkbmJvVTNv?=
- =?utf-8?B?VnI2YjUreFJuMmo1ZDE3MFZhZlUyRDJYMlRLWkxWMVhwZ1NOWStnR1A5dFQx?=
- =?utf-8?B?QW4rckdiNXJvbmNmYkVDSGRkUVNwYWJnSllFS01jSVlIV3RMejZiS3ZHNzJs?=
- =?utf-8?B?SmhGZkxDOFFFMXJobVg0YzJtMFlKaWxuR2NFUXRhSlI4SnRjd1FLZUIzTUdN?=
- =?utf-8?B?TEFUaEJBOVhCWWxZSTRWT091bWJpcWNHdjJ5dVZMaGowWkdGWjN1WmxaRVJ4?=
- =?utf-8?B?aXA3L0JFaFh2V3dRQ1FlTVVVQ0NiSHNNU2V1MXpZVDVEMEpmcjlxQTFDZlZk?=
- =?utf-8?B?MVJEMmdIT2Rsc1ZIck5kS0JtQ3N2Mi9UdVJFdytPMWtrOGIwUU5JeDRvSFVl?=
- =?utf-8?B?SmNKekc4MGdXa2dObTBDL0dyd1BQYWVkUnN4QzBZRElSMXQ3Z3JsTk9RenI0?=
- =?utf-8?B?RlQ5VWJMYUZnT1hDanJhTEhuOElsT3VYYU5NdUowaWdKZ2Q5WlA3QVRyYnpC?=
- =?utf-8?B?U0RoNVNRQnI4aTRpeUxqYkV4Y0w1c3IzVG40NzNVVGtPaHlHcUZKMVZZd0Zj?=
- =?utf-8?B?aTBDNVVBWHFNOVJzZnF2eHVRbENPTDBNY3dCWnZla293aUxSa2ZhTGtGeDA2?=
- =?utf-8?B?dThzc1BMWGZPUnJ2WHM5SlZwYnNTUFUzWXdvYTB0WHpVWm5GQ0dFcWYzTURa?=
- =?utf-8?B?VHhBSWY3N1I2MzZlZTRDSEU3Z3p2WmwwMUlZaElUTjRENjkzdVFzY2lBci9V?=
- =?utf-8?B?ZkRVTVRxdjQ2Q3FDZEZvekxrZXdtQWdjUlFVZHJKMGR4MzNGbm52NHFVdlh3?=
- =?utf-8?B?cnAxZldFVHlYVlN0Wkx4WE16NG43TzlRZkxzQVJVd0tSaHFJSDN2UGlla2kw?=
- =?utf-8?Q?+U6EdhzOvIukoDvZ4Jk5QTOqtuc5vPuS52U3nvV?=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TUNXKzhXOVJmN0RhU2dGUzNLaCtEc1VWZjZFL2t1cFpFT2tkTkU3VHdhRmJ1?=
- =?utf-8?B?UjJDWTNyU3ZsYkZrNitTZzFadTRxV3h1Qi9DYVp0M0EydGVQT2RaTjJ2djVw?=
- =?utf-8?B?T0ZISE55UG9ycVVxSHRnNWdRbjR0YUNiT1UvajFuUUc2Wnc2cjJQQm9NZnYw?=
- =?utf-8?B?THllNTJzZVliUVFibHFLYXE1eStsSm03K1ZwWTcra1ZJL2VIZSs2SHNGZ29B?=
- =?utf-8?B?NVA4cG14cm9GcmczZEFNN0JocnNvaTQ5YzZyOVhzVG40Vk5wUkZZVk1oRGFG?=
- =?utf-8?B?QlczMjA3OFFsTVI4bTRzeEVUeTYvSVBjVDZiRmdCaGNubDNLMkJ0b2QweTll?=
- =?utf-8?B?QjZxL0J0dGc3VlpYWUxHUHVCN1ZINDdxdXNsVVp0ZllBdWVFSkxoU0xVTGNq?=
- =?utf-8?B?MEFkaG5qQm9uVHNWY2JQbVIxU1puZmNaazlsNitnd1RXNVVUV2laUmY0ak1s?=
- =?utf-8?B?TWhxRW9BN1prdmRlcnNCaFBJUUQwRnFtRTNqQkl6ajNDb0V1aE1Ebk43MmVJ?=
- =?utf-8?B?N3QwMEM1NmdsV2pwbFBwY0VRUlpBdkVzNU5SVzhTaUNQQzNoRlFNaUNVVTFD?=
- =?utf-8?B?SzB4b0RITkF2KzdEWVVoakxobGFSTXNnK3lyMFpaS2RDOWh5YkxhR3EwMkRy?=
- =?utf-8?B?WGF2MXk2Z0gyTStPemhvZkJNOHdQRXE5OUI1ZmQ0QzZLc2NOS3FmRU1RTzdm?=
- =?utf-8?B?K1lUdGhZVm1BckJJbHdNZkdpY05jZVRRbi8xT2lLU2NVN3UxSXloZk51amhx?=
- =?utf-8?B?WWR4Ylo4Wmd0RzVTMDdmWDV1UW1oVHNmeklkSVl2TFptSDMySFpoQm0xNkcx?=
- =?utf-8?B?L05oSE5DNkx1d04rc2NrSVJNVjlENzNYSkl3V2VyYlRIRmVyV1hyaEV1NXlK?=
- =?utf-8?B?Z2k1b1pkSExVU2plVVh6eTRpUERHU3crZ3pjQWxuMHJhd0d2MnFuajFWSlJq?=
- =?utf-8?B?c0tmUklPRDFxOE9LSEhxVkxKZEU0dFl3QzM5TDFnei9sV3V2NFpyWElQa2JE?=
- =?utf-8?B?cEhmUmlFSC90ekN1cis1eVhuK1pNcmh6S0tzSmd5cVBRQzNhNlpHRWlVYUgw?=
- =?utf-8?B?OWpVODlmeDZNMS96cXlDdDcybndkSkJhU1pVdVZLZ05ud2tURWYxWHNQdnpk?=
- =?utf-8?B?UHZ5emFuNEtYbTZWMnJwS1huZmlQV0FZSFhYZC9RR0tzQ2libXJSM3RpSUNx?=
- =?utf-8?B?aXZmOVJXN25zVzFIbFp5ZnZ0eStMVmdaanMxTjE1b2VhQkJJNmtZUVZ1Tzd4?=
- =?utf-8?B?b1hkbTZ5T1JvdUpkQmdhVEhOajNEbTdtRVRBV1RCZDBWMC9TSU9oYk02MVBy?=
- =?utf-8?B?YXl6d2JpZmhYbmtVRWUvUEllM3Zua3dYeFdIUmhWVDJxaHgzOFRPcGlKR3pH?=
- =?utf-8?B?RGtmaXlCd3pldmY3MlBiUWt0cEJicDROeVVHbTVPZk1uLzBueEg5QytRb1NQ?=
- =?utf-8?B?bTZIUTVkd09MakZtNzdLN2d2OURJemVjVm52ZzZaeXpnbEtiZ1V1MzkrSnRB?=
- =?utf-8?B?YUs4amQzdThQSzBNTzBtblUyTVpabmNvSTRWTFFKWGdxMEI2TzNwTXFSVk9C?=
- =?utf-8?B?djZuRVU2UUNYVlA1c0tSNHBtWjFjYVFKckczL0pkYnBsUFVNZjJWRnlYR2xQ?=
- =?utf-8?Q?LHjs9BVChgKUw5flnywal3ZSJAY3eplybx+UfxRvCCaA=3D?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3029ae89-9a45-4465-23b3-08de01c92a88
-X-MS-Exchange-CrossTenant-AuthSource: VI0P195MB2739.EURP195.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Oct 2025 15:34:24.9124
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9P195MB0920
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250929092221.10947-6-yurand2000@gmail.com>
 
-On 10/1/25 23:52, Arnd Bergmann wrote:
-> On Wed, Oct 1, 2025, at 18:04, Franz-Josef Haider wrote:
->> On 9/30/25 15:09, Linus Walleij wrote:
->>> On Thu, Sep 25, 2025 at 11:33 PM Franz-Josef Haider <fj.haider@outlook.com> wrote:
->>>
->>>> From 33ce5a26ef08199625bc5bb01a176047bfacff91 Mon Sep 17 00:00:00 2001
->>>> From: Franz-Josef Haider <fj.haider@outlook.com>
->> Hello, I have done this change because when trying to "select 
->> CPU_ARM940T" from a Kconfig for a device with arm940t cpu, the build 
->> ends up failing with errors like
->>             arch/arm/lib/ashldi3.S: Assembler messages:
->>             arch/arm/lib/ashldi3.S:44: Error: cannot honor width suffix 
->> -- `rsb ip,r2,#32'
->>
->> With the change I am able to build a kernel which runs on a device with 
->> arm940t cpu (with the patch "ARM: Add missing mmu flags entry to arm940 
->> proc info." which I've submitted as well. And with the necessary mach 
->> files etc).
->>
->> I can elaborate on this in the commit message and also adjust the 
->> condition to include the other CPU types you mentioned.
-> Hi Franz-Josef,
->
-> We removed support for ARMv4T NOMMU a couple of years ago in
-> commit 2f618d5ef5dd ("ARM: remove support for NOMMU ARMv4/v5"),
-> in order to simplify the Kconfig CPU selection.
->
-> Adding a new platform in turn means you'll have to add that
-> infrastructure we skipped back then, and the dependency here
-> is only a very small part of that.
->
-> Do you have a public git tree with the rest of your patches?
->
->      Arnd
-Hi,
+Hello,
 
-Ok if the support for ARMv4T NOMMU has been removed, then maybe we can leave this as resolved.
+On 29/09/25 11:22, Yuri Andriaccio wrote:
+> Disable the old RT_GROUP_SCHED scheduler. Note that this does not completely
+> remove all the RT_GROUP_SCHED functionality, just unhooks it and removes most of
+> the relevant functions. Some of the RT_GROUP_SCHED functions are kept because
+> they will be adapted for the HCBS scheduling.
+> 
+> Signed-off-by: Yuri Andriaccio <yurand2000@gmail.com>
+> ---
+>  kernel/sched/core.c     |   6 -
+>  kernel/sched/deadline.c |  34 --
+>  kernel/sched/debug.c    |   6 -
+>  kernel/sched/rt.c       | 848 ++--------------------------------------
+>  kernel/sched/sched.h    |  11 +-
+>  kernel/sched/syscalls.c |  13 -
+>  6 files changed, 26 insertions(+), 892 deletions(-)
+> 
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index ccba6fc3c3f..5791aa1f8c8 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -8721,11 +8721,6 @@ void __init sched_init(void)
+>  
+>  	init_defrootdomain();
+>  
+> -#ifdef CONFIG_RT_GROUP_SCHED
+> -	init_rt_bandwidth(&root_task_group.rt_bandwidth,
+> -			global_rt_period(), global_rt_runtime());
+> -#endif /* CONFIG_RT_GROUP_SCHED */
+> -
+>  #ifdef CONFIG_CGROUP_SCHED
+>  	task_group_cache = KMEM_CACHE(task_group, 0);
+>  
+> @@ -8777,7 +8772,6 @@ void __init sched_init(void)
+>  		 * starts working after scheduler_running, which is not the case
+>  		 * yet.
+>  		 */
+> -		rq->rt.rt_runtime = global_rt_runtime();
+>  		init_tg_rt_entry(&root_task_group, &rq->rt, NULL, i, NULL);
+>  #endif
+>  		rq->sd = NULL;
+> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+> index 6ff00f71041..277fbaff8b5 100644
+> --- a/kernel/sched/deadline.c
+> +++ b/kernel/sched/deadline.c
+> @@ -1508,40 +1508,6 @@ static void update_curr_dl_se(struct rq *rq, struct sched_dl_entity *dl_se, s64
+>  		if (!is_leftmost(dl_se, &rq->dl))
+>  			resched_curr(rq);
+>  	}
+> -
+> -	/*
+> -	 * The fair server (sole dl_server) does not account for real-time
+> -	 * workload because it is running fair work.
+> -	 */
+> -	if (dl_se == &rq->fair_server)
+> -		return;
+> -
+> -#ifdef CONFIG_RT_GROUP_SCHED
+> -	/*
+> -	 * Because -- for now -- we share the rt bandwidth, we need to
+> -	 * account our runtime there too, otherwise actual rt tasks
+> -	 * would be able to exceed the shared quota.
+> -	 *
+> -	 * Account to the root rt group for now.
+> -	 *
+> -	 * The solution we're working towards is having the RT groups scheduled
+> -	 * using deadline servers -- however there's a few nasties to figure
+> -	 * out before that can happen.
+> -	 */
+> -	if (rt_bandwidth_enabled()) {
+> -		struct rt_rq *rt_rq = &rq->rt;
+> -
+> -		raw_spin_lock(&rt_rq->rt_runtime_lock);
+> -		/*
+> -		 * We'll let actual RT tasks worry about the overflow here, we
+> -		 * have our own CBS to keep us inline; only account when RT
+> -		 * bandwidth is relevant.
+> -		 */
+> -		if (sched_rt_bandwidth_account(rt_rq))
+> -			rt_rq->rt_time += delta_exec;
+> -		raw_spin_unlock(&rt_rq->rt_runtime_lock);
+> -	}
+> -#endif /* CONFIG_RT_GROUP_SCHED */
+>  }
+>  
+>  /*
+> diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
+> index 02e16b70a79..efcf8d82f85 100644
+> --- a/kernel/sched/debug.c
+> +++ b/kernel/sched/debug.c
+> @@ -890,12 +890,6 @@ void print_rt_rq(struct seq_file *m, int cpu, struct rt_rq *rt_rq)
+>  
+>  	PU(rt_nr_running);
+>  
+> -#ifdef CONFIG_RT_GROUP_SCHED
+> -	P(rt_throttled);
+> -	PN(rt_time);
+> -	PN(rt_runtime);
+> -#endif
+> -
+>  #undef PN
+>  #undef PU
+>  #undef P
+> diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+> index a599f63bf7f..c625ea45ca7 100644
+> --- a/kernel/sched/rt.c
+> +++ b/kernel/sched/rt.c
+> @@ -1,3 +1,4 @@
+> +#pragma GCC diagnostic ignored "-Wunused-function"
 
-It's actually just for a hobby project, nothing important. I just thought these two patches might be helpful to other people who encounter a similar issue on similar cpus, but if the support for ARMv4T NOMMU has been dropped then there is no point maybe.
-Here are the patches for 6.2 in any case but it's very much a hacky WIP, and there is some stuff in there that's not needed anymore on top of later commits. https://github.com/krnlyng/linux-ipod/commits/n2g-wip
-I also have a version on top of a recent (~29 SEPT 2025) commit locally if that is interesting too.
+Uh oh, guess this goes away with later patches? It's anyway not very
+nice unfortunately and it also breaks the SPDX licence first
+requirement.
 
-Best regards and thanks,
-Franz-Josef
+>  // SPDX-License-Identifier: GPL-2.0
+>  /*
+>   * Real-Time Scheduling Class (mapped to the SCHED_FIFO and SCHED_RR
+
+So, this leaves only a skeleton of the current RT_GROUP implementation.
+I believe cgroup ABI will still be there, but it won't have an effect.
+Since this is part of an atomic all-or-nothing set of changes, maybe
+it's OK? Guess people can get confused if for some reason they end up
+using a kernel with patches only up to this one. :-)
+
+Best,
+Juri
+
 
