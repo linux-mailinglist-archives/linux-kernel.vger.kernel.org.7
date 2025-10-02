@@ -1,170 +1,103 @@
-Return-Path: <linux-kernel+bounces-840172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E805FBB3BC5
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 13:26:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BED15BB3BE0
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 13:27:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FD3E192171A
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 11:27:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5DAB57B0EFC
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 11:26:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48C5C30FC07;
-	Thu,  2 Oct 2025 11:26:34 +0000 (UTC)
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83ED230FC1A;
+	Thu,  2 Oct 2025 11:27:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gondor.apana.org.au header.i=@gondor.apana.org.au header.b="Oy1O6G9J"
+Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 009B82F25F8
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 11:26:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48029149C6F;
+	Thu,  2 Oct 2025 11:27:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759404393; cv=none; b=XHCVn1TC2h88/Ip5g9u6LGohIL/SQ74Do2S33UDThaXo24GZU+Cn6OPJYsy3oTVWy/KEpsaSnVeja3HTfRk6ANLkQ8OHKTTMQs2N2QxITq9GyqHVUoWFsQxShLpFLH86W9JA1tsIIq/kwrAVFNkN3cXIUUfcLUIIBDmMqhfZ4Ns=
+	t=1759404462; cv=none; b=nugT9BmGw90JlyIN3aufkhMXIB2d3YdnL2Kf/YKjDZt+owHXnEDDfvkc8eP1KwK2nw211x0fW057g8HeMA8g5dIMN0nF29E77MYwBMHFn1DX0nEr8Zai75EeVBIFIel+NLBlWYEBlg9f9/aScFwSrAlLoANAMHZNzj5BAyxrMe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759404393; c=relaxed/simple;
-	bh=L2gyy5R2PGRsyNpSJCw6YF43D0THBoN3Fpu7eFNWOsQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=aNdJ2d3Z2IWiamQPE3MS4uFxEkipUx0rDoBQVLIUCPHlsMN0C9S+3yG5ZJjX0veWmoOnvqOF7Z5TJnz1lMx0IJyBPmjy0wnb2DMQ0uFjKj9kUclIx3SjH5A91PaUnRoApwj0CgVxpkzJR0WcPaWBJ18wP1Pe3LVR7waXwdtE3VQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-636688550c0so1802434a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 04:26:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759404390; x=1760009190;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=b0nIdEO3nCxjYmoEiKbLvMDM6O2oTNOpG3jz3yT7Mfc=;
-        b=MVRFiRVTj8GeSX7tLlyEO+VQ2zq/UoseF9fwTf/mVuFjJp91MMmm2vQrXhtxmrNLgK
-         ZBTQE6sfbIS6mzkO67R1nDmAtnRCchusMl/mYEoA46QW6bHDJrw2gzLbs6zlaOBBKGtr
-         oG3M+yBQA1XU8DHmc3DYi/U/fI3F+A53X3fv+iFXaHilGzhlnZdA5dOhv6aU6+JVRXwk
-         xUjVW7jKcdtHEQlZtS1AbaRMmIQOy+/557IIn/qq9OnOWJ2UTSKvCLmGhFTnswY4EMN9
-         OdMccs65by+3HjCjvOAjmwaD+GSRalXxRl6l2j1DuOtACnsGm5RFzZNV72R1uzFPWd2L
-         LJiA==
-X-Forwarded-Encrypted: i=1; AJvYcCULEWRNo+6m/1e7uMCSGsXZkwXfuz96nUX7MgTfIDXHPWHhp6nlmh4FaSHC9RFudX45NKblu/skEXv8Q0M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzeuw4iHSaf9Pumxw6SFgFHoMWHzIRilxaehD+V/nhEKfwf115z
-	upAOQkAWZM3Xi/qEOPkn6meLcYYpCFgfoqOA1diljrz9/AkxfsoGmagz
-X-Gm-Gg: ASbGncuw5qa3RpIhp+iR2lH1GixhQN9eOoFGV4mPDfwL8Vgv93UbYuht+T/K059hNOQ
-	8bx4k/WiLW1C7BpR8y+FQTUqAig45VgxcMtqHONp1HIbXeR90T6xpbxaJTz4KRMJoB8uSubRyJW
-	Ap+JYKoYCe8wyjWIldurh+D5ikCkayf0ePHLRcQZlfMP4Tp9o/jVx65rzMDim4grmn+RNl3fr6Y
-	5Xj3rAwkQlk+RM5tgzxZrviLUFu8hqUgz1vzMevSuter9jL5bzhY7z2J7kx38ZgHqLQOKZQEd0V
-	fUX3jmp4ynzXE1IqlOgw6BgLR/3G254d2QdMwZI9W5XBCRiWZbUy4ZvHsOe59YzHpTzOZ5XQ7Lb
-	RiZFdhfyyCKrQzA9osA0+V+wdnMRgHplrPE8F
-X-Google-Smtp-Source: AGHT+IG9HhGolfHHMg6Ad2wpoa5xY0rqQothguiF1qQAIawwu0gA0HdvZrHHIiYXFOGXFbUci2Ul9w==
-X-Received: by 2002:a05:6402:1ec9:b0:634:5fb4:10e6 with SMTP id 4fb4d7f45d1cf-63678c4d06amr8314834a12.23.1759404390054;
-        Thu, 02 Oct 2025 04:26:30 -0700 (PDT)
-Received: from localhost ([2a03:2880:30ff:8::])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6375eb397fbsm1647457a12.0.2025.10.02.04.26.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 04:26:29 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-Date: Thu, 02 Oct 2025 04:26:20 -0700
-Subject: [PATCH v2] stable: crypto: sha256 - fix crash at kexec
+	s=arc-20240116; t=1759404462; c=relaxed/simple;
+	bh=Egm0T8cSzPyrQsOMXP9uiDZImB/BFusEsrwgMevPWwo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bes8zn0hwApUBD7LlAwiZWf6x6glbjUz7FFtRg2sdUecDk8Hp2DeyQwUhW7FEUAlbY6uaGk3KqrFM7r4zPOxSxDd5kzmGFWHg43MiE7OGQs/yiWSs8nkfNWBoea1EHA9GjDwXRX59imlk08IxWX1ne4HbBslv69C/tteJVkuBDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=gondor.apana.org.au header.i=@gondor.apana.org.au header.b=Oy1O6G9J; arc=none smtp.client-ip=180.181.231.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=gondor.apana.org.au; s=h01; h=In-Reply-To:MIME-Version:References:
+	Message-ID:Subject:Cc:To:From:Date:cc:to:subject:message-id:date:from:
+	reply-to; bh=NKN2jJAcUQAltvUw4+OVLkUL2lRdIIFnP1PmgDZHiEA=; b=Oy1O6G9Jjea8PF9g
+	DzEESfzU4hlh5I2toehR4D1F4aqJQNjGC6kDTak9Cl2GOvB0Va7LTDUKHY3FTG2PTwKQxwEVEMNvK
+	YC9C4vYN7bQ8uG5eY2CSZoa8vI+5/I9+qZDKcy/byXJw4yH0CmO8GB3o6a/a6mIEMyDDXzHLc7GRj
+	iFtelG5yarOpEG9o9yz0zxM2nt76cZtF3B2KELYig5ehUuJdpKrqKnhxjsyeHeKLellGhGwvYI7m7
+	qCAn++lIGHuVlyrQV1QemhxVZPvkG55b1AIn8sXMoiv7j3yYUNHy4V48WtQAdfNv/xwzdb2z7f8HF
+	buGP6wd3E0GSNM9+6w==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1v4HT9-00A0Pp-1F;
+	Thu, 02 Oct 2025 19:27:32 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Thu, 02 Oct 2025 19:27:31 +0800
+Date: Thu, 2 Oct 2025 19:27:31 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Jiri Slaby <jirislaby@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+	Vegard Nossum <vegard.nossum@oracle.com>, netdev@vger.kernel.org,
+	Eric Biggers <ebiggers@kernel.org>,
+	Jakub Kicinski <kuba@kernel.org>
+Subject: Re: 6.17 crashes in ipv6 code when booted fips=1 [was: [GIT PULL]
+ Crypto Update for 6.17]
+Message-ID: <aN5ho_VTClL5ai8l@gondor.apana.org.au>
+References: <aIirh_7k4SWzE-bF@gondor.apana.org.au>
+ <05b7ef65-37bb-4391-9ec9-c382d51bae4d@kernel.org>
+ <aN5GO1YLO_yXbMNH@gondor.apana.org.au>
+ <562363e8-ea90-4458-9f97-1b1cb433c863@kernel.org>
+ <8bb5a196-7d55-4bdb-b890-709f918abad0@kernel.org>
+ <1a71398e-637f-4aa5-b4c6-0d3502a62a0c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251002-stable_crash-v2-1-836adf233521@debian.org>
-X-B4-Tracking: v=1; b=H4sIAFth3mgC/3XMQQrDIBAAwK/InmNxTSXUU/8RQtFkjQtFiwZpC
- fl7ae69zmF2qFSYKlixQ6HGlXMCK3QnYI4urSR5AStAK21QKZR1c/5Jj7m4GmXQaNC7oK69h07
- Aq1Dg99mNUycgct1y+Zx7w5/+iRpKlL0acFZ+GW6G7gt5dumSywrTcRxfUTnH3KkAAAA=
-X-Change-ID: 20251001-stable_crash-f2151baf043b
-To: gregkh@linuxfoundation.org, sashal@kernel.org
-Cc: stable@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>, 
- "David S. Miller" <davem@davemloft.net>, Ard Biesheuvel <ardb@kernel.org>, 
- linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel-team@meta.com, Breno Leitao <leitao@debian.org>, 
- Michael van der Westhuizen <rmikey@meta.com>, 
- Tobias Fleig <tfleig@meta.com>
-X-Mailer: b4 0.15-dev-dd21f
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2616; i=leitao@debian.org;
- h=from:subject:message-id; bh=L2gyy5R2PGRsyNpSJCw6YF43D0THBoN3Fpu7eFNWOsQ=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBo3mFk4r6DYmopianNWZQlWi3FjU3x2aPyn4g6Z
- GPHyjdKO4mJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaN5hZAAKCRA1o5Of/Hh3
- ba7wD/0bKMhDOdDE3/MMo0aZ/Scql4DlORNBiC9qjeNJFyFeSO6OBfIUAzIoUbtrm0f03PdRJdn
- bv36lxyUK0N12VhVzFx1xXwaUjgY10Wz4nlMwNFF6is8p0nvKpZ7S79Tzmms9SizXhhyVSu4uwi
- s+HOPjFgXlotiUhiuFF9MrU8dnLlwOBAvrDcWjgS0qod9A7iFBgfkywjEpYU3pFSvd7kuEhW3TI
- 4Dlq+eyXukilJj7KDqzBG0x/5dwlAPzQMDaEq2Ovm2D2cQMDDlKry05sq6hWDC6rinUK2ckzgTT
- 4u3BA9KQsVh+sKmXSaxJEcsi0vQB58b1xtx1nxgA5wp0tEx2emQQskXF5OpmkrJSmN0kQYyYteh
- FLxsAyuLaii0vMg1wka4Ij4jzSAGIgiTlr4GmB4F00DKMFNXwmjF80atG9vCzZTp20iyWGuNn96
- 7zqm/wQMDPh2yVDC+qLAmQNPDRMjV3pcGYF7g7uQk/CqOX7b7vA+u+MvJT8FCR2PnkEtZCJPXDx
- gzSLxhlFIWdwFw0ispSGOaxTYbHnM/IAlO3a6t71OVYpwjGW4mrb0UzgkcN3KtnK31KlJOTKxl3
- D+Qdq1BY3M/N4DTCY+EzcEwmS1e+BVT0ryCQ09HINk0zxDjHoH10Zn0LQzsD8ATubhmGcX3Sbvg
- dTf48fpB3rSL5Ag==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1a71398e-637f-4aa5-b4c6-0d3502a62a0c@kernel.org>
 
-Loading a large (~2.1G) files with kexec crashes the host with when
-running:
+On Thu, Oct 02, 2025 at 12:57:11PM +0200, Jiri Slaby wrote:
+>
+> Anyway, cherry-picking this -next commit onto 6.17 works as well (the code
+> uses now crypto_lib's sha1, not crypto's):
+> commit 095928e7d80186c524013a5b5d54889fa2ec1eaa
+> Author: Eric Biggers <ebiggers@kernel.org>
+> Date:   Sat Aug 23 21:36:43 2025 -0400
+> 
+>     ipv6: sr: Use HMAC-SHA1 and HMAC-SHA256 library functions
+> 
+> 
+> I don't know what to do next -- should it be put into 6.17 stable later and
+> we are done?
 
-  # kexec --load kernel --initrd initrd_with_2G_or_more
+Yes that works too.  But it's basically the same as reverting
+the patch from Vegard since it makes the code use SHA1 again
+even though we told it not too.
 
-  UBSAN: signed-integer-overflow in ./include/crypto/sha256_base.h:64:19
-  34152083 * 64 cannot be represented in type 'int'
-  ...
-  BUG: unable to handle page fault for address: ff9fffff83b624c0
-  sha256_update (lib/crypto/sha256.c:137)
-  crypto_sha256_update (crypto/sha256_generic.c:40)
-  kexec_calculate_store_digests (kernel/kexec_file.c:769)
-  __se_sys_kexec_file_load (kernel/kexec_file.c:397 kernel/kexec_file.c:332)
-  ...
+Perhaps we should just revert Vegard's change? Since it's kind
+of pointless now that people are just using the underlying SHA1
+algorithm directly through lib/crypto.
 
-(Line numbers based on commit da274362a7bd9 ("Linux 6.12.49")
-
-This started happening after commit f4da7afe07523f
-("kexec_file: increase maximum file size to 4G") that landed in v6.0,
-which increased the file size for kexec.
-
-This is not happening upstream (v6.16+), given that `block` type was
-upgraded from "int" to "size_t" in commit 74a43a2cf5e8 ("crypto:
-lib/sha256 - Move partial block handling out")
-
-Upgrade the block type similar to the commit above, avoiding hitting the
-overflow.
-
-This patch is only suitable for the stable tree, and before 6.16, which
-got commit 74a43a2cf5e8 ("crypto: lib/sha256 - Move partial block
-handling out"). This is not required before f4da7afe07523f ("kexec_file:
-increase maximum file size to 4G"). In other words, this fix is required
-between versions v6.0 and v6.16.
-
-Signed-off-by: Breno Leitao <leitao@debian.org>
-Fixes: f4da7afe07523f ("kexec_file: increase maximum file size to 4G") # Before v6.16
-Reported-by: Michael van der Westhuizen <rmikey@meta.com>
-Reported-by: Tobias Fleig <tfleig@meta.com>
----
-Changes in v2:
-- s/size_t/unsigned int/ as suggested by Eric
-- Tag the commit that introduce the problem as Fixes, making backport easier.
-- Link to v1: https://lore.kernel.org/r/20251001-stable_crash-v1-1-3071c0bd795e@debian.org
----
- include/crypto/sha256_base.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/crypto/sha256_base.h b/include/crypto/sha256_base.h
-index e0418818d63c8..e3e610cfe8d30 100644
---- a/include/crypto/sha256_base.h
-+++ b/include/crypto/sha256_base.h
-@@ -44,7 +44,7 @@ static inline int lib_sha256_base_do_update(struct sha256_state *sctx,
- 	sctx->count += len;
- 
- 	if (unlikely((partial + len) >= SHA256_BLOCK_SIZE)) {
--		int blocks;
-+		unsigned int blocks;
- 
- 		if (partial) {
- 			int p = SHA256_BLOCK_SIZE - partial;
-
----
-base-commit: da274362a7bd9ab3a6e46d15945029145ebce672
-change-id: 20251001-stable_crash-f2151baf043b
-
-Best regards,
---  
-Breno Leitao <leitao@debian.org>
-
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
