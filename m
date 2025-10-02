@@ -1,266 +1,152 @@
-Return-Path: <linux-kernel+bounces-840446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF003BB471E
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 18:09:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92958BB472D
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 18:09:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D3F919E1073
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 16:09:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C61517F7D1
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 16:09:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A22B42417E0;
-	Thu,  2 Oct 2025 16:08:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2A96242D7F;
+	Thu,  2 Oct 2025 16:09:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ufKzI35u";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="N9W6Xp0r";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ufKzI35u";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="N9W6Xp0r"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UXYB3VL/"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 402F617A586
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 16:08:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A9E32417C6
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 16:09:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759421338; cv=none; b=kvbdp72edx5PkqSr3Of+eeOv4V8Z4sJlpIWqbSFZSy7afU72Z3QdAnzaxUqm1ex6dNHBfW7NMgPXlygXu0wlKcV/R5ioMIiFABDS1eslLXjyp984oGhOkaKh7+CQj1fdcfbXm31xDZv9S6Qnr5a+dKNHy/JtRpJZ+xaNRExPZ7M=
+	t=1759421377; cv=none; b=HTaU3GCTdTgsAzwUtUt+0FsP9tOuQQ+7iSNMsa7/EBmcY89bUy0SchmFGUQyaFzhAK7MgAmz6RdkNIZSrYV3pbUGGNra7RP9cUlBZ+xQ52Afdi+L57NK1ZJlC2w9el8i4w8W4bWoIMJZCSVDVaFdxyz49FA2eUAbhc1IJFFCupo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759421338; c=relaxed/simple;
-	bh=ioIMyd3kpSLAWwGhmKX9lIlETZIrkU/y9fHDB/gkBn0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ik0lFRey9usJ+Vjs99aYA3FBI6UADPaeFLVSEcJkTau4/p4Mde8eI3vHw5P+TqfZUFUXmKphs0Q5WJstbFAAUJVQzooTTqlBS9piAyai2/1XC83mOpwd48gftltFTic2RUtAxs3UXMtwX4MnalLfiltM4rSJ1Qw/YJkoJyEv8bs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ufKzI35u; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=N9W6Xp0r; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ufKzI35u; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=N9W6Xp0r; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 782F71F74C;
-	Thu,  2 Oct 2025 16:08:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759421335; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mMfYu5fHhCkDmwDC+Z/a2bGRlbbVtf3KJSZLjjALdzI=;
-	b=ufKzI35uZa4zMwSPHm2MK4TOZAbPklKHse7WEcOFbzy2arkUiTPs9e2gJEW89HpMAxTTn5
-	/O68y2FoOeTM4I2oKRaZIrmxjQX3Ti5zChAaPXXsqxzMpv37JVKS3Tz5LNojundgh62SC0
-	RRHkRxBg9jel7OVdC549War/dHVojRA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759421335;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mMfYu5fHhCkDmwDC+Z/a2bGRlbbVtf3KJSZLjjALdzI=;
-	b=N9W6Xp0r0R1DLKoBRQDvprCVWl5pQFQmRT35JNejAEdSFxltTTc5BJZQeEPznrrNriH1bW
-	q55s34TXpym6BPAQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759421335; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mMfYu5fHhCkDmwDC+Z/a2bGRlbbVtf3KJSZLjjALdzI=;
-	b=ufKzI35uZa4zMwSPHm2MK4TOZAbPklKHse7WEcOFbzy2arkUiTPs9e2gJEW89HpMAxTTn5
-	/O68y2FoOeTM4I2oKRaZIrmxjQX3Ti5zChAaPXXsqxzMpv37JVKS3Tz5LNojundgh62SC0
-	RRHkRxBg9jel7OVdC549War/dHVojRA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759421335;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mMfYu5fHhCkDmwDC+Z/a2bGRlbbVtf3KJSZLjjALdzI=;
-	b=N9W6Xp0r0R1DLKoBRQDvprCVWl5pQFQmRT35JNejAEdSFxltTTc5BJZQeEPznrrNriH1bW
-	q55s34TXpym6BPAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6BDD31395B;
-	Thu,  2 Oct 2025 16:08:55 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id z6tQGpej3mglbwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 02 Oct 2025 16:08:55 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 1AA34A0A58; Thu,  2 Oct 2025 18:08:51 +0200 (CEST)
-Date: Thu, 2 Oct 2025 18:08:51 +0200
-From: Jan Kara <jack@suse.cz>
-To: Deepanshu Kartikey <kartikey406@gmail.com>
-Cc: jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] isofs: fix inode leak caused by disconnected dentries
- from exportfs
-Message-ID: <of6vjajyda3355hl7vskbjjb67wrqlqfv4hn5i2vxihn2qspau@3dqu5dolu3z5>
-References: <20251001202713.2077654-1-kartikey406@gmail.com>
+	s=arc-20240116; t=1759421377; c=relaxed/simple;
+	bh=jynfVcM8i52XQQmSZJi60Fasb9iYKRRdPBtB7suA36U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=i81WXISzgRp8kL9ur8f7krWR8kYTAITa5Lklt9a/zeWDYMP+zkFQmWzpS62SRe321j1oK2uwkyKUy9gH03qrS4jLphuAiubBW5o1XbQSNd7nzlGQwglmaZgJXu8NJF9wKstRZ/QxCPFRpY/SLW+OEEeT2LJTGGVGfJFqNaTr5yw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UXYB3VL/; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-57d97bac755so9565e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 09:09:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759421373; x=1760026173; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nYaSxRZcAE2xjpCgMhj4CSwwcibne1lj6Mtg6tgQtr0=;
+        b=UXYB3VL/VICOoSMQg9ZJ7S5Ncjf+RjahAzqLPnntDpZt0ki+iuTFjDEfuy1QctACJQ
+         aIPMh73QWhWFBiacxQrOD56W/raht2kjrjt1ii/wtNil/ZoUBjnESyWrGseSQTlq7jWK
+         YA1oxUQR6rswZgxLN5aKG0g2u1NV72dRc7JzCs2p+VXkKg3gbIZdGoQwzIDFVlelOkPL
+         iFKfLiWaw5KGSA3pbmkxq2GRlkdYOhIGZEzVd0QV+jAKeMPiy5OhlKLfnV3Apv34h8Ou
+         qkkTPt6mHuHVEZJzJnOSgFrkCapoJireScX9zGHKDsXCQngCdrkRnpg68c18mS3WvSdC
+         JIPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759421373; x=1760026173;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nYaSxRZcAE2xjpCgMhj4CSwwcibne1lj6Mtg6tgQtr0=;
+        b=ZTzkDZD2rHP1Api6EDTEGT71LQCTI47W7imB4C0Qa8sYiONrc8mjxWHkRoHJ/UwWam
+         qBwoZUi4VSvP3lkA7ukFqZYmCLDy7W1SD/V9h9Tv7dVZax2lQaogMiBK5DHOLj+2D+Z8
+         gPwaz0lHPxzw/2rpU4zKMHgYwzB9gaamwSwRKrVrYbwbDf/QtwKByi9cRZeSXelAFHDf
+         nb93tNaXmJfwpmfvNUAHSrHzuGO0OoBwhbTtyqQFHJQb1LxWEBP9v210HXuRnnj0uJlp
+         EEGIkOFqTR+GLCdrAwYrroxRPxCkpPQ67DcG1Rp1Uqe6jQ1gc0Hh64rEphR/2sDqP+Lz
+         5HBw==
+X-Forwarded-Encrypted: i=1; AJvYcCXOO82M9Iyk173+uIxILqMJlh81rsthChvhVn40uhEaODY//Up2BRE0UsYdeLK9W8CnT9eJ1zkxB48Dk0M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxh65IEyfJiaxUiOQcO9vxEPr4Ae6ovYEfe3FBlDix1Pn7d2DQV
+	edt8iYZm2rFwTQEZ6lkGmGjUfsl2mnznVs4o5WtGAGQL60wlZEo23DYCU7xCvI6yyxqsgmazwXn
+	GSRllIizlIl6xo8XlU4BMfPnBD+7nEYKLeyj5nGLX
+X-Gm-Gg: ASbGnctRNlybcqrY7vxScqxt1wVNeT9sT1oMj/rH/iJkxWCX/dLLcnMWwVqHgpMszfV
+	FfHxhrWj3BB8yL7ZtyFfbay1vcS4o6Ej8Ys243+dNfW1HCPxmN31S5GPJFrVZQq3j45XkSc4QhE
+	VeLc7b8IP1Ft0+5f7NQQntajJOHXSAgktH/arxI2cvtIvnegLIlDXszBGAT7iONbjKVzuJ1VBId
+	OtiI0qDKO0epJp89CJQl5oLsg4B3iOlJ+ROP1ZxW50UmCoZ9uqRGSIbuFDNiksFLzdUTBpHS42Y
+	6tzWCg==
+X-Google-Smtp-Source: AGHT+IE0aOK9/s6P3Bt0+HH6g7rOWTn4mSSWgFpftjNPyu9JGjNcMfZaz8ssxl3nqGjjdzhmSSXVI8NcWrhOPLCdG3U=
+X-Received: by 2002:a05:6512:3ca1:b0:577:b58:6308 with SMTP id
+ 2adb3069b0e04-58b0235044fmr311879e87.3.1759421372912; Thu, 02 Oct 2025
+ 09:09:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251001202713.2077654-1-kartikey406@gmail.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	RCPT_COUNT_THREE(0.00)[4];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
+References: <20250901160930.1785244-1-pbonzini@redhat.com> <20250901160930.1785244-5-pbonzini@redhat.com>
+ <CAGtprH__G96uUmiDkK0iYM2miXb31vYje9aN+J=stJQqLUUXEg@mail.gmail.com>
+ <74a390a1-42a7-4e6b-a76a-f88f49323c93@intel.com> <CAGtprH-mb0Cw+OzBj-gSWenA9kSJyu-xgXhsTjjzyY6Qi4E=aw@mail.gmail.com>
+ <a2042a7b-2e12-4893-ac8d-50c0f77f26e9@intel.com> <CAGtprH_nTBdX-VtMQJM4-y8KcB_F4CnafqpDX7ktASwhO0sxAg@mail.gmail.com>
+ <DM8PR11MB575071F87791817215355DD8E7E7A@DM8PR11MB5750.namprd11.prod.outlook.com>
+ <27d19ea5-d078-405b-a963-91d19b4229c8@suse.com> <5b007887-d475-4970-b01d-008631621192@intel.com>
+In-Reply-To: <5b007887-d475-4970-b01d-008631621192@intel.com>
+From: Vishal Annapurve <vannapurve@google.com>
+Date: Thu, 2 Oct 2025 09:09:01 -0700
+X-Gm-Features: AS18NWAb3xAzNHgehZPxAk9HSv432Ypkc_6eBOTjRMrO-VySkrKIqS9Age0OH1g
+Message-ID: <CAGtprH-WE2_ADCCqm2uCvuDVbx61PRpcqy-+krq13rss2T_OSg@mail.gmail.com>
+Subject: Re: [PATCH 4/7] x86/kexec: Disable kexec/kdump on platforms with TDX
+ partial write erratum
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Juergen Gross <jgross@suse.com>, "Reshetova, Elena" <elena.reshetova@intel.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"bp@alien8.de" <bp@alien8.de>, "tglx@linutronix.de" <tglx@linutronix.de>, 
+	"peterz@infradead.org" <peterz@infradead.org>, "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>, 
+	"thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, "x86@kernel.org" <x86@kernel.org>, 
+	"kas@kernel.org" <kas@kernel.org>, "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, 
+	"dwmw@amazon.co.uk" <dwmw@amazon.co.uk>, "Huang, Kai" <kai.huang@intel.com>, 
+	"seanjc@google.com" <seanjc@google.com>, "Chatre, Reinette" <reinette.chatre@intel.com>, 
+	"Yamahata, Isaku" <isaku.yamahata@intel.com>, "Williams, Dan J" <dan.j.williams@intel.com>, 
+	"ashish.kalra@amd.com" <ashish.kalra@amd.com>, "nik.borisov@suse.com" <nik.borisov@suse.com>, 
+	"Gao, Chao" <chao.gao@intel.com>, "sagis@google.com" <sagis@google.com>, 
+	"Chen, Farrah" <farrah.chen@intel.com>, Binbin Wu <binbin.wu@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Thu, Oct 2, 2025 at 8:06=E2=80=AFAM Dave Hansen <dave.hansen@intel.com> =
+wrote:
+>
+> On 10/2/25 00:46, Juergen Gross wrote:
+> > So lets compare the 2 cases with kdump enabled and disabled in your
+> > scenario (crash of the host OS):
+> >
+> > kdump enabled: No dump can be produced due to the #MC and system is
+> > rebooted.
+> >
+> > kdump disabled: No dump is produced and system is rebooted after crash.
+> > > What is the main concern with kdump enabled? I don't see any
+> > disadvantage with enabling it, just the advantage that in many cases
+> > a dump will be written.
+> The disadvantage is that a kernel bug from long ago results in a machine
+> check. Machine checks are generally indicative of bad hardware. So the
+> disadvantage is that someone mistakes the long ago kernel bug for bad
+> hardware.
+>
+> There are two ways of looking at this:
+>
+> 1. A theoretically fragile kdump is better than no kdump at all. All of
+>    the stars would have to align for kdump to _fail_ and we don't think
+>    that's going to happen often enough to matter.
+> 2. kdump happens after kernel bugs. The machine checks happen because of
+>    kernel bugs. It's not a big stretch to think that, at scale, kdump is
+>    going to run in to these #MCs on a regular basis.
 
-On Thu 02-10-25 01:57:13, Deepanshu Kartikey wrote:
-> Thank you for the review. You're absolutely right - my initial
-> explanation was incorrect. I've done extensive debugging to understand
-> the actual mechanism causing the leak.
+Looking at Elena's response, I would say it's still *a* big stretch
+for kdump to run into these #MCs on a regular basis as following
+sequence is needed for problematic scenario:
+1) Host OS bug should corrupt TDX private memory with a *partial
+write*, that is part of kernel memory.
+    -> i.e. PAMT tables, SEPT tables, TD VCPU/VM metadata etc.
+    -> IIUC corruption of guest memory is not a concern as that
+belongs to userspace.
+2) TDX Module/TD shouldn't consume that poisoned memory.
+    -> i.e. no walk of the metadata memory.
+3) Host kernel needs to generate a bug that causes an orthogonal panic.
 
-Hrm, the text below looks like it was generated by some AI agent :) More
-importantly it still doesn't really explain the underlying cause of the
-leak - it is fine to use AI for debugging but then one should get his own
-understanding of the situation. As I was curious about the root cause, I
-did the debugging myself and [1] has the proper analysis of the problem and
-the fix.
+*partial writes* IIUC need special instructions.
 
-								Honza
-
-[1] https://lore.kernel.org/all/20251002155506.10755-2-jack@suse.cz/
-
-> 
-> Root Cause Analysis
-> ===================
-> 
-> The leak occurs specifically with CONFIG_JOLIET=y through the following sequence:
-> 
-> 1. Joliet Root Switching During Mount
-> --------------------------------------
-> 
-> In isofs_fill_super(), when Joliet extensions are detected:
-> - Primary root inode 1792 is created with i_count=1, i_nlink=3
-> - During Joliet switching, iput(inode) is called on inode 1792
-> - i_count decrements to 0, but generic_drop_inode() returns false (i_nlink=3 > 0)
-> - Inode 1792 remains cached at i_count=0
-> - New Joliet root inode 1920 is created and attached to sb->s_root
-> 
-> Debugging output:
->   [9.653617] isofs: switching roots, about to iput ino=1792, i_count=1
->   [9.653676] isofs: after iput, getting new root
->   [9.653880] isofs: old inode after iput ino=1792, i_count=0, i_nlink=3
->   [9.654219] isofs: got new root ino=1920, i_count=1
-> 
-> 2. open_by_handle_at() Triggers Reconnection
-> ---------------------------------------------
-> 
-> When the system call attempts to resolve a file handle:
-> - exportfs_decode_fh_raw() calls fh_to_dentry() which returns inode 1856
-> - The dentry is marked DCACHE_DISCONNECTED
-> - reconnect_path() is invoked to connect the path to root
-> - This calls reconnect_one() to walk up the directory tree
-> 
-> 3. Reference Accumulation in reconnect_one()
-> ---------------------------------------------
-> 
-> I instrumented reconnect_one() to track dentry reference counts:
-> 
->   [8.010398] reconnect_one: called for inode 1856
->   [8.010735] isofs: __isofs_iget got inode 1792, i_count=1
->   [8.011041] After fh_to_parent: d_count=1
->   [8.011319] After exportfs_get_name: d_count=2
->   [8.011769] After lookup_one_unlocked: d_count=3
-> 
-> The parent dentry (inode 1792) accumulates 3 references:
-> 1. Initial reference from fh_to_parent()
-> 2. Additional reference taken by exportfs_get_name()
-> 3. Another reference taken by lookup_one_unlocked()
-> 
-> Then lookup_one_unlocked() creates a dentry for inode 1807:
->   [8.015179] isofs: __isofs_iget got inode 1807, i_count=1
->   [8.016169] lookup returns tmp (inode 1807), d_count=1
-> 
-> The code enters the tmp != dentry branch and calls dput(tmp), then goes to 
-> out_reconnected.
-> 
-> 4. Insufficient Cleanup
-> -----------------------
-> 
-> For inode 1807, I traced through dput():
->   [10.083359] fast_dput: lockref_put_return returned 0
->   [10.083699] fast_dput: RETAINING dentry for inode 1807, d_flags=0x240043
-> 
-> The dentry refcount goes to 0, but retain_dentry() returns true because of 
-> the DCACHE_REFERENCED flag (0x40 in 0x240043). The dentry is kept in cache 
-> with refcount 0, still holding the inode reference.
-> 
-> For inode 1792:
->   [10.084125] fast_dput: lockref_put_return returned 2
-> 
-> At out_reconnected, only one dput(parent) is called, decrementing from 3 to 2. 
-> Two references remain leaked.
-> 
-> 5. Unmount Failure
-> ------------------
-> 
-> At unmount time:
-> - shrink_dcache_for_umount() doesn't evict dentries with positive refcounts (1792)
-> - Doesn't aggressively evict retained dentries with refcount 0 (1807)
-> - Both inodes appear as leaked with i_count=1
-> 
->   [10.155385] LEAKED INODE: ino=1807, i_count=1, i_state=0x0, i_nlink=1
->   [10.155604] LEAKED INODE: ino=1792, i_count=1, i_state=0x0, i_nlink=1
-> 
-> Why shrink_dcache_sb() Works
-> =============================
-> 
-> Calling shrink_dcache_sb() in isofs_put_super() forces eviction of:
-> - Dentries with extra references that weren't properly released
-> - Retained dentries sitting in cache at refcount 0
-> 
-> This ensures cleanup happens before the superblock is destroyed.
-> 
-> Open Questions
-> ==============
-> 
-> 1. Are exportfs_get_name() and lookup_one_unlocked() supposed to take 
->    references to the parent dentry that the caller must release? Should 
->    reconnect_one() be calling dput(parent) multiple times, or are these 
->    functions leaking references?
-> 
-> 2. Is adding shrink_dcache_sb() in put_super() the appropriate fix, or 
->    should this be handled in the reconnection error path when 
->    reconnect_one() fails?
-> 
-> 3. Does this indicate a broader issue with how exportfs handles parent 
->    dentry references during failed path reconnections that might affect 
->    other filesystems?
-> 
-> I can investigate further into the implementation of exportfs_get_name() 
-> and lookup_one_unlocked() to understand where exactly the extra references 
-> are taken if that would be helpful.
-> 
-> Best regards,
-> Deepanshu Kartikey
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>
+> Does that capture the two perspectives fairly?
 
