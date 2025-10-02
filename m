@@ -1,173 +1,202 @@
-Return-Path: <linux-kernel+bounces-840515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67FA4BB4961
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 18:45:59 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BC45BB4964
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 18:46:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDCBD19E3C70
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 16:46:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 47C824E1866
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 16:46:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F69E26B777;
-	Thu,  2 Oct 2025 16:45:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6363723E342;
+	Thu,  2 Oct 2025 16:46:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b="MnCNTtKy"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="a7AVwFKp"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F3F023183F
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 16:45:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BDDB236A70
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 16:46:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759423546; cv=none; b=JUp7MIzNPcRgzSrZhc56t7TzBvR5X+Y/M19rcOcQD3q3DQUbn8yH/DHrd1Ov3d/YXa7Cq8SCebdoH1CG+B/0cl7CW+jTorSv+UIslabCb0b9MJU4h/d4XGO1Ips7AhiWWX7Ay9LOvUEx9d/czAoDwYmup3+Nx5Lat2x8xEnSAYk=
+	t=1759423583; cv=none; b=bVtNo296IvIs+HuVIrd7GQL09nVLXTLe5t3+VJq+4GoM4RfEURNOxRd0yYciPJ8MePgejXm0yS9lGYnLRL8yKr/UWnuR38cTyH/3qAj02rs2/nFCLTrMRtLgp4XUT3wp50Oyga16dH/GQMvD8nQKRvw6+XbbnZkjgiJbBH9dUes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759423546; c=relaxed/simple;
-	bh=1A9QR3g98F/jojxQcsQCrmr26ivi3VklZB9Uaf1MTlU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nO2OXIhx3wC30oq3M2IdAws56rsduLup1vHLHLZrZ1ld1cMfdOMv8KSg2ZC5Qz47BzslKcc0jMyYFW3tRYv8DylwIY9s/QrZgDpMTP3XSfyM0U5pjFAosgxG3V8QxKBAOGlY5ORYwVb5udQPKYWSi45qPIKcgJMUqw3co/qUYBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc.com header.i=@rivosinc.com header.b=MnCNTtKy; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b5a631b9c82so802095a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 09:45:44 -0700 (PDT)
+	s=arc-20240116; t=1759423583; c=relaxed/simple;
+	bh=QLyV/yM++26FneUT3uH4L6P1odlqjQgGMfZW6jkOWbc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uGJUl7wSn2ZUlDJiWz++5rsOp4AWwDv6Sov39WbuXRy/yVYuV2FAodTRWCPbgCizxcBdBz7cD3asBzZgSIVs4pUbyuiiYX8zVm4h+aPd2xxAWXfAX/YpGqWcf3knZBQvzkoJ8n4hnn4XLhToLXyV4DfpKAgVEXC5FCnyJgYQHKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=a7AVwFKp; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-afcb78ead12so245778666b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 09:46:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc.com; s=google; t=1759423544; x=1760028344; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1A9QR3g98F/jojxQcsQCrmr26ivi3VklZB9Uaf1MTlU=;
-        b=MnCNTtKyaUFuYYeEXqZEKsPn1vNDgYmRgHmoSDQ8pqXwUSDg16tnaJOgTbmxgYCSvL
-         ttR2mJcpVSyIWsNEzqKaewCXI+Uay0LF2DDWupFbx5qC+TzrL3zZWA9hdFKOXXZVA5qK
-         Y1FaX6+H91TwLVFtSs9nB4NLFg/L8P8mEIWc7t+8xMfrysxek/vB8TIdxtYPttEjse2z
-         Y55kKHaAckwEyWi/CGg8BQ2bDzcVi95jfBDWStSUhFArx5zXdaw2gxxGx45GVeMuVQ4x
-         DVR4wQa2JaTxA7N3eLWIVOtBzIDk3bxnp+uXhzQhEyT9dpbD3pRdCf9WzKl7ERe2SexX
-         7DcA==
+        d=linux-foundation.org; s=google; t=1759423579; x=1760028379; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=9vzsEhVXUVbwA+f8Wq3Hi/pcxlbcP2wMVdzZNvAfvdM=;
+        b=a7AVwFKpqR7KkJwKZkk68xiuJaWXdTFYlFcTgogE9RPQcaQdmuK2HGzUFejVWyzRKC
+         0VbbmwweiMOyqOHvDR/sWiOrd+SoJHEtPOk8QMOe3TT/J/6JUcZvhAQh+Zwzoy1bPLsF
+         ahBgnmJsrZ2KRJVi8RuWjDpQ5t3KvQh+kszqk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759423544; x=1760028344;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1A9QR3g98F/jojxQcsQCrmr26ivi3VklZB9Uaf1MTlU=;
-        b=W89WrHVqxcz3fs1kL+N+9Yq0HaqZiobj6YVTa7XfvA8Zw4d5mDvTUSNmToH9bGzgom
-         cK13g7B6C/H6QV/134ezO+Ky87Z3st0oHpXh2XJNla0su/WkhY+/xrQtfeA75ljuC0zT
-         uq0w28vXqugWT9YsnAYyti1DPdMk4aJPd//5AsTGtf9LtlvKjBNxdibGglOd2utSYjzV
-         cnHs5nNlYCppmZjVZrT3m58uhjlrhgObb2D7HZK2ZTxBKYmAIj/N1fOX6BOdscTCq4I/
-         OaD6ghqBBz0iX8owzYxGguTA/g7tw86zVZu6VK/cwSUjHzVnrfbiES/o8Kl/IxLG9THt
-         HFmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWXIRTeRY6jWc+XTST0we4QSoiDWS8C18VrsTfBqiPTvanresZw9Eu8m9Yhav3zvhMDDZZ+z0DiwgHmm1o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzSraSzUlTK6w+ewglohH8Z6l6EhmpkwIVcXXvZVYd+8fIF9an
-	9jyjLMSXrRxA4RqXt8mXG5n8ipPJUjV4h6a7MlOIudZswvVbQedsqIaGGotGSgsWsPM=
-X-Gm-Gg: ASbGncsiHn8Qhsis7aRJp1JsT2qSjvEG4KNjW/3AIxY3GET2ZaKj1RntB0pgrcFbShU
-	BN4XCuTW33M38p/gwCLzg1WgvRP2JT1tZ38Vm4l/YMAT37Onqf6ZBjuE3JCqu0mnYu2kbcyZw0G
-	MHTOi5dVNTSW7wsxtGM4Q7X6afPGzwXMcNBeSPFPXYOfgCgQjchYsETFn9Xac6bUslvHgLA9Hx6
-	GxgJqcBNi/6n4rMDdHN4xP+IwJu7ZLBhUi2tsHkSBKgcwHsag+AT1GQ8xtN9F761K/ZZL4t496O
-	18PgBpSSC27oqtbZiQ6XG6wj0r35fqdL56K90gyTWrQnhZOzxxWNEdYNz4qi1FLU+++NrWcG2KL
-	g4Fu8hPdcgGv7IgEMfwEiVgUSQaVTh+KeWCjIM4LBwvy7TJTwIGZEhjTV
-X-Google-Smtp-Source: AGHT+IGOeNAivntNqMaBDACXUIJXINgHBVnHmalDozgA9lIHXQF1UAZCwzUqmrzChLzk9pEqivj7cA==
-X-Received: by 2002:a17:90a:e70f:b0:32e:e186:726d with SMTP id 98e67ed59e1d1-339c27a1901mr8380a91.31.1759423544003;
-        Thu, 02 Oct 2025 09:45:44 -0700 (PDT)
-Received: from debug.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-339b4f3ceedsm2812742a91.18.2025.10.02.09.45.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 09:45:43 -0700 (PDT)
-Date: Thu, 2 Oct 2025 09:45:40 -0700
-From: Deepak Gupta <debug@rivosinc.com>
-To: Florian Weimer <fweimer@redhat.com>
-Cc: Charles Mirabile <cmirabil@redhat.com>, pjw@kernel.org,
-	Liam.Howlett@oracle.com, a.hindborg@kernel.org,
-	akpm@linux-foundation.org, alex.gaynor@gmail.com,
-	alexghiti@rivosinc.com, aliceryhl@google.com,
-	alistair.francis@wdc.com, andybnac@gmail.com, aou@eecs.berkeley.edu,
-	arnd@arndb.de, atishp@rivosinc.com, bjorn3_gh@protonmail.com,
-	boqun.feng@gmail.com, bp@alien8.de, brauner@kernel.org,
-	broonie@kernel.org, charlie@rivosinc.com, cleger@rivosinc.com,
-	conor+dt@kernel.org, conor@kernel.org, corbet@lwn.net,
-	dave.hansen@linux.intel.com, david@redhat.com,
-	devicetree@vger.kernel.org, ebiederm@xmission.com,
-	evan@rivosinc.com, gary@garyguo.net, hpa@zytor.com,
-	jannh@google.com, jim.shu@sifive.com, kees@kernel.org,
-	kito.cheng@sifive.com, krzk+dt@kernel.org,
-	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-	linux-riscv@lists.infradead.org, lorenzo.stoakes@oracle.com,
-	lossin@kernel.org, mingo@redhat.com, ojeda@kernel.org,
-	oleg@redhat.com, palmer@dabbelt.com, paul.walmsley@sifive.com,
-	peterz@infradead.org, richard.henderson@linaro.org,
-	rick.p.edgecombe@intel.com, robh@kernel.org,
-	rust-for-linux@vger.kernel.org, samitolvanen@google.com,
-	shuah@kernel.org, tglx@linutronix.de, tmgross@umich.edu,
-	vbabka@suse.cz, x86@kernel.org, zong.li@sifive.com
-Subject: Re: [PATCH v19 00/27] riscv control-flow integrity for usermode
-Message-ID: <aN6sNFBzx8NPU3Th@debug.ba.rivosinc.com>
-References: <f953ee7b-91b3-f6f5-6955-b4a138f16dbc@kernel.org>
- <20250926192919.349578-1-cmirabil@redhat.com>
- <aNbwNN_st4bxwdwx@debug.ba.rivosinc.com>
- <CABe3_aE4+06Um2x3e1D=M6Z1uX4wX8OjdcT48FueXRp+=KD=-w@mail.gmail.com>
- <aNcAela5tln5KTUI@debug.ba.rivosinc.com>
- <lhu3484i9en.fsf@oldenburg.str.redhat.com>
- <aNxsWYYnj22G5xuX@debug.ba.rivosinc.com>
- <lhuwm5dh6hf.fsf@oldenburg.str.redhat.com>
+        d=1e100.net; s=20230601; t=1759423579; x=1760028379;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9vzsEhVXUVbwA+f8Wq3Hi/pcxlbcP2wMVdzZNvAfvdM=;
+        b=m7pJP/S9xYnwNkBk4KjUo5KCqLTRckuKhTqE4s4Icotuoc2RwS2CNPgiB3HY9qUDZf
+         WXu+TtkNdIvaGp7ZB7nFZB4eWK4bo9x/1HbHUir4p52qDaBvwwP+wGrxsyBF0x458Ndo
+         h+fTWczFzoNKJnAHbKhJW3JVaaL+QPPXBbd5OfWp+Im7H69L1jh/cRBWkn9zO7l1XkSD
+         JYkduSxDelfs2SSH/VNezO9kBwWOs4juQCzv+T4KyndNS1rITY45OUYdNjOXHmlqIy0c
+         Qx4B9WCQzXMF/TEYxonJBr/4ldFbIUpIuY0WWn7l5d/gXa30HXXpfy5mp/HDGVgWigf8
+         MYWQ==
+X-Gm-Message-State: AOJu0YzKxXBmJEchoeX1DgtLh3YAIb22X+ifAwTGlcVn2m4xvpYs53jX
+	aQk+qcRSTPAR1uGZbWymHoxzL54a7ERncF83EzX4AIaTEeGCO0f+SctEQ263BWInhxEP88m7zVL
+	eXsNY2lc=
+X-Gm-Gg: ASbGncsUpA6dfYDl35a50w9mMAYEggliYtN5ypoU5vAttNrjBu904DeYgfzi2zU5Y1Z
+	oKQzRZva7az56rYvS6IoxOy37fu72LSRDNpF/mkhxKcI4QK/2Quilc18EUD+9HXpA6GaSgm1jCL
+	CO4PU6l+J9duzhkK//gix7ANMHr2KpUz6dqco9LpZqNBeI558qmwJwS8JQ56+FW4NPSIbarYhNY
+	4AtqJRlwIHvDnzl8uLeeFAjs+aheE/CmFdxYptVsXRvyYQ3xytK9kRHcITeZa/mmcEdkwJ58p5d
+	7JqIs/b9093SksLGelfeyG9r2qeqZg/0/RvHlV/wlUViDDkE6c5ffN0Barv1PnWTFNmz67JY87V
+	c7Lh0d3tR1LoICZDGP97ZWEttXXUaodEm6jhXNo11kH+fvkR6OdVWOAj3TxvYu9E7bGS2oBPwUH
+	ChkOqTFLFqW1kUfADSTVFyCt6rE8Ecqrc=
+X-Google-Smtp-Source: AGHT+IE6BOvu8qWRRgRzeEXx3IAEDPc9NYOl+xiSZOx3+jBZdtiGbP+yxGxdTZ//HMzEV4NUYR/5Eg==
+X-Received: by 2002:a17:906:eecd:b0:b3f:f6d:1dae with SMTP id a640c23a62f3a-b49c1d6150emr13943066b.12.1759423579229;
+        Thu, 02 Oct 2025 09:46:19 -0700 (PDT)
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com. [209.85.218.54])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b48652aa637sm236970666b.12.2025.10.02.09.46.18
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 02 Oct 2025 09:46:18 -0700 (PDT)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-afcb7ae6ed0so213996266b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 09:46:18 -0700 (PDT)
+X-Received: by 2002:a17:907:1c1b:b0:b42:9840:eac1 with SMTP id
+ a640c23a62f3a-b49c4393389mr10071766b.49.1759423577719; Thu, 02 Oct 2025
+ 09:46:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <lhuwm5dh6hf.fsf@oldenburg.str.redhat.com>
+References: <aNrm_14uJmGE7MYC@yury>
+In-Reply-To: <aNrm_14uJmGE7MYC@yury>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 2 Oct 2025 09:46:01 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whoOUsqPKb7OQwhQf9H_3=5sXGPJrDbfQfwLB3Bi13tcQ@mail.gmail.com>
+X-Gm-Features: AS18NWDTSnffJM68wOZw79kbKNNh0jg-232_U3V11UlxV_WYxRiq56cGPnOaxk0
+Message-ID: <CAHk-=whoOUsqPKb7OQwhQf9H_3=5sXGPJrDbfQfwLB3Bi13tcQ@mail.gmail.com>
+Subject: Re: [GIT PULL] bitmap for 6.18
+To: Yury Norov <yury.norov@gmail.com>
+Cc: linux-kernel@vger.kernel.org, NVIDIA <YuryNorovyury.norov@gmail.com>, 
+	Alice Ryhl <aliceryhl@google.com>, Burak Emir <bqe@google.com>, 
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, 
+	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Oct 02, 2025 at 01:45:48PM +0200, Florian Weimer wrote:
->* Deepak Gupta:
+On Mon, 29 Sept 2025 at 13:07, Yury Norov <yury.norov@gmail.com> wrote:
 >
->> On Tue, Sep 30, 2025 at 11:20:32AM +0200, Florian Weimer wrote:
->>>* Deepak Gupta:
->>>
->>>> In case of shadow stack, it similar situation. If enabled compiler
->>>> decides to insert sspush and sspopchk. They necessarily won't be
->>>> prologue or epilogue but somewhere in function body as deemed fit by
->>>> compiler, thus increasing the complexity of runtime patching.
->>>>
->>>> More so, here are wishing for kernel to do this patching for usermode
->>>> vDSO when there is no guarantee of such of rest of usermode (which if
->>>> was compiled with shadow stack would have faulted before vDSO's
->>>> sspush/sspopchk if ran on pre-zimop hardware)
->>>
->>>I think this capability is desirable so that you can use a distribution
->>>kernel during CFI userspace bringup.
->>
->> I didn't get it, can you elaborate more.
->>
->> Why having kernel carry two vDSO (one with shadow stack and one without) would
->> be required to for CFI userspace bringup?
->>
->> If Distro is compiling for RVA23 CONFIG_RISCV_USERCFI has to be selected yes,
->> kernel can have vDSO with shadow stack. Distro can light this option only when
->> its compiling entire distro for RVA23.
->
->I think it boils down to whether you want CFI bringup contributions from
->people who do not want to or cannot build their own custom RVA23
->kernels.
+>  - almost complete consolidation for HIWORD_UPDATE()-like macros from Nicolas;
 
-How will they contribute to CFI bringup without having a CFI compiled usersapce?
-If their userspace is compiled with shadow stack instructions and they can't take
-this userspace to old hardware else it'll start faulting as soon as control is
-given to userspace (first sspush or sspopcheck in userspace).
+Argh. I don't love this, but I've pulled it.
 
->
->Another use case would be running container images with CFI on a
->distribution kernel which supports pre-RVA23 hardware.
+That new interface is a bit odd, and I had to wrap my head around it a
+bit, but it actually looks fine when it's a single bit or it already
+has a mask defined for it, and the end result is something like
 
-Container image with CFI will have glibc and ld (and all other userspace) also
-compiled with shadow stack instructions in it. As soon as you take this
-container image to a pre-RVA23 hardware, you won't even reach vDSO. It'll break
-much before that, unless kernel is taking a trap on all sspush/sspopchk
-instructions in prologue/epilogue of functions in userspace (glibc, ld, etc)
+        FIELD_PREP_WM16(BIT(1), val)
 
->
->Thanks,
->Florian
->
+Yes, this is often longer than what it replaces, but quite readable,
+and I think it's a good thing.
+
+But then we have GENMASK.
+
+The macro from hell, that was a mistake from day 0, but then took over
+despite always being illogical.
+
+It was so illogical that it had to have lots of error checking,
+because it always had the wrong interface and as a result lots of
+people got it wrong.
+
+So now it has compile-time checking of the bits to make sure people
+get notified when they invariably get things wrong.
+
+The only saving grace of that thing is that checking. I feel that
+often the *only* reason to use GENMASK() over any other alternative is
+literally that it checks the arguments so much because the interface
+is so horrific.
+
+It does "high, low", which is often very unintuitive, and in fact the
+very commit that introduced this thing from hell had to convert the
+sane "low,high" cases to the other way around.
+
+See commit 10ef6b0dffe4 ("bitops: Introduce a more generic BITMASK
+macro"), and notice how ALMOST ALL use cases were switched around to
+the illogical "high,low" format by that introductory phase.
+
+And yes, I understand why that person did it: many datasheets show
+bits in a register graphically, and then you see that "high .. low"
+thing in a rectangle that describes the register, and that ordering
+them makes 100% sense IN THAT CONTEXT.
+
+But it damn well does not make sense in most other contexts.
+
+In fact, even in the context of generating mask #defines, it actually
+reads oddly, because you end up having things like
+
+  /* Status register (SR) */
+  #define I2C_SR_OP               GENMASK(1, 0)   /* Operation */
+  #define I2C_SR_STATUS           GENMASK(3, 2)   /* controller status */
+  #define I2C_SR_CAUSE            GENMASK(6, 4)   /* Abort cause */
+  #define I2C_SR_TYPE             GENMASK(8, 7)   /* Receive type */
+  #define I2C_SR_LENGTH           GENMASK(19, 9)  /* Transfer length */
+
+(Yes, that's a real example from the kernel), and notice how *oddly*
+the numbers flow in that series: instead of being a logical
+progression of 0 .. 1 .. 2 .. 3 etc, you have 1 .. 0 .. 3 .. 2 .. 6 ..
+4 etc)
+
+I really have an almost irrational hatred of GENMASK (note "almost". I
+think it's rational). I hate it so much that this almost made me not
+pull the end result just because a few conversions were just
+horrendous.
+
+The very first conversion in that series does this:
+
+-               mci_writel(host, TIMING_CON1, HIWORD_UPDATE(raw_value,
+0x07ff, 1));
++               mci_writel(host, TIMING_CON1,
++                          FIELD_PREP_WM16(GENMASK(11, 1), raw_value));
+
+and no, that new version is *NOT* more readable than the old code. I
+had to really read it several times just to understand what was going
+on, admittedly because the old HIWORD_UPDATE() macro was also odd.
+
+But at least that old HIWORD_UPDATE() was odd in a "natural" way.
+
+And it's all because GENMASK() is a horrible horrible interface, and
+should only be used for generating other #defines for actual masks
+when you read the datasheet.
+
+Anyway. I just wanted to state how much I hate GENMASK(). It's almost
+fine for when it is appropriate, but this is an example of where it's
+very much not appropriate.
+
+I wish we had a saner form for generating bitmasks with a better
+interface. The "high,low" thing is horrendous when what you want is "I
+want X bits starting at X":
+
+Maybe we could introduce a new macro to go with BIT(x), and call it
+"BITS(low,high)". Yes, we'd have to replace a few existing driver uses
+of BITS(), but not very many.
+
+Am I the only person who would find "BITS(1,11)" to be much easier to
+understand than "GENMASK(11,1)"?
+
+Random "Linus rants" email over.
+
+             Linus
 
