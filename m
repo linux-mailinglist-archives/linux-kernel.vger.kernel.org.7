@@ -1,372 +1,144 @@
-Return-Path: <linux-kernel+bounces-839990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3BBDBB33E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 10:42:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9086BB3395
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 10:41:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E52C24C6B7C
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 08:39:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8886419E7313
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 08:40:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80F1C2E11DD;
-	Thu,  2 Oct 2025 08:16:26 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D28B92E2DFC
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 08:16:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 927D32EA491;
+	Thu,  2 Oct 2025 08:17:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bHvHi6Tf"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F48E2E62D1;
+	Thu,  2 Oct 2025 08:17:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759392985; cv=none; b=DJzM/94tcHqY5eSpTuYmvWkvrS9on7nkyCs/9YhNK7oue7SuNfLRWCIGP+0+VVZzuBfSSt2jImCwg8iHIDOl4z017DameYsacadlc+aFEqeWDfRMyOzQ0lk/7cI92RiS1FDwVUJA02xvqlig86WYjdibiUMYb01zzdCbTep7Kn8=
+	t=1759393032; cv=none; b=OnXlrUw/jG1Dv4LZXAjWgQG5D5xr1FuCygCOy+Wxb0yuLuVNbEGjZspLDhHKtwBX+7PZW4QdruXkKQjpoXjq0Z7lUH9O4LUFOJX8W18DACjL1V3T3/YZF39vXev+lm0Zy2D4AzUbcdMjnScDtiHsXuLW+d899i4XNRahw2LRvqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759392985; c=relaxed/simple;
-	bh=GcY4QqwdVFNFDaB8hsIOXOXdUOgb56BYgj8HFmrbbIg=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=L8mtmDvDsRHkrpkWc3mVcb2AWPoAXxrfZ7aY/a4IbP4C8nr1+a0sL8rmDGKPyHZAX4edwp8FhsHOVaDsGIYT7hXjzUEwt9zs6gNMMHQo9bZvWoZrmhz7rc+/QTTS4RoTdLjHoqX1yMgM1z70XOJqsNyOVUcjjdRuGVx7Rp9mZzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-c45ff70000001609-bf-68de34d63323
-From: Byungchul Park <byungchul@sk.com>
-To: akpm@linux-foundation.org
-Cc: david@redhat.com,
-	ziy@nvidia.com,
-	matthew.brost@intel.com,
-	joshua.hahnjy@gmail.com,
-	rakie.kim@sk.com,
-	gourry@gourry.net,
-	ying.huang@linux.alibaba.com,
-	apopple@nvidia.com,
-	clameter@sgi.com,
-	kravetz@us.ibm.com,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	max.byungchul.park@gmail.com,
-	kernel_team@skhynix.com,
-	harry.yoo@oracle.com,
-	gwan-gyeong.mun@intel.com,
-	yeoreum.yun@arm.com,
-	syzkaller@googlegroups.com,
-	ysk@kzalloc.com
-Subject: [RFC] mm/migrate: make sure folio_unlock() before folio_wait_writeback()
-Date: Thu,  2 Oct 2025 17:16:12 +0900
-Message-Id: <20251002081612.53281-1-byungchul@sk.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrFLMWRmVeSWpSXmKPExsXC9ZZnke41k3sZBu/+GVjMWb+GzWLXjRCL
-	9Y3r2C2+rv/FbPHz7nF2i4uv/zBZ3F/2jMXi+NZ57BbX1x5lsri8aw6bxb01/1ktvvVJW1yY
-	2MtqceRNN7PF3C+GFqvXZFh8Wb2KzWL20XvsDkIea+atYfTYOesuu8eeiSfZPLrbLrN7LN7z
-	kslj06dJ7B4Lf79g9jgx4zeLx86Hlh69ze/YPD4+vcXi8X7fVTaPu9eBys5d62P2+LxJLoA/
-	issmJTUnsyy1SN8ugSvjxdW5zAXTvCsu96s2ME6y7GLk5JAQMJF4f3MOcxcjB5jde84LJMwm
-	oC5x48ZPZhBbREBWYurf8yxdjFwczAKXmSUWbr7DCpIQFgiUWPJ/KhNIL4uAqsTaReUgYV4B
-	U4muNVfZIMbLS6zecIAZpFdC4DubxILNW6ASkhIHV9xgmcDIvYCRYRWjUGZeWW5iZo6JXkZl
-	XmaFXnJ+7iZGYIgvq/0TvYPx04XgQ4wCHIxKPLwXVO9mCLEmlhVX5h5ilOBgVhLhTVhxJ0OI
-	NyWxsiq1KD++qDQntfgQozQHi5I4r9G38hQhgfTEktTs1NSC1CKYLBMHp1QDo3DpnjcpD5sS
-	NP3b2b22bFgv8bRU/u0pLhmLqE9nPz2bUX+k+kD0S8MfPSc+XTAynbL0824Z1sfdVySk5x5I
-	0yq6/06kR3DlBZOL1d0lzveONambVi3pOr0h7qsrw5kJllOthbRrlU77SUrU6S2e01O+ZHq6
-	5aTFa3MYGJfbp8kkn0hZZ+8fosRSnJFoqMVcVJwIAMhUt3ptAgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAAwFZAqb9CAMSxgMaCGludGVybmFsIgYKBApOO4Mt1jTeaDDn7B84nK+sBji6
-	2FQ4r4GuBzj1r/oDOPndxwc40ev8AjjfpuYEOMe1ngc4w53JBTjXrcUCONO6nAY43qz/BTj2
-	jhs40JGNBTjC1ucFOMTsiwM4nfQxOKusaDj0q6oGOJvF3gdAFEisnqwBSLma3QdIvJHJBkiL
-	htMHSKO86QJIsvKSB0ih++gDSMiY+wRIueE5SI2D7gZI8eXaBEjvvtUGSN3X6QJI9ttISKPo
-	8AJIztaOA1ARWgo8ZGVsaXZlci8+YApo6NWdA3CWS3jTjyWAAZI5igEICBgQNBiNzkqKAQkI
-	BhAnGNjY+QOKAQkIFBAdGJX9zwSKAQoIAxDTAxihs9wFigEJCBMQURik/5UCigEICAQQJRit
-	oneKAQkIDRA1GIqs1QaKAQkIGBAfGKuwwAOQAQigAQCqARRpbnZtYWlsNS5za2h5bml4LmNv
-	bbIBBgoEpn38kbgB9NNHwgEQCAEiDA3RJd1oEgVhdnN5bcIBGAgDIhQNYKjcaBINZGF5emVy
-	b19ydWxlc8IBGwgEIhcNSldlYBIQZ2F0ZWtlZXBlcl9ydWxlc8IBAggJGoABmrQ6/dQGRW5m
-	7tfqdxjvZxxMYkIS4he2oulSk9TUDjcbZqzBICj1qH6tY8JN3Yb3xgeIyoTRzzKOqW7NQmvn
-	0YTBD2ur2CObjCx279mhMhGJVNYWjjEV8KduNgcNLh4zyRmPlBhuuyVvWhLofH43LqOK/uHz
-	/4B+0aH5S7Gw4bwiBHNoYTEqA3JzYRffiDpZAgAA
-X-CFilter-Loop: Reflected
+	s=arc-20240116; t=1759393032; c=relaxed/simple;
+	bh=qhPCv+hvtTaEhLSvWRtO8cEw6fW/dZWLWErQIn5N/xI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IeQ5WDdr+s/ZxTERLn5eAoyZYYHGz0JzW5VK7o3RQs0W6pV9Te8jQXla3069C6On7TxYqEDn1cM0pk8STDM1a4OgiZ597JlbkRYN84/PrBt2pbaAfn63KcCFjyHKR3wUrIF6pz1SLgUcKzZq8RR+mLW+47cFtaWhtxMdiFfS5SY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bHvHi6Tf; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759393030; x=1790929030;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=qhPCv+hvtTaEhLSvWRtO8cEw6fW/dZWLWErQIn5N/xI=;
+  b=bHvHi6Tf6x/xkfHLwjuXJvMxI5kMnbD1oPi4oBtxQPGxng5MJuc8AsWk
+   K3EtIDSVLomCinLwwiFsdP6DEif/5gUgC5DKTu3WgDv94CL7Qzp619hrp
+   mXJo/01MjlQ4WBDetvbx0ZUgqSN2xiSqH6ZUMn+CEWOupKGYLDo3cGzUg
+   l0VWa1Uj6aC5Wa+PYFOaKFKpOMU+X4O6q9fcZrf0UcwFk9rr7miTItBSl
+   rWq//aTKHW/UplK76bGwS//usY7Vkle0Agdhgf4K2vIEzMZVSbuFr/Wef
+   l8WkSaSCajNqjWJVNkySxHhMaVYYkRENr44hcrAWu6flRlpDx8C+F4N7I
+   w==;
+X-CSE-ConnectionGUID: vecdJEyBR8+IG0unCgVxRQ==
+X-CSE-MsgGUID: ROiODXKeSXC5jFxFfy0O7w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11569"; a="49230498"
+X-IronPort-AV: E=Sophos;i="6.18,309,1751266800"; 
+   d="scan'208";a="49230498"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2025 01:17:09 -0700
+X-CSE-ConnectionGUID: 6YX8BcraQ+aqUY/Jr4ihHw==
+X-CSE-MsgGUID: BdxfyJimRBuNrjmbXHg0HA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,309,1751266800"; 
+   d="scan'208";a="178797283"
+Received: from bergbenj-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.175])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2025 01:17:07 -0700
+Received: from kekkonen.localdomain (localhost [IPv6:::1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 7333A121EC3;
+	Thu, 02 Oct 2025 11:17:03 +0300 (EEST)
+Date: Thu, 2 Oct 2025 11:17:03 +0300
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Cc: Dafna Hirschfeld <dafna@fastmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Keke Li <keke.li@amlogic.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Dan Scally <dan.scally@ideasonboard.com>,
+	Antoine Bouyer <antoine.bouyer@nxp.com>,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v5 0/8] media: Introduce V4L2 generic ISP support
+Message-ID: <aN40_78P5TaUuglA@kekkonen.localdomain>
+References: <20250915-extensible-parameters-validation-v5-0-e6db94468af3@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250915-extensible-parameters-validation-v5-0-e6db94468af3@ideasonboard.com>
 
-DEPT(Dependency Tracker) reported a deadlock:
+Hi Jacopo,
 
-   ===================================================
-   DEPT: Circular dependency has been detected.
-   6.15.11-00046-g2c223fa7bd9a-dirty #13 Not tainted
-   ---------------------------------------------------
-   summary
-   ---------------------------------------------------
-   *** DEADLOCK ***
+On Mon, Sep 15, 2025 at 07:18:09PM +0200, Jacopo Mondi wrote:
+> Extensible parameters meta formats have been introduced in the Linux
+> kernel v6.12 initially to support different revision of the RkISP1 ISP
+> implemented in different SoC. In order to avoid breaking userspace
+> everytime an ISP configuration block is added or modified in the uAPI
+> these new formats, which are versionated and extensible by their
+> definition have been introduced.
+> 
+> See for reference:
+> e9d05e9d5db1 ("media: uapi: rkisp1-config: Add extensible params format")
+> 6c53a7b68c5d ("media: rkisp1: Implement extensible params support")
+> 
+> The Amlogic C3 ISP driver followed shortly, introducing an extensible
+> format for the ISP configuration:
+> 
+> 6d406187ebc0 ("media: uapi: Add stats info and parameters buffer for C3 ISP")
+> 
+> with a very similar, if not identical, implementation of the routines to
+> validate and handle the ISP configuration in the ISP driver in the
+> c3-isp-params.c file.
+> 
+> fb2e135208f3 ("media: platform: Add C3 ISP driver")
+> 
+> With the recent upstreaming attempt of the Mali C55 ISP driver from Dan,
+> a third user of extensible parameters is going to be itroduced in the
+> kernel, duplicating again in the driver the procedure for validating and
+> handling the ISP configuration blocks
+> 
+> https://patchwork.linuxtv.org/project/linux-media/patch/20250624-c55-v10-15-54f3d4196990@ideasonboard.com/
+> 
+> To avoid duplicating again the validation routines and common types
+> definition, this series introduces v4l2-isp.c/.h for the kAPI
+> and v4l2-isp.h for the uAPI and re-organize the RkISP1
+> and Amlogic C3 drivers to use the common types and the helper validation
+> routines.
+> 
+> The v4l2-isp abstraction will be augmented to support statistcs as well.
+> 
+> If the here proposed approach is accepted, I propose to rebase the Mali
+> C55 driver on top of this series, to use the new common types and
+> helpers.
+> 
+> I have been able to test this on RkISP1 but not on C3.
 
-   context A
-      [S] (unknown)(pg_locked_map:0)
-      [W] dept_page_wait_on_bit(pg_writeback_map:0)
-      [E] dept_page_clear_bit(pg_locked_map:0)
+Thank you for working on this.
 
-   context B
-      [S] (unknown)(pg_writeback_map:0)
-      [W] dept_page_wait_on_bit(pg_locked_map:0)
-      [E] dept_page_clear_bit(pg_writeback_map:0)
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-   [S]: start of the event context
-   [W]: the wait blocked
-   [E]: the event not reachable
-   ---------------------------------------------------
-   context A's detail
-   ---------------------------------------------------
-   context A
-      [S] (unknown)(pg_locked_map:0)
-      [W] dept_page_wait_on_bit(pg_writeback_map:0)
-      [E] dept_page_clear_bit(pg_locked_map:0)
-
-   [S] (unknown)(pg_locked_map:0):
-   (N/A)
-
-   [W] dept_page_wait_on_bit(pg_writeback_map:0):
-   [<ffff800080589c94>] folio_wait_bit+0x2c/0x38
-   stacktrace:
-         folio_wait_bit_common+0x824/0x8b8
-         folio_wait_bit+0x2c/0x38
-         folio_wait_writeback+0x5c/0xa4
-         migrate_pages_batch+0x5e4/0x1788
-         migrate_pages+0x15c4/0x1840
-         compact_zone+0x9c8/0x1d20
-         compact_node+0xd4/0x27c
-         sysctl_compaction_handler+0x104/0x194
-         proc_sys_call_handler+0x25c/0x3f8
-         proc_sys_write+0x20/0x2c
-         do_iter_readv_writev+0x350/0x448
-         vfs_writev+0x1ac/0x44c
-         do_pwritev+0x100/0x15c
-         __arm64_sys_pwritev2+0x6c/0xcc
-         invoke_syscall.constprop.0+0x64/0x18c
-         el0_svc_common.constprop.0+0x80/0x198
-
-   [E] dept_page_clear_bit(pg_locked_map:0):
-   [<ffff800080700914>] migrate_folio_undo_src+0x1b4/0x200
-   stacktrace:
-         migrate_folio_undo_src+0x1b4/0x200
-         migrate_pages_batch+0x1578/0x1788
-         migrate_pages+0x15c4/0x1840
-         compact_zone+0x9c8/0x1d20
-         compact_node+0xd4/0x27c
-         sysctl_compaction_handler+0x104/0x194
-         proc_sys_call_handler+0x25c/0x3f8
-         proc_sys_write+0x20/0x2c
-         do_iter_readv_writev+0x350/0x448
-         vfs_writev+0x1ac/0x44c
-         do_pwritev+0x100/0x15c
-         __arm64_sys_pwritev2+0x6c/0xcc
-         invoke_syscall.constprop.0+0x64/0x18c
-         el0_svc_common.constprop.0+0x80/0x198
-         do_el0_svc+0x28/0x3c
-         el0_svc+0x50/0x220
-   ---------------------------------------------------
-   context B's detail
-   ---------------------------------------------------
-   context B
-      [S] (unknown)(pg_writeback_map:0)
-      [W] dept_page_wait_on_bit(pg_locked_map:0)
-      [E] dept_page_clear_bit(pg_writeback_map:0)
-
-   [S] (unknown)(pg_writeback_map:0):
-   (N/A)
-
-   [W] dept_page_wait_on_bit(pg_locked_map:0):
-   [<ffff80008081e478>] bdev_getblk+0x58/0x120
-   stacktrace:
-         find_get_block_common+0x224/0xbc4
-         bdev_getblk+0x58/0x120
-         __ext4_get_inode_loc+0x194/0x98c
-         ext4_get_inode_loc+0x4c/0xcc
-         ext4_reserve_inode_write+0x74/0x158
-         __ext4_mark_inode_dirty+0xd4/0x4e0
-         __ext4_ext_dirty+0x118/0x164
-         ext4_ext_map_blocks+0x1578/0x2ca8
-         ext4_map_blocks+0x2a4/0xa60
-         ext4_convert_unwritten_extents+0x1b0/0x3c0
-         ext4_convert_unwritten_io_end_vec+0x90/0x1a0
-         ext4_end_io_end+0x58/0x194
-         ext4_end_io_rsv_work+0xc4/0x150
-         process_one_work+0x3b4/0xac0
-         worker_thread+0x2b0/0x53c
-         kthread+0x1a0/0x33c
-
-   [E] dept_page_clear_bit(pg_writeback_map:0):
-   [<ffff8000809dfc5c>] ext4_finish_bio+0x638/0x820
-   stacktrace:
-         folio_end_writeback+0x140/0x488
-         ext4_finish_bio+0x638/0x820
-         ext4_release_io_end+0x74/0x188
-         ext4_end_io_end+0xa0/0x194
-         ext4_end_io_rsv_work+0xc4/0x150
-         process_one_work+0x3b4/0xac0
-         worker_thread+0x2b0/0x53c
-         kthread+0x1a0/0x33c
-         ret_from_fork+0x10/0x20
-
-To simplify the scenario:
-
-   context X (wq worker)	context Y (process context)
-
-				migrate_pages_batch()
-   ext4_end_io_end()		  ...
-     ...			  migrate_folio_unmap()
-     ext4_get_inode_loc()	    ...
-       ...			    folio_lock() // hold the folio lock
-       bdev_getblk()		    ...
-         ...			    folio_wait_writeback() // wait forever
-         __find_get_block_slow()
-           ...			    ...
-           folio_lock() // wait forever
-           folio_unlock()	  migrate_folio_undo_src()
-				    ...
-     ...			    folio_unlock() // never reachable
-     ext4_finish_bio()
-	...
-	folio_end_writeback() // never reachable
-
-context X is waiting for the folio lock to be released by context Y,
-while context Y is waiting for the writeback to end in context X.
-Ultimately, two contexts are waiting for the event that will never
-happen, say, deadlock.
-
-*Only one* of the following two conditions should be allowed, or we
-cannot avoid this kind of deadlock:
-
-   1. while holding a folio lock (and heading for folio_unlock()),
-      waiting for a writeback to end,
-   2. while heading for the writeback end, waiting for the folio lock to
-      be released,
-
-Since allowing 2 and avoiding 1 sound more sensible than the other,
-remove the first condition by making sure folio_unlock() before
-folio_wait_writeback() in migrate_folio_unmap().
-
-Fixes: 49d2e9cc45443 ("[PATCH] Swap Migration V5: migrate_pages() function")
-Reported-by: Yunseong Kim <ysk@kzalloc.com>
-Signed-off-by: Byungchul Park <byungchul@sk.com>
-Tested-by: Yunseong Kim <ysk@kzalloc.com>
----
-
-Hi,
-
-Thanks to Yunseong for reporting the issue, testing, and confirming if
-this patch can resolve the issue.  We used the latest version of DEPT
-to detect the issue:
-
-   https://lore.kernel.org/all/20251002081247.51255-1-byungchul@sk.com/
-
-I mentioned in the commit message above like:
-
-   *Only one* of the following two conditions should be allowed, or we
-   cannot avoid this kind of deadlock:
-   
-      1. while holding a folio lock (and heading for folio_unlock()),
-         waiting for a writeback to end,
-      2. while heading for the writeback end, waiting for the folio lock
-         to be released,
-
-Honestly, I'm not convinced which one we should choose between two, I
-chose 'allowing 2 and avoiding 1' to resolve this issue though.
-
-However, please let me know if I was wrong and we should go for
-'allowing 1 and avoiding 2'.  If so, I should try a different approach,
-for example, to fix by preventing folio_lock() or using folio_try_lock()
-while heading for writeback end in ext4_end_io_end() or something.
-
-To Yunseong,
-
-The link you shared for a system hang is:
-
-   https://gist.github.com/kzall0c/a6091bb2fd536865ca9aabfd017a1fc5
-
-I think an important stacktrace for this issue, this is, waiting for
-PG_writeback, was missed in the log.
-
-	Byungchul
-
----
- mm/migrate.c | 57 +++++++++++++++++++++++++++++++++++++---------------
- 1 file changed, 41 insertions(+), 16 deletions(-)
-
-diff --git a/mm/migrate.c b/mm/migrate.c
-index 9e5ef39ce73a..60b0b054f27a 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -1215,6 +1215,17 @@ static int migrate_folio_unmap(new_folio_t get_new_folio,
- 
- 	dst->private = NULL;
- 
-+retry_wait_writeback:
-+	/*
-+	 * Only in the case of a full synchronous migration is it
-+	 * necessary to wait for PageWriteback.  In the async case, the
-+	 * retry loop is too short and in the sync-light case, the
-+	 * overhead of stalling is too much.  Plus, do not write-back if
-+	 * it's in the middle of direct compaction
-+	 */
-+	if (folio_test_writeback(src) && mode == MIGRATE_SYNC)
-+		folio_wait_writeback(src);
-+
- 	if (!folio_trylock(src)) {
- 		if (mode == MIGRATE_ASYNC)
- 			goto out;
-@@ -1245,27 +1256,41 @@ static int migrate_folio_unmap(new_folio_t get_new_folio,
- 
- 		folio_lock(src);
- 	}
--	locked = true;
--	if (folio_test_mlocked(src))
--		old_page_state |= PAGE_WAS_MLOCKED;
- 
- 	if (folio_test_writeback(src)) {
--		/*
--		 * Only in the case of a full synchronous migration is it
--		 * necessary to wait for PageWriteback. In the async case,
--		 * the retry loop is too short and in the sync-light case,
--		 * the overhead of stalling is too much
--		 */
--		switch (mode) {
--		case MIGRATE_SYNC:
--			break;
--		default:
--			rc = -EBUSY;
--			goto out;
-+		if (mode == MIGRATE_SYNC) {
-+			/*
-+			 * folio_unlock() is required before trying
-+			 * folio_wait_writeback().  Or it leads a
-+			 * deadlock like:
-+			 *
-+			 *   context x		context y
-+			 *   in XXX_io_end()	in migrate_folio_unmap()
-+			 *
-+			 *   ...		...
-+			 *   bdev_getblk();	folio_lock();
-+			 *
-+			 *     // wait forever	// wait forever
-+			 *     folio_lock();	folio_wait_writeback();
-+			 *
-+			 *     ...		...
-+			 *     folio_unlock();
-+			 *   ...		// never reachable
-+			 *			folio_unlock();
-+			 *   // never reachable
-+			 *   folio_end_writeback();
-+			 */
-+			folio_unlock(src);
-+			goto retry_wait_writeback;
- 		}
--		folio_wait_writeback(src);
-+		rc = -EBUSY;
-+		goto out;
- 	}
- 
-+	locked = true;
-+	if (folio_test_mlocked(src))
-+		old_page_state |= PAGE_WAS_MLOCKED;
-+
- 	/*
- 	 * By try_to_migrate(), src->mapcount goes down to 0 here. In this case,
- 	 * we cannot notice that anon_vma is freed while we migrate a page.
-
-base-commit: e5f0a698b34ed76002dc5cff3804a61c80233a7a
 -- 
-2.17.1
+Kind regards,
 
+Sakari Ailus
 
