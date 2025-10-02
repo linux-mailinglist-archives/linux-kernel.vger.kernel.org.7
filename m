@@ -1,113 +1,189 @@
-Return-Path: <linux-kernel+bounces-840415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13DD7BB45F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 17:34:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A99E9BB4606
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 17:35:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7F5C3A9852
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 15:34:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 520903B2B47
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 15:35:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F611217733;
-	Thu,  2 Oct 2025 15:33:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04258221264;
+	Thu,  2 Oct 2025 15:35:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="KuW9ZfC1"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="bLTTCn04"
+Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011015.outbound.protection.outlook.com [52.101.52.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC70E4D8CE
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 15:33:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759419238; cv=none; b=AeXiHtJfjnlTXqKaRXOrCBXSLt+FR50hUcHNJU8QMOZbFQg7RCcHoFjO20ReWr+FGB3hlLLuZzoQjgZCxXYnEZZghiWyXfoyG6mXD9HR36S6kpR87Y87XXkR4RJVJY8qskd2/tDtDI9dnKl+MIclGF/1DBa5gtrli6tc6C1y9h0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759419238; c=relaxed/simple;
-	bh=+j7uZg63eSagCwHvMXMZNe6B3dkKmdil1qD4JIFInkE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=p7xjkz1Ogq0pYOcGIIut5lUEAEFqIwPrLcSX/5cBmvUKmx+JBBcZ3B2/tEakcsPoQI195s+3xkRlkRB9pQI9/jxKyesHHLa8pbQIkupXCBbS4ewW7A/4RkbFrZfHhoA8egIchg3g2/AgzyScrkn6xtyaflskpQMkr0LdOKSfZx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=KuW9ZfC1; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 4BBBF1A10A6;
-	Thu,  2 Oct 2025 15:33:54 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 1FD936062C;
-	Thu,  2 Oct 2025 15:33:54 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id DA6A2102F17FA;
-	Thu,  2 Oct 2025 17:33:35 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1759419233; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=k+1LiZdujVey+bphMk0ViassNao8HXzl/x5/6BvKxv4=;
-	b=KuW9ZfC15+F2q6S7zoLQrivAKuihRyzzhksmV6+vjOXwtFvIFzkF2jDYtsZoXTGnvs57p0
-	UqOb93tG33xgehEr9MAK4CGCv2XF7y8CZ07yOmcxDS7mgu8sWCnL7vX1mROwSfeTn074ja
-	rUsYnnKJ+VITEucvH2naCLfFgSLP+NuO4PicowvpK5J6u3DeVKs4Tr90D5mmjAsrdFZJQ2
-	crRGyIK31jy7QuqqKoU3hTnHKtM8U4Zm2Oro8eraOYzrZduo+qCMCoGX3UK4J1s5nutvKo
-	N1QSo9PJgeJxH2hlNe5SdqOeTRDU4BNJTyNR52Chg4Rw3Mvrcz3lqPYSRshwxw==
-Date: Thu, 2 Oct 2025 17:33:31 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: kernel test robot <oliver.sang@intel.com>
-Cc: <oe-lkp@lists.linux.dev>, <lkp@intel.com>,
- <dri-devel@lists.freedesktop.org>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
- <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Hui Pu
- <Hui.Pu@gehealthcare.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/7] drm/bridge: lock the encoder chain in scoped
- for_each loops
-Message-ID: <20251002173331.3d06d7d3@booty>
-In-Reply-To: <202509301358.38036b85-lkp@intel.com>
-References: <20250926-drm-bridge-alloc-encoder-chain-mutex-v1-4-23b62c47356a@bootlin.com>
-	<202509301358.38036b85-lkp@intel.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA18C1FBCA7;
+	Thu,  2 Oct 2025 15:35:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759419333; cv=fail; b=pymVLhVQF30dQPz0cGwjvlLcqwYiO99LUi7hNhhVdmqde0MyjqKCv20b+yLBCbz00oYYzmpkebkdr+eERWMf3J/vHAjOZj9U+pIjIPEbuZq/YgfwjElvpcxCWfYb5Sa3xKJi1pai5+WnsvN4eD38/0NWFEdTote04AOq4+pYwgg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759419333; c=relaxed/simple;
+	bh=EEdBVMOdTlxGLm9TwaX2tY4yKHC/gX8EUEieSxzjMrg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FDoxDd8+FlOSiqcCWZ6mIhDwfOxLZ3HzOPzWUWxa4+yZFhpLaf5fBztt4mKyOBZFsZO0xpoWgg+Z8E0atLQUXz7feA/3z44JhVb8EOxbonFAt6cAr+AWAT4N+hCPqOuL0XPTYyIEneNqnZPoO8QZQLX+szulAmSID61OuV+s/z4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=bLTTCn04; arc=fail smtp.client-ip=52.101.52.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qqWaWi66OHSPof1QvG5BI/dwI1PhJ0+YH48HHmaxG+XBWCMtDqTLObYIC6N28TZ+6trCxerHzyyktU755lkx+LIwen6FW1qofkWV04UfD5V+y7u4biDcRT1uJ4L9P4uRVy+chc6OHzefaAjgTTaVnCKOm0ncj/jokAQPUqcrBjazDYsuKCDWOoPjm6WQSGPWgqSt+IDCwl6VVGLV4lBegq/nB4eyX9k0hcmMbGCQPzGQb5Qon2htsF9pqbEZhUK11c58EPmwxvf3yiEfiMTa7m8pMH7hGT1GLuRqC2POP5yRgW0e4we1GCxAfP6jM3NTkbtrzAwGDikOcTnV+C71pg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0RD+p9WYfunRtzmK8Akga0C0tSNrqd7lYIr/vRggjH4=;
+ b=hoUJFY+OyJVJBcy1AEimG5+TwyTHQzB+wL6PLYexFw519VWtT/wJdcnHpJqtPdCw63uNI2J8v0yIBHkvTzVLsCu7Kr/xGCQWNxm1sorXSAntkGNlNrKQhGXVCf++y/kv+iGAWbkedOWvBcmGu7FIfXhbSlzC3Tnau28hS9AERvuk/Sjjfbfz3g4Zu/a9i4R5+8CcclRXqma4Enxb1uXWQpXXCeeZ2+SeXqUyooRdZ9cbkCCGS1dBCJOXtYK8LxmmZLWBI5jEFx51djeAjy0bgAfkRCQWEqigVL6sG10PnVlwPQal81YMhknEDmCj54GwLx39LCQBSoSSCvYJ/WqtiA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0RD+p9WYfunRtzmK8Akga0C0tSNrqd7lYIr/vRggjH4=;
+ b=bLTTCn04WQpEy/cd+FvsfoXNUVmDlcj4QSHrL6fSDbsgj764Byz61XtV2zljmjls0oFMUX5AsbkLpd1fu3BLnl+nZ1OJ5T+PsyqkI/vpy2D3FNanRpAU14kDAeHIJspe9RUtw1/b50rLkaAR9Af00X83kHgNkbzh12iIqvRcrq8=
+Received: from MN0P222CA0028.NAMP222.PROD.OUTLOOK.COM (2603:10b6:208:531::30)
+ by CY8PR12MB8340.namprd12.prod.outlook.com (2603:10b6:930:7a::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.18; Thu, 2 Oct
+ 2025 15:35:25 +0000
+Received: from BL6PEPF0001AB50.namprd04.prod.outlook.com
+ (2603:10b6:208:531:cafe::9e) by MN0P222CA0028.outlook.office365.com
+ (2603:10b6:208:531::30) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9182.15 via Frontend Transport; Thu,
+ 2 Oct 2025 15:35:24 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
+Received: from satlexmb08.amd.com (165.204.84.17) by
+ BL6PEPF0001AB50.mail.protection.outlook.com (10.167.242.74) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9182.15 via Frontend Transport; Thu, 2 Oct 2025 15:35:24 +0000
+Received: from SATLEXMB06.amd.com (10.181.40.147) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Thu, 2 Oct
+ 2025 08:35:23 -0700
+Received: from satlexmb07.amd.com (10.181.42.216) by SATLEXMB06.amd.com
+ (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 2 Oct
+ 2025 10:35:23 -0500
+Received: from xsjtanmays50.xilinx.com (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Thu, 2 Oct 2025 08:35:22 -0700
+From: Tanmay Shah <tanmay.shah@amd.com>
+To: <andersson@kernel.org>, <mathieu.poirier@linaro.org>
+CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Tanmay
+ Shah <tanmay.shah@amd.com>
+Subject: [RFC PATCH] remoteproc: core: full attach detach during recovery
+Date: Thu, 2 Oct 2025 08:33:46 -0700
+Message-ID: <20251002153343.766352-1-tanmay.shah@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB50:EE_|CY8PR12MB8340:EE_
+X-MS-Office365-Filtering-Correlation-Id: 825a722d-f385-4ad6-ae23-08de01c94e19
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?leYRej2dB/q24Me39YzaFLYD9IOvb51hYaify6XgI2/vVV+QSqjfn0iMNv8C?=
+ =?us-ascii?Q?cOto/Ct+KcJk2Ob+XcZWKtpnSf0y3dthiIj2MUwX+FnuxqSGaE9nWnQVKysH?=
+ =?us-ascii?Q?EiosRmM3ZDAh4g6xYEP+esdc9Gmx4z7Vsus8bZF6bZlaV5+5S2o1CbW/ljyV?=
+ =?us-ascii?Q?Jtz6YCkEKSUn7DAqD0jiUhwXwImMOru++F3yk93SG31TbDfdWvAkOP0WJ49I?=
+ =?us-ascii?Q?ysjqM1QNBe66T8F1aD65oXzj2UeY+BaT6JBNcFdUag9t4FDE/E6kMnYaSjfc?=
+ =?us-ascii?Q?hcFQJzr6aVFMCtJnatKYiKa9m4L4+7g0UwJiQPiv8RsVlt7y1ovMtDslind4?=
+ =?us-ascii?Q?5oTofRpW56QjX6P44pMuWWpPC6CeaMeRMiUET16+P+/uFpmVeb/24FZrAC9H?=
+ =?us-ascii?Q?TP2zgYGIPs3FrTRd2L5vwonbwVXd/IvV17RXsgZaKRCbFc/Qunc2Ycjhy7j4?=
+ =?us-ascii?Q?5DAtzUjumngqKipqwjO+w0RF08meLSLvW/aCJXexoXNjg02I7IrqCcbXzBrM?=
+ =?us-ascii?Q?/E+zv1sy9EZKoDGlaOWMkqrik4Ft41C0ZcrFqxc4sV/bK2VtYjy2FdGwvjeK?=
+ =?us-ascii?Q?DHcjqmxjdp1DMsbLZ3TuWadGrlXz2/vXyl7ifi4HRqa4XRtCZ3mlLPnxMAFT?=
+ =?us-ascii?Q?WdPY3LGpQFbElabYZZRPJAHZ/ITD0rqkcgJC7hnLgig33gs1aUQojdiNj7uF?=
+ =?us-ascii?Q?l3fvrJAxhlZ1Sar88l5teb6PYAnIHJ0wMV9y/EkwfNX7jsBcnZbjiMCcdFFr?=
+ =?us-ascii?Q?OcUZ0gN4P2urnqGNlZ3vchO5NxS6qvunaRjBJ9SWzzhTwF4AAJLyK0lQ/1qK?=
+ =?us-ascii?Q?JXGz6iRd6fxStnPyqajB4O9h+SdO953+x07ZkuHQj2UPO5EKGV0Q7oN9oY77?=
+ =?us-ascii?Q?7OoGRV9dlSaiSjLiSWSZy6iF0Wr3LaclWQskdeRXF07R80id+shY6ETxR1EC?=
+ =?us-ascii?Q?w8PhjCFBlCe/C7Q1crvZb/SWePMeHIc3RbM3mptwJxUglmIQn3TiHlmpLYRS?=
+ =?us-ascii?Q?U+XBw1ugsyEEiG5Nu6YBJ+yclV3l+ufMwpQAmm1LGRCeBxwg/kbOc3kYbQBa?=
+ =?us-ascii?Q?gMlvNZQ5054tKhsL78ufJv0rcPRDiBcQKyVxt2YZTSus7eEHZ2AZ49+KkuT4?=
+ =?us-ascii?Q?Qyj7ftCWhsZrngf8qS7a1ubaxIXYavVellWyg9hgkzX378sVlHuuWAeZWsAG?=
+ =?us-ascii?Q?asEFr26h/LiUsslNP06jGUgGFgyRP2196qO0QhQkZaZFL97U87a8h6HFGlu4?=
+ =?us-ascii?Q?ImhDkYs+663DbKMZ/xuinOy56r6uHsI6mM1G9HYmDeIN+PQiXEq3LDxfDQrN?=
+ =?us-ascii?Q?hePZ7CnrS01/ErP+jrke/m5EM+oIm2JTw15Z5T1yYTdCqVHFoqXAEzfKSTCU?=
+ =?us-ascii?Q?VVEoepL8KyCz1H99M1VZoYU+C3K9+X5UBF4Svm66sNYrIp1GBUNAUxDh4Pfn?=
+ =?us-ascii?Q?G+BbhlWbCQ3eVjZAqmJN1Y7IvUNONuMRFsYBRzi5lMlLSXz8VRQaVI2ju1Nx?=
+ =?us-ascii?Q?K05s6MTeVEdS2oALiw8hrhYDf9q/Bk1lOPwA5nNNNHAMSdrzjoEre3qBYwTk?=
+ =?us-ascii?Q?8vRc5bdoIOUnQ9qAC3g=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Oct 2025 15:35:24.3115
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 825a722d-f385-4ad6-ae23-08de01c94e19
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF0001AB50.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB8340
 
-Hello,
+Current recovery operation does only virtio device reset, but do not
+free and re-allocate all the resources. As third-party is booting the
+remote processor during attach-detach, it is better to free and
+re-allocate resoruces as resource table state might be unknown to linux
+when remote processor boots and reports crash.
 
-On Tue, 30 Sep 2025 14:16:23 +0800
-kernel test robot <oliver.sang@intel.com> wrote:
+Signed-off-by: Tanmay Shah <tanmay.shah@amd.com>
+---
 
-> [  674.477504][    C1] watchdog: BUG: soft lockup - CPU#1 stuck for 626s! [swapper/0:1]
-> [  674.477539][    C1] CPU#1 Utilization every 96s during lockup:
-> [  674.477543][    C1] 	#1: 100% system,	  1% softirq,	  1% hardirq,	  0% idle
-> [  674.477549][    C1] 	#2: 100% system,	  1% softirq,	  1% hardirq,	  0% idle
-> [  674.477553][    C1] 	#3: 100% system,	  0% softirq,	  1% hardirq,	  0% idle
-> [  674.477557][    C1] 	#4: 100% system,	  1% softirq,	  1% hardirq,	  0% idle
-> [  674.477561][    C1] 	#5: 100% system,	  1% softirq,	  1% hardirq,	  0% idle
-...
-> [ 674.477713][ C1] drm_atomic_add_encoder_bridges (drivers/gpu/drm/drm_atomic.c:1319 (discriminator 1025)) 
+Note: RFC patch for design discussion. Please do not merge. 
 
-The one reported is an actual bug, causing an infinite loop when the
-encoder bridge chain is empty. Took a while to reproduce and debug, but
-the fix is very simple:
+ drivers/remoteproc/remoteproc_core.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
- #define drm_for_each_bridge_in_chain_scoped(encoder, bridge)                           \
-        for (struct drm_bridge *bridge __free(drm_bridge_encoder_chain_unlock) =        \
--                    list_first_entry(&drm_encoder_chain_lock(encoder)->bridge_chain,   \
-+                    list_first_entry_or_null(&drm_encoder_chain_lock(encoder)->bridge_chain,   \
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index 825672100528..4971508bc5b2 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1786,7 +1786,20 @@ static int rproc_attach_recovery(struct rproc *rproc)
+ 	if (ret)
+ 		return ret;
+ 
+-	return __rproc_attach(rproc);
++	/* clean up all acquired resources */
++	rproc_resource_cleanup(rproc);
++
++	/* release HW resources if needed */
++	rproc_unprepare_device(rproc);
++
++	rproc_disable_iommu(rproc);
++
++	/* Free the copy of the resource table */
++	kfree(rproc->cached_table);
++	rproc->cached_table = NULL;
++	rproc->table_ptr = NULL;
++
++	return rproc_attach(rproc);
+ }
+ 
+ static int rproc_boot_recovery(struct rproc *rproc)
 
-Fix queued for v2.
-
-Luca
-
+base-commit: 56d030ea3330ab737fe6c05f89d52f56208b07ac
 -- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.34.1
+
 
