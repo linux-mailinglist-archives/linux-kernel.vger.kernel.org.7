@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-840253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86177BB3F2C
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 14:56:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10FE2BB3F2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 14:56:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54F23188A7C6
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 12:56:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 065433A73FC
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 12:56:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22594311949;
-	Thu,  2 Oct 2025 12:55:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8736E311C37;
+	Thu,  2 Oct 2025 12:55:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NGQMcLus"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dhl9EF9F"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF1F13112B7
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 12:55:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 625FA311957
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 12:55:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759409743; cv=none; b=MjPDqhdPs92679tPf5ZN2REvluhnfwJWAMvObYm/W52yJYyon0Wzm2G2IigkQvT9Mt0GQxVAXVOtdE25avHhsYELiQnla7VMhmJRzpMlQ++fxOziJKvwW7DMzO8Rv4xzXZIFtq9qrOtWVsmA4e9UL7QWSrq2s0RxxbffcCsQRQc=
+	t=1759409750; cv=none; b=bfhGAKTudAirjhWUNjoosuKc+EGziDtLnafyYlbYKZ0ugKbM0+5ZgW6vz67H33E8anYOGR8LO7EdBUxCnfbhZzbQHYqIFNDBzHx/YvJaUkmyIguYKGR8Nz44UZfYOd+kj2FKJ8vDw6aD0Y4BF5dVp6WVYQ1WMu0itg350FCL4o0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759409743; c=relaxed/simple;
-	bh=wYXddcwvRcQeKAEy9A1oIWjRBhIg8md5Wu6+CeCI49E=;
+	s=arc-20240116; t=1759409750; c=relaxed/simple;
+	bh=fak1x7u6QjeJLvthEEWVG8U8+j2kAQGpv7pJ0KElavg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dgNzK5lrKKRV22t/oHr9GwRoBUUJ18z/BmHx06p+wYClFh7CKAvbhhb7So9TxVRMV7+eCg9DKrUD0hKnwqEOupMRphduyH19hYeAStBoGbVYhIIvqGOKyXZ5SHWi3yesAtnvAqKD9MzhS9Qbku4t8Ud3uMe2ePucc/qu5GhVI6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NGQMcLus; arc=none smtp.client-ip=209.85.210.176
+	 MIME-Version; b=Gom79/X41SSF0o4uDhZ8RwXX3bUR0V6c7yLAD2k5qXS1opw8O5T1jdRqlPPHJ6c3IK2Fb3noT0mFCEniGrkj3aw2O0cAV+olJkuf7gy6erhnaRFjOUZeW69XQT3Pckk6JCTVOsP9T0dTVS8NMr6LTKbDLF+/DG5asyV5Pthg53o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dhl9EF9F; arc=none smtp.client-ip=209.85.210.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-7833765433cso1519068b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 05:55:41 -0700 (PDT)
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-77f605f22easo1032587b3a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 05:55:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759409741; x=1760014541; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1759409749; x=1760014549; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EJxtmpcoXc4yrgHs5WtTE6sBIdXe4Bd5IXbrrNjT5jw=;
-        b=NGQMcLusDd/Trjo4v/ZCJyD5L6xV8SQsCX3YmeSXaTk8TgIbI0cDmxoda2ObY4av2o
-         O0XocLzHvtPpRa2Ff5Go4t61EUDF+QbwQ1OL3/SrWJDq/eAd7wmO5IrJUALFkE2lWIq2
-         FLL8XSeLYKlKOqyKgMTCAeE4VSU1SdJXt+7ZbL1BeM6d76bF5fQ97dLd17gi3nYi826A
-         bRseLqLBxScAOV6+JG5cD04DDnX+8e4k2iQYUO3qN8gXPFKYhLWk3Omi4gn9CFYnQjSZ
-         nbr4zf7WZ3D/fK5P3KNn+J5MFtsnLIS4Jzdib6ZuQVgrehDyKPxNYhgZNHfwwJ7q/m60
-         2qRQ==
+        bh=QJKixBnmE478kGZ+GgFsDt+ITdYACcgY7ioQS8r/oGI=;
+        b=dhl9EF9FwUKUnmtTaj21fF+rKEq1ZT3x9Lo9Me7HtOjocW6eEuXKFYCiXs9xr9fINF
+         qjQY1VPcGwMgETi+Ijb0OOeRzsM9f7ZxWXUMm79oXpw/UwAwvVMogQFgllYs1GsOD7EM
+         MErO1Q8aYno/5EMlr7ZnNIdI+Ir66o+2FYQeFKoVAIjC9tWOaUfXQ54nNwlF0cUCYgWk
+         1ESeAevyq2Kf7+7G7GYUxOx2kV7BN4l/rUAhFIn8M6a8B1J2AK5si6Ymt4v4/9H560xF
+         ruD4M1FelN3IJQX9a550gSB5T6IrSK9Dq7e+vSIkUAjFfB9BvmQurLpDp+6OcxdB3wMM
+         zi8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759409741; x=1760014541;
+        d=1e100.net; s=20230601; t=1759409749; x=1760014549;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=EJxtmpcoXc4yrgHs5WtTE6sBIdXe4Bd5IXbrrNjT5jw=;
-        b=b8rIqTwjXcSJjr/G3dQaBRYXwCgnY0uQenFN4lioZYE1/dmCQuo7DgPRo0+k/5STuS
-         42Tw05PGcx3DG/yvLIKIO7BkODRggfcY0nAy3N6F/+b04H0+KPAGC6ses2wWYoKlPIEJ
-         Tm/yqbmQZXRz50eQbUvKK8z1zdj4NU2NnvlADlC1zH/rQD1ASJ59mr0z0uJAF/cHeka2
-         tCumi9GuVph6zuifvDGe6qyqaE3QcCgb+kbv86ciWQsjZ4VM5+05PY7TAKsEsfLMAtjG
-         OtwGhP0KN26wFVJC9mPHsDno84hbTXbmT/0909GYRlNJpDPaGJ3TDaSizHQNwc5pAJwZ
-         dwkw==
-X-Forwarded-Encrypted: i=1; AJvYcCVkIP3c6Z5pKYdwlYIK5wipwhispm1A476Rs9e4vuL9/7eO/9ETtmcNxPjE9zsNrZUBrZwztoonYE6HMdc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKzAtYixhlCcoG6OiBdmfypeEQMcire/NugdY2Oq5EzsJdnKwm
-	ixYZTxXRp1GGTgba9rNyPJhUFPMzxriau0+kuYrdOkVncuoH+b7a0Lf/
-X-Gm-Gg: ASbGncusJftAPNZwAOXCyB2KnAp1Ft0cuWzGYnemYAsDtyYelJMtfIU42w9QGbKNImY
-	PtqVC2srxEPNhtkCekij8NaOzTJ/B8jfo7fdqYrVLHQ3Xq+JP8hweLh9fLJWgqwVn13iOw+zUyk
-	AqBcgYXhsGn0GWEELmoOpW9XE3UFVN+axM41+fMuqVWjAbRSIvl+eSTAQHpNP6AGns4zBEwKPM1
-	rT+Yv+YuCnBr8bbFZPT+K/lN1N3kbUvbYwJ6pzqKioRa1LSfoXLCobgGiK8gKiljO4CBjXGV8z2
-	kSRy3+Ati4726YfZFRAaOgNkRL4wzxRJK6k0pZysYZzf0DOlp/dC0z6k0FALT1y4HbS73HAPf/c
-	C0WivgI9rHk6Nuzvd+cI1aV5KTg4KQ4cqNbq0+OE7C4CeY7s=
-X-Google-Smtp-Source: AGHT+IHFaqJGan1kbBL1yPFJipQm5sq8pkjRSeMRc0bigutWIseqQVBU2KqOXs5f++yqM/U9uhcYVQ==
-X-Received: by 2002:a05:6a00:1884:b0:776:20c2:d58b with SMTP id d2e1a72fcca58-78af4209966mr9210619b3a.24.1759409740920;
-        Thu, 02 Oct 2025 05:55:40 -0700 (PDT)
+        bh=QJKixBnmE478kGZ+GgFsDt+ITdYACcgY7ioQS8r/oGI=;
+        b=e4eRgpnoM+6jM5N4BdYcYKXCPfT28Ys85NlDxLheIoZnn3YkM2tAG9ZgcDkUGzl07g
+         c8+X5B9WW01Ui1e1j9pShroL0N0YM512PArL1U6YKMOH94oTj9On3eRZ35CB7xn0huIT
+         4evjWTd3GXH407vMs6J57M2YT4Q6XiQgNVMFm/V7Pd6O8/2nOlV9GDA/VMck88KT5VMQ
+         Bp/tr/QOrGiCgG6tQq0qtwQXB1GNqfQ3iyiKYTQe7Bs7X3y9HhIULYLDh0R+Fa6Twvbu
+         64UIeCQWtSVNDlqylIrAG0UqC5g/5/JP0SufXdgIhXNopQMOmO+VqpplIyI3vnbJnjca
+         ftNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXT9F9HWSImjSckcT/p8pt0AxrfxX1L+cGPmM9rR/Mfe01TOa1ykqCdfZ0d6vN/61FHUKwj79UkZ4vG1+I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybaIBZy8218MZ4Ng+CFLvBNEPWYcObiLSdvQYi9QN8HiMZEcR0
+	IJkhZCMVuJVAM/aJZaMXJDmzWs3GuhbgjQWp0mOXRTH++bNQxdbLaIHY
+X-Gm-Gg: ASbGnctrTsqonLS3wNApxjjDs3px4uLGbvDGIaE3Ib+yq1Nxu/K6a7l4bLoLrM00Ovo
+	zp0MlW+QPlbcDGmDvKhougSt6TOmHKWj8KTpBe07RFnBGdWPlpYXVQnKu5/B3GompUBniOKu95U
+	JcSLbs+wWswevYwXoDDJyIyNle761TTkvcU1MIwFufax8LeY5RF/uBpmQ30S8W/E+6Rbw/uWws4
+	dku+HdGeBc7LaPjL4qYwjhXAPAwvLERDaINZmCTEMlqabDyHmzfeF89enTf9KaEjnTVkcIVgk3U
+	68XvXGtUQ6PdjSl4A9IljRQJGt4ra4zwX0SFDEodLU1JuMMLQTxcZ23JOGSHfQYuX7aMpIfaPsY
+	jsYKqF6hLV8ZCE4mfSidVGrogxbmMix7HrbEFhnad+WChWsQ=
+X-Google-Smtp-Source: AGHT+IEXlSEGCReTXDSDLwHVI1dX1cLJG7c7lxdNNuysBOzqp9JYRTzMQXY47Kt2ZLlng9HpZPzO6Q==
+X-Received: by 2002:a05:6a00:4f94:b0:780:f6db:b1af with SMTP id d2e1a72fcca58-78af420a72bmr7689110b3a.16.1759409748735;
+        Thu, 02 Oct 2025 05:55:48 -0700 (PDT)
 Received: from fedora ([2405:201:3017:a80:9e5c:2c74:b73f:890a])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78b01f9a2b9sm2165556b3a.19.2025.10.02.05.55.35
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78b01f9a2b9sm2165556b3a.19.2025.10.02.05.55.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 05:55:40 -0700 (PDT)
+        Thu, 02 Oct 2025 05:55:48 -0700 (PDT)
 From: Bhavik Sachdev <b.sachdev1904@gmail.com>
 To: Alexander Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>
@@ -88,9 +88,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	Ingo Molnar <mingo@kernel.org>,
 	Andrei Vagin <avagin@gmail.com>,
 	Alexander Mikhalitsyn <alexander@mihalicyn.com>
-Subject: [PATCH 2/4] fs/namespace: add umounted mounts to umount_mnt_ns
-Date: Thu,  2 Oct 2025 18:18:38 +0530
-Message-ID: <20251002125422.203598-3-b.sachdev1904@gmail.com>
+Subject: [PATCH 3/4] statmount: allow for "unmounted" mounts
+Date: Thu,  2 Oct 2025 18:18:39 +0530
+Message-ID: <20251002125422.203598-4-b.sachdev1904@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251002125422.203598-1-b.sachdev1904@gmail.com>
 References: <20251002125422.203598-1-b.sachdev1904@gmail.com>
@@ -102,125 +102,76 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+With "unmounted" mounts getting added to a separate umount_mnt_ns, we
+need special handling in statmount in order for it to work on
+"unmounted" mounts.
 
-This patch add "unmounted" mounts to umount_mnt_ns instead of mount
-namespace being NULL for such mounts. This will allow us to later use
-statmount to get mount info about these mounts.
+unmount_mnt_ns has no root mount (it doesn't really make sense for it to
+have one) and "unmounted" mounts have no mountpoint. We handle both
+these things in statmount and output the mountpoint as "[detached]" in
+case of an "unmounted" mount.
 
-We also introduce proper checks so that "unmounted" mounts are still
-detected correctly.
-
-We delete mounts from umount_mnt_ns when no references to them exist.
-
-Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Signed-off-by: Bhavik Sachdev <b.sachdev1904@gmail.com>
 ---
- fs/d_path.c    |  2 +-
- fs/mount.h     | 10 +++++++++-
- fs/namespace.c | 23 ++++++++++++++++++++---
- 3 files changed, 30 insertions(+), 5 deletions(-)
+ fs/namespace.c | 25 +++++++++++++++++++------
+ 1 file changed, 19 insertions(+), 6 deletions(-)
 
-diff --git a/fs/d_path.c b/fs/d_path.c
-index bb365511066b..c6a4118899e1 100644
---- a/fs/d_path.c
-+++ b/fs/d_path.c
-@@ -119,7 +119,7 @@ static int __prepend_path(const struct dentry *dentry, const struct mount *mnt,
- 			/* Global root */
- 			mnt_ns = READ_ONCE(mnt->mnt_ns);
- 			/* open-coded is_mounted() to use local mnt_ns */
--			if (!IS_ERR_OR_NULL(mnt_ns) && !is_anon_ns(mnt_ns))
-+			if (!IS_ERR_OR_NULL(mnt_ns) && !is_anon_ns(mnt_ns) && !is_umount_ns(mnt_ns))
- 				return 1;	// absolute root
- 			else
- 				return 2;	// detached or not attached yet
-diff --git a/fs/mount.h b/fs/mount.h
-index 97737051a8b9..03f8165939b4 100644
---- a/fs/mount.h
-+++ b/fs/mount.h
-@@ -122,10 +122,18 @@ static inline int mnt_has_parent(const struct mount *mnt)
- 	return mnt != mnt->mnt_parent;
- }
- 
-+extern struct mnt_namespace *umount_mnt_ns;
-+
-+static inline bool is_umount_ns(struct mnt_namespace *ns)
-+{
-+	return ns == umount_mnt_ns;
-+}
-+
- static inline int is_mounted(struct vfsmount *mnt)
- {
-+	struct mnt_namespace *ns = READ_ONCE(real_mount(mnt)->mnt_ns);
- 	/* neither detached nor internal? */
--	return !IS_ERR_OR_NULL(real_mount(mnt)->mnt_ns);
-+	return !IS_ERR_OR_NULL(ns) && !is_umount_ns(ns);
- }
- 
- extern struct mount *__lookup_mnt(struct vfsmount *, struct dentry *);
 diff --git a/fs/namespace.c b/fs/namespace.c
-index 70fe01d810df..0b4be12c02de 100644
+index 0b4be12c02de..29d0e692b365 100644
 --- a/fs/namespace.c
 +++ b/fs/namespace.c
-@@ -1016,7 +1016,7 @@ static inline bool check_anonymous_mnt(struct mount *mnt)
- {
- 	u64 seq;
- 
--	if (!is_anon_ns(mnt->mnt_ns))
-+	if (!is_anon_ns(mnt->mnt_ns) || is_umount_ns(mnt->mnt_ns))
- 		return false;
- 
- 	seq = mnt->mnt_ns->seq_origin;
-@@ -1400,9 +1400,11 @@ static void mntput_no_expire(struct mount *mnt)
- {
- 	LIST_HEAD(list);
- 	int count;
-+	struct mnt_namespace *ns;
- 
- 	rcu_read_lock();
--	if (likely(READ_ONCE(mnt->mnt_ns))) {
-+	ns = READ_ONCE(mnt->mnt_ns);
-+	if (likely(ns && !is_umount_ns(ns))) {
- 		/*
- 		 * Since we don't do lock_mount_hash() here,
- 		 * ->mnt_ns can change under us.  However, if it's
-@@ -1438,6 +1440,18 @@ static void mntput_no_expire(struct mount *mnt)
- 	mnt->mnt.mnt_flags |= MNT_DOOMED;
- 	rcu_read_unlock();
- 
-+	if (mnt_ns_attached(mnt)) {
-+		struct mnt_namespace *ns;
-+
-+		move_from_ns(mnt);
-+		ns = mnt->mnt_ns;
-+		if (ns) {
-+			ns->nr_mounts--;
-+			__touch_mnt_namespace(ns);
-+		}
-+		mnt->mnt_ns = NULL;
-+	}
-+
- 	list_del(&mnt->mnt_instance);
- 	if (unlikely(!list_empty(&mnt->mnt_expire)))
- 		list_del(&mnt->mnt_expire);
-@@ -1885,6 +1899,9 @@ static void umount_tree(struct mount *mnt, enum umount_tree_flags how)
- 		 * namespace, etc.
- 		 */
- 		mnt_notify_add(p);
-+
-+		mnt_add_to_ns(umount_mnt_ns, p);
-+		umount_mnt_ns->nr_mounts++;
- 	}
+@@ -5365,6 +5365,12 @@ static int statmount_mnt_root(struct kstatmount *s, struct seq_file *seq)
+ 	return 0;
  }
  
-@@ -4804,7 +4821,7 @@ static int can_idmap_mount(const struct mount_kattr *kattr, struct mount *mnt)
++static int statmount_mnt_point_detached(struct kstatmount *s, struct seq_file *seq)
++{
++	seq_puts(seq, "[detached]");
++	return 0;
++}
++
+ static int statmount_mnt_point(struct kstatmount *s, struct seq_file *seq)
+ {
+ 	struct vfsmount *mnt = s->mnt;
+@@ -5589,7 +5595,11 @@ static int statmount_string(struct kstatmount *s, u64 flag)
+ 		break;
+ 	case STATMOUNT_MNT_POINT:
+ 		offp = &sm->mnt_point;
+-		ret = statmount_mnt_point(s, seq);
++		if (!s->root.mnt && !s->root.dentry)
++			/* detached mount case */
++			ret = statmount_mnt_point_detached(s, seq);
++		else
++			ret = statmount_mnt_point(s, seq);
+ 		break;
+ 	case STATMOUNT_MNT_OPTS:
+ 		offp = &sm->mnt_opts;
+@@ -5743,17 +5753,20 @@ static int do_statmount(struct kstatmount *s, u64 mnt_id, u64 mnt_ns_id,
+ 	if (!s->mnt)
+ 		return -ENOENT;
+ 
+-	err = grab_requested_root(ns, &root);
+-	if (err)
+-		return err;
++	if (!is_umount_ns(ns)) {
++		err = grab_requested_root(ns, &root);
++		if (err)
++			return err;
++	}
+ 
+ 	/*
+ 	 * Don't trigger audit denials. We just want to determine what
+ 	 * mounts to show users.
+ 	 */
+ 	m = real_mount(s->mnt);
+-	if (!is_path_reachable(m, m->mnt.mnt_root, &root) &&
+-	    !ns_capable_noaudit(ns->user_ns, CAP_SYS_ADMIN))
++
++	if (!is_umount_ns(ns) && !is_path_reachable(m, m->mnt.mnt_root, &root) &&
++		!ns_capable_noaudit(ns->user_ns, CAP_SYS_ADMIN))
  		return -EPERM;
  
- 	/* Mount has already been visible in the filesystem hierarchy. */
--	if (!is_anon_ns(mnt->mnt_ns))
-+	if (!is_anon_ns(mnt->mnt_ns) || is_umount_ns(mnt->mnt_ns))
- 		return -EINVAL;
- 
- 	return 0;
+ 	err = security_sb_statfs(s->mnt->mnt_root);
 -- 
 2.51.0
 
