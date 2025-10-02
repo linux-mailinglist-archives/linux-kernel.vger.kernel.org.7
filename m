@@ -1,115 +1,89 @@
-Return-Path: <linux-kernel+bounces-839781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EAB4BB266B
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 04:53:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FF6CBB2674
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 04:55:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F21A87A3681
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 02:52:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E709819C2396
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 02:56:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71F4E287249;
-	Thu,  2 Oct 2025 02:53:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A814028725D;
+	Thu,  2 Oct 2025 02:55:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RyDfaXMj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BnSc6f0T"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C46C8335C7;
-	Thu,  2 Oct 2025 02:53:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE60D335C7;
+	Thu,  2 Oct 2025 02:55:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759373626; cv=none; b=LtecOUzvCpUhsgbYNU1tmHjPWgfBdFbhnh4ErIxD34tL4Bdqcv5P8SFiWFcxhPGf6KBFy97wQhqYuCERzJy5XwWhAQbX/iaAaPY2tCIN/fYbOzJCHdIw99twPlKFSufzScGVS9l7Zec7AqDxahTvw/yHW8j9LhpLdxt51RWr52c=
+	t=1759373744; cv=none; b=QAvfExsI/0dOhbupd0g9F6iCAn5UbFzlXYY9U78ztUgw/mtGeCZLtBOz2tU3BgrEjei4Y33hHjiqL724OnU32jTl0Q3WohA9c+Wnrib9PzKekUjHb3XdWg7j91kI4knRoo3MyfM2Cuk+l23nYfgSlSLuIyV/WQA0N6s7bOZ/1tg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759373626; c=relaxed/simple;
-	bh=k5Fo7WwY3d4EfZhjNQelpmfw9Ke+RYCe8Y1iFx4rh6w=;
+	s=arc-20240116; t=1759373744; c=relaxed/simple;
+	bh=4Q8KN3t8PrMWqPzYc96enM/J37p9JJO8vsuWDUnc5Os=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pbcfAIEU4tB0oG2Q10C+j65voPXprB5Jcne70pdoyse10p82x0PpU9UvvcBT4BO8XPtyAZEc5y5WL7Gb+X3y8WFGfJwQFFW/c32J7z9RG0LprAc59vL3+Yhxk9ze50Pknj6F8yIttzc4cnaJthBI6EPxHkH9Rvk8WI2lKyRMDUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RyDfaXMj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B9B1C4CEF7;
-	Thu,  2 Oct 2025 02:53:45 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hk5xRiVJaB3ijOMI0o6rmWWcGTt1t8oiPhzVGI3hLjQ9LB+dtc10lH6joZ/Psw0ykcHXMJq2gLCyQV5L1zMxOkAH2RBj5OaA1IxF5jooIQwDO0OjhdIK6dSDH5qordVdePG6Nt0zOd7Z/ccDgfr0UdI38zz5O2Nqg4OHjvCv5jA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BnSc6f0T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4386AC4CEF1;
+	Thu,  2 Oct 2025 02:55:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759373626;
-	bh=k5Fo7WwY3d4EfZhjNQelpmfw9Ke+RYCe8Y1iFx4rh6w=;
+	s=k20201202; t=1759373743;
+	bh=4Q8KN3t8PrMWqPzYc96enM/J37p9JJO8vsuWDUnc5Os=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RyDfaXMjrk99bGqmhy78acCjsU/K613xe7YU9tO0izmOmI4uhnQsY/iZT/2TbIMpE
-	 MoBuwV6NvjgHL5i8YXGAX9DuIsL8pVKi58vNuS7ijeUJbWzhafrtZ1PYkM30AyS8nb
-	 jUv2RIujj7kPYZ3/2XnZZZkGVeCDRaSEbXB4KyygfCo/QZj7K2VsKHPkR8Oc2JJGy2
-	 iDJpL963nA3Atv+S53scx/gWeaBRSdHmu3udIHV4W4P++He3Xq3c9E9e+KpImjfktN
-	 qpQK3XLBWSaJQsdmU0UgLd22yZmO47Y9ELThsU2OhSt0stLM7vzfIn66/WDyIUb8Mf
-	 a3qj3TZLufFFw==
-Date: Wed, 1 Oct 2025 21:53:44 -0500
-From: Rob Herring <robh@kernel.org>
-To: Otto =?iso-8859-1?Q?Pfl=FCger?= <otto.pflueger@abscue.de>
-Cc: Sebastian Reichel <sre@kernel.org>,
+	b=BnSc6f0TfYGYZ9WskfKmVbbqXanHjpwnL3DZJl7nJ3etfNAE5Tuw9b8NGu0N3EJXL
+	 0VbLPM2jeBivvOTVJk1Ep4vUaQiq/uo1hU80K09NI1+onWFjhT4IjgwNx1Be6xa8NP
+	 fYFi775l8e7L6nK1x5J3IKRaXOm19ex6c7h6LXleN2QVya6wKgZ5EKjSdjcVce/vvM
+	 Az1dtaNByOfBvWkCjE5f2VkC0ABdNJ3LVT4bbpauYKj0X3pVfv25hC9fM0hzroO+x1
+	 hrB7dOV8yfCc96bxv83Bfdbarn2GWRSNZUUSAm8Bf8Kj9HD0E6WaBof9kMQCCu34Eq
+	 jhNuT2G7w5Fig==
+Date: Wed, 1 Oct 2025 21:55:42 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Dzmitry Sankouski <dsankouski@gmail.com>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	Konrad Dybcio <konradybcio@kernel.org>, Lee Jones <lee@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Orson Zhai <orsonzhai@gmail.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Chunyan Zhang <zhang.lyra@gmail.com>, Lee Jones <lee@kernel.org>,
-	linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/5] dt-bindings: mfd: sc2731: Reference
- sprd,sc2731-poweroff
-Message-ID: <20251002025344.GA2958334-robh@kernel.org>
-References: <20250926-sc2730-reboot-v1-0-62ebfd3d31bb@abscue.de>
- <20250926-sc2730-reboot-v1-2-62ebfd3d31bb@abscue.de>
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Conor Dooley <conor+dt@kernel.org>
+Subject: Re: [PATCH v5 3/3] dt-bindings: max77705: add interrupt-controller
+ property
+Message-ID: <175937374135.2964452.8506735773123499639.robh@kernel.org>
+References: <20250926-starqltechn-correct_max77705_nodes-v5-0-c6ab35165534@gmail.com>
+ <20250926-starqltechn-correct_max77705_nodes-v5-3-c6ab35165534@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250926-sc2730-reboot-v1-2-62ebfd3d31bb@abscue.de>
+In-Reply-To: <20250926-starqltechn-correct_max77705_nodes-v5-3-c6ab35165534@gmail.com>
 
-On Fri, Sep 26, 2025 at 06:23:24PM +0200, Otto Pflüger wrote:
-> Reference the new sprd,sc2731-poweroff bindings and add an example.
+
+On Fri, 26 Sep 2025 20:13:28 +0300, Dzmitry Sankouski wrote:
+> Add interrupt-controller property, because max77705 has dedicated interrupt
+> source register to determine which sub device triggered an interrupt.
 > 
-> Signed-off-by: Otto Pflüger <otto.pflueger@abscue.de>
+> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
 > ---
->  Documentation/devicetree/bindings/mfd/sprd,sc2731.yaml | 8 ++++++++
->  1 file changed, 8 insertions(+)
+> Changes for v5:
+> - group interrupt properties together, including #interrupt-cells
 > 
-> diff --git a/Documentation/devicetree/bindings/mfd/sprd,sc2731.yaml b/Documentation/devicetree/bindings/mfd/sprd,sc2731.yaml
-> index b023e1ef8d3ccdb1d82d64ed1a60d5a712a1b910..a78d7e26b3a2c77b84da84fc23e52f3a22ab14df 100644
-> --- a/Documentation/devicetree/bindings/mfd/sprd,sc2731.yaml
-> +++ b/Documentation/devicetree/bindings/mfd/sprd,sc2731.yaml
-> @@ -52,6 +52,10 @@ properties:
->    '#size-cells':
->      const: 0
->  
-> +  poweroff:
-> +    type: object
-> +    $ref: /schemas/power/reset/sprd,sc2731-poweroff.yaml#
-
-You don't need a child node here as there's no DT resources. Just make 
-the parent node the power off provider.
-
-IOW, a node with only a compatible property is pretty much always wrong 
-(though yes, you can find examples).
-
-> +
->    regulators:
->      type: object
->      $ref: /schemas/regulator/sprd,sc2731-regulator.yaml#
-> @@ -221,6 +225,10 @@ examples:
->            reg = <0xec8>;
->          };
->  
-> +        poweroff {
-> +          compatible = "sprd,sc2731-poweroff";
-> +        };
-> +
->          regulators {
->            compatible = "sprd,sc2731-regulator";
->  
+> Changes in v4:
+> - fix commit message: node -> property
+> - fix commit message: minor reword and punctuation
+> ---
+>  Documentation/devicetree/bindings/mfd/maxim,max77705.yaml | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
 > 
-> -- 
-> 2.50.0
-> 
+
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+
 
