@@ -1,98 +1,547 @@
-Return-Path: <linux-kernel+bounces-840194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49B39BB3CD0
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 13:43:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4E73BB3CD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 13:43:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A73B63A5EB4
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 11:43:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6155019C81B7
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 11:44:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B6753101A3;
-	Thu,  2 Oct 2025 11:42:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EFEB30FC30;
+	Thu,  2 Oct 2025 11:43:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dXf5HugE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="cg4fUyT9";
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="cg4fUyT9"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011005.outbound.protection.outlook.com [52.101.70.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B88392797AF;
-	Thu,  2 Oct 2025 11:42:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759405372; cv=none; b=qUBz2xvV2QOFep9EMmy3pF8UWJoRViKFY4yy7Vd1N3jbECvdwi/Ed/frqGbssRXheUBCFUTdh1GIplGLXBEePy8K7ngbYc+IGKfyu6cfft93GQfsbOfQu2bDywSbmSphQ45BucEzeCj8GsfE/3q/7jI1Nb/EHJhCMX409v4lBsM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759405372; c=relaxed/simple;
-	bh=vbNFbdJYlLnZG2wACTOj7jBkUXMZiUzzUteZi3K/WGk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ldezFmhXYMSBq6gSGGC5sGGO6TUAxaPknLCKDBxrE7ZmjyRjlSOWtFeXtRJZP9+qPbR0qiAD/o8YH/F/bm/RWGB7Vmrgp+2BYGNmVESKIr+KC6iW3uSVgj9zXVx01wqRGNOuIitAm2+tzPRGKUc+JIX97ud4bm5nhhGkiLKrpJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dXf5HugE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3B83C4CEFC;
-	Thu,  2 Oct 2025 11:42:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759405372;
-	bh=vbNFbdJYlLnZG2wACTOj7jBkUXMZiUzzUteZi3K/WGk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dXf5HugE2M/1uw3eIrVJdnXIOaGbLjiyduT4zq89pe0c9hylUVCAqHD5fjitAzcuB
-	 6mAnIDaRYASpySLAhtVXPfY6LszYliFh8id6SuSjfQzJec0JWX54dr3gIzF411Xtcm
-	 JXe509xlNkL8dC57yFEm7OVd545/1NZ+fyWecn4o5hUUN6JydaVLnOBeoc7z0ZtKhq
-	 ktIn261RjE6P5OEdqnQE/O51+K16n2xGHpVhhUnYjkFVks4zcWKXmV/T6ASLQkoZEN
-	 3yuY15Q110BLgK0oHcXF0PBghnVUt0gQuz+0Sl59GOZYAKnhRJueAVThQl6J3IyEFx
-	 BsJ2WcJ6QLqvQ==
-Date: Thu, 2 Oct 2025 12:42:47 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-Cc: angelogioacchino.delregno@collabora.com, conor+dt@kernel.org,
-	krzk+dt@kernel.org, lgirdwood@gmail.com, matthias.bgg@gmail.com,
-	robh@kernel.org, devicetree@vger.kernel.org, kernel@collabora.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org
-Subject: Re: [PATCH v3] dt-bindings: ASoC: Convert MediaTek RT5650 codecs
- bindings to DT schema
-Message-ID: <83df4958-8cdc-4ec4-a77a-0f6132513664@sirena.org.uk>
-References: <20251001183517.83278-1-ariel.dalessandro@collabora.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D76F32797AF
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 11:43:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.5
+ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759405421; cv=fail; b=DfbOcl1+XTlnOTKH9iE1uaP50/4gnVV3NeegQ1HCSD29Mqc6QAQrwT8Pd2xgQBGpLmqzJNtb6ShlpcFi4HEUzC4rp42DeSyQMYAryplRLhj6M37Hj1kghAkBoyUOBMnZDB6Jh6dlKONSMyHXzj/fT1VEcTIkWiUtH+s04u3vQQU=
+ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759405421; c=relaxed/simple;
+	bh=lFyIHpW9nV6p44ME5jOCD/CuZNOsko4MM4W36YP7LyU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=iytgsxRTbQaYG9wNl7QYlufy9CnOtIBKcPW3e99Via7XHRMRDBbxPwofHXXvttrA239+oul4JrqltM+PPJ7LNsZsOJkn/Lg5suytPjv/EyHaJcy/7MqX1LNXrJodVG5uwDS/yjFiOQXWiOMlcPF40CMzzKZzOozFVp3YxgiMyhc=
+ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=cg4fUyT9; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=cg4fUyT9; arc=fail smtp.client-ip=52.101.70.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
+ b=N/PzCHjZGNCWdZHJCsebLE2R4qlXbWYiQXxRynBFiQkSG/drzF+OVLigD1zZZXVSKHYA3U5GMD2ceF3G71M5fR40t/XTk505vrfud9ZdqEGoV5DbscwoKx1M1BcClFR40q1AttnM4WngEdx0o/soZhA2sYRMAsQRpwLcqg05q78U+Oslzqux5RkmqFsdYqFsod/nQtoFJ0di5qi7we72aX6Z78DqQ9I7JnLpzuMfJRtOdTwdNTqHktim8S/9Cg1KKIaN4RZAWVZn6w54H6R3UpZFfIM8Re63+uyuVeFpf9s8sXVM0wwvoK72hYxgVrT3vxI0GF16EplcfEpLII/IIQ==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zIob6CqaZyQZRvTAhRaSJfxFL6RGvYKLnayqbqD051c=;
+ b=Ys/1wjscgq4shEdluoyFEhjqAkabcq6BFL0Jc325gAhM7HmocFhcQxhyLTEoUGx3RPnqf+rWmUNLiAU6JN1HmQ0dTI50e4HzoI6/5HrMlqOocTeqfGDEQwspiNS2mUkwRFwiuLUE6oss2M1XCNCHhkrRUxFRPqnOSmUhuYkiFmRnmQkVZzpeyXErMw5ktqaCx3lWKr3qD0tfZTTKMdm759P1imYyjRTNE6BBtjS8N3lju6APj+UccabyVqg/v9vwrHMcr2Fzc4KgrPfy8fjYhhcSTz0u9LsJSlZbcZC+nz8ygHDftf2AhNaWvE/i/SdoIR9oUVPkRwHCF76H6cEXeQ==
+ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
+ 4.158.2.129) smtp.rcpttodomain=sk.com smtp.mailfrom=arm.com; dmarc=pass
+ (p=none sp=none pct=100) action=none header.from=arm.com; dkim=pass
+ (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
+ spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
+ dmarc=[1,1,header.from=arm.com])
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zIob6CqaZyQZRvTAhRaSJfxFL6RGvYKLnayqbqD051c=;
+ b=cg4fUyT91whG1yTZa1DchSbjDWY3NpQJIRGSW/wEsN23+z8+uF+wQNxb0+ex9pdz/74mAs/T0Is1KiSe7XE/67WKg3JP9b0tWRsocNGJoRp3W1xD01yA9GavP9Z3SYwE5jw03X/1hY87eA+atm6KcyfKnSfiyXEiF2vSJAXL9qM=
+Received: from DUZPR01CA0043.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:468::6) by VI0PR08MB10780.eurprd08.prod.outlook.com
+ (2603:10a6:800:204::10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.18; Thu, 2 Oct
+ 2025 11:43:26 +0000
+Received: from DU6PEPF0000B61F.eurprd02.prod.outlook.com
+ (2603:10a6:10:468:cafe::7e) by DUZPR01CA0043.outlook.office365.com
+ (2603:10a6:10:468::6) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9182.15 via Frontend Transport; Thu,
+ 2 Oct 2025 11:44:15 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
+ smtp.mailfrom=arm.com; dkim=pass (signature was verified)
+ header.d=arm.com;dmarc=pass action=none header.from=arm.com;
+Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
+ 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
+ client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
+Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
+ DU6PEPF0000B61F.mail.protection.outlook.com (10.167.8.134) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9182.15
+ via Frontend Transport; Thu, 2 Oct 2025 11:43:25 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FMKDaBl93ZopNqO24310KVZtAKMe3GYcWmOdVMQ4RdVX33LUGlScJI7i03FnwUk23NDX6ybCzvtfIAMlXtveXprjKohjYrO20XE5pwKRZzcJmQARa4SR1nZ8y2kWqt2nLc6LSFRUCcP3AeTG7Qd1XaT9puW4sCFv5tu6s//MVLPA1IdXFPNdXJJKrrZ2/Iuv/NSLOryg6Pr36fnC82+YUwN+TITYpagNTyFD1qxE7EibN2K6nHOuq1sO8vkyLttdOs2WU9ErVez0dnQC+IVeCFXJdxy0+mWBUpFH1iEa4zohNPTY3P1MroqA5HWeuOGBHoiyMRf28yJ1z2gpuJHxrg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zIob6CqaZyQZRvTAhRaSJfxFL6RGvYKLnayqbqD051c=;
+ b=mVoaxh+sLVmZLp9Gh6dKxFCOykPCmAtV1EEUXjAahnVN/DxXA4tmfNNZxNtZ026KMainfud5QWvTI9LoJdd0vLNAWXEzPnktM8pDrTfv70FO9vIdgQiJTo8/Ci2VOJvL9WN5f0XBU99gQHDW5sd2x9j2LzsNgnAeJy6kZAGZxLLauZGowOaPkyPeL/m1yhgWwtgytrdERcFv5ZceUToTUAEX8/ReqFYMU9e/BLfaaJ9woLlcxo4VBHuJiw3hfGlKZKzkfaZgkOwGHHzY99p69PCsHyvyaNVcYGDRvefjEoI8mfc7vFFGxNK1pyotQvUIIKdVFPulUYDK/MSfBGcuXg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zIob6CqaZyQZRvTAhRaSJfxFL6RGvYKLnayqbqD051c=;
+ b=cg4fUyT91whG1yTZa1DchSbjDWY3NpQJIRGSW/wEsN23+z8+uF+wQNxb0+ex9pdz/74mAs/T0Is1KiSe7XE/67WKg3JP9b0tWRsocNGJoRp3W1xD01yA9GavP9Z3SYwE5jw03X/1hY87eA+atm6KcyfKnSfiyXEiF2vSJAXL9qM=
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=arm.com;
+Received: from GV1PR08MB10521.eurprd08.prod.outlook.com
+ (2603:10a6:150:163::20) by DB8PR08MB5324.eurprd08.prod.outlook.com
+ (2603:10a6:10:11e::19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.17; Thu, 2 Oct
+ 2025 11:42:52 +0000
+Received: from GV1PR08MB10521.eurprd08.prod.outlook.com
+ ([fe80::d430:4ef9:b30b:c739]) by GV1PR08MB10521.eurprd08.prod.outlook.com
+ ([fe80::d430:4ef9:b30b:c739%3]) with mapi id 15.20.9160.017; Thu, 2 Oct 2025
+ 11:42:52 +0000
+Date: Thu, 2 Oct 2025 12:42:48 +0100
+From: Yeoreum Yun <yeoreum.yun@arm.com>
+To: Byungchul Park <byungchul@sk.com>
+Cc: akpm@linux-foundation.org, david@redhat.com, ziy@nvidia.com,
+	matthew.brost@intel.com, joshua.hahnjy@gmail.com, rakie.kim@sk.com,
+	gourry@gourry.net, ying.huang@linux.alibaba.com, apopple@nvidia.com,
+	clameter@sgi.com, kravetz@us.ibm.com, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, max.byungchul.park@gmail.com,
+	kernel_team@skhynix.com, harry.yoo@oracle.com,
+	gwan-gyeong.mun@intel.com, syzkaller@googlegroups.com,
+	ysk@kzalloc.com
+Subject: Re: [RFC] mm/migrate: make sure folio_unlock() before
+ folio_wait_writeback()
+Message-ID: <aN5lOFVFfewXUijF@e129823.arm.com>
+References: <20251002081612.53281-1-byungchul@sk.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251002081612.53281-1-byungchul@sk.com>
+X-ClientProxiedBy: LO4P123CA0531.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:2c5::15) To GV1PR08MB10521.eurprd08.prod.outlook.com
+ (2603:10a6:150:163::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="TE5evtEICq1wpIvP"
-Content-Disposition: inline
-In-Reply-To: <20251001183517.83278-1-ariel.dalessandro@collabora.com>
-X-Cookie: idleness, n.:
+X-MS-TrafficTypeDiagnostic:
+	GV1PR08MB10521:EE_|DB8PR08MB5324:EE_|DU6PEPF0000B61F:EE_|VI0PR08MB10780:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4c176c6b-fac5-4b2f-0f62-08de01a8e5f4
+x-checkrecipientrouted: true
+NoDisclaimer: true
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted:
+ BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info-Original:
+ =?utf-8?B?NzhjN2VaTmZydmZMdnZEWUVURjVwWWZTTFVuSGpNOFIrTS9VWmJiNjAyUUho?=
+ =?utf-8?B?dzRlekM0UUUrREdjb1ZmMkNuRGF3enorUGZ3Vnhnc0c3S0tpR3pZQjdFWTd4?=
+ =?utf-8?B?Qzk2cVpWSG9adS8wVEF6SXE2N3EzWHpwQnJBUkZITy9TREtGT21xd0c2VW9C?=
+ =?utf-8?B?T1Nmak1tN1lZZzdhditUdkpJZU1sZnF3amQ5UldkS1AwY1BwRTRJM1dNTmQ4?=
+ =?utf-8?B?S3dWcWpMUWQrRytmaC9pTnFROWpzN1lMQ3Z6VnJzN09PTXZtSTBjREJ3VFNn?=
+ =?utf-8?B?T0RCU2p3eDFqOG9BWGNFZE1OUWVoYXByU3JYQzZiUmI4eit6eUd6cGZFaXNT?=
+ =?utf-8?B?L05VbXBiMk8wUk9pN1Z4bDBVQUFIQ2NmeU9lanBDck0wemFJejVEVVlSMG1o?=
+ =?utf-8?B?UmxOc0lpUWsyc0RUNkUzckI2eHFHWGp4M0RSckx0S2FYMEhYOFZNMjgzMFNR?=
+ =?utf-8?B?RzZkd1hQeUNaVVlpQ0FTenpnOUg1eUFudVlSRHJGbG1qUUtNQjhSbEVHNHF6?=
+ =?utf-8?B?a01qc0ZxcWpTZ3VPV0lIUEVKSUtiUXdhSUtRMitueEVjdVVrWkdCTXVFRmt2?=
+ =?utf-8?B?MDErTEJkaGNLelRLNHVpR3RjdWUxYkRzRDlmT0lqZE5oU2p4K3pCS0ZFd0lD?=
+ =?utf-8?B?dTBpZ0pjbTJxLzlLUTBvbkhHVXdMTmpzQ0c1RmM3TjJpNU1FMWp2L1V1Q2tV?=
+ =?utf-8?B?Q2dNcXlWekJOcTdJZ0NoZ2pVTlFoeUxaeW81TW1lVUNvVkt0R0xiUWdDRTln?=
+ =?utf-8?B?VXNkb1c1cnZ4WllSODNZRzVyeVUycFRUM05uK3pjeHlLNUFwQm1Id2hhZFZi?=
+ =?utf-8?B?UFp6YWgrSXdMNnJvd0VsbTBCQXJqWVRkajd6Wllrd0QxTEVqTEdoZDk2aHlV?=
+ =?utf-8?B?ZHRoVzA1WHJEbzVPcmVXYkwyMFJvelJtQytuOXdOMlJhUWExdkUyL00wZGM2?=
+ =?utf-8?B?RVpHS2JTNFFvMy8zc0F2UHpHSHBVRm9DSEwzUG1mQndLTnZDb0R5NWZqaDJs?=
+ =?utf-8?B?Z1JXVm1INnBSUzd6TWRkOXA1bFRyckVPeDcxK1hGVWJRR3R6ZjU3TWRtc3ho?=
+ =?utf-8?B?a2VqRi9CcDI4U1VaamJGczF5b3paUUFNVnhWWXhYbHpITENaV0ZxbVJ6Z2sy?=
+ =?utf-8?B?elB4aDdpUDI2VFJTMVdHZzdoT1dvQ1NuQUhMZGU2UElXZ1N5M1Y4SEJGUkxM?=
+ =?utf-8?B?NTlkSjFaRytBMTl2VHpmN1ozUVhFUzlnN0xjbE5saGltUDNJdXMxWXBYMjhF?=
+ =?utf-8?B?ckFvN09rN1JFcm9kNUdyd0hYQkpjLzVuWTFOZll6a21mTXBUWGcxbWJUODBq?=
+ =?utf-8?B?cldycGZ5Y1ZPZXZnYUc0MzU2SFhYTE51cjd3MWFiOWhXMnVUR0NFOVdzbEFY?=
+ =?utf-8?B?TFBqTUdsV2tDK1JxT2Fkb3hpQXdPYm85bTVPRlQ3Z0c5azRaQXhUV3IyNkFS?=
+ =?utf-8?B?c3I1dUUyd2NVWGJzbElkUlJpOWFScTVMZkZmbDYzK3M5NGhXK3o1bVhoNmNu?=
+ =?utf-8?B?d0ZaWU80U1lHeWsvRHdTNmFHbVZGZWE2MzZvNk9sc1BqczlkaTR1NEplTEJz?=
+ =?utf-8?B?eTlpYlhZdmRzN3ZQcGRCc1ZFSXFBT2lYU0l1TXBDK1BUcUEzUTFHU09jY2Nr?=
+ =?utf-8?B?dExJWHdnWEMxSkNBakNiNFVLT0dCUkpMVG5TSktaenJ1Tk9JTlIrdENqcW4r?=
+ =?utf-8?B?cUM2SUFPc3dxTjZFb3U0MFE1c21UbXBudXJNbWV4UkF2bDhYSVpWMFB1Q2E2?=
+ =?utf-8?B?NGNqQmc2bERjdFVQUkpVKzJkRGFEaUV3SUZRODM3bVhVVmxjNWgxa1RTNFNj?=
+ =?utf-8?B?WjNBckFlejRCZ1lRZ3U4RHNyN09GS1pOUk4yZDFJNGMreWVlMERPS2J3N0pK?=
+ =?utf-8?B?dGY3Um5Vb1RtL2dVQkRBcjdWQkh3bmR2Nk9aWDY4ZDZHakN1NkZyYUpHRUZX?=
+ =?utf-8?Q?JeyLq7KTzrg=3D?=
+X-Forefront-Antispam-Report-Untrusted:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV1PR08MB10521.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR08MB5324
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped:
+ DU6PEPF0000B61F.eurprd02.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs:
+	e1ea2fdd-feb1-499f-933d-08de01a8d1a7
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|14060799003|35042699022|376014|7416014|82310400026|36860700013|1800799024|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?UU5xWHNLU2VKWGUxTDNoSFB6aytSeXdwUk5oVUFwYzR4disvS0NuWmtGMFFq?=
+ =?utf-8?B?RXlLMk12bitMN2JtUGFpOU9qZjJHRzgrbjJ6aXMwa2dFcE5qU0xLQmNEaTk1?=
+ =?utf-8?B?V05jVnltQWFqaGtsN0p0dldyMDh2bkJmVTh5N2JHQnVrNmk1ZjZIN21SN1Fs?=
+ =?utf-8?B?Uk13c0U5dXd3VFRvRXVkQkNNS21Fck9QQzNMSzBnZmFhbVRJT3ljOE55SWcz?=
+ =?utf-8?B?OXhmR2NvUE11cURqUE90SEh0S2NzYVJsRFUwYjJtZklFN0R1RnlyUGNOcVpi?=
+ =?utf-8?B?MHU4dWFPSHVtWC9YZnE1ZUh2VjM4K0RqTjYybk9ZVWhsUGJjYXg2RGVPRUVa?=
+ =?utf-8?B?Rlp0M0ExQjVJQ2NFN3YvZGllSHU4MEM5RDlSM2N0andmaVc2K21yOFVReTN2?=
+ =?utf-8?B?SWhLdE5YYzJVRGJtQ21YTzhKaWlSVGZaSVNsb2g0dmViL3c5MkVxT2hXUHBK?=
+ =?utf-8?B?ZEJmT3crMlcxWXByR3pRNFFaR0xSQ0J6cGFxZVFUbEVZRkZSTGt2a0RYQkN5?=
+ =?utf-8?B?M0FIUzhpTmFnRjNHbmFqZFJNb1hLdFphcVZJL2szeTB3ZnA2WGlyVkxCeWNW?=
+ =?utf-8?B?TlhuUXl6cWUyREVYZk4yQkhjNitwRzk5clE4VmNoWFBpNzJEN2FrRkpoUjFp?=
+ =?utf-8?B?VXdxemRVWWxKRkV0ejZadzBxdFdQS1VNQ2NzR0U1cllmVWxkUmNycEtpMDRH?=
+ =?utf-8?B?UFhKNlNRY2lDSzZWc1VmSzNPTUQwZE0vcDVCL2ZxUndjckpzZm1BVXZPaWV5?=
+ =?utf-8?B?c3h1WEpGY1ZRTkJxbTNkZVBERkhFelVDT0RBampqZkZqb2w0UnNzcmpqM2tM?=
+ =?utf-8?B?cWNLdEFnbzFRNXlKd0w3UWRDZHNaaVZYVkMweVBML0pzVUhuUkVxYzVLdDNp?=
+ =?utf-8?B?NFVQWkd6NWtNUllROHFOd3RiR2tQMStmUnZKUjVRWXVxUlEvQmZHK1l2bGtN?=
+ =?utf-8?B?aCszSDY5MnZBU2hKRkxlclpYZkZhcEwxenhkSENvNXZ1MjlralV5aVJwMlVS?=
+ =?utf-8?B?SG54Y0w1dytaRlV3b2FmYnZBdnVzSUNQUkRUQXVjN3ZuTk9pK0k2dXovUkFP?=
+ =?utf-8?B?dGsyRWhkV0NoV1drRlFRM2xoWW9EbS9PTzJlU2luQlYzS3dGZFlnUHpEd002?=
+ =?utf-8?B?N3hFUXlaK0ovcmZFanJ4TTZhVXovZWxlTEt0ckhYS0gxSUJBenRnQWlHWjFH?=
+ =?utf-8?B?MzgzSzR6MUtnNFZkVmx3RjlNR2tJS2FRODNWVzYxNjdHY1QxODFTVjM2UHlq?=
+ =?utf-8?B?bjA4OVM3bEFmMWtqWkN2OUFwU0FmWFFyall5eGs4ZXJiZVl0U1I2ZHJXNUVH?=
+ =?utf-8?B?dVFnWTYrbU8vYjJmNE9sTUpzY0tFZlZJMUlKSjBxRjRuaWR3UUNxNEduZlNM?=
+ =?utf-8?B?cThEc0ZXWG5pbGZ1QURERy9vSXBDQnY5SlRkakRvRmJIcWxWZUY3Wm1zWGZj?=
+ =?utf-8?B?REVpMUFaMkpRbXdnaU91S2licnhVVXljRC9BVUNwK0sxNDl0ZHFEdW12eGFD?=
+ =?utf-8?B?R3Q3WXA4OTZMOHc3OTNpeVZwYUx3UzZsUTh3a1pQbzAvcGtnNUV3VFVpQ292?=
+ =?utf-8?B?bWZUeUMzTndwWWFWcHJlUTMyd2JuRVNCYldVNzgwYVBsRytnekh0SjFYNXFL?=
+ =?utf-8?B?ZzRkOGs3Z3dLdExadE9GL09kbWRqemg3Qm5nVHlBV2tqVW9Dam9kT2dEeFVh?=
+ =?utf-8?B?NDdnTERJMWtldlpzQnZORGc1SXlGUE1kUmF4b0xlTGE3aSs1YjEzbHlJMTg5?=
+ =?utf-8?B?VWQwMTc2cjVwb1d0SHg5c3RIYklWendFbXNWREk0Qnl4eW82c2t5ZkNZMjNn?=
+ =?utf-8?B?RjV0Sy9DOWtmVUI4dUt1L1d6S1JMV1hWdll6WWdDOHNmUlFKSVdkUGhNanIx?=
+ =?utf-8?B?Mk9ocU52MHVDbnN1c0xGL2JrRHBXaTlsUG9VSXYvS1k2Y3ptVGd6YXVWRm5s?=
+ =?utf-8?B?ajRSeVloeTVrOUFtOHFuMUVieTRlVmtoRzN0eWFkRXhaelFLTUVxc3gxaXYz?=
+ =?utf-8?B?TjMvTnQ1SzhVRE03UU1nZnNTd2hCTDJ0ZUdyNnRZRGRaelg3S1JLSS8weXVU?=
+ =?utf-8?Q?as31pv?=
+X-Forefront-Antispam-Report:
+	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(14060799003)(35042699022)(376014)(7416014)(82310400026)(36860700013)(1800799024)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Oct 2025 11:43:25.6206
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4c176c6b-fac5-4b2f-0f62-08de01a8e5f4
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DU6PEPF0000B61F.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR08MB10780
 
+Hi Byoungchul,
 
---TE5evtEICq1wpIvP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> DEPT(Dependency Tracker) reported a deadlock:
+>
+>    ===================================================
+>    DEPT: Circular dependency has been detected.
+>    6.15.11-00046-g2c223fa7bd9a-dirty #13 Not tainted
+>    ---------------------------------------------------
+>    summary
+>    ---------------------------------------------------
+>    *** DEADLOCK ***
+>
+>    context A
+>       [S] (unknown)(pg_locked_map:0)
+>       [W] dept_page_wait_on_bit(pg_writeback_map:0)
+>       [E] dept_page_clear_bit(pg_locked_map:0)
+>
+>    context B
+>       [S] (unknown)(pg_writeback_map:0)
+>       [W] dept_page_wait_on_bit(pg_locked_map:0)
+>       [E] dept_page_clear_bit(pg_writeback_map:0)
+>
+>    [S]: start of the event context
+>    [W]: the wait blocked
+>    [E]: the event not reachable
+>    ---------------------------------------------------
+>    context A's detail
+>    ---------------------------------------------------
+>    context A
+>       [S] (unknown)(pg_locked_map:0)
+>       [W] dept_page_wait_on_bit(pg_writeback_map:0)
+>       [E] dept_page_clear_bit(pg_locked_map:0)
+>
+>    [S] (unknown)(pg_locked_map:0):
+>    (N/A)
+>
+>    [W] dept_page_wait_on_bit(pg_writeback_map:0):
+>    [<ffff800080589c94>] folio_wait_bit+0x2c/0x38
+>    stacktrace:
+>          folio_wait_bit_common+0x824/0x8b8
+>          folio_wait_bit+0x2c/0x38
+>          folio_wait_writeback+0x5c/0xa4
+>          migrate_pages_batch+0x5e4/0x1788
+>          migrate_pages+0x15c4/0x1840
+>          compact_zone+0x9c8/0x1d20
+>          compact_node+0xd4/0x27c
+>          sysctl_compaction_handler+0x104/0x194
+>          proc_sys_call_handler+0x25c/0x3f8
+>          proc_sys_write+0x20/0x2c
+>          do_iter_readv_writev+0x350/0x448
+>          vfs_writev+0x1ac/0x44c
+>          do_pwritev+0x100/0x15c
+>          __arm64_sys_pwritev2+0x6c/0xcc
+>          invoke_syscall.constprop.0+0x64/0x18c
+>          el0_svc_common.constprop.0+0x80/0x198
+>
+>    [E] dept_page_clear_bit(pg_locked_map:0):
+>    [<ffff800080700914>] migrate_folio_undo_src+0x1b4/0x200
+>    stacktrace:
+>          migrate_folio_undo_src+0x1b4/0x200
+>          migrate_pages_batch+0x1578/0x1788
+>          migrate_pages+0x15c4/0x1840
+>          compact_zone+0x9c8/0x1d20
+>          compact_node+0xd4/0x27c
+>          sysctl_compaction_handler+0x104/0x194
+>          proc_sys_call_handler+0x25c/0x3f8
+>          proc_sys_write+0x20/0x2c
+>          do_iter_readv_writev+0x350/0x448
+>          vfs_writev+0x1ac/0x44c
+>          do_pwritev+0x100/0x15c
+>          __arm64_sys_pwritev2+0x6c/0xcc
+>          invoke_syscall.constprop.0+0x64/0x18c
+>          el0_svc_common.constprop.0+0x80/0x198
+>          do_el0_svc+0x28/0x3c
+>          el0_svc+0x50/0x220
+>    ---------------------------------------------------
+>    context B's detail
+>    ---------------------------------------------------
+>    context B
+>       [S] (unknown)(pg_writeback_map:0)
+>       [W] dept_page_wait_on_bit(pg_locked_map:0)
+>       [E] dept_page_clear_bit(pg_writeback_map:0)
+>
+>    [S] (unknown)(pg_writeback_map:0):
+>    (N/A)
+>
+>    [W] dept_page_wait_on_bit(pg_locked_map:0):
+>    [<ffff80008081e478>] bdev_getblk+0x58/0x120
+>    stacktrace:
+>          find_get_block_common+0x224/0xbc4
+>          bdev_getblk+0x58/0x120
+>          __ext4_get_inode_loc+0x194/0x98c
+>          ext4_get_inode_loc+0x4c/0xcc
+>          ext4_reserve_inode_write+0x74/0x158
+>          __ext4_mark_inode_dirty+0xd4/0x4e0
+>          __ext4_ext_dirty+0x118/0x164
+>          ext4_ext_map_blocks+0x1578/0x2ca8
+>          ext4_map_blocks+0x2a4/0xa60
+>          ext4_convert_unwritten_extents+0x1b0/0x3c0
+>          ext4_convert_unwritten_io_end_vec+0x90/0x1a0
+>          ext4_end_io_end+0x58/0x194
+>          ext4_end_io_rsv_work+0xc4/0x150
+>          process_one_work+0x3b4/0xac0
+>          worker_thread+0x2b0/0x53c
+>          kthread+0x1a0/0x33c
+>
+>    [E] dept_page_clear_bit(pg_writeback_map:0):
+>    [<ffff8000809dfc5c>] ext4_finish_bio+0x638/0x820
+>    stacktrace:
+>          folio_end_writeback+0x140/0x488
+>          ext4_finish_bio+0x638/0x820
+>          ext4_release_io_end+0x74/0x188
+>          ext4_end_io_end+0xa0/0x194
+>          ext4_end_io_rsv_work+0xc4/0x150
+>          process_one_work+0x3b4/0xac0
+>          worker_thread+0x2b0/0x53c
+>          kthread+0x1a0/0x33c
+>          ret_from_fork+0x10/0x20
+>
+> To simplify the scenario:
+>
+>    context X (wq worker)	context Y (process context)
+>
+> 				migrate_pages_batch()
+>    ext4_end_io_end()		  ...
+>      ...			  migrate_folio_unmap()
+>      ext4_get_inode_loc()	    ...
+>        ...			    folio_lock() // hold the folio lock
+>        bdev_getblk()		    ...
+>          ...			    folio_wait_writeback() // wait forever
+>          __find_get_block_slow()
+>            ...			    ...
+>            folio_lock() // wait forever
+>            folio_unlock()	  migrate_folio_undo_src()
+> 				    ...
+>      ...			    folio_unlock() // never reachable
+>      ext4_finish_bio()
+> 	...
+> 	folio_end_writeback() // never reachable
+>
+> context X is waiting for the folio lock to be released by context Y,
+> while context Y is waiting for the writeback to end in context X.
+> Ultimately, two contexts are waiting for the event that will never
+> happen, say, deadlock.
+>
+> *Only one* of the following two conditions should be allowed, or we
+> cannot avoid this kind of deadlock:
+>
+>    1. while holding a folio lock (and heading for folio_unlock()),
+>       waiting for a writeback to end,
+>    2. while heading for the writeback end, waiting for the folio lock to
+>       be released,
+>
+> Since allowing 2 and avoiding 1 sound more sensible than the other,
+> remove the first condition by making sure folio_unlock() before
+> folio_wait_writeback() in migrate_folio_unmap().
+>
+> Fixes: 49d2e9cc45443 ("[PATCH] Swap Migration V5: migrate_pages() function")
+> Reported-by: Yunseong Kim <ysk@kzalloc.com>
+> Signed-off-by: Byungchul Park <byungchul@sk.com>
+> Tested-by: Yunseong Kim <ysk@kzalloc.com>
+> ---
+>
+> Hi,
+>
+> Thanks to Yunseong for reporting the issue, testing, and confirming if
+> this patch can resolve the issue.  We used the latest version of DEPT
+> to detect the issue:
+>
+>    https://lore.kernel.org/all/20251002081247.51255-1-byungchul@sk.com/
+>
+> I mentioned in the commit message above like:
+>
+>    *Only one* of the following two conditions should be allowed, or we
+>    cannot avoid this kind of deadlock:
+>
+>       1. while holding a folio lock (and heading for folio_unlock()),
+>          waiting for a writeback to end,
+>       2. while heading for the writeback end, waiting for the folio lock
+>          to be released,
+>
+> Honestly, I'm not convinced which one we should choose between two, I
+> chose 'allowing 2 and avoiding 1' to resolve this issue though.
+>
+> However, please let me know if I was wrong and we should go for
+> 'allowing 1 and avoiding 2'.  If so, I should try a different approach,
+> for example, to fix by preventing folio_lock() or using folio_try_lock()
+> while heading for writeback end in ext4_end_io_end() or something.
+>
+> To Yunseong,
+>
+> The link you shared for a system hang is:
+>
+>    https://gist.github.com/kzall0c/a6091bb2fd536865ca9aabfd017a1fc5
+>
+> I think an important stacktrace for this issue, this is, waiting for
+> PG_writeback, was missed in the log.
+>
+> 	Byungchul
+>
+> ---
+>  mm/migrate.c | 57 +++++++++++++++++++++++++++++++++++++---------------
+>  1 file changed, 41 insertions(+), 16 deletions(-)
+>
+> diff --git a/mm/migrate.c b/mm/migrate.c
+> index 9e5ef39ce73a..60b0b054f27a 100644
+> --- a/mm/migrate.c
+> +++ b/mm/migrate.c
+> @@ -1215,6 +1215,17 @@ static int migrate_folio_unmap(new_folio_t get_new_folio,
+>
+>  	dst->private = NULL;
+>
+> +retry_wait_writeback:
+> +	/*
+> +	 * Only in the case of a full synchronous migration is it
+> +	 * necessary to wait for PageWriteback.  In the async case, the
+> +	 * retry loop is too short and in the sync-light case, the
+> +	 * overhead of stalling is too much.  Plus, do not write-back if
+> +	 * it's in the middle of direct compaction
+> +	 */
+> +	if (folio_test_writeback(src) && mode == MIGRATE_SYNC)
+> +		folio_wait_writeback(src);
+> +
+>  	if (!folio_trylock(src)) {
+>  		if (mode == MIGRATE_ASYNC)
+>  			goto out;
+> @@ -1245,27 +1256,41 @@ static int migrate_folio_unmap(new_folio_t get_new_folio,
+>
+>  		folio_lock(src);
+>  	}
+> -	locked = true;
+> -	if (folio_test_mlocked(src))
+> -		old_page_state |= PAGE_WAS_MLOCKED;
+>
+>  	if (folio_test_writeback(src)) {
+> -		/*
+> -		 * Only in the case of a full synchronous migration is it
+> -		 * necessary to wait for PageWriteback. In the async case,
+> -		 * the retry loop is too short and in the sync-light case,
+> -		 * the overhead of stalling is too much
+> -		 */
+> -		switch (mode) {
+> -		case MIGRATE_SYNC:
+> -			break;
+> -		default:
+> -			rc = -EBUSY;
+> -			goto out;
+> +		if (mode == MIGRATE_SYNC) {
+> +			/*
+> +			 * folio_unlock() is required before trying
+> +			 * folio_wait_writeback().  Or it leads a
+> +			 * deadlock like:
+> +			 *
+> +			 *   context x		context y
+> +			 *   in XXX_io_end()	in migrate_folio_unmap()
+> +			 *
+> +			 *   ...		...
+> +			 *   bdev_getblk();	folio_lock();
+> +			 *
+> +			 *     // wait forever	// wait forever
+> +			 *     folio_lock();	folio_wait_writeback();
+> +			 *
+> +			 *     ...		...
+> +			 *     folio_unlock();
+> +			 *   ...		// never reachable
+> +			 *			folio_unlock();
+> +			 *   // never reachable
+> +			 *   folio_end_writeback();
+> +			 */
+> +			folio_unlock(src);
+> +			goto retry_wait_writeback;
+>  		}
+> -		folio_wait_writeback(src);
+> +		rc = -EBUSY;
+> +		goto out;
+>  	}
+>
+> +	locked = true;
+> +	if (folio_test_mlocked(src))
+> +		old_page_state |= PAGE_WAS_MLOCKED;
+> +
+>  	/*
+>  	 * By try_to_migrate(), src->mapcount goes down to 0 here. In this case,
+>  	 * we cannot notice that anon_vma is freed while we migrate a page.
 
-On Wed, Oct 01, 2025 at 03:35:17PM -0300, Ariel D'Alessandro wrote:
-> Convert the existing text-based DT bindings for Mediatek MT8173 RT5650
-> codecs to a DT schema.
+Hmm, I still have concerns about this change.
+(1) seems to imply that the use of WB_SYNC_ALL by
+mpage_writebacks() is also incorrect. In addition,
+this change could introduce another theoretical livelock
+when the folio enters writeback frequently.
 
-Please submit patches using subject lines reflecting the style for the
-subsystem, this makes it easier for people to identify relevant patches.
-Look at what existing commits in the area you're changing are doing and
-make sure your subject lines visually resemble what they're doing.
-There's no need to resubmit to fix this alone.
+AFAIK, while a folio is under writeback,
+its related buffers won’t be freed by migration, and
+since try_free_buffer() checks the writeback state first,
+taking folio_lock() shouldn’t be necessary while bdev_getblk().
 
---TE5evtEICq1wpIvP
-Content-Type: application/pgp-signature; name="signature.asc"
+Therefore, it seems sufficient to check whether
+the folio is under writeback in __find_get_block_slow(), e.g.:
 
------BEGIN PGP SIGNATURE-----
+diff --git a/fs/buffer.c b/fs/buffer.c
+index 6a8752f7bbed..804d33df6b0f 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -194,6 +194,9 @@ __find_get_block_slow(struct block_device *bdev, sector_t block, bool atomic)
+        if (IS_ERR(folio))
+                goto out;
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjeZTYACgkQJNaLcl1U
-h9CNRQgAgB0/gZ+KlQcFzodFTVNysydvUs64RjVNx19lW3i4SQf/GsUktr4RAh9g
-9fM6ZQz7A8jXbMTRxjR6N+/ePk0Fi0UA+l68gKCNAA05qsLW/8+BQ+reEVHQ9lIi
-CeSYhmUTlX3qcE7AM/bhjSPJxyEqCQM+hDt3Hwj7FYICOD+S1djW7oKo+sHmVsYN
-Lwrxb3cL5cLE2ySupwT6rACvXkA3N969/9FkJI33fPBPM5gSdrxRcmEzxU9qlhQg
-Tm7qISufYk0OjvRcd3+Nm6l2YNrbfolcFyCKWeM2lbPVd17Ryb2E0ft4F71DhL/y
-6n1IvdgVe8vNJ7NEGDu1SYQctIoenw==
-=0b63
------END PGP SIGNATURE-----
++       if (folio_test_writeback(folio))
++               return true;
++
+        /*
+         * Folio lock protects the buffers. Callers that cannot block
+         * will fallback to serializing vs try_to_free_buffers() via
 
---TE5evtEICq1wpIvP--
+Am I missing something?
+
+--
+Sincerely,
+Yeoreum Yun
 
