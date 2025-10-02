@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-840329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E052BB41FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 16:04:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E827BB4205
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 16:04:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B7CF19E1C66
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 14:04:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54C773BCC48
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 14:04:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88EE53128C5;
-	Thu,  2 Oct 2025 14:03:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4687F3126C1;
+	Thu,  2 Oct 2025 14:03:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bRUxiY/A"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Bd6bm1YV"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C7573128A9
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 14:03:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 012E3311977
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 14:03:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759413821; cv=none; b=Hm282eS2jWjeFHVqXqftBSalg68s+d+FrIiTM6kRJ8rYyH9g6/5SrJ+4okJ9AGv272JZKTIgPP9+PzBIedNSzHbZCVs01JAzlWSulD5YHLrisZWWzX4o7SOBAqh5SdytjiA0XH9zH2gA3hql53XlGoUIwIkffd3igGC06n3DWK0=
+	t=1759413828; cv=none; b=izMRMX+EJaUC+pTf7/h7k1JIeGLTxdXNPlooAKs0nIttiWxhQrEAZvdobP1IcmJHYJ1CJtEYwDIentehoxP7L0zvbeF/vhfopmEBoI+NSrJClNBw65BHP4tub/BoIA2cT12UNjD33xHPTD9NPUqGGhp5HHOm+LcTkfIXcEQqOOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759413821; c=relaxed/simple;
-	bh=pu/Wq7yaIyvBO3zNXz8Gt3QQ0JYmGbu8ebJVzjfJJbM=;
+	s=arc-20240116; t=1759413828; c=relaxed/simple;
+	bh=NZEIOIblbdawTCrxGt/Ero7Fwtqw3BTyIDWtF6I6nvk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UdVqeKszj5qoW+d8XH8BUWzSGijPWAIfDxEVhFbFaK0enyUXzK1j8bpbT/9wN8lcRka6vP7/ZozX2KzUFf7itB0Lz9JYJ5ZnyuwEXA4+2n85NEINNmfWjR+VmDFqmLpi0wucfX98ERHG94GEMII+xjcVSLYuWpAC9Vauxe0Xz+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bRUxiY/A; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=nn4OBVxOSV7is3paIBTyj6s+Fu3eV++yW6OpWlORVcfZ9q5SCJEiHwun1AWtLUpo/rQkqkWNd1J/B3aOZ98hKaY0lXTLhPqMI/ps4Wr9CeY4pl35sJXisXvjDPQbf2qXoMtELcLfazdy84aiR1n9KukUgDgpB7iM1PK1FGoR6iM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Bd6bm1YV; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759413819;
+	s=mimecast20190719; t=1759413824;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=IzFlPAZDLxRFUBTmQm4fHS0TbV7GeZRfH8gzkTO+hL0=;
-	b=bRUxiY/AfSt0ITQVPahISGQaGEpgpBjx4+MzfB/kluCdx+pevfgoQkf3QRohLFFsqzKMf3
-	gyBuI/vFkeAa+rhU8/eD4Ss6sRFIBCkilSfrz8yT2Z8cI5phTUH1AzC9G2j33ZNnR9dnyk
-	jk9D8CF+KzCRiwGd0LhHzlv6ovEzq+A=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+	bh=gS6I9+pn+T6EshQ8kERlfqfUoiq0QQuAAxssnEC3ucQ=;
+	b=Bd6bm1YVqDH5eAxRJxODOtXqsS8s1Bo1eo9RbwITRjZ55RBGWQ7ND/aBdoGnBqF6ckylMi
+	Vhd7dEsyDugBgqobjRpjlumXMFbME9kQ+OxCVINluotipZTn3lFl+wsHak2HxhlUEWLcZZ
+	If0EtvSTVjs5yik37Nu+kUysWlf6luw=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-532-yLLmgC9SPACel5eoVWZ0FA-1; Thu,
- 02 Oct 2025 10:03:35 -0400
-X-MC-Unique: yLLmgC9SPACel5eoVWZ0FA-1
-X-Mimecast-MFC-AGG-ID: yLLmgC9SPACel5eoVWZ0FA_1759413812
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-306--f-uMXj2O52s0GBU6Y1kxQ-1; Thu,
+ 02 Oct 2025 10:03:39 -0400
+X-MC-Unique: -f-uMXj2O52s0GBU6Y1kxQ-1
+X-Mimecast-MFC-AGG-ID: -f-uMXj2O52s0GBU6Y1kxQ_1759413817
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7669C1956066;
-	Thu,  2 Oct 2025 14:03:31 +0000 (UTC)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 072D11955D7B;
+	Thu,  2 Oct 2025 14:03:37 +0000 (UTC)
 Received: from warthog.procyon.org.com (unknown [10.42.28.24])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 91E9E19560B8;
-	Thu,  2 Oct 2025 14:03:28 +0000 (UTC)
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 0548130002C6;
+	Thu,  2 Oct 2025 14:03:32 +0000 (UTC)
 From: David Howells <dhowells@redhat.com>
 To: Eric Biggers <ebiggers@kernel.org>
 Cc: David Howells <dhowells@redhat.com>,
@@ -65,12 +65,12 @@ Cc: David Howells <dhowells@redhat.com>,
 	Stephan Mueller <smueller@chronox.de>,
 	linux-crypto@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Harald Freudenberger <freude@linux.ibm.com>,
-	Holger Dengler <dengler@linux.ibm.com>,
-	linux-s390@vger.kernel.org
-Subject: [PATCH v5 1/5] s390/sha3: Rename conflicting functions
-Date: Thu,  2 Oct 2025 15:03:15 +0100
-Message-ID: <20251002140321.2639064-2-dhowells@redhat.com>
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v5 2/5] arm64/sha3: Rename conflicting functions
+Date: Thu,  2 Oct 2025 15:03:16 +0100
+Message-ID: <20251002140321.2639064-3-dhowells@redhat.com>
 In-Reply-To: <20251002140321.2639064-1-dhowells@redhat.com>
 References: <20251002140321.2639064-1-dhowells@redhat.com>
 Precedence: bulk
@@ -80,199 +80,92 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Rename the s390 sha3_* functions to have an "s390_" prefix to avoid
+Rename the arm64 sha3_* functions to have an "arm64_" prefix to avoid
 conflict with generic code.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
-Acked-By: Harald Freudenberger <freude@linux.ibm.com>
 cc: Eric Biggers <ebiggers@kernel.org>
 cc: Jason A. Donenfeld <Jason@zx2c4.com>
 cc: Ard Biesheuvel <ardb@kernel.org>
-cc: Holger Dengler <dengler@linux.ibm.com>
+cc: Catalin Marinas <catalin.marinas@arm.com>
+cc: Will Deacon <will@kernel.org>
 cc: Herbert Xu <herbert@gondor.apana.org.au>
 cc: Stephan Mueller <smueller@chronox.de>
 cc: linux-crypto@vger.kernel.org
-cc: linux-s390@vger.kernel.org
+cc: linux-arm-kernel@lists.infradead.org
 ---
- arch/s390/crypto/sha3_256_s390.c | 26 +++++++++++++-------------
- arch/s390/crypto/sha3_512_s390.c | 26 +++++++++++++-------------
- 2 files changed, 26 insertions(+), 26 deletions(-)
+ arch/arm64/crypto/sha3-ce-glue.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/arch/s390/crypto/sha3_256_s390.c b/arch/s390/crypto/sha3_256_s390.c
-index 03bb4f4bab70..fd5ecae60a57 100644
---- a/arch/s390/crypto/sha3_256_s390.c
-+++ b/arch/s390/crypto/sha3_256_s390.c
-@@ -19,7 +19,7 @@
+diff --git a/arch/arm64/crypto/sha3-ce-glue.c b/arch/arm64/crypto/sha3-ce-glue.c
+index b4f1001046c9..426d8044535a 100644
+--- a/arch/arm64/crypto/sha3-ce-glue.c
++++ b/arch/arm64/crypto/sha3-ce-glue.c
+@@ -31,7 +31,7 @@ MODULE_ALIAS_CRYPTO("sha3-512");
+ asmlinkage int sha3_ce_transform(u64 *st, const u8 *data, int blocks,
+ 				 int md_len);
  
- #include "sha.h"
- 
--static int sha3_256_init(struct shash_desc *desc)
-+static int s390_sha3_256_init(struct shash_desc *desc)
+-static int sha3_update(struct shash_desc *desc, const u8 *data,
++static int arm64_sha3_update(struct shash_desc *desc, const u8 *data,
+ 		       unsigned int len)
  {
- 	struct s390_sha_ctx *sctx = shash_desc_ctx(desc);
- 
-@@ -32,7 +32,7 @@ static int sha3_256_init(struct shash_desc *desc)
- 	return 0;
+ 	struct sha3_state *sctx = shash_desc_ctx(desc);
+@@ -55,8 +55,8 @@ static int sha3_update(struct shash_desc *desc, const u8 *data,
+ 	return len;
  }
  
--static int sha3_256_export(struct shash_desc *desc, void *out)
-+static int s390_sha3_256_export(struct shash_desc *desc, void *out)
+-static int sha3_finup(struct shash_desc *desc, const u8 *src, unsigned int len,
+-		      u8 *out)
++static int arm64_sha3_finup(struct shash_desc *desc, const u8 *src, unsigned int len,
++			    u8 *out)
  {
- 	struct s390_sha_ctx *sctx = shash_desc_ctx(desc);
- 	union {
-@@ -50,7 +50,7 @@ static int sha3_256_export(struct shash_desc *desc, void *out)
- 	return 0;
- }
- 
--static int sha3_256_import(struct shash_desc *desc, const void *in)
-+static int s390_sha3_256_import(struct shash_desc *desc, const void *in)
- {
- 	struct s390_sha_ctx *sctx = shash_desc_ctx(desc);
- 	union {
-@@ -68,22 +68,22 @@ static int sha3_256_import(struct shash_desc *desc, const void *in)
- 	return 0;
- }
- 
--static int sha3_224_import(struct shash_desc *desc, const void *in)
-+static int s390_sha3_224_import(struct shash_desc *desc, const void *in)
- {
- 	struct s390_sha_ctx *sctx = shash_desc_ctx(desc);
- 
--	sha3_256_import(desc, in);
-+	s390_sha3_256_import(desc, in);
- 	sctx->func = CPACF_KIMD_SHA3_224;
- 	return 0;
- }
- 
- static struct shash_alg sha3_256_alg = {
- 	.digestsize	=	SHA3_256_DIGEST_SIZE,	   /* = 32 */
--	.init		=	sha3_256_init,
-+	.init		=	s390_sha3_256_init,
- 	.update		=	s390_sha_update_blocks,
- 	.finup		=	s390_sha_finup,
--	.export		=	sha3_256_export,
--	.import		=	sha3_256_import,
-+	.export		=	s390_sha3_256_export,
-+	.import		=	s390_sha3_256_import,
- 	.descsize	=	S390_SHA_CTX_SIZE,
- 	.statesize	=	SHA3_STATE_SIZE,
- 	.base		=	{
-@@ -96,22 +96,22 @@ static struct shash_alg sha3_256_alg = {
- 	}
- };
- 
--static int sha3_224_init(struct shash_desc *desc)
-+static int s390_sha3_224_init(struct shash_desc *desc)
- {
- 	struct s390_sha_ctx *sctx = shash_desc_ctx(desc);
- 
--	sha3_256_init(desc);
-+	s390_sha3_256_init(desc);
- 	sctx->func = CPACF_KIMD_SHA3_224;
- 	return 0;
- }
- 
- static struct shash_alg sha3_224_alg = {
- 	.digestsize	=	SHA3_224_DIGEST_SIZE,
--	.init		=	sha3_224_init,
-+	.init		=	s390_sha3_224_init,
- 	.update		=	s390_sha_update_blocks,
- 	.finup		=	s390_sha_finup,
--	.export		=	sha3_256_export, /* same as for 256 */
--	.import		=	sha3_224_import, /* function code different! */
-+	.export		=	s390_sha3_256_export, /* same as for 256 */
-+	.import		=	s390_sha3_224_import, /* function code different! */
- 	.descsize	=	S390_SHA_CTX_SIZE,
- 	.statesize	=	SHA3_STATE_SIZE,
- 	.base		=	{
-diff --git a/arch/s390/crypto/sha3_512_s390.c b/arch/s390/crypto/sha3_512_s390.c
-index a5c9690eecb1..f4b52a3a0433 100644
---- a/arch/s390/crypto/sha3_512_s390.c
-+++ b/arch/s390/crypto/sha3_512_s390.c
-@@ -18,7 +18,7 @@
- 
- #include "sha.h"
- 
--static int sha3_512_init(struct shash_desc *desc)
-+static int s390_sha3_512_init(struct shash_desc *desc)
- {
- 	struct s390_sha_ctx *sctx = shash_desc_ctx(desc);
- 
-@@ -31,7 +31,7 @@ static int sha3_512_init(struct shash_desc *desc)
- 	return 0;
- }
- 
--static int sha3_512_export(struct shash_desc *desc, void *out)
-+static int s390_sha3_512_export(struct shash_desc *desc, void *out)
- {
- 	struct s390_sha_ctx *sctx = shash_desc_ctx(desc);
- 	union {
-@@ -49,7 +49,7 @@ static int sha3_512_export(struct shash_desc *desc, void *out)
- 	return 0;
- }
- 
--static int sha3_512_import(struct shash_desc *desc, const void *in)
-+static int s390_sha3_512_import(struct shash_desc *desc, const void *in)
- {
- 	struct s390_sha_ctx *sctx = shash_desc_ctx(desc);
- 	union {
-@@ -67,22 +67,22 @@ static int sha3_512_import(struct shash_desc *desc, const void *in)
- 	return 0;
- }
- 
--static int sha3_384_import(struct shash_desc *desc, const void *in)
-+static int s390_sha3_384_import(struct shash_desc *desc, const void *in)
- {
- 	struct s390_sha_ctx *sctx = shash_desc_ctx(desc);
- 
--	sha3_512_import(desc, in);
-+	s390_sha3_512_import(desc, in);
- 	sctx->func = CPACF_KIMD_SHA3_384;
- 	return 0;
- }
- 
- static struct shash_alg sha3_512_alg = {
- 	.digestsize	=	SHA3_512_DIGEST_SIZE,
--	.init		=	sha3_512_init,
-+	.init		=	s390_sha3_512_init,
- 	.update		=	s390_sha_update_blocks,
- 	.finup		=	s390_sha_finup,
--	.export		=	sha3_512_export,
--	.import		=	sha3_512_import,
-+	.export		=	s390_sha3_512_export,
-+	.import		=	s390_sha3_512_import,
- 	.descsize	=	S390_SHA_CTX_SIZE,
- 	.statesize	=	SHA3_STATE_SIZE,
- 	.base		=	{
-@@ -97,22 +97,22 @@ static struct shash_alg sha3_512_alg = {
- 
- MODULE_ALIAS_CRYPTO("sha3-512");
- 
--static int sha3_384_init(struct shash_desc *desc)
-+static int s390_sha3_384_init(struct shash_desc *desc)
- {
- 	struct s390_sha_ctx *sctx = shash_desc_ctx(desc);
- 
--	sha3_512_init(desc);
-+	s390_sha3_512_init(desc);
- 	sctx->func = CPACF_KIMD_SHA3_384;
- 	return 0;
- }
- 
- static struct shash_alg sha3_384_alg = {
- 	.digestsize	=	SHA3_384_DIGEST_SIZE,
--	.init		=	sha3_384_init,
-+	.init		=	s390_sha3_384_init,
- 	.update		=	s390_sha_update_blocks,
- 	.finup		=	s390_sha_finup,
--	.export		=	sha3_512_export, /* same as for 512 */
--	.import		=	sha3_384_import, /* function code different! */
-+	.export		=	s390_sha3_512_export, /* same as for 512 */
-+	.import		=	s390_sha3_384_import, /* function code different! */
- 	.descsize	=	S390_SHA_CTX_SIZE,
- 	.statesize	=	SHA3_STATE_SIZE,
- 	.base		=	{
+ 	struct sha3_state *sctx = shash_desc_ctx(desc);
+ 	struct crypto_shash *tfm = desc->tfm;
+@@ -90,8 +90,8 @@ static int sha3_finup(struct shash_desc *desc, const u8 *src, unsigned int len,
+ static struct shash_alg algs[] = { {
+ 	.digestsize		= SHA3_224_DIGEST_SIZE,
+ 	.init			= crypto_sha3_init,
+-	.update			= sha3_update,
+-	.finup			= sha3_finup,
++	.update			= arm64_sha3_update,
++	.finup			= arm64_sha3_finup,
+ 	.descsize		= SHA3_STATE_SIZE,
+ 	.base.cra_name		= "sha3-224",
+ 	.base.cra_driver_name	= "sha3-224-ce",
+@@ -102,8 +102,8 @@ static struct shash_alg algs[] = { {
+ }, {
+ 	.digestsize		= SHA3_256_DIGEST_SIZE,
+ 	.init			= crypto_sha3_init,
+-	.update			= sha3_update,
+-	.finup			= sha3_finup,
++	.update			= arm64_sha3_update,
++	.finup			= arm64_sha3_finup,
+ 	.descsize		= SHA3_STATE_SIZE,
+ 	.base.cra_name		= "sha3-256",
+ 	.base.cra_driver_name	= "sha3-256-ce",
+@@ -114,8 +114,8 @@ static struct shash_alg algs[] = { {
+ }, {
+ 	.digestsize		= SHA3_384_DIGEST_SIZE,
+ 	.init			= crypto_sha3_init,
+-	.update			= sha3_update,
+-	.finup			= sha3_finup,
++	.update			= arm64_sha3_update,
++	.finup			= arm64_sha3_finup,
+ 	.descsize		= SHA3_STATE_SIZE,
+ 	.base.cra_name		= "sha3-384",
+ 	.base.cra_driver_name	= "sha3-384-ce",
+@@ -126,8 +126,8 @@ static struct shash_alg algs[] = { {
+ }, {
+ 	.digestsize		= SHA3_512_DIGEST_SIZE,
+ 	.init			= crypto_sha3_init,
+-	.update			= sha3_update,
+-	.finup			= sha3_finup,
++	.update			= arm64_sha3_update,
++	.finup			= arm64_sha3_finup,
+ 	.descsize		= SHA3_STATE_SIZE,
+ 	.base.cra_name		= "sha3-512",
+ 	.base.cra_driver_name	= "sha3-512-ce",
 
 
