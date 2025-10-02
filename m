@@ -1,125 +1,94 @@
-Return-Path: <linux-kernel+bounces-840001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D22D6BB345B
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 10:45:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AC7EBB3515
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 10:49:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2483219E2A3A
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 08:43:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0974A540CC4
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 08:43:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BCDA313539;
-	Thu,  2 Oct 2025 08:33:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26A9D2FFF8E;
+	Thu,  2 Oct 2025 08:39:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eg3qDZfA"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PfaEfQu0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DC642F361F
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 08:33:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FC3F2F261D;
+	Thu,  2 Oct 2025 08:39:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759394021; cv=none; b=g8V3FZEmnajVRpbCl1cUYSJeUfIeUhQRRGnusAGOaIztQYTGMM8sSBVCJo5qtVfnni1NRJ2WwRZ0PhTF1et/+YoULIaQ4dpYl2XvW28zcSG5VCmyIc5ltxF7ub74Zra1cESqrrTfrO6/9uu/MhPO3GMe+WhjbpqKqlLXw25ejPU=
+	t=1759394351; cv=none; b=g0SC0c9mLE3L3OCfpabc5M7HeEGKpqkzROtoOCr+L+TB5aqlVntoqmB6/D0ctHtkEa2Gfg1yLrN9WtxF8nVkH7qjkMl6qe6uBR1XVIf0T2lLtZB7Z/14rT9VU4WPIB8jlMyBkYX7B9n8sZCbn4lTzPXXC6062u3rJCs7RFDaTlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759394021; c=relaxed/simple;
-	bh=VUn0hFGRPODeVa/MzbiuBzzDqAKnT3J0AdauWCw0CO8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AuchWhokr3e1dm7lSnC4/FKkIhVsJ8nR3Uo37XMa0YQjI0hr3cNhAnGziIycRPNQrfxosElN1xjqlvv6zccUvZ5hsIowSflmFIdyvv6v6d2GlTc6C85BhelFQSKtHxR1hlRTvJbtayIlJXXm9I2MsUOK4HSV659hO0vPi9LJHRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eg3qDZfA; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-57e8e67aa3eso2624550e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 01:33:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759394016; x=1759998816; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rCnWTNE47EKUFdNbhO9xh7Mmv5d7MGU177iaBEqF0KQ=;
-        b=eg3qDZfAnyNP/5dG9RiUbkT9joDN8dswm3lHEidhkw0bfqa93CsLQQHZk57Xk4mmZ+
-         v+u5HLpQI2DduDv/lVSE1NIOPJHGXf/XXTbFbLX5qSfmE6Fwg+WTDX4Hi/GS4NExRTIW
-         89vKLWdNBEkthBbwDGARCjsfYqThOtyUjQdUQvp+Nu2/erPYF50Gz8cve9vAUPPbveTg
-         rwjrUUUMJ8y3g8kaCUOZ0l1sYjpxxBLZNYUGLpg1mltE9rFyXgWkwoY0gWkSr04iRdTf
-         EO4dDym7FYWsXZSymNT9ZUjWSs6kQJvaPewmSmuSOJKPsT0+wuuJ4e0I7cl0iBmmlnuo
-         cyHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759394016; x=1759998816;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rCnWTNE47EKUFdNbhO9xh7Mmv5d7MGU177iaBEqF0KQ=;
-        b=EOCV7XN45ZvWK4AaknS8GXUZ/Ny8rBgNYYM1LG4pKfC44k00zir9khM8vB0FyKxM3H
-         rH4dd0OumzHzFt5Qhgm7ynnXIlcVqftKki/71AVQTVA/SSM2HSEQfnilsRLtAoMaWAeH
-         0KNQ9yUcA0gSij6SyN3blwfN+yidPGfLODHXxuF8NilGyix+xdCxY4BXWdxs2gAUKMW3
-         lPZCYV1A69uuk39TOGWEVzNaKw2OgCx/W4bpQ9ifKZd8grviHxdr2eWajW7t8zlyVGpG
-         snnMfQAbOUAU6ekQEIiBpgKqmgU0Yd4hpvO5CcnqCgr+A1RBWIcXfaxznF8KTZ/jb0xE
-         BhMw==
-X-Forwarded-Encrypted: i=1; AJvYcCWJVkt8Fh9KrEdpjn75QJcoOXnCnzvBDofJfQiN1lauYkYV9Pl9vpS1yCCyTo+Z/+aEaiz55Z3Cppq0dBQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcyLNrTp0jYrPCehj/qG7O2AxnrsmqMzXm4Sv5AhnAq53VYNy+
-	gEYTx7zLy6L8ON/4R+061sEfqv4LAtb9kgHXISmiD6rbTYZIRbbOcI9Y
-X-Gm-Gg: ASbGnctWI3negblHaIK00T4QhJUcjCEVWdlt6UgY8vG/APnXZ5WHoTJrqsY1pgw/3CD
-	YapFMzwQ6oHvwzgUWzcVhASRqdQAhIRu8DkQHmirEYVNsOVdOJao32BqsIGr68HOplio4wRIEFO
-	WeVvJflM/p8KChuSWBQKqPj9h/tZrrrqgolAU5Y431gBsQhGHeRi7E2bzBB1f8NRn38l7xDnPWk
-	Z6qtsYYpUSZl3YnQUShClcsozk8/1qayHK9e4raCKibropgLB6KxvwEqEXga82gS5tcS42Kc8B6
-	EKnhQCjMSwwp3EbRNBCRmHOjpQEhojDRbvTaeM/eAoBBDswlmczc68MgVN8HsQvbfKPRcbJZJew
-	45m0q+fk2mv9oQef2k5O7RCpSK7G/oL+gxWx+/MczhW4ZtZIjY4ccg5mHLyILUtgRmXxHawz1UK
-	x2Ux0MBtDT3iNMokmpUDHY0xmNhVZ7AtgZtvqPKnlv
-X-Google-Smtp-Source: AGHT+IHjcjwtFqspT76BDrqWmxGqO8qvZJDfBRE/OUo2b+yHt06K2O/V4pEtvb4W9p4Ul/oCXQ8WRg==
-X-Received: by 2002:a05:6512:401a:b0:58a:ff9b:2234 with SMTP id 2adb3069b0e04-58b00b3d66amr894765e87.2.1759394016142;
-        Thu, 02 Oct 2025 01:33:36 -0700 (PDT)
-Received: from localhost.localdomain (broadband-109-173-93-221.ip.moscow.rt.ru. [109.173.93.221])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58b0114033dsm632852e87.53.2025.10.02.01.33.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 01:33:35 -0700 (PDT)
-From: Alexandr Sapozhnkiov <alsp705@gmail.com>
-To: Karol Herbst <kherbst@redhat.com>,
-	Lyude Paul <lyude@redhat.com>,
-	Danilo Krummrich <dakr@redhat.com>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	nouveau@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Cc: Alexandr Sapozhnikov <alsp705@gmail.com>,
-	lvc-project@linuxtesting.org
-Subject: [PATCH] gpu/drm/nouveau/nvif: fix a null dereference in nvif_client_ctor()
-Date: Thu,  2 Oct 2025 11:33:30 +0300
-Message-ID: <20251002083332.11-1-alsp705@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1759394351; c=relaxed/simple;
+	bh=3Qpsm4nFL3tgcFKEF1NONo4gOR6GP4LHeXjUsz+FLlM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NYBOS1AJsBQpSRwESMeKV6OgSDlk7hE7O06wY6A82Ahv1mbwZipTPolCGqjKfkkYWCVMPuYyq7dpXHZ2veePeZ8pVlc1DOEgHNjJ6ImTJEDb/rZxNdcLZV0FqdYA/LqBm3Qpyx0jN1NcwtTS6uqoh/w2I5B8OuTCU7Bk1keC5zs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PfaEfQu0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A2EDC4CEF4;
+	Thu,  2 Oct 2025 08:39:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759394350;
+	bh=3Qpsm4nFL3tgcFKEF1NONo4gOR6GP4LHeXjUsz+FLlM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=PfaEfQu0ZbAbM/shf4t1xes4Gk2vUBdWTp/DgaqE3OiDZqzry9t2Toz1meYeTYVjh
+	 W1Pu8j8XGG4byXnNVgIFlHkO9JS+hzExYzZddJG++F6ts6CxkbIBU1r4EVha8oyu3i
+	 jzlW7vkfk2ZQ7FctLHHoh7rmwHkJSJu8SgLUMVYlIknkI8DuDDbJTGFEIV0qbhxbfE
+	 l1Dr2s/mR38JitRsQ8ydlAL/iKev7YllDCAjd9+xPbRUsgcxB9CHHFiOSUsURAtKOh
+	 Wuzg1R7h9TbmDXF08HR+MhDTsoA+csOqkNSj2h8VFzWT5UwkZWlKiSUk8aO/kOgLUJ
+	 EwXRp4uLKatMg==
+From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Menglong Dong <menglong8.dong@gmail.com>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Menglong Dong <dongml2@chinatelecom.cn>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	oliver.sang@intel.com
+Subject: [PATCH] tracing: fprobe: Fix to init fprobe_ip_table earlier
+Date: Thu,  2 Oct 2025 17:39:04 +0900
+Message-ID:  <175939434403.3665022.13030530757238556332.stgit@mhiramat.tok.corp.google.com>
+X-Mailer: git-send-email 2.51.0.618.g983fd99d29-goog
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-From: Alexandr Sapozhnikov <alsp705@gmail.com>
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-If the name parameter can be NULL, then you should not do 
-strncpy before checking name for NULL.
+Since the fprobe_ip_table is used from module unloading in
+the failure path of load_module(), it must be initialized in
+the earlier timing than late_initcall(). Unless that, the
+fprobe_module_callback() will use an uninitialized spinlock of
+fprobe_ip_table.
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+Initialize fprobe_ip_table in core_initcall which is the same
+timing as ftrace.
 
-Signed-off-by: Alexandr Sapozhnikov <alsp705@gmail.com>
+Reported-by: kernel test robot <oliver.sang@intel.com>
+Closes: https://lore.kernel.org/oe-lkp/202509301440.be4b3631-lkp@intel.com
+Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 ---
- drivers/gpu/drm/nouveau/nvif/client.c | 2 +-
+ kernel/trace/fprobe.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nvif/client.c b/drivers/gpu/drm/nouveau/nvif/client.c
-index 3a27245f467f..3cfe420b5156 100644
---- a/drivers/gpu/drm/nouveau/nvif/client.c
-+++ b/drivers/gpu/drm/nouveau/nvif/client.c
-@@ -69,7 +69,7 @@ nvif_client_ctor(struct nvif_client *parent, const char *name, u64 device,
- 	} nop = {};
- 	int ret;
- 
--	strscpy_pad(args.name, name, sizeof(args.name));
-+	strscpy_pad(args.name, name ? name : "nvifClient", sizeof(args.name));
- 	ret = nvif_object_ctor(parent != client ? &parent->object : NULL,
- 			       name ? name : "nvifClient", 0,
- 			       NVIF_CLASS_CLIENT, &args, sizeof(args),
--- 
-2.43.0
+diff --git a/kernel/trace/fprobe.c b/kernel/trace/fprobe.c
+index 95e43814b85b..99d83c08b9e2 100644
+--- a/kernel/trace/fprobe.c
++++ b/kernel/trace/fprobe.c
+@@ -847,4 +847,4 @@ static int __init fprobe_initcall(void)
+ 	rhltable_init(&fprobe_ip_table, &fprobe_rht_params);
+ 	return 0;
+ }
+-late_initcall(fprobe_initcall);
++core_initcall(fprobe_initcall);
 
 
