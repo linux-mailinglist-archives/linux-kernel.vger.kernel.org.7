@@ -1,515 +1,156 @@
-Return-Path: <linux-kernel+bounces-840533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2289ABB49FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 19:11:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3732BB4A03
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 19:12:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7F761720E0
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 17:11:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B048A19E4477
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 17:12:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CAA8269CE6;
-	Thu,  2 Oct 2025 17:11:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 906E9269CE6;
+	Thu,  2 Oct 2025 17:12:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="P4v99KR9"
-Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012020.outbound.protection.outlook.com [40.93.195.20])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="dXM5k7f9"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D060922758F
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 17:11:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A1EA22758F
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 17:12:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759425078; cv=fail; b=siWom4p1VR/6fJrdY31YpZd0uZKsm24FmUpTfqsIBGvMmT6RoKvJjixTFgpJTigzqGXNCxwacyafblIfJNKKyGAej85fp357hY1ofaizdc3cupzRe40+SXT4n6VJCngNz7Dh2A9vURc1WCKQIj9HzSjkOP/4noKR1VgBtSN8LEI=
+	t=1759425136; cv=pass; b=GHFLda29NYK0/F3Q6i/EWgKC4ui9ZZXxvKvmT+Ww82dbLTjIigWkmjn7DBn+6xhvBXeE5GhnpNwTwXe/4pCkvMUmcrpR0QtmqZrMk7zMax2BSaAuMmW9nygAvwpONOjMRnz5ub+WTvQSu688f0Xy1fImUH/pcdfv5HX64GRcnIA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759425078; c=relaxed/simple;
-	bh=mFii2MBgx636SkrdpKGVtH+o8aqVshKwdx1Ys0JNUXM=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=AweOtiE1pT1y36a9x6ZL/OVzDbv77QJ94AGNIKRm8IhdT8jqwtVGqJ2H01mtRl3kCT8RvHOTcELuEWnzX1BF+YiCaQiesrqnI15/P6EoL/kgH0KJWV8Ps4m10pS0806vCL5ruv0iNbCEIw6AjLXjnuyCHsBRv6pBZO84Z8xwUII=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=P4v99KR9; arc=fail smtp.client-ip=40.93.195.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=w1K7A4k3W61DqMrpihrXsiNyVFSO8Iuqc1MRwAKHT8qoowApDhwyAiesL84HUzjgbrMYtvJUtLSYctH4LXKLtjTIEgcGgdPF4d3XFr+5TTicTnjIH8b2vxfjHZF/5UwlQyiPctth7K9VROmnojCUo0VENimdYwQsCXvlen9ugtkJkt4gbS6xI9j3boE4QBcQmRHMMOZiOKlWizPYhZWlSBHvyu13i49aBNhXDvWx5v1geWNO7ihKy6JouK3RAGf2KrZnyXfE7Qcymli5kMdFPvijmYH0kSR/oQUKaPryoR0k/hRpf87X7hs2+SbrHhjJ0B7nO7rKUNQCL8GOqcbqYA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=huNcEIewhipS44zElWNdT3WqoFwT0Wl2BEoh8hmrdfQ=;
- b=phhi2zzcnAs3doiu6n9DHqNeOgYEdVVHxRyPkVtoslbjjmXMtDFiSBw1Xcpht0g8+QSta+ZgT4KZVDO8YHt3TbBHPgd21ibAz7NLcEuUTZV6TehEmsl5B9XyLarfoNsY63XuGNTO7b39vVFF8ydRWqMSQRAmvI7iY5kNWEf9RHFu908OA8vpl1HiQRkfQ3GVoRlLqYhtBMyTmqa2Bh2VThwC1159HFuClZtLsa67gn4J7uq1fnR2NAiLp9A4oJ30AVeUnbMiSgFhcGOPgkNxfkVwLwCdKpYl6jAvBa8UJaej4yC0+X+VMIXSVa3zxXYjCvZsQBx2xlPuYVz9shuZaQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=huNcEIewhipS44zElWNdT3WqoFwT0Wl2BEoh8hmrdfQ=;
- b=P4v99KR98wn3UWbp0t2x9HT7CTxV3wYcne+cgmORzu2Uy00a5ufEKbNtCEGEHSwfIHxYL0yieBKoyxUiqYoiJTNdevWitibQ378UGLA5d9C2q4iUs/oDNczCzm1GjiWeRp7v0jCC6ctcsrXirH76FshpMIfeYYoyf9lIEyj9+aY=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from IA0PR12MB8301.namprd12.prod.outlook.com (2603:10b6:208:40b::13)
- by MN0PR12MB6001.namprd12.prod.outlook.com (2603:10b6:208:37d::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.18; Thu, 2 Oct
- 2025 17:11:07 +0000
-Received: from IA0PR12MB8301.namprd12.prod.outlook.com
- ([fe80::e929:57f5:f4db:5823]) by IA0PR12MB8301.namprd12.prod.outlook.com
- ([fe80::e929:57f5:f4db:5823%4]) with mapi id 15.20.9160.017; Thu, 2 Oct 2025
- 17:11:07 +0000
-Message-ID: <1c8c91a7-9f6d-442f-8e20-736fd5d41ef3@amd.com>
-Date: Thu, 2 Oct 2025 22:40:48 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC V3 0/9] Accelerate page migration with batch copying and
- hardware offload
-To: Zi Yan <ziy@nvidia.com>
-Cc: akpm@linux-foundation.org, david@redhat.com, willy@infradead.org,
- matthew.brost@intel.com, joshua.hahnjy@gmail.com, rakie.kim@sk.com,
- byungchul@sk.com, gourry@gourry.net, ying.huang@linux.alibaba.com,
- apopple@nvidia.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
- vbabka@suse.cz, rppt@kernel.org, surenb@google.com, mhocko@suse.com,
- vkoul@kernel.org, lucas.demarchi@intel.com, rdunlap@infradead.org,
- jgg@ziepe.ca, kuba@kernel.org, justonli@chromium.org, ivecera@redhat.com,
- dave.jiang@intel.com, Jonathan.Cameron@huawei.com, dan.j.williams@intel.com,
- rientjes@google.com, Raghavendra.KodsaraThimmappa@amd.com, bharata@amd.com,
- alirad.malek@zptcorp.com, yiannis@zptcorp.com, weixugc@google.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20250923174752.35701-1-shivankg@amd.com>
- <633F4EFC-13A9-40DF-A27D-DBBDD0AF44F3@nvidia.com>
-Content-Language: en-US
-From: "Garg, Shivank" <shivankg@amd.com>
-In-Reply-To: <633F4EFC-13A9-40DF-A27D-DBBDD0AF44F3@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: BM1P287CA0001.INDP287.PROD.OUTLOOK.COM
- (2603:1096:b00:40::21) To IA0PR12MB8301.namprd12.prod.outlook.com
- (2603:10b6:208:40b::13)
+	s=arc-20240116; t=1759425136; c=relaxed/simple;
+	bh=LLKstXLmH508qUEsX1l704tztcvzRHAjC9Otl6C5hc8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eUjLKsnc+Na66GN7j3+Gb3fMqGLywSyiPa1/2QMbIj88OP/+DJL2XT6KxVx9fKb47OhwtZuW6kFw0+DqnTmvCQD+D4KJZgAChFyGxQu70dXkXh8OWFuzYJzBkaJP7R9EocdaDk7zfqsWa1rjgeoRGa1Giaxg62qIjhIU4T8Aysg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=dXM5k7f9; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1759425116; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Fc79Y2nHiSHcnNulRhDiEi6r+XSlJxyAwpYYmFqHvpOuDYsbis1PkT0DvEXCJ/iHGXGZnQsCePkWK2pzqvILrFfVuMeyl4xRgQffV1hkHhK9zKehIUqcSxXKI8jN9+rI7sex6Ze3F+tRv+Bv9QG+JsypPCfJm1mYC6hEmk/MBUo=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1759425116; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=vEJPPTFhogSa3KCUS+TOyXr0VwMc+58qyo+RyNDimAY=; 
+	b=j0Vky8bJtrghhR5ZIXbF199viv3DtUVNN9rm+Qbm6F+vUxRzD2bgIcBfxO7+Mqd9NDSDTBTG4DtsMQGHDPn/L6hLliQgJAmwiVawDBmedwZMA9DNnaMuWEDCj+do4DCB3PMAgP8vJd7KE6aJAkHVOX8QXXJvbyS0tNbRbH4ZHZI=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
+	dmarc=pass header.from=<adrian.larumbe@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1759425116;
+	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=vEJPPTFhogSa3KCUS+TOyXr0VwMc+58qyo+RyNDimAY=;
+	b=dXM5k7f9BQv/uineiDLvQog1NZvQXT8W0FwppT26kVvicr46FA18YK0dSXwkO1i7
+	zISGeilTvtu0gDqGLHefwtCwIE1h2D1iGd6TKFIOjJ5vicKtgUQE1jU3QY8OifvZm/l
+	WodPJUv+1Vl2RCkkaUVdEZUNbWxfbI6b7t0GvCuc=
+Received: by mx.zohomail.com with SMTPS id 1759425114428924.5561370853379;
+	Thu, 2 Oct 2025 10:11:54 -0700 (PDT)
+From: =?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>
+To: linux-kernel@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org,
+	Steven Price <steven.price@arm.com>,
+	Boris Brezillon <boris.brezillon@collabora.com>,
+	kernel@collabora.com,
+	=?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>,
+	Rob Herring <robh@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
+Subject: [PATCH] drm/panfrost: Name scheduler queues after their job slots
+Date: Thu,  2 Oct 2025 18:11:37 +0100
+Message-ID: <20251002171139.2067139-1-adrian.larumbe@collabora.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA0PR12MB8301:EE_|MN0PR12MB6001:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4a6eedd7-7334-45e2-95bd-08de01d6acee
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cFJxb2hiZXpDc2V4eUZRK2lGYTZCMlU2clJob0g1Q1hxN0taZ04zTjI0eDJs?=
- =?utf-8?B?NGpmZGhtTC90bXdGUXJFbjZYNFkyNXRwZ0h6Y090bWxnYzc5R2FMcGQrTGlG?=
- =?utf-8?B?dld0eHQ5WmtIM05FWHJ2NEh1YkVHVGNkVDBQL09aTWQ2bVAxSXhpc1A1bEs3?=
- =?utf-8?B?NXliRjlwdEdFYkFra3MwNHAzYXRKY0I1K2g0NW9wL2RUcEM3M2xFT2dOQXZQ?=
- =?utf-8?B?TkIyZ3lyaGlvY05TZEVtTmNFN3NuV3o4SmV6ZkZQdzU4VWZFb2lZN2JCbmJn?=
- =?utf-8?B?WWxPSE5hVHF1RFAxWGU5bmtkVEFBcG95MnZtdS9OdEtXQVB6MGJIcm1BR0Y5?=
- =?utf-8?B?ZHpZaWRaYU42TWVKcWpuTVE3bWFLZ2JucGJzQnhHamFndFN5RDM2ZHlEMTJs?=
- =?utf-8?B?MWpvMG1HYWFubG5xckZibW8yUXhPazcwYnJWWSsyZ1N2TFlyM1ZWdHBFakpu?=
- =?utf-8?B?aVZLdDIzK09ZQzRYL2pNOXFYRlJuL0hUSlZXWlhmU0JGNlRPV0ZiS0g2Rm83?=
- =?utf-8?B?dlo1MXFXTFZMOTU1OG43b0NDbnZIT1d3dlBUT0E0ZkJTOWprcjNKNmVZZE5L?=
- =?utf-8?B?eTZTTkhFNFVoR1JjNzlNek94Wm5EeTE3SnJKQVFxcmZFb1M5ZXBqbWhTWjN0?=
- =?utf-8?B?ckRZUmJxU1VkUUNHNHVwRyt0RG1IejBrL3ErMlhmMC90MnAwbExRamIxckFV?=
- =?utf-8?B?OGk3UjRyeEJUUnhhTnplRThyUEp1b0lVaUtPbUEzM0hNVXBUYUh6ZWxvOHZ2?=
- =?utf-8?B?dXFwMHg0TFZ6SWowNzBDS0tHZXBxYUtXVFJ3aVZEVUhBSnBhaUNuRUVwL0p0?=
- =?utf-8?B?QnJYWW9rcTRsYXhpRFVqS0lKT3Q5MjA5M1JkeUttNExIU0xUY01vNis3UzdJ?=
- =?utf-8?B?a0hncFNob01uWXh2QlZJRjRPaGg3czlIQk8xOWZEdndvcVpLbjFHTkc0NUxl?=
- =?utf-8?B?SXZHZGhiV0ZUUjVGWkN4OGdWN0IxWXJoYkZibThPTmpwTVVSYmJOeU1FWXVx?=
- =?utf-8?B?Z3dDeFhZaTN1R0tOQ3R1LzRvT2ZsaXBHaTZHWkM1ZkljakZCeit5MzR0RVJG?=
- =?utf-8?B?NEZibHdVTHljSHlQMmxRazFUN0NlMTlIMnFwZlBZdm81WkVTOU4vNUw3OVhC?=
- =?utf-8?B?SjVxNXYrLyt5bVo1VTk3ZEI1ZXB1U2R6MURuRkpFTis0RDBKUHQxalNHc3Fk?=
- =?utf-8?B?UkwrYWl1Q1JFc0tGR3BPdXJKaG43ZTY0V3ZxNGRSVTJydm1WVCtQVFJjUHpK?=
- =?utf-8?B?Skx6a1QyVm9takF0bnhPLzZJUU5CaCtTUDZKdkRLRzUyYWJ2UTJGNjV1RDdC?=
- =?utf-8?B?MmtkUmNvbmt0bHBSMTZnNE1LYTVsWi9wRkJ6elg3MERrc1dCZ0JkS21iTi9L?=
- =?utf-8?B?S01DMHlyNEFBSFJRUGhCTEFTSzhqT0RiS3VNQXV0eTRRbXNLaDRWTUh3eGxJ?=
- =?utf-8?B?UjhkZzVTZU9qaktmemYyemJBaHNCMFVkWFNNeEIwb3d1dG1qeGRZdmFSaXRi?=
- =?utf-8?B?eER0YzZXN0tJcjludE5ZREdZbExrYTZLNmVWRUd2eVoxVHJudmhHWHlDVkNu?=
- =?utf-8?B?V2NLUS8rMTNCVGEyUDJCVXNySEpNMDI1d0ZySTlNUFc2TEtjSHp2SElvYVhN?=
- =?utf-8?B?b3pDbmdXb1MyN3RzbStkTnZ6R1ppNStlcXdHei9TMXpkaW10TmZNdWZxa3Zo?=
- =?utf-8?B?SjJiSHc3OEQzVXN2NGlUa2NmUW1ObWJFZktuZlFXVHNKY1NqV3hIWDdKakxP?=
- =?utf-8?B?T3grQVVsRk9kSnN2cTdtdDNnWElvL0luY285NUkzMHZwaE53WmVwWkF2cXl6?=
- =?utf-8?B?SFVpR2xYcC9FNzZYQkVUSUNWWHVENk43Q1pxZGwrd001TlZ3R1NwM3BqTHgr?=
- =?utf-8?B?RkhjVjd6VnNBNUJUK0NUUE9ZakRSeHpXbDljNnBGVVRtL2RYS0R3Zk55MzM4?=
- =?utf-8?Q?zEx8q3fNScw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA0PR12MB8301.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?N3RWeUxzRjlSNmhrTUJjb2dyOWNJTFFYS3ArK3pFbmh6d05Dd0sxVS82YWxV?=
- =?utf-8?B?V2Y0SXpQemEvNlVLWmZmOXJEWUs1NGJHNFBUaHoxTXJlRC9QdlNGY1RVL1Nw?=
- =?utf-8?B?ZmlhaW4yeVZ0bzByR3lFV08va1NQdHhpWjlYQUNtajVZWFdDVlcvWTdRZmtE?=
- =?utf-8?B?ZGxkdGtxcHpHa1grWWhqR1NYanlyWXh4UE1tS2ZINDVzWTZYYk9sUVdVRlZJ?=
- =?utf-8?B?MHh5YytQNXZRSDh2YVNLUVdBUm9QdEtBVFJHV3dBaGZCOFFFMDI4ZDZIQnpH?=
- =?utf-8?B?RFNteXJOMlV0QjZyT0IydVVkMTRSdy90ZGJVT3RLQzBnLzltOVlpbkRuWXlB?=
- =?utf-8?B?RXpWN2R0cFgwbTFWWXF6Q1VNeHcyZFY1Ty85N0ZJaVQxcU15T2k2cnZQTFMz?=
- =?utf-8?B?MVBIeEIwaGh3dmlEeGNGWHFXdGtXQk9oZXpyeWdyNFdFV2tubnRrdkgrSWc0?=
- =?utf-8?B?OC9aaExoZFdLaHJEMmlYQ2N3WkQ2c3ZyQjVhcXI5Z2V1d0lIWmpiMjVKeGFF?=
- =?utf-8?B?bHFJbGpmSGpSck9DaXJINC9Ndk5xZUlya0NUR0loZ083YUNvUklWLzdHWUQy?=
- =?utf-8?B?dmtoM1lTTFozTmdtK01VRzZ1VVlYWDZtUEdZUmVmRGtFQUdVTzdhNEp2M3g5?=
- =?utf-8?B?WGVEWnZvbFF5MmpyV1J3RTBBNXpBcXROMlNlYnUvODl2WTcrWWgrZW1ZTXNu?=
- =?utf-8?B?Wm05cjRSbjdoTnVjdDZBbDkwZllldDhha3N6d1ZzeXUwbUdUME9mZlN2QSsw?=
- =?utf-8?B?TkovZW5Nb0lrb2gwMW5hWmJIUEQySTJ5Wkx3a2ZRR0ZvT21kVmE4YWZGVGVP?=
- =?utf-8?B?RUN2UGpVczZiWktoSmVFQ2IvSlFpalpxUlJYSkpqd3NYcEZSK055MjhUTlAy?=
- =?utf-8?B?S09vem04NzlZRTdyTEtwTmZkbEtleVMyTTNNWmtJaUFRSDlPYUE1dDBwNUh1?=
- =?utf-8?B?cStsc0R6M2tIQWFKNWljRFA4VE15dkkwdk1DUGF5aFp4Rzg3L2JMdHBhOGox?=
- =?utf-8?B?MUpMMS9MZUltaHVBRTh5MlFJSEJ1blU1NEwvMDJDOE94MnlPS01ZeTgxcnJ1?=
- =?utf-8?B?OFJ0MHdUODlTR3NlYXZHWkwwalRBRHZrV0hzeVdhZTEwOUpnYlBtNTdGVE54?=
- =?utf-8?B?SzVlbVUzTjE1U3U5RGwzakU3ZitJTWtUZUdET2dzSCtxbCthd1VaMzNGMEd1?=
- =?utf-8?B?ZlAzWHdLNjg5YmxUb2VrTDV6eWFnMURDdEtzVDJsNFVUbUVlMHNoNXlRUk5S?=
- =?utf-8?B?VDlER05BSWpSZUc5N0hveHNsVFdJREwrR0daOHRFVDB0MkRjSTF5Unl0VGhF?=
- =?utf-8?B?RTdZU09KR3JoanBzcC9veitickRFR3MyUGdsV1NvMXY0WG9uK0M5Unh0M2ZF?=
- =?utf-8?B?Y25zSEY4b3lnaVE1UWlVQ0lDRDBKeGZ3aTJEcVdsWm1oV2tDeS9hSVpSVzVY?=
- =?utf-8?B?LzhoSzI5QWw2alVFYnR4N0NlczQwZlVyNzBPT2kyYlArWlRtZU1JTVVhd2x5?=
- =?utf-8?B?dm1lK3BURG1nUTRzNmgrb3MzZFNGL0xVZnVwUjkrMVFhOThZd1NjcmtaV3N0?=
- =?utf-8?B?R25FUGhkY1U2elYzSnJTZ2ZUT0ZsbDBvN21MeTNOL2hlRUV2UjgyU2Jncjdr?=
- =?utf-8?B?TGhyNGRLb1BkdEVVeStXNFZVSVlzVTNvd29lZEdpUGc3VkVKQkIxb1ZweWhl?=
- =?utf-8?B?aFI3aFBGRDJDU3dyK3Z6U2dIT2RJK0xwR3JtczRwaEJOb0F1TGY0RzZrelAy?=
- =?utf-8?B?c2pZUVVSMDdMbUtJcnNveTFsMW1BNGhCNGx2YUpIc3FjNnA0d1B6Vk5BUC8y?=
- =?utf-8?B?bTFZaGVNeG5iU0VCSlZHYXBNWlFVR3NrZkZveE5OOUdCcjJMdzZVbjJuZGQv?=
- =?utf-8?B?OVVSbjlsTFJqNE5yOWdCeUZVSTZxOHQ5NkhxK1FyV2RhMUJ1VWJENlZOMU1k?=
- =?utf-8?B?TkxyZkNqWk1yVngyTjU4S3NrZWhveXJHSElJcFBBZWpqWHhhWFVDNHFCUjhS?=
- =?utf-8?B?L3F4L21PVlJURU5ETUplNWdNTkFMWkZQQ2pla2Q0N2ozUE9RY25CK09aaE44?=
- =?utf-8?B?Tk5sNnRqKzhoMG5WTk5vQjI1emxpQVZMMnRPTHo0S3NKUGU2OHhNeTR2MDVC?=
- =?utf-8?Q?h67s5UanUwqLQCIJbqcZB0oKF?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4a6eedd7-7334-45e2-95bd-08de01d6acee
-X-MS-Exchange-CrossTenant-AuthSource: IA0PR12MB8301.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Oct 2025 17:11:07.4524
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4RQP2vanFjCXXpNRQJkjgjeWTOzOAxFg0bpCVGXRaGIKppmIZN/sAZf4PS90QBC+VH4wLZ+t/dfoCwrQh8w0VQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6001
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+Drawing from commit d2624d90a0b7 ("drm/panthor: assign unique names to
+queues"), give scheduler queues proper names that reflect the function
+of their JM slot, so that this will be shown when gathering DRM
+scheduler tracepoints.
 
+Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
+---
+ drivers/gpu/drm/panfrost/panfrost_drv.c | 6 ------
+ drivers/gpu/drm/panfrost/panfrost_job.c | 6 +++++-
+ drivers/gpu/drm/panfrost/panfrost_job.h | 2 ++
+ 3 files changed, 7 insertions(+), 7 deletions(-)
 
-On 9/24/2025 8:52 AM, Zi Yan wrote:
-> On 23 Sep 2025, at 13:47, Shivank Garg wrote:
-> 
->> This is the third RFC of the patchset to enhance page migration by batching
->> folio-copy operations and enabling acceleration via multi-threaded CPU or
->> DMA offload.
->>
->> Single-threaded, folio-by-folio copying bottlenecks page migration
->> in modern systems with deep memory hierarchies, especially for large
->> folios where copy overhead dominates, leaving significant hardware
->> potential untapped.
->>
->> By batching the copy phase, we create an opportunity for significant
->> hardware acceleration. This series builds a framework for this acceleration
->> and provides two initial offload driver implementations: one using multiple
->> CPU threads (mtcopy) and another leveraging the DMAEngine subsystem (dcbm).
->>
->> This version incorporates significant feedback to improve correctness,
->> robustness, and the efficiency of the DMA offload path.
->>
->> Changelog since V2:
->>
->> 1. DMA Engine Rewrite:
->>    - Switched from per-folio dma_map_page() to batch dma_map_sgtable()
->>    - Single completion interrupt per batch (reduced overhead)
->>    - Order of magnitude improvement in setup time for large batches
->> 2. Code cleanups and refactoring
->> 3. Rebased on latest mainline (6.17-rc6+)
-> 
-> Thanks for working on this.
-> 
-> It is better to rebase on top of Andrew’s mm-new tree.
-> 
-> I have a version at: https://github.com/x-y-z/linux-dev/tree/batched_page_migration_copy_amd_v3-mm-everything-2025-09-23-00-13.
-> 
-> The difference is that I changed Patch 6 to use padata_do_multithreaded()
-> instead of my own implementation, since padata is a nice framework
-> for doing multithreaded jobs. The downside is that your patch 9
-> no longer applies and you will need to hack kernel/padata.c to
-> achieve the same thing.
+diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
+index 22350ce8a08f..d08c87bc63a2 100644
+--- a/drivers/gpu/drm/panfrost/panfrost_drv.c
++++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
+@@ -668,12 +668,6 @@ static void panfrost_gpu_show_fdinfo(struct panfrost_device *pfdev,
+ 	 *   job spent on the GPU.
+ 	 */
+ 
+-	static const char * const engine_names[] = {
+-		"fragment", "vertex-tiler", "compute-only"
+-	};
+-
+-	BUILD_BUG_ON(ARRAY_SIZE(engine_names) != NUM_JOB_SLOTS);
+-
+ 	for (i = 0; i < NUM_JOB_SLOTS - 1; i++) {
+ 		if (pfdev->profile_mode) {
+ 			drm_printf(p, "drm-engine-%s:\t%llu ns\n",
+diff --git a/drivers/gpu/drm/panfrost/panfrost_job.c b/drivers/gpu/drm/panfrost/panfrost_job.c
+index c47d14eabbae..0f0340ffee19 100644
+--- a/drivers/gpu/drm/panfrost/panfrost_job.c
++++ b/drivers/gpu/drm/panfrost/panfrost_job.c
+@@ -28,6 +28,10 @@
+ #define job_write(dev, reg, data) writel(data, dev->iomem + (reg))
+ #define job_read(dev, reg) readl(dev->iomem + (reg))
+ 
++const char * const engine_names[] = {
++	"fragment", "vertex-tiler-compute", "compute-only"
++};
++
+ struct panfrost_queue_state {
+ 	struct drm_gpu_scheduler sched;
+ 	u64 fence_context;
+@@ -846,7 +850,6 @@ int panfrost_job_init(struct panfrost_device *pfdev)
+ 		.num_rqs = DRM_SCHED_PRIORITY_COUNT,
+ 		.credit_limit = 2,
+ 		.timeout = msecs_to_jiffies(JOB_TIMEOUT_MS),
+-		.name = "pan_js",
+ 		.dev = pfdev->dev,
+ 	};
+ 	struct panfrost_job_slot *js;
+@@ -887,6 +890,7 @@ int panfrost_job_init(struct panfrost_device *pfdev)
+ 
+ 	for (j = 0; j < NUM_JOB_SLOTS; j++) {
+ 		js->queue[j].fence_context = dma_fence_context_alloc(1);
++		args.name = engine_names[j];
+ 
+ 		ret = drm_sched_init(&js->queue[j].sched, &args);
+ 		if (ret) {
+diff --git a/drivers/gpu/drm/panfrost/panfrost_job.h b/drivers/gpu/drm/panfrost/panfrost_job.h
+index 5a30ff1503c6..52ff10b8d3d0 100644
+--- a/drivers/gpu/drm/panfrost/panfrost_job.h
++++ b/drivers/gpu/drm/panfrost/panfrost_job.h
+@@ -53,6 +53,8 @@ struct panfrost_jm_ctx {
+ 	struct drm_sched_entity slot_entity[NUM_JOB_SLOTS];
+ };
+ 
++extern const char * const engine_names[];
++
+ int panfrost_jm_ctx_create(struct drm_file *file,
+ 			   struct drm_panfrost_jm_ctx_create *args);
+ int panfrost_jm_ctx_destroy(struct drm_file *file, u32 handle);
 
-This looks good. For now, I'll hack padata.c locally.
-
-Currently, with numa_aware=true, padata round-robins work items across
-NUMA nodes using queue_work_node().
-For an upstream-able solution, I think we need a similar mechanism to
-spread work across CCDs.
-
-> I also tried to attribute back page copy kthread time to the initiating
-> thread so that page copy time does not disappear when it is parallelized
-> using CPU threads. It is currently a hack in the last patch from
-> the above repo. With the patch, I can see system time of a page migration
-> process with multithreaded page copy looks almost the same as without it,
-> while wall clock time is smaller. But I have not found time to ask
-> scheduler people about a proper implementation yet.
-> 
-> 
->>
->> MOTIVATION:
->> -----------
->>
->> Current Migration Flow:
->> [ move_pages(), Compaction, Tiering, etc. ]
->>               |
->>               v
->>      [ migrate_pages() ] // Common entry point
->>               |
->>               v
->>     [ migrate_pages_batch() ] // NR_MAX_BATCHED_MIGRATION (512) folios at a time
->>       |
->>       |--> [ migrate_folio_unmap() ]
->>       |
->>       |--> [ try_to_unmap_flush() ] // Perform a single, batched TLB flush
->>       |
->>       |--> [ migrate_folios_move() ] // Bottleneck: Interleaved copy
->>            - For each folio:
->>              - Metadata prep: Copy flags, mappings, etc.
->>              - folio_copy()  <-- Single-threaded, serial data copy.
->>              - Update PTEs & finalize for that single folio.
->>
->> Understanding overheads in page migration (move_pages() syscall):
->>
->> Total move_pages() overheads = folio_copy() + Other overheads
->> 1. folio_copy() is the core copy operation that interests us.
->> 2. The remaining operations are user/kernel transitions, page table walks,
->> locking, folio unmap, dst folio alloc, TLB flush, copying flags, updating
->> mappings and PTEs etc. that contribute to the remaining overheads.
->>
->> Percentage of folio_copy() overheads in move_pages(N pages) syscall time:
->> Number of pages being migrated and folio size:
->>             4KB     2MB
->> 1 page     <1%     ~66%
->> 512 page   ~35%    ~97%
->>
->> Based on Amdahl's Law, optimizing folio_copy() for large pages offers a
->> substantial performance opportunity.
->>
->> move_pages() syscall speedup = 1 / ((1 - F) + (F / S))
->> Where F is the fraction of time spent in folio_copy() and S is the speedup of
->> folio_copy().
->>
->> For 4KB folios, folio copy overheads are significantly small in single-page
->> migrations to impact overall speedup, even for 512 pages, maximum theoretical
->> speedup is limited to ~1.54x with infinite folio_copy() speedup.
->>
->> For 2MB THPs, folio copy overheads are significant even in single page
->> migrations, with a theoretical speedup of ~3x with infinite folio_copy()
->> speedup and up to ~33x for 512 pages.
->>
->> A realistic value of S (speedup of folio_copy()) is 7.5x for DMA offload
->> based on my measurements for copying 512 2MB pages.
->> This gives move_pages(), a practical speedup of 6.3x for 512 2MB page (also
->> observed in the experiments below).
->>
->> DESIGN: A Pluggable Migrator Framework
->> ---------------------------------------
->>
->> Introduce migrate_folios_batch_move():
->>
->> [ migrate_pages_batch() ]
->>     |
->>     |--> migrate_folio_unmap()
->>     |
->>     |--> try_to_unmap_flush()
->>     |
->>     +--> [ migrate_folios_batch_move() ] // new batched design
->>             |
->>             |--> Metadata migration
->>             |    - Metadata prep: Copy flags, mappings, etc.
->>             |    - Use MIGRATE_NO_COPY to skip the actual data copy.
->>             |
->>             |--> Batch copy folio data
->>             |    - Migrator is configurable at runtime via sysfs.
->>             |
->>             |          static_call(_folios_copy) // Pluggable migrators
->>             |          /          |            \
->>             |         v           v             v
->>             | [ Default ]  [ MT CPU copy ]  [ DMA Offload ]
->>             |
->>             +--> Update PTEs to point to dst folios and complete migration.
->>
->>
->> User Control of Migrator:
->>
->> # echo 1 > /sys/kernel/dcbm/offloading
->>    |
->>    +--> Driver's sysfs handler
->>         |
->>         +--> calls start_offloading(&cpu_migrator)
->>               |
->>               +--> calls offc_update_migrator()
->>                     |
->>                     +--> static_call_update(_folios_copy, mig->migrate_offc)
->>
->> Later, During Migration ...
->> migrate_folios_batch_move()
->>     |
->>     +--> static_call(_folios_copy) // Now dispatches to the selected migrator
->>           |
->>           +-> [ mtcopy | dcbm | kernel_default ]
->>
->>
->> PERFORMANCE RESULTS:
->> --------------------
->>
->> System Info: AMD Zen 3 EPYC server (2-sockets, 32 cores, SMT Enabled),
->> 1 NUMA node per socket, Linux Kernel 6.16.0-rc6, DVFS set to Performance,
->> PTDMA hardware.
->>
->> Benchmark: Use move_pages() syscall to move pages between two NUMA nodes.
->>
->> 1. Moving different sized folios (4KB, 16KB,..., 2MB) such that total transfer size is constant
->> (1GB), with different number of parallel threads/channels.
->> Metric: Throughput is reported in GB/s.
->>
->> a. Baseline (Vanilla kernel, single-threaded, folio-by-folio migration):
->>
->> Folio size|4K       | 16K       | 64K        | 128K       | 256K       | 512K       | 1M         | 2M         |
->> ===============================================================================================================
->> Tput(GB/s)|3.73±0.33| 5.53±0.36 | 5.90±0.56  | 6.34±0.08  | 6.50±0.05  | 6.86±0.61  | 6.92±0.71  | 10.67±0.36 |
->>
->> b. Multi-threaded CPU copy offload (mtcopy driver, use N Parallel Threads=1,2,4,8,12,16):
->>
->> Thread | 4K         | 16K       | 64K        | 128K       | 256K       | 512K       | 1M         | 2M         |
->> ===============================================================================================================
->> 1      | 3.84±0.10  | 5.23±0.31 | 6.01±0.55  | 6.34±0.60  | 7.16±1.00  | 7.12±0.78  | 7.10±0.86  | 10.94±0.13 |
->> 2      | 4.04±0.19  | 6.72±0.38 | 7.68±0.12  | 8.15±0.06  | 8.45±0.09  | 9.29±0.17  | 9.87±1.01  | 17.80±0.12 |
->> 4      | 4.72±0.21  | 8.41±0.70 | 10.08±1.67 | 11.44±2.42 | 10.45±0.17 | 12.60±1.97 | 12.38±1.73 | 31.41±1.14 |
->> 8      | 4.91±0.28  | 8.62±0.13 | 10.40±0.20 | 13.94±3.75 | 11.03±0.61 | 14.96±3.29 | 12.84±0.63 | 33.50±3.29 |
->> 12     | 4.84±0.24  | 8.75±0.08 | 10.16±0.26 | 10.92±0.22 | 11.72±0.14 | 14.02±2.51 | 14.09±2.65 | 34.70±2.38 |
->> 16     | 4.77±0.22  | 8.95±0.69 | 10.36±0.26 | 11.03±0.22 | 11.58±0.30 | 13.88±2.71 | 13.00±0.75 | 35.89±2.07 |
->>
->> c. DMA offload (dcbm driver, use N DMA Channels=1,2,4,8,12,16):
->>
->> Chan Cnt| 4K        | 16K       | 64K        | 128K       | 256K       | 512K       | 1M         | 2M         |
->> ===============================================================================================================
->> 1      | 2.75±0.19  | 2.86±0.13 | 3.28±0.20  | 4.57±0.72  | 5.03±0.62  | 4.69±0.25  | 4.78±0.34  | 12.50±0.24 |
->> 2      | 3.35±0.19  | 4.57±0.19 | 5.35±0.55  | 6.71±0.71  | 7.40±1.07  | 7.38±0.61  | 7.21±0.73  | 14.23±0.34 |
->> 4      | 4.01±0.17  | 6.36±0.26 | 7.71±0.89  | 9.40±1.35  | 10.27±1.96 | 10.60±1.42 | 12.35±2.64 | 26.84±0.91 |
->> 8      | 4.46±0.16  | 7.74±0.13 | 9.72±1.29  | 10.88±0.16 | 12.12±2.54 | 15.62±3.96 | 13.29±2.65 | 45.27±2.60 |
->> 12     | 4.60±0.22  | 8.90±0.84 | 11.26±2.19 | 16.00±4.41 | 14.90±4.38 | 14.57±2.84 | 13.79±3.18 | 59.94±4.19 |
->> 16     | 4.61±0.25  | 9.08±0.79 | 11.14±1.75 | 13.95±3.85 | 13.69±3.39 | 15.47±3.44 | 15.44±4.65 | 63.69±5.01 |
->>
->> - Throughput increases with folio size. Larger folios benefit more from DMA.
->> - Scaling shows diminishing returns beyond 8-12 threads/channels.
->> - Multi-threading and DMA offloading both provide significant gains - up to 3.4x and 6x respectively.
->>
->> 2. Varying total move size: (folio count = 1,8,..8192) for a fixed folio size of 2MB
->>    using only single thread/channel
->>
->> folio_cnt | Baseline    | MTCPU      | DMA
->> ====================================================
->> 1         | 7.96±2.22   | 6.43±0.66  | 6.52±0.45   |
->> 8         | 8.20±0.75   | 8.82±1.10  | 8.88±0.54   |
->> 16        | 7.54±0.61   | 9.06±0.95  | 9.03±0.62   |
->> 32        | 8.68±0.77   | 10.11±0.42 | 10.17±0.50  |
->> 64        | 9.08±1.03   | 10.12±0.44 | 11.21±0.24  |
->> 256       | 10.53±0.39  | 10.77±0.28 | 12.43±0.12  |
->> 512       | 10.59±0.29  | 10.81±0.19 | 12.61±0.07  |
->> 2048      | 10.86±0.26  | 11.05±0.05 | 12.75±0.03  |
->> 8192      | 10.84±0.18  | 11.12±0.05 | 12.81±0.02  |
->>
->> - Throughput increases with folios count but plateaus after a threshold.
->>   (The migrate_pages function uses a folio batch size of 512)
->>
->> Performance Analysis (V2 vs V3):
->>
->> The new SG-based DMA driver dramatically reduces software overhead. By
->> switching from per-folio dma_map_page() to batch dma_map_sgtable(), setup
->> time improves by an order of magnitude for large batches.
->> This is most visible with 4KB folios, making DMA viable even for smaller
->> page sizes. For 2MB THP migrations, where hardware transfer time is more
->> dominant, the gains are more modest.
->>
->> OPEN QUESTIONS:
->> ---------------
->>
->> User-Interface:
->>
->> 1. Control Interface Design:
->> The current interface creates separate sysfs files
->> for each driver, which can be confusing. Should we implement a unified interface
->> (/sys/kernel/mm/migration/offload_migrator), which accepts the name of the desired migrator
->> ("kernel", "mtcopy", "dcbm"). This would ensure only one migrator is active at a time.
->> Is this the right approach?
->>
->> 2. Dynamic Migrator Selection:
->> Currently, active migrator is a global state, and only one can be active a time.
->> A more flexible approach might be for the caller of migrate_pages() to specify/hint which
->> offload mechanism to use, if any. This would allow a CXL driver to explicitly request DMA while a GPU driver might prefer
->> multi-threaded CPU copy.
->>
->> 3. Tuning Parameters: Expose parameters like number of threads/channels, batch size,
->> and thresholds for using migrators. Who should own these parameters?
->>
->> 4. Resources Accounting[3]:
->> a. CPU cgroups accounting and fairness
->> b. Migration cost attribution
->>
->> FUTURE WORK:
->> ------------
->>
->> 1. Enhance DMA drivers for bulk copying (e.g., SDXi Engine).
->> 2. Enhance multi-threaded CPU copying for platform-specific scheduling of worker threads to optimize bandwidth utilization. Explore sched-ext for this. [2]
->> 3. Enable kpromoted [4] to use the migration offload infrastructure.
->>
->> EARLIER POSTINGS:
->> -----------------
->>
->> - RFC V2: https://lore.kernel.org/all/20250319192211.10092-1-shivankg@amd.com
->> - RFC V1: https://lore.kernel.org/all/20240614221525.19170-1-shivankg@amd.com
->>
->> REFERENCES:
->> -----------
->>
->> [1] RFC from Zi Yan: https://lore.kernel.org/all/20250103172419.4148674-1-ziy@nvidia.com
->> [2] LSFMM: https://lore.kernel.org/all/cf6fc05d-c0b0-4de3-985e-5403977aa3aa@amd.com
->> [3] https://lore.kernel.org/all/CAHbLzkpoKP0fVZP5b10wdzAMDLWysDy7oH0qaUssiUXj80R6bw@mail.gmail.com
->> [4] https://lore.kernel.org/all/20250910144653.212066-1-bharata@amd.com
->>
->> Mike Day (1):
->>   mm: add support for copy offload for folio Migration
->>
->> Shivank Garg (4):
->>   mm: Introduce folios_mc_copy() for batch copying folios
->>   mm/migrate: add migrate_folios_batch_move to  batch the folio move
->>     operations
->>   dcbm: add dma core batch migrator for batch page offloading
->>   mtcopy: spread threads across die for testing
->>
->> Zi Yan (4):
->>   mm/migrate: factor out code in move_to_new_folio() and
->>     migrate_folio_move()
->>   mm/migrate: revive MIGRATE_NO_COPY in migrate_mode
->>   mtcopy: introduce multi-threaded page copy routine
->>   adjust NR_MAX_BATCHED_MIGRATION for testing
->>
->>  drivers/Kconfig                        |   2 +
->>  drivers/Makefile                       |   3 +
->>  drivers/migoffcopy/Kconfig             |  17 +
->>  drivers/migoffcopy/Makefile            |   2 +
->>  drivers/migoffcopy/dcbm/Makefile       |   1 +
->>  drivers/migoffcopy/dcbm/dcbm.c         | 415 +++++++++++++++++++++++++
->>  drivers/migoffcopy/mtcopy/Makefile     |   1 +
->>  drivers/migoffcopy/mtcopy/copy_pages.c | 397 +++++++++++++++++++++++
->>  include/linux/migrate_mode.h           |   2 +
->>  include/linux/migrate_offc.h           |  34 ++
->>  include/linux/mm.h                     |   2 +
->>  mm/Kconfig                             |   8 +
->>  mm/Makefile                            |   1 +
->>  mm/migrate.c                           | 358 ++++++++++++++++++---
->>  mm/migrate_offc.c                      |  58 ++++
->>  mm/util.c                              |  29 ++
->>  16 files changed, 1284 insertions(+), 46 deletions(-)
->>  create mode 100644 drivers/migoffcopy/Kconfig
->>  create mode 100644 drivers/migoffcopy/Makefile
->>  create mode 100644 drivers/migoffcopy/dcbm/Makefile
->>  create mode 100644 drivers/migoffcopy/dcbm/dcbm.c
->>  create mode 100644 drivers/migoffcopy/mtcopy/Makefile
->>  create mode 100644 drivers/migoffcopy/mtcopy/copy_pages.c
->>  create mode 100644 include/linux/migrate_offc.h
->>  create mode 100644 mm/migrate_offc.c
->>
->> -- 
->> 2.43.0
-> 
-> 
-> Best Regards,
-> Yan, Zi
+base-commit: 30531e9ca7cd4f8c5740babd35cdb465edf73a2d
+-- 
+2.51.0
 
 
