@@ -1,241 +1,154 @@
-Return-Path: <linux-kernel+bounces-840644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0876BB4E03
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 20:31:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE204BB4E0D
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 20:32:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56B3D2A2523
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 18:31:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 538373BFE97
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 18:32:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63D31278754;
-	Thu,  2 Oct 2025 18:31:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21FA0279918;
+	Thu,  2 Oct 2025 18:32:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="iwjlrRhU"
-Received: from pdx-out-009.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-009.esa.us-west-2.outbound.mail-perimeter.amazon.com [35.155.198.111])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eKawoDk7"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1633272E7A;
-	Thu,  2 Oct 2025 18:31:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.155.198.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 180ED277C9B
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 18:32:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759429909; cv=none; b=j8GVlxf+YkRo/Sxh02sUggvK2ZPl4Ttefx6aF9jBbZMiw9f6nI5Rkf97hPrRc4dDNg0d1XQ0hQ1rmf/qYUFyPOcFos5G2IdvVXmLfmb9AF2pnE6ZPfqvCbddDAGC2LTxEfLixtBAIlvJxZPlZqJVhxKrTBSru/HWfL1y2J6YZZ0=
+	t=1759429932; cv=none; b=Ngl0B5pWJ+GcTtPMhQ6lWdUfMCZoD9jWFU50+TKyjSnIPAWAZWx5dPhts9FreEDMiRMzH20qqijqPLy9uzK94qQq9cfjK7k5G3F5U3y7H8DiW2JT6Rrr+fnAaB/R1URYEbD2Vvj+u9Rx2vT7jW8uXMFIm18e7ZWqbizxA819g74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759429909; c=relaxed/simple;
-	bh=S5X+ln9suPNYfPKmNJwkNFs8cq+CTVZh9dbxgcluX0w=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=g3/jfD/JAuP8H0qJwPcjoWrw5IqIVEQOM8PFiUrISKO7kR/GxVAjlwr8tfdcuRCSIyhzITA3Oan0UmFTiH/t4aqXg+1qFsckCVA4cqNj/sC+nbnoPBUXLoN5hF21j1kJaBxlqs2i5sZXVi6+YRjhlb6Imn/QwiKrc7fAWj1hZAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=iwjlrRhU; arc=none smtp.client-ip=35.155.198.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+	s=arc-20240116; t=1759429932; c=relaxed/simple;
+	bh=UyDRhwIZr0wQtDNdqpTYj4LFriGBJZRLGT/DA4pwCg0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cH+yHI1+f4A0iRfIhLdIBNSYOvdRDugy9fcYkzF0fMr5GMLJ0acLoR6OGRnE5RZ10G/K7NLFMvQR5hbx8e2boaY5kDPbNV2ZhSz0T5YoDqf80pcDkiWxq49fN54ko/9Y51+QuMfX7IQlTT7lgGk6jvtet/zpWuTGZALqGeho6P8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eKawoDk7; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b5a631b9c82so885659a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 11:32:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1759429907; x=1790965907;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=hNR2+g/mC2XgaJosKn9yziY9qtPJN0Jq67aKkpU0X/4=;
-  b=iwjlrRhUm+hrocCKnYrzq+VnkHJ7V+gIhfBY0EI345JWe7PjyJeUTWX3
-   Vn4FDgv5bZ5pRN0DtxmfAgEY4TgWXV2SUp1cfV0NFbZysnQOERpT3hZXv
-   /SOpJI4JStdghRKes63GObPfEgNu1eP4p26WPhGBIGAGZpvOZetsmJKko
-   f2peeRnORFodfX139JSJmbDxNdJJMbBnDJFmNJPrl81h7LWi8PO/MFJ4f
-   FjH3nD1UJnJG3DvYMkC7/kc0z2hQrJJ/q/+MJGeTwoZ9Y3wf1aW+RBpc6
-   LFFRVn8bDiKm5KmP+eYmaJE2ZUBphFs1Qf19OmyPjnMdHEjKxOe1D/Yuc
-   g==;
-X-CSE-ConnectionGUID: TH2hmQuyRHq/4LiJ3yHihA==
-X-CSE-MsgGUID: wxOVIfXNRhm+jMHsjitrLQ==
-X-IronPort-AV: E=Sophos;i="6.18,310,1751241600"; 
-   d="scan'208";a="4054719"
-Received: from ip-10-5-0-115.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.0.115])
-  by internal-pdx-out-009.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2025 18:31:44 +0000
-Received: from EX19MTAUWA001.ant.amazon.com [10.0.21.151:30569]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.54.171:2525] with esmtp (Farcaster)
- id c02af0b7-9b0d-420c-912e-0adfda417d11; Thu, 2 Oct 2025 18:31:44 +0000 (UTC)
-X-Farcaster-Flow-ID: c02af0b7-9b0d-420c-912e-0adfda417d11
-Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
- EX19MTAUWA001.ant.amazon.com (10.250.64.217) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Thu, 2 Oct 2025 18:31:43 +0000
-Received: from b0be8375a521.amazon.com (10.37.245.8) by
- EX19D001UWA001.ant.amazon.com (10.13.138.214) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Thu, 2 Oct 2025 18:31:42 +0000
-From: Kohei Enju <enjuk@amazon.com>
-To: <yanjun.zhu@linux.dev>
-CC: <enjuk@amazon.com>, <jgg@ziepe.ca>, <leon@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-	<syzbot+938fcd548c303fe33c1a@syzkaller.appspotmail.com>,
-	<syzkaller-bugs@googlegroups.com>
-Subject: Re: [syzbot] [rdma?] KMSAN: uninit-value in ib_nl_handle_ip_res_resp
-Date: Fri, 3 Oct 2025 03:31:19 +0900
-Message-ID: <20251002183134.87314-1-enjuk@amazon.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <16f3a168-cf4d-4ef6-8e7f-28589e8ee582@linux.dev>
-References: <16f3a168-cf4d-4ef6-8e7f-28589e8ee582@linux.dev>
+        d=gmail.com; s=20230601; t=1759429929; x=1760034729; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0xG0CcI6s1hgPAwUG8O/9m8f6+Wz/D5AR23LZQVr7Po=;
+        b=eKawoDk7chzeMPvdMYx+EtN85XUFz1AnhawYii94uLI8U69nJZdhsz5cOGy0e0dCqm
+         bF9Mc3oi3eZHN+6GJFX+Jb8p0fPXn53rAabYgOCn//KtA0iqSWgkMra+IqqMg/+QYDRS
+         uR2OLvrNIgae1s8j2i24IydTAdOg239y3CeQ3Lz0jPs15cnN/Mjw8J6+W4fJHFGYjiLR
+         A3ZPhmRpnQexXiQKZ2hZES7LmoCXWRGqU84aTdJyW85upg1axEl7ZtB53kJoihIuS4mb
+         cP/wlx0GfLtSwCw2g3e8QOAyNeLiXXKC7O1DV/Tkt3Pygi6Qbr0bWScFJMxWTeG8gYW9
+         6gsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759429929; x=1760034729;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0xG0CcI6s1hgPAwUG8O/9m8f6+Wz/D5AR23LZQVr7Po=;
+        b=pgkxdkBbeBwdbd4u42mRDxrwHqtZQlnNKpT0U5mkjOCXvvk0tnK7Ve8+G50/7Tbfkh
+         nBzxQQLX5CsA9dzgoCUy/yvHxRhsKTJfwysL6Qi0sf3DBjaCfuE3e7gQNaFxgXloxKGC
+         qCZggAYASnuF7SnagPm2YCN/j78vDUK46Nsg+h6zEF3AO/iZYSd3J43+ywATt/Q4AE0N
+         4lIsH5Mc2AOY88+kshrcJGX+/u1ruomZRVZokytiMfKn2Zsb42JCsnvo0ptWMKnkOwNd
+         9867oOwz3pAYWaEz2Z040OrWmQ/s47F/YLK4eDA6NSeGSg8UmQFC9M+A4q/9FPTL+M42
+         ZvCw==
+X-Forwarded-Encrypted: i=1; AJvYcCVCwgmh4qdFxfK0hT8I70tHPhi1c32rTzj60JnP55Dpss4EY71m94eZGbIIUTEtubfpNLCQMVwLdPcvDuA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFlM5w3yaUk0rf4L2dKYU6X2I+Fy79QhgcEI8jEgUxIeMvHTV6
+	s9b8bN19v9VxV5aVTsCMrDRKGA90SGOLVHAbBvlaGdokygGHJiwBtqxb+jMZNt68viIW4arL+A9
+	rnIjxe9cGxzsjVYZguw+yU3LsQ02PT7M=
+X-Gm-Gg: ASbGnctsP+h7Zd0w8m2MU6H4IN5Q6nENIRBbo637BxDARkYJy1rK2ZorRn2/fx989jT
+	FDrQAl8ksJrSl8yrG0xGaQklQP3BA/i+N9K1/axCVTWQfpsEFlkH/RoYRfI6UMtav1I5rOOTTg+
+	vDjOQi71dRYf8LPG7JXbNBEGB5R3/xR4dRVqpXUx+qkeJZiQgDL0b8m2+3TNh3Zrv6tNXEZJsDj
+	9AeBLai1TREoVXW5R/EaUUiVCnl0ZHtDUtvmKzUo88x7q1fsghBI70ybyrOMguYLe8Rfv0K9VYy
+	wa/AM0KswU5JVmBm2w==
+X-Google-Smtp-Source: AGHT+IEstN7kMZUYjY35DUMyOR6/5I8AHe5nv1wJrlRFIJk67TwL0o89K8lWPuQFmVis/Y7cpKJ9BygZB+7IHAI5vYo=
+X-Received: by 2002:a17:903:4b08:b0:26a:f6e6:ef4f with SMTP id
+ d9443c01a7336-28e9a65e62bmr2322505ad.60.1759429929219; Thu, 02 Oct 2025
+ 11:32:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D046UWA004.ant.amazon.com (10.13.139.76) To
- EX19D001UWA001.ant.amazon.com (10.13.138.214)
+References: <20251002180541.1375151-1-kriish.sharma2006@gmail.com> <34901d4b-0fa9-4a86-b8b1-9c9dc5ed0e2e@gmail.com>
+In-Reply-To: <34901d4b-0fa9-4a86-b8b1-9c9dc5ed0e2e@gmail.com>
+From: Kriish Sharma <kriish.sharma2006@gmail.com>
+Date: Fri, 3 Oct 2025 00:01:57 +0530
+X-Gm-Features: AS18NWBo8w6ka6isASgG_CEDtwSQpfX2F1TyKo17vjYa0mOH_V4nWvDlLzsdOF0
+Message-ID: <CAL4kbRNZNYHdwy1jLREEU0Bt9Tsy7oS-LXU1oi33gNLBj-OUUw@mail.gmail.com>
+Subject: Re: [PATCH] drivers/net/wan/hdlc_ppp: fix potential null pointer in
+ ppp_cp_event logging
+To: Dimitri Daskalakis <dimitri.daskalakis1@gmail.com>
+Cc: khc@pm.waw.pl, andrew+netdev@lunn.ch, davem@davemloft.net, 
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2 Oct 2025 11:16:46 -0700, yanjun.zhu wrote:
+Thanks for the suggestion. For this patch, I opted to handle the
+fallback locally in ppp_cp_event to keep the change minimal and low
+risk.
 
->On 9/30/25 8:02 PM, Kohei Enju wrote:
->> On Tue, 30 Sep 2025 13:29:32 -0700, syzbot wrote:
->> 
->>> Hello,
->>>
->>> syzbot found the following issue on:
->>>
->>> HEAD commit:    1896ce8eb6c6 Merge tag 'fsverity-for-linus' of git://git.k..
->>> git tree:       upstream
->>> console output: https://syzkaller.appspot.com/x/log.txt?x=153d0092580000
->>> kernel config:  https://syzkaller.appspot.com/x/.config?x=6eca10e0cdef44f
->>> dashboard link: https://syzkaller.appspot.com/bug?extid=938fcd548c303fe33c1a
->>> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
->>> userspace arch: i386
->>>
->>> Unfortunately, I don't have any reproducer for this issue yet.
->>>
->>> Downloadable assets:
->>> disk image: https://storage.googleapis.com/syzbot-assets/d0fbab3c0b62/disk-1896ce8e.raw.xz
->>> vmlinux: https://storage.googleapis.com/syzbot-assets/71c7b444e106/vmlinux-1896ce8e.xz
->>> kernel image: https://storage.googleapis.com/syzbot-assets/96a4aa63999d/bzImage-1896ce8e.xz
->>>
->>> IMPORTANT: if you fix the issue, please add the following tag to the commit:
->>> Reported-by: syzbot+938fcd548c303fe33c1a@syzkaller.appspotmail.com
->>>
->>> netlink: 8 bytes leftover after parsing attributes in process `syz.8.3246'.
->>> =====================================================
->>> BUG: KMSAN: uninit-value in hex_byte_pack include/linux/hex.h:13 [inline]
->>> BUG: KMSAN: uninit-value in ip6_string+0xef4/0x13a0 lib/vsprintf.c:1490
->>> hex_byte_pack include/linux/hex.h:13 [inline]
->>> ip6_string+0xef4/0x13a0 lib/vsprintf.c:1490
->>> ip6_addr_string+0x18a/0x3e0 lib/vsprintf.c:1509
->>> ip_addr_string+0x245/0xee0 lib/vsprintf.c:1633
->>> pointer+0xc09/0x1bd0 lib/vsprintf.c:2542
->>> vsnprintf+0xf8a/0x1bd0 lib/vsprintf.c:2930
->>> vprintk_store+0x3ae/0x1530 kernel/printk/printk.c:2279
->>> vprintk_emit+0x307/0xcd0 kernel/printk/printk.c:2426
->>> vprintk_default+0x3f/0x50 kernel/printk/printk.c:2465
->>> vprintk+0x36/0x50 kernel/printk/printk_safe.c:82
->>> _printk+0x17e/0x1b0 kernel/printk/printk.c:2475
->>> ib_nl_process_good_ip_rsep drivers/infiniband/core/addr.c:128 [inline]
->> 
->> I see when gid is not initialized in nla_for_each_attr loop, this should
->> return early.
+On Thu, Oct 2, 2025 at 11:46=E2=80=AFPM Dimitri Daskalakis
+<dimitri.daskalakis1@gmail.com> wrote:
 >
->GID is a globally unique 128-bit identifier for an RDMA port, used for 
->addressing and routing in InfiniBand or RoCE networks. It\u2019s crucial for 
->establishing RDMA connections across subnets or Ethernet networks. IMO, 
->we do not just return when gid is not found. We should find out why the 
->GID does not exist if I get you correctly.
-
-Indeed, I think you're right.
-Considering that ib_nl_is_good_ip_resp() returns true, the fact that GID
-doesn't exist seems weird and we should investigate the cause.
-
+> On 10/2/25 11:05 AM, Kriish Sharma wrote:
 >
->Then we can fix this problem where the GID can not be added into GID table.
->
->It is just my 2 cent advice.
->
->Yanjun.Zhu
->
->> 
->> I think the splat occurrs when gid is not found, so a simple fix might
->> be like:
->> 
->> diff --git a/drivers/infiniband/core/addr.c b/drivers/infiniband/core/addr.c
->> index be0743dac3ff..c03a308bcda5 100644
->> --- a/drivers/infiniband/core/addr.c
->> +++ b/drivers/infiniband/core/addr.c
->> @@ -103,15 +103,21 @@ static void ib_nl_process_good_ip_rsep(const struct nlmsghdr *nlh)
->>          struct addr_req *req;
->>          int len, rem;
->>          int found = 0;
->> +       bool gid_found = false;
->> 
->>          head = (const struct nlattr *)nlmsg_data(nlh);
->>          len = nlmsg_len(nlh);
->> 
->>          nla_for_each_attr(curr, head, len, rem) {
->> -               if (curr->nla_type == LS_NLA_TYPE_DGID)
->> +               if (curr->nla_type == LS_NLA_TYPE_DGID) {
->>                          memcpy(&gid, nla_data(curr), nla_len(curr));
->> +                       gid_found = true;
->> +               }
->>          }
->> 
->> +       if (!gid_found)
->> +               return;
->> +
->>          spin_lock_bh(&lock);
->>          list_for_each_entry(req, &req_list, list) {
->>                  if (nlh->nlmsg_seq != req->seq)
->> 
->>> ib_nl_handle_ip_res_resp+0x963/0x9d0 drivers/infiniband/core/addr.c:141
->>> rdma_nl_rcv_msg drivers/infiniband/core/netlink.c:-1 [inline]
->>> rdma_nl_rcv_skb drivers/infiniband/core/netlink.c:239 [inline]
->>> rdma_nl_rcv+0xefa/0x11c0 drivers/infiniband/core/netlink.c:259
->>> netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
->>> netlink_unicast+0xf04/0x12b0 net/netlink/af_netlink.c:1346
->>> netlink_sendmsg+0x10b3/0x1250 net/netlink/af_netlink.c:1896
->>> sock_sendmsg_nosec net/socket.c:714 [inline]
->>> __sock_sendmsg+0x333/0x3d0 net/socket.c:729
->>> ____sys_sendmsg+0x7e0/0xd80 net/socket.c:2617
->>> ___sys_sendmsg+0x271/0x3b0 net/socket.c:2671
->>> __sys_sendmsg+0x1aa/0x300 net/socket.c:2703
->>> __compat_sys_sendmsg net/compat.c:346 [inline]
->>> __do_compat_sys_sendmsg net/compat.c:353 [inline]
->>> __se_compat_sys_sendmsg net/compat.c:350 [inline]
->>> __ia32_compat_sys_sendmsg+0xa4/0x100 net/compat.c:350
->>> ia32_sys_call+0x3f6c/0x4310 arch/x86/include/generated/asm/syscalls_32.h:371
->>> do_syscall_32_irqs_on arch/x86/entry/syscall_32.c:83 [inline]
->>> __do_fast_syscall_32+0xb0/0x150 arch/x86/entry/syscall_32.c:306
->>> do_fast_syscall_32+0x38/0x80 arch/x86/entry/syscall_32.c:331
->>> do_SYSENTER_32+0x1f/0x30 arch/x86/entry/syscall_32.c:369
->>> entry_SYSENTER_compat_after_hwframe+0x84/0x8e
->>>
->>> Local variable gid.i created at:
->>> ib_nl_process_good_ip_rsep drivers/infiniband/core/addr.c:102 [inline]
->>> ib_nl_handle_ip_res_resp+0x254/0x9d0 drivers/infiniband/core/addr.c:141
->>> rdma_nl_rcv_msg drivers/infiniband/core/netlink.c:-1 [inline]
->>> rdma_nl_rcv_skb drivers/infiniband/core/netlink.c:239 [inline]
->>> rdma_nl_rcv+0xefa/0x11c0 drivers/infiniband/core/netlink.c:259
->>>
->>> CPU: 0 UID: 0 PID: 17455 Comm: syz.8.3246 Not tainted syzkaller #0 PREEMPT(none)
->>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
->>> =====================================================
->>>
->>>
->>> ---
->>> This report is generated by a bot. It may contain errors.
->>> See https://goo.gl/tpsmEJ for more information about syzbot.
->>> syzbot engineers can be reached at syzkaller@googlegroups.com.
->>>
->>> syzbot will keep track of this issue. See:
->>> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->>>
->>> If the report is already addressed, let syzbot know by replying with:
->>> #syz fix: exact-commit-title
->>>
->>> If you want to overwrite report's subsystems, reply with:
->>> #syz set subsystems: new-subsystem
->>> (See the list of subsystem names on the web dashboard)
->>>
->>> If the report is a duplicate of another one, reply with:
->>> #syz dup: exact-subject-of-another-report
->>>
->>> If you want to undo deduplication, reply with:
->>> #syz undup
->>>
->
->
+> > Fixes warnings observed during compilation with -Wformat-overflow:
+> >
+> > drivers/net/wan/hdlc_ppp.c: In function =E2=80=98ppp_cp_event=E2=80=99:
+> > drivers/net/wan/hdlc_ppp.c:353:17: warning: =E2=80=98%s=E2=80=99 direct=
+ive argument is null [-Wformat-overflow=3D]
+> >   353 |                 netdev_info(dev, "%s down\n", proto_name(pid));
+> >       |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > drivers/net/wan/hdlc_ppp.c:342:17: warning: =E2=80=98%s=E2=80=99 direct=
+ive argument is null [-Wformat-overflow=3D]
+> >   342 |                 netdev_info(dev, "%s up\n", proto_name(pid));
+> >       |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> >
+> > Introduce local variable `pname` and fallback to "unknown" if proto_nam=
+e(pid)
+> > returns NULL.
+> >
+> > Fixes: 262858079afd ("Add linux-next specific files for 20250926")
+> > Signed-off-by: Kriish Sharma <kriish.sharma2006@gmail.com>
+> > ---
+> >  drivers/net/wan/hdlc_ppp.c | 8 ++++++--
+> >  1 file changed, 6 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/net/wan/hdlc_ppp.c b/drivers/net/wan/hdlc_ppp.c
+> > index 7496a2e9a282..f3b3fa8d46fd 100644
+> > --- a/drivers/net/wan/hdlc_ppp.c
+> > +++ b/drivers/net/wan/hdlc_ppp.c
+> > @@ -339,7 +339,9 @@ static void ppp_cp_event(struct net_device *dev, u1=
+6 pid, u16 event, u8 code,
+> >               ppp_tx_cp(dev, pid, CP_CODE_REJ, ++ppp->seq, len, data);
+> >
+> >       if (old_state !=3D OPENED && proto->state =3D=3D OPENED) {
+> > -             netdev_info(dev, "%s up\n", proto_name(pid));
+> > +             const char *pname =3D proto_name(pid);
+> > +
+> > +             netdev_info(dev, "%s up\n", pname ? pname : "unknown");
+> >               if (pid =3D=3D PID_LCP) {
+> >                       netif_dormant_off(dev);
+> >                       ppp_cp_event(dev, PID_IPCP, START, 0, 0, 0, NULL)=
+;
+> > @@ -350,7 +352,9 @@ static void ppp_cp_event(struct net_device *dev, u1=
+6 pid, u16 event, u8 code,
+> >               }
+> >       }
+> >       if (old_state =3D=3D OPENED && proto->state !=3D OPENED) {
+> > -             netdev_info(dev, "%s down\n", proto_name(pid));
+> > +             const char *pname =3D proto_name(pid);
+> > +
+> > +             netdev_info(dev, "%s down\n", pname ? pname : "unknown");
+> >               if (pid =3D=3D PID_LCP) {
+> >                       netif_dormant_on(dev);
+> >                       ppp_cp_event(dev, PID_IPCP, STOP, 0, 0, 0, NULL);
+> Would it be better to return "unknown" in proto_name()'s default case?
 
