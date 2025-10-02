@@ -1,129 +1,122 @@
-Return-Path: <linux-kernel+bounces-840462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92A5DBB47C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 18:18:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E684BB4814
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 18:20:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CFCA3A516B
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 16:18:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73D2D7A21AC
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 16:18:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A733925334B;
-	Thu,  2 Oct 2025 16:17:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABC45258EE1;
+	Thu,  2 Oct 2025 16:18:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jCLc2WA7"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ntM32JZY"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED68A2580ED
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 16:17:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8320259C94
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 16:18:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759421867; cv=none; b=GIZGLaza8dsqBpbSSBqOKTB/n9WbM97i6/ZB9L8XwNIQpH85Dc2+0QH3y5XovUBBx/LsFidKGb5oN1dInr4b+ej5vb7gF/53Z2e2Uq4UB0k31ylnIS0ktU3hoKYdUFikPDFZOxc7GO6BuyaskEfS7xeFw7PiF+hm7tOOGv01eQM=
+	t=1759421914; cv=none; b=XA2On2Br+JYm+6Y3+Kw4doohbW6OeH0i9zgMQ2hjd9ncixdOfmCMS7lVcsg+d68Lvfn9yzog1J5n7ZHDxrzCGRmOnIX4yTdVvv0CyWJfcNvHQKXre1VgwhfAf9KE55ednv6cIHjp0iQIco3Rz9N7ZMqAZ2sSY8tZLDh4iZ6Y45g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759421867; c=relaxed/simple;
-	bh=1YHnshCqLi+ucWc5M7tP4V4y4kXaMFfeCtQBd/Oa7l0=;
+	s=arc-20240116; t=1759421914; c=relaxed/simple;
+	bh=aLH9BCUCK6JFkv6xyUlkoPUhsi1r/cg0UwxlEtbgTww=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CW8MzztJMhe6Nr9sZpiqccPHBi25ivHxB5cOWU3mJEmXjvKhVWFrmS9OyAH7w+N1UJ5CrBIPijpRvJs1kEaXTs4LyA6k2qjlfsbl6VlMevQRwiQTbv/An4ZQBSDcR7KN5PuzHDvB2wyLcEpP51tysa7bCsJ6ASKQwQG3Hq0uzmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jCLc2WA7; arc=none smtp.client-ip=209.85.216.50
+	 To:Cc:Content-Type; b=otk8bNo7JxEhYK7JEtaWj3DPpZsE/Hu7hmmOkOdzeB8j/zM10GI0sYeWX3ZYm5UueOm7lgNBZeFdgdhLpM0vRWOQPQ43cK8n5j+aQLaMXYR9Fg5bPuNNsuf1+WPk/dOPnJTDaNQ0UoDiHyvisqzeRI69U4Y88HROwLDk23O/UWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ntM32JZY; arc=none smtp.client-ip=209.85.216.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-33292adb180so1288982a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 09:17:45 -0700 (PDT)
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-33082c95fd0so1372482a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 09:18:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759421865; x=1760026665; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1759421912; x=1760026712; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Tns1AdvpF6HQZmPvVXIDEXEzdssOYUsqEK8yeD9oV6I=;
-        b=jCLc2WA7MgTu4DUwCdWJxV+EknF/ZClgkDG4ywA1pL3E3F0jexbSkw2p6KhpVJd2Q4
-         gSxj+hq4lzZ4uptY05bcE1z4SIx1zq6M+RsiJAuMZjcIHhPHCRwRzp512TmQS/cRvjt2
-         MoEjj9p9VTdNXTKe6eFk9AyjB79zFFN0x9mOjACgWdpvN1IciJJy9WJLJm8AKE58wRcj
-         ae6tZA6BExKiWe/NTlThix2+AiC59GWCa9G3gwvTOGLV4/3LAwEsjYrPGfTnr61zXP5K
-         xhxEoqL2qjroLS+ixtgpeOjYrBufAvWOwt+Wj8f/vy0FHF4msVyfJn3Elrav34C+LOfw
-         Hp1Q==
+        bh=Cs0gCH7mhvaO1qaWvoNXBT3MrPhbI+ZP4G1QowHi4cU=;
+        b=ntM32JZYOV98CQiB502TF5RPc4tOmcxVgck7M3aKAkGVn8suHkcjzqF1vYEpMKx/ZZ
+         InqoKTdJdCMrbk11L2bdhuT4o028GnExmDvdRscX8TD/9kM3PklVSFRoevRT9bgqUnDz
+         z5joPOlpMf9YcjWXSk7VCxv7wpkQbCUJZ7/efW6P/W1w5QYdT+fzWt3DKY2B9CiI9k0u
+         v2B7hZIOzGvcujxPnnGL/ZGJR92Fp2knXa7wNed4bsmTfZ2v7+f6eKX9thDP+i/IJlMW
+         EjNvHYxEpMxs+0zsQHDA9I/6MtAa1FHQlqVVT/B/1mEwJL39OhDL2osCnf4Dx3K5Idnr
+         Mn2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759421865; x=1760026665;
+        d=1e100.net; s=20230601; t=1759421912; x=1760026712;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Tns1AdvpF6HQZmPvVXIDEXEzdssOYUsqEK8yeD9oV6I=;
-        b=e269tZxh4Kkm7cn5KhJMYq5DfslurovIW/qxe62AUMiZhe3TOfVTYHOF9AXXQgpL54
-         Yavwj/fqFxCnT1WvLaYoNuO9U6eE99lX8wRAlgTK1dRycN+I2dejWUt416vK9QHEWTpt
-         cFOEHSJmMbLd5ARGcz5kEHjeZDCeBYQF0xxpggKIu6gwuJikVHguD01FlRXmNuQh++pU
-         3yrTPTNIEdYsIj0FE8w3cApBRj8NvNCHNaH9TkQg6vBezbXD65Elq65eVGUcJNv1eoko
-         /1HNmE72ATKIZozgcsMuhjstU/MjZzjIWKBkkaxoHXmgFQZBf8R7EbhErY7kik0UqR1r
-         hF5A==
-X-Forwarded-Encrypted: i=1; AJvYcCVeSsTqRz2V2K4MYdeFqrU2AfnTr57wigLYspNFlJI5rktw2XHa/qwavP6P6D5AjcbUnqJf7gb2EZc0oUs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQGjWlb2Tc0q2wqRsJATuFJqRg5D5DbG5k1u87dPNaYGdkFi6c
-	/G7Dx97yCymSaOKYHuQz+NvyE3AzcLhEjkTjgr34ZzAcmsNBvpiqe1qm3j2tPfwGvbryrWbCn8v
-	Ef6kfl9UeO9XPpIFzI52NeG8WqdJNBwI=
-X-Gm-Gg: ASbGnctMsZBTfCOe0v4JL6vrzOCQxGsXpCOFAF0ftdBuunOo/ZvRo4cp6vAKyTdxNLI
-	AJQbWVOuFwUE7wGKO5qaTIoreM8LimDu1LZOqb91KA4y5LsSL2SI8bDJNvQ+hhjnSerRvCWHb5k
-	dkXg3JoLthmjb/iLeR48SwKNCMEbLnh0OT6yDJ4YVsMKP9sOCektIY+YXy0TVZ+i3wFBEPpwVgx
-	TkR3c5yuDlO5VlTJftmBmP6B/KmbJs=
-X-Google-Smtp-Source: AGHT+IG05j1d6QNHzwDrb/UQJ4gcdVPoLdwBOKbzmCKpejfaOjCLo+ZcRilsDiKUj5p2759Bf2DxGd/yIw9mbP1uPh4=
-X-Received: by 2002:a17:90b:3b41:b0:32b:94a2:b0d5 with SMTP id
- 98e67ed59e1d1-339a6f93baemr10463340a91.37.1759421865385; Thu, 02 Oct 2025
- 09:17:45 -0700 (PDT)
+        bh=Cs0gCH7mhvaO1qaWvoNXBT3MrPhbI+ZP4G1QowHi4cU=;
+        b=sSvdkSg+TZPAfAztwsv1bMMdu1cXFf6pBH4COsqdPNMEIbvbuwMHKf1GNIvd0Pzx9B
+         UE5Q8XzdQO6MrOKMYYKQ7t8X7dYAR2d9vU965XW8KIumwd8nDiaaMQtL1PMvP/3RsbQG
+         JegI+mccHftOK8w5fwUORpgWpAFd/fA5DHJ+5FgLLXO5XblWB0HHvLIUO5ypCFJgn8hy
+         eLwmmyMuWshilH1COHPUDnmKq7m9RRhrYVvI+Px5e7yTyAftZL6MbFEPX1wTmrdzMv2l
+         TiwPR8SPQZSBFBqCbo81whik3FAZuBJyUHM5QiLAhNT6rhOSiOftJkc2ojb0+Ti0en75
+         iSXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXSh84nsh5+1KMKgs6+zyJChmacTVjSkjERfq3iod2MkENDaEvRKuHyAfS38G2DmTiZx5n+yYy6zstj1SA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFpHWtLXoM3GRhiCa/U6d7i8reKdO9hlB2E78u0+0k0mVNhgTL
+	/Ah7485J+1GVHIfVnfso0Gro8DZyQdGluww2iWsLutk3aJywUZ9QbEvaeFlDfjNepzaMH1r6SuE
+	XdFE3tiPFAqUe3za7PWJDlkN66ZpxALo=
+X-Gm-Gg: ASbGncv6cJMVx+kyrn+uU/PD/mq9UwHfH/bWTGSvvM7jx2OG/yz3fQlkLohGf21FObG
+	63Uy78NGVMlzQ2mStY8yyfGwSKX+BA62Vx/04Lp3EpS3XuEiyzTjGGndlXMMfdwQvUp+8nDi/DM
+	TQvzXpyHYlunelcDiXUpQkGceXn/B23IcC/LdYzRmESS6FAU0LsrlDhwb6AA3pCjoTgWRn+9xo4
+	zLYq+XzOhDk0gdjy+RN2L76G27JXmw=
+X-Google-Smtp-Source: AGHT+IFg+PLUyWcoSsUAUf4htH875wDYY+hRdnGTted2LRpK1PJKUcMRnSKqqpUMk+z7FMvgEMVUAaitgkdEcJV3rx8=
+X-Received: by 2002:a17:90b:38cb:b0:32e:ca03:3ba with SMTP id
+ 98e67ed59e1d1-339a6f2e679mr8142326a91.22.1759421910494; Thu, 02 Oct 2025
+ 09:18:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250822190140.2154646-1-briannorris@chromium.org> <20250822190140.2154646-2-briannorris@chromium.org>
-In-Reply-To: <20250822190140.2154646-2-briannorris@chromium.org>
+References: <20250821-qcs8300_mdss-v8-0-e9be853938f9@oss.qualcomm.com>
+ <20250821-qcs8300_mdss-v8-5-e9be853938f9@oss.qualcomm.com> <iza3iyj6ztuudm5rqfrxtalwxfghzsguf3pieulylebdblq7sw@divpjvwwvmsg>
+In-Reply-To: <iza3iyj6ztuudm5rqfrxtalwxfghzsguf3pieulylebdblq7sw@divpjvwwvmsg>
 From: ChaosEsque Team <chaosesqueteam@gmail.com>
-Date: Thu, 2 Oct 2025 12:22:42 -0400
-X-Gm-Features: AS18NWCuq-n56JL0W7Gw4m7AvH4B1Hxysibf-Cfy8GzGwnCU1M2OHsorAHULTwM
-Message-ID: <CALC8CXeb6smyYpMN2owPfcDBdk344W0pV7MJSYUTAhew9eFE8A@mail.gmail.com>
-Subject: Re: [PATCH v2 1/6] genirq/test: Select IRQ_DOMAIN
-To: Brian Norris <briannorris@chromium.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, David Gow <davidgow@google.com>, 
-	linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, kunit-dev@googlegroups.com
+Date: Thu, 2 Oct 2025 12:23:27 -0400
+X-Gm-Features: AS18NWDwyTbNJJLg_4zVrM-EyYlDVd5QGpchaU4fwAQ38Pf7WEw2ME2yXmyyL7Q
+Message-ID: <CALC8CXfTA6bBN-ZthgRoPXvv-BZQtvL7w7a+6bgTe_GTWnnfHg@mail.gmail.com>
+Subject: Re: [PATCH v8 5/6] drm/msm: mdss: Add QCS8300 support
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Yongxing Mou <yongxing.mou@oss.qualcomm.com>, Rob Clark <robin.clark@oss.qualcomm.com>, 
+	Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>, 
+	Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Kuogee Hsieh <quic_khsieh@quicinc.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Chuck Norris' brotha. Chuck Norris looking mutha fuka
+Yoongxing the Chinaman, and Dmitry the RUSSKIE; Conspiring.
 
-On Fri, Aug 22, 2025 at 3:28=E2=80=AFPM Brian Norris <briannorris@chromium.=
-org> wrote:
+On Fri, Aug 22, 2025 at 6:39=E2=80=AFAM Dmitry Baryshkov
+<dmitry.baryshkov@oss.qualcomm.com> wrote:
 >
-> These tests use irq_domain_alloc_descs() and so require
-> CONFIG_IRQ_DOMAIN.
+> On Thu, Aug 21, 2025 at 11:36:00AM +0800, Yongxing Mou wrote:
+> > Add Mobile Display Subsystem (MDSS) support for the QCS8300 platform.
+> >
+> > Signed-off-by: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
+> > ---
+> >  drivers/gpu/drm/msm/msm_mdss.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
 >
-> Fixes: 66067c3c8a1e ("genirq: Add kunit tests for depth counts")
-> Reported-by: Guenter Roeck <linux@roeck-us.net>
-> Closes: https://lore.kernel.org/lkml/ded44edf-eeb7-420c-b8a8-d6543b955e6e=
-@roeck-us.net/
-> Signed-off-by: Brian Norris <briannorris@chromium.org>
-> Reviewed-by: David Gow <davidgow@google.com>
-> ---
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 >
-> (no changes since v1)
 >
->  kernel/irq/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/kernel/irq/Kconfig b/kernel/irq/Kconfig
-> index 1da5e9d9da71..08088b8e95ae 100644
-> --- a/kernel/irq/Kconfig
-> +++ b/kernel/irq/Kconfig
-> @@ -148,6 +148,7 @@ config IRQ_KUNIT_TEST
->         bool "KUnit tests for IRQ management APIs" if !KUNIT_ALL_TESTS
->         depends on KUNIT=3Dy
->         default KUNIT_ALL_TESTS
-> +       select IRQ_DOMAIN
->         imply SMP
->         help
->           This option enables KUnit tests for the IRQ subsystem API. Thes=
-e are
 > --
-> 2.51.0.rc2.233.g662b1ed5c5-goog
->
+> With best wishes
+> Dmitry
 >
 
