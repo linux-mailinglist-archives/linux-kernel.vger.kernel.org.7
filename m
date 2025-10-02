@@ -1,91 +1,111 @@
-Return-Path: <linux-kernel+bounces-840840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D8D9BB58A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 00:28:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4022BB58AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 00:30:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E20DC19271D3
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 22:29:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 498803A51D1
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 22:30:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB1642737E6;
-	Thu,  2 Oct 2025 22:28:48 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DD5D245023
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 22:28:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7C8426B0AE;
+	Thu,  2 Oct 2025 22:30:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="dfOZmbP0"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEDE72F2D;
+	Thu,  2 Oct 2025 22:30:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759444128; cv=none; b=JlLC07gaBkp4USRmW9UPcl6GmJn/g0kz8QXFne3eQMKM4Chos6LhRTecyYQet+IQqoQlHc77QS+EAX8tAOTlXTWPeDOYvNrqhe7JYTa/SbGbo6WZxyEZU8Vv+t27pv2cKuW+1G2KABhbpnbGw+cfsS3UQwP4j9EfkBuCe7dyiNw=
+	t=1759444226; cv=none; b=WAJMunQnTWjlI8xeLrE38EPNU4Mv/D4aEZIKzvHEG+VdtXQOA85AIxmdzrnBnHCrQ+WsSNFeDmtVUFcY02i5SjEGCvYeILh9RmqC8YTccmEopO7ox5U3bLiEhSXS3o/D0LGl1U3qLQu2Fyi41vEm7Wigj2g84Tgi2YNeJQ2sIs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759444128; c=relaxed/simple;
-	bh=6yIWmQVBkdeo4k9A/ET9hcLPkqL9LMtgmxAzQSDoUHE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WyQig9HAX8BgGS9l+IHYYSX1FJsFdNDEraoNKmcuYT3FhZMCh1qNS7F9cjvXZRCIzqTtMSFfn/PDtYHWoHeIfP183vLQoWYtNz2jxsDfwpK0V5cotmu/1uvzhZroGqFxIdoAIeuS50W+hDN+2ScneWncdEoINZ2JW+uGLmlqxzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7C7841655;
-	Thu,  2 Oct 2025 15:28:36 -0700 (PDT)
-Received: from localhost.localdomain (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8B6DC3F5A1;
-	Thu,  2 Oct 2025 15:28:43 -0700 (PDT)
-From: Andre Przywara <andre.przywara@arm.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] reset: core: reset-gpio: Suppress registration error for optional resets
-Date: Thu,  2 Oct 2025 23:28:26 +0100
-Message-ID: <20251002222826.16516-1-andre.przywara@arm.com>
-X-Mailer: git-send-email 2.46.4
+	s=arc-20240116; t=1759444226; c=relaxed/simple;
+	bh=fF75rwgKIO8KDklsni4x/9EcLRPv8qHp2cT2OZREY20=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=AVzPNBx15R/P5h+c2YiAYg89g8Rz4ohpp6CtFPoAMfoEGI3t5hS0U1WKcDnuE4kkbcoNXvEuo/7Np0CxCrftwfgvV6Uo4ehE7/OWBPp/jR0kfonZe0uT2+AGDRULf24gEBM3u7LNejMeJLr3FsxzCCiVaLKUN3vBdmL2WgB7rj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=dfOZmbP0; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.64.160.245] (unknown [20.191.74.188])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 136E8211B7D4;
+	Thu,  2 Oct 2025 15:30:23 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 136E8211B7D4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1759444224;
+	bh=z6OYRJ9samRnQk1PTwtlFMjIR8HmV/wZd9vd6dwjQ+I=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=dfOZmbP0MBG3PV5UExxHxALUVk0WBPVdqaxtHduycv0PWhGynTrLwgf71Ubp9yIFB
+	 fGT1OBF9PTcjxiXKFltOiI0OjYGpVRC1IvwRLI3EKVxESXtFj00grsB7+TBXl+TLMJ
+	 /b3asgCXtO9sKk5hVXNLnCkF+4ZE4WC9JXcW2QfY=
+Message-ID: <605ce8cf-bdf9-45ca-b407-708625c8dcfa@linux.microsoft.com>
+Date: Thu, 2 Oct 2025 15:30:22 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Cc: Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>,
+ Nuno Das Neves <nunodasneves@linux.microsoft.com>,
+ Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
+ "open list:Hyper-V/Azure CORE AND DRIVERS" <linux-hyperv@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ easwar.hariharan@linux.microsoft.com
+Subject: Re: [PATCH] Drivers: hv: Use -ETIMEDOUT for HV_STATUS_TIME_OUT
+ instead of -EIO
+To: "K. Y. Srinivasan" <kys@microsoft.com>
+References: <20251002221347.402320-1-easwar.hariharan@linux.microsoft.com>
+From: Easwar Hariharan <easwar.hariharan@linux.microsoft.com>
+Content-Language: en-US
+In-Reply-To: <20251002221347.402320-1-easwar.hariharan@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-For reset controllers that are marked as optional, we should skip errors
-during probing and return NULL, to avoid unnecessary failures. The
-reset-gpio controller does this mostly, but returns the true error in
-case the __reset_add_reset_gpio_device() call fails. Treat this call the
-same as the other registration errors, and consider the optional flag.
+On 10/2/2025 3:13 PM, Easwar Hariharan wrote:
+> Use the -ETIMEDOUT errno value as the correct 1:1 match for the
+> hypervisor timeout status
+> 
+> Fixes: 3817854ba89201 ("hyperv: Log hypercall status codes as strings")
+> Signed-off-by: Easwar Hariharan <easwar.hariharan@linux.microsoft.com>
+> ---
+>  drivers/hv/hv_common.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/hv/hv_common.c b/drivers/hv/hv_common.c
+> index 49898d10fafff..9b51b67d54cc8 100644
+> --- a/drivers/hv/hv_common.c
+> +++ b/drivers/hv/hv_common.c
+> @@ -781,7 +781,7 @@ static const struct hv_status_info hv_status_infos[] = {
+>  	_STATUS_INFO(HV_STATUS_INVALID_LP_INDEX,		-EIO),
+>  	_STATUS_INFO(HV_STATUS_INVALID_REGISTER_VALUE,		-EIO),
+>  	_STATUS_INFO(HV_STATUS_OPERATION_FAILED,		-EIO),
+> -	_STATUS_INFO(HV_STATUS_TIME_OUT,			-EIO),
+> +	_STATUS_INFO(HV_STATUS_TIME_OUT,			-ETIMEDOUT),
+>  	_STATUS_INFO(HV_STATUS_CALL_PENDING,			-EIO),
+>  	_STATUS_INFO(HV_STATUS_VTL_ALREADY_ENABLED,		-EIO),
+>  #undef _STATUS_INFO
 
-One could argue that at this point it's a proper error that should not
-be ignored anymore, but in case of the reset-gpio controller this is not
-entirely true, since the code at the moment does not support GPIO
-controllers with three #gpio-cells - there is a TODO comment about this
-in that said function. So to avoid unnecessary probe fails for devices
-using reset-gpios (it's an optional reset after all), let's treat an
-error as still optional at this point.
+Actually looking at the whole struct, it may be useful to also change at least some of
+ the following codes?
 
-This fixes operation of WiFi chips on Allwinner boards, where some use
-reset-gpios, and which currently fail because all Allwinner SoCs use
-GPIO controllers with 3 cells.
+        _STATUS_INFO(HV_STATUS_INVALID_ALIGNMENT,               -EIO), -> EINVAL
+        _STATUS_INFO(HV_STATUS_ACCESS_DENIED,                   -EIO), -> EACCES
+        _STATUS_INFO(HV_STATUS_INVALID_PARTITION_STATE,         -EIO), -> EINVAL
+        _STATUS_INFO(HV_STATUS_OPERATION_DENIED,                -EIO), -> EACCES
+        _STATUS_INFO(HV_STATUS_PROPERTY_VALUE_OUT_OF_RANGE,     -EIO), -> ERANGE
+        _STATUS_INFO(HV_STATUS_INSUFFICIENT_BUFFERS,            -EIO), -> ENOBUFS
+        _STATUS_INFO(HV_STATUS_NOT_ACKNOWLEDGED,                -EIO), -> EBUSY
+        _STATUS_INFO(HV_STATUS_INVALID_VP_STATE,                -EIO), -> EINVAL
+        _STATUS_INFO(HV_STATUS_INVALID_LP_INDEX,                -EIO), -> EINVAL
+        _STATUS_INFO(HV_STATUS_INVALID_REGISTER_VALUE,          -EIO), -> EINVAL
+        _STATUS_INFO(HV_STATUS_VTL_ALREADY_ENABLED,             -EIO), -> EBUSY
 
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
----
- drivers/reset/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Nuno, Stas, others, what do you think?
 
-diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-index 22f67fc77ae53..c2ccd08fb36e1 100644
---- a/drivers/reset/core.c
-+++ b/drivers/reset/core.c
-@@ -1044,7 +1044,7 @@ __of_reset_control_get(struct device_node *node, const char *id, int index,
- 
- 		ret = __reset_add_reset_gpio_device(&args);
- 		if (ret) {
--			rstc = ERR_PTR(ret);
-+			rstc = optional ? NULL : ERR_PTR(ret);
- 			goto out_put;
- 		}
- 	}
--- 
-2.46.4
-
+Thanks,
+Easwar (he/him)
 
