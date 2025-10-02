@@ -1,125 +1,204 @@
-Return-Path: <linux-kernel+bounces-840454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94ED5BB4762
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 18:15:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03238BB4771
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 18:15:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38C727B38D9
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 16:13:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A643B1C31A3
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 16:15:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A732C246797;
-	Thu,  2 Oct 2025 16:14:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED85624DD11;
+	Thu,  2 Oct 2025 16:15:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cWQJDLbm"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lVAzF5Rv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04BD32417FB;
-	Thu,  2 Oct 2025 16:14:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34719245006;
+	Thu,  2 Oct 2025 16:15:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759421684; cv=none; b=RGap31DKpdHyW2dSbVmxVKNjINzrqWRXqatrIITmGc6bhSUIWBI+yCyG8QoGU4dHtJXiy8ugCCR+IyfUs80Sct4tYSAqpIQ+rSbmqRPYerGv+M1G0PLDRAfF10pbXDJIHGyOL+jG4xpO/FJsfdtsSbPaNqaC3pwmkPslb0pyZvw=
+	t=1759421732; cv=none; b=WY07cqnfov/ScfDxgelvK3SWI83YjNWMUV0HYgjX4Xlpfeu0CcT40K1VUmY8oZGIw+xl5SOBV36+fSH8j4FGIPnply2YDqxyznNFy6OpQhFLxAaOxDBg2amTl4IOIy7tN2Ur/XjBJLIk5bSofXt3Rzd+QyjXOCgaDkhFEeVNELA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759421684; c=relaxed/simple;
-	bh=qYK9tIlRdM4ftIEjUodiuu8y/vbcNvvDnzhbabm8v1g=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=LTMYF40CKwnkm6oz21qQfHIv/lbiDY3ULkw8BdqNw3XJqezclmttzpTvIynSurUmT6iftjcmSkxMbG+15iofLLswPOr62FlNpajY13cZOIozySf/Ws7zRCZ+8DTrS745iiSbYc3iMLwPvscPq2ZfOyNi/lJ+w0UrupomOvkFGZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cWQJDLbm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E9BDC4CEF4;
-	Thu,  2 Oct 2025 16:14:42 +0000 (UTC)
+	s=arc-20240116; t=1759421732; c=relaxed/simple;
+	bh=buMaABYKeuu7EzStngN7lRoHldJv3zzZqBJVbXiTgh4=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=mAk4R1NSPOeF7q5oGc1hbJYqnlfTELRCwO1oGIeetULD+6AqWXARVhU2hw/VwssXL3Hibv6KjcXRHRGpaaqZxr73Qjdry7bWe2BdS0s7+fMIqfJbqFi8z8CqP5ZFwVx6HVtUk+CF6HHIlWvPfYjSv3Zjiu31dOeaUwB5aP2sqL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lVAzF5Rv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 988E0C4CEF9;
+	Thu,  2 Oct 2025 16:15:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759421683;
-	bh=qYK9tIlRdM4ftIEjUodiuu8y/vbcNvvDnzhbabm8v1g=;
-	h=Date:From:To:Cc:Subject:From;
-	b=cWQJDLbmavDJre+NaTqCVXEEGNCSXibM+xor439mhET4AOjy+T/NQ2KDaXYQduA2I
-	 HdQ2JHcrIB4eSs/lIybbB9SpCi1K0hSqZpVSnGXvNqGJvMi4UE7Oh0JJQoEcSzzwks
-	 TROi5H3ONpNWvhMlWasZJoZpWmc/KjuhcK+vlg+H+Q2SLbeJwYIzmR/KqTX4GALMWf
-	 w59JToZWk1ktKWoS6rs6ceIrKn6kewMIQ69WJ3J9ck1ZZSfPuPfIHku2H/LM+owz88
-	 ONeKjQcvoeEpbYBJik0xdeXBRkF3UhG/a1shBtrDClYVCs1aazphAQiFZzhn3cnDTK
-	 jZ9W7iehAzG2w==
-Date: Thu, 2 Oct 2025 17:14:39 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Wei Liu <wei.liu@kernel.org>
-Cc: Helge Deller <deller@gmx.de>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Mukesh Rathor <mrathor@linux.microsoft.com>,
-	Prasanna Kumar T S M <ptsm@linux.microsoft.com>
-Subject: linux-next: manual merge of the hyperv tree with the fbdev tree
-Message-ID: <aN6k79cY8mKSrKQq@sirena.org.uk>
+	s=k20201202; t=1759421731;
+	bh=buMaABYKeuu7EzStngN7lRoHldJv3zzZqBJVbXiTgh4=;
+	h=Date:From:To:Subject:Reply-To:From;
+	b=lVAzF5RvhCqNZ/Pe69dP110soGl9guHPtde4ge1OG06E/BhEi/g9e1ujuCHprmt4z
+	 qqMgD46GVy82R8YtbpP95SrW30adxBMY1lavLIJkdkLdK6vXPNsy6UNTuaR5W2akbG
+	 RGONQK5fOIJtznBNCNa93DhiHXqQUAcjEHBXVBz2b+4ONNrGlNjiGbyucfELOVa2be
+	 N4EFYRpMrUI+e/FatgCDYPDFjDCtDcFuPO1cl6jTbdjltTZF4y3w9gQvSTKQXFIn61
+	 OKssn4VSCxxtGk2d0iMJGWG0KVeOxbFBcxjbdelDolnVmJeuFL7/lconHbVQovChH/
+	 Xt1NO7OFN4DSw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 3D4C7CE0F80; Thu,  2 Oct 2025 09:15:29 -0700 (PDT)
+Date: Thu, 2 Oct 2025 09:15:29 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: torvalds@linux-foundation.org,
+	-c@paulmck-thinkpad-p17-gen-1.smtp.subspace.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	rcu@vger.kernel.org
+Subject: [GIT PULL] RCU changes for v6.18
+Message-ID: <54b61526-1b94-4dd5-a339-27ba75fb52f3@paulmck-laptop>
+Reply-To: paulmck@kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="u6Tp12HfwbG15J4B"
-Content-Disposition: inline
-
-
---u6Tp12HfwbG15J4B
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+Hello, Linus,
 
-Today's linux-next merge of the hyperv tree got a conflict in:
+Please pull this RCU update into the v6.18 merge window:
 
-  drivers/video/fbdev/Kconfig
+  git://git.kernel.org/pub/scm/linux/kernel/git/rcu/linux tags/rcu.2025.09.26a
+  # HEAD: 1d289fc5691c7a970a285bc53292bac9e37c89a6: Merge branch 'torture.2025.08.14a' into HEAD (2025-09-23 02:10:51 -0700)
 
-between commit:
+----------------------------------------------------------------
+RCU pull request for v6.18
 
-  9e84636785c5e ("fbdev: hyperv_fb: Deprecate this in favor of Hyper-V DRM =
-driver")
+This pull request contains the following branches, non-octopus merged:
 
-=66rom the fbdev tree and commit:
+Documentation updates:
 
-  94b04355e6397 ("Drivers: hv: Add CONFIG_HYPERV_VMBUS option")
+  - Update whatisRCU.rst and checklist.rst for recent RCU API additions.
 
-=66rom the hyperv tree.
+  - Fix RCU documentation formatting and typos.
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+  - Replace dead Ottawa Linux Symposium links in RTFP.txt.
 
-diff --cc drivers/video/fbdev/Kconfig
-index a7500251f41ac,72c63eaeb983a..0000000000000
---- a/drivers/video/fbdev/Kconfig
-+++ b/drivers/video/fbdev/Kconfig
-@@@ -1771,8 -1773,8 +1771,8 @@@ config FB_BROADSHEE
-  	  a bridge adapter.
- =20
-  config FB_HYPERV
- -	tristate "Microsoft Hyper-V Synthetic Video support"
- +	tristate "Microsoft Hyper-V Synthetic Video support (DEPRECATED)"
-- 	depends on FB && HYPERV
-+ 	depends on FB && HYPERV_VMBUS
-  	select DMA_CMA if HAVE_DMA_CONTIGUOUS && CMA
-  	select FB_IOMEM_HELPERS_DEFERRED
-  	help
+Miscellaneous RCU updates:
 
---u6Tp12HfwbG15J4B
-Content-Type: application/pgp-signature; name="signature.asc"
+  - Document that rcu_barrier() hurries RCU_LAZY callbacks.
 
------BEGIN PGP SIGNATURE-----
+  - Remove redundant interrupt disabling from
+    rcu_preempt_deferred_qs_handler().
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjepO4ACgkQJNaLcl1U
-h9BWfgf9Fty7eVKVXKZ1RqiQ8VJ0WUrkya43vIdWQBEsSc7hF8R7NckWhvfYTNoA
-C94+/5tcRzQd4lGKMgiHlpYUa86GUdYeb1qjqIhRDB5EoCowjaUWMlU31bVSmrFG
-0gbEBvHUZpfRI2blKVQbnP4q7+11NZqu6/xIsnyuR3d7ngob5Sgn+VvZfJaqz22e
-M/E5kGT+A+UXHljESSUvXG2OTPOT4t40a6On0E0HvTF1J+wtB31Mo43EqzCk82mb
-zgfsvO6IGF0VfINsyvvhUEIzKBnz4Mc5e5R/kbE4UhSVeWY5VNfe5UOCYGvUH8v0
-aw8DsFcYUq7AneVKO411ANsWKqZZgA==
-=e1xn
------END PGP SIGNATURE-----
+  - Move list_for_each_rcu from list.h to rculist.h, and adjust the
+    include directive in kernel/cgroup/dmem.c accordingly.
 
---u6Tp12HfwbG15J4B--
+  - Make initial set of changes to accommodate upcoming system_percpu_wq
+    changes.
+
+SRCU updates:
+
+  - Create an srcu_read_lock_fast_notrace() for eventual use in tracing,
+    including adding guards.
+
+  - Document the reliance on per-CPU operations as implicit RCU readers
+    in __srcu_read_{,un}lock_fast().
+
+  - Document the srcu_flip() function's memory-barrier D's relationship
+    to SRCU-fast readers.
+
+  - Remove a redundant preempt_disable() and preempt_enable() pair from
+    srcu_gp_start_if_needed().
+
+Torture-test updates:
+
+  - Fix jitter.sh spin time so that it actually varies as advertised.
+    It is still quite coarse-grained, but at least it does now vary.
+
+  - Update torture.sh help text to include the not-so-new --do-normal
+    parameter, which permits (for example) testing KCSAN kernels without
+    doing non-debug kernels.
+
+  - Fix a number of false-positive diagnostics that were being triggered
+    by rcutorture starting before boot completed.  Running multiple
+    near-CPU-bound rcutorture processes when there is only the boot CPU
+    is after all a bit excessive.
+
+  - Substitute kcalloc() for kzalloc().
+
+  - Remove a redundant kfree() and NULL out kfree()ed objects.
+
+----------------------------------------------------------------
+Akira Yokosawa (1):
+      rcu: docs: Requirements.rst: Abide by conventions of kernel documentation
+
+Andy Shevchenko (1):
+      rculist: move list_for_each_rcu() to where it belongs
+
+Bagas Sanjaya (3):
+      Documentation: RCU: Wrap kvm-remote.sh rerun snippet in literal code block
+      Documentation: RCU: Reduce toctree depth
+      Documentation: RCU: Retitle toctree index
+
+Kaushlendra Kumar (2):
+      refperf: Remove redundant kfree() after torture_stop_kthread()
+      refperf: Set reader_tasks to NULL after kfree()
+
+Marco Crivellari (3):
+      rcu: replace use of system_wq with system_percpu_wq
+      rcu: WQ_PERCPU added to alloc_workqueue users
+      rcu: WQ_UNBOUND added to sync_wq workqueue
+
+Nikil Paul S (1):
+      docs: rcu: Replace multiple dead OLS links in RTFP.txt
+
+Paul E. McKenney (20):
+      rcu: Document that rcu_barrier() hurries lazy callbacks
+      srcu: Move rcu_is_watching() checks to srcu_read_{,un}lock_fast()
+      srcu: Add srcu_read_lock_fast_notrace() and srcu_read_unlock_fast_notrace()
+      srcu: Add guards for notrace variants of SRCU-fast readers
+      rcutorture: Fix jitter.sh spin time
+      torture: Add --do-normal parameter to torture.sh help text
+      torture: Announce kernel boot status at torture-test startup
+      rcutorture: Suppress "Writer stall state" reports during boot
+      rcutorture: Delay rcutorture readers and writers until boot completes
+      torture: Delay CPU-hotplug operations until boot completes
+      rcutorture: Delay forward-progress testing until boot completes
+      doc: Update whatisRCU.rst for recent RCU API additions
+      doc: Add RCU guards to checklist.rst
+      doc: Fix typo in RCU's torture.rst documentation
+      Merge branch 'doc.2025.08.20a' into HEAD
+      srcu: Document __srcu_read_{,un}lock_fast() implicit RCU readers
+      srcu: Document srcu_flip() memory-barrier D relation to SRCU-fast
+      Merge branch 'rcu.2025.09.23a' into HEAD
+      Merge branch 'srcu-next.2025.08.21a' into HEAD
+      Merge branch 'torture.2025.08.14a' into HEAD
+
+Qianfeng Rong (2):
+      rcutorture: Use kcalloc() instead of kzalloc()
+      refscale: Use kcalloc() instead of kzalloc()
+
+Zqiang (2):
+      rcu: Remove local_irq_save/restore() in rcu_preempt_deferred_qs_handler()
+      srcu/tiny: Remove preempt_disable/enable() in srcu_gp_start_if_needed()
+
+ .../RCU/Design/Requirements/Requirements.rst       |  52 ++++---
+ Documentation/RCU/RTFP.txt                         |   6 +-
+ Documentation/RCU/checklist.rst                    |  27 ++--
+ Documentation/RCU/index.rst                        |   6 +-
+ Documentation/RCU/torture.rst                      |   4 +-
+ Documentation/RCU/whatisRCU.rst                    | 150 ++++++++++++++++-----
+ include/linux/list.h                               |  10 --
+ include/linux/rculist.h                            |  10 ++
+ include/linux/srcu.h                               |  34 +++++
+ include/linux/srcutree.h                           |  49 ++++---
+ kernel/cgroup/dmem.c                               |   1 +
+ kernel/rcu/rcutorture.c                            |  27 +++-
+ kernel/rcu/refscale.c                              |   4 +-
+ kernel/rcu/srcutiny.c                              |   4 +-
+ kernel/rcu/srcutree.c                              |  10 ++
+ kernel/rcu/tasks.h                                 |   4 +-
+ kernel/rcu/tree.c                                  |   9 +-
+ kernel/rcu/tree_plugin.h                           |   5 +-
+ kernel/torture.c                                   |   7 +-
+ tools/testing/selftests/rcutorture/bin/jitter.sh   |  27 +++-
+ tools/testing/selftests/rcutorture/bin/torture.sh  |   1 +
+ 21 files changed, 317 insertions(+), 130 deletions(-)
 
