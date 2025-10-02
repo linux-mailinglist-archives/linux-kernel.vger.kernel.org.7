@@ -1,116 +1,89 @@
-Return-Path: <linux-kernel+bounces-839778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A801BB2656
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 04:49:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D293BB2659
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 04:50:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C9B3323FEB
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 02:49:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C2B14235C4
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 02:50:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B8CB1A9FAB;
-	Thu,  2 Oct 2025 02:49:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RX2k/IDB"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4910D157493;
+	Thu,  2 Oct 2025 02:50:07 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 758E91BC3F
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 02:49:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1063529A2
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 02:50:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759373349; cv=none; b=KRvlnGNdI1zJLcEzdZUJCh6tZ8y3GWXwoC4/+VEAttgOZV+JC6HrDvqAA69vY7Qf30ecRqjdpqC8rOVTvusB1GsGjezbiMniccE6bb2cFy7y1HMAJXr3+TJGsKab2fnxverzQjYdm60qvjLZUAK/7CRn3efxEGsfJnAlXjNr7LU=
+	t=1759373406; cv=none; b=MvEaNIG55eY0ifE0cZD1KR+HRI8cFxO2Qyop0TmvuqxhZDXQBlVfzaHzvRZvt4yPQlExNkfc6MV0lc5TuzVelK41KkEnB1nzRgzphkT9djoaOXvMV+nF+qg9c7vhjI/msnwKP+Q5JDvMeh6e+gzq3QQyt9ytsoJaFgqsvhciYzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759373349; c=relaxed/simple;
-	bh=Rlm3SRdluo6yATbX4oF9ZqGmVsyUJvCoJRvFMc9x7uE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nW41ywMaZDdYg1P2STvPP39vL+uhWgOyHoRJcUH+2lcPkpg3O5KZjCMw1at88iPPQsXMFTTTBHfUx6S7Y34+Eujk5b9VjBn00S4qNw7/CodBPJ5jTVrxfplB/hjdyIz0NInAHSu7fiRI0K66H20XXJ3aGjBBrkN4L6hnnR+5aGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RX2k/IDB; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-782bfd0a977so571744b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 19:49:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759373346; x=1759978146; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tx+T52VXaGxHIwE5ue3lwEYrArbLgvH+yochMGJeg3w=;
-        b=RX2k/IDBFpj7OaiBMMNw2ldViDFkCSCVMLjiRm9ajwCmkjJdz/7W7a0ZEjwKSqktUI
-         xn+zO/YTabnn/CAjD+gU36LXyet0alW1Sx1uj5cSQ0zepUpsd7yNNawoDFvhPuzXuCOw
-         scCkIPjZa4Vdjb+BGVveCM9EAO01sTRdiyGmlLZGN5QNOS9rpUFKT44a+PYc/qMvEHNH
-         LM2D485bez5S7WPnsZiol/R98+9t024VbuTZIvVnLumcyt7JlXHupaUPBXZGkmRFdMBs
-         UQvpagS9hbPihMnv9oAKEYaOE6hB6ayfOSA0Ci7Osr5YdlMsCs6rFvhMjb0Mn32Tlcjf
-         PAzA==
+	s=arc-20240116; t=1759373406; c=relaxed/simple;
+	bh=ZLrqAaOBrvnI4r3szYnFj1I9UP4Tx3OqwNedANk1biY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=PTWqNQiqWIZUcUD3+usG0ESOz6gblQkZELuCGBQeTSOyKnPdj5pUIpcGaCmZMnFNR4O7WmeXNq0/2I5+AiDUdkuAGvdf5khfTn9edPX9GC1T0zWrFx79UKuzqqfnvhRRGqQB4pv21fGXg+SuKbFFTOy+ZRHqw10daOmS9plzaWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-92c4374566fso40451239f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 19:50:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759373346; x=1759978146;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tx+T52VXaGxHIwE5ue3lwEYrArbLgvH+yochMGJeg3w=;
-        b=tiH0EvAZ+splS4FqAWEMbZXKgldc4kAy2dUHiqIHxhrFyjWDuQIotOAx1sVfsZrWeI
-         vIavTe78RcspkBZxBgWsgvkLKrXAf/pT6OkBwYa1vpVMdxs48KRqRVcM3sVjEgevUOmB
-         5nc9CSCfsZtWYrhEOQlneFfL+lO3m4zQO9+nRVuSJauujHOd07rEKXjmU+WxH+zmqsA9
-         LpmJvK/6I2amzqyB01c6lH/bACetaO+rokxkWPFNE+Fhua/3THDNppAccYB8MFZSzsS5
-         LA6tWKD44tVLG1thq1YMt3CMLlHbF2I31zZ0/azKukcWSUg/84pCneOOS/yO1k/R2G8u
-         Ad1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWJbG3vMqbjQ2ZTNrBnE1rYyjoIR7cZ5DE7zoYPTsfCJGOp5bEgmO9aBn2DLlIqM5BbjOkfDmRgwnhtJzU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2HJtaiFr0qZW8XXUD3p4+6xAha7xR7q6W7xQSGdckM8pH8Prz
-	6lb5j+ZzKgJ0l/ucGuFxUlP1apgoS9GvajPmcZhEHCNoAJjRbWBio0Kp
-X-Gm-Gg: ASbGncuI/I2WYOdZOZ10dREHKfwYomeKVpvZJJIQ4GSS1G2uwyQ7unG6WlVOPjTPT6y
-	8ZK1lW1X1+r+lN3bKpFE32OZ9GPdIWggpmQS+Fe9+ivvwZTDney6qe4999M/v92z9qqygxW58rX
-	sCYfXgRAu8N/dkocQ+GONGfPfYys29vixWwkufnU/BWN/isE5gftlImzboGtOO60T4d+TeAOo1u
-	rLNERK3yWIPB39JOl+9hBZw+Rf/9OQiPP7jgvHd7nvlbILu8S3md/zGZ4Y5CXd0mRm5D7bHY65h
-	FtMVJXPzv4vVAzulnuAAz1kfhg5p2uwTaRc+L+Biw1tWt8XDwcygofjhu/CnvmAqMmFFnPJ5Oq+
-	FDEA+TpaK1kK+CIf8AY7zGM3vyJYZzHOTXv4TnnzvBz1pxRGSXwM5ZPPrGpxZfsLI/v/Bwtg=
-X-Google-Smtp-Source: AGHT+IETH7I1DUb42a6zVBccP/CPta+Puwg/XA6sZLcvnAAu5JdYF0uhLuw9HJFtEs02mk+EPLAu+w==
-X-Received: by 2002:a05:6a20:d306:b0:263:3b40:46d4 with SMTP id adf61e73a8af0-321eb7f0ea7mr7236687637.56.1759373345690;
-        Wed, 01 Oct 2025 19:49:05 -0700 (PDT)
-Received: from u.. (61-222-64-201.hinet-ip.hinet.net. [61.222.64.201])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6099f72f99sm845643a12.47.2025.10.01.19.49.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Oct 2025 19:49:05 -0700 (PDT)
-From: Sammy Hsu <zelda3121@gmail.com>
-X-Google-Original-From: Sammy Hsu <sammy.hsu@wnc.com.tw>
-To: chandrashekar.devegowda@intel.com
-Cc: chiranjeevi.rapolu@linux.intel.com,
-	haijun.liu@mediatek.com,
-	ricardo.martinez@linux.intel.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Sammy Hsu <sammy.hsu@wnc.com.tw>
-Subject: [PATCH] net: wwan: t7xx: add support for HP DRMR-H01
-Date: Thu,  2 Oct 2025 10:48:41 +0800
-Message-ID: <20251002024841.5979-1-sammy.hsu@wnc.com.tw>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1759373404; x=1759978204;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IXkCYyVq+Ok8Rfz7LkQRm5taj3jhnYdzLypCVreUpOQ=;
+        b=p9Gjdz2Ul+kXJzGySIvnqD70C1NqWhk1xVGoSFUpjKYGVpiHy1QiBy07nedMppahaP
+         FOrHdxpUAture0JFxb0jiPjWDxQ52Yh/UOmQXk/InPgg+KpDUjZfCHU/9EtCpz6IPmti
+         dqcwYBvE+3smyrJt25umPacJcTjeXpnmmQRgwMuXSPP+wbidDMy+m7TC/t+Vwn10ifKc
+         wh1PE1Zk9YHUK72M8MC4+Z9WodBlFrYsPuGz2aK0GBLogvJ3+36iVpU2f1O8VzOCLoKg
+         a8fFU8gMLSvyWbvmRI06tOTwuo3qJ9mPXy2LpZisj4+EexOB+92jFHEfTGD4FpKItQ1L
+         mgqw==
+X-Forwarded-Encrypted: i=1; AJvYcCXluLqeOWMWDO1m77cKb64/1kXCVdrQWSJThAdEM3D3Nxsem2nwem/xcbkn1goaKkCjGtq1dyrD7BQUO44=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy10RK+EWX62T54dvLVtf2+aGPajSpomFMlUFaf2c/jGaAzGks/
+	JBqE9+4l5LUUEWWH2UeVIc/0SG1jninSmy7LHKUFpiA47xDW1bmAk7H8mTcJwTiKL79pcjzxNCE
+	5PUi1zrt5xxxXJAYteuklwhnspeisOBzmNYCmZMUPi4k9qmUQ94oDMa8YIYA=
+X-Google-Smtp-Source: AGHT+IGr+AJiP1ZEZ27TFDXMlUXIf41qC4roBHiJek7Cv7nZRHTTs9a8+sccW0Tp7nADTyHqjW7I5EQfOoNN575UDOJAH5EEpW6x
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6602:2c82:b0:938:9f22:ed34 with SMTP id
+ ca18e2360f4ac-9389f22f4c9mr566606539f.16.1759373404188; Wed, 01 Oct 2025
+ 19:50:04 -0700 (PDT)
+Date: Wed, 01 Oct 2025 19:50:04 -0700
+In-Reply-To: <A4321695-9F12-4C7C-ACC9-72FD84B6DB2C@nvidia.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68dde85c.a00a0220.102ee.0073.GAE@google.com>
+Subject: Re: [syzbot] [mm?] WARNING in memory_failure
+From: syzbot <syzbot+e6367ea2fdab6ed46056@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, david@redhat.com, jane.chu@oracle.com, 
+	kernel@pankajraghav.com, linmiaohe@huawei.com, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, mcgrof@kernel.org, nao.horiguchi@gmail.com, 
+	syzkaller-bugs@googlegroups.com, ziy@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
 
-add support for HP DRMR-H01 (0x03f0, 0x09c8)
+Hello,
 
-Signed-off-by: Sammy Hsu <sammy.hsu@wnc.com.tw>
----
- drivers/net/wwan/t7xx/t7xx_pci.c | 1 +
- 1 file changed, 1 insertion(+)
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+lost connection to test machine
 
-diff --git a/drivers/net/wwan/t7xx/t7xx_pci.c b/drivers/net/wwan/t7xx/t7xx_pci.c
-index 8bf63f2dcbbf..00c0161f0c78 100644
---- a/drivers/net/wwan/t7xx/t7xx_pci.c
-+++ b/drivers/net/wwan/t7xx/t7xx_pci.c
-@@ -940,6 +940,7 @@ static void t7xx_pci_remove(struct pci_dev *pdev)
- static const struct pci_device_id t7xx_pci_table[] = {
- 	{ PCI_DEVICE(PCI_VENDOR_ID_MEDIATEK, 0x4d75) },
- 	{ PCI_DEVICE(0x14c0, 0x4d75) }, // Dell DW5933e
-+	{ PCI_DEVICE(0x03f0, 0x09c8) }, // HP DRMR-H01
- 	{ }
- };
- MODULE_DEVICE_TABLE(pci, t7xx_pci_table);
--- 
-2.43.0
 
+
+Tested on:
+
+commit:         9cfbc23b mm/memory-failure: improve large block size f..
+git tree:       https://github.com/x-y-z/linux-dev.git fix_split_page_min_order_and_opt_memory_failure-for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=118ae05b980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=714d45b6135c308e
+dashboard link: https://syzkaller.appspot.com/bug?extid=e6367ea2fdab6ed46056
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+userspace arch: arm64
+
+Note: no patches were applied.
 
