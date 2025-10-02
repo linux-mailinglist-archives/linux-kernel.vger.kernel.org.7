@@ -1,637 +1,371 @@
-Return-Path: <linux-kernel+bounces-840038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCABCBB362B
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 11:02:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 648A0BB3631
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 11:03:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 600611697BD
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 09:02:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DB3B422D0A
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 09:03:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E0262ED869;
-	Thu,  2 Oct 2025 09:00:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 935DA3009ED;
+	Thu,  2 Oct 2025 09:01:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="WBPJGC0T"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="m9Ye3oIk";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="B3dDG0Re"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D65B30146C;
-	Thu,  2 Oct 2025 09:00:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759395643; cv=none; b=D+vlsL6PRC+OOsLx+7S+yAioBTw8hnwWnxeKdgbUw8TzgQqt/wBxwGXxlcaVomI+uIr+TPRv9UHcEdjSf2eNwXQsG1ByY1Sxc5/zt6fp2SiYQJRgIQzVarJ6G17QipIIhypjQuAhiVJaXovlyzaYQ9QwP2LVgPVcM/TDXzsus/A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759395643; c=relaxed/simple;
-	bh=z7QoYK6rIUcQKzS/kooQX1jOH/Vj4i/Rtgn8LZ8gbZM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=p7pjqC6eaotK7+FiGh8vZ51oJq58nKfcYgQjCLq9WFAG21/wEHZ8nY+ZCVCtmeYiotw/I1QShSzGOC6XnQLttkN85kj2d4i/RaUWpOD4ZVDR9b++Zi8gKmrd95LQcHp+W3huVXBbMtajwmau+NcOGzCKubNIZ7irZ+TTrNaP09Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=WBPJGC0T; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1759395639;
-	bh=z7QoYK6rIUcQKzS/kooQX1jOH/Vj4i/Rtgn8LZ8gbZM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=WBPJGC0Tb1JLP30mX8RWFKNkzCDFwxqphkkYNA084Dkqm9E7j71Nh18ZuZ9UJUTnQ
-	 gsl97jUfazoMh0xcn0HYFIewjoAf46hIFNE1Cm2J8cge7uC1BQOLNULy2N0dYEYI10
-	 h++SxPEddyrYR00Y9esZd7tie41RfD3wB10PN/THJVZfhEwqO3WJs093+mJ3L95x0R
-	 RLR/S+fjWsLwBF13rBCkTeyptcaOgom1+x0q+GinCmRHSMfPdLopEr0dzYLqCals+T
-	 T8np8wwZ4FbNrOqrQqdEVvt5fZjITQtq6rW4fSgN9DZDYuFBMxKK+PBy0VyH/nxoFD
-	 fMos5Oo6iOUQA==
-Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7257F17E13C1;
-	Thu,  2 Oct 2025 11:00:38 +0200 (CEST)
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: linux-mediatek@lists.infradead.org
-Cc: lee@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	kernel@collabora.com,
-	wenst@chromium.org,
-	igor.belwon@mentallysanemainliners.org,
-	=?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?= <nfraprado@collabora.com>
-Subject: [PATCH v7 9/9] drivers: mfd: Add support for MediaTek SPMI PMICs and MT6363/73
-Date: Thu,  2 Oct 2025 11:00:28 +0200
-Message-ID: <20251002090028.1796462-10-angelogioacchino.delregno@collabora.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251002090028.1796462-1-angelogioacchino.delregno@collabora.com>
-References: <20251002090028.1796462-1-angelogioacchino.delregno@collabora.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B1C92E22A9
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 09:01:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759395700; cv=fail; b=lZ2zYVB30Ero9X0EgUqmhPFTCpXPbDfAoZn/l6EHBlcgMdtxopnnx9wyjlz5pyeDPNhWzTTHfBqzoEfl+nQY/8ohZn+liUucg+xjvX4dXFsJ+5KhoMFvtEP8IFJoCOPtA7xojSwH612dHdbK12HYBJuWUeQLbtmSBSQnrfH4008=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759395700; c=relaxed/simple;
+	bh=GvmFhaGtqK4GsrXLOygsyiT5AHU+4Eic6ORtm7jylNA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=OLP5+N1LKAkJ8wwWKRAGIQGUzkyMfog98Oi9kgPMXS5JfhWEOLu9mh5P/oiUV3p/LmlVCsIy2e9HTaByubpRqFVVprDY0LNpMnjytIZDJ8yG/+mpJn3b1pOLsSmBBMp4ZgXHMeDbEbACHlCY4is+zh26Ga7PYJXsqosJy0uJ8wg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=m9Ye3oIk; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=B3dDG0Re; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5928NBPN004521;
+	Thu, 2 Oct 2025 09:01:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2025-04-25; bh=KnxAb/x7pdkE5Jf7a+Hfqv/i6yZ/v1cZavNvrA3n99c=; b=
+	m9Ye3oIkMITuiQqUrgZRdCNziWslC0KiGfOxls6KPjM1pa6AKyh4lKuX7POzKrx6
+	u3wMBmj8nTRaiyXTPshH5/fn2et1y7EOsEqFpBO+sIyisx3BoFzFoqdsn/Y1EEWY
+	q7FWejZ4A6lIfpiqQYo1O8toGH2Cg+m7RH6YuJbspPwXeBl9fLYeIIRCHCceK4Zo
+	Q9gTPoIDiXZ4/OX1ZomJiZyWIgtcDAPH6laKAUjGKqJVGi3wMSPs7IaWIDToMhJ4
+	Fn8V9yeiak4kpwbX71hdaZ5iD88MtEoOBMWoOq4DeVU9CvdsTl/5TiK5cXtsHhmF
+	vfCu6LtYg7/z4wI/CS7NyQ==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 49gmcq301g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 02 Oct 2025 09:01:00 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5928WqSj023268;
+	Thu, 2 Oct 2025 09:00:59 GMT
+Received: from byapr05cu005.outbound.protection.outlook.com (mail-westusazon11010006.outbound.protection.outlook.com [52.101.85.6])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 49e6cb58ap-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 02 Oct 2025 09:00:59 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=MIYz2/SRWgbFtHPOnFAQG/7wG5I97PTUbqIqiJbFvNVl/9x2cWA7jH34p16c2ax/b42V2TH7GS1X4i1dLfmJX6fHOxHwhx2T4GGGpZLpHF8ATVd6wbCjQfThuW3oblOOgqUUm/JvTxDj++ugoy6T5XNc2KBQTEfckPCnw/qfEADrmcW+X6yjPGf7ZfGhImzdrkMmRuzYEcE1+nIj0Yt/Uirylpvx6hKE0Bsw7Ies9AnSaUUQebAOf7/FPVMj/AQuKnL3jeCGDGtUW1/AYRIJogF8Aa6FoOOLScVI5ebeus6m69si/2izVpcok0sYsgxYUnV76GmjjqaPv28YQZCoGQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KnxAb/x7pdkE5Jf7a+Hfqv/i6yZ/v1cZavNvrA3n99c=;
+ b=kfQGi2x1hoPSGCdSYZZyVtRzuwfN+60p8kRpgFt/VNQWifstdOSANiMMdn1odk7g7NLvFe/9x2bpfQ+EzMSurlQLydQ/JTJaKhK/k1X22cHuh+IyTd9MD1Ddx4P2gEPFo3KicflDnudZhKRn9pK6mRIL8yHV+Bli2m+i2tTbPxbahdMfiTGBoQQ+XwyawdC0nCbAwyUzCPx9qoGDR3Lpi+dO4OKQYBszNfbQ9GroGJ0bkSzkR+h8jud21RXJ65Yo5yswIlX3vklB8rZO5PeQI+HLmD5O1ghHskCOUH9mAhSX1eky8gugVLClRUF+7X/DwAZpUqL+XTKawUDGQdJ7TQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KnxAb/x7pdkE5Jf7a+Hfqv/i6yZ/v1cZavNvrA3n99c=;
+ b=B3dDG0ReJ1Z8ujnJ/mPUCG7ey9Kgtz99CNbDwTOifYN4mgcSKY1xGsk3TdVbGmQY9iWlibKh25Bbg73QUDDdVGIr/Xy9MYz4Ru1bDDD+uPnpRSZX+kYdJO15KEbyRcPuLmXHkEyqzVRxtlcjzXiT2SRlRyhMp4IY1ltLj0nDflU=
+Received: from CH3PR10MB7329.namprd10.prod.outlook.com (2603:10b6:610:12c::16)
+ by CH3PR10MB6857.namprd10.prod.outlook.com (2603:10b6:610:14a::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.18; Thu, 2 Oct
+ 2025 09:00:57 +0000
+Received: from CH3PR10MB7329.namprd10.prod.outlook.com
+ ([fe80::f238:6143:104c:da23]) by CH3PR10MB7329.namprd10.prod.outlook.com
+ ([fe80::f238:6143:104c:da23%7]) with mapi id 15.20.9160.017; Thu, 2 Oct 2025
+ 09:00:57 +0000
+Date: Thu, 2 Oct 2025 18:00:45 +0900
+From: Harry Yoo <harry.yoo@oracle.com>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, ranxiaokai627@163.com,
+        Andrew Morton <akpm@linux-foundation.org>, cl@gentwo.org,
+        David Rientjes <rientjes@google.com>,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        Alexei Starovoitov <ast@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
+        ran.xiaokai@zte.com.cn
+Subject: Re: [PATCH] slab: Fix using this_cpu_ptr() in preemptible context
+Message-ID: <aN4_PeDcDQUhv6N-@hyeyoo>
+References: <20250930083402.782927-1-ranxiaokai627@163.com>
+ <aNu2xJMkEyYSdmW6@hyeyoo>
+ <CAADnVQJ-bkd2UVsZmhdb1L5ZrXjZbTnRcaJ-D=ojsoiRHmHwaw@mail.gmail.com>
+ <b9fb0a69-6cfb-4285-8118-ef5301115948@suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b9fb0a69-6cfb-4285-8118-ef5301115948@suse.cz>
+X-ClientProxiedBy: SE2P216CA0061.KORP216.PROD.OUTLOOK.COM
+ (2603:1096:101:118::7) To CH3PR10MB7329.namprd10.prod.outlook.com
+ (2603:10b6:610:12c::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR10MB7329:EE_|CH3PR10MB6857:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0acec73b-fc03-4955-78a1-08de01923261
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VkpGOERRaUFFV0c0Q3paRzRNRjROK0pWd3dGSTBOQTh2b0E5NkozVjNvc3hi?=
+ =?utf-8?B?UWxTWTNHMUJoNERZK0dOaXd4VnNNK0IvTFIzSUNMTjJOZTc4TTBLMUYvSUVi?=
+ =?utf-8?B?bnZVTkNRT3VOcWNTblg4N1RlbE11T0VpWmNrNnhkUmo1YVF2YkF1N0FheURN?=
+ =?utf-8?B?SUFNWUcrVUNyejk3NWQ1bUREdkxqcS9RVTZ6TVd4L0Y3SDIvZCt5Q2xUWkJk?=
+ =?utf-8?B?UlhaYzNGYnMyU0p6SStvSVY4bk83VEVNRHBzUFNZVDRqWXJ0aGh2YnBXTFE3?=
+ =?utf-8?B?QmdVbXlBMHZHVkdyMEJpYVZwRDVzUlgwejN6QWprVFdjMEtucVk4akFjR0VW?=
+ =?utf-8?B?L3hLc2lmOFh2TS90V1RoVEVXYWp3aXUya2hlUVRXQ0VON04vS1NuNmEyQmV4?=
+ =?utf-8?B?TE1PS3lBSFF3dEJ3aHJoY2M1T21BM2FCbTM3RFBRK0lLVXBEdWIwRGpmeFpD?=
+ =?utf-8?B?alFLbWU5WmFVL1JMY0QvWXF6bTJBNE5paitRTy9NOW9MSTBZVWh2UEhZdnli?=
+ =?utf-8?B?bHk4L0ljU1NLbWMyUmptM1VYL004UEJUOE5zUWtReFpLaDIxbjdzQUdJOFR4?=
+ =?utf-8?B?SFpGcWE0Q2VGNThNRG1mbSs0WmxTLzhxWU9JR0JyNTMzOUpTRFZDT2hycSs2?=
+ =?utf-8?B?LzdQNU00cTd2T05PaCtLTllxUTd5YmpLU2VrV293NHRKaytnMDFKZHUzQ2xk?=
+ =?utf-8?B?U3RvajVrUEhWRXBZMm44Sk5SaklzZExnVlVNVldDa2NodGFOZFZNeTd1bTd3?=
+ =?utf-8?B?OGxSTVJoVVV2eGRuZkZtVndVOWdteHU1ekV1VzQzdmMvOVVJVVlNOHdydThm?=
+ =?utf-8?B?SFBuSjhzK2czTGhnbGVORXhiVTVUUXZsVm1TTjQybHpINGo2RWswZjcvZDZR?=
+ =?utf-8?B?b3N0WnVWWTJmcjJLTEdCZFpYeUVaQjVGZWZMVEZhQm1VWFExWDZpTk1ob1d5?=
+ =?utf-8?B?bGRoMGlLUTFKYWtBd3lOa2ZMUTJsbkJ4MXlxUVdvVGRhU1UzYmFFVjNzUUtC?=
+ =?utf-8?B?dGx3NnFqZHJXUEtRV1F3UEh0TEE0TDFPRm9QNVIzV1VnNVRQYzBSLzZCVXlj?=
+ =?utf-8?B?WTNFcFI3OWV5SjZmUE1NRGh2UmhMU20wZy9WOUhlaWNESTZVSy83eVJ4LzVU?=
+ =?utf-8?B?RXY3UmZMd1VVQS9VdmkxVjNpSXk5WmZsQVNLcTMyOG9OYWtXZzlra2hRR09w?=
+ =?utf-8?B?c3NDbURXdVp2WDJHbjdxMUdkUGcyamlUR3Z4SGdwWlRObnRpaCtjU0NnVUVZ?=
+ =?utf-8?B?UDh6L2dLNi96RTBNM1VPbWgrREhVM3lNVkd2bGtYNXhBUng4RnRESEhMOGty?=
+ =?utf-8?B?WDFYUGhiRmgzb0hqcVlLRmFUc0U3NFVPSitQRDllRlVQK1RoemtZbzBaVjRi?=
+ =?utf-8?B?ZjBvUGJ3cUluMXRBRmJHM0VyMDF1OEVDa3c2dnVCT1NKRVFRT1NqbEcyNXk3?=
+ =?utf-8?B?SFJIZk1YVHZQV21xZjhCR1Rzc3ZlMldBV2hieVdkN1F0cEdxd00yZ3BGOUZU?=
+ =?utf-8?B?VHp5R0xMQmhyS0lWUVM2azBrM016TDZ2QUkySGVRcVJndERMdWVjSCszek9y?=
+ =?utf-8?B?QUppS1JZUnRmNzBYZGdjV3M1Q3NiS25JY1c1K1VtVDUyUm9UTFgrVDF6bEhy?=
+ =?utf-8?B?KzFnRlhES1p4SElYUzlTdzI5T2VNREpyaVZoWFlQa3BLNDFIRkpOc0cvS1or?=
+ =?utf-8?B?K1JJVm5MMVlMMzIxeXFwU0FJRS82bytKMFpLakljY0NuMFo2bXFuRnJmVS9n?=
+ =?utf-8?B?MHV3c3M5YW1zbUNSdm0xb29teVFtMGhKdXBHVHloWDIyWDY0eDZqNmNBRkJ0?=
+ =?utf-8?B?R1Z4dEtzcUlUUkVJQmxjWk5wRDZnWGxQVUFVK0Ryb3hwUUx6VjdBcGxCbjBO?=
+ =?utf-8?B?S3MzUXhDMGRkZkhhSUYwT1JXS3dTd0l0N2x6ZVNpanloWlowc0l1czQ1L2Vs?=
+ =?utf-8?Q?zUik3/0Yquzp4z7sOppIyWPMBpBEnFcr?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR10MB7329.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?eEFJNEpiaTNkTi9RYkJ1YmM2K1dwRzlzUy8rN0FvS0R1blJ5TmFRdW0wYitB?=
+ =?utf-8?B?OVRIZm9YMHVqRFlBQ0QyckRnSmw3V0Q1b3YrTGphRGdnOHk2MjhCcXZDOXEr?=
+ =?utf-8?B?SFl0WFhxTjhiMkJHMlFybzZrSmtwL09JS2w4UlNsNVV6NjZKbHRBM2JpblJ0?=
+ =?utf-8?B?QWpwbktKVHlOVStrQmtrbW5jUEhyOWRoY2k5d1B4dkNpT09ybUk4LzBFcDhn?=
+ =?utf-8?B?alpTcmZsMXdmTGlmOTRYaU5sMXhFQkZoL1N2d3NYMUlOR0J4RWIrUzZFckR6?=
+ =?utf-8?B?Q2hlaGxDaGxIQXgyeWs5Y0JaL0ZZaGVzYW4rck5XbERUSVFTc1RKTTc1V3pr?=
+ =?utf-8?B?bnpPRXNKVmFxaERjTk9pKzRyUU5ua3BhZE5zT2l1RVVLTkYzaHJxRXlZNzhl?=
+ =?utf-8?B?MlI3N0k4cEVXak9oZndBWnU2ZnhXejFONnZIcVBhNUtJdGV3dDBiQUpIWTRs?=
+ =?utf-8?B?a21ta2FiN3hwdHlPZWhDdFZKNG84NytFbFRGbHBKL1FUTGxQNlpzZGVTcmdu?=
+ =?utf-8?B?LzlmMzNiTEZTOHZ5YlhlZUxySU1ZK1gveUhCT3FJVUVHSXpXU1NUTlBXNjZG?=
+ =?utf-8?B?a1NiaUlMZEhWMkxzUUtOUmVZY2dCRkRvc04vc0FRaTViRjN2Ykc5dGowczI0?=
+ =?utf-8?B?Q0pVSURLT2ZDV1o2Y0IxaENDOU9LdXBPaFp6R0FpalVyL3JxV1k3OSt4K0Fp?=
+ =?utf-8?B?QXg3VERJTE8zem1LWDdwblcwOGsrRWNocTFVQWZRVGpWc3BYOXNsVVVNUFI5?=
+ =?utf-8?B?anRFalJlUnF5REUyb1ZxUGxicHJXcTZzMDhCZmlINVpmL2wxL2RPamF3c2Rn?=
+ =?utf-8?B?aVZWdVNsZ0Y2clVteE1TQjdLQXhvelcyNXBQTklIbS9xc29Vb1R5T0dMOVJu?=
+ =?utf-8?B?V0Qvcks3K3FaQm84SnJiQ2JDWTlsdkJiSkdHOHRvb0N2STh6L1Z2YWhkQzly?=
+ =?utf-8?B?YklLQ3BLeHlOUVIvN1NtVzh4aFNIYmpReEdLdlQvclRHRitub2h0YnFGVFhG?=
+ =?utf-8?B?N0xvNFk4dC8rdVAyTDFvVnlxZURWUzZHSWtiK0Z1SmhnL1c3Y3IxYTZiYm5o?=
+ =?utf-8?B?MGJRMXRqMVVCSG56MFlZYXhsSjJtMWd4WjBZRlFYdmZpNmZMN0UrSDdzK2cx?=
+ =?utf-8?B?Ti90M0FmRFZhK1A2am5WMmJBQ1dPNVdqQVowdEhTdTNmMDdoWVlqTnNNQW9p?=
+ =?utf-8?B?RnFrWUdyTW1KNVB3K0diMFNxUEU2cXJnYjZIbUtPVnhhZFJDb2RIMzNSMmwv?=
+ =?utf-8?B?WEp5Rmw1RTd6dFA3dXI5WlcwRFlCUUpTZHI0KzdHWDltcjIxN2NnOEFBdGxu?=
+ =?utf-8?B?V014TXErMnVhdG43TmtaMnEzSlFaNUUrTC9zTXl5Um93NHhob0gyMTNhVTI4?=
+ =?utf-8?B?RDN6ZHlWcXZ2NzZPaTVrRit0d0tGV2p0b3VRYXRhcDNZbFEwRENOdmViaDRE?=
+ =?utf-8?B?dFZ2NHN5amZDdlViYy9yMjVibGRtQVBkK3paNmJCZU00Y2owMmRHT3BsZWRJ?=
+ =?utf-8?B?NGRnTVQySC9vZFBROHlPdWxDcGRDSUkrT2svUWZvSmFOSHNFTW4wTE85M00z?=
+ =?utf-8?B?WVlJOWViVGluVUMxbDAxNzRZRWZsRVZDR1UzeHRoOC9KbUZwclh5UnpGeUxK?=
+ =?utf-8?B?bHhPem9TQTZHUzEzQThpZU9idEMrdmVrQmNhc0VnN0pxTU9oM2JRR2dQRmNT?=
+ =?utf-8?B?U1RGcXNxdjM2dDhNRkluWVc0aFR5REE1UTI0UUhaWW5oRmIveEJSa0J2V0Nh?=
+ =?utf-8?B?TjFaZkh6Y3YrWTMwMDJ2T0F1eWJ4RGY0OEozVGFQanJNbFZJNXFYOW1Vc01h?=
+ =?utf-8?B?T043cnRROGdyZ28xbTcxT3o2enRMMmY2ampxRkRTd05RWDI1SGs1UDZzN2tw?=
+ =?utf-8?B?RmUyckx2ZXhWeUNkZmFKVjd3YkxpWGVxR3dESWxJNEJIMTJNMWl3SkdLb0g5?=
+ =?utf-8?B?U0svNW9OMXdpQ21CM1JLdkUvcWYrcTlqczBDZi9XWXIvZ254MmQwYVhEUWU3?=
+ =?utf-8?B?dkpCY2NPT1JwejdIb2FzUWloREp3Q0hkbHdlaXB5OHVJZ0dVeXQ2cE9qbndI?=
+ =?utf-8?B?cHJWa2pZSGdFQUpyUGlpcjc3OTIxQnB0NkN2VW5PZWJNTnJZRFZaalprM3lE?=
+ =?utf-8?Q?p/OaZLItYzUn+PnGRhVw2Qvx2?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	xyjcL1U5rH4V6kTkRhbmCzOK8BwCkryg2+rcMV5AE5Vvj6Jdz+fJdHAlWQUs9Ybch8rM7kSunkmaISLLNAxmxCjzAnUbDrcILi5Qm6XY77Gi3/5eNdglOTAJqs2q+QuW2Zmg+RoWip0JjwTBwqjukecry1I5zFjRIleQ2wpXi3KgD9GPETV09UWRkcvW5Yu1Ccv8iWV3mir4ZKXYQCkqTHDK2biHQ3S7qBsz9MG0lxusKOQ0VcxcBE3W9SrSHHNBhg/maHU++ShJse1hicThjjSl2eSbj9w6HnxindFd8B8ttivD/AOI2PTGD97m5QvyRB36DWq2bQGQx7z8iUuj1rPMA1EBXqwpE4mZulYaRN4VshCh266CdMg+3QEwex2YlChFCc3ekPwGKPy5LXO7yvcDmOq9JFpbq9fry3Zkh7o7P3IbMvk6t+G22x5rJLQ3s/rPZDmoMVnJItkJLBuakD6I2hvyE2iMy6BjY4yWgGcHE0LRUq/arbf8d/RWDmVG/FcnRkaNx71IpPlgKSmY6A3KPQXWgVnf0Lbc1UMnjTTkJtLolPcv6/ofQaKfrjCzf06CAxVuJDTQkBvJqKnSXyYs6qT9GyrCEA9sO2zL/VQ=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0acec73b-fc03-4955-78a1-08de01923261
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR10MB7329.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Oct 2025 09:00:56.8745
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Wo6i25mwjySJ5rXX6YUcduTXfFijbzvEpQY3zziNR+3vcSYM+WN9qz7q+U/FMrkvSJRWWEmUH3f033VhRFsQgg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR10MB6857
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-02_03,2025-10-02_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 malwarescore=0
+ mlxlogscore=999 mlxscore=0 phishscore=0 bulkscore=0 suspectscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2509150000 definitions=main-2510020075
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTMwMDE2NiBTYWx0ZWRfX/Ft6JzO2OdPX
+ /4do1WmYTVndX/V1o1oi7yZi/UqnfjZOLQzz4BEAsN6sxooyvCJ5yPX4AAaYatxlz8YBKDcvGXQ
+ fCHUNWq7qV/tXuMnlbWqdLIGi6VqBuJ2P96XL0nQxFOnI4+sMU9VFa9aLpjZi190OopZceV1Bif
+ xf+bkBpF22kzOO9EGRNIpyczzhSgIEY3AXCLL1VUNKy0uGVPek4Zf/9DE1ijcpf3YerysCVM/1B
+ lQNjrVdjHQmAyBxbP44UrDoEVewb/0h885JM2nfqJ8cbpMwPHy88BvswkRiX9NSlHdAkfgeNElQ
+ 4Ka9HhId5eRhZiDBknwzeAsqqj8ThBZyE/7ErLOGsLhdYeLHHhGAKzydzcz7ZD4gQYjdKUDZzi/
+ n4S/3/rzxMK2hrgOgiF4ilKgFctPpQ==
+X-Proofpoint-ORIG-GUID: Nt85o4gIqJcrQhlwBJ_EKR__m8RDpGxD
+X-Authority-Analysis: v=2.4 cv=c7amgB9l c=1 sm=1 tr=0 ts=68de3f4c b=1 cx=c_pps
+ a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=x6icFKpwvdMA:10 a=GoEa3M9JfhUA:10 a=yPCof4ZbAAAA:8 a=Byx-y9mGAAAA:8
+ a=1RTuLK3dAAAA:8 a=OWyD4sRVhJ9q_nbmn8YA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=kRpfLKi8w9umh8uBmg1i:22
+X-Proofpoint-GUID: Nt85o4gIqJcrQhlwBJ_EKR__m8RDpGxD
 
-This driver adds support for the MediaTek SPMI PMICs and their
-interrupt controller (which is present in 95% of the cases).
+On Thu, Oct 02, 2025 at 10:14:55AM +0200, Vlastimil Babka wrote:
+> On 9/30/25 13:19, Alexei Starovoitov wrote:
+> > On Tue, Sep 30, 2025 at 12:54 PM Harry Yoo <harry.yoo@oracle.com> wrote:
+> >>
+> >> On Tue, Sep 30, 2025 at 08:34:02AM +0000, ranxiaokai627@163.com wrote:
+> >> > From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
+> >> >
+> >> > defer_free() maybe called in preemptible context, this will
+> >> > trigger the below warning message:
+> >> >
+> >> > BUG: using smp_processor_id() in preemptible [00000000] code: swapper/0/1
+> >> > caller is defer_free+0x1b/0x60
+> >> > Call Trace:
+> >> >  <TASK>
+> >> >  dump_stack_lvl+0xac/0xc0
+> >> >  check_preemption_disabled+0xbe/0xe0
+> >> >  defer_free+0x1b/0x60
+> >> >  kfree_nolock+0x1eb/0x2b0
+> >> >  alloc_slab_obj_exts+0x356/0x390
+> > 
+> > Please share config and repro details, since the stack trace
+> > looks theoretical, but you somehow got it?
+> > This is not CONFIG_SLUB_TINY, but kfree_nolock()
+> > sees locked per-cpu slab?
+> 
+> Could it be just the "slab != c->slab" condition in do_slab_free()? That's
+> more likely.
 
-Other than probing all of the sub-devices of a SPMI PMIC, this
-sets up a regmap from the relevant SPMI bus and initializes an
-interrupt controller with its irq domain and irqchip to handle
-chained interrupts, with the SPMI bus itself being its parent
-irq controller, and the PMIC being the outmost device.
+Agreed that we're seeing the case.
 
-This driver hence holds all of the information about a specific
-PMIC's interrupts and will properly handle them, calling the
-ISR for any subdevice that requested an interrupt.
+> However...
+> > Is this PREEMPT_RT ?
+> > 
+> >> >  __alloc_tagging_slab_alloc_hook+0xa0/0x300
+> >> >  __kmalloc_cache_noprof+0x1c4/0x5c0
+> >> >  __set_page_owner+0x10d/0x1c0
+> 
+> This is the part that puzzles me, where do we call kmalloc from
+> __set_page_owner()?
 
-As for the interrupt spec, this driver wants 3 interrupt cells,
-but ignores the first one: this is because of how this first
-revision of the MediaTek SPMI 2.0 Controller works, which does
-not hold irq number information in its register, but delegates
-that to the SPMI device - it's possible that this will change
-in the future with a newer revision of the controller IP, and
-this is the main reason for that.
+It's
 
-To make use of this implementation, this driver also adds the
-required bits to support MediaTek MT6363 and MT6373 SPMI PMICs.
+__set_page_owner()
+-> inc_stack_record_count()
+-> add_stack_record_to_list()
+-> kmalloc().
 
-Reviewed-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
-Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
- drivers/mfd/Kconfig         |  17 ++
- drivers/mfd/Makefile        |   1 +
- drivers/mfd/mtk-spmi-pmic.c | 410 ++++++++++++++++++++++++++++++++++++
- include/linux/mfd/mt6363.h  |  26 +++
- include/linux/mfd/mt6373.h  |  21 ++
- 5 files changed, 475 insertions(+)
- create mode 100644 drivers/mfd/mtk-spmi-pmic.c
- create mode 100644 include/linux/mfd/mt6363.h
- create mode 100644 include/linux/mfd/mt6373.h
+> And in a way that it loses the GFP_KERNEL passed all the
+> way? I don't even see a lib/stackdepot function here.
 
-diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-index 13c955d31309..339fcd37eab6 100644
---- a/drivers/mfd/Kconfig
-+++ b/drivers/mfd/Kconfig
-@@ -1120,6 +1120,23 @@ config MFD_MT6397
- 	  accessing the device; additional drivers must be enabled in order
- 	  to use the functionality of the device.
+Oh wait, we clear __GFP_RECLAIM on the first attempt to allocate
+high-order slabs. so gfpflags_allow_spinning() returns false.
+
+> >> >  post_alloc_hook+0x84/0xf0
+> >> >  get_page_from_freelist+0x73b/0x1380
+> >> >  __alloc_frozen_pages_noprof+0x110/0x2c0
+> >> >  alloc_pages_mpol+0x44/0x140
+> >> >  alloc_slab_page+0xac/0x150
+> >> >  allocate_slab+0x78/0x3a0
+> >> >  ___slab_alloc+0x76b/0xed0
+> >> >  __slab_alloc.constprop.0+0x5a/0xb0
+> >> >  __kmalloc_noprof+0x3dc/0x6d0
+> >> >  __list_lru_init+0x6c/0x210
+> 
+> This has a kcalloc(GFP_KERNEL).
+
+Right.
  
-+config MFD_MTK_SPMI_PMIC
-+	tristate "MediaTek SPMI PMICs"
-+	depends on ARCH_MEDIATEK || COMPILE_TEST
-+	depends on OF
-+	depends on SPMI
-+	select REGMAP_SPMI
-+	default y if ARCH_MEDIATEK
-+	help
-+	  Say yes here to enable support for MediaTek's SPMI PMICs.
-+	  These PMICs made their first appearance in board designs using the
-+          MediaTek Dimensity 9400 series of SoCs.
-+	  Note that this will only be useful paired with descriptions of the
-+	  independent functions as children nodes in the device tree.
-+
-+	  Say M here if you want to include support for the MediaTek SPMI
-+	  PMICs as a module. The module will be called "mtk-spmi-pmic".
-+
- config MFD_MENF21BMC
- 	tristate "MEN 14F021P00 Board Management Controller Support"
- 	depends on I2C
-diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-index d2720d496e07..8f33fd9519ac 100644
---- a/drivers/mfd/Makefile
-+++ b/drivers/mfd/Makefile
-@@ -187,6 +187,7 @@ obj-$(CONFIG_MFD_MT6360)	+= mt6360-core.o
- obj-$(CONFIG_MFD_MT6370)	+= mt6370.o
- mt6397-objs			:= mt6397-core.o mt6397-irq.o mt6358-irq.o
- obj-$(CONFIG_MFD_MT6397)	+= mt6397.o
-+obj-$(CONFIG_MFD_MTK_SPMI_PMIC)	+= mtk-spmi-pmic.o
- 
- obj-$(CONFIG_RZ_MTU3)		+= rz-mtu3.o
- obj-$(CONFIG_ABX500_CORE)	+= abx500-core.o
-diff --git a/drivers/mfd/mtk-spmi-pmic.c b/drivers/mfd/mtk-spmi-pmic.c
-new file mode 100644
-index 000000000000..512b53bdb0d1
---- /dev/null
-+++ b/drivers/mfd/mtk-spmi-pmic.c
-@@ -0,0 +1,410 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) 2024 MediaTek Inc.
-+ * Copyright (c) 2025 Collabora Ltd
-+ *                    AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-+ */
-+
-+#include <linux/device.h>
-+#include <linux/errno.h>
-+#include <linux/gfp.h>
-+#include <linux/irq.h>
-+#include <linux/irqdomain.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/of_irq.h>
-+#include <linux/of_platform.h>
-+#include <linux/spmi.h>
-+#include <linux/types.h>
-+#include <linux/regmap.h>
-+#include <linux/irqchip/chained_irq.h>
-+#include <linux/mfd/mt6363.h>
-+#include <linux/mfd/mt6373.h>
-+
-+#define MTK_SPMI_PMIC_VAL_BITS		8
-+#define MTK_SPMI_PMIC_CHIP_ID_REG_M	0xb
-+#define MTK_SPMI_PMIC_RCS_IRQ_DONE	0x41b
-+
-+/**
-+ * mtk_spmi_pmic_irq_group - Group of interrupts in SPMI PMIC
-+ * @num_int_regs: Number of registers for this group of interrupts
-+ * @con_reg:      PMIC Interrupt Group Control 0 register
-+ * @sta_reg:      PMIC Interrupt Group Status 0 register
-+ * @group_num:    PMIC Interrupt Group number - also corresponds to the
-+ *                status bit in the global IRQ Control register
-+ */
-+struct mtk_spmi_pmic_irq_grp {
-+	u8 hwirq_base;
-+	u8 num_int_regs;
-+	u16 con_reg;
-+	u16 sta_reg;
-+	u8 group_num;
-+};
-+
-+/**
-+ * mtk_spmi_pmic_pdata - SPMI PMIC Platform Data
-+ * @pmic_irq:    Group of interrupts in SPMI PMIC
-+ * @num_groups:  Number of groups of interrupts
-+ * @con_reg_sz:  Size of Control registers, depends on existence
-+ *               of SET and CLR registers in the layout
-+ * @top_irq_reg: Global interrupt status register, explains which
-+ *               group needs attention because of a group irq
-+ * @chip_id_reg: Chip ID Register
-+ */
-+struct mtk_spmi_pmic_pdata {
-+	const struct mtk_spmi_pmic_irq_grp *pmic_irq;
-+	u8 num_groups;
-+	u8 con_reg_sz;
-+	u8 top_irq_reg;
-+	u8 chip_id_reg;
-+};
-+
-+/**
-+ * mtk_spmi_pmic - Main driver structure
-+ * @pdata:    SPMI PMIC Platform data
-+ * @dev:      Handle to SPMI Device
-+ * @dom:      IRQ Domain of the PMIC's interrupt controller
-+ * @regmap:   Handle to PMIC regmap
-+ * @irq_lock: Lock for the PMIC's irqchip
-+ * @irq:      PMIC chained interrupt
-+ */
-+struct mtk_spmi_pmic {
-+	const struct mtk_spmi_pmic_pdata *pdata;
-+	struct device *dev;
-+	struct irq_domain *dom;
-+	struct regmap *regmap;
-+	struct mutex irq_lock;
-+	int irq;
-+};
-+
-+static void mtk_spmi_pmic_irq_set_unmasking(struct irq_data *d, bool unmask)
-+{
-+	struct mtk_spmi_pmic *pmic = irq_data_get_irq_chip_data(d);
-+	const struct mtk_spmi_pmic_pdata *pdata = pmic->pdata;
-+	struct regmap *regmap = pmic->regmap;
-+	irq_hw_number_t hwirq = irqd_to_hwirq(d);
-+	unsigned short i;
-+
-+	for (i = 0; i < pdata->num_groups; i++) {
-+		const struct mtk_spmi_pmic_irq_grp *irq_grp = &pdata->pmic_irq[i];
-+		u32 con_reg;
-+		u8 irq_en_bit;
-+
-+		if (hwirq < irq_grp->hwirq_base)
-+			continue;
-+
-+		con_reg = irq_grp->con_reg + (pdata->con_reg_sz * i);
-+		irq_en_bit = hwirq - irq_grp->hwirq_base;
-+
-+		regmap_assign_bits(regmap, con_reg, BIT(irq_en_bit), unmask);
-+
-+		break;
-+	}
-+}
-+
-+static void mtk_spmi_pmic_irq_mask(struct irq_data *d)
-+{
-+	mtk_spmi_pmic_irq_set_unmasking(d, false);
-+}
-+
-+static void mtk_spmi_pmic_irq_unmask(struct irq_data *d)
-+{
-+	mtk_spmi_pmic_irq_set_unmasking(d, true);
-+}
-+
-+static void mtk_spmi_pmic_irq_lock(struct irq_data *d)
-+{
-+	struct mtk_spmi_pmic *pmic = irq_data_get_irq_chip_data(d);
-+
-+	mutex_lock(&pmic->irq_lock);
-+}
-+
-+static void mtk_spmi_pmic_irq_sync_unlock(struct irq_data *d)
-+{
-+	struct mtk_spmi_pmic *pmic = irq_data_get_irq_chip_data(d);
-+
-+	mutex_unlock(&pmic->irq_lock);
-+}
-+
-+static struct irq_chip mtk_spmi_pmic_irq_chip = {
-+	.name = "mtk-spmi-pmic",
-+	.irq_mask = mtk_spmi_pmic_irq_mask,
-+	.irq_unmask = mtk_spmi_pmic_irq_unmask,
-+	.irq_bus_lock = mtk_spmi_pmic_irq_lock,
-+	.irq_bus_sync_unlock = mtk_spmi_pmic_irq_sync_unlock,
-+	.flags = IRQCHIP_SKIP_SET_WAKE,
-+};
-+
-+static int mtk_spmi_pmic_irq_domain_map(struct irq_domain *d, unsigned int virq,
-+					irq_hw_number_t hwirq)
-+{
-+	struct mtk_spmi_pmic *pmic = d->host_data;
-+
-+	irq_set_chip_data(virq, pmic);
-+	irq_set_chip_and_handler(virq, &mtk_spmi_pmic_irq_chip, handle_level_irq);
-+
-+	return 0;
-+}
-+
-+static int mtk_spmi_pmic_irq_xlate(struct irq_domain *d, struct device_node *ctrlr,
-+				  const u32 *intspec, unsigned int intsize,
-+				  unsigned long *out_hwirq, unsigned int *out_type)
-+{
-+	struct mtk_spmi_pmic *pmic = d->host_data;
-+	struct device *dev = pmic->dev;
-+	struct irq_fwspec fwspec;
-+
-+	of_phandle_args_to_fwspec(ctrlr, intspec, intsize, &fwspec);
-+	if (WARN_ON(fwspec.param_count < 3))
-+		return -EINVAL;
-+
-+	/*
-+	 * The IRQ number in intspec[0] is ignored on purpose here!
-+	 *
-+	 * This is because of how at least the first revision of the SPMI 2.0
-+	 * controller works in MediaTek SoCs: the controller will raise an
-+	 * interrupt for each SID (but doesn't know the details!), and the
-+	 * specific IRQ number that got raised must be read from the PMIC or
-+	 * its sub-device driver.
-+	 * It's possible that this will change in the future with a newer
-+	 * revision of the SPMI controller, and this is why the devicetree
-+	 * holds the full intspec.
-+	 */
-+	*out_hwirq = intspec[1];
-+	*out_type = intspec[2] & IRQ_TYPE_SENSE_MASK;
-+
-+	dev_dbg(dev, "Found device IRQ %u chained from SPMI IRQ %x (map: 0x%lx)\n",
-+		intspec[1], intspec[0], *out_hwirq);
-+
-+	return 0;
-+}
-+
-+static const struct irq_domain_ops mtk_spmi_pmic_irq_domain_ops = {
-+	.map = mtk_spmi_pmic_irq_domain_map,
-+	.xlate = mtk_spmi_pmic_irq_xlate,
-+};
-+
-+static int mtk_spmi_pmic_handle_group_irq(struct mtk_spmi_pmic *pmic, int group)
-+{
-+	const struct mtk_spmi_pmic_irq_grp *irq_grp = &pmic->pdata->pmic_irq[group];
-+	struct regmap *regmap = pmic->regmap;
-+	struct device *dev = pmic->dev;
-+	int i, ret;
-+
-+	for (i = 0; i < irq_grp->num_int_regs; i++) {
-+		u32 status, saved_status;
-+
-+		ret = regmap_read(regmap, irq_grp->sta_reg + i, &status);
-+		if (ret) {
-+			dev_err(dev, "Could not read IRQ status register: %d", ret);
-+			return ret;
-+		}
-+
-+		if (status == 0)
-+			continue;
-+
-+		saved_status = status;
-+		do {
-+			irq_hw_number_t hwirq;
-+			u8 bit = __ffs(status);
-+
-+			/* Each reg has 8 bits: this is the first irq of this group */
-+			hwirq = MTK_SPMI_PMIC_VAL_BITS * i;
-+
-+			/* Offset by this group's start interrupt */
-+			hwirq += irq_grp->hwirq_base;
-+
-+			/* Finally, offset by the fired irq's bit number */
-+			hwirq += bit;
-+
-+			status &= ~BIT(bit);
-+
-+			generic_handle_domain_irq(pmic->dom, hwirq);
-+		} while (status);
-+
-+		/* Clear the interrupts by writing the previous status */
-+		regmap_write(regmap, irq_grp->sta_reg + i, saved_status);
-+	}
-+
-+	return 0;
-+}
-+
-+static void mtk_spmi_pmic_handle_chained_irq(struct irq_desc *desc)
-+{
-+	struct mtk_spmi_pmic *pmic = irq_desc_get_handler_data(desc);
-+	const struct mtk_spmi_pmic_pdata *pdata = pmic->pdata;
-+	struct irq_chip *chip = irq_desc_get_chip(desc);
-+	struct regmap *regmap = pmic->regmap;
-+	bool irq_handled = false;
-+	int i, ret;
-+	u32 val;
-+
-+	chained_irq_enter(chip, desc);
-+
-+	ret = regmap_read(regmap, pdata->top_irq_reg, &val);
-+	if (ret)
-+		handle_bad_irq(desc);
-+
-+	dev_dbg(pmic->dev, "PMIC IRQ Status: %x\n", val);
-+
-+	/* This is very unlikely to happen */
-+	if (val == 0) {
-+		chained_irq_exit(chip, desc);
-+		return;
-+	}
-+
-+	for (i = 0; i < pdata->num_groups; i++) {
-+		const struct mtk_spmi_pmic_irq_grp *irq_grp = &pdata->pmic_irq[i];
-+		u8 group_bit = BIT(irq_grp[i].group_num);
-+
-+		if (val & group_bit) {
-+			ret = mtk_spmi_pmic_handle_group_irq(pmic, i);
-+			if (ret == 0)
-+				irq_handled = true;
-+		}
-+	}
-+
-+	/* The RCS flag has to be cleared even if the IRQ was not handled. */
-+	ret = regmap_write(regmap, MTK_SPMI_PMIC_RCS_IRQ_DONE, 1);
-+	if (ret)
-+		dev_warn(pmic->dev, "Could not clear RCS flag!\n");
-+
-+	if (!irq_handled)
-+		handle_bad_irq(desc);
-+
-+	chained_irq_exit(chip, desc);
-+}
-+
-+static void mtk_spmi_pmic_irq_remove(void *data)
-+{
-+	struct mtk_spmi_pmic *pmic = (struct mtk_spmi_pmic *)data;
-+
-+	irq_set_chained_handler_and_data(pmic->irq, NULL, NULL);
-+	irq_domain_remove(pmic->dom);
-+}
-+
-+static int mtk_spmi_pmic_irq_init(struct spmi_device *sdev, struct regmap *regmap,
-+				  const struct mtk_spmi_pmic_pdata *pdata)
-+{
-+	struct mtk_spmi_pmic *pmic;
-+	int ret;
-+
-+	pmic = devm_kzalloc(&sdev->dev, sizeof(*pmic), GFP_KERNEL);
-+	if (!pmic)
-+		return -ENOMEM;
-+
-+	pmic->irq = of_irq_get(sdev->dev.of_node, 0);
-+	if (pmic->irq < 0)
-+		return dev_err_probe(&sdev->dev, pmic->irq, "Cannot get IRQ\n");
-+
-+	pmic->dev = &sdev->dev;
-+	pmic->regmap = regmap;
-+	pmic->pdata = pdata;
-+	mutex_init(&pmic->irq_lock);
-+
-+	pmic->dom = irq_domain_add_tree(sdev->dev.of_node,
-+					&mtk_spmi_pmic_irq_domain_ops, pmic);
-+	if (!pmic->dom)
-+		return dev_err_probe(&sdev->dev, -ENOMEM, "Cannot create IRQ domain\n");
-+
-+	ret = devm_add_action_or_reset(&sdev->dev, mtk_spmi_pmic_irq_remove, pmic);
-+	if (ret) {
-+		irq_domain_remove(pmic->dom);
-+		return ret;
-+	}
-+
-+	irq_set_chained_handler_and_data(pmic->irq, mtk_spmi_pmic_handle_chained_irq, pmic);
-+
-+	return 0;
-+}
-+
-+#define MTK_SPMI_PMIC_IRQ_GROUP(pmic, grp, gnum, first_irq, last_irq)	\
-+{									\
-+	.hwirq_base = first_irq,					\
-+	.num_int_regs = ((last_irq - first_irq) /			\
-+			 MTK_SPMI_PMIC_VAL_BITS) + 1,			\
-+	.con_reg = pmic##_##grp##_TOP_INT_CON0,				\
-+	.sta_reg = pmic##_##grp##_TOP_INT_STATUS0,			\
-+	.group_num = gnum,						\
-+}
-+
-+static const struct mtk_spmi_pmic_irq_grp mt6363_irq_groups[] = {
-+	MTK_SPMI_PMIC_IRQ_GROUP(MT6363, BUCK, 0, 0, 9),
-+	MTK_SPMI_PMIC_IRQ_GROUP(MT6363, LDO, 1, 16, 40),
-+	MTK_SPMI_PMIC_IRQ_GROUP(MT6363, PSC, 2, 48, 57),
-+	MTK_SPMI_PMIC_IRQ_GROUP(MT6363, MISC, 3, 64, 79),
-+	MTK_SPMI_PMIC_IRQ_GROUP(MT6363, HK, 4, 80, 87),
-+	MTK_SPMI_PMIC_IRQ_GROUP(MT6363, BM, 6, 88, 107)
-+};
-+
-+static const struct mtk_spmi_pmic_irq_grp mt6373_irq_groups[] = {
-+	MTK_SPMI_PMIC_IRQ_GROUP(MT6373, BUCK, 0, 0, 9),
-+	MTK_SPMI_PMIC_IRQ_GROUP(MT6373, LDO, 1, 16, 39),
-+	MTK_SPMI_PMIC_IRQ_GROUP(MT6373, MISC, 3, 56, 71),
-+};
-+
-+static const struct mtk_spmi_pmic_pdata mt6363_pdata = {
-+	.pmic_irq = mt6363_irq_groups,
-+	.num_groups = ARRAY_SIZE(mt6363_irq_groups),
-+	.con_reg_sz = 3,
-+	.top_irq_reg = MT6363_TOP_INT_STATUS1,
-+	.chip_id_reg = MTK_SPMI_PMIC_CHIP_ID_REG_M,
-+};
-+
-+static const struct mtk_spmi_pmic_pdata mt6373_pdata = {
-+	.pmic_irq = mt6373_irq_groups,
-+	.num_groups = ARRAY_SIZE(mt6373_irq_groups),
-+	.con_reg_sz = 3,
-+	.top_irq_reg = MT6373_TOP_INT_STATUS1,
-+	.chip_id_reg = MTK_SPMI_PMIC_CHIP_ID_REG_M,
-+};
-+
-+static const struct regmap_config mtk_spmi_regmap_config = {
-+	.reg_bits	= 16,
-+	.val_bits	= MTK_SPMI_PMIC_VAL_BITS,
-+	.max_register	= 0xffff,
-+	.fast_io	= true,
-+};
-+
-+static int mtk_spmi_pmic_probe(struct spmi_device *sdev)
-+{
-+	const struct mtk_spmi_pmic_pdata *pdata;
-+	struct device *dev = &sdev->dev;
-+	struct regmap *regmap;
-+	int ret;
-+
-+	regmap = devm_regmap_init_spmi_ext(sdev, &mtk_spmi_regmap_config);
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
-+
-+	pdata = (const struct mtk_spmi_pmic_pdata *)device_get_match_data(&sdev->dev);
-+	if (pdata && pdata->num_groups) {
-+		ret = mtk_spmi_pmic_irq_init(sdev, regmap, pdata);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return devm_of_platform_populate(dev);
-+}
-+
-+static const struct of_device_id mtk_pmic_spmi_id_table[] = {
-+	{ .compatible = "mediatek,mt6363", .data = &mt6363_pdata },
-+	{ .compatible = "mediatek,mt6373", .data = &mt6373_pdata },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, mtk_pmic_spmi_id_table);
-+
-+static struct spmi_driver mtk_spmi_pmic_driver = {
-+	.probe = mtk_spmi_pmic_probe,
-+	.driver = {
-+		.name = "mtk-spmi-pmic",
-+		.of_match_table = mtk_pmic_spmi_id_table,
-+	},
-+};
-+module_spmi_driver(mtk_spmi_pmic_driver);
-+
-+MODULE_AUTHOR("AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>");
-+MODULE_DESCRIPTION("MediaTek SPMI PMIC driver");
-+MODULE_LICENSE("GPL");
-diff --git a/include/linux/mfd/mt6363.h b/include/linux/mfd/mt6363.h
-new file mode 100644
-index 000000000000..2e13398f5af5
---- /dev/null
-+++ b/include/linux/mfd/mt6363.h
-@@ -0,0 +1,26 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (c) 2021 MediaTek Inc.
-+ * Copyright (c) 2025 Collabora Ltd
-+ *                    AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-+ */
-+
-+#ifndef __MFD_MT6363_H__
-+#define __MFD_MT6363_H__
-+
-+/* PMIC Registers */
-+#define MT6363_MISC_TOP_INT_CON0	0x37
-+#define MT6363_MISC_TOP_INT_STATUS0	0x43
-+#define MT6363_TOP_INT_STATUS1		0x4e
-+#define MT6363_PSC_TOP_INT_CON0		0x90f
-+#define MT6363_PSC_TOP_INT_STATUS0	0x91b
-+#define MT6363_BM_TOP_INT_CON0		0xc24
-+#define MT6363_BM_TOP_INT_STATUS0	0xc36
-+#define MT6363_HK_TOP_INT_CON0		0xf92
-+#define MT6363_HK_TOP_INT_STATUS0	0xf9e
-+#define MT6363_BUCK_TOP_INT_CON0	0x1411
-+#define MT6363_BUCK_TOP_INT_STATUS0	0x141d
-+#define MT6363_LDO_TOP_INT_CON0		0x1b11
-+#define MT6363_LDO_TOP_INT_STATUS0	0x1b29
-+
-+#endif /* __MFD_MT6363_H__ */
-diff --git a/include/linux/mfd/mt6373.h b/include/linux/mfd/mt6373.h
-new file mode 100644
-index 000000000000..3509e46447bd
---- /dev/null
-+++ b/include/linux/mfd/mt6373.h
-@@ -0,0 +1,21 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (c) 2021 MediaTek Inc.
-+ * Copyright (c) 2025 Collabora Ltd
-+ *                    AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-+ */
-+
-+#ifndef __MFD_MT6373_H__
-+#define __MFD_MT6373_H__
-+
-+/* PMIC Registers */
-+#define MT6373_MISC_TOP_INT_CON0	0x3c
-+#define MT6373_MISC_TOP_INT_STATUS0	0x48
-+#define MT6373_TOP_INT_MASK_CON0	0x4c
-+#define MT6373_TOP_INT_STATUS1		0x53
-+#define MT6373_BUCK_TOP_INT_CON0	0x1411
-+#define MT6373_BUCK_TOP_INT_STATUS0	0x141d
-+#define MT6373_LDO_TOP_INT_CON0		0x1b10
-+#define MT6373_LDO_TOP_INT_STATUS0	0x1b22
-+
-+#endif /* __MFD_MT6373_H__ */
+> >> >  alloc_super+0x3b6/0x470
+> >> >  sget_fc+0x5f/0x3a0
+> >> >  get_tree_nodev+0x27/0x90
+> >> >  vfs_get_tree+0x26/0xc0
+> >> >  vfs_kern_mount.part.0+0xb6/0x140
+> >> >  kern_mount+0x24/0x40
+> >> >  init_pipe_fs+0x4f/0x70
+> >> >  do_one_initcall+0x62/0x2e0
+> >> >  kernel_init_freeable+0x25b/0x4b0
+> 
+> Here we've set the full gfp_allowed_mask already so it's not masking our
+> GFP_KERNEL.
+
+Right.
+
 -- 
-2.51.0
+Cheers,
+Harry / Hyeonggon
 
+> >> >  kernel_init+0x1a/0x1c0
+> >> >  ret_from_fork+0x290/0x2e0
+> >> >  ret_from_fork_asm+0x11/0x20
+> >> > </TASK>
+> >> >
+> >> > Replace this_cpu_ptr with raw_cpu_ptr to eliminate
+> >> > the above warning message.
+> >> >
+> >> > Fixes: af92793e52c3 ("slab: Introduce kmalloc_nolock() and kfree_nolock().")
+> >>
+> >> There's no mainline commit hash yet, should be adjusted later.
+> >>
+> >> > Signed-off-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
+> >> > ---
+> >> >  mm/slub.c | 4 ++--
+> >> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >> >
+> >> > diff --git a/mm/slub.c b/mm/slub.c
+> >> > index 1433f5b988f7..67c57f1b5a86 100644
+> >> > --- a/mm/slub.c
+> >> > +++ b/mm/slub.c
+> >> > @@ -6432,7 +6432,7 @@ static void free_deferred_objects(struct irq_work *work)
+> >> >
+> >> >  static void defer_free(struct kmem_cache *s, void *head)
+> >> >  {
+> >> > -     struct defer_free *df = this_cpu_ptr(&defer_free_objects);
+> >> > +     struct defer_free *df = raw_cpu_ptr(&defer_free_objects);
+> >>
+> >> This suppresses warning, but let's answer the question;
+> >> Is it actually safe to not disable preemption here?
+> >>
+> >> >       if (llist_add(head + s->offset, &df->objects))
+> >>
+> >> Let's say a task was running on CPU X and migrated to a different CPU
+> >> (say, Y) after returning from llist_add() or before calling llist_add(),
+> >> then we're queueing the irq_work of CPU X on CPU Y.
+> >>
+> >> I think technically this should be safe because, although we're using
+> >> per-cpu irq_work here, the irq_work framework itself is designed to handle
+> >> concurrent access from multiple CPUs (otherwise it won't be safe to use
+> >> a global irq_work like in other places) by using lockless list, which
+> >> uses try_cmpxchg() and xchg() for atomic update.
+> >>
+> >> So if I'm not missing something it should be safe, but it was very
+> >> confusing to confirm that it's safe as we're using per-cpu irq_work...
+> >>
+> >> I don't think these paths are very performance critical, so why not disable
+> >> preemption instead of replacing it with raw_cpu_ptr()?
+> > 
+> > +1.
+> > Though irq_work_queue() works for any irq_work it should
+> > be used for current cpu, since it IPIs itself.
+> > So pls use guard(preempt)(); instead.
+> 
+> Agreed. But we should fix it like this. But the report is strange.
 
