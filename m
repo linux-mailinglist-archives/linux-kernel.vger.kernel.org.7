@@ -1,285 +1,322 @@
-Return-Path: <linux-kernel+bounces-839699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79754BB22F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 02:56:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D508BB234C
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 03:04:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E41BC189667F
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 00:56:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02D563B8B7A
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 01:04:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E72F1F936;
-	Thu,  2 Oct 2025 00:56:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC9F739FD9;
+	Thu,  2 Oct 2025 01:04:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="I2tOQqxH"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XUVAA4jQ"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22B2AB652
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 00:56:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25F9F25776
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 01:04:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759366564; cv=none; b=hXlQ0JLV5LMSI62AcMYeXWcdkx2pGQcZxtz51b5pLHEhgpQDp4eNjn+uLi/YLtkqiEd6v4PfdzEF/5nOWrNXzL57aqxltQ3OPGLtnuiUzxDR2QzMI5Y8Wg2mSpSdihwaxozmf6fKY1Tka1JoIzl2AAvmGeXodN4RgFSOriM7JIU=
+	t=1759367059; cv=none; b=Ol8giFnSDb7ugrubE1lG0xzWPSfmV0U8tcf41tF2VShgpcX8lYhuxFkToWCoSjShVWWA6oa1z6aY/6R5ruyqeK9qz2c3qP6b2ueBqYZaqLbcikIpmAKm/4SPbLPiqVwDq2WpSmyOE/ogFkDeq4k9asF8kU17mN1b7S7+uC4SJyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759366564; c=relaxed/simple;
-	bh=Mnra6sxDGNMUqaO+Vm3H9zPCZysENcOo0QQWNFnugoQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tQQgQFuEK+AeTPKfK+7hq3vv3Y7nerx10U0S+/Mb1lKF1JoJ95qhPITa/0jz7h/rttr5Q/TVaOtBGv5MpquScpWKhonMNfq52Kgv5IY22VLlYWOEylIWLZCHM4LPYJ1AE7+8r1hDYAxCzUOgXWzDr+z7fXlmptPMtDF/lFSl54Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=I2tOQqxH; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 591Ibw4O017629
-	for <linux-kernel@vger.kernel.org>; Thu, 2 Oct 2025 00:56:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=8PzQc+BmJiwVOLFHqrykB34m
-	n5pDbaOYFIBrZaxzwsU=; b=I2tOQqxHbLH3mAXAEts/d7DiOVYDuGA82QegSdLf
-	vAZ4A+rYVfab/A9wCZ8Dv/yYgp7fkMtxOBmJMzEhTw+qrNjG35UVaL9oEWe6wLHT
-	G2VXD8qx8L6vRfY9iz1q7/XtJvNN34W5yJUBsgpjcFX6uNVUc01lWv5SU6EhZM4H
-	4NpqV4smMyCJdmLWwo0lwzTajvaonYJ4psS7gc1DXzFE+SlN9ZXGP9Y6ngM/eGME
-	2fSZGnXo6BgR2I2QgBZsXkqR2I5x7Q70cxb8Wi5LgcxbUNaxwM8GdL2MdQdBd5EL
-	LDGaWXTHQEO0JS8sB2jbzDP63Xin008qIii2EfXZ/v1R4A==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49fyrf7u84-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 00:56:00 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4df10fb4a4cso18019871cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 17:56:00 -0700 (PDT)
+	s=arc-20240116; t=1759367059; c=relaxed/simple;
+	bh=Y505aKQKUnwUfjNG+Qp9UI4/UlFZuJIXU1Q3R7U1VQk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nd0mpqKzRRpjruGl1NMgMKDsq+5jlE/C5E4eOLSKe6Gd0utmvnJT0q3rweY3qsTnc+DktEmpPxW0s4lnpaOnMd41slPC5vbj8NJuGCATQ6nWi+SkjQkkxFjamV2c8jGlNUeFUgUjpeaM0NSgiTIN14RmiEiCRRSCif0u7nIIe3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XUVAA4jQ; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-330631e534eso566836a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 18:04:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759367057; x=1759971857; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pHTDHANhx2I7dIzGsQLBn00mkeR2Scl9/Qsf768Yqmk=;
+        b=XUVAA4jQxE2GzEGj1p+3rCXuCEWhnqL9FPU18AeYaCKDXhVqXewfXVrSXjPXnYGinv
+         zrweugwmjPfeKpA0PHVipI0U9AYEtGRaUq8Dx+KIVIV+wFtxUBjtpKKEPIc0ZX2PybSF
+         yev9WGg+MEwntDz8bhgtMKBeUnQeAlTr+Wq3H6vYPChvNZdz20IA9FrUAUVgMuU7sEv1
+         X+RJJtuwAc2xSdN44aT9VA6byut8C3b0gQhvj3kTb+U67gqllF0MBVhr40CqCjEzsFAF
+         F5r9Nxhdl7stVAloWvl0gDxQkLZpMDBEd+0/IhQQMeK4vCnjrGD3eYzNZxoRgZ92B/4H
+         +gWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759366560; x=1759971360;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8PzQc+BmJiwVOLFHqrykB34mn5pDbaOYFIBrZaxzwsU=;
-        b=Mt5ihq0t8N+fJPD/Z4klVbsIXBwp/Q9S9vIJXwY7gJdl7HMGkzQkoASRgOAviL4mMX
-         aXtjyVqegxVuDLWSkYAek2ugQj/A4faPWpICwJokLq+S1muPjqprp9J/Zrk78FXlWNIy
-         4Hel+aVlVMmMmYO50vK8I/pVt5vfHiuigIBC2rsH4IBNuwrspezAF+hi1hhGHNxOYyim
-         r1nG0pm9lmJ2C/hsVSWQeiv7Q7r3ej3UOTwmdSDOEpvtoHKpQZAjdrt8NcdyEPORoNmq
-         J+Q/5qp0aSgnxLXRcwTbf06xUXsa/JpsvGkzfiixP+fvrK058W3K5+XFKqgie+BxTlnC
-         0k3A==
-X-Forwarded-Encrypted: i=1; AJvYcCWX/1Oj3Q1Qs0+ERE7K6d/Jvso4b07aqrUnBIbZVn2UfMQoPIZB57klo3JDLvlcauDN13bEt6S0DgpIAC8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPmTZPuY37lNfYUbpI637fZKm9halWE9T3sMzkGg9z9jdhV3+8
-	qSROZSH6jZI+i/SjRDr22SOGjSOFS+cYURj5VV+5e2YN6+1I9wi2NDr842hwOXSPqXoOiDckidI
-	Pan5Uo1Cqqy+H+7hXwGKD5ogDB1aAYBJJbq3/HzaFyfJWD182QXdvtA4hnzRU51F+SFA=
-X-Gm-Gg: ASbGnct7l6N9yvQQHsdskQlL4widTLt23RyiBkpl0aszU7noc0s0n9vg4ZeCRBo5UxW
-	mKVojGHPBq2vYOpbEGIFS+mpqL/A3lQ/bUH96IlJYhKhB07ViBPwYkXaD/yi+rN0EhwabOwDe80
-	HdqRvG0SbgIQq1K1ODUNdQB0bXDmROKed/y/kINQVZOLW/yf6XJNLm7iXi/EteMMxZ3N2L+KEmD
-	ojZmHa6/3/o6AqnJZYZ4MM9MzpgTMrLIHvvj1w7XlRZ9+v4NlJkVvBZPvpDdbP5UoB1E1RwUCjR
-	OHEuGS7EWHCq++/bcGlxJiI94jJ8wFsMV+jp6OZOGpDJ8j/p2QYxIQOMMxdu3N2z3eEkU3YqjHX
-	pdr8tCPuxRGzJTXEkVPvYVArquYPpiNrkO8jzDftyXAgFe5edvyADBpdwnA==
-X-Received: by 2002:a05:622a:5518:b0:4dc:4828:b7a6 with SMTP id d75a77b69052e-4e41e5416famr78963191cf.59.1759366559926;
-        Wed, 01 Oct 2025 17:55:59 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGtplyOrthJ4uP+eWCWIt60T2cvFyskp9IejhadjkX5IEu1X/U3y4cM2LWQ0k7UzPqTkzQ8qg==
-X-Received: by 2002:a05:622a:5518:b0:4dc:4828:b7a6 with SMTP id d75a77b69052e-4e41e5416famr78962981cf.59.1759366559465;
-        Wed, 01 Oct 2025 17:55:59 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-373ba4a6015sm2742211fa.45.2025.10.01.17.55.57
+        d=1e100.net; s=20230601; t=1759367057; x=1759971857;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pHTDHANhx2I7dIzGsQLBn00mkeR2Scl9/Qsf768Yqmk=;
+        b=V6LfplVyMwJzBnCVfOnnhQ1fcQzhYXTlWemqL/LKKLapsSUJD+jHr9dHfRHEiLXN2E
+         O5BKX9HsaFruusTlEYcZFbypBpUgEwu/KYTde0TOzpw+QDNGZ2N3gQHPhDoDJvhpUIex
+         0veKJn3OF1VBhQaPAPETm3dj2dLINHvQAdjo4DoFSFCdL5WU7hPPHqRvcQQka8fqrPJl
+         uUry9I73t+ujBj3rw9rQevH5sIyYUW2rGpS8Pat6D7z2fGm2QwpV/ysEfGbdMV5xTKcW
+         KtOtoYGKCSC+tIEY32GaBMIP3nsbNL0hK+Bzjbh5TpQ3G1p4jTOr+cbw1FGj1z1kmRhL
+         jTgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUl+0lUOhVahaFIkiTkEkeN9t8y5d0XOwGHwKcplwSvadajRaj5eEJL2cso0wBiCFiJquXgE9C64xVpqNA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHGQ1ScJNM+avjcEBrJhHcWplYinMozrziGd5yS80V6ZzFboJO
+	L8gmSCa27dfrsOlIstkEF2K1r//vneC890n9biRJl5JPa5ipyNp0eMSk
+X-Gm-Gg: ASbGncu8HB534uSd6pKE73QtXA7hxDloE87xAXtcDSI7sO/vaOkBS574nM/pAWnugfI
+	M6VZ/vYCa+azGPmpDZjNZPfACH6t8FbXOUnY9eputVfK8yyODLz+Nmc7zufmlKvLrLxlczvXB+7
+	vZPP0n4TYlSXExdmg/YhMJdrLkIi1F9a/b3EQjtsUTjQ6PInDmRDg8b/FmcxNJ/IGn+e1gbTSdx
+	pNOqGzCyPGdwCGNQuYAV5/F4kIQgHM3LL/SPnoYucJsLM/4uLPZkjP+u/jP6tlVUhtrrYR3xrsU
+	jZ8HoCj92bVJX58JqXPQwouEY+Wz4A/1Tfct273hHkz37JmdJm3337tZ6cckeMPMV3IN+LDQPnM
+	7KIhIfIlcTAVtAxJn1gDyrMyUsgkX1eiNWxQfajt9jWaSjrxqZrkKPPVwhA==
+X-Google-Smtp-Source: AGHT+IF3t1LeatYEk8zV1ykLzbl5xhmZAqb1p7kS4fD0Fq+BS96TmnxU8ltYTQ5Psy74eDVDoRHjJQ==
+X-Received: by 2002:a17:90b:1b0b:b0:32e:a535:4872 with SMTP id 98e67ed59e1d1-339a6e281ebmr5626461a91.2.1759367057231;
+        Wed, 01 Oct 2025 18:04:17 -0700 (PDT)
+Received: from ryzoh.. ([2804:14c:5fc8:8033:f637:ab:9082:d04])
+        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-339b4f3ceedsm943113a91.18.2025.10.01.18.04.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Oct 2025 17:55:57 -0700 (PDT)
-Date: Thu, 2 Oct 2025 03:55:56 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Wesley Cheng <wesley.cheng@oss.qualcomm.com>
-Cc: krzk+dt@kernel.org, conor+dt@kernel.org, konrad.dybcio@oss.qualcomm.com,
-        kishon@kernel.org, vkoul@kernel.org, gregkh@linuxfoundation.org,
-        robh@kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-phy@lists.infradead.org, linux-usb@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 01/10] dt-bindings: phy:
- qcom,sc8280xp-qmp-usb43dp-phy: Add Glymur compatible
-Message-ID: <tblxljq2wmbbb3cpzv3xd7koc6j224ts3kd5mhx7hgpatenond@dqu3gunfocu2>
-References: <20251001220534.3166401-1-wesley.cheng@oss.qualcomm.com>
- <20251001220534.3166401-2-wesley.cheng@oss.qualcomm.com>
+        Wed, 01 Oct 2025 18:04:16 -0700 (PDT)
+From: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Aubin Constans <aubin.constans@microchip.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Aaro Koskinen <aaro.koskinen@iki.fi>,
+	linux-mmc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
+Subject: [PATCH] mmc: use octal file permissions instead of symbolic
+Date: Wed,  1 Oct 2025 21:57:14 -0300
+Message-Id: <20251002005714.6380-1-pedrodemargomes@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251001220534.3166401-2-wesley.cheng@oss.qualcomm.com>
-X-Proofpoint-ORIG-GUID: UUKGPqT1UW0-eMDrkXDbd_TK7A608s-i
-X-Proofpoint-GUID: UUKGPqT1UW0-eMDrkXDbd_TK7A608s-i
-X-Authority-Analysis: v=2.4 cv=etzSD4pX c=1 sm=1 tr=0 ts=68ddcda0 cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=JfrnYn6hAAAA:8 a=EUspDBNiAAAA:8 a=poLWbaA-Eiv7kSeqQ60A:9
- a=CjuIK1q_8ugA:10 a=uxP6HrT_eTzRwkO_Te1X:22 a=1CNFftbPRP8L7MoqJWF3:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI5MDE3NSBTYWx0ZWRfX6pERcPOvsGjS
- lro01w/wwPf+oj1dJxnTLOYu9eGRYmaO7KwTHfJOmHnXDnILoN3DUKU/6fpNpoXmGFRS+YqEF4F
- 4M/VlL7PHR7kgDvCl5aUrjLqceCyE2yWhNMei+KKKK34Os6ash0GFL6WmtATGvNVfCHS2pI/Gl7
- vUa9mll6sCafN0+8cD1epY/us684yaiukQX/54BuUrheY2AbbPlJp6gu4Dk1puHr9HZ7wav4NSR
- i5rF+VtvZGziazc43C2Eu2R0pGfMgzOavNIZkZLPCdpaGofKZ5d+Mvr5ofW5Yn8GTdpPwRAV7vT
- kTHfj7eoNittwxJ28sJ1482nsaXm9sEI+i/kP6yhm9PTmI70DVilaJ1Lralz6sOJH0IMVvgPSGF
- 3tZtk6iMbH86dTL/XJ4rOMTvTmbc0A==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-01_07,2025-09-29_04,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 lowpriorityscore=0 clxscore=1015 suspectscore=0 malwarescore=0
- priorityscore=1501 spamscore=0 impostorscore=0 adultscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509290175
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 01, 2025 at 03:05:25PM -0700, Wesley Cheng wrote:
-> Define a Glymur compatible string for the QMP PHY combo driver, along with
-> resource requirements.  This adds a new requirement for a clkref clock-name
-> for each QMP PHY.
-> 
-> Signed-off-by: Wesley Cheng <wesley.cheng@oss.qualcomm.com>
-> ---
->  .../phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml    | 76 +++++++++++++++----
->  1 file changed, 63 insertions(+), 13 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml
-> index c8bc512df08b..377d830f0855 100644
-> --- a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml
-> +++ b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml
-> @@ -16,6 +16,7 @@ description:
->  properties:
->    compatible:
->      enum:
-> +      - qcom,glymur-qmp-usb3-dp-phy
->        - qcom,sar2130p-qmp-usb3-dp-phy
->        - qcom,sc7180-qmp-usb3-dp-phy
->        - qcom,sc7280-qmp-usb3-dp-phy
-> @@ -41,12 +42,7 @@ properties:
->  
->    clock-names:
->      minItems: 4
-> -    items:
-> -      - const: aux
-> -      - const: ref
-> -      - const: com_aux
-> -      - const: usb3_pipe
-> -      - const: cfg_ahb
-> +    maxItems: 5
->  
->    power-domains:
->      maxItems: 1
-> @@ -63,6 +59,8 @@ properties:
->  
->    vdda-pll-supply: true
->  
-> +  refgen-supply: true
-> +
->    "#clock-cells":
->      const: 1
->      description:
-> @@ -105,6 +103,22 @@ required:
->  
->  allOf:
->    - $ref: /schemas/usb/usb-switch.yaml#
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          enum:
-> +            - qcom,glymur-qmp-usb3-dp-phy
-> +    then:
-> +      properties:
+As stated in Documentation/dev-tools/checkpatch.rst, octal file
+permissions are preferred over symbolic constants because they are
+easier to read and understand. Replace symbolic permissions with
+their octal equivalents.
 
-Missing constraint for clocks.
+Signed-off-by: Pedro Demarchi Gomes <pedrodemargomes@gmail.com>
+---
+ drivers/mmc/core/block.c       |  6 +++---
+ drivers/mmc/core/bus.h         |  2 +-
+ drivers/mmc/core/mmc.c         |  4 ++--
+ drivers/mmc/core/mmc_test.c    |  4 ++--
+ drivers/mmc/core/sd.c          |  2 +-
+ drivers/mmc/host/atmel-mci.c   | 10 +++++-----
+ drivers/mmc/host/davinci_mmc.c |  6 +++---
+ drivers/mmc/host/dw_mmc.c      | 10 +++++-----
+ drivers/mmc/host/omap.c        |  4 ++--
+ drivers/mmc/host/omap_hsmmc.c  |  4 ++--
+ 10 files changed, 26 insertions(+), 26 deletions(-)
 
-> +        clock-names:
-> +          items:
-> +            - const: aux
-> +            - const: ref
-> +            - const: com_aux
-> +            - const: usb3_pipe
-> +            - const: clkref
-> +
->    - if:
->        properties:
->          compatible:
-> @@ -113,21 +127,45 @@ allOf:
->              - qcom,sdm845-qmp-usb3-dp-phy
->      then:
->        properties:
-> -        clocks:
-> -          maxItems: 5
-
-No, you can't remove this. clock-names doens't provide constraints (or
-description) of the clocks property.
-
->          clock-names:
-> -          maxItems: 5
-> -    else:
-> +          items:
-> +            - const: aux
-> +            - const: ref
-> +            - const: com_aux
-> +            - const: usb3_pipe
-> +            - const: cfg_ahb
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          enum:
-> +            - qcom,sar2130p-qmp-usb3-dp-phy
-> +            - qcom,sc7280-qmp-usb3-dp-phy
-> +            - qcom,sc8180x-qmp-usb3-dp-phy
-> +            - qcom,sc8280xp-qmp-usb43dp-phy
-> +            - qcom,sm6350-qmp-usb3-dp-phy
-> +            - qcom,sm8150-qmp-usb3-dp-phy
-> +            - qcom,sm8250-qmp-usb3-dp-phy
-> +            - qcom,sm8350-qmp-usb3-dp-phy
-> +            - qcom,sm8450-qmp-usb3-dp-phy
-> +            - qcom,sm8550-qmp-usb3-dp-phy
-> +            - qcom,sm8650-qmp-usb3-dp-phy
-> +            - qcom,sm8750-qmp-usb3-dp-phy
-> +            - qcom,x1e80100-qmp-usb3-dp-phy
-> +    then:
->        properties:
-> -        clocks:
-> -          maxItems: 4
-
-Same here.
-
->          clock-names:
-> -          maxItems: 4
-> +          items:
-> +            - const: aux
-> +            - const: ref
-> +            - const: com_aux
-> +            - const: usb3_pipe
->  
->    - if:
->        properties:
->          compatible:
->            enum:
-> +            - qcom,glymur-qmp-usb3-dp-phy
->              - qcom,sar2130p-qmp-usb3-dp-phy
->              - qcom,sc8280xp-qmp-usb43dp-phy
->              - qcom,sm6350-qmp-usb3-dp-phy
-> @@ -142,6 +180,18 @@ allOf:
->        properties:
->          power-domains: false
->  
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          enum:
-> +            - qcom,glymur-qmp-usb3-dp-phy
-> +    then:
-> +      required:
-> +        - refgen-supply
-> +    else:
-> +      properties:
-> +        refgen-supply: false
-> +
->  additionalProperties: false
->  
->  examples:
-> 
-> -- 
-> linux-phy mailing list
-> linux-phy@lists.infradead.org
-> https://lists.infradead.org/mailman/listinfo/linux-phy
-
+diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
+index 9cc47bf94804..78dc1a9ca2ef 100644
+--- a/drivers/mmc/core/block.c
++++ b/drivers/mmc/core/block.c
+@@ -387,10 +387,10 @@ static umode_t mmc_disk_attrs_is_visible(struct kobject *kobj,
+ 	if (a == &dev_attr_ro_lock_until_next_power_on.attr &&
+ 	    (md->area_type & MMC_BLK_DATA_AREA_BOOT) &&
+ 	    md->queue.card->ext_csd.boot_ro_lockable) {
+-		mode = S_IRUGO;
++		mode = 0444;
+ 		if (!(md->queue.card->ext_csd.boot_ro_lock &
+ 				EXT_CSD_BOOT_WP_B_PWR_WP_DIS))
+-			mode |= S_IWUSR;
++			mode |= 0200;
+ 	}
+ 
+ 	mmc_blk_put(md);
+@@ -3244,7 +3244,7 @@ static void mmc_blk_add_debugfs(struct mmc_card *card, struct mmc_blk_data *md)
+ 
+ 	if (mmc_card_mmc(card)) {
+ 		md->ext_csd_dentry =
+-			debugfs_create_file("ext_csd", S_IRUSR, root, card,
++			debugfs_create_file("ext_csd", 0400, root, card,
+ 					    &mmc_dbg_ext_csd_fops);
+ 	}
+ }
+diff --git a/drivers/mmc/core/bus.h b/drivers/mmc/core/bus.h
+index cfd0d02d3420..8b69624fa46e 100644
+--- a/drivers/mmc/core/bus.h
++++ b/drivers/mmc/core/bus.h
+@@ -20,7 +20,7 @@ static ssize_t mmc_##name##_show (struct device *dev, struct device_attribute *a
+ 	struct mmc_card *card = mmc_dev_to_card(dev);				\
+ 	return sysfs_emit(buf, fmt, args);					\
+ }										\
+-static DEVICE_ATTR(name, S_IRUGO, mmc_##name##_show, NULL)
++static DEVICE_ATTR(name, 0444, mmc_##name##_show, NULL)
+ 
+ struct mmc_card *mmc_alloc_card(struct mmc_host *host,
+ 				const struct device_type *type);
+diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+index 5be9b42d5057..e4b7829469ea 100644
+--- a/drivers/mmc/core/mmc.c
++++ b/drivers/mmc/core/mmc.c
+@@ -830,7 +830,7 @@ static ssize_t mmc_fwrev_show(struct device *dev,
+ 				  card->ext_csd.fwrev);
+ }
+ 
+-static DEVICE_ATTR(fwrev, S_IRUGO, mmc_fwrev_show, NULL);
++static DEVICE_ATTR(fwrev, 0444, mmc_fwrev_show, NULL);
+ 
+ static ssize_t mmc_dsr_show(struct device *dev,
+ 			    struct device_attribute *attr,
+@@ -846,7 +846,7 @@ static ssize_t mmc_dsr_show(struct device *dev,
+ 		return sysfs_emit(buf, "0x%x\n", 0x404);
+ }
+ 
+-static DEVICE_ATTR(dsr, S_IRUGO, mmc_dsr_show, NULL);
++static DEVICE_ATTR(dsr, 0444, mmc_dsr_show, NULL);
+ 
+ static struct attribute *mmc_std_attrs[] = {
+ 	&dev_attr_cid.attr,
+diff --git a/drivers/mmc/core/mmc_test.c b/drivers/mmc/core/mmc_test.c
+index 80e5d87a5e50..62b4983c1ef5 100644
+--- a/drivers/mmc/core/mmc_test.c
++++ b/drivers/mmc/core/mmc_test.c
+@@ -3218,12 +3218,12 @@ static int mmc_test_register_dbgfs_file(struct mmc_card *card)
+ 
+ 	mutex_lock(&mmc_test_lock);
+ 
+-	ret = __mmc_test_register_dbgfs_file(card, "test", S_IWUSR | S_IRUGO,
++	ret = __mmc_test_register_dbgfs_file(card, "test", 0644,
+ 		&mmc_test_fops_test);
+ 	if (ret)
+ 		goto err;
+ 
+-	ret = __mmc_test_register_dbgfs_file(card, "testlist", S_IRUGO,
++	ret = __mmc_test_register_dbgfs_file(card, "testlist", 0444,
+ 		&mtf_testlist_fops);
+ 	if (ret)
+ 		goto err;
+diff --git a/drivers/mmc/core/sd.c b/drivers/mmc/core/sd.c
+index ec02067f03c5..5ed6bc47f1c4 100644
+--- a/drivers/mmc/core/sd.c
++++ b/drivers/mmc/core/sd.c
+@@ -744,7 +744,7 @@ static ssize_t mmc_dsr_show(struct device *dev, struct device_attribute *attr,
+ 	return sysfs_emit(buf, "0x%x\n", 0x404);
+ }
+ 
+-static DEVICE_ATTR(dsr, S_IRUGO, mmc_dsr_show, NULL);
++static DEVICE_ATTR(dsr, 0444, mmc_dsr_show, NULL);
+ 
+ MMC_DEV_ATTR(vendor, "0x%04x\n", card->cis.vendor);
+ MMC_DEV_ATTR(device, "0x%04x\n", card->cis.device);
+diff --git a/drivers/mmc/host/atmel-mci.c b/drivers/mmc/host/atmel-mci.c
+index 777342fb7657..d4a504f0aded 100644
+--- a/drivers/mmc/host/atmel-mci.c
++++ b/drivers/mmc/host/atmel-mci.c
+@@ -609,12 +609,12 @@ static void atmci_init_debugfs(struct atmel_mci_slot *slot)
+ 	if (!root)
+ 		return;
+ 
+-	debugfs_create_file("regs", S_IRUSR, root, host, &atmci_regs_fops);
+-	debugfs_create_file("req", S_IRUSR, root, slot, &atmci_req_fops);
+-	debugfs_create_u32("state", S_IRUSR, root, &host->state);
+-	debugfs_create_xul("pending_events", S_IRUSR, root,
++	debugfs_create_file("regs", 0400, root, host, &atmci_regs_fops);
++	debugfs_create_file("req", 0400, root, slot, &atmci_req_fops);
++	debugfs_create_u32("state", 0400, root, &host->state);
++	debugfs_create_xul("pending_events", 0400, root,
+ 			   &host->pending_events);
+-	debugfs_create_xul("completed_events", S_IRUSR, root,
++	debugfs_create_xul("completed_events", 0400, root,
+ 			   &host->completed_events);
+ }
+ 
+diff --git a/drivers/mmc/host/davinci_mmc.c b/drivers/mmc/host/davinci_mmc.c
+index c691f1b60395..3174e7ac65b3 100644
+--- a/drivers/mmc/host/davinci_mmc.c
++++ b/drivers/mmc/host/davinci_mmc.c
+@@ -145,17 +145,17 @@
+ #define MAX_NR_SG	16
+ 
+ static unsigned rw_threshold = 32;
+-module_param(rw_threshold, uint, S_IRUGO);
++module_param(rw_threshold, uint, 0444);
+ MODULE_PARM_DESC(rw_threshold,
+ 		"Read/Write threshold. Default = 32");
+ 
+ static unsigned poll_threshold = 128;
+-module_param(poll_threshold, uint, S_IRUGO);
++module_param(poll_threshold, uint, 0444);
+ MODULE_PARM_DESC(poll_threshold,
+ 		 "Polling transaction size threshold. Default = 128");
+ 
+ static unsigned poll_loopcount = 32;
+-module_param(poll_loopcount, uint, S_IRUGO);
++module_param(poll_loopcount, uint, 0444);
+ MODULE_PARM_DESC(poll_loopcount,
+ 		 "Maximum polling loop count. Default = 32");
+ 
+diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+index c5db92bbb094..2380ab82812a 100644
+--- a/drivers/mmc/host/dw_mmc.c
++++ b/drivers/mmc/host/dw_mmc.c
+@@ -175,12 +175,12 @@ static void dw_mci_init_debugfs(struct dw_mci_slot *slot)
+ 	if (!root)
+ 		return;
+ 
+-	debugfs_create_file("regs", S_IRUSR, root, host, &dw_mci_regs_fops);
+-	debugfs_create_file("req", S_IRUSR, root, slot, &dw_mci_req_fops);
+-	debugfs_create_u32("state", S_IRUSR, root, &host->state);
+-	debugfs_create_xul("pending_events", S_IRUSR, root,
++	debugfs_create_file("regs", 0400, root, host, &dw_mci_regs_fops);
++	debugfs_create_file("req", 0400, root, slot, &dw_mci_req_fops);
++	debugfs_create_u32("state", 0400, root, &host->state);
++	debugfs_create_xul("pending_events", 0400, root,
+ 			   &host->pending_events);
+-	debugfs_create_xul("completed_events", S_IRUSR, root,
++	debugfs_create_xul("completed_events", 0400, root,
+ 			   &host->completed_events);
+ #ifdef CONFIG_FAULT_INJECTION
+ 	fault_create_debugfs_attr("fail_data_crc", root, &host->fail_data_crc);
+diff --git a/drivers/mmc/host/omap.c b/drivers/mmc/host/omap.c
+index 52ac3f128a1c..5fc7d6d722b7 100644
+--- a/drivers/mmc/host/omap.c
++++ b/drivers/mmc/host/omap.c
+@@ -326,7 +326,7 @@ mmc_omap_show_cover_switch(struct device *dev, struct device_attribute *attr,
+ 		       "closed");
+ }
+ 
+-static DEVICE_ATTR(cover_switch, S_IRUGO, mmc_omap_show_cover_switch, NULL);
++static DEVICE_ATTR(cover_switch, 0444, mmc_omap_show_cover_switch, NULL);
+ 
+ static ssize_t
+ mmc_omap_show_slot_name(struct device *dev, struct device_attribute *attr,
+@@ -338,7 +338,7 @@ mmc_omap_show_slot_name(struct device *dev, struct device_attribute *attr,
+ 	return sprintf(buf, "%s\n", slot->pdata->name);
+ }
+ 
+-static DEVICE_ATTR(slot_name, S_IRUGO, mmc_omap_show_slot_name, NULL);
++static DEVICE_ATTR(slot_name, 0444, mmc_omap_show_slot_name, NULL);
+ 
+ static void
+ mmc_omap_start_command(struct mmc_omap_host *host, struct mmc_command *cmd)
+diff --git a/drivers/mmc/host/omap_hsmmc.c b/drivers/mmc/host/omap_hsmmc.c
+index adc0d0b6ae37..5c679b795af1 100644
+--- a/drivers/mmc/host/omap_hsmmc.c
++++ b/drivers/mmc/host/omap_hsmmc.c
+@@ -747,7 +747,7 @@ omap_hsmmc_show_slot_name(struct device *dev, struct device_attribute *attr,
+ 	return sprintf(buf, "%s\n", mmc_pdata(host)->name);
+ }
+ 
+-static DEVICE_ATTR(slot_name, S_IRUGO, omap_hsmmc_show_slot_name, NULL);
++static DEVICE_ATTR(slot_name, 0444, omap_hsmmc_show_slot_name, NULL);
+ 
+ /*
+  * Configure the response type and send the cmd.
+@@ -1673,7 +1673,7 @@ DEFINE_SHOW_ATTRIBUTE(mmc_regs);
+ static void omap_hsmmc_debugfs(struct mmc_host *mmc)
+ {
+ 	if (mmc->debugfs_root)
+-		debugfs_create_file("regs", S_IRUSR, mmc->debugfs_root,
++		debugfs_create_file("regs", 0400, mmc->debugfs_root,
+ 			mmc, &mmc_regs_fops);
+ }
+ 
 -- 
-With best wishes
-Dmitry
+2.39.5
+
 
