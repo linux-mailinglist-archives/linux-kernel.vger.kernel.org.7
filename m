@@ -1,125 +1,209 @@
-Return-Path: <linux-kernel+bounces-840562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AEC8BB4AF1
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 19:27:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 49B8ABB4AFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 19:27:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74A487B2391
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 17:25:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0512F7B24CB
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 17:25:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2D1428A1E6;
-	Thu,  2 Oct 2025 17:24:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC482737FD;
+	Thu,  2 Oct 2025 17:24:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SpBjYcRl"
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PJxUnZ/h"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BE3128312D
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 17:24:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AB3C23A989;
+	Thu,  2 Oct 2025 17:24:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759425861; cv=none; b=WZ9hoIE3PBdjNTOCByWqz1eKzCeYyPnlf9UGUlVe/X1DuKfiB+FcT1Vcr/CaUPAm0d6FzJhn2T/nt6RbCySV//sD7zpby3IHSqD7vo7NjHJWec1TorMEEsG77wPbXlsbXEWhMyyXIEyN6XKhPfWAWsg0ZXSWegKKEBIepWeMUCs=
+	t=1759425874; cv=none; b=K4/3Y+7g1tZiv7PJWQKGM5NAvst4w6TN1TFEpXb0+kGx7aqnFuXUOALQdHyVj0RmwsqZofXyuiwIavufO89sd0vJt4X+dyeZQcOPGOmv5p4LiRpF26DGog3+J2rN2KlztiJPBOP1c7LifCOdV4qTNSp0ZEZbnxi0h+0cdQzMzcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759425861; c=relaxed/simple;
-	bh=bNEWBZRyBHfKqr01S8/SKbTmlXSajYDu9W7EMIMQC6Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=gVnCymEmO+LzZyV1S8R+6s0MPs0fnbinKlXkIMPJgqdSB91PyQz+bSOo9wVhKKdUd68cjhlTt6LhiQeLCM7tq1omkoLdiy/gNFjjYomD2y+vWpuPKDbW3+YT21tkyDyz2/PXhUIJ+SNOS2IcvzyWl/k2KrUr86M+cWZSikQLL2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SpBjYcRl; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4da72b541f8so14893901cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 10:24:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759425858; x=1760030658; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QMViGqdfcDRKE+thTCkDFhQYc4S31LExZ+nrwKtGa20=;
-        b=SpBjYcRlOQ+0OeqBUTSaTWqj6STLep5hbio0F0+gU8dzsJ4IVU2iKA7OAhWAHdRB99
-         k0ImO5m7gQ0nW4u1H7iDBL2YhSykJKtmG61YQPfKsvMZxY0jkvtMyCFDUnzEcHfqXLME
-         seeCvovxT1837r9NIDl+jumTJuSnqywoqhOM1IVyuMhRq4vbjb78G8hvwEUJkTpeL+ux
-         yNHA8EVEoR/6fXRq7JBWqYOlaT1TQJaDqqxypz00bhWZKOoiYIeMxAXkjduSQ46Mkxh3
-         Fry0k0UHibFCqXfYAr0JfXu4dXf91rta0pw+dnQ8rJMWqVzB1ln1ex75eVsOjPOtTkof
-         J46Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759425858; x=1760030658;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QMViGqdfcDRKE+thTCkDFhQYc4S31LExZ+nrwKtGa20=;
-        b=It7KKnGa0bNoD4cDwjfb570SnFcS8tZLPJ/oI/RR5ATWaf08dGN6uAy5WZpXbMpKje
-         mq4oaoMPbQfqs1x+Jx3ECN1xHPOHUL1+CJOqLrBf9ZIcT1YqLO0TmjEeRLx0/UynV6yS
-         3C/PDooUAysRnzwsT12D8GN29x1z16Zzo45+M+sAc+B5yayTELXLHI61InNTJqrPXrYU
-         aSQN6oh7aoy0ZfSgAFNbhppGyEx+HIeQ8BheN6N0Hqufe1deemslPo1wHHEiClfci1mz
-         a2WxzcE7Ukvh5VHXKBdxx4EZSnxH5mWNt7106YjwE0OHMhZkRV4aqnmqTAP4fYp4rBzu
-         zWnw==
-X-Forwarded-Encrypted: i=1; AJvYcCWJ0g+KD7n9+cWRcKbT27qD2YYkuLbPFSXRNy4+LR882a4jWWQ+RiKtZMZZqa4BCB2i4O62yn5/Z+xuxa8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSCg1lRiFLecEewQTiBPVCjQMRepxcJ98Dy9HSC8FXxP/gp5/c
-	kR3Jq6YNoDppwi+pIZB8SAd1hcfUGHuRZp5KfjipueIzUYhn6DYKu2+m
-X-Gm-Gg: ASbGncuXyAIKgQCV3eijseEZyY/T0EkShQL6k3fas1sF7i2IySKUGlHyh1Lz2p3oQj0
-	nhjEEZOPyCDeWGlOwgA+P5YIU/Ntr+V9gd3SBcv8gzxi1NoILzDQzzTaOsc0/UJ+ItLvOrzCioZ
-	K13FOegMwXqGAfeH70UeSRbznDfO6Azp3VrTixIwA0fs6dzZIW18lQc0gcL9zLcS+o/PjcW8Tre
-	Klrt96F4kyPdY0plpDTzvLjfNu+8V7cr7IdrEm3G1HNmLn99/eIA21wWfXvLDZgOMib+bQMbNzs
-	nAKy2pZUg2FcGtI+W1mkNH+A26tGMBMksXzLnSPhUfXi1mlE1MgBx7ikp0UpLCqvidIhOto9pDI
-	1OFbbLm7dJzLkLRH4iDKMsV2PNzYNmYC3a7uWo/X06o6NP2Z44UDVdgU6z42CBLUCa9dHck0f5F
-	8kd2Fl+lP5LRz5Ck9lJo4x
-X-Google-Smtp-Source: AGHT+IFBR/DbvZ6VQiaghYjkQSXWBduaHlJ0TVnRxV/BRzfotDhZefmEwz9LpFxscxCFJZEtu8XB3Q==
-X-Received: by 2002:a05:622a:4d95:b0:4cf:8fa2:ccd2 with SMTP id d75a77b69052e-4e576a453d8mr1892611cf.13.1759425857952;
-        Thu, 02 Oct 2025 10:24:17 -0700 (PDT)
-Received: from linux-kernel-dev-start.. ([159.203.26.228])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4e55cbd3d9fsm24504971cf.32.2025.10.02.10.24.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 10:24:17 -0700 (PDT)
-From: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	vivek.balachandhar@gmail.com
-Subject: [PATCH v4 16/16] staging: rtl8723bs: remove trailing whitespace in rtw_mlme.c comments
-Date: Thu,  2 Oct 2025 17:23:04 +0000
-Message-Id: <20251002172304.1083601-17-vivek.balachandhar@gmail.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20251002172304.1083601-1-vivek.balachandhar@gmail.com>
-References: <20251002172304.1083601-1-vivek.balachandhar@gmail.com>
+	s=arc-20240116; t=1759425874; c=relaxed/simple;
+	bh=OMRJNrpLvAxA249vBZ/bEhXZq23hs6Dl0++C6N1Jv28=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lRjbBAff5zY55VWAje35h02jovnvlJD6yWatCy/IX1VPC2MNHA+IXNF4d7xcAJ1mxe96IZ6r4WRZy/WsdSmsdBrc2Vxy79cmTL0v0UAqzF4znXdQeNbAhttUrId/Wj8WZgSC4ZaWWY58P+D9/inDVq2o15w46LQB6LWwuZXvOlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PJxUnZ/h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C0CBC4CEF4;
+	Thu,  2 Oct 2025 17:24:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759425873;
+	bh=OMRJNrpLvAxA249vBZ/bEhXZq23hs6Dl0++C6N1Jv28=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PJxUnZ/hsGfSMdxSw4DluZMMdmgPLoB0yyEVgXWK+6xwqbjq8vykr7/3JUWLML/FE
+	 8bCVgBTjZh6Sy8yuLHdKP9+Bn94wSc5ttQWSlwnBmnPXB3xxmKmWk4AC+n8gd7AYXz
+	 6Jk2X7uO5PEbpgf0HX9JEytPfGKDnH1f05YJVyirsEOs94WDMRPgDMqlFhlghb29Lx
+	 IpPG1aG2BPbqrXJLNrDomPbTCh4inzxdlbrGsukh1DYco9IDd+3Dw6rJvcXd+69dek
+	 n4FgucUECGIQGo+0QyDlludX1PG6GXGJzryiNukhkCec6rlYvdpo25Qy/u44oOw3ci
+	 4AHlJp8q1p5Ew==
+Date: Thu, 2 Oct 2025 10:23:10 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Vegard Nossum <vegard.nossum@oracle.com>
+Cc: Jiri Slaby <jirislaby@kernel.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+	netdev@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>
+Subject: Re: 6.17 crashes in ipv6 code when booted fips=1 [was: [GIT PULL]
+ Crypto Update for 6.17]
+Message-ID: <20251002172310.GC1697@sol>
+References: <aIirh_7k4SWzE-bF@gondor.apana.org.au>
+ <05b7ef65-37bb-4391-9ec9-c382d51bae4d@kernel.org>
+ <aN5GO1YLO_yXbMNH@gondor.apana.org.au>
+ <562363e8-ea90-4458-9f97-1b1cb433c863@kernel.org>
+ <8bb5a196-7d55-4bdb-b890-709f918abad0@kernel.org>
+ <1a71398e-637f-4aa5-b4c6-0d3502a62a0c@kernel.org>
+ <f31dbb22-0add-481c-aee0-e337a7731f8e@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <f31dbb22-0add-481c-aee0-e337a7731f8e@oracle.com>
 
-Remove trailing spaces shown as error in checkpatch run in comment lines
-around the IsInPreAuthKeyList() comments section.
+On Thu, Oct 02, 2025 at 01:30:43PM +0200, Vegard Nossum wrote:
+> 
+> On 02/10/2025 12:57, Jiri Slaby wrote:
+> > On 02. 10. 25, 12:13, Jiri Slaby wrote:
+> > > On 02. 10. 25, 12:05, Jiri Slaby wrote:
+> > > > On 02. 10. 25, 11:30, Herbert Xu wrote:
+> > > > > On Thu, Oct 02, 2025 at 10:10:41AM +0200, Jiri Slaby wrote:
+> > > > > > On 29. 07. 25, 13:07, Herbert Xu wrote:
+> > > > > > > Vegard Nossum (1):
+> > > > > > >         crypto: testmgr - desupport SHA-1 for FIPS 140
+> > > > > > 
+> > > > > > Booting 6.17 with fips=1 crashes with this commit -- see below.
+> > > > > > 
+> > > > > > The crash is different being on 6.17 (below) and on the commit --
+> > > > > > 9d50a25eeb05c45fef46120f4527885a14c84fb2.
+> > > > > > 
+> > > > > > 6.17 minus that one makes it work again.
+> > > > > > 
+> > > > > > Any ideas?
+> > > > > 
+> > > > > The purpose of the above commit is to remove the SHA1 algorithm
+> > > > > if you boot with fips=1.  As net/ipv6/seg6_hmac.c depends on the
+> > > > > sha1 algorithm, it will obviously fail if SHA1 isn't there.
+> > > > 
+> > > > Ok, but I don't immediately see what is one supposed to do to
+> > > > boot 6.17 distro (openSUSE) kernel with fips=1 then?
+> 
+> First off, I just want to acknowledge that my commit to disable SHA-1
+> when booting with fips=1 is technically regressing userspace as well as
+> this specific ipv6 code.
+> 
+> However, fips=1 has a very specific use case, which is FIPS compliance.
+> Now, SHA-1 has been deprecated since 2011 but not yet fully retired
+> until 2030.
+> 
+> The purpose of the commit is to actually begin the transition as is
+> encouraged by NIST and prevent any new FIPS certifications from expiring
+> early, which would be the outcome for any FIPS certifications initiated
+> after December 31 this year. I think this is in line with the spirit of
+> using and supporting fips=1 to begin with, in the sense that if you
+> don't care about using SHA-1 then you probably don't care about fips=1
+> to start with either.
+> 
+> If you really want to continue using SHA-1 in FIPS mode with 6.17 then I
+> would suggest reverting my patch downstream as the straightforward fix.
+> 
+> > > Now I do, in the context you write, I see inet6_init()'s fail path
+> > > is broken. The two backtraces show:
+> > > [    2.381371][    T1]  ip6_mr_cleanup+0x43/0x50
+> > > [    2.382321][    T1]  inet6_init+0x365/0x3d0
+> > > 
+> > > and
+> > > 
+> > > [    2.420857][    T1]  proto_unregister+0x93/0x100
+> > > [    2.420857][    T1]  inet6_init+0x3a2/0x3d0
+> > > 
+> > > I am looking what exactly, but this is rather for netdev@
+> > 
+> > More functions from the fail path are not ready to unroll and resurrect
+> > from the failure.
+> > 
+> > Anyway, cherry-picking this -next commit onto 6.17 works as well (the
+> > code uses now crypto_lib's sha1, not crypto's):
+> > commit 095928e7d80186c524013a5b5d54889fa2ec1eaa
+> > Author: Eric Biggers <ebiggers@kernel.org>
+> > Date:   Sat Aug 23 21:36:43 2025 -0400
+> > 
+> >      ipv6: sr: Use HMAC-SHA1 and HMAC-SHA256 library functions
+> > 
+> > 
+> > I don't know what to do next -- should it be put into 6.17 stable later
+> > and we are done?
+> 
+> I'd like to raise a general question about FIPS compliance here,
+> especially to Eric and the crypto folks: If SHA-1/SHA-256/HMAC is being
+> made available outside of the crypto API and code around the kernel is
+> making direct use of it
 
-These were pre-existing in origin/staging-testing; git blame points to:
-08a2e17462dc3 ("staging: rtl8723bs: fix space-before-tab warnings")
-(2025-08-05, Zhuoheng Li)
+lib/ has had SHA-1 support since 2005.  The recent changes just made the
+SHA-1 API more comprehensive and more widely used in the kernel.
 
-No functional change.
+> then this seems to completely subvert the
+> purpose of CONFIG_CRYPTO_FIPS/fips=1 since it essentially makes the
+> kernel non-compliant even when booting with fips=1.
+> 
+> Is this expected? Should it be documented?
 
-Signed-off-by: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
----
- drivers/staging/rtl8723bs/core/rtw_mlme.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+If calling code would like to choose not to use or allow a particular
+crypto algorithm when fips_enabled=1, it's free to do so.  
 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme.c b/drivers/staging/rtl8723bs/core/rtw_mlme.c
-index f17b16fe8819..6f147a6f2345 100644
---- a/drivers/staging/rtl8723bs/core/rtw_mlme.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_mlme.c
-@@ -2093,7 +2093,7 @@ int rtw_restruct_wmm_ie(struct adapter *adapter, u8 *in_ie, u8 *out_ie, uint in_
- 	return ielength;
- }
- 
--/* Ported from 8185: IsInPreAuthKeyList(). 
-+/* Ported from 8185: IsInPreAuthKeyList().
-  * (Renamed from SecIsInPreAuthKeyList(), 2006-10-13.)
-  * Added by Annie, 2006-05-07.
-  *
--- 
-2.39.5
+That's far more flexible than the crypto/ approach, which has
+historically been problematic since it breaks things unnecessarily.  The
+caller can actually do something that makes sense for it, including:
 
+- Deciding whether FIPS requirements even apply to it in the first
+  place.  (Considering that it may or may not be implementing something
+  that would be considered a "security function" by FIPS.)
+
+- Targeting the disablement to the correct, narrow area.  (Not something
+  overly-broad like the entire IPv6 stack, or entire TPM support.)
+
+So: if the people doing FIPS certifications of the whole kernel make a
+determination that fips_enabled=1 kernels must not support IPv6 Segment
+Routing with HMAC-SHA1 authentication, then they're welcome to send a
+patch that makes seg6_genl_sethmac() reject SEG6_HMAC_ALGO_SHA1 if
+fips_enabled.  And that would actually correctly disable the SHA-1
+support only, rather than disabling the entire IPv6 stack...
+
+Still, for many years lib/ has had APIs for SHA-1 and various
+non-FIPS-approved crypto algorithms.  These are used even when
+fips_enabled=1.  So, if this was actually important, one would think
+these cases would have addressed already.  This is one of the reasons
+why I haven't been worrying about adding these checks myself.
+
+It's really up to someone who cares (if anyone does) to send patches.
+
+> FIPS also has a bunch of requirements around algorithm testing, for
+> example that every algorithm shall pass tests before it can be used.
+> lib/crypto/ has kunit tests, but there is no interaction with
+> CONFIG_CRYPTO_FIPS or fips=1 as far as I can tell, and no enforcement
+> mechanism. This seems like a bad thing for all the distros that are
+> currently certifying their kernels for FIPS.
+
+As I've said in another thread
+(https://lore.kernel.org/linux-crypto/20250917184856.GA2560@quark/,
+https://lore.kernel.org/linux-crypto/20250918155327.GA1422@quark/),
+small patches that add FIPS pre-operational self-tests would generally
+be fine, if they are shown to actually be needed and are narrowly scoped
+to what is actually needed.  These would be different from and much
+simpler than the KUnit tests, which are the real tests.
+
+But again, it's up to someone who cares to send patches.  And again,
+lib/ has had SHA-1 since 2005, so this isn't actually new.
+
+- Eric
 
