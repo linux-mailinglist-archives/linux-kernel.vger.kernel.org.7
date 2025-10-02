@@ -1,150 +1,266 @@
-Return-Path: <linux-kernel+bounces-839787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AB89BB2683
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 04:58:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72B5ABB268C
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 04:58:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 049B34A0275
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 02:58:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA531164E3D
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 02:58:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3528F28BAAC;
-	Thu,  2 Oct 2025 02:57:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A4DF1A9FAB;
+	Thu,  2 Oct 2025 02:58:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AwCU5cbv"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UtM7qcJc"
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 274B92BE652
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 02:57:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2522A1A5B92
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 02:58:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759373865; cv=none; b=N4m0dpvkn/RHIX2bZ9mtSTMQ/Q+Yc1Fj9Y0bm0P/U7s40A2Nuj9MjnbASrShCM38QY5xKK4Ad8ytaEPoSw0ybGpnbhttWAP3vHZ6S7MRUVwt0Krli+DnyfbkwYJmso6MgHpWkZ9goQLxC+cxEhsSFPRxYYKqbkhUzcqs4UpVUus=
+	t=1759373927; cv=none; b=LLr3NImlv1mW/M1lgcR5ydLQd99NqA6M/q+YUXdZkqGL/wcyppcKnUjv78QNihEdq+o2c0pIk/3QhpjMxGDhBm5tFMfF7G9pETHDkvFx3vFrfKf8xygpquboigSdMPh7CJ0MDXAUdrtxkH2AKL/ZrC3Hbqv73bEmK0ZQsDGSo4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759373865; c=relaxed/simple;
-	bh=caEnrJrbDTSnBBK/eonWkRY3j1UDsNBgc2z4QmoRzU4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Au6yBr6wD6DK30wwBA623suSGb/YqgHfYLHnFz7BzDttYfLXfACn6XnMuUhah/07OfL7xh2tmy1MUNqX2p1PQRE2/c81EDQ3/XSuOGv5q2Wov5W4q+8XoC/71t33HD1QOIXeYtsTTWxRZbny1adisTKfrgwHMnWxWVpzjfzZ0ls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AwCU5cbv; arc=none smtp.client-ip=209.85.210.176
+	s=arc-20240116; t=1759373927; c=relaxed/simple;
+	bh=AFQ0+vnRlDOTQJXWhOhRj0G+nQ+Zs0XRhRjq4A56fVg=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=h9bAICoRJB6oN/6QiL19Q1RFK1dYqtJEcPTLgTZuhgzR0r8IlF7oGNXGxEl8uhQvBb9VMYbZXSl1JALDpYazpJPEOawzJOxIgEkj1+dL6b84SbuoGAJ3CIcfwrhZpJSprtjBe4HqWO0Zx2I9lXBrLWUkQmGDbHABWkhyKdWTrqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UtM7qcJc; arc=none smtp.client-ip=209.85.160.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-78af9ebe337so455712b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 19:57:43 -0700 (PDT)
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4e56cd8502aso3300021cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 19:58:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759373863; x=1759978663; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=J82Z56xOWTI27M4LZYheLiy5OIEEBunWj+Vbpah8nWE=;
-        b=AwCU5cbv4nS9H3fxDuimuKYG/S/w0oaV72jxSqGnGAMuG3BEhQ3+Izh7pZ8ZyHAjMg
-         Kv+1WPPt2V6zlu8eEadR2a/fn8CtcAsA6rjDK7wtG/08dm2BHMLQD86DNqH25RvY/ofb
-         Nqzlx+H/1i4WqTFMLxXKkXo99eggmMyyvPmlOzyLZXTSMuhdEEa3rJvmCV8/pPhK/pCQ
-         Us1ehVoLpnNOY45WsbUSWBIh7Cm7wH2fuTZ5s9coLIR1EsmdLiPSaleNNDvh8VZ02NAF
-         EbSjuBVhdEoJSC9kwX3tRgb7XeHoouc5Y03pgtsoQOxvnSo5fuXhCRNxkjCuuqhHep+w
-         owFQ==
+        d=gmail.com; s=20230601; t=1759373925; x=1759978725; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=SPDWoBVHdObjAFgVvHKYm/ngzKxCIMKXS+1jqg6D8Pk=;
+        b=UtM7qcJckR/kwomrVl6fdY71A+VWx4SbogP+yE746VzeR5Yvw47Q5K9FVSpS3dF4Xt
+         vSVaX20GrdIoD6CAN28Q9Fg9sWMMh/UqslKeKa9J11Nq/4srVLsiskyaCsw8Q5pt48b5
+         yug9aGZ4jrGA+Ej2Gtq8WW+ACYs/Vni3HxnKu1QPmiKO2FDG2sKjh4VI58usiZ98H+8o
+         5y1T8qlD7cgv2bWaoQh24XTyICGkeV7RFfsMASVf93lqYidg3VOY77SvA18/t99Fshke
+         5LW7ti2lkumoY8pdfqZqdSdjFeAT4ylJuK4nGc7cXxYorn66IlFAtvJpUbreGtKL43Vs
+         dUPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759373863; x=1759978663;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=J82Z56xOWTI27M4LZYheLiy5OIEEBunWj+Vbpah8nWE=;
-        b=oiFxqP4NqMyWs6OwFIUf/9PZ/iGkDbN1FVvZGbr49iWdtaeCLj+D7z0+39wcnWwp9B
-         Jw0k4jOQV0pssvFuCrD3RaLmdYyD0K8YQMeNo4ieyQ3CnsqZQl6Kjppo77FfaoDfRTZf
-         aVqds2Va1iyDqsyfUrZ/Fo93zdkXEgwh+WHfJGh8cM4V6VtR3JU2a9xZ3fXIcODB1WYV
-         yRm5XuebCFjsKw3F/WBWrW14oOQkkOKW2GvPkm6ceW1MsJO2dn8FCx7g7JM6wPY2WGDW
-         DfquZptpLFgIUpU0wZymB1Wy+E8AGQKlR+hp51jIQEn+oAITKRWSb9WMOlL/NrHjYfEG
-         1F3A==
-X-Forwarded-Encrypted: i=1; AJvYcCWz2Nc2POSdLGeu1s13Ax72nVBU7BozwpFvv/uNt7npEE5HN+3cFvZTszAL0OLradvzb0TPjTGIK8xKWBU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxS7NoVA3PIrPPwba9fxpdPSGb593ak7v/4vY9IFOL7REs1EJ94
-	Pi5/40NNGMvP3p+NFEgJYchJxR02EdH6R6XnROCALsg6Sgf2hA9L0YzX
-X-Gm-Gg: ASbGnctvotRAADzyw7n8ZKdvei2iRWgaBb7y5KbF9NCsCaeDV8mPkROERkn1PQEGjHL
-	EyuJ4MiX9olGyeI8nzaNZ0dODpq50Bp4IqXsznGaYtMyyaGJTCH3iygYgJ/UMWYMbtJs1a2R4PE
-	T5hXTZ64DUgfCNbvXt5l6nub46F7WGdr6RVR1+1Fd1k/H2ldPYZEE91Dzu8NGzvkR0Dn0ZA6y76
-	4kyArWRAKqJBpwU/pYazJ0omDrfAz3pmjvavoGXTfZ3j8cEeAIlnIdJpLTcKqr4lM1OvTsf4zWf
-	7A+RQOSkiAvPOvzFVpWlGaBvupssyyCf+BdyTcZ+bMNiih5OHCYVkOfry8JRzGh0JSNg0sOjndf
-	7lqmrGDtHPFMlJJPJM7O6Owgu7ukao6zNUxJPFiw/HGpa6FUkhv0JKsOk8fccICLtOCvKCU2C7x
-	dXLQ==
-X-Google-Smtp-Source: AGHT+IELr6NndrKlAnm5EF8uU1znjKk+zekuloU2u1bUXPL0pBVBvgbb8LT9E38aM9+bGWXS6JGmgw==
-X-Received: by 2002:a05:6a21:32aa:b0:2cb:5f15:ebf3 with SMTP id adf61e73a8af0-321e7e3f5dcmr7711795637.44.1759373863298;
-        Wed, 01 Oct 2025 19:57:43 -0700 (PDT)
-Received: from cmpatel-home.hsd1.or.comcast.net ([2601:1c0:5780:9200:2327:e4d:63c9:c38d])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6099f73537sm849839a12.43.2025.10.01.19.57.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Oct 2025 19:57:42 -0700 (PDT)
-From: Chintan Patel <chintanlike@gmail.com>
-To: maarten.lankhorst@linux.intel.com,
-	maxime.ripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	syzbot+147ba789658184f0ce04@syzkaller.appspotmail.com,
-	Chintan Patel <chintanlike@gmail.com>
-Subject: [PATCH v2] drm/vblank: downgrade vblank wait timeout from WARN to debug
-Date: Wed,  1 Oct 2025 19:57:23 -0700
-Message-ID: <20251002025723.9430-1-chintanlike@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1759373925; x=1759978725;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SPDWoBVHdObjAFgVvHKYm/ngzKxCIMKXS+1jqg6D8Pk=;
+        b=aQXPNPUSDd3ssfDLrn9nykL3F0rwOQSkyvNjt6uRGnLddwlnQlWSj/He7P6WF1JqGF
+         yMRfp4VB7OovPDBM3OAJmxGEgRijTl2VxWQNC0zriCz6Vh+T3AnqsqbPPbixqmeV32Jf
+         Lxe+minKMpOzWx8wVaOhmABEUO8ZTPHn4c8NHMtVe1Qz4EKKhNq2ZW0hJ8TzplxbFLfq
+         abfH6RugckEI8C0sJNdKaVL2lrXg/3zuA0sxrD4dPTtl/0O6/1VtdkcYHCQAoZYQ9M8T
+         1F/G56EH6pTND6hqAUDCS4HocTZQwaJNKNEihU8263y9Qx/WKUiaaM35WLBn8aEXJDag
+         Xw7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVKscVYfegAD6BFhEcZ4NLodsftWkV4Dyn9y/l1tAmoTTN6RrDcwJkbzg9lkqsPZgQPL1lpIn2DLX3FHrE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQX3Z2MuXe5ZhEExn7TBBxyVC2Qj87dy4b1xta2bRxE/VBehnv
+	w2N3hTw3QBlhvb91NtN2DE7eQCiUYseX7BlvOz8iSmIvbXhox+/nQvVx
+X-Gm-Gg: ASbGncuybDhaz+YkDXW/vyECX+i0c5L9oNzp/Dg+IjuD13qZsayjCNAqpBGkTTvmi3T
+	xXnFqGYhTYQCz4sXaTd54+ci+PqBXwXiph0zRF/Cw25IVnlWg9pUMFb47C1q9btPZnOfSeIEUkm
+	NskufI7ZFPL0tAZws6uVHsIBMoA8godkqkb8eG88sypM3oFg9pE+Bb/aSX9YgwqPykoVol7xVo8
+	blbMyVegE15Qq0dsi4EX8EUktpCqVQ4r350HBrXUb7zIaVA4JMqpFBpRSlFpHYGXBzPxhhj4Ac7
+	FAv9pt55cva01kGNTNK032/82tn1tk60VrafWQPSsy/u5dDB4RAgHuwdArRZ+A0ZLA98WwaoJeN
+	RVGXRFxvukwSLNUEznkWVGe3RJgR1PgDDEKIawprZdpmo1UEq3B5HZKx0UvvrROfy0TDtxz6FLU
+	LP9APWbb1S2PXnH3vGU0k6iZzL9WNTYQ==
+X-Google-Smtp-Source: AGHT+IHEiTChiNkm3rqtjGx8pAiTWZdt9TSl9GKNVJqXH4NffSUcy5+ncXc/xlWZubwQRixrbAWhyQ==
+X-Received: by 2002:ac8:5fcd:0:b0:4db:db96:15d3 with SMTP id d75a77b69052e-4e41cc0ce72mr76524281cf.31.1759373924633;
+        Wed, 01 Oct 2025 19:58:44 -0700 (PDT)
+Received: from ehlo.thunderbird.net (modemcable197.17-162-184.mc.videotron.ca. [184.162.17.197])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4e55c9e77bcsm12172451cf.24.2025.10.01.19.58.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 01 Oct 2025 19:58:43 -0700 (PDT)
+Date: Wed, 01 Oct 2025 22:58:38 -0400
+From: =?ISO-8859-1?Q?Jean-Fran=E7ois_Lessard?= <jefflessard3@gmail.com>
+To: Rob Herring <robh@kernel.org>
+CC: Andy Shevchenko <andy@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
+ devicetree@vger.kernel.org
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v5_3/7=5D_dt-bindings=3A_auxdisp?=
+ =?US-ASCII?Q?lay=3A_add_Titan_Micro_Electronics_TM16xx?=
+User-Agent: Thunderbird for Android
+In-Reply-To: <20251002024431.GA2926696-robh@kernel.org>
+References: <20250926141913.25919-1-jefflessard3@gmail.com> <20250926141913.25919-4-jefflessard3@gmail.com> <20251002024431.GA2926696-robh@kernel.org>
+Message-ID: <A137AD5E-2D4E-4C1E-8A71-EF90E60D8F14@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-When wait_event_timeout() in drm_wait_one_vblank() times out, the
-current WARN can cause unnecessary kernel panics in environments
-with panic_on_warn set (e.g. CI, fuzzing). These timeouts can happen
-under scheduler pressure or from invalid userspace calls, so they are
-not always a kernel bug.
+Le 1 octobre 2025 22 h 44 min 31 s HAE, Rob Herring <robh@kernel=2Eorg> a =
+=C3=A9crit=C2=A0:
+>On Fri, Sep 26, 2025 at 10:19:04AM -0400, Jean-Fran=C3=A7ois Lessard wrot=
+e:
+>> Add documentation for TM16xx-compatible 7-segment LED display controlle=
+rs
+>> with keyscan=2E
+>>=20
+=2E=2E=2E
+>> +
+>> +  digits:
+>> +    type: object
+>> +    description: Container for 7-segment digit group definitions
+>> +    additionalProperties: false
+>> +
+>> +    properties:
+>> +      "#address-cells":
+>> +        const: 1
+>> +      "#size-cells":
+>> +        const: 0
+>> +
+>> +    patternProperties:
+>> +      "^digit@[0-9]+$":
+>
+>Unit addresses are typically hex, so: [0-9a-f]+
+>
 
-Replace the WARN with drm_dbg_kms() messages that provide useful
-context (last and current vblank counters) without crashing the
-system. Developers can still enable drm.debug to diagnose genuine
-problems.
+Acknowledged=2E Will change to hex pattern=2E
 
-Reported-by: syzbot+147ba789658184f0ce04@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=147ba789658184f0ce04
-Tested-by: syzbot+147ba789658184f0ce04@syzkaller.appspotmail.com
+>> +        type: object
+>> +        unevaluatedProperties: false
+>> +
+>> +        properties:
+>> +          reg:
+>> +            description:
+>> +              Digit position identifier numbered sequentially left-to-=
+right,
+>> +              with reg=3D0 representing the leftmost digit position as=
+ displayed
+>> +              to the user=2E
+>> +            maxItems: 1
+>> +
+>> +          segments:
+>> +            $ref: /schemas/types=2Eyaml#/definitions/uint32-matrix
+>> +            description: |
+>> +              Array of grid/segment coordinate pairs for each 7-segmen=
+t position=2E
+>> +              Each entry is <grid segment> mapping to standard 7-segme=
+nt positions
+>> +              in order: a, b, c, d, e, f, g
+>> +
+>> +              Standard 7-segment layout:
+>> +                 aaa
+>> +                f   b
+>> +                f   b
+>> +                 ggg
+>> +                e   c
+>> +                e   c
+>> +                 ddd
+>> +            items:
+>> +              items:
+>> +                - description: Grid index
+>> +                - description: Segment index
+>> +            minItems: 7
+>> +            maxItems: 7
+>> +
+>> +        required:
+>> +          - reg
+>> +          - segments
+>> +
+>> +  leds:
+>> +    type: object
+>> +    description: Container for individual LED icon definitions
+>> +    additionalProperties: false
+>> +
+>> +    properties:
+>> +      "#address-cells":
+>> +        const: 2
+>> +      "#size-cells":
+>> +        const: 0
+>> +
+>> +    patternProperties:
+>> +      "^led@[0-9]+,[0-9]+$":
+>
+>Again, hex please=2E
+>
 
-Signed-off-by: Chintan Patel <chintanlike@gmail.com>
+Acknowledged=2E Will change to hex pattern=2E
 
-v2:
- - Drop unnecessary in-code comment (suggested by Thomas Zimmermann)
- - Remove else branch, only log timeout case
----
- drivers/gpu/drm/drm_vblank.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+>I assume this is <grid>,<segment>? Please add a description for the=20
+>node and say that=2E
+>
 
-diff --git a/drivers/gpu/drm/drm_vblank.c b/drivers/gpu/drm/drm_vblank.c
-index 46f59883183d..a94570668cba 100644
---- a/drivers/gpu/drm/drm_vblank.c
-+++ b/drivers/gpu/drm/drm_vblank.c
-@@ -1289,7 +1289,7 @@ void drm_wait_one_vblank(struct drm_device *dev, unsigned int pipe)
- {
- 	struct drm_vblank_crtc *vblank = drm_vblank_crtc(dev, pipe);
- 	int ret;
--	u64 last;
-+	u64 last, curr;
- 
- 	if (drm_WARN_ON(dev, pipe >= dev->num_crtcs))
- 		return;
-@@ -1305,7 +1305,12 @@ void drm_wait_one_vblank(struct drm_device *dev, unsigned int pipe)
- 				 last != drm_vblank_count(dev, pipe),
- 				 msecs_to_jiffies(100));
- 
--	drm_WARN(dev, ret == 0, "vblank wait timed out on crtc %i\n", pipe);
-+	curr = drm_vblank_count(dev, pipe);
-+
-+	if (ret == 0) {
-+		drm_dbg_kms(dev, "WAIT_VBLANK: timeout crtc=%d, last=%llu, curr=%llu\n",
-+			pipe, last, curr);
-+	}
- 
- 	drm_vblank_put(dev, pipe);
- }
--- 
-2.43.0
+Yes this is <grid>,<segment>=2E Will add description=2E
 
+>> +        type: object
+>> +        $ref: /schemas/leds/common=2Eyaml#
+>> +        unevaluatedProperties: false
+>> +
+>> +        properties:
+>> +          reg:
+>> +            description:
+>> +              Grid and segment indices as <grid segment> of this indiv=
+idual LED icon
+>> +
+>> +        required:
+>> +          - reg
+>> +
+>> +dependencies:
+>> +  poll-interval:
+>> +    - linux,keymap
+>> +  linux,keymap:
+>> +    - poll-interval
+>> +  autorepeat:
+>> +    - linux,keymap
+>> +    - poll-interval
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +
+>> +allOf:
+>> +  - $ref: /schemas/leds/common=2Eyaml#
+>> +    properties:
+>> +      color: false
+>> +      function: false
+>> +      function-enumerator: false
+>> +  - $ref: /schemas/input/input=2Eyaml#
+>> +  - $ref: /schemas/input/matrix-keymap=2Eyaml#
+>> +  # SPI controllers require 3-wire (combined MISO/MOSI line)
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            enum:
+>> +              - fdhisi,fd620
+>> +              - fdhisi,fd628
+>> +              - princeton,pt6964
+>> +              - titanmec,tm1618
+>> +              - titanmec,tm1620
+>> +              - titanmec,tm1628
+>> +              - titanmec,tm1638
+>> +              - wxicore,aip1618
+>> +              - wxicore,aip1628
+>> +    then:
+>> +      $ref: /schemas/spi/spi-peripheral-props=2Eyaml#
+>> +      properties:
+>> +        spi-3wire: true
+>
+>You can drop properties=2E
+>
+
+The issue is spi-3wire is defined in the child node of spi/spi-controller=
+=2Eyaml,
+not in spi-peripheral-props=2Eyaml=2E
+
+Removing properties did not pass dt validation=2E Am I missing something?
+
+>> +      required:
+>> +        - spi-3wire
+>
+>With those nits fixed,
+>
+>Reviewed-by: Rob Herring (Arm) <robh@kernel=2Eorg>
+>
+
+Thank you!
 
