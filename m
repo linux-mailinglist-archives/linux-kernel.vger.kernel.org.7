@@ -1,146 +1,174 @@
-Return-Path: <linux-kernel+bounces-839808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E73FBB2783
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 06:04:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04333BB278D
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 06:17:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2F513B4C42
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 04:04:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D8761C4DA3
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 04:17:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1E712DC772;
-	Thu,  2 Oct 2025 04:03:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C477E1C5D59;
+	Thu,  2 Oct 2025 04:17:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="nmS+2Auk"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KzHaU6Iu"
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBD1F2DC335
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 04:03:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73CE379CF
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 04:17:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759377833; cv=none; b=P8UZj6eDrVAtk/R0Nh1aA1652BVHYbJvf4iNxgOfvwvGR9t0arIrDY61ZWP0U87P4e4oWm27h8CCHf0XUww2dlzlFTxi9xNwDLYEqQz6W6aHS4ADAJL4sWIBut6JiY+RtsZzSMayR89xKyN0tS9eKM2z5R/wnV3mPUWujfk2EIc=
+	t=1759378638; cv=none; b=MB7L40xTbw3YXOSRLPl4HHNdct8+0hcVJAuMAdpmSZYbQPFSyxJmpGLElGeytbs+ChXYnvfOCEBXrD1ZCvCNt0RdW1kIAPtJUCEBrM2/SaR0Av9RrXUKOBVOB+nR0m0AfgozTJiyPORjfn0KjyWHOmYj7oeMBure8w90Ygn9DcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759377833; c=relaxed/simple;
-	bh=+kpouLBH3+i3L9bCw5lRcIZ8dux1NxH241oSpMjEftw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hfceW+Z1SJUT/4YfcSnUjWC9TXc+517D5mwJwSWuvFCLISCboMrQGZhgeWWLb77QbtNdL5b0Wy1YuW4Tx+3bgVEQC6CVrTAzV/miEd4jAzy0xVu4c8QlnTn4cyHHPf6hN/bgnrlcWtXWTacQD3F+bQr2vGgB1qb9fNAosAMKVE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=nmS+2Auk; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 591IcAvY023589
-	for <linux-kernel@vger.kernel.org>; Thu, 2 Oct 2025 04:03:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=vDEXMrZyI5DjkHRHF3nr0kxs
-	P51hoP/2gaSxVHUCc9Q=; b=nmS+2AukrkY+m+RurA3EtNGV2FGFou88PLYeG8bd
-	AfyL6ZpDTBu/diSPVJvZE1BEXGNnGJLOvtpsZv8GZ8pTFDnpUINPxRmOwfFyJrXn
-	3Ek6K7RqFgWZNLxs/DHyicv0O2B3IuTMkBxc06bHGKgLFwCnXv2d/8J4lkvSbFW3
-	IrqpgfXHmYvAX0s6i1a9jnWHDR2EwTL8q3mEzsm02SM2l0NIapiXMOsW00tUusmm
-	QfljbzctBgRPieRVRT1+p35OaphTZD95sfOvkyWzk6KuicYA6LYNi1/XiF9Qn+KT
-	mA76i/QDwh2Pv588pcYn58+SyMTz38C+51aOBgGG8eVcHw==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e8a66n2j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 04:03:50 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4d9ec6e592bso11478901cf.2
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 21:03:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759377830; x=1759982630;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1759378638; c=relaxed/simple;
+	bh=ctQddUgZm+88vHmtPzUekOskf2BJsO+AnrtcChvOlmA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jWQLmUTpT3jGhFhas1GBDV8W23cRyRg1RDSCWOlBrbdqJDOkj3gNDs5KaLSmt8zRXOLQdvmhL5BZs8xR30cGzDukQ138cZCd+THId7o5w+CnBfdfc+kM+OlvAGSVZ7jEdcPVOVrx8pcinmqtKiANNMFHu9y9hpYz7oKaP88T8GA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KzHaU6Iu; arc=none smtp.client-ip=209.85.217.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-58de3ab1831so623643137.3
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 21:17:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759378634; x=1759983434; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vDEXMrZyI5DjkHRHF3nr0kxsP51hoP/2gaSxVHUCc9Q=;
-        b=jwtqmkA2xZpy5GXKN80cEKhp6GonuQwCqFny3VFjigZSaogWzSrbUdSLFyfceEDfW2
-         HTqIreOwIkgLWXUwUGIYUl5xJC4lS2jR7aMP65gvcjsWn2sIj2VArEQrsjPXJlOgRjzJ
-         /wXBzvs7t+0h7/xVbafics71mtDtKLDXv6VmpfANjivkmRHCatlf8W/CgJ80zEb+dS0C
-         XCBpIRoKTB0jEgHP3DSpph32sTxFH77wBVUvxLYcuw7pK8cntG2sMcdD5az+Xu4tyOMB
-         PUgaid6qDKYFc1Wt3F6xhB2x2gRVq/sw4Mj/4hPlk7tpgkYSsJHIYOx7Hc2eg1Z4o8kQ
-         aLKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX5SNeODO4nABsLe7wgjUmijK2p6GJPwJ/58ikQIRbe+tyT8MPH5XyMO5sPiBcnRpfL4l2/UFMmfpx2lgk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWhPgfrTlGExxGspgp/SPDGd2Oo0l0vpTk0GmFI/H8nglztS+R
-	yZm8L9gYSb3GDUrEwkQ0r7zzVkvkCFFYFfiDkgkMJ56oGDpG7N+ffgAAgvNsMl9SRI1OcMCAStA
-	kcCC8DlUKFhZ/87fqe9cBzCSV9nhq1mhEvkAT+X1Hx/5EATa0Qr14fsn4AXP4R9API/M=
-X-Gm-Gg: ASbGncsuz/gV6cjk/o6uJc26+WqcQbUHZEWoNK7qI1jKX5qiPP412/H1Ik5W89voYLQ
-	73X6d/+T8ZBb1WYfObCySlBVxyYeH6IveytA2PnJ56PwVBekKJ4g9oOyixxKhm3OqtwjMF4RZWy
-	T6tmpyYqwG2e7zPJxH7HK8TdCyCutR4Z/UZvH+p5KluDmnrVzMPdPoHoM3YpAHAcYM/MOxFDBm8
-	G6BQiDyszCPFvFP/Q1LuanKCzQszOs5k6mMfvOY3CjvBgX8jTpWXW5jsnnBhnNjPE4CsJiqrsx5
-	hgeTdgHxMIVflcAqIGF+72dZ+qLqH5kWTcq0QRIxaPVzfpm5g2s4aa+N5mXZLyhJ1qxicaNw8IS
-	jdR3zoI1CZVmIKTYp+JdfpMDKV99HwBU2gVcjz4G199Ki9BMdKgksZWLHyA==
-X-Received: by 2002:ac8:5fd1:0:b0:4bd:3e4b:ba5e with SMTP id d75a77b69052e-4e41dc7e96cmr73704391cf.48.1759377829762;
-        Wed, 01 Oct 2025 21:03:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEdRnA3NDBk05T82OdZV3hs33TJ4DX6PASBWRlUSILv290R6xNtY8dpoH23pG+GAI9V2WH+nw==
-X-Received: by 2002:ac8:5fd1:0:b0:4bd:3e4b:ba5e with SMTP id d75a77b69052e-4e41dc7e96cmr73704141cf.48.1759377829292;
-        Wed, 01 Oct 2025 21:03:49 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58b0118d3dbsm441304e87.65.2025.10.01.21.03.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Oct 2025 21:03:48 -0700 (PDT)
-Date: Thu, 2 Oct 2025 07:03:46 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Luca Weiss <luca.weiss@fairphone.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/5] arm64: dts: qcom: qcm6490-fairphone-fp5: Use correct
- compatible for audiocc
-Message-ID: <r2spjuu6yaz25ujrr6q5xli6dwjh4fh7vhx52ldsprbibxgcji@rhbhwupqhciw>
-References: <20250930-sc7280-dts-misc-v1-0-5a45923ef705@fairphone.com>
- <20250930-sc7280-dts-misc-v1-3-5a45923ef705@fairphone.com>
+        bh=ctQddUgZm+88vHmtPzUekOskf2BJsO+AnrtcChvOlmA=;
+        b=KzHaU6Iu6X0WFjEHN18TskRGBspqJmZIxR0MBT3G4JQjRuNGbYq+M1mgM7jHIdKaF3
+         hmjqYOycGR4LUuXD7mT9T7phwELr58pFHs1FwAHf3ZeS3wUcjjPukmlhh3C/DCwT15jZ
+         Uh86fBVfokWg3HSuYTnKtFbNUsylN6zXKGAyb0YOe4HZuHAG3wFXxEpJTIz89bW3iCIl
+         3XyA3BOxm8sm4qcfz9Y+fQ/yHDRAvJqZjSHOoIKZa4d7UyWDfmCTahz/F/5mxPDfoVTf
+         mB+xQ9N8s/gQku6SsqaizJUbwGk+d2tMT7kCjzrXXDgYgaEXNJaLY8qEHIRaa4HqoKef
+         fuag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759378634; x=1759983434;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ctQddUgZm+88vHmtPzUekOskf2BJsO+AnrtcChvOlmA=;
+        b=joyRs7hk53to8XkXBcIJAZVMh0JA+ZpCyeYUN6O+Cd91aNg88u/RgkMxkiJxKgK67J
+         5EFybWfatU5Me5Iqkju1nP8nfEX1m7uSNQ0Qhxlw4JNu/FJF4a9N/xCSKMHyyRg9ZAYc
+         ItBZzsT57usemOzTnfQjnB0kZExd6CAfPke21psoLRC6gzO+z2XENCS/7lztF962VfWU
+         RZGMuPZ1WuTAOHiYHsL23uoLhHHf+whIac2IoXrZiH8K8bVTTa3xQS7kL7xyn9Jc1fgm
+         uNOahSrsUKtJASoMzXFXxFgeV+G4yub4FCVtdQwEDDGffyPZnYjArxAWlmi9X2sYJ3pf
+         56DQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXKbg4GS/SRc9VYGuKfNBY7U+xWpxP0AxqqYOntiVeEKiKI1LtiYS3r2h62Fst12VYpmp/erB4WuKRwx8M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSdPTOGFuMdeBvIUJY6Ym0n0aDYaMfrLwLSB5QR2FWX1bDhGNS
+	f6Yi7sikS3PfJ3sLcpzQcNZKUiWRKOPpPq08MOmKEImjlTZZJTpzqeWd+qpGLMi4uzHjpqWyMjV
+	ktx22HbGe4J+nsUvDuqWtlJEfervLIpQ=
+X-Gm-Gg: ASbGnctdVtpiQPzieEBpdlvrnJyVQr29Pl3pOMNSDOVGLJvTprL+vSy7mTP7KbhHDik
+	4By2OC+JcomV1ZBpO76hJSsEVYIVLz4zTCTpdQQl6V/mkLQOulr3B32v3QUHkCuPYYcWY5gFB4M
+	ytH/InZNKNwiCd25JBh+Dasi83+x2ztvBbPZE1tUjXfXw0HOYT70aitj6wkkBPnmShY+fkPG+0v
+	p/nMDMCF3Rm52/k3rkQjE53zDx6bruvi2Z51eSrIgnGRCL9WSNMYd5rOMmd1Q7RTtNRCpy6GvQ=
+X-Google-Smtp-Source: AGHT+IHtvWQt8jonztmIlXZVLrosCzlBFZCwfKRU9/rXACxnEYGw3JcofNOIt435bpI1Zm7zqg5PCoJh2gMscknY7Rc=
+X-Received: by 2002:a05:6102:41a1:b0:59d:b0f7:664c with SMTP id
+ ada2fe7eead31-5d3fe7043d6mr3036274137.35.1759378634290; Wed, 01 Oct 2025
+ 21:17:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250930-sc7280-dts-misc-v1-3-5a45923ef705@fairphone.com>
-X-Authority-Analysis: v=2.4 cv=RZKdyltv c=1 sm=1 tr=0 ts=68ddf9a6 cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=6H0WHjuAAAAA:8 a=EUspDBNiAAAA:8 a=ZWl6vx9Q9smWLlo6MzwA:9
- a=CjuIK1q_8ugA:10 a=dawVfQjAaf238kedN5IG:22 a=Soq9LBFxuPC4vsCAQt-j:22
-X-Proofpoint-GUID: iuNmKZ5JjYuXNcZmHw3Xe2aRhauI5hfY
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAzMyBTYWx0ZWRfX0PjFzQc6xnoA
- pBzaCm/ymp7Pbr57tiLBJoI/TbO3gPexKfWbjkWQipI7/gXGQwhy6nGMNsNZirY+MgsjLxskncH
- wHNlZ6wUbE3n6iSvdTHxn5Wfi/gDDWcBNy3fg7TLiFY/bQpLNW4YSfWED8gFbXuo9FGJxshV9us
- efMLN0fSgbPJqzhFhbIOU9y+3KZkmhGwy27S5oqIJvDri1+coo8AxnXWg4/pKlpHoRd8DSNwB2V
- vm0lY9jQgTlNXmx+hjqZZ2Uuy1Cj9ovgYRPxXWQU7T//8O16c8nkxIPAomduahpYyOPr/IjsikS
- /nJ6SmFX6EA9I0uREWdgeKvfPSAN0MHGuRlhXbZ/veDglBcgae62AIqLevxaaFFEeVTqi/JzvHB
- bWq8+ZyE5QLYo6jEfr2sQVLZWOZGLw==
-X-Proofpoint-ORIG-GUID: iuNmKZ5JjYuXNcZmHw3Xe2aRhauI5hfY
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-02_02,2025-09-29_04,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 malwarescore=0 priorityscore=1501 adultscore=0 phishscore=0
- impostorscore=0 spamscore=0 bulkscore=0 lowpriorityscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270033
+References: <20250919212650.GA275426@fedora> <CAM_iQpXnHr7WC6VN3WB-+=CZGF5pyfo9y9D4MCc_Wwgp29hBrw@mail.gmail.com>
+ <20250922142831.GA351870@fedora> <CAM_iQpWO71vSV_0qXiUYeKYZMYF0xWNz8MrUVRkqKwDEtQvKqA@mail.gmail.com>
+ <20250923170545.GA509965@fedora> <3b1a1b17-9a93-47c6-99a1-43639cd05cbf@redhat.com>
+ <20250924125101.GA562097@fedora> <CAM_iQpWRZ-vihMEa=k-j9EYN9itUeZLhZ14AoCvZ9mturFxAyw@mail.gmail.com>
+ <20250924190316.GA8709@fedora> <CAM_iQpXnvyZWrv4W45SBTDV-tCXU4Fz1=S8z_0s5en+U29vSZQ@mail.gmail.com>
+ <20250929151149.GB81824@fedora>
+In-Reply-To: <20250929151149.GB81824@fedora>
+From: Cong Wang <xiyou.wangcong@gmail.com>
+Date: Wed, 1 Oct 2025 21:17:02 -0700
+X-Gm-Features: AS18NWBSFERQychThKDKhC7xP4aDfnWKA8U5c5GLpDIk74WF-1WcxMsDvgDcjOU
+Message-ID: <CAM_iQpVRruWNnMtP2BKfQJrHnA_B+ea84GbO_C2rF6cuJcj5_Q@mail.gmail.com>
+Subject: Re: [RFC Patch 0/7] kernel: Introduce multikernel architecture support
+To: Stefan Hajnoczi <stefanha@redhat.com>
+Cc: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org, 
+	pasha.tatashin@soleen.com, Cong Wang <cwang@multikernel.io>, 
+	Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>, 
+	Alexander Graf <graf@amazon.com>, Mike Rapoport <rppt@kernel.org>, Changyuan Lyu <changyuanl@google.com>, 
+	kexec@lists.infradead.org, linux-mm@kvack.org, multikernel@lists.linux.dev, 
+	jasowang@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 30, 2025 at 03:57:03PM +0200, Luca Weiss wrote:
-> Use the correct compatible for this phone with standard Qualcomm
-> firmware and remove references to power-domains from a 'reserved' node.
-> 
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
-> ---
->  arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
+On Mon, Sep 29, 2025 at 8:12=E2=80=AFAM Stefan Hajnoczi <stefanha@redhat.co=
+m> wrote:
+>
+> On Sat, Sep 27, 2025 at 12:42:23PM -0700, Cong Wang wrote:
+> > On Wed, Sep 24, 2025 at 12:03=E2=80=AFPM Stefan Hajnoczi <stefanha@redh=
+at.com> wrote:
+> > >
+> > > Thanks, that gives a nice overview!
+> > >
+> > > I/O Resource Allocation part will be interesting. Restructuring exist=
+ing
+> > > device drivers to allow spawned kernels to use specific hardware queu=
+es
+> > > could be a lot of work and very device-specific. I guess a small set =
+of
+> > > devices can be supported initially and then it can grow over time.
+> >
+> > My idea is to leverage existing technologies like XDP, which
+> > offers huge benefits here:
+> >
+> > 1) It is based on shared memory (although it is virtual)
+> >
+> > 2) Its API's are user-space API's, which is even stronger for
+> > kernel-to-kernel sharing, this possibly avoids re-inventing
+> > another protocol.
+> >
+> > 3) It provides eBPF.
+> >
+> > 4) The spawned kernel does not require any hardware knowledge,
+> > just pure XDP-ringbuffer-based software logic.
+> >
+> > But it also has limitations:
+> >
+> > 1) xdp_md is too specific for networking, extending it to storage
+> > could be very challenging. But we could introduce a SDP for
+> > storage to just mimic XDP.
+> >
+> > 2) Regardless, we need a doorbell anyway. IPI is handy, but
+> > I hope we could have an even lighter one. Or more ideally,
+> > redirecting the hardware queue IRQ into each target CPU.
+>
+> I see. I was thinking that spawned kernels would talk directly to the
+> hardware. Your idea of using a software interface is less invasive but
+> has an overhead similar to paravirtualized devices.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+When we have sufficient hardware resources or prefer to use
+SR IOV, the multikernel could indeed access hardware directly.
+Queues are an alternative choice for elasticity.
 
+>
+> A software approach that supports a wider range of devices is
+> virtio_vdpa (drivers/vdpa/). The current virtio_vdpa implementation
+> assumes that the device is located in the same kernel. A
+> kernel-to-kernel bridge would be needed so that the spawned kernel
+> forwards the vDPA operations to the other kernel. The other kernel
+> provides the virtio-net, virtio-blk, etc device functionality by passing
+> requests to a netdev, blkdev, etc.
 
--- 
-With best wishes
-Dmitry
+I think that is the major blocker. VDPA looks more complex than
+queue-based solutions (including Soft Functions provided by mlx),
+from my naive understanding, but I will take a deep look at VDPA.
+
+>
+> There are in-kernel simulator devices for virtio-net and virtio-blk in
+> drivers/vdpa/vdpa_sim/ which can be used as a starting point. These
+> devices are just for testing and would need to be fleshed out to become
+> useful for real workloads.
+>
+> I have CCed Jason Wang, who maintains vDPA, in case you want to discuss
+> it more.
+
+Appreciate it.
+
+Regards,
+Cong Wang
 
