@@ -1,88 +1,59 @@
-Return-Path: <linux-kernel+bounces-840824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EB1ABB580E
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 23:40:58 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84462BB581A
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 23:42:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3313719E7B4C
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 21:41:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6D0764E7648
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 21:42:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F204627E048;
-	Thu,  2 Oct 2025 21:40:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D6A827A904;
+	Thu,  2 Oct 2025 21:42:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MOujQqn6"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z+K2wg+s"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 106801E4AB
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 21:40:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B31A07081C;
+	Thu,  2 Oct 2025 21:42:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759441251; cv=none; b=YyrszsVqE0j47hPp6IVSeroRMS2pIpKlurlum2uYiK929ocFcimF43BFKC+qZBDiHC4gWz0myLlDXmOcl26LrUHmH8WUnXImiJSGCibWBrwC6D153J23M/jopKQS0J8zhm8yOqSFUtvwXIZKrGJCrWxE0gaXfIMZzpT73oftkRk=
+	t=1759441358; cv=none; b=JDTNZbcUFXuSY6WPlJPT32ZYKKfHdF4tUmjHsI0/4iHz5q90XR9TNKiYom/7dWVqpOcYa+Hh719gUc26qtNYw1o2B70O84k/gXj69NQLE+isnFt05klMNzenVGedF3GBqjcv2EfhRvfwISU65J2Tc4MBI8V1Jsa806u5/e8tJYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759441251; c=relaxed/simple;
-	bh=4br5TXp20Sa42/FcnLphmQ5GaWo3dSD/pk6MBmPScJ8=;
+	s=arc-20240116; t=1759441358; c=relaxed/simple;
+	bh=R+U+5Uoh8xpG2po4iT5CxOmrkdsIQY39xuIay2qKYH0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YBehdO5dI4AEAg803scgBxsU8MfkjZH34bag4gqF+wJedBgOrvKkMZPQ6ELviOtsU/H2wrJ0ozXN52HZiR+dksYEzV6crkFXc9HkiSCNg8+0zY20Eon3e97rNFSovqivh9uIv8SRAmf+ZLvUIyl1UfMPrvr0rjtggcUEa89UkKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MOujQqn6; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b555ab7fabaso1439078a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 14:40:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759441249; x=1760046049; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+g7WCpxhGw/kfoUiPXF0Q0M8PAzBxjz/5AXzmRXGxrc=;
-        b=MOujQqn6snK0uKJg3td6LBFlTxmHHa0gKfAcaPvkUnqvbPzCG2IqkZSDxPa597OLJi
-         jbkqhQtaHw11z9q9CwF+T2FZq5l6w07lFgEjixEnzWCu+65BVw5aF4T74bnpz+mM9DSl
-         ehgFAI8Iy3NB+DMgRVhlo27AE6XI9Y5lwnxScCCuBBDHxAUsWomNYjNZLoCdCuO/WdYG
-         XaCzd1qtDIBZrGm08drqE97vIIvvPlNzgi2vF8QNR09CUgqfZeL0NxXGk44/nNjjRdpy
-         rA4zWVBbULJuJt6kIuQifjDYhhalSyGCmno8TJfh8N3udC25dKWRf5KH7nGyK1MqxJ0d
-         rjYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759441249; x=1760046049;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+g7WCpxhGw/kfoUiPXF0Q0M8PAzBxjz/5AXzmRXGxrc=;
-        b=l84C+010ottFqi9W9afGND3+T1so0UrFB5ph9iUtaSJlP8MT8e309lbyuradg2ir3c
-         76TJzrC1JznkNTGzKdTCHG33SoU4r7r9xMTnAOaMDYAtvwihOmp+MGYh3Dn8lT9UJmMA
-         EeCoptB9cxFT4y36luhuXCmuA9+Xru6bc+YkPP2AjLeXbLJUPb0Svr2klH7C40jCYP19
-         ASK9qh4kwbL4PHvdeovYfSXWmKgwPsCtSe9ohBl2rhwhe3D1ZGE+xII68XbU//DRMXeZ
-         yCTjFhIc0MOsAtuVn4l1t1sxM5Kv4WQk2G7+dnVMGYwDvCEjz6U4XDepxYVP89rzYFau
-         ZJ1g==
-X-Forwarded-Encrypted: i=1; AJvYcCWNgTNpSEbLqJh5pkx8NmmirR0t4vVoAvfTPLJOauY7yBYHjofNq5zbOG5TDxAMlWkSXYiW9AOFgLe6Pnc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLH6r7KzdG7vwzA6794y0E15uHWD7uKOybf41l5BLO/rpgWohC
-	mOsvEb27GVVYArSLdWESmsYu9nPBjbw998lba735jtwZnPDYldeDo4zL
-X-Gm-Gg: ASbGncvXwZjevZ9bJ8mmLBgahksyjsQ7zSGCNFzZ/wdMXw0efGQl8uLFbbHpNna3Hlz
-	ooQDhW+sdzzp7REiaHJkfrpG+aijVtq761owQj1d/YdM5tzgJ4zMulB/fYG3NkTQlwwlKe0HrR0
-	bEpbsn5Du+iWZ5h4jVY6cs/ILhaOwxUeEA2Ymg7TN4aD7yi2YgwZa8fygmm36wxGJvSKG02Xcln
-	yc7iPI6QX+WXIKRosrsPlMyn4R1aG/uIlECitYrTNo9izL3Pu1kOuuxA7biWpPlGzV0YOnj8yAJ
-	hyzrhCnIsYzvaHJEO1UuuJc8Ebibb3cakB2gFdNRu8lJWF0eskEoaznJKZGpGlRPNXNumtPbRlj
-	aWVtHdaKXjD9YkqQU8M9BeLOHWktJCf0vpjIdt0x+DsvSLiXhkbUdUsJ2B1g=
-X-Google-Smtp-Source: AGHT+IEZKtfG4lWFJ+VDJNIZB0rz102xqLGloS2pPVhFCwbbWN3EfpP8unSWU8sfUUl8oUSB1hU8Rg==
-X-Received: by 2002:a17:902:ce0a:b0:28b:4ca5:d522 with SMTP id d9443c01a7336-28e9a65656bmr8167645ad.39.1759441249357;
-        Thu, 02 Oct 2025 14:40:49 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d11191bsm30420125ad.11.2025.10.02.14.40.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 14:40:48 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Thu, 2 Oct 2025 14:40:47 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Alexis Czezar Torreno <alexisczezar.torreno@analog.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH 1/2] hwmon: (pmbus/max34440): Update adpm12160 coeff due
- to latest FW
-Message-ID: <00cdf890-9f7a-4f98-b170-a50fa8d5ff37@roeck-us.net>
-References: <20251001-hwmon-next-v1-0-f8ca6a648203@analog.com>
- <20251001-hwmon-next-v1-1-f8ca6a648203@analog.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lQSgg6j+l+CWnZ5ACtWNZggAqmBRP+RPHqsVZVSEvCTHcg0E8XsXASDaUZFKdAbcLQkwCeJ8O47ISCk/ocmw3vBixVU772zI1o4HSHI8jyJnJ4GYzjsCYTj/gjvhR0GvZ6WUx3mIzjRrwwDDw1ugoShBNx6/yV4/3PnI1jHsit0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z+K2wg+s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB198C4CEF4;
+	Thu,  2 Oct 2025 21:42:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759441358;
+	bh=R+U+5Uoh8xpG2po4iT5CxOmrkdsIQY39xuIay2qKYH0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Z+K2wg+s6ye8wg87MpZi4h3uVemy3ZH129Ew4Kn+NR01NV+mS+84oIRhVjtDVIK3U
+	 t0Tcni0VZy6GPtDppQfSe7ewKPWUYQJ2e3RMVI2+/eCUi1KFmNJZ4yqR1Adq0oC8c9
+	 VriiRho+tt0/765a+a+A/be8EeV0dLDh5O9whp9vshJNQfRCj6994UQqXOF+/WZnKF
+	 phJShQ04sA+UQIzDJ+44DMGLSZdIMRgTbS67VFd0DfOq/CP5UtlIYS5yL/EMsvcwGh
+	 wWILiw4VsKMgwilcGDKh7Tj2ES1kgsu2/VWP0NctHF9h8d3fUBvZ8i42dklE57sB7y
+	 T7nI3kyHfBD4Q==
+Date: Thu, 2 Oct 2025 21:42:36 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Mukesh Rathor <mrathor@linux.microsoft.com>
+Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arch@vger.kernel.org, kys@microsoft.com,
+	haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+	arnd@arndb.de
+Subject: Re: [PATCH v2 5/6] x86/hyperv: Implement hypervisor RAM collection
+ into vmcore
+Message-ID: <20251002214236.GC925245@liuwe-devbox-debian-v2.local>
+References: <20250923214609.4101554-1-mrathor@linux.microsoft.com>
+ <20250923214609.4101554-6-mrathor@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,18 +62,113 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251001-hwmon-next-v1-1-f8ca6a648203@analog.com>
+In-Reply-To: <20250923214609.4101554-6-mrathor@linux.microsoft.com>
 
-On Wed, Oct 01, 2025 at 08:37:07AM +0800, Alexis Czezar Torreno wrote:
-> adpm12160 is a dc-dc power module. The firmware was updated and the
-> coeeficients in the pmbus_driver_info needs to be updated. Since the
-> part has not yet released with older FW, this permanent change to
-> reflect the latest should be ok.
+On Tue, Sep 23, 2025 at 02:46:08PM -0700, Mukesh Rathor wrote:
+[...]
+> +
+> +/*
+> + * This is the C entry point from the asm glue code after the devirt hypercall.
+
+devirt -> devirtualization
+
+> + * We enter here in IA32-e long mode, ie, full 64bit mode running on kernel
+> + * page tables with our below 4G page identity mapped, but using a temporary
+> + * GDT. ds/fs/gs/es are null. ss is not usable. bp is null. stack is not
+> + * available. We restore kernel GDT, and rest of the context, and continue
+> + * to kexec.
+> + */
+[...]
+> +
+> +static noinline __noclone void crash_nmi_callback(struct pt_regs *regs)
+> +{
+> +	struct hv_input_disable_hyp_ex *input;
+> +	u64 status;
+> +	int msecs = 1000, ccpu = smp_processor_id();
+> +
+> +	if (ccpu == 0) {
+> +		/* crash_save_cpu() will be done in the kexec path */
+> +		cpu_emergency_stop_pt();	/* disable performance trace */
+> +		atomic_inc(&crash_cpus_wait);
+> +	} else {
+> +		crash_save_cpu(regs, ccpu);
+> +		cpu_emergency_stop_pt();	/* disable performance trace */
+> +		atomic_inc(&crash_cpus_wait);
+> +		for (;;)
+> +			cpu_relax();
+> +	}
+> +
+> +	while (atomic_read(&crash_cpus_wait) < num_online_cpus() && msecs--)
+> +		mdelay(1);
+> +
+> +	stop_nmi();
+> +	if (!hv_has_crashed)
+> +		hv_notify_prepare_hyp();
+> +
+> +	if (crashing_cpu == -1)
+> +		crashing_cpu = ccpu;		/* crash cmd uses this */
+> +
+> +	hv_hvcrash_ctxt_save();
+> +	hv_mark_tss_not_busy();
+> +	hv_crash_fixup_kernpt();
+> +
+> +	input = *this_cpu_ptr(hyperv_pcpu_input_arg);
+> +	memset(input, 0, sizeof(*input));
+> +	input->rip = trampoline_pa;
+> +	input->arg = devirt_arg;
+> +
+> +	status = hv_do_hypercall(HVCALL_DISABLE_HYP_EX, input, NULL);
+> +
+
+If I understand this correctly, after this call, upon return from the
+hypervisor, Linux will start executing the trampoline code.
+
+> +	hv_panic_timeout_reboot();
+
+Why is this needed? Is it to catch the case when the hypercall fails?
+
+
+[...]
+> +static void __noclone hv_crash_stop_other_cpus(void)
+> +{
+> +	static bool crash_stop_done;
+> +	struct pt_regs lregs;
+> +	int ccpu = smp_processor_id();
+> +
+> +	if (hv_has_crashed)
+> +		return;		/* all cpus already in NMI handler path */
+> +
+> +	if (!kexec_crash_loaded()) {
+> +		hv_notify_prepare_hyp();
+> +		hv_panic_timeout_reboot();	/* no return */
+> +	}
+> +
+> +	/* If hyp crashes also, we could come here again before cpus_stopped is
+
+hypervisor or hv (given the same term is used in the function)
+
+> +	 * set in crash_smp_send_stop(). So use our own check.
+> +	 */
+> +	if (crash_stop_done)
+> +		return;
+> +	crash_stop_done = true;
+> +
+> +	/* Linux has crashed: hv is healthy, we can ipi safely */
+
+IPI.
+
+> +
+> +err_out:
+> +	unregister_nmi_handler(NMI_LOCAL, "hv_crash_nmi");
+> +	pr_err("Hyper-V: only linux (but not hyp) kdump support enabled\n");
+
+hypervisor not hyp. This is a message for the user so we should be as
+clear as possible.
+
+Wei
+
+> +}
+> -- 
+> 2.36.1.vfs.0.0
 > 
-> Signed-off-by: Alexis Czezar Torreno <alexisczezar.torreno@analog.com>
-
-Applied.
-
-Thanks,
-Guenter
 
