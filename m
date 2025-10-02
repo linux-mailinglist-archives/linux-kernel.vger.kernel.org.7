@@ -1,460 +1,155 @@
-Return-Path: <linux-kernel+bounces-840174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7644DBB3BF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 13:29:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC5D4BB3BF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 13:30:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 243EC16C7A0
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 11:29:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BDF83A58D9
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 11:30:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3646230FC07;
-	Thu,  2 Oct 2025 11:29:37 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED59D24DFF9;
+	Thu,  2 Oct 2025 11:30:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IUiUl0pz"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 723652E0935
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 11:29:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B182C1A3165
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 11:30:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759404576; cv=none; b=uzvADtCJB/NYVYw4BiTbxtSM7icc8T6iS8yAPekAL+jFQxw89hbR+7SNyKEvC3wBVaWv28ZaXanq+27wvWE7oWTn34LLXtd6cCNclchHDAr9gFSDRie1xn7/fs5/l5b42VU0G2Gc4GSiPVgOgPW0Vg728ulFFVX8vJyySgv90WY=
+	t=1759404646; cv=none; b=MPc1L9SscT0yLV1RKt5nT6LUrXOOaVCGSsQrlA6kgdrK2UIG67yFSuD7+UAAgFmxTYi4GFCHgYMkhkb2i1NmX/O12Qj/jzJ6izfC6wvu3SYwYvN2ewXKshlCh2ORxX+R+4g5RfdFn5PtkWU6yf3nb/twp2tcU+KFmMv8ZDDmQvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759404576; c=relaxed/simple;
-	bh=0p1iCvUZU2MVevusoquPN/vDux/1sdoQPSrrN7qWCME=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MF2SnwEnlUa/oPVO1y8b62RV51Il6NeOrNr8nO+aSufDg0vzeATd3YMvBYkYzmNzX3vx+WP64GNF9IXqdMrjRqLKcr4xG5NU3pXNrMU4EdFqcpWDm9oumR2weO/JBx35zfwBlgSkEFpynyoscB1eT3CGpjdLPQjFuGDQ3RPlPh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ccqHc6cckz67FbS;
-	Thu,  2 Oct 2025 19:26:20 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id ABDE7140144;
-	Thu,  2 Oct 2025 19:29:30 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 2 Oct
- 2025 12:29:28 +0100
-Date: Thu, 2 Oct 2025 12:29:27 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Shivank Garg <shivankg@amd.com>
-CC: <akpm@linux-foundation.org>, <david@redhat.com>, <ziy@nvidia.com>,
-	<willy@infradead.org>, <matthew.brost@intel.com>, <joshua.hahnjy@gmail.com>,
-	<rakie.kim@sk.com>, <byungchul@sk.com>, <gourry@gourry.net>,
-	<ying.huang@linux.alibaba.com>, <apopple@nvidia.com>,
-	<lorenzo.stoakes@oracle.com>, <Liam.Howlett@oracle.com>, <vbabka@suse.cz>,
-	<rppt@kernel.org>, <surenb@google.com>, <mhocko@suse.com>,
-	<vkoul@kernel.org>, <lucas.demarchi@intel.com>, <rdunlap@infradead.org>,
-	<jgg@ziepe.ca>, <kuba@kernel.org>, <justonli@chromium.org>,
-	<ivecera@redhat.com>, <dave.jiang@intel.com>, <dan.j.williams@intel.com>,
-	<rientjes@google.com>, <Raghavendra.KodsaraThimmappa@amd.com>,
-	<bharata@amd.com>, <alirad.malek@zptcorp.com>, <yiannis@zptcorp.com>,
-	<weixugc@google.com>, <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>
-Subject: Re: [RFC V3 6/9] mtcopy: introduce multi-threaded page copy routine
-Message-ID: <20251002122927.000039e5@huawei.com>
-In-Reply-To: <20250923174752.35701-7-shivankg@amd.com>
-References: <20250923174752.35701-1-shivankg@amd.com>
-	<20250923174752.35701-7-shivankg@amd.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1759404646; c=relaxed/simple;
+	bh=RQX1NrwSl34NR56s6r7Eq4byEhj8c1P2Mj4LF6PvM/g=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=LUPjnu0iGvyHHQv70Rh7aJJ2NRNXKiz3MlNYfJ72sFVDRu6A75AHXuYF9CvJ9d6FrpRDs8uyyX63OojGHftXi2HPfHzAcS4omjVWg/LS5IKvDmj5HqlKUY4fEuow4r9lCl6yfeI3PeqyC0D7wVB1mXnkUlrprBaD6vqEOJQGFb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IUiUl0pz; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759404643;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=vgnKlLoouS3JtpeFvZfGtYcXm2a9bedZ8zcilOwZLtg=;
+	b=IUiUl0pzGYthahOiOPEz2OoGU5yYX0f8T5I5dZJi5qy6hZtAqqL2P2vq9TKdYDCPiTWZk3
+	kS2FD95c/jLtIlbskIBtyiM46QZmJpuznP4PhBQT+24kPVr8pD7Oxb8G7n94rWIHO5YoAl
+	eO0R2JUHrdcsGh0CmSE6wGcwM1P9VqA=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-453-Vu2Y5PI0NSiF0sU0dgmwcA-1; Thu, 02 Oct 2025 07:30:41 -0400
+X-MC-Unique: Vu2Y5PI0NSiF0sU0dgmwcA-1
+X-Mimecast-MFC-AGG-ID: Vu2Y5PI0NSiF0sU0dgmwcA_1759404640
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3ee13baf21dso1241374f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 04:30:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759404640; x=1760009440;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vgnKlLoouS3JtpeFvZfGtYcXm2a9bedZ8zcilOwZLtg=;
+        b=hXdagHy5V95F7j2qqGeXwgBgjAs04LUm1ZuxyHH4Kwoea+4QIXSTD+DcCMcfwAVsg6
+         K3HxlDeMDKZNtKMFzWexuZj4Wnx1ow+dm3M3WdLY5uxPcdDY2MLpCKQEN9Fjpkc8mpCE
+         GjtmfaEqQTIkNM7QMINoErZ6leJTSH41XXu5THfh71ZuGL1VHxm3ORIqUgoyy3+0SDTP
+         CmCh/3Oh6YbJ84RAmyk2cln5gu0hYzKgr9L1Diuv9v4GdczpFcdZ4tb+HFHUQzsgergo
+         1hv7qGZbQe8D9XfaHrXukgGeQlZUL8QNxnzQDZTES/qPVmXQqje2islqbnT9hY1NHCox
+         3bXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU07Feh+JAEi4JgZY4nQVf/8KE/u8a3iDm5h+5FN6pEOrOLoO1HhrCnJBu2Yswvy1QLkFAEPUTHd8ELJwE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLhbO1HG1iIPbuYBakG/Ztcwq2jdX+S16+EbEBSVVjnm4dGUgY
+	OIE6T3nrsHmQ+/fkoBRBzZOwzwW25glzw30jH4MTJhMj46V7qReA5MPy70FFyuVlnScy5SCJI1o
+	U9sqyx13ny9baB91VHO6a6TKhx97M+Oo7kiK+ndjGqvA6Wc69hcicFXzq+2zWgWwCEw==
+X-Gm-Gg: ASbGncvhlSdcP59jqIjCNjcO/Pd1NfUbXGEGVMgp2X02PjKh3ep3/9cji+4x+NAYca5
+	rTyoJTBHFj3tpf4DlWVGlHtDJecS+vkGLNKSiDUNkJk2H/QLC06MO2Zz0XA9rZ4u5LGZGmWBob4
+	Eh8spTfkPhst9/jW10stg8L9Tjb97ypn++JnadC8J6vzkRvymg1FZMJdA2Ad6Cfo96BsU9M7ga1
+	EsmGrMAQNqNPjWXC8CTA7CLgdIg5G+xItUcn7QE4mOuqWposmgyMOEyzwFLRuvE39s5bMSYP2UE
+	lADMXF6vD3JEEzbo2ynHbF41xQlxRZS7wVAOchet3xONTKl0MYWlBz6xrlUbfEMsgM2lnBs=
+X-Received: by 2002:a5d:5849:0:b0:3e7:4265:66de with SMTP id ffacd0b85a97d-425577e4a34mr3854400f8f.8.1759404640410;
+        Thu, 02 Oct 2025 04:30:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEg/p/3A3WClXyVi0cI2vseaqGhsWcOe/0Q7yc6NHO0UegG/kY8kVpI8noqmlGXEPJcWATvzQ==
+X-Received: by 2002:a5d:5849:0:b0:3e7:4265:66de with SMTP id ffacd0b85a97d-425577e4a34mr3854386f8f.8.1759404639960;
+        Thu, 02 Oct 2025 04:30:39 -0700 (PDT)
+Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.30])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8a8542sm3262416f8f.9.2025.10.02.04.30.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Oct 2025 04:30:39 -0700 (PDT)
+Message-ID: <58243003fdba1c06d90576fcfec5096012318a27.camel@redhat.com>
+Subject: Re: [PATCH v2 03/20] rv: Unify DA event handling functions across
+ monitor types
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: Nam Cao <namcao@linutronix.de>, linux-kernel@vger.kernel.org, Steven
+ Rostedt <rostedt@goodmis.org>, linux-trace-kernel@vger.kernel.org
+Cc: Tomas Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>, Clark
+ Williams <williams@redhat.com>, John Kacur <jkacur@redhat.com>
+Date: Thu, 02 Oct 2025 13:30:38 +0200
+In-Reply-To: <87a5297jij.fsf@yellow.woof>
+References: <20250919140954.104920-1-gmonaco@redhat.com>
+	 <20250919140954.104920-4-gmonaco@redhat.com> <87a5297jij.fsf@yellow.woof>
+Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
+ keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
+ 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0BrZXJuZWwub3JnPoiZBBMWCgBBFiEEysoR+AuB3R
+ Zwp6j270psSVh4TfIFAmjKX2MCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
+ Q70psSVh4TfIQuAD+JulczTN6l7oJjyroySU55Fbjdvo52xiYYlMjPG7dCTsBAMFI7dSL5zg98I+8
+ cXY1J7kyNsY6/dcipqBM4RMaxXsOtCRHYWJyaWVsZSBNb25hY28gPGdtb25hY29AcmVkaGF0LmNvb
+ T6InAQTFgoARAIbAwUJBaOagAULCQgHAgIiAgYVCgkICwIEFgIDAQIeBwIXgBYhBMrKEfgLgd0WcK
+ eo9u9KbElYeE3yBQJoymCyAhkBAAoJEO9KbElYeE3yjX4BAJ/ETNnlHn8OjZPT77xGmal9kbT1bC1
+ 7DfrYVISWV2Y1AP9HdAMhWNAvtCtN2S1beYjNybuK6IzWYcFfeOV+OBWRDQ==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100012.china.huawei.com (7.191.174.184) To
- dubpeml100005.china.huawei.com (7.214.146.113)
 
-On Tue, 23 Sep 2025 17:47:41 +0000
-Shivank Garg <shivankg@amd.com> wrote:
+On Thu, 2025-10-02 at 11:14 +0200, Nam Cao wrote:
+> Gabriele Monaco <gmonaco@redhat.com> writes:
+> > +/*
+> > + * da_get_task - return the task associated to the monitor
+> > + */
+> > +static inline struct task_struct *da_get_task(struct da_monitor *da_mo=
+n)
+> > +{
+> > +	return container_of(da_mon, struct task_struct,
+> > rv[task_mon_slot].da_mon);
+> > +}
+>=20
+> This function is not used? Maybe later in the series, let me keep looking=
+..
 
-> From: Zi Yan <ziy@nvidia.com>
-> 
-> Now page copies are batched, multi-threaded page copy can be used to
-> increase page copy throughput.
-> 
-> Enable using:
-> echo 1 >  /sys/kernel/cpu_mt/offloading
-> echo NR_THREADS >  /sys/kernel/cpu_mt/threads
+Right, this doesn't belong here, I should add it later..
 
-I guess this order is to show that you can update threads with it on
-as system load changes.
+>=20
+> > =C2=A0static inline bool da_handle_start_event(enum events event)
+> > =C2=A0{
+> > -	struct da_monitor *da_mon;
+> > -
+> > =C2=A0	if (!da_monitor_enabled())
+> > =C2=A0		return 0;
+>=20
+> Can't this part be shared between different monitor types?
+>=20
+> Same for the other handle functions.
 
-Maybe call this out explicitly?
+Mmh good point, I left it separate because the per-object monitors (later i=
+n the
+series) do a bit more before calling the __da_handle_* functions (like some
+potential allocation).
 
-> 
-> Disable:
-> echo 0 >  /sys/kernel/cpu_mt/offloading
-> 
-> Signed-off-by: Zi Yan <ziy@nvidia.com>
-> Co-developed-by: Shivank Garg <shivankg@amd.com>
-> Signed-off-by: Shivank Garg <shivankg@amd.com>
-
-Various other things inline.
+But it's probably not a big deal to let them do that in any case, consideri=
+ng
+da_monitor_enabled() is false only during teardown or with monitoring off, =
+and
+in neither case a superfluous allocation should cause problems.
 
 Thanks,
-
-Jonathan
-
-> diff --git a/drivers/migoffcopy/Kconfig b/drivers/migoffcopy/Kconfig
-> new file mode 100644
-> index 000000000000..e73698af3e72
-> --- /dev/null
-> +++ b/drivers/migoffcopy/Kconfig
-> @@ -0,0 +1,9 @@
-> +config MTCOPY_CPU
-> +       bool "Multi-Threaded Copy with CPU"
-> +       depends on OFFC_MIGRATION
-> +       default n
-> +       help
-> +         Interface MT COPY CPU driver for batch page migration
-> +         offloading. Say Y if you want to try offloading with
-> +         MultiThreaded CPU copy APIs.
-Try?  I'd be more positive in the help text :)
-
-> +
-
-> diff --git a/drivers/migoffcopy/mtcopy/copy_pages.c b/drivers/migoffcopy/mtcopy/copy_pages.c
-> new file mode 100644
-> index 000000000000..68e50de602d6
-> --- /dev/null
-> +++ b/drivers/migoffcopy/mtcopy/copy_pages.c
-> @@ -0,0 +1,327 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Parallel page copy routine.
-> + */
-> +
-> +#include <linux/module.h>
-> +#include <linux/kernel.h>
-Generally we are trying to get away from anything including kernel.h
-directly.  There is relatively little still in there, so maybe check
-you actually need it here.
-
-> +#include <linux/printk.h>
-> +#include <linux/init.h>
-> +#include <linux/sysctl.h>
-> +#include <linux/sysfs.h>
-> +#include <linux/highmem.h>
-> +#include <linux/workqueue.h>
-> +#include <linux/slab.h>
-> +#include <linux/migrate.h>
-> +#include <linux/migrate_offc.h>
-> +
-> +#define MAX_NUM_COPY_THREADS 64
-Add a comment on why this number.
-
-> +
-> +struct copy_page_info {
-> +	struct work_struct copy_page_work;
-> +	int ret;
-> +	unsigned long num_items;
-> +	struct copy_item item_list[];
-__counted_by
-
-> +};
-> +
-> +static unsigned long copy_page_routine(char *vto, char *vfrom,
-> +	unsigned long chunk_size)
-> +{
-> +	return copy_mc_to_kernel(vto, vfrom, chunk_size);
-> +}
-> +
-> +static void copy_page_work_queue_thread(struct work_struct *work)
-> +{
-> +	struct copy_page_info *my_work = (struct copy_page_info *)work;
-
-container_of()
-
-> +	int i;
-> +
-> +	my_work->ret = 0;
-> +	for (i = 0; i < my_work->num_items; ++i)
-> +		my_work->ret |= !!copy_page_routine(my_work->item_list[i].to,
-> +					my_work->item_list[i].from,
-> +					my_work->item_list[i].chunk_size);
-> +}
-> +
-> +static ssize_t mt_offloading_set(struct kobject *kobj, struct kobj_attribute *attr,
-> +		const char *buf, size_t count)
-> +{
-> +	int ccode;
-> +	int action;
-> +
-> +	ccode = kstrtoint(buf, 0, &action);
-> +	if (ccode) {
-> +		pr_debug("(%s:) error parsing input %s\n", __func__, buf);
-> +		return ccode;
-> +	}
-> +
-> +	/*
-> +	 * action is 0: User wants to disable MT offloading.
-> +	 * action is 1: User wants to enable MT offloading.
-> +	 */
-> +	switch (action) {
-> +	case 0:
-> +		mutex_lock(&migratecfg_mutex);
-> +		if (is_dispatching == 1) {
-> +			stop_offloading();
-> +			is_dispatching = 0;
-> +		} else
-> +			pr_debug("MT migration offloading is already OFF\n");
-> +		mutex_unlock(&migratecfg_mutex);
-> +		break;
-> +	case 1:
-> +		mutex_lock(&migratecfg_mutex);
-> +		if (is_dispatching == 0) {
-> +			start_offloading(&cpu_migrator);
-> +			is_dispatching = 1;
-> +		} else
-> +			pr_debug("MT migration offloading is already ON\n");
-> +		mutex_unlock(&migratecfg_mutex);
-> +		break;
-> +	default:
-> +		pr_debug("input should be zero or one, parsed as %d\n", action);
-> +	}
-> +	return sizeof(action);
-> +}
-> +
-> +static ssize_t mt_offloading_show(struct kobject *kobj,
-> +		struct kobj_attribute *attr, char *buf)
-> +{
-> +	return sysfs_emit(buf, "%d\n", is_dispatching);
-> +}
-> +
-> +static ssize_t mt_threads_set(struct kobject *kobj, struct kobj_attribute *attr,
-> +		const char *buf, size_t count)
-> +{
-> +	int ccode;
-> +	unsigned int threads;
-> +
-> +	ccode = kstrtouint(buf, 0, &threads);
-> +	if (ccode) {
-> +		pr_debug("(%s:) error parsing input %s\n", __func__, buf);
-
-I'm fairly sure you can use dynamic debug here to add the __func__ so no need
-to do it by hand.
-
-> +		return ccode;
-> +	}
-> +
-> +	if (threads > 0 && threads <= MAX_NUM_COPY_THREADS) {
-> +		mutex_lock(&migratecfg_mutex);
-> +		limit_mt_num = threads;
-> +		mutex_unlock(&migratecfg_mutex);
-> +		pr_debug("MT threads set to %u\n", limit_mt_num);
-> +	} else {
-
-I'd flip the logic to test first for in range and exit if not. Then
-no indent on the good path.
-
-> +		pr_debug("Invalid thread count. Must be between 1 and %d\n", MAX_NUM_COPY_THREADS);
-> +		return -EINVAL;
-> +	}
-> +
-> +	return count;
-> +}
-
-> +int copy_page_lists_mt(struct list_head *dst_folios,
-> +		struct list_head *src_folios, unsigned int nr_items)
-> +{
-> +	struct copy_page_info *work_items[MAX_NUM_COPY_THREADS] = {0};
-
-{} or { NULL } perhaps given it's an array of pointers.
-
-> +	unsigned int total_mt_num = limit_mt_num;
-> +	struct folio *src, *src2, *dst, *dst2;
-> +	int max_items_per_thread;
-> +	int item_idx;
-> +	int err = 0;
-> +	int cpu;
-> +	int i;
-> +
-> +	if (IS_ENABLED(CONFIG_HIGHMEM))
-> +		return -EOPNOTSUPP;
-> +
-> +	/* Each threads get part of each page, if nr_items < totla_mt_num */
-Each thread gets part of each page
-
-total_mt_num  Though isn't the comment talking about when it's greater than or equal?
-
-
-> +	if (nr_items < total_mt_num)
-> +		max_items_per_thread = nr_items;
-> +	else
-> +		max_items_per_thread = (nr_items / total_mt_num) +
-> +				((nr_items % total_mt_num) ? 1 : 0);
-> +
-> +
-> +	for (cpu = 0; cpu < total_mt_num; ++cpu) {
-> +		work_items[cpu] = kzalloc(sizeof(struct copy_page_info) +
-> +						sizeof(struct copy_item) *
-> +							max_items_per_thread,
-
-struct_size() looks appropriate here.
-
-> +					  GFP_NOWAIT);
-> +		if (!work_items[cpu]) {
-> +			err = -ENOMEM;
-> +			goto free_work_items;
-> +		}
-> +	}
-> +
-> +	if (nr_items < total_mt_num) {
-> +		for (cpu = 0; cpu < total_mt_num; ++cpu) {
-> +			INIT_WORK((struct work_struct *)work_items[cpu],
-Why not avoid having to know it is at start of structure by using
-work_items[cpu]->copy_page_work instead.
-
-> +					  copy_page_work_queue_thread);
-> +			work_items[cpu]->num_items = max_items_per_thread;
-> +		}
-> +
-> +		item_idx = 0;
-> +		dst = list_first_entry(dst_folios, struct folio, lru);
-> +		dst2 = list_next_entry(dst, lru);
-> +		list_for_each_entry_safe(src, src2, src_folios, lru) {
-> +			unsigned long chunk_size = PAGE_SIZE * folio_nr_pages(src) / total_mt_num;
-> +			char *vfrom = page_address(&src->page);
-> +			char *vto = page_address(&dst->page);
-> +
-> +			VM_WARN_ON(PAGE_SIZE * folio_nr_pages(src) % total_mt_num);
-> +			VM_WARN_ON(folio_nr_pages(dst) != folio_nr_pages(src));
-> +
-> +			for (cpu = 0; cpu < total_mt_num; ++cpu) {
-> +				work_items[cpu]->item_list[item_idx].to =
-> +					vto + chunk_size * cpu;
-> +				work_items[cpu]->item_list[item_idx].from =
-> +					vfrom + chunk_size * cpu;
-> +				work_items[cpu]->item_list[item_idx].chunk_size =
-> +					chunk_size;
-> +			}
-> +
-> +			item_idx++;
-> +			dst = dst2;
-> +			dst2 = list_next_entry(dst, lru);
-> +		}
-> +
-> +		for (cpu = 0; cpu < total_mt_num; ++cpu)
-> +			queue_work(system_unbound_wq,
-> +				   (struct work_struct *)work_items[cpu]);
-
-As above. If you want the work struct, using the member that is the right type.
-
-> +	} else {
-> +		int num_xfer_per_thread = nr_items / total_mt_num;
-> +		int per_cpu_item_idx;
-> +
-> +
-> +		for (cpu = 0; cpu < total_mt_num; ++cpu) {
-> +			INIT_WORK((struct work_struct *)work_items[cpu],
-
-Same again.
-
-> +					  copy_page_work_queue_thread);
-> +
-> +			work_items[cpu]->num_items = num_xfer_per_thread +
-> +					(cpu < (nr_items % total_mt_num));
-> +		}
-> +
-> +		cpu = 0;
-> +		per_cpu_item_idx = 0;
-> +		item_idx = 0;
-> +		dst = list_first_entry(dst_folios, struct folio, lru);
-> +		dst2 = list_next_entry(dst, lru);
-> +		list_for_each_entry_safe(src, src2, src_folios, lru) {
-> +			work_items[cpu]->item_list[per_cpu_item_idx].to =
-> +				page_address(&dst->page);
-> +			work_items[cpu]->item_list[per_cpu_item_idx].from =
-> +				page_address(&src->page);
-> +			work_items[cpu]->item_list[per_cpu_item_idx].chunk_size =
-> +				PAGE_SIZE * folio_nr_pages(src);
-> +
-> +			VM_WARN_ON(folio_nr_pages(dst) !=
-> +				   folio_nr_pages(src));
-> +
-> +			per_cpu_item_idx++;
-> +			item_idx++;
-> +			dst = dst2;
-> +			dst2 = list_next_entry(dst, lru);
-> +
-> +			if (per_cpu_item_idx == work_items[cpu]->num_items) {
-> +				queue_work(system_unbound_wq,
-> +					(struct work_struct *)work_items[cpu]);
-and one more.
-> +				per_cpu_item_idx = 0;
-> +				cpu++;
-> +			}
-> +		}
-> +		if (item_idx != nr_items)
-> +			pr_warn("%s: only %d out of %d pages are transferred\n",
-> +				__func__, item_idx - 1, nr_items);
-> +	}
-> +
-> +	/* Wait until it finishes  */
-> +	for (i = 0; i < total_mt_num; ++i) {
-> +		flush_work((struct work_struct *)work_items[i]);
-> +		/* retry if any copy fails */
-> +		if (work_items[i]->ret)
-> +			err = -EAGAIN;
-> +	}
-> +
-> +free_work_items:
-> +	for (cpu = 0; cpu < total_mt_num; ++cpu)
-> +		kfree(work_items[cpu]);
-> +
-> +	return err;
-> +}
-> +
-> +static struct kobject *mt_kobj_ref;
-> +static struct kobj_attribute mt_offloading_attribute = __ATTR(offloading, 0664,
-> +		mt_offloading_show, mt_offloading_set);
-> +static struct kobj_attribute mt_threads_attribute = __ATTR(threads, 0664,
-> +		mt_threads_show, mt_threads_set);
-> +
-> +static int __init cpu_mt_module_init(void)
-> +{
-> +	int ret = 0;
-
-Always set before use so don't init here.
-
-> +
-> +	mt_kobj_ref = kobject_create_and_add("cpu_mt", kernel_kobj);
-> +	if (!mt_kobj_ref)
-> +		return -ENOMEM;
-> +
-> +	ret = sysfs_create_file(mt_kobj_ref, &mt_offloading_attribute.attr);
-> +	if (ret)
-> +		goto out_offloading;
-> +
-> +	ret = sysfs_create_file(mt_kobj_ref, &mt_threads_attribute.attr);
-> +	if (ret)
-> +		goto out_threads;
-> +
-> +	is_dispatching = 0;
-> +
-> +	return 0;
-> +
-> +out_threads:
-> +	sysfs_remove_file(mt_kobj_ref, &mt_offloading_attribute.attr);
-> +out_offloading:
-> +	kobject_put(mt_kobj_ref);
-> +	return ret;
-> +}
-
-> +module_init(cpu_mt_module_init);
-> +module_exit(cpu_mt_module_exit);
-> +
-> +MODULE_LICENSE("GPL");
-> +MODULE_AUTHOR("Zi Yan");
-> +MODULE_DESCRIPTION("CPU_MT_COPY"); /* CPU Multithreaded Batch Migrator */
-
-If a module description needs a comment after it I'd rewrite that description!
-
+Gabriele
 
 
