@@ -1,144 +1,211 @@
-Return-Path: <linux-kernel+bounces-839991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9086BB3395
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 10:41:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24EBBBB339E
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 10:41:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8886419E7313
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 08:40:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 551F8188E25C
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 08:40:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 927D32EA491;
-	Thu,  2 Oct 2025 08:17:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 224222F1FDA;
+	Thu,  2 Oct 2025 08:19:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bHvHi6Tf"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TqfCzb3x";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="IarRZo5E";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="TqfCzb3x";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="IarRZo5E"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F48E2E62D1;
-	Thu,  2 Oct 2025 08:17:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA11A2F1FC2
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 08:19:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759393032; cv=none; b=OnXlrUw/jG1Dv4LZXAjWgQG5D5xr1FuCygCOy+Wxb0yuLuVNbEGjZspLDhHKtwBX+7PZW4QdruXkKQjpoXjq0Z7lUH9O4LUFOJX8W18DACjL1V3T3/YZF39vXev+lm0Zy2D4AzUbcdMjnScDtiHsXuLW+d899i4XNRahw2LRvqE=
+	t=1759393196; cv=none; b=okwh/9NfbDddWvzXc/SfxC+yKqUl+VWbsqS2DVrW6zWWmT6uW6tk2LMERIuLCimTrfM3wrkcx7TJ/uPlKZfF1NhTESsdGny77EQO3kiK70WlTkXshbjIeg3f88gyTYov0jSgsNiM3UT4ZMoTMp1hHqAJ7QPwm+stnw9fKgZZGfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759393032; c=relaxed/simple;
-	bh=qhPCv+hvtTaEhLSvWRtO8cEw6fW/dZWLWErQIn5N/xI=;
+	s=arc-20240116; t=1759393196; c=relaxed/simple;
+	bh=S+aCkm6yG2Btn3fL69jj1tlpwurqMhvUmEE3mORoj1c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IeQ5WDdr+s/ZxTERLn5eAoyZYYHGz0JzW5VK7o3RQs0W6pV9Te8jQXla3069C6On7TxYqEDn1cM0pk8STDM1a4OgiZ597JlbkRYN84/PrBt2pbaAfn63KcCFjyHKR3wUrIF6pz1SLgUcKzZq8RR+mLW+47cFtaWhtxMdiFfS5SY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bHvHi6Tf; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759393030; x=1790929030;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=qhPCv+hvtTaEhLSvWRtO8cEw6fW/dZWLWErQIn5N/xI=;
-  b=bHvHi6Tf6x/xkfHLwjuXJvMxI5kMnbD1oPi4oBtxQPGxng5MJuc8AsWk
-   K3EtIDSVLomCinLwwiFsdP6DEif/5gUgC5DKTu3WgDv94CL7Qzp619hrp
-   mXJo/01MjlQ4WBDetvbx0ZUgqSN2xiSqH6ZUMn+CEWOupKGYLDo3cGzUg
-   l0VWa1Uj6aC5Wa+PYFOaKFKpOMU+X4O6q9fcZrf0UcwFk9rr7miTItBSl
-   rWq//aTKHW/UplK76bGwS//usY7Vkle0Agdhgf4K2vIEzMZVSbuFr/Wef
-   l8WkSaSCajNqjWJVNkySxHhMaVYYkRENr44hcrAWu6flRlpDx8C+F4N7I
-   w==;
-X-CSE-ConnectionGUID: vecdJEyBR8+IG0unCgVxRQ==
-X-CSE-MsgGUID: ROiODXKeSXC5jFxFfy0O7w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11569"; a="49230498"
-X-IronPort-AV: E=Sophos;i="6.18,309,1751266800"; 
-   d="scan'208";a="49230498"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2025 01:17:09 -0700
-X-CSE-ConnectionGUID: 6YX8BcraQ+aqUY/Jr4ihHw==
-X-CSE-MsgGUID: BdxfyJimRBuNrjmbXHg0HA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,309,1751266800"; 
-   d="scan'208";a="178797283"
-Received: from bergbenj-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.175])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2025 01:17:07 -0700
-Received: from kekkonen.localdomain (localhost [IPv6:::1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 7333A121EC3;
-	Thu, 02 Oct 2025 11:17:03 +0300 (EEST)
-Date: Thu, 2 Oct 2025 11:17:03 +0300
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Cc: Dafna Hirschfeld <dafna@fastmail.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Keke Li <keke.li@amlogic.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Dan Scally <dan.scally@ideasonboard.com>,
-	Antoine Bouyer <antoine.bouyer@nxp.com>,
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v5 0/8] media: Introduce V4L2 generic ISP support
-Message-ID: <aN40_78P5TaUuglA@kekkonen.localdomain>
-References: <20250915-extensible-parameters-validation-v5-0-e6db94468af3@ideasonboard.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=c8h0GfzHyjXdzsvAPwqdRduqoM3NY9L2ZnYLTA43++Prwpd+b/07AjwUSdLRdN/wJ6IQHzKqqKRGy5YPLv1sYSFfH7mUugu56WEP0GY59jFBJcSzlbCX2kMhxxT+o4Ynaq1OvAVD9Q1tcCaVaDUw1BjHAdu06IyAp4Kk/MF/bnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TqfCzb3x; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=IarRZo5E; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=TqfCzb3x; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=IarRZo5E; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id B02DF1F8D4;
+	Thu,  2 Oct 2025 08:19:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759393192; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2/LbKpJXex3eAogkvshZEWozp2J1FFOZdR/dpOaaQTU=;
+	b=TqfCzb3x6wTFGBd7fIj+wxzJ0+NGq5PiqHPs1ZwoMz8tY5M4OcC+LTdNMs2dCzW9iExEut
+	xkOumHCCyx1Uy+n7X0WjoF8K8y+UUFajpqnX2LQSQIpQm12zcF3XJPATgqjTuHw5tKKIV2
+	FnghvUT9a2TSnlFeDypK2XOw6RzFGVQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759393192;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2/LbKpJXex3eAogkvshZEWozp2J1FFOZdR/dpOaaQTU=;
+	b=IarRZo5EUg+zWoMMCc314rWCj0Y/I5++ugQyJtmzeIg+w7tsioXPqO1Pqj4wdl8QhZ6eIX
+	kn0iUKQqRyXj1NAQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1759393192; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2/LbKpJXex3eAogkvshZEWozp2J1FFOZdR/dpOaaQTU=;
+	b=TqfCzb3x6wTFGBd7fIj+wxzJ0+NGq5PiqHPs1ZwoMz8tY5M4OcC+LTdNMs2dCzW9iExEut
+	xkOumHCCyx1Uy+n7X0WjoF8K8y+UUFajpqnX2LQSQIpQm12zcF3XJPATgqjTuHw5tKKIV2
+	FnghvUT9a2TSnlFeDypK2XOw6RzFGVQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1759393192;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2/LbKpJXex3eAogkvshZEWozp2J1FFOZdR/dpOaaQTU=;
+	b=IarRZo5EUg+zWoMMCc314rWCj0Y/I5++ugQyJtmzeIg+w7tsioXPqO1Pqj4wdl8QhZ6eIX
+	kn0iUKQqRyXj1NAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A410A13990;
+	Thu,  2 Oct 2025 08:19:52 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id dIgMKKg13miQUwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 02 Oct 2025 08:19:52 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id B281BA0A56; Thu,  2 Oct 2025 10:19:46 +0200 (CEST)
+Date: Thu, 2 Oct 2025 10:19:46 +0200
+From: Jan Kara <jack@suse.cz>
+To: syzbot <syzbot+e0f8855a87443d6a2413@syzkaller.appspotmail.com>
+Cc: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Subject: Re: [syzbot] [fs?] WARNING in copy_mnt_ns
+Message-ID: <siwzfsrwodz2zfxqmub4yrfcadmnygdoc7a5imvtr3eicgzlsn@2ipfsri5p7ui>
+References: <68dd8c99.a00a0220.102ee.0061.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="dvp74spf6ooxd5tb"
+Content-Disposition: inline
+In-Reply-To: <68dd8c99.a00a0220.102ee.0061.GAE@google.com>
+X-Spamd-Result: default: False [-1.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=8f1ac8502efee0ee];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[multipart/mixed,text/plain,text/x-patch];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	TAGGED_RCPT(0.00)[e0f8855a87443d6a2413];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+,1:+,2:+];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	SUBJECT_HAS_QUESTION(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	HAS_ATTACHMENT(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -1.30
+
+
+--dvp74spf6ooxd5tb
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250915-extensible-parameters-validation-v5-0-e6db94468af3@ideasonboard.com>
 
-Hi Jacopo,
+On Wed 01-10-25 13:18:33, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    50c19e20ed2e Merge tag 'nolibc-20250928-for-6.18-1' of git..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=126f605b980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=8f1ac8502efee0ee
+> dashboard link: https://syzkaller.appspot.com/bug?extid=e0f8855a87443d6a2413
+> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1374b858580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15602092580000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/5fb1f87b20e9/disk-50c19e20.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/aebfd0341e80/vmlinux-50c19e20.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/11452a5eed6c/bzImage-50c19e20.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+e0f8855a87443d6a2413@syzkaller.appspotmail.com
+> 
+> ------------[ cut here ]------------
+> ida_free called for id=1019 which is not allocated.
 
-On Mon, Sep 15, 2025 at 07:18:09PM +0200, Jacopo Mondi wrote:
-> Extensible parameters meta formats have been introduced in the Linux
-> kernel v6.12 initially to support different revision of the RkISP1 ISP
-> implemented in different SoC. In order to avoid breaking userspace
-> everytime an ISP configuration block is added or modified in the uAPI
-> these new formats, which are versionated and extensible by their
-> definition have been introduced.
-> 
-> See for reference:
-> e9d05e9d5db1 ("media: uapi: rkisp1-config: Add extensible params format")
-> 6c53a7b68c5d ("media: rkisp1: Implement extensible params support")
-> 
-> The Amlogic C3 ISP driver followed shortly, introducing an extensible
-> format for the ISP configuration:
-> 
-> 6d406187ebc0 ("media: uapi: Add stats info and parameters buffer for C3 ISP")
-> 
-> with a very similar, if not identical, implementation of the routines to
-> validate and handle the ISP configuration in the ISP driver in the
-> c3-isp-params.c file.
-> 
-> fb2e135208f3 ("media: platform: Add C3 ISP driver")
-> 
-> With the recent upstreaming attempt of the Mali C55 ISP driver from Dan,
-> a third user of extensible parameters is going to be itroduced in the
-> kernel, duplicating again in the driver the procedure for validating and
-> handling the ISP configuration blocks
-> 
-> https://patchwork.linuxtv.org/project/linux-media/patch/20250624-c55-v10-15-54f3d4196990@ideasonboard.com/
-> 
-> To avoid duplicating again the validation routines and common types
-> definition, this series introduces v4l2-isp.c/.h for the kAPI
-> and v4l2-isp.h for the uAPI and re-organize the RkISP1
-> and Amlogic C3 drivers to use the common types and the helper validation
-> routines.
-> 
-> The v4l2-isp abstraction will be augmented to support statistcs as well.
-> 
-> If the here proposed approach is accepted, I propose to rebase the Mali
-> C55 driver on top of this series, to use the new common types and
-> helpers.
-> 
-> I have been able to test this on RkISP1 but not on C3.
+Please try attached patch:
 
-Thank you for working on this.
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
 
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-
+								Honza
 -- 
-Kind regards,
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
-Sakari Ailus
+--dvp74spf6ooxd5tb
+Content-Type: text/x-patch; charset=us-ascii
+Content-Disposition: attachment;
+	filename="0001-ns-Fix-mnt-ns-ida-handling-in-copy_mnt_ns.patch"
+
+From 5cbdc1dd457f85fdbaa8f5840feeffee41f9aaae Mon Sep 17 00:00:00 2001
+From: Jan Kara <jack@suse.cz>
+Date: Thu, 2 Oct 2025 10:15:06 +0200
+Subject: [PATCH] ns: Fix mnt ns ida handling in copy_mnt_ns()
+
+Commit be5f21d3985f ("ns: add ns_common_free()") modified error cleanup
+and started to free wrong inode number from the ida. Fix it.
+
+Reported-by: syzbot+e0f8855a87443d6a2413@syzkaller.appspotmail.com
+Fixes: be5f21d3985f ("ns: add ns_common_free()")
+Signed-off-by: Jan Kara <jack@suse.cz>
+---
+ fs/namespace.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/namespace.c b/fs/namespace.c
+index dc01b14c58cd..1ba97d745019 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -4165,7 +4165,7 @@ struct mnt_namespace *copy_mnt_ns(u64 flags, struct mnt_namespace *ns,
+ 	new = copy_tree(old, old->mnt.mnt_root, copy_flags);
+ 	if (IS_ERR(new)) {
+ 		namespace_unlock();
+-		ns_common_free(ns);
++		ns_common_free(new_ns);
+ 		dec_mnt_namespaces(new_ns->ucounts);
+ 		mnt_ns_release(new_ns);
+ 		return ERR_CAST(new);
+-- 
+2.51.0
+
+
+--dvp74spf6ooxd5tb--
 
