@@ -1,222 +1,257 @@
-Return-Path: <linux-kernel+bounces-840411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43DC0BB4537
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 17:29:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17036BB4543
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 17:30:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B529B7B1CCF
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 15:26:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86BD619E3B03
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 15:30:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1FF91F181F;
-	Thu,  2 Oct 2025 15:26:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23EDA1F5858;
+	Thu,  2 Oct 2025 15:30:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OvWg1S5G"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UfcFYhNY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EA5B1EDA09
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 15:26:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 469DE1F2C45;
+	Thu,  2 Oct 2025 15:29:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759418813; cv=none; b=u996pQSeTX3YbF93Pcm29Vd3WMhxWTntLVsj9RdY/RxHEqXb+9Sei+XaisOiSabgPYBK7UqLJ5P76q9ujhjgbB44YjFS+CDeK1WPk4YG2jhBc/NZi+hsBImMve9VDd+86k9NlEZY5bwswXnwk5mtqKrKiy7LT5BmyGkTTpd8doI=
+	t=1759419000; cv=none; b=HYKSGXs/BzsJ2OqV9/mJaibhkXngj6mM5nNrrltE+e5jGyZ344rLRzr1fyehucsNuT0a9noyYYY6Kg2KB/SSUUOigfa3KKqTt1DvK1Q7omWqJydMlK3TJW5psHttzGH+myU67Ly7XiTwPgNqu9yxHAMYs5UGHWdNgrUovLXbwk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759418813; c=relaxed/simple;
-	bh=y+65hYrYIaWHVoTgELiJ1RdDrOEMiSFF9ry/3VNg7Pc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UBR50SXwsyVTe2ZQnnEZowH5q/UWcplN4qPAlPlPqg5G4Bc6BB4CdigdOs/htQOGTzkZ0hoV8A3J/nAhtkvBOuiAFlViQo4unmSanyb8cMmwatxA7Ee7Oq1gEQjsDk31CwPyFl/kvCMFetMLejFqMsOxaXMIMriRb1UUSwRjBb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OvWg1S5G; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-267facf9b58so7069885ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 08:26:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759418811; x=1760023611; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cQJrUlVfBkMRiq+RoyZz0BqubRT3pqUe/XqlC5WCMZ8=;
-        b=OvWg1S5GRy8v58/s2gH3x/xydcL6ALFGA76DDRN1m/qvfRQZZrdn6/kskTZAJSGjoW
-         XVmu/A2CkzpK+/6S5Jmwrkw69J5UEIWLRpZzlccugs8RgFFlznArrrMaTuBEKKDFvWq2
-         OS7P1EVftSbWpgEv48exDEtWuWrkmc2i82BVOHQDtnL92YPM5sapN/5/CJut1VrfGSFx
-         DINyhx77scD8wgP0bpe3o7Azm9lvVGzebBjxah8V0lrnb7yDvEak59xJ5HVW2GUpQC5f
-         qopM0nuaZ3+GHEYj2/s8gXRicWoHk9tH5j6RFQiNx1QziqBRgMIOXG1PdKGC4Dakqacj
-         m9RQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759418811; x=1760023611;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cQJrUlVfBkMRiq+RoyZz0BqubRT3pqUe/XqlC5WCMZ8=;
-        b=S4IMs9n/Oww4aPvXP5VNUFEZZfrP8mCY6O6etC28lh4J+bPUZlllFCHQbjmJwp3zt1
-         gM8ivGBC1/cUXHtKrmrsARA70u3BYJSjo4KEFGa+Rak1m45HjpKCmHKGciA2C2S9xggf
-         aveI7y8Ukq64fn/VJj4tiC+GWx/qL0tib8UcPESl/qg8esuB3OkMKi+iVYfS1cZTccaA
-         1A4ByyEbprb/L+p4oyR5IoFFkepmJI0FSB5GgnsdOSIwjti/NF7JwkBB2TNKtKA4qLOK
-         nk/wMMb23l2C4aG1pbK89fSJnRWh7v2QulZ0u0XWFR8G0EZWAdjN2WuzzXwUoNkWLeAW
-         gl9A==
-X-Forwarded-Encrypted: i=1; AJvYcCWXUdHzfSLUIScQPMJS5ScS2wqAaGiJ4laTJYqGn8AgFtqdJG9w0DZGjURjlsQXM4oecTeEguebr6YK44E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZU50xvKfVOZ28oONWNMTBi7Ph4vDUIeYUXaAV6JQKx8CW+L2c
-	pBRp/EVBEJIblZ+N35WTOT2rjW8qcV+qRbDF8sQKyYZ7Ewr7UQmtqbCv
-X-Gm-Gg: ASbGnct0J2wZKzqJnVxocPAkXVhrKHxJ1AePqaD5p3gkp7Q0YxB3zHsLVQrImj7BPc9
-	e/hCp7CU0obm71oO4Tjl25Oy/5n80DhyleUleAHppYywUwv5rkDEyI/bn04fjnXTdoTSFxTJXlV
-	erNtYmvo54s+vIVC3WzqWNulVHCdvd7WQzJc9kX6HFBzfrgrbAtgE+DS4CumTKU0e06kjlIpJGl
-	dEwWf1AruAA3eCkAoICN+qHx7BBQTSSkev/zfOp1Zyb2jeOQmL1lsnB7Oq0cbIW/LtplKYXYGi5
-	YZ59B5xvXSC7rMUxlVKwz6P/LhpHst22ixEwzJN2zrz+2WFxbM7rjpAk0J9tTZMztKyzI8Px0z3
-	FqKNUzCGb1a/DB0YkHsiXqTJayELslQ28G5qJbZSoB9WGVkU=
-X-Google-Smtp-Source: AGHT+IHranjbyb4YEuGAJFDc+X+dnQAiIaVTrIAMeQdBADBspQ0b+xaGar2PfT40nlwyi7dQ4ZgNQg==
-X-Received: by 2002:a17:903:190d:b0:262:4878:9dff with SMTP id d9443c01a7336-28e7f26f32fmr113038245ad.12.1759418809416;
-        Thu, 02 Oct 2025 08:26:49 -0700 (PDT)
-Received: from mythos-cloud ([175.204.162.54])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d11080csm24776565ad.1.2025.10.02.08.26.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 08:26:49 -0700 (PDT)
-From: Yeounsu Moon <yyyynoom@gmail.com>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yeounsu Moon <yyyynoom@gmail.com>
-Subject: [PATCH net] net: dlink: handle dma_map_single() failure properly
-Date: Fri,  3 Oct 2025 00:26:38 +0900
-Message-ID: <20251002152638.1165-1-yyyynoom@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1759419000; c=relaxed/simple;
+	bh=/lfDtITrdt033G9K6Sf8CUJ+JNwPECTxs5/z8imfrh8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UH2ueW44H8SaEV2pYdMLvnu27BKXVLNYmoea2msdanVkZoeVBjmgY9MjtIUUH56gq66QdYG3s8DNr6Mv85wKjPyhYmZu4+XsUjKQNpL7ZudDrT8BvF58be6yqMdPPdpHJ1I5iLs5BmH4HwiGHvU9KDUG89ebnZ6VlkXUEd9rWP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UfcFYhNY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B143CC4CEF4;
+	Thu,  2 Oct 2025 15:29:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759418999;
+	bh=/lfDtITrdt033G9K6Sf8CUJ+JNwPECTxs5/z8imfrh8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=UfcFYhNYVe9LFCSZBzZWACpYul4pVNqXZh/qTM4FTzXBmZuFuE0vtbqYVMwSwioFh
+	 eG0C6syh5yiiDbtL5ilZ6u2udyWLjy2Fx0+/TxM4lbpGCefhdNTbwb12a4JhvGzy/v
+	 +xKGhsIDlo7HCQHjooCi0CZIfsZDQxc7r1ZtC0lYuYE9z5CebIDiyQw8G5cSLTsHEN
+	 5eecWRBYz3Q9VRH2RW7BiNEagiQypjl9aM9oTwnlOQqJmokvvZiZ7EL7e+D8FuPBEr
+	 AtcTo2hzGWJnOMs5CQ3D9WAyzfhTVp3OD9eFgIG65lfg83fbDIp1SdiOFIziT8JWvu
+	 vs4Y5Gl5xNGNA==
+Message-ID: <a562c510-9c08-4acd-afe8-efb8aaceec66@kernel.org>
+Date: Thu, 2 Oct 2025 16:29:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 8/8] media: iris: Add platform data for kaanapali
+To: Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
+ Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Vishnu Reddy <quic_bvisredd@quicinc.com>
+References: <20250925-knp_video-v1-0-e323c0b3c0cd@oss.qualcomm.com>
+ <4-Uqk007ML-Q9NW-SjN7t6kX_tmucJiWOgoCTosvL2KPNWFwQzquB-VcPUMtnHTnTIMdKSMyg7JQNpOUthu9FQ==@protonmail.internalid>
+ <20250925-knp_video-v1-8-e323c0b3c0cd@oss.qualcomm.com>
+From: Bryan O'Donoghue <bod@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20250925-knp_video-v1-8-e323c0b3c0cd@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add error handling by checking `dma_mapping_error()` and cleaning up
-the `skb` using the appropriate `dev_kfree_skb*()` variant.
+On 25/09/2025 00:14, Vikash Garodia wrote:
+> Add support for the kaanapali platform by re-using the SM8550
+> definitions and using the vpu4 ops.
+> Move the configurations that differs in a per-SoC platform
+> header, that will contain SoC specific data.
+> 
+> Co-developed-by: Vishnu Reddy <quic_bvisredd@quicinc.com>
+> Signed-off-by: Vishnu Reddy <quic_bvisredd@quicinc.com>
+> Signed-off-by: Vikash Garodia <vikash.garodia@oss.qualcomm.com>
+> ---
+>   .../platform/qcom/iris/iris_platform_common.h      |  1 +
+>   .../media/platform/qcom/iris/iris_platform_gen2.c  | 86 ++++++++++++++++++++++
+>   .../platform/qcom/iris/iris_platform_kaanapali.h   | 63 ++++++++++++++++
+>   drivers/media/platform/qcom/iris/iris_probe.c      |  4 +
+>   4 files changed, 154 insertions(+)
+> 
+> diff --git a/drivers/media/platform/qcom/iris/iris_platform_common.h b/drivers/media/platform/qcom/iris/iris_platform_common.h
+> index d6d4a9fdfc189797f903dfeb56d931741b405ee2..465943db0c6671e9b564b40e31ce6ba2d645a84c 100644
+> --- a/drivers/media/platform/qcom/iris/iris_platform_common.h
+> +++ b/drivers/media/platform/qcom/iris/iris_platform_common.h
+> @@ -46,6 +46,7 @@ extern struct iris_platform_data sm8250_data;
+>   extern struct iris_platform_data sm8550_data;
+>   extern struct iris_platform_data sm8650_data;
+>   extern struct iris_platform_data sm8750_data;
+> +extern struct iris_platform_data kaanapali_data;
+> 
+>   enum platform_clk_type {
+>   	IRIS_AXI_CLK, /* AXI0 in case of platforms with multiple AXI clocks */
+> diff --git a/drivers/media/platform/qcom/iris/iris_platform_gen2.c b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
+> index 00c6b9021b98aac80612b1bb9734c8dac8146bd9..142b7d84ee00a9b65420158ac1f168515b56f4a3 100644
+> --- a/drivers/media/platform/qcom/iris/iris_platform_gen2.c
+> +++ b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
+> @@ -15,6 +15,7 @@
+>   #include "iris_platform_qcs8300.h"
+>   #include "iris_platform_sm8650.h"
+>   #include "iris_platform_sm8750.h"
+> +#include "iris_platform_kaanapali.h"
+> 
+>   #define VIDEO_ARCH_LX 1
+>   #define BITRATE_MAX				245000000
+> @@ -1095,3 +1096,88 @@ struct iris_platform_data qcs8300_data = {
+>   	.enc_op_int_buf_tbl = sm8550_enc_op_int_buf_tbl,
+>   	.enc_op_int_buf_tbl_size = ARRAY_SIZE(sm8550_enc_op_int_buf_tbl),
+>   };
+> +
+> +struct iris_platform_data kaanapali_data = {
+> +	.get_instance = iris_hfi_gen2_get_instance,
+> +	.init_hfi_command_ops = iris_hfi_gen2_command_ops_init,
+> +	.init_hfi_response_ops = iris_hfi_gen2_response_ops_init,
+> +	.get_vpu_buffer_size = iris_vpu4x_buf_size,
+> +	.vpu_ops = &iris_vpu4x_ops,
+> +	.set_preset_registers = iris_set_sm8550_preset_registers,
+> +	.icc_tbl = sm8550_icc_table,
+> +	.icc_tbl_size = ARRAY_SIZE(sm8550_icc_table),
+> +	.clk_rst_tbl = kaanapali_clk_reset_table,
+> +	.clk_rst_tbl_size = ARRAY_SIZE(kaanapali_clk_reset_table),
+> +	.bw_tbl_dec = sm8550_bw_table_dec,
+> +	.bw_tbl_dec_size = ARRAY_SIZE(sm8550_bw_table_dec),
+> +	.pmdomain_tbl = kaanapali_pmdomain_table,
+> +	.pmdomain_tbl_size = ARRAY_SIZE(kaanapali_pmdomain_table),
+> +	.opp_pd_tbl = sm8550_opp_pd_table,
+> +	.opp_pd_tbl_size = ARRAY_SIZE(sm8550_opp_pd_table),
+> +	.clk_tbl = kaanapali_clk_table,
+> +	.clk_tbl_size = ARRAY_SIZE(kaanapali_clk_table),
+> +	.opp_clk_tbl = kaanapali_opp_clk_table,
+> +	/* Upper bound of DMA address range */
+> +	.dma_mask = 0xe0000000 - 1,
+> +	.fwname = "qcom/vpu/vpu40_p2.mbn",
+> +	.pas_id = IRIS_PAS_ID,
+> +	.inst_caps = &platform_inst_cap_sm8550,
+> +	.inst_fw_caps_dec = inst_fw_cap_sm8550_dec,
+> +	.inst_fw_caps_dec_size = ARRAY_SIZE(inst_fw_cap_sm8550_dec),
+> +	.inst_fw_caps_enc = inst_fw_cap_sm8550_enc,
+> +	.inst_fw_caps_enc_size = ARRAY_SIZE(inst_fw_cap_sm8550_enc),
+> +	.tz_cp_config_data = tz_cp_config_kaanapali,
+> +	.tz_cp_config_data_size = ARRAY_SIZE(tz_cp_config_kaanapali),
+> +	.core_arch = VIDEO_ARCH_LX,
+> +	.hw_response_timeout = HW_RESPONSE_TIMEOUT_VALUE,
+> +	.ubwc_config = &ubwc_config_sm8550,
+> +	.num_vpp_pipe = 2,
+> +	.max_session_count = 16,
+> +	.max_core_mbpf = NUM_MBS_8K * 2,
+> +	.max_core_mbps = ((8192 * 4352) / 256) * 60,
+> +	.dec_input_config_params_default =
+> +		sm8550_vdec_input_config_params_default,
+> +	.dec_input_config_params_default_size =
+> +		ARRAY_SIZE(sm8550_vdec_input_config_params_default),
+> +	.dec_input_config_params_hevc =
+> +		sm8550_vdec_input_config_param_hevc,
+> +	.dec_input_config_params_hevc_size =
+> +		ARRAY_SIZE(sm8550_vdec_input_config_param_hevc),
+> +	.dec_input_config_params_vp9 =
+> +		sm8550_vdec_input_config_param_vp9,
+> +	.dec_input_config_params_vp9_size =
+> +		ARRAY_SIZE(sm8550_vdec_input_config_param_vp9),
+> +	.dec_output_config_params =
+> +		sm8550_vdec_output_config_params,
+> +	.dec_output_config_params_size =
+> +		ARRAY_SIZE(sm8550_vdec_output_config_params),
+> +
+> +	.enc_input_config_params =
+> +		sm8550_venc_input_config_params,
+> +	.enc_input_config_params_size =
+> +		ARRAY_SIZE(sm8550_venc_input_config_params),
+> +	.enc_output_config_params =
+> +		sm8550_venc_output_config_params,
+> +	.enc_output_config_params_size =
+> +		ARRAY_SIZE(sm8550_venc_output_config_params),
+> +
+> +	.dec_input_prop = sm8550_vdec_subscribe_input_properties,
+> +	.dec_input_prop_size = ARRAY_SIZE(sm8550_vdec_subscribe_input_properties),
+> +	.dec_output_prop_avc = sm8550_vdec_subscribe_output_properties_avc,
+> +	.dec_output_prop_avc_size =
+> +		ARRAY_SIZE(sm8550_vdec_subscribe_output_properties_avc),
+> +	.dec_output_prop_hevc = sm8550_vdec_subscribe_output_properties_hevc,
+> +	.dec_output_prop_hevc_size =
+> +		ARRAY_SIZE(sm8550_vdec_subscribe_output_properties_hevc),
+> +	.dec_output_prop_vp9 = sm8550_vdec_subscribe_output_properties_vp9,
+> +	.dec_output_prop_vp9_size =
+> +		ARRAY_SIZE(sm8550_vdec_subscribe_output_properties_vp9),
+> +
+> +	.dec_ip_int_buf_tbl = sm8550_dec_ip_int_buf_tbl,
+> +	.dec_ip_int_buf_tbl_size = ARRAY_SIZE(sm8550_dec_ip_int_buf_tbl),
+> +	.dec_op_int_buf_tbl = sm8550_dec_op_int_buf_tbl,
+> +	.dec_op_int_buf_tbl_size = ARRAY_SIZE(sm8550_dec_op_int_buf_tbl),
+> +
+> +	.enc_op_int_buf_tbl = sm8550_enc_op_int_buf_tbl,
+> +	.enc_op_int_buf_tbl_size = ARRAY_SIZE(sm8550_enc_op_int_buf_tbl),
+> +};
+> diff --git a/drivers/media/platform/qcom/iris/iris_platform_kaanapali.h b/drivers/media/platform/qcom/iris/iris_platform_kaanapali.h
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..247fb9d7cb632d2e9a1e9832d087cb03ac9b7cf3
+> --- /dev/null
+> +++ b/drivers/media/platform/qcom/iris/iris_platform_kaanapali.h
+> @@ -0,0 +1,63 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
+> + */
+> +
+> +#ifndef __IRIS_PLATFORM_KAANAPALI_H__
+> +#define __IRIS_PLATFORM_KAANAPALI_H__
+> +
+> +#define VIDEO_REGION_VM0_SECURE_NP_ID		1
+> +#define VIDEO_REGION_VM0_NONSECURE_NP_ID	5
+> +
+> +static const char *const kaanapali_clk_reset_table[] = {
+> +	"bus0",
+> +	"bus1",
+> +	"core_freerun_reset",
+> +	"vcodec0_core_freerun_reset",
+> +};
+> +
+> +static const char *const kaanapali_pmdomain_table[] = {
+> +	"venus",
+> +	"vcodec0",
+> +	"vpp0",
+> +	"vpp1",
+> +	"apv",
+> +};
+> +
+> +static const struct platform_clk_data kaanapali_clk_table[] = {
+> +	{ IRIS_AXI_CLK, "iface" },
+> +	{ IRIS_CTRL_CLK, "core" },
+> +	{ IRIS_HW_CLK, "vcodec0_core" },
+> +	{ IRIS_AXI1_CLK, "iface1" },
+> +	{ IRIS_CTRL_FREERUN_CLK, "core_freerun" },
+> +	{ IRIS_HW_FREERUN_CLK, "vcodec0_core_freerun" },
+> +	{ IRIS_BSE_HW_CLK, "vcodec_bse" },
+> +	{ IRIS_VPP0_HW_CLK, "vcodec_vpp0" },
+> +	{ IRIS_VPP1_HW_CLK, "vcodec_vpp1" },
+> +	{ IRIS_APV_HW_CLK, "vcodec_apv" },
+> +};
+> +
+> +static const char *const kaanapali_opp_clk_table[] = {
+> +	"vcodec0_core",
+> +	"vcodec_apv",
+> +	"vcodec_bse",
+> +	"core",
+> +	NULL,
+> +};
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Yeounsu Moon <yyyynoom@gmail.com>
-Tested-on: D-Link DGE-550T Rev-A3
+Why are mxc and mmcx absett from this table ?
+
 ---
- drivers/net/ethernet/dlink/dl2k.c | 49 ++++++++++++++++++++++++-------
- 1 file changed, 38 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/net/ethernet/dlink/dl2k.c b/drivers/net/ethernet/dlink/dl2k.c
-index 1996d2e4e3e2..a821c9921745 100644
---- a/drivers/net/ethernet/dlink/dl2k.c
-+++ b/drivers/net/ethernet/dlink/dl2k.c
-@@ -508,6 +508,7 @@ static int alloc_list(struct net_device *dev)
- 	for (i = 0; i < RX_RING_SIZE; i++) {
- 		/* Allocated fixed size of skbuff */
- 		struct sk_buff *skb;
-+		dma_addr_t addr;
- 
- 		skb = netdev_alloc_skb_ip_align(dev, np->rx_buf_sz);
- 		np->rx_skbuff[i] = skb;
-@@ -516,13 +517,19 @@ static int alloc_list(struct net_device *dev)
- 			return -ENOMEM;
- 		}
- 
-+		addr = dma_map_single(&np->pdev->dev, skb->data,
-+				      np->rx_buf_sz, DMA_FROM_DEVICE);
-+		if (dma_mapping_error(&np->pdev->dev, addr)) {
-+			dev_kfree_skb(skb);
-+			np->rx_skbuff[i] = NULL;
-+			free_list(dev);
-+			return -ENOMEM;
-+		}
- 		np->rx_ring[i].next_desc = cpu_to_le64(np->rx_ring_dma +
- 						((i + 1) % RX_RING_SIZE) *
- 						sizeof(struct netdev_desc));
- 		/* Rubicon now supports 40 bits of addressing space. */
--		np->rx_ring[i].fraginfo =
--		    cpu_to_le64(dma_map_single(&np->pdev->dev, skb->data,
--					       np->rx_buf_sz, DMA_FROM_DEVICE));
-+		np->rx_ring[i].fraginfo = cpu_to_le64(addr);
- 		np->rx_ring[i].fraginfo |= cpu_to_le64((u64)np->rx_buf_sz << 48);
- 	}
- 
-@@ -674,6 +681,7 @@ rio_timer (struct timer_list *t)
- 		/* Re-allocate skbuffs to fill the descriptor ring */
- 		for (; np->cur_rx - np->old_rx > 0; np->old_rx++) {
- 			struct sk_buff *skb;
-+			dma_addr_t addr;
- 			entry = np->old_rx % RX_RING_SIZE;
- 			/* Dropped packets don't need to re-allocate */
- 			if (np->rx_skbuff[entry] == NULL) {
-@@ -686,10 +694,16 @@ rio_timer (struct timer_list *t)
- 						dev->name, entry);
- 					break;
- 				}
-+				addr = dma_map_single(&np->pdev->dev, skb->data,
-+						      np->rx_buf_sz,
-+						      DMA_FROM_DEVICE);
-+				if (dma_mapping_error(&np->pdev->dev, addr)) {
-+					dev_kfree_skb_irq(skb);
-+					np->rx_ring[entry].fraginfo = 0;
-+					break;
-+				}
- 				np->rx_skbuff[entry] = skb;
--				np->rx_ring[entry].fraginfo =
--				    cpu_to_le64 (dma_map_single(&np->pdev->dev, skb->data,
--								np->rx_buf_sz, DMA_FROM_DEVICE));
-+				np->rx_ring[entry].fraginfo = cpu_to_le64(addr);
- 			}
- 			np->rx_ring[entry].fraginfo |=
- 			    cpu_to_le64((u64)np->rx_buf_sz << 48);
-@@ -720,6 +734,7 @@ start_xmit (struct sk_buff *skb, struct net_device *dev)
- 	struct netdev_private *np = netdev_priv(dev);
- 	void __iomem *ioaddr = np->ioaddr;
- 	struct netdev_desc *txdesc;
-+	dma_addr_t addr;
- 	unsigned entry;
- 	u64 tfc_vlan_tag = 0;
- 
-@@ -743,8 +758,14 @@ start_xmit (struct sk_buff *skb, struct net_device *dev)
- 		    ((u64)np->vlan << 32) |
- 		    ((u64)skb->priority << 45);
- 	}
--	txdesc->fraginfo = cpu_to_le64 (dma_map_single(&np->pdev->dev, skb->data,
--						       skb->len, DMA_TO_DEVICE));
-+	addr = dma_map_single(&np->pdev->dev, skb->data, skb->len,
-+			      DMA_TO_DEVICE);
-+	if (dma_mapping_error(&np->pdev->dev, addr)) {
-+		dev_kfree_skb_any(skb);
-+		np->tx_skbuff[entry] = NULL;
-+		return NETDEV_TX_OK;
-+	}
-+	txdesc->fraginfo = cpu_to_le64(addr);
- 	txdesc->fraginfo |= cpu_to_le64((u64)skb->len << 48);
- 
- 	/* DL2K bug: DMA fails to get next descriptor ptr in 10Mbps mode
-@@ -1007,6 +1028,7 @@ receive_packet (struct net_device *dev)
- 	entry = np->old_rx;
- 	while (entry != np->cur_rx) {
- 		struct sk_buff *skb;
-+		dma_addr_t addr;
- 		/* Dropped packets don't need to re-allocate */
- 		if (np->rx_skbuff[entry] == NULL) {
- 			skb = netdev_alloc_skb_ip_align(dev, np->rx_buf_sz);
-@@ -1018,10 +1040,15 @@ receive_packet (struct net_device *dev)
- 					dev->name, entry);
- 				break;
- 			}
-+			addr = dma_map_single(&np->pdev->dev, skb->data,
-+					      np->rx_buf_sz, DMA_FROM_DEVICE);
-+			if (dma_mapping_error(&np->pdev->dev, addr)) {
-+				dev_kfree_skb_irq(skb);
-+				np->rx_ring[entry].fraginfo = 0;
-+				break;
-+			}
- 			np->rx_skbuff[entry] = skb;
--			np->rx_ring[entry].fraginfo =
--			    cpu_to_le64(dma_map_single(&np->pdev->dev, skb->data,
--						       np->rx_buf_sz, DMA_FROM_DEVICE));
-+			np->rx_ring[entry].fraginfo = cpu_to_le64(addr);
- 		}
- 		np->rx_ring[entry].fraginfo |=
- 		    cpu_to_le64((u64)np->rx_buf_sz << 48);
--- 
-2.51.0
-
+bod
 
