@@ -1,149 +1,166 @@
-Return-Path: <linux-kernel+bounces-840362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A73B2BB4340
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 16:43:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6187BB4349
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 16:44:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A3633276B7
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 14:43:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 527833C824C
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 14:44:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64C0E31280D;
-	Thu,  2 Oct 2025 14:43:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68A36312805;
+	Thu,  2 Oct 2025 14:44:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="osZbTsPX"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="MHVEbBlX"
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E000311C27;
-	Thu,  2 Oct 2025 14:43:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FA272C027F
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 14:44:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759416214; cv=none; b=UV61iMa8RBJcJllsGSrzsH4EersnMtu+o3VG2sXCXGzLAI4F66TIASrTF64f+sswHzZt/EXEgqTERJq4MruZGSj6VsIT2c7KD0yGRl9IvsmJcOVEFUV5DrsJNwoX1pPY3FNLmcAsmrX8FO/L/nPqXB6vSi885zfO/NLTs7NQEvQ=
+	t=1759416265; cv=none; b=ZuPYIaHyYN2bXqpYjTNGgk21t8hrLcHPgFt1SKgwhEEpAr4YvDWb00FomK0LCkDOoPTIlOoJSmvwvEM2BiYUk6EKC/txPlhD0nUgxaRht1iIVWg0KVj/e1hQJXiIg7wBbc20LVYSPeYCunZ5Cb0xln1BtiLzoWLRpK5fCMGPtXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759416214; c=relaxed/simple;
-	bh=TX6lxiqzVoYryBClnaB22OLqwc2CirkAL+RoFAqjnuo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tUL62L2wXtULx6wYakbASBGj7dym2fOm8GCMbUwHHqdFLggSkqWntZdkzkIYsd51F0/4asrsoURvF7rrR6tY3V7v856ATasFL6UqhKKIRv0PBIglMgpVo5uh2cxO4cWCOxLntmPeQo10M7xl0/hvhYQBCPdI31W7qaCYaqZLlsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=osZbTsPX; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 592DsFXZ014093;
-	Thu, 2 Oct 2025 14:43:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=+KKO2R
-	Q9X5b3SH2MnkmdS3AE03dbnGo39IZG+WyDtNY=; b=osZbTsPXs7eQxy1JWMEwfO
-	lkSxNxx9jnWpYP/+9ujVGMQYc3ZiwX0kGfYXJBe5x8Hwp2YkJBfsX5sCe6cVZYWV
-	S3jqcqX/wBSdmmDjV/mE9XmrDIlQLxjMfDd7JeJwkRKxBy+DAU3jOegYd20Posi7
-	gTJJI37IaKy3pwUcuxzvxJdhWGCSfyRlq8te9QMEW2P4yU5x0XdDmsE4MhUdvPfq
-	H+HEAeiC5IQCl4oLcJVVu6kd+Qu2XiXe3OpArdZCAqSS+ntFgjRQ8lLRjgTWJMf4
-	jj0fP7g536I7MukNI0BoLd7VBYZDxUo0cfFH/xrz3+wIXomK2lBQTi3go9MqUE+w
-	==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49e7jwvs1m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 02 Oct 2025 14:43:31 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 592DmBdk026752;
-	Thu, 2 Oct 2025 14:43:30 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49eu8n6d1v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 02 Oct 2025 14:43:30 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 592EhQ0H50921864
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 2 Oct 2025 14:43:26 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 59A2B20040;
-	Thu,  2 Oct 2025 14:43:26 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1808320043;
-	Thu,  2 Oct 2025 14:43:26 +0000 (GMT)
-Received: from osiris (unknown [9.155.211.25])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu,  2 Oct 2025 14:43:26 +0000 (GMT)
-Date: Thu, 2 Oct 2025 16:43:23 +0200
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Heiko Carstens <hca@linux.ibm.com>
-Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-        Ilya Leoshkevich <iii@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] s390 fixes for 6.17-rc3
-Message-ID: <20251002144323.69394Cc7-hca@linux.ibm.com>
-References: <20250822123608.142112A72-agordeev@linux.ibm.com>
- <ab3131a2-c42a-47ff-bf03-e9f68ac053c0@t-8ch.de>
- <20251002110526.7570C1c-hca@linux.ibm.com>
+	s=arc-20240116; t=1759416265; c=relaxed/simple;
+	bh=aFsyykfKdVfUZ6OYSkvanTpq9T0/ktCIc35j5HZJV2A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ez0CZ7A3ut+u9DymptjuQuM/TxWrjnLZFpTTalrSxE4CRQDYfr3BTgJCEEBktF5wq9kKkKDUyijdQzV3KTwqIXDqDmr/h+OX9JCQJEQowAHjRG16jz2IcK33SXFlcbI/dINgnkZyBx2xRGtSZTZ16HgiGXMOINlnvhpT18rNaNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=MHVEbBlX; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-86420079b01so106542085a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 07:44:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google; t=1759416263; x=1760021063; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cUdgvpTLhvmJ1bP4tagSyz2Yjbg3ABuiWON3GAUGKAI=;
+        b=MHVEbBlXiahSFWEnhIECC1bs5YDd/kgc7lq6R0rFLYStfzpexwiECLre5iJhKyMnH/
+         yASORhLsM+AadC6xiqGehtWbmrzKqTFaRfE0yWGroDhMQiWRwjfsvo/XNYaFYB3ekRFf
+         QpJEv0BO6ZGyr/Dvuq/JMFw5rPkuDYByM2djSqrbMRiQvC1hE9km8tJOcdMfx8TteKWq
+         P/2FJD2bB/hDc7l3WRohRdpGSS3yUMriEvYwg6/gL2O41or3cmUderZA+c8aPsIkq9fW
+         6EmqrOayLSgswF6JxZb3Iboh4a8hzeDU0CJTE62Sj3017Rh9HRbGSbw6FJrMn/ee3SD1
+         ZzOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759416263; x=1760021063;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cUdgvpTLhvmJ1bP4tagSyz2Yjbg3ABuiWON3GAUGKAI=;
+        b=WF9aftPJyd0qK/XoscIgq3WvRs4fOdDSQlPKrSqOshE4RPvhSR6jNFh72GhUZBcnA4
+         hTgaGgwBpwSJZ1RG0nycbWjIoQmN2vNaDP8xjPGZfLBvodAuQHCa+uop8MnBNR38nb4O
+         mA3t37LrOFfrQDsx5Lrk6upwrBW+lPtLb38cIP30WWshxZQ+U4Ha1AM29hlCl7/SpeQP
+         BTH46cB+kwbHuyC2dn+ncgkyXUO9b5vyEpCWU9o7qwWPqMRZamDE0jOplnXdXqR8vEnT
+         POftwJ3w9KgmLPUtKdseympX60A8SNDLzMW6mHZxHPtpvRgZruEGF5yrRuxZUv7r/95R
+         RKeA==
+X-Forwarded-Encrypted: i=1; AJvYcCUIR3nc3sThEaWzGmS+31g7XMRkIChzPR5Kdx3ghQ3SduhlNqLgQi0x6VQcImF8r95HISJuEiR3y9Rs31w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJijyBpx6klHcax2EImkEtd7E2jnTuaRnBVW2nqdbr1VDHZlb9
+	5FVgmo5fgtY96CdpBI6ST5gjnc9kzg0WKUaeM/DGScqQex2AMA51WuobyTgPFL9wibXp2Vn8K4w
+	Dd0BG7PKJcOgq5PGrpnMiduqsJgVo4tpx5jsTfMB2JQ==
+X-Gm-Gg: ASbGnctI9mOxKdNVcE127h41PKeVz7mV0jiQw/oZZxoawGfGpG6eYYGL3n7gb0FTO5i
+	9HGTF538CB9+Hs4kxR/94BlMj7QeXWQdhcydlmmcSVsfyjy3aA0QW7t4Ku7edEYrzdyP0MufjAJ
+	SL7vWxc37XreFuwJRCa4QFu5iwZ4MSviVV95pKQvqfvflJ3IP26x617z5Wgr+hhDdMCEIlHn2po
+	WEip9CJwvX9HhTmUAjppnl4K2iVNabCYDGypIY=
+X-Google-Smtp-Source: AGHT+IGVMGKUNvEytPBUBiSRA0mE9OlqXs6dKRKkwtnlotBZX7A4sJ1yzYAuoM2EkNHdvMa26nVXJxT3V5vw3So//6c=
+X-Received: by 2002:a05:620a:1a96:b0:851:cb50:c5d0 with SMTP id
+ af79cd13be357-8737021afc9mr974017485a.12.1759416262594; Thu, 02 Oct 2025
+ 07:44:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251002110526.7570C1c-hca@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAyNSBTYWx0ZWRfX3PLBDIly4mg2
- keZ/JzaOp030ZfDMyD0V5ETCfdvJRiH+cyeuZhzAd5+hNDaSVGSdnGvUHslOne3/IEFDqFgcA73
- isv3OS5si5Vu/WgbBuMj7tKSAriSxul13b5ZC5JnrTQVo7IeEl22/vnCRdVg8XydHqQO7Byx71T
- CuIV2KB8CPPWEevVOlgQ40Evy6mV/Gz3Gw1700x9H2Y6JfuSbXOwg+fpzg5wQc4K6/s3W9TQHe7
- wHer5fRfEIfaZe1IhC6fWyiNOutsq+5vTRgez52enJzV/scfBbWoH7/M7/9sbH8KDOJI6x7Mc0v
- v5sUNNLqfLMDNHbAOWNNALs/x6E9skoBsUexANGmLCLnwQ2ZSh0B2vs/OjhezGmaz3vpxyWLDru
- rLmUECMyVbCZQ/wr/CktgZDFh8OF+w==
-X-Proofpoint-ORIG-GUID: Z10YevIFXZbHNXMwDpwNkJWHHJnUj2u5
-X-Proofpoint-GUID: Z10YevIFXZbHNXMwDpwNkJWHHJnUj2u5
-X-Authority-Analysis: v=2.4 cv=GdUaXAXL c=1 sm=1 tr=0 ts=68de8f93 cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=8nJEP1OIZ-IA:10 a=x6icFKpwvdMA:10 a=MIeSm9THH0csdDuaAvAA:9
- a=3ZKOabzyN94A:10 a=wPNLvfGTeEIA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-02_05,2025-10-02_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 clxscore=1015 phishscore=0 adultscore=0 priorityscore=1501
- malwarescore=0 spamscore=0 bulkscore=0 impostorscore=0 lowpriorityscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270025
+References: <20250928190624.3735830-1-skhawaja@google.com> <20250928190624.3735830-14-skhawaja@google.com>
+ <20250929160034.GG2695987@ziepe.ca> <CA+CK2bDqDz3k0gXamJEbKUL7RPBLVjaA5=Jum=CF84wR+50izA@mail.gmail.com>
+ <20250930135916.GN2695987@ziepe.ca> <CAAywjhRGrGjZK3jQptieVWmdzvjfNtTYrp2ChTZJSmFyrBaRqw@mail.gmail.com>
+ <20250930210504.GU2695987@ziepe.ca> <CAAywjhRQONuHsxTGQZ5R=EJbOHUD+xOF_CYjkNRbUyCQkORwig@mail.gmail.com>
+ <20251001114742.GV2695987@ziepe.ca> <CA+CK2bAvnTTz+vPg7v38_1dajRZQHyPQ8iDmziiW8GFUqy6=Ag@mail.gmail.com>
+ <20251002115712.GA3195829@ziepe.ca>
+In-Reply-To: <20251002115712.GA3195829@ziepe.ca>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Thu, 2 Oct 2025 10:43:45 -0400
+X-Gm-Features: AS18NWDqwdwuRxoZh_uXq08M5BHLz0U3xt0O7Y5fWskUwNH0ZUclyFnSzqq54qE
+Message-ID: <CA+CK2bAudSHq2t5NZPBKDC2wfzsF6SSxTF7aZ2kxueOTzWYcfg@mail.gmail.com>
+Subject: Re: [RFC PATCH 13/15] iommufd: Persist iommu domains for live update
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Samiullah Khawaja <skhawaja@google.com>, David Woodhouse <dwmw2@infradead.org>, 
+	Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>, 
+	Will Deacon <will@kernel.org>, iommu@lists.linux.dev, YiFei Zhu <zhuyifei@google.com>, 
+	Robin Murphy <robin.murphy@arm.com>, Pratyush Yadav <pratyush@kernel.org>, 
+	Kevin Tian <kevin.tian@intel.com>, linux-kernel@vger.kernel.org, 
+	Saeed Mahameed <saeedm@nvidia.com>, Adithya Jayachandran <ajayachandra@nvidia.com>, 
+	Parav Pandit <parav@nvidia.com>, Leon Romanovsky <leonro@nvidia.com>, William Tu <witu@nvidia.com>, 
+	Vipin Sharma <vipinsh@google.com>, dmatlack@google.com, Chris Li <chrisl@kernel.org>, 
+	praan@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 02, 2025 at 01:05:26PM +0200, Heiko Carstens wrote:
-> On Thu, Oct 02, 2025 at 12:44:41AM +0200, Thomas Weißschuh wrote:
-> > Hi Alexander, Vasily and Heiko,
-> > [    2.118473] Run /init as init process
-> > [    2.142148] User process fault: interruption code 0006 ilc:0
-> > [    2.142626] CPU: 0 UID: 0 PID: 1 Comm: init Not tainted 6.17.0-rc2-00002-gfcc43a7e294f #24 NONE
-> > [    2.142739] Hardware name: QEMU 8561 QEMU (KVM/Linux)
-> > [    2.142822] User PSW : 0705200080000000 00000000804087b2
-                                                       ^
-> > [    2.142911]            R:0 T:1 IO:1 EX:1 Key:0 M:1 W:0 P:1 AS:0 CC:2 PM:0 RI:0 EA:1
-> > [    2.142979] User GPRS: 0000000000000000 000000000040c060 ffffffffffffffff 0000000000000002
-> > [    2.143022]            0000000000000800 00000000000007ff 0000000000000000 0000000000000000
-> > [    2.143061]            0000000000000000 000003ff00000001 000000000040c000 000000007ff720ac
-> > [    2.143106]            000000007ff720a4 0000000000409540 00000000804087b2 000000007ff71ec0
-> > [    2.143406] User Code: Bad PSW.
-> > [    2.144705] Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000004
+On Thu, Oct 2, 2025 at 7:57=E2=80=AFAM Jason Gunthorpe <jgg@ziepe.ca> wrote=
+:
+>
+> On Wed, Oct 01, 2025 at 03:28:56PM -0400, Pasha Tatashin wrote:
+> > > > 3. On FINISH, the IOMMU core updates the context entries of preserv=
+ed
+> > > > devices to point to the new domain.
+> > >
+> > > No, finish should never do anything on the restore path, IMHO. User
+> > > should directly attach the newly created HWPT when it is ready.
+> >
+> > But, finish is our indicator that a particular session (VM) is out of
+> > blackout, and now we are free to do slow things, such as
+> > re-allocating/recreating page tables. Why start it before a VM is out
+> > of blackout?
+>
+> Things should be paired.. The suspend side is
+>
+>  start luo - "brown out" - kernel does basically nothing as the luo is em=
+pty
+>  add all sorts of things to sessions
+>  finish - kernel does last minute things
+>
+> While the resume is the symmetric opposite:
+>
+>  kexec boot - kernel restores the critical stuff it needs to boot to
+>                userspace
+>  userspace does all sorts of stuff and gets things out of the sessions
+>  finish - luo should be empty now as everything was taken out by
+>           userspace
 
-...
+I see, so you are proposing that finish() is basically a no-op for
+IOMMU as long as everything was properly reclaimed by userspace.
 
-> Hm, this looks like a qemu bug to me.
-> 
-> Ilya, could you have a look at this please?
-> 
-> The above report is a specification exception with an instruction length
-> code of zero, while the PSW points to a 31 bit user space address. As far
-> as I understand the architecture this is only possible for an early PSW
-> specification exception (aka invalid PSW); however the PSW looks good to
-> me.
+> I think when things come out of luo they should be fully operational
+> immediately.
 
-I was wrong, the above bit should be zero otherwise it is indeed an early
-PSW specification exception. I'll figure out where this comes from, but
-might take a few days due to public holiday.
+I agree. Once we are in "normal" mode, we should be done with all
+live-update specifics. In this state, the kernel must be fully
+operational without limitations or pending background work that could
+reduce VM performance. Also, any session was not reclaimed before
+finish(), it and all resources associated with it should be terminated
+during finish.
+
+> Finish on resume shouldn't indicate anything specific beyond the luo
+> should be empty and everything should have been restored. It isn't
+> like finish on pre-kexec.
+>
+> Userspace decides how it sequences things and what steps it takes
+> before ending blackout and resuming the VM.
+
+This is a fair statement: userspace knows when vCPUs are resumed and
+can decide when to do the HWPT swap. Following that logic, what if we
+provide a specific ioctl() to perform the swap? Userspace could then
+call that ioctl() prior to finish(), and during the finish() callback,
+we would only need to do a quick sanity check that everything is in
+order (i.e., resources were retrieved and the HWPTs were swapped).
+
+What do we do if the user reclaimed iommufd but did not swap HWPT or
+did not perform some other ioctl() before finish(), simply print a
+kernel warnings and let it be, or force swapping during finish before
+going into normal mode?
+
+Pasha
 
