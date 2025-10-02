@@ -1,151 +1,197 @@
-Return-Path: <linux-kernel+bounces-840191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 720F9BB3CBB
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 13:40:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DCD3BB3CC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 13:42:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38B0E7AF85F
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 11:38:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD91F7B1378
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 11:40:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AC8230FC26;
-	Thu,  2 Oct 2025 11:40:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2D2330FC26;
+	Thu,  2 Oct 2025 11:42:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cG/7F70V"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PCD3fmpj"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2DE13093BF
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 11:40:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8735B2797AF
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 11:42:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759405213; cv=none; b=WLjnu3MVK9thCU/77gA/mxMjzCEm7LOnp18le/18W89tb8AC9fZ/lCugqd7pmcphKdtPp+U8p7PtD3lwGdHm8KKhducbwx21Yb4RTeAjqB0/NN5gOqfWlPkwaG+vMflhpXNOovSr5AYl44e3CuEpYVMYsJ2kHQ3O49CGYV9aMrk=
+	t=1759405352; cv=none; b=GGL6IvxcdssA0tgYxc7Imqa0tqsbzFVgI6d2RngaduFIErvXOi8yMUMA59b5hH2EPjPpf69VFx5nGU0lmNCvRguqrZnsQVisb4uGlikUkF/LzXmWVx+Yh4CsbU3tB3sURJUz6nFzxxFYhPyQxLmy01MFPkcLA66b2o+IspfFWfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759405213; c=relaxed/simple;
-	bh=vWzodoQgqiLu0pXyZfRnw5dcWNrHKmXYDfqUz9i4RoU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fi9P2myNgUmcg6HZu4sFeakP7u07eIkdtLVykzuR5JrCl5NCGpn/nEUWcnNQJICGE8qYb2TKzltDdx/37BMhoN8xMqIlhhbT//S9NL4xcml9PTpJlbR92hvV3HkYNLmLqgOtQrpKUxlxCk9LfeBkjG9zNaWYX1C5c2Oge3WLoyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cG/7F70V; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759405212; x=1790941212;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=vWzodoQgqiLu0pXyZfRnw5dcWNrHKmXYDfqUz9i4RoU=;
-  b=cG/7F70VZCEvAA1lkFPdCxYIX4hHF/LpXHbyaAQ+yyiFlBWw+9qbeCzS
-   6MvnQ3/iVHs3pseRhl5EMCfGP6hvEuPMHjNSF+lrChp1iC5Zf1cxZpoFK
-   NpmqntC7I717CWCXzI6lqnqReVL66aQRlx+5xCVMVWgVhW/gLD29cy8Z5
-   9svG0OY91RbTStolgWfGkkSliOmWWV9TprBrKT/PHS8OTtgA8RDZP6Km0
-   58zQaUjyr1+Wvn6Zuo6DWLaX5N6morC0sKbwxH+qh0gaKthdUghYBS3Gu
-   CUJJU99YgyfbbY+Xt1vbBa3hDUBswlZ9DStk7MDOZIRbjerkLwrJkKGs2
-   A==;
-X-CSE-ConnectionGUID: /QHSXoD3QLe0SXK4tMiTfg==
-X-CSE-MsgGUID: 1etkicwFRPuWdqndMIaCnQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11569"; a="79337986"
-X-IronPort-AV: E=Sophos;i="6.18,309,1751266800"; 
-   d="scan'208";a="79337986"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2025 04:40:11 -0700
-X-CSE-ConnectionGUID: vyYSF09PRJaTpofzcJnjDg==
-X-CSE-MsgGUID: O9GCZXuXTjWwkrgSjbrZVg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,309,1751266800"; 
-   d="scan'208";a="183321130"
-Received: from fpallare-mobl4.ger.corp.intel.com (HELO localhost) ([10.245.245.228])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2025 04:40:08 -0700
-Date: Thu, 2 Oct 2025 14:40:05 +0300
-From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To: Chintan Patel <chintanlike@gmail.com>
-Cc: maarten.lankhorst@linux.intel.com, maxime.ripard@kernel.org,
-	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	syzbot+147ba789658184f0ce04@syzkaller.appspotmail.com
-Subject: Re: [PATCH v2] drm/vblank: downgrade vblank wait timeout from WARN
- to debug
-Message-ID: <aN5klZdl2MZdPSpU@intel.com>
-References: <20251002025723.9430-1-chintanlike@gmail.com>
+	s=arc-20240116; t=1759405352; c=relaxed/simple;
+	bh=NtUnw3Bb8cfSR6LaDxYQmeLo6xSsSvXSGXLWjxRdkzc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Qy8yZ+QqhcaDX5V79bI4utsEmuL0NuTh4evYb6HwA45lcTCz36OrVZpdJ/89ufMkTayNidiSy7LYuZyHbo+ZlJqGhAY16XhdKQ2hq96eMsCm6lBdnLBrdZyV4h4KDWi42sGqy/crATwT8DiToaQqeSC396Q+0XZuHdiF4byRANw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PCD3fmpj; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759405349;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=0Ej62FVOQq6zEj2u9bPFI8FOph7VYHFWyQUQShm6AY8=;
+	b=PCD3fmpjt7Mg7TwiiEb6jvCVcD+wNQV4GVaiPzvaD3C+iDDpYNhjYmQA/PB8fZTkxPTLZI
+	Kizf6OZgW+3EddnrBb9wXbqARHxGpoFnO7qQtOVEWwJxLRpbaix6ZdWWG+tlsVrIVt6UFG
+	qQUnZ0KG7EqFiU7luG4DaUgDNnioDNA=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-323-XZwJex4bOV6Daw223vaVFg-1; Thu, 02 Oct 2025 07:42:28 -0400
+X-MC-Unique: XZwJex4bOV6Daw223vaVFg-1
+X-Mimecast-MFC-AGG-ID: XZwJex4bOV6Daw223vaVFg_1759405347
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3f7b5c27d41so748140f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 04:42:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759405347; x=1760010147;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0Ej62FVOQq6zEj2u9bPFI8FOph7VYHFWyQUQShm6AY8=;
+        b=XPV2fr2SKfr02pCIZNxpYuHsjXZQYnvWEdKgHfrVeVslhfkTTeS827K6H95AhCYHuH
+         wta7wonKTLDd8T1i7Xhbgfwvqwi9qZ6LE8V/Q7dEoTopLPJYveN/ZAjS8eWtzzC5d6Qi
+         LH1zTlQZrCxZqHhiHsdcyYB4AwCzjQ6g+YtZk4HVqh4WtQtJVx8nfoV5Q/mjE0h5GmVC
+         vcyxgQurEg5XftoRVf1xeXgu+aB80RgCGBgEc4VAox0P8RRP0H8Qy7dfcYcoCLhaRJtk
+         D1+UmzYg9stbwrruyp1ccKptJdPaHoBkUQ10hlqdthTr/rDCUvGCLOp6dDkN3gRJueCK
+         AgCw==
+X-Forwarded-Encrypted: i=1; AJvYcCXpESP/+2hFdHuoNNN/VjnWEtrQ5gmItDhBsx4y402BtZEAdx6nvD+PytZLs7Q9PaoOfeUxoq0ZbrmMJSA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yza34XBrzS2akUIzZ5/Wz6beUW3Ry6NsFu6Abc3VxyWHi7S6Nsu
+	B8sdITLmWpqA+NROLTVCEquwwzSbRLCJ1snslPylWe7oRetX11dB+LOwt44rye/khZ0zouFw+bK
+	j2VjfIZpMctR2dgxYtif7MLF8wvAJE1aeh/wLW+a3J4n1w7ClrM3mHg906eWoHUGQNg==
+X-Gm-Gg: ASbGncuIvJyZLLXl7j1tYRsqKsbjU0YzQ++oXQmiOcEtr6VGk6GEeondptlKZeIhurG
+	Sv+M1++XCU02j6iy5QO5I+3UHCrB6FZEZuUN7rpzUugc0nF87JTRKDmdRFB3P5tahLPap8oMMPF
+	PLMgHgEWwJWG4NaXW+POQHk2Nt0ExMatHC9NvK/9q7ApcOUp4jwfd/rf4Ns046BLZRKcvT11AkJ
+	GYd2bMMDuL15RwA61ORdN12ZFBfgmSmdeDMCD1bby1nez2P9ZraMUB4SWkvr4QgzD65Q+j5HxKv
+	0gmU241LDJJph+MxtAy8bkXx06hUkZRt+1S2dQmSZUfXDG6P0mI0ftxJbUafvBZK6kXbQfQ=
+X-Received: by 2002:a05:6000:1887:b0:3d3:b30:4cf2 with SMTP id ffacd0b85a97d-4255d2b3268mr1947648f8f.19.1759405347096;
+        Thu, 02 Oct 2025 04:42:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEQBsRd3QbWjCawGUT/34IGA9DqiAFCCG8hAG/sJP5Zufv3lc6VVpYan82fkDtRhahnnjowCw==
+X-Received: by 2002:a05:6000:1887:b0:3d3:b30:4cf2 with SMTP id ffacd0b85a97d-4255d2b3268mr1947631f8f.19.1759405346651;
+        Thu, 02 Oct 2025 04:42:26 -0700 (PDT)
+Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.30])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8f45e9sm3335434f8f.51.2025.10.02.04.42.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Oct 2025 04:42:26 -0700 (PDT)
+Message-ID: <77c1e6213e1c250ad8bf57849d8c90dfd2f105d1.camel@redhat.com>
+Subject: Re: [PATCH 1/2] rv: Fully convert enabled_monitors to use list_head
+ as iterator
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: Nam Cao <namcao@linutronix.de>, Steven Rostedt <rostedt@goodmis.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+	 <mathieu.desnoyers@efficios.com>, linux-trace-kernel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>, 
+	stable@vger.kernel.org
+Date: Thu, 02 Oct 2025 13:42:24 +0200
+In-Reply-To: <20251002082235.973099-1-namcao@linutronix.de>
+References: <20251002082235.973099-1-namcao@linutronix.de>
+Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
+ keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
+ 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0BrZXJuZWwub3JnPoiZBBMWCgBBFiEEysoR+AuB3R
+ Zwp6j270psSVh4TfIFAmjKX2MCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
+ Q70psSVh4TfIQuAD+JulczTN6l7oJjyroySU55Fbjdvo52xiYYlMjPG7dCTsBAMFI7dSL5zg98I+8
+ cXY1J7kyNsY6/dcipqBM4RMaxXsOtCRHYWJyaWVsZSBNb25hY28gPGdtb25hY29AcmVkaGF0LmNvb
+ T6InAQTFgoARAIbAwUJBaOagAULCQgHAgIiAgYVCgkICwIEFgIDAQIeBwIXgBYhBMrKEfgLgd0WcK
+ eo9u9KbElYeE3yBQJoymCyAhkBAAoJEO9KbElYeE3yjX4BAJ/ETNnlHn8OjZPT77xGmal9kbT1bC1
+ 7DfrYVISWV2Y1AP9HdAMhWNAvtCtN2S1beYjNybuK6IzWYcFfeOV+OBWRDQ==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251002025723.9430-1-chintanlike@gmail.com>
-X-Patchwork-Hint: comment
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Wed, Oct 01, 2025 at 07:57:23PM -0700, Chintan Patel wrote:
-> When wait_event_timeout() in drm_wait_one_vblank() times out, the
-> current WARN can cause unnecessary kernel panics in environments
-> with panic_on_warn set (e.g. CI, fuzzing). These timeouts can happen
-> under scheduler pressure or from invalid userspace calls, so they are
-> not always a kernel bug.
 
-"invalid userspace calls" should never reach this far.
-That would be a kernel bug.
 
-> 
-> Replace the WARN with drm_dbg_kms() messages that provide useful
-> context (last and current vblank counters) without crashing the
-> system. Developers can still enable drm.debug to diagnose genuine
-> problems.
-> 
-> Reported-by: syzbot+147ba789658184f0ce04@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=147ba789658184f0ce04
-> Tested-by: syzbot+147ba789658184f0ce04@syzkaller.appspotmail.com
-> 
-> Signed-off-by: Chintan Patel <chintanlike@gmail.com>
-> 
-> v2:
->  - Drop unnecessary in-code comment (suggested by Thomas Zimmermann)
->  - Remove else branch, only log timeout case
+On Thu, 2025-10-02 at 08:22 +0000, Nam Cao wrote:
+> The callbacks in enabled_monitors_seq_ops are inconsistent. Some treat th=
+e
+> iterator as struct rv_monitor *, while others treat the iterator as struc=
+t
+> list_head *.
+>=20
+> This causes a wrong type cast and crashes the system as reported by Natha=
+n.
+>=20
+> Convert everything to use struct list_head * as iterator. This also makes
+> enabled_monitors consistent with available_monitors.
+>=20
+
+Looks good to me and passes my tests.
+
+Reviewed-by: Gabriele Monaco <gmonaco@redhat.com>
+
+Thanks,
+Gabriele
+
+> Fixes: de090d1ccae1 ("rv: Fix wrong type cast in enabled_monitors_next()"=
+)
+> Reported-by: Nathan Chancellor <nathan@kernel.org>
+> Closes:
+> https://lore.kernel.org/linux-trace-kernel/20250923002004.GA2836051@ax162=
+/
+> Signed-off-by: Nam Cao <namcao@linutronix.de>
+> Cc: <stable@vger.kernel.org>
 > ---
->  drivers/gpu/drm/drm_vblank.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_vblank.c b/drivers/gpu/drm/drm_vblank.c
-> index 46f59883183d..a94570668cba 100644
-> --- a/drivers/gpu/drm/drm_vblank.c
-> +++ b/drivers/gpu/drm/drm_vblank.c
-> @@ -1289,7 +1289,7 @@ void drm_wait_one_vblank(struct drm_device *dev, unsigned int pipe)
->  {
->  	struct drm_vblank_crtc *vblank = drm_vblank_crtc(dev, pipe);
->  	int ret;
-> -	u64 last;
-> +	u64 last, curr;
->  
->  	if (drm_WARN_ON(dev, pipe >= dev->num_crtcs))
->  		return;
-> @@ -1305,7 +1305,12 @@ void drm_wait_one_vblank(struct drm_device *dev, unsigned int pipe)
->  				 last != drm_vblank_count(dev, pipe),
->  				 msecs_to_jiffies(100));
->  
-> -	drm_WARN(dev, ret == 0, "vblank wait timed out on crtc %i\n", pipe);
-> +	curr = drm_vblank_count(dev, pipe);
-> +
-> +	if (ret == 0) {
-> +		drm_dbg_kms(dev, "WAIT_VBLANK: timeout crtc=%d, last=%llu, curr=%llu\n",
-> +			pipe, last, curr);
+> =C2=A0kernel/trace/rv/rv.c | 12 ++++++------
+> =C2=A01 file changed, 6 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/kernel/trace/rv/rv.c b/kernel/trace/rv/rv.c
+> index 48338520376f..43e9ea473cda 100644
+> --- a/kernel/trace/rv/rv.c
+> +++ b/kernel/trace/rv/rv.c
+> @@ -501,7 +501,7 @@ static void *enabled_monitors_next(struct seq_file *m=
+,
+> void *p, loff_t *pos)
+> =C2=A0
+> =C2=A0	list_for_each_entry_continue(mon, &rv_monitors_list, list) {
+> =C2=A0		if (mon->enabled)
+> -			return mon;
+> +			return &mon->list;
+> =C2=A0	}
+> =C2=A0
+> =C2=A0	return NULL;
+> @@ -509,7 +509,7 @@ static void *enabled_monitors_next(struct seq_file *m=
+,
+> void *p, loff_t *pos)
+> =C2=A0
+> =C2=A0static void *enabled_monitors_start(struct seq_file *m, loff_t *pos=
+)
+> =C2=A0{
+> -	struct rv_monitor *mon;
+> +	struct list_head *head;
+> =C2=A0	loff_t l;
+> =C2=A0
+> =C2=A0	mutex_lock(&rv_interface_lock);
+> @@ -517,15 +517,15 @@ static void *enabled_monitors_start(struct seq_file=
+ *m,
+> loff_t *pos)
+> =C2=A0	if (list_empty(&rv_monitors_list))
+> =C2=A0		return NULL;
+> =C2=A0
+> -	mon =3D list_entry(&rv_monitors_list, struct rv_monitor, list);
+> +	head =3D &rv_monitors_list;
+> =C2=A0
+> =C2=A0	for (l =3D 0; l <=3D *pos; ) {
+> -		mon =3D enabled_monitors_next(m, mon, &l);
+> -		if (!mon)
+> +		head =3D enabled_monitors_next(m, head, &l);
+> +		if (!head)
+> =C2=A0			break;
+> =C2=A0	}
+> =C2=A0
+> -	return mon;
+> +	return head;
+> =C2=A0}
+> =C2=A0
+> =C2=A0/*
 
-It should at the very least be a drm_err(). Though the backtrace can
-be useful in figuring out where the problem is coming from, so not
-too happy about this change.
-
-> +	}
->  
->  	drm_vblank_put(dev, pipe);
->  }
-> -- 
-> 2.43.0
-
--- 
-Ville Syrjälä
-Intel
 
