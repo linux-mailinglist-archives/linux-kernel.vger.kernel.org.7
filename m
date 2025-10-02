@@ -1,111 +1,182 @@
-Return-Path: <linux-kernel+bounces-840017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52CD5BB3578
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 10:52:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F585BB3572
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 10:52:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 184E4546216
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 08:48:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEA8B188C200
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 08:49:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 155762FC879;
-	Thu,  2 Oct 2025 08:45:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EM1RKYzX";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="j1Ih9hHa"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E72982FC87F;
-	Thu,  2 Oct 2025 08:45:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F7F72FE07B;
+	Thu,  2 Oct 2025 08:46:38 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2298C2FE049;
+	Thu,  2 Oct 2025 08:46:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759394735; cv=none; b=SEDpfIIsZKxgWGr/0bLI9HjlS/X9P+isQZpJAEaoRd9LjmvB+RSDJN2HOykjSeDgJrW4wOS03myOtb8nYUJtSM4APIflMFaJR21PqD419ACSAIgcoz5LZEeC8kKFsFqVddnaOI8J7lhiTpPEzLFhCNUUz0q5CJAbb/UK6m2SjfE=
+	t=1759394797; cv=none; b=PtRQkuS5yDaVfVRq9lq8f5QPUdq9lvTj9XaM3/yVU3mwNFv5eQqGVL3Nw3s3yaa41qjgar3B6wjtn3Plk4VDn89s9s0qk0zUxXSGftyXD0jWrt9dmVoVik8EoMyJdWod2RHe28OfSAk2tbrWEbNkzyGPdDq9pyjiJ6saTHXBNdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759394735; c=relaxed/simple;
-	bh=rA01WQkZhKe14fYRS2r5JOFsP5ASi/fcms5hDJnoJZQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=lKjBwbIUu2BGqZKGLEkfTygfnxN8TP5btCvxEWqhF/wn2H8osEUpStDUFijfMMM1TE31I6Q0pJvzp0ZCT0Go76aQlkeQc2CNeY5rCTA/iQ5X4BaN1ffDkSGEg2pB0lC0NERj446AIUWeTUYhJk4WEPPXm35cMouxFIqPhE+YXE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EM1RKYzX; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=j1Ih9hHa; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Nam Cao <namcao@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1759394732;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rA01WQkZhKe14fYRS2r5JOFsP5ASi/fcms5hDJnoJZQ=;
-	b=EM1RKYzXgfMZ8jE9J05s635uZ5it0oww6m9zlJHti1I37bkzqFj6DSVLUqIiL4eF0aBKcQ
-	AaR0+EgPgRu6Qyb6zObkVVmy3ZPCart3+tSx8bHD9fSOa2Ry7c9bAkxbzuuJD0X7WifNiq
-	NJKfiL7uLWVDvPG1Ze2PCP+8IuF97En9rd1W4ANCH54cz+iCkEuDvSRqVbPGpXzQD/5yA3
-	HuSWgMEjVmKeLeYVl7EAOJIpAenqibV7fppIP1g73zhZNAag53HbxloArNYMYhundJ9Lm0
-	MhaLE1X3TN60rCoSNw+UWyawxvogkBiKtozlFa3Ce8Xri5tXo5xn2a8eUUru5g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1759394732;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rA01WQkZhKe14fYRS2r5JOFsP5ASi/fcms5hDJnoJZQ=;
-	b=j1Ih9hHapZn0jcIzuxHHSnDI+GpkeVOw+hMW4UE0U+BrsgtAEGV4Qyv/ES3z1FdqYa7XgW
-	cBcMl41SObql4BAw==
-To: Gabriele Monaco <gmonaco@redhat.com>, linux-kernel@vger.kernel.org,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, linux-trace-kernel@vger.kernel.org
-Cc: Gabriele Monaco <gmonaco@redhat.com>, Tomas Glozar <tglozar@redhat.com>,
- Juri Lelli <jlelli@redhat.com>, Clark Williams <williams@redhat.com>, John
- Kacur <jkacur@redhat.com>
-Subject: Re: [PATCH v2 01/20] rv: Refactor da_monitor to minimise macros
-In-Reply-To: <20250919140954.104920-2-gmonaco@redhat.com>
-References: <20250919140954.104920-1-gmonaco@redhat.com>
- <20250919140954.104920-2-gmonaco@redhat.com>
-Date: Thu, 02 Oct 2025 10:45:31 +0200
-Message-ID: <87frc17kus.fsf@yellow.woof>
+	s=arc-20240116; t=1759394797; c=relaxed/simple;
+	bh=6F+DR4WRZKG0j8hQTKo5t/bxdCuQDOz0ydW2ZYJ1qT0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ix10b7R1nUSv8CJb3rWyYdc9UqNxNmkpPvsODmpbYpA3uqgqOQxQcPMtbHlcWodxdaB54B1aD5X1YrThJLtFvprTjArrGAp+Dbz2HOMgbLkvPV16FrsAaAKcPR7+547NFZI35uilvghTnRb2aWWVwXXgYOjVhKPNh0a6v9StV0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2721C1692;
+	Thu,  2 Oct 2025 01:46:27 -0700 (PDT)
+Received: from [10.1.27.48] (unknown [10.1.27.48])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 584853F66E;
+	Thu,  2 Oct 2025 01:46:31 -0700 (PDT)
+Message-ID: <6d3953f3-14ce-4a58-a018-3636e77dbdf8@arm.com>
+Date: Thu, 2 Oct 2025 09:46:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 06/43] arm64: RME: Define the user ABI
+Content-Language: en-GB
+To: Steven Price <steven.price@arm.com>, Marc Zyngier <maz@kernel.org>
+Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ James Morse <james.morse@arm.com>, Oliver Upton <oliver.upton@linux.dev>,
+ Zenghui Yu <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
+ Alexandru Elisei <alexandru.elisei@arm.com>,
+ Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
+ linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+ Gavin Shan <gshan@redhat.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+ Alper Gun <alpergun@google.com>, "Aneesh Kumar K . V"
+ <aneesh.kumar@kernel.org>, Emi Kisanuki <fj0570is@fujitsu.com>,
+ Vishal Annapurve <vannapurve@google.com>
+References: <20250820145606.180644-1-steven.price@arm.com>
+ <20250820145606.180644-7-steven.price@arm.com> <86jz1eztz4.wl-maz@kernel.org>
+ <47a7bc06-9d44-42f8-88df-f6db3bc997bc@arm.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <47a7bc06-9d44-42f8-88df-f6db3bc997bc@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Gabriele Monaco <gmonaco@redhat.com> writes:
-> The da_monitor helper functions are generated from macros of the type:
->
-> DECLARE_DA_FUNCTION(name, type) \
-> static void da_func_x_##name(type arg) {} \
-> static void da_func_y_##name(type arg) {} \
->
-> This is good to minimise code duplication but the long macros made of
-> skipped end of lines is rather hard to parse. Since functions are
-> static, the advantage of naming them differently for each monitor is
-> minimal.
->
-> Refactor the da_monitor.h file to minimise macros, instead of declaring
-> functions from macros, we simply declare them with the same name for all
-> monitors (e.g. da_func_x) and for any remaining reference to the monitor
-> name (e.g. tracepoints, enums, global variables) we use the CONCATENATE
-> macro.
-> In this way the file is much easier to maintain while keeping the same
-> generality.
-> Functions depending on the monitor types are now conditionally compiled
-> according to the value of RV_MON_TYPE, which must be defined in the
-> monitor source.
-> The monitor type can be specified as in the original implementation,
-> although it's best to keep the default implementation (unsigned char) as
-> not all parts of code support larger data types, and likely there's no
-> need.
->
-> We keep the empty macro definitions to ease review of this change with
-> diff tools, but cleanup is required.
->
-> Also adapt existing monitors to keep the build working.
->
-> Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
+On 01/10/2025 15:44, Steven Price wrote:
+> On 01/10/2025 13:28, Marc Zyngier wrote:
+>> On Wed, 20 Aug 2025 15:55:26 +0100,
+>> Steven Price <steven.price@arm.com> wrote:
+>>>
+>>> There is one (multiplexed) CAP which can be used to create, populate and
+>>> then activate the realm.
+>>>
+>>> Co-developed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>>> Signed-off-by: Steven Price <steven.price@arm.com>
+>>> Reviewed-by: Gavin Shan <gshan@redhat.com>
+>>> ---
+>>> Changes since v9:
+>>>   * Improvements to documentation.
+>>>   * Bump the magic number for KVM_CAP_ARM_RME to avoid conflicts.
+>>> Changes since v8:
+>>>   * Minor improvements to documentation following review.
+>>>   * Bump the magic numbers to avoid conflicts.
+>>> Changes since v7:
+>>>   * Add documentation of new ioctls
+>>>   * Bump the magic numbers to avoid conflicts
+>>> Changes since v6:
+>>>   * Rename some of the symbols to make their usage clearer and avoid
+>>>     repetition.
+>>> Changes from v5:
+>>>   * Actually expose the new VCPU capability (KVM_ARM_VCPU_REC) by bumping
+>>>     KVM_VCPU_MAX_FEATURES - note this also exposes KVM_ARM_VCPU_HAS_EL2!
+>>> ---
+>>>   Documentation/virt/kvm/api.rst    | 71 +++++++++++++++++++++++++++++++
+>>>   arch/arm64/include/uapi/asm/kvm.h | 49 +++++++++++++++++++++
+>>>   include/uapi/linux/kvm.h          | 10 +++++
+>>>   3 files changed, 130 insertions(+)
+>>>
+>>> diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
+>>> index 6aa40ee05a4a..69c0a9eba6c5 100644
+>>> --- a/Documentation/virt/kvm/api.rst
+>>> +++ b/Documentation/virt/kvm/api.rst
+>>> @@ -3549,6 +3549,11 @@ Possible features:
+>>>   	  Depends on KVM_CAP_ARM_EL2_E2H0.
+>>>   	  KVM_ARM_VCPU_HAS_EL2 must also be set.
+>>>   
+>>> +	- KVM_ARM_VCPU_REC: Allocate a REC (Realm Execution Context) for this
+>>> +	  VCPU. This must be specified on all VCPUs created in a Realm VM.
+>>> +	  Depends on KVM_CAP_ARM_RME.
+>>> +	  Requires KVM_ARM_VCPU_FINALIZE(KVM_ARM_VCPU_REC).
+>>> +
+>>>   4.83 KVM_ARM_PREFERRED_TARGET
+>>>   -----------------------------
+>>>   
+>>> @@ -5122,6 +5127,7 @@ Recognised values for feature:
+>>>   
+>>>     =====      ===========================================
+>>>     arm64      KVM_ARM_VCPU_SVE (requires KVM_CAP_ARM_SVE)
+>>> +  arm64      KVM_ARM_VCPU_REC (requires KVM_CAP_ARM_RME)
+>>>     =====      ===========================================
+>>>   
+>>>   Finalizes the configuration of the specified vcpu feature.
+>>> @@ -6476,6 +6482,30 @@ the capability to be present.
+>>>   
+>>>   `flags` must currently be zero.
+>>>   
+>>> +4.144 KVM_ARM_VCPU_RMM_PSCI_COMPLETE
+>>> +------------------------------------
+>>> +
+>>> +:Capability: KVM_CAP_ARM_RME
+>>> +:Architectures: arm64
+>>> +:Type: vcpu ioctl
+>>> +:Parameters: struct kvm_arm_rmm_psci_complete (in)
+>>> +:Returns: 0 if successful, < 0 on error
+>>> +
+>>> +::
+>>> +
+>>> +  struct kvm_arm_rmm_psci_complete {
+>>> +	__u64 target_mpidr;
+>>> +	__u32 psci_status;
+>>> +	__u32 padding[3];
+>>> +  };
+>>> +
+>>> +Where PSCI functions are handled by user space, the RMM needs to be informed of
+>>> +the target of the operation using `target_mpidr`, along with the status
+>>> +(`psci_status`). The RMM v1.0 specification defines two functions that require
+>>> +this call: PSCI_CPU_ON and PSCI_AFFINITY_INFO.
+>>> +
+>>> +If the kernel is handling PSCI then this is done automatically and the VMM
+>>> +doesn't need to call this ioctl.
+>>
+>> Why should userspace involved in this? Why can't this be a
+>> notification that the host delivers to the RMM when the vcpu is about
+>> to run?
+> 
+> This is only when PSCI is being handled by user space. If the kernel
+> (i.e KVM) is handling PSCI then indeed there's no user space involvement.
+> 
+> I'm not sure how we could avoid this when PSCI is being implemented in
+> user space. Or am I missing something?
 
-Farewell, macros. You won't be missed.
+I think there is a bit of disconnect here.
 
-Reviewed-by: Nam Cao <namcao@linutronix.de>
+The RMM doesn't track the RECs for a given vCPU. So, when it requires
+the REC object for a given vCPU, the Host provides this via an 
+RMI_PSCI_COMPLETE call. This is used for PSCI_CPU_ON and 
+PSCI_AFFINITY_INFO today, where the RMM can do the book keeping
+for the REC and emulate the PSCI. Now, the host does have a control
+on whether to ACCEPT or REJECT a request (for CPU_ON).
+The RMM requires the PSCI_COMPLETE call, before it can return the
+PSCI_CPU_ON back to the caller and also before the target vCPU can
+run. Thus, this cannot be delayed until the "new VCPU" is run.
+
+Like Steven mentioned, this is only useful in the UABI if the VMM is
+handling the PSCI. And this must be issued, before the target vCPU
+can be scheduled.
+
+Suzuki
 
