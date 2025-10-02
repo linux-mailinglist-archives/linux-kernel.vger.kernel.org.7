@@ -1,86 +1,86 @@
-Return-Path: <linux-kernel+bounces-840552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FFF6BB4AC7
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 19:25:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45415BB4ACD
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 19:25:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6354C7B0B3A
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 17:23:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8F161C0E5A
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 17:25:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 477CC275864;
-	Thu,  2 Oct 2025 17:24:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5D8826FD86;
+	Thu,  2 Oct 2025 17:24:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fw8uQVI+"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RiDjafsl"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD3DD2741B3
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 17:23:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 604D826F46F
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 17:24:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759425841; cv=none; b=mgFQEPOUzngQrefVc8SV91RegJNFEBG+TwevZUlLrKRNA4OiyC6jcf2crAjAuMQ1A5AMPA/0K7HDqUGO8FMCgimqiPZyGSyjo3McM+TlaaD39PZrFwUZFrtmA+0gj4o0xn7LyrnU2cob8/wjc+Xw9gthya9uiLwGCgZF2RmCmh0=
+	t=1759425843; cv=none; b=rZB4QSqdntyW+FzQDY7c14h0R9b9zUuLewKfyRZ4QDJOMroWEpKPcrWnmBi2FzmmBY4p8EMO+bU6H+f6a8Eug6h6nKHuuUSmQeiq7rpZrEU4ktx0yNdKO0/x4JobVFhBtoZRtEHMpaIy7I/HeIMt7mYL4TwitodxmzAXJURHNU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759425841; c=relaxed/simple;
-	bh=1PC1+sAQ5+RudOHFOyziJUj9BmNGyBE9j6UashNsZzs=;
+	s=arc-20240116; t=1759425843; c=relaxed/simple;
+	bh=XLMY6ExyY6u6fV0WN7Z3qcEwjCdaVTdq/bJcMA4pmIw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=FKF1D6CQV2M/ikxpjGjx1GXcchTHhq1yvQ9ruqD6fAYIpuOfkeYAr30/S17Ux8UVltDfDxQ3qi2H9CaNMmkKfLEGMvZfSsie4mOZNwWvoo4Lfb5v9nxiwnxVDPOO48XTXn1O8WuSqL36RqqvhRnq8SNQnzgxUjQQ4hMaoZa1fFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fw8uQVI+; arc=none smtp.client-ip=209.85.160.181
+	 MIME-Version; b=YNoI48Lo8PmrCToQJO56Xd5cP1xoZAF0PlWl9Xx/c3+7IiLU6S1xCwbQ5TaxOPX7oHQmcR7IvS4RZ+0fTakWlM8Qp8AtUE07mf2oNio+6s+2t8X1zLzYkIopQNG0XtUv7iTT2jbr6HPKxUXiRS2zQbLPM/lt7lHb7bL080Geb0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RiDjafsl; arc=none smtp.client-ip=209.85.160.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4e4f8122660so12807641cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 10:23:59 -0700 (PDT)
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4da894db6e9so11447501cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 10:24:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759425839; x=1760030639; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1759425840; x=1760030640; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vvBFaRtjx461qob9bhD15oHTSRVQ6nYQZ4Qc5hYd+vg=;
-        b=fw8uQVI+Qooy/AiX5yEC2CLgDRjBx03KE6dd9cLLZRwYijM/PpSnYcyJNt2iG22iTE
-         cEF0eQw5v8Ph+xX21Rav86d7GuNPZW7GvVyWioJHm2fgmT+4DxmxXbUqpVjLEGfmvvY0
-         rViJou7kmQ0Srk2q/cvmrRJaiBEr6wf835F6olvQLP+AHrAvU33QHIYmhUlHJHqHoMSJ
-         CsjVGutIO5gc+b9NW4fCvE88Udc1xy6uvl9qhY3y8iwpt70I2tHCExpF509ZY2yGsVAn
-         aqAvwkdumCjopLgSZz0AOEtJ+oHovlBmqz6QsA1MTFJxrTxQEp7s3JkfjLeI0fgiBZUV
-         xXIA==
+        bh=hoZMG2H5XFtwBXCa7Edxt/CDBvIRhOXOvs0bduMCYtk=;
+        b=RiDjafslA/0B7nOHyz1uFHgAuyJQ87HTudXxa/Cb5ehPYb6eQmG5fV9lW0UdZO3z1i
+         19q2VBf1zfWxwwWPicjueDfwS9p8Oo/NLhgJMeHl9Ks+yIBzKuMXt7Emv4Bhj60mrRGY
+         ZYtaUfiSnnVWCLwhyumaHZihbD++Bbo+/VR1TU1koBKjUAjwzgYd0QE1U3l+eFg2OkRC
+         Rr9z6MRwgB5tzhrxAqJk5P9jJ++2OCyi4DcOYo+lGgbLd6m2HFULxbEJgZZLHh85n68f
+         P72wKOcOfAyzp5FMcumJ9hiQvqDchHmAR84WaM9LK7UFDzK0pPnBoyVJeXMNtc2ggvcX
+         bdlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759425839; x=1760030639;
+        d=1e100.net; s=20230601; t=1759425840; x=1760030640;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=vvBFaRtjx461qob9bhD15oHTSRVQ6nYQZ4Qc5hYd+vg=;
-        b=LTB/DhQo5nW+fEpTeResau/02DitKpAZzo/j3zX6eW3Fd+9apv1rz0MEja+wPbZ9uP
-         qcnnvzSMqhzJGl3jw7C9FUoGIuVHD206/bRPvv1cRq5XD+tv5fkirD6oPqbHYgeUMMcr
-         a331g4vyG4A5lES+Th8XzUM/jg0wcFVBWRf6O5pP4FwLsOG2Dwr+dQjPjtajYqh7YyTn
-         sQhg47anxTQMSXjI5aRzk4VPNviXmEHlevIYCM2a4OgXqCYANjOvctFOV7fXqpsWHAXk
-         KFRqSuVBKzSAH7NL66R6ssYYFsEY8GzSWjdEVNUGgLpLyMREmEuxy/bbIOHr6YpT/qun
-         ++mQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW1DDUsGU/ZwTypUug7kZMQKVLRsZDKz3RmlZ4qdsRLUNFxRqTWYAq1efwCfYUiG84qzPVb934MRp5Jz/o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8eEwH9WbZQxm+SfoWZyTAIpRJM0uoSbvifvdlGZz7M7FYQ8RW
-	oxsHzrWYvv3PeQaZAsR2ViCOCqkBoof94cuM9z88psV/hASVMnnQ3J08
-X-Gm-Gg: ASbGnct7NR7/7ZbnskT+1kJx53UU02CdEXSgDYzlWyoDd11an4raYT6HZjADIV1p0fA
-	z8mmU5ZaJevEZvqY4+7I9Lbu/QgrLSlOc2Tvity9drwaad8Y8pBeL5hGRwI4C4/moprlvMbN4CU
-	HFAsS8TOb0kd0tjhsAXJb49jlzuGFddq7owVl9qnM9WBfKYe5D66vGazwFh5Cb2a0qorcM0TKSq
-	Xrjpqx9r1l4pUGQ/W0fwFlEGBdhjaZ3Y00DbINvbW/SLcrrbkKwUlpD2Do7ckC5YuN7JMrjkyTd
-	SkAtCazQWDvltyL7JqLekDXEE7vYpTCi5SlInlCXWe6mhd6XcYHTDBgJeGwyns9anncUO9jagpK
-	J0mtCLFlNM22UcyM+RrCaFzZBV0vnvbvulYJhLRD4lYXIjHfTjBVHkp/pOZxUWlwKRkVH1ISzMz
-	FfIenG+jYDTF5cU4zS2RC+
-X-Google-Smtp-Source: AGHT+IE+jU7SzzEavOn5JZUH3ibDHJskYyMLSKshCzyAsOgcjXufZCQx7zNwRQEQ34HAOXQjM0rYQA==
-X-Received: by 2002:a05:622a:5a19:b0:4d8:1f72:ba60 with SMTP id d75a77b69052e-4e576a453b6mr1489481cf.14.1759425838559;
-        Thu, 02 Oct 2025 10:23:58 -0700 (PDT)
+        bh=hoZMG2H5XFtwBXCa7Edxt/CDBvIRhOXOvs0bduMCYtk=;
+        b=hvLzfNOKW/vtIWYhSuTU29VlUADB9RDSOX68fQV7nMF94/ADYulXRoNYqZuZXiXNrs
+         oO+iEQaUxmre0Lo0T3F1DP9C+upQ8BkH4LK5uc+wFcNMlVo1t+l+AMT1s3AD1EDkIpjq
+         Zn7acinC32uaBObJemn8AhH/HOQRXCSfAvZGSt/SLa2xWij9LbkGyeHdh0AyhK+PwCy2
+         u7CtxzKbZR88CuY3UyaH0s0szWosT5GIBF4W1vYO2uHXG5i7l4846JfV2Vi9cVS/u+rY
+         onUe4UimURD6AvOFLz/QdHTeGdvJipulgyBEo0YZ7T4M+C6kH1T8xqplAgW5F4swYTMf
+         0EQA==
+X-Forwarded-Encrypted: i=1; AJvYcCUOKlkXiqYbR11KEVIlMpTxmpar9WIZ5dDfKq0ok1RzfvPLH4vZNXUijk6FVPw7d7ZYDae9lWD/OxnJRjM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypdDx8kHlgYQ4y5Bn0bRB6jtYgeVH98+xI0XhO9xI4Fm9y8jYz
+	tZQGMxf2U06ZlZunb/Bb9ZU7fLssXjD4RKTjWH8SZ+ZZaPbMsRjy6Hft
+X-Gm-Gg: ASbGncscihnB9kofvu3HQDZFndtf7qxlpYqS6SkKM4fE8CUwyo7bJm9RzlAtfn35WZY
+	bKuG9EcUXcTyulNIkitsSWiNmfIaQ2evPB0WUaWTZLXsc2o0RpFk8o4Aqr58PXKRg27vHJrLKPy
+	LXW9MBmH0p5LegqwZcq6uRp4tHuab0tjaL5VASplCqTHYD0uyW7xpXyl8aenptHrgr4sJMTviku
+	7cV6PRfPyxp50ZZnmu7dzlVgi7tQtPVwvB3f+DOg5YIYXGbbinAv5LLo24nzDmvzy02RL+dcVOe
+	9kT/G01mpEfJlt0/kKvljDFoojJvNZ5h8xZVgGFP84p5SfvKXunwwoa7065EBOzS2MKKg2/GLZa
+	XZ3GT1HUts63JFYYF8lJ/GzdGCxrTdaPdxuQLZYShdaouAi3gRoGFv2Zwt0OcJzXezubk68RL0/
+	U=
+X-Google-Smtp-Source: AGHT+IEb9ym2sEaLOwaU7JZLamaTF20zBlWyIBwnY70sa8szndTtJluJszAmcJXuglcryN7DFe8gZA==
+X-Received: by 2002:ac8:57c3:0:b0:4b5:ea1f:77ec with SMTP id d75a77b69052e-4e57697253bmr1853621cf.0.1759425840226;
+        Thu, 02 Oct 2025 10:24:00 -0700 (PDT)
 Received: from linux-kernel-dev-start.. ([159.203.26.228])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4e55cbd3d9fsm24504971cf.32.2025.10.02.10.23.57
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4e55cbd3d9fsm24504971cf.32.2025.10.02.10.23.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 10:23:57 -0700 (PDT)
+        Thu, 02 Oct 2025 10:23:59 -0700 (PDT)
 From: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
 To: gregkh@linuxfoundation.org
 Cc: linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
 	vivek.balachandhar@gmail.com
-Subject: [PATCH v4 06/16] staging: rtl8723bs: fix indentation to align with open parenthesis
-Date: Thu,  2 Oct 2025 17:22:54 +0000
-Message-Id: <20251002172304.1083601-7-vivek.balachandhar@gmail.com>
+Subject: [PATCH v4 07/16] staging: rtl8723bs: adding asterisks in multi-line block comments
+Date: Thu,  2 Oct 2025 17:22:55 +0000
+Message-Id: <20251002172304.1083601-8-vivek.balachandhar@gmail.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20251002172304.1083601-1-vivek.balachandhar@gmail.com>
 References: <20251002172304.1083601-1-vivek.balachandhar@gmail.com>
@@ -92,108 +92,91 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Adjust indentation of function arguments to align with the opening
-parenthesis, following kernel coding style. This improves readability
-and maintains consistent formatting.
+Format multi-line block comments with leading asterisks
+
+Add leading asterisks (*) on each line of multi-line block comments,
+in accordance with kernel coding style. This improves consistency
+and readability of the comments.
 
 No functional changes.
 
 Signed-off-by: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
 ---
- drivers/staging/rtl8723bs/core/rtw_mlme.c | 24 +++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+ drivers/staging/rtl8723bs/core/rtw_mlme.c | 33 ++++++++++++-----------
+ 1 file changed, 17 insertions(+), 16 deletions(-)
 
 diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme.c b/drivers/staging/rtl8723bs/core/rtw_mlme.c
-index 0296c2e9a7e1..ba77040a8d8d 100644
+index ba77040a8d8d..ac313ec06587 100644
 --- a/drivers/staging/rtl8723bs/core/rtw_mlme.c
 +++ b/drivers/staging/rtl8723bs/core/rtw_mlme.c
-@@ -183,7 +183,7 @@ void _rtw_free_network(struct	mlme_priv *pmlmepriv, struct wlan_network *pnetwor
- 		return;
- 
- 	if ((check_fwstate(pmlmepriv, WIFI_ADHOC_MASTER_STATE) == true) ||
--		(check_fwstate(pmlmepriv, WIFI_ADHOC_STATE) == true))
-+	    (check_fwstate(pmlmepriv, WIFI_ADHOC_STATE) == true))
- 		lifetime = 1;
- 
- 	if (!isfreeall) {
-@@ -270,7 +270,7 @@ signed int rtw_if_up(struct adapter *padapter)
- 	signed int res;
- 
- 	if (padapter->bDriverStopped || padapter->bSurpriseRemoved ||
--		(check_fwstate(&padapter->mlmepriv, _FW_LINKED) == false))
-+	    (check_fwstate(&padapter->mlmepriv, _FW_LINKED) == false))
- 		res = false;
- 	else
- 		res =  true;
-@@ -339,7 +339,7 @@ int rtw_is_same_ibss(struct adapter *adapter, struct wlan_network *pnetwork)
- 	struct security_priv *psecuritypriv = &adapter->securitypriv;
- 
- 	if ((psecuritypriv->dot11PrivacyAlgrthm != _NO_PRIVACY_) &&
--		    (pnetwork->network.privacy == 0))
-+	    (pnetwork->network.privacy == 0))
- 		ret = false;
- 	else if ((psecuritypriv->dot11PrivacyAlgrthm == _NO_PRIVACY_) &&
- 		 (pnetwork->network.privacy == 1))
-@@ -420,7 +420,7 @@ struct	wlan_network	*rtw_get_oldest_wlan_network(struct __queue *scanned_queue)
+@@ -217,10 +217,10 @@ void _rtw_free_network_nolock(struct	mlme_priv *pmlmepriv, struct wlan_network *
  }
  
- void update_network(struct wlan_bssid_ex *dst, struct wlan_bssid_ex *src,
--	struct adapter *padapter, bool update_ie)
-+		    struct adapter *padapter, bool update_ie)
+ /*
+-	return the wlan_network with the matching addr
+-
+-	Shall be called under atomic context... to avoid possible racing condition...
+-*/
++ *	return the wlan_network with the matching addr
++ *
++ *	Shall be called under atomic context... to avoid possible racing condition...
++ */
+ struct wlan_network *_rtw_find_network(struct __queue *scanned_queue, u8 *addr)
  {
- 	long rssi_ori = dst->rssi;
+ 	struct list_head	*phead, *plist;
+@@ -322,10 +322,10 @@ void rtw_free_network_nolock(struct adapter *padapter, struct wlan_network *pnet
+ }
  
-@@ -474,9 +474,9 @@ static void update_current_network(struct adapter *adapter, struct wlan_bssid_ex
- 	struct	mlme_priv *pmlmepriv = &adapter->mlmepriv;
+ /*
+-	return the wlan_network with the matching addr
+-
+-	Shall be called under atomic context... to avoid possible racing condition...
+-*/
++ *	return the wlan_network with the matching addr
++ *
++ *	Shall be called under atomic context... to avoid possible racing condition...
++ */
+ struct	wlan_network *rtw_find_network(struct __queue *scanned_queue, u8 *addr)
+ {
+ 	struct	wlan_network *pnetwork = _rtw_find_network(scanned_queue, addr);
+@@ -489,8 +489,8 @@ static void update_current_network(struct adapter *adapter, struct wlan_bssid_ex
+ }
  
- 	rtw_bug_check(&pmlmepriv->cur_network.network,
--		&pmlmepriv->cur_network.network,
--		&pmlmepriv->cur_network.network,
--		&pmlmepriv->cur_network.network);
-+		      &pmlmepriv->cur_network.network,
-+		      &pmlmepriv->cur_network.network,
-+		      &pmlmepriv->cur_network.network);
- 
- 	if ((check_fwstate(pmlmepriv, _FW_LINKED) == true) &&
- 	    (is_same_network(&pmlmepriv->cur_network.network, pnetwork, 0))) {
-@@ -1438,7 +1438,7 @@ void rtw_stassoc_event_callback(struct adapter *adapter, u8 *pbuf)
- 	spin_lock_bh(&pmlmepriv->lock);
- 
- 	if ((check_fwstate(pmlmepriv, WIFI_ADHOC_MASTER_STATE) == true) ||
--		(check_fwstate(pmlmepriv, WIFI_ADHOC_STATE) == true)) {
-+	    (check_fwstate(pmlmepriv, WIFI_ADHOC_STATE) == true)) {
- 		if (adapter->stapriv.asoc_sta_count == 2) {
- 			spin_lock_bh(&pmlmepriv->scanned_queue.lock);
- 			ptarget_wlan = rtw_find_network(&pmlmepriv->scanned_queue,
-@@ -1537,7 +1537,7 @@ void rtw_stadel_event_callback(struct adapter *adapter, u8 *pbuf)
+ /*
+-Caller must hold pmlmepriv->lock first.
+-*/
++ * Caller must hold pmlmepriv->lock first.
++ */
+ void rtw_update_scanned_network(struct adapter *adapter, struct wlan_bssid_ex *target)
+ {
+ 	struct list_head	*plist, *phead;
+@@ -523,7 +523,8 @@ void rtw_update_scanned_network(struct adapter *adapter, struct wlan_bssid_ex *t
  	}
  
- 	if (check_fwstate(pmlmepriv, WIFI_ADHOC_MASTER_STATE) ||
--	      check_fwstate(pmlmepriv, WIFI_ADHOC_STATE)) {
-+	    check_fwstate(pmlmepriv, WIFI_ADHOC_STATE)) {
- 		rtw_free_stainfo(adapter,  psta);
- 
- 		if (adapter->stapriv.asoc_sta_count == 1) {
-@@ -2107,7 +2107,7 @@ static int SecIsInPMKIDList(struct adapter *Adapter, u8 *bssid)
- 
- 	for (i = 0; i < NUM_PMKID_CACHE; i++)
- 		if ((p->PMKIDList[i].bUsed) &&
--				(!memcmp(p->PMKIDList[i].Bssid, bssid, ETH_ALEN)))
-+		    (!memcmp(p->PMKIDList[i].Bssid, bssid, ETH_ALEN)))
- 			return i;
- 	return -1;
+ 	/* If we didn't find a match, then get a new network slot to initialize
+-	 * with this beacon's information */
++	 * with this beacon's information
++	 */
+ 	if (!target_find) {
+ 		if (list_empty(&pmlmepriv->free_bss_pool.queue)) {
+ 			/* If there are no more slots, expire the oldest */
+@@ -1891,11 +1892,11 @@ static int rtw_check_join_candidate(struct mlme_priv *mlme
  }
-@@ -2694,8 +2694,8 @@ void _rtw_roaming(struct adapter *padapter, struct wlan_network *tgt_network)
- signed int rtw_linked_check(struct adapter *padapter)
+ 
+ /*
+-Calling context:
+-The caller of the sub-routine will be in critical section...
+-The caller must hold the following spinlock
+-pmlmepriv->lock
+-*/
++ * Calling context:
++ * The caller of the sub-routine will be in critical section...
++ * The caller must hold the following spinlock
++ * pmlmepriv->lock
++ */
+ 
+ int rtw_select_and_join_from_scanned_queue(struct mlme_priv *pmlmepriv)
  {
- 	if ((check_fwstate(&padapter->mlmepriv, WIFI_AP_STATE) == true) ||
--			(check_fwstate(&padapter->mlmepriv, WIFI_ADHOC_STATE |
--			 WIFI_ADHOC_MASTER_STATE) == true)) {
-+	    (check_fwstate(&padapter->mlmepriv, WIFI_ADHOC_STATE |
-+			   WIFI_ADHOC_MASTER_STATE) == true)) {
- 		if (padapter->stapriv.asoc_sta_count > 2)
- 			return true;
- 	} else {	/* Station mode */
 -- 
 2.39.5
 
