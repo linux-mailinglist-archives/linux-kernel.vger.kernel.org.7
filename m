@@ -1,122 +1,97 @@
-Return-Path: <linux-kernel+bounces-840619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6532BB4D46
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 20:06:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50B6ABB4D6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 20:07:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E7DD324635
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 18:05:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11DA83A134F
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 18:06:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9090B27CB02;
-	Thu,  2 Oct 2025 18:04:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0468D275AF2;
+	Thu,  2 Oct 2025 18:04:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mandrillapp.com header.i=@mandrillapp.com header.b="MKEjX3T3";
-	dkim=pass (2048-bit key) header.d=vates.tech header.i=teddy.astie@vates.tech header.b="vBk+ai2w"
-Received: from mail132-2.atl131.mandrillapp.com (mail132-2.atl131.mandrillapp.com [198.2.132.2])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HYBIu/8B"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 276FE27C172
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 18:04:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.2.132.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A30428E0F;
+	Thu,  2 Oct 2025 18:04:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759428257; cv=none; b=fP+en47hKSSVH2QqNHEiicdHVjPjj4rS0Sv0G7F1wiYOQgV/Q0qh0xwG7raL5tKkpbGkxJXLjgN42XizbIq0QewctIss1ze2owaK5q9W7VSQcyMZprwr8XxwrS4Avp438dAlsrmu7J5/+Cg3VeuIKSIQmZnR8T7VGchgRsrLekc=
+	t=1759428298; cv=none; b=hJdz3Xz67Cohz28Qjvor7ySc85dVp79f+tduhz2uQzAU0pbknSayst6urmVQUngSFWBj4FtB538RiO8m6IPvhvmBKd1xxksIRhWRsvdUZjhSNOnHTCi804S6NrbiyEzKra4sTwH+k9GM1SshsnzK1qWxGvyT8KGVz7SpXUrNFkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759428257; c=relaxed/simple;
-	bh=aXEIbACNRtnofIP0VZq3wF1u+oABNhMX4NkKLUF3g2Y=;
-	h=From:Subject:To:Cc:Message-Id:Date:MIME-Version:Content-Type; b=elJTJBldhLAF4/BHFT+FsDPPjclw5q0Kj7cLCrsohBn9s/0sZSatxkFBPw/MJoXggTClegm3RUkOeecBMzfcTx05Cpw7Wqlgi2kaPH3+gxi3AFpYGm60yqULIGkABL28YhMofYVioLhldhALc/bBngbZs9VU5LUXFTUUZCYfNwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=vates.tech; spf=pass smtp.mailfrom=bounce.vates.tech; dkim=pass (2048-bit key) header.d=mandrillapp.com header.i=@mandrillapp.com header.b=MKEjX3T3; dkim=pass (2048-bit key) header.d=vates.tech header.i=teddy.astie@vates.tech header.b=vBk+ai2w; arc=none smtp.client-ip=198.2.132.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=vates.tech
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bounce.vates.tech
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mandrillapp.com;
-	s=mte1; t=1759428255; x=1759698255;
-	bh=4bpvfICFTTCbiWIKY9SvhS9+6AYpp3DjTixjEpmMXbI=;
-	h=From:Subject:To:Cc:Message-Id:Feedback-ID:Date:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding:CC:Date:Subject:From;
-	b=MKEjX3T3S3BDLNWeRIQQiTfvuPrpitvjTUlvkEwhm3RLUsaDHdPbgTeO8cVLTbVfo
-	 NdW2jt+FgtlchG2a34dFizchoB5MgWuJurKK9TJnh9d69VmOXvUwJfXvaR3/MFbPpD
-	 xJYNIjebA3+bwAHhaw3Pif+v6mEe2BnW11wjKxjKQg/DRKrwTOVB4UYdBc/gD2nisg
-	 vSHhPq8ehRnkk16l4KAcb7yvmyCKWgvZ8dwbY+M0/SE9Jv9qhM0pxk+vngDhzNLWAS
-	 FS8FuQdAp1tcLJ4DV8oCrkt8JKlXcaVMbrxyWtD88zRnu/kmIvnNuLjmbAU6e63MI+
-	 7TUagsYyuUtsQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vates.tech; s=mte1;
-	t=1759428255; x=1759688755; i=teddy.astie@vates.tech;
-	bh=4bpvfICFTTCbiWIKY9SvhS9+6AYpp3DjTixjEpmMXbI=;
-	h=From:Subject:To:Cc:Message-Id:Feedback-ID:Date:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding:CC:Date:Subject:From;
-	b=vBk+ai2wFw7tRDuAhcFpXFrneoUHUyUghv2N1viCw8APN6KgUl469xrNSMLz4u3DE
-	 V4LZQOrtXN/mudcMXttHk5PHGC00lq66Dj2ja57jWOO4FfmRiTx1ZQAa5E+BKiA/y3
-	 Zvs2kJxJOoY559S4uPZ6qUC6CEKOqKiJQrsN834s0sMON/27xTuh0yZAy31e9bzBdp
-	 zrryl1TTvSBiCexwCoVp7CoETwPayD7Edx/tjG9WAh+MnoMfkuE5dcsnu/R2K+HaVZ
-	 PEBinZqH+utY58jffuqo844QDwUDuiXGp9flOhQt/jngrd2wTfKWsAeweO5k3g4pWu
-	 v53ITXOijjT2w==
-Received: from pmta09.mandrill.prod.atl01.rsglab.com (localhost [127.0.0.1])
-	by mail132-2.atl131.mandrillapp.com (Mailchimp) with ESMTP id 4cd06l2HFlzS62WSB
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 18:04:15 +0000 (GMT)
-From: "Teddy Astie" <teddy.astie@vates.tech>
-Subject: =?utf-8?Q?[PATCH]=20ccp/hsti:=20Fix=20bogus=20sizeof=20in=20psp=5Fpopulate=5Fhsti?=
-Received: from [37.26.189.201] by mandrillapp.com id 6186e6d9d34b4f57b65fac67565006e3; Thu, 02 Oct 2025 18:04:15 +0000
-X-Mailer: git-send-email 2.51.0
-X-Bm-Disclaimer: Yes
-X-Bm-Milter-Handled: 4ffbd6c1-ee69-4e1b-aabd-f977039bd3e2
-X-Bm-Transport-Timestamp: 1759428253425
-To: linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org
-Cc: "Teddy Astie" <teddy.astie@vates.tech>, "Mario Limonciello" <mario.limonciello@amd.com>, "Tom Lendacky" <thomas.lendacky@amd.com>, "John Allen" <john.allen@amd.com>, "Herbert Xu" <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>
-Message-Id: <5743ec02c374ce52d1b406d41e9e240d049ee7e2.1759427927.git.teddy.astie@vates.tech>
-X-Native-Encoded: 1
-X-Report-Abuse: =?UTF-8?Q?Please=20forward=20a=20copy=20of=20this=20message,=20including=20all=20headers,=20to=20abuse@mandrill.com.=20You=20can=20also=20report=20abuse=20here:=20https://mandrillapp.com/contact/abuse=3Fid=3D30504962.6186e6d9d34b4f57b65fac67565006e3?=
-X-Mandrill-User: md_30504962
-Feedback-ID: 30504962:30504962.20251002:md
-Date: Thu, 02 Oct 2025 18:04:15 +0000
+	s=arc-20240116; t=1759428298; c=relaxed/simple;
+	bh=+YpbQ5kLgsPWSLHiqjsCHFhCOGG5AXkBncjFEdSXwvo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VpfkZBCyxpnjYtwRuTON0TjbVBIIjlbYP3xUsQDlkLYCjYJlcsc+h5aOYF+ghk7EBLaz+GBBFbYYPqAyoI9c7yKz0U/Q4OiHDIusyoftoEarx8XbQbSJkQSEnjhLCBKPBPDGFIUdHVZwSLP08acF385W46XPiCOL1j3XbETfhd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HYBIu/8B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AC6BC4CEF4;
+	Thu,  2 Oct 2025 18:04:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759428298;
+	bh=+YpbQ5kLgsPWSLHiqjsCHFhCOGG5AXkBncjFEdSXwvo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HYBIu/8BFfzEH+5VckSaOBDuhrC80cklLYfS7/fVNVzRou2sTvc/s2ZetL83eVESC
+	 Jg+nfhmQF3oCGur84Ap0dmRnnxGxTx0yFYNTFqqc3mTUvHS/ZWb2UNxDH+gI1160tE
+	 cmg48mGK29FjiHfwucLMAhjI8k6CsZkIx1PsaujldzOTV7qrKM3R7oewGJSkaLvgPu
+	 WDv7MuRCzZPZykYVx/wpIK+TS/fZAlg8vj66FZGm7JA5Y0xDexjkFLMviJ4e7HMbWP
+	 xnox5vlKOR8heTVCzUD1kJgSPqt2pxULym55O1iu+5vcRupMH5mh064qDm7JimLltO
+	 IhmdZUZboHVFw==
+Date: Thu, 2 Oct 2025 15:04:53 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] libperf mmap: In user mmap rdpmc avoid undefined
+ behavior
+Message-ID: <aN6-xfp4pcnxbnaq@x1>
+References: <20250914182437.1959331-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250914182437.1959331-1-irogers@google.com>
 
-Payload is actually struct hsti_request and not a pointer which
-makes the considered payload size smaller than it should be.
+On Sun, Sep 14, 2025 at 11:24:37AM -0700, Ian Rogers wrote:
+> A shift left of a signed 64-bit s64 may overflow and result in
+> undefined behavior caught by ubsan. Switch to a u64 instead.
 
-Signed-off-by: Teddy Astie <teddy.astie@vates.tech>
-Fixes: 82f9327f774c ("crypto: ccp - Add support for getting security attributes on some older systems")
----
-CC: Mario Limonciello <mario.limonciello@amd.com>
-CC: Tom Lendacky <thomas.lendacky@amd.com>
-CC: John Allen <john.allen@amd.com>
-CC: Herbert Xu <herbert@gondor.apana.org.au>
-CC: "David S. Miller" <davem@davemloft.net>
----
- drivers/crypto/ccp/hsti.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks, applied to perf-tools-next,
 
-diff --git a/drivers/crypto/ccp/hsti.c b/drivers/crypto/ccp/hsti.c
-index 1b39a4fb55c0..0e6b73b55dbf 100644
---- a/drivers/crypto/ccp/hsti.c
-+++ b/drivers/crypto/ccp/hsti.c
-@@ -88,7 +88,7 @@ static int psp_poulate_hsti(struct psp_device *psp)
- 	if (!req)
- 		return -ENOMEM;
+- Arnaldo
  
--	req->header.payload_size = sizeof(req);
-+	req->header.payload_size = sizeof(*req);
- 
- 	ret = psp_send_platform_access_msg(PSP_CMD_HSTI_QUERY, (struct psp_request *)req);
- 	if (ret)
--- 
-2.51.0
-
-
-
---
- | Vates
-
-XCP-ng & Xen Orchestra - Vates solutions
-
-web: https://vates.tech
-
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/lib/perf/mmap.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/lib/perf/mmap.c b/tools/lib/perf/mmap.c
+> index c1a51d925e0e..ec124eb0ec0a 100644
+> --- a/tools/lib/perf/mmap.c
+> +++ b/tools/lib/perf/mmap.c
+> @@ -508,7 +508,7 @@ int perf_mmap__read_self(struct perf_mmap *map, struct perf_counts_values *count
+>  		idx = READ_ONCE(pc->index);
+>  		cnt = READ_ONCE(pc->offset);
+>  		if (pc->cap_user_rdpmc && idx) {
+> -			s64 evcnt = read_perf_counter(idx - 1);
+> +			u64 evcnt = read_perf_counter(idx - 1);
+>  			u16 width = READ_ONCE(pc->pmc_width);
+>  
+>  			evcnt <<= 64 - width;
+> -- 
+> 2.51.0.384.g4c02a37b29-goog
+> 
 
