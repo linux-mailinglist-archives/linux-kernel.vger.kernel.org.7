@@ -1,197 +1,127 @@
-Return-Path: <linux-kernel+bounces-840192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DCD3BB3CC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 13:42:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D1E97BB3CCA
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 13:43:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD91F7B1378
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 11:40:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B70A7B2E6F
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 11:41:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2D2330FC26;
-	Thu,  2 Oct 2025 11:42:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B810330FC38;
+	Thu,  2 Oct 2025 11:42:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PCD3fmpj"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="wwF2dHn4"
+Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8735B2797AF
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 11:42:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F0FC2797AF;
+	Thu,  2 Oct 2025 11:42:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759405352; cv=none; b=GGL6IvxcdssA0tgYxc7Imqa0tqsbzFVgI6d2RngaduFIErvXOi8yMUMA59b5hH2EPjPpf69VFx5nGU0lmNCvRguqrZnsQVisb4uGlikUkF/LzXmWVx+Yh4CsbU3tB3sURJUz6nFzxxFYhPyQxLmy01MFPkcLA66b2o+IspfFWfc=
+	t=1759405369; cv=none; b=pQYuynUYaZEX8QHtvpPwvAG132SQN53vrGa6725Ah2lj+IPQaZWPGk/9fK/VsLQpu1bU59VMyedN/A1xyiHsV1H5+j5Om8Kj2SZYtKqcFMf/j3GV8l6opgEhSxf46muk918yl7O45vnQl95Hw2ZzL1Ybaz14ZK9xI0UF67K0JYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759405352; c=relaxed/simple;
-	bh=NtUnw3Bb8cfSR6LaDxYQmeLo6xSsSvXSGXLWjxRdkzc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Qy8yZ+QqhcaDX5V79bI4utsEmuL0NuTh4evYb6HwA45lcTCz36OrVZpdJ/89ufMkTayNidiSy7LYuZyHbo+ZlJqGhAY16XhdKQ2hq96eMsCm6lBdnLBrdZyV4h4KDWi42sGqy/crATwT8DiToaQqeSC396Q+0XZuHdiF4byRANw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PCD3fmpj; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759405349;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=0Ej62FVOQq6zEj2u9bPFI8FOph7VYHFWyQUQShm6AY8=;
-	b=PCD3fmpjt7Mg7TwiiEb6jvCVcD+wNQV4GVaiPzvaD3C+iDDpYNhjYmQA/PB8fZTkxPTLZI
-	Kizf6OZgW+3EddnrBb9wXbqARHxGpoFnO7qQtOVEWwJxLRpbaix6ZdWWG+tlsVrIVt6UFG
-	qQUnZ0KG7EqFiU7luG4DaUgDNnioDNA=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-323-XZwJex4bOV6Daw223vaVFg-1; Thu, 02 Oct 2025 07:42:28 -0400
-X-MC-Unique: XZwJex4bOV6Daw223vaVFg-1
-X-Mimecast-MFC-AGG-ID: XZwJex4bOV6Daw223vaVFg_1759405347
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3f7b5c27d41so748140f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 04:42:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759405347; x=1760010147;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0Ej62FVOQq6zEj2u9bPFI8FOph7VYHFWyQUQShm6AY8=;
-        b=XPV2fr2SKfr02pCIZNxpYuHsjXZQYnvWEdKgHfrVeVslhfkTTeS827K6H95AhCYHuH
-         wta7wonKTLDd8T1i7Xhbgfwvqwi9qZ6LE8V/Q7dEoTopLPJYveN/ZAjS8eWtzzC5d6Qi
-         LH1zTlQZrCxZqHhiHsdcyYB4AwCzjQ6g+YtZk4HVqh4WtQtJVx8nfoV5Q/mjE0h5GmVC
-         vcyxgQurEg5XftoRVf1xeXgu+aB80RgCGBgEc4VAox0P8RRP0H8Qy7dfcYcoCLhaRJtk
-         D1+UmzYg9stbwrruyp1ccKptJdPaHoBkUQ10hlqdthTr/rDCUvGCLOp6dDkN3gRJueCK
-         AgCw==
-X-Forwarded-Encrypted: i=1; AJvYcCXpESP/+2hFdHuoNNN/VjnWEtrQ5gmItDhBsx4y402BtZEAdx6nvD+PytZLs7Q9PaoOfeUxoq0ZbrmMJSA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yza34XBrzS2akUIzZ5/Wz6beUW3Ry6NsFu6Abc3VxyWHi7S6Nsu
-	B8sdITLmWpqA+NROLTVCEquwwzSbRLCJ1snslPylWe7oRetX11dB+LOwt44rye/khZ0zouFw+bK
-	j2VjfIZpMctR2dgxYtif7MLF8wvAJE1aeh/wLW+a3J4n1w7ClrM3mHg906eWoHUGQNg==
-X-Gm-Gg: ASbGncuIvJyZLLXl7j1tYRsqKsbjU0YzQ++oXQmiOcEtr6VGk6GEeondptlKZeIhurG
-	Sv+M1++XCU02j6iy5QO5I+3UHCrB6FZEZuUN7rpzUugc0nF87JTRKDmdRFB3P5tahLPap8oMMPF
-	PLMgHgEWwJWG4NaXW+POQHk2Nt0ExMatHC9NvK/9q7ApcOUp4jwfd/rf4Ns046BLZRKcvT11AkJ
-	GYd2bMMDuL15RwA61ORdN12ZFBfgmSmdeDMCD1bby1nez2P9ZraMUB4SWkvr4QgzD65Q+j5HxKv
-	0gmU241LDJJph+MxtAy8bkXx06hUkZRt+1S2dQmSZUfXDG6P0mI0ftxJbUafvBZK6kXbQfQ=
-X-Received: by 2002:a05:6000:1887:b0:3d3:b30:4cf2 with SMTP id ffacd0b85a97d-4255d2b3268mr1947648f8f.19.1759405347096;
-        Thu, 02 Oct 2025 04:42:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEQBsRd3QbWjCawGUT/34IGA9DqiAFCCG8hAG/sJP5Zufv3lc6VVpYan82fkDtRhahnnjowCw==
-X-Received: by 2002:a05:6000:1887:b0:3d3:b30:4cf2 with SMTP id ffacd0b85a97d-4255d2b3268mr1947631f8f.19.1759405346651;
-        Thu, 02 Oct 2025 04:42:26 -0700 (PDT)
-Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.30])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8f45e9sm3335434f8f.51.2025.10.02.04.42.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 04:42:26 -0700 (PDT)
-Message-ID: <77c1e6213e1c250ad8bf57849d8c90dfd2f105d1.camel@redhat.com>
-Subject: Re: [PATCH 1/2] rv: Fully convert enabled_monitors to use list_head
- as iterator
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: Nam Cao <namcao@linutronix.de>, Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
-	 <mathieu.desnoyers@efficios.com>, linux-trace-kernel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>, 
-	stable@vger.kernel.org
-Date: Thu, 02 Oct 2025 13:42:24 +0200
-In-Reply-To: <20251002082235.973099-1-namcao@linutronix.de>
-References: <20251002082235.973099-1-namcao@linutronix.de>
-Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
- keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
- 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0BrZXJuZWwub3JnPoiZBBMWCgBBFiEEysoR+AuB3R
- Zwp6j270psSVh4TfIFAmjKX2MCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
- Q70psSVh4TfIQuAD+JulczTN6l7oJjyroySU55Fbjdvo52xiYYlMjPG7dCTsBAMFI7dSL5zg98I+8
- cXY1J7kyNsY6/dcipqBM4RMaxXsOtCRHYWJyaWVsZSBNb25hY28gPGdtb25hY29AcmVkaGF0LmNvb
- T6InAQTFgoARAIbAwUJBaOagAULCQgHAgIiAgYVCgkICwIEFgIDAQIeBwIXgBYhBMrKEfgLgd0WcK
- eo9u9KbElYeE3yBQJoymCyAhkBAAoJEO9KbElYeE3yjX4BAJ/ETNnlHn8OjZPT77xGmal9kbT1bC1
- 7DfrYVISWV2Y1AP9HdAMhWNAvtCtN2S1beYjNybuK6IzWYcFfeOV+OBWRDQ==
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1759405369; c=relaxed/simple;
+	bh=zSH9797fJ78xiisbHGjTWoEbZLjtnPdnxj+9risSCs0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LP15osQdDp1aueLfcdJMjx9wgoTDNr2AK1xb9j+uDnuPPi0A3K3rSULrwW7TKuy8e79YwBsAwjkDOxMy6zr6FhNdJ2LtjEOChU9qKq3zPgxvOzzxa59Nipu2vx3bbgeMo5/zQHzPRd4Ui+6XZ2juSGiVizc+u7QY87cJg/ZQsek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=wwF2dHn4; arc=none smtp.client-ip=115.124.30.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1759405357; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=yfqJW3Keyz7btvmQhBVyThI19zXN+mtr///MNA4fQb4=;
+	b=wwF2dHn4fBTG7oib9ikM7uA5N79XM2sSWc47LkzqoYjupQnZyned4VjIvoBfauopXCvA1TP6Y3wqWOkkWilVexuQMxUZ9DP8JAjh+l8kXtUIHiTv1U3krumVixKlSdpoOXtnS5gqrnk4vZd3aawvMsazyqrSK+mOiz2/vH1rVdk=
+Received: from 30.180.0.242(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WpHqq9F_1759405355 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 02 Oct 2025 19:42:36 +0800
+Message-ID: <4a152e1b-c468-4fbf-ac0b-dbb76fa1e2ac@linux.alibaba.com>
+Date: Thu, 2 Oct 2025 19:42:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] ext4: fix an data corruption issue in nojournal mode
+To: Zhang Yi <yi.zhang@huaweicloud.com>, linux-ext4@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, yi.zhang@huawei.com,
+ libaokun1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
+References: <20250916093337.3161016-1-yi.zhang@huaweicloud.com>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20250916093337.3161016-1-yi.zhang@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+Hi Ted,
 
+On 2025/9/16 17:33, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
+> 
+> Hello!
+> 
+> This series fixes an data corruption issue reported by Gao Xiang in
+> nojournal mode. The problem is happened after a metadata block is freed,
+> it can be immediately reallocated as a data block. However, the metadata
+> on this block may still be in the process of being written back, which
+> means the new data in this block could potentially be overwritten by the
+> stale metadata and trigger a data corruption issue. Please see below
+> discussion with Jan for more details:
+> 
+>    https://lore.kernel.org/linux-ext4/a9417096-9549-4441-9878-b1955b899b4e@huaweicloud.com/
+> 
+> Patch 1 strengthens the same case in ordered journal mode, theoretically
+> preventing the occurrence of stale data issues.
+> Patch 2 fix this issue in nojournal mode.
 
-On Thu, 2025-10-02 at 08:22 +0000, Nam Cao wrote:
-> The callbacks in enabled_monitors_seq_ops are inconsistent. Some treat th=
-e
-> iterator as struct rv_monitor *, while others treat the iterator as struc=
-t
-> list_head *.
->=20
-> This causes a wrong type cast and crashes the system as reported by Natha=
-n.
->=20
-> Convert everything to use struct list_head * as iterator. This also makes
-> enabled_monitors consistent with available_monitors.
->=20
+It seems this series is not applied, is it ignored?
 
-Looks good to me and passes my tests.
+When ext4 nojournal mode is used, it is actually a very
+serious bug since data corruption can happen very easily
+in specific conditions (we actually have a specific
+environment which can reproduce the issue very quickly)
 
-Reviewed-by: Gabriele Monaco <gmonaco@redhat.com>
+Also it seems AWS folks reported this issue years ago
+(2021), the phenomenon was almost the same, but the issue
+still exists until now:
+https://lore.kernel.org/linux-ext4/20211108173520.xp6xphodfhcen2sy@u87e72aa3c6c25c.ant.amazon.com/
+
+Some of our internal businesses actually rely on EXT4
+no_journal mode and when they upgrade the kernel from
+4.19 to 5.10, they actually read corrupted data after
+page cache memory is reclaimed (actually the on-disk
+data was corrupted even earlier).
+
+So personally I wonder what's the current status of
+EXT4 no_journal mode since this issue has been existing
+for more than 5 years but some people may need
+an extent-enabled ext2 so they selected this mode.
+
+We already released an announcement to advise customers
+not using no_journal mode because it seems lack of
+enough maintainence (yet many end users are interested
+in this mode):
+https://www.alibabacloud.com/help/en/alinux/support/data-corruption-risk-and-solution-in-ext4-nojounral-mode
 
 Thanks,
-Gabriele
+Gao Xiang
 
-> Fixes: de090d1ccae1 ("rv: Fix wrong type cast in enabled_monitors_next()"=
-)
-> Reported-by: Nathan Chancellor <nathan@kernel.org>
-> Closes:
-> https://lore.kernel.org/linux-trace-kernel/20250923002004.GA2836051@ax162=
-/
-> Signed-off-by: Nam Cao <namcao@linutronix.de>
-> Cc: <stable@vger.kernel.org>
-> ---
-> =C2=A0kernel/trace/rv/rv.c | 12 ++++++------
-> =C2=A01 file changed, 6 insertions(+), 6 deletions(-)
->=20
-> diff --git a/kernel/trace/rv/rv.c b/kernel/trace/rv/rv.c
-> index 48338520376f..43e9ea473cda 100644
-> --- a/kernel/trace/rv/rv.c
-> +++ b/kernel/trace/rv/rv.c
-> @@ -501,7 +501,7 @@ static void *enabled_monitors_next(struct seq_file *m=
-,
-> void *p, loff_t *pos)
-> =C2=A0
-> =C2=A0	list_for_each_entry_continue(mon, &rv_monitors_list, list) {
-> =C2=A0		if (mon->enabled)
-> -			return mon;
-> +			return &mon->list;
-> =C2=A0	}
-> =C2=A0
-> =C2=A0	return NULL;
-> @@ -509,7 +509,7 @@ static void *enabled_monitors_next(struct seq_file *m=
-,
-> void *p, loff_t *pos)
-> =C2=A0
-> =C2=A0static void *enabled_monitors_start(struct seq_file *m, loff_t *pos=
-)
-> =C2=A0{
-> -	struct rv_monitor *mon;
-> +	struct list_head *head;
-> =C2=A0	loff_t l;
-> =C2=A0
-> =C2=A0	mutex_lock(&rv_interface_lock);
-> @@ -517,15 +517,15 @@ static void *enabled_monitors_start(struct seq_file=
- *m,
-> loff_t *pos)
-> =C2=A0	if (list_empty(&rv_monitors_list))
-> =C2=A0		return NULL;
-> =C2=A0
-> -	mon =3D list_entry(&rv_monitors_list, struct rv_monitor, list);
-> +	head =3D &rv_monitors_list;
-> =C2=A0
-> =C2=A0	for (l =3D 0; l <=3D *pos; ) {
-> -		mon =3D enabled_monitors_next(m, mon, &l);
-> -		if (!mon)
-> +		head =3D enabled_monitors_next(m, head, &l);
-> +		if (!head)
-> =C2=A0			break;
-> =C2=A0	}
-> =C2=A0
-> -	return mon;
-> +	return head;
-> =C2=A0}
-> =C2=A0
-> =C2=A0/*
+> 
+> Regards,
+> Yi.
+> 
+> Zhang Yi (2):
+>    jbd2: ensure that all ongoing I/O complete before freeing blocks
+>    ext4: wait for ongoing I/O to complete before freeing blocks
+> 
+>   fs/ext4/ext4_jbd2.c   | 11 +++++++++--
+>   fs/jbd2/transaction.c | 13 +++++++++----
+>   2 files changed, 18 insertions(+), 6 deletions(-)
+> 
 
 
