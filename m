@@ -1,84 +1,87 @@
-Return-Path: <linux-kernel+bounces-839684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90583BB226B
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 02:34:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 33496BB226E
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 02:36:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52A1D1781E2
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 00:34:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9987F17A2A6
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 00:36:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9025861FFE;
-	Thu,  2 Oct 2025 00:34:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bUP6ji1v"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EBFC42AA9;
+	Thu,  2 Oct 2025 00:36:05 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1A781758B;
-	Thu,  2 Oct 2025 00:34:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CAAF3BB44
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 00:36:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759365277; cv=none; b=WRXM8zs0jj8CNqpqbv5gtCkQDi3lw+kiQG6LUZI3q0/qGHa6QuC9YYxbTWTSu6vxrY6uM7PFrbMo+JvOEW/wGEPyWJbbscoaKMm72JImVtiLM190MZ72n+JrLGMI9oCONjy7T3s0E21RAyrS3hoczANkzDCxL5d4x3Sh1lo4hpo=
+	t=1759365364; cv=none; b=dShnABv6HqKzHb8SxV+lLdXXhx6XFj2qF8FM9o+Ny+BcemYyBGsagaX+UnoT+m5lBpyvCiHHDA8Br7UxLSk8Noh3DhQuxdyQfIPW2RtXPhs5FmjemQtyTCtRppvYLrR28ktFHLa6tj1kNjdFHtyS7TjPkVnct7j6aX5L/gkbTlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759365277; c=relaxed/simple;
-	bh=gjOTJli6M8zGzeuRzvYHCyoKoewturxE7at7kfehWos=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F5g7Ar68VAGfRBWXSSWtkI9aT3OoTpmWo6KeqAfwJu8/1wzXZAjzvGzPXPR7n14Kd58nWlndKCnZjv3YHwLkVBI7vqhVdvrXJmmeThkWOh1wXS3kF7vs7+n8mNMm2+im+2lS2LbXg3LUtaHg+IgT4iomLK2Jj3c4SM2t7cFkO9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bUP6ji1v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9B2CC4CEF1;
-	Thu,  2 Oct 2025 00:34:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759365276;
-	bh=gjOTJli6M8zGzeuRzvYHCyoKoewturxE7at7kfehWos=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bUP6ji1vEWavXjnx8umZ7TmoVyLWgg+2Ky9vtJKnYVeQLrIty+4e9pJqtotzmbd2h
-	 oqdIctYMWDQMOtrjAKObm3wAOTcIyg7bywHEZIAR/4PNU4/F11BfIaSylm+8RQVi0E
-	 X/kNUo59JYNvqN5rrrPrEA2W3U1j/8XC8TXDhBNI/rnqYJnF3/VAEo+GXNp64F8BDy
-	 Mw3RqvlQfhMgEylOcuYoukc9Mm761AWIjwX1EzD0i0lBZmKfeJL5WowCIJLcjJNzda
-	 PBbKn4lungdBRa2pJpSxb/iW7rJmRCdAHUiPjUZ4jMoU0wMihxFfX7/ilKzBtuVAGK
-	 dqMKYE+6zrlfg==
-Date: Wed, 1 Oct 2025 19:34:32 -0500
-From: Rob Herring <robh@kernel.org>
-To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-Cc: Manivannan Sadhasivam <mani@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: mailbox: qcom-ipcc: Add bindings for
- physical client ids
-Message-ID: <20251002003432.GA2714683-robh@kernel.org>
-References: <20250922-ipcc-header-v1-1-f0b12715e118@oss.qualcomm.com>
+	s=arc-20240116; t=1759365364; c=relaxed/simple;
+	bh=bwpYwQaWtgYV/4EIa9s7E3W0KQxFM5fsNFsckMwQ0pk=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=axQ/9A87LrrJVBr6rBG9XcEGTqJ4lMh5wrtO59rV1Zr4+kSg4kPHAUlGRhNvi6ZK0hENlWYSKZIfu/mtt6Z5D4oPVpDI+BEd8WNZvLDN19UBuKrXdet3xjEFVQZOWqMBa6flJw9xAkA6d7MR18rOIukW2Moc8rloO7VSbkfA2ck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-42af09092b9so13820875ab.3
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 17:36:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759365362; x=1759970162;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RHjq+mkQyvQNovkB/35GuHldARZ4D1Z8sn8JCi337hA=;
+        b=UenkRfDaNYCEHt1OGpC2nklt+vFPry8ZAWwLf1hWnOKW6YwB284i0iyW8Cf+kZYsme
+         o6UvupKLTJpCfS73z648anxC+UkFeJjz8IMqYULQucZkAMwqqRMysEpqqBVecAZYqva6
+         6owILUj9FmSKPS2JAxlmvjF7gLAaSguZt/BwAN05A1gnEz85yiIvmT1s2gYvu2/Tz4CB
+         2z1CWi+HTjr5Q+KM1P9DN4L0wvnao7eTz7m878AfbmYoebMG020oRVQDn8UR2oBCGmwn
+         cBqNqRf7kRPowMh5SNgXCypWhSE2KjESXZ0eXfDPgxSPknrMen5r49Rc9rLJrIOXGAnX
+         BC7g==
+X-Forwarded-Encrypted: i=1; AJvYcCVb9TbUsjZ6hPeANNIgmHqCLJJ9VgHw6IxsyDAbd/1nCKN5H9ad/jy/depcX+mknr2lRSS2Ku199qZM9/g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiZVselcxE8tNkILaNRo4qug3EhLRyel8gOnE/DeGXAA1FTnao
+	9Ui3DP50gQ0u/mN67BSHVDQGPGtBQYAz8rhVoO2azkhZQldv4mFI8qqpczcJjfhwNKDGzx5EqgH
+	OfaCTtrbISU7dODiFNgFqcFvZvoqTS8it4968/E1lWbswYXHK68ejHciFlyw=
+X-Google-Smtp-Source: AGHT+IHr0/UyySINkDzvXpwmevkcUkSEy9O2KIxlQeVRtgQ+eu23a2o1R3xWxV/bl8cEXYFF6e/j228AP+4aMgSZrUAeR9zoMqwP
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250922-ipcc-header-v1-1-f0b12715e118@oss.qualcomm.com>
+X-Received: by 2002:a05:6e02:180b:b0:424:a3e:d79 with SMTP id
+ e9e14a558f8ab-42d8160eb1emr67401455ab.21.1759365362471; Wed, 01 Oct 2025
+ 17:36:02 -0700 (PDT)
+Date: Wed, 01 Oct 2025 17:36:02 -0700
+In-Reply-To: <20251001235909.7921-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68ddc8f2.a00a0220.102ee.006f.GAE@google.com>
+Subject: Re: [syzbot] [fs?] WARNING in free_mnt_ns
+From: syzbot <syzbot+7d23dc5cd4fa132fb9f3@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Sep 22, 2025 at 08:34:20PM -0700, Jingyi Wang wrote:
-> Physical client IDs instead of virtual client IDs are used for qcom new
-> platforms in the Inter Process Communication Controller (IPCC) driver
-> as virtual physical mapping logic is removed in HW. Add the bindings.
-> 
-> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-> ---
->  include/dt-bindings/mailbox/qcom-ipcc.h | 48 +++++++++++++++++++++++++++++++++
->  1 file changed, 48 insertions(+)
+Hello,
 
-This looks incomplete. Where's the binding additions for the new h/w 
-that uses these ids. This series looks more complete:
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-https://lore.kernel.org/all/20250924183726.509202-3-sibi.sankar@oss.qualcomm.com
+Reported-by: syzbot+7d23dc5cd4fa132fb9f3@syzkaller.appspotmail.com
+Tested-by: syzbot+7d23dc5cd4fa132fb9f3@syzkaller.appspotmail.com
 
-Can QCom please coordinate your work so we're not getting the same thing 
-a day apart.
+Tested on:
 
-Rob
+commit:         080ffb4b Merge tag 'i3c/for-6.18' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12dd46e2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5a792dde4ff127ac
+dashboard link: https://syzkaller.appspot.com/bug?extid=7d23dc5cd4fa132fb9f3
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1696b858580000
+
+Note: testing is done by a robot and is best-effort only.
 
