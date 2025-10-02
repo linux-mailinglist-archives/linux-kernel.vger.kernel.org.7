@@ -1,225 +1,154 @@
-Return-Path: <linux-kernel+bounces-839923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 252A6BB2BE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 09:52:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFBD3BB2BEC
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 09:54:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6842172B93
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 07:52:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B9BC19C3AD4
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 07:55:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B9D32D1936;
-	Thu,  2 Oct 2025 07:52:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFA6B2D2394;
+	Thu,  2 Oct 2025 07:54:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b="M3MfH+rU"
-Received: from pdx-out-001.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-001.esa.us-west-2.outbound.mail-perimeter.amazon.com [44.245.243.92])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SmUTP5N6"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FC0B1DD9AD;
-	Thu,  2 Oct 2025 07:52:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.245.243.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A951F2D0275
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 07:54:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759391534; cv=none; b=EAhn2FVO2+fM8ex5hH9Zq9XJJFUV9foMNpu5+bVYjVMsyfc6nyA8k+oZoAoLn4dODJ1XX1rS7tpQ9ckxayR7FEaeUPfkDdjhxk6N2vRQBt8H0ZTDVdn4vZR10481CVeQX6Ic2ygQ28INAfjmIPHRhqiRB1CBPQ5S7K9OzRQzqhk=
+	t=1759391686; cv=none; b=nP3bbF07lw1hDBm59pTlZ2ZFtAJPQQl/L6vTZa6EV2rXrPBs+ED8LsM5+3mKNXsFjxOhHgDtoYhNJbwYZuqggIvuatkzhDuY/hjm++bAiVoLaCSgel0T58TbsowLC/pscNZxP2aYXiu1l9xZDmk/eP0Vj0nRDSe+R1EbGInb7fo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759391534; c=relaxed/simple;
-	bh=Ah8TYPLJ8zfpSzOJ6OqScr2Gx8nC8ju05DqYixGcl34=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=h2zL7c2PUj2o/SyOZO62l/LrYDsxsJsiP9kSDXBBDygiMwhFBpaBr2SbPMjYBtTd5E3AgR4032V3aOB7sgNxTEh3WxvM6XUAurrAaP0T4VIs+nUbnRV62CgBCRztG8olAFnqjrmogWwQZ4418NJ8tDnjj6ZPwaswQJxiUkS+LpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b=M3MfH+rU; arc=none smtp.client-ip=44.245.243.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazoncorp2;
-  t=1759391532; x=1790927532;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=2SGvgtfExrVMKD6QFwY+i2a9wnruIxOwASxfKxqf6S8=;
-  b=M3MfH+rUZHYNfPzV62LgAFbuBbCWOKi1BJqsz4gxpbEIKTV7HDbAXPiS
-   8wXpnvh7Bcld/lLkzbfyQnLlSdXx9QSyEZbT7sXVRY+Ke2gjZdfgygyqg
-   vPHI7eJxhGHyXTuE/nAfEeVSBKTgJaE46AHU3lkLeE1lfUObUWDmt57m7
-   h5kVHpu9l203xk6z7Xptd/iBh6lIaOpTZ3DSdqBf7lYpRsaO0mlQzLLsN
-   MHABVGgBvOiT52QS7rIGmni7zKhBrrU1MI6ESKZckaFkrVcW84nPaOz+a
-   Pb/9QjXvYhDDL4s9VoKkk6/tttRL0iSH08ngf/Kis0SzvVeqHhmWem6ih
-   A==;
-X-CSE-ConnectionGUID: hzfbE5ZsTnCi/kS8l7dAKg==
-X-CSE-MsgGUID: fDs/5FZ+T2Smfxg1JTMupw==
-X-IronPort-AV: E=Sophos;i="6.18,281,1751241600"; 
-   d="scan'208";a="4137127"
-Received: from ip-10-5-6-203.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.6.203])
-  by internal-pdx-out-001.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2025 07:52:10 +0000
-Received: from EX19MTAUWC002.ant.amazon.com [10.0.38.20:24445]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.20.71:2525] with esmtp (Farcaster)
- id 4a555600-ee08-4b41-952a-f943cb84732e; Thu, 2 Oct 2025 07:52:10 +0000 (UTC)
-X-Farcaster-Flow-ID: 4a555600-ee08-4b41-952a-f943cb84732e
-Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
- EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Thu, 2 Oct 2025 07:52:10 +0000
-Received: from dev-dsk-acsjakub-1b-6f9934e2.eu-west-1.amazon.com
- (172.19.75.107) by EX19D001UWA001.ant.amazon.com (10.13.138.214) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20; Thu, 2 Oct 2025
- 07:52:08 +0000
-From: Jakub Acs <acsjakub@amazon.de>
-To: <linux-fsdevel@vger.kernel.org>
-CC: <acsjakub@amazon.de>, Andrew Morton <akpm@linux-foundation.org>, "David
- Hildenbrand" <david@redhat.com>, Xu Xin <xu.xin16@zte.com.cn>, Chengming Zhou
-	<chengming.zhou@linux.dev>, Peter Xu <peterx@redhat.com>, Axel Rasmussen
-	<axelrasmussen@google.com>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v4] mm: redefine VM_* flag constants with BIT()
-Date: Thu, 2 Oct 2025 07:52:02 +0000
-Message-ID: <20251002075202.11306-1-acsjakub@amazon.de>
-X-Mailer: git-send-email 2.47.3
+	s=arc-20240116; t=1759391686; c=relaxed/simple;
+	bh=WSAv+LklGTDBmAJg9JWePc59MIDbYN30xXPqFRoxrGA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fhVnbe626bJsb92sWrBH+wWcN0JxYUsy8vMZ701iBH27SGW5hyrUCVMh8Efw8GzaYJnjcSxQOmSMudB7e26Xv54vGZQxLdsKU1sepiMhpgjaPS/cMDg/rgScKqPGtyA7ALTokaekYT0xAVZNz6yssdQsFe4qfGM720/Q+Op2JKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SmUTP5N6; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759391683;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=f5NgAjs0FgUvOjNKCgOViw/s6WyhuboPXgN8L2oduk0=;
+	b=SmUTP5N6n2tC2XO2a5xgoxLAO/X78ISI4HrcL0iGg3wVcJ3KGtpk3A3cjR/IJfgSZgj+m5
+	u0ROPESKRQ/Mfee6vYODGlojPB+PVJy7bhmQE/HVwxf+xM3uGpZK0FaWC5LJ3z71NyQxAk
+	vYlGWk3e7cNRH2RAOMUbQW1kLJzCuGw=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-486-11b2WFyoM--bhWkWGPQhxA-1; Thu, 02 Oct 2025 03:54:42 -0400
+X-MC-Unique: 11b2WFyoM--bhWkWGPQhxA-1
+X-Mimecast-MFC-AGG-ID: 11b2WFyoM--bhWkWGPQhxA_1759391681
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3ee12ab7f33so569421f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 00:54:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759391681; x=1759996481;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=f5NgAjs0FgUvOjNKCgOViw/s6WyhuboPXgN8L2oduk0=;
+        b=asaPTE3aOGfaauIV50nxIMTiOzhSPup7Wj/+v845RXDuXtJ6Dcvr3Nvonh1VwQ6Mhu
+         D+V7e9ny60e17kSgdGem8QcfK7GwxHJANmn/outUn/3y62iMRgKJXAOqiU+tXilueG6b
+         vb7mP8t5QigPokvQ1IdVRgzikD/rgUbv19nfIb4tBcLyIS52gbuDgAWr5Xra7K97ns+o
+         sOnK5SBzYR1OeD8qLtDCwo8ilZKZCh9Zxbn6l+5bcrZ4I/hSa+0gQjIhnD4n6ryZqerF
+         2+xvF/apkh10TpKt2j/QxARC598ki3E5bO5cuXHOcvTbsvf9k89GthlZ+cphx1OcrJoM
+         vSEw==
+X-Gm-Message-State: AOJu0YxwTCQe55gB4i/lQHba9Z7+upmi0XeukdbPovDCVCvPfc/nOQxw
+	imNzYsPreVi2n/pHUuVtCQfzkc5dmvL2pVBk2Ecyv8+8kDvGpdCx4v/uQXe6cvDSwdVRqoGEbYl
+	qArolXjEZ8WEuGBPeso+6msKWr74LsYUQZc+Oq2DYm2koAavVDGAi5ppbO/QlF+b24LS0ZIGkdu
+	H6
+X-Gm-Gg: ASbGncvbjd+m2TDYbXM9P08Mrg0sSkliH+Qz4NINYvkVuyq3y5C2+txZ9iDyZbGJG4g
+	j2ch+J9Y3fRCynBq8XdIFzVZD818DqncJeq1buXK4TySWRF0vqSv/LZwTZHiE7h/b8kMk8BfUwc
+	uBeHmL4Vgl8KDvCurQPLbfuaG4U0Fe+ZEn7jOQuSYQSQ7Bxm9ZEQuDCmsyUJWVeuz/+SWZ/2u8W
+	bd/XqWUKuuMM+427vRth03JCPjUzEMfpB8IhESMSiNVy9m6VLqNB23SByplRw3/+DDIb2VQqGRQ
+	j7ufDuf4bUIr74F1O3QENQ==
+X-Received: by 2002:a05:6000:4282:b0:40e:31a2:7efe with SMTP id ffacd0b85a97d-425577f4cb8mr4951708f8f.14.1759391680651;
+        Thu, 02 Oct 2025 00:54:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHKgb2wuYS24zodpwDlxRHEFq5J/MXUUrEeNEVo0zphJwnjV4MGibFNyYvpxnYvHco/UT9a7w==
+X-Received: by 2002:a05:6000:4282:b0:40e:31a2:7efe with SMTP id ffacd0b85a97d-425577f4cb8mr4951692f8f.14.1759391680190;
+        Thu, 02 Oct 2025 00:54:40 -0700 (PDT)
+Received: from localhost ([2a01:e0a:b25:f902::ff])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8b0068sm2484557f8f.26.2025.10.02.00.54.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Oct 2025 00:54:39 -0700 (PDT)
+Date: Thu, 2 Oct 2025 09:54:39 +0200
+From: Maxime Ripard <mripard@redhat.com>
+To: Jens Wiklander <jens.wiklander@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, op-tee@lists.trustedfirmware.org, 
+	linux-arm-kernel@lists.infradead.org, Olivier Masse <olivier.masse@nxp.com>, 
+	Thierry Reding <thierry.reding@gmail.com>, Yong Wu <yong.wu@mediatek.com>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
+	Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>, 
+	"T . J . Mercier" <tjmercier@google.com>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
+	Sumit Garg <sumit.garg@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, azarrabi@qti.qualcomm.com, 
+	Simona Vetter <simona.vetter@ffwll.ch>, Daniel Stone <daniel@fooishbar.org>, 
+	Rouven Czerwinski <rouven.czerwinski@linaro.org>, robin.murphy@arm.com, Sumit Garg <sumit.garg@oss.qualcomm.com>
+Subject: Re: [PATCH v12 3/9] tee: implement protected DMA-heap
+Message-ID: <20251002-sceptical-goose-of-fame-7b33d6@houat>
+References: <20250911135007.1275833-1-jens.wiklander@linaro.org>
+ <20250911135007.1275833-4-jens.wiklander@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ClientProxiedBy: EX19D040UWA002.ant.amazon.com (10.13.139.113) To
- EX19D001UWA001.ant.amazon.com (10.13.138.214)
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-
-Make VM_* flag constant definitions consistent - unify all to use BIT()
-macro.
-
-We have previously changed VM_MERGEABLE in a separate bugfix. This is a
-follow-up to make all the VM_* flag constant definitions consistent, as
-suggested by David in [1].
-
-[1]: https://lore.kernel.org/all/85f852f9-8577-4230-adc7-c52e7f479454@redhat.com/
-
-Signed-off-by: Jakub Acs <acsjakub@amazon.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Xu Xin <xu.xin16@zte.com.cn>
-Cc: Chengming Zhou <chengming.zhou@linux.dev>
-Cc: Peter Xu <peterx@redhat.com>
-Cc: Axel Rasmussen <axelrasmussen@google.com>
-Cc: linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org
----
-v3 -> v4:
- - fix VM_MAYOVERLAY and VM_PFNMAP definitions
- - send outside the series
-
-This depends on the following patch:
-https://lore.kernel.org/all/20251001090353.57523-2-acsjakub@amazon.de/
-
-v3: https://lore.kernel.org/all/20251001090353.57523-3-acsjakub@amazon.de/
-
- include/linux/mm.h | 66 +++++++++++++++++++++++-----------------------
- 1 file changed, 33 insertions(+), 33 deletions(-)
-
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index c6794d0e24eb..cb33f967d327 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -246,56 +246,56 @@ extern unsigned int kobjsize(const void *objp);
-  * vm_flags in vm_area_struct, see mm_types.h.
-  * When changing, update also include/trace/events/mmflags.h
-  */
--#define VM_NONE		0x00000000
-+#define VM_NONE		0
- 
--#define VM_READ		0x00000001	/* currently active flags */
--#define VM_WRITE	0x00000002
--#define VM_EXEC		0x00000004
--#define VM_SHARED	0x00000008
-+#define VM_READ		BIT(0)		/* currently active flags */
-+#define VM_WRITE	BIT(1)
-+#define VM_EXEC		BIT(2)
-+#define VM_SHARED	BIT(3)
- 
- /* mprotect() hardcodes VM_MAYREAD >> 4 == VM_READ, and so for r/w/x bits. */
--#define VM_MAYREAD	0x00000010	/* limits for mprotect() etc */
--#define VM_MAYWRITE	0x00000020
--#define VM_MAYEXEC	0x00000040
--#define VM_MAYSHARE	0x00000080
-+#define VM_MAYREAD	BIT(4)		/* limits for mprotect() etc */
-+#define VM_MAYWRITE	BIT(5)
-+#define VM_MAYEXEC	BIT(6)
-+#define VM_MAYSHARE	BIT(7)
- 
--#define VM_GROWSDOWN	0x00000100	/* general info on the segment */
-+#define VM_GROWSDOWN	BIT(8)		/* general info on the segment */
- #ifdef CONFIG_MMU
--#define VM_UFFD_MISSING	0x00000200	/* missing pages tracking */
-+#define VM_UFFD_MISSING	BIT(9)		/* missing pages tracking */
- #else /* CONFIG_MMU */
--#define VM_MAYOVERLAY	0x00000200	/* nommu: R/O MAP_PRIVATE mapping that might overlay a file mapping */
-+#define VM_MAYOVERLAY	BIT(9)		/* nommu: R/O MAP_PRIVATE mapping that might overlay a file mapping */
- #define VM_UFFD_MISSING	0
- #endif /* CONFIG_MMU */
--#define VM_PFNMAP	0x00000400	/* Page-ranges managed without "struct page", just pure PFN */
--#define VM_UFFD_WP	0x00001000	/* wrprotect pages tracking */
-+#define VM_PFNMAP	BIT(10)		/* Page-ranges managed without "struct page", just pure PFN */
-+#define VM_UFFD_WP	BIT(12)		/* wrprotect pages tracking */
- 
--#define VM_LOCKED	0x00002000
--#define VM_IO           0x00004000	/* Memory mapped I/O or similar */
-+#define VM_LOCKED	BIT(13)
-+#define VM_IO           BIT(14)		/* Memory mapped I/O or similar */
- 
- 					/* Used by sys_madvise() */
--#define VM_SEQ_READ	0x00008000	/* App will access data sequentially */
--#define VM_RAND_READ	0x00010000	/* App will not benefit from clustered reads */
--
--#define VM_DONTCOPY	0x00020000      /* Do not copy this vma on fork */
--#define VM_DONTEXPAND	0x00040000	/* Cannot expand with mremap() */
--#define VM_LOCKONFAULT	0x00080000	/* Lock the pages covered when they are faulted in */
--#define VM_ACCOUNT	0x00100000	/* Is a VM accounted object */
--#define VM_NORESERVE	0x00200000	/* should the VM suppress accounting */
--#define VM_HUGETLB	0x00400000	/* Huge TLB Page VM */
--#define VM_SYNC		0x00800000	/* Synchronous page faults */
--#define VM_ARCH_1	0x01000000	/* Architecture-specific flag */
--#define VM_WIPEONFORK	0x02000000	/* Wipe VMA contents in child. */
--#define VM_DONTDUMP	0x04000000	/* Do not include in the core dump */
-+#define VM_SEQ_READ	BIT(15)		/* App will access data sequentially */
-+#define VM_RAND_READ	BIT(16)		/* App will not benefit from clustered reads */
-+
-+#define VM_DONTCOPY	BIT(17)		/* Do not copy this vma on fork */
-+#define VM_DONTEXPAND	BIT(18)		/* Cannot expand with mremap() */
-+#define VM_LOCKONFAULT	BIT(19)		/* Lock the pages covered when they are faulted in */
-+#define VM_ACCOUNT	BIT(20)		/* Is a VM accounted object */
-+#define VM_NORESERVE	BIT(21)		/* should the VM suppress accounting */
-+#define VM_HUGETLB	BIT(22)		/* Huge TLB Page VM */
-+#define VM_SYNC		BIT(23)		/* Synchronous page faults */
-+#define VM_ARCH_1	BIT(24)		/* Architecture-specific flag */
-+#define VM_WIPEONFORK	BIT(25)		/* Wipe VMA contents in child. */
-+#define VM_DONTDUMP	BIT(26)		/* Do not include in the core dump */
- 
- #ifdef CONFIG_MEM_SOFT_DIRTY
--# define VM_SOFTDIRTY	0x08000000	/* Not soft dirty clean area */
-+# define VM_SOFTDIRTY	BIT(27)		/* Not soft dirty clean area */
- #else
- # define VM_SOFTDIRTY	0
- #endif
- 
--#define VM_MIXEDMAP	0x10000000	/* Can contain "struct page" and pure PFN pages */
--#define VM_HUGEPAGE	0x20000000	/* MADV_HUGEPAGE marked this vma */
--#define VM_NOHUGEPAGE	0x40000000	/* MADV_NOHUGEPAGE marked this vma */
-+#define VM_MIXEDMAP	BIT(28)		/* Can contain "struct page" and pure PFN pages */
-+#define VM_HUGEPAGE	BIT(29)		/* MADV_HUGEPAGE marked this vma */
-+#define VM_NOHUGEPAGE	BIT(30)		/* MADV_NOHUGEPAGE marked this vma */
- #define VM_MERGEABLE	BIT(31)		/* KSM may merge identical pages */
- 
- #ifdef CONFIG_ARCH_USES_HIGH_VMA_FLAGS
--- 
-2.47.3
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="ucqtnbt2ioahlqrj"
+Content-Disposition: inline
+In-Reply-To: <20250911135007.1275833-4-jens.wiklander@linaro.org>
 
 
+--ucqtnbt2ioahlqrj
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Subject: Re: [PATCH v12 3/9] tee: implement protected DMA-heap
+MIME-Version: 1.0
 
+On Thu, Sep 11, 2025 at 03:49:44PM +0200, Jens Wiklander wrote:
+> +static const char *heap_id_2_name(enum tee_dma_heap_id id)
+> +{
+> +	switch (id) {
+> +	case TEE_DMA_HEAP_SECURE_VIDEO_PLAY:
+> +		return "protected,secure-video";
+> +	case TEE_DMA_HEAP_TRUSTED_UI:
+> +		return "protected,trusted-ui";
+> +	case TEE_DMA_HEAP_SECURE_VIDEO_RECORD:
+> +		return "protected,secure-video-record";
+> +	default:
+> +		return NULL;
+> +	}
+> +}
 
-Amazon Web Services Development Center Germany GmbH
-Tamara-Danz-Str. 13
-10243 Berlin
-Geschaeftsfuehrung: Christian Schlaeger
-Eingetragen am Amtsgericht Charlottenburg unter HRB 257764 B
-Sitz: Berlin
-Ust-ID: DE 365 538 597
+We've recently agreed on a naming guideline (even though it's not merged yet)
+
+https://lore.kernel.org/r/20250728-dma-buf-heap-names-doc-v4-1-f73f71cf0dfd@kernel.org
+
+Secure and trusted should be defined I guess, because secure and
+protected at least seem redundant to me.
+
+Maxime
+
+--ucqtnbt2ioahlqrj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaN4vvgAKCRAnX84Zoj2+
+dh5DAYCtjelmpXHr50Khpzx9gOlMaEclQyCYsx0ccN3NkEfrV19Dn1EcsuWOsMM8
+FnSLI0wBf20rXmWeBPjWcAcR1B39X7YSjO3A7FgWI4aIrvvEGff3VbIQIgq5c/ST
+75QC6+0wWg==
+=iJBu
+-----END PGP SIGNATURE-----
+
+--ucqtnbt2ioahlqrj--
 
 
