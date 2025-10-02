@@ -1,117 +1,100 @@
-Return-Path: <linux-kernel+bounces-840227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50481BB3E18
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 14:23:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07DD9BB3E2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 14:28:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A29219C790B
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 12:24:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB2203C3B3F
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 12:28:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 940953101D5;
-	Thu,  2 Oct 2025 12:23:54 +0000 (UTC)
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C94563101D1;
+	Thu,  2 Oct 2025 12:28:05 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D973101B5
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 12:23:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36D94201017;
+	Thu,  2 Oct 2025 12:28:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759407834; cv=none; b=jlvO2v9djysjFRwvJFAe+UK0CW9M4Fkn4L9lOMaHe5jmMISqF/LfEvWTmMZzXLgkpWraC5Ngb2KQv7umNrLYTrqsxdDaeCFXdE6Eq1KyIjqdpnScj2nkI+i+G/uA30dFkcbdJN2GIeOPuz6KhnnEZ8loAyQKvMGZmcon0SVAZqU=
+	t=1759408085; cv=none; b=s1DQhfBcFLCX30+8e9aIS4oZG+tBqblBaIsn73KSZNzGV4XnaraAztfLmuAdJbkzuKyfVvPsPxAghXGpB9GwHqtq8uYuUt1pzoK+JDAyC3HrWER3GE3IxXXN/5gaeKvuSxyEaCNULYWTWbREk+5jvCApvTCd1gEegpQ7qPj+Jh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759407834; c=relaxed/simple;
-	bh=AC0onUH/KWR12euPrEMMEF6CxzSfY+hS18p7k/rNiSI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YDhijl1qjIgWFKh4NiBO2bMZsdcKhJsWW/zdWwx6XaM1IQqNFHpd/M3hjWjRbnHt7V0ITBnqJ5PMSJ51v7hE3stdk28GRHGfSHx+jPLLHCnxqWFon4HyeTtm5Lo4y8uZ1aY8h2N0sWdCelmIoaZpoA42UPOWXtm/pYilLftYhyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-62fca216e4aso2128337a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 05:23:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759407829; x=1760012629;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JHq3klzPYB8yjcAVOmszOfkdhflrtsWL0PRMLhhvkhU=;
-        b=nBBRoDDGvCYHW6ege+4UdZQ2DE+qNi3uj0XHdRvLD4EjU9PGKZX7kBJknOomlFUs/O
-         t7D/lk2iiaakxBVcRMGEfoGAw3EcW4hZJC4pqUtw4X3ujwTIYSqy2FEeCPTPci7PbFCp
-         6pTNfhAAKcb8lAWN1tOBSep/AluOWyZxZvdCp/U2AgmZ/pexjuCwp/R9Htoxix4fl90f
-         B+HKIC4vFryftU0wiGiGe2F022QLpJUmTUzBsvZBoO7Ni6WOm0ZDJ3TU0PgxP7cjROpm
-         B6f6xYqSmestk4uXAu9TOwx5Wkak2rUaGMu08pWUucalNmBVKyCx4J1SRz3AFEDsAJO+
-         1wdg==
-X-Forwarded-Encrypted: i=1; AJvYcCX9WoF08bxruEgRUL5q4bj9ZVrmnRwt6ePn420U725n19SPCNyERr5GlGJStheFfKTDH/zzrFgNxyZc9n8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5lptrFjWq6jD95dakNQeNwJM6SjRXFkGqItsOWJzvOn7fTrnx
-	+p/Dk8L67jp0lVs4MlyEQV9Akz+STCkBjlxgmIKRykQm9o4uPgdWh8/Mli0Aukv4nag=
-X-Gm-Gg: ASbGncvoPGzCLAdVT3jMciLRCwf3bnNVxNLBww3JH47uJmxhWg/ar65POkuMizh3CxI
-	2ZCj71RddnyzE9KSsaeO7kwLPGvQh/O4PT8TqM3We9QKZ23pSW8KaITOAqayLY4LnJechoA4A5+
-	GVoFTua4FZhYyYPQ1H1SN1xCkflXLWkUU3uHHayXzjywiqn3cEb74CUr/7BLZ+ayxVwQHAQemxt
-	FP3ahKKA/eemtSsF3VZ7EYHy+wWGEkfpAD5ZgnZJaC8Vw3UbQWiPotc2obIYuK/muuq4FAvNwnR
-	tSq7DjzuWUpBri7bpjw+B6AzTbqUZvrFCFLsQsaOosEttyz/A3qdksZTYs01W+R5nC/nGibWZBT
-	4MwejdmenWvbNinfkuP3qJ57ANJ9kDVosno465HwJN1pC8JKtzKx6s28c8T/9xIsEn3aQIpzBr9
-	GgsDuDmOICf9ZMBkVzuHWa88AqzzIgeQ==
-X-Google-Smtp-Source: AGHT+IG/UNG1w1GMbI90A6htc52w2xMrWB192K5hQl3K8CMEUq7aN/i2Doc8vtnUeBqy+lgw1ieSPQ==
-X-Received: by 2002:a05:6402:1809:b0:62f:2b4a:fb34 with SMTP id 4fb4d7f45d1cf-63787ea6e70mr2741268a12.14.1759407829271;
-        Thu, 02 Oct 2025 05:23:49 -0700 (PDT)
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com. [209.85.208.43])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-637880ffdf7sm1770136a12.28.2025.10.02.05.23.45
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Oct 2025 05:23:45 -0700 (PDT)
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-62fca216e4aso2128002a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 05:23:45 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXqCyMURekp/8XdJ/YuopE0o7L5JMnYOnlrWYuC0pv+5f5AAKBaMPb7BfcK9BYs6d3mM0CT7fjbzIGNiOQ=@vger.kernel.org
-X-Received: by 2002:a50:99db:0:b0:631:6acd:fa3a with SMTP id
- 4fb4d7f45d1cf-6376a8cbaebmr2386247a12.4.1759407825048; Thu, 02 Oct 2025
- 05:23:45 -0700 (PDT)
+	s=arc-20240116; t=1759408085; c=relaxed/simple;
+	bh=T5UwiR4dMBrZ3D7lTmuVkPkQNoJ5IcfALnYS/MfaMPI=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=L+/j6jRl/0A550c0CaogzpjVFTTOsbwBd8Q4i0pi5BUh46Vn8OKXbQLokO0L6NiTIjIK/qBPMv18cCjZONFvAt/pFDLev97Wf8+PXEYXHJT6klOx60OmUmVaC1jKxpNGxgDAncxBlk0Q/TSA+PpRoosoZnwsXbTfGLZy0F1Heyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ccrc76T6nz6L4sN;
+	Thu,  2 Oct 2025 20:25:43 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id CC445140426;
+	Thu,  2 Oct 2025 20:27:59 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 2 Oct
+ 2025 13:27:58 +0100
+Date: Thu, 2 Oct 2025 13:27:56 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Terry Bowman <terry.bowman@amd.com>
+CC: <dave@stgolabs.net>, <dave.jiang@intel.com>, <alison.schofield@intel.com>,
+	<dan.j.williams@intel.com>, <bhelgaas@google.com>, <shiju.jose@huawei.com>,
+	<ming.li@zohomail.com>, <Smita.KoralahalliChannabasappa@amd.com>,
+	<rrichter@amd.com>, <dan.carpenter@linaro.org>,
+	<PradeepVineshReddy.Kodamati@amd.com>, <lukas@wunner.de>,
+	<Benjamin.Cheatham@amd.com>, <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	<linux-cxl@vger.kernel.org>, <alucerop@amd.com>, <ira.weiny@intel.com>,
+	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>
+Subject: Re: [PATCH v12 19/25] cxl: Introduce cxl_pci_drv_bound() to check
+ for bound driver
+Message-ID: <20251002132756.00003fe1@huawei.com>
+In-Reply-To: <20250925223440.3539069-20-terry.bowman@amd.com>
+References: <20250925223440.3539069-1-terry.bowman@amd.com>
+	<20250925223440.3539069-20-terry.bowman@amd.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251001122326.4024391-1-cosmin-gabriel.tanislav.xa@renesas.com> <20251001122326.4024391-8-cosmin-gabriel.tanislav.xa@renesas.com>
-In-Reply-To: <20251001122326.4024391-8-cosmin-gabriel.tanislav.xa@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 2 Oct 2025 14:23:31 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWQZzgv-St7a05Z0nr6ijDG=a5UT6dkz0apx4Ympxowgw@mail.gmail.com>
-X-Gm-Features: AS18NWAPPSWmlScZEb54OFRRxiDbKu9VBgdxP80maayV33NLkOLsg7T87DMtor8
-Message-ID: <CAMuHMdWQZzgv-St7a05Z0nr6ijDG=a5UT6dkz0apx4Ympxowgw@mail.gmail.com>
-Subject: Re: [PATCH v3 7/7] arm64: defconfig: enable RZ/T2H / RZ/N2H ADC driver
-To: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
-	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-iio@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500009.china.huawei.com (7.191.174.84) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-On Wed, 1 Oct 2025 at 14:24, Cosmin Tanislav
-<cosmin-gabriel.tanislav.xa@renesas.com> wrote:
-> Renesas RZ/T2H (R9A09G077) and RZ/N2H (R9A09G087) SoCs include three
-> 12-Bit successive approximation A/D converters.
->
-> RZ/T2H has two ADCs with 4 channels and one with 6.
-> RZ/N2H has two ADCs with 4 channels and one with 15.
->
-> Enable the driver for them.
->
-> Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+On Thu, 25 Sep 2025 17:34:34 -0500
+Terry Bowman <terry.bowman@amd.com> wrote:
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> CXL devices handle protocol errors via driver-specific callbacks rather
+> than the generic pci_driver::err_handlers by default. The callbacks are
+> implemented in the cxl_pci driver and are not part of struct pci_driver, so
+> cxl_core must verify that a device is actually bound to the cxl_pci
+> module's driver before invoking the callbacks (the device could be bound
+> to another driver, e.g. VFIO).
+> 
+> However, cxl_core can not reference symbols in the cxl_pci module because
+> it creates a circular dependency. This prevents cxl_core from checking the
+> EP's bound driver and calling the callbacks.
+> 
+> To fix this, move drivers/cxl/pci.c into drivers/cxl/core/pci_drv.c and
+> build it as part of the cxl_core module. Compile into cxl_core using
+> CXL_PCI and CXL_CORE Kconfig dependencies. This removes the standalone cxl_pci
+> module, consolidates the cxl_pci driver code into cxl_core, and eliminates
+> the circular dependency so cxl_core can safely perform bound-driver checks
+> and invoke the CXL PCI callbacks.
+> 
+> Introduce cxl_pci_drv_bound() to return boolean depending on if the PCI EP
+> parameter is bound to a CXL driver instance. This will be used in future
+> patch when dequeuing work from the kfifo.
+> 
+> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+> 
+Description is nice and clear on the necessity so fair enough.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
 
