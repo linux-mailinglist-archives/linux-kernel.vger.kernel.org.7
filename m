@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-839864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59DB7BB2992
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 08:10:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06D6FBB2998
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 08:11:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C6553B8BB5
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 06:10:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D79374204A2
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 06:10:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AA172D323E;
-	Thu,  2 Oct 2025 06:09:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 455D72DA773;
+	Thu,  2 Oct 2025 06:09:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="k/3CAjt+"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="hcikybLL"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DFB22D2390
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 06:09:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C23B2882BD
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 06:09:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759385372; cv=none; b=Sby/cES3ZmOk84svnhkCFJkXHPUxn5YxfyDKsL/ESJ8da9UAHUjZxiAZV+7DxPEmeNP/UI33NzjoXE5ttYrdh8pWlq/jQFPklYfzHA2/VzCsynFaMIS8xKsSftmHiVMfxVe2zSd3JfRVPRL3bz/GJjmi8PmYLqI59HGt7sO9P6k=
+	t=1759385379; cv=none; b=XP+OWBsjP7+HC8rJry4TBdcsczyp74HT16XiNvPJpp64sh1NfCbqJxhxRoub3hR7sJAsz9M5vBEBdbJvVQ6h4q0g8c9+8DR3HuMvbosq38tJHVwzYalz8PHcwYoOftUHkZVOhYiLXLlulfsQcyprB6CQn/rIzn5MqhulBe1LRTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759385372; c=relaxed/simple;
-	bh=A8yV6HZYjL3Q3FaHQaHm8hNAwETN0T+E21KzDymdeVs=;
+	s=arc-20240116; t=1759385379; c=relaxed/simple;
+	bh=j2jjXbUEye2nfKb3sw3aIgKPRAfLAp+24kdzx86f4sc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=n10XiaDj/Ni6LYJRPgSiBmMVeZfq9NQF+uQg71Cr3SQMf2V7pgZX0U5ugvJNOWAbdHhM+aU+F0I0WQ638poaGqEqp1ZUChQl8JN+8TKrIsIwNjYyeqtUPDXlQF4LcMarS1josGBUh7rtBwAm69e+a87IdxuLvX4tEL8Ta5U0u10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=k/3CAjt+; arc=none smtp.client-ip=209.85.210.170
+	 MIME-Version; b=f6b7TiDgVDIncGxi8f7OHKIrrVaVGMVrc2U6pLngORcm+t2+kGOALCjKW25M8/6gJkcyrtpCkrrl6gN+sSAVTz0ptCR5aoAO+hdmys0o5c64uu8mEk8XZuq/vf0BbJ+Xm3z0M+3JZDDcm1kb+DPdHZqKJD8OUTlfjKOOeAEd4Ng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=hcikybLL; arc=none smtp.client-ip=209.85.216.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-78118e163e5so1647283b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 23:09:31 -0700 (PDT)
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-3327f8ed081so877676a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 23:09:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1759385370; x=1759990170; darn=vger.kernel.org;
+        d=ventanamicro.com; s=google; t=1759385377; x=1759990177; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8zmmvMMm35WfJWJCu/rbPWUzK6j6v7Igidp5p7E+6WY=;
-        b=k/3CAjt+Jo16pYkpnbpvBxVzcvIbnZwFycGZMB1N+g/J9ZV1yDLUcL98Am+PW4ClrE
-         BpvAxWkCC5g16yzXuVxWMTNY428F5EnXxV92Jda3gkLBr/296zvbYMBK8lyYRhGGxw2d
-         PXY0OqQMdmmt8EfRo4/fRfpJOfXBs5ZsNobwtQckF+Qp1YFmB3uwb+rNudQzzS+cw0gC
-         K1DaS7u5VuJ5j4hjsNTF4vWtCuQ5Qjb82S81Xz1vd/e2Q6FcC1MEFkw8w3IFkrOIti3g
-         hCMiDUAN7Dvc4ZKqqyj98qMLHgF6aoHYFCzDPnrcSB5ZbdYJxnjLkPummDou+LtECDz3
-         cEmA==
+        bh=MF1UBNl0YQdxkCR2Wq/BcrNYDGhukTT3j7EdaD4pBPY=;
+        b=hcikybLLA/XrC7oQzbMplex6fDdyU1a4XXZ7jQJRx1uxX3hFXxTtUzlZ7xVDhR3sgo
+         AWvUKGbpjW8mNUwQPaY9vzDfJKxKdTl4UrYBV1KIEZ3oB6n7SXxJttxWonhTdwIFGOhv
+         G+4AZftItpiBRGUheuWhY5Yo6DSw02eDAY3D4uVma+0+tgzVvmrH6+4NC5QZPdzVmgCC
+         fXbvrQAKly2YUrjmH61PeU5YzCsmswRzPsEpPHE7VLuP7Ae0ow4siB5DB2EsgRaVy2u8
+         lZhTVhMGNDPFMT7IAjUAD3j1g2XcgSGcnyBPlqHxJ0b5pL7IVO05jZT+7iAEzxsw5XC1
+         f0zA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759385370; x=1759990170;
+        d=1e100.net; s=20230601; t=1759385377; x=1759990177;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8zmmvMMm35WfJWJCu/rbPWUzK6j6v7Igidp5p7E+6WY=;
-        b=Wl8TusZEFzhfyk/V4zBmPGnJG2sMPJL/b4CJ+hLB49T9AhLNFamISeWACIAExfeRTo
-         VbZa9Y2JsYoo2GZ8fYST1n+H5QXqf5lOvEASvW31lFKj7Kcmt6JFfBK+5tEEjr9YkG05
-         fUgQdopqNy5moW6jB9tgwnB15w+k+gETErzPCCHu9Gx5DwhlOEHa07E8AKl66jHOkBHm
-         9xlJtRbJmoCCIqoDwEB6cykfsC0Te2CIheWz1cIjdIc4ltqk2PZoElKxNPJimiBmzrQD
-         OE92ls1n2XrXBgXjj//WexX7JQ8Nr6Vqzh2UnEnllB+usnlFVBNjJSY6XCyPMYHT8W1B
-         hLeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU7AasgrZO6Pasv/GrPB+n1uVSbZ2zbYuLkRF95z+8vDLsGlQD4D0va6Gk7i1BOzIb1j9uaAbg2dtJ5wIg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4IspfgnY8hlIYjdZlYeZZB2X77iIucdA1YWFZPEBmrVZ/dXXU
-	01MWlNNqBb4Yq8MhdP1Qyp1gsrX5nZ7Je1NGHXkLmBHIzE9mg+2qOPfxze6xcvPj9fg=
-X-Gm-Gg: ASbGncsusUXp0bfJc99SJF/1lXD7CE2qIYo5oP5zcI/JzmnCqAqVGr73y4bpXFv3AoZ
-	60BBXA3zDzYt4NY52cXxe2yylr2KtQ6byzSlAMWpG3rdsRcCHL7fon4HIa4jN2Xan/UAA4YnY7R
-	M7eLjVio5R9fIAvcY/pRAc37WEALOIzKEWoKgKVtx0p/dxxyQJvi1DuGQL/DDt8c0EbN0taixA2
-	nj0jp2y+EdnbV3MfSe7TRYzcW43aAX+n93ZOuhhJplIfNv/1r6zNWczbW9RHRgmiwxM+FTH2FMs
-	8+y2dWTOWY0Y6XVSkiZC+pSthvcBQUnciVFlv9vtu+DXvjfpGQKOOP0OOW0JzY76D7iF+RT8fdo
-	9ViTztRPCnrdfXgDTd+tfa32ZqCvWFcQoSY1yq9Hc1sdOyDFskEZcAS1EbtP60bCEZIsGYesK1i
-	tsZaI=
-X-Google-Smtp-Source: AGHT+IF+YSzJ58uViX8Nc9sdQwacWiEzaK5CydbflVdamOordFViOPRH4V5+hIAsR14420tWtxw0Bw==
-X-Received: by 2002:a05:6a21:3943:b0:243:78a:82c4 with SMTP id adf61e73a8af0-32a261f188amr2830964637.25.1759385370384;
-        Wed, 01 Oct 2025 23:09:30 -0700 (PDT)
+        bh=MF1UBNl0YQdxkCR2Wq/BcrNYDGhukTT3j7EdaD4pBPY=;
+        b=eQ22HVo7ZRk8ZCKmlWQZO1VVAe14tNLBfRjwfTz/O3Y5fEH5I/l9mjnE9/i/afZMen
+         mfR7AcWpoVxtWa4YbZ/mJ9T/SZ+4lPKIHFgOSOvUlv/DdBEPA4pS94b4EbFvt0EXbv9j
+         JoqKUxiX4fy3qlq+oCQITyuVLEuhez/KNXz7Yix8PUuUkDJ3cWGPvWics8XQF4GxTvAq
+         3qLV53J/fPhU1CpYH2//i+vwZw/5pA9iaoXvZ6H0y2c2WzWr0ZOMh/VN99N9taDHnnTp
+         YeBpiWORLRVdkR/Q1eMddu2rzKykZ2ONvTQBXgQMpIDCdqsYmefM8e03CvQII2YjcBrb
+         VcbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWBZ625BYji7ur/O168TF3a8WxITuN+r3rq3CGRD1ZjK1Zsu+frpsU0TFbkiWW28+vEAhdA4oRFuyiZkRs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+J6bFGmlbbjW1XEdPcD4cFx8QTN+pX/+/UIy5bbRtvP/e3t2B
+	+inZBXAk4hpQsLc1LJXGEghZ5h7xRx5KWdOp1Wec6/ryWuNNGv6SLPz0/oB5VQAPWSI=
+X-Gm-Gg: ASbGncshWGbYrhheucSg82NYZUSiSWdwUcJu334r7Tp1ci4cj+Cn2JsIxuiR30DJ7wu
+	TP9KClWzVQltpikPt5HvucwzbbskDjtiKN10F5LfRwVEup6EvNA7Y9/fkQwX71xS/thNMA+8Ten
+	JL3a4UibSnOPsfH2a/Ey/EAtwKbfXVkeTPQPOO4eh44ydPaEOIlqpqNijvxyViZnwT7sT/MKEKh
+	AJ2RcSdfuk0nhiZLxaRDGos8equ6R6G0R1KW8jFIolWfC/cFsI2Dd+8nrOZPFhVjacawNtewsM4
+	kIt89s8YCabQwbWC2Ijd9syMaOd7WsKxy6YEvD/tgHBIxHrjVBDaidzIISdHCiHmICgLJ9jUquk
+	amqK8s8ClxInbVDi6S0aJ+YqQ6EqSO2ruB1eePER5PtRhz8R4xp6oET5gHKT6XPnkGWgm7hI6fD
+	cBR/Q=
+X-Google-Smtp-Source: AGHT+IHhhHbJ8hJGnY+jVzo5XBMGx1xaIAa5m44vk4uxyjS42YcaIHBNHmkiTntGZfiB3yhY5MXCRg==
+X-Received: by 2002:a17:90b:1e08:b0:32e:70f5:6988 with SMTP id 98e67ed59e1d1-339a6f84cd2mr5872201a91.32.1759385377284;
+        Wed, 01 Oct 2025 23:09:37 -0700 (PDT)
 Received: from localhost.localdomain ([122.171.19.158])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6099f594afsm1205029a12.37.2025.10.01.23.09.23
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b6099f594afsm1205029a12.37.2025.10.01.23.09.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Oct 2025 23:09:29 -0700 (PDT)
+        Wed, 01 Oct 2025 23:09:36 -0700 (PDT)
 From: Anup Patel <apatel@ventanamicro.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -98,11 +98,10 @@ Cc: Alexandre Ghiti <alex@ghiti.fr>,
 	linux-riscv@lists.infradead.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Mayuresh Chitale <mchitale@ventanamicro.com>,
 	Anup Patel <apatel@ventanamicro.com>
-Subject: [PATCH 10/11] perf tools: Initial support for RISC-V trace decoder
-Date: Thu,  2 Oct 2025 11:37:31 +0530
-Message-ID: <20251002060732.100213-11-apatel@ventanamicro.com>
+Subject: [PATCH 11/11] MAINTAINERS: Add entry for RISC-V trace framework and drivers
+Date: Thu,  2 Oct 2025 11:37:32 +0530
+Message-ID: <20251002060732.100213-12-apatel@ventanamicro.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251002060732.100213-1-apatel@ventanamicro.com>
 References: <20251002060732.100213-1-apatel@ventanamicro.com>
@@ -114,164 +113,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Mayuresh Chitale <mchitale@ventanamicro.com>
+Add Mayuresh and myself as maintainers for RISC-V trace framework and drivers.
 
-Add bare bones support for RISC-V trace decoder so that the data received
-from the hardware by the RISC-V trace perf driver can be written to the
-perf record output file.
-
-Co-developed-by: Anup Patel <apatel@ventanamicro.com>
 Signed-off-by: Anup Patel <apatel@ventanamicro.com>
-Signed-off-by: Mayuresh Chitale <mchitale@ventanamicro.com>
 ---
- tools/perf/util/Build             |  1 +
- tools/perf/util/auxtrace.c        |  3 +
- tools/perf/util/rvtrace-decoder.c | 91 +++++++++++++++++++++++++++++++
- tools/perf/util/rvtrace.h         |  2 +
- 4 files changed, 97 insertions(+)
- create mode 100644 tools/perf/util/rvtrace-decoder.c
+ MAINTAINERS | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/tools/perf/util/Build b/tools/perf/util/Build
-index 4959e7a990e4..2305638283c4 100644
---- a/tools/perf/util/Build
-+++ b/tools/perf/util/Build
-@@ -142,6 +142,7 @@ perf-util-$(CONFIG_AUXTRACE) += cs-etm.o
- perf-util-$(CONFIG_AUXTRACE) += cs-etm-decoder/
- endif
- perf-util-$(CONFIG_AUXTRACE) += cs-etm-base.o
-+perf-util-$(CONFIG_AUXTRACE) += rvtrace-decoder.o
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 969df0192fc1..898b51d3dd8a 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -21800,6 +21800,17 @@ F:	include/dt-bindings/power/thead,th1520-power.h
+ F:	include/dt-bindings/reset/thead,th1520-reset.h
+ F:	include/linux/firmware/thead/thead,th1520-aon.h
  
- perf-util-y += parse-branch-options.o
- perf-util-y += dump-insn.o
-diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
-index 735f6c360064..5ccb5f3d9af8 100644
---- a/tools/perf/util/auxtrace.c
-+++ b/tools/perf/util/auxtrace.c
-@@ -54,6 +54,7 @@
- #include "arm-spe.h"
- #include "hisi-ptt.h"
- #include "s390-cpumsf.h"
-+#include "rvtrace.h"
- #include "util/mmap.h"
- 
- #include <linux/ctype.h>
-@@ -1394,6 +1395,8 @@ int perf_event__process_auxtrace_info(struct perf_session *session,
- 		err = hisi_ptt_process_auxtrace_info(event, session);
- 		break;
- 	case PERF_AUXTRACE_RISCV_TRACE:
-+		err = rvtrace__process_auxtrace_info(event, session);
-+		break;
- 	case PERF_AUXTRACE_UNKNOWN:
- 	default:
- 		return -EINVAL;
-diff --git a/tools/perf/util/rvtrace-decoder.c b/tools/perf/util/rvtrace-decoder.c
-new file mode 100644
-index 000000000000..58db5ca62c1a
---- /dev/null
-+++ b/tools/perf/util/rvtrace-decoder.c
-@@ -0,0 +1,91 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * RISC-V trace Decoder
-+ */
++RISC-V TRACE FRAMEWORK AND DRIVERS
++M:	Mayuresh Chitale <mchitale@gmail.com>
++M:	Anup Patel <anup@brainfault.org>
++L:	linux-riscv@lists.infradead.org
++S:	Maintained
++F:	Documentation/devicetree/bindings/riscv/riscv,trace-component.yaml
++F:	drivers/hwtracing/rvtrace/*
++F:	include/linux/rvtrace*
++F:	tools/perf/arch/riscv/util/auxtrace.c
++F:	tools/perf/util/rvtrace*
 +
-+#include <errno.h>
-+#include <inttypes.h>
-+#include "evlist.h"
-+#include <internal/lib.h>
-+#include "rvtrace.h"
-+
-+struct rvtrace_decoder {
-+	struct auxtrace auxtrace;
-+	u32 auxtrace_type;
-+	struct perf_session *session;
-+	struct machine *machine;
-+	u32 pmu_type;
-+};
-+
-+static int rvtrace_process_event(struct perf_session *session __maybe_unused,
-+				 union perf_event *event __maybe_unused,
-+				 struct perf_sample *sample __maybe_unused,
-+				 const struct perf_tool *tool __maybe_unused)
-+{
-+	return 0;
-+}
-+
-+static int rvtrace_process_auxtrace_event(struct perf_session *session __maybe_unused,
-+					  union perf_event *event __maybe_unused,
-+					  const struct perf_tool *tool __maybe_unused)
-+{
-+	return 0;
-+}
-+
-+static int rvtrace_flush(struct perf_session *session __maybe_unused,
-+			 const struct perf_tool *tool __maybe_unused)
-+{
-+	return 0;
-+}
-+
-+static void rvtrace_free_events(struct perf_session *session __maybe_unused)
-+{
-+}
-+
-+static void rvtrace_free(struct perf_session *session)
-+{
-+	struct rvtrace_decoder *ptr = container_of(session->auxtrace, struct rvtrace_decoder,
-+					    auxtrace);
-+
-+	session->auxtrace = NULL;
-+	free(ptr);
-+}
-+
-+static bool rvtrace_evsel_is_auxtrace(struct perf_session *session,
-+				      struct evsel *evsel)
-+{
-+	struct rvtrace_decoder *ptr = container_of(session->auxtrace,
-+						   struct rvtrace_decoder, auxtrace);
-+
-+	return evsel->core.attr.type == ptr->pmu_type;
-+}
-+
-+int rvtrace__process_auxtrace_info(union perf_event *event,
-+				   struct perf_session *session)
-+{
-+	struct perf_record_auxtrace_info *auxtrace_info = &event->auxtrace_info;
-+	struct rvtrace_decoder *ptr;
-+
-+	if (auxtrace_info->header.size < RVTRACE_AUXTRACE_PRIV_SIZE +
-+	    sizeof(struct perf_record_auxtrace_info))
-+		return -EINVAL;
-+
-+	ptr = zalloc(sizeof(*ptr));
-+	if (!ptr)
-+		return -ENOMEM;
-+
-+	ptr->session = session;
-+	ptr->machine = &session->machines.host;
-+	ptr->auxtrace_type = auxtrace_info->type;
-+	ptr->pmu_type = auxtrace_info->priv[0];
-+
-+	ptr->auxtrace.process_event = rvtrace_process_event;
-+	ptr->auxtrace.process_auxtrace_event = rvtrace_process_auxtrace_event;
-+	ptr->auxtrace.flush_events = rvtrace_flush;
-+	ptr->auxtrace.free_events = rvtrace_free_events;
-+	ptr->auxtrace.free = rvtrace_free;
-+	ptr->auxtrace.evsel_is_auxtrace = rvtrace_evsel_is_auxtrace;
-+	session->auxtrace = &ptr->auxtrace;
-+
-+	return 0;
-+}
-diff --git a/tools/perf/util/rvtrace.h b/tools/perf/util/rvtrace.h
-index 93c041db8660..fdf2e5866c85 100644
---- a/tools/perf/util/rvtrace.h
-+++ b/tools/perf/util/rvtrace.h
-@@ -15,4 +15,6 @@
- 
- #define RVTRACE_AUXTRACE_PRIV_SIZE	sizeof(u64)
- 
-+int rvtrace__process_auxtrace_info(union perf_event *event, struct perf_session *session);
-+struct auxtrace_record *rvtrace_record_init(int *err);
- #endif
+ RNBD BLOCK DRIVERS
+ M:	Md. Haris Iqbal <haris.iqbal@ionos.com>
+ M:	Jack Wang <jinpu.wang@ionos.com>
 -- 
 2.43.0
 
