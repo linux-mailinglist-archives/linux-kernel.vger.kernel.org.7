@@ -1,86 +1,86 @@
-Return-Path: <linux-kernel+bounces-840561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E47FBB4AEE
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 19:26:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AEC8BB4AF1
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 19:27:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D6B01C2C68
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 17:26:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74A487B2391
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 17:25:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A26F32882AF;
-	Thu,  2 Oct 2025 17:24:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2D1428A1E6;
+	Thu,  2 Oct 2025 17:24:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="itIqJK42"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SpBjYcRl"
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49314285041
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 17:24:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BE3128312D
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 17:24:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759425858; cv=none; b=fRBuTWSHfce8BJURtFlkE0GwF493pKNcP0Iqw25wW/uOad6Ra5qngMjRCsTOlcVLIidh0/dAgIfDo6EkG22y2ZkI8lYNYKA2uI4mgBG5yJT6MJ6KxIeqG7vYPrF9Y7SICueE1KOVsHeBwu+5nUwJnuNbBqiuZ4NiTBcRdx1VXUI=
+	t=1759425861; cv=none; b=WZ9hoIE3PBdjNTOCByWqz1eKzCeYyPnlf9UGUlVe/X1DuKfiB+FcT1Vcr/CaUPAm0d6FzJhn2T/nt6RbCySV//sD7zpby3IHSqD7vo7NjHJWec1TorMEEsG77wPbXlsbXEWhMyyXIEyN6XKhPfWAWsg0ZXSWegKKEBIepWeMUCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759425858; c=relaxed/simple;
-	bh=TnKLTRJJ6lErK4Ayj/2b3UMGvx3XBSAiFViCHcE3muY=;
+	s=arc-20240116; t=1759425861; c=relaxed/simple;
+	bh=bNEWBZRyBHfKqr01S8/SKbTmlXSajYDu9W7EMIMQC6Y=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=EjVYWy3jdycOQtrnFJZ/vfWqyQ7RXeMCqxG3GB18t+2lwIvORJRcx52l8L2nZvGkXLhjDYEJsav0z85dxsXm1gg5OVaRLmtKVdiRmCxeUbN+T1PU+NGyshyXU94DtybynXY1iu973jjizBvnxZE4ZrbS9gvi98B9NJUydWO4ql0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=itIqJK42; arc=none smtp.client-ip=209.85.160.174
+	 MIME-Version; b=gVnCymEmO+LzZyV1S8R+6s0MPs0fnbinKlXkIMPJgqdSB91PyQz+bSOo9wVhKKdUd68cjhlTt6LhiQeLCM7tq1omkoLdiy/gNFjjYomD2y+vWpuPKDbW3+YT21tkyDyz2/PXhUIJ+SNOS2IcvzyWl/k2KrUr86M+cWZSikQLL2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SpBjYcRl; arc=none smtp.client-ip=209.85.160.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4df0467b510so17253111cf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 10:24:17 -0700 (PDT)
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4da72b541f8so14893901cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 10:24:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759425856; x=1760030656; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1759425858; x=1760030658; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/YZZsnVhuRhLrG1wV8qp8NzWiX9JVa/qmSszT0l1J7A=;
-        b=itIqJK42C2TDVGiOUQlBlnm1YcKesikaRFOSxTq3T9bOsEUzBxaHCrrMeqnxO95EyA
-         j3A4GQW53Xc/s+419v2/OXqztZqEJj3i6GmP6sQxsIMBFK95GhrYQxE8jzVh2scW8Mxe
-         nzM8IcunA1ieVyduQCbZF4zi6SVbS5tBgAB10da6j7q4N/GIveXHI9qdM6ra/lWH62zs
-         aG31WvgcyX+lpZm+FxuLzmIOF5VCPhMvM9mKFOB7vbXGbF2zsZjRgqe2iVbDYzrWyyWU
-         p1Sf9y/kaX5+vJQFqS9Ly/znt5+aMjpbh1TExHtVuqK/RiEQEe/9lJ5IAbWTl0XhH84b
-         CbbA==
+        bh=QMViGqdfcDRKE+thTCkDFhQYc4S31LExZ+nrwKtGa20=;
+        b=SpBjYcRlOQ+0OeqBUTSaTWqj6STLep5hbio0F0+gU8dzsJ4IVU2iKA7OAhWAHdRB99
+         k0ImO5m7gQ0nW4u1H7iDBL2YhSykJKtmG61YQPfKsvMZxY0jkvtMyCFDUnzEcHfqXLME
+         seeCvovxT1837r9NIDl+jumTJuSnqywoqhOM1IVyuMhRq4vbjb78G8hvwEUJkTpeL+ux
+         yNHA8EVEoR/6fXRq7JBWqYOlaT1TQJaDqqxypz00bhWZKOoiYIeMxAXkjduSQ46Mkxh3
+         Fry0k0UHibFCqXfYAr0JfXu4dXf91rta0pw+dnQ8rJMWqVzB1ln1ex75eVsOjPOtTkof
+         J46Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759425856; x=1760030656;
+        d=1e100.net; s=20230601; t=1759425858; x=1760030658;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/YZZsnVhuRhLrG1wV8qp8NzWiX9JVa/qmSszT0l1J7A=;
-        b=r89Dg06KzaKS0bZFJFyn7+aT1SG1DISl5l1/fVmlqWjkKqdsU5sOIXk/cxgK2L0Ed2
-         elx14nfGkb/bZgLy2ztTG3zInT2LguBm9zRXlr+GmOdQCCpjI8CW3OE4dLMI0ILHJM7G
-         kJ+lAvNpge4bazZMXj8GIuPouVxR9FeT/qXvFUdhn5RE2eONXmq4lxcG64Yt8vuJfmeJ
-         OoNu8kFNwy9m7r/TleMdWKABNaiRZk6weZ5hUeREdXXCOfCGPZMysPpdV2P9lSWli0gZ
-         amYNMk1n2hAW0KUHqO9Ym9ntm8KU/WuzltfTkdgAmhS9FcmYSXXzWxlktwGeliZhpcfe
-         uijA==
-X-Forwarded-Encrypted: i=1; AJvYcCXAUVNC1iCntpUocuODu28G4+2fntFY9aY4ssh8255DUXmrI2NtwEOYHbCREDB8ZnKIe3AKgRuUxkpXe4M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyc3nHgR6VwONGlKV5jJIkwQWxG958e05WP3QTmx2Y+HUC6UWfw
-	Ip7aPDCP9S5zpe32B40VQdSh4Uzbm01CnQoeoktW5JdZxujsgnM1LHKO
-X-Gm-Gg: ASbGnctabyNPaGoQ/TZCi6zcOjNhYif9njC+fRtokyE0qQ79/TYkG1n1MeBDuQ11Itz
-	AHCqKBt8rgQHpTaa4zOgNrRlUFbN2kbt/7VcFU0n2LSVVzJZcxy0iQzBo3irjrDnKLGwfScR0dq
-	WkB+foS1iJMMAvbg7AlbS0dIx1Q5I7dKcWlAhfbxGbdTZTUDUZjgsbWEfaykzQMiuo6EUBLtdtx
-	YOI+r3PtxpmhQYoz0/MawbPc81MZyEYtUPBVdsnlOsq3pkJOwrh1q1YJy/kqlexnii3SJz9a0tL
-	PnVaWPxb615r7RJBf+1k71yvcyZytXvzkmZY5KMD0pSYUBv4XU7B84k4hJKrhGwjbng5u+GkW15
-	Uy7zRSGgsP9HsuUBCe++z3acc8CYfKof0WVEdoPzklqH6Izfa/qwrPVdKPe8dtt00k+FXGVRO8M
-	M=
-X-Google-Smtp-Source: AGHT+IHq/nu6xvYLrVY5dOYgmICAlKGmpDqj/EFzgjuYKt3fMSL5t0Ss5zZJjr2Z3fnSAa2wSTIJgQ==
-X-Received: by 2002:ac8:5744:0:b0:4b6:373c:f81c with SMTP id d75a77b69052e-4e576a7bbadmr1431871cf.30.1759425856102;
-        Thu, 02 Oct 2025 10:24:16 -0700 (PDT)
+        bh=QMViGqdfcDRKE+thTCkDFhQYc4S31LExZ+nrwKtGa20=;
+        b=It7KKnGa0bNoD4cDwjfb570SnFcS8tZLPJ/oI/RR5ATWaf08dGN6uAy5WZpXbMpKje
+         mq4oaoMPbQfqs1x+Jx3ECN1xHPOHUL1+CJOqLrBf9ZIcT1YqLO0TmjEeRLx0/UynV6yS
+         3C/PDooUAysRnzwsT12D8GN29x1z16Zzo45+M+sAc+B5yayTELXLHI61InNTJqrPXrYU
+         aSQN6oh7aoy0ZfSgAFNbhppGyEx+HIeQ8BheN6N0Hqufe1deemslPo1wHHEiClfci1mz
+         a2WxzcE7Ukvh5VHXKBdxx4EZSnxH5mWNt7106YjwE0OHMhZkRV4aqnmqTAP4fYp4rBzu
+         zWnw==
+X-Forwarded-Encrypted: i=1; AJvYcCWJ0g+KD7n9+cWRcKbT27qD2YYkuLbPFSXRNy4+LR882a4jWWQ+RiKtZMZZqa4BCB2i4O62yn5/Z+xuxa8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSCg1lRiFLecEewQTiBPVCjQMRepxcJ98Dy9HSC8FXxP/gp5/c
+	kR3Jq6YNoDppwi+pIZB8SAd1hcfUGHuRZp5KfjipueIzUYhn6DYKu2+m
+X-Gm-Gg: ASbGncuXyAIKgQCV3eijseEZyY/T0EkShQL6k3fas1sF7i2IySKUGlHyh1Lz2p3oQj0
+	nhjEEZOPyCDeWGlOwgA+P5YIU/Ntr+V9gd3SBcv8gzxi1NoILzDQzzTaOsc0/UJ+ItLvOrzCioZ
+	K13FOegMwXqGAfeH70UeSRbznDfO6Azp3VrTixIwA0fs6dzZIW18lQc0gcL9zLcS+o/PjcW8Tre
+	Klrt96F4kyPdY0plpDTzvLjfNu+8V7cr7IdrEm3G1HNmLn99/eIA21wWfXvLDZgOMib+bQMbNzs
+	nAKy2pZUg2FcGtI+W1mkNH+A26tGMBMksXzLnSPhUfXi1mlE1MgBx7ikp0UpLCqvidIhOto9pDI
+	1OFbbLm7dJzLkLRH4iDKMsV2PNzYNmYC3a7uWo/X06o6NP2Z44UDVdgU6z42CBLUCa9dHck0f5F
+	8kd2Fl+lP5LRz5Ck9lJo4x
+X-Google-Smtp-Source: AGHT+IFBR/DbvZ6VQiaghYjkQSXWBduaHlJ0TVnRxV/BRzfotDhZefmEwz9LpFxscxCFJZEtu8XB3Q==
+X-Received: by 2002:a05:622a:4d95:b0:4cf:8fa2:ccd2 with SMTP id d75a77b69052e-4e576a453d8mr1892611cf.13.1759425857952;
+        Thu, 02 Oct 2025 10:24:17 -0700 (PDT)
 Received: from linux-kernel-dev-start.. ([159.203.26.228])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4e55cbd3d9fsm24504971cf.32.2025.10.02.10.24.15
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4e55cbd3d9fsm24504971cf.32.2025.10.02.10.24.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 10:24:15 -0700 (PDT)
+        Thu, 02 Oct 2025 10:24:17 -0700 (PDT)
 From: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
 To: gregkh@linuxfoundation.org
 Cc: linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
 	vivek.balachandhar@gmail.com
-Subject: [PATCH v4 15/16] staging: rtl8723bs: merge nested if conditions for clarity and tab problems
-Date: Thu,  2 Oct 2025 17:23:03 +0000
-Message-Id: <20251002172304.1083601-16-vivek.balachandhar@gmail.com>
+Subject: [PATCH v4 16/16] staging: rtl8723bs: remove trailing whitespace in rtw_mlme.c comments
+Date: Thu,  2 Oct 2025 17:23:04 +0000
+Message-Id: <20251002172304.1083601-17-vivek.balachandhar@gmail.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20251002172304.1083601-1-vivek.balachandhar@gmail.com>
 References: <20251002172304.1083601-1-vivek.balachandhar@gmail.com>
@@ -92,31 +92,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Combine nested if conditions for clarity and fix tab indentation in one
-place to match kernel coding style.
+Remove trailing spaces shown as error in checkpatch run in comment lines
+around the IsInPreAuthKeyList() comments section.
 
-No functional changes.
+These were pre-existing in origin/staging-testing; git blame points to:
+08a2e17462dc3 ("staging: rtl8723bs: fix space-before-tab warnings")
+(2025-08-05, Zhuoheng Li)
+
+No functional change.
 
 Signed-off-by: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
 ---
- drivers/staging/rtl8723bs/core/rtw_mlme.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/staging/rtl8723bs/core/rtw_mlme.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme.c b/drivers/staging/rtl8723bs/core/rtw_mlme.c
-index aa842905a467..f17b16fe8819 100644
+index f17b16fe8819..6f147a6f2345 100644
 --- a/drivers/staging/rtl8723bs/core/rtw_mlme.c
 +++ b/drivers/staging/rtl8723bs/core/rtw_mlme.c
-@@ -1254,8 +1254,8 @@ void rtw_joinbss_event_prehandle(struct adapter *adapter, u8 *pbuf)
- 						rtw_free_stainfo(adapter,  pcur_sta);
+@@ -2093,7 +2093,7 @@ int rtw_restruct_wmm_ie(struct adapter *adapter, u8 *in_ie, u8 *out_ie, uint in_
+ 	return ielength;
+ }
  
- 					ptarget_wlan = rtw_find_network(&pmlmepriv->scanned_queue, pnetwork->network.mac_address);
--					if (check_fwstate(pmlmepriv, WIFI_STATION_STATE) == true) {
--					    if (ptarget_wlan)
-+					if (check_fwstate(pmlmepriv, WIFI_STATION_STATE) == true &&
-+					    ptarget_wlan) {
- 						ptarget_wlan->fixed = true;
- 					}
- 				}
+-/* Ported from 8185: IsInPreAuthKeyList(). 
++/* Ported from 8185: IsInPreAuthKeyList().
+  * (Renamed from SecIsInPreAuthKeyList(), 2006-10-13.)
+  * Added by Annie, 2006-05-07.
+  *
 -- 
 2.39.5
 
