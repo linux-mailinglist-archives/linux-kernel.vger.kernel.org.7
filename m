@@ -1,87 +1,88 @@
-Return-Path: <linux-kernel+bounces-839685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33496BB226E
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 02:36:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 602F8BB2274
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 02:37:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9987F17A2A6
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 00:36:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C007318983CD
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 00:37:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EBFC42AA9;
-	Thu,  2 Oct 2025 00:36:05 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4554172618;
+	Thu,  2 Oct 2025 00:37:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YsXqFKn0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CAAF3BB44
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 00:36:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B28D5227;
+	Thu,  2 Oct 2025 00:37:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759365364; cv=none; b=dShnABv6HqKzHb8SxV+lLdXXhx6XFj2qF8FM9o+Ny+BcemYyBGsagaX+UnoT+m5lBpyvCiHHDA8Br7UxLSk8Noh3DhQuxdyQfIPW2RtXPhs5FmjemQtyTCtRppvYLrR28ktFHLa6tj1kNjdFHtyS7TjPkVnct7j6aX5L/gkbTlk=
+	t=1759365427; cv=none; b=eu2fli/Lmw4Pq7muUfMQMtHWYFTkdMTE2cWFMrmE6zwdo77mMFQ6/sehLyrjPyhcZTU6r3t/nxqGrdQw0hLyCsXsOIUpDbc1MekwxKWzAjZRoGIYwMzFfNlAppzraNeAxo2SVGruIRdye1EzyvHSeOpgkAUIfUYB0hYy0FIIBnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759365364; c=relaxed/simple;
-	bh=bwpYwQaWtgYV/4EIa9s7E3W0KQxFM5fsNFsckMwQ0pk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=axQ/9A87LrrJVBr6rBG9XcEGTqJ4lMh5wrtO59rV1Zr4+kSg4kPHAUlGRhNvi6ZK0hENlWYSKZIfu/mtt6Z5D4oPVpDI+BEd8WNZvLDN19UBuKrXdet3xjEFVQZOWqMBa6flJw9xAkA6d7MR18rOIukW2Moc8rloO7VSbkfA2ck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-42af09092b9so13820875ab.3
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 17:36:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759365362; x=1759970162;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RHjq+mkQyvQNovkB/35GuHldARZ4D1Z8sn8JCi337hA=;
-        b=UenkRfDaNYCEHt1OGpC2nklt+vFPry8ZAWwLf1hWnOKW6YwB284i0iyW8Cf+kZYsme
-         o6UvupKLTJpCfS73z648anxC+UkFeJjz8IMqYULQucZkAMwqqRMysEpqqBVecAZYqva6
-         6owILUj9FmSKPS2JAxlmvjF7gLAaSguZt/BwAN05A1gnEz85yiIvmT1s2gYvu2/Tz4CB
-         2z1CWi+HTjr5Q+KM1P9DN4L0wvnao7eTz7m878AfbmYoebMG020oRVQDn8UR2oBCGmwn
-         cBqNqRf7kRPowMh5SNgXCypWhSE2KjESXZ0eXfDPgxSPknrMen5r49Rc9rLJrIOXGAnX
-         BC7g==
-X-Forwarded-Encrypted: i=1; AJvYcCVb9TbUsjZ6hPeANNIgmHqCLJJ9VgHw6IxsyDAbd/1nCKN5H9ad/jy/depcX+mknr2lRSS2Ku199qZM9/g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiZVselcxE8tNkILaNRo4qug3EhLRyel8gOnE/DeGXAA1FTnao
-	9Ui3DP50gQ0u/mN67BSHVDQGPGtBQYAz8rhVoO2azkhZQldv4mFI8qqpczcJjfhwNKDGzx5EqgH
-	OfaCTtrbISU7dODiFNgFqcFvZvoqTS8it4968/E1lWbswYXHK68ejHciFlyw=
-X-Google-Smtp-Source: AGHT+IHr0/UyySINkDzvXpwmevkcUkSEy9O2KIxlQeVRtgQ+eu23a2o1R3xWxV/bl8cEXYFF6e/j228AP+4aMgSZrUAeR9zoMqwP
+	s=arc-20240116; t=1759365427; c=relaxed/simple;
+	bh=kHKQ8XMS0aHS1J8DY2i0xrspGqEu0jVIyBUJzo9bMiA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lXKLf6Y0RmEyrNzLPli70ihYbFNTe7h7GnqtVj6GV1ZVfUCJ6/yIgEx7tRQXwocoiiZykknEq4zrSKuRXHrVpDgjubj94B+oB7Xno1RG95uu7DuyJ4BtqHZ6vYD2/ANUy45oxf4PxE7XpCnFBEfLmmW3KzrNPd2kf1kp1ar8apA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YsXqFKn0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7A6AC4CEF1;
+	Thu,  2 Oct 2025 00:37:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759365427;
+	bh=kHKQ8XMS0aHS1J8DY2i0xrspGqEu0jVIyBUJzo9bMiA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YsXqFKn0XpgvKFy3ljziq5R/02wb1nFWfXQGeRTaXF9pqMYsD4xcBNiMgvuMJSaUO
+	 IJfnevgSe7S4MjBICHhS3C/KXYUpUj9f3SyYqAnuKzwtLV90csD/n+jqdVRkYrlEjI
+	 AGxbzFqnS54/c14RrYWKGKwv/8VCv79R0PfB7UTraN7DDaq0/l2R96zk99U5CD0+X/
+	 J8STehMjn84BxrIDkKjxzx56EGVqK3kectxwBa+9V18oIZE6bVe+7/buzBg57WiDZd
+	 R4WbCju3iMArFX4PGNCirKF69tB0LaZP9e3ujYu+hmORE1zOvNj118r0FeNLmqVYax
+	 s/9RyAGxvtYLA==
+Date: Wed, 1 Oct 2025 19:37:05 -0500
+From: Rob Herring <robh@kernel.org>
+To: Sibi Sankar <sibi.sankar@oss.qualcomm.com>
+Cc: jassisinghbrar@gmail.com, krzk+dt@kernel.org, conor+dt@kernel.org,
+	mani@kernel.org, andersson@kernel.org, mathieu.poirier@linaro.org,
+	konradybcio@kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH 2/5] dt-bindings: mailbox: qcom-ipcc: Document Glymur
+ physical client IDs
+Message-ID: <20251002003705.GA2672888-robh@kernel.org>
+References: <20250924183726.509202-1-sibi.sankar@oss.qualcomm.com>
+ <20250924183726.509202-3-sibi.sankar@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:180b:b0:424:a3e:d79 with SMTP id
- e9e14a558f8ab-42d8160eb1emr67401455ab.21.1759365362471; Wed, 01 Oct 2025
- 17:36:02 -0700 (PDT)
-Date: Wed, 01 Oct 2025 17:36:02 -0700
-In-Reply-To: <20251001235909.7921-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68ddc8f2.a00a0220.102ee.006f.GAE@google.com>
-Subject: Re: [syzbot] [fs?] WARNING in free_mnt_ns
-From: syzbot <syzbot+7d23dc5cd4fa132fb9f3@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250924183726.509202-3-sibi.sankar@oss.qualcomm.com>
 
-Hello,
+On Thu, Sep 25, 2025 at 12:07:23AM +0530, Sibi Sankar wrote:
+> Document the physical client IDs specific to Glymur SoCs. Physical client
+> IDs are used on newer Qualcomm platforms including Glymur, since the Inter
+> Process Communication Controller (IPCC) HW block no longer has the virtual
+> to physical mapping in place.
+> 
+> Signed-off-by: Sibi Sankar <sibi.sankar@oss.qualcomm.com>
+> ---
+> 
+> https://patchwork.kernel.org/project/linux-arm-msm/patch/20250922-ipcc-header-v1-1-f0b12715e118@oss.qualcomm.com/
+> ^^ patch seems to assume physical IDs are common across SoCs but it doesn't
+> seem to hold true on Glymur.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Maybe QCom should sort that out before sending us stuff...
 
-Reported-by: syzbot+7d23dc5cd4fa132fb9f3@syzkaller.appspotmail.com
-Tested-by: syzbot+7d23dc5cd4fa132fb9f3@syzkaller.appspotmail.com
+> 
+>  include/dt-bindings/mailbox/qcom-ipcc.h | 61 +++++++++++++++++++++++++
+>  1 file changed, 61 insertions(+)
 
-Tested on:
+This belongs with patch 1 as it is part of the binding/ABI.
 
-commit:         080ffb4b Merge tag 'i3c/for-6.18' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12dd46e2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5a792dde4ff127ac
-dashboard link: https://syzkaller.appspot.com/bug?extid=7d23dc5cd4fa132fb9f3
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1696b858580000
-
-Note: testing is done by a robot and is best-effort only.
+Rob
 
