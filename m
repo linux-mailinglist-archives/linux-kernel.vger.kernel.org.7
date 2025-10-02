@@ -1,469 +1,250 @@
-Return-Path: <linux-kernel+bounces-839728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1412EBB2432
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 03:22:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BED61BB2438
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 03:24:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9323519C8228
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 01:22:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92DB27A78CB
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 01:23:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA7B26A8D2;
-	Thu,  2 Oct 2025 01:22:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B00978F4B;
+	Thu,  2 Oct 2025 01:24:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Oan4Wl1U";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="E1mhSHhy"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="XrwhfqM4";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="wb8B3y2L"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BEBB1F16B
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 01:22:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759368131; cv=none; b=B9CO0NWJBzNFB5wftzd3cDqau0fi8Vp847Ve/yIaeAfltEm/+7UM/Ca7zvIlKoMly0b1fNhkfXg7bAFm/8KgC1fS6aFpRh2f7a6baKbPvUjViy0Vn+oGMDKAOjP8mncnSGY9alV/u/qE55YFq3EqeZHVkUH/sfpdhzoXlMFT3dA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759368131; c=relaxed/simple;
-	bh=FkhJ0bn/dLik5yr81XwhILcK9FmXeiA+QBiMy0wZ/u8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=iu74mQ6N+oXzt+nwCaHtrk2aj0b2khhA0w+adL+MeWLeYta50OsLyLKj/+JRIvf9qXnyWVeHSUZbyrf8dw4UqGx4BhsLz2aMths56P2Pt3UVBuVEV4MQmmW4T7i7c3Z2W+D8OLw4tF/0R7eM1h68cdNUVF9Ft+v2HUbBQnGwLFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Oan4Wl1U; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=E1mhSHhy; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1759368127;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G5HhcgVdGP3xqgtLy3Tc/szbjeC6+qay+6ptLrUyw/k=;
-	b=Oan4Wl1U0bc9RAq+4m5qU7jk/gvkevlQvjyEZSOi3LdL9rbY0M5FKkEmeJjVBJ/vAbYY5P
-	oeZL4QWBAVH2vtd13z36h0Xm543vJdF3KEHDO9m5/JQsgdFfifO7fO3AW4ZuzDeyfHPQVS
-	oB4Uatsk+W9x6yK3mVHkzoXZy7Q2DZ5syF02Li9EntetXAjudJrnKAA1U1zVObYRFdnVEr
-	vDqUVtGtPMWZBdKtyNCTQzcXMV4WoBqIcToqzXhr9P7BLLZziblMKCQHAVqhSu2ncNcEwc
-	p5LafiONXZXDpEZ6xdtPux2YbOGRUrP4jup0R1QwuHj4RxWuc61QjR3IrJiDpg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1759368127;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G5HhcgVdGP3xqgtLy3Tc/szbjeC6+qay+6ptLrUyw/k=;
-	b=E1mhSHhy/7wACo/iZUzp2+hwOWkOvXEgLvUtGiJji4IoPtcEpEErLdhf/7zrVGX+5qlREo
-	dHeDEwxFKHlra9Dw==
-To: Gabriele Monaco <gmonaco@redhat.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Ingo Molnar <mingo@redhat.com>, Peter
- Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>, linux-mm@kvack.org, "Paul E.
- McKenney" <paulmck@kernel.org>, Gautham R. Shenoy
- <gautham.shenoy@amd.com>, Florian Weimer <fweimer@redhat.com>
-Subject: Re: [PATCH v2 2/4] rseq: Run the mm_cid_compaction from
- rseq_handle_notify_resume()
-In-Reply-To: <87tt0k3oks.ffs@tglx>
-References: <87tt0k3oks.ffs@tglx>
-Date: Thu, 02 Oct 2025 03:22:06 +0200
-Message-ID: <87o6qq2j41.ffs@tglx>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF553BE5E;
+	Thu,  2 Oct 2025 01:24:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759368281; cv=fail; b=HLqImjmZO8sXYU5jva7HzeqS5FTdvRSTWHjfJk7X/CqQDbEqNE73c5hCEYskkm9CTMG04PGyU2nA2+IFvSHeCFjGaaHxCqorF+TRsCtJdTgtIao2xeb4UBP60W7f4d0utaYDrut+My1ZUaIKKYk8Set9J9q+i1zX9k7G/VwuKuE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759368281; c=relaxed/simple;
+	bh=pn/r8C10J9ngfCTMPArO4AHGOiX5U+yvVXjmiHYFPK4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=YumNXKWqHNJHXOTJkqzs1LthILT/H+x0VVd3Jfb7sxSxCn+U4a9xYW/i+BNc5TVefS7Z7B9a0R2cUFrKHA4F8zRjVmuLlkilQH+UNn4OXnIooL+RT2h/gJ9kFj3Iz+s7XXS3qopHi90F3Ii43MqUF9xja83iEncT8qdk1lQJKhU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=XrwhfqM4; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=wb8B3y2L; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 591LgRAE010029;
+	Thu, 2 Oct 2025 01:24:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=A4CQfqoiJKCrsUmd9e
+	AEPOEPvJzov0MwzZDA3F1RLhs=; b=XrwhfqM4Gq7276H41n1RtNPeWzdSovc5WF
+	dSFV+gUDV33pc1/Oxe/5M/h9+p5RxRcAfnweHm+z+avoLOKtfE4nfpias8Z+lYk3
+	P5dFXqJDVg72S3dU7IaPbtWvynMNtmgyir062rZROy+xB3bk7vUzjVzGS5XNLQl1
+	zaZ/5G/YyaktNNjWzg5yMDuU1hcCN/N3KneHdAt4RcDHcTx3fZ3/zsb5UIlTH6MO
+	wN5u9Nes08gSIg+P8YHz3cy/3ft6Xq/CNgfjFjdBQkIuMW85kGqeUQi9J2AA9Nxi
+	LTxBFzU9LINjvsS+UFdZ8Ejb7WPkcO7fHPuIQiaMAU4ag7097sUA==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 49gmactjmq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 02 Oct 2025 01:24:02 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5920B3xO003040;
+	Thu, 2 Oct 2025 01:23:58 GMT
+Received: from bl2pr02cu003.outbound.protection.outlook.com (mail-eastusazon11011014.outbound.protection.outlook.com [52.101.52.14])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 49e6cada3c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 02 Oct 2025 01:23:58 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=iYMK2/XHRpZUG6AqouWxy5ER4FEk4Xd77HGS+EQhq2tjig/jWZah2Pghx5/4prNOQBRpEwW+wZCKbVtNkX3j0jDhZJvGJ67S/QvPl+WjMJY4foqhdNhZo30/CbJXrhrmccY3o0KoLOOspewbbMIOw/Gr4VoP5cnrCcj6SScs1hZH0IHj6wedil4zoRGYEq3+IKYvLt1cabs7ZnLSThQq51FsfBQ0+5zEBQkhtWNK9Kta6ZdpLj0F9bGg9UDlloBtsJ9/ri7hYe4DErcHymWXMToHk7jTRXOryQ25srjkUTPero16QREUMbVt9a5Hs6A04X38fY2ahGeEHwF1xHp2mQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=A4CQfqoiJKCrsUmd9eAEPOEPvJzov0MwzZDA3F1RLhs=;
+ b=seqKw+n33tzmTPurQzTFwPd8Ze0gF2J9jRsGColyDYwgObz68csyksYdqghz0L9F5uoh70N5Q817WsUWiQq9ZMt4BJWznZAIPzm1elsDlCt77ncGsbVkU56a+SWbIyhLkbtjppTNk4AsMDScqI1/4+WPrxwNBL7rlbNDMJDEyOg4sLXGtjqVs+l6xydRSn7dKnL1+5dYfO7hKhgtcUJOlYqfjbfPBpG4oH3UDidhNtsoFOabRoN2+PnOWluf0K7msKUNfbQD+cPNiFIMD9T2zXkEutod2eaTWRWGKVJ2v70kqEe/2KQL4A9wzX19cb4IZVML+EFBJOWMzHcCjczXaA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=A4CQfqoiJKCrsUmd9eAEPOEPvJzov0MwzZDA3F1RLhs=;
+ b=wb8B3y2LmV1caflM7mCJyzn1bUYCB/hzw+4jHdcMlWIgy/lKmjnx92WfXUfpUV8pcneE5IDutrB0Vm2WCmqBXbkMEEm81jvW4PtV7cvUs65OpLSrctvp3yWx06Fy+n9VELZHn7O0vXCvTYjzofkbtervhi/Ocf+YtYIFNrg1ld4=
+Received: from CH3PR10MB7329.namprd10.prod.outlook.com (2603:10b6:610:12c::16)
+ by SJ2PR10MB7733.namprd10.prod.outlook.com (2603:10b6:a03:57b::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.18; Thu, 2 Oct
+ 2025 01:23:54 +0000
+Received: from CH3PR10MB7329.namprd10.prod.outlook.com
+ ([fe80::f238:6143:104c:da23]) by CH3PR10MB7329.namprd10.prod.outlook.com
+ ([fe80::f238:6143:104c:da23%7]) with mapi id 15.20.9160.017; Thu, 2 Oct 2025
+ 01:23:54 +0000
+Date: Thu, 2 Oct 2025 10:23:46 +0900
+From: Harry Yoo <harry.yoo@oracle.com>
+To: Qi Zheng <zhengqi.arch@bytedance.com>
+Cc: hannes@cmpxchg.org, hughd@google.com, mhocko@suse.com,
+        roman.gushchin@linux.dev, shakeel.butt@linux.dev,
+        muchun.song@linux.dev, david@redhat.com, lorenzo.stoakes@oracle.com,
+        ziy@nvidia.com, baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com,
+        npache@redhat.com, ryan.roberts@arm.com, dev.jain@arm.com,
+        baohua@kernel.org, lance.yang@linux.dev, akpm@linux-foundation.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        cgroups@vger.kernel.org, Muchun Song <songmuchun@bytedance.com>
+Subject: Re: [PATCH v3 1/4] mm: thp: replace folio_memcg() with
+ folio_memcg_charged()
+Message-ID: <aN3UIj1Ec8aDlSaj@hyeyoo>
+References: <cover.1759056506.git.zhengqi.arch@bytedance.com>
+ <488cc8d44ba9ef1ec8ed2b32e7267d83cfd5736d.1759056506.git.zhengqi.arch@bytedance.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <488cc8d44ba9ef1ec8ed2b32e7267d83cfd5736d.1759056506.git.zhengqi.arch@bytedance.com>
+X-ClientProxiedBy: SEWP216CA0133.KORP216.PROD.OUTLOOK.COM
+ (2603:1096:101:2c0::10) To CH3PR10MB7329.namprd10.prod.outlook.com
+ (2603:10b6:610:12c::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR10MB7329:EE_|SJ2PR10MB7733:EE_
+X-MS-Office365-Filtering-Correlation-Id: ef30e1fb-af41-4e83-8b2f-08de01525a0d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|7416014|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?soQmBv5VqL8s/mieH/IxulAp8dOpHPGpdImYaiqBMqikWoj+O9iEZ7QOaccF?=
+ =?us-ascii?Q?lIUKoY8VHsOKULqiq9PROO7/gUJv6DYWOtXmOVAp8/wd7M2xqsvGbmMnLjpn?=
+ =?us-ascii?Q?RtxkSYJk79tCZY3AjG2llNLPqh+zJTk7L/0vNwx9Q+fAhydRSC5gf83dVjTT?=
+ =?us-ascii?Q?jFfLDkTx90/qY4AjCZmf3gNQ71cNNrFGnHVfV9+IfPQoojIUOlmb7oO/6uAl?=
+ =?us-ascii?Q?7E7MWQHfJUcWohhowBsy2tuQ3wwlzBiEzX1tkTvOukWcSBOINYL/VgdU+xjn?=
+ =?us-ascii?Q?ybyWSyoUnpM/pC+P7BT8sbEiqjnhytwMeNojJsKfcxroZu7D9F9RuEGLIPYR?=
+ =?us-ascii?Q?D8oeZHE3AyxZlGaH+/Pjym3PsckbwPl2MtDGe/XNca6fNMvXvHHlyyqWJfkL?=
+ =?us-ascii?Q?7xUrVrn0BZzS889V3+WWknAPmCj+FeFSqGDHzrhtZHDDAvM3TEBLwmEFSmiT?=
+ =?us-ascii?Q?5SPrzHspWgMtdRUQUKtnvw1iziER3psN9IeHEJkPWgs09AnN6FLhdWXEHAV1?=
+ =?us-ascii?Q?kdEpJI+teVQMPoVtGBz097NTWTd6fT7rJ92OztQlQh7pfyRHtrFtQM1WQGZ8?=
+ =?us-ascii?Q?AYFcYuFIqJW/YCCz5pjrQ9pECHtP41+LuvxghWburhNCgvz5fZbRehMSGO43?=
+ =?us-ascii?Q?6MRh3rQLg+cNxl0Lxqcp36eaoWCmhHKWdWtVruOwFQ959RMyj+gdx97OsE1Y?=
+ =?us-ascii?Q?feVtNKg5nQtUktlt6tHum+Y4idGogAOBz456C0UZ22xtr0snOhqGsFLjvrtC?=
+ =?us-ascii?Q?mwiwI88CA90j3lpWpziCOdGPB+9KjQLQfIMwNSc/MjCuaAR2fuxM0HdlHwZ+?=
+ =?us-ascii?Q?RgZ++ZvLODgrXrRCC1Rt6nRHV57lHmfv6K7Oiui09omrpZhLvc5u/F5QJ7wN?=
+ =?us-ascii?Q?d9nj6sE1m6Lb38A77sh232KNWcQ6w2G3siA4qa52ObC2vTAfBkh4b0Laa7M2?=
+ =?us-ascii?Q?zqPtFusZAhsGoZI6auz9R4oUtRjR2uyim9WIf55XDsbi9G188gvPclqQxa75?=
+ =?us-ascii?Q?L2OVwnL/gPmpoh7FDDFBRByGb25gJEz1OSMEXXRMdM582yhEazK0Lvw771LA?=
+ =?us-ascii?Q?Pa07n/8erWzIZC74c3FzsAsl96+yeiKL7qeTnCcRNeii7VjMKGDtdszS9xV8?=
+ =?us-ascii?Q?jYQyOiNVEFEUPr0X4HSEmDQUwG0o8tzBNg71EtutfWaUd7yZ4FhMliAwCUo2?=
+ =?us-ascii?Q?ROEEg9phc7+VE4BhnqAePuGCWHkFEF9EBq7bO74hIXkwsmPgO6zgBp2bYNl7?=
+ =?us-ascii?Q?D+vQokBMJo61agoqlXMJjpL9BSKL6eGvkRWZjq+OB+T0gTqoWDBf+7ey5l4B?=
+ =?us-ascii?Q?x5uOMjxKRcX/ALCdLOG5LNHvYMN2oB3/ljuMWMi9t+wpAN8bOv/BaEWUZ8i5?=
+ =?us-ascii?Q?v1DHr8z4gWrJqyhtKKuuHdgGSfWgAIauxZagp8fHbYHIR41cDHxp15gwp9Zh?=
+ =?us-ascii?Q?qKbY7Nsu8hQrO7lVbQzhffetwOGpqa/U?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR10MB7329.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?5DzoAH1yb98Offx7paYFpWuNdeCKOuTI+CIdNiEXw1Ju2Mk4Op5ucVoY0yzx?=
+ =?us-ascii?Q?dMr5D0zqTGH2olBIYXfYOIPISA3IRqTGMsrx0Y1J94bHn/8HWlTvWkzIqmeM?=
+ =?us-ascii?Q?SX6qeb+md6J7hY98lcbJPPCidYe4zWezxpj03O2I1Htog4gg/6DxeamveAJX?=
+ =?us-ascii?Q?6KHE9FrjFtpWKyAPwVFEURZE//lI9N2xZFijcpsOKxLrCoWWgXi8jIe54jZB?=
+ =?us-ascii?Q?GKS3yNkV3hyfhlrnhkhI3dDDGSOOILkRG07J42CFzZ/7oCz/xYGu4KGcEgsh?=
+ =?us-ascii?Q?hPSqvC9WBuh4lWFw18P1pa+P6fjMJ+6Ac0gDTiDDHRU89E0xoTLw773SfW/H?=
+ =?us-ascii?Q?7syJKU4zwp4NM2KXUfzGu5lLTxp/JmiTMmNB9y0NXBkmrnxSbJf0IGAxjCUf?=
+ =?us-ascii?Q?8yoQgvl2hfLz3bCgEELb8WvDji+afiih1IzvwtFtYSlja+pWhCDrxr15BGL/?=
+ =?us-ascii?Q?3L1zFUdgSH3Zxpzh0PJNlmafR9S0qoCtQjNMXrNonEph9jP+lUCs1SnDkIwm?=
+ =?us-ascii?Q?XmLbUp6E3st4ovripbLroGm0fjibaHX1avDwqNHL9l13T97stY29LkSztOSo?=
+ =?us-ascii?Q?NS/QB6mh7FQEmv92QKFHB4jfobhUDl41YZ5cfImmP8MJdOz5ODQRvVYBMyYe?=
+ =?us-ascii?Q?D+6vw4oIsZ2h+jpczS7dnwVYAUiq2MNhWxnQpCTqt0xW+oj4py3SNHNO7jJs?=
+ =?us-ascii?Q?/8NCiJM134LJD0PNyxCkokH0rp+r8zr/u1q6u55RqTF7jXArn+Hg0TfRGGxD?=
+ =?us-ascii?Q?0pklAC2wdEOQr3B7N7pnezgs5e7fqg83aM6+oC2ZoneigEgf94Le40XCB3+f?=
+ =?us-ascii?Q?YpmJO+YvmJr0dtxCGH8Wx2xiKnMmDUr2BFDKnPdKw9pY5rl2LiwFmLD+tbAp?=
+ =?us-ascii?Q?g2eS9kOFjARDVmta85fpJdDbqQBBNNHqoS4qnSwlDe0n3l/5TNqUEUgSxhCn?=
+ =?us-ascii?Q?VVXfcNLJDlXCHoPPZxqTS3U0S8eQIgq5Ydwy7dp3wMZLB35h74gEhLKC6Qdx?=
+ =?us-ascii?Q?Nym0yw1htTT29IcQ3fFHPGQTO5543wYqL9KOEzcXjM+7Hwste6XPlKnUqUuI?=
+ =?us-ascii?Q?LWIxlTW5NUbzKhkwJi2vqWvZ5JsocpOdJlnIf6NSSqjHkX3moW+qbTAr4R5S?=
+ =?us-ascii?Q?62Jkh0vYpzm6doXrVAfpSZkkDzE29vDZkODp+PP4kt8IgP5b2oIwNB8C8qze?=
+ =?us-ascii?Q?4SC5IMZlToMQ8VI0cV6T5F0+6oFsDhrR+TopQfDIQjLcUy/z2nPoqWkCF+k/?=
+ =?us-ascii?Q?9BBhVAEv5XBIdDFspUB4SAISDF55jQNQYFYATS/h+G0+Xw3vHcCHDSUoliBz?=
+ =?us-ascii?Q?p6X9D7GS7R1u5zu3cP0DxPAvHywRvCpffECl67rTTJV5vWSDdZ8u/31ysdzU?=
+ =?us-ascii?Q?sQc7y8g44YEoVugdsWuE0Xk7DClm1DI/IhH3ieq1oDKGYipRydPgRrZ9aWPU?=
+ =?us-ascii?Q?mlr4XF3reVw+FA/J+33qC+Au6XznFRSmwyMzCEImJmc7bKLkaPetC59Q2sCU?=
+ =?us-ascii?Q?ncyo0PBq3FbhexUBrtK9VdP61/k2MUq9rcniaumwbL6Yp95DQwv3867BdqEp?=
+ =?us-ascii?Q?+YBWkf+k3wluI8OubTQPiE2zKkmAqd54usMyAlIL?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	OfNAeclOmiktHX3vxtvf1cYxdpuqfOyeJpk872vyNYpHwXE7Afr+zpnp/p1RpxVCFuCg+RGggKbLRtd/XgRlcMRmbUumTjoWRYcQowVDKd7lpOSXeeVs82tQxsI7/I8tKQwEn9AvM1AJdeFgV1J7WpKom75tBPZa3mbcA2nhBhI6IX5YG34Q/L6ssbDuBbOMEYLubL5iUaH+HhdMRC5Bz/dXFtah4m024ajkWmdbeNghI+AAuEGyuPi1urrVJwy5Fu1mg5jLPvG4JZPLFTtMkqJDsGoPHgBhL559gZQ/gTYwWadg9xiI3Mv11cAJsOhC7wnAEQ1BqM0Imf/eAvUP5c+x4VvDndck6Au3yKMNZfWYzJ6+99FGiRjhXd+mO+TFXc84L2OTHsbYoJw8DKfJfgZ8J4zCx3YGQH9I5Ft1jurPh/TxOC3HjQrumjxqhBidQU7YR0wj/jZuF8TL9xjYPApVhPEycwOo/FdxisO52DBCwSMfKI86Ju2h9kBrSWTeSFJVs9igaHspgmSuBAcwT2lsZM+hDQZ2X9ZLBjqMkZN1aogTvjpSEGYjr1YgpIsnsfxaj3nPKVutc5RuFvheSdGBUdedXJnUXFPnQ1FMYrU=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ef30e1fb-af41-4e83-8b2f-08de01525a0d
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR10MB7329.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Oct 2025 01:23:54.5527
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: F1OHHZO9FdofVaFT1zxkjUs1eyu7ZOEbJS0+1JJdlce00+F7tMngKIKWDbiRpvYkY1Wd7K4ztlDoA5ikwPZmFQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR10MB7733
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-01_07,2025-09-29_04,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 bulkscore=0
+ malwarescore=0 mlxscore=0 spamscore=0 adultscore=0 phishscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2509150000 definitions=main-2510020010
+X-Authority-Analysis: v=2.4 cv=P5I3RyAu c=1 sm=1 tr=0 ts=68ddd432 b=1 cx=c_pps
+ a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=x6icFKpwvdMA:10 a=GoEa3M9JfhUA:10 a=968KyxNXAAAA:8 a=ufHFDILaAAAA:8
+ a=20KFwNOVAAAA:8 a=yPCof4ZbAAAA:8 a=DcoFswAzfnP7r750LCsA:9 a=CjuIK1q_8ugA:10
+ a=ZmIg1sZ3JBWsdXgziEIF:22 cc=ntf awl=host:13622
+X-Proofpoint-ORIG-GUID: 1IADOdiL0Tpyf0wcjeRW75kjR8VcUlNl
+X-Proofpoint-GUID: 1IADOdiL0Tpyf0wcjeRW75kjR8VcUlNl
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTMwMDE2NSBTYWx0ZWRfX8Glr5aXfHcMV
+ EJL3tVIBVgxqilhVMOxZFL14LDjly61SeFpWRW3R8g7hNmf1sOMY+/xzbhJqHbp3OmtXaGTHNgN
+ fQmacIpXXk2AHNtbVdFj3OKxXcMvwoRHYTxUgfTdRkuTw6IWn5p8us5/YVu9dexEnQDMntLyZN9
+ ZG6k8u4FV5rmGLrsAt4+T+W21qKAAx2PsBu4JI9RyXcLblJApBkDM1wosVBBznXgkT8oQRTa02s
+ N4Qy5wKH2IxQKJqO1QkKKJ9kGZyUJi7jUkFXq80pXhB0gbtDaW2cdwI7Tg9PqZmX3NlpCMIzkGD
+ OCRlTSaUwSUhEeWHareybgcpGpt57qskNLKrO3jnVRVmm5wKi0CcmaJcVb8JS+JkMoqj4BZYgRr
+ qIo7kDcwxN8L1yHwb5N90DQs9LzgzxLYomo8tOEwhd+9vxCErHM=
 
-On Tue, Sep 30 2025 at 00:01, Thomas Gleixner wrote:
-> On Wed, Sep 24 2025 at 17:22, Gabriele Monaco wrote:
-> I'm definitely not claiming that it will hold up in real wider testing,
-> but those initial results tell me that this is definitely more
-> worthwhile to explore further than trying to apply hacky bandaids to the
-> existing implementation.
->
-> There are some rough edges in it:
->
->   - the above #A -> #B -> #C allocation order might be not ideal.
+On Sun, Sep 28, 2025 at 07:16:59PM +0800, Qi Zheng wrote:
+> From: Muchun Song <songmuchun@bytedance.com>
+> 
+> folio_memcg_charged() is intended for use when the user is unconcerned
+> about the returned memcg pointer. It is more efficient than folio_memcg().
+> Therefore, replace folio_memcg() with folio_memcg_charged().
+> 
+> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+> Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+> Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
+> Acked-by: David Hildenbrand <david@redhat.com>
+> Reviewed-by: Roman Gushchin <roman.gushchin@linux.dev>
+> ---
 
-And actually it is not for the case where there is a massive back to
-back scheduling of threads which share the mm because that makes the
-cidmask operations contended. Thanks to Mathieu and Peter for pointing
-it out.
+Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
 
-Though it actually needs a micro benchmark to see it in perf. Neither
-hackbench in threaded mode nor other obnoxious test cases show it.
+-- 
+Cheers,
+Harry / Hyeonggon
 
-But after trying a few approaches and utter frustration I decided to
-ignore it for a while and then look at it with a fresh mind again. The
-solution was there in plain sight as the current implementation does
-something similar in the middle of the maze:
-
-  If the scheduled out (previous) and the scheduled in (next) task share
-  the mm, then just inheriting the CID from the previous task w/o
-  touching the CID mask makes that prominent cpumask fiddling in perf
-  top go away completely.
-
-With that the overhead of __schedule() in perf top actually becomes
-smaller than with the original base implementation (rseq/perf branch).
-That's on bare metal with hyperthreading enabled.
-
-           Intel SKL               AMD Zen3
-CPUs:      112                     256      
-base:      5.1% __schedule         4.4% __schedule
-patch-v1: 10.2% __schedule        11.2% __schedule 
-patch-v2:  4.9% __schedule         3.8% __schedule
-
-Cool, right?
-
-But then I really have reached the limits of my performance testing
-abilities. Any benchmark I threw at the lot and especially a simple
-malloc comparison benchmark:
-
-      https://github.com/f18m/malloc-benchmarks
-
-which runs the benchmark magic against various malloc libraries, gives
-me incomprehensible results, which vary from run to run on the same
-kernel and end up in both directions of improvement or regression.
-
-The malloc-benchmark seems to amplify the improvements/regressions
-around the scalability points which are on the mainline base line
-already, so I assume that's some weak spot of those libraries.
-
-Anyway, I've applied the delta patch below to my devel branch:
-
-     git://git.kernel.org/pub/scm/linux/kernel/git/tglx/devel.git rseq/cid
-
-I'd really appreciate help from people who actually have the relevant
-benchmarks and know how to do actually reproducible evaluations and
-comparisons.
-
-The interesting evaluation points are:
-
-    1) upstream Linus
-
-and then the commits in
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tglx/devel.git rseq/cid
-
-    2) 1822acbae2c9 ("rseq: Switch to TIF_RSEQ if supported")
-
-       which is the big rseq rework
-
-    3) a769dbb7a22a ("sched: Simplify MM CID management")
-
-       the v1 hack
-
-    4) abd407e145f2 ("sched: More CID hackery")
-
-       the below
-
-Thanks,
-
-        tglx
----
-Subject: sched: More CID hackery
-From: Thomas Gleixner <tglx@linutronix.de>
-Date: Wed, 01 Oct 2025 21:38:48 +0200
-
-Add content here...
-
-Not-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
----
- include/linux/mm_types.h |   41 ++++++++++++++++++++++-------------------
- include/linux/sched.h    |    4 +---
- kernel/fork.c            |    1 +
- kernel/sched/core.c      |   36 +++++++++++++++++++-----------------
- kernel/sched/sched.h     |   33 +++++++++++++++++++++++++--------
- kernel/signal.c          |    4 ++--
- 6 files changed, 70 insertions(+), 49 deletions(-)
-
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -919,7 +919,7 @@ struct vm_area_struct {
- #define vma_policy(vma) NULL
- #endif
- 
--struct mm_cid {
-+struct mm_cid_pcpu {
- 	unsigned int cid;
- };
- 
-@@ -977,27 +977,23 @@ struct mm_struct {
- 
- #ifdef CONFIG_SCHED_MM_CID
- 		/**
--		 * @pcpu_cid: Per-cpu current cid.
--		 *
--		 * Keep track of the currently allocated mm_cid for each cpu.
--		 * The per-cpu mm_cid values are serialized by their respective
--		 * runqueue locks.
-+		 * @pcpu_cid: Per-cpu CID storage
- 		 */
--		struct mm_cid __percpu *pcpu_cid;
-+		struct mm_cid_pcpu __percpu *pcpu_cid;
- 		/**
- 		 * @nr_cpus_allowed: Number of CPUs allowed for mm.
- 		 *
--		 * Number of CPUs allowed in the union of all mm's
--		 * threads allowed CPUs.
-+		 * Number of CPUs allowed in the union of all mm's threads
-+		 * allowed CPUs. It only grows, but can never shrink.
- 		 */
- 		unsigned int nr_cpus_allowed;
-+		unsigned int mm_cid_users;
-+		unsigned int mm_max_cid;
-+
- 		/**
--		 * @cpus_allowed_lock: Lock protecting mm cpus_allowed.
--		 *
--		 * Provide mutual exclusion for mm cpus_allowed and
--		 * mm nr_cpus_allowed updates.
-+		 * @mm_cid_lock: Lock protecting the above
- 		 */
--		raw_spinlock_t cpus_allowed_lock;
-+		raw_spinlock_t mm_cid_lock;
- #endif
- #ifdef CONFIG_MMU
- 		atomic_long_t pgtables_bytes;	/* size of all page tables */
-@@ -1332,19 +1328,19 @@ static inline void mm_init_cid(struct mm
- 	int i;
- 
- 	for_each_possible_cpu(i) {
--		struct mm_cid *pcpu_cid = per_cpu_ptr(mm->pcpu_cid, i);
-+		struct mm_cid_pcpu *pcpu_cid = per_cpu_ptr(mm->pcpu_cid, i);
- 
- 		pcpu_cid->cid = MM_CID_UNSET;
- 	}
- 	mm->nr_cpus_allowed = p->nr_cpus_allowed;
--	raw_spin_lock_init(&mm->cpus_allowed_lock);
-+	raw_spin_lock_init(&mm->mm_cid_lock);
- 	cpumask_copy(mm_cpus_allowed(mm), &p->cpus_mask);
- 	cpumask_clear(mm_cidmask(mm));
- }
- 
- static inline int mm_alloc_cid_noprof(struct mm_struct *mm, struct task_struct *p)
- {
--	mm->pcpu_cid = alloc_percpu_noprof(struct mm_cid);
-+	mm->pcpu_cid = alloc_percpu_noprof(struct mm_cid_pcpu);
- 	if (!mm->pcpu_cid)
- 		return -ENOMEM;
- 	mm_init_cid(mm, p);
-@@ -1363,6 +1359,13 @@ static inline unsigned int mm_cid_size(v
- 	return 2 * cpumask_size();	/* mm_cpus_allowed(), mm_cidmask(). */
- }
- 
-+static inline void mm_update_max_cid(struct mm_struct *mm)
-+{
-+	unsigned int max_cid = min(mm->nr_cpus_allowed, mm->mm_cid_users);
-+
-+	WRITE_ONCE(mm->mm_max_cid, max_cid);
-+}
-+
- static inline void mm_set_cpus_allowed(struct mm_struct *mm, const struct cpumask *cpumask)
- {
- 	struct cpumask *mm_allowed = mm_cpus_allowed(mm);
-@@ -1370,10 +1373,10 @@ static inline void mm_set_cpus_allowed(s
- 	if (!mm)
- 		return;
- 	/* The mm_cpus_allowed is the union of each thread allowed CPUs masks. */
--	raw_spin_lock(&mm->cpus_allowed_lock);
-+	guard(raw_spinlock)(&mm->mm_cid_lock);
- 	cpumask_or(mm_allowed, mm_allowed, cpumask);
- 	WRITE_ONCE(mm->nr_cpus_allowed, cpumask_weight(mm_allowed));
--	raw_spin_unlock(&mm->cpus_allowed_lock);
-+	mm_update_max_cid(mm);
- }
- #else /* CONFIG_SCHED_MM_CID */
- static inline void mm_init_cid(struct mm_struct *mm, struct task_struct *p) { }
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1405,9 +1405,7 @@ struct task_struct {
- #ifdef CONFIG_SCHED_MM_CID
- 	int				mm_cid;		/* Current cid in mm */
- 	int				last_mm_cid;	/* Most recent cid in mm */
--	int				migrate_from_cpu;
- 	int				mm_cid_active;	/* Whether cid bitmap is active */
--	struct callback_head		cid_work;
- #endif
- 
- 	struct tlbflush_unmap_batch	tlb_ubc;
-@@ -2299,7 +2297,7 @@ static __always_inline void alloc_tag_re
- void sched_mm_cid_before_execve(struct task_struct *t);
- void sched_mm_cid_after_execve(struct task_struct *t);
- void sched_mm_cid_fork(struct task_struct *t);
--void sched_mm_cid_exit_signals(struct task_struct *t);
-+void sched_mm_cid_exit(struct task_struct *t);
- static inline int task_mm_cid(struct task_struct *t)
- {
- 	return t->mm_cid;
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -2449,6 +2449,7 @@ static bool need_futex_hash_allocate_def
- 	exit_task_namespaces(p);
- bad_fork_cleanup_mm:
- 	if (p->mm) {
-+		sched_mm_cid_exit(p);
- 		mm_clear_owner(p->mm, p);
- 		mmput(p->mm);
- 	}
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -10408,44 +10408,46 @@ void call_trace_sched_update_nr_running(
-  * When a task exits, the MM CID held by the task is not longer required as
-  * the task cannot return to user space.
-  */
--void sched_mm_cid_exit_signals(struct task_struct *t)
-+void sched_mm_cid_exit(struct task_struct *t)
- {
- 	struct mm_struct *mm = t->mm;
- 
- 	if (!mm || !t->mm_cid_active)
- 		return;
- 
--	guard(preempt)();
-+	guard(raw_spinlock_irq)(&mm->mm_cid_lock);
- 	t->mm_cid_active = 0;
- 	if (t->mm_cid != MM_CID_UNSET) {
- 		cpumask_clear_cpu(t->mm_cid, mm_cidmask(mm));
- 		t->mm_cid = MM_CID_UNSET;
- 	}
-+	mm->mm_cid_users--;
-+	mm_update_max_cid(mm);
- }
- 
--/* Deactivate MM CID allocation across execve() */
--void sched_mm_cid_before_execve(struct task_struct *t)
--{
--	sched_mm_cid_exit_signals(t);
--}
--
--/* Reactivate MM CID after successful execve() */
--void sched_mm_cid_after_execve(struct task_struct *t)
-+void sched_mm_cid_fork(struct task_struct *t)
- {
- 	struct mm_struct *mm = t->mm;
- 
--	if (!mm)
--		return;
-+	WARN_ON_ONCE(!mm || t->mm_cid != MM_CID_UNSET);
- 
--	guard(preempt)();
-+	guard(raw_spinlock_irq)(&mm->mm_cid_lock);
- 	t->mm_cid_active = 1;
--	mm_cid_select(t);
-+	mm->mm_cid_users++;
-+	mm_update_max_cid(mm);
- }
- 
--void sched_mm_cid_fork(struct task_struct *t)
-+/* Deactivate MM CID allocation across execve() */
-+void sched_mm_cid_before_execve(struct task_struct *t)
- {
--	WARN_ON_ONCE(!t->mm || t->mm_cid != MM_CID_UNSET);
--	t->mm_cid_active = 1;
-+	sched_mm_cid_exit(t);
-+}
-+
-+/* Reactivate MM CID after successful execve() */
-+void sched_mm_cid_after_execve(struct task_struct *t)
-+{
-+	if (t->mm)
-+		sched_mm_cid_fork(t);
- }
- #endif /* CONFIG_SCHED_MM_CID */
- 
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -3518,7 +3518,7 @@ static inline void init_sched_mm_cid(str
- 		return;
- 
- 	/* Preset last_mm_cid */
--	max_cid = min_t(int, READ_ONCE(mm->nr_cpus_allowed), atomic_read(&mm->mm_users));
-+	max_cid = READ_ONCE(mm->mm_max_cid);
- 	t->last_mm_cid = max_cid - 1;
- }
- 
-@@ -3531,7 +3531,7 @@ static inline bool __mm_cid_get(struct t
- 	if (cpumask_test_and_set_cpu(cid, mm_cidmask(mm)))
- 		return false;
- 	t->mm_cid = t->last_mm_cid = cid;
--	__this_cpu_write(mm->pcpu_cid->cid, cid);
-+	__this_cpu_write(t->mm->pcpu_cid->cid, cid);
- 	return true;
- }
- 
-@@ -3540,7 +3540,7 @@ static inline bool mm_cid_get(struct tas
- 	struct mm_struct *mm = t->mm;
- 	unsigned int max_cid;
- 
--	max_cid = min_t(int, READ_ONCE(mm->nr_cpus_allowed), atomic_read(&mm->mm_users));
-+	max_cid = READ_ONCE(mm->mm_max_cid);
- 
- 	/* Try to reuse the last CID of this task */
- 	if (__mm_cid_get(t, t->last_mm_cid, max_cid))
-@@ -3568,14 +3568,31 @@ static inline void mm_cid_select(struct
- 	}
- }
- 
--static inline void switch_mm_cid(struct task_struct *prev, struct task_struct *next)
-+static inline bool mm_cid_inherit(struct task_struct *prev, struct task_struct *next)
- {
--	if (prev->mm_cid_active) {
--		if (prev->mm_cid != MM_CID_UNSET)
--			cpumask_clear_cpu(prev->mm_cid, mm_cidmask(prev->mm));
--		prev->mm_cid = MM_CID_UNSET;
-+	unsigned int cid = prev->mm_cid;
-+
-+	if (!prev->mm_cid_active || cid == MM_CID_UNSET)
-+		return false;
-+
-+	prev->mm_cid = MM_CID_UNSET;
-+
-+	if (!next->mm_cid_active || prev->mm != next->mm ||
-+	    cid >= READ_ONCE(prev->mm->mm_max_cid)) {
-+		cpumask_clear_cpu(cid, mm_cidmask(prev->mm));
-+		return false;
- 	}
- 
-+	next->mm_cid = next->last_mm_cid = cid;
-+	rseq_sched_set_task_mm_cid(next, cid);
-+	return true;
-+}
-+
-+static inline void switch_mm_cid(struct task_struct *prev, struct task_struct *next)
-+{
-+	if (mm_cid_inherit(prev, next))
-+		return;
-+
- 	if (next->mm_cid_active) {
- 		mm_cid_select(next);
- 		rseq_sched_set_task_mm_cid(next, next->mm_cid);
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -3125,7 +3125,7 @@ void exit_signals(struct task_struct *ts
- 	cgroup_threadgroup_change_begin(tsk);
- 
- 	if (thread_group_empty(tsk) || (tsk->signal->flags & SIGNAL_GROUP_EXIT)) {
--		sched_mm_cid_exit_signals(tsk);
-+		sched_mm_cid_exit(tsk);
- 		tsk->flags |= PF_EXITING;
- 		cgroup_threadgroup_change_end(tsk);
- 		return;
-@@ -3136,7 +3136,7 @@ void exit_signals(struct task_struct *ts
- 	 * From now this task is not visible for group-wide signals,
- 	 * see wants_signal(), do_signal_stop().
- 	 */
--	sched_mm_cid_exit_signals(tsk);
-+	sched_mm_cid_exit(tsk);
- 	tsk->flags |= PF_EXITING;
- 
- 	cgroup_threadgroup_change_end(tsk);
-
-
-
-
-
-
-
-
-   
-
+>  mm/huge_memory.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 1b81680b4225f..6db24b3a57005 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -4014,7 +4014,7 @@ bool __folio_unqueue_deferred_split(struct folio *folio)
+>  	bool unqueued = false;
+>  
+>  	WARN_ON_ONCE(folio_ref_count(folio));
+> -	WARN_ON_ONCE(!mem_cgroup_disabled() && !folio_memcg(folio));
+> +	WARN_ON_ONCE(!mem_cgroup_disabled() && !folio_memcg_charged(folio));
+>  
+>  	ds_queue = get_deferred_split_queue(folio);
+>  	spin_lock_irqsave(&ds_queue->split_queue_lock, flags);
+> -- 
+> 2.20.1
 
