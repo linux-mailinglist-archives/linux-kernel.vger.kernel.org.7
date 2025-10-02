@@ -1,248 +1,142 @@
-Return-Path: <linux-kernel+bounces-840754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39E59BB525E
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 22:47:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 49A64BB5261
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 22:47:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 768C23C6F77
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 20:47:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6772D485E51
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 20:47:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EC98254AE4;
-	Thu,  2 Oct 2025 20:46:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 695C51EEA55;
+	Thu,  2 Oct 2025 20:47:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DF4AxCyh"
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SzpMTRKy"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8D381EEA55
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 20:46:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A8171DF97F
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 20:47:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759438005; cv=none; b=ZKiyLk0uW+kCFZh41tOSnIguj3Gb/6l1XFejHIFB7NWSQs6DfvOAp8BSbKXiLFeI4UmlBwQhsIZMwDj4tkFEQ/Vq87Cenyfu88PpQKadO8FB5QRJmkA46427ZUtR1Y7YYfFDLA1CwaitK8PEdvDcep0N+UVGkw4KNWMPveeZM6U=
+	t=1759438028; cv=none; b=IhhAkGwD/lt65SbJigZYZ5Tp5CNfxYRc3Z/rbILFTgn6YI2focjSb087qU7wO2l4reC7bMYX/4/h50AzYeJi0Z0viIYq63DxdQnwwZLlU5Yds7ZqO1ljIyuYsivGxFkBT8NVEIKAU/Y7k7JJSurrPJiHn9abMEQ74Uqpp0LCRd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759438005; c=relaxed/simple;
-	bh=JggwyU8+falGG8LJc+r4zOOOtJrz8MlfWHTD353hWew=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=E72z5sVXOd96rS6lgoasUqA/Sa3WhW7Hgq/pETP9cAdNY20nOHKATD+z+I1n1HlJW28KVN2kwdl/e27GXtBW+dFzETvXgXTss9efRskGQSy1j7RdAY6+dEIanOip2fdRgeyK2F8R/Iln3V9ybmjHz/x6zqf2cWWPYDkKofV3m5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DF4AxCyh; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-71d5fe46572so20425767b3.1
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 13:46:43 -0700 (PDT)
+	s=arc-20240116; t=1759438028; c=relaxed/simple;
+	bh=wGpuZ6M76mxssiVzFPguhRDJhH4kxLiycpYO+f7VSAo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=eSk4mIy3a4IV0aq30VriKuSgFGZGxcDA1MBEQ3qvNKdd6pb1jJHxa+vKVUqisNc7uKCFsvP0+fxesf+HE2BStYSX+nudTk7BGhit9KSpNtod2bRGr/hB563TmCw3wd4Wm7LUtavtl7B450ocjyxl/JAQMTt9nYPz+l4nEk8tnXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SzpMTRKy; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2681645b7b6so15085ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 13:47:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759438003; x=1760042803; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1759438026; x=1760042826; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=OBa7sIAa7lZB7AE0W4U5YndRgjFk5P+mjzsHi3y1lyA=;
-        b=DF4AxCyhf2OEw+cY3IkDe9IGfe7P2UFQWFF68CCSB7SXUim7fDGbUHKf88bDPchVq+
-         i1uUYQgT+jvM50yxdMqxd5UhvlLoRYQ99fmnESQG+MUoOFCLlq1xONVkkLh1DRorHV6L
-         J3CVzaK5Z+/PGJkyC3Ix3Z6enGY0Pt87jMhVRUfBGkWKjB8epagwnpLYdfW8rGWXnIbq
-         3qAx2wN7v6+I7lP7DsJvX1D8ez/Q164KlRlK+NXiOQvycOJfjFYyzNjv2F8oBT+2X+yz
-         IWT67aqwhfLYF/6g89Nnww6L8EzkCITCLQXjV7P+diN6QiU+SFcJeACumaUE7jmlSEBj
-         wKtw==
+        bh=wGpuZ6M76mxssiVzFPguhRDJhH4kxLiycpYO+f7VSAo=;
+        b=SzpMTRKyfGX6J8chm6op3vEywBE3i+QypSnAvn9VY4wfQModMa2l9JucAdJtCzUXOl
+         st/OZcGp3H3sxG5Rme3nQppuWBr41HawrDW0ToZYMNvtwjF+RgkCSp7LADZkMa7J1/H3
+         FHA/eblWYRyoj6knV/q3cKGME15/Hswl884p95rZ/CGkM+ZMGwKqALkE4Q+o86BzGbbM
+         5KZr3T4/3nEMYEYwQROmD/fNmpiw1jyMmqVI6ZiygaBKdUyUhtXgM63S6bv5wpXMO92Q
+         9tVk9YuvojSHng/PioDA88tmcKQPpH2mmzDiJGgBPuRMov4WlSPG9QbpzjeF/pdx7Q/b
+         qmQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759438003; x=1760042803;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1759438026; x=1760042826;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=OBa7sIAa7lZB7AE0W4U5YndRgjFk5P+mjzsHi3y1lyA=;
-        b=ZCNeYGwZP7nfV1/2iY9JW6PtpXyUy/7F2UQWME+5FHDnidYxQgoWYAWDy+eMfgFSOx
-         6lekcbr7c8w08wGND0hq7eddaiEr7C8iPgI7g/zjNWXkdUUsmOvO+reQEZl/pMnKjRyS
-         buJh6GAQc/BfJXeH5vwSEqhhSVyvxKsmzFKlvVRAfYxIuH4TxiHSNgHES5aelKjOfZGu
-         jPrNJoFCuSwvXMeJ61egJ+bg+WUEBACL1DdTeW8Z1L0UngbOBrX0YwDU/05jQTc9mnUi
-         1XkAiFBpFJ8eWVSOuidf6fnVaAsozDjkFSK9s3oyUGJroaRCxgMvmrNgJgnbpOmAwzXU
-         Ouig==
-X-Forwarded-Encrypted: i=1; AJvYcCXD3Z57do0mQareRLOXZ/4+qNYfMocxX4dz7IYbf24z4ayDQo2KQUdhknNuSk+PzCO5xEAS3lr++GqzDEk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzStx9q9s+dinXbWm+8fDh9enBm5UiwsM9Wtzwwn/PcXOU9i9lN
-	a7uM2inCgZ52vi0rn4aII4siB+T+BAJWAKPH0k7TPqvFh+X/8Jz3ISJS
-X-Gm-Gg: ASbGncufkntqePjHkgyQ34E8HBy1avmxGH8YiMqAKFRLst+qJ0tw1CdLUJ5tdpXofLz
-	dauHxC0JSuBB0AutoGrvYO456mPp5VAihyRPJdhnj6ofbU2rpEMyiSNHQBs1f5arlrTXJYrmSPR
-	budQ6oP1Eo2HIBAkh0PWvN3jBd+bqIwDKtZo+gcE2D5jfv9xR7XTX/ONqWNZc0YXsqwxnziKhPL
-	CTFBN5h7r4njP/E9W1dE9c/en/gJuslMA7Yx2ORA3iJtYiVjj5pySdVMFjQgS3B82807bkrPSUa
-	O2GPWtTKCVsoauivsMAAY7dTX9BqEK9LqVJdyvDHnQXp95qAe+0g1KCu4ydaEChihmy6PPoHDCR
-	XOpx3yHfB3/CnFF9R5+3baZ9geAv67jm6w+03o3ZmrJZaFg6IbFsypbPl3C+hZTL/8hs/OpkvmL
-	oN0wC4NIb4GIE=
-X-Google-Smtp-Source: AGHT+IENI2go9fghJpen+tUDrCCnqIsPZ10tsTLEeBnhI7cBoG/y7/sR3qgtxNTvBex2gqOGrkvgtA==
-X-Received: by 2002:a05:690c:a4c8:b0:77f:771e:fb78 with SMTP id 00721157ae682-77f81b6c90amr49034987b3.18.1759438002398;
-        Thu, 02 Oct 2025 13:46:42 -0700 (PDT)
-Received: from localhost ([2a03:2880:25ff:2::])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-77f81d1444asm11412977b3.42.2025.10.02.13.46.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 13:46:41 -0700 (PDT)
-From: Joshua Hahn <joshua.hahnjy@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Chris Mason <clm@fb.com>,
-	Kiryl Shutsemau <kirill@shutemov.name>,
-	Brendan Jackman <jackmanb@google.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@suse.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Zi Yan <ziy@nvidia.com>,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	kernel-team@meta.com
-Subject: [PATCH v3 3/3] mm/page_alloc: Batch page freeing in free_frozen_page_commit
-Date: Thu,  2 Oct 2025 13:46:33 -0700
-Message-ID: <20251002204636.4016712-4-joshua.hahnjy@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251002204636.4016712-1-joshua.hahnjy@gmail.com>
-References: <20251002204636.4016712-1-joshua.hahnjy@gmail.com>
+        bh=wGpuZ6M76mxssiVzFPguhRDJhH4kxLiycpYO+f7VSAo=;
+        b=lENrHAQNu1MZe6N49CZGKXHa4aWxmdk9C4aPYNaIhbMJ9zvn+OVZ6uHZKU3fI6PsPG
+         yrd4DKB34e/xiNO42TvdNQI72CKinWmITF4hslIPIOdwxaqkjZEbWJIMEQHvuKx1zEO8
+         tgI25K7b+wy0NAJB/ETH8WRacJDFVjWoE0NQYmG0EJuImq8Bltl5AK0MhqgeHu2KQBsM
+         HE72GFAL5hpaVbXOc6o49jAI0KeRm5amJFFi7EUu2dKs8v/8tWtfxheX31TCkyG7lIV1
+         BoSdClFms4ch1bKyrdI/DZ776jZ2NK9bzZ+m8fgcjZos3ABycLpHZef1xz4qQWgwrNBX
+         AGQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWRxcPM2Xaqgw9wRcfLc/8eGFxICbP4vRzBv8TkYBeXDbuhNu5oPJolVD3Q9WTB8oHMZzkKSQB0zVTk0Uo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCWQpqVQfC+voCJT9ZRx/ar/mybAwwbCCOZ7gdJAaEpwBNZYnE
+	MuZ2RdcD1fvBzeLQZjSHgPN/6elVRjL3GNYYnLJC70EDJbzQhWQLoZdH6rUxfN71kw7n8HS3gw5
+	wKOgrAJYRvkzkwecNx5FKm1x+7TqUqiPexhWpFpyU
+X-Gm-Gg: ASbGncukAfs4mD1WCuxdunyMFpWg/faT2FFx0hMsjAHqGjftL7nn6ya4UOHNvTsKc5K
+	dwQSKUQUmAtM1PUmofvxZkHoI+q564J2D/ZqY2VGdujK7qJf4kGmIL56eoJDwHYxjnzf7CXN/tz
+	v+71oTbkxcubF9wMoAaeaJrkqWe0IMaUqhxNrS5ohsCgxt0pAFeEoxbl3I/ceyQ9QLqBnUIw9s0
+	7sOJuiq8SxjmucPMwAe0oQuUBzR5+nPvARB6f776oE63i/t9OYFBl0TYBU93PhTFnGvD6aouyfD
+	Gqw=
+X-Google-Smtp-Source: AGHT+IGeT/Wv4F/Aj2sMPivpvB6xqpoM5WwcESEP9AUk2vBvZmhz0lOz8ASNJ4/8/WdJIostUr9SbQ5MlLrOBK0r7gE=
+X-Received: by 2002:a17:903:17cc:b0:240:6076:20cd with SMTP id
+ d9443c01a7336-28e9b6819dfmr277485ad.15.1759438026136; Thu, 02 Oct 2025
+ 13:47:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251002200604.1792141-1-irogers@google.com> <20251002200604.1792141-2-irogers@google.com>
+In-Reply-To: <20251002200604.1792141-2-irogers@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Thu, 2 Oct 2025 13:46:54 -0700
+X-Gm-Features: AS18NWAkMYJeep1oFyAislGqnoiAUDkYmOZdGhymPKgmBEyVCgnWt3LjibdjhnI
+Message-ID: <CAP-5=fWvj-cAzh9R=8EjjUaaLGe9+XW5x_f4Pka6EdAQMU1X4A@mail.gmail.com>
+Subject: Re: [PATCH v1 2/2] perf stat: Refactor retry/skip/fatal error handling
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
+	Howard Chu <howardchu95@gmail.com>, Thomas Falcon <thomas.falcon@intel.com>, 
+	Chun-Tse Shao <ctshao@google.com>, Dapeng Mi <dapeng1.mi@linux.intel.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Before returning, free_frozen_page_commit calls free_pcppages_bulk using
-nr_pcp_free to determine how many pages can appropritately be freed,
-based on the tunable parameters stored in pcp. While this number is an
-accurate representation of how many pages should be freed in total, it
-is not an appropriate number of pages to free at once using
-free_pcppages_bulk, since we have seen the value consistently go above
-2000 in the Meta fleet on larger machines.
+On Thu, Oct 2, 2025 at 1:06=E2=80=AFPM Ian Rogers <irogers@google.com> wrot=
+e:
+>
+> For the sake of Intel topdown events commit 9eac5612da1c ("perf stat:
+> Don't skip failing group events") changed perf stat error handling
+> making it so that more errors were fatal and didn't report "<not
+> supported>" events. The change outside of topdown events was
+> unintentional.
+>
+> The notion of "fatal" error handling was introduced in commit
+> e0e6a6ca3ac2 ("perf stat: Factor out open error handling") and refined
+> in commits like commit cb5ef60067c1 ("perf stat: Error out unsupported
+> group leader immediately) to be an approach for avoiding later
+> assertion failures in the code base. This change fixes those issues
+> and removes the notion of a fatal error on an event. If all events
+> fail to open then a fatal error occurs with the previous fatal error
+> message. This seems to best match the notion of supported events and
+> allowing some errors not to stop perf stat, while allowing the truly
+> fatal no event case to terminate the tool early.
+>
+> The evsel->errored flag is only used in the stat code but always just
+> meaning !evsel->supported although there is a comment about it being
+> sticky. Force all evsels to be supported in evsel__init and then clear
+> this when evsel__open fails. When an event is tried the supported is
+> set to true again. This simplifies the notion of whether an evsel is
+> broken.
+>
+> In the get_group_fd code, fail to get a group fd when the evsel isn't
+> supported. If the leader isn't supported then it is also expected that
+> there is no group_fd as the leader will have been skipped. Therefore
+> change the BUG_ON test to be on supported rather than skippable. This
+> corrects the assertion errors that were the reason for the previous
+> fatal error handling.
+>
+> Fixes: 9eac5612da1c ("perf stat: Don't skip failing group events")
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+> An earlier version of this fix exists in:
+> https://lore.kernel.org/lkml/20250923223312.238185-2-irogers@google.com/
+> This version is more thorough and tries to make the overall code base
+> more consistent.
 
-As such, perform batched page freeing in free_pcppages_bulk by using
-pcp->batch member. In order to ensure that other processes are not
-starved of the zone lock, free both the zone lock and pcp lock to yield to
-other threads.
+Looks like this broke some test expectations, will fix up in v2.
 
-Note that because free_frozen_page_commit now performs a spinlock inside the
-function (and can fail), the function may now return with a freed pcp.
-To handle this, return true if the pcp is locked on exit and false otherwise.
-
-In addition, since free_frozen_page_commit must now be aware of what UP
-flags were stored at the time of the spin lock, and because we must be
-able to report new UP flags to the callers, add a new unsigned long*
-parameter UP_flags to keep track of this.
-
-Suggested-by: Chris Mason <clm@fb.com>
-Co-developed-by: Johannes Weiner <hannes@cmpxchg.org>
-Signed-off-by: Joshua Hahn <joshua.hahnjy@gmail.com>
----
- mm/page_alloc.c | 66 ++++++++++++++++++++++++++++++++++++++++++-------
- 1 file changed, 57 insertions(+), 9 deletions(-)
-
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index f525f197c5fd..9b9f5a44496c 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -2818,12 +2818,21 @@ static int nr_pcp_high(struct per_cpu_pages *pcp, struct zone *zone,
- 	return high;
- }
- 
--static void free_frozen_page_commit(struct zone *zone,
-+/*
-+ * Tune pcp alloc factor and adjust count & free_count. Free pages to bring the
-+ * pcp's watermarks below high.
-+ *
-+ * May return a freed pcp, if during page freeing the pcp spinlock cannot be
-+ * reacquired. Return true if pcp is locked, false otherwise.
-+ */
-+static bool free_frozen_page_commit(struct zone *zone,
- 		struct per_cpu_pages *pcp, struct page *page, int migratetype,
--		unsigned int order, fpi_t fpi_flags)
-+		unsigned int order, fpi_t fpi_flags, unsigned long *UP_flags)
- {
- 	int high, batch;
-+	int to_free, to_free_batched;
- 	int pindex;
-+	int cpu = smp_processor_id();
- 	bool free_high = false;
- 
- 	/*
-@@ -2861,15 +2870,20 @@ static void free_frozen_page_commit(struct zone *zone,
- 		 * Do not attempt to take a zone lock. Let pcp->count get
- 		 * over high mark temporarily.
- 		 */
--		return;
-+		return true;
- 	}
- 
- 	high = nr_pcp_high(pcp, zone, batch, free_high);
- 	if (pcp->count < high)
--		return;
-+		return true;
-+
-+	to_free = nr_pcp_free(pcp, batch, high, free_high);
-+	if (to_free == 0)
-+		return true;
- 
--	free_pcppages_bulk(zone, nr_pcp_free(pcp, batch, high, free_high),
--			   pcp, pindex);
-+free_batch:
-+	to_free_batched = min(to_free, batch);
-+	free_pcppages_bulk(zone, to_free_batched, pcp, pindex);
- 	if (test_bit(ZONE_BELOW_HIGH, &zone->flags) &&
- 	    zone_watermark_ok(zone, 0, high_wmark_pages(zone),
- 			      ZONE_MOVABLE, 0)) {
-@@ -2887,6 +2901,35 @@ static void free_frozen_page_commit(struct zone *zone,
- 		    next_memory_node(pgdat->node_id) < MAX_NUMNODES)
- 			atomic_set(&pgdat->kswapd_failures, 0);
- 	}
-+	high = nr_pcp_high(pcp, zone, batch, free_high);
-+	to_free -= to_free_batched;
-+	if (pcp->count >= high) {
-+		pcp_spin_unlock(pcp);
-+		pcp_trylock_finish(*UP_flags);
-+
-+		pcp_trylock_prepare(*UP_flags);
-+		pcp = pcp_spin_trylock(zone->per_cpu_pageset);
-+		if (!pcp) {
-+			pcp_trylock_finish(*UP_flags);
-+			return false;
-+		}
-+
-+		/*
-+		 * Check if this thread has been migrated to a different
-+		 * CPU. If that is the case, give up and indicate that
-+		 * the pcp is returned in an unlocked state.
-+		 */
-+		if (smp_processor_id() != cpu) {
-+			pcp_spin_unlock(pcp);
-+			pcp_trylock_finish(*UP_flags);
-+			return false;
-+		}
-+	}
-+
-+	if (to_free > 0 && pcp->count >= high)
-+		goto free_batch;
-+
-+	return true;
- }
- 
- /*
-@@ -2934,7 +2977,9 @@ static void __free_frozen_pages(struct page *page, unsigned int order,
- 	pcp_trylock_prepare(UP_flags);
- 	pcp = pcp_spin_trylock(zone->per_cpu_pageset);
- 	if (pcp) {
--		free_frozen_page_commit(zone, pcp, page, migratetype, order, fpi_flags);
-+		if (!free_frozen_page_commit(zone, pcp, page, migratetype,
-+						order, fpi_flags, &UP_flags))
-+			return;
- 		pcp_spin_unlock(pcp);
- 	} else {
- 		free_one_page(zone, page, pfn, order, fpi_flags);
-@@ -3034,8 +3079,11 @@ void free_unref_folios(struct folio_batch *folios)
- 			migratetype = MIGRATE_MOVABLE;
- 
- 		trace_mm_page_free_batched(&folio->page);
--		free_frozen_page_commit(zone, pcp, &folio->page, migratetype,
--					order, FPI_NONE);
-+		if (!free_frozen_page_commit(zone, pcp, &folio->page,
-+				migratetype, order, FPI_NONE, &UP_flags)) {
-+			pcp = NULL;
-+			locked_zone = NULL;
-+		}
- 	}
- 
- 	if (pcp) {
--- 
-2.47.3
+Thanks,
+Ian
 
