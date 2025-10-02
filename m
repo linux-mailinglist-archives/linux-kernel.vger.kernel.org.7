@@ -1,106 +1,154 @@
-Return-Path: <linux-kernel+bounces-840276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96AEBBB4030
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 15:19:19 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D90C2BB403B
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 15:19:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C76CB192609F
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 13:19:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A34C44E24B1
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 13:19:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5020D3115B1;
-	Thu,  2 Oct 2025 13:19:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EAFB311952;
+	Thu,  2 Oct 2025 13:19:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TtOU6QpN"
-Received: from mail-ej1-f73.google.com (mail-ej1-f73.google.com [209.85.218.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=iokpp.de header.i=@iokpp.de header.b="A8J2E4a8"
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B000F30E84F
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 13:19:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.73
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759411151; cv=none; b=JDHekmGi4mI2xTQCwpLsxcOtDxIUGJ94cYAjo2YlJZwL4qwfxbz2Ikny4ZWXzYb0AXDHP5wxkMOSYitGCWF+aGws6VlH9fI0cChu37fAqXY8K/93we9sbQp0GBVLqtNc5VRP94/v6Kz4+gIeHZ5fl9CQJCnTPVVCZAMNCaL53VY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759411151; c=relaxed/simple;
-	bh=ppas900mz8UZ1nAze0k0cgvVf6bsDr1n1l1Zsx5qMIg=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=JwlzksK/JKgzDDjycr//1cDFahj1bt+zqIjzNxr614ZO6IyinfUrCvqzOvyYydrbhU6VKzod6ENhDIa0xoqxLHmfHNF1QFQW7NpEzUsq2Ntrv6SRcFPpXIb5ZtRYW5PG3x7XKbcMzuUkBSiTTiM8ocMCexC/yHHtBoD7PK9DAPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mclapinski.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TtOU6QpN; arc=none smtp.client-ip=209.85.218.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mclapinski.bounces.google.com
-Received: by mail-ej1-f73.google.com with SMTP id a640c23a62f3a-b3d83a7b6d7so90302166b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 06:19:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759411147; x=1760015947; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=opsuLXZalKgBtjjtUFfr16++aW0WmcWbDZvURSoXadw=;
-        b=TtOU6QpNzv8icRxuaer3wPSVs9Qa9NuKzE9tzfCo1FhmvmFadrFWAI7ZcsFT6TDBT6
-         4SzD0ioiXpkMgvuptYr43XoEQ3VGmnlvcQpqM4YCZUxqWpDjqaMRCzyOCvZuMLDjUzCc
-         TxaqTVUXHLEwZuzj2/1OslrZXqvRLnGWva3h5dz5+X6nUPsNNDhhPLnuRoy5/uO012f9
-         XnduKcQJyheRt7xLY87Fx9WC6+8t8oLgGEMVrU0w9Tp4M0+XI21rbaHzItQYtVdE0doG
-         GB1Z07riVjSAZHus9SiBlTs3APCdTS/d3m8dAZI3ZFjMkX1iJU3e1xh0zYAUdEWnG/vL
-         kNmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759411147; x=1760015947;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=opsuLXZalKgBtjjtUFfr16++aW0WmcWbDZvURSoXadw=;
-        b=vRqVma3Ss7+3T+bLAOb1nRq3thJVRK8ZbCMWRFrwrBSqMFmPapiPMeg/YDdn8QCfc9
-         +2tTqcWqxYcpvCbxX0L4aLnNb0v+DW+tOr7LzDRWHy2wCMXzLxNrvEaZ7gbKOTTjuQVv
-         xtUjPK4VaKbdwo3VOg757I1G89egt3a4Wv/Oqc0A7fnK5QoiIexscWVzP2uRFFF9Qzvd
-         6FPy6Khkr/FRebyEoq8I0ZUZzl+6BvfdbYpsbR8RtTUUYQi5hZCXED+7wNeRhEJT0uuF
-         0pSfzl59ZiuSgPGsRyQM9B5sLpnPTONSDJhqwGvMYD6Tt70n/DBoHTqUztAwi6nsGgLe
-         M5pg==
-X-Forwarded-Encrypted: i=1; AJvYcCXQdXCXxgfcl6B7k8Mdbo8LJe7VoH1CjVelD+oYIovcoN4tbcZ5x1KQhWpuC1P5p+YN2DHZQE0M1+yrCvw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsF5W7k+vJxQzAHwIygGE181T6laAAmYl6Pqx7QVEFMf4fK/Qu
-	3xyeRgrc1wyDrOWdYKUOpO3ylA8Pq20JkJCt7ZRC17yPudthM9EeCvoonqZXv+BXWAbJWtXU2LB
-	f8qW3ufG7gp56KAUjwMVuUQ==
-X-Google-Smtp-Source: AGHT+IEBOtinBILzYUipbzKT6uP64K+v7i7D/BSugv8X6CMyxWJNMehP5LgieusjsvQy15d5i9FRZHYKNzdUhUgV
-X-Received: from edqh26.prod.google.com ([2002:aa7:c61a:0:b0:637:b54a:d88e])
- (user=mclapinski job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:907:94d2:b0:b2f:2c8a:680b with SMTP id a640c23a62f3a-b46e7bbb560mr870743666b.58.1759411147168;
- Thu, 02 Oct 2025 06:19:07 -0700 (PDT)
-Date: Thu,  2 Oct 2025 15:19:00 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1EF82D1936;
+	Thu,  2 Oct 2025 13:19:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759411185; cv=pass; b=ocaBXhKOuczLpEfJtWIcG0A4wvGnasmWY+5NzVYRuKDwKSz0Ak0/hpGgz+GP/XG2Ih+hmBbLZ2z3ea+tOqHd8OqI8uzwblo9bHFekBfRuR2U/Q9FWZO/QWM9j5QYoKiXqWg11gd7mqHfzBZXo6uKL7iCzSZA6Y3H+gUz5k1TZTA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759411185; c=relaxed/simple;
+	bh=JzvkrumKusAlTsB7Mu9S0miZ9QQmnsaq0ov2x1sE5/0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=do1F5OXnExu57mer09HvtRGdraq9/3MZGHYpq34KRbw5VJIobKlO1uGHhZMfSDUw5b7+clZH69jwa4mvA+xNBa9h737VJ/MRBvfsuePUPSbk2o3JYIT4Jh1vMBTefqpMIGtc/6o9fpmKcOEAWAdGU30tBa8J1/w15a9hxlxwXDM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iokpp.de; spf=none smtp.mailfrom=iokpp.de; dkim=pass (2048-bit key) header.d=iokpp.de header.i=@iokpp.de header.b=A8J2E4a8; arc=pass smtp.client-ip=85.215.255.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iokpp.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=iokpp.de
+ARC-Seal: i=1; a=rsa-sha256; t=1759411177; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=rUfvcOL2ISN0pjTmN81TDa+cqt1kV8WyxaRe25xzB7xcUpTOJ1L72pWm6GLUTK2djn
+    tVw+5e+NNtvPMEUkvKfvrNGANMq7Xmsa5E3pb4zqj5gCQfWmhXWxenWWb0zxx49lEo2v
+    JAiJxXtAiDQhtcTTE9DvxnWRSeCjKPmfWO0STxGdr587DuX7Em9T71+crnzv1QHjWDIX
+    rxT+MjW6bg3BLxSi3jHUtysaIoHdXKtIOQutBQQ2DKqNPK155p22p5tIUILcCsFwVn2A
+    PXAHmeJe9RaH7e2k0e1LDEizcgeeb7RPnCFvzi5CF1dOIbLgdq9SaKtYLiyGt41q9VAR
+    b9Gw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1759411177;
+    s=strato-dkim-0002; d=strato.com;
+    h=References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Cc:Date:
+    From:Subject:Sender;
+    bh=pY+LXWZai8R7ETSQISmr3YBTii1mPODyogPubFswHaM=;
+    b=AmQBh1r6gk03AmXA+AlPg0MW8PS5n1OyBjZp7m8pUPcU28tYoH3vAlNg7Cu4QbVC3m
+    y7l7pMOGZEu3mz1qpQsxJdCf+7lAr7ClCzk0c22rif68ZLgFW37ob57Ozd7VIzk9hDE3
+    YA41VQ4rgNH2pB+mFWuDum2lwpgcvaQsUOHJZik25W+PP5T/oBw5fiTSnzu8RuItcDvK
+    0Dqw5e8mIlUDkzrHjK3670roXKnCxP6xnn2uWh1ci0V1WRP+Y+dnyst4NlKfBO/1nhqa
+    Y0KLhId62g0ZUsjZ01X80jPvkusAH3fGDB6B0ru3sZj2ZR6LJ2B3n0atHw4A8JT4APF+
+    onIw==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1759411177;
+    s=strato-dkim-0002; d=iokpp.de;
+    h=References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Cc:Date:
+    From:Subject:Sender;
+    bh=pY+LXWZai8R7ETSQISmr3YBTii1mPODyogPubFswHaM=;
+    b=A8J2E4a8wt89LpysYnaIcZ2LA1cooT071iqY6t/CZ6gjwdq0I5GxzNEUc4F+0Itj0i
+    Fv5hnER8pkKR7MUWESEczpGabXG9D3rFuYDM5sDjf0VHiIePrTskg17yZ2V7Xi3Bk2+w
+    PpQowEOetRbxI8OtCuQKAIW2J3/XlIuOmOn2SUMkSE2PoJO/YseOdyvhdvztBaapel4U
+    WbULt66gXKjwMVP347kHbcTUJF6zA7YIni6pjhg4XSiiNFuqnbvhVyM9m5yfMs2DJeFM
+    OwrkoQ+tq7OMiqQZXoyguiFT4gwrbGthe+HyGj9OxKZ4OAAhNoeGcibzk+u5yjne5bhy
+    qsDg==
+X-RZG-AUTH: ":LmkFe0i9dN8c2t4QQyGBB/NDXvjDB6pBSe9tgBDSDt0V0zJolXBtbIoYhB+fa1AL9w=="
+Received: from [192.168.226.211]
+    by smtp.strato.de (RZmta 53.3.2 AUTH)
+    with ESMTPSA id z9ebc6192DJafN1
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+	(Client did not present a certificate);
+    Thu, 2 Oct 2025 15:19:36 +0200 (CEST)
+Message-ID: <b7a1de5c459a98935ad6f2fbdc35e1e96d1242ba.camel@iokpp.de>
+Subject: Re: [PATCH v2 3/3] scsi: ufs: core: Add OP-TEE based RPMB driver
+ for UFS devices
+From: Bean Huo <beanhuo@iokpp.de>
+To: Avri Altman <Avri.Altman@sandisk.com>, "avri.altman@wdc.com"
+ <avri.altman@wdc.com>, "bvanassche@acm.org" <bvanassche@acm.org>, 
+ "alim.akhtar@samsung.com" <alim.akhtar@samsung.com>, "jejb@linux.ibm.com"
+ <jejb@linux.ibm.com>,  "martin.petersen@oracle.com"
+ <martin.petersen@oracle.com>, "can.guo@oss.qualcomm.com"
+ <can.guo@oss.qualcomm.com>, "ulf.hansson@linaro.org"
+ <ulf.hansson@linaro.org>,  "beanhuo@micron.com" <beanhuo@micron.com>,
+ "jens.wiklander@linaro.org" <jens.wiklander@linaro.org>
+Cc: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org"
+	 <linux-kernel@vger.kernel.org>
+Date: Thu, 02 Oct 2025 15:19:33 +0200
+In-Reply-To: <PH7PR16MB6196ADF912182709D465970DE5E6A@PH7PR16MB6196.namprd16.prod.outlook.com>
+References: <20251001060805.26462-1-beanhuo@iokpp.de>
+	 <20251001060805.26462-4-beanhuo@iokpp.de>
+	 <PH7PR16MB6196ADF912182709D465970DE5E6A@PH7PR16MB6196.namprd16.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.0.618.g983fd99d29-goog
-Message-ID: <20251002131900.3252980-1-mclapinski@google.com>
-Subject: [PATCH 1/1] dax: add PROBE_PREFER_ASYNCHRONOUS to the pmem driver
-From: Michal Clapinski <mclapinski@google.com>
-To: Dan Williams <dan.j.williams@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, 
-	Dave Jiang <dave.jiang@intel.com>, nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org
-Cc: Pasha Tatashin <pasha.tatashin@soleen.com>, linux-kernel@vger.kernel.org, 
-	Michal Clapinski <mclapinski@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
 
-Comments in linux/device/driver.h say that the goal is to do async
-probing on all devices. The current behavior unnecessarily slows down
-the boot by synchronous probing dax_pmem devices, so let's change that.
+On Wed, 2025-10-01 at 10:06 +0000, Avri Altman wrote:
+> > From: Bean Huo <beanhuo@micron.com>
+> >=20
+> > This patch adds OP-TEE based RPMB support for UFS devices. This enables
+> > secure RPMB operations on UFS devices through OP-TEE, providing the sam=
+e
+> > functionality available for eMMC devices and extending kernel-based sec=
+ure
+> > storage support to UFS-based systems.
+> >=20
+> > Benefits of OP-TEE based RPMB implementation:
+> > - Eliminates dependency on userspace supplicant for RPMB access
+> > - Enables early boot secure storage access (e.g., fTPM, secure UEFI
+> > variables)
+> > - Provides kernel-level RPMB access as soon as UFS driver is initialize=
+d
+> > - Removes complex initramfs dependencies and boot ordering requirements
+> > - Ensures reliable and deterministic secure storage operations
+> > - Supports both built-in and modular fTPM configurations
+> >=20
+> > Co-developed-by: Can Guo <can.guo@oss.qualcomm.com>
+> > Signed-off-by: Can Guo <can.guo@oss.qualcomm.com>
+> > Signed-off-by: Bean Huo <beanhuo@micron.com>
+> Reviewed-by: Avri Altman <avri.altman@sandisk.com>
+>=20
+> Nit: Would it make sense to simplify things, e.g. :
+> Instead of struct list_head rpmbs;
+> Use:
+> struct ufs_rpmb_dev *rpmbs[4];
 
-Signed-off-by: Michal Clapinski <mclapinski@google.com>
----
- drivers/dax/pmem.c | 1 +
- 1 file changed, 1 insertion(+)
+Avri,=20
 
-diff --git a/drivers/dax/pmem.c b/drivers/dax/pmem.c
-index bee93066a849..737654e8c5e8 100644
---- a/drivers/dax/pmem.c
-+++ b/drivers/dax/pmem.c
-@@ -77,6 +77,7 @@ static struct nd_device_driver dax_pmem_driver = {
- 	.probe = dax_pmem_probe,
- 	.drv = {
- 		.name = "dax_pmem",
-+		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
- 	},
- 	.type = ND_DRIVER_DAX_PMEM,
- };
--- 
-2.51.0.618.g983fd99d29-goog
+yes, having a fixed-size data set, choose an array over a list when needs f=
+ast,
+random access to elements by index. I will address it in next version.
+
+> Also, I don't remember if you were planning to add the additional rpmb
+> operations (6 to 9) later or not.
+
+yes, to make those usable, firstly need to enable in op-tee OS,  I will che=
+ck
+op-tee OS and enable in extension patch.
+
+Kind regards,
+Bean
+
+>=20
+> Thanks,
+> Avri
 
 
