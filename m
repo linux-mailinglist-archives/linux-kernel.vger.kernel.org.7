@@ -1,153 +1,118 @@
-Return-Path: <linux-kernel+bounces-840264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF150BB3FA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 15:03:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68C13BB3FAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 15:05:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D7503B5EFF
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 13:03:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24A101640EE
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 13:05:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6493311594;
-	Thu,  2 Oct 2025 13:03:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A8CF3112D1;
+	Thu,  2 Oct 2025 13:05:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tK7L357z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sq94r276"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D4D2EC08E;
-	Thu,  2 Oct 2025 13:03:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 910471E480;
+	Thu,  2 Oct 2025 13:05:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759410226; cv=none; b=BjGdS+zxpQvtXSh6Gwy4t3s9ZkoYv7GmAOGyVH7x6TJmhlES3wAC9m0fX34WppLVBwppe2yHHvYVLD1jS7lwisrBzlFWU0QBtYkqiskfepqHJL4FsDjEWzwEohBRQYeqvJMtLQqQIIheFeczM5nNC7hN+DUNaw7fY6606Xxm96Y=
+	t=1759410329; cv=none; b=EBNEpSUCDd4LqFP8RjALM9FeuzvSCjFmhLJunpCoIArTiviCXcEm8R8hJ9Bne/vyM0pAQiGBrMPNWjuppNVgC+iM+00d004NLDnxPD49sNE9xhgghbK1nYW7ReNhmazym3Ob033GjCa3Ysl19eaub4WSYC27bScxK6pDaiWWv6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759410226; c=relaxed/simple;
-	bh=IqmZ2qn3/cwmHXiV+sDN9KZgmACU1tPIoXsK0UdOIVg=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=cLSgjTFc5GXzWuc9Txcdm4Wy++L5S7r4nwa0z6lKw4oTMMoNBMF2NSAcOrBVadWwLso39jgvWxD5uxv1uEpsPsMzZiiwzE4UeBLtgHxnc0fZML+rCdeZV7o6lM6nbRLwB1ayRSfeQtnMEaieEQ444dP0xhGNzanyUA7NVGRa/ZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tK7L357z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F94CC4CEF4;
-	Thu,  2 Oct 2025 13:03:40 +0000 (UTC)
+	s=arc-20240116; t=1759410329; c=relaxed/simple;
+	bh=afj8svAg+O+Rcv4PrXWjw33OYX3xxNR7edXvIz5juag=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=NuLrDDX7YGnIEzZw124aZ+mK4sCNuljKCnFhKJ1IdcXDgWaoYgJrFXuDVEKRzNreLQtDnY8WMM7NtYN++4fzAGxaPn94vZJliTUQvJzUhR8vFrdahDAumnxB2AyKFInW7AcBU5VncbLcelp7Ob8cnZzRBPNy1n8MufC+iVTPBw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sq94r276; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04A28C4CEF4;
+	Thu,  2 Oct 2025 13:05:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759410225;
-	bh=IqmZ2qn3/cwmHXiV+sDN9KZgmACU1tPIoXsK0UdOIVg=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=tK7L357zNRoAygiOUdtULi+T8umVIFJxKaXPxAvPO/y5yIv7YNhM7mm/9ecDNViJb
-	 U5c24LtvIkzzXU+wyIYZgyR/Knb1Xc4rQwmfSTb/wFwN1Ajm0X+7zIrvoVscLgOvwI
-	 R+qaC+Azn3dYLZPyQ3Tt1bb/psBFOV7wzGXRwSLEf07icqaRWz6NEh1KEEjh+WLYYa
-	 As1LaqL6oWluc9DUTl41JaWPxewctI23uLEHtcXblAPrJLxovJU+LP6w8jlxDKRsaR
-	 0BHN0wN9fMYudk6kEeNyDQnTDi7/CbM75I63QgKiyWR9/FZXYd5kV+ePZkxuGHqGQB
-	 iL9XYmmt+fE4g==
+	s=k20201202; t=1759410329;
+	bh=afj8svAg+O+Rcv4PrXWjw33OYX3xxNR7edXvIz5juag=;
+	h=Date:From:To:Cc:Subject:From;
+	b=sq94r276ZyrffvzfBTP8Q6Jqd39Bas0nomXvU6aI9jvJp+PHiNLyf2qXC6DvSztDd
+	 vF9h1g5i9FghcDvFM240bdkBxK1iMenHpJKHCa768QhuDTnQlhdpdkjHKzHVjlaa3M
+	 DroeghsZG25Esdj1O1KibyD3/PqYnqrNiP3bDQJV49VKJcfISSix5TgDmcJrwwS1BO
+	 JnatDOapUECyHY6qt+dm++UBUXrL7LNr5CPFykmbABHfEmT4Py+g7UIIUE5mg762Nd
+	 unsG1RKGwd8Q+RFdEbz9ZcODdRWeHRp0BMRi1EIwoLcoiRc0hAXqToZrrmP1WekMow
+	 3wSu/JaiHB46w==
+Date: Thu, 2 Oct 2025 10:05:25 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>,
+	Gabriele Monaco <gmonaco@redhat.com>,
+	James Clark <james.clark@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Tomas Glozar <tglozar@redhat.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: [PATCH 1/1] tools build: Don't assume libtracefs-devel is always
+ available
+Message-ID: <aN54leQ54ozcUXBO@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 02 Oct 2025 15:03:38 +0200
-Message-Id: <DD7UVCEVB21H.SQ00WZLLPINP@kernel.org>
-Subject: Re: [PATCH v2 1/2] rust: pci: skip probing VFs if driver doesn't
- support VFs
-Cc: "John Hubbard" <jhubbard@nvidia.com>, "Alexandre Courbot"
- <acourbot@nvidia.com>, "Joel Fernandes" <joelagnelf@nvidia.com>, "Timur
- Tabi" <ttabi@nvidia.com>, "Alistair Popple" <apopple@nvidia.com>, "Zhi
- Wang" <zhiw@nvidia.com>, "Surath Mitra" <smitra@nvidia.com>, "David Airlie"
- <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Alex Williamson"
- <alex.williamson@redhat.com>, "Bjorn Helgaas" <bhelgaas@google.com>,
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, "Miguel
- Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun
- Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
- <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
- Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- <nouveau@lists.freedesktop.org>, <linux-pci@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>, "LKML" <linux-kernel@vger.kernel.org>
-To: "Jason Gunthorpe" <jgg@nvidia.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20251002020010.315944-1-jhubbard@nvidia.com>
- <20251002020010.315944-2-jhubbard@nvidia.com>
- <20251002121110.GE3195801@nvidia.com>
- <DD7TWUPD83M9.5IO0VX7PP1UK@kernel.org>
- <20251002123921.GG3195801@nvidia.com>
-In-Reply-To: <20251002123921.GG3195801@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Thu Oct 2, 2025 at 2:39 PM CEST, Jason Gunthorpe wrote:
-> On Thu, Oct 02, 2025 at 02:18:36PM +0200, Danilo Krummrich wrote:
->> On Thu Oct 2, 2025 at 2:11 PM CEST, Jason Gunthorpe wrote:
->> > On Wed, Oct 01, 2025 at 07:00:09PM -0700, John Hubbard wrote:
->> >> Add a "supports_vf" flag to struct pci_driver to let drivers declare
->> >> Virtual Function (VF) support. If a driver does not support VFs, then
->> >> the PCI driver core will not probe() any VFs for that driver's device=
-s.
->> >>=20
->> >> On the Rust side, add a const "SUPPORTS_VF" Driver trait, defaulting =
-to
->> >> false: drivers must explicitly opt into VF support.
->> >
->> > As I said in the other thread - please no.
->> >
->> > Linux drivers are expected to run on their VFs.
->>=20
->> The consequence would be that drivers for HW that can export VFs would n=
-eed to
->> be rejected upstream if they only support the PF, but no VFs. IMHO, that=
-'s an
->> unreasonable requirement.
->
-> Not rejected, they just need to open code a simple isvf check and fail
-> during probe if they really have a (hopefully temporary) problem.
+perf doesn't use libtracefs and so it doesn't make sense to assume it is
+always available when building test-all.bin, defeating the feature check
+speedup it provides.
 
-The question is whether it is due to a (temporary) problem, or if it is by
-design.
+The other tools/build/ users such as rtla, rv, etc call $(feature_check
+libtracefs) to check its availability instead of using the test-all.bin
+mechanism, stopping the build and asking for libtracefs-devel to be
+installed.
 
-I think it's not unreasonable to have a driver for the PF and a separate dr=
-iver
-for the VFs if they are different enough; the drivers can still share commo=
-n
-code of course.
+Noticed after applying Ian Roger's removal unused libtracefs
+configuration in tools/perf/.
 
-Surely, you can argue that if they have different enough requirements they
-should have different device IDs, but "different enough requirements" is pr=
-etty
-vague and it's not under our control either.
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Gabriele Monaco <gmonaco@redhat.com>
+Cc: Ian Rogers <irogers@google.com>
+Cc: James Clark <james.clark@linaro.org>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Tomas Glozar <tglozar@redhat.com>
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/build/feature/test-all.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-> This not really a realistic case. Linux running in the VM *should*
-> have drivers that operate the VF, and those existing drivers *should*
-> work in the PF context.
->
-> Drivers that work in VM but not in a host should not be encouraged!!
+diff --git a/tools/build/feature/test-all.c b/tools/build/feature/test-all.c
+index e1847db6f8e63750..2df593593b6ec15e 100644
+--- a/tools/build/feature/test-all.c
++++ b/tools/build/feature/test-all.c
+@@ -150,10 +150,6 @@
+ # include "test-libtraceevent.c"
+ #undef main
+ 
+-#define main main_test_libtracefs
+-# include "test-libtracefs.c"
+-#undef main
+-
+ int main(int argc, char *argv[])
+ {
+ 	main_test_libpython();
+@@ -187,7 +183,6 @@ int main(int argc, char *argv[])
+ 	main_test_reallocarray();
+ 	main_test_libzstd();
+ 	main_test_libtraceevent();
+-	main_test_libtracefs();
+ 
+ 	return 0;
+ }
+-- 
+2.49.0
 
-I agree, we should indeed encourage HW manufacturers to design the HW in a =
-way
-that a single driver works in both cases, i.e. less less code to maintain, =
-less
-surface for bugs, etc., if that is what you mean.
-
-But, if there is another solution for VFs already, e.g. in the case of nova=
--core
-vGPU, why restrict drivers from opt-out of VFs. (In a previous reply I ment=
-ioned
-I prefer opt-in, but you convinced me that it should rather be opt-out.)
-
-> AFAICT this is even true for novacore, the driver should "work" but
-> the VF won't be provisioned today so it should fail startup in some
-> way. eg "no vram" or something like that.
->
->> > This temporary
->> > weirdness of novacore should not be elevated to a core behavior that
->> > people will misuse.
->>=20
->> It's not just nova-core, please see [1].
->>=20
->> [1] https://lore.kernel.org/lkml/DD7TP31FEE92.2E0AKAHUOHVVF@kernel.org/
->
-> I responded there, I don't think the reasons those were added to ICE
-> and then cargo-culted are very good, not good enough to justify adding
-> it to the core code.
-
-Indeed, the justification of ICE is clearly wrong.
 
