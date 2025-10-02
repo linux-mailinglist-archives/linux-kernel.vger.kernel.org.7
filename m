@@ -1,182 +1,122 @@
-Return-Path: <linux-kernel+bounces-840620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C38FBB4D64
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 20:06:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6532BB4D46
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 20:06:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4B4E4265CC
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 18:06:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E7DD324635
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 18:05:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64EE72BE029;
-	Thu,  2 Oct 2025 18:04:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9090B27CB02;
+	Thu,  2 Oct 2025 18:04:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="iZzhB/fo"
-Received: from fra-out-013.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-013.esa.eu-central-1.outbound.mail-perimeter.amazon.com [63.178.132.221])
+	dkim=pass (2048-bit key) header.d=mandrillapp.com header.i=@mandrillapp.com header.b="MKEjX3T3";
+	dkim=pass (2048-bit key) header.d=vates.tech header.i=teddy.astie@vates.tech header.b="vBk+ai2w"
+Received: from mail132-2.atl131.mandrillapp.com (mail132-2.atl131.mandrillapp.com [198.2.132.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 272B628368A;
-	Thu,  2 Oct 2025 18:04:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.178.132.221
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 276FE27C172
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 18:04:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.2.132.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759428267; cv=none; b=KZzd/okgcof5v1nAtnePsSNLkk5WeuPfZtIUanDz8Y+wYpvFUvlZ7JPaSO3gIvIFYvn3S5NdIpgFl1ILZZcNyqj7fubYk//tSzrq6YAp7qp7pE0hWQAU9YiuQx3tNW5s99ETj18YZNgPdchXr7Jn9XHBhD2wpfgC1J6wRj/xBAU=
+	t=1759428257; cv=none; b=fP+en47hKSSVH2QqNHEiicdHVjPjj4rS0Sv0G7F1wiYOQgV/Q0qh0xwG7raL5tKkpbGkxJXLjgN42XizbIq0QewctIss1ze2owaK5q9W7VSQcyMZprwr8XxwrS4Avp438dAlsrmu7J5/+Cg3VeuIKSIQmZnR8T7VGchgRsrLekc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759428267; c=relaxed/simple;
-	bh=V2L3IilwofpV6SrsfVTvut5ipDXkokIOm+dTBT4i7eQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Yc/WX9BOR5s80PDHHJWORcOc2MZ9h6tbS+kT0YTw9pJNWRDRXNAUrQAszw60LYdElCe+HqAv1rTnGfIyS35Oy0bQIM1PoA7WLESeGaSp0R8J6uxChMRKaAHrMCiuz/JkVn86G/TkhhkkF7kkiIZZzlEWdwOlptl+6ymHqwXcWTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=iZzhB/fo; arc=none smtp.client-ip=63.178.132.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1759428266; x=1790964266;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=k0dUe76w+6n5/NfsPbyefGVCom+xh3GGcFcV3Olhmks=;
-  b=iZzhB/foyKosKk4jiCGauA1qJdpICwRbF11rgOn/rcQX9MrvoJABrDPF
-   60nOSCBdm/bu32yH49iUO4733GCoN0WcRiWMWkoz/DKScq8UxovYMA2rb
-   ThKJ/BI/fEpet+erAFS8FmFcEr9FMHcurDHa9piu90yEhmmEeSI1Qp4r9
-   Alipc5XORn+1sj92pOrFzQXR+YwJfO/6lWHwp8uw95gCiRi8UECZy0PzN
-   JZ+jeWLDyorw4vuNUowiBzDNyR9KNKl3f60oo+SveUDYcDPLFqF8fl7RB
-   CmXCT/5rm5a879Oi3v7L7qpvLSQjbmBymYLS6XuJGXPKPUwzcokH6AV4c
-   g==;
-X-CSE-ConnectionGUID: KYP+mIxcS+qh8swRIg8aqg==
-X-CSE-MsgGUID: 3iUG7CuKRNa+UdIi4LLhFw==
-X-IronPort-AV: E=Sophos;i="6.18,310,1751241600"; 
-   d="scan'208";a="2924326"
-Received: from ip-10-6-6-97.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.6.97])
-  by internal-fra-out-013.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2025 18:04:23 +0000
-Received: from EX19MTAEUC001.ant.amazon.com [54.240.197.225:28750]
- by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.1.16:2525] with esmtp (Farcaster)
- id 50a0473f-3493-43fb-a202-fb586031f523; Thu, 2 Oct 2025 18:04:23 +0000 (UTC)
-X-Farcaster-Flow-ID: 50a0473f-3493-43fb-a202-fb586031f523
-Received: from EX19D018EUA004.ant.amazon.com (10.252.50.85) by
- EX19MTAEUC001.ant.amazon.com (10.252.51.193) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Thu, 2 Oct 2025 18:04:23 +0000
-Received: from dev-dsk-farbere-1a-46ecabed.eu-west-1.amazon.com
- (172.19.116.181) by EX19D018EUA004.ant.amazon.com (10.252.50.85) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20; Thu, 2 Oct 2025
- 18:04:10 +0000
-From: Eliav Farber <farbere@amazon.com>
-To: <gregkh@linuxfoundation.org>, <kenneth.feng@amd.com>,
-	<alexander.deucher@amd.com>, <christian.koenig@amd.com>, <airlied@gmail.com>,
-	<simona@ffwll.ch>, <linus.walleij@linaro.org>, <dmitry.torokhov@gmail.com>,
-	<tglx@linutronix.de>, <wens@csie.org>, <jernej.skrabec@gmail.com>,
-	<samuel@sholland.org>, <agk@redhat.com>, <snitzer@kernel.org>,
-	<mpatocka@redhat.com>, <clm@fb.com>, <dsterba@suse.com>,
-	<luc.vanoostenryck@gmail.com>, <pmladek@suse.com>, <rostedt@goodmis.org>,
-	<andriy.shevchenko@linux.intel.com>, <linux@rasmusvillemoes.dk>,
-	<senozhatsky@chromium.org>, <akpm@linux-foundation.org>,
-	<lijo.lazar@amd.com>, <asad.kamal@amd.com>, <kevinyang.wang@amd.com>,
-	<David.Laight@ACULAB.COM>, <amd-gfx@lists.freedesktop.org>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-	<linux-input@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-sunxi@lists.linux.dev>, <dm-devel@lists.linux.dev>,
-	<linux-btrfs@vger.kernel.org>, <linux-sparse@vger.kernel.org>,
-	<stable@vger.kernel.org>, <farbere@amazon.com>
-CC: Arnd Bergmann <arnd@kernel.org>, Christoph Hellwig <hch@infradead.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>, "Jason A. Donenfeld"
-	<Jason@zx2c4.com>, Jens Axboe <axboe@kernel.dk>, Lorenzo Stoakes
-	<lorenzo.stoakes@oracle.com>, Mateusz Guzik <mjguzik@gmail.com>, "Matthew
- Wilcox" <willy@infradead.org>, Pedro Falcato <pedro.falcato@gmail.com>
-Subject: [PATCH v3 11/11 6.1.y] minmax.h: remove some #defines that are only expanded once
-Date: Thu, 2 Oct 2025 18:00:29 +0000
-Message-ID: <20251002180036.33738-12-farbere@amazon.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251002180036.33738-1-farbere@amazon.com>
-References: <20251002180036.33738-1-farbere@amazon.com>
+	s=arc-20240116; t=1759428257; c=relaxed/simple;
+	bh=aXEIbACNRtnofIP0VZq3wF1u+oABNhMX4NkKLUF3g2Y=;
+	h=From:Subject:To:Cc:Message-Id:Date:MIME-Version:Content-Type; b=elJTJBldhLAF4/BHFT+FsDPPjclw5q0Kj7cLCrsohBn9s/0sZSatxkFBPw/MJoXggTClegm3RUkOeecBMzfcTx05Cpw7Wqlgi2kaPH3+gxi3AFpYGm60yqULIGkABL28YhMofYVioLhldhALc/bBngbZs9VU5LUXFTUUZCYfNwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=vates.tech; spf=pass smtp.mailfrom=bounce.vates.tech; dkim=pass (2048-bit key) header.d=mandrillapp.com header.i=@mandrillapp.com header.b=MKEjX3T3; dkim=pass (2048-bit key) header.d=vates.tech header.i=teddy.astie@vates.tech header.b=vBk+ai2w; arc=none smtp.client-ip=198.2.132.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=vates.tech
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bounce.vates.tech
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mandrillapp.com;
+	s=mte1; t=1759428255; x=1759698255;
+	bh=4bpvfICFTTCbiWIKY9SvhS9+6AYpp3DjTixjEpmMXbI=;
+	h=From:Subject:To:Cc:Message-Id:Feedback-ID:Date:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding:CC:Date:Subject:From;
+	b=MKEjX3T3S3BDLNWeRIQQiTfvuPrpitvjTUlvkEwhm3RLUsaDHdPbgTeO8cVLTbVfo
+	 NdW2jt+FgtlchG2a34dFizchoB5MgWuJurKK9TJnh9d69VmOXvUwJfXvaR3/MFbPpD
+	 xJYNIjebA3+bwAHhaw3Pif+v6mEe2BnW11wjKxjKQg/DRKrwTOVB4UYdBc/gD2nisg
+	 vSHhPq8ehRnkk16l4KAcb7yvmyCKWgvZ8dwbY+M0/SE9Jv9qhM0pxk+vngDhzNLWAS
+	 FS8FuQdAp1tcLJ4DV8oCrkt8JKlXcaVMbrxyWtD88zRnu/kmIvnNuLjmbAU6e63MI+
+	 7TUagsYyuUtsQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vates.tech; s=mte1;
+	t=1759428255; x=1759688755; i=teddy.astie@vates.tech;
+	bh=4bpvfICFTTCbiWIKY9SvhS9+6AYpp3DjTixjEpmMXbI=;
+	h=From:Subject:To:Cc:Message-Id:Feedback-ID:Date:MIME-Version:
+	 Content-Type:Content-Transfer-Encoding:CC:Date:Subject:From;
+	b=vBk+ai2wFw7tRDuAhcFpXFrneoUHUyUghv2N1viCw8APN6KgUl469xrNSMLz4u3DE
+	 V4LZQOrtXN/mudcMXttHk5PHGC00lq66Dj2ja57jWOO4FfmRiTx1ZQAa5E+BKiA/y3
+	 Zvs2kJxJOoY559S4uPZ6qUC6CEKOqKiJQrsN834s0sMON/27xTuh0yZAy31e9bzBdp
+	 zrryl1TTvSBiCexwCoVp7CoETwPayD7Edx/tjG9WAh+MnoMfkuE5dcsnu/R2K+HaVZ
+	 PEBinZqH+utY58jffuqo844QDwUDuiXGp9flOhQt/jngrd2wTfKWsAeweO5k3g4pWu
+	 v53ITXOijjT2w==
+Received: from pmta09.mandrill.prod.atl01.rsglab.com (localhost [127.0.0.1])
+	by mail132-2.atl131.mandrillapp.com (Mailchimp) with ESMTP id 4cd06l2HFlzS62WSB
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 18:04:15 +0000 (GMT)
+From: "Teddy Astie" <teddy.astie@vates.tech>
+Subject: =?utf-8?Q?[PATCH]=20ccp/hsti:=20Fix=20bogus=20sizeof=20in=20psp=5Fpopulate=5Fhsti?=
+Received: from [37.26.189.201] by mandrillapp.com id 6186e6d9d34b4f57b65fac67565006e3; Thu, 02 Oct 2025 18:04:15 +0000
+X-Mailer: git-send-email 2.51.0
+X-Bm-Disclaimer: Yes
+X-Bm-Milter-Handled: 4ffbd6c1-ee69-4e1b-aabd-f977039bd3e2
+X-Bm-Transport-Timestamp: 1759428253425
+To: linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org
+Cc: "Teddy Astie" <teddy.astie@vates.tech>, "Mario Limonciello" <mario.limonciello@amd.com>, "Tom Lendacky" <thomas.lendacky@amd.com>, "John Allen" <john.allen@amd.com>, "Herbert Xu" <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>
+Message-Id: <5743ec02c374ce52d1b406d41e9e240d049ee7e2.1759427927.git.teddy.astie@vates.tech>
+X-Native-Encoded: 1
+X-Report-Abuse: =?UTF-8?Q?Please=20forward=20a=20copy=20of=20this=20message,=20including=20all=20headers,=20to=20abuse@mandrill.com.=20You=20can=20also=20report=20abuse=20here:=20https://mandrillapp.com/contact/abuse=3Fid=3D30504962.6186e6d9d34b4f57b65fac67565006e3?=
+X-Mandrill-User: md_30504962
+Feedback-ID: 30504962:30504962.20251002:md
+Date: Thu, 02 Oct 2025 18:04:15 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D040UWA001.ant.amazon.com (10.13.139.22) To
- EX19D018EUA004.ant.amazon.com (10.252.50.85)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-From: David Laight <David.Laight@ACULAB.COM>
+Payload is actually struct hsti_request and not a pointer which
+makes the considered payload size smaller than it should be.
 
-[ Upstream commit 2b97aaf74ed534fb838d09867d09a3ca5d795208 ]
-
-The bodies of __signed_type_use() and __unsigned_type_use() are much the
-same size as their names - so put the bodies in the only line that expands
-them.
-
-Similarly __signed_type() is defined separately for 64bit and then used
-exactly once just below.
-
-Change the test for __signed_type from CONFIG_64BIT to one based on gcc
-defined macros so that the code is valid if it gets used outside of a
-kernel build.
-
-Link: https://lkml.kernel.org/r/9386d1ebb8974fbabbed2635160c3975@AcuMS.aculab.com
-Signed-off-by: David Laight <david.laight@aculab.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Arnd Bergmann <arnd@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Jason A. Donenfeld <Jason@zx2c4.com>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Pedro Falcato <pedro.falcato@gmail.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Eliav Farber <farbere@amazon.com>
+Signed-off-by: Teddy Astie <teddy.astie@vates.tech>
+Fixes: 82f9327f774c ("crypto: ccp - Add support for getting security attributes on some older systems")
 ---
- include/linux/minmax.h | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+CC: Mario Limonciello <mario.limonciello@amd.com>
+CC: Tom Lendacky <thomas.lendacky@amd.com>
+CC: John Allen <john.allen@amd.com>
+CC: Herbert Xu <herbert@gondor.apana.org.au>
+CC: "David S. Miller" <davem@davemloft.net>
+---
+ drivers/crypto/ccp/hsti.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/minmax.h b/include/linux/minmax.h
-index 2bbdd5b5e07e..eaaf5c008e4d 100644
---- a/include/linux/minmax.h
-+++ b/include/linux/minmax.h
-@@ -46,10 +46,8 @@
-  * comparison, and these expressions only need to be careful to not cause
-  * warnings for pointer use.
-  */
--#define __signed_type_use(ux) (2 + __is_nonneg(ux))
--#define __unsigned_type_use(ux) (1 + 2 * (sizeof(ux) < 4))
- #define __sign_use(ux) (is_signed_type(typeof(ux)) ? \
--	__signed_type_use(ux) : __unsigned_type_use(ux))
-+	(2 + __is_nonneg(ux)) : (1 + 2 * (sizeof(ux) < 4)))
+diff --git a/drivers/crypto/ccp/hsti.c b/drivers/crypto/ccp/hsti.c
+index 1b39a4fb55c0..0e6b73b55dbf 100644
+--- a/drivers/crypto/ccp/hsti.c
++++ b/drivers/crypto/ccp/hsti.c
+@@ -88,7 +88,7 @@ static int psp_poulate_hsti(struct psp_device *psp)
+ 	if (!req)
+ 		return -ENOMEM;
  
- /*
-  * Check whether a signed value is always non-negative.
-@@ -57,7 +55,7 @@
-  * A cast is needed to avoid any warnings from values that aren't signed
-  * integer types (in which case the result doesn't matter).
-  *
-- * On 64-bit any integer or pointer type can safely be cast to 'long'.
-+ * On 64-bit any integer or pointer type can safely be cast to 'long long'.
-  * But on 32-bit we need to avoid warnings about casting pointers to integers
-  * of different sizes without truncating 64-bit values so 'long' or 'long long'
-  * must be used depending on the size of the value.
-@@ -66,12 +64,12 @@
-  * them, but we do not use s128 types in the kernel (we do use 'u128',
-  * but they are handled by the !is_signed_type() case).
-  */
--#ifdef CONFIG_64BIT
--  #define __signed_type(ux) long
-+#if __SIZEOF_POINTER__ == __SIZEOF_LONG_LONG__
-+#define __is_nonneg(ux) statically_true((long long)(ux) >= 0)
- #else
--  #define __signed_type(ux) typeof(__builtin_choose_expr(sizeof(ux) > 4, 1LL, 1L))
-+#define __is_nonneg(ux) statically_true( \
-+	(typeof(__builtin_choose_expr(sizeof(ux) > 4, 1LL, 1L)))(ux) >= 0)
- #endif
--#define __is_nonneg(ux) statically_true((__signed_type(ux))(ux) >= 0)
+-	req->header.payload_size = sizeof(req);
++	req->header.payload_size = sizeof(*req);
  
- #define __types_ok(ux, uy) \
- 	(__sign_use(ux) & __sign_use(uy))
+ 	ret = psp_send_platform_access_msg(PSP_CMD_HSTI_QUERY, (struct psp_request *)req);
+ 	if (ret)
 -- 
-2.47.3
+2.51.0
+
+
+
+--
+ | Vates
+
+XCP-ng & Xen Orchestra - Vates solutions
+
+web: https://vates.tech
 
 
