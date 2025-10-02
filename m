@@ -1,172 +1,164 @@
-Return-Path: <linux-kernel+bounces-840851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EDF6BB5946
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 00:58:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 62990BB58F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 00:53:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0B093AD99C
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 22:58:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D20534825F2
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 22:53:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24C71275AFA;
-	Thu,  2 Oct 2025 22:58:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3DAF25F780;
+	Thu,  2 Oct 2025 22:53:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Y1B9H9KP"
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Wbvefx0a"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B5618027
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 22:58:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB78E2E403
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 22:53:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759445918; cv=none; b=WOPIHxc5H1rC3jPPhG21ioJ8nVHZfHIUSO3d92tMG8SFKfwI0ZCl2LzR5FqJCBX8kvC/o+FLYmh7Bm8uHU5X/J3OM8KHL5zI3BksYYZ4Q1QAbIjdS5+QjwwRoUlBKPAkdkzUxY03y9EZQsIcBWq/sZ0gqgV6iOLxZam7LlssAF0=
+	t=1759445616; cv=none; b=eRWTcAEaIDlrVT0Vzy5fBI/Kve0cse2Z5uIGxDA5L5Hmf045NMipiyJEsuFr4TQ0APfHv5Kqs4NutehyJgbwgJQSb2fUQ5VR2IP3j8JrIC2JtEBJbdKs7IjyKbUbrPayQO4vhxEQshoPm7Uq+IRg7TDXIL3/fY2bSF55R2hn5nM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759445918; c=relaxed/simple;
-	bh=Y7ngC7HojWm7IUs9PGbu+/f7WUp+fPvyjflZvuNQEyo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ht7qk0Dl5195cC5IBsWUwI+L45caE3CnB5yQjwOUtSQl+ymi1FdHHYKkahfBdSDcJdpHUspKKoY8uH3JQPpDsmDUrKNLYkaPwLX7MZd2zU3PPPFJoGAZLNI4ExtyjTHIs7iyAcoQQ/EGRDYjjYyZk/PbJH/pfqtYtPxP0Bznbuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=Y1B9H9KP; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-86302b5a933so140134585a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 15:58:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1759445916; x=1760050716; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BD70i09QaMORHOgNG1NIf1k6EzR92nb/hgxntasDR3A=;
-        b=Y1B9H9KPzBsc9x27fk9GwXw9H1m5QjH3BKU1EXbMgiaN8d7680NteoWx2ogLvkrFTj
-         ZbrzcoKNq+9OqtT38zPxVI0ONd903t/kyime6+GgBKC0rRWsCjsSWHg2F7dYmauGcVKO
-         tC1PzPmdk8n3/3dAfifzwLemichGWZ1AFTdzqLAltwug7e0i5N3CCO1SBaq+HVL9YUnR
-         Yq6tBn0d3PXhXNLBJELZXeR6VPG+0BHbvv8V4Tlt5ypsg/vH2AOK7nQThYVfUKmv5P/P
-         aOUSLx1mvxXAh2HQd91iOAj3h2DN0khnwnCSPlzh6V7nunEamsndZ4Gll9qMJJpIrY2g
-         Qv1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759445916; x=1760050716;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BD70i09QaMORHOgNG1NIf1k6EzR92nb/hgxntasDR3A=;
-        b=G6ESzRWMzEKBmseRElLXiCLhSG4TW/0z9YPI+5fkNZ4XSSFqBgAKdZXEGiwO5lv/Ou
-         PgE7WFWvmTsy7ypf5KnwSx5KsE4eg0dKgSgE+XKr3AhlXj4cI4tLqxwKe5YyIT5HUyzN
-         9L8WD5Mw2UIzbNqIc7HACr2PSgXOZdeqRoa3ZmSKInY+ylPIBsQQBDk347pXRbWP9jRy
-         6qj4vAvRcf5TXnHdEEnQXHYJ0taPNDpj54gUPLXqnDugSiJzC4WlV28W+fIegEm2VunY
-         xfI8LY2EHuTlCFmHZbQEGAah+4gBOoQr4jyHBpxwNV3QlHmGN+1pdwF8/UByIfU4858M
-         lomQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXJBkPuobYZQ9f4u0zrOTXLQnZCrIWzsf7JQkx9S1ARs4WFM+BeS9Vn97RT9DO3qUaeMpWvm5SG0F/fw68=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMmGpwq6sDGW6rQCHEe6fqzd1aqvWXvETxFa52glCDmqazKH8t
-	HvGxsfq3cZP1oN5hJs/qqQn3kfoWF0ApPZIlL9pAPJ0rLyn993fY10VrtoOwD3IeXURMC0NVyP3
-	su6IUZ1U=
-X-Gm-Gg: ASbGncujvE1xwCR6qpVtfIV6FJ+x8ZNGLl7BmvEzFWd9sZc7HDoXi50/AsACzhCShXi
-	NJrZRItl7VZCM22JC2ARnd980QNDDqd2W4+bQk0olxyUow46ooxQKTTEYLLJq7lWJv1+DIUDOC/
-	hUz2Wb0mKS0CmvHDrSm05dhdxeOIPGkzPO9taLUQyYNPsl+27M9xlzhWhfxXdX0Rk3cozZqjIAN
-	v64O9MbJSFxXZpSjzkQSw0hcT7iPznfDhY59USB7p66aWaqwJcCt5oqwjv+nh0bP1wptpb3aTZJ
-	H7DjAaVoms1DX+tS8Nmfl/ZfahBW+cCWrSw3KYHGnBNB/8wdz/kg8iYpcXYmEIcF6golXAiRod3
-	1flmg/7BvjQO0TxvSWzJljzAlsFUi3nOJjh4A1w2KGlkPavGolmKM7SPkuFH23wKiGzNg/yFUfb
-	h4ZsB/tiR7EjmPpEwj
-X-Google-Smtp-Source: AGHT+IHCc1FLv00zZuPdiNAyfYYP5u1gSaWvc8oyXsbkG+278vuif9Ukg/t+3FfiMRq3Nh5J7YH1Gg==
-X-Received: by 2002:a05:620a:1917:b0:84c:65bd:2835 with SMTP id af79cd13be357-87a378d2e6bmr165704185a.42.1759445915598;
-        Thu, 02 Oct 2025 15:58:35 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8777112966asm293725985a.4.2025.10.02.15.58.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 15:58:34 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1v4SFu-0000000E1CO-07w7;
-	Thu, 02 Oct 2025 19:58:34 -0300
-Date: Thu, 2 Oct 2025 19:58:34 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: Samiullah Khawaja <skhawaja@google.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, iommu@lists.linux.dev,
-	YiFei Zhu <zhuyifei@google.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Pratyush Yadav <pratyush@kernel.org>,
-	Kevin Tian <kevin.tian@intel.com>, linux-kernel@vger.kernel.org,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Adithya Jayachandran <ajayachandra@nvidia.com>,
-	Parav Pandit <parav@nvidia.com>,
-	Leon Romanovsky <leonro@nvidia.com>, William Tu <witu@nvidia.com>,
-	Vipin Sharma <vipinsh@google.com>, dmatlack@google.com,
-	Chris Li <chrisl@kernel.org>, praan@google.com
-Subject: Re: [RFC PATCH 13/15] iommufd: Persist iommu domains for live update
-Message-ID: <20251002225834.GJ3195829@ziepe.ca>
-References: <20250930210504.GU2695987@ziepe.ca>
- <CAAywjhRQONuHsxTGQZ5R=EJbOHUD+xOF_CYjkNRbUyCQkORwig@mail.gmail.com>
- <20251001114742.GV2695987@ziepe.ca>
- <CA+CK2bAvnTTz+vPg7v38_1dajRZQHyPQ8iDmziiW8GFUqy6=Ag@mail.gmail.com>
- <20251002115712.GA3195829@ziepe.ca>
- <CA+CK2bAudSHq2t5NZPBKDC2wfzsF6SSxTF7aZ2kxueOTzWYcfg@mail.gmail.com>
- <20251002151012.GF3195829@ziepe.ca>
- <CAAywjhQGQx2_2X8r0rf3AgMDbJj-9C=9_1a3xgiLwuzKLAvXCQ@mail.gmail.com>
- <20251002211217.GI3195829@ziepe.ca>
- <CA+CK2bBJ_RoRuCxiHuraDH4Gya-ZON3S6PE9PgPfsxObvBRY4w@mail.gmail.com>
+	s=arc-20240116; t=1759445616; c=relaxed/simple;
+	bh=TPxLZuKAZbF1jjrTZM0SUyipMSUfNxa+s1mG1m24iUY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=keYwaL+pkdoqtGHbiOFCNJziDkbcw0rrBAuICpzRpaB1eGD2Nd18AzoaLD/60L0csMiGKTpN8sCkQCuLIdbSBIvK/l9u1bqYRx2J38Bj9/N5wszSOQ4CppKIAsiyiqTMranQQleA5P1x6E814iIYmEBPcPCcu0CtPqZGdNDOLNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Wbvefx0a; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759445614; x=1790981614;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=TPxLZuKAZbF1jjrTZM0SUyipMSUfNxa+s1mG1m24iUY=;
+  b=Wbvefx0aar6N02JsOREhi3ME0Gl5v6Vh3Y0CqRXqCwGxbX3yrMP93aZD
+   ujE9ojEkY5sJSOs9wW/+ypC5pA10xe78g5LGbgsS75uH8zCNRkhgEDXYy
+   KFhVrHM2bqtHC9I4sphIs8puiomvpt4L3wpxELH8HvKbaJ5LTxN0Y5J2i
+   HuGAeDs1I82qHonhftNGw81HYsR23TFh4pasTfEA6dQY5Xm8hR93LYOTU
+   XEWMojHYzMrBhhe21XDzy9ec9saghxZkFA1Zcjm6yYbMm100PBOtztZb1
+   haKJTZNARGDJ3zKwjIFNsNAGm1GjqyMP73YpxikKo9LcYAtfbNhwsnb2/
+   w==;
+X-CSE-ConnectionGUID: pGuSFFclQQCLpE406wZy6g==
+X-CSE-MsgGUID: /Ty5TFTwQIGDoGzscP2ICg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11570"; a="61645447"
+X-IronPort-AV: E=Sophos;i="6.18,310,1751266800"; 
+   d="scan'208";a="61645447"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2025 15:53:33 -0700
+X-CSE-ConnectionGUID: 9vXTMcjhS4++U5FUTDUhIg==
+X-CSE-MsgGUID: l6XS7XbhR9a/0FnLzzpgtA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,310,1751266800"; 
+   d="scan'208";a="179591480"
+Received: from b04f130c83f2.jf.intel.com ([10.165.154.98])
+  by fmviesa009.fm.intel.com with ESMTP; 02 Oct 2025 15:53:33 -0700
+From: Tim Chen <tim.c.chen@linux.intel.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Tim Chen <tim.c.chen@linux.intel.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	Chen Yu <yu.c.chen@intel.com>,
+	Doug Nelson <doug.nelson@intel.com>,
+	Mohini Narkhede <mohini.narkhede@intel.com>,
+	linux-kernel@vger.kernel.org,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Shrikanth Hegde <sshegde@linux.ibm.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>
+Subject: [RESEND PATCH] sched/fair: Skip sched_balance_running cmpxchg when balance is not due
+Date: Thu,  2 Oct 2025 16:00:12 -0700
+Message-Id: <e27d5dcb724fe46acc24ff44670bc4bb5be21d98.1759445926.git.tim.c.chen@linux.intel.com>
+X-Mailer: git-send-email 2.32.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+CK2bBJ_RoRuCxiHuraDH4Gya-ZON3S6PE9PgPfsxObvBRY4w@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 02, 2025 at 05:30:53PM -0400, Pasha Tatashin wrote:
-> > Maybe finish is too broad grained? What if each session had a finish?
-> > All the objects in the session are cleaned up, invoke the session
-> > finish and the memfd's in the session unfreeze?
-> 
-> All sessions have their own finish:
-> https://lore.kernel.org/all/20250929010321.3462457-15-pasha.tatashin@soleen.com
-> LIVEUPDATE_SESSION_SET_EVENT
-> 
-> Each session can go into a "finished" state independently. However, I
-> am still thinking about whether a dependency graph is needed. I feel
-> that if we require FDs to be added to a session in a specific order
-> (i.e., dependencies must be added first), and every subsequent FD
-> checks that all prerequisites are already in the session via the
-> existing can_preserve() callback, we should be okay, as long as we
-> finish() them in reverse order.
+Repost comments:
 
-I don't think it is quite that simple, like "finishing" an
-iommu_domain cannot reconnect it back to the memfd. The only way to
-finish it in the current sketch is to delete it.
+There have been past discussions about avoiding serialization in load
+balancing, but no objections were raised to this patch itself during
+its last posting:
+https://lore.kernel.org/lkml/20250416035823.1846307-1-tim.c.chen@linux.intel.com/
 
-So if you have a notion that finish is disallowed and when it is
-actually finished maybe the order doesn't matter?
+Vincent and Chen Yu have already provided their Reviewed-by tags.
 
-eg it doesn't matter what order we unfreeze memfds in.
+We recently encountered this issue again on a 2-socket, 240-core
+Clearwater Forest server running SPECjbb. In this case, 14% of CPU
+cycles were wasted on unnecessary acquisitions of
+sched_balance_running. This reinforces the need for the change, and we
+hope it can be merged.
 
-This sort of assumes that something outside luo is still ensuring that
-no disallowed operations are happening to the objects. eg nobody is
-trying to ftruncate a memfd.
+Tim
 
-But I don't quite know what other objects besides memfd are going to
-have this special frozen state??
+---
 
-> There are two issues:
-> 1. What do we do with LIVEUPDATE_SESSION_UNPRESERVE_FD ?
-> We can simply remove this IOCTL all together. Stuff can be unpreserved
-> by simply closing session FD.
+During load balancing, balancing at the LLC level and above must be
+serialized. The scheduler currently checks the atomic
+`sched_balance_running` flag before verifying whether a balance is
+actually due. This causes high contention, as multiple CPUs may attempt
+to acquire the flag concurrently.
 
-This is for serialize error handling? It does make sense if some sub
-component of a session fails to serialize you'd just give up and close
-the whole session.
+On a 2-socket Granite Rapids system with sub-NUMA clustering enabled
+and running OLTP workloads, 7.6% of CPU cycles were spent on cmpxchg
+operations for `sched_balance_running`. In most cases, the attempt
+aborts immediately after acquisition because the load balance time is
+not yet due.
 
-> 2. Remembering this order on the way back, and since we are using the
-> token as an iterator, that is not going to work, unless the graph is
-> also preserved. However, now that we have sessions and the token
-> values are independent for each session, I am thinking we can go back
-> to the model where the kernel issues tokens when FDs are preserved, as
-> each session will always start from token=0. This way FD preservation
-> order and token order will always match.
+Fix this by checking whether a balance is due *before* trying to
+acquire `sched_balance_running`. This avoids many wasted acquisitions
+and reduces the cmpxchg overhead in `sched_balance_domain()` from 7.6%
+to 0.05%. As a result, OLTP throughput improves by 11%.
 
-You could just encode a preservation order numer in a seperate field?
+Reviewed-by: Chen Yu <yu.c.chen@intel.com>
+Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
+Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
+---
+ kernel/sched/fair.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-Jason
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 8ce56a8d507f..bedd785c4a39 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -12126,13 +12126,13 @@ static void sched_balance_domains(struct rq *rq, enum cpu_idle_type idle)
+ 
+ 		interval = get_sd_balance_interval(sd, busy);
+ 
+-		need_serialize = sd->flags & SD_SERIALIZE;
+-		if (need_serialize) {
+-			if (atomic_cmpxchg_acquire(&sched_balance_running, 0, 1))
+-				goto out;
+-		}
+-
+ 		if (time_after_eq(jiffies, sd->last_balance + interval)) {
++			need_serialize = sd->flags & SD_SERIALIZE;
++			if (need_serialize) {
++				if (atomic_cmpxchg_acquire(&sched_balance_running, 0, 1))
++					goto out;
++			}
++
+ 			if (sched_balance_rq(cpu, rq, sd, idle, &continue_balancing)) {
+ 				/*
+ 				 * The LBF_DST_PINNED logic could have changed
+@@ -12144,9 +12144,9 @@ static void sched_balance_domains(struct rq *rq, enum cpu_idle_type idle)
+ 			}
+ 			sd->last_balance = jiffies;
+ 			interval = get_sd_balance_interval(sd, busy);
++			if (need_serialize)
++				atomic_set_release(&sched_balance_running, 0);
+ 		}
+-		if (need_serialize)
+-			atomic_set_release(&sched_balance_running, 0);
+ out:
+ 		if (time_after(next_balance, sd->last_balance + interval)) {
+ 			next_balance = sd->last_balance + interval;
+-- 
+2.32.0
+
 
