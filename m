@@ -1,126 +1,254 @@
-Return-Path: <linux-kernel+bounces-839874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EBF1BB29EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 08:28:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9ED9BB29FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 08:35:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8F417AE7C2
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 06:26:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 978E83B0503
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 06:35:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 076B02877F1;
-	Thu,  2 Oct 2025 06:28:18 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 207D228C2A6;
+	Thu,  2 Oct 2025 06:35:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="oAAR64Xh";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="11E5T0lq";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="oAAR64Xh";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="11E5T0lq"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB5B02877D9
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 06:28:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D25C13AF2
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 06:34:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759386497; cv=none; b=hVBudYllwAeCcjGlfglbJIFThtrcSaot+S8nRvVsXi9ksEYu1++zjpjHh6TGMpJewge37SI9UchH7b0rjD2b6oT2DK+wLdhaKv1keqJR+QzjqVOKSkafuq3XEIGPZpIg8LXwCEmMKREsiNwLOkFiS7J8v0Bqo1w7ucoQ45UVoWw=
+	t=1759386899; cv=none; b=PG9q9PGLaSNxnUx6466bv9FbJErz/Dc6iXpGtumiSXGwm9C31vlFR7xM4dnszmjafopYbTpP1jMH1cE0rmmfZ0e7DYIoXAegNL/6SWcZjVKzM2ME41kLjz3+P58bNyO5D7nNCEg+PNkVnUGNVq2GW0stm7C7jQL9zrC589pcX1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759386497; c=relaxed/simple;
-	bh=9WEH4vKZFM2k4Xsmy2GwEKxrX+eNQP9rESl8edllpcw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=lIQpi7tijx8NqJsmJISS6sQX1aasNl+0ekLFmLfqQfq8rcnQ0JRLxdoDEUhXjGQZzqmZtRQIWfjU5yIhTBW1UX47xO38N/YgvF1DY2HaSJRfNhk1V7qbGRDxBI2WiLyzTU+iP2W6xqSx7bFY6A8jhuVEFU5I3juA7rDqdxCARjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-90e469a7f6bso89065139f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 01 Oct 2025 23:28:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759386493; x=1759991293;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ROjITWJuB2PqB72RMSnOzd9aCzel9Vg1gKRJuRBaIc0=;
-        b=KICGrTeErLKwHCF5nNC7DqQUM1J4lfg2gBuTSJf+VOg/yUrWeh+4auXPWVuMreCAu+
-         cOOWFbnF5Z4j78V5x1iWnC2d6aQ5NQwkwTgv6DKLyhyendZJJgdDg+iHgSLkjPUFBiE+
-         bAtTZ4HQjAo6Ys9lYLcmNWTjnQ7tF83iz0bkBlOKp3S6Jvstv2ghtuum1AnqqFyXZcIY
-         fJZ0UCVZ2yClORLUN3SNpOd2GECET/Ed1B7mSRWum1avFp0vs0KzL0dKPrCW5CdT3/P0
-         UUiDk6K7GBVp0jWEYwsxe4A4rlJDmQxFtu0xoye/i7Gnxwb4BKteeUJEglTn5UU//XfQ
-         sqHw==
-X-Gm-Message-State: AOJu0Ywq1pwib8vGsWpS4RAxErjx+GsLsZ47U++6CVihImwjseAML+/S
-	ZjG8UUV3Io9iTJ+WqvkUX23f6h+ZF8G5l8mdVOUoZi9Myf4EFigi+slv7Jh4TTQgVICZTmYogR8
-	ceSiBapCCinufUhHnyhaKmTBW9CqxdKzVQK7Bgr1MgGxQzQa7raauTtGaeio=
-X-Google-Smtp-Source: AGHT+IGsPsmh/InfxW45Lv76MgfILfkgjy5ZMrd56RtkOc6graARhI+Hji6xFa/JrXahvtG8M32/rWpuUHXWbIJ7dJtAd+aGCJRK
+	s=arc-20240116; t=1759386899; c=relaxed/simple;
+	bh=cSn1Yt85Xa7GE1vzWLBt9P1lIN4xymtOao5CJIvcQYA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h2VpaDkt2suf90/ZUxA3hea0L2iD5eQEyk0TryBI0I+uCQFOx0f/VGCJoElNkpA+6DwG1rHzqnAX2iu4oJerPT4c6KGxWVnOBFAacHanw6NOOE4iUj0X/vt5Lc8aikeZOZszb2ue2CFUQPD+ae03ZHWkA4+gKL2L0iU971LZqZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=oAAR64Xh; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=11E5T0lq; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=oAAR64Xh; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=11E5T0lq; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id AEFA21F818;
+	Thu,  2 Oct 2025 06:34:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1759386889; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=2AhVawyHOeVXeN0dwRjjfWCyiE8+Rv7muX5eTnNtJEM=;
+	b=oAAR64Xh/aVQ6hqIphnFeBu75wc0r2W47YeX1B024PhAmgNsQe67ZroJ3tereZVkAV7oK/
+	hXtUkh/RS6hyzvOCSkPcn8RIYL5N9XrskxvFY+vLNVMbg1lgfWS4XMTz0J5tyF+rKLvbWD
+	pBD2Kg6mvkxXIYY9waAgNHiljH1I6Fw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1759386889;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=2AhVawyHOeVXeN0dwRjjfWCyiE8+Rv7muX5eTnNtJEM=;
+	b=11E5T0lqyzjukM4TJkWBgb8WEg/8GWSKOgfHNSoDo7S727SsERw8poHEu8JkLnSnZrMmng
+	YRUNHP7/n5x8AXDQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=oAAR64Xh;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=11E5T0lq
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1759386889; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=2AhVawyHOeVXeN0dwRjjfWCyiE8+Rv7muX5eTnNtJEM=;
+	b=oAAR64Xh/aVQ6hqIphnFeBu75wc0r2W47YeX1B024PhAmgNsQe67ZroJ3tereZVkAV7oK/
+	hXtUkh/RS6hyzvOCSkPcn8RIYL5N9XrskxvFY+vLNVMbg1lgfWS4XMTz0J5tyF+rKLvbWD
+	pBD2Kg6mvkxXIYY9waAgNHiljH1I6Fw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1759386889;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=2AhVawyHOeVXeN0dwRjjfWCyiE8+Rv7muX5eTnNtJEM=;
+	b=11E5T0lqyzjukM4TJkWBgb8WEg/8GWSKOgfHNSoDo7S727SsERw8poHEu8JkLnSnZrMmng
+	YRUNHP7/n5x8AXDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 73A4D13990;
+	Thu,  2 Oct 2025 06:34:49 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id so1GGgkd3miOMAAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Thu, 02 Oct 2025 06:34:49 +0000
+Message-ID: <840dfd6f-3417-4667-a808-70d3d3f331c0@suse.de>
+Date: Thu, 2 Oct 2025 08:34:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:340b:b0:92f:575a:6df0 with SMTP id
- ca18e2360f4ac-937afb06682mr840440239f.19.1759386492873; Wed, 01 Oct 2025
- 23:28:12 -0700 (PDT)
-Date: Wed, 01 Oct 2025 23:28:12 -0700
-In-Reply-To: <68ddc2f9.a00a0220.102ee.006d.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68de1b7c.050a0220.1696c6.002c.GAE@google.com>
-Subject: Forwarded: [PATCH] ext4: reject system.data xattr with external inode storage
-From: syzbot <syzbot+3ee481e21fd75e14c397@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] drm/vblank: downgrade vblank wait timeout from WARN to
+ debug
+To: Chintan Patel <chintanlike@gmail.com>, maarten.lankhorst@linux.intel.com,
+ maxime.ripard@kernel.org, airlied@gmail.com, simona@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ syzbot+147ba789658184f0ce04@syzkaller.appspotmail.com
+References: <20251002025723.9430-1-chintanlike@gmail.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20251002025723.9430-1-chintanlike@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: AEFA21F818
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com,linux.intel.com,kernel.org,ffwll.ch];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[147ba789658184f0ce04];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid]
+X-Spam-Score: -3.01
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+Hi
 
-***
+Am 02.10.25 um 04:57 schrieb Chintan Patel:
+> When wait_event_timeout() in drm_wait_one_vblank() times out, the
+> current WARN can cause unnecessary kernel panics in environments
+> with panic_on_warn set (e.g. CI, fuzzing). These timeouts can happen
+> under scheduler pressure or from invalid userspace calls, so they are
+> not always a kernel bug.
+>
+> Replace the WARN with drm_dbg_kms() messages that provide useful
+> context (last and current vblank counters) without crashing the
+> system. Developers can still enable drm.debug to diagnose genuine
+> problems.
+>
+> Reported-by: syzbot+147ba789658184f0ce04@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=147ba789658184f0ce04
+> Tested-by: syzbot+147ba789658184f0ce04@syzkaller.appspotmail.com
+>
+> Signed-off-by: Chintan Patel <chintanlike@gmail.com>
 
-Subject: [PATCH] ext4: reject system.data xattr with external inode storage
-Author: kartikey406@gmail.com
+There should be no empty lines among those tags
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+>
+> v2:
+>   - Drop unnecessary in-code comment (suggested by Thomas Zimmermann)
+>   - Remove else branch, only log timeout case
+> ---
+>   drivers/gpu/drm/drm_vblank.c | 9 +++++++--
+>   1 file changed, 7 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/drm_vblank.c b/drivers/gpu/drm/drm_vblank.c
+> index 46f59883183d..a94570668cba 100644
+> --- a/drivers/gpu/drm/drm_vblank.c
+> +++ b/drivers/gpu/drm/drm_vblank.c
+> @@ -1289,7 +1289,7 @@ void drm_wait_one_vblank(struct drm_device *dev, unsigned int pipe)
+>   {
+>   	struct drm_vblank_crtc *vblank = drm_vblank_crtc(dev, pipe);
+>   	int ret;
+> -	u64 last;
+> +	u64 last, curr;
+>   
+>   	if (drm_WARN_ON(dev, pipe >= dev->num_crtcs))
+>   		return;
+> @@ -1305,7 +1305,12 @@ void drm_wait_one_vblank(struct drm_device *dev, unsigned int pipe)
+>   				 last != drm_vblank_count(dev, pipe),
+>   				 msecs_to_jiffies(100));
+>   
+> -	drm_WARN(dev, ret == 0, "vblank wait timed out on crtc %i\n", pipe);
+> +	curr = drm_vblank_count(dev, pipe);
 
-Prevent use-after-free in ext4_search_dir by rejecting malformed
-inline directory xattr entries during validation.
+Please don't call drm_vblank_count() here. It's not necessary for 
+regular operation. Simply keep the debug message as-is.
 
-ext4 uses the system.data xattr to store inline directory entries
-within the inode. This xattr must always use inline storage
-(e_value_inum == 0). However, a corrupted filesystem can craft a
-system.data xattr entry with e_value_inum != 0, bypassing the existing
-validation in check_xattrs() which only validates e_value_offs when
-e_value_inum == 0.
+> +
+> +	if (ret == 0) {
 
-Later, when ext4_find_inline_entry() is called, ext4_get_inline_xattr_pos()
-reads the corrupt e_value_offs and calculates an inline_start pointer
-that can point outside the inode buffer, potentially into freed memory.
-When ext4_search_dir() attempts to access this invalid pointer, it
-results in a KASAN use-after-free.
+"if (!ret)" is the preferred style.
 
-Fix this by explicitly validating that system.data xattr entries always
-have e_value_inum == 0 in check_xattrs(). This catches the corruption
-at validation time during inode load, before the corrupt pointer can be
-used.
+> +		drm_dbg_kms(dev, "WAIT_VBLANK: timeout crtc=%d, last=%llu, curr=%llu\n",
+> +			pipe, last, curr);
 
-Reported-by: syzbot+3ee481e21fd75e14c397@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=3ee481e21fd75e14c397
-Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
----
- fs/ext4/xattr.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+Aligning the pipe argument with dev from the previous line is the 
+preferred style.
 
-diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
-index 5a6fe1513fd2..8680f649ea7e 100644
---- a/fs/ext4/xattr.c
-+++ b/fs/ext4/xattr.c
-@@ -251,6 +251,13 @@ check_xattrs(struct inode *inode, struct buffer_head *bh,
- 			err_str = "invalid ea_ino";
- 			goto errout;
- 		}
-+		if (entry->e_name_index == EXT4_XATTR_INDEX_SYSTEM &&
-+		    entry->e_name_len == 4 &&
-+		    !memcmp(entry->e_name, "data", 4) &&
-+		    ea_ino != 0) {
-+			err_str = "system.data xattr cannot use external inode storage";
-+			goto errout;
-+		}
- 		if (size > EXT4_XATTR_SIZE_MAX) {
- 			err_str = "e_value size too large";
- 			goto errout;
+Best regards
+Thomas
+
+> +	}
+>   
+>   	drm_vblank_put(dev, pipe);
+>   }
+
 -- 
-2.43.0
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
+
 
 
