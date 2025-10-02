@@ -1,116 +1,161 @@
-Return-Path: <linux-kernel+bounces-840870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2A58BB5A0C
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 01:42:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63029BB5A15
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 01:43:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EDA04810B0
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 23:42:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AAB219C8166
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 23:43:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69A622C030E;
-	Thu,  2 Oct 2025 23:42:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41E8E2C08A8;
+	Thu,  2 Oct 2025 23:43:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="f5LjvHRQ"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SD9zg56c"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8E442BFC8F
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 23:42:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DB742C0260;
+	Thu,  2 Oct 2025 23:43:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759448568; cv=none; b=ReAYAfSeDvNFIUbHBlScvlMRBn0OKFtS0Xt+0WmUOfM3heiImvcp8i4/FhZXG3IG83+cKiP1rEG0/k++U9yPX4c1NnQiWNE2l/ECuJsK9Mih1GfpQD0F5ubPYXhNC3wV4WPjYaRELF5NRfg5qUuZ2zUhM/IkTLOf6rAjwaMrJdc=
+	t=1759448611; cv=none; b=Z++LcNJHM3I9uEhxybtPFHZ+QysjaoqLFL7/RXx6xhiH6IWWBaXb2x1yax63mr6UiGCfBKyUTHKLii+o8mlaXEJ9HguY4NfXeeJfpSFIFv7eqBUgXibrnvAaLlg8LBqXqVTSts+ClnFGX/d1uwGgYKZqvfttBxmc/7X755k+rmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759448568; c=relaxed/simple;
-	bh=gJjbvYewm3FTigD0IImKi1Lk/ATATeELfBSgVimlQSI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XI9HA6vj0GpFB19rlzs2in2BOXxoOS0j4RHP+HHTdQcD6T1TxA+c9n2T/JHkPxbOqIwefVjtQGsjJvMNXUfnEVnUoxP8eAb9j4aRit0L2aV0DzvrwByJ+Du02p1prqNKl0Iim4Tixe21hIfU/wG7QzY75+AvsxB14obJzoLUSsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=f5LjvHRQ; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-36527ac0750so15398361fa.3
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 16:42:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759448565; x=1760053365; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gJjbvYewm3FTigD0IImKi1Lk/ATATeELfBSgVimlQSI=;
-        b=f5LjvHRQotQl+77GppalK+NyD3GAHZPeusJyRA5cQuy8BMlOTotdmPcwlSW5i+MhOt
-         4QgQwVy6ns3v8ziYbDOHcULLRVBr8noSeXubvfjJf3TliSFXNRGZTUIlguq89EE2Psv7
-         JewIed/gHhArhtPJsPTiipgUUeNbcXvAnLHMnSrOzBC5zGN4hMHqX3oSQ/ns8e+dQF25
-         hfXbLas4dwBcvSt5iswiGdJee5qWOHYo3kLKPl/sYloK3R62gpqXFv+q2mi+9+uDO0jo
-         1JnM5aeEaHd3FZ0S2EORso2a8DFpsbYxYoWhZ1WxHow2tjwT1wddMjJCYqhu5sa96zuy
-         gH+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759448565; x=1760053365;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gJjbvYewm3FTigD0IImKi1Lk/ATATeELfBSgVimlQSI=;
-        b=HLTHRb8lWJVBmIcBQ038U+DMZU/JhaUhUGUYNnCg6HFQx6h5BfS73cyBv8c44tiRL/
-         RIxXXtQ0RYvhtL9pVmrg3Vdr9Rf1SkHW1A7eq5yT9iYX4RV2cnuvhpVEsmKSYO1ydgOY
-         pp1ku9vbLppgulUVuwnoWB5KnBVUUZ9iufIdNmw0U8BelfG3GtYxwuN4SwjW7uG/Khwf
-         9WRs9oYYtruCD12vGwmriiwI4P+7UdrH20Qr5nVWlfyRrYNsWN6295P+RdtkqdmDm/y2
-         jczktHM68r+YSeOijf2pZgDY6IxnOka95EJGWl+SKO/d8TRKFMLoJ5l5B5YtZJd0qdIL
-         PJ8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVlpc0McURjGlCoB1Hu125aUHb+n4JQcqYbnzeQljP/joj/UXeoVomabMKYXOkkK7BUnMddxCmeoug0nm4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywddxnjno9MmCoRzMkzhbGSsO1Eg9Yc5k5lX1hGeldrALcWDPoT
-	eC5WsthCO7duN1xgHy8W9wBjYTsOGKHPvNF0FXaebSZSY8gzfLmzcV8BEAFo14ICRmSFkqjp1/k
-	wdEP/G/02XpQe/MLaNhbfTMjSxUM54XX+vwAJxEJ0
-X-Gm-Gg: ASbGncsHC6eH3DoYkNnIW6c72bGyG40u2Cn3EuTMh67Qrrh4jhJZBoAsHNNwk4rXrjT
-	oPBMrecjZpD+hR5QVygZOLrZvIaxpZhv6G8eKtC4ftbDQrpSHSL9sLJyTZux8mBgUOGzNldbqPh
-	PM0CIroa4RAUMSSY00M7r2w1+1cxtXedLi8KYlwhjEPljDDTmnW7HHhJqrivQx8o7OOD+VJbj0N
-	D7TPzye9uMEfg4Yb7ZRXEYnWTbWGc3cozgDEg==
-X-Google-Smtp-Source: AGHT+IFZ1jB2tcB8G2J26ZHxSJC11SyLjkju2JvcqrxYVc6SMqqMcsiXwmwlMmW41AI7IKEGdEauVtUZQAHZX9zl4fs=
-X-Received: by 2002:a05:651c:50c:b0:360:c716:2666 with SMTP id
- 38308e7fff4ca-374c3849b72mr2777821fa.30.1759448564630; Thu, 02 Oct 2025
- 16:42:44 -0700 (PDT)
+	s=arc-20240116; t=1759448611; c=relaxed/simple;
+	bh=lYv98tEZDeXTfmFmqu18xtcmHIUbV2d/ZskYE0cZT8M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JpyvWEhHm6vGwRZTvNEpUymNpGk+YUkQx1vRoxgCruiGCg//5gIQMVvwW8pVSK0AzbdpaL1esux6WA0n7Y9BAUAiEPVElHdVrQSWMYqGrdj35VaDuKE4Kk21YguccNK7ip8trlDfMZHvzWw/vTRxUCMHZL1SoODUMkp8L7+2S0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SD9zg56c; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759448609; x=1790984609;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=lYv98tEZDeXTfmFmqu18xtcmHIUbV2d/ZskYE0cZT8M=;
+  b=SD9zg56cnfykZLr9D7q+z08Ik5CeHNLf4NueEXz0ashWMvEWOcXhCbo7
+   s0/JMJHHlqqr720uVfeZWY/ZVSnhjIjZysJPQiUEtSwoMlYw47rq0PBaR
+   0Vn+2mFhUuw8ZSPE75X40HjW68s8/1FPwuWVQZxIZ8XA/fzrxIrVrgJOV
+   /uHxPYSoIR2GZ5FS681eueVgtoXWd+8evn+IGl4WO0bDwiwVdUDsJ7uYW
+   G2+3Dhg8CJD7Q6v5Fs1RnwO/B4a4GCTTLh1tIVswUyu9WzS9XCneH1zWo
+   qcOenD2Mqd1Ipb2yxeGkyp1qCpEOCCWlWBIZtIvN9CgQ4ZlOm/6g5H85H
+   A==;
+X-CSE-ConnectionGUID: sbwEHIN4SJ+SP+Xr2EZ2iA==
+X-CSE-MsgGUID: DIfR4ZB2S7CTlwvUyKd2zQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11570"; a="60948387"
+X-IronPort-AV: E=Sophos;i="6.18,310,1751266800"; 
+   d="scan'208";a="60948387"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2025 16:43:28 -0700
+X-CSE-ConnectionGUID: q8NQMeOAQ12a0jSMS8NB5A==
+X-CSE-MsgGUID: uYS12Z8iRGKdPHZ+AYx7tg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,310,1751266800"; 
+   d="scan'208";a="178444531"
+Received: from mgoodin-mobl3.amr.corp.intel.com (HELO tfalcon-desk.attlocal.net) ([10.124.223.53])
+  by orviesa010.jf.intel.com with ESMTP; 02 Oct 2025 16:43:27 -0700
+From: thomas.falcon@intel.com
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Andi Kleen <ak@linux.intel.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>,
+	Thomas Falcon <thomas.falcon@intel.com>
+Subject: [Patch v3 0/2] perf record: ratio-to-prev event term for auto counter reload
+Date: Thu,  2 Oct 2025 18:43:04 -0500
+Message-ID: <20251002234308.64218-1-thomas.falcon@intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250916-luo-pci-v2-0-c494053c3c08@kernel.org>
- <20250916-luo-pci-v2-3-c494053c3c08@kernel.org> <20250929174831.GJ2695987@ziepe.ca>
- <CAF8kJuNZPYxf2LYTPYVzho_NM-Rtp8i+pP3bFTwkM_h3v=LwbQ@mail.gmail.com>
- <20250930163837.GQ2695987@ziepe.ca> <aN7KUNGoHrFHzagu@google.com>
- <CACePvbX6GfThDnwLdOUsdQ_54eqF3Ff=4hrGhDJ0Ba00-Q1qBw@mail.gmail.com>
- <CALzav=cKoG4QLp6YtqMLc9S_qP6v9SpEt5XVOmJN8WVYLxRmRw@mail.gmail.com> <20251002232153.GK3195829@ziepe.ca>
-In-Reply-To: <20251002232153.GK3195829@ziepe.ca>
-From: David Matlack <dmatlack@google.com>
-Date: Thu, 2 Oct 2025 16:42:17 -0700
-X-Gm-Features: AS18NWDaj8RvZipjEJ2QAatnJ0ODM4jInJmPqpdDhTEeGpvwrsDlFmhWeb1pz7I
-Message-ID: <CALzav=cYBmn_t1w2jHicSbnX57whJYD9Cu84KJekL0n2gZxfmw@mail.gmail.com>
-Subject: Re: [PATCH v2 03/10] PCI/LUO: Forward prepare()/freeze()/cancel()
- callbacks to driver
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Chris Li <chrisl@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Pasha Tatashin <pasha.tatashin@soleen.com>, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	Pasha Tatashin <tatashin@google.com>, Jason Miu <jasonmiu@google.com>, 
-	Vipin Sharma <vipinsh@google.com>, Saeed Mahameed <saeedm@nvidia.com>, 
-	Adithya Jayachandran <ajayachandra@nvidia.com>, Parav Pandit <parav@nvidia.com>, William Tu <witu@nvidia.com>, 
-	Mike Rapoport <rppt@kernel.org>, Leon Romanovsky <leon@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 2, 2025 at 4:21=E2=80=AFPM Jason Gunthorpe <jgg@ziepe.ca> wrote=
-:
-> On Thu, Oct 02, 2025 at 02:31:08PM -0700, David Matlack wrote:
-> > And we don't care about PF drivers until we get to
-> > supporting SR-IOV. So the driver callbacks all seem unnecessary at
-> > this point.
->
-> I guess we will see, but I'm hoping we can get quite far using
-> vfio-pci as the SRIOV PF driver and don't need to try to get a big PF
-> in-kernel driver entangled in this.
+From: Thomas Falcon <thomas.falcon@intel.com>
 
-So far we have had to support vfio-pci, pci-pf-stub, and idpf as PF
-drivers, and nvme looks like it's coming soon :(
+The Auto Counter Reload (ACR)[1] feature is used to track the
+relative rates of two or more perf events, only sampling
+when a given threshold is exceeded. This helps reduce overhead
+and unnecessary samples. However, enabling this feature
+currently requires setting two parameters:
+
+ -- Event sampling period ("period")
+ -- acr_mask, which determines which events get reloaded
+    when the sample period is reached.
+
+For example, in the following command:
+
+perf record -e "{cpu_atom/branch-misses,period=200000,\
+acr_mask=0x2/ppu,cpu_atom/branch-instructions,period=1000000,\
+acr_mask=0x3/u}" -- ./mispredict
+
+The goal is to limit event sampling to cases when the
+branch miss rate exceeds 20%. If the branch instructions
+sample period is exceeded first, both events are reloaded.
+If branch misses exceed their threshold first, only the
+second counter is reloaded, and a sample is taken.
+
+To simplify this, provide a new “ratio-to-prev” event term
+that works alongside the period event option or -c option.
+This would allow users to specify the desired relative rate
+between events as a ratio, making configuration more intuitive.
+
+With this enhancement, the equivalent command would be:
+
+perf record -e "{cpu_atom/branch-misses/ppu,\
+cpu_atom/branch-instructions,period=1000000,ratio_to_prev=5/u}" \
+-- ./mispredict
+
+or
+
+perf record -e "{cpu_atom/branch-misses/ppu,\
+cpu_atom/branch-instructions,ratio-to-prev=5/u}" -c 1000000 \
+-- ./mispredict
+
+[1] https://lore.kernel.org/lkml/20250327195217.2683619-1-kan.liang@linux.intel.com/
+
+v3: rebase to current perf-tools-next
+
+v2: (changes below suggested by Ian Rogers):
+
+-- Add documentation explaining acr_mask bitmask used by ACR
+-- Move ACR specific implementation to arch/x86/
+-- Provide test cases for event parsing and perf record tests
+
+Thomas Falcon (2):
+  perf record: Add ratio-to-prev term
+  perf record: Add auto counter reload parse and regression tests
+
+ tools/perf/Documentation/intel-acr.txt | 53 ++++++++++++++++++
+ tools/perf/Documentation/perf-list.txt |  2 +
+ tools/perf/arch/x86/util/evsel.c       | 52 ++++++++++++++++++
+ tools/perf/tests/parse-events.c        | 54 ++++++++++++++++++
+ tools/perf/tests/shell/record.sh       | 40 ++++++++++++++
+ tools/perf/util/evsel.c                | 76 ++++++++++++++++++++++++++
+ tools/perf/util/evsel.h                |  1 +
+ tools/perf/util/evsel_config.h         |  1 +
+ tools/perf/util/parse-events.c         | 22 ++++++++
+ tools/perf/util/parse-events.h         |  3 +-
+ tools/perf/util/parse-events.l         |  1 +
+ tools/perf/util/pmu.c                  |  3 +-
+ 12 files changed, 306 insertions(+), 2 deletions(-)
+ create mode 100644 tools/perf/Documentation/intel-acr.txt
+
+-- 
+2.50.1
+
 
