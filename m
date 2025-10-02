@@ -1,157 +1,128 @@
-Return-Path: <linux-kernel+bounces-840311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57D57BB412B
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 15:41:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DEEF2BB4119
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 15:38:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3EF567A4EC7
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 13:39:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C80517A4487
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 13:36:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 777E5311977;
-	Thu,  2 Oct 2025 13:40:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39A19311977;
+	Thu,  2 Oct 2025 13:38:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iokpp.de header.i=@iokpp.de header.b="oLyrUk2M"
-Received: from mo4-p02-ob.smtp.rzone.de (mo4-p02-ob.smtp.rzone.de [85.215.255.84])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QoiE1Hp4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82D38279DD3;
-	Thu,  2 Oct 2025 13:40:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.84
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759412457; cv=pass; b=p6jHe7hzTbRrLuBXCeoYcXwaVu+sdWKIXvfuEkE/aEpbhC6wylypOmb6GcBXRm02cSInyciwFDEKqhQct6c9kgKq/IkKnr2S+N9pwn7tXjqwTzMUCXT1xheQT5WZOwfHdfnDmHXpG1spuymfTnQRciiyvrTL9xVJ493o5xUk42Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759412457; c=relaxed/simple;
-	bh=JEb4nDsmkhXVTzgjqw0WZY5kgx7o1l+lwN3qdfye8i0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=g57JqOVnrxTF5vaTDtTBBZlE6hy5FsTJqPjsGoaiQn70YlPToYUlbXMgbMOoSEJuER2isJO5I08FbKg8YZNHuqJ2AsVoZBypT3oXSGY1E3qVmvGCk/1v1ihJjbMxdkuhrkketjxBhL+U1PPZHRilMzJJl69Embm95hZnmzW/ET4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iokpp.de; spf=none smtp.mailfrom=iokpp.de; dkim=pass (2048-bit key) header.d=iokpp.de header.i=@iokpp.de header.b=oLyrUk2M; arc=pass smtp.client-ip=85.215.255.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iokpp.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=iokpp.de
-ARC-Seal: i=1; a=rsa-sha256; t=1759412267; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=HExv0ytQMYnMPjZUQs05Jn1DJfrj5uCQVcb6nxbpcMyo7NN2+wuFlTkS3zJhK2wi24
-    NylmnBdO7fO93nUS+E75inP8mmJHE71Zx//6j+l9YlV1QoWqZa5wvW9oaPzrGMAYCjZU
-    3tj+TJFnd/InVc4Xiv5womOUkJR74tFqnO4646unikXvdRf4rcWEruw1J1dv9l7DEask
-    TZ1+GwFZPcCAgQ+vfFap7a8htD20EQr4O9TvMt4K9g8qlAn22ltEY5owynrV1Gy6LtDT
-    D/lydXAw15x1GSRj93HOfvsifGXlADwS5zhGV1nxtxf9W/SddkEJwXXsUYo/BKYdEKZm
-    XpjA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1759412267;
-    s=strato-dkim-0002; d=strato.com;
-    h=References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=rqQnv/rS7WUOtqAsgdkvgJpquhDc2e1pp1j6u9ylnj4=;
-    b=trg64J57ATe4nrcj1Nc3LuVG0zgQ+tppK3IzCz8aJa2J8ZpwGjsoXyGq8o1eAiT5Qa
-    pRKaMFqer9ftBJiUk3LqynPlgUc59MWRthuU8vZDECmhI7J69WHr2VkPaUUbhXYX31ry
-    0gez9fcEEJPD2sEqFaqZLNYwB7V2WafvDl7O9ebRAEc2aZCVSXkL7IqaCznGkCj+h8Jm
-    uTPO5pKeh9xno3A1ru/5pFhmSIV/Tt+FxUX1LMuljJysK7KqtIDjBOnDO0AU+JB2dZpB
-    kRLuzaIcErmxSWrI9k/bMnuttJH7Vss7eyA3zXKnsAAKWpsQR4rKODdUXu8ZDpAkQmPv
-    JPcQ==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo02
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1759412267;
-    s=strato-dkim-0002; d=iokpp.de;
-    h=References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Cc:Date:
-    From:Subject:Sender;
-    bh=rqQnv/rS7WUOtqAsgdkvgJpquhDc2e1pp1j6u9ylnj4=;
-    b=oLyrUk2MztlSuu+Op0DJ2FJgKrssL8z+WSCKnOjkzlBJ0MQazNjd5XynhgTxkxSUV4
-    iGdVBYvn12pZUAwshKbzDP+ZnJXz85UypJ8mXb7vCPJRP+42lM3B3iYtTJOZwkF7J6mO
-    EJ+M7NJNcIImZaRxtzWjLY68Ib877jX3vZx4eHFGCw8aANKqBl/b1HVFz26TB+8L9KGs
-    +EE+1cFgqsC/MTULL022FMjGM5YxsZr0xqWLfjCvpvGol2S3P7nwRsTNoAp1D6i1ij+p
-    Csb8gYGRNYeZqtQixXEX77vxJKYiuiIwKNKMFIIxTZyEXDMHKBwJZhKKjIyw7aozg3f5
-    R9Qw==
-X-RZG-AUTH: ":LmkFe0i9dN8c2t4QQyGBB/NDXvjDB6pBSe9tgBDSDt0V0zJolXBtbIoYhB+fa1AL9w=="
-Received: from [192.168.226.211]
-    by smtp.strato.de (RZmta 53.3.2 AUTH)
-    with ESMTPSA id z9ebc6192DbifSK
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Thu, 2 Oct 2025 15:37:44 +0200 (CEST)
-Message-ID: <6ae302f80fe866dcbeaf7f6f51e131b7b4722682.camel@iokpp.de>
-Subject: Re: [PATCH v2 3/3] scsi: ufs: core: Add OP-TEE based RPMB driver
- for UFS devices
-From: Bean Huo <beanhuo@iokpp.de>
-To: Jens Wiklander <jens.wiklander@linaro.org>
-Cc: avri.altman@wdc.com, bvanassche@acm.org, alim.akhtar@samsung.com, 
-	jejb@linux.ibm.com, martin.petersen@oracle.com, can.guo@oss.qualcomm.com, 
-	ulf.hansson@linaro.org, beanhuo@micron.com, linux-scsi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Thu, 02 Oct 2025 15:37:42 +0200
-In-Reply-To: <CAHUa44HA0uoXbkKgyvF4Rb9OJa1Qj-Wh7QAmQxXYAf3grLdktw@mail.gmail.com>
-References: <20251001060805.26462-1-beanhuo@iokpp.de>
-	 <20251001060805.26462-4-beanhuo@iokpp.de>
-	 <CAHUa44HA0uoXbkKgyvF4Rb9OJa1Qj-Wh7QAmQxXYAf3grLdktw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86B77279DD3;
+	Thu,  2 Oct 2025 13:38:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759412311; cv=none; b=avAQOg49ABNZt2+STaSPq7wh1uBar+g9Lgzn4gwTuLTtX2RnpBuZ4fzhJVSWw6RafCsYpf50Yl9QGi5xGzJUax/D4Sc7Bhj7BGZnk0zrXQnmFPHeojYEz9tHmQjDxt3qF1oTeEghhoAMGu5/Begjd15lZWdWtThb3a73zokCqVg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759412311; c=relaxed/simple;
+	bh=2oft3Au5B4OOW0yabtivw0E2y/k2pqPeKWqw5yQV9c8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r7ZTlguWawsqqMEvwSjwQLvMl5O40XwFY+rpH4KElSX7oUVGZVH6okU61tfBvSVnOqmUOsr9rs26kC8ccd/oykOHYDOLPIwyKRdQ/Il/CXC54BW8op29Cn/c/Ofm1GqvVP2J9UY7kSowmZmxnDljhRRjKyVWNvFsU2Gt/HIP5C4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QoiE1Hp4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E18F0C4CEF4;
+	Thu,  2 Oct 2025 13:38:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759412311;
+	bh=2oft3Au5B4OOW0yabtivw0E2y/k2pqPeKWqw5yQV9c8=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=QoiE1Hp4DjOETKkO+w1k/llxFR+f+vhrqhY/WDsEALOJSCK4WODd+MZdEpliEOLY4
+	 brQbOhbO77dHhU+JlKIKJK6BAjDaEiYh46A3slxZJc8LMboZNUkVfUwNRxGLq2hgf7
+	 HLn9uP+gLEkg3jGNAai4XgMvg80exptIa3HDzdx1m9Ijdw33kFu20fZpmZlaTiA5Ju
+	 E1w5rnxzAKYD8pPi/KKznYVz0T8cMjFBoxaePv72mMGqmJf2s/mnDoxrjTgbg9M8/4
+	 n9QUnalhvsprbndHeTb9a3ncU5PgjUdSpHgFdBr/U+bLXm+nKvu8Lnxr3BNjbm8GpR
+	 nscGCw4AV2v8A==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 94E76CE0E5A; Thu,  2 Oct 2025 06:38:28 -0700 (PDT)
+Date: Thu, 2 Oct 2025 06:38:28 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: rcu@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+	Kernel Team <kernel-team@meta.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>, bpf <bpf@vger.kernel.org>
+Subject: Re: [PATCH v2 08/21] rcu: Add noinstr-fast
+ rcu_read_{,un}lock_tasks_trace() APIs
+Message-ID: <5e9b7d89-fbd9-48f2-a538-a3aeaab5d9ec@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <7fa58961-2dce-4e08-8174-1d1cc592210f@paulmck-laptop>
+ <20251001144832.631770-8-paulmck@kernel.org>
+ <CAADnVQLozKuSPMe4qUDxCV6pCSQ=rQNKy524K7R=uM5yTpLV0Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAADnVQLozKuSPMe4qUDxCV6pCSQ=rQNKy524K7R=uM5yTpLV0Q@mail.gmail.com>
 
-On Wed, 2025-10-01 at 09:50 +0200, Jens Wiklander wrote:
-> > +++ b/drivers/ufs/core/ufshcd.c
-> > @@ -5240,10 +5240,15 @@ static void ufshcd_lu_init(struct ufs_hba *hba,
-> > struct scsi_device *sdev)
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 desc_buf[UNIT_DESC_PARAM_LU_WR_PROTECT] =3D=3D UFS_LU_POWER_ON_WP)
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 hba->dev_info.is_lu_power_on_wp =3D true;
-> >=20
-> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* In case of RPMB LU, check if a=
-dvanced RPMB mode is enabled */
-> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (desc_buf[UNIT_DESC_PARAM_UNIT=
-_INDEX] =3D=3D UFS_UPIU_RPMB_WLUN &&
-> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 desc_buf[=
-RPMB_UNIT_DESC_PARAM_REGION_EN] & BIT(4))
-> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 hba->dev_info.b_advanced_rpmb_en =3D true;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* In case of RPMB LU, check if a=
-dvanced RPMB mode is enabled, and
-> > get region size */
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (desc_buf[UNIT_DESC_PARAM_UNIT=
-_INDEX] =3D=3D UFS_UPIU_RPMB_WLUN) {
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 if (desc_buf[RPMB_UNIT_DESC_PARAM_REGION_EN] & BIT(4))
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 hba->dev_in=
-fo.b_advanced_rpmb_en =3D true;
->=20
-> Does this indicate that the other RPMB frame format is used?
+On Wed, Oct 01, 2025 at 06:37:33PM -0700, Alexei Starovoitov wrote:
+> On Wed, Oct 1, 2025 at 7:48 AM Paul E. McKenney <paulmck@kernel.org> wrote:
+> >
+> > +static inline struct srcu_ctr __percpu *rcu_read_lock_tasks_trace(void)
+> > +{
+> > +       struct srcu_ctr __percpu *ret = __srcu_read_lock_fast(&rcu_tasks_trace_srcu_struct);
+> > +
+> > +       rcu_try_lock_acquire(&rcu_tasks_trace_srcu_struct.dep_map);
+> > +       if (!IS_ENABLED(CONFIG_TASKS_TRACE_RCU_NO_MB))
+> > +               smp_mb(); // Provide ordering on noinstr-incomplete architectures.
+> > +       return ret;
+> > +}
+> 
+> ...
+> 
+> > @@ -50,14 +97,15 @@ static inline void rcu_read_lock_trace(void)
+> >  {
+> >         struct task_struct *t = current;
+> >
+> > +       rcu_try_lock_acquire(&rcu_tasks_trace_srcu_struct.dep_map);
+> >         if (t->trc_reader_nesting++) {
+> >                 // In case we interrupted a Tasks Trace RCU reader.
+> > -               rcu_try_lock_acquire(&rcu_tasks_trace_srcu_struct.dep_map);
+> >                 return;
+> >         }
+> >         barrier();  // nesting before scp to protect against interrupt handler.
+> > -       t->trc_reader_scp = srcu_read_lock_fast(&rcu_tasks_trace_srcu_struct);
+> > -       smp_mb(); // Placeholder for more selective ordering
+> > +       t->trc_reader_scp = __srcu_read_lock_fast(&rcu_tasks_trace_srcu_struct);
+> > +       if (!IS_ENABLED(CONFIG_TASKS_TRACE_RCU_NO_MB))
+> > +               smp_mb(); // Placeholder for more selective ordering
+> >  }
+> 
+> Since srcu_fast() __percpu pointers must be incremented/decremented
+> within the same task, should we expose "raw" rcu_read_lock_tasks_trace()
+> at all?
+> rcu_read_lock_trace() stashes that pointer within a task,
+> so implementation guarantees that unlock will happen within the same task,
+> while _tasks_trace() requires the user not to do stupid things.
+> 
+> I guess it's fine to have both versions and the amount of copy paste
+> seems justified, but I keep wondering.
+> Especially since _tasks_trace() needs more work on bpf trampoline
+> side to pass this pointer around from lock to unlock.
+> We can add extra 8 bytes to struct bpf_tramp_run_ctx and save it there,
+> but set/reset run_ctx operates on current anyway, so it's not clear
+> which version will be faster. I suspect _trace() will be good enough.
+> Especially since trc_reader_nesting is kinda an optimization.
 
-yes, if BIT4 is 1, means Advanced RPMB is enabled, from the Spec:
+The idea is to convert callers and get rid of rcu_read_lock_trace()
+in favor of rcu_read_lock_tasks_trace(), the reason being the slow
+task_struct access on x86.  But if the extra storage is an issue for
+some use cases, we can keep both.  In that case, I would of course reduce
+the copy-pasta in a future patch.
 
-"There are two RPMB modes; Normal RPMB mode and Advanced RPMB mode using EH=
-S.
-The RPMB mode can be configured by setting Bit4 of bRPMBRegionEnable parame=
-ter
-of the RPMB descriptor in the configuration stage. If the device receives a=
-n
-RPMB operation request of a different mode than the configured RPMB mode, t=
-he
-device shall respond with ILLEGAL REQUEST."
-
-
-if it is in Advanced RPMB mode, and use sends normal RPMB frame, the device=
- will
-respond ILLEGAL REQUEST in response.  but it is better to mute this noise, =
-I
-will add this in next version:  if it is in advanced RPMB, we will not call=
- RPMB
-probe.
-
-Regarding the advanced RPMB, its frame is quite different with normal RPMB,
-since we need to pass EHS, not just RPMB frame as we use. It is better to h=
-ave a
-check you and us online, see which way is better to enalbe it in op-tee OS.
-
-
-Kind regards,
-Bean
+							Thanx, Paul
 
