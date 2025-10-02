@@ -1,98 +1,111 @@
-Return-Path: <linux-kernel+bounces-840147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC1A5BB3AE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 12:47:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBEA9BB3B01
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 12:48:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D05A19C3A26
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 10:47:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7679016D831
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 10:48:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85C5E30CDB3;
-	Thu,  2 Oct 2025 10:47:07 +0000 (UTC)
-Received: from Atcsqr.andestech.com (60-248-80-70.hinet-ip.hinet.net [60.248.80.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC4D1305E3F
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 10:46:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.248.80.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7836330C63D;
+	Thu,  2 Oct 2025 10:48:49 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5B5D30C375
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 10:48:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759402026; cv=none; b=CMDDIvxMXg4U4rUfN8mZBA9IEXZO0fR9pViqdOwgPim3CxqB3jiTNyDjMQ/4gyjNAQePjjplugbpoy8Jt2x0nCTfNNILLfCLJDVwIGfmGDbjd/8Cg1pYc/nuS6oWesPgPGjtC0ExG93UMl839uJxP4n2b83CwTdZ4HMJ0JsdtYk=
+	t=1759402129; cv=none; b=E+HGD8egmAYgDTcQonFHqXIp9CtkAsB5b3EeAA6d6UFCI7TPLAd1QvP5xTtMaOMp8q9IjStaPMfZX/bux8KrybRyisO9ydpyjlGxHh8FAOdX6la7s/A+Q7vybW1HNnCzTSz3ukyVMCzb+nZbKtY5kt6dkS0feRDwdkYL5plVN0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759402026; c=relaxed/simple;
-	bh=udodIbL6v5L3ARkdqtvidUF2a323b6DgbAovYb/w62k=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rJs/l7wYyd67wDWZ0EEbcFIodsIn2P0VEgHWU2SSmifpjStT9y3C++TgkP7a27+9P3IBwkGJ3K74Rwjl6M9S1+WYbM7+9pR14Uj9a6ibbtrpWGTC6l797ESnVar2sEwVYIcsHXRv3J5M55k8X78WUVreBx+hBFYWrTTYDc1Y3eA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=andestech.com; spf=pass smtp.mailfrom=andestech.com; arc=none smtp.client-ip=60.248.80.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=andestech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
-Received: from mail.andestech.com (ATCPCS31.andestech.com [10.0.1.89])
-	by Atcsqr.andestech.com with ESMTPS id 592AkEKl068633
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 2 Oct 2025 18:46:14 +0800 (+08)
-	(envelope-from randolph@andestech.com)
-Received: from atctrx.andestech.com (10.0.15.173) by ATCPCS31.andestech.com
- (10.0.1.89) with Microsoft SMTP Server id 14.3.498.0; Thu, 2 Oct 2025
- 18:46:14 +0800
-From: Randolph Lin <randolph@andestech.com>
-To: <linux-kernel@vger.kernel.org>
-CC: <linux-pci@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <jingoohan1@gmail.com>,
-        <mani@kernel.org>, <lpieralisi@kernel.org>, <kwilczynski@kernel.org>,
-        <robh@kernel.org>, <bhelgaas@google.com>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <alex@ghiti.fr>, <aou@eecs.berkeley.edu>,
-        <palmer@dabbelt.com>, <paul.walmsley@sifive.com>,
-        <ben717@andestech.com>, <inochiama@gmail.com>,
-        <thippeswamy.havalige@amd.com>, <namcao@linutronix.de>,
-        <shradha.t@samsung.com>, <pjw@kernel.org>, <randolph.sklin@gmail.com>,
-        <tim609@andestech.com>, Randolph Lin <randolph@andestech.com>
-Subject: [PATCH v5 5/5] MAINTAINERS: Add maintainers for Andes QiLai PCIe driver
-Date: Thu, 2 Oct 2025 18:45:58 +0800
-Message-ID: <20251002104558.4068668-6-randolph@andestech.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251002104558.4068668-1-randolph@andestech.com>
-References: <20251002104558.4068668-1-randolph@andestech.com>
+	s=arc-20240116; t=1759402129; c=relaxed/simple;
+	bh=se6eEsy/TQwDLOrh2LvOYEanoi1FPmiqneRDmuDWBss=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Mrq44yACoFgN437vHU6VqqpCzFKYM6bq8uYh1xyh1XSNc2TyswsQ1kpEPSVK5kP6a7lCzKmF9/y8RPmMmMhkm6pxkvyoYPf4SCx660OuOVR9S5IXm2G9/eJbYu+sCd06AdDpEh7vvOGsLZ8ZBwgfoopmdWxJ6j3Kf4yLSCf8coY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 034551596;
+	Thu,  2 Oct 2025 03:48:39 -0700 (PDT)
+Received: from [10.57.2.240] (unknown [10.57.2.240])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2BE7B3F66E;
+	Thu,  2 Oct 2025 03:48:45 -0700 (PDT)
+Message-ID: <04c19e70-d895-45ff-b221-974abaa8dff8@arm.com>
+Date: Thu, 2 Oct 2025 11:48:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-DKIM-Results: atcpcs31.andestech.com; dkim=none;
-X-DNSRBL: 
-X-SPAM-SOURCE-CHECK: pass
-X-MAIL:Atcsqr.andestech.com 592AkEKl068633
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/10] drm/panthor: minor AS_CONTROL clean up
+To: Chia-I Wu <olvaffe@gmail.com>,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Grant Likely <grant.likely@linaro.org>, Heiko Stuebner <heiko@sntech.de>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250916210823.4033529-1-olvaffe@gmail.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20250916210823.4033529-1-olvaffe@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Here add maintainer information for Andes QiLai PCIe driver.
+On 16/09/2025 22:08, Chia-I Wu wrote:
+> This series performs minor AS_CONTROL clean up.
+> 
+> Patch 1 to 5 rename and document AS_CONTROL config functions. There is
+> no functional change. All functions are now prefixed by mmu_hw_ for
+> consistency. All of them also expect locking. I choose not to suffix
+> them by _locked, but I can be convinced.
+> 
+> Patch 6 to 7 eliminiate redundant mmu_hw_wait_ready. This is the main
+> functional change of the series. panthor_vm_flush_range no longer waits
+> for UNLOCK to complete.
+> 
+> Patch 8 to 10 give mmu_hw_flush_caches final touches, to improve error
+> handling, simplifying code, etc.
 
-Signed-off-by: Randolph Lin <randolph@andestech.com>
----
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+I think you need to provide better justification for these changes. Some
+of them might make some sense, but in general most of the "cleanup"
+patches by themselves seem to make the code harder to read. Which can be
+fine if they are a precursor to achieving an improvement in a following
+patch, but as things stand I'm having a hard time to figure out what the
+benefit is.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 49aace3381cd..6f6021863e7d 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -19401,6 +19401,13 @@ S:	Supported
- F:	Documentation/devicetree/bindings/pci/altr,pcie-root-port.yaml
- F:	drivers/pci/controller/pcie-altera.c
- 
-+PCI DRIVER FOR ANDES QILAI PCIE
-+M:	Randolph Lin <randolph@andestech.com>
-+L:	linux-pci@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/pci/andestech,qilai-pcie.yaml
-+F:	drivers/pci/controller/dwc/pcie-andes-qilai.c
-+
- PCI DRIVER FOR APPLIEDMICRO XGENE
- M:	Toan Le <toan@os.amperecomputing.com>
- L:	linux-pci@vger.kernel.org
--- 
-2.34.1
+The cover letter implies that we have redundant mmu_hw_wait_ready calls
+(which I can believe). But we need a proper justification on why they
+are redundant, and proper patch descriptions for the precursor patches
+so that anyone coming to them in the future can understand why they were
+applied (without having to hunt through mail archives for the cover
+letter, or guess from the later patches).
+
+Having said the above, I do appreciate the time you took to write the
+documentation blocks - we do have a bunch of fairly confusing functions.
+
+Thanks,
+Steve
+
+> Chia-I Wu (10):
+>   drm/panthor: rename and document wait_ready
+>   drm/panthor: rename and document lock_region
+>   drm/panthor: add mmu_hw_cmd_unlock
+>   drm/panthor: add mmu_hw_cmd_update
+>   drm/panthor: rename and document mmu_hw_do_operation_locked
+>   drm/panthor: remove write_cmd
+>   drm/panthor: remove unnecessary mmu_hw_wait_ready calls
+>   drm/panthor: improve error handling for mmu_hw_flush_caches
+>   drm/panthor: move size check to mmu_hw_flush_caches
+>   drm/panthor: simplify mmu_hw_flush_caches
+> 
+>  drivers/gpu/drm/panthor/panthor_mmu.c | 157 +++++++++++++++-----------
+>  1 file changed, 94 insertions(+), 63 deletions(-)
+> 
 
 
