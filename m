@@ -1,47 +1,77 @@
-Return-Path: <linux-kernel+bounces-840639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4583BB4DE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 20:17:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3346EBB4DE6
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 20:22:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C11C7A72BB
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 18:15:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8CB37AA8FC
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 18:21:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFFC2275B16;
-	Thu,  2 Oct 2025 18:17:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CCE0273803;
+	Thu,  2 Oct 2025 18:22:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mX3HNEpE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QReD39J7"
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EB8D261581;
-	Thu,  2 Oct 2025 18:17:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0089E1547CC
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 18:22:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759429039; cv=none; b=eb0BwOf09DOa+ZX0Mv1y4CKUYL8eYipgOHtqIktmWUkbj00JTXhv/eDvKONe3bV/X9HMnBQo0woAKBFAPe3cvSVOC0E2M0I2zrNRNAPTvuxX6dnpZ57M4rrng12r7SJ4KrfoEuPYqnFH3NGPtJfLpzJrtftv8ZNjeOGgHGVXFOk=
+	t=1759429358; cv=none; b=uJaLQiw8mgO+JQ5BFLW06PKzntbsJC9fCK2MGd2XWO6DnE2fQUwuAl5TOZE3nB/kZFNhBjFYY/r5UkcYifJGEh2+mgAeMX3K144LY8jQw1k4JOQfuWx36HBuOjiiRkEKNmNiCwss4SCqfN938G1tmpZbzZI5J1ZVz/ejSsaeyfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759429039; c=relaxed/simple;
-	bh=4nKLh32Hd2nAWCTAdpEWRGqLtylws6S+PEJ1b66ALT4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MzqZDujK3gWDxZrAn+g9Aoo6x+Uuwnf/+3CXlOg1RZOLpcgjHP6+swhfra3PB3t0kpvJSckjMwmhcGI7FbwTzypbkgmlO2EZ6/pVWO3YsBj4uHrzqoiGOSmgNZTJBYwhrtsnY6EL2r7229ysVIs0jZy2K+WeZG2883tcKrM9B14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mX3HNEpE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99057C4CEF4;
-	Thu,  2 Oct 2025 18:17:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759429037;
-	bh=4nKLh32Hd2nAWCTAdpEWRGqLtylws6S+PEJ1b66ALT4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mX3HNEpEPuhjzPVJ0Wx7A8Nx8gieSgnTuE+DAIKmJaXa1Zr1t/9QfeYIlhdGxLGNp
-	 E6pxP1sRrTwrLntnRAMi5XkZzw+zxxjXW6RZrfq6q/Et3yF0z7dLQ7IVZZGKe6He88
-	 aIO8yst8sagPlV8FN9Jo44jXIltb0dvPehRRKMTA8nX+ODbnRScHe+n5NqqRKgRbhS
-	 zPyHkbG4SzgS27SwRQYHtrSRw93tXbFBAixuZao3TejkLuZaL9IsrXe1FuOjpJtAo3
-	 vWpoLgmiRqpj5mIejJy+VKhL09K7YiymH2AdbvCxWJyulNXyH/owx1sAhQbcQkoJ0o
-	 Zj1YwbWAho+vA==
-Message-ID: <3ab338fb-3336-4294-bd21-abd26bc18392@kernel.org>
-Date: Thu, 2 Oct 2025 20:17:10 +0200
+	s=arc-20240116; t=1759429358; c=relaxed/simple;
+	bh=jVsDT8CZca7il5bpDbRCAemozU7bmD2716fKgRL435A=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Content-Type; b=m2f4LPMezX+3mHlm5yjymos+w9aLAiCQ+plkiVoAZUKoaEdpQIMJTi15Q3p1MZSzDjJQYNlu3KfmZvowQvCGaf26kp2PTrUOsJGV+PqFm/ncmBJWtkpWE3+E7bgr9aq4t9JMXjdUHQzihrP/tjWo6UuIi10LW7tWtKTM4n6plTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QReD39J7; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-71d6051aeafso14889957b3.2
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 11:22:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759429356; x=1760034156; darn=vger.kernel.org;
+        h=autocrypt:content-language:to:subject:from:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=Udi1nXDALcI77V78DVoZCpip0XcRMWFFhn7nW9/Wijs=;
+        b=QReD39J7AH1BZmDU9wb1MJk88w0OJYS56itQuytKWb5xPHVT/hY33/0ld++1DAVWi9
+         E6JQ8N6PJZiBV5/NCEhHN70W53yK/ISwHVN32oR5wOduTKoTlZS2kt3ByJjteE5oqSHI
+         FXjWIQ4VkXcfDjvAzRSPQLaVmtcEtOr7aW5Vpp/G4eSnG3EBsuNCwP0XMI7H/gkpSlX8
+         o82eHri8NSExwxgXsGA/ankz94I49aQUryZQWdTKDMAGorWuzKDymdnQzw99+rNQlZB1
+         kD3Jt4bG3olU2bloMuaRVgvFXszaWdv8IjitguXHH4rmu6D0iiLj8qoNRdkODtgMyNhB
+         gRwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759429356; x=1760034156;
+        h=autocrypt:content-language:to:subject:from:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Udi1nXDALcI77V78DVoZCpip0XcRMWFFhn7nW9/Wijs=;
+        b=EDJcf5PSnoA6d/sigDLcIj3oPZeZ+kExqcutAFMtRRepuS+XAvUFR6IeXyPq4mS9ZQ
+         h4jqyxL5OHOcqhqSa3B8nprNAA4dXfeu8BqREUsslOhg1sgl1eQwhAhj1NnJ+UVovUJd
+         9b/Bnn7aOqddmIsUxRDXg7sLOK8zrhGhOrTGb/GtkQkC7wsIfaDqYrlQpTJbCuntVkZE
+         sjeZDZLn/4oAaJ5+MhPovhIexd9JpuiTXBlGXJa+DAXaljRr2gm11lW/qNNdJVhz8XQ0
+         koFkzqh6R+4o4Z3TvtHHCPH+nc19LMGyUcleRkLLA+ZP79tKQCRr3jDtanwZ4SFl1MtY
+         rj1A==
+X-Gm-Message-State: AOJu0YyUw1wG1fHCuUCt0VFP0QyWdfTu9wLJFN9Nt2uvmDgGtztQzjxP
+	aLrWZRdRaajrY0I+umQLaZAW27y6mTxqAU8bKNaNQXURt2IoiR0UTOVQg73ehQ==
+X-Gm-Gg: ASbGncvqX4BONM4YNmgF2Qzabx16pqAdHuoDAaXeP2u5SHjGw2FSv+IBrmVo9+Scdj4
+	BzExrQU2kWnSy0p3FOwBMGc6SMGyTxDbrxErHeyiYRvjjlK4EP5Dm/79FAkjJr5L80E2NsB7yR+
+	h5HmdNNkXI/iPWIEsNITQsoUGTDFT+ZZzUoNun8c0G91nkqgE3hLxIv8RwV0NZ/T19aANLIHVhH
+	YB4T+pRbeRY5RqSwK84wY9LfSM3ygxBSLqPqMUJ1mI6Acs329F+GTFajUfMiIwCZ+RvCLeT1zsj
+	3Nu1WfsBMNndL1vE1rhX30jSuV4WqJ1nlk8Go7TS8jgeQC09btZQijLNXFxtCvisr9ciwJrQUTx
+	RDzD6fx5p+D3bnbe8iOTjoezcyyT8HFYiix70GnImlbUMQvn3rfsSm9lFme08U0899A9J/VaRNx
+	9B4vzIRobscpL2GIlg4fleurj2lTwGFRK2XDWmbPiuTwTNViS0Kp9/ZxUS0j0=
+X-Google-Smtp-Source: AGHT+IGNgwGNBvgcSFEB1uzgEM+zVz1O+v5hD6E8CFgrBU+kZptolfXLqBnhKDEveWM7dpD5JvzH7Q==
+X-Received: by 2002:a05:690e:4282:10b0:633:b08b:fee4 with SMTP id 956f58d0204a3-63b9a08da92mr247742d50.23.1759429355661;
+        Thu, 02 Oct 2025 11:22:35 -0700 (PDT)
+Received: from [10.138.34.110] (h96-60-249-169.cncrtn.broadband.dynamic.tds.net. [96.60.249.169])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-77f81c09387sm10314217b3.2.2025.10.02.11.22.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 02 Oct 2025 11:22:34 -0700 (PDT)
+Message-ID: <58ac5d49-14a9-4fe6-a5a4-746d6b73f82b@gmail.com>
+Date: Thu, 2 Oct 2025 14:22:30 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,74 +79,241 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] rust: pci: skip probing VFs if driver doesn't
- support VFs
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: John Hubbard <jhubbard@nvidia.com>,
- Alexandre Courbot <acourbot@nvidia.com>,
- Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
- Alistair Popple <apopple@nvidia.com>, Zhi Wang <zhiw@nvidia.com>,
- Surath Mitra <smitra@nvidia.com>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Alex Williamson
- <alex.williamson@redhat.com>, Bjorn Helgaas <bhelgaas@google.com>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
- nouveau@lists.freedesktop.org, linux-pci@vger.kernel.org,
- rust-for-linux@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-References: <20251002123921.GG3195801@nvidia.com>
- <DD7UVCEVB21H.SQ00WZLLPINP@kernel.org> <20251002135600.GB3266220@nvidia.com>
- <DD7XKV6T2PS7.35C66VPOP6B3C@kernel.org> <20251002152346.GA3298749@nvidia.com>
- <DD7YQK3PQIA1.15L4J6TTR9JFZ@kernel.org> <20251002170506.GA3299207@nvidia.com>
- <DD80P7SKMLI2.1FNMP21LJZFCI@kernel.org>
- <DD80R10HBCHR.1BZNEAAQI36LE@kernel.org>
- <af4b7ce4-eb13-4f8d-a208-3a527476d470@nvidia.com>
- <20251002180525.GC3299207@nvidia.com>
-From: Danilo Krummrich <dakr@kernel.org>
+From: Demi Marie Obenour <demiobenour@gmail.com>
+Subject: PID namespace init releases its file locks before its children die
+To: Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>
 Content-Language: en-US
-In-Reply-To: <20251002180525.GC3299207@nvidia.com>
+Autocrypt: addr=demiobenour@gmail.com; keydata=
+ xsFNBFp+A0oBEADffj6anl9/BHhUSxGTICeVl2tob7hPDdhHNgPR4C8xlYt5q49yB+l2nipd
+ aq+4Gk6FZfqC825TKl7eRpUjMriwle4r3R0ydSIGcy4M6eb0IcxmuPYfbWpr/si88QKgyGSV
+ Z7GeNW1UnzTdhYHuFlk8dBSmB1fzhEYEk0RcJqg4AKoq6/3/UorR+FaSuVwT7rqzGrTlscnT
+ DlPWgRzrQ3jssesI7sZLm82E3pJSgaUoCdCOlL7MMPCJwI8JpPlBedRpe9tfVyfu3euTPLPx
+ wcV3L/cfWPGSL4PofBtB8NUU6QwYiQ9Hzx4xOyn67zW73/G0Q2vPPRst8LBDqlxLjbtx/WLR
+ 6h3nBc3eyuZ+q62HS1pJ5EvUT1vjyJ1ySrqtUXWQ4XlZyoEFUfpJxJoN0A9HCxmHGVckzTRl
+ 5FMWo8TCniHynNXsBtDQbabt7aNEOaAJdE7to0AH3T/Bvwzcp0ZJtBk0EM6YeMLtotUut7h2
+ Bkg1b//r6bTBswMBXVJ5H44Qf0+eKeUg7whSC9qpYOzzrm7+0r9F5u3qF8ZTx55TJc2g656C
+ 9a1P1MYVysLvkLvS4H+crmxA/i08Tc1h+x9RRvqba4lSzZ6/Tmt60DPM5Sc4R0nSm9BBff0N
+ m0bSNRS8InXdO1Aq3362QKX2NOwcL5YaStwODNyZUqF7izjK4QARAQABzTxEZW1pIE1hcmll
+ IE9iZW5vdXIgKGxvdmVyIG9mIGNvZGluZykgPGRlbWlvYmVub3VyQGdtYWlsLmNvbT7CwXgE
+ EwECACIFAlp+A0oCGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJELKItV//nCLBhr8Q
+ AK/xrb4wyi71xII2hkFBpT59ObLN+32FQT7R3lbZRjVFjc6yMUjOb1H/hJVxx+yo5gsSj5LS
+ 9AwggioUSrcUKldfA/PKKai2mzTlUDxTcF3vKx6iMXKA6AqwAw4B57ZEJoMM6egm57TV19kz
+ PMc879NV2nc6+elaKl+/kbVeD3qvBuEwsTe2Do3HAAdrfUG/j9erwIk6gha/Hp9yZlCnPTX+
+ VK+xifQqt8RtMqS5R/S8z0msJMI/ajNU03kFjOpqrYziv6OZLJ5cuKb3bZU5aoaRQRDzkFIR
+ 6aqtFLTohTo20QywXwRa39uFaOT/0YMpNyel0kdOszFOykTEGI2u+kja35g9TkH90kkBTG+a
+ EWttIht0Hy6YFmwjcAxisSakBuHnHuMSOiyRQLu43ej2+mDWgItLZ48Mu0C3IG1seeQDjEYP
+ tqvyZ6bGkf2Vj+L6wLoLLIhRZxQOedqArIk/Sb2SzQYuxN44IDRt+3ZcDqsPppoKcxSyd1Ny
+ 2tpvjYJXlfKmOYLhTWs8nwlAlSHX/c/jz/ywwf7eSvGknToo1Y0VpRtoxMaKW1nvH0OeCSVJ
+ itfRP7YbiRVc2aNqWPCSgtqHAuVraBRbAFLKh9d2rKFB3BmynTUpc1BQLJP8+D5oNyb8Ts4x
+ Xd3iV/uD8JLGJfYZIR7oGWFLP4uZ3tkneDfYzsFNBFp+A0oBEAC9ynZI9LU+uJkMeEJeJyQ/
+ 8VFkCJQPQZEsIGzOTlPnwvVna0AS86n2Z+rK7R/usYs5iJCZ55/JISWd8xD57ue0eB47bcJv
+ VqGlObI2DEG8TwaW0O0duRhDgzMEL4t1KdRAepIESBEA/iPpI4gfUbVEIEQuqdqQyO4GAe+M
+ kD0Hy5JH/0qgFmbaSegNTdQg5iqYjRZ3ttiswalql1/iSyv1WYeC1OAs+2BLOAT2NEggSiVO
+ txEfgewsQtCWi8H1SoirakIfo45Hz0tk/Ad9ZWh2PvOGt97Ka85o4TLJxgJJqGEnqcFUZnJJ
+ riwoaRIS8N2C8/nEM53jb1sH0gYddMU3QxY7dYNLIUrRKQeNkF30dK7V6JRH7pleRlf+wQcN
+ fRAIUrNlatj9TxwivQrKnC9aIFFHEy/0mAgtrQShcMRmMgVlRoOA5B8RTulRLCmkafvwuhs6
+ dCxN0GNAORIVVFxjx9Vn7OqYPgwiofZ6SbEl0hgPyWBQvE85klFLZLoj7p+joDY1XNQztmfA
+ rnJ9x+YV4igjWImINAZSlmEcYtd+xy3Li/8oeYDAqrsnrOjb+WvGhCykJk4urBog2LNtcyCj
+ kTs7F+WeXGUo0NDhbd3Z6AyFfqeF7uJ3D5hlpX2nI9no/ugPrrTVoVZAgrrnNz0iZG2DVx46
+ x913pVKHl5mlYQARAQABwsFfBBgBAgAJBQJafgNKAhsMAAoJELKItV//nCLBwNIP/AiIHE8b
+ oIqReFQyaMzxq6lE4YZCZNj65B/nkDOvodSiwfwjjVVE2V3iEzxMHbgyTCGA67+Bo/d5aQGj
+ gn0TPtsGzelyQHipaUzEyrsceUGWYoKXYyVWKEfyh0cDfnd9diAm3VeNqchtcMpoehETH8fr
+ RHnJdBcjf112PzQSdKC6kqU0Q196c4Vp5HDOQfNiDnTf7gZSj0BraHOByy9LEDCLhQiCmr+2
+ E0rW4tBtDAn2HkT9uf32ZGqJCn1O+2uVfFhGu6vPE5qkqrbSE8TG+03H8ecU2q50zgHWPdHM
+ OBvy3EhzfAh2VmOSTcRK+tSUe/u3wdLRDPwv/DTzGI36Kgky9MsDC5gpIwNbOJP2G/q1wT1o
+ Gkw4IXfWv2ufWiXqJ+k7HEi2N1sree7Dy9KBCqb+ca1vFhYPDJfhP75I/VnzHVssZ/rYZ9+5
+ 1yDoUABoNdJNSGUYl+Yh9Pw9pE3Kt4EFzUlFZWbE4xKL/NPno+z4J9aWemLLszcYz/u3XnbO
+ vUSQHSrmfOzX3cV4yfmjM5lewgSstoxGyTx2M8enslgdXhPthZlDnTnOT+C+OTsh8+m5tos8
+ HQjaPM01MKBiAqdPgksm1wu2DrrwUi6ChRVTUBcj6+/9IJ81H2P2gJk3Ls3AVIxIffLoY34E
+ +MYSfkEjBz0E8CLOcAw7JIwAaeBT
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------YZxknMOFwUAH46VD6JJUcHiv"
+
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------YZxknMOFwUAH46VD6JJUcHiv
+Content-Type: multipart/mixed; boundary="------------a80GZK03UxpE3BpW1SCd1wl7";
+ protected-headers="v1"
+From: Demi Marie Obenour <demiobenour@gmail.com>
+To: Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>
+Message-ID: <58ac5d49-14a9-4fe6-a5a4-746d6b73f82b@gmail.com>
+Subject: PID namespace init releases its file locks before its children die
+
+--------------a80GZK03UxpE3BpW1SCd1wl7
+Content-Type: multipart/mixed; boundary="------------hx5dOB50yxmv5jTGuViKV6SL"
+
+--------------hx5dOB50yxmv5jTGuViKV6SL
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-On 10/2/25 8:05 PM, Jason Gunthorpe wrote:
-> On Thu, Oct 02, 2025 at 10:49:21AM -0700, John Hubbard wrote:
->>> Forgot to add: But I think Zhi explained that this is not necessary and can be
->>> controlled by the VFIO driver, i.e. the PCI driver that binds to the VF itself.
->>
->> Yes, this is the direction that I originally (3 whole days ago, haha) had in mind,
->> after talking with Zhi and a few others: nova-core handles PFs, and the VFIO driver
->> handles the VFs, and use the "is virtual" logic to sort them out.
-> 
-> To be clear, no matter what the VFIO driver bound to the VF should not
-> become entangled with any aux devices.
-> 
-> The VFIO VF driver uses pci_iov_get_pf_drvdata() to reach into the PF
-> to request the PF's help. Eg for live migration or things of that
-> nature.
+I noticed that PID 1 in a PID namespace can release file locks (due
+to exiting) while its children are still running for a bit.  If the
+locks held by PID 1 were relied to serialize the execution of its
+child processes, this could result in data corruption.
 
-Ick! The VF driver should never mess with the PF driver's private data.
+Specifically, the child processes are killed via exit_notify() ->
+forget_original_parent() -> find_child_reaper() ->
+zap_pid_ns_processes().  That comes *after* exit_files(), which
+releases the file locks.
 
-Instead the PF driver should provide an API for the VF driver to get things done
-on behalf.
+While it is possible to implement this with cgroups, cgroups
+are quite a bit more complicated to use, at least compared to
+a single call to unshare() before fork().
 
-It also has the implication that we need to guarantee that PF driver unbind will
-also unbind all VFs, but we need this guarantee anyways. I.e. when the VFIO
-driver calls into nova-core we want the guarantee that we're in a scope where
-the PF driver is bound.
-> My point here is that generally we don't put profiling code in the
-> VFIO driver and then use pci_iov_get_pf_drvdata() to access the PF do
-> actually do the profiling.
-> 
-> The VF cannot/should not control profiling of itself - that would be a
-> security problem once it is assigned to a VM.
+Is this intentional?  Changing the behavior would make supervision
+trees significantly easier to properly implement.
+--=20
+Sincerely,
+Demi Marie Obenour (she/her/hers)
 
-As mentioned above, if at all I think the PF driver has to provide an API for that.
 
-> So the profiling resides entirely inside the PF world and should
-> operate without VFIO.
+--------------hx5dOB50yxmv5jTGuViKV6SL
+Content-Type: application/pgp-keys; name="OpenPGP_0xB288B55FFF9C22C1.asc"
+Content-Disposition: attachment; filename="OpenPGP_0xB288B55FFF9C22C1.asc"
+Content-Description: OpenPGP public key
+Content-Transfer-Encoding: quoted-printable
 
-Perfectly fine with me, I'm open to both approaches.
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+xsFNBFp+A0oBEADffj6anl9/BHhUSxGTICeVl2tob7hPDdhHNgPR4C8xlYt5q49y
+B+l2nipdaq+4Gk6FZfqC825TKl7eRpUjMriwle4r3R0ydSIGcy4M6eb0IcxmuPYf
+bWpr/si88QKgyGSVZ7GeNW1UnzTdhYHuFlk8dBSmB1fzhEYEk0RcJqg4AKoq6/3/
+UorR+FaSuVwT7rqzGrTlscnTDlPWgRzrQ3jssesI7sZLm82E3pJSgaUoCdCOlL7M
+MPCJwI8JpPlBedRpe9tfVyfu3euTPLPxwcV3L/cfWPGSL4PofBtB8NUU6QwYiQ9H
+zx4xOyn67zW73/G0Q2vPPRst8LBDqlxLjbtx/WLR6h3nBc3eyuZ+q62HS1pJ5EvU
+T1vjyJ1ySrqtUXWQ4XlZyoEFUfpJxJoN0A9HCxmHGVckzTRl5FMWo8TCniHynNXs
+BtDQbabt7aNEOaAJdE7to0AH3T/Bvwzcp0ZJtBk0EM6YeMLtotUut7h2Bkg1b//r
+6bTBswMBXVJ5H44Qf0+eKeUg7whSC9qpYOzzrm7+0r9F5u3qF8ZTx55TJc2g656C
+9a1P1MYVysLvkLvS4H+crmxA/i08Tc1h+x9RRvqba4lSzZ6/Tmt60DPM5Sc4R0nS
+m9BBff0Nm0bSNRS8InXdO1Aq3362QKX2NOwcL5YaStwODNyZUqF7izjK4QARAQAB
+zTxEZW1pIE9iZW5vdXIgKElUTCBFbWFpbCBLZXkpIDxhdGhlbmFAaW52aXNpYmxl
+dGhpbmdzbGFiLmNvbT7CwY4EEwEIADgWIQR2h02fEza6IlkHHHGyiLVf/5wiwQUC
+X6YJvQIbAwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgAAKCRCyiLVf/5wiwWRhD/0Y
+R+YYC5Kduv/2LBgQJIygMsFiRHbR4+tWXuTFqgrxxFSlMktZ6gQrQCWe38WnOXkB
+oY6n/5lSJdfnuGd2UagZ/9dkaGMUkqt+5WshLFly4BnP7pSsWReKgMP7etRTwn3S
+zk1OwFx2lzY1EnnconPLfPBc6rWG2moA6l0WX+3WNR1B1ndqpl2hPSjT2jUCBWDV
+rGOUSX7r5f1WgtBeNYnEXPBCUUM51pFGESmfHIXQrqFDA7nBNiIVFDJTmQzuEqIy
+Jl67pKNgooij5mKzRhFKHfjLRAH4mmWZlB9UjDStAfFBAoDFHwd1HL5VQCNQdqEc
+/9lZDApqWuCPadZN+pGouqLysesIYsNxUhJ7dtWOWHl0vs7/3qkWmWun/2uOJMQh
+ra2u8nA9g91FbOobWqjrDd6x3ZJoGQf4zLqjmn/P514gb697788e573WN/MpQ5XI
+Fl7aM2d6/GJiq6LC9T2gSUW4rbPBiqOCeiUx7Kd/sVm41p9TOA7fEG4bYddCfDsN
+xaQJH6VRK3NOuBUGeL+iQEVF5Xs6Yp+U+jwvv2M5Lel3EqAYo5xXTx4ls0xaxDCu
+fudcAh8CMMqx3fguSb7Mi31WlnZpk0fDuWQVNKyDP7lYpwc4nCCGNKCj622ZSocH
+AcQmX28L8pJdLYacv9pU3jPy4fHcQYvmTavTqowGnM08RGVtaSBNYXJpZSBPYmVu
+b3VyIChsb3ZlciBvZiBjb2RpbmcpIDxkZW1pb2Jlbm91ckBnbWFpbC5jb20+wsF4
+BBMBAgAiBQJafgNKAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRCyiLVf
+/5wiwYa/EACv8a2+MMou9cSCNoZBQaU+fTmyzft9hUE+0d5W2UY1RY3OsjFIzm9R
+/4SVccfsqOYLEo+S0vQMIIIqFEq3FCpXXwPzyimotps05VA8U3Bd7yseojFygOgK
+sAMOAee2RCaDDOnoJue01dfZMzzHPO/TVdp3OvnpWipfv5G1Xg96rwbhMLE3tg6N
+xwAHa31Bv4/Xq8CJOoIWvx6fcmZQpz01/lSvsYn0KrfEbTKkuUf0vM9JrCTCP2oz
+VNN5BYzqaq2M4r+jmSyeXLim922VOWqGkUEQ85BSEemqrRS06IU6NtEMsF8EWt/b
+hWjk/9GDKTcnpdJHTrMxTspExBiNrvpI2t+YPU5B/dJJAUxvmhFrbSIbdB8umBZs
+I3AMYrEmpAbh5x7jEjoskUC7uN3o9vpg1oCLS2ePDLtAtyBtbHnkA4xGD7ar8mem
+xpH9lY/i+sC6CyyIUWcUDnnagKyJP0m9ks0GLsTeOCA0bft2XA6rD6aaCnMUsndT
+ctrab42CV5XypjmC4U1rPJ8JQJUh1/3P48/8sMH+3krxpJ06KNWNFaUbaMTGiltZ
+7x9DngklSYrX0T+2G4kVXNmjaljwkoLahwLla2gUWwBSyofXdqyhQdwZsp01KXNQ
+UCyT/Pg+aDcm/E7OMV3d4lf7g/CSxiX2GSEe6BlhSz+Lmd7ZJ3g32M1ARGVtaSBN
+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
+EtJuZYM5blWncBOJCoWMnBEcTEo/viU3GgcVRw=3D=3D
+=3Dx94R
+-----END PGP PUBLIC KEY BLOCK-----
+
+--------------hx5dOB50yxmv5jTGuViKV6SL--
+
+--------------a80GZK03UxpE3BpW1SCd1wl7--
+
+--------------YZxknMOFwUAH46VD6JJUcHiv
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEopQtqVJW1aeuo9/sszaHOrMp8lMFAmjewucACgkQszaHOrMp
+8lO8kg//d30mCG3KbIgqJqq66o/r+xf7NGHzVsUptICBpfKmoBebzG7p8O4mWpnl
+WTL7epS4NNWrDa5NH8ng5sJNfC9/LS265ehCGLe3Y9NMdnzNm9J93903T1CxT00t
+6lPztovDKr+qlbeeD9BnW2u5XdDkUfaYu2LZNjIH+VDSMgDQlsO9ZDhzRO7FoBhJ
+/TN3ToPIhTbKjY9Vb4wTtV1PrUHxNZoEMKZw+aLGEUkeFPq6s4Bl0ehN3aCkdfdg
+gNfIYii4nOs4Bz75gJr18MszbpQfCtJi0k+bcDQkZQ7+8e64js9EQvy4uaHCrU/T
+Vwt64h+1g3PY+6IdwGAjuOhf59OSyIdlNwti+llMdujewTa5ccBKVWmlT0GixL4J
+g8gOH/tJ/QzD6YnJNEAHm6J+nHAJtd1FaThN8P8uQyRzHJHRP0hBf4gKTY9cDEfN
+UU371/UsdlA2iTm2erG1b3S7AWgqCRkSs7hLcbDDxE+Bpf+/k6ptW2RLYEHXFUOK
+q6zvBECAKzVY9XKN+KKKM2b1y/11TAMSw/+SIa5pdZI+Db7U983B+oWMCprqO/dW
+8LUKNsCD25pjJ+aAVhfYiu9U43SP/RDpG0O6eAetdJF6rHjPuoFiBdZO0+Y6UZYn
+HOak9QBI3GePlsM2lm0fzwJ2s6MsJTW6QiFIqD7mVf5IumvRUTI=
+=W5RY
+-----END PGP SIGNATURE-----
+
+--------------YZxknMOFwUAH46VD6JJUcHiv--
 
