@@ -1,135 +1,178 @@
-Return-Path: <linux-kernel+bounces-840111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2472BB3908
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 12:10:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3F24BB391A
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 12:11:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 825631921348
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 10:11:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D460B3B81F2
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 10:11:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9989530AACA;
-	Thu,  2 Oct 2025 10:10:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DA0D307AF5;
+	Thu,  2 Oct 2025 10:10:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZDVYz6yM"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ZtsT0+sZ"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D1DB3093B6
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 10:10:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B9CB2EBDCA
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 10:10:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759399805; cv=none; b=tpNQYGgJYISl5QL3tJUitPjz801hq0VLuR0+hy94/B5RA0eSS4Ftr2VmZBNc4x+mOenWw0xShmy2eDnx/J7KiaQ64mykztGixvCsFKm3T5k4q1MpS+eL/FNt6t5+tJoF5gW8FE5uCJl8gsr5fL/vrluIrpxulSeZZdHaJNdivkQ=
+	t=1759399854; cv=none; b=OItAlyfo2+rLfqFj752ax/2WUOQBHCPlBCfrxKBxGXIC4uozCGeMJ/FFhmtrtlG+3mfRSECzybepycx5bn1LVpiv+HjoMJ+zQxa+iwgZEM9l8ibkNv+ZAlOVecbEgsUXdWx6KkugjR8iNFugjbhGiWCGZmcmCpEiJSF10BEU8uA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759399805; c=relaxed/simple;
-	bh=o8uIpvdm8rS/o+S1mykUYGGLHkWfPhCsX3cg0yw1X58=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=I7yDC2IT2m/YjSuikckb0ehmW/cAX2xn7TZE0dXdsIvwBoeAysad1fpUsERGTAB4Ggw6lXkmT01t2jK8+vnUZA4ts+pqixS1+b2DgHrCRO4Rxjd+7o5J3+WhzrtK7XWVZZWeBIgQ8A3xrjBIZlqBUsX+ah4pvafOukjWXE6rKcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZDVYz6yM; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3f2ae6fadb4so723031f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 03:10:01 -0700 (PDT)
+	s=arc-20240116; t=1759399854; c=relaxed/simple;
+	bh=wXssKmLPJjqoKaW2dSKD8DrBwPR8NTRLuMaPkl0T40w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tqv5wpINHw//W6JHmKYUQMql8/JyT3LYHqW9XPjEr8cTpurxrSw7LxXUg2DFFUeekp+p/nhZ2ol7RTK/wGEgmInpKLJ92gmR6sxdsoDZYKP086ZhFlL9pRTRXdPFzSHznibL5SS89tZvCprDPKC2uI8nDNc6ZUMqlLwSej4SyRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ZtsT0+sZ; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b40f11a1027so160428866b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 03:10:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759399800; x=1760004600; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=S28JNZPWK+3sAmARH83rSsyGla0uTsZRncPjJTp9toA=;
-        b=ZDVYz6yMmRu6882C7YCgncuxHZK1w/wzCMXkNq+Wbp9p5lV78PDRPvJpAfKCFarqLg
-         uJD09CeMZnKKzKQwRB3Y0qmS/Akysi9xtoIsZLjmGmcMM0nmq5bF31NW10/kII/BA+vk
-         c6jxGdDosYJfAzAdgmJYuw+NhzY6voZTi4zEYIlAzCxz4rUPxrAlZX+z6wQBmNAsGLLY
-         kaP52H7M28Qv/8vHWomuuTAw9h4PZc+ipoSRDe1VAwpfql3gkNzgLRoAZfbCMZ0UuUYy
-         446R1+oKPitoNe5dHo3m1AlYd1SyIBdE+7+Rnw/ZWqQcuZ+7U79u2KxLoCRipforqW12
-         I6+g==
+        d=suse.com; s=google; t=1759399850; x=1760004650; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=GE+ky0OQxWYABlQ1pTeY2tV572+/4cRLHoT7laA9e2Y=;
+        b=ZtsT0+sZgsiKYy0fczWhOiDJIRnw40azseHJYF9rIQKyECaylmIpEAsSlTiG7kfnZ/
+         7vaj0Uyl58ADvOjFmb6LUBxjmChRutzQEZYWfRtaIBbwdXwfFcGbvxBCHPS7GzZSZp0x
+         bV621k3HsKFIfT/l0oqhry0n0fOlB3DfvDVcLEhwdfNhsJxlG8FBX1smwsGm4w/1Uw+g
+         xaoMLC/eBXAmqiP+K64dJsr0EAnQxLqmJvPZngU4A8XOMorlktsv0tPVFqcfP9E4GS1H
+         gIcsdhR52Oy3IB7kOl3Zci5gzDtwuGzPArAW1TMXboP0xjdanisi/IMv++Ul/J5+tYWX
+         H0kQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759399800; x=1760004600;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=S28JNZPWK+3sAmARH83rSsyGla0uTsZRncPjJTp9toA=;
-        b=qqdDix2B5tGGc155mqnoKSxHgZtf6CL3gQEvUz197Nv1OLBgYdqzk7TlA3Tt4zL5+V
-         RnjQHFnaZtd9CAxJRNvULUgNbTrcgxFUco3R6lg6TrxWW+fEK6ttQWbHui2sEBGgikGK
-         N3QFjbkbXE1oKR8mKtSLBPI0zogDw/F5xasfeMXAEO0SmY/KMXuP9uQ9ajXM5a5MTAMx
-         qPbJ7E8hzOhW5vZ0/H5wNsk0J+k0hsrEPRDGF59SufH2W+vDuZSLYc7r+LcBjy+SlfJD
-         9+/r+X57yKipyBIT9YhgxDqafpOKlwd2aVmXa6EqulrBIkp9YwsS43vbmfs+3o6LZJB+
-         K1EA==
-X-Forwarded-Encrypted: i=1; AJvYcCXElqMTyX4YIF1EtGS8l+e69RIxE7jsKR5QylBdFkVa7XtAleEwtcTJsPsE/2Aln9/OMPXRfb8sYeMnMjA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTolpTWcVSFecEIa4qvQZjnKSq60rZ5uQ1JbxHz8ruyt4e67Zw
-	Mmx19IxaRMMIwntJ4FXsESx6HiqdmnJVLyQ0/BZhqHrqDaF0tr8U1wL6BkVZbTWcyeQ=
-X-Gm-Gg: ASbGncva05MDiSMxUh6jqUDRMQxfaxcu1/4vMPLL8Zn8uD+3cNwwqLMj+HfBhAOFqt5
-	RHjVZX++olFrEuMVww2TI5CMRESwcJdScuypRUcVmr1DrjxzhhkdKhDscU4nUlviJNdAqsWib25
-	Our7WSsuA6SyVRzegJns4v8qqplOmPavTLno32yfoaSJHRR4hrLLkP+x0Bqrlp6KdFDNNe/zrBz
-	iDSL5JWERe0SGmox5Uh0dLJPfJTUTkpnGQN6e2daMAjqibJjGtXvEQQkQ32cWraYIm1v3w2waxT
-	3F5cAyA7F3K/hW1MClvl0NwRwlaIPGbVepJTnRxoWagfrKKcN5Pt4T0sdb3ihGinzYc3Ie8Ssi3
-	DxAh4Z3LWcHK+/UAeO9joZ7vm9eUuikCTCMTOKI04y3xSCQo41KU8DlD/4nHb
-X-Google-Smtp-Source: AGHT+IG6HKInp+uRx4lrhBICFNa45XLSFjaTQzHhAm4u0XucfQOV7OmI9NNGmwwxaM0SBXY84aYtrw==
-X-Received: by 2002:a05:6000:40cb:b0:3ec:df2b:14c8 with SMTP id ffacd0b85a97d-425577ea4bcmr5328296f8f.20.1759399800449;
-        Thu, 02 Oct 2025 03:10:00 -0700 (PDT)
-Received: from ho-tower-lan.lan ([185.48.76.109])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8ab960sm3017289f8f.13.2025.10.02.03.09.59
+        d=1e100.net; s=20230601; t=1759399850; x=1760004650;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GE+ky0OQxWYABlQ1pTeY2tV572+/4cRLHoT7laA9e2Y=;
+        b=jTLxeUiC2SuzkF+Rqzd7sehrSPeDs65KFZWYWJku8ELCKrBqhMD8yfZCB60sxDEFA2
+         JO0d/DkPGbA42tNsBrtV4O4xaniIRWRbomUzYSVSq2+NDIYg4Sbz9xlZJaoFi9r16Via
+         //0UWDmUaWa607raxEKycQadaNlS05cF9zAbDaOV15nH11ohD0ftd/HxxjFU+jhBJVka
+         /D4KdmsMIkP2cW8OVhPhEBEsT48jGnVNm22xZwKMzPoECwa3MOLpnlpvnmc1MIW7UUQV
+         0BZ/PabuxtgKiWUqP9rtj0T9R05LcYjC8muXpye4LHhUFGlhh55bFbQC/JSgIoaTiylH
+         BnPg==
+X-Forwarded-Encrypted: i=1; AJvYcCWAbLQySp1SNWHys/vAVqGgrkhsMzKXewlb3W9UIUpXrsVpK+L3qjeqH0bV/M4E5MjKr78ErdRSfVaFIpQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxCt35b2rt9kYZdJLB5Wi5MVFLo9ijuPNSs9d2pQ/NUR4Gb7DM
+	d9tVd5OSqOVXwEJYawCF6EOnwAi/yybKlnxIjB3sC/yKTNn6UmW+jmPrzsIe0j8jXZM=
+X-Gm-Gg: ASbGncuX3AlBZ7Qb2Eqm9dSQPva9JHY94NANqvnYsfnS/ZLym/X6WqMYAn2xQ5PXevA
+	bopcRUYqz3Y+2nRlE7m8xhIR2Nj9BMv+MIWUh8rzow90i/iLrZog97J+gPytZBzOqHikmZ5XPgA
+	/jIimR/m7s7LpnMre/4lF8quqkdfm5U1Clk6N1dDbaMfKeofUepAKirf7w9Sr4YmWgCeN1tjinh
+	+acUEA1FdCoz2JOoRpxWXZ8J+qYApytxiMgyI0Rsc0CwzzlgXtgulSC6LDU1xtsZztV1lLiDP36
+	biCjHTDWL+vQH+Q+K5vrMfau6Nb3m4v62n1sCE0TXc7NyHjOm7i9iPcJ1ofhwkNlPQ2PUCupahQ
+	thskYILOpTHQEJZQJNGJoxyiX7XO4g9pq7lhYFVq8QoH0c8HTJIqJXzEN5Icc
+X-Google-Smtp-Source: AGHT+IGxl9hTQJndeyrrY2EXOVwu1e5fuv5VEZrM/+o7Oep3Ib43HVi1P0fq44Dw2SHMm6HLcy6y9w==
+X-Received: by 2002:a17:907:3f07:b0:b3c:3c8e:189d with SMTP id a640c23a62f3a-b46e9765a7cmr822509266b.32.1759399850373;
+        Thu, 02 Oct 2025 03:10:50 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b48652aa035sm174647066b.15.2025.10.02.03.10.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 03:10:00 -0700 (PDT)
-From: James Clark <james.clark@linaro.org>
-Date: Thu, 02 Oct 2025 11:09:33 +0100
-Subject: [PATCH v3 5/5] coresight: docs: Document etm4x ts_interval
+        Thu, 02 Oct 2025 03:10:49 -0700 (PDT)
+Date: Thu, 2 Oct 2025 12:10:47 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Andrew Murray <amurray@thegoodpenguin.co.uk>
+Cc: John Ogness <john.ogness@linutronix.de>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] printk: console_flush_one_record() code cleanup
+Message-ID: <aN5Pp2cFf_pedhxe@pathway.suse.cz>
+References: <20250927-printk_legacy_thread_console_lock-v2-0-cff9f063071a@thegoodpenguin.co.uk>
+ <20250927-printk_legacy_thread_console_lock-v2-2-cff9f063071a@thegoodpenguin.co.uk>
+ <84o6qsjduw.fsf@jogness.linutronix.de>
+ <CALqELGwd1CiRAYNBVWsrgb5T3eJ9ugP+0wG2WKZGvSfowqgaaQ@mail.gmail.com>
+ <84seg3gd89.fsf@jogness.linutronix.de>
+ <CALqELGw8wtbbihLsOcNgnV2vGoSR7kD8_tHmt7ESY4d3buwrLQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251002-james-cs-syncfreq-v3-5-fe5df2bf91d1@linaro.org>
-References: <20251002-james-cs-syncfreq-v3-0-fe5df2bf91d1@linaro.org>
-In-Reply-To: <20251002-james-cs-syncfreq-v3-0-fe5df2bf91d1@linaro.org>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>, 
- Mike Leach <mike.leach@linaro.org>, 
- Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
- Jonathan Corbet <corbet@lwn.net>, Leo Yan <leo.yan@arm.com>
-Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
- James Clark <james.clark@linaro.org>
-X-Mailer: b4 0.14.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALqELGw8wtbbihLsOcNgnV2vGoSR7kD8_tHmt7ESY4d3buwrLQ@mail.gmail.com>
 
-Document how the new field is used, maximum value and the interaction
-with SYNC timestamps.
+On Wed 2025-10-01 17:26:27, Andrew Murray wrote:
+> On Wed, 1 Oct 2025 at 10:53, John Ogness <john.ogness@linutronix.de> wrote:
+> >
+> > On 2025-09-30, Andrew Murray <amurray@thegoodpenguin.co.uk> wrote:
+> > >> On 2025-09-27, Andrew Murray <amurray@thegoodpenguin.co.uk> wrote:
+> > >> > diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+> > >> > index 060d4919de320fe21fd7aca73ba497e27c4ff334..e2c1cacdb4164489c60fe38f1e2837eb838107d6 100644
+> > >> > --- a/kernel/printk/printk.c
+> > >> > +++ b/kernel/printk/printk.c
+> > >> > @@ -3280,21 +3284,16 @@ static bool console_flush_one_record(bool do_cond_resched, u64 *next_seq, bool *
+> > >> >   */
+> > >> >  static bool console_flush_all(bool do_cond_resched, u64 *next_seq, bool *handover)
+> > >> >  {
+> > >> > -     bool any_usable = false;
+> > >> > +     bool any_usable;
+> > >>
+> > >> Since console_flush_all() does read @any_usable, I would expect it to
+> > >> initialize @any_usable. So I would not remove this definition initialization.
+> > >
+> > > Prior to this series, console_flush_all would set any_usable to false.
+> > > It would be set to true if at any point a usable console is found,
+> > > that value would be returned, or otherwise false if handover or panic.
+> > > When the first patch split out this function, any_usable was kept as
+> > > it was, leading to any_usable being true, even if a handover or panic
+> > > had happened (hence additional checks needed, which are removed in
+> > > this patch).
+> > >
+> > > By setting any_usable at the start of flush_one_record, it allows for
+> > > any_usable to revert back to false, in the case where a once usable
+> > > console is no longer usable. Thus representing the situation for the
+> > > last record printed. It also makes console_flush_one_record easier to
+> > > understand, as the any_usable flag will always be set, rather than
+> > > only changing from false to true.
+> >
+> > OK. But then just have console_flush_all() set @any_usable in the loop:
+> >
+> > static bool console_flush_all(bool do_cond_resched, u64 *next_seq, bool *handover)
+> > {
+> >         bool any_progress;
+> >         bool any_usable;
+> >
+> >         *next_seq = 0;
+> >         *handover = false;
+> >
+> >         do {
+> >                 any_usable = false;
+> >                 any_progress = console_flush_one_record(do_cond_resched, next_seq,
+> >                                                         handover, &any_usable);
+> >         } while (any_progress);
+> >
+> >         return any_usable;
+> > }
+> 
+> Yes, that seems like common sense, I have no idea why I didn't think of that :|
 
-Signed-off-by: James Clark <james.clark@linaro.org>
----
- Documentation/trace/coresight/coresight.rst | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+Looks good to me.
 
-diff --git a/Documentation/trace/coresight/coresight.rst b/Documentation/trace/coresight/coresight.rst
-index 806699871b80..0cd83119b83f 100644
---- a/Documentation/trace/coresight/coresight.rst
-+++ b/Documentation/trace/coresight/coresight.rst
-@@ -619,6 +619,20 @@ They are also listed in the folder /sys/bus/event_source/devices/cs_etm/format/
-      - Cycle count threshold value. If nothing is provided here or the provided value is 0, then the
-        default value i.e 0x100 will be used. If provided value is less than minimum cycles threshold
-        value, as indicated via TRCIDR3.CCITMIN, then the minimum value will be used instead.
-+   * - ts_level
-+     - Controls frequency of timestamps. The reload value of the
-+       timestamp counter is 2 raised to the power of this value. If the value is
-+       0 then the reload value is 1, if the value is 10 then the reload value is
-+       1024. Maximum allowed value is 15, and setting the maximum disables
-+       generation of timestamps via the counter, freeing the counter resources.
-+       Timestamps will be generated after 2 ^ ts_level cycles.
-+
-+       Separately to this value, timestamps will also be emitted when a SYNC
-+       packet is generated, although this is only for every 4096 bytes of trace.
-+       Therefore it's not possible to generate timestamps less frequently than
-+       that and ts_level timestamps are always in addition to SYNC timestamps.
-+       Timestamps must be enabled for this to have effect.
-+
- 
- How to use the STM module
- -------------------------
+> 
+> >
+> > > Alternatively, it may be possible for console_flush_one_record to
+> > > return any_usable, thus dropping it as an argument and removing the
+> > > return of any_progress. Instead the caller could keep calling
+> > > console_flush_one_record until it returns false or until next_seq
+> > > stops increasing?
 
--- 
-2.34.1
+No, this won't work. @next_seq shows the highest value from all
+consoles. It is no longer increased when at least one console
+flushed all pending messages. But other consoles might be
+behind, still having pending messages, and still making progress.
 
+Honestly, I do not know how to make it better. We need to pass
+both information: @next_seq and if some console flushed something.
+
+Note that @next_seq is valid only when all consoles are flushed
+and returning the same @next_seq. But it does not help to remove
+the @any_progress parameter.
+
+Best Regards,
+Petr
 
