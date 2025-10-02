@@ -1,105 +1,132 @@
-Return-Path: <linux-kernel+bounces-839995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13BBDBB33B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 10:42:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A41AEBB344F
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 10:45:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DDEF19E82CA
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 08:41:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EAB546361C
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 08:41:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC6712F99AE;
-	Thu,  2 Oct 2025 08:23:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10E5F2FD1D0;
+	Thu,  2 Oct 2025 08:24:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="coLETaei";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="9qQbg4e3"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="i5+HKGpb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98B792F6569;
-	Thu,  2 Oct 2025 08:23:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC45E2D46DA;
+	Thu,  2 Oct 2025 08:24:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759393409; cv=none; b=Nw1fAi8WRVf4jLIKqEspnxP074qyozNoufES5dlkr6iOnvkBquP5c1+EHlwkQqFpF2YCDuLCXa5x+7ulsj4N5Bok+hvp8TjgAbwB45AvSZhxc3bUP4WfJ3jq8ck9DDlwJq8wu4YYpjaSoa1euILt8ZvQXe+Ij4eortjCefrwtUU=
+	t=1759393492; cv=none; b=FG1uUYWxwWOE7JW2qXI15uYPFlyk5sJSGrH/xeRv2OHpGlMr7pP2QvAJDDyzNGqY201GlFTYT5qadDXvWWY9b6tGE+E+LBX0reL5Nej40d+pC35prINKj8SClq2ert5OG1/3EAg1wkWkithQdrTyGhPh5es0vjmF1gBc5k7SwwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759393409; c=relaxed/simple;
-	bh=UqlGLleMkXpq+Xno0Q1AJU7J41Tk+8nEgleIZqqVhjA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ty6OpbC+TcWD90JyurZuX6yh3ugFPbhpElptgIPOgGxlBxcip9SP4BfvfhRN34p0gbTtNYK69F91AgV16DxRNQJqgmiz+z2i9Xph+YyY04bZUkn/0gRa9eN+xJ/Sym+onpjfwhgDkg9ydYW1nLitMjbMuwaruCuZeoiBHsPgu4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=coLETaei; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=9qQbg4e3; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Nam Cao <namcao@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1759393404;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=j7PsuRrjkeVYwWZ9ja15zwm8l8USychG99WEiutMiLA=;
-	b=coLETaei03rwnGWtgFTZkhAw9qkBwd153+zuDmhUTmZkmycp7V0iE83VJp0uSRE4aEZFoI
-	cDEzfazpJwjsGDAZanfZhTea8YV2TDH0zJsvB7JyWSJkuugSM8FunwpAwX14yahGobDsj7
-	VVLoySvEYGqYcQLhoMC4dnVHGIsV9vK80mfe5DxJ5QyuRa0jOOHfIeZqRus/fc+D+/PhU8
-	2ZRxRBO2Y1+A1DCltaJUYKz5nqd6jejHL7hVzzEE7E34yaxd06lUPHjHiEO1JJ1W/RmwG+
-	NDk0VPtXAq8Zoajg1ZZfmo1KILdaaVBqVnMgk8Q7+2GwEp2KhYCujLTBO424aQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1759393404;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=j7PsuRrjkeVYwWZ9ja15zwm8l8USychG99WEiutMiLA=;
-	b=9qQbg4e39E9kN4EL3/b/jsO6DJEg11tPRMSFmjBdIHtCwqFcv3BhdTubgDGwf14V4nd0ah
-	ZXbbvQNeoNfmQOAg==
-To: Gabriele Monaco <gmonaco@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-trace-kernel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Nam Cao <namcao@linutronix.de>,
-	kernel test robot <lkp@intel.com>,
-	stable@vger.kernel.org
-Subject: [PATCH 2/2] rv: Make rtapp/pagefault monitor depends on CONFIG_MMU
-Date: Thu,  2 Oct 2025 08:23:17 +0000
-Message-ID: <20251002082317.973839-1-namcao@linutronix.de>
+	s=arc-20240116; t=1759393492; c=relaxed/simple;
+	bh=EGta/OBizNM09PGf6rEuH2ZEVwPb5dGKC+KMXznpC2w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qkgpazbu6iD0LhzA4OXGZZtmgo2tseuTqBGzg5oTt1DpZH1n91jz8DTZcQqc4Wro+jXKxQogwoVReuBrz1gHMkzhqOsj+gnMHzJwHu0k8BsfkQvvEtJUHNl7kirmz1rpMm+9va4RiM2wdcrw29UlOlBTfurF4r81lk+lAjj6THE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=i5+HKGpb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60A32C4CEF4;
+	Thu,  2 Oct 2025 08:24:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1759393491;
+	bh=EGta/OBizNM09PGf6rEuH2ZEVwPb5dGKC+KMXznpC2w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=i5+HKGpbYKH37uF6UEmHuZtFQv6O5ZG1HxMQr8kvde7omSAD+zel/Z4+s6JwdJrZv
+	 Ur3S6DldaheLi+GEdKKHX1ZJ+iRyil+oU4pwd+w36q87VybbM/v+qrAgAFV69+RNbv
+	 WsN8AOHH246elLsfI0Z+lVr0mIU6QpnW71c2yL1s=
+Date: Thu, 2 Oct 2025 10:24:41 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Byungchul Park <byungchul@sk.com>
+Cc: linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
+	torvalds@linux-foundation.org, damien.lemoal@opensource.wdc.com,
+	linux-ide@vger.kernel.org, adilger.kernel@dilger.ca,
+	linux-ext4@vger.kernel.org, mingo@redhat.com, peterz@infradead.org,
+	will@kernel.org, tglx@linutronix.de, rostedt@goodmis.org,
+	joel@joelfernandes.org, sashal@kernel.org, daniel.vetter@ffwll.ch,
+	duyuyang@gmail.com, johannes.berg@intel.com, tj@kernel.org,
+	tytso@mit.edu, willy@infradead.org, david@fromorbit.com,
+	amir73il@gmail.com, kernel-team@lge.com, linux-mm@kvack.org,
+	akpm@linux-foundation.org, mhocko@kernel.org, minchan@kernel.org,
+	hannes@cmpxchg.org, vdavydov.dev@gmail.com, sj@kernel.org,
+	jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
+	penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
+	ngupta@vflare.org, linux-block@vger.kernel.org,
+	josef@toxicpanda.com, linux-fsdevel@vger.kernel.org, jack@suse.cz,
+	jlayton@kernel.org, dan.j.williams@intel.com, hch@infradead.org,
+	djwong@kernel.org, dri-devel@lists.freedesktop.org,
+	rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
+	hamohammed.sa@gmail.com, harry.yoo@oracle.com,
+	chris.p.wilson@intel.com, gwan-gyeong.mun@intel.com,
+	max.byungchul.park@gmail.com, boqun.feng@gmail.com,
+	longman@redhat.com, yunseong.kim@ericsson.com, ysk@kzalloc.com,
+	yeoreum.yun@arm.com, netdev@vger.kernel.org,
+	matthew.brost@intel.com, her0gyugyu@gmail.com, corbet@lwn.net,
+	catalin.marinas@arm.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com, luto@kernel.org,
+	sumit.semwal@linaro.org, gustavo@padovan.org,
+	christian.koenig@amd.com, andi.shyti@kernel.org, arnd@arndb.de,
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
+	rppt@kernel.org, surenb@google.com, mcgrof@kernel.org,
+	petr.pavlu@suse.com, da.gomez@kernel.org, samitolvanen@google.com,
+	paulmck@kernel.org, frederic@kernel.org, neeraj.upadhyay@kernel.org,
+	joelagnelf@nvidia.com, josh@joshtriplett.org, urezki@gmail.com,
+	mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com,
+	qiang.zhang@linux.dev, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com,
+	chuck.lever@oracle.com, neil@brown.name, okorniev@redhat.com,
+	Dai.Ngo@oracle.com, tom@talpey.com, trondmy@kernel.org,
+	anna@kernel.org, kees@kernel.org, bigeasy@linutronix.de,
+	clrkwllms@kernel.org, mark.rutland@arm.com, ada.coupriediaz@arm.com,
+	kristina.martsenko@arm.com, wangkefeng.wang@huawei.com,
+	broonie@kernel.org, kevin.brodsky@arm.com, dwmw@amazon.co.uk,
+	shakeel.butt@linux.dev, ast@kernel.org, ziy@nvidia.com,
+	yuzhao@google.com, baolin.wang@linux.alibaba.com,
+	usamaarif642@gmail.com, joel.granados@kernel.org,
+	richard.weiyang@gmail.com, geert+renesas@glider.be,
+	tim.c.chen@linux.intel.com, linux@treblig.org,
+	alexander.shishkin@linux.intel.com, lillian@star-ark.net,
+	chenhuacai@kernel.org, francesco@valla.it,
+	guoweikang.kernel@gmail.com, link@vivo.com, jpoimboe@kernel.org,
+	masahiroy@kernel.org, brauner@kernel.org,
+	thomas.weissschuh@linutronix.de, oleg@redhat.com, mjguzik@gmail.com,
+	andrii@kernel.org, wangfushuai@baidu.com, linux-doc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+	linaro-mm-sig@lists.linaro.org, linux-i2c@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-modules@vger.kernel.org,
+	rcu@vger.kernel.org, linux-nfs@vger.kernel.org,
+	linux-rt-devel@lists.linux.dev
+Subject: Re: [PATCH v17 01/47] llist: move llist_{head,node} definition to
+ types.h
+Message-ID: <2025100230-grafted-alias-22a2@gregkh>
+References: <20251002081247.51255-1-byungchul@sk.com>
+ <20251002081247.51255-2-byungchul@sk.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251002081247.51255-2-byungchul@sk.com>
 
-There is no page fault without MMU. Compiling the rtapp/pagefault monitor
-without CONFIG_MMU fails as page fault tracepoints' definitions are not
-available.
+On Thu, Oct 02, 2025 at 05:12:01PM +0900, Byungchul Park wrote:
+> llist_head and llist_node can be used by some other header files.  For
+> example, dept for tracking dependencies uses llist in its header.  To
+> avoid header dependency, move them to types.h.
 
-Make rtapp/pagefault monitor depends on CONFIG_MMU.
+If you need llist in your code, then include llist.h.  Don't force all
+types.h users to do so as there is not a dependency in types.h for
+llist.h.
 
-Fixes: 9162620eb604 ("rv: Add rtapp_pagefault monitor")
-Signed-off-by: Nam Cao <namcao@linutronix.de>
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202509260455.6Z9Vkty4-lkp@int=
-el.com/
-Cc: stable@vger.kernel.org
----
- kernel/trace/rv/monitors/pagefault/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+This patch shouldn't be needed as you are hiding "header dependency" for
+other files.
 
-diff --git a/kernel/trace/rv/monitors/pagefault/Kconfig b/kernel/trace/rv/m=
-onitors/pagefault/Kconfig
-index 5e16625f1653..0e013f00c33b 100644
---- a/kernel/trace/rv/monitors/pagefault/Kconfig
-+++ b/kernel/trace/rv/monitors/pagefault/Kconfig
-@@ -5,6 +5,7 @@ config RV_MON_PAGEFAULT
- 	select RV_LTL_MONITOR
- 	depends on RV_MON_RTAPP
- 	depends on X86 || RISCV
-+	depends on MMU
- 	default y
- 	select LTL_MON_EVENTS_ID
- 	bool "pagefault monitor"
---=20
-2.51.0
+thanks,
 
+greg k-h
 
