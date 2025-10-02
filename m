@@ -1,174 +1,211 @@
-Return-Path: <linux-kernel+bounces-840825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84462BB581A
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 23:42:44 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32212BB5820
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 23:44:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6D0764E7648
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 21:42:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D97014E545C
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 21:44:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D6A827A904;
-	Thu,  2 Oct 2025 21:42:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64F692848A7;
+	Thu,  2 Oct 2025 21:44:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z+K2wg+s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="qCGBi/4N"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B31A07081C;
-	Thu,  2 Oct 2025 21:42:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 489547081C;
+	Thu,  2 Oct 2025 21:44:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759441358; cv=none; b=JDTNZbcUFXuSY6WPlJPT32ZYKKfHdF4tUmjHsI0/4iHz5q90XR9TNKiYom/7dWVqpOcYa+Hh719gUc26qtNYw1o2B70O84k/gXj69NQLE+isnFt05klMNzenVGedF3GBqjcv2EfhRvfwISU65J2Tc4MBI8V1Jsa806u5/e8tJYg=
+	t=1759441467; cv=none; b=iU0w5F1QxxBJ4hCMMK3vl+nWCDvF+4BoBGvEs1X+7K0cZw+2Z64D1M6x2JOvHiWU1l8ZiWdpFyp7op8oA3EoeAOEABBTYsB2bD4byJ6Pv1xkyHDO3jmREK7UM3boxgEZ6KhLfgReYCreUM9FM760SgaZ8mktrQobFDyM3nsXzIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759441358; c=relaxed/simple;
-	bh=R+U+5Uoh8xpG2po4iT5CxOmrkdsIQY39xuIay2qKYH0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lQSgg6j+l+CWnZ5ACtWNZggAqmBRP+RPHqsVZVSEvCTHcg0E8XsXASDaUZFKdAbcLQkwCeJ8O47ISCk/ocmw3vBixVU772zI1o4HSHI8jyJnJ4GYzjsCYTj/gjvhR0GvZ6WUx3mIzjRrwwDDw1ugoShBNx6/yV4/3PnI1jHsit0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z+K2wg+s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB198C4CEF4;
-	Thu,  2 Oct 2025 21:42:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759441358;
-	bh=R+U+5Uoh8xpG2po4iT5CxOmrkdsIQY39xuIay2qKYH0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Z+K2wg+s6ye8wg87MpZi4h3uVemy3ZH129Ew4Kn+NR01NV+mS+84oIRhVjtDVIK3U
-	 t0Tcni0VZy6GPtDppQfSe7ewKPWUYQJ2e3RMVI2+/eCUi1KFmNJZ4yqR1Adq0oC8c9
-	 VriiRho+tt0/765a+a+A/be8EeV0dLDh5O9whp9vshJNQfRCj6994UQqXOF+/WZnKF
-	 phJShQ04sA+UQIzDJ+44DMGLSZdIMRgTbS67VFd0DfOq/CP5UtlIYS5yL/EMsvcwGh
-	 wWILiw4VsKMgwilcGDKh7Tj2ES1kgsu2/VWP0NctHF9h8d3fUBvZ8i42dklE57sB7y
-	 T7nI3kyHfBD4Q==
-Date: Thu, 2 Oct 2025 21:42:36 +0000
-From: Wei Liu <wei.liu@kernel.org>
-To: Mukesh Rathor <mrathor@linux.microsoft.com>
-Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org, kys@microsoft.com,
-	haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-	arnd@arndb.de
-Subject: Re: [PATCH v2 5/6] x86/hyperv: Implement hypervisor RAM collection
- into vmcore
-Message-ID: <20251002214236.GC925245@liuwe-devbox-debian-v2.local>
-References: <20250923214609.4101554-1-mrathor@linux.microsoft.com>
- <20250923214609.4101554-6-mrathor@linux.microsoft.com>
+	s=arc-20240116; t=1759441467; c=relaxed/simple;
+	bh=vdCdPdFwsJMMeXs4fFvCyFSm56dK+WwqeX0uDW72egY=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=pogLz8F+xZiiQgPjBn11P0zIaczc+ym7muokVriks5HFEKNhMdVSdrT0rL6zkEm1dVimB2RU6iXE/i9uD1KZamYwu4w8Cen+Cllq8Xdk549YZyeo1whVjj0CY2Hv22sRugrlWjVT5bPS60k3SoGT3vxEvtlRGOMxdT+CNlbnUBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=qCGBi/4N; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1ACBCF06;
+	Thu,  2 Oct 2025 23:42:52 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1759441372;
+	bh=vdCdPdFwsJMMeXs4fFvCyFSm56dK+WwqeX0uDW72egY=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=qCGBi/4NLGhL50yZ8HswAtm5fhy64XVceEcH4gsVFTSHUKvmADZfZ3Dve0fwSCUhq
+	 hoWMRD0zCeOlw+Fhl9lg6CoeM0QW/cMGYDCIXJtsNrCxb0srjXwz+9lU0H1Oxn8CZa
+	 EOHKzcHZJdLieWgc/DjpTLGf0/usnithmHeTiuL0=
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250923214609.4101554-6-mrathor@linux.microsoft.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250922182003.3712101-2-stefan.klug@ideasonboard.com>
+References: <20250922182003.3712101-2-stefan.klug@ideasonboard.com>
+Subject: Re: [PATCH v3] media: rkisp1: Improve frame sequence correctness on stats and params buffers
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: Stefan Klug <stefan.klug@ideasonboard.com>, linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Dafna Hirschfeld <dafna@fastmail.com>, Heiko Stuebner <heiko@sntech.de>, Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Stefan Klug <stefan.klug@ideasonboard.com>, linux-media@vger.kernel.org
+Date: Thu, 02 Oct 2025 22:44:19 +0100
+Message-ID: <175944145933.3917877.5417697383444150190@ping.linuxembedded.co.uk>
+User-Agent: alot/0.9.1
 
-On Tue, Sep 23, 2025 at 02:46:08PM -0700, Mukesh Rathor wrote:
-[...]
-> +
-> +/*
-> + * This is the C entry point from the asm glue code after the devirt hypercall.
+Quoting Stefan Klug (2025-09-22 19:19:57)
+> On the rkisp1 (in my case on a NXP i.MX8 M Plus) the ISP interrupt
+> handler is sometimes called with RKISP1_CIF_ISP_V_START (start of frame)
+> and RKISP1_CIF_ISP_FRAME (end of frame) being set at the same time. In
+> commit 8524fa22fd2f ("media: staging: rkisp1: isp: add a warning and
+> debugfs var for irq delay") a warning was added for that. There are two
+> cases where this condition can occur:
+>=20
+> 1. The v-sync and the frame-end belong to the same frame. This means,
+>    the irq was heavily delayed and the warning is likely appropriate.
+>=20
+> 2. The v-sync belongs to the next frame. This can happen if the vertical
+>    blanking between two frames is very short.
+>=20
+> The current code always handles case 1 although case 2 is in my
+> experience the more common case and happens in regular usage. This leads
+> to incorrect sequence numbers on stats and params buffers which in turn
+> breaks the regulation in user space. Fix that by adding a frame_active
+> flag to distinguish between these cases and handle the start of frame
+> either at the beginning or at the end of the rkisp1_isp_isr().
+>=20
+> Signed-off-by: Stefan Klug <stefan.klug@ideasonboard.com>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-devirt -> devirtualization
+Ooops I replied to a previous version. Isn't email review fun.
 
-> + * We enter here in IA32-e long mode, ie, full 64bit mode running on kernel
-> + * page tables with our below 4G page identity mapped, but using a temporary
-> + * GDT. ds/fs/gs/es are null. ss is not usable. bp is null. stack is not
-> + * available. We restore kernel GDT, and rest of the context, and continue
-> + * to kexec.
-> + */
-[...]
-> +
-> +static noinline __noclone void crash_nmi_callback(struct pt_regs *regs)
-> +{
-> +	struct hv_input_disable_hyp_ex *input;
-> +	u64 status;
-> +	int msecs = 1000, ccpu = smp_processor_id();
-> +
-> +	if (ccpu == 0) {
-> +		/* crash_save_cpu() will be done in the kexec path */
-> +		cpu_emergency_stop_pt();	/* disable performance trace */
-> +		atomic_inc(&crash_cpus_wait);
-> +	} else {
-> +		crash_save_cpu(regs, ccpu);
-> +		cpu_emergency_stop_pt();	/* disable performance trace */
-> +		atomic_inc(&crash_cpus_wait);
-> +		for (;;)
-> +			cpu_relax();
-> +	}
-> +
-> +	while (atomic_read(&crash_cpus_wait) < num_online_cpus() && msecs--)
-> +		mdelay(1);
-> +
-> +	stop_nmi();
-> +	if (!hv_has_crashed)
-> +		hv_notify_prepare_hyp();
-> +
-> +	if (crashing_cpu == -1)
-> +		crashing_cpu = ccpu;		/* crash cmd uses this */
-> +
-> +	hv_hvcrash_ctxt_save();
-> +	hv_mark_tss_not_busy();
-> +	hv_crash_fixup_kernpt();
-> +
-> +	input = *this_cpu_ptr(hyperv_pcpu_input_arg);
-> +	memset(input, 0, sizeof(*input));
-> +	input->rip = trampoline_pa;
-> +	input->arg = devirt_arg;
-> +
-> +	status = hv_do_hypercall(HVCALL_DISABLE_HYP_EX, input, NULL);
-> +
+Reviewed-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
 
-If I understand this correctly, after this call, upon return from the
-hypervisor, Linux will start executing the trampoline code.
-
-> +	hv_panic_timeout_reboot();
-
-Why is this needed? Is it to catch the case when the hypercall fails?
-
-
-[...]
-> +static void __noclone hv_crash_stop_other_cpus(void)
-> +{
-> +	static bool crash_stop_done;
-> +	struct pt_regs lregs;
-> +	int ccpu = smp_processor_id();
+>=20
+> ---
+>=20
+> Hi all,
+>=20
+> Here is an updated version of the patch with a fix for a typo that was
+> spotted in the last review.
+>=20
+> Changes in v3:
+> - Fixed typo in comment
+> - Collected r-by tag
+>=20
+> Changes in v2:
+> - Removed test for !frame_active in second v_start handler
+> - Improved comments
+>=20
+> Best regards,
+> Stefan
+>=20
+> ---
+>  .../platform/rockchip/rkisp1/rkisp1-common.h  |  1 +
+>  .../platform/rockchip/rkisp1/rkisp1-isp.c     | 27 +++++++++++++++----
+>  2 files changed, 23 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-common.h b/dri=
+vers/media/platform/rockchip/rkisp1/rkisp1-common.h
+> index ca952fd0829b..adf23416de9a 100644
+> --- a/drivers/media/platform/rockchip/rkisp1/rkisp1-common.h
+> +++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-common.h
+> @@ -222,6 +222,7 @@ struct rkisp1_isp {
+>         struct media_pad pads[RKISP1_ISP_PAD_MAX];
+>         const struct rkisp1_mbus_info *sink_fmt;
+>         __u32 frame_sequence;
+> +       bool frame_active;
+>  };
+> =20
+>  /*
+> diff --git a/drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c b/driver=
+s/media/platform/rockchip/rkisp1/rkisp1-isp.c
+> index 8c29a1c9309a..660c1fd7efcc 100644
+> --- a/drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c
+> +++ b/drivers/media/platform/rockchip/rkisp1/rkisp1-isp.c
+> @@ -965,6 +965,7 @@ static int rkisp1_isp_s_stream(struct v4l2_subdev *sd=
+, int enable)
+>         }
+> =20
+>         isp->frame_sequence =3D -1;
+> +       isp->frame_active =3D false;
+> =20
+>         sd_state =3D v4l2_subdev_lock_and_get_active_state(sd);
+> =20
+> @@ -1086,12 +1087,15 @@ void rkisp1_isp_unregister(struct rkisp1_device *=
+rkisp1)
+>   * Interrupt handlers
+>   */
+> =20
+> -static void rkisp1_isp_queue_event_sof(struct rkisp1_isp *isp)
+> +static void rkisp1_isp_sof(struct rkisp1_isp *isp)
+>  {
+>         struct v4l2_event event =3D {
+>                 .type =3D V4L2_EVENT_FRAME_SYNC,
+>         };
+> =20
+> +       isp->frame_sequence++;
+> +       isp->frame_active =3D true;
 > +
-> +	if (hv_has_crashed)
-> +		return;		/* all cpus already in NMI handler path */
+>         event.u.frame_sync.frame_sequence =3D isp->frame_sequence;
+>         v4l2_event_queue(isp->sd.devnode, &event);
+>  }
+> @@ -1111,15 +1115,20 @@ irqreturn_t rkisp1_isp_isr(int irq, void *ctx)
+> =20
+>         rkisp1_write(rkisp1, RKISP1_CIF_ISP_ICR, status);
+> =20
+> -       /* Vertical sync signal, starting generating new frame */
+> -       if (status & RKISP1_CIF_ISP_V_START) {
+> -               rkisp1->isp.frame_sequence++;
+> -               rkisp1_isp_queue_event_sof(&rkisp1->isp);
+> +       /*
+> +        * Vertical sync signal, starting new frame. Defer handling of vs=
+ync
+> +        * after RKISP1_CIF_ISP_FRAME if the previous frame was not compl=
+eted
+> +        * yet.
+> +        */
+> +       if (status & RKISP1_CIF_ISP_V_START && !rkisp1->isp.frame_active)=
+ {
+> +               status &=3D ~RKISP1_CIF_ISP_V_START;
+> +               rkisp1_isp_sof(&rkisp1->isp);
+>                 if (status & RKISP1_CIF_ISP_FRAME) {
+>                         WARN_ONCE(1, "irq delay is too long, buffers migh=
+t not be in sync\n");
+>                         rkisp1->debug.irq_delay++;
+>                 }
+>         }
 > +
-> +	if (!kexec_crash_loaded()) {
-> +		hv_notify_prepare_hyp();
-> +		hv_panic_timeout_reboot();	/* no return */
-> +	}
+>         if (status & RKISP1_CIF_ISP_PIC_SIZE_ERROR) {
+>                 /* Clear pic_size_error */
+>                 isp_err =3D rkisp1_read(rkisp1, RKISP1_CIF_ISP_ERR);
+> @@ -1138,6 +1147,7 @@ irqreturn_t rkisp1_isp_isr(int irq, void *ctx)
+>         if (status & RKISP1_CIF_ISP_FRAME) {
+>                 u32 isp_ris;
+> =20
+> +               rkisp1->isp.frame_active =3D false;
+>                 rkisp1->debug.complete_frames++;
+> =20
+>                 /* New frame from the sensor received */
+> @@ -1152,5 +1162,12 @@ irqreturn_t rkisp1_isp_isr(int irq, void *ctx)
+>                 rkisp1_params_isr(rkisp1);
+>         }
+> =20
+> +       /*
+> +        * Deferred handling of vsync if RKISP1_CIF_ISP_V_START and
+> +        * RKISP1_CIF_ISP_FRAME occurred in the same irq.
+> +        */
+> +       if (status & RKISP1_CIF_ISP_V_START)
+> +               rkisp1_isp_sof(&rkisp1->isp);
 > +
-> +	/* If hyp crashes also, we could come here again before cpus_stopped is
-
-hypervisor or hv (given the same term is used in the function)
-
-> +	 * set in crash_smp_send_stop(). So use our own check.
-> +	 */
-> +	if (crash_stop_done)
-> +		return;
-> +	crash_stop_done = true;
-> +
-> +	/* Linux has crashed: hv is healthy, we can ipi safely */
-
-IPI.
-
-> +
-> +err_out:
-> +	unregister_nmi_handler(NMI_LOCAL, "hv_crash_nmi");
-> +	pr_err("Hyper-V: only linux (but not hyp) kdump support enabled\n");
-
-hypervisor not hyp. This is a message for the user so we should be as
-clear as possible.
-
-Wei
-
-> +}
-> -- 
-> 2.36.1.vfs.0.0
-> 
+>         return IRQ_HANDLED;
+>  }
+> --=20
+> 2.48.1
+>
 
