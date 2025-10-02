@@ -1,132 +1,196 @@
-Return-Path: <linux-kernel+bounces-840667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B9FFBB4EDC
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 20:46:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16054BB4EC7
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 20:45:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0302332227A
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 18:46:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F85219C71F0
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 18:45:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CED127EFFE;
-	Thu,  2 Oct 2025 18:46:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FFD727E048;
+	Thu,  2 Oct 2025 18:45:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e2PUofOZ"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AryvmF9l"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBD6012C544
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 18:45:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201FC27B34F;
+	Thu,  2 Oct 2025 18:45:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759430761; cv=none; b=J//OQPChKT7ZSmrCiDQPkjY15UhNBOAscRWCVYCAFoD5QHzq1zGekGgU0oRHvxXgOSGxH9XHSVsQ3UDg/28dXuNQJSc9CVOaMRYtSsoY52W/YPBl+YXs8q7KOOEck+TT62VoyFZwZHeNKR+r/q+xyFNi5Ilcf5/uqc+HDTmF26I=
+	t=1759430711; cv=none; b=HJXM4CWe58SD8/PyK4+NftGaOKEclrqMxWiWKa01SkRXBZTruOQTvqqipcGH0Gark3dXoh6CvGQYZS4WVf7M7H1Xk6BX+QD6pXXmW1/CLVVzWRxuH01jyWlm0hmQ50NRduXBI8Sarh8X3+buEZ4snxBdfV9zcoER6jCGYQjzIy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759430761; c=relaxed/simple;
-	bh=Ascy4a+Xeii0NZTr/g7kAFe/Ox0HSoQnoFLYu2nFJE4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ObMPemQ0PhhXpB0ifl8FUv7nX5ufqTxvc9Y2OqumO6OkUkpCJt9dATtHu/f8Wa20iW3rB4KoKm7mJnZ5U0q8JvA3UVnjyEh+ZvD5WMzFV+jD9TuAQFtlSVlRvD50nEBWFyAPHmxxnx+WBrsWc+DeTr7wRzo5nRVDFiEdZVrac5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e2PUofOZ; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-330b0bb4507so1390020a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 11:45:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759430758; x=1760035558; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/gi5q0a0nZyS/dfJX3MGDVRu/hHYpidRpZ3Oro0wuwY=;
-        b=e2PUofOZbWliyOxrhK/5zDwlNnhjjh2r/Qm/LFQjAbfjAOroVdm5n+hCsiHpxyrSFR
-         o6sTEzVFOddbNqRSN1UiAW3BFgDMlKLg1f6+xRn/JUcgajp9R9LZAEfA3svvYkW09m0E
-         +5UgKtEutBc74yHQi158b6jvQGL3aPjcsXXcKFcfxFEkwCi4+Li44Cn9VInAWTS7OLBX
-         Yv4TGSqpTUkNKHelTr9CkTcpiJMPc4zaTMYFYA9Dle5crbO2QZTRtG8A/xHdWRdbRWYm
-         lfQBbun2mPempeBm8TNUe9j3Zk2kWiNb97gVyceP4TfruPHzKulU8xGc5uvA4W/uwd+b
-         Bhsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759430758; x=1760035558;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/gi5q0a0nZyS/dfJX3MGDVRu/hHYpidRpZ3Oro0wuwY=;
-        b=RwpQAt9tO4jnq8K04n5Uy61N2gS0uhu2eW8EXYEy96L7emvk7uxbGZGJE/+nSkAXFZ
-         EmA6UyJZ1v6aQs07j+KK+gSPBsjo2CCf0c79fWPkLZdK+4jyXeMtsrT6CralZ4VM+6Y0
-         CgjsABWWocPi1ms7ZTAs3S6hwhfmlwL2HJuQi5umiVUb6IVpAImCnJv64SFWI4vnTCzN
-         aFLgzI9VKOL/AojD8HwA3g83NVoSvHAx4vmGRrRgbSL0tj7MJNgjthngcyj6/i1vn7K+
-         F7i9C2O+leAXOYiBIsXf77ZJ//9/wXXR3BsXJxdxJ6s0MegSpOYNUVzxlSq5YVqhNtk8
-         ArlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV7FjvW2oOTzo02LJ8IMhEHoV3v8v2Qes8Gg6gU3GhFW9hG7DX32GjyiHulhgeeHWKEs2l3ndirVAeyfBU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFYXKlxRJwwiGXE8W84/4DbJ3wwoQBjG4Q/zUu3k/Gts9MFS94
-	UuE3Yg6TXacqFnXPG1J5NI+rQ+7z8CyGI1HMCQZaj2ZsgjRSPHZv9ML7
-X-Gm-Gg: ASbGncsfEGtxK8kCv9Y9bo62r7xNY7e+YbVyFWBmOyw8W5X4EMf3A/2suwQic/284VN
-	oy/mIO8ikEijx4VCxrjb96zG+WsIPDX4xQgVO5L+Jxv+IWMPpw0ubNmVDK0kRztPFz1/OuLV0cr
-	qObh+eQywYRsk1BcvqCHoE9AYNtGfxjx1lab2LXRQPT6rEcmBK2ZKNuKJBdAx/2/aVRrosi903t
-	gezz+gvxKFlGjwjQsyMjE4wQemEHVOWvN342rCajp1Oblg+oDIFfIf64fsoI8m5SWn+Mh52SEB/
-	vM3zWRea/use80zoB6mZaSN4UgstQ1KiJ+Hq5p8mjB5v32MdtiIzsc3cfBkI+4Ae4nOpgCihFNd
-	JHf2wmtGbss8UgvvlolcN2oY/Zkmc/8S5ZKKgHJb+B6EqaM0BVYXWHpzo
-X-Google-Smtp-Source: AGHT+IFD/xR7zKZYq6ViRMZbh2WKNDPDZW4cTflRTL1qJCjXE32+dlrH1auWCgKPbeZC9OKbs2Dm1A==
-X-Received: by 2002:a17:90b:17c5:b0:32e:528c:60ee with SMTP id 98e67ed59e1d1-339c27ba49bmr384189a91.24.1759430758146;
-        Thu, 02 Oct 2025 11:45:58 -0700 (PDT)
-Received: from archlinux ([179.110.144.170])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-339a701bf31sm5600336a91.19.2025.10.02.11.45.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 11:45:57 -0700 (PDT)
-From: =?UTF-8?q?Eric=20Gon=C3=A7alves?= <ghatto404@gmail.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>
-Cc: devicetree@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4] arm64: dts: qcom: sm8250-samsung-common: correct reserved pins
-Date: Thu,  2 Oct 2025 18:44:59 +0000
-Message-ID: <20251002184459.15742-1-ghatto404@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1759430711; c=relaxed/simple;
+	bh=N62s52yKQggU+cuuYi8aVyVjhGJr8EhIrUGAee4cmp4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H1ne+sNAb1V45yrxOyXODKsECvx0tewQvKuRiyhS9xxLRk6bFgNKFn8LJ7Zql1zPzdSeAKnc3Xagjcx7Qx0IYuOXRsXlro2AY/PpzrK59Din9ndrzOHcBNrysU3KOHk6jVmvfb0FAVdEdUUvg3kUx+qazb5zAOgbNuKlfdKC0T0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AryvmF9l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C967C4CEF5;
+	Thu,  2 Oct 2025 18:45:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759430710;
+	bh=N62s52yKQggU+cuuYi8aVyVjhGJr8EhIrUGAee4cmp4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AryvmF9lGQP/L+G0e3unybzYiHSOJ2fUdvWii7/gnjZZXyW9KmBkOwf6z3kLP8PtE
+	 I2HVWNM+Kw14l27wm9X4KPLngg4CAgqpqBsgeM4TVTQEmh5yN8ubeRmksFFX1yoP7H
+	 XBm18QXTcbJ+74i4xFXWHes+VF+dTBM2zHXnkuNrir1HGrb96hpXjHf6VjQiCUMNq3
+	 LIQUVuD4H0VMFttdqTT5XlgJdF0vspApLb+QS2yJSHFjYNfBs6vlFdFCCqILUoL+kR
+	 4KmK38nF7OqyBGyFVUtorlZ53IylXHsQgZOfM+MEz3I/oV4kkWwbDli/afDLpfmLuL
+	 yrf8mKYxja+2A==
+Date: Thu, 2 Oct 2025 15:45:06 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Charlie Jenkins <charlie@rivosinc.com>,
+	Eric Biggers <ebiggers@kernel.org>,
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+	James Clark <james.clark@linaro.org>,
+	Collin Funk <collin.funk1@gmail.com>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	Li Huafei <lihuafei1@huawei.com>,
+	Athira Rajeev <atrajeev@linux.ibm.com>,
+	Stephen Brennan <stephen.s.brennan@oracle.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Haibo Xu <haibo1.xu@intel.com>, Andi Kleen <ak@linux.intel.com>,
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	bpf@vger.kernel.org, llvm@lists.linux.dev,
+	Song Liu <song@kernel.org>
+Subject: Re: [PATCH v6 00/15] Support dynamic opening of capstone/llvm
+Message-ID: <aN7IMkpl0yQy8a13@x1>
+References: <20250929190805.201446-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250929190805.201446-1-irogers@google.com>
 
-The S20 series has additional reserved pins for the fingerprint sensor,
-GPIO 20-23. Correct it by adding them into gpio-reserved-ranges.
+On Mon, Sep 29, 2025 at 12:07:50PM -0700, Ian Rogers wrote:
+> Linking against libcapstone and libLLVM can be a significant increase
+> in dependencies and file size if building statically. For something
+> like `perf record` the disassembler and addr2line functionality won't
+> be used. Support dynamically loading these libraries using dlopen and
+> then calling the appropriate functions found using dlsym.
 
-Fixes: 6657fe9e9f23 ("arm64: dts: qcom: add initial support for Samsung Galaxy S20 FE")
-Signed-off-by: Eric Gonçalves <ghatto404@gmail.com>
----
-Changes in v4:
-- Removed accidental , instead of ; in the last line
+Got the first 5 patches of this series cherry-picked, will test it all
+and then consider from 6 onwards.
 
-Changes in v3:
-- Actually fixed <40 4> indentation
-Sorry, I still had my editor on 4 spaces a tab
-
-Changes in v2:
-- "Fixed" the formatting of the <40 4> line
-- Added Fixes tag
----
- arch/arm64/boot/dts/qcom/sm8250-samsung-common.dtsi | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/qcom/sm8250-samsung-common.dtsi b/arch/arm64/boot/dts/qcom/sm8250-samsung-common.dtsi
-index 96662bf9e527..7696b147e7da 100644
---- a/arch/arm64/boot/dts/qcom/sm8250-samsung-common.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8250-samsung-common.dtsi
-@@ -159,7 +159,8 @@ &pon_resin {
- };
+- Arnaldo
  
- &tlmm {
--	gpio-reserved-ranges = <40 4>; /* I2C (Unused) */
-+	gpio-reserved-ranges = <20 4>, /* SPI (fingerprint scanner) */
-+			       <40 4>; /* Unused */
- };
- 
- &usb_1 {
--- 
-2.51.0
-
+> The patch series:
+> 1) moves the capstone, LLVM and libbfd code to their own C files,
+> 2) simplifies a little the capstone code;
+> 3) adds perf_ variants of the functions that will either directly call
+>    the function or use dlsym to discover it;
+> 4) adds BPF JIT disassembly support to in memory disassemblers (LLVM
+>    and capstone) by just directing them at the BPF info linear JIT
+>    instructions (note this doesn't support source lines);
+> 5) adds fallback to srcline's addr2line so that llvm_addr2line is
+>    tried first, then the deprecated libbfd and then the forked command
+>    tried next, moving the code for forking out of the main srcline.c
+>    file in the process.
+> 
+> The addr2line LLVM functionality is written in C++. To avoid linking
+> against libLLVM for this, a new LIBLLVM_DYNAMIC option is added where
+> the C++ code with the libLLVM dependency will be built into a
+> libperf-llvm.so and that dlsym-ed and called against. Ideally LLVM
+> would extend their C API to avoid this.
+> 
+> v6: Refactor the libbfd along with capstone and LLVM, previous patch
+>     series had tried to avoid this by just removing the deprecated
+>     BUILD_NONDISTRO code. Remove the libtracefs removal into its own
+>     patch.
+> v5: Rebase and comment typo fix.
+> v4: Rebase and addition of a patch removing an unused struct variable.
+> v3: Add srcline addr2line fallback trying LLVM first then forking a
+>     process. This came up in conversation with Steinar Gunderson
+>     <sesse@google.com>.
+>     Tweak the cover letter message to try to address Andi Kleen's
+>     <ak@linux.intel.com> feedback that the series doesn't really
+>     achieve anything.
+> v2: Add mangling of the function names in libperf-llvm.so to avoid
+>     potential infinite recursion. Add BPF JIT disassembly support to
+>     LLVM and capstone. Add/rebase the BUILD_NONDISTRO cleanup onto the
+>     series from:
+>     https://lore.kernel.org/lkml/20250111202851.1075338-1-irogers@google.com/
+>     Some other minor additional clean up.
+> 
+> Ian Rogers (15):
+>   perf map: Constify objdump offset/address conversion APIs
+>   perf capstone: Move capstone functionality into its own file
+>   perf llvm: Move llvm functionality into its own file
+>   perf libbfd: Move libbfd functionality to its own file
+>   perf capstone: Remove open_capstone_handle
+>   perf capstone: Support for dlopen-ing libcapstone.so
+>   perf llvm: Support for dlopen-ing libLLVM.so
+>   perf llvm: Mangle libperf-llvm.so function names
+>   perf dso: Move read_symbol from llvm/capstone to dso
+>   perf dso: Support BPF programs in dso__read_symbol
+>   perf llvm: Disassemble cleanup
+>   perf dso: Clean up read_symbol error handling
+>   perf disasm: Make ins__scnprintf and ins__is_nop static
+>   perf srcline: Fallback between addr2line implementations
+>   perf disasm: Remove unused evsel from annotate_args
+> 
+>  tools/perf/Makefile.config         |  14 +
+>  tools/perf/Makefile.perf           |  24 +-
+>  tools/perf/builtin-script.c        |   2 -
+>  tools/perf/tests/make              |   2 +
+>  tools/perf/util/Build              |   7 +-
+>  tools/perf/util/addr2line.c        | 439 ++++++++++++++++
+>  tools/perf/util/addr2line.h        |  20 +
+>  tools/perf/util/annotate.c         |   1 -
+>  tools/perf/util/capstone.c         | 682 +++++++++++++++++++++++++
+>  tools/perf/util/capstone.h         |  24 +
+>  tools/perf/util/config.c           |   2 +-
+>  tools/perf/util/disasm.c           | 645 ++----------------------
+>  tools/perf/util/disasm.h           |   6 +-
+>  tools/perf/util/disasm_bpf.c       | 195 --------
+>  tools/perf/util/disasm_bpf.h       |  12 -
+>  tools/perf/util/dso.c              | 112 +++++
+>  tools/perf/util/dso.h              |   4 +
+>  tools/perf/util/libbfd.c           | 600 ++++++++++++++++++++++
+>  tools/perf/util/libbfd.h           |  83 ++++
+>  tools/perf/util/llvm-c-helpers.cpp | 120 ++++-
+>  tools/perf/util/llvm-c-helpers.h   |  24 +-
+>  tools/perf/util/llvm.c             | 484 ++++++++++++++++++
+>  tools/perf/util/llvm.h             |  21 +
+>  tools/perf/util/map.c              |  19 +-
+>  tools/perf/util/map.h              |   6 +-
+>  tools/perf/util/print_insn.c       | 117 +----
+>  tools/perf/util/srcline.c          | 772 ++---------------------------
+>  tools/perf/util/srcline.h          |   9 +-
+>  tools/perf/util/symbol-elf.c       | 100 +---
+>  tools/perf/util/symbol.c           | 131 -----
+>  30 files changed, 2745 insertions(+), 1932 deletions(-)
+>  create mode 100644 tools/perf/util/addr2line.c
+>  create mode 100644 tools/perf/util/addr2line.h
+>  create mode 100644 tools/perf/util/capstone.c
+>  create mode 100644 tools/perf/util/capstone.h
+>  delete mode 100644 tools/perf/util/disasm_bpf.c
+>  delete mode 100644 tools/perf/util/disasm_bpf.h
+>  create mode 100644 tools/perf/util/libbfd.c
+>  create mode 100644 tools/perf/util/libbfd.h
+>  create mode 100644 tools/perf/util/llvm.c
+>  create mode 100644 tools/perf/util/llvm.h
+> 
+> -- 
+> 2.51.0.570.gb178f27e6d-goog
+> 
 
