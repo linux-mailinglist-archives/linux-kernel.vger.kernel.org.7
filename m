@@ -1,230 +1,121 @@
-Return-Path: <linux-kernel+bounces-840744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36AE5BB5219
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 22:32:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97A53BB539C
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 22:52:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B342484BA6
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 20:32:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D211D188F45D
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 20:52:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE042253F2B;
-	Thu,  2 Oct 2025 20:32:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91B712737E0;
+	Thu,  2 Oct 2025 20:50:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="IP0NImhb"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="C69Ah66b"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC7AE1E5711
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 20:32:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759437136; cv=pass; b=S5P15iI7O8447Ahao8k4CXYMoMqa1UslPY8eNzMx17GD0f5I0UPUdXgpHFAGbLHiltH1yWtSzqFsz5hbea8KJSlDML8LZzh06M0WBeGmc51HRJAS6gclU4xiFAtrR+6ed/14/M7XguhTSeGkxlboAShorCS+f31cQU17JyZt58Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759437136; c=relaxed/simple;
-	bh=NjFt9POZmKZtxILhFsv4Paq5wzzFbW3PoGLAUZXSFFE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nC81AMMNen3vNwLulmP3wOc9Jsb0gj4iUQyaOXpvpU+FuM5Niv+0vd79L7JaxSeen/lNaEOj6G0bl+T/LnsWiA3lWmmJKO6WIXZXfz5s3WEErEkjyndcWQNJiEvFj/DzLbvYUYzwcJhcNyEmFrQgDJHjj6f7K8hsVcM9H19Qegs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=IP0NImhb; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1759437123; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=hf0yNY6pev48pP3lvEFXwIcZXa7vqHM/nGQwRaZcgqryOJXtFGWejbHSrbRQ0E5GZ5rinHU96gEJOHmoORuVhmKfUf4zV1LCQoUrzJH4NPBeoVm0ngkarybKLRLvpukUPeJk8nfaOuPpRRGKr5eKgdoJCkuNHqhQkQMNcoTHgGA=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1759437123; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=xXXabHF2wi/vPQGoTBb6Z4j9GeDgIGTwwWUPHpDInQs=; 
-	b=RuiRRCXaEQ4+IuR/eyZVuS3Ufx2SWWm8tg+9hs9J0awRasjF+rpeH4YLqmd7ijgvuKFbc4/bl3KrvoyzeZEMxFBM4XqkkI9jpRH9u9t3+2GtKr9p7+1SJdlVjfayhTAXUAk1Nng8wCQuisyX9y40CveKASpWNIxIVSYFSyHblDk=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1759437123;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-	bh=xXXabHF2wi/vPQGoTBb6Z4j9GeDgIGTwwWUPHpDInQs=;
-	b=IP0NImhbmsb7jd5lr+1RBhaP/8ZJZJIwbhFDyoNGu7hEYQ6wB46GRBYglaAG6KFW
-	5yhl1yolEyk2atTRZ0SRfUHR5NL1pRDPwAmIs8mS3+oysynKKkdCRQM0S9T4dAPPKwr
-	JhLvBRjNrOP1rehsKmJnUSmkHKDhG7N2McM8VfMs=
-Received: by mx.zohomail.com with SMTPS id 1759437121782218.431267913679;
-	Thu, 2 Oct 2025 13:32:01 -0700 (PDT)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-To: Yury Norov <yury.norov@gmail.com>,
- Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, NVIDIA <YuryNorovyury.norov@gmail.com>,
- Alice Ryhl <aliceryhl@google.com>, Burak Emir <bqe@google.com>,
- Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
- Jakub Kicinski <kuba@kernel.org>, Heiko Stuebner <heiko@sntech.de>
-Subject: Re: [GIT PULL] bitmap for 6.18
-Date: Thu, 02 Oct 2025 22:31:57 +0200
-Message-ID: <8170477.EvYhyI6sBW@workhorse>
-In-Reply-To:
- <CAHk-=whoOUsqPKb7OQwhQf9H_3=5sXGPJrDbfQfwLB3Bi13tcQ@mail.gmail.com>
-References:
- <aNrm_14uJmGE7MYC@yury>
- <CAHk-=whoOUsqPKb7OQwhQf9H_3=5sXGPJrDbfQfwLB3Bi13tcQ@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 683FE1C4A10;
+	Thu,  2 Oct 2025 20:50:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759438236; cv=none; b=ITxyFni55KTlgngHdwXXLhd5wTInMV/p70VeHlWPhcFqd+IdmQiSk7WlomW4lLxFAAW1YobwJ8faL0o1ckbk2AldosRt8/EuoPczaH3jHD62t2mrRxoVixBbrTrtHBRO2VWHD+OxxswLbF2oqFDN1g23yIaq8vhi4GgGHKFMJRs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759438236; c=relaxed/simple;
+	bh=UTpRTPC7u6vNzbnK8EDdA8HMy/2iR/0ZlTpwgM8uRGM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=emOKOdhfCyPwwti3QAox9u0qg3q6ZK57QE8f6dXZzFXlTj3+a6DM7Z549eWfKcn6Vx2iNiWqmrWSYaojUpGDrm/2967zj2tv0u2DI3zgOx+UPlLk14AApi8uG6jgO2zPjOeScLoKQ/HuHIRXti6Kj/zG5+FsxqJ3vInLjMwocNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=C69Ah66b; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=EXs6IZ4idy9yeg4n6KxHIZ/ibHP7AdPo7DYQz33da8g=; b=C69Ah66b9sLO6yz0
+	8KLv6iEanfRNtaIYZzZLAZzLbmpPYjXZhWNRoZv3Xb43w6X60+D0SHCUm1MjJjiHoEJh2F6CheAvk
+	3HQDZ17dKoLKqxWN2sTDEc5a2UzLESuxy5AnFmDmX95noFpZxSonhY8zYpofp4fpn9lSTb7uxQkzP
+	q8lqCL18VOvQv5Cv0XtPwwbewKKu0NWUQPb67VuKNwCu9HEe5dktLlqQ9eONu2sneZcmk1ueykqF6
+	kqHeFWXt2+dnvcck/0wccCQWTjXMHJFhsJKZxfHUSerrWJui8SpUHxMiqFOtG610Duuz9q23Fzoit
+	VR82hsYZnE51ny5GhA==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1v4PyJ-00Ebda-1f;
+	Thu, 02 Oct 2025 20:32:15 +0000
+Date: Thu, 2 Oct 2025 20:32:15 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: Lee Jones <lee@kernel.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mark Brown <broonie@kernel.org>, arnd@arndb.de, mchehab@kernel.org,
+	lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
+	linux-media@vger.kernel.org, linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/4] Remove the wl1273 FM Radio
+Message-ID: <aN7hT_59V6KcOxTe@gallifrey>
+References: <20250625133258.78133-1-linux@treblig.org>
+ <20250808154903.GB23187@pendragon.ideasonboard.com>
+ <20250902103249.GG2163762@google.com>
+ <20250902113527.GB1694@pendragon.ideasonboard.com>
+ <88042d72-b428-442e-ba3c-b15e587e12a7@sirena.org.uk>
+ <20250902121015.GI13448@pendragon.ideasonboard.com>
+ <aLcuHnj_h3Xf7DiK@gallifrey>
+ <20250903072301.GZ2163762@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250903072301.GZ2163762@google.com>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-34-amd64 (x86_64)
+X-Uptime: 20:29:51 up 158 days,  4:43,  1 user,  load average: 0.05, 0.01,
+ 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-On Thursday, 2 October 2025 18:46:01 Central European Summer Time Linus Torvalds wrote:
-> On Mon, 29 Sept 2025 at 13:07, Yury Norov <yury.norov@gmail.com> wrote:
-> >
-> >  - almost complete consolidation for HIWORD_UPDATE()-like macros from Nicolas;
+* Lee Jones (lee@kernel.org) wrote:
+> On Tue, 02 Sep 2025, Dr. David Alan Gilbert wrote:
 > 
-> Argh. I don't love this, but I've pulled it.
+> > * Laurent Pinchart (laurent.pinchart@ideasonboard.com) wrote:
+> > > On Tue, Sep 02, 2025 at 12:47:39PM +0100, Mark Brown wrote:
+> > > > On Tue, Sep 02, 2025 at 01:35:27PM +0200, Laurent Pinchart wrote:
+> > > > 
+> > > > > Patch 1/4 has been queued in the media tree and should be in linux-next
+> > > > > as commit 103b0cfc9ab6. It is based straight on v6.17-rc1. Patch 2/4 is
+> > > > > also in linux-next, but is based on other ALSA patches. The simplest
+> > > > > course of action would be for you to merge 3/4 for v6.18, and 4/4 for
+> > > > > v6.19.
+> > > > 
+> > > > Or given that it's a driver removal we could just get a rebase of the
+> > > > series against the meda tree applied?  The conflicts with ASoC should be
+> > > > trivial to resolve.
+> > > 
+> > > I don't mind either way. I know Linus doesn't like having the same patch
+> > > merged with different commit IDs, but I don't know how strict the rule
+> > > is, especially when git should be able to resolve the conflict
+> > > transparently.
+> > 
+> > I still think the easiest thing is to leave 1/4 and 2/4 as you currently
+> > have them; and let Lee take 3/4 and 4/4 next time around.
 > 
-> That new interface is a bit odd, and I had to wrap my head around it a
-> bit, but it actually looks fine when it's a single bit or it already
-> has a mask defined for it, and the end result is something like
-> 
->         FIELD_PREP_WM16(BIT(1), val)
-> 
-> Yes, this is often longer than what it replaces, but quite readable,
-> and I think it's a good thing.
-> 
-> But then we have GENMASK.
-> 
-> The macro from hell, that was a mistake from day 0, but then took over
-> despite always being illogical.
-> 
-> It was so illogical that it had to have lots of error checking,
-> because it always had the wrong interface and as a result lots of
-> people got it wrong.
-> 
-> So now it has compile-time checking of the bits to make sure people
-> get notified when they invariably get things wrong.
-> 
-> The only saving grace of that thing is that checking. I feel that
-> often the *only* reason to use GENMASK() over any other alternative is
-> literally that it checks the arguments so much because the interface
-> is so horrific.
-> 
-> It does "high, low", which is often very unintuitive, and in fact the
-> very commit that introduced this thing from hell had to convert the
-> sane "low,high" cases to the other way around.
-> 
-> See commit 10ef6b0dffe4 ("bitops: Introduce a more generic BITMASK
-> macro"), and notice how ALMOST ALL use cases were switched around to
-> the illogical "high,low" format by that introductory phase.
-> 
-> And yes, I understand why that person did it: many datasheets show
-> bits in a register graphically, and then you see that "high .. low"
-> thing in a rectangle that describes the register, and that ordering
-> them makes 100% sense IN THAT CONTEXT.
+> It's more disjointed than I like.  But it's okay.  Remind me later.
 
-Hi, that person here.
+Hi Lee,
+  1 and 2 of this series just got merged into Linus' tree.
+Thanks all!
+3 and 4 can go in at your convenience.
 
-My datasheets indeed show registers in the probably verilog-derived
-high:low notation. An example of what that looks like is publicly
-available[1]. The PWM hardware there is the same as the one I'm
-working on for the RK3576, where I was motivated to finally address
-the HIWORD_UPDATE copypaste throughout drivers. During this work I
-discovered, and was told by others, that this is in fact more than
-just a Rockchip-specific convention.
+Dave
 
-The HIWORD_UPDATE macros specifically had the issue that they liked
-to deviate from each other, e.g. in argument order. This made jumping
-between drivers awkward, because the same symbol could mean two different
-things.
-
-FWIW, I am also not a fan of GENMASK's high-to-low order. I do
-however prefer it over bare hex values, but that's likely because I
-can't really do hex math in my head. I don't know what 0x7ff << 1
-is by heart, and I wouldn't know what bit would end up being the
-first set bit there.
-
-Since this new macro is decoupled from GENMASK however, I think
-people other than me will find it to be useful. Macros that make you
-think about whether your mask can be statically checked at compile
-time will probably result in fewer people shifting a sign bit into an
-awkward place without knowing. It already stopped me from doing
-precisely that.
-
+> -- 
+> Lee Jones [李琼斯]
 > 
-> But it damn well does not make sense in most other contexts.
-> 
-> In fact, even in the context of generating mask #defines, it actually
-> reads oddly, because you end up having things like
-> 
->   /* Status register (SR) */
->   #define I2C_SR_OP               GENMASK(1, 0)   /* Operation */
->   #define I2C_SR_STATUS           GENMASK(3, 2)   /* controller status */
->   #define I2C_SR_CAUSE            GENMASK(6, 4)   /* Abort cause */
->   #define I2C_SR_TYPE             GENMASK(8, 7)   /* Receive type */
->   #define I2C_SR_LENGTH           GENMASK(19, 9)  /* Transfer length */
-> 
-> (Yes, that's a real example from the kernel), and notice how *oddly*
-> the numbers flow in that series: instead of being a logical
-> progression of 0 .. 1 .. 2 .. 3 etc, you have 1 .. 0 .. 3 .. 2 .. 6 ..
-> 4 etc)
-> 
-> I really have an almost irrational hatred of GENMASK (note "almost". I
-> think it's rational). I hate it so much that this almost made me not
-> pull the end result just because a few conversions were just
-> horrendous.
-> 
-> The very first conversion in that series does this:
-> 
-> -               mci_writel(host, TIMING_CON1, HIWORD_UPDATE(raw_value,
-> 0x07ff, 1));
-> +               mci_writel(host, TIMING_CON1,
-> +                          FIELD_PREP_WM16(GENMASK(11, 1), raw_value));
-> 
-> and no, that new version is *NOT* more readable than the old code. I
-> had to really read it several times just to understand what was going
-> on, admittedly because the old HIWORD_UPDATE() macro was also odd.
-> 
-> But at least that old HIWORD_UPDATE() was odd in a "natural" way.
-> 
-> And it's all because GENMASK() is a horrible horrible interface, and
-> should only be used for generating other #defines for actual masks
-> when you read the datasheet.
-> 
-> Anyway. I just wanted to state how much I hate GENMASK(). It's almost
-> fine for when it is appropriate, but this is an example of where it's
-> very much not appropriate.
-> 
-> I wish we had a saner form for generating bitmasks with a better
-> interface. The "high,low" thing is horrendous when what you want is "I
-> want X bits starting at X":
-> 
-> Maybe we could introduce a new macro to go with BIT(x), and call it
-> "BITS(low,high)". Yes, we'd have to replace a few existing driver uses
-> of BITS(), but not very many.
-> 
-> Am I the only person who would find "BITS(1,11)" to be much easier to
-> understand than "GENMASK(11,1)"?
-
-I'm with you on that, but others may disagree. This is may be an
-artefact of Latin writing going left to right while our Arabic
-numerals go right to left, I think. Different people will have
-different cutoffs for where numerals conceptually start for them
-and where text ends.
-
-But then again I also think the writel(var, addr) order is unexpected,
-and `ln -s target link_name` is off, and if find(1) tells me paths must
-precede expression one more time I'm gonna lose it. So maybe taste in
-matters like this isn't tied to numerals at all.
-
-> 
-> Random "Linus rants" email over.
-> 
->              Linus
-> 
-
-Kind regards,
-Nicolas Frattaroli
-
-Link: https://opensource.rock-chips.com/images/3/36/Rockchip_RK3506_TRM_Part_1_V1.2-20250811.pdf [1]
-
-
-
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
