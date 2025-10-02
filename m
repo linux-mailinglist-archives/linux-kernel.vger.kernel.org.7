@@ -1,161 +1,120 @@
-Return-Path: <linux-kernel+bounces-840669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B84BBB4EEE
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 20:49:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 936EABB4EFD
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 20:50:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A0BF3A8AAB
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 18:49:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7CA047AF7CC
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 18:48:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 486C9277CB3;
-	Thu,  2 Oct 2025 18:49:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFABE279DA1;
+	Thu,  2 Oct 2025 18:50:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WlPSXAkL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TJ36Cb1L"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F14112C544;
-	Thu,  2 Oct 2025 18:49:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8760C12C544
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 18:50:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759430945; cv=none; b=kj4g/LvcCwJK8TgvPXaBp4hlY0siRjCTC7K8AGXdJAxNieZBah18pdK50Ctt0jKN7DqS0IUm2FHz87eu409L6fc5xGgMmuxWx1qQUiGQwJ7/LhKKV0uATMcA+2RF+jmbEktsgEFWaY6lBwNjoevTlJtg6OJ6E5Xsu8CLf1lxLv0=
+	t=1759431021; cv=none; b=HU/yaSWCLk2w/wKcigt47EskXlH5Yk9OIeNMetE2pxWgl4gHLearTAXd3NoIQC1MoFxokfcvlI8UmJRciXmqc02GdnrsQWpxcl8ku/N2t+H/uqsDI60mh2X75Gku+qe8KpdXdWS6DIzHX9foy8dHqoAJGV6qmkmyrD5l7xPMIso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759430945; c=relaxed/simple;
-	bh=NI9tbW1dRs+FSsXJo6G/jpW6PG0lao3tz6eQ+b8g5iU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YtHNpEgR51wB3We2cLQcs0pgq+k/K4shAcEk17uyxngvugvXdbMzYHm6VXwqNGnb4KP+F22n7rZybybNVXCNacosCZTrn93ctWDfoYli4yJO1ciq0pFeWNZqvGPh3n25aQ5VcwGIpI4BgoyBG2yi4OalWrkHyCW3obHgAbjkgPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WlPSXAkL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04C6AC4CEF4;
-	Thu,  2 Oct 2025 18:48:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759430942;
-	bh=NI9tbW1dRs+FSsXJo6G/jpW6PG0lao3tz6eQ+b8g5iU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WlPSXAkLUYZ1T/pGUYK2oK6ojCZup540aF7OCb8ISwdHgcCg4nmXcwnUAm3tRkU1t
-	 RP3sLYYVuI3Na+Gqp+06H9wMkquPs7ZwLwgF4oRxUzA0tGmLl2NCJyWrfd8fORHurT
-	 yIPeLybzvMa002Ei2ZOXRekvHkB9u2DRbPzk1Euhlq9Gr8QYMaVnj4448o4YOMsM9V
-	 yoM6LA/Z62TmTK9at7Tm++hDpfr05s1pZej3MhLO0w0qDtYRiVOgQRhoewwQK/wE/Z
-	 iaZOAWVNMWEFfqmfsZ4gbhP50a76xsiA/4VNaWKHoQkNJKVTHCU7FTBzYDRaaWE/bM
-	 DT6iH7FiXG8vg==
-Date: Thu, 2 Oct 2025 19:48:57 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org,
-	biju.das.jz@bp.renesas.com,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>, linux-phy@lists.infradead.org,
+	s=arc-20240116; t=1759431021; c=relaxed/simple;
+	bh=+5m+4sgTII4yCZaAet+Qp+1LoGf9H06zjUeyc9Iv/fM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=so2mVgZjYeb7PFJn4+73xtjZAhfC7mft56Y6omo/S6n9i1phcWXX1iJoVdGQFH8QaMlhbXAT0aWxReTfJFPedENYv8jEw9BTIqzBnP+m6XiSK94F/WuBA6G6kydIVfvi8tG+BrkDbfK8AlzzO72qznoxsjpJx76NRvWSlY9wRW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TJ36Cb1L; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3ee12a63af1so843549f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 11:50:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759431017; x=1760035817; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+dRh7hUJcZfRa3tzyKlaq5YbJA/Dgq6bx57UbBqN/vc=;
+        b=TJ36Cb1LUztBgvb+g9Yf/pHev1/35FtFS5DlsDFTfyEc6kjPRr8CLdh/+KOnjGc7mA
+         ZmJ7XJ52ODB25cI/e5gb2NCf/940mKwrW0+678y+wQ/hbooOl+3teK0BWsZpLZGoV+tN
+         31hXBpCkmHY0H9Feo5QJDYdskdQVMas9lR635J8K/Y2Fvf4Z/YO03fi8cAYAKl06NtZh
+         i+qUlx+FQZ6mlEFLedRL3jkSyoe9DbiMsvam/6IPD7Gk/bQKE3zL+yYmQ0c4KvRIh/gu
+         sSf3egzuBNN08ZshP9aWdtLuZsMOajtdhPLoYFxO8zJx7cO8ao8rree/KM/2wBEVLPvr
+         FbXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759431017; x=1760035817;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+dRh7hUJcZfRa3tzyKlaq5YbJA/Dgq6bx57UbBqN/vc=;
+        b=GOZQtDtIvPWhkvS11H0V+qzN77FvBDyGGVw9YYVVmNNNo5vlQkd4jciQ75IJ+szFl4
+         1Fj6eafWs6IYr7J+FoDDd5k64FaNs4v47lmKpsbwAutVedVCyFZx7Fy8T+fHosJKlyea
+         HMYqxvWVqLcq5H7qnwVS6H1wZXge8v9eOOiCbM9fDprUBtlt44/W/vFiMluij3dh13Xv
+         XsNumePf1CakbusF7uqJCawH7gpuZnZC+RnuFcChZX+B7diIDXy/Q0LxXuZh6TUrxpt3
+         fcOqxV+YSvNik1fiKkzjrnUBBOrZdUKRg+9C19mN+H4otIltKQaqpCLukVsN7xG43ORo
+         7KzA==
+X-Forwarded-Encrypted: i=1; AJvYcCUvr0kN5la3a9+lmu3DNQA2UyoSBm41b7bSxJep6JHg1t4TbKV/wUkr277sd9aR0r7V7VVZvaOmM/giHTQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLS7k+sHFqPd7AtKmGdWh+efUNJ5RARvyJiCyj5/Ks64Kz9DPj
+	mvo1YldsOdCOdYCuqQ5maYvtCnzZUHt9bRcFGsC4DCPCW/Ve3ptNKm1J
+X-Gm-Gg: ASbGncvB3ifxCsqrl9PYRf+lY46yMOEhz/XDJWvRp3Aik+5O7iGJRypcdaIjoatcMpW
+	mfrrGYsv6cLlQbBO1lHj/wJoGvIAaZ5sm8udQKxEEKfsFDmnOr57SjiWnREo++M0N1ASmSQ6TeU
+	zGo5dNATKTkYbX5MA5RCSUXcHk69pv4u6Dj5Buh+KWV37CYTs/kC09hiL3uCfuLO9NEAGAxXFeA
+	TEV8xw2bh5CImgem4Bq/+tlFbLNITLggNXfcEQ4BLcNRiNLYFBMWs/+b65ZgF6KU6bt1SqxxRa9
+	FcaDZduJ8NcarGOkLcxdB4h8Ft7qqUKMxMii6745f/EF2GE/GyxOWOoM4NgLBHy1NF4rMt3c/mY
+	id/whcOjo0RNKKK9bbYO041lOMkPR3B9vwnFEmYXkBztX81tHkjXnKTfaBN++QbPrGRXFm6/U6w
+	==
+X-Google-Smtp-Source: AGHT+IG0f8mpS6OQkJvra3BO7swBfZy5YCzRMfDwUCKFbpOkGl9skRSpnUpMfSkKZCiALKsmjFPRzg==
+X-Received: by 2002:a05:6000:24c6:b0:3fa:ebaf:4c3e with SMTP id ffacd0b85a97d-425671b3081mr219050f8f.54.1759431016524;
+        Thu, 02 Oct 2025 11:50:16 -0700 (PDT)
+Received: from toolbx.fritz.box ([2a02:8071:b783:140:715c:faf0:31ea:b518])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8e9780sm4616246f8f.29.2025.10.02.11.50.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Oct 2025 11:50:15 -0700 (PDT)
+From: Maximilian Luz <luzmaximilian@gmail.com>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Maximilian Luz <luzmaximilian@gmail.com>,
+	linux-hwmon@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/18] Add USB2.0 support for RZ/G3E
-Message-ID: <20251002-mystify-idiom-0273ef40b4dd@spud>
-References: <20251001212709.579080-1-tommaso.merciai.xr@bp.renesas.com>
+Subject: [PATCH] hwmon: (nct6775) Add ASUS ROG STRIX X870E-H GAMING WIFI7
+Date: Thu,  2 Oct 2025 20:49:56 +0200
+Message-ID: <20251002184958.359744-1-luzmaximilian@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="eLDSy2g573seoiip"
-Content-Disposition: inline
-In-Reply-To: <20251001212709.579080-1-tommaso.merciai.xr@bp.renesas.com>
+Content-Transfer-Encoding: 8bit
 
+The ASUS ROG STRIX X870E-H GAMING WIFI7 has a NCT6799D compatible chip,
+which is also accessed via ACPI.
 
---eLDSy2g573seoiip
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Maximilian Luz <luzmaximilian@gmail.com>
+---
 
-On Wed, Oct 01, 2025 at 11:26:44PM +0200, Tommaso Merciai wrote:
-> Dear All,
->=20
-> This patch series adds USB2.0 support for the Renesas R9A09G047 (RZ/G3E)
-> SoC and enables it on the RZ/G3E SMARC II board.
-> The RZ/G3E USB2.0 IP is identical to that used in the RZ/V2H (R9A09G057),
-> so the existing support has been extended accordingly.
->=20
-> The series applies on top of [1] and [2] and includes driver cleanups,
-> VBUS/OTG handling fixes, regulator improvements, clock/reset additions,
-> and device tree updates for RZ/G3E, RZ/V2H, and RZ/V2N SoCs and boards.
->=20
-> Thanks & Regards,
-> Tommaso
+I'm not entirely sure if this is strictly necessary. There don't seem to
+be any resource conflict warnings as reported on other boards. However,
+there is some locking in the DSDT, so I guess it might be overall safer
+to just go through ACPI, as it does expose AsusMbSwInterface.
+---
+ drivers/hwmon/nct6775-platform.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-If you're not gonna CC me on all the patches in the series, please at
-least CC me on the cover so I have an idea about what is going on in the
-rest of the set.
-All the bindings are
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+diff --git a/drivers/hwmon/nct6775-platform.c b/drivers/hwmon/nct6775-platform.c
+index 407945d2cd6a..c3a719aef1ac 100644
+--- a/drivers/hwmon/nct6775-platform.c
++++ b/drivers/hwmon/nct6775-platform.c
+@@ -1403,6 +1403,7 @@ static const char * const asus_msi_boards[] = {
+ 	"ROG STRIX X670E-E GAMING WIFI",
+ 	"ROG STRIX X670E-F GAMING WIFI",
+ 	"ROG STRIX X670E-I GAMING WIFI",
++	"ROG STRIX X870E-H GAMING WIFI7",
+ 	"ROG STRIX Z590-A GAMING WIFI",
+ 	"ROG STRIX Z590-A GAMING WIFI II",
+ 	"ROG STRIX Z590-E GAMING WIFI",
+-- 
+2.51.0
 
-Cheers,
-Conor.
-
->=20
-> [1] https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=
-=3D1001788
-> [2] https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=
-=3D1006104
->=20
-> Tommaso Merciai (18):
->   phy: renesas: rcar-gen3-usb2: Use devm_pm_runtime_enable()
->   phy: renesas: rcar-gen3-usb2: Factor out VBUS control logic
->   reset: rzv2h-usb2phy: Simplify pm_runtime driver handling
->   reset: rzv2h-usb2phy: Set VBENCTL register for OTG mode
->   dt-bindings: phy: renesas,usb2-phy: Document USB VBUS regulator
->   phy: renesas: rcar-gen3-usb2: Add regulator for OTG VBUS control
->   regulator: devres: Disable exclusive regulator before releasing
->   dt-bindings: clock: renesas,r9a09g047-cpg: Add USB2 PHY core clocks
->   clk: renesas: r9a09g047: Add clock and reset entries for USB2
->   dt-bindings: usb: renesas,usbhs: Add RZ/G3E SoC support
->   dt-bindings: phy: renesas,usb2-phy: Document RZ/G3E SoC
->   dt-bindings: reset: Document RZ/G3E USB2PHY reset
->   arm64: dts: renesas: r9a09g056: Add USB2.0 PHY VBUS internal regulator
->     node
->   arm64: dts: renesas: r9a09g056n48-rzv2n-evk: Enable USB2 PHY0 VBUS
->     support
->   arm64: dts: renesas: r9a09g057: Add USB2.0 PHY VBUS internal regulator
->     node
->   arm64: dts: renesas: r9a09g057h44-rzv2h-evk: Enable USB2 PHY0 VBUS
->     support
->   arm64: dts: renesas: r9a09g047: Add USB2.0 support
->   arm64: dts: renesas: r9a09g047e57-smarc: Enable USB2.0 support
->=20
->  .../bindings/phy/renesas,usb2-phy.yaml        |  10 +-
->  .../reset/renesas,rzv2h-usb2phy-reset.yaml    |   4 +-
->  .../bindings/usb/renesas,usbhs.yaml           |   1 +
->  arch/arm64/boot/dts/renesas/r9a09g047.dtsi    | 122 +++++++++++
->  .../boot/dts/renesas/r9a09g047e57-smarc.dts   |  49 +++++
->  arch/arm64/boot/dts/renesas/r9a09g056.dtsi    |   6 +
->  .../dts/renesas/r9a09g056n48-rzv2n-evk.dts    |   5 +
->  arch/arm64/boot/dts/renesas/r9a09g057.dtsi    |   6 +
->  .../dts/renesas/r9a09g057h44-rzv2h-evk.dts    |   5 +
->  .../boot/dts/renesas/renesas-smarc2.dtsi      |  23 ++
->  drivers/clk/renesas/r9a09g047-cpg.c           |  18 +-
->  drivers/phy/renesas/phy-rcar-gen3-usb2.c      | 199 +++++++++++++-----
->  drivers/regulator/devres.c                    |   8 +-
->  drivers/reset/reset-rzv2h-usb2phy.c           | 105 ++++++---
->  .../dt-bindings/clock/renesas,r9a09g047-cpg.h |   2 +
->  15 files changed, 478 insertions(+), 85 deletions(-)
->=20
-> --=20
-> 2.43.0
->=20
-
---eLDSy2g573seoiip
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaN7JGQAKCRB4tDGHoIJi
-0rKdAP9D2KiLyyufhN7hq/rJnj5f3R36WtCUVA2GlgysBGz2zAEAjvU0Qjowphpf
-Dlrv1wKDz9xKn/XpS0z1oY5GgtqCYAY=
-=82Nv
------END PGP SIGNATURE-----
-
---eLDSy2g573seoiip--
 
