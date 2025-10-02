@@ -1,125 +1,98 @@
-Return-Path: <linux-kernel+bounces-840634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1304FBB4DB6
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 20:12:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DD5DBB4DBE
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 20:14:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E4061C7E5D
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 18:12:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5710F423AA5
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 18:14:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FA5427CB02;
-	Thu,  2 Oct 2025 18:12:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60B462765D0;
+	Thu,  2 Oct 2025 18:13:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=csh.rit.edu header.i=@csh.rit.edu header.b="nPJiCYx1"
-Received: from greygoose-centos7.csh.rit.edu (greygoose-centos7.csh.rit.edu [129.21.49.170])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eBNnkyWu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DD5027A44A;
-	Thu,  2 Oct 2025 18:12:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.21.49.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0B59199BC;
+	Thu,  2 Oct 2025 18:13:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759428733; cv=none; b=nr+D8kFWHDDmhaqK/CFUmbFfL253JX97zGdKImsmVosO8jardOA7PjL+4WzZV8iZjngMH3VYdU4EjQhLS57LSVYwYqj8qhf9yehxV7wtdJS7mC1PJcDdN1KwWDbNHp65ekowMSyE3nnankvu7q8La0oGpzo/z4AWj09Lk5R2lWs=
+	t=1759428836; cv=none; b=s2sqRPYrVDSlCEsrA8eTYKtlzzASFL3fTHdBL1Ye1AbmehsvLFDYrUAzqabelKUugyjXQsyKWYk9NRd0ol3vSobjqo6lqhEH+EYpHU2xN/vRVKfeXrGDGdmYHfF6a9VMbSsY8JbF5m7XpSAMfdCfDMkRi4nFsNEk8BoP3ToKbUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759428733; c=relaxed/simple;
-	bh=W2m7Cd/qmNXM1k0QykgSUzIUJ6rontCrfMafYILgWx8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ABvII+eInxj+K47GGVRh9Z65L9Mjo1wXpl9pKi/BfXVv4nFoARDtmAuPOHt4CgJjSV4zSpDMlaPxgl8Gu8j4aq2+Niq8BGxAzbnCQcvxhU8OM0RpLMExNk/VDmXkkWTOxnSD4cTNRxXcUelm3LAlvpFoSEvUExhRh9lrNLVw5HI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=csh.rit.edu; spf=pass smtp.mailfrom=csh.rit.edu; dkim=pass (1024-bit key) header.d=csh.rit.edu header.i=@csh.rit.edu header.b=nPJiCYx1; arc=none smtp.client-ip=129.21.49.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=csh.rit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csh.rit.edu
-Received: from localhost (localhost [127.0.0.1])
-	by greygoose-centos7.csh.rit.edu (Postfix) with ESMTP id 29FA440EA0BF;
-	Thu,  2 Oct 2025 14:12:10 -0400 (EDT)
-Authentication-Results: mail.csh.rit.edu (amavisd-new);
- dkim=pass (1024-bit key) reason="pass (just generated, assumed good)"
- header.d=csh.rit.edu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=csh.rit.edu; h=
-	content-transfer-encoding:mime-version:references:in-reply-to
-	:x-mailer:message-id:date:date:subject:subject:from:from
-	:received:received; s=mail; t=1759428725; x=1761243126; bh=W2m7C
-	d/qmNXM1k0QykgSUzIUJ6rontCrfMafYILgWx8=; b=nPJiCYx1fjzxynWYuC4yK
-	+PBoOeMfeskM6IYqp1Nlppirs3Z0ryXsXMxqfIj/0rH3I+FDil1uJgp2zbizCyki
-	iXtQYbpgKoRQOQVbbynjGqV3wQLIbO9ECze5Liu/HaXLwFV7NZQHpX6JdioiEOC+
-	8+lSwOJbXfVjvn2XAAT5Pc=
-X-Virus-Scanned: amavisd-new at csh.rit.edu
-Received: from greygoose-centos7.csh.rit.edu ([127.0.0.1])
- by localhost (mail.csh.rit.edu [127.0.0.1]) (amavisd-new, port 10026)
- with ESMTP id 9J5Lvaxx6d3d; Thu,  2 Oct 2025 14:12:05 -0400 (EDT)
-Received: from ada.csh.rit.edu (ada.csh.rit.edu [129.21.49.156])
-	by greygoose-centos7.csh.rit.edu (Postfix) with ESMTP id BB1D6456D905;
-	Thu,  2 Oct 2025 14:11:52 -0400 (EDT)
-From: Mary Strodl <mstrodl@csh.rit.edu>
-To: linux-kernel@vger.kernel.org
-Cc: tzungbi@kernel.org,
-	dan.carpenter@linaro.org,
-	linus.walleij@linaro.org,
-	brgl@bgdev.pl,
-	linux-gpio@vger.kernel.org,
-	Mary Strodl <mstrodl@csh.rit.edu>
-Subject: [PATCH v3 4/4] gpio: mpsse: support bryx radio interface kit
-Date: Thu,  2 Oct 2025 14:11:36 -0400
-Message-ID: <20251002181136.3546798-5-mstrodl@csh.rit.edu>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20251002181136.3546798-1-mstrodl@csh.rit.edu>
-References: <20251002181136.3546798-1-mstrodl@csh.rit.edu>
+	s=arc-20240116; t=1759428836; c=relaxed/simple;
+	bh=+rNDhqtqqe0nUxbkfG3s9/MheX8ThCsOyszH+HFi8LA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gQA/ssIUJS0COEjU5rWRIDzn38gMNa6K0izjDaUCWU5X5fnj8L2bqdgailLGpVo6DDhgL1F0aHdHBMHShbPDZRo8hdlrGBa1QBwQTUY4vpX7tclHrzLS+YJ3ZOHnSQJ19nPSSLxTNOIErQKKeJZ4ehdeKS1a1qU0r5CzBvGt4uA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eBNnkyWu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26716C4CEF4;
+	Thu,  2 Oct 2025 18:13:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759428836;
+	bh=+rNDhqtqqe0nUxbkfG3s9/MheX8ThCsOyszH+HFi8LA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eBNnkyWuxfCYodDcKY0Ih0NFbyy4jFAe6kPbeSH2km9Ot6zYVrRwjxcJvWazt/aZB
+	 t9CpLafoxAxMJC2O9wAYkKZadMS6/p+o/4QQ/V/hGU70Mf2XzQsB7vVajGiSVLsArD
+	 7cPoDqk15tlYHyUUZPgfU/Yd8Vu7sBGVICvIj5cBbNFwIF7jLbKxL4fj5dOugCTvpX
+	 Z3rhPqVpp8/8O6cA2scP50OXn5UwfMgNPQri+fOSGd8QP4ET77aihGqNScP5LJUKOo
+	 k2fZS6xj5xq0p7OTEX7JSiWARJ0+W1s0WmRkMT3OIwGE3pbeGO0Be2AZleXXmBBeDt
+	 nUXf7Iu9zMICQ==
+Date: Thu, 2 Oct 2025 15:13:52 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Yury Norov <yury.norov@gmail.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Ido Schimmel <idosch@nvidia.com>, Jakub Kicinski <kuba@kernel.org>,
+	Jamal Hadi Salim <jhs@mojatatu.com>,
+	Jason Xing <kerneljasonxing@gmail.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Yuyang Huang <yuyanghuang@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Petr Machata <petrm@nvidia.com>,
+	Maurice Lambert <mauricelambert434@gmail.com>,
+	Jonas Gottlieb <jonas.gottlieb@stackit.cloud>,
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	bpf@vger.kernel.org
+Subject: Re: [PATCH v1 0/4] perf/tools build related fixes
+Message-ID: <aN7A4AklA7byxiFe@x1>
+References: <20250905224708.2469021-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250905224708.2469021-1-irogers@google.com>
 
-This device is powered by an FT232H, which is very similar to the
-FT2232H this driver was written for. The key difference is it has only
-one MPSSE instead of two. As a result, it presents only one USB
-interface to the system, which conveniently "just works" out of the box
-with this driver.
+On Fri, Sep 05, 2025 at 03:47:04PM -0700, Ian Rogers wrote:
+> Add missing header files and #includes to fix the build in some
+> environments like bazel.
+> 
+> Ian Rogers (4):
+>   perf bench futex: Add missing stdbool.h
+>   tools bitmap: Add missing asm-generic/bitsperlong.h include
+>   tools include: Replace tools linux/gfp_types.h with kernel version
+>   tools include: Add headers to make tools builds more hermetic
 
-The brik exposes only two GPIO lines which are hardware limited to only
-be useful in one direction. As a result, I've restricted things on the
-driver side to refuse to configure any other lines.
+Thanks, applied to perf-tools-next,
 
-This device, unlike the sealevel device I wrote this driver for
-originally, is hotpluggable, which makes for all sorts of weird
-edgecases. I've tried my best to stress-test the parts that could go
-wrong, but given the new usecase, more heads taking a critical look at
-the teardown and synchronization bits on the driver as a whole would be
-appreciated.
-
-Signed-off-by: Mary Strodl <mstrodl@csh.rit.edu>
----
- drivers/gpio/gpio-mpsse.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/drivers/gpio/gpio-mpsse.c b/drivers/gpio/gpio-mpsse.c
-index c2a344488a23..3c0645374ba7 100644
---- a/drivers/gpio/gpio-mpsse.c
-+++ b/drivers/gpio/gpio-mpsse.c
-@@ -65,8 +65,19 @@ struct mpsse_quirk {
- 	unsigned long dir_out;            /* Bitmask of valid output pins */
- };
-=20
-+static struct mpsse_quirk bryx_brik_quirk =3D {
-+	.names =3D {
-+		[3] =3D "Push to Talk",
-+		[5] =3D "Channel Activity",
-+	},
-+	.dir_out =3D ~BIT(3),	/* Push to Talk     */
-+	.dir_in  =3D ~BIT(5),	/* Channel Activity */
-+};
-+
- static const struct usb_device_id gpio_mpsse_table[] =3D {
- 	{ USB_DEVICE(0x0c52, 0xa064) },   /* SeaLevel Systems, Inc. */
-+	{ USB_DEVICE(0x0403, 0x6988),     /* FTDI, assigned to Bryx */
-+	  .driver_info =3D (kernel_ulong_t)&bryx_brik_quirk},
- 	{ }                               /* Terminating entry */
- };
-=20
---=20
-2.47.0
-
+- Arnaldo
 
