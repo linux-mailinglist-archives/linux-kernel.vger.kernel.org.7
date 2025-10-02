@@ -1,117 +1,120 @@
-Return-Path: <linux-kernel+bounces-840338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC9FEBB4225
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 16:05:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C76CBB4228
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 16:06:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6712A19E1EFD
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 14:06:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6CCD3B65C1
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 14:05:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08A15312830;
-	Thu,  2 Oct 2025 14:05:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3F3F311C2A;
+	Thu,  2 Oct 2025 14:05:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="CMBo4wuA"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s1R9as0r"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53FCE2EB84A
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 14:05:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01FEE30CDA4;
+	Thu,  2 Oct 2025 14:05:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759413942; cv=none; b=WYMS/BEPqlPFYzeU6IRYtVebBjXLN28abL0G8nfurD8Hmig6Vi8YFqSZshwKYzXzy27eSrP5swl+FD1ponW6Q4RatRZIacMJhT+6fQ+e/Cp1vXkh3iUVebPevPuQCBJmaOb4xDOeSTI6AwSY6j+h1rf+7odUoMNoExhrZ9FgmGY=
+	t=1759413940; cv=none; b=QubY4HuaKsVLc4mFUDGC+6lmvTg1PCkiGXUfVzoTvLkx9pwE9dstIR7jxpe2blgoUKA68mKp39p3kUR1EegVkkMMzA8asSTXJ+FM7W3WWSlMkSOb4lwG0Fcq2ox7UxKLT9QRUTLe20ieIfkIbbt28i7wxdmvSGi48M18jimi8PI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759413942; c=relaxed/simple;
-	bh=LYm9D5vlhSiUy616cHQLJ5BvEm6YIL752SKqypsFb5w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fnwo0/w4F+fxIm7GY6QgEp7Pw2NnYJyj0Ecmko5fxwDKGXyqsKWE5oEIRnWFvzx955D9XyyGAxdwj0OSLzUCgo6KeHQ8QA8H0TNSntnl7F/3iCFFB397OP0mL95pW0YS1c5e+yZIiVgdtSKvu2EAPNfxuieKNFeUvyUpMHXyWhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=CMBo4wuA; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=LYm9
-	D5vlhSiUy616cHQLJ5BvEm6YIL752SKqypsFb5w=; b=CMBo4wuAPtjTjtjdpLmm
-	qn8XDWdQSJRTAPrvIx1iDiclurdwEuFzB3C08f9exHfxyBopLh/0e1hp0TV+WTJy
-	dqpycYiHLylx89u9xJQQ7Pr7tdMH3gSqWtgTlflVHxwkWh7MMWYLz8NdB+ejvSQN
-	Ck0HXEuFewJGt09bxpI7+kFeMIryT65lq068YL6794IQQ0uQ4NFPjk89YiuDdA5F
-	hzyHONjOVLzh9c2/rT8TbOVqHBja7VToYNh1mXwIqJnKBxJ0g5StwVmwZ4XS8Jsf
-	ZpwNsSCW4b0tWQChSWq3MSzFjafkkH/E/VqqF5HuNFlPIfAntcCHneiXmIrErcZ6
-	eg==
-Received: (qmail 295296 invoked from network); 2 Oct 2025 16:05:36 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 2 Oct 2025 16:05:36 +0200
-X-UD-Smtp-Session: l3s3148p1@2PCrei1AIOIgAwDPXwQHAL/S9V79e5yL
-Date: Thu, 2 Oct 2025 16:05:35 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Luca Weiss <luca.weiss@fairphone.com>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Griffin Kroah-Hartman <griffin.kroah@fairphone.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	Daniel Scally <djrscally@gmail.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	=?utf-8?B?QW5kcsOp?= Apitzsch <git@apitzsch.eu>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Wolfram Sang <wsa@kernel.org>, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 3/4] arm64: dts: qcom: qcm6490-fairphone-fp5: Enable CCI
- pull-up
-Message-ID: <aN6Gr5FcfYpKgAFM@shikoro>
-References: <20251002-dw9800-driver-v1-0-c305328e44f0@fairphone.com>
- <20251002-dw9800-driver-v1-3-c305328e44f0@fairphone.com>
- <1be80052-3ba5-46de-804a-de995f8db5d4@oss.qualcomm.com>
- <DD7V3G4RLB2I.QYT4BWT1LA5U@fairphone.com>
+	s=arc-20240116; t=1759413940; c=relaxed/simple;
+	bh=w/6ukFnSIf3xFHi/LDem9ERkn1jLezN2X7IbgT7Mg98=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=DkdIT9Ttx08kp2difXOkrjhOmBPo0KJrAl3mkQvSoAJ/ZtOkeXlb0KqjdF0TCGhgoyUJ5uL1KFAZSEM3/9oOOFCXc2YcMxtDlQ/AQzVduiFkhYW0IKB7CDd7TN+2LE7LilpFG0AHtiSuhYXnmhiJ+kjE3jZ8aGUZl9hq3FyYVQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s1R9as0r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1EA8FC4CEF4;
+	Thu,  2 Oct 2025 14:05:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759413939;
+	bh=w/6ukFnSIf3xFHi/LDem9ERkn1jLezN2X7IbgT7Mg98=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=s1R9as0rPJejr5crZ8buPFO9viDB/UW1/TKbHoovyjtGQ7Ta++SyOtnDBFBF4MM1D
+	 D+GlwXKbpv39wKWkARYvagfHTxRbOW667IxWKTvR6hNn9VT4CBG9RfBpplSE2Q2n2K
+	 6b9Lbxsfys+BjTmMHa3SwlHE+PhEgPigzk4vorX+2B9zcO8z2tSg9gFun+61YRXZMa
+	 9QMkLyKSGxEVhsXrl0sprHNumxP6h+PvkRXdMkdYozhP+b+5J5c2LE23d2weh1XHcG
+	 4aUN29vf3toEiaBpazhd01Gs91IYhgpquBX/kBVSLe0whmK/iQQXH4Pz07v+Z5tA1h
+	 uod0rE7UnH0cw==
+Date: Thu, 2 Oct 2025 23:05:36 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Menglong Dong <menglong8.dong@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, oliver.sang@intel.com
+Subject: Re: [PATCH] tracing: fprobe: Fix to init fprobe_ip_table earlier
+Message-Id: <20251002230536.a0e15f3b016782c3bb9e5e9d@kernel.org>
+In-Reply-To: <CADxym3Yvxs_Z6a1-EPziz79SBRsYHcaOH-CtvUhngYy3bJ71iA@mail.gmail.com>
+References: <175939434403.3665022.13030530757238556332.stgit@mhiramat.tok.corp.google.com>
+	<CADxym3Yvxs_Z6a1-EPziz79SBRsYHcaOH-CtvUhngYy3bJ71iA@mail.gmail.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="iN8q4H5XPZs0qq2D"
-Content-Disposition: inline
-In-Reply-To: <DD7V3G4RLB2I.QYT4BWT1LA5U@fairphone.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+On Thu, 2 Oct 2025 18:00:24 +0800
+Menglong Dong <menglong8.dong@gmail.com> wrote:
+
+> On Thu, Oct 2, 2025 at 4:39 PM Masami Hiramatsu (Google)
+> <mhiramat@kernel.org> wrote:
+> >
+> > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> >
+> > Since the fprobe_ip_table is used from module unloading in
+> > the failure path of load_module(), it must be initialized in
+> > the earlier timing than late_initcall(). Unless that, the
+> > fprobe_module_callback() will use an uninitialized spinlock of
+> > fprobe_ip_table.
+> >
+> > Initialize fprobe_ip_table in core_initcall which is the same
+> > timing as ftrace.
+> >
+> > Reported-by: kernel test robot <oliver.sang@intel.com>
+> > Closes: https://lore.kernel.org/oe-lkp/202509301440.be4b3631-lkp@intel.com
+> 
+> Don't we need a Fixes tag here?
+
+OK, I'll add it too.
+
+> 
+> The other part of this patch is LGTM.
+> 
+> Reviewed-by: Menglong Dong <menglong8.dong@gmail.com>
+
+Thank you!
 
 
---iN8q4H5XPZs0qq2D
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> 
+> Thanks!
+> Menglong Dong
+> 
+> > Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > ---
+> >  kernel/trace/fprobe.c |    2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/kernel/trace/fprobe.c b/kernel/trace/fprobe.c
+> > index 95e43814b85b..99d83c08b9e2 100644
+> > --- a/kernel/trace/fprobe.c
+> > +++ b/kernel/trace/fprobe.c
+> > @@ -847,4 +847,4 @@ static int __init fprobe_initcall(void)
+> >         rhltable_init(&fprobe_ip_table, &fprobe_rht_params);
+> >         return 0;
+> >  }
+> > -late_initcall(fprobe_initcall);
+> > +core_initcall(fprobe_initcall);
+> >
 
 
-> Unfortunately though this effort has stalled some years ago. There is
-> "struct regulator *bus_regulator;" in "struct i2c_adapter" already and
-> vbus-supply is documented in i2c-mt65xx but afaik this not functional
-> because some code was ripped out ago because of some AMDGPU regressions.
-
-Thanks for mentioning this. It all sounded familiar to me but I couldn't
-put my finger exactly.
-
-
---iN8q4H5XPZs0qq2D
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjehqsACgkQFA3kzBSg
-KbbIAQ//QfAX8m49uUj1J5d915zmYl1ga2ibjh9XM98MLwfWVTrbBKLi8aoYwru5
-3n32muazTU8syFw9hftxJjKs7beuNJ7vBytCP+mvs/d3y976Ff6xM+kFnKUWiIb5
-v2wP3ECPOTeHO+OXG2pDIuLDpfjLlFVaO0nGbg1dnTmSvqnHbvOklmPAjqgehY78
-C4pCYZkaIsMPrRrp/lutY+W39Ua8v9B4BRaqYjepzq5u86+zaU/S3hglhrNt+MzX
-bONZqbB4HQKfYuZrcWtXIlATp1SAc7LnbAbJ6CU/gHheEUaQA8Fdw3Yn7CR3MGPn
-eVmkSv/U+8UIbFs1DY5UAv8oOnq+jqIVKrlcI36V9ftmmbsWkN4AE7mL6gpWuZZv
-C9olQqGYid0OJXe5qcU8gHOFvdj4Vspr7rbD4oQC20SF/6A0w/d1QEQPGt/fN1BY
-ppCM/MDH2R8Hw2Heibr1NDM62n7n5090UmTSPjZau4ksQuxJyga8sKvM9OAKMyk+
-8qAwilsIUxYcZYTT9DRrVJEyWGQxJp0LwO8N9FkN+eDiaY/BmPqFl33C79EU4WC9
-4705Uq5xK7f+v/Yts9ZqtIDILbSA2q0QRHcSeH2EK3PpJEvClgu7xVCPTz73Hkvb
-v9poLEjcB0lxNihio4NoTRHkWDtOS1Opds2CqwzTRDkcSvUk1tQ=
-=dsTU
------END PGP SIGNATURE-----
-
---iN8q4H5XPZs0qq2D--
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
