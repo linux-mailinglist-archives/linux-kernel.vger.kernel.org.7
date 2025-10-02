@@ -1,170 +1,345 @@
-Return-Path: <linux-kernel+bounces-840843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7BC5BB58B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 00:33:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0C6CBB58C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 00:36:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4004D19C749F
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 22:33:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C399B423FDA
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 22:36:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14A20272E6E;
-	Thu,  2 Oct 2025 22:33:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 951B527A92E;
+	Thu,  2 Oct 2025 22:36:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="g6GN9X5E"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="JavLxU0d"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D670C1DED77
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 22:32:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82D1A1E9B37;
+	Thu,  2 Oct 2025 22:36:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759444379; cv=none; b=kbfFQgAFmIFynE/fzZALtpKh5kVoB9G/Z6HN45P1fVJEhbOYwhRH+rUgy0il7gOtTFgJJDHOPSWZI/wceGKae/5mlIjUiHAUXHHLSLQ17N38WfYPJn3l0wM9OlR1Pjm7EKABgY5XKTgt2CMpJCbck/Vs540YGPoT+o6Ox00dTPc=
+	t=1759444588; cv=none; b=heA3mIOFIIa2Mr2RhNnzZjbVoaToAlB1lciGn/9llpdKS+ZOTMun7li+WxLV56CmZtkYpSB7dYwr2VNOMDuM2F7LEv3hP92WX5SGe5eMzBmxCYu0yoUzYdkV+ZSJjsK9r7FbGkMDj3xgvxblL9F6QpIPx19KV64JqinoxigS+nw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759444379; c=relaxed/simple;
-	bh=qGBvGVUOR2k1VrExAC7p734oLxaKwcZqmNkNFkXFeTw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KvvXmWAeZTVrRbxPycFLubG5+pzIIy96hQbxu/NjIyukZl9sgZjX67XasHwzbkoKgnfEy8MRbJsAWRJAQVh0n5oFuv+wC6HPqKJGYrqc/eoZxFao7IKw4kZNFsFkmoW8Z59icHfkpKH/c3y7KN+GNYv1Z+38gEjJsiB0EM224lE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=g6GN9X5E; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5929NYCx006633
-	for <linux-kernel@vger.kernel.org>; Thu, 2 Oct 2025 22:32:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	FpwK6wbpl1nHk+Rk54AADbhqSQ/2kNSwRaAd3k0SSc4=; b=g6GN9X5E+IsJIiUT
-	c3GcgC/AxotYGLwrKIZYP/4wdgzr2atBF4oD5A9TTnRqNSiKdjVC003noX/XXP7I
-	W2mOfIAxHn25XRRLM00aNyYC+EswzahZVc1nMDn2xmVO00SgGvnDb9H6a+5Gh3cl
-	UIAznHf0Bib0xFuiy37rsWZ/jSVXz6PB5u6C7vz2fR1POplJ3qB2UQFzdXMXCDqx
-	PHECk2c17/tWPTZFi2iqy5LrA7eI58kF5ZBEHDfBG29tSlJTVwTxQWTov7edkvIj
-	XkxDuNQ7nvNs7Bni1SQu4Gtklb6ymKoHuzm1sbGmf+N8KrOyjc6CTob2vxCK+A+O
-	lmvoDw==
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e851s6em-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 22:32:57 +0000 (GMT)
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-32ed9dbba55so465135a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 15:32:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759444376; x=1760049176;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FpwK6wbpl1nHk+Rk54AADbhqSQ/2kNSwRaAd3k0SSc4=;
-        b=EwvQIQAtDbtTmlAzz/3zAp0/7n1HFsX6ruS3vp4JJ6hyfAHfQO0y/hFGDHOy9vtaqi
-         QjUqLuzpi83J4A7RTa30C0CUjScD4fbmcjJuz3cFZ9FF8KcJ7ju3GD4Xu37Bu9qj31Hh
-         kDzY385nJGred4EykgB2yhAX8c8aIu817Sdr+o3z5wkzIIVsJxzbCFL282B48Uu3BybL
-         Z0dhfeobRZk/rHrFKAEWxe45SUeogKe5TH+JtCD3Hq1qHEVze1Y+I1SCvqW+KqzuXOmx
-         snw8+MUa9zZZ0dCsn5LEGqS5SfN6KnNYM1ug4BYhM+OnPt3BWbQHlRHBEKH75xrZ5y7D
-         GJfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUqw0niJkj09McRkX0XbNFOPBpdiKPTp1nT0JtJQccQXuMlZkQmqfeHU8idrimM6dwOrO/l3NNMzQ5xnCU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWUcU/xd4IWtbbPzgwWyEkdIowAcvSzrU/Wqat2/9vci+BAF3k
-	2f4ZDlYYy02SDTgitNBER6tH5o4xuqY+bUfwW0IFNi9hUrPFSY63kOlbr95eU/a/bhr4biCHBQI
-	mluiTaflIHgvU5MysbWllEdtbw2dIibKYV+J3+C/auY1xAQmKE9L1sx/fH82zR8zjRkU=
-X-Gm-Gg: ASbGncv1UOpeDu/4tsyP+qzneVezOQpDMBVskLGR283l1JDR1UtVyVmDao6pYNuNjn2
-	4G7WHpsShZ0SE+M9Pa1y4FC+2B0fwSqS3XYabWlAIdV9i7hdHWRPkd+xnLshtAM6Qh6yYzNR4Y1
-	twn+cNjf42JCtpHqkI8hLazvkLHoPrgP0YCzJk3TiCLMAjv7dcD5ZHRx8q10gmoernoFQBcBI62
-	DK3QSjkn0mfWc1HJuXqU9vDoFiQ8V/9RgbmPhb8LSSjYiNzsNH8nEnCDXjHiHDKNxZ9l8BdNRlL
-	nneurhOoNK54MgYL8h29FyhsKBbr7HI5OcEKYoAngdAf5shfa5S/MoOa7HoCTcStPdcb9dskcPC
-	hnACLT/ZuQozNkMXB37VgyJdQrdBQv9KM
-X-Received: by 2002:a17:90b:1b07:b0:335:2eee:19d7 with SMTP id 98e67ed59e1d1-339c27f147cmr548597a91.5.1759444376149;
-        Thu, 02 Oct 2025 15:32:56 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHv7Ezyd2UUjO1KmLcKNimDDT7YbIHUc7nq44OqeXFnjgQivLtCpsrlpOrl4tDqUhXI5zl9oQ==
-X-Received: by 2002:a17:90b:1b07:b0:335:2eee:19d7 with SMTP id 98e67ed59e1d1-339c27f147cmr548575a91.5.1759444375693;
-        Thu, 02 Oct 2025 15:32:55 -0700 (PDT)
-Received: from [10.71.110.242] (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3399cdef492sm4222624a91.4.2025.10.02.15.32.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Oct 2025 15:32:55 -0700 (PDT)
-Message-ID: <ad9c79bd-b3ea-4dac-96c5-f264eaf91dcc@oss.qualcomm.com>
-Date: Thu, 2 Oct 2025 15:32:54 -0700
+	s=arc-20240116; t=1759444588; c=relaxed/simple;
+	bh=gB5LseVaah0BdbQ1EcpV4iPc2oWSvKxKUWT3k3vmJXA=;
+	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=YjzUC9OkM6hEsz0bjrLew9prADpdLn54m4uJOwdPTHgdA8XduxiBZvGfebf7aysXoEu/6mRbZe3ai//q+x0pSZuco9sHxg393VzSEab9exi7y66lwe9EMWb81eco7lW1LLg+R0s7VoVjFGq6GGRgsycmcVkKw/Ki1Gk5tc3t8xw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=JavLxU0d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC91FC4CEF4;
+	Thu,  2 Oct 2025 22:36:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1759444588;
+	bh=gB5LseVaah0BdbQ1EcpV4iPc2oWSvKxKUWT3k3vmJXA=;
+	h=Date:From:To:Cc:Subject:From;
+	b=JavLxU0dTZI+rbGLfsNfto2CMThKVa3MckK8RZWp0WKJE9WIddezAtKBHkIf7Pvez
+	 b/SFKGbARvm9PoHbQReXluhgJzDgi7PHd0WzPc+ztm0irhf1GVEBrssgh5TwbyF5hk
+	 WOKBgldjqGVcMFJ49+KKZI34crX3uVGOov8zq+O4=
+Date: Thu, 2 Oct 2025 15:36:27 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-mm@kvack.org, mm-commits@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: [GIT PULL] non-MM updates for 6.18-rc1
+Message-Id: <20251002153627.8890d5019e8e25a9df283e99@linux-foundation.org>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/5] media: v4l2: Add description for V4L2_PIX_FMT_AV1 in
- v4l_fill_fmtdesc()
-To: Nicolas Dufresne <nicolas@ndufresne.ca>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
-        Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Bryan O'Donoghue <bod@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-References: <20251001-av1_irisdecoder-v1-0-9fb08f3b96a0@oss.qualcomm.com>
- <20251001-av1_irisdecoder-v1-2-9fb08f3b96a0@oss.qualcomm.com>
- <544147436308901fba85d6de48380c0c1eea7c67.camel@ndufresne.ca>
-Content-Language: en-US
-From: Deepa Guthyappa Madivalara <deepa.madivalara@oss.qualcomm.com>
-In-Reply-To: <544147436308901fba85d6de48380c0c1eea7c67.camel@ndufresne.ca>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=OJoqHCaB c=1 sm=1 tr=0 ts=68defd99 cx=c_pps
- a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=fpfRSM_o4ZOcEIIQWIgA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=uKXjsCUrEbL0IQVhDsJ9:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAzMiBTYWx0ZWRfX4X5QheBHAeg8
- 0TN84ScF9t81jYBkIaaR4ZCpreQOEe1IdIlw7ZcDACX7hcZ/+03GFiry+kG9RTCIYn/GufJ0D6M
- f7pqNSjdc9IexDMXAa5zym/AXIcxQZM8LUDq0F56IHiAwwD7S646qIJRU8IXVeyEOJWihfv7a+v
- LlyLkQvOU2GbuUcjzhmVam5ig7+sLqwsxPfYZWLkW/uLngG1Oiyy1G5fXK6xrmLObw+v71dHtl1
- cfhH4yQBNfrJUIq7SXOGmPywqiuL/YDpa/Sud0hKqVCx+BmJI3rAnIwHY+SX2PLd5GMonIPFjT4
- ad3NMpzULkwnpmbKJ68P3OjkmlQk/77sWppZdYmWZNbMsLBhEntdOQh3mh94RIuP/WhpgkRv2fU
- wvx0Y/BpFQlqs0rCXEXrltg9Pl+E4Q==
-X-Proofpoint-ORIG-GUID: H0nplsU8_5W-wDxmUY1Oiotpquz7xOSg
-X-Proofpoint-GUID: H0nplsU8_5W-wDxmUY1Oiotpquz7xOSg
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-02_08,2025-10-02_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 adultscore=0 priorityscore=1501 bulkscore=0 impostorscore=0
- suspectscore=0 lowpriorityscore=0 phishscore=0 malwarescore=0 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270032
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
 
-On 10/2/2025 12:43 PM, Nicolas Dufresne wrote:
-> Le mercredi 01 octobre 2025 à 12:00 -0700, Deepa Guthyappa Madivalara a écrit :
->> Add a descriptive string for the AV1 pixel format to v4l_fill_fmtdesc(),
->> enabling proper reporting of AV1 support via VIDIOC_ENUM_FMT.
->>
->> Signed-off-by: Deepa Guthyappa Madivalara <deepa.madivalara@oss.qualcomm.com>
->> ---
->>   drivers/media/v4l2-core/v4l2-ioctl.c | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-
->> core/v4l2-ioctl.c
->> index
->> 01cf52c3ea33e1a01e1b306036ba4e57ef5c95d0..d3ee7736b74b0f277d3208782e3ac3282eca
->> 1e6b 100644
->> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
->> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
->> @@ -1542,6 +1542,7 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
->>   		case V4L2_PIX_FMT_QC10C:	descr = "QCOM Compressed 10-
->> bit Format"; break;
->>   		case V4L2_PIX_FMT_AJPG:		descr = "Aspeed
->> JPEG"; break;
->>   		case V4L2_PIX_FMT_AV1_FRAME:	descr = "AV1 Frame"; break;
->> +		case V4L2_PIX_FMT_AV1:		descr = "AV1"; break;
-> Perhaps "AV1 OBU stream", so its clear its no Annex B ?
+Linus, please pull the mm.git non-MM updates for the 6.18-rcX
+development cycle.
 
-Sure, makes it more clear. I will update this as well in the next patch.
+No merge conflicts are present and none are anticipated.
 
-Regards,
-deepa
+Thanks.
 
->>   		case V4L2_PIX_FMT_MT2110T:	descr = "Mediatek 10bit Tile
->> Mode"; break;
->>   		case V4L2_PIX_FMT_MT2110R:	descr = "Mediatek 10bit
->> Raster Mode"; break;
->>   		case V4L2_PIX_FMT_HEXTILE:	descr = "Hextile Compressed
->> Format"; break;
+
+The following changes since commit e6b9dce0aeeb91dfc0974ab87f02454e24566182:
+
+  Merge tag 'sound-6.17-rc5' of git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound (2025-09-02 13:38:07 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-nonmm-stable-2025-10-02-15-29
+
+for you to fetch changes up to 9f1c14c1de1bdde395f6cc893efa4f80a2ae3b2b:
+
+  Squashfs: reject negative file sizes in squashfs_read_inode() (2025-09-28 11:36:15 -0700)
+
+----------------------------------------------------------------
+Patch series in this pull request:
+
+- The 3 patch series "ida: Remove the ida_simple_xxx() API" from
+  Christophe Jaillet completes the removal of this legacy IDR API.
+
+- The 9 patch series "panic: introduce panic status function family"
+  from Jinchao Wang provides a number of cleanups to the panic code and
+  its various helpers, which were rather ad-hoc and scattered all over the
+  place.
+
+- The 5 patch series "tools/delaytop: implement real-time keyboard
+  interaction support" from Fan Yu adds a few nice user-facing usability
+  changes to the delaytop monitoring tool.
+
+- The 3 patch series "efi: Fix EFI boot with kexec handover (KHO)" from
+  Evangelos Petrongonas fixes a panic which was happening with the
+  combination of EFI and KHO.
+
+- The 2 patch series "Squashfs: performance improvement and a sanity
+  check" from Phillip Lougher teaches squashfs's lseek() about
+  SEEK_DATA/SEEK_HOLE.  A mere 150x speedup was measured for a well-chosen
+  microbenchmark.
+
+- Plus another 50-odd singleton patches all over the place.
+
+----------------------------------------------------------------
+Alexey Dobriyan (1):
+      proc: test lseek on /proc/net/dev
+
+Alistair Popple (1):
+      cramfs: fix incorrect physical page address calculation
+
+Bala-Vignesh-Reddy (1):
+      selftests: proc: mark vsyscall strings maybe-unused
+
+Brian Mak (1):
+      x86/kexec: carry forward the boot DTB on kexec
+
+Christophe JAILLET (3):
+      idr test suite: remove usage of the deprecated ida_simple_xx() API
+      ida: remove the ida_simple_xxx() API
+      nvmem: update a comment related to struct nvmem_config
+
+Coiby Xu (1):
+      crash: add KUnit tests for crash_exclude_mem_range
+
+Dan Carpenter (2):
+      ocfs2: remove unnecessary NULL check in ocfs2_grab_folios()
+      ocfs2: fix double free in user_cluster_connect()
+
+Demi Marie Obenour (1):
+      kernel: prevent prctl(PR_SET_PDEATHSIG) from racing with parent process exit
+
+Dmitry Antipov (2):
+      ocfs2: add suballoc slot check in ocfs2_validate_inode_block()
+      ocfs2: avoid extra calls to strlen() after ocfs2_sprintf_system_inode_name()
+
+Evangelos Petrongonas (2):
+      kexec: introduce is_kho_boot()
+      efi: support booting with kexec handover (KHO)
+
+Fan Yu (5):
+      tools/delaytop: add flexible sorting by delay field
+      tools/delaytop: add memory verbose mode support
+      tools/delaytop: add interactive mode with keyboard controls
+      tools/delaytop: improve error handling for missing PSI support
+      docs: update delaytop documentation for new interactive features
+
+Feng Tang (3):
+      lib/sys_info: handle sys_info_mask==0 case
+      panic: refine the document for 'panic_print'
+      panic: add note that 'panic_print' parameter is deprecated
+
+Guan-Chun Wu (1):
+      btree: simplify merge logic by using btree_last() return value
+
+Huacai Chen (1):
+      init: handle bootloader identifier in kernel parameters
+
+Jinchao Wang (10):
+      panic: introduce helper functions for panic state
+      fbdev: use panic_in_progress() helper
+      crash_core: use panic_try_start() in crash_kexec()
+      panic: use panic_try_start() in nmi_panic()
+      panic: use panic_try_start() in vpanic()
+      printk/nbcon: use panic_on_this_cpu() helper
+      panic/printk: replace this_cpu_in_panic() with panic_on_this_cpu()
+      panic/printk: replace other_cpu_in_panic() with panic_on_other_cpu()
+      watchdog: skip checks when panic is in progress
+      panic: use angle-bracket include for panic.h
+
+Joe Perches (1):
+      checkpatch: allow http links of any length in commit logs
+
+Johan Hovold (1):
+      lib/genalloc: fix device leak in of_gen_pool_get()
+
+Johannes Berg (1):
+      panic: remove CONFIG_PANIC_ON_OOPS_VALUE
+
+Krzysztof Kozlowski (2):
+      coccinelle: of_table: handle SPI device ID tables
+      coccinelle: platform_no_drv_owner: handle also built-in drivers
+
+Kuan-Wei Chiu (2):
+      test_firmware: use str_true_false() helper
+      alloc_tag: use str_on_off() helper
+
+Liao Yuanhong (3):
+      lib/digsig: remove unnecessary memset
+      x86/crash: remove redundant 0 value initialization
+      kexec_core: remove redundant 0 value initialization
+
+Masami Hiramatsu (Google) (1):
+      hung_task: dump blocker task if it is not hung
+
+Oleg Nesterov (3):
+      fork: kill the pointless lower_32_bits() in create_io_thread(), kernel_thread(), and user_mode_thread()
+      sched/task.h: fix the wrong comment on task_lock() nesting with tasklist_lock
+      kernel/sys.c: fix the racy usage of task_lock(tsk->group_leader) in sys_prlimit64() paths
+
+Petr Mladek (1):
+      panic: clean up message about deprecated 'panic_print' parameter
+
+Phillip Lougher (4):
+      Squashfs: fix uninit-value in squashfs_get_parent
+      Squashfs: add additional inode sanity checking
+      Squashfs: add SEEK_DATA/SEEK_HOLE support
+      Squashfs: reject negative file sizes in squashfs_read_inode()
+
+Pratyush Yadav (1):
+      kho: only fill kimage if KHO is finalized
+
+Qianfeng Rong (1):
+      ref_tracker: remove redundant __GFP_NOWARN
+
+Randy Dunlap (2):
+      list.h: add missing kernel-doc for basic macros
+      kernel.h: add comments for enum system_states
+
+Sahil Chandna (1):
+      kallsyms: use kmalloc_array() instead of kmalloc()
+
+Sergey Senozhatsky (1):
+      panic: remove redundant panic-cpu backtrace
+
+Sibi Sankar (1):
+      MAINTAINERS: update Sibi Sankar's email address
+
+Soham Bagchi (2):
+      kcov: use write memory barrier after memcpy() in kcov_move_area()
+      kcov: load acquire coverage count in user-space code
+
+Suchit Karunakaran (1):
+      checkpatch: suppress strscpy warnings for userspace tools
+
+Tetsuo Handa (1):
+      squashfs: verify inode mode when loading from disk
+
+Thorsten Blum (2):
+      ocfs2: remove commented out mlog() statements
+      lib/decompress: use designated initializers for struct compress_format
+
+Tio Zhang (1):
+      fork: remove #ifdef CONFIG_LOCKDEP in copy_process()
+
+Xichao Zhao (1):
+      lib/fault-inject-usercopy.c: use PTR_ERR_OR_ZERO() to simplify code
+
+ZhenguoYao (2):
+      watchdog/softlockup: fix wrong output when watchdog_thresh < 3
+      watchdog/softlockup: fix incorrect CPU utilization output during softlockup
+
+fuqiang wang (1):
+      x86/kexec: fix potential cmem->ranges out of memory
+
+yili (1):
+      ocfs2: fix super block reserved field offset comment
+
+zhang jiao (1):
+      fs/proc/base.c: fix the wrong format specifier
+
+zhoumin (1):
+      vfat: remove unused variable
+
+ .mailmap                                           |   3 +-
+ Documentation/accounting/delay-accounting.rst      |  91 ++--
+ Documentation/admin-guide/kernel-parameters.txt    |   2 +-
+ Documentation/admin-guide/sysctl/kernel.rst        |   2 +-
+ Documentation/dev-tools/kcov.rst                   |   7 +-
+ MAINTAINERS                                        |   2 +-
+ arch/x86/kernel/crash.c                            |  25 +-
+ arch/x86/kernel/kexec-bzimage64.c                  |  47 +-
+ drivers/firmware/efi/efi-init.c                    |  29 +-
+ drivers/video/fbdev/core/fbcon.c                   |   9 +-
+ fs/cramfs/inode.c                                  |   2 +-
+ fs/fat/dir.c                                       |   7 +-
+ fs/ocfs2/alloc.c                                   |   3 +-
+ fs/ocfs2/dlm/dlmmaster.c                           |  11 -
+ fs/ocfs2/dlm/dlmrecovery.c                         |   1 -
+ fs/ocfs2/inode.c                                   |   8 +
+ fs/ocfs2/ioctl.c                                   |  18 +-
+ fs/ocfs2/move_extents.c                            |   8 +-
+ fs/ocfs2/ocfs2_fs.h                                |   2 +-
+ fs/ocfs2/stack_user.c                              |   1 +
+ fs/ocfs2/sysfile.c                                 |  12 +-
+ fs/proc/base.c                                     |   2 +-
+ fs/squashfs/file.c                                 | 137 ++++-
+ fs/squashfs/inode.c                                |  39 +-
+ fs/squashfs/squashfs.h                             |   1 +
+ fs/squashfs/squashfs_fs.h                          |   1 +
+ fs/squashfs/squashfs_fs_i.h                        |   2 +-
+ include/linux/idr.h                                |   8 -
+ include/linux/kernel.h                             |  21 +-
+ include/linux/kexec.h                              |   5 +-
+ include/linux/kexec_handover.h                     |   6 +
+ include/linux/list.h                               |   8 +
+ include/linux/moduleparam.h                        |  13 +
+ include/linux/nvmem-provider.h                     |   2 +-
+ include/linux/panic.h                              |   6 +
+ include/linux/printk.h                             |   2 -
+ include/linux/sched/task.h                         |   5 +-
+ include/uapi/linux/kexec.h                         |   4 +
+ init/main.c                                        |  12 +
+ kernel/Kconfig.kexec                               |  11 +
+ kernel/Makefile                                    |   1 +
+ kernel/crash_core.c                                |  30 +-
+ kernel/crash_core_test.c                           | 343 +++++++++++++
+ kernel/fork.c                                      |  18 +-
+ kernel/hung_task.c                                 |  78 +--
+ kernel/kallsyms_selftest.c                         |   2 +-
+ kernel/kcov.c                                      |   9 +
+ kernel/kexec_core.c                                |   1 -
+ kernel/kexec_file.c                                |   1 +
+ kernel/kexec_handover.c                            |  22 +-
+ kernel/panic.c                                     | 129 ++++-
+ kernel/printk/internal.h                           |   1 -
+ kernel/printk/nbcon.c                              |  14 +-
+ kernel/printk/printk.c                             |  37 +-
+ kernel/printk/printk_ringbuffer.c                  |   2 +-
+ kernel/sys.c                                       |  32 +-
+ kernel/watchdog.c                                  |  28 +-
+ kernel/watchdog_perf.c                             |   4 +
+ lib/Kconfig.debug                                  |   6 -
+ lib/alloc_tag.c                                    |   3 +-
+ lib/btree.c                                        |   4 +-
+ lib/decompress.c                                   |  21 +-
+ lib/digsig.c                                       |   1 -
+ lib/dump_stack.c                                   |   2 +-
+ lib/fault-inject-usercopy.c                        |   4 +-
+ lib/genalloc.c                                     |   5 +-
+ lib/ref_tracker.c                                  |   6 +-
+ lib/sys_info.c                                     |   3 +-
+ lib/test_firmware.c                                |   7 +-
+ scripts/checkpatch.pl                              |  14 +-
+ scripts/coccinelle/api/platform_no_drv_owner.cocci |   9 +
+ scripts/coccinelle/misc/of_table.cocci             |  14 +-
+ tools/accounting/delaytop.c                        | 571 +++++++++++++++------
+ tools/testing/radix-tree/idr-test.c                |  16 +-
+ tools/testing/selftests/proc/.gitignore            |   1 +
+ tools/testing/selftests/proc/Makefile              |   1 +
+ tools/testing/selftests/proc/proc-net-dev-lseek.c  |  68 +++
+ tools/testing/selftests/proc/proc-pid-vm.c         |  12 +-
+ 78 files changed, 1619 insertions(+), 476 deletions(-)
+ create mode 100644 kernel/crash_core_test.c
+ create mode 100644 tools/testing/selftests/proc/proc-net-dev-lseek.c
+
 
