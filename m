@@ -1,235 +1,147 @@
-Return-Path: <linux-kernel+bounces-840873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D921CBB5A18
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 01:43:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 239E7BB5A1E
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 01:44:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 725A619C848F
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 23:44:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67010486592
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 23:44:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF3162C11EC;
-	Thu,  2 Oct 2025 23:43:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C10AE2C08D5;
+	Thu,  2 Oct 2025 23:44:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X6cxv/B0"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UXbWajv5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 854342C08D5;
-	Thu,  2 Oct 2025 23:43:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 196E22C031E
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 23:44:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759448615; cv=none; b=Iz9ekUKbUTK1FY0Uj/FQik+ED1pk86GvA6EEy/jQF0t93Nqm4dNrlcN8apyOVRkCQXwTsmE416IVYTRjs773RdB583CbJatGCQAU8Ywc4Z+8vVrhgLdQxhL4Sye/JxFMdyE9vccBqTyzT0+5P7KDBLsO/tqFUBSlfpQleYrnDS8=
+	t=1759448671; cv=none; b=pZ5Sz8xFFboooxCCEf8ek8g9Q0EbT5wVGx69MlQbypFWL/wfggjRxPItye80Gl/O+BqUKIabV0lOyzvIAhl3MJ5CYAjFdPTorPVOV6TyuNX1i9ewQ9ZTn0l1yDVAyTWw5TR9GWnwZE0pQb4F/N4DF45s4JPaYSj5Sx3z/zK0Hkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759448615; c=relaxed/simple;
-	bh=53y8mTKwYGU9EQpfzk/NGpruUlqMD9aiccI+mmERdBg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dDltKTB3Vphl5kkzSZbCY5dQ0eg025kAooXyuCrC7BBT5elDTJgeCY14RCy3SvHompV6qwrX8NQLxO9+OREJpaEJ/etnkLjyrJ2YfrnI/qlGG0+d1a/N3oQ7FoiUXS+SSzvO77HlGxPutzf4UpMwUUrR6f5uREkgHq2kv5JSfNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X6cxv/B0; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759448614; x=1790984614;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=53y8mTKwYGU9EQpfzk/NGpruUlqMD9aiccI+mmERdBg=;
-  b=X6cxv/B0eed+7jj82xh4eNcAav310t96jVLvio6XARHMSWVetz/HI9am
-   JWm4WLmI1pfv6evWswgrYUemavVWfpdPYm6grZLufud0TSimCNhSYppx+
-   Pges+PXWx/D+iivM1chhwIWDyJzgvDZPVoOmFo2XVzXPQbNC98mk2Bre/
-   Y2MdJwIkBpVcsnUrABp0z+s5lH8g7bjqwEtO0PvSI1LjmmX891jVQi3UV
-   FD1Ugfbb1merMdPAC1IRz4soqI97HG0V3++BV/HGBjgqQJs7FQaGdUdSf
-   HGUsi43cMqilTUz6sKQ9LDrPHwBL2J4VTD3boIChOvLRlsr74k4PqkBKW
-   g==;
-X-CSE-ConnectionGUID: mltELkH8TwqieYu98yrnlA==
-X-CSE-MsgGUID: GFcz0VFLQTG/YwWSWTNRvA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11570"; a="60948401"
-X-IronPort-AV: E=Sophos;i="6.18,310,1751266800"; 
-   d="scan'208";a="60948401"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2025 16:43:33 -0700
-X-CSE-ConnectionGUID: TWYbA5FgRiaf6JbFs5CK/A==
-X-CSE-MsgGUID: kyvZrzOsTO2S42W5shpXwg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,310,1751266800"; 
-   d="scan'208";a="178444545"
-Received: from mgoodin-mobl3.amr.corp.intel.com (HELO tfalcon-desk.attlocal.net) ([10.124.223.53])
-  by orviesa010.jf.intel.com with ESMTP; 02 Oct 2025 16:43:32 -0700
-From: thomas.falcon@intel.com
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Andi Kleen <ak@linux.intel.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>,
-	Thomas Falcon <thomas.falcon@intel.com>
-Subject: [Patch v3 2/2] perf record: Add auto counter reload parse and regression tests
-Date: Thu,  2 Oct 2025 18:43:06 -0500
-Message-ID: <20251002234308.64218-3-thomas.falcon@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251002234308.64218-1-thomas.falcon@intel.com>
-References: <20251002234308.64218-1-thomas.falcon@intel.com>
+	s=arc-20240116; t=1759448671; c=relaxed/simple;
+	bh=R6uVG9Okh0A6W3VKSBMqAtqMu3KvZurm5tI7M91CTTs=;
+	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=USyQjkvXvvcy2AdvYOBV8sVBtXY5KdNUCAfj2oH09LS9ClAtVfcDM9XbGac6ujwkDJf0Q2emc5gsek8pHhvGywwIlwy5BBFLPdk5qjmLruMohKLAFtq0Au9EXPOYG2Y/R30ima6bCKW3+KLSXug03RZw+amu7vR2JXwz4+LOh4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UXbWajv5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15597C4CEF4;
+	Thu,  2 Oct 2025 23:44:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759448671;
+	bh=R6uVG9Okh0A6W3VKSBMqAtqMu3KvZurm5tI7M91CTTs=;
+	h=Date:From:To:Cc:Subject:From;
+	b=UXbWajv5zXlEQEukobofrdmlbADybPtlY1fskdI2XZoPcxkpLYXtTPm63Lw9bW6OS
+	 AF6YA0+uuQwBIiWDOIQr9RVinri/XySaZQ1rhhImgndgYr+oAIJa+bu2c0jfiIrw6u
+	 SqIM9N4iBtOVDGJBBIkcaP8jn6EO6QBPYvINAhQl1f5zCw4OIRwBBbQfcrOc7XFI8J
+	 1wljxUYMfmJDwT+PsCGM6TN9VTI/tDiFg0LKfhGBzJFNyueEAGuVassg6wUtAAkAUC
+	 FahISA/8Pji2Wofg8cjitwX1B6bB1NbqS83FMbBBva8NL2i7qVC7/NYp8indHjrzBS
+	 73BP4N/vXUttw==
+Date: Fri, 3 Oct 2025 08:44:26 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Masami Hiramatsu (Google) <mhiramat@kernel.org>, Menglong Dong
+ <menglong8.dong@gmail.com>, Thorsten Blum <thorsten.blum@linux.dev>, Steven
+ Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ linux-kernel@vger.kernel.org
+Subject: [GIT PULL] probes: Update for v6.18
+Message-Id: <20251003084426.f2de6028fd74e1af4e13d190@kernel.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Thomas Falcon <thomas.falcon@intel.com>
+Hi Linus,
 
-Include event parsing and regression tests for auto counter reload
-and ratio-to-prev event term.
+Probes for v6.18:
 
-Reviewed-by: Ian Rogers <irogers@google.com>
-Signed-off-by: Thomas Falcon <thomas.falcon@intel.com>
----
- tools/perf/tests/parse-events.c  | 54 ++++++++++++++++++++++++++++++++
- tools/perf/tests/shell/record.sh | 40 +++++++++++++++++++++++
- 2 files changed, 94 insertions(+)
+- fprobe: Performance enhancement of the fprobe using rhltable
+  . fprobe: use rhltable for fprobe_ip_table. The fprobe IP table has
+    been converted to use an rhltable for improved performance when
+    dealing with a large number of probed functions.
+  . Fix a suspicious RCU usage warning of the above change in the
+    fprobe entry handler.
+  . Remove an unused local variable of the above change.
+  . Fix to initialize fprobe_ip_table in core_initcall().
 
-diff --git a/tools/perf/tests/parse-events.c b/tools/perf/tests/parse-events.c
-index bb8004397650..67550cc60555 100644
---- a/tools/perf/tests/parse-events.c
-+++ b/tools/perf/tests/parse-events.c
-@@ -1736,6 +1736,53 @@ static int test__intel_pt(struct evlist *evlist)
- 	return TEST_OK;
- }
- 
-+static bool test__acr_valid(void)
-+{
-+	struct perf_pmu *pmu = NULL;
-+
-+	while ((pmu = perf_pmus__scan_core(pmu)) != NULL) {
-+		if (perf_pmu__has_format(pmu, "acr_mask"))
-+			return true;
-+	}
-+
-+	return false;
-+}
-+
-+static int test__ratio_to_prev(struct evlist *evlist)
-+{
-+	struct evsel *evsel;
-+	int ret;
-+
-+	TEST_ASSERT_VAL("wrong number of entries", 2 * perf_pmus__num_core_pmus() == evlist->core.nr_entries);
-+
-+	 evlist__for_each_entry(evlist, evsel) {
-+		if (!perf_pmu__has_format(evsel->pmu, "acr_mask"))
-+			return TEST_OK;
-+
-+		if (evsel == evlist__first(evlist)) {
-+			TEST_ASSERT_VAL("wrong config2", 0 == evsel->core.attr.config2);
-+			TEST_ASSERT_VAL("wrong leader", evsel__is_group_leader(evsel));
-+			TEST_ASSERT_VAL("wrong core.nr_members", evsel->core.nr_members == 2);
-+			TEST_ASSERT_VAL("wrong group_idx", evsel__group_idx(evsel) == 0);
-+			ret = assert_hw(&evsel->core, PERF_COUNT_HW_CPU_CYCLES, "cycles");
-+		} else {
-+			TEST_ASSERT_VAL("wrong config2", 0 == evsel->core.attr.config2);
-+			TEST_ASSERT_VAL("wrong leader", !evsel__is_group_leader(evsel));
-+			TEST_ASSERT_VAL("wrong core.nr_members", evsel->core.nr_members == 0);
-+			TEST_ASSERT_VAL("wrong group_idx", evsel__group_idx(evsel) == 1);
-+			ret = assert_hw(&evsel->core, PERF_COUNT_HW_INSTRUCTIONS, "instructions");
-+		}
-+		if (ret)
-+			return ret;
-+		/*
-+		 * The period value gets configured within evlist__config,
-+		 * while this test executes only parse events method.
-+		 */
-+		TEST_ASSERT_VAL("wrong period", 0 == evsel->core.attr.sample_period);
-+	}
-+	return TEST_OK;
-+}
-+
- static int test__checkevent_complex_name(struct evlist *evlist)
- {
- 	struct evsel *evsel = evlist__first(evlist);
-@@ -2249,6 +2296,13 @@ static const struct evlist_test test__events[] = {
- 		.check = test__checkevent_tracepoint,
- 		/* 4 */
- 	},
-+	{
-+		.name  = "{cycles,instructions/period=200000,ratio-to-prev=2.0/}",
-+		.valid = test__acr_valid,
-+		.check = test__ratio_to_prev,
-+		/* 5 */
-+	},
-+
- };
- 
- static const struct evlist_test test__events_pmu[] = {
-diff --git a/tools/perf/tests/shell/record.sh b/tools/perf/tests/shell/record.sh
-index b1ad24fb3b33..0f5841c479e7 100755
---- a/tools/perf/tests/shell/record.sh
-+++ b/tools/perf/tests/shell/record.sh
-@@ -388,6 +388,45 @@ test_callgraph() {
-   echo "Callgraph test [Success]"
- }
- 
-+test_ratio_to_prev() {
-+  echo "ratio-to-prev test"
-+  if ! perf record -o /dev/null -e "{instructions, cycles/period=100000,ratio-to-prev=0.5/}" \
-+     true 2> /dev/null
-+  then
-+    echo "ratio-to-prev [Skipped not supported]"
-+    return
-+  fi
-+  if ! perf record -o /dev/null -e "instructions, cycles/period=100000,ratio-to-prev=0.5/" \
-+     true |& grep -q 'Invalid use of ratio-to-prev term without preceding element in group'
-+  then
-+    echo "ratio-to-prev test [Failed elements must be in same group]"
-+    err=1
-+    return
-+  fi
-+  if ! perf record -o /dev/null -e "{instructions,dummy,cycles/period=100000,ratio-to-prev=0.5/}" \
-+     true |& grep -q 'must have same PMU'
-+  then
-+    echo "ratio-to-prev test [Failed elements must have same PMU]"
-+    err=1
-+    return
-+  fi
-+  if ! perf record -o /dev/null -e "{instructions,cycles/ratio-to-prev=0.5/}" \
-+     true |& grep -q 'Event period term or count (-c) must be set when using ratio-to-prev term.'
-+  then
-+    echo "ratio-to-prev test [Failed period must be set]"
-+    err=1
-+    return
-+  fi
-+  if ! perf record -o /dev/null -e "{cycles/ratio-to-prev=0.5/}" \
-+     true |& grep -q 'Invalid use of ratio-to-prev term without preceding element in group'
-+  then
-+    echo "ratio-to-prev test [Failed need 2+ events]"
-+    err=1
-+    return
-+  fi
-+  echo "Basic ratio-to-prev record test [Success]"
-+}
-+
- # raise the limit of file descriptors to minimum
- if [[ $default_fd_limit -lt $min_fd_limit ]]; then
-        ulimit -Sn $min_fd_limit
-@@ -404,6 +443,7 @@ test_leader_sampling
- test_topdown_leader_sampling
- test_precise_max
- test_callgraph
-+test_ratio_to_prev
- 
- # restore the default value
- ulimit -Sn $default_fd_limit
+- wprobe: Introduce a watchpoint probe event based on hw_breakpoint.
+  . Add a new watchpoint probe that uses hardware breakpoints to
+    monitor memory accesses. This allows for tracing memory reads
+    and writes at specified addresses.
+  . Add a basic add/remove test case for wprobe.
+  . Add a syntax test case for wprobe.
+
+- probes: Cleanup probe event subsystems.
+  . uprobe/eprobe: Allocate traceprobe_parse_context per probe instead
+    of each probe argument parsing. This reduce memory allocation/free
+    of temporary working memory.
+  . uprobes: Cleanup code using __free().
+  . eprobes: Cleanup code using __free().
+  . probes: Cleanup code using __free(trace_probe_log_clear) to clear
+    error log automatically.
+  . probes: Replace strcpy() with memcpy() in __trace_probe_log_err().
+
+
+Please pull the latest probes-v6.18-2 tree, which can be found at:
+
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+probes-v6.18-2
+
+Tag SHA1: c9699ea9d31215b01384fc3ce3a8c7cb3c8671f9
+Head SHA1: 764d1ce2ccf0377dd81a0f199f267703918588da
+
+
+Masami Hiramatsu (Google) (9):
+      tracing: probes: Use __free() for trace_probe_log
+      tracing: eprobe: Cleanup eprobe event using __free()
+      tracing: uprobes: Cleanup __trace_uprobe_create() with __free()
+      tracing: uprobe: eprobes: Allocate traceprobe_parse_context per probe
+      tracing: fprobe: Remove unused local variable
+      tracing: wprobe: Add watchpoint probe event based on hardware breakpoint
+      selftests: tracing: Add a basic testcase for wprobe
+      selftests: tracing: Add syntax testcase for wprobe
+      tracing: fprobe: Fix to init fprobe_ip_table earlier
+
+Menglong Dong (2):
+      tracing: fprobe: use rhltable for fprobe_ip_table
+      tracing: fprobe: fix suspicious rcu usage in fprobe_entry
+
+Thorsten Blum (1):
+      tracing: probes: Replace strcpy() with memcpy() in __trace_probe_log_err()
+
+----
+ Documentation/trace/index.rst                      |   1 +
+ Documentation/trace/wprobetrace.rst                |  69 +++
+ include/linux/fprobe.h                             |   3 +-
+ include/linux/trace_events.h                       |   2 +
+ kernel/trace/Kconfig                               |  13 +
+ kernel/trace/Makefile                              |   1 +
+ kernel/trace/fprobe.c                              | 159 +++--
+ kernel/trace/trace.c                               |   9 +-
+ kernel/trace/trace.h                               |   5 +
+ kernel/trace/trace_eprobe.c                        | 108 ++--
+ kernel/trace/trace_probe.c                         |  27 +-
+ kernel/trace/trace_probe.h                         |  12 +-
+ kernel/trace/trace_uprobe.c                        |  82 +--
+ kernel/trace/trace_wprobe.c                        | 685 +++++++++++++++++++++
+ tools/testing/selftests/ftrace/config              |   1 +
+ .../ftrace/test.d/dynevent/add_remove_wprobe.tc    |  68 ++
+ .../test.d/dynevent/wprobes_syntax_errors.tc       |  20 +
+ 17 files changed, 1076 insertions(+), 189 deletions(-)
+ create mode 100644 Documentation/trace/wprobetrace.rst
+ create mode 100644 kernel/trace/trace_wprobe.c
+ create mode 100644 tools/testing/selftests/ftrace/test.d/dynevent/add_remove_wprobe.tc
+ create mode 100644 tools/testing/selftests/ftrace/test.d/dynevent/wprobes_syntax_errors.tc
+---------------------------
+
 -- 
-2.50.1
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
