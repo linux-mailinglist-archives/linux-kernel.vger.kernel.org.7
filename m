@@ -1,91 +1,222 @@
-Return-Path: <linux-kernel+bounces-840156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AAB0BB3B67
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 13:03:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33CA5BB3B6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 13:03:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAF593BD1B4
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 11:03:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD49F3272A0
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 11:03:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57D6F30F944;
-	Thu,  2 Oct 2025 11:03:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rbnzu7ka";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="neSAJyLr"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EBCA30F94F;
+	Thu,  2 Oct 2025 11:03:29 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23AB12EC099;
-	Thu,  2 Oct 2025 11:03:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C5BE2EC099
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 11:03:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759402989; cv=none; b=ZjOj6IZt8dDzKD/XO6Ajpa9f2XCqhP0zPXnkitgTsUZGm69n64eCH5zN1Ie+UflviEVZplXL73w2btU48VO0bHy32TRY2Xizfk16W2vhgvnns0j6xseB6a1Qd2d49yaGHjmoPrVau+rOGgLrbq2HIikjk9BPVXoWvcBQK+7CIFg=
+	t=1759403008; cv=none; b=ddJbM7jOV1fCegU1PKTYj4hTJtvh0mySpXGONwIIa0QfXcEyj4Cuc4PCNINqUv/+/roaOZcXjq84Sy2f4CSqrCqyAG4zfjitzX5e1e4EyOKNqaWPZteApDpRKYVMJI/sVPT4H038jr0FjH9HAMNEvgbmLfStPkuVB7T8CD3zqCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759402989; c=relaxed/simple;
-	bh=8NYUepfs/ARQb10GiGuRLU3X3En1i9nrdZTxw7phox0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=qZJMMOiQHaTcmwpVYFyPQNEGbYNUfHvjSQt66DNKqe/0Zbzsm/+hxDdIm1Ymiu+FpoqRH2egnMgpnfKzwbwpLi+PxkiHaJzyfQ9kHYhYEAiqMhxgnmZ43kz8F7bkZqcRrVgmWABxFR38kii65DyWPjH40bys+X6DJaY4ZUJJhos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rbnzu7ka; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=neSAJyLr; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Nam Cao <namcao@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1759402984;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8NYUepfs/ARQb10GiGuRLU3X3En1i9nrdZTxw7phox0=;
-	b=rbnzu7ka3AOA5YL82MSdhuabD1IotwnsPvy5LajOFlb6Rn/Mbx8VQM1fzRzpK3SNAM5LsB
-	tpmoMc4RMnNG3SElFPmCtgTgzo+4IDgEFt6QSyDKo7slXuEaRHlMh578/FzXXAANt60TqO
-	WEnMEj0o1cnU/kUF2u+0mcRdghDQ7117hBSdOvpcVyrGQ0ngPBqgjW64PZrfA0rEzocmmT
-	ocym/F3BOwsHb1YJ5oAzf8jAvOz31OTiLJ0qaQPZNwmRSaUNlDcw5g6A3GdKoARQ43D86h
-	bCHWg2Hk7zvtwy2BtksjNmhy1bbegABQl2Q4h3asX20Bk99a/Af+JiKltVcc/A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1759402984;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8NYUepfs/ARQb10GiGuRLU3X3En1i9nrdZTxw7phox0=;
-	b=neSAJyLrx0LQ+jRiH2PdB4zI1AJETWwMhL/tDLrILA3uS+pFNZWKPqFsPxUlQxT4JHxQFa
-	opsRcWxku5rPCAAQ==
-To: Gabriele Monaco <gmonaco@redhat.com>, linux-kernel@vger.kernel.org,
- Steven Rostedt <rostedt@goodmis.org>, linux-trace-kernel@vger.kernel.org
-Cc: Gabriele Monaco <gmonaco@redhat.com>, Tomas Glozar <tglozar@redhat.com>,
- Juri Lelli <jlelli@redhat.com>, Clark Williams <williams@redhat.com>, John
- Kacur <jkacur@redhat.com>
-Subject: Re: [PATCH v2 11/20] verification/rvgen: Allow spaces in and events
- strings
-In-Reply-To: <20250919140954.104920-12-gmonaco@redhat.com>
-References: <20250919140954.104920-1-gmonaco@redhat.com>
- <20250919140954.104920-12-gmonaco@redhat.com>
-Date: Thu, 02 Oct 2025 13:03:04 +0200
-Message-ID: <87v7kxr2fr.fsf@yellow.woof>
+	s=arc-20240116; t=1759403008; c=relaxed/simple;
+	bh=ZUCdPUTGkEt0v0lb4ITMH1udbOVULhS45YDus7CEMj8=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=W7ILEv468JGzktlzc9dQzN5r/nGHoIaLJK/CvUGxJzT9TMNK8XynaSGGAembxEfttA5rxlQQ0tEjs4003C82t5QwTu4yCBSAolIiNCwVD1hxT2TNCrl92MF+dUpdvB8sdswSWtKX40COYJtzxoJaPJ7dro+EVvhUf5Y4/TQINsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ccpkX0rtWz6L4tv;
+	Thu,  2 Oct 2025 19:01:08 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id D51CE140278;
+	Thu,  2 Oct 2025 19:03:23 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 2 Oct
+ 2025 12:03:22 +0100
+Date: Thu, 2 Oct 2025 12:03:20 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Shivank Garg <shivankg@amd.com>
+CC: <akpm@linux-foundation.org>, <david@redhat.com>, <ziy@nvidia.com>,
+	<willy@infradead.org>, <matthew.brost@intel.com>, <joshua.hahnjy@gmail.com>,
+	<rakie.kim@sk.com>, <byungchul@sk.com>, <gourry@gourry.net>,
+	<ying.huang@linux.alibaba.com>, <apopple@nvidia.com>,
+	<lorenzo.stoakes@oracle.com>, <Liam.Howlett@oracle.com>, <vbabka@suse.cz>,
+	<rppt@kernel.org>, <surenb@google.com>, <mhocko@suse.com>,
+	<vkoul@kernel.org>, <lucas.demarchi@intel.com>, <rdunlap@infradead.org>,
+	<jgg@ziepe.ca>, <kuba@kernel.org>, <justonli@chromium.org>,
+	<ivecera@redhat.com>, <dave.jiang@intel.com>, <dan.j.williams@intel.com>,
+	<rientjes@google.com>, <Raghavendra.KodsaraThimmappa@amd.com>,
+	<bharata@amd.com>, <alirad.malek@zptcorp.com>, <yiannis@zptcorp.com>,
+	<weixugc@google.com>, <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>
+Subject: Re: [RFC V3 4/9] mm/migrate: add migrate_folios_batch_move to 
+ batch the folio move operations
+Message-ID: <20251002120320.00003ab7@huawei.com>
+In-Reply-To: <20250923174752.35701-5-shivankg@amd.com>
+References: <20250923174752.35701-1-shivankg@amd.com>
+	<20250923174752.35701-5-shivankg@amd.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100012.china.huawei.com (7.191.174.184) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-Gabriele Monaco <gmonaco@redhat.com> writes:
+On Tue, 23 Sep 2025 17:47:39 +0000
+Shivank Garg <shivankg@amd.com> wrote:
 
-> Currently the automata parser assumes event strings don't have any
-> space, this stands true for event names, but can be a wrong assumption
-> if we want to store other information in the event strings (e.g.
-> constraints for hybrid automata).
->
-> Adapt the parser logic to allow spaces in the event strings.
+> This is a preparatory patch that enables batch copying for folios
+> undergoing migration. By enabling batch copying the folio content, we can
+> efficiently utilize the capabilities of DMA hardware or multi-threaded
+> folio copy. It uses MIGRATE_NO_COPY to skip folio copy during metadata
+> copy process and performed the copies in a batch later.
+> 
+> Currently, the folio move operation is performed individually for each
+> folio in sequential manner:
+> for_each_folio() {
+>         Copy folio metadata like flags and mappings
+>         Copy the folio content from src to dst
+>         Update page tables with dst folio
+> }
+> 
+> With this patch, we transition to a batch processing approach as shown
+> below:
+> for_each_folio() {
+>         Copy folio metadata like flags and mappings
+> }
+> Batch copy all src folios to dst
+> for_each_folio() {
+>         Update page tables with dst folios
+> }
+> 
+> dst->private is used to store page states and possible anon_vma value,
+> thus needs to be cleared during metadata copy process. To avoid additional
+> memory allocation to store the data during batch copy process, src->private
+> is used to store the data after metadata copy process, since src is no
+> longer used.
+> 
+> Co-developed-by: Zi Yan <ziy@nvidia.com>
+> Signed-off-by: Zi Yan <ziy@nvidia.com>
+> Signed-off-by: Shivank Garg <shivankg@amd.com>
+> ---
+>  mm/migrate.c | 197 +++++++++++++++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 193 insertions(+), 4 deletions(-)
+> 
+> diff --git a/mm/migrate.c b/mm/migrate.c
+> index 3fe78ecb146a..ce94e73a930d 100644
+> --- a/mm/migrate.c
+> +++ b/mm/migrate.c
+> @@ -843,12 +843,15 @@ static int __migrate_folio(struct address_space *mapping, struct folio *dst,
+>  			   enum migrate_mode mode)
+>  {
+>  	int rc, expected_count = folio_expected_ref_count(src) + 1;
+> +	unsigned long dst_private = (unsigned long)dst->private;
+Why not just stash it in a void * and void the casts?
 
-I probably misunderstand something, but isn't the description
-misleading? After reading this description, I expect the patch to ignore
-spaces or something similar. But from my understanding, the script only
-allowed a single event, and this patch allows conditions as well.
+>  
+>  	/* Check whether src does not have extra refs before we do more work */
+>  	if (folio_ref_count(src) != expected_count)
+>  		return -EAGAIN;
+>  
+> -	if (mode != MIGRATE_NO_COPY) {
+> +	if (mode == MIGRATE_NO_COPY) {
+> +		dst->private = NULL;
+> +	} else {
+>  		rc = folio_mc_copy(dst, src);
+>  		if (unlikely(rc))
+>  			return rc;
+> @@ -862,6 +865,10 @@ static int __migrate_folio(struct address_space *mapping, struct folio *dst,
+>  		folio_attach_private(dst, folio_detach_private(src));
+>  
+>  	folio_migrate_flags(dst, src);
+> +
+> +	if (mode == MIGRATE_NO_COPY)
 
-Shouldn't this be squashed to the next patch?
+I'd add a comment on what you mention in the commit message about this being a safe place
+to stash this.
 
-Nam
+> +		src->private = (void *)dst_private;
+> +
+>  	return MIGRATEPAGE_SUCCESS;
+>  }
+>  
+> @@ -1149,7 +1156,7 @@ static void __migrate_folio_record(struct folio *dst,
+>  	dst->private = (void *)anon_vma + old_page_state;
+>  }
+>  
+> -static void __migrate_folio_extract(struct folio *dst,
+> +static void __migrate_folio_read(struct folio *dst,
+>  				   int *old_page_state,
+>  				   struct anon_vma **anon_vmap)
+>  {
+> @@ -1157,6 +1164,12 @@ static void __migrate_folio_extract(struct folio *dst,
+>  
+>  	*anon_vmap = (struct anon_vma *)(private & ~PAGE_OLD_STATES);
+>  	*old_page_state = private & PAGE_OLD_STATES;
+> +}
+
+Probably a blank line here.
+
+> +static void __migrate_folio_extract(struct folio *dst,
+> +				   int *old_page_state,
+> +				   struct anon_vma **anon_vmap)
+> +{
+> +	__migrate_folio_read(dst, old_page_state, anon_vmap);
+>  	dst->private = NULL;
+>  }
+>  
+> @@ -1776,6 +1789,176 @@ static void migrate_folios_move(struct list_head *src_folios,
+>  	}
+>  }
+>  
+> +static void migrate_folios_batch_move(struct list_head *src_folios,
+> +		struct list_head *dst_folios,
+> +		free_folio_t put_new_folio, unsigned long private,
+> +		enum migrate_mode mode, int reason,
+> +		struct list_head *ret_folios,
+> +		struct migrate_pages_stats *stats,
+> +		int *retry, int *thp_retry, int *nr_failed,
+> +		int *nr_retry_pages)
+> +{
+> +	struct folio *folio, *folio2, *dst, *dst2;
+> +	int rc, nr_pages = 0, nr_batched_folios = 0;
+> +	int old_page_state = 0;
+> +	struct anon_vma *anon_vma = NULL;
+> +	int is_thp = 0;
+
+Always set in each loop before use. So no need to init here that I can see.
+
+> +	LIST_HEAD(err_src);
+> +	LIST_HEAD(err_dst);
+
+> +	/* Batch copy the folios */
+> +	rc = folios_mc_copy(dst_folios, src_folios, nr_batched_folios);
+> +
+> +	/* TODO:  Is there a better way of handling the poison
+> +	 * recover for batch copy, instead of falling back to serial copy?
+
+Is there a reason we might expect this to be common enough to care about
+not using the serial path?
+
+> +	 */
+> +	/* fallback to serial page copy if needed */
+> +	if (rc) {
+> +		dst = list_first_entry(dst_folios, struct folio, lru);
+> +		dst2 = list_next_entry(dst, lru);
+> +		list_for_each_entry_safe(folio, folio2, src_folios, lru) {
+> +			is_thp = folio_test_large(folio) &&
+> +				 folio_test_pmd_mappable(folio);
+> +			nr_pages = folio_nr_pages(folio);
+> +			rc = folio_mc_copy(dst, folio);
+> +
+
 
