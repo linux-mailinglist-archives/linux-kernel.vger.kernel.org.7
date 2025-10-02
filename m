@@ -1,135 +1,149 @@
-Return-Path: <linux-kernel+bounces-840489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F8DCBB4895
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 18:28:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BDA4BB48C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 18:33:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E5747B7179
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 16:26:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1DA23B13FD
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 16:33:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E484725A33A;
-	Thu,  2 Oct 2025 16:27:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB5B3261B9C;
+	Thu,  2 Oct 2025 16:33:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B5j44dFY"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IYI4osjP"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02D1B1DA0E1
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 16:27:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CC8D18FC97
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 16:33:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759422476; cv=none; b=cSAzsy56Lw1fNUQxxX18Ew6u64Iwo37o9QznU74PtZ3SGbOK4VjysP/YbwraQGAVbUnMg5SYpp7YokuBdbpiaanw3FsXfKBdZ+Fnbv7NvisoEKB5dUp3svZq5BaX1t1ikQ+Zb12q2TJhMGgpcblD2RoDVEOxdZFHIngWo7gP4V8=
+	t=1759422814; cv=none; b=AzMnwJZdnNMs75LyMkJ3jvZOa60u4JU50YTaT2svr+OEqWUW9RMOwA/QDAbxOFYWrVPcY0qxYFiVoC8sDSX5rlaMvJLjmfT8cvTi0ekIp8oO93nXLtUgp+4eNMQ6/1pUgWDo6CZMexFVB+96lH8b4PFvCngl8ssJSgAzzxg5/zQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759422476; c=relaxed/simple;
-	bh=6P8PdpETu4JNDLuK6zlPSVTpwWgTkevlM36iYzRTPwU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OtpRZa+IqRntbJya4zu7VxT0OBHhsovpECybaqASJ+j0neYIEos9JIr7s4KVNGe21arLGRgMC+mhIrn1OuS/kUB8Yxl+utbb5NT60VuCzvH64x6u6Hi263i0GNXtbRle6TonH6uQqiKWPTSeciCwOQdDE/GjU7OuIx9eDwRrfYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B5j44dFY; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b55517e74e3so1416793a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 09:27:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759422474; x=1760027274; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8MIx1cgazS4vSFCcdU3NLCPECgs+mJUW/PomE8mLbHI=;
-        b=B5j44dFYWUOlHCn/pCvYEdl74C3TgzANfjcctywXm7qJCtjGENvdQ2+k7HFTtFfjxy
-         hyHuiYguqujKmN8OBQU0ISjPnii3SNHnFzwk7t+kwrIHv0okFylgjjwVm9RWlPNPYfJM
-         5iYqFcvvz5QZuniwyP2echa82fSwjtzqeDdINbSf3CxFWfl9wxQzZlt8Xz1CkXN3alcn
-         Gso7/SHGvP19TN54axD3Way9tZv+muvdDdsxUdIL+2+qREldeilLw6NioTEyuFYhlkMz
-         FllXGWQCCZPVEDJi7CA9/zeofB858kSq690ZroBxPHL/EgeOAJm0q+uC7jrLsIbXYNO+
-         HYJw==
+	s=arc-20240116; t=1759422814; c=relaxed/simple;
+	bh=w6Vxrk6KdcgYiT6lXdu/kreSX4FHrdn9P+prLxY9ozI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Juc2rANWR+/oE4wJmneKRoUtR9WDiM+xSGNnwaMEuaLl09PTfQ9OVB3vKk3vKn2CR6R2BqYxbcf2tEtntYqrmAjmUu3M7zBt2qlKv/5x4MRnf4SRr5uJH7HNiaxXGasOtoV0g+nN88u312JhpRSWTGmAEbvAzOkvrCNDoylpHV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IYI4osjP; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759422811;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YdR3NzwrosX/m8eq+tUtYGt+iZF+C/ngXCOZthrJPXY=;
+	b=IYI4osjPlywc1+Hz2TbYukWX2M/K3n963Z+kRG4GtWFoKRZBUI/40IHJ72i6ZbDPrAuYEl
+	dOCSX7GEOqjFWYuvXwkgTUSYIIq/0g+fUpTG4vtPbx5TK871ahH3lQ6F/kxi2PKd+0UsP9
+	g6aG2NJ6DDnlwWvPfFdXiLxSLpn0QiI=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-340-IJvQo6zaP7KOjg-a91uQMw-1; Thu, 02 Oct 2025 12:33:29 -0400
+X-MC-Unique: IJvQo6zaP7KOjg-a91uQMw-1
+X-Mimecast-MFC-AGG-ID: IJvQo6zaP7KOjg-a91uQMw_1759422809
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4de53348322so53518941cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 09:33:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759422474; x=1760027274;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8MIx1cgazS4vSFCcdU3NLCPECgs+mJUW/PomE8mLbHI=;
-        b=GVZhM4kQQqmGnuRemG3f8T1eqE/ax3OHNGieiVL55xlC/9p0ZIiYItgbQOl8rfvL9l
-         mP43UzBZaij+zNI+f8qNMwGOcT/GqXO3SDnB2s58OJ+dSrkq1ikZJJtQ00ZqMJqdZ9+n
-         spl4EYdsZWqJVXtrSRL1An98qw8PVB1/Lt85LVLmlXZUQH5ujW2VCGqGwuFTtupqQNjZ
-         jOrEpG9aoS5oVFikZwtVCYNgj2sq4sbghiK20IkFWHh/5y9LIQn0WGtxB/TVZfHyAmt6
-         U1aqomGI8iGTx5XCqgMYyv5b1dgqz5Flyv7TYveG4BXpjJ0OdhgfyIltjltRZPX6SMLi
-         VAxg==
-X-Forwarded-Encrypted: i=1; AJvYcCUHEo6GJGdFSsnSEguVEmTvvPSmvzSQkDq9AUr7D0mNSm8cX96yz58B38XzaTgMwP2a78K5XfnG/+Z2GVk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwryMlH1/m+MSlWAeIS9u+KxuBDkKwcezGbk7un7+peqU+epCR4
-	zXsVmQ81JY4eGF+I/3mS7N5FGb73mxAjHQqbo2urFdMCufoaKesRRQefLIRXFhC3LcWsOD9Lz8J
-	9OniKk34/5HLTuS1D0IfXnGa0ECJQUYE=
-X-Gm-Gg: ASbGncus0kKQ5XSurK1c+NMUfq8zvit5bMTwZoCfJzEA6CKPZ8TT/KfiqeEBDj6oRz5
-	8O52rmuM5rThCjvSuY6AtJnU9AkEaKsvIdD3iRFLxwAbdhpSnRvx7h38AoYma2MB9s9t6R+wv6Y
-	MVoJm40wmC3gBfrQJx89jZWJH/VhFdiiI/nmtb731hSY2/LHhzKPnlWk/jec4Y/jnkgk9zE1+C8
-	LI3V3Izf3jnrbl3RlLvQuCDm5mdF3A=
-X-Google-Smtp-Source: AGHT+IE264pwEl1Py+B5Xh9WvrM0/n0gzZfa2yw7thnQZLAo0gAAHCDysz98mjnnKEJ1frpS6mNIZHS1sZMZP+3Dyfg=
-X-Received: by 2002:a17:902:f54f:b0:278:bfae:3244 with SMTP id
- d9443c01a7336-28e7f31f073mr119647195ad.54.1759422474219; Thu, 02 Oct 2025
- 09:27:54 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759422809; x=1760027609;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YdR3NzwrosX/m8eq+tUtYGt+iZF+C/ngXCOZthrJPXY=;
+        b=iNrj+F18fwkUa6uiZhxyoNjnFvLHXgNsWMWXqohKDi+FnGDXJ0UoGSuUC9ST1vWPHq
+         C8Lrmku7HhK4Oiu/tAykvbeiMG2ZiQ3CZSk+96CRolfn62Py+l9v/UHQoBR2T6mK9FAN
+         srC1hoPuQoBLyGfiaP/p/CzLUwGHRWtPSsuH7Z3i8fxUmHg7KJ4bC/B6QoYbwoVtzf04
+         ICfCL+AAjR9RDUK3Rth7SxAL29FCCXWUfwvF5GtzoF5LSslT+jqt0i6kx8BGJ2kngRS2
+         w5Z9HrfK7ljLg6iyuxyMNZZg4kjCxvhb9Qh35AvLhOUYdk2znFcGhdc87KKks2Tj/F95
+         K/RQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUH+XxRJqlVrsZjSXE8a7rpWb8Rc+UayNUGcRYREl0xWAX8PUCnDaWOGet42EwIXS3jJdE6Bq8gGww2HH0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzc8lnvHUdCC9LXGC657gLb3lnCepjXiGxXK0qKdlCA5hn/72/j
+	k21QiRL/9Q5TjJn3vG3BAPYG/Ij8fYVc7EbpLR42kFXPzybET0BYqsh6lNloKwIKMo2LZZfseVl
+	om0cpqZcJDZ50oVAmyizc5adg95nzgCMlB6SfnkygwPnsxwAzKi8pr+pn4CXajxhhhA==
+X-Gm-Gg: ASbGncvDtDMpV7yaqd3HsoAeBe1pLiDZ5R2YET7YOMZSpbL1Q3XM9x73kXaRSFUwAdr
+	Cx2bGrLxgDxYuBLLPXWw0+gCjACJsADVNKGfl9GkImv9pKFArPVGWA3dRBLaI3X7kNTpcSQfkVe
+	TTDUXf51z/TugIFmsNOa6djFm9CgmRon+Y/fdWjkR5dNgJ1TQH+Y7ylYad3YgEoLcOKiLts0RK9
+	83koVYw7Isf1LOsw0ZVPt+HDPW574/z34Fa0FUdKwy8fCF/YHu8MWb0g6xqVCHTaGmOWlO9RQpe
+	Mi/E+rIVG8YROLKpat0aoCPs7Y4tesPP5xWS8TcQB3nnvH5cVg1E8prfh6pael6I9O/D45kd9PM
+	+ALiUpO34T3rxNBURV16WMzmB
+X-Received: by 2002:a05:622a:1249:b0:4de:10a5:2c7f with SMTP id d75a77b69052e-4e41eef65e3mr124173091cf.84.1759422809211;
+        Thu, 02 Oct 2025 09:33:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE9XFDVHze3B7gqhGWPlrpQWvqd3Rxv66AFPb3iUUWuRrW0a/a1sVRExcO2QP/ShbWzAgM7Wg==
+X-Received: by 2002:a05:622a:1249:b0:4de:10a5:2c7f with SMTP id d75a77b69052e-4e41eef65e3mr124172541cf.84.1759422808769;
+        Thu, 02 Oct 2025 09:33:28 -0700 (PDT)
+Received: from jlelli-thinkpadt14gen4.remote.csb (host-80-47-6-60.as13285.net. [80.47.6.60])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8777892eadasm236072185a.39.2025.10.02.09.33.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Oct 2025 09:33:28 -0700 (PDT)
+Date: Thu, 2 Oct 2025 17:33:23 +0100
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Yuri Andriaccio <yurand2000@gmail.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	Luca Abeni <luca.abeni@santannapisa.it>,
+	Yuri Andriaccio <yuri.andriaccio@santannapisa.it>
+Subject: Re: [RFC PATCH v3 07/24] sched/core: Initialize root_task_group
+Message-ID: <aN6pU3aBYT5V81jE@jlelli-thinkpadt14gen4.remote.csb>
+References: <20250929092221.10947-1-yurand2000@gmail.com>
+ <20250929092221.10947-8-yurand2000@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250729141142.13907-1-e@freeshell.de> <20250819-sushi-change-1254c2d2a08d@spud>
-In-Reply-To: <20250819-sushi-change-1254c2d2a08d@spud>
-From: ChaosEsque Team <chaosesqueteam@gmail.com>
-Date: Thu, 2 Oct 2025 12:32:49 -0400
-X-Gm-Features: AS18NWBxdQwDblikz4B95tTiZeIyNZADBMQZlumlTwR7d0S68rpJfqzNjYf7xEo
-Message-ID: <CALC8CXcAGobb__cs65bPT-vL-YVbpG-4f0j6FuiTgANFY7uw=w@mail.gmail.com>
-Subject: Re: [PATCH v2] riscv: dts: starfive: jh7110-common: drop no-sdio
- property from mmc1
-To: Conor Dooley <conor@kernel.org>
-Cc: E Shattow <e@freeshell.de>, Emil Renner Berthing <kernel@esmil.dk>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Hal Feng <hal.feng@starfivetech.com>, Minda Chen <minda.chen@starfivetech.com>, 
-	linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250929092221.10947-8-yurand2000@gmail.com>
 
-E, Conor.
-That white boy you used to play paintball with.
+Hello,
 
-On Tue, Aug 19, 2025 at 2:13=E2=80=AFPM Conor Dooley <conor@kernel.org> wro=
-te:
->
-> On Tue, Jul 29, 2025 at 07:11:35AM -0700, E Shattow wrote:
-> > Relax no-sdio restriction on mmc1 for jh7110 boards. Property was
-> > introduced for StarFive VisionFive2 dts to configure mmc1 for SD Card
-> > but this is not necessary, the restriction is only needed to block use =
-of
-> > commands that would cause a device to malfunction.
-> >
-> > Signed-off-by: E Shattow <e@freeshell.de>
->
-> I'm going to apply this one to for-next, to give it more of a chance to
-> soak.
->
-> > ---
-> >  arch/riscv/boot/dts/starfive/jh7110-common.dtsi | 1 -
-> >  1 file changed, 1 deletion(-)
-> >
-> > diff --git a/arch/riscv/boot/dts/starfive/jh7110-common.dtsi b/arch/ris=
-cv/boot/dts/starfive/jh7110-common.dtsi
-> > index 4baeb981d4df..b156f8703016 100644
-> > --- a/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
-> > +++ b/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
-> > @@ -290,7 +290,6 @@ &mmc1 {
-> >       assigned-clock-rates =3D <50000000>;
-> >       bus-width =3D <4>;
-> >       bootph-pre-ram;
-> > -     no-sdio;
-> >       no-mmc;
-> >       cd-gpios =3D <&sysgpio 41 GPIO_ACTIVE_LOW>;
-> >       disable-wp;
-> >
-> > base-commit: 038d61fd642278bab63ee8ef722c50d10ab01e8f
-> > --
-> > 2.50.0
-> >
+On 29/09/25 11:22, Yuri Andriaccio wrote:
+> From: luca abeni <luca.abeni@santannapisa.it>
+> 
+> Add the initialization function for task_group's dl_servers.
+> Initialize the default bandwidth for rt-cgroups and the root control group.
+> Add utility functions to check (and get) if a rt_rq entity is connected to a
+> real-time cgroup.
+
+It's a bit of a nit, but this patch does quite more than $SUBJECT. So,
+I'd say please either reword $SUBJECT or consider splitting it further.
+
+...
+
+> @@ -3077,6 +3078,21 @@ static inline struct rq *rq_of_rt_se(struct sched_rt_entity *rt_se)
+>  	WARN_ON(!rt_group_sched_enabled() && rt_rq->tg != &root_task_group);
+>  	return rt_rq->rq;
+>  }
+> +
+> +static inline int is_dl_group(struct rt_rq *rt_rq)
+> +{
+> +	return rt_rq->tg != &root_task_group;
+> +}
+> +
+> +/*
+> + * Return the scheduling entity of this group of tasks.
+> + */
+> +static inline struct sched_dl_entity *dl_group_of(struct rt_rq *rt_rq)
+> +{
+> +	BUG_ON(!is_dl_group(rt_rq));
+
+BUG_ON() should generally be avoided, if possible. Could a
+WARN_ON_ONCE() plus returning NULL work here?
+
+> +
+> +	return rt_rq->tg->dl_se[cpu_of(rt_rq->rq)];
+> +}
+
+Thanks,
+Juri
+
 
