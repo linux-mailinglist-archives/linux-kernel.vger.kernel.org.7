@@ -1,187 +1,120 @@
-Return-Path: <linux-kernel+bounces-840745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63557BB5222
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 22:34:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BC97BB5237
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 22:39:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EF8B34E34FF
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 20:34:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61AB3485100
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 20:39:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30346260583;
-	Thu,  2 Oct 2025 20:34:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 917ED239E65;
+	Thu,  2 Oct 2025 20:39:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VY4r5nAj"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="moLwMfiQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6879239E65
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 20:34:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC9CA253F03
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 20:39:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759437261; cv=none; b=Sgwkw43yJAFx0kyG9IkqLw1QYKI/Ro4MDoBpfnT9wDjv8zwTxooU1op5DcS7Gzp7UtN/r99CTnGjh+En1WcMGdG3+4d0L72c+5JvMqyxFmyWZ7BY+8Twb8RiFZuG0wXLf/aaVJNFV7D6NoHnJrf9oShKyodDSChDi8gWGP0lt1Q=
+	t=1759437549; cv=none; b=D25RhrRDzQkoQJcgCq/Bc9XgEY3ZulefYZBTIGIglzEpDw8OlDximnPfbT213KdtHfTnhZBEj/EjAEzYFEbmT2ZxsQLw+LHqbDMHfLLPtjjD6/NN+QXuS4BisreKT+wiiHaNlBbWiTDaNkNOc7NX/5IeZVWI+aGSLmtORpqYk8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759437261; c=relaxed/simple;
-	bh=UFht+P1o0k8Q+RYtLVZ2D9q+Octvm53w5gp3kes5Nq0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T9Hht2LE/wx9kPiwZZaMLwbbdSGKBJgzUNNj71/waiHERuRb+5TA98UueMEtb/VjgqxKCSfj2p0Irxaz5UYdzkxGOs+Q1tTaBEuRcCmntUgoXWJoMm2sUzV+g+c3EprqS6grp2YQzg7921sLbTIXV8DoTW8UtOCiUwI293QWA+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VY4r5nAj; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-46e33b260b9so14516715e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 13:34:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759437258; x=1760042058; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=K8GRSdYcGt/dB2sri1422IZPPC5ZRlc8SsQOJHCd9NY=;
-        b=VY4r5nAjuFUbZhRowr2+5wcQeYZ/FLPkMdE1EHgRYHsHB/yy85xreZdbBHTWt8gzSH
-         J5lijajjh0W2TRr0P0vFvP1jCqvKynN/S45xMGHURS4u1c4Uk28yfK8cDNhyYfK0YAJm
-         PRMcJW1Lz+Vxpa/ijDWuGreWfOxeI/GxlFMwz/t8FGlDtwHany6Z3xVNPB2xHkGqQf+b
-         FjXgKxfad3rbZb57ndoCfwc62KMPMcbXeXg7abA5Gb+MOL3GogWTbp1ALIK+TfrOtQe7
-         WcmD1GRet8VOUp0jLQygklxo9AI6e40oiCBxVb8E62z0fyTwo5u+LSyMd2MnGPrRW0KC
-         sGIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759437258; x=1760042058;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=K8GRSdYcGt/dB2sri1422IZPPC5ZRlc8SsQOJHCd9NY=;
-        b=dymAFK6u5zp+43Zp3mNqqz8oHg2F9nHSR0fvV3r05/sySgofwJpZxUdV+AaKdaRave
-         VuwSxYYMrBpP6dZlL6Epgg6CG5VpxTC8RheveAEu490sLYJYS+rqOqXPXY9PZeY/Pl+r
-         7H3+WwkrkfLQ7tuJd3gDZqS98obegIpnGej5Nkx0pKgAxM9de9hg0ofOC4VHyv/H/pYk
-         QwbPwvP1TPS/qI8Tde+i0KL2k6whTrnOwtGrubUNB6pADc8YJDiTQKeFSSYesq6tosSJ
-         8hyS1KbFFSFK9CfH5lR9TFbxM0b7iBfZSjfQQBPUqF45RMfq3ykq1A4wlFeDhrNo0EuT
-         Ra5g==
-X-Gm-Message-State: AOJu0YxSkkIRml77HxkNCOWOdkwIapaHo2wM1ESBTJwDXKCOPmrSvEmq
-	YmRmPFghbGjT9WSvZLshN/aVWfLURok9Sd9OGj6oqekfryP+McKY1qUekUQCHtYd/7A=
-X-Gm-Gg: ASbGncsv2qToFO3m4Q0uvFb6v5iHkkchEIIarfv02U3XrfLOucdw4xongIEv1avzgLA
-	Qk9K/VZLoyHffPOgq79NBzJtqklTBZdceQ94gzDKHi7SN8foLOh8v0snDq5/hYZ+xGtV8Gzj4to
-	HC0BosY3XnKgEQFPRSv4Qh5nf4FePQTvgG86lcxeqLYjkCbQVDFN3LpoEqWgCo8QIWXG5SzylTK
-	a3fw1kNSmI8Z53M1l5OyMn6n5S5F6FPtR/71WRSzk3/jbipzB0UL/LAofp9+pLc12VO1lruqkQe
-	GEPLlTfmsUo9x9ltmeo65xEUU7IY7pNwkhzy7OmMs0ND4PlKQOLUx3XJVcxwOh+VX80MS7m9HE/
-	FjzcGyuERAnzOHb4k0Ff67d7dM2wQ+laLoPER8hgc99dyOMp6/E3tIMWO
-X-Google-Smtp-Source: AGHT+IFN8bz+lbJg47w/J96bwFKw4CLz2HVr4Ej5ANcyT5HseU9KMrJXqiS3iYm/H5ehR4LOqETc+Q==
-X-Received: by 2002:a05:600c:c4aa:b0:46e:4cd3:7d6e with SMTP id 5b1f17b1804b1-46e7110498dmr4309565e9.9.1759437257834;
-        Thu, 02 Oct 2025 13:34:17 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-46e693c33adsm46836855e9.18.2025.10.02.13.34.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 13:34:17 -0700 (PDT)
-Date: Thu, 2 Oct 2025 23:34:13 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Mary Strodl <mstrodl@csh.rit.edu>
-Cc: linux-kernel@vger.kernel.org, tzungbi@kernel.org,
-	linus.walleij@linaro.org, brgl@bgdev.pl, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v3 3/4] gpio: mpsse: add quirk support
-Message-ID: <aN7hxUz7TGG38Hv_@stanley.mountain>
-References: <20251002181136.3546798-1-mstrodl@csh.rit.edu>
- <20251002181136.3546798-4-mstrodl@csh.rit.edu>
+	s=arc-20240116; t=1759437549; c=relaxed/simple;
+	bh=7/AuhGoWi1V0uAa5z01NsipBf1OVW30L+AI0uY5qLCQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Hco+GK7pRA4HJLB5LHiBgz+wbVtQB0s55ZtRGcwrIUgY6l059V4SPmPFgXfrVmWFPU7ass1x5ZWTTrgRnIcXXGDRmTDw8iFpUKmXgJ84wbyYXT0FvbKJic8J52X1gPpSIe3BgvLvrPpMpEd0y1vb4MtDIqVXFNI2VaiSrmoyAFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=moLwMfiQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 431C1C4CEF4
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 20:39:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759437548;
+	bh=7/AuhGoWi1V0uAa5z01NsipBf1OVW30L+AI0uY5qLCQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=moLwMfiQQN0ZCC+ecnLTENcC5TPm1sfReyCy98sGYt6n2eFyDvcCGxOLUNl9a/stn
+	 C93n6kFu5FIDxLblqT/FkLTlSh4aiwP622pp3Ukhp49RoqKj5O9b3PjTwSCSmQXKai
+	 hzAKXS/Cvv0YMYP195h0vgXj2fkpvTwrZjC0sKboAS7rM5+/fMvKshImJZzme0dXHS
+	 +WOga8zYZoIQUwWZcecPDT8kgssrOxn+thy5Jw3FnDGk8JcH20ef7gicnSmzb2VWEW
+	 peWF+3hnQgR9j7CVMcGSZqFod4rxh9oSZ+omSu41dpPWGWGevhlr81N1uoVus9FP2h
+	 cOsErPMz4QeKQ==
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-71d71bcab6fso16304687b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 13:39:08 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVQNentjSfeQEJfHKZV+89D/1KW2b+U0mtvFSbUyCEqKxDLWaPnOzA/EVcHyFe/JLn0GJv8B4I15sJ0iXM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzrft8GU6S2SfPWTtSKmCngTnyuReLqqzQeCUbQcNU0FA0fMxFw
+	txKp1kqiIqz15wrfPRt6FddrxiuuneNs7orrgkEVRzx30NJo7r9iB79h2DWKePgOtbHaP35Or//
+	Q6AQtGVeMNzaw9EZwxlAgwOTmKdAZjQ8V3ZC8c/Pzeg==
+X-Google-Smtp-Source: AGHT+IGDTPBhR6qaSfQtBFveyqgG74j4Ur0lJQ2edVW2LAGHeYnfcwgpDW2WYqwQfIovdxGAn898aHgZBJK2Slh3kr8=
+X-Received: by 2002:a05:690e:251c:10b0:635:4ecc:fc2b with SMTP id
+ 956f58d0204a3-63b9a10bbbcmr497679d50.51.1759437547537; Thu, 02 Oct 2025
+ 13:39:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251002181136.3546798-4-mstrodl@csh.rit.edu>
+References: <20250916-luo-pci-v2-0-c494053c3c08@kernel.org>
+ <20250916-luo-pci-v2-3-c494053c3c08@kernel.org> <2025093044-icky-treat-e1c3@gregkh>
+In-Reply-To: <2025093044-icky-treat-e1c3@gregkh>
+From: Chris Li <chrisl@kernel.org>
+Date: Thu, 2 Oct 2025 13:38:56 -0700
+X-Gmail-Original-Message-ID: <CACePvbUr42mj0kbcaw4cgKnd7v1f8z8Jhq4+_QN7Z5Nvicd1cw@mail.gmail.com>
+X-Gm-Features: AS18NWCZM0LPAxyjDszHoc42H9U7_N-0OszxH4rR8NC46m34FcHMMwIeG9Tp_iA
+Message-ID: <CACePvbUr42mj0kbcaw4cgKnd7v1f8z8Jhq4+_QN7Z5Nvicd1cw@mail.gmail.com>
+Subject: Re: [PATCH v2 03/10] PCI/LUO: Forward prepare()/freeze()/cancel()
+ callbacks to driver
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Len Brown <lenb@kernel.org>, 
+	Pasha Tatashin <pasha.tatashin@soleen.com>, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	David Matlack <dmatlack@google.com>, Pasha Tatashin <tatashin@google.com>, 
+	Jason Miu <jasonmiu@google.com>, Vipin Sharma <vipinsh@google.com>, 
+	Saeed Mahameed <saeedm@nvidia.com>, Adithya Jayachandran <ajayachandra@nvidia.com>, 
+	Parav Pandit <parav@nvidia.com>, William Tu <witu@nvidia.com>, Mike Rapoport <rppt@kernel.org>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 02, 2025 at 02:11:35PM -0400, Mary Strodl wrote:
-> Builds out a facility for specifying compatible lines directions and
-> labels for MPSSE-based devices.
-> 
-> * dir_in/out are bitmask of lines that can go in/out. 0 means
->   compatible, 1 means incompatible. This is convenient, because it means
->   if the struct is zeroed out, it supports all pins.
+On Tue, Sep 30, 2025 at 8:30=E2=80=AFAM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Tue, Sep 16, 2025 at 12:45:11AM -0700, Chris Li wrote:
+> >  include/linux/dev_liveupdate.h |  23 +++++
+> >  include/linux/device/driver.h  |   6 ++
+>
+> Driver core changes under the guise of only PCI changes?  Please no.
 
-What?  No, please make 1 be supported and 0 be not supported.  This
-really weirded me out when I read the code.  If it were just 1 for
-true and 0 for false a lot of comments regarding dir_in/out could be
-removed because the code would be straight forward.
+There is a reason why I use the device struct rather than the pci_dev
+struct even though liveupdate currently only works with PCI devices.
+It comes down to the fact that the pci_bus and pci_host_bridge are not
+pci_dev struct. We need something that is common across all those
+three types of PCI related struct I care about(pci_dev, pci_bus,
+pci_host_bridge). The device struct is just common around those. I can
+move the dev_liveupdate struct into pci_bus, pci_host_bridge and
+pci_dev independently. That will be more contained inside PCI, not
+touching the device struct. The patch would be bigger because the data
+structure is spread into different structs. Do you have a preference
+which way to go?
 
-You can easily set everything to 1 by assigning -1 or using memset().
+> Break this series out properly, get the driver core stuff working FIRST,
+> then show how multiple busses will work with them (i.e. you usually need
+> 3 to know if you got it right).
 
-> * names is an array of line names which will be exposed to userspace.
-> 
-> Also changes the chip label format to include some more useful
-> information about the device to help identify it from userspace.
-> 
-> Signed-off-by: Mary Strodl <mstrodl@csh.rit.edu>
-> ---
->  drivers/gpio/gpio-mpsse.c | 109 ++++++++++++++++++++++++++++++++++++--
->  1 file changed, 106 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-mpsse.c b/drivers/gpio/gpio-mpsse.c
-> index 6ec940f6b371..c2a344488a23 100644
-> --- a/drivers/gpio/gpio-mpsse.c
-> +++ b/drivers/gpio/gpio-mpsse.c
-> @@ -29,6 +29,9 @@ struct mpsse_priv {
->  	u8 gpio_outputs[2];	     /* Output states for GPIOs [L, H] */
->  	u8 gpio_dir[2];		     /* Directions for GPIOs [L, H] */
->  
-> +	unsigned long dir_in;        /* Bitmask of valid input pins  */
-> +	unsigned long dir_out;       /* Bitmask of valid output pins */
-> +
->  	u8 *bulk_in_buf;	     /* Extra recv buffer to grab status bytes */
->  
->  	struct usb_endpoint_descriptor *bulk_in;
-> @@ -54,6 +57,14 @@ struct bulk_desc {
->  	int timeout;
->  };
->  
-> +#define MPSSE_NGPIO 16
-> +
-> +struct mpsse_quirk {
-> +	const char   *names[MPSSE_NGPIO]; /* Pin names, if applicable     */
-> +	unsigned long dir_in;             /* Bitmask of valid input pins  */
-> +	unsigned long dir_out;            /* Bitmask of valid output pins */
-> +};
-> +
->  static const struct usb_device_id gpio_mpsse_table[] = {
->  	{ USB_DEVICE(0x0c52, 0xa064) },   /* SeaLevel Systems, Inc. */
->  	{ }                               /* Terminating entry */
-> @@ -171,6 +182,32 @@ static int gpio_mpsse_get_bank(struct mpsse_priv *priv, u8 bank)
->  	return buf;
->  }
->  
-> +static int mpsse_ensure_supported(struct gpio_chip *chip,
-> +				  unsigned long *mask, int direction)
+Multiple buses you mean different types of bus, e.g. USB, PCI and
+others or 3 pci_bus is good enough? Right now we have no intention to
+support bus types other than PCI devices. The liveupdate is about
+preserving the GPU context cross kernel upgrade. Suggestion welcome.
 
-Just pass mask not a pointer to mask.  It would be different if
-you were going to allow more than 32 bits to be set, then we would
-need to pass a pointer and use set_bit() etc...
+> I'm guessing you will need/want PCI, platform, and something else?
 
-> +{
-> +	unsigned long supported, unsupported;
-> +	char *type = "input";
-> +	struct mpsse_priv *priv = gpiochip_get_data(chip);
-> +
-> +	supported = priv->dir_in;
-> +	if (direction == GPIO_LINE_DIRECTION_OUT) {
-> +		supported = priv->dir_out;
-> +		type = "output";
-> +	}
-> +
-> +	/* An invalid bit was in the provided mask */
-> +	unsupported = *mask & supported;
-> +	if (unsupported) {
-> +		dev_err(&priv->udev->dev,
-> +			"mpsse: GPIO %d doesn't support %s\n",
-> +			(int)find_first_bit(&unsupported, sizeof(unsupported) * 8),
+This series only cares about PCI. The LUO series has subsystems. The
+PCI livedupate code is registered as an LUO subsystem. I guess the
+subsystem is close to the platform you have in mind? LUO also has the
+memfd in addition to the subsystem.
 
-Use %lu instead of %d and get rid of the unnecessary cast.
-
-> +			type);
-> +		return -EOPNOTSUPP;
-> +	}
-> +
-> +	return 0;
-> +}
-
-regards,
-dan carpenter
-
+Chris
 
