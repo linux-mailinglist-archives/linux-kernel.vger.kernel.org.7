@@ -1,135 +1,152 @@
-Return-Path: <linux-kernel+bounces-840204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8F57BB3D27
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 13:51:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D1C73BB3D21
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 13:51:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B549325CC6
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 11:51:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 972CA16789E
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 11:51:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8031527F010;
-	Thu,  2 Oct 2025 11:51:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A4C330FC3E;
+	Thu,  2 Oct 2025 11:51:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mgD4MLp7"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Wdovkm52"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90CCB304BC6
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 11:51:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A0932F1FEC
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 11:51:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759405875; cv=none; b=UH84oOCY/I+RoEBKStiSVnmIDAHZA1O71m07ef3kIXn49h7gbB+wMpukOK4M0O+HVCO9zUW+p/OSDdyR9eP/3FE8OgXUjMZQPbqlY7xX2RsM2jULCE1Upy7c1c11fWdaP9OE5CssYcJWIXr1CpwNp2VrRTE8T0L2+FgXVNT1lv0=
+	t=1759405869; cv=none; b=sSTvC40iXWUmzPuiQCwccMIu6VtmsCS4uPyzHejUbJHoz95nNB1i7yaKyoqpJRHqnsu8H2fVOtlwNIYjUWB+dU3T+NLF4HNA5uvYCmV0zwbF50kwMrK6tU4xqR+U2O0mBWvX3n964IWjKrjbp0f7uJIievy0PtUDw8oW4c6uGrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759405875; c=relaxed/simple;
-	bh=yLBbZ9jfwcCAUUW6go/oHQkQFqPUDBxewKa/dr1Crjc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D9drcHDauRr+AAX10HxxYjY0r07cVhjXrPhNEtKjaz/GO1a3jMEUa/ypOjyz4Pdn3PiXfjtaq8R5B5u2frLVDT2fiEBwsTx4UuYVayGZf9vOjWOe9GLYbpdrR8vtXrIe873efWNj7Li2ELWahfZJdTrQvZUKFccnYyiqUtgBmCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=mgD4MLp7; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ioO2N+FXkPcJWuPZKGaDiYhArSpzEuAlf3L8sLL3grs=; b=mgD4MLp7j6I4EeZt5ngGOfslTA
-	99ulM+lgOr/GfAiW9tU8+xrgVYFVsNoq4PvJRro+PaLErPgFQTcUF+qfcRJJ2/JKAJcNAK2NIPEbh
-	c0LmU+NBT2Kuwze5y+KHLTQ/e6bNtL56y5+CoIjKcvuh6cVGzFSc+CntaEhJUOej9QAbDNl85z0Kb
-	uUbXPQ7jqG8VWSWTMhGsWWF7gdY6SzPYHfOthfElH7740E6oHv4K1mH1mswxlXMtUP3iUzN/B54ML
-	IGqL3Eprs1YSeRK7nIOmZtJqFopgG+W/Wk0O/QI3m+kBz1ochLDlUzOCkVl9Y8/RkJgolXiVaT6lm
-	rSlXuZ6g==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v4HpU-0000000EG2G-230o;
-	Thu, 02 Oct 2025 11:50:36 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id CE6B9300754; Thu, 02 Oct 2025 13:50:34 +0200 (CEST)
-Date: Thu, 2 Oct 2025 13:50:34 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Chen, Yu C" <yu.c.chen@intel.com>
-Cc: Ingo Molnar <mingo@redhat.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	"Gautham R . Shenoy" <gautham.shenoy@amd.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Libo Chen <libo.chen@oracle.com>,
-	Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
-	Hillf Danton <hdanton@sina.com>,
-	Shrikanth Hegde <sshegde@linux.ibm.com>,
-	Jianyong Wu <jianyong.wu@outlook.com>,
-	Yangyu Chen <cyy@cyyself.name>,
-	Tingyin Duan <tingyin.duan@gmail.com>,
-	Vern Hao <vernhao@tencent.com>, Len Brown <len.brown@intel.com>,
-	Tim Chen <tim.c.chen@linux.intel.com>,
-	Aubrey Li <aubrey.li@intel.com>, Zhao Liu <zhao1.liu@intel.com>,
-	Chen Yu <yu.chen.surf@gmail.com>, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v4 07/28] sched: Add helper function to decide
- whether to allow cache aware scheduling
-Message-ID: <20251002115034.GS3419281@noisy.programming.kicks-ass.net>
-References: <cover.1754712565.git.tim.c.chen@linux.intel.com>
- <701c7be7f0e69582d9ad0c25025ec2e133e73fbb.1754712565.git.tim.c.chen@linux.intel.com>
- <20251001131715.GO4067720@noisy.programming.kicks-ass.net>
- <89c777b7-33bd-400d-8b6f-4e6d697dc632@intel.com>
+	s=arc-20240116; t=1759405869; c=relaxed/simple;
+	bh=FGLQ2Uj+CWbIJKZzhsAmoLQqBs2S93GpxqQTJkIDe1c=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=dw987DUJFPvZJHwfFm199tOSR2ACGj1hgrQytmjN95t9eajX1vAl5Gn6d5/lhNGk5mQ+Pk/TL+yooSyfQlXFOC4UPCl/O2V2+NbPMIDT7qhVFB4aNNILZcPg10D4xh0GYGGRGpjrnUvgKJcH1bJ3l1Gyyl7o+4pgCrwl2QA+Mjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Wdovkm52; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759405867;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=O/UdOTSJuFeuz61ETEUJOhsl+GvhZM/EvZcDfUCVmxI=;
+	b=Wdovkm52kKZqXRcCqnibVUjnbKEdG56JqSVgvnC4JX4hAqATc/OyjCzW0MdbZG3kxUoFrg
+	IIMDbZkAN0Ov8gGzLrWiuWjv1zzoIUZNc+Yt55GnIRLUo2bnCQQ88juqJ2ugNLqbEwt12Y
+	7+aDmKYxf2rT5Hb3aJuxsFzs0v/p+i8=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-488-9rGfL69zNWqS-PURqOSEFg-1; Thu, 02 Oct 2025 07:51:05 -0400
+X-MC-Unique: 9rGfL69zNWqS-PURqOSEFg-1
+X-Mimecast-MFC-AGG-ID: 9rGfL69zNWqS-PURqOSEFg_1759405865
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3f3787688b0so524690f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 04:51:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759405864; x=1760010664;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=O/UdOTSJuFeuz61ETEUJOhsl+GvhZM/EvZcDfUCVmxI=;
+        b=SsLce3DL5CFD8EwdEK+1z16kE5I8boMct+Ofn6htrCAh7t2sGaronEpKri9UPpwZpQ
+         u1aQwfW4u0ueUY+x5fMIresoIdHHDw3+uSds37rxTDSZXw6yxcs1LnHPlN/Nt5Nh81pG
+         MC7q/hChF2Hkq5Fp+VuJ1UtC0iWqWhdnmtXvibBHJ9mViGzyQmZygFUQVV+hy/9c/hy5
+         n27NR2KGY6Vkj1qe5MjepD0LZBS3d1h35bXgoi+DrrWtqDOfMLRPqI9v4J/PD9mqpwwq
+         bG49N2+bjeNzFfvDg7+QlmJ8u4nNgWLmfCI0yP+cdjdNf0hGBQfQyAlKKeD9Cq5ckrI0
+         QATA==
+X-Forwarded-Encrypted: i=1; AJvYcCXn9yL75IUMIaSGg7wqWLF2rB1rTmkWaspGEreG9Z3Y9sDBPF6U5l1hf99IKt1yBPWKdKhabls2EKfhXGM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDh9DoTTKBxbQy+prg9QF/6hGv6jVGOmFgxac2MpsR5y3jUuuq
+	TVkmzPNltNKKVCFF+2hK+cycIUq56BIidB5ZokcW0SypSYJaogAohm35Nm8Cmcs8DBHqwQ4bD6y
+	lzUYprmIJWhtK6s7PTYrh7nh+nR8BhzIGu5x/ulg7s9CLydPd7hOlB0vzSmdHwXoYEg==
+X-Gm-Gg: ASbGncuCezc1l4pxffzQ6hAaMYgjt4HG5YvKzCSyJ6J4bnGbk5w81tBCGpVZc/vpJnz
+	CCf4G7qoexnWDcRqTUeQCboJ5+lMmM4BYj40dds9kXfamFkDAHPUz7ExGoFFj530mQk44KftUmK
+	NQR5qSgkKZnL+Ure2LWgQ1sLhIe3pyXc4fe+H5Y2aqgCfmbAqzG0+7wv+aV0FasWd9hNUu8OqBW
+	ManycaB73VPVRYSXQl7kZQbmCOd6bZofGmLfg7mCnYxd1KKG9cdEJfdsnk4DXf4pd59fqSmuFR5
+	phJtdix3SC9+AibHaLUA7Z0TzKo6SR7ZDjUKQv0MkpDCQ2HOpN69En9waGMh3CWTs78iEns=
+X-Received: by 2002:a05:6000:40c7:b0:3ee:1279:6e68 with SMTP id ffacd0b85a97d-425578197dbmr5097952f8f.47.1759405864535;
+        Thu, 02 Oct 2025 04:51:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFiZ0Tp7eiBzvf0DenM28iIPgbDIMFoVMsSJWueKET191HqUB2L04iRl6mrUsuKThJQn393hA==
+X-Received: by 2002:a05:6000:40c7:b0:3ee:1279:6e68 with SMTP id ffacd0b85a97d-425578197dbmr5097936f8f.47.1759405864120;
+        Thu, 02 Oct 2025 04:51:04 -0700 (PDT)
+Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.30])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8f45e9sm3367076f8f.51.2025.10.02.04.51.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Oct 2025 04:51:03 -0700 (PDT)
+Message-ID: <067420a47d3fd7d9f50e4bc97248d0b4b812f9cd.camel@redhat.com>
+Subject: Re: [PATCH 2/2] rv: Make rtapp/pagefault monitor depends on
+ CONFIG_MMU
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: Nam Cao <namcao@linutronix.de>, Steven Rostedt <rostedt@goodmis.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+	 <mathieu.desnoyers@efficios.com>, linux-trace-kernel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>, 
+	stable@vger.kernel.org
+Date: Thu, 02 Oct 2025 13:51:01 +0200
+In-Reply-To: <20251002082317.973839-1-namcao@linutronix.de>
+References: <20251002082317.973839-1-namcao@linutronix.de>
+Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
+ keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
+ 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0BrZXJuZWwub3JnPoiZBBMWCgBBFiEEysoR+AuB3R
+ Zwp6j270psSVh4TfIFAmjKX2MCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
+ Q70psSVh4TfIQuAD+JulczTN6l7oJjyroySU55Fbjdvo52xiYYlMjPG7dCTsBAMFI7dSL5zg98I+8
+ cXY1J7kyNsY6/dcipqBM4RMaxXsOtCRHYWJyaWVsZSBNb25hY28gPGdtb25hY29AcmVkaGF0LmNvb
+ T6InAQTFgoARAIbAwUJBaOagAULCQgHAgIiAgYVCgkICwIEFgIDAQIeBwIXgBYhBMrKEfgLgd0WcK
+ eo9u9KbElYeE3yBQJoymCyAhkBAAoJEO9KbElYeE3yjX4BAJ/ETNnlHn8OjZPT77xGmal9kbT1bC1
+ 7DfrYVISWV2Y1AP9HdAMhWNAvtCtN2S1beYjNybuK6IzWYcFfeOV+OBWRDQ==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <89c777b7-33bd-400d-8b6f-4e6d697dc632@intel.com>
 
-On Thu, Oct 02, 2025 at 07:31:40PM +0800, Chen, Yu C wrote:
-> On 10/1/2025 9:17 PM, Peter Zijlstra wrote:
-> > On Sat, Aug 09, 2025 at 01:03:10PM +0800, Chen Yu wrote:
-> > > From: Tim Chen <tim.c.chen@linux.intel.com>
-> > > 
-> > > Cache-aware scheduling is designed to aggregate threads into their
-> > > preferred LLC, either via the task wake up path or the load balancing
-> > > path. One side effect is that when the preferred LLC is saturated,
-> > > more threads will continue to be stacked on it, degrading the workload's
-> > > latency. A strategy is needed to prevent this aggregation from going too
-> > > far such that the preferred LLC is too overloaded.
-> > 
-> > So one of the ideas was to extend the preferred llc number to a mask.
-> > Update the preferred mask with (nr_threads / llc_size) bits, indicating
-> > the that many top llc as sorted by occupancy.
-> > 
-> > 
-> 
-> Having more than one preferred LLC helps prevent aggregation from going
-> too far on a single preferred LLC.
-> 
-> One question would be: if one LLC cannot hold all the threads of a process,
-> does a second preferred LLC help in this use case? Currently, this patch
-> gives up task aggregation and falls back to legacy load balancing if the
-> preferred LLC is overloaded. If we place threads across two preferred LLCs,
-> these threads might encounter cross-LLC latency anyway - so we may as well
-> let
-> legacy load balancing spread them out IMO.
+On Thu, 2025-10-02 at 08:23 +0000, Nam Cao wrote:
+> There is no page fault without MMU. Compiling the rtapp/pagefault monitor
+> without CONFIG_MMU fails as page fault tracepoints' definitions are not
+> available.
+>=20
+> Make rtapp/pagefault monitor depends on CONFIG_MMU.
 
-Well, being stuck on 2 LLCs instead of being spread across 10 still
-seems like a win, no?
+Makes sense.
 
-Remember, our friends at AMD have *MANY* LLCs.
+Reviewed-by: Gabriele Monaco <gmonaco@redhat.com>
 
-> Another issue that Patch 7 tries to address is avoiding task
-> bouncing between preferred LLCs and non-preferred LLCs. If we
-> introduce a preferred LLC priority list, logic to prevent task
-> bouncing between different preferred LLCs might be needed in
-> load balancing, which could become complicated. 
+Thanks,
+Gabriele
 
-It doesn't really become more difficult to tell preferred LLC from
-non-preferred LLC with a asm. So why should things get more complicatd?
+>=20
+> Fixes: 9162620eb604 ("rv: Add rtapp_pagefault monitor")
+> Signed-off-by: Nam Cao <namcao@linutronix.de>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes:
+> https://lore.kernel.org/oe-kbuild-all/202509260455.6Z9Vkty4-lkp@intel.com=
+/
+> Cc: stable@vger.kernel.org
+> ---
+> =C2=A0kernel/trace/rv/monitors/pagefault/Kconfig | 1 +
+> =C2=A01 file changed, 1 insertion(+)
+>=20
+> diff --git a/kernel/trace/rv/monitors/pagefault/Kconfig
+> b/kernel/trace/rv/monitors/pagefault/Kconfig
+> index 5e16625f1653..0e013f00c33b 100644
+> --- a/kernel/trace/rv/monitors/pagefault/Kconfig
+> +++ b/kernel/trace/rv/monitors/pagefault/Kconfig
+> @@ -5,6 +5,7 @@ config RV_MON_PAGEFAULT
+> =C2=A0	select RV_LTL_MONITOR
+> =C2=A0	depends on RV_MON_RTAPP
+> =C2=A0	depends on X86 || RISCV
+> +	depends on MMU
+> =C2=A0	default y
+> =C2=A0	select LTL_MON_EVENTS_ID
+> =C2=A0	bool "pagefault monitor"
 
-
-Anyway, it was just one of the 'random' ideas I had kicking about.
-Reality always ruins things, *shrug* :-)
 
