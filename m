@@ -1,129 +1,147 @@
-Return-Path: <linux-kernel+bounces-840397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 475CFBB44A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 17:19:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 069EDBB44B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 17:21:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D5504227C2
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 15:19:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54AC517D0E9
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 15:21:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A67AC19CD1D;
-	Thu,  2 Oct 2025 15:19:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AECD619DFAB;
+	Thu,  2 Oct 2025 15:21:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VE/ls8AK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hDG7KqqK"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A69D2CCC0;
-	Thu,  2 Oct 2025 15:19:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 112E92CCC0;
+	Thu,  2 Oct 2025 15:21:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759418355; cv=none; b=FmJXGKzHCJzmTUjHZfSaa+Qjnjlv1ii8Nnu4n6VyYRruFf9uVFP+eVnwYZDzOJMG3Oc4qAJdC8HnsM3laZb9iu7ahpGJGkZ8E3o4wwcOBGXqdUqTCHRwTdb8D/g7hLAA/uY3u3wDcn3vvE4NiGij7HnDOCo50+AdjCeolz0JpTE=
+	t=1759418464; cv=none; b=Fc4NGWodkNZcDsSZBaOZJyDlzEPEm076ZHwvjifxxLn0PNl2XBUjQjbt9ZZR3Xir+vuN7cDn/9wTO7EvV7mFubUib+VsIf9usyGkzkYFgxnxJD3B2Q3BwcDnZ4TTKpaJcqz3QGrXmaDHVgFd//dzcgDQyv5A+e4h636K2qzIfnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759418355; c=relaxed/simple;
-	bh=52z6Vi0V9bS76ga+Gq4jeAA16tCIeXDKH633DY7nwVU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=t1LaHhhO8lPz8u2yealxBy1IBcLlXYp52rHC4GPa6OU+s2Kk9/DocmWJKGGESVRwLC7J3IYYJwgbB7rwjgVML/QksSpCv9/uT1mRCjR+B2HRFXM5w2U+y9cY8OXWuN4BZiAohLs78URpQJNjCMGNiAu5XTzVpsg5FgLpfg0D6Ek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VE/ls8AK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19B29C4CEF4;
-	Thu,  2 Oct 2025 15:19:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759418354;
-	bh=52z6Vi0V9bS76ga+Gq4jeAA16tCIeXDKH633DY7nwVU=;
-	h=Date:From:To:Cc:Subject:From;
-	b=VE/ls8AKImGUN6yFCV40ziwMhE2nc9AJQsb7Ceq/kY3WZMkUCbQy2uE0lvIrtk1pb
-	 3oQ2Nm1SPYQEPMK+CbOfj84b3m+ZEFCgKlnPtR4XM93x0cUVIPLE8QBsQJOn8i9KEh
-	 u6/h1dCI8N5Pj1NukdDKuNv+95XhXbIFKVocmNuRCReCMnp1rs6B86qfrkmaxQEFnD
-	 BN90ceFY/Jd7VJnFcD4UXvvQ+OqR0gVTN2G3qdQqnbGr7ZqEMVaU8C35mdp1bN0Ga2
-	 LvNmVeMU3RsbeFRoIf1+eHNU9jqFk5oos50P9qRq0JGnGe9iDNijtU0XQ1cC/N6gQg
-	 hisHGcdBX9uQg==
-Date: Thu, 2 Oct 2025 16:19:10 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Crystal Wood <crwood@redhat.com>,
-	Ivan Pravdin <ipravdin.official@gmail.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the ftrace tree with the origin tree
-Message-ID: <aN6X7mvUjNw0DCn9@sirena.org.uk>
+	s=arc-20240116; t=1759418464; c=relaxed/simple;
+	bh=wpMI6K9jf8cxnVOXCIV9BDWS/xQlCr9Uira4EJEMdr8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HIXMx/3M4Sumw5/1vfDdosX+x46WrJ7CABtTIwL4SaDabFvNgUt0VsXL2ntsQdihgdJzmSp3bamSv/Sc6Jnrxs1s55PDHm/JZwwuqS3I5vWl+riHsHYVoELl4hPpqjtsftsHOWpNJ+q7jIfOxiVuBVhYySjuHEyXIePwLMXsGNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hDG7KqqK; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759418462; x=1790954462;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=wpMI6K9jf8cxnVOXCIV9BDWS/xQlCr9Uira4EJEMdr8=;
+  b=hDG7KqqKezmBP0cfvCjLK2P/WoZqIPhFXbUZZVTCKvZUSKgMxbmp7wmj
+   QIyY0om7h39AJMOOAterll2T+Ao+W9gWqs2roNVDzb5yTZDfpZXuS1FTj
+   if9Csqzxm3RpfUWD+jqqy5IYyoHaYtKRgewnOLL4EzkCZRvIXxnnlvG0E
+   l4EYiUHQM7jCTnhZI4OXqYDEGd//Zn5TI3YsUgiZN3C2DOHm+gRLd3Q81
+   nURI7aFp0/mgmN8QGLyiB6Sr+YkxMHd0NK0wJySAA75QAPCClFo5F0u4q
+   411gYDl/AqsJd3wxl+ATmlXIuS9lvjr/GTQHLBEXBcG/kEGV8TAejec2r
+   A==;
+X-CSE-ConnectionGUID: Ty+4gfzkR3ezG4BA77HfCQ==
+X-CSE-MsgGUID: 2l4RTd4sTMKOkV/p39kXIw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11570"; a="73134327"
+X-IronPort-AV: E=Sophos;i="6.18,309,1751266800"; 
+   d="scan'208";a="73134327"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2025 08:21:01 -0700
+X-CSE-ConnectionGUID: JNn/PG/jR3WevUnXl40jbA==
+X-CSE-MsgGUID: ppAn+mkURAWVybHWGi/kHA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,309,1751266800"; 
+   d="scan'208";a="209762262"
+Received: from fpallare-mobl4.ger.corp.intel.com (HELO localhost) ([10.245.245.228])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2025 08:20:58 -0700
+Date: Thu, 2 Oct 2025 18:20:54 +0300
+From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc: Alexandr Sapozhnkiov <alsp705@gmail.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	lvc-project@linuxtesting.org
+Subject: Re: [PATCH 5.10] gpu/i915: fix error return in mmap_offset_attach()
+Message-ID: <aN6YVtnJ3Guh43n5@intel.com>
+References: <20251002084828.11-1-alsp705@gmail.com>
+ <aN6EbmgZYchyMHRn@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="5lrJ10G9x1tJJWav"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aN6EbmgZYchyMHRn@intel.com>
+X-Patchwork-Hint: comment
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
+On Thu, Oct 02, 2025 at 09:55:58AM -0400, Rodrigo Vivi wrote:
+> On Thu, Oct 02, 2025 at 11:48:26AM +0300, Alexandr Sapozhnkiov wrote:
+> > From: Alexandr Sapozhnikov <alsp705@gmail.com>
+> 
+> About the subject, this is not just a 5.10 kernel issue.
+> This code is the current code in our tip.
+> So this needs to target drm-tip branch, and then Cc stable
+> and perhaps a Fixes: tag.
+> 
+> > 
+> > In the drm_vma_node_allow function, kmalloc may 
+> > return NULL, in which case the file element will not be 
+> > added to the mmo->vma_node list. It would be good to 
+> > not ignore this event, but at least log an error message.
+> > 
+> > Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> > 
+> > Signed-off-by: Alexandr Sapozhnikov <alsp705@gmail.com>
+> > ---
+> >  drivers/gpu/drm/i915/gem/i915_gem_mman.c | 7 +++++--
+> >  1 file changed, 5 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/i915/gem/i915_gem_mman.c b/drivers/gpu/drm/i915/gem/i915_gem_mman.c
+> > index a2195e28b625..adaef8f09d59 100644
+> > --- a/drivers/gpu/drm/i915/gem/i915_gem_mman.c
+> > +++ b/drivers/gpu/drm/i915/gem/i915_gem_mman.c
+> > @@ -706,8 +706,11 @@ mmap_offset_attach(struct drm_i915_gem_object *obj,
+> >  	mmo = insert_mmo(obj, mmo);
+> >  	GEM_BUG_ON(lookup_mmo(obj, mmap_type) != mmo);
+> >  out:
+> > -	if (file)
+> > -		drm_vma_node_allow_once(&mmo->vma_node, file);
+> > +	if (file) {
+> > +		err = drm_vma_node_allow_once(&mmo->vma_node, file);
+> > +		if (err)
+> 
+> perhaps we also need to drm_vma_offset_remove here?
+> I mean... honest question, doubt here. Is there any further clean-up needed?
 
---5lrJ10G9x1tJJWav
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yeah, mmo->vma_node has already been linked to varius places here.
+So this will lead to use-after-free in short order.
 
-Hi all,
+With the current code if this fails then I think all that ends up
+happening is that subsequent mmap() will fail. Maybe that's just
+fine?
 
-Today's linux-next merge of the ftrace tree got a conflict in:
+> 
+> > +			goto err;
+> > +	}
+> >  	return mmo;
+> >  
+> >  err:
+> > -- 
+> > 2.43.0
+> > 
 
-  tools/tracing/rtla/src/actions.c
-
-between commit:
-
-  b1e0ff7209e95 ("rtla: Fix buffer overflow in actions_parse")
-
-=66rom the origin tree and commit:
-
-  05b7e10687c69 ("tools/rtla: Add remaining support for osnoise actions")
-
-=66rom the ftrace tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc tools/tracing/rtla/src/actions.c
-index 13ff1934d47c9,991139f9069f1..0000000000000
---- a/tools/tracing/rtla/src/actions.c
-+++ b/tools/tracing/rtla/src/actions.c
-@@@ -127,11 -127,11 +127,11 @@@ actions_add_continue(struct actions *se
-   * actions_parse - add an action based on text specification
-   */
-  int
-- actions_parse(struct actions *self, const char *trigger)
-+ actions_parse(struct actions *self, const char *trigger, const char *trac=
-efn)
-  {
-  	enum action_type type =3D ACTION_NONE;
-- 	char *token;
-+ 	const char *token;
- -	char trigger_c[strlen(trigger)];
- +	char trigger_c[strlen(trigger) + 1];
- =20
-  	/* For ACTION_SIGNAL */
-  	int signal =3D 0, pid =3D 0;
-
---5lrJ10G9x1tJJWav
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjel+0ACgkQJNaLcl1U
-h9AUAwf/XOqi/rsABt1ZUQhVk6eXqIOShFxSu7xGSanoxgXUVTsCMjUjI6BrRAGn
-obVUxteEmVdRYcq+xFMtX/dI/4/thtn1uh+TwUW6zl04fHnlISsBV9wFv6pslUlp
-10jFjGWs5Sm+tjgc3tQMztcd91MvasqI0QcwAaH8LTogG7OozZlVeWllyGMdgbis
-cA3FRFJwP1CVJkcZBuGYtQeaYnrh2bVIH3760mMgUarG1SV+L+vnP5e+fYrrMkmO
-1PHyOpU6WtlB4GppFKuDJ1192Kp7GZ3lgKsF8vk7CXl2CUgBi4IDQFyyr9hLqOrr
-mRh9rBKLB5pYutjOQjYDC4P3ks+ukQ==
-=dqBR
------END PGP SIGNATURE-----
-
---5lrJ10G9x1tJJWav--
+-- 
+Ville Syrjälä
+Intel
 
