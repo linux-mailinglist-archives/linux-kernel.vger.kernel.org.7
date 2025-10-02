@@ -1,178 +1,251 @@
-Return-Path: <linux-kernel+bounces-840112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3F24BB391A
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 12:11:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DA1FBB3917
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 12:11:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D460B3B81F2
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 10:11:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CB24192514F
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 10:11:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DA0D307AF5;
-	Thu,  2 Oct 2025 10:10:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 777CD3081C4;
+	Thu,  2 Oct 2025 10:11:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ZtsT0+sZ"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="ckfVU200"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B9CB2EBDCA
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 10:10:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA7C92EB5CD;
+	Thu,  2 Oct 2025 10:11:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759399854; cv=none; b=OItAlyfo2+rLfqFj752ax/2WUOQBHCPlBCfrxKBxGXIC4uozCGeMJ/FFhmtrtlG+3mfRSECzybepycx5bn1LVpiv+HjoMJ+zQxa+iwgZEM9l8ibkNv+ZAlOVecbEgsUXdWx6KkugjR8iNFugjbhGiWCGZmcmCpEiJSF10BEU8uA=
+	t=1759399881; cv=none; b=brJ28YnO64lmqODPJos1CUdPlafoZlBOZaXUKcacB/Z77TP95oL3QjD26YfpSPVNonuirlGaWH5L8ZIHZbirP3AZkGhwXV89zjg+Bop6VVM1sNlMnTFrcRB2yZGSrIu7c17EDOgaOq6OUSqx2BxJOhPsLVY5dP5YzBWmpWM5bcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759399854; c=relaxed/simple;
-	bh=wXssKmLPJjqoKaW2dSKD8DrBwPR8NTRLuMaPkl0T40w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tqv5wpINHw//W6JHmKYUQMql8/JyT3LYHqW9XPjEr8cTpurxrSw7LxXUg2DFFUeekp+p/nhZ2ol7RTK/wGEgmInpKLJ92gmR6sxdsoDZYKP086ZhFlL9pRTRXdPFzSHznibL5SS89tZvCprDPKC2uI8nDNc6ZUMqlLwSej4SyRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ZtsT0+sZ; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b40f11a1027so160428866b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 03:10:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1759399850; x=1760004650; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GE+ky0OQxWYABlQ1pTeY2tV572+/4cRLHoT7laA9e2Y=;
-        b=ZtsT0+sZgsiKYy0fczWhOiDJIRnw40azseHJYF9rIQKyECaylmIpEAsSlTiG7kfnZ/
-         7vaj0Uyl58ADvOjFmb6LUBxjmChRutzQEZYWfRtaIBbwdXwfFcGbvxBCHPS7GzZSZp0x
-         bV621k3HsKFIfT/l0oqhry0n0fOlB3DfvDVcLEhwdfNhsJxlG8FBX1smwsGm4w/1Uw+g
-         xaoMLC/eBXAmqiP+K64dJsr0EAnQxLqmJvPZngU4A8XOMorlktsv0tPVFqcfP9E4GS1H
-         gIcsdhR52Oy3IB7kOl3Zci5gzDtwuGzPArAW1TMXboP0xjdanisi/IMv++Ul/J5+tYWX
-         H0kQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759399850; x=1760004650;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GE+ky0OQxWYABlQ1pTeY2tV572+/4cRLHoT7laA9e2Y=;
-        b=jTLxeUiC2SuzkF+Rqzd7sehrSPeDs65KFZWYWJku8ELCKrBqhMD8yfZCB60sxDEFA2
-         JO0d/DkPGbA42tNsBrtV4O4xaniIRWRbomUzYSVSq2+NDIYg4Sbz9xlZJaoFi9r16Via
-         //0UWDmUaWa607raxEKycQadaNlS05cF9zAbDaOV15nH11ohD0ftd/HxxjFU+jhBJVka
-         /D4KdmsMIkP2cW8OVhPhEBEsT48jGnVNm22xZwKMzPoECwa3MOLpnlpvnmc1MIW7UUQV
-         0BZ/PabuxtgKiWUqP9rtj0T9R05LcYjC8muXpye4LHhUFGlhh55bFbQC/JSgIoaTiylH
-         BnPg==
-X-Forwarded-Encrypted: i=1; AJvYcCWAbLQySp1SNWHys/vAVqGgrkhsMzKXewlb3W9UIUpXrsVpK+L3qjeqH0bV/M4E5MjKr78ErdRSfVaFIpQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxCt35b2rt9kYZdJLB5Wi5MVFLo9ijuPNSs9d2pQ/NUR4Gb7DM
-	d9tVd5OSqOVXwEJYawCF6EOnwAi/yybKlnxIjB3sC/yKTNn6UmW+jmPrzsIe0j8jXZM=
-X-Gm-Gg: ASbGncuX3AlBZ7Qb2Eqm9dSQPva9JHY94NANqvnYsfnS/ZLym/X6WqMYAn2xQ5PXevA
-	bopcRUYqz3Y+2nRlE7m8xhIR2Nj9BMv+MIWUh8rzow90i/iLrZog97J+gPytZBzOqHikmZ5XPgA
-	/jIimR/m7s7LpnMre/4lF8quqkdfm5U1Clk6N1dDbaMfKeofUepAKirf7w9Sr4YmWgCeN1tjinh
-	+acUEA1FdCoz2JOoRpxWXZ8J+qYApytxiMgyI0Rsc0CwzzlgXtgulSC6LDU1xtsZztV1lLiDP36
-	biCjHTDWL+vQH+Q+K5vrMfau6Nb3m4v62n1sCE0TXc7NyHjOm7i9iPcJ1ofhwkNlPQ2PUCupahQ
-	thskYILOpTHQEJZQJNGJoxyiX7XO4g9pq7lhYFVq8QoH0c8HTJIqJXzEN5Icc
-X-Google-Smtp-Source: AGHT+IGxl9hTQJndeyrrY2EXOVwu1e5fuv5VEZrM/+o7Oep3Ib43HVi1P0fq44Dw2SHMm6HLcy6y9w==
-X-Received: by 2002:a17:907:3f07:b0:b3c:3c8e:189d with SMTP id a640c23a62f3a-b46e9765a7cmr822509266b.32.1759399850373;
-        Thu, 02 Oct 2025 03:10:50 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b48652aa035sm174647066b.15.2025.10.02.03.10.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 03:10:49 -0700 (PDT)
-Date: Thu, 2 Oct 2025 12:10:47 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Andrew Murray <amurray@thegoodpenguin.co.uk>
-Cc: John Ogness <john.ogness@linutronix.de>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] printk: console_flush_one_record() code cleanup
-Message-ID: <aN5Pp2cFf_pedhxe@pathway.suse.cz>
-References: <20250927-printk_legacy_thread_console_lock-v2-0-cff9f063071a@thegoodpenguin.co.uk>
- <20250927-printk_legacy_thread_console_lock-v2-2-cff9f063071a@thegoodpenguin.co.uk>
- <84o6qsjduw.fsf@jogness.linutronix.de>
- <CALqELGwd1CiRAYNBVWsrgb5T3eJ9ugP+0wG2WKZGvSfowqgaaQ@mail.gmail.com>
- <84seg3gd89.fsf@jogness.linutronix.de>
- <CALqELGw8wtbbihLsOcNgnV2vGoSR7kD8_tHmt7ESY4d3buwrLQ@mail.gmail.com>
+	s=arc-20240116; t=1759399881; c=relaxed/simple;
+	bh=FDRgKnI/t3kBP81YopfW6F7ZbSOjOFYTwcvFnNwbBms=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SMrzsJ0GInYmosd7yhc5QTMVM9fKJP+8LmdosqMDUPTGt3ER9Z8PuOnc3WSUZEMpn5hElB2wOx4oXlsb4uwoHrfn8VCZ1a1bE54ntImIfrJmE6gQckdcgPJF3a1T0PcItn8flTvYb+TNdY1+zzIEmEwAeyqDdzLwbF+kON3kt4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=ckfVU200; arc=none smtp.client-ip=212.227.15.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1759399877; x=1760004677; i=deller@gmx.de;
+	bh=ahAUlbKeYMw4kObW2wIhCa08EtFJP0e35i5Z/gVr/KU=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=ckfVU200voCT6PEDhWE3iHvJNof1Y/VJP5EW6GNlu0HiehzFSbgPaq3iFyVvzGl6
+	 U0Cqs9/y2KA7vm5p8OcuMmeNyQhN2ms2wWbfLH6oNotyZr3SW5AekmzzGV5Ldcz8U
+	 5tJfuYkUHpOS3ys2/l/z2JMICe2CNVS7TGwgAu207fNVlZ/R6F7ni3EU1SSs99o1Y
+	 bfwAyn8VZHtA7IW79Iqk2MpPSwr6YCDrsvPWn3g1VuHm7dFlrY5oy0Bfj58w25Kly
+	 2xjJKVvHeMwT9JD90axjSmRKgUllYzmuD+mMEJwJ8dwxKX9MvGuZ48VE5aIPUcTlF
+	 fs04ogDJhABkypgbjg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [10.8.0.6] ([78.94.87.245]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MsYqv-1uB2vn2xnH-00y0hQ; Thu, 02
+ Oct 2025 12:11:16 +0200
+Message-ID: <c008abe6-d16e-4063-a81b-dc52cf71d5a8@gmx.de>
+Date: Thu, 2 Oct 2025 12:11:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALqELGw8wtbbihLsOcNgnV2vGoSR7kD8_tHmt7ESY4d3buwrLQ@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fbdev: Add bounds checking in bit_putcs to fix
+ vmalloc-out-of-bounds
+To: Albin Babu Varghese <albinbabuvarghese20@gmail.com>
+Cc: Simona Vetter <simona@ffwll.ch>,
+ syzbot+48b0652a95834717f190@syzkaller.appspotmail.com,
+ linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20250927075010.119671-1-albinbabuvarghese20@gmail.com>
+ <cb00a5e2-6e50-4b01-bcd7-33eeae57ed63@gmx.de> <aN1ihRfB-GHTEt_4@arch-box>
+ <5ab00319-e43e-4000-8814-c7d67f384c53@gmx.de> <aN49Qt4dezOqAmoo@arch-box>
+Content-Language: en-US
+From: Helge Deller <deller@gmx.de>
+Autocrypt: addr=deller@gmx.de; keydata=
+ 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
+In-Reply-To: <aN49Qt4dezOqAmoo@arch-box>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:qDmaz6m0gNP8uIanKiF7WpZDN9xxQaKEPucu4IdX6dG8lVAhGHW
+ cIVCCPeOE968Kv/k6DSa+NlueLh2VetgDmmDWjxdHzZf0mHVeoATemOuuHc7/5uGeEecs4X
+ 7JyJgKbfe6D4D0APtDJnA73qnEkJ4OhlMNWTkbRtqFCQ+G/reX3QhfzP9zXmPCvOHOLIQ2O
+ t8jYkzOl8RxL+qPIIVnTQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:pMLNWrBJkTE=;g+YNv0Dm68b4j1Tv4oCbboT7SMb
+ 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
+ kCXBA==
 
-On Wed 2025-10-01 17:26:27, Andrew Murray wrote:
-> On Wed, 1 Oct 2025 at 10:53, John Ogness <john.ogness@linutronix.de> wrote:
-> >
-> > On 2025-09-30, Andrew Murray <amurray@thegoodpenguin.co.uk> wrote:
-> > >> On 2025-09-27, Andrew Murray <amurray@thegoodpenguin.co.uk> wrote:
-> > >> > diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-> > >> > index 060d4919de320fe21fd7aca73ba497e27c4ff334..e2c1cacdb4164489c60fe38f1e2837eb838107d6 100644
-> > >> > --- a/kernel/printk/printk.c
-> > >> > +++ b/kernel/printk/printk.c
-> > >> > @@ -3280,21 +3284,16 @@ static bool console_flush_one_record(bool do_cond_resched, u64 *next_seq, bool *
-> > >> >   */
-> > >> >  static bool console_flush_all(bool do_cond_resched, u64 *next_seq, bool *handover)
-> > >> >  {
-> > >> > -     bool any_usable = false;
-> > >> > +     bool any_usable;
-> > >>
-> > >> Since console_flush_all() does read @any_usable, I would expect it to
-> > >> initialize @any_usable. So I would not remove this definition initialization.
-> > >
-> > > Prior to this series, console_flush_all would set any_usable to false.
-> > > It would be set to true if at any point a usable console is found,
-> > > that value would be returned, or otherwise false if handover or panic.
-> > > When the first patch split out this function, any_usable was kept as
-> > > it was, leading to any_usable being true, even if a handover or panic
-> > > had happened (hence additional checks needed, which are removed in
-> > > this patch).
-> > >
-> > > By setting any_usable at the start of flush_one_record, it allows for
-> > > any_usable to revert back to false, in the case where a once usable
-> > > console is no longer usable. Thus representing the situation for the
-> > > last record printed. It also makes console_flush_one_record easier to
-> > > understand, as the any_usable flag will always be set, rather than
-> > > only changing from false to true.
-> >
-> > OK. But then just have console_flush_all() set @any_usable in the loop:
-> >
-> > static bool console_flush_all(bool do_cond_resched, u64 *next_seq, bool *handover)
-> > {
-> >         bool any_progress;
-> >         bool any_usable;
-> >
-> >         *next_seq = 0;
-> >         *handover = false;
-> >
-> >         do {
-> >                 any_usable = false;
-> >                 any_progress = console_flush_one_record(do_cond_resched, next_seq,
-> >                                                         handover, &any_usable);
-> >         } while (any_progress);
-> >
-> >         return any_usable;
-> > }
-> 
-> Yes, that seems like common sense, I have no idea why I didn't think of that :|
+On 10/2/25 10:52, Albin Babu Varghese wrote:
+> Hi Helge, I tested your suggestions and they seem to work well.
+>=20
+>> Do you know if this affects the selection?
+>> If so, would modifying (reducing/shortening) the selection maybe fix it=
+?
+>=20
+> The syzkaller reproducer uses really weird values where xs > xe and ys >=
+ ye
+> (xs=3D0xa00, xe=3D0x101, ys=3D0xc7e, ye=3D0x100) and set_selection() alr=
+eady swaps them
+> if needed and clamps the values.
 
-Looks good to me.
+Ok.
+ =20
+> I added debug prints to check what's happening and the clamping in
+> set_selection() is working and the values coming through are within boun=
+ds. But
+> the crash still happens when you remap the framebuffer because of a slig=
+ht
+> overflow.
+>=20
+> I also discovered that when image.width is clipped on the X-axis, the ch=
+aracter
+> count (cnt) must also be updated to match, otherwise bit_putcs_aligned()
+> 	receives mismatched buffer size and character count parameters, causing
+> 	out-of-bounds writes.
+>=20
+> So I changed it to something like this:
+>=20
+> +	if (image.dx >=3D info->var.xres)
+> +		break;
+> +	if (image.dx + image.width > info->var.xres) {
+> +		image.width =3D info->var.xres - image.dx;
+> +		cnt =3D image.width / vc->vc_font.width;
+> +		if (cnt =3D=3D 0)
+> +			break;
+> +		image.width =3D cnt * vc->vc_font.width;
+> +	}
 
-> 
-> >
-> > > Alternatively, it may be possible for console_flush_one_record to
-> > > return any_usable, thus dropping it as an argument and removing the
-> > > return of any_progress. Instead the caller could keep calling
-> > > console_flush_one_record until it returns false or until next_seq
-> > > stops increasing?
+Looks good.
 
-No, this won't work. @next_seq shows the highest value from all
-consoles. It is no longer increased when at least one console
-flushed all pending messages. But other consoles might be
-behind, still having pending messages, and still making progress.
+> I tested it in syzbot, with the syzkaller reproducer, and also manually =
+in QEMU
+> and verified that the buffer switches from tty1 to tty2 work correctly.
+>=20
+> I couldn=E2=80=99t find a dedicated fbdev/fbcon test suite. Beyond kself=
+tests, do you
+> recommend anything specific before sending v2?
 
-Honestly, I do not know how to make it better. We need to pass
-both information: @next_seq and if some console flushed something.
+There is Geert's fbdev test tool (https://git.kernel.org/pub/scm/linux/ker=
+nel/git/geert/fbtest.git/),
+but it does not involve testing of fbcon.
 
-Note that @next_seq is valid only when all consoles are flushed
-and returning the same @next_seq. But it does not help to remove
-the @any_progress parameter.
-
-Best Regards,
-Petr
+Helge
 
