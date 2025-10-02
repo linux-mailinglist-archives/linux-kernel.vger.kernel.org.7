@@ -1,132 +1,107 @@
-Return-Path: <linux-kernel+bounces-840364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F4D1BB434F
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 16:45:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13F2EBB4361
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 16:50:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1867327A93
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 14:45:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C53237B3818
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 14:48:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F361042AA9;
-	Thu,  2 Oct 2025 14:45:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87F452F872;
+	Thu,  2 Oct 2025 14:50:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CyYmN7qG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="ydIXfp5d"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 536531EA84;
-	Thu,  2 Oct 2025 14:45:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 562DD2CCC0
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 14:49:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759416327; cv=none; b=uMvucDYN95yyXe9a/ti6OzjIH19uV6eotbn2A3e1Ug32aK0fhBl2KInS+gswHsmXrAY6nI34M/2ZDtqdQnfh2WuYq+qyf9ZUun5qzzVa9O8v4yMg4Y4r7VC0kTZKdC4ZwIhi0Lqfzp/i3N3gH2qIFHjI8zMlzV9vLbwzffcunBU=
+	t=1759416601; cv=none; b=jmicVvk2h0GYXoqhjKFykBVRhZl5JNHLCzFisjVo1zAgay2L4dcDZeNLvHIOst5nIXiaBPQBBdqlsZhPuLPBXY1NdC3rlROnUlqYeSvILYPWklY50kyh5rLdUqQefm2w2GyfCdAdrbFT4vVEo9qMYA/8fe6dG+pNJUgTHbkKiko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759416327; c=relaxed/simple;
-	bh=hovg+MzsVFfIJLx6d1wu/V4EcBcDv0vurkK1uFcHofU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p6S+ISUaAl4D9cGSO0ETLZlZ7NglC66SEOJzgb/HaldLq+/1tV6T7byv+UrN3e79ACJSxb7Hw8O7C7q5ADdBKsQ5UT0eX1uof8OzG1s1VB3AM/3Ry0fTaU9UlLsg4GS/a2hBUii3sTete+nQ4dcHZs8j4tqUutQ0ByRL65HhWn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CyYmN7qG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9DDDC4CEFB;
-	Thu,  2 Oct 2025 14:45:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759416326;
-	bh=hovg+MzsVFfIJLx6d1wu/V4EcBcDv0vurkK1uFcHofU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CyYmN7qGSN5/kArx1ABt8f54Dhd0h7gkfphpHTn4z25OegPbkGKP2p7D3d43QHWTA
-	 GZ/lzlT/GJmx48qzLLzRxLNc0llBPlDHnSwrtFo+yt1Ajg4kMswpqTaqmKunTzXjPb
-	 QEodCzLXRUpdU4wqTSUZkqOYfjAg+RNlV5rGVXeTu4IPxriV9dw2Kz7fw+yCXWOOE9
-	 cHJPFjA0fSc+3+xomQUidEUQcE+YYDs/vtDF9PoWRhAh3XiwZiiXWEMwz0wEC5Rc8U
-	 gs1Ej1bD9D3d+T74Ltcsc+OBqJNisb3Y1iuQ0JtXUkyZD4VWAUwEwvbqO+ld1mk1TC
-	 I3e2xeW5IYCjg==
-Received: from johan by xi.lan with local (Exim 4.98.2)
-	(envelope-from <johan@kernel.org>)
-	id 1v4KYX-000000001Ut-1qub;
-	Thu, 02 Oct 2025 16:45:17 +0200
-Date: Thu, 2 Oct 2025 16:45:17 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>,
-	Rob Clark <robin.clark@oss.qualcomm.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Yong Wu <yong.wu@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Krishna Reddy <vdumpa@nvidia.com>, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	Suman Anna <s-anna@ti.com>
-Subject: Re: [PATCH 11/14] iommu/omap: fix device leaks on probe_device()
-Message-ID: <aN6P_Wt2ruMeKF3w@hovoldconsulting.com>
-References: <20250925122756.10910-1-johan@kernel.org>
- <20250925122756.10910-12-johan@kernel.org>
- <8e98159d-5c13-453f-8d4b-c7ff80617239@arm.com>
+	s=arc-20240116; t=1759416601; c=relaxed/simple;
+	bh=3DEtzWzJ+5AbtUuYByrnTkKmHNnskh1UPwBWzowwkgg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DLxeVQdaxGJg+L6nHbs9ajqJMey+boepAK/eZ9H7wiLdmOGKeVL8F9nK9QoKTsQ7IJVMuH5DPpddPVwBQMIQMlyK7VS8H0chYSz2s19YPtCggQ3gSxtWje+VRnNAs+suNj0HDp9UTECcwd42gIeJNYaW/Q9T7MhUgdeDCaObq4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=ydIXfp5d; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-33c9f2bcdceso10532131fa.2
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 07:49:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1759416597; x=1760021397; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3DEtzWzJ+5AbtUuYByrnTkKmHNnskh1UPwBWzowwkgg=;
+        b=ydIXfp5dpkCzuZKHZsEydCQOSr/Qo6bwdcESVHpvFsJkYDN1X+GueJ1gmP5EoBZ3C0
+         pPa+rLyzZnoIlryxXtJBtwjhdypHk4JIiC2ejn1bYCLNOKUZyu/jCD/9PmwFJEuk6gDq
+         oP5eA2QI83QoRML+ueEm5tL2dniM6LhFcEqvXZ99mnov9ZUNwoiFC/0pKkUn+LMekX0e
+         sTV6cBYxLdiCj/sOIBlXtYi+e9PYEX33zLYWLZiQh8mvjrpk8ooj8CIOnDl3E4rDr8rt
+         /n2Hs6fornyHh3gqgwZ5t+NMkCN0LrLwMf6VHml1k/RYzf7HZakbg6gqnAMSv/8AZrir
+         v8Og==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759416597; x=1760021397;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3DEtzWzJ+5AbtUuYByrnTkKmHNnskh1UPwBWzowwkgg=;
+        b=n+FFWeIfUc6gV9fM62wTjzNELKYFSaLDKe3BC2s3Tie9g0u8wZZow2NapnjNrDlwuX
+         SlOCev0CEIFmjWluDj//SHz22wzfPaQ4cXIEW5HItYhQiTbzSoWcteuuk++iSk6i/LM9
+         tbsrDOQ9hR3UxbP+8G4konQbq+ImO5q1I4Wkjz7FNPogQc7moqFmIwWbFJEADT/HzKFB
+         UzN/KVqhJBGN8YkH52YEncue8Jony6mkDbMSPwXifBCobI8a+wnSOGfVjM3X+HbAmSF4
+         1WtGX6GchE8kwhVws6WsogBzGO6qRRiBquJXruygetEv5v9S8vI6amzPlKUjVRoZhOi3
+         wDIw==
+X-Forwarded-Encrypted: i=1; AJvYcCVV5YYl9MXlhT82Mt22wdK8yiOkyR4fzk4f9UdZszG5BqBEXErnoKjMBH1s/UNlRPo+OrREPDd7ClaiWrk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypL6Z7QC9Oin+IuvC3K48oPq0r4TBMCuGzqKbVi9pBIrF75/Si
+	ujGXyvNsPFzXBr2zH3tYcd7nBfYuiJgb0m8y0hyAF9PlC0CJ1xR8Bc5xDpzhEHreW/zrZi0Jpi9
+	3tzsGli+gt7yE+JkuDpzRO6L1bqrMvZkzKp4NlqGMzg==
+X-Gm-Gg: ASbGncu4XrJ6cZqphCU55Jy+ee3ARdHmKk5CGAibVe0ZBrZVdYeeArlPezLDzCYd+CM
+	J5NOHNk0/RPm7hgy9d3HO4iz04t8V289JIQuVjwQk6aVglkoLd9XOakW7mwlB3CR9LwTyIFTpea
+	EMIE9pd9n9ekJPOvGuBKzbBaL/YM5lbPqHB9P3i7O2fHAyzmRrYWAkjKCVGgEvB3tl+OB1kI+zS
+	pM3iqtpZP+wIcHWmxUh6wS3WXVtMYvjDEYt3LcCUt6aPuGJjXPB7JK+viF5Kx4=
+X-Google-Smtp-Source: AGHT+IEFxaUXZbW4cydqpBo5P7Gi6kzBpFsb/v/pBDTMbOwFFLX/m9JHrRJwODjL2sU3sJEEl4mXuOKvbZUzvPir5oM=
+X-Received: by 2002:a05:651c:c90:b0:337:e151:9ec with SMTP id
+ 38308e7fff4ca-373a711564bmr20327891fa.16.1759416597435; Thu, 02 Oct 2025
+ 07:49:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8e98159d-5c13-453f-8d4b-c7ff80617239@arm.com>
+References: <20251002-i2c-mux-v2-0-b698564cd956@gmail.com> <20251002-i2c-mux-v2-3-b698564cd956@gmail.com>
+In-Reply-To: <20251002-i2c-mux-v2-3-b698564cd956@gmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Thu, 2 Oct 2025 16:49:45 +0200
+X-Gm-Features: AS18NWC7qjlJCo2wv35_zng7a-THUxjToC7YH2tPnfIiOSWbAAuz7_LLpy1uN60
+Message-ID: <CAMRc=MdUHQmbDOGW1LMhE8iZmJszmC0oyOJYvVssap9wshBkmg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/5] i2c: davinci: calculate bus freq from Hz instead
+ of kHz
+To: Marcus Folkesson <marcus.folkesson@gmail.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, 
+	Michael Hennerich <michael.hennerich@analog.com>, Andi Shyti <andi.shyti@kernel.org>, 
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 02, 2025 at 01:05:08PM +0100, Robin Murphy wrote:
-> On 2025-09-25 1:27 pm, Johan Hovold wrote:
+On Thu, Oct 2, 2025 at 4:42=E2=80=AFPM Marcus Folkesson
+<marcus.folkesson@gmail.com> wrote:
+>
+> The bus frequency is unnecessarily converted between Hz and kHz in
+> several places.
+> This is probably an old legacy from the old times (pre-devicetrees)
+> when the davinci_i2c_platform_data took the bus_freq in kHz.
+>
+> Stick to Hz.
+>
+> Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+> ---
 
-> > @@ -1663,22 +1663,22 @@ static struct iommu_device *omap_iommu_probe_device(struct device *dev)
-> >   	for (i = 0, tmp = arch_data; i < num_iommus; i++, tmp++) {
-> >   		np = of_parse_phandle(dev->of_node, "iommus", i);
-> >   		if (!np) {
-> > -			kfree(arch_data);
-> > -			return ERR_PTR(-EINVAL);
-> > +			ret = -EINVAL;
-> > +			goto err_put_iommus;
-> >   		}
-> >   
-> >   		pdev = of_find_device_by_node(np);
-> >   		if (!pdev) {
-> >   			of_node_put(np);
-> > -			kfree(arch_data);
-> > -			return ERR_PTR(-ENODEV);
-> > +			ret = -ENODEV;
-> > +			goto err_put_iommus;
-> >   		}
-> >   
-> >   		oiommu = platform_get_drvdata(pdev);
-> >   		if (!oiommu) {
-> >   			of_node_put(np);
-> > -			kfree(arch_data);
-> > -			return ERR_PTR(-EINVAL);
-> > +			ret = -EINVAL;
-> > +			goto err_put_iommus;
-> >   		}
-> >   
-> >   		tmp->iommu_dev = oiommu;
-> > @@ -1697,17 +1697,28 @@ static struct iommu_device *omap_iommu_probe_device(struct device *dev)
-> >   	oiommu = arch_data->iommu_dev;
-> >   
-> >   	return &oiommu->iommu;
-> > +
-> > +err_put_iommus:
-> > +	for (tmp = arch_data; tmp->dev; tmp++)
-> > +		put_device(tmp->dev);
-> 
-> This should just pair with the of_node_put() calls (other than the first 
-> one, of course), i.e. do it in the success path as well and drop the 
-> release_device change below. It doesn't serve any purpose for client 
-> devices to hold additional references on the IOMMU device when those are 
-> strictly within the lifetime of the IOMMU driver being bound to it anyway.
-
-I kept the reference until release() (even if not strictly needed) as I
-mistakenly thought the driver was using the arch data device pointer
-directly.
-
-Turns out that one has never been used so I'll drop it as well as part
-of v2.
-
-Johan
+Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
