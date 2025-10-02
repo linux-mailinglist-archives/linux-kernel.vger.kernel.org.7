@@ -1,240 +1,113 @@
-Return-Path: <linux-kernel+bounces-840268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 301A1BB3FCE
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 15:12:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90AE9BB3FD7
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 15:12:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC80719C51B9
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 13:12:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FF133BA10A
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 13:12:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 473DF31158E;
-	Thu,  2 Oct 2025 13:12:18 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6932311C35;
+	Thu,  2 Oct 2025 13:12:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gsIXbF1e"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C08729ACC5
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 13:12:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D8DE29ACC5;
+	Thu,  2 Oct 2025 13:12:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759410737; cv=none; b=oVQUVN5Wtxc411VCP1+ogOCbnotth2SPf/In3LiAwDfFjdK7o87G97C5Z1LB+7CeTd6WnIRXa+XxRHVYNe4bY6C4oFo3fc6wu8AbidDtA1poB0akSisFp/cN2EmEKdDgSfbtuYnVXur/urv4iQJYQMuaag3x3/ZSe9CDN/QiZAc=
+	t=1759410740; cv=none; b=YHefaHr6Zy5KW5MDtr6c5igYEg3ujLKHz4PjSFR5mTW+pRCnJ9R5KM7gY/9bRw1Hrq/1r5pzsSwCZu8DLcpjt5QEEGgQM+IPhY/dgyZY7iez/egTrmOcdKB9FG0CwISnC7oMp80vxE7Y6rzjA+Pwo8IC6nE6Yo2YQ+AnkGp/+CQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759410737; c=relaxed/simple;
-	bh=sQzU2kePbMg21U9hQNJqXwvo/QhuZCoGyWAJ1f1T//Q=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fUEy9A1BDeTvUXkzirQa1x2Q5gqBgZ08DkrZ7MbHZYxBP05Ik9CfWhXYgqu+ku+mBNjyQzY3ElTaJYvncM4k2IPR4tm6H4zR6YCF3bAil72oxowlvMnQvgzjCQd9TZ73gcnZ68wQbffm6w4HS2g4/M116kJ/JI3McnPPO1oxRnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ccsb730Fzz6L4sd;
-	Thu,  2 Oct 2025 21:09:55 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id 68093140426;
-	Thu,  2 Oct 2025 21:12:11 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 2 Oct
- 2025 14:12:09 +0100
-Date: Thu, 2 Oct 2025 14:12:07 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Raghavendra K T <raghavendra.kt@amd.com>
-CC: <AneeshKumar.KizhakeVeetil@arm.com>, <Michael.Day@amd.com>,
-	<akpm@linux-foundation.org>, <bharata@amd.com>, <dave.hansen@intel.com>,
-	<david@redhat.com>, <dongjoo.linux.dev@gmail.com>, <feng.tang@intel.com>,
-	<gourry@gourry.net>, <hannes@cmpxchg.org>, <honggyu.kim@sk.com>,
-	<hughd@google.com>, <jhubbard@nvidia.com>, <jon.grimm@amd.com>,
-	<k.shutemov@gmail.com>, <kbusch@meta.com>, <kmanaouil.dev@gmail.com>,
-	<leesuyeon0506@gmail.com>, <leillc@google.com>, <liam.howlett@oracle.com>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<mgorman@techsingularity.net>, <mingo@redhat.com>, <nadav.amit@gmail.com>,
-	<nphamcs@gmail.com>, <peterz@infradead.org>, <riel@surriel.com>,
-	<rientjes@google.com>, <rppt@kernel.org>, <santosh.shukla@amd.com>,
-	<shivankg@amd.com>, <shy828301@gmail.com>, <sj@kernel.org>, <vbabka@suse.cz>,
-	<weixugc@google.com>, <willy@infradead.org>, <ying.huang@linux.alibaba.com>,
-	<ziy@nvidia.com>, <dave@stgolabs.net>, <yuanchu@google.com>,
-	<kinseyho@google.com>, <hdanton@sina.com>, <harry.yoo@oracle.com>
-Subject: Re: [RFC PATCH V3 01/17] mm: Add kscand kthread for PTE A bit scan
-Message-ID: <20251002141207.00007b58@huawei.com>
-In-Reply-To: <20250814153307.1553061-2-raghavendra.kt@amd.com>
-References: <20250814153307.1553061-1-raghavendra.kt@amd.com>
-	<20250814153307.1553061-2-raghavendra.kt@amd.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1759410740; c=relaxed/simple;
+	bh=y7aX4lbkpltMNipgy0YD9zDoYMM8nzuOWLeGW3EjzWw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tX7KrsKcPvOqKX/zwqrIre6FYrrXSaHObIjIJ5LDOcXW82D/i1bY6orfbJvWGXm5iFq/4BXmB4H/dQWQaHb5Lcgc05NFo29iHKOr31A/oTS0B6Zuhn7dV3za7ql6T4WkoPr7y92WZGflPrrLMr279dEblINgQzoLWbO51+hRHHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gsIXbF1e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08D70C4CEF4;
+	Thu,  2 Oct 2025 13:12:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759410739;
+	bh=y7aX4lbkpltMNipgy0YD9zDoYMM8nzuOWLeGW3EjzWw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gsIXbF1eOLut9RdxYVNi775fhNJF0J75KTHW2n4GzILNiJFLQDFo8EN7h0lLm5S6E
+	 yxCEeK2j1aug2hDtD50Ymvu0qq++D6+6BaBGk7HFth0QMCoQYJ3YtD2zB6qrSLOA09
+	 7zMEZKIVALrXBgL376eKdpjGbkMJhkNPqIxFzU7KDpuWq5VzmTBZfPNNEEiZPXtwwE
+	 /SK22wCT950sihegNEhGFqcnfQ/Eu6h8BL6HbQBUOHoMiB1PZ/iNP+/QDnimxNOcUl
+	 GqsrUKVuzUkCibsVx1I7b6STuRmsDgKxZmOBd0iOyF3WDuJB/5vb/8cDBKBmRhgAVZ
+	 GoseV/EOAObmw==
+Message-ID: <96091daa-0868-45c8-b16b-39076862b8ee@kernel.org>
+Date: Thu, 2 Oct 2025 14:12:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] arm64: dts: qcom: qcm6490-fairphone-fp5: Enable CCI
+ pull-up
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Griffin Kroah-Hartman <griffin.kroah@fairphone.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ Daniel Scally <djrscally@gmail.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, =?UTF-8?Q?Andr=C3=A9_Apitzsch?=
+ <git@apitzsch.eu>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Wolfram Sang <wsa@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org
+References: <20251002-dw9800-driver-v1-0-c305328e44f0@fairphone.com>
+ <20251002-dw9800-driver-v1-3-c305328e44f0@fairphone.com>
+ <H1UBvTPPR7Tu-lzvNcSjkBkAs8KXmTnMGOywmOMU19jtFgF0aChDEfnEcTarceYFIPulLRbHW3ar30_uNW2HjA==@protonmail.internalid>
+ <1be80052-3ba5-46de-804a-de995f8db5d4@oss.qualcomm.com>
+From: Bryan O'Donoghue <bod@kernel.org>
+Content-Language: en-US
+In-Reply-To: <1be80052-3ba5-46de-804a-de995f8db5d4@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100010.china.huawei.com (7.191.174.197) To
- dubpeml100005.china.huawei.com (7.214.146.113)
 
-On Thu, 14 Aug 2025 15:32:51 +0000
-Raghavendra K T <raghavendra.kt@amd.com> wrote:
+On 02/10/2025 13:45, Konrad Dybcio wrote:
+> On 10/2/25 12:15 PM, Griffin Kroah-Hartman wrote:
+>> Enable vreg_l6p which is used as a pull-up for the CCI busses, to make
+>> sure I2C communication works as expected.
 
-> Also add a config option for the same.
-> 
-> High level design:
-> 
-> While (1):
->   Scan the slowtier pages belonging to VMAs of a task.
->   Add to migation list.
-> 
-> A separate thread:
->   Migrate scanned pages to a toptier node based on heuristics.
-> 
-> The overall code is influenced by khugepaged design.
-> 
-> Signed-off-by: Raghavendra K T <raghavendra.kt@amd.com>
+"vreg_l6p is the voltage source for the pull-up resistor"
 
-Hi Raghavendra,
-
-A few comments inline.
-
-Thanks,
-
-Jonathan
-
-> diff --git a/mm/kscand.c b/mm/kscand.c
-> new file mode 100644
-> index 000000000000..f7bbbc70c86a
-> --- /dev/null
-> +++ b/mm/kscand.c
-> @@ -0,0 +1,163 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +#include <linux/mm.h>
-
-Good to pick an order for includes.   Various options, my personal
-preference is alphabetical with groups of linux/* asm/* and local headers.
-
-> +#include <linux/mm_types.h>
-> +#include <linux/sched.h>
-> +#include <linux/sched/mm.h>
-> +#include <linux/mmu_notifier.h>
-> +#include <linux/swap.h>
-> +#include <linux/mm_inline.h>
-> +#include <linux/kthread.h>
-> +#include <linux/string.h>
-> +#include <linux/delay.h>
-> +#include <linux/cleanup.h>
-> +
-> +#include <asm/pgalloc.h>
-> +#include "internal.h"
-...
+>>
+>> Signed-off-by: Griffin Kroah-Hartman<griffin.kroah@fairphone.com>
+>> ---
+> Makes me wonder if we should maybe extend the CCI definition
+> (or maybe the common i2c-bus binding?) to accept an external
+> pull-up supply, as this is a common problem.. (+Bryan, Wolfram)
 
 
-> +static void kscand_wait_work(void)
-> +{
-> +	const unsigned long scan_sleep_jiffies =
-> +		msecs_to_jiffies(kscand_scan_sleep_ms);
-> +
-> +	if (!scan_sleep_jiffies)
-> +		return;
-> +
-> +	kscand_sleep_expire = jiffies + scan_sleep_jiffies;
-> +
-> +	/* Allows kthread to pause scanning */
-> +	wait_event_timeout(kscand_wait, kscand_should_wakeup(),
-> +			scan_sleep_jiffies);
-> +}
+always-on is up to the platform - i.e. do you care about the 
+floating-state of the i2c bus in power-collapse anyway ? Feels like 
+something up to the platform designers.
+> We could then shut down the regulator when cameras are not
+> in use, preserving some trace amounts of power.> Or maybe L6P is already used as a pull-up supply for more things
+> onboard and should be always-on either way? Could you please
+> check that, Griffin?
 
-Trivial but more consistent I think to have a blank line here.
+If we drop always-on and introduce a "pullup-supply" to the CCI bindings 
+then, it would be up the CCI driver to enable/disable the bus pullups 
+and then we can optionally do the power-rail disable when entering 
+power-collapse.
 
-> +static void kscand_do_scan(void)
-> +{
-> +	unsigned long iter = 0, mms_to_scan;
-> +
-> +	mms_to_scan = READ_ONCE(kscand_mms_to_scan);
-Slightly nicer perhaps as
+That'd be nice.
 
-	unsigned long iter = 0;
-	unsigned long mms_to_scan = READ_ONCE(kscand_mms_to_scan);
+As-is though I personally am fine with the patch as-is with the updated 
+commit text above - consider the CCI change as extra homework ;)
 
-> +
-> +	while (true) {
-> +		if (unlikely(kthread_should_stop()) ||
-> +			!READ_ONCE(kscand_scan_enabled))
-> +			break;
-> +
-> +		if (kscand_has_work())
-> +			msleep(100);
-> +
-> +		iter++;
-> +
-> +		if (iter >= mms_to_scan)
-> +			break;
-> +		cond_resched();
-> +	}
-> +}
-> +
+Assuming the commit log is tweaked.
 
-> +
-> +static int start_kscand(void)
-> +{
-> +	struct task_struct *kthread;
-> +
-> +	guard(mutex)(&kscand_mutex);
-> +
-> +	if (kscand_thread)
-> +		return 0;
-> +
-> +	kthread = kthread_run(kscand, NULL, "kscand");
-> +	if (IS_ERR(kscand_thread)) {
-
-That looks like the wrong variable to check.
-
-> +		pr_err("kscand: kthread_run(kscand) failed\n");
-> +		return PTR_ERR(kthread);
-> +	}
-> +
-> +	kscand_thread = kthread;
-> +	pr_info("kscand: Successfully started kscand");
-> +
-> +	if (!list_empty(&kscand_scan.mm_head))
-
-You have kscand_has_work() for this.
-
-> +		wake_up_interruptible(&kscand_wait);
-> +
-> +	return 0;
-> +}
-> +
-> +static int stop_kscand(void)
-> +{
-> +	guard(mutex)(&kscand_mutex);
-> +
-> +	if (kscand_thread) {
-> +		kthread_stop(kscand_thread);
-> +		kscand_thread = NULL;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int __init kscand_init(void)
-> +{
-> +	int err;
-> +
-> +	err = start_kscand();
-> +	if (err)
-> +		goto err_kscand;
-This breaks the nice principle of side effect free calls
-on error. If start_kscand() has failed, I'd not really expect to have
-have stop explicitly.   I'm not sure you actually do need to do so.
-
-
-> +
-> +	return 0;
-> +
-> +err_kscand:
-> +	stop_kscand();
-> +
-> +	return err;
-> +}
-> +subsys_initcall(kscand_init);
-
+Reviewed-by: Bryan O'Donoghue <bod@kernel.org>
 
