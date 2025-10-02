@@ -1,154 +1,179 @@
-Return-Path: <linux-kernel+bounces-839924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFBD3BB2BEC
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 09:54:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A98FEBB2BF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 09:55:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B9BC19C3AD4
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 07:55:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75FB719C32A1
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 07:55:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFA6B2D2394;
-	Thu,  2 Oct 2025 07:54:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5B872D238D;
+	Thu,  2 Oct 2025 07:55:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SmUTP5N6"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z/r4OwOe"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A951F2D0275
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 07:54:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A99DE2D1936
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 07:54:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759391686; cv=none; b=nP3bbF07lw1hDBm59pTlZ2ZFtAJPQQl/L6vTZa6EV2rXrPBs+ED8LsM5+3mKNXsFjxOhHgDtoYhNJbwYZuqggIvuatkzhDuY/hjm++bAiVoLaCSgel0T58TbsowLC/pscNZxP2aYXiu1l9xZDmk/eP0Vj0nRDSe+R1EbGInb7fo=
+	t=1759391702; cv=none; b=TA8Dwgd48kxEYcKS2WNbIcfVEhKhPOOthkJAa0qVKQFSzTaVSqEt3Oah8wwHMHTuxJJogBQxROduQUD0+7bq9PV9j158w5XU1QWSJrem2H5qkq9eQanZXIMSNZ90/ixcVLV6hHbw/1gR+dkK4D57VyhJ+mjlDj5YZfhTDGTe/ls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759391686; c=relaxed/simple;
-	bh=WSAv+LklGTDBmAJg9JWePc59MIDbYN30xXPqFRoxrGA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fhVnbe626bJsb92sWrBH+wWcN0JxYUsy8vMZ701iBH27SGW5hyrUCVMh8Efw8GzaYJnjcSxQOmSMudB7e26Xv54vGZQxLdsKU1sepiMhpgjaPS/cMDg/rgScKqPGtyA7ALTokaekYT0xAVZNz6yssdQsFe4qfGM720/Q+Op2JKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SmUTP5N6; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1759391702; c=relaxed/simple;
+	bh=nb9SLyTaxwx10+zZr/x8CleDAMeEWEvApjntTON8H7s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VFU3ciWZGTKMwfxqVVsCR1qM/SCGHqZwd4WqVTJXRJInz+c/h1hK9a4hQpf6BC9FVE1I/LO9v4Cv7YM5O1TaqUP0NOosMbQm4MpmNFNdgt40LEcobnnyvUm8bNzvdbvT2k5jW9wNFdN6D+XphuA3asEpcLAkOLJKZJWj/hpPYTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z/r4OwOe; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759391683;
+	s=mimecast20190719; t=1759391698;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f5NgAjs0FgUvOjNKCgOViw/s6WyhuboPXgN8L2oduk0=;
-	b=SmUTP5N6n2tC2XO2a5xgoxLAO/X78ISI4HrcL0iGg3wVcJ3KGtpk3A3cjR/IJfgSZgj+m5
-	u0ROPESKRQ/Mfee6vYODGlojPB+PVJy7bhmQE/HVwxf+xM3uGpZK0FaWC5LJ3z71NyQxAk
-	vYlGWk3e7cNRH2RAOMUbQW1kLJzCuGw=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=vikbvMujRxH5+j8MHPapMlTJNADuVwLSxX8Ctdq/Fn4=;
+	b=Z/r4OwOess7EcSQJql7uoMPLtlo+QbxeRHfhws+qgdu/kIvmHJg6cFUR4Rb91WgpojeuSE
+	FTxf67wBFXfdEI2KwEvYtZM8DbMs9/sAq4VjQfbJ5hRt79RBGbSVdSCv9Fs91D9ONNJ8k5
+	kXxkyLHmxOdhDHDKrKYZLC63HzT6bfE=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-486-11b2WFyoM--bhWkWGPQhxA-1; Thu, 02 Oct 2025 03:54:42 -0400
-X-MC-Unique: 11b2WFyoM--bhWkWGPQhxA-1
-X-Mimecast-MFC-AGG-ID: 11b2WFyoM--bhWkWGPQhxA_1759391681
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3ee12ab7f33so569421f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 00:54:41 -0700 (PDT)
+ us-mta-594-7uZu0uurMF21d8lbvNZZvQ-1; Thu, 02 Oct 2025 03:54:57 -0400
+X-MC-Unique: 7uZu0uurMF21d8lbvNZZvQ-1
+X-Mimecast-MFC-AGG-ID: 7uZu0uurMF21d8lbvNZZvQ_1759391696
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3ecdc9dbc5fso276266f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 00:54:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759391681; x=1759996481;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=f5NgAjs0FgUvOjNKCgOViw/s6WyhuboPXgN8L2oduk0=;
-        b=asaPTE3aOGfaauIV50nxIMTiOzhSPup7Wj/+v845RXDuXtJ6Dcvr3Nvonh1VwQ6Mhu
-         D+V7e9ny60e17kSgdGem8QcfK7GwxHJANmn/outUn/3y62iMRgKJXAOqiU+tXilueG6b
-         vb7mP8t5QigPokvQ1IdVRgzikD/rgUbv19nfIb4tBcLyIS52gbuDgAWr5Xra7K97ns+o
-         sOnK5SBzYR1OeD8qLtDCwo8ilZKZCh9Zxbn6l+5bcrZ4I/hSa+0gQjIhnD4n6ryZqerF
-         2+xvF/apkh10TpKt2j/QxARC598ki3E5bO5cuXHOcvTbsvf9k89GthlZ+cphx1OcrJoM
-         vSEw==
-X-Gm-Message-State: AOJu0YxwTCQe55gB4i/lQHba9Z7+upmi0XeukdbPovDCVCvPfc/nOQxw
-	imNzYsPreVi2n/pHUuVtCQfzkc5dmvL2pVBk2Ecyv8+8kDvGpdCx4v/uQXe6cvDSwdVRqoGEbYl
-	qArolXjEZ8WEuGBPeso+6msKWr74LsYUQZc+Oq2DYm2koAavVDGAi5ppbO/QlF+b24LS0ZIGkdu
-	H6
-X-Gm-Gg: ASbGncvbjd+m2TDYbXM9P08Mrg0sSkliH+Qz4NINYvkVuyq3y5C2+txZ9iDyZbGJG4g
-	j2ch+J9Y3fRCynBq8XdIFzVZD818DqncJeq1buXK4TySWRF0vqSv/LZwTZHiE7h/b8kMk8BfUwc
-	uBeHmL4Vgl8KDvCurQPLbfuaG4U0Fe+ZEn7jOQuSYQSQ7Bxm9ZEQuDCmsyUJWVeuz/+SWZ/2u8W
-	bd/XqWUKuuMM+427vRth03JCPjUzEMfpB8IhESMSiNVy9m6VLqNB23SByplRw3/+DDIb2VQqGRQ
-	j7ufDuf4bUIr74F1O3QENQ==
-X-Received: by 2002:a05:6000:4282:b0:40e:31a2:7efe with SMTP id ffacd0b85a97d-425577f4cb8mr4951708f8f.14.1759391680651;
-        Thu, 02 Oct 2025 00:54:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHKgb2wuYS24zodpwDlxRHEFq5J/MXUUrEeNEVo0zphJwnjV4MGibFNyYvpxnYvHco/UT9a7w==
-X-Received: by 2002:a05:6000:4282:b0:40e:31a2:7efe with SMTP id ffacd0b85a97d-425577f4cb8mr4951692f8f.14.1759391680190;
-        Thu, 02 Oct 2025 00:54:40 -0700 (PDT)
-Received: from localhost ([2a01:e0a:b25:f902::ff])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8b0068sm2484557f8f.26.2025.10.02.00.54.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 00:54:39 -0700 (PDT)
-Date: Thu, 2 Oct 2025 09:54:39 +0200
-From: Maxime Ripard <mripard@redhat.com>
-To: Jens Wiklander <jens.wiklander@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, op-tee@lists.trustedfirmware.org, 
-	linux-arm-kernel@lists.infradead.org, Olivier Masse <olivier.masse@nxp.com>, 
-	Thierry Reding <thierry.reding@gmail.com>, Yong Wu <yong.wu@mediatek.com>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
-	Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>, 
-	"T . J . Mercier" <tjmercier@google.com>, Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, 
-	Sumit Garg <sumit.garg@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, azarrabi@qti.qualcomm.com, 
-	Simona Vetter <simona.vetter@ffwll.ch>, Daniel Stone <daniel@fooishbar.org>, 
-	Rouven Czerwinski <rouven.czerwinski@linaro.org>, robin.murphy@arm.com, Sumit Garg <sumit.garg@oss.qualcomm.com>
-Subject: Re: [PATCH v12 3/9] tee: implement protected DMA-heap
-Message-ID: <20251002-sceptical-goose-of-fame-7b33d6@houat>
-References: <20250911135007.1275833-1-jens.wiklander@linaro.org>
- <20250911135007.1275833-4-jens.wiklander@linaro.org>
+        d=1e100.net; s=20230601; t=1759391696; x=1759996496;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vikbvMujRxH5+j8MHPapMlTJNADuVwLSxX8Ctdq/Fn4=;
+        b=Z/781tUDu4mMhM0AHT/nxjqjmHA7l1znQP2CMyoQ8ERVDXZir8bpkBj5eadddqd5et
+         koOjBxYPg9k1YYdC2kgIS0XDqLn9rfblr41Xn/SGUKFW/+mmxTxnWH0H4ADd6136v+Hu
+         KcWdTkpdx4Peczr7WwosYwXjE6k/97IPSQf8wNjkJVAAA4m3Bfwe77qMdhbqqoA6qwvY
+         Nrm5t1lnD3hSTNMx60s6RMKisczAyvD4qoAnAvo17WCRN7zGnYsMZ8xPQUs+9yLZ2Bn4
+         j1+s3QAEJwrD/kimNoEwpSQj4/o5OYKkVDYBSYGNIK8YQSfnQu0CiyCLt5uHQuQn/b36
+         F7Dw==
+X-Forwarded-Encrypted: i=1; AJvYcCWsbL6gyNevORkpRPDXazBNhPoWln56QgPdumpfdLmeZy2GDqxLuCUWbFbfeS1mFuWcE6Z6ynuME0HqlO8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylRaZ5XAVGXAfZHqrxil/dMDr+oHS2G01T0LNjb/f4TXZBVMYl
+	WGkwB283wNZSv1GYf8czfE96vbQLYDep5JumCg59kP/iFfrBcOBUrmx5nQE62/BIgl8bZqXNnp5
+	wVO8LFqn0yv2ZqE82UQN456IaUNEE/5h1Tpmtrq9V3BmqDl/n/9a+fxfoUrvB2A2/7Q==
+X-Gm-Gg: ASbGnctQ8wuwCdH8FCLlcego1ppQ1szS/uTnTevzyYSGrhNWwbE28ifSWnJriO21vkH
+	WV7TzKA6jkwYiLlm/6DOBo9+zU8sm0ebkY9PVBsYE9TNqPFeWapjJZv+NVo0VlTrELHa4m1HSi+
+	M4mbza62nMmhDa8805Y6Biby95hRfVPLqkMW/ae++tSBxtuJKbD5F0LitQZmL/JernZzdje1JKb
+	IK8rpz+dwDnvsNaj11caPQVxXKlBcQIZ8ykP3eeJUSE5kBRhZiqyBY/+/UASu8Em5eNK2e1inpU
+	0e+y7aMj2rjp1cFdJUgQbVeXp1uxO3RE8VCFoxztBGfB0qaezHZpEIuwt668b0QQrFYar6kwqej
+	Y0lzqnBJJ
+X-Received: by 2002:a05:6000:420a:b0:3e7:471c:1de3 with SMTP id ffacd0b85a97d-425577f1b33mr4696226f8f.14.1759391696265;
+        Thu, 02 Oct 2025 00:54:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG4ucs9qEAt4KkjYeplUmqpl78kNlA5Io8C5XuP/RQbkK+tZkwKR1bmiFsNk+oZQa0IXEyYPA==
+X-Received: by 2002:a05:6000:420a:b0:3e7:471c:1de3 with SMTP id ffacd0b85a97d-425577f1b33mr4696203f8f.14.1759391695720;
+        Thu, 02 Oct 2025 00:54:55 -0700 (PDT)
+Received: from [192.168.3.141] (tmo-080-144.customers.d1-online.com. [80.187.80.144])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8f4b71sm2383313f8f.57.2025.10.02.00.54.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 02 Oct 2025 00:54:55 -0700 (PDT)
+Message-ID: <7b7028f7-8225-475f-bf74-a0e6d3fa90e7@redhat.com>
+Date: Thu, 2 Oct 2025 09:54:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="ucqtnbt2ioahlqrj"
-Content-Disposition: inline
-In-Reply-To: <20250911135007.1275833-4-jens.wiklander@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] mm: redefine VM_* flag constants with BIT()
+To: Jakub Acs <acsjakub@amazon.de>, linux-fsdevel@vger.kernel.org
+Cc: Andrew Morton <akpm@linux-foundation.org>, Xu Xin <xu.xin16@zte.com.cn>,
+ Chengming Zhou <chengming.zhou@linux.dev>, Peter Xu <peterx@redhat.com>,
+ Axel Rasmussen <axelrasmussen@google.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20251002075202.11306-1-acsjakub@amazon.de>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <20251002075202.11306-1-acsjakub@amazon.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 02.10.25 09:52, Jakub Acs wrote:
+> Make VM_* flag constant definitions consistent - unify all to use BIT()
+> macro.
+> 
+> We have previously changed VM_MERGEABLE in a separate bugfix. This is a
+> follow-up to make all the VM_* flag constant definitions consistent, as
+> suggested by David in [1].
+> 
+> [1]: https://lore.kernel.org/all/85f852f9-8577-4230-adc7-c52e7f479454@redhat.com/
+> 
+> Signed-off-by: Jakub Acs <acsjakub@amazon.de>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Xu Xin <xu.xin16@zte.com.cn>
+> Cc: Chengming Zhou <chengming.zhou@linux.dev>
+> Cc: Peter Xu <peterx@redhat.com>
+> Cc: Axel Rasmussen <axelrasmussen@google.com>
+> Cc: linux-mm@kvack.org
+> Cc: linux-kernel@vger.kernel.org
+> ---
 
---ucqtnbt2ioahlqrj
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH v12 3/9] tee: implement protected DMA-heap
-MIME-Version: 1.0
+LGTM now, thanks!
 
-On Thu, Sep 11, 2025 at 03:49:44PM +0200, Jens Wiklander wrote:
-> +static const char *heap_id_2_name(enum tee_dma_heap_id id)
-> +{
-> +	switch (id) {
-> +	case TEE_DMA_HEAP_SECURE_VIDEO_PLAY:
-> +		return "protected,secure-video";
-> +	case TEE_DMA_HEAP_TRUSTED_UI:
-> +		return "protected,trusted-ui";
-> +	case TEE_DMA_HEAP_SECURE_VIDEO_RECORD:
-> +		return "protected,secure-video-record";
-> +	default:
-> +		return NULL;
-> +	}
-> +}
+Acked-by: David Hildenbrand <david@redhat.com>
 
-We've recently agreed on a naming guideline (even though it's not merged yet)
+-- 
+Cheers
 
-https://lore.kernel.org/r/20250728-dma-buf-heap-names-doc-v4-1-f73f71cf0dfd@kernel.org
-
-Secure and trusted should be defined I guess, because secure and
-protected at least seem redundant to me.
-
-Maxime
-
---ucqtnbt2ioahlqrj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaN4vvgAKCRAnX84Zoj2+
-dh5DAYCtjelmpXHr50Khpzx9gOlMaEclQyCYsx0ccN3NkEfrV19Dn1EcsuWOsMM8
-FnSLI0wBf20rXmWeBPjWcAcR1B39X7YSjO3A7FgWI4aIrvvEGff3VbIQIgq5c/ST
-75QC6+0wWg==
-=iJBu
------END PGP SIGNATURE-----
-
---ucqtnbt2ioahlqrj--
+David / dhildenb
 
 
