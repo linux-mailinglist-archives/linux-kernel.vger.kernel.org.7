@@ -1,127 +1,161 @@
-Return-Path: <linux-kernel+bounces-840161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62EECBB3B7F
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 13:08:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E6BEBB3B82
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 13:10:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1119C19C7BD3
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 11:09:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8CC87A9638
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 11:08:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5492930E842;
-	Thu,  2 Oct 2025 11:08:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="agq1w+0d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 980D830E842;
+	Thu,  2 Oct 2025 11:10:17 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A68C73081D9;
-	Thu,  2 Oct 2025 11:08:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 188E925CC42
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 11:10:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759403319; cv=none; b=XjRv43F6WG1qYuB39iFZ4IxOr1vagK4wABHVgnwwsM+xwvyPXE1BQN2oOoDixC99NO0rXZ4+sHNuZY8z/MLJjtu2CiMHwMujkEhA5Ati3m5OSXQOecDT2WgnDOZwVOQk0B9fCOtBp/TLB5XqiE3I+/l4u3KDw2GEXJKY6Ap9hBE=
+	t=1759403417; cv=none; b=ixD1i5iwbyheodAH7LRLDe1oeHwCvHKYSZRuNQmXqu1J99r0QAEiJTKrO0rYaRhzBvnfvd4CzZaWX79bwWLRk+LcAwA4GQIF/DSSX1GcPDT64FXbX/KQlzM8L7KHgJVgDGwgWJukkwB9PPg/gS0ZEyG2IZQDMgOOO77XKWC7Cis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759403319; c=relaxed/simple;
-	bh=itr6V9nhZjCQdJ+bfdY2TGFXyRDvluU7JGsl6RhXbSI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=DzRiYS4mIZIjQb6fRc4fMjsKXEZ3JwIGnSUcDX/PcBF6YqDSXC9wHLGtnSGeiaUzYop7/mQkfN763eK1gtJrzlnX19fT2v5NrQFYV6BrH/jMsNiUt1mcoEOEMN4Sjzuqh7XdZsLp9uBPMh06ZdnszUUWzDUp4S3JPwF3wYUQ5ik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=agq1w+0d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49991C4CEF4;
-	Thu,  2 Oct 2025 11:08:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759403319;
-	bh=itr6V9nhZjCQdJ+bfdY2TGFXyRDvluU7JGsl6RhXbSI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=agq1w+0dW0cR9yXNYFx/0Ob6wziSJKpwZIPgCg5nxwrdeBvRe+SrCmrswv22Q5KGq
-	 511b8JbCIocsC4G/By8gtU3u0r1ezLImhS/gxMJNl4QMCqWTIEcOZ1RUHdTm5MSPYq
-	 KoWFALKJlo01g24Y4PaGaivPoJVyH9PglK0khEn6cM9eXy/hgk4m0MtXcIu9/UBcs/
-	 325BLrggFbNAQNmwQuoPdO4sIDlhD5+z2c/twNqE/l6A1GXe/wO4EGYdWGBRr2L7Sr
-	 /l4Bg91PuIz2nDy0laHRNNhZZ800al5SIK76WToAHA+mEc4TAi6wOLqN5haJ0sLZUc
-	 to3fu3KrrLkFQ==
-Date: Thu, 2 Oct 2025 12:08:33 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Chuck Lever <chuck.lever@oracle.com>
-Cc: Anna Schumaker <anna.schumaker@oracle.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Mike Snitzer <snitzer@kernel.org>
-Subject: linux-next: manual merge of the nfsd tree with the nfs-anna tree
-Message-ID: <aN5dMYUPfFly6eUO@sirena.org.uk>
+	s=arc-20240116; t=1759403417; c=relaxed/simple;
+	bh=yTEDfHAsR2bu6GvQnXfNEOmxY+Ul1vJRWrNJ7p3zw5Q=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CVRINiNK3ybJNvIEC8TJbzbWcpiWrjNJQbL91Ymd8okjGlMrUM/c2hPoSxQc4CobXfIvmwgzsd1d0oHE5w9xpRHl3LCo4r0zhimEObhqwtxlRYqpB7kE1RxIqDUoNyUOQ0N3DpFjkJoNCYY9LkYbw/UXINn2bwVqTgrqNmSsiM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ccpwc6Ycxz6L50S;
+	Thu,  2 Oct 2025 19:09:52 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1A705140278;
+	Thu,  2 Oct 2025 19:10:13 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 2 Oct
+ 2025 12:10:11 +0100
+Date: Thu, 2 Oct 2025 12:10:09 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Shivank Garg <shivankg@amd.com>, <lorenzo.stoakes@oracle.com>
+CC: <akpm@linux-foundation.org>, <david@redhat.com>, <ziy@nvidia.com>,
+	<willy@infradead.org>, <matthew.brost@intel.com>, <joshua.hahnjy@gmail.com>,
+	<rakie.kim@sk.com>, <byungchul@sk.com>, <gourry@gourry.net>,
+	<ying.huang@linux.alibaba.com>, <apopple@nvidia.com>,
+	<Liam.Howlett@oracle.com>, <vbabka@suse.cz>, <rppt@kernel.org>,
+	<surenb@google.com>, <mhocko@suse.com>, <vkoul@kernel.org>,
+	<lucas.demarchi@intel.com>, <rdunlap@infradead.org>, <jgg@ziepe.ca>,
+	<kuba@kernel.org>, <justonli@chromium.org>, <ivecera@redhat.com>,
+	<dave.jiang@intel.com>, <dan.j.williams@intel.com>, <rientjes@google.com>,
+	<Raghavendra.KodsaraThimmappa@amd.com>, <bharata@amd.com>,
+	<alirad.malek@zptcorp.com>, <yiannis@zptcorp.com>, <weixugc@google.com>,
+	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>
+Subject: Re: [RFC V3 5/9] mm: add support for copy offload for folio
+ Migration
+Message-ID: <20251002121009.00005899@huawei.com>
+In-Reply-To: <20250923174752.35701-6-shivankg@amd.com>
+References: <20250923174752.35701-1-shivankg@amd.com>
+	<20250923174752.35701-6-shivankg@amd.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="TZ/4XHkpefzJNvcD"
-Content-Disposition: inline
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100012.china.huawei.com (7.191.174.184) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
+
+On Tue, 23 Sep 2025 17:47:40 +0000
+Shivank Garg <shivankg@amd.com> wrote:
+
+> From: Mike Day <michael.day@amd.com>
+> 
+> Offload-Copy drivers should implement following functions to enable folio
+> migration offloading:
+> migrate_offc() - This function takes src and dst folios list undergoing
+
+Trivial but I'd burn the characters to just spell out offc.
+migrate_offload_copy() isn't exactly long.
+
+> migration. It is responsible for transfer of page content between the
+> src and dst folios.
+> can_migrate_offc() - It performs necessary checks if offload copying
+> migration is supported for the give src and dst folios.
+> 
+> Offload-Copy driver should include a mechanism to call start_offloading and
+> stop_offloading for enabling and disabling migration offload respectively.
+> 
+> Signed-off-by: Mike Day <michael.day@amd.com>
+> Co-developed-by: Shivank Garg <shivankg@amd.com>
+> Signed-off-by: Shivank Garg <shivankg@amd.com>
+
+Just a trivial comment inline.
+
+Ultimately feels like more complexity will be needed to deal with
+multiple providers of copying facilities being available, but I guess
+this works for now.
+
+Jonathan
+
+> diff --git a/mm/migrate_offc.c b/mm/migrate_offc.c
+> new file mode 100644
+> index 000000000000..a6530658a3f7
+> --- /dev/null
+> +++ b/mm/migrate_offc.c
+> @@ -0,0 +1,58 @@
 
 
---TZ/4XHkpefzJNvcD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> +
+> +struct migrator migrator = {
+> +	.name = "kernel",
+> +	.migrate_offc = folios_mc_copy,
+> +	.srcu_head.func = srcu_mig_cb,
+> +	.owner = NULL,
 
-Hi all,
+No point in setting this to null explicitly unless intent
+is to act as some sort of documentation.
 
-Today's linux-next merge of the nfsd tree got a conflict in:
 
-  fs/nfsd/vfs.h
+> +};
+> +
+> +int start_offloading(struct migrator *m)
+> +{
+> +	int offloading = 0;
+> +	int ret;
+> +
+> +	pr_info("starting migration offload by %s\n", m->name);
+> +	ret = offc_update_migrator(m);
+> +	if (ret < 0) {
+> +		pr_err("failed to start migration offload by %s, err=%d\n",
+> +		       m->name, ret);
+> +		return ret;
+> +	}
+> +	atomic_try_cmpxchg(&dispatch_to_offc, &offloading, 1);
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(start_offloading);
+> +
+> +int stop_offloading(void)
+> +{
+> +	int offloading = 1;
+> +	int ret;
+> +
+> +	pr_info("stopping migration offload by %s\n", migrator.name);
+> +	ret = offc_update_migrator(NULL);
+> +	if (ret < 0) {
+> +		pr_err("failed to stop migration offload by %s, err=%d\n",
+> +		       migrator.name, ret);
+> +		return ret;
+> +	}
+> +	atomic_try_cmpxchg(&dispatch_to_offc, &offloading, 0);
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(stop_offloading);
 
-between commit:
-
-  d11f6cd1bb4a4 ("NFSD: filecache: add STATX_DIOALIGN and STATX_DIO_READ_AL=
-IGN support")
-
-=66rom the nfs-anna tree and commits:
-
-  c926f0298d3cd ("NFSD: Relocate the fh_want_write() and fh_drop_write() he=
-lpers")
-  c1f203e46c55a ("NFSD: Move the fh_getattr() helper")
-
-=66rom the nfsd tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --git a/fs/nfsd/nfsfh.c b/fs/nfsd/nfsfh.c
-index 3edccc38db42e..e70bc699e9a51 100644
---- a/fs/nfsd/nfsfh.c
-+++ b/fs/nfsd/nfsfh.c
-@@ -697,6 +697,10 @@ __be32 fh_getattr(const struct svc_fh *fhp, struct kst=
-at *stat)
- 		.dentry		=3D fhp->fh_dentry,
- 	};
- 	u32 request_mask =3D STATX_BASIC_STATS;
-+	struct inode *inode =3D d_inode(p.dentry);
-+
-+	if (S_ISREG(inode->i_mode))
-+		request_mask |=3D (STATX_DIOALIGN | STATX_DIO_READ_ALIGN);
-=20
- 	if (fhp->fh_maxsize =3D=3D NFS4_FHSIZE)
- 		request_mask |=3D (STATX_BTIME | STATX_CHANGE_COOKIE);
-
---TZ/4XHkpefzJNvcD
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjeXTAACgkQJNaLcl1U
-h9BprwgAha5g+Mq360IMTO7XheD1+P1Xk1JITrsia3puUVsQ0VhJ22Dx5duIHPF7
-inWJ+SsNKJW3VwNcscNJU1M/0bO+fsxfaMjFw76iP9AkDVj6TKwWokX4bTqZ0rB2
-C+q93aH3Zeu9+gyulpcq+afpOJcf/5yK+oU/D+JQ9eYQ11pKUrxbZKVcBB1+88gq
-3cLrkJ6Ydbv9a+vs/uw2F6bpKFm8ybGm/rd45iUoC1U/tV5U0iUOew09EgP6UW2J
-UKH9GD2czDJGzdURYRpWITdcoKmCSjdmQ13/giHngZPFdJMLR9QwfMd4QZzhFBmk
-BLt54B/3LC9ITbIcYNWbRrr5z0tc2Q==
-=KkEB
------END PGP SIGNATURE-----
-
---TZ/4XHkpefzJNvcD--
 
