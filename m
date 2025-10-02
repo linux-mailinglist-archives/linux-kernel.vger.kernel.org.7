@@ -1,183 +1,264 @@
-Return-Path: <linux-kernel+bounces-840831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBD03BB5864
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 00:05:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B7F1BB5867
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 00:07:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 925D33AAFE9
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 22:05:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29C223AB3C2
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 22:07:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F5D1257AD1;
-	Thu,  2 Oct 2025 22:05:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CF2A245023;
+	Thu,  2 Oct 2025 22:07:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a+U7mH14"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XDKDZ4Z8"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2CB91E7C34
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 22:05:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E1324501A
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 22:07:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759442737; cv=none; b=aH4+cMj/NXCqfE9w+FPkswri829DsomvOETJ658FVfrJDdYzm4J5qSXKrMGrQDVhqbgKI35vp7xOL2r11FmVJ7H8z0xGF+TBsrAPmi4/HpmYfP2LP4msj/+u/GIT9ft3YPVtFZmZZQ1GLkNU5pGixmbAdqyFLkXBaNaoCM9OoVs=
+	t=1759442854; cv=none; b=GlM/RFVPmDZ5me7+jydG/9Vl3r6v6KsjAtD108O3PxxAu/shmx6lHtLNGKE1quzIFIfqEippOEHF4vaxAFshRntnTiwGogegAFMnoSurB4d9WdRSgYkKw0A7OXbin/LU+vV621nqvYBxvcQWZNCVf1IYw64NvmCYqdb8y/i/rEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759442737; c=relaxed/simple;
-	bh=1i2PGHOBlzesOlKb0KunNSlwKXJ8YEtYzNgdw1lIPCY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZqM2Bm8hj8i4gpkoOM2CMTqT6g+4DCnAH5697B8nx4EjFNEhInmT6aPzwgp7f+DW4Gr+UHE6TsLObB8vTMax9gyLUnrwk9gZYoOe4hSilv7U2JRx0l3gHPiVdw1O7065E/WkfgnqASmPZkH/DB5WwhO62QeGNYfiYc580g7ZNNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a+U7mH14; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 233C2C4CEF9
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 22:05:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759442737;
-	bh=1i2PGHOBlzesOlKb0KunNSlwKXJ8YEtYzNgdw1lIPCY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=a+U7mH14xtrkWaLGuLJBcwokOwfhjfRuSNt8H4dzjf/V7Y98PWGlbBj4U2vO2Dx0W
-	 3i0NdOTdKNsEOY4VofKLwULGP3CbtYfj8qYVzRhOYFKGnd9hrG+bScaAg+U0eQ3vb0
-	 x1JueHZ3scb99v7GouDKRqZsNZIDuUa4VGsW+qz5j+eOKjeTtMVm+bg/YvsWoruG9v
-	 +vOnmSgG5EIgk34K4v/5Idli9PRTGxZ9fKKrY+KR6GkPVNGo8WJhN/Mtw+ZnoGoU2H
-	 PzQCDrlrRn+wnlhuNi752niHMPhQbSy3mAsKVXbCstQA0QA05Mxlqf3U3vmomXH5Q/
-	 IiRrcgF050Qxw==
-Received: by mail-yx1-f49.google.com with SMTP id 956f58d0204a3-6353e91a04aso1922400d50.2
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 15:05:37 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX1yEJv7QjsIVbt+01O7HV3/Nn1Jmab76oeY/t7B+/uoIhgQfhm+UbTTLFTNd2OWaJmzum4AnN4TSQmkJg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwG1oKttcDJGtThyxt2vRp2I0Jm8OVHmhwqigg+hnNzuhVovGLl
-	Ifh+7RroeuEHRof/BsN1pcjpAQ7ZLoi2KEqmLLnHKPbLYnitEierAkFrrLoYHO2CvTJl/NpNDfA
-	TOCyLHBZvgi83YJNX+oV/ceszH7o7vFH5HOb78ZQNIA==
-X-Google-Smtp-Source: AGHT+IEGz/E3gvgWQWJBpGvhYdizHBoqpgoHXPFVlDxboUphdex83hV8i8e33+KTknFYTQAzUSqc94p8KlQRHxX9MpY=
-X-Received: by 2002:a05:690e:1042:b0:635:4ed0:5767 with SMTP id
- 956f58d0204a3-63b9a0eb8e5mr564620d50.53.1759442736413; Thu, 02 Oct 2025
- 15:05:36 -0700 (PDT)
+	s=arc-20240116; t=1759442854; c=relaxed/simple;
+	bh=r+uE1WFm8d59B/9GQ5U9y4YXsxkXuSQea+Owcaqjl7w=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=T3/R9wDs5y8k0mw29ukFWmsC+z70W7h/NkZg/PA0VA8xGXthkqIhf33RRkogL9M8dkoaANScM+GXqVRmvfuO0nGheSTllkd231525OowTx9dNsjYGW1Ee5bmrZo2ga7I2+J+E2FR2FJmqwwTEfl9QK+oa0cInObRGR8OU3XuUlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XDKDZ4Z8; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-269a2b255aaso31145435ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 15:07:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759442852; x=1760047652; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Fw5vkeOAxyYTZQE/8F6wMtOywp3niBYC/dWA3qYObnw=;
+        b=XDKDZ4Z8fybNlNJDHMM8Wv5gPBo9ywlZ9pAW+/vdwAY17hGuysS+xXVNbUUYIfgKni
+         sCROmpugK6xyjAnb0xPqikgJaQlULLDaaFwOB3d84SdES0ZH8bo5I4qIwVr3SsVBwFrm
+         c07d0NSLkOaAESBYHLyRnmQv/7DBKmaQBmLXjIsMLMRNmXKo6gIA6n+/TcagarmaZIB9
+         SvNEds2naxYQ8nXWGJ+UOezYWCTzpR6xl3zQYHhvKjgvmc1SCR9aSitJSXkPu3KYGJek
+         WdhPP19WnSJR3BiUDSmy2/5VHpqjgAySOLBBzGtZL4zwS+iEZ0+sBSioAglr5tYacPDK
+         KGiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759442852; x=1760047652;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Fw5vkeOAxyYTZQE/8F6wMtOywp3niBYC/dWA3qYObnw=;
+        b=Sjo9uvcKBgiY2NeclQFxm38Xw+Yuwov5ijREYAmTPuNTZ+l3GFIJSTI4bW0sbdcF7X
+         JBhATpa45QDnXG7etqgDZdp48sJDQJuMU6RoH0Hvu5+oLBVXyV1OcfqCJh5JdzpGmzbI
+         LkKLVZC5EQFhs61ItppuuQ/4hRe/h62YcBHq/rXI6tVIsG9JifQH2VZPzuBdYR6qPnCa
+         qYS3Ligm3Xr8NouZCXC+TcGVnBf/X7BXkfbsN07Ov68rnclDOap9xlJV0bcC/fK0jEyZ
+         Lq8abP0M3makoz6aE/XLU9SKxkCJy5zD/vPSmE1wjbNIAcLD/5l8gL8HJCo+kEOAj/IJ
+         lhVw==
+X-Forwarded-Encrypted: i=1; AJvYcCVhQyYY8ZVsITyL75v1V/oOupygpNbGqV8O36+3BczT2kaDAlEPey6mzco51UJo7N87f4F+lfZcB4djiPA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3dDMlcUbSTXiTCLxWucXmxlzTdxbkNZUdcXk9b0/JyMkekfGZ
+	lElaaOnbLJpeGhvNvaNLEcfvjPmPJf9vHl9DJFnkfZdXBBMnLbH7BznEAEduzeBktgv5Cjtc0h4
+	bDnRsbKPTkw==
+X-Google-Smtp-Source: AGHT+IG+3dTGppB+owJbqWjOJmlsi7q6946ThoxezRTJIU8YUsMFZyVYwN9PkolCuqiqx16BoZKoJbRaOCZG
+X-Received: from plw21.prod.google.com ([2002:a17:903:45d5:b0:27e:dc53:d244])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:b4e:b0:24b:e55:360
+ with SMTP id d9443c01a7336-28e9a5f6858mr8825685ad.23.1759442852196; Thu, 02
+ Oct 2025 15:07:32 -0700 (PDT)
+Date: Thu,  2 Oct 2025 15:07:26 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250916-luo-pci-v2-0-c494053c3c08@kernel.org>
- <20250916-luo-pci-v2-6-c494053c3c08@kernel.org> <20250929175704.GK2695987@ziepe.ca>
- <CAF8kJuNfCG08FU=BmLtoh6+Z4V5vPHOMew9NMyCWQxJ=2MLfxg@mail.gmail.com>
- <CA+CK2bBFZn7EGOJakvQs3SX3i-b_YiTLf5_RhW_B4pLjm2WBuw@mail.gmail.com>
- <2025093030-shrewdly-defiant-1f3e@gregkh> <CACePvbXrbR=A43UveqPrBmQHAfvjuJGtw9XyUQvpYe941KwzuA@mail.gmail.com>
- <2025100142-slick-deserving-4aed@gregkh>
-In-Reply-To: <2025100142-slick-deserving-4aed@gregkh>
-From: Chris Li <chrisl@kernel.org>
-Date: Thu, 2 Oct 2025 15:05:25 -0700
-X-Gmail-Original-Message-ID: <CACePvbVCXGn-c3dVZfLTq+GbcFfjWchN0OwEHDNs_-EV6TJfyg@mail.gmail.com>
-X-Gm-Features: AS18NWDQhcK4fgqdE0eBM-UDvfpXtCItsSWyIznJ_2678Y5nqftnJrabxisTIzg
-Message-ID: <CACePvbVCXGn-c3dVZfLTq+GbcFfjWchN0OwEHDNs_-EV6TJfyg@mail.gmail.com>
-Subject: Re: [PATCH v2 06/10] PCI/LUO: Save and restore driver name
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Pasha Tatashin <pasha.tatashin@soleen.com>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	Bjorn Helgaas <bhelgaas@google.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Len Brown <lenb@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	David Matlack <dmatlack@google.com>, Pasha Tatashin <tatashin@google.com>, 
-	Jason Miu <jasonmiu@google.com>, Vipin Sharma <vipinsh@google.com>, 
-	Saeed Mahameed <saeedm@nvidia.com>, Adithya Jayachandran <ajayachandra@nvidia.com>, 
-	Parav Pandit <parav@nvidia.com>, William Tu <witu@nvidia.com>, Mike Rapoport <rppt@kernel.org>, 
-	Leon Romanovsky <leon@kernel.org>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.618.g983fd99d29-goog
+Message-ID: <20251002220727.1889799-1-irogers@google.com>
+Subject: [PATCH v2 1/2] perf stat: Move create_perf_stat_counter to builtin-stat
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
+	Howard Chu <howardchu95@gmail.com>, Thomas Falcon <thomas.falcon@intel.com>, 
+	Chun-Tse Shao <ctshao@google.com>, Dapeng Mi <dapeng1.mi@linux.intel.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 30, 2025 at 10:13=E2=80=AFPM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
-> >
-> > for example, the pci has this sysfs control api:
-> >
-> > "/sys/bus/pci/devices/0000:04:00.0/driver_override" which takes the
-> > *driver name* as data to override what driver is allowed to bind to
-> > this device.
-> > Does this driver_override consider it as using the driver name as part
-> > of the abi? If not, why?
->
-> Because the bind/unbind/override was created as a debug facility for
-> doing kernel development and then people have turned it into a "let's
-> operate our massive cloud systems with this fragile feature".
+The function create_perf_stat_counter is only used in builtin-stat.c
+and contains logic about retrying events specific to
+builtin-stat.c. Move the code to builtin-stat to tidy this up.
 
-Frankly, I did not know that it was a debug API or should be treated like o=
-ne.
+Signed-off-by: Ian Rogers <irogers@google.com>
+---
+ tools/perf/builtin-stat.c | 60 +++++++++++++++++++++++++++++++++++++--
+ tools/perf/util/stat.c    | 56 ------------------------------------
+ tools/perf/util/stat.h    |  4 ---
+ 3 files changed, 58 insertions(+), 62 deletions(-)
 
-Let's say we want to make it right for now and future, any
-suggestion/guide line for the new API?
+diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+index ab567919b89a..75b9979c6c05 100644
+--- a/tools/perf/builtin-stat.c
++++ b/tools/perf/builtin-stat.c
+@@ -676,6 +676,62 @@ static enum counter_recovery stat_handle_error(struct evsel *counter, int err)
+ 	return COUNTER_FATAL;
+ }
+ 
++static int create_perf_stat_counter(struct evsel *evsel,
++				    struct perf_stat_config *config,
++				    int cpu_map_idx)
++{
++	struct perf_event_attr *attr = &evsel->core.attr;
++	struct evsel *leader = evsel__leader(evsel);
++
++	/* Reset supported flag as creating a stat counter is retried. */
++	attr->read_format = PERF_FORMAT_TOTAL_TIME_ENABLED |
++			    PERF_FORMAT_TOTAL_TIME_RUNNING;
++
++	/*
++	 * The event is part of non trivial group, let's enable
++	 * the group read (for leader) and ID retrieval for all
++	 * members.
++	 */
++	if (leader->core.nr_members > 1)
++		attr->read_format |= PERF_FORMAT_ID|PERF_FORMAT_GROUP;
++
++	attr->inherit = !config->no_inherit && list_empty(&evsel->bpf_counter_list);
++
++	/*
++	 * Some events get initialized with sample_(period/type) set,
++	 * like tracepoints. Clear it up for counting.
++	 */
++	attr->sample_period = 0;
++
++	if (config->identifier)
++		attr->sample_type = PERF_SAMPLE_IDENTIFIER;
++
++	if (config->all_user) {
++		attr->exclude_kernel = 1;
++		attr->exclude_user   = 0;
++	}
++
++	if (config->all_kernel) {
++		attr->exclude_kernel = 0;
++		attr->exclude_user   = 1;
++	}
++
++	/*
++	 * Disabling all counters initially, they will be enabled
++	 * either manually by us or by kernel via enable_on_exec
++	 * set later.
++	 */
++	if (evsel__is_group_leader(evsel)) {
++		attr->disabled = 1;
++
++		if (target__enable_on_exec(&target))
++			attr->enable_on_exec = 1;
++	}
++
++	return evsel__open_per_cpu_and_thread(evsel, evsel__cpus(evsel), cpu_map_idx,
++					      evsel->core.threads);
++}
++
+ static int __run_perf_stat(int argc, const char **argv, int run_idx)
+ {
+ 	int interval = stat_config.interval;
+@@ -736,7 +792,7 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
+ 		if (evsel__is_bperf(counter))
+ 			continue;
+ try_again:
+-		if (create_perf_stat_counter(counter, &stat_config, &target,
++		if (create_perf_stat_counter(counter, &stat_config,
+ 					     evlist_cpu_itr.cpu_map_idx) < 0) {
+ 
+ 			/*
+@@ -794,7 +850,7 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
+ 				continue;
+ try_again_reset:
+ 			pr_debug2("reopening weak %s\n", evsel__name(counter));
+-			if (create_perf_stat_counter(counter, &stat_config, &target,
++			if (create_perf_stat_counter(counter, &stat_config,
+ 						     evlist_cpu_itr.cpu_map_idx) < 0) {
+ 
+ 				switch (stat_handle_error(counter, errno)) {
+diff --git a/tools/perf/util/stat.c b/tools/perf/util/stat.c
+index 50b1a92d16df..101ed6c497bc 100644
+--- a/tools/perf/util/stat.c
++++ b/tools/perf/util/stat.c
+@@ -716,59 +716,3 @@ size_t perf_event__fprintf_stat_config(union perf_event *event, FILE *fp)
+ 
+ 	return ret;
+ }
+-
+-int create_perf_stat_counter(struct evsel *evsel,
+-			     struct perf_stat_config *config,
+-			     struct target *target,
+-			     int cpu_map_idx)
+-{
+-	struct perf_event_attr *attr = &evsel->core.attr;
+-	struct evsel *leader = evsel__leader(evsel);
+-
+-	attr->read_format = PERF_FORMAT_TOTAL_TIME_ENABLED |
+-			    PERF_FORMAT_TOTAL_TIME_RUNNING;
+-
+-	/*
+-	 * The event is part of non trivial group, let's enable
+-	 * the group read (for leader) and ID retrieval for all
+-	 * members.
+-	 */
+-	if (leader->core.nr_members > 1)
+-		attr->read_format |= PERF_FORMAT_ID|PERF_FORMAT_GROUP;
+-
+-	attr->inherit = !config->no_inherit && list_empty(&evsel->bpf_counter_list);
+-
+-	/*
+-	 * Some events get initialized with sample_(period/type) set,
+-	 * like tracepoints. Clear it up for counting.
+-	 */
+-	attr->sample_period = 0;
+-
+-	if (config->identifier)
+-		attr->sample_type = PERF_SAMPLE_IDENTIFIER;
+-
+-	if (config->all_user) {
+-		attr->exclude_kernel = 1;
+-		attr->exclude_user   = 0;
+-	}
+-
+-	if (config->all_kernel) {
+-		attr->exclude_kernel = 0;
+-		attr->exclude_user   = 1;
+-	}
+-
+-	/*
+-	 * Disabling all counters initially, they will be enabled
+-	 * either manually by us or by kernel via enable_on_exec
+-	 * set later.
+-	 */
+-	if (evsel__is_group_leader(evsel)) {
+-		attr->disabled = 1;
+-
+-		if (target__enable_on_exec(target))
+-			attr->enable_on_exec = 1;
+-	}
+-
+-	return evsel__open_per_cpu_and_thread(evsel, evsel__cpus(evsel), cpu_map_idx,
+-					      evsel->core.threads);
+-}
+diff --git a/tools/perf/util/stat.h b/tools/perf/util/stat.h
+index 4b0f14ae4e5f..34f30a295f89 100644
+--- a/tools/perf/util/stat.h
++++ b/tools/perf/util/stat.h
+@@ -223,10 +223,6 @@ size_t perf_event__fprintf_stat(union perf_event *event, FILE *fp);
+ size_t perf_event__fprintf_stat_round(union perf_event *event, FILE *fp);
+ size_t perf_event__fprintf_stat_config(union perf_event *event, FILE *fp);
+ 
+-int create_perf_stat_counter(struct evsel *evsel,
+-			     struct perf_stat_config *config,
+-			     struct target *target,
+-			     int cpu_map_idx);
+ void evlist__print_counters(struct evlist *evlist, struct perf_stat_config *config,
+ 			    struct target *_target, struct timespec *ts, int argc, const char **argv);
+ 
+-- 
+2.51.0.618.g983fd99d29-goog
 
-
-> We have never said that driver names will remain the same across
-> releases, and they have changed over time.  Device ids have also moved
-
-That is fine. The LUO PCI just says that at the old kernel that does
-the liveupdate from, that is the driver name "foo1" in the old kernel
-A1. The new kernel A2 that gets boot will know about the old kernel
-A1, at least in the typical data center. There will be a test live
-update A1 to A2. Validation before officially rolling out the
-liveupdate kernel. The new kernel A2 can know that, oh, on this old
-kernel, A1, this driver "foo2" used to call "foo1" in A1.  Then it can
-let the PCI core bind to the "foo2" for that device instead. Later
-when A2 liveupdate to A3, A3 can drop the knowledge of the "foo1" if
-we are sure the A1 kernel is no longer supported.
-
-> from one driver to another as well, making the "control" of the device
-> seem to have changed names.
-
-The name can be changed, just the new kernel needs to know about the
-change and handle it. Extra complexity but not impossible.
-
->
-> > What live update wants is to make that driver_override persistent over
-> > kexec. It does not introduce the "driver_override" API. That is
-> > pre-existing conditions. The PCI liveupdate just wants to use it.
->
-> That does not mean that this is the correct api to use at all.  Again,
-> this was a debugging aid, to help with users who wanted to add a device
-> id to a driver without having to rebuild it.  Don't make it something
-> that it was never intended to be.
->
-> Why not just make a new api as you are doing something new here?  That
-> way you get to define it to work exactly the way you need?
-
-Sure, I can invent a new API. I am just a bit afraid to introduce a
-new API and carry the burden of supporting it forever.
-
-Another idea is that we don't remember the driver's name. The kernel
-just enforces that, if the device is liveupdate, no auto probe at all.
-Then push the responsibility to the user space to load the driver and
-manually bind the device to the right driver. The user space will
-still need to know what is the previous driver name or some way to
-identify the right driver for this liveupdate process. Somebody will
-need to know something like a driver name and pass that to the new
-kernel to restore it. But not the kernel.
-
-It will have a drawback on extra latency of the black out window, now
-after PCI scans the PCI bus, a user space program will be run to bind
-and probe the driver.
-
->
-> > I want to get some basic understanding before adventure into the more
-> > complex solutions.
->
-> You mean "real" solutions :)
-
-I mean the more upstream accepted solutions.
-
-> It's not my requirement to say "here is C", but rather I am saying "B is
-> not going to scale over time as GUIDs are a pain to manage".
-
-I can agree to that.
-
-> > Do you have any other suggestion how to prevent the live update PCI
-> > device bind to a different driver after kexec? I am happy to work on
-> > the direction you point out and turn that into a patch for the
-> > discussion purpose.
->
-> Why prevent it?  Why not just have a special api just for drivers that
-> want to use this new feature?
-
-The typical GPU will bind to the VFIO driver when the VM is using it.
-If we don't prevent auto probe, the PCI device will auto probe to the
-native driver on the next kexec. Naturally, the native driver will
-have no day to decode the data saved from the previous vfio driver.
-
-Chris
 
