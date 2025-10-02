@@ -1,316 +1,249 @@
-Return-Path: <linux-kernel+bounces-839902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79D81BB2B0B
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 09:27:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B94A1BB2B02
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 09:27:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE23019C2D62
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 07:28:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78C447B3127
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 07:25:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D1DF2C08C5;
-	Thu,  2 Oct 2025 07:27:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F060C2C0F7A;
+	Thu,  2 Oct 2025 07:27:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UdHGpaft"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Epaec5LO"
+Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011004.outbound.protection.outlook.com [52.101.62.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF75D33F6
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 07:27:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759390070; cv=none; b=RW84XeN9cbqyn2dAVc+sS+oEyePbEBi908JT/h4J1QsOHfDSa470Iqrjw1LeiYZUqHGpzlemPpXwkBZ/LpOrcKicn310hyfWd4ExKvzeRzs9qNTUimQLICjxExgK+pSkJkznUmBA4XysX52UVPrAstzQpj5eJjyYWlj+HcryPoA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759390070; c=relaxed/simple;
-	bh=Pe9V4pOUKY0TgpmvjfSAP8vc53Cb77GQdtv5sowAjNE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m1CT+x1RjBHnB/LGWzoiHrvotxeierDtumNYD+u5bx79LKWfvBhw5nVDPayINFQ0mqQPBk2PJNSBgS+QjB9P7mqyuThHJ+VqH7yqoOAYSLAIsU7uLvjuMRs3lGZ2gVZrdN3/Z1hlAcSQ7uMWRjHiPl2OV8vQfN6NsALjOzI296A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UdHGpaft; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759390067;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IMoT/EJOXxcCndc9sTtuH4r5q/WuvT1uP7pW4UMHvkM=;
-	b=UdHGpaftHsperoRT+sMQBFlu7jrN8UHzrD6NcpaZPFLiyN1QmFQTRCng7Un5L4SJ5XFjbg
-	wramT94m9mi95xJUne0B53lYJllFkUUQSP0JC1n8sRcoNc7Gwvt/tI8wUZpEKiKRW9gdTO
-	P+jjTW7LwOdBuPXODCNYxwyq0y5ouQ0=
-Received: from mail-yx1-f71.google.com (mail-yx1-f71.google.com
- [74.125.224.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-258-AdvDs-h4MPWv_szAZDKQ6Q-1; Thu, 02 Oct 2025 03:27:46 -0400
-X-MC-Unique: AdvDs-h4MPWv_szAZDKQ6Q-1
-X-Mimecast-MFC-AGG-ID: AdvDs-h4MPWv_szAZDKQ6Q_1759390065
-Received: by mail-yx1-f71.google.com with SMTP id 956f58d0204a3-63604a1a14aso1118468d50.1
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 00:27:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759390065; x=1759994865;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IMoT/EJOXxcCndc9sTtuH4r5q/WuvT1uP7pW4UMHvkM=;
-        b=UD4c+RnYsTiIRBMEc0p7ctU0v2VBzssI7lgI5y+7uWtP0fuXBjBvlZNReZZ6ozsHy4
-         c/b47HAhcVZxRv/c8vRFC7xebe/kCT9N3o5aHBPV+/YCxrxwVf/ra2nxcoV/dcKGh6n6
-         qGPB+GImIz/LeueMcFwoS4p2zMffSn0Goxhw2aepcR9FyutnoMYEXgs2wU4ELEjtxdFp
-         SFFp9SMM2R41lHf3kc+7Yl2yQoy8s4BYTgNyy17Bx6d8PK7T9Bly5y5XHGGs/1/nYyun
-         pE3row1gdyKWRvbG++9iG4EjSdpMKfobe3OjIjIQpt2A2n8CpRO2fUcD4pjjPXI30gXZ
-         nuIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXHDv1lfUlNMbEo4pxtMswJRwW3v3a8P4aB4z/6mjdnWyr7K26ot/SIe5epJeTBKPfinYnfysIi2NeT/AU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsZKDOEyMLVLnlM19l8pjv9Upz7IdWceDYWui8CHQMxqgRgmcw
-	KXzkXuH1vqJsOcsdOn8bZkbni6YGBkZhzQubIhsO3UmGbsk2h26dL0pIYXY9Dbe2JXgy1M+CV+o
-	O+nLOZ9arq/sQPoJkBToAszuPAdeb2kFkp+JCgT+0h9gfWOm0tdwlfi8o4n3ATqelF6PRVdiAio
-	VNdxHC8iDO5utCxmT7ql5zIGkuVL629ZEJ3diZRxFE
-X-Gm-Gg: ASbGnctIPqaftIqeHVXb8mbObjnH8GVVFsd8YXSDou07HEGrfnANrTTX/WHhIYQYvAj
-	ueu35XukliQOsG34i1H47H6+tyGO6leyAmo3UDNXiFcDo6ctx37wRyx490bkHC3VZLQAxSLg2Cb
-	ayAHNPjA+03kpInY/+xEQWR7n30r8Br48KRkaslY4hbRnRgugHT9ok0upRKbXC4ujkHupkBIGm2
-	r7PO9XOEkdS0Q==
-X-Received: by 2002:a53:b6c6:0:b0:634:7613:25a4 with SMTP id 956f58d0204a3-63b6ff0af71mr6830746d50.14.1759390065169;
-        Thu, 02 Oct 2025 00:27:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF8+sedmtxTreESow8ld4vIqcdjpkPuG0lafu4PLKnMyWgezKmRryEvxJjmsNUqH9uSvqw1y3W8d+yaQlNzSno=
-X-Received: by 2002:a53:b6c6:0:b0:634:7613:25a4 with SMTP id
- 956f58d0204a3-63b6ff0af71mr6830723d50.14.1759390064543; Thu, 02 Oct 2025
- 00:27:44 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A95F2C029B
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 07:27:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.4
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759390044; cv=fail; b=VFO0VoCO15Vw+DmEBA1xkUNVmSourlbeb9wCLcJ30XsdYOe7V4DLvwPP9+plDwGAagaqOl4rSxLICQQl3C5OPKgEfi8RaCyohbQSSOMf/Sk9ptRqbHK0KG1afNKnQshVxCMmHdkItWln9YnyWA/d9uQW64veGMWA5u4SHfvZzcE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759390044; c=relaxed/simple;
+	bh=lxh8nkbFSKl6Urz7CE60zlbotKDuhQjXdKtOjizrwXU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=oeCgrYfRfm/YN+nuEkYsKC3szglzHd3L2U1sYO/v0dRoMwzZygEHCJ8UWIXNdB51qIwfmV6Zts33kN519lzX67EBRy0rhbdUfZYw0Lg1aB+TgL/M3mkWE8FfmCf5+GRCNd7rQVZ+XGo+nfxMjSExDmgwuaSmtDQkxF8ztGqFiW4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Epaec5LO; arc=fail smtp.client-ip=52.101.62.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vclW4rSsc6IM24xmIFvnUm8kC1HGsawgWMPJpGwoYvgww1nKsmW8UfNGta/3Tzm3cyEPiPGRtmY1RfklqCfUto1Im+U96B4/Ud1ajhTixbiBr/jzqshgQ/2AX6PMhp3ZWkMjHKyLFfHvG23lH1ewNGavxaJep8wHvWY51lDTEOZIXKeWByDnZ+qI+ix8XFWi8Lc6oShOm95QfAGbi+2h9Pkd1TxamH4Ub8q3fGxPOjaKqf9UAxQSKu9M39tsHdN3kO1Vy0ldaX5DxuBP898Gd6E7dzsGzamRMX4xSqRQ5s3bNA3sTCnhfiu5nm7W14hUbC9LdlS3EG+D/98PTyjeUw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KHFed6gsFpz7n1lx8+XFuec9566DM5+y20+dGSoYj9s=;
+ b=H4pPONJCDcLqar71M5mMcteI/UaBtFBeLQgbr55OZ6zxH8+gxozPe+h8njXsbGhQC9E4N77hXTYkwbOIHqxTUQktPXN4fE4OA9r804UNtiUrB3kXckt0sefV6pSHTGJ+fCnIRw44y6dpjjjas4Aq9TP3JAwazXGF8DG68+mZcKRHNGm4MX0XcVtAWS7KxTjtiC+LN1berPWIG1pmuQAtudpJdaCCf/6IcLOG4RdubHUZ2T/s24REhlLX9XAEwp0F2/FTDYGkkQZe2eAqpiXqLR2ayYzGtd6FkuxuXdxpg6GZhZFM/yxn27AlQ0DG1t/8L7WrKhlhxoiLaB2orV8xUg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KHFed6gsFpz7n1lx8+XFuec9566DM5+y20+dGSoYj9s=;
+ b=Epaec5LObV4c97tYtQc+gcUE/kpQxpXNMuCfw8cyLTLh1Kkflk9egMPmJzF+80N9uae1kkG9yxvShauNllZktPnbY+RqobJJf91bGc84stNe37FfgoKE22CxGICyTgHYyr7Pq155or3vUBeP1tIVboIplZsuYYIcf22dmZjdid5w6sOmK/VBOspy4DErJUQOFKzLZaPYfPwaI9MKMARbsSnVb+RtmsPEoDpYV5JQzSxVdszOUCvnnams0/VXp1cU8SsASoSzFCGCP8C9fxRxZiUN8H//V6ooapEuCkpLvhuu9kMtNSNSxnoVWuzFd9nO9FZ7eg97KfxiikI949qaiQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
+ by SA1PR12MB8743.namprd12.prod.outlook.com (2603:10b6:806:37c::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.10; Thu, 2 Oct
+ 2025 07:27:19 +0000
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c%3]) with mapi id 15.20.9160.017; Thu, 2 Oct 2025
+ 07:27:19 +0000
+Date: Thu, 2 Oct 2025 09:27:12 +0200
+From: Andrea Righi <arighi@nvidia.com>
+To: Ryan Newton <rrnewton@gmail.com>
+Cc: linux-kernel@vger.kernel.org, tj@kernel.org, newton@meta.com
+Subject: Re: [PATCH 2/3] sched_ext: optimize first_task update logic
+Message-ID: <aN4pUAfE30rF6-n4@gpd4>
+References: <20251002025722.3420916-1-rrnewton@gmail.com>
+ <20251002025722.3420916-3-rrnewton@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251002025722.3420916-3-rrnewton@gmail.com>
+X-ClientProxiedBy: ZR2P278CA0038.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:47::7) To LV8PR12MB9620.namprd12.prod.outlook.com
+ (2603:10b6:408:2a1::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1675725124-7375-1-git-send-email-si-wei.liu@oracle.com>
- <1675725124-7375-5-git-send-email-si-wei.liu@oracle.com> <CAJaqyWdEZbURGZtmobrED_jBq34DnQEuC8kUoPMH5=p2K7NE0w@mail.gmail.com>
- <f5897b60-8e4f-4a3c-a88d-f85be0bc7705@oracle.com>
-In-Reply-To: <f5897b60-8e4f-4a3c-a88d-f85be0bc7705@oracle.com>
-From: Eugenio Perez Martin <eperezma@redhat.com>
-Date: Thu, 2 Oct 2025 09:27:08 +0200
-X-Gm-Features: AS18NWAkYZhuEt1p0u2fDdrsIqY5nDF2gtaoeWtZRs3qDM6cUMLedr6j1FLwjb8
-Message-ID: <CAJaqyWd2sRSMeR294sQGxyEFg3dPbd5AgUmG+C85oCCZXqCEBQ@mail.gmail.com>
-Subject: Re: [PATCH RESENT v4 4/6] vdpa: validate device feature provisioning
- against supported class
-To: Si-Wei Liu <si-wei.liu@oracle.com>
-Cc: mst@redhat.com, jasowang@redhat.com, parav@nvidia.com, 
-	virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org, 
-	Dragos Tatulea DE <dtatulea@nvidia.com>, Maxime Coquelin <mcoqueli@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|SA1PR12MB8743:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4cb483b1-0ce9-4d13-a3d9-08de01851ee3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?itd8vSBdyhIPbaYeinWNci4XZCVfTdB5OoSR0lOsontmFAR5bYHuUqn+xJSX?=
+ =?us-ascii?Q?vAYZdPt4G6WgOHm6L9TGS5jQ40/u8kD3J2S38/G38hohYv7FQ4soOGGh9Guw?=
+ =?us-ascii?Q?EqmsHYmVcJdLUONQDYbqZlFAKTyQvPb6VAXv0U7we7bm288WQ4QnhJ3A/xq2?=
+ =?us-ascii?Q?mrpTuj/D9GWTH3/SKlwN3ylmRfP5Pv8XJQk/WCEg4d8vG1Bo/+qpnIKS8qVR?=
+ =?us-ascii?Q?wk9ah1CdjAxxmnv3wz23w9m5wgDuydrvzr2bq2JaImX8gfhSNzuZrFIVNl/r?=
+ =?us-ascii?Q?Qqvk3+X33KUla6jQvF6P78TNqpqycR7cYV/UyyYJ5JNpGxNS1uXH6OXm8eYh?=
+ =?us-ascii?Q?KkrTmwb9PXw9SihiTADEZsci2HLULPjl7jjQfc8RsaiYXu1bZ7mWge/qBjrD?=
+ =?us-ascii?Q?lUvofoRW/TpSZmrhvoUa4J34HPq92fdI7tYDZYZcFy/UDtKZNVAZ0WIU60ZI?=
+ =?us-ascii?Q?C5kIddS4wigD/aFgOi8Obmg/Sbo4vL9T8sF4X0V89Voxde+VlxSbpwmbKbAk?=
+ =?us-ascii?Q?vCjxl5xRDXsEtdd021uvtO/wNUJ2GUcuOBvAoq+Of8etTjpnLfbr1Pqb5yGf?=
+ =?us-ascii?Q?dfm+LYoJsIe4fSuOPNnFHE69Vsh/I/pQ/3S5EA1OF2SH09w6ZjMis6xtgxsu?=
+ =?us-ascii?Q?pPixoBxo1kpggtPvFcu1a9xSN/vBboc+cSrpAXF6NsMi8lKAL2UBe17FwMfj?=
+ =?us-ascii?Q?unG5/YAsdpl1UusJdXaDK+tgOPkPnQo3tWwxWF/g2o7nTR1PjYfMduEJCmF3?=
+ =?us-ascii?Q?LBLlyU340cqiEOPJVlsOWpfrYBA5Ai92Xvr/06ND00BhCaHrpM4sDynBy2Ze?=
+ =?us-ascii?Q?fbVUmxK7WkOLBXYqxKYv2HReijWo+obViJ3qeWc9HLgqL3UBK/wycAZPl5KQ?=
+ =?us-ascii?Q?FO9mDXjh2Qdhfd5KW44UkvlpWPjCAfx8AeAmsvvfQzk/d+FWJ59SEGSv8i0p?=
+ =?us-ascii?Q?ZC+YzpBOwOxwiyfgEXKP9QpgPBqZtXGW7LeVHxuwxoZ6YcjkEM50o/0PD+Xt?=
+ =?us-ascii?Q?TGr5Q93D9SiSxFoVeMqaX1smSz7zEh9cFjQhCOOuh31Gg47LIFLqp7cQdrHz?=
+ =?us-ascii?Q?IQ/T3OCoXy9vetM1lCSB70Gw3zn2PtvIFe3QLXyXKfK5TV0oxr5V1zLT4MPj?=
+ =?us-ascii?Q?Z+J65DaTaXWdrxilH/Bo85EEsLux2nGP9gur2Zwg9WruKYI37nsQhhawD+mJ?=
+ =?us-ascii?Q?FH4uDpA8lRwf+TlFyPqfnDclk6Xeh25128QeLTf7gnJ0ru8w+XUum4ZUeANl?=
+ =?us-ascii?Q?nKkQqMYuzRmcl/FzWKwcSpkL+y8Tcv8+0whU9/bWpTlJyisOdE4jT8BWY6TK?=
+ =?us-ascii?Q?qhfhN8lUTeWi4o4jczXrOkvAivpI5m9QddNdaMEpVk4tIb0xFPDkC127j8Hn?=
+ =?us-ascii?Q?zhkEXxN+JNfEvF90sndAAk8sMoloaNUhgQIKBVPp4Cxo70OGvsfLIRqIHifX?=
+ =?us-ascii?Q?iHi0aMqt4NHDF1n64YvpVPyiuB2UKenv?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?eSd/r3xP5fpekD+JX7/EAW1QebedCH/72/rEXvdhrCxyrb8hoiZyiytmbQXe?=
+ =?us-ascii?Q?MNxLhzgdzkEOPAcBjpCa00bt/9ElhiGwqq+SAEF9Z7F99dcZ7hMPhZuNp0Hc?=
+ =?us-ascii?Q?cfD3wOeRwXu8ePJ9KoHEXpR3gd9pPIsWUkJkHNDyriThpl5ogkbo884oZ3hN?=
+ =?us-ascii?Q?DLULpWh4tgMqjD7+aM3NHGkbAZio43G4ll9JJG+O46VWNoDk0p7f+FxZ5lIw?=
+ =?us-ascii?Q?PvlxgDhgCy/67NUyv4o/6GC4vrwNWNflpEefn9GrrGCNReTHc2fuD4xbHBxZ?=
+ =?us-ascii?Q?QsqMQb8BSxXEe797APRPaW1SKqhjVqqWBSrMKRZt6HwzQhGB6vXRPIyzR/6/?=
+ =?us-ascii?Q?RmAyxOQpFcaVl6499Y2QOMbdDD5Vp8cJu/q+SflhnNmWB2MuyMHLJ0UYmuQm?=
+ =?us-ascii?Q?IbYJYhZOGwgfa3bjbT4AdClWIlbLvRdNua4uV8OHwor7d756nUZElh4a5OIw?=
+ =?us-ascii?Q?wbtIxb2cj/kGi6o7QFUZP+1SJrR2+6N6fdN/w9XfvyChuwwoIZc2IvBcSn8p?=
+ =?us-ascii?Q?48pBJKZG4MaE9MHtDl0eswhfNxlFEEqCmOZnkCMjP5m4zxV/6vns7FDBUKKw?=
+ =?us-ascii?Q?9PKpsy9J9/SWt0zZRIwm5Jcag6fEDQTUUtaC78xua2hADiBZKv0A15riDHpD?=
+ =?us-ascii?Q?LnUcnPtLFOsB1X1cwsYRsklTFsoaMJRtIHoLVg5ZDSFhdlAUP7ROzEa9E7K3?=
+ =?us-ascii?Q?reyBY3MvIw0y6w2XrF9uxOcW//kfdEQny3D9Uge5xdRo3H8aAoBCUUo4i1rY?=
+ =?us-ascii?Q?UTkjMBYoidVL2Ck+6MV6YIknhqSrinkzdj7wePQ0/foncfB/wAQd8r0X/0mx?=
+ =?us-ascii?Q?R6IssQjiqg/TdDZsnL4eakleToY7Of+E2XF/l2sfl384mHErZWxhiz+7l/VY?=
+ =?us-ascii?Q?MM7GrAwlg3oLV+TgukQxGVkXVkHxq1eQzK81FkzfNgUzU7aeL2resNK1PO60?=
+ =?us-ascii?Q?g2yEC5SArfjhJg6JK4A1ZNwKt7pZOe+cSWLF5EvtDee4m5VOkDPYbLBfB6DR?=
+ =?us-ascii?Q?si5HcsTMZS6y+FEsiNpOpAgP5lIIR9mALGpwX2x3YIxWwDS6m9HlPatI/oh3?=
+ =?us-ascii?Q?Pn1WiPwqB5XDHY4HwngmqmMbXbWdwfGlcci2h0yNxGHatSosn1Yk1pz2osVt?=
+ =?us-ascii?Q?+f0XWcKF7ani6lmQqsWm6kSZoZssUGaV9wDWpaiW70F83SRLVGxnqSg5dXbQ?=
+ =?us-ascii?Q?QjFQIcVYthSfrn9OCQYCyi0WfD+BiJmrNAbiWfS4gs9diJ+ipTRKYXSlT8Ag?=
+ =?us-ascii?Q?v/QvgXLpAFJAiXsFgR1+fn7p6nhWEI3KQIYMOILaYPy+fMfPan6m+cLkvf9q?=
+ =?us-ascii?Q?h0+ss73vSCZjFtNdO7lP+GGo1oEspqYfmpu4MknRjjuvMKcaiW/Bz2IDk/lR?=
+ =?us-ascii?Q?jakdf6zX3bWYRpGVVwLlVIzVqh07qF/OmViaiXDqqXFju8xdWQlc1ymGuBLO?=
+ =?us-ascii?Q?ePKSEcNCjrAQBGIGfe25gEdF3YbsO0lZ7bkGyqn0uh5gaKWHLcvDBH+ltNYh?=
+ =?us-ascii?Q?sFowLDRJF1iTqdWn8YY/kwk7Rz2R+4HYR3mLGZxBGCdbrBaEr1zbRuCLG1uQ?=
+ =?us-ascii?Q?yCvEW8idvM2aRnBslorBOFvudszeMUjmguOI399u?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4cb483b1-0ce9-4d13-a3d9-08de01851ee3
+X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Oct 2025 07:27:19.5892
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: RCEuA6M+aRdbu+kQ1XI+pqLaeS/Szor3CjqR9+a+OiMlRlFOpEMtdKuO1ZwYqEXtEm3tdJyFGMGW2L4uc5npeA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8743
 
-On Thu, Oct 2, 2025 at 1:27=E2=80=AFAM Si-Wei Liu <si-wei.liu@oracle.com> w=
-rote:
->
-> Hi Eugenio,
->
-> On 10/1/2025 6:26 AM, Eugenio Perez Martin wrote:
-> > On Tue, Feb 7, 2023 at 12:15=E2=80=AFAM Si-Wei Liu <si-wei.liu@oracle.c=
-om> wrote:
-> >> Today when device features are explicitly provisioned, the features
-> >> user supplied may contain device class specific features that are
-> >> not supported by the parent management device. On the other hand,
-> >> when parent management device supports more than one class, the
-> >> device features to provision may be ambiguous if none of the class
-> >> specific attributes is provided at the same time. Validate these
-> >> cases and prompt appropriate user errors accordingly.
-> >>
-> >> Signed-off-by: Si-Wei Liu <si-wei.liu@oracle.com>
-> >> ---
-> >>   drivers/vdpa/vdpa.c | 59 +++++++++++++++++++++++++++++++++++++++++++=
-++--------
-> >>   1 file changed, 50 insertions(+), 9 deletions(-)
-> >>
-> >> diff --git a/drivers/vdpa/vdpa.c b/drivers/vdpa/vdpa.c
-> >> index 1eba978..8da5120 100644
-> >> --- a/drivers/vdpa/vdpa.c
-> >> +++ b/drivers/vdpa/vdpa.c
-> >> @@ -460,12 +460,28 @@ static int vdpa_nl_mgmtdev_handle_fill(struct sk=
-_buff *msg, const struct vdpa_mg
-> >>          return 0;
-> >>   }
-> >>
-> >> +static u64 vdpa_mgmtdev_get_classes(const struct vdpa_mgmt_dev *mdev,
-> >> +                                   unsigned int *nclasses)
-> >> +{
-> >> +       u64 supported_classes =3D 0;
-> >> +       unsigned int n =3D 0;
-> >> +
-> >> +       for (int i =3D 0; mdev->id_table[i].device; i++) {
-> >> +               if (mdev->id_table[i].device > 63)
-> >> +                       continue;
-> >> +               supported_classes |=3D BIT_ULL(mdev->id_table[i].devic=
-e);
-> >> +               n++;
-> >> +       }
-> >> +       if (nclasses)
-> >> +               *nclasses =3D n;
-> >> +
-> >> +       return supported_classes;
-> >> +}
-> >> +
-> >>   static int vdpa_mgmtdev_fill(const struct vdpa_mgmt_dev *mdev, struc=
-t sk_buff *msg,
-> >>                               u32 portid, u32 seq, int flags)
-> >>   {
-> >> -       u64 supported_classes =3D 0;
-> >>          void *hdr;
-> >> -       int i =3D 0;
-> >>          int err;
-> >>
-> >>          hdr =3D genlmsg_put(msg, portid, seq, &vdpa_nl_family, flags,=
- VDPA_CMD_MGMTDEV_NEW);
-> >> @@ -475,14 +491,9 @@ static int vdpa_mgmtdev_fill(const struct vdpa_mg=
-mt_dev *mdev, struct sk_buff *m
-> >>          if (err)
-> >>                  goto msg_err;
-> >>
-> >> -       while (mdev->id_table[i].device) {
-> >> -               if (mdev->id_table[i].device <=3D 63)
-> >> -                       supported_classes |=3D BIT_ULL(mdev->id_table[=
-i].device);
-> >> -               i++;
-> >> -       }
-> >> -
-> >>          if (nla_put_u64_64bit(msg, VDPA_ATTR_MGMTDEV_SUPPORTED_CLASSE=
-S,
-> >> -                             supported_classes, VDPA_ATTR_UNSPEC)) {
-> >> +                             vdpa_mgmtdev_get_classes(mdev, NULL),
-> >> +                             VDPA_ATTR_UNSPEC)) {
-> >>                  err =3D -EMSGSIZE;
-> >>                  goto msg_err;
-> >>          }
-> >> @@ -566,13 +577,25 @@ static int vdpa_nl_cmd_mgmtdev_get_doit(struct s=
-k_buff *skb, struct genl_info *i
-> >>                                   BIT_ULL(VDPA_ATTR_DEV_NET_CFG_MTU)  =
-   | \
-> >>                                   BIT_ULL(VDPA_ATTR_DEV_NET_CFG_MAX_VQ=
-P))
-> >>
-> >> +/*
-> >> + * Bitmask for all per-device features: feature bits VIRTIO_TRANSPORT=
-_F_START
-> >> + * through VIRTIO_TRANSPORT_F_END are unset, i.e. 0xfffffc000fffffff =
-for
-> >> + * all 64bit features. If the features are extended beyond 64 bits, o=
-r new
-> >> + * "holes" are reserved for other type of features than per-device, t=
-his
-> >> + * macro would have to be updated.
-> >> + */
-> >> +#define VIRTIO_DEVICE_F_MASK (~0ULL << (VIRTIO_TRANSPORT_F_END + 1) |=
- \
-> >> +                             ((1ULL << VIRTIO_TRANSPORT_F_START) - 1)=
-)
-> >> +
-> >>   static int vdpa_nl_cmd_dev_add_set_doit(struct sk_buff *skb, struct =
-genl_info *info)
-> >>   {
-> >>          struct vdpa_dev_set_config config =3D {};
-> >>          struct nlattr **nl_attrs =3D info->attrs;
-> >>          struct vdpa_mgmt_dev *mdev;
-> >> +       unsigned int ncls =3D 0;
-> >>          const u8 *macaddr;
-> >>          const char *name;
-> >> +       u64 classes;
-> >>          int err =3D 0;
-> >>
-> >>          if (!info->attrs[VDPA_ATTR_DEV_NAME])
-> >> @@ -649,6 +672,24 @@ static int vdpa_nl_cmd_dev_add_set_doit(struct sk=
-_buff *skb, struct genl_info *i
-> >>                  goto err;
-> >>          }
-> >>
-> >> +       classes =3D vdpa_mgmtdev_get_classes(mdev, &ncls);
-> >> +       if (config.mask & VDPA_DEV_NET_ATTRS_MASK &&
-> >> +           !(classes & BIT_ULL(VIRTIO_ID_NET))) {
-> >> +               NL_SET_ERR_MSG_MOD(info->extack,
-> >> +                                  "Network class attributes provided =
-on unsupported management device");
-> >> +               err =3D -EINVAL;
-> >> +               goto err;
-> >> +       }
-> >> +       if (!(config.mask & VDPA_DEV_NET_ATTRS_MASK) &&
-> >> +           config.mask & BIT_ULL(VDPA_ATTR_DEV_FEATURES) &&
-> >> +           classes & BIT_ULL(VIRTIO_ID_NET) && ncls > 1 &&
-> >> +           config.device_features & VIRTIO_DEVICE_F_MASK) {
-> >> +               NL_SET_ERR_MSG_MOD(info->extack,
-> >> +                                  "Management device supports multi-c=
-lass while device features specified are ambiguous");
-> >> +               err =3D -EINVAL;
-> >> +               goto err;
-> >> +       }
-> >
-> > Hi! I need to question this last if() :). What's the point of error
-> > when we specify features device-specific, from net or blk?
-> Because device specific features belong to different feature space, for
-> instance, VIRTIO_BLK_F_SIZE_MAX (1) on block device and
-> VIRTIO_NET_F_GUEST_CSUM (1) on network device both use same feature bit
-> value of (1<<1)ULL, but they belong to different type of devices.
->
-> >
-> > In the VDUSE case both blk and net are supported. I want to use
-> > device_features to limit the net features that the VDUSE device
-> > exports.
-> Then we have to extend to the vdpa CLI to add "class ..." attribute to
-> explicitly indicate which type of device the creation has to be, so
-> eliminate the ambiguity entirely.
->
-> >
-> > Also, why is this limited to only net devices?
-> Actually, this is not limited to only net I think, we can even remove the
->
-> classes & BIT_ULL(VIRTIO_ID_NET)
->
-> conditional if mgmtdev and vdpa dev instance is 1:1 bound. But at the
-> point when this code was written, it's not clear to me how multi-class
-> can be supported - such that does it limit to one vdpa instance
-> supporting one single class 1:1, or it is even possible to support both
-> or multiple classes (multi-facets) per vdpa instance i.e. 1:N.
->
-> >   does this part:
-> >
-> > classes & BIT_ULL(VIRTIO_ID_NET) && ncls > 1
-> >
-> > Means that it is ok to specify more than one class as long as the set
-> > does not contain net?
-> Exactly, that's why it is coded in that odd way. For instance, if a
-> multi-facet vdpa instance needs to be provisioned with respective
-> feature bits for both block and iSCSI device types at the same time, we
-> may have to extend the CLI usage to support that.
->
+On Wed, Oct 01, 2025 at 10:57:20PM -0400, Ryan Newton wrote:
+> From: Ryan Newton <newton@meta.com>
+> 
+> This is a follow-on optimization to the prior commit which added a
+> lockless peek operation on DSQs. That implementation is correct and
+> simple, but elides several optimizations.
+> 
+> Previously, we read the first_task using the same slowpath, irrespective
+> of where we enqueue the task. With this change, we instead base the
+> update on what we know about the calling context. On both insert and
+> removal we can break down whether the change (1) definitely, (2) never,
+> or (3) sometimes changes first task. In some cases we know what the new
+> first task will be, and can set it more directly.
+> 
+> Signed-off-by: Ryan Newton <newton@meta.com>
+> ---
+>  kernel/sched/ext.c | 26 ++++++++++++++++++++------
+>  1 file changed, 20 insertions(+), 6 deletions(-)
+> 
+> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+> index fd0121c03311..1cb10aa9913a 100644
+> --- a/kernel/sched/ext.c
+> +++ b/kernel/sched/ext.c
+> @@ -953,8 +953,11 @@ static void dispatch_enqueue(struct scx_sched *sch, struct scx_dispatch_q *dsq,
+>  				container_of(rbp, struct task_struct,
+>  					     scx.dsq_priq);
+>  			list_add(&p->scx.dsq_list.node, &prev->scx.dsq_list.node);
+> +			/* first task unchanged - no update needed */
+>  		} else {
+>  			list_add(&p->scx.dsq_list.node, &dsq->list);
+> +			/* new task is at head - use fastpath */
+> +			rcu_assign_pointer(dsq->first_task, p);
+>  		}
+>  	} else {
+>  		/* a FIFO DSQ shouldn't be using PRIQ enqueuing */
+> @@ -962,15 +965,20 @@ static void dispatch_enqueue(struct scx_sched *sch, struct scx_dispatch_q *dsq,
+>  			scx_error(sch, "DSQ ID 0x%016llx already had PRIQ-enqueued tasks",
+>  				  dsq->id);
+>  
+> -		if (enq_flags & (SCX_ENQ_HEAD | SCX_ENQ_PREEMPT))
+> +		if (enq_flags & (SCX_ENQ_HEAD | SCX_ENQ_PREEMPT)) {
+>  			list_add(&p->scx.dsq_list.node, &dsq->list);
+> -		else
+> +			/* new task inserted at head - use fastpath */
+> +			rcu_assign_pointer(dsq->first_task, p);
+> +		} else {
+> +			bool was_empty;
+> +
+> +			was_empty = list_empty(&dsq->list);
+>  			list_add_tail(&p->scx.dsq_list.node, &dsq->list);
+> +			if (was_empty)
+> +				rcu_assign_pointer(dsq->first_task, p);
+> +		}
+>  	}
+>  
+> -	/* even the add_tail code path may have changed the first element */
+> -	dsq_update_first_task(dsq);
+> -
+>  	/* seq records the order tasks are queued, used by BPF DSQ iterator */
+>  	dsq->seq++;
+>  	p->scx.dsq_seq = dsq->seq;
+> @@ -1023,9 +1031,15 @@ static void task_unlink_from_dsq(struct task_struct *p,
+>  		p->scx.dsq_flags &= ~SCX_TASK_DSQ_ON_PRIQ;
+>  	}
+>  
+> +	if (dsq->first_task == p) {
+> +		if (dsq->id & SCX_DSQ_FLAG_BUILTIN)
+> +			rcu_assign_pointer(dsq->first_task,
+> +			  list_next_entry(p, scx.dsq_list.node));
 
-Right I get the algorithm, but I still don't get what this is trying
-to solve :).
+nit: no need to split in two lines, it should fit in the 100 characters per
+line limit.
 
-Let me give some examples: I've got a mgmt device that supports blk
-and net. Now two operators want to create one vdpa device of each
-kind.
+> +		else
+> +			dsq_update_first_task(dsq);
+> +	}
 
-Let's say it is VDUSE. The userland device is able to set its own
-name, and their creation is atomic, so there is no way to set the
-features to the wrong one. Let's say one VDUSE device is called
-vduse_net0 and the other one is vduse_blk0, so we can tell which one
-is which with "vdpa dev add name vduse_net0 device_features ...". We
-cannot set the device features to the wrong one.
+However, from my comment in PATCH 1/3, if we allow to use
+scx_bpf_dsq_peek() only with user DSQs this would become:
 
-In the case of mlx the mgmtdev is already a net device, so we cannot
-create two different devices of a different kind. We could provide a
-different feature set depending on who is creating the device if we
-don't want live migration, and that's possible with the current code
-as long as we can tell them apart by the name.
+if (!(dsq->id & SCX_DSQ_FLAG_BUILTIN) && dsq->first_task == p)
+	dsq_update_first_task(dsq);
 
-Other devices already have more ids than NET, but not standard VIRTIO.
-Others could have only one ID, being that VIRTIO_DEV_ANY_ID, and I
-think that would pass the test and allow you to set device_features.
-Then we have vp_vdpa, which blindly passes the one single device id of
-the PCI device and I think it would allow to set device_features. All
-of these are hypothetical as they don't offer the
-VDPA_ATTR_DEV_FEATURES to the vdpa core, but I think they should be
-able to do it.
+>  	list_del_init(&p->scx.dsq_list.node);
+>  	dsq_mod_nr(dsq, -1);
+> -	dsq_update_first_task(dsq);
+>  }
+>  
+>  static void dispatch_dequeue(struct rq *rq, struct task_struct *p)
+> -- 
+> 2.51.0
+> 
 
-So I'm not sure if that ambiguity is just solved otherwise? If not,
-could we move that to the specific backend?
-
-Thanks!
-
+Thanks,
+-Andrea
 
