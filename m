@@ -1,122 +1,158 @@
-Return-Path: <linux-kernel+bounces-840532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46C16BB49FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 19:09:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ED0ABB49F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 19:09:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03E8819E120D
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 17:10:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A7593AB859
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 17:09:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAB33267B89;
-	Thu,  2 Oct 2025 17:09:46 +0000 (UTC)
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA31D261B60;
+	Thu,  2 Oct 2025 17:09:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gAyHH8Qr"
+Received: from mail-ej1-f74.google.com (mail-ej1-f74.google.com [209.85.218.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF5A686342
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 17:09:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86C1442A99
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 17:09:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759424986; cv=none; b=NX2lDemi5Y5EyIq3/59RGVH7jicCwFzCB7DygL0NP+S0bu9fSJhIiCg4ym6uJV/29GACg/qI42JQnSatSL/Sp7NhY63lRGIvGERclIjjWWbaYtBTO/5WYJVN+NO/7qbtxbM3Cl1KD6MW3QmA9NuBkdbD9v9kFxTMfCruiVcg99w=
+	t=1759424944; cv=none; b=gV/HD0euTH/SY/9dnSfT9Pb8uaz/ThUslf/ETTMAeCuchW3ajpbWKujrnm/VNRBawvziqZ0Zf/YDnXg1jCMLrVu5cCsKvJ9eoxFiN/DK1Z89Hn7fXzD3/u420MSIqDbGA/bDx6NE0BZhAdzCMAmLcySG8smoTtnVMRFRw9sFzrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759424986; c=relaxed/simple;
-	bh=wV3apveSRN76n364Q4Xgge6Ku/7v8/2U94tI1XcIKwU=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=A3m6i+rdo9kZ59/JLkp8OmFB2k4OyVRtNB3b+w5MapRrqRINsNnfxELCswtO3is+4mqlwIStBSlVHAHcSnZrCAbTwz+897v3VCfKo7k7cNNvFbOGRF7Y1D2XySI5j5PsaPKiq8qdEcZybkKS8vs68Bd2pMBQNMpGf3TnOegWBMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-46e6ba26c50so6238385e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 10:09:44 -0700 (PDT)
+	s=arc-20240116; t=1759424944; c=relaxed/simple;
+	bh=UosIEFOqEfLBW1M4HZQz2PsAAPsmXv6z/NJn78iqWTE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=tk/UB9gv49i0zT2XG0lN6j0QvINhatdkmpdha0stI76BfXQI4AjzbckIdyHDfdfKWNmajoTuAPgfjL39lrbKHCDSQ45OAtUOSqedJ0eXbPe7fsqirfXKMNnsrrOwMzA2WaWkRdR/Lnl2dzjwW8dmPLeW+IGOxIaw/ts5T24RkfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gAyHH8Qr; arc=none smtp.client-ip=209.85.218.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
+Received: by mail-ej1-f74.google.com with SMTP id a640c23a62f3a-b3d21b18e8fso108645066b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 10:09:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759424941; x=1760029741; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=d+9vf4Jwiso9F3Y02vPP8NSYVqJvXagA/c4Pp2UKX20=;
+        b=gAyHH8Qr41MZsrUgzXRQiyvPY4e+SoGF1bza+Y+jpcUmGeo8QC6MO2eKfOdMfa2j2b
+         wB8l/fBJAm6hNGQ+qRCrmJQ/67pRrdMlgX8uovHoCrBG1jwPoXjS4tCmKy6Kcu9nMGSM
+         PA+CNQ1zkQH6FovBAKhgs4bsi9/YXhzzoFuWXaHrSF1owjBI7dbgxs0I4HDszMbE+QNl
+         K4XyEWaa0VSs1+zWydvtCAMvNyhZ0VT24rYrUYNAQS98Yh23y9ICbkciTi0/NT8Luuhs
+         L0AgOpb9Y/YAvzYNpYd1UsgYzWUGm4iSgpMkIHzfyHURXLP+Tg7z8Cqu13n/XGb+ybLN
+         A2ng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759424983; x=1760029783;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ALhMC3B+HG9RzOr8Fvsyhus8tagwxCMBXxlTBDad21U=;
-        b=jOZKJIR4OAOEmTI+TzFttY8JkKFmZpuCsHRsIOOSSggmfj1Nxh/0b0hEEFnXUrJAWs
-         bHPzOMXFxftbkmWGY72vWYZ62dSYEHSZHSFxGGHSvKV/+cnjRTUQXkHbndvUWaRJjJnq
-         uuPojzKoYFiDXtRfHq8bnGtPhKsTLGRL5/IiK/zUwUwiRSM2XAdUvzHnEcfqXe0L+7sV
-         jqkp2hagdOPhYmPtfgmeMhzYO/9g/LFp+FocYXeu0VGuKofVba0lgvG80acpBL/cDwov
-         4isLl92VKCZVSJEofrcxVt96lwdKdLmDlzX3AcA8qc6z61c0j5eKhXXwMdXonAcRlem5
-         BwZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVvSju21JjBr5ZUWdAdgUs1Nq9eMEj+RtIA58orB/h30DhTvjEWhhnnMSNaMWWX7MSbC1dJWBBeUohG3Lk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxP8DEHfhlVMLg9AgVeBP8fiA6U/FZTN/JsAiweDmKQlAij9v7r
-	WltkrLE1k+N7NbdnpUvyWNPbqsP6g6qLC9aJomJr6X4tM1PMuJK3p3xpDul7WuAC01A=
-X-Gm-Gg: ASbGncuYz35Rc4g2IDJOihBRcFmLQtwFmcrATgBxP1bGxv+LAk60zcPi/MSmUdVAaNA
-	FwUnLrSwVQ8jeWL041zEjXyJR+wFz9SsIEz9sBFk6dP58cTJBXlgv9zelq5NlVUGBFU3n/w7xlK
-	yQ0r+qeE++ib7XApROQPw5/Xgo/keyKybQLBHVrs2pqN+Gd8uFLlrAUXpwuDBZKXWiJXawFt46B
-	x6FbSmHt45w/IyCh+hnVjXqw5BtYD6+txGdPHH5KOdM5X2SE1+coXqajMvGak4C1Dh4ApzP0Dty
-	SFkv4SnHfBvQ7Z7VzmqNn9QvFquDv93Quj8Axu28da8pSrAWMMI8x39TR4B9w+HHJdA8Gn+EIYe
-	K0zB8S8UFWKt8B3TmRmE3te9hHzNdR+ihoKwDmBIbRn8tfxnnu/Q=
-X-Google-Smtp-Source: AGHT+IEYZDN8Vs/SGTNR8tAG0UxJGfa0XX0wxDzajLCBKTWIabOxTdsv/uzzOyq0NfdbKIuezVvROA==
-X-Received: by 2002:a05:600c:3556:b0:46e:4004:a296 with SMTP id 5b1f17b1804b1-46e71109df8mr282575e9.9.1759424982964;
-        Thu, 02 Oct 2025 10:09:42 -0700 (PDT)
-Received: from localhost ([2a00:a041:e2eb:5500:8728:d68a:a687:c89b])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8abe90sm4407649f8f.23.2025.10.02.10.09.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 10:09:42 -0700 (PDT)
-From: Costa Shulyupin <costa.shul@redhat.com>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Tomas Glozar <tglozar@redhat.com>,
-	Crystal Wood <crwood@redhat.com>,
-	Costa Shulyupin <costa.shul@redhat.com>,
-	John Kacur <jkacur@redhat.com>,
-	linux-trace-kernel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] tools/rtla: Fix unassigned nr_cpus
-Date: Thu,  2 Oct 2025 20:08:45 +0300
-Message-ID: <20251002170846.437888-1-costa.shul@redhat.com>
-X-Mailer: git-send-email 2.51.0
+        d=1e100.net; s=20230601; t=1759424941; x=1760029741;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=d+9vf4Jwiso9F3Y02vPP8NSYVqJvXagA/c4Pp2UKX20=;
+        b=VSDgFFUsGLEZ6Xnrd94zkxeQ1Hz9x1WXIGW6DkviUbkCRuM+J82JqN30b9QjULaVa3
+         PosH6oz8VHxO6Lb+WNzQRokK5EEyYTO4fSRvv+4aBASJBzFHZ12dk8UGigEb/N3XgsIY
+         tnZ0xzQvWz4HVR9/KYEYhTR/s3rg0pylUJsBZfhbz0mUY1J0pYOuG43H6Eoa4M23A4Zm
+         Cjva41WlKsJyzWBImOImk8SiN4eBRs+xFKnYOK+O2OPTFXyzqBvljRrGiY+Ry7n/9iPp
+         MMdMpz6pSZewoAWmPjhlHO0b2jb9uQqeW9jQt+YEpQQgHwMMDcprTX46mC1GT4ktyvar
+         3ZTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXXjF9GahxqDy2mV4YmVIShHGvhd3lXwx0V4UeR1TdtLiqSJH9dYAk8gmIvfzvprZKktTSUtfdcG+APYA8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyC9+vd7W1MC6FPaGeH21TjkT5DJfPU8RCPIQYLyCP+dMhEwAQE
+	dNle+99xa4PbNFyj0+/CeuCav+xRore8Gnb4QpO0EbCZ1gvOaCam8SRgUG8PvW6H4yBDKeIk06x
+	HYgjN4vqi43pAXw==
+X-Google-Smtp-Source: AGHT+IGKMxTwF3i3+/qTvA5h7gHpdu2tX1PHS/EAhbrLp6zU/xDFnlc2KHFRVhsXz5+haLREIW8oS2NfjBoTGQ==
+X-Received: from ejdf14.prod.google.com ([2002:a17:906:84e:b0:b2f:99d7:b88d])
+ (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:907:3f82:b0:b40:8954:a8bf with SMTP id a640c23a62f3a-b49c1b6d3cbmr20560166b.2.1759424940627;
+ Thu, 02 Oct 2025 10:09:00 -0700 (PDT)
+Date: Thu, 02 Oct 2025 17:08:59 +0000
+In-Reply-To: <19e5012a-3c58-4696-9e4e-39e2b7d2b5af@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20250924-b4-asi-page-alloc-v1-0-2d861768041f@google.com>
+ <20250924-b4-asi-page-alloc-v1-5-2d861768041f@google.com> <08338619-6aa1-4905-bdf8-bf1a90857307@intel.com>
+ <DD7WQ97R8OG6.1CA5E2FU5ISMZ@google.com> <19e5012a-3c58-4696-9e4e-39e2b7d2b5af@intel.com>
+X-Mailer: aerc 0.21.0
+Message-ID: <DD80374YZEWM.1L31D2VUKK80C@google.com>
+Subject: Re: [PATCH 05/21] x86/mm/pat: mirror direct map changes to ASI
+From: Brendan Jackman <jackmanb@google.com>
+To: Dave Hansen <dave.hansen@intel.com>, Brendan Jackman <jackmanb@google.com>, 
+	Andy Lutomirski <luto@kernel.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Suren Baghdasaryan <surenb@google.com>, 
+	Michal Hocko <mhocko@suse.com>, Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>, 
+	Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>, 
+	Roman Gushchin <roman.gushchin@linux.dev>
+Cc: <peterz@infradead.org>, <bp@alien8.de>, <dave.hansen@linux.intel.com>, 
+	<mingo@redhat.com>, <tglx@linutronix.de>, <akpm@linux-foundation.org>, 
+	<david@redhat.com>, <derkling@google.com>, <junaids@google.com>, 
+	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>, <reijiw@google.com>, 
+	<rientjes@google.com>, <rppt@kernel.org>, <vbabka@suse.cz>, <x86@kernel.org>, 
+	Yosry Ahmed <yosry.ahmed@linux.dev>
+Content-Type: text/plain; charset="UTF-8"
 
-In recently introduced timerlat_free(),
-the variable 'nr_cpus' is not assigned.
+On Thu Oct 2, 2025 at 4:40 PM UTC, Dave Hansen wrote:
+> On 10/2/25 07:31, Brendan Jackman wrote:
+> It's actually anything that has _PAGE_PRESENT in cpa->mask_set. There
+> are a number of those. Some of them are irrelevant like the execmem
+> code, but there are quite a few more that look troublesome outside of
+> debugging environments.
+>
+>>> Also, could we try and make the nomenclature consistent? We've got
+>>> "unrestricted direct map" and "asi_nonsensitive_pgd" being used (at
+>>> least). Could the terminology be made more consistent?
+>> 
+>> Hm. It is actually consistent: "unrestricted" is a property of the
+>> address space / execution context. "nonsensitive" is a property of the
+>> memory. Nonsensitive memory is mapped into the unrestricted address
+>> space. asi_nonsensitive_pgd isn't an address space we enter it's just a
+>> holding area (like if we never actually pointed CR3 at init_mm.pgd but
+>> just useed it as a source to clone from).
+>> 
+>> However.. just because it's consistent doesn't mean it's not confusing.
+>> Do you think we should just squash these two words and call the whole
+>> thing "nonsensitive"? I don't know if "nonsensitive address space" makes
+>> much sense... Is it possible I can fix this by just adding more
+>> comments?
+>
+> It makes sense to me that a "nonsensitive address space" would not map
+> any sensitive data and that a "asi_nonsensitive_pgd" is the root of that
+> address space.
 
-Assign it with sysconf(_SC_NPROCESSORS_CONF) as done elsewhere.
-Remove the culprit: -Wno-maybe-uninitialized. The rest of the
-code is clean.
+OK, then it probably just sounds wrong to me because I'm steeped in the
+current jargon. For v2 I'll try just dropping "[un]restricted".
 
-Signed-off-by: Costa Shulyupin <costa.shul@redhat.com>
----
- tools/tracing/rtla/Makefile.rtla  | 2 +-
- tools/tracing/rtla/src/timerlat.c | 3 ++-
- 2 files changed, 3 insertions(+), 2 deletions(-)
+>>>>  static int __change_page_attr_set_clr(struct cpa_data *cpa, int primary)
+>>>>  {
+>>>>  	unsigned long numpages = cpa->numpages;
+>>>> @@ -2007,6 +2033,8 @@ static int __change_page_attr_set_clr(struct cpa_data *cpa, int primary)
+>>>>  		if (!debug_pagealloc_enabled())
+>>>>  			spin_lock(&cpa_lock);
+>>>>  		ret = __change_page_attr(cpa, primary);
+>>>> +		if (!ret)
+>>>> +			ret = mirror_asi_direct_map(cpa, primary);
+>>>>  		if (!debug_pagealloc_enabled())
+>>>>  			spin_unlock(&cpa_lock);
+>>>>  		if (ret)
+>>>>
+>>>
+>>> Is cpa->pgd ever have any values other than NULL or init_mm->pgd? I
+>>> didn't see anything in a quick grep.
+>> 
+>> It can also be efi_mm.pgd via sev_es_efi_map_ghcbs_cas().
+>
+> It would be _nice_ if the ASI exclusion wasn't so magic.
+>
+> Like, instead of hooking in to __change_page_attr_set_clr() and
+> filtering on init_mm if we had the callers declare explicitly whether
+> their changes get reflected into the ASI nonsensitive PGD.
+>
+> Maybe that looks like a new flag: CPA_DIRECT_MAP or something. Once you
+> pass that flag in, the cpa code knows that you're working on init_mm.pgd
+> and mirror_asi_direct_map() can look for *that* instead of init_mm.
 
-diff --git a/tools/tracing/rtla/Makefile.rtla b/tools/tracing/rtla/Makefile.rtla
-index 08c1b40883d3..1743d91829d4 100644
---- a/tools/tracing/rtla/Makefile.rtla
-+++ b/tools/tracing/rtla/Makefile.rtla
-@@ -18,7 +18,7 @@ export CC AR STRIP PKG_CONFIG LD_SO_CONF_PATH LDCONFIG
- FOPTS		:= -flto=auto -ffat-lto-objects -fexceptions -fstack-protector-strong	\
- 		-fasynchronous-unwind-tables -fstack-clash-protection
- WOPTS		:= -O -Wall -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2		\
--		-Wp,-D_GLIBCXX_ASSERTIONS -Wno-maybe-uninitialized
-+		-Wp,-D_GLIBCXX_ASSERTIONS
- 
- ifeq ($(CC),clang)
-   FOPTS		:= $(filter-out -flto=auto -ffat-lto-objects, $(FOPTS))
-diff --git a/tools/tracing/rtla/src/timerlat.c b/tools/tracing/rtla/src/timerlat.c
-index 28ea4f6710c1..df4f9bfe3433 100644
---- a/tools/tracing/rtla/src/timerlat.c
-+++ b/tools/tracing/rtla/src/timerlat.c
-@@ -213,7 +213,8 @@ void timerlat_analyze(struct osnoise_tool *tool, bool stopped)
- void timerlat_free(struct osnoise_tool *tool)
- {
- 	struct timerlat_params *params = to_timerlat_params(tool->params);
--	int nr_cpus, i;
-+	int nr_cpus = sysconf(_SC_NPROCESSORS_CONF);
-+	int i;
- 
- 	timerlat_aa_destroy();
- 	if (dma_latency_fd >= 0)
--- 
-2.51.0
-
+Sounds good to me. If "The Direct Map" is a gonna be a special thing
+then having it be a flag instead of a certain magic pgd_t * makes sense
+to me. I'll try this out.
 
