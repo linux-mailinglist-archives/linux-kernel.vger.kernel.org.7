@@ -1,218 +1,225 @@
-Return-Path: <linux-kernel+bounces-839922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF1E7BB2BDD
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 09:49:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 252A6BB2BE0
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 09:52:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 591EB19C3CA4
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 07:50:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6842172B93
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 07:52:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BA762D0C73;
-	Thu,  2 Oct 2025 07:49:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B9D32D1936;
+	Thu,  2 Oct 2025 07:52:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gehealthcare.com header.i=@gehealthcare.com header.b="cNLrS0WP"
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012011.outbound.protection.outlook.com [52.101.43.11])
+	dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b="M3MfH+rU"
+Received: from pdx-out-001.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-001.esa.us-west-2.outbound.mail-perimeter.amazon.com [44.245.243.92])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4CD91DD9AD
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 07:49:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759391379; cv=fail; b=AgDbSS96kPYkBq52VDqcvywAla8Mi9ObJYz49ETALKOATw2/5P5XPa/VhNE9HMsGDMARrtxQDdIgS0Ph2cSRpXAKDvI9IYhj1GNOBPgqoTZtDeeJQxhkwKdMp/sGshG7vADn+TXTWFlUTvDfoftAJa39kScb65gHC64waAtIZOg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759391379; c=relaxed/simple;
-	bh=EPkRvSd5tSa+DnBNsumbTbg8yZBJph59ETTMqx8d90M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ju8GeteZhzCM/Ab5t57ypC+FX3+uD02mPytxB4zS3i0nK/Dw/HV1o0kAE/9LEi/FLx+MhMzZXA6B/fJEWEUsz458NaUUJLO/BAMD4aPFqEAkArHdIzll4u0rabMvagk99RvIyOb96r28y69U2O+OBaQJAKDc4sc18L1OQ376NlI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gehealthcare.com; spf=pass smtp.mailfrom=gehealthcare.com; dkim=pass (2048-bit key) header.d=gehealthcare.com header.i=@gehealthcare.com header.b=cNLrS0WP; arc=fail smtp.client-ip=52.101.43.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gehealthcare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gehealthcare.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vlist7ChYA/U9VeEUIq/h7H1ma+vwKsMm3cKvlGH0OoYRCX0zwBYeHi6uPyU5MAisDsKU+lqwzLcLK0CsqxzLlAhUTG3VkTZXBKDeXOdrUSgNogcFhw38TsqgnXaJPEAzF77quz5X95wG+vtwALc4hoqr2JJA8woy8XZH3ecW/2RDi7kQnXP5jjey40wQ1XA+5NHEXNqrESUbBpalEcr199eIrdrdncfFptCSa5oovLB60dGh70OUKNQjCbUMVIFBAMW+nd+XkXInyF7JDFmpr8Nw6FceHEXZDhBHS6lIB3Acw28s6ZCxhhWHRoTRJsWDCMGxFaOKhGgsjfVTpNvJg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zd3S2pGM7tli/9elqsY/9eyb8Kg99cwZpZFjog4Imig=;
- b=mX2mqOK/d1zzKgb85z6YZsD6WmeF3zC9w0JyMlahALc97KB094X/E37PYEuuHEBRDzIK4OfLPM2JOIDpjVReo5R7lVwAcbVIV7jqGq3UeguDEOooFH+jT38B3pR3u8ntSUQtzVACiZLFxIosyX/+xolHpDXqcm8Ca5eng9vu9mH+TECMWcQeYTW6jmkTHqtzSYJT7jM891dfD+ss6kjEaN2UGDKmrVqx30BOuZeRTU+rVZUujKOwijSdePCEj9EBhgbbjHiKIcvYdZvEQjS6om3lkRPzxjjFWn/zUzqo0SuWphSboIu8yZaFSLS9JY0pY3kfFwpsLuNUz5kTr+K8xg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 165.85.157.49) smtp.rcpttodomain=vger.kernel.org
- smtp.mailfrom=gehealthcare.com; dmarc=fail (p=quarantine sp=quarantine
- pct=100) action=quarantine header.from=gehealthcare.com; dkim=none (message
- not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gehealthcare.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zd3S2pGM7tli/9elqsY/9eyb8Kg99cwZpZFjog4Imig=;
- b=cNLrS0WPeqAOPdWe+XwXkz2CBELVDOAoF3fjPhAR37/EJmIKeiPKy6zuOP4/oUJI66Zfo0wdwkkfjrfBH53oFo+AR1Jz82+KG4Du4KWlPGKHx0wzam4HXtS7e5Z0qnJr3lBfYaehtOH6r8WlI9hbXu4telTAtQ8gxHF76lSGL6J06EmL051sfMEsRRJPlTztXD2gHexuVWRgwMdKs/fSii72RaOj6RmiTRdFR0sz/KdtEGVN6b6/YAE2fbatpd6Y6+ozZxkETHszFPHDzKPRRvLA8yewJprQkI5pzYcXv4TnMa9ydAkEiEDkLVNNvPVPFjw0BN7ynq2vYQajRH13Dw==
-Received: from DM5PR08CA0031.namprd08.prod.outlook.com (2603:10b6:4:60::20) by
- CYYPR22MB4264.namprd22.prod.outlook.com (2603:10b6:930:c3::15) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9160.18; Thu, 2 Oct 2025 07:49:35 +0000
-Received: from DS1PEPF0001709A.namprd05.prod.outlook.com
- (2603:10b6:4:60:cafe::ed) by DM5PR08CA0031.outlook.office365.com
- (2603:10b6:4:60::20) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9160.18 via Frontend Transport; Thu,
- 2 Oct 2025 07:49:35 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 165.85.157.49)
- smtp.mailfrom=gehealthcare.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=quarantine header.from=gehealthcare.com;
-Received-SPF: Fail (protection.outlook.com: domain of gehealthcare.com does
- not designate 165.85.157.49 as permitted sender)
- receiver=protection.outlook.com; client-ip=165.85.157.49;
- helo=atlrelay1.compute.ge-healthcare.net;
-Received: from atlrelay1.compute.ge-healthcare.net (165.85.157.49) by
- DS1PEPF0001709A.mail.protection.outlook.com (10.167.18.104) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9182.15 via Frontend Transport; Thu, 2 Oct 2025 07:49:35 +0000
-Received: from zeus (zoo13.fihel.lab.ge-healthcare.net [10.168.174.111])
-	by builder1.fihel.lab.ge-healthcare.net (Postfix) with SMTP id 2F7D4D04D5;
-	Thu,  2 Oct 2025 10:49:33 +0300 (EEST)
-Date: Thu, 2 Oct 2025 10:49:32 +0300
-From: Ian Ray <ian.ray@gehealthcare.com>
-To: Marcus Folkesson <marcus.folkesson@gmail.com>
-Cc: Support Opensource <support.opensource@diasemi.com>,
-	Lee Jones <lee@kernel.org>, Axel Lin <axel.lin@ingics.com>,
-	Adam Thomson <Adam.Thomson.Opensource@diasemi.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mfd: da9052-spi: change read-mask to write-mask
-Message-ID: <aN4ujFg_uRufUXn-@zeus>
-References: <20240925-da9052-v2-1-f243e4505b07@gmail.com>
- <aN0mqU75onKEYSDg@zeus>
- <aN4oad5e7YUNaR8w@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FC0B1DD9AD;
+	Thu,  2 Oct 2025 07:52:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.245.243.92
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759391534; cv=none; b=EAhn2FVO2+fM8ex5hH9Zq9XJJFUV9foMNpu5+bVYjVMsyfc6nyA8k+oZoAoLn4dODJ1XX1rS7tpQ9ckxayR7FEaeUPfkDdjhxk6N2vRQBt8H0ZTDVdn4vZR10481CVeQX6Ic2ygQ28INAfjmIPHRhqiRB1CBPQ5S7K9OzRQzqhk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759391534; c=relaxed/simple;
+	bh=Ah8TYPLJ8zfpSzOJ6OqScr2Gx8nC8ju05DqYixGcl34=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=h2zL7c2PUj2o/SyOZO62l/LrYDsxsJsiP9kSDXBBDygiMwhFBpaBr2SbPMjYBtTd5E3AgR4032V3aOB7sgNxTEh3WxvM6XUAurrAaP0T4VIs+nUbnRV62CgBCRztG8olAFnqjrmogWwQZ4418NJ8tDnjj6ZPwaswQJxiUkS+LpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b=M3MfH+rU; arc=none smtp.client-ip=44.245.243.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazoncorp2;
+  t=1759391532; x=1790927532;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=2SGvgtfExrVMKD6QFwY+i2a9wnruIxOwASxfKxqf6S8=;
+  b=M3MfH+rUZHYNfPzV62LgAFbuBbCWOKi1BJqsz4gxpbEIKTV7HDbAXPiS
+   8wXpnvh7Bcld/lLkzbfyQnLlSdXx9QSyEZbT7sXVRY+Ke2gjZdfgygyqg
+   vPHI7eJxhGHyXTuE/nAfEeVSBKTgJaE46AHU3lkLeE1lfUObUWDmt57m7
+   h5kVHpu9l203xk6z7Xptd/iBh6lIaOpTZ3DSdqBf7lYpRsaO0mlQzLLsN
+   MHABVGgBvOiT52QS7rIGmni7zKhBrrU1MI6ESKZckaFkrVcW84nPaOz+a
+   Pb/9QjXvYhDDL4s9VoKkk6/tttRL0iSH08ngf/Kis0SzvVeqHhmWem6ih
+   A==;
+X-CSE-ConnectionGUID: hzfbE5ZsTnCi/kS8l7dAKg==
+X-CSE-MsgGUID: fDs/5FZ+T2Smfxg1JTMupw==
+X-IronPort-AV: E=Sophos;i="6.18,281,1751241600"; 
+   d="scan'208";a="4137127"
+Received: from ip-10-5-6-203.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.6.203])
+  by internal-pdx-out-001.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2025 07:52:10 +0000
+Received: from EX19MTAUWC002.ant.amazon.com [10.0.38.20:24445]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.20.71:2525] with esmtp (Farcaster)
+ id 4a555600-ee08-4b41-952a-f943cb84732e; Thu, 2 Oct 2025 07:52:10 +0000 (UTC)
+X-Farcaster-Flow-ID: 4a555600-ee08-4b41-952a-f943cb84732e
+Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
+ EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Thu, 2 Oct 2025 07:52:10 +0000
+Received: from dev-dsk-acsjakub-1b-6f9934e2.eu-west-1.amazon.com
+ (172.19.75.107) by EX19D001UWA001.ant.amazon.com (10.13.138.214) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20; Thu, 2 Oct 2025
+ 07:52:08 +0000
+From: Jakub Acs <acsjakub@amazon.de>
+To: <linux-fsdevel@vger.kernel.org>
+CC: <acsjakub@amazon.de>, Andrew Morton <akpm@linux-foundation.org>, "David
+ Hildenbrand" <david@redhat.com>, Xu Xin <xu.xin16@zte.com.cn>, Chengming Zhou
+	<chengming.zhou@linux.dev>, Peter Xu <peterx@redhat.com>, Axel Rasmussen
+	<axelrasmussen@google.com>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v4] mm: redefine VM_* flag constants with BIT()
+Date: Thu, 2 Oct 2025 07:52:02 +0000
+Message-ID: <20251002075202.11306-1-acsjakub@amazon.de>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aN4oad5e7YUNaR8w@gmail.com>
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS1PEPF0001709A:EE_|CYYPR22MB4264:EE_
-X-MS-Office365-Filtering-Correlation-Id: 25a4bd71-bca0-4b69-60c1-08de01883b44
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|30052699003|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?aKsZSFfCBg/lY0aeP+JAHvdpxHSi2cwn9tz4IOF1rFU5dV4kUxU+gD7CpkMP?=
- =?us-ascii?Q?lrbW4Sbof+n01UMCD4j/ufJRhIhwBtZFB3qhYPUJerM0brudtdnxc4ZDckM4?=
- =?us-ascii?Q?9VtDtwQovJZER7c49TZrKmcXJx4032+mgpokaZ94oVFKiaC8O0PSCihQ2kzQ?=
- =?us-ascii?Q?HAhlKsNZUZD8pS6AGsV6erykp4x0azLPwBjTU8kE+0QDTWCsKA8CfeIIbs5w?=
- =?us-ascii?Q?ImvnLPK4SsngMvgbpwvpH9QBefniHr0AOWYjAXfADC7YhyWnUY/qgBPH5FXV?=
- =?us-ascii?Q?4/JvAxa7t6TbjC1M/Ct3FPk39MlLE72oSwJULb0jOM0QgMV3TGkqqKVbJXxi?=
- =?us-ascii?Q?mEKena8TL3w0pa4Y5XFQsMaZjziKC6BAg7kmnc3fzJUJZUNVssc7y8SroxyC?=
- =?us-ascii?Q?q4EzB1H+Aj4oERRPE3/TncXiq99e8Bj8p/oXMtAO4OFx4dgLCK6oFD65DUY6?=
- =?us-ascii?Q?eLqEnPZSpQ1h2LUyUKjKc0zO+uqacNgSNBuetRoY3akli8IAxZNMlCMx3YpX?=
- =?us-ascii?Q?fMCEVHBCy8XLcLjjVm168Vwxj8tL+O1vCV6IGyAUOpG5nhaPm+83Kkdb6myI?=
- =?us-ascii?Q?BRt0XkqohnJd59AazuxJzwDEpGNJmLRFaTFdJyYtrhbKh38Dacm5OkoN2tLM?=
- =?us-ascii?Q?3lXhJt2TRgMRaFrGSuXb6WLmxjRLrL5cR8Hc7xgEhrX3NmszPD2CRBCqi6Jh?=
- =?us-ascii?Q?igL0xfT0kHmlT2Hmfs1/j7Hc2L4Mr8FEmZOFTC4NmEV7xK8g8n+1oZe5gLOD?=
- =?us-ascii?Q?OYnKdUKZqhrtT9unnLV6V4fPxjkGNDIf8USgKZDk2XYaEfUoazTVgkge/1+K?=
- =?us-ascii?Q?rH/nk8ia8MDsZSEy0KaeSoF4diMgnAiJAjVs4OrLBUKfRQvrtw4V8Cd9zesv?=
- =?us-ascii?Q?JXHnImbZcp2PYKAG8+wwXcqoI81NWLtXpdu+ieJEelBtOiIsa21Kk/Q8FGaR?=
- =?us-ascii?Q?9wYM8D4PZ3tYT7sFLC+yo3WvlgcNRWtsGKfenlWRLcBfzIgm5k5HEhwtDKwj?=
- =?us-ascii?Q?ldjBAmH/VH9NdIGmnnTE/S8voFX8Efy+UrmRtsy5jpIkrWW+eaRARJS34W3f?=
- =?us-ascii?Q?xXtQOt8CV61mRltMsCyCATAiSIhEKCl1UG6RPQzPa4xIih4lBlKrS/yQRQlT?=
- =?us-ascii?Q?McN3fVmsiBBlvUXXsMBcUvV9KQC9b1RiyrUa0UFh8kFf7je0tamtr+R7CbOA?=
- =?us-ascii?Q?m05a5PmLaO/FGqsWeZX/2Sw1sZF9eac88ghiTRiTEXzgN7Nse5dCuOrl9o6r?=
- =?us-ascii?Q?rzmoewf4qVxeLA+xljut6ipZmyh9zgpCdj7VS249rzd/rx8Ezp/LG9CRL3in?=
- =?us-ascii?Q?9VaoiGDb9QZBkB/LH1GDmlcinShEiEoCVW/LtoSzLAl7BprMdtwLa962fmX5?=
- =?us-ascii?Q?RLbNIig5DcOMcdQqUMnVi25QVij8yi3EaLQV22npP1zUVxDb6Pj68g63P23x?=
- =?us-ascii?Q?WT4i422BzAjYaapv+SJPlTQasIS9tr6dsJwFK3kWx34AWp71fSArPxHvIL1k?=
- =?us-ascii?Q?SmySFMb4ZVlLXRUHG/zyd+uy+l4acogudVP4XeyfRCXczt5qjrrfjtNLtAkt?=
- =?us-ascii?Q?HfzbGdmCyNhW65PhIwA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.85.157.49;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:atlrelay1.compute.ge-healthcare.net;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(30052699003)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: gehealthcare.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Oct 2025 07:49:35.2830
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 25a4bd71-bca0-4b69-60c1-08de01883b44
-X-MS-Exchange-CrossTenant-Id: 9a309606-d6ec-4188-a28a-298812b4bbbf
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=9a309606-d6ec-4188-a28a-298812b4bbbf;Ip=[165.85.157.49];Helo=[atlrelay1.compute.ge-healthcare.net]
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TreatMessagesAsInternal-DS1PEPF0001709A.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR22MB4264
+X-ClientProxiedBy: EX19D040UWA002.ant.amazon.com (10.13.139.113) To
+ EX19D001UWA001.ant.amazon.com (10.13.138.214)
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 02, 2025 at 09:23:21AM +0200, Marcus Folkesson wrote:
-> Hello Ian,
-> 
-> On Wed, Oct 01, 2025 at 04:03:37PM +0300, Ian Ray wrote:
-> > Hello Marcus,
-> > 
-> > On Wed, Sep 25, 2024 at 12:19:53PM +0200, Marcus Folkesson wrote:
-> > > Driver has mixed up the R/W bit.
-> > > The LSB bit is set on write rather than read.
-> > > Change it to avoid nasty things to happen.
-> > > 
-> > > Fixes: e9e9d3973594 ("mfd: da9052: Avoid setting read_flag_mask for da9052-i2c driver")
-> > > Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
-> > 
-> > Your patch breaks DA9053 SPI communication (for me, at least) on the
-> > 6.1.y branch (I have not tested on master).
-> > 
-> > The datasheets [1] and [2] both refer to R/Wn in the SPI signalling.
-> > 
-> > What led to the assertion that "The LSB bit is set on write rather
-> > than read."?
-> > 
-> > In the original code "config.read_flag_mask = 1;", is OR'd into the
-> > buffer in regmap_set_work_buf_flag_mask.  This sets the "R" bit as
-> > expected.
-> 
-> Hrm.
-> 
-> I follow you and agree with what you say.
-> Could you please read out R19 INTERFACE register?
-> Bit 3, R/W POL, deviates from the default value (1) in my setup, which
-> is probably the reason why it doesn't work for me without the patch.
+Make VM_* flag constant definitions consistent - unify all to use BIT()
+macro.
 
--- >8 -- 
-# cat /sys/kernel/debug/regmap/spi2.0/registers |grep "^13:"
-13: 88
--- >8 -- 
+We have previously changed VM_MERGEABLE in a separate bugfix. This is a
+follow-up to make all the VM_* flag constant definitions consistent, as
+suggested by David in [1].
 
-> 
-> Your datasheet revision is later than mine, could you plese verify that
-> the default value is still 1 for DA9052 in your revision?
+[1]: https://lore.kernel.org/all/85f852f9-8577-4230-adc7-c52e7f479454@redhat.com/
 
-Yes it is still 1 (the complete set of defaults for R19 is 10011000).
+Signed-off-by: Jakub Acs <acsjakub@amazon.de>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: Xu Xin <xu.xin16@zte.com.cn>
+Cc: Chengming Zhou <chengming.zhou@linux.dev>
+Cc: Peter Xu <peterx@redhat.com>
+Cc: Axel Rasmussen <axelrasmussen@google.com>
+Cc: linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org
+---
+v3 -> v4:
+ - fix VM_MAYOVERLAY and VM_PFNMAP definitions
+ - send outside the series
 
-> 
-> If that is the case, either the datasheet is wrong or my chips must
-> somehow been preloaded with some values.
+This depends on the following patch:
+https://lore.kernel.org/all/20251001090353.57523-2-acsjakub@amazon.de/
 
-Yes, in my understanding these PMICs are highly configurable via OTP.
-(Almost every register can be customized.)
+v3: https://lore.kernel.org/all/20251001090353.57523-3-acsjakub@amazon.de/
 
-> 
-> As nobody else has reported any issue I guess it is safer to revert
-> this patch.
+ include/linux/mm.h | 66 +++++++++++++++++++++++-----------------------
+ 1 file changed, 33 insertions(+), 33 deletions(-)
 
-Agree -- following the datasheet default is probably the right thing to
-do here.
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index c6794d0e24eb..cb33f967d327 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -246,56 +246,56 @@ extern unsigned int kobjsize(const void *objp);
+  * vm_flags in vm_area_struct, see mm_types.h.
+  * When changing, update also include/trace/events/mmflags.h
+  */
+-#define VM_NONE		0x00000000
++#define VM_NONE		0
+ 
+-#define VM_READ		0x00000001	/* currently active flags */
+-#define VM_WRITE	0x00000002
+-#define VM_EXEC		0x00000004
+-#define VM_SHARED	0x00000008
++#define VM_READ		BIT(0)		/* currently active flags */
++#define VM_WRITE	BIT(1)
++#define VM_EXEC		BIT(2)
++#define VM_SHARED	BIT(3)
+ 
+ /* mprotect() hardcodes VM_MAYREAD >> 4 == VM_READ, and so for r/w/x bits. */
+-#define VM_MAYREAD	0x00000010	/* limits for mprotect() etc */
+-#define VM_MAYWRITE	0x00000020
+-#define VM_MAYEXEC	0x00000040
+-#define VM_MAYSHARE	0x00000080
++#define VM_MAYREAD	BIT(4)		/* limits for mprotect() etc */
++#define VM_MAYWRITE	BIT(5)
++#define VM_MAYEXEC	BIT(6)
++#define VM_MAYSHARE	BIT(7)
+ 
+-#define VM_GROWSDOWN	0x00000100	/* general info on the segment */
++#define VM_GROWSDOWN	BIT(8)		/* general info on the segment */
+ #ifdef CONFIG_MMU
+-#define VM_UFFD_MISSING	0x00000200	/* missing pages tracking */
++#define VM_UFFD_MISSING	BIT(9)		/* missing pages tracking */
+ #else /* CONFIG_MMU */
+-#define VM_MAYOVERLAY	0x00000200	/* nommu: R/O MAP_PRIVATE mapping that might overlay a file mapping */
++#define VM_MAYOVERLAY	BIT(9)		/* nommu: R/O MAP_PRIVATE mapping that might overlay a file mapping */
+ #define VM_UFFD_MISSING	0
+ #endif /* CONFIG_MMU */
+-#define VM_PFNMAP	0x00000400	/* Page-ranges managed without "struct page", just pure PFN */
+-#define VM_UFFD_WP	0x00001000	/* wrprotect pages tracking */
++#define VM_PFNMAP	BIT(10)		/* Page-ranges managed without "struct page", just pure PFN */
++#define VM_UFFD_WP	BIT(12)		/* wrprotect pages tracking */
+ 
+-#define VM_LOCKED	0x00002000
+-#define VM_IO           0x00004000	/* Memory mapped I/O or similar */
++#define VM_LOCKED	BIT(13)
++#define VM_IO           BIT(14)		/* Memory mapped I/O or similar */
+ 
+ 					/* Used by sys_madvise() */
+-#define VM_SEQ_READ	0x00008000	/* App will access data sequentially */
+-#define VM_RAND_READ	0x00010000	/* App will not benefit from clustered reads */
+-
+-#define VM_DONTCOPY	0x00020000      /* Do not copy this vma on fork */
+-#define VM_DONTEXPAND	0x00040000	/* Cannot expand with mremap() */
+-#define VM_LOCKONFAULT	0x00080000	/* Lock the pages covered when they are faulted in */
+-#define VM_ACCOUNT	0x00100000	/* Is a VM accounted object */
+-#define VM_NORESERVE	0x00200000	/* should the VM suppress accounting */
+-#define VM_HUGETLB	0x00400000	/* Huge TLB Page VM */
+-#define VM_SYNC		0x00800000	/* Synchronous page faults */
+-#define VM_ARCH_1	0x01000000	/* Architecture-specific flag */
+-#define VM_WIPEONFORK	0x02000000	/* Wipe VMA contents in child. */
+-#define VM_DONTDUMP	0x04000000	/* Do not include in the core dump */
++#define VM_SEQ_READ	BIT(15)		/* App will access data sequentially */
++#define VM_RAND_READ	BIT(16)		/* App will not benefit from clustered reads */
++
++#define VM_DONTCOPY	BIT(17)		/* Do not copy this vma on fork */
++#define VM_DONTEXPAND	BIT(18)		/* Cannot expand with mremap() */
++#define VM_LOCKONFAULT	BIT(19)		/* Lock the pages covered when they are faulted in */
++#define VM_ACCOUNT	BIT(20)		/* Is a VM accounted object */
++#define VM_NORESERVE	BIT(21)		/* should the VM suppress accounting */
++#define VM_HUGETLB	BIT(22)		/* Huge TLB Page VM */
++#define VM_SYNC		BIT(23)		/* Synchronous page faults */
++#define VM_ARCH_1	BIT(24)		/* Architecture-specific flag */
++#define VM_WIPEONFORK	BIT(25)		/* Wipe VMA contents in child. */
++#define VM_DONTDUMP	BIT(26)		/* Do not include in the core dump */
+ 
+ #ifdef CONFIG_MEM_SOFT_DIRTY
+-# define VM_SOFTDIRTY	0x08000000	/* Not soft dirty clean area */
++# define VM_SOFTDIRTY	BIT(27)		/* Not soft dirty clean area */
+ #else
+ # define VM_SOFTDIRTY	0
+ #endif
+ 
+-#define VM_MIXEDMAP	0x10000000	/* Can contain "struct page" and pure PFN pages */
+-#define VM_HUGEPAGE	0x20000000	/* MADV_HUGEPAGE marked this vma */
+-#define VM_NOHUGEPAGE	0x40000000	/* MADV_NOHUGEPAGE marked this vma */
++#define VM_MIXEDMAP	BIT(28)		/* Can contain "struct page" and pure PFN pages */
++#define VM_HUGEPAGE	BIT(29)		/* MADV_HUGEPAGE marked this vma */
++#define VM_NOHUGEPAGE	BIT(30)		/* MADV_NOHUGEPAGE marked this vma */
+ #define VM_MERGEABLE	BIT(31)		/* KSM may merge identical pages */
+ 
+ #ifdef CONFIG_ARCH_USES_HIGH_VMA_FLAGS
+-- 
+2.47.3
 
-For the future, we could consider an optional device tree property to
-describe this read/write bit polarity.
 
-Thanks,
-Ian
 
-> 
-> > 
-> > [1] DA9052 CFR0011-120-00 Rev 5, Revision 2.5, 13-Feb-2017, page 67.
-> > [2] DA9053 DA9053-00-IDS2n_131017, page 54.
-> > 
-> > Blue skies,
-> > Ian
-> 
-> 
-> Best regards,
-> Marcus Folkesson
+
+Amazon Web Services Development Center Germany GmbH
+Tamara-Danz-Str. 13
+10243 Berlin
+Geschaeftsfuehrung: Christian Schlaeger
+Eingetragen am Amtsgericht Charlottenburg unter HRB 257764 B
+Sitz: Berlin
+Ust-ID: DE 365 538 597
+
 
