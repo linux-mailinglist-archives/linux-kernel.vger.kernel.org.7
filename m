@@ -1,127 +1,222 @@
-Return-Path: <linux-kernel+bounces-840587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ECBCBB4BC0
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 19:46:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69E9BBB4BC3
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 19:46:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D0903B66FB
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 17:46:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DEC019C8761
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 17:47:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A464726C3B0;
-	Thu,  2 Oct 2025 17:46:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9115F274B39;
+	Thu,  2 Oct 2025 17:46:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jVGTfPfx"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G1ravXce"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66111157A72
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 17:46:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51F519882B
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 17:46:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759427189; cv=none; b=PGIAJd4LaZYTmMberezDW+7CzBzVlJyEzDu94IVoeg0odE+rKCipTy3uJ8eKXepSuo+e86/Rx5HkXXakqj3sxCEv1kiZ0SkhWAytDSNyZzhjcKByr3MT99W9BY26Wep4tGQiP5AdRAjr6FyIxwEinhmFxIOAuAJaGp8UrJFvIH0=
+	t=1759427190; cv=none; b=hdR+2vA9hfYw+NtDbBuyF7Q1yVljK9Mjm0qK4XGNgp3zj0y0ocRJrZRgR0ekA85bUQADX+9WA9l6LJxUYCYqTfhYLfaB7AaoCSMERDfL474iSzstocera7pc4uJ/w1XryygkRakq4fWMp9KcRHddHCTWwi5YgmJufB3HtUb3tN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759427189; c=relaxed/simple;
-	bh=d8JhIBf9djcZXIfnCciHGMpxUiYp6eLd6xES6V8e5b4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Pv0l3Hd9E3qlTJ5PTt5dIE5/Xt/FCi4b6psFMUnAWvXSChdM3FMA0urnNRdBsMzMdv5jTiDVbFANNKpqhHxos/fjZgYYVUQP3Lz8AKDyT52FTS6zPnP7nEXOZAD+3OJhHH7wyfAFQ92qoaGgXKB8Adv5e5JqRiE7y2vR5kZe3jY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jVGTfPfx; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-46e2c3b6d4cso11012335e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 10:46:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759427186; x=1760031986; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=U9sNcmKDNcl/Dt3ZzxXXGUrNG+YQTuMkF7kiQoXtwf4=;
-        b=jVGTfPfxVhVMhkmsDF+t7oSZfg4gnmuGPOwpaeSwkFBUD/50nnhMYzq0Cnt3EZN8rm
-         OgcjZt/+08HKhmT6NKfQhNI+tiYtg7pcN2cE9un/y1+fR0kcagV6ar5d3r630WiFTXQe
-         Qm/uWOPnnUSGG8CwRj2bVsBawLAlUe1Dd1B6OqK8+6wy3IJFGkRaBFjfuRS84jsfYfbN
-         VVawYtsjuxCMBWwm19qt1LD5XYR+jGo3QwBO5dfUroy8Z5A7CbRd/AyMqK9hXY9rue1j
-         KklufSGQzC1CUq6r6qPUkNaV6v+MAvx/zLTZnNDzsIqKJ1Zbx89fCoe6B9aa+91OCZ+4
-         +Fcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759427186; x=1760031986;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=U9sNcmKDNcl/Dt3ZzxXXGUrNG+YQTuMkF7kiQoXtwf4=;
-        b=KyYFqt5jnULyyPlp4eQ0DJPePJr2LIixhC3STnAUVgSaN9j7OooJny/ETuDxqR9I0O
-         JiiqriC1VSIKEhYO6tYaj18n2T01BM8+9oEgD6Re8jSPksqGjgpKmsT7nvEUC3Fh32Jj
-         H1mfij3LfLhLmRzRHhzqxUjKCf6gkrXvzFceUJnusVjMGz3cPwrK6pFk1NoKx+qwcj/0
-         6DV9uODWYSl0TMoGJQC5FVN0HmaqA78+9SXyOcVKR8q7VkYLPzRsWzewrP+RJggZ7RDE
-         V25XHPi7ln/tg4PVellpscvqcXvVqiES370zFkIr/xVJnCuJHaATPDU1/L8ysSnRujkM
-         ehxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWT+Hxn/ddT/nxSv9wYPK9KL3novQ55nYVNCPsBWL9kwcXpi4YISenpJun+8hfxKNKWPQ+gffmMFoPtrhE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/stq7NikP8zIF/0Cdnrg20ahkn1H1GzWo6DuYHv7WWGVQ7i3H
-	W2P/XXHxH6jS3KJo47TAf/sfUcEuFtlMIWYOVolgI8AsVJG3iscRMHaR
-X-Gm-Gg: ASbGncsjJ1xx4OA5PdAJ0sar9JHl6+NjAxgg3kp7d/uCMWFWZREJu9+Jh3V/UMe/yOG
-	H4F3T1BTQxNvQaS82UrR337HMX2EOdgNYsgxBQV6fFVBsgDjuLbVmXE3JQ70PSeDyimaD0NJL29
-	O+WcPh0NA6rU/fUEpABioo60ZARy/3ARMm0FGbdDa4f/wKN+K8igYagHe/bepRyJu+XXvRtMT7o
-	UXenbO+uyyP0ajtuvkzBIZnatxM49NGmFikGazo/hUNPU1o/p9zpBx5xvmobpjdBVigL2rNMY/Y
-	oYnsorbKZiFUFke39Fkht88UnoUBJo7EGHa4OmLDE66jllZ3Ch8hYzhpo0rmNrxb4EYuK2UyP69
-	6aM9Jx2otlrCs51vT90481ntmNE204StaR3yEShyNcQ==
-X-Google-Smtp-Source: AGHT+IHDGwwW7vV9OjeTKcYO8fMtxK6OUhwxnDACT7Snh7gOrjwK+iCQOUA3HzoB6hu+zfULqCwkWQ==
-X-Received: by 2002:a05:6000:2c11:b0:3ee:1296:d9e8 with SMTP id ffacd0b85a97d-4256714ca6cmr97372f8f.17.1759427185491;
-        Thu, 02 Oct 2025 10:46:25 -0700 (PDT)
-Received: from pc.. ([105.163.1.135])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e693bcc2csm43640665e9.12.2025.10.02.10.46.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 10:46:24 -0700 (PDT)
-From: Erick Karanja <karanja99erick@gmail.com>
-To: andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	david.hunter.linux@gmail.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Erick Karanja <karanja99erick@gmail.com>
-Subject: [PATCH] net: fsl_pq_mdio: Fix device node reference leak in fsl_pq_mdio_probe
-Date: Thu,  2 Oct 2025 20:46:17 +0300
-Message-ID: <20251002174617.960521-1-karanja99erick@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1759427190; c=relaxed/simple;
+	bh=azAzbZ47I5l4JwPusJDx6KaCBO3+FNHt+yo9NUchArw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=K4twWHx6786CZWF6e8xo46wc2GfyCVsqjoGzbGZgo366OKIE2VXch7ZPlbpdto8L60Bohh5T0f+1KLhFKGHNrfWfIca266qB19u53tve1ZwLeYH4QinEAtBjRmXNCeKtkebSwif2WN0Qqzb4pxcSM5ej++BdO9dVRTXA5KxcenU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G1ravXce; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759427189; x=1790963189;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=azAzbZ47I5l4JwPusJDx6KaCBO3+FNHt+yo9NUchArw=;
+  b=G1ravXceiFrGWAytc5LpXgsQzsPw2ZC3Lr8B1OcIHTkvPfPB6SgQ3IEo
+   25EJlgwMQBkDDospHo+IXVryRxdTPRdyhZL6YEt37efaUtPZow7Q1t4tI
+   7dzZ05cmDi7vl47QX8YsI+LScSdi+Z8VGxGd7FGcJbQZ2JtHkswhruZ6V
+   S43eW7qOsoPl0uUm2Sx0OWZYEmN53iGz8AXHVBrKNEtq/u47Vq2ryEb1C
+   cH422nU8vXTlkqPwPNmNU1a4h8I/0cIjckBfVDvRB0OesxoBg12LfRXJ9
+   hVRK6uzG27+2rtwaAFJ5IZoxHQVp+8vlestIy9iEGE3Wm0gfBygA6pqtV
+   g==;
+X-CSE-ConnectionGUID: X+RFX0cDQbuScUMcaTEbHQ==
+X-CSE-MsgGUID: aX0e6OyORBiat7hNds99fA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11570"; a="61754831"
+X-IronPort-AV: E=Sophos;i="6.18,310,1751266800"; 
+   d="scan'208";a="61754831"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2025 10:46:28 -0700
+X-CSE-ConnectionGUID: ahvDI2XSQ+SBOz5QdyVvkQ==
+X-CSE-MsgGUID: riuwifEfT8SmZ0tRrvNZoQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,310,1751266800"; 
+   d="scan'208";a="179116115"
+Received: from schen9-mobl4.amr.corp.intel.com (HELO [10.125.110.7]) ([10.125.110.7])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2025 10:46:25 -0700
+Message-ID: <881eeb68d4e0711bdf73a7fe27cc29d9cae60321.camel@linux.intel.com>
+Subject: Re: [RFC PATCH v4 07/28] sched: Add helper function to decide
+ whether to allow cache aware scheduling
+From: Tim Chen <tim.c.chen@linux.intel.com>
+To: Peter Zijlstra <peterz@infradead.org>, "Chen, Yu C" <yu.c.chen@intel.com>
+Cc: Ingo Molnar <mingo@redhat.com>, K Prateek Nayak
+ <kprateek.nayak@amd.com>,  "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>, Juri Lelli	
+ <juri.lelli@redhat.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel
+ Gorman <mgorman@suse.de>,  Valentin Schneider	 <vschneid@redhat.com>, Libo
+ Chen <libo.chen@oracle.com>, Madadi Vineeth Reddy	
+ <vineethr@linux.ibm.com>, Hillf Danton <hdanton@sina.com>, Shrikanth Hegde	
+ <sshegde@linux.ibm.com>, Jianyong Wu <jianyong.wu@outlook.com>, Yangyu Chen
+	 <cyy@cyyself.name>, Tingyin Duan <tingyin.duan@gmail.com>, Vern Hao	
+ <vernhao@tencent.com>, Len Brown <len.brown@intel.com>, Aubrey Li	
+ <aubrey.li@intel.com>, Zhao Liu <zhao1.liu@intel.com>, Chen Yu	
+ <yu.chen.surf@gmail.com>, linux-kernel@vger.kernel.org
+Date: Thu, 02 Oct 2025 10:46:25 -0700
+In-Reply-To: <20251002115034.GS3419281@noisy.programming.kicks-ass.net>
+References: <cover.1754712565.git.tim.c.chen@linux.intel.com>
+	 <701c7be7f0e69582d9ad0c25025ec2e133e73fbb.1754712565.git.tim.c.chen@linux.intel.com>
+	 <20251001131715.GO4067720@noisy.programming.kicks-ass.net>
+	 <89c777b7-33bd-400d-8b6f-4e6d697dc632@intel.com>
+	 <20251002115034.GS3419281@noisy.programming.kicks-ass.net>
+Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual;
+ keydata=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
+ uQ==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Add missing of_node_put call to release device node tbi obtained
-via for_each_child_of_node.
+On Thu, 2025-10-02 at 13:50 +0200, Peter Zijlstra wrote:
+> On Thu, Oct 02, 2025 at 07:31:40PM +0800, Chen, Yu C wrote:
+> > On 10/1/2025 9:17 PM, Peter Zijlstra wrote:
+> > > On Sat, Aug 09, 2025 at 01:03:10PM +0800, Chen Yu wrote:
+> > > > From: Tim Chen <tim.c.chen@linux.intel.com>
+> > > >=20
+> > > > Cache-aware scheduling is designed to aggregate threads into their
+> > > > preferred LLC, either via the task wake up path or the load balanci=
+ng
+> > > > path. One side effect is that when the preferred LLC is saturated,
+> > > > more threads will continue to be stacked on it, degrading the workl=
+oad's
+> > > > latency. A strategy is needed to prevent this aggregation from goin=
+g too
+> > > > far such that the preferred LLC is too overloaded.
+> > >=20
+> > > So one of the ideas was to extend the preferred llc number to a mask.
+> > > Update the preferred mask with (nr_threads / llc_size) bits, indicati=
+ng
+> > > the that many top llc as sorted by occupancy.
+> > >=20
+> > >=20
+> >=20
+> > Having more than one preferred LLC helps prevent aggregation from going
+> > too far on a single preferred LLC.
+> >=20
+> > One question would be: if one LLC cannot hold all the threads of a proc=
+ess,
+> > does a second preferred LLC help in this use case? Currently, this patc=
+h
+> > gives up task aggregation and falls back to legacy load balancing if th=
+e
+> > preferred LLC is overloaded. If we place threads across two preferred L=
+LCs,
+> > these threads might encounter cross-LLC latency anyway - so we may as w=
+ell
+> > let
+> > legacy load balancing spread them out IMO.
+>=20
+> Well, being stuck on 2 LLCs instead of being spread across 10 still
+> seems like a win, no?
+>=20
+> Remember, our friends at AMD have *MANY* LLCs.
+>=20
+> > Another issue that Patch 7 tries to address is avoiding task
+> > bouncing between preferred LLCs and non-preferred LLCs. If we
+> > introduce a preferred LLC priority list, logic to prevent task
+> > bouncing between different preferred LLCs might be needed in
+> > load balancing, which could become complicated.=20
+>=20
+> It doesn't really become more difficult to tell preferred LLC from
+> non-preferred LLC with a asm. So why should things get more complicatd?
+>=20
 
-Fixes: afae5ad78b342 ("net/fsl_pq_mdio: streamline probing of MDIO nodes")
+For secondary and maybe tertiary LLCs to work well, the
+ordering of the occupancy between the LLCs have to be
+relatively stable. Or else we could have many
+tasks migration between the LLCs when the ordering change.
+Frequent task migrations could be worse for performance.
 
-Signed-off-by: Erick Karanja <karanja99erick@gmail.com>
----
- drivers/net/ethernet/freescale/fsl_pq_mdio.c | 2 ++
- 1 file changed, 2 insertions(+)
+From previous experiments, we saw that the occupancy could
+have some fairly big fluctuations.  That's the reason=C2=A0
+we set the preferred LLC threshold to be high (2x).
+We want to be sure before jerking tasks around to a new LLC.
 
-diff --git a/drivers/net/ethernet/freescale/fsl_pq_mdio.c b/drivers/net/ethernet/freescale/fsl_pq_mdio.c
-index 577f9b1780ad..de88776dd2a2 100644
---- a/drivers/net/ethernet/freescale/fsl_pq_mdio.c
-+++ b/drivers/net/ethernet/freescale/fsl_pq_mdio.c
-@@ -479,10 +479,12 @@ static int fsl_pq_mdio_probe(struct platform_device *pdev)
- 					"missing 'reg' property in node %pOF\n",
- 					tbi);
- 				err = -EBUSY;
-+				of_node_put(tbi);
- 				goto error;
- 			}
- 			set_tbipa(*prop, pdev,
- 				  data->get_tbipa, priv->map, &res);
-+			of_node_put(tbi);
- 		}
- 	}
- 
--- 
-2.43.0
+With the secondary, tertiary LLCs, LLC ordering would change
+more frequently than having just a single preferred LLC.
+The secondary and tertiary LLCs have fewer tasks/mm and
+occupancy could fluctuate more.
+One concern is this could lead to extra task migrations
+that could negate any cache consolidation benefits gained.
 
+Tim
+
+>=20
+> Anyway, it was just one of the 'random' ideas I had kicking about.
+> Reality always ruins things, *shrug* :-)
 
