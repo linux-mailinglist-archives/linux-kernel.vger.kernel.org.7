@@ -1,111 +1,122 @@
-Return-Path: <linux-kernel+bounces-840841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4022BB58AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 00:30:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2B38BB58B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 00:30:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 498803A51D1
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 22:30:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F2E71927335
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 22:31:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7C8426B0AE;
-	Thu,  2 Oct 2025 22:30:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA151277003;
+	Thu,  2 Oct 2025 22:30:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="dfOZmbP0"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEDE72F2D;
-	Thu,  2 Oct 2025 22:30:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZcNcVw2b"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34D871DED77
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 22:30:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759444226; cv=none; b=WAJMunQnTWjlI8xeLrE38EPNU4Mv/D4aEZIKzvHEG+VdtXQOA85AIxmdzrnBnHCrQ+WsSNFeDmtVUFcY02i5SjEGCvYeILh9RmqC8YTccmEopO7ox5U3bLiEhSXS3o/D0LGl1U3qLQu2Fyi41vEm7Wigj2g84Tgi2YNeJQ2sIs0=
+	t=1759444236; cv=none; b=gu9qyWGB22JijijULLlQgghTNZxC89heSFPfUDJuXZOOtKGA9ujZW2SzmaXpAa/PdaECEuTBlWcrFwY43mZnQxRwc4UG2mB5j6MoL87Z36IqgYZ/rb6S+GVK+QrxZZciC5kmdQI4P1I+mkXY63hy3FZtVC320hKXTU3TcYmmsyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759444226; c=relaxed/simple;
-	bh=fF75rwgKIO8KDklsni4x/9EcLRPv8qHp2cT2OZREY20=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=AVzPNBx15R/P5h+c2YiAYg89g8Rz4ohpp6CtFPoAMfoEGI3t5hS0U1WKcDnuE4kkbcoNXvEuo/7Np0CxCrftwfgvV6Uo4ehE7/OWBPp/jR0kfonZe0uT2+AGDRULf24gEBM3u7LNejMeJLr3FsxzCCiVaLKUN3vBdmL2WgB7rj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=dfOZmbP0; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [100.64.160.245] (unknown [20.191.74.188])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 136E8211B7D4;
-	Thu,  2 Oct 2025 15:30:23 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 136E8211B7D4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1759444224;
-	bh=z6OYRJ9samRnQk1PTwtlFMjIR8HmV/wZd9vd6dwjQ+I=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=dfOZmbP0MBG3PV5UExxHxALUVk0WBPVdqaxtHduycv0PWhGynTrLwgf71Ubp9yIFB
-	 fGT1OBF9PTcjxiXKFltOiI0OjYGpVRC1IvwRLI3EKVxESXtFj00grsB7+TBXl+TLMJ
-	 /b3asgCXtO9sKk5hVXNLnCkF+4ZE4WC9JXcW2QfY=
-Message-ID: <605ce8cf-bdf9-45ca-b407-708625c8dcfa@linux.microsoft.com>
-Date: Thu, 2 Oct 2025 15:30:22 -0700
+	s=arc-20240116; t=1759444236; c=relaxed/simple;
+	bh=mclwb4BLPmCejXVZg2cR82rxkFBq0yH1/DlDBXyjY74=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gtFb9jh+7kcS2bQ8y7qRARJtt+tJJNhnwIeVy2qBeo1XPj3d/jvlrFkXs3mfPjfRUixw2UDgZO0wnjUSC9XVZaGrHvDO7ClQWO/Loj93Fh7K99drJAPNomH3osRTudLEKOTE8gexjHx+SYuw9xdVhK7JI4JIpBtVNDq8jO2/M7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZcNcVw2b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCCA5C4CEFA
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 22:30:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759444235;
+	bh=mclwb4BLPmCejXVZg2cR82rxkFBq0yH1/DlDBXyjY74=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ZcNcVw2bBfizYT3syecFR74oq8jg0ZM0QoFIkNJhekVil48dSD9CJOrHTQe+UXGZS
+	 XyukVruIMo55D3gW2VGpMca6347oLdOIOjpmN3RQA1CLvzAsQr0+k7fC2pWFFrYPEq
+	 UuCZMqIzlhEQQ0xJKxIRb169HgxbNTyyQL3Pfh9A9Yt3qnrl+Gx7K9jJBM8qV41RDN
+	 gwGPbRa6KOAZkTxnk8APDEz2mGcnQPLs9PrBzjkUi76E847gXDUr+GbHfZ7Bpwy9IC
+	 PkcHdQRyg6bMRVadQFk4/LxaRJmADo0csj8EdYKzT1R3jlLyQ7yBh5ErbDM6qvphxF
+	 Xo1ypXm6IGgaw==
+Received: by mail-yx1-f52.google.com with SMTP id 956f58d0204a3-6353f2937f3so1704442d50.3
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 15:30:35 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXLCd0Wb3TTYmrSkyzKsQMyIglg4W4HtmHlpVuVo6Nsi6qSjJcuusIrp8f65h6IkQmXd8yP9xPK+OVcqqY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfSoxnHxp70tasf+d2fn+35Tgc76VQBCt4ed4IieWCyKhBSI4F
+	EwjMn2sjO25UoJKGJcIbCnsqY1IakFkK0Oa1CfMMwfLEi8pJuLx801iChAXepjbzIe5LDe20Szd
+	QKAZ9oPLYHeVSoa7jfbTDCJADsEuCaWQNVk6/WwRe3g==
+X-Google-Smtp-Source: AGHT+IER8jPAUzVQN0o6Ky1MS7KVMc0a4lSY1AA2ChRrKcHMDDcDaZNsOD3pjWILpiKV4YkdhpOWKKWWlyCIVXeH7GA=
+X-Received: by 2002:a05:690e:2513:20b0:5f4:55cb:80d4 with SMTP id
+ 956f58d0204a3-63b9a074d1emr857849d50.17.1759444235020; Thu, 02 Oct 2025
+ 15:30:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
- Dexuan Cui <decui@microsoft.com>,
- Nuno Das Neves <nunodasneves@linux.microsoft.com>,
- Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
- "open list:Hyper-V/Azure CORE AND DRIVERS" <linux-hyperv@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>,
- easwar.hariharan@linux.microsoft.com
-Subject: Re: [PATCH] Drivers: hv: Use -ETIMEDOUT for HV_STATUS_TIME_OUT
- instead of -EIO
-To: "K. Y. Srinivasan" <kys@microsoft.com>
-References: <20251002221347.402320-1-easwar.hariharan@linux.microsoft.com>
-From: Easwar Hariharan <easwar.hariharan@linux.microsoft.com>
-Content-Language: en-US
-In-Reply-To: <20251002221347.402320-1-easwar.hariharan@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250916-luo-pci-v2-6-c494053c3c08@kernel.org>
+ <20250929175704.GK2695987@ziepe.ca> <CAF8kJuNfCG08FU=BmLtoh6+Z4V5vPHOMew9NMyCWQxJ=2MLfxg@mail.gmail.com>
+ <CA+CK2bBFZn7EGOJakvQs3SX3i-b_YiTLf5_RhW_B4pLjm2WBuw@mail.gmail.com>
+ <2025093030-shrewdly-defiant-1f3e@gregkh> <CA+CK2bDH=7H58kbwDM1zQ37uN_k61H_Fu8np1TjuG_uEVfT1oA@mail.gmail.com>
+ <2025093052-resupply-unmixable-e9bb@gregkh> <CA+CK2bCBFZDsaEywbfCzDJrH3oXyMmSffV-x7bOs8qC7NT7nAg@mail.gmail.com>
+ <2025100147-scrubbed-untold-fc55@gregkh> <CA+CK2bA0acjg-CEKufERu_ov4up3E4XTkJ6kbEDCny0iASrFVQ@mail.gmail.com>
+ <2025100225-abridge-shifty-3d50@gregkh>
+In-Reply-To: <2025100225-abridge-shifty-3d50@gregkh>
+From: Chris Li <chrisl@kernel.org>
+Date: Thu, 2 Oct 2025 15:30:24 -0700
+X-Gmail-Original-Message-ID: <CACePvbWw9G=y_cycWFMXxRbmuAE8yFCM0Z3y=Ojw30ENDkDL-g@mail.gmail.com>
+X-Gm-Features: AS18NWBKklIiW19M0HLe-eu5UU3jj0bpgI_sv1S6en5UzgvXxCD0FefovaS2CF8
+Message-ID: <CACePvbWw9G=y_cycWFMXxRbmuAE8yFCM0Z3y=Ojw30ENDkDL-g@mail.gmail.com>
+Subject: Re: [PATCH v2 06/10] PCI/LUO: Save and restore driver name
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Pasha Tatashin <pasha.tatashin@soleen.com>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	Bjorn Helgaas <bhelgaas@google.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Len Brown <lenb@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	David Matlack <dmatlack@google.com>, Pasha Tatashin <tatashin@google.com>, 
+	Jason Miu <jasonmiu@google.com>, Vipin Sharma <vipinsh@google.com>, 
+	Saeed Mahameed <saeedm@nvidia.com>, Adithya Jayachandran <ajayachandra@nvidia.com>, 
+	Parav Pandit <parav@nvidia.com>, William Tu <witu@nvidia.com>, Mike Rapoport <rppt@kernel.org>, 
+	Leon Romanovsky <leon@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/2/2025 3:13 PM, Easwar Hariharan wrote:
-> Use the -ETIMEDOUT errno value as the correct 1:1 match for the
-> hypervisor timeout status
-> 
-> Fixes: 3817854ba89201 ("hyperv: Log hypercall status codes as strings")
-> Signed-off-by: Easwar Hariharan <easwar.hariharan@linux.microsoft.com>
-> ---
->  drivers/hv/hv_common.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/hv/hv_common.c b/drivers/hv/hv_common.c
-> index 49898d10fafff..9b51b67d54cc8 100644
-> --- a/drivers/hv/hv_common.c
-> +++ b/drivers/hv/hv_common.c
-> @@ -781,7 +781,7 @@ static const struct hv_status_info hv_status_infos[] = {
->  	_STATUS_INFO(HV_STATUS_INVALID_LP_INDEX,		-EIO),
->  	_STATUS_INFO(HV_STATUS_INVALID_REGISTER_VALUE,		-EIO),
->  	_STATUS_INFO(HV_STATUS_OPERATION_FAILED,		-EIO),
-> -	_STATUS_INFO(HV_STATUS_TIME_OUT,			-EIO),
-> +	_STATUS_INFO(HV_STATUS_TIME_OUT,			-ETIMEDOUT),
->  	_STATUS_INFO(HV_STATUS_CALL_PENDING,			-EIO),
->  	_STATUS_INFO(HV_STATUS_VTL_ALREADY_ENABLED,		-EIO),
->  #undef _STATUS_INFO
+On Wed, Oct 1, 2025 at 11:09=E2=80=AFPM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+> Just keeping a device "alive" while rebooting into the same exact kernel
+> image seems odd to me given that this is almost never what people
+> actually do.  They update their kernel with the weekly stable release to
+> get the new bugfixes (remember we fix 13 CVEs a day), and away you go.
+> You are saying that this workload would not actually be supported, so
+> why do you want live update at all?  Who needs this?
 
-Actually looking at the whole struct, it may be useful to also change at least some of
- the following codes?
+I saw Pasha reply to a lot of your questions. I can take a stab on who
+needs it. Others feel free to add/correct me. The major cloud vendor
+(you know who is the usual suspect) providing GPU to the VM will want
+it. The usage case is that the VM is controlled by the customer. The
+cloud provider has a contract on how many maintenance downtimes to the
+VM. Let's say X second maintenance downtime per year. When upgrading
+the host kernel, typically the VM can be migrated to another host
+without much interruption, so it does not take much from the down time
+budget. However when you have a GPU attached to the VM, the GPU is
+running some ML jobs, there is no good way to migrate that GPU context
+to another machine. Instead, we can do a liveupdate from the host
+kernel. During the liveupdate, the old kernel saves the liveupdate
+state. VM is paused to memory while the GPU as a PCI device is kept on
+running.  ML jobs are still up.  The kernel liveupdate kexec to the
+new kernel version. Restore and reconstruct the software side of the
+device state. VM re-attached to the file descriptor to get the
+previous context. In the end the VM can resume running with the new
+kernel while the GPU keeps running the ML job. From the VM point of
+view, there are Y seconds the VM does not respond during the kexec.
+The GPU did not lose the context and VM did not reboot. The benefit is
+that Y second is much smaller than the time to reboot the VM  and
+restart the GPU ML jobs. So that Y can fit into the X second
+maintenance downtime per year in the service contract.
 
-        _STATUS_INFO(HV_STATUS_INVALID_ALIGNMENT,               -EIO), -> EINVAL
-        _STATUS_INFO(HV_STATUS_ACCESS_DENIED,                   -EIO), -> EACCES
-        _STATUS_INFO(HV_STATUS_INVALID_PARTITION_STATE,         -EIO), -> EINVAL
-        _STATUS_INFO(HV_STATUS_OPERATION_DENIED,                -EIO), -> EACCES
-        _STATUS_INFO(HV_STATUS_PROPERTY_VALUE_OUT_OF_RANGE,     -EIO), -> ERANGE
-        _STATUS_INFO(HV_STATUS_INSUFFICIENT_BUFFERS,            -EIO), -> ENOBUFS
-        _STATUS_INFO(HV_STATUS_NOT_ACKNOWLEDGED,                -EIO), -> EBUSY
-        _STATUS_INFO(HV_STATUS_INVALID_VP_STATE,                -EIO), -> EINVAL
-        _STATUS_INFO(HV_STATUS_INVALID_LP_INDEX,                -EIO), -> EINVAL
-        _STATUS_INFO(HV_STATUS_INVALID_REGISTER_VALUE,          -EIO), -> EINVAL
-        _STATUS_INFO(HV_STATUS_VTL_ALREADY_ENABLED,             -EIO), -> EBUSY
+Hope that explanation makes sense to you.
 
-Nuno, Stas, others, what do you think?
-
-Thanks,
-Easwar (he/him)
+Chris
 
