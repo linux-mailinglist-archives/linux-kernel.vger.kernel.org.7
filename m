@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-840741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0794BB520B
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 22:32:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52045BB520C
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 22:32:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85494482999
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 20:31:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8B9D19E6921
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 20:32:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B118A239E65;
-	Thu,  2 Oct 2025 20:31:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD42529CB52;
+	Thu,  2 Oct 2025 20:31:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="niKD+msE"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ksl+zng1"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0E3B288CA6
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 20:31:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09AC5296BC8
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 20:31:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759437095; cv=none; b=mKVBTz6LRE+o1wjV9IFr/UW9RNdO6kkwrvtoZeGLESs4oF5r9ZmKh9Zq7u76ugUzOeeyCEHNDDf+u+yPxNA+BBmjVAP19rEQod4Db0tWgRzfulBA/Po5gVI5VLmYVnImh7biH6VsuUhRIQO/zbTngttkuObg2T6SLMaXKw23HZk=
+	t=1759437097; cv=none; b=SYDZMdyeS/an/jgkGWnH+8u6FvaQyDjolbEs3m76CBkoPfRRShNVIENGO5jEZ5E8FW3CLtjy3J4LZULBwvquL8cS2HsakoJyrsDbxxvJPNC5opjPcR0PMQLKJ0luzJU0vUJeU6/Quwaab7EtsKDegFhYS4vIZ7+FibXJmrZ4cNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759437095; c=relaxed/simple;
-	bh=oFqfX8Z2mJdTJQsFSTDiVyLiBlBkNY9lzw2zoVWVqgs=;
+	s=arc-20240116; t=1759437097; c=relaxed/simple;
+	bh=I6rdzfWZcPvJgyeOvLi+c+eLBQbKBQcDt5Nq6d7BpO8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RQh00IsRpJ0bubWiVLabZDInSW+E8ic2P4V4WSlRGKUZVkmDIT2O+wuxVLUosAi9lrVD/7u5yNOe/EdiD6qf8XO5wk+B/kRTElXOnFL5w0GLOS9H6X01TdCL6w9+34NL9PWRjo5MN4sI/1MoTI4cWK3fFB71Yse4v4H0uVc7Tp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=niKD+msE; arc=none smtp.client-ip=209.85.167.42
+	 MIME-Version; b=kfZtsj8G/MDgqyFw1itmIM9bPS/HdIYc03OeAHoEy5jeMRIsTDJkv+iAbzhDvjXuOYCQKVdW3tpoRXqg3vVB6nH3VioOxRcIjaA7buhkafRsX9eutSOM7DHqdk6+S26JgZaLxhiYEKOF1v1IEMX3iQn2nwv9GqlGIE9QjCRyftI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ksl+zng1; arc=none smtp.client-ip=209.85.167.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-57f1b88354eso1387312e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 13:31:33 -0700 (PDT)
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-57b8fc6097fso1983631e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 13:31:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759437092; x=1760041892; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1759437094; x=1760041894; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vnaoVcrd4pwmhUrJPtwORPmWfBFGgKSYQKAf2waxl6w=;
-        b=niKD+msEFgjCBdznqEM0W5KpORqIMjRPZWdSvQyWtjyix5xg2oQyb+ZQO5GTon9e76
-         5MAQna0YedZiKfPxPmkMco1JLb/6xWRrMultkECQKJiuTpp2q0xnvzyhgM0ynAWyBvcF
-         4NodqLTBn1157ZesKABN/FTAVV9Y+f8MZEcmrtRfiZS4tT4HqLJNgqUPi7dU7KMQJxxh
-         pmlfNn5MdroGnzmJtGZMWnAcJxAdekCtVBeSBfS0AWhzqz+4hO+2BKLoaUt1HEzDWcBu
-         MhdLU1+IQKCAESSu/evhGzFlhvsUyM9Oqh4uivsS50h6bywpoqEskj7DppR006VI9rl6
-         aKLA==
+        bh=URqcz1PqBiajUpbWyyVEtzMSrXQenRBULzsl914p9Po=;
+        b=ksl+zng1u11CfgZoTQqtSDgDfh/TYHHl5AEaVeayb5Me6Lf985cacFKHfcfHf6fn0E
+         W/nM58KgR6t0SqBbPNQAl+tFBpQJla0yB9A7FomQSY+w2hLTzIviiN+8fGW0Zni0E4jj
+         /WJcJiZtsfL6cqjWUR70ckco7bsc4OAj2QVYAt/8ix+dROslb4CFC+dgdEWdiEDNRQF0
+         5H0cuWcziVv070KWTcGSP9dWi7GACriPdvft7NmLYaLPpP28hDGsXC5fVFZwWVY16b7Y
+         SftGDf33haxBNuO3N1YAiPRsZsC8nm559VyBO6wHrlUHsMJJToBne5V4W+mQfVg+aFPo
+         C+xg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759437092; x=1760041892;
+        d=1e100.net; s=20230601; t=1759437094; x=1760041894;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=vnaoVcrd4pwmhUrJPtwORPmWfBFGgKSYQKAf2waxl6w=;
-        b=JUNotp2/iaIgKJngj++CxbyXDqAktgeubfhzkWMgxPVlRAkYTZbUHuthV0dzMdWmcv
-         I/XYKDlX8/n+EciWMpKZ7CbtIF2KFHwAJKWAY/eNChUZSk75DMKWCbmBQ7i1ZP12CdJz
-         ywjmqHbqgrZ37kloIWFxkHxVJeH3DWqGrCr5BgIwrzRo+TFkUUzy0gQrXdrEmSEu3UiL
-         sCUdZ1CcNmgIUoF4c0gdNMRieUypax0LnvHgwk7v5AbGRQVrwOgSEvgwicIHKPN9Pr4L
-         TpTvXPKP8o6J0ZrpGucLkMFLsz/NUQ2i4U/5kRnNX35j6s8xO/HJv857199ArQMlKd8f
-         0zbA==
-X-Forwarded-Encrypted: i=1; AJvYcCVL7tPeGhJUgg0dmy12TGVomQ7V6E0vt5+GIFkdR/RHgAj8Q4j4gl2N4bCvZjJ6eew+VwzVMJmBCPiC1bc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfsKkzmcnmuLwngXv6PdyzBjTVtpVs/afEGsAPwrbeOlf53Sdc
-	iXljwKQ2ILXhiyl4xQiB5u21IxjxbUXk3yxXS+JuBk75PX4q+i70WQXB
-X-Gm-Gg: ASbGncvukFv6/ih7Ki7pFiAK2wQyldESB139yjXdgADnOHHdfsqaJpOFTPUJV+3/ix5
-	ho/Ad4kUTbpFRMpuN/pnCYfATUQUwxmwD4yPMftr03ZAWi1lhljK2I6/IwTJOz3innzg00xsSO5
-	XfckeHNBaHCv3cxDWcoUwJHBGAl2h/duhm5SS6OwVI2rz0xaIDspL4gTohSzqg1OVa3fvnl2L26
-	/GTWkatjM9RBJjAqKBe7R9pEAnZ15OWpRnm4zxoxnfo/2Hm2IkiDPy6nwCiSxaUvnEm+vBg3YXz
-	WeB4dnVgYo9I8MXmMff7NSvHfJRUX3DpxwRJxeKK6Dn2YWIewauyYtUnbZyt69EXJal3LaXtAQc
-	AdbrIe3yPn/t2//KDoteaURWRJ+vZkO/UU2bfjT2FhFZm2r3gLKtKrtld/8ld17C2Beb7/howhI
-	39
-X-Google-Smtp-Source: AGHT+IEcgVk9tVcLruf5PYqQZRtZFzdaqWGCohValC9Aw6pmRxH0sM9m8K8y2YfTPEivEuP7ViNpPA==
-X-Received: by 2002:a05:6512:3d0f:b0:57c:90fc:7d3 with SMTP id 2adb3069b0e04-58cbc7764f4mr132824e87.53.1759437091706;
-        Thu, 02 Oct 2025 13:31:31 -0700 (PDT)
+        bh=URqcz1PqBiajUpbWyyVEtzMSrXQenRBULzsl914p9Po=;
+        b=MiLv1zWgGcXlWFGHzqsTZsILXMEBOlKlvpdzZSN2DF0RowDxqU5PsjpoTz1MwQ03Lk
+         J1bLa0c5Zx71NEnEDMOLrNhkyfq7RqAfaLGAvweA9hR/63WjZo7AcSiv6WPvGZ1cYB02
+         xm47+8JfMzoD76lo/ChiIVl66Si/nsvvf3hgAca5goMoKC9FA2GUTeVxtOcQRl46DwxE
+         kauzJaSYrvwG/xT6lYK0G9icuyaZ1AkZkXqv8d7ssx2mvKu0CQg6S0LNu8N/5cpBvgAM
+         bXNBxE3BKimKm1qJByxLNNXtZLbPxkRpWWh3BXqugf2K5P8bMKX+nCds7DNx7fJroVmy
+         qqig==
+X-Forwarded-Encrypted: i=1; AJvYcCWIFLAFAdyH6DPqYys0VU3Pk7mc/J75eH/hd16lCFp6kiULSKiOenAhw8f0luqbfgqUszEuNe/beipUb8c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMxAidBMYC4TTSRQBiPpGh28w8ve19wYeHVVtT6ZDkkoRJJE9y
+	ro8D4Q55MgaY6EItl2T2ZvYbtLc90gOOozGs1URBDYM5UhwdfVMkqQIA
+X-Gm-Gg: ASbGnct2EJC+bYvK090zQ7SqAX930lf170g4p4LKlnAiyWvyOcoFSPLKmnLEFVCzh5W
+	ykWTfJR1DI4pTWhnGCOdvULpPpKjqhcUUPy0xL8EIlT8Wk58ZMnZto7zlT9/IybLBck2IZIiIQ3
+	uvlNVVinioM6RpNqqslTMGK7y1G2z1D1ctW8mne3J47NLbP59LcGUjNBltrbNoxU4/x8cVGEGT3
+	u1rBM1zDbyGmhc239SvrIV8LIXp3XXSYpT9jcsykXkQEdXahQENrQgNhIyXq3Se83GoBpd3WRoo
+	vjMw/ej8rkjPJ3YsFOodnHpteGJT2ICWtyMJp5dYmAUJvqgeR1b3bnOHYE56DrbihOlJrvGIHcM
+	cnMjZvZpGu5aJA9K2eqaqI3IZxqRVEKTyJxCq0nTLPYJo9wqYaNXXCYR2BIA0bZrdKiwAcas3dJ
+	WK
+X-Google-Smtp-Source: AGHT+IHWKAwAUfJW+XD+5V5RcRh9IVpwmdya52Ikx8ywWGkiirBkd8RMVHMZ7lX5+YUZDXR0SH0zSQ==
+X-Received: by 2002:a05:6512:1322:b0:57d:77a1:715d with SMTP id 2adb3069b0e04-58cbb4417d0mr145968e87.32.1759437094010;
+        Thu, 02 Oct 2025 13:31:34 -0700 (PDT)
 Received: from SC-WS-02452.corp.sbercloud.ru ([46.159.163.120])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58b0113f3ddsm1127316e87.52.2025.10.02.13.31.30
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58b0113f3ddsm1127316e87.52.2025.10.02.13.31.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 13:31:31 -0700 (PDT)
+        Thu, 02 Oct 2025 13:31:33 -0700 (PDT)
 From: Sergey Bashirov <sergeybashirov@gmail.com>
 To: Chuck Lever <chuck.lever@oracle.com>,
 	Christoph Hellwig <hch@infradead.org>,
@@ -84,9 +84,9 @@ To: Chuck Lever <chuck.lever@oracle.com>,
 Cc: linux-nfs@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Sergey Bashirov <sergeybashirov@gmail.com>
-Subject: [PATCH v2 2/4] NFSD/blocklayout: Extract extent mapping from proc_layoutget
-Date: Thu,  2 Oct 2025 23:31:12 +0300
-Message-ID: <20251002203121.182395-3-sergeybashirov@gmail.com>
+Subject: [PATCH v2 3/4] NFSD/blocklayout: Introduce layout content structure
+Date: Thu,  2 Oct 2025 23:31:13 +0300
+Message-ID: <20251002203121.182395-4-sergeybashirov@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251002203121.182395-1-sergeybashirov@gmail.com>
 References: <20251002203121.182395-1-sergeybashirov@gmail.com>
@@ -98,191 +98,161 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-No changes in functionality. Split the proc_layoutget function to
-create a helper function that maps single extent to the requested
-range. This helper function is then used to implement support for
-multiple extents per LAYOUTGET.
+Add a layout content structure instead of a single extent. The ability
+to store and encode an array of extents is then used to implement support
+for multiple extents per LAYOUTGET.
 
 Signed-off-by: Sergey Bashirov <sergeybashirov@gmail.com>
 ---
- fs/nfsd/blocklayout.c | 115 ++++++++++++++++++++++++------------------
- 1 file changed, 66 insertions(+), 49 deletions(-)
+ fs/nfsd/blocklayout.c    | 26 ++++++++++++++++++++++----
+ fs/nfsd/blocklayoutxdr.c | 36 +++++++++++++++++++++++++++---------
+ fs/nfsd/blocklayoutxdr.h | 14 ++++++++++++++
+ 3 files changed, 63 insertions(+), 13 deletions(-)
 
 diff --git a/fs/nfsd/blocklayout.c b/fs/nfsd/blocklayout.c
-index 425648565ab2..35a95501db63 100644
+index 35a95501db63..6d29ea5e8623 100644
 --- a/fs/nfsd/blocklayout.c
 +++ b/fs/nfsd/blocklayout.c
-@@ -17,68 +17,44 @@
+@@ -88,9 +88,10 @@ nfsd4_block_proc_layoutget(struct svc_rqst *rqstp, struct inode *inode,
+ 		const struct svc_fh *fhp, struct nfsd4_layoutget *args)
+ {
+ 	struct nfsd4_layout_seg *seg = &args->lg_seg;
++	struct pnfs_block_layout *bl;
+ 	struct pnfs_block_extent *bex;
+ 	u64 length;
+-	u32 block_size = i_blocksize(inode);
++	u32 nr_extents_max = 1, block_size = i_blocksize(inode);
+ 	__be32 nfserr;
+ 
+ 	if (locks_in_grace(SVC_NET(rqstp)))
+@@ -102,16 +103,33 @@ nfsd4_block_proc_layoutget(struct svc_rqst *rqstp, struct inode *inode,
+ 		goto out_error;
+ 	}
+ 
++	/*
++	 * RFC 8881, section 3.3.17:
++	 *   The layout4 data type defines a layout for a file.
++	 *
++	 * RFC 8881, section 18.43.3:
++	 *   The loga_maxcount field specifies the maximum layout size
++	 *   (in bytes) that the client can handle. If the size of the
++	 *   layout structure exceeds the size specified by maxcount,
++	 *   the metadata server will return the NFS4ERR_TOOSMALL error.
++	 */
++	nfserr = nfserr_toosmall;
++	if (args->lg_maxcount < PNFS_BLOCK_LAYOUT4_SIZE +
++				PNFS_BLOCK_EXTENT_SIZE)
++		goto out_error;
++
+ 	/*
+ 	 * Some clients barf on non-zero block numbers for NONE or INVALID
+ 	 * layouts, so make sure to zero the whole structure.
+ 	 */
+ 	nfserr = nfserrno(-ENOMEM);
+-	bex = kzalloc(sizeof(*bex), GFP_KERNEL);
+-	if (!bex)
++	bl = kzalloc(struct_size(bl, extents, nr_extents_max), GFP_KERNEL);
++	if (!bl)
+ 		goto out_error;
+-	args->lg_content = bex;
++	bl->nr_extents = nr_extents_max;
++	args->lg_content = bl;
+ 
++	bex = &bl->extents[0];
+ 	nfserr = nfsd4_block_map_extent(inode, fhp, seg->offset, seg->length,
+ 			seg->iomode, args->lg_minlength, bex);
+ 	if (nfserr != nfs_ok)
+diff --git a/fs/nfsd/blocklayoutxdr.c b/fs/nfsd/blocklayoutxdr.c
+index e50afe340737..196ef4245604 100644
+--- a/fs/nfsd/blocklayoutxdr.c
++++ b/fs/nfsd/blocklayoutxdr.c
+@@ -14,12 +14,25 @@
  #define NFSDDBG_FACILITY	NFSDDBG_PNFS
  
  
-+/*
-+ * Get an extent from the file system that starts at offset or below
-+ * and may be shorter than the requested length.
++/**
++ * nfsd4_block_encode_layoutget - encode block/scsi layout extent array
++ * @xdr: stream for data encoding
++ * @lgp: layoutget content, actually an array of extents to encode
++ *
++ * Encode the opaque loc_body field in the layoutget response. Since the
++ * pnfs_block_layout4 and pnfs_scsi_layout4 structures on the wire are
++ * the same, this function is used by both layout drivers.
++ *
++ * Return values:
++ *   %nfs_ok: Success, all extents encoded into @xdr
++ *   %nfserr_toosmall: Not enough space in @xdr to encode all the data
 + */
- static __be32
--nfsd4_block_proc_layoutget(struct svc_rqst *rqstp, struct inode *inode,
--		const struct svc_fh *fhp, struct nfsd4_layoutget *args)
-+nfsd4_block_map_extent(struct inode *inode, const struct svc_fh *fhp,
-+		u64 offset, u64 length, u32 iomode, u64 minlength,
-+		struct pnfs_block_extent *bex)
+ __be32
+ nfsd4_block_encode_layoutget(struct xdr_stream *xdr,
+ 		const struct nfsd4_layoutget *lgp)
  {
--	struct nfsd4_layout_seg *seg = &args->lg_seg;
- 	struct super_block *sb = inode->i_sb;
--	u64 length;
--	u32 block_size = i_blocksize(inode);
--	struct pnfs_block_extent *bex;
- 	struct iomap iomap;
- 	u32 device_generation = 0;
- 	int error;
+-	const struct pnfs_block_extent *b = lgp->lg_content;
+-	int len = sizeof(__be32) + 5 * sizeof(__be64) + sizeof(__be32);
++	const struct pnfs_block_layout *bl = lgp->lg_content;
++	u32 i, len = sizeof(__be32) + bl->nr_extents * PNFS_BLOCK_EXTENT_SIZE;
+ 	__be32 *p;
  
--	if (locks_in_grace(SVC_NET(rqstp)))
--		return nfserr_grace;
--
--	if (seg->offset & (block_size - 1)) {
--		dprintk("pnfsd: I/O misaligned\n");
--		goto out_layoutunavailable;
--	}
--
--	/*
--	 * Some clients barf on non-zero block numbers for NONE or INVALID
--	 * layouts, so make sure to zero the whole structure.
--	 */
--	error = -ENOMEM;
--	bex = kzalloc(sizeof(*bex), GFP_KERNEL);
--	if (!bex)
--		goto out_error;
--	args->lg_content = bex;
--
--	error = sb->s_export_op->map_blocks(inode, seg->offset, seg->length,
--					    &iomap, seg->iomode != IOMODE_READ,
--					    &device_generation);
-+	error = sb->s_export_op->map_blocks(inode, offset, length, &iomap,
-+			iomode != IOMODE_READ, &device_generation);
- 	if (error) {
- 		if (error == -ENXIO)
--			goto out_layoutunavailable;
--		goto out_error;
--	}
--
--	length = iomap.offset + iomap.length - seg->offset;
--	if (length < args->lg_minlength) {
--		dprintk("pnfsd: extent smaller than minlength\n");
--		goto out_layoutunavailable;
-+			return nfserr_layoutunavailable;
-+		return nfserrno(error);
- 	}
+ 	p = xdr_reserve_space(xdr, sizeof(__be32) + len);
+@@ -27,14 +40,19 @@ nfsd4_block_encode_layoutget(struct xdr_stream *xdr,
+ 		return nfserr_toosmall;
  
- 	switch (iomap.type) {
- 	case IOMAP_MAPPED:
--		if (seg->iomode == IOMODE_READ)
-+		if (iomode == IOMODE_READ)
- 			bex->es = PNFS_BLOCK_READ_DATA;
- 		else
- 			bex->es = PNFS_BLOCK_READWRITE_DATA;
- 		bex->soff = iomap.addr;
- 		break;
- 	case IOMAP_UNWRITTEN:
--		if (seg->iomode & IOMODE_RW) {
-+		if (iomode & IOMODE_RW) {
- 			/*
- 			 * Crack monkey special case from section 2.3.1.
- 			 */
--			if (args->lg_minlength == 0) {
-+			if (minlength == 0) {
- 				dprintk("pnfsd: no soup for you!\n");
--				goto out_layoutunavailable;
-+				return nfserr_layoutunavailable;
- 			}
+ 	*p++ = cpu_to_be32(len);
+-	*p++ = cpu_to_be32(1);		/* we always return a single extent */
++	*p++ = cpu_to_be32(bl->nr_extents);
  
- 			bex->es = PNFS_BLOCK_INVALID_DATA;
-@@ -87,7 +63,7 @@ nfsd4_block_proc_layoutget(struct svc_rqst *rqstp, struct inode *inode,
- 		}
- 		fallthrough;
- 	case IOMAP_HOLE:
--		if (seg->iomode == IOMODE_READ) {
-+		if (iomode == IOMODE_READ) {
- 			bex->es = PNFS_BLOCK_NONE_DATA;
- 			break;
- 		}
-@@ -95,27 +71,68 @@ nfsd4_block_proc_layoutget(struct svc_rqst *rqstp, struct inode *inode,
- 	case IOMAP_DELALLOC:
- 	default:
- 		WARN(1, "pnfsd: filesystem returned %d extent\n", iomap.type);
--		goto out_layoutunavailable;
-+		return nfserr_layoutunavailable;
- 	}
- 
- 	error = nfsd4_set_deviceid(&bex->vol_id, fhp, device_generation);
- 	if (error)
--		goto out_error;
-+		return nfserrno(error);
-+
- 	bex->foff = iomap.offset;
- 	bex->len = iomap.length;
-+	return nfs_ok;
-+}
-+
-+static __be32
-+nfsd4_block_proc_layoutget(struct svc_rqst *rqstp, struct inode *inode,
-+		const struct svc_fh *fhp, struct nfsd4_layoutget *args)
-+{
-+	struct nfsd4_layout_seg *seg = &args->lg_seg;
-+	struct pnfs_block_extent *bex;
-+	u64 length;
-+	u32 block_size = i_blocksize(inode);
-+	__be32 nfserr;
-+
-+	if (locks_in_grace(SVC_NET(rqstp)))
-+		return nfserr_grace;
- 
--	seg->offset = iomap.offset;
--	seg->length = iomap.length;
-+	nfserr = nfserr_layoutunavailable;
-+	if (seg->offset & (block_size - 1)) {
-+		dprintk("pnfsd: I/O misaligned\n");
-+		goto out_error;
-+	}
-+
-+	/*
-+	 * Some clients barf on non-zero block numbers for NONE or INVALID
-+	 * layouts, so make sure to zero the whole structure.
-+	 */
-+	nfserr = nfserrno(-ENOMEM);
-+	bex = kzalloc(sizeof(*bex), GFP_KERNEL);
-+	if (!bex)
-+		goto out_error;
-+	args->lg_content = bex;
-+
-+	nfserr = nfsd4_block_map_extent(inode, fhp, seg->offset, seg->length,
-+			seg->iomode, args->lg_minlength, bex);
-+	if (nfserr != nfs_ok)
-+		goto out_error;
-+
-+	nfserr = nfserr_layoutunavailable;
-+	length = bex->foff + bex->len - seg->offset;
-+	if (length < args->lg_minlength) {
-+		dprintk("pnfsd: extent smaller than minlength\n");
-+		goto out_error;
-+	}
-+
-+	seg->offset = bex->foff;
-+	seg->length = bex->len;
- 
- 	dprintk("GET: 0x%llx:0x%llx %d\n", bex->foff, bex->len, bex->es);
+-	p = svcxdr_encode_deviceid4(p, &b->vol_id);
+-	p = xdr_encode_hyper(p, b->foff);
+-	p = xdr_encode_hyper(p, b->len);
+-	p = xdr_encode_hyper(p, b->soff);
+-	*p++ = cpu_to_be32(b->es);
 -	return 0;
++	for (i = 0; i < bl->nr_extents; i++) {
++		const struct pnfs_block_extent *bex = bl->extents + i;
++
++		p = svcxdr_encode_deviceid4(p, &bex->vol_id);
++		p = xdr_encode_hyper(p, bex->foff);
++		p = xdr_encode_hyper(p, bex->len);
++		p = xdr_encode_hyper(p, bex->soff);
++		*p++ = cpu_to_be32(bex->es);
++	}
++
 +	return nfs_ok;
- 
- out_error:
- 	seg->length = 0;
--	return nfserrno(error);
--out_layoutunavailable:
--	seg->length = 0;
--	return nfserr_layoutunavailable;
-+	return nfserr;
  }
  
- static __be32
+ static int
+diff --git a/fs/nfsd/blocklayoutxdr.h b/fs/nfsd/blocklayoutxdr.h
+index 7d25ef689671..2e0c6c7d2b42 100644
+--- a/fs/nfsd/blocklayoutxdr.h
++++ b/fs/nfsd/blocklayoutxdr.h
+@@ -8,6 +8,15 @@
+ struct iomap;
+ struct xdr_stream;
+ 
++/* On the wire size of the layout4 struct with zero number of extents */
++#define PNFS_BLOCK_LAYOUT4_SIZE \
++	(sizeof(__be32) * 2 +	/* offset4 */ \
++	 sizeof(__be32) * 2 +	/* length4 */ \
++	 sizeof(__be32) +	/* layoutiomode4 */ \
++	 sizeof(__be32) +	/* layouttype4 */ \
++	 sizeof(__be32) +	/* number of bytes */ \
++	 sizeof(__be32))	/* number of extents */
++
+ struct pnfs_block_extent {
+ 	struct nfsd4_deviceid		vol_id;
+ 	u64				foff;
+@@ -21,6 +30,11 @@ struct pnfs_block_range {
+ 	u64				len;
+ };
+ 
++struct pnfs_block_layout {
++	u32				nr_extents;
++	struct pnfs_block_extent	extents[] __counted_by(nr_extents);
++};
++
+ /*
+  * Random upper cap for the uuid length to avoid unbounded allocation.
+  * Not actually limited by the protocol.
 -- 
 2.43.0
 
