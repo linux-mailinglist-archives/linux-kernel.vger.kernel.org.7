@@ -1,101 +1,120 @@
-Return-Path: <linux-kernel+bounces-840429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 865C4BB466C
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 17:50:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 661CFBB4670
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 17:51:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 407913C4AA6
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 15:50:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DC47189649F
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 15:51:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 706C523506F;
-	Thu,  2 Oct 2025 15:50:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FBBD2356C6;
+	Thu,  2 Oct 2025 15:51:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dTXq6h0R"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="Jk0maqcU"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7C409460;
-	Thu,  2 Oct 2025 15:50:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759420242; cv=none; b=flX2IzuznlLFKzso5QAj4nhNgpkq1O4F+22y3A/FlBHL9uHbeOX6XB2OUcLvkmoIRozvXJHlI5r4ms/cSQSfhRJ6rVsNBHyFDxBAL+7K8+u3/3OvIwIXWD4yTBI88W5bJXDavVrNzT15wh+Bl1uXzYT5Gd6HKlJE5MNVd/ggsEE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759420242; c=relaxed/simple;
-	bh=6j7P7D3ZdZkPkhxVe8Nmu9oVhF1XG9K7nmEmMeTv89Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ihsTNyF0tk5HOlF4VpKOdL48vd3qZg8WIeZEs6gUzPgV0XC9HjWGLwWIW4sGTlh0TaJGZ4MN6nfg+FzHK06FHm/SaXX08AR1BtrZryq1piP8c4vTHoWd9W7s+XMt/EGdAqa/YoqnpdH8dBvYgRRI4GLomCSn8M33iRDOxeocl0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dTXq6h0R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7144CC4CEF4;
-	Thu,  2 Oct 2025 15:50:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759420242;
-	bh=6j7P7D3ZdZkPkhxVe8Nmu9oVhF1XG9K7nmEmMeTv89Q=;
-	h=Date:From:To:Cc:Subject:From;
-	b=dTXq6h0Ra/+xNtrMd5p0t7ZbW6GK2Gg3LNaKclFlMIBLBZP9ZF4awXNbzjhEzlWMp
-	 aGd6rQrdbjngzSFRuUj+skIV67IgNMgtWNe+BZbd5dq1ryx9qh+L+RIVLwoX3PMscL
-	 xUlTdniBZHM+AwqBvAAauRQw4Cf9y0zC9nlLkT3jIjJvEQDlrAcaXB80OIY9lRg8Dk
-	 iAKjppuV2/ItAobjY9iOHmXpqIsR8SszsaNOsYjnaqYU6E6qpjkFOaSN/kH+DmkF2S
-	 ubOCPjMpI9Y2qB9VwhPp63/gnolPoe0NONfC2OX30E5vap4BLAue73pjRnJkUZ+mEF
-	 SOF+u726FRkuw==
-Date: Thu, 2 Oct 2025 16:50:38 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the ftrace tree
-Message-ID: <aN6fTmAjD7-SJsw2@sirena.org.uk>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19B439460;
+	Thu,  2 Oct 2025 15:51:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759420277; cv=pass; b=smcjz8O2Jy17oQnd/Xs0ZwCS5hENeezX4oUzQTW457nn2QprIGNdfb9UrxCvd0qbCZEgYsHG2pmF2dL3g5xCxx4GiL7twNbcxro1kOCDy1RPUJGjgQMeTD12a+uy/pDI0aPvHoXGK02AM2aOd7KZiB1jorAiin+jqt3leSw5kHA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759420277; c=relaxed/simple;
+	bh=qbssQKuQaom4m795PA7iywGUdWorLZn0ryyZ8FnOa8k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WN/S4wX+dkcGhJPht+4H/bwmmzXT7A93zvVgT0456Ms+GRuIjQo+BnyCBrLmaCTiX/0kSlsziz11IhXJbCaAPxKHz7r86qf8l3uDQXbjbQjwDCqp6fDLHZX5Ph5BW8vsOaBhDRHE0ILQ+zLgtQIRu2Cf10Uh5jOWnKu+bfcxpOk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=Jk0maqcU; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1759420250; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=BBmF9prk/9z+d/PIko3gG5IAT2wZMeU/HJGNEXDhsL79OLHLgbEgpOeLVoJnl5DXS+DoGGzkwff1tTDsHOfd3jUXPP16XMT87Ubd3PkGDGUxxUeKgqJ3NsNiOQylMZPMMAzWQDHw1XD81wPAWyemhcLgQku0QejlYuAXimBPizA=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1759420250; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=cjZk9P3mPo8vEXyNeg2cfL82WiNZDB6NKkkVZEOqqe4=; 
+	b=hA43kO52+tz+ehJfz9xv7c/voKNs3CmoZ91Fc96JxIZxLf09+kvn0qCnRzSimdIPYQSV/2f6MtRz1b4KQOtk5lb3lLTYhxKFtRoTacky7A8T9ddjd/RbDLuqKcg0q8yv1+jOkdpqNvq/jjxywTLBTV9Aa/hlevSZtWHsdYuMTbo=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
+	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1759420250;
+	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=cjZk9P3mPo8vEXyNeg2cfL82WiNZDB6NKkkVZEOqqe4=;
+	b=Jk0maqcUR5RFGMo9gQtZKBtwo79YQjWnsCWrWNDjB4GcjyI7SexYYl2RnOZnmPUW
+	dfEJJiUN46+9ElIDZbIA4k63oloHRyOx4q/De1OcfrkybweMzm0oJ7Ng3Gybr7h94aq
+	HCnHbf6vXLEfoeLA9DKLx1mieVPuvtOsGIB7RolM=
+Received: by mx.zohomail.com with SMTPS id 1759420248615533.0821852004965;
+	Thu, 2 Oct 2025 08:50:48 -0700 (PDT)
+Message-ID: <169cf964-85a7-4f96-9a0c-0f06c7bfa012@collabora.com>
+Date: Thu, 2 Oct 2025 18:50:41 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="EwFsy2jw2jwPnioe"
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] media: synopsys: hdmirx: Detect broken interrupt
+To: Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Hans Verkuil <hverkuil@xs4all.nl>, jose.abreu@synopsys.com,
+ nelson.costa@synopsys.com, shawn.wen@rock-chips.com,
+ nicolas.dufresne@collabora.com, kernel@collabora.com,
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org
+References: <20251002140750.579059-1-dmitry.osipenko@collabora.com>
+ <wrzkhnslrwnpsv7gbdcvxobahun7l6foftftk676hxinfeqwjr@v3di5okva7co>
+From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Content-Language: en-US
+In-Reply-To: <wrzkhnslrwnpsv7gbdcvxobahun7l6foftftk676hxinfeqwjr@v3di5okva7co>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
+
+On 10/2/25 18:33, Sebastian Reichel wrote:
+> Hello Dmitry,
+> 
+> On Thu, Oct 02, 2025 at 05:07:50PM +0300, Dmitry Osipenko wrote:
+>> Downstream version of RK3588 U-Boot uses customized TF-A that remaps
+>> HDMIRX hardware interrupt, routing it via firmware that isn't supported
+>> by upstream driver.
+>>
+>> Detect broken interrupt and print a clarifying error message about a need
+>> to use open-source TF-A with this driver.
+>>
+>> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+>> ---
+>> Changelog:
+>>
+>> v2: - Added PHY r/w lock and moved the clarifying error message as
+>>       was suggested by Sebastian Reichel.
+>>
+>>  .../platform/synopsys/hdmirx/snps_hdmirx.c    | 90 ++++++++++++++++++-
+>>  .../platform/synopsys/hdmirx/snps_hdmirx.h    |  2 +
+>>  2 files changed, 90 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c b/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
+>> index b7d278b3889f..e6456352dfa5 100644
+>> --- a/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
+>> +++ b/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
+> 
+> #include <linux/cleanup.h>
+> 
+> Otherwise LGTM and hopefully helps people to figure out the root
+> cause of their problems:
+> 
+> Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+
+Thanks for the review. The cleanup.h always included by mutex/spinlock
+headers, there is no need to include it explicitly.
 
 
---EwFsy2jw2jwPnioe
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-Hi all,
-
-After merging the ftrace tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
-
-/tmp/next/build/kernel/trace/trace_wprobe.c: In function '__register_trace_wprobe':
-/tmp/next/build/kernel/trace/trace_wprobe.c:176:20: error: cast to generic address space pointer from disjoint '__seg_gs' address space pointer [-Werror]
-  176 |         if (IS_ERR((void * __force)tw->bp_event)) {
-      |                    ^
-/tmp/next/build/kernel/trace/trace_wprobe.c:177:35: error: cast to generic address space pointer from disjoint '__seg_gs' address space pointer [-Werror]
-  177 |                 int ret = PTR_ERR((void * __force)tw->bp_event);
-      |                                   ^
-
-Caused by commit
-
-   eaa7b0b3b9875 ("tracing: wprobe: Add watchpoint probe event based on hardware breakpoint")
-
-I have used the version from 20250929 instead.
-
---EwFsy2jw2jwPnioe
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjen04ACgkQJNaLcl1U
-h9Cf8Af+PZ5qUtPpN6WMrntSRp4SaSZ6DHsn5zGJeJ0STwHBYxYHr7Jrt/d6JLpI
-B7gyOe6NtBb3IREl2+awUs3fVj5D48OJLtH9+5h//XBgafZuu6b21l8yLt3KUrjs
-FuzQqcdL7CelhM8timPwZWNxOCnzJYDVgKcfV/6LcaFNPzKZmgJIRMxc3tHwM+so
-cN+0se8C5kAEdX/VlCsTyZ8oYeKlB5I7ZcOkOm1mjcZ2x8YrZ3OAAp4p67NKZaZ/
-CsBN+HTU79z/NrsJ+xDPU5m81ClLAlGObLeJxKtv/qHAq8OWICW7dHZXdbFj8UWR
-09UBeXJiDJXO51MVj1RK02olT7ym5Q==
-=+1z9
------END PGP SIGNATURE-----
-
---EwFsy2jw2jwPnioe--
+-- 
+Best regards,
+Dmitry
 
