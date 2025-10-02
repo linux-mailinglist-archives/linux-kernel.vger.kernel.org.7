@@ -1,110 +1,140 @@
-Return-Path: <linux-kernel+bounces-840781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3BABBB55D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 23:01:01 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 909C9BB566F
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 23:03:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A03B7342607
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 21:01:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EBE7A4E7079
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 21:03:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C20822D3EEE;
-	Thu,  2 Oct 2025 20:55:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A40541E008B;
+	Thu,  2 Oct 2025 20:58:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b6RroNDL"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EtEpeJNV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBE0C2D3EEB
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 20:55:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00725254AE4
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 20:58:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759438545; cv=none; b=a/FqwLNN/e8tHRCCmd+UK8vx746GvcynHDSai4yM/i7nCoU+Lu5KSUaFk2ILu5GP/QZRMBuv4kSVUr+Jjm8FrXTgiwNlSTx64uB4LiKgVjY1ncStlQcXVEWW/YzXJSiTlF+K6PxUppuU2HPIpfsmjgICltDjMZzGuZMFFtT/EGA=
+	t=1759438691; cv=none; b=EUS0PE9L3ZgDbxtkKyrpJAoGOXWkD+q2mHwV8GiZGDvHh9ZXbHfuo8461ZJ16tq95DUW1fSK2QM2t8/x7zHeFXU0ffJ41nMzrz8+6CpGr1MzP6eezAUGARQMeGCY9YXzXvAb4YA/1cyQey1orlhtvaUO6Lo3HF90LVCRgL7yZag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759438545; c=relaxed/simple;
-	bh=Z9iSGZ+S2wi6F1tMIvySWX/506OKQt3iTsYD6qsKENo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RB8bS0qkgldDztaE4GGgDLn0tttb9eDUbX3BYuEaNBFX7OGu0wbj0tqsaZ2/N1+6t+ZgNZLi+ODBD2OUvf26DTxs5GyzBpwHLfGNFDqFzRk5xUWFXTcw7VBRTtd5xOQxa8hRrUt8RPGSEKYAfsxBvi2jr12k0vhy6PRwqHJW0gI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b6RroNDL; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-27edcbcd158so18836455ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 13:55:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759438543; x=1760043343; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6nWNzw5rFvgp5+4E98Z8mggAdalCFOI1DScecBvxjnM=;
-        b=b6RroNDLzLznnFNiaz7yXatY0jWMrfUxE6G4oZj97RRKJt3nNA/Uoej1GAKCEFdsvs
-         gPcCTpedk+89YT2NI9m+xCepcN9tAzhroUcSOmxnS/KYxwlL1qAppLHLc3Awl7PJlAQu
-         WrfubdDKUiNWZWFialB+7jVYioWbMsIH4+hTkvpsdd7M4DRGGe7+bprZkU02ksfZfKFe
-         c4zir1AZZzZNGVPAGWfsEr63n8vf1L5A1J1UDHfRVhfNi7toMcZcDsExxz49GLDIZwwo
-         uL28sDEuqh+cmU9Xc+9S8ImueUOnzcUscuO/5SG4CtoUKLxojCfbRoXseMj/T/DnTf6K
-         E/EA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759438543; x=1760043343;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6nWNzw5rFvgp5+4E98Z8mggAdalCFOI1DScecBvxjnM=;
-        b=Pjx3GwkJoC/UjflYIqFimcvwLvMBLnsE4ost535qfrcbV0+BVmQl61+8Pnt2HZxVWa
-         SU2o/KhLjT97gazIhF9wk94LMl+mhBYdcXnL/jttucHdx/vEHQmDypN71F2vIPhKZz9K
-         SZjv/GKeqW0E6rc+iV6Z7INebv3IyorPGVdY1x1ROFTqK/4MpnbieImpAmY0RbZrFA0m
-         z5TONMmsp8CjaOD9EjTslZOyzctO4T/4kEvaqw43WTmlCGd+6ecarPClh+2Q73X47UFY
-         XhcprCpkVrg1ULRJObrwG2D3sG9hZtp0V75tuDioDtY+iIPFoq3IvcfkOcljPaP6Fmlx
-         Cyeg==
-X-Forwarded-Encrypted: i=1; AJvYcCVl6VVOfQBrWSNwHuIr16BqvlAixN90NIElrb+OJqHeW3yyPWF52IM3wHwJzabApzN+UyVm9gHn4H92D0I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztSarqH2k6Sa42Wozlhym0lHKgpx7E2/BgTXfgcCyE6Oi6tNxC
-	A7zXKucTafX6Bz+inYJfNSsAd8ZAgEiTHkMNZXXyvfzQ6zCb7F50zzp3fCEeemXT
-X-Gm-Gg: ASbGncsw77UW+nYcFFuCwNAIYJIi9FZ1C9KO+TxMjxqm5ri+r4mcI//qx1G0h9bQQNO
-	6noObNFmCG5WkWoD4FzlH6p9ge4CjjIUczstucEAvSt95ATgxUey2f+UftbkQeVbKMCz6E+bPhN
-	YH3Aqv158kK2Qe7Lga0C91E5bFG7EIKzTKIfzLvVMzEPPM1+e1MGS2uwkfEDWBwkVw5Ecg4otZH
-	0kMiuH2h9SFHoJvKkOwQ+TeAr1ofUC1oouSB3U77OHx/VxIVv0xoCH/F3xUyLt7BY5pOv7IUO4v
-	MDiq+SlgFGt3yia7UMA0rJBBAahEkKGK6OP/hoM8MSKLSax7QnPVJB1kmTTfdMt/+RekgVMlj4s
-	QJGEtc2XgiomYcKhL/GazX/sBRDS/84aXuA2J1uVjzywHEU2r/PSgCS02ZXY=
-X-Google-Smtp-Source: AGHT+IGYss5qk3VXhh2R+ZWPGB8ZQYoyyFAiwZWm24n7JZhmlZdFeuaqBerfiJZ6THmQhp0n8lu8ag==
-X-Received: by 2002:a17:902:c405:b0:24c:a9c6:d193 with SMTP id d9443c01a7336-28e9a54661cmr8418405ad.18.1759438543174;
-        Thu, 02 Oct 2025 13:55:43 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d1d622dsm29757765ad.110.2025.10.02.13.55.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Oct 2025 13:55:42 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Thu, 2 Oct 2025 13:55:41 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Kim Seer Paller <kimseer.paller@analog.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, linux-hwmon@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH 2/2] hwmon: (pmbus/max17616): add driver for max17616
-Message-ID: <2731236d-e3a3-4fba-9938-ca6b10f975d5@roeck-us.net>
-References: <20250930-upstream-max17616-v1-0-1525a85f126c@analog.com>
- <20250930-upstream-max17616-v1-2-1525a85f126c@analog.com>
+	s=arc-20240116; t=1759438691; c=relaxed/simple;
+	bh=QuDJLpxpgTWQCmC222wS5dcfHdTx1VhU/4n6fIF2MmU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fxErEwMpMxVhMsPSEKw1Hsf0b0A0shNDr2bVHPsczRdOeB+SRLL9cJVX54iNL/IM9QuNK+aOBWacO5IbxbOFZtA2UMcGlN7id4v6Kgt1X2i2A/ToaYMHH8dCa41q51SaP4MA65jfSowvjVf+7vgqS8S4uiECJH5vm0RaxLTTavg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EtEpeJNV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94C59C116D0
+	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 20:58:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759438690;
+	bh=QuDJLpxpgTWQCmC222wS5dcfHdTx1VhU/4n6fIF2MmU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=EtEpeJNVRuiZu5G7oyC8Z3/vMaWQlljjOrmDOjKfTsFakrX03uec8ls2fpn/E5f3t
+	 lIIplvsd+9pHHCgVGqjx7TpQ0UrqG4qaYYuE55rPNr1PW561Cu7mZmAasXAFL9Wvug
+	 2fnOatdLnNJWEowl/zQq97wi57EFG3PY+maVoDO3V0kMmaV8T20U6om3cIoCnAa3eU
+	 xqF8d9lGR63189BuUFjJHwW93KnP697RnH94jFAaiHpJxkLG3Ti6Sd+k27Bym5nr59
+	 U8RIOSEXr9O3L0WGE1iwwsLU1EHoX1w1fSsNIXGajLC2bJW6s5XRIzekb7VdCQ+QYo
+	 0qlgkQTPW/5Jg==
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-71d71bcab69so16657017b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 13:58:10 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXMsfFBn5sO9GliS3CyRhaCmzrSla2Fjvmhf35mKKFse/3AR5PZ2fDMHqqKh0va3f0iwuDxa9PELja0pwo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpyIzTCPWNI26qCNTQZ4aU5OJOWJwWTu747fxAFaF/Cv+gqe6G
+	VjV5/uue/hYZRzoqwJwpf6GNwSUkhy6P+sj6pHvChtVhst2dGmHC40UyqAAtaSHSIrbV2i951nr
+	vtEmOKleDma6uL0ObMxS6/AROoc9xp/BMF9aOwtZrnA==
+X-Google-Smtp-Source: AGHT+IEBbilENRA97k78jKka8MhP7AcUg4QxD+YO/3Zll3QmQghhCutavFmrEEWz0n+RwUianEhLXkUhS+pXlsXCha4=
+X-Received: by 2002:a53:4203:0:b0:632:eae9:5cfb with SMTP id
+ 956f58d0204a3-63b9a0eccdfmr465910d50.29.1759438689674; Thu, 02 Oct 2025
+ 13:58:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250930-upstream-max17616-v1-2-1525a85f126c@analog.com>
+References: <20250916-luo-pci-v2-0-c494053c3c08@kernel.org>
+ <20250916-luo-pci-v2-3-c494053c3c08@kernel.org> <20250929174831.GJ2695987@ziepe.ca>
+ <CAF8kJuNZPYxf2LYTPYVzho_NM-Rtp8i+pP3bFTwkM_h3v=LwbQ@mail.gmail.com>
+ <20250930163837.GQ2695987@ziepe.ca> <aN7KUNGoHrFHzagu@google.com>
+In-Reply-To: <aN7KUNGoHrFHzagu@google.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Thu, 2 Oct 2025 13:57:57 -0700
+X-Gmail-Original-Message-ID: <CACePvbX6GfThDnwLdOUsdQ_54eqF3Ff=4hrGhDJ0Ba00-Q1qBw@mail.gmail.com>
+X-Gm-Features: AS18NWDZJi8whgIGIZhrpcn5Z11nQX63ss5Yzm8TI207CY6N08iz9viqDQ579L4
+Message-ID: <CACePvbX6GfThDnwLdOUsdQ_54eqF3Ff=4hrGhDJ0Ba00-Q1qBw@mail.gmail.com>
+Subject: Re: [PATCH v2 03/10] PCI/LUO: Forward prepare()/freeze()/cancel()
+ callbacks to driver
+To: David Matlack <dmatlack@google.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Len Brown <lenb@kernel.org>, 
+	Pasha Tatashin <pasha.tatashin@soleen.com>, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	Pasha Tatashin <tatashin@google.com>, Jason Miu <jasonmiu@google.com>, 
+	Vipin Sharma <vipinsh@google.com>, Saeed Mahameed <saeedm@nvidia.com>, 
+	Adithya Jayachandran <ajayachandra@nvidia.com>, Parav Pandit <parav@nvidia.com>, William Tu <witu@nvidia.com>, 
+	Mike Rapoport <rppt@kernel.org>, Leon Romanovsky <leon@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 30, 2025 at 01:02:21PM +0800, Kim Seer Paller wrote:
-> Add support for MAX17616/MAX17616A current-limiter with
-> overvoltage/surge, undervoltage, reverse polarity, loss of ground
-> protection with PMBus interface. The PMBus interface allows monitoring
-> of input/output voltages, output current and temperature.
-> 
-> Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
+On Thu, Oct 2, 2025 at 11:54=E2=80=AFAM David Matlack <dmatlack@google.com>=
+ wrote:
+> > Then don't do generic devices until we get iommufd done and you have a
+> > meaningful in-tree driver to consume what you are adding.
+>
+> I agree with Jason. I don't think we can reasonably make the argument
+> that we need this series until we have actualy use-cases for it.
+>
+> I think we should focus on vfio-pci device preservation next, and use
+> that to incrementally drive whatever changes are necessary to the PCI
+> and generic device layer bit by bit.
 
-Applied to hwmon-next.
+The feedback I got for the PCI V1 was to make it as minimal as
+possible. We agree preserving the BUS MASTER bit is the first minimal
+step. That is what I did in the V2 phase I series. Only the bus
+master. I think the pci-lu-test driver did demo the bus master bit, it
+is not vfio yet. At least that was the plan shared in the upstream
+alignment meeting.
 
-Thanks,
-Guenter
+> For example, once we a basic vfio-pci device preservation working, we
+> can start thinking about how to handle when that device is a VF, and we
+> have to start also preserving the SR-IOV state on the PF and get the PF
+
+SR-IOV is a much bigger step than the BUS Master bit. I recall at one
+point in the upstream discussion meeting that we don't do SR-IOV as
+the first step. I am not opposed to it, we need to get to vfio and
+SR-IOV eventually. I just feel that the PCI + VFIO + SR-IOV will be a
+much bigger series. I worry the series size is not friendly for
+reviewers. I wish there could be smaller incremental steps digestible.
+
+> driver involved in the process. At that point we can discuss how to
+> solve that specific problem. Maybe the solution will look something like
+> this series, maybe it will look like something else. There is open
+> design space.
+
+Yes doable, just will delay the LUO/PCI series by a bit and a much
+bigger series.
+
+> Without approaching it this way, I don't see how we can't reasonably
+> argue that anything in this series is necessary. And I suspect some
+> parts of this series truly are unnecessary, at least in the short term.
+
+You have me on the double negatives, always not very good at those.
+If the bigger series is what we want, I can do that. Just will have
+some latency to get the VFIO.
+
+> In our internal implementation, the only dependent device that truly
+> needed to participate is the PF driver when a VF is preserved.
+> Everything else (e.g. pcieport callbacks) have just been no-ops.
+
+Your VF device does not need to preserve DMA? If you want to preserve
+DMA the bus master bit is required, and the pcieport driver for the
+PCI-PCI bridge is also required. I am not sure pure VF and PF without
+any DMA makes practical sense.
+
+Chris
 
