@@ -1,131 +1,206 @@
-Return-Path: <linux-kernel+bounces-839681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-839680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44A4EBB224D
-	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 02:24:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D60F9BB2244
+	for <lists+linux-kernel@lfdr.de>; Thu, 02 Oct 2025 02:24:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDCCE422766
-	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 00:24:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07F02423227
+	for <lists+linux-kernel@lfdr.de>; Thu,  2 Oct 2025 00:24:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8474C1DFF7;
-	Thu,  2 Oct 2025 00:23:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE5203A1CD;
+	Thu,  2 Oct 2025 00:23:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxsw.ie header.i=@nxsw.ie header.b="X5Ycs8Om"
-Received: from mail-4323.protonmail.ch (mail-4323.protonmail.ch [185.70.43.23])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hVncy673"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ED11B640
-	for <linux-kernel@vger.kernel.org>; Thu,  2 Oct 2025 00:23:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D1D1CAA4;
+	Thu,  2 Oct 2025 00:23:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759364637; cv=none; b=XUSqyKkSQFxsrkVfLSXGdapxhFioHIYfe0+YNGL9P6ngPDVbGaKuKdP1yNe3m2+G7Zx8gIfZt61tf2lc7o9Xvxw9Y9jVnwVKAeEZBbgCS6o32lsmIVVXuHirxisDk73JwR6MGkSm7Pk3HP+YfGfjdmK61L7NA1sHfj8tlX1Asko=
+	t=1759364635; cv=none; b=VR1hTtgbtFEO2QylYozIaf7lsuBiI0F517tehqpNw4C1xF01GirYugj5uypLtPcY1Nd/Ea+zauCeTacc09jX4390JpDxFndhcuGI04IVo7XBAwiyUjVpnZ3B5+aMxOCj7fkvFeblV6Y2f6uVjERAKhbF4jnc9c9InSdz1hla5tw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759364637; c=relaxed/simple;
-	bh=Sdb1+wtHZb+FPfadxxqZAuDijR/adSPjWxuLJEkTF2Q=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=e0e1zeOIMhiLtJubNpVfBw55ksI1X8c2PpPbfSbFTiz2cv1ieCpiH+HdZjXt/GytAgrnpoSm3LM9mqrPLAo6sfjpOssHhEUzU7sVgV9pzUF1n2JMVlxVZ9k9JFrJqxQGSpJHt00hTGd5vv/R5KJvhOR7ZckcmPNlVE0mmddOm1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=nxsw.ie; spf=pass smtp.mailfrom=nxsw.ie; dkim=pass (2048-bit key) header.d=nxsw.ie header.i=@nxsw.ie header.b=X5Ycs8Om; arc=none smtp.client-ip=185.70.43.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=nxsw.ie
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxsw.ie
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxsw.ie;
-	s=protonmail3; t=1759364625; x=1759623825;
-	bh=KfALADPRY43GntF4MFm9RPEBQIOEJYHeDbUmR9+DFyg=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=X5Ycs8OmuzOmS8Z0lk98QzCKzedcDfdrmuSUzaQ7tgp/Ll4l6EoiCKQFAFAvDi8Ek
-	 CgLCvFgSpCqj5Xyq33Hy01XlP8Jkr4gYdPBtpxaWR7jDmykvocrZVOjhOTlXOuLIbF
-	 5KGdhT6Y9norZdoe5IlC2C8u95zOaOfx+54YlSpchczxj1wMbd6ornRNjnG/dEhFyi
-	 aV9Ms5QHE4CmXxOcTqSx8U2lPI6Ti2McHjTlby2sWAI0QUPI0jwgfLpHdDk9mH+5NL
-	 PcYluYMvkfOYoH3ego95/ejfKGB7mLMZbZILheZoWBq1Exw+Ely4EC6i+vhWk0vmVv
-	 N2RJ+ZkB7dyww==
-Date: Thu, 02 Oct 2025 00:23:37 +0000
-To: Abhinaba Rakshit <abhinaba.rakshit@oss.qualcomm.com>, Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>, "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, "Martin K. Petersen" <martin.petersen@oracle.com>
-From: Bryan O'Donoghue <bod.linux@nxsw.ie>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org
-Subject: Re: [PATCH 2/2] ufs: host: scale ICE clock
-Message-ID: <d31e4bba-5438-480b-8d3f-229ac5b4ddf4@nxsw.ie>
-In-Reply-To: <20251001-enable-ufs-ice-clock-scaling-v1-2-ec956160b696@oss.qualcomm.com>
-References: <20251001-enable-ufs-ice-clock-scaling-v1-0-ec956160b696@oss.qualcomm.com> <20251001-enable-ufs-ice-clock-scaling-v1-2-ec956160b696@oss.qualcomm.com>
-Feedback-ID: 136405006:user:proton
-X-Pm-Message-ID: d642a5663908cbe0fc7d6de3975240d510a45876
+	s=arc-20240116; t=1759364635; c=relaxed/simple;
+	bh=nLP9fhz32gTFEWdtwpsj7W9ND021HfhNxyofKluho6w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HwvrR++lQ+dif8Pd7iBeBg8gbbP9SfOX1SZ30M3GkCHdmh1Z5/sCqaEx1sT20K7mwKe7w5umrPJlAUO8Ud9hBRHangQyPx6HcyNgTV68kfgaX9bIBCrjyerTVHMUWwhARsf7felTTkyC4j/N1OENSOFE84uo4nF1Wv6w+f/fd4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hVncy673; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D677C4CEF5;
+	Thu,  2 Oct 2025 00:23:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759364634;
+	bh=nLP9fhz32gTFEWdtwpsj7W9ND021HfhNxyofKluho6w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hVncy673Ouc6oDlymJrlJBYVllMJPVo9qRPxUCmt7wiJFH5+Sb4PBeeRmIbadcjMZ
+	 IRNL+Qgm310d/brridU3WBuserJwTUDJGoPt48MemO+bxadoXwctLeWP2biFyIZQ9o
+	 ds0+MUCbh4xckpMv72ksV0abLBftwcd4UUUiTAbvB5K8zhjLYZGIRb7mmzrNgB6xLU
+	 LOZRu+h0k+mvsdGM1U14VjlD99qh7QKqHhr8/j4gVrkM0zP2AGxBK2gFuUhRctvhxg
+	 4TKkPNahRkz1SuEyX1XyoBywuPGAOdRRW1DxuMgzZinlR5L+BXzkPHNE5dwzZxP5Dw
+	 17rdW+LczJGXA==
+Date: Wed, 1 Oct 2025 19:23:47 -0500
+From: Rob Herring <robh@kernel.org>
+To: Randolph Lin <randolph@andestech.com>
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+	jingoohan1@gmail.com, mani@kernel.org, lpieralisi@kernel.org,
+	kwilczynski@kernel.org, bhelgaas@google.com, krzk+dt@kernel.org,
+	conor+dt@kernel.org, alex@ghiti.fr, aou@eecs.berkeley.edu,
+	palmer@dabbelt.com, paul.walmsley@sifive.com, ben717@andestech.com,
+	inochiama@gmail.com, thippeswamy.havalige@amd.com,
+	namcao@linutronix.de, shradha.t@samsung.com,
+	randolph.sklin@gmail.com, tim609@andestech.com
+Subject: Re: [PATCH v4 2/5] dt-bindings: PCI: Add Andes QiLai PCIe support
+Message-ID: <20251002002347.GA2629882-robh@kernel.org>
+References: <20250924112820.2003675-1-randolph@andestech.com>
+ <20250924112820.2003675-3-randolph@andestech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250924112820.2003675-3-randolph@andestech.com>
 
-On 01/10/2025 12:38, Abhinaba Rakshit wrote:
-> Scale ICE clock from ufs controller.
-
-UFS
-
->=20
-> Signed-off-by: Abhinaba Rakshit <abhinaba.rakshit@oss.qualcomm.com>
+On Wed, Sep 24, 2025 at 07:28:17PM +0800, Randolph Lin wrote:
+> Add the Andes QiLai PCIe node, which includes 3 Root Complexes.
+> Only one example is required in the DTS bindings YAML file.
+> 
+> Signed-off-by: Randolph Lin <randolph@andestech.com>
 > ---
->   drivers/ufs/host/ufs-qcom.c | 14 ++++++++++++++
->   1 file changed, 14 insertions(+)
->=20
-> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
-> index 3e83dc51d53857d5a855df4e4dfa837747559dad..2964b95a4423e887c0414ed93=
-99cc02d37b5229a 100644
-> --- a/drivers/ufs/host/ufs-qcom.c
-> +++ b/drivers/ufs/host/ufs-qcom.c
-> @@ -305,6 +305,13 @@ static int ufs_qcom_ice_prepare_key(struct blk_crypt=
-o_profile *profile,
->   =09return qcom_ice_prepare_key(host->ice, lt_key, lt_key_size, eph_key)=
-;
->   }
->=20
-> +static int ufs_qcom_ice_scale_clk(struct ufs_qcom_host *host, bool scale=
-_up)
-> +{
-> +=09if (host->hba->caps & UFSHCD_CAP_CRYPTO)
-> +=09=09return qcom_ice_scale_clk(host->ice, scale_up);
-> +=09return 0;
-> +}
+>  .../bindings/pci/andestech,qilai-pcie.yaml    | 103 ++++++++++++++++++
+>  1 file changed, 103 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pci/andestech,qilai-pcie.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/andestech,qilai-pcie.yaml b/Documentation/devicetree/bindings/pci/andestech,qilai-pcie.yaml
+> new file mode 100644
+> index 000000000000..8effe6ebd9d7
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pci/andestech,qilai-pcie.yaml
+> @@ -0,0 +1,103 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pci/andestech,qilai-pcie.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
->   static const struct blk_crypto_ll_ops ufs_qcom_crypto_ops =3D {
->   =09.keyslot_program=09=3D ufs_qcom_ice_keyslot_program,
->   =09.keyslot_evict=09=09=3D ufs_qcom_ice_keyslot_evict,
-> @@ -339,6 +346,11 @@ static void ufs_qcom_config_ice_allocator(struct ufs=
-_qcom_host *host)
->   {
->   }
->=20
-> +static inline int ufs_qcom_ice_scale_clk(struct ufs_qcom_host *host, boo=
-l scale_up)
-> +{
-> +=09return 0;
-> +}
+> +title: Andes QiLai PCIe host controller
 > +
->   #endif
->=20
->   static void ufs_qcom_disable_lane_clks(struct ufs_qcom_host *host)
-> @@ -1636,6 +1648,8 @@ static int ufs_qcom_clk_scale_notify(struct ufs_hba=
- *hba, bool scale_up,
->   =09=09else
->   =09=09=09err =3D ufs_qcom_clk_scale_down_post_change(hba, target_freq);
->=20
-> +=09=09if (!err)
-> +=09=09=09err =3D ufs_qcom_ice_scale_clk(host, scale_up);
->=20
->   =09=09if (err) {
->   =09=09=09ufshcd_uic_hibern8_exit(hba);
->=20
-> --
+> +description: |+
+
+Don't need '|+'.
+
+> +  Andes QiLai PCIe host controller is based on the Synopsys DesignWare
+> +  PCI core. It shares common features with the PCIe DesignWare core and
+> +  inherits common properties defined in
+> +  Documentation/devicetree/bindings/pci/snps,dw-pcie.yaml.
+> +
+> +maintainers:
+> +  - Randolph Lin <randolph@andestech.com>
+> +
+> +allOf:
+> +  - $ref: /schemas/pci/snps,dw-pcie.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: andestech,qilai-pcie
+> +
+> +  reg:
+> +    items:
+> +      - description: Data Bus Interface (DBI) registers.
+> +      - description: APB registers.
+> +      - description: PCIe configuration space region.
+> +
+> +  reg-names:
+> +    items:
+> +      - const: dbi
+> +      - const: apb
+> +      - const: config
+> +
+> +  ranges:
+> +    maxItems: 2
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  "#interrupt-cells":
+> +    const: 1
+> +
+> +  interrupt-map: true
+> +
+> +required:
+> +  - reg
+> +  - reg-names
+> +  - "#interrupt-cells"
+> +  - interrupts
+> +  - interrupt-names
+> +  - interrupt-map-mask
+> +  - interrupt-map
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    soc {
+> +      #address-cells = <2>;
+> +      #size-cells = <2>;
+> +
+> +      bus@80000000 {
+> +        compatible = "simple-bus";
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +        dma-ranges = <0x44 0x00000000 0x04 0x00000000 0x04 0x00000000>;
+> +        ranges = <0x00 0x80000000 0x00 0x80000000 0x00 0x20000000>,
+> +                 <0x00 0x04000000 0x00 0x04000000 0x00 0x00001000>,
+> +                 <0x00 0x00000000 0x20 0x00000000 0x20 0x00000000>;
+
+Drop ranges and dma-ranges. Not relevant to the example.
+
+> +
+> +        pci@80000000 {
+
+pcie
+
+> +          compatible = "andestech,qilai-pcie";
+> +          device_type = "pci";
+> +          reg = <0x0 0x80000000 0x0 0x20000000>,
+> +                <0x0 0x04000000 0x0 0x00001000>,
+> +                <0x0 0x00000000 0x0 0x00010000>;
+> +          reg-names = "dbi", "apb", "config";
+> +
+> +          linux,pci-domain = <0>;
+> +          bus-range = <0x0 0xff>;
+
+You don't need this if 0-0xff is supported. That's the default.
+
+> +          num-viewport = <4>;
+
+Deprecated...
+
+> +          #address-cells = <3>;
+> +          #size-cells = <2>;
+> +          ranges = <0x02000000 0x00 0x10000000 0x00 0x10000000 0x0 0xf0000000>,
+> +                   <0x43000000 0x01 0x00000000 0x01 0x0000000 0x1f 0x00000000>;
+> +
+> +          #interrupt-cells = <1>;
+> +          interrupts = <0xf>;
+> +          interrupt-names = "msi";
+> +          interrupt-parent = <&plic0>;
+> +          interrupt-map-mask = <0 0 0 7>;
+> +          interrupt-map = <0 0 0 1 &plic0 0xf IRQ_TYPE_LEVEL_HIGH>,
+> +                          <0 0 0 2 &plic0 0xf IRQ_TYPE_LEVEL_HIGH>,
+> +                          <0 0 0 3 &plic0 0xf IRQ_TYPE_LEVEL_HIGH>,
+> +                          <0 0 0 4 &plic0 0xf IRQ_TYPE_LEVEL_HIGH>;
+> +        };
+> +      };
+> +    };
+> -- 
 > 2.34.1
->=20
->=20
-
-Once fixed.
-
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-
+> 
 
