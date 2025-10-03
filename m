@@ -1,129 +1,93 @@
-Return-Path: <linux-kernel+bounces-841212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FA6FBB6841
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 13:08:18 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 525F4BB684A
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 13:09:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4BB919E5822
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 11:08:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F28FB4E7AD5
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 11:09:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 558D22EB5BF;
-	Fri,  3 Oct 2025 11:08:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C8B12EB849;
+	Fri,  3 Oct 2025 11:08:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QFylw06H"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SylRB0m1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FFAC81720
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 11:08:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF91081720;
+	Fri,  3 Oct 2025 11:08:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759489691; cv=none; b=a2A8/xjWJlj4NViqctzkZEXKknRLSYrQtqovM77x9g9Io9jCswC4czvlpGjKjUF2hBARFERJOtxB76gngPBlKX6OUYw2o/Wp0ez5+lDZVxGcVWLLwGMVZ7LRKFux4h8M3vrgSOFaFRSP0gsHoK1e6zD5MkfUyXMwH1jpyMVUtkI=
+	t=1759489732; cv=none; b=DHRgFjzQUuiY/bkq9PJXct1yVPXYuiLQLCMDJN+XyHGeeI4hbypCjwU+6htdTJOcbiYH1pdAmewsjOD2iFMeFMtbuF2JaVUZlXgKa9mUXH+UL2/6TpmNSCtWZ32/vNZvo/0AA0lqXPOr0GFVSc8uf+yKWQQkAHXFDv8yh3JDW44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759489691; c=relaxed/simple;
-	bh=3dJOXmWGWTXkohW5t1g7MDHN1lCRpBDgo4FpFwXMTOs=;
+	s=arc-20240116; t=1759489732; c=relaxed/simple;
+	bh=Qqb8NIJ7UArlqzST4/1DpbR3N4j0f9ZT/J3xqzy6rm0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ty1pQXLUl1KvQFH2WYpt/+MLSs4ppsmELIlm+3zIfD9NNr4/2gax3zSyNnZO2WdNHg3+TYMliewM86xQnDXI7F4EL6mwbYIGxm82of55Po/ARVnDNiT/Qs9yQY63tGr1w3KdYLXqjQGqJNJDUjjEjOXY9gXDoTxnoKJn0oRiuLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QFylw06H; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759489687;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Xtoatduwo5XW/OWrjLtdrbYwdN0kHRW1Zujxno/egPQ=;
-	b=QFylw06H8Zt6IkrtMuf9Jn9fD5lR8ZGxm3/ZMBmUrgoQHaw8F5aqCb9tNmbywKAOxgaXJ8
-	ljHcr4MHmq+894S45lyZFSx+J+3oziflMq+dRpqB+WsrIQ+xi8ira9/JiDIJvKVcjTR4/e
-	9LR3scphMYtwevYI1V6G3w0FU+HweWo=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-64-4mkj5VKePIGTCqL2pX088A-1; Fri, 03 Oct 2025 07:08:06 -0400
-X-MC-Unique: 4mkj5VKePIGTCqL2pX088A-1
-X-Mimecast-MFC-AGG-ID: 4mkj5VKePIGTCqL2pX088A_1759489685
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-46e5bcf38dfso20956805e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 04:08:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759489685; x=1760094485;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Xtoatduwo5XW/OWrjLtdrbYwdN0kHRW1Zujxno/egPQ=;
-        b=uZoUQOFsh37EmLKOX0nw/f3cpTCpxTDGJp2dbSLTJKiNSO8+eHIloXhfBuuftJlECQ
-         4Q7NjgpB24cDRVHoldU04XYgkwzaLfJHEh8BudFatft/gojcbJMUYJqyVZXqW7oHitl8
-         MUazihpq2a2oZHoDDX9QIF5nzuvZoJNvPs1xwXcHEmbj+lBl8KbGxwbDAv/GETpre18E
-         Ggr8oTxA2x5VDCQixWIXsLLYN61VFjVfsxYvWkgPYfdJrCIQrg6yo5IOLK4i8FjOPJq0
-         MegHaRCEZBODEHFMB9sUDAn7qX0KrcPVBnFjuBzZGn1eFqV17CSSEf10JChJa6+M8rNS
-         5EtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVgikjEX0usztMBbguTMwy+rgelUjC4zgpN34xPPUHn3bmjFh0nUCc5XHdV066b8aGeuq8OipsbdZd5vts=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzihqFLh+m0c7++u/cZ6YF5xwjakHHZTDMAfjezoLnoeoPl/qJl
-	2ps40TvKnI9dt1F9G1CwE3r2T3rVYdx0qTe6BEvs2bSu2/0aMOiDPalUurr4m8YCGmZOFEnIjsg
-	nCOC07akDS2nThWRBIj7x0Na3C8AX2oWb5MMFHunZbNE9Y0UQ0d5l26rffvkr/rSHlQ==
-X-Gm-Gg: ASbGnctViS0hIGuibXytX0fD/cw8wuMlfsI8iFFRuQT/d7ipxPbI3SHVw6oYeOc6gPx
-	0dKuZ4PPiD5DiefZsHuD1IH1i8RF6oInjOkefKoc5OjbdJflBrOYRBnD6vkdLp0GqDQDRlpZkJD
-	6D1qUR1x4tLsBjB0/6psPDUcS2ng1ZW7HXOfoOTZjWCCTitLg4P4iIgIHwGb4WaIGL1IYjJewg/
-	MHomq/dqPwElaISh6M9uEI7qHo5KjOs9l3Q0+Coh0iZFkshaO+eT5/DHyzM619XtvrXzfEU6LhP
-	S1YRwRfPHHO4+qR/hJLqBWgYYakWoBj0GbaNmu4=
-X-Received: by 2002:a05:600c:4688:b0:458:b8b0:6338 with SMTP id 5b1f17b1804b1-46e70c5c8b0mr23989385e9.6.1759489684739;
-        Fri, 03 Oct 2025 04:08:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHuHa8uUTYfm17St4zx4T4+dwpgApOvW/hXh/wH8u/C70YRTMI1bzyLC1ZaRawnbggbsccgtQ==
-X-Received: by 2002:a05:600c:4688:b0:458:b8b0:6338 with SMTP id 5b1f17b1804b1-46e70c5c8b0mr23989085e9.6.1759489684352;
-        Fri, 03 Oct 2025 04:08:04 -0700 (PDT)
-Received: from redhat.com ([2a0d:6fc0:1518:6900:b69a:73e1:9698:9cd3])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-4255d8e980dsm8135399f8f.36.2025.10.03.04.08.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Oct 2025 04:08:03 -0700 (PDT)
-Date: Fri, 3 Oct 2025 07:08:01 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Alok Tiwari <alok.a.tiwari@oracle.com>
-Cc: eperezma@redhat.com, jasowang@redhat.com, xuanzhuo@linux.alibaba.com,
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] virtio_vdpa: fix misleading return in void function
-Message-ID: <20251003070729-mutt-send-email-mst@kernel.org>
-References: <20251001191653.1713923-1-alok.a.tiwari@oracle.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=R9MnjbEREavdvg69s1bgGOZEPzmZnnC7ODgyVoXLO5qHYK228JP11Pcwig9UDGJFB1kiBCJWmFEo/rUoV+mYd7pqfoZarWlCFwJ/aD/cxjOc2z6p/pVgzk7hTAGVw1AwILKXZEdepwaOfA1oDVdlGq5/ISrIVXHap/82XxItp1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SylRB0m1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CC87C4CEF5;
+	Fri,  3 Oct 2025 11:08:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759489731;
+	bh=Qqb8NIJ7UArlqzST4/1DpbR3N4j0f9ZT/J3xqzy6rm0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SylRB0m1joaKYgTLulMhzX0MhuAOpn1eXp4TfFtk0pZo/05IfVuRdOjO8tTc4r5fu
+	 OPsI/A8OUydTasL9A1Huva9QI7rCvLCuhmpO7PcN8eSGAhuthsxaAnw38wXXsKFm5V
+	 3xSJ+vmnC6Qowu0IPnRzTU3eWA2J6V+gcU363dPg3L4AXN4JY0lTYcwo1Mwz40BpJb
+	 D5otfzN8xfbKUMUKfBq7LvsKw3kEXicexcKMRD+A74CzQY824oWgeYO+a/AYslFexu
+	 BFxpBe4/z0d2+h/UL/vdN9qT8wF28Rf4YAy1Yg3lq8FI/l6C7Xg0qCJPET1CO7qLHm
+	 mOeuLVCLE4Nxw==
+Date: Fri, 3 Oct 2025 12:08:46 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Peter Ujfalusi <peter.ujfalusi@linux.intel.com>
+Cc: lgirdwood@gmail.com, linux-sound@vger.kernel.org,
+	kai.vehmanen@linux.intel.com, ranjani.sridharan@linux.intel.com,
+	yung-chuan.liao@linux.intel.com, pierre-louis.bossart@linux.dev,
+	bhelgaas@google.com, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kw@linux.com
+Subject: Re: [PATCH 3/7] ASoC: Intel: soc-acpi: add NVL match tables
+Message-ID: <533d2d46-27dc-467f-b121-f4535f325aaf@sirena.org.uk>
+References: <20251002084252.7305-1-peter.ujfalusi@linux.intel.com>
+ <20251002084252.7305-4-peter.ujfalusi@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="VASl+GsgNTamOKDS"
+Content-Disposition: inline
+In-Reply-To: <20251002084252.7305-4-peter.ujfalusi@linux.intel.com>
+X-Cookie: hangover, n.:
+
+
+--VASl+GsgNTamOKDS
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251001191653.1713923-1-alok.a.tiwari@oracle.com>
 
-On Wed, Oct 01, 2025 at 12:16:50PM -0700, Alok Tiwari wrote:
-> virtio_vdpa_set_status() is declared as returning void, but it used
-> "return vdpa_set_status()" Since vdpa_set_status() also returns
-> void, the return statement is unnecessary and misleading.
-> Remove it.
-> 
-> Signed-off-by: Alok Tiwari <alok.a.tiwari@oracle.com>
+On Thu, Oct 02, 2025 at 11:42:48AM +0300, Peter Ujfalusi wrote:
+> For now the tables are basic for mockup devices
 
-Fixes: c043b4a8cf3b ("virtio: introduce a vDPA based transport")
+Acked-by: Mark Brown <broonie@kernel.org>
 
+--VASl+GsgNTamOKDS
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> ---
->  drivers/virtio/virtio_vdpa.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/virtio/virtio_vdpa.c b/drivers/virtio/virtio_vdpa.c
-> index 657b07a60788..1abecaf76465 100644
-> --- a/drivers/virtio/virtio_vdpa.c
-> +++ b/drivers/virtio/virtio_vdpa.c
-> @@ -80,7 +80,7 @@ static void virtio_vdpa_set_status(struct virtio_device *vdev, u8 status)
->  {
->  	struct vdpa_device *vdpa = vd_get_vdpa(vdev);
->  
-> -	return vdpa_set_status(vdpa, status);
-> +	vdpa_set_status(vdpa, status);
->  }
->  
->  static void virtio_vdpa_reset(struct virtio_device *vdev)
-> -- 
-> 2.50.1
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjfrr0ACgkQJNaLcl1U
+h9Ds+wf+MrJG8kPzbDNK6JVOiuQ+1zsUWpPTaD0XC4TLarOyqTj9Ft0bXqi620+T
+1CsqxbRxhw6rVde8ji8rSF6EfVQNk8BJxU1cB7Rq3oPlHcZaUxmEo5Ws76GhJ/Xp
+8r3uPW8sfGS47IRdm3NM6CcZOB9xO9X7v6fpnBhT5UliPm3XFgvF4X56BXJBlo7c
+m5ozNFXRjhn/yCi0b5CDj4zvV9SML1YXgvW2xmGowLGzFL85ds7046eVX8gVWCmP
+NMgrJtKaVWj9f/biUBqM91vO82VTjkIy7Q7BbMAyidivul4Fokg4qNySMXcWpfn3
+Kx63ky8E0taJ/y6jFdowLG1v/5TUmw==
+=X7Tt
+-----END PGP SIGNATURE-----
+
+--VASl+GsgNTamOKDS--
 
