@@ -1,285 +1,533 @@
-Return-Path: <linux-kernel+bounces-841604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59F5BBB7CE9
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 19:51:48 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 019C9BB7CF0
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 19:55:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 193B74EE0CF
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 17:51:47 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C571F4ECAEF
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 17:55:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45CDB2DAFD8;
-	Fri,  3 Oct 2025 17:51:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE7282DC33F;
+	Fri,  3 Oct 2025 17:55:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aSba/HIc"
-Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hgancyl3"
+Received: from mail-yx1-f44.google.com (mail-yx1-f44.google.com [74.125.224.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDCD32D0619
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 17:51:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B69D315853B
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 17:55:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759513900; cv=none; b=f0up10cOw5Zq9ojU3SU1yq/zHdV75tb6bXZbmInz369AVAe6laI9ODEs7Fa4i3TtHuQohO43RjVlgY9UJWCaACo+1BitrbkpgeNetGQICM6MwxbWGAbXTpHzd8aKS2nQDhTWisCvmdq/FFdvMCaJUAyoKo9ooMPQXAABbIrYQyQ=
+	t=1759514123; cv=none; b=cF6X+5c0verx7wzYf1rwIeqxMuQ8StIR1hu68vhJAeFbYGxGmRrLVNIQ7n2BEefBRQyBhmgFwx+DIrKQP5J0EAL9GllvUuTyZnCesR3eCZG8tpFBxul82xNz4MlDs0brU75XGrQlAPi4LGDozPbA2JexAB3FwgYHWAvEnD2Z7XI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759513900; c=relaxed/simple;
-	bh=mxIPjbnJtjAvJhjqu0RPpD7E2GA8VibHOhngXsknw68=;
+	s=arc-20240116; t=1759514123; c=relaxed/simple;
+	bh=EmYH7lZEN/7mdNIXQQcc5lN2QW1gjvRJcCBMmQkT+IU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KMQ6ZTSYo4G5zt5vsUhxVo2xR7pSHDcqlTX9cwF/3aAmA6cD+QEPz25AV7PQXcrFbzOwUl2lZb/HYwCo0m3vIWBjshXmgIC8BqTevkg3on3qKcdZkmZnNTWJcW2nGt/u6PL8MpPImZMi/f9ayu78PfJD9lZH9IjohJULxizEjzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aSba/HIc; arc=none smtp.client-ip=209.85.166.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-887764c2868so240414239f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 10:51:37 -0700 (PDT)
+	 To:Cc:Content-Type; b=Kh5IIXBpeh76/niB6+0+beoWU60JNO7CP41mi7YKVuVT7cFGxC/aHzaQiHoOWFrV2NTsDuIa3CesAuHgJFyUY8QI4gQZY+sfkHl/uTyUm10M2ncPSNMwdC0TJbCfrjj17eiABOHQVkEoWrVBQcGr0tERfHeX/bdnep8kY+BJG5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hgancyl3; arc=none smtp.client-ip=74.125.224.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yx1-f44.google.com with SMTP id 956f58d0204a3-6353ff1a78dso2474557d50.0
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 10:55:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759513897; x=1760118697; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1759514120; x=1760118920; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=iybLh8+L4TkpxzlAmZmGQVw8GbTyDtpsUZyNN32bmfc=;
-        b=aSba/HIcGIEi6QVlWBtPswmbzc2nnG+vlCORhsZa5iFeeggzsi4fsEprm4bCTVSdTF
-         Pr96qgDQt5eypfmFwHg/gmq5rt1GXB8D3dh+79Vp+Nc7ZIcrWXtFwvM3P6V2NynZERX3
-         4jVd1UB+0Pj7xLoJe11166pmEnj6/PKn0JNYULfQUtyZCGMFSpHP5C4oZLzYqT+QE4N5
-         ea22L16S6/wU8DZuBoPBA+G7XmxYlbhA2h5MtNvgblYJ4JkP4MQgN2M0vKPEGBs4FKCT
-         ncJ3pxDSbn0PD12f4bJTMcnukoNjr4LTMG87GptfdsZIFtDk97hYTDl0uiB4V7Sf6wLy
-         Ti7g==
+        bh=a1b73eD3J07PphzqhxdvLpc171f9Nn9CiIGeoDF7jTM=;
+        b=hgancyl39duSMimwchrSnYLQEMXgJc8uYo8aNAMdsYEpS7xFYi2ig7qDo1kyd5H4pU
+         AtHRSbPyjNXA5BLdQoUuImzZxrFRUYaWFPdMr6ksTE8+6Wl0OQWOML1pkkQ+Mgbs8LHw
+         zTgP++gsrlnEvuJtoTdBQNMq45oHQ1nGp5jhniiZ/Dku3wQh7S2d7cfiBY2/myIoOQpy
+         q5aafsggZqJZVtiwX10alCw7cMqH0MS0XmEB7oVzVMGF37wJkFEppQtlSQRQ6IuxOdHV
+         ar63hdp+4kNSMTPW/2JjWVywVvsrmbOzmwM4TLIyNK1HX4ALJsN0d8zVJDkb4FqMVuBJ
+         dL7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759513897; x=1760118697;
+        d=1e100.net; s=20230601; t=1759514120; x=1760118920;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=iybLh8+L4TkpxzlAmZmGQVw8GbTyDtpsUZyNN32bmfc=;
-        b=gx61bOlxenIRa5WR9IJxC472myLsPe3V9zMyFYHY5KK5WSd9Xl+wI/MMoJzlcx4rOf
-         mcUpPlZpAJZvjjshJGKOQhaRSTRH20Evf/HNNIwGWPCkZBrKhDMQ4n5YQ3tAgPKj2nbq
-         QR8Fs9eLkyAypCE/8EOLL71AjGZqde/GGoG0i73XBJXYzToXyn9IumTss+IsYSQ9n2dr
-         ZEtt/vs8UEpBcadakbYi59/lhkEkw7YENpEgb9xD0aNuheBNfu/YdONr8SRQe1Ju4LxW
-         ZzBip1eCHM9W0xfaJbSN0SfvfnD50K77eJi+vD4AOLwpoORtf0yD3Uob35tnfgH9uyC1
-         xiug==
-X-Forwarded-Encrypted: i=1; AJvYcCVQn5/2wni47t3UeuTGGwSr86AEiX0xbEbly1qmMxhGKbZKxshXCjBVpvbTFvXdNCeE9QVpgA+rd+NKl3o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YweOlCzvZMEudEnUzIhYIPoqSbL3vXTiFen+6oJNaPzVSulKItV
-	czTt6TQajn1XN0iVwKIJBwWOFAIaBfo7pomsEQEkxxcuZ7mjJV1dF30T5jCv8IxZS/AETCFJbe3
-	lHYZ6iiQKUJ+8+Dr0l2qL/QMtY6uUB2cfTIL2m14=
-X-Gm-Gg: ASbGncsS2hMGOm76awBDGaN29eLS2WBXUg1+7UP0kUmYEB+6wAVOL6GYltdMFjWCmq+
-	J+38RRybnn9vI72uRiG8sfR1GyhXbDYrAlfaZ75jAELbPvtUFmya6zSoEzKPEJFBFhy24/kMZbQ
-	mGV8Kwn9Ki4kVv74xyrBbBGLk3Vj3cB+gtO/SBW520q4uWP1Tcs3jMwd+qsBA+XUfz4GiGwLn7Z
-	kdHoCjLLOcGsSenGQW/ggp+Ppc31zJxRFz2OFeI
-X-Google-Smtp-Source: AGHT+IFxWCl0H0bEwNJ/yNAdI7wLJSC6u/LbBfSQHxB1RSf9qUdhZbywkYmPtERI6GanAV013KE1aJ3+27znXww1NtI=
-X-Received: by 2002:a05:6602:6416:b0:914:9a7:c25b with SMTP id
- ca18e2360f4ac-93b96941af7mr584315739f.4.1759513896580; Fri, 03 Oct 2025
- 10:51:36 -0700 (PDT)
+        bh=a1b73eD3J07PphzqhxdvLpc171f9Nn9CiIGeoDF7jTM=;
+        b=cJNJzUdhYjOk3QIYeH83QgwOJEGtbBNYmEledY9ArtMr9cMTOVVJu6A2WIIuSQ896E
+         aN8i0Bq3/vql3UioxaB6THVGmiyKh4An3PSVImOw3/xBYYYWIkAevcfpoaoIyMA8bzmK
+         GUgeULYnzce4RWLsChvkgp9JOtv0DtIB0TyAx+XvL89ltzX1JKILUeDRU9+wuOMYxUqN
+         k/w7x6A+RHa4TCAuYGzgPGaOu6Y40pAAWFuQfQqax90FEcyCqpWJXTOOgZulDIdgi5kG
+         I4I0X0ak00aCl/eqjbqATLUa917ejQ2scqS6F44maCshs6yXow/P5Dbca5s1+hd0lV0c
+         E/WQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUze8NwBulwonEP/xAGrmNTkOR3D7WCW0TULGeNguq0Nx8zfMljnqbCPg8EZ6oAWR2qBMS+7tYhT1zcKJw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuUrcEqvskP4wTRgTRojlTQb1ArlzC9pgzOroG+r+7d5Mz1e+o
+	ooIAjF9b32rgoHFD9DUV+o+Hjgx7h5jLqB3kj4UAyFbItpTQUJZ6GIfBvRgicFcNIGsQ50rz3ht
+	Yg6nfKapOnKRl5/nOm0qOdTIfpn4iBOsJjTQlCS6MqQ==
+X-Gm-Gg: ASbGnctsAbP9PrUhqI51Ryrbjo+94JxMRArvtVWCghOKxwkweXlzh6t5KTXDFMUlR0v
+	NfG1bO+y+GRPIavh5fDvAZ0mxo7dPao15lotoSIjbMw2gDcdVo4B4I6cRNe5l/1pnK3ddpR7HGV
+	grYI2y9W01SH7ibaBIk4IeBoWdeJ7QNDqC3gI2Kdp+UM8j/Om+zaaYQguoFR0Ro9UAkVpscM5K3
+	+VmGGe2HotsU7OFx9ylCKtJZmgCZ5pmLUQrk2bDKd6T
+X-Google-Smtp-Source: AGHT+IEsi3zTjbIEzgUfpuQxM21bQ1UgHTZkyJdgVHLwOTUMPzbn8+oeMmltFD2cdIn5JGTG7y0eC8dfLjZ7tA/qYSk=
+X-Received: by 2002:a53:a0ca:0:b0:629:ec90:c446 with SMTP id
+ 956f58d0204a3-63b9a06f1a3mr3107060d50.12.1759514119507; Fri, 03 Oct 2025
+ 10:55:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250926093008.1949131-1-rk0006818@gmail.com>
-In-Reply-To: <20250926093008.1949131-1-rk0006818@gmail.com>
-From: Rahul Kumar <rk0006818@gmail.com>
-Date: Fri, 3 Oct 2025 23:21:25 +0530
-X-Gm-Features: AS18NWBAqDBk-brZQipmIu4JtjsscgcOTEoPvU74Cba7HGt69_ZDe9ZZhSKTIwM
-Message-ID: <CAKY2RybMM5jcOzO_mknsdH+m9-T+Qe3yMhRrdpV_VE4paUrAKw@mail.gmail.com>
-Subject: Re: [PATCH v3] drm/komeda: Convert logging in komeda_crtc.c to drm_*
- with drm_device parameter
-To: liviu.dudau@arm.com, maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
-	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-kernel-mentees@lists.linux.dev, skhan@linuxfoundation.org
+References: <20251002-gs101-pmu-regmap-tables-v1-0-1f96f0920eb3@linaro.org> <20251002-gs101-pmu-regmap-tables-v1-2-1f96f0920eb3@linaro.org>
+In-Reply-To: <20251002-gs101-pmu-regmap-tables-v1-2-1f96f0920eb3@linaro.org>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Fri, 3 Oct 2025 12:55:08 -0500
+X-Gm-Features: AS18NWDO4wOWUr7D5fpivRh4cck7ZlJFct3DOK5VRmjxFhJsrC5iwEvf350v8mo
+Message-ID: <CAPLW+4=+efttfgj9gMSGpv2sjhJQ7whtoCuitK+Ku4U7hzE+1A@mail.gmail.com>
+Subject: Re: [PATCH 2/3] soc: samsung: exynos-pmu: move some gs101 related
+ code into new file
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Liviu,
-
-Just following up to ask if anything more is needed from my side for
-this patch, or if you plan to pick it up in this merge window.
-
-Thanks,
-Rahul
-
-On Fri, Sep 26, 2025 at 3:00=E2=80=AFPM Rahul Kumar <rk0006818@gmail.com> w=
-rote:
+On Thu, Oct 2, 2025 at 5:33=E2=80=AFAM Andr=C3=A9 Draszik <andre.draszik@li=
+naro.org> wrote:
 >
-> Replace all dev_err(), dev_warn(), dev_info() and DRM_ERROR/WARN/INFO()
-> calls in drivers/gpu/drm/arm/display/komeda/komeda_crtc.c with the
-> corresponding drm_err(), drm_warn(), and drm_info() helpers.
+> To avoid cluttering common code, move most of the gs101 code into a new
+> file, gs101-pmu.c
 >
-> The new drm_*() logging functions take a struct drm_device * as the
-> first argument. This allows the DRM core to prefix log messages with
-> the specific DRM device name and instance, which is essential for
-> distinguishing logs when multiple GPUs or display controllers are present=
+> More code is going to be added for gs101 - having it all in one file
+> helps keeping the common code (file) more readable.
+>
+
+Maybe add "no functional change" note for refactoring/cleanup patches like =
+this.
+
+> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+> ---
+>  MAINTAINERS                      |   1 +
+>  drivers/soc/samsung/Makefile     |   3 +-
+>  drivers/soc/samsung/exynos-pmu.c | 133 ---------------------------------=
+---
+>  drivers/soc/samsung/exynos-pmu.h |   7 ++
+>  drivers/soc/samsung/gs101-pmu.c  | 141 +++++++++++++++++++++++++++++++++=
+++++++
+>  5 files changed, 151 insertions(+), 134 deletions(-)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 3439485437117aaffbe61b709468348231ca3cc4..b8908a95abc561ecf04be560f=
+0e358c58acad693 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -10599,6 +10599,7 @@ F:      Documentation/devicetree/bindings/clock/g=
+oogle,gs101-clock.yaml
+>  F:     Documentation/devicetree/bindings/soc/google/google,gs101-pmu-int=
+r-gen.yaml
+>  F:     arch/arm64/boot/dts/exynos/google/
+>  F:     drivers/clk/samsung/clk-gs101.c
+> +F:     drivers/soc/samsung/gs101-pmu.c
+>  F:     drivers/phy/samsung/phy-gs101-ufs.c
+>  F:     include/dt-bindings/clock/google,gs101.h
+>  K:     [gG]oogle.?[tT]ensor
+> diff --git a/drivers/soc/samsung/Makefile b/drivers/soc/samsung/Makefile
+> index 248a33d7754af1a1e5fbbbb79413eb300bbbc8e5..636a762608c9ba2c22a72d6f9=
+597ceb015f7f36c 100644
+> --- a/drivers/soc/samsung/Makefile
+> +++ b/drivers/soc/samsung/Makefile
+> @@ -6,7 +6,8 @@ exynos_chipid-y                 +=3D exynos-chipid.o exyn=
+os-asv.o
+>
+>  obj-$(CONFIG_EXYNOS_USI)       +=3D exynos-usi.o
+>
+> -obj-$(CONFIG_EXYNOS_PMU)       +=3D exynos-pmu.o
+> +obj-$(CONFIG_EXYNOS_PMU)       +=3D exynos_pmu.o
+> +exynos_pmu-y                   +=3D exynos-pmu.o gs101-pmu.o
+>
+>  obj-$(CONFIG_EXYNOS_PMU_ARM_DRIVERS)   +=3D exynos3250-pmu.o exynos4-pmu=
+.o \
+>                                         exynos5250-pmu.o exynos5420-pmu.o
+> diff --git a/drivers/soc/samsung/exynos-pmu.c b/drivers/soc/samsung/exyno=
+s-pmu.c
+> index 9f416de03610b1727d8cc77616e5c87e2525cc69..528fd4bd96f515a15b0bf8d67=
+c505f7a84c0fc2e 100644
+> --- a/drivers/soc/samsung/exynos-pmu.c
+> +++ b/drivers/soc/samsung/exynos-pmu.c
+> @@ -6,7 +6,6 @@
+>  // Exynos - CPU PMU(Power Management Unit) support
+>
+>  #include <linux/array_size.h>
+> -#include <linux/arm-smccc.h>
+>  #include <linux/bitmap.h>
+>  #include <linux/cpuhotplug.h>
+>  #include <linux/cpu_pm.h>
+> @@ -25,14 +24,6 @@
+>
+>  #include "exynos-pmu.h"
+>
+> -#define PMUALIVE_MASK                  GENMASK(13, 0)
+> -#define TENSOR_SET_BITS                        (BIT(15) | BIT(14))
+> -#define TENSOR_CLR_BITS                        BIT(15)
+> -#define TENSOR_SMC_PMU_SEC_REG         0x82000504
+> -#define TENSOR_PMUREG_READ             0
+> -#define TENSOR_PMUREG_WRITE            1
+> -#define TENSOR_PMUREG_RMW              2
+> -
+>  struct exynos_pmu_context {
+>         struct device *dev;
+>         const struct exynos_pmu_data *pmu_data;
+> @@ -54,125 +45,6 @@ static struct exynos_pmu_context *pmu_context;
+>  /* forward declaration */
+>  static struct platform_driver exynos_pmu_driver;
+>
+> -/*
+> - * Tensor SoCs are configured so that PMU_ALIVE registers can only be wr=
+itten
+> - * from EL3, but are still read accessible. As Linux needs to write some=
+ of
+> - * these registers, the following functions are provided and exposed via
+> - * regmap.
+> - *
+> - * Note: This SMC interface is known to be implemented on gs101 and deri=
+vative
+> - * SoCs.
+> - */
+> -
+> -/* Write to a protected PMU register. */
+> -static int tensor_sec_reg_write(void *context, unsigned int reg,
+> -                               unsigned int val)
+> -{
+> -       struct arm_smccc_res res;
+> -       unsigned long pmu_base =3D (unsigned long)context;
+> -
+> -       arm_smccc_smc(TENSOR_SMC_PMU_SEC_REG, pmu_base + reg,
+> -                     TENSOR_PMUREG_WRITE, val, 0, 0, 0, 0, &res);
+> -
+> -       /* returns -EINVAL if access isn't allowed or 0 */
+> -       if (res.a0)
+> -               pr_warn("%s(): SMC failed: %d\n", __func__, (int)res.a0);
+> -
+> -       return (int)res.a0;
+> -}
+> -
+> -/* Read/Modify/Write a protected PMU register. */
+> -static int tensor_sec_reg_rmw(void *context, unsigned int reg,
+> -                             unsigned int mask, unsigned int val)
+> -{
+> -       struct arm_smccc_res res;
+> -       unsigned long pmu_base =3D (unsigned long)context;
+> -
+> -       arm_smccc_smc(TENSOR_SMC_PMU_SEC_REG, pmu_base + reg,
+> -                     TENSOR_PMUREG_RMW, mask, val, 0, 0, 0, &res);
+> -
+> -       /* returns -EINVAL if access isn't allowed or 0 */
+> -       if (res.a0)
+> -               pr_warn("%s(): SMC failed: %d\n", __func__, (int)res.a0);
+> -
+> -       return (int)res.a0;
+> -}
+> -
+> -/*
+> - * Read a protected PMU register. All PMU registers can be read by Linux=
 .
->
-> This change aligns komeda with the DRM TODO item: "Convert logging to
-> drm_* functions with drm_device parameter".
->
-> Signed-off-by: Rahul Kumar <rk0006818@gmail.com>
-> Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
-> ---
-> Changes since v2:
-> - Added Reviewed-by tag from Liviu Dudau
->
-> Link to v1:
-> https://lore.kernel.org/all/aJshoswGslcYQFLI@e110455-lin.cambridge.arm.co=
-m/
-> ---
->  .../gpu/drm/arm/display/komeda/komeda_crtc.c  | 31 +++++++++++--------
->  1 file changed, 18 insertions(+), 13 deletions(-)
->
-> diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c b/drivers/g=
-pu/drm/arm/display/komeda/komeda_crtc.c
-> index 2ad33559a33a..5a66948ffd24 100644
-> --- a/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
-> +++ b/drivers/gpu/drm/arm/display/komeda/komeda_crtc.c
-> @@ -111,6 +111,7 @@ komeda_crtc_atomic_check(struct drm_crtc *crtc,
->  static int
->  komeda_crtc_prepare(struct komeda_crtc *kcrtc)
+> - * Note: The SMC read register is not used, as only registers that can b=
+e
+> - * written are readable via SMC.
+> - */
+> -static int tensor_sec_reg_read(void *context, unsigned int reg,
+> -                              unsigned int *val)
+> -{
+> -       *val =3D pmu_raw_readl(reg);
+> -       return 0;
+> -}
+> -
+> -/*
+> - * For SoCs that have set/clear bit hardware this function can be used w=
+hen
+> - * the PMU register will be accessed by multiple masters.
+> - *
+> - * For example, to set bits 13:8 in PMU reg offset 0x3e80
+> - * tensor_set_bits_atomic(ctx, 0x3e80, 0x3f00, 0x3f00);
+> - *
+> - * Set bit 8, and clear bits 13:9 PMU reg offset 0x3e80
+> - * tensor_set_bits_atomic(0x3e80, 0x100, 0x3f00);
+> - */
+> -static int tensor_set_bits_atomic(void *ctx, unsigned int offset, u32 va=
+l,
+> -                                 u32 mask)
+> -{
+> -       int ret;
+> -       unsigned int i;
+> -
+> -       for (i =3D 0; i < 32; i++) {
+> -               if (!(mask & BIT(i)))
+> -                       continue;
+> -
+> -               offset &=3D ~TENSOR_SET_BITS;
+> -
+> -               if (val & BIT(i))
+> -                       offset |=3D TENSOR_SET_BITS;
+> -               else
+> -                       offset |=3D TENSOR_CLR_BITS;
+> -
+> -               ret =3D tensor_sec_reg_write(ctx, offset, i);
+> -               if (ret)
+> -                       return ret;
+> -       }
+> -       return 0;
+> -}
+> -
+> -static bool tensor_is_atomic(unsigned int reg)
+> -{
+> -       /*
+> -        * Use atomic operations for PMU_ALIVE registers (offset 0~0x3FFF=
+)
+> -        * as the target registers can be accessed by multiple masters. S=
+FRs
+> -        * that don't support atomic are added to the switch statement be=
+low.
+> -        */
+> -       if (reg > PMUALIVE_MASK)
+> -               return false;
+> -
+> -       switch (reg) {
+> -       case GS101_SYSIP_DAT0:
+> -       case GS101_SYSTEM_CONFIGURATION:
+> -               return false;
+> -       default:
+> -               return true;
+> -       }
+> -}
+> -
+> -static int tensor_sec_update_bits(void *ctx, unsigned int reg,
+> -                                 unsigned int mask, unsigned int val)
+> -{
+> -
+> -       if (!tensor_is_atomic(reg))
+> -               return tensor_sec_reg_rmw(ctx, reg, mask, val);
+> -
+> -       return tensor_set_bits_atomic(ctx, reg, val, mask);
+> -}
+> -
+>  void pmu_raw_writel(u32 val, u32 offset)
 >  {
-> +       struct drm_device *drm =3D kcrtc->base.dev;
->         struct komeda_dev *mdev =3D kcrtc->base.dev->dev_private;
->         struct komeda_pipeline *master =3D kcrtc->master;
->         struct komeda_crtc_state *kcrtc_st =3D to_kcrtc_st(kcrtc->base.st=
-ate);
-> @@ -128,8 +129,8 @@ komeda_crtc_prepare(struct komeda_crtc *kcrtc)
->
->         err =3D mdev->funcs->change_opmode(mdev, new_mode);
->         if (err) {
-> -               DRM_ERROR("failed to change opmode: 0x%x -> 0x%x.\n,",
-> -                         mdev->dpmode, new_mode);
-> +               drm_err(drm, "failed to change opmode: 0x%x -> 0x%x.\n,",
-> +                       mdev->dpmode, new_mode);
->                 goto unlock;
->         }
->
-> @@ -142,18 +143,18 @@ komeda_crtc_prepare(struct komeda_crtc *kcrtc)
->         if (new_mode !=3D KOMEDA_MODE_DUAL_DISP) {
->                 err =3D clk_set_rate(mdev->aclk, komeda_crtc_get_aclk(kcr=
-tc_st));
->                 if (err)
-> -                       DRM_ERROR("failed to set aclk.\n");
-> +                       drm_err(drm, "failed to set aclk.\n");
->                 err =3D clk_prepare_enable(mdev->aclk);
->                 if (err)
-> -                       DRM_ERROR("failed to enable aclk.\n");
-> +                       drm_err(drm, "failed to enable aclk.\n");
->         }
->
->         err =3D clk_set_rate(master->pxlclk, mode->crtc_clock * 1000);
->         if (err)
-> -               DRM_ERROR("failed to set pxlclk for pipe%d\n", master->id=
-);
-> +               drm_err(drm, "failed to set pxlclk for pipe%d\n", master-=
->id);
->         err =3D clk_prepare_enable(master->pxlclk);
->         if (err)
-> -               DRM_ERROR("failed to enable pxl clk for pipe%d.\n", maste=
-r->id);
-> +               drm_err(drm, "failed to enable pxl clk for pipe%d.\n", ma=
-ster->id);
->
->  unlock:
->         mutex_unlock(&mdev->lock);
-> @@ -164,6 +165,7 @@ komeda_crtc_prepare(struct komeda_crtc *kcrtc)
->  static int
->  komeda_crtc_unprepare(struct komeda_crtc *kcrtc)
->  {
-> +       struct drm_device *drm =3D kcrtc->base.dev;
->         struct komeda_dev *mdev =3D kcrtc->base.dev->dev_private;
->         struct komeda_pipeline *master =3D kcrtc->master;
->         u32 new_mode;
-> @@ -180,8 +182,8 @@ komeda_crtc_unprepare(struct komeda_crtc *kcrtc)
->
->         err =3D mdev->funcs->change_opmode(mdev, new_mode);
->         if (err) {
-> -               DRM_ERROR("failed to change opmode: 0x%x -> 0x%x.\n,",
-> -                         mdev->dpmode, new_mode);
-> +               drm_err(drm, "failed to change opmode: 0x%x -> 0x%x.\n,",
-> +                       mdev->dpmode, new_mode);
->                 goto unlock;
->         }
->
-> @@ -200,6 +202,7 @@ komeda_crtc_unprepare(struct komeda_crtc *kcrtc)
->  void komeda_crtc_handle_event(struct komeda_crtc   *kcrtc,
->                               struct komeda_events *evts)
->  {
-> +       struct drm_device *drm =3D kcrtc->base.dev;
->         struct drm_crtc *crtc =3D &kcrtc->base;
->         u32 events =3D evts->pipes[kcrtc->master->id];
->
-> @@ -212,7 +215,7 @@ void komeda_crtc_handle_event(struct komeda_crtc   *k=
-crtc,
->                 if (wb_conn)
->                         drm_writeback_signal_completion(&wb_conn->base, 0=
-);
->                 else
-> -                       DRM_WARN("CRTC[%d]: EOW happen but no wb_connecto=
-r.\n",
-> +                       drm_warn(drm, "CRTC[%d]: EOW happen but no wb_con=
-nector.\n",
->                                  drm_crtc_index(&kcrtc->base));
->         }
->         /* will handle it together with the write back support */
-> @@ -236,7 +239,7 @@ void komeda_crtc_handle_event(struct komeda_crtc   *k=
-crtc,
->                         crtc->state->event =3D NULL;
->                         drm_crtc_send_vblank_event(crtc, event);
->                 } else {
-> -                       DRM_WARN("CRTC[%d]: FLIP happened but no pending =
-commit.\n",
-> +                       drm_warn(drm, "CRTC[%d]: FLIP happened but no pen=
-ding commit.\n",
->                                  drm_crtc_index(&kcrtc->base));
->                 }
->                 spin_unlock_irqrestore(&crtc->dev->event_lock, flags);
-> @@ -309,7 +312,7 @@ komeda_crtc_flush_and_wait_for_flip_done(struct komed=
-a_crtc *kcrtc,
->
->         /* wait the flip take affect.*/
->         if (wait_for_completion_timeout(flip_done, HZ) =3D=3D 0) {
-> -               DRM_ERROR("wait pipe%d flip done timeout\n", kcrtc->maste=
-r->id);
-> +               drm_err(drm, "wait pipe%d flip done timeout\n", kcrtc->ma=
-ster->id);
->                 if (!input_flip_done) {
->                         unsigned long flags;
->
-> @@ -562,6 +565,7 @@ static const struct drm_crtc_funcs komeda_crtc_funcs =
+>         writel_relaxed(val, pmu_base_addr + offset);
+> @@ -244,11 +116,6 @@ static const struct regmap_config regmap_pmu_intr =
 =3D {
->  int komeda_kms_setup_crtcs(struct komeda_kms_dev *kms,
->                            struct komeda_dev *mdev)
->  {
-> +       struct drm_device *drm =3D &kms->base;
->         struct komeda_crtc *crtc;
->         struct komeda_pipeline *master;
->         char str[16];
-> @@ -581,7 +585,7 @@ int komeda_kms_setup_crtcs(struct komeda_kms_dev *kms=
-,
->                 else
->                         sprintf(str, "None");
+>         .use_raw_spinlock =3D true,
+>  };
 >
-> -               DRM_INFO("CRTC-%d: master(pipe-%d) slave(%s).\n",
-> +               drm_info(drm, "CRTC-%d: master(pipe-%d) slave(%s).\n",
->                          kms->n_crtcs, master->id, str);
+> -static const struct exynos_pmu_data gs101_pmu_data =3D {
+> -       .pmu_secure =3D true,
+> -       .pmu_cpuhp =3D true,
+> -};
+> -
+>  /*
+>   * PMU platform driver and devicetree bindings.
+>   */
+> diff --git a/drivers/soc/samsung/exynos-pmu.h b/drivers/soc/samsung/exyno=
+s-pmu.h
+> index 113149ed32c88a09b075be82050c26970e4c0620..fe11adc4f6ac8fc8bce228d58=
+52deaff7c438221 100644
+> --- a/drivers/soc/samsung/exynos-pmu.h
+> +++ b/drivers/soc/samsung/exynos-pmu.h
+> @@ -44,7 +44,14 @@ extern const struct exynos_pmu_data exynos4412_pmu_dat=
+a;
+>  extern const struct exynos_pmu_data exynos5250_pmu_data;
+>  extern const struct exynos_pmu_data exynos5420_pmu_data;
+>  #endif
+> +extern const struct exynos_pmu_data gs101_pmu_data;
 >
->                 kms->n_crtcs++;
-> @@ -613,6 +617,7 @@ static int komeda_attach_bridge(struct device *dev,
->                                 struct komeda_pipeline *pipe,
->                                 struct drm_encoder *encoder)
->  {
-> +       struct drm_device *drm =3D encoder->dev;
->         struct drm_bridge *bridge;
->         int err;
+>  extern void pmu_raw_writel(u32 val, u32 offset);
+>  extern u32 pmu_raw_readl(u32 offset);
+> +
+> +int tensor_sec_reg_write(void *context, unsigned int reg, unsigned int v=
+al);
+> +int tensor_sec_reg_read(void *context, unsigned int reg, unsigned int *v=
+al);
+> +int tensor_sec_update_bits(void *ctx, unsigned int reg, unsigned int mas=
+k,
+> +                          unsigned int val);
+
+Nitpick: just noticed the inconsistency between context/ctx wording
+usage in above function arguments.
+
+> +
+>  #endif /* __EXYNOS_PMU_H */
+> diff --git a/drivers/soc/samsung/gs101-pmu.c b/drivers/soc/samsung/gs101-=
+pmu.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..b5a535822ec830b751e36a331=
+21e2a03ef2ebcb2
+> --- /dev/null
+> +++ b/drivers/soc/samsung/gs101-pmu.c
+> @@ -0,0 +1,141 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +//
+> +// Copyright 2025 Linaro Ltd.
+> +//
+> +// GS101 PMU (Power Management Unit) support
+> +
+
+AFAIR headers like these should be made using multi-line comments (not
+talking about SPDX part). Or is it the latest fashion trends in
+kernel?
+
+Anyways, those all are minor:
+
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+
+> +#include <linux/arm-smccc.h>
+> +#include <linux/array_size.h>
+> +#include <linux/soc/samsung/exynos-pmu.h>
+> +#include <linux/soc/samsung/exynos-regs-pmu.h>
+> +
+> +#include "exynos-pmu.h"
+> +
+> +#define PMUALIVE_MASK                  GENMASK(13, 0)
+> +#define TENSOR_SET_BITS                        (BIT(15) | BIT(14))
+> +#define TENSOR_CLR_BITS                        BIT(15)
+> +#define TENSOR_SMC_PMU_SEC_REG         0x82000504
+> +#define TENSOR_PMUREG_READ             0
+> +#define TENSOR_PMUREG_WRITE            1
+> +#define TENSOR_PMUREG_RMW              2
+> +
+> +const struct exynos_pmu_data gs101_pmu_data =3D {
+> +       .pmu_secure =3D true,
+> +       .pmu_cpuhp =3D true,
+> +};
+> +
+> +/*
+> + * Tensor SoCs are configured so that PMU_ALIVE registers can only be wr=
+itten
+> + * from EL3, but are still read accessible. As Linux needs to write some=
+ of
+> + * these registers, the following functions are provided and exposed via
+> + * regmap.
+> + *
+> + * Note: This SMC interface is known to be implemented on gs101 and deri=
+vative
+> + * SoCs.
+> + */
+> +
+> +/* Write to a protected PMU register. */
+> +int tensor_sec_reg_write(void *context, unsigned int reg, unsigned int v=
+al)
+> +{
+> +       struct arm_smccc_res res;
+> +       unsigned long pmu_base =3D (unsigned long)context;
+> +
+> +       arm_smccc_smc(TENSOR_SMC_PMU_SEC_REG, pmu_base + reg,
+> +                     TENSOR_PMUREG_WRITE, val, 0, 0, 0, 0, &res);
+> +
+> +       /* returns -EINVAL if access isn't allowed or 0 */
+> +       if (res.a0)
+> +               pr_warn("%s(): SMC failed: %d\n", __func__, (int)res.a0);
+> +
+> +       return (int)res.a0;
+> +}
+> +
+> +/* Read/Modify/Write a protected PMU register. */
+> +static int tensor_sec_reg_rmw(void *context, unsigned int reg,
+> +                             unsigned int mask, unsigned int val)
+> +{
+> +       struct arm_smccc_res res;
+> +       unsigned long pmu_base =3D (unsigned long)context;
+> +
+> +       arm_smccc_smc(TENSOR_SMC_PMU_SEC_REG, pmu_base + reg,
+> +                     TENSOR_PMUREG_RMW, mask, val, 0, 0, 0, &res);
+> +
+> +       /* returns -EINVAL if access isn't allowed or 0 */
+> +       if (res.a0)
+> +               pr_warn("%s(): SMC failed: %d\n", __func__, (int)res.a0);
+> +
+> +       return (int)res.a0;
+> +}
+> +
+> +/*
+> + * Read a protected PMU register. All PMU registers can be read by Linux=
+.
+> + * Note: The SMC read register is not used, as only registers that can b=
+e
+> + * written are readable via SMC.
+> + */
+> +int tensor_sec_reg_read(void *context, unsigned int reg, unsigned int *v=
+al)
+> +{
+> +       *val =3D pmu_raw_readl(reg);
+> +       return 0;
+> +}
+> +
+> +/*
+> + * For SoCs that have set/clear bit hardware this function can be used w=
+hen
+> + * the PMU register will be accessed by multiple masters.
+> + *
+> + * For example, to set bits 13:8 in PMU reg offset 0x3e80
+> + * tensor_set_bits_atomic(ctx, 0x3e80, 0x3f00, 0x3f00);
+> + *
+> + * Set bit 8, and clear bits 13:9 PMU reg offset 0x3e80
+> + * tensor_set_bits_atomic(0x3e80, 0x100, 0x3f00);
+> + */
+> +static int tensor_set_bits_atomic(void *ctx, unsigned int offset, u32 va=
+l,
+> +                                 u32 mask)
+> +{
+> +       int ret;
+> +       unsigned int i;
+> +
+> +       for (i =3D 0; i < 32; i++) {
+> +               if (!(mask & BIT(i)))
+> +                       continue;
+> +
+> +               offset &=3D ~TENSOR_SET_BITS;
+> +
+> +               if (val & BIT(i))
+> +                       offset |=3D TENSOR_SET_BITS;
+> +               else
+> +                       offset |=3D TENSOR_CLR_BITS;
+> +
+> +               ret =3D tensor_sec_reg_write(ctx, offset, i);
+> +               if (ret)
+> +                       return ret;
+> +       }
+> +       return 0;
+> +}
+> +
+> +static bool tensor_is_atomic(unsigned int reg)
+> +{
+> +       /*
+> +        * Use atomic operations for PMU_ALIVE registers (offset 0~0x3FFF=
+)
+> +        * as the target registers can be accessed by multiple masters. S=
+FRs
+> +        * that don't support atomic are added to the switch statement be=
+low.
+> +        */
+> +       if (reg > PMUALIVE_MASK)
+> +               return false;
+> +
+> +       switch (reg) {
+> +       case GS101_SYSIP_DAT0:
+> +       case GS101_SYSTEM_CONFIGURATION:
+> +               return false;
+> +       default:
+> +               return true;
+> +       }
+> +}
+> +
+> +int tensor_sec_update_bits(void *ctx, unsigned int reg, unsigned int mas=
+k,
+> +                          unsigned int val)
+> +{
+> +       if (!tensor_is_atomic(reg))
+> +               return tensor_sec_reg_rmw(ctx, reg, mask, val);
+> +
+> +       return tensor_set_bits_atomic(ctx, reg, val, mask);
+> +}
 >
-> @@ -624,7 +629,7 @@ static int komeda_attach_bridge(struct device *dev,
->
->         err =3D drm_bridge_attach(encoder, bridge, NULL, 0);
->         if (err)
-> -               dev_err(dev, "bridge_attach() failed for pipe: %s\n",
-> +               drm_err(drm, "bridge_attach() failed for pipe: %s\n",
->                         of_node_full_name(pipe->of_node));
->
->         return err;
 > --
-> 2.43.0
+> 2.51.0.618.g983fd99d29-goog
+>
 >
 
