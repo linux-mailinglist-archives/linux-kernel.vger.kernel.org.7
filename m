@@ -1,615 +1,511 @@
-Return-Path: <linux-kernel+bounces-841235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E7DCBB6947
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 13:58:35 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9678BB6951
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 14:03:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F293D19E5CDB
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 11:58:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9F57E4EA62A
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 12:03:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 722202BE029;
-	Fri,  3 Oct 2025 11:57:30 +0000 (UTC)
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCB2D2ECD1D;
+	Fri,  3 Oct 2025 12:03:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kRMU8Afg"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 963662EBB8C
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 11:57:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64E2228504B
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 12:03:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759492649; cv=none; b=VMrZ5scHp6Es9dFqjCEoB7bpXmTh+8bAYXYPEO2E+OEjC1atSu6aZR0jrVCF1k4gnrtnLGZA49cTqPBZRQxDJzTWlMammaCofMX4sypEDMiuj48Q9wvxANsOQkNGZR0O+042Qjl3ws1WMcQ6XaJkA1lv6la9dUn/H+ie+jHQO8c=
+	t=1759493011; cv=none; b=XtPurWI1gf2oF5mapWrj2hZpChBxVFtitKk4qwJU4eMuvHqeUvpOlVKBYnt+oY9Dn/uMFG9V/Si6qFvOWRRyOzCNSvdHULfNo5zp16jjS+L7XV7S94OKLKAojwPyYAwm+q26RB1xhmYG0Blc/SUlw2Vq1Pv3QgaD2nbzZ/owCn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759492649; c=relaxed/simple;
-	bh=kXeBQWfw7Jx9MLKkvNQFw5Up3TwBcRtANKYYjl7PaDQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=iOmEHTJ1hHs6TVlu22FOQwfdz9F4Z4gzCLKAIdbBOKe3u5IxkXJFB6U6zELdietQttqTrm9nuG8RtyanJpCwFHi+t16SB3fh3tismHJwBHzEsChcXaD9U7r2xdJC+ePTOyGVdwkrftq7GPowjyrsuZlgKQ4xpo0vtIwH6SkBqRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b00a9989633so5888866b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 04:57:26 -0700 (PDT)
+	s=arc-20240116; t=1759493011; c=relaxed/simple;
+	bh=yv+S/jnE7az3NpTH9ALrZjC5rcuBgoQb8XWCpPhTDX4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=Vu1ozlecPJXPoGumZj1s+SJIdeRMEJKQIeG3VBFIgEc6PUfZ2cIJpkQyEydBxlZJx1HQhY8jAxV6lnIj2h28Eq/tABIRmtxTcl768AKSppyCfye652wbJsmPmQx19GCz2XnozlmH7QrbRwTuIcUOtVtRTFNZtmOAOAN3aGB+UOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kRMU8Afg; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-46e33b260b9so21196885e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 05:03:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1759493008; x=1760097808; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:cc:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=g/yPmNq+D49WFMiq3UChUnkB5ipVol1o/yzWT8SNKXA=;
+        b=kRMU8AfgRRK87vuHOX7G+UB5Ylrl213q5v+XEh4opBsf2sV9nSRM7cDcrFj68UrOfW
+         OhFa9uywsFhFGn2WySOwHQ9WSqwiuw2YhQdMjNwstzS1Za2xVKu3ki4QRF606BVZPBJe
+         IbSgC1ZU3I5jvruBmJ7YQKbHsC3kt7V3+UfzAK05Et4zBcdyIhAIQeG1bKiqhbNUAX+D
+         K7d4BkqV6HoO2N22t9/4zgUROftgfmqhUxZxQ4ipQo37Bl6UhO0vEHcD/2x5HzYydVnn
+         troPh00PfQD2qtqYWgK5q0rE/JoGyLk1ZOVO3g5A6kYuG0Ei2GADbKFYVRWXztiXw70b
+         8eCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759492645; x=1760097445;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IPqSdPRLL+/ic1c9CZoAayBqLN290Dj7ejr0ufn8Chk=;
-        b=GcNNfHOJ/eDxghvTHLIGJY1hPADJ/X4vfgiH3bkxwZEVB6jrIPgH0gT+swDTnrwtmM
-         BEQKSE13E6NUiPErNUzt59jeLNODAyeAVBeW7qQAOZrQ8q4hHoftSSeLjl0xSIYDLxJu
-         jUCUlAAjGd4gePhGCCa4BnKwdwf5WY/fj4+1xbITDUFEXsbViEO3WxOf6FdDO+1UGXlt
-         XrWi/DZ0Ki3SkH9+ezGHrHP6ggUGMOParqah189IlkrH1+c4lX1jxL06XIpWdk74w2GF
-         fUbRXE9VrlldjlseImJppUoEBY2FBVZ218Lr/Uz8SxS9W8DDMEcj3HFX4LUcKE9w/dhX
-         Vs5Q==
-X-Gm-Message-State: AOJu0YxVNg0lpZJSFFCe1Uh5dH97mAg7YDYGkPVMIPFN72cdu9ViNELz
-	qUB8TPjReN98p0a+k4HtyijO1uifTpEa2SCEPCLbA5Ls8DcJzTgRGszd
-X-Gm-Gg: ASbGncuuQ6Js4WQOfzLs1gaB3ag+H5bhHgMayEywhC9yKcikiohq+lJiCPnc83+viA3
-	Jo2rAkl9NKDQqZlbx1Segcn4ZZ+GgpX8RehTur6B4u+w7MXHjJWksMzgS4HLAAGz8aHfGlmBXN/
-	+4r3okqcwgEFdGzGWANTVYMGolsSMVJEvsHgDVHpXa8lVWZ8KAWnH6wzHLtgxt6nr+hhCn8MXBY
-	sSmreHXTRaZx++WN+b8Rrcx+GQNYdkRdGOeYmNlGOK884ksMUcoUKrnpVCRdJ1kug/dBN8vT+xU
-	TUUajNYsWExGn5sy7Td885eSgq+OGr/YQJGoyAH9dpDEHDZXpmkVw5Ujk36n0aqV2cxMgEgo4Z1
-	2GEIB6GRJe0Lalea9zhHQ+HEs9eq77lUh471WLg==
-X-Google-Smtp-Source: AGHT+IEyuR/64V9ixQilwXTYbXG/GDiP+3k/Iw7RqoIRh1FIAzjeg7kAxEjGsvd5EOpIcCbGc7gjAw==
-X-Received: by 2002:a17:906:d54c:b0:b3a:8070:e269 with SMTP id a640c23a62f3a-b49c19754a9mr427262166b.14.1759492644628;
-        Fri, 03 Oct 2025 04:57:24 -0700 (PDT)
-Received: from localhost ([2a03:2880:30ff:73::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b486970a4bdsm423720466b.49.2025.10.03.04.57.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Oct 2025 04:57:24 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-Date: Fri, 03 Oct 2025 04:57:15 -0700
-Subject: [PATCH net v7 4/4] selftest: netcons: add test for netconsole over
- bonded interfaces
+        d=1e100.net; s=20230601; t=1759493008; x=1760097808;
+        h=content-transfer-encoding:in-reply-to:from:cc:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=g/yPmNq+D49WFMiq3UChUnkB5ipVol1o/yzWT8SNKXA=;
+        b=Ll1yDeZU4FOV916WQ+uNJkQRxIvm+5IBHX2g1Dc4URFm/JexMAuMrOG//b6RTiHnpF
+         NRcXDpB3iT1faAgE0iW9zVvdyvLH6r+9w4HBXLQrsyXwnwNPVZsc1o0fAsThiRXtSw0T
+         KTkufeLq0aHxtuxGMtax80zGPgoMSHbN7UPu+l+/Cj7ZpwJgsRF44umdLmes/Jx7ZkO2
+         /1MJDpEHoX9jy8cLKKs6RYnGEGMTIS9/zDK6ORGtRvgpTjIovcUevPQ6QzN8dKQo6i5D
+         SD38TVwZY9a+tYs45LpTeu5nwqliGFFShP9qD+EjY5ZKTuHICEYzTouWxodzU9DwYQbD
+         M5DA==
+X-Forwarded-Encrypted: i=1; AJvYcCVxXoxKfVwHo0SK15baTlk5nUEUTLxwrS7u507tFL6gqY8xUE/W+AeRlVg00ULBs3ebUsmRxsnm7Ck/yLQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVPJMUakjBZE61Lw6tnLBK4TnhiV40lslXOICvFmcDbPOZxi0o
+	l9MD8mYUKDNSHXEfg2XCHO64efknk+qjOTHSSkBcHijyGZFfKbSgvlJcAMZs8UgpfXc=
+X-Gm-Gg: ASbGnct4xycuSVDPKRttsSkDa0QM3q8gZcWN+ORuUf8EXAdJ+ExSYD+44CTz5B1Xw3C
+	n8msV2y5xyZxdo79SICqEOm+MRdDDLPu2NHSEHh7s9QOMsdmhD2RC5Mucob7XvWEKUILoYkr1XQ
+	6Qsmx3WUl8iL/8jFthWp2HQt1gTwBiyhY71vob+A83oenTMsDmylt63BSwnTlw2N47P4/udR3rf
+	kLyG98y4Uv2PiJcn64CIUnPhn9j3hOBNH1NvFB6JNkHU20MSuOdfTF41S9dcswmlz8eLaSj813Z
+	Lt3vSu8QFBqiEM8XalKRsLiunA+cwhUIvF770GawUHovdF7U6pzsNUj89i/kT8P/26CcEoJHnnD
+	71680mJ+UFnn+D3wH5IlnRgyLtR63OiZIneOPtqZc3Kt7P/YDiMrvMe3r
+X-Google-Smtp-Source: AGHT+IGiDvKHZeSwoGJi2fPM5QafQx+012inaI/gsWAWOkcZnCRwqejgLweqHyQP6YdFfaxSjF9h8g==
+X-Received: by 2002:a05:600c:4e01:b0:450:cabd:b4a9 with SMTP id 5b1f17b1804b1-46e711465d9mr19121825e9.29.1759493007359;
+        Fri, 03 Oct 2025 05:03:27 -0700 (PDT)
+Received: from [192.168.1.3] ([185.48.76.109])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-46e5c4afd27sm74467365e9.7.2025.10.03.05.03.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 03 Oct 2025 05:03:26 -0700 (PDT)
+Message-ID: <4a49c58a-4b07-456c-a2e6-67d04b905944@linaro.org>
+Date: Fri, 3 Oct 2025 13:03:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] perf stat: Refactor retry/skip/fatal error
+ handling
+To: Ian Rogers <irogers@google.com>
+References: <20251002220727.1889799-1-irogers@google.com>
+ <20251002220727.1889799-2-irogers@google.com>
+Content-Language: en-US
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, Howard Chu <howardchu95@gmail.com>,
+ Thomas Falcon <thomas.falcon@intel.com>, Chun-Tse Shao <ctshao@google.com>,
+ Dapeng Mi <dapeng1.mi@linux.intel.com>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <20251002220727.1889799-2-irogers@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251003-netconsole_torture-v7-4-aa92fcce62a9@debian.org>
-References: <20251003-netconsole_torture-v7-0-aa92fcce62a9@debian.org>
-In-Reply-To: <20251003-netconsole_torture-v7-0-aa92fcce62a9@debian.org>
-To: Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Shuah Khan <shuah@kernel.org>, Simon Horman <horms@kernel.org>, 
- david decotigny <decot@googlers.com>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, asantostc@gmail.com, efault@gmx.de, 
- calvin@wbinvd.org, kernel-team@meta.com, calvin@wbinvd.org, 
- jv@jvosburgh.net, Breno Leitao <leitao@debian.org>
-X-Mailer: b4 0.15-dev-dd21f
-X-Developer-Signature: v=1; a=openpgp-sha256; l=18767; i=leitao@debian.org;
- h=from:subject:message-id; bh=kXeBQWfw7Jx9MLKkvNQFw5Up3TwBcRtANKYYjl7PaDQ=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBo37odPod2tQAgud2H6XoIlLTFNe7lRUSvPkw8a
- CgiFTQVWPKJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaN+6HQAKCRA1o5Of/Hh3
- bbJQD/9XRjVFqMt0jubU0zJx7fgZFCwhDPUn3Zd1oB/lfIieLKI+dgqdnmG5HtaNAlABVaLLR4b
- 1ob2DMogh+HjD+KS9Za3EvgvtTsYLjjbNZhrcy8Op1blxVqdDN0ZGUubkNXAMloWooARX+gjWvt
- G5Q2eLrWcvLFuq9ZsrWVlCToQGPMuyufyfCIJASTomkdXjgbTlfMydjJtw8ybpXle3XWl00xykI
- J+IyDEG6E24O13sHIYA4ZQ+pd0uOYVzx9XBoCcQKJlPOXCwY11IL80Dp6oXE/V6zHxLCY0lERHC
- tE6XJ089AzLOZiqH6B6IQ9uEsLcufD6eCvPLnxwH328aUqZM+ZqQZf3W565cAq314luOnhp+SH0
- ZocmZ39cmMxvRs+Xinej4ki181Y4XA/eNAdQiojjJoy1srP3GbZJ/V2RvR4XqkaQuTuk1ZI93s2
- WowEPjLaL0FYTL9oOIQNSbQhEnUtdBU6qLFDqfYOsWUy7KTBcnpbybkGoSrRefWTzdJ8JcpXLqi
- zwQLTyIw1u4v9oirdmsd639DGCv2+WXtUwmYN/Bs/bW1aqAH8HddNOR5xWSSo7kai5vO1pE+eau
- 5XVJKKs3hjw49IuU5tmx7DT/EBx8AYpPoaDf8SJrhDMnqcX0ptzTyC8ebYTYgiIkv9akGXbnG88
- sHNCP+r5z3sh2ZA==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
-This patch adds a selftest that verifies netconsole functionality
-over bonded network interfaces using netdevsim. It sets up two bonded
-interfaces acting as transmit (TX) and receive (RX) ends, placed in
-separate network namespaces. The test sends kernel log messages and
-verifies that they are properly received on the bonded RX interfaces
-with both IPv4 and IPv6, and using basic and extended netconsole
-formats.
 
-This patchset aims to test a long-standing netpoll subsystem where
-netpoll has multiple users. (in this case netconsole and bonding). A
-similar selftest has been discussed in [1] and [2].
 
-This test also tries to enable bonding and netpoll in different order,
-just to guarantee that all the possibilities are exercised.
+On 02/10/2025 11:07 pm, Ian Rogers wrote:
+> For the sake of Intel topdown events commit 9eac5612da1c ("perf stat:
+> Don't skip failing group events") changed perf stat error handling
+> making it so that more errors were fatal and didn't report "<not
+> supported>" events. The change outside of topdown events was
+> unintentional.
+> 
+> The notion of "fatal" error handling was introduced in commit
+> e0e6a6ca3ac2 ("perf stat: Factor out open error handling") and refined
+> in commits like commit cb5ef60067c1 ("perf stat: Error out unsupported
+> group leader immediately) to be an approach for avoiding later
+> assertion failures in the code base. This change fixes those issues
+> and removes the notion of a fatal error on an event. If all events
+> fail to open then a fatal error occurs with the previous fatal error
+> message. This seems to best match the notion of supported events and
+> allowing some errors not to stop perf stat, while allowing the truly
+> fatal no event case to terminate the tool early.
+> 
+> The evsel->errored flag is only used in the stat code but always just
+> meaning !evsel->supported although there is a comment about it being
+> sticky. Force all evsels to be supported in evsel__init and then clear
+> this when evsel__open fails. When an event is tried the supported is
+> set to true again. This simplifies the notion of whether an evsel is
+> broken.
+> 
+> In the get_group_fd code, fail to get a group fd when the evsel isn't
+> supported. If the leader isn't supported then it is also expected that
+> there is no group_fd as the leader will have been skipped. Therefore
+> change the BUG_ON test to be on supported rather than skippable. This
+> corrects the assertion errors that were the reason for the previous
+> fatal error handling.
+> 
+> Fixes: 9eac5612da1c ("perf stat: Don't skip failing group events")
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+> v2: Missed setting supported for weak groups. When no supported
+>      events, report the error on the first event in the evlist.
+> 
+> An earlier version of this fix exists in:
+> https://lore.kernel.org/lkml/20250923223312.238185-2-irogers@google.com/
+> This version is more thorough and tries to make the overall code base
+> more consistent.
+> ---
 
-Link: https://lore.kernel.org/all/20250905-netconsole_torture-v3-0-875c7febd316@debian.org/ [1]
-Link: https://lore.kernel.org/lkml/96b940137a50e5c387687bb4f57de8b0435a653f.1404857349.git.decot@googlers.com/ [2]
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
- .../testing/selftests/drivers/net/bonding/Makefile |   2 +
- tools/testing/selftests/drivers/net/bonding/config |   4 +
- .../drivers/net/bonding/netcons_over_bonding.sh    | 221 +++++++++++++++++++++
- .../selftests/drivers/net/lib/sh/lib_netcons.sh    | 158 ++++++++++++++-
- 4 files changed, 378 insertions(+), 7 deletions(-)
+Reviewed-by: James Clark <james.clark@linaro.org>
 
-diff --git a/tools/testing/selftests/drivers/net/bonding/Makefile b/tools/testing/selftests/drivers/net/bonding/Makefile
-index 2f095cf67d9a0..691e0bef4244c 100644
---- a/tools/testing/selftests/drivers/net/bonding/Makefile
-+++ b/tools/testing/selftests/drivers/net/bonding/Makefile
-@@ -8,6 +8,7 @@ TEST_PROGS := \
- 	dev_addr_lists.sh \
- 	mode-1-recovery-updelay.sh \
- 	mode-2-recovery-updelay.sh \
-+	netcons_over_bonding.sh \
- 	bond_options.sh \
- 	bond-eth-type-change.sh \
- 	bond_macvlan_ipvlan.sh \
-@@ -21,6 +22,7 @@ TEST_FILES := \
- 	bond_topo_3d1c.sh
- 
- TEST_INCLUDES := \
-+	../lib/sh/lib_netcons.sh \
- 	../../../net/forwarding/lib.sh \
- 	../../../net/lib.sh
- 
-diff --git a/tools/testing/selftests/drivers/net/bonding/config b/tools/testing/selftests/drivers/net/bonding/config
-index e5b7a8db4dfa3..5adc77d3808e1 100644
---- a/tools/testing/selftests/drivers/net/bonding/config
-+++ b/tools/testing/selftests/drivers/net/bonding/config
-@@ -1,5 +1,6 @@
- CONFIG_BONDING=y
- CONFIG_BRIDGE=y
-+CONFIG_CONFIGFS_FS=y
- CONFIG_DUMMY=y
- CONFIG_IPV6=y
- CONFIG_MACVLAN=y
-@@ -8,6 +9,9 @@ CONFIG_NET_ACT_GACT=y
- CONFIG_NET_CLS_FLOWER=y
- CONFIG_NET_CLS_MATCHALL=m
- CONFIG_NET_SCH_INGRESS=y
-+CONFIG_NETCONSOLE=m
-+CONFIG_NETCONSOLE_DYNAMIC=y
-+CONFIG_NETCONSOLE_EXTENDED_LOG=y
- CONFIG_NLMON=y
- CONFIG_VETH=y
- CONFIG_VLAN_8021Q=m
-diff --git a/tools/testing/selftests/drivers/net/bonding/netcons_over_bonding.sh b/tools/testing/selftests/drivers/net/bonding/netcons_over_bonding.sh
-new file mode 100755
-index 0000000000000..c550c906bf021
---- /dev/null
-+++ b/tools/testing/selftests/drivers/net/bonding/netcons_over_bonding.sh
-@@ -0,0 +1,221 @@
-+#!/usr/bin/env bash
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# This selftest exercises trying to have multiple netpoll users at the same
-+# time.
-+#
-+# This selftest has multiple smalls test inside, and the goal is to
-+# get interfaces with bonding and netconsole in different orders in order
-+# to catch any possible issue.
-+#
-+# The main test composes of four interfaces being created using netdevsim; two
-+# of them are bonded to serve as the netconsole's transmit interface. The
-+# remaining two interfaces are similarly bonded and assigned to a separate
-+# network namespace, which acts as the receive interface, where socat monitors
-+# for incoming messages.
-+#
-+# A netconsole message is then sent to ensure it is properly received across
-+# this configuration.
-+#
-+# Later, run a few other tests, to make sure that bonding and netconsole cannot
-+# coexist.
-+#
-+# The test's objective is to exercise netpoll usage when managed simultaneously
-+# by multiple subsystems (netconsole and bonding).
-+#
-+# Author: Breno Leitao <leitao@debian.org>
-+
-+set -euo pipefail
-+
-+SCRIPTDIR=$(dirname "$(readlink -e "${BASH_SOURCE[0]}")")
-+
-+source "${SCRIPTDIR}"/../lib/sh/lib_netcons.sh
-+
-+modprobe netdevsim 2> /dev/null || true
-+modprobe netconsole 2> /dev/null || true
-+modprobe bonding 2> /dev/null || true
-+
-+# The content of kmsg will be save to the following file
-+OUTPUT_FILE="/tmp/${TARGET}"
-+
-+# Check for basic system dependency and exit if not found
-+check_for_dependencies
-+# Set current loglevel to KERN_INFO(6), and default to KERN_NOTICE(5)
-+echo "6 5" > /proc/sys/kernel/printk
-+# Remove the namespace, interfaces and netconsole target on exit
-+trap cleanup_bond EXIT
-+
-+FORMAT="extended"
-+IP_VERSION="ipv4"
-+
-+function create_all_ifaces() {
-+	# setup_ns function is coming from lib.sh
-+	setup_ns NAMESPACE
-+
-+	# Create two interfaces for RX and two for TX
-+	create_ifaces_bond
-+	# Link netlink ifaces
-+	link_ifaces_bond
-+}
-+
-+# configure DSTIF and SRCIF IPs
-+function configure_ifaces_ips() {
-+	local IP_VERSION=${1:-"ipv4"}
-+	select_ipv4_or_ipv6 "${IP_VERSION}"
-+	configure_ip
-+}
-+
-+function enable_netpoll_on_enslaved_iface() {
-+	echo 0 > "${NETCONS_PATH}"/enabled
-+
-+	# At this stage, BOND_TX1_SLAVE_IF is enslaved to BOND_TX_MAIN_IF, and
-+	# linked to BOND_RX1_SLAVE_IF inside the namespace.
-+	echo "${BOND_TX1_SLAVE_IF}" > "${NETCONS_PATH}"/dev_name
-+
-+	# This should fail with the following message in dmesg:
-+	# netpoll: netconsole: ethX is a slave device, aborting
-+	set +e
-+	echo 1 > "${NETCONS_PATH}"/enabled
-+	set -e
-+
-+	if [[ $(cat "${NETCONS_PATH}"/enabled) -eq 1 ]]
-+	then
-+		echo "test failed: Bonding and netpoll cannot co-exists." >&2
-+		exit "${ksft_fail}"
-+	fi
-+}
-+
-+function delete_bond_and_reenable_target() {
-+	ip link delete "${BOND_TX_MAIN_IF}" type bond
-+
-+	# BOND_TX1_SLAVE_IF is not attached to a bond interface anymore
-+	# netpoll can be plugged in there
-+	echo "${BOND_TX1_SLAVE_IF}" > "${NETCONS_PATH}"/dev_name
-+
-+	# this should work, since the interface is not enslaved
-+	echo 1 > "${NETCONS_PATH}"/enabled
-+
-+	if [[ $(cat "${NETCONS_PATH}"/enabled) -eq 0 ]]
-+	then
-+		echo "test failed: Unable to start netpoll on an unbond iface." >&2
-+		exit "${ksft_fail}"
-+	fi
-+}
-+
-+# Send a netconsole message to the netconsole target
-+function send_netcons_msg_through_bond_iface() {
-+	# Listen for netconsole port inside the namespace and
-+	# destination interface
-+	listen_port_and_save_to "${OUTPUT_FILE}" "${IP_VERSION}" &
-+	# Wait for socat to start and listen to the port.
-+	wait_for_port "${NAMESPACE}" "${PORT}" "${IP_VERSION}"
-+	# Send the message
-+	echo "${MSG}: ${TARGET}" > /dev/kmsg
-+	# Wait until socat saves the file to disk
-+	busywait "${BUSYWAIT_TIMEOUT}" test -s "${OUTPUT_FILE}"
-+	# Make sure the message was received in the dst part
-+	# and exit
-+	validate_result "${OUTPUT_FILE}" "${FORMAT}"
-+	# kill socat in case it is still running
-+	pkill_socat
-+}
-+
-+# BOND_TX1_SLAVE_IF has netconsole enabled on it, bind it to BOND_TX_MAIN_IF.
-+# Given BOND_TX_MAIN_IF was deleted, recreate it first
-+function enslave_netcons_enabled_iface {
-+	# netconsole got disabled while the interface was down
-+	if [[ $(cat "${NETCONS_PATH}"/enabled) -eq 0 ]]
-+	then
-+		echo "test failed: netconsole expected to be enabled against BOND_TX1_SLAVE_IF" >&2
-+		exit "${ksft_fail}"
-+	fi
-+
-+	# recreate the bonding iface. it got deleted by previous
-+	# test (delete_bond_and_reenable_target)
-+	ip link add "${BOND_TX_MAIN_IF}" type bond mode balance-rr
-+
-+	# sub-interface need to be down before attaching to bonding
-+	# This will also disable netconsole.
-+	ip link set "${BOND_TX1_SLAVE_IF}" down
-+	ip link set "${BOND_TX1_SLAVE_IF}" master "${BOND_TX_MAIN_IF}"
-+	ip link set "${BOND_TX_MAIN_IF}" up
-+
-+	# netconsole got disabled while the interface was down
-+	if [[ $(cat "${NETCONS_PATH}"/enabled) -eq 1 ]]
-+	then
-+		echo "test failed: Device is part of a bond iface, cannot have netcons enabled" >&2
-+		exit "${ksft_fail}"
-+	fi
-+}
-+
-+# Get netconsole enabled on a bonding interface and attach a second
-+# sub-interface.
-+function enslave_iface_to_bond {
-+	# BOND_TX_MAIN_IF has only BOND_TX1_SLAVE_IF right now
-+	echo "${BOND_TX_MAIN_IF}" > "${NETCONS_PATH}"/dev_name
-+	echo 1 > "${NETCONS_PATH}"/enabled
-+
-+	# netcons is attached to bond0 and BOND_TX1_SLAVE_IF is
-+	# part of BOND_TX_MAIN_IF. Attach BOND_TX2_SLAVE_IF to BOND_TX_MAIN_IF.
-+	ip link set "${BOND_TX2_SLAVE_IF}" master "${BOND_TX_MAIN_IF}"
-+	if [[ $(cat "${NETCONS_PATH}"/enabled) -eq 0 ]]
-+	then
-+		echo "test failed: Netconsole should be enabled on bonding interface. Failed" >&2
-+		exit "${ksft_fail}"
-+	fi
-+}
-+
-+####################
-+# Tests start here #
-+####################
-+
-+# Create regular interfaces using netdevsim and link them
-+create_all_ifaces
-+
-+# Setup the bonding interfaces
-+# BOND_RX_MAIN_IF has BOND_RX{1,2}_SLAVE_IF
-+# BOND_TX_MAIN_IF has BOND_TX{1,2}_SLAVE_IF
-+setup_bonding_ifaces
-+
-+# First test send a msg through bonding
-+export DSTIF="${BOND_RX_MAIN_IF}"
-+export SRCIF="${BOND_TX_MAIN_IF}"
-+
-+# Configure the ips as BOND_RX1_SLAVE_IF and BOND_TX1_SLAVE_IF
-+configure_ifaces_ips "${IP_VERSION}"
-+create_dynamic_target "${FORMAT}"
-+set_user_data
-+
-+# Test #1 : Create an bonding interface and attach netpoll into
-+# the bonding interface. Netconsole/netpoll should work on
-+# the bonding interface.
-+send_netcons_msg_through_bond_iface
-+echo "test #1: netpoll on bonding interface worked. Test passed" >&2
-+
-+# Test #2: Attach netpoll to an enslaved interface
-+# Try to attach netpoll to an enslaved sub-interface (while still being part of
-+# a bonding interface), which shouldn't be allowed
-+enable_netpoll_on_enslaved_iface
-+echo "test #2: netpoll correctly rejected enslaved interface (expected behavior). Test passed." >&2
-+
-+# Test #3: Unplug the sub-interface from bond and enable netconsole
-+# Detach the interface from a bonding interface and attach netpoll again
-+delete_bond_and_reenable_target
-+echo "test #3: Able to attach to an unbound interface. Test passed." >&2
-+
-+# Test #4: Enslave a sub-interface that had netconsole enabled
-+# Try to enslave an interface that has netconsole/netpoll enabled.
-+# Previous test has netconsole enabled in BOND_TX1_SLAVE_IF, try to enslave it
-+enslave_netcons_enabled_iface
-+echo "test #4: Enslaving an interface with netpoll attached. Test passed." >&2
-+
-+# Test #5: Enslave a sub-interface to a bonding interface
-+# Enslave an interface to a bond interface that has netpoll attached
-+# At this stage, BOND_TX_MAIN_IF is created and BOND_TX1_SLAVE_IF is part of
-+# it. Netconsole is currently disabled
-+enslave_iface_to_bond
-+echo "test #5: Enslaving an interface to bond+netpoll. Test passed." >&2
-+
-+cleanup_bond
-+trap - EXIT
-+exit "${EXIT_STATUS}"
-diff --git a/tools/testing/selftests/drivers/net/lib/sh/lib_netcons.sh b/tools/testing/selftests/drivers/net/lib/sh/lib_netcons.sh
-index 9b5ef8074440c..30e4f357b47e9 100644
---- a/tools/testing/selftests/drivers/net/lib/sh/lib_netcons.sh
-+++ b/tools/testing/selftests/drivers/net/lib/sh/lib_netcons.sh
-@@ -28,17 +28,24 @@ NETCONS_PATH="${NETCONS_CONFIGFS}"/"${TARGET}"
- # NAMESPACE will be populated by setup_ns with a random value
- NAMESPACE=""
- 
--# IDs for netdevsim
-+# IDs for netdevsim. We either use NSIM_DEV_{1,2}_ID for standard test
-+# or NSIM_BOND_{T,R}X_{1,2} for the bonding tests. Not both at the
-+# same time.
- NSIM_DEV_1_ID=$((256 + RANDOM % 256))
- NSIM_DEV_2_ID=$((512 + RANDOM % 256))
-+NSIM_BOND_TX_1=$((768 + RANDOM % 256))
-+NSIM_BOND_TX_2=$((1024 + RANDOM % 256))
-+NSIM_BOND_RX_1=$((1280 + RANDOM % 256))
-+NSIM_BOND_RX_2=$((1536 + RANDOM % 256))
- NSIM_DEV_SYS_NEW="/sys/bus/netdevsim/new_device"
-+NSIM_DEV_SYS_LINK="/sys/bus/netdevsim/link_device"
-+NSIM_DEV_SYS_DEL="/sys/bus/netdevsim/del_device"
- 
- # Used to create and delete namespaces
- source "${LIBDIR}"/../../../../net/lib.sh
- 
- # Create netdevsim interfaces
- create_ifaces() {
--
- 	echo "$NSIM_DEV_2_ID" > "$NSIM_DEV_SYS_NEW"
- 	echo "$NSIM_DEV_1_ID" > "$NSIM_DEV_SYS_NEW"
- 	udevadm settle 2> /dev/null || true
-@@ -54,7 +61,6 @@ create_ifaces() {
- }
- 
- link_ifaces() {
--	local NSIM_DEV_SYS_LINK="/sys/bus/netdevsim/link_device"
- 	local SRCIF_IFIDX=$(cat /sys/class/net/"$SRCIF"/ifindex)
- 	local DSTIF_IFIDX=$(cat /sys/class/net/"$DSTIF"/ifindex)
- 
-@@ -96,6 +102,33 @@ function select_ipv4_or_ipv6()
- 	fi
- }
- 
-+# Create 4 netdevsim interfaces. Two of them will be bound to TX bonding iface
-+# and the other two will be bond to the RX interface (on the other namespace)
-+function create_ifaces_bond() {
-+	echo "$NSIM_BOND_TX_1" > "$NSIM_DEV_SYS_NEW"
-+	echo "$NSIM_BOND_TX_2" > "$NSIM_DEV_SYS_NEW"
-+	echo "$NSIM_BOND_RX_1" > "$NSIM_DEV_SYS_NEW"
-+	echo "$NSIM_BOND_RX_2" > "$NSIM_DEV_SYS_NEW"
-+	udevadm settle 2> /dev/null || true
-+
-+	local BOND_TX1=/sys/bus/netdevsim/devices/netdevsim"$NSIM_BOND_TX_1"
-+	local BOND_TX2=/sys/bus/netdevsim/devices/netdevsim"$NSIM_BOND_TX_2"
-+	local BOND_RX1=/sys/bus/netdevsim/devices/netdevsim"$NSIM_BOND_RX_1"
-+	local BOND_RX2=/sys/bus/netdevsim/devices/netdevsim"$NSIM_BOND_RX_2"
-+
-+	# TX
-+	BOND_TX1_SLAVE_IF=$(find "$BOND_TX1"/net -maxdepth 1 -type d ! \
-+		-path "$BOND_TX1"/net -exec basename {} \; | grep -v net)
-+	BOND_TX2_SLAVE_IF=$(find "$BOND_TX2"/net -maxdepth 1 -type d ! \
-+		-path "$BOND_TX2"/net -exec basename {} \; | grep -v net)
-+
-+	# RX
-+	BOND_RX1_SLAVE_IF=$(find "$BOND_RX1"/net -maxdepth 1 -type d ! \
-+		-path "$BOND_RX1"/net -exec basename {} \; | grep -v net)
-+	BOND_RX2_SLAVE_IF=$(find "$BOND_RX2"/net -maxdepth 1 -type d ! \
-+		-path "$BOND_RX2"/net -exec basename {} \; | grep -v net)
-+}
-+
- function set_network() {
- 	local IP_VERSION=${1:-"ipv4"}
- 
-@@ -180,8 +213,6 @@ function disable_release_append() {
- }
- 
- function do_cleanup() {
--	local NSIM_DEV_SYS_DEL="/sys/bus/netdevsim/del_device"
--
- 	# Delete netdevsim devices
- 	echo "$NSIM_DEV_2_ID" > "$NSIM_DEV_SYS_DEL"
- 	echo "$NSIM_DEV_1_ID" > "$NSIM_DEV_SYS_DEL"
-@@ -193,14 +224,26 @@ function do_cleanup() {
- 	echo "${DEFAULT_PRINTK_VALUES}" > /proc/sys/kernel/printk
- }
- 
--function cleanup() {
-+function cleanup_netcons() {
- 	# delete netconsole dynamic reconfiguration
--	echo 0 > "${NETCONS_PATH}"/enabled
-+	# do not fail if the target is already disabled
-+	if [[ ! -d "${NETCONS_PATH}" ]]
-+	then
-+		# in some cases this is called before netcons path is created
-+		return
-+	fi
-+	if [[ $(cat "${NETCONS_PATH}"/enabled) != 0 ]]
-+	then
-+		echo 0 > "${NETCONS_PATH}"/enabled || true
-+	fi
- 	# Remove all the keys that got created during the selftest
- 	find "${NETCONS_PATH}/userdata/" -mindepth 1 -type d -delete
- 	# Remove the configfs entry
- 	rmdir "${NETCONS_PATH}"
-+}
- 
-+function cleanup() {
-+	cleanup_netcons
- 	do_cleanup
- }
- 
-@@ -377,3 +420,104 @@ function wait_for_port() {
- 	# more frequently on IPv6
- 	sleep 1
- }
-+
-+# netdevsim link BOND_TX to BOND_RX interfaces
-+function link_ifaces_bond() {
-+	local BOND_TX1_SLAVE_IFIDX
-+	local BOND_TX2_SLAVE_IFIDX
-+	local BOND_RX1_SLAVE_IFIDX
-+	local BOND_RX2_SLAVE_IFIDX
-+
-+	BOND_TX1_SLAVE_IFIDX=$(cat /sys/class/net/"$BOND_TX1_SLAVE_IF"/ifindex)
-+	BOND_TX2_SLAVE_IFIDX=$(cat /sys/class/net/"$BOND_TX2_SLAVE_IF"/ifindex)
-+	BOND_RX1_SLAVE_IFIDX=$(cat /sys/class/net/"$BOND_RX1_SLAVE_IF"/ifindex)
-+	BOND_RX2_SLAVE_IFIDX=$(cat /sys/class/net/"$BOND_RX2_SLAVE_IF"/ifindex)
-+
-+	exec {NAMESPACE_FD}</var/run/netns/"${NAMESPACE}"
-+	exec {INITNS_FD}</proc/self/ns/net
-+
-+	# Bind the dst interfaces to namespace
-+	ip link set "${BOND_RX1_SLAVE_IF}" netns "${NAMESPACE}"
-+	ip link set "${BOND_RX2_SLAVE_IF}" netns "${NAMESPACE}"
-+
-+	# Linking TX ifaces to the RX ones (on the other namespace)
-+	echo "${INITNS_FD}:$BOND_TX1_SLAVE_IFIDX $NAMESPACE_FD:$BOND_RX1_SLAVE_IFIDX"  \
-+		> "$NSIM_DEV_SYS_LINK"
-+	echo "${INITNS_FD}:$BOND_TX2_SLAVE_IFIDX $NAMESPACE_FD:$BOND_RX2_SLAVE_IFIDX"  \
-+		> "$NSIM_DEV_SYS_LINK"
-+}
-+
-+# Create "bond_tx_XX" and "bond_rx_XX" interfaces, and set DSTIF and SRCIF with
-+# the bonding interfaces
-+function setup_bonding_ifaces() {
-+	local RAND=$(( RANDOM % 100 ))
-+	BOND_TX_MAIN_IF="bond_tx_$RAND"
-+	BOND_RX_MAIN_IF="bond_rx_$RAND"
-+
-+	if ! ip link add "${BOND_TX_MAIN_IF}" type bond mode balance-rr
-+	then
-+		echo "Failed to create bond TX interface. Is CONFIG_BONDING set?" >&2
-+		# only clean nsim ifaces and namespace. Nothing else has been
-+		# initialized
-+		cleanup_bond_nsim
-+		trap - EXIT
-+		exit "${ksft_skip}"
-+	fi
-+	ip link set "${BOND_TX1_SLAVE_IF}" down
-+	ip link set "${BOND_TX2_SLAVE_IF}" down
-+
-+	ip link set "${BOND_TX1_SLAVE_IF}" master "${BOND_TX_MAIN_IF}"
-+	ip link set "${BOND_TX2_SLAVE_IF}" master "${BOND_TX_MAIN_IF}"
-+	ip link set "${BOND_TX_MAIN_IF}" up
-+
-+	# now create the RX bonding iface
-+	ip netns exec "${NAMESPACE}" \
-+		ip link add "${BOND_RX_MAIN_IF}" type bond mode balance-rr
-+	ip netns exec "${NAMESPACE}" \
-+		ip link set "${BOND_RX1_SLAVE_IF}" down
-+	ip netns exec "${NAMESPACE}" \
-+		ip link set "${BOND_RX2_SLAVE_IF}" down
-+
-+	ip netns exec "${NAMESPACE}" \
-+		ip link set "${BOND_RX1_SLAVE_IF}" master "${BOND_RX_MAIN_IF}"
-+	ip netns exec "${NAMESPACE}" \
-+		ip link set "${BOND_RX2_SLAVE_IF}" master "${BOND_RX_MAIN_IF}"
-+	ip netns exec "${NAMESPACE}" \
-+		ip link set "${BOND_RX_MAIN_IF}" up
-+	ip netns exec "${NAMESPACE}" \
-+		ip link set "${BOND_RX1_SLAVE_IF}" up
-+	ip netns exec "${NAMESPACE}" \
-+		ip link set "${BOND_RX2_SLAVE_IF}" up
-+}
-+
-+# Clean up netdevsim ifaces created for bonding test
-+function cleanup_bond_nsim() {
-+	echo "$NSIM_BOND_TX_1" > "$NSIM_DEV_SYS_DEL"
-+	echo "$NSIM_BOND_TX_2" > "$NSIM_DEV_SYS_DEL"
-+	echo "$NSIM_BOND_RX_1" > "$NSIM_DEV_SYS_DEL"
-+	echo "$NSIM_BOND_RX_2" > "$NSIM_DEV_SYS_DEL"
-+	cleanup_all_ns
-+}
-+
-+# cleanup tests that use bonding interfaces
-+function cleanup_bond() {
-+	cleanup_netcons
-+
-+	# Delete TX ifaces
-+	ip link set "${BOND_TX_MAIN_IF}" down  2> /dev/null || true
-+	ip link set "${BOND_TX1_SLAVE_IF}" down || true
-+	ip link set "${BOND_TX2_SLAVE_IF}" down || true
-+	ip link delete "${BOND_TX_MAIN_IF}" type bond  2> /dev/null || true
-+
-+	# Delete RX ifaces
-+	ip netns exec "${NAMESPACE}" \
-+		ip link set "${BOND_RX_MAIN_IF}" down || true
-+	ip netns exec "${NAMESPACE}" \
-+		ip link set "${BOND_RX1_SLAVE_IF}" down || true
-+	ip netns exec "${NAMESPACE}" \
-+		ip link set "${BOND_RX2_SLAVE_IF}" down || true
-+	ip netns exec "${NAMESPACE}" \
-+		ip link delete "${BOND_RX_MAIN_IF}" type bond  || true
-+
-+	cleanup_bond_nsim
-+}
-
--- 
-2.47.3
+>   tools/perf/builtin-record.c |   2 -
+>   tools/perf/builtin-stat.c   | 123 +++++++++++++++---------------------
+>   tools/perf/util/evsel.c     |  40 +++++++-----
+>   tools/perf/util/evsel.h     |   1 -
+>   4 files changed, 76 insertions(+), 90 deletions(-)
+> 
+> diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+> index 7ea3a11aca70..d76f01956e33 100644
+> --- a/tools/perf/builtin-record.c
+> +++ b/tools/perf/builtin-record.c
+> @@ -1408,8 +1408,6 @@ static int record__open(struct record *rec)
+>   			ui__error("%s\n", msg);
+>   			goto out;
+>   		}
+> -
+> -		pos->supported = true;
+>   	}
+>   
+>   	if (symbol_conf.kptr_restrict && !evlist__exclude_kernel(evlist)) {
+> diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+> index 75b9979c6c05..7006f848f87a 100644
+> --- a/tools/perf/builtin-stat.c
+> +++ b/tools/perf/builtin-stat.c
+> @@ -610,22 +610,13 @@ static int dispatch_events(bool forks, int timeout, int interval, int *times)
+>   enum counter_recovery {
+>   	COUNTER_SKIP,
+>   	COUNTER_RETRY,
+> -	COUNTER_FATAL,
+>   };
+>   
+>   static enum counter_recovery stat_handle_error(struct evsel *counter, int err)
+>   {
+>   	char msg[BUFSIZ];
+>   
+> -	if (counter->skippable) {
+> -		if (verbose > 0) {
+> -			ui__warning("skipping event %s that kernel failed to open .\n",
+> -				    evsel__name(counter));
+> -		}
+> -		counter->supported = false;
+> -		counter->errored = true;
+> -		return COUNTER_SKIP;
+> -	}
+> +	assert(!counter->supported);
+>   
+>   	/*
+>   	 * PPC returns ENXIO for HW counters until 2.6.37
+> @@ -636,19 +627,16 @@ static enum counter_recovery stat_handle_error(struct evsel *counter, int err)
+>   			ui__warning("%s event is not supported by the kernel.\n",
+>   				    evsel__name(counter));
+>   		}
+> -		counter->supported = false;
+> -		/*
+> -		 * errored is a sticky flag that means one of the counter's
+> -		 * cpu event had a problem and needs to be reexamined.
+> -		 */
+> -		counter->errored = true;
+> -	} else if (evsel__fallback(counter, &target, err, msg, sizeof(msg))) {
+> +		return COUNTER_SKIP;
+> +	}
+> +	if (evsel__fallback(counter, &target, err, msg, sizeof(msg))) {
+>   		if (verbose > 0)
+>   			ui__warning("%s\n", msg);
+> +		counter->supported = true;
+>   		return COUNTER_RETRY;
+> -	} else if (target__has_per_thread(&target) && err != EOPNOTSUPP &&
+> -		   evsel_list->core.threads &&
+> -		   evsel_list->core.threads->err_thread != -1) {
+> +	}
+> +	if (target__has_per_thread(&target) && err != EOPNOTSUPP &&
+> +	    evsel_list->core.threads && evsel_list->core.threads->err_thread != -1) {
+>   		/*
+>   		 * For global --per-thread case, skip current
+>   		 * error thread.
+> @@ -656,24 +644,17 @@ static enum counter_recovery stat_handle_error(struct evsel *counter, int err)
+>   		if (!thread_map__remove(evsel_list->core.threads,
+>   					evsel_list->core.threads->err_thread)) {
+>   			evsel_list->core.threads->err_thread = -1;
+> +			counter->supported = true;
+>   			return COUNTER_RETRY;
+>   		}
+> -	} else if (err == EOPNOTSUPP) {
+> -		if (verbose > 0) {
+> -			ui__warning("%s event is not supported by the kernel.\n",
+> -				    evsel__name(counter));
+> -		}
+> -		counter->supported = false;
+> -		counter->errored = true;
+>   	}
+> -
+> -	evsel__open_strerror(counter, &target, err, msg, sizeof(msg));
+> -	ui__error("%s\n", msg);
+> -
+> -	if (child_pid != -1)
+> -		kill(child_pid, SIGTERM);
+> -
+> -	return COUNTER_FATAL;
+> +	if (verbose > 0) {
+> +		ui__warning(err == EOPNOTSUPP
+> +			? "%s event is not supported by the kernel.\n"
+> +			: "skipping event %s that kernel failed to open.\n",
+> +			evsel__name(counter));
+> +	}
+> +	return COUNTER_SKIP;
+>   }
+>   
+>   static int create_perf_stat_counter(struct evsel *evsel,
+> @@ -746,8 +727,8 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
+>   	bool is_pipe = STAT_RECORD ? perf_stat.data.is_pipe : false;
+>   	struct evlist_cpu_iterator evlist_cpu_itr;
+>   	struct affinity saved_affinity, *affinity = NULL;
+> -	int err;
+> -	bool second_pass = false;
+> +	int err, open_err = 0;
+> +	bool second_pass = false, has_supported_counters;
+>   
+>   	if (forks) {
+>   		if (evlist__prepare_workload(evsel_list, &target, argv, is_pipe, workload_exec_failed_signal) < 0) {
+> @@ -787,14 +768,17 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
+>   		if (target.use_bpf)
+>   			break;
+>   
+> -		if (counter->reset_group || counter->errored)
+> +		if (counter->reset_group || !counter->supported)
+>   			continue;
+>   		if (evsel__is_bperf(counter))
+>   			continue;
+> -try_again:
+> -		if (create_perf_stat_counter(counter, &stat_config,
+> -					     evlist_cpu_itr.cpu_map_idx) < 0) {
+>   
+> +		while (true) {
+> +			if (create_perf_stat_counter(counter, &stat_config,
+> +						     evlist_cpu_itr.cpu_map_idx) == 0)
+> +				break;
+> +
+> +			open_err = errno;
+>   			/*
+>   			 * Weak group failed. We cannot just undo this here
+>   			 * because earlier CPUs might be in group mode, and the kernel
+> @@ -802,29 +786,19 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
+>   			 * it to later.
+>   			 * Don't close here because we're in the wrong affinity.
+>   			 */
+> -			if ((errno == EINVAL || errno == EBADF) &&
+> +			if ((open_err == EINVAL || open_err == EBADF) &&
+>   				evsel__leader(counter) != counter &&
+>   				counter->weak_group) {
+>   				evlist__reset_weak_group(evsel_list, counter, false);
+>   				assert(counter->reset_group);
+> +				counter->supported = true;
+>   				second_pass = true;
+> -				continue;
+> -			}
+> -
+> -			switch (stat_handle_error(counter, errno)) {
+> -			case COUNTER_FATAL:
+> -				err = -1;
+> -				goto err_out;
+> -			case COUNTER_RETRY:
+> -				goto try_again;
+> -			case COUNTER_SKIP:
+> -				continue;
+> -			default:
+>   				break;
+>   			}
+>   
+> +			if (stat_handle_error(counter, open_err) != COUNTER_RETRY)
+> +				break;
+>   		}
+> -		counter->supported = true;
+>   	}
+>   
+>   	if (second_pass) {
+> @@ -837,7 +811,7 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
+>   		evlist__for_each_cpu(evlist_cpu_itr, evsel_list, affinity) {
+>   			counter = evlist_cpu_itr.evsel;
+>   
+> -			if (!counter->reset_group && !counter->errored)
+> +			if (!counter->reset_group && counter->supported)
+>   				continue;
+>   
+>   			perf_evsel__close_cpu(&counter->core, evlist_cpu_itr.cpu_map_idx);
+> @@ -848,34 +822,29 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
+>   
+>   			if (!counter->reset_group)
+>   				continue;
+> -try_again_reset:
+> -			pr_debug2("reopening weak %s\n", evsel__name(counter));
+> -			if (create_perf_stat_counter(counter, &stat_config,
+> -						     evlist_cpu_itr.cpu_map_idx) < 0) {
+> -
+> -				switch (stat_handle_error(counter, errno)) {
+> -				case COUNTER_FATAL:
+> -					err = -1;
+> -					goto err_out;
+> -				case COUNTER_RETRY:
+> -					goto try_again_reset;
+> -				case COUNTER_SKIP:
+> -					continue;
+> -				default:
+> +
+> +			while (true) {
+> +				pr_debug2("reopening weak %s\n", evsel__name(counter));
+> +				if (create_perf_stat_counter(counter, &stat_config,
+> +							     evlist_cpu_itr.cpu_map_idx) == 0)
+> +					break;
+> +
+> +				open_err = errno;
+> +				if (stat_handle_error(counter, open_err) != COUNTER_RETRY)
+>   					break;
+> -				}
+>   			}
+> -			counter->supported = true;
+>   		}
+>   	}
+>   	affinity__cleanup(affinity);
+>   	affinity = NULL;
+>   
+> +	has_supported_counters = false;
+>   	evlist__for_each_entry(evsel_list, counter) {
+>   		if (!counter->supported) {
+>   			perf_evsel__free_fd(&counter->core);
+>   			continue;
+>   		}
+> +		has_supported_counters = true;
+>   
+>   		l = strlen(counter->unit);
+>   		if (l > stat_config.unit_width)
+> @@ -887,6 +856,16 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
+>   			goto err_out;
+>   		}
+>   	}
+> +	if (!has_supported_counters) {
+> +		evsel__open_strerror(evlist__first(evsel_list), &target, open_err,
+> +				     msg, sizeof(msg));
+> +		ui__error("No supported events found.\n%s\n", msg);
+> +
+> +		if (child_pid != -1)
+> +			kill(child_pid, SIGTERM);
+> +		err = -1;
+> +		goto err_out;
+> +	}
+>   
+>   	if (evlist__apply_filters(evsel_list, &counter, &target)) {
+>   		pr_err("failed to set filter \"%s\" on event %s with %d (%s)\n",
+> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+> index 1a29d4f47bbf..fe93f11cf3d1 100644
+> --- a/tools/perf/util/evsel.c
+> +++ b/tools/perf/util/evsel.c
+> @@ -407,6 +407,7 @@ void evsel__init(struct evsel *evsel,
+>   	evsel->collect_stat  = false;
+>   	evsel->group_pmu_name = NULL;
+>   	evsel->skippable     = false;
+> +	evsel->supported     = true;
+>   	evsel->alternate_hw_config = PERF_COUNT_HW_MAX;
+>   	evsel->script_output_type = -1; // FIXME: OUTPUT_TYPE_UNSET, see builtin-script.c
+>   }
+> @@ -1941,7 +1942,7 @@ static int get_group_fd(struct evsel *evsel, int cpu_map_idx, int thread)
+>   	struct evsel *leader = evsel__leader(evsel);
+>   	int fd;
+>   
+> -	if (evsel__is_group_leader(evsel))
+> +	if (!evsel->supported || evsel__is_group_leader(evsel))
+>   		return -1;
+>   
+>   	/*
+> @@ -1955,7 +1956,7 @@ static int get_group_fd(struct evsel *evsel, int cpu_map_idx, int thread)
+>   		return -1;
+>   
+>   	fd = FD(leader, cpu_map_idx, thread);
+> -	BUG_ON(fd == -1 && !leader->skippable);
+> +	BUG_ON(fd == -1 && leader->supported);
+>   
+>   	/*
+>   	 * When the leader has been skipped, return -2 to distinguish from no
+> @@ -2573,12 +2574,14 @@ static int evsel__open_cpu(struct evsel *evsel, struct perf_cpu_map *cpus,
+>   	enum rlimit_action set_rlimit = NO_CHANGE;
+>   	struct perf_cpu cpu;
+>   
+> -	if (evsel__is_retire_lat(evsel))
+> -		return evsel__tpebs_open(evsel);
+> +	if (evsel__is_retire_lat(evsel)) {
+> +		err = evsel__tpebs_open(evsel);
+> +		goto out;
+> +	}
+>   
+>   	err = __evsel__prepare_open(evsel, cpus, threads);
+>   	if (err)
+> -		return err;
+> +		goto out;
+>   
+>   	if (cpus == NULL)
+>   		cpus = empty_cpu_map;
+> @@ -2598,19 +2601,22 @@ static int evsel__open_cpu(struct evsel *evsel, struct perf_cpu_map *cpus,
+>   	display_attr(&evsel->core.attr);
+>   
+>   	if (evsel__is_tool(evsel)) {
+> -		return evsel__tool_pmu_open(evsel, threads,
+> -					    start_cpu_map_idx,
+> -					    end_cpu_map_idx);
+> +		err = evsel__tool_pmu_open(evsel, threads,
+> +					   start_cpu_map_idx,
+> +					   end_cpu_map_idx);
+> +		goto out;
+>   	}
+>   	if (evsel__is_hwmon(evsel)) {
+> -		return evsel__hwmon_pmu_open(evsel, threads,
+> -					     start_cpu_map_idx,
+> -					     end_cpu_map_idx);
+> +		err = evsel__hwmon_pmu_open(evsel, threads,
+> +					    start_cpu_map_idx,
+> +					    end_cpu_map_idx);
+> +		goto out;
+>   	}
+>   	if (evsel__is_drm(evsel)) {
+> -		return evsel__drm_pmu_open(evsel, threads,
+> -					   start_cpu_map_idx,
+> -					   end_cpu_map_idx);
+> +		err = evsel__drm_pmu_open(evsel, threads,
+> +					  start_cpu_map_idx,
+> +					  end_cpu_map_idx);
+> +		goto out;
+>   	}
+>   
+>   	for (idx = start_cpu_map_idx; idx < end_cpu_map_idx; idx++) {
+> @@ -2689,7 +2695,8 @@ static int evsel__open_cpu(struct evsel *evsel, struct perf_cpu_map *cpus,
+>   		}
+>   	}
+>   
+> -	return 0;
+> +	err = 0;
+> +	goto out;
+>   
+>   try_fallback:
+>   	if (evsel__ignore_missing_thread(evsel, perf_cpu_map__nr(cpus),
+> @@ -2728,6 +2735,9 @@ static int evsel__open_cpu(struct evsel *evsel, struct perf_cpu_map *cpus,
+>   		thread = nthreads;
+>   	} while (--idx >= 0);
+>   	errno = old_errno;
+> +out:
+> +	if (err)
+> +		evsel->supported = false;
+>   	return err;
+>   }
+>   
+> diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
+> index 03f9f22e3a0c..1ad0b3fcd559 100644
+> --- a/tools/perf/util/evsel.h
+> +++ b/tools/perf/util/evsel.h
+> @@ -121,7 +121,6 @@ struct evsel {
+>   	bool			forced_leader;
+>   	bool			cmdline_group_boundary;
+>   	bool			reset_group;
+> -	bool			errored;
+>   	bool			needs_auxtrace_mmap;
+>   	bool			default_metricgroup; /* A member of the Default metricgroup */
+>   	bool			needs_uniquify;
 
 
