@@ -1,181 +1,174 @@
-Return-Path: <linux-kernel+bounces-841574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7446EBB7B3F
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 19:22:06 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9E59BB7B51
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 19:23:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEABB4A2684
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 17:22:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A2AA44EE261
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 17:23:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FA0B2DA75F;
-	Fri,  3 Oct 2025 17:21:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90A782DA75A;
+	Fri,  3 Oct 2025 17:23:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Th30eFDg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ryLEMopg"
+Received: from mail-yx1-f46.google.com (mail-yx1-f46.google.com [74.125.224.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A5AE2D0628;
-	Fri,  3 Oct 2025 17:21:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F8F323AB8B
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 17:22:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759512118; cv=none; b=J1flTy+edtpedrcC7W1sgNH8L4hawjLgQDSkB/Ia/tnustoXEhXUDJF3jSqAxFg9C9UleSM1PmdwoZ7tTx5V+WoDTiAwdj5XjA/XNVoaG9F21KEsCRTpnleFtCoOXSXantQu7GYBK6BRiYMIo/jNumY3TNIOPVrfF3DdojbcH/E=
+	t=1759512179; cv=none; b=lAudNyTMyhmKIbgdbnvd6Bjz9zvtocYK6hzthbMDEyLf4zI+IItMx/4jDBXX3+H6H7KtvH7PryoqksX+6KtHaIqGwtHsHLqh9bw7ggDo8UgVtVrYZYwlCCaBlvXjjEH/TnVem45RwtI7TUfg7OoZt1DopKNyQB3uicg8LAQNCEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759512118; c=relaxed/simple;
-	bh=gJyCL8uxswVnUfA7Rwci8BgxqWn7pX8aafHn3LwvUy4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=RFke0WYugHNX9tWa2M+eWon/KBt2WySX2H18ONFIQfFhlRjah8Ri30BXsO6OfacWa9f7CDlUePFkwLoBR66YFPZCyhKgaB9yHh3tb+MTnWEfeYoC+FEGUgS+nUcKRGA5UnW4cIpm6WdT7s4VUYPibe8yZgwL6e6XnWE/MMpVzPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Th30eFDg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CAA7C4CEF5;
-	Fri,  3 Oct 2025 17:21:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759512118;
-	bh=gJyCL8uxswVnUfA7Rwci8BgxqWn7pX8aafHn3LwvUy4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=Th30eFDgAR9AWh5/pYf4m8ToHxrvKDRYPxME7aMWPS78o9w6gaabq4RznHz9NaAnS
-	 enA90sfpO8CF4nZDNrI2p9vx6Lxa0w8WyWiyKWt9qPLhqwDRlKue3a2Ztc4IuizavR
-	 3grRXBqmsYav+iOJPUZMm/yL6sxnnD4sT7ULhx1jO4XpwMMVwJp0Ry9Ao6mIhIMp2b
-	 z1fVIFXRsKi03U4uoop5AHsw6kYxWdbiFeHGugBOH/VIvdWIuMiy3L/tX77YCFWJR/
-	 Hymy2LuptIJQ3z3E6sgLQKSyEmAhn8sypAVkhCU64Wav5pqtBza9OWr/uET8lAK97p
-	 cGMcNG+TdjDkQ==
-Date: Fri, 3 Oct 2025 12:21:56 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Hongxing Zhu <hongxing.zhu@nxp.com>,
-	"jingoohan1@gmail.com" <jingoohan1@gmail.com>,
-	"l.stach@pengutronix.de" <l.stach@pengutronix.de>,
-	"lpieralisi@kernel.org" <lpieralisi@kernel.org>,
-	"kwilczynski@kernel.org" <kwilczynski@kernel.org>,
-	"mani@kernel.org" <mani@kernel.org>,
-	"robh@kernel.org" <robh@kernel.org>,
-	"bhelgaas@google.com" <bhelgaas@google.com>,
-	"shawnguo@kernel.org" <shawnguo@kernel.org>,
-	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>,
-	"festevam@gmail.com" <festevam@gmail.com>,
-	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 2/2] PCI: imx6: Add a method to handle CLKREQ#
- override active low
-Message-ID: <20251003172156.GA357448@bhelgaas>
+	s=arc-20240116; t=1759512179; c=relaxed/simple;
+	bh=nG0ahfV68XEs9AbhYnuX7OiFNRl3Vvk1C7mNKiqb+o4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NZVjzmNi62+gtRNl6BQVZRXuqysLjluMpPSHZur6SgQCbgFlLpgQG5WwBx/nFbmxi/lDV6Lt0wa7lP6hY8kPVNCLdUOxNXuHnehgGomsTGRVzZDWKf5jFS4Dq3IwyrA58adf4p6jlZ3cPNuWOj/GaHydi2oa0bCg6FUdmDPqbag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ryLEMopg; arc=none smtp.client-ip=74.125.224.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yx1-f46.google.com with SMTP id 956f58d0204a3-635283199a9so2332107d50.1
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 10:22:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1759512177; x=1760116977; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LGWR7Op0jGJB/hnyDRBm1VaEtVV6gV3pqYTKcigBXCc=;
+        b=ryLEMopgDzpxHODHZ43tFOza6ZmIUOW8c+Kdq97oCHLNzeBZmiWAqyt33mhQDGsrlu
+         mzATRdt9RE0qzHRhyC1KRPGA5FZtfwxNDFjQoYCa5jAu0G+muMrhmf2WUFmHzLm0xqa+
+         0oy41SRqH+h1WM3GMZJmjDU2pzBbJSX36rT9rE+8J7XEeRQjfwuJYHt0TII+YcTk5aJc
+         I3IWrXO0kcT1EnubYjoWzWZHrR4SQ0qZoBhqCV7CQ5ZLIod9Q7qYKHSVDqV6d4wivOKq
+         oqA4Av8FZokhGhuC4EqGmvtzt/eTfT3FpykYKdHCoXch80929mRJKLXOV8hpGXT1iczU
+         rOQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759512177; x=1760116977;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LGWR7Op0jGJB/hnyDRBm1VaEtVV6gV3pqYTKcigBXCc=;
+        b=fGEq+tze1nkgAZNSyQtfXKijy0s85PwNVA5iefv+U7g4HjinidSURiLjVJ6vVbwwPn
+         QT3sOt+1Zx6inXA+otlpYclkK7Lmq78/5Pto/J8A4z+nESX/aT0ViJ4nHLIbyv+zua1M
+         ZsZGoZmXoFD4qYpzQ1ruVuFVO8Nxiy2LS+xpaKksQCJWBV03itu27MiBhRhawx6HcRco
+         6sGfmHjHm1Mvb0L3aNvUtpgoqTzsgSSrZO26afnrcr8g6MkBbTSnD+P7jNVrsl7Pg5eK
+         Eh9gL3aS8b2YezMDSH6j/a0Kypnd3rV1Z11WSLGfxkDCDcjXYpS1z08JZ54VGpdCOGIL
+         N1Tw==
+X-Forwarded-Encrypted: i=1; AJvYcCW5DLi8UAuLYYYSvaEbetIWRzqhtVdiE36ExlGT5E83iu6kIGYPqofvM785a/nLeRzJRhooY5hjQZ9Kl3c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTtlGg9ikHkS8SglVeG4Op9nXg72GN5ZyXNbbGyiucC9b4jNnY
+	QwA35qpRNruPgylU8ABVjkm1NVX1k0DgqmY0igfI3RMTB4Ed90WHDpQCGpHyh5/LtNtrxqSUvnL
+	Yi4OoSimP1r0gIycJg/IKSyYsPw/Bo6D/A6NNCqLGoQ==
+X-Gm-Gg: ASbGncsOBXGzBSX4e6b1kVBlc4P3Gip3ujNfVOwG+5F5UWZagVH0REscJFxiI4rgTLN
+	znXOynO/CQwDb6RKGj4T3QZ992/TTtWPncGqF8ISHFvbrH5I8tOv3m3EWjzSzTIQ4n+U/D2j0JX
+	HkfRBkrEX/vuZly6Kzsup/Mj1iODxUF9ZUB3imTSpn/EN3tOIkdx0u3LiKiN0XydmVQ06sZTRCS
+	qnVpOIu7Wson9v+5nMVMxPu+h4X3ljdo1L14/EQhHWD
+X-Google-Smtp-Source: AGHT+IEaOvU8KB5Em4L2bWs/Xj/IkcvvxTcqZJWq4PxSiqWi8wXfy+Ft4q6LsFqAEYTMabgdZG5h7FcKPPHNINr43CI=
+X-Received: by 2002:a05:690e:1c4:b0:636:d230:7d82 with SMTP id
+ 956f58d0204a3-63b9a0e08bdmr1960868d50.26.1759512176832; Fri, 03 Oct 2025
+ 10:22:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aNcXxC7cJ6yha+ff@lizhi-Precision-Tower-5810>
+References: <20251002-gs101-pmu-regmap-tables-v1-0-1f96f0920eb3@linaro.org> <20251002-gs101-pmu-regmap-tables-v1-1-1f96f0920eb3@linaro.org>
+In-Reply-To: <20251002-gs101-pmu-regmap-tables-v1-1-1f96f0920eb3@linaro.org>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Fri, 3 Oct 2025 12:22:46 -0500
+X-Gm-Features: AS18NWBQR2ismkqxDcti8kjrNtnGND89e5O87aRDbFrbCUVqVqwZBLFSImHDwoE
+Message-ID: <CAPLW+4=mVbXex9Sxm2oEq0j3RJ0_KtXRq2Ttt5cfQ_dxXTuhSA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] soc: samsung: exynos-pmu: allow specifying read &
+ write access tables for secure regmap
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 26, 2025 at 06:46:28PM -0400, Frank Li wrote:
-> On Fri, Sep 26, 2025 at 03:25:21PM -0500, Bjorn Helgaas wrote:
-> > On Fri, Sep 26, 2025 at 03:08:30AM +0000, Hongxing Zhu wrote:
-> > > > -----Original Message-----
-> > > > From: Bjorn Helgaas <helgaas@kernel.org>
-> >
-> > > > On Fri, Sep 26, 2025 at 02:19:37AM +0000, Hongxing Zhu wrote:
-> > > > > > -----Original Message-----
-> > > > > > From: Bjorn Helgaas <helgaas@kernel.org> On Tue, Sep 23, 2025 at
-> > > > > > 03:39:13PM +0800, Richard Zhu wrote:
-> > > > > > > The CLKREQ# is an open drain, active low signal that is
-> > > > > > > driven low by the card to request reference clock. It's an
-> > > > > > > optional signal added in PCIe CEM r4.0, sec 2. Thus, this
-> > > > > > > signal wouldn't be driven low if it's reserved.
-> > > > > > >
-> > > > > > > Since the reference clock controlled by CLKREQ# may be
-> > > > > > > required by i.MX PCIe host too. To make sure this clock is
-> > > > > > > ready even when the CLKREQ# isn't driven low by the card(e.x
-> > > > > > > the scenario described above), force CLKREQ# override active
-> > > > > > > low for i.MX PCIe host during initialization.
-> > > > > > >
-> > > > > > > The CLKREQ# override can be cleared safely when
-> > > > > > > supports-clkreq is present and PCIe link is up later.
-> > > > > > > Because the CLKREQ# would be driven low by the card at this
-> > > > > > > time.
-> > > > > >
-> > > > > > What happens if we clear the CLKREQ# override (so the host
-> > > > > > doesn't assert it), and the link is up but the card never
-> > > > > > asserts CLKREQ# (since it's an optional signal)?
-> > > > > >
-> > > > > > Does the i.MX host still work?
-> > > > >
-> > > > > The CLKREQ# override active low only be cleared when link is up
-> > > > > and supports-clkreq is present. In the other words, there is a
-> > > > > remote endpoint  device, and the CLKREQ# would be driven active
-> > > > > low by this endpoint device.
-> > > >
-> > > > Assume an endpoint designed to CEM r2.0.  CLKREQ# doesn't exist in
-> > > > CEM r2.0, so even if the endpoint is present and the link is up,
-> > > > the endpoint will not assert CLKREQ#.
-> > > >
-> > > > Will the i.MX host still work?
-> >
-> > > Yes, i.MX host still work.
-> > > If the endpoint designed to CEM r2.0, and CLKREQ# is reserved. The
-> > > property suppots-clkreq wouldn't present in this scenario. Thus, the
-> > > CLKREQ# override active low set by host driver wouldn't be cleared
-> > > later, although the link is up and an endpoint is present.
-> >
-> > Do you mean 'supports-clkreq' describes the *endpoint*, and you need
-> > to change the devicetree depending on which endpoint is connected?
-> 
-> It is NOT descript *endpoint*. supports-clkreq descript the board design,
-> which connect CLKREQ# signal. Because standard slot's CLKREQ# (PIN12) is
-> reserved in beggin, so some old PCIe card have not pull down this signal as
-> latest spec requirement.
-> 
-> PCIe Standard slot with INTEL E2000 1G ethernet card, which is producted
-> around 10 year ago, PIN12 is reserved.
-> 
-> So we don't set supports-clkreq for stardard PCI slot, only set it for
-> M.2 slot. So stardard PCI slot in imx95 evk can support most cards. We have
-> not vendor card lists, which already connect/not connect CLKREQ#, so we
-> have to fallback to disconnect CLKREQ# situation by clarm our evk board
-> have not connect CLKREQ# to make all card works, eventhough it lost power
-> save feature. work is more impantant then power saving.
-> 
-> > The schema says 'supports-clkreq' tells us whether CLKREQ# signal
-> > routing exists, not whether the downstream device actually supports
-> > CLKREQ#:
-> >
-> >   https://github.com/devicetree-org/dt-schema/blob/4b28bc79fdc552f3e0b870ef1362bb711925f4f3/dtschema/schemas/pci/pci-bus-common.yaml#L155
-> >
-> > I don't see 'supports-clkreq' in any devicetree related to imx6, so
-> > I'm not sure this patch is needed yet.  Does it fix an existing
-> > problem?
-> 
-> The patch adding 'supports-clkreq' in dts is on going. No funtional broken
-> because it just impact l1ss power saving features.
-> 
-> > If it enables some future functionality, maybe we should defer it
-> > until we're actually ready to enable that functionality?
-> 
-> Actually, it fixes i.MX95 19x19 EVK second slot problem. At least
-> INTEL E2000 1G ethernet card can't work at i.MX95 EVK boards at main
-> stream kernel without this patch.
+On Thu, Oct 2, 2025 at 5:33=E2=80=AFAM Andr=C3=A9 Draszik <andre.draszik@li=
+naro.org> wrote:
+>
+> Accessing non-existent PMU registers causes an SError, halting the
+> system.
+>
+> regmap can help us with that by allowing to pass the list of valid
+> registers as part of the config during creation. When this driver
+> creates a new regmap itself rather than relying on
+> syscon_node_to_regmap(), it's therefore easily possible to hook in
+> custom access tables for valid read and write registers.
+>
+> Specifying access tables avoids SErrors for invalid registers and
+> instead the regmap core can just return an error. Outside drivers, this
+> is also helpful when using debugfs to access the regmap.
+>
+> Make it possible for drivers to specify read and write tables to be
+> used on creation of the secure regmap.
+>
+> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+> ---
+>  drivers/soc/samsung/exynos-pmu.c | 3 +++
+>  drivers/soc/samsung/exynos-pmu.h | 4 ++++
+>  2 files changed, 7 insertions(+)
+>
+> diff --git a/drivers/soc/samsung/exynos-pmu.c b/drivers/soc/samsung/exyno=
+s-pmu.c
+> index 22c50ca2aa79bf1945255ee6cc7443d7309b2573..9f416de03610b1727d8cc7761=
+6e5c87e2525cc69 100644
+> --- a/drivers/soc/samsung/exynos-pmu.c
+> +++ b/drivers/soc/samsung/exynos-pmu.c
+> @@ -635,6 +635,9 @@ static int exynos_pmu_probe(struct platform_device *p=
+dev)
+>                 pmu_regmcfg =3D regmap_smccfg;
+>                 pmu_regmcfg.max_register =3D resource_size(res) -
+>                                            pmu_regmcfg.reg_stride;
+> +               pmu_regmcfg.wr_table =3D pmu_context->pmu_data->wr_table;
+> +               pmu_regmcfg.rd_table =3D pmu_context->pmu_data->rd_table;
+> +
 
-I deferred these two patches so we have time to tidy these up:
+Seems like pmu_regmcfg declaration can be pulled under this "if" scope
+-- just a thought for future.
 
-  - Coordinate with adding 'supports-clkreq' in devicetrees.
+>                 /* Need physical address for SMC call */
+>                 regmap =3D devm_regmap_init(dev, NULL,
+>                                           (void *)(uintptr_t)res->start,
+> diff --git a/drivers/soc/samsung/exynos-pmu.h b/drivers/soc/samsung/exyno=
+s-pmu.h
+> index 0938bb4fe15f439e2d8bddeec51b6077e79a7e84..113149ed32c88a09b075be820=
+50c26970e4c0620 100644
+> --- a/drivers/soc/samsung/exynos-pmu.h
+> +++ b/drivers/soc/samsung/exynos-pmu.h
+> @@ -27,6 +27,10 @@ struct exynos_pmu_data {
+>         void (*pmu_init)(void);
+>         void (*powerdown_conf)(enum sys_powerdown);
+>         void (*powerdown_conf_extra)(enum sys_powerdown);
+> +
+> +       /* for the pmu_secure case */
+> +       const struct regmap_access_table *rd_table;
+> +       const struct regmap_access_table *wr_table;
 
-  - Fix the imx95 refclk enable that was missed in the v5 series.
+Maybe it's worth to add #include <linux/regmap.h> in this header, or
+at least forward declaration struct regmap_access_table?
 
-  - Consider making imx95 refclk enable parallel to the other
-    versions, e.g., by using .enable_ref_clk() instead of doing it in
-    imx95_pcie_init_phy().
+Also, would be nice to have kernel-doc comment for struct
+exynos_pmu_data at this point, but it might be out of scope for this
+patch.
 
-  - Describe the "i.MX95 19x19 EVK second slot problem" in the commit
-    log.  Possibly split that into a second patch if it can be
-    separated from the CLKREQ# override.  It sounds like this part
-    doesn't depend on 'supports-clkreq' in a devicetree?
+Other than those minor nitpicks -- LGTM:
 
-Maybe we can also figure out how to explain why CLKREQ# override is an
-issue for imx6 but not for other DWC-based drivers.
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 
-Bjorn
+>  };
+>
+>  extern void __iomem *pmu_base_addr;
+>
+> --
+> 2.51.0.618.g983fd99d29-goog
+>
+>
 
