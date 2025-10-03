@@ -1,56 +1,77 @@
-Return-Path: <linux-kernel+bounces-840996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C76AABB5ED5
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 06:38:47 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4821ABB5EE7
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 06:54:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81FCE4A1B2F
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 04:38:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9CF764E4DD5
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 04:54:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5B5B1E7C19;
-	Fri,  3 Oct 2025 04:38:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D224E1EB5D6;
+	Fri,  3 Oct 2025 04:54:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iohhr0FN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AzLBbP1A"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1338719D8A3;
-	Fri,  3 Oct 2025 04:38:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 320161547EE;
+	Fri,  3 Oct 2025 04:54:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759466320; cv=none; b=CtArB2tAVfasJ5bdAxzZDXPG5tkagYWaeSoPrvHfUgDJ+xB9KTlYWB02QcaAQa7X0YvSytMHOPy7CFlvPK6NA40fepE02Pr+n96FvkRl/4xK7ioESNLvGFe/TeFVkjLVROPX2GYD0gN2kK1BbkH/QlHgxGrqLertoMNcSsfrsP4=
+	t=1759467278; cv=none; b=V0WrE8m0kjDgl+P/EafzDImaTcgbMQMyH9B49iRYuV0SVS+6bRA/GyioxqT5I3mFkMjddRz7mse8BrXGhXKfK/K3cd5ue9jWIeBWvbZXbJ+5hkaFuWxalLG8wmZXN5zx3hgGF0A8g7Lmh2MZHTcoKPMlq8dd+L0tzeq32O8gR+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759466320; c=relaxed/simple;
-	bh=YB9h7a+lip4DzsrxCoL/ykcyG+kEAQwpy1Ru3e3Ygmg=;
+	s=arc-20240116; t=1759467278; c=relaxed/simple;
+	bh=fVzDhdiuZ0I8KofZ1ITv4SgXW0yFAeLo9kX/WXd7/ZI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OKh/xCeO6nf5HkZ9mav6dQD86K3NMEYu1GnruoQ9p1Fzx1Ynuv5vqubGEoyqnJlsgMItdC6GiisrmyyqsnxgAidB0CMRkxJ5F6Q4MCW3k1dAXgymCw+dSjc9gajfpiT+0Krq6qPM6cvREinoJJPJn9LtCJKezzQKDAwznQI9Lgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Iohhr0FN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCE7FC4CEF5;
-	Fri,  3 Oct 2025 04:38:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759466319;
-	bh=YB9h7a+lip4DzsrxCoL/ykcyG+kEAQwpy1Ru3e3Ygmg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Iohhr0FNpDA6UJbR8tYDVoAulsO2nTiiYzgcLOfB8R1NaWG5TdJ88JWI71O132ug6
-	 VrXcNLzQ8mUzB+DLUJfx+1+e3T04fldqDHxEz5rSdAbGGwmQVVNRjKBFvuZgoFiM9Y
-	 mz0hH7MboZhqzNrdcuZH7s2kv2suxW7jChANhY+9YbPwwyZcI9ZxoSgKMwZOvnNIMV
-	 S0vuxEAnyV7zDO4dAaAyl3mYGSlWA2dpDlugyl01PN/N8FrmRMbW7lBGZa65dXm0wy
-	 h3kidkjXNZnemjsLwMtTlXQKMZ97NSjLfJwgSI8oALRhrPiP9y6Lwty59FP6CqhqdC
-	 fXsnsaxPJlmxw==
-Date: Fri, 3 Oct 2025 13:38:33 +0900
-From: Namhyung Kim <namhyung@kernel.org>
-To: kan.liang@linux.intel.com
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com, jolsa@kernel.org,
-	alexander.shishkin@linux.intel.com, mark.rutland@arm.com,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	dave.hansen@linux.intel.com
-Subject: Re: [PATCH] MAINTAINERS: Remove myself from perf_events subsystem
-Message-ID: <aN9TSXHrf5B_3k5P@google.com>
-References: <20250925162428.3516894-1-kan.liang@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yl0+uIYc0W1O1lBkjgy8XUfuBqKf9jHZXP9kDW+WtPpEXR/fSlNxV4+3xTb5Xe3UPoJ92ahMVP1wFbYJrmQUIUnlQTKQy154X7JOJ665y/FQ1Qbc578CSMtiThAXWHWt8MvNMHD+Aj1UpbzVWAin8mmU5Ys7ToEwlvf2LEx315s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AzLBbP1A; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759467276; x=1791003276;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=fVzDhdiuZ0I8KofZ1ITv4SgXW0yFAeLo9kX/WXd7/ZI=;
+  b=AzLBbP1AMvYBQYMaQYnL3QhGQXsOuNXF/OL3lKdlDsLnizFpZHs92aFj
+   NrVNYSHMyDofMXDweKLKUITCP2G33/bdJW4Mma+5wY3ucYB1B27EsdSd5
+   aLNObmv7qFtvGanKCeNqvdqFR5ZoDyu7BT9Oe68bKEN4gFFYw8dns/f3q
+   GY6FdHUkn9Zk9P43V5l+2tm7aXgtfTHgV3ciEwDKJ99UFmD5XFKggLGxO
+   tqEjeHB05Px3HlYaW+KNQFwc/l2eOvC7wh7qFj34gdq83BTJaMddXXCCq
+   rGBSOmrGAVzC0o1Bz4tbjO8X9RF5xu2/Wf+dWgBESo01Xbxi6ICebgyj5
+   Q==;
+X-CSE-ConnectionGUID: JkUeY+C/QIaKwzmPhq6Pfg==
+X-CSE-MsgGUID: HTfCcecOTLe8ZEtcjKMIkg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11570"; a="64367267"
+X-IronPort-AV: E=Sophos;i="6.18,311,1751266800"; 
+   d="scan'208";a="64367267"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2025 21:54:35 -0700
+X-CSE-ConnectionGUID: onFewDEASoqT3LdBmm/MCg==
+X-CSE-MsgGUID: 356vVtU/QwipN43w7XVtcw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,311,1751266800"; 
+   d="scan'208";a="209886780"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by orviesa002.jf.intel.com with ESMTP; 02 Oct 2025 21:54:33 -0700
+Received: by black.igk.intel.com (Postfix, from userid 1001)
+	id E2AAC95; Fri, 03 Oct 2025 06:54:31 +0200 (CEST)
+Date: Fri, 3 Oct 2025 06:54:31 +0200
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Markus Probst <markus.probst@posteo.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Mika Westerberg <westeri@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gpio: of: make it possible to reference gpios probed in
+ acpi in device tree
+Message-ID: <20251003045431.GA2912318@black.igk.intel.com>
+References: <20251002215759.1836706-1-markus.probst@posteo.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,43 +80,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250925162428.3516894-1-kan.liang@linux.intel.com>
+In-Reply-To: <20251002215759.1836706-1-markus.probst@posteo.de>
 
-On Thu, Sep 25, 2025 at 09:24:28AM -0700, kan.liang@linux.intel.com wrote:
-> From: Kan Liang <kan.liang@linux.intel.com>
-> 
-> I'm stepping down as the Reviewer of perf_events subsystem.
-> It has been an honor and a pleasure to work with everyone to improve the
-> perf_events subsystem. However, due to personal reasons, I have to leave
-> Intel. I believe it would be difficult for me to continue in this role
-> any further.
+Hi,
 
-Sorry to hear that, too.  You've been amazing on various works in this
-area.  You'll be missed.  Hope you have a great opportunity for the next
-stage!
+On Thu, Oct 02, 2025 at 09:58:05PM +0000, Markus Probst wrote:
+> sometimes it is necessary to use both acpi and device tree to declare
+> devices. Not every gpio device driver which has an acpi_match_table has
+> an of_match table (e.g. amd-pinctrl). Furthermore gpio is an device which
+> can't be easily disabled in acpi and then redeclared in device tree, as
+> it often gets used by other devices declared in acpi (e.g. via GpioInt or
+> GpioIo). Thus a disable of acpi and migration to device tree is not always
+> possible or very time consuming, while acpi by itself is very limited and
+> not always sufficient. This won't affect most configurations, as most of
+> the time either CONFIG_ACPI or CONFIG_OF gets enabled, not both.
 
-Thanks,
-Namhyung
+Can you provide a real example where this kind of mixup can happen? The
+ACPI ID PRP0001 specifically was added to allow using DT bindings in ACPI
+based systems.
 
-> 
-> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Regarding the patch, please spell gpio -> GPIO, acpi ACPI and so on.
+
+> Signed-off-by: Markus Probst <markus.probst@posteo.de>
 > ---
->  MAINTAINERS | 1 -
->  1 file changed, 1 deletion(-)
+>  drivers/gpio/gpiolib-of.c | 241 +++++++++++++++++++++++---------------
+>  1 file changed, 145 insertions(+), 96 deletions(-)
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index fe168477caa4..2c788294cf84 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -19759,7 +19759,6 @@ R:	Alexander Shishkin <alexander.shishkin@linux.intel.com>
->  R:	Jiri Olsa <jolsa@kernel.org>
->  R:	Ian Rogers <irogers@google.com>
->  R:	Adrian Hunter <adrian.hunter@intel.com>
-> -R:	"Liang, Kan" <kan.liang@linux.intel.com>
->  L:	linux-perf-users@vger.kernel.org
->  L:	linux-kernel@vger.kernel.org
->  S:	Supported
-> -- 
-> 2.38.1
-> 
+> diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+> index 37ab78243fab..c472b86148b3 100644
+> --- a/drivers/gpio/gpiolib-of.c
+> +++ b/drivers/gpio/gpiolib-of.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/pinctrl/pinctrl.h>
+>  #include <linux/slab.h>
+>  #include <linux/string.h>
+> +#include <linux/acpi.h>
+
+I'm not really sure if this is good idea to be honest.
 
