@@ -1,196 +1,199 @@
-Return-Path: <linux-kernel+bounces-841058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E213ABB627E
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 09:19:31 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58B9CBB6281
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 09:21:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74E521AE098A
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 07:19:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DFB3D4E7E49
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 07:21:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43F6023AE9B;
-	Fri,  3 Oct 2025 07:19:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 124E323D7E2;
+	Fri,  3 Oct 2025 07:21:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UCjWiseW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="bEgpKn8Y";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="28LT4I65";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="hIVPvxtC";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="erQ5Zm9p"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 805112F5B
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 07:19:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C9DB23AE9B
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 07:21:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759475965; cv=none; b=ba9w/cwku/m2nmKF++oN/6FIrr4TU7Fxl6gikO0/6HmkREh4fcf2cl4sLj9O9o803Og0PCsbVpfCBQW+zYH+1I0zd95VM9sA9HUgPvVI+gBeQtghPen9Gb5UapwqKfAn2EimofoGQs67czOSSXJXdtDi5/f1AESt1HRI0WHPfBg=
+	t=1759476112; cv=none; b=YHzXubDC6vR8CnvwX3jH1Dhir99l9zsC2m3dvMuL+3dAObQSjt3NwX0ibkQ5b167nErXAyhUorqgO2tDfxvMeXMVtr0GXifRAZVcEdvDOBNk64ohZm6V2BfYO6/Ko3bLrd3g8L6zSuW1kAEq+V0kYURiWpCb5TPDYPzxwgLBJvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759475965; c=relaxed/simple;
-	bh=npL7ZxipwXBJqYe6tFFbbpWqtsI0lDGBpLw4bTD7F8c=;
-	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=MYai0J9+bqfKOuFhvh4Uh2nxw+6FS9boavyu/vOMznvOGbfoZp6q/nFmqpQmNvQK0/6mjl3BX4cB0l764HVbqIwwnPsUsyhej4GeUM2P3CukyRXloym7hZ7VeunmYCiTPJ8+CmiB6G791NT8OpWm5YUOlA/nHWvg97XAb0T0w1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UCjWiseW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6205C4CEF5;
-	Fri,  3 Oct 2025 07:19:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759475965;
-	bh=npL7ZxipwXBJqYe6tFFbbpWqtsI0lDGBpLw4bTD7F8c=;
-	h=Date:From:To:cc:Subject:From;
-	b=UCjWiseWJylfmkFB2mCIzgS3u4KKG2ABboUvSZnUhpI43SLpMl08UCoTnt0ad3Ymk
-	 MSV4jzOXEAhwpwotwrl1Hi+RywYNaJue23c1X8ADx/iBbXLjuVcpHZVVMJN7hsQPR8
-	 Fzi7N3x58dPu6rN4Uam/9224Aa/YDjGXnnNnqeg1IMw8X2MKFN86KZtsP5daI7TUIl
-	 3A8NTh0zeBzM5HxeKK2GOaQBaPcCE0a5ShaUgYf2UpnOc1vn3JiovZvTWJJd28u0rw
-	 rcPenAzkhy0iVatCk0uSsHNJ+5ToTxOgDaTwzirojom7Hg1B8T/HbScm4rvhM2Old8
-	 cA36qaSLNFKEw==
-Date: Fri, 3 Oct 2025 01:19:20 -0600 (MDT)
-From: Paul Walmsley <pjw@kernel.org>
-To: torvalds@linux-foundation.org
-cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] RISC-V updates for the v6.18 merge window (part two)
-Message-ID: <9a4eb234-b19c-8051-472b-4bd793a9e252@kernel.org>
+	s=arc-20240116; t=1759476112; c=relaxed/simple;
+	bh=MF1ojK1e4qTMJpyC4kVXvIjqRe+VO3XJwjd/QevRJoA=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OQnAXhWP2STS3Pozam2xULfGoL5PkIyrQqdejCn+5SwOhhKgqsFJXFzQHAGBhlyl0nkjYCzjDI03ozleqWQPG/t/1Mh7he0Hy6j+JD2DSQ6CMqBIldgseTCyBeJ0v9VAsawthlbCfyjpbnBMv8pwmOcsvimoRTVU56/cbJk1seM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=bEgpKn8Y; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=28LT4I65; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=hIVPvxtC; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=erQ5Zm9p; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 9132A33867;
+	Fri,  3 Oct 2025 07:21:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1759476098; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rvh/zyAvQe8sgpRHWRg4gdaK+6SZnI8zSJs6AZ9Y4ek=;
+	b=bEgpKn8YpLSM/tYGoMKlyb4H+dntsKVt9+39JEoI8AOg2194BxQSqO4XTDDGTK+ZZQBsCR
+	jCE2AKbjagTUsoQ8AuJSeB6nfhTDNr4lW1JWCDfA4+yM6Mp3p3NDGX3s0iUXlGteTINhgy
+	h728Cg/FoJfzzZm9yrljsRfXkqlGRtI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1759476098;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rvh/zyAvQe8sgpRHWRg4gdaK+6SZnI8zSJs6AZ9Y4ek=;
+	b=28LT4I65u+jCEfNlAo1sbNYBCNmowf3FR8UouoFQ3VC01A5s6dR8FKi7bSK1DydgfIWIez
+	b5xedf4t0axH07DA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1759476097; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rvh/zyAvQe8sgpRHWRg4gdaK+6SZnI8zSJs6AZ9Y4ek=;
+	b=hIVPvxtCG/If+Fwu9Ubyu8IgeMBQVsPY0+ouRZonojzpoAVVkG9n6XOCwqa35ww247NbRg
+	PWJLwfoqGYPiQplLbCI7JtksrqnQ72iuFup6/RBxUvQFqNlHEhGHTzVLE2HGro92le+Ae7
+	kweeBMbGJ+aS0VyDqf3otfGgdUDYZIs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1759476097;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rvh/zyAvQe8sgpRHWRg4gdaK+6SZnI8zSJs6AZ9Y4ek=;
+	b=erQ5Zm9pRiHHHekinY7lZjDUJMrLMiHsJfDfsg3ApUb3ZzN/4fOs00BlqeP16tDOP8zn8f
+	ewgIW+7hgF3QwuDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 502B913990;
+	Fri,  3 Oct 2025 07:21:37 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id vrTzEYF532iyXQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Fri, 03 Oct 2025 07:21:37 +0000
+Date: Fri, 03 Oct 2025 09:21:36 +0200
+Message-ID: <87o6qoh2m7.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: hariconscious@gmail.com
+Cc: perex@perex.cz,
+	tiwai@suse.com,
+	khalid@kernel.org,
+	shuah@kernel.org,
+	david.hunter.linux@gmail.com,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sound/core/seq: Initialize structure pointer to NULL to prevent undefined behavior
+In-Reply-To: <20251002174301.15512-1-hariconscious@gmail.com>
+References: <20251002174301.15512-1-hariconscious@gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=ISO-8859-7
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-1.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TAGGED_RCPT(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[perex.cz,suse.com,kernel.org,gmail.com,vger.kernel.org];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_NONE(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -1.80
 
-Linus,
+On Thu, 02 Oct 2025 19:43:00 +0200,
+hariconscious@gmail.com wrote:
+> 
+> From: HariKrishna Sagala <hariconscious@gmail.com>
+> 
+> This change ensures the structure pointer is explicitly initialized to
+> NULL,preventing potential access to uninitialized memory. It improves
+> code safety and avoids undefined behavior during pointer dereferencing.
+> 
+> Signed-off-by: HariKrishna Sagala <hariconscious@gmail.com>
+> ---
+> 
+> Note:
+> Turned on the settings needed for sequencer MIDI and built a kernel
+> image with those settings. The system booted up fine with no errors.
+> However, couldn¢t get the sequencer emulation to start.
 
-The following changes since commit 0b0ca959d20689fece038954bbf1d7b14c0b11c3:
+Something really wrong in your test, I'm afraid.
+See your patch below more closely:
 
-  riscv: errata: Fix the PAUSE Opcode for MIPS P8700 (2025-09-19 10:33:56 -0600)
+> 
+>  sound/core/seq/seq_midi_emul.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/sound/core/seq/seq_midi_emul.c b/sound/core/seq/seq_midi_emul.c
+> index 81d2ef5e5811..f24c5a475c41 100644
+> --- a/sound/core/seq/seq_midi_emul.c
+> +++ b/sound/core/seq/seq_midi_emul.c
+> @@ -647,7 +647,7 @@ static void snd_midi_channel_init(struct snd_midi_channel *p, int n)
+>   */
+>  static struct snd_midi_channel *snd_midi_channel_init_set(int n)
+>  {
+> -	struct snd_midi_channel *chan;
+> +	struct snd_midi_channel *chan = NULL;
+>  	int  i;
+>  
+>  	chan = kmalloc_array(n, sizeof(struct snd_midi_channel), GFP_KERNEL);
 
-are available in the Git repository at:
+The variable chan is initialized at the very beginning.
+NULL initialization is utterly nonsense.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux tags/riscv-for-linus-6.18-mw2
+> @@ -686,7 +686,7 @@ reset_all_channels(struct snd_midi_channel_set *chset)
+>   */
+>  struct snd_midi_channel_set *snd_midi_channel_alloc_set(int n)
+>  {
+> -	struct snd_midi_channel_set *chset;
+> +	struct snd_midi_channel_set *chset = NULL;
+>  
+>  	chset = kmalloc(sizeof(*chset), GFP_KERNEL);
 
-for you to fetch changes up to 68247d45c045bb7dda923cf2c8d0937ce0e16394:
+Here, too.
 
-  clk: COMMON_CLK_RPMI should depend on RISCV (2025-10-01 19:07:43 -0600)
+So all changes make really no sense.
 
-----------------------------------------------------------------
-RISC-V updates for the v6.18 merge window (part two)
 
-Second set of RISC-V updates for the v6.18 merge window, consisting
-of:
+thanks,
 
-- Support for the RISC-V-standardized RPMI interface.
-
-  RPMI is a platform management communication mechanism between OSes
-  running on application processors, and a remote platform management
-  processor.  Similar to ARM SCMI, TI SCI, etc.  This includes irqchip,
-  mailbox, and clk changes.
-
-- Support for the RISC-V-standardized MPXY SBI extension.
-
-  MPXY is a RISC-V-specific standard implementing a shared memory
-  mailbox between S-mode operating systems (e.g., Linux) and M-mode
-  firmware (e.g., OpenSBI).  It is part of this PR since one of its
-  use cases is to enable M-mode firmware to act as a single RPMI client
-  for all RPMI activity on a core (including S-mode RPMI activity).
-  Includes a mailbox driver.
-
-- Some ACPI-related updates to enable the use of RPMI and MPXY.
-
-- The addition of Linux-wide memcpy_{from,to}_le32() static inline
-  functions, for RPMI use.
-
-- An ACPI Kconfig change to enable boot logos on any ACPI-using
-  architecture (including RISC-V)
-
-- A RISC-V defconfig change to add GPIO keyboard and event device
-  support, for front panel shutdown or reboot buttons
-
-This PR also includes a recent, one-line Kconfig patch from Geert to
-keep non-RISC-V users from being asked about building the RPMI virtual
-clock driver when !COMPILE_TEST.  THere's nothing preventing
-non-RISC-V SoCs from implementing RPMI, but until some users show up,
-let's not annoy others with it.
-
-----------------------------------------------------------------
-Anup Patel (14):
-      dt-bindings: mailbox: Add bindings for RPMI shared memory transport
-      dt-bindings: mailbox: Add bindings for RISC-V SBI MPXY extension
-      RISC-V: Add defines for the SBI message proxy extension
-      mailbox: Add common header for RPMI messages sent via mailbox
-      mailbox: Allow controller specific mapping using fwnode
-      byteorder: Add memcpy_to_le32() and memcpy_from_le32()
-      mailbox: Add RISC-V SBI message proxy (MPXY) based mailbox driver
-      dt-bindings: clock: Add RPMI clock service message proxy bindings
-      dt-bindings: clock: Add RPMI clock service controller bindings
-      dt-bindings: Add RPMI system MSI message proxy bindings
-      dt-bindings: Add RPMI system MSI interrupt controller bindings
-      irqchip: Add driver for the RPMI system MSI service group
-      RISC-V: Enable GPIO keyboard and event device in RV64 defconfig
-      MAINTAINERS: Add entry for RISC-V RPMI and MPXY drivers
-
-Geert Uytterhoeven (1):
-      clk: COMMON_CLK_RPMI should depend on RISCV
-
-Heinrich Schuchardt (1):
-      ACPI: support BGRT table on RISC-V
-
-Rahul Pathak (1):
-      clk: Add clock driver for the RISC-V RPMI clock service group
-
-Sunil V L (9):
-      ACPI: property: Refactor acpi_fwnode_get_reference_args() to support nargs_prop
-      ACPI: Add support for nargs_prop in acpi_fwnode_get_reference_args()
-      ACPI: scan: Update honor list for RPMI System MSI
-      ACPI: RISC-V: Create interrupt controller list in sorted order
-      ACPI: RISC-V: Add support to update gsi range
-      ACPI: RISC-V: Add RPMI System MSI to GSI mapping
-      irqchip/irq-riscv-imsic-early: Export imsic_acpi_get_fwnode()
-      mailbox/riscv-sbi-mpxy: Add ACPI support
-      irqchip/riscv-rpmi-sysmsi: Add ACPI support
-
- .../bindings/clock/riscv,rpmi-clock.yaml           |   64 ++
- .../bindings/clock/riscv,rpmi-mpxy-clock.yaml      |   64 ++
- .../riscv,rpmi-mpxy-system-msi.yaml                |   67 ++
- .../riscv,rpmi-system-msi.yaml                     |   74 ++
- .../bindings/mailbox/riscv,rpmi-shmem-mbox.yaml    |  124 +++
- .../bindings/mailbox/riscv,sbi-mpxy-mbox.yaml      |   51 +
- MAINTAINERS                                        |   15 +
- arch/riscv/configs/defconfig                       |    2 +
- arch/riscv/include/asm/irq.h                       |    6 +
- arch/riscv/include/asm/sbi.h                       |   62 ++
- drivers/acpi/Kconfig                               |    2 +-
- drivers/acpi/property.c                            |  128 +--
- drivers/acpi/riscv/irq.c                           |   75 +-
- drivers/acpi/scan.c                                |    2 +
- drivers/base/property.c                            |    2 +-
- drivers/clk/Kconfig                                |    9 +
- drivers/clk/Makefile                               |    1 +
- drivers/clk/clk-rpmi.c                             |  620 ++++++++++++
- drivers/irqchip/Kconfig                            |    7 +
- drivers/irqchip/Makefile                           |    1 +
- drivers/irqchip/irq-riscv-imsic-early.c            |    2 +
- drivers/irqchip/irq-riscv-rpmi-sysmsi.c            |  328 +++++++
- drivers/mailbox/Kconfig                            |   11 +
- drivers/mailbox/Makefile                           |    2 +
- drivers/mailbox/mailbox.c                          |   65 +-
- drivers/mailbox/riscv-sbi-mpxy-mbox.c              | 1019 ++++++++++++++++++++
- include/linux/byteorder/generic.h                  |   16 +
- include/linux/mailbox/riscv-rpmi-message.h         |  243 +++++
- include/linux/mailbox_controller.h                 |    3 +
- 29 files changed, 2981 insertions(+), 84 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/riscv,rpmi-clock.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/riscv,rpmi-mpxy-clock.yaml
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/riscv,rpmi-mpxy-system-msi.yaml
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/riscv,rpmi-system-msi.yaml
- create mode 100644 Documentation/devicetree/bindings/mailbox/riscv,rpmi-shmem-mbox.yaml
- create mode 100644 Documentation/devicetree/bindings/mailbox/riscv,sbi-mpxy-mbox.yaml
- create mode 100644 drivers/clk/clk-rpmi.c
- create mode 100644 drivers/irqchip/irq-riscv-rpmi-sysmsi.c
- create mode 100644 drivers/mailbox/riscv-sbi-mpxy-mbox.c
- create mode 100644 include/linux/mailbox/riscv-rpmi-message.h
-
-    text	   data	    bss	     dec	    hex	filename
-12839941	6181502	 419253	19440696	128a438	vmlinux.rv64.orig
-12866875	6191482	 419269	19477626	129347a	vmlinux.rv64
-11788867	6000158	 404229	18193254	1159b66	vmlinux.rv64_nosmp.orig
-11800609	6005634	 404245	18210488	115deb8	vmlinux.rv64_nosmp
-11771062	4703702	 309629	16784393	1001c09	vmlinux.rv32.orig
-11794258	4711898	 309637	16815793	10096b1	vmlinux.rv32
- 2615066	 758584	 119048	 3492698	 354b5a	vmlinux.nommu_virt.orig
- 2615066	 758584	 119048	3 492698	 354b5a	vmlinux.nommu_virt
+Takashi
 
