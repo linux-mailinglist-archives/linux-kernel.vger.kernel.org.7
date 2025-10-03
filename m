@@ -1,117 +1,123 @@
-Return-Path: <linux-kernel+bounces-841051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DE6DBB6232
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 09:07:29 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8468BB6235
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 09:07:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D989C487796
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 07:07:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D850D4E1D1E
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 07:07:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F326622D4DD;
-	Fri,  3 Oct 2025 07:07:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28A0E22D9F7;
+	Fri,  3 Oct 2025 07:07:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="LkYpphNw"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Pt0rT/KK"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BD90227EA4
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 07:07:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3E8122A4DB
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 07:07:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759475242; cv=none; b=ZzG+ypC3pUn9V27w21Vo8DppNDEXfNIGvU5+pwoo+c3gg2HnluLFShcxGIbWWXiTxD/E1IynKaDnvl7h7lsCM6ETmtlXZQkHotq4sv4k7q/TxIYq11CAlCnal/ULNY2ZN7ewnxUtCQs1gHx1+lfP42mvBGvV5keB4/nDBYevq8Y=
+	t=1759475263; cv=none; b=RF/9IWYWBmi647wpuZ5VeYJjtvhP64meHYEfOIDveY8TcUVEvNwbExMc5OENLLwB0eu5ZaO7k2+FgEdqPfZjgiYoV96gVtJZlFtj1sR5WTJM/qlfcq5H7+XK11EwxQYXYLucptNGwJF7XUML8Ys7wS9qUnPRrm+i12TE2KK0MUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759475242; c=relaxed/simple;
-	bh=NmBarXdprph0Ea9BqhLbnDit9HvUdKIbTKXdxSGKLqA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VR8yQCkHX3VXE5hq69ofnAe+yMsnE+Cj+dlq8Z9Fj5xH03z1LqRjQyJKKimRFm2/6HAaNzB/8GDR9o3Hsd1U/SOcJW/p8o+IToq9uvToQ6kh+kCWSv1HtVeifqLqM9uWwfNcIOPW3G4KcEqDNLmO1MgLyjE/0WV5ftKZI+tYpoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=LkYpphNw; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b484b15e72bso36070166b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 00:07:19 -0700 (PDT)
+	s=arc-20240116; t=1759475263; c=relaxed/simple;
+	bh=VfnrwV00n1OTVgQ7ak+8WGMC6Lhvu/i4uIuO4QQf7B0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f6eNE5bQI5eepeZ3mmnJi4X/gYrGn43NFS04frM4zKOcK47mOEveiGsajhfKFydZP3/Rf5FDEwlUJngDf/w71Esa7roPjM1goDxLbXYZ+1GLaaVQuq5lWijcq0qefmX8iA+MtdwxjyM74pqKFiKGufC1ENEm87Nr5LinWPpyaZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Pt0rT/KK; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-42557c5cedcso1039489f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 00:07:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1759475238; x=1760080038; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7oJsClXNUdjNS3IHTnmCIDO3oNqk4uGp8NgO3dHySVY=;
-        b=LkYpphNwNAbETbOGIbWmZZmyFtUGSOAp8LMFKwpGi26mMwVb/d3IrhjMm7Ri4/kKga
-         uI3rNze6Ff8rgVzc/fkSrjaSxAluUQR7MiZnrGn6i8r+PTq/ugw2vbIrAqHE8DtZuuMz
-         uVN16AaShzAccnaEqkHsX8wi8Ja7PZhlvD0L7pJf/UReWlSJciGzg06mwNFqGHgkwEkJ
-         fhlYuH/hIo3BgPihv8DmkslEROtIDD1jL/VxO614CoPYLsRIg3LX1mVLqVMQwVuQl8iw
-         qraFs1oA3iv57UGvDvLwj/cRSygsh5O9ZBhvx1e9fjB74TsPN/j0rKMotE9z7YDzwzmC
-         s+vg==
+        d=linaro.org; s=google; t=1759475260; x=1760080060; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+dLYg+KUenxi+tGWfH6hX1Q42Ol8JhSulu76BtWPmL4=;
+        b=Pt0rT/KKCsnSTktZVPcoGGmRXgamgaDWaS5hPp1VuMkq+j6o55J0B7C22vPcEgkbrR
+         nQeOnqnexflHRHMIQkWNo4pT6FpGvqCkKNyRu959fz82CoezuU52QQ+B6tMZ8DyQL3Nu
+         wFfbdBL3fSCjAo99cPhymT4G7Hp54WyVq9zh5R8iUI5WyPm+JRk5usYqVTz7eXcyM01i
+         jNHJuSl5jaUkUQjUKr3MOqGbqeMCvMoikO2624TnexwEMr2Aqa14zuIm/FL+nq7Jokwt
+         uU9YKf/hP1Qlek8IZICiZIdM2w32O8Fu9UnKVX7ofU1sMvygLnpgVwzfebpbddxmH9AR
+         Dpcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759475238; x=1760080038;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7oJsClXNUdjNS3IHTnmCIDO3oNqk4uGp8NgO3dHySVY=;
-        b=JewoJ8B3XiVahNS01i3mEGWNDD+l6Sd7mxSGFyS7eW4iL/6Qj2gTYWTr4jWTSesMgD
-         hmh5NEX6wWrPb7KpQjwyZMu8AZXqflJ6DXAOPtHMVLdZEEGSajYUuml+zSNsi70itUej
-         jE/IXtZ2U718yEQMDGpiq8yM65jwFqx+upjaN8TBIxVlKtG4DqUlFH1GAIwNeXUWs5Yj
-         aR4Z+ODaFtl491VM+qZDyHyqtTaTR1ZW8qB1bUSGGwS3tJqdA9MaM+pbkmbQnmXv4EG6
-         6hEDq/WWJ/+XIwDAUVIGkgk/zEs8pc6da4qaGjeucyOeX+vm2CJmDZrnmh7Pz7TcMNRy
-         UkGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU7Zsb0nTAXdzrMVzwe4WMt/HjU2fsdjCWRc7EXM/vZG4eSEn4+aWSBBDh39s3Y2Ob87yKX/oK/+7qhk2Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxg5R3ieHY7t360e13j2hCXuWXe7kZELYKzCLVlVk+vf9VdgVMN
-	4ztOeKl85boXsvYeYu+vbHOQyehoPNKNnJP7Y0bebydDgQI/89cCiA7FSG/J2G2O2lo=
-X-Gm-Gg: ASbGncuVrqJSkE432Zyxn2eSWUrY4MRqdSPcyrsG81K6s/lAcylyvHWmS4rr/laMoJt
-	4hBGIxGx+8dU1Oqf37Oq9dWNzoZlHlwU3SGllzALehTRcqfAtgux+j9iy33WTK9JmJDPFUYYZXs
-	jpaq4wZUl9Q+aUA3bvZOsmj3uNhe5BFUQhLcpSsuXcPucJhD7v+XcNroxlRaxXWqznkVvbPAihb
-	5PK2G6jJCW+ZHShkqBrOebDQaSTwejvIjbxFjMyhrFzFT2tGDK3az9rSGd6L3TehXjqXBI4M9dk
-	VaaKS1mwqsCyAmyjeMG5M6iLAUW24utWpuA2VYj4RAHlkrkVsJ3FnVMiRUGyjve6Brg7zPGnE7l
-	g0B49WUeeF/kLc5rKBb3tmUYFnv029fs2P06lEhp/hCfy9n6RrYKSSvhB4LXFRgUmo6yX9o7XXu
-	URN2HGGhIifbv8z7HtnHySXl32looafOhW/RAPrt/9Xcl7wXJYYwRh
-X-Google-Smtp-Source: AGHT+IFHgcgAxKrBEwL/rl1KkiwB5iUsa34TbQ1eqD87gj7Bd+hJwtRTUeDPma+saazo3hj9xNIPCw==
-X-Received: by 2002:a17:907:94c8:b0:b3d:6ec6:9e88 with SMTP id a640c23a62f3a-b49c295f869mr130567666b.7.1759475238345;
-        Fri, 03 Oct 2025 00:07:18 -0700 (PDT)
-Received: from mordecai.tesarici.cz (dynamic-2a00-1028-83b8-1e7a-3010-3bd6-8521-caf1.ipv6.o2.cz. [2a00:1028:83b8:1e7a:3010:3bd6:8521:caf1])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b4869b4d9f5sm375183666b.66.2025.10.03.00.07.17
+        d=1e100.net; s=20230601; t=1759475260; x=1760080060;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+dLYg+KUenxi+tGWfH6hX1Q42Ol8JhSulu76BtWPmL4=;
+        b=BEBQheh9rwx594rpRf3o2jZ+m9yKPu9Mm6tL2g1KV3BJQEnIl0P44iLrpQVWU88SRB
+         TJ4n9Q2grprZcfQghw1i1ffld3H74GEwlreBaAzr67zjEKhY5PE2Ya+QZAX+4tCPAe68
+         gU7Uyqq6+5yM574Hw/FMoStGLM0EL8om8ZJSU4XikjZRKQ/nmmYEUpJ0xtpJmXFoxKbC
+         p4gTpCHXR/t9M/wQ4K59nxUfnIWXoMu32vs2zish+s5cmmJXMf+fT2WiEvHFCnwdal1J
+         /7RLCXLMEN/ERvkHwbwKFr9fpoXYIkRXwXwf2w67cfzYMouoNAtz+ffXY7jKQ/DP8vhO
+         GB3g==
+X-Forwarded-Encrypted: i=1; AJvYcCWeiDdDhqHSC3lEyRcZnCw7gWkCXtkA53XkUh9M0T212VFLA682GUp/2HzjWonWK2+g4xOMkLKIRI/KYyo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSiOpEBwnzciCpxpKfG4slN7Hv2wqVWBiIeP1UJdBwbD+OS1ow
+	KefgLeWu7o3m6Nl8EoAXMOEz+lvtY4tBFE5L4bPnU4b3drLt8o+2vFfTTiz2sxpV9ms=
+X-Gm-Gg: ASbGncs3oyX4EynQNTeRcel5Dvre3pvU8uMWyLd7WlatMWQZRukUEaRB08/088zeB9o
+	eFowkhDo8PGHnMMQZkwQbGlPJD75k5MAFNsHf/m+34nAwODX+gf8djxNiTrtUrRLA2TqpOycb82
+	9tMEM4BmQV9RzSVmddmoFcsUwfNLWzk+893X3Q3r9WcP+Zga+9GwCuwjljkhQBQUbktxo/jlekY
+	HK5urxAfZtyfVgGoK65chK3GrM6WZEnXV225EI4XnH/3rclycGO/1gwzDq5sTv0hson/NqD31ik
+	e5xc/QTMpTgqapAjjnNXF2LFEi4tiT5PjHaKtQMCIwOagC7r2XdOIXCmKo8AHZXl24petEKarnF
+	oA6MFcE6rvea/h1w+zpahSN8oEKB/5IiTVkWQ3f9vQwMBoxSYLexZxFBR
+X-Google-Smtp-Source: AGHT+IH6eMzb4VOW5KfpbZYuUFHDgM4wKDGHErJCIyTzM3ybhw/asDsLkBOmij7ls7Gu/mDzsM8qHg==
+X-Received: by 2002:a05:6000:4285:b0:3ea:c360:ff88 with SMTP id ffacd0b85a97d-4256719ebdcmr1056224f8f.31.1759475259872;
+        Fri, 03 Oct 2025 00:07:39 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-4255d8f01absm6582677f8f.44.2025.10.03.00.07.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Oct 2025 00:07:18 -0700 (PDT)
-Date: Fri, 3 Oct 2025 09:07:08 +0200
-From: Petr Tesarik <ptesarik@suse.com>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Sean Anderson <sean.anderson@linux.dev>, Robin Murphy
- <robin.murphy@arm.com>, linux-trace-kernel@vger.kernel.org,
- iommu@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dma-mapping: fix direction in dma_alloc direction
- traces
-Message-ID: <20251003090708.7951d755@mordecai.tesarici.cz>
-In-Reply-To: <9505e149-29e3-4fc2-ac71-898e88492667@samsung.com>
-References: <CGME20251001061047eucas1p1f96a848ff2643b48179dd3e55959da7e@eucas1p1.samsung.com>
-	<20251001061028.412258-1-ptesarik@suse.com>
-	<9505e149-29e3-4fc2-ac71-898e88492667@samsung.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-suse-linux-gnu)
+        Fri, 03 Oct 2025 00:07:39 -0700 (PDT)
+Date: Fri, 3 Oct 2025 10:07:36 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
+Cc: gregkh@linuxfoundation.org, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 09/16] staging: rtl8723bs: fix excessive indentation
+ in nested if statement
+Message-ID: <aN92OChccPlzs0KR@stanley.mountain>
+References: <20251002172304.1083601-1-vivek.balachandhar@gmail.com>
+ <20251002172304.1083601-10-vivek.balachandhar@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251002172304.1083601-10-vivek.balachandhar@gmail.com>
 
-On Fri, 3 Oct 2025 09:00:13 +0200
-Marek Szyprowski <m.szyprowski@samsung.com> wrote:
-
-> On 01.10.2025 08:10, Petr Tesarik wrote:
-> > Set __entry->dir to the actual "dir" parameter of all trace events
-> > in dma_alloc_class. This struct member was left uninitialized by
-> > mistake.
-> >
-> > Signed-off-by: Petr Tesarik <ptesarik@suse.com>
-> > Fixes: 3afff779a725 ("dma-mapping: trace dma_alloc/free direction")  
+On Thu, Oct 02, 2025 at 05:22:57PM +0000, Vivek BalachandharTN wrote:
+> Adjust indentation in a nested if-statement to match kernel coding
+> style and improve readability.
 > 
-> Applied to dma-mapping-for-next (for v6.18-rc1) branch. Thanks!
+> No functional changes.
+> 
+> Signed-off-by: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
+> ---
+>  drivers/staging/rtl8723bs/core/rtw_mlme.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme.c b/drivers/staging/rtl8723bs/core/rtw_mlme.c
+> index 5d31684c7cf3..34fdef878b51 100644
+> --- a/drivers/staging/rtl8723bs/core/rtw_mlme.c
+> +++ b/drivers/staging/rtl8723bs/core/rtw_mlme.c
+> @@ -1254,8 +1254,8 @@ void rtw_joinbss_event_prehandle(struct adapter *adapter, u8 *pbuf)
+>  
+>  					ptarget_wlan = rtw_find_network(&pmlmepriv->scanned_queue, pnetwork->network.mac_address);
+>  					if (check_fwstate(pmlmepriv, WIFI_STATION_STATE) == true) {
+> -						if (ptarget_wlan)
+> -							ptarget_wlan->fixed = true;
+> +					    if (ptarget_wlan)
+> +						ptarget_wlan->fixed = true;
 
-Thank you for maintaining the code!
+Wut?
 
-Petr T
+regards,
+dan carpenter
+
 
