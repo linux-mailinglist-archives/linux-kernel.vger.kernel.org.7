@@ -1,117 +1,153 @@
-Return-Path: <linux-kernel+bounces-841685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 409D9BB7FEB
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 21:45:51 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 840EFBB7FF1
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 21:46:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A58419E4AB2
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 19:46:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 18E8E4E8550
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 19:46:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BEE21F78E6;
-	Fri,  3 Oct 2025 19:45:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5A691FF1C7;
+	Fri,  3 Oct 2025 19:46:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WcPlmJX8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="pwxz+051"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FC4D35965;
-	Fri,  3 Oct 2025 19:45:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9293529405;
+	Fri,  3 Oct 2025 19:46:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759520744; cv=none; b=d817466AHU7nW2NPXuiuqKg3rKM/ukqzDK2nQIzhS2yKBXca9yo9DXOLVqEaxUUtzLhZ2l7QyIRoQtQs10gikHWFSor2liu1NZsz3+BdbD9Ad5RhZgJ/WG9KLVjzlX6gOL/Y8H4AvqW8Fwfr8Tp95UWmsOpf/d1KBRwoY7r2zIw=
+	t=1759520768; cv=none; b=fGK2Ac8tS2nZQWY7fmydGkrlrxOj2XMgLZSsHkDyg4C6jmT/OuJqcwc1IjSpizXZ3EiFEXN5EDyEGnf357x/rU9r6rheSuJH7Yq1DdaBmMXpyKhPcFQgpWkCERkUHfOMH69v9ssHNWeo6SN16hk5n/l39UKniKsngeafSAu6Jg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759520744; c=relaxed/simple;
-	bh=QpRq4pZF3Ac0f5IRd4ZuXiSeD3Zs67hn7hh2pF7Bnbc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MvD4ctNmTMvXLW2E/9RlxfVRf/slChbXCL0X8fw8KWurMEBF7gXuC0IaETACVkZ3SbNYgswto7F3IjF+pWiz0JWiXeVse3LdGECl0saswYw5kyoOPYjwWbX5yLdYvmQQhwy7wKzSnG4eqe+X9GlKf4mTQiEGBPDnS2ajj8rUGS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WcPlmJX8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F16BBC4CEF5;
-	Fri,  3 Oct 2025 19:45:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759520743;
-	bh=QpRq4pZF3Ac0f5IRd4ZuXiSeD3Zs67hn7hh2pF7Bnbc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WcPlmJX8ZTIndb1Uc6CLSkNPL8Ki5yFptQjQ7QJT5yoCaZzBeCJ1XJPx38fFScxnO
-	 i9QdBjbOwxPRRSWJ7jxJhc6zTPr7fSpxbpt21yxkkkrLfjZqlDISTYHf+LJ+644S05
-	 Es/13ibZCzJ6YiETgfN3zUZ6Bo7Uy5vMDwQfwCbUOQbh+3LD8yul4tc40XOYACdIfW
-	 86zDJruw/KK5MIfF8c+vJTSusA8Oe7fCcNHZUtU5qwOi81PDTw9gChQqyqNIXTMMa7
-	 pG567zztNH9kzXjds6fcO8LBdKmETl8wV3/rWnxxLyIJYrbnYSHkCkMtEp2G4x/0cg
-	 cRWSR6w+89GUQ==
-Message-ID: <36720829-6ba3-4178-952c-4236622edfa2@kernel.org>
-Date: Fri, 3 Oct 2025 14:45:41 -0500
+	s=arc-20240116; t=1759520768; c=relaxed/simple;
+	bh=FYgI+8DVFLoz3Mo1QSKIyBySU789fjJWTtKhpJbrAiw=;
+	h=Message-ID:Subject:From:To:Cc:Content-Type:Date:MIME-Version; b=ttJg8hm5CA/TLBoGfblwov64F+CW2fcDePjNTspxP3j9pMbv6oJz9hKGT96FxIRKrn+TMUr6T2u2DMMd1jzPDBDQy6nE+lKRomiz/bk2nYE9ClSaNTXnhUkCYxB4BeZHexlWLf17VuoSwoP3Am17b6hCXGsF/2pDUqp5h3zDY6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=pwxz+051; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 593ClxMp020716;
+	Fri, 3 Oct 2025 19:45:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pp1; bh=liEcdOeoAzkXJhIOic7285aRp08Y
+	b3xqhFYfk9SqN8k=; b=pwxz+051cjZhOSDvrkYMkyBn9EvcHIWngxiMaaB0F/Hv
+	qIUIo0b7zeol+9MK/EksCnu9Uoi6xEbRmcafDuVhmGC6lh6d0H0xnbB8m3EPO5E6
+	34/9djbtniGmKsYA+7Vktl/Xe+HFe2xgEF6l2S5LnyeHJBdsjylzhb/qkQOA7+ZF
+	Zh38qCawPOIVYNQaX6atyU9SdCblhd44QXT/+h4kOj/aYklR/JcIwL51FhNGdkPl
+	+kqupV19+9xRh0BFicY3lJwLTem224xXaJ03mOCi6F1vc3E4epnCoYd8Uq9tvj0H
+	cO6zM8eC3n8M3blNjLyZkuPM8biMVA49swW4NFIowg==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49e7jx3ty4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 03 Oct 2025 19:45:58 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 593HalWL026818;
+	Fri, 3 Oct 2025 19:45:57 GMT
+Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49eu8ncmj5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 03 Oct 2025 19:45:57 +0000
+Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
+	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 593Jjv8n32047846
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 3 Oct 2025 19:45:57 GMT
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7B95D58055;
+	Fri,  3 Oct 2025 19:45:57 +0000 (GMT)
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id F2AE35803F;
+	Fri,  3 Oct 2025 19:45:56 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.86.89])
+	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Fri,  3 Oct 2025 19:45:56 +0000 (GMT)
+Message-ID: <235aaef81ca206c9ac1f69ece17dd9a15f826d85.camel@linux.ibm.com>
+Subject: [GIT PULL] integrity: subsystem fixes for v6.18
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-kernel	
+ <linux-kernel@vger.kernel.org>,
+        Roberto Sassu
+ <roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 03 Oct 2025 15:45:56 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] MAINTAINERS: add Denis Benato as maintainer for asus
- notebooks
-To: Hans de Goede <hansg@kernel.org>, Denis Benato
- <benato.denis96@gmail.com>, linux-kernel@vger.kernel.org,
- "Luke D. Jones" <luke@ljones.dev>
-Cc: platform-driver-x86@vger.kernel.org,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Hans de Goede <hdegoede@redhat.com>, Armin Wolf <W_Armin@gmx.de>
-References: <20251003184949.1083030-1-benato.denis96@gmail.com>
- <46762a7e-e8cb-45fb-8d62-062915133463@kernel.org>
-Content-Language: en-US
-From: "Mario Limonciello (AMD) (kernel.org)" <superm1@kernel.org>
-In-Reply-To: <46762a7e-e8cb-45fb-8d62-062915133463@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+User-Agent: Evolution 3.54.3 (3.54.3-2.fc41) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAyNSBTYWx0ZWRfXwqrmRvKgid7L
+ DvWkTJXLmVpDQpV58DP0Bf/eW2iFfHzauiCNzAQYiLoGqC14/QlHedGXgeW7OxiCcU82EFaDE2p
+ K2qCZYtQ1x4fMurQ6R6JqfpAVsiHaJj/TtbCmooQgMHSZ7G4/CVM06572wdufU6yuaEIPBpC9Yv
+ CxY7A0ghJ9I4jpHMWE2nohQytzf0zXU3MF9Kz+kmgsKmqeX8+qZplzEyaAb7ouVFGghHN9mJXAq
+ UARyVe0/Nh+WPEyWC9GfyGLWUHEk7acA/UrTHzRD17BPm4e2KXBOQvdvgvURc4Hu9n0jdgWRZXQ
+ 6ZQ7JtkD3vO4nV8zRlJEuSQicb7+1cMWcaRSZaN5eucxaHq3t+hWeQNNVxNcI8PLzBoIDaRCEr4
+ rxocmnBRJMf8uUd8o1d73kXj7Dc3Aw==
+X-Proofpoint-ORIG-GUID: fzWM3UfK3XtN6iH8mKx-rPM6Mlnwmev5
+X-Proofpoint-GUID: fzWM3UfK3XtN6iH8mKx-rPM6Mlnwmev5
+X-Authority-Analysis: v=2.4 cv=GdUaXAXL c=1 sm=1 tr=0 ts=68e027f6 cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VwQbUJbxAAAA:8 a=YP3ZxmzE6RWCoqP63XUA:9
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-03_06,2025-10-02_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 clxscore=1015 phishscore=0 adultscore=0 priorityscore=1501
+ malwarescore=0 spamscore=0 bulkscore=0 impostorscore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270025
 
+Hi Linus,
 
+There's just a couple of changes: 2 crypto code cleanup and 1 IMA xattr bug=
+ fix.
 
-On 10/3/2025 1:58 PM, Hans de Goede wrote:
-> Hi,
-> 
-> On 3-Oct-25 8:49 PM, Denis Benato wrote:
->> Add myself as maintainer for "ASUS NOTEBOOKS AND EEEPC ACPI/WMI EXTRAS
->> DRIVERS" as suggested by Hans de Goede and Armin Wolf.
->>
->> Signed-off-by: Denis Benato <benato.denis96@gmail.com>
->> Link: https://lore.kernel.org/all/8128cd6b-50e3-464c-90c2-781f61c3963e@gmail.com
-> 
-> Thanks, patch looks good to me:
-> 
-> Reviewed-by: Hans de Goede <hansg@kernel.org>
-> 
-> Regards,
-> 
-> Hans
+thanks,
 
-Reviewed-by: Mario Limonciello (AMD) <superm1@kernel.org>
+Mimi
 
-Luke,
+The following changes since commit c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9=
+:
 
-You are planning to step down from maintainer too, right?  Can you send 
-a last patch doing that too?  Or let Denis send one and Ack that?
+  Linux 6.17-rc2 (2025-08-17 15:22:10 -0700)
 
-> 
-> 
-> 
->> ---
->>   MAINTAINERS | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index 156fa8eefa69..81bcb934748d 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -3841,6 +3841,7 @@ F:	drivers/hwmon/asus-ec-sensors.c
->>   ASUS NOTEBOOKS AND EEEPC ACPI/WMI EXTRAS DRIVERS
->>   M:	Corentin Chary <corentin.chary@gmail.com>
->>   M:	Luke D. Jones <luke@ljones.dev>
->> +M:	Denis Benato <benato.denis96@gmail.com>
->>   L:	platform-driver-x86@vger.kernel.org
->>   S:	Maintained
->>   W:	https://asus-linux.org/
-> 
-> 
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git=
+/ tags/integrity-v6.18
+
+for you to fetch changes up to 88b4cbcf6b041ae0f2fc8a34554a5b6a83a2b7cd:
+
+  ima: don't clear IMA_DIGSIG flag when setting or removing non-IMA xattr (=
+2025-10-03 07:50:56 -0400)
+
+----------------------------------------------------------------
+integrity-v6.18
+
+----------------------------------------------------------------
+Coiby Xu (1):
+      ima: don't clear IMA_DIGSIG flag when setting or removing non-IMA xat=
+tr
+
+Eric Biggers (2):
+      integrity: Select CRYPTO from INTEGRITY_ASYMMETRIC_KEYS
+      lib/digsig: Use SHA-1 library instead of crypto_shash
+
+ lib/Kconfig                           |  3 +--
+ lib/digsig.c                          | 46 +++++--------------------------=
+----
+ security/integrity/Kconfig            |  1 +
+ security/integrity/ima/ima_appraise.c | 23 ++++++++++++++----
+ 4 files changed, 26 insertions(+), 47 deletions(-)
 
 
