@@ -1,107 +1,196 @@
-Return-Path: <linux-kernel+bounces-841056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE3FDBB626B
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 09:14:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E213ABB627E
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 09:19:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8AF0C4E8637
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 07:14:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74E521AE098A
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 07:19:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC08923815D;
-	Fri,  3 Oct 2025 07:14:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43F6023AE9B;
+	Fri,  3 Oct 2025 07:19:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FjfOhuCq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UCjWiseW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FC3D22F14C
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 07:14:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 805112F5B
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 07:19:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759475681; cv=none; b=WEg6t3gfPIEJPUTE2wwHU+IFXjQeBK0HRHLthJ0nz/gPWMW9UArOil6qa2MuOwl3FCwPAN1JHuoGJjNjYh3kkRJP4YJ0WzF6Vppu9h6vRpLvxbM6T7kASWNSyT5puf5MeVgJCRFnmHAxihjjh2UKLE5Yg/CN+3lNLcDttE41mxc=
+	t=1759475965; cv=none; b=ba9w/cwku/m2nmKF++oN/6FIrr4TU7Fxl6gikO0/6HmkREh4fcf2cl4sLj9O9o803Og0PCsbVpfCBQW+zYH+1I0zd95VM9sA9HUgPvVI+gBeQtghPen9Gb5UapwqKfAn2EimofoGQs67czOSSXJXdtDi5/f1AESt1HRI0WHPfBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759475681; c=relaxed/simple;
-	bh=e1mankBQsqTlkT/47qns+yAsg9e8OdnU7wK4bL7Cxj8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PqR8jTl7/qvbF7UlHMACUhdgxmnjpYgfAa8rMUykLgUMLEwrGtyrxGyKOj17CPBydV/zZajKCweFBHoWq/sw2tPhGM7YAHhVDGQytDXpo1ecdB393ZjUyE+VzRGoT2Qje5hcFrcwoU9xTwvGRiXvoLPOZM99l/4C8KlvYR2C+yY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FjfOhuCq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB6ABC4CEF7
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 07:14:40 +0000 (UTC)
+	s=arc-20240116; t=1759475965; c=relaxed/simple;
+	bh=npL7ZxipwXBJqYe6tFFbbpWqtsI0lDGBpLw4bTD7F8c=;
+	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=MYai0J9+bqfKOuFhvh4Uh2nxw+6FS9boavyu/vOMznvOGbfoZp6q/nFmqpQmNvQK0/6mjl3BX4cB0l764HVbqIwwnPsUsyhej4GeUM2P3CukyRXloym7hZ7VeunmYCiTPJ8+CmiB6G791NT8OpWm5YUOlA/nHWvg97XAb0T0w1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UCjWiseW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6205C4CEF5;
+	Fri,  3 Oct 2025 07:19:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759475680;
-	bh=e1mankBQsqTlkT/47qns+yAsg9e8OdnU7wK4bL7Cxj8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=FjfOhuCqhrGurzKPj5qtOc4txo94/YK345QuMjbsEB/SdGtont6m3dxDMd/6ENl15
-	 onIDvfcF1D9h8jHHraNxqY40V+nyAbIg6Xu8/gDhQr1RttZ24/hiDsMrANjYrbsNYO
-	 hL1AY/Sc/bdlsKBZmwd8LFWDcXsy1NL55Y6kPcTFjNTY38Z7dkmAN1yy7lfmXKCKZr
-	 jlOiP0kFFhdTpjBDRq3t8qPARm9b5UR+MIVDsjIWO9AU4hRLUKoBL3vqH9oqlbRy6A
-	 pJTi/lHWJbN82u9LEK0oKUWs/G0KzKDS173BUvpuIeiu906QLHJbBNXC7vt2GkR04f
-	 s0DjQWVIeVzcQ==
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b57d93ae3b0so1284738a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 00:14:40 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU1K/eLTycbAmT2nJzEZbknFNsqQJKQjNPXbIyO7YrrXZ80glYFlBze8/syoiMmYJHnV+Ac+4OQvOO9cVo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpVUpCRniqVb6usElbZFmD3Yd2hjAUnFhjpjvqOWvde8LD9MkZ
-	wPHKgr2IJuddDnaXYG9JG2w0gF+1EskH2NR4wg9ZlztKwX85TYHR4r/4swQlj/wwtPm9n2fosIM
-	28tihjCNcVHb/bs7JoBLA8lJedEbKtXA=
-X-Google-Smtp-Source: AGHT+IFi1G5SGzoCfQoYo09oOXzVchVUQnwqXoK2qsgzd7cvdMuGwR0SLJFyyWeKdqGyWBExudnAw/kwmPrFyMTs9Xo=
-X-Received: by 2002:a17:902:e78e:b0:269:8059:83ab with SMTP id
- d9443c01a7336-28e9a6639dfmr21972375ad.51.1759475680482; Fri, 03 Oct 2025
- 00:14:40 -0700 (PDT)
+	s=k20201202; t=1759475965;
+	bh=npL7ZxipwXBJqYe6tFFbbpWqtsI0lDGBpLw4bTD7F8c=;
+	h=Date:From:To:cc:Subject:From;
+	b=UCjWiseWJylfmkFB2mCIzgS3u4KKG2ABboUvSZnUhpI43SLpMl08UCoTnt0ad3Ymk
+	 MSV4jzOXEAhwpwotwrl1Hi+RywYNaJue23c1X8ADx/iBbXLjuVcpHZVVMJN7hsQPR8
+	 Fzi7N3x58dPu6rN4Uam/9224Aa/YDjGXnnNnqeg1IMw8X2MKFN86KZtsP5daI7TUIl
+	 3A8NTh0zeBzM5HxeKK2GOaQBaPcCE0a5ShaUgYf2UpnOc1vn3JiovZvTWJJd28u0rw
+	 rcPenAzkhy0iVatCk0uSsHNJ+5ToTxOgDaTwzirojom7Hg1B8T/HbScm4rvhM2Old8
+	 cA36qaSLNFKEw==
+Date: Fri, 3 Oct 2025 01:19:20 -0600 (MDT)
+From: Paul Walmsley <pjw@kernel.org>
+To: torvalds@linux-foundation.org
+cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] RISC-V updates for the v6.18 merge window (part two)
+Message-ID: <9a4eb234-b19c-8051-472b-4bd793a9e252@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20250901054234epcas5p1e4b34b6ccb304b0306b1fe616edda9e2@epcas5p1.samsung.com>
- <20250901051926.59970-1-ravi.patel@samsung.com> <CAJKOXPe7Hn0qwg8jDMg4KoF-n4kziLQnvAx9vbNKEcS_KjzEdw@mail.gmail.com>
- <000001dc3428$dc2990c0$947cb240$@samsung.com>
-In-Reply-To: <000001dc3428$dc2990c0$947cb240$@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Date: Fri, 3 Oct 2025 16:14:28 +0900
-X-Gmail-Original-Message-ID: <CAJKOXPft4eHTbA6qPA2MzyKZPhcxGUbJmfR3ykPaGuXRvacnEw@mail.gmail.com>
-X-Gm-Features: AS18NWBorturPBW47S-AOdo4x9Et0GYnS5dR5FsCvXZoQdPFULPyyy5QFJ7b8vw
-Message-ID: <CAJKOXPft4eHTbA6qPA2MzyKZPhcxGUbJmfR3ykPaGuXRvacnEw@mail.gmail.com>
-Subject: Re: [PATCH v4 0/6] Add support for the Axis ARTPEC-8 SoC
-To: Ravi Patel <ravi.patel@samsung.com>
-Cc: jesper.nilsson@axis.com, mturquette@baylibre.com, sboyd@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	s.nawrocki@samsung.com, cw00.choi@samsung.com, alim.akhtar@samsung.com, 
-	linus.walleij@linaro.org, tomasz.figa@gmail.com, catalin.marinas@arm.com, 
-	will@kernel.org, arnd@arndb.de, ksk4725@coasia.com, kenkim@coasia.com, 
-	pjsin865@coasia.com, gwk1013@coasia.com, hgkim05@coasia.com, 
-	mingyoungbo@coasia.com, smn1196@coasia.com, shradha.t@samsung.com, 
-	inbaraj.e@samsung.com, swathi.ks@samsung.com, hrishikesh.d@samsung.com, 
-	dj76.yang@samsung.com, hypmean.kim@samsung.com, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-arm-kernel@axis.com, devicetree@vger.kernel.org, 
-	linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 
-On Fri, 3 Oct 2025 at 14:45, Ravi Patel <ravi.patel@samsung.com> wrote:
->
-> Hi Krzysztof,
->
-> The dt-bindings patch was merged earlier in v3 series (https://lore.kernel.org/linux-samsung-soc/175664688891.195158.13270877080433356384.b4-ty@linaro.org/ on 31st August)
-> into respective maintainer repo.
-> Then I have been asked to drop the applied v3 patches and send rebased v4 series (https://lore.kernel.org/linux-samsung-soc/15508cb4-843c-42d1-8854-5eabd79ca0df@kernel.org/)
->
-> Since the 4 patches from v3 series has been already merged, I have not the mentioned dependency while sending remaining v4 patches considering
-> It is going to same maintainer repo and it will be applied in sequence.
->
-> For future patches (like artpec-9), I will mention the dependency even it is merged in same repo.
->
+Linus,
 
-I know what happened, so no need to explain that. Single maintainer
-repo doesn't matter, it's irrelevant and you mentioning it means you
-didn't read the maintainer soc profiles I asked. You still don't get
-the problem about what happened, at least judging by above expansion,
-and this means you will repeat the same mistakes.
+The following changes since commit 0b0ca959d20689fece038954bbf1d7b14c0b11c3:
 
-I will not proceed with further artpec patches until you really
-understand how the process works, through existing documentation.
-Please do your homework, to reduce the workload on maintainers.
+  riscv: errata: Fix the PAUSE Opcode for MIPS P8700 (2025-09-19 10:33:56 -0600)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux tags/riscv-for-linus-6.18-mw2
+
+for you to fetch changes up to 68247d45c045bb7dda923cf2c8d0937ce0e16394:
+
+  clk: COMMON_CLK_RPMI should depend on RISCV (2025-10-01 19:07:43 -0600)
+
+----------------------------------------------------------------
+RISC-V updates for the v6.18 merge window (part two)
+
+Second set of RISC-V updates for the v6.18 merge window, consisting
+of:
+
+- Support for the RISC-V-standardized RPMI interface.
+
+  RPMI is a platform management communication mechanism between OSes
+  running on application processors, and a remote platform management
+  processor.  Similar to ARM SCMI, TI SCI, etc.  This includes irqchip,
+  mailbox, and clk changes.
+
+- Support for the RISC-V-standardized MPXY SBI extension.
+
+  MPXY is a RISC-V-specific standard implementing a shared memory
+  mailbox between S-mode operating systems (e.g., Linux) and M-mode
+  firmware (e.g., OpenSBI).  It is part of this PR since one of its
+  use cases is to enable M-mode firmware to act as a single RPMI client
+  for all RPMI activity on a core (including S-mode RPMI activity).
+  Includes a mailbox driver.
+
+- Some ACPI-related updates to enable the use of RPMI and MPXY.
+
+- The addition of Linux-wide memcpy_{from,to}_le32() static inline
+  functions, for RPMI use.
+
+- An ACPI Kconfig change to enable boot logos on any ACPI-using
+  architecture (including RISC-V)
+
+- A RISC-V defconfig change to add GPIO keyboard and event device
+  support, for front panel shutdown or reboot buttons
+
+This PR also includes a recent, one-line Kconfig patch from Geert to
+keep non-RISC-V users from being asked about building the RPMI virtual
+clock driver when !COMPILE_TEST.  THere's nothing preventing
+non-RISC-V SoCs from implementing RPMI, but until some users show up,
+let's not annoy others with it.
+
+----------------------------------------------------------------
+Anup Patel (14):
+      dt-bindings: mailbox: Add bindings for RPMI shared memory transport
+      dt-bindings: mailbox: Add bindings for RISC-V SBI MPXY extension
+      RISC-V: Add defines for the SBI message proxy extension
+      mailbox: Add common header for RPMI messages sent via mailbox
+      mailbox: Allow controller specific mapping using fwnode
+      byteorder: Add memcpy_to_le32() and memcpy_from_le32()
+      mailbox: Add RISC-V SBI message proxy (MPXY) based mailbox driver
+      dt-bindings: clock: Add RPMI clock service message proxy bindings
+      dt-bindings: clock: Add RPMI clock service controller bindings
+      dt-bindings: Add RPMI system MSI message proxy bindings
+      dt-bindings: Add RPMI system MSI interrupt controller bindings
+      irqchip: Add driver for the RPMI system MSI service group
+      RISC-V: Enable GPIO keyboard and event device in RV64 defconfig
+      MAINTAINERS: Add entry for RISC-V RPMI and MPXY drivers
+
+Geert Uytterhoeven (1):
+      clk: COMMON_CLK_RPMI should depend on RISCV
+
+Heinrich Schuchardt (1):
+      ACPI: support BGRT table on RISC-V
+
+Rahul Pathak (1):
+      clk: Add clock driver for the RISC-V RPMI clock service group
+
+Sunil V L (9):
+      ACPI: property: Refactor acpi_fwnode_get_reference_args() to support nargs_prop
+      ACPI: Add support for nargs_prop in acpi_fwnode_get_reference_args()
+      ACPI: scan: Update honor list for RPMI System MSI
+      ACPI: RISC-V: Create interrupt controller list in sorted order
+      ACPI: RISC-V: Add support to update gsi range
+      ACPI: RISC-V: Add RPMI System MSI to GSI mapping
+      irqchip/irq-riscv-imsic-early: Export imsic_acpi_get_fwnode()
+      mailbox/riscv-sbi-mpxy: Add ACPI support
+      irqchip/riscv-rpmi-sysmsi: Add ACPI support
+
+ .../bindings/clock/riscv,rpmi-clock.yaml           |   64 ++
+ .../bindings/clock/riscv,rpmi-mpxy-clock.yaml      |   64 ++
+ .../riscv,rpmi-mpxy-system-msi.yaml                |   67 ++
+ .../riscv,rpmi-system-msi.yaml                     |   74 ++
+ .../bindings/mailbox/riscv,rpmi-shmem-mbox.yaml    |  124 +++
+ .../bindings/mailbox/riscv,sbi-mpxy-mbox.yaml      |   51 +
+ MAINTAINERS                                        |   15 +
+ arch/riscv/configs/defconfig                       |    2 +
+ arch/riscv/include/asm/irq.h                       |    6 +
+ arch/riscv/include/asm/sbi.h                       |   62 ++
+ drivers/acpi/Kconfig                               |    2 +-
+ drivers/acpi/property.c                            |  128 +--
+ drivers/acpi/riscv/irq.c                           |   75 +-
+ drivers/acpi/scan.c                                |    2 +
+ drivers/base/property.c                            |    2 +-
+ drivers/clk/Kconfig                                |    9 +
+ drivers/clk/Makefile                               |    1 +
+ drivers/clk/clk-rpmi.c                             |  620 ++++++++++++
+ drivers/irqchip/Kconfig                            |    7 +
+ drivers/irqchip/Makefile                           |    1 +
+ drivers/irqchip/irq-riscv-imsic-early.c            |    2 +
+ drivers/irqchip/irq-riscv-rpmi-sysmsi.c            |  328 +++++++
+ drivers/mailbox/Kconfig                            |   11 +
+ drivers/mailbox/Makefile                           |    2 +
+ drivers/mailbox/mailbox.c                          |   65 +-
+ drivers/mailbox/riscv-sbi-mpxy-mbox.c              | 1019 ++++++++++++++++++++
+ include/linux/byteorder/generic.h                  |   16 +
+ include/linux/mailbox/riscv-rpmi-message.h         |  243 +++++
+ include/linux/mailbox_controller.h                 |    3 +
+ 29 files changed, 2981 insertions(+), 84 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/riscv,rpmi-clock.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/riscv,rpmi-mpxy-clock.yaml
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/riscv,rpmi-mpxy-system-msi.yaml
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/riscv,rpmi-system-msi.yaml
+ create mode 100644 Documentation/devicetree/bindings/mailbox/riscv,rpmi-shmem-mbox.yaml
+ create mode 100644 Documentation/devicetree/bindings/mailbox/riscv,sbi-mpxy-mbox.yaml
+ create mode 100644 drivers/clk/clk-rpmi.c
+ create mode 100644 drivers/irqchip/irq-riscv-rpmi-sysmsi.c
+ create mode 100644 drivers/mailbox/riscv-sbi-mpxy-mbox.c
+ create mode 100644 include/linux/mailbox/riscv-rpmi-message.h
+
+    text	   data	    bss	     dec	    hex	filename
+12839941	6181502	 419253	19440696	128a438	vmlinux.rv64.orig
+12866875	6191482	 419269	19477626	129347a	vmlinux.rv64
+11788867	6000158	 404229	18193254	1159b66	vmlinux.rv64_nosmp.orig
+11800609	6005634	 404245	18210488	115deb8	vmlinux.rv64_nosmp
+11771062	4703702	 309629	16784393	1001c09	vmlinux.rv32.orig
+11794258	4711898	 309637	16815793	10096b1	vmlinux.rv32
+ 2615066	 758584	 119048	 3492698	 354b5a	vmlinux.nommu_virt.orig
+ 2615066	 758584	 119048	3 492698	 354b5a	vmlinux.nommu_virt
 
