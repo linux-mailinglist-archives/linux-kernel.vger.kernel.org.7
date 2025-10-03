@@ -1,95 +1,94 @@
-Return-Path: <linux-kernel+bounces-841074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0AE2BB632C
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 09:50:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DB07BB6332
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 09:52:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9412E4E40AD
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 07:50:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A477E19C37A5
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 07:52:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A739025E824;
-	Fri,  3 Oct 2025 07:50:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFD1A25E824;
+	Fri,  3 Oct 2025 07:51:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="C/lmm3ow";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="S1eyH6nj";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="C/lmm3ow";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="S1eyH6nj"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ETHyvFRD";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="55F87NwC";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ETHyvFRD";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="55F87NwC"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E23F125C809
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 07:50:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6E252475CB
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 07:51:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759477802; cv=none; b=MxQluFfA742ZeVJ1iCRVGJTIacDWiVmVj/7Lg3gVk4rwY46Yp7Vjhc76XrYUQiDY4J6/pm3Cuh/A8nEEw5PElaavdi6WCLxXat08VSbKI+uEwNqU+Wzxax9jAfpbJHOFVWDKFrK5RCTL83oKPkj8LlUC7FaGhCGG+3IpykjTIyA=
+	t=1759477915; cv=none; b=AdM4rT4yAKBdbz8MhGIHHvcdDUgVZOUeg+5rnaSkrrughq479VOQvSV/nMUsz21/xE9Ujc+6Mf8aulv6yeZFDMBG4zsxyMUtQ+lAcDzvpuURgSG7ly2De/9RdwKnYPYNIVZsEa3J57rGdXsCtGcn4dkeCD9F58lhuZpzwtkjDxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759477802; c=relaxed/simple;
-	bh=EDez1S4AqiFaQkCFmx3Xu2teXcZCZcYEEh7Fmcq6Z+U=;
+	s=arc-20240116; t=1759477915; c=relaxed/simple;
+	bh=qw7GpF/AtXGDiy5T8r1MOIGkFC9ZbPVWgthbSOO+bC8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ahFcmG03bsOZzef5ldV32TIpSdZo0DaF2NOTtM1O/Kwn0aMh1V8CdNAUCOHI4f2C5zYAH2E6YqF8nNvCanXIjHTCzjoFtb4fxf8Rq5MceaszBVVLjKRzH2z4/epHMxNbT3LwOSefmkfNh83YOy6iF+oaVlkxrbzvg3E6DsZosOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=C/lmm3ow; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=S1eyH6nj; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=C/lmm3ow; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=S1eyH6nj; arc=none smtp.client-ip=195.135.223.131
+	 In-Reply-To:Content-Type; b=ShpgdjaH1md+zK6brXCeXr49JjTSc8IJeTZ0zSRVTZ+d9SVYt5uq2qIbOZcsDzH5vEWMGDrL2DGBRQNeEEkhmVBF+LDE7SaOmisJ4AS1t9ovH2KxYtkRl3bBUwFgXTu3PJ95hZCH9RaqhGnZWkXgrXHxtdDtgmFWDKhnQjO5480=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ETHyvFRD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=55F87NwC; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ETHyvFRD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=55F87NwC; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 4FF7D1F799;
-	Fri,  3 Oct 2025 07:49:58 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 8B4B433735;
+	Fri,  3 Oct 2025 07:51:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759477798; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1759477905; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=sFANgBbddzqqfD/X2CBv0pVIzs/fX2yb+wzLngSKptI=;
-	b=C/lmm3owZNu0rtANDu1/6zyDLnCtp20YXUYngak5FzGa+As1vzBJpNz7NYK9/C/o6Ewpab
-	6oAzVIIolWGD/5VUfCECsSqj+tXOnRq+ufLTpw2ZQRp0gLXGB3uYvyQQgx6SA+KrE60l1b
-	pm/cIKDBkyo6JxZ4328+hRcvZD34dq8=
+	bh=jyD5TCL95BfJRg3fvR2k1fsUPBPmEbdw11jWmd4nsj8=;
+	b=ETHyvFRDBZqxXlCbXzsFq+9upFzy/RsriaAFyMv9RVPnMOcpdOp8Icu2Ux0XThQSmPsdn6
+	wO2J2SWjG4BKoorfhu3js2cBSTfqUE4TM8MzciAf43YaJ8yUYFO59h5qzxJpwQh9CQCeHv
+	X7UlAW6oHuHVk6WYzfFSTDpN8EkGqVM=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759477798;
+	s=susede2_ed25519; t=1759477905;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=sFANgBbddzqqfD/X2CBv0pVIzs/fX2yb+wzLngSKptI=;
-	b=S1eyH6njYwBlOSxREBFthoCFnLr0fOPNYSLvo6FR7/0LZuCWpOhBp1QmV4XZ4Jrkc7csfB
-	yVuLPmXv/5DXjxAw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="C/lmm3ow";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=S1eyH6nj
+	bh=jyD5TCL95BfJRg3fvR2k1fsUPBPmEbdw11jWmd4nsj8=;
+	b=55F87NwCcfyrL5Ys8lYixDg7q/7LMtWTCVoPpw513rK1Z+aSqDs2T0WJfXb2ZwmZDkNsSL
+	DMPKzKKf3VR44rAg==
+Authentication-Results: smtp-out1.suse.de;
+	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1759477798; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1759477905; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=sFANgBbddzqqfD/X2CBv0pVIzs/fX2yb+wzLngSKptI=;
-	b=C/lmm3owZNu0rtANDu1/6zyDLnCtp20YXUYngak5FzGa+As1vzBJpNz7NYK9/C/o6Ewpab
-	6oAzVIIolWGD/5VUfCECsSqj+tXOnRq+ufLTpw2ZQRp0gLXGB3uYvyQQgx6SA+KrE60l1b
-	pm/cIKDBkyo6JxZ4328+hRcvZD34dq8=
+	bh=jyD5TCL95BfJRg3fvR2k1fsUPBPmEbdw11jWmd4nsj8=;
+	b=ETHyvFRDBZqxXlCbXzsFq+9upFzy/RsriaAFyMv9RVPnMOcpdOp8Icu2Ux0XThQSmPsdn6
+	wO2J2SWjG4BKoorfhu3js2cBSTfqUE4TM8MzciAf43YaJ8yUYFO59h5qzxJpwQh9CQCeHv
+	X7UlAW6oHuHVk6WYzfFSTDpN8EkGqVM=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1759477798;
+	s=susede2_ed25519; t=1759477905;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=sFANgBbddzqqfD/X2CBv0pVIzs/fX2yb+wzLngSKptI=;
-	b=S1eyH6njYwBlOSxREBFthoCFnLr0fOPNYSLvo6FR7/0LZuCWpOhBp1QmV4XZ4Jrkc7csfB
-	yVuLPmXv/5DXjxAw==
+	bh=jyD5TCL95BfJRg3fvR2k1fsUPBPmEbdw11jWmd4nsj8=;
+	b=55F87NwCcfyrL5Ys8lYixDg7q/7LMtWTCVoPpw513rK1Z+aSqDs2T0WJfXb2ZwmZDkNsSL
+	DMPKzKKf3VR44rAg==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3710D13AAD;
-	Fri,  3 Oct 2025 07:49:58 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 72CE213AAD;
+	Fri,  3 Oct 2025 07:51:45 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 0vEQDSaA32h0ZQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Fri, 03 Oct 2025 07:49:58 +0000
-Message-ID: <f72deca7-4344-4adc-88e3-35a4a1d9a30b@suse.cz>
-Date: Fri, 3 Oct 2025 09:49:57 +0200
+	id pFewG5GA32j4ZQAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Fri, 03 Oct 2025 07:51:45 +0000
+Message-ID: <b23bcee1-bc5e-427a-904b-7f3b1f4766b1@suse.cz>
+Date: Fri, 3 Oct 2025 09:51:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,13 +96,13 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] slab: Fix using this_cpu_ptr() in preemptible context
+Subject: Re: [PATCH] slab: Add allow_spin check to eliminate kmemleak warnings
 Content-Language: en-US
 To: ranxiaokai627@163.com, akpm@linux-foundation.org, cl@gentwo.org,
  rientjes@google.com, roman.gushchin@linux.dev, harry.yoo@oracle.com,
  ast@kernel.org
 Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, ran.xiaokai@zte.com.cn
-References: <20250930083402.782927-1-ranxiaokai627@163.com>
+References: <20250930063831.782815-1-ranxiaokai627@163.com>
 From: Vlastimil Babka <vbabka@suse.cz>
 Autocrypt: addr=vbabka@suse.cz; keydata=
  xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
@@ -144,57 +143,47 @@ Autocrypt: addr=vbabka@suse.cz; keydata=
  rywqgzTUhHFKKF6/9L/lYtrNcHU8Z6Y4Ju/MLUiNYkmtrGIMnkjKCiRqlRrZE/v5YFHbayRD
  dJKXobXTtCBYpLJM4ZYRpGZXne/FAtWNe4KbNJJqxMvrTOrnIatPj8NhBVI0RSJRsbilh6TE
  m6M14QORSWTLRg==
-In-Reply-To: <20250930083402.782927-1-ranxiaokai627@163.com>
+In-Reply-To: <20250930063831.782815-1-ranxiaokai627@163.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 4FF7D1F799
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.51 / 50.00];
+X-Spamd-Result: default: False [-4.30 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
 	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
 	RCPT_COUNT_SEVEN(0.00)[10];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MID_RHS_MATCH_FROM(0.00)[];
 	FREEMAIL_TO(0.00)[163.com,linux-foundation.org,gentwo.org,google.com,linux.dev,oracle.com,kernel.org];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
 	ARC_NA(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
 	FREEMAIL_ENVRCPT(0.00)[163.com];
 	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_ALL(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
 	FROM_EQ_ENVFROM(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:dkim,suse.cz:mid,suse.cz:email,zte.com.cn:email];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
 	TO_DN_NONE(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Score: -4.51
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[zte.com.cn:email,suse.cz:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
 
-On 9/30/25 10:34, ranxiaokai627@163.com wrote:
+On 9/30/25 08:38, ranxiaokai627@163.com wrote:
 > From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
 > 
-> defer_free() maybe called in preemptible context, this will
-> trigger the below warning message:
+> In slab_post_alloc_hook(), kmemleak check is skipped when
+> gfpflags_allow_spinning() returns false since commit 13d872ade8be
+> ("slab: Introduce kmalloc_nolock() and kfree_nolock().").
+> Therefore, unconditionally calling kmemleak_not_leak() in
+> alloc_slab_obj_exts() would trigger the following warning:
 > 
-> BUG: using smp_processor_id() in preemptible [00000000] code: swapper/0/1
-> caller is defer_free+0x1b/0x60
+> kmemleak: Trying to color unknown object at 0xffff8881057f5000 as Grey
 > Call Trace:
->  <TASK>
->  dump_stack_lvl+0xac/0xc0
->  check_preemption_disabled+0xbe/0xe0
->  defer_free+0x1b/0x60
->  kfree_nolock+0x1eb/0x2b0
->  alloc_slab_obj_exts+0x356/0x390
->  __alloc_tagging_slab_alloc_hook+0xa0/0x300
+>  alloc_slab_obj_exts+0x1b5/0x370
+>  __alloc_tagging_slab_alloc_hook+0x9f/0x2d0
 >  __kmalloc_cache_noprof+0x1c4/0x5c0
 >  __set_page_owner+0x10d/0x1c0
 >  post_alloc_hook+0x84/0xf0
@@ -205,124 +194,35 @@ On 9/30/25 10:34, ranxiaokai627@163.com wrote:
 >  allocate_slab+0x78/0x3a0
 >  ___slab_alloc+0x76b/0xed0
 >  __slab_alloc.constprop.0+0x5a/0xb0
->  __kmalloc_noprof+0x3dc/0x6d0
->  __list_lru_init+0x6c/0x210
->  alloc_super+0x3b6/0x470
->  sget_fc+0x5f/0x3a0
->  get_tree_nodev+0x27/0x90
->  vfs_get_tree+0x26/0xc0
->  vfs_kern_mount.part.0+0xb6/0x140
->  kern_mount+0x24/0x40
->  init_pipe_fs+0x4f/0x70
->  do_one_initcall+0x62/0x2e0
->  kernel_init_freeable+0x25b/0x4b0
->  kernel_init+0x1a/0x1c0
->  ret_from_fork+0x290/0x2e0
->  ret_from_fork_asm+0x11/0x20
-> </TASK>
 > 
-> Replace this_cpu_ptr with raw_cpu_ptr to eliminate
-> the above warning message.
+> Add the allow_spin check in alloc_slab_obj_exts() to
+> eliminate the above warning.
 > 
-> Fixes: af92793e52c3 ("slab: Introduce kmalloc_nolock() and kfree_nolock().")
+> Fixes: 13d872ade8be ("slab: Introduce kmalloc_nolock() and kfree_nolock().")
+
+Updated commit hash (also above)
+
 > Signed-off-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
 
-Since the slab PR was merged, we should fix this ideally before rc1 so I
-updated the code myself per the discussion and added to slab/for-next
+Added to slab/for-next-fixes, thanks!
 
-Thanks!
-
-----8<----
-From d6306a3d5577769b179ae4e448fd144e2b0f7717 Mon Sep 17 00:00:00 2001
-From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
-Date: Tue, 30 Sep 2025 08:34:02 +0000
-Subject: [PATCH] slab: Fix using this_cpu_ptr() in preemptible context
-
-defer_free() maybe called in preemptible context, this will trigger the
-below warning message:
-
-BUG: using smp_processor_id() in preemptible [00000000] code: swapper/0/1
-caller is defer_free+0x1b/0x60
-Call Trace:
- <TASK>
- dump_stack_lvl+0xac/0xc0
- check_preemption_disabled+0xbe/0xe0
- defer_free+0x1b/0x60
- kfree_nolock+0x1eb/0x2b0
- alloc_slab_obj_exts+0x356/0x390
- __alloc_tagging_slab_alloc_hook+0xa0/0x300
- __kmalloc_cache_noprof+0x1c4/0x5c0
- __set_page_owner+0x10d/0x1c0
- post_alloc_hook+0x84/0xf0
- get_page_from_freelist+0x73b/0x1380
- __alloc_frozen_pages_noprof+0x110/0x2c0
- alloc_pages_mpol+0x44/0x140
- alloc_slab_page+0xac/0x150
- allocate_slab+0x78/0x3a0
- ___slab_alloc+0x76b/0xed0
- __slab_alloc.constprop.0+0x5a/0xb0
- __kmalloc_noprof+0x3dc/0x6d0
- __list_lru_init+0x6c/0x210
- alloc_super+0x3b6/0x470
- sget_fc+0x5f/0x3a0
- get_tree_nodev+0x27/0x90
- vfs_get_tree+0x26/0xc0
- vfs_kern_mount.part.0+0xb6/0x140
- kern_mount+0x24/0x40
- init_pipe_fs+0x4f/0x70
- do_one_initcall+0x62/0x2e0
- kernel_init_freeable+0x25b/0x4b0
- kernel_init+0x1a/0x1c0
- ret_from_fork+0x290/0x2e0
- ret_from_fork_asm+0x11/0x20
-</TASK>
-
-Disable preemption in defer_free() and also defer_deactivate_slab() to
-make it safe.
-
-[vbabka@suse.cz: disable preemption instead of using raw_cpu_ptr() per
- the discussion ]
-Fixes: af92793e52c3 ("slab: Introduce kmalloc_nolock() and kfree_nolock().")
-Signed-off-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
-Link: https://lore.kernel.org/r/20250930083402.782927-1-ranxiaokai627@163.com
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
----
- mm/slub.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
-
-diff --git a/mm/slub.c b/mm/slub.c
-index 1433f5b988f7..44aa0e3f48ee 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -6432,17 +6432,24 @@ static void free_deferred_objects(struct irq_work *work)
- 
- static void defer_free(struct kmem_cache *s, void *head)
- {
--	struct defer_free *df = this_cpu_ptr(&defer_free_objects);
-+	struct defer_free *df;
- 
-+	guard(preempt)();
-+
-+	df = this_cpu_ptr(&defer_free_objects);
- 	if (llist_add(head + s->offset, &df->objects))
- 		irq_work_queue(&df->work);
- }
- 
- static void defer_deactivate_slab(struct slab *slab, void *flush_freelist)
- {
--	struct defer_free *df = this_cpu_ptr(&defer_free_objects);
-+	struct defer_free *df;
- 
- 	slab->flush_freelist = flush_freelist;
-+
-+	guard(preempt)();
-+
-+	df = this_cpu_ptr(&defer_free_objects);
- 	if (llist_add(&slab->llnode, &df->slabs))
- 		irq_work_queue(&df->work);
- }
--- 
-2.51.0
-
+> ---
+>  mm/slub.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/mm/slub.c b/mm/slub.c
+> index 09cbe580842c..a76275f4870a 100644
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -2145,7 +2145,8 @@ int alloc_slab_obj_exts(struct slab *slab, struct kmem_cache *s,
+>  		return 0;
+>  	}
+>  
+> -	kmemleak_not_leak(vec);
+> +	if (allow_spin)
+> +		kmemleak_not_leak(vec);
+>  	return 0;
+>  }
+>  
 
 
