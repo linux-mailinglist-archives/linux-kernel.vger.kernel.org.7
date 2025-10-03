@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-840927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46C80BB5BF5
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 03:35:39 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8388ABB5BFB
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 03:35:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D812B4E3321
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 01:35:37 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D5738343A53
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 01:35:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42C182836BD;
-	Fri,  3 Oct 2025 01:35:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71F24283CBD;
+	Fri,  3 Oct 2025 01:35:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VbR7WYX1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s4kKW0mH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96932273D9F;
-	Fri,  3 Oct 2025 01:35:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C71A7281530;
+	Fri,  3 Oct 2025 01:35:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759455331; cv=none; b=jr/h4aTrcvHK/UtEU6NaaoqvCeb/x3Kp7hIRHOayaDfKDwoWLnCkeJ/+mPZ6oyFRFkguRf4GZI3oDppsIyqlvulqlfTAHb0dH8Wm5W1WAKstfUT55rS/iGOs7v3TIrhax4cRiw96brsYuH3/20FSjmUMmWkJ516Q1lat3KhVdEk=
+	t=1759455344; cv=none; b=jtGad1CjM84u6psSIyBTRkQ07JzGPkKLRw1JaiVUsPfbBxRwWuO9g63i2Iq86tQ6X0HvszMVtW1Pb/sqdfvEfRhYhc0sR21Y8OxN1bnJ/CrjwrDV0kGpX8NeNk8EdZJ5zcHRK6oLxuP+55hMGB/eYIWarZmYvzwpcIAvWAmnijY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759455331; c=relaxed/simple;
-	bh=Rc0jCyqhwITy1zb5mT2jrVxBrzj0eHN3SwcodYrb+vs=;
+	s=arc-20240116; t=1759455344; c=relaxed/simple;
+	bh=rf1er9a4lReCT/NehrRHLXkGnEVIVFBXkdHlXO9+QZE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WgugfSWHIH/qGKy+p/TUaufl4+mOGYWdnsbtMMSVGWh82j6aEfwV5uO5EJj2L1U5pWvSihAW8UechRvSbasO7DcIUL68s+ON3wNGZ/eHtxQ6V9LnGEEr+6vefnFU2fwX1INVdBAlMjgMTCFN1tAXGePz9jY0XRPhxwL0vu9qGjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VbR7WYX1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE84EC4CEF4;
-	Fri,  3 Oct 2025 01:35:29 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=EFSpYr1yLZG1nos+7xuvGYZD/roDz6HhPQe/xPjoW6GJfTMEg29PygEXTYTuOnfIFH4va+d+fIaqDbGxncrPpgqL/X/26b11hMMSEjEgS54aE5+bFU49ysd2JI8zb9OLlFTVkFJePm2ICtYS79wYjgzgJ9fVWW8EnXjiMePOSFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s4kKW0mH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A577C4CEF4;
+	Fri,  3 Oct 2025 01:35:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759455330;
-	bh=Rc0jCyqhwITy1zb5mT2jrVxBrzj0eHN3SwcodYrb+vs=;
+	s=k20201202; t=1759455344;
+	bh=rf1er9a4lReCT/NehrRHLXkGnEVIVFBXkdHlXO9+QZE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VbR7WYX1w2sUsckCNEoeEsZXkzBgJmehVfrS5tks3VGq4KaG+52S/lNVMkU7kuIz3
-	 021EVPz9SfUanKh/B7g5xLntFBdNDgUhZc2kjY/KyL0uZSY4iYoE/Cdedo9HN3+jX3
-	 ahtbNMsYWzapeWKRHx27ZaPm04hGmAvB2qxhFx4Fq4OEH4PewNqd3SZpO3h+u927V0
-	 SwThOzyBloUR1/vo/Tw8bRhZ4cH+FpYO1qADmwEripz8KfKCNe6xRmvA3ufmhPntSm
-	 7oJGuLdXAx4od24nbP6dRHyw19okWFENXxgwzrFjyp648mclb9yqObWQPuLLtNgHg2
-	 FxAJFc6DGTahQ==
-Date: Thu, 2 Oct 2025 18:35:28 -0700
+	b=s4kKW0mHQPFPHhmpNE0b6fwkBcc7TE61EriU4uKvhaypsTBE9FNmEnwaYKfUlFqRH
+	 XzZLXWLO9Njmfyl2FIPvfs48XcP9Xe3aDTailo/hWPS/HH3/8D1ALbq0D5YJfVIu5c
+	 8vwsKQTxzD4fv4iM7GEbYgPc/p+r4AKXv6uQzJRSvtXcdPUCjo/8E3aQ72g1gADcJZ
+	 Htzcyt6GxlfZfAqCSaKmCsavlQyZ/mA0qSEymI09a9r5bDa94PFt2GVXjwxHwOaS4Z
+	 SYHQaMaQA8hXZZUoXI+YImH7P+wxMFN6p8F3K2xgdKSEkKnY4TZUvV8bcdZP9P4Y70
+	 swBRfIlJ86S5w==
+Date: Thu, 2 Oct 2025 18:35:43 -0700
 From: Drew Fustini <fustini@kernel.org>
 To: Han Gao <rabenda.cn@gmail.com>
 Cc: devicetree@vger.kernel.org, Guo Ren <guoren@kernel.org>,
@@ -53,11 +53,10 @@ Cc: devicetree@vger.kernel.org, Guo Ren <guoren@kernel.org>,
 	Chen Wang <unicorn_wang@outlook.com>,
 	Inochi Amaoto <inochiama@gmail.com>,
 	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] riscv: dts: thead: add xtheadvector to the th1520
- devicetree
-Message-ID: <aN8oYBGfd9Y0vp0O@x1>
+Subject: Re: [PATCH v2 2/3] riscv: dts: thead: add ziccrse for th1520
+Message-ID: <aN8ob0mIu85m0nGO@x1>
 References: <cover.1758228055.git.rabenda.cn@gmail.com>
- <1ff3fb07b24fb375fcf9d3067aa50583f47c35fe.1758228055.git.rabenda.cn@gmail.com>
+ <71ac2ff73a63bd8674c4bc91fd287390d5339609.1758228055.git.rabenda.cn@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,16 +65,13 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1ff3fb07b24fb375fcf9d3067aa50583f47c35fe.1758228055.git.rabenda.cn@gmail.com>
+In-Reply-To: <71ac2ff73a63bd8674c4bc91fd287390d5339609.1758228055.git.rabenda.cn@gmail.com>
 
-On Fri, Sep 19, 2025 at 04:44:47AM +0800, Han Gao wrote:
-> The th1520 support xtheadvector [1] so it can be included in the
-> devicetree. Also include vlenb for the cpu. And set vlenb=16 [2].
+On Fri, Sep 19, 2025 at 04:44:48AM +0800, Han Gao wrote:
+> Existing rv64 hardware conforms to the rva20 profile.
 > 
-> This can be tested by passing the "mitigations=off" kernel parameter.
-> 
-> Link: https://lore.kernel.org/linux-riscv/20241113-xtheadvector-v11-4-236c22791ef9@rivosinc.com/ [1]
-> Link: https://lore.kernel.org/linux-riscv/aCO44SAoS2kIP61r@ghost/ [2]
+> Ziccrse is an additional extension required by the rva20 profile, so
+> th1520 has this extension.
 > 
 > Signed-off-by: Han Gao <rabenda.cn@gmail.com>
 
