@@ -1,172 +1,131 @@
-Return-Path: <linux-kernel+bounces-841003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04CF1BB5F06
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 07:23:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2611EBB5F0F
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 07:25:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66D6D19E7914
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 05:24:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A967C3A1BCD
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 05:25:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D34F71E8332;
-	Fri,  3 Oct 2025 05:23:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE6D11D54D8;
+	Fri,  3 Oct 2025 05:25:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="OuJpRqpm"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PSzIzINo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9399B19D880
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 05:23:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3219E19D880
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 05:25:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759469024; cv=none; b=Abidnc90H8mr+moGn9gcPOq7VinVnBaB1LDMcCLpha/Z42RiJtee6bgIwX96hCqXdDA91cnsKm3O8PK9tPt+IifaXUFOxFS2qEpnT+3J9L4SJ5OtlyUR6wt2DBzMQY6pXuY0G78v5PE4rX7sVyWuZ+kYzD9whX9aG/8HY7fA/3k=
+	t=1759469111; cv=none; b=Q1iNIkd6zencumf+O81ys0CaH3ko46catZEsnxfV5O589qsRyeAqwzIu2f4lepkJ/a4FJ/7hTikrXt8kgx8vJedCvTA1HPhN8uO1BN5Q8qlF/LH5qoDWKU8uysBh/UluhOJ0ejvVWoiv9OrHBppqTHrlxo7q9PPfgVPvYYMnOHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759469024; c=relaxed/simple;
-	bh=JQ1ILdEJfTeOvk1t9z7Uzk8Mjvtb1aObDW+FEHuIPI8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ox1kPkmNnURU51deqw7490N9Jak99j0zqJwK1TAMTkpJ957QxH7sla7FKzv2xncrVEpNvso+ZIOlC7FonqoNrgNW/8T1irVbTeeXrhVtN+mJCXxA25fM/5luHHBsrt0WH+AX5TbC7RJ/+gasiFs6uuptMPvFJuJG+U+Jv/V21lA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=OuJpRqpm; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5931e8RM008419;
-	Fri, 3 Oct 2025 05:23:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=3jDVaH
-	BcShvY1tW6+8gkQDFf9bSoUtDAkccMTj+ss0Q=; b=OuJpRqpmpCriuEFGI8K+D3
-	H1EfcXqRlrTzCL+f6AX0ejygv6SFkiufpJM0N7LlM3jPNGoMy5R1fetXJyZ5EbjH
-	FH6btMe0z+9FeUTgKF0Rxa7F4bQ5BPQgZu9FXXLmFmczMzCRyCPkviP7mJuvFRSe
-	jgzMPxxlT6tinuZNoLRhpMWtf6fnwvPOO7nCiOTbWau8DU0eonRAWq5QqlaWWhdB
-	umC0lJjQoJcUU8Zq01Y2FGePfEZ+WOu8jUBAwWa0PmojNyyk1dsWTmAPBgqrrvI+
-	xGUZ/LDoOtUdOe/oRVOnz6IA56FgKHwvuCoD8LP/8+K5Ge/Wo/rAWQnYtZIpYleQ
-	==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49e7kusnj0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 03 Oct 2025 05:23:32 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5930lllw007321;
-	Fri, 3 Oct 2025 05:23:30 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49eurk9eb9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 03 Oct 2025 05:23:30 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5935NSta60031304
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 3 Oct 2025 05:23:28 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B39EB2004B;
-	Fri,  3 Oct 2025 05:23:28 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A29DE20043;
-	Fri,  3 Oct 2025 05:23:25 +0000 (GMT)
-Received: from [9.39.17.250] (unknown [9.39.17.250])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri,  3 Oct 2025 05:23:25 +0000 (GMT)
-Message-ID: <204e1921-f3e3-41cf-bae7-36884f50503b@linux.ibm.com>
-Date: Fri, 3 Oct 2025 10:53:24 +0530
+	s=arc-20240116; t=1759469111; c=relaxed/simple;
+	bh=EOzXcb2+snU5GyhFcUIMvU/Iu5AP4ndE6HRdY7JLoe0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SsMYNRFvPrKvSMW3th5i6MY3GP6uJE4BJdCv/tEcGq+/aVwctiCn4zSNZ5Rsr+nJpgvRtrwxAJEkwoIMEMrBP5cSFdm6h97//4ci50Cdd52M4U+zJDYy+Lz9w8CcEa7mbToaM+TgQC3QQPVqJkuSzGD8T63mJtZzbM64bK+GeoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PSzIzINo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B726FC116D0
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 05:25:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759469110;
+	bh=EOzXcb2+snU5GyhFcUIMvU/Iu5AP4ndE6HRdY7JLoe0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=PSzIzINoE/iFlnHHVSjX8RjDSjuVe0jHrE/XUZeqeGZTensJCaoBpMAf4Wug9Ty0b
+	 ZdmJligdirwKiDAGVOm4YDXwHYPEo7s39FC4obKBdNkfjS7e9ztLtY/KjgbyUlKIN5
+	 I/fxYmSvl1P2O1GJ9dUq2CNIn0zNfNygQl7ab8Y8VcTo1P55yBa2gOxWTywEHA5DZB
+	 s924jVegnd/B2LTR9qlVFHZ7w2Kp9ViG4D85F83TMkBri2SgAfUDRPQ99EyicfTnCA
+	 1hPsIR1dMeCYpcwhxGLU5/E9ZJhfKZyUX6lVlbf+LZlgxYbXyQ5T295ogoEWzwsRml
+	 lQluvNnsPvnRw==
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-71d71bcab69so19955957b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 22:25:10 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXEhfOPOuVRw7aBri6ckk9hQnivNxbyP8fb+CR61QfFdzxZMAbX9nVWq2ZKKyrlv7Q3n8x3/L+5d6RePGo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkNVBeeKdY8ahLsBumqP3ab0vewgwtraoI5AIDno+rsCDzXg6d
+	aTrH8K+T/DNz7l6SV/OV9bh22FRc0o2mSQXBjFm7Osqz3tEMZesi2zigY94IHYP2t5ihIsXhLNn
+	uGwcaNKwMGdtk8x3ahkVPLYjbWyCOPGtUu+DtPo/R1A==
+X-Google-Smtp-Source: AGHT+IH1QaxvSwsxjI4CgG6jGhMwDMFvz5F+YufC61cns4ki360T00rHhtNN6NuQo5SKORdiM0w3plcY22ZTKfKp7g4=
+X-Received: by 2002:a05:690e:254d:b0:634:647d:f582 with SMTP id
+ 956f58d0204a3-63b9a1061f3mr1276161d50.37.1759469109963; Thu, 02 Oct 2025
+ 22:25:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH] sched/fair: Skip sched_balance_running cmpxchg
- when balance is not due
-To: Tim Chen <tim.c.chen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@kernel.org>, Chen Yu <yu.c.chen@intel.com>,
-        Doug Nelson <doug.nelson@intel.com>,
-        Mohini Narkhede <mohini.narkhede@intel.com>,
-        linux-kernel@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        K Prateek Nayak <kprateek.nayak@amd.com>
-References: <e27d5dcb724fe46acc24ff44670bc4bb5be21d98.1759445926.git.tim.c.chen@linux.intel.com>
-Content-Language: en-US
-From: Shrikanth Hegde <sshegde@linux.ibm.com>
-In-Reply-To: <e27d5dcb724fe46acc24ff44670bc4bb5be21d98.1759445926.git.tim.c.chen@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=T7WBjvKQ c=1 sm=1 tr=0 ts=68df5dd4 cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VwQbUJbxAAAA:8 a=QyXUC8HyAAAA:8
- a=KKAkSRfTAAAA:8 a=VnNF1IyMAAAA:8 a=oVqUVcJZufWzTc19_WoA:9 a=QEXdDO2ut3YA:10
- a=cvBusfyB2V15izCimMoJ:22 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-GUID: pfYib3NatHxl-F17ho2uFpBmiBLV4iPl
-X-Proofpoint-ORIG-GUID: pfYib3NatHxl-F17ho2uFpBmiBLV4iPl
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAyNSBTYWx0ZWRfX/Zq+Cr600UEX
- gswkhnoCWH5sgXhIA5GmQdRAm7j/CVSdk8E8o5d3OnpMMcl0aH86UXhZkx6YDppNjYUX4Tg+zMT
- vL4rGGytSYeuD5xcg6eqDGdbUGRQgo9uDjRLSUJblDdAUYLtIMypjA7W+E6d3C0nGtN0KOCaotW
- l9lU/a5UWkKEm/i2xKN1XBmcLTy5pkenfsdlAt5iCHH2U3q1sarWpbipZhyomxFC8NfAzqgpdo2
- 63iSFy/sYvEgAkpvLr7sM5+XFm6IMSFHm0xzEJ9WoIS4OiOeIkew+4pZtk8LolVqOZ3OiAQ1CI8
- /prHJOOO4dpdUJjmvGsmBvLExLmb9ozitOBiE0iU/ZDN9Te5JitvJti3qvIWFiNVABIH421OwVG
- j6KLFayHCKWLj2QD+i6516KczwLLmQ==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-03_01,2025-10-02_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 clxscore=1011 spamscore=0 suspectscore=0 priorityscore=1501
- bulkscore=0 adultscore=0 lowpriorityscore=0 malwarescore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270025
+References: <20250916-luo-pci-v2-0-c494053c3c08@kernel.org>
+ <20250916-luo-pci-v2-3-c494053c3c08@kernel.org> <20250929174831.GJ2695987@ziepe.ca>
+ <CAF8kJuNZPYxf2LYTPYVzho_NM-Rtp8i+pP3bFTwkM_h3v=LwbQ@mail.gmail.com>
+ <20250930163837.GQ2695987@ziepe.ca> <aN7KUNGoHrFHzagu@google.com>
+ <CACePvbX6GfThDnwLdOUsdQ_54eqF3Ff=4hrGhDJ0Ba00-Q1qBw@mail.gmail.com>
+ <CALzav=cKoG4QLp6YtqMLc9S_qP6v9SpEt5XVOmJN8WVYLxRmRw@mail.gmail.com> <20251002232153.GK3195829@ziepe.ca>
+In-Reply-To: <20251002232153.GK3195829@ziepe.ca>
+From: Chris Li <chrisl@kernel.org>
+Date: Thu, 2 Oct 2025 22:24:59 -0700
+X-Gmail-Original-Message-ID: <CACePvbXdzx5rfS1qKkFYtL-yizQiht_evge-jWo0F2ruobgkZA@mail.gmail.com>
+X-Gm-Features: AS18NWDhTnBi_Y6qY5_bokBauhakTKLowQI20S0cLVucoLN7G4cwQsTg60ByTaQ
+Message-ID: <CACePvbXdzx5rfS1qKkFYtL-yizQiht_evge-jWo0F2ruobgkZA@mail.gmail.com>
+Subject: Re: [PATCH v2 03/10] PCI/LUO: Forward prepare()/freeze()/cancel()
+ callbacks to driver
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: David Matlack <dmatlack@google.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Len Brown <lenb@kernel.org>, 
+	Pasha Tatashin <pasha.tatashin@soleen.com>, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	Pasha Tatashin <tatashin@google.com>, Jason Miu <jasonmiu@google.com>, 
+	Vipin Sharma <vipinsh@google.com>, Saeed Mahameed <saeedm@nvidia.com>, 
+	Adithya Jayachandran <ajayachandra@nvidia.com>, Parav Pandit <parav@nvidia.com>, William Tu <witu@nvidia.com>, 
+	Mike Rapoport <rppt@kernel.org>, Leon Romanovsky <leon@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Oct 2, 2025 at 4:21=E2=80=AFPM Jason Gunthorpe <jgg@ziepe.ca> wrote=
+:
+>
+> On Thu, Oct 02, 2025 at 02:31:08PM -0700, David Matlack wrote:
+> > I'm saying the only drivers that actually needed to implement Live
+> > Update driver callbacks have been vfio-pci and PF drivers. The
+> > vfio-pci support doesn't exist yet upstream, and we are planning to
+> > use FD preservation there. So we don't know if driver callbacks will
+> > be needed for that.
+>
+> I don't expect driver callbacks trough the pci subsystem, and I think
+> they should be removed from this series.
 
+Per suggestion from David as well. I will remove the driver callback
+from the PCI series.
 
-On 10/3/25 4:30 AM, Tim Chen wrote:
-> Repost comments:
-> 
-> There have been past discussions about avoiding serialization in load
-> balancing, but no objections were raised to this patch itself during
-> its last posting:
-> https://lore.kernel.org/lkml/20250416035823.1846307-1-tim.c.chen@linux.intel.com/
-> 
-> Vincent and Chen Yu have already provided their Reviewed-by tags.
-> 
-> We recently encountered this issue again on a 2-socket, 240-core
-> Clearwater Forest server running SPECjbb. In this case, 14% of CPU
-> cycles were wasted on unnecessary acquisitions of
-> sched_balance_running. This reinforces the need for the change, and we
-> hope it can be merged.
-> 
-> Tim
-> 
-> ---
-> 
-> During load balancing, balancing at the LLC level and above must be
-> serialized. The scheduler currently checks the atomic
-> `sched_balance_running` flag before verifying whether a balance is
-> actually due. This causes high contention, as multiple CPUs may attempt
-> to acquire the flag concurrently.
-> 
-> On a 2-socket Granite Rapids system with sub-NUMA clustering enabled
-> and running OLTP workloads, 7.6% of CPU cycles were spent on cmpxchg
-> operations for `sched_balance_running`. In most cases, the attempt
-> aborts immediately after acquisition because the load balance time is
-> not yet due.
-> 
-> Fix this by checking whether a balance is due *before* trying to
-> acquire `sched_balance_running`. This avoids many wasted acquisitions
-> and reduces the cmpxchg overhead in `sched_balance_domain()` from 7.6%
-> to 0.05%. As a result, OLTP throughput improves by 11%.
-> 
-> Reviewed-by: Chen Yu <yu.c.chen@intel.com>
-> Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
-> Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
-> ---
+>
+> As I said the flow is backwards from what we want. The vfio driver
+> gets a luo FD from an ioctl, and it goes through and calls into luo
+> and pci with that session object to do all the required serialization.
+>
+> Any required callbacks should be routed through luo based on creating
+> preserved objects within luo and providing ops to luo.
+>
+> There is no other way to properly link things to sessions.
 
-Hi Tim.
+As David pointed out in the other email, the PCI also supports other
+non vfio PCI devices which do not have the FD and FD related sessions.
+That is the original intent for the LUO PCI subsystem.
 
-Fine by me. unnecessary atomic operations do hurt on large systems.
-The further optimization that i pointed out can come in later i guess.
-That would help only further. this should be good to begin with.
+> > And we don't care about PF drivers until we get to
+> > supporting SR-IOV. So the driver callbacks all seem unnecessary at
+> > this point.
+>
+> I guess we will see, but I'm hoping we can get quite far using
+> vfio-pci as the SRIOV PF driver and don't need to try to get a big PF
+> in-kernel driver entangled in this.
 
-With that.
-Reviewed-by: Shrikanth Hegde <sshegde@linux.ibm.com>
+Yes, vfio-pci is a big series as well. Getting a NIC might be easier
+to get the PF DMA working with a live update but that will be thrown
+away once we have the vfio-pci as the real user. Actually getting the
+pci-pf-stub driver working would be a smaller and reasonable step to
+justify the PF support in LUO PCI.
 
+Chris
 
