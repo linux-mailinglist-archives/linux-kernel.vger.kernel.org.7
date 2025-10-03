@@ -1,533 +1,198 @@
-Return-Path: <linux-kernel+bounces-841605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 019C9BB7CF0
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 19:55:29 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 090EABB7CF8
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 19:56:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C571F4ECAEF
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 17:55:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DF5FD4EE397
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 17:56:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE7282DC33F;
-	Fri,  3 Oct 2025 17:55:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6AE12DC760;
+	Fri,  3 Oct 2025 17:56:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hgancyl3"
-Received: from mail-yx1-f44.google.com (mail-yx1-f44.google.com [74.125.224.44])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bje+rQlC"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B69D315853B
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 17:55:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 956F82DA76C
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 17:56:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759514123; cv=none; b=cF6X+5c0verx7wzYf1rwIeqxMuQ8StIR1hu68vhJAeFbYGxGmRrLVNIQ7n2BEefBRQyBhmgFwx+DIrKQP5J0EAL9GllvUuTyZnCesR3eCZG8tpFBxul82xNz4MlDs0brU75XGrQlAPi4LGDozPbA2JexAB3FwgYHWAvEnD2Z7XI=
+	t=1759514179; cv=none; b=mib+2ParHBPbhpPbgYadtZscwdfTpMw8wse3/772ZN6km1WR+VDmnkwtWxNbXxaRGzrjas7rN9LnfHMZlndh91VyNAoHiSdFIk2+7ArVhkkPawdqywyreZNHtoMY8WNSB99+y4Z2D+CxyDDwTKsS66nHXidgQ7A0Duw94VT92sM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759514123; c=relaxed/simple;
-	bh=EmYH7lZEN/7mdNIXQQcc5lN2QW1gjvRJcCBMmQkT+IU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Kh5IIXBpeh76/niB6+0+beoWU60JNO7CP41mi7YKVuVT7cFGxC/aHzaQiHoOWFrV2NTsDuIa3CesAuHgJFyUY8QI4gQZY+sfkHl/uTyUm10M2ncPSNMwdC0TJbCfrjj17eiABOHQVkEoWrVBQcGr0tERfHeX/bdnep8kY+BJG5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hgancyl3; arc=none smtp.client-ip=74.125.224.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yx1-f44.google.com with SMTP id 956f58d0204a3-6353ff1a78dso2474557d50.0
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 10:55:20 -0700 (PDT)
+	s=arc-20240116; t=1759514179; c=relaxed/simple;
+	bh=mczsFEopVF9Nf3Eh6gcn/ks9momGug0VWCsPbGNJHcs=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=u/R+WEvGplakhNccuZEaGKuwIH9j/4BfpZXFe0qRooPprAcP/viWLeodg/cyMXa/QWlV8kzp9HSnnjcUIsLq7Afpt/3MXPofG3qfq2GvP3tR3R1UcFS2mxFYWM1cFO/TFGPqfOqtBGAJ6eZmAae7amXYSIDwPpQRAViaNqd6QLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bje+rQlC; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-77f5e6a324fso4064058b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 10:56:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759514120; x=1760118920; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=a1b73eD3J07PphzqhxdvLpc171f9Nn9CiIGeoDF7jTM=;
-        b=hgancyl39duSMimwchrSnYLQEMXgJc8uYo8aNAMdsYEpS7xFYi2ig7qDo1kyd5H4pU
-         AtHRSbPyjNXA5BLdQoUuImzZxrFRUYaWFPdMr6ksTE8+6Wl0OQWOML1pkkQ+Mgbs8LHw
-         zTgP++gsrlnEvuJtoTdBQNMq45oHQ1nGp5jhniiZ/Dku3wQh7S2d7cfiBY2/myIoOQpy
-         q5aafsggZqJZVtiwX10alCw7cMqH0MS0XmEB7oVzVMGF37wJkFEppQtlSQRQ6IuxOdHV
-         ar63hdp+4kNSMTPW/2JjWVywVvsrmbOzmwM4TLIyNK1HX4ALJsN0d8zVJDkb4FqMVuBJ
-         dL7Q==
+        d=google.com; s=20230601; t=1759514177; x=1760118977; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=b9kHANUA1oW98B2rv+eoU9hlrfnQq0vAOP1H1ZwrBOU=;
+        b=bje+rQlCjBB4a9G6WYN/vSg3MsAUMI6fsR9ocO63uhr3saayDots9f837/J8V+BnZe
+         PlvUNn5x8hscR6YpQLoKm3adf9Y65B6Rm9MBaP46inRfVnimCJE3/SNSshBxmVcKtZSM
+         iVizM4ee7/TXBHS92xSDMEZv8cDkMEZYnHUu1ULqjYC9bSJqWK9YwevVBKzcU20p0LoC
+         sMWmlaXAWfq67leIzO8RmP0kmVzlMqb5RVskd180E9OQEbuRbSokB8DD4cceN8UbAiFc
+         cThzY3HyP7Wx84tiLqf+9tFnyximd0w6NzG5OPPcQ1MPplRrVk9xY2vZmuj40H+fL1Rm
+         KDaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759514120; x=1760118920;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=a1b73eD3J07PphzqhxdvLpc171f9Nn9CiIGeoDF7jTM=;
-        b=cJNJzUdhYjOk3QIYeH83QgwOJEGtbBNYmEledY9ArtMr9cMTOVVJu6A2WIIuSQ896E
-         aN8i0Bq3/vql3UioxaB6THVGmiyKh4An3PSVImOw3/xBYYYWIkAevcfpoaoIyMA8bzmK
-         GUgeULYnzce4RWLsChvkgp9JOtv0DtIB0TyAx+XvL89ltzX1JKILUeDRU9+wuOMYxUqN
-         k/w7x6A+RHa4TCAuYGzgPGaOu6Y40pAAWFuQfQqax90FEcyCqpWJXTOOgZulDIdgi5kG
-         I4I0X0ak00aCl/eqjbqATLUa917ejQ2scqS6F44maCshs6yXow/P5Dbca5s1+hd0lV0c
-         E/WQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUze8NwBulwonEP/xAGrmNTkOR3D7WCW0TULGeNguq0Nx8zfMljnqbCPg8EZ6oAWR2qBMS+7tYhT1zcKJw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuUrcEqvskP4wTRgTRojlTQb1ArlzC9pgzOroG+r+7d5Mz1e+o
-	ooIAjF9b32rgoHFD9DUV+o+Hjgx7h5jLqB3kj4UAyFbItpTQUJZ6GIfBvRgicFcNIGsQ50rz3ht
-	Yg6nfKapOnKRl5/nOm0qOdTIfpn4iBOsJjTQlCS6MqQ==
-X-Gm-Gg: ASbGnctsAbP9PrUhqI51Ryrbjo+94JxMRArvtVWCghOKxwkweXlzh6t5KTXDFMUlR0v
-	NfG1bO+y+GRPIavh5fDvAZ0mxo7dPao15lotoSIjbMw2gDcdVo4B4I6cRNe5l/1pnK3ddpR7HGV
-	grYI2y9W01SH7ibaBIk4IeBoWdeJ7QNDqC3gI2Kdp+UM8j/Om+zaaYQguoFR0Ro9UAkVpscM5K3
-	+VmGGe2HotsU7OFx9ylCKtJZmgCZ5pmLUQrk2bDKd6T
-X-Google-Smtp-Source: AGHT+IEsi3zTjbIEzgUfpuQxM21bQ1UgHTZkyJdgVHLwOTUMPzbn8+oeMmltFD2cdIn5JGTG7y0eC8dfLjZ7tA/qYSk=
-X-Received: by 2002:a53:a0ca:0:b0:629:ec90:c446 with SMTP id
- 956f58d0204a3-63b9a06f1a3mr3107060d50.12.1759514119507; Fri, 03 Oct 2025
- 10:55:19 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759514177; x=1760118977;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=b9kHANUA1oW98B2rv+eoU9hlrfnQq0vAOP1H1ZwrBOU=;
+        b=E1Dh9K2Uc1XRkCZLo/Dc86b6++acbY42GIosvnOweLR9bM7BoIx5WTunkatGxHSEbb
+         D+g6/lv/EYRYdDwyUQjgfO1JXtRAkHzX4mug+KgDpy1eQPdSvwiMq+hEbLOtJmkNo5Cz
+         7zEsI66m5XIYZa3yij1eV9uvS9yl0udNVUQkkuyzdazdFYS9jAzxWLkGX35B9WT0JCnt
+         qiJ1AJXUVsU5O2oICUIv+tulwR/ybpGg8m5ITpjZvjCi06JByoItUnhiKU7UFwvBjnGF
+         I4pTu1ersO1wfl4kkQmKNB6bUaGNVV0nVasn/QcSy9dd8XcRCnR9cywI3WqKNwD55n4Q
+         dH5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWO4tRv9wgY0Ych1WWpq//8RjLwKjEOcWwdshAlUwbZ0HLeNBGND25dOykDC/ZyrdRSWtRpLmpzQCICKuM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkyeOz8UMGoj+ShOkvqmky0pOiqizVXTbUnYFUWJqeaKUUyXW7
+	dvibR70/ayZjEc7Iy5muy1aVbBcowkgRNB1CSZaxMrcHl8yaNocvtAyAVRrYM5bBO10L1JCtOfL
+	rjeGV5uIiXg==
+X-Google-Smtp-Source: AGHT+IGK5DjimV2qy9GjxAU8ZDs57rl0GR5hN/1Bai3xrKPzFU+iuKgrRk60P0+uZ9MVi9V+s3neLlpTMpri
+X-Received: from pgac10.prod.google.com ([2002:a05:6a02:294a:b0:b55:794f:64bb])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:94ca:b0:2fb:8392:5469
+ with SMTP id adf61e73a8af0-32b62100051mr5227315637.54.1759514176762; Fri, 03
+ Oct 2025 10:56:16 -0700 (PDT)
+Date: Fri,  3 Oct 2025 10:56:12 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20251002-gs101-pmu-regmap-tables-v1-0-1f96f0920eb3@linaro.org> <20251002-gs101-pmu-regmap-tables-v1-2-1f96f0920eb3@linaro.org>
-In-Reply-To: <20251002-gs101-pmu-regmap-tables-v1-2-1f96f0920eb3@linaro.org>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Fri, 3 Oct 2025 12:55:08 -0500
-X-Gm-Features: AS18NWDO4wOWUr7D5fpivRh4cck7ZlJFct3DOK5VRmjxFhJsrC5iwEvf350v8mo
-Message-ID: <CAPLW+4=+efttfgj9gMSGpv2sjhJQ7whtoCuitK+Ku4U7hzE+1A@mail.gmail.com>
-Subject: Re: [PATCH 2/3] soc: samsung: exynos-pmu: move some gs101 related
- code into new file
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.618.g983fd99d29-goog
+Message-ID: <20251003175613.2512296-1-irogers@google.com>
+Subject: [PATCH v2 1/2] perf namespaces: Avoid get_current_dir_name dependency
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 2, 2025 at 5:33=E2=80=AFAM Andr=C3=A9 Draszik <andre.draszik@li=
-naro.org> wrote:
->
-> To avoid cluttering common code, move most of the gs101 code into a new
-> file, gs101-pmu.c
->
-> More code is going to be added for gs101 - having it all in one file
-> helps keeping the common code (file) more readable.
->
+get_current_dir_name is a GNU extension not supported on, for example,
+Android. There is only one use of it so let's just switch to getcwd to
+avoid build and other complexity.
 
-Maybe add "no functional change" note for refactoring/cleanup patches like =
-this.
-
-> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-> ---
->  MAINTAINERS                      |   1 +
->  drivers/soc/samsung/Makefile     |   3 +-
->  drivers/soc/samsung/exynos-pmu.c | 133 ---------------------------------=
+Signed-off-by: Ian Rogers <irogers@google.com>
 ---
->  drivers/soc/samsung/exynos-pmu.h |   7 ++
->  drivers/soc/samsung/gs101-pmu.c  | 141 +++++++++++++++++++++++++++++++++=
-++++++
->  5 files changed, 151 insertions(+), 134 deletions(-)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 3439485437117aaffbe61b709468348231ca3cc4..b8908a95abc561ecf04be560f=
-0e358c58acad693 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -10599,6 +10599,7 @@ F:      Documentation/devicetree/bindings/clock/g=
-oogle,gs101-clock.yaml
->  F:     Documentation/devicetree/bindings/soc/google/google,gs101-pmu-int=
-r-gen.yaml
->  F:     arch/arm64/boot/dts/exynos/google/
->  F:     drivers/clk/samsung/clk-gs101.c
-> +F:     drivers/soc/samsung/gs101-pmu.c
->  F:     drivers/phy/samsung/phy-gs101-ufs.c
->  F:     include/dt-bindings/clock/google,gs101.h
->  K:     [gG]oogle.?[tT]ensor
-> diff --git a/drivers/soc/samsung/Makefile b/drivers/soc/samsung/Makefile
-> index 248a33d7754af1a1e5fbbbb79413eb300bbbc8e5..636a762608c9ba2c22a72d6f9=
-597ceb015f7f36c 100644
-> --- a/drivers/soc/samsung/Makefile
-> +++ b/drivers/soc/samsung/Makefile
-> @@ -6,7 +6,8 @@ exynos_chipid-y                 +=3D exynos-chipid.o exyn=
-os-asv.o
->
->  obj-$(CONFIG_EXYNOS_USI)       +=3D exynos-usi.o
->
-> -obj-$(CONFIG_EXYNOS_PMU)       +=3D exynos-pmu.o
-> +obj-$(CONFIG_EXYNOS_PMU)       +=3D exynos_pmu.o
-> +exynos_pmu-y                   +=3D exynos-pmu.o gs101-pmu.o
->
->  obj-$(CONFIG_EXYNOS_PMU_ARM_DRIVERS)   +=3D exynos3250-pmu.o exynos4-pmu=
-.o \
->                                         exynos5250-pmu.o exynos5420-pmu.o
-> diff --git a/drivers/soc/samsung/exynos-pmu.c b/drivers/soc/samsung/exyno=
-s-pmu.c
-> index 9f416de03610b1727d8cc77616e5c87e2525cc69..528fd4bd96f515a15b0bf8d67=
-c505f7a84c0fc2e 100644
-> --- a/drivers/soc/samsung/exynos-pmu.c
-> +++ b/drivers/soc/samsung/exynos-pmu.c
-> @@ -6,7 +6,6 @@
->  // Exynos - CPU PMU(Power Management Unit) support
->
->  #include <linux/array_size.h>
-> -#include <linux/arm-smccc.h>
->  #include <linux/bitmap.h>
->  #include <linux/cpuhotplug.h>
->  #include <linux/cpu_pm.h>
-> @@ -25,14 +24,6 @@
->
->  #include "exynos-pmu.h"
->
-> -#define PMUALIVE_MASK                  GENMASK(13, 0)
-> -#define TENSOR_SET_BITS                        (BIT(15) | BIT(14))
-> -#define TENSOR_CLR_BITS                        BIT(15)
-> -#define TENSOR_SMC_PMU_SEC_REG         0x82000504
-> -#define TENSOR_PMUREG_READ             0
-> -#define TENSOR_PMUREG_WRITE            1
-> -#define TENSOR_PMUREG_RMW              2
-> -
->  struct exynos_pmu_context {
->         struct device *dev;
->         const struct exynos_pmu_data *pmu_data;
-> @@ -54,125 +45,6 @@ static struct exynos_pmu_context *pmu_context;
->  /* forward declaration */
->  static struct platform_driver exynos_pmu_driver;
->
-> -/*
-> - * Tensor SoCs are configured so that PMU_ALIVE registers can only be wr=
-itten
-> - * from EL3, but are still read accessible. As Linux needs to write some=
- of
-> - * these registers, the following functions are provided and exposed via
-> - * regmap.
-> - *
-> - * Note: This SMC interface is known to be implemented on gs101 and deri=
-vative
-> - * SoCs.
-> - */
-> -
-> -/* Write to a protected PMU register. */
-> -static int tensor_sec_reg_write(void *context, unsigned int reg,
-> -                               unsigned int val)
-> -{
-> -       struct arm_smccc_res res;
-> -       unsigned long pmu_base =3D (unsigned long)context;
-> -
-> -       arm_smccc_smc(TENSOR_SMC_PMU_SEC_REG, pmu_base + reg,
-> -                     TENSOR_PMUREG_WRITE, val, 0, 0, 0, 0, &res);
-> -
-> -       /* returns -EINVAL if access isn't allowed or 0 */
-> -       if (res.a0)
-> -               pr_warn("%s(): SMC failed: %d\n", __func__, (int)res.a0);
-> -
-> -       return (int)res.a0;
-> -}
-> -
-> -/* Read/Modify/Write a protected PMU register. */
-> -static int tensor_sec_reg_rmw(void *context, unsigned int reg,
-> -                             unsigned int mask, unsigned int val)
-> -{
-> -       struct arm_smccc_res res;
-> -       unsigned long pmu_base =3D (unsigned long)context;
-> -
-> -       arm_smccc_smc(TENSOR_SMC_PMU_SEC_REG, pmu_base + reg,
-> -                     TENSOR_PMUREG_RMW, mask, val, 0, 0, 0, &res);
-> -
-> -       /* returns -EINVAL if access isn't allowed or 0 */
-> -       if (res.a0)
-> -               pr_warn("%s(): SMC failed: %d\n", __func__, (int)res.a0);
-> -
-> -       return (int)res.a0;
-> -}
-> -
-> -/*
-> - * Read a protected PMU register. All PMU registers can be read by Linux=
-.
-> - * Note: The SMC read register is not used, as only registers that can b=
-e
-> - * written are readable via SMC.
-> - */
-> -static int tensor_sec_reg_read(void *context, unsigned int reg,
-> -                              unsigned int *val)
-> -{
-> -       *val =3D pmu_raw_readl(reg);
-> -       return 0;
-> -}
-> -
-> -/*
-> - * For SoCs that have set/clear bit hardware this function can be used w=
-hen
-> - * the PMU register will be accessed by multiple masters.
-> - *
-> - * For example, to set bits 13:8 in PMU reg offset 0x3e80
-> - * tensor_set_bits_atomic(ctx, 0x3e80, 0x3f00, 0x3f00);
-> - *
-> - * Set bit 8, and clear bits 13:9 PMU reg offset 0x3e80
-> - * tensor_set_bits_atomic(0x3e80, 0x100, 0x3f00);
-> - */
-> -static int tensor_set_bits_atomic(void *ctx, unsigned int offset, u32 va=
-l,
-> -                                 u32 mask)
-> -{
-> -       int ret;
-> -       unsigned int i;
-> -
-> -       for (i =3D 0; i < 32; i++) {
-> -               if (!(mask & BIT(i)))
-> -                       continue;
-> -
-> -               offset &=3D ~TENSOR_SET_BITS;
-> -
-> -               if (val & BIT(i))
-> -                       offset |=3D TENSOR_SET_BITS;
-> -               else
-> -                       offset |=3D TENSOR_CLR_BITS;
-> -
-> -               ret =3D tensor_sec_reg_write(ctx, offset, i);
-> -               if (ret)
-> -                       return ret;
-> -       }
-> -       return 0;
-> -}
-> -
-> -static bool tensor_is_atomic(unsigned int reg)
-> -{
-> -       /*
-> -        * Use atomic operations for PMU_ALIVE registers (offset 0~0x3FFF=
-)
-> -        * as the target registers can be accessed by multiple masters. S=
-FRs
-> -        * that don't support atomic are added to the switch statement be=
-low.
-> -        */
-> -       if (reg > PMUALIVE_MASK)
-> -               return false;
-> -
-> -       switch (reg) {
-> -       case GS101_SYSIP_DAT0:
-> -       case GS101_SYSTEM_CONFIGURATION:
-> -               return false;
-> -       default:
-> -               return true;
-> -       }
-> -}
-> -
-> -static int tensor_sec_update_bits(void *ctx, unsigned int reg,
-> -                                 unsigned int mask, unsigned int val)
-> -{
-> -
-> -       if (!tensor_is_atomic(reg))
-> -               return tensor_sec_reg_rmw(ctx, reg, mask, val);
-> -
-> -       return tensor_set_bits_atomic(ctx, reg, val, mask);
-> -}
-> -
->  void pmu_raw_writel(u32 val, u32 offset)
->  {
->         writel_relaxed(val, pmu_base_addr + offset);
-> @@ -244,11 +116,6 @@ static const struct regmap_config regmap_pmu_intr =
-=3D {
->         .use_raw_spinlock =3D true,
->  };
->
-> -static const struct exynos_pmu_data gs101_pmu_data =3D {
-> -       .pmu_secure =3D true,
-> -       .pmu_cpuhp =3D true,
-> -};
-> -
->  /*
->   * PMU platform driver and devicetree bindings.
->   */
-> diff --git a/drivers/soc/samsung/exynos-pmu.h b/drivers/soc/samsung/exyno=
-s-pmu.h
-> index 113149ed32c88a09b075be82050c26970e4c0620..fe11adc4f6ac8fc8bce228d58=
-52deaff7c438221 100644
-> --- a/drivers/soc/samsung/exynos-pmu.h
-> +++ b/drivers/soc/samsung/exynos-pmu.h
-> @@ -44,7 +44,14 @@ extern const struct exynos_pmu_data exynos4412_pmu_dat=
-a;
->  extern const struct exynos_pmu_data exynos5250_pmu_data;
->  extern const struct exynos_pmu_data exynos5420_pmu_data;
->  #endif
-> +extern const struct exynos_pmu_data gs101_pmu_data;
->
->  extern void pmu_raw_writel(u32 val, u32 offset);
->  extern u32 pmu_raw_readl(u32 offset);
-> +
-> +int tensor_sec_reg_write(void *context, unsigned int reg, unsigned int v=
-al);
-> +int tensor_sec_reg_read(void *context, unsigned int reg, unsigned int *v=
-al);
-> +int tensor_sec_update_bits(void *ctx, unsigned int reg, unsigned int mas=
-k,
-> +                          unsigned int val);
+v2: Fix free of oldcwd on errout.
+---
+ tools/perf/Makefile.config             |  4 ----
+ tools/perf/util/Build                  |  1 -
+ tools/perf/util/get_current_dir_name.c | 18 ------------------
+ tools/perf/util/get_current_dir_name.h |  8 --------
+ tools/perf/util/namespaces.c           |  7 +++----
+ 5 files changed, 3 insertions(+), 35 deletions(-)
+ delete mode 100644 tools/perf/util/get_current_dir_name.c
+ delete mode 100644 tools/perf/util/get_current_dir_name.h
 
-Nitpick: just noticed the inconsistency between context/ctx wording
-usage in above function arguments.
+diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+index 0f4b297fbacc..6cdb96576cb8 100644
+--- a/tools/perf/Makefile.config
++++ b/tools/perf/Makefile.config
+@@ -417,10 +417,6 @@ ifeq ($(feature-eventfd), 1)
+   CFLAGS += -DHAVE_EVENTFD_SUPPORT
+ endif
+ 
+-ifeq ($(feature-get_current_dir_name), 1)
+-  CFLAGS += -DHAVE_GET_CURRENT_DIR_NAME
+-endif
+-
+ ifeq ($(feature-gettid), 1)
+   CFLAGS += -DHAVE_GETTID
+ endif
+diff --git a/tools/perf/util/Build b/tools/perf/util/Build
+index 5ead46dc98e7..9464eceb764b 100644
+--- a/tools/perf/util/Build
++++ b/tools/perf/util/Build
+@@ -23,7 +23,6 @@ perf-util-y += evsel_fprintf.o
+ perf-util-y += perf_event_attr_fprintf.o
+ perf-util-y += evswitch.o
+ perf-util-y += find_bit.o
+-perf-util-y += get_current_dir_name.o
+ perf-util-y += levenshtein.o
+ perf-util-y += mmap.o
+ perf-util-y += memswap.o
+diff --git a/tools/perf/util/get_current_dir_name.c b/tools/perf/util/get_current_dir_name.c
+deleted file mode 100644
+index e68935e9ac8c..000000000000
+--- a/tools/perf/util/get_current_dir_name.c
++++ /dev/null
+@@ -1,18 +0,0 @@
+-// SPDX-License-Identifier: LGPL-2.1
+-// Copyright (C) 2018, 2019 Red Hat Inc, Arnaldo Carvalho de Melo <acme@redhat.com>
+-//
+-#ifndef HAVE_GET_CURRENT_DIR_NAME
+-#include "get_current_dir_name.h"
+-#include <limits.h>
+-#include <string.h>
+-#include <unistd.h>
+-
+-/* Android's 'bionic' library, for one, doesn't have this */
+-
+-char *get_current_dir_name(void)
+-{
+-	char pwd[PATH_MAX];
+-
+-	return getcwd(pwd, sizeof(pwd)) == NULL ? NULL : strdup(pwd);
+-}
+-#endif // HAVE_GET_CURRENT_DIR_NAME
+diff --git a/tools/perf/util/get_current_dir_name.h b/tools/perf/util/get_current_dir_name.h
+deleted file mode 100644
+index 69f7d5537d32..000000000000
+--- a/tools/perf/util/get_current_dir_name.h
++++ /dev/null
+@@ -1,8 +0,0 @@
+-// SPDX-License-Identifier: LGPL-2.1
+-// Copyright (C) 2018, 2019 Red Hat Inc, Arnaldo Carvalho de Melo <acme@redhat.com>
+-//
+-#ifndef __PERF_GET_CURRENT_DIR_NAME_H
+-#ifndef HAVE_GET_CURRENT_DIR_NAME
+-char *get_current_dir_name(void);
+-#endif // HAVE_GET_CURRENT_DIR_NAME
+-#endif // __PERF_GET_CURRENT_DIR_NAME_H
+diff --git a/tools/perf/util/namespaces.c b/tools/perf/util/namespaces.c
+index 68f5de2d79c7..01502570b32d 100644
+--- a/tools/perf/util/namespaces.c
++++ b/tools/perf/util/namespaces.c
+@@ -6,7 +6,6 @@
+ 
+ #include "namespaces.h"
+ #include "event.h"
+-#include "get_current_dir_name.h"
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <fcntl.h>
+@@ -293,14 +292,14 @@ void nsinfo__mountns_enter(struct nsinfo *nsi,
+ 	if (!nsi || !nsinfo__need_setns(nsi))
+ 		return;
+ 
+-	if (snprintf(curpath, PATH_MAX, "/proc/self/ns/mnt") >= PATH_MAX)
++	if (!getcwd(curpath, sizeof(curpath)))
+ 		return;
+ 
+-	oldcwd = get_current_dir_name();
++	oldcwd = strdup(curpath);
+ 	if (!oldcwd)
+ 		return;
+ 
+-	oldns = open(curpath, O_RDONLY);
++	oldns = open("/proc/self/ns/mnt", O_RDONLY);
+ 	if (oldns < 0)
+ 		goto errout;
+ 
+-- 
+2.51.0.618.g983fd99d29-goog
 
-> +
->  #endif /* __EXYNOS_PMU_H */
-> diff --git a/drivers/soc/samsung/gs101-pmu.c b/drivers/soc/samsung/gs101-=
-pmu.c
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..b5a535822ec830b751e36a331=
-21e2a03ef2ebcb2
-> --- /dev/null
-> +++ b/drivers/soc/samsung/gs101-pmu.c
-> @@ -0,0 +1,141 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +//
-> +// Copyright 2025 Linaro Ltd.
-> +//
-> +// GS101 PMU (Power Management Unit) support
-> +
-
-AFAIR headers like these should be made using multi-line comments (not
-talking about SPDX part). Or is it the latest fashion trends in
-kernel?
-
-Anyways, those all are minor:
-
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
-
-> +#include <linux/arm-smccc.h>
-> +#include <linux/array_size.h>
-> +#include <linux/soc/samsung/exynos-pmu.h>
-> +#include <linux/soc/samsung/exynos-regs-pmu.h>
-> +
-> +#include "exynos-pmu.h"
-> +
-> +#define PMUALIVE_MASK                  GENMASK(13, 0)
-> +#define TENSOR_SET_BITS                        (BIT(15) | BIT(14))
-> +#define TENSOR_CLR_BITS                        BIT(15)
-> +#define TENSOR_SMC_PMU_SEC_REG         0x82000504
-> +#define TENSOR_PMUREG_READ             0
-> +#define TENSOR_PMUREG_WRITE            1
-> +#define TENSOR_PMUREG_RMW              2
-> +
-> +const struct exynos_pmu_data gs101_pmu_data =3D {
-> +       .pmu_secure =3D true,
-> +       .pmu_cpuhp =3D true,
-> +};
-> +
-> +/*
-> + * Tensor SoCs are configured so that PMU_ALIVE registers can only be wr=
-itten
-> + * from EL3, but are still read accessible. As Linux needs to write some=
- of
-> + * these registers, the following functions are provided and exposed via
-> + * regmap.
-> + *
-> + * Note: This SMC interface is known to be implemented on gs101 and deri=
-vative
-> + * SoCs.
-> + */
-> +
-> +/* Write to a protected PMU register. */
-> +int tensor_sec_reg_write(void *context, unsigned int reg, unsigned int v=
-al)
-> +{
-> +       struct arm_smccc_res res;
-> +       unsigned long pmu_base =3D (unsigned long)context;
-> +
-> +       arm_smccc_smc(TENSOR_SMC_PMU_SEC_REG, pmu_base + reg,
-> +                     TENSOR_PMUREG_WRITE, val, 0, 0, 0, 0, &res);
-> +
-> +       /* returns -EINVAL if access isn't allowed or 0 */
-> +       if (res.a0)
-> +               pr_warn("%s(): SMC failed: %d\n", __func__, (int)res.a0);
-> +
-> +       return (int)res.a0;
-> +}
-> +
-> +/* Read/Modify/Write a protected PMU register. */
-> +static int tensor_sec_reg_rmw(void *context, unsigned int reg,
-> +                             unsigned int mask, unsigned int val)
-> +{
-> +       struct arm_smccc_res res;
-> +       unsigned long pmu_base =3D (unsigned long)context;
-> +
-> +       arm_smccc_smc(TENSOR_SMC_PMU_SEC_REG, pmu_base + reg,
-> +                     TENSOR_PMUREG_RMW, mask, val, 0, 0, 0, &res);
-> +
-> +       /* returns -EINVAL if access isn't allowed or 0 */
-> +       if (res.a0)
-> +               pr_warn("%s(): SMC failed: %d\n", __func__, (int)res.a0);
-> +
-> +       return (int)res.a0;
-> +}
-> +
-> +/*
-> + * Read a protected PMU register. All PMU registers can be read by Linux=
-.
-> + * Note: The SMC read register is not used, as only registers that can b=
-e
-> + * written are readable via SMC.
-> + */
-> +int tensor_sec_reg_read(void *context, unsigned int reg, unsigned int *v=
-al)
-> +{
-> +       *val =3D pmu_raw_readl(reg);
-> +       return 0;
-> +}
-> +
-> +/*
-> + * For SoCs that have set/clear bit hardware this function can be used w=
-hen
-> + * the PMU register will be accessed by multiple masters.
-> + *
-> + * For example, to set bits 13:8 in PMU reg offset 0x3e80
-> + * tensor_set_bits_atomic(ctx, 0x3e80, 0x3f00, 0x3f00);
-> + *
-> + * Set bit 8, and clear bits 13:9 PMU reg offset 0x3e80
-> + * tensor_set_bits_atomic(0x3e80, 0x100, 0x3f00);
-> + */
-> +static int tensor_set_bits_atomic(void *ctx, unsigned int offset, u32 va=
-l,
-> +                                 u32 mask)
-> +{
-> +       int ret;
-> +       unsigned int i;
-> +
-> +       for (i =3D 0; i < 32; i++) {
-> +               if (!(mask & BIT(i)))
-> +                       continue;
-> +
-> +               offset &=3D ~TENSOR_SET_BITS;
-> +
-> +               if (val & BIT(i))
-> +                       offset |=3D TENSOR_SET_BITS;
-> +               else
-> +                       offset |=3D TENSOR_CLR_BITS;
-> +
-> +               ret =3D tensor_sec_reg_write(ctx, offset, i);
-> +               if (ret)
-> +                       return ret;
-> +       }
-> +       return 0;
-> +}
-> +
-> +static bool tensor_is_atomic(unsigned int reg)
-> +{
-> +       /*
-> +        * Use atomic operations for PMU_ALIVE registers (offset 0~0x3FFF=
-)
-> +        * as the target registers can be accessed by multiple masters. S=
-FRs
-> +        * that don't support atomic are added to the switch statement be=
-low.
-> +        */
-> +       if (reg > PMUALIVE_MASK)
-> +               return false;
-> +
-> +       switch (reg) {
-> +       case GS101_SYSIP_DAT0:
-> +       case GS101_SYSTEM_CONFIGURATION:
-> +               return false;
-> +       default:
-> +               return true;
-> +       }
-> +}
-> +
-> +int tensor_sec_update_bits(void *ctx, unsigned int reg, unsigned int mas=
-k,
-> +                          unsigned int val)
-> +{
-> +       if (!tensor_is_atomic(reg))
-> +               return tensor_sec_reg_rmw(ctx, reg, mask, val);
-> +
-> +       return tensor_set_bits_atomic(ctx, reg, val, mask);
-> +}
->
-> --
-> 2.51.0.618.g983fd99d29-goog
->
->
 
