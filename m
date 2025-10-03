@@ -1,167 +1,87 @@
-Return-Path: <linux-kernel+bounces-840984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8627BB5E56
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 06:22:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 12A0ABB5E59
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 06:23:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73C45427017
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 04:22:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64C0E4A084A
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 04:23:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3722C1DF25C;
-	Fri,  3 Oct 2025 04:22:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="eTQQxV7C"
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C8A81DE8B5;
+	Fri,  3 Oct 2025 04:23:09 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AA4313A3ED;
-	Fri,  3 Oct 2025 04:22:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 121CE1DDC37
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 04:23:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759465357; cv=none; b=bvIfDZ0m3ZmYyHstgrYjgvDXlOW+rOKFvd5MrioPDFPIjkV6FrkW0dIZFUPLH5dLwAIvWi0Z7Sff1PDwbQu9SOO5uj9V+/QOxjZRNFuSUoghq0Dae3rQtEBnRU8aYlNUm8Vj4GwHfigQclemMgDapw7EsYpcZjUrILtOdWHVza0=
+	t=1759465388; cv=none; b=aoGjaWZUk3jMfG3WbPAgd+077ny6b+/2feoWaheMwPwh1EWwdUKFQ495xVSQNjUCCL0Qwy3lLTQJ8Ah5XdQ09X7SHfLIlegsqaL8JuOxPo+ZFiVieJrPdu+YfUCIuRibKw2RIWtI+GaDb+aGtrZNu50eZ7ivlxIlo0r008QC+T8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759465357; c=relaxed/simple;
-	bh=BXBFE0zEH+OZh3PToClWUyja4fEYE0kkxq/gjiSlJOo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pJkibh7uqX8dqWYpTccT19/cchBUfVGHI7n6rUjkV/+AoNbze4HlQ0xrHzHV0txPly9QQ38X8TO/mv/zQ3wDhBLM/ss68hC1Z1Dj1DJEHLW0lSwN1nW1/03yeL1oYRu2Nhr5LK6j9b2HBW8yWRrtK1tTj09ryxRjcTH4vkxKo0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=eTQQxV7C; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4cdFr14RHLz9tdV;
-	Fri,  3 Oct 2025 06:22:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1759465345;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rfjajPgEwVLh4oTw1tl5i3Qwbh9BXtm5rODawyfaF28=;
-	b=eTQQxV7Cz6Zn3ryUrERVS4yq5ujsCo1hGdrYn+LQE/4HeM9IxZOaOoJWV8uOYIG8sDbGmn
-	XXEAqo8Bt9rTbvQw84t0LR80s0IUu85LKusdEYIm3HYX6dOlGIvUDQY/d7N1OwRaIJKGQL
-	22G8fVxTW55uSaM8YdkUkiGCS+IvMHCSK2Ytj4iscuvLpTxmErI4JvC2AXQsEhZllKasLI
-	b3UFlui+wFlTp8eZEJ8XMW4P7qNsBhnutRYOa/xqG3nOPWELDcPCnmGkg2Rs1Bk7WZyMkR
-	1BFH/x2X513K06iS6iP1tyzWTYdIMnSG+C+vfO+zHqcHcE7TwJnZg+2NKtFMOQ==
-Date: Fri, 3 Oct 2025 14:22:11 +1000
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: Alejandro Colomar <alx@kernel.org>
-Cc: Askar Safin <safinaskar@gmail.com>, brauner@kernel.org, 
-	dhowells@redhat.com, g.branden.robinson@gmail.com, jack@suse.cz, 
-	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-man@vger.kernel.org, mtk.manpages@gmail.com, viro@zeniv.linux.org.uk
-Subject: Re: [PATCH v5 7/8] man/man2/open_tree{,_attr}.2: document new
- open_tree_attr() API
-Message-ID: <2025-10-03-chosen-flabby-plunder-premises-hrf07h@cyphar.com>
-References: <20250925-new-mount-api-v5-7-028fb88023f2@cyphar.com>
- <20251001003841.510494-1-safinaskar@gmail.com>
- <2025-10-01-brawny-bronze-taste-mounds-zp8G2b@cyphar.com>
- <5ukckeqipdkz6aigdy7rmtsmy5zav5x4rw2hrgbxiwfflrcmgb@jy7yr34cwyat>
+	s=arc-20240116; t=1759465388; c=relaxed/simple;
+	bh=HKV2G7xK0NTd1QesbTsCr49zTjkvB1hGyDTI0OAALgY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=YnZkxNZMHYoOz4PZG2nHCA5TqZtExYzjVZCKJtMEhqfp+EI5fSwjazAnCYhCSfzsJteVu+JJFa4zckBkRtdqKJuqnvwpxHKRuarNibItuYLTXvly4hpGQ14796DKybD04KJViE8EX6KLB9RZ5AJh4lntz4+ib/AgtulY2pWCRAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-886e347d26bso245159539f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 21:23:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759465386; x=1760070186;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=heeo35bzR6TCKyVDE0Dwx36OB4enkxeB28ejktvZPaI=;
+        b=jMVVRK+NbWalLe+YOq47XnfuQCTj5cSw5mHMCfKhd/wqZzAuOPFRPrSmVwn1djeybI
+         Q2X2oDrNgWycEO1yVb/hyy/BnpSkANTN/1VLM2875AOJXtkUMvMWvsGqZlZoPooJVHNz
+         XCSt7//aXqxhB3ulTCpasGtkS+J2gkgx1CKb64QrRiVMVfKX4ay4TMU1BByjYhZmLkJI
+         ELuW8YrazSaMIUuC85LsKZzgBBgvSckl/VnZjMUIrzBckEb7Jb6hzTqqBIBpuNhvTqtp
+         kVNmXxwgysFS1Vq0mOK5iSNiSEodDKU0Ft6/DK6EDytSZnBNIVz94tMSML3Apst7QjVC
+         06xA==
+X-Forwarded-Encrypted: i=1; AJvYcCW2YzRFjjOxezxkKPJPjlttPSYre8cURgTxzzTEI3+now4DlyWuR0sJJTQSrmueQ/Kn70ZICvBnJ+t2ll8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkUL6t5lUPPOovMjsxPp0d8gqi0+nNV4D22ax2Rli7YSQRc5mm
+	XDU6X5EQFkL+xwuyGk7tGychG9ioDMsWJZYE4tVTZQ0ZRx72cSPb24wpd6nw7i6kqSextkDNk9u
+	Ab4GDfLgUKthiY0jljCNKuKWGLZpZk7EQ/krrlfsRuXlj6CDhM8cDBO2tTFo=
+X-Google-Smtp-Source: AGHT+IFgV1g/mhNiInUWc8HH9LuTV0oNxgHCANV4xcvEX1qN/fbUWat5rsRl8j8NOYYUOG15TWJvCl5xiWSokcQlqMZx9fT/qvYu
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="wybfpsl2p34qcvgm"
-Content-Disposition: inline
-In-Reply-To: <5ukckeqipdkz6aigdy7rmtsmy5zav5x4rw2hrgbxiwfflrcmgb@jy7yr34cwyat>
+X-Received: by 2002:a05:6602:2dd1:b0:883:fc4a:ea55 with SMTP id
+ ca18e2360f4ac-93b968ffff1mr234481039f.3.1759465386256; Thu, 02 Oct 2025
+ 21:23:06 -0700 (PDT)
+Date: Thu, 02 Oct 2025 21:23:06 -0700
+In-Reply-To: <20251003040153.2411696-1-kartikey406@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68df4faa.050a0220.1696c6.003e.GAE@google.com>
+Subject: Re: [syzbot] [ext4?] KASAN: slab-out-of-bounds Read in ext4_search_dir
+From: syzbot <syzbot+3ee481e21fd75e14c397@syzkaller.appspotmail.com>
+To: kartikey406@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+Hello,
 
---wybfpsl2p34qcvgm
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v5 7/8] man/man2/open_tree{,_attr}.2: document new
- open_tree_attr() API
-MIME-Version: 1.0
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-On 2025-10-01, Alejandro Colomar <alx@kernel.org> wrote:
-> Hi Aleksa,
->=20
-> On Wed, Oct 01, 2025 at 05:35:45PM +1000, Aleksa Sarai wrote:
-> > On 2025-10-01, Askar Safin <safinaskar@gmail.com> wrote:
-> > > Aleksa Sarai <cyphar@cyphar.com>:
-> > > > +mntfd2 =3D open_tree(mntfd1, "", OPEN_TREE_CLONE,
-> > > > +                   &attr, sizeof(attr));
-> > >=20
-> > > Your whole so-called "open_tree_attr example" doesn't contain any ope=
-n_tree_attr
-> > > calls. :)
-> > >=20
-> > > I think you meant open_tree_attr here.
-> >=20
-> > Oops.
-> >=20
-> > >=20
-> > > > +\&
-> > > > +/* Create a new copy with the id-mapping cleared */
-> > > > +memset(&attr, 0, sizeof(attr));
-> > > > +attr.attr_clr =3D MOUNT_ATTR_IDMAP;
-> > > > +mntfd3 =3D open_tree(mntfd1, "", OPEN_TREE_CLONE,
-> > > > +                   &attr, sizeof(attr));
-> > >=20
-> > > And here.
-> >=20
-> > Oops x2.
-> >=20
-> > > Otherwise your whole patchset looks good. Add to whole patchset:
-> > > Reviewed-by: Askar Safin <safinaskar@gmail.com>
->=20
-> I've applied the patch, with the following amendment:
->=20
-> 	diff --git i/man/man2/open_tree.2 w/man/man2/open_tree.2
-> 	index 8b48f3b78..f6f2fbecd 100644
-> 	--- i/man/man2/open_tree.2
-> 	+++ w/man/man2/open_tree.2
-> 	@@ -683,14 +683,14 @@ .SS open_tree_attr()
-> 	 .\" Using .attr_clr is not strictly necessary but makes the intent clea=
-rer.
-> 	 attr.attr_set =3D MOUNT_ATTR_IDMAP;
-> 	 attr.userns_fd =3D nsfd2;
-> 	-mntfd2 =3D open_tree(mntfd1, "", OPEN_TREE_CLONE,
-> 	-                   &attr, sizeof(attr));
-> 	+mntfd2 =3D open_tree_attr(mntfd1, "", OPEN_TREE_CLONE,
-> 	+                        &attr, sizeof(attr));
-> 	 \&
-> 	 /* Create a new copy with the id-mapping cleared */
-> 	 memset(&attr, 0, sizeof(attr));
-> 	 attr.attr_clr =3D MOUNT_ATTR_IDMAP;
-> 	-mntfd3 =3D open_tree(mntfd1, "", OPEN_TREE_CLONE,
-> 	-                   &attr, sizeof(attr));
-> 	+mntfd3 =3D open_tree_attr(mntfd1, "", OPEN_TREE_CLONE,
-> 	+                        &attr, sizeof(attr));
-> 	 .EE
-> 	 .in
-> 	 .P
->=20
->=20
-> (Hopefully I got it right.)
+Reported-by: syzbot+3ee481e21fd75e14c397@syzkaller.appspotmail.com
+Tested-by: syzbot+3ee481e21fd75e14c397@syzkaller.appspotmail.com
 
-That looks correct -- thanks!
+Tested on:
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-https://www.cyphar.com/
+commit:         e406d57b Merge tag 'mm-nonmm-stable-2025-10-02-15-29' ..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=117c0304580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=84e81c4d0c0e900a
+dashboard link: https://syzkaller.appspot.com/bug?extid=3ee481e21fd75e14c397
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=159c0304580000
 
---wybfpsl2p34qcvgm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJEEABYKADkWIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaN9PcxsUgAAAAAAEAA5t
-YW51MiwyLjUrMS4xMSwyLDIACgkQKJf60rfpRG841QD/aQiZQdLpxxn1Be+21pvf
-bXC7K4m0Tl12JBmevAxkfhAA/3deU7Zt6PHKGPssSrsI4P6icJWoYcVBvunm3LjI
-doEP
-=yX5i
------END PGP SIGNATURE-----
-
---wybfpsl2p34qcvgm--
+Note: testing is done by a robot and is best-effort only.
 
