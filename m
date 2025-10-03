@@ -1,168 +1,119 @@
-Return-Path: <linux-kernel+bounces-841016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF768BB5F89
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 08:17:17 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FB0BBB5F92
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 08:19:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5691D19E46AB
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 06:17:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1C7804E2863
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 06:19:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8FCE1F5617;
-	Fri,  3 Oct 2025 06:17:12 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 364B51FBEAC;
+	Fri,  3 Oct 2025 06:19:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="AMqz2Nn+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D29A158DAC
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 06:17:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82EA2158DAC;
+	Fri,  3 Oct 2025 06:19:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759472232; cv=none; b=Ra9FLkWQI/4hfCK2GJfYejegLNYs5NVwn9XML/MOWh9RZJvv8T2p8vquV+vUwntJxb1jNplrPmCxZJzHDyg+M9FO233svbeuNg+hYu+hDKsNmFGYFBUWUS81EoTTTHaQAq/0vY+Df5wK3AL5bT32hpyNh/GpA1OYEJIIGrC09VA=
+	t=1759472343; cv=none; b=mmkzXXTUZu7IPBag6L7v7kRkx925DywXrcCIU+/R5XGnMzkNIQIO6dCsp1OujqtW7NQDvnK0AGhwyP42DmYal4TBg9YEemukTv1OtSW1DLh2E2LJYRsb90Rdepr+E/9N8Cf6sBGldYym23jqBYEsAmg8W/Z5ezMZAjVluAgSxTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759472232; c=relaxed/simple;
-	bh=DY2LpIw+buD76/TQi8/+FFrw7iGIpPfinV+MQ53jhno=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=b9ALsRlI779aJOTNqn17/iNRADA0wj5vMq1PY744bqFVotQg27FvnWVdg6RoCFSOnAmJlAAQviwbPjYb3YrzDMpEDWEW1m49DB/hDCT6uRgBOU411U2iJ0mebB4MsizWD1OgZB7AaNRcueegnUjq3ai0Ol/mcrq7Q+uH+tUFpWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-42d88ae6e6aso20635035ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 23:17:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759472227; x=1760077027;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=V5vs9n9028GGJFsoBbT/p4gNDi1uzSRnj3Xc4sJwfKs=;
-        b=TX/I9ZYYebCt8jCFMt3TySOzTIZzCBBy7vNDf/wBwq/vwtNw+NuLaJW4fy78kf6lLC
-         vcM4yT4bBbUjYxqHPZq9FLoIrFQb2/70S4o7MIGOj5uM2zLLvOlO7GZH5W2Lycg+rgCp
-         d73nfvi0cDfblm4y2HdzPSIBuVT5+uPEgtqkJFoJIRU3dIZMvJDZ57UfFP5RQaGeD9k/
-         H966OePkElLaww6TT1tLmQXrklY51gsiwTDz8lViZiSC8uZQhyqvpZYtZ/7nPcs1DqYj
-         iloKH2DlssOBwvnyAqVioBp1w5gQkI8KsfelFlJXbPEN6ILG5zxN+xd+09tqWxr1o7ac
-         YmxQ==
-X-Gm-Message-State: AOJu0YyitdYQhyKL74oyAbcRX5SPDmqR1U9ga9UviPeYi1gTAw1mfjCN
-	DPbLBxQ04v1lACa/Bstex3nVK8nfu8qqIKuU8qi/QISbp3lZpoWifYbBYeJ+TydqnnHju7H+UF8
-	++5wODU/nyZy76ffWy4Q3kpc46Fl3SHDChGzvBPHHypgvTto4K27PkD7sVAw=
-X-Google-Smtp-Source: AGHT+IGN0CR5RM0gcMakJJbFf4//tFC3Ujc50fVpQ34lyj9FaFpJN4JiJqiGNYmBjmN7yp7m07qqR0vParoupnWxwBIxgT+C6PGU
+	s=arc-20240116; t=1759472343; c=relaxed/simple;
+	bh=oPZnpLhd0eTHGu0EKAIm4qHKPQRG1JVI8tF3iuEdlj4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uUyfrOth8e6/yealrxTSnXPxRB4ufRoSr3AL3/Bo9MPtflr7Q0B0i9Zpfdc4xjOp52vlgOSnU2KJZ67/jDJ/Ipp1lH1HcgixTL+m9Ds9HzBUmuBFf4nrAaeBc9A3BSYsx5Xkz8Ny3fVQ/0icZDecTbTfpJ+NKESBZqocnxtVOaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=AMqz2Nn+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D67BC4CEF5;
+	Fri,  3 Oct 2025 06:19:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1759472342;
+	bh=oPZnpLhd0eTHGu0EKAIm4qHKPQRG1JVI8tF3iuEdlj4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AMqz2Nn+ATNZEYG3EMxNEJMUyEp+w45V1za9eJSHnZMlExCO1q2302hHcjiATNf2U
+	 H928pcWh2P1vq0qhR6k5YavR7LPArVbGWBRlxJmCZ2FtBOwOEvoFA7LpZNsD2sct2n
+	 sbk+zi1E6+uOcgL9BXe9dqd5Khswe/aXyjK77Ve0=
+Date: Fri, 3 Oct 2025 08:18:58 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Chris Li <chrisl@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, Len Brown <lenb@kernel.org>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-acpi@vger.kernel.org, David Matlack <dmatlack@google.com>,
+	Pasha Tatashin <tatashin@google.com>,
+	Jason Miu <jasonmiu@google.com>, Vipin Sharma <vipinsh@google.com>,
+	Saeed Mahameed <saeedm@nvidia.com>,
+	Adithya Jayachandran <ajayachandra@nvidia.com>,
+	Parav Pandit <parav@nvidia.com>, William Tu <witu@nvidia.com>,
+	Mike Rapoport <rppt@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Leon Romanovsky <leon@kernel.org>
+Subject: Re: [PATCH v2 03/10] PCI/LUO: Forward prepare()/freeze()/cancel()
+ callbacks to driver
+Message-ID: <2025100323-sneer-perennial-55e1@gregkh>
+References: <20250916-luo-pci-v2-0-c494053c3c08@kernel.org>
+ <20250916-luo-pci-v2-3-c494053c3c08@kernel.org>
+ <2025093044-icky-treat-e1c3@gregkh>
+ <CACePvbUr42mj0kbcaw4cgKnd7v1f8z8Jhq4+_QN7Z5Nvicd1cw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:160a:b0:425:94f5:5e3 with SMTP id
- e9e14a558f8ab-42e7b220cc5mr24276065ab.10.1759472226753; Thu, 02 Oct 2025
- 23:17:06 -0700 (PDT)
-Date: Thu, 02 Oct 2025 23:17:06 -0700
-In-Reply-To: <68ddc2f9.a00a0220.102ee.006d.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68df6a62.050a0220.2c17c1.0018.GAE@google.com>
-Subject: Forwarded: [PATCH] ext4: reject inline data flag when i_extra_isize
- is zero
-From: syzbot <syzbot+3ee481e21fd75e14c397@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACePvbUr42mj0kbcaw4cgKnd7v1f8z8Jhq4+_QN7Z5Nvicd1cw@mail.gmail.com>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Thu, Oct 02, 2025 at 01:38:56PM -0700, Chris Li wrote:
+> On Tue, Sep 30, 2025 at 8:30 AM Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Tue, Sep 16, 2025 at 12:45:11AM -0700, Chris Li wrote:
+> > >  include/linux/dev_liveupdate.h |  23 +++++
+> > >  include/linux/device/driver.h  |   6 ++
+> >
+> > Driver core changes under the guise of only PCI changes?  Please no.
+> 
+> There is a reason why I use the device struct rather than the pci_dev
+> struct even though liveupdate currently only works with PCI devices.
+> It comes down to the fact that the pci_bus and pci_host_bridge are not
+> pci_dev struct. We need something that is common across all those
+> three types of PCI related struct I care about(pci_dev, pci_bus,
+> pci_host_bridge). The device struct is just common around those. I can
+> move the dev_liveupdate struct into pci_bus, pci_host_bridge and
+> pci_dev independently. That will be more contained inside PCI, not
+> touching the device struct. The patch would be bigger because the data
+> structure is spread into different structs. Do you have a preference
+> which way to go?
 
-***
+If you only are caring about one single driver, don't mess with a
+subsystem or the driver core, just change the driver.  My objection here
+was that you were claiming it was a PCI change, yet it was actually only
+touching the driver core which means that all devices in the systems for
+all Linux users will be affected.
 
-Subject: [PATCH] ext4: reject inline data flag when i_extra_isize is zero
-Author: kartikey406@gmail.com
+> > Break this series out properly, get the driver core stuff working FIRST,
+> > then show how multiple busses will work with them (i.e. you usually need
+> > 3 to know if you got it right).
+> 
+> Multiple buses you mean different types of bus, e.g. USB, PCI and
+> others or 3 pci_bus is good enough? Right now we have no intention to
+> support bus types other than PCI devices. The liveupdate is about
+> preserving the GPU context cross kernel upgrade. Suggestion welcome.
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+So all of this is just for one single driver.  Ugh.  Just do it in the
+single driver then, don't mess with the driver core, or even the PCI
+core.  Just make it specific to the driver and then none of us will even
+notice the mess that this all creates :)
 
+thanks,
 
-Prevent use-after-free in ext4_search_dir by rejecting inodes that
-claim to have inline data but have no extra inode space allocated.
-ext4 inline data is stored in the extra inode space beyond the
-standard 128-byte inode structure. This requires i_extra_isize to be
-non-zero to provide space for the system.data xattr that stores the
-inline directory entries or file data.
-However, a corrupted filesystem can craft an inode with both:
-- i_extra_isize == 0 (no extra space)
-- EXT4_INODE_INLINE_DATA flag set (claims to use extra space)
-This creates a fundamental inconsistency. When i_extra_isize is zero,
-ext4_iget() skips calling ext4_iget_extra_inode(), which means the
-inline xattr validation in check_xattrs() never runs. Later, when
-ext4_find_inline_entry() attempts to access the inline data, it reads
-unvalidated and potentially corrupt xattr structures, leading to
-out-of-bounds memory access and use-after-free.
-Fix this by validating in ext4_iget() that if an inode has the
-EXT4_INODE_INLINE_DATA flag set, i_extra_isize must be non-zero.
-This catches the corruption at inode load time before any inline
-data operations are attempted.
-
-Reported-by: syzbot+3ee481e21fd75e14c397@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=3ee481e21fd75e14c397
-Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
----
- fs/ext4/inode.c | 13 ++++++++++++-
- fs/ext4/xattr.c |  2 +-
- 2 files changed, 13 insertions(+), 2 deletions(-)
-
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 5b7a15db4953..257e9b1c6416 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -5099,7 +5099,8 @@ static inline int ext4_iget_extra_inode(struct inode *inode,
- 	if (EXT4_INODE_HAS_XATTR_SPACE(inode)  &&
- 	    *magic == cpu_to_le32(EXT4_XATTR_MAGIC)) {
- 		int err;
--
-+		ext4_error_inode(inode, "ext4_iget_extra_inode", 5102, 0,
-+				 "wow this inode has extra space");
- 		err = xattr_check_inode(inode, IHDR(inode, raw_inode),
- 					ITAIL(inode, raw_inode));
- 		if (err)
-@@ -5112,6 +5113,7 @@ static inline int ext4_iget_extra_inode(struct inode *inode,
- 		return err;
- 	} else
- 		EXT4_I(inode)->i_inline_off = 0;
-+
- 	return 0;
- }
- 
-@@ -5414,6 +5416,13 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
- 		ei->i_sync_tid = tid;
- 		ei->i_datasync_tid = tid;
- 	}
-+	if (EXT4_INODE_SIZE(inode->i_sb) < EXT4_GOOD_OLD_INODE_SIZE) {
-+		ext4_error_inode(inode, function, line, 0,
-+				 "wow! this inode has less data");
-+		if (ext4_test_inode_flag(inode, EXT4_INODE_INLINE_DATA)) {
-+			ext4_error_inode(inode, function, line, 0, "wow! this inode is line");
-+		}
-+	}
- 
- 	if (EXT4_INODE_SIZE(inode->i_sb) > EXT4_GOOD_OLD_INODE_SIZE) {
- 		if (ei->i_extra_isize == 0) {
-@@ -5422,6 +5431,8 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
- 			ei->i_extra_isize = sizeof(struct ext4_inode) -
- 					    EXT4_GOOD_OLD_INODE_SIZE;
- 		} else {
-+			ext4_error_inode(inode, function, line, 0,
-+					"wow! this inode has reached ext4 iget");
- 			ret = ext4_iget_extra_inode(inode, raw_inode, ei);
- 			if (ret)
- 				goto bad_inode;
-diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
-index 5a6fe1513fd2..9b4a6978b313 100644
---- a/fs/ext4/xattr.c
-+++ b/fs/ext4/xattr.c
-@@ -195,7 +195,7 @@ check_xattrs(struct inode *inode, struct buffer_head *bh,
- 	struct ext4_xattr_entry *e = entry;
- 	int err = -EFSCORRUPTED;
- 	char *err_str;
--
-+	ext4_error_inode(inode, "check_xattrs", 198, 0, "wow! we are in check_xattrs");
- 	if (bh) {
- 		if (BHDR(bh)->h_magic != cpu_to_le32(EXT4_XATTR_MAGIC) ||
- 		    BHDR(bh)->h_blocks != cpu_to_le32(1)) {
--- 
-2.43.0
-
+greg k-h
 
