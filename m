@@ -1,169 +1,190 @@
-Return-Path: <linux-kernel+bounces-841101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04AF4BB6442
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 10:47:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A354BB644E
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 10:51:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0BD619E55B4
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 08:48:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 855DA19E80C7
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 08:52:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7239227CCF3;
-	Fri,  3 Oct 2025 08:47:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C6E72765E3;
+	Fri,  3 Oct 2025 08:51:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="uUksfYjQ"
-Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="m8AHGWe8"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23CA227A929
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 08:47:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16F731804A
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 08:51:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759481238; cv=none; b=TfU0481Zcuf91KxKqaIYAgFJBQEVAk+ugLQSHHPRMnJqbA9hoZ4jDP57PNOWu51ggUyp+BJjpAAbyOrBHmUyGtUD9jLm95LbvNWNI6/+TdHAmaVpW7AtNvy8lmHfebWuAB5j2LcZMHyKLKeonLY1czESkeJpMgNEZMT/+OyGUgw=
+	t=1759481506; cv=none; b=SBGqgAbDNmokT9DON4v/HRflCUYpgE8F/287omoSFHWS5Zf/I3hnPrjZZ5E2F3QeFI0wFZaSH9ycW/jQ/dMeQ1pNqs9XhqoAn2ZvQ9FjF3aoJqPjkEB4zpYRSmYJlpngNTiIG8u1pLBa3X56gZnQhfR9NZrIK9C7EbUf0Fp2Cvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759481238; c=relaxed/simple;
-	bh=XLodWl1Mnqi6n+xmZaM4r4KxwmmAoji2W6kZJLMVLA8=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Qy96/zeVsQWPcv544LAR07azUGtfTPH+p6k260257N/mDuXEoF6+1bxEd1mIyz22Z7qaNIqfShGhSYDSVBHdLtsg1mR4hybZeMCiVf+f/P7nvaKomG3ajJ7cOTBjdthhMu9TYSxehQwuhRbZJTXPanRqWpkKTmjHGTdTaamkkeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=uUksfYjQ; arc=none smtp.client-ip=91.218.175.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1759481235;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CZM6bExjDs8jz6TVsKvY1N151Suvl2rvzQSjV8ALYIE=;
-	b=uUksfYjQzFzSy+jIUVRgc1r4bn38I5hd+45qOv9/mdFxrvxzk9fcv6zH0laC2n+GqUwYYK
-	LkUwLZKnFojni7xbzvB9JkN87RKhExIzunDQfsiFzpCqzTXr8rFazFgRGqVbh9NlKL6jqy
-	GuCU2BX8K3WYSi4giFgDNlfM4rFjHUA=
-From: KaFai Wan <kafai.wan@linux.dev>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	shuah@kernel.org,
-	kafai.wan@linux.dev,
-	toke@redhat.com,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH bpf 2/2] selftests/bpf: Add test for unpinning htab with internal timer struct
-Date: Fri,  3 Oct 2025 16:45:28 +0800
-Message-ID: <20251003084528.502518-3-kafai.wan@linux.dev>
-In-Reply-To: <20251003084528.502518-1-kafai.wan@linux.dev>
-References: <20251003084528.502518-1-kafai.wan@linux.dev>
+	s=arc-20240116; t=1759481506; c=relaxed/simple;
+	bh=x2XT9zcVh7kzpD0X4tRTqt0/foxsWPu3XNzZKS/xTCM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MGUCsXeHORWH0qq1ldxY4ArW5jGdAMrpwFvkYw8vEBCjqq/4UX5UlGlIaXRrLPr/hu9Bn/QBP86Tm2HdqnHOzfE9fMjSYeceyHH7NgUkim99gguJjYRKg3ChVo4P5qxXbAjjyy/rQiD6V6eA+MvQS/0zv5QbpD7tqnr1uC2szVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=m8AHGWe8; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-367874aeeacso20643991fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 01:51:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1759481503; x=1760086303; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YmsmH87Q3nsWkYHojOW1pGLDSq47SZ4os0x3/+bAd08=;
+        b=m8AHGWe8HvKSi7+9lYUVf2aMm16iHSkGGiFtwoQNHZgfx+2da1ua5h4lsvrCEf3kgT
+         8aO9ZQO+vP/KFj1w5aOcM10ArD2WvZX57bmNXwMYsd4keYfskgHkwNlGPRVW69h6jZ4e
+         ddWQFbDOkoTUggQpqzHA436NhCQtWOtsbb6uYYqIP7gOij2WqKzM+NiCav1naoZQyYsk
+         QK1J4iKhXr/o9ClW4mdqRfuzhpIWaaLqpaMhXTDoAd+ZZ//dpSj70i5qxPzn2oDwZG9N
+         CIXyAMx8DeOJBEU1Mfs+FTo744x58MqMlX620xpIEyKPJwJY7YqCGxFkA8/IOyt7bOSi
+         oHRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759481503; x=1760086303;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YmsmH87Q3nsWkYHojOW1pGLDSq47SZ4os0x3/+bAd08=;
+        b=QhS2Q1Pl7q3Vm9fIqf0YoHWgS0FfAV2IcfoJBP8xf5yB+oGG4WjDrKJIpJit6b42hg
+         nv7eIgsFeM7wtYN/Klmlf7QeIJnGeoibJBkSTo4+0+3ptB3kLnBN+K8HEseOgFHOie4z
+         85tQ2x0T8x2kKkeDylrZxZwIBp1DXV7NPdvWuqklQ9qSsZfFRzsb8lmuBZWMS30Rl3TZ
+         SMtje0TTvr848Kh8wOHbf+oCG/44RwfbCF0LIp3WEXRyVLTlYd8dyDwRi0q35ryVAbY0
+         ffozqu7B3PK9kd/52yKjgnzXfcLpRjODya6hJSOMeJWbzUmlU7MYUmY/cnsTFW/lhcK+
+         RMew==
+X-Forwarded-Encrypted: i=1; AJvYcCWGRfa66w+9PQwa6L6lgrnsOd4x+e0O7bKMOTcieizFXHURr+rSWYopd802I5VsAxJSNODMZ3u4HOhbmH4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAsp7bpBTXLrn+dHz3T2KX7t+KsLDNBHgIIy2GvkcMDOUIBSXh
+	tM3GKfqHYat7dYY2AZrL5q6TFXtAIp6Hph0F1H59AY3kmBp40LXOFIDQEBEZEuHXfdLT/XSO0Dt
+	mb/TZKfkrLlUfPejY9QQzQoRYS2S+WnoIBia5Qi4eDg==
+X-Gm-Gg: ASbGncvSuMfkhqigBKabw3RFUFW2TK7vbIeXoTi+iISElBPeVSgOi+YgWKM5/oVlYxF
+	o4Wlm/EWaULO8ldnjKvN5/x24W5Yfbl3+OLkGnPYFVTrrAMVMx3D4fMZEdl+mZ/u+mwCNsW5Dqe
+	CrDsDwQP+/SGZ/yfKcbk0OQOeQXbBFyDdoyXh+xib3cxDDgnTQKSLzVr3OUAJ27Hp47hwGX0Gz7
+	1a1jMY8vANsTEPdGHOkACUgfOacjvYBIqHg1UMHulyCU1rVUrju+JJZ9mvqwA==
+X-Google-Smtp-Source: AGHT+IGpVFhYHvvmq0k22AePxJXM3wxZnhvCRYnHq9Pngg2NH46casC/4XWUD4nLAbqyQDtuHaatgzMh2vzh8d67flE=
+X-Received: by 2002:a05:651c:12c1:b0:332:3562:9734 with SMTP id
+ 38308e7fff4ca-374c36c07f2mr6231941fa.8.1759481503006; Fri, 03 Oct 2025
+ 01:51:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20251002215759.1836706-1-markus.probst@posteo.de>
+ <CAMRc=Me3VLbmRksbrHmOdw8NxN7sxXjeuNFb9=6DzE=uLn0oAA@mail.gmail.com> <7f4057f25594ac3b50993a739af76b7b1430ee6a.camel@posteo.de>
+In-Reply-To: <7f4057f25594ac3b50993a739af76b7b1430ee6a.camel@posteo.de>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Fri, 3 Oct 2025 10:51:31 +0200
+X-Gm-Features: AS18NWCIhQoF-dv9QcLF1nIcoukTH-eCETtxxDfQif9_jQZhzC3c7G8RkGTaXOE
+Message-ID: <CAMRc=McioBjF3WCBu0ezzuL+JJTiEpF2fz1YpbToRpijpHfAEg@mail.gmail.com>
+Subject: Re: [PATCH] gpio: of: make it possible to reference gpios probed in
+ acpi in device tree
+To: Markus Probst <markus.probst@posteo.de>, Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Mika Westerberg <westeri@kernel.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-gpio@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add test to verify that unpinning hash tables containing internal timer
-structures does not trigger context warnings.
+On Fri, Oct 3, 2025 at 10:40=E2=80=AFAM Markus Probst <markus.probst@posteo=
+.de> wrote:
+>
+> On Fri, 2025-10-03 at 10:03 +0200, Bartosz Golaszewski wrote:
+> > On Thu, Oct 2, 2025 at 11:58=E2=80=AFPM Markus Probst
+> > <markus.probst@posteo.de> wrote:
+> > >
+> > > sometimes it is necessary to use both acpi and device tree to
+> > > declare
+> >
+> > This is a rather controversial change so "sometimes" is not
+> > convincing
+> > me. I would like to see a user of this added in upstream to consider
+> > it.
+> >
+> > > devices. Not every gpio device driver which has an acpi_match_table
+> > > has
+> > > an of_match table (e.g. amd-pinctrl). Furthermore gpio is an device
+> > > which
+> >
+> > What is the use-case here because I'm unable to wrap my head around
+> > it? Referencing devices described in ACPI from DT? How would the
+> > associated DT source look like?
+> In my specific usecase for the Synology DS923+, there are gpios for
+> powering the usb vbus on (powered down by default), also for powering
+> on sata disks. An example for a regulator defined in DT using a gpio in
+> ACPI (in this case controlling the power of on of the usb ports):
+>
+>         gpio: gpio-controller@fed81500 {
+>                 acpi-path =3D "\\_SB_.GPIO";
+>                 #gpio-cells =3D <2>;
+>         };
+>
+>         vbus1_regulator: fixedregulator@0 {
+>                 compatible =3D "regulator-fixed";
+>                 regulator-name =3D "vbus1_regulator";
+>                 regulator-min-microvolt =3D <5000000>;
+>                 regulator-max-microvolt =3D <5000000>;
+>                 gpio =3D <&gpio 0x2a 0x01>;
+>         };
+>
+> - Markus Probst
+> >
 
-Each subtest (timer_prealloc and timer_no_prealloc) can trigger the
-context warning when unpinning, but the warning cannot be triggered
-twice within a short time interval (a HZ), which is expected behavior.
+Krzysztof: Could you please look at this and chime in? Does this make any s=
+ense?
 
-Signed-off-by: KaFai Wan <kafai.wan@linux.dev>
----
- .../selftests/bpf/prog_tests/pinning_htab.c   | 37 +++++++++++++++++++
- .../selftests/bpf/progs/test_pinning_htab.c   | 25 +++++++++++++
- 2 files changed, 62 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/pinning_htab.c
- create mode 100644 tools/testing/selftests/bpf/progs/test_pinning_htab.c
+> > Bart
+> >
+> > > can't be easily disabled in acpi and then redeclared in device
+> > > tree, as
+> > > it often gets used by other devices declared in acpi (e.g. via
+> > > GpioInt or
+> > > GpioIo). Thus a disable of acpi and migration to device tree is not
+> > > always
+> > > possible or very time consuming, while acpi by itself is very
+> > > limited and
+> > > not always sufficient. This won't affect most configurations, as
+> > > most of
+> > > the time either CONFIG_ACPI or CONFIG_OF gets enabled, not both.
+> > >
+> > > Signed-off-by: Markus Probst <markus.probst@posteo.de>
+> > > ---
+> > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > >=
+ > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > =
+> > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > >=
+ > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > =
+> > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > >=
+ > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > =
+> > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > >=
+ > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > =
+> > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > >=
+ > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > =
+> > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > >=
+ > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > =
+> > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > >=
+ > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > =
+> > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > >=
+ > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > =
+> > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > >=
+ > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > =
+> > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > >=
+ > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > =
+> > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > >=
+ > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > =
+> > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > >=
+ > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > =
+> > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > >=
+ > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > =
+> > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > > >=
+ > > > > > > > > > >
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/pinning_htab.c b/tools/testing/selftests/bpf/prog_tests/pinning_htab.c
-new file mode 100644
-index 000000000000..fc804bb87b26
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/pinning_htab.c
-@@ -0,0 +1,37 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <test_progs.h>
-+#include "test_pinning_htab.skel.h"
-+
-+static void unpin_map(const char *map_name, const char *pin_path)
-+{
-+	struct test_pinning_htab *skel;
-+	struct bpf_map *map;
-+	int err;
-+
-+	skel = test_pinning_htab__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "skel open_and_load"))
-+		return;
-+
-+	map = bpf_object__find_map_by_name(skel->obj, map_name);
-+	if (!ASSERT_OK_PTR(map, "bpf_object__find_map_by_name"))
-+		goto out;
-+
-+	err = bpf_map__pin(map, pin_path);
-+	if (!ASSERT_OK(err, "bpf_map__pin"))
-+		goto out;
-+
-+	err = bpf_map__unpin(map, pin_path);
-+	if (!ASSERT_OK(err, "bpf_map__unpin"))
-+		goto out;
-+out:
-+	test_pinning_htab__destroy(skel);
-+}
-+
-+void test_pinning_htab(void)
-+{
-+	if (test__start_subtest("timer_prealloc"))
-+		unpin_map("timer_prealloc", "/sys/fs/bpf/timer_prealloc");
-+	if (test__start_subtest("timer_no_prealloc"))
-+		unpin_map("timer_no_prealloc", "/sys/fs/bpf/timer_no_prealloc");
-+}
-diff --git a/tools/testing/selftests/bpf/progs/test_pinning_htab.c b/tools/testing/selftests/bpf/progs/test_pinning_htab.c
-new file mode 100644
-index 000000000000..ae227930c73c
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/test_pinning_htab.c
-@@ -0,0 +1,25 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include "vmlinux.h"
-+#include <bpf/bpf_helpers.h>
-+
-+char _license[] SEC("license") = "GPL";
-+
-+struct timer_val {
-+	struct bpf_timer timer;
-+};
-+
-+struct {
-+	__uint(type, BPF_MAP_TYPE_HASH);
-+	__type(key, __u32);
-+	__type(value, struct timer_val);
-+	__uint(max_entries, 1);
-+} timer_prealloc SEC(".maps");
-+
-+struct {
-+	__uint(type, BPF_MAP_TYPE_HASH);
-+	__type(key, __u32);
-+	__type(value, struct timer_val);
-+	__uint(max_entries, 1);
-+	__uint(map_flags, BPF_F_NO_PREALLOC);
-+} timer_no_prealloc SEC(".maps");
--- 
-2.43.0
+[snip]
 
+What happened here with your mailer?
+
+Bart
 
