@@ -1,271 +1,184 @@
-Return-Path: <linux-kernel+bounces-841396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5580DBB731D
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 16:35:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FE3DBB7326
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 16:36:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 727D819E83A7
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 14:36:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4B433B4EC4
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 14:36:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DF34242D90;
-	Fri,  3 Oct 2025 14:35:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2808621FF29;
+	Fri,  3 Oct 2025 14:36:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xhCX0EiJ"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="eMQTxe5P"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AB41139E
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 14:35:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A273D1F8724
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 14:36:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759502121; cv=none; b=DtveKgAJ6bmxD+zBS7E4B2UD7sTsk5sH0jQNODNX5vrBHzaEdxJ3BTmxPY7Itym7F1YifEXLWPuNSHoX7IFG8o4ZRNDcrfZ3NujHc4RRdGJ7sMs+8GbVVIZEijSzMzJS8GJKbnZnmsxrsF2TGcbym6MGLyUuWGIh7KWNa2f/obM=
+	t=1759502172; cv=none; b=IdWAP802umMQuL6Q/rGWvSFF8FFqvt85rIQc/6TLrli9FCoFAFUIpHjpK21Kt5rjO5Es+/hjsyjdefGVyN4//sg15wdk9RHe9GjILHNRkwvVibct3hNKmO/E7B6QxN8gbkg4iGta+NbD/8jLTBC+kcfasYmZKj2TKtGRHzlHff8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759502121; c=relaxed/simple;
-	bh=Q4wvhKK1SLC7lyGyvNT/vgYSM+5FbboY05jYhys6UEU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=c/NSw87Jv8Gwv4jPabhZ139Ar5OiG4R/C80rfeFuH+VFismqGDXiwstsHi3CkCSYjUx8QTeLbN0WXjHfB5orn3qwjbgeQosXmC6QPVRjWqHU5azyBrVpA4Jq2LWQGyS01iohOc0sAB2j4W1PVUAYZsXc0oMXGWHdaa9SM1JMstQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xhCX0EiJ; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32ee157b9c9so2088369a91.2
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 07:35:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759502119; x=1760106919; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Iz/kuorGnhS1JOjPWbMWU1uMXuAxZjX5KeqruEHo5gU=;
-        b=xhCX0EiJWFYwAOJ9Hx1CL2LrSi4BlAnCg5AMuvjvqS6xZuUsBwXwmKLxgXRgOTiF6r
-         W4OXOTn5Y9+HaEghznHKnFZPcaK+Bu65bV+IG6LiryzVzvgotPDM1KYNfRxM5qpYB1lz
-         k0FulPSDye9EQQuMwcXTSgHTEolLffJFBsaJn/WZ4JJX7B1tcYlZ8kC18TlP5LpEbWfr
-         MxkGAjcwDUXa8SgvxJJ3TUqrZEJyE5OvhMfp1frqyTH5FmvL0OGJyHeACEnEtPQ7FURI
-         wj9cbjhtyz8qQPSJk0bYQS9IA12E7q3wcsA1aDG1iKu4lCKkG3W7qRpVal/A1iZS2cB3
-         veJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759502119; x=1760106919;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Iz/kuorGnhS1JOjPWbMWU1uMXuAxZjX5KeqruEHo5gU=;
-        b=c96gE7esGgYTDKqV7SnH6k2gNzw350n+lmR4OZbV9dnXN/kz6ZhTjLxlSy/P6ODFIv
-         ODMfgtMpBX1GBBGsPwCdy38IvGMiUXm4jhYqPid3tT31VvB61fBmiSTGNLKxMdij3y+2
-         0rNtiyfUhFmrv4yrskjbazYan5L/LRn/xYcLPEqsSayeqt8pTZ1JTZ90p4rj5fgWklfh
-         VNL42v9z53x8AKK9E899tM2OYLRGmBMqzWSwm4KE9LlqtrGjvbwlx28VOUZHyjZ0QqTG
-         eLd40oWf7QRFsABcJBmJDhYY3Rm5z4i1ZmfbgVNXnA7b75ttrV4+/O/rR2cT6lyDTZ1u
-         1F2A==
-X-Forwarded-Encrypted: i=1; AJvYcCVvWLc3evPf/NoIentBsOMzvA+YqOPgrvo0bZyf7XQs/SIP3Ou0qf5GCjurjpImMGwT27EhS+srTg4oOQI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9ZTlgLQ2rEeK1xpUw48YmvTvsQ/oWXzRbu3eGqAbijGaM5WjY
-	cy6tDHCuFI6i6uWC2bFJQ+GTyPogkr8Vg73rCoRQXQmvSHGjdXmJF+BlGNINgy1Y4naXjyKo5AM
-	9z7AgCw==
-X-Google-Smtp-Source: AGHT+IFUN7Oe4z6ZymRlBXqr3L4kG4PYp2PMFWWKwKk/eG/6YDVO+WPrjEYPY3MOxRYFU3HuhZBFs27G7uM=
-X-Received: from pjpy4.prod.google.com ([2002:a17:90a:a404:b0:32b:95bb:dbc])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4a11:b0:32e:e18a:3691
- with SMTP id 98e67ed59e1d1-339c27b3cf0mr3856927a91.35.1759502118454; Fri, 03
- Oct 2025 07:35:18 -0700 (PDT)
-Date: Fri, 3 Oct 2025 07:35:16 -0700
-In-Reply-To: <b3c2da681c5bf139e2eaf0ea82c7422f972f6288.1747264138.git.ackerleytng@google.com>
+	s=arc-20240116; t=1759502172; c=relaxed/simple;
+	bh=VyohuO4CZGUcGR62GS+0n04Mx5bz3VjGW5hDt2YqbmY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=l7bEjSIhP3tJY6vIv8pQ4wukKPFE2fcplQAufRJ+p6kPsGVB2SKolxpNtfYlb5QPooh0l9xlQElaXziGDZLD/8ldGWs4zwr3GHx70jK/XCoFrTj4+hOmNXJwtd8wwtFD4SomomsHgFEjYej9WVgYM6MfhC/4+sOqHisaJb4OnCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=eMQTxe5P; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id AE8624E40E97;
+	Fri,  3 Oct 2025 14:36:08 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 7DFAB60683;
+	Fri,  3 Oct 2025 14:36:08 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E4BD6102F1B8A;
+	Fri,  3 Oct 2025 16:36:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1759502167; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=7ENhq4LPUBj+5tdkC5VWGQKUjz+S/mLq1l/k1oBmWF4=;
+	b=eMQTxe5PK2DpR3qfK4LbwutTQbIoLivxguVmJQIcLxBA/1R9sPXFDdP0/mR54JIBSTgyJX
+	14uqxisQdKpT4CyiYu3bKsPCGIBDIQOnAnBwyRPHBiRLNHy1kuEu3ojPlUTszjSVOMDiIy
+	D5xexCWCMgtcNbe/5xV9HCLi9b2sEOoWkTgXI4v6nZtN1AEzGepP8Ojf7q3wwrRi+HHosl
+	qggAuElvSY6POoHkzshV3vmTKJW7tKSUjWDXcL0uYOgM2nwJPRnZO4auwKVtsccPP4dR1s
+	KpFQeUiWsH2vVLB+kMepRDLkQyQUSTddOpDBpX0eRp8C4BmFPOUNx0tIs3VGiQ==
+From: Romain Gantois <romain.gantois@bootlin.com>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
+ Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>, Hans de Goede <hansg@kernel.org>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-iio@vger.kernel.org
+Subject: Re: [PATCH v2 2/5] iio: add processed write API
+Date: Fri, 03 Oct 2025 16:35:59 +0200
+Message-ID: <2406495.tdWV9SEqCh@fw-rgant>
+In-Reply-To:
+ <CAMknhBG_o=jTKtHHDyK=bq7wcHMnDM1ZHaYAfX0K2hjHfkX3Bg@mail.gmail.com>
+References:
+ <20250925-ltm8054-driver-v2-0-bb61a401a0dc@bootlin.com>
+ <5015441.GXAFRqVoOG@fw-rgant>
+ <CAMknhBG_o=jTKtHHDyK=bq7wcHMnDM1ZHaYAfX0K2hjHfkX3Bg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1747264138.git.ackerleytng@google.com> <b3c2da681c5bf139e2eaf0ea82c7422f972f6288.1747264138.git.ackerleytng@google.com>
-Message-ID: <aN_fJEZXo6wkcHOh@google.com>
-Subject: Re: [RFC PATCH v2 29/51] mm: guestmem_hugetlb: Wrap HugeTLB as an
- allocator for guest_memfd
-From: Sean Christopherson <seanjc@google.com>
-To: Ackerley Tng <ackerleytng@google.com>
-Cc: kvm@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	x86@kernel.org, linux-fsdevel@vger.kernel.org, aik@amd.com, 
-	ajones@ventanamicro.com, akpm@linux-foundation.org, amoorthy@google.com, 
-	anthony.yznaga@oracle.com, anup@brainfault.org, aou@eecs.berkeley.edu, 
-	bfoster@redhat.com, binbin.wu@linux.intel.com, brauner@kernel.org, 
-	catalin.marinas@arm.com, chao.p.peng@intel.com, chenhuacai@kernel.org, 
-	dave.hansen@intel.com, david@redhat.com, dmatlack@google.com, 
-	dwmw@amazon.co.uk, erdemaktas@google.com, fan.du@intel.com, fvdl@google.com, 
-	graf@amazon.com, haibo1.xu@intel.com, hch@infradead.org, hughd@google.com, 
-	ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz, 
-	james.morse@arm.com, jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, 
-	jhubbard@nvidia.com, jroedel@suse.de, jthoughton@google.com, 
-	jun.miao@intel.com, kai.huang@intel.com, keirf@google.com, 
-	kent.overstreet@linux.dev, kirill.shutemov@intel.com, liam.merwick@oracle.com, 
-	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, maz@kernel.org, 
-	mic@digikod.net, michael.roth@amd.com, mpe@ellerman.id.au, 
-	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es, 
-	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com, 
-	paul.walmsley@sifive.com, pbonzini@redhat.com, pdurrant@amazon.co.uk, 
-	peterx@redhat.com, pgonda@google.com, pvorel@suse.cz, qperret@google.com, 
-	quic_cvanscha@quicinc.com, quic_eberman@quicinc.com, 
-	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com, quic_pheragu@quicinc.com, 
-	quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com, richard.weiyang@gmail.com, 
-	rick.p.edgecombe@intel.com, rientjes@google.com, roypat@amazon.co.uk, 
-	rppt@kernel.org, shuah@kernel.org, steven.price@arm.com, 
-	steven.sistare@oracle.com, suzuki.poulose@arm.com, tabba@google.com, 
-	thomas.lendacky@amd.com, usama.arif@bytedance.com, vannapurve@google.com, 
-	vbabka@suse.cz, viro@zeniv.linux.org.uk, vkuznets@redhat.com, 
-	wei.w.wang@intel.com, will@kernel.org, willy@infradead.org, 
-	xiaoyao.li@intel.com, yan.y.zhao@intel.com, yilun.xu@intel.com, 
-	yuzenghui@huawei.com, zhiquan1.li@intel.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="nextPart2710806.irdbgypaU6";
+ micalg="pgp-sha512"; protocol="application/pgp-signature"
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Wed, May 14, 2025, Ackerley Tng wrote:
-> guestmem_hugetlb is an allocator for guest_memfd. It wraps HugeTLB to
-> provide huge folios for guest_memfd.
-> 
-> This patch also introduces guestmem_allocator_operations as a set of
-> operations that allocators for guest_memfd can provide. In a later
-> patch, guest_memfd will use these operations to manage pages from an
-> allocator.
-> 
-> The allocator operations are memory-management specific and are placed
-> in mm/ so key mm-specific functions do not have to be exposed
-> unnecessarily.
+--nextPart2710806.irdbgypaU6
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
+From: Romain Gantois <romain.gantois@bootlin.com>
+To: David Lechner <dlechner@baylibre.com>
+Subject: Re: [PATCH v2 2/5] iio: add processed write API
+Date: Fri, 03 Oct 2025 16:35:59 +0200
+Message-ID: <2406495.tdWV9SEqCh@fw-rgant>
+MIME-Version: 1.0
 
-This code doesn't have to be put in mm/, all of the #includes are to <linux/xxx.h>.
-Unless I'm missing something, what you actually want to avoid is _exporting_ mm/
-APIs, and for that all that is needed is ensure the code is built-in to the kernel
-binary, not to kvm.ko.
+On Wednesday, 1 October 2025 12:03:21 CEST David Lechner wrote:
+> On Wed, Oct 1, 2025 at 9:19=E2=80=AFAM Romain Gantois <romain.gantois@boo=
+tlin.com>
+>=20
+=2E..
+> > > > +           case IIO_VAL_INT_PLUS_MICRO:
+> > > > +           case IIO_VAL_INT_PLUS_NANO:
+> > > > +                   break;
+> > > > +           case IIO_VAL_FRACTIONAL:
+> > > > +                   offset_val /=3D offset_val2;
+> > > > +                   break;
+> > > > +           case IIO_VAL_FRACTIONAL_LOG2:
+> > > > +                   offset_val >>=3D offset_val2;
+> > > > +                   break;
+> > > > +           default:
+> > > > +                   return -EINVAL;
+> > > > +           }
+> > > > +
+> > > > +           *raw -=3D offset_val;
+> > > > +   }
+> > >=20
+> > > There are some rounding biases in this function, but I'm not sure if
+> > > it is worth trying to make a perfectly fair function.
+> >=20
+> > I'm unfamiliar with the notion of rounding bias, does it mean that nest=
+ed
+> > calls of this function would tend to amplify rounding errors? In this
+> > case,
+> > would rounding to the nearest integer instead of whatever is being done=
+ by
+> > the
+> > integer division here be a good solution?
+>=20
+> In this case, the issue is when you are taking multiple samples. When you
+> look at the average of all of the samples, you will be able to see the
+> bias. For example, in one of the drivers I was looking at there is an
+> offset of xxxx.6. Since the IIO_VAL_INT_PLUS_MICRO case is just dropping
+> any fractional part, the raw value will be on average 0.6 lsb lower that
+> the requested value. This could be a problem in an application where high
+> precision is required. But probably not noticeable in cases where 1 lsb is
+> less than the noise level.
+>=20
 
-diff --git a/virt/kvm/Makefile.kvm b/virt/kvm/Makefile.kvm
-index d047d4cf58c9..c18c77e8a638 100644
---- a/virt/kvm/Makefile.kvm
-+++ b/virt/kvm/Makefile.kvm
-@@ -13,3 +13,5 @@ kvm-$(CONFIG_HAVE_KVM_IRQ_ROUTING) += $(KVM)/irqchip.o
- kvm-$(CONFIG_HAVE_KVM_DIRTY_RING) += $(KVM)/dirty_ring.o
- kvm-$(CONFIG_HAVE_KVM_PFNCACHE) += $(KVM)/pfncache.o
- kvm-$(CONFIG_KVM_GUEST_MEMFD) += $(KVM)/guest_memfd.o
-+
-+obj-$(subst m,y,$(CONFIG_KVM_GUEST_MEMFD)) += $(KVM)/guest_memfd_hugepages.o
-\ No newline at end of file
+Thanks a lot for the detailed explanation. For the IIO_VAL_INT_PLUS_MICRO/N=
+ANO=20
+cases, I think that scaling by MICRO/NANO, then subtracting the offset, the=
+n=20
+dividing and rounding to the closest would give a small precision improveme=
+nt=20
+in some cases. It would be a bit slower though, but for low sample-rate=20
+devices like the ones in IIO I don't think it would be noticeable. I'll giv=
+e=20
+it a try.
 
-People may want the code to live in mm/ for maintenance and ownership reasons
-(or not, I haven't followed the discussions on hugepage support), but that's a
-very different justification than what's described in the changelog.
+> The floor division for IIO_VAL_FRACTIONAL creates a similar bias.
+> DIV_ROUND_CLOSEST can help there, but even that has a small bias because
+> values of exactly 0.5 always get rounded in the same direction. That kind
+> of bias is much smaller though, so easier to ignore.
+>=20
 
-And if the _only_ user is guest_memfd, putting this in mm/ feels quite weird.
-And if we anticipate other users, the name guestmem_hugetlb is weird, because
-AFAICT there's nothing in here that is in any way guest specific, it's just a
-few APIs for allocating and accounting hugepages.
+DIV_ROUND_CLOSEST would indeed reduce the bias at no substantial cost,=20
+so I think I'll go with that.
 
-Personally, I don't see much point in trying to make this a "generic" library,
-in quotes because the whole guestmem_xxx namespace makes it anything but generic.
-I don't see anything in mm/guestmem_hugetlb.c that makes me go "ooh, that's nasty,
-I'm glad this is handled by a library".  But if we want to go straight to a
-library, it should be something that is really truly generic, i.e. not "guest"
-specific in any way.
+Thanks,
 
-> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
-> 
-> Change-Id: I3cafe111ea7b3c84755d7112ff8f8c541c11136d
-> ---
->  include/linux/guestmem.h      |  20 +++++
->  include/uapi/linux/guestmem.h |  29 +++++++
->  mm/Kconfig                    |   5 +-
->  mm/guestmem_hugetlb.c         | 159 ++++++++++++++++++++++++++++++++++
->  4 files changed, 212 insertions(+), 1 deletion(-)
->  create mode 100644 include/linux/guestmem.h
->  create mode 100644 include/uapi/linux/guestmem.h
+=2D-=20
+Romain Gantois, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--nextPart2710806.irdbgypaU6
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEIcCsAScRrtr7W0x0KCYAIARzeA4FAmjf308ACgkQKCYAIARz
+eA4YERAAm4m2/w4+jcoswY51aGJZqKrSPOzOpO8q6r9YFkh7HwV1oCP/ChhhdBXF
+fY0mg8b9JgN/9kk2tSSjnhf8yhxNQu9U/j3W+pnFV5LNZPhqxJgdjQDmg4NnVaEm
+yUA+cf7/RAVlJz8RTPZJi5NlTdZbTQUiPDV2GBGjFwejtlg1Nf1LArXfQmVB8kS4
+ZWvyTc3HaWHHcrjlz6EV534ewUTURMT1hH5uUVbdv7OKva7LRkbskHBMDvwTs+UF
+DLztHWy4h2CFmPMN0/qlF6hIUrNVPkR0FoMtFRYbwpREDfWLsGdSsz5Jo/0Rc3Kf
+E8zzwb7ghaC8JD0evSLoSJ9ie8S5hMhqvCXc66ZSagoE9xA0V0ZWEc9a0UbcVh2m
++e/q2N9xsDSjrAPJZLlU0E3AHelhRjMQOEq4iESPld2rM5IJb3HDEBjQzCNWz86k
+ZBprOos/x8XXHaWg31s1cSdU0owOfzZ2I1wptwIer6k18hvwYzBuyCXZcfcSyWjY
+RDU40EibBcglu0imyRhwW5rkRhsfulUkkM7D2s8PDh0fblNBf12wRBtQraRoEmCp
+/XHxZ0T206JkI3jjgq7MkxHEzcMcCrcCYiv3h26beu3WmTC1FGdVeHMnBC0A7E6d
+farq3q/R3hZas94F3irQJjakRXyGV8/+C1embayiuxBM81qLE/A=
+=gBYg
+-----END PGP SIGNATURE-----
+
+--nextPart2710806.irdbgypaU6--
 
 
-..
 
-> diff --git a/include/uapi/linux/guestmem.h b/include/uapi/linux/guestmem.h
-> new file mode 100644
-> index 000000000000..2e518682edd5
-> --- /dev/null
-> +++ b/include/uapi/linux/guestmem.h
-
-With my KVM hat on, NAK to defining uAPI in a library like this.  This subtly
-defines uAPI for KVM, and effectively any other userspace-facing entity that
-utilizes the library/allocator.  KVM's uAPI needs to be defined by KVM, period.
-
-There's absolutely zero reason to have guestmem_hugetlb_setup() take in flags.
-Explicitly pass the page size, or if preferred, the page_size_log, and let the
-caller figure out how to communicate the size to the kernel.
-
-IMO, the whole MAP_HUGE_xxx approach is a (clever) hack to squeeze the desired
-size into mmap() flags.  I don't see any reason to carry that forward to guest_memfd.
-For once, we had the foresight to reserve some space in KVM's uAPI structure, so
-there's no need to squeeze things into flags.
-
-E.g. we could do something like this:
-
-diff --git include/uapi/linux/kvm.h include/uapi/linux/kvm.h
-index 42053036d38d..b79914472d27 100644
---- include/uapi/linux/kvm.h
-+++ include/uapi/linux/kvm.h
-@@ -1605,11 +1605,16 @@ struct kvm_memory_attributes {
- #define KVM_CREATE_GUEST_MEMFD _IOWR(KVMIO,  0xd4, struct kvm_create_guest_memfd)
- #define GUEST_MEMFD_FLAG_MMAP          (1ULL << 0)
- #define GUEST_MEMFD_FLAG_INIT_SHARED   (1ULL << 1)
-+#define GUEST_MEMFD_FLAG_HUGE_PAGES    (1ULL << 2)
- 
- struct kvm_create_guest_memfd {
-        __u64 size;
-        __u64 flags;
--       __u64 reserved[6];
-+       __u8 huge_page_size_log2;
-+       __u8 reserve8;
-+       __u16 reserve16;
-+       __u32 reserve32;
-+       __u64 reserved[5];
- };
- 
- #define KVM_PRE_FAULT_MEMORY   _IOWR(KVMIO, 0xd5, struct kvm_pre_fault_memory)
-
-And not have to burn 6 bits of flags to encode the size in a weird location.
-
-But that's a detail for KVM to sort out, which is exactly my point; how this is
-presented to userspace for guest_memfd is question for KVM.
-
-> @@ -0,0 +1,29 @@
-> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-> +#ifndef _UAPI_LINUX_GUESTMEM_H
-> +#define _UAPI_LINUX_GUESTMEM_H
-> +
-> +/*
-> + * Huge page size must be explicitly defined when using the guestmem_hugetlb
-> + * allocator for guest_memfd.  It is the responsibility of the application to
-> + * know which sizes are supported on the running system.  See mmap(2) man page
-> + * for details.
-> + */
-> +
-> +#define GUESTMEM_HUGETLB_FLAG_SHIFT	58
-> +#define GUESTMEM_HUGETLB_FLAG_MASK	0x3fUL
-> +
-> +#define GUESTMEM_HUGETLB_FLAG_16KB	(14UL << GUESTMEM_HUGETLB_FLAG_SHIFT)
-> +#define GUESTMEM_HUGETLB_FLAG_64KB	(16UL << GUESTMEM_HUGETLB_FLAG_SHIFT)
-> +#define GUESTMEM_HUGETLB_FLAG_512KB	(19UL << GUESTMEM_HUGETLB_FLAG_SHIFT)
-> +#define GUESTMEM_HUGETLB_FLAG_1MB	(20UL << GUESTMEM_HUGETLB_FLAG_SHIFT)
-> +#define GUESTMEM_HUGETLB_FLAG_2MB	(21UL << GUESTMEM_HUGETLB_FLAG_SHIFT)
-> +#define GUESTMEM_HUGETLB_FLAG_8MB	(23UL << GUESTMEM_HUGETLB_FLAG_SHIFT)
-> +#define GUESTMEM_HUGETLB_FLAG_16MB	(24UL << GUESTMEM_HUGETLB_FLAG_SHIFT)
-> +#define GUESTMEM_HUGETLB_FLAG_32MB	(25UL << GUESTMEM_HUGETLB_FLAG_SHIFT)
-> +#define GUESTMEM_HUGETLB_FLAG_256MB	(28UL << GUESTMEM_HUGETLB_FLAG_SHIFT)
-> +#define GUESTMEM_HUGETLB_FLAG_512MB	(29UL << GUESTMEM_HUGETLB_FLAG_SHIFT)
-> +#define GUESTMEM_HUGETLB_FLAG_1GB	(30UL << GUESTMEM_HUGETLB_FLAG_SHIFT)
-> +#define GUESTMEM_HUGETLB_FLAG_2GB	(31UL << GUESTMEM_HUGETLB_FLAG_SHIFT)
-> +#define GUESTMEM_HUGETLB_FLAG_16GB	(34UL << GUESTMEM_HUGETLB_FLAG_SHIFT)
-> +
-> +#endif /* _UAPI_LINUX_GUESTMEM_H */
-
-...
-
-> +const struct guestmem_allocator_operations guestmem_hugetlb_ops = {
-> +	.inode_setup = guestmem_hugetlb_setup,
-> +	.inode_teardown = guestmem_hugetlb_teardown,
-> +	.alloc_folio = guestmem_hugetlb_alloc_folio,
-> +	.nr_pages_in_folio = guestmem_hugetlb_nr_pages_in_folio,
-> +};
-> +EXPORT_SYMBOL_GPL(guestmem_hugetlb_ops);
-
-Why are these bundled into a structure?  AFAICT, that adds layers of indirection
-for absolutely no reason.  And especially on the KVM guest_memfd side, implementing
-a pile of infrastructure to support "custom" allocators is very premature.  Without
-a second "custom" allocator, it's impossible to determine if the indirection
-provided is actually a good design.  I.e. all of the kvm_gmem_has_custom_allocator()
-logic in guest_memfd.c is just HugeTLB logic buried behind a layer of unnecessary
-indirection.
 
