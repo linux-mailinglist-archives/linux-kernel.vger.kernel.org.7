@@ -1,163 +1,166 @@
-Return-Path: <linux-kernel+bounces-841390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D279BBB72EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 16:28:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A924DBB72F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 16:29:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 384EF4EBFDC
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 14:28:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6955719E8077
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 14:29:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA74A23AB9C;
-	Fri,  3 Oct 2025 14:28:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23A3323ABBF;
+	Fri,  3 Oct 2025 14:29:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="pHIfItoT"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=markus.stockhausen@gmx.de header.b="rDTQABXf"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1A87156F20
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 14:28:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F840156F20;
+	Fri,  3 Oct 2025 14:29:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759501715; cv=none; b=M4zdWB5fmSCqjY3tErSpuvrcn8g0WVSUyZTbx9OAc0lAimYY3waVqfXvHcK1tiYSSvorJmXlV2YuQocRp9+khAyeOkryhJVR1m47GfIQd9X5nmX4HNBJn1Erjl7t9IoZ2a8smvksVlcTftSeFQsWmFLQZ+MdrkL/mVx/RM+NyBA=
+	t=1759501744; cv=none; b=DZ/6Vi83uqFq/bIHrkAeHSyNdjbgKXzJUooAoGZdQkk2YfFZhBUMXk5BPCPBuWdHKZgs20TkWtrqfS8BOPqYjrFOhMMMuPo9TeVWJDtDdKgS9aQufeig5zHsb1XTi8vLn28DqWx3ntzZBGOCupKaTMrxWYxSSm1eOrOiDPeSi/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759501715; c=relaxed/simple;
-	bh=ezPNEZ/IJFqSQ+puYoLRYru6SDkIr4R+J3IIgGJZEDI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=evPCBzNJmrYyjG8YGgw4ACYV/pQaLzdrkgrFMZlmoq89G7EktBFFosz1H4jBUdeOQSG1Wvml4POy7+sVkrIC9vIu1hwsgMuh3vTdk0Z93FajuSukaB9Kt+x7pZE3ieGFwAC9sRslvczxzadd3JvsQTVUl+Tyg98YjxoVyEzHwQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=pHIfItoT; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4e4f8122660so23473721cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 07:28:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1759501712; x=1760106512; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=jSkC//pyzN8DkO27vm1eJ5t7cdX6GtvZ0FN76acbnVs=;
-        b=pHIfItoTrinMsVqESM6JspIwtJsiY16ZVAqygfSB4MHuP7s29dKKDd5NDQo75zfi0m
-         cXClk018vqZeeO2QANylhVksI6CPwzqFOXfbsMB0YP7J8pLTDUjWoE4c7jsPNng2y/8A
-         Kr+sYYraKRdeP5c3ZaFb+vMGLuEktws44aKGIl2ShuN1Sq+Qu6RbZS3W2OGYefGFdLc0
-         54ZJ5kJEQbQK5lXcF6xJ1EWb3sCK9bspiefzTQJtGebY7ehYm0Upgs22go4+N+YjsD/S
-         +wWFS1eqXgogQxeimFRDB4JXH0VktA+6cogmAyn0VOfNZgiTakVJ8vxFEnlCAwei60Lh
-         vn9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759501712; x=1760106512;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jSkC//pyzN8DkO27vm1eJ5t7cdX6GtvZ0FN76acbnVs=;
-        b=bc36e9fmW1JWcxr6D6nZphMJdwuIl40Slpk7MTz6F7J7kjb1MLqhQJPQgp5khmd0AX
-         oewjgtpBrMhkLWjWRL9weW1dI6Q6J2SgKEkUSaZnkuYf4+Snd4YQgwufrlEtpuxVn6VM
-         43lQ3YJkk6FP+/9v07sHG+XISdJ+SnGXoc9I9sPaOAC3WDdfXyEfdEibAsvOH41fXblO
-         bXb+BoLpn199llMKe243wwaTciiztjoYsXW9eiTWUVzTIlOuufeRklt5RbE3weu61Owh
-         j6j/+N+a7Zo/UYtQ8ZLX0yVqTRDc3CL3r8PicoA40GYfbircTy5RhTq4VHDjfGQ5sTCc
-         X18A==
-X-Forwarded-Encrypted: i=1; AJvYcCXpSUX5cv7Tqo4w5wdG22lt1s/P17x97aKGFu5OLs2/2HKViFtLFagGu5szXpyMhVgL5+FsW8Ckt4KMdhM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHukJGlViykdjwabvqTIDfo3BmJkd9ycHw9dV9FqlZ7NVlDSeb
-	PeMAYF+SBuk7hivEUtCj8c1ishSG2SN/yEm6IK0MAJEJTnaQbQKAU0sVPJ5+g/cdryg=
-X-Gm-Gg: ASbGncsXZ4ZTpd2WFzlwzvQBwUdHQneFeN+19OE5zm6Na20PyXQxwC1c9x/7oZmfpYn
-	w5AGwo+beVGp3pnndkNZ6IMftU2X9Q+0Q2sjNU+nLPMlMM75A//GexhGbw5HVPGDMC8D2xPTgGX
-	ZHt6GS72PrXoFgxQbT1lg3SrSXZAcXPaGL4MYxhXcHy9HRMSoax7b+JKRFyy0tA+cJ0KfSkwgV6
-	Ds0pA704rCDHwQRTSfWW5Vtc8JIp5Sqx6qzmZG7mcJQTiFC57tbuJP6xGlUst0c4/bBP/DSCX0l
-	Kokkb50HV5IxgF3w6BzhhrWYVXf5r8ppZmjJvxzYdLFMZljB3B4vxoi1kd9ytmwImeBWo8PAoYR
-	OedBLWS47ci+gvVd5VhV7QhdzclfhEiKda6oYkGSx/xR3c5OSi4A1ZLIFXsQbaCYpuCgIAaxm2M
-	1RUA/gx/aVOpd7Nuu73igbFKi6IeE=
-X-Google-Smtp-Source: AGHT+IFmZUi0hUXGPsDtYIINOMocKKfxwRPSDcyJQoNDReTGD2RJGHxokJ1tsn6R+c3XW95hY9Axtw==
-X-Received: by 2002:a05:620a:4489:b0:815:dab2:1ea8 with SMTP id af79cd13be357-87a38f08966mr387406685a.79.1759501712450;
-        Fri, 03 Oct 2025 07:28:32 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4e55d0c8a57sm40352021cf.37.2025.10.03.07.28.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Oct 2025 07:28:30 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1v4glo-0000000E68Z-3t8X;
-	Fri, 03 Oct 2025 11:28:28 -0300
-Date: Fri, 3 Oct 2025 11:28:28 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Chris Li <chrisl@kernel.org>
-Cc: Pasha Tatashin <pasha.tatashin@soleen.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, Len Brown <lenb@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-acpi@vger.kernel.org, David Matlack <dmatlack@google.com>,
-	Pasha Tatashin <tatashin@google.com>,
-	Jason Miu <jasonmiu@google.com>, Vipin Sharma <vipinsh@google.com>,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Adithya Jayachandran <ajayachandra@nvidia.com>,
-	Parav Pandit <parav@nvidia.com>, William Tu <witu@nvidia.com>,
-	Mike Rapoport <rppt@kernel.org>, Leon Romanovsky <leon@kernel.org>
-Subject: Re: [PATCH v2 06/10] PCI/LUO: Save and restore driver name
-Message-ID: <20251003142828.GP3195829@ziepe.ca>
-References: <20250916-luo-pci-v2-0-c494053c3c08@kernel.org>
- <20250916-luo-pci-v2-6-c494053c3c08@kernel.org>
- <20250929175704.GK2695987@ziepe.ca>
- <CAF8kJuNfCG08FU=BmLtoh6+Z4V5vPHOMew9NMyCWQxJ=2MLfxg@mail.gmail.com>
- <CA+CK2bBFZn7EGOJakvQs3SX3i-b_YiTLf5_RhW_B4pLjm2WBuw@mail.gmail.com>
- <20250930163732.GP2695987@ziepe.ca>
- <CACePvbVXZ-rPmBi30eAO-2oF5K5hzQqQPo17M6hV7Pn4Dxrg9g@mail.gmail.com>
+	s=arc-20240116; t=1759501744; c=relaxed/simple;
+	bh=MMKF7tw01yglKAHwmffsqsUvjDZqq/s5YQzmuEiXpxQ=;
+	h=From:To:Cc:References:In-Reply-To:Subject:Date:Message-ID:
+	 MIME-Version:Content-Type; b=s0/qom7e7kLdH/onq0fWeI+d9lAyloyt7jM9iHMfRlLvO40DA5FlmsD0KKbxwObyWlLoWvBYhX92scWwrHx7DFtvCkdC+VZBaQEMA77ATbF+jMMH/c4KffTQtFuc/+9ekD/BwlHRGyIUzFyv6WHBblGF5HkNwZhWeiZvnrEdWM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=markus.stockhausen@gmx.de header.b=rDTQABXf; arc=none smtp.client-ip=212.227.17.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1759501739; x=1760106539;
+	i=markus.stockhausen@gmx.de;
+	bh=oTqg2npgKEGMOQMr/s7XNHcjqbDTehdyJapKNLr6RNc=;
+	h=X-UI-Sender-Class:From:To:Cc:References:In-Reply-To:Subject:Date:
+	 Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=rDTQABXfyErPT2K1L625KYMykx9n8OYgiN7fYu2Bg6ouOTFKqzBVxyH0/0L/Jo+l
+	 PJKx/xq7EInEyrynPIpoV4k6QAJJ/C8mL2RNuMAgohIP3z67HQkI+V1En8q1HkQuM
+	 4yEvMfhjQ1WB3m8nGsBgzSFkIzm5atmk8/Sd11FQUyQnAGjFQBv2nBB9q6JSA0C1a
+	 MLdQBeDcVz0xfNJ9TyDU7Y0i5nNUMlZ4ayu3zxvIuiAznHHdnRzlNUeIn2nlW5opJ
+	 ZNIrhwzc1Hjagc+CQ+PGVLCcu/LssBHBn9sj4asr6sJ4jv1c5O2iBSr8TREzpQIq6
+	 5/H3iX3u5i/IYQAhmQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from colnote55 ([94.31.70.55]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MMXUN-1ul5rQ1EwB-00YbBa; Fri, 03
+ Oct 2025 16:28:59 +0200
+From: <markus.stockhausen@gmx.de>
+To: "'Dan Carpenter'" <dan.carpenter@linaro.org>
+Cc: "'Miquel Raynal'" <miquel.raynal@bootlin.com>,
+	"'Richard Weinberger'" <richard@nod.at>,
+	"'Vignesh Raghavendra'" <vigneshr@ti.com>,
+	<linux-mtd@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>,
+	<kernel-janitors@vger.kernel.org>
+References: <aN-XoqpP2Jz75pjj@stanley.mountain>
+In-Reply-To: <aN-XoqpP2Jz75pjj@stanley.mountain>
+Subject: AW: [PATCH next] mtd: nand: realtek-ecc: Fix a IS_ERR() vs NULL bug in probe
+Date: Fri, 3 Oct 2025 16:28:59 +0200
+Message-ID: <00c601dc3472$0facc810$2f065830$@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACePvbVXZ-rPmBi30eAO-2oF5K5hzQqQPo17M6hV7Pn4Dxrg9g@mail.gmail.com>
+Content-Type: text/plain;
+	charset="US-ASCII"
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: de
+Thread-Index: AQJqja67MJKY+tUNx++6gAi8+r8CtrOTyAXw
+X-Provags-ID: V03:K1:Cz0hESHIKg77xNOkBMntF6ogc2m+1zwCHA/YQfziEH7mLKM491k
+ I+jzBrxGvFhVJ0oytGI8FyEfUrWAy72Ofs+6GqSvZmxBMjyJ1f48txI+MZ6xTWECVIDvPvw
+ BmjH3CekeBr1WmVVY2aKrsm8QTSIKgmeUqdLZ1HhPHMneSjtym/wfH4jLxpyR9KBTQbFiTl
+ w3IRJx6m6020go591isoQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:xIktEgnlmIw=;Bi5x9vty1IQzeK0IcPElMhxFx6o
+ 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
+ 3Pmqg==
 
-On Thu, Oct 02, 2025 at 02:39:26PM -0700, Chris Li wrote:
-> On Tue, Sep 30, 2025 at 9:37 AM Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> > As I said, I would punt all of this to the initrd and let the initrd
-> > explicitly bind drivers.
-> 
-> You still need a mechanism to prevent after the PCI bridge scan,
-> create the pci_devices, not auto probe the drivers. If it is not
-> driver_override, it will be some new PCI API and liveupdate is the
-> first user of it.
+> Von: Dan Carpenter <dan.carpenter@linaro.org>=20
+> Gesendet: Freitag, 3. Oktober 2025 11:30
+>
+> The dma_alloc_noncoherent() function doesn't return error pointers, it
+> returns NULL on error.  Fix the error checking to match.
 
-Yes, we need userspace to control the timing of driver binding for
-Confidential Compute too, so I would prefer to see a generic proposal
-that can solve both.
+Hi Dan,
 
-If this is to be a luo thing then preserving disabling driver auto
-bind for specific devices could be reasonable.
+thanks for the quick fix.
 
-> There are two slightly different things here:
-> 1) modprobe the driver. That is typically control by udev.
-> 2) auto probing the drive after the driver has been loaded or PCI
-> device scanned.
- 
-> In your envisioning, the initrd autobind controls both of the above
-> two spec of things, right?
+Markus
 
-Today the initrd runs udev which does the module loading and then
-the kernel does driver auto binding.
-
-You'd want to move driver binding to userspace so that userspace can
-select which is the right driver for luo and for CC we want to delay
-binding the drivers until after userspace has measured and verified
-the device.
-
-The idea is that userpsace, through the modules.alias file, would run
-the same driver selection algorithm and signal the kernel to load the
-driver.
-
-Also, for VFIO we have addressed Greg's remarks about driver name ABI
-by adding VFIO specific module.alias entries:
-
-alias vfio_pci:v*d*sv*sd*bc*sc*i* vfio_pci
-alias vfio_pci:v000015B3d0000101Esv*sd*bc*sc*i* mlx5_vfio_pci
-
-Modern userspace is already supposed to be entering VFIO mode by using
-this file and avoiding making driver name an ABI.
-
-Jason
 
