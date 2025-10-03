@@ -1,124 +1,161 @@
-Return-Path: <linux-kernel+bounces-841189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8848ABB672F
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 12:35:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CAE6BB6744
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 12:36:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E97DF344C40
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 10:35:24 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id EC639344E24
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 10:36:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1888A2EAB64;
-	Fri,  3 Oct 2025 10:35:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="UdzxMg/M"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC1A92EA494;
+	Fri,  3 Oct 2025 10:36:38 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D37FEED8;
-	Fri,  3 Oct 2025 10:35:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EB4F27470
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 10:36:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759487717; cv=none; b=Gpz/RcoAVPn/17FOTZtvJuIbtibBXqIQdhtz/XNrlT5oshbj8KXe2IQXetRO1GJbWjp5S3nGPhFbgIiukgHd3EXJKau6PByMRUB+pxGtSzjMcVLKmY1CNfrfTHSu/rPNx1rHdcdEyk9OJ5QJmgeAEf83X1RbaMKGaUd3vONGP2Y=
+	t=1759487798; cv=none; b=Q73+eF/2LwcMwkko3A+FOQ/pm0yljqvy91Xe2RBkEvXBA348RfJzNx9om+bgxi3DvZ0suwD698Ww+nhE1SGlHUdVqKLEDcBKA8HYNDI9H4xc+keq+GtdVki1NORUgYEC/mPbxl7z/pqqMpv43Se/WPgzpGk86/UefdZ1TaAC7rI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759487717; c=relaxed/simple;
-	bh=3JWA9oif72B2fdKOGx3ma2MxgIoNecyfOUqxEQ+hy0U=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=RRH8eozOYm12AIQMpKXqpo6usct7OU6aTdGn+Lfj63gHYXAUxQK6E0zb0+5qrIsCVjio2jGb+LAxVlEpWCqqXNPttxLqXauJnHyP5V9gGlnUFjmn//G7FLqdB30rN6bfNP+s8IVmCy81nwzi4q1gZVhiRma0uIpvdLOs6o7BSzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=UdzxMg/M; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 57872192C;
-	Fri,  3 Oct 2025 12:33:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1759487622;
-	bh=3JWA9oif72B2fdKOGx3ma2MxgIoNecyfOUqxEQ+hy0U=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=UdzxMg/MyuPF0ZjEqTl81NM2zqAYZb/b/g7qQZAj9YZvWuK4hbwLpA9yFb3Iz5EXe
-	 wWUUmser5UEL93SE68Pz5XwMJIlOdW7KNdWuVAQSpKZ9tILJ89i6sBjv2hHaiS5hhf
-	 z8QE5zBxa6av40Rp62uymf+vEVpUNvFHoGGg8SH8=
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1759487798; c=relaxed/simple;
+	bh=Kv/oh3/xw+Z4tU96HcRdl29X4mjMBCXkIuNqBVoKCB4=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Mhrl/P8KGKoLvYlAkcmcBYn6+mzyupxBOl6XgMDJq03oOx8EJgk1hbGKNjbiU75qC93827vrF+W+OT9D56Yu8hNnE8cIQ2ZnlK0tiR5QDh0todhWtFuSgdCELGdTHvpusDTUTpV0aDmFHX6l7udMxzlMVSqz1N0OGqP8D1MTEEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cdQ7F5ghXz67Hjq;
+	Fri,  3 Oct 2025 18:36:09 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1743F1400D9;
+	Fri,  3 Oct 2025 18:36:33 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 3 Oct
+ 2025 11:36:31 +0100
+Date: Fri, 3 Oct 2025 11:36:29 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Bharata B Rao <bharata@amd.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<dave.hansen@intel.com>, <gourry@gourry.net>, <hannes@cmpxchg.org>,
+	<mgorman@techsingularity.net>, <mingo@redhat.com>, <peterz@infradead.org>,
+	<raghavendra.kt@amd.com>, <riel@surriel.com>, <rientjes@google.com>,
+	<sj@kernel.org>, <weixugc@google.com>, <willy@infradead.org>,
+	<ying.huang@linux.alibaba.com>, <ziy@nvidia.com>, <dave@stgolabs.net>,
+	<nifan.cxl@gmail.com>, <xuezhengchu@huawei.com>, <yiannis@zptcorp.com>,
+	<akpm@linux-foundation.org>, <david@redhat.com>, <byungchul@sk.com>,
+	<kinseyho@google.com>, <joshua.hahnjy@gmail.com>, <yuanchu@google.com>,
+	<balbirs@nvidia.com>, <alok.rathore@samsung.com>
+Subject: Re: [RFC PATCH v2 2/8] migrate: implement
+ migrate_misplaced_folios_batch
+Message-ID: <20251003113629.00004fcb@huawei.com>
+In-Reply-To: <20250910144653.212066-3-bharata@amd.com>
+References: <20250910144653.212066-1-bharata@amd.com>
+	<20250910144653.212066-3-bharata@amd.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1be80052-3ba5-46de-804a-de995f8db5d4@oss.qualcomm.com>
-References: <20251002-dw9800-driver-v1-0-c305328e44f0@fairphone.com> <20251002-dw9800-driver-v1-3-c305328e44f0@fairphone.com> <1be80052-3ba5-46de-804a-de995f8db5d4@oss.qualcomm.com>
-Subject: Re: [PATCH 3/4] arm64: dts: qcom: qcm6490-fairphone-fp5: Enable CCI pull-up
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-To: =?utf-8?q?Andr=C3=A9?= Apitzsch <git@apitzsch.eu>, Bjorn Andersson <andersson@kernel.org>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Daniel Scally <djrscally@gmail.com>, Griffin Kroah-Hartman <griffin.kroah@fairphone.com>, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, Konrad Dybcio <konradybcio@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, Wolfram Sang <wsa@kernel.org>, devicetree@vger.kernel.org
-Date: Fri, 03 Oct 2025 11:35:09 +0100
-Message-ID: <175948770924.935713.8703906918697470771@ping.linuxembedded.co.uk>
-User-Agent: alot/0.9.1
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100011.china.huawei.com (7.191.174.247) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-Quoting Konrad Dybcio (2025-10-02 13:45:49)
-> On 10/2/25 12:15 PM, Griffin Kroah-Hartman wrote:
-> > Enable vreg_l6p which is used as a pull-up for the CCI busses, to make
-> > sure I2C communication works as expected.
-> >=20
-> > Signed-off-by: Griffin Kroah-Hartman <griffin.kroah@fairphone.com>
-> > ---
->=20
-> Makes me wonder if we should maybe extend the CCI definition
-> (or maybe the common i2c-bus binding?) to accept an external
-> pull-up supply, as this is a common problem.. (+Bryan, Wolfram)
+On Wed, 10 Sep 2025 20:16:47 +0530
+Bharata B Rao <bharata@amd.com> wrote:
 
-I'm a little confused about terminology here. To me CCI is the
-communiation protocol (how to write the registers on the i2c bus). But
-here' we're talking about 'pulling up' a cci bus ?
+> From: Gregory Price <gourry@gourry.net>
+> 
+> A common operation in tiering is to migrate multiple pages at once.
+> The migrate_misplaced_folio function requires one call for each
+> individual folio.  Expose a batch-variant of the same call for use
+> when doing batch migrations.
+> 
+I probably missed an earlier discussion of this but what does the
+_batch postfix add over the plural (folios)?
 
-Is this actually impacting the bus - or is it more that it's /powering/
-the camera and VCM both simultaneously (which is what happens on the RPi
-cameras)
+> Signed-off-by: Gregory Price <gourry@gourry.net>
+> Signed-off-by: Bharata B Rao <bharata@amd.com>
+> ---
+>  include/linux/migrate.h |  6 ++++++
+>  mm/migrate.c            | 31 +++++++++++++++++++++++++++++++
+>  2 files changed, 37 insertions(+)
+> 
+> diff --git a/include/linux/migrate.h b/include/linux/migrate.h
+> index acadd41e0b5c..0593f5869be8 100644
+> --- a/include/linux/migrate.h
+> +++ b/include/linux/migrate.h
+> @@ -107,6 +107,7 @@ static inline int migrate_huge_page_move_mapping(struct address_space *mapping,
+>  int migrate_misplaced_folio_prepare(struct folio *folio,
+>  		struct vm_area_struct *vma, int node);
+>  int migrate_misplaced_folio(struct folio *folio, int node);
+> +int migrate_misplaced_folios_batch(struct list_head *foliolist, int node);
+>  #else
+>  static inline int migrate_misplaced_folio_prepare(struct folio *folio,
+>  		struct vm_area_struct *vma, int node)
+> @@ -117,6 +118,11 @@ static inline int migrate_misplaced_folio(struct folio *folio, int node)
+>  {
+>  	return -EAGAIN; /* can't migrate now */
+>  }
+> +static inline int migrate_misplaced_folios_batch(struct list_head *foliolist,
+> +						 int node)
+> +{
+> +	return -EAGAIN; /* can't migrate now */
+> +}
+>  #endif /* CONFIG_NUMA_BALANCING */
+>  
+>  #ifdef CONFIG_MIGRATION
+> diff --git a/mm/migrate.c b/mm/migrate.c
+> index 7e356c0b1b5a..1268a95eda0e 100644
+> --- a/mm/migrate.c
+> +++ b/mm/migrate.c
+> @@ -2714,5 +2714,36 @@ int migrate_misplaced_folio(struct folio *folio, int node)
+>  	BUG_ON(!list_empty(&migratepages));
+>  	return nr_remaining ? -EAGAIN : 0;
+>  }
+> +
+> +/*
 
-My curiosity lies in the fact that indeed we somehow need to be able to
-coordinate the power relationship between multiple devices which ...
-while independent for configuration - they do impact each other. I.e. if
-you power on the camera and it simultaneously powers on the VCM - you
-get the VCM jumping position if it's not also configured, so I
-anticipate various bits of complexities here if they are all powered by
-the same line.
+Kernel-doc perhaps appropriate?
 
-I don't think a camera module should always be powered on for a phone
-running on a battery - perhaps on this device the sensors have a
-separate power down control ?
+> + * Batch variant of migrate_misplaced_folio. Attempts to migrate
+> + * a folio list to the specified destination.
+> + *
+> + * Caller is expected to have isolated the folios by calling
+> + * migrate_misplaced_folio_prepare(), which will result in an
+> + * elevated reference count on the folio.
+> + *
+> + * This function will un-isolate the folios, dereference them, and
+> + * remove them from the list before returning.
+> + */
+> +int migrate_misplaced_folios_batch(struct list_head *folio_list, int node)
+> +{
+> +	pg_data_t *pgdat = NODE_DATA(node);
+> +	unsigned int nr_succeeded;
+> +	int nr_remaining;
+> +
+> +	nr_remaining = migrate_pages(folio_list, alloc_misplaced_dst_folio,
+> +				     NULL, node, MIGRATE_ASYNC,
+> +				     MR_NUMA_MISPLACED, &nr_succeeded);
+> +	if (nr_remaining)
+> +		putback_movable_pages(folio_list);
+> +
+> +	if (nr_succeeded) {
+> +		count_vm_numa_events(NUMA_PAGE_MIGRATE, nr_succeeded);
+> +		mod_node_page_state(pgdat, PGPROMOTE_SUCCESS, nr_succeeded);
+> +	}
+> +	BUG_ON(!list_empty(folio_list));
+> +	return nr_remaining ? -EAGAIN : 0;
+> +}
+>  #endif /* CONFIG_NUMA_BALANCING */
+>  #endif /* CONFIG_NUMA */
 
---
-Kieran
-
-> We could then shut down the regulator when cameras are not
-> in use, preserving some trace amounts of power.
->=20
-> Or maybe L6P is already used as a pull-up supply for more things
-> onboard and should be always-on either way? Could you please
-> check that, Griffin?
->=20
-> Konrad
->=20
-> >  arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >=20
-> > diff --git a/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts b/arch/=
-arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
-> > index e115b6a52b299ef663ccfb614785f8f89091f39d..2dd2c452592aa6b0ac826f1=
-9eb9cb1a8b90cee47 100644
-> > --- a/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
-> > +++ b/arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts
-> > @@ -749,6 +749,8 @@ vreg_l6p: ldo6 {
-> >                               regulator-name =3D "vreg_l6p";
-> >                               regulator-min-microvolt =3D <1700000>;
-> >                               regulator-max-microvolt =3D <1904000>;
-> > +                             /* Pull-up for CCI I2C busses */
-> > +                             regulator-always-on;
-> >                       };
-> > =20
-> >                       vreg_l7p: ldo7 {
-> >
 
