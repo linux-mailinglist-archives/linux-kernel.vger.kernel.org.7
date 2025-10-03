@@ -1,187 +1,152 @@
-Return-Path: <linux-kernel+bounces-841571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81A4EBB7AE7
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 19:14:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68AC8BB7B60
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 19:23:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 07BD74EE6D7
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 17:14:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01B4E1B209AB
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 17:24:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F4A92D8DB1;
-	Fri,  3 Oct 2025 17:14:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9CB72DA76C;
+	Fri,  3 Oct 2025 17:23:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ZvOK6SXT"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=bell.net header.i=@bell.net header.b="STH7xa2d"
+Received: from cmx-mtlrgo002.bell.net (mta-mtl-006.bell.net [209.71.208.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D02F2D8785
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 17:14:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8885723AB8B;
+	Fri,  3 Oct 2025 17:23:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.71.208.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759511647; cv=none; b=JfU7OpXuPSkjsOPzKR6kzW6grdGVgPAte9IG3peNc6jTfonb61Qw6IvDsuyarCQ9KzNpESpz8YcGFZbdbH4pgRhQTngvVtgrT6HSQITgepH3AaEG2WXeuT5TmSVsC4HQKyfuuC9lg2a5l66qu47MTrin7aEzepwLytjzt+Une0k=
+	t=1759512211; cv=none; b=KRrVSQ5niMyPZiZgdbvLTVKsi2q/BIi3YJUOE5TRV/yN6DgLenjq4CdfKJkzbFbWOqKaIL0QwMm6Zfg5v0nXv2QfRGBWQ4HG+EpKQhuePDtGIq0H8+vVc/Opkye7OriDvP8bKFc4+9iGj8k3BLA1i8F4EGNSotiyCeNtdorHwpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759511647; c=relaxed/simple;
-	bh=sRXN7wdWBdzUwr0/A2cwW5ynUeLKYkEY8qUaCZEgH7w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sKg7ZnTWZp/4yXsAkB2XDQnf15Jyg28Aq0xaStGGqOtnw7S3GuzuvIV2Qmui7F5KZfYi8WJOh0avwTlRoXjG2aQj4RSCSmoqWGiRKNGBs7XY1embSvpC1P3Eanxqi87dxW25k46LolbmkdfHRIlkmpvnt2vRVf2msAbdGLhP5NY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ZvOK6SXT; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5936cdSm007888
-	for <linux-kernel@vger.kernel.org>; Fri, 3 Oct 2025 17:14:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=w3Aan5Y538FKID4Zme+09bSf
-	ZawmXE/Z3TfUDYtZLco=; b=ZvOK6SXTiGxwJA5O8q0E6YRJIQWlP/SIL7BBvjvx
-	ktJ3KWhxKbewT+wO0IoEqojsHme6LMc2jgqRZCbELPmup8XesK55EiHXsc1iuEIj
-	XW+VJmQmJDAh6gfKl59aZdzCskN2mO7HNn/wldfFrra8aGIlUeZsm5XMStqPys/a
-	P3j5amWXD+4UVoEIOKvicZg7z5DsYwvvJEvVNARi67nU2r14J76iSzzJPtNCinFz
-	aVwngPwlsmxo/WZ67lxylz8ukhf1/xJh2ICZGa6KuvdLY/AWU1nd9478I5+je0/+
-	zpmaqfeLCcNSA6hsnAvogx7861uaJmBGbtJpDjozB4mg1A==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49hkhh4nhx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 17:14:04 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4de5fe839aeso63463121cf.3
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 10:14:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759511644; x=1760116444;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w3Aan5Y538FKID4Zme+09bSfZawmXE/Z3TfUDYtZLco=;
-        b=UITOPNonHorCJDV62pzE462UZl9N69A5bMawB+71qK1rU0AeAW66LRm9j+VIzCNZgn
-         4R2gNTK1AWfvLwKhQhh8iNxnfqncpUHym2zZ9cnQZ+0cobp2J+O1UKh00PYe+vOYJB9/
-         cbrlDmKMhnjZ77kzjDa8ifudWb7Zl/yAuBzTq9BsdLgSRM9UXLXFRzRcHDQGBUuSOnxn
-         W0Zxxe16/G+fCGTiAW5m8VUn/yvhp9w0KacDqrA990sq34pK2wb3S+x9ag0zvvt8NfLX
-         f8Jj6nRrzorofrP6jJ8FCjPoulQoNf0iw2KhmQAAvFDxIqFkH93Hz5BIpRk2Dhh6hUEZ
-         ofSA==
-X-Forwarded-Encrypted: i=1; AJvYcCVf4k0tcw8qQQwXoTpeftGAcCQDw6d4nmasZTu9Uj8HXmJWM2zLLo/eXgbn7VR3adEZtDsYK2xqGS4RQjY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgrkLzVHBS0VUKGPIu7Mi4bJ9vhjIe7lgwaFcGToZhoRDs+Y3v
-	GPEEoEYqDyX7F6xibPSOLCFKWyr3UhmKg70T5XMn076l7Rt/78EF2iR5YFalB7wMZ/jT6GZ4in8
-	mSkVNEDGzdiyO6lHozSpSxNs99vwIOnfE3abKq/t+/IomcwQESQvE8EPxLZHWSSwiNsg=
-X-Gm-Gg: ASbGncvy3fyOvNvQioxrWXN4ms6BAtqmPjrhu6fBAoIBydMi8HJvAW7WZhiTbjulbZI
-	TGml/AY3P+3tOo1jhOiNolDt6lqwlWZdX9m5ObL0Ms/GXCEeatN5DKMaVunrz8H7LF9VGEx5eIp
-	MuyG1vrNHnIwt5Wm4HPBF9u5sz7VclJR5b5wUzqWTB5rwKzPLa/KXg8rfz71JfLoPDyP8Drg7I0
-	5hF2R9vZg8c3zVbG8Gz0KKYa5e7exMuYOAlqZ2LG+pQAUfauznA5vHFltq9Zjcqccfi0/RkFMKD
-	GXHZtjbnDBuDQHsLZ0QdezQpiQgxXH05YzINq2s+bOstfRjJBwL1Zu+KWfCKk0litpS9m92MvdW
-	vKxo2V0K6LPpe5BB75VJx2unfahZYyhTPhrbRx0qvTuEsce7odkC4HiS64w==
-X-Received: by 2002:a05:622a:1247:b0:4e0:3cdb:d1dc with SMTP id d75a77b69052e-4e576ab90e1mr48287091cf.43.1759511643798;
-        Fri, 03 Oct 2025 10:14:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFkV77r7PT0L/lrRELV9noKeQLSHDewsA/eylq6OZ4OFiGR32HGy/BEXU6rkm2xWDWluN3TxQ==
-X-Received: by 2002:a05:622a:1247:b0:4e0:3cdb:d1dc with SMTP id d75a77b69052e-4e576ab90e1mr48286431cf.43.1759511643127;
-        Fri, 03 Oct 2025 10:14:03 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-58b01124414sm1996946e87.26.2025.10.03.10.14.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Oct 2025 10:14:02 -0700 (PDT)
-Date: Fri, 3 Oct 2025 20:13:59 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Paul Sajna <sajattack@postmarketos.org>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, David Heidelberg <david@ixit.cz>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org,
-        Amir Dahan <system64fumo@protonmail.com>,
-        Christopher Brown <crispybrown@gmail.com>
-Subject: Re: [PATCH v3 07/11] arm64: dts: qcom: sdm845-lg-{common, judyln}:
- Add wifi node
-Message-ID: <gfbvgsen75w5h7afyo454pvdfslkeprqyuycuok6syinbza7vx@crapzdo33re7>
-References: <20250928-judyln-dts-v3-0-b14cf9e9a928@postmarketos.org>
- <20250928-judyln-dts-v3-7-b14cf9e9a928@postmarketos.org>
- <f58493a9-6def-4610-9c3e-d6a877dc23d3@oss.qualcomm.com>
- <d38801bc77ad00442b1669ea252ae30a5c6af5b4@postmarketos.org>
- <7661d9d9-eca3-4708-8162-960df0d7f6c7@oss.qualcomm.com>
- <ad721948b83a54eaa34f367e12564fe6acc222a1@postmarketos.org>
+	s=arc-20240116; t=1759512211; c=relaxed/simple;
+	bh=Di4WMImwmV6KHePb6cCCkczkHfQ+nxD1+liCaEC8/NM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=t2P4PYl+XgIT7wGYDlN2ZUEpyqYCZkrBJ0hM1aUyOJSDNkbfdzX8tJ8JFnBA1vR6lK2zUSlBkB3L/Xdebkumvft5q+PbvTEZwtXAK0Yx9TM9j9EQcbO/pZt4fZSwiqdPKvsJFL73uVI06uy/PbZOwvgdc5YCbLztqe8z0xpWHvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bell.net; spf=pass smtp.mailfrom=bell.net; dkim=pass (2048-bit key) header.d=bell.net header.i=@bell.net header.b=STH7xa2d; arc=none smtp.client-ip=209.71.208.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bell.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bell.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bell.net; s=selector1; t=1759512209; 
+        bh=Zng9vbugJ96jo23SWsSK+sYWjXU4T6lDUgmXQbXs8jQ=;
+        h=Message-ID:Date:MIME-Version:Subject:To:References:From:In-Reply-To:Content-Type;
+        b=STH7xa2dn/qPmG92jIcX/GRtDkY0RNMiWnaUX5nw4Z/94xFcZXc3uJksIGEjcy+vM8yrxb27s1Lk8snvVVHgaMQbkjzCZNKE3nbg+KtIVyDN4KsoYPof2Atingxuln/n03japvC+xNiLOlEtSJtyGmtnQUGfNPTraDKPtHf6YNklzHvlwd9iK8TXMtJwjxQXrdccJ8vPzzVLXKrV4pyz01fTUXQk87j7gvz/6R55jp8AvnIUUElARVMUsqK7UbjZ/tPWcKj340Wvf9pk/6ausvqT2/bEEC1xRZLlW/zTejBCGHL6POoP6FGPT9dP7GmyqcpIXCwML+3eoUgkas19yw==
+X-RG-SOPHOS: Clean
+X-RG-VADE-SC: 0
+X-RG-VADE: Clean
+X-RG-Env-Sender: dave.anglin@bell.net
+X-RG-Rigid: 687D2719085236A8
+X-RazorGate-Vade: dmFkZTEz5RsOfS/EjyC9+Ub2YxMQTERFV1WLvzAUX6YmdSOutxh9nRbLS04S3w48higa1O8ySU0qm+pqSRX3wt8t7qkudb+hf38O2cDVBt0Kodl0paa0HIkabXXcLE04OYO2sfJDqHB/jS8wt+02VySn6T7scpRa2/Wb/W0TedGsH+DNn2gMwBQkWLPoywlRU31ryXtBiYmXlotzDw/m9sHi6Ve2Oe4ZbS7rGoU0eMfVxQ1vdpTbvuVoBHAzbOn/HOzN2sm3iazxmdQXB2zliRM2lqfuZ84PwaM8At8uXBomYirF3V7eWOpaQHd67GeKnlALIR04/2bSPWgtsioImHLtEYMUYILOLrqzu60KxaDoJfi0jS84+pz1YHvEjCAHio3FYqB5B70FUgeLOG5tpRvdjUaDoceW5vxb8rUVFiNlIZEORiP8Ryt2DdKF/msyF/ll7HjQWR/Z37leTmRcz68buYNSLzuuzJKUIPl92lqv8sTwABSZMs3YepgBjMuPskBbPEHdnWoUKJbVe1qcVlI3GQOAXS5mf3ynF6weGnFTuZ4HZbi4HX3L30T7A7X8Qv1rTZ3rpm5EpmFtAmqDAuNKPjQAa7kjbsf/J8ObDge/LHWP85rEf+OYzINc2XvkMdaAGSz6QlO/27zkjU+6gaSl175fxf9Mjs880jgHp7z6R/5qNA
+X-RazorGate-Vade-Verdict: clean 0
+X-RazorGate-Vade-Classification: clean
+Received: from [192.168.2.49] (142.126.189.246) by cmx-mtlrgo002.bell.net (authenticated as dave.anglin@bell.net)
+        id 687D2719085236A8; Fri, 3 Oct 2025 13:18:32 -0400
+Message-ID: <610b10bc-1aa2-4fad-a40b-be5fcfa04430@bell.net>
+Date: Fri, 3 Oct 2025 13:18:32 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ad721948b83a54eaa34f367e12564fe6acc222a1@postmarketos.org>
-X-Proofpoint-GUID: 4Q0QpDvmAGqYciyFWEQuR7Y6k8nZPMOc
-X-Authority-Analysis: v=2.4 cv=cILtc1eN c=1 sm=1 tr=0 ts=68e0045c cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=QgkLZLD_Px6AUkAJ0r8A:9 a=lqcHg5cX4UMA:10
- a=CjuIK1q_8ugA:10 a=uxP6HrT_eTzRwkO_Te1X:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDAyMDA0NyBTYWx0ZWRfX1TpqJjTKTjHv
- ydlFmVCRkrZK4faqJpvME9RSbHumDb/RmP13GG9fJd+lYd9rp/P8VaGsL76DQjCBEpLsjIpr4BJ
- /fqs6ct9+sjElZq6nMIaeKwKGF4QYQzDSKwsk4trW42Vye07YTEnQ4HiHa74XJL+jayq9AKniO6
- 4i8w6plKbLHs28Wrh4NgtcY9xI6cjR+fxYDuRJ07Sak+SOfdAfWt6EHsCSVj4l1CPQ47qcU0d0N
- spmbD2Yfu8k7NGLS1twPkJEVaYIrFstedJzTwH2torPHn1wAvaoxkfr4/Ccnr4F2I0VHEz/ILFP
- RGt7bY9WbsuFjyDJh7m0ogI77YuRC9EwRA6XqwQp35D5lbkwwPLf8sdN/z5ZZjVYTvETRdiDFvP
- tn+xsFPn4ChQenby9fUaABZloVkrbw==
-X-Proofpoint-ORIG-GUID: 4Q0QpDvmAGqYciyFWEQuR7Y6k8nZPMOc
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-03_05,2025-10-02_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 phishscore=0 lowpriorityscore=0 priorityscore=1501
- impostorscore=0 bulkscore=0 clxscore=1015 malwarescore=0 adultscore=0
- suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2509150000
- definitions=main-2510020047
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 3/9] parisc: Convert DMA map_page to map_phys interface
+To: Jason Gunthorpe <jgg@nvidia.com>, Leon Romanovsky <leon@kernel.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
+ Leon Romanovsky <leonro@nvidia.com>, Andreas Larsson <andreas@gaisler.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "David S. Miller" <davem@davemloft.net>, Geoff Levand <geoff@infradead.org>,
+ Helge Deller <deller@gmx.de>, Ingo Molnar <mingo@redhat.com>,
+ iommu@lists.linux.dev,
+ "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+ Jason Wang <jasowang@redhat.com>, Juergen Gross <jgross@suse.com>,
+ linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Matt Turner <mattst88@gmail.com>, Michael Ellerman <mpe@ellerman.id.au>,
+ "Michael S. Tsirkin" <mst@redhat.com>,
+ Richard Henderson <richard.henderson@linaro.org>,
+ sparclinux@vger.kernel.org, Stefano Stabellini <sstabellini@kernel.org>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Thomas Gleixner <tglx@linutronix.de>, virtualization@lists.linux.dev,
+ x86@kernel.org, xen-devel@lists.xenproject.org,
+ Magnus Lindholm <linmag7@gmail.com>
+References: <cover.1759071169.git.leon@kernel.org>
+ <333ec4dabec16d3d913a93780bc6e7ddb5240fcf.1759071169.git.leon@kernel.org>
+ <20251003150144.GC3360665@nvidia.com>
+From: John David Anglin <dave.anglin@bell.net>
+Content-Language: en-US
+Autocrypt: addr=dave.anglin@bell.net; keydata=
+ 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
+ T70V9SSrl2hiw38vRzsl
+In-Reply-To: <20251003150144.GC3360665@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 02, 2025 at 07:26:16PM +0000, Paul Sajna wrote:
-> October 2, 2025 at 9:37 AM, "Konrad Dybcio" <konrad.dybcio@oss.qualcomm.com mailto:konrad.dybcio@oss.qualcomm.com?to=%22Konrad%20Dybcio%22%20%3Ckonrad.dybcio%40oss.qualcomm.com%3E > wrote:
+On 2025-10-03 11:01 a.m., Jason Gunthorpe wrote:
+> This doesn't actually use the virt at all:
 > 
+> 	offset = ((unsigned long) addr) & ~IOVP_MASK;
+> 	if((size % L1_CACHE_BYTES) || ((unsigned long)addr % L1_CACHE_BYTES))
+> 		ccio_io_pdir_entry(pdir_start, KERNEL_SPACE, (unsigned long)addr, hint);
 > 
-> > 
-> > On 10/2/25 6:51 AM, Paul Sajna wrote:
-> > 
-> > > 
-> > > October 1, 2025 at 9:14 AM, "Konrad Dybcio" <konrad.dybcio@oss.qualcomm.com mailto:konrad.dybcio@oss.qualcomm.com?to=%22Konrad%20Dybcio%22%20%3Ckonrad.dybcio%40oss.qualcomm.com%3E > wrote
-> > >  
-> > >  
-> > > 
-> > > > 
-> > > > As the dt-checker points out, there is no such property
-> > > > 
-> > > >  If your wi-fi works regardless of that, you probably don't need
-> > > >  to set the one you intended to
-> > > > 
-> > > >  Konrad
-> > > > 
-> > >  
-> > >  Perhaps this only exists in the postmarketos tree, but it definitely exists, and doesn't work without it. I'll remove it for upstreaming for now but hopefully someone sorts that out. upstream.
-> > > 
-> > So you didn't test the tree you sent? :/
-> > 
-> > fwiw
-> > 
-> > drivers/net/wireless/ath/ath10k/snoc.c:
-> >  qcom,snoc-host-cap-8bit-quirk
-> > 
-> > Konrad
-> >
+> And ccio_io_pdir_entry():
+> 	pa = lpa(vba);
 > 
-> I think I'll probably just drop this until a bunch of other stuff is upstreamed. mdss is totally broken on mainline, wi-fi doesn't work, fuel gauge is missing, etc. etc.
+> Is a special instruction that uses virt but AI tells me that special
+> LPA instruction is returning phys. Not sure if that is a different
+> value than virt_to_phys()..
 
-Please make sure that the parts you are sending upstream are actually
-working on the upstream tree. Otherwise somebody might try running
-upstream without extra patches and be surprised about it not working.
-
-The patchseres in question was submitted in 2020 and got rejected. Since
-that time we have added support for machine-specific firmware-N.bin, so
-Kalle's suggestion can now be implemented easily.
-
-Regarding the MDSS. Is it being solved by adding reset to the MDSS node?
-Or are there any other issues?
-
+ccio_io_pdir_entry currently only supports KERNEL_SPACE.  For KERNEL_SPACE, lpa() and
+virt_to_phys() are equivalent if page is mapped.  lpa() returns 0 if a non-access data
+TLB fault occurs (i.e., page isn't mapped).  Not sure if that matters.
+> IDK, I'm not feeling brave enough to drop the LPA but maybe include
+> this note in the commit message.
 > 
-> I tried the 8-bit quirk and it didn't help.
 
 -- 
-With best wishes
-Dmitry
+John David Anglin  dave.anglin@bell.net
 
