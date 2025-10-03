@@ -1,171 +1,83 @@
-Return-Path: <linux-kernel+bounces-841163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA891BB662E
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 11:36:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37CD1BB6631
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 11:38:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9AAB64E1AD2
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 09:36:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF5F53B48C9
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 09:38:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9584728643E;
-	Fri,  3 Oct 2025 09:36:06 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85D3C1B4248
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 09:36:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7F1B2882B7;
+	Fri,  3 Oct 2025 09:38:29 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1316E1AF0C8
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 09:38:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759484166; cv=none; b=a1wRJgsFM1cOSx48EByxc1BbzgtVQ6ps4oX5MAnIJD4aUvhHtGC+aXz1yp/eeyZWlDdynJ1UZwiQxUAu7AVtkI3wiIGWb0AtfcxtNckaZqNyZmTlsl08JRjOapWb4IvMK2r8MWuaKLt5iNyQekUzJTQzfvyi/W73u8AeggaMBE0=
+	t=1759484309; cv=none; b=G8JGR0Kc3ap5LquNUIwoJeLRIVbVPKZSajjcX4H6FNp5J10M49AbhEp0asel20LJZhLIJ1EFBXl9aqKTawXG1ixJgmfrEtzQQQ8KP4Rv9E/0tTH1H344zsH/wZj53TzcvPTDngz/G29EY9rT/qgR0HuCQ22J33MIQqY+YZjZ08E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759484166; c=relaxed/simple;
-	bh=L8kpsni/nnzjEOqNMvlyijH6FVkm5rOdANG0pYRwOBs=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DYLriRn+jjWttAExBYtrz9eXZdh49P2Hy8QqUpFF0j5zJJmOCtX+PjqqFUeVbdoWerHP1OlbONBBCJUAO4hnqZwPsttUMgmRpR1DO29ycsR/CXexR1FrYFiAPuGxlqjAXX+M6frVWvOj4tRYDpcL1nxtdk2qUQg/bEFoboB8y3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cdNk85Vn6z6K8gH;
-	Fri,  3 Oct 2025 17:32:48 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id E30771402EF;
-	Fri,  3 Oct 2025 17:35:59 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 3 Oct
- 2025 10:35:57 +0100
-Date: Fri, 3 Oct 2025 10:35:56 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Raghavendra K T <raghavendra.kt@amd.com>
-CC: <AneeshKumar.KizhakeVeetil@arm.com>, <Michael.Day@amd.com>,
-	<akpm@linux-foundation.org>, <bharata@amd.com>, <dave.hansen@intel.com>,
-	<david@redhat.com>, <dongjoo.linux.dev@gmail.com>, <feng.tang@intel.com>,
-	<gourry@gourry.net>, <hannes@cmpxchg.org>, <honggyu.kim@sk.com>,
-	<hughd@google.com>, <jhubbard@nvidia.com>, <jon.grimm@amd.com>,
-	<k.shutemov@gmail.com>, <kbusch@meta.com>, <kmanaouil.dev@gmail.com>,
-	<leesuyeon0506@gmail.com>, <leillc@google.com>, <liam.howlett@oracle.com>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<mgorman@techsingularity.net>, <mingo@redhat.com>, <nadav.amit@gmail.com>,
-	<nphamcs@gmail.com>, <peterz@infradead.org>, <riel@surriel.com>,
-	<rientjes@google.com>, <rppt@kernel.org>, <santosh.shukla@amd.com>,
-	<shivankg@amd.com>, <shy828301@gmail.com>, <sj@kernel.org>, <vbabka@suse.cz>,
-	<weixugc@google.com>, <willy@infradead.org>, <ying.huang@linux.alibaba.com>,
-	<ziy@nvidia.com>, <dave@stgolabs.net>, <yuanchu@google.com>,
-	<kinseyho@google.com>, <hdanton@sina.com>, <harry.yoo@oracle.com>
-Subject: Re: [RFC PATCH V3 08/17] mm: Add throttling of mm scanning using
- scan_size
-Message-ID: <20251003103556.00006e3c@huawei.com>
-In-Reply-To: <20250814153307.1553061-9-raghavendra.kt@amd.com>
-References: <20250814153307.1553061-1-raghavendra.kt@amd.com>
-	<20250814153307.1553061-9-raghavendra.kt@amd.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1759484309; c=relaxed/simple;
+	bh=bO2Xi6RrCMi33+65AM5z3Avy5D4qvt/c3ObbwI2c6kw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=N9ClbdywHC1tKJkHlqgvJaMoIG/N6xXKt/nCaJgfPCpdPcYlj4vX+umFr0OAhu/olAS6dVbNGCaawqbECUuiH9dT6/2z3aa+fO2tKFdrfO7aYJJ8IBoCNZSw28dBpQQQzRJT3TdvEl5tNaX0Iiqq/kyYyB2J3A3n3+KOCBXidbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F2D271655;
+	Fri,  3 Oct 2025 02:38:17 -0700 (PDT)
+Received: from [10.44.160.83] (e126510-lin.lund.arm.com [10.44.160.83])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6FC5C3F66E;
+	Fri,  3 Oct 2025 02:38:24 -0700 (PDT)
+Message-ID: <ef5d851b-0f67-410e-9479-0f6d344fa17b@arm.com>
+Date: Fri, 3 Oct 2025 11:38:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/6] powerpc/64s: Do not re-activate batched TLB flush
+To: Alexander Gordeev <agordeev@linux.ibm.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+References: <cover.1749747752.git.agordeev@linux.ibm.com>
+ <8625a1d97dcf4ae499b4bb341e27346f768a7248.1749747752.git.agordeev@linux.ibm.com>
+ <aFGFl9Dvb9zdC3JS@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
+Content-Language: en-GB
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+In-Reply-To: <aFGFl9Dvb9zdC3JS@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100011.china.huawei.com (7.191.174.247) To
- dubpeml100005.china.huawei.com (7.214.146.113)
 
-On Thu, 14 Aug 2025 15:32:58 +0000
-Raghavendra K T <raghavendra.kt@amd.com> wrote:
+On 17/06/2025 17:11, Alexander Gordeev wrote:
+> On Thu, Jun 12, 2025 at 07:36:13PM +0200, Alexander Gordeev wrote:
+>> Since commit b9ef323ea168 ("powerpc/64s: Disable preemption in hash
+>> lazy mmu mode") a task can not be preempted while in lazy MMU mode.
+>> Therefore, the batch re-activation code is never called, so remove it.
+>>
+>> Signed-off-by: Alexander Gordeev <agordeev@linux.ibm.com>
+>> ---
+>>  arch/powerpc/include/asm/thread_info.h |  2 --
+>>  arch/powerpc/kernel/process.c          | 25 -------------------------
+>>  2 files changed, 27 deletions(-)
+> Hi All,
+>
+> (I trimmed non-ppc mailing lists/people).
+>
+> The whole series does not seem to make it, but this patch alone is still
+> applicable and makes sence, if I am not mistaken.
 
-> Before this patch, scanning is done on entire virtual address space
-> of all the tasks. Now the scan size is shrunk or expanded based on the
-> useful pages found in the last scan.
-> 
-> This helps to quickly get out of unnecessary scanning thus burning
-> lesser CPU.
-> 
-> Drawback: If a useful chunk is at the other end of the VMA space, it
-> will delay scanning and migration.
-> 
-> Shrink/expand algorithm for scan_size:
-> X : Number of useful pages in the last scan.
-> Y : Number of useful pages found in current scan.
-> Initial scan_size is 1GB
->  case 1: (X = 0, Y = 0)
->   Decrease scan_size by 2
->  case 2: (X = 0, Y > 0)
->   Aggressively change to MAX (4GB)
->  case 3: (X > 0, Y = 0 )
->    No change
->  case 4: (X > 0, Y > 0)
->    Increase scan_size by 2
-> 
-> Scan size is clamped between MIN (256MB) and MAX (4GB)).
-> TBD:  Tuning based on real workloads
+Yes, I agree. I arrived at the same conclusion working on the next
+version of the nested lazy_mmu series [1]. May I include this patch in v3?
 
-Seems like a reasonable thing to do, but as you say tuning
-data needed to justify how aggressive this should be and
-those size limits.
+- Kevin
 
-Trivial stuff inline.
-
-> 
-> Signed-off-by: Raghavendra K T <raghavendra.kt@amd.com>
-> ---
->  mm/kscand.c | 29 +++++++++++++++++++++++++++++
->  1 file changed, 29 insertions(+)
-> 
-> diff --git a/mm/kscand.c b/mm/kscand.c
-> index 843069048c61..39a7fcef7de8 100644
-> --- a/mm/kscand.c
-> +++ b/mm/kscand.c
-> @@ -28,10 +28,15 @@
->  
->  static struct task_struct *kscand_thread __read_mostly;
->  static DEFINE_MUTEX(kscand_mutex);
-> +
-
-Push that into earlier patch to cut down on churn / noise.
-
-
->  /*
->   * Total VMA size to cover during scan.
-> + * Min: 256MB default: 1GB max: 4GB
->   */
-> +#define KSCAND_SCAN_SIZE_MIN	(256 * 1024 * 1024UL)
-> +#define KSCAND_SCAN_SIZE_MAX	(4 * 1024 * 1024 * 1024UL)
->  #define KSCAND_SCAN_SIZE	(1 * 1024 * 1024 * 1024UL)
-> +
-
-Likewise.
-
->  static unsigned long kscand_scan_size __read_mostly = KSCAND_SCAN_SIZE;
->  
->  /*
-> @@ -94,6 +99,8 @@ struct kscand_mm_slot {
->  	unsigned long next_scan;
->  	/* Tracks how many useful pages obtained for migration in the last scan */
->  	unsigned long scan_delta;
-> +	/* Determines how much VMA address space to be covered in the scanning */
-> +	unsigned long scan_size;
->  	long address;
->  	bool is_scanned;
->  };
-
->  static inline void kscand_update_mmslot_info(struct kscand_mm_slot *mm_slot,
->  				unsigned long total)
->  {
->  	unsigned int scan_period;
->  	unsigned long now;
-> +	unsigned long scan_size;
-
-Combining a few of these or assigning at declaration will reduce the code size a bit
-which is always nice to have if it doesn't hurt readability.
-
->  	unsigned long old_scan_delta;
->  
-> +	scan_size = mm_slot->scan_size;
->  	scan_period = mm_slot->scan_period;
->  	old_scan_delta = mm_slot->scan_delta;
-
+[1]
+https://lore.kernel.org/all/20250908073931.4159362-1-kevin.brodsky@arm.com/
 
