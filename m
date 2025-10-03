@@ -1,140 +1,172 @@
-Return-Path: <linux-kernel+bounces-841230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 778DCBB690E
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 13:53:59 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B915CBB691D
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 13:57:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C83534E5B42
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 11:53:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C0CC24EA548
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 11:57:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5279E27F19F;
-	Fri,  3 Oct 2025 11:53:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D5MpwQ9Y"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA6FB2848AF;
+	Fri,  3 Oct 2025 11:57:22 +0000 (UTC)
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05FAB26B2D5
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 11:53:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A51B026FDA5
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 11:57:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759492431; cv=none; b=p/dbEkQgeuQ1QJkvDXW2egZAVF1nUHX1IOBdf0Yrr/NhZEmJwpS5XRfAQqrAXZvUXWnI/IvKywVKkf9HMWvZfqnTpMccMAFKAbJypglVtYFkDgc/omIbYmETnsamehtsk9jePT/yUmXiOxp4TzjdH1Mssv1DSSJk5zXTjZ8dI38=
+	t=1759492642; cv=none; b=EpnPwVkzEHcAknSO99XFvcgHi2Bd/ZTTLNC8GpAHoSoayOu8CmjxDNFEG7nJJ4wEPK+PdS6hAvokjcOU4CkY5+CoeM+r3Lk677ervm7UmBlQTA+7WrrwMcOEaAOnY9hJQV5CZ3vMoU9Vb2z0qSFUGQJSTcFHBF38W340OxBpwtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759492431; c=relaxed/simple;
-	bh=xxNiT++Ko9RTw9HOwLGTPFz5Lc+N7FUYBe8+a9G5faw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eB1/yrggnwNN1NCd9eVGGYpZOf76B2KTbNK6viJfgjjVnSv4OCZ3spyH3iK4c/9x6wKnoMv6ve6D25eHoCe3srErHt4PHeyzqpzVmLp92DwyvsXEHbDSrPA5R0xTwZFJsNt1S6M9BtBQGZnMgEbKl8o4vLDLQcefUtFUCYMqeYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D5MpwQ9Y; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-631df7b2dffso4979665a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 04:53:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1759492427; x=1760097227; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=v348Sd1HyGnZQBz/neaZqbiR/lhhLUWkTvsJPcWV5Ok=;
-        b=D5MpwQ9Yvwa0gPLhdrjtHBdug+tLd/dV37tlrTHl+hGtuDz2EflORc9mp1b5dGlILC
-         uhf2f8ar3J8tLLD6T8GaqR1AyBDShoWlsIQPo8FcTeN8n7i2lTfM6EQ2sNFmbuvQIQT+
-         KQkHG4oH071+/BakPXEaRB6GyehwBVGMu9Qp94sZlBV4zbqPrpn8v1DEJmbcxu1DqWrk
-         sS+YiwWT2IEUfEE4D2LXosZxGiqRhM7zd0Xl/3vExzYfkj/ARb4pd7JLkphMBxFi2uAi
-         5gj8hG1D/5t7zS8We8nIXnPNcC7SJRKultY1+olmWeSIZcCsA+16N5kqLehqxZ6macR7
-         GO1A==
+	s=arc-20240116; t=1759492642; c=relaxed/simple;
+	bh=h6er2ckpwVF7GuNqAHxEQy4OA/+J1C6yr4ND2RJuFwM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=fyHduCaghZd3g70g/MG1brJHG5HCr3rrh5d1o6KM9JpSnLBB7Qz5+eVKCdN1y41514vJVrA14hJTCU2HQ5bEZU4IO/UQ4SdM0zIRqh/mjKCRLyTWh53vuJfM7pmqxFBqqG0eETn9AMv0ETftPGf5C/z/2IyVFlz5Oz9poZN+CV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b256c8ca246so475011166b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 04:57:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759492427; x=1760097227;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=v348Sd1HyGnZQBz/neaZqbiR/lhhLUWkTvsJPcWV5Ok=;
-        b=VWAsed+qimc/onlCtkiqwLFTL2bpluNQOVtWKSnrcRZrLk6cLIQ2vZnqt0KkNPCnkV
-         OxCcWbMtSa1vrQjUb0b4h2KT+baaHayP7B0q8BL0x/v7tIi9Uaom9Mjw0uytQAvHlOLh
-         adB05C0ub6f/CxiO3y/psL9usvIQByJ5gfDRZvMdHWruLJuIpG+zCh1z2U7ZBeaFX8r5
-         67AsNDMxogGphbaqhHhHqSb6ysrmuYyPSo6w5GCtrq1Ut4+Jdbexp60eemhPk2ZExO2e
-         MU9BUsxOldnqIiQVayxnpnLn81f6P0QoH+nKhHmCxwbh7rA44FYJcS4HScYLOsx8c6yn
-         OvcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVfIbGoa1Ra7BgzbHWF+XBKNiq8GSBakGBQ1+Ku2fRzRFsQGk0cHIIiU5WlMy9cctnXJ4Q/NthGdOPm7H4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrYwwQyEcN9wZww7rUuNcScP9IPhGNaWk3YowqcjPfE/UdaqNs
-	aXWi5zDKudCpB55MmdtfRHGenoJraHoI0HDQC8w6zsUt8Tpjay4+j2W2cs49Lm+R4Lw=
-X-Gm-Gg: ASbGncsk2ydfOZNsle8r1npge02Zj0cIkF0uXSziJdn3aVsmaDDRkMBvU72XeU8ncuu
-	CQ5/NjNIHq7FynK7Vi1hwlRteVPuSXjvEsov0Nca3ee/mHhW8207RD4GhtjKw3fYWIRmnwdZCLm
-	Fsbz3wm60uRHT7VlBWlooRFTURK4EB1VO/6c6wXhPL8epTU1OM53RdjUwnpLyLtRTZwZU6/h5oK
-	DeLIHscmGxQGQzygQ4lqBWISuvQBdr7aVK0Wof3nypAys26PR0bl6Pv72OeAT/W/hdtEEAcfeHy
-	rM8IuPzwmz8ZrgbamEX1gTzm/cKUZumRYYcuLKbdUSigu9eFZlD9p/R/MM+RaYzOLfoEMujz1Mi
-	LFLYrPjFXffmqx3PeTkphl6qqP39hQnSmCKxPplrCTloYrTIxgo42H4eq7J5PMhVg6UPp
-X-Google-Smtp-Source: AGHT+IHYR3iC2LH79LtowBLJrojMWjOE+pppainz+qSkeukLPpqSESK6b5VQ8mGniwQIYMRLlwAVvA==
-X-Received: by 2002:a17:907:6eab:b0:afe:159:14b1 with SMTP id a640c23a62f3a-b49c1971e56mr369945366b.9.1759492427304;
-        Fri, 03 Oct 2025 04:53:47 -0700 (PDT)
-Received: from [192.168.0.25] ([82.76.24.202])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b4865e7c47fsm430327666b.37.2025.10.03.04.53.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 03 Oct 2025 04:53:46 -0700 (PDT)
-Message-ID: <8e687353-f505-4122-bd46-57ba0d84dabf@linaro.org>
-Date: Fri, 3 Oct 2025 14:53:40 +0300
+        d=1e100.net; s=20230601; t=1759492639; x=1760097439;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Z/RwV8Q4hBWil9Gk7UQBXPk1Pu4CPKtI2/nJ64HEYjA=;
+        b=OvpIzOX5SKgxSoBTB2kFjiWe5rC4gaso1UC2PYTgx8dCkVIuz80tspRG5NGi5l9//N
+         Puf6BkHM2kTOMNcTV+6Paub/ujMUaLRSolJo/9CnCgJWalH3mpnNcG6B8h69WeU/46p3
+         NO8yKej6jYtI5EyAec5pKmAMcSiUg8JL3na2XzIMlS4QFoLOELoTlaK3nlczA0ai8ydL
+         ZxPsziAU7wHeILRwnOK6Cow6s+zThSOppKLt8SXHMo/0kWYJuJmoCXc41WRQOf2CMf6w
+         y+4/sFe3oHzBC+CPFq9Dc+2eI6Vks7lQCQxr6Hd6Q2bZLbVIA3RkgiNrQSNLSKiimmES
+         uEaA==
+X-Gm-Message-State: AOJu0YzCT3wwC3IzIT64ZJ5AQ0L2BrwFPM32N3HSX1ccebuvxNqc521m
+	3Xe4PO0hPM5+ynFxhU7HyaPaG4pBWR+1+H7ZfVLMr5qmSNd0mpx19nYo
+X-Gm-Gg: ASbGncsCJbj28o45fpdn6N9GvaQziXVsjqK3gNw/uHmG44kqOpYsWA2zTfBjKNyDIL/
+	rz1/9JkeeoF+Y49S3pro95t18B9GMZMcPNQZ48v/lO2xLVnVk609edTYlXoHoF5HDo0UWaqL+UD
+	f1axgPnbAnAVz8EPKRqF2kNM2COcFURUKoCW2onNLdRl8LCkBfwYQp+TVn5qMgkKlYgeJwclFM8
+	pc3ty2sCutqsGHIonfCOYsuCHPP4Ms9dbyudBC1cqdAsCr1c74kIFutm6SluxqFrQzTWHfo7Lug
+	7i3CxtTY9NVdz4Rw+VX/H9cV/D+Tj8rwP9Y/C+ws14KZiH01Fn5ElmX9kdvNPVw8G8qsyDgnv9f
+	bGR+6Y5bZgJ2IpxRQdiN8Frx1L9TkN5QYG0WOo8v1gX7+qxY=
+X-Google-Smtp-Source: AGHT+IEBrRSxx7/yWNcZNy8YRDCLrMWcGHLTzaM2/PNk5nSyIVA/cP+iPZEBnhkQGX8ARqi8DjEZGg==
+X-Received: by 2002:a17:907:3ea1:b0:b0f:4ae:c83 with SMTP id a640c23a62f3a-b49c4498ba6mr344101166b.63.1759492638759;
+        Fri, 03 Oct 2025 04:57:18 -0700 (PDT)
+Received: from localhost ([2a03:2880:30ff:1::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b486970a684sm421586966b.52.2025.10.03.04.57.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Oct 2025 04:57:18 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+Subject: [PATCH net v7 0/4] net: netpoll: fix memory leak and add
+ comprehensive selftests
+Date: Fri, 03 Oct 2025 04:57:11 -0700
+Message-Id: <20251003-netconsole_torture-v7-0-aa92fcce62a9@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] dt-bindings: firmware: qcom,scm: document SCM on
- Kaanapali SOC
-To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Robert Marko <robimarko@gmail.com>,
- Das Srinagesh <quic_gurus@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, aiqun.yu@oss.qualcomm.com,
- tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
- yijie.yang@oss.qualcomm.com
-References: <20250924-knp-soc-binding-v1-0-93a072e174f9@oss.qualcomm.com>
- <20250924-knp-soc-binding-v1-3-93a072e174f9@oss.qualcomm.com>
-Content-Language: en-US
-From: Eugen Hristev <eugen.hristev@linaro.org>
-In-Reply-To: <20250924-knp-soc-binding-v1-3-93a072e174f9@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABe632gC/33QzUrEMBQF4FcJWc+Vm/+0K99DRJL0ZiYgjaS1K
+ EPfXexCKq2uD3zncO58olZo4j2780ZLmUodec/chfF0C+OVoAy8Z1yiNNihhJHmVMepvtLLXNv
+ 83gh8TlJlDCl0Hb8w/tYol48NfeIjzfz5wvitTHNtn1vRIrboP3MRIABVsmit6Tx1jwPFEsaH2
+ q6bt8i9oU8NCQjGOUODGZKy9mCovWFODQUI3pnkMsVBiaOhd4Zwp4YGBAwmquizF4kOhtkb/tQ
+ wgOAcSUMYNMXjDvtjCPzjU/v9h1YxG5lt1L+NdV2/AHrD85kOAgAA
+X-Change-ID: 20250902-netconsole_torture-8fc23f0aca99
+To: Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Shuah Khan <shuah@kernel.org>, Simon Horman <horms@kernel.org>, 
+ david decotigny <decot@googlers.com>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, asantostc@gmail.com, efault@gmx.de, 
+ calvin@wbinvd.org, kernel-team@meta.com, calvin@wbinvd.org, 
+ jv@jvosburgh.net, Breno Leitao <leitao@debian.org>, stable@vger.kernel.org
+X-Mailer: b4 0.15-dev-dd21f
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2814; i=leitao@debian.org;
+ h=from:subject:message-id; bh=h6er2ckpwVF7GuNqAHxEQy4OA/+J1C6yr4ND2RJuFwM=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBo37odxqpA+Bf5hgG25++y6b8FaPNRtqZCUr/ay
+ 00v+QBdVMWJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaN+6HQAKCRA1o5Of/Hh3
+ bRkNEACIT6uj/iC4elMIBuLj5AIVM8ML+EhKcTH/EJDXfFAWwVViRTCJYYOwnKP114T/phZVedn
+ ARbxrO/CAiuVV/KE4XX5cov3N0oD0IixD4b6+Pzyi1FxdRMbpsJ1C6pZx5kwXm75/rf21BS0vkM
+ Lv08oYaIKrbtotGthCuEWjSWLpu3lUV5xAjd4VmZrYrXncXsCNOs0nUEknpjLmy2cobwDY0gOox
+ m9bJPSVKK4EFGhjdAoM5FECpO6CXpWUbik4nenqtTJrnZNQtdEbBIyEJcW1a5nhZUwVB3cZz8Yd
+ NOfuGIkACRF64A3sfOx2uayTHJpPY8eDNmIub1P13fIJEPhb2QZ5qNWkb9aliVM0xj3QcYAhaKK
+ RXkrlLDyoXgOWF2GC3Ehi+MoCYLR8EinZaegb411cBoljTaSTEULI3D98XZYmIk0J+IHgwdjnCG
+ O8g6ixgqTYN58QS989ZXvjL/b/Qpw3D0Rt8xct2GcmJeNRNwqokkfJP5iPNHIBfLcztq+NhhrQ4
+ W2shjO7Hj8wqHJ/xlX37LZeK0yUYJH213IpE1Jx1DikKB7IDl8ozxlsrmk04Tjt2XsoQ3bE/zzH
+ mufB1QtG301tMBRR0aek0m5VTNrTwwT8MbhGaJEHygNKBhoDDzWIvkiH+8Utnf1r10ixPMxfXCI
+ JYl5qYFAhntecAQ==
+X-Developer-Key: i=leitao@debian.org; a=openpgp;
+ fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
+Fix a memory leak in netpoll and introduce netconsole selftests that
+expose the issue when running with kmemleak detection enabled.
 
+This patchset includes a selftest for netpoll with multiple concurrent
+users (netconsole + bonding), which simulates the scenario from test[1]
+that originally demonstrated the issue allegedly fixed by commit
+efa95b01da18 ("netpoll: fix use after free") - a commit that is now
+being reverted.
 
-On 9/25/25 02:31, Jingyi Wang wrote:
-> Document scm compatible for the Qualcomm Kaanapali SoC. It is an interface
-> to communicate to the secure firmware.
+Sending this to "net" branch because this is a fix, and the selftest
+might help with the backports validation.
 
-Same nitpicks on subject name and extra sentence
+Link: https://lore.kernel.org/lkml/96b940137a50e5c387687bb4f57de8b0435a653f.1404857349.git.decot@googlers.com/ [1]
 
-Reviewed-by: Eugen Hristev <eugen.hristev@linaro.org>
-> 
-> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-> ---
->  Documentation/devicetree/bindings/firmware/qcom,scm.yaml | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/firmware/qcom,scm.yaml b/Documentation/devicetree/bindings/firmware/qcom,scm.yaml
-> index ef97faac7e47..340b754e6322 100644
-> --- a/Documentation/devicetree/bindings/firmware/qcom,scm.yaml
-> +++ b/Documentation/devicetree/bindings/firmware/qcom,scm.yaml
-> @@ -31,6 +31,7 @@ properties:
->            - qcom,scm-ipq806x
->            - qcom,scm-ipq8074
->            - qcom,scm-ipq9574
-> +          - qcom,scm-kaanapali
->            - qcom,scm-mdm9607
->            - qcom,scm-milos
->            - qcom,scm-msm8226
-> @@ -202,6 +203,7 @@ allOf:
->            compatible:
->              contains:
->                enum:
-> +                - qcom,scm-kaanapali
->                  - qcom,scm-milos
->                  - qcom,scm-sm8450
->                  - qcom,scm-sm8550
-> 
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+Changes in v7:
+- Rebased on top of `net`
+- Link to v6: https://lore.kernel.org/r/20251002-netconsole_torture-v6-0-543bf52f6b46@debian.org
+
+Changes in v6:
+- Expand the tests even more and some small fixups
+- Moved the test to bonding selftests
+- Link to v5: https://lore.kernel.org/r/20250918-netconsole_torture-v5-0-77e25e0a4eb6@debian.org
+
+Changes in v5:
+- Set CONFIG_BONDING=m in selftests/drivers/net/config.
+- Link to v4: https://lore.kernel.org/r/20250917-netconsole_torture-v4-0-0a5b3b8f81ce@debian.org
+
+Changes in v4:
+- Added an additional selftest to test multiple netpoll users in
+  parallel
+- Link to v3: https://lore.kernel.org/r/20250905-netconsole_torture-v3-0-875c7febd316@debian.org
+
+Changes in v3:
+- This patchset is a merge of the fix and the selftest together as
+  recommended by Jakub.
+
+Changes in v2:
+- Reuse the netconsole creation from lib_netcons.sh. Thus, refactoring
+  the create_dynamic_target() (Jakub)
+- Move the "wait" to after all the messages has been sent.
+- Link to v1: https://lore.kernel.org/r/20250902-netconsole_torture-v1-1-03c6066598e9@debian.org
+
+---
+Breno Leitao (4):
+      net: netpoll: fix incorrect refcount handling causing incorrect cleanup
+      selftest: netcons: refactor target creation
+      selftest: netcons: create a torture test
+      selftest: netcons: add test for netconsole over bonded interfaces
+
+ net/core/netpoll.c                                 |   7 +-
+ tools/testing/selftests/drivers/net/Makefile       |   1 +
+ .../testing/selftests/drivers/net/bonding/Makefile |   2 +
+ tools/testing/selftests/drivers/net/bonding/config |   4 +
+ .../drivers/net/bonding/netcons_over_bonding.sh    | 221 +++++++++++++++++++++
+ .../selftests/drivers/net/lib/sh/lib_netcons.sh    | 188 ++++++++++++++++--
+ .../selftests/drivers/net/netcons_torture.sh       | 127 ++++++++++++
+ 7 files changed, 530 insertions(+), 20 deletions(-)
+---
+base-commit: 7ae421cf78bd795513ec3a7d7ef7ac9437693e23
+change-id: 20250902-netconsole_torture-8fc23f0aca99
+
+Best regards,
+--  
+Breno Leitao <leitao@debian.org>
 
 
