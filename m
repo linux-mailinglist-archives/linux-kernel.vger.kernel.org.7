@@ -1,113 +1,167 @@
-Return-Path: <linux-kernel+bounces-840983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62154BB5E4A
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 06:20:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8627BB5E56
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 06:22:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 90E7D4E1F60
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 04:19:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73C45427017
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 04:22:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1A2C1DDC37;
-	Fri,  3 Oct 2025 04:19:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3722C1DF25C;
+	Fri,  3 Oct 2025 04:22:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TxIpnjre"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="eTQQxV7C"
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 341F913A3ED;
-	Fri,  3 Oct 2025 04:19:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AA4313A3ED;
+	Fri,  3 Oct 2025 04:22:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759465195; cv=none; b=LDaDtxPj/slutzq4PetfgCGiO+QoUkXkTa5iiMpYfrdmgDOrensYF1pjNMu6Ubb67/JrHqF9RMCgY0bEs1969cLIKZb0NbLUBEDAl64bCI164+JV/n0/xOYO91p+uv3xZgxbk9Q8v9YqjSTK5Qi+ix9y5tG3rpcwx135hgm7gBk=
+	t=1759465357; cv=none; b=bvIfDZ0m3ZmYyHstgrYjgvDXlOW+rOKFvd5MrioPDFPIjkV6FrkW0dIZFUPLH5dLwAIvWi0Z7Sff1PDwbQu9SOO5uj9V+/QOxjZRNFuSUoghq0Dae3rQtEBnRU8aYlNUm8Vj4GwHfigQclemMgDapw7EsYpcZjUrILtOdWHVza0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759465195; c=relaxed/simple;
-	bh=tJF1eZNNuOE1+lkH9NxBrXzi38f2k9l7zWGgnC6Wnis=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TUxqONKBdv91QRTfL5F+os0anbCqWaDpG0vU1paY6rOrVB69+0F1SlKupmJUVykr7zBx4f17cY3vurUFF6HrqfnlRQWTKzUvjV5LQ7nv7a9Gh+eo8xqTwjmbdJWr0yJCDhuVUsnyUxM1p/Y+cnoLM8zuhbxPmPqRyfQi7Py6U5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TxIpnjre; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83F3DC4CEF5;
-	Fri,  3 Oct 2025 04:19:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759465194;
-	bh=tJF1eZNNuOE1+lkH9NxBrXzi38f2k9l7zWGgnC6Wnis=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=TxIpnjre3Uz7q7thqMtcpFWf/u9n2iigg5OhhnpNobyZ2XkVmjiwCwGu120GuwQo9
-	 X5TCk4CjfvukJXz1iA3Yn2Wc6VDjeUBa8EgptJidMHicSnLXaDQXwlPIfJOUudTeRY
-	 JMURnn5Wj/TQYNwfKyWnEZHg5IhgpW17C4hsGEFiUx+VRsWX8cjJpW0OErwhqgGlo/
-	 BYtab3RB6NGmtCj70hKJ7ACNoadtPrfARicBBLmVZHfydodxOoyt9p9XSYypsUrzA2
-	 nj7Ax5ViQn0kqaGdf6VI3PNK8FqFCX8fXxIOpU0MgqLu7NTigwLS9D1PnZ2+doLcxg
-	 lrJIz2tUkwjtA==
-Message-ID: <b3a1cf17-a739-477c-acee-ac61a0d8e2a9@kernel.org>
-Date: Fri, 3 Oct 2025 13:19:31 +0900
+	s=arc-20240116; t=1759465357; c=relaxed/simple;
+	bh=BXBFE0zEH+OZh3PToClWUyja4fEYE0kkxq/gjiSlJOo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pJkibh7uqX8dqWYpTccT19/cchBUfVGHI7n6rUjkV/+AoNbze4HlQ0xrHzHV0txPly9QQ38X8TO/mv/zQ3wDhBLM/ss68hC1Z1Dj1DJEHLW0lSwN1nW1/03yeL1oYRu2Nhr5LK6j9b2HBW8yWRrtK1tTj09ryxRjcTH4vkxKo0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=eTQQxV7C; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4cdFr14RHLz9tdV;
+	Fri,  3 Oct 2025 06:22:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1759465345;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rfjajPgEwVLh4oTw1tl5i3Qwbh9BXtm5rODawyfaF28=;
+	b=eTQQxV7Cz6Zn3ryUrERVS4yq5ujsCo1hGdrYn+LQE/4HeM9IxZOaOoJWV8uOYIG8sDbGmn
+	XXEAqo8Bt9rTbvQw84t0LR80s0IUu85LKusdEYIm3HYX6dOlGIvUDQY/d7N1OwRaIJKGQL
+	22G8fVxTW55uSaM8YdkUkiGCS+IvMHCSK2Ytj4iscuvLpTxmErI4JvC2AXQsEhZllKasLI
+	b3UFlui+wFlTp8eZEJ8XMW4P7qNsBhnutRYOa/xqG3nOPWELDcPCnmGkg2Rs1Bk7WZyMkR
+	1BFH/x2X513K06iS6iP1tyzWTYdIMnSG+C+vfO+zHqcHcE7TwJnZg+2NKtFMOQ==
+Date: Fri, 3 Oct 2025 14:22:11 +1000
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Alejandro Colomar <alx@kernel.org>
+Cc: Askar Safin <safinaskar@gmail.com>, brauner@kernel.org, 
+	dhowells@redhat.com, g.branden.robinson@gmail.com, jack@suse.cz, 
+	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-man@vger.kernel.org, mtk.manpages@gmail.com, viro@zeniv.linux.org.uk
+Subject: Re: [PATCH v5 7/8] man/man2/open_tree{,_attr}.2: document new
+ open_tree_attr() API
+Message-ID: <2025-10-03-chosen-flabby-plunder-premises-hrf07h@cyphar.com>
+References: <20250925-new-mount-api-v5-7-028fb88023f2@cyphar.com>
+ <20251001003841.510494-1-safinaskar@gmail.com>
+ <2025-10-01-brawny-bronze-taste-mounds-zp8G2b@cyphar.com>
+ <5ukckeqipdkz6aigdy7rmtsmy5zav5x4rw2hrgbxiwfflrcmgb@jy7yr34cwyat>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND] block/mq-deadline: adjust the timeout period of
- the per_prio->dispatch
-To: chengkaitao <pilgrimtao@gmail.com>, axboe@kernel.dk
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- chengkaitao <chengkaitao@kylinos.cn>
-References: <20250926023818.16223-1-pilgrimtao@gmail.com>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20250926023818.16223-1-pilgrimtao@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-On 9/26/25 11:38, chengkaitao wrote:
-> From: chengkaitao <chengkaitao@kylinos.cn>
-> 
-> Reference function started_after()
-> Before modification:
-> 	Timeout for dispatch{read}: 9.5s
-> 	started_after - 0.5s < latest_start - 10s
-> 	9.5s < latest_start - started_after
-> 
-> 	Timeout for dispatch{write}: 5s
-> 	started_after - 5s < latest_start - 10s
-> 	5s < latest_start - started_after
-> 
-> At this point, write requests have higher priority than read requests.
-> 
-> After modification:
-> 	Timeout for dispatch{read/write}: 5s
-> 	prio_aging_expire / 2 < latest_start - started_after
-> 
-> Signed-off-by: chengkaitao <chengkaitao@kylinos.cn>
-
-Also please write your name correctly here, separating first and last names with
-a capital first letter for each (unless of course if this is your only
-name/firstname, but still missing the capital letter).
-
-> ---
->  block/mq-deadline.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/block/mq-deadline.c b/block/mq-deadline.c
-> index b9b7cdf1d3c9..f311168f8dfe 100644
-> --- a/block/mq-deadline.c
-> +++ b/block/mq-deadline.c
-> @@ -672,7 +672,8 @@ static void dd_insert_request(struct blk_mq_hw_ctx *hctx, struct request *rq,
->  
->  	if (flags & BLK_MQ_INSERT_AT_HEAD) {
->  		list_add(&rq->queuelist, &per_prio->dispatch);
-> -		rq->fifo_time = jiffies;
-> +		rq->fifo_time = jiffies + dd->fifo_expire[data_dir]
-> +				- dd->prio_aging_expire / 2;
->  	} else {
->  		deadline_add_rq_rb(per_prio, rq);
->  
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="wybfpsl2p34qcvgm"
+Content-Disposition: inline
+In-Reply-To: <5ukckeqipdkz6aigdy7rmtsmy5zav5x4rw2hrgbxiwfflrcmgb@jy7yr34cwyat>
 
 
--- 
-Damien Le Moal
-Western Digital Research
+--wybfpsl2p34qcvgm
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v5 7/8] man/man2/open_tree{,_attr}.2: document new
+ open_tree_attr() API
+MIME-Version: 1.0
+
+On 2025-10-01, Alejandro Colomar <alx@kernel.org> wrote:
+> Hi Aleksa,
+>=20
+> On Wed, Oct 01, 2025 at 05:35:45PM +1000, Aleksa Sarai wrote:
+> > On 2025-10-01, Askar Safin <safinaskar@gmail.com> wrote:
+> > > Aleksa Sarai <cyphar@cyphar.com>:
+> > > > +mntfd2 =3D open_tree(mntfd1, "", OPEN_TREE_CLONE,
+> > > > +                   &attr, sizeof(attr));
+> > >=20
+> > > Your whole so-called "open_tree_attr example" doesn't contain any ope=
+n_tree_attr
+> > > calls. :)
+> > >=20
+> > > I think you meant open_tree_attr here.
+> >=20
+> > Oops.
+> >=20
+> > >=20
+> > > > +\&
+> > > > +/* Create a new copy with the id-mapping cleared */
+> > > > +memset(&attr, 0, sizeof(attr));
+> > > > +attr.attr_clr =3D MOUNT_ATTR_IDMAP;
+> > > > +mntfd3 =3D open_tree(mntfd1, "", OPEN_TREE_CLONE,
+> > > > +                   &attr, sizeof(attr));
+> > >=20
+> > > And here.
+> >=20
+> > Oops x2.
+> >=20
+> > > Otherwise your whole patchset looks good. Add to whole patchset:
+> > > Reviewed-by: Askar Safin <safinaskar@gmail.com>
+>=20
+> I've applied the patch, with the following amendment:
+>=20
+> 	diff --git i/man/man2/open_tree.2 w/man/man2/open_tree.2
+> 	index 8b48f3b78..f6f2fbecd 100644
+> 	--- i/man/man2/open_tree.2
+> 	+++ w/man/man2/open_tree.2
+> 	@@ -683,14 +683,14 @@ .SS open_tree_attr()
+> 	 .\" Using .attr_clr is not strictly necessary but makes the intent clea=
+rer.
+> 	 attr.attr_set =3D MOUNT_ATTR_IDMAP;
+> 	 attr.userns_fd =3D nsfd2;
+> 	-mntfd2 =3D open_tree(mntfd1, "", OPEN_TREE_CLONE,
+> 	-                   &attr, sizeof(attr));
+> 	+mntfd2 =3D open_tree_attr(mntfd1, "", OPEN_TREE_CLONE,
+> 	+                        &attr, sizeof(attr));
+> 	 \&
+> 	 /* Create a new copy with the id-mapping cleared */
+> 	 memset(&attr, 0, sizeof(attr));
+> 	 attr.attr_clr =3D MOUNT_ATTR_IDMAP;
+> 	-mntfd3 =3D open_tree(mntfd1, "", OPEN_TREE_CLONE,
+> 	-                   &attr, sizeof(attr));
+> 	+mntfd3 =3D open_tree_attr(mntfd1, "", OPEN_TREE_CLONE,
+> 	+                        &attr, sizeof(attr));
+> 	 .EE
+> 	 .in
+> 	 .P
+>=20
+>=20
+> (Hopefully I got it right.)
+
+That looks correct -- thanks!
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+https://www.cyphar.com/
+
+--wybfpsl2p34qcvgm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJEEABYKADkWIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaN9PcxsUgAAAAAAEAA5t
+YW51MiwyLjUrMS4xMSwyLDIACgkQKJf60rfpRG841QD/aQiZQdLpxxn1Be+21pvf
+bXC7K4m0Tl12JBmevAxkfhAA/3deU7Zt6PHKGPssSrsI4P6icJWoYcVBvunm3LjI
+doEP
+=yX5i
+-----END PGP SIGNATURE-----
+
+--wybfpsl2p34qcvgm--
 
