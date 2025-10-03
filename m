@@ -1,168 +1,133 @@
-Return-Path: <linux-kernel+bounces-840943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C827BB5C95
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 04:02:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C5A5BB5CAA
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 04:12:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CCDC427A39
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 02:02:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 859C7480C78
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 02:12:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C53322C0F72;
-	Fri,  3 Oct 2025 02:02:37 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C76AD2C235C;
+	Fri,  3 Oct 2025 02:12:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hNWSkcRM"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F6F22C08A1
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 02:02:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 955C82C2353;
+	Fri,  3 Oct 2025 02:12:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759456957; cv=none; b=VNmZnHP5AY7+zhjlPrsDbNqq9SzS7uClobaPCD7ygk8BeFb7AatQG3nAY75j1zFKgSq0WC1kq7rShMiEPUqFAHxATX7U3fF/l2w2yVNBYHpAgHoE2JTunYdGW5LEsmKUXl6g6NF8awERBBM5s7cVlNIKOKyfxAT5NVP6VhXGGBw=
+	t=1759457542; cv=none; b=t6HC0IJecLSmYARhYWKMqK1W9VShX05zXBJsZ/w+rKpi96cDMdXx6oKtk6wYuEauNKNIsct1jAVXOApw/qfYUEwRIpz+6fBw4X9mAO9u8UEnztmRY2geA6I1A7obl5fQAFnbS0Q3/qYvE0+I2XPJQK15eDLnptqJQaP3/oqYpuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759456957; c=relaxed/simple;
-	bh=DY2LpIw+buD76/TQi8/+FFrw7iGIpPfinV+MQ53jhno=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=N/tVp5T4WzBtyNakBz3Eqi7+OmjWYzm9X/N7trvU/cxDoR93D8NlSvZ6+3MzV2l0KSb48xOVWKNLFR7aWJIpcvmnUa9K3BoRGIhb1qMBcXycJPYHJ+/joBbZbUsHMvaag7OqqvkltzqbZD20v7JcePxfv4dDFejFnOrRZGZvOKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-42e74499445so10985015ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 19:02:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759456951; x=1760061751;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=V5vs9n9028GGJFsoBbT/p4gNDi1uzSRnj3Xc4sJwfKs=;
-        b=ca7tliBD738SnDRZ0QBlfkSFtRXCm/C38kAoiHvvGVwSpkqwHkU4AWT5e0TRr14r1r
-         0N3qG4xpQAkxCKJbpza/rM2TxGdL2m/RslKst9nVbSwkD7kbdisn01i8NZ+p52DY0+H6
-         BEfOo4jTPhd299GYLQbWaCGU5ubhTRwABsCQHNHGy2pITWQtt+ymcbh/3dte2wGZQjQy
-         CXPBKNUgZn3w2BY1inGoNwVnoahz3hPbAXFc7A/GOgYDb0EUD8UIcrsa5wbpn31rkMKs
-         4rAG6jjDwKTWNKVtZzMKBg91KH/HNKGP+a9mti4ukwEiuRi+ZndpAJN8mWYRLaRXTrIM
-         VW8g==
-X-Gm-Message-State: AOJu0Yz36zA3pqcGTgLtTXT00Jth2zSoDdQCfgBaA+eZSnCtixcZrlq6
-	GVBwcFGUDSQI01DYuVSYuv1becMW585HYw2bE7DSpb9+Yjnejhh4cwGotDWy17fqFqzweptAZKk
-	hzPkQuUbV8EoueUyObHcXu7PO3gpxIk0Tpv/Zwft8scczrVouw8cYXF9hwXM=
-X-Google-Smtp-Source: AGHT+IEnhN5ZXhen6/XFABzvH6fT2pQLHNer7jCTQfJVOMd3tkue7NR0WhYNIXLvJDa0ZrWzkWMqr3lbt+tt+/LGuZcWjJ7YYGx0
+	s=arc-20240116; t=1759457542; c=relaxed/simple;
+	bh=qtzjrZBBxKN/6Xha1W2kGG4xjEIlLB9Uc8Ik5gn2z2M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kHZjL5hRQg1sUL7uqj7Tqrh1hqmU47aBTBdNZyClJcd0TzXmUusWZBBe8lv0F9IcRDWphNF1lkXuccdWdD4MPCcHCn7RLtJedsvhlvcxNNE9sruFi6/ar/QlprvC2xQyNKbvFHdR+qfRGLojnLejRXfYz5BLyDhxe01AW8QxNzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hNWSkcRM; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759457536; x=1790993536;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=qtzjrZBBxKN/6Xha1W2kGG4xjEIlLB9Uc8Ik5gn2z2M=;
+  b=hNWSkcRMYVT+wJwS2NRUgAAn04nLKLT1/J1NTApY0lw5RoI7NwcpGZVl
+   T3E6A3+G/cSrbdq665DbS0oAZeMVL5jzdjeMzeEKXz1u8Nc5nWOYJNeR3
+   BhQ4MvTfMH//0Yit2CfaPkTfM67vMcurpO2dSNC73TzmUhYVg5YbrJoQc
+   eJc35iM9jVnuk+Yo2wpT3FosRFotPf5UQoVDiKKWDkvG8o1bLmSp3aYbg
+   AA2KH4s4OMPbIVyoYhyc/puJQcE6iuqUPLRfsnWTxy8X19XPB4q1ij33d
+   reyh0K5OO+RXjB/OsCtugW1UosT8OkSr+dn9/mMU/43THGWC8L+tZcDXc
+   Q==;
+X-CSE-ConnectionGUID: sZb0cg6VTR+w4+xvhGYZPw==
+X-CSE-MsgGUID: GVV97dEJTw613u+VfGy6Rg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11570"; a="64361708"
+X-IronPort-AV: E=Sophos;i="6.18,311,1751266800"; 
+   d="scan'208";a="64361708"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Oct 2025 19:12:16 -0700
+X-CSE-ConnectionGUID: pCeIzc+NR8ORVedj+sh/Ig==
+X-CSE-MsgGUID: WNmjOiUcSsyju4Y91t++ZQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,311,1751266800"; 
+   d="scan'208";a="179601731"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by fmviesa008.fm.intel.com with ESMTP; 02 Oct 2025 19:12:14 -0700
+Date: Fri, 3 Oct 2025 09:59:44 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: dan.j.williams@intel.com
+Cc: linux-coco@lists.linux.dev, linux-pci@vger.kernel.org,
+	yilun.xu@intel.com, baolu.lu@linux.intel.com,
+	zhenzhong.duan@intel.com, aneesh.kumar@kernel.org,
+	bhelgaas@google.com, aik@amd.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] PCI/IDE: Add/export mini helpers for platform TSM
+ drivers
+Message-ID: <aN8uEHZzd2cCOYoK@yilunxu-OptiPlex-7050>
+References: <20250928062756.2188329-1-yilun.xu@linux.intel.com>
+ <20250928062756.2188329-2-yilun.xu@linux.intel.com>
+ <68dc74a6b7348_1fa210058@dwillia2-mobl4.notmuch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12e8:b0:42d:bb9d:5358 with SMTP id
- e9e14a558f8ab-42e7ada8fbcmr16029115ab.27.1759456951210; Thu, 02 Oct 2025
- 19:02:31 -0700 (PDT)
-Date: Thu, 02 Oct 2025 19:02:31 -0700
-In-Reply-To: <68ddc2f9.a00a0220.102ee.006d.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68df2eb7.050a0220.2c17c1.0010.GAE@google.com>
-Subject: Forwarded: [PATCH] ext4: reject inline data flag when i_extra_isize
- is zero
-From: syzbot <syzbot+3ee481e21fd75e14c397@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <68dc74a6b7348_1fa210058@dwillia2-mobl4.notmuch>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Tue, Sep 30, 2025 at 05:24:06PM -0700, dan.j.williams@intel.com wrote:
+> Xu Yilun wrote:
+> > These mini helpers are mainly for platform TSM drivers to setup root
+> > port side configuration. Root port side IDE settings may require
+> > platform specific firmware calls (e.g. TDX Connect [1]) so could not use
+> > pci_ide_stream_setup(), but may still share these mini helpers cause
+> > they also refer to definitions in IDE specification.
+> > 
+> > [1]: https://lore.kernel.org/linux-coco/20250919142237.418648-28-dan.j.williams@intel.com/
+> > 
+> > Signed-off-by: Xu Yilun <yilun.xu@linux.intel.com>
+> > ---
+> >  include/linux/pci-ide.h | 6 ++++++
+> >  drivers/pci/ide.c       | 8 +++-----
+> >  2 files changed, 9 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/include/linux/pci-ide.h b/include/linux/pci-ide.h
+> > index a30f9460b04a..5adbd8b81f65 100644
+> > --- a/include/linux/pci-ide.h
+> > +++ b/include/linux/pci-ide.h
+> > @@ -6,6 +6,11 @@
+> >  #ifndef __PCI_IDE_H__
+> >  #define __PCI_IDE_H__
+> >  
+> > +#define PREP_PCI_IDE_SEL_RID_2(base, domain)               \
+> > +	(FIELD_PREP(PCI_IDE_SEL_RID_2_VALID, 1) |          \
+> > +	 FIELD_PREP(PCI_IDE_SEL_RID_2_BASE, (base)) | \
+> > +	 FIELD_PREP(PCI_IDE_SEL_RID_2_SEG, (domain)))
+> > +
+> >  enum pci_ide_partner_select {
+> >  	PCI_IDE_EP,
+> >  	PCI_IDE_RP,
+> > @@ -61,6 +66,7 @@ struct pci_ide {
+> >  	struct tsm_dev *tsm_dev;
+> >  };
+> >  
+> > +int pci_ide_domain(struct pci_dev *pdev);
+> >  struct pci_ide_partner *pci_ide_to_settings(struct pci_dev *pdev, struct pci_ide *ide);
+> >  struct pci_ide *pci_ide_stream_alloc(struct pci_dev *pdev);
+> >  void pci_ide_stream_free(struct pci_ide *ide);
+> 
+> So I do not think we need to export these as much as let TSM drivers
+> reuse more of the common register setup logic.
 
-***
+Do you mean PCI IDE should provide the collapsed raw RID/Address
+Association Register values for platform TSM drivers? TDX needs these
+raw values for SEAMCALLs.
 
-Subject: [PATCH] ext4: reject inline data flag when i_extra_isize is zero
-Author: kartikey406@gmail.com
-
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-
-
-Prevent use-after-free in ext4_search_dir by rejecting inodes that
-claim to have inline data but have no extra inode space allocated.
-ext4 inline data is stored in the extra inode space beyond the
-standard 128-byte inode structure. This requires i_extra_isize to be
-non-zero to provide space for the system.data xattr that stores the
-inline directory entries or file data.
-However, a corrupted filesystem can craft an inode with both:
-- i_extra_isize == 0 (no extra space)
-- EXT4_INODE_INLINE_DATA flag set (claims to use extra space)
-This creates a fundamental inconsistency. When i_extra_isize is zero,
-ext4_iget() skips calling ext4_iget_extra_inode(), which means the
-inline xattr validation in check_xattrs() never runs. Later, when
-ext4_find_inline_entry() attempts to access the inline data, it reads
-unvalidated and potentially corrupt xattr structures, leading to
-out-of-bounds memory access and use-after-free.
-Fix this by validating in ext4_iget() that if an inode has the
-EXT4_INODE_INLINE_DATA flag set, i_extra_isize must be non-zero.
-This catches the corruption at inode load time before any inline
-data operations are attempted.
-
-Reported-by: syzbot+3ee481e21fd75e14c397@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=3ee481e21fd75e14c397
-Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
----
- fs/ext4/inode.c | 13 ++++++++++++-
- fs/ext4/xattr.c |  2 +-
- 2 files changed, 13 insertions(+), 2 deletions(-)
-
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 5b7a15db4953..257e9b1c6416 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -5099,7 +5099,8 @@ static inline int ext4_iget_extra_inode(struct inode *inode,
- 	if (EXT4_INODE_HAS_XATTR_SPACE(inode)  &&
- 	    *magic == cpu_to_le32(EXT4_XATTR_MAGIC)) {
- 		int err;
--
-+		ext4_error_inode(inode, "ext4_iget_extra_inode", 5102, 0,
-+				 "wow this inode has extra space");
- 		err = xattr_check_inode(inode, IHDR(inode, raw_inode),
- 					ITAIL(inode, raw_inode));
- 		if (err)
-@@ -5112,6 +5113,7 @@ static inline int ext4_iget_extra_inode(struct inode *inode,
- 		return err;
- 	} else
- 		EXT4_I(inode)->i_inline_off = 0;
-+
- 	return 0;
- }
- 
-@@ -5414,6 +5416,13 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
- 		ei->i_sync_tid = tid;
- 		ei->i_datasync_tid = tid;
- 	}
-+	if (EXT4_INODE_SIZE(inode->i_sb) < EXT4_GOOD_OLD_INODE_SIZE) {
-+		ext4_error_inode(inode, function, line, 0,
-+				 "wow! this inode has less data");
-+		if (ext4_test_inode_flag(inode, EXT4_INODE_INLINE_DATA)) {
-+			ext4_error_inode(inode, function, line, 0, "wow! this inode is line");
-+		}
-+	}
- 
- 	if (EXT4_INODE_SIZE(inode->i_sb) > EXT4_GOOD_OLD_INODE_SIZE) {
- 		if (ei->i_extra_isize == 0) {
-@@ -5422,6 +5431,8 @@ struct inode *__ext4_iget(struct super_block *sb, unsigned long ino,
- 			ei->i_extra_isize = sizeof(struct ext4_inode) -
- 					    EXT4_GOOD_OLD_INODE_SIZE;
- 		} else {
-+			ext4_error_inode(inode, function, line, 0,
-+					"wow! this inode has reached ext4 iget");
- 			ret = ext4_iget_extra_inode(inode, raw_inode, ei);
- 			if (ret)
- 				goto bad_inode;
-diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
-index 5a6fe1513fd2..9b4a6978b313 100644
---- a/fs/ext4/xattr.c
-+++ b/fs/ext4/xattr.c
-@@ -195,7 +195,7 @@ check_xattrs(struct inode *inode, struct buffer_head *bh,
- 	struct ext4_xattr_entry *e = entry;
- 	int err = -EFSCORRUPTED;
- 	char *err_str;
--
-+	ext4_error_inode(inode, "check_xattrs", 198, 0, "wow! we are in check_xattrs");
- 	if (bh) {
- 		if (BHDR(bh)->h_magic != cpu_to_le32(EXT4_XATTR_MAGIC) ||
- 		    BHDR(bh)->h_blocks != cpu_to_le32(1)) {
--- 
-2.43.0
-
+> 
+> I will flesh out more of the proposal on the next patch.
 
