@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-841192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66B8DBB6756
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 12:39:50 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5C7ABB6768
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 12:39:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DFFAA345082
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 10:39:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 41C344E614D
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 10:39:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E34C2EAB64;
-	Fri,  3 Oct 2025 10:39:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1401C2EACF9;
+	Fri,  3 Oct 2025 10:39:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JWD16IXL"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="upwAZc38"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8018327470
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 10:39:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3722681720
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 10:39:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759487983; cv=none; b=sALE+3qoxNtJfizyXA10dZlkR5uf5g1gttOhv722gJbMU6neDQij/x4SqkR622AsKJiUbra7f+SdXIRRYMV/OfE8gBjTGWt5LyKEiMGanXZ62JMJE3TbJPhs3QJzPUluzlufzvsoWTeNLv+T+UXeWISj4qG1/uqcTynAhl8zAvA=
+	t=1759487985; cv=none; b=M+F8aKMcWQVp219ko2XeENtizNv3rH8MlbatO6g1ZoAhq2SHVj72y+rIJ6drPLGzy8bnb/NuJdbZZz5bIc+W6sz4IDxmLCGvwoqojPI0Ct1I+VHeJh0Ii60PNB6ewZGxxHdspat9nmM3Y2WZlK+QrAejORcmyc1xyCtq4dmlh/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759487983; c=relaxed/simple;
-	bh=Y+3IKH/WFGhJzDLX0GpuHXdYnK3H2S3R9yn5XG3EHvY=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Iakl+P/nt7PYE7LPRecYgwii8UN2FV9QtDwT9bq+mpk4f5DBQh5yv0QGKD368BmiZ00pm2VsSnHzoHw1XG77QpXIrlcJ9BDFOyGhGy1aGVBxXRA/X6e0uY8/98Ls8xEWsqpNcFoixByU02t3hV0WzZZt34+5OrwT84zbwuyojoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JWD16IXL; arc=none smtp.client-ip=185.246.84.56
+	s=arc-20240116; t=1759487985; c=relaxed/simple;
+	bh=KX49EIdCKMoNVJPsWgELjfff+Y5Kp5R86U4uS+ZpzDk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=hYNutGfsQJlGyQQcuspmLNlgd5ELcrSjrm5oKDtV2IIp0mE5NJEYjA9of/ocYENKNqbJ897suVGF11U8vs8r2XqaVy7rxWaieyFfbMIYG+KAo7zf6zOzEbNk4otyTetzkwqI6JzqIltu9vJICsQ5Fzk+x9sjewGEAWxHZtp6OaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=upwAZc38; arc=none smtp.client-ip=185.171.202.116
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id D122A1A10C5;
-	Fri,  3 Oct 2025 10:39:39 +0000 (UTC)
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 85783C00D99;
+	Fri,  3 Oct 2025 10:39:23 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 9828260683;
-	Fri,  3 Oct 2025 10:39:39 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 16160102F1C34;
-	Fri,  3 Oct 2025 12:39:33 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 84F6760683;
+	Fri,  3 Oct 2025 10:39:41 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 12F32102F1C67;
+	Fri,  3 Oct 2025 12:39:38 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1759487978; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding; bh=g0ifPB/eYa8meuD70ncVR+Pbu9URi3BL9N1ASpxRhvg=;
-	b=JWD16IXLpAdEGlchg51Agy/wqoZ+QR2DO13PjzoF/Z0w11AHS5sUxb+PW611IozUYe1ZP6
-	Ovvlt2aWd81WazV2hsIyZioVwwdgqcsY9vVqROzhPGi4VjbahGjPESgmx/Gbm8LkD5II2a
-	haF4CdnkL1fdxE4YGciFiN7pzqsemuQVEnpONlQDtPkPfflTCCfZHkImCkoIYmQdPcunzL
-	ozrmPZuHG9CaOeuSc/Ogwxu6gkmzFBh9zsNdfufY3dGsP48VFrqcEXfJ+hglBCsY5Oai7I
-	saUFBRlzCN41hp7js+ACXtn6nvzemkiiDyHg3mCazPaQe95Xj2vbi/K+xTLE+Q==
+	t=1759487980; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=Qfu3JgcIsjrYY7+XbEdTvSNI3rVgt39kSDML/1Ac/9c=;
+	b=upwAZc38H/sjoI9c8mcboj6oeXPAJsQPew3TzYvjqR+/+DCQJwSLAKqGKNyNWl756zzr49
+	szwqN8H2FHqMLIev5WxWCl6dT+Wwz6ciHofzvk1iB8weZj+lBuM0NmH+ws2oFdnYk/j7BN
+	HzNerP9hTrCEbPd7JD5cpY7FUpMnRL358Z9SYCmjyZg+wK7ZYh2vvFzrRbpLplUIbSpFur
+	TAAQfT9x6VmEUUTX4ZESiiqEW1o3inCegiUwVczkpuU1YdHUfhC6fkp64ocqe4fpPb87iX
+	PAp5jgCBjTqcovr1HSJPLjoOFNCjjSdXH33jTGxuDYlJRKsGCSGugzpZotDUxg==
 From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Subject: [PATCH v2 0/7] drm/bridge: protect encoder bridge chain with a
- mutex
-Date: Fri, 03 Oct 2025 12:39:22 +0200
-Message-Id: <20251003-drm-bridge-alloc-encoder-chain-mutex-v2-0-78bf61580a06@bootlin.com>
+Date: Fri, 03 Oct 2025 12:39:23 +0200
+Subject: [PATCH v2 1/7] drm/encoder: add mutex to protect the bridge chain
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,12 +57,10 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIANqn32gC/42NwQ6CMBBEf4X07JpSbEFP/ofhQNtVNoHWbJFgC
- P9uJfHu8c1M5q0iIRMmcSlWwThTohgyqEMhXN+FBwL5zEJJpeVZafA8gmXyuemGITrA4KJHhjy
- nAONrwgVs3XijZKMRtchXT8Y7Lbvm1mbuKU2R37t1Lr/pT2D+E8wlSFCVNcqd6kqb7mpjnAYKR
- xdH0W7b9gH7mWjA2gAAAA==
-X-Change-ID: 20250925-drm-bridge-alloc-encoder-chain-mutex-b78d62085ee5
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251003-drm-bridge-alloc-encoder-chain-mutex-v2-1-78bf61580a06@bootlin.com>
+References: <20251003-drm-bridge-alloc-encoder-chain-mutex-v2-0-78bf61580a06@bootlin.com>
+In-Reply-To: <20251003-drm-bridge-alloc-encoder-chain-mutex-v2-0-78bf61580a06@bootlin.com>
 To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
  Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
  David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
@@ -77,84 +75,115 @@ Cc: Hui Pu <Hui.Pu@gehealthcare.com>,
 X-Mailer: b4 0.14.2
 X-Last-TLS-Session-Version: TLSv1.3
 
-This series ensures that the bridge chain of the encoder will not be
-modified while some other concurrent code flows are iterating over it.
-
-This is part of the work towards removal of bridges from a still existing
-DRM pipeline without use-after-free. The grand plan was discussed in [1].
-Here's the work breakdown (➜ marks the current series):
-
- 1. ➜ add refcounting to DRM bridges (struct drm_bridge)
-    (based on devm_drm_bridge_alloc() [0])
-    A. ✔ add new alloc API and refcounting (v6.16)
-    B. ✔ convert all bridge drivers to new API (v6.17)
-    C. ✔ kunit tests (v6.17)
-    D. ✔ add get/put to drm_bridge_add/remove() + attach/detach()
-         and warn on old allocation pattern (v6.17)
-    E. ➜ add get/put on drm_bridge accessors
-       1. ✔ drm_bridge_chain_get_first_bridge() + add a cleanup action
-            (drm-misc-next)
-       2. ✔ drm_bridge_get_prev_bridge() (drm-misc-next)
-       3. ✔ drm_bridge_get_next_bridge() (drm-misc-next)
-       4. ✔ drm_for_each_bridge_in_chain() (drm-misc-next)
-       5. ✔ drm_bridge_connector_init (drm-misc-next)
-       6. ➜ protect encoder bridge chain with a mutex
-       7. of_drm_find_bridge
-       8. drm_of_find_panel_or_bridge, *_of_get_bridge
-       9. … enforce drm_bridge_add before drm_bridge_attach
-    F. ✔ debugfs improvements
-       1. ✔ add top-level 'bridges' file (v6.16)
-       2. ✔ show refcount and list removed bridges (drm-misc-next)
- 2. … handle gracefully atomic updates during bridge removal
- 3. … DSI host-device driver interaction
- 4. ✔ removing the need for the "always-disconnected" connector
- 5. finish the hotplug bridge work, moving code to the core and potentially
-    removing the hotplug-bridge itself (this needs to be clarified as
-    points 1-3 are developed)
-
 The per-encoder bridge chain is currently assumed to be static once it is
 fully initialized. Work is in progress to add hot-pluggable bridges,
 breaking that assumption.
 
-With hotplug and especially hot-unplug, bridges will be added and removed
-without notice, and thus be added/removed to/from the encoder chain in
-drm_bridge_attach/detach(), concurrently to the code iterating on the
-chain. This can result in disruption of the code iterating over the
-chain. The rationale is explained by a detailed example in patch 2.
+With bridge removal, the encoder chain can change without notice, removing
+tail bridges. This can be problematic while iterating over the chain.
 
-Avoid bugs by introducing a mutex to make list insertion, removal and
-iterations mutually exclusive.
+Add a mutex to be taken whenever looping or changing the encoder chain.
 
-[1] https://lore.kernel.org/lkml/20250206-hotplug-drm-bridge-v6-0-9d6f2c9c3058@bootlin.com/#t
+Also add two APIs to lock/unlock the mutex without the need to manipulate
+internal struct drm_encoder fields.
 
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+
 ---
+
 Changes in v2:
-- Improve commit messages and add documentation as per v1 review
-- Patch 4: fixed infinite loop when encoder->bridge_chain is empty
-- Link to v1: https://lore.kernel.org/r/20250926-drm-bridge-alloc-encoder-chain-mutex-v1-0-23b62c47356a@bootlin.com
-
+- Added documentation to new APIs
 ---
-Luca Ceresoli (7):
-      drm/encoder: add mutex to protect the bridge chain
-      drm/encoder: drm_encoder_cleanup: take chain mutex while tearing down
-      drm/bridge: lock the encoder bridge chain mutex during insertion
-      drm/bridge: lock the encoder chain in scoped for_each loops
-      drm/bridge: prevent encoder chain changes while iterating with list_for_each_entry_from()
-      drm/bridge: prevent encoder chain changes while iterating with list_for_each_entry_reverse()
-      drm/bridge: prevent encoder chain changes in pre_enable/post_disable
+ drivers/gpu/drm/drm_encoder.c |  2 ++
+ include/drm/drm_encoder.h     | 39 +++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 41 insertions(+)
 
- drivers/gpu/drm/drm_bridge.c  | 51 ++++++++++++++++++-----------------
- drivers/gpu/drm/drm_encoder.c |  4 +++
- include/drm/drm_bridge.h      | 62 +++++++++++++++++++++++--------------------
- include/drm/drm_encoder.h     | 39 +++++++++++++++++++++++++++
- 4 files changed, 103 insertions(+), 53 deletions(-)
----
-base-commit: 0f2efbe6d8305b91c9b2c92ebaf8c24a614bc305
-change-id: 20250925-drm-bridge-alloc-encoder-chain-mutex-b78d62085ee5
+diff --git a/drivers/gpu/drm/drm_encoder.c b/drivers/gpu/drm/drm_encoder.c
+index 8f2bc6a28482229fd0b030a1958f87753ad7885f..3261f142baea30c516499d23dbf8d0acf5952cd6 100644
+--- a/drivers/gpu/drm/drm_encoder.c
++++ b/drivers/gpu/drm/drm_encoder.c
+@@ -129,6 +129,7 @@ static int __drm_encoder_init(struct drm_device *dev,
+ 	}
+ 
+ 	INIT_LIST_HEAD(&encoder->bridge_chain);
++	mutex_init(&encoder->bridge_chain_mutex);
+ 	list_add_tail(&encoder->head, &dev->mode_config.encoder_list);
+ 	encoder->index = dev->mode_config.num_encoder++;
+ 
+@@ -202,6 +203,7 @@ void drm_encoder_cleanup(struct drm_encoder *encoder)
+ 	kfree(encoder->name);
+ 	list_del(&encoder->head);
+ 	dev->mode_config.num_encoder--;
++	mutex_destroy(&encoder->bridge_chain_mutex);
+ 
+ 	memset(encoder, 0, sizeof(*encoder));
+ }
+diff --git a/include/drm/drm_encoder.h b/include/drm/drm_encoder.h
+index 977a9381c8ba943b4d3e021635ea14856df8a17d..449281c37e39f67a0037603762f347f5086df983 100644
+--- a/include/drm/drm_encoder.h
++++ b/include/drm/drm_encoder.h
+@@ -25,6 +25,7 @@
+ 
+ #include <linux/list.h>
+ #include <linux/ctype.h>
++#include <linux/mutex.h>
+ #include <drm/drm_crtc.h>
+ #include <drm/drm_mode.h>
+ #include <drm/drm_mode_object.h>
+@@ -189,6 +190,9 @@ struct drm_encoder {
+ 	 */
+ 	struct list_head bridge_chain;
+ 
++	/** @bridge_chain_mutex: protect bridge_chain from changes while iterating */
++	struct mutex bridge_chain_mutex;
++
+ 	const struct drm_encoder_funcs *funcs;
+ 	const struct drm_encoder_helper_funcs *helper_private;
+ 
+@@ -319,6 +323,41 @@ static inline struct drm_encoder *drm_encoder_find(struct drm_device *dev,
+ 	return mo ? obj_to_encoder(mo) : NULL;
+ }
+ 
++/**
++ * drm_encoder_chain_lock - lock the encoder bridge chain
++ * @encoder: encoder whose bridge chain must be locked
++ *
++ * Locks the mutex protecting the bridge chain from concurrent access.
++ * To be called by code modifying ot iterating over the bridge chain to
++ * prevent the list from changing while iterating over it.
++ * Call drm_encoder_chain_unlock() when done to unlock the mutex.
++ *
++ * Returns:
++ * Pointer to @encoder. Useful to lock the chain and then operate on the
++ * in the same statement, e.g.:
++ * list_first_entry_or_null(&drm_encoder_chain_lock(encoder)->bridge_chain)
++ */
++static inline struct drm_encoder *drm_encoder_chain_lock(struct drm_encoder *encoder)
++{
++	if (!WARN_ON_ONCE(!encoder))
++		mutex_lock(&encoder->bridge_chain_mutex);
++
++	return encoder;
++}
++
++/**
++ * drm_encoder_chain_unlock - unlock the encoder bridge chain
++ * @encoder: encoder whose bridge chain must be unlocked
++ *
++ * Unlocks the mutex protecting the bridge chain from concurrent access,
++ * matching drm_encoder_chain_lock().
++ */
++static inline void drm_encoder_chain_unlock(struct drm_encoder *encoder)
++{
++	if (!WARN_ON_ONCE(!encoder))
++		mutex_unlock(&encoder->bridge_chain_mutex);
++}
++
+ void drm_encoder_cleanup(struct drm_encoder *encoder);
+ 
+ /**
 
-Best regards,
 -- 
-Luca Ceresoli <luca.ceresoli@bootlin.com>
+2.51.0
 
 
