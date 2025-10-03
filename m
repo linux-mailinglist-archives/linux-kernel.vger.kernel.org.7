@@ -1,201 +1,299 @@
-Return-Path: <linux-kernel+bounces-841865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49688BB86FD
-	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 01:52:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 28505BB8700
+	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 01:56:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C1624A7AF7
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 23:52:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEDCE4C3442
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 23:56:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B6CD27B34F;
-	Fri,  3 Oct 2025 23:52:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEEB627380A;
+	Fri,  3 Oct 2025 23:56:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="UV+d3WKy"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kWZ4tdtW"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9CDD24679F;
-	Fri,  3 Oct 2025 23:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759535560; cv=none; b=ool8n89LLetuQJtDiC74ZmUpp62EcuPFmQGLaeWd8i7uX/+T3PFYFeqkubc3NE7Fu2/sasqnEGcic3GIZfWPNDYXd+6P6r4kKaf8bVwNGpGeOKKBIG4BvmRAo8zQrk6+5thYCTa3CvycMX+z4MPb7qEMjhfwRn7OPDrhycRw7OY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759535560; c=relaxed/simple;
-	bh=bgbeQkYqa1A2Y3gpDzbMy9FRoP1Nbs7BaWl5sEjJKKM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XjMy8i8FX3AGXNssx6nOAG4OEvLzK0oT3g20PgbGsu/3WR2kpbufK3E2u2OcvCfmkf9SW7jGzUjH7SSv3sikNZvYSWm51UgGYea+cmh04vV5XUdvxYa7w+q2E/iPoNpS3Ghej/Wy4nJWXzMrttyVScGhmeSshtiUjpgIISqyviw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=UV+d3WKy; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id B41371340;
-	Sat,  4 Oct 2025 01:51:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1759535465;
-	bh=bgbeQkYqa1A2Y3gpDzbMy9FRoP1Nbs7BaWl5sEjJKKM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UV+d3WKy7zPh0026oTMivv9SmFnqH8QBxKHMiBRLoktA855IEEoyfVH5DUrIBwQG5
-	 /xyeEuU58IE4NnOf95DpLw8AiQkJ6QN7jjVp6J1cybnDVBHhwe0dcdXVI/sz8goi3I
-	 YvFc/W2Emwa5wRbNljuwPeXQBbhA8AzM2Ka9Mx68=
-Date: Sat, 4 Oct 2025 02:52:30 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Alexey Charkov <alchark@gmail.com>
-Cc: Dragan Simic <dsimic@manjaro.org>,
-	Alexander Shiyan <eagle.alexander923@gmail.com>,
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	stable@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] arm64: dts: rockchip: Fix broken tsadc pinctrl binding
- for rk3588
-Message-ID: <20251003235230.GD1492@pendragon.ideasonboard.com>
-References: <20250124052611.3705-1-eagle.alexander923@gmail.com>
- <CABjd4YwA8P9LVuDviO6xydkHpuuOY7XT0pk1oa+FDqOo=uZN4A@mail.gmail.com>
- <a76f315f023a3f8f5435e0681119b4eb@manjaro.org>
- <CABjd4Ywh_AkbXHonx-8vL-hNY5LMLJge5e4oqxvUG+qe6OF-Og@mail.gmail.com>
- <61b494b209d7360d0f36adbf6d5443a4@manjaro.org>
- <CABjd4Yx0p0B=e00MjCpDDq8Z=0FtM0s9EN86WdvRimt-_+kh2w@mail.gmail.com>
- <CABjd4Yy14bpjzvFyc8et-=pmds5uwzfxNqcs7L=+XRXBogZEsQ@mail.gmail.com>
- <20251003133304.GA21023@pendragon.ideasonboard.com>
- <CABjd4YxbyUWghd1ya8UayFkAE-VWQSd5-J2QD0sV7WmS8AXkCg@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FA77266EF1
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 23:56:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759535783; cv=fail; b=Muchp6omDmKMpFBVoJ9TQAMUjsnrw56bMf2Sis7CqQbY8nruOE0Q9J8PJKpIM7HuDXiA1gJmgkuxmqBXls0E1iTw/WrYYODKsM37uZIdjVfSd9BUOA0MnxKfI8Rj+GN0Iq8yxbqX0uoCiWZey5rvUThviFUNMgioG5Qngsdw624=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759535783; c=relaxed/simple;
+	bh=b+qv22vvdvnBceSYfGYPGXdGyR1AmGZ0MC410Mbzqe0=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=RibDwQavrKK6fmSY1ljB+tfHbARIj5oYbAvB2lZ+MmXRgN/Ml/BLwRQLYhwz4eFXRYpWUAhHjzOhnzDq6+4IjQBJZmgtG8I7nNX5icgQki8H5p4OjxbKTSpPYym1zNraJKtO7WQ661bxil3FCJV7NhOGL2Ki4AUu0jLdXWKa1qc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kWZ4tdtW; arc=fail smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1759535782; x=1791071782;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=b+qv22vvdvnBceSYfGYPGXdGyR1AmGZ0MC410Mbzqe0=;
+  b=kWZ4tdtWO8DedzEEM75veecY2G5RVeq9qP+WqAD9HJId391h/k3pa4NA
+   raF7jgslEVHkFv8woad/I8alN6P8aGcX85xatJE7iCc3h5wkiiTKsu4iJ
+   JZhyAlpO1zhk+CxYw7KW+RrFkvvzV3cOKRMdw1Y3fb8P+D8990r3+IAuv
+   2Qt9jaMndLi4LyMgIzcjwf0ba7P2h9lO/hXp1HqoZZiQcph3k3BdqK4Fv
+   DQIB75FLn/osUc5mzwDpk3uof4ZaFgXanNpCoFOMla9wMQE0/xYoT4v4/
+   4kP64Wm875GHMVlzVhZRunUkfiQpFpv6JDCf6hGpv0mYZ3koQhMFZSdWz
+   Q==;
+X-CSE-ConnectionGUID: ORj3nWjTQ9CXO/Dt4nw7vw==
+X-CSE-MsgGUID: 9RO3hFetQHibLyjwqfIWzQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11571"; a="73172550"
+X-IronPort-AV: E=Sophos;i="6.18,314,1751266800"; 
+   d="scan'208";a="73172550"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2025 16:56:21 -0700
+X-CSE-ConnectionGUID: 2otltg1hQcSxEUZgMWX45Q==
+X-CSE-MsgGUID: Q/3+BNsAQki8n0gjquAo/w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,314,1751266800"; 
+   d="scan'208";a="179326310"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2025 16:56:20 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Fri, 3 Oct 2025 16:56:19 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Fri, 3 Oct 2025 16:56:19 -0700
+Received: from MW6PR02CU001.outbound.protection.outlook.com (52.101.48.5) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Fri, 3 Oct 2025 16:56:18 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=E3YcB0fA8/RmAMiBV/wHSf61st3F1wP7hR6mdgZvl6BFP/8EGTB9tvyx8FRMNxI6nlzrSOMJMIMbUf6N9m2HceO3GsI9b5YV8md9YBfW9Oi0tvPR/I+jUZ1ni911dp8iuo3uu2zXavoLEebHmuASim0OJl7bM9zBvbugRdkN8AK/aon1euY9tNiu+STvuC9VJeL4VuLCrDY7x3sTc0JNbRNOEUizau7v8R3bbbhr/lUVPlLpI/iYoNv1c4t6PgaIfOa974H9bx5Yewx9BVjHi0+SsYPu7IEyUbNcM432vg+m3lXp1UjJGd/i/E+b/If+pBzKAkg867s1WUntWg6Yyg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0JwkLYf3eiQ7KLNKpgBkRLSwroS6ohRH9PfkU3bvc7o=;
+ b=bFf+wiJ1xubdMfzOv00l3HoU2wBcvzOHVAXXJo5YOtBZbMxGj58ZUtT9x1dDbCN1GQRYA8eCDwM1pKIY/84D/Ank/mhvgx5F7NJIkxHnIpIpLtZsbtPW/QjeiW3imnxMg3y8JZv5NOs3Lz2wKTyvGS0srPICVPfr/jwtFeGrMSiIcsiM9pVn7bud2vQ0zmekBiIE3lTtvztNo2gikyf5iq3Zz12G5r6jHDSLcNKsrX5Zdku+p0+prto5bMWqGsIGKVDdpytG3nC+hONL+2TsqU9UAk8kiDpU1mLOW0E9rUd2jLL/1O3itZbJLaXrkldgT6hXDvpc+SA25CzeNe1DiA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
+ by IA0PR11MB7911.namprd11.prod.outlook.com (2603:10b6:208:40e::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.18; Fri, 3 Oct
+ 2025 23:56:13 +0000
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf%3]) with mapi id 15.20.9182.015; Fri, 3 Oct 2025
+ 23:56:13 +0000
+Message-ID: <ba1e8bc8-a3b3-411a-85b9-c20cc23d8adb@intel.com>
+Date: Fri, 3 Oct 2025 16:56:10 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 18/31] fs/resctrl: Refactor L3 specific parts of
+ __mon_event_count()
+To: Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghuay@nvidia.com>, "Maciej
+ Wieczor-Retman" <maciej.wieczor-retman@intel.com>, Peter Newman
+	<peternewman@google.com>, James Morse <james.morse@arm.com>, Babu Moger
+	<babu.moger@amd.com>, Drew Fustini <dfustini@baylibre.com>, Dave Martin
+	<Dave.Martin@arm.com>, Chen Yu <yu.c.chen@intel.com>
+CC: <x86@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<patches@lists.linux.dev>
+References: <20250925200328.64155-1-tony.luck@intel.com>
+ <20250925200328.64155-19-tony.luck@intel.com>
+From: Reinette Chatre <reinette.chatre@intel.com>
+Content-Language: en-US
+In-Reply-To: <20250925200328.64155-19-tony.luck@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW4PR03CA0071.namprd03.prod.outlook.com
+ (2603:10b6:303:b6::16) To SJ2PR11MB7573.namprd11.prod.outlook.com
+ (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CABjd4YxbyUWghd1ya8UayFkAE-VWQSd5-J2QD0sV7WmS8AXkCg@mail.gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|IA0PR11MB7911:EE_
+X-MS-Office365-Filtering-Correlation-Id: 54cf248a-bd6d-4bec-40f4-08de02d86efc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?QjdCMWVrL2kvSXltTktoeU5yTkwxVFV1eXRQK0xWRlVnUGNIZVlYTERYUzlK?=
+ =?utf-8?B?eFhvRG14UzI0eFo5T1Q4T3Nyc016ZUdHa0lGSFVFOHpGWGhnbktMTi93OWlv?=
+ =?utf-8?B?dThDOUtPQkowZjZvckxtWkRSWTlmMWlnUU5tcnI1OStrUTh6ajBhWnZwRnlB?=
+ =?utf-8?B?TytHMGljbklxTjhXNXNhQVpOWVJhbnhWUzdJbW5LNjJYanFndllSTDY0NDdq?=
+ =?utf-8?B?cEI0eGZ5ZEJ5L3R6b0U3cGlBZGE1bUk4R1IyVUdMMkZRckY1dkorWFp0czNJ?=
+ =?utf-8?B?aXZzajI2c2hRa1RlT1NmYXZTWDVPL3k5ZTVCVWN0OHZidDhpalM3cWcyeGNp?=
+ =?utf-8?B?NSt1bHBqRTIrLzkrak43Z1ZYZWJqNW1iSWN0UzREdklzTlBZcmorYXhnM09i?=
+ =?utf-8?B?QVBCTnBlbmo2WlErV2JlODlueUptK3poQTE1dzZ6OUIyaWxXbTVwVm9NT21H?=
+ =?utf-8?B?Y2tlbmlDZHlVa3QwVitxQXFNZUovWlVFVE9VNHhsZ1RQdDhqSnhDLzM1SGQv?=
+ =?utf-8?B?TnBrTzhycm1DRG1qTkZOcVpBZWwwbEdHM01LMExGVWZlM2JOV0syd2NkQmx2?=
+ =?utf-8?B?ak1YT1cyTE9jb3EwWm5hbitDd3FuZmE0MEYzbnQwT2RXYzFDb3NKa1A2blF0?=
+ =?utf-8?B?YU85dFJhamdVeGREWGxNWGhZNnp4WlBCMGVOUUFjcWJRanRrZkZsY0tuQXlS?=
+ =?utf-8?B?V0gzbFhhaG1IcFZNazhzQnloQm1GeU9QU2hhRVJKajB6aVFvWmJIWHRZK3hB?=
+ =?utf-8?B?WkdMci9hOXF4TWRLNzdXSDQ2S1hhdUFoSlBwV2ZQK2xkQkp5bFdmVkdhMEhS?=
+ =?utf-8?B?dnlxbFFGRE1EU1ZqdjZZSlFMYUlMZVE5UUdGc01yR1hEbG8rOU9YS3dnZktD?=
+ =?utf-8?B?K2g2MHJlUjQwQ2dLTXBtbVkrQ2R5WU00aVl1R1RXRWR2V21tOW5xS0VwZDZv?=
+ =?utf-8?B?bUhrb3RsSmZERWVrRXFFRG15RTgyWlpBem9jMnZBSW1ySWF6TnU3bXM3aW1i?=
+ =?utf-8?B?L0JPTHNaT2pSeEpqcWRoSlpjblNMR1dlOFRkNTdwaTJjaWhDT2VxVDI2Z3ds?=
+ =?utf-8?B?RHNTVXl5L05JZWhxVmM5TEl5R0hCU2NrWDlGRDhLbkFPVHRaem8wTDVGdWVE?=
+ =?utf-8?B?QTdWenR5YzVVYm1nY2J6WHJmRURvbGxGTkt3MG1ES1liaUZXSWErQ2xDa3dy?=
+ =?utf-8?B?RHZLNFpEWXhQenJVMW5Eamlyc3daOE13K0x2Z0VjQllsNktVbzRrNEl2QjlF?=
+ =?utf-8?B?czdOUk1MVDhiS29ZY3FxdUMremJOTFNpd245TFI1Y0ZlNlZsZURzQU5MUFJn?=
+ =?utf-8?B?ckx3S0FLQXFCeERxSyt5VitHbWoxQVNPYmNjRm5xaVg1dCs3QSsxNE1RN0pL?=
+ =?utf-8?B?bnd5NitReFZkS25zc1ljcFV1a21XUUIzT3lqYlNkcVlkWSswVDlobDA2YUlE?=
+ =?utf-8?B?c0hEcGVIS2dwdVNVRGNPME9VRklkbzN4alRnRk1FQ3p2cGdWeng3bHRUR25R?=
+ =?utf-8?B?UzJQM3NYSXl3N1RxbVp2KzAwTGNHcW5yamRmT1gyUktLRExyUFBnMDJGQW1v?=
+ =?utf-8?B?dUtaeFJMTTN5YVcrajF0SVJsem9WMnVIY2lMV1RVR0RoTjdabU8xQWpxV0Jw?=
+ =?utf-8?B?elRmTERwS0F4TzZFdy9sdFFCaVpXS3VRdjZlMEYzQlRoZTgwZVJyYnVUdWUy?=
+ =?utf-8?B?QklVM0pkdUswQVFsVWFGMlhnNGJheGErcDZIMXRhNUFVTVVJU3BFYmZFbHVk?=
+ =?utf-8?B?TmJqOFFaQ0xYQWFadk9kUG5QTkhYQnptc0hEeHdjbktmVjlZTVdOZDlsbFlW?=
+ =?utf-8?B?aUVPejc1engxaHVCd2NTOVMwd1JzamdwNUc2K05pcFdwNUxHVU41MHBIZDNh?=
+ =?utf-8?B?N2dtY21OZkhqUHJiY1g2Q21zZEo3b3JwdEhxREpFSEpLRVRSdGc3Vk5RUnpE?=
+ =?utf-8?Q?jinsyVvvcg8/uWaydepZKB5kLQBhzaWi?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?UnpZSy9jYjRwelJFcUp0SXNKTVdwdkZ3VEVtaURBRnNoOWtLWnJqaWtuNTRD?=
+ =?utf-8?B?aG4xbDh0a2lEdThPOTlKUDE5NFEwNGRTTUNVQ0Y5YkxBRW1aeHloSUhsT0pG?=
+ =?utf-8?B?bkpuQjNKTWE1d0RKZDhZNXFlMkRvSkhNWWNvOURua3lZUGFOZkJNSmcyc0dJ?=
+ =?utf-8?B?NkdxU3kyMnNkZ2ZONFpDaXh3eHM4aXllTTR6b0o1eGRjWDkwZUM4bVUvSHA3?=
+ =?utf-8?B?bjhGV1RwMzQzTW9hSFBlbTZxOFFWSkl2QTJKYjYvZm5nZWRsWGVXTE1CemNH?=
+ =?utf-8?B?Sll3ZG1saVAwWENFTkQ0ay9oTmlscjNJbDVlUForL29qZlpITHVJZUtjcDBG?=
+ =?utf-8?B?dkNyREtRUUJENHJPR3VzMzhZWllLV1cyVkpPOXY5V0U4MnBtNzJyUFlEZ2x5?=
+ =?utf-8?B?VnBGV2s1YmlhTXVWWlZ5UkR4aFlsWnJkU2dHcDV2TzZnbFc3WDBSVEExendV?=
+ =?utf-8?B?cnBlL0NzSjMwcXN3R1NLYkhZcjF4N0N0N3NTbWg0VVhaVHQ5MEQ0K0VRazJj?=
+ =?utf-8?B?TitCMTQ1eUhySW1Cc2cxaHZxRzlIck5hbm5XbjBTVnMybXZBT3RDYnFlSklE?=
+ =?utf-8?B?cEhlbStBS0QvL092TUR0dmJoZ1JRZ2s1eExxbkYrNnNOcVJ3K0dwOEFueFN1?=
+ =?utf-8?B?aUx4WU9ZRk9NT2g4cGFjMkY1QkFWSkdKN0JaYWVqZzZOVW1nR2REWExGbzUz?=
+ =?utf-8?B?U2Jub0IySmNuUlJ0TGwxampzMkhJTDRBN2p4aTFGaitjMkZRYTJsaUFDaGdq?=
+ =?utf-8?B?M2VrYnorWkxyTWZUOUZQcEFNRC9YYlI5ZjZGMDVBekZ1MXZjOXJwRm5yZ3I4?=
+ =?utf-8?B?czVMRytGZXJ1OFdkUEhnVFE5bmhCWDMrNlpXWmIwb201VG1vS0FtK1BJanpX?=
+ =?utf-8?B?Vm5wcG04QmVzbm8xczYwTXY4b3RVLzl0Unh4TXd6WDhqVFhSeHJWQVNBMUor?=
+ =?utf-8?B?NUlWd3dyQTMrb3FWelF6UFl0d3kwSXZ5VXJXZmR1THBRYnJZRnNBejhuRjBS?=
+ =?utf-8?B?TktWWTYwVEZGMXNUUDFWazBaUG1VTTR1MlZ3M1d4NVVlTWlVRUxDckdESFh3?=
+ =?utf-8?B?aXlyZlpyZzcyTVFseDlvdjEvWE0ySUI2cjRjZXgvOEUveGhEeU0xUUE4N1BY?=
+ =?utf-8?B?NUN3VlI2M1hjeUp0M29GeFJqZ0JGQ1hRK3BJdksvbUZDTFh6M2dvR1NoUERD?=
+ =?utf-8?B?NWpyMDBOTm1sMVF5and5aGVJUlZudXV2VTNxREhWSktzWXZxaWVtQ1pwZ1l6?=
+ =?utf-8?B?VDZBN3hFTVdxNUV6R2RJVFA1ODl3SUQvU1VNWkNFNXJhUHJmSWRHQmNTKzkr?=
+ =?utf-8?B?aW5JS0RiKzFOdDFVcXlGT3ZJYXFSdWlZR1g4dWpDNWVVdlI4cFp4WTF6c0RC?=
+ =?utf-8?B?Z3h2dDhmdVVxV2lpeVp3UWVXN2NLVThhS1lYemVoeVg5aU5KejFvcDNvbFNo?=
+ =?utf-8?B?aW4yNUx0YXZPTXBma1I3Mm5FTFJBMkdBL3ZGSWZDMVF3MVRneEdXN0I4c0E0?=
+ =?utf-8?B?VWdUcnJLUFIwY2ZjQkIzZkhabnlpaG5CL0tucjVHekxROVRxRHY1V09vVFAv?=
+ =?utf-8?B?NDlnUitCaGRuZllkUmVNYk1jbG9pdXpGMU1pS25Cd1kvSGova1hUSFlUZXRn?=
+ =?utf-8?B?QUVKcUxIUzIrbjZjd3AzUmtuSWt3aTNrWldjTkJuQitaZE4wZDgxaFZmcEg0?=
+ =?utf-8?B?UmFuTUduUXVoeVpMNnBkN2tOZmg2VnM1YkFmQXlXTEkwNXZBMUhIcTdiTnhB?=
+ =?utf-8?B?MFZ5Q1BKUXYwbjlKS2RPTExLd2o0ejVzNXV3azFJWG9vUGNtN1BKa3lMdWhn?=
+ =?utf-8?B?d2l2WnpzazNmOEFuTVBWRGQrTlVCeGdaTWZtUmZuNE9penI0OGFpVjBEY0xM?=
+ =?utf-8?B?RWxIcEd1VEkvYUR3ZzRzZ2V1SDV6Z2FUWDgzVCthTjRCeHNNNmJvdmF2ZXc0?=
+ =?utf-8?B?THkzblVrbkJ1TU5HRWNtOWg5ckk0ck82QmlNdWFDOGdqYmZ0YVQ0ZjR4UlAw?=
+ =?utf-8?B?MGhyU2hxMDRad0lRenFtcTZNQkR1bFdhc2JPQnR6OWpnMmJ1SUpKa1d0ZElz?=
+ =?utf-8?B?aFg5T2hHVktnYUZoREhlanJ6RkQ5dHZ3M1dWMytaakx4OFYvU3ZWUFMyRHA4?=
+ =?utf-8?B?NGhBQlhWTkxQcFFCUkN6ZWVYRjMxZWNvZCtQakk4L1JkMTYrSk5xNUR1WVE3?=
+ =?utf-8?B?bkE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 54cf248a-bd6d-4bec-40f4-08de02d86efc
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Oct 2025 23:56:13.2583
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: chAnmo9aAutjLEiVglfQ7f6qVnU7g4qxRf18+53fKvqR5REbEdpAwMuTBv0LFfeP5iJ+K78bVrfWInATK1/wcO3DYK6X/eSZn1MkJf9Dn0A=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR11MB7911
+X-OriginatorOrg: intel.com
 
-On Fri, Oct 03, 2025 at 06:13:39PM +0400, Alexey Charkov wrote:
-> On Fri, Oct 3, 2025 at 5:33 PM Laurent Pinchart wrote:
-> > On Fri, Jan 24, 2025 at 11:44:34PM +0400, Alexey Charkov wrote:
-> > > On Fri, Jan 24, 2025 at 9:23 PM Alexey Charkov <alchark@gmail.com> wrote:
-> > > > On Fri, Jan 24, 2025 at 2:37 PM Dragan Simic <dsimic@manjaro.org> wrote:
-> > > > > On 2025-01-24 11:25, Alexey Charkov wrote:
-> > > > > > On Fri, Jan 24, 2025 at 2:06 PM Dragan Simic <dsimic@manjaro.org>
-> > > > > > wrote:
-> > > > > >> On 2025-01-24 09:33, Alexey Charkov wrote:
-> > > > > >> > On Fri, Jan 24, 2025 at 9:26 AM Alexander Shiyan
-> > > > > >> > <eagle.alexander923@gmail.com> wrote:
-> > > > > >> >>
-> > > > > >> >> There is no pinctrl "gpio" and "otpout" (probably designed as
-> > > > > >> >> "output")
-> > > > > >> >> handling in the tsadc driver.
-> > > > > >> >> Let's use proper binding "default" and "sleep".
-> > > > > >> >
-> > > > > >> > This looks reasonable, however I've tried it on my Radxa Rock 5C and
-> > > > > >> > the driver still doesn't claim GPIO0 RK_PA1 even with this change. As
-> > > > > >> > a result, a simulated thermal runaway condition (I've changed the
-> > > > > >> > tshut temperature to 65000 and tshut mode to 1) doesn't trigger a PMIC
-> > > > > >> > reset, even though a direct `gpioset 0 1=0` does.
-> > > > > >> >
-> > > > > >> > Are any additional changes needed to the driver itself?
-> > > > > >>
-> > > > > >> I've been digging through this patch the whole TSADC/OTP thing in the
-> > > > > >> last couple of hours, and AFAIK some parts of the upstream driver are
-> > > > > >> still missing, in comparison with the downstream driver.
-> > > > > >>
-> > > > > >> I've got some small suggestions for the patch itself, but the issue
-> > > > > >> you observed is obviously of higher priority, and I've singled it out
-> > > > > >> as well while digging through the code.
-> > > > > >>
-> > > > > >> Could you, please, try the patch below quickly, to see is it going to
-> > > > > >> fix the issue you observed?  I've got some "IRL stuff" to take care of
-> > > > > >> today, so I can't test it myself, and it would be great to know is it
-> > > > > >> the right path to the proper fix.
-> > > > > >>
-> > > > > >> diff --git i/drivers/thermal/rockchip_thermal.c
-> > > > > >> w/drivers/thermal/rockchip_thermal.c
-> > > > > >> index f551df48eef9..62f0e14a8d98 100644
-> > > > > >> --- i/drivers/thermal/rockchip_thermal.c
-> > > > > >> +++ w/drivers/thermal/rockchip_thermal.c
-> > > > > >> @@ -1568,6 +1568,11 @@ static int rockchip_thermal_probe(struct
-> > > > > >> platform_device *pdev)
-> > > > > >>          thermal->chip->initialize(thermal->grf, thermal->regs,
-> > > > > >>                                    thermal->tshut_polarity);
-> > > > > >>
-> > > > > >> +       if (thermal->tshut_mode == TSHUT_MODE_GPIO)
-> > > > > >> +               pinctrl_select_default_state(dev);
-> > > > > >> +       else
-> > > > > >> +               pinctrl_select_sleep_state(dev);
-> > > > > >
-> > > > > > I believe no 'else' block is needed here, because if tshut_mode is not
-> > > > > > TSHUT_MODE_GPIO then the TSADC doesn't use this pin at all, so there's
-> > > > > > no reason for the driver to mess with its pinctrl state. I'd rather
-> > > > > > put a mirroring block to put the pin back to its 'sleep' state in the
-> > > > > > removal function for the TSHUT_MODE_GPIO case.
-> > > > >
-> > > > > You're right, but the "else block" is what the downstream driver does,
-> > > >
-> > > > Does it though? It only handles the TSHUT_MODE_GPIO case as far as I
-> > > > can tell (or TSHUT_MODE_OTP in downstream driver lingo) [1]
-> > > >
-> > > > [1] https://github.com/radxa/kernel/blob/edb3eeeaa4643ecac6f4185d6d391c574735fca1/drivers/thermal/rockchip_thermal.c#L2564
-> > > >
-> > > > > so I think it's better to simply stay on the safe side and follow that
-> > > > > logic in the upstream driver.  Is it really needed?  Perhaps not, but
-> > > > > it also shouldn't hurt.
-> > > > >
-> > > > > > Will try and revert.
-> > > > >
-> > > > > Awesome, thanks!
-> > > > >
-> > > > > > P.S. Just looked at the downstream driver, and it actually calls
-> > > > > > TSHUT_MODE_GPIO TSHUT_MODE_OTP instead, so it seems that "otpout" was
-> > > > > > not a typo in the first place. So maybe the right approach here is not
-> > > > > > to change the device tree but rather fix the "gpio" / "otpout" pinctrl
-> > > > > > state handling in the driver.
-> > > > >
-> > > > > Indeed, "otpout" wasn't a typo, and I've already addressed that in my
-> > > > > comments to Alexander's patch.  Will send that response a bit later.
-> > > > >
-> > > > > I think it's actually better to accept the approach in Alexander's
-> > > > > patch, because the whole thing applies to other Rockchip SoCs as well,
-> > > > > not just to the RK3588(S).
-> > > >
-> > > > Anyway, I've just tried it after including the changes below, and
-> > > > while /sys/kernel/debug/pinctrl/pinctrl-handles shows the expected
-> > > > pinctrls under tsadc, the driver still doesn't seem to be triggering a
-> > > > PMIC reset. Weird. Any thoughts welcome.
-> > >
-> > > I found the culprit. "otpout" (or "default" if we follow Alexander's
-> > > suggested approach) pinctrl state should refer to the &tsadc_shut_org
-> > > config instead of &tsadc_shut - then the PMIC reset works.
-> >
-> > I've recently brought up an RK3588S-based Orange Pi CM5 Base board, made
-> > of a compute module (CM5, see [1]) and a carrier board (Base, see [2]).
-> > The carrier board has a reset button which pulls the PMIC_RESET_L signal
-> > of the CM5 to GND (see page 3 of the schematics in [3]).
-> >
-> > With &tsadc_shut_org the reset button has absolutely no effect. With
-> > &tsadc_shut it resets the board as expected.
+Hi Tony,
+
+On 9/25/25 1:03 PM, Tony Luck wrote:
+> The "MBM counter assignment" and "reset counter on first read" features
+> are only applicable to the RDT_RESOURCE_L3 resource.
 > 
-> Interesting. The TSADC shouldn't affect the physical button operation
-> at all, if it's really wired to the PMIC as the signal name implies.
-> There isn't even any default pull value associated with the TSHUT pin
-> config.
+> Add a check for the RDT_RESOURCE_L3 resource.
+
+Why?
+
+"Add a check for the RDT_RESOURCE_L3 resource" can be seen from code.
+
 > 
-> What if you switch the GPIO0_A1 pin to GPIO output mode with no pull?
-> Does the button work then? Does the board reset if you toggle the GPIO
-> value with `gpioset`?
+> Signed-off-by: Tony Luck <tony.luck@intel.com>
+> ---
+>  fs/resctrl/monitor.c | 38 ++++++++++++++++++++------------------
+>  1 file changed, 20 insertions(+), 18 deletions(-)
+> 
+> diff --git a/fs/resctrl/monitor.c b/fs/resctrl/monitor.c
+> index 1eb054749d20..d484983c0f02 100644
+> --- a/fs/resctrl/monitor.c
+> +++ b/fs/resctrl/monitor.c
+> @@ -453,27 +453,29 @@ static int __mon_event_count(struct rdtgroup *rdtgrp, struct rmid_read *rr)
+>  	if (!cpu_on_correct_domain(rr))
+>  		return -EINVAL;
+>  
+> -	if (!domain_header_is_valid(rr->hdr, RESCTRL_MON_DOMAIN, RDT_RESOURCE_L3))
+> -		return -EINVAL;
+> -	d = container_of(rr->hdr, struct rdt_l3_mon_domain, hdr);
+> -
+> -	if (rr->is_mbm_cntr) {
+> -		cntr_id = mbm_cntr_get(rr->r, d, rdtgrp, rr->evt->evtid);
+> -		if (cntr_id < 0) {
+> -			rr->err = -ENOENT;
+> +	if (rr->r->rid == RDT_RESOURCE_L3) {
+> +		if (!domain_header_is_valid(rr->hdr, RESCTRL_MON_DOMAIN, RDT_RESOURCE_L3))
+>  			return -EINVAL;
 
-The button works when GPIO0_A1 is configured as a GPIO input. It doesn't
-work anymore when the GPIO is set to 1, and setting the GPIO to 0 resets
-the board. This confirms your hypothesis that the reset button
-functionality conflicts with TSADC_SHUT being configured as a push-pull
-output.
+This snippet keeps moving around but it remains problematic from what I can tell since rr->hdr
+can still be NULL here.
 
--- 
-Regards,
+> +		d = container_of(rr->hdr, struct rdt_l3_mon_domain, hdr);
+> +
+> +		if (rr->is_mbm_cntr) {
+> +			cntr_id = mbm_cntr_get(rr->r, d, rdtgrp, rr->evt->evtid);
+> +			if (cntr_id < 0) {
+> +				rr->err = -ENOENT;
+> +				return -EINVAL;
+> +			}
+>  		}
+> -	}
+>  
+> -	if (rr->first) {
+> -		if (rr->is_mbm_cntr)
+> -			resctrl_arch_reset_cntr(rr->r, d, closid, rmid, cntr_id, rr->evt->evtid);
+> -		else
+> -			resctrl_arch_reset_rmid(rr->r, d, closid, rmid, rr->evt->evtid);
+> -		m = get_mbm_state(d, closid, rmid, rr->evt->evtid);
+> -		if (m)
+> -			memset(m, 0, sizeof(struct mbm_state));
+> -		return 0;
+> +		if (rr->first) {
+> +			if (rr->is_mbm_cntr)
+> +				resctrl_arch_reset_cntr(rr->r, d, closid, rmid, cntr_id, rr->evt->evtid);
+> +			else
+> +				resctrl_arch_reset_rmid(rr->r, d, closid, rmid, rr->evt->evtid);
+> +			m = get_mbm_state(d, closid, rmid, rr->evt->evtid);
+> +			if (m)
+> +				memset(m, 0, sizeof(struct mbm_state));
+> +			return 0;
+> +		}
+>  	}
 
-Laurent Pinchart
+__mon_event_count() is now unreasonably complicated. One motivation from changelog is because
+"MBM counter assignment is only applicable to RDT_RESOURCE_L3" but then the change proceeds
+to only add a RDT_RESOURCE_L3 check in some parts of __mon_event_count() that deals
+with counter assignment and leaves other parts to rely on rmid_read properties. It also
+fails to mention or make explicit that all the special SNC handling is only applicable to
+L3 and leaves that code to seemingly be generic and reader needs to be very familiar with
+the code to know differently. I find SNC already a challenge and find this to increase that
+complexity unnecessarily.
+
+PERF_PKG only needs to reach a handful of lines in __mon_event_count() to read a counter.
+I thus think the best way forward is to split __mon_event_count() and move all the L3 code
+into its own function. 
+
+Reinette
+
 
