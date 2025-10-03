@@ -1,383 +1,196 @@
-Return-Path: <linux-kernel+bounces-841436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D588ABB74FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 17:24:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FCEABB7507
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 17:24:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C210E48093F
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 15:24:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD9B0480D93
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 15:24:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90E282857DF;
-	Fri,  3 Oct 2025 15:23:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F027C285CB6;
+	Fri,  3 Oct 2025 15:24:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="qd8oJ0Rg"
-Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010007.outbound.protection.outlook.com [52.101.85.7])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uScpE9gw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D39611FCFEF;
-	Fri,  3 Oct 2025 15:23:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.7
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759505036; cv=fail; b=KmPeiBxRtz2cYAT/xnljpWd+zAnK6Riw+hClJbb4eYkxRfcBEdkqJMUzy/uD+SWGOSJqHUVenpwasroCUaYfZyDh1T/g+hWKagjs01mzaYITL3pZ5Wj5wCWEfMmiq8OVrPAM9nNSbuFPU9B+xgwJWx5rZLFYICSOSHccGpjRqoI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759505036; c=relaxed/simple;
-	bh=747+QaHhcgYHF28ehSROcoGyGY7p5GWpEZGzZ2tfGtE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=H46lxDQ7o9vzKyVpfbpLZrLl+GyH1HIkHx4Snl9mZ7S75LJb2aKF7F2bRwA+Gp970rLHpW5JIhp+smSZZ2EpioL7KBaGcZKWaCljWodxVAlBwsxm18YYEx0Hrx4C/30a1wHRB4g5pV4ExD3KeEiAqMIgrcnmBS5eVAIEijliamg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=qd8oJ0Rg; arc=fail smtp.client-ip=52.101.85.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bng/Stg3ZijDN7NOMwqT0M7vaiS9t3n0UKmSP32on23OJOYPHgKARlRuYod596oGVHxnpVsrelCThBEQNWsl/kaJlC6nNmJE/QLONAIZpug/eMYugbbVU06fcsVbkKHYVPFD64litqr2+nUmDOLN4g5fTi1QwKVsvjLO9dQdPpmaimPnV4OU/sE0HSdfmvxFUkk1ndvMs9p3AxTFrVpCO8jVva7+9ApQlr+xM/93PT5BAqAw9vJsdm+x1NUa5CzVXJ5eY9gwt5q0VBLojqtJ6Ax9uHL1L0qbgicWlO4HHKrVhdmvDH5irhYpHVJbMp9jfCGuO9t/itJmIeKoSlpxEw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jtc5WMSxVlVNzPst3RpH9eKfrwJFRtvWi3FALTkEYoc=;
- b=cyPE9toTEj/YTOuvaHyAxOY54KZ3us7Lst99t4Q5crvjzJezNJu/ake+a3+V5JyWWNVggpRooEhx9TLtfuAQedCmES+NjMhfhVeOs82MHrjnnI6jFtDBDLbBDxUyfwCSOBAFZfQe+vQnZW57FSKBaptJlQ4fX2PGdRlAm3/7dQ22WEthEOOGD1KPJX3qNK5Xy/O02041Z9mnTNMv2TRWjr18VVB0o8sDvVHrW7Qe17sC2MxtlpbTgHZb3XvBGAXuLrLjR4UnUUYRbtoP2twMhBLCBYKweK2yu7Va2tpT+YYrDviu85T63f6j389jpJ38K9f0iWrWOKQwJjeoBLJD5w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jtc5WMSxVlVNzPst3RpH9eKfrwJFRtvWi3FALTkEYoc=;
- b=qd8oJ0Rgr9/x8vlNqcS9XQBIcL5fBSSU8cpjRDnZnAtvBNZg2wsdedWP6+28DkgHbxKDaL5WjSbMVquoDUvXDujKXuK8Hy0czWud4tN1LsZniaW/eoZKRSi6XExuV4QFLzQ//COWiGxRp89W4mgwcGOnf0fKdjfrgzjnqzmkJgf7D9O8/O7d+pki8zkSX79scVCa3fhtb9tQ67kLEnMtpDpIv+c2qkehfDu0jFJTrvZF//TcWDGnhFx9pg+MnwCB85ewLeRNtZ9ccvgBo6XyYFwGq9T7xU901dgVILAprKCiqkqlYnLr8jd20LWJtHU/eJ3GlRFBh0iQDLE4sZQ5Jg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
- by SN7PR12MB8603.namprd12.prod.outlook.com (2603:10b6:806:260::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.18; Fri, 3 Oct
- 2025 15:23:45 +0000
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91%2]) with mapi id 15.20.9160.017; Fri, 3 Oct 2025
- 15:23:45 +0000
-Message-ID: <81490b32-6ea2-400f-a97e-ad2e33e6daab@nvidia.com>
-Date: Fri, 3 Oct 2025 11:23:43 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 6/9] rust: bitfield: Add KUNIT tests for bitfield
-To: Alexandre Courbot <acourbot@nvidia.com>, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org,
- dakr@kernel.org
-Cc: Alistair Popple <apopple@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, bjorn3_gh@protonmail.com,
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
- joel@joelfernandes.org, Elle Rhumsaa <elle@weathered-steel.dev>,
- Yury Norov <yury.norov@gmail.com>,
- Daniel Almeida <daniel.almeida@collabora.com>,
- Andrea Righi <arighi@nvidia.com>, nouveau@lists.freedesktop.org
-References: <20250930144537.3559207-1-joelagnelf@nvidia.com>
- <20250930144537.3559207-7-joelagnelf@nvidia.com>
- <DD7GCYCZU3P3.1KK174S7MQ5BW@nvidia.com>
-Content-Language: en-US
-From: Joel Fernandes <joelagnelf@nvidia.com>
-In-Reply-To: <DD7GCYCZU3P3.1KK174S7MQ5BW@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BN0PR04CA0039.namprd04.prod.outlook.com
- (2603:10b6:408:e8::14) To SN7PR12MB8059.namprd12.prod.outlook.com
- (2603:10b6:806:32b::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25C5928507C;
+	Fri,  3 Oct 2025 15:24:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759505068; cv=none; b=BqHGfwULOcobtX1m1GkWM+Lr5hLZ80yFpnIqrAb23xnXyTkWw33p+oBFJh3eXjKXOgSmG9bXtFtIJfWtVTayFwX1PMEp/fpBb2oohgNkeKUThc99AbWw+loK6X2qAmp62VKu/TDb7d+lVKLM1K+XAC1PMzcvKi6tXt/nRThDJTs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759505068; c=relaxed/simple;
+	bh=DQbc540c3F4b2scI1GiUAhd/lmG2n6h9j6Q7f/kL6PA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=PF/aSVtIx95bm4U8p8jeB0LRXFJXaM3Bze7fgs4+JX+DOecaUUPnYlDx/tCfryYEWXM1RhmJEllVcDQ2Aj7TABPD4U/xIJKTGAmnJKZo2V+HyTWHYLIaDKNmXsXlydgZpiPR+ZGaLSYoJjyQIt/qH/AkRIkVekaDNckMHQ01l+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uScpE9gw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08774C4CEF5;
+	Fri,  3 Oct 2025 15:24:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759505067;
+	bh=DQbc540c3F4b2scI1GiUAhd/lmG2n6h9j6Q7f/kL6PA=;
+	h=From:Date:Subject:To:Cc:From;
+	b=uScpE9gwKBXzfsOqJsm8nsTLuyY8dsZmu4CVbMgtH7C3okBfq1cziyx+eSwvIfGU0
+	 DjYjQF8St5imJ7he/JHa1lANjODwgVgnyiimp9BC9HfVZ+99bD8xLq+CaxXYhHSnI/
+	 e7AJg0YNd1EDn8rwhRLpyPRHYWwnup4Sg8sXdBIKMBbACWlz+lb1XtHdIwmf+UamFE
+	 7Nk6XFlkxVGXcbL/km/QdRNVGiRQz9RxUGqprrTede8gGP6x5iw1d5ZpPmb1D4QzCV
+	 uuZ2wrLr6fazv7XN8GUph1QAHMc0YfGxBBjqa8GwmYt54C/yaXOOFQa05igBKZLEti
+	 2ISx/BcmVFI/Q==
+From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Date: Fri, 03 Oct 2025 17:24:17 +0200
+Subject: [PATCH bpf] selftests/bpf: fix implicit-function-declaration
+ errors
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|SN7PR12MB8603:EE_
-X-MS-Office365-Filtering-Correlation-Id: 69dde9f3-e127-42f0-8416-08de0290d7f4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?LzA3MUk1QWJlVEh2K3pzbkt1UzZGSW11ZDBZWEI2dDg3OUVKN0FYemVJSjBU?=
- =?utf-8?B?TFNld2liOGdpTmNwUVZINGR2c0VSRHlhY1ZrYXAzTjVLMTdmMW1pZXN6cTBn?=
- =?utf-8?B?eEY2VDNFd3M5eEZCajVzbFU0MXJnUUdpRm1JREk4UDlhRmlBS0xhb2FMdEpC?=
- =?utf-8?B?Z1cra2JTb2xQRWgzRjBlM2hRWDV3YUpCOWh6dTJlQUc2Sit6bXNpd2pyeHk2?=
- =?utf-8?B?dUM4bzNNRjBsVDMrZ1lwSEpGYVZxbWllSkphU1ZPd2NCNFB5L0tPSkVmNklH?=
- =?utf-8?B?NjBaRWpWSTB3em5IUlRScmlFL2k5ZUtZb2RzYzhOVHZMYXVCRFAwOWVyUnBm?=
- =?utf-8?B?SnQ0V2IrZ213eTZnNHVsUEpYaWJCWjBTckRJeFh0K2hiazUzdFFaTHVRR1Q0?=
- =?utf-8?B?blprbUV5UG1zMjZkdERGN2IzSWNoSjZ3akpVQ2o5d2lGc3MxQ2lYbXArV1Za?=
- =?utf-8?B?dk5Lc3phS2FVcGdFcmxlTGtHbjlPZW9PbGdpVW96NGVQZWxqUnNLOXVtMHMv?=
- =?utf-8?B?K004T2lmUzlVT0VqV1ZqWHRTU3hNNEVhR2RNNFVlNjNXWlFLOVFHYUpPbzMr?=
- =?utf-8?B?TnUzWUNseldSMk13UGd5OU8vRXdtNjNkQVhodVpGQjVOcGlUcVNPbi91YVlx?=
- =?utf-8?B?bmRVL3pVcHlvYzVQVkhWUjFDTUx3REd6bU5taHhabnJTaVR2bE1HKysyeDlW?=
- =?utf-8?B?dDBGZk0yT295YmFLUWJqNDFKMkM1WjVCaCswN1VNOEkrWXFrTDhNQkVJNXFl?=
- =?utf-8?B?MFh1WGhnTXk0NVdWVHMvckxhRm1UKytodCthTmZiOS9VeHdOMEdOVFBHUTZs?=
- =?utf-8?B?aGRLdlRrOHhiVjh6djhETnRoRGd4bVFRMU9WQ0NwNDBZdVFlTEJQWUVldVE5?=
- =?utf-8?B?c09hNzZQRzhnTHZoVER0NGRVSlhwOERoLzlmTVRoRXFJUzV5N2dXTG5VR2dW?=
- =?utf-8?B?QVFyeFZVdjIzN1o4V1FrY25kVUhRQzBaYlQ0SWxSUEk2YU9lQ2FIdWp6Q24z?=
- =?utf-8?B?a283T2Nxa0x4ZWZnallFbFFyaHM1N2tWYksyN05rVWxDOFJmZmZ4M1VTeFo2?=
- =?utf-8?B?TmFxRlc3a0QzMVNBT0RTb2toQmIvc2JyL1JabnhYRU93L0dHRUxkTVFmZXZJ?=
- =?utf-8?B?UGNLb1k4dlBROGY5cnorclUyUFl6M1RYUGZVYjBPVCtjdS9ZZ1ZKNGk3Nkd5?=
- =?utf-8?B?UWxaU055aXFjSEowUXYrUVh6ejMzOE1ERVhLNDBHaTU1R2RBNGJaL3p0cWJZ?=
- =?utf-8?B?YmhFVGo2ZVMydkZaK2VIUlZTbFVQbzVHNjkyTWR1YU1OSkVRNXVBaHc0Mzlk?=
- =?utf-8?B?bGU4WGNEM0toUHdPQWNVQzc5QXVZT1F1eWF5K1VrN0V6TjJhSTlkL0F4bUht?=
- =?utf-8?B?dXpheUZNY1U4TkNzOXBIZWl1RGRkMVprYm91MkoxM1crVDZzSFdRUE5XNHhB?=
- =?utf-8?B?OUs0Y2dVM09XMXU5RHVITXpvSEpPZ012SWJ3UXkxejhFWDJ2cjZzaUN4clFm?=
- =?utf-8?B?SWFZOVlMWTI0aUxTUnlMQ1BYcVY0WjBCUU8weUtiZTJzOGt6dUlFNHJONnQ3?=
- =?utf-8?B?V2x1Mm9VN0hoQ2t6MFUwa0ErQzJZc3Byd3dsR3RZMXh4MlV3a0F0VW9mbmtQ?=
- =?utf-8?B?QmJXYUFRaVZkK25aNURzZlQxNmNNM2V1N2k4OUhEMnh6ZWs4dVlLSXNWRlRW?=
- =?utf-8?B?NEpMdzNwK3RMM2dnS3U4czVjWWdJUTVtZWxuYnF0UU1FVFBSV2FMVGpZTmxO?=
- =?utf-8?B?VUxhb3Y0SzA2UUovZ3RzTlFoSWZoeHMxMTBmekZacVJ4UlpFL0V2ZitMUmJx?=
- =?utf-8?B?d3ovWmRtZkhaa1lyWGxIcHpOZzc3c3dCS3R0QWxURHFyNkUvTFlrS0JyL0Zx?=
- =?utf-8?B?SVhpZWtmNDl5RTlGdEFlYXRMbGpxc0tSQTQ4NWFDbmFtU3g4ejRVS3ZNZy9C?=
- =?utf-8?Q?plnYXazVUsdhPA5dP4+ilbIgU0QWsThN?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZkJRZTJRMEUybTc4azF6UTdGak5uL1JVNDZzNDRENkExQ0hYTlViNHR5blVx?=
- =?utf-8?B?UDdoSHh6U0I1dUpFYkw1RzFTZDBGajN6aXprYW9tRk1IWE5aMUFSeFZWRkJp?=
- =?utf-8?B?YVkxV0pud3lHMi9vb095V2dXclAwUmV4ZHdDVkY0M2RDeFVVeW1hcU5sZTJv?=
- =?utf-8?B?S2RQUnh1TGtOV0ZmWVZmMTBPUnZmZmFTUGh0R3NqT0c2dGZNS085U1ZSckZY?=
- =?utf-8?B?bGVoQXh3elVNL1Y2NElwS1BZWlA0SGQ2eHVza3JJcm1wdUNweEQ0UWthaTA4?=
- =?utf-8?B?WmJsejUwRmdWaHhpZVhZNkVaQitPazdLdTZhMnk2ODh4T1EzSUcvWHhvNUFF?=
- =?utf-8?B?b096SmdFeG9wd0tNaEJjTUhWSWR3cThoK3NnbGhpNUJwd0N2Y1hLK2FZZHF3?=
- =?utf-8?B?ZU1wRUcrbFQ0S1RjbjRDUHV1SllZTzRCOUh4SHoxTHlldTdyaHJUcU5ZL2dG?=
- =?utf-8?B?YWh0MkY2TUpCeTdrN0s0clUrVGNXTFlXOGJOdEpvb0E1RU16MTRkRW9DZUFk?=
- =?utf-8?B?Y0F6WmNlbHpQTFFSYWhOemhvdkVyd3VLSnM1dDJINjVLbStBQ0F1eUVKdW1R?=
- =?utf-8?B?L1hQODVYazhNVzBNK0hmcG5yL2FBR1NQVmZ3R0NOM1UxZ1pMaWd6eEloNHUr?=
- =?utf-8?B?NWV6KzlRNFBQVWw3ZVkvcElZWXdiMmkrUWpVQ3RPQWdoUFljWTZNbEh2ZjFN?=
- =?utf-8?B?RGJ2TlNLNWZkMHVyQW9EUURHWTNidjdLUjFZQytvayt1eFA3WE5WZ1g5SjBR?=
- =?utf-8?B?V2ZvVTNkQ3dPNGZCVG1PZDFFQUZTOWNLN25MTVp3VlR0cWJyL2NrU3RIWXBI?=
- =?utf-8?B?UHZILzlyRGNKelZ0NmRyWWxLTkV4dnJsRE1rTmcxSDRrWjVmRnJUcWFlZ3hF?=
- =?utf-8?B?RXVwKzF6YzVscG5ibnVrZjBnY1gzWEZOeVJJL0tURDVvTWZWNk5oRktMdlFs?=
- =?utf-8?B?VHVwdFQxSHZQRXpxK005NjlmNW8vcW11TU0xQkN2b2lUWnRFbGJIUXlPK1hX?=
- =?utf-8?B?THhPb0Z1cUZDTklzaEFCL0hCWVYzL0t0WGVWNDgrdTJta3NkVUJrOGpkb3dU?=
- =?utf-8?B?RUlpN0RvaUZVKzFGWHdhWFFNQzVTbGVEcUszN2pMdTE4Sys3VXgwbFRtVFJE?=
- =?utf-8?B?amlDYmZIZ2VBSEJDbjNwSnVleFZVU1BZTTBQcWNSMEJUZW9EQklTdXlPbVc2?=
- =?utf-8?B?UVgvRHh5OVlTajNZMkd3MDh0Vm1LQVEyaWNFK25lVmVGNXpmNkpxZkdvcUg4?=
- =?utf-8?B?M2Y5OGs0VS92THNzUGEwb1hNNVN4WTNaRzk0aTVTdTZ4RkRHQnZ1akF2aTc1?=
- =?utf-8?B?ZTcrb3B4b0lVeFBjK3I4cGt3ZDlSWERtZzhzTUhOV09TUVhyZXpHcktGb05Y?=
- =?utf-8?B?N1o2OTV4UmpiOXZHTUtmNUt6anRrZzdCblRURndGaE9hK1lEVUc2Tkx1TVlV?=
- =?utf-8?B?cUVubFo4L3pnQm01M2FhenJrZ1c1TmJESmJBZmJBd2F6Ty82dUpGSEtRTjZh?=
- =?utf-8?B?REU4ZmtJM0lEV3pjTmUxdGFIazVDVEJydnQrbkdBOEFKRTdZVlFGZjkwVUQr?=
- =?utf-8?B?c1Z1anVVaFhXWENKZCtwU1d0N3FZb0xtcmp3WDhkTElQYlF6Z1VHbEJGVUlz?=
- =?utf-8?B?bi9RUTZwWG0zTVRLNHJJbG9ZSWZGdTZoSXl2c3U0bi82aHdiaENnSS96Y1NE?=
- =?utf-8?B?UVNyT3dxWjZ5TWxyZ015V3VzWGJZL3ZaZHBCT01pTjRnZWVDK3FtanlNdTBV?=
- =?utf-8?B?V0lsd21UTS9FWVZrNUxocCtXZ2tlcm1NWkxFNWpMYUovMWVBVXljQVVvVlNt?=
- =?utf-8?B?VU02SGlTMWsvTU5jQVVZdWRxSjI2RHRhM2dZYUU1YXUwemNhSzRVdTZoaDJw?=
- =?utf-8?B?bm5wTE11WjA1clBkUFFWL0M1aHNTbEh3VmdEaXlQQ2l2dzVaa1IrR1c1YU53?=
- =?utf-8?B?MDFGTUVPQzU2K3BHZWJTeXp1T1c4RGNnUW4wNWd3UlFDOVdiTXNqL1M3OGNn?=
- =?utf-8?B?am9weVFlZHoyOW94UWFocERiU1doZVZWaysrdHZPdUFpdGd5WDFzaWlhVjVa?=
- =?utf-8?B?VVNSREFRQ3NmWnZubFJNeVc2TmhQc3o3RjRIc1E4Q3VNMkxPWVE4emZaSVpP?=
- =?utf-8?Q?Btu3M6hAsdJsVam+HUrZwZVhu?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 69dde9f3-e127-42f0-8416-08de0290d7f4
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Oct 2025 15:23:45.7202
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Ws9J6R9G4PTBjz+3pmZKTglvxuQuoDVGdig2nftLR9f/X79thWqu99DgiOmJhG4oCYgGdWvOfp/nm2OQLO7oeA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB8603
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251003-bpf-sft-fix-build-err-6-18-v1-1-2a71170861ef@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAKDq32gC/x2MwQqDQAwFf0Vy7oPsahfpr5QeVs3WgFjJtqUg/
+ nuDx4GZ2amKqVS6NTuZfLXqa3UIl4bGOa9PgU7OFDleA3OLYSuo5Y2iPwwfXSaIGRJCj5S7kdt
+ YUs+ZfLCZuHXO7+QdPY7jD0VWMm9xAAAA
+X-Change-ID: 20251003-bpf-sft-fix-build-err-6-18-6a4c032f680a
+To: Andrii Nakryiko <andrii@kernel.org>, 
+ Eduard Zingerman <eddyz87@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
+ Daniel Borkmann <daniel@iogearbox.net>, 
+ Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
+ Yonghong Song <yonghong.song@linux.dev>, 
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>, 
+ Nathan Chancellor <nathan@kernel.org>, 
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>
+Cc: bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
+ "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6355; i=matttbe@kernel.org;
+ h=from:subject:message-id; bh=DQbc540c3F4b2scI1GiUAhd/lmG2n6h9j6Q7f/kL6PA=;
+ b=owGbwMvMwCVWo/Th0Gd3rumMp9WSGDLuv1oe9TQgbcvhc1tWTA27r1zjXS04JeVS00qtaYw2O
+ 30ZPNXaO0pZGMS4GGTFFFmk2yLzZz6v4i3x8rOAmcPKBDKEgYtTACayP5rhv9Pj04ERzaufnPq+
+ xW/FnIyQ1U41sRqdAnVvfyxlivh4lY2RYbFWa0DUrrCz/70U1vnunjk3sm2BUU32XUUGv5XvPgS
+ XswMA
+X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
+ fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
 
+When trying to build the latest BPF selftests, with a debug kernel
+config, Pahole 1.30 and CLang 20.1.8 (and GCC 15.2), I got these errors:
 
+  progs/dynptr_success.c:579:9: error: call to undeclared function 'bpf_dynptr_slice'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+    579 |         data = bpf_dynptr_slice(&ptr, 0, NULL, 1);
+        |                ^
+  progs/dynptr_success.c:579:9: note: did you mean 'bpf_dynptr_size'?
+  .virtme/build-debug-btf//tools/include/vmlinux.h:120280:14: note: 'bpf_dynptr_size' declared here
+   120280 | extern __u32 bpf_dynptr_size(const struct bpf_dynptr *p) __weak __ksym;
+          |              ^
+  progs/dynptr_success.c:579:7: error: incompatible integer to pointer conversion assigning to '__u64 *' (aka 'unsigned long long *') from 'int' [-Wint-conversion]
+    579 |         data = bpf_dynptr_slice(&ptr, 0, NULL, 1);
+        |              ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  progs/dynptr_success.c:596:9: error: call to undeclared function 'bpf_dynptr_slice'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+    596 |         data = bpf_dynptr_slice(&ptr, 0, NULL, 10);
+        |                ^
+  progs/dynptr_success.c:596:7: error: incompatible integer to pointer conversion assigning to 'char *' from 'int' [-Wint-conversion]
+    596 |         data = bpf_dynptr_slice(&ptr, 0, NULL, 10);
+        |              ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-On 10/1/2025 9:41 PM, Alexandre Courbot wrote:
-> On Tue Sep 30, 2025 at 11:45 PM JST, Joel Fernandes wrote:
->> Add KUNIT tests to make sure the macro is working correctly.
->>
->> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
->> ---
->>  rust/kernel/bitfield.rs | 321 ++++++++++++++++++++++++++++++++++++++++
->>  1 file changed, 321 insertions(+)
->>
->> diff --git a/rust/kernel/bitfield.rs b/rust/kernel/bitfield.rs
->> index fed19918c3b9..9a20bcd2eb60 100644
->> --- a/rust/kernel/bitfield.rs
->> +++ b/rust/kernel/bitfield.rs
->> @@ -402,3 +402,324 @@ fn default() -> Self {
->>          }
->>      };
->>  }
->> +
->> +#[::kernel::macros::kunit_tests(kernel_bitfield)]
->> +mod tests {
->> +    use core::convert::TryFrom;
->> +
->> +    // Enum types for testing => and ?=> conversions
->> +    #[derive(Debug, Clone, Copy, PartialEq)]
->> +    enum MemoryType {
->> +        Unmapped = 0,
->> +        Normal = 1,
->> +        Device = 2,
->> +        Reserved = 3,
->> +    }
->> +
->> +    impl Default for MemoryType {
->> +        fn default() -> Self {
->> +            MemoryType::Unmapped
->> +        }
->> +    }
-> 
-> Tip: you can add `Default` to the `#[derive]` marker of `MemoryType` and
-> mark the variant you want as default with `#[default]` instead of
-> providing a full impl block:
-> 
->     #[derive(Debug, Default, Clone, Copy, PartialEq)]
->     enum MemoryType {
->         #[default]
->         Unmapped = 0,
->         Normal = 1,
->         Device = 2,
->         Reserved = 3,
->     }
-> 
+I don't have these errors without the debug kernel config from
+kernel/configs/debug.config. With the debug kernel, bpf_dynptr_slice()
+is not declared in vmlinux.h. It is declared there without debug.config.
 
-Good point, changed to this.
+The fix is similar to what is done in dynptr_fail.c which is also using
+bpf_dynptr_slice(): bpf_kfuncs.h is now included.
 
->> +
->> +    impl TryFrom<u8> for MemoryType {
->> +        type Error = u8;
->> +        fn try_from(value: u8) -> Result<Self, Self::Error> {
->> +            match value {
->> +                0 => Ok(MemoryType::Unmapped),
->> +                1 => Ok(MemoryType::Normal),
->> +                2 => Ok(MemoryType::Device),
->> +                3 => Ok(MemoryType::Reserved),
->> +                _ => Err(value),
->> +            }
->> +        }
->> +    }
->> +
->> +    impl From<MemoryType> for u64 {
->> +        fn from(mt: MemoryType) -> u64 {
->> +            mt as u64
->> +        }
->> +    }
->> +
->> +    #[derive(Debug, Clone, Copy, PartialEq)]
->> +    enum Priority {
->> +        Low = 0,
->> +        Medium = 1,
->> +        High = 2,
->> +        Critical = 3,
->> +    }
->> +
->> +    impl Default for Priority {
->> +        fn default() -> Self {
->> +            Priority::Low
->> +        }
->> +    }
->> +
->> +    impl From<u8> for Priority {
->> +        fn from(value: u8) -> Self {
->> +            match value & 0x3 {
->> +                0 => Priority::Low,
->> +                1 => Priority::Medium,
->> +                2 => Priority::High,
->> +                _ => Priority::Critical,
->> +            }
->> +        }
->> +    }
->> +
->> +    impl From<Priority> for u16 {
->> +        fn from(p: Priority) -> u16 {
->> +            p as u16
->> +        }
->> +    }
->> +
->> +    bitfield! {
->> +        struct TestPageTableEntry(u64) {
->> +            0:0       present     as bool;
->> +            1:1       writable    as bool;
->> +            11:9      available   as u8;
->> +            13:12     mem_type    as u8 ?=> MemoryType;
->> +            17:14     extended_type as u8 ?=> MemoryType;  // For testing failures
->> +            51:12     pfn         as u64;
->> +            51:12     pfn_overlap as u64;
->> +            61:52     available2  as u16;
->> +        }
->> +    }
->> +
->> +    bitfield! {
->> +        struct TestControlRegister(u16) {
->> +            0:0       enable      as bool;
->> +            3:1       mode        as u8;
->> +            5:4       priority    as u8 => Priority;
->> +            7:4       priority_nibble as u8;
->> +            15:8      channel     as u8;
->> +        }
->> +    }
->> +
->> +    bitfield! {
->> +        struct TestStatusRegister(u8) {
->> +            0:0       ready       as bool;
->> +            1:1       error       as bool;
->> +            3:2       state       as u8;
->> +            7:4       reserved    as u8;
->> +            7:0       full_byte   as u8;  // For entire register
->> +        }
->> +    }
->> +
->> +    #[test]
->> +    fn test_single_bits() {
->> +        let mut pte = TestPageTableEntry::default();
->> +
->> +        assert!(!pte.present());
->> +        assert!(!pte.writable());
->> +
->> +        pte = pte.set_present(true);
->> +        assert!(pte.present());
->> +
->> +        pte = pte.set_writable(true);
->> +        assert!(pte.writable());
->> +
->> +        pte = pte.set_writable(false);
->> +        assert!(!pte.writable());
->> +
->> +        assert_eq!(pte.available(), 0);
->> +        pte = pte.set_available(0x5);
->> +        assert_eq!(pte.available(), 0x5);
-> 
-> I'd suggest testing the actual raw value of the register on top of
-> invoking the getter. That way you also test that:
+Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+---
+Notes:
+ - This patch looks wrong, I guess bpf_dynptr_slice() should be in
+   vmlinux.h even with a "debug" kernel, but it is not:
+   $ grep -cw bpf_dynptr_slice .virtme/build-debug-btf/tools/include/vmlinux.h
+   0
+   $ grep -w bpf_dynptr_slice .virtme/build-btf/tools/include/vmlinux.h
+   extern void *bpf_dynptr_slice(...) __weak __ksym;
+ - This is on top of bpf/master: commit 63d2247e2e37, tag bpf-fixes.
+ - I only see this error when using kernel/configs/debug.config.
+ - Because this has not been spot by the BPF CI, I wonder if I'm
+   building the BPF selftests properly... Here is what I did:
+   $ virtme-configkernel --arch x86_64 --defconfig \
+     --custom tools/testing/selftests/net/mptcp/config \
+     --custom kernel/configs/debug.config \
+     --custom tools/testing/selftests/bpf/config \
+     O=${PWD}/.virtme/build-debug-btf
+   $ ./scripts/config --file ${PWD}/.virtme/build-debug-btf/.config \
+     -e NET_NS_REFCNT_TRACKER -d SLUB_DEBUG_ON \
+     -d DEBUG_KMEMLEAK_AUTO_SCAN -e PANIC_ON_OOPS \
+     -e SOFTLOCKUP_DETECTOR -e BOOTPARAM_SOFTLOCKUP_PANIC \
+     -e HARDLOCKUP_DETECTOR -e BOOTPARAM_HUNG_TASK_PANIC \
+     -e DETECT_HUNG_TASK -e BOOTPARAM_HUNG_TASK_PANIC -e DEBUG_INFO \
+     -e DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT -e GDB_SCRIPTS \
+     -e DEBUG_INFO_DWARF4 -e DEBUG_INFO_COMPRESSED \
+     -e DEBUG_INFO_COMPRESSED_ZLIB -e DEBUG_INFO_BTF_MODULES \
+     -e MODULE_ALLOW_BTF_MISMATCH -d IA32_EMULATION -e DYNAMIC_DEBUG \
+     --set-val CONSOLE_LOGLEVEL_DEFAULT 8 -e FTRACE -e FUNCTION_TRACER \
+     -e DYNAMIC_FTRACE -e FTRACE_SYSCALLS -e HIST_TRIGGERS -e DEBUG_NET \
+     -m KUNIT -e KUNIT_DEBUGFS -d KUNIT_ALL_TESTS -m MPTCP_KUNIT_TEST \
+     -e BPF_JIT -e BPF_SYSCALL -e TUN -e CRYPTO_USER_API_HASH \
+     -e CRYPTO_SHA1 -e NET_SCH_TBF -e BRIDGE -d RETPOLINE -d PCCARD \
+     -d MACINTOSH_DRIVERS -d SOUND -d USB_SUPPORT -d NEW_LEDS -d SCSI \
+     -d SURFACE_PLATFORMS -d DRM -d FB -d ATA -d MISC_FILESYSTEMS
+     # sorry, long list used by the MPTCP CI to accelerate builds, etc.
+   $ make O=${PWD}/.virtme/build-debug-btf olddefconfig
+   $ make O=${PWD}/.virtme/build-debug-btf -j$(nproc) -l$(nproc)
+   $ make O=${PWD}/.virtme/build-debug-btf headers_install \
+     INSTALL_HDR_PATH=${PWD}/.virtme/headers
+   $ make O=${PWD}/.virtme/build-debug-btf \
+     KHDR_INCLUDES=-I${PWD}/.virtme/headers/includes \
+     -C tools/testing/selftests/bpf
+ - The errors I got should be reproducible using:
+   $ docker run -v "${PWD}:${PWD}:rw" -w "${PWD}" --privileged --rm -it \
+     -e INPUT_EXTRA_ENV=INPUT_RUN_TESTS_ONLY=bpftest_all \
+     --pull always mptcp/mptcp-upstream-virtme-docker:latest \
+     auto-btf-debug
+ - These issues were originally spot by our MPTCP CI:
+   https://github.com/multipath-tcp/mptcp_net-next/actions/runs/18222911614/job/51886811332
+ - No errors without kernel/configs/debug.config on the CI and on my side
+ - This CI got different issues, and I had to declare more kfuncs there:
+   https://github.com/multipath-tcp/mptcp_net-next/commit/4435d4da9f4f
+   but this CI is currently on top of 'net', with Jiri's patches from
+   https://lore.kernel.org/20251001122223.170830-1-jolsa@kernel.org
+ - The builds have been done from a clean build directory each time.
+ - Do you think the issue is on my side? Dependences? How the selftests
+   are built? I didn't change the way the BPF selftests are built for a
+   while. I had other issues with pahole 1.29, but fixed with 1.30.
+ - Feel free to discard this patch for a better solution (if any).
+ - I don't know which Fixes tag adding, but I doubt this patch is valid.
+---
+ tools/testing/selftests/bpf/progs/dynptr_success.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Sure, I am actually doing a raw check in a few other tests, but I could do so in
-this one as well.
+diff --git a/tools/testing/selftests/bpf/progs/dynptr_success.c b/tools/testing/selftests/bpf/progs/dynptr_success.c
+index 127dea342e5a67dda33e0a39e84d135206d2f3f1..60daf5ce8eb283d8c8bf2d7853eda6313df4fa87 100644
+--- a/tools/testing/selftests/bpf/progs/dynptr_success.c
++++ b/tools/testing/selftests/bpf/progs/dynptr_success.c
+@@ -6,6 +6,7 @@
+ #include <stdbool.h>
+ #include <bpf/bpf_helpers.h>
+ #include <bpf/bpf_tracing.h>
++#include "bpf_kfuncs.h"
+ #include "bpf_misc.h"
+ #include "errno.h"
+ 
 
-> 
-> - The right field is actually written (i.e. if the offset is off by one,
->   the getter will return the expected result even though the bitfield
->   has the wrong value),
-> - No other field has been affected.
-> 
-> So something like:
-> 
->     pte = pte.set_present(true);
->     assert!(pte.present());
->     assert(pte.into(), 0x1u64);
-> 
->     pte = pte.set_writable(true);
->     assert!(pte.writable());
->     assert(pte.into(), 0x3u64);
-> 
-> It might look a bit gross, but it is ok since these are not doctests
-> that users are going to take as a reference, so we case improve test
-> coverage at the detriment of readability.
-> 
+---
+base-commit: 63d2247e2e37d9c589a0a26aa4e684f736a45e29
+change-id: 20251003-bpf-sft-fix-build-err-6-18-6a4c032f680a
 
-Ack. I will add these.
-
-Thanks for the review! (I am assuming with these changes you're Ok with me
-carrying your Reviewed-by tag on this patch as well, but please let me know if
-there is a concern.)
-
- - Joel
-
+Best regards,
+-- 
+Matthieu Baerts (NGI0) <matttbe@kernel.org>
 
 
