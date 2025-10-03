@@ -1,73 +1,62 @@
-Return-Path: <linux-kernel+bounces-841744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41717BB81D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 22:39:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F1231BB81D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 22:39:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02E4E19E0DB8
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 20:39:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B56DE19E104A
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 20:39:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5792123D7E4;
-	Fri,  3 Oct 2025 20:38:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 539B72451F0;
+	Fri,  3 Oct 2025 20:38:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZqJ/d9ql"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dVv4/lhP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8D9F156F20;
-	Fri,  3 Oct 2025 20:38:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD41C23DEB6
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 20:38:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759523934; cv=none; b=BWLdzoG7ghmRV8Rzucqf7yh8vER755pdEcCBjfkyuMSlN5tjRuK8z/5zxZ+DcB1j59m5BX1bZXAzKA/WDDYiFClhyAzZ0dHkmOTANWTRGhTx0cMJU8gE8WAwrhIFex9FT6ZN5aEkdonAE55UDPUISdVmT5fC08vunbvOyqt+EKQ=
+	t=1759523935; cv=none; b=eCs0/jI/v84hP34ygcqQrzvDqyy3WyIIz8bG9fg2Ycn1obWuWSwsC6fFqRlYPNB+9rn5qMhhnaWlM5kwNFYrN1vTfRILDsselXVZvSCwdWmX7SMKBXRh3W7uNRo2T7lmVfO3wASVMeVsx0KU1OkXswEusCVRTg4UVAyjvxiB3HI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759523934; c=relaxed/simple;
-	bh=8Kylk+IGScGVl68XY62G0IZ7hqRC6OFEitrMjSrCFis=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AKec1Uf0YIpSb2z2YeQcDWrGiulzUFeVB715BYcUrLvD/XhbOaelzNCGdSJOlp4k/OlsXKkwZ5s6FU6zMCkuYnKDGaVJTdlQUD11DYBLrJYFnlsqrigr+YagJblArkQh/TFuc8Fm7BUmNzfMoRGXDh/t+IuvWAh/Zio4x/tE5k8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZqJ/d9ql; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DB82C4CEF5;
-	Fri,  3 Oct 2025 20:38:54 +0000 (UTC)
+	s=arc-20240116; t=1759523935; c=relaxed/simple;
+	bh=QYf5NoN4iCNnsX/4rgyF4h8KGvpOZHNtyc2i/D4d3Fg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=rw0AXqyBBjhMKzrBN2+sKWi/yjMrG9bSsmOwwFdGPfmCBeI8SA/eNc55kOhWiXqPnBXY1Xllzkg5VGJb2IKqc89FcFPjXz6axN5RmPT4QScoowAB9r2qkHjwLoOo3lHc5mTSKlT5tdBcQsAdmBF2v2E+Sxy7KcUGDXSriqEakQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dVv4/lhP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FD7FC4CEFA;
+	Fri,  3 Oct 2025 20:38:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759523934;
-	bh=8Kylk+IGScGVl68XY62G0IZ7hqRC6OFEitrMjSrCFis=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ZqJ/d9qlMsYouwfCYmYg3wszEYzw8EOZv8jG1Utxyek0uCcIgTzGt3A1ekVkuEV8/
-	 OAnoFpAtFI/a0+DKGJnUnGH2EVvrQmNv0iZWMmmegz05Sv22XotbcOk2/ld5Qz+TYl
-	 QDyKE+VWzCBMQ9JLUR6n1p93F6JWzuoGqeAUAUYwCAJEvTEJK3vx3blOcW7T1R5nFM
-	 1EjxKBGNH6HB31vrPWvaasZXlGgl2spFk+6bJlEqw33NCIvhmgZPrx3NulvezhqlLN
-	 aTPcz2gBpZCSHccRx6QiVpr0upiomnXZ7yOad9xBR9a5ZTpXk5G2RY0wyV+OEkxl9v
-	 0SY1aFcD4xiAQ==
+	s=k20201202; t=1759523935;
+	bh=QYf5NoN4iCNnsX/4rgyF4h8KGvpOZHNtyc2i/D4d3Fg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=dVv4/lhP7CXRVGS6gZXty6SM2CuqqWMtV94l7WDc//YwsLdWRvA9OSEMFefrhAIc8
+	 eD+0MkFrUaBHnOFc9MuMxvL1iv/8mtrG8Ant8Og95++U6GIAgmNKogDidifzS0tHlJ
+	 Qq3b3jfvhfLTtBfMV94YLQ6Y3hwNn1ZBNk9jjHiFhOwXOWUYPudbac5AyJaX6QC+4g
+	 tY9+XyBWcrd7FuttcbI76cyHxqzDkf1l8ZwzoyXp/dM0VPZutwFpp0yKW33ddZzQhP
+	 EH/lKPXUi64pNrLFlO9IYbWvxwLUsAkbVfTSleDoDk04Cwd7/XjIobzm7g7poJJcIa
+	 DEmVG9WD9KLeA==
 From: SeongJae Park <sj@kernel.org>
 To: 
 Cc: SeongJae Park <sj@kernel.org>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
 	Andrew Morton <akpm@linux-foundation.org>,
 	Chengming Zhou <chengming.zhou@linux.dev>,
-	David Hildenbrand <david@redhat.com>,
 	Johannes Weiner <hannes@cmpxchg.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Michal Hocko <mhocko@kernel.org>,
-	Michal Hocko <mhocko@suse.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Muchun Song <muchun.song@linux.dev>,
 	Nhat Pham <nphamcs@gmail.com>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
 	Yosry Ahmed <yosry.ahmed@linux.dev>,
-	cgroups@vger.kernel.org,
 	kernel-team@meta.com,
-	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org
-Subject: [PATCH 0/4] mm/zswap: misc cleanup of code and documentations
-Date: Fri,  3 Oct 2025 13:38:47 -0700
-Message-Id: <20251003203851.43128-1-sj@kernel.org>
+Subject: [PATCH 1/4] mm/zswap: remove unnecessary dlen writes for incompressible pages
+Date: Fri,  3 Oct 2025 13:38:48 -0700
+Message-Id: <20251003203851.43128-2-sj@kernel.org>
 X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20251003203851.43128-1-sj@kernel.org>
+References: <20251003203851.43128-1-sj@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,23 +65,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Cleanup an unnecessary local variable write in incompressible pages
-handling, typos (s/zwap/zswap/) and outdated comments/documentations
-about the zswap's red-black tree, which is replaced by xarray.
+Incompressible pages handling logic in zswap_compress() is setting
+'dlen' as PAGE_SIZE twice.  Once before deciding whether to save the
+content as is, and once again after it is decided to save it as is.
+But the value of 'dlen' is used only if it is decided to save the
+content as is, so the first write is unnecessary.  It is not causing
+real user issues, but making code confusing to read.  Remove the
+unnecessary write operation.
 
-SeongJae Park (4):
-  mm/zswap: remove unnecessary dlen writes for incompressible pages
-  mm/zswap: fix typos: s/zwap/zswap/
-  mm/zswap: s/red-black tree/xarray/
-  Docs/admin-guide/mm/zswap: s/red-black tree/xarray/
+Signed-off-by: SeongJae Park <sj@kernel.org>
+---
+ mm/zswap.c | 1 -
+ 1 file changed, 1 deletion(-)
 
- Documentation/admin-guide/mm/zswap.rst | 10 +++++-----
- mm/memcontrol.c                        |  2 +-
- mm/zswap.c                             |  7 +++----
- 3 files changed, 9 insertions(+), 10 deletions(-)
-
-
-base-commit: 2e943d9cc1fdd399a2f95d1c1d6b865d04bfa239
+diff --git a/mm/zswap.c b/mm/zswap.c
+index c1af782e54ec..80619c8589a7 100644
+--- a/mm/zswap.c
++++ b/mm/zswap.c
+@@ -894,7 +894,6 @@ static bool zswap_compress(struct page *page, struct zswap_entry *entry,
+ 	 * to the active LRU list in the case.
+ 	 */
+ 	if (comp_ret || !dlen || dlen >= PAGE_SIZE) {
+-		dlen = PAGE_SIZE;
+ 		if (!mem_cgroup_zswap_writeback_enabled(
+ 					folio_memcg(page_folio(page)))) {
+ 			comp_ret = comp_ret ? comp_ret : -EINVAL;
 -- 
 2.39.5
 
