@@ -1,205 +1,187 @@
-Return-Path: <linux-kernel+bounces-841129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19BCBBB6535
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 11:10:17 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B4B3BB6539
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 11:11:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1C893A823F
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 09:10:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4A1DB4EB3DA
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 09:11:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8AA92882D3;
-	Fri,  3 Oct 2025 09:10:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEB9E288522;
+	Fri,  3 Oct 2025 09:11:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Mf1ynVAR"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IfPd0vh0"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 867282882B8
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 09:10:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66F35188CB1
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 09:11:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759482607; cv=none; b=ViBIVY71K+RjaAF8v35D+jUPklRaqLTAZqP8x0Dy9dTkeAvUH0txZeinLwjG5U3/VDMfkB3gCZwyUvZ34+no3lj+M2bMfWrbKE2JPMLSFHh5QijhqLGWMpDQZwSvXKaKrp6W+vSup/YB3mejv1U9ssaZnheROIaHdR1t0469Qek=
+	t=1759482684; cv=none; b=fKhFVGp69DhSnvENsQ+q/VrD+VYcZLQSSkCj0njOknh8xCzkQPJFNCSI6isBDZOQUKa2iDabyKGLsd9TkYXqVuXllhPoWui5WY9+PFMCtHMTzzA6u3Vm3fQIOeChK9rZS22jzI4VUGTLNNb10Onk0IaqByUfR1MVIa/uWDckre4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759482607; c=relaxed/simple;
-	bh=g+UyabP7D/WYt51zePGNa1iOGkEPveNswKAW4d9GM9Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lGJ261qBrwSO6lCiUX5OG+XVjGnK4E/mlruTy6m7UuJn+Xrlu3XBCud3ZJaHJWXlB6YDSnrDEIBrpczJ/xr3I8C7Q0izmr1wP5It3w8AwSjmqXnCnr3TfXbrdRA0hsiQQDz7UWzZC1gG7p3DZ5KtxFP2HkxcrISB0KHQ2ds8KlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Mf1ynVAR; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 592MwoHG023326
-	for <linux-kernel@vger.kernel.org>; Fri, 3 Oct 2025 09:10:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	9G+ZsHAD1n3qGPEQOvfOjFGqmrOTP8PC0DMNouciob8=; b=Mf1ynVARGjaPpLa1
-	RcUrlPuW2pYAkB77JOlTBVI9k6BXS1qOrKy1Y5TB3Knh8jptEB8tDfRq9QlMWwXp
-	NQtyc7ek0v8IbWI+ew3enhe5Z0f0zrhIbrSZCLpaN2SQVXpKzlXzRuy6iASBIxCg
-	WnYBCd1zFAwGwzx6e/zGcE00q915QzeJugs6NsmMJiCi6s24s6Io/AR6P8/7Ovlc
-	PAvQbwKOzHUL+afjaCNa3y1AWQtnjCI8IhSz+coyCD8gntboN0F090Yl9YEheXPf
-	e8F7KfcbTIDmtz7B9NO1cLMwfw+kdyBE3kqIy0/W1uqogE8j3kyHGP8zvmGwaOH5
-	qnbmRA==
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com [209.85.215.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 49e8a6ac41-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 09:10:04 +0000 (GMT)
-Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-b554fdd710bso1352068a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 02:10:04 -0700 (PDT)
+	s=arc-20240116; t=1759482684; c=relaxed/simple;
+	bh=VfiCAGN0AGfa646ltsvQvSU2Seqpx2og6lu9lSfJWYk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ugwjUSsAETfh8/BrWs3lB/shV6eJx85QMzZE4/Px7551bxPq0jcqGAkUEDm32Wn+KFdgEmexLa4dy8hbUuhdnoD9vaFfAeESMAz4VxRlhKF2az///MwWy53hqTisUtBPpxNQV++7GrpVj2nrjiu4xGa1q0MVm85/rxT5E7fEidI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IfPd0vh0; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-368348d30e0so19781731fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 02:11:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759482679; x=1760087479; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LTLAmAkT0Bz6x7mi9MjbZErT4JQSvAEF74DuHT2XEq8=;
+        b=IfPd0vh0R1NzQyZBXlGkHO2bi3GIRFXxH6oWp6YdU5q5/xfpOkeq1nzGh0kFMsPhbJ
+         2MkVKP+kIBDeS2JS5MpfNxmeGG9uWNlqk3zNNs9joNUvxlErd46thPzRFeZcth5ERF4K
+         qwpe2s6xo593oOiggD+Dx3VycsKJU+HxR9iCPVWTx+yEzxSPy1S0T6HrFU64bTyd0ARI
+         rFmVmAnDt0pw2ZWfzj4jvVAtpHqdFqG7xl6QcIVaEAlGyJYxmUet/OkJjq6UUGRUmim8
+         V2ZKEnGALhvvoYoBH/klepHXGlGHBuOX0GIlbkw/wZ29ml3NksSOKzy4AD1FNDq+XSfv
+         TWAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759482603; x=1760087403;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9G+ZsHAD1n3qGPEQOvfOjFGqmrOTP8PC0DMNouciob8=;
-        b=qCAN/IYgUw8t6DNGEtDlLBEOACKUlVxyYdmBZkhr0lqLQ1SX+xcp3UDe3o9kN/SWjt
-         EvJEmw7MigN9giJzCz+eTwSUp4pmx91ybjuMWiw7+HboiwQ8+OZZjfhxxdAkrqqjYikG
-         crBE0Q1L+GrwrP7bgNq2G8scVnqTyWDg6CpQvVTDu/2lAzNWtPL5xSQzRLuk/3KPYIZE
-         vewcCozB7n+5muTQp/0oXkmgE28td61Q0ESQCuCk0mX7lC9SVhZgwXeKxIDZj7TatQww
-         7ClHoW0eb/nX2B/lv8kRofvhBefRbYUfGVtEQ/7MsDkAdPiT9nTjGc+3B/ew3IwigmrV
-         3+5w==
-X-Forwarded-Encrypted: i=1; AJvYcCW4EFm8PjPWXfVsJvkIZt4YvjhHm+ZoquDWlI1EXzjPnsDpwI3LMY8IwsJstK9136c00BXif2DMwkSYiZk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaqDPtrYReT4gqwrUdf+lS7WP2tCfSB3lSmBa6uMj898tN5gJs
-	/5imHWYFoCffWXPqTKBHJaM8j9rba13drsmSe5qpptv9dZK8TdZ5qQosjbhErpcgliWuOXPbxBQ
-	1Pd+bwqsvg2MFs2teNhgMkU9ci2gZvR0UMzYWJIbzaFoszhST9VzzZ0dGqDiOIYHYjs0=
-X-Gm-Gg: ASbGncscgM7xzzi3qzCBOHZ7CE1PxHW0GO608YVh/9lSxqoXr4C6zDpGKNPtpBE+gy+
-	CnlaUus2iuzHr2BiLjZo9rOxejKnaKziNGxB8CUphVv5CKRtYvoXJQpFPg5Dgxma6XCuIAE08oL
-	o54G6p+kPfQT9faabTbJlCCPe5dYvv30lVK8Jn9rCd2NHYueOt2BvNynQNrLMcJcQUkLmH8FCl1
-	mTZO8FtWWjlG4hgLKo3P9QxXOA8sBRsqfhedAeOT5leT4+3yjPgPrSJI1gyjPMe8WIkmu73S1is
-	XABdxms9Ce7LD4qfudvrp2yo2AgxqhgtZLmpgReo7Yvb2gabINTxqwgnk39pHoaq8699YPPsKuA
-	3QXY=
-X-Received: by 2002:a17:903:3c70:b0:269:ae5a:e32b with SMTP id d9443c01a7336-28e9a5668e1mr30170475ad.13.1759482602885;
-        Fri, 03 Oct 2025 02:10:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IED/ngo+VR5SYkELB9gRDWFieCrqK8UHsEA2FB7sm98eH67+OUnQaYh4ScjWZbBPm9CWIZQ8w==
-X-Received: by 2002:a17:903:3c70:b0:269:ae5a:e32b with SMTP id d9443c01a7336-28e9a5668e1mr30170065ad.13.1759482602391;
-        Fri, 03 Oct 2025 02:10:02 -0700 (PDT)
-Received: from [10.219.49.214] ([202.46.23.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d1dc168sm44215525ad.120.2025.10.03.02.09.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 03 Oct 2025 02:10:01 -0700 (PDT)
-Message-ID: <58a69bdd-f26e-4cc2-bbe2-6e9d5bb69aa0@oss.qualcomm.com>
-Date: Fri, 3 Oct 2025 14:39:54 +0530
+        d=1e100.net; s=20230601; t=1759482679; x=1760087479;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LTLAmAkT0Bz6x7mi9MjbZErT4JQSvAEF74DuHT2XEq8=;
+        b=pDJUOvDo0BgR6u6qjFR/2lGpQfqz1VWQaCWzUDcYgFuMTSMUXpBHqA3ceOsnOImMdE
+         3WV7iTvGyZIU1I0vdDkeLr+Nn0jkQh/WKAcH92vV0TqLHT8dy3O/ytVwpOQf0rK8h3lc
+         sfmho9luVJZDaCFGXbE9OQlp4RFQFBYHKoZYj0bU+O8IbNIlpHmGuLF4Sal8aUdbrgHf
+         RW55p1YOJRdu2Wf/b/WmLKw2fIJ4n0rzbrHlqkM2SJ89MfaIfcQUVfoffnP9qxBKnAF7
+         w6005zNfndO3xWSwgoWMZWz02F783LWSUApkOEH1GuenVXCJHgzkAMpKsTQXaGfAGS8q
+         5f7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXi1ptxcuII0Xn26ArBS3HufTyzYsUmc9RmOlrxJSwj6DjntabNK7A4w0ZAEAd5GviCZH+EGAKpplMWW00=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvWq4p1B7ZVSpE5Sy0D6oKMpN8LgOTJxf4zMXoPuCsh+9+s550
+	R4BMoyVYVBDvortZBOiai5bUxdpRwbBMbZzV53LgWmPE8rI7yjP91X8+
+X-Gm-Gg: ASbGncsvKK4pGgbpoEjoyYcgLI/rq2aQStXAMXBNJHvqmOskguqIBcWq0y0Vs7eQHit
+	vvBu2b08WyD+gs1v3e0OlE3BBGHFQ20w/tRIFJK3Q27swbQnwknfM4Rs+3ns4Zj4Eom+7UC7ULP
+	F6sN9H+DjOC3hZCBeP8x7UVWe328nU3X/FdOJ00DaAKymt3oiAmkZX91K/llZ6Z808qezL2slY/
+	K9VCGcjZ6iDsswDOMcDtcj9j+Hyrk6LzBmjkzGPFMe6cqug1/+l3lbeEEDa1qCGiZ9DFmGuPrST
+	RVWBl5L+kKdFxECfr4m6BU7vM1/iA1dnYLyFjAVSQjK9v512ksvmNOMmlaZpzof7MYNuftfH/9T
+	PpE0wN1ATXpKs/ZCQ9QvVoltfFnn4Ej5swv7ElhbD9e9pmXFXiFQxiVwDNafFE9LRWnGIP1WmSh
+	mZZl26yTjuLyc=
+X-Google-Smtp-Source: AGHT+IEE37WjpVP/WIvXAgeGS39Gce9Ezt51xjGTSJsmxeVSfCWvxIo+dLGFakcwws5UpIYrgxmgHA==
+X-Received: by 2002:a05:651c:1992:b0:372:9992:1b0 with SMTP id 38308e7fff4ca-374c3823058mr6029241fa.31.1759482679187;
+        Fri, 03 Oct 2025 02:11:19 -0700 (PDT)
+Received: from SC-WS-02452.corp.sbercloud.ru ([46.159.163.120])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-373ba444480sm13498971fa.30.2025.10.03.02.11.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 03 Oct 2025 02:11:18 -0700 (PDT)
+From: Sergey Bashirov <sergeybashirov@gmail.com>
+To: Chuck Lever <chuck.lever@oracle.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Dai Ngo <Dai.Ngo@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	NeilBrown <neil@brown.name>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Tom Talpey <tom@talpey.com>
+Cc: linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Sergey Bashirov <sergeybashirov@gmail.com>
+Subject: [PATCH v3 0/4] NFSD: Impl multiple extents in block/scsi layoutget
+Date: Fri,  3 Oct 2025 12:11:02 +0300
+Message-ID: <20251003091115.184075-1-sergeybashirov@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/20] arm64: dts: qcom: Introduce Kaanapali platform
- device tree
-To: Alexey Klimov <alexey.klimov@linaro.org>,
-        Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, aiqun.yu@oss.qualcomm.com,
-        tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
-        yijie.yang@oss.qualcomm.com,
-        Tengfei Fan <tengfei.fan@oss.qualcomm.com>,
-        Qiang Yu <qiang.yu@oss.qualcomm.com>,
-        Manish Pandey <manish.pandey@oss.qualcomm.com>,
-        Ronak Raheja <ronak.raheja@oss.qualcomm.com>,
-        Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>,
-        Kamal Wadhwa <kamal.wadhwa@oss.qualcomm.com>,
-        Jyothi Kumar Seerapu <jyothi.seerapu@oss.qualcomm.com>,
-        Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>,
-        Vikash Garodia <vikash.garodia@oss.qualcomm.com>
-References: <20250924-knp-dts-v1-0-3fdbc4b9e1b1@oss.qualcomm.com>
- <DD6BOLBXKBYP.2NVXRXGJ9W3IG@linaro.org>
-Content-Language: en-US
-From: Prasad Kumpatla <prasad.kumpatla@oss.qualcomm.com>
-In-Reply-To: <DD6BOLBXKBYP.2NVXRXGJ9W3IG@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=RZKdyltv c=1 sm=1 tr=0 ts=68df92ec cx=c_pps
- a=Oh5Dbbf/trHjhBongsHeRQ==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=EUspDBNiAAAA:8 a=k2UVWlRvf9iVtZTx9S8A:9
- a=QEXdDO2ut3YA:10 a=_Vgx9l1VpLgwpw_dHYaR:22
-X-Proofpoint-GUID: 1T3zg2YPUoeIoSMiHHsUWdYT2IyfvWAP
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTI3MDAzMyBTYWx0ZWRfX2pyJ1Ei8WVOe
- eY11suK8PPwJ36ZL+BIgABToKxc9r+Fm3/QxW0Z6R0nOqkhezDMF8DcEznLXCaOKiLkoDMih2q+
- mULWiIjkPrOWDT/JiO+H8Nsz6gqUs32yqyG5AJOXTMwfGwMuAniKPZ5q+afs/pEUyXDhrCPo/jN
- Y59DWEWCEGZ+LJcT1wfeAgkTTNAkg7Us73nHj19UtP+Axt7cje5jk1eJ3AEksA5RpXn7IVraJ/N
- NlI5FOb7QLXKPslupd1pULwGSGLEsBHiJ5zh2quq1Br8e8PoaK2rasswX3E867Le4eWH7KMFoQY
- ApCAtYMVy40WDOCa6sOJYuwnZ5IdY/xwza0XHo/xoviWSq8TpKC4Al1vUff6Q/3zVPZpVxh/iZ/
- eaEWHVrkAJnsfjW9hDqT3Tn5BL16Zw==
-X-Proofpoint-ORIG-GUID: 1T3zg2YPUoeIoSMiHHsUWdYT2IyfvWAP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-03_02,2025-10-02_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 malwarescore=0 priorityscore=1501 adultscore=0 phishscore=0
- impostorscore=0 spamscore=0 bulkscore=0 lowpriorityscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2509150000 definitions=main-2509270033
+Content-Transfer-Encoding: 8bit
 
+Implement support for multiple extents in the LAYOUTGET response
+for two main reasons.
 
-On 9/30/2025 11:18 PM, Alexey Klimov wrote:
-> On Thu Sep 25, 2025 at 1:17 AM BST, Jingyi Wang wrote:
->> Introduce the Device Tree for the recently announced Snapdragon SoC from Qualcomm:
->> https://www.qualcomm.com/products/mobile/snapdragon/smartphones/snapdragon-8-series-mobile-platforms/snapdragon-8-elite-gen-5
->>
->> Bindings and base Device Tree for the Kaanapali SoC, MTP (Mobile Test Platform)
->> and QRD (Qualcommm Reference Device) are splited in three:
->>
->> - 1-3: MTP board boot-to-shell with basic function.
->> - 4-16: More feature including PCIE, sdcard, usb, DSPs, PMIC related, tsense, bus, crypto etc. Add QRD board support.
->> - 17-20: Multimedia features including audio, video and camss.
->>
->> Features added and enabled:
->> - CPUs with PSCI idle states and cpufreq
->> - Interrupt-controller with PDC wakeup support
->> - Timers, TCSR Clock Controllers
->> - Reserved Shared memory
->> - GCC and RPMHCC
->> - TLMM
->> - Interconnect with CPU BWMONs
->> - QuP with uart
->> - SMMU
->> - RPMHPD and regulator
->> - UFS with inline crypto engine (ICE)
->> - LLCC
->> - Watchdog
->> - cDSP, aDSP with SMP2P and fastrpc
->> - BUS with I2C and SPI
->> - USB2/USB3
->> - Modem(see crash after bring up)
->> - SoCCP
->> - SDHCI
->> - random number generator (RNG) and Qcrypto
->> - tsens
->> - PCIE
->> - coresight
->> - Bluetooth
->> - WLAN
->> - Audio
-> Were everything described as audio enabled and tested? As far as I was aware
-> some devices required some soundwire rework to support soundwire microphones.
-> Is it finished? I don't see this linked here, but you state that audio
-> features "added and enabled".
->
-> Do we understand this correctly that, I presume, everthing that is more-or-less compatible
-> with previous platforms were added and enabled (with renames) but not _all_ ?
->
-> Probably some rewording is required.
+First, it avoids unnecessary RPC calls. For files consisting of many
+extents, especially large ones, too many LAYOUTGET requests are observed
+in Wireshark traces.
 
-No, As outlined in the commit message, validation was performed on the 
-Kaanapali-MTP platform having
-WSA8845 and On board Microphones(Mic Bias supply from WCD939x) , and 
-there is no SoundWire
-microphones support on this MTP platform.
+Second, due to the current limitation on returning a single extent,
+the client can only reliably request layouts with minimum length set
+to 4K. Otherwise, NFS4ERR_LAYOUTUNAVAILABLE may be returned if XFS
+allocated a 4K extent within the requested range.
 
-Thanks,
-Prasad
+We are using the ability to request layouts with a minimum length
+greater than 4K to fix/workaround a bug in the client. I will prepare
+the client's patch for review too.
 
->
-> Best regards,
-> Alexey
->
+Below is an example of multiple extents in the LAYOUTGET response
+captured using Wireshark.
+
+Network File System, Ops(3): SEQUENCE, PUTFH, LAYOUTGET
+    [Program Version: 4]
+    [V4 Procedure: COMPOUND (1)]
+    Tag: <EMPTY>
+        length: 0
+        contents: <EMPTY>
+    minorversion: 2
+    Operations (count: 3): SEQUENCE, PUTFH, LAYOUTGET
+        Opcode: SEQUENCE (53)
+        Opcode: PUTFH (22)
+        Opcode: LAYOUTGET (50)
+            layout available?: No
+            layout type: LAYOUT4_BLOCK_VOLUME (3)
+            IO mode: IOMODE_RW (2)
+            offset: 0
+            length: 10485760
+            min length: 16384
+            StateID
+            maxcount: 4096
+    [Main Opcode: LAYOUTGET (50)]
+
+Network File System, Ops(3): SEQUENCE PUTFH LAYOUTGET
+    [Program Version: 4]
+    [V4 Procedure: COMPOUND (1)]
+    Status: NFS4_OK (0)
+    Tag: <EMPTY>
+        length: 0
+        contents: <EMPTY>
+    Operations (count: 3)
+        Opcode: SEQUENCE (53)
+        Opcode: PUTFH (22)
+        Opcode: LAYOUTGET (50)
+            Status: NFS4_OK (0)
+            return on close?: Yes
+            StateID
+            Layout Segment (count: 1)
+                offset: 0
+                length: 385024
+                IO mode: IOMODE_RW (2)
+                layout type: LAYOUT4_BLOCK_VOLUME (3)
+                layout: <DATA>
+                    length: 4052
+                    contents: <DATA>
+    [Main Opcode: LAYOUTGET (50)]
+pNFS Block Layout Extents
+    bex_count: 92
+    BEX[0]
+    BEX[1]
+    BEX[2]
+    ...
+
+Signed-off-by: Sergey Bashirov <sergeybashirov@gmail.com>
+---
+Changes in v3:
+ - Added a Fixes tag
+ - Removed an unnecessary sentence from the commit message
+
+Sergey Bashirov (4):
+  NFSD/blocklayout: Fix minlength check in proc_layoutget
+  NFSD/blocklayout: Extract extent mapping from proc_layoutget
+  NFSD/blocklayout: Introduce layout content structure
+  NFSD/blocklayout: Support multiple extents per LAYOUTGET
+
+ fs/nfsd/blocklayout.c    | 154 +++++++++++++++++++++++++++------------
+ fs/nfsd/blocklayoutxdr.c |  36 ++++++---
+ fs/nfsd/blocklayoutxdr.h |  14 ++++
+ 3 files changed, 147 insertions(+), 57 deletions(-)
+
+-- 
+2.43.0
+
 
