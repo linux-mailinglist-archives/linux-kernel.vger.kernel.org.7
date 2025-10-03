@@ -1,159 +1,73 @@
-Return-Path: <linux-kernel+bounces-841060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D1DEBB629C
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 09:26:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 924E3BB62E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 09:34:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9E9F19E42AD
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 07:26:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 532294828CB
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 07:34:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FC8D242925;
-	Fri,  3 Oct 2025 07:26:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S1zIUKHt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32FFA2475C2;
+	Fri,  3 Oct 2025 07:34:32 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBCD72045B5
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 07:26:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8636823D7E4;
+	Fri,  3 Oct 2025 07:34:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759476375; cv=none; b=YEMJpdnVHTwJHAuNrmz/L544aiLKmQ8HaLyaIgTy4LpgTgGGZ/U9Jb5FXlV2DfuquWL8yBqYH7sZoC0okNj/gtWrwXNEOBedxM2r+N7bSaEP6BIyUM2a057Uey6XSIj2BY6bLdMmfDsjAjKSdqUlj1YskAod8SdshnpLyh/jK+Y=
+	t=1759476871; cv=none; b=MEvM/ABfsW3XUrRgwmuL0MTi3DyFPC77/ZXsIrgtf0pd7NFaaJ2lHQOqgRBHbsxnvscgtodEkMWvcvmqGEabWa4/MUY4A97+GNQfymfRJVk8JFtP+gvKvfPkYYgB5jUoJyYr8nAIRH71Slb1LX0ZxoYbaTGlLAFDC/aC14Ql11o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759476375; c=relaxed/simple;
-	bh=2UVfqZBLQy49KOitiBc8tAhkDTA0H0l42JBiq5frpVo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Kv0C5yKfzaSLBAtFyPQqcjNgPqxAtPgzke6OsHp404vsWZK3svsJ1f19haUQ609tfr5/swIxJfiFy8EYJudyAqOxre92NWSgxXu0Mh4kMXzmmYDSZ/KdjlH3ZRwbQwDRnSeQA9PBtH1f3pP2dA2flTzrvHByTGhuH5RQ/D3iqvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S1zIUKHt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79383C116C6
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 07:26:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759476375;
-	bh=2UVfqZBLQy49KOitiBc8tAhkDTA0H0l42JBiq5frpVo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=S1zIUKHt3LloFfNANikDd0XW0+ztTpcnpQv8+tIet/DpQC3R28J6N6vl9ur8ExAAY
-	 MfNhnWrPkswsYPPX0JCavDZBkMLw/bMlCD+dpYoZPcLmkaJM8gsQCItq+ByUeoFJPH
-	 Lm/kNOO5q3556sZIrtw1Xb/ncW1LNl7o3sqwYKfm9VCtdyRArCzeJQTorHUzp7Afnp
-	 FtvIlkjSGsgsLGX12VbFO+mvv+QJNpCgz6jmtPUm1ZPzJH+CJSZ5l5eIc0amwQ2FQo
-	 9JbEppH4xW1r4Qb14JvOBs+otrtI985gjsm8LQ44pNG7OHHO+zdBso4j9b/uqRsmPc
-	 T46T0yP84/OBA==
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-46e3bcf272aso46775e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 00:26:15 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWADoVO89yQ4z0myDf1i4sHp0heIJYqk0XbfB1UrsYHe+j3jLvlczwhypsasN5GZB4XEl2HKmRe43HAxXo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCBZVLIVNr6CK/un0pVEJMIA0P3EbWrUe01Kz7Qj7r+c0wyOFh
-	AWasFB/Qae/wZbbQUVodT3QuJg66KXLqg+VbMVC0twKwGAmZsPdpFdiljS0y3p0fhX/h45BokUS
-	DGbx78lZjySuC+eePZRRVGlRKi0zQRVX97cySngod
-X-Google-Smtp-Source: AGHT+IF0FiWT5gMQo98IhUp4cZtjFyILRjcK8Xaqt1wm42UeFLIWHBRBzQ/OBxCtkYm3PZwpQvfzMjvw6MuNndIW52U=
-X-Received: by 2002:a05:600c:a119:b0:46e:251:b1c2 with SMTP id
- 5b1f17b1804b1-46e71bcd364mr726825e9.7.1759476373969; Fri, 03 Oct 2025
- 00:26:13 -0700 (PDT)
+	s=arc-20240116; t=1759476871; c=relaxed/simple;
+	bh=wiRbWWPoccuzvAkr6r3pQqRCKqdskqnouKGdtWYbgbU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aoRb9ouLz2oqIm3mDzWMQm6VzuRf9j1S5CGzLzo0CRI+Rk7D46aSzgEe/f1iO5mwxkPexozS/O4WQXo5/oRuiI60xxmEjk3boa1HnfiFzG/pUk++0QULUEzVJubNEKhcUGHvymdbbR53UJbCxWqiHuYIWk3+b9Zgyg4N2VSNaNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 599FD227AAC; Fri,  3 Oct 2025 09:27:52 +0200 (CEST)
+Date: Fri, 3 Oct 2025 09:27:52 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, linux-btrace@vger.kernel.org,
+	John Garry <john.g.garry@oracle.com>,
+	Hannes Reinecke <hare@suse.de>, Damien Le Moal <dlemoal@kernel.org>,
+	Christoph Hellwig <hch@lst.de>, Naohiro Aota <naohiro.aota@wdc.com>,
+	Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
+	Chaitanya Kulkarni <chaitanyak@nvidia.com>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>
+Subject: Re: [PATCH v2 06/15] blktrace: split do_blk_trace_setup into two
+ functions
+Message-ID: <20251003072752.GB12624@lst.de>
+References: <20250925150231.67342-1-johannes.thumshirn@wdc.com> <20250925150231.67342-7-johannes.thumshirn@wdc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250916-luo-pci-v2-0-c494053c3c08@kernel.org>
- <20250916-luo-pci-v2-3-c494053c3c08@kernel.org> <2025093044-icky-treat-e1c3@gregkh>
- <CACePvbUr42mj0kbcaw4cgKnd7v1f8z8Jhq4+_QN7Z5Nvicd1cw@mail.gmail.com> <2025100323-sneer-perennial-55e1@gregkh>
-In-Reply-To: <2025100323-sneer-perennial-55e1@gregkh>
-From: Chris Li <chrisl@kernel.org>
-Date: Fri, 3 Oct 2025 00:26:01 -0700
-X-Gmail-Original-Message-ID: <CAF8kJuNPFbSJezynwXWpMx0ihV32YvAgdfygj7bx1nhxtmB8-w@mail.gmail.com>
-X-Gm-Features: AS18NWBHnR4jWer8Ic4JpU49F_9I1u94mBhx82LIn4FVdmymqdVYaus1UMIqdqA
-Message-ID: <CAF8kJuNPFbSJezynwXWpMx0ihV32YvAgdfygj7bx1nhxtmB8-w@mail.gmail.com>
-Subject: Re: [PATCH v2 03/10] PCI/LUO: Forward prepare()/freeze()/cancel()
- callbacks to driver
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Pasha Tatashin <pasha.tatashin@soleen.com>, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	David Matlack <dmatlack@google.com>, Pasha Tatashin <tatashin@google.com>, 
-	Jason Miu <jasonmiu@google.com>, Vipin Sharma <vipinsh@google.com>, 
-	Saeed Mahameed <saeedm@nvidia.com>, Adithya Jayachandran <ajayachandra@nvidia.com>, 
-	Parav Pandit <parav@nvidia.com>, William Tu <witu@nvidia.com>, Mike Rapoport <rppt@kernel.org>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250925150231.67342-7-johannes.thumshirn@wdc.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Thu, Oct 2, 2025 at 11:19=E2=80=AFPM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Thu, Oct 02, 2025 at 01:38:56PM -0700, Chris Li wrote:
-> > On Tue, Sep 30, 2025 at 8:30=E2=80=AFAM Greg Kroah-Hartman
-> > <gregkh@linuxfoundation.org> wrote:
-> > >
-> > > On Tue, Sep 16, 2025 at 12:45:11AM -0700, Chris Li wrote:
-> > > >  include/linux/dev_liveupdate.h |  23 +++++
-> > > >  include/linux/device/driver.h  |   6 ++
-> > >
-> > > Driver core changes under the guise of only PCI changes?  Please no.
-> >
-> > There is a reason why I use the device struct rather than the pci_dev
-> > struct even though liveupdate currently only works with PCI devices.
-> > It comes down to the fact that the pci_bus and pci_host_bridge are not
-> > pci_dev struct. We need something that is common across all those
-> > three types of PCI related struct I care about(pci_dev, pci_bus,
-> > pci_host_bridge). The device struct is just common around those. I can
-> > move the dev_liveupdate struct into pci_bus, pci_host_bridge and
-> > pci_dev independently. That will be more contained inside PCI, not
-> > touching the device struct. The patch would be bigger because the data
-> > structure is spread into different structs. Do you have a preference
-> > which way to go?
->
-> If you only are caring about one single driver, don't mess with a
-> subsystem or the driver core, just change the driver.  My objection here
+On Thu, Sep 25, 2025 at 05:02:22PM +0200, Johannes Thumshirn wrote:
+> Split do_blk_trace_setup into two functions, this is done to prepare for
+> an incoming new BLKTRACESETUP2 ioctl(2) which can receive extended
+> parameters form user-space.
+> 
+> Also move the size verification logic to the callers.
 
-It is more than just one driver, we have vfio-pci, idpf, pci-pf-stub
-and possible nvme driver.
-The change needs to happen in the PCI enumeration and probing as well,
-that is outside of the driver code.
+Can you add a why for that move?
 
-> was that you were claiming it was a PCI change, yet it was actually only
-> touching the driver core which means that all devices in the systems for
+Otherwise this looks sane.
 
-In theory all the devices can be liveupdate preserved. But now we only
-support PCI.
-I can look into containing the change in PCI only and not touching the
-device struct if that is what you mean. I recall I tried that
-previously and failed because bus->bridge is a device struct rather
-than pci_dev or pci_host_bridge. I can try harder not to touch device
-structs. Patch will be bigger and more complex than this right now.
-But at least the damage is limited to PCI only if successful.
-
-> all Linux users will be affected.
-
-I understand your concerns. I was wishing one day all devices could
-support liveupdate, but that is not the case right now.
-
-> > > Break this series out properly, get the driver core stuff working FIR=
-ST,
-> > > then show how multiple busses will work with them (i.e. you usually n=
-eed
-> > > 3 to know if you got it right).
-> >
-> > Multiple buses you mean different types of bus, e.g. USB, PCI and
-> > others or 3 pci_bus is good enough? Right now we have no intention to
-> > support bus types other than PCI devices. The liveupdate is about
-> > preserving the GPU context cross kernel upgrade. Suggestion welcome.
->
-> So all of this is just for one single driver.  Ugh.  Just do it in the
-> single driver then, don't mess with the driver core, or even the PCI
-
-Not a single driver. It is the whole PCI core. Or in your book the
-whole PCI is just one single driver?
-
-> core.  Just make it specific to the driver and then none of us will even
-> notice the mess that this all creates :)
-
-OK. Let me try that PCI only approach again and try it harder. I will
-report back.
-
-Thanks for the feedback.
-
-Chris
 
