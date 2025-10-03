@@ -1,238 +1,218 @@
-Return-Path: <linux-kernel+bounces-841857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2B14BB865E
-	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 01:30:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29132BB8667
+	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 01:30:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 27C14347C55
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 23:30:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C72A93B8CC5
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 23:30:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D54402727FA;
-	Fri,  3 Oct 2025 23:27:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE63B27A90A;
+	Fri,  3 Oct 2025 23:29:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WmerEFt9"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="bmrkak1L"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33544247DEA
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 23:27:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759534045; cv=fail; b=Jf6gTbAZT+6NGerxvhNHv16yS2qpEZ+mNcINZ8SjKvKSHDY/bE/k25Pw6H6kN0ZcKUcxv/lNQf47bWvFFTpgnguSSL15CF8rhfuY0k685bBIGs2W3vMRT+57hbYLI5hDgy7XPl+1NKIDkE3g0Qh+RKndu8A/OB+OC8c3S1Tnzeg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759534045; c=relaxed/simple;
-	bh=1zl2fIJpsRjZdiy3ry/1AEpg0izsUFIGGaqYA/ZHxQg=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=DBkKSmVDV9U+NsDpSl3OvWme0vD0S5qrWvenFyxIClUtds6rFgJunwneTeYPKE3mpCyKY5rPMwoUQsHamu7A/rHATJkBzeox/PY8j16Ad2IdDnnBnDLgJVWW7OzfYnR1CyhP9vAYuhxVoBkUAwpZ3wGNLPj/kDHObEPlK4oKag8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WmerEFt9; arc=fail smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1759534044; x=1791070044;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=1zl2fIJpsRjZdiy3ry/1AEpg0izsUFIGGaqYA/ZHxQg=;
-  b=WmerEFt9dg/PBa/vHwm2hYNq9bO3i7AgFQQYAjQ9ieK53N0O/KXiFiGp
-   3BvbnOW81p4ioh45MIUBQtSxlnKE+WSGdHktKubxH819pcpuiSxH2hOIC
-   xrV1B22mYPqn96VA+BeS2dq4+SLKxmuY7KR8+KPAJ4NO7H4/5NICDhSqg
-   C9sb9ivEk2nAEWyf1Om7kdvpPFJHFFNaUBX633z6WCycbatxHrm3SIAiS
-   LPDa/0DOd3LoBY0cNytukRRPDVZEkibqQa4pucgG45bf+sS8OYbr1hYQE
-   ex9WLKk8KU++UI2vlvpGvC2BylTbm9FBdRAbYPuciUifbi+NiMRO7uKV6
-   Q==;
-X-CSE-ConnectionGUID: Nky947ReTKGLNDgtCc+Flw==
-X-CSE-MsgGUID: VDDH+bw+QpGPSX+DT2HjZg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11571"; a="61862740"
-X-IronPort-AV: E=Sophos;i="6.18,314,1751266800"; 
-   d="scan'208";a="61862740"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2025 16:27:23 -0700
-X-CSE-ConnectionGUID: Fsa6QYpqQIifKqcRfYlIxg==
-X-CSE-MsgGUID: QzNWrVD3TO+C9t1dkwknaA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,314,1751266800"; 
-   d="scan'208";a="179826410"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Oct 2025 16:27:23 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Fri, 3 Oct 2025 16:27:22 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Fri, 3 Oct 2025 16:27:22 -0700
-Received: from BL2PR02CU003.outbound.protection.outlook.com (52.101.52.54) by
- edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Fri, 3 Oct 2025 16:27:22 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=p2qd4DwYZq/DF/T5E85oNOVgJC2crUIBR43QIlsh0xAP0lTj/qlmub60S93MKo4mMoaQMwCT9mOpyt7BVDVULTttDqxo/GKui3KpQOaSQVmcNt3oKGxNs/AdfPQIUF/uu8UPUbJDAQvghfQ9F0Pw2lCHINHRFf5fEvHL7/NyrPOTrcbdkZaW9UFyNXzrtSNVkZAA9mY74eAtBAzh1ifNYU16r4G7RyXYIzIq+yrT4KXxzb/VLN8wAa1p65kpKhTzvsOOLgwcKdetBHEk/Ik8eOyKe6sTMqZlCa9vvIwjS+l43d+AHPVRxYAoDLx8Xjme72CKbMkEVqGirstO46dbdA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RYaale+nkhADoNiUIRxwJZZ49YtMuRtGUU4qZgFxnK0=;
- b=OsQaPlrH3m5Z8pFZzOqddNYHV0igGpsSnyykWsnehNcWdxZ3j9vIfP1RgJ7gibThn+sRv6ZMTQUvIYJG+RK7o6RiRIKoMPOfC1AHHCqYJ+azDSYyPKKDvJJ/JwZmiJXC3IMSqLgBF4F90Wn6mwPEG9Ptg1yM3khffLGCjBMZ4Yg2YBg4tGXuU3ur5Iz9hWWx2TjV70YT6qlRX5uSudDavovxVif/5SkR4asslgqJ/+NOP1fu33KW2UogCv2IN1kdpUS88u/tPHJofge90eGrRynkERTyKRmjgeO54+8a51j96EzC8G7gDiDBdBJDXoWMTFtpDAbp1u0GH4+nd27ARw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
- by CO1PR11MB5028.namprd11.prod.outlook.com (2603:10b6:303:9a::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.17; Fri, 3 Oct
- 2025 23:27:14 +0000
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf%3]) with mapi id 15.20.9182.015; Fri, 3 Oct 2025
- 23:27:14 +0000
-Message-ID: <6ac08f9f-3f48-4178-9b59-b4c4f93966cf@intel.com>
-Date: Fri, 3 Oct 2025 16:27:12 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 09/31] fs/resctrl: Make event details accessible to
- functions when reading events
-To: Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghuay@nvidia.com>, "Maciej
- Wieczor-Retman" <maciej.wieczor-retman@intel.com>, Peter Newman
-	<peternewman@google.com>, James Morse <james.morse@arm.com>, Babu Moger
-	<babu.moger@amd.com>, Drew Fustini <dfustini@baylibre.com>, Dave Martin
-	<Dave.Martin@arm.com>, Chen Yu <yu.c.chen@intel.com>
-CC: <x86@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<patches@lists.linux.dev>
-References: <20250925200328.64155-1-tony.luck@intel.com>
- <20250925200328.64155-10-tony.luck@intel.com>
-Content-Language: en-US
-From: Reinette Chatre <reinette.chatre@intel.com>
-In-Reply-To: <20250925200328.64155-10-tony.luck@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MW4PR03CA0263.namprd03.prod.outlook.com
- (2603:10b6:303:b4::28) To SJ2PR11MB7573.namprd11.prod.outlook.com
- (2603:10b6:a03:4d2::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B71A9247DEA;
+	Fri,  3 Oct 2025 23:29:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759534149; cv=none; b=kQnGcmDfo4VnXwJ/g/wAuFmBJu25rdVF6yM66Kw6Oi+BF6PG89iIAdDtkKG3LFLl7zykAufz4LMP9jH0K/uO9g/6eLvRydnAZ7BHh3m2UkfZUsQdZZFRqriATxfpX7ZHNky5kN1kzCtK+mA1xKPOwtxwCbZhcTPiBEzZdRKAIgQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759534149; c=relaxed/simple;
+	bh=Gd6MjNS+J2ZgURDuUz7uUsdeGP3zuFb2WjuR8+lGXUM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iOKDfLkbOW4ltCvO42c6o5lOXitfsk5ZGD9ILqqyN2d9fSoNKrM//tGYiz9PZ/paiDnuKAgovP8ThwATgPxqbLgFG7jMwLSLSdwqfKI24V2dkLrbrSye4Udn2IDW2llw+qK+nGDM/j/Bj31cJsaneedAzBoisMcgzLujMsQ91YU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=bmrkak1L; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id EE1811340;
+	Sat,  4 Oct 2025 01:27:32 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1759534053;
+	bh=Gd6MjNS+J2ZgURDuUz7uUsdeGP3zuFb2WjuR8+lGXUM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bmrkak1L5TPfv70hwLAyxVvGyPtYS2vSwFF0uzzbrKaVLMpbvUSSxTCoIQmMKh2QB
+	 WCij6BrSJzdoeEE5DvIFEUJqTk08aXy++c00jjMUPnmxreofhiTIyfp5PP01Qtu6fH
+	 KZhBK27shpa/sXo0GHzitqlI9CNVb5dlpmRmn8o8=
+Date: Sat, 4 Oct 2025 02:28:56 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Alexey Charkov <alchark@gmail.com>
+Cc: Dragan Simic <dsimic@manjaro.org>,
+	Alexander Shiyan <eagle.alexander923@gmail.com>,
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	stable@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] arm64: dts: rockchip: Fix broken tsadc pinctrl binding
+ for rk3588
+Message-ID: <20251003232856.GC1492@pendragon.ideasonboard.com>
+References: <20250124052611.3705-1-eagle.alexander923@gmail.com>
+ <CABjd4YwA8P9LVuDviO6xydkHpuuOY7XT0pk1oa+FDqOo=uZN4A@mail.gmail.com>
+ <a76f315f023a3f8f5435e0681119b4eb@manjaro.org>
+ <CABjd4Ywh_AkbXHonx-8vL-hNY5LMLJge5e4oqxvUG+qe6OF-Og@mail.gmail.com>
+ <61b494b209d7360d0f36adbf6d5443a4@manjaro.org>
+ <CABjd4Yx0p0B=e00MjCpDDq8Z=0FtM0s9EN86WdvRimt-_+kh2w@mail.gmail.com>
+ <CABjd4Yy14bpjzvFyc8et-=pmds5uwzfxNqcs7L=+XRXBogZEsQ@mail.gmail.com>
+ <20251003133304.GA21023@pendragon.ideasonboard.com>
+ <CABjd4YxbyUWghd1ya8UayFkAE-VWQSd5-J2QD0sV7WmS8AXkCg@mail.gmail.com>
+ <CABjd4YwtwUYFX4bX5vy=AFi=Dn1r6nxWtMvmeKBSjkvriNJtsQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|CO1PR11MB5028:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3167769f-5e24-418a-fded-08de02d462ad
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?ZzZJMXFiRUlTb1c4QTRncnpxYXFyVEVjeEMwVys0ZmxDRFpnY0s3cThmb25C?=
- =?utf-8?B?Z3pIdHJxeEVDWGhwZ3ZZQ3Q0dS83M2pYcDBPS1luWEx1YWxZUnFTbTVRa250?=
- =?utf-8?B?YVdIZWswSjdPOXJCcmJhREtPSlhtenBTUFp0djAvbWw3M1hkY3Jjak5EV1dq?=
- =?utf-8?B?Mm96MVFXWW5weHByQkNhdjFLSVNMTWJ4STNaT1d0RVliL3dqMFFoMXUzak5o?=
- =?utf-8?B?dFNlUENBalAzWWUzQno1Rkh1K2IzdU85dkdMcGgzaWEreER4ZEIzZXhCa05B?=
- =?utf-8?B?RS9EWVdVNVNuZVpLRVIvKzRtdzRSOGN2YkVPYTJ5RlJuQWQ2UE1mK3RkQnRK?=
- =?utf-8?B?S1FwUHZLRVYzY0tuekI5NFY4S0NQTFZ5SzZZT0lQVS9qcWR2SDBaeFZZVW0z?=
- =?utf-8?B?clpJWlUvaGlQNmlmUmtaZytwVGtZNVoxUmtSck0vOWJkNUhxTkVTUGFhUnpK?=
- =?utf-8?B?K0ErTUppR3pmSFpJMWljSlc0bm9YYkVsZUIyZE1PVUNUOEVDYXNnUkVIQUJn?=
- =?utf-8?B?KzQzWlJmK2FWbjBQR1VkMzlCK1o2OThLVDlsWVF2Q1hYbUVDam1KQmM1ckV1?=
- =?utf-8?B?WnRWZDRuS2FiaTN5cWFxbGhXWEdJM05CU3RSenJLVUMxeHhDcGdpTDRreUZQ?=
- =?utf-8?B?enRFdm9iTm1ReGptQ1Q1MG96c1ovY0lEMjZMdHBQRitZQU1RNmtFbE9Gc0hM?=
- =?utf-8?B?TDNHQ24wMlFhUWZ6Y0xONXBhQlFnV29YSWxWR0xCMncwOEwzTjlXVzFBamd1?=
- =?utf-8?B?SmlIZksvRmFRTjJqTmhoNSt0Z3Y0UDM0d1J1WXJrU05iNS9YTXRDNXVISzNR?=
- =?utf-8?B?cFdyU0dNSEJhank3T1l3bkovejdFZitvZTQ5aXVvdjlmZmNmUXppbis0N29j?=
- =?utf-8?B?d0hpd1hxNFBlQTU3akQzMEk5cmQzaGxCbmpjWVFxc2ZKZkZoK01GUXZhZm0r?=
- =?utf-8?B?SUZJbHY4eWFlSnZmUERqVVdqZjU2WDRrcnVFS1ZlZTlpemJkMTYvWkJCWU9B?=
- =?utf-8?B?dUx3OXVESEdUaWx4MUxCQWlFSm5sSFVxWDVOK1VUS2lacWprRFVwRy9EcDdL?=
- =?utf-8?B?c1RhZWd3c3pJeXMrK1VZVlNUd2s2cW82RHBmSEZZYXc4VzZnZ1ZVcWVtN0lz?=
- =?utf-8?B?SnplbC83bWZnM2JUc0xkSkVmTkdwZmw3Sm1hOXhXL2xFTUNvdUpzamQ5bDl5?=
- =?utf-8?B?MjUyNnBnQVFmL1dCNzBkeXBQbjRaa0cwTWM3NXBQT1dSeDE5cld6UndWRzRl?=
- =?utf-8?B?WHFlR1VGMjlYUHRucTNJRENlalo3aGo3V0hPUkMzeDdibUhLN1Mxdnc5STFj?=
- =?utf-8?B?ckhQNWRmeXVBc3dqdE04OXc2TGhwUDRyRzNVMERzQndsbC92OTZraFJBaEg1?=
- =?utf-8?B?VmJ4U1ZWeGhvd0RiQTQ5UDZ1aXVwQ0ZmcGNrZUdwM3U4YUYzMmVlOWlZY0hv?=
- =?utf-8?B?bUlsUzF4dURpUzFLNnRkTFN6SXNZekczZVdSdit3N1hJYWNUd1ExQkZCM3NC?=
- =?utf-8?B?SFRsdnlLejZrTWZsK0FTY0pYV1dlVklUNTBRZEJjSy9aVmY5aUk5U0lBTklS?=
- =?utf-8?B?ZmRUMk8xNVNwSWFXRnNzMG5DZkxSQzAvUjQrRjFvRlBmWlc3UlZwOEFRajE1?=
- =?utf-8?B?VVJhQlE0aTBqSmFqbmFIaWw5NjlURTVyTksxSUYwQTBvNmFTbjBKT3J0Ry9E?=
- =?utf-8?B?TWhwY1VMbi8zMXUxNHJEUFprbUR4cjhRWjNKTThHM1I2NVhSazE2bGlmblIw?=
- =?utf-8?B?MnVhNU5JNVVPMy9NVFlGYW90b2VqVk41RjNhVDFOZWdqeTJSUlZHdWlkeEM2?=
- =?utf-8?B?bk12K3B4WTd0QmFuWHpkdENBU0FBSVd4K1pvU0NuYmdtSSt2WWIvUWZtTGVo?=
- =?utf-8?B?eVJ0cmFEMzh1VHV5cWRMWjBPQ29WZUFNRUQxMmNMM3RPaytnUk1iVWc1ZVF2?=
- =?utf-8?Q?sii2rKxA8uaj8QMw5mbD5guAKRdysfCp?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?ZW9paWQwZDVma21SU3RTM3VWM2o5dFIyZ3Y4c1NtbU5DL2tlRUJLdmpjc2xW?=
- =?utf-8?B?WWNPY1RodVZyRjRLeFpTaGhYMjNMNXRSWEg3N2pZWFd3UmZySWkwb2FsVlBh?=
- =?utf-8?B?c3BwVzUrRTFOWWJua3g5YUxuVGwwcm5HUDlMRkhrbkN3QmpEa1pCWGIybWZH?=
- =?utf-8?B?OGN2WDBKVmdrbnllS3JnWHkyaDBFUHN5bFBsTTY0c3FsMWpRcXdzTlZSOWwy?=
- =?utf-8?B?MnFoNmRsMDdRRGZ1Ym9ZMFlBUWNQNUNwRzh6QWppd21ESlpDbVd1eFJRdUNu?=
- =?utf-8?B?MDhTSEU4Zm1SMGxZZXBqdzlLd3VwM2lNaHFPQXZOemNKb2FCZ1NFRTRvTlVG?=
- =?utf-8?B?TVVKQ0IzT3dTNUJLUEdKMTd0cDRRUkI3VURtNFMyM0R3VDZoLytJVE1EV09T?=
- =?utf-8?B?b3pIdTNLUjBjSm5ldytPUHZtUVdqQzI4MUNuUlBiVytRdW83dHdMME15ZUJ0?=
- =?utf-8?B?bDN5eGR6aDBDeHAzVzBrQ1F3QUtGZkRWU1ZYRzEwRkhQUy9yOWRybjIvWUZE?=
- =?utf-8?B?RnMxc2ZQVUVVaHFaRHl4UkIyQmFscFgyRWxFUlI3MGRkcFlGQlV3Rk40QzV0?=
- =?utf-8?B?VVZZeFhEbGs3bnIvQ0pZSG9mWkhsU1NDaHN0UzNBeG5hTWNBVEtxVzJFYS9j?=
- =?utf-8?B?MzdxeUhZc1ZYY284eWZpSXIvMSt4YWk5dmZrb1BGZmQ2VzVVdlpoUjFCajY3?=
- =?utf-8?B?NnZxMmFSUy9zOWVVbGQvVm95aEpqNHZzOGh6NTlwMlpFVnh1YWZNS000QmNT?=
- =?utf-8?B?MnlNenlXTVFlakk0VEVUZkYwQ1pKWVJUWTlFWk5qZWk4Y1U2UG05dzBqUzdQ?=
- =?utf-8?B?Ri9udndOdERsY2dxOVVBOWVUZzM0dkg1WG8yVmQ5Y0xaQXA0RnZPNG1qVy9k?=
- =?utf-8?B?bWZtakRvdXp4MWZZWWw3bWhOL3c4WlBBdnJHNmFvUWJJL1lIeFJQM2dIWnhm?=
- =?utf-8?B?VnEvS2ExdEN5K0paYlQ2YUFmUjBnK0NLQVQxQUdndXdjNHA1NWk1S1c3ZWR4?=
- =?utf-8?B?KysrdTIyYVNHSVQwYlI4dnpTbjFkQndDS1FHNUZ5QnM3eHd1Y1gxVVV1VUlV?=
- =?utf-8?B?bWFHVDdPcm5vYVZHVnd1cEYxRGVCMTcwZkJYN3FWMWV3cERtdmpCNm9YbDg5?=
- =?utf-8?B?THdhZ1RNVlUxdHY1elRpZDl1cFBnTCsrY0xWeUNXS28rTVFIOC9SNzU0L28w?=
- =?utf-8?B?Yk8rNUI2WFNXNVFnSUduSkl5Nys2YlRaRVJ2L0dhUTNPNWI2VCtBTEdvdTlv?=
- =?utf-8?B?UGZCeUV0V1pVaVRFOVJiSmtYU1h6eTZRbi9ZdDJveHlYcjR1ZWJMeDA1ZFpV?=
- =?utf-8?B?WUwwOW5HWkRpVjByRFZvRUJ4RXc5SnJPL3lTSHQraDlhREw4dzNTdUJubEk2?=
- =?utf-8?B?ajRPcklPRE1Kckkyblk5SHVSZlNMelRZUHZBeFFwaVBVOTZpRkVYRHBzT1dq?=
- =?utf-8?B?UGM4TDYxWWwyMEVSUklUM3hQK3Vsc0RUYzRCbzl0OXJqUnZaK1FNdE9HQ1Vh?=
- =?utf-8?B?NXpxZWpYM2dtS25CMjNKZ1U5dVhXbWRFRmtIMlBtRktHRWswZk96WklCTE41?=
- =?utf-8?B?bzdobGxGa1h0RWxYUEFMclVxYklHb3pxZk5HMEF0SURzTFk1UjdSbkNhbU9m?=
- =?utf-8?B?ZHZlcU15TVI2YXcwczdHYm54bzRUd1NXbnRhZ1ErVThjeisxdjg0VXY4YjRU?=
- =?utf-8?B?NFdjQm1mSERoZjgyQncrSmVXWTUvTTFWcmtOVm8veVUwSUI2TGxmVUowMlJ5?=
- =?utf-8?B?YWVpcDFvY1lYMUxqYm03dHFhemhiaThSSVV4ZkdINDAyVHVaeTJhamxzd3ds?=
- =?utf-8?B?QjZQOTdjRkFRdGRwTEdyKzdIYS9pNmQ2NEFDTWI0UVhYNXVVWnZjZEVGaEJM?=
- =?utf-8?B?eDI2SmhYTjhENmpWbjNEQ2dtTll2YmFGemJYcWJqckdLcTNhOUdWYnpYMXZH?=
- =?utf-8?B?ZWpKZUovc25EL0dUMGpTSUg5MzJ0SVMvNlE0RG92SVZPU1NSeXhha3R1NDJX?=
- =?utf-8?B?bnE4QUNQMHlMRDJEaFNUUlI1aGJZTTJLSTd0YlhFWmNnV1BVeTA5aHRKSk51?=
- =?utf-8?B?NWNmYURFdDZMREo1RCt6Q3RDeGNXSXVaWUtaSmN6MGc2WjJwQS93TnNnR1du?=
- =?utf-8?B?RGxFYzR0V3NLTy9Id1cyNjdYd0U2UDJzdkpYaGV6RTkxeng5UHpvL3hGSXFk?=
- =?utf-8?B?a3c9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3167769f-5e24-418a-fded-08de02d462ad
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Oct 2025 23:27:14.6593
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: sYbSn/WJrnrP8AWvtVaK2jrTc0GfUEv07zo0hHUp0kn2ENDUT1FeEfqqiQ67qrb18LZ7QVf+G0wRyExwnl7T4Tvj80Y1aT/8h7zYrJIU7pc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR11MB5028
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CABjd4YwtwUYFX4bX5vy=AFi=Dn1r6nxWtMvmeKBSjkvriNJtsQ@mail.gmail.com>
 
-Hi Tony,
+Hi Alexey,
 
-On 9/25/25 1:03 PM, Tony Luck wrote:
-> Reading monitoring data from MMIO requires more context to be able to
-
-To tie this together with the "instead of just the event id" used later
-I'd propose:
-
-	Reading monitoring event data from MMIO requires more context
-	than the event id to be able to ...
-
-> read the correct memory location. struct mon_evt is the appropriate
-> place for this event specific context.
+On Fri, Oct 03, 2025 at 06:55:26PM +0400, Alexey Charkov wrote:
+> On Fri, Oct 3, 2025 at 6:13 PM Alexey Charkov wrote:
+> > On Fri, Oct 3, 2025 at 5:33 PM Laurent Pinchart wrote:
+> > > On Fri, Jan 24, 2025 at 11:44:34PM +0400, Alexey Charkov wrote:
+> > > > On Fri, Jan 24, 2025 at 9:23 PM Alexey Charkov <alchark@gmail.com> wrote:
+> > > > > On Fri, Jan 24, 2025 at 2:37 PM Dragan Simic <dsimic@manjaro.org> wrote:
+> > > > > > On 2025-01-24 11:25, Alexey Charkov wrote:
+> > > > > > > On Fri, Jan 24, 2025 at 2:06 PM Dragan Simic <dsimic@manjaro.org>
+> > > > > > > wrote:
+> > > > > > >> On 2025-01-24 09:33, Alexey Charkov wrote:
+> > > > > > >> > On Fri, Jan 24, 2025 at 9:26 AM Alexander Shiyan
+> > > > > > >> > <eagle.alexander923@gmail.com> wrote:
+> > > > > > >> >>
+> > > > > > >> >> There is no pinctrl "gpio" and "otpout" (probably designed as
+> > > > > > >> >> "output")
+> > > > > > >> >> handling in the tsadc driver.
+> > > > > > >> >> Let's use proper binding "default" and "sleep".
+> > > > > > >> >
+> > > > > > >> > This looks reasonable, however I've tried it on my Radxa Rock 5C and
+> > > > > > >> > the driver still doesn't claim GPIO0 RK_PA1 even with this change. As
+> > > > > > >> > a result, a simulated thermal runaway condition (I've changed the
+> > > > > > >> > tshut temperature to 65000 and tshut mode to 1) doesn't trigger a PMIC
+> > > > > > >> > reset, even though a direct `gpioset 0 1=0` does.
+> > > > > > >> >
+> > > > > > >> > Are any additional changes needed to the driver itself?
+> > > > > > >>
+> > > > > > >> I've been digging through this patch the whole TSADC/OTP thing in the
+> > > > > > >> last couple of hours, and AFAIK some parts of the upstream driver are
+> > > > > > >> still missing, in comparison with the downstream driver.
+> > > > > > >>
+> > > > > > >> I've got some small suggestions for the patch itself, but the issue
+> > > > > > >> you observed is obviously of higher priority, and I've singled it out
+> > > > > > >> as well while digging through the code.
+> > > > > > >>
+> > > > > > >> Could you, please, try the patch below quickly, to see is it going to
+> > > > > > >> fix the issue you observed?  I've got some "IRL stuff" to take care of
+> > > > > > >> today, so I can't test it myself, and it would be great to know is it
+> > > > > > >> the right path to the proper fix.
+> > > > > > >>
+> > > > > > >> diff --git i/drivers/thermal/rockchip_thermal.c
+> > > > > > >> w/drivers/thermal/rockchip_thermal.c
+> > > > > > >> index f551df48eef9..62f0e14a8d98 100644
+> > > > > > >> --- i/drivers/thermal/rockchip_thermal.c
+> > > > > > >> +++ w/drivers/thermal/rockchip_thermal.c
+> > > > > > >> @@ -1568,6 +1568,11 @@ static int rockchip_thermal_probe(struct
+> > > > > > >> platform_device *pdev)
+> > > > > > >>          thermal->chip->initialize(thermal->grf, thermal->regs,
+> > > > > > >>                                    thermal->tshut_polarity);
+> > > > > > >>
+> > > > > > >> +       if (thermal->tshut_mode == TSHUT_MODE_GPIO)
+> > > > > > >> +               pinctrl_select_default_state(dev);
+> > > > > > >> +       else
+> > > > > > >> +               pinctrl_select_sleep_state(dev);
+> > > > > > >
+> > > > > > > I believe no 'else' block is needed here, because if tshut_mode is not
+> > > > > > > TSHUT_MODE_GPIO then the TSADC doesn't use this pin at all, so there's
+> > > > > > > no reason for the driver to mess with its pinctrl state. I'd rather
+> > > > > > > put a mirroring block to put the pin back to its 'sleep' state in the
+> > > > > > > removal function for the TSHUT_MODE_GPIO case.
+> > > > > >
+> > > > > > You're right, but the "else block" is what the downstream driver does,
+> > > > >
+> > > > > Does it though? It only handles the TSHUT_MODE_GPIO case as far as I
+> > > > > can tell (or TSHUT_MODE_OTP in downstream driver lingo) [1]
+> > > > >
+> > > > > [1] https://github.com/radxa/kernel/blob/edb3eeeaa4643ecac6f4185d6d391c574735fca1/drivers/thermal/rockchip_thermal.c#L2564
+> > > > >
+> > > > > > so I think it's better to simply stay on the safe side and follow that
+> > > > > > logic in the upstream driver.  Is it really needed?  Perhaps not, but
+> > > > > > it also shouldn't hurt.
+> > > > > >
+> > > > > > > Will try and revert.
+> > > > > >
+> > > > > > Awesome, thanks!
+> > > > > >
+> > > > > > > P.S. Just looked at the downstream driver, and it actually calls
+> > > > > > > TSHUT_MODE_GPIO TSHUT_MODE_OTP instead, so it seems that "otpout" was
+> > > > > > > not a typo in the first place. So maybe the right approach here is not
+> > > > > > > to change the device tree but rather fix the "gpio" / "otpout" pinctrl
+> > > > > > > state handling in the driver.
+> > > > > >
+> > > > > > Indeed, "otpout" wasn't a typo, and I've already addressed that in my
+> > > > > > comments to Alexander's patch.  Will send that response a bit later.
+> > > > > >
+> > > > > > I think it's actually better to accept the approach in Alexander's
+> > > > > > patch, because the whole thing applies to other Rockchip SoCs as well,
+> > > > > > not just to the RK3588(S).
+> > > > >
+> > > > > Anyway, I've just tried it after including the changes below, and
+> > > > > while /sys/kernel/debug/pinctrl/pinctrl-handles shows the expected
+> > > > > pinctrls under tsadc, the driver still doesn't seem to be triggering a
+> > > > > PMIC reset. Weird. Any thoughts welcome.
+> > > >
+> > > > I found the culprit. "otpout" (or "default" if we follow Alexander's
+> > > > suggested approach) pinctrl state should refer to the &tsadc_shut_org
+> > > > config instead of &tsadc_shut - then the PMIC reset works.
+> > >
+> > > I've recently brought up an RK3588S-based Orange Pi CM5 Base board, made
+> > > of a compute module (CM5, see [1]) and a carrier board (Base, see [2]).
+> > > The carrier board has a reset button which pulls the PMIC_RESET_L signal
+> > > of the CM5 to GND (see page 3 of the schematics in [3]).
+> > >
+> > > With &tsadc_shut_org the reset button has absolutely no effect. With
+> > > &tsadc_shut it resets the board as expected.
+> >
+> > Interesting. The TSADC shouldn't affect the physical button operation
+> > at all, if it's really wired to the PMIC as the signal name implies.
+> > There isn't even any default pull value associated with the TSHUT pin
+> > config.
 > 
-> Prepare for addition of extra fields to mon_evt by changing the calling
+> On a second thought, I've got another hypothesis. Your baseboard only
+> pulls the reset line through  a 100 Ohm resistor when the button is
+> pressed. So if the TSHUT pin is in its default push-pull mode and
+> stays high when no thermal runaway reset is requested, the reset
+> button won't pull the line fully to zero, as the TSHUT line pulls it
+> high at the same time.
 
-"mon_evt" -> "struct mon_evt"
+That's the most likely cause, I agree.
 
-> conventions to pass a pointer to the mon_evt structure instead of just
-> the event id.
-> 
-> Signed-off-by: Tony Luck <tony.luck@intel.com>
-> ---
+> If you switch it from &tsadc_shut_org to &tsadc_shut, then it stops
+> working properly as the thermal protection reset, and GPIO0_A1 remains
+> high-impendance, thus allowing the reset button to function even
+> though its pull is too weak.
 
-| Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
+By the way, what is the difference between tsadc_shut_org and tsadc_shut
+? I haven't seen it being clearly documented in the TRM.
 
-Reinette
+> So maybe change the pin configuration of &tsadc_shut_org in
+> rk3588-base-pinctrl.dtsi to open drain and retry?
+
+That's a good idea, but... how ? The pinctrl-rockchip driver doesn't
+seem to support generic open-drain configuration.
+
+-- 
+Regards,
+
+Laurent Pinchart
 
