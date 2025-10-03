@@ -1,183 +1,126 @@
-Return-Path: <linux-kernel+bounces-841752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C42D9BB8238
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 22:48:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6634BB822C
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 22:47:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEC3B3A7125
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 20:48:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACEDD3A8D54
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 20:47:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50021256C9B;
-	Fri,  3 Oct 2025 20:47:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EB7D24DD0E;
+	Fri,  3 Oct 2025 20:47:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hlKvIP96"
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d6y11QK1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24BB3987D
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 20:47:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E16A83987D;
+	Fri,  3 Oct 2025 20:47:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759524473; cv=none; b=YpGdWrtDpET3b+RownqLELDzX/TaFIHOeYFA1O16o7zKs5NP4TH+DxKfdf1rbB0Dxt/7KB3SMpvxU8LTMgLTBMXhLc/m7Ps2LyJggaSwK0tiSuiLVaCgGeW774aKAW8heAor9BEjD4g4KgZyvr+joQtCqc2HGeMd8l8dkuKncjw=
+	t=1759524465; cv=none; b=MNnQYAVEXZqOVXLyYipwdV4cvYe2wBqYxJdK80+S0sQZkPdeWo3EnCTKMxsysBwfMJSyZkgsOXwmH/wzR4eJuZLixhpIhf50pr+OoL0ZdcHmgC25DgE7xOf1gG5JEEsv5sbDnjlQmeTj6erbpGqrBmofIEXjSJ4XdrgPPd/Rw1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759524473; c=relaxed/simple;
-	bh=MHoXLWg3HvpW49PRCoLLv1E052ODwx10RLVlPGCpiHY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OIHTt6k4wWh25l+CnXgKVKOgU8gKxs/Bj4PGElcSOKpLXqnan6vv56aq5aF7buN57Vb8uA6RAbZQCiU/EFVxoJajv0kRJTBYQPHEtTHiAMM59iKD7tHIzkYK1Su8eO3Hxd8YyL2QHtbtSkeLy9jD+qhyfzpSeSgQu6UyG/WomOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hlKvIP96; arc=none smtp.client-ip=209.85.128.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-7501c24a731so32082197b3.3
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 13:47:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759524471; x=1760129271; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ec07GK8IeebwUTlhOReO08byQCiI8XurDvMqhbTfpDs=;
-        b=hlKvIP96ETlMNTcctkUps4Rp3bu8GayWk1dye8kfWKZeJmZPrn2xu5PWNK7tcDcnca
-         8J6QOoYZz/UczJ53iUQ+ODjzYaCL9jCFbfKm5I5zDM/Y0qY8SHgfjS3ANDkQR3I7BV0N
-         YTiCQm7+Z0opwMD0G7QvJa1N6+eytVQ5jmmM9pdfY+7uAEARJ1egzvqFrmhpoB+QmYwW
-         L+pOCGclpsgtNd3b1VBcf+8oB6iuUAE1kC7KKnm9nXNMHV07GGi+b3wgj0JmqB+Vm2ZZ
-         M9/8wI00qisEY3O42//cOu7x4TKc5BgSKtFRDvD63/pV2RGbhLo8fIoflI1ej5TRnpv2
-         95dg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759524471; x=1760129271;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ec07GK8IeebwUTlhOReO08byQCiI8XurDvMqhbTfpDs=;
-        b=Bo5L1e7RX8FYL93kgu/Pt8vY3gzC7XJpIF/tSHRVuwH+CFW0KCSapb66HsQDnRmwMM
-         CwEER/gJwebuj/kLemeuBickBH/5bHM/0nVfGBVlwVFtRPSGf85XFNEo8EIDDZHdUAKR
-         VI8nL621Ztgw7/KGBjlNVkFIQ+vBi0LQmIUaWMHV7F2AZHERcBOjfa8DU5yvfzeV1dMN
-         sEoIruNlkhpujgs52lLjug/Kcnu49LhGIb9+kxM7YLmqa90raEf3rIHlXe9RU+A0iJRZ
-         Q51FOWIWjx4Tucsf6gRjYDseUre1Akk9UWfQHYQfZnctmeq9PKeyPHX4g55sKvMwtIqq
-         GMCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWG0KlEaY3QRNZRPprO15gKy22feF9qZynd66Yl7rZKJDxJQPY3VIeIu0EWwsSmRYzzkhQ6CY4ofBr0ilI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUOee1cuAqIT8ezp0+BgZsyOTEtNvudWl5rIlJ2OQqJKms1eJO
-	Y0XMHEoOeusJwR4vH+Nmy8tzEzqQy8beQNKB8NNKNNsTm7GXNzUy1xSLh+f42udGE3jhtUVZmnz
-	umZkhEVC4stxKsqbZ6IHjsdJdpv4+l2g=
-X-Gm-Gg: ASbGncuZSgHwNxqmwDNvZs/YijTSA3VbfJ2SzXJVTD8KDjTTP4xJOV9fa/UiGE63IL6
-	G5PLu4Mavq26o6dOIIkxUt7E1uyo3iB38YDXXT/cdeQpP5/Nqdi9DOtcUNqFO8SoZdri+L44Nic
-	ak7/3zq3jhLKUlaX2Bhenftn4Es2KlPp2PMxyvkI+Knixegks8HFkQSL0jGEJTqLIYMIDqo1JkM
-	xkP/i+RslcNxI6+8HbKOHilOSq5VqQK5sBS9tDpsxOxQDMaWbmVzp4cSB75kgeen814jwcIEbby
-	rHuulh5kGm2OdvhB5S9WTA==
-X-Google-Smtp-Source: AGHT+IGbRtPbh98BClkNFwaUaMJb45w8kt4Jk0KxRGScag36Tw0xGWcnBknxDwxYEhQPRsDsxQjX2aqyBPDcA2KuG7Q=
-X-Received: by 2002:a53:8550:0:b0:638:53e9:bab0 with SMTP id
- 956f58d0204a3-63b9a0ee753mr3639824d50.24.1759524470895; Fri, 03 Oct 2025
- 13:47:50 -0700 (PDT)
+	s=arc-20240116; t=1759524465; c=relaxed/simple;
+	bh=s9KdYwHxtmjq+rq4sojwwWTmmqYjg09bj3FGC5XSE/I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p4LdM15ePpBHRKYN/dxw2hK4OoozEa0c/fTNX25AZu/TkNm9vlPREs6SllqOLcxy6+hz6ng9c2iI/IlsMmmz03xklMCHgaM6BqwhqJx1SGnDjq3+nUeRufIP5U+FRIBkdexQ0Y21RcSlHzdCnEHCdtdBhvTr7/UYyxgPt7Ktewo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d6y11QK1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7302C4CEF5;
+	Fri,  3 Oct 2025 20:47:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1759524464;
+	bh=s9KdYwHxtmjq+rq4sojwwWTmmqYjg09bj3FGC5XSE/I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=d6y11QK15ZptdWlP41qvreKP+B3iFmWUFkf3nCrbM4xwYUYyG9tVcIfnLscTKs9PW
+	 RwKJdiQ+tHjDH6b4QYRIPTDqNM1yRC1FmVnI7xpckDbCDby6fRJDNSGLwyLmrCsMuJ
+	 +EnsN/amGGUjz9mlYR90GLkIe8Xf6BfRBM29dgfEz7TqOURUVnmmusBn7haFd57Ot2
+	 pRVOlOH8XaUsiBM7yX3x0MEUQ2jBX1e1ybH0Ls+ivJbWVIQPu2cA3CTiSCe+rGIG1t
+	 6J2cK6X8+UjoK3QC7jNlBcjsU77FGfp8OKFRtwyDzKZpBWDFcBKhusG2TosjL+rhPj
+	 A7mRq8QKyoYMw==
+Date: Fri, 3 Oct 2025 21:47:39 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Jammy Huang <jammy_huang@aspeedtech.com>
+Cc: "mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"sboyd@kernel.org" <sboyd@kernel.org>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"joel@jms.id.au" <joel@jms.id.au>,
+	"andrew@codeconstruct.com.au" <andrew@codeconstruct.com.au>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1] dt-bindings: clock: Add AST2500/AST2600 VIDEO reset
+ definition
+Message-ID: <20251003-gestate-roast-37ef1b1c2e07@spud>
+References: <20251002095651.2211900-1-jammy_huang@aspeedtech.com>
+ <20251002-accuracy-gloomily-a3e46d5a3f02@spud>
+ <TYZPR06MB65687E6795F9C899B3F067CEF1E4A@TYZPR06MB6568.apcprd06.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251003-mt8196-gpufreq-v6-0-76498ad61d9e@collabora.com> <20251003-mt8196-gpufreq-v6-6-76498ad61d9e@collabora.com>
-In-Reply-To: <20251003-mt8196-gpufreq-v6-6-76498ad61d9e@collabora.com>
-From: Chia-I Wu <olvaffe@gmail.com>
-Date: Fri, 3 Oct 2025 13:47:39 -0700
-X-Gm-Features: AS18NWBGD0pXXLOymrZv-_f8nOh4HIhBGy-SAER5xKOoIW_DOui92j81TfsOhUs
-Message-ID: <CAPaKu7Q==RvuZR-pgJekF++Y4HOdkryEvYV8QGJd_os0_if_vQ@mail.gmail.com>
-Subject: Re: [PATCH v6 6/7] drm/panthor: Use existing OPP table if present
-To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Boris Brezillon <boris.brezillon@collabora.com>, Jassi Brar <jassisinghbrar@gmail.com>, 
-	Chen-Yu Tsai <wenst@chromium.org>, Steven Price <steven.price@arm.com>, 
-	Liviu Dudau <liviu.dudau@arm.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, Kees Cook <kees@kernel.org>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, kernel@collabora.com, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, linux-hardening@vger.kernel.org, 
-	linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="1VWs/xU7QyzcZvNl"
+Content-Disposition: inline
+In-Reply-To: <TYZPR06MB65687E6795F9C899B3F067CEF1E4A@TYZPR06MB6568.apcprd06.prod.outlook.com>
+
+
+--1VWs/xU7QyzcZvNl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 3, 2025 at 1:16=E2=80=AFPM Nicolas Frattaroli
-<nicolas.frattaroli@collabora.com> wrote:
->
-> On SoCs where the GPU's power-domain is in charge of setting performance
-> levels, the OPP table of the GPU node will have already been populated
-> during said power-domain's attach_dev operation.
->
-> To avoid initialising an OPP table twice, only set the OPP regulator and
-> the OPPs from DT if there's no OPP table present.
->
-> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-> ---
->  drivers/gpu/drm/panthor/panthor_devfreq.c | 26 ++++++++++++++++---------=
--
->  1 file changed, 16 insertions(+), 10 deletions(-)
->
-> diff --git a/drivers/gpu/drm/panthor/panthor_devfreq.c b/drivers/gpu/drm/=
-panthor/panthor_devfreq.c
-> index 978f193a2aee561fadd9a976e9b1417118260889..6beb6170d6eea3dd65880dfe6=
-4a61abbdd5f08da 100644
-> --- a/drivers/gpu/drm/panthor/panthor_devfreq.c
-> +++ b/drivers/gpu/drm/panthor/panthor_devfreq.c
-> @@ -143,6 +143,7 @@ int panthor_devfreq_init(struct panthor_device *ptdev=
-)
->         struct panthor_devfreq *pdevfreq;
->         struct dev_pm_opp *opp;
->         unsigned long cur_freq;
-> +       struct opp_table *t;
->         unsigned long freq =3D ULONG_MAX;
->         int ret;
->
-> @@ -152,18 +153,23 @@ int panthor_devfreq_init(struct panthor_device *ptd=
-ev)
->
->         ptdev->devfreq =3D pdevfreq;
->
-> -       ret =3D devm_pm_opp_set_regulators(dev, reg_names);
-> -       if (ret) {
-> -               if (ret !=3D -EPROBE_DEFER)
-> -                       DRM_DEV_ERROR(dev, "Couldn't set OPP regulators\n=
-");
-> -
-> -               return ret;
-> +       t =3D dev_pm_opp_get_opp_table(dev);
-"t" is too short for a long function like this one. We should either
-rename it to "opp_table" or refactor this out to a shorter function.
+On Fri, Oct 03, 2025 at 01:50:46AM +0000, Jammy Huang wrote:
+>=20
+> > On Thu, Oct 02, 2025 at 05:56:51PM +0800, Jammy Huang wrote:
+> > > Add VIDEO reset bit definition for AST2500/AST2600.
+> > >
+> > > Signed-off-by: Jammy Huang <jammy_huang@aspeedtech.com>
+> > > ---
+> > >  include/dt-bindings/clock/aspeed-clock.h | 1 +
+> > >  1 file changed, 1 insertion(+)
+> > >
+> > > diff --git a/include/dt-bindings/clock/aspeed-clock.h
+> > b/include/dt-bindings/clock/aspeed-clock.h
+> > > index 06d568382c77..421ca577c1b2 100644
+> > > --- a/include/dt-bindings/clock/aspeed-clock.h
+> > > +++ b/include/dt-bindings/clock/aspeed-clock.h
+> > > @@ -53,5 +53,6 @@
+> > >  #define ASPEED_RESET_AHB		8
+> > >  #define ASPEED_RESET_CRT1		9
+> > >  #define ASPEED_RESET_HACE		10
+> > > +#define ASPEED_RESET_VIDEO		21
+> >=20
+> > What's up with the gap here? Are there another 10 resets missing?
+> Thanks for your review. I find this is just an index of reset map. I will=
+ update
+> new patch later.
 
-dev_pm_domain_set_performance_state is new to me. It might just be me,
-but a short comment explaining that the opp table might have been set
-up by the pmdomain can be helpful.
+I don't know what this has to do with the question I asked. What's going
+to be in the update?
 
-With that, Reviewed-by: Chia-I Wu <olvaffe@gmail.com>.
 
-> +       if (IS_ERR_OR_NULL(t)) {
-> +               ret =3D devm_pm_opp_set_regulators(dev, reg_names);
-> +               if (ret) {
-> +                       if (ret !=3D -EPROBE_DEFER)
-> +                               DRM_DEV_ERROR(dev, "Couldn't set OPP regu=
-lators\n");
-> +
-> +                       return ret;
-> +               }
-> +
-> +               ret =3D devm_pm_opp_of_add_table(dev);
-> +               if (ret)
-> +                       return ret;
-> +       } else {
-> +               dev_pm_opp_put_opp_table(t);
->         }
->
-> -       ret =3D devm_pm_opp_of_add_table(dev);
-> -       if (ret)
-> -               return ret;
-> -
->         spin_lock_init(&pdevfreq->lock);
->
->         panthor_devfreq_reset(pdevfreq);
->
-> --
-> 2.51.0
->
+Cheers,
+Conor.
+
+--1VWs/xU7QyzcZvNl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaOA2awAKCRB4tDGHoIJi
+0jDmAQC9H6FC4Z5rZxCYUvmj2W55k+/oKnx/O91NA9fjEXpn4wEA1EUm7O+71S3h
+KO0JSohz5byNmEAy5MoQILoMqD6k2Aw=
+=MtpR
+-----END PGP SIGNATURE-----
+
+--1VWs/xU7QyzcZvNl--
 
