@@ -1,124 +1,141 @@
-Return-Path: <linux-kernel+bounces-841754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61A4ABB8250
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 22:50:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0279DBB8259
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 22:51:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2443719C7162
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 20:51:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A88104C2BD7
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 20:51:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98316253B73;
-	Fri,  3 Oct 2025 20:50:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 864A22566D9;
+	Fri,  3 Oct 2025 20:51:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N4enKN8j"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Lrx+Opa8"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8AED3987D;
-	Fri,  3 Oct 2025 20:50:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BFCB253B40;
+	Fri,  3 Oct 2025 20:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759524641; cv=none; b=csVrXm+1DgRxoYBDCPpdSv+ml8xFUte5KEk3Mq0QZPeoO4dNQel1iafy/cYMGCQNH0/8XVGJ4LlsHr+Vq0/BVz1AKGLYQPouaxOmbaUZ7Yovrx9iWLNogJaIvHH0K5LeE3q9l0NacfYEX77kOjlDAw/zzKAp9NSOoCLwY34Qgf0=
+	t=1759524666; cv=none; b=ihjNQWrNKjhHS2PEqT+nJXA+18HL67c64WfueG1/r7SxXCWW/cwPpHc3uleIlse8/vVAfXgK+CvvG5C8f+fsaOzqvcKCH4if/1OktBpzW89+/rq5MOtC9RfkqBQKupbwWhiZJYXEGDg8he1tZhnrzxQE4RuoNXvBjayVEdZGt7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759524641; c=relaxed/simple;
-	bh=1p94Kd/jPrr2ZswfHfsej8PaEZcEH+oj56Meu5Y2CAg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QDNCPQJO/rFzJDBvIn8eFPJjC/eVlDLxk3E1024spgD+AO1czNQu4vwj7n3lTIrcbcnuj1TIdnLzPOno6hewg0uV3fPSWFSBNnZHmL6ARTRx+B0+yio64pWuXFvvsJTdVRc0rW3hdCeTlGJFzSNb9N7+fjYnQn98i/H8SBm/dDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N4enKN8j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52E7FC4CEF5;
-	Fri,  3 Oct 2025 20:50:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759524640;
-	bh=1p94Kd/jPrr2ZswfHfsej8PaEZcEH+oj56Meu5Y2CAg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=N4enKN8j2eK1CuI01fDM+arTXjdajKM5HCHwySG5f+hXMd/308SPC3ZKY+m6hNJIn
-	 rj1I1cP1ma/1XbdRYYoKhtL3/WAFyYK9PlKxHPvi8YXtKR3g4C8pO96B6ICtkj/3j4
-	 fZVMVsb1JIlKqs9WL2yWndnGpXEJc4Ch+t7KHUiWtyPtfiLKw+3ydxhQWqaNADC4sp
-	 Sri0fUxt0pBeYaMDyKbnTI25jupqutIRZAlLpvrL1JMfl2BG7ITjoava+9x+YDL/q8
-	 DohfD3vWnSDAiwoa8sfKlZVsB4MAoZ+CiR4ArHYivxgxrMcuDRW+GYUMf/sOgrVKWz
-	 ilHIilMvIjqkQ==
-Date: Fri, 3 Oct 2025 21:50:36 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Jammy Huang <jammy_huang@aspeedtech.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
-	andrew@codeconstruct.com.au, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: clock: aspeed: Add VIDEO reset
- definition
-Message-ID: <20251003-winking-surround-d047d3c90fd3@spud>
-References: <20251003015845.2715538-1-jammy_huang@aspeedtech.com>
- <20251003015845.2715538-2-jammy_huang@aspeedtech.com>
- <20251003-paralyze-herald-f9ef464d43e2@spud>
+	s=arc-20240116; t=1759524666; c=relaxed/simple;
+	bh=bZr+Lvkb5M6Ufx0akrIYv+VR8dkYeZRAOvoeF3RPvsg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=ArnWUhXLUdvRaJOD1J2q2n6uL+3EDuWDBk3lcB4ZdorhZv5xvImhhD+vK1Cr7o60sGAv9gqlIHwuHWKOchkNqVDUHY+ZhddyGtxZZgraHq0kMrEUYFb9JDr5SP2o5JIEN+B1cRLV4FCNiysNQYEoZKz6XrwC5NAr3TzsuKoO0q0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Lrx+Opa8; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Cc:Content-ID:Content-Description;
+	bh=oIs3ppVLk6gw/qZXypZLZcOfa+yCn//X21VZFkDaLYU=; b=Lrx+Opa8kAlfEXuyu8nZrskDYS
+	RMEVW1K3EtHWtp/TNPMDl4+TZidS8rII6LOpnPv0qEvXnZn1PtaWNoVRLLHkzUnhbCR3Tfh1MpEHf
+	ZkZd/NEu3t0eSIf0IaCZTwNSp4G961ZaVD/mJjLljb3ViiQ31g8H8jJABJOEx687ZtuOQgxZ+AsqI
+	LmC9fUttLZOzjyJF2FAdnCTKBCeWjOa6Rmq3x9FU9+hZojGWXCUyKadvy1un7W8qu/DrpcU76pUyT
+	OX6o9m0+7SucZJP87UviQ0UOsMWHeilEIIYasmiArPjulk9Jci/3QFC7WnJj9QL3uPYwy+SzCuC2Q
+	D0kAwH9A==;
+Received: from [50.53.25.54] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1v4mjl-0000000D7bQ-0Z25;
+	Fri, 03 Oct 2025 20:50:45 +0000
+Message-ID: <3913273d-12e2-426f-aec7-263b7f49008a@infradead.org>
+Date: Fri, 3 Oct 2025 13:50:43 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="GbO01kysT0Oxu35+"
-Content-Disposition: inline
-In-Reply-To: <20251003-paralyze-herald-f9ef464d43e2@spud>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 23/23] MAINTAINERS: add entry for KStackWatch
+To: Jinchao Wang <wangjinchao600@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, Mike Rapoport <rppt@kernel.org>,
+ Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>,
+ Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>,
+ David Hildenbrand <david@redhat.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Suren Baghdasaryan <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>, Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ Kees Cook <kees@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Sami Tolvanen <samitolvanen@google.com>, Miguel Ojeda <ojeda@kernel.org>,
+ Masahiro Yamada <masahiroy@kernel.org>, Rong Xu <xur@google.com>,
+ Naveen N Rao <naveen@kernel.org>, David Kaplan <david.kaplan@amd.com>,
+ Andrii Nakryiko <andrii@kernel.org>, Jinjie Ruan <ruanjinjie@huawei.com>,
+ Nam Cao <namcao@linutronix.de>, workflows@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, linux-mm@kvack.org, llvm@lists.linux.dev,
+ Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+ Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>,
+ Vincenzo Frascino <vincenzo.frascino@arm.com>, kasan-dev@googlegroups.com,
+ "David S. Miller" <davem@davemloft.net>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-trace-kernel@vger.kernel.org
+References: <20250930024402.1043776-1-wangjinchao600@gmail.com>
+ <20250930024402.1043776-24-wangjinchao600@gmail.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20250930024402.1043776-24-wangjinchao600@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+Hi,
 
---GbO01kysT0Oxu35+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 9/29/25 7:43 PM, Jinchao Wang wrote:
+> Add a maintainer entry for Kernel Stack Watch.
+> 
+> Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
+> ---
+>  MAINTAINERS | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 520fb4e379a3..3d4811ff3631 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -13362,6 +13362,14 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git
+>  F:	Documentation/dev-tools/kselftest*
+>  F:	tools/testing/selftests/
+>  
+> +KERNEL STACK WATCH
+> +M:	Jinchao Wang <wangjinchao600@gmail.com>
+> +S:	Maintained
+> +F:	Documentation/dev-tools/kstackwatch.rst
+> +F:	include/linux/kstackwatch_types.h
+> +F:	mm/kstackwatch/
+> +F:	tools/kstackwatch/
+> +
 
-On Fri, Oct 03, 2025 at 09:49:00PM +0100, Conor Dooley wrote:
-> On Fri, Oct 03, 2025 at 09:58:44AM +0800, Jammy Huang wrote:
-> > ASPEED clock controller provides a couple of resets. Add the define of
-> > video to allow referring to it.
-> >=20
-> > Signed-off-by: Jammy Huang <jammy_huang@aspeedtech.com>
-> > ---
-> >  v2 changes:
-> >   - Update index of ASPEED_RESET_VIDEO
->=20
-> Ah, so here is the next version. I don't see how this can be correct if
-> 21 was correct before. Was 21 wrong?
+Add entries in alphabetical order, please.
 
-Given the driver has mappings, I guess this is actually correct.
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+>  KERNEL SMB3 SERVER (KSMBD)
+>  M:	Namjae Jeon <linkinjeon@kernel.org>
+>  M:	Namjae Jeon <linkinjeon@samba.org>
 
-> > ---
-> >  include/dt-bindings/clock/aspeed-clock.h | 1 +
-> >  1 file changed, 1 insertion(+)
-> >=20
-> > diff --git a/include/dt-bindings/clock/aspeed-clock.h b/include/dt-bind=
-ings/clock/aspeed-clock.h
-> > index 06d568382c77..671e5a476eae 100644
-> > --- a/include/dt-bindings/clock/aspeed-clock.h
-> > +++ b/include/dt-bindings/clock/aspeed-clock.h
-> > @@ -53,5 +53,6 @@
-> >  #define ASPEED_RESET_AHB		8
-> >  #define ASPEED_RESET_CRT1		9
-> >  #define ASPEED_RESET_HACE		10
-> > +#define ASPEED_RESET_VIDEO		11
-> > =20
-> >  #endif
-> > --=20
-> > 2.25.1
-> >=20
+-- 
+~Randy
 
-
-
---GbO01kysT0Oxu35+
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaOA3HAAKCRB4tDGHoIJi
-0vYZAQCmKLwDhm+cuPWduwkWTnpOANP4HjnQu7jEQpxmnAp8vQEA8Hg6Ok19zE03
-5dhdXT+b7zt9X10JDsEcH5iw3pm2rgU=
-=lZUw
------END PGP SIGNATURE-----
-
---GbO01kysT0Oxu35+--
 
