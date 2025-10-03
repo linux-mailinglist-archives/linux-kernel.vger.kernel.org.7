@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-841853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1D09BB8649
-	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 01:29:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ADCBBB8643
+	for <lists+linux-kernel@lfdr.de>; Sat, 04 Oct 2025 01:29:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 860D34A821F
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 23:29:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEC3A19E4504
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 23:29:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 568DA2E0915;
-	Fri,  3 Oct 2025 23:26:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 350372DF12C;
+	Fri,  3 Oct 2025 23:26:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="COnD2lko"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zen6oU47"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F21A2DF128
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 23:26:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14A8C2DF710
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 23:26:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759533992; cv=none; b=KEa9GirXrEgdz5byOmUx6MRL3/PqmAPSXT8zbiyl7jKViGHM8I4Ke67K9YcVETASd/o9OfLk5H/qtP4zhjI2xLltJ0NcUcZjxkg0+I+Dx0i5RA7w8DumWQnVAOVSGBOnem97jj+sW9Py2rBYRsJb3qS7NddmBpnojCBWDfvZDZ0=
+	t=1759533991; cv=none; b=jTIgYs5Gw4nDX6FAV48DBjAzCckWRBLaU+oFLg3+QoCHEwntI10syw6QI7xbZKMIl/Loa1SRvU4xGxyY6nycAXOTTWfUhmA2y0DVXuqI1+pMONZ0+dKPDavRxI5egkuKD06IMZ0yBR5+8rIqpTVL69+Au5bwczJtrMQAQcBr47w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759533992; c=relaxed/simple;
-	bh=6A3rm7M0SNfn/DEmaJmZ8IQYVrrLiungr00EjqUjHk8=;
+	s=arc-20240116; t=1759533991; c=relaxed/simple;
+	bh=0xeumNRu0bdu/oLbIMPmUD2rrS5rFLO2H9kNKTpm7Eg=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=KVJo3t7o/GCi1MqMIMwZcB+tSHfw1p7mHxOhI/RK3gKe2T9sRxLQMNLblbiXh7+uPO/flH/r0pRGU1UDsAyT/lsSFC+lwrSZAotp5oDq55GY0D5wX6Penc4HhS1nur2J1kfMJOK/NslVQRBRFAqv3prp1j/Sl32yZFco2H3SefM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=COnD2lko; arc=none smtp.client-ip=209.85.216.74
+	 To:Cc:Content-Type; b=lA0j6yMXzAnTqkfC0AcbM9xFpYNI2yMl3VgXrAGbrLz/law1bbH0eSVn6VroNdHbPqDdSDK0GUPX8u5Ed5fMcWSTsRj+tXbXU2IBFyrhdvFomDbRCvtQ/dVqnifFBow9nIDwxM0fA5nZ7pSJK4uX7KhTC20C3zCFvAbWuP4RUNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zen6oU47; arc=none smtp.client-ip=209.85.214.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-330a4d5c4efso2480303a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 16:26:28 -0700 (PDT)
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-269939bfccbso31731555ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 16:26:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1759533988; x=1760138788; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1759533989; x=1760138789; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=oWL2l0x7QCaxAl9nbpgRZwNGP+fn2GN1l9LXkO0Ve1g=;
-        b=COnD2lkoyYsSsZCfwPv5+pNhDTJBAIW3j9nOnhl8IaTyFIItBQIogwmmhQSZrScvXB
-         OJeLwW0XM8DJwaObXScixN1o95eNJ2BwWm74MIuduFYGP0v3zZJzJL2auGon2lC3XIK+
-         E2MFFaACpbvlir97nIr3imtbvsB5qnP1pZEoYRd8iDUiM2m5hSeUzuCQBTVnfTOP9MIN
-         /b21VUJ5SkSscz1++qL/t2EaY/k3pGtxKjA+SD9zfD43b9i7ui4aFGD5tTgqDkZxiGMr
-         KpsIipLDmt0Y87PKDVV/8RGGz5aKqSrWw8zIJdUfSlVq4Bex20pP7qjdSO2rIGXtT9oT
-         NAQg==
+        bh=qrTDG0acHPOPKJ3AVdBdofNeaQKfhOMghQNh09nNQB8=;
+        b=zen6oU47fV/1SDB+LIeNzFsLd35ERNRIYcyID8yvAuvb793VqKD8bIrIPqoSE2YNFC
+         yY7ish9Upr3nxIb3LGMX79ZSmf8Wb6FnLCIkPVLARK+wLDpKI1EWFjanWAs4/Zi6WVD5
+         VmEIb+T8fEJQh4aP6z1EsMJfPRIYOF8JQtj7PafnJL3bUB0GE5iIFiUmtLnFRSANyNeH
+         a9FNoMGOLtCEEuONSkUBGsWNOMcFl9GFR0Bo0UmrBpWBa5c+lRHR5uBQeEo1aRzjXZp0
+         2JHtzbGUWtIySbaydOn5MFPvtfdoVLVc9p1q00/ORWFC+fu2nlulS9UfMkd0o67tdZWw
+         UtDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759533988; x=1760138788;
+        d=1e100.net; s=20230601; t=1759533989; x=1760138789;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=oWL2l0x7QCaxAl9nbpgRZwNGP+fn2GN1l9LXkO0Ve1g=;
-        b=wQ2Uu1aD7F2wkMXguko4rEDqLGMksE/Zs8/ZUuizxPsYjynU59y6X+G531atNhkSzj
-         VPA268S7GHkIZ+f8vHJe5qiLv0muaGFhv3l25j0qJbNDJPsk74jJBoTu9BqShdCTp0sP
-         z6Wsk+LOLv7nyK7jVp4KGC1RDzJE74DQWo12sDeUJWEocKnIts9hA3gL1xSn/3u0r4qi
-         5HpEufQPWpDpw8cqo9OCUHfvcUaWy/llK5BRe3r6qk4haOp/ki8fxgok31QqsV7fqjl1
-         W9s0s5zOAaNSFhpHfBjOkQcgn8bIFQTOe3LqUWv+g+uLRcypaMtLexXaRciLQq3fCzjY
-         q5BA==
-X-Forwarded-Encrypted: i=1; AJvYcCWBqOwNnBB4Z8o+s/RM+6hvZaDeE7MpSPyPtBWsuu5S2iqEYJ+iUCv/xfeVIwr0569hTx+iUsucUa7NIBM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4PsVpWspvj7kZkGv5soa/qUfvLb/AY4qzIL+ZWpbHogReYEca
-	ItCOZy5pW7a3Y9PhSWCrY3IFNA9UtolPND3tKBkoeCye9tvkcL5tC9Pb4KyFHn/tXOfm96qr1BB
-	yObtK3g==
-X-Google-Smtp-Source: AGHT+IG6jhNH5LLVuE/VonOGTqxAkXKOoCKJ+ViZFBmtyFsLnGr4P81Fp/FlqkwNWy4JKdDWCIbTFL0NooA=
-X-Received: from pjbsd7.prod.google.com ([2002:a17:90b:5147:b0:338:3770:a496])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1b07:b0:32b:cb15:5fdc
- with SMTP id 98e67ed59e1d1-339c27af443mr5341457a91.30.1759533987905; Fri, 03
- Oct 2025 16:26:27 -0700 (PDT)
+        bh=qrTDG0acHPOPKJ3AVdBdofNeaQKfhOMghQNh09nNQB8=;
+        b=omELrXoWKkXQi+hgwlPH77HIoQ/hBExq5JdY6h4YqCauNVyHEAAfrLLNbe1+t9UdXG
+         Th1egtFq1Pv7rmAfNpJvUk5OHpe2Xr4RMFo+xViuZ7hULjTubW/UqE1W0tXQ0qliWfbz
+         V21niCONkA4k9VS+x+gF9jFbwXebBspzJlw2UpzDfsJE1tJ35NSXBluAI8xPQ1rX19Az
+         CWRV7RukqOQrJ7wwJp6jGNDRN0eMYv7dVCndVWnLDrFO/FA9UBg775aNPltSxfD8CLLF
+         ufnEpeVh65PNf2TyoTFJWbTPn4HKivJpXcSL9Hb8tKKVQlvmyPdmdK5FMbuGTefulCRr
+         8/Mw==
+X-Forwarded-Encrypted: i=1; AJvYcCWWvd+GvQicQxbQ/i3JLPImErivBEUPIrFa91QK54R7xHol74uY+uQibykdSc+xrG8kP0p4JEXCU7RMLNY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywd9BAkwivEMIJsSl9g4ci/L2JeWJ89rtQ8OuPx7zEXIcv/zUjO
+	IrVuPvN1vAeAheXDT5XEe12HMPnTHDF5r0Ptg+qRpB9kdgKHbPyPQQGPj6OYyJ85aXEfRgHXfQB
+	fXVM3cA==
+X-Google-Smtp-Source: AGHT+IGTaO3/D04Td+DbjpLaoUihiDB5eETO+E+bVM2wQesLhDsp0vKrjYvnc7RvC0OhiVRi6XrR4kqXyXQ=
+X-Received: from plot3.prod.google.com ([2002:a17:902:8c83:b0:27e:4187:b4d3])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:4b50:b0:24e:3cf2:2453
+ with SMTP id d9443c01a7336-28e9a7031c4mr52954735ad.61.1759533989354; Fri, 03
+ Oct 2025 16:26:29 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri,  3 Oct 2025 16:26:02 -0700
+Date: Fri,  3 Oct 2025 16:26:03 -0700
 In-Reply-To: <20251003232606.4070510-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,9 +75,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251003232606.4070510-1-seanjc@google.com>
 X-Mailer: git-send-email 2.51.0.618.g983fd99d29-goog
-Message-ID: <20251003232606.4070510-10-seanjc@google.com>
-Subject: [PATCH v2 09/13] KVM: selftests: Add wrappers for mmap() and munmap()
- to assert success
+Message-ID: <20251003232606.4070510-11-seanjc@google.com>
+Subject: [PATCH v2 10/13] KVM: selftests: Isolate the guest_memfd
+ Copy-on-Write negative testcase
 From: Sean Christopherson <seanjc@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, 
 	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
@@ -87,337 +87,56 @@ Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Ackerley Tng <ackerleytng@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Add and use wrappers for mmap() and munmap() that assert success to reduce
-a significant amount of boilerplate code, to ensure all tests assert on
-failure, and to provide consistent error messages on failure.
+Move the guest_memfd Copy-on-Write (CoW) testcase to its own function to
+better separate positive testcases from negative testcases.
 
 No functional change intended.
 
-Reviewed-by: Fuad Tabba <tabba@google.com>
-Tested-by: Fuad Tabba <tabba@google.com>
-Reviewed-by: David Hildenbrand <david@redhat.com>
-Reviewed-by: Ackerley Tng <ackerleytng@google.com>
+Suggested-by: Ackerley Tng <ackerleytng@google.com>
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- .../testing/selftests/kvm/guest_memfd_test.c  | 21 +++------
- .../testing/selftests/kvm/include/kvm_util.h  | 25 +++++++++++
- tools/testing/selftests/kvm/lib/kvm_util.c    | 44 +++++++------------
- tools/testing/selftests/kvm/mmu_stress_test.c |  5 +--
- .../selftests/kvm/s390/ucontrol_test.c        | 16 +++----
- .../selftests/kvm/set_memory_region_test.c    | 17 ++++---
- 6 files changed, 64 insertions(+), 64 deletions(-)
+ tools/testing/selftests/kvm/guest_memfd_test.c | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
 diff --git a/tools/testing/selftests/kvm/guest_memfd_test.c b/tools/testing/selftests/kvm/guest_memfd_test.c
-index 9f98a067ab51..319fda4f5d53 100644
+index 319fda4f5d53..640636c76eb9 100644
 --- a/tools/testing/selftests/kvm/guest_memfd_test.c
 +++ b/tools/testing/selftests/kvm/guest_memfd_test.c
-@@ -50,8 +50,7 @@ static void test_mmap_supported(int fd, size_t total_size)
- 	mem = mmap(NULL, total_size, PROT_READ | PROT_WRITE, MAP_PRIVATE, fd, 0);
- 	TEST_ASSERT(mem == MAP_FAILED, "Copy-on-write not allowed by guest_memfd.");
- 
--	mem = mmap(NULL, total_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
--	TEST_ASSERT(mem != MAP_FAILED, "mmap() for guest_memfd should succeed.");
-+	mem = kvm_mmap(total_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd);
- 
- 	memset(mem, val, total_size);
- 	for (i = 0; i < total_size; i++)
-@@ -70,8 +69,7 @@ static void test_mmap_supported(int fd, size_t total_size)
- 	for (i = 0; i < total_size; i++)
- 		TEST_ASSERT_EQ(READ_ONCE(mem[i]), val);
- 
--	ret = munmap(mem, total_size);
--	TEST_ASSERT(!ret, "munmap() should succeed.");
-+	kvm_munmap(mem, total_size);
+@@ -40,15 +40,20 @@ static void test_file_read_write(int fd, size_t total_size)
+ 		    "pwrite on a guest_mem fd should fail");
  }
  
- static sigjmp_buf jmpbuf;
-@@ -89,10 +87,8 @@ static void test_fault_overflow(int fd, size_t total_size)
- 	const char val = 0xaa;
- 	char *mem;
- 	size_t i;
+-static void test_mmap_supported(int fd, size_t total_size)
++static void test_mmap_cow(int fd, size_t size)
+ {
+-	const char val = 0xaa;
+-	char *mem;
+-	size_t i;
 -	int ret;
- 
--	mem = mmap(NULL, map_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
--	TEST_ASSERT(mem != MAP_FAILED, "mmap() for guest_memfd should succeed.");
-+	mem = kvm_mmap(map_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd);
- 
- 	sigaction(SIGBUS, &sa_new, &sa_old);
- 	if (sigsetjmp(jmpbuf, 1) == 0) {
-@@ -104,8 +100,7 @@ static void test_fault_overflow(int fd, size_t total_size)
- 	for (i = 0; i < total_size; i++)
- 		TEST_ASSERT_EQ(READ_ONCE(mem[i]), val);
- 
--	ret = munmap(mem, map_size);
--	TEST_ASSERT(!ret, "munmap() should succeed.");
-+	kvm_munmap(mem, map_size);
- }
- 
- static void test_mmap_not_supported(int fd, size_t total_size)
-@@ -351,10 +346,9 @@ static void test_guest_memfd_guest(void)
- 					     GUEST_MEMFD_FLAG_INIT_SHARED);
- 	vm_set_user_memory_region2(vm, slot, KVM_MEM_GUEST_MEMFD, gpa, size, NULL, fd, 0);
- 
--	mem = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
--	TEST_ASSERT(mem != MAP_FAILED, "mmap() on guest_memfd failed");
-+	mem = kvm_mmap(size, PROT_READ | PROT_WRITE, MAP_SHARED, fd);
- 	memset(mem, 0xaa, size);
--	munmap(mem, size);
-+	kvm_munmap(mem, size);
- 
- 	virt_pg_map(vm, gpa, gpa);
- 	vcpu_args_set(vcpu, 2, gpa, size);
-@@ -362,8 +356,7 @@ static void test_guest_memfd_guest(void)
- 
- 	TEST_ASSERT_EQ(get_ucall(vcpu, NULL), UCALL_DONE);
- 
--	mem = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
--	TEST_ASSERT(mem != MAP_FAILED, "mmap() on guest_memfd failed");
-+	mem = kvm_mmap(size, PROT_READ | PROT_WRITE, MAP_SHARED, fd);
- 	for (i = 0; i < size; i++)
- 		TEST_ASSERT_EQ(mem[i], 0xff);
- 
-diff --git a/tools/testing/selftests/kvm/include/kvm_util.h b/tools/testing/selftests/kvm/include/kvm_util.h
-index 26cc30290e76..ee60dbf5208a 100644
---- a/tools/testing/selftests/kvm/include/kvm_util.h
-+++ b/tools/testing/selftests/kvm/include/kvm_util.h
-@@ -286,6 +286,31 @@ static inline bool kvm_has_cap(long cap)
- #define __KVM_SYSCALL_ERROR(_name, _ret) \
- 	"%s failed, rc: %i errno: %i (%s)", (_name), (_ret), errno, strerror(errno)
- 
-+static inline void *__kvm_mmap(size_t size, int prot, int flags, int fd,
-+			       off_t offset)
-+{
 +	void *mem;
-+
-+	mem = mmap(NULL, size, prot, flags, fd, offset);
-+	TEST_ASSERT(mem != MAP_FAILED, __KVM_SYSCALL_ERROR("mmap()",
-+		    (int)(unsigned long)MAP_FAILED));
-+
-+	return mem;
+ 
+-	mem = mmap(NULL, total_size, PROT_READ | PROT_WRITE, MAP_PRIVATE, fd, 0);
++	mem = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_PRIVATE, fd, 0);
+ 	TEST_ASSERT(mem == MAP_FAILED, "Copy-on-write not allowed by guest_memfd.");
 +}
 +
-+static inline void *kvm_mmap(size_t size, int prot, int flags, int fd)
++static void test_mmap_supported(int fd, size_t total_size)
 +{
-+	return __kvm_mmap(size, prot, flags, fd, 0);
-+}
-+
-+static inline void kvm_munmap(void *mem, size_t size)
-+{
++	const char val = 0xaa;
++	char *mem;
++	size_t i;
 +	int ret;
-+
-+	ret = munmap(mem, size);
-+	TEST_ASSERT(!ret, __KVM_SYSCALL_ERROR("munmap()", ret));
-+}
-+
- /*
-  * Use the "inner", double-underscore macro when reporting errors from within
-  * other macros so that the name of ioctl() and not its literal numeric value
-diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
-index 6743fbd9bd67..83a721be7ec5 100644
---- a/tools/testing/selftests/kvm/lib/kvm_util.c
-+++ b/tools/testing/selftests/kvm/lib/kvm_util.c
-@@ -741,13 +741,11 @@ static void vm_vcpu_rm(struct kvm_vm *vm, struct kvm_vcpu *vcpu)
- 	int ret;
  
- 	if (vcpu->dirty_gfns) {
--		ret = munmap(vcpu->dirty_gfns, vm->dirty_ring_size);
--		TEST_ASSERT(!ret, __KVM_SYSCALL_ERROR("munmap()", ret));
-+		kvm_munmap(vcpu->dirty_gfns, vm->dirty_ring_size);
- 		vcpu->dirty_gfns = NULL;
- 	}
+ 	mem = kvm_mmap(total_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd);
  
--	ret = munmap(vcpu->run, vcpu_mmap_sz());
--	TEST_ASSERT(!ret, __KVM_SYSCALL_ERROR("munmap()", ret));
-+	kvm_munmap(vcpu->run, vcpu_mmap_sz());
+@@ -272,6 +277,7 @@ static void __test_guest_memfd(struct kvm_vm *vm, uint64_t flags)
  
- 	ret = close(vcpu->fd);
- 	TEST_ASSERT(!ret,  __KVM_SYSCALL_ERROR("close()", ret));
-@@ -783,20 +781,16 @@ void kvm_vm_release(struct kvm_vm *vmp)
- static void __vm_mem_region_delete(struct kvm_vm *vm,
- 				   struct userspace_mem_region *region)
- {
--	int ret;
--
- 	rb_erase(&region->gpa_node, &vm->regions.gpa_tree);
- 	rb_erase(&region->hva_node, &vm->regions.hva_tree);
- 	hash_del(&region->slot_node);
- 
- 	sparsebit_free(&region->unused_phy_pages);
- 	sparsebit_free(&region->protected_phy_pages);
--	ret = munmap(region->mmap_start, region->mmap_size);
--	TEST_ASSERT(!ret, __KVM_SYSCALL_ERROR("munmap()", ret));
-+	kvm_munmap(region->mmap_start, region->mmap_size);
- 	if (region->fd >= 0) {
- 		/* There's an extra map when using shared memory. */
--		ret = munmap(region->mmap_alias, region->mmap_size);
--		TEST_ASSERT(!ret, __KVM_SYSCALL_ERROR("munmap()", ret));
-+		kvm_munmap(region->mmap_alias, region->mmap_size);
- 		close(region->fd);
- 	}
- 	if (region->region.guest_memfd >= 0)
-@@ -1053,12 +1047,9 @@ void vm_mem_add(struct kvm_vm *vm, enum vm_mem_backing_src_type src_type,
- 		region->fd = kvm_memfd_alloc(region->mmap_size,
- 					     src_type == VM_MEM_SRC_SHARED_HUGETLB);
- 
--	region->mmap_start = mmap(NULL, region->mmap_size,
--				  PROT_READ | PROT_WRITE,
--				  vm_mem_backing_src_alias(src_type)->flag,
--				  region->fd, 0);
--	TEST_ASSERT(region->mmap_start != MAP_FAILED,
--		    __KVM_SYSCALL_ERROR("mmap()", (int)(unsigned long)MAP_FAILED));
-+	region->mmap_start = kvm_mmap(region->mmap_size, PROT_READ | PROT_WRITE,
-+				      vm_mem_backing_src_alias(src_type)->flag,
-+				      region->fd);
- 
- 	TEST_ASSERT(!is_backing_src_hugetlb(src_type) ||
- 		    region->mmap_start == align_ptr_up(region->mmap_start, backing_src_pagesz),
-@@ -1129,12 +1120,10 @@ void vm_mem_add(struct kvm_vm *vm, enum vm_mem_backing_src_type src_type,
- 
- 	/* If shared memory, create an alias. */
- 	if (region->fd >= 0) {
--		region->mmap_alias = mmap(NULL, region->mmap_size,
--					  PROT_READ | PROT_WRITE,
--					  vm_mem_backing_src_alias(src_type)->flag,
--					  region->fd, 0);
--		TEST_ASSERT(region->mmap_alias != MAP_FAILED,
--			    __KVM_SYSCALL_ERROR("mmap()",  (int)(unsigned long)MAP_FAILED));
-+		region->mmap_alias = kvm_mmap(region->mmap_size,
-+					      PROT_READ | PROT_WRITE,
-+					      vm_mem_backing_src_alias(src_type)->flag,
-+					      region->fd);
- 
- 		/* Align host alias address */
- 		region->host_alias = align_ptr_up(region->mmap_alias, alignment);
-@@ -1344,10 +1333,8 @@ struct kvm_vcpu *__vm_vcpu_add(struct kvm_vm *vm, uint32_t vcpu_id)
- 	TEST_ASSERT(vcpu_mmap_sz() >= sizeof(*vcpu->run), "vcpu mmap size "
- 		"smaller than expected, vcpu_mmap_sz: %zi expected_min: %zi",
- 		vcpu_mmap_sz(), sizeof(*vcpu->run));
--	vcpu->run = (struct kvm_run *) mmap(NULL, vcpu_mmap_sz(),
--		PROT_READ | PROT_WRITE, MAP_SHARED, vcpu->fd, 0);
--	TEST_ASSERT(vcpu->run != MAP_FAILED,
--		    __KVM_SYSCALL_ERROR("mmap()", (int)(unsigned long)MAP_FAILED));
-+	vcpu->run = kvm_mmap(vcpu_mmap_sz(), PROT_READ | PROT_WRITE,
-+			     MAP_SHARED, vcpu->fd);
- 
- 	if (kvm_has_cap(KVM_CAP_BINARY_STATS_FD))
- 		vcpu->stats.fd = vcpu_get_stats_fd(vcpu);
-@@ -1794,9 +1781,8 @@ void *vcpu_map_dirty_ring(struct kvm_vcpu *vcpu)
- 			    page_size * KVM_DIRTY_LOG_PAGE_OFFSET);
- 		TEST_ASSERT(addr == MAP_FAILED, "Dirty ring mapped exec");
- 
--		addr = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, vcpu->fd,
--			    page_size * KVM_DIRTY_LOG_PAGE_OFFSET);
--		TEST_ASSERT(addr != MAP_FAILED, "Dirty ring map failed");
-+		addr = __kvm_mmap(size, PROT_READ | PROT_WRITE, MAP_SHARED, vcpu->fd,
-+				  page_size * KVM_DIRTY_LOG_PAGE_OFFSET);
- 
- 		vcpu->dirty_gfns = addr;
- 		vcpu->dirty_gfns_count = size / sizeof(struct kvm_dirty_gfn);
-diff --git a/tools/testing/selftests/kvm/mmu_stress_test.c b/tools/testing/selftests/kvm/mmu_stress_test.c
-index 6a437d2be9fa..37b7e6524533 100644
---- a/tools/testing/selftests/kvm/mmu_stress_test.c
-+++ b/tools/testing/selftests/kvm/mmu_stress_test.c
-@@ -339,8 +339,7 @@ int main(int argc, char *argv[])
- 	TEST_ASSERT(max_gpa > (4 * slot_size), "MAXPHYADDR <4gb ");
- 
- 	fd = kvm_memfd_alloc(slot_size, hugepages);
--	mem = mmap(NULL, slot_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
--	TEST_ASSERT(mem != MAP_FAILED, "mmap() failed");
-+	mem = kvm_mmap(slot_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd);
- 
- 	TEST_ASSERT(!madvise(mem, slot_size, MADV_NOHUGEPAGE), "madvise() failed");
- 
-@@ -413,7 +412,7 @@ int main(int argc, char *argv[])
- 	for (slot = (slot - 1) & ~1ull; slot >= first_slot; slot -= 2)
- 		vm_set_user_memory_region(vm, slot, 0, 0, 0, NULL);
- 
--	munmap(mem, slot_size / 2);
-+	kvm_munmap(mem, slot_size / 2);
- 
- 	/* Sanity check that the vCPUs actually ran. */
- 	for (i = 0; i < nr_vcpus; i++)
-diff --git a/tools/testing/selftests/kvm/s390/ucontrol_test.c b/tools/testing/selftests/kvm/s390/ucontrol_test.c
-index d265b34c54be..50bc1c38225a 100644
---- a/tools/testing/selftests/kvm/s390/ucontrol_test.c
-+++ b/tools/testing/selftests/kvm/s390/ucontrol_test.c
-@@ -142,19 +142,17 @@ FIXTURE_SETUP(uc_kvm)
- 	self->kvm_run_size = ioctl(self->kvm_fd, KVM_GET_VCPU_MMAP_SIZE, NULL);
- 	ASSERT_GE(self->kvm_run_size, sizeof(struct kvm_run))
- 		  TH_LOG(KVM_IOCTL_ERROR(KVM_GET_VCPU_MMAP_SIZE, self->kvm_run_size));
--	self->run = (struct kvm_run *)mmap(NULL, self->kvm_run_size,
--		    PROT_READ | PROT_WRITE, MAP_SHARED, self->vcpu_fd, 0);
--	ASSERT_NE(self->run, MAP_FAILED);
-+	self->run = kvm_mmap(self->kvm_run_size, PROT_READ | PROT_WRITE,
-+			     MAP_SHARED, self->vcpu_fd);
- 	/**
- 	 * For virtual cpus that have been created with S390 user controlled
- 	 * virtual machines, the resulting vcpu fd can be memory mapped at page
- 	 * offset KVM_S390_SIE_PAGE_OFFSET in order to obtain a memory map of
- 	 * the virtual cpu's hardware control block.
- 	 */
--	self->sie_block = (struct kvm_s390_sie_block *)mmap(NULL, PAGE_SIZE,
--			  PROT_READ | PROT_WRITE, MAP_SHARED,
--			  self->vcpu_fd, KVM_S390_SIE_PAGE_OFFSET << PAGE_SHIFT);
--	ASSERT_NE(self->sie_block, MAP_FAILED);
-+	self->sie_block = __kvm_mmap(PAGE_SIZE, PROT_READ | PROT_WRITE,
-+				     MAP_SHARED, self->vcpu_fd,
-+				     KVM_S390_SIE_PAGE_OFFSET << PAGE_SHIFT);
- 
- 	TH_LOG("VM created %p %p", self->run, self->sie_block);
- 
-@@ -186,8 +184,8 @@ FIXTURE_SETUP(uc_kvm)
- 
- FIXTURE_TEARDOWN(uc_kvm)
- {
--	munmap(self->sie_block, PAGE_SIZE);
--	munmap(self->run, self->kvm_run_size);
-+	kvm_munmap(self->sie_block, PAGE_SIZE);
-+	kvm_munmap(self->run, self->kvm_run_size);
- 	close(self->vcpu_fd);
- 	close(self->vm_fd);
- 	close(self->kvm_fd);
-diff --git a/tools/testing/selftests/kvm/set_memory_region_test.c b/tools/testing/selftests/kvm/set_memory_region_test.c
-index ce3ac0fd6dfb..7fe427ff9b38 100644
---- a/tools/testing/selftests/kvm/set_memory_region_test.c
-+++ b/tools/testing/selftests/kvm/set_memory_region_test.c
-@@ -433,10 +433,10 @@ static void test_add_max_memory_regions(void)
- 	pr_info("Adding slots 0..%i, each memory region with %dK size\n",
- 		(max_mem_slots - 1), MEM_REGION_SIZE >> 10);
- 
--	mem = mmap(NULL, (size_t)max_mem_slots * MEM_REGION_SIZE + alignment,
--		   PROT_READ | PROT_WRITE,
--		   MAP_PRIVATE | MAP_ANONYMOUS | MAP_NORESERVE, -1, 0);
--	TEST_ASSERT(mem != MAP_FAILED, "Failed to mmap() host");
-+
-+	mem = kvm_mmap((size_t)max_mem_slots * MEM_REGION_SIZE + alignment,
-+		       PROT_READ | PROT_WRITE,
-+		       MAP_PRIVATE | MAP_ANONYMOUS | MAP_NORESERVE, -1);
- 	mem_aligned = (void *)(((size_t) mem + alignment - 1) & ~(alignment - 1));
- 
- 	for (slot = 0; slot < max_mem_slots; slot++)
-@@ -446,9 +446,8 @@ static void test_add_max_memory_regions(void)
- 					  mem_aligned + (uint64_t)slot * MEM_REGION_SIZE);
- 
- 	/* Check it cannot be added memory slots beyond the limit */
--	mem_extra = mmap(NULL, MEM_REGION_SIZE, PROT_READ | PROT_WRITE,
--			 MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
--	TEST_ASSERT(mem_extra != MAP_FAILED, "Failed to mmap() host");
-+	mem_extra = kvm_mmap(MEM_REGION_SIZE, PROT_READ | PROT_WRITE,
-+			     MAP_PRIVATE | MAP_ANONYMOUS, -1);
- 
- 	ret = __vm_set_user_memory_region(vm, max_mem_slots, 0,
- 					  (uint64_t)max_mem_slots * MEM_REGION_SIZE,
-@@ -456,8 +455,8 @@ static void test_add_max_memory_regions(void)
- 	TEST_ASSERT(ret == -1 && errno == EINVAL,
- 		    "Adding one more memory slot should fail with EINVAL");
- 
--	munmap(mem, (size_t)max_mem_slots * MEM_REGION_SIZE + alignment);
--	munmap(mem_extra, MEM_REGION_SIZE);
-+	kvm_munmap(mem, (size_t)max_mem_slots * MEM_REGION_SIZE + alignment);
-+	kvm_munmap(mem_extra, MEM_REGION_SIZE);
- 	kvm_vm_free(vm);
- }
- 
+ 	if (flags & GUEST_MEMFD_FLAG_MMAP) {
+ 		gmem_test(mmap_supported, vm, flags);
++		gmem_test(mmap_cow, vm, flags);
+ 		gmem_test(fault_overflow, vm, flags);
+ 	} else {
+ 		gmem_test(mmap_not_supported, vm, flags);
 -- 
 2.51.0.618.g983fd99d29-goog
 
