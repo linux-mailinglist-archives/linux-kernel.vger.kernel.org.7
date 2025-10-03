@@ -1,94 +1,133 @@
-Return-Path: <linux-kernel+bounces-840906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1932FBB5AFC
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 02:52:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74B6ABB5B05
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 02:53:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ABE404E4066
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 00:52:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E16A3BF952
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 00:53:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 425B91ADFFB;
-	Fri,  3 Oct 2025 00:52:46 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED68EDF72
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 00:52:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71E7D1C4A0A;
+	Fri,  3 Oct 2025 00:53:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dtGD5UUJ"
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B941B4F09
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 00:53:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759452765; cv=none; b=CIQHhLfTtz/Iz0kN5BOHbvTODLGM19T0zj7rabOKUkJpjczpCC3hk2+LmU8djxBPwgnGD01/Eh9FsO0sbWM7S0BB9YmgG26FmETtiXmKNaE3CV/3wWsRsw8S4e2Bzou0dbSQGdXMcTiwwJyNt70If+oYMbU+SKeRmdCPlwzlgoA=
+	t=1759452831; cv=none; b=tSCi1ZIZnuRTBsl0UKurlx9N2tBgtgTFvmQ834u82tBhElcxUJEnsvMDmR5HFQHp9rkQpIWKA7BODpbTdBxy3lls6xuPrOjPMcWEXx23ejZJdZSt2AtJiFNaCBou/qAP8Qu7oQ7TCQYPEr+3CpDWnXsUvkuidAElUWkbVfz9yKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759452765; c=relaxed/simple;
-	bh=x3K+T54pQmuKD7sU1shs/LBsxeAFFKSumqDzX1Xb7qA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TY/viO6A0WS7ufXOPV6vAlfRJ1sEUh8i1+6EZ4KLRE3esAOU7N/55YTtBZ/VdZ/0NasjikaIkwtUqDsE3+fI870PtfjjjyQmWpg7DzSW30FJP30iWne7t0QV9wY4XIxQHwoYdItvgBDUiX1uCYj8/GiAVNUS9uQhGB9PRNrbV4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-c2dff70000001609-70-68df1e53a707
-Date: Fri, 3 Oct 2025 09:52:30 +0900
-From: Byungchul Park <byungchul@sk.com>
-To: Hillf Danton <hdanton@sina.com>, ysk@kzalloc.com
-Cc: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	kernel_team@skhynix.com
-Subject: Re: [RFC] mm/migrate: make sure folio_unlock() before
- folio_wait_writeback()
-Message-ID: <20251003005230.GB75385@system.software.com>
-References: <20251002081612.53281-1-byungchul@sk.com>
- <20251002220211.8009-1-hdanton@sina.com>
- <20251003004828.GA75385@system.software.com>
+	s=arc-20240116; t=1759452831; c=relaxed/simple;
+	bh=qZpdUj16BCejTHKsOOW/dPiTbIkZGYldC2/13Q6Sxvw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=k+K8a5SGfe7FOHax65KQFlOAEvY4aqy6GH19HI3ty2N28tlyRwVFkMB3nnWCrYlLjH4LZfImXPnw+tYLEANgIwcPeSG00DOxd4NBCRVBpra45grALy7vZ0Xfy7P4mZPOIHghfTyKY0XF6Xe8kWLteSYK/OJkIXe4grIHQcqwTF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dtGD5UUJ; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-71d603a269cso18494527b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 17:53:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1759452825; x=1760057625; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TIjyu4CrKVxFW8+yt9bV88mlzHIu8EXyBfp0u4n9wkI=;
+        b=dtGD5UUJUIySDvgIySMlxZTjL07mWjDvn+jnQ5u2tJBIKxeJnWooYa7+vu/VZBLDBU
+         hUdPiHnyu7zBCrnaopiOwFvfwB4m8gzDjpDZfU5GgKGuXW1IaS4NhEpZjKEi6SIkBdXv
+         fvJ+iEyQ6V6S369cppZDaV0FO7Zpq64hH+shI8hUkUOPpBj7qMyBVOek9O+yMFJkxmR8
+         C3ZO09x6YgtOOysN7/a2GRUbAAOhQwBV9DlFirqql+qoF/Aa1au/eoOJH0V57FVliBXt
+         bDMtOZhemyXnI2Y5VsC6dvNGsRY+JdgE32FkLRsnIofOjghgzdUSZNPPOqZdNSCTzHTS
+         +ITw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759452825; x=1760057625;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TIjyu4CrKVxFW8+yt9bV88mlzHIu8EXyBfp0u4n9wkI=;
+        b=KROZ2Vdl/xT+3EVjZ9ffPcfQJHh/8Rt8pYEgqDSTEI4uKku1Ig6K5T+DyYGGK0SHZX
+         oQvA5vtC0NFrWg1TC2svUItrE8/f7urZdmMKE4kZmhT9ud3uviobRPmEog/iFBwOUhO+
+         /1rxSbEIYDfFWxiYRdICQExaQj5YUXHmPZOZe1AcdR/tydwowPDdjR9dryp+U0cI9UH/
+         rSjnUsZdApU5XLHjjmB/b+3CoddpTjcejWC2fNtcuAhcJ9XuOeBZPZpU3xVgtxIpI3pL
+         8fsqouq/lt3xY7YkH4XJctT48Bj6iOVAXwcLoIxNBaIcEJ3WG1eEz1Wd6S5pA0s2ki0r
+         mE1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWpfZh6nVZZdmNng+TDC3TUvLJjo6BYrNxbNpC2B41aFEyJO2MHU8Cj0B0ZCzFfhsnSttXRC0LGZMygj9k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YziPrzj4nDhUtqi+PIticDNaxbifXsOJnc94HusBErA8LSE14nL
+	1e52+uz0jxpKBNH+c0TyhuKJ4VPLVq6gKu4EnCidLbmCgwjwNoICSufOBoQctPqm/8oLAlKnahN
+	N4uqjE7W9V2nAO15u851PvCuZvjnPOYc=
+X-Gm-Gg: ASbGncvkLYGaU9eQWbmj2C6xqlwShFfNaMuPOjWMENixF09Fae6nULqSFbQVm7xkIK2
+	OsZnVvC7hz3tTF/BK0LCIr3eRiMe4fDPUGuWWu4DTKEyX3cXcn+ABoxmw7IRGOewrhpVw3grcab
+	zIZb3o/ciVzgiPjuisS/XEmi0GH22j8CNgoYTQ/LGRMxE9j6PERQPa/DU3nuatfCOmSUfmDuYSC
+	hSKHn1bQUgVtHddIPrLjqk+/I9Oc8TBmzD0Ii8IUi2BT83cIPgolyjhZHTwdEul1fOlNDNLotpZ
+	WDRaZVdVCmawl+V/D4T1
+X-Google-Smtp-Source: AGHT+IHdqvyiXZIG2OFdfIS5se4cN2dqc9rVIfSmO3bgaMv9f7oUgu2QkiOcy9N9WlxLlxEKZMv7ZFtncLqKJpUd6es=
+X-Received: by 2002:a53:d151:0:b0:636:d3c3:67e2 with SMTP id
+ 956f58d0204a3-63b9a07cb33mr1112628d50.21.1759452825478; Thu, 02 Oct 2025
+ 17:53:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251003004828.GA75385@system.software.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrGLMWRmVeSWpSXmKPExsXC9ZZnkW6w3P0Mg697zS3mrF/DZvF1/S9m
-	iwM/n7NYXN41h83i3pr/rBZfVq9ic2Dz2PRpErvHwt8vmD1OzPjN4vF+31U2j0kv3D0+b5IL
-	YIvisklJzcksSy3St0vgyjgxbTJ7QRdrxbbGLvYGxh/MXYycHBICJhIHvvxggrEv93SC2SwC
-	KhIrdu5lBLHZBNQlbtz4CVYvAlTzZcsxMJtZYBKjxM71hSC2sEC4xPT2cywgNq+AhcTsA1eB
-	5nBxCAn0M0p8+rKaFSIhKHFy5hMWiGYtiRv/XgIVcQDZ0hLL/3GAhDkFLCUm/7sHtldUQFni
-	wLbjYHMkBFawSczfeQHqaEmJgytusExgFJiFZOwsJGNnIYxdwMi8ilEoM68sNzEzx0QvozIv
-	s0IvOT93EyMwtJfV/onewfjpQvAhRgEORiUeXo+CexlCrIllxZW5hxglOJiVRHgTVtzJEOJN
-	SaysSi3Kjy8qzUktPsQozcGiJM5r9K08RUggPbEkNTs1tSC1CCbLxMEp1cAYd+MIo534pZ3B
-	G094393dYcSg+tS55uWk71lP+14lG34SzeM3FH+78NEOt3pVm9NXon7FZwV6RU//936LWvhi
-	pu1SdoLr2ew//pb2c9D8w1wRvbFEqmHyvy7BLx/FNnxN8lzAkpVQxH1UU+9Bz8H8oLWLGLeZ
-	WodZ/LtmsWLi+9q4uvep2iuUWIozEg21mIuKEwGGbsp0aQIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrLLMWRmVeSWpSXmKPExsXC5WfdrBssdz/DYN9aLYs569ewWXxd/4vZ
-	4sDP5ywWh+eeZLW4vGsOm8W9Nf9ZLb6sXsXmwO6x6dMkdo+Fv18we5yY8ZvF4/2+q2wek164
-	eyx+8YHJ4/MmuQD2KC6blNSczLLUIn27BK6ME9Mmsxd0sVZsa+xib2D8wdzFyMkhIWAicbmn
-	kwnEZhFQkVixcy8jiM0moC5x48ZPsBoRoJovW46B2cwCkxgldq4vBLGFBcIlprefYwGxeQUs
-	JGYfuAo0h4tDSKCfUeLTl9WsEAlBiZMzn7BANGtJ3Pj3EqiIA8iWllj+jwMkzClgKTH53z2w
-	vaICyhIHth1nmsDIOwtJ9ywk3bMQuhcwMq9iFMnMK8tNzMwx1SvOzqjMy6zQS87P3cQIDNRl
-	tX8m7mD8ctn9EKMAB6MSD69Hwb0MIdbEsuLK3EOMEhzMSiK8CSvuZAjxpiRWVqUW5ccXleak
-	Fh9ilOZgURLn9QpPTRASSE8sSc1OTS1ILYLJMnFwSjUwLlt+hmt5wvG2r0HfFMOt2m6r5Ua3
-	RoXFNUzhDFkpnTRbin3id03hrb9WH1c8dILZMvLh8aKdn8zyqmfv39PS2LR+XzDnk7+n2uad
-	vnwqVmFas1aC6FnPsmcbinpv8N+fHJ/M8HuedobfdqWnwStCovgrZi4xO5ZYXKE7y/Ts49nr
-	V0R/+dDrqMRSnJFoqMVcVJwIAHatfuZQAgAA
-X-CFilter-Loop: Reflected
+References: <20250916200751.3999354-1-olvaffe@gmail.com> <cf530254-b5f2-44b6-b49e-9144898d75a7@arm.com>
+In-Reply-To: <cf530254-b5f2-44b6-b49e-9144898d75a7@arm.com>
+From: Chia-I Wu <olvaffe@gmail.com>
+Date: Thu, 2 Oct 2025 17:53:34 -0700
+X-Gm-Features: AS18NWAMUQsGVX85ALNwXjhcZfVyXxJqw58XEv-fAwlcGZnD9yFUHyWgXLbTPQA
+Message-ID: <CAPaKu7RK2dW4LYbCj7ksbNJVst+Yn5aetKhJG0N=EyTY8BhYfw@mail.gmail.com>
+Subject: Re: [PATCH] drm/panthor: add query for calibrated timstamp info
+To: Lukas Zapolskas <lukas.zapolskas@arm.com>
+Cc: nd@arm.com, Boris Brezillon <boris.brezillon@collabora.com>, 
+	Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Grant Likely <grant.likely@linaro.org>, Heiko Stuebner <heiko@sntech.de>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	marcin.slusarz@arm.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 03, 2025 at 09:48:28AM +0900, Byungchul Park wrote:
-> On Fri, Oct 03, 2025 at 06:02:10AM +0800, Hillf Danton wrote:
-> > On Thu, 2 Oct 2025 13:38:59 +0200 David Hildenbrand wrote:
-> > >
-> > > If it's a real issue, I wonder if a trylock on the writeback path could
-> > > be an option.
-> > >
-> > Given Thanks to Yunseong for reporting the issue, testing, and confirming if
-> > this patch can resolve the issue, could you share your reproducer with
-> > reviewers Byungchul?
-> 
-> Sure.  Yunseong told me it's 100% reproducable.  Yunseong, can you help
-> him reproduce the issue, please?
-
-+to ysk@kzalloc.com
-
-> 
-> 	Byungchul
+On Fri, Sep 26, 2025 at 3:41=E2=80=AFAM Lukas Zapolskas <lukas.zapolskas@ar=
+m.com> wrote:
+>
+> Hello Chia-I,
+>
+[...]
+> > +     switch (out->cpu_clockid) {
+> > +     case CLOCK_MONOTONIC:
+> > +             cpu_timestamp =3D ktime_get_ns;
+> > +             break;
+> > +     case CLOCK_MONOTONIC_RAW:
+> > +             cpu_timestamp =3D ktime_get_raw_ns;
+> > +             break;
+> > +     case CLOCK_REALTIME:
+> > +             cpu_timestamp =3D ktime_get_real_ns;
+> > +             break;
+> > +     case CLOCK_BOOTTIME:
+> > +             cpu_timestamp =3D ktime_get_boottime_ns;
+> > +             break;
+> > +     case CLOCK_TAI:
+> > +             cpu_timestamp =3D ktime_get_clocktai_ns;
+> > +             break;
+>
+> Out of interest, what is the use-case for the REALTIME, BOOTTIME and TAI =
+clocks? Looking at
+> VK_KHR_calibrated_timestamps, it seems that only MONOTONIC and MONOTONIC_=
+RAW are exposed directly.
+> I worry that providing the other clocks may make it easier for accidental=
+ly querying timestamps that
+> can't be correlated with driver state. A recent Mesa change aligned PanVK=
+ Perfetto instrumentation on
+> MONOTONIC_RAW [1], and the performance counter patches I've proposed also=
+ use MONOTONIC_RAW
+> as the only clock source.
+I followed drm_xe_query_engine_cycles without giving much thought. As
+long as we leave room for future extension, we can certainly only
+allow those required by vulkan.
 
