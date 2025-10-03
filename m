@@ -1,124 +1,131 @@
-Return-Path: <linux-kernel+bounces-840971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A37CABB5D7F
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 05:15:40 +0200 (CEST)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E0E5BB5D85
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 05:16:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58C943AD6F7
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 03:15:39 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DE80134447E
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 03:16:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7D7C42AA9;
-	Fri,  3 Oct 2025 03:15:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ahh9/NqI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85F321386B4;
+	Fri,  3 Oct 2025 03:16:39 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E29F14A01
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 03:15:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D95E44A01
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 03:16:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759461334; cv=none; b=EyyaNCmPphWwosDJfJMcsJ30w2/o6i8hpg+i7IZtn4RinyB3NyOLkyEHWHE2kvDe1Rrz4Z73htfWr0YlJgKwkXbkSSNbVEu4be/o5JlaWJrzjWgBRII2/zJAvByu2TvqjUGcGzHUAQLScFarh+RxUFJvyLNmEvOik27q7ipHgJo=
+	t=1759461399; cv=none; b=VUb6uRC8RjTva/Cy4hxaaYEkNuXd0mr/0Lvsis5W6D6GaEims1qxFdbA2uxYs/nQjl32wZ9xYn3H+XdreVfQ8p5C/zpQexFtcWNrKWN5v+9Nlbr0RRGveOnIR17WX86a2uZCGVHvDyC9tlr4CBLPzeNjTVOhU/ke+j4Iv0SweOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759461334; c=relaxed/simple;
-	bh=sk3y8tknfOwTAtWs2x2BOp4Uzd3iFdPo7zrPBdb6P4M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bjju2CiVDOVNvwn2H573wB00k3oveOJaK8HWL0lFjMuCq1lbnVxQccpNdy8RF9vudQBdiIk2xrMvb39Kpwz85G+QzVbG7bcajL2rQp/nU0unP5ZBKYOTuks+mkrl1sS3DvhTPpC8Qz9zOkB2QrbM1fHIv7zB+VPskw+R3LL0tqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ahh9/NqI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DCCDC4CEF4;
-	Fri,  3 Oct 2025 03:15:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759461333;
-	bh=sk3y8tknfOwTAtWs2x2BOp4Uzd3iFdPo7zrPBdb6P4M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ahh9/NqIy7/60+4tECOftLkCVDmack28EU778HdJ8yX5sjjp/DpO567ReWibvG0IM
-	 g9PK9I/85fRD41KNQMdnhdSoGhQZWY1ixYvsCm4TJRe/XpI2BPqFh1pVdlCsSclxaz
-	 txICycc584ykAmYE1dmsNZv1Q13UEtw/KdmQE5tHRNqfS7hyroeznLTIm/5xQB5zsY
-	 Zjjlg0QJpzaQA3ELd0zA8mtaKsVFvyIQSJbL6CryJMYd/dNJRYlWTuU/+NeLxSMtbw
-	 n6g+88agY4d+EOkJEg5/yPBTULNhtVL716TNYEJeRL8OedayViNByARBhEzv/g+LOG
-	 4rdTJI+/pkIXQ==
-Date: Fri, 3 Oct 2025 03:15:31 +0000
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Chao Yu <chao@kernel.org>
-Cc: Haofeng Li <920484857@qq.com>, linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org, Haofeng Li <13266079573@163.com>,
-	Haofeng Li <lihaofeng@kylinos.cn>
-Subject: Re: [PATCH] f2fs: fix ifolio memory leak in f2fs_move_inline_dirents
- error path
-Message-ID: <aN8_05vg6Lz1eAkF@google.com>
-References: <tencent_3FA2C956B557ED4D050EB26922B50D3CF40A@qq.com>
- <3bdcdb11-2d67-4842-b21c-2b41ce5faea9@kernel.org>
+	s=arc-20240116; t=1759461399; c=relaxed/simple;
+	bh=NDRM+J9lKX33WXEMjOf9LqOMGSK46DWBIK5lKWB0k7o=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=pbEVUE1qHBChLSc1ZdUtfoAvsoJg+6xS5Deop42ollkinPl3vq2v2BMS7Y5E9IzaKdt5/ydZGPpxwdX2OeXMGkt3kz8i3JdqufQ+Sy/e2/MtX++yQm7PyNOGApq3VyQ0j5xLtCX6+gCT2UgOxpSDZ4bTlLUMfu3mZykhGBfQIAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-42575c5c876so20596655ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 20:16:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759461393; x=1760066193;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CzsTwJgfq/2Y2E9BOjtYkmKVXp5nzlvk+b2UGHuqZjk=;
+        b=Pwvj789woefwfqQ1AumZj1FPkiwjlvDskpKkWgyhlQYbG5MAnF5coGoH1ATtKvtWp+
+         TzhGMl5nlA+LfdEYn0Iua7sT/WyCOuQZItEYK7uxjROI2xo1RHj5n3mqeeMMLMtAGP5X
+         kuH+JaFrDD9n2KkfRX9eY9s0DRn0LSGleYq8WVKshrIEJoqkgcpC7EVD/6x4RCZFzy4P
+         DgMPZCfNIkr3Avi0IYAp2yy+y+vY1S2O4FcawjDjpdX51YBhgDHZRApo2erv/FrLOgb1
+         DI1Q3fUivFBIS0jw6/5052e8FBD71SBcVrlsl9VTRuHc1R0AGs1j/uNt2XSKyOyP1T6v
+         2XuA==
+X-Gm-Message-State: AOJu0YxGe+dLixVw9hzP3j2WZybJ7ZMQNh0me0mu3SKRXhwLlK822ja5
+	Z+59ZkFqVY2Xf7SQC0/fls39JQ+8WnhnMKd6oevW3yiP11B0DgfAHuMPQ8yQBFnL/3hzMOOmdPK
+	DAoGpqk2ruSDg+OS0LMEvQOAL+dtsjm7wchS/yrB9qNBaWAzfNe7aaEyLxwM=
+X-Google-Smtp-Source: AGHT+IFzzXzEMUHWGosUbXS3KuR7pcpcNkxlUGDD6X5aHnXyRrJVepyJRW+ziolQlfi/grApj19om+CXh1WshlXQKvhoh5bbOgcU
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3bdcdb11-2d67-4842-b21c-2b41ce5faea9@kernel.org>
+X-Received: by 2002:a05:6e02:1546:b0:40d:e7d8:63fa with SMTP id
+ e9e14a558f8ab-42e7adca144mr17446405ab.26.1759461393079; Thu, 02 Oct 2025
+ 20:16:33 -0700 (PDT)
+Date: Thu, 02 Oct 2025 20:16:33 -0700
+In-Reply-To: <68ddc2f9.a00a0220.102ee.006d.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68df4011.050a0220.1696c6.003d.GAE@google.com>
+Subject: Forwarded: [PATCH] ext4: reject inline data flag when i_extra_isize
+ is zero
+From: syzbot <syzbot+3ee481e21fd75e14c397@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 10/03, Chao Yu wrote:
-> On 2025/9/30 17:16, Haofeng Li wrote:
-> > From: Haofeng Li <lihaofeng@kylinos.cn>
-> > 
-> > Fixes a memory leak issue in f2fs_move_inline_dirents() where
-> > the ifolio is not properly released in certain error paths.
-> > 
-> > Problem Analysis:
-> > - In f2fs_try_convert_inline_dir(), ifolio is acquired via f2fs_get_inode_folio()
-> > - When do_convert_inline_dir() fails, the caller expects ifolio to be released
-> > - However, in f2fs_move_inline_dirents(), two specific error paths don't release ifolio
-> > 
-> > Fixes: 201a05be9628a ("f2fs: add key function to handle inline dir")
-> > Signed-off-by: Haofeng Li <lihaofeng@kylinos.cn>
-> > ---
-> >   fs/f2fs/inline.c | 8 ++++++--
-> >   1 file changed, 6 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
-> > index 58ac831ef704..2496866fc45d 100644
-> > --- a/fs/f2fs/inline.c
-> > +++ b/fs/f2fs/inline.c
-> > @@ -425,7 +425,7 @@ static int f2fs_move_inline_dirents(struct inode *dir, struct folio *ifolio,
-> >   	set_new_dnode(&dn, dir, ifolio, NULL, 0);
-> >   	err = f2fs_reserve_block(&dn, 0);
-> 
-> f2fs_reserve_block() will call f2fs_put_dnode() in its error path, it has
-> unlocked & released inode folio?
-> 
-> >   	if (err)
-> > -		goto out;
-> > +		goto out_put_ifolio;
-> >   	if (unlikely(dn.data_blkaddr != NEW_ADDR)) {
-> >   		f2fs_put_dnode(&dn);
-> 
-> Ditto, or am I missing something?
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-It seems you're right. Let me drop this patch.
+***
 
-> 
-> Thanks,
-> 
-> > @@ -434,7 +434,7 @@ static int f2fs_move_inline_dirents(struct inode *dir, struct folio *ifolio,
-> >   			  __func__, dir->i_ino, dn.data_blkaddr);
-> >   		f2fs_handle_error(F2FS_F_SB(folio), ERROR_INVALID_BLKADDR);
-> >   		err = -EFSCORRUPTED;
-> > -		goto out;
-> > +		goto out_put_ifolio;
-> >   	}
-> >   	f2fs_folio_wait_writeback(folio, DATA, true, true);
-> > @@ -479,6 +479,10 @@ static int f2fs_move_inline_dirents(struct inode *dir, struct folio *ifolio,
-> >   out:
-> >   	f2fs_folio_put(folio, true);
-> >   	return err;
-> > +
-> > +out_put_ifolio:
-> > +	f2fs_folio_put(ifolio, true);
-> > +	goto out;
-> >   }
-> >   static int f2fs_add_inline_entries(struct inode *dir, void *inline_dentry)
+Subject: [PATCH] ext4: reject inline data flag when i_extra_isize is zero
+Author: kartikey406@gmail.com
+
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+
+ Prevent use-after-free in ext4_search_dir by rejecting inodes that claim to
+ have inline data but have no extra inode space allocated. ext4 inline data is
+ stored in the extra inode space beyond the standard 128-byte inode structure.
+ This requires i_extra_isize to be non-zero to provide space for the
+ system.data xattr that stores the inline directory entries or file data.
+ However, a corrupted filesystem can craft an inode with both: - i_extra_isize
+ == 0 (no extra space) - EXT4_INODE_INLINE_DATA flag set (claims to use extra
+ space) This creates a fundamental inconsistency. When i_extra_isize is zero,
+ ext4_iget() skips calling ext4_iget_extra_inode(), which means the inline
+ xattr validation in check_xattrs() never runs. Later, when
+ ext4_find_inline_entry() attempts to access the inline data, it reads
+ unvalidated and potentially corrupt xattr structures, leading to
+ out-of-bounds memory access and use-after-free. Fix this by validating in
+ ext4_iget() that if an inode has the EXT4_INODE_INLINE_DATA flag set,
+ i_extra_isize must be non-zero. This catches the corruption at inode load
+ time before any inline data operations are attempted. 
+
+Reported-by: syzbot+3ee481e21fd75e14c397@syzkaller.appspotmail.com 
+Closes:https://syzkaller.appspot.com/bug?extid=3ee481e21fd75e14c397 
+Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
+
+---
+ fs/ext4/inline.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/fs/ext4/inline.c b/fs/ext4/inline.c
+index 1b094a4f3866..d6541e661dfa 100644
+--- a/fs/ext4/inline.c
++++ b/fs/ext4/inline.c
+@@ -1614,9 +1614,19 @@ struct buffer_head *ext4_find_inline_entry(struct inode *dir,
+ 
+ 	if (ext4_get_inline_size(dir) == EXT4_MIN_INLINE_DATA_SIZE)
+ 		goto out;
+-
++
+ 	inline_start = ext4_get_inline_xattr_pos(dir, &is.iloc);
+ 	inline_size = ext4_get_inline_size(dir) - EXT4_MIN_INLINE_DATA_SIZE;
++	void *inode_start = ext4_raw_inode(&is.iloc);
++	void *inode_end = inode_start + EXT4_INODE_SIZE(dir->i_sb);
++
++	if (inline_start < inode_start ||
++	    inline_start >= inode_end ||
++	    inline_start + inline_size > inode_end) {
++		 printk(KERN_WARNING "found error in ext4_find_inline_entry\n");
++		 ret = -EFSCORRUPTED;
++		goto out;
++	}
+ 
+ 	ret = ext4_search_dir(is.iloc.bh, inline_start, inline_size,
+ 			      dir, fname, 0, res_dir);
+-- 
+2.43.0
+
 
