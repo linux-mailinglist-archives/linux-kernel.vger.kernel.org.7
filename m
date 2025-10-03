@@ -1,87 +1,181 @@
-Return-Path: <linux-kernel+bounces-841533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD9ACBB79BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 18:52:10 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A2ADBB79C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 18:52:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63E5A4864BE
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 16:52:09 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4CF2B4EDAF3
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 16:52:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE9632D2387;
-	Fri,  3 Oct 2025 16:52:05 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA5292BDC33
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 16:52:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C01F32D29CF;
+	Fri,  3 Oct 2025 16:52:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="sUW4RWmm"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C5962D2485;
+	Fri,  3 Oct 2025 16:52:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759510325; cv=none; b=JNX1GTes7EYUGTpucDtRAmAjjbenyYDO0lhXVIJSswx86hpb0ipmYtoN8ieGGlsGVUKCaObZ0Qw2pESmqcSHTe63hnLx4afOs5mb5khQp8hRev398I7qqzo0x8IZ7XShi0enVJuZAY2ix2GodWGqgwORPN9JEMzI9i2iB+QBLLk=
+	t=1759510342; cv=none; b=aVrIVBh2TrAgmns8xduFsMnP2l9nDp2ZVz/r77q6Mk2qCfD0/m6npikskEJg4/UZibhThDzgrwrKB5405xB/3JlGkwJRkEdkqkAH4ut70S52z4xt0yqTyK5Y0h2dFGrV5DyiL2vybw7R8+nopqMOAab+1cNYqm6rg65sfEgYlXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759510325; c=relaxed/simple;
-	bh=JTaA8zjQAbMQ+/VFUovnfJxIi02YH2pRK1a/Jzh+wRg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=NYnygIxzQqW+T0rX1csRNig8q7DiVWaF0iuiVy0DF9cmcr/37tcMQJWWvlXUDbBQ3PVxqEsZK4/ERzesECYdO7JDq7Z0OQ/twY5lh07GPH8WzZSgsH2IVXT1F30uOkp+93nwhSkhkwnTkQls3TFwdMEqloZCH4EVRUHqz5+I0dE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-42d85031919so34400925ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 09:52:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759510323; x=1760115123;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AKNPnLewPI4iofJmzNCWaRuSIl2pCIXr8sLsxWgGvvg=;
-        b=VRkvxuGFG27wupHxV4lJ0nxuF4EGTX8ugQRESWXApK6IkM/sisMH3rMAnp9zzZEhAe
-         OIGDWmg7a/Gqr0cktXA6fHIrn0Bn6Tjh3RbnP8+bpfqnJI7W+1PwkpxwnjfgCLFQ/v0x
-         a4ibhQ0yieldc0EVwR5qlivPNIx/tGKLXJq1dRU31GkUJuF6bwLQaW6u8pvX+gic8HCp
-         abgJybg5N9/Arp0A1lmp7gfwgy2Ound4DGM/9qGSLfxvQypKegXKtCt/RQzKh/HdG/Rs
-         pjDKlhYrMB31XFsgLdvauU5HZM5tVppT4sNJOVrmqUBNGPMubvgsczFDoY/c0kOtDrHW
-         pX0A==
-X-Forwarded-Encrypted: i=1; AJvYcCVARUj+iFaVGUU7RD6QXUEGmeoUOq2Ba1vJS8AiWU8lyUVfctxxJot6qHU26zNatA/WXbOKlXXsg7sDU7c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywntnzz+sn6x/Wxl+VcR4HUBedkQy4ijqNMgcdI7iwhzn4PbBbX
-	7J6jM02oSfH8i6j5nt85vSJbhUdSPpmXViyNK04A+LykA2/CDKoSbLYmjIO0lU01ZDfpklkQirp
-	22WWTkThFEUaAFHIhqGC8OYEiSGqhjyJdgEJXphUDytEDUk9mZktECfzTBMk=
-X-Google-Smtp-Source: AGHT+IGyMt3kN5JcEi9YY4nqLAsT/n9PYISoq6h+V8MeG/SfU1V8Cix+jyrva6LJ5/WN/CygxsDCwi5O41t6twqA8t26AKb7bHu3
+	s=arc-20240116; t=1759510342; c=relaxed/simple;
+	bh=XopMqeBEhXWvFMPQFEtogrEfzYADeZLpFbReGstZ9vM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZG83ExxNzudPYpvbjQu9jexSZJ1cXgDfQnJNCEyzP8ezCVK14tB+3zriYws7kV9ujH0UdxteV5c1aZYA//I+w3pQhu2OLXlnTT7ZFoaJ1KqIqUuHQj9FGIlEOHenPZfqIyLckccUqYWLFVpfAYzGIn5AfDAzhAuOmU2nVWU+W/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=sUW4RWmm; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from skinsburskii.localdomain (unknown [52.148.171.5])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 73B94211D8C8;
+	Fri,  3 Oct 2025 09:52:19 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 73B94211D8C8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1759510339;
+	bh=FD7HWPe0C/v7A3S/nQyeRDNE2l3vn3CGHv8EhytZTng=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sUW4RWmmBm7LEZN5/klHAbY/rFTlyD4az9XqYLPRhydkxVvYz2ALNt0G+nCfciyzN
+	 7j7YdZt+Dj0Ejf5cgj2daCxzyhiOjQZojzopWH8Wie6bMAbfDFICgjKjZJsK/Ayxbv
+	 8EBQtpUeh6lDPZemKG66Ex1/Zkfk/PIW/m4CEnB4=
+Date: Fri, 3 Oct 2025 09:52:17 -0700
+From: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
+To: Michael Kelley <mhklinux@outlook.com>
+Cc: "kys@microsoft.com" <kys@microsoft.com>,
+	"haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+	"wei.liu@kernel.org" <wei.liu@kernel.org>,
+	"decui@microsoft.com" <decui@microsoft.com>,
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 3/5] Drivers: hv: Batch GPA unmap operations to
+ improve large region performance
+Message-ID: <aN__QWQZkXN8k1-V@skinsburskii.localdomain>
+References: <175942263069.128138.16103948906881178993.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
+ <175942296162.128138.15731950243504649929.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
+ <SN6PR02MB415777407333F3EC40CC05B7D4E4A@SN6PR02MB4157.namprd02.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b24:b0:42d:878b:6e40 with SMTP id
- e9e14a558f8ab-42e7ad336d6mr52290985ab.13.1759510322880; Fri, 03 Oct 2025
- 09:52:02 -0700 (PDT)
-Date: Fri, 03 Oct 2025 09:52:02 -0700
-In-Reply-To: <20251003161140.2960355-1-kartikey406@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68dfff32.050a0220.2c17c1.0025.GAE@google.com>
-Subject: Re: [syzbot] [mm?] WARNING in hugetlb_vma_assert_locked
-From: syzbot <syzbot+f26d7c75c26ec19790e7@syzkaller.appspotmail.com>
-To: broonie@kernel.org, kartikey406@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <SN6PR02MB415777407333F3EC40CC05B7D4E4A@SN6PR02MB4157.namprd02.prod.outlook.com>
 
-Hello,
+On Fri, Oct 03, 2025 at 12:27:13AM +0000, Michael Kelley wrote:
+> From: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com> Sent: Thursday, October 2, 2025 9:36 AM
+> > 
+> > Reduce overhead when unmapping large memory regions by batching GPA unmap
+> > operations in 2MB-aligned chunks.
+> > 
+> > Use a dedicated constant for batch size to improve code clarity and
+> > maintainability.
+> > 
+> > Signed-off-by: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
+> > ---
+> >  drivers/hv/mshv_root.h         |    2 ++
+> >  drivers/hv/mshv_root_hv_call.c |    2 +-
+> >  drivers/hv/mshv_root_main.c    |   15 ++++++++++++---
+> >  3 files changed, 15 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/hv/mshv_root.h b/drivers/hv/mshv_root.h
+> > index e3931b0f12693..97e64d5341b6e 100644
+> > --- a/drivers/hv/mshv_root.h
+> > +++ b/drivers/hv/mshv_root.h
+> > @@ -32,6 +32,8 @@ static_assert(HV_HYP_PAGE_SIZE == MSHV_HV_PAGE_SIZE);
+> > 
+> >  #define MSHV_PIN_PAGES_BATCH_SIZE	(0x10000000ULL / HV_HYP_PAGE_SIZE)
+> > 
+> > +#define MSHV_MAX_UNMAP_GPA_PAGES	512
+> > +
+> >  struct mshv_vp {
+> >  	u32 vp_index;
+> >  	struct mshv_partition *vp_partition;
+> > diff --git a/drivers/hv/mshv_root_hv_call.c b/drivers/hv/mshv_root_hv_call.c
+> > index c9c274f29c3c6..0696024ccfe31 100644
+> > --- a/drivers/hv/mshv_root_hv_call.c
+> > +++ b/drivers/hv/mshv_root_hv_call.c
+> > @@ -17,7 +17,7 @@
+> >  /* Determined empirically */
+> >  #define HV_INIT_PARTITION_DEPOSIT_PAGES 208
+> >  #define HV_MAP_GPA_DEPOSIT_PAGES	256
+> > -#define HV_UMAP_GPA_PAGES		512
+> > +#define HV_UMAP_GPA_PAGES		MSHV_MAX_UNMAP_GPA_PAGES
+> > 
+> >  #define HV_PAGE_COUNT_2M_ALIGNED(pg_count) (!((pg_count) & (0x200 - 1)))
+> > 
+> > diff --git a/drivers/hv/mshv_root_main.c b/drivers/hv/mshv_root_main.c
+> > index 7ef66c43e1515..8bf0b5af25802 100644
+> > --- a/drivers/hv/mshv_root_main.c
+> > +++ b/drivers/hv/mshv_root_main.c
+> > @@ -1378,6 +1378,7 @@ mshv_map_user_memory(struct mshv_partition *partition,
+> >  static void mshv_partition_destroy_region(struct mshv_mem_region *region)
+> >  {
+> >  	struct mshv_partition *partition = region->partition;
+> > +	u64 page_offset;
+> >  	u32 unmap_flags = 0;
+> >  	int ret;
+> > 
+> > @@ -1396,9 +1397,17 @@ static void mshv_partition_destroy_region(struct mshv_mem_region *region)
+> >  	if (region->flags.large_pages)
+> >  		unmap_flags |= HV_UNMAP_GPA_LARGE_PAGE;
+> > 
+> > -	/* ignore unmap failures and continue as process may be exiting */
+> > -	hv_call_unmap_gpa_pages(partition->pt_id, region->start_gfn,
+> > -				region->nr_pages, unmap_flags);
+> > +	for (page_offset = 0; page_offset < region->nr_pages; page_offset++) {
+> > +		if (!region->pages[page_offset])
+> > +			continue;
+> > +
+> > +		hv_call_unmap_gpa_pages(partition->pt_id,
+> > +					ALIGN(region->start_gfn + page_offset,
+> > +					      MSHV_MAX_UNMAP_GPA_PAGES),
+> 
+> Seems like this should be ALIGN_DOWN() instead of ALIGN().  ALIGN() rounds
+> up to get the requested alignment, which could skip over some non-zero
+> entries in region->pages[].
+> 
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Indeed, the goal is to unmap in 2MB chunks as it's the max payload that
+can be passed to hypervisor.
+I'll replace it with ALIGN_DOWN in the next revision.
 
-Reported-by: syzbot+f26d7c75c26ec19790e7@syzkaller.appspotmail.com
-Tested-by: syzbot+f26d7c75c26ec19790e7@syzkaller.appspotmail.com
+> And I'm assuming the unmap hypercall is idempotent in that if the specified
+> partition PFN range includes some pages that aren't mapped, the hypercall
+> just skips them and keeps going without returning an error.
+> 
 
-Tested on:
+It might be the case, but it's not reliable.
+If the region size isn’t aligned to MSHV_MAX_UNMAP_GPA_PAGES (i.e., not
+aligned to 2M), the hypervisor can return an error for the trailing
+invalid (non-zero) PFNs.
+I’ll fix this in the next revision.
 
-commit:         47a8d4b8 Add linux-next specific files for 20251003
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=16b765cd980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5cc2d3410fac6d84
-dashboard link: https://syzkaller.appspot.com/bug?extid=f26d7c75c26ec19790e7
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=10cb9334580000
+> > +					MSHV_MAX_UNMAP_GPA_PAGES, unmap_flags);
+> > +
+> > +		page_offset += MSHV_MAX_UNMAP_GPA_PAGES - 1;
+> 
+> This update to the page_offset doesn't take into account the effect of the
+> ALIGN (or ALIGN_DOWN) call.  With a change to ALIGN_DOWN(), it may
+> increment too far and perhaps cause the "for" loop to be exited prematurely,
+> which would fail to unmap some of the pages.
+> 
 
-Note: testing is done by a robot and is best-effort only.
+I’m not sure I see the problem here.  If we align the offset by
+MSHV_MAX_UNMAP_GPA_PAGES and unmap the same number of pages, then we
+should increment the offset by that very same number, shouldn’t we?
+
+Thanks,
+Stanislav
+
+> > +	}
+> > 
+> >  	mshv_region_invalidate(region);
+> > 
+> > 
+> > 
+> 
 
