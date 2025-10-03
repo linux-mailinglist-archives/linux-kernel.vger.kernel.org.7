@@ -1,99 +1,99 @@
-Return-Path: <linux-kernel+bounces-841679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7395CBB7FA9
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 21:27:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 265EEBB7FAC
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 21:28:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A39919E1DB6
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 19:27:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BA643C3FFF
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 19:28:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28B051DF258;
-	Fri,  3 Oct 2025 19:27:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B0FB228CBC;
+	Fri,  3 Oct 2025 19:27:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MVlYUeUi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XNjj6Kis"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87D0E1A9F9B
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 19:27:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96A0D1A9F9B;
+	Fri,  3 Oct 2025 19:27:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759519648; cv=none; b=avQoz67FwHtdcRiu3dtYSH77mAXQvyIwwccBwgxe1Xf0jiBJcx9zh4PC8Ljg0tkH2BLr3j+rSQaSPdH/AzMLM4Guhw0rHCxTVW9sY6xYsGbY76fVewW70vCoYI7BdGDwAQStlEItarsiCJuwTTwOUF33qjWG232EmayZXmBUKLo=
+	t=1759519678; cv=none; b=PMX8ntYBhvGqz2m7pHjrE5/xwFMFABeo5zfdNrNaK3GEQJGkJxuPqWnUZNnT2d5Egb3b+Ao6bhMrq9PoC5VZg1YWlzYii/6ITbalr7Yz9I2JnVccFpgcOzlDe3VPXt5azvHFdNewoqgGnhc800Dm9kraXlQh+HLD00f/mo/t7NU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759519648; c=relaxed/simple;
-	bh=f/LqKLc9MJ+mLYQaPZ1lV8+MeJ9MaG9Xyfc/PZeq8As=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p7AIxXYuvIsQaJOa4oOwwzuRCCh8d1jG/jU4Y/q5gJywNzNzOuLBoThuoNR708oHb7y5CYbgciNbWEIrKek2Q9GmzbRsijcqMP8FdCKWFrkNA5A7wCYihJhHL3fyh/ISbrmYk1UQVageRoT6a1kbOUbwLdM8mmTPI+KstCQy/ew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MVlYUeUi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A21DC4AF0C
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 19:27:28 +0000 (UTC)
+	s=arc-20240116; t=1759519678; c=relaxed/simple;
+	bh=+3/SNgTkdPUgDjGUiVYWGQyYCU3vEkAv+rXQrlV99TU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tWmX5LU01os8e/To22hCwabb2BUxjKpOk4QD4zW0U6uSMApkQlR4C7m+1oe2a+V9NrpMpCHlOyDP1X9dD6Hb2b/D+yuV3bo8Kohp6bbuYkdPk3LZhTt5k2NT3WUhbJWJQowhFR78wbl2GmspCxkMf4SjUyZ+fDwDiRP0iGS8j0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XNjj6Kis; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12C12C4CEF5;
+	Fri,  3 Oct 2025 19:27:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1759519648;
-	bh=f/LqKLc9MJ+mLYQaPZ1lV8+MeJ9MaG9Xyfc/PZeq8As=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=MVlYUeUiAg3BfjBIiU137OYQqbr93vHHAviTvIqdpViuNOkXbZ7GyaOYJaW5ubhem
-	 rodbrzz3bkkkOTlnNjwEGeKTDhZzFHeFwAptOwHBdUQz4b0j5TYyxlcKHMGVjiyK5z
-	 twn5TyRKB9J13RdrrepyYnT8YL3OPgQa84olKLosXTUhp3m5suBeIV7DxrVZwDVv1z
-	 wLAzFwstbgrZ8PzZrDNYwwTwvfpAA8YD2BFOANPHG0IMARbZkqt070GoTz+XSj48l8
-	 APO5jdiDaIVH/CwQxVE66WzEN7kOE45ID+S1gVjlyYNXvrd5aOr7BLK2RimKgrz+04
-	 8wna9vdF2q3MQ==
-Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-43f4fca2f43so1448310b6e.3
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 12:27:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWv6PKT+BSt53z0l/xhstTgvINWbXSTr/6TfLYLoDKNzTgH3rfdCdl0UfDZMkswCLMQ2I4l++6o/pphDSE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDH/XycQb4ofBClXKU+3YfTUdrtTDfrLN3M3hYByOORQHOT3TY
-	M9XtQKpd0z8CprPSw+j2DBmoqWv6UYTm3FKwIX39ujY/+qdxqLYDNcHCmS1mtM39nNpvTxGXLJW
-	aAVH7ahhpdzVPWr3lugohxiVusl8EmhM=
-X-Google-Smtp-Source: AGHT+IHULswGdoIFKuCxTcQrBU+FeeCAQQ7e5W/n7YJIg5v1QKXCoxc/GmWqOGq4cK/6X0JqkzJzL1RpZuqao4iuzKE=
-X-Received: by 2002:a05:6808:1525:b0:438:bdb0:89ba with SMTP id
- 5614622812f47-43fc178aad2mr1849983b6e.3.1759519647460; Fri, 03 Oct 2025
- 12:27:27 -0700 (PDT)
+	s=k20201202; t=1759519678;
+	bh=+3/SNgTkdPUgDjGUiVYWGQyYCU3vEkAv+rXQrlV99TU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XNjj6KisEUlG1vevBXkFRZwxHBTDAf6+BT8+bIPLC5FAZpZWU/+RIfWetfw6hsIIE
+	 3g0TeQWhQ3rRPYUM1ycRh3qj4bApdhucgIpz5pEN6WYTZ5VOyKRfj9uR6E3nqStNyX
+	 uhHHGIAkWHlbTi+RTkZrJyCPpeyP2qJcftjTstqr4D2rt6b5t2POsYxTPst0kJbsUW
+	 Dl/C/qDa/kRgjLLWCUB/cVLl+KLJt9g8A54hOl9r1e/unHX5+Sw0y+rzDOtcLPCgFf
+	 P0WNR9h177Wm//ElDAxRmph3rlVdhJ1VrldGIIXPlCW5D/LbKmtViTamluyby2tzNt
+	 vELMsOVcGoUEA==
+Date: Fri, 3 Oct 2025 16:27:55 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: thomas.falcon@intel.com
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>
+Subject: Re: [Patch v3 0/2] perf record: ratio-to-prev event term for auto
+ counter reload
+Message-ID: <aOAju-lDNHBFnYWx@x1>
+References: <20251002234308.64218-1-thomas.falcon@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251001-libthermal-install-v1-0-3071fd3f6612@pengutronix.de> <59a02980-3d3f-4baa-b466-271121a97a2e@linaro.org>
-In-Reply-To: <59a02980-3d3f-4baa-b466-271121a97a2e@linaro.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 3 Oct 2025 21:27:15 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0i7JKLNfi5nDFrJuOuHfQ7k01uve=WV-KccNgnNKGLr+Q@mail.gmail.com>
-X-Gm-Features: AS18NWB5iB4OoZmA0nz146FsSGzdA-mFd_FFtInMF9a01s7P754Smg5cbBvVQJ4
-Message-ID: <CAJZ5v0i7JKLNfi5nDFrJuOuHfQ7k01uve=WV-KccNgnNKGLr+Q@mail.gmail.com>
-Subject: Re: [PATCH 0/3] tools: lib: thermal: compile/install improvements
-To: Daniel Lezcano <daniel.lezcano@linaro.org>, Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Emil Dahl Juhl <juhl.emildahl@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251002234308.64218-1-thomas.falcon@intel.com>
 
-On Fri, Oct 3, 2025 at 4:11=E2=80=AFPM Daniel Lezcano <daniel.lezcano@linar=
-o.org> wrote:
->
-> On 10/1/25 13:40, Sascha Hauer wrote:
-> > This series contains some installation/compilation improvements for
-> > libthermal.
-> >
-> > Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
-> > ---
-> > Emil Dahl Juhl (2):
-> >        tools: lib: thermal: don't preserve owner in install
-> >        tools: lib: thermal: expose thermal_exit symbols
-> >
-> > Sascha Hauer (1):
-> >        tools: lib: thermal: use pkg-config to locate libnl3
-> >
-> >   tools/lib/thermal/Makefile       | 9 +++++++--
-> >   tools/lib/thermal/libthermal.map | 5 ++++-
-> >   2 files changed, 11 insertions(+), 3 deletions(-)
-> > ---
->
-> Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
->
-> Thanks for the series
+On Thu, Oct 02, 2025 at 06:43:04PM -0500, thomas.falcon@intel.com wrote:
+> The goal is to limit event sampling to cases when the branch miss rate
+> exceeds 20%. If the branch instructions sample period is exceeded
+> first, both events are reloaded.  If branch misses exceed their
+> threshold first, only the second counter is reloaded, and a sample is
+> taken.
+ 
+> To simplify this, provide a new “ratio-to-prev” event term
+> that works alongside the period event option or -c option.
+> This would allow users to specify the desired relative rate
+> between events as a ratio, making configuration more intuitive.
+ 
+> With this enhancement, the equivalent command would be:
+> 
+> perf record -e "{cpu_atom/branch-misses/ppu,\
+> cpu_atom/branch-instructions,period=1000000,ratio_to_prev=5/u}" \
+> -- ./mispredict
+> or
+> perf record -e "{cpu_atom/branch-misses/ppu,\
+> cpu_atom/branch-instructions,ratio-to-prev=5/u}" -c 1000000 \
+> -- ./mispredict
+> [1] https://lore.kernel.org/lkml/20250327195217.2683619-1-kan.liang@linux.intel.com/
+> v3: rebase to current perf-tools-next
 
-Applied as 6.18 material, thanks!
+Thanks, applied to perf-tools-next,
+
+- Arnaldo
+ 
+> v2: (changes below suggested by Ian Rogers):
 
