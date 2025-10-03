@@ -1,190 +1,165 @@
-Return-Path: <linux-kernel+bounces-841486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADD77BB77FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 18:13:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B60A7BB7808
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 18:14:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82BBD3ACBB0
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 16:11:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE04E3A964E
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 16:13:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D0D72BD001;
-	Fri,  3 Oct 2025 16:11:52 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 063472BDC0C;
+	Fri,  3 Oct 2025 16:13:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eSVl+qmC"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9565C26E6FA
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 16:11:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4179288537
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 16:13:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759507912; cv=none; b=Td7RCpDpZbtYuFpncLs6HoRRC+PX2z3XfGTK77miYMA6JgqWiV1weniMpZyPGxxHHtOyLLtXS40bwTjy3w2bIyClKwf2fsoc029fAD5XK4pX4SXhxVSyL5cGnRr/E6m01GnIKIGQpeT48aQe732gjrY7ue4euM2cP/0w83HhV0w=
+	t=1759508009; cv=none; b=CnOfhfBM6rDEeivqQW24saivKrC+EfnqEJ6KD8iHNS2oibgyhJYOujaEY58FmsITu2vgKbX709PPlx0DPdyvtxsihV9hFRfEDtWbGDMA32tghEeRbEv+awQuPWWzsbXl2l1UJMJbngCYZti2EEQE69Za9qUHJfYqqeQ7Q+1jJzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759507912; c=relaxed/simple;
-	bh=MCB7Uuj+bcnO37OYnfvqezeYus9dr2yQQs7xODWXmyk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=AiScBjrfS4KtMiXAOpTgau4Hr/RRlXIbHMlRz52VELB5xK4ImiHis7kHt+97bqoSfXx2m4wdGHapJgXhzfvaL2gO2uMjNq430NNrA2IQNJstrf2POoPGl+tuDAh4Z3qv7k3+gnKM7iVdbIjqaZPfoY0FdhgaJT1LixabQJ+jvrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-90efeb58159so305696139f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 09:11:50 -0700 (PDT)
+	s=arc-20240116; t=1759508009; c=relaxed/simple;
+	bh=YST8ZF3CcYfjTEJjqYRKNJnCudGeZXmyFr2oVhiwg2c=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=RDZg1oiASlApon5WwM/M+c9xu+skDlPVa4vAhKVk0bEEWb+kfBsV5cW/wl7zrHAkDl71NNzTokTxSBJI++DjwKnQ2cZwx+yu9z3OTrmcn5u/0IZvjoonsZN26MReZ8Ff+RN0ra5LRkal0vQbPnCdasZzt+XW/QGY2a2I6us0Ytg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eSVl+qmC; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-77e7808cf4bso1985339b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 09:13:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1759508007; x=1760112807; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tmfo6BfSj1vijjHYWbexLj1tiKT+0K4lqvnwt2mSWyo=;
+        b=eSVl+qmCuoJOZllp0tfhLGnX8cM47fY35j8urvgCGfPROS3mpPVzCO8FzAvv4Tkpvl
+         umi9kjk8RJT6qyZZyiWSQqzntUwBaNukU74V+Ft6qdlN6M69Fb5UzJQslowojasgExgl
+         yJCu9x3v6h6BYOTV1KQo5YpHmlOQCpmU3BNqwp2qptuLnyS+1I6DDOsDPctTBI9ajNZ9
+         ajdeiXauDREizMn2e0m6XGKu1mz2tq5Ym7MHykcXpwfuvqX0b/c5wBIs8FKUkHF74sgD
+         sGxr7nnky5t9lb078mFj+ME3u6kvX3LoIZBPtZantwMJDfM4JXUD81XncIl5hNgph1b1
+         UgQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759507910; x=1760112710;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HAfYRnayLv9RGHspEWeLNh/nILt1ebBjq4P0vnqySKM=;
-        b=ufqZYZ6QH4dVBtNnrlZlKe1xLa1nvTqlCpSl0Uu3+UEVcDNIwJPzy4v9K5zOPfxn4A
-         qaGbMJ0C/HRWyQ1eP3Hwqg4iGr5eAjwIOOqE0N1L8BjjAzta9qsbkKYib5fwGSznijgn
-         1mQ/15E3cbFxWyWI6LsibKo621dKcl6c//PSSY6s0X9AMyQ9ScitIMsv1hT0bbn08u6Y
-         +yprSdUaoYR3z+axR+N0fS9EcAUKLM1BTbUv68BQPgO0ri2mFC3m3ysz8G29LXiSMi9Z
-         SNaVi58rQMMuEGx7J0C7pBqvqpMW785IP02+8hioCANO3vYkdO3KbaImKEbouxfY8/Qw
-         AONg==
-X-Gm-Message-State: AOJu0Yx/0ObPDy3om9vr/M65K802gPQjiyCQXuC6sH+PJDkKJLnNn6mg
-	9zZh+inGMTRijjPFv/8/0BKRhzcPLhKSUOaKsoAsisikeYWcvy+nP4v+ze+nWvV7I1Z0Qb1l/VB
-	KczRXbsgCg2u+J3OO512NIeMpFgKDFDTg7Yt9jQAeuRarOAPrBGNM96B+JJU=
-X-Google-Smtp-Source: AGHT+IHvDvMLABZqMvXdi3xZSbNErXy55MAvhzM1dc8Ap9ekadvLbH9EO2wpdZG9oCgtnvpMZviBsgwPKDje2XnkV8wUInE93fSG
+        d=1e100.net; s=20230601; t=1759508007; x=1760112807;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=tmfo6BfSj1vijjHYWbexLj1tiKT+0K4lqvnwt2mSWyo=;
+        b=I6B+ne1bJZUe60vITQF4Ckm8ZwIpYuUKwdS0WqGwdKF5a8ywPv6AdkXoslnFG5E0TJ
+         kPppTpPDdd2XMEAAfjTLkg7JFSUepaBn4yJ4nRxc1uBBDzr+c0PJ6QDA3HfeQtR7yzpL
+         hMDxbq4RDVJXADjjD44Um5nWv5ZvHQm2SFYRRLb02ENDQ8TzYzenMTIFsoSbRiwduvrf
+         xIuCOwHNGO0qOrntaQxHp0eJu0OgpyZewZ79yPDnPmzH3f2R2oXSnLxY95rGGN8jUR34
+         4XnsQgPurDT5xUfAQ1KRp+TJZKQBIWaJ1jv8z5InCw7f8UxFefaEEKqKlp9vj+l/x86D
+         N+8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWG9BGpvNEbck3x2Gh90R0K5+uF0UWQLqzqHif+EWXZP7rPI0NWf2+z4aUdgi9cvvzvPqrXIyZ8MEjIjT8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyz1qQIcwVqXXXJ3Ol/GPMI0DuA7KEWo3EGbWnpRS2wD+ZLLqHI
+	syQWKP5zoV1cv2P10wg7JRlvra6vbJBJDrPteZWoptaXfe4E2+tmcqOig2bVbad0sfv/l/ryQJ+
+	Dlb8lbQ==
+X-Google-Smtp-Source: AGHT+IGckT+FYIKyF0u496NCKfZhFFbReLIlmMVt60Vecws/DHOYXpXuGQnDznnvpoOwwtW65OfuIzp1Y8U=
+X-Received: from pgbcv13.prod.google.com ([2002:a05:6a02:420d:b0:b62:de94:990d])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:6a10:b0:2cd:a43f:78fb
+ with SMTP id adf61e73a8af0-32b620db8b0mr4716222637.48.1759508007117; Fri, 03
+ Oct 2025 09:13:27 -0700 (PDT)
+Date: Fri, 3 Oct 2025 09:13:25 -0700
+In-Reply-To: <CAGtprH9N=974HZiqfdaO9DK9nycDD9NeiPeHC49P-DkgTaWtTw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a92:cda2:0:b0:42d:7f38:a9b4 with SMTP id
- e9e14a558f8ab-42e7adc9d0cmr41245055ab.31.1759507909758; Fri, 03 Oct 2025
- 09:11:49 -0700 (PDT)
-Date: Fri, 03 Oct 2025 09:11:49 -0700
-In-Reply-To: <68d26261.a70a0220.4f78.0003.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68dff5c5.a00a0220.102ee.0115.GAE@google.com>
-Subject: Forwarded: [PATCH] hugetlbfs: skip PMD unsharing when shareable lock unavailable
-From: syzbot <syzbot+f26d7c75c26ec19790e7@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <aNshILzpjAS-bUL5@google.com> <CAGtprH_JgWfr2wPGpJg_mY5Sxf6E0dp5r-_4aVLi96To2pugXA@mail.gmail.com>
+ <aN1TgRpde5hq_FPn@google.com> <CAGtprH-0B+cDARbK-xPGfx4sva+F1akbkX1gXts2VHaqyDWdzA@mail.gmail.com>
+ <aN1h4XTfRsJ8dhVJ@google.com> <CAGtprH-5NWVVyEM63ou4XjG4JmF2VYNakoFkwFwNR1AnJmiDpA@mail.gmail.com>
+ <aN3BhKZkCC4-iphM@google.com> <CAGtprH_evo=nyk1B6ZRdKJXX2s7g1W8dhwJhEPJkG=o2ORU48g@mail.gmail.com>
+ <aN8U2c8KMXTy6h9Q@google.com> <CAGtprH9N=974HZiqfdaO9DK9nycDD9NeiPeHC49P-DkgTaWtTw@mail.gmail.com>
+Message-ID: <aN_2JaorgERIkpW4@google.com>
+Subject: Re: [PATCH 1/6] KVM: guest_memfd: Add DEFAULT_SHARED flag, reject
+ user page faults if not set
+From: Sean Christopherson <seanjc@google.com>
+To: Vishal Annapurve <vannapurve@google.com>
+Cc: Ackerley Tng <ackerleytng@google.com>, David Hildenbrand <david@redhat.com>, 
+	Patrick Roy <patrick.roy@linux.dev>, Fuad Tabba <tabba@google.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, 
+	kvm list <kvm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Nikita Kalyazin <kalyazin@amazon.co.uk>, Shivank Garg <shivankg@amd.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Thu, Oct 02, 2025, Vishal Annapurve wrote:
+> On Thu, Oct 2, 2025, 5:12=E2=80=AFPM Sean Christopherson <seanjc@google.c=
+om> wrote:
+> >
+> > > >
+> > > > If the _only_ user-visible asset that is added is a KVM_CREATE_GUES=
+T_MEMFD flag,
+> > > > a CAP is gross overkill.  Even if there are other assets that accom=
+pany the new
+> > > > flag, there's no reason we couldn't say "this feature exist if XYZ =
+flag is
+> > > > supported".
+> > > >
+> > > > E.g. it's functionally no different than KVM_CAP_VM_TYPES reporting=
+ support for
+> > > > KVM_X86_TDX_VM also effectively reporting support for a _huge_ numb=
+er of things
+> > > > far beyond being able to create a VM of type KVM_X86_TDX_VM.
+> > > >
+> > >
+> > > What's your opinion about having KVM_CAP_GUEST_MEMFD_MMAP part of
+> > > KVM_CAP_GUEST_MEMFD_CAPS i.e. having a KVM cap covering all features
+> > > of guest_memfd?
+> >
+> > I'd much prefer to have both.  Describing flags for an ioctl via a bitm=
+ask that
+> > doesn't *exactly* match the flags is asking for problems.  At best, it =
+will be
+> > confusing.  E.g. we'll probably end up with code like this:
+> >
+> >         gmem_caps =3D kvm_check_cap(KVM_CAP_GUEST_MEMFD_CAPS);
+> >
+> >         if (gmem_caps & KVM_CAP_GUEST_MEMFD_MMAP)
+> >                 gmem_flags |=3D GUEST_MEMFD_FLAG_MMAP;
+> >         if (gmem_caps & KVM_CAP_GUEST_MEMFD_INIT_SHARED)
+> >                 gmem_flags |=3D KVM_CAP_GUEST_MEMFD_INIT_SHARED;
+> >
+>=20
+> No, I actually meant the userspace can just rely on the cap to assume
+> right flags to be available (not necessarily the same flags as cap
+> bits).
+>=20
+> i.e. Userspace will do something like:
+> gmem_caps =3D kvm_check_cap(KVM_CAP_GUEST_MEMFD_CAPS);
+>=20
+> if (gmem_caps & KVM_CAP_GUEST_MEMFD_MMAP)
+>         gmem_flags |=3D GUEST_MEMFD_FLAG_MMAP;
+> if (gmem_caps & KVM_CAP_GUEST_MEMFD_HUGETLB)
+>         gmem_flags |=3D GUEST_MEMFD_FLAG_HUGETLB | GUEST_MEMFD_FLAG_HUGET=
+LB_2MB;
 
-***
+Yes, that's exactly what I said.  But I goofed when copy+pasted and failed =
+to
+do s/KVM_CAP_GUEST_MEMFD_INIT_SHARED/GUEST_MEMFD_FLAG_INIT_SHARED, which is=
+ the
+type of bug that ideally just can't happen.
 
-Subject: [PATCH] hugetlbfs: skip PMD unsharing when shareable lock unavailable
-Author: kartikey406@gmail.com
+Side topic, I'm not at all convinced that this is what we want for KVM's uA=
+PI:
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
+	if (gmem_caps & KVM_CAP_GUEST_MEMFD_HUGETLB)                              =
+   =20
+		gmem_flags |=3D GUEST_MEMFD_FLAG_HUGETLB | GUEST_MEMFD_FLAG_HUGETLB_2MB;
 
-When hugetlb_vmdelete_list() cannot acquire the shareable lock for a VMA,
-the original code skipped the entire VMA, leaving pages unmapped. This
-caused a regression where pages were not freed during fallocate(PUNCH_HOLE)
-operations, as reported by Mark Brown.
+See https://lore.kernel.org/all/aN_fJEZXo6wkcHOh@google.com.
 
-The issue occurs because:
-1. hugetlb_vmdelete_list() tries to acquire the VMA lock
-2. For shareable VMAs, this includes the shareable lock via
-   hugetlb_vma_trylock_write()
-3. If successful and VMA is shareable type, we have the shareable lock
-4. huge_pmd_unshare() requires this lock and asserts it is held
+> Userspace has to anyways assume flag values, userspace just needs to
+> know if a particular feature is available.
 
-The previous fix (dd83609b8898) avoided the assertion by skipping entire
-VMAs without shareable locks, but this prevented pages from being unmapped
-and freed, breaking PUNCH_HOLE behavior.
-
-This fix takes a different approach: instead of skipping the VMA entirely,
-we skip only the PMD unsharing operation when we don't have the required
-lock, while still proceeding with page unmapping. This is safe because:
-- PMD unsharing is an optimization to reduce shared page table overhead
-- Page unmapping can proceed safely with just the VMA write lock
-- Pages get freed immediately as expected by PUNCH_HOLE callers
-
-We add a new ZAP_FLAG_NO_UNSHARE flag to communicate to
-__unmap_hugepage_range() that it should skip huge_pmd_unshare() while
-still clearing page table entries and freeing pages.
-
-Fixes: dd83609b8898 ("hugetlbfs: skip VMAs without shareable locks in hugetlb_vmdelete_list")
-Reported-by: Mark Brown <broonie@kernel.org>
-Link: https://lore.kernel.org/all/20251003150956.2870745-1-kartikey406@gmail.com/T/
-Signed-off-by: Deepanshu Kartikey <Kartikey406@gmail.com>
----
- fs/hugetlbfs/inode.c | 22 ++++++++++++----------
- include/linux/mm.h   |  2 ++
- mm/hugetlb.c         |  3 ++-
- 3 files changed, 16 insertions(+), 11 deletions(-)
-
-diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
-index 9c94ed8c3ab0..519497bc1045 100644
---- a/fs/hugetlbfs/inode.c
-+++ b/fs/hugetlbfs/inode.c
-@@ -474,29 +474,31 @@ hugetlb_vmdelete_list(struct rb_root_cached *root, pgoff_t start, pgoff_t end,
- 	vma_interval_tree_foreach(vma, root, start, end ? end - 1 : ULONG_MAX) {
- 		unsigned long v_start;
- 		unsigned long v_end;
-+		bool have_shareable_lock;
-+		zap_flags_t local_flags = zap_flags;
- 
- 		if (!hugetlb_vma_trylock_write(vma))
- 			continue;
--
-+
-+		have_shareable_lock = __vma_shareable_lock(vma);
-+
- 		/*
--		 * Skip VMAs without shareable locks. Per the design in commit
--		 * 40549ba8f8e0, these will be handled by remove_inode_hugepages()
--		 * called after this function with proper locking.
-+		 * If we can't get the shareable lock, set ZAP_FLAG_NO_UNSHARE
-+		 * to skip PMD unsharing. We still proceed with unmapping to
-+		 * ensure pages are properly freed, which is critical for punch
-+		 * hole operations that expect immediate page freeing.
- 		 */
--		if (!__vma_shareable_lock(vma))
--			goto skip;
--
-+		if (!have_shareable_lock)
-+			local_flags |= ZAP_FLAG_NO_UNSHARE;
- 		v_start = vma_offset_start(vma, start);
- 		v_end = vma_offset_end(vma, end);
- 
--		unmap_hugepage_range(vma, v_start, v_end, NULL, zap_flags);
--
-+		unmap_hugepage_range(vma, v_start, v_end, NULL, local_flags);
- 		/*
- 		 * Note that vma lock only exists for shared/non-private
- 		 * vmas.  Therefore, lock is not held when calling
- 		 * unmap_hugepage_range for private vmas.
- 		 */
--skip:
- 		hugetlb_vma_unlock_write(vma);
- 	}
- }
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 06978b4dbeb8..9126ab44320d 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2395,6 +2395,8 @@ struct zap_details {
- #define  ZAP_FLAG_DROP_MARKER        ((__force zap_flags_t) BIT(0))
- /* Set in unmap_vmas() to indicate a final unmap call.  Only used by hugetlb */
- #define  ZAP_FLAG_UNMAP              ((__force zap_flags_t) BIT(1))
-+/* Skip PMD unsharing when unmapping hugetlb ranges without shareable lock */
-+#define  ZAP_FLAG_NO_UNSHARE         ((__force zap_flags_t) BIT(2))
- 
- #ifdef CONFIG_SCHED_MM_CID
- void sched_mm_cid_before_execve(struct task_struct *t);
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 6cac826cb61f..c4257aa568fe 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -5885,7 +5885,8 @@ void __unmap_hugepage_range(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 		}
- 
- 		ptl = huge_pte_lock(h, mm, ptep);
--		if (huge_pmd_unshare(mm, vma, address, ptep)) {
-+		if (!(zap_flags & ZAP_FLAG_NO_UNSHARE) &&
-+		      huge_pmd_unshare(mm, vma, address, ptep)) {
- 			spin_unlock(ptl);
- 			tlb_flush_pmd_range(tlb, address & PUD_MASK, PUD_SIZE);
- 			force_flush = true;
--- 
-2.43.0
-
+I don't understand what you mean by "assume flag values".
 
