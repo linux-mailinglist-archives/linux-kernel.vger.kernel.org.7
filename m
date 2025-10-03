@@ -1,691 +1,369 @@
-Return-Path: <linux-kernel+bounces-840910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9D5DBB5B1D
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 02:59:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BA38BB5B20
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 02:59:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F7E41AE16EE
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 00:59:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FBD61AE178A
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 00:59:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D881B1D7E42;
-	Fri,  3 Oct 2025 00:59:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAD661D88AC;
+	Fri,  3 Oct 2025 00:59:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bEqfIyFK"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="XCOvoC4j"
+Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010058.outbound.protection.outlook.com [52.101.193.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D43B86F305
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 00:58:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759453143; cv=none; b=IcyyDY2k8hahej841gipia2yoSf1Mw6RdLfWcs6HcbI211nbOxNv43qCWkJAG8p/pRsLfJY0cg5kmCygaRqikcS2QktfrdqxxxC2JoyUBsqoLZrisPhSwQH3fbzlirem+GPNW1SwIIghZ/UCTa9N4Vm0C3u7poNqc1m9ZqPdxlg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759453143; c=relaxed/simple;
-	bh=M4Z2whpCy7ejVYdr43N3DBsACwFJCUfvRnnM7EMipEk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fTeGIKL6calM2GtuPPaZBWO/zx0sI+MLqvI7JJ4tV4JO5MaBX9SeB6XM+6ETHVOSVjb8naKo8Zlcuh+tDsQcU5EPDz9VYEoEeWfSuxNPGBuPoYCsDQ2TEj+/YfWsyXy3N+ucp+1L8WCLVKZCOHljOkDLTTaFRDWHCUBJ64Tc2Kc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bEqfIyFK; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1759453136;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AIluKvUIeE/qbH8NmvnsgQ/Z6TBiua3Vl8s1i99/pgU=;
-	b=bEqfIyFKl2v990Aw75j7FGHxyjM1yXs334ndKzrYk7EIO+NpLZFm8kBgbpDoqUAtFswzMx
-	s0PXd2BQpX4yhyoL+cgQRbqh/3g8RPc3SCIpSUO5+sYRrmoFQOjnjU3RgepkGfbOdiaMrP
-	3t3qr98UpZYR56TzSBrF9bJ5dWGQa3A=
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
- [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-674-u2964vnWMK-xPJkHuvAQRA-1; Thu, 02 Oct 2025 20:58:55 -0400
-X-MC-Unique: u2964vnWMK-xPJkHuvAQRA-1
-X-Mimecast-MFC-AGG-ID: u2964vnWMK-xPJkHuvAQRA_1759453134
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-272b7bdf41fso21873335ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 17:58:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759453134; x=1760057934;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AIluKvUIeE/qbH8NmvnsgQ/Z6TBiua3Vl8s1i99/pgU=;
-        b=Mu1gwLhoqAtPA57s+k3hJ3E6XD2oE8ba+gcRxIOpHYNs2aVMdqPR0zFDom1Alct0ze
-         mgUNDENgIpxp+DtHyWEA+A4ZMu1HkvmfomqQfWGZ7HOEguG7n3nvUQO/oDv5b82naUJN
-         IrWJtu2DZ0PzqoYrItxpYT/rLNloo3RS16ksOvLwCAtp/pGKgg3wlQSnk9CVhNOUrIx+
-         R8R4FCcsg95ztGvafUw6TQXQGztzxNDGr/rmhVrHTST8QSNM1B+Dj+Qx/aCpRmrz+tW/
-         tvG5A6Acke7A4/e9Qhtkt/NWdOo498QsmuvZizsJQRtMWDDwJ7SswOROUn6I+kCEPjlF
-         mY5g==
-X-Forwarded-Encrypted: i=1; AJvYcCWAv16aijsIpfmWHYKT9d7duzCEz4KPhwnnjGLcnxqVLgSinatREBe3NU/m6lsCOXmBKfQhmVWiXqbOv4g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxg3kN0BoWKSuGw5KYxysDNo5C/IB8BNomUo5irXOGJabpLvx86
-	CKptRUCQd7FiASWOBUPq80KhBUNSNRY9xuIq8zxL6lUfDJxyuMpCluEQdzCpAum9FTjZ6+1mW04
-	cd/BiN347Z/IcNt71d2/hVGUX5qMXJB4mbUYHfK0AM9rLiaDB0GUThJ8AXuNT/y05Hw==
-X-Gm-Gg: ASbGncvRraAKBKbzyK69ThPqQEgBpmjVOnW9+DV0U6+0Vm08bkk0pnNSmJXO3XelbFX
-	VS/oYXgyDMpULdLvUQSJJkoQw7tI/kqeHdVJQ11z7nQZHJKeNEXAHf3W0EKhgKPsoHnYalnLTaW
-	Ih70e4HJGLeGj9pLXvEd5CVL+mqQumVcOBOCRzeZWa33/oZeus5sK6LeZ9qEQ7yfOO5gMFHLAtw
-	EvFok2V7nm09caUu4DdB/ylE7MLOgAkUmQI3AAPjE6jDZbbNXNY/l4Kx3bzln5BJklOrklCfn4I
-	Ijehk6ZAoeMQyS5sfPYEtseavBbgR2/DDCwo8qi2ZudX+0TJKmzTE5iL+ptFv/aTS0AdXcxGrKv
-	pagciD+Gcxw==
-X-Received: by 2002:a17:903:230a:b0:282:ee0e:5991 with SMTP id d9443c01a7336-28e9a5f7222mr12697195ad.30.1759453134232;
-        Thu, 02 Oct 2025 17:58:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEaTEg5vD3QN8t3LUlZUTp2tkCic8On/odh9gyv30BwyKNn3A3xfpDioQ3VMbjbnGLOYln37A==
-X-Received: by 2002:a17:903:230a:b0:282:ee0e:5991 with SMTP id d9443c01a7336-28e9a5f7222mr12696725ad.30.1759453133677;
-        Thu, 02 Oct 2025 17:58:53 -0700 (PDT)
-Received: from [192.168.68.51] (n175-34-62-5.mrk21.qld.optusnet.com.au. [175.34.62.5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-28e8d1b845bsm32909455ad.79.2025.10.02.17.58.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Oct 2025 17:58:53 -0700 (PDT)
-Message-ID: <64105db5-01e3-44ba-bfb0-6524de471ccb@redhat.com>
-Date: Fri, 3 Oct 2025 10:58:40 +1000
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A9CE1DA55;
+	Fri,  3 Oct 2025 00:59:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.58
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1759453160; cv=fail; b=fDR0nQLC+BPbOD1DJk2WCK4+7v/bZXAXlGSFv998pQZRxr9OwcIGfA5ocgsdlneCfypmZFH2BZX7CKJvBoyNJYEkdv73iCk/8X1vlk93NAWzhOnclFyXNQS/EiHSej5ZUq5brnbGcVqqNl8Z1Nc04MPxcraO4Ar68F1pawD9xBE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1759453160; c=relaxed/simple;
+	bh=bWGShARyovg0bAUU7yURSnq/mbz/c4M4qBOnqyyo1FU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=mPx5/LIHkJ2ZcSxjI+LOSBMRsWZvDiPYiNTxwmx2BUdQLyMOfy8MyVSSEWHsAt4ZxcHvrJdysXBeMeli2RyVw8RKnw2nAGq45qPW9CMFJhlHjgUIgNMWw82uLl9wYCzw1clX/nhs/Ctnb1V3EsrDc94TgRCFwZIhUQqIFhHVbGM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=XCOvoC4j; arc=fail smtp.client-ip=52.101.193.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=p300Iyf7G8cnYaC0ElvghWQjBNYtjrC5nIsEp3pH278bMBU+aplH5WaZNWZSCI1RQ0O9ouzQFGl2M92p8jbWr/0B3jxWP8eYqOsOLk3r0WfAwhhLNmKIJgM8FzF/Oady6mo9C6vd9XgKnWXIMdl4qAuJ+DmhHWhilLSqxbB4Brd9RyUOnZ8d11FzbOdgE4LcreA5W2zspq6t3mGydZs6iuh2A3vpBEpIxXJYjafY74GFegUVuB7kpVH77q0uXo7p7rSFyne5IvFyEyJI+S2VdzZXPhGIFbhXUJ35OvRtHS/DIfTkZWWpmmXBiC38LpoNeZLGU30tz+xqeAjYrISaCA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=yTHVJDVkoVHlPrry2AxlKBhln4AbMOsklvqCd27vNos=;
+ b=dStgdP4O83x+N/kpiyG3zF2jUXnggikWNwDrmUjyefM7PPV7p8ON8uKQ1v7sDRlgWWXe6zLACkRYnmiN4IfKoKLvZjqOQEg+1yvsvVcck8304svxAvhgMckSRqXDRkOY5iicdqpD0jiPmYYhsxuxHnZHSIyo35KO2u4eqng0zGv2duO0G3WH33YCIrIh90TjulbIU0wgcoJ8PFcGAXj6bECMpB1bzdsTzaRC3ivsKaEMWZfcEXv6+PJJ1kg1zA8fCPp1SdeGhkb41318rruKkwQdntxhiNmZ3KoGooMwKbiAhoMhT2sHdimXpTSIlC+awulnZ/5I8pUklFxcOBdvqA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yTHVJDVkoVHlPrry2AxlKBhln4AbMOsklvqCd27vNos=;
+ b=XCOvoC4jb5axxrTSs8aUyIjCK6xaaLsqc8i4SwZY6XVjBleInYcwCE10Txfb60JMGnHaJNDsSTWeZO0hNLm0esqdl41+O0WI6xRe3kcywYZ9umhyL8jDyjExialprSF8y55QxansmLoYfdfPdLqB8bvFSLdgPp+4f2P5bSb05eo47EaZwcmwrDcqfTAmNeffrVgslooY1m/AUN0V7osadlnpsIXGqiNThNLUU4P0RyPHcJQEYu3rCn4kmHkf6TOYHw4wsDjvDhAxpUOGtELv7O7Lj8DMJPnvIsY1YaVHCiSqqvK8Xt/j9rojixB6I6YV5G/q0HkyRz30G4Brfb9Tig==
+Received: from SN7PR12MB8131.namprd12.prod.outlook.com (2603:10b6:806:32d::12)
+ by SA1PR12MB9546.namprd12.prod.outlook.com (2603:10b6:806:459::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9160.18; Fri, 3 Oct
+ 2025 00:59:07 +0000
+Received: from SN7PR12MB8131.namprd12.prod.outlook.com
+ ([fe80::ce21:6749:3d4e:2c61]) by SN7PR12MB8131.namprd12.prod.outlook.com
+ ([fe80::ce21:6749:3d4e:2c61%6]) with mapi id 15.20.9160.017; Fri, 3 Oct 2025
+ 00:59:07 +0000
+From: Vishal Aslot <vaslot@nvidia.com>
+To: Dave Jiang <dave.jiang@intel.com>, Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>, Alison Schofield
+	<alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, Ira
+ Weiny <ira.weiny@intel.com>, Dan Williams <dan.j.williams@intel.com>, Li Ming
+	<ming.li@zohomail.com>, Peter Zijlstra <peterz@infradead.org>, Dan Carpenter
+	<dan.carpenter@linaro.org>, Zijun Hu <zijun.hu@oss.qualcomm.com>,
+	"linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] cxl/hdm: allow zero sized committed decoders
+Thread-Topic: [PATCH v2] cxl/hdm: allow zero sized committed decoders
+Thread-Index: AQHcNADr7CR1e/ei5UC/raGgi2gvQA==
+Date: Fri, 3 Oct 2025 00:59:07 +0000
+Message-ID:
+ <SN7PR12MB8131F796BAE8B6243E088879BBE7A@SN7PR12MB8131.namprd12.prod.outlook.com>
+References:
+ <SN7PR12MB81316C958DF0F4B10369B928BBE6A@SN7PR12MB8131.namprd12.prod.outlook.com>
+ <cb300580-1297-4d4b-9a3a-2cf7445b739b@intel.com>
+ <SN7PR12MB8131FBDB82D2A3A539FA09D0BBE6A@SN7PR12MB8131.namprd12.prod.outlook.com>
+ <70a2ea96-0a4b-4185-8f37-ea77ed757b64@intel.com>
+ <SN7PR12MB81319CD146CC8B4CFD45E62FBBE7A@SN7PR12MB8131.namprd12.prod.outlook.com>
+In-Reply-To:
+ <SN7PR12MB81319CD146CC8B4CFD45E62FBBE7A@SN7PR12MB8131.namprd12.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN7PR12MB8131:EE_|SA1PR12MB9546:EE_
+x-ms-office365-filtering-correlation-id: 0d47d840-925d-42d1-b613-08de02180e82
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|376014|1800799024|366016|921020|38070700021;
+x-microsoft-antispam-message-info:
+ =?iso-8859-1?Q?qoHjIvi6Yhu+oRQeSXrg1PX1qvxuC/r/2wmauVjJ0RVEBeShAsfLYDPiBo?=
+ =?iso-8859-1?Q?dZzyD347KXk9q2RxtJ7gazJR/3ZaA7FaO+v43yLVbKJw1XWIB76oT+LF8o?=
+ =?iso-8859-1?Q?DdKOFVSLASzyYeRKNCZZcTSZFeNVei+AUirF3q6ZnYeNgk+Rq5+bJwC8od?=
+ =?iso-8859-1?Q?W8ZQuZDu8IbtciSjjQdM8rqnlXmg57HShnzuXyzvgUOCJiIrYpUHRnJUiL?=
+ =?iso-8859-1?Q?j7iLjTblGYqLsHhNqJ9jYrspnyZVmVYSIzJ2ea1T1mZEMnfqGFi3ORrdQ8?=
+ =?iso-8859-1?Q?qXpoS75Kf+eD84wImtTTdNf78w4DFe5TNQc0JTWcfbM60aFRh4V3nwtuHi?=
+ =?iso-8859-1?Q?Y4qARWy9PN2XUceHNL6ECS5mPnpAgDclDtdUt9pfskL+WVRRgfqc30c7N4?=
+ =?iso-8859-1?Q?MJ7mhLTpxxTM5M4ILkJwp0RlO0Afqgus1xXG3M9lTPKoK4pdJodEMGSxgh?=
+ =?iso-8859-1?Q?9R458qoxNhfEIdDyINnxpksYE2u54sKssJ3SRsuV0uGOsOsMO1/idDAVbF?=
+ =?iso-8859-1?Q?sBQyv9MgHRKbX3t4MhRJRR7cN9xMMqSbAm9tFwmNfJ/LaQBIBl7MOFSkFU?=
+ =?iso-8859-1?Q?34sqXZfIz6POskn3jIuaMeszebSbQpnrOLfbYEgk7kG63VhktCY+epLyHK?=
+ =?iso-8859-1?Q?XoVaWRy9oGvIC0564M38nFhqm0KNRKe/FKkiea3MW4CKWcmwEBS/qeXPyr?=
+ =?iso-8859-1?Q?5/SfktIJ1bf2jZshfeJuaZl2bzha+VxmI2UOT4PBgSIPJJaNR3f8+voxVG?=
+ =?iso-8859-1?Q?wi95sgqtQGpkXa3xn4imaI+fvMYdv11wacE4UQnuq7KWcH+cJ6sfpMktoL?=
+ =?iso-8859-1?Q?TWhtx9aXQWTcMpJTX1aweHa+/sh/u7YRm7i9/QDqbSsg8WBf2rK6nHt33w?=
+ =?iso-8859-1?Q?RiGQrdku1XgSJBD0u2+nigk8yfb+tf24Js3ziiEVPtI0RB9qjCLETRZ5yz?=
+ =?iso-8859-1?Q?YreTslWwDqkOwJFEA+dLUczGXqQmZU9HT61Ia8SG3A64xLIKbkbocjPqhL?=
+ =?iso-8859-1?Q?b1CTT8ORAEnCMvVf/24piupUUD/2BTLI2nabz4N1hZvh7gabVo7zGzwCmV?=
+ =?iso-8859-1?Q?wJO3cx3YR4NUp7B/wohFcKi8ZK/KPk1YDvZzBeq2YIw3y47PyazI+2uHmw?=
+ =?iso-8859-1?Q?9jssY1bO5YXFD9RCMfCLiZssvnejtdIz01llv5rHrr4ov87NWMyl8eao3e?=
+ =?iso-8859-1?Q?4vwxTDHLo1u937pSrdAjA7DTLshRwDU6udd6Z9duCagCPXiAFZGCd6i685?=
+ =?iso-8859-1?Q?6OZW7aPasayVf0zvQT6gWwIkmRwG44AFqpQiFrtgqFjLDUlWDt/ZQjkz+/?=
+ =?iso-8859-1?Q?WVTDrogijlm0IAla8K5lFkmAHIH6WuATXJvb5T8lTWgI2+yugT8XMXJYmk?=
+ =?iso-8859-1?Q?3oP9FWP3zsLhX4PfUq77L8BIWsdjeHMwniCDNxCZJDXxbyGooL4UFs9smM?=
+ =?iso-8859-1?Q?R7Xgap++ljrN9ukTvt+1bimqvAnO90nSjR55kjlhzyK/vnQN9xyfad+ZzI?=
+ =?iso-8859-1?Q?bz4KwZ6FQYiCM0gORPY1ZHQ5kus3q64YxwXDhtnh6c6nOz7VMRdPl8+QB2?=
+ =?iso-8859-1?Q?foRyXEb6fXOLu8i1zcEi3SIPLKJ/tp9L4DoOjW1QiDG7OCLK6w=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8131.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(921020)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-8859-1?Q?qIk3ZIADEU1CVC8VQVipkX8hO+HCYjzNb8erLhqlCFCmlU7M5cqFwZzNes?=
+ =?iso-8859-1?Q?bhnpVPM/3wyIjx9S037oWPUnywdJgxg7oVnHlxEhXC/eZ7+1zCnRt6nBFq?=
+ =?iso-8859-1?Q?1zOC1cvKWbuYmLY6ZLGMRJlz3W6GMEYNWtUxsNhQI64GL8UIqN33NT2D1D?=
+ =?iso-8859-1?Q?fQ0ddibHJfurtdBJZwmI9rYMsSIIvMoUtPF23UVj6fmtx1Ez7ur954xGGC?=
+ =?iso-8859-1?Q?RllkSfqiaYAdlJtQ+dZeT08xdXwpZjyqxj4wHgbOKkujnC2pN6emf7nJVj?=
+ =?iso-8859-1?Q?/lvxLSkY2gQpbUenYRCUKgEXGC0SuQ8trAFPTB9aIgUv+fhiGP9a4epcl4?=
+ =?iso-8859-1?Q?QboFZR8fDMiGsEuWSDoZ9rpEg1IJzhTKu6BlN9uZrVtxy+B+Ogu+at6ugw?=
+ =?iso-8859-1?Q?Ixa/2sYLrAFBvVAFRrfQKJC5t3RKP8KxkpVPcr4XPRKHaeei0Ltqr52fPL?=
+ =?iso-8859-1?Q?p8itnVg5lupGM+aODF2Fy5oTZxbr8yjSJIBLsfOOH1f1STHkwQddsrdKwo?=
+ =?iso-8859-1?Q?WrKO3ImFUjkhsEzdvgEl2po4M2kV2gpyGoEsJwGxzgJRvjPAEVuPmhpUNn?=
+ =?iso-8859-1?Q?5mI2lKOvy2p0RZFf9oR1mEbQct9Pqh5QPj4dFAqtTzmXTa0/VylVVC7yg5?=
+ =?iso-8859-1?Q?oDHjuCtqKxOYmo1C+xowXK9TuGjOLpVNGMT23gIb7UmbEPWtYiNpxha47Z?=
+ =?iso-8859-1?Q?nAdDd9SQGPfKdlU67SKrHX571QskIiZK77e1MHXKYQ2XaMIbHK6mi/uWbE?=
+ =?iso-8859-1?Q?vktU9rtAMQ1Gk8+NlRH+Fi9r1zQHfiyrtwwHfp8QRH8/N8SjeiAu5QZTVS?=
+ =?iso-8859-1?Q?uTffMGz54HTpzPoYR1E1BedNNgKjR20n/Ly0mILhV3E4y0D21LmWm3zNo9?=
+ =?iso-8859-1?Q?uBYA1zWrLzAN+MN2QVpMETIqwMNU48lDF4uHL3+b0WCDOkNRzgmlwaFGpk?=
+ =?iso-8859-1?Q?gT89fMMbp+kinEXqdO4a8mhBNH2EvJwRD9mMaeVPIkHGJ7drfG6ldl2Jsx?=
+ =?iso-8859-1?Q?W29W54mBz8jo9BZrrC0Lo4cKKn/mc22uOEHNGWksC3m0SrRL9zCRv+FNmq?=
+ =?iso-8859-1?Q?T4/7kZdw5BX2059sB0wUaAJXy7e8Z/zWGM2jVE7DTj/om6OZNScBWdFBmp?=
+ =?iso-8859-1?Q?tLHmEPKbCCmApjlC9ZcbUV0WSyh1/12ymvwAiRqL+67eP5PwQdGgQqm+zl?=
+ =?iso-8859-1?Q?8FNLhSlzTJdv3WqYZTd6bHu+oNAHNREQsQ4y53dwrY2I1gMp/YNe7Yjf5F?=
+ =?iso-8859-1?Q?rV3nTHRA6B3EGbecLYNVreGRFefMG6Rs24+Zko/RUVwN+ThV2JxDIn58JG?=
+ =?iso-8859-1?Q?R6PbsmLjtfDdugyXp1GSAMKl+sV8gu6Jve9bsDi7pjZRHKmpqAWPi/Q8QK?=
+ =?iso-8859-1?Q?7dWAMDEK0iydqyM49WaZLCVXtNH7fehekTguL1TX3i8HnfbsIGwNXC+6Kg?=
+ =?iso-8859-1?Q?/w0n1gBLf1heSQ2VRkTjrJp9OxDdNXLoQVEYGtqgZCt6cOvUZh1mFt4i0A?=
+ =?iso-8859-1?Q?KNj/U+KBv56bXUifcubpDci1D1WVLSyuo/I7qKo9reR3NqBmvf/nC6Pnga?=
+ =?iso-8859-1?Q?BNJQHSNb/4uRO2CvvgbHSz+hfgW+PYc97qANxbyTaRMA+py4FbgOS1vnbb?=
+ =?iso-8859-1?Q?c/WzBoMa9jENc=3D?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 06/29] ACPI / MPAM: Parse the MPAM table
-To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org
-Cc: D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
- Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
- fenghuay@nvidia.com, baisheng.gao@unisoc.com,
- Jonathan Cameron <jonathan.cameron@huawei.com>, Rob Herring
- <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
- Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
- <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>
-References: <20250910204309.20751-1-james.morse@arm.com>
- <20250910204309.20751-7-james.morse@arm.com>
-Content-Language: en-US
-From: Gavin Shan <gshan@redhat.com>
-In-Reply-To: <20250910204309.20751-7-james.morse@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8131.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0d47d840-925d-42d1-b613-08de02180e82
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Oct 2025 00:59:07.8518
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: YPrtV6azpvWdmSc8gzfgO3S1ENccCSrGhLlF/4NycIRofg27JtNzYrBdMS9nLMwrPY+o1wrWQgcD7F+27Oz5zg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB9546
 
-On 9/11/25 6:42 AM, James Morse wrote:
-> Add code to parse the arm64 specific MPAM table, looking up the cache
-> level from the PPTT and feeding the end result into the MPAM driver.
-> 
-> For now the MPAM hook mpam_ris_create() is stubbed out, but will update
-> the MPAM driver with optional discovered data.
-> 
-> CC: Carl Worth <carl@os.amperecomputing.com>
-> Link: https://developer.arm.com/documentation/den0065/3-0bet/?lang=en
-> Signed-off-by: James Morse <james.morse@arm.com>
-> 
-> ---
-> Changes since v1:
->   * Whitespace.
->   * Gave GLOBAL_AFFINITY a pre-processor'd name.
->   * Fixed assumption that there are zero functional dependencies.
->   * Bounds check walking of the MSC RIS.
->   * More bounds checking in the main table walk.
->   * Check for nonsense numbers of function dependencies.
->   * Smattering of pr_debug() to help folk feeding line-noise to the parser.
->   * Changed the comment flavour on the SPDX string.
->   * Removed additional table check.
->   * More comment wrangling.
-> 
-> Changes since RFC:
->   * Used DEFINE_RES_IRQ_NAMED() and friends macros.
->   * Additional error handling.
->   * Check for zero sized MSC.
->   * Allow table revisions greater than 1. (no spec for revision 0!)
->   * Use cleanup helpers to retrive ACPI tables, which allows some functions
->     to be folded together.
-> ---
->   arch/arm64/Kconfig          |   1 +
->   drivers/acpi/arm64/Kconfig  |   3 +
->   drivers/acpi/arm64/Makefile |   1 +
->   drivers/acpi/arm64/mpam.c   | 361 ++++++++++++++++++++++++++++++++++++
->   drivers/acpi/tables.c       |   2 +-
->   include/linux/acpi.h        |  12 ++
->   include/linux/arm_mpam.h    |  48 +++++
->   7 files changed, 427 insertions(+), 1 deletion(-)
->   create mode 100644 drivers/acpi/arm64/mpam.c
->   create mode 100644 include/linux/arm_mpam.h
-> 
-> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> index 4be8a13505bf..6487c511bdc6 100644
-> --- a/arch/arm64/Kconfig
-> +++ b/arch/arm64/Kconfig
-> @@ -2062,6 +2062,7 @@ config ARM64_TLB_RANGE
->   
->   config ARM64_MPAM
->   	bool "Enable support for MPAM"
-> +	select ACPI_MPAM if ACPI
->   	help
->   	  Memory System Resource Partitioning and Monitoring (MPAM) is an
->   	  optional extension to the Arm architecture that allows each
-> diff --git a/drivers/acpi/arm64/Kconfig b/drivers/acpi/arm64/Kconfig
-> index b3ed6212244c..f2fd79f22e7d 100644
-> --- a/drivers/acpi/arm64/Kconfig
-> +++ b/drivers/acpi/arm64/Kconfig
-> @@ -21,3 +21,6 @@ config ACPI_AGDI
->   
->   config ACPI_APMT
->   	bool
-> +
-> +config ACPI_MPAM
-> +	bool
-> diff --git a/drivers/acpi/arm64/Makefile b/drivers/acpi/arm64/Makefile
-> index 05ecde9eaabe..9390b57cb564 100644
-> --- a/drivers/acpi/arm64/Makefile
-> +++ b/drivers/acpi/arm64/Makefile
-> @@ -4,6 +4,7 @@ obj-$(CONFIG_ACPI_APMT) 	+= apmt.o
->   obj-$(CONFIG_ACPI_FFH)		+= ffh.o
->   obj-$(CONFIG_ACPI_GTDT) 	+= gtdt.o
->   obj-$(CONFIG_ACPI_IORT) 	+= iort.o
-> +obj-$(CONFIG_ACPI_MPAM) 	+= mpam.o
->   obj-$(CONFIG_ACPI_PROCESSOR_IDLE) += cpuidle.o
->   obj-$(CONFIG_ARM_AMBA)		+= amba.o
->   obj-y				+= dma.o init.o
-> diff --git a/drivers/acpi/arm64/mpam.c b/drivers/acpi/arm64/mpam.c
-> new file mode 100644
-> index 000000000000..fd9cfa143676
-> --- /dev/null
-> +++ b/drivers/acpi/arm64/mpam.c
-> @@ -0,0 +1,361 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +// Copyright (C) 2025 Arm Ltd.
-> +
-> +/* Parse the MPAM ACPI table feeding the discovered nodes into the driver */
-> +
-> +#define pr_fmt(fmt) "ACPI MPAM: " fmt
-> +
-> +#include <linux/acpi.h>
-> +#include <linux/arm_mpam.h>
-> +#include <linux/bits.h>
-> +#include <linux/cpu.h>
-> +#include <linux/cpumask.h>
-> +#include <linux/platform_device.h>
-> +
-> +#include <acpi/processor.h>
-> +
-> +/*
-> + * Flags for acpi_table_mpam_msc.*_interrupt_flags.
-> + * See 2.1.1 Interrupt Flags, Table 5, of DEN0065B_MPAM_ACPI_3.0-bet.
-> + */
-> +#define ACPI_MPAM_MSC_IRQ_MODE_MASK                    BIT(0)
-> +#define ACPI_MPAM_MSC_IRQ_TYPE_MASK                    GENMASK(2, 1)
-> +#define ACPI_MPAM_MSC_IRQ_TYPE_WIRED                   0
-> +#define ACPI_MPAM_MSC_IRQ_AFFINITY_PROCESSOR_CONTAINER BIT(3)
-> +#define ACPI_MPAM_MSC_IRQ_AFFINITY_VALID               BIT(4)
-> +
-> +static bool acpi_mpam_register_irq(struct platform_device *pdev, int intid,
-> +				   u32 flags, int *irq,
-> +				   u32 processor_container_uid)
-> +{
-> +	int sense;
-> +
-> +	if (!intid)
-> +		return false;
-> +
-> +	if (FIELD_GET(ACPI_MPAM_MSC_IRQ_TYPE_MASK, flags) !=
-> +	    ACPI_MPAM_MSC_IRQ_TYPE_WIRED)
-> +		return false;
-> +
-> +	sense = FIELD_GET(ACPI_MPAM_MSC_IRQ_MODE_MASK, flags);
-> +
-> +	if (16 <= intid && intid < 32 && processor_container_uid != GLOBAL_AFFINITY) {
-> +		pr_err_once("Partitioned interrupts not supported\n");
-> +		return false;
-> +	}
-> +
-> +	*irq = acpi_register_gsi(&pdev->dev, intid, sense, ACPI_ACTIVE_HIGH);
-> +	if (*irq <= 0) {
-> +		pr_err_once("Failed to register interrupt 0x%x with ACPI\n",
-> +			    intid);
-> +		return false;
-> +	}
-> +
-> +	return true;
-> +}
-
-0 is allowed by acpi_register_gsi().
-
-	if (*irq < 0) {
-		pr_err_once(...);
-		return false;
-	}
-
-> +
-> +static void acpi_mpam_parse_irqs(struct platform_device *pdev,
-> +				 struct acpi_mpam_msc_node *tbl_msc,
-> +				 struct resource *res, int *res_idx)
-> +{
-> +	u32 flags, aff;
-> +	int irq;
-> +
-> +	flags = tbl_msc->overflow_interrupt_flags;
-> +	if (flags & ACPI_MPAM_MSC_IRQ_AFFINITY_VALID &&
-> +	    flags & ACPI_MPAM_MSC_IRQ_AFFINITY_PROCESSOR_CONTAINER)
-> +		aff = tbl_msc->overflow_interrupt_affinity;
-> +	else
-> +		aff = GLOBAL_AFFINITY;
-> +	if (acpi_mpam_register_irq(pdev, tbl_msc->overflow_interrupt, flags, &irq, aff))
-> +		res[(*res_idx)++] = DEFINE_RES_IRQ_NAMED(irq, "overflow");
-> +
-> +	flags = tbl_msc->error_interrupt_flags;
-> +	if (flags & ACPI_MPAM_MSC_IRQ_AFFINITY_VALID &&
-> +	    flags & ACPI_MPAM_MSC_IRQ_AFFINITY_PROCESSOR_CONTAINER)
-> +		aff = tbl_msc->error_interrupt_affinity;
-> +	else
-> +		aff = GLOBAL_AFFINITY;
-> +	if (acpi_mpam_register_irq(pdev, tbl_msc->error_interrupt, flags, &irq, aff))
-> +		res[(*res_idx)++] = DEFINE_RES_IRQ_NAMED(irq, "error");
-> +}
-> +
-> +static int acpi_mpam_parse_resource(struct mpam_msc *msc,
-> +				    struct acpi_mpam_resource_node *res)
-> +{
-> +	int level, nid;
-> +	u32 cache_id;
-> +
-> +	switch (res->locator_type) {
-> +	case ACPI_MPAM_LOCATION_TYPE_PROCESSOR_CACHE:
-> +		cache_id = res->locator.cache_locator.cache_reference;
-> +		level = find_acpi_cache_level_from_id(cache_id);
-> +		if (level <= 0) {
-> +			pr_err_once("Bad level (%u) for cache with id %u\n", level, cache_id);
-> +			return -EINVAL;
-> +		}
-> +		return mpam_ris_create(msc, res->ris_index, MPAM_CLASS_CACHE,
-> +				       level, cache_id);
-> +	case ACPI_MPAM_LOCATION_TYPE_MEMORY:
-> +		nid = pxm_to_node(res->locator.memory_locator.proximity_domain);
-> +		if (nid == NUMA_NO_NODE)
-> +			nid = 0;
-> +		return mpam_ris_create(msc, res->ris_index, MPAM_CLASS_MEMORY,
-> +				       255, nid);
-
-It's perhaps worthy a warning message when @nid is explicitly set to zero due to
-the bad proximity domain, something like below.
-
-		if (nid == NUMA_NO_NODE) {
-			nid = 0;
-			if (num_possible_nodes() > 1) {
-				pr_warn("Bad proximity domain %d, mapped to node 0\n",
-					res->locator.memory_locator.proximity_domain);
-			}
-		}
-		
-
-> +	default:
-> +		/* These get discovered later and treated as unknown */
-> +		return 0;
-> +	}
-> +}
-> +
-> +int acpi_mpam_parse_resources(struct mpam_msc *msc,
-> +			      struct acpi_mpam_msc_node *tbl_msc)
-> +{
-> +	int i, err;
-> +	char *ptr, *table_end;
-> +	struct acpi_mpam_resource_node *resource;
-> +
-> +	ptr = (char *)(tbl_msc + 1);
-> +	table_end = ptr + tbl_msc->length;
-> +	for (i = 0; i < tbl_msc->num_resource_nodes; i++) {
-> +		u64 max_deps, remaining_table;
-> +
-> +		if (ptr + sizeof(*resource) > table_end)
-> +			return -EINVAL;
-> +
-> +		resource = (struct acpi_mpam_resource_node *)ptr;
-> +
-> +		remaining_table = table_end - ptr;
-> +		max_deps = remaining_table / sizeof(struct acpi_mpam_func_deps);
-> +		if (resource->num_functional_deps > max_deps) {
-> +			pr_debug("MSC has impossible number of functional dependencies\n");
-> +			return -EINVAL;
-> +		}
-> +
-> +		err = acpi_mpam_parse_resource(msc, resource);
-> +		if (err)
-> +			return err;
-> +
-> +		ptr += sizeof(*resource);
-> +		ptr += resource->num_functional_deps * sizeof(struct acpi_mpam_func_deps);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static bool __init parse_msc_pm_link(struct acpi_mpam_msc_node *tbl_msc,
-> +				     struct platform_device *pdev,
-> +				     u32 *acpi_id)
-> +{
-> +	char hid[sizeof(tbl_msc->hardware_id_linked_device) + 1];
-> +	bool acpi_id_valid = false;
-> +	struct acpi_device *buddy;
-> +	char uid[11];
-> +	int err;
-> +
-> +	memset(&hid, 0, sizeof(hid));
-> +	memcpy(hid, &tbl_msc->hardware_id_linked_device,
-> +	       sizeof(tbl_msc->hardware_id_linked_device));
-> +
-> +	if (!strcmp(hid, ACPI_PROCESSOR_CONTAINER_HID)) {
-> +		*acpi_id = tbl_msc->instance_id_linked_device;
-> +		acpi_id_valid = true;
-> +	}
-> +
-> +	err = snprintf(uid, sizeof(uid), "%u",
-> +		       tbl_msc->instance_id_linked_device);
-> +	if (err >= sizeof(uid)) {
-> +		pr_debug("Failed to convert uid of device for power management.");
-> +		return acpi_id_valid;
-> +	}
-> +
-> +	buddy = acpi_dev_get_first_match_dev(hid, uid, -1);
-> +	if (buddy)
-> +		device_link_add(&pdev->dev, &buddy->dev, DL_FLAG_STATELESS);
-> +
-> +	return acpi_id_valid;
-> +}
-> +
-> +static int decode_interface_type(struct acpi_mpam_msc_node *tbl_msc,
-> +				 enum mpam_msc_iface *iface)
-> +{
-> +	switch (tbl_msc->interface_type) {
-> +	case 0:
-> +		*iface = MPAM_IFACE_MMIO;
-> +		return 0;
-> +	case 0xa:
-> +		*iface = MPAM_IFACE_PCC;
-> +		return 0;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
-> +static int __init acpi_mpam_parse(void)
-> +{
-> +	struct acpi_table_header *table __free(acpi_table) = acpi_get_table_ret(ACPI_SIG_MPAM, 0);
-> +	char *table_end, *table_offset = (char *)(table + 1);
-> +	struct property_entry props[4]; /* needs a sentinel */
-> +	struct acpi_mpam_msc_node *tbl_msc;
-> +	int next_res, next_prop, err = 0;
-> +	struct acpi_device *companion;
-> +	struct platform_device *pdev;
-> +	enum mpam_msc_iface iface;
-> +	struct resource res[3];
-> +	char uid[16];
-> +	u32 acpi_id;
-> +
-> +	if (acpi_disabled || !system_supports_mpam() || IS_ERR(table))
-> +		return 0;
-> +
-> +	if (table->revision < 1)
-> +		return 0;
-> +
-> +	table_end = (char *)table + table->length;
-> +
-> +	while (table_offset < table_end) {
-> +		tbl_msc = (struct acpi_mpam_msc_node *)table_offset;
-> +		table_offset += tbl_msc->length;
-> +
-> +		if (table_offset > table_end) {
-> +			pr_debug("MSC entry overlaps end of ACPI table\n");
-> +			break;
-> +		}
-> +
-> +		/*
-> +		 * If any of the reserved fields are set, make no attempt to
-> +		 * parse the MSC structure. This MSC will still be counted,
-> +		 * meaning the MPAM driver can't probe against all MSC, and
-> +		 * will never be enabled. There is no way to enable it safely,
-> +		 * because we cannot determine safe system-wide partid and pmg
-> +		 * ranges in this situation.
-> +		 */
-> +		if (tbl_msc->reserved || tbl_msc->reserved1 || tbl_msc->reserved2) {
-> +			pr_err_once("Unrecognised MSC, MPAM not usable\n");
-> +			pr_debug("MSC.%u: reserved field set\n", tbl_msc->identifier);
-> +			continue;
-> +		}
-> +
-> +		if (!tbl_msc->mmio_size) {
-> +			pr_debug("MSC.%u: marked as disabled\n", tbl_msc->identifier);
-> +			continue;
-> +		}
-> +
-> +		if (decode_interface_type(tbl_msc, &iface)) {
-> +			pr_debug("MSC.%u: unknown interface type\n", tbl_msc->identifier);
-> +			continue;
-> +		}
-> +
-> +		next_res = 0;
-> +		next_prop = 0;
-> +		memset(res, 0, sizeof(res));
-> +		memset(props, 0, sizeof(props));
-> +
-> +		pdev = platform_device_alloc("mpam_msc", tbl_msc->identifier);
-> +		if (!pdev) {
-> +			err = -ENOMEM;
-> +			break;
-> +		}
-> +
-> +		if (tbl_msc->length < sizeof(*tbl_msc)) {
-> +			err = -EINVAL;
-> +			break;
-> +		}
-> +
-> +		/* Some power management is described in the namespace: */
-> +		err = snprintf(uid, sizeof(uid), "%u", tbl_msc->identifier);
-> +		if (err > 0 && err < sizeof(uid)) {
-> +			companion = acpi_dev_get_first_match_dev("ARMHAA5C", uid, -1);
-> +			if (companion)
-> +				ACPI_COMPANION_SET(&pdev->dev, companion);
-> +			else
-> +				pr_debug("MSC.%u: missing namespace entry\n", tbl_msc->identifier);
-> +		}
-> +
-> +		if (iface == MPAM_IFACE_MMIO) {
-> +			res[next_res++] = DEFINE_RES_MEM_NAMED(tbl_msc->base_address,
-> +							       tbl_msc->mmio_size,
-> +							       "MPAM:MSC");
-> +		} else if (iface == MPAM_IFACE_PCC) {
-> +			props[next_prop++] = PROPERTY_ENTRY_U32("pcc-channel",
-> +								tbl_msc->base_address);
-> +			next_prop++;
-> +		}
-> +
-> +		acpi_mpam_parse_irqs(pdev, tbl_msc, res, &next_res);
-> +		err = platform_device_add_resources(pdev, res, next_res);
-> +		if (err)
-> +			break;
-> +
-> +		props[next_prop++] = PROPERTY_ENTRY_U32("arm,not-ready-us",
-> +							tbl_msc->max_nrdy_usec);
-> +
-> +		/*
-> +		 * The MSC's CPU affinity is described via its linked power
-> +		 * management device, but only if it points at a Processor or
-> +		 * Processor Container.
-> +		 */
-> +		if (parse_msc_pm_link(tbl_msc, pdev, &acpi_id)) {
-> +			props[next_prop++] = PROPERTY_ENTRY_U32("cpu_affinity",
-> +								acpi_id);
-> +		}
-> +
-> +		err = device_create_managed_software_node(&pdev->dev, props,
-> +							  NULL);
-> +		if (err)
-> +			break;
-> +
-> +		/* Come back later if you want the RIS too */
-> +		err = platform_device_add_data(pdev, tbl_msc, tbl_msc->length);
-> +		if (err)
-> +			break;
-> +
-> +		err = platform_device_add(pdev);
-> +		if (err)
-> +			break;
-> +	}
-> +
-> +	if (err)
-> +		platform_device_put(pdev);
-> +
-> +	return err;
-> +}
-> +
-> +int acpi_mpam_count_msc(void)
-> +{
-> +	struct acpi_table_header *table __free(acpi_table) = acpi_get_table_ret(ACPI_SIG_MPAM, 0);
-> +	char *table_end, *table_offset = (char *)(table + 1);
-> +	struct acpi_mpam_msc_node *tbl_msc;
-> +	int count = 0;
-> +
-> +	if (IS_ERR(table))
-> +		return 0;
-> +
-> +	if (table->revision < 1)
-> +		return 0;
-> +
-> +	table_end = (char *)table + table->length;
-> +
-> +	while (table_offset < table_end) {
-> +		tbl_msc = (struct acpi_mpam_msc_node *)table_offset;
-> +		if (!tbl_msc->mmio_size)
-> +			continue;
-> +
-> +		if (tbl_msc->length < sizeof(*tbl_msc))
-> +			return -EINVAL;
-> +		if (tbl_msc->length > table_end - table_offset)
-> +			return -EINVAL;
-> +		table_offset += tbl_msc->length;
-> +
-> +		count++;
-> +	}
-> +
-> +	return count;
-> +}
-> +
-
-acpi_mpam_count_msc() iterates the existing MSC node, which is part of acpi_mpam_parse().
-So the question is why we can't drop acpi_mpam_count_msc() and maintain a variable to
-count the existing MSC nodes in acpi_mpam_parse() ?
-
-> +/*
-> + * Call after ACPI devices have been created, which happens behind acpi_scan_init()
-> + * called from subsys_initcall(). PCC requires the mailbox driver, which is
-> + * initialised from postcore_initcall().
-> + */
-> +subsys_initcall_sync(acpi_mpam_parse);
-> diff --git a/drivers/acpi/tables.c b/drivers/acpi/tables.c
-> index fa9bb8c8ce95..835e3795ede3 100644
-> --- a/drivers/acpi/tables.c
-> +++ b/drivers/acpi/tables.c
-> @@ -408,7 +408,7 @@ static const char table_sigs[][ACPI_NAMESEG_SIZE] __nonstring_array __initconst
->   	ACPI_SIG_PSDT, ACPI_SIG_RSDT, ACPI_SIG_XSDT, ACPI_SIG_SSDT,
->   	ACPI_SIG_IORT, ACPI_SIG_NFIT, ACPI_SIG_HMAT, ACPI_SIG_PPTT,
->   	ACPI_SIG_NHLT, ACPI_SIG_AEST, ACPI_SIG_CEDT, ACPI_SIG_AGDI,
-> -	ACPI_SIG_NBFT };
-> +	ACPI_SIG_NBFT, ACPI_SIG_MPAM };
->   
->   #define ACPI_HEADER_SIZE sizeof(struct acpi_table_header)
->   
-> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-> index c5fd92cda487..af449964426b 100644
-> --- a/include/linux/acpi.h
-> +++ b/include/linux/acpi.h
-> @@ -8,6 +8,7 @@
->   #ifndef _LINUX_ACPI_H
->   #define _LINUX_ACPI_H
->   
-> +#include <linux/cleanup.h>
->   #include <linux/errno.h>
->   #include <linux/ioport.h>	/* for struct resource */
->   #include <linux/resource_ext.h>
-> @@ -221,6 +222,17 @@ void acpi_reserve_initial_tables (void);
->   void acpi_table_init_complete (void);
->   int acpi_table_init (void);
->   
-> +static inline struct acpi_table_header *acpi_get_table_ret(char *signature, u32 instance)
-> +{
-> +	struct acpi_table_header *table;
-> +	int status = acpi_get_table(signature, instance, &table);
-> +
-> +	if (ACPI_FAILURE(status))
-> +		return ERR_PTR(-ENOENT);
-> +	return table;
-> +}
-> +DEFINE_FREE(acpi_table, struct acpi_table_header *, if (!IS_ERR(_T)) acpi_put_table(_T))
-> +
->   int acpi_table_parse(char *id, acpi_tbl_table_handler handler);
->   int __init_or_acpilib acpi_table_parse_entries(char *id,
->   		unsigned long table_size, int entry_id,
-> diff --git a/include/linux/arm_mpam.h b/include/linux/arm_mpam.h
-> new file mode 100644
-> index 000000000000..3d6c39c667c3
-> --- /dev/null
-> +++ b/include/linux/arm_mpam.h
-> @@ -0,0 +1,48 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/* Copyright (C) 2025 Arm Ltd. */
-> +
-> +#ifndef __LINUX_ARM_MPAM_H
-> +#define __LINUX_ARM_MPAM_H
-> +
-> +#include <linux/acpi.h>
-> +#include <linux/types.h>
-> +
-> +#define GLOBAL_AFFINITY		~0
-> +
-> +struct mpam_msc;
-> +
-> +enum mpam_msc_iface {
-> +	MPAM_IFACE_MMIO,	/* a real MPAM MSC */
-> +	MPAM_IFACE_PCC,		/* a fake MPAM MSC */
-> +};
-> +
-> +enum mpam_class_types {
-> +	MPAM_CLASS_CACHE,       /* Well known caches, e.g. L2 */
-> +	MPAM_CLASS_MEMORY,      /* Main memory */
-> +	MPAM_CLASS_UNKNOWN,     /* Everything else, e.g. SMMU */
-> +};
-> +
-> +#ifdef CONFIG_ACPI_MPAM
-> +/* Parse the ACPI description of resources entries for this MSC. */
-> +int acpi_mpam_parse_resources(struct mpam_msc *msc,
-> +			      struct acpi_mpam_msc_node *tbl_msc);
-> +
-> +int acpi_mpam_count_msc(void);
-> +#else
-> +static inline int acpi_mpam_parse_resources(struct mpam_msc *msc,
-> +					    struct acpi_mpam_msc_node *tbl_msc)
-> +{
-> +	return -EINVAL;
-> +}
-> +
-> +static inline int acpi_mpam_count_msc(void) { return -EINVAL; }
-> +#endif
-> +
-> +static inline int mpam_ris_create(struct mpam_msc *msc, u8 ris_idx,
-> +				  enum mpam_class_types type, u8 class_id,
-> +				  int component_id)
-> +{
-> +	return -EINVAL;
-> +}
-> +
-> +#endif /* __LINUX_ARM_MPAM_H */
-
-Thanks,
-Gavin
-
+init_hdm_decoder() fails with -ENXIO if a=0A=
+committed HDM decoder has zero size.=0A=
+=0A=
+The CXL spec permits committing zero sized decoders.=0A=
+See "8.2.4.20.12 Committing Decoder Programming".=0A=
+It says,"It is legal for software to program Decoder=0A=
+Size to 0 and commit it. Such a decoder will not=0A=
+participate in HDM decode."=0A=
+=0A=
+This patch updates init_hdm_decoder() to return=0A=
+-ENOSPC if the decoder is commited with zero-size.=0A=
+The caller leaves the decoder allocated but does not=0A=
+add it. It simply continues to the next decoder.=0A=
+=0A=
+Signed-off-by: Vishal Aslot <vaslot@nvidia.com>=0A=
+---=0A=
+ drivers/cxl/core/hdm.c | 7 +++++--=0A=
+ 1 file changed, 5 insertions(+), 2 deletions(-)=0A=
+=0A=
+diff --git a/drivers/cxl/core/hdm.c b/drivers/cxl/core/hdm.c=0A=
+index e9e1d555cec6..50164fd1b434 100644=0A=
+--- a/drivers/cxl/core/hdm.c=0A=
++++ b/drivers/cxl/core/hdm.c=0A=
+@@ -1047,10 +1047,10 @@ static int init_hdm_decoder(struct cxl_port *port, =
+struct cxl_decoder *cxld,=0A=
+                }=0A=
+=0A=
++               port->commit_end =3D cxld->id;=0A=
++=0A=
+                if (size =3D=3D 0) {=0A=
+-                       dev_warn(&port->dev,=0A=
++                       dev_dbg(&port->dev,=0A=
+                                 "decoder%d.%d: Committed with zero size\n"=
+,=0A=
+                                 port->id, cxld->id);=0A=
+-                       return -ENXIO;=0A=
++                       return -ENOSPC;=0A=
+                }=0A=
+-               port->commit_end =3D cxld->id;=0A=
+        } else {=0A=
+@@ -1210,6 +1210,9 @@ int devm_cxl_enumerate_decoders(struct cxl_hdm *cxlhd=
+m,=0A=
+                rc =3D init_hdm_decoder(port, cxld, target_map, hdm, i,=0A=
+                                      &dpa_base, info);=0A=
+                if (rc) {=0A=
++                       if (rc =3D=3D -ENOSPC) {=0A=
++                               continue;=0A=
++                       }=0A=
+                        dev_warn(&port->dev,=0A=
+                                 "Failed to initialize decoder%d.%d\n",=0A=
+                                 port->id, i);=0A=
+--=0A=
+2.34.1=0A=
+=0A=
+> ________________________________________=0A=
+> From: Vishal Aslot <vaslot@nvidia.com>=0A=
+> Sent: Wednesday, October 1, 2025 8:57 PM=0A=
+> To: Dave Jiang; Davidlohr Bueso; Jonathan Cameron; Alison Schofield; Vish=
+al Verma; Ira Weiny; Dan Williams; Li Ming; Peter Zijlstra; Dan Carpenter; =
+Zijun Hu; linux-cxl@vger.kernel.org=0A=
+> Cc: linux-kernel@vger.kernel.org=0A=
+> Subject: Re: [PATCH] cxl/hdm: allow zero sized committed decoders=0A=
+>=0A=
+> External email: Use caution opening links or attachments=0A=
+>=0A=
+>=0A=
+>> ________________________________________=0A=
+>> From: Dave Jiang <dave.jiang@intel.com>=0A=
+>> Sent: Wednesday, October 1, 2025 5:46 PM=0A=
+>> To: Vishal Aslot; Davidlohr Bueso; Jonathan Cameron; Alison Schofield; V=
+ishal Verma; Ira Weiny; Dan Williams; Li Ming; Peter Zijlstra; Dan Carpente=
+r; Zijun Hu; linux-cxl@vger.kernel.org=0A=
+>> Cc: linux-kernel@vger.kernel.org=0A=
+>> Subject: Re: [PATCH] cxl/hdm: allow zero sized committed decoders=0A=
+>>=0A=
+>> External email: Use caution opening links or attachments=0A=
+>>=0A=
+>>=0A=
+>> On 10/1/25 3:03 PM, Vishal Aslot wrote:=0A=
+>>> Thanks for the quick review, Dave. Yes, forgot to put the commit messag=
+e. :)=0A=
+>>> About the copyright message. Should I not be updating the year to 2025 =
+in it?=0A=
+>>=0A=
+>> I wouldn't bother unless you are doing massive changes and in that case =
+it would be adding NVidia copyright anyhow for you. Also, typically linux m=
+ailing lists prefer responding inline and >> not top posting.=0A=
+>=0A=
+> Ah, understood. Thanks for the mentoring.=0A=
+>=0A=
+>>>=0A=
+>>>=0A=
+>>>=0A=
+>>>=0A=
+>>>=0A=
+>>>=0A=
+>>>=0A=
+>>>=0A=
+>>>=0A=
+>>>=0A=
+>>> ________________________________________=0A=
+>>> From: Dave Jiang <dave.jiang@intel.com>=0A=
+>>> Sent: Wednesday, October 1, 2025 4:28 PM=0A=
+>>> To: Vishal Aslot; Davidlohr Bueso; Jonathan Cameron; Alison Schofield; =
+Vishal Verma; Ira Weiny; Dan Williams; Li Ming; Peter Zijlstra; Dan Carpent=
+er; Zijun Hu; linux-cxl@vger.kernel.org=0A=
+>>> Cc: linux-kernel@vger.kernel.org=0A=
+>>> Subject: Re: [PATCH] cxl/hdm: allow zero sized committed decoders=0A=
+>>>=0A=
+>>> External email: Use caution opening links or attachments=0A=
+>>>=0A=
+>>>=0A=
+>>> On 10/1/25 1:37 PM, Vishal Aslot wrote:=0A=
+>>>> Signed-off-by: Vishal Aslot <vaslot@nvidia.com>=0A=
+>>>=0A=
+>>> Missing commit log?=0A=
+>=0A=
+> Yes, will add one in v2.=0A=
+>=0A=
+>>>>=0A=
+>>>> ---=0A=
+>>>>  drivers/cxl/core/hdm.c | 9 +++++++--=0A=
+>>>>  1 file changed, 7 insertions(+), 2 deletions(-)=0A=
+>>>>=0A=
+>>>> diff --git a/drivers/cxl/core/hdm.c b/drivers/cxl/core/hdm.c=0A=
+>>>> index e9e1d555cec6..97a5f27f5b72 100644=0A=
+>>>> --- a/drivers/cxl/core/hdm.c=0A=
+>>>> +++ b/drivers/cxl/core/hdm.c=0A=
+>>>> @@ -1,5 +1,5 @@=0A=
+>>>>  // SPDX-License-Identifier: GPL-2.0-only=0A=
+>>>> -/* Copyright(c) 2022 Intel Corporation. All rights reserved. */=0A=
+>>>> +/* Copyright(c) 2022-2025 Intel Corporation. All rights reserved. */=
+=0A=
+>>>=0A=
+>>> Stray change?=0A=
+>=0A=
+> No, it was intentional but I understand that for this small update, I don=
+'t need to update copyright info. I'll undo this change in v2.=0A=
+>=0A=
+>>>=0A=
+>>>>  #include <linux/seq_file.h>=0A=
+>>>>  #include <linux/device.h>=0A=
+>>>>  #include <linux/delay.h>=0A=
+>>>> @@ -1050,7 +1050,7 @@ static int init_hdm_decoder(struct cxl_port *por=
+t, struct cxl_decoder *cxld,=0A=
+>>>>                         dev_warn(&port->dev,=0A=
+>>>>                                  "decoder%d.%d: Committed with zero si=
+ze\n",=0A=
+>>>>                                  port->id, cxld->id);=0A=
+>>>=0A=
+>>> I wonder if we should make this dev_dbg() now that it's a valid case.=
+=0A=
+>=0A=
+> Yes, makes sense. I'll change it to dev_dbg() in v2.=0A=
+>=0A=
+>>>=0A=
+>>>> -                       return -ENXIO;=0A=
+>>>> +                       return -ENOSPC;=0A=
+>>>>                 }=0A=
+>>>>                 port->commit_end =3D cxld->id;=0A=
+>>>>         } else {=0A=
+>>>> @@ -1210,6 +1210,11 @@ int devm_cxl_enumerate_decoders(struct cxl_hdm =
+*cxlhdm,=0A=
+>>>>                 rc =3D init_hdm_decoder(port, cxld, target_map, hdm, i=
+,=0A=
+>>>>                                       &dpa_base, info);=0A=
+>>>>                 if (rc) {=0A=
+>>>> +                       if (rc =3D=3D -ENOSPC) {=0A=
+>>>> +                               put_device(&cxld->dev);=0A=
+>>>=0A=
+>>> Why put_device()? Should we enumerate this decoder instead of pretend i=
+t doesn't exist? essentially only a dev_set_name() and device_add()?=0A=
+>=0A=
+> That is a good point. The decoder has been committed so it should be acco=
+unted for in the OS.=0A=
+> I'll remove put_device() in v2.=0A=
+>=0A=
+>>>=0A=
+>>>> +                               rc =3D 0;=0A=
+>>>=0A=
+>>> Don't think this is needed since the continue will put it at start of t=
+he loop where rc gets written by init_hdm_decoder() return value.=0A=
+>=0A=
+> Agreed. I was being paranoid. Will remove it in v2.=0A=
+>=0A=
+>>>=0A=
+>>>> +                               continue;=0A=
+>>>> +                       }=0A=
+>>>>                         dev_warn(&port->dev,=0A=
+>>>>                                  "Failed to initialize decoder%d.%d\n"=
+,=0A=
+>>>>                                  port->id, i);=0A=
+>>>> --=0A=
+>>>> 2.34.1=0A=
+>>>=
 
