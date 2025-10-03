@@ -1,192 +1,145 @@
-Return-Path: <linux-kernel+bounces-840898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-840899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id F034EBB5AD7
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 02:31:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9C77BB5ADD
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 02:32:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B9B894E82A5
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 00:31:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A023D19E784E
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 00:32:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F3C23BBF2;
-	Fri,  3 Oct 2025 00:31:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE6E573451;
+	Fri,  3 Oct 2025 00:32:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C2wByUPO"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dcORrS37"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90C11175BF
-	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 00:31:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD9A18B12
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 00:32:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759451504; cv=none; b=Jf05B61/Kz9jE4LtcMQCEdvfwbW2fTRB6EdQMFFywAIfAl/OrpREglUdsXjbxWLLytpLTfqrhgKUakPFqKP4U0UDfPs5hh4BMWv+i/VkjyG4GpICEHdT17QvYzuOIc/xDKVCotM+hPCHrIDTbOS7GH9sdJkZ3H+hpXcRi7dxPE0=
+	t=1759451546; cv=none; b=kxECR+1Ng8RwpE7MResCqrxL7/B5YGrbY35a9RHVTedO3CYAwwDkJPsyLipeDgKfSAbcj/B6yVq9+M8y0hQbnv8oTElENXZUiIiQ0pcvGQQTiqSVSav+XpoKuvUOiKq+kYl1Xnq9KiO7AQ+gMlOAs/UayMFXWyIqJPYxDJUqua0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759451504; c=relaxed/simple;
-	bh=dMj5WRQV/om9Nj61vhT+zYSNzeMigXFUlTwcU8SQkmQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Yj3ekOv4tkvLpFG82shXyqnSExxf6ejuWloPNiHLurzZ2mkCHWYbs3FjV3+5ABhvHUn9RPaOPK3eLtvKQtMe76gFEifOL9GHyogYfUagbBgeSciqVVQRbdQ3SS4rEoP9asEc3ShP6hJxrkO+G/Fk6ogyclqezC7N9fst5Lq5GLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C2wByUPO; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-71d6083cc69so18789267b3.2
-        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 17:31:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1759451498; x=1760056298; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4U5pnCPEOjyEvJTXMjyeqBkkPLwp0u6MFGFXx4Pna3U=;
-        b=C2wByUPOEjG7SP4az4ZS1sipfN/CeV4+LbpkRAaX5r/TdttwFX08mZt5oOvb5Ot/pw
-         c8aqn1QIidYk/e5McbFdZxD9JPg1SFJZFgsedu7K2EPDL7/3cCfDFeaPgaOLPh1AoNC3
-         6mts2x682vQgJWZ9aQTfpL97XCl3lAfBChQpyIoKhBkxalC6lJ+4dx9efOgFYYczjYQI
-         xNHWYWyiGhTl1l/1Otg2D7f7qS4osq3TyNuEyeL94FBWNtT16xNnBTCDJSYuwgDroF+f
-         R7iIIBQ8cNdhjBeJzZ8mWmhNwWTZ5ljzy3OTi2JXTJM8ZMIZ70YiH24LXm2xjQhvBsby
-         VjvQ==
+	s=arc-20240116; t=1759451546; c=relaxed/simple;
+	bh=ETlEf66hdPCHHJn1GuWHBeROSwycNJMpRgfr1/FpZG8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hfFGLSP/KNtVmU40fzcEjQVYPhnBYxvmJ7dTKkevsp8CAt1/O7oBq5HEnA+W4kIeigTRVFUjMp2GNzKWTMGGotcIRvNGQezse6No9S7vuHz7PeMQc82moLe6KSInvEkOt9PGYFm9Lj8P6yFgTts7Oo3JU+QBE2DX72hFkVKPPTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dcORrS37; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1759451539;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Xaf5RNoemnbQ5bhVRXfDXLq6XKqiACwC+kjxc5U7K8E=;
+	b=dcORrS37leWVm4KdpJNUOSvAc4CYYTK3jpbJjqb5xAt4wtttB+ZEjt4PUbwRl6w9jFWqgF
+	AG/GoC6OqpioSg+v7OgFwageCiUd4qxkM82cdSc64kIHfigBepNACLamvdOm7xQONHV7sx
+	TmkJdof4u0UAJwF8XinDsOYp9spWaXw=
+Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com
+ [209.85.210.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-151-HszvnMsDMfmeXXpi0Ae79A-1; Thu, 02 Oct 2025 20:32:18 -0400
+X-MC-Unique: HszvnMsDMfmeXXpi0Ae79A-1
+X-Mimecast-MFC-AGG-ID: HszvnMsDMfmeXXpi0Ae79A_1759451538
+Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-77f2466eeb5so1715676b3a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 02 Oct 2025 17:32:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1759451498; x=1760056298;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4U5pnCPEOjyEvJTXMjyeqBkkPLwp0u6MFGFXx4Pna3U=;
-        b=UTxl6vk6qNSrcyIzvwfGZ47gIddEGSW0LEV2+epxb9bvawfJofZ1W8so445f3cPnvc
-         FypK6M+9b03hhhRqcvSz9rQ4A/0mnOQmy6aN2NbPlzCYwSPCW0anMqLlJS/cIqVZ2LMO
-         gnNcmr7t75ZW46e7HYb6bfuJ+CywK/L1g36y/35f89bdev20VkogRCWbSVgnKlkEGZ2b
-         MrEe+GkVDxoAvuWpMUM4sdTNFpnL0ONRlsQWNuJTSpwF6Un+726Nyn+Qxrgzy/GUgqzi
-         eAvWK1q6rvV6+MIjUsrlttZnDoQuipS0GmDXUiCv68hsiyLFtrFkUv6lZS1XqGPSJUHO
-         fnzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVKmgAx4zLoOOvp5jf6cwOWEvbnZdWU5YIdk9v/xR02wYBOx2VYWK8UbOCOXzxTNnlS5OLTl75nGUJ9K/s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKa8lBu+d7jsoR/wDCBJkMGuYVCv5glblLQte6czLqJUYK1jVg
-	Gy26WEcppiH7fFvEZckmQBBwBgnABWlrY91o4q1ebOob78Jd07x1iT/d5JiZWl+1ZkTOgcky0CH
-	/iI1vSeqU9PC1tjS1OpaP3bJxHde98vw=
-X-Gm-Gg: ASbGnctFls01bY2BGskDb1li+RkdQg1RjFLdrY6AogaJGQosljQzMbNl08NiAGZSZ4D
-	0+g1lmHSqsZvuhDNgOcul0WytyXa9Jt+IGU9nhFrE3jgvxGhTFbLohOPc8TeTiEZUAiLDC5TZSa
-	g7KIGAQ3MJoO6M2sNlPbXVm6nzIJuGhlEp2a7R2ATuQlsGsiGHUQcoZqPMFg2MDaOjqGJT1l6w2
-	gSi5JQDwxchozCrz1HH+naPC/z9IFHm3XlGXAKrutNnecdJsdcRgrekdWnCu6OREHKl3+iFiwnS
-	J40ZQvf/1EODNZrjgSWQ
-X-Google-Smtp-Source: AGHT+IHSk85RSXIwuchkQqF0A/BvXRnC9Gw/LAQoBVBK/mn507GK9IZBmwwY+wHxNq7PYiIbBOsMUewMXpSTJIlxPWM=
-X-Received: by 2002:a05:690e:159a:20b0:629:e2b6:1302 with SMTP id
- 956f58d0204a3-63b9a07171emr1133628d50.17.1759451498517; Thu, 02 Oct 2025
- 17:31:38 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1759451537; x=1760056337;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xaf5RNoemnbQ5bhVRXfDXLq6XKqiACwC+kjxc5U7K8E=;
+        b=d9aq7I6gpZ5PI+OvRbl9mnZMTJV0kciFgnbbbM2+d/YUwmGW5DdPZe5z1cJM10yh5E
+         ercxKlbETgSpbMyXSDQXuVQDNNmziYpc36C/l/nL3ZTpzz8xKaY50qVpsWz4nBgXFAH4
+         A7SgrpbBWF2udH8hJeArgJ3ZcwBOCsRqVuehi7pvY1Xd5WG7AApvaiWQQfgf9wIPguz2
+         CeXgP/TZA3j0d4yaH4zTCpmBk94AKb7M3wflj1qwjVenEUh2eTfuuKrv2/4QMQWMuSCt
+         eq7WprR95ohBZq6617ARYlm68uapq2eRxMKEU/TEJste8HwWvy0q2Zyd+9QbIlBgYCZK
+         9dsw==
+X-Forwarded-Encrypted: i=1; AJvYcCW4hjPqCQc8Z7ONvVOYtrpc7Xf/+9qa/XTsUL9AyUTUTKrkHNAxiy6P/dOgXpRVNeDKfdc3D6xm1qE5lhk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfwyhWdaBWjQyRjEVuyaOuGf8zPJgUiGl6zen78MF91g3Q4jGa
+	ZoGk7/S1QtKqFgqgSIUSyHcEO5KMLf+ShnhdQ2jZmfMlWASESN5raacw5DtuGnrAOR398P6Og5w
+	lEmc0XquiRuHd/CRt0MKKsza8B0XixghdwbRco+bZspkloClzvHVEvrveNWySuvRdjQ==
+X-Gm-Gg: ASbGncu7Sn5Ymm4bSyS8TdJ8/WP0ZJ64LuPNc1PUeiw6ybOIy5l5UZWhCAeVQKKAgcV
+	WfFjWOeLDsKq7TPS1u2UGqYxxXHnmXnvO87yL7JM7QGrjdsIjAY9NPhwBNv4x5Kc9NDeNdbFzFt
+	Vu8zHIvLdXHOsTqAhr7CWDn8/ULy2MafzOieg7xixa6/ZWvw62friX8MfsjCqbg3D0OZYFNVMfs
+	JdyY4DuFJi7aACr9MUAVJe5ZzAIV9q8e3/VUJptKPpDYGmAXixg/AQixxO3gB31WpDIk+V7NRDW
+	vxBq5j4UNKOZtaFpTgBz53WigIf1zJMeDYWLZpYbGIRutctX5kKNtfnVw+zOcdWvOKyb2eL0oMx
+	47zc09ntE6Q==
+X-Received: by 2002:a05:6a00:39a3:b0:781:1a9f:aeeb with SMTP id d2e1a72fcca58-78c98d2e6aemr1700837b3a.1.1759451537523;
+        Thu, 02 Oct 2025 17:32:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEWEEgYNq3YMaGCew9+gs61ruTR+Mw3AELcBoDCygoa6FdJ8RVNCdO/U7t0LGX7nViXA3ZUSQ==
+X-Received: by 2002:a05:6a00:39a3:b0:781:1a9f:aeeb with SMTP id d2e1a72fcca58-78c98d2e6aemr1700792b3a.1.1759451537135;
+        Thu, 02 Oct 2025 17:32:17 -0700 (PDT)
+Received: from [192.168.68.51] (n175-34-62-5.mrk21.qld.optusnet.com.au. [175.34.62.5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-78b02074654sm3236692b3a.75.2025.10.02.17.32.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 02 Oct 2025 17:32:16 -0700 (PDT)
+Message-ID: <ef45ce3a-7a78-45c8-8196-75923af7c6ab@redhat.com>
+Date: Fri, 3 Oct 2025 10:32:04 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250916210823.4033529-1-olvaffe@gmail.com> <20250916210823.4033529-6-olvaffe@gmail.com>
- <ca22f80c-c233-4030-81d1-f425b8c1fb83@arm.com>
-In-Reply-To: <ca22f80c-c233-4030-81d1-f425b8c1fb83@arm.com>
-From: Chia-I Wu <olvaffe@gmail.com>
-Date: Thu, 2 Oct 2025 17:31:27 -0700
-X-Gm-Features: AS18NWAjq-5mQlMvXdR4W6e9qPj0GEnhhIeXGsj7lk4Tej78VBVZlV1t3dCSgZk
-Message-ID: <CAPaKu7RKDwpSqJ6u8mjcc4G0Z-T7G1LxFw2rXQtxgSW=1_-jkw@mail.gmail.com>
-Subject: Re: [PATCH 05/10] drm/panthor: rename and document mmu_hw_do_operation_locked
-To: Steven Price <steven.price@arm.com>
-Cc: Boris Brezillon <boris.brezillon@collabora.com>, Liviu Dudau <liviu.dudau@arm.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Grant Likely <grant.likely@linaro.org>, Heiko Stuebner <heiko@sntech.de>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 05/29] arm64: kconfig: Add Kconfig entry for MPAM
+To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org
+Cc: D Scott Phillips OS <scott@os.amperecomputing.com>,
+ carl@os.amperecomputing.com, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
+ Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+ fenghuay@nvidia.com, baisheng.gao@unisoc.com,
+ Jonathan Cameron <jonathan.cameron@huawei.com>, Rob Herring
+ <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
+ Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
+ <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Danilo Krummrich <dakr@kernel.org>
+References: <20250910204309.20751-1-james.morse@arm.com>
+ <20250910204309.20751-6-james.morse@arm.com>
+Content-Language: en-US
+From: Gavin Shan <gshan@redhat.com>
+In-Reply-To: <20250910204309.20751-6-james.morse@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 2, 2025 at 3:41=E2=80=AFAM Steven Price <steven.price@arm.com> =
-wrote:
->
-> On 16/09/2025 22:08, Chia-I Wu wrote:
-> > Rename mmu_hw_do_operation_locked to mmu_hw_flush_caches.
->
-> This is confusing, you've renamed the _locked variant and left the
-> wrapper mmu_hw_do_operation() with the old name.
-The commit message says "rename and document", and I try to stay true
-to it. I could certainly squash some of the commits to make this
-series less confusing.
+On 9/11/25 6:42 AM, James Morse wrote:
+> The bulk of the MPAM driver lives outside the arch code because it
+> largely manages MMIO devices that generate interrupts. The driver
+> needs a Kconfig symbol to enable it. As MPAM is only found on arm64
+> platforms, the arm64 tree is the most natural home for the Kconfig
+> option.
+> 
+> This Kconfig option will later be used by the arch code to enable
+> or disable the MPAM context-switch code, and to register properties
+> of CPUs with the MPAM driver.
+> 
+> Signed-off-by: James Morse <james.morse@arm.com>
+> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+> CC: Dave Martin <dave.martin@arm.com>
+> ---
+> Changes since v1:
+>   * Help text rewritten by Dave.
+> ---
+>   arch/arm64/Kconfig | 23 +++++++++++++++++++++++
+>   1 file changed, 23 insertions(+)
+> 
 
->
-> I agree "do operation" isn't a great name, although "flush caches"
-> sounds to me like it's a function which does the whole cache flush dance
-> in one go, but it's still the same "one part of a cache flush operation"
-> code.
-It gets the name from being a wrapper for panthor_gpu_flush_caches.
-Which part of "cache flush operation" is missing?
+Reviewed-by: Gavin Shan <gshan@redhat.com>
 
->
-> Thanks,
-> Steve
->
-> >
-> > Signed-off-by: Chia-I Wu <olvaffe@gmail.com>
-> > ---
-> >  drivers/gpu/drm/panthor/panthor_mmu.c | 22 +++++++++++++++++-----
-> >  1 file changed, 17 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/pa=
-nthor/panthor_mmu.c
-> > index 727339d80d37e..7d1645a24129d 100644
-> > --- a/drivers/gpu/drm/panthor/panthor_mmu.c
-> > +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
-> > @@ -622,8 +622,20 @@ static void mmu_hw_cmd_unlock(struct panthor_devic=
-e *ptdev, u32 as_nr)
-> >       write_cmd(ptdev, as_nr, AS_COMMAND_UNLOCK);
-> >  }
-> >
-> > -static int mmu_hw_do_operation_locked(struct panthor_device *ptdev, in=
-t as_nr,
-> > -                                   u64 iova, u64 size, u32 op)
-> > +/**
-> > + * mmu_hw_cmd_flush_caches() - Flush and invalidate L2/MMU/LSC caches
-> > + * @ptdev: Device.
-> > + * @as_nr: AS to issue command to.
-> > + * @iova: Start of the region.
-> > + * @size: Size of the region.
-> > + * @op: AS_COMMAND_FLUSH_*
-> > + *
-> > + * Issue LOCK/GPU_FLUSH_CACHES/UNLOCK commands in order to flush and
-> > + * invalidate L2/MMU/LSC caches for a region.
-> > + *
-> > + * Return: 0 on success, a negative error code otherwise.
-> > + */
-> > +static int mmu_hw_flush_caches(struct panthor_device *ptdev, int as_nr=
-, u64 iova, u64 size, u32 op)
-> >  {
-> >       const u32 l2_flush_op =3D CACHE_CLEAN | CACHE_INV;
-> >       u32 lsc_flush_op;
-> > @@ -680,7 +692,7 @@ static int mmu_hw_do_operation(struct panthor_vm *v=
-m,
-> >       int ret;
-> >
-> >       mutex_lock(&ptdev->mmu->as.slots_lock);
-> > -     ret =3D mmu_hw_do_operation_locked(ptdev, vm->as.id, iova, size, =
-op);
-> > +     ret =3D mmu_hw_flush_caches(ptdev, vm->as.id, iova, size, op);
-> >       mutex_unlock(&ptdev->mmu->as.slots_lock);
-> >
-> >       return ret;
-> > @@ -691,7 +703,7 @@ static int panthor_mmu_as_enable(struct panthor_dev=
-ice *ptdev, u32 as_nr,
-> >  {
-> >       int ret;
-> >
-> > -     ret =3D mmu_hw_do_operation_locked(ptdev, as_nr, 0, ~0ULL, AS_COM=
-MAND_FLUSH_MEM);
-> > +     ret =3D mmu_hw_flush_caches(ptdev, as_nr, 0, ~0ULL, AS_COMMAND_FL=
-USH_MEM);
-> >       if (ret)
-> >               return ret;
-> >
-> > @@ -702,7 +714,7 @@ static int panthor_mmu_as_disable(struct panthor_de=
-vice *ptdev, u32 as_nr)
-> >  {
-> >       int ret;
-> >
-> > -     ret =3D mmu_hw_do_operation_locked(ptdev, as_nr, 0, ~0ULL, AS_COM=
-MAND_FLUSH_MEM);
-> > +     ret =3D mmu_hw_flush_caches(ptdev, as_nr, 0, ~0ULL, AS_COMMAND_FL=
-USH_MEM);
-> >       if (ret)
-> >               return ret;
-> >
->
+
+
 
