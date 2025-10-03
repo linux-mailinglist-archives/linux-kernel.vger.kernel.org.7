@@ -1,141 +1,126 @@
-Return-Path: <linux-kernel+bounces-841755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-841756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0279DBB8259
-	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 22:51:18 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83CE6BB825F
+	for <lists+linux-kernel@lfdr.de>; Fri, 03 Oct 2025 22:51:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A88104C2BD7
-	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 20:51:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3C6774EEFF7
+	for <lists+linux-kernel@lfdr.de>; Fri,  3 Oct 2025 20:51:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 864A22566D9;
-	Fri,  3 Oct 2025 20:51:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E44B52561AE;
+	Fri,  3 Oct 2025 20:51:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Lrx+Opa8"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ciq.com header.i=@ciq.com header.b="k2M/ReJg"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BFCB253B40;
-	Fri,  3 Oct 2025 20:51:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE410254B18
+	for <linux-kernel@vger.kernel.org>; Fri,  3 Oct 2025 20:51:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1759524666; cv=none; b=ihjNQWrNKjhHS2PEqT+nJXA+18HL67c64WfueG1/r7SxXCWW/cwPpHc3uleIlse8/vVAfXgK+CvvG5C8f+fsaOzqvcKCH4if/1OktBpzW89+/rq5MOtC9RfkqBQKupbwWhiZJYXEGDg8he1tZhnrzxQE4RuoNXvBjayVEdZGt7c=
+	t=1759524691; cv=none; b=n7E3/aibtuc1suc8DYXJazBKlldKLP27uMUuik/WX/vfPlZ9SbHYhadTa58f8fnI/nMvWLr2DiE5BaNirBhPPkXQ4pcTB0Jsd1GyPAZ2ePxbJCO53VSQzU2Hnlen68B43YDxpdpjuzU1vGme4ISuZouRbuPNGv2n5kuUPmYH3Co=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1759524666; c=relaxed/simple;
-	bh=bZr+Lvkb5M6Ufx0akrIYv+VR8dkYeZRAOvoeF3RPvsg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=ArnWUhXLUdvRaJOD1J2q2n6uL+3EDuWDBk3lcB4ZdorhZv5xvImhhD+vK1Cr7o60sGAv9gqlIHwuHWKOchkNqVDUHY+ZhddyGtxZZgraHq0kMrEUYFb9JDr5SP2o5JIEN+B1cRLV4FCNiysNQYEoZKz6XrwC5NAr3TzsuKoO0q0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Lrx+Opa8; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Cc:Content-ID:Content-Description;
-	bh=oIs3ppVLk6gw/qZXypZLZcOfa+yCn//X21VZFkDaLYU=; b=Lrx+Opa8kAlfEXuyu8nZrskDYS
-	RMEVW1K3EtHWtp/TNPMDl4+TZidS8rII6LOpnPv0qEvXnZn1PtaWNoVRLLHkzUnhbCR3Tfh1MpEHf
-	ZkZd/NEu3t0eSIf0IaCZTwNSp4G961ZaVD/mJjLljb3ViiQ31g8H8jJABJOEx687ZtuOQgxZ+AsqI
-	LmC9fUttLZOzjyJF2FAdnCTKBCeWjOa6Rmq3x9FU9+hZojGWXCUyKadvy1un7W8qu/DrpcU76pUyT
-	OX6o9m0+7SucZJP87UviQ0UOsMWHeilEIIYasmiArPjulk9Jci/3QFC7WnJj9QL3uPYwy+SzCuC2Q
-	D0kAwH9A==;
-Received: from [50.53.25.54] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1v4mjl-0000000D7bQ-0Z25;
-	Fri, 03 Oct 2025 20:50:45 +0000
-Message-ID: <3913273d-12e2-426f-aec7-263b7f49008a@infradead.org>
-Date: Fri, 3 Oct 2025 13:50:43 -0700
+	s=arc-20240116; t=1759524691; c=relaxed/simple;
+	bh=bGf/fVMq7D81Q5YNB5Z+ahF/or+jbs9kwSx5EKrooY4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ta9t58kUe4Mj/8m2wV5B3SiVLjbiVJQPylZ6hl99SuSg/I7JVit2lOOd6gpJpdHN7jkmYvpDJtRjNlPSXImM0GU75ImuGklZ1HhWWZYs5ESVnV/Fw4RZ8NyVlu4S8OX3WKCoZqY4sHSEOqOZ3wYwEHIFxYjHbOf72sNYMl+yrGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ciq.com; spf=pass smtp.mailfrom=ciq.com; dkim=pass (2048-bit key) header.d=ciq.com header.i=@ciq.com header.b=k2M/ReJg; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ciq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ciq.com
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4da37f6e64cso27479501cf.2
+        for <linux-kernel@vger.kernel.org>; Fri, 03 Oct 2025 13:51:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ciq.com; s=s1; t=1759524687; x=1760129487; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7Z9OJHsg9AnDgBWFYYVznso9JgY1ikRBT350Nr1kqdA=;
+        b=k2M/ReJgV/PIPf4/m4x1RqbifFPwBk5bqmg8At//lqk6DpVBhDAm6KT4/g2mVY1DEA
+         2X0Ac4C23kFdj2Mos7g7JXG9+pZHCBLeYaaw+h/iGbMT+0fHaviuoapGj038Ccl8Zat2
+         eRzWm1Q3dwSHgL0go0/W5FG09tfDkyG4uULYxOF+puBvARO9pvQTt32yEAMg92oXnql9
+         IUErb7yQeBzFm6BnuB6SeVU4K3fiM+g50n9rCflqYg7cQhXK70ta5OxRHeXHv+rAb6Ox
+         b/dlWauTsRnEdQV09tGwWa6Q1NspN4PMi0eCIyQakckYXOZZcoK8vtk84LT9Yh9l2Cm2
+         tFPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1759524687; x=1760129487;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7Z9OJHsg9AnDgBWFYYVznso9JgY1ikRBT350Nr1kqdA=;
+        b=spRbYVuvCfxvreXTnNdrtk2XyeUqUliqph5PozciTARGm13tWu1yoBK0sunkc5gNQ3
+         lCwTxo8tZzhvx7J8R4P+KlJzLNI/9BfvHkOvg6YJWhwONWJP4cg6QhU/ktDD4cABAd6y
+         QmJkO/ilr7cg30sjohIchWv2YZ7JbhA+Zxy35hxiur5VnCyX+SyiHxC0JTcOSYQPRVeo
+         GH9E8GX9/B1k2IwhgpJjkelGafgF/NfQdFmoAelIkrjAxY+mWc1qSySD67SBZGnfMRAq
+         fNvJtOI/+/mpY9X8PQXrk2OmBkA/Z2XdjGhWwxlL5wRXY2qxfC1+Xt7k2V4x+tCZfB1k
+         L2ng==
+X-Forwarded-Encrypted: i=1; AJvYcCVC9hCaUnC0Qm3E2f7SDhhoS8MoM2A/4s6T0K79UYOUWc1N/Utq9kaBQnrnnoolHztd2iZynepohxDZSpw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjDrO429wJPE15Gwn8TodWZPpVm6ZCZxAzg9UOFzUAnQDGo/wC
+	naYdEtXyqnHqkOBfpV4RNEE6bewZ6W9UpNCpmd4jjw1RHD4d/q7metKi+A5U6tFW1CodzZxbrXq
+	Px5koYVnU4qPi/jpEfzsohUIsUOrza1skXxQW6oy4Cp75kry1BfBot0FQ/Q==
+X-Gm-Gg: ASbGnct5ZSd6PMciLUvxcj3+mKVNrC3tj8vYer6tEY5Yc9WVQ5yNkhr5OotT0sT5zRf
+	L3aNaVVYiP8wkzf7IAIgyxowq+QNq3UzZBoYzzTqyusA3244wdjoceeht4tY07L8vCQFXdPA3/z
+	JhONcfFajuzmrWUN9Beox+/DEqsFcyuNdRk4jWhraVv1iwZeJy5PYmn+wt3+ijvKBbVRYyWRk+C
+	wZk9VubmGcLLCvoIaPUTDHyqHTwZotEDvbZOatPgr0=
+X-Google-Smtp-Source: AGHT+IGOFuK5QKXUa0EoyQNwTfrrar3OCp+dKAGP3fEaEJ9VnSeYg1Yk+ezWQ9N6bxp2R87Mtx6d9Bh25m/9JjggpuQ=
+X-Received: by 2002:a05:622a:303:b0:4b7:9add:76cd with SMTP id
+ d75a77b69052e-4e576ae6ba4mr64596521cf.42.1759524687516; Fri, 03 Oct 2025
+ 13:51:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 23/23] MAINTAINERS: add entry for KStackWatch
-To: Jinchao Wang <wangjinchao600@gmail.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Masami Hiramatsu <mhiramat@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, Mike Rapoport <rppt@kernel.org>,
- Alexander Potapenko <glider@google.com>, Marco Elver <elver@google.com>,
- Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>,
- David Hildenbrand <david@redhat.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
- <vbabka@suse.cz>, Suren Baghdasaryan <surenb@google.com>,
- Michal Hocko <mhocko@suse.com>, Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- Kees Cook <kees@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Sami Tolvanen <samitolvanen@google.com>, Miguel Ojeda <ojeda@kernel.org>,
- Masahiro Yamada <masahiroy@kernel.org>, Rong Xu <xur@google.com>,
- Naveen N Rao <naveen@kernel.org>, David Kaplan <david.kaplan@amd.com>,
- Andrii Nakryiko <andrii@kernel.org>, Jinjie Ruan <ruanjinjie@huawei.com>,
- Nam Cao <namcao@linutronix.de>, workflows@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org, linux-mm@kvack.org, llvm@lists.linux.dev,
- Andrey Ryabinin <ryabinin.a.a@gmail.com>,
- Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>,
- Vincenzo Frascino <vincenzo.frascino@arm.com>, kasan-dev@googlegroups.com,
- "David S. Miller" <davem@davemloft.net>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-trace-kernel@vger.kernel.org
-References: <20250930024402.1043776-1-wangjinchao600@gmail.com>
- <20250930024402.1043776-24-wangjinchao600@gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250930024402.1043776-24-wangjinchao600@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20251003160338.463688162@linuxfoundation.org>
+In-Reply-To: <20251003160338.463688162@linuxfoundation.org>
+From: Brett Mastbergen <bmastbergen@ciq.com>
+Date: Fri, 3 Oct 2025 16:51:16 -0400
+X-Gm-Features: AS18NWCwKeFKfMLlMvvr2cSuujlh1BUpd9drr1fldSku7mQZdxTUWOKjj9ta5Is
+Message-ID: <CAOBMUvjBZLErkgx=VK06QHFBJZ3rLiJ+NdXitrT7PUnd452Jmg@mail.gmail.com>
+Subject: Re: [PATCH 6.12 00/10] 6.12.51-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, 
+	achill@achill.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Fri, Oct 3, 2025 at 12:08=E2=80=AFPM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.12.51 release.
+> There are 10 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sun, 05 Oct 2025 16:02:25 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.12.51-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.12.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+>
 
-On 9/29/25 7:43 PM, Jinchao Wang wrote:
-> Add a maintainer entry for Kernel Stack Watch.
-> 
-> Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
-> ---
->  MAINTAINERS | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 520fb4e379a3..3d4811ff3631 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -13362,6 +13362,14 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git
->  F:	Documentation/dev-tools/kselftest*
->  F:	tools/testing/selftests/
->  
-> +KERNEL STACK WATCH
-> +M:	Jinchao Wang <wangjinchao600@gmail.com>
-> +S:	Maintained
-> +F:	Documentation/dev-tools/kstackwatch.rst
-> +F:	include/linux/kstackwatch_types.h
-> +F:	mm/kstackwatch/
-> +F:	tools/kstackwatch/
-> +
+Builds successfully.  Boots and works on qemu and Dell XPS 15 9520 w/
+Intel Core i7-12600H
 
-Add entries in alphabetical order, please.
+Tested-by: Brett Mastbergen <bmastbergen@ciq.com>
 
->  KERNEL SMB3 SERVER (KSMBD)
->  M:	Namjae Jeon <linkinjeon@kernel.org>
->  M:	Namjae Jeon <linkinjeon@samba.org>
-
--- 
-~Randy
-
+Thanks,
+Brett
 
